@@ -856,7 +856,7 @@ STDMETHODIMP SVRemoteCtrl::get_ServerType(BSTR* pVal)
 	return l_Status;
 }
 
-void SVRemoteCtrl::AsyncThreadFunc(bool& p_rWaitForEvent)
+void SVRemoteCtrl::AsyncThreadFunc(bool& )
 {
 	SVCommandTemplatePtr l_CommandPtr;
 
@@ -881,7 +881,7 @@ void SVRemoteCtrl::AsyncThreadFunc(bool& p_rWaitForEvent)
 	m_AsyncCommandHelper.SetCommandComplete();
 }
 
-HRESULT SVRemoteCtrl::SetControlServer(SVCommandStatus& p_rStatus)
+HRESULT SVRemoteCtrl::SetControlServer(SVCommandStatus& )
 {
 	HRESULT l_Status = S_OK;
 

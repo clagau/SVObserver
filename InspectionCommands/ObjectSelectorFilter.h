@@ -24,7 +24,7 @@ public:
 
 	virtual ~AttributesAllowedFilter() {};
 
-	bool operator()(const SvOi::IObjectClass* pObject, unsigned int Attribute, int ArrayIndex) const
+	bool operator()(const SvOi::IObjectClass* pObject, unsigned int Attribute, int ) const
 	{
 		bool Result(false);
 
@@ -110,7 +110,7 @@ private:
 	}
 
 public:
-	bool RangeSelectorFilter::operator()(const SvOi::IObjectClass* pObject, unsigned int attributeMask, int ArrayIndex) const
+	bool RangeSelectorFilter::operator()(const SvOi::IObjectClass* pObject, unsigned int attributeMask, int ) const
 	{
 		bool bRetVal = false;
 		auto pValueObject = dynamic_cast<const SvOi::IValueObject*>(pObject);
@@ -139,7 +139,7 @@ public:
 
 	virtual ~MLRejectValueFilter() {};
 
-	bool operator()(const SvOi::IObjectClass* pObject, unsigned int Attribute, int ArrayIndex) const
+	bool operator()(const SvOi::IObjectClass* pObject, unsigned int Attribute, int ) const
 	{
 		bool Result(false);
 
@@ -186,7 +186,7 @@ public:
 
 	virtual ~TableObjectSelector() {};
 
-	bool operator()(const SvOi::IObjectClass* pObject, unsigned int Attribute, int ArrayIndex) const
+	bool operator()(const SvOi::IObjectClass* pObject, unsigned int, int ) const
 	{
 		if (!pObject)
 		{

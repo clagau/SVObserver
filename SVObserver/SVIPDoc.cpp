@@ -83,11 +83,11 @@ static char THIS_FILE[] = __FILE__;
 
 union SVViewUnion
 {
-	CView *pView;
-	SVImageViewScroll *pImageScroll;
-	SVImageViewClass *pImageView;
-	ToolSetView *pToolSetView;
-	ResultTabbedView *pResultView;
+	CView* pView{nullptr};	//Note for union only one field can be initialized
+	SVImageViewScroll* pImageScroll;
+	SVImageViewClass* pImageView;
+	ToolSetView* pToolSetView;
+	ResultTabbedView* pResultView;
 };
 
 constexpr int MaxImageViews = 8;
@@ -1342,7 +1342,7 @@ void SVIPDoc::updateToolsetView(uint32_t toolID, uint32_t postID, uint32_t owner
 		pRequest->set_listmode(SvPb::MoveObjectRequest_ListEnum_TaskObjectList);
 
 		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, nullptr);
-		assert(S_OK == hr);
+		assert(S_OK == hr); UNREFERENCED_PARAMETER(hr);
 
 		SVObjectClass*  pOwnerObject(SVObjectManagerClass::Instance().GetObject(ownerID));
 		if (pOwnerObject && SvPb::LoopToolObjectType != pOwnerObject->GetObjectSubType())
@@ -1482,7 +1482,6 @@ void SVIPDoc::OpenToolAdjustmentDialog(int tab)
 		SvTo::SVToolClass* l_pTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject(GetSelectedToolID()));
 		if (nullptr != l_pTool)
 		{
-			const SvDef::SVObjectTypeInfoStruct& rToolType = l_pTool->GetObjectInfo().m_ObjectTypeInfo;
 			SVSVIMStateClass::AddState(SV_STATE_EDITING);
 			try
 			{
@@ -2118,7 +2117,11 @@ void SVIPDoc::InitMenu()
 		SVUtilitiesClass util;
 		// Load and init Utility Menu
 		CMenu* pMenu = pWindow->GetMenu();
-		if (pMenu = util.FindSubMenuByName(pMenu, _T("&Utilities"))) { util.LoadMenu(pMenu); }
+		pMenu = util.FindSubMenuByName(pMenu, _T("&Utilities"));
+		if(nullptr != pMenu)
+		{
+			util.LoadMenu(pMenu);
+		}
 
 		// Load and init Tool Set Draw Menu
 		int pos = 0;
@@ -2405,7 +2408,6 @@ SvDef::StringSet SVIPDoc::TranslateSelectedObjects(const SVObjectReferenceVector
 void SVIPDoc::LoadRegressionTestVariables(SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent)
 {
 	SVTreeType::SVBranchHandle htiRegression = nullptr;
-	SVTreeType::SVBranchHandle htiViews = nullptr;
 
 	bool bOk = SvXml::SVNavigateTree::GetItemBranch(rTree, SvXml::CTAG_REGRESSIONTEST, htiParent, htiRegression);
 	if (bOk)
@@ -2437,7 +2439,7 @@ void SVIPDoc::SaveViews(SvOi::IObjectWriter& rWriter)
 	{
 		long ViewNumber = 0;
 
-		while (View.pView = GetNextView(vPos))
+		while (nullptr != (View.pView = GetNextView(vPos)))
 		{
 			rWriter.StartElement(View.pView->GetRuntimeClass()->m_lpszClassName);
 
@@ -2499,7 +2501,7 @@ void SVIPDoc::SaveViewPlacements(SvOi::IObjectWriter& rWriter)
 			SVIPSplitterFrame* pFrame = dynamic_cast<SVIPSplitterFrame*>(pWndSplitter2->GetParent());
 
 			CRuntimeClass* pClass = pFrame->GetRuntimeClass();
-			assert(_T("SVIPSplitterFrame") == std::string(pClass->m_lpszClassName));
+			assert(_T("SVIPSplitterFrame") == std::string(pClass->m_lpszClassName));	UNREFERENCED_PARAMETER(pClass);
 
 			if (pFrame &&pFrame->GetSafeHwnd())
 			{
@@ -2736,7 +2738,7 @@ bool SVIPDoc::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle htiPar
 					SVIPSplitterFrame* pFrame = dynamic_cast<SVIPSplitterFrame*>(pWndSplitter2->GetParent());
 
 					CRuntimeClass* pClass = pFrame->GetRuntimeClass();
-					assert(_T("SVIPSplitterFrame") == std::string(pClass->m_lpszClassName));
+					assert(_T("SVIPSplitterFrame") == std::string(pClass->m_lpszClassName)); UNREFERENCED_PARAMETER(pClass);
 
 					if (pFrame && pFrame->GetSafeHwnd())
 					{
@@ -2759,7 +2761,6 @@ bool SVIPDoc::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle htiPar
 			mbInitImagesByName = true;
 			POSITION vPos;
 			std::string Name;
-			SVTreeType::SVBranchHandle htiBranch = nullptr;
 
 			bOk = SvXml::SVNavigateTree::GetItemBranch(rTree, SvXml::CTAG_VIEWS, htiIPViews, htiViews);
 			if (bOk)
@@ -2787,7 +2788,9 @@ bool SVIPDoc::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle htiPar
 							{
 								View.pView = GetNextView(vPos);
 								if (!View.pView)
+								{
 									break;  // if there are not enough views, exit the loop
+								}
 							}
 
 							// if there were not enough views or the view found is the
@@ -2796,11 +2799,11 @@ bool SVIPDoc::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle htiPar
 								Name.compare(View.pView->GetRuntimeClass()->m_lpszClassName))
 							{
 								vPos = GetFirstViewPosition();
-								while ((View.pView = GetNextView(vPos)) &&
+								while (nullptr != (View.pView = GetNextView(vPos)) &&
 									(Name.compare(View.pView->GetRuntimeClass()->m_lpszClassName)));
 							}
 
-							if (View.pView)  // this should never fail, but if it does, we'll try to continue
+							if (nullptr != View.pView)  // this should never fail, but if it does, we'll try to continue
 							{
 								if (View.pView->IsKindOf(RUNTIME_CLASS(SVImageViewScroll)))
 								{
@@ -2857,11 +2860,11 @@ bool SVIPDoc::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle htiPar
 								Name.compare(View.pView->GetRuntimeClass()->m_lpszClassName))
 							{
 								vPos = GetFirstViewPosition();
-								while ((View.pView = GetNextView(vPos)) &&
+								while (nullptr != (View.pView = GetNextView(vPos)) &&
 									(Name.compare(View.pView->GetRuntimeClass()->m_lpszClassName)));
 							}
 
-							if (View.pView)  // this should never fail, but if it does, we'll try to continue
+							if (nullptr != View.pView)  // this should never fail, but if it does, we'll try to continue
 							{
 								if (View.pView->IsKindOf(RUNTIME_CLASS(SVImageViewScroll)))
 								{
@@ -3315,7 +3318,7 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread(LPVOID lpParam)
 	}
 	if (nullptr == pIPDoc->GetInspectionProcess() || nullptr == hRegressionWnd)
 	{
-		return E_FAIL;
+		return static_cast<DWORD> (E_FAIL);
 	}
 
 	bool l_bFirst = true;

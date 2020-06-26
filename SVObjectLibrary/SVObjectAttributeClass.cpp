@@ -830,7 +830,7 @@ bool SVObjectAttributeClass::GetData(SvCl::SVObjectVariantArrayClass& rData)
 			{
 				_variant_t vt;
 				vt.vt = VT_BOOL;
-				vt.boolVal = m_BoolArray[i];
+				vt.boolVal = m_BoolArray[i] ? VARIANT_TRUE : VARIANT_FALSE;
 				rData.push_back(vt);
 			}
 

@@ -164,7 +164,7 @@ BOOL SVChildrenSetupDialogClass::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 	
-	if( m_pAvailableChildrenList && m_pParentObject && ( m_pParentOwner = m_pParentObject->GetParent() ) )
+	if( nullptr != m_pAvailableChildrenList && nullptr != m_pParentObject && nullptr != (m_pParentOwner = m_pParentObject->GetParent()))
 	{
 		// Setup available list...
 		m_AvailableChildrenListCtrl.ModifyStyle( 0, LVS_REPORT );
@@ -372,7 +372,7 @@ void SVChildrenSetupDialogClass::OnPublishButton()
 	}
 }
 
-void SVChildrenSetupDialogClass::OnItemChangedChildrenList(NMHDR* pNMHDR, LRESULT* pResult)
+void SVChildrenSetupDialogClass::OnItemChangedChildrenList(NMHDR*, LRESULT* pResult)
 {
 	//
 	// Check for a selection count and if selection is not the
@@ -418,10 +418,8 @@ void SVChildrenSetupDialogClass::OnItemChangedChildrenList(NMHDR* pNMHDR, LRESUL
 	*pResult = 0;
 }
 
-void SVChildrenSetupDialogClass::OnItemChangedAvailableChildrenList(NMHDR* pNMHDR, LRESULT* pResult)
+void SVChildrenSetupDialogClass::OnItemChangedAvailableChildrenList(NMHDR*, LRESULT* pResult)
 {
-	NM_LISTVIEW* pNMListView = reinterpret_cast< NM_LISTVIEW* >( pNMHDR );
-
 	BOOL enable = m_AvailableChildrenListCtrl.GetSelectedCount();
 	GetAndEnableWindow( this, IDC_ADD_BUTTON, enable );
 

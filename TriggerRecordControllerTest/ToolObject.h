@@ -32,7 +32,7 @@ namespace SvTrcT
 		/// This method reset the tool to the new condition. It set the position and the input buffer struct and reset the output buffer struct.
 		/// \param pos [in] Position of the tool in the tool set.
 		/// \param bufferStructIn [in] Input buffer struct.
-		virtual void reset(uint32_t sourceId, int sourcePos, const SVMatroxBufferCreateStruct& bufferStructIn, SvTrc::ITriggerRecordControllerRW& recordController) { m_sourcePos = sourcePos; m_bufferStructIn = bufferStructIn; };
+		virtual void reset(uint32_t , int sourcePos, const SVMatroxBufferCreateStruct& bufferStructIn, SvTrc::ITriggerRecordControllerRW& ) { m_sourcePos = sourcePos; m_bufferStructIn = bufferStructIn; };
 		uint32_t getObjectId() const { return m_objectId; };
 		int getImagePos() const { return m_trPos; };
 		const SVMatroxBufferCreateStruct& getBufferIn() const { return m_bufferStructIn; };

@@ -97,7 +97,7 @@ void TextObject::Draw( POINT p_dOffset, double p_fZoomWidth, double p_fZoomHeigh
 	rDC.SetTextColor( l_OldColor );
 }
 
-bool TextObject::IsValidObjectAtPoint( HTTYPE& SelType, const CPoint& imagePoint, const CPoint& viewPoint ) const
+bool TextObject::IsValidObjectAtPoint( HTTYPE& SelType, const CPoint& imagePoint, const CPoint& ) const
 {
 	bool bRet = false;
 	CRect l_rec( m_pos.x - GRAB_SIZE, m_pos.y - GRAB_SIZE, m_pos.x + GRAB_SIZE, m_pos.y + GRAB_SIZE );

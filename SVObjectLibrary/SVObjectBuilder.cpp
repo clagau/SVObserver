@@ -107,6 +107,7 @@ static SVPoint<double> GetDPointFromString(const std::string& rValue)
 HRESULT SVObjectBuilder::CreateObject(SvPb::ClassIdEnum classID, uint32_t uniqueID, const std::string& name, const std::string& objectName, uint32_t ownerUniqueID )
 {
 	HRESULT hr = S_OK;
+	UNREFERENCED_PARAMETER(name);
 
 	SVObjectClass* pObject = nullptr;
 	// Construct new object...

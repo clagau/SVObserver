@@ -83,17 +83,8 @@ void CModelessMsgBox::DoDataExchange(CDataExchange* pDX)
 void CModelessMsgBox::PostNcDestroy() 
 {
 	CDialog::PostNcDestroy();
-	try
-	{
-		delete this;
-	}
-	catch (...)
-	{
-		// we tried to delete something that was already deleted
-		// or created on the stack.
-		// or an invalid pointer
-		ASSERT(FALSE);
-	}
+
+	delete this;
 }
 
 BOOL CModelessMsgBox::OnInitDialog() 

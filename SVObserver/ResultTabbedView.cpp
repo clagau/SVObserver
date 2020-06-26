@@ -231,7 +231,7 @@ void ResultTabbedView::OnSize(UINT nType, int cx, int cy)
 #pragma endregion Private Methods
 
 
-afx_msg LRESULT ResultTabbedView::OnChangingActiveTab(WPARAM wParam, LPARAM lParam)
+afx_msg LRESULT ResultTabbedView::OnChangingActiveTab(WPARAM wParam, LPARAM)
 {
 	//! wParam contains the active tab index
 	UpdateTab(static_cast<int> (wParam));

@@ -120,7 +120,7 @@ BOOL SelectedObjectsPage::OnInitDialog()
 	return TRUE;
 }
 
-void SelectedObjectsPage::OnDblClickListSelected(NMHDR *pNMHDR, LRESULT *pResult)
+void SelectedObjectsPage::OnDblClickListSelected(NMHDR*, LRESULT*)
 {
 	ShowObjectSelector();
 }

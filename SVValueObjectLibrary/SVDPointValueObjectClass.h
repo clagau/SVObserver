@@ -35,7 +35,7 @@ public:
 
 
 protected:
-	virtual double ValueType2Double(const SVPoint<double>& rValue) const override { return 0.0; }
+	virtual double ValueType2Double(const SVPoint<double>&) const override { return 0.0; }
 	virtual _variant_t ValueType2Variant(const SVPoint<double>* pValue) const override;
 	virtual SVPoint<double> Variant2ValueType(const _variant_t& rValue) const override;
 

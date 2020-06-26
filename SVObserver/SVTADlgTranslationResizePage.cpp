@@ -1110,8 +1110,6 @@ HRESULT SVTADlgTranslationResizePage::RestorePropertyTreeItemFromBackup(SVRPrope
 	long	oldOverscanValue = 0;
 	long	oldPerformanceValue = 0;
 
-	SVRPropertyItemEdit* editItem = nullptr;
-
 	m_pTool->GetBackupInspectionParameters(&oldHeightScaleFactor,
 		&oldWidthScaleFactor,
 		&oldInterpolationModeValue,

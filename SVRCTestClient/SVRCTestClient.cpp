@@ -23,7 +23,7 @@
 struct NotificationHandler
 {
 	//This compiles with a reference but not with a rhs reference 
-	SvSyl::SVFuture<void>  OnNext(SvPb::GetNotificationStreamResponse& resp)
+	SvSyl::SVFuture<void>  OnNext(const SvPb::GetNotificationStreamResponse& resp)
 	{
 		SV_LOG_GLOBAL(info) << "Get New Notification: " <<
 			resp.message_case() << " DEBUGSTRING: " << resp.DebugString() << std::endl;
@@ -36,7 +36,7 @@ struct NotificationHandler
 	}
 	void OnError(const SvPenv::Error& er)
 	{
-		SvRpc::errorToException(er);
+		std::runtime_error(std::to_string(er));
 		return;
 	}
 
@@ -44,7 +44,7 @@ struct NotificationHandler
 
 
 
-static void GetNotifications(SvWsl::SVRCClientService& client)
+void GetNotifications(SvWsl::SVRCClientService& client)
 {
 	SvPb::GetNotificationStreamRequest req;
 	auto ctx = client.GetNotificationStream(std::move(req), SvRpc::Observer<SvPb::GetNotificationStreamResponse>(
@@ -99,16 +99,19 @@ void PrintTreeItems(const SvPb::ConfigTreeItem& rTreeItem, std::string& rData, c
 	}
 }
 
-
 int main(int argc, char* argv[])
 {
 	SvHttp::WebsocketClientSettings ClientSettings;
 	ClientSettings.Host = "192.168.10.110";
 	ClientSettings.Port = SvHttp::Default_Port;
 	if (argc > 1)
+	{
 		ClientSettings.Host = argv[1];
+	}
 	if (argc > 2)
-		ClientSettings.Port = atoi(argv[2]);
+	{
+		ClientSettings.Port = static_cast<uint16_t> (atoi(argv[2]));
+	}
 
 	NotificationHandler Handler;
 
@@ -400,6 +403,5 @@ int main(int argc, char* argv[])
 	pRpcClient->stop();
 	system("pause");
 	return 0;
-
 }
 

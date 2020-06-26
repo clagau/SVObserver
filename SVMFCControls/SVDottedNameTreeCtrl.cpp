@@ -69,7 +69,7 @@ namespace SvMc
 					CString strItem = GetItemText( hSibling );
 					if( strItem.CompareNoCase( tStrToken ) == 0 )
 						break;
-				} while( hSibling = GetNextItem( hSibling, TVGN_NEXT ) );
+				} while( NULL != (hSibling = GetNextItem( hSibling, TVGN_NEXT )));
 
 				if( nullptr == hSibling )
 				{
@@ -168,7 +168,7 @@ namespace SvMc
 					CString strItem = GetItemText( hSibling );
 					if( strItem.CompareNoCase( tStrToken ) == 0 )
 						break;
-				} while( hSibling = GetNextItem( hSibling, TVGN_NEXT ) );
+				} while(NULL != (hSibling = GetNextItem( hSibling, TVGN_NEXT )));
 
 				if( nullptr != hSibling )
 				{

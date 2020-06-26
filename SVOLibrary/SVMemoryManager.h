@@ -74,7 +74,7 @@ private:
 				SVSingleLock lock( m_critsec );
 				iter = m_mapEntries.insert( SVMemoryPoolEntryPair(owner, SVMemoryPoolEntry()) ).first;
 			}
-			__int64 value = ::InterlockedExchangeAdd64( const_cast <PLONGLONG> (&m_lUsed), lSizeInBytes );
+			::InterlockedExchangeAdd64( const_cast <PLONGLONG> (&m_lUsed), lSizeInBytes );
 			iter->second.lSize += lSizeInBytes;
 
 			return hr;
@@ -87,7 +87,7 @@ private:
 			SVMemoryPoolEntryMap::iterator iter = m_mapEntries.find(owner);
 			if ( iter != m_mapEntries.end() )
 			{
-				__int64 value = ::InterlockedExchangeAdd64( const_cast <PLONGLONG> (&m_lUsed), -iter->second.lSize );
+				::InterlockedExchangeAdd64( const_cast <PLONGLONG> (&m_lUsed), -iter->second.lSize );
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_MEMORY)
 				TRACE(_T("SVMemoryPool::ReleasePoolMemory %08X - %d\n"), owner, iter->second.lSize);

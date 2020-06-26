@@ -322,10 +322,10 @@ bool SVRPropertyItemFile::SVRBrowseForFolder()
 	INT_PTR rc = dlg.DoModal();
 	if (IDOK == rc)
 	{
-		std::string Path = dlg.GetPathName();
+		Path = dlg.GetPathName();
 		if (m_bTrailingSlash)				// add a trailing slash if it is not already there
 		{
-			size_t Pos = Path.size();
+			Pos = Path.size();
 			if( Path[Pos - 1] != _T('\\'))
 			{
 				Path += _T("\\");

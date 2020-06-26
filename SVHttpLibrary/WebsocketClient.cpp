@@ -90,7 +90,7 @@ void WebsocketClient::disconnect()
 	}
 }
 
-void WebsocketClient::handle_resolve(const boost::system::error_code& ec,
+void WebsocketClient::handle_resolve(const boost::system::error_code& ,
 	boost::asio::ip::tcp::resolver::results_type results)
 {
 	boost::asio::async_connect(m_Socket.next_layer(), results.begin(), results.end(),
@@ -243,7 +243,7 @@ void WebsocketClient::check_write_queue()
 }
 
 void WebsocketClient::handle_request_sent(const boost::system::error_code& error,
-	size_t bytes_sent,
+	size_t,
 	std::shared_ptr<std::vector<char>> buf)
 {
 	m_bIsWriting = false;

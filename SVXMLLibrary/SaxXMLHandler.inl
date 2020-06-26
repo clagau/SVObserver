@@ -115,11 +115,11 @@ namespace SvXml
 	}
 
 	template<typename TreeType>
-	HRESULT  SaxXMLHandler<TreeType>::OnStartElement(const wchar_t  *pwchNamespaceUri, int cchNamespaceUri, const wchar_t *pwchName,  int cchName,ISAXAttributes *pAttributes,int depth ) 
+	HRESULT  SaxXMLHandler<TreeType>::OnStartElement(const wchar_t  *, int , const wchar_t *pwchName,  int cchName,ISAXAttributes *pAttributes,int  ) 
 	{
 		m_spNewElement.reset();
 		m_spNewElement = SpTreeElement( new SaxTreeElement(pwchName, cchName));	
-		int NoOfAt  = m_spNewElement->SetAttributes(pAttributes);
+		m_spNewElement->SetAttributes(pAttributes);
 		bool ParseArray = false;
 
 		if(IsEncrypted())
@@ -249,7 +249,7 @@ namespace SvXml
 	}
 
 	template<typename TreeType>
-	HRESULT  SaxXMLHandler<TreeType>::OnElementData( const wchar_t *pwchData,  int cchData, int depth) 
+	HRESULT  SaxXMLHandler<TreeType>::OnElementData( const wchar_t *pwchData,  int cchData, int ) 
 	{
 
 		if(m_status != PARSING_NONE)
@@ -271,7 +271,7 @@ namespace SvXml
 	}
 
 	template<typename TreeType>
-	HRESULT  SaxXMLHandler<TreeType>::OnEndElement(const wchar_t  *pwchNamespaceUri, int cchNamespaceUri,const wchar_t *pwchName,  int cchName, int depth )
+	HRESULT  SaxXMLHandler<TreeType>::OnEndElement(const wchar_t  *, int ,const wchar_t *pwchName,  int cchName, int  )
 	{
 		if(m_status == PARSING_NONE)
 		{
@@ -427,7 +427,7 @@ namespace SvXml
 
 
 	template<typename TreeType>
-	HRESULT  SaxXMLHandler<TreeType>::OnXMLError(int line, int column, const wchar_t *pwchErrorText, unsigned long errorCode, bool fatal )
+	HRESULT  SaxXMLHandler<TreeType>::OnXMLError(int line, int column, const wchar_t *pwchErrorText, unsigned long errorCode, bool )
 	{
 		SvDef::StringVector messageList;
 		messageList.push_back(SvUl::Format(_T("%i"), line));

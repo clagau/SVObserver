@@ -24,7 +24,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-SVToolAdjustmentDialogTransformationLearnPageClass::SVToolAdjustmentDialogTransformationLearnPageClass( uint32_t inspectionId, uint32_t taskObjectId, SVToolAdjustmentDialogSheetClass* Parent )
+SVToolAdjustmentDialogTransformationLearnPageClass::SVToolAdjustmentDialogTransformationLearnPageClass( uint32_t, uint32_t , SVToolAdjustmentDialogSheetClass* Parent )
 : CPropertyPage(SVToolAdjustmentDialogTransformationLearnPageClass::IDD)
 {
 	//{{AFX_DATA_INIT(SVToolAdjustmentDialogTransformationLearnPageClass)
@@ -102,9 +102,6 @@ void SVToolAdjustmentDialogTransformationLearnPageClass::refresh()
 {
 	if( m_pTaskObject )
 	{
-		CWnd* pWnd = nullptr;
-
-
 		m_translationXValue = 0.0;
 		m_translationYValue = 0.0;
 
@@ -198,7 +195,7 @@ BOOL SVToolAdjustmentDialogTransformationLearnPageClass::OnInitDialog()
 
 	pWnd->SetWindowText("q:");
 
-	if( m_pParentDialog && ( m_pTaskObject = m_pParentDialog->GetTaskObject() ) )
+	if(nullptr != m_pParentDialog && nullptr != (m_pTaskObject = m_pParentDialog->GetTaskObject()))
 	{
 		// Get EvaluateX Object...
 		SvDef::SVObjectTypeInfoStruct evaluateObjectInfo;

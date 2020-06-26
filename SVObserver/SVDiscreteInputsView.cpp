@@ -78,7 +78,7 @@ BOOL SVDiscreteInputsView::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName,
 	return RetVal;
 }
 
-void SVDiscreteInputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint )
+void SVDiscreteInputsView::OnUpdate( CView* , LPARAM , CObject*  )
 {
 	if(::IsWindow( m_hWnd ) )
 	{
@@ -162,7 +162,7 @@ void SVDiscreteInputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHin
 	//CListView::OnUpdate( pSender, lHint, pHint );   //This call will cause flicker
 }
 
-void SVDiscreteInputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
+void SVDiscreteInputsView::OnLButtonDblClk(UINT, CPoint point)
 {
 	SVDigitalInputObject *pDigInput;
 	SVIOEntryHostStructPtrVector ppIOEntries;

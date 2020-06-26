@@ -35,7 +35,7 @@ BEGIN_MESSAGE_MAP(SVIOTabbedView, CMDIChildWnd)
 	ON_WM_DESTROY()
 END_MESSAGE_MAP()
 
-BOOL SVIOTabbedView::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext)
+BOOL SVIOTabbedView::OnCreateClient(LPCREATESTRUCT, CCreateContext* pContext)
 {
 	TVisualObject *pIOTab = new TVisualObject(SVIOViewID, _T("IO"), pContext, RUNTIME_CLASS(TTabWnd));
 

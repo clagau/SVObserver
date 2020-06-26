@@ -25,20 +25,20 @@ public:
 private:
 	struct BufferElement
 	{
-		volatile DWORD SyncDWord;
-		volatile int  SlotNumberLast;
-		volatile int SlotNumberReject;
-		volatile DWORD TriggerNumber;
-		volatile BOOL isReject;
+		volatile DWORD SyncDWord{0};
+		volatile int  SlotNumberLast{0};
+		volatile int SlotNumberReject{0};
+		volatile int TriggerNumber{-1};
+		volatile BOOL isReject{false};
 	};
 
 	struct RingbufferInfos
 	{
-		volatile int TotalSlotCount; //<Number  of RingbufferEntries 
-		volatile int  RejectSlotCount;
-		volatile int LastEntry;
-		volatile int LastReject;
-		volatile int LastUsedRejectSlot;
+		volatile int TotalSlotCount{0}; //<Number  of RingbufferEntries 
+		volatile int  RejectSlotCount{0};
+		volatile int LastEntry{0};
+		volatile int LastReject{0};
+		volatile int LastUsedRejectSlot{0};
 	};
 
 public:
@@ -57,7 +57,7 @@ public:
 
 	///returns a slot number the readercounter is increased for this slot. 
 	//returns MAXDWORD if  the slot is not available 
-	int GetReaderSlotByTrigger(DWORD Triggercount);
+	int GetReaderSlotByTrigger(int Triggercount);
 
 	/// decrease the readercounter  
 	void ReleaseReaderSlot(int readerslot);
@@ -67,13 +67,13 @@ public:
 
 	void SetToReject(int writerslot);
 	///  Writerlock is released slot becomes the last written slot if it is valid 
-	void ReleaseWriteSlot(int slot, DWORD triggerNumber, bool isValid);
+	void ReleaseWriteSlot(int slot, int triggerNumber, bool isValid);
 
 	///Triggernumber for Readerslot 
-	DWORD GetTriggerNumber(int Readerslot) const;
+	int GetTriggerNumber(int Readerslot) const;
 
 	///vector with trigger numbers return size of vector max number 
-	int GetRejects(std::vector<DWORD> &rRejects) const;
+	int GetRejects(std::vector<int> &rRejects) const;
 
 	///return the number of reject slots
 	int GetRejectSlotCount() const;

@@ -304,8 +304,9 @@ BOOL SVTADlgArchiveImagePage::OnInitDialog()
 
 	m_StopAtMaxImagesButton.SetCheck(m_ValueController.Get<bool>(SvPb::ArchiveStopAtMaxImagesEId));
 	m_useAlternativeImagePaths = m_ValueController.Get<bool>(SvPb::UseAlternativeImagePathsEId);
-
-	m_List.swap(m_pTool->getImageArchiveList());
+	
+	SVObjectReferenceVector imageVector{m_pTool->getImageArchiveList()};
+	m_List.swap(imageVector);
 
 	m_mapInitialSelectedImageMemUsage = m_mapSelectedImageMemUsage;
 	m_ToolImageMemoryUsage = CalculateToolMemoryUsage();
@@ -335,7 +336,7 @@ BOOL SVTADlgArchiveImagePage::OnInitDialog()
 	return TRUE;
 }
 
-void SVTADlgArchiveImagePage::OnDblClickListSelected( NMHDR *pNMHDR, LRESULT *pResult )
+void SVTADlgArchiveImagePage::OnDblClickListSelected(NMHDR*, LRESULT*)
 {
 	ShowObjectSelector();
 }

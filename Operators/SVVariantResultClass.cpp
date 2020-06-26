@@ -32,7 +32,7 @@ SV_IMPLEMENT_CLASS( SVVariantResultClass, SvPb::VariantResultClassId);
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-SVVariantResultClass::SVVariantResultClass( BOOL BCreateDefaultTaskList , SVObjectClass* POwner  , int StringResourceID  )
+SVVariantResultClass::SVVariantResultClass(BOOL , SVObjectClass*, int)
 {
 	// Identify yourself
 	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVResultObjectType;

@@ -36,7 +36,7 @@ public:
 	void setStandardFormatString() override {} //not currently used in this class
 
 protected:
-	virtual double ValueType2Double(const SVPoint<long>& rValue) const override { return 0.0; };
+	virtual double ValueType2Double(const SVPoint<long>&) const override { return 0.0; };
 	virtual _variant_t ValueType2Variant(const SVPoint<long>* pValue) const override;
 	virtual SVPoint<long> Variant2ValueType(const _variant_t& rValue) const override;
 

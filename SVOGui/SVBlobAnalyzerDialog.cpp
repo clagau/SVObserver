@@ -559,7 +559,7 @@ namespace SvOg
 
 		if (0 >= listBox.GetCount())
 		{
-			listBox.SetItemData(listBox.AddString(_T("(No Feature)")), LB_ERR);
+			listBox.SetItemData(listBox.AddString(_T("(No Feature)")), static_cast<DWORD_PTR> (LB_ERR));
 		}
 
 		listBox.SetCurSel(0);

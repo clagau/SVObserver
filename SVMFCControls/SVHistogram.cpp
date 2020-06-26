@@ -167,7 +167,7 @@ namespace SvMc
 		DrawGrid(dc);
 	}
 
-	void SVHistogram::OnMouseMove(UINT nFlags, CPoint point)
+	void SVHistogram::OnMouseMove(UINT , CPoint point)
 	{
 		if (m_boundState&histogram::active)
 		{
@@ -212,7 +212,7 @@ namespace SvMc
 		}
 	}
 
-	void SVHistogram::OnLButtonDown(UINT nFlags, CPoint point)
+	void SVHistogram::OnLButtonDown(UINT , CPoint point)
 	{
 		if (m_boundState&histogram::active)
 		{
@@ -243,19 +243,19 @@ namespace SvMc
 		SetFocus();
 	}
 
-	BOOL SVHistogram::OnEraseBkgnd(CDC* pDC)
+	BOOL SVHistogram::OnEraseBkgnd(CDC* )
 	{
 		return TRUE; // no need to erase...
 	}
 
-	void SVHistogram::OnLButtonUp(UINT nFlags, CPoint point)
+	void SVHistogram::OnLButtonUp(UINT , CPoint )
 	{
 		m_dragging = 0;
 		ReleaseCapture();
 		::SetCursor(m_ArrowCursor);
 	}
 
-	BOOL SVHistogram::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
+	BOOL SVHistogram::OnMouseWheel(UINT , short zDelta, CPoint )
 	{
 		if (m_placement == histogram::analyzer)
 			return FALSE;
@@ -371,7 +371,7 @@ namespace SvMc
 		PaintBitmap();
 	}
 
-	void SVHistogram::OnMButtonDown(UINT nFlags, CPoint point)
+	void SVHistogram::OnMButtonDown(UINT , CPoint )
 	{
 		if (m_placement != histogram::analyzer)
 		{
@@ -380,7 +380,7 @@ namespace SvMc
 		}
 	}
 
-	void SVHistogram::OnMButtonUp(UINT nFlags, CPoint point)
+	void SVHistogram::OnMButtonUp(UINT, CPoint )
 	{
 		if (m_placement != histogram::analyzer)
 		{

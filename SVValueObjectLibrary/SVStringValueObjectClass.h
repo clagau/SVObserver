@@ -35,7 +35,7 @@ public:
 	void setStandardFormatString() override {} //not currently used in this class
 
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* pDataObject ) override;
-	virtual HRESULT SetValue(const std::string& rValueString, int Index = -1) override;
+	virtual HRESULT SetValue(const std::string& String, int Index = -1) override;
 	virtual HRESULT SetArrayValues(const ValueVector& rValues) override;
 
 	virtual void setMemBlockPointer(uint8_t* pMemBlockBase) override;
@@ -47,7 +47,7 @@ protected:
 	virtual std::string* reserveLocalMemory() override;
 	virtual void clearMemoryBlockPointer() override { m_pMemBlockData = nullptr; }
 
-	virtual double ValueType2Double(const std::string& rValue) const { return 0.0; }
+	virtual double ValueType2Double(const std::string& ) const { return 0.0; }
 	virtual _variant_t ValueType2Variant(const std::string* pValue) const override { return (nullptr != pValue) ? _variant_t(pValue->c_str()) : _variant_t(); }
 	virtual std::string Variant2ValueType(const _variant_t& rValue) const override { return SvUl::createStdString(rValue); }
 

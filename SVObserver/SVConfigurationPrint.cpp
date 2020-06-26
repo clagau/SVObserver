@@ -521,7 +521,7 @@ void SVConfigurationPrint::printConfigToStringBuffer(std::string& rBuffer)
 	CWnd wnd;
 	CRect rect(0, 0, 10, 10);
 	BOOL bResult = wnd.CreateEx(0, _T("Button"), _T(""), 0, rect, nullptr, 0);
-	ASSERT(bResult);
+	assert(bResult); UNREFERENCED_PARAMETER(bResult);
 	HDC hDC = wnd.GetDC()->GetSafeHdc();
 	m_printDC.Attach(hDC);
 	
@@ -907,11 +907,10 @@ void SVConfigurationPrint::PrintChildren( CDC* pDC, SVObjectClass* pObj, CPoint&
     {
 		if (SVToolSetClass* pToolSet = dynamic_cast<SVToolSetClass*>(pObj))
 		{
-			SVToolGrouping& rToolGroupings = GetToolGroupings(pToolSet->GetInspection()->getObjectId());
-			if (rToolGroupings.size())
+			SVToolGrouping toolGroupings = GetToolGroupings(pToolSet->GetInspection()->getObjectId());
+			if (toolGroupings.size())
 			{
-				bool bToolGroupActive = false;
-				for (SVToolGrouping::iterator it = rToolGroupings.begin();it != rToolGroupings.end();++it)
+				for (SVToolGrouping::iterator it = toolGroupings.begin();it != toolGroupings.end();++it)
 				{
 					switch (it->second.m_type)
 					{
@@ -2360,7 +2359,7 @@ void SVConfigurationPrint::PrintMonitorListSection(CDC* pDC, CPoint& ptCurPos, i
 	}
 }
 
-void SVConfigurationPrint::PrintGlobalConstants( CDC* pDC, CPoint& ptCurPos, int nIndentLevel )
+void SVConfigurationPrint::PrintGlobalConstants( CDC* pDC, CPoint& ptCurPos, int)
 {
 	std::string Label;
 	std::string Value;
@@ -2405,7 +2404,7 @@ SVDeviceParamConfigPrintHelper::SVDeviceParamConfigPrintHelper(
 {
 }
 
-HRESULT SVDeviceParamConfigPrintHelper::Visit(SVDeviceParam& param )
+HRESULT SVDeviceParamConfigPrintHelper::Visit(SVDeviceParam&)
 {
 	return S_OK;
 }
@@ -2469,7 +2468,7 @@ HRESULT SVDeviceParamConfigPrintHelper::Visit( SVBoolValueDeviceParam& param )
 	return S_OK;
 }
 
-HRESULT SVDeviceParamConfigPrintHelper::Visit( SVStringValueDeviceParam& param )
+HRESULT SVDeviceParamConfigPrintHelper::Visit(SVStringValueDeviceParam& param)
 {
 	const SVStringValueDeviceParam* pCamFileParam = m_rCamFileParams.Parameter( param.Type() ).DerivedValue( pCamFileParam );
 	if ( pCamFileParam )
@@ -2479,17 +2478,17 @@ HRESULT SVDeviceParamConfigPrintHelper::Visit( SVStringValueDeviceParam& param )
 	return S_OK;
 }
 
-HRESULT SVDeviceParamConfigPrintHelper::Visit( SVParamListDeviceParam& param )
+HRESULT SVDeviceParamConfigPrintHelper::Visit(SVParamListDeviceParam&)
 {
 	return S_OK;
 }
 
-HRESULT SVDeviceParamConfigPrintHelper::Visit( SVLutDeviceParam& param )
+HRESULT SVDeviceParamConfigPrintHelper::Visit(SVLutDeviceParam&)
 {
 	return S_OK;
 }
 
-HRESULT SVDeviceParamConfigPrintHelper::Visit( SVLightReferenceDeviceParam& param )
+HRESULT SVDeviceParamConfigPrintHelper::Visit( SVLightReferenceDeviceParam&)
 {
 	return S_OK;
 }

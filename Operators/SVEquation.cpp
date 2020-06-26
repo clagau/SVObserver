@@ -105,7 +105,7 @@ void SVEquationSymbolTableClass::Init(SVObjectClass* pRequestor)
 int SVEquationSymbolTableClass::AddSymbol(LPCTSTR name, SVObjectClass* pRequestor)
 {
 	// Strip off Double Quotes
-	std::string SymbolName = SvUl::Trim(std::string(name), _T("\""));
+	std::string SymbolName = SvUl::Trim(name, _T("\""));
 
 	SVEquationSymbolTypeEnum Type = SV_INPUT_SYMBOL_TYPE;
 
@@ -365,11 +365,10 @@ void SVEquationClass::Persist(SvOi::IObjectWriter& rWriter)
 HRESULT SVEquationClass::SetObjectValue(SVObjectAttributeClass* pDataObject)
 {
 	HRESULT hr = S_FALSE;
-	bool bOk = false;
 
 	SvCl::SVObjectStdStringArrayClass AttributeList;
-
-	if ((bOk = pDataObject->GetAttributeData(_T("EquationBuffer"), AttributeList)))
+	bool bOk{pDataObject->GetAttributeData(_T("EquationBuffer"), AttributeList)};
+	if(bOk)
 	{
 		for (int i = 0; i < static_cast<int> (AttributeList.size()); i++)
 		{

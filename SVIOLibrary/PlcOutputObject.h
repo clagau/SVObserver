@@ -24,7 +24,7 @@ public:
 #pragma region Public Methods
 public:
 	///PLC output does not need to write any value
-	virtual HRESULT Write( const _variant_t& rValue ) override { return S_OK; }
+	virtual HRESULT Write( const _variant_t&) override { return S_OK; }
 	virtual HRESULT Reset() override { return S_OK;}
 	virtual bool isCombined() const override {return m_isCombined; }
 	virtual bool isAndACK() const override { return m_isAndACK; }

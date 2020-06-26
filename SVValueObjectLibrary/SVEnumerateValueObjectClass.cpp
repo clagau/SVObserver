@@ -54,11 +54,10 @@ SVEnumerateValueObjectClass::~SVEnumerateValueObjectClass()
 HRESULT SVEnumerateValueObjectClass::SetObjectValue( SVObjectAttributeClass* pDataObject )
 {
 	HRESULT Result( E_FAIL );
-	bool bOk( false );
-	
 	SvCl::SVObjectStdStringArrayClass SVStringArray;
+	bool bOk(pDataObject->GetAttributeData(_T("Enumeration"), SVStringArray));
 
-	if ( bOk = pDataObject->GetAttributeData( _T("Enumeration"), SVStringArray ) )
+	if (bOk)
 	{
 		for( int i = 0; i < static_cast<int> (SVStringArray.size()); i++ )
 		{
@@ -101,17 +100,17 @@ bool SVEnumerateValueObjectClass::SetEnumTypes( LPCTSTR szEnumList )
 		if( szList )
 		{
 			TCHAR  sep[] = _T( "," );
-			TCHAR* szEnumToken;
+			TCHAR* pEnumToken;
 			long enumValue = 0L;
 
 			bRetVal = true;
 
 			// Extract enumerations...
-			szEnumToken = _tcstok( szList, sep );   
+			pEnumToken = _tcstok( szList, sep );   
 			do   
 			{
 				// Get Enum Identifier...
-				std::string EnumString  = szEnumToken;
+				std::string EnumString  = pEnumToken;
 				size_t Pos = EnumString.find( TCHAR( '=' ) );
 				if( std::string::npos != Pos )
 				{
@@ -123,8 +122,7 @@ bool SVEnumerateValueObjectClass::SetEnumTypes( LPCTSTR szEnumList )
 				}
 				
 				// Trim identifier..
-				EnumString = SvUl::TrimLeft( EnumString );
-				EnumString = SvUl::TrimRight( EnumString );
+				EnumString = SvUl::Trim(EnumString.c_str());
 
 				// Check if identifier is valid and unique...
 				long lDummy = 0L;
@@ -139,7 +137,7 @@ bool SVEnumerateValueObjectClass::SetEnumTypes( LPCTSTR szEnumList )
 					bRetVal = false;
 				}
 
-			} while( szEnumToken = _tcstok( nullptr, sep ) );
+			} while(nullptr != (pEnumToken = _tcstok(nullptr, sep)));
 
 			// Free allocated resources...
 			free( szList );
@@ -219,8 +217,7 @@ bool SVEnumerateValueObjectClass::GetEnumerator( LPCTSTR szEnumerator, long& rVa
 {
 	bool bConverted = false;
 
-	std::string strTemp( rString );
-	SvUl::MakeLower( strTemp );
+	std::string strTemp = SvUl::MakeLower(rString.c_str());
 	std::string Digits = SvUl::ValidateString( rString, _T("0123456789-. xabcdef") );
 	if ( (strTemp == Digits) && std::string::npos != Digits.find_first_of( _T("0123456789") ) )	// MUST have at least one digit and no non-hex alphabetic stuff or other spurrious chars
 	{

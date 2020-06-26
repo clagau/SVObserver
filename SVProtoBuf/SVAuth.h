@@ -9,6 +9,8 @@
 #pragma once
 
 #pragma warning( push )
+#pragma warning( disable : 4127 )
+#pragma warning( disable : 4244 )
 #pragma warning( disable : 4800 )
 #include "SVAuth.pb.h"
 #pragma warning( pop )

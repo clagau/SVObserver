@@ -230,7 +230,7 @@ bool SVLutTransformOperation::operator == ( const SVLutTransformOperation& rhs )
 	return (typeid(*this) == typeid(rhs)) != FALSE;
 }
 
-HRESULT SVDefaultLutTransform::Transform(SVLutTransformOperationNormal& t, SVLutBand& data, const SVLutTransformParameters& param)
+HRESULT SVDefaultLutTransform::Transform(SVLutTransformOperationNormal& , SVLutBand& data, const SVLutTransformParameters& )
 {
 	HRESULT hr = S_OK;
 	for (unsigned long i=0; i < data.Size(); i++)
@@ -240,7 +240,7 @@ HRESULT SVDefaultLutTransform::Transform(SVLutTransformOperationNormal& t, SVLut
 	return hr;
 }
 
-HRESULT SVDefaultLutTransform::Transform(SVLutTransformOperationInvert& t, SVLutBand& data, const SVLutTransformParameters& param)
+HRESULT SVDefaultLutTransform::Transform(SVLutTransformOperationInvert& , SVLutBand& data, const SVLutTransformParameters& )
 {
 	HRESULT hr = S_OK;
 	for (unsigned long i=0; i < data.Size(); i++)
@@ -249,7 +249,7 @@ HRESULT SVDefaultLutTransform::Transform(SVLutTransformOperationInvert& t, SVLut
 	}
 	return hr;
 }
-HRESULT SVDefaultLutTransform::Transform(SVLutTransformOperationSign& t, SVLutBand& data, const SVLutTransformParameters& param)
+HRESULT SVDefaultLutTransform::Transform(SVLutTransformOperationSign& , SVLutBand& data, const SVLutTransformParameters& )
 {
 	HRESULT hr = S_OK;
 	unsigned long i;
@@ -264,7 +264,7 @@ HRESULT SVDefaultLutTransform::Transform(SVLutTransformOperationSign& t, SVLutBa
 	return hr;
 }
 
-HRESULT SVDefaultLutTransform::Transform(SVLutTransformOperationClip& t, SVLutBand& data, const SVLutTransformParameters& param)
+HRESULT SVDefaultLutTransform::Transform(SVLutTransformOperationClip& , SVLutBand& data, const SVLutTransformParameters& param)
 {
 	HRESULT hr = S_FALSE;
 	assert ( param.size() == 2 );
@@ -288,13 +288,13 @@ HRESULT SVDefaultLutTransform::Transform(SVLutTransformOperationClip& t, SVLutBa
 	return hr;
 }
 
-HRESULT SVDefaultLutTransform::Transform(SVLutTransformOperationFreeform& t, SVLutBand& data, const SVLutTransformParameters& param)
+HRESULT SVDefaultLutTransform::Transform(SVLutTransformOperationFreeform&, SVLutBand& , const SVLutTransformParameters& )
 {
 	HRESULT hr = S_OK;
 	return hr;
 }
 
-HRESULT SVDefaultLutTransform::Transform(SVLutTransformOperationTwoKnee& t, SVLutBand& data, const SVLutTransformParameters& param)
+HRESULT SVDefaultLutTransform::Transform(SVLutTransformOperationTwoKnee&, SVLutBand& data, const SVLutTransformParameters& param)
 {
 	HRESULT hr = S_OK;
 	assert( param.size() == 5 );

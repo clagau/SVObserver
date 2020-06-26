@@ -30,7 +30,7 @@ namespace SvSml
 		void BuildProtoMessage(SvPml::MesMonitorEntryData& rProtoMessage) const;
 		void BuildFromProtoMessage(const SvPml::MesMonitorEntryData& rProtoMessage);
 
-		DWORD InspectionStoreId{ UINT_MAX }; //<Inspection Store Index  
+		int m_inspectionStoreId{-1}; //<Inspection Store Index  
 		int m_inspectionTRCPos = -1;
 		SvPb::SVObjectTypeEnum ObjectType{SvPb::SVNotSetObjectType};
 		DWORD variant_type{ VT_EMPTY };  ///vt value from variant

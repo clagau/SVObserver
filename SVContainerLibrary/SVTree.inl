@@ -14,20 +14,20 @@ namespace SvCl
 	template<typename Key, typename Data>
 	SVTree<Key, Data>::SVTree( )
 	{
-		SVTreeElement* pElement( get() );
-		if( nullptr != pElement && nullptr == pElement->second)
+		SVTreeElement* pTreeElement( get() );
+		if( nullptr != pTreeElement && nullptr == pTreeElement->second)
 		{
-			pElement->second = std::shared_ptr<Data>{ new Data };
+			pTreeElement->second = std::shared_ptr<Data>{ new Data };
 		}
 	}
 
 	template<typename Key, typename Data>
 	SVTree<Key, Data>::SVTree( const SVTreeContainer& rTree ) : tcl::sequential_tree< std::pair< Key, std::shared_ptr<Data> > >( rTree)
 	{
-		SVTreeElement* pElement( get() );
-		if( nullptr != pElement && nullptr == pElement->second )
+		SVTreeElement* pTreeElement( get() );
+		if( nullptr != pTreeElement && nullptr == pTreeElement->second )
 		{
-			pElement->second = std::shared_ptr<Data>{ new Data };
+			pTreeElement->second = std::shared_ptr<Data>{ new Data };
 		}
 	}
 

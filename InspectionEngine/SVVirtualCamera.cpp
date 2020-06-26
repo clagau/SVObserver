@@ -34,7 +34,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-HRESULT CALLBACK ImageCallback(void *pOwner, void *pCaller, void *pData)
+HRESULT CALLBACK ImageCallback(void *, void *pCaller, void *pData)
 {
 	SVVirtualCamera* pCamera = reinterpret_cast<SVVirtualCamera*> (pCaller);
 	SVODataResponseClass* pResponse = reinterpret_cast<SVODataResponseClass*> (pData);
@@ -93,7 +93,7 @@ bool SVVirtualCamera::GetImageInfo(SVImageInfoClass *pImageInfo)
 	return bOk;
 }
 
-HRESULT SVVirtualCamera::RefreshObject( const SVObjectClass* const pSender, RefreshObjectType Type )
+HRESULT SVVirtualCamera::RefreshObject( const SVObjectClass* const, RefreshObjectType Type)
 {
 	HRESULT Result = S_OK;
 	

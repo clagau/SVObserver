@@ -622,7 +622,7 @@ CLabel& CLabel::SetFontBold(BOOL bBold)
 //////////////////////////////////////////////////////////////////////////
 CLabel& CLabel::SetFontUnderline(BOOL bSet)
 {
-	m_lf.lfUnderline = bSet;
+	m_lf.lfUnderline = static_cast<BYTE> (bSet);
 	ReconstructFont();
 	UpdateSurface();
 
@@ -649,7 +649,7 @@ CLabel& CLabel::SetFontUnderline(BOOL bSet)
 //////////////////////////////////////////////////////////////////////////
 CLabel& CLabel::SetFontItalic(BOOL bSet)
 {
-	m_lf.lfItalic = bSet;
+	m_lf.lfItalic = static_cast<BYTE> (bSet);
 	ReconstructFont();
 	UpdateSurface();
 
@@ -1251,7 +1251,7 @@ CLabel& CLabel::SetFont(LOGFONT lf)
 	return *this;
 }
 
-BOOL CLabel::OnEraseBkgnd(CDC* pDC)
+BOOL CLabel::OnEraseBkgnd(CDC*)
 {
 	// TODO: Add your message handler code here and/or call default
 	return TRUE;

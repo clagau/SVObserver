@@ -396,7 +396,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessEmbeddedValues(typename SVT
 }
 
 template< typename SVTreeType >
-HRESULT SVInspectionTreeParser< SVTreeType >::ProcessBranchObjectValues(typename SVTreeType::SVBranchHandle hItem, uint32_t ownerID, uint32_t objectID)
+HRESULT SVInspectionTreeParser< SVTreeType >::ProcessBranchObjectValues(typename SVTreeType::SVBranchHandle hItem, uint32_t , uint32_t objectID)
 {
 	HRESULT hr = S_OK;
 
@@ -464,7 +464,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessBranchObjectValues(typename
 }
 
 template< typename SVTreeType >
-HRESULT SVInspectionTreeParser< SVTreeType >::ProcessLeafObjectValues(typename SVTreeType::SVBranchHandle hItem, uint32_t ownerID, uint32_t objectID)
+HRESULT SVInspectionTreeParser< SVTreeType >::ProcessLeafObjectValues(typename SVTreeType::SVBranchHandle hItem, uint32_t, uint32_t objectID)
 {
 	HRESULT hr = S_OK;
 

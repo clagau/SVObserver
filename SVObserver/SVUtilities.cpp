@@ -190,7 +190,6 @@ bool SVUtilitiesClass::LoadMenuFromINI(CMenu *pMenu)
 	ClearMenu(pMenu);
 
 	std::string UtilName;
-	LPTSTR pKeyName = nullptr;
 	DWORD dwId = 0;
 	SVObserverApp* pApp = static_cast<SVObserverApp*> (AfxGetApp());
 
@@ -349,8 +348,6 @@ void SVUtilitiesClass::UpdateIni()
 {
 	SVObserverApp* pApp = static_cast<SVObserverApp*> (AfxGetApp());
 	SvLib::SVOINIClass UtilityIni( SvStl::GlobalPath::Inst().GetSVUtilityIniPath() );
-
-	int iMapSize = static_cast<int>(pApp->m_UtilityMenu.size());
 
 	std::map<UINT, SvLib::SVUtilityIniClass>::const_iterator Iter( pApp->m_UtilityMenu.begin() );
 

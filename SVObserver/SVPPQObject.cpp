@@ -923,7 +923,8 @@ void SVPPQObject::PrepareGoOnline()
 
 			//@TODO[gra][7.40][25.05.2016]: This should at a later stage show all the tool errors not only the first error
 			SvStl::MessageContainerVector AllToolMessages;
-			m_arInspections[i]->getToolMessages(std::back_inserter(AllToolMessages));
+			auto inserter = std::back_inserter(AllToolMessages);
+			m_arInspections[i]->getToolMessages(inserter);
 			SvStl::MessageContainerVector::const_iterator Iter(AllToolMessages.begin());
 			SvStl::SourceFileParams sourceFileParam(StdMessageParams);
 			if (AllToolMessages.end() != Iter)
@@ -1108,15 +1109,6 @@ void SVPPQObject::GoOnline()
 
 	// Kick the threads up a notch, for real!
 	m_AsyncProcedure.SetPriority(THREAD_PRIORITY_HIGHEST);
-
-	// This snippet of code here apears to do nothing, but it is actually 
-	// initializing the RTTI for the output object parents.  This insures that there 
-	// is no appreciable delay in the writeOutputs function that uses dynaic_cast.
-	for (size_t i = 0; i < m_UsedOutputs.size(); i++)
-	{
-		SVObjectClass* pObject = m_UsedOutputs[i]->getObject();
-		void* l_pInit = nullptr != pObject ? dynamic_cast<SVPPQObject*>(pObject->GetParent()) : nullptr;
-	}
 
 	if (SvDef::SVPPQNextTriggerMode == m_outputMode)
 	{
@@ -2723,7 +2715,7 @@ HRESULT SVPPQObject::ProcessCameraResponse(const SVCameraQueueElement& rElement)
 	if ((nullptr != rElement.m_pCamera) && (nullptr != rElement.m_Data.getImage()))
 	{
 		long l_CameraPositionOnPPQ = 0;
-		size_t l_ProductIndex = -1;
+		size_t l_ProductIndex = static_cast<size_t> (-1);
 		SVProductInfoStruct* pProduct = nullptr;
 		SVCameraInfoMap::iterator l_svIter;
 		long	ppqSize = static_cast<long> (m_ppPPQPositions.size());
@@ -2954,7 +2946,7 @@ bool SVPPQObject::FinishCamera(void *pCaller, SVODataResponseClass *pResponse)
 	return l_Status;
 }
 
-bool SVPPQObject::FinishTrigger(void *pCaller, const SvTi::SVTriggerInfoStruct& rTriggerInfo)
+bool SVPPQObject::FinishTrigger(void *, const SvTi::SVTriggerInfoStruct& rTriggerInfo)
 {
 	bool l_Status = m_bOnline;
 
@@ -3068,7 +3060,7 @@ bool SVPPQObject::IsObjectInPPQ(const SVObjectClass& object) const
 	return retValue;
 }
 
-void CALLBACK SVPPQObject::OutputTimerCallback(UINT uTimerID, UINT uRsvd, DWORD_PTR dwUser, DWORD_PTR dwRsvd1, DWORD_PTR dwRsvd2)
+void CALLBACK SVPPQObject::OutputTimerCallback(UINT , UINT , DWORD_PTR dwUser, DWORD_PTR , DWORD_PTR )
 {
 	SVPPQObject* pPPQ = reinterpret_cast<SVPPQObject*>(dwUser);
 
@@ -3115,7 +3107,7 @@ HRESULT SVPPQObject::MarkProductInspectionsMissingAcquisiton(SVProductInfoStruct
 	return l_Status;
 }
 
-void CALLBACK SVPPQObject::APCThreadProcess(DWORD_PTR dwParam)
+void CALLBACK SVPPQObject::APCThreadProcess(DWORD_PTR)
 {
 }
 
@@ -4327,7 +4319,6 @@ void SVPPQObject::setTRofInterest(const SVProductInfoStruct& rProduct, bool isIn
 void SVPPQObject::setTR2StoreForInterestMap(uint32_t ipId, SVProductInfoStruct &rProduct)
 {
 	auto& rIpQueue = m_storeForInterestMap[ipId];
-	long triggerCount = rProduct.m_triggerInfo.lTriggerCount;
 	if (rIpQueue.size() >= m_maxProcessingOffset4Interest)
 	{
 		auto& rIter = rIpQueue.front();

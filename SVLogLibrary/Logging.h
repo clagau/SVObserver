@@ -10,11 +10,12 @@
 //******************************************************************************
 
 #pragma once
-
+#pragma warning(disable : 4714)
+#pragma warning(push)
 #include <boost/log/trivial.hpp>
 #include <boost/log/utility/manipulators/add_value.hpp>
-
 #include <SVLogLibrary/LogSettings.h>
+#pragma warning(pop)
 
 namespace SvLog
 {

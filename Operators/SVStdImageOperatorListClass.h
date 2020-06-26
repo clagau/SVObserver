@@ -51,8 +51,8 @@ public:
 
 	virtual bool Run( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
-	virtual const SvIe::SVImageClass* getOutputImage(bool bRunMode = false) const override { return &m_OutputImage; };
-	virtual const SvIe::SVImageClass* getReferenceImage(bool bRunMode = false) const override { return &m_LogicalROIImage; };
+	virtual const SvIe::SVImageClass* getOutputImage(bool) const override { return &m_OutputImage; };
+	virtual const SvIe::SVImageClass* getReferenceImage(bool ) const override { return &m_LogicalROIImage; };
 
 protected:
 

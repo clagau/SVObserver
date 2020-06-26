@@ -185,7 +185,7 @@ SVGigeCameraDBContent::~SVGigeCameraDBContent()
 {
 }
 
-HRESULT SVGigeCameraDBContent::startElement(unsigned short* pwchNamespaceUri, int cchNamespaceUri, unsigned short* pwchLocalName, int cchLocalName, unsigned short* pwchRawName, int cchRawName, MSXML2::ISAXAttributes* pAttributes)
+HRESULT SVGigeCameraDBContent::startElement(unsigned short* , int , unsigned short* pwchLocalName, int cchLocalName, unsigned short* , int , MSXML2::ISAXAttributes* pAttributes)
 {
 	HRESULT hr = S_OK;
 
@@ -233,7 +233,7 @@ HRESULT SVGigeCameraDBContent::startElement(unsigned short* pwchNamespaceUri, in
     return hr;
 }
        
-HRESULT SVGigeCameraDBContent::endElement(unsigned short* pwchNamespaceUri, int cchNamespaceUri, unsigned short* pwchLocalName, int cchLocalName, unsigned short* pwchRawName, int cchRawName)
+HRESULT SVGigeCameraDBContent::endElement(unsigned short* , int , unsigned short* pwchLocalName, int cchLocalName, unsigned short* , int )
 {
 	WString elementName(reinterpret_cast<wchar_t *>(pwchLocalName), cchLocalName);
 	

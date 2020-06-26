@@ -325,49 +325,49 @@ BOOL SVToolAdjustmentDialogThresholdPageClass::OnInitDialog()
 		else
 		{
 			// Deacivate all threshold page controls...
-			CWnd* pWnd(nullptr);
-			if( pWnd = GetDlgItem( IDC_DIALOGIMAGE ) )
-				pWnd->EnableWindow( FALSE );
-			if( pWnd = GetDlgItem( IDC_LOWER_SLIDER ) )
-				pWnd->EnableWindow( FALSE );
-			if( pWnd = GetDlgItem( IDC_UPPER_SLIDER ) )
-				pWnd->EnableWindow( FALSE );
-			if( pWnd = GetDlgItem( IDC_UPPER_CHECK ) )
-				pWnd->EnableWindow( FALSE );
-			if( pWnd = GetDlgItem( IDC_CHECK1 ) )
-				pWnd->EnableWindow( FALSE );
-			if( pWnd = GetDlgItem( IDC_LOWER_CHECK ) )
-				pWnd->EnableWindow( FALSE );
-			if( pWnd = GetDlgItem( IDC_UPPER_EDIT ) )
-				pWnd->EnableWindow( FALSE );
-			if( pWnd = GetDlgItem( IDC_LOWER_EDIT ) )
-				pWnd->EnableWindow( FALSE );
-			if( pWnd = GetDlgItem( IDC_WHITE_PIXEL_TEXT ) )
-				pWnd->EnableWindow( FALSE );
-			if( pWnd = GetDlgItem( IDC_USE_EXTERN_LT_CHECK ) )
-				pWnd->EnableWindow( FALSE );
-			if( pWnd = GetDlgItem( IDC_USE_EXTERN_UT_CHECK ) )
-				pWnd->EnableWindow( FALSE );
+			CWnd* pWnd = GetDlgItem(IDC_DIALOGIMAGE);
+			if(nullptr != pWnd)
+				pWnd->EnableWindow( false );
+			if (nullptr != (pWnd = GetDlgItem(IDC_LOWER_SLIDER)))
+				pWnd->EnableWindow(false);
+			if (nullptr != (pWnd = GetDlgItem(IDC_UPPER_SLIDER)))
+				pWnd->EnableWindow(false);
+			if (nullptr != (pWnd = GetDlgItem(IDC_UPPER_CHECK)))
+				pWnd->EnableWindow(false);
+			if (nullptr != (pWnd = GetDlgItem(IDC_CHECK1)))
+				pWnd->EnableWindow(false);
+			if (nullptr != (pWnd = GetDlgItem(IDC_LOWER_CHECK)))
+				pWnd->EnableWindow(false);
+			if (nullptr != (pWnd = GetDlgItem(IDC_UPPER_EDIT)))
+				pWnd->EnableWindow(false);
+			if (nullptr != (pWnd = GetDlgItem(IDC_LOWER_EDIT)))
+				pWnd->EnableWindow(false);
+			if (nullptr != (pWnd = GetDlgItem(IDC_WHITE_PIXEL_TEXT)))
+				pWnd->EnableWindow(false);
+			if (nullptr != (pWnd = GetDlgItem(IDC_USE_EXTERN_LT_CHECK)))
+				pWnd->EnableWindow(false);
+			if (nullptr != (pWnd = GetDlgItem(IDC_USE_EXTERN_UT_CHECK)))
+				pWnd->EnableWindow(false);
 
 			// Hide Formula Button
-			if( pWnd = GetDlgItem( IDC_LT_FORMULA_BUTTON ) )
+			if (nullptr != (pWnd = GetDlgItem(IDC_LT_FORMULA_BUTTON)))
 				pWnd->ShowWindow( SW_HIDE );
-			if( pWnd = GetDlgItem( IDC_UT_FORMULA_BUTTON ) )
+			if (nullptr != (pWnd = GetDlgItem(IDC_UT_FORMULA_BUTTON)))
 				pWnd->ShowWindow( SW_HIDE );
 
 			// Hide auto threshold controls...
-			if( pWnd = GetDlgItem( IDC_AUTOTHRESHOLD_EDIT ) )
-				pWnd->ShowWindow( SW_HIDE );
-			if( pWnd = GetDlgItem( IDC_BLACK_BACKGROUND_RADIO ) )
-				pWnd->ShowWindow( SW_HIDE );
-			if( pWnd = GetDlgItem( IDC_WHITE_BACKGROUND_RADIO ) )
-				pWnd->ShowWindow( SW_HIDE );
-			if( pWnd = GetDlgItem( IDC_AUTOTHRESHOLD_SLIDER ) )
-				pWnd->ShowWindow( SW_HIDE );
-			if( pWnd = GetDlgItem( IDC_USE_EXTERN_ATM_CHECK ) )
-				pWnd->ShowWindow( SW_HIDE );
-			if( pWnd = GetDlgItem( IDC_ATM_FORMULA_BUTTON ) )
-				pWnd->ShowWindow( SW_HIDE );
+			if (nullptr != (pWnd = GetDlgItem(IDC_AUTOTHRESHOLD_EDIT)))
+				pWnd->ShowWindow(SW_HIDE);
+			if (nullptr != (pWnd = GetDlgItem(IDC_BLACK_BACKGROUND_RADIO)))
+				pWnd->ShowWindow(SW_HIDE);
+			if (nullptr != (pWnd = GetDlgItem(IDC_WHITE_BACKGROUND_RADIO)))
+				pWnd->ShowWindow(SW_HIDE);
+			if (nullptr != (pWnd = GetDlgItem(IDC_AUTOTHRESHOLD_SLIDER)))
+				pWnd->ShowWindow(SW_HIDE);
+			if (nullptr != (pWnd = GetDlgItem(IDC_USE_EXTERN_ATM_CHECK)))
+				pWnd->ShowWindow(SW_HIDE);
+			if (nullptr != (pWnd = GetDlgItem(IDC_ATM_FORMULA_BUTTON)))
+				pWnd->ShowWindow(SW_HIDE);
 		}
 	}
 	else
@@ -518,14 +518,14 @@ void SVToolAdjustmentDialogThresholdPageClass::OnUpperActivateCheck()
 		if (m_bUseExternUT)
 		{
 			// Disable and hide slider...
-			if (pWnd = GetDlgItem(IDC_UPPER_SLIDER))
+			if (nullptr != (pWnd = GetDlgItem(IDC_UPPER_SLIDER)))
 			{
 				pWnd->ShowWindow( SW_HIDE );
 				pWnd->EnableWindow( FALSE );
 			}
 
 			// Enable and show formula button...
-			if( pWnd = GetDlgItem( IDC_UT_FORMULA_BUTTON ) )
+			if (nullptr != (pWnd = GetDlgItem(IDC_UT_FORMULA_BUTTON)))
 			{
 				pWnd->ShowWindow( SW_SHOW );
 				pWnd->EnableWindow();
@@ -537,14 +537,14 @@ void SVToolAdjustmentDialogThresholdPageClass::OnUpperActivateCheck()
 		else
 		{
 			// Disable and hide formula button...
-			if ( pWnd = GetDlgItem( IDC_UT_FORMULA_BUTTON ) )
+			if (nullptr != (pWnd = GetDlgItem(IDC_UT_FORMULA_BUTTON)))
 			{
 				pWnd->ShowWindow( SW_HIDE );
 				pWnd->EnableWindow( FALSE );
 			}
 
 			// Enable and show slider...
-			if( pWnd = GetDlgItem( IDC_UPPER_SLIDER ) )
+			if (nullptr != (pWnd = GetDlgItem(IDC_UPPER_SLIDER)))
 			{
 				pWnd->ShowWindow( SW_SHOW );
 				pWnd->EnableWindow();
@@ -558,14 +558,14 @@ void SVToolAdjustmentDialogThresholdPageClass::OnUpperActivateCheck()
 		}
 
 		// Enable and show edit...
-		if( pWnd = GetDlgItem( IDC_UPPER_EDIT ) )
+		if (nullptr != (pWnd = GetDlgItem(IDC_UPPER_EDIT)))
 		{
 			pWnd->ShowWindow( SW_SHOW );
 			pWnd->EnableWindow(m_bUseExternUT ? FALSE : TRUE);
 		}
 
 		// Enable and show use extern UT check..
-		if( pWnd = GetDlgItem( IDC_USE_EXTERN_UT_CHECK ) )
+		if (nullptr != (pWnd = GetDlgItem(IDC_USE_EXTERN_UT_CHECK)))
 		{
 			pWnd->ShowWindow( SW_SHOW );
 			pWnd->EnableWindow();
@@ -580,14 +580,14 @@ void SVToolAdjustmentDialogThresholdPageClass::OnUpperActivateCheck()
 		if( m_bUseExternUT )
 		{
 			// Hide and disable slider...
-			if( pWnd = GetDlgItem( IDC_UPPER_SLIDER ) )
+			if (nullptr != (pWnd = GetDlgItem(IDC_UPPER_SLIDER)))
 			{
 				pWnd->ShowWindow( SW_HIDE );
 				pWnd->EnableWindow( FALSE );
 			}
 
 			// Show disabled formula button...
-			if( pWnd = GetDlgItem( IDC_UT_FORMULA_BUTTON ) )
+			if (nullptr != (pWnd = GetDlgItem(IDC_UT_FORMULA_BUTTON)))
 			{
 				pWnd->EnableWindow( FALSE );
 				pWnd->ShowWindow( SW_SHOW );
@@ -596,14 +596,14 @@ void SVToolAdjustmentDialogThresholdPageClass::OnUpperActivateCheck()
 		else
 		{
 			// Hide and disable formula button...
-			if( pWnd = GetDlgItem( IDC_UT_FORMULA_BUTTON ) )
+			if (nullptr != (pWnd = GetDlgItem(IDC_UT_FORMULA_BUTTON)))
 			{
 				pWnd->ShowWindow( SW_HIDE );
 				pWnd->EnableWindow( FALSE );
 			}
 
 			// Show disabled slider...
-			if( pWnd = GetDlgItem( IDC_UPPER_SLIDER ) )
+			if (nullptr != (pWnd = GetDlgItem(IDC_UPPER_SLIDER)))
 			{
 				pWnd->EnableWindow( FALSE );
 				pWnd->ShowWindow( SW_SHOW );
@@ -611,11 +611,11 @@ void SVToolAdjustmentDialogThresholdPageClass::OnUpperActivateCheck()
 		}
 
 		// Disable edit...
-		if( pWnd = GetDlgItem( IDC_UPPER_EDIT ) )
+		if (nullptr != (pWnd = GetDlgItem(IDC_UPPER_EDIT)))
 			pWnd->EnableWindow( FALSE );
 
 		// Disable use extern UT check..
-		if( pWnd = GetDlgItem( IDC_USE_EXTERN_UT_CHECK ) )
+		if (nullptr != (pWnd = GetDlgItem(IDC_USE_EXTERN_UT_CHECK)))
 			pWnd->EnableWindow( FALSE );
 
 		m_histogram.Disable(histogram::high);
@@ -639,14 +639,14 @@ void SVToolAdjustmentDialogThresholdPageClass::OnLowerActivateCheck()
 		if( m_bUseExternLT )
 		{
 			// Disable and hide slider...
-			if( pWnd = GetDlgItem( IDC_LOWER_SLIDER ) )
+			if (nullptr != (pWnd = GetDlgItem(IDC_LOWER_SLIDER)))
 			{
 				pWnd->ShowWindow( SW_HIDE );
 				pWnd->EnableWindow( FALSE );
 			}
 
 			// Enable and show formula button...
-			if( pWnd = GetDlgItem( IDC_LT_FORMULA_BUTTON ) )
+			if (nullptr != (pWnd = GetDlgItem(IDC_LT_FORMULA_BUTTON)))
 			{
 				pWnd->ShowWindow( SW_SHOW );
 				pWnd->EnableWindow();
@@ -658,14 +658,14 @@ void SVToolAdjustmentDialogThresholdPageClass::OnLowerActivateCheck()
 		else
 		{
 			// Disable and hide formula button...
-			if( pWnd = GetDlgItem( IDC_LT_FORMULA_BUTTON ) )
+			if (nullptr != (pWnd = GetDlgItem(IDC_LT_FORMULA_BUTTON)))
 			{
 				pWnd->ShowWindow( SW_HIDE );
 				pWnd->EnableWindow( FALSE );
 			}
 
 			// Enable and show slider...
-			if( pWnd = GetDlgItem( IDC_LOWER_SLIDER ) )
+			if (nullptr != (pWnd = GetDlgItem(IDC_LOWER_SLIDER)))
 			{
 				pWnd->ShowWindow( SW_SHOW );
 				pWnd->EnableWindow();
@@ -680,14 +680,14 @@ void SVToolAdjustmentDialogThresholdPageClass::OnLowerActivateCheck()
 		}
 
 		// Enable and show edit...
-		if( pWnd = GetDlgItem( IDC_LOWER_EDIT ) )
+		if (nullptr != (pWnd = GetDlgItem(IDC_LOWER_EDIT)))
 		{
 			pWnd->ShowWindow( SW_SHOW );
 			pWnd->EnableWindow(m_bUseExternLT ? FALSE : TRUE );
 		}
 
 		// Enable and show use extern LT check..
-		if( pWnd = GetDlgItem( IDC_USE_EXTERN_LT_CHECK ) )
+		if (nullptr != (pWnd = GetDlgItem(IDC_USE_EXTERN_LT_CHECK)))
 		{
 			pWnd->ShowWindow( SW_SHOW );
 			pWnd->EnableWindow();
@@ -702,14 +702,14 @@ void SVToolAdjustmentDialogThresholdPageClass::OnLowerActivateCheck()
 		if( m_bUseExternLT )
 		{
 			// Hide and disable slider...
-			if( pWnd = GetDlgItem( IDC_LOWER_SLIDER ) )
+			if (nullptr != (pWnd = GetDlgItem(IDC_LOWER_SLIDER)))
 			{
 				pWnd->ShowWindow( SW_HIDE );
 				pWnd->EnableWindow( FALSE );
 			}
 
 			// Show disabled formula button...
-			if( pWnd = GetDlgItem( IDC_LT_FORMULA_BUTTON ) )
+			if (nullptr != (pWnd = GetDlgItem(IDC_LT_FORMULA_BUTTON)))
 			{
 				pWnd->EnableWindow( FALSE );
 				pWnd->ShowWindow( SW_SHOW );
@@ -718,14 +718,14 @@ void SVToolAdjustmentDialogThresholdPageClass::OnLowerActivateCheck()
 		else
 		{
 			// Hide and disable formula button...
-			if( pWnd = GetDlgItem( IDC_LT_FORMULA_BUTTON ) )
+			if (nullptr != (pWnd = GetDlgItem(IDC_LT_FORMULA_BUTTON)))
 			{
 				pWnd->ShowWindow( SW_HIDE );
 				pWnd->EnableWindow( FALSE );
 			}
 
 			// Show disabled slider...
-			if( pWnd = GetDlgItem( IDC_LOWER_SLIDER ) )
+			if (nullptr != (pWnd = GetDlgItem(IDC_LOWER_SLIDER)))
 			{
 				pWnd->EnableWindow( FALSE );
 				pWnd->ShowWindow( SW_SHOW );
@@ -733,12 +733,12 @@ void SVToolAdjustmentDialogThresholdPageClass::OnLowerActivateCheck()
 		}
 
 		// Disable edit...
-		if( pWnd = GetDlgItem( IDC_LOWER_EDIT ) )
+		if (nullptr != (pWnd = GetDlgItem(IDC_LOWER_EDIT)))
 		{
 			pWnd->EnableWindow( FALSE );
 		}
 		// Disable use extern LT check..
-		if( pWnd = GetDlgItem( IDC_USE_EXTERN_LT_CHECK ) )
+		if (nullptr != (pWnd = GetDlgItem(IDC_USE_EXTERN_LT_CHECK)))
 		{
 			pWnd->EnableWindow( FALSE );
 		}
@@ -763,57 +763,46 @@ void SVToolAdjustmentDialogThresholdPageClass::OnCheck1()
 		if( m_bUseAutoThreshold )
 		{
 			// Hide manual threshold controls...
-			if( pWnd = GetDlgItem( IDC_UPPER_CHECK ) )
+			if (nullptr != (pWnd = GetDlgItem(IDC_UPPER_CHECK)))
 				pWnd->ShowWindow( SW_HIDE );
-			if( pWnd = GetDlgItem( IDC_LOWER_CHECK ) )
+			if (nullptr != (pWnd = GetDlgItem(IDC_LOWER_CHECK)))
 				pWnd->ShowWindow( SW_HIDE );
-			if( pWnd = GetDlgItem( IDC_UPPER_STATIC ) )
+			if (nullptr != (pWnd = GetDlgItem(IDC_UPPER_STATIC)))
 				pWnd->ShowWindow( SW_HIDE );
-			if( pWnd = GetDlgItem( IDC_LOWER_STATIC ) )
+			if (nullptr != (pWnd = GetDlgItem(IDC_LOWER_STATIC)))
 				pWnd->ShowWindow( SW_HIDE );
-			if( pWnd = GetDlgItem( IDC_UPPER_EDIT ) )
+			if (nullptr != (pWnd = GetDlgItem(IDC_UPPER_EDIT)))
 				pWnd->ShowWindow( SW_HIDE );
-			if( pWnd = GetDlgItem( IDC_LOWER_EDIT ) )
+			if (nullptr != (pWnd = GetDlgItem(IDC_LOWER_EDIT)))
 				pWnd->ShowWindow( SW_HIDE );
-			if( pWnd = GetDlgItem( IDC_UPPER_SLIDER ) )
+			if (nullptr != (pWnd = GetDlgItem(IDC_UPPER_SLIDER)))
 				pWnd->ShowWindow( SW_HIDE );
-			if( pWnd = GetDlgItem( IDC_LOWER_SLIDER ) )
+			if (nullptr != (pWnd = GetDlgItem(IDC_LOWER_SLIDER)))
 				pWnd->ShowWindow( SW_HIDE );
-			if( pWnd = GetDlgItem( IDC_USE_EXTERN_LT_CHECK ) )
+			if (nullptr != (pWnd = GetDlgItem(IDC_USE_EXTERN_LT_CHECK)))
 				pWnd->ShowWindow( SW_HIDE );
-			if( pWnd = GetDlgItem( IDC_USE_EXTERN_UT_CHECK ) )
+			if (nullptr != (pWnd = GetDlgItem(IDC_USE_EXTERN_UT_CHECK)))
 				pWnd->ShowWindow( SW_HIDE );
 			// Hide Formula Button
-			if( pWnd = GetDlgItem( IDC_LT_FORMULA_BUTTON ) )
+			if (nullptr != (pWnd = GetDlgItem(IDC_LT_FORMULA_BUTTON)))
 				pWnd->ShowWindow( SW_HIDE );
-			if( pWnd = GetDlgItem( IDC_UT_FORMULA_BUTTON ) )
+			if (nullptr != (pWnd = GetDlgItem(IDC_UT_FORMULA_BUTTON)))
 				pWnd->ShowWindow( SW_HIDE );
 
 			// Show auto threshold controls...
-			if( pWnd = GetDlgItem( IDC_AUTOTHRESHOLD_EDIT ) )
+			if (nullptr != (pWnd = GetDlgItem(IDC_AUTOTHRESHOLD_EDIT)))
 				pWnd->ShowWindow( SW_SHOW );
-			if( pWnd = GetDlgItem( IDC_BLACK_BACKGROUND_RADIO ) )
+			if (nullptr != (pWnd = GetDlgItem(IDC_BLACK_BACKGROUND_RADIO)))
 				pWnd->ShowWindow( SW_SHOW );
-			if( pWnd = GetDlgItem( IDC_WHITE_BACKGROUND_RADIO ) )
+			if (nullptr != (pWnd = GetDlgItem(IDC_WHITE_BACKGROUND_RADIO)))
 				pWnd->ShowWindow( SW_SHOW );
-			if( pWnd = GetDlgItem( IDC_USE_EXTERN_ATM_CHECK ) )
+			if (nullptr != (pWnd = GetDlgItem(IDC_USE_EXTERN_ATM_CHECK)))
 				pWnd->ShowWindow( SW_SHOW );
-			if( m_bUseExternATM )
-			{
-				if( pWnd = GetDlgItem( IDC_AUTOTHRESHOLD_SLIDER ) )
-					pWnd->ShowWindow( SW_HIDE );
 
-				if( pWnd = GetDlgItem( IDC_ATM_FORMULA_BUTTON ) )
-					pWnd->ShowWindow( SW_SHOW );
-			}
-			else
-			{
-				if( pWnd = GetDlgItem( IDC_ATM_FORMULA_BUTTON ) )
-					pWnd->ShowWindow( SW_HIDE );
-
-				if( pWnd = GetDlgItem( IDC_AUTOTHRESHOLD_SLIDER ) )
-					pWnd->ShowWindow( SW_SHOW );
-			}
+			if (nullptr != (pWnd = GetDlgItem(IDC_AUTOTHRESHOLD_SLIDER)))
+				pWnd->ShowWindow(m_bUseExternATM ? SW_HIDE : SW_SHOW);
+			if (nullptr != (pWnd = GetDlgItem(IDC_ATM_FORMULA_BUTTON)))
+				pWnd->ShowWindow(m_bUseExternATM ? SW_SHOW : SW_HIDE);
 
 			// Save state
 			m_lo = static_cast<int>(m_lowerThres);
@@ -822,35 +811,35 @@ void SVToolAdjustmentDialogThresholdPageClass::OnCheck1()
 		else
 		{
 			// Hide auto threshold controls...
-			if( pWnd = GetDlgItem( IDC_AUTOTHRESHOLD_EDIT ) )
+			if (nullptr != (pWnd = GetDlgItem(IDC_AUTOTHRESHOLD_EDIT)))
 				pWnd->ShowWindow( SW_HIDE );
-			if( pWnd = GetDlgItem( IDC_BLACK_BACKGROUND_RADIO ) )
+			if (nullptr != (pWnd = GetDlgItem(IDC_BLACK_BACKGROUND_RADIO)))
 				pWnd->ShowWindow( SW_HIDE );
-			if( pWnd = GetDlgItem( IDC_WHITE_BACKGROUND_RADIO ) )
+			if (nullptr != (pWnd = GetDlgItem(IDC_WHITE_BACKGROUND_RADIO)))
 				pWnd->ShowWindow( SW_HIDE );
-			if( pWnd = GetDlgItem( IDC_AUTOTHRESHOLD_SLIDER ) )
+			if (nullptr != (pWnd = GetDlgItem(IDC_AUTOTHRESHOLD_SLIDER)))
 				pWnd->ShowWindow( SW_HIDE );
-			if( pWnd = GetDlgItem( IDC_USE_EXTERN_ATM_CHECK ) )
+			if (nullptr != (pWnd = GetDlgItem(IDC_USE_EXTERN_ATM_CHECK)))
 				pWnd->ShowWindow( SW_HIDE );
-			if( pWnd = GetDlgItem( IDC_ATM_FORMULA_BUTTON ) )
+			if (nullptr != (pWnd = GetDlgItem(IDC_ATM_FORMULA_BUTTON)))
 				pWnd->ShowWindow( SW_HIDE );
 
 			// Show manual threshold controls...
-			if( pWnd = GetDlgItem( IDC_UPPER_CHECK ) )
+			if (nullptr != (pWnd = GetDlgItem(IDC_UPPER_CHECK)))
 				pWnd->ShowWindow( SW_SHOW );
-			if( pWnd = GetDlgItem( IDC_LOWER_CHECK ) )
+			if (nullptr != (pWnd = GetDlgItem(IDC_LOWER_CHECK)))
 				pWnd->ShowWindow( SW_SHOW );
-			if( pWnd = GetDlgItem( IDC_UPPER_STATIC ) )
+			if (nullptr != (pWnd = GetDlgItem(IDC_UPPER_STATIC)))
 				pWnd->ShowWindow( SW_SHOW );
-			if( pWnd = GetDlgItem( IDC_LOWER_STATIC ) )
+			if (nullptr != (pWnd = GetDlgItem(IDC_LOWER_STATIC)))
 				pWnd->ShowWindow( SW_SHOW );
-			if( pWnd = GetDlgItem( IDC_UPPER_EDIT ) )
+			if (nullptr != (pWnd = GetDlgItem(IDC_UPPER_EDIT)))
 				pWnd->ShowWindow( SW_SHOW );
-			if( pWnd = GetDlgItem( IDC_LOWER_EDIT ) )
+			if (nullptr != (pWnd = GetDlgItem(IDC_LOWER_EDIT)))
 				pWnd->ShowWindow( SW_SHOW );
-			if( pWnd = GetDlgItem( IDC_USE_EXTERN_LT_CHECK ) )
+			if (nullptr != (pWnd = GetDlgItem(IDC_USE_EXTERN_LT_CHECK)))
 				pWnd->ShowWindow( SW_SHOW );
-			if( pWnd = GetDlgItem( IDC_USE_EXTERN_UT_CHECK ) )
+			if (nullptr != (pWnd = GetDlgItem(IDC_USE_EXTERN_UT_CHECK)))
 				pWnd->ShowWindow( SW_SHOW );
 
 			m_lo = static_cast<int>(m_lowerThres);
@@ -866,44 +855,44 @@ void SVToolAdjustmentDialogThresholdPageClass::OnCheck1()
 	else
 	{
 		// Hide manual threshold controls...
-		if( pWnd = GetDlgItem( IDC_UPPER_CHECK ) )
+		if (nullptr != (pWnd = GetDlgItem(IDC_UPPER_CHECK)))
 			pWnd->ShowWindow( SW_HIDE );
-		if( pWnd = GetDlgItem( IDC_LOWER_CHECK ) )
+		if (nullptr != (pWnd = GetDlgItem(IDC_LOWER_CHECK)))
 			pWnd->ShowWindow( SW_HIDE );
-		if( pWnd = GetDlgItem( IDC_UPPER_STATIC ) )
+		if (nullptr != (pWnd = GetDlgItem(IDC_UPPER_STATIC)))
 			pWnd->ShowWindow( SW_HIDE );
-		if( pWnd = GetDlgItem( IDC_LOWER_STATIC ) )
+		if (nullptr != (pWnd = GetDlgItem(IDC_LOWER_STATIC)))
 			pWnd->ShowWindow( SW_HIDE );
-		if( pWnd = GetDlgItem( IDC_UPPER_EDIT ) )
+		if (nullptr != (pWnd = GetDlgItem(IDC_UPPER_EDIT)))
 			pWnd->ShowWindow( SW_HIDE );
-		if( pWnd = GetDlgItem( IDC_LOWER_EDIT ) )
+		if (nullptr != (pWnd = GetDlgItem(IDC_LOWER_EDIT)))
 			pWnd->ShowWindow( SW_HIDE );
-		if( pWnd = GetDlgItem( IDC_UPPER_SLIDER ) )
+		if (nullptr != (pWnd = GetDlgItem(IDC_UPPER_SLIDER)))
 			pWnd->ShowWindow( SW_HIDE );
-		if( pWnd = GetDlgItem( IDC_LOWER_SLIDER ) )
+		if (nullptr != (pWnd = GetDlgItem(IDC_LOWER_SLIDER)))
 			pWnd->ShowWindow( SW_HIDE );
-		if( pWnd = GetDlgItem( IDC_USE_EXTERN_LT_CHECK ) )
+		if (nullptr != (pWnd = GetDlgItem(IDC_USE_EXTERN_LT_CHECK)))
 			pWnd->ShowWindow( SW_HIDE );
-		if( pWnd = GetDlgItem( IDC_USE_EXTERN_UT_CHECK ) )
+		if (nullptr != (pWnd = GetDlgItem(IDC_USE_EXTERN_UT_CHECK)))
 			pWnd->ShowWindow( SW_HIDE );
 		// Hide Formula Button
-		if( pWnd = GetDlgItem( IDC_LT_FORMULA_BUTTON ) )
+		if (nullptr != (pWnd = GetDlgItem(IDC_LT_FORMULA_BUTTON)))
 			pWnd->ShowWindow( SW_HIDE );
-		if( pWnd = GetDlgItem( IDC_UT_FORMULA_BUTTON ) )
+		if (nullptr != (pWnd = GetDlgItem(IDC_UT_FORMULA_BUTTON)))
 			pWnd->ShowWindow( SW_HIDE );
 
 		// Hide auto threshold controls...
-		if( pWnd = GetDlgItem( IDC_AUTOTHRESHOLD_EDIT ) )
+		if (nullptr != (pWnd = GetDlgItem(IDC_AUTOTHRESHOLD_EDIT)))
 			pWnd->ShowWindow( SW_HIDE );
-		if( pWnd = GetDlgItem( IDC_BLACK_BACKGROUND_RADIO ) )
+		if (nullptr != (pWnd = GetDlgItem(IDC_BLACK_BACKGROUND_RADIO)))
 			pWnd->ShowWindow( SW_HIDE );
-		if( pWnd = GetDlgItem( IDC_WHITE_BACKGROUND_RADIO ) )
+		if (nullptr != (pWnd = GetDlgItem(IDC_WHITE_BACKGROUND_RADIO)))
 			pWnd->ShowWindow( SW_HIDE );
-		if( pWnd = GetDlgItem( IDC_AUTOTHRESHOLD_SLIDER ) )
+		if (nullptr != (pWnd = GetDlgItem(IDC_AUTOTHRESHOLD_SLIDER)))
 			pWnd->ShowWindow( SW_HIDE );
-		if( pWnd = GetDlgItem( IDC_USE_EXTERN_ATM_CHECK ) )
+		if (nullptr != (pWnd = GetDlgItem(IDC_USE_EXTERN_ATM_CHECK)))
 			pWnd->ShowWindow( SW_HIDE );
-		if( pWnd = GetDlgItem( IDC_ATM_FORMULA_BUTTON ) )
+		if (nullptr != (pWnd = GetDlgItem(IDC_ATM_FORMULA_BUTTON)))
 			pWnd->ShowWindow( SW_HIDE );
 	}
 

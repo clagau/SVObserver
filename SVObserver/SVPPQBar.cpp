@@ -38,7 +38,7 @@ SVPPQBarClass::~SVPPQBarClass()
 {
 }
 
-CSize SVPPQBarClass::CalcFixedLayout( BOOL bStretch, BOOL bHorz )
+CSize SVPPQBarClass::CalcFixedLayout( BOOL , BOOL  )
 {
 	return SVWindowBarClass::CalcFixedLayout( TRUE, TRUE );
 }
@@ -99,7 +99,7 @@ void SVPPQBarClass::OnDestroy()
 	SVWindowBarClass::OnDestroy();
 }
 
-void SVPPQBarClass::OnSelChangePQTab( NMHDR* pNMHDR, LRESULT* pResult ) 
+void SVPPQBarClass::OnSelChangePQTab( NMHDR*, LRESULT* pResult ) 
 {
 	int index = pqTabCtrl.GetCurSel();
 	if( index >= 0 )

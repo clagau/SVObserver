@@ -126,7 +126,7 @@ std::string SVToolGrouping::MakeNumericUniqueName(const std::string& rName) cons
 		std::stringstream ss;
 		// Get Base Name (can't end in a number)
 		std::string baseName = rName;
-		size_t last_char_pos = rName.find_last_not_of(_T("0123456789"));
+		last_char_pos = rName.find_last_not_of(_T("0123456789"));
 		if (last_char_pos != std::string::npos)
 		{
 			baseName = rName.substr(0, last_char_pos + 1);

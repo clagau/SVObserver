@@ -19,8 +19,9 @@
 #include "PropVariant.h"
 #include "OutStreamWrapper.h"
 
-
-static const std::string EmptyFileAlias = _T("[Content]");
+constexpr GUID cICryptoGetTextPassword =	{0x23170F69, 0x40C1, 0x278A, {0x00, 0x00, 0x00, 0x05, 0x00, 0x10, 0x00, 0x00}};
+constexpr GUID cIArchiveExtractCallback =	{0x23170F69, 0x40C1, 0x278A, {0x00, 0x00, 0x00, 0x06, 0x00, 0x20, 0x00, 0x00}};
+constexpr LPCTSTR cEmptyFileAlias = _T("[Content]");
 
 
 ArchiveExtractCallback::ArchiveExtractCallback( const CComPtr<IInArchive>& rArchiveHandler, const std::string& rDirectory, std::vector<std::string>& rUnzippedFiles)
@@ -43,14 +44,14 @@ STDMETHODIMP ArchiveExtractCallback::QueryInterface( REFIID iid, void** ppvObjec
 		return S_OK;
 	}
 
-	if ( iid == IID_IArchiveExtractCallback )
+	if ( iid == cIArchiveExtractCallback )
 	{
 		*ppvObject = static_cast< IArchiveExtractCallback* >( this );
 		AddRef();
 		return S_OK;
 	}
 
-	if ( iid == IID_ICryptoGetTextPassword )
+	if ( iid == cICryptoGetTextPassword )
 	{
 		*ppvObject = static_cast< ICryptoGetTextPassword* >( this );
 		AddRef();
@@ -75,13 +76,13 @@ STDMETHODIMP_(ULONG) ArchiveExtractCallback::Release()
 	return res;
 }
 
-STDMETHODIMP ArchiveExtractCallback::SetTotal( UInt64 size )
+STDMETHODIMP ArchiveExtractCallback::SetTotal( UInt64  )
 {
 	//	- SetTotal is never called for ZIP and 7z formats
 	return S_OK;
 }
 
-STDMETHODIMP ArchiveExtractCallback::SetCompleted( const UInt64* completeValue )
+STDMETHODIMP ArchiveExtractCallback::SetCompleted( const UInt64*)
 {
 	//Callback Event calls
 	/*
@@ -153,12 +154,12 @@ STDMETHODIMP ArchiveExtractCallback::GetStream( UInt32 index, ISequentialOutStre
 	return S_OK;
 }
 
-STDMETHODIMP ArchiveExtractCallback::PrepareOperation( Int32 askExtractMode )
+STDMETHODIMP ArchiveExtractCallback::PrepareOperation( Int32  )
 {
 	return S_OK;
 }
 
-STDMETHODIMP ArchiveExtractCallback::SetOperationResult( Int32 operationResult )
+STDMETHODIMP ArchiveExtractCallback::SetOperationResult( Int32  )
 {
 	if ( m_absPath.empty() )
 	{
@@ -183,7 +184,7 @@ STDMETHODIMP ArchiveExtractCallback::SetOperationResult( Int32 operationResult )
 	return S_OK;
 }
 
-STDMETHODIMP ArchiveExtractCallback::CryptoGetTextPassword( BSTR* password )
+STDMETHODIMP ArchiveExtractCallback::CryptoGetTextPassword( BSTR* )
 {
 	// TODO: support passwords
 	return E_ABORT;
@@ -200,7 +201,7 @@ void ArchiveExtractCallback::GetPropertyFilePath( UInt32 index )
 
 	if ( prop.vt == VT_EMPTY )
 	{
-		m_relPath = EmptyFileAlias;
+		m_relPath = cEmptyFileAlias;
 	}
 	else if ( prop.vt != VT_BSTR )
 	{

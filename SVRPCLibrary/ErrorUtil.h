@@ -31,17 +31,17 @@ static std::string to_string(const SvPenv::Error& err)
 
 namespace SvRpc
 {
-static std::runtime_error errorToException(const SvPenv::Error& err)
+inline std::runtime_error errorToException(const SvPenv::Error& err)
 {
 	return std::runtime_error(std::to_string(err));
 }
 
-static std::exception_ptr errorToExceptionPtr(const SvPenv::Error& err)
+inline std::exception_ptr errorToExceptionPtr(const SvPenv::Error& err)
 {
 	return std::make_exception_ptr(errorToException(err));
 }
 
-static SvPenv::Error build_error(SvPenv::ErrorCode ErrorCode, const char* pMsg = nullptr)
+inline SvPenv::Error build_error(SvPenv::ErrorCode ErrorCode, const char* pMsg = nullptr)
 {
 	SvPenv::Error Result;
 	Result.set_errorcode(ErrorCode);
@@ -53,7 +53,7 @@ static SvPenv::Error build_error(SvPenv::ErrorCode ErrorCode, const char* pMsg =
 }
 
 template<class T>
-static SvPenv::Error build_packed_error(SvPenv::ErrorCode ErrorCode, const char* pMsg, const T& payload)
+SvPenv::Error build_packed_error(SvPenv::ErrorCode ErrorCode, const char* pMsg, const T& payload)
 {
 	SvPenv::Error Result;
 	Result.set_errorcode(ErrorCode);

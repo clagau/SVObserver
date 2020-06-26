@@ -89,7 +89,7 @@ bool  DisplayTrigger(SvSml::SMRingBuffer &Ringbuffer, SvSml::SMRingBuffer::SlotT
 
 size_t DisplayAllRejects(SvSml::SMRingBuffer &Ringbuffer)
 {
-	std::vector<DWORD> rejects;
+	std::vector<int> rejects;
 	Ringbuffer.GetRejects(rejects);
 	for (const auto &j : rejects)
 	{
@@ -104,7 +104,7 @@ int main(int argc, char* argv[])
 {
 	std::string name;
 	bool bServer(false);
-	int nRejects(20), nTotal(40),ClientThreads(1);
+	int nRejects(20), nTotal(40);
 	int delay(20);
 	const char* Usage = "USAGE: server Name  Rejects  nTotal  delay \nUSAGE: client Name   delay";
 	if (argc > 2 && strcmp("server", argv[1]) == 0)
@@ -189,7 +189,6 @@ int main(int argc, char* argv[])
 		SvSml::SMRingBuffer RingbuffferClient;
 		try
 		{
-			DWORD failer(0);
 			RingbuffferClient.OpenConnection(name.c_str());
 			std::cout << "L last Trigger" << std::endl;
 			std::cout << "R last Reject" << std::endl;

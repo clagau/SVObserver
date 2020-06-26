@@ -308,7 +308,7 @@ HRESULT SVRemoteOutputGroupAddRemoveDlg::GetNewItems( SvDef::StringVector& rOutp
 	return S_OK;
 }
 
-LRESULT  SVRemoteOutputGroupAddRemoveDlg::OnUsedListEditFinished(WPARAM wPar, LPARAM lPar)
+LRESULT  SVRemoteOutputGroupAddRemoveDlg::OnUsedListEditFinished(WPARAM, LPARAM )
 {
 	CRect rec ;
 	CRect wRec;
@@ -330,7 +330,7 @@ LRESULT  SVRemoteOutputGroupAddRemoveDlg::OnUsedListEditFinished(WPARAM wPar, LP
 		CString Text;
 		m_UsedList.GetText(sel, Text);
 		//trim white space from left and right of the new name
-		std::string newName = SvUl::Trim( std::string( Text ));
+		std::string newName = SvUl::Trim(Text);
 
 		SvUl::RemoveCharacters( newName, SvDef::cGeneralExcludeChars );
 

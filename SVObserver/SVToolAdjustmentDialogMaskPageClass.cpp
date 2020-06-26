@@ -260,19 +260,6 @@ void SVToolAdjustmentDialogMaskPageClass::OnEditStaticMaskButton()
 		}
 	}
 
-	HGLOBAL hGlobal = m_maskController.GetMaskData();
-	// Set mask Graphix data...
-	CComPtr<IStream> pStream;
-	HRESULT hr = CreateStreamOnHGlobal(hGlobal, true, &pStream);
-	if (S_OK == hr)
-	{
-		m_pMaskEditorCtl->SetMaskData(pStream);
-	}
-	else
-	{
-		ASSERT(false);
-	}
-
 	if (m_pMaskEditorCtl)
 	{
 		UpdateData(true);
@@ -281,11 +268,11 @@ void SVToolAdjustmentDialogMaskPageClass::OnEditStaticMaskButton()
 		m_pMaskEditorCtl->SetImageDIBHandle(pSourceImage);
 
 		// Set Mask Graphix data...
-		CComPtr<IStream> pStream;
-		hr = CreateStreamOnHGlobal(m_maskController.GetMaskData(), true, &pStream);
+		CComPtr<IStream> pStreamMaskEditor;
+		HRESULT hr = CreateStreamOnHGlobal(m_maskController.GetMaskData(), true, &pStreamMaskEditor);
 		if (S_OK == hr)
 		{
-			m_pMaskEditorCtl->SetMaskData(pStream);
+			m_pMaskEditorCtl->SetMaskData(pStreamMaskEditor);
 		}
 		else
 		{
@@ -306,13 +293,13 @@ void SVToolAdjustmentDialogMaskPageClass::OnEditStaticMaskButton()
 			HGLOBAL hg;
 			CComPtr<IUnknown> pUnk;
 			pUnk.Attach(m_pMaskEditorCtl->GetMaskData());
-			CComPtr<IStream> pStream;
-			hr = pUnk->QueryInterface(IID_IStream, reinterpret_cast<void**>(&pStream));
+			CComPtr<IStream> pStreamMaskController;
+			hr = pUnk->QueryInterface(IID_IStream, reinterpret_cast<void**>(&pStreamMaskController));
 			if (S_OK == hr)
 			{
-				if (nullptr != pStream )
+				if (nullptr != pStreamMaskController )
 				{
-					hr = GetHGlobalFromStream(pStream, &hg);
+					hr = GetHGlobalFromStream(pStreamMaskController, &hg);
 					m_maskController.SetMaskData(hg);
 				}
 			}
@@ -545,30 +532,26 @@ void SVToolAdjustmentDialogMaskPageClass::OnChangeEditFillColor()
 	initMask();
 }
 
-UINT_PTR CALLBACK SVToolAdjustmentDialogMaskPageClass::ColorDlgHookFn( HWND hdlg, UINT uiMsg, WPARAM wParam, LPARAM lParam )
+UINT_PTR CALLBACK SVToolAdjustmentDialogMaskPageClass::ColorDlgHookFn( HWND hdlg, UINT uiMsg, WPARAM, LPARAM lParam )
 {
 	int iReturnCode = 0;	// by default allow color dlg to process message
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_OTHER)
-	TRACE("ColorDlgHookFn - MSG: %08X, WPARAM: %08X, LPARAM: %08X\n", uiMsg, wParam, lParam);
+	TRACE("ColorDlgHookFn - MSG: %08X, LPARAM: %08X\n", uiMsg, lParam);
 #endif
 
-	CWnd* pwndTmp = CWnd::FromHandle(hdlg);
-	ASSERT(pwndTmp);
-	CColorDialog* pDlg = dynamic_cast <CColorDialog*> (pwndTmp);
-
+	CWnd* pWnd = CWnd::FromHandle(hdlg);
+	assert(nullptr != pWnd);
 	switch (uiMsg)
 	{
 		case WM_INITDIALOG:
 		{
-			CWnd* pwndTmp = CWnd::FromHandle(hdlg);
-			ASSERT(pwndTmp);
-			if (pwndTmp)
+			if (pWnd)
 			{
-				pwndTmp->GetDlgItem(COLOR_RAINBOW)->ShowWindow(SW_HIDE);
-				pwndTmp->GetDlgItem(COLOR_BOX1)->ShowWindow(SW_HIDE);
-				pwndTmp->GetDlgItem(COLOR_CUSTOM1)->ShowWindow(SW_HIDE);
-				pwndTmp->GetDlgItem(COLOR_SOLID)->ShowWindow(SW_HIDE);
+				pWnd->GetDlgItem(COLOR_RAINBOW)->ShowWindow(SW_HIDE);
+				pWnd->GetDlgItem(COLOR_BOX1)->ShowWindow(SW_HIDE);
+				pWnd->GetDlgItem(COLOR_CUSTOM1)->ShowWindow(SW_HIDE);
+				pWnd->GetDlgItem(COLOR_SOLID)->ShowWindow(SW_HIDE);
 				
 				CHOOSECOLOR* pColor = reinterpret_cast<CHOOSECOLOR*>(lParam);
 				if (pColor)
@@ -583,9 +566,9 @@ UINT_PTR CALLBACK SVToolAdjustmentDialogMaskPageClass::ColorDlgHookFn( HWND hdlg
 
 		case WM_PAINT:
 		{
-			CWnd* pWndRed = pDlg->GetDlgItem(COLOR_RED);
-			ASSERT(pWndRed);
-			if (pWndRed)
+			CWnd* pWndRed = pWnd->GetDlgItem(COLOR_RED);
+			assert(nullptr != pWndRed);
+			if (nullptr != pWndRed)
 			{
 				CString sText;
 				pWndRed->GetWindowText(sText);

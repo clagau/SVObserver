@@ -33,23 +33,13 @@ static char THIS_FILE[] = __FILE__;
 const TCHAR* const cCreateObjectFunction = _T("CreateObject");
 
 // CLSIDs for 7z
-static const GUID CLSID_CFormatZip =			{0x23170F69, 0x40C1, 0x278A, {0x10, 0x00, 0x00, 0x01, 0x10, 0x01, 0x00, 0x00}};
-static const GUID CLSID_CFormat7z =				{0x23170F69, 0x40C1, 0x278A, {0x10, 0x00, 0x00, 0x01, 0x10, 0x07, 0x00, 0x00}};
-static const GUID IID_ISequentialInStream =		{0x23170F69, 0x40C1, 0x278A, {0x00, 0x00, 0x00, 0x03, 0x00, 0x01, 0x00, 0x00}};
-static const GUID IID_ISequentialOutStream =	{0x23170F69, 0x40C1, 0x278A, {0x00, 0x00, 0x00, 0x03, 0x00, 0x02, 0x00, 0x00}};
-static const GUID IID_IInStream =				{0x23170F69, 0x40C1, 0x278A, {0x00, 0x00, 0x00, 0x03, 0x00, 0x03, 0x00, 0x00}};
-static const GUID IID_IOutStream =				{0x23170F69, 0x40C1, 0x278A, {0x00, 0x00, 0x00, 0x03, 0x00, 0x04, 0x00, 0x00}};
-static const GUID IID_IStreamGetSize =			{0x23170F69, 0x40C1, 0x278A, {0x00, 0x00, 0x00, 0x03, 0x00, 0x06, 0x00, 0x00}};
-static const GUID IID_ICompressProgressInfo =	{0x23170F69, 0x40C1, 0x278A, {0x00, 0x00, 0x00, 0x04, 0x00, 0x04, 0x00, 0x00}};
-static const GUID IID_ICryptoGetTextPassword =	{0x23170F69, 0x40C1, 0x278A, {0x00, 0x00, 0x00, 0x05, 0x00, 0x10, 0x00, 0x00}};
-static const GUID IID_ICryptoGetTextPassword2 = {0x23170F69, 0x40C1, 0x278A, {0x00, 0x00, 0x00, 0x05, 0x00, 0x11, 0x00, 0x00}};
-static const GUID IID_ISetProperties =			{0x23170F69, 0x40C1, 0x278A, {0x00, 0x00, 0x00, 0x06, 0x00, 0x03, 0x00, 0x00}};
-static const GUID IID_IArchiveExtractCallback = {0x23170F69, 0x40C1, 0x278A, {0x00, 0x00, 0x00, 0x06, 0x00, 0x20, 0x00, 0x00}};
-static const GUID IID_IArchiveUpdateCallback =	{0x23170F69, 0x40C1, 0x278A, {0x00, 0x00, 0x00, 0x06, 0x00, 0x80, 0x00, 0x00}};
-static const GUID IID_IOutArchive =				{0x23170F69, 0x40C1, 0x278A, {0x00, 0x00, 0x00, 0x06, 0x00, 0xA0, 0x00, 0x00}};
-static const GUID IID_IInArchive =				{0x23170F69, 0x40C1, 0x278A, {0x00, 0x00, 0x00, 0x06, 0x00, 0x60, 0x00, 0x00}};
+constexpr GUID CLSID_CFormatZip =			{0x23170F69, 0x40C1, 0x278A, {0x10, 0x00, 0x00, 0x01, 0x10, 0x01, 0x00, 0x00}};
+constexpr GUID CLSID_CFormat7z =			{0x23170F69, 0x40C1, 0x278A, {0x10, 0x00, 0x00, 0x01, 0x10, 0x07, 0x00, 0x00}};
+constexpr GUID cISetProperties =			{0x23170F69, 0x40C1, 0x278A, {0x00, 0x00, 0x00, 0x06, 0x00, 0x03, 0x00, 0x00}};
+constexpr GUID cIOutArchive =				{0x23170F69, 0x40C1, 0x278A, {0x00, 0x00, 0x00, 0x06, 0x00, 0xA0, 0x00, 0x00}};
+constexpr GUID cIInArchive =				{0x23170F69, 0x40C1, 0x278A, {0x00, 0x00, 0x00, 0x06, 0x00, 0x60, 0x00, 0x00}};
 //Unzip formats supported in the order of their priority
-static const GUID UnzipFormats[] = {CLSID_CFormat7z, CLSID_CFormatZip};
+constexpr GUID UnzipFormats[] = {CLSID_CFormat7z, CLSID_CFormatZip};
 #pragma endregion Declarations
 
 namespace SvUl
@@ -81,10 +71,10 @@ bool makeZipFile( const std::string& rZipFileName, const SvDef::StringVector& rZ
 		
 			if(nullptr != pCreateObject)
 			{
-				if(S_OK == pCreateObject(&CLSID_CFormat7z, &IID_IOutArchive, reinterpret_cast<void **> (&pArchive)))
+				if(S_OK == pCreateObject(&CLSID_CFormat7z, &cIOutArchive, reinterpret_cast<void **> (&pArchive)))
 				{
 					CComPtr< ISetProperties > pSetProperties;
-					pArchive->QueryInterface(IID_ISetProperties, reinterpret_cast<void**>(&pSetProperties));
+					pArchive->QueryInterface(cISetProperties, reinterpret_cast<void**>(&pSetProperties));
 		
 					if(nullptr != pSetProperties)
 					{
@@ -141,7 +131,7 @@ bool unzipAll( const std::string& rZipFileName, const std::string& rDestinationF
 				//Tries to unzip the supported formats until one works
 				for (const auto& rUnzipFormat : UnzipFormats)
 				{
-					if (S_OK == pCreateObject(&rUnzipFormat, &IID_IInArchive, reinterpret_cast<void **> (&pArchive)))
+					if (S_OK == pCreateObject(&rUnzipFormat, &cIInArchive, reinterpret_cast<void **> (&pArchive)))
 					{
 						CComPtr<IStream> pFileStream;
 						_bstr_t wFileName {rZipFileName.c_str()};
@@ -151,7 +141,7 @@ bool unzipAll( const std::string& rZipFileName, const std::string& rDestinationF
 							if (S_OK == pArchive->Open(pInputFile, 0, nullptr))
 							{
 								CComPtr<ArchiveExtractCallback> pExtractCallback = new ArchiveExtractCallback(pArchive, rDestinationFolder, rUnzippedFiles);
-								if (S_OK == pArchive->Extract(nullptr, -1, false, pExtractCallback))
+								if (S_OK == pArchive->Extract(nullptr, static_cast<UInt32> (-1), false, pExtractCallback))
 								{
 									Result = true;
 									break;

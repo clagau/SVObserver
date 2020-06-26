@@ -61,8 +61,8 @@ HRESULT SVPlcIOImpl::Initialize(bool bInit)
 		memset(buffer, 0, 255);
 		::GetPrivateProfileString(cSettingsGroup, cPLCSimulation, "", buffer, 255, iniFile.c_str());
 		m_plcSimulateFile = buffer;
-		m_plcTransferTime = ::GetPrivateProfileInt(cSettingsGroup, cPLCTransferTime, 0, iniFile.c_str());
-		m_plcNodeID = ::GetPrivateProfileInt(cSettingsGroup, cPLCNodeID, 0, iniFile.c_str());
+		m_plcTransferTime = static_cast<uint16_t> (::GetPrivateProfileInt(cSettingsGroup, cPLCTransferTime, 0, iniFile.c_str()));
+		m_plcNodeID = static_cast<uint16_t> (::GetPrivateProfileInt(cSettingsGroup, cPLCNodeID, 0, iniFile.c_str()));
 	}
 	else
 	{
@@ -102,7 +102,7 @@ HRESULT SVPlcIOImpl::GetInputValue(unsigned long* pValue)
 	return result;
 }
 
-HRESULT SVPlcIOImpl::SetOutputValue(unsigned long value)
+HRESULT SVPlcIOImpl::SetOutputValue(unsigned long )
 {
 	return S_OK;
 }
@@ -138,17 +138,17 @@ HRESULT SVPlcIOImpl::SetOutputData(unsigned long triggerIndex, const SvTh::IntVa
 	return result;
 }
 
-HRESULT SVPlcIOImpl::GetBoardVersion(long& rlVer)
+HRESULT SVPlcIOImpl::GetBoardVersion(long& )
 {
 	return S_OK;
 }
 
-HRESULT SVPlcIOImpl::GetInputBit(unsigned long bitNum, bool& rBitVal)
+HRESULT SVPlcIOImpl::GetInputBit(unsigned long , bool& )
 {
 	return S_OK;
 }
 
-HRESULT SVPlcIOImpl::SetOutputBit(unsigned long bitNum, bool bitVal)
+HRESULT SVPlcIOImpl::SetOutputBit(unsigned long , bool )
 {
 	return S_OK;
 }
@@ -303,7 +303,7 @@ void SVPlcIOImpl::beforeStopTrigger(unsigned long triggerIndex)
 
 
 
-HRESULT SVPlcIOImpl::TriggerGetParameterCount(unsigned long triggerIndex, unsigned long* pCount)
+HRESULT SVPlcIOImpl::TriggerGetParameterCount(unsigned long , unsigned long* pCount)
 {
 	HRESULT result {E_FAIL};
 
@@ -315,7 +315,7 @@ HRESULT SVPlcIOImpl::TriggerGetParameterCount(unsigned long triggerIndex, unsign
 	return result;
 }
 
-HRESULT SVPlcIOImpl::TriggerGetParameterName(unsigned long triggerIndex, unsigned long index, BSTR* pName)
+HRESULT SVPlcIOImpl::TriggerGetParameterName(unsigned long , unsigned long index, BSTR* pName)
 {
 	HRESULT result{E_FAIL};
 
@@ -343,7 +343,7 @@ HRESULT SVPlcIOImpl::TriggerGetParameterName(unsigned long triggerIndex, unsigne
 	return result;
 }
 
-HRESULT SVPlcIOImpl::TriggerGetParameterValue(unsigned long triggerIndex, unsigned long index, VARIANT* pValue)
+HRESULT SVPlcIOImpl::TriggerGetParameterValue(unsigned long , unsigned long index, VARIANT* pValue)
 {
 	HRESULT result{E_FAIL};
 
@@ -371,14 +371,9 @@ HRESULT SVPlcIOImpl::TriggerGetParameterValue(unsigned long triggerIndex, unsign
 	return result;
 }
 
-HRESULT SVPlcIOImpl::TriggerSetParameterValue(unsigned long triggerIndex, unsigned long index, VARIANT* pValue)
+HRESULT SVPlcIOImpl::TriggerSetParameterValue(unsigned long, unsigned long , VARIANT*)
 {
-	HRESULT result{E_FAIL};
-	if (nullptr != pValue)
-	{
-	}
-	return result;
-
+	return E_FAIL;
 }
 
 // Non-Trigger Parameter Functions
@@ -480,7 +475,7 @@ void SVPlcIOImpl::reportTrigger(const TriggerReport& rTriggerReport)
 	if(m_moduleReady)
 	{
 		//PLC channel is zero based while SVObserver trigger index is one based!
-		int triggerIndex = rTriggerReport.m_channel + 1;
+		unsigned long triggerIndex = rTriggerReport.m_channel + 1;
 
 		SvTh::IntVariantMap triggerData;
 		triggerData[SvTh::TriggerDataEnum::TimeStamp] = _variant_t(rTriggerReport.m_triggerTimestamp);

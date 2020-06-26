@@ -112,7 +112,7 @@ bool SVCheckPathDir( LPCTSTR PathName, bool CreateIfDoesNotExist )
 	// Save current settings...
 	if( nullptr == _tgetcwd( curPath, _MAX_PATH )  )
 	{
-		curPath[ 0 ] = _TCHAR( '/0' );
+		curPath[0] = '\0';
 	}
 	// check path
 	TCHAR  path[ _MAX_PATH ];
@@ -131,7 +131,7 @@ bool SVCheckPathDir( LPCTSTR PathName, bool CreateIfDoesNotExist )
 			return false;
 		}
 
-		while( pLast = _tcspbrk( pLast, _T( "\\/" ) ) )
+		while(nullptr != (pLast = _tcspbrk( pLast, _T( "\\/" ))))
 		{
 			_tcsncpy( path, PathName, pLast++ - PathName + 1 );
 			path[ pLast - PathName ] = _TCHAR( '\0' );

@@ -50,7 +50,7 @@ namespace  SvXml
 		m_Variant.Clear();
 	}
 
-	VARIANT SVMaterialData::GetVARIANT()
+	VARIANT& SVMaterialData::GetVARIANT()
 	{
 		return m_Variant.GetVARIANT();
 	}

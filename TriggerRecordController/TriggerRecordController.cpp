@@ -942,7 +942,7 @@ bool TriggerRecordController::removeImageBuffer(uint32_t ownerID, const SVMatrox
 		assert(false);
 		return false;
 	}
-	auto& bufferMapIter = m_additionalBufferMap.find(ownerID);
+	auto bufferMapIter = m_additionalBufferMap.find(ownerID);
 	if (m_additionalBufferMap.end() != bufferMapIter)
 	{
 		std::string typeString(reinterpret_cast<const char*>(&bufferStruct), sizeof(bufferStruct));
@@ -988,7 +988,7 @@ bool TriggerRecordController::removeAllImageBuffer(uint32_t ownerID)
 	::OutputDebugString(DebugString.c_str());
 #endif
 
-	auto& bufferMapIter = m_additionalBufferMap.find(ownerID);
+	auto bufferMapIter = m_additionalBufferMap.find(ownerID);
 	if (m_additionalBufferMap.end() != bufferMapIter)
 	{
 		reduceRequiredImageBuffer(bufferMapIter->second);

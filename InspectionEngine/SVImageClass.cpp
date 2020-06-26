@@ -148,16 +148,8 @@ SVImageClass *SVImageClass::GetParentImage() const
 
 void SVImageClass::init()
 {
-	try
-	{
-		::InitializeCriticalSection(&m_hCriticalSection);
-
-		m_bCriticalSectionCreated = true;
-	}
-	catch (...)
-	{
-		m_bCriticalSectionCreated = false;
-	}
+	::InitializeCriticalSection(&m_hCriticalSection);
+	m_bCriticalSectionCreated = true;
 
 	m_ImageType = SvDef::SVImageTypeEnum::SVImageTypeUnknown;
 
@@ -785,79 +777,18 @@ const SVImageClass*const SVImageClass::GetRootImage() const
 	return this;
 }
 
-#ifdef _DEBUG
-//Moved to precompiled header: #include <map>
-namespace
-{
-std::map<DWORD, long> f_mapCritSec;
-};
-#endif
-
 bool SVImageClass::Lock() const
 {
-	bool l_bOk = false;
+	::EnterCriticalSection(&m_hCriticalSection);
 
-	try
-	{
-		::EnterCriticalSection(&m_hCriticalSection);
-
-		l_bOk = true;
-#ifdef _DEBUG
-		DWORD dwThreadId = ::GetCurrentThreadId();
-		f_mapCritSec[dwThreadId]++;
-		//! Double casting required to avoid warnings from 64 to 32 bit conversion
-		if (dwThreadId == static_cast<DWORD> (reinterpret_cast<LONGLONG> (m_hCriticalSection.OwningThread)))
-		{
-			long lRecursionCount = f_mapCritSec[dwThreadId];
-		}
-#endif
-	}
-	catch (...)
-	{
-		l_bOk = false;
-	}
-
-	return l_bOk;
+	return true;
 }
 
 bool SVImageClass::Unlock() const
 {
-	bool l_bOk = false;
+	::LeaveCriticalSection(&m_hCriticalSection);
 
-#ifdef _DEBUG
-	DWORD dwThreadId = ::GetCurrentThreadId();
-	//! Double casting required to avoid warnings from 64 to 32 bit conversion
-	assert(dwThreadId == static_cast<DWORD> (reinterpret_cast<LONGLONG> (m_hCriticalSection.OwningThread)));
-#endif
-
-	try
-	{
-#ifdef _DEBUG
-		//! Double casting required to avoid warnings from 64 to 32 bit conversion
-		if (dwThreadId == static_cast<DWORD> (reinterpret_cast<LONGLONG> (m_hCriticalSection.OwningThread)))
-		{
-			long lRecursionCount = f_mapCritSec[dwThreadId];
-			//assert( lRecursionCount == m_hCriticalSection.RecursionCount );
-		}
-		f_mapCritSec[dwThreadId]--;
-
-		// BRW - In Windows 7, LockCount doesn't mean what it meant in Windows XP.
-		// http://msdn.microsoft.com/en-us/library/windows/hardware/ff541979(v=vs.85).aspx
-#endif
-
-		::LeaveCriticalSection(&m_hCriticalSection);
-
-		l_bOk = true;
-	}
-	catch (...)
-	{
-		l_bOk = false;
-		assert(l_bOk == true);
-	}
-
-	assert(l_bOk == true);
-
-	return l_bOk;
+	return true;
 }
 
 HRESULT SVImageClass::RemoveObjectConnection(uint32_t objectID)
@@ -909,21 +840,20 @@ void SVImageClass::PersistImageAttributes(SvOi::IObjectWriter& rWriter)
 	rWriter.WriteAttribute(scBandLinkTag, Value);
 }
 
-HRESULT SVImageClass::SetObjectValue(SVObjectAttributeClass* PDataObject)
+HRESULT SVImageClass::SetObjectValue(SVObjectAttributeClass* pDataObject)
 {
 	HRESULT hr = E_FAIL;
-	bool bOk = false;
 
 	SvCl::SVObjectLongArrayClass svLongArray;
-
-	if ((bOk = PDataObject->GetAttributeData(_T("PixelDepth"), svLongArray)))
+	bool bOk{pDataObject->GetAttributeData(_T("PixelDepth"), svLongArray)};
+	if(bOk)
 	{
 		for (int i = 0; i < static_cast<int> (svLongArray.size()); i++)
 		{
 			m_ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, svLongArray[i]);
 		}
 	}
-	else if ((bOk = PDataObject->GetAttributeData(_T("BandNumber"), svLongArray)))
+	else if(true == (bOk = pDataObject->GetAttributeData(_T("BandNumber"), svLongArray)))
 	{
 		long BandNumber{0L};
 		for (int i = 0; i < static_cast<int> (svLongArray.size()); i++)
@@ -950,7 +880,7 @@ HRESULT SVImageClass::SetObjectValue(SVObjectAttributeClass* PDataObject)
 			}
 		}
 	}
-	else if ((bOk = PDataObject->GetAttributeData(_T("BandLink"), svLongArray)))
+	else if (true == (bOk = pDataObject->GetAttributeData(_T("BandLink"), svLongArray)))
 	{
 		for (int i = 0; i < static_cast<int> (svLongArray.size()); i++)
 		{
@@ -960,7 +890,7 @@ HRESULT SVImageClass::SetObjectValue(SVObjectAttributeClass* PDataObject)
 	}
 	else
 	{
-		hr = SVObjectAppClass::SetObjectValue(PDataObject);
+		hr = SVObjectAppClass::SetObjectValue(pDataObject);
 
 		m_LastUpdate = SvTl::GetTimeStamp();
 
@@ -1260,7 +1190,7 @@ void SVImageClass::copiedSavedImage(SvTrc::ITriggerRecordRWPtr pTr)
 		if (nullptr != m_savedBuffer && nullptr != image && !image->isEmpty())
 		{
 			HRESULT result = SVMatroxBufferInterface::CopyBuffer(image->getHandle()->GetBuffer(), m_savedBuffer->GetBuffer());
-			assert(S_OK == result);
+			assert(S_OK == result); UNREFERENCED_PARAMETER(result);
 		}
 	}
 }
@@ -1549,7 +1479,7 @@ void SVImageClass::copyCurrent2SaveImage()
 	if (nullptr != m_savedBuffer && nullptr != image)
 	{
 		HRESULT result = SVMatroxBufferInterface::CopyBuffer(m_savedBuffer->GetBuffer(), image->GetBuffer());
-		assert(S_OK == result);
+		assert(S_OK == result);		UNREFERENCED_PARAMETER(result);
 	}
 }
 

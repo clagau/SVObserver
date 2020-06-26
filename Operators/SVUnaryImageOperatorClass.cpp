@@ -101,7 +101,7 @@ bool SVUnaryImageOperatorClass::Run( bool First, SvOi::SVImageBufferHandlePtr RI
 // .Description : Runs this operator. MUST BE OVERRIDDEN !!!
 //              : Returns FALSE, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
-bool SVUnaryImageOperatorClass::onRun( bool First, SvOi::SVImageBufferHandlePtr RInputImageHandle, SvOi::SVImageBufferHandlePtr ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVUnaryImageOperatorClass::onRun( bool, SvOi::SVImageBufferHandlePtr, SvOi::SVImageBufferHandlePtr, SVRunStatusClass& , SvStl::MessageContainerVector* )
 {
 	assert(0);
 	return false;

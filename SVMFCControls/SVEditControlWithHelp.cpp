@@ -70,7 +70,7 @@ namespace SvMc
 		CEdit::OnKillFocus(pNewWnd);
 	}
 
-	HBRUSH SVEditControlWithHelp::CtlColor( CDC* pDC, UINT nCtlColor )
+	HBRUSH SVEditControlWithHelp::CtlColor( CDC* pDC, UINT )
 	{
 		if (m_isCurrentStringActive || !m_currentString.IsEmpty())
 		{

@@ -294,7 +294,7 @@ HRESULT SVLinearAnalyzerClass::GetInputUseRotationAngle(bool& rUseRotationAngle)
 	return Result;
 }
 
-HRESULT SVLinearAnalyzerClass::onCollectOverlays(SvIe::SVImageClass* pImage,SVExtentMultiLineStructVector& rMultiLineArray)
+HRESULT SVLinearAnalyzerClass::onCollectOverlays(SvIe::SVImageClass*,SVExtentMultiLineStructVector& rMultiLineArray)
 {
 	HRESULT l_hrRet = S_OK;
 	SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*>(GetTool());
@@ -420,7 +420,7 @@ HRESULT SVLinearAnalyzerClass::onCollectOverlays(SvIe::SVImageClass* pImage,SVEx
 	return l_hrRet;
 }
 
-void SVLinearAnalyzerClass::addOverlayGroups(const SvIe::SVImageClass* pImage, SvPb::Overlay& rOverlay) const
+void SVLinearAnalyzerClass::addOverlayGroups(const SvIe::SVImageClass*, SvPb::Overlay& rOverlay) const
 {
 	const SVImageExtentClass& rAnalyzerExtents = GetImageExtent();
 

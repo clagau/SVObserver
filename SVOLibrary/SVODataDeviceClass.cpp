@@ -12,7 +12,7 @@
 #include "stdafx.h"
 #include "SVODataDeviceClass.h"
 
-VOID CALLBACK SVODataDeviceClass::APCProc( ULONG_PTR dwParam )
+VOID CALLBACK SVODataDeviceClass::APCProc( ULONG_PTR  )
 {
 }
 
@@ -68,7 +68,7 @@ void SVODataDeviceClass::ClearDevice()
 /*
 This method creates the processing threads, events, and initializes processing queues.
 */
-HRESULT SVODataDeviceClass::Create( unsigned long ulSize )
+HRESULT SVODataDeviceClass::Create(unsigned long )
 {
 	HRESULT hrOk = S_OK;
 
@@ -394,7 +394,7 @@ HRESULT SVODataDeviceClass::Reset()
 /*
 This method processes the data in the device process thread.
 */
-HRESULT SVODataDeviceClass::Process( bool& p_WaitForEvents )
+HRESULT SVODataDeviceClass::Process( bool&  )
 {
 	HRESULT hrOk = S_OK;
 
@@ -534,7 +534,7 @@ HRESULT SVODataDeviceClass::ProcessResponse( SVDataResponseQueue &rUsedQueue, SV
 /*
 This method walks the Callback list and executes the provided callback with the provided response.
 */
-HRESULT SVODataDeviceClass::ExecuteCallback( SVCallbackClassPtrQueue &rCallbackList, SVODataResponseClass& p_rResponse )
+HRESULT SVODataDeviceClass::ExecuteCallback( SVCallbackClassPtrQueue&, SVODataResponseClass& p_rResponse )
 {
 	HRESULT hrOk = S_FALSE;
 

@@ -141,11 +141,11 @@ public:
 	SVLutEntry& operator () (UINT nBand, UINT nIndex);
 	const SVLutEntry& operator () (UINT nBand, UINT nIndex) const;
 
-	ULONG NumBands() const;
+	int NumBands() const;
 	const SVLutInfo& Info() const;
 
 private:
-	std::vector< SVLutBand > maBands;
+	std::vector< SVLutBand > m_Bands;
 	SVLutInfo mInfo;
 };
 

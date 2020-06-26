@@ -215,7 +215,7 @@ HRESULT SVTaskObjectClass::GetOutputListFiltered(SVObjectReferenceVector& rObjec
 	return S_OK;
 }
 
-HRESULT SVTaskObjectClass::IsAuxInputImage(const SvOl::SVInObjectInfoStruct* p_psvInfo) const
+HRESULT SVTaskObjectClass::IsAuxInputImage(const SvOl::SVInObjectInfoStruct*) const
 {
 	return S_FALSE;
 }
@@ -282,7 +282,7 @@ HRESULT SVTaskObjectClass::FindNextInputImageInfo(SvOl::SVInObjectInfoStruct*& p
 }
 
 
-void SVTaskObjectClass::removeTaskMessage(long MessageCode, SvStl::MessageTextEnum AdditionalTextId)
+void SVTaskObjectClass::removeTaskMessage(DWORD MessageCode, SvStl::MessageTextEnum AdditionalTextId)
 {
 	
 	auto it = std::find_if(m_ResetErrorMessages.begin(), m_ResetErrorMessages.end(),
@@ -707,12 +707,13 @@ void SVTaskObjectClass::ResolveDesiredInputs(const SvDef::SVObjectTypeInfoVector
 			pInInfo->SetInputObjectType(rDesiredInType);
 		}
 
-		const SvDef::SVObjectTypeInfoStruct& info = pInInfo->GetInputObjectInfo().m_ObjectTypeInfo;
+		const SvDef::SVObjectTypeInfoStruct& rInfo = pInInfo->GetInputObjectInfo().m_ObjectTypeInfo;
 
 		assert(SvDef::InvalidObjectId != pInInfo->GetInputObjectInfo().getObjectId() ||
-			SvPb::NoEmbeddedId != info.m_EmbeddedID ||
-			SvPb::SVNotSetObjectType != info.m_ObjectType ||
-			SvPb::SVNotSetSubObjectType != info.m_SubType);
+			SvPb::NoEmbeddedId != rInfo.m_EmbeddedID ||
+			SvPb::SVNotSetObjectType != rInfo.m_ObjectType ||
+			SvPb::SVNotSetSubObjectType != rInfo.m_SubType);
+		UNREFERENCED_PARAMETER(rInfo);
 	}
 }
 
@@ -903,12 +904,12 @@ HRESULT SVTaskObjectClass::SetImageExtentToParent()
 	return S_FALSE;
 }
 
-HRESULT SVTaskObjectClass::SetImageExtentToFit(const SVImageExtentClass& rImageExtent)
+HRESULT SVTaskObjectClass::SetImageExtentToFit(const SVImageExtentClass& )
 {
 	return S_FALSE;
 }
 
-HRESULT SVTaskObjectClass::GetPropertyInfo(SvPb::SVExtentPropertyEnum p_eProperty, SVExtentPropertyInfoStruct& p_rInfo) const
+HRESULT SVTaskObjectClass::GetPropertyInfo(SvPb::SVExtentPropertyEnum, SVExtentPropertyInfoStruct& ) const
 {
 	return S_FALSE;
 }
@@ -2027,7 +2028,7 @@ HRESULT SVTaskObjectClass::HideInputsOutputs(SVObjectPtrVector& rListOfObjects)
 	return S_OK;
 }
 
-HRESULT SVTaskObjectClass::GetDrawInfo(SVExtentMultiLineStruct& p_rMultiLine)
+HRESULT SVTaskObjectClass::GetDrawInfo(SVExtentMultiLineStruct&)
 {
 	HRESULT l_Status = S_OK;
 

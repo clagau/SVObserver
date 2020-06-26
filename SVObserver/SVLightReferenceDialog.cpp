@@ -245,16 +245,17 @@ BOOL SVLightReferenceDialogPropertyPageClass::OnInitDialog()
 	m_ValueSlider.SetTic( 127 );
 	m_ValueSlider.SetPageSize( 1 );
 
-	CWnd* pWnd;
+	CWnd* pWnd{nullptr};
 
 	std::vector<UINT> aChannels;
 	aChannels.push_back(IDC_CHANNEL0);
 	aChannels.push_back(IDC_CHANNEL1);
 	aChannels.push_back(IDC_CHANNEL2);
 
-	for ( int i = 0; i < static_cast<int>(aChannels.size()); i++)
+	for(int i = 0; i < static_cast<int>(aChannels.size()); i++)
 	{
-		if( pWnd = GetDlgItem( aChannels[i] ) )
+		pWnd = GetDlgItem(aChannels[i]);
+		if(nullptr != pWnd)
 		{
 			BOOL bEnable =  m_NumBands > 1 && (m_BandSize > 1 || m_CamBand == i);  // if there is only one band, don't enable any of the radio buttons
 			if ( i < m_pLR->NumBands() )
@@ -267,8 +268,8 @@ BOOL SVLightReferenceDialogPropertyPageClass::OnInitDialog()
 			pWnd->EnableWindow(bEnable);
 		}
 	}
-
-	if( pWnd = GetDlgItem( IDC_CHANNEL3 ) )
+	pWnd = GetDlgItem(IDC_CHANNEL3);
+	if(nullptr != pWnd)
 	{
 		BOOL bEnable = m_NumBands > 1 && (m_BandSize > 3 || m_CamBand == 3);
 		if ( nullptr == m_pLR->Band(m_CamBand).AttributeByName(std::string(CurrentName())) )

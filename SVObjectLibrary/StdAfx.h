@@ -71,6 +71,8 @@
 #include <boost/config.hpp>
 #include <boost/foreach.hpp>
 #include <boost/function.hpp>
+#pragma warning(disable : 4458 4459)
+#pragma warning(push)
 #include <boost/graph/adjacency_list.hpp>				//Used by static library
 #include <boost/graph/depth_first_search.hpp>			//Used by static library
 #include <boost/graph/breadth_first_search.hpp>			//Used by static library
@@ -78,6 +80,7 @@
 #include <boost/graph/filtered_graph.hpp>				//Used by static library
 #include <boost/graph/graphviz.hpp>						//Used by static library
 #include <boost/scoped_array.hpp>						//Used by static library
+#pragma warning(pop)
 #include <boost/tokenizer.hpp>
 #include <boost/utility.hpp>
 

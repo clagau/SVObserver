@@ -74,8 +74,6 @@ DWORD WINAPI SVEventThread<SVEventThreadSignalHandler>::ThreadProc( LPVOID lpPar
 	}
 	else
 	{
-		DWORD errorCode = GetLastError();
-
 		hrOk = E_FAIL;
 	}
 
@@ -169,7 +167,7 @@ void SVEventThread< SVEventThreadSignalHandler >::Destroy()
 
 			if( WAIT_OBJECT_0 != ::WaitForSingleObject( m_hThreadComplete, FIVE_SECONDS ) )
 			{
-				::TerminateThread( m_hThread, E_FAIL );
+				::TerminateThread(m_hThread, static_cast<DWORD> (E_FAIL));
 
 				::SetEvent( m_hThreadComplete );
 			}
@@ -180,7 +178,7 @@ void SVEventThread< SVEventThreadSignalHandler >::Destroy()
 		{
 			if( WAIT_TIMEOUT == ::WaitForSingleObject( m_hThread, 0 ) )
 			{
-				::TerminateThread( m_hThread, E_FAIL );
+				::TerminateThread(m_hThread, static_cast<DWORD> (E_FAIL));
 			}
 		}
 

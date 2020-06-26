@@ -143,8 +143,6 @@ void SVTestIODlg::OnTriggerButtonClicked( UINT nID )
 void SVTestIODlg::OnCancel()
 {
 	return;
-
-	CDialog::OnCancel();
 }
 
 

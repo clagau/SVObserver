@@ -221,7 +221,7 @@ BOOL SVLutDlgPage::OnInitDialog()
 
 	if( bAllVariablesSet )
 	{
-		CWnd* pWnd = nullptr;
+		CWnd* pWnd{nullptr};
 
 		// Set Normalize Mode of Graph Control...
 		m_LUTGraph.SetNormalizeMode( SvMc::SVNormalizeXYMinMax );
@@ -230,7 +230,8 @@ BOOL SVLutDlgPage::OnInitDialog()
 		if ( 3 == m_iBandWidth )
 		{
 			// show color band controls if color LUT
-			if (pWnd = GetDlgItem(IDC_COLOR_BAND_SYNC))
+			pWnd = GetDlgItem(IDC_COLOR_BAND_SYNC);
+			if (nullptr != pWnd)
 			{
 				((CButton*)pWnd)->SetCheck(TRUE);
 			}
@@ -238,10 +239,10 @@ BOOL SVLutDlgPage::OnInitDialog()
 			bool bSame = true;
 			for (unsigned int j=0; bSame && j < m_Lut.Info().BandSize(); j++)
 			{
-				long lVal = m_Lut(0, j);
-				for (unsigned int iBand=1; iBand < m_Lut.NumBands(); iBand++)
+				unsigned long lutValue = m_Lut(0, j);
+				for (int iBand=1; iBand < m_Lut.NumBands(); iBand++)
 				{
-					bSame = bSame && (m_Lut(iBand, j) == lVal);
+					bSame = bSame && (m_Lut(iBand, j) == lutValue);
 				}
 			}
 			if (!bSame)
@@ -256,23 +257,23 @@ BOOL SVLutDlgPage::OnInitDialog()
 			 m_pCamera->GetBand(m_iCurrentBand);
 
 			// hide color band controls if not color LUT
-			if (pWnd = GetDlgItem(IDC_COLOR_BAND_ALL))
+			if (nullptr != (pWnd = GetDlgItem(IDC_COLOR_BAND_ALL)))
 			{
 				pWnd->ShowWindow( SW_HIDE );
 			}
-			if (pWnd = GetDlgItem(IDC_COLOR_BAND_BLUE))
+			if (nullptr != (pWnd = GetDlgItem(IDC_COLOR_BAND_BLUE)))
 			{
 				pWnd->ShowWindow( SW_HIDE );
 			}
-			if (pWnd = GetDlgItem(IDC_COLOR_BAND_GREEN))
+			if (nullptr != (pWnd = GetDlgItem(IDC_COLOR_BAND_GREEN)))
 			{
 				pWnd->ShowWindow( SW_HIDE );
 			}
-			if (pWnd = GetDlgItem(IDC_COLOR_BAND_RED))
+			if (nullptr != (pWnd = GetDlgItem(IDC_COLOR_BAND_RED)))
 			{
 				pWnd->ShowWindow( SW_HIDE );
 			}
-			if (pWnd = GetDlgItem(IDC_COLOR_BAND_SYNC))
+			if (nullptr != (pWnd = GetDlgItem(IDC_COLOR_BAND_SYNC)))
 			{
 				pWnd->ShowWindow( SW_HIDE );
 			}
@@ -332,28 +333,28 @@ BOOL SVLutDlgPage::OnInitDialog()
 void SVLutDlgPage::ShowBoundaryControls(bool bShow)
 {
 	UINT cmd = (bShow) ? SW_SHOW : SW_HIDE;
-	CWnd* pWnd(nullptr);
-	if( pWnd = GetDlgItem( IDC_UPPER_EDIT ) )
+	CWnd* pWnd = GetDlgItem( IDC_UPPER_EDIT );
+	if(nullptr != pWnd)
 	{
 		pWnd->ShowWindow( cmd );
 	}
-	if( pWnd = GetDlgItem( IDC_UPPER_SLIDER ) )
+	if(nullptr != (pWnd = GetDlgItem( IDC_UPPER_SLIDER )))
 	{
 		pWnd->ShowWindow( cmd );
 	}
-	if( pWnd = GetDlgItem( IDC_UPPER_STATIC ) )
+	if (nullptr != (pWnd = GetDlgItem(IDC_UPPER_STATIC)))
 	{
 		pWnd->ShowWindow( cmd );
 	}
-	if( pWnd = GetDlgItem( IDC_LOWER_EDIT ) )
+	if (nullptr != (pWnd = GetDlgItem(IDC_LOWER_EDIT)))
 	{
 		pWnd->ShowWindow( cmd );
 	}
-	if( pWnd = GetDlgItem( IDC_LOWER_SLIDER ) )
+	if (nullptr != (pWnd = GetDlgItem(IDC_LOWER_SLIDER)))
 	{
 		pWnd->ShowWindow( cmd );
 	}
-	if( pWnd = GetDlgItem( IDC_LOWER_STATIC ) )
+	if (nullptr != (pWnd = GetDlgItem(IDC_LOWER_STATIC)))
 	{
 		pWnd->ShowWindow( cmd );
 	}
@@ -362,36 +363,36 @@ void SVLutDlgPage::ShowBoundaryControls(bool bShow)
 void SVLutDlgPage::ShowRangeControls(bool bShow)
 {
 	UINT cmd = (bShow) ? SW_SHOW : SW_HIDE;
-	CWnd* pWnd(nullptr);
-	if( pWnd = GetDlgItem( IDC_STATIC_X1 ) )
+	CWnd* pWnd = GetDlgItem(IDC_STATIC_X1);
+	if(nullptr != pWnd)
 	{
 		pWnd->ShowWindow( cmd );
 	}
-	if( pWnd = GetDlgItem( IDC_STATIC_Y1 ) )
+	if (nullptr != (pWnd = GetDlgItem(IDC_STATIC_Y1)))
 	{
 		pWnd->ShowWindow( cmd );
 	}
-	if( pWnd = GetDlgItem( IDC_STATIC_X2 ) )
+	if (nullptr != (pWnd = GetDlgItem(IDC_STATIC_X2)))
 	{
 		pWnd->ShowWindow( cmd );
 	}
-	if( pWnd = GetDlgItem( IDC_STATIC_Y2 ) )
+	if (nullptr != (pWnd = GetDlgItem(IDC_STATIC_Y2)))
 	{
 		pWnd->ShowWindow( cmd );
 	}
-	if( pWnd = GetDlgItem( IDC_X1 ) )
+	if (nullptr != (pWnd = GetDlgItem(IDC_X1)))
 	{
 		pWnd->ShowWindow( cmd );
 	}
-	if( pWnd = GetDlgItem( IDC_Y1 ) )
+	if (nullptr != (pWnd = GetDlgItem(IDC_Y1)))
 	{
 		pWnd->ShowWindow( cmd );
 	}
-	if( pWnd = GetDlgItem( IDC_X2 ) )
+	if (nullptr != (pWnd = GetDlgItem(IDC_X2)))
 	{
 		pWnd->ShowWindow( cmd );
 	}
-	if( pWnd = GetDlgItem( IDC_Y2 ) )
+	if (nullptr != (pWnd = GetDlgItem(IDC_Y2)))
 	{
 		pWnd->ShowWindow( cmd );
 	}
@@ -399,7 +400,6 @@ void SVLutDlgPage::ShowRangeControls(bool bShow)
 
 void SVLutDlgPage::Refresh()
 {
-	CWnd* pWnd = nullptr;
 	if( true )
 	{
 		// Recalc LUT...
@@ -578,9 +578,9 @@ void SVLutDlgPage::Refresh()
 void SVLutDlgPage::ShowControls(bool bShow, SVLutTransformOperationEnum e)
 {
 	UINT nCmd = bShow ? SW_SHOW : SW_HIDE;
-	CWnd* pWnd;
+	CWnd* pWnd = GetDlgItem(IDC_FORMULA_BUTTON);
 
-	if( pWnd = GetDlgItem( IDC_FORMULA_BUTTON ) )
+	if(nullptr != pWnd)
 	{
 		pWnd->ShowWindow( nCmd );
 	}
@@ -589,19 +589,19 @@ void SVLutDlgPage::ShowControls(bool bShow, SVLutTransformOperationEnum e)
 	{
 		nCmdRangeShow = SW_HIDE;
 	}
-	if ( pWnd = GetDlgItem( IDC_STATIC_RANGE_0_0 ) )
+	if (nullptr != (pWnd = GetDlgItem(IDC_STATIC_RANGE_0_0)))
 	{
 		pWnd->ShowWindow( nCmdRangeShow );
 	}
-	if ( pWnd = GetDlgItem( IDC_STATIC_RANGE_X_MAX ) )
+	if (nullptr != (pWnd = GetDlgItem(IDC_STATIC_RANGE_X_MAX)))
 	{
 		pWnd->ShowWindow( nCmdRangeShow );
 	}
-	if ( pWnd = GetDlgItem( IDC_STATIC_RANGE_Y_MAX ) )
+	if (nullptr != (pWnd = GetDlgItem(IDC_STATIC_RANGE_Y_MAX)))
 	{
 		pWnd->ShowWindow( nCmdRangeShow );
 	}
-	if ( pWnd = GetDlgItem( IDC_STATIC_RANGE_XY_MAX ) )
+	if (nullptr != (pWnd = GetDlgItem(IDC_STATIC_RANGE_XY_MAX)))
 	{
 		pWnd->ShowWindow( nCmdRangeShow );
 	}
@@ -624,45 +624,45 @@ void SVLutDlgPage::ShowControls(bool bShow, SVLutTransformOperationEnum e)
 
 void SVLutDlgPage::EnableControls(bool bEnable)
 {
-	CWnd* pWnd(nullptr);
+	CWnd* pWnd = GetDlgItem( IDC_CONTINUOUS_RECALC_CHECK );
 
-	if( pWnd = GetDlgItem( IDC_CONTINUOUS_RECALC_CHECK ) )
+	if(nullptr != pWnd)
 	{
 		pWnd->EnableWindow( bEnable );
 	}
-	if( pWnd = GetDlgItem( IDC_LUT_MODE_COMBO ) )
+	if (nullptr != (pWnd = GetDlgItem(IDC_LUT_MODE_COMBO)))
 	{
 		pWnd->EnableWindow( bEnable );
 	}
-	if( pWnd = GetDlgItem( IDC_LUT_GRAPH ) )
+	if (nullptr != (pWnd = GetDlgItem(IDC_LUT_GRAPH)))
 	{
 		pWnd->EnableWindow( bEnable );
 	}
-	if( pWnd = GetDlgItem( IDC_FORMULA_BUTTON ) )
+	if (nullptr != (pWnd = GetDlgItem(IDC_FORMULA_BUTTON)))
 	{
 		pWnd->EnableWindow( bEnable );
 	}
-	if( pWnd = GetDlgItem( IDC_UPPER_EDIT ) )
+	if (nullptr != (pWnd = GetDlgItem(IDC_UPPER_EDIT)))
 	{
 		pWnd->EnableWindow( bEnable );
 	}
-	if( pWnd = GetDlgItem( IDC_UPPER_SLIDER ) )
+	if (nullptr != (pWnd = GetDlgItem(IDC_UPPER_SLIDER)))
 	{
 		pWnd->EnableWindow( bEnable );
 	}
-	if( pWnd = GetDlgItem( IDC_UPPER_STATIC ) )
+	if (nullptr != (pWnd = GetDlgItem(IDC_UPPER_STATIC)))
 	{
 		pWnd->EnableWindow( bEnable );
 	}
-	if( pWnd = GetDlgItem( IDC_LOWER_EDIT ) )
+	if (nullptr != (pWnd = GetDlgItem(IDC_LOWER_EDIT)))
 	{
 		pWnd->EnableWindow( bEnable );
 	}
-	if( pWnd = GetDlgItem( IDC_LOWER_SLIDER ) )
+	if (nullptr != (pWnd = GetDlgItem(IDC_LOWER_SLIDER)))
 	{
 		pWnd->EnableWindow( bEnable );
 	}
-	if( pWnd = GetDlgItem( IDC_LOWER_STATIC ) )
+	if (nullptr != (pWnd = GetDlgItem(IDC_LOWER_STATIC)))
 	{
 		pWnd->EnableWindow( bEnable );
 	}
@@ -744,7 +744,7 @@ void SVLutDlgPage::OnContinuousRecalcCheck()
 {
 }
 
-LRESULT SVLutDlgPage::OnGraphRefresh( WPARAM wparam, LPARAM lparam )
+LRESULT SVLutDlgPage::OnGraphRefresh(WPARAM, LPARAM)
 {
 	Refresh();
 	return true;
@@ -867,7 +867,7 @@ BOOL CALLBACK SVLutDlgPage::GraphMousePointCallback( POINT point_, LPVOID pThis_
 					// set value at xPos, (int) dY
 					if (-1 == pThis->m_iCurrentBand)
 					{
-						for (unsigned int iBand=0; iBand < pThis->m_Lut.NumBands(); iBand++)
+						for (int iBand=0; iBand < pThis->m_Lut.NumBands(); iBand++)
 						{
 							pThis->m_Lut(iBand)(xPos) = (int) dY;
 						}
@@ -929,7 +929,7 @@ void SVLutDlgPage::OnColorBandSync()
 		// copy current band data to all other bands
 		if ( -1 != m_iCurrentBand )
 		{
-			for (unsigned int iBand=0; iBand < m_Lut.NumBands(); iBand++)
+			for (int iBand=0; iBand < m_Lut.NumBands(); iBand++)
 			{
 				if (iBand == m_iCurrentBand)
 					continue;

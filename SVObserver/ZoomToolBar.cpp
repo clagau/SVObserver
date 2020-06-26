@@ -100,7 +100,6 @@ int ZoomToolBar::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	TEXTMETRIC tm;
 	dc.GetTextMetrics(&tm);
 	int cxChar = tm.tmAveCharWidth;
-	int cyChar = tm.tmHeight + tm.tmExternalLeading;
 	dc.SelectObject(pOldFont);
 	
 	CRect rect;

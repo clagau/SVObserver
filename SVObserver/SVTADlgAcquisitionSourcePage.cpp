@@ -31,7 +31,7 @@ BEGIN_MESSAGE_MAP(SVToolAdjustmentDialogAcquisitionSourcePageClass, CPropertyPag
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-SVToolAdjustmentDialogAcquisitionSourcePageClass::SVToolAdjustmentDialogAcquisitionSourcePageClass(uint32_t inspectionID, uint32_t taskObjectID, SVToolAdjustmentDialogSheetClass* pSheet )
+SVToolAdjustmentDialogAcquisitionSourcePageClass::SVToolAdjustmentDialogAcquisitionSourcePageClass(uint32_t, uint32_t , SVToolAdjustmentDialogSheetClass* pSheet)
 : CPropertyPage(SVToolAdjustmentDialogAcquisitionSourcePageClass::IDD)
 , m_pSheet(pSheet)
 {
@@ -56,7 +56,7 @@ BOOL SVToolAdjustmentDialogAcquisitionSourcePageClass::OnInitDialog()
 
 	UpdateData( FALSE );
 
-	if( m_pSheet && ( m_pTaskObject = m_pSheet->GetTaskObject() ) && SvPb::SVToolAcquisitionObjectType == m_pTaskObject->GetObjectSubType())
+	if( m_pSheet && nullptr != (m_pTaskObject = m_pSheet->GetTaskObject()) && SvPb::SVToolAcquisitionObjectType == m_pTaskObject->GetObjectSubType())
 	{
 		// Try to get main image of the current acquisition tool...
 		SvDef::SVObjectTypeInfoStruct info;

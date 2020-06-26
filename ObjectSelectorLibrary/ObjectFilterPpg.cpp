@@ -157,7 +157,7 @@ namespace SvOsl
 		}
 	}
 
-	void ObjectFilterPpg::OnGridRClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
+	void ObjectFilterPpg::OnGridRClick(NMHDR *, LRESULT* /*pResult*/)
 	{
 		CPoint p;
 		if (GetCursorPos(&p))
@@ -274,10 +274,8 @@ namespace SvOsl
 		//add leaves
 		int i = 1;
 		m_Grid.SetRowCount(i);
-		std::string filterNameUpper(m_FilterNameControl.getEditText());
-		std::string filterLocationUpper(m_FilterLocationControl.getEditText());
-		SvUl::MakeUpper(filterNameUpper);
-		SvUl::MakeUpper(filterLocationUpper);
+		std::string filterNameUpper = SvUl::MakeUpper(m_FilterNameControl.getEditText());
+		std::string filterLocationUpper = SvUl::MakeUpper(m_FilterLocationControl.getEditText());
 		SvCl::ObjectTreeItems::pre_order_iterator Iter = m_rTreeContainer.pre_order_begin();
 		while( m_rTreeContainer.pre_order_end() != Iter )
 		{
@@ -289,11 +287,8 @@ namespace SvOsl
 				}
 				int checkSelection = m_checkedControl.GetCurSel();
 				int typeSelection = m_TypeControl.GetCurSel();
-				std::string nameUpper(Iter->second->m_Name);
-				std::string locationUpper(Iter->second->m_Location);
-				SvUl::MakeUpper(nameUpper);
-				SvUl::MakeUpper(locationUpper);
-
+				std::string nameUpper = SvUl::MakeUpper(Iter->second->m_Name.c_str());
+				std::string locationUpper = SvUl::MakeUpper(Iter->second->m_Location.c_str());
 				bool isNameValid = SvUl::isSubmatch(nameUpper, filterNameUpper);
 				bool isLocationValid = SvUl::isSubmatch(locationUpper, filterLocationUpper);
 				CString typeText = _T("");
@@ -358,7 +353,7 @@ namespace SvOsl
 		}
 	}
 
-	void ObjectFilterPpg::changeCheckState( const std::string& rLocation, bool isChecked, int rowNumber )
+	void ObjectFilterPpg::changeCheckState( const std::string& rLocation, bool isChecked, int)
 	{
 		SvCl::ObjectTreeItems::iterator iter = m_rTreeContainer.findItem(rLocation);
 		if( m_rTreeContainer.end() != iter )

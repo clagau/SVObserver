@@ -1044,8 +1044,6 @@ BOOL CSVOPropertyPageDlg::OnInitDialog()
 	// Create a root item (root items should always be SVRPropertyItem object since they
 	// can not have properties
 	
-	bool bResult = false;
-	
 	m_Tree.SetColumn( (long) ( rc.Width() * 0.30 ) );
 
 	switch(m_nID)
@@ -1232,17 +1230,17 @@ void CSVOPropertyPageDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 											//UpdateCameraGigeBinningParameters
 											if (params.ParameterExists(DeviceParamVerticalBinning))
 											{
-												SVLongValueDeviceParam* pParam(nullptr);
-												params.GetParameter(DeviceParamVerticalBinning).GetDerivedValue(pParam);
-												pParam->lValue = 1;
-												params.SetParameter(DeviceParamVerticalBinning,pParam);
+												SVLongValueDeviceParam* pbinningParam(nullptr);
+												params.GetParameter(DeviceParamVerticalBinning).GetDerivedValue(pbinningParam);
+												pbinningParam->lValue = 1;
+												params.SetParameter(DeviceParamVerticalBinning, pbinningParam);
 											}
 											if (params.ParameterExists(DeviceParamHorizontalBinning))
 											{
-												SVLongValueDeviceParam* pParam(nullptr);
-												params.GetParameter(DeviceParamHorizontalBinning).GetDerivedValue(pParam);
-												pParam->lValue = 1;
-												params.SetParameter(DeviceParamHorizontalBinning,pParam);
+												SVLongValueDeviceParam* pbinningParam(nullptr);
+												params.GetParameter(DeviceParamHorizontalBinning).GetDerivedValue(pbinningParam);
+												pbinningParam->lValue = 1;
+												params.SetParameter(DeviceParamHorizontalBinning, pbinningParam);
 											}										
 										}
 									}
@@ -1314,8 +1312,7 @@ void CSVOPropertyPageDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 				{
 					std::string FileName;
 					m_Tree.FindItem(PROP_AD_FILE_NAME)->GetItemValue( FileName );
-					SvUl::TrimLeft( FileName );
-					SvUl::TrimRight( FileName );
+					FileName = SvUl::Trim(FileName.c_str());
 					//! Check if file exists
 					if (!FileName.empty() && 0 != _access(FileName.c_str(), 0))
 					{

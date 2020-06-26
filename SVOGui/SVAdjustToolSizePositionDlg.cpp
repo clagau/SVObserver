@@ -186,7 +186,7 @@ BOOL SVAdjustToolSizePositionDlg::OnInitDialog()
 	return TRUE;  // return TRUE unless you set the focus to a control
 }
 
-LRESULT SVAdjustToolSizePositionDlg::OnNotifyLButtonDown(WPARAM wParam, LPARAM lParam)
+LRESULT SVAdjustToolSizePositionDlg::OnNotifyLButtonDown(WPARAM , LPARAM lParam)
 {
 	m_pButton = reinterpret_cast <SvMc::SVUpDownButton*> (lParam);
 
@@ -196,7 +196,7 @@ LRESULT SVAdjustToolSizePositionDlg::OnNotifyLButtonDown(WPARAM wParam, LPARAM l
 	return 0;
 }
 
-LRESULT SVAdjustToolSizePositionDlg::OnNotifyLButtonUp(WPARAM wParam, LPARAM lParam)
+LRESULT SVAdjustToolSizePositionDlg::OnNotifyLButtonUp(WPARAM, LPARAM )
 {
 	KillTimer(TIMER_PAUSE);
 	KillTimer(TIMER_REPEAT);

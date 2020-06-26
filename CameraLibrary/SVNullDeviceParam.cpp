@@ -25,7 +25,7 @@ SVNullDeviceParam::SVNullDeviceParam()
 }
 
 // Why pass a parameter and not use it...
-SVNullDeviceParam::SVNullDeviceParam(SVDeviceParamEnum typeEnum)
+SVNullDeviceParam::SVNullDeviceParam(SVDeviceParamEnum )
 : SVDeviceParam(DeviceParamInvalid)
 {
 }
@@ -39,7 +39,7 @@ SVNullDeviceParam::~SVNullDeviceParam()
 {
 }
 
-SVNullDeviceParam& SVNullDeviceParam::operator=(const SVNullDeviceParam& rhs)
+SVNullDeviceParam& SVNullDeviceParam::operator=(const SVNullDeviceParam&)
 {
 	return *this;
 }

@@ -50,7 +50,7 @@ namespace SvSml
 		
 		const MonitorListCpy*  GetMonitorListCpyPointerForPPQ(const std::string& PPQName)  const;
 	
-		DWORD GetInspectionStoreId(const std::string& rInspectionName) const;
+		int GetInspectionStoreId(const std::string& rInspectionName) const;
 	
 		void Insert(MonitorListCpyPointer& rMLCpyPtr);
 		

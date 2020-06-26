@@ -75,12 +75,12 @@ UINT SVFigureEditor::OnHitTest( CPoint point )	// visual hit test
 	return HitTest( point ).CursorHT();
 }
 
-HRESULT SVFigureEditor::Draw( HDC hDC ) const
+HRESULT SVFigureEditor::Draw( HDC  ) const
 {
 	return E_NOTIMPL;
 }
 
-HRESULT SVFigureEditor::PaintOverlay( CDC& dc, CRect rectViewport, CRect rectDisplay )
+HRESULT SVFigureEditor::PaintOverlay( CDC& , CRect , CRect  )
 {
 	return E_NOTIMPL;
 }
@@ -108,7 +108,7 @@ HRESULT SVFigureEditor::LButtonDown(UINT nFlags, CPoint point)
 	return hr;
 }
 
-HRESULT SVFigureEditor::LButtonUp(UINT nFlags, CPoint point)
+HRESULT SVFigureEditor::LButtonUp(UINT, CPoint)
 {
 	HRESULT hr = S_OK;
 

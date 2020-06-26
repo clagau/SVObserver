@@ -81,6 +81,6 @@ namespace SvMc
 		{
 			return GetItemData(sel);
 		}
-		return -1;
+		return 0;
 	}
 } //namespace SvMc

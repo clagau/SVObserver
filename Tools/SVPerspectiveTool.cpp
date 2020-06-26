@@ -85,8 +85,8 @@ HRESULT SVPerspectiveToolClass::UpdateOutputImageExtents()
 	/*l_hrOk = */OutputExtents.SetExtentProperty( SvPb::SVExtentPropertyHeight, l_dValue );
 
 	// Set Translation
-	bool l_bHideX;
-	long l_lType;
+	bool l_bHideX{false};
+	long l_lType{0L};
 	m_svWarpType.GetValue( l_lType );
 	WarpType l_eType = ( WarpType ) l_lType;
 	if( l_eType == WarpTypeHorizontal )
@@ -511,7 +511,7 @@ HRESULT SVPerspectiveToolClass::SetImageExtent(const SVImageExtentClass& rImageE
 	return l_hrOk;
 }
 
-void SVPerspectiveToolClass::addOverlays(const SvIe::SVImageClass* pImage, SvPb::OverlayDesc& rOverlay) const
+void SVPerspectiveToolClass::addOverlays(const SvIe::SVImageClass*, SvPb::OverlayDesc& rOverlay) const
 {
 	auto* pOverlay = rOverlay.add_overlays();
 	pOverlay->set_name(GetName());

@@ -86,7 +86,7 @@ public:
 
 	//// new code to load values into array positions in a single bucket.
 	template <typename T>	
-	bool GetArrayData(LPCTSTR szName, std::vector<T>& raData, T defaultValue)
+	bool GetArrayData(LPCTSTR szName, std::vector<T>& raData, T )
 	{// VC6 compiler limitation: code must be here (inside the class definition)
 		std::vector<T> svTempArray;
 		bool bOk = GetAttributeData( szName, svTempArray );

@@ -18,7 +18,11 @@
 #include "PropVariant.h"
 #include "InStreamWrapper.h"
 
-static const LONGLONG cTimeConvertOffset = 116444736000000000;
+constexpr GUID cICompressProgressInfo = {0x23170F69, 0x40C1, 0x278A, {0x00, 0x00, 0x00, 0x04, 0x00, 0x04, 0x00, 0x00}};
+constexpr GUID cICryptoGetTextPassword2 = {0x23170F69, 0x40C1, 0x278A, {0x00, 0x00, 0x00, 0x05, 0x00, 0x11, 0x00, 0x00}};
+constexpr GUID cIArchiveUpdateCallback = {0x23170F69, 0x40C1, 0x278A, {0x00, 0x00, 0x00, 0x06, 0x00, 0x80, 0x00, 0x00}};
+
+constexpr LONGLONG cTimeConvertOffset = 116444736000000000;
 
 ArchiveUpdateCallback::ArchiveUpdateCallback(const std::vector<std::string>& rFiles, const std::string& rFolderPrefix)
 	: m_rFiles {rFiles}
@@ -47,21 +51,21 @@ STDMETHODIMP ArchiveUpdateCallback::QueryInterface(REFIID iid, void** ppvObject)
 		return S_OK;
 	}
 
-	if (iid == IID_IArchiveUpdateCallback)
+	if (iid == cIArchiveUpdateCallback)
 	{
 		*ppvObject = static_cast<IArchiveUpdateCallback*>(this);
 		AddRef();
 		return S_OK;
 	}
 
-	if (iid == IID_ICryptoGetTextPassword2)
+	if (iid == cICryptoGetTextPassword2)
 	{
 		*ppvObject = static_cast<ICryptoGetTextPassword2*>(this);
 		AddRef();
 		return S_OK;
 	}
 
-	if (iid == IID_ICompressProgressInfo)
+	if (iid == cICompressProgressInfo)
 	{
 		*ppvObject = static_cast<ICompressProgressInfo*>(this);
 		AddRef();
@@ -86,17 +90,17 @@ STDMETHODIMP_(ULONG) ArchiveUpdateCallback::Release()
 	return res;
 }
 
-STDMETHODIMP ArchiveUpdateCallback::SetTotal(UInt64 size)
+STDMETHODIMP ArchiveUpdateCallback::SetTotal(UInt64 )
 {
 	return S_OK;
 }
 
-STDMETHODIMP ArchiveUpdateCallback::SetCompleted(const UInt64* completeValue)
+STDMETHODIMP ArchiveUpdateCallback::SetCompleted(const UInt64* )
 {
 	return S_OK;
 }
 
-STDMETHODIMP ArchiveUpdateCallback::GetUpdateItemInfo(UInt32 index, Int32* newData, Int32* newProperties, UInt32* indexInArchive)
+STDMETHODIMP ArchiveUpdateCallback::GetUpdateItemInfo(UInt32 , Int32* newData, Int32* newProperties, UInt32* indexInArchive)
 {
 	// Setting info for Create mode (vs. Append mode).
 	// TODO: support append mode
@@ -224,7 +228,7 @@ STDMETHODIMP ArchiveUpdateCallback::GetStream(UInt32 index, ISequentialInStream*
 	return S_OK;
 }
 
-STDMETHODIMP ArchiveUpdateCallback::SetOperationResult(Int32 operationResult)
+STDMETHODIMP ArchiveUpdateCallback::SetOperationResult(Int32 )
 {
 	return S_OK;
 }
@@ -237,7 +241,7 @@ STDMETHODIMP ArchiveUpdateCallback::CryptoGetTextPassword2(Int32* passwordIsDefi
 	return *password != 0 ? S_OK : E_OUTOFMEMORY;
 }
 
-STDMETHODIMP ArchiveUpdateCallback::SetRatioInfo(const UInt64* inSize, const UInt64* outSize)
+STDMETHODIMP ArchiveUpdateCallback::SetRatioInfo(const UInt64* , const UInt64* )
 {
 	return S_OK;
 }

@@ -347,7 +347,8 @@ void SVExternalToolTask::CreateArrayInTable()
 		{
 			resultTableSortContainer[i] = i;
 		}
-		pTab->setSortContainer(resultTableSortContainer, SVRunStatusClass());
+		SVRunStatusClass runStatus;
+		pTab->setSortContainer(resultTableSortContainer, runStatus);
 	}
 }
 bool SVExternalToolTask::CreateTableObjects()
@@ -635,9 +636,9 @@ HRESULT SVExternalToolTask::Initialize(SVDllLoadLibraryCallback fnNotify, bool i
 
 	HRESULT hr = S_FALSE;
 	BSTR bstrName = nullptr;
-	HRESULT hrUninitializeRun = m_dll.UninitializeRun(getObjectId());
-	HRESULT hrClose = m_dll.Close();
-	HRESULT hrUninitialize = Uninitialize();
+	m_dll.UninitializeRun(getObjectId());
+	m_dll.Close();
+	Uninitialize();
 
 	m_aInspectionInputImages.clear();
 	m_InspectionInputValues.clear();
@@ -2118,7 +2119,6 @@ void SVExternalToolTask::updateImageInputInfo()
 	bool resetConnects = false;
 	for (int i = 0; i < m_aInputImageInformationStructs.size(); ++i)
 	{
-		SvPb::SVObjectSubTypeEnum subType = SvPb::SVNotSetSubObjectType;
 		bool mono = m_aInputImageInformationStructs[i].mayBeBlackAndWhite();
 		bool color = m_aInputImageInformationStructs[i].mayBeColor();
 		if (mono && !color)

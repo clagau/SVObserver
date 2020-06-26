@@ -143,8 +143,6 @@ bool SVIOController::RebuildOutputList()
 	{
 		return SetRaidErrorBit( true );
 	}
-
-	return true;
 }
 
 bool SVIOController::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent )

@@ -26,7 +26,7 @@ static char THIS_FILE[] = __FILE__;
 // SVBarCodeStringMatchDialog dialog
 
 
-SVBarCodeStringMatchDialog::SVBarCodeStringMatchDialog(CWnd* pParent /*=nullptr*/)
+SVBarCodeStringMatchDialog::SVBarCodeStringMatchDialog(CWnd* /*=nullptr*/)
 	: CPropertyPage(SVBarCodeStringMatchDialog::IDD)
 {
 	m_SaveInFile = FALSE;

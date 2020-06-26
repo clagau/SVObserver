@@ -361,7 +361,6 @@ void ResultViewReferences::InsertFromPPQInputs(SVInspectionProcess* pInspection)
 {
 	// Insert all PPQ input items that are picked for viewing
 	
-	size_t PpqInputSize = 0;
 	if( nullptr != pInspection )
 	{
 		for(const auto& rpInputEntry : pInspection->m_PPQInputs)

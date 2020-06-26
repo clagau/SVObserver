@@ -316,7 +316,7 @@ DWORD SVBlobAnalyzerClass::AllocateResult(int FeatureIndex)
 	{	
 		SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
 		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16111, getObjectId());
-		return -SvStl::Err_16111;
+		return static_cast<DWORD> (-SvStl::Err_16111);
 	}
 
 	Add(pResult);
@@ -332,7 +332,7 @@ DWORD SVBlobAnalyzerClass::AllocateResult(int FeatureIndex)
 	{
 		SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
 		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16112, getObjectId());
-		return -SvStl::Err_16112 ; 
+		return static_cast<DWORD> (-SvStl::Err_16112);
 	}
 
 	pValue->SetObjectAttributesAllowed( SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::RemoveAttribute );
@@ -406,7 +406,7 @@ DWORD SVBlobAnalyzerClass::AllocateBlobResult ()
 		{
 			SvStl::MessageMgrStd  Ex(SvStl::MsgType::Log | SvStl::MsgType::Display );
 			Ex.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16113, getObjectId());
-			LastError =   -SvStl::Err_16113 ; 
+			LastError = static_cast<DWORD> (-SvStl::Err_16113);
 			break;
 		}
 		
@@ -422,7 +422,7 @@ DWORD SVBlobAnalyzerClass::AllocateBlobResult ()
 		{		
 			SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16114, getObjectId());
-			LastError = -SvStl::Err_16114 ; 
+			LastError = static_cast<DWORD> (-SvStl::Err_16114);
 			break;
 		}
 		
@@ -706,7 +706,7 @@ bool SVBlobAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCreateS
 		{
 			m_SortFeature.SetValue(1L);
 		}
-		if(!m_pResultBlob && !(m_pResultBlob = GetBlobResultObject()))
+		if(nullptr == m_pResultBlob && nullptr == (m_pResultBlob = GetBlobResultObject()))
 		{
 			if (AllocateBlobResult() & SvDef::svErrorCondition)
 			{
@@ -1426,8 +1426,7 @@ DWORD SVBlobAnalyzerClass::BuildFeatureListID ()
 	{
 		SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log);
 		MesMan.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16150);
-		LastError = -SvStl::Err_16150;
-		return LastError;
+		LastError = static_cast<DWORD> (-SvStl::Err_16150);
 	}	
 
 	return LastError;
@@ -1490,7 +1489,7 @@ bool SVBlobAnalyzerClass::IsPtOverResult( const POINT& rPoint )
 	return ( m_nBlobIndex != -1 );
 }
 
-void SVBlobAnalyzerClass::addParameterForMonitorList(SvStl::MessageContainerVector& rMessages, std::back_insert_iterator<SvOi::ParametersForML> inserter) const
+void SVBlobAnalyzerClass::addParameterForMonitorList(SvStl::MessageContainerVector&, std::back_insert_iterator<SvOi::ParametersForML> inserter) const
 {
 	std::string FeaturesEnabled;
 	m_PersistantFeaturesEnabled.getValue(FeaturesEnabled);
@@ -1586,7 +1585,7 @@ bool SVBlobAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMessa
 	return Result;
 }
 
-HRESULT SVBlobAnalyzerClass::onCollectOverlays(SvIe::SVImageClass* pImage, SVExtentMultiLineStructVector& rMultiLineArray )
+HRESULT SVBlobAnalyzerClass::onCollectOverlays(SvIe::SVImageClass* , SVExtentMultiLineStructVector& rMultiLineArray )
 {
 	// only if ToolSet/Tool was not Disabled
 	SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (GetTool());
@@ -1670,7 +1669,7 @@ HRESULT SVBlobAnalyzerClass::onCollectOverlays(SvIe::SVImageClass* pImage, SVExt
 	return S_OK;
 }
 
-void SVBlobAnalyzerClass::addOverlayGroups(const SvIe::SVImageClass* pImage, SvPb::Overlay& rOverlay) const
+void SVBlobAnalyzerClass::addOverlayGroups(const SvIe::SVImageClass*, SvPb::Overlay& rOverlay) const
 {
 	auto* pGroup = rOverlay.add_shapegroups();
 	pGroup->set_name("Blobs");

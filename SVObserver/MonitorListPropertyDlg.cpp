@@ -59,7 +59,6 @@ BOOL MonitorListPropertyDlg::OnInitDialog()
 	
 	// Create SVRPropTree control IDC_MONITOR_PROPERTY_TRUE
 	m_Tree.Create(dwStyle, rc, this, IDC_MONITOR_PROPERTY_TREE);
-	long lVal = m_Tree.GetColumn();
 	m_Tree.SetColumn(200);
 
 	RemoteMonitorListMap::iterator it = m_MonitorList.find(std::string(m_MonitorListName));
@@ -107,7 +106,7 @@ bool MonitorListPropertyDlg::IsValidListName(const std::string& rName, const std
 	return bRetVal;
 }
 
-void MonitorListPropertyDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
+void MonitorListPropertyDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT*)
 {
 	LPNMPROPTREE pNMPropTree = (LPNMPROPTREE) pNotifyStruct;
 
@@ -119,7 +118,7 @@ void MonitorListPropertyDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResu
 		{
 			std::string Name;
 			m_Tree.FindItem(PROP_MONITOR_LIST_NAME)->GetItemValue(Name);
-			SvUl::Trim( Name );
+			Name = SvUl::Trim(Name.c_str());
 			
 			ValidateLabelText(Name);
 			if (IsValidListName(Name, m_DisplayName))

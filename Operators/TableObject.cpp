@@ -99,7 +99,7 @@ SVObjectClass* TableObject::getNumberOfRowObject() const
 	return pObject;
 }
 
-void TableObject::setSortContainer(const SvVol::ValueObjectSortContainer& sortMap, SVRunStatusClass& rRunStatus)
+void TableObject::setSortContainer(const SvVol::ValueObjectSortContainer& sortMap, SVRunStatusClass&)
 {
 	*m_spSortContainer.get() = sortMap;
 	for (int i = 0; i < m_ValueList.size(); ++i)
@@ -362,7 +362,8 @@ void  TableObject::getTableValues(_variant_t& rValue, long* pRowCount, long* pCo
 			double val {0.0};
 			valueList[c]->GetValue(val, r);
 			HRESULT hr = tdimsa.MultiDimSetAt(aIndex, val);
-			ATLASSERT(hr == S_OK);
+			assert(hr == S_OK);
+			UNREFERENCED_PARAMETER(hr);
 		}
 	}
 	rValue.Clear();
@@ -380,28 +381,23 @@ void  TableObject::getTableValues(_variant_t& rValue, long* pRowCount, long* pCo
 bool TableObject::setTableValues(const _variant_t& rValue)
 {
 	
-	long NCols = (long)m_ValueList.size();
-	if (NCols == 0)
+	unsigned long colNumber = static_cast<unsigned long> (m_ValueList.size());
+	if (colNumber == 0)
 	{
 		return false;
 	}
-
 	
 	if (rValue.vt == VT_EMPTY)
 	{
 		setSortContainerDummy(SvVol::DummySortContainer(0));
-		
-		
-		
 		return true;
-
 	}
-	
 
 	if ((rValue.vt != (VT_R8 | VT_ARRAY)) || (rValue.parray == nullptr))
 	{
 		return false;
 	}
+	
 	CComSafeArray<double> sa(rValue.parray);
 	int dim = sa.GetDimensions();
 	if (dim != 2)
@@ -411,28 +407,24 @@ bool TableObject::setTableValues(const _variant_t& rValue)
 	
 	int nRows = __min(m_ValueList[0]->getArraySize(), static_cast<int>(sa.GetCount(1)));
 	
-	
 	setSortContainerDummy(SvVol::DummySortContainer(nRows));
-	
-	
-	
-	assert(NCols == sa.GetCount(0));
-	
-	for (int col = 0; col < NCols; col++)
+
+	assert(colNumber == sa.GetCount(0));
+	for (unsigned long col = 0; col < colNumber; col++)
 	{
-		for (int r = 0; r < nRows; r++)
+		for (long row = 0; row < nRows; row++)
 		{
 			double val {0};
 			try
 			{
-				long Index[2] = {col,r};
+				long Index[2] = {static_cast<long> (col), row};
 				sa.MultiDimGetAt(Index, val);
 			}
 			catch (...)
 			{
 				val = 0.0;
 			}
-			m_ValueList[col]->SetValue(val, r);
+			m_ValueList[col]->SetValue(val, row);
 		}
 	}
 

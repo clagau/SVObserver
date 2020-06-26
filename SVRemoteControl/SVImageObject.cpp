@@ -26,23 +26,23 @@
 STDMETHODIMP SVImageObject::get_Image(IPictureDisp** pVal)
 {
 	HRESULT hr = S_OK;
-	if (len == 0)
+	if (m_length == 0)
 	{
 		hr = FetchImage();
 	}
 	if (SUCCEEDED(hr))
 	{
-		HGLOBAL hg = ::GlobalAlloc(GHND, len);
+		HGLOBAL hg = ::GlobalAlloc(GHND, m_length);
 		if (hg)
 		{
-			memcpy(::GlobalLock(hg), DIB.get(), len);
+			memcpy(::GlobalLock(hg), m_DIB.get(), m_length);
 			::GlobalUnlock(hg);
 			CComPtr<IStream> stream;
 			hr = ::CreateStreamOnHGlobal(hg, TRUE, &stream);
 			// Create IPictureDisp from IStream
 			if (SUCCEEDED(hr))
 			{
-				hr = ::OleLoadPicture(stream, len, FALSE, __uuidof(IPictureDisp), (LPVOID *)pVal);
+				hr = ::OleLoadPicture(stream, m_length, FALSE, __uuidof(IPictureDisp), (LPVOID *)pVal);
 			}
 		}
 		else
@@ -59,56 +59,56 @@ STDMETHODIMP SVImageObject::get_Name(BSTR* pVal)
 {
 	ATL::CComBSTR tmp;
 	tmp.Attach(*pVal);
-	tmp = name;
+	tmp = m_name;
 	*pVal = tmp.Detach();
 	return S_OK;
 }
 
 STDMETHODIMP SVImageObject::put_Name(BSTR newVal)
 {
-	name = newVal;
+	m_name = newVal;
 	return S_OK;
 }
 
 STDMETHODIMP SVImageObject::get_Status(LONG* pVal)
 {
-	*pVal = status;
+	*pVal = m_status;
 	return S_OK;
 }
 
 STDMETHODIMP SVImageObject::put_Status(LONG newVal)
 {
-	status = newVal;
+	m_status = newVal;
 	return S_OK;
 }
 
 STDMETHODIMP SVImageObject::get_TriggerCount(LONG* pVal)
 {
-	*pVal = trigger;
+	*pVal = m_trigger;
 	return S_OK;
 }
 
 STDMETHODIMP SVImageObject::put_TriggerCount(LONG newVal)
 {
-	trigger = newVal;
+	m_trigger = newVal;
 	return S_OK;
 }
 
-STDMETHODIMP SVImageObject::put_Image(IPictureDisp * newVal)
+STDMETHODIMP SVImageObject::put_Image(IPictureDisp*)
 {
 	return E_NOTIMPL;
 }
 
 STDMETHODIMP SVImageObject::get_ImageFormat(SVImageFormatsEnum* pVal)
 {
-	*pVal = format;
+	*pVal = m_format;
 	return S_OK;
 }
 
 STDMETHODIMP SVImageObject::put_ImageFormat(SVImageFormatsEnum newVal)
 {
-	format = newVal;
-	if (format & fetch)
+	m_format = newVal;
+	if (m_format & fetch)
 	{
 		//@TODO:  BRW - Had to disable this to avoid "Problem setting image format."
 		//return FetchImage();
@@ -121,14 +121,14 @@ STDMETHODIMP SVImageObject::get_PNG(VARIANT* pVal)
 	BOOL ok = FALSE;
 	BYTE * png = 0;
 	HRESULT hr = S_OK;
-	if (len == 0)
+	if (m_length == 0)
 	{
 		hr = FetchImage();
 	}
 	if (SUCCEEDED(hr))
 	{
 		// open a memory stream for the source
-		FIMEMORY* hSrcMem = FreeImage_OpenMemory(const_cast<unsigned char *>(DIB.get()), len);
+		FIMEMORY* hSrcMem = FreeImage_OpenMemory(const_cast<unsigned char *>(m_DIB.get()), m_length);
 		if (hSrcMem)
 		{
 			// get the file type
@@ -219,12 +219,12 @@ HRESULT SVImageObject::SaveBitmap(gdi::Bitmap & bmp)
 		bmp.Save(stream, &cid);
 		HGLOBAL hg;
 		SVLOG((l_Status = ::GetHGlobalFromStream(stream, &hg)));
-		len = static_cast<ULONG>(GlobalSize(hg));
-		bytes tmp(reinterpret_cast<BYTE *>(new char[len]));
+		m_length = static_cast<ULONG>(GlobalSize(hg));
+		bytes tmp(reinterpret_cast<BYTE *>(new char[m_length]));
 		void * glo = ::GlobalLock(hg);
-		memcpy(tmp.get(), glo, len);
+		memcpy(tmp.get(), glo, m_length);
 		::GlobalUnlock(hg);
-		DIB.swap(tmp);
+		m_DIB.swap(tmp);
 	}
 	return l_Status;
 }
@@ -259,16 +259,16 @@ STDMETHODIMP SVImageObject::GetImage(VARIANT_BOOL overlays, DOUBLE zoom, SVImage
 STDMETHODIMP SVImageObject::get_DIB(VARIANT* pVal)
 {
 	HRESULT hr = S_OK;
-	if (len == 0)
+	if (m_length == 0)
 	{
 		hr = FetchImage();
 	}
 	if (SUCCEEDED(hr))
 	{
 		BYTE * buff = 0;
-		SAFEARRAY * arr = ::SafeArrayCreateVector(::VT_UI1, 0, len);
+		SAFEARRAY * arr = ::SafeArrayCreateVector(::VT_UI1, 0, m_length);
 		::SafeArrayAccessData(arr, reinterpret_cast<void**>(&buff));
-		BYTE * dib = DIB.get();
+		BYTE * dib = m_DIB.get();
 		if (!dib)
 		{
 			hr = INET_E_DOWNLOAD_FAILURE;
@@ -276,7 +276,7 @@ STDMETHODIMP SVImageObject::get_DIB(VARIANT* pVal)
 		}
 		else
 		{
-			memcpy(buff, dib, len);
+			memcpy(buff, dib, m_length);
 		}
 		::SafeArrayUnaccessData(arr);
 		if (SUCCEEDED(hr))
@@ -289,7 +289,7 @@ STDMETHODIMP SVImageObject::get_DIB(VARIANT* pVal)
 	return hr;
 }
 
-STDMETHODIMP SVImageObject::put_DIB(VARIANT newVal)
+STDMETHODIMP SVImageObject::put_DIB(VARIANT)
 {
 	return E_NOTIMPL;
 }
@@ -300,8 +300,6 @@ STDMETHODIMP SVImageObject::SetImage(VARIANT image)
 
 	if ((image.vt == VT_DISPATCH) && (image.pdispVal != NULL))
 	{
-		HBITMAP l_hSourceBitmap = NULL;
-
 		CComQIPtr<IPictureDisp> l_PictureDispPtr;
 
 		l_Status = image.pdispVal->QueryInterface(&l_PictureDispPtr);
@@ -327,12 +325,12 @@ STDMETHODIMP SVImageObject::SetImage(VARIANT image)
 					HGLOBAL hg;
 					l_Status = ::GetHGlobalFromStream(stream, &hg);
 					SVLOG(l_Status);
-					len = static_cast<ULONG>(GlobalSize(hg));
-					bytes tmp(reinterpret_cast<BYTE *>(new char[len]));
+					m_length = static_cast<ULONG>(GlobalSize(hg));
+					bytes tmp(reinterpret_cast<BYTE *>(new char[m_length]));
 					void * glo = ::GlobalLock(hg);
-					memcpy(tmp.get(), glo, len);
+					memcpy(tmp.get(), glo, m_length);
 					::GlobalUnlock(hg);
-					DIB.swap(tmp);
+					m_DIB.swap(tmp);
 				}
 			}
 		}
@@ -340,18 +338,18 @@ STDMETHODIMP SVImageObject::SetImage(VARIANT image)
 	else if ((image.vt == (VT_ARRAY | VT_UI1)) || (image.vt == (VT_ARRAY | VT_I1)))
 	{
 		SAFEARRAY * arr = image.parray;
-		::SafeArrayGetUBound(arr, 1, reinterpret_cast<LONG *>(&len));
+		::SafeArrayGetUBound(arr, 1, reinterpret_cast<LONG *>(&m_length));
 		BYTE * src = 0;
 		::SafeArrayAccessData(arr, reinterpret_cast<void**>(&src));
 		HGLOBAL hg = ::GlobalHandle(src);
 		if (hg != NULL)
 		{
-			len = static_cast<LONG>(GlobalSize(hg));
-			bytes tmp(reinterpret_cast<BYTE *>(new char[len]));
+			m_length = static_cast<LONG>(GlobalSize(hg));
+			bytes tmp(reinterpret_cast<BYTE *>(new char[m_length]));
 			void * glo = ::GlobalLock(hg);
-			memcpy(tmp.get(), glo, len);
+			memcpy(tmp.get(), glo, m_length);
 			::GlobalUnlock(hg);
-			DIB.swap(tmp);
+			m_DIB.swap(tmp);
 		}
 		else
 		{
@@ -410,15 +408,15 @@ HRESULT SVImageObject::FetchImage()
 	}
 	catch (std::exception & /*ex*/)
 	{
-		DIB.reset();
-		len = 0;
+		m_DIB.reset();
+		m_length = 0;
 		hr = INET_E_DOWNLOAD_FAILURE;
 		SVLOG(hr);
 	}
 	return hr;
 }
 
-void SVImageObject::SetOverlays(VARIANT bsOverlays)
+void SVImageObject::SetOverlays(VARIANT)
 {
 
 }

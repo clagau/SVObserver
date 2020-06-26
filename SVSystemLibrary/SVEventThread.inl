@@ -128,7 +128,7 @@ void SVEventThread< SVEventThreadSignalHandler >::Destroy()
 			{
 				SVThreadManager::setThreadError( static_cast<DWORD> (SVMSG_THREAD_EXIT_ERROR), m_tag.c_str(), SvStl::SourceFileParams(StdMessageParams) );
 
-				::TerminateThread( m_hThread, E_FAIL );
+				::TerminateThread(m_hThread, static_cast<DWORD> (E_FAIL));
 
 				::SetEvent( m_hThreadComplete );
 			}
@@ -141,7 +141,7 @@ void SVEventThread< SVEventThreadSignalHandler >::Destroy()
 			{
 				SVThreadManager::setThreadError( static_cast<DWORD> (SVMSG_THREAD_EXIT_ERROR), m_tag.c_str(), SvStl::SourceFileParams(StdMessageParams) );
 
-				::TerminateThread( m_hThread, E_FAIL );
+				::TerminateThread( m_hThread, static_cast<DWORD> (E_FAIL));
 			}
 		}
 		SVThreadManager::Instance().Remove(m_hThread);

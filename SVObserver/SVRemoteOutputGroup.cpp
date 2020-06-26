@@ -328,7 +328,7 @@ std::string SVRemoteOutputGroup::GetPPQName() const
 		if (nullptr != l_pSubject)
 		{
 			l_SubjectName = l_pSubject->GetCompleteName();
-			HRESULT l_hr = SVObjectManagerClass::Instance().AttachObserver(std::string(SvO::cPPQObjectTag), m_PPQObjectId, getObjectId());
+			SVObjectManagerClass::Instance().AttachObserver(std::string(SvO::cPPQObjectTag), m_PPQObjectId, getObjectId());
 		}
 	}
 

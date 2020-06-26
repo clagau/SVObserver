@@ -5105,14 +5105,13 @@ namespace SvGcl
 
 		EnableScrollBars(SB_HORZ, FALSE);
 
-		int col;
 		CRect rect;
 		GetClientRect(rect);
 
 		int nFirstColumn = (bExpandFixed)? 0 : GetFixedColumnCount();
 
 		int nNumColumnsAffected = 0;
-		for (col = nFirstColumn; col < GetColumnCount(); col++)
+		for (int col = nFirstColumn; col < GetColumnCount(); col++)
 		{
 			if (m_arColWidths[col] > 0)
 				nNumColumnsAffected++;
@@ -5125,7 +5124,7 @@ namespace SvGcl
 		int nDifference = rect.Width() -(int) virtualWidth;
 		int nColumnAdjustment = nDifference / nNumColumnsAffected;
 
-		for (col = nFirstColumn; col < GetColumnCount(); col++)
+		for (int col = nFirstColumn; col < GetColumnCount(); col++)
 		{
 			if (m_arColWidths[col] > 0)
 				m_arColWidths[col] += nColumnAdjustment;    
@@ -5134,8 +5133,8 @@ namespace SvGcl
 		if (nDifference > 0)
 		{
 			int leftOver = nDifference % nNumColumnsAffected;
-			for (int nCount = 0, col = nFirstColumn; 
-				 (col < GetColumnCount()) && (nCount < leftOver); col++, nCount++)
+			int col = nFirstColumn;
+			for (int nCount = 0; (col < GetColumnCount()) && (nCount < leftOver); col++, nCount++)
 			{
 				if (m_arColWidths[col] > 0)
 					m_arColWidths[col] += 1;
@@ -5144,8 +5143,8 @@ namespace SvGcl
 		else 
 		{
 			int leftOver = (-nDifference) % nNumColumnsAffected;
-			for (int nCount = 0, col = nFirstColumn; 
-				 (col < GetColumnCount()) && (nCount < leftOver); col++, nCount++)
+			int col = nFirstColumn;
+			for (int nCount = 0; (col < GetColumnCount()) && (nCount < leftOver); col++, nCount++)
 			{
 				if (m_arColWidths[col] > 0)
 					m_arColWidths[col] -= 1;
@@ -5205,14 +5204,13 @@ namespace SvGcl
 
 		EnableScrollBars(SB_VERT, FALSE); 
 
-		int row;
 		CRect rect;
 		GetClientRect(rect);
     
 		int nFirstRow = (bExpandFixed)? 0 : GetFixedRowCount();
 
 		int nNumRowsAffected = 0;
-		for (row = nFirstRow; row < GetRowCount(); row++)
+		for (int row = nFirstRow; row < GetRowCount(); row++)
 		{
 			if (m_arRowHeights[row] > 0)
 				nNumRowsAffected++;
@@ -5225,7 +5223,7 @@ namespace SvGcl
 		int nDifference = rect.Height() -(int) virtualHeight;
 		int nRowAdjustment = nDifference / nNumRowsAffected;
     
-		for (row = nFirstRow; row < GetRowCount(); row++)
+		for (int row = nFirstRow; row < GetRowCount(); row++)
 		{
 			if (m_arRowHeights[row] > 0)
 				m_arRowHeights[row] += nRowAdjustment;    
@@ -5234,8 +5232,8 @@ namespace SvGcl
 		if (nDifference > 0)
 		{
 			int leftOver = nDifference % nNumRowsAffected;
-			for (int nCount = 0, row = nFirstRow; 
-				 (row < GetRowCount()) && (nCount < leftOver); row++, nCount++)
+			int row = nFirstRow;
+			for (int nCount = 0; (row < GetRowCount()) && (nCount < leftOver); row++, nCount++)
 			{
 				if (m_arRowHeights[row] > 0)
 					m_arRowHeights[row] += 1;
@@ -5244,8 +5242,8 @@ namespace SvGcl
 		else 
 		{
 			int leftOver = (-nDifference) % nNumRowsAffected;
-			for (int nCount = 0, row = nFirstRow; 
-				 (row < GetRowCount()) && (nCount < leftOver); row++, nCount++)
+			int row = nFirstRow;
+			for (int nCount = 0; (row < GetRowCount()) && (nCount < leftOver); row++, nCount++)
 			{
 				if (m_arRowHeights[row] > 0)
 					m_arRowHeights[row] -= 1;
@@ -5974,7 +5972,7 @@ namespace SvGcl
 
 			if (IsValid(cell))
 			{
-				CGridCellBase* pCell = GetCell(cell.row, cell.col);
+				pCell = GetCell(cell.row, cell.col);
 				if (pCell)
 					pCell->OnDblClick(pointClickedRel);
 				SendMessageToParent(cell.row, cell.col, NM_DBLCLK);

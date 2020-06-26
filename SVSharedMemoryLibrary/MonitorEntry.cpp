@@ -37,7 +37,7 @@ namespace SvSml
 	}
 	void MonitorEntryData::BuildProtoMessage(SvPml::MesMonitorEntryData& rProtoMessage) const
 	{
-		rProtoMessage.set_inspectionstoreid(InspectionStoreId);
+		rProtoMessage.set_inspectionstoreid(m_inspectionStoreId);
 		rProtoMessage.set_objecttype(ObjectType);
 		rProtoMessage.set_variant_type(variant_type);
 		rProtoMessage.set_isarray(isArray);
@@ -59,7 +59,7 @@ namespace SvSml
 	void MonitorEntryData::BuildFromProtoMessage(const SvPml::MesMonitorEntryData& rProtoMessage)
 	{
 
-		InspectionStoreId = rProtoMessage.inspectionstoreid();
+		m_inspectionStoreId = rProtoMessage.inspectionstoreid();
 		ObjectType = rProtoMessage.objecttype();
 		variant_type = rProtoMessage.variant_type();
 		isArray = rProtoMessage.isarray();
@@ -120,14 +120,14 @@ namespace SvSml
 			pImageDef->set_name(SvUl::to_utf8(name));
 			pImageDef->set_width(static_cast<INT32>(data.sizeX));
 			pImageDef->set_height(static_cast<INT32>(data.sizeY));
-			pImageDef->set_storeid(data.InspectionStoreId);
+			pImageDef->set_storeid(data.m_inspectionStoreId);
 		}
 		else
 		{
 			auto pValueDef = resp.add_valuedeflist();
 			pValueDef->set_name(SvUl::to_utf8(name));
 			pValueDef->set_type(data.variant_type);
-			pValueDef->set_storeid (data.InspectionStoreId);
+			pValueDef->set_storeid (data.m_inspectionStoreId);
 		}
 
 	}

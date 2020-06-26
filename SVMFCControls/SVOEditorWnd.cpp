@@ -246,7 +246,7 @@ namespace SvMc
 		CEdit::OnChar(nChar, nRepCnt, nFlags);
 	}
 
-	void CSVOEditorWnd::OnLButtonDblClk(UINT nFlags, CPoint point) 
+	void CSVOEditorWnd::OnLButtonDblClk(UINT , CPoint ) 
 	{
 		EndEditing() ;	
 	}

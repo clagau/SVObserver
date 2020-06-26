@@ -101,10 +101,8 @@ HRESULT SVOIniLoader::LoadOEMIni(LPCTSTR oemIniFile)
 	SVOINIClass OemIni(oemIniFile);
 
 	std::string  WinKey = OemIni.GetValueString(OEMSpecificSectionTag, ProductIDTag, EmptyString);
-	std::string ModelNumber = OemIni.GetValueString(OEMSpecificSectionTag, ModelNoTag, EmptyModelNo);
-	SvUl::TrimLeft(ModelNumber);
-	SvUl::TrimRight(ModelNumber);
-	SvUl::MakeUpper(ModelNumber);
+	std::string ModelNumber = SvUl::Trim(OemIni.GetValueString(OEMSpecificSectionTag, ModelNoTag, EmptyModelNo).c_str());
+	ModelNumber = SvUl::MakeUpper(ModelNumber.c_str());
 
 	std::string serialNumber;
 	if (!readSerialNumberFromSystem(serialNumber))
@@ -124,8 +122,7 @@ HRESULT SVOIniLoader::LoadOEMIni(LPCTSTR oemIniFile)
 		m_ModelNumber = ModelNumber;
 		m_SerialNumber = serialNumber;
 
-		std::string SingleCamera = OemIni.GetValueString(OEMSpecificSectionTag, SingleCameraTag, NTag);
-		SvUl::Trim(SingleCamera);
+		std::string SingleCamera = SvUl::Trim(OemIni.GetValueString(OEMSpecificSectionTag, SingleCameraTag, NTag).c_str());
 		if (SingleCamera == YTag)
 		{
 			m_bSingleCameraModel = true;
@@ -145,7 +142,6 @@ HRESULT SVOIniLoader::LoadSVIMIni(LPCTSTR svimIniFile)
 {
 	HRESULT Result = S_OK;
 	SVOINIClass SvimIni(svimIniFile);
-	BSTR l_bstrValue = nullptr;
 
 	int LegacyEquation = SvimIni.GetValueInt(SVIMInfoSectionTag, LegacyEquationParsingTag, 0);
 	m_bUseCorrectListRecursion = (0 == LegacyEquation);
@@ -213,9 +209,7 @@ HRESULT SVOIniLoader::LoadHardwareIni(LPCTSTR hardwareIniFile)
 
 		if (m_rInitialInfo.m_ProductName.empty())
 		{
-			m_rInitialInfo.m_ProductName = HardwareINI.GetValueString(m_rInitialInfo.m_AcquisitionBoardName.c_str(), ProductNameTag, EmptyString);
-			SvUl::TrimLeft(m_rInitialInfo.m_ProductName);
-			SvUl::TrimRight(m_rInitialInfo.m_ProductName);
+			m_rInitialInfo.m_ProductName = SvUl::Trim(HardwareINI.GetValueString(m_rInitialInfo.m_AcquisitionBoardName.c_str(), ProductNameTag, EmptyString).c_str());
 			if (SVIM_X2_GD2A == m_rInitialInfo.m_ProductName || SVIM_X2_GD8A == m_rInitialInfo.m_ProductName)
 			{
 				if (m_bSingleCameraModel)
@@ -327,10 +321,8 @@ HRESULT SVOIniLoader::LoadHardwareIni(LPCTSTR hardwareIniFile)
 
 HRESULT SVOIniLoader::DecodeModelNumber(LPCTSTR modelNumber)
 {
-	std::string CheckModelNumber(modelNumber);
-	SvUl::TrimLeft(CheckModelNumber);
-	SvUl::TrimRight(CheckModelNumber);
-	SvUl::MakeUpper(CheckModelNumber);
+	std::string CheckModelNumber = SvUl::Trim(modelNumber);
+	CheckModelNumber = SvUl::MakeUpper(CheckModelNumber.c_str());
 
 	if (11 != CheckModelNumber.size() || EmptyModelNo == CheckModelNumber)
 	{
@@ -406,7 +398,7 @@ bool readSerialNumberFromSystem(std::string& serialNumber)
 
 	fclose(fp);          //cleanup temp file
 	remove(snFileName.c_str());
-	serialNumber = SvUl::Trim(SvUl::Format("%ws", sn));
+	serialNumber = SvUl::Trim(SvUl::Format("%ws", sn).c_str());
 	return (8 == serialNumber.size() || 9 == serialNumber.size());
 }
 } //namespace SvLib

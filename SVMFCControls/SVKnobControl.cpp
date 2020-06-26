@@ -69,13 +69,13 @@ namespace SvMc
 
 		return TRUE;
 	}
-	void SVKnobControl::DoDataExchange(CDataExchange* pDX)
+	void SVKnobControl::DoDataExchange(CDataExchange* )
 	{
 	}
 
 	// SVKnobControl message handlers
 
-	void SVKnobControl::OnLButtonDown(UINT nFlags, CPoint point)
+	void SVKnobControl::OnLButtonDown(UINT , CPoint point)
 	{
 		CRect l_rect = dotRect();
 		l_rect.InflateRect(1, 1);
@@ -106,14 +106,14 @@ namespace SvMc
 		}
 	}
 
-	void SVKnobControl::OnLButtonUp(UINT nFlags, CPoint point)
+	void SVKnobControl::OnLButtonUp(UINT , CPoint )
 	{
 		ClipCursor(nullptr);
 		m_dragging = false;
 		ReleaseCapture();
 	}
 
-	void SVKnobControl::OnMouseMove(UINT nFlags, CPoint point)
+	void SVKnobControl::OnMouseMove(UINT , CPoint point)
 	{
 		if (m_dragging)
 		{
@@ -243,7 +243,7 @@ namespace SvMc
 		dc.Ellipse(&rect);
 	}
 
-	BOOL SVKnobControl::OnEraseBkgnd(CDC* pDC)
+	BOOL SVKnobControl::OnEraseBkgnd(CDC*)
 	{
 		return TRUE;
 	}

@@ -549,12 +549,12 @@ void SVMaskShapeEditorDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult
 }
 #pragma endregion AFX Methods
 
-void SVMaskShapeEditorDlg::ObjectChangedExDialogImage(long Tab, long Handle, VARIANT* ParameterList, VARIANT* ParameterValue)
+void SVMaskShapeEditorDlg::ObjectChangedExDialogImage(long , long , VARIANT* ParameterList, VARIANT* ParameterValue)
 {
 	////////////////////////////////////////////////////////
 	// SET SHAPE PROPERTIES
 	VariantParamMap ParaMap;
-	int count = SvOg::DisplayHelper::FillParameterMap(ParaMap, ParameterList, ParameterValue);
+	SvOg::DisplayHelper::FillParameterMap(ParaMap, ParameterList, ParameterValue);
 
 	SvOp::SVMaskShape* pShape = m_mapShapes[ m_eShapeType ];
 	SvOp::SVMaskShape::MapType mapProperties;
@@ -613,18 +613,18 @@ void SVMaskShapeEditorDlg::ObjectChangedExDialogImage(long Tab, long Handle, VAR
 	UpdateMask(true);
 }
 
-void SVMaskShapeEditorDlg::MouseMovedImDialogImage(long Tab, long X, long Y)
+void SVMaskShapeEditorDlg::MouseMovedImDialogImage(long , long X, long Y)
 {
 	m_sCoordinates.Format( _T("%ld, %ld"), X, Y );
 	UpdateData(FALSE);
 }
 
-UINT_PTR CALLBACK SVMaskShapeEditorDlg::ColorDlgHookFn( HWND hdlg, UINT uiMsg, WPARAM wParam, LPARAM lParam )
+UINT_PTR CALLBACK SVMaskShapeEditorDlg::ColorDlgHookFn( HWND hdlg, UINT uiMsg, WPARAM, LPARAM lParam )
 {
 	int iReturnCode = 0;	// by default allow color dlg to process message
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_OTHER)
-	TRACE("ColorDlgHookFn - MSG: %08X, WPARAM: %08X, LPARAM: %08X\n", uiMsg, wParam, lParam);
+	TRACE("ColorDlgHookFn - MSG: %08X, LPARAM: %08X\n", uiMsg, lParam);
 #endif
 
 	CWnd* pwndTmp = CWnd::FromHandle(hdlg);

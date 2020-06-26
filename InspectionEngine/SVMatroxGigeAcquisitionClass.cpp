@@ -249,7 +249,7 @@ HRESULT SVMatroxGigeAcquisitionClass::GetMinLightReferenceValue( unsigned long u
 	return hr;
 }
 
-HRESULT SVMatroxGigeAcquisitionClass::GetLightReferenceValueStep( unsigned long ulType, unsigned long &rulValue ) const
+HRESULT SVMatroxGigeAcquisitionClass::GetLightReferenceValueStep( unsigned long, unsigned long &rulValue ) const
 {
 	HRESULT hr = S_OK;
 	rulValue = 1;

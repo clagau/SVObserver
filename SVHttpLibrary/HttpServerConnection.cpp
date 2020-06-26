@@ -112,7 +112,7 @@ void HttpServerConnection::http_do_read()
 		std::placeholders::_2));
 }
 
-void HttpServerConnection::http_on_read(const boost::system::error_code& error, size_t bytes_read)
+void HttpServerConnection::http_on_read(const boost::system::error_code& error, size_t )
 {
 	if (error)
 	{
@@ -219,7 +219,7 @@ void HttpServerConnection::http_on_read(const boost::system::error_code& error, 
 	return http_do_write(http_build_file_get(path, std::move(body)));
 }
 
-void HttpServerConnection::http_on_write(const boost::system::error_code& error, size_t bytes_read, bool close)
+void HttpServerConnection::http_on_write(const boost::system::error_code& error, size_t , bool close)
 {
 	// release memory we needed to keep during write
 	m_EmptyResponse = {};
@@ -707,7 +707,7 @@ void HttpServerConnection::ws_send_next_frame()
 		std::bind(&HttpServerConnection::ws_on_frame_sent, shared_from_this(), std::placeholders::_1, std::placeholders::_2));
 }
 
-void HttpServerConnection::ws_on_frame_sent(const boost::system::error_code& error, size_t bytes_sent)
+void HttpServerConnection::ws_on_frame_sent(const boost::system::error_code& error, size_t)
 {
 	auto promise = m_FrameQueue.front().Promise;
 	if (promise)

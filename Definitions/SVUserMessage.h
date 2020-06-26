@@ -22,7 +22,6 @@
 
 // Used to start and monitor Object Script parsing
 #define SV_UPDATE_PROGRESS_TEXT						WM_USER + 6
-#define SV_PARSE_OBJECT_SCRIPT_END					WM_USER + 7
 #define SV_UPDATE_PROGRESS							WM_USER + 8
 #define SV_END_PROGRESS_DIALOG						WM_USER + 9
 
@@ -34,9 +33,6 @@
 
 // Send update to MainFrame to set enable/disable menuitems and/or hide additional windows
 #define SV_LOGGED_ON_USER_CHANGED				    WM_USER + 12
-
-// Send to MainFrame after all objects for all IPD are created
-#define SV_PARSE_OBJECT_CREATE_DONE					WM_USER + 13
 
 // 	Message to call OnRunMostRecentMRU()
 #define SV_AUTO_RUN_LAST_MRU                        WM_USER + 14

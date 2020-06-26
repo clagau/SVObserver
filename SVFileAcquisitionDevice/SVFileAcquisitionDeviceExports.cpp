@@ -187,7 +187,7 @@ HRESULT WINAPI SVDigitizerDestroyBuffers( unsigned long triggerchannel )
 	return l_hrOk;
 }
 
-HRESULT WINAPI SVDigitizerUnloadCameraFile( unsigned long triggerchannel )
+HRESULT WINAPI SVDigitizerUnloadCameraFile( unsigned long  )
 {
 	return S_FALSE;
 }
@@ -453,7 +453,7 @@ HRESULT WINAPI SVDigitizerGetParameter( unsigned long triggerchannel, SVDevicePa
 	return l_hrOk;
 }
 
-HRESULT WINAPI SVDigitizerDestroyParameter( unsigned long triggerchannel, SVDeviceParamWrapper* p_pParameter )
+HRESULT WINAPI SVDigitizerDestroyParameter( unsigned long, SVDeviceParamWrapper* p_pParameter )
 {
 	HRESULT l_hrOk = S_OK;
 

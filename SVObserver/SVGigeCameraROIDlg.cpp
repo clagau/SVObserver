@@ -163,7 +163,7 @@ BOOL SVGigeCameraROIDlg::OnInitDialog()
 	UpdateSpinHeightRange();
 
 	UDACCEL accel[10];
-	UINT nNum = m_SpinTop.GetAccel( 10, accel );
+	m_SpinTop.GetAccel( 10, accel );
 
 	accel[1].nInc = m_pFormat->m_lVPosStep * 3;
 	accel[2].nInc = m_pFormat->m_lVPosStep * 5;
@@ -450,10 +450,10 @@ void SVGigeCameraROIDlg::OnChangeBinningHoriz()
 {
 }
 
-void SVGigeCameraROIDlg::ObjectChangedExDialogImage(long Tab, long Handle, VARIANT* ParameterList, VARIANT* ParameterValue)
+void SVGigeCameraROIDlg::ObjectChangedExDialogImage(long, long, VARIANT* ParameterList, VARIANT* ParameterValue)
 {
 	std::map<long,_variant_t> ParaMap;
-	int count = SvOg::DisplayHelper::FillParameterMap(ParaMap,ParameterList,ParameterValue);
+	SvOg::DisplayHelper::FillParameterMap(ParaMap,ParameterList,ParameterValue);
 
 	m_iWidth = ParaMap[CDSVPictureDisplay::P_X2].lVal - ParaMap[CDSVPictureDisplay::P_X1].lVal;
 	m_iHeight = ParaMap[CDSVPictureDisplay::P_Y2].lVal - ParaMap[CDSVPictureDisplay::P_Y1].lVal;

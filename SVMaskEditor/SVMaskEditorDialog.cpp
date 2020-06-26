@@ -185,13 +185,7 @@ BOOL SVMaskEditorDialogClass::OnInitDialog()
 
 
 			DisplayWndCtl.PMother = this;
-			DisplayWndCtl.Create(nullptr,
-				_T("SVMaskEditorImageWindow"),
-				WS_CHILD | WS_VISIBLE | WS_BORDER,
-				rect,
-				this,
-				-1
-			);
+			DisplayWndCtl.Create(nullptr, _T("SVMaskEditorImageWindow"), WS_CHILD | WS_VISIBLE | WS_BORDER, rect, this, 0);
 
 
 			// Select Display...
@@ -213,10 +207,10 @@ BOOL SVMaskEditorDialogClass::OnInitDialog()
 
 
 			// Load Button Icons...
-			CButton* pRadio;
+			CButton* pRadio = dynamic_cast<CButton*> (GetDlgItem(IDC_PEN_RADIO));
 			HICON hIcon;
 			int iconSize = 16;
-			if (pRadio = (CButton*)GetDlgItem(IDC_PEN_RADIO))
+			if (nullptr != pRadio)
 			{
 				hIcon = (HICON) ::LoadImage(AfxGetInstanceHandle(),
 					MAKEINTRESOURCE(IDI_PEN_ICON),
@@ -229,7 +223,8 @@ BOOL SVMaskEditorDialogClass::OnInitDialog()
 				pRadio->SetCheck(1);
 			}
 
-			if (pRadio = (CButton*)GetDlgItem(IDC_POLYGON_RADIO))
+			pRadio = dynamic_cast<CButton*> (GetDlgItem(IDC_POLYGON_RADIO));
+			if (nullptr != pRadio)
 			{
 				hIcon = (HICON) ::LoadImage(AfxGetInstanceHandle(),
 					MAKEINTRESOURCE(IDI_POLYGON_ICON),
@@ -240,7 +235,8 @@ BOOL SVMaskEditorDialogClass::OnInitDialog()
 				pRadio->SetIcon(hIcon);
 			}
 
-			if (pRadio = (CButton*)GetDlgItem(IDC_RECT_RADIO))
+			pRadio = dynamic_cast<CButton*> (GetDlgItem(IDC_RECT_RADIO));
+			if (nullptr != pRadio)
 			{
 				hIcon = (HICON) ::LoadImage(AfxGetInstanceHandle(),
 					MAKEINTRESOURCE(IDI_RECT_ICON),
@@ -251,7 +247,8 @@ BOOL SVMaskEditorDialogClass::OnInitDialog()
 				pRadio->SetIcon(hIcon);
 			}
 
-			if (pRadio = (CButton*)GetDlgItem(IDC_ELLIPSE_RADIO))
+			pRadio = dynamic_cast<CButton*> (GetDlgItem(IDC_ELLIPSE_RADIO));
+			if (nullptr != pRadio)
 			{
 				hIcon = (HICON) ::LoadImage(AfxGetInstanceHandle(),
 					MAKEINTRESOURCE(IDI_ELLIPSE_ICON),
@@ -262,7 +259,8 @@ BOOL SVMaskEditorDialogClass::OnInitDialog()
 				pRadio->SetIcon(hIcon);
 			}
 
-			if (pRadio = (CButton*)GetDlgItem(IDC_POLYLINE_RADIO))
+			pRadio = dynamic_cast<CButton*> (GetDlgItem(IDC_POLYLINE_RADIO));
+			if (nullptr != pRadio)
 			{
 				hIcon = (HICON) ::LoadImage(AfxGetInstanceHandle(),
 					MAKEINTRESOURCE(IDI_POLYLINE_ICON),
@@ -273,7 +271,8 @@ BOOL SVMaskEditorDialogClass::OnInitDialog()
 				pRadio->SetIcon(hIcon);
 			}
 
-			if (pRadio = (CButton*)GetDlgItem(IDC_FILLED_RECT_RADIO))
+			pRadio = dynamic_cast<CButton*> (GetDlgItem(IDC_FILLED_RECT_RADIO));
+			if (nullptr != pRadio)
 			{
 				hIcon = (HICON) ::LoadImage(AfxGetInstanceHandle(),
 					MAKEINTRESOURCE(IDI_FILLED_RECT_ICON),
@@ -284,7 +283,8 @@ BOOL SVMaskEditorDialogClass::OnInitDialog()
 				pRadio->SetIcon(hIcon);
 			}
 
-			if (pRadio = (CButton*)GetDlgItem(IDC_FILLED_ELLIPSE_RADIO))
+			pRadio = dynamic_cast<CButton*> (GetDlgItem(IDC_FILLED_ELLIPSE_RADIO));
+			if (nullptr != pRadio)
 			{
 				hIcon = (HICON) ::LoadImage(AfxGetInstanceHandle(),
 					MAKEINTRESOURCE(IDI_FILLED_ELLIPSE_ICON),
@@ -295,7 +295,8 @@ BOOL SVMaskEditorDialogClass::OnInitDialog()
 				pRadio->SetIcon(hIcon);
 			}
 
-			if (pRadio = (CButton*)GetDlgItem(IDC_FILL_RADIO))
+			pRadio = dynamic_cast<CButton*> (GetDlgItem(IDC_FILL_RADIO));
+			if (nullptr != pRadio)
 			{
 				hIcon = (HICON) ::LoadImage(AfxGetInstanceHandle(),
 					MAKEINTRESOURCE(IDI_FILL_ICON),
@@ -710,7 +711,7 @@ void SVMaskEditorDialogClass::OnSelchangeArithmeticCombo()
 }
 
 
-void SVMaskEditorDialogClass::CanvasLButtonDown(UINT nFlags, CPoint point)
+void SVMaskEditorDialogClass::CanvasLButtonDown(UINT , CPoint point)
 {
 	CRect rect;
 	DisplayWndCtl.GetClientRect(&rect);
@@ -798,7 +799,7 @@ void SVMaskEditorDialogClass::CanvasLButtonDown(UINT nFlags, CPoint point)
 	UpdateData(FALSE);
 }
 
-void SVMaskEditorDialogClass::CanvasLButtonUp(UINT nFlags, CPoint point)
+void SVMaskEditorDialogClass::CanvasLButtonUp(UINT , CPoint point)
 {
 	// Regard Zoom Factors...
 	ScalePoint(point, TRUE);
@@ -871,7 +872,7 @@ void SVMaskEditorDialogClass::CanvasLButtonUp(UINT nFlags, CPoint point)
 }
 
 
-void SVMaskEditorDialogClass::CanvasLButtonDblClk(UINT nFlags, CPoint point)
+void SVMaskEditorDialogClass::CanvasLButtonDblClk(UINT , CPoint point)
 {
 	// Regard Zoom Factors...
 	ScalePoint(point, TRUE);
@@ -924,7 +925,7 @@ void SVMaskEditorDialogClass::CanvasLButtonDblClk(UINT nFlags, CPoint point)
 	UpdateData(FALSE);
 }
 
-void SVMaskEditorDialogClass::CanvasMouseMove(UINT nFlags, CPoint point)
+void SVMaskEditorDialogClass::CanvasMouseMove(UINT, CPoint point)
 {
 	// Regard Zoom Factors...
 	ScalePoint(point, TRUE);

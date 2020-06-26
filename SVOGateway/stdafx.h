@@ -62,7 +62,10 @@
 #include <boost/asio/io_service.hpp>
 #include <boost/bind.hpp>
 #include <boost/function.hpp> //Used by static library
+#pragma warning(disable : 4714)
+#pragma warning(push)
 #include <boost/log/trivial.hpp>
+#pragma warning(pop)
 #include <boost/thread.hpp>
 
 #define BOOST_DATE_TIME_NO_LIB

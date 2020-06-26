@@ -1008,7 +1008,7 @@ void SVObserverApp::OnUpdateAppExit(CCmdUI* PCmdUI)
 		&& m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_EXIT));
 }
 
-void SVObserverApp::OnUpdateAppAbout(CCmdUI* PCmdUI)
+void SVObserverApp::OnUpdateAppAbout(CCmdUI* )
 {
 }
 
@@ -1418,9 +1418,9 @@ void SVObserverApp::OnExtrasUtilitiesEdit()
 	if (S_OK == m_svSecurityMgr.SVValidate(SECURITY_POINT_EXTRAS_MENU_UTILITIES_SETUP))
 	{
 		CWnd* pWindow = AfxGetMainWnd();
-		CMenu* pMenu = pWindow->GetMenu();
-
-		if (pMenu = util.FindSubMenuByName(pMenu, _T("&Utilities")))
+		CMenu* pMenu = (nullptr != pWindow) ? pWindow->GetMenu() : nullptr;
+		pMenu = util.FindSubMenuByName(pMenu, _T("&Utilities"));
+		if (nullptr != pMenu)
 		{
 			util.SetupUtilities(pMenu);
 			UpdateAllMenuExtrasUtilities();
@@ -1938,13 +1938,10 @@ BOOL SVObserverApp::InitInstance()
 
 	// Load Utilities Menu
 	SVUtilitiesClass util;
-	CWnd *pWindow;
-	CMenu *pMenu;
-
-	pWindow = AfxGetMainWnd();
-	pMenu = pWindow->GetMenu();
-
-	if (pMenu = util.FindSubMenuByName(pMenu, _T("&Utilities")))
+	CWnd *pWindow = AfxGetMainWnd();
+	CMenu* pMenu = (nullptr != pWindow) ? pWindow->GetMenu() : nullptr;
+	pMenu = util.FindSubMenuByName(pMenu, _T("&Utilities"));
+	if (nullptr != pMenu)
 	{
 		util.LoadMenu(pMenu);
 	}
@@ -2098,7 +2095,7 @@ BOOL SVObserverApp::OnIdle(LONG lCount)
 	return bMore;
 }
 
-CDocument* SVObserverApp::OpenDocumentFile(LPCTSTR FileName)
+CDocument* SVObserverApp::OpenDocumentFile(LPCTSTR )
 {
 	return nullptr;
 }
@@ -2999,7 +2996,7 @@ SVIODoc* SVObserverApp::GetIODoc() const
 	return pIODoc;
 }
 
-bool SVObserverApp::Logout(bool bForceLogout)
+bool SVObserverApp::Logout(bool )
 {
 	// We need to deselect any tool that might be set for operator move.
 	SVMainFrame* pWndMain = dynamic_cast<SVMainFrame*> (GetMainWnd());
@@ -3840,7 +3837,7 @@ SVIPDoc* SVObserverApp::GetIPDoc(LPCTSTR StrIPDocPathName) const
 // -----------------------------------------------------------------------------
 // .Description : ...
 ////////////////////////////////////////////////////////////////////////////////
-bool SVObserverApp::AlreadyExistsIPDocTitle(LPCTSTR StrIPDocTitle)
+bool SVObserverApp::AlreadyExistsIPDocTitle(LPCTSTR )
 {
 	return false;
 }
@@ -3850,7 +3847,7 @@ bool SVObserverApp::AlreadyExistsIPDocTitle(LPCTSTR StrIPDocTitle)
 // -----------------------------------------------------------------------------
 // .Description : ...
 ////////////////////////////////////////////////////////////////////////////////
-bool SVObserverApp::ShowConfigurationAssistant(int Page /*= 3*/,
+bool SVObserverApp::ShowConfigurationAssistant(int /*= 3*/,
 	bool bFileNewConfiguration /*= false*/)
 {
 	bool bOk = false;
@@ -4103,17 +4100,17 @@ void SVObserverApp::UpdateAllMenuExtrasUtilities()
 {
 	SVUtilitiesClass util;
 	CMDIFrameWnd* pMainFrame;
-	CMenu* pMenu;
 	CString sMenuText;
 	CMenu menu;
 
 	pMainFrame = (CMDIFrameWnd*)AfxGetMainWnd();
 	HMENU hMenu = pMainFrame->m_hMenuDefault;    // default menu
 	menu.Attach(hMenu);
-	pMenu = &menu;
+	CMenu* pMenu = &menu;
 	sMenuText = _T("&Utilities");
 
-	if (pMenu = util.FindSubMenuByName(pMenu, sMenuText))
+	pMenu = util.FindSubMenuByName(pMenu, sMenuText);
+	if (nullptr != pMenu)
 	{
 		menu.Detach();
 		util.LoadMenu(pMenu);
@@ -4132,7 +4129,8 @@ void SVObserverApp::UpdateAllMenuExtrasUtilities()
 		menu.Attach(hMenu);
 		pMenu = &menu;
 
-		if (pMenu = util.FindSubMenuByName(pMenu, sMenuText))
+		pMenu = util.FindSubMenuByName(pMenu, sMenuText);
+		if (nullptr != pMenu)
 		{
 			menu.Detach();
 			util.LoadMenu(pMenu);
@@ -4846,8 +4844,7 @@ HRESULT SVObserverApp::CheckDrive(const std::string& rDrive) const
 	// Check if exists
 	if (!PathFileExists(rDrive.c_str()))
 	{
-		std::string Drive = SvUl::Left(rDrive, 1);
-		SvUl::MakeUpper(Drive);
+		std::string Drive = SvUl::MakeUpper(SvUl::Left(rDrive, 1).c_str());
 
 		SvDef::StringVector msgList;
 		msgList.push_back(Drive);
@@ -4873,8 +4870,7 @@ HRESULT SVObserverApp::CheckDrive(const std::string& rDrive) const
 		std::string Name(FileSystemName);
 		if (std::string::npos == Name.find(_T("NTFS")))
 		{
-			std::string Drive = SvUl::Left(rDrive, 1);
-			SvUl::MakeUpper(Drive);
+			std::string Drive = SvUl::MakeUpper(SvUl::Left(rDrive, 1).c_str());
 
 			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
 			Exception.setMessage(SVMSG_SVO_5052_DRIVENOTNTFSFORMAT, Drive.c_str(), SvStl::SourceFileParams(StdMessageParams));
@@ -5218,9 +5214,9 @@ HRESULT SVObserverApp::ConnectCameraBuffers()
 
 HRESULT SVObserverApp::InitializeSecurity()
 {
-	HMODULE hMessageDll;
+	HMODULE hMessageDll{nullptr};
 
-	if (hMessageDll = LoadLibraryEx(_T("SVMessage.dll"), nullptr, LOAD_LIBRARY_AS_DATAFILE))
+	if (nullptr != (hMessageDll = LoadLibraryEx(_T("SVMessage.dll"), nullptr, LOAD_LIBRARY_AS_DATAFILE)))
 	{
 		// This sleep(0) was added after the LoadLibrary to fix a bug where the system ran out of resources.
 		Sleep(0);

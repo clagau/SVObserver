@@ -90,7 +90,8 @@ void CDllTool::getInputValuesDefinitionEx(std::array<InputValueDefinitionStructE
 			aIndex[0] = x;
 			aIndex[1] = y;
 			HRESULT hr = tdimsa.MultiDimSetAt(aIndex, 1);
-			ATLASSERT(hr == S_OK);
+			assert(hr == S_OK); 	UNREFERENCED_PARAMETER(hr);
+
 		}
 	}
 	inputDefEx[InputValue_TABLE_ARRAY].vt = VT_ARRAY | VT_R8;
@@ -393,15 +394,15 @@ HRESULT CDllTool::initRun(const ImageDefinitionStruct* const p_paStructs, const 
 	CComSafeArrayBound bound[2] = {ColumnCountA,RowCountA};
 	CComSafeArray<double> tdimsa(bound, 2);
 	LONG aIndex[2];
-	for (int x = 0; x < ColumnCountA; x++)
+	for (int x = 0; x < ColumnCountA && S_OK == hr; x++)
 	{
-		for (int y = 0; y < RowCountA; y++)
+		for (int y = 0; y < RowCountA && S_OK == hr; y++)
 		{
 			aIndex[0] = x;
 			aIndex[1] = y;
 			double value = (x + 1) *(y + 1);
-			HRESULT hr = tdimsa.MultiDimSetAt(aIndex, value);
-			ATLASSERT(hr == S_OK);
+			hr = tdimsa.MultiDimSetAt(aIndex, value);
+			assert(S_OK == hr);
 		}
 	}
 	CComSafeArray<double> tdimsb(tdimsa);
@@ -431,7 +432,7 @@ HRESULT CDllTool::run_copyTableInput2Output()
 	{
 		CComSafeArray<double> saInput((m_aInputValues[InputValue_TABLE_ARRAY].parray));
 		int dim = saInput.GetDimensions();
-		ATLASSERT(dim == 2);
+		assert(dim == 2);	UNREFERENCED_PARAMETER(dim);
 		unsigned long NX = saInput.GetCount();
 		unsigned long NY = saInput.GetCount(1);
 		if (NX > 0 && NY > 0)
@@ -453,7 +454,7 @@ HRESULT CDllTool::run_copyTableInput2Output()
 					}
 
 					HRESULT hr = tdimsa.MultiDimSetAt(aIndex, val);
-					ATLASSERT(hr == S_OK);
+					ATLASSERT(hr == S_OK);	UNREFERENCED_PARAMETER(hr);
 				}
 			}
 
@@ -474,7 +475,7 @@ HRESULT CDllTool::run_copySelectedTableInput2Output(int Select)
 	{
 		CComSafeArray<double> saInput((m_aInputValues[InputValue_TABLE_ARRAY].parray));
 		int dim = saInput.GetDimensions();
-		ATLASSERT(dim == 2);
+		assert(dim == 2);	UNREFERENCED_PARAMETER(dim);
 		int NX = saInput.GetCount();
 		int NY = saInput.GetCount(1);
 
@@ -519,10 +520,9 @@ HRESULT CDllTool::run_copySelectedTableInput2Output(int Select)
 
 	if (m_aInputValues[InputValue_TABLE_NAMES].vt == (VT_ARRAY | VT_BSTR))
 	{
-
 		CComSafeArray<BSTR> saInput((m_aInputValues[InputValue_TABLE_NAMES].parray));
 		int dim = saInput.GetDimensions();
-		ATLASSERT(dim == 1);
+		assert(dim == 1);	UNREFERENCED_PARAMETER(dim);
 		int len = saInput.GetCount();
 		std::stringstream sts;
 		::OutputDebugString(" Table Names\n");
@@ -620,7 +620,6 @@ HRESULT CDllTool::run()
 		{
 			double out{ 0 };
 			int inputarrayLen = 0;
-			int inputarrayLowerBound = 0;
 			CComSafeArray<double> saInput((m_aInputValues[InputValue_Second_Double_Array].parray));
 
 			inputarrayLen = saInput.GetCount();

@@ -427,10 +427,11 @@ bool SVMaskShape::IsAutoResize() const
 	return m_bAutoResize;
 }
 
-HRESULT SVMaskShapeRectangle::Render(HDC hDC, COLORREF rgbShape, COLORREF rgbBackground) const
+HRESULT SVMaskShapeRectangle::Render(HDC hDC, COLORREF rgbShape, COLORREF ) const
 {
 	HBRUSH hBrush = ::CreateSolidBrush(rgbShape);
-	HRESULT result = (0 != ::FillRect(hDC, &GetRect(), hBrush)) ? S_OK : E_FAIL;
+	RECT rect = GetRect();
+	HRESULT result = (0 != ::FillRect(hDC, &rect, hBrush)) ? S_OK : E_FAIL;
 	::DeleteObject(hBrush);
 
 	return result;
@@ -448,14 +449,14 @@ HRESULT SVMaskShapeRectangle::RenderOutline(HDC hDC, RECT rectViewport, RECT rec
 	return result;
 }
 
-HRESULT SVMaskShapeOval::Render(HDC hDC, COLORREF rgbShape, COLORREF rgbBackground) const
+HRESULT SVMaskShapeOval::Render(HDC hDC, COLORREF , COLORREF ) const
 {
 	RECT rect(GetRect());
 
 	return ::Ellipse(hDC, rect.left, rect.top, rect.right, rect.bottom) ? S_OK : E_FAIL;
 }
 
-HRESULT SVMaskShapeOval::RenderOutline(HDC hDC, RECT rectViewport, RECT rectDisplay, COLORREF rgb) const
+HRESULT SVMaskShapeOval::RenderOutline(HDC hDC, RECT rectViewport, RECT rectDisplay, COLORREF ) const
 {
 	RECT rect(GetRect());
 	TranslateToDisplay( rectViewport, rectDisplay, rect );
@@ -480,14 +481,14 @@ SVMaskShapeSymmetricTrapezoid::SVMaskShapeSymmetricTrapezoid()
 	m_mapProperties[SvPb::ShapeMaskPropertySymmetryOrientationEId].bAvailableWithAutoResize = true;
 }
 
-HRESULT SVMaskShapeSymmetricTrapezoid::Render(HDC hDC, COLORREF rgbShape, COLORREF rgbBackground) const
+HRESULT SVMaskShapeSymmetricTrapezoid::Render(HDC hDC, COLORREF , COLORREF ) const
 {
 	std::vector<POINT> points = GetPoints();
 
 	return ::Polygon(hDC, &(points[0]), static_cast<int>(points.size())) ? S_OK : E_FAIL;
 }
 
-HRESULT SVMaskShapeSymmetricTrapezoid::RenderOutline(HDC hDC, RECT rectViewport, RECT rectDisplay, COLORREF rgb) const
+HRESULT SVMaskShapeSymmetricTrapezoid::RenderOutline(HDC hDC, RECT rectViewport, RECT rectDisplay, COLORREF ) const
 {
 	std::vector<POINT> points = GetPoints();
 	TranslateToDisplay(rectViewport, rectDisplay, points);
@@ -637,7 +638,7 @@ SVMaskShapeDoughnut::SVMaskShapeDoughnut()
 	m_mapProperties[SvPb::ShapeMaskPropertyTopBottomThicknessEId].bAvailableWithAutoResize = true;
 }
 
-HRESULT SVMaskShapeDoughnut::Render(HDC hDC, COLORREF rgbShape, COLORREF rgbBackground) const
+HRESULT SVMaskShapeDoughnut::Render(HDC hDC, COLORREF , COLORREF rgbBackground) const
 {
 	RECT rect(GetRect());
 	HRESULT result = ::Ellipse(hDC, rect.left, rect.top, rect.right, rect.bottom) ? S_OK : E_FAIL;
@@ -659,7 +660,7 @@ HRESULT SVMaskShapeDoughnut::Render(HDC hDC, COLORREF rgbShape, COLORREF rgbBack
 	return result;
 }
 
-HRESULT SVMaskShapeDoughnut::RenderOutline(HDC hDC, RECT rectViewport, RECT rectDisplay, COLORREF rgb) const
+HRESULT SVMaskShapeDoughnut::RenderOutline(HDC hDC, RECT rectViewport, RECT rectDisplay, COLORREF) const
 {
 	RECT rect(GetRect());
 	TranslateToDisplay(rectViewport, rectDisplay, rect);

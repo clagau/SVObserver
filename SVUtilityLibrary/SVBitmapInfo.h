@@ -21,15 +21,15 @@ public:
 	typedef std::vector< RGBQUAD > SVColorTable;
 	typedef std::vector< PALETTEENTRY > SVPaletteTable;
 
-	static SVColorTable GetDefaultColorTable( unsigned short p_BitCount );
-	static unsigned long GetColorTableSize( unsigned short p_BitCount, unsigned long p_Compression );
-	static unsigned long GetImageStrideInBytes( long p_Width, unsigned short p_BitCount );
-	static unsigned long GetImageSizeInBytes( long p_Width, long p_Height, unsigned short p_BitCount );
+	static SVColorTable GetDefaultColorTable( int bitCount );
+	static unsigned long GetColorTableSize(int bitCount, unsigned long compression );
+	static unsigned long GetImageStrideInBytes( long width, int bitCount );
+	static unsigned long GetImageSizeInBytes( long width, long height, int bitCount );
 
 	SVBitmapInfo();
-	SVBitmapInfo( const SVBitmapInfo& p_rObject );
-	SVBitmapInfo( const BITMAPINFO& p_rObject );
-	SVBitmapInfo( long p_Width, long p_Height, unsigned short p_BitCount, const SVColorTable& p_rColorTable );
+	SVBitmapInfo( const SVBitmapInfo& rObject );
+	SVBitmapInfo( const BITMAPINFO& rObject );
+	SVBitmapInfo( long width, long height, int bitCount, const SVColorTable& rColorTable );
 
 	virtual ~SVBitmapInfo();
 
@@ -43,7 +43,7 @@ public:
 
 	long GetWidth() const;
 	long GetHeight() const;
-	unsigned short GetBitCount() const;
+	int GetBitCount() const;
 	unsigned long GetColorTableSize() const;
 	RGBQUAD* GetColorTable() const;
 	SVPaletteTable GetPaletteTable() const;
@@ -53,24 +53,24 @@ public:
 
 	void FlipHeight();
 
-	void Assign( const BITMAPINFO& p_rObject );
-	void Assign( long p_Width, long p_Height, unsigned short p_BitCount, const SVColorTable& p_rColorTable );
+	void Assign( const BITMAPINFO& rObject );
+	void Assign( long width, long height, int bitCount, const SVColorTable& rColorTable );
 
-	const SVBitmapInfo& operator=( const SVBitmapInfo& p_rObject );
+	const SVBitmapInfo& operator=( const SVBitmapInfo& rObject );
 
-	bool operator==( const SVBitmapInfo& p_rObject ) const;
-	bool operator==( const BITMAPINFO& p_rObject ) const;
-	bool operator==( const BITMAPINFOHEADER& p_rObject ) const;
+	bool operator==( const SVBitmapInfo& rObject ) const;
+	bool operator==( const BITMAPINFO& rObject ) const;
+	bool operator==( const BITMAPINFOHEADER& rObject ) const;
 
-	bool operator!=( const SVBitmapInfo& p_rObject ) const;
-	bool operator!=( const BITMAPINFO& p_rObject ) const;
-	bool operator!=( const BITMAPINFOHEADER& p_rObject ) const;
+	bool operator!=( const SVBitmapInfo& rObject ) const;
+	bool operator!=( const BITMAPINFO& rObject ) const;
+	bool operator!=( const BITMAPINFOHEADER& rObject ) const;
 
 protected:
 	size_t m_BufferSize;
 	unsigned char* m_pBuffer;
 };
 
-bool operator==( const BITMAPINFO& p_rLeft, const SVBitmapInfo& p_rRight );
-bool operator==( const BITMAPINFOHEADER& p_rLeft, const SVBitmapInfo& p_rRight );
+bool operator==( const BITMAPINFO& rLhs, const SVBitmapInfo& rRhs);
+bool operator==( const BITMAPINFOHEADER& rLhs, const SVBitmapInfo& rRhs);
 

@@ -60,7 +60,7 @@ BOOL ProductDlg::OnInitDialog()
 
 	for (int c = 0; c < ecolSize; c++)
 	{
-		int ret = m_ListCtrl.InsertColumn(c, ColHeader[c], LVCFMT_LEFT, ColHeaderWidth[c]);
+		m_ListCtrl.InsertColumn(c, ColHeader[c], LVCFMT_LEFT, ColHeaderWidth[c]);
 	}
 	FillControl();
 
@@ -123,7 +123,7 @@ BOOL ProductDlg::AppendProduct(SvSml::MLProduct* pProduct, int& line)
 		for (int ImItem = 0; ImItem < Nimage; ImItem++)
 		{
 			int slot = pProduct->m_slot;
-			int StoreIndex = pProduct->m_ImageEntries[ImItem]->data.InspectionStoreId;
+			int StoreIndex = pProduct->m_ImageEntries[ImItem]->data.m_inspectionStoreId;
 			std::string filename = SvUl::Format(_T("%i %i  %i"), StoreIndex, -1, slot);
 
 			csobj.Format("%i", pProduct->m_ImageEntries[ImItem].get()->data.ObjectType);

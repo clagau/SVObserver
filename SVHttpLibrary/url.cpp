@@ -297,8 +297,8 @@ std::string normalize_IPv6(const char *s, const char *e) {
     // Decode the fields
     std::uint16_t fields[8];
     size_t null_pos=8, null_len=0, nfields=0;
-    for(size_t i=0; i<ntokens; ++i) {
-        const char *p=tokens[i];
+    for(i=0; i<ntokens; ++i) {
+        p=tokens[i];
         if (p==tokens[i+1] || *p==':')
             null_pos=i;
         else {
@@ -599,7 +599,7 @@ Url &Url::host(const std::string& h, std::uint8_t ip_v) {
     lazy_parse();
     std::string o;
     if (h.empty())
-        ip_v=-1;
+        ip_v= static_cast<std::uint8_t> (-1);
     else if (is_ipv4(h)) {
         if (!is_valid_ipv4(h))
             throw Url::parse_error("Invalid IPv4 address '"+h+"'");

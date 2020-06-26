@@ -315,24 +315,22 @@ SVDeviceParamStructTestCases::SVDeviceParamStructTestCases(SVDeviceParamCollecti
 	{// begin scope
 		SVLongValueDeviceParam param;
 		param.lValue = 10;
-		SVLongValueDeviceParam::OptionType option;
-		option.m_Value = 5;
-		option.m_Description = _T("hello");
+		SVLongValueDeviceParam::OptionType option(5, _T("hello"));
 		param.info.options.push_back(option);
 		rDevice.SetParameter( DeviceParamBrightness, param );
 
 		SVLongValueDeviceParam* pParam = nullptr;
-		HRESULT hr = rDevice.GetParameter( DeviceParamBrightness, pParam );
+		rDevice.GetParameter( DeviceParamBrightness, pParam );
 		if ( pParam )
 		{
 			bool bOk;
 			bOk = pParam->lValue == 10;
 			assert(bOk);
-			SVLongValueDeviceParam::OptionType option(123, "OneTwoThree");
+			option.m_Value = 123;
+			option.m_Description = _T("OneTwoThree");
 			pParam->info.options.push_back(option);
 			
 			rDevice.GetParameter( DeviceParamBrightness ).DerivedValue(pParam)->lValue = 4;
-
 
 			// test the world of const
 			const SVDeviceParamWrapper& w = rDevice.Parameter( DeviceParamBrightness );
@@ -342,14 +340,12 @@ SVDeviceParamStructTestCases::SVDeviceParamStructTestCases(SVDeviceParamCollecti
 			//pParam = w.DerivedValue( pParam );	// should not compile
 			//pConstParam->lValue = 5;	// should not compile
 			SVDeviceParam* pIWannaBeAClone = pConstParam->Clone();
-			SVDeviceParam* pIWannaBeACloneToo = w->Clone();
 			SVDeviceParamWrapper w2 = w->Clone();
 			SVDeviceParamWrapper w3 = w;
 			//w = w3; should not compile
 			SVDeviceParamWrapper RapperClone( pIWannaBeAClone );
 			pParam = RapperClone.DerivedValue( pParam );
 			pParam->lValue = 6;
-
 		}
 
 	}// end scope
@@ -435,7 +431,7 @@ const TDeviceParamInfo<__int64>& TDeviceParamInfo<__int64>::operator= (const TDe
 ///////////////////////////////////////////////////////////////////////////////////
 
 // **********************************************
-HRESULT SVDeviceParam::SetMetadata(const SVDeviceParam* pBaseParam )
+HRESULT SVDeviceParam::SetMetadata(const SVDeviceParam* )
 {
 	HRESULT hr = E_NOTIMPL;
 

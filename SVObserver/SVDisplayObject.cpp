@@ -116,7 +116,7 @@ HRESULT SVDisplayObject::ObserverUpdate( const SVRemoveImages& p_rData )
 	return l_Status;
 }
 
-HRESULT SVDisplayObject::ObserverUpdate( const SVRemoveValues& p_rData )
+HRESULT SVDisplayObject::ObserverUpdate( const SVRemoveValues&  )
 {
 	HRESULT l_Status = S_OK;
 
@@ -130,7 +130,7 @@ HRESULT SVDisplayObject::ObserverUpdate( const SVRemoveValues& p_rData )
 	return l_Status;
 }
 
-HRESULT SVDisplayObject::ObserverUpdate( const SVRemoveSubjectStruct& p_rData )
+HRESULT SVDisplayObject::ObserverUpdate(const SVRemoveSubjectStruct& )
 {
 	HRESULT l_Status = S_OK;
 

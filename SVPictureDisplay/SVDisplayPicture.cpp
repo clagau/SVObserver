@@ -264,7 +264,7 @@ void SVDisplayPicture::OnPaint()
 	// Do not call CStatic::OnPaint() for painting messages
 }
 
-BOOL SVDisplayPicture::OnEraseBkgnd(CDC* pDC)
+BOOL SVDisplayPicture::OnEraseBkgnd(CDC*)
 {
 	// Handled in OnPaint
 	return true;

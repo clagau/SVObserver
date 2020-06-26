@@ -154,7 +154,7 @@ bool SVFileNameManagerClass::AddItem(SVFileNameClass* pFileName)
 			catch (std::bad_alloc& e)
 			{
 				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log );
-				Exception.setMessage( E_UNEXPECTED, e.what(), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_15044_FileNameManagerAdd );
+				Exception.setMessage( static_cast<DWORD> (E_UNEXPECTED), e.what(), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_15044_FileNameManagerAdd );
 			}
 		}
 
@@ -224,7 +224,7 @@ bool SVFileNameManagerClass::CreatePath(LPCTSTR PathName)
 	{
 		bool bDone = false;
 
-		size_t Start=-1;
+		size_t Start=0;
 		if( SvUl::Left(Path, 2) == _T("\\\\"))	// UNC path
 		{
 			Start = SvUl::Mid(Path, 2).find('\\') + 1;

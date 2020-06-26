@@ -31,7 +31,7 @@ SVIPResultData::SVIPResultData()
 {
 }
 
-SVIPResultData::SVIPResultData( const SVResultDataMap& p_rResultData, const std::vector <IPResultTableData>& rResultTableData, double p_ToolSetEndTime, double p_ToolSetAvgTime, double p_TriggerDistance, double p_ToolSetTime )
+SVIPResultData::SVIPResultData( const SVResultDataMap& p_rResultData, const std::vector <IPResultTableData>&, double p_ToolSetEndTime, double p_ToolSetAvgTime, double p_TriggerDistance, double p_ToolSetTime )
 : m_ResultData( p_rResultData ),
   m_ToolSetEndTime( p_ToolSetEndTime ),
   m_ToolSetAvgTime( p_ToolSetAvgTime ),

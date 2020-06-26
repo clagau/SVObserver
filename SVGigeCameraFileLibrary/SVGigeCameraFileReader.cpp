@@ -383,7 +383,6 @@ HRESULT SVGigeCameraFileReader::ReadCameraFileBoolParam( SVDeviceParamCollection
 		int iOption = 0;
 		std::string OptionKey;
 		OptionKey = SvUl::Format( cOPTIONFORMAT, rKey.c_str(), ++iOption );
-		int iVal = iKEY_DOES_NOT_EXIST;
 		while ( iKEY_DOES_NOT_EXIST != (iVal = GetPrivateProfileInt( sSection.c_str(), OptionKey.c_str(), iKEY_DOES_NOT_EXIST, m_Filename.c_str() )) )
 		{
 			OptionKey = SvUl::Format( cOPTIONDESCFORMAT, rKey.c_str(), iOption );

@@ -48,7 +48,10 @@
 #include <atlcomcli.h>
 #include <atlsafe.h>
 #include <comutil.h>
+#pragma warning (push)
+#pragma warning( disable: 4458 )
 #include <GdiPlus.h>
+#pragma warning (pop)
 #include <winbase.h>
 #include <boost/config.hpp> // put this first to suppress some VC++ warnings
 #define NOMINMAX			// Exclude min/max macros

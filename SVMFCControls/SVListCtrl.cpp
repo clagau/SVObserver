@@ -288,7 +288,6 @@ namespace SvMc
 		}
 
 		// if checkbox style
-		UINT nStateImageMask = lvi.state & LVIS_STATEIMAGEMASK;
 
 		// draw 1. item	
 		CRect rcItem(lpDrawItemStruct->rcItem);
@@ -310,7 +309,7 @@ namespace SvMc
 			rcItem.right += lvc.cx;
 			if (rcItem.left < rcClipBox.right && rcItem.right > rcClipBox.left && rcItem.right > rcItem.left)
 			{
-				CString strText= GetItemText(lpDrawItemStruct->itemID, nColumn);
+				strText= GetItemText(lpDrawItemStruct->itemID, nColumn);
 				if (strText.IsEmpty())
 					continue;
 
@@ -350,6 +349,7 @@ namespace SvMc
 		CFont* pFont = GetFont();
 		CFont* pOldFont = dc.SelectObject(pFont);	
 		dc.GetTextMetrics(&tm);
+		dc.SelectObject(pOldFont);
 		int nItemHeight = tm.tmHeight + tm.tmExternalLeading;
 		lpMeasureItemStruct->itemHeight = nItemHeight + 6;
 	}
@@ -378,13 +378,6 @@ namespace SvMc
 			DWORD dwPos = ::GetMessagePos();
 			CPoint ptList(LOWORD(dwPos), HIWORD(dwPos));
 			ScreenToClient(&ptList);
-
-			CRect rect;
-			GetClientRect(rect);
-			int cy = rect.Height();
-			//
-			// perform autoscroll if the cursor is near the top or bottom.
-			//
 
 			// Hover test 
 			CImageList::DragMove(ptList);
@@ -481,9 +474,6 @@ namespace SvMc
 				if (nPrev != m_nDragTarget)// prevents flicker 
 					SetItemState(nPrev, 0, LVIS_DROPHILITED);
 
-				CRect rect;
-				GetClientRect (rect);
-				int cy = rect.Height();
 				if (m_nDragTarget != -1)
 				{
 					SetItemState(m_nDragTarget, LVIS_DROPHILITED, LVIS_DROPHILITED);
@@ -496,13 +486,13 @@ namespace SvMc
 	}
 
 
-	BOOL SVListCtrl::OnItemLButtonDown(LVHITTESTINFO& ht)
+	BOOL SVListCtrl::OnItemLButtonDown(LVHITTESTINFO& )
 	{
 		return TRUE;
 	}
 
 
-	void SVListCtrl::OnControlLButtonDown(UINT nFlags, CPoint point, LVHITTESTINFO& ht)
+	void SVListCtrl::OnControlLButtonDown(UINT , CPoint point, LVHITTESTINFO& ht)
 	{
 		OnEditItem(ht.iItem, ht.iSubItem, point, VK_LBUTTON);
 	}
@@ -607,7 +597,7 @@ namespace SvMc
 	}
 
 
-	BOOL SVListCtrl::IsReadOnly(int nItem, int nSubItem/*=0*/)
+	BOOL SVListCtrl::IsReadOnly(int , int nSubItem/*=0*/)
 	{
 		if (nSubItem)
 			return FALSE;
@@ -650,7 +640,7 @@ namespace SvMc
 		*pResult = 1;
 	}
 
-	void SVListCtrl::OnEditItem(int iItem, int iSubItem, CPoint point, UINT nChar)
+	void SVListCtrl::OnEditItem(int iItem, int iSubItem, CPoint , UINT nChar)
 	{
 		if (IsReadOnly(iItem, iSubItem))
 			return;
@@ -691,7 +681,8 @@ namespace SvMc
 
 		dwStyle |= ES_AUTOHSCROLL;
 		rect.DeflateRect(1, 1, 1, 1);
-		CEdit *pEdit = new SVInPlaceEdit(this, rect, dwStyle, IDC_EDITCTRL, iItem, iSubItem, GetItemText(iItem, iSubItem), nChar);
+		//This is deleted when closed
+		new SVInPlaceEdit(this, rect, dwStyle, IDC_EDITCTRL, iItem, iSubItem, GetItemText(iItem, iSubItem), nChar);
 	}	
 
 
@@ -722,7 +713,7 @@ namespace SvMc
 
 				if (above != -1)
 				{
-					SetItemState(above, LVIS_SELECTED | LVIS_FOCUSED, -1);
+					SetItemState(above, LVIS_SELECTED | LVIS_FOCUSED, 0xffff);
 					m_CurItem = above;
 				}
 				break;
@@ -734,7 +725,7 @@ namespace SvMc
 
 				if (below != -1)
 				{
-					SetItemState(below, LVIS_SELECTED | LVIS_FOCUSED, -1);
+					SetItemState(below, LVIS_SELECTED | LVIS_FOCUSED, 0xffff);
 					m_CurItem = below;
 				}
 				break;
@@ -794,20 +785,14 @@ namespace SvMc
 	}
 
 
-	void SVListCtrl::OnBegindrag(NMHDR* pNMHDR, LRESULT* pResult) 
+	void SVListCtrl::OnBegindrag(NMHDR*, LRESULT* pResult) 
 	{
-		NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
-		// TODO: Add your control notification handler code here
-
 		*pResult = 0;
 	}
 
 
-	void SVListCtrl::OnColumnclick(NMHDR* pNMHDR, LRESULT* pResult) 
+	void SVListCtrl::OnColumnclick(NMHDR*, LRESULT* pResult) 
 	{
-		NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
-		// TODO: Add your control notification handler code here
-
 		*pResult = 0;
 	}
 
@@ -874,7 +859,7 @@ namespace SvMc
 	}
 
 
-	LRESULT SVListCtrl::OnSetFont(WPARAM wParam, LPARAM)
+	LRESULT SVListCtrl::OnSetFont(WPARAM , LPARAM)
 	{
 		LRESULT res =  Default();
 

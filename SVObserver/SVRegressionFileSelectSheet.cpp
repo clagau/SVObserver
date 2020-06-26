@@ -189,7 +189,6 @@ void SVRegressionFileSelectSheet::ValidateAndFillFileList()
 {
 	long lTotalNumFiles = 0;
 
-	int iCount = static_cast<int>(m_pRegressionList->size());
 	long lListCountSize = 0;
 
 	for ( auto& rStruct : *m_pRegressionList )

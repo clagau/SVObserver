@@ -283,7 +283,7 @@ void SVExternalToolInputSelectPage::OnUndoChanges()
 	}
 }
 
-void SVExternalToolInputSelectPage::OnItemQueryShowButton(NMHDR* pNotifyStruct, LRESULT* plResult)
+void SVExternalToolInputSelectPage::OnItemQueryShowButton(NMHDR* , LRESULT* plResult)
 {
 	*plResult = TRUE;	// always show button
 }

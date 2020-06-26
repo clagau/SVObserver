@@ -611,7 +611,7 @@ HRESULT SVImageConvertorGDI::CopyDIBitsFlip(HDC hDC, HBITMAP hDIB, void* pSrcBit
 	pbmInfo->bmiHeader.biHeight = -pbmInfo->bmiHeader.biHeight;
 
 	// Set the bits of our new bitmap
-	int iRet = SetDIBits( hDC, hDIB, 0, abs( pbmhInfo->biHeight ), pSrcBits, pbmInfo, DIB_RGB_COLORS );
+	SetDIBits( hDC, hDIB, 0, abs( pbmhInfo->biHeight ), pSrcBits, pbmInfo, DIB_RGB_COLORS );
 
 	::GdiFlush();
 

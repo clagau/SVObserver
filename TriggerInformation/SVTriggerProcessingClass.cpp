@@ -18,8 +18,6 @@
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
-static int i = 0;
-
 namespace SvTi
 {
 	SVTriggerProcessingClass& SVTriggerProcessingClass::Instance()

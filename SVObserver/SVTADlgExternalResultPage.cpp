@@ -27,7 +27,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-SVExternalToolResultPage::SVExternalToolResultPage(LPCTSTR Title, uint32_t inspectionId, uint32_t taskObjectId, int id)
+SVExternalToolResultPage::SVExternalToolResultPage(LPCTSTR Title, uint32_t inspectionId, uint32_t taskObjectId, int )
 	: CPropertyPage(SVExternalToolResultPage::IDD)
 	, m_InspectionID(inspectionId)
 	, m_TaskObjectID(taskObjectId)
@@ -327,7 +327,7 @@ void SVExternalToolResultPage::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plRe
 	{
 		SVRPropertyItem* pItem = pNMPropTree->pItem;
 		int iIndex = GetItemIndex(pItem);
-		assert(iIndex >= 0);
+		assert(iIndex >= 0);	UNREFERENCED_PARAMETER(iIndex);
 		// @TODO - add validation logic, e.g.: if (!bValidated) {*plResult = S_FALSE;}
 	}
 

@@ -321,13 +321,11 @@ void SVIODoc::InitMenu()
 {
 	// Load Utilities Menu
 	SVUtilitiesClass util;
-	CWnd* pWindow;
-	CMenu* pMenu;
 
-	pWindow = AfxGetMainWnd();
-	pMenu = pWindow->GetMenu();
-
-	if( pMenu = util.FindSubMenuByName(pMenu, _T("&Utilities") ) )
+	CWnd* pWindow = AfxGetMainWnd();
+	CMenu* pMenu = (nullptr != pWindow) ? pWindow->GetMenu() : nullptr;
+	pMenu = util.FindSubMenuByName(pMenu, _T("&Utilities"));
+	if(nullptr != pMenu)
 	{
 		util.LoadMenu(pMenu);
 	}

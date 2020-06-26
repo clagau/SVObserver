@@ -53,7 +53,7 @@ constexpr int IconGrowBy = 2;
 #pragma endregion Declarations
 
 #pragma region Constructor
-SVTADlgArchiveResultsPage::SVTADlgArchiveResultsPage(uint32_t inspectionId, uint32_t taskObjectId, SVToolAdjustmentDialogSheetClass* Parent) 
+SVTADlgArchiveResultsPage::SVTADlgArchiveResultsPage(uint32_t , uint32_t , SVToolAdjustmentDialogSheetClass* Parent) 
 : CPropertyPage(SVTADlgArchiveResultsPage::IDD)
 , m_pParent(Parent)
 , m_pTool(nullptr)
@@ -225,14 +225,15 @@ BOOL SVTADlgArchiveResultsPage::OnInitDialog()
 	m_pTool->m_bvoUseHeaders.GetValue(m_ColumnHeaders);
 	GetDlgItem(IDC_HEADER_BTN)->EnableWindow(m_ColumnHeaders);
 
-	m_List.swap(m_pTool->assembleResultReferenceVector());
+	SVObjectReferenceVector resultVector = m_pTool->assembleResultReferenceVector();
+	m_List.swap(resultVector);
 
 	ReadSelectedObjects();
 	UpdateData(FALSE);
 	return TRUE;
 }
 
-void SVTADlgArchiveResultsPage::OnDblClickListSelected( NMHDR *pNMHDR, LRESULT *pResult )
+void SVTADlgArchiveResultsPage::OnDblClickListSelected(NMHDR*, LRESULT*)
 {
 	ShowObjectSelector();
 }

@@ -28,7 +28,7 @@ static char THIS_FILE[] = __FILE__;
 
 constexpr char* cCameraTriggerTag = _T("CameraTrigger_");
 
-CSVOTriggerDeviceDlg::CSVOTriggerDeviceDlg(CWnd* pParent /*=nullptr*/)
+CSVOTriggerDeviceDlg::CSVOTriggerDeviceDlg(CWnd* /*=nullptr*/)
 : CPropertyPage(CSVOTriggerDeviceDlg::IDD)
 {
 	//{{AFX_DATA_INIT(CSVOTriggerDeviceDlg)

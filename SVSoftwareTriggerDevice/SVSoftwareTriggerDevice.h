@@ -21,7 +21,7 @@ class SVSoftwareTriggerDevice : public SvTi::IODeviceBase
 {
 	struct TimerInfo
 	{
-		std::atomic_uint16_t m_timerID {0};
+		std::atomic_uint32_t m_timerID {0};
 		std::atomic_ulong m_triggerIndex {0UL};
 		std::atomic_uint16_t m_period {0};
 		std::atomic_bool m_newPeriod {false};

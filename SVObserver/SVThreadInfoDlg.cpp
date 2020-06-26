@@ -268,7 +268,6 @@ void SVThreadInfoDlg::OnItemButtonClick(NMHDR* pNotifyStruct, LRESULT* plResult)
 		SVRPropertyItemCombo* pItem = reinterpret_cast<SVRPropertyItemCombo*>(pNMPropTree->pItem);
 		if ( pItem->GetCtrlID() >= PROP_THREADS_BASE )
 		{
-			UINT i = pItem->GetCtrlID() - PROP_THREADS_BASE;
 			std::string Text = pItem->GetLabelText();
 			long lValue;
 			pItem->GetItemValue( lValue );
@@ -296,7 +295,6 @@ void SVThreadInfoDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 		SVThreadManager::Instance().SetAffinity( pItem->GetLabelText(), lValue );
 		SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
 	}
-	int i = 0;
 }
 
 void SVThreadInfoDlg::OnBnClickedSave()

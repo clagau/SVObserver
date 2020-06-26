@@ -12,6 +12,10 @@
 #include "stdafx.h"
 #include "InStreamWrapper.h"
 
+constexpr GUID cISequentialInStream =	{0x23170F69, 0x40C1, 0x278A, {0x00, 0x00, 0x00, 0x03, 0x00, 0x01, 0x00, 0x00}};
+constexpr GUID cIInStream =				{0x23170F69, 0x40C1, 0x278A, {0x00, 0x00, 0x00, 0x03, 0x00, 0x03, 0x00, 0x00}};
+constexpr GUID cIStreamGetSize =		{0x23170F69, 0x40C1, 0x278A, {0x00, 0x00, 0x00, 0x03, 0x00, 0x06, 0x00, 0x00}};
+
 InStreamWrapper::InStreamWrapper( const CComPtr< IStream >& rBaseStream ): 
 	m_baseStream{rBaseStream}
 {
@@ -30,21 +34,21 @@ HRESULT STDMETHODCALLTYPE InStreamWrapper::QueryInterface( REFIID iid, void** pp
 		return S_OK;
 	}
 
-	if ( iid == IID_ISequentialInStream )
+	if ( iid == cISequentialInStream )
 	{
 		*ppvObject = static_cast< ISequentialInStream* >( this );
 		AddRef();
 		return S_OK;
 	}
 
-	if ( iid == IID_IInStream )
+	if ( iid == cIInStream )
 	{
 		*ppvObject = static_cast< IInStream* >( this );
 		AddRef();
 		return S_OK;
 	}
 
-	if ( iid == IID_IStreamGetSize )
+	if ( iid == cIStreamGetSize )
 	{
 		*ppvObject = static_cast< IStreamGetSize* >( this );
 		AddRef();

@@ -141,7 +141,7 @@ private:
 	// Output Attributes
 	SVExtentFigureStruct m_figure;
 
-	unsigned long m_properties{0UL};
+	int m_properties{0L};
 
 	SVExtentPropertyValueMap m_extentValues;
 };

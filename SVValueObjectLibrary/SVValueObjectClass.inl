@@ -953,7 +953,7 @@ void SVValueObjectClass<T>::setResultSizePointer(int32_t* pResultSize)
 
 
 template <typename T>
-std::string SVValueObjectClass<T>::getFixedWidthFormatString(uint32_t totalWidth, uint32_t decimals)
+std::string SVValueObjectClass<T>::getFixedWidthFormatString(uint32_t , uint32_t )
 {
 	//@TODO[Arvid][10.00][21.04.2020] for some kinds of value objects this function has not been implemented yet. This may or may not be necessary in the future.
 	SvDef::StringVector msgList;

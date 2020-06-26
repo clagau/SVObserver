@@ -387,8 +387,7 @@ void SVRPropertyItemCombo::ButtonClicked()
 	{
 		if ( m_bShowButton )
 		{
-			bool bResult = false;
-			LRESULT lr = m_pProp->SendNotify(PTN_ITEMBUTTONCLICK, this);
+			m_pProp->SendNotify(PTN_ITEMBUTTONCLICK, this);
 		}
 	}
 }

@@ -86,7 +86,7 @@ LRESULT SVProgressDialog::OnUpdateProgress( WPARAM wParam, LPARAM lParam )
 	return true;
 }
 
-LRESULT SVProgressDialog::OnUpdateText(WPARAM wParam, LPARAM lParam)
+LRESULT SVProgressDialog::OnUpdateText(WPARAM , LPARAM lParam)
 {
 	m_Text = reinterpret_cast<LPCTSTR>(lParam);
 	m_staticTextCtrl.SetWindowText(m_Text);
@@ -94,7 +94,7 @@ LRESULT SVProgressDialog::OnUpdateText(WPARAM wParam, LPARAM lParam)
 	return true;
 }
 
-LRESULT SVProgressDialog::OnEndProgressDialog(WPARAM wParam, LPARAM lParam)
+LRESULT SVProgressDialog::OnEndProgressDialog(WPARAM, LPARAM )
 {
 	m_progressCtrl.SetPos(100);
 	EndDialog(IDOK);

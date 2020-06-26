@@ -139,12 +139,12 @@ public:
 	SVToolExtentClass& getToolExtent() {return m_toolExtent;}
 	HRESULT UpdateOffsetDataToImage(SVExtentOffsetStruct& p_rsvOffsetData, SvIe::SVImageClass* p_svToolImage);
 
-	virtual SVToolClass* GetObjectAtPoint(const SVPoint<double>& rPoint) { return nullptr; };
+	virtual SVToolClass* GetObjectAtPoint(const SVPoint<double>& ) { return nullptr; };
 
 	virtual bool propagateSizeAndPosition();
 	virtual bool usePropagateSizeAndPosition() const;
 	
-	 void removeTaskMessages(long MessageCode, SvStl::MessageTextEnum AdditionalTextId);
+	 void removeTaskMessages(DWORD MessageCode, SvStl::MessageTextEnum AdditionalTextId);
 
 #pragma region ITool methods
 	virtual bool areAuxExtentsAvailable() const override;

@@ -382,7 +382,9 @@ void GraphObject::calcRect()
 
 void GraphObject::calcPointsForDrawing( DirectionEnum direction, long minValue, long maxValue, long displaySize, long globalOffset, double globalZoom, bool isFlip, POINT* const & points, size_t sizePoints )
 {
-	ASSERT(m_points.size() == sizePoints);
+	assert(m_points.size() == sizePoints);
+	UNREFERENCED_PARAMETER(sizePoints);
+
 	long localOffset = 0;
 	double localZoom = displaySize / static_cast<double>(maxValue - minValue);
 	if(isFlip)

@@ -12,6 +12,8 @@
 #include "stdafx.h"
 #include "OutStreamWrapper.h"
 
+constexpr GUID cISequentialOutStream = {0x23170F69, 0x40C1, 0x278A, {0x00, 0x00, 0x00, 0x03, 0x00, 0x02, 0x00, 0x00}};
+constexpr GUID cIOutStream = {0x23170F69, 0x40C1, 0x278A, {0x00, 0x00, 0x00, 0x03, 0x00, 0x04, 0x00, 0x00}};
 
 OutStreamWrapper::OutStreamWrapper(const CComPtr<IStream>& rBaseStream) :
 	m_BaseStream{rBaseStream}
@@ -31,14 +33,14 @@ HRESULT STDMETHODCALLTYPE OutStreamWrapper::QueryInterface( REFIID iid, void** p
 		return S_OK;
 	}
 
-	if ( iid == IID_ISequentialOutStream )
+	if ( iid == cISequentialOutStream )
 	{
 		*ppvObject = static_cast< ISequentialOutStream* >( this );
 		AddRef();
 		return S_OK;
 	}
 
-	if ( iid == IID_IOutStream )
+	if ( iid == cIOutStream )
 	{
 		*ppvObject = static_cast< IOutStream* >( this );
 		AddRef();

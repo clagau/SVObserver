@@ -208,8 +208,6 @@ void CSVImageTestDlg::OnRefresh()
 
 	if ( nullptr != m_pSubsystem )
 	{
-		CSVImageTestApp* pApp = (CSVImageTestApp *)AfxGetApp();	
-
 		unsigned long l_ulSize = 0;
 
 		m_pSubsystem->m_svDigitizers.GetCount( &l_ulSize );

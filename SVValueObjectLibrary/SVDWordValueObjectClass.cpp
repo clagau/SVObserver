@@ -84,7 +84,7 @@ DWORD SVDWordValueObjectClass::ConvertString2Type( const std::string& rValue ) c
 	std::string Digits = SvUl::ValidateString( rValue, _T("0123456789 .xXabcdefABCDEF") );
 	if ( Digits == rValue )
 	{
-		SvUl::MakeLower( Digits );
+		Digits = SvUl::MakeLower(Digits.c_str());
 		TCHAR* p = nullptr;
 		DWORD Value( 0 );
 		if ( std::string::npos != Digits.find( 'x' ) )

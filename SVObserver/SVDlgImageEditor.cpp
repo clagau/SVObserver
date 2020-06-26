@@ -52,7 +52,7 @@ HRESULT SVDlgImageEditor::SetFigureEditor( SVFigureEditor* pFigureEditor )
 	return S_OK;
 }
 
-LRESULT SVDlgImageEditor::OnNcHitTest( CPoint point )
+LRESULT SVDlgImageEditor::OnNcHitTest( CPoint  )
 {
 	return HTCLIENT;	// must do this to get mouse input
 }
@@ -90,8 +90,6 @@ void SVDlgImageEditor::OnMouseMove(UINT nFlags, CPoint point)
 
 	if ( (nullptr != m_hWnd ) && (nullptr != m_pFigureEditor ) )
 	{
-		bool bResetMouse = false;
-
 		CPoint ptMouse = point;
 		CRect l_ClientRect;
 		GetClientRect(&l_ClientRect);
@@ -141,7 +139,7 @@ CPoint SVDlgImageEditor::GetMouseCoordinates()	// in image coordinates, not scre
 }
 
 
-BOOL SVDlgImageEditor::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message) 
+BOOL SVDlgImageEditor::OnSetCursor(CWnd*, UINT , UINT ) 
 {
 	m_szCursorId = GetPickCursor( m_uiHitTest );
 	

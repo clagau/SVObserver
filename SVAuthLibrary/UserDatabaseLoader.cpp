@@ -151,7 +151,7 @@ public:
 		m_State.push_back(PS_START);
 	}
 
-	HRESULT  OnStartElement(const wchar_t  *pwchNamespaceUri, int cchNamespaceUri, const wchar_t *pwchName, int cchName, ISAXAttributes *pAttributes, int depth) override
+	HRESULT  OnStartElement(const wchar_t  *pwchNamespaceUri, int cchNamespaceUri, const wchar_t *pwchName, int cchName, ISAXAttributes *pAttributes, int ) override
 	{
 		const auto ns = std::wstring(pwchNamespaceUri, cchNamespaceUri);
 		const auto name = std::wstring(pwchName, cchName);
@@ -215,13 +215,13 @@ public:
 		return S_OK;
 	}
 
-	HRESULT  OnElementData(const wchar_t *pwchData, int cchData, int depth) override
+	HRESULT  OnElementData(const wchar_t*, int , int ) override
 	{
 		// We do not need any data. All required data is inside attributes.
 		return S_OK;
 	}
 
-	HRESULT  OnEndElement(const wchar_t  *pwchNamespaceUri, int cchNamespaceUri, const wchar_t *pwchName, int cchName, int depth) override
+	HRESULT  OnEndElement(const wchar_t*, int , const wchar_t*, int , int ) override
 	{
 		const auto lastState = m_State.back();
 		const auto lastNode = m_Nodes.back();
@@ -250,7 +250,7 @@ public:
 		return S_OK;
 	}
 
-	HRESULT  OnXMLError(int line, int column, const wchar_t *pwchErrorText, unsigned long errorCode, bool fatal) override
+	HRESULT  OnXMLError(int , int , const wchar_t* pwchErrorText, unsigned long , bool ) override
 	{
 		std::wcout << "OnXMLError: " << pwchErrorText << std::endl;
 		return S_OK;

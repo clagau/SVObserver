@@ -106,7 +106,7 @@ protected:
 	SVMaskShape();	// don't create instances of base class
 
 	virtual HRESULT Render(HDC hDC, COLORREF rgbShape, COLORREF rgbBackground) const = 0;
-	virtual HRESULT RenderOutline(HDC hDC, RECT rectViewport, RECT rectDisplay, COLORREF rgb) const {return S_FALSE; }
+	virtual HRESULT RenderOutline(HDC, RECT, RECT, COLORREF) const {return S_FALSE; }
 	virtual HRESULT ValidateProperties(MapType& rmapProperties) const;
 
 	HRESULT TranslateToDisplay(RECT rectViewport, RECT rectDisplay, RECT& rShapeRect) const;

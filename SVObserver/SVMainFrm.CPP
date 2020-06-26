@@ -105,8 +105,6 @@ BEGIN_MESSAGE_MAP(SVMainFrame, CMDIFrameWnd)
 	ON_COMMAND(ID_DEFAULT_HELP, CMDIFrameWnd::OnHelpFinder)
 
 	// Start Object Script Parser
-	ON_MESSAGE(SV_PARSE_OBJECT_SCRIPT_END, OnEndObjectScriptParse)
-	ON_MESSAGE(SV_PARSE_OBJECT_CREATE_DONE, OnEndObjectCreation)
 	ON_MESSAGE(SV_LOGGED_ON_USER_CHANGED,OnUserChanged)
 	ON_MESSAGE(WM_DISPLAYCHANGE, OnDisplayChange)
 	ON_WM_ACTIVATEAPP()
@@ -568,7 +566,7 @@ void SVMainFrame::OnUpdateStatusInfo( CCmdUI *pCmdUI )
 			CString l_strUser = _T("User: ");
 			if( TheSVObserverApp.m_svSecurityMgr.SVGetUseLogon() )
 			{
-				HRESULT l_hr = TheSVObserverApp.m_svSecurityMgr.SVGetUser( l_bstUser );
+				TheSVObserverApp.m_svSecurityMgr.SVGetUser( l_bstUser );
 				if( nullptr != l_bstUser )
 				{
 					l_strUser += l_bstUser;
@@ -728,32 +726,32 @@ void SVMainFrame::OnUpdateStatusInfo( CCmdUI *pCmdUI )
 	m_wndStatusBar.Invalidate();
 }
 
-LRESULT SVMainFrame::InvalidateStatusBar( WPARAM wParam, LPARAM lParam )
+LRESULT SVMainFrame::InvalidateStatusBar( WPARAM , LPARAM  )
 {
 	m_wndStatusBar.Invalidate();
 	return 0;
 }
 
-LRESULT SVMainFrame::RemoteRegisterMonitorList( WPARAM wParam, LPARAM lParam )
+LRESULT SVMainFrame::RemoteRegisterMonitorList( WPARAM , LPARAM  )
 {
 	TheSVObserverApp.GetIODoc()->GetIOController()->ShowMonitorListTab();
 	return 0;
 }
 
-LRESULT SVMainFrame::onAddFileToConfig(WPARAM wParam, LPARAM lParam)
+LRESULT SVMainFrame::onAddFileToConfig(WPARAM , LPARAM lParam)
 {
 	LPCTSTR pFileName = reinterpret_cast<LPCTSTR> (lParam);
 	TheSVObserverApp.AddAdditionalFile(pFileName);
 	return 0;
 }
 
-LRESULT SVMainFrame::onSaveConfig(WPARAM wParam, LPARAM lParam)
+LRESULT SVMainFrame::onSaveConfig(WPARAM , LPARAM lParam)
 {
 	LPCTSTR pFileName = reinterpret_cast<LPCTSTR> (lParam);
 	return TheSVObserverApp.SavePackedConfiguration(pFileName);
 }
 
-LRESULT SVMainFrame::Shutdown( WPARAM wParam, LPARAM lParam )
+LRESULT SVMainFrame::Shutdown(WPARAM wParam, LPARAM)
 {
 	long shutdownOption = static_cast<long>(wParam);
 	char cmd[50];
@@ -973,9 +971,6 @@ HRESULT SVMainFrame::ParseToolsetScripts( SVTreeType& p_rTree )
 			if( S_OK == l_Status && nullptr != pConfig )
 			{
 				unsigned long parserHandle = SVObjectScriptParserClass::GetParserHandle();
-
-				unsigned long ulVersion = pConfig->GetFileVersion();
-
 				if (nullptr == hItemToolset)
 				{
 					l_Status = E_FAIL;
@@ -1044,24 +1039,6 @@ BOOL SVMainFrame::DestroyPPQButtons()
 	return m_PPQBar.DestroyButtons();
 }
 
-///////////////////////////////////////////////////////
-// handler for End Object Script Parsing message
-///////////////////////////////////////////////////////
-LRESULT SVMainFrame::OnEndObjectScriptParse(WPARAM wParam, LPARAM lParam)
-{
-	BOOL rc = true;
-	return rc;
-}
-
-///////////////////////////////////////////////////////
-// handler for End Object Script Parsing message
-///////////////////////////////////////////////////////
-LRESULT SVMainFrame::OnEndObjectCreation(WPARAM wParam, LPARAM lParam)
-{
-	BOOL rc = true;
-	return rc;
-}
-
 void SVMainFrame::OnConfigurationFinishedInitializing()
 {
 	// Finally indicate to the 'world' that the configuration is loaded
@@ -1121,7 +1098,7 @@ void SVMainFrame::OnActivateApp(BOOL bActive, DWORD dwThreadID)
 			if( SVDirectX::Instance().IsLost() == DDERR_SURFACELOST )
 			{
 				HRESULT hr = SVDirectX::Instance().RestoreAllSurfaces();
-
+				UNREFERENCED_PARAMETER(hr);
 #if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 				if (hr != DD_OK)
 				{
@@ -1245,7 +1222,7 @@ LRESULT SVMainFrame::OnDisplayChange(WPARAM p_p1, LPARAM p_p2)
 	return rc;
 }
 
-LRESULT SVMainFrame::OnSetMode( WPARAM wParam, LPARAM lParam )
+LRESULT SVMainFrame::OnSetMode( WPARAM , LPARAM lParam )
 {
 	return TheSVObserverApp.SetMode( static_cast<unsigned long>(lParam ));
 }
@@ -1268,7 +1245,7 @@ void SVMainFrame::Dump(CDumpContext& dc) const
 
 #endif //_DEBUG
 
-LRESULT SVMainFrame::OnUserChanged( WPARAM wParam, LPARAM lParam )
+LRESULT SVMainFrame::OnUserChanged(WPARAM, LPARAM  )
 {
 	bool accessAllowed = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_VIEW_MENU_PPQ_BAR ) ;  // ID_VIEW_PPQ_BAR );
 
@@ -1366,7 +1343,7 @@ void SVMainFrame::OnExtrasEnableAutoSave()
 
 void SVMainFrame::OnUpdateExtrasEnableAutoSave(CCmdUI *pCmdUI)
 {
-	BOOL bEnable = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_EXTRAS_MENU_AUTOSAVE_CONFIGURATION );
+	bool bEnable = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_EXTRAS_MENU_AUTOSAVE_CONFIGURATION );
 
 	pCmdUI->Enable( bEnable );
 	pCmdUI->SetCheck( ExtrasEngine::Instance().IsAutoSaveEnabled());
@@ -1384,9 +1361,10 @@ void SVMainFrame::OnExtrasEnableFbwf()
 
 void SVMainFrame::OnUpdateExtrasEnableFbwf(CCmdUI *pCmdUI)
 {
-	BOOL bEnable = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_EXTRAS_MENU_FBWF_CONFIGURATION );
-
-	pCmdUI->Enable(false); //Arvid temporarily disabled as per SVO-1084. Parameter was: (ExtrasEngine::Instance().IsFbwfAvailable()==true)
+	//Arvid temporarily disabled as per SVO-1084. Parameter was: (ExtrasEngine::Instance().IsFbwfAvailable()==true)
+	//bool bEnable = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_EXTRAS_MENU_FBWF_CONFIGURATION );
+	bool bEnable = false;
+	pCmdUI->Enable(bEnable);
 
 	pCmdUI->SetCheck( ExtrasEngine::Instance().IsFbwfSelected());
 }

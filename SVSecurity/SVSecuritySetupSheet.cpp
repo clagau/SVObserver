@@ -92,7 +92,7 @@ void SVSecuritySetupSheet::InitializeGroupList(CListBox& list)
 	PDWORD_PTR		resume_handle = 0;
 
 	list.AddString( _T( "Everybody" ) );
-	nas = NetLocalGroupEnum( nullptr, 0, ( LPBYTE* )&pBuf, -1, &entriesread, &totalentries, resume_handle );
+	nas = NetLocalGroupEnum( nullptr, 0, ( LPBYTE* )&pBuf, static_cast<DWORD> (-1), &entriesread, &totalentries, resume_handle );
 	if (nas == NERR_Success)
 	{
 		if ( nullptr !=  (pTmpBuf = pBuf) )

@@ -78,7 +78,6 @@ static std::string GetListName(CListCtrl& rCtrl, int item)
 			index = rCtrl.GetNextItem(index, LVNI_ABOVE);
 			if (index >= 0)
 			{
-				LVITEM lvItem;
 				lvItem.mask = LVIF_PARAM;
 				lvItem.iItem = index;
 				lvItem.iSubItem = 0;
@@ -96,7 +95,7 @@ static std::string GetListName(CListCtrl& rCtrl, int item)
 	return name;
 }
 
-static int AddMonitoredItems(CListCtrl& rCtrl, const MonitoredObjectList& items, bool bCollapse, int NextLine, int indent, int itemData)
+static int AddMonitoredItems(CListCtrl& rCtrl, const MonitoredObjectList& items, bool, int NextLine, int indent, int itemData)
 {
 
 	LVITEM lvItem;
@@ -516,7 +515,7 @@ BOOL MonitorListView::PreCreateWindow(CREATESTRUCT& cs)
 	return CListView::PreCreateWindow(cs);
 }
 
-void MonitorListView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
+void MonitorListView::OnUpdate(CView* , LPARAM lHint, CObject* )
 {
 	SVIODoc* pIODoc = GetDocument();
 	SVConfigurationObject* pConfig(nullptr);
@@ -590,7 +589,7 @@ void MonitorListView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 	// Do not call CListView::OnUpdate() - it will cause flicker
 }
 
-void MonitorListView::OnLButtonDblClk(UINT nFlags, CPoint point)
+void MonitorListView::OnLButtonDblClk(UINT, CPoint point)
 {
 	UINT flags;
 	int item = m_rCtrl.HitTest(point, &flags);

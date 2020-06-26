@@ -259,8 +259,6 @@ public:
 	void SetConfigurationLoaded();
 	bool RenameOutputListInspectionNames(LPCTSTR OldInspectionName, LPCTSTR NewInspectionName);
 	
-	unsigned long GetFileVersion() const;
-
 	HRESULT SetModuleReady( bool p_Value );
 	HRESULT SetRaidErrorBit( bool p_Value );
 

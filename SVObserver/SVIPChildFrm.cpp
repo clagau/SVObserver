@@ -53,7 +53,7 @@ BEGIN_MESSAGE_MAP(SVIPSplitterFrame, CMDIChildWnd)
 END_MESSAGE_MAP()
 #pragma endregion Declarations
 
-LRESULT SVIPSplitterFrame::OnUpdateAllData(WPARAM wParam, LPARAM lParam)
+LRESULT SVIPSplitterFrame::OnUpdateAllData(WPARAM , LPARAM )
 {
 	if( nullptr != m_pIPDoc )
 	{
@@ -183,11 +183,11 @@ void SVIPSplitterFrame::SetViewSize( CWnd *l_pView, CSize &p_rViewSize )
 	}
 }
 
-BOOL SVIPSplitterFrame::OnCreateClient( LPCREATESTRUCT lpcs, CCreateContext* PContext )
+BOOL SVIPSplitterFrame::OnCreateClient( LPCREATESTRUCT, CCreateContext* pContext )
 {
-	if( nullptr != PContext )
+	if( nullptr != pContext )
 	{
-		m_pIPDoc = dynamic_cast< SVIPDoc* >( PContext->m_pCurrentDoc );
+		m_pIPDoc = dynamic_cast< SVIPDoc* >( pContext->m_pCurrentDoc );
 	}
 
 	if( nullptr != m_pIPDoc )
@@ -224,7 +224,7 @@ BOOL SVIPSplitterFrame::OnCreateClient( LPCREATESTRUCT lpcs, CCreateContext* PCo
 	//
 	if( ! m_oWndSplitter2.CreateView( 0, 0, RUNTIME_CLASS( ToolSetView ),
 								CSize( SvDef::cDefaultToolsetViewWidth, SvDef::cDefaultToolsetViewHeight ), 
-								PContext ) )
+								pContext ) )
 	{
 		return FALSE;
 	}
@@ -255,8 +255,8 @@ BOOL SVIPSplitterFrame::OnCreateClient( LPCREATESTRUCT lpcs, CCreateContext* PCo
 
 	for( l = 0; l < 2; l++ )
 	{
-		if( ! m_oWndSplitter4.CreateView( 0, l, PContext->m_pNewViewClass, 
-										CSize( 100, 100 ), PContext ) )
+		if( ! m_oWndSplitter4.CreateView( 0, l, pContext->m_pNewViewClass, 
+										CSize( 100, 100 ), pContext ) )
 		{
 			return FALSE;
 		}// end if
@@ -276,8 +276,8 @@ BOOL SVIPSplitterFrame::OnCreateClient( LPCREATESTRUCT lpcs, CCreateContext* PCo
 
 	for( l = 0; l < 3; l++ )
 	{
-		if( ! m_oWndSplitter5.CreateView( 0, l, PContext->m_pNewViewClass, 
-										CSize( 100, 100 ), PContext ) )
+		if( ! m_oWndSplitter5.CreateView( 0, l, pContext->m_pNewViewClass, 
+										CSize( 100, 100 ), pContext ) )
 		{
 			return FALSE;
 		}// end if
@@ -297,8 +297,8 @@ BOOL SVIPSplitterFrame::OnCreateClient( LPCREATESTRUCT lpcs, CCreateContext* PCo
 
 	for( l = 0; l < 3; l++ )
 	{
-		if( ! m_oWndSplitter6.CreateView( 0, l, PContext->m_pNewViewClass, 
-										CSize( 100, 100 ), PContext ) )
+		if( ! m_oWndSplitter6.CreateView( 0, l, pContext->m_pNewViewClass, 
+										CSize( 100, 100 ), pContext ) )
 		{
 			return FALSE;
 		}// end if
@@ -310,7 +310,7 @@ BOOL SVIPSplitterFrame::OnCreateClient( LPCREATESTRUCT lpcs, CCreateContext* PCo
 	//
 	if( !m_oWndSplitter1.CreateView( 1, 0, RUNTIME_CLASS( ResultTabbedView ),
 									CSize( SvDef::cDefaultResultViewWidth, SvDef::cDefaultResultViewHeight ), 
-									PContext ) )
+									pContext ) )
 	{
 		return FALSE;
 	}

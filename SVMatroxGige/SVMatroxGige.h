@@ -106,7 +106,7 @@ private:
 	void LockMainCameraParamList(const SVMatroxGigeDigitizer& digitizer, bool bLock=true);
 	void SetCameraParam(const SVMatroxGigeDigitizer& digitizer, int p_iParameterID, int p_iParameterTypeID, VARIANT* p_pvarValue);
 
-	HRESULT FindCamera(const SVMatroxGigeSystem& p_rSystem, long p_DeviceNumber, unsigned long& p_rHandle);
+	HRESULT FindCamera(const SVMatroxGigeSystem& rSystem, long deviceNumber, unsigned long& rHandle);
 
 	// Matrox Hooks
 	static __int64 __stdcall DigitizerStartFrameCallback( __int64 HookType, __int64 EventId, void* pContext );

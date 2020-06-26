@@ -132,7 +132,7 @@ void MonitorListDlg::OnBnClickedButtonProperties()
 	MonEntryDlg ME_Dlg;
 	ME_Dlg.m_Name = pMe->name.c_str();
 	ME_Dlg.m_Height = (DWORD)pMe->data.sizeY;
-	ME_Dlg.m_InspectionStoreId = pMe->data.InspectionStoreId;
+	ME_Dlg.m_InspectionStoreId = pMe->data.m_inspectionStoreId;
 	ME_Dlg.m_Pitch = (DWORD) pMe->data.Pitch;
 	ME_Dlg.m_Type = pMe->data.ObjectType;
 	ME_Dlg.m_Size = (DWORD) pMe->data.ByteSize;

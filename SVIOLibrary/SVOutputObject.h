@@ -21,8 +21,8 @@
 class SVOutputObject : public SVObjectClass
 {
 public:
-	explicit SVOutputObject( LPCSTR strObjectName ) { m_isCreated = true; }
-	explicit SVOutputObject( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVOUTPUTOBJECT )
+	explicit SVOutputObject( LPCSTR  ) { m_isCreated = true; }
+	explicit SVOutputObject( SVObjectClass*  = nullptr, int  = IDS_CLASSNAME_SVOUTPUTOBJECT )
 	{
 		m_isCreated = true;
 	}

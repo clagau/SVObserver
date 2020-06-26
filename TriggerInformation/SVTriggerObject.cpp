@@ -23,12 +23,12 @@
 
 namespace SvTi
 {
-	HRESULT CALLBACK SVOTriggerObjectCallbackPtr( void *pvOwner, void *pvCaller, void *pvResponse )
+	HRESULT CALLBACK SVOTriggerObjectCallbackPtr( void* pvOwner, void*, void *pvResponse )
 	{
 		HRESULT hrOk = S_OK;
 
-		SVTriggerObject* pTrigger = reinterpret_cast< SVTriggerObject* >( pvOwner );	
-		SVOResponseClass* pResponse = reinterpret_cast< SVOResponseClass* >( pvResponse );	
+		SVTriggerObject* pTrigger = reinterpret_cast<SVTriggerObject*> (pvOwner);	
+		SVOResponseClass* pResponse = reinterpret_cast<SVOResponseClass*> (pvResponse);
 
 		//Only do an assert check so that in release mode no check is made
 		assert( nullptr != pTrigger && nullptr != pResponse );

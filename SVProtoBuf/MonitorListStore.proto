@@ -6,7 +6,7 @@ import "SVO-Enum.proto";
 //for Serialization class MonitorEntryData
 message MesMonitorEntryData
 {
-	uint32 InspectionStoreId = 1;
+	int32 InspectionStoreId = 1;
 	SvPb.SVObjectTypeEnum ObjectType = 3;
 	uint32 variant_type = 4; ///vt value from variant
 	bool isArray = 6;

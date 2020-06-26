@@ -68,14 +68,14 @@ namespace SvMc
 	};
 
 	template<>
-	inline void TheAnchor<label::top>::AnchorUpdate(const CRect & rect, const Func & func)
+	inline void TheAnchor<label::top>::AnchorUpdate(const CRect & rect, const Func & )
 	{
 		m_anchor.x = rect.CenterPoint().x;
 		m_anchor.y = rect.top - 2;
 	}
 
 	template<>
-	inline void TheAnchor<label::leftTop>::AnchorUpdate(const CRect & rect, const Func & func)
+	inline void TheAnchor<label::leftTop>::AnchorUpdate(const CRect & rect, const Func & )
 	{
 		m_anchor.x = rect.left - 2;
 		m_anchor.y = rect.top;
@@ -103,28 +103,28 @@ namespace SvMc
 	}
 
 	template<>
-	inline void TheAnchor<label::leftBottom>::AnchorUpdate(const CRect & rect, const Func & func)
+	inline void TheAnchor<label::leftBottom>::AnchorUpdate(const CRect & rect, const Func & )
 	{
 		m_anchor.x = rect.left - 2;
 		m_anchor.y = rect.bottom;
 	}
 
 	template<>
-	inline void TheAnchor<label::bottomLeft>::AnchorUpdate(const CRect & rect, const Func & func)
+	inline void TheAnchor<label::bottomLeft>::AnchorUpdate(const CRect & rect, const Func & )
 	{
 		m_anchor.x = rect.left;
 		m_anchor.y = rect.bottom + 2;
 	}
 
 	template<>
-	inline void TheAnchor<label::bottom>::AnchorUpdate(const CRect & rect, const Func & func)
+	inline void TheAnchor<label::bottom>::AnchorUpdate(const CRect & rect, const Func & )
 	{
 		m_anchor.x = rect.CenterPoint().x;
 		m_anchor.y = rect.bottom + 2;
 	}
 
 	template<>
-	inline void TheAnchor<label::bottomRight>::AnchorUpdate(const CRect & rect, const Func & func)
+	inline void TheAnchor<label::bottomRight>::AnchorUpdate(const CRect & rect, const Func& )
 	{
 		m_anchor.x = rect.right;
 		m_anchor.y = rect.bottom + 2;
@@ -239,7 +239,7 @@ namespace SvMc
 			m_changed = true;
 		}
 
-		void Draw(CPaintDC & dc, CWnd * wnd)
+		void Draw(CPaintDC & dc, CWnd*)
 		{
 			if (m_changed)
 			{

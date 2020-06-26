@@ -93,7 +93,6 @@ HRESULT SVArchiveRecordsArray::InitializeObjects(SVArchiveTool* pToolArchive, Sv
 			}
 			else
 			{
-				auto pValueObject = ObjectRef.getValueObject();
 				m_vecRecords.back().InitArchiveRecord(pToolArchive, ObjectRef);
 			}
 		}

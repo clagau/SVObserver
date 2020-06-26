@@ -315,7 +315,7 @@ HRESULT SVMatroxPatternInterface::CreateContext(__int64& rModelId, SVMatroxBuffe
 @SVOperationDescription This function creates a result buffer with the specified number of entries.
 
 */
-HRESULT SVMatroxPatternInterface::CreateResult(__int64& rResultId, long& rlNbrEntries)
+HRESULT SVMatroxPatternInterface::CreateResult(__int64& rResultId, long&)
 {
 	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS

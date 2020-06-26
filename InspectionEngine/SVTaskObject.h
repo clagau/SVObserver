@@ -114,7 +114,7 @@ public:
 	void clearTaskMessages() { m_ResetErrorMessages.clear(); m_RunErrorMessages.clear(); };
 	void clearRunErrorMessages() { m_RunErrorMessages.clear(); };
 
-	void removeTaskMessage(long MessageCode, SvStl::MessageTextEnum AdditionalTextId);
+	void removeTaskMessage(DWORD MessageCode, SvStl::MessageTextEnum AdditionalTextId);
 
 
 	bool IsRunErrorMessageEmpty() { return m_RunErrorMessages.empty(); };
@@ -143,7 +143,7 @@ public:
 	//************************************
 	virtual SvStl::MessageContainer getFirstTaskMessage() const override;
 	virtual SvDef::StringVector getSpecialImageList() const override { return {}; };
-	virtual bool getSpecialImage(const std::string& rName, SvOi::SVImageBufferHandlePtr& rImagePtr) const override { return false; };
+	virtual bool getSpecialImage(const std::string& , SvOi::SVImageBufferHandlePtr& ) const override { return false; };
 	virtual std::vector<uint32_t> getEmbeddedList() const override;
 	virtual bool isErrorMessageEmpty() const override { return m_ResetErrorMessages.empty() && m_RunErrorMessages.empty(); };
 #pragma endregion virtual method (ITaskObject)
@@ -163,7 +163,7 @@ protected:
 	/// \param rInfo [in] input info for the connection.
 	/// \param rPOwner [in,out] The method can change the owner if required.
 	/// \returns bool
-	virtual bool hasToAskFriendForConnection(const SvDef::SVObjectTypeInfoStruct& rInfo, SVObjectClass*& rPOwner) const { return true; }
+	virtual bool hasToAskFriendForConnection(const SvDef::SVObjectTypeInfoStruct& , SVObjectClass*& ) const { return true; }
 
 	/// calls RegisterEmbeddedObject(() twice to register a linked value referring to 'T' in one function call
 	template<typename T>
@@ -205,7 +205,7 @@ public:
 	/// \param pOwnerObject [in] The owner of the changed object.
 	/// \param rOldEmbeddedID [in] Old embeddedId
 	/// \param rNewEmbeddedID [in] New embeddedId
-	virtual void OnEmbeddedIDChanged(const SVObjectClass* pOwnerObject, SvPb::EmbeddedIdEnum oldEmbeddedID, SvPb::EmbeddedIdEnum newEmbeddedID) {};
+	virtual void OnEmbeddedIDChanged(const SVObjectClass* , SvPb::EmbeddedIdEnum , SvPb::EmbeddedIdEnum ) {};
 
 protected:
 	// Direct Method Call
@@ -223,7 +223,7 @@ protected:
 	/// Add a overlay group if available to the protoBuf-message.
 	/// \param pImage [in] Image for with the overlay should be collected.
 	/// \param rOverlay [in,out] Protobuf Message.
-	virtual void addOverlayGroups(const SVImageClass* pImage, SvPb::Overlay& rOverlay) const {};
+	virtual void addOverlayGroups(const SVImageClass* , SvPb::Overlay& ) const {};
 
 	virtual SVObjectPtrDeque GetPreProcessObjects() const override;
 	virtual SVObjectPtrDeque GetPostProcessObjects() const override;

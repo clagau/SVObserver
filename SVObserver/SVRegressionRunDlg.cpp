@@ -403,7 +403,7 @@ void CSVRegressionRunDlg::OnBtnExit()
 	Dlg.DoModal();
 }
 
-LRESULT  CSVRegressionRunDlg::SetNextFiles(WPARAM wParam, LPARAM lParam)
+LRESULT  CSVRegressionRunDlg::SetNextFiles(WPARAM wParam, LPARAM )
 {
 	HRESULT hRet = S_OK;
 
@@ -462,7 +462,7 @@ LRESULT  CSVRegressionRunDlg::SetNextFiles(WPARAM wParam, LPARAM lParam)
 	return hRet;
 }
 
-LRESULT CSVRegressionRunDlg::SetPlayPauseBtn(WPARAM wParam, LPARAM lParam)
+LRESULT CSVRegressionRunDlg::SetPlayPauseBtn(WPARAM , LPARAM )
 {
 	HRESULT hRet = S_OK;
 
@@ -492,7 +492,7 @@ LRESULT CSVRegressionRunDlg::SetPlayPauseBtn(WPARAM wParam, LPARAM lParam)
 	return hRet;
 }
 
-LRESULT CSVRegressionRunDlg::SetPreviousFrameBtn(WPARAM wParam, LPARAM lParam)
+LRESULT CSVRegressionRunDlg::SetPreviousFrameBtn(WPARAM, LPARAM lParam)
 {
 	HRESULT hRet = S_OK;
 

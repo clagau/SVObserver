@@ -110,7 +110,7 @@ BOOL GlobalConstantView::PreCreateWindow(CREATESTRUCT& cs)
 	return CListView::PreCreateWindow(cs);
 }
 
-void GlobalConstantView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint )
+void GlobalConstantView::OnUpdate( CView* , LPARAM , CObject*  )
 {
 	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
@@ -128,8 +128,7 @@ void GlobalConstantView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint 
 		SvVol::BasicValueObjects::ValueVector::const_iterator Iter( GlobalObjects.begin() );
 		while(GlobalObjects.end() != Iter && nullptr != *Iter)
 		{
-			std::string Name( (*Iter)->GetCompleteName() );
-			SvUl::MakeUpper(Name);
+			std::string Name = SvUl::MakeUpper((*Iter)->GetCompleteName().c_str());
 			m_DataList.push_back( std::make_pair( Name,  *Iter ) );
 			++Iter;
 		}
@@ -504,7 +503,7 @@ int GlobalConstantView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
-void GlobalConstantView::OnLButtonDblClk(UINT nFlags, CPoint point)
+void GlobalConstantView::OnLButtonDblClk(UINT, CPoint point)
 {
 	UINT flags;
 	int item = m_rCtrl.HitTest(point, &flags);

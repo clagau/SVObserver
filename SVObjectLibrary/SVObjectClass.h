@@ -102,7 +102,7 @@ public:
 	bool ConnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo );
 	virtual bool DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo );
 
-	virtual bool isInputImage(uint32_t imageId) const { return false; };
+	virtual bool isInputImage(uint32_t ) const { return false; };
 
 	virtual void ResetName();
 	virtual void SetObjectName( LPCTSTR ObjectName );
@@ -118,7 +118,7 @@ public:
 
 	/// Destroy a friend (Disconnect, CloseObject and Destroy his friend), but it must be a taskObject. 
 	/// \param pObject [in] object to destroy.
-	virtual void DestroyFriend(SVObjectClass* pObject) {};
+	virtual void DestroyFriend(SVObjectClass* ) {};
 	//************************************
 	//! this function returns a pointer to the friendobject which fit the ObjectType, if any. Otherwise it returns nullptr. 
 	//! \param rObjectType [in]
@@ -173,8 +173,8 @@ public:
 	virtual SvOi::IObjectClass* getFirstObject(const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends = true, const SvOi::IObjectClass* pRequestor = nullptr) const override;
 	virtual void moveFriendObject(uint32_t objectToMoveId, uint32_t preObjectId = SvDef::InvalidObjectId) override;
 	virtual bool resetAllObjects( SvStl::MessageContainerVector *pErrorMessages=nullptr ) override { return ResetObject(pErrorMessages); };
-	virtual HRESULT getValue(double& rValue, int Index = -1) const override { return E_NOTIMPL; };
-	virtual HRESULT getValues(std::vector<double>& rValues) const override { return E_NOTIMPL; };
+	virtual HRESULT getValue(double& , int = 0) const override { return E_NOTIMPL; };
+	virtual HRESULT getValues(std::vector<double>& ) const override { return E_NOTIMPL; };
 #pragma endregion virtual method (IObjectClass)
 
 	const SVObjectInfoStruct& GetOwnerInfo() const;
@@ -191,7 +191,7 @@ public:
 	/// \param pChildObject [in] child object to create
 	/// \param context [in]
 	/// \returns bool
-	virtual bool CreateChildObject( SVObjectClass* pChildObject, DWORD context = 0 ) { return false; };
+	virtual bool CreateChildObject( SVObjectClass* , DWORD = 0) { return false; };
 
 	/// Overwrite ID of an embedded object.
 	/// \param rUniqueID [in] New id of the object
@@ -202,18 +202,18 @@ public:
 	/// Get the input list combined also from children and if required from friends.
 	/// \param inputList [in,out] Add the new input object to the end of the list.
 	/// \param bAlsoFriends [in] If true, it adds also the inputs of the friend.
-	virtual void GetInputInterface(SvOl::SVInputInfoListClass& rInputList, bool bAlsoFriends) const {};
+	virtual void GetInputInterface(SvOl::SVInputInfoListClass& , bool ) const {};
 
 	/// Will be called, if an object was renamed.
 	/// \param rRenamedObject [in] Reference to the renamed object.
 	/// \param rOldName [in] Old name of the object.
-	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName) {};
+	virtual void OnObjectRenamed(const SVObjectClass& , const std::string& ) {};
 
 	/// Replace the current object with new ids etc.
 	/// \param pObject [in,out] Object t be removed.
 	/// \param rNewid [in] The mew ID of the object
 	/// \returns bool
-	virtual bool replaceObject(SVObjectClass* pObject, uint32_t newId) { return false; };
+	virtual bool replaceObject(SVObjectClass* , uint32_t ) { return false; };
 #pragma endregion Methods to replace processMessage
 
 protected:
@@ -227,7 +227,7 @@ protected:
 	/// Call method createAllObjects for the child object with the right create struct.
 	/// \param rChildObject [in]
 	/// \returns bool
-	virtual bool createAllObjectsFromChild( SVObjectClass& rChildObject ) { return false; };
+	virtual bool createAllObjectsFromChild( SVObjectClass& ) { return false; };
 
 protected:
 	//This attribute holds the enumerated bits of allowed object attributes.

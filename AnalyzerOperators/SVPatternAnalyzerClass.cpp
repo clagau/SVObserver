@@ -478,7 +478,7 @@ bool SVPatternAnalyzerClass::SetSearchParameters ()
 						MatroxCode = SVMatroxPatternInterface::SetSpeed( m_patContextHandle, lParam );
 					}
 					
-					BOOL	bParam;
+					BOOL	bParam{false};
 					if (S_OK == MatroxCode)
 					{
 						msv_bpatSearchAngleMode.GetValue( bParam ); 
@@ -923,7 +923,7 @@ SvStl::MessageContainerVector SVPatternAnalyzerClass::validateAndSetEmbeddedValu
 	return messages;
 }
 
-void SVPatternAnalyzerClass::addParameterForMonitorList(SvStl::MessageContainerVector& rMessages, std::back_insert_iterator<SvOi::ParametersForML> inserter) const
+void SVPatternAnalyzerClass::addParameterForMonitorList(SvStl::MessageContainerVector& , std::back_insert_iterator<SvOi::ParametersForML> inserter) const
 {
 	inserter = SvOi::ParameterPairForML(msv_dpatResultX.GetCompleteName(), msv_dpatResultX.getObjectId());
 	// cppcheck-suppress redundantAssignment symbolName=inserter ; cppCheck doesn't know back_insert_iterator
@@ -935,7 +935,7 @@ void SVPatternAnalyzerClass::addParameterForMonitorList(SvStl::MessageContainerV
 	inserter = SvOi::ParameterPairForML(msv_lpatNumFoundOccurances.GetCompleteName(), msv_lpatNumFoundOccurances.getObjectId());
 }
 
-HRESULT SVPatternAnalyzerClass::onCollectOverlays(SvIe::SVImageClass* pImage, SVExtentMultiLineStructVector& rMultiLineArray )
+HRESULT SVPatternAnalyzerClass::onCollectOverlays(SvIe::SVImageClass* , SVExtentMultiLineStructVector& rMultiLineArray )
 {
 	// only if ToolSet/Tool was not Disabled
 	SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (GetTool());
@@ -964,7 +964,7 @@ HRESULT SVPatternAnalyzerClass::onCollectOverlays(SvIe::SVImageClass* pImage, SV
 	return S_OK;
 }
 
-void SVPatternAnalyzerClass::addOverlayGroups(const SvIe::SVImageClass* pImage, SvPb::Overlay& rOverlay) const
+void SVPatternAnalyzerClass::addOverlayGroups(const SvIe::SVImageClass*, SvPb::Overlay& rOverlay) const
 {
 	auto* pGroup = rOverlay.add_shapegroups();
 	pGroup->set_name("Pattern");

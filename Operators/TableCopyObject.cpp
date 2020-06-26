@@ -87,7 +87,7 @@ bool TableCopyObject::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	return retValue && TableObject::ResetObject(pErrorMessages);
 }
 
-SvVol::DoubleSortValuePtr TableCopyObject::addNewColumn(LPCTSTR name, int pos)
+SvVol::DoubleSortValuePtr TableCopyObject::addNewColumn(LPCTSTR, int pos)
 {
 	SvVol::DoubleSortValueObject* pObject = nullptr;
 	SVObjectManagerClass::Instance().ConstructObject(SvPb::DoubleSortValueClassId, pObject);

@@ -76,7 +76,7 @@ BEGIN_MESSAGE_MAP(SVCameraPage, CPropertyPage)
 	ON_WM_DESTROY()
 END_MESSAGE_MAP()
 
-HRESULT SVCameraPage::UpdateWithCompletedBuffer( const SvTrc::IImagePtr& rImage)
+HRESULT SVCameraPage::UpdateWithCompletedBuffer( const SvTrc::IImagePtr& )
 {
 	std::string Count;
 
@@ -387,7 +387,7 @@ void SVCameraPage::EnableViewCameraFileButton()
 	::EnableWindow(::GetDlgItem(m_hWnd, IDC_VIEW_CAMERA_FILE), true);
 }
 
-void SVCameraPage::OnTimer(UINT_PTR nIDEvent)
+void SVCameraPage::OnTimer(UINT_PTR)
 {
 	if( nullptr != m_pAcquisition && m_bStarted )
 	{

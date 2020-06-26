@@ -573,7 +573,7 @@ bool SVToolClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVec
 	return Result;
 }
 
-bool SVToolClass::getConditionalResult(bool bRunMode /*= false*/) const
+bool SVToolClass::getConditionalResult(bool /*= false*/) const
 {
 	BOOL Value(false);
 	SvVol::SVBoolValueObjectClass* pBoolObject = SvOl::getInput<SvVol::SVBoolValueObjectClass>(m_inputConditionBoolObjectInfo);
@@ -725,7 +725,7 @@ bool SVToolClass::usePropagateSizeAndPosition() const
 	return false;
 }
 
-void SVToolClass::removeTaskMessages(long MessageCode, SvStl::MessageTextEnum AdditionalTextId)
+void SVToolClass::removeTaskMessages(DWORD MessageCode, SvStl::MessageTextEnum AdditionalTextId)
 {
 	removeTaskMessage(MessageCode, AdditionalTextId);
 	for (auto& TaskObj : m_TaskObjectVector)
@@ -830,7 +830,7 @@ HRESULT SVToolClass::setExtentToParent()
 	return retVal;
 }
 
-bool SVToolClass::SetDefaultFormulas(SvStl::MessageContainerVector *pErrorMessages)
+bool SVToolClass::SetDefaultFormulas(SvStl::MessageContainerVector*)
 {
 	return true;
 }
@@ -1099,7 +1099,7 @@ long SVToolClass::getToolPosition() const
 	return Result;
 };
 
-SvOi::ParametersForML SVToolClass::getParameterForMonitorList(SvStl::MessageContainerVector& rMessages) const
+SvOi::ParametersForML SVToolClass::getParameterForMonitorList(SvStl::MessageContainerVector&) const
 {
 	return SvOi::ParametersForML();
 }

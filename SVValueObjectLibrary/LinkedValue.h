@@ -76,7 +76,7 @@ public:
 	}
 
 #pragma region Methods to replace processMessage
-	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName) override { UpdateLinkedName(); };
+	virtual void OnObjectRenamed(const SVObjectClass& , const std::string& ) override { UpdateLinkedName(); };
 #pragma endregion Methods to replace processMessage
 
 	const SVObjectClass* GetLinkedObject()  const;

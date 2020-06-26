@@ -110,7 +110,7 @@ SVSetupDialogManager::SVSetupDialogManager()
 {
 }
 
-HRESULT SVSetupDialogManager::SVBarCodeAnalyzerClassSetupDialog(uint32_t objectId, CWnd* pParentWnd)
+HRESULT SVSetupDialogManager::SVBarCodeAnalyzerClassSetupDialog(uint32_t objectId, CWnd* )
 {
 	HRESULT l_Status = S_OK;
 
@@ -291,7 +291,7 @@ HRESULT SVSetupDialogManager::SVBlobAnalyzerClassSetupDialog(uint32_t objectId, 
 	return l_Status;
 }
 
-HRESULT SVSetupDialogManager::SVColorToolClassSetupDialog(uint32_t objectId, CWnd* PParentWnd)
+HRESULT SVSetupDialogManager::SVColorToolClassSetupDialog(uint32_t objectId, CWnd* )
 {
 	HRESULT l_Status = E_FAIL;
 
@@ -331,7 +331,7 @@ HRESULT SVSetupDialogManager::SVColorToolClassSetupDialog(uint32_t objectId, CWn
 	return l_Status;
 }
 
-HRESULT SVSetupDialogManager::SVHistogramAnalyzerClassSetupDialog(uint32_t objectId, CWnd* PParentWnd)
+HRESULT SVSetupDialogManager::SVHistogramAnalyzerClassSetupDialog(uint32_t objectId, CWnd* )
 {
 	HRESULT l_Status = S_OK;
 
@@ -388,7 +388,7 @@ HRESULT SVSetupDialogManager::SVHistogramAnalyzerClassSetupDialog(uint32_t objec
 	return l_Status;
 }
 
-HRESULT SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog(uint32_t objectId, CWnd* pParentWnd)
+HRESULT SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog(uint32_t objectId, CWnd* )
 {
 	HRESULT l_Status = S_OK;
 
@@ -488,7 +488,7 @@ HRESULT SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog(uint32_t objectId
 	return l_Status;
 }
 
-HRESULT SVSetupDialogManager::SVLuminanceAnalyzerClassSetupDialog(uint32_t objectId, CWnd* PParentWnd)
+HRESULT SVSetupDialogManager::SVLuminanceAnalyzerClassSetupDialog(uint32_t objectId, CWnd* )
 {
 	HRESULT l_Status = S_OK;
 
@@ -507,7 +507,7 @@ HRESULT SVSetupDialogManager::SVLuminanceAnalyzerClassSetupDialog(uint32_t objec
 	return l_Status;
 }
 
-HRESULT SVSetupDialogManager::SVOCVAnalyzerClassSetupDialog(uint32_t objectId, CWnd* PParentWnd)
+HRESULT SVSetupDialogManager::SVOCVAnalyzerClassSetupDialog(uint32_t objectId, CWnd* )
 {
 	HRESULT l_Status = S_OK;
 
@@ -586,7 +586,7 @@ HRESULT SVSetupDialogManager::SVOCVAnalyzerClassSetupDialog(uint32_t objectId, C
 	return l_Status;
 }
 
-HRESULT SVSetupDialogManager::SVPixelAnalyzerClassSetupDialog(uint32_t objectId, CWnd* pParentWnd)
+HRESULT SVSetupDialogManager::SVPixelAnalyzerClassSetupDialog(uint32_t objectId, CWnd*)
 {
 	HRESULT l_Status = S_FALSE;
 

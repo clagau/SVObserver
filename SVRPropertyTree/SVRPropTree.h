@@ -65,7 +65,7 @@ typedef struct _NMPROPTREE
 } NMPROPTREE, *PNMPROPTREE, FAR *LPNMPROPTREE;
 
 // SVRPropTree specific Notification Codes
-enum
+enum PropTreeNotification
 {
 	PTN_FIRST               = -1100,
 
@@ -181,7 +181,7 @@ public:
 	// Focus on the next item
 	SVRPropertyItem* FocusNext();
 
-	LRESULT SendNotify(UINT nNotifyCode, SVRPropertyItem* pItem = nullptr);
+	LRESULT SendNotify(PropTreeNotification nNotifyCode, SVRPropertyItem* pItem = nullptr);
 
 	bool SaveState(SVRPropTreeState& rState);
 	bool RestoreState(const SVRPropTreeState& rState);

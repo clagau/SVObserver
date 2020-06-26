@@ -14,7 +14,7 @@
 #pragma endregion Includes
 
 template<typename Insertor>
-HRESULT SVFileSystemScanner<Insertor>::ScanForFiles(LPCTSTR dirName, LPCTSTR filter, Insertor& insertor, bool bScanSubDirs)
+HRESULT SVFileSystemScanner<Insertor>::ScanForFiles(LPCTSTR dirName, LPCTSTR filter, Insertor insertor, bool bScanSubDirs)
 {
 	HRESULT hr = S_FALSE;
 
@@ -67,7 +67,7 @@ HRESULT SVFileSystemScanner<Insertor>::ScanForFiles(LPCTSTR dirName, LPCTSTR fil
 }
 
 template<typename Insertor>
-HRESULT SVFileSystemScanner<Insertor>::ScanForDirectories(LPCTSTR dirName, LPCTSTR filter, Insertor& insertor, bool bScanSubDirs)
+HRESULT SVFileSystemScanner<Insertor>::ScanForDirectories(LPCTSTR dirName, LPCTSTR filter, Insertor insertor, bool bScanSubDirs)
 {
 	HRESULT hr = S_FALSE;
 

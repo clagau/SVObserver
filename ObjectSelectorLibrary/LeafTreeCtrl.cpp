@@ -45,7 +45,7 @@ namespace SvOsl
 	#pragma endregion Constructor
 
 	#pragma region Public Methods
-	void LeafTreeCtrl::changeSelectedItem( const HTREEITEM& rItem )
+	void LeafTreeCtrl::changeSelectedItem( const HTREEITEM&  )
 	{
 	}
 
@@ -149,7 +149,7 @@ namespace SvOsl
 		}
 	}
 
-	void LeafTreeCtrl::showContextMenu( bool ItemHit )
+	void LeafTreeCtrl::showContextMenu( bool)
 	{
 		//If single selection do not show context menu
 		if ( isSingleSelect() )
@@ -158,7 +158,7 @@ namespace SvOsl
 		}
 
 		CMenu Menu;
-		CMenu* pPopupMenu;
+		CMenu* pPopupMenu{nullptr};
 
 		UINT MenuResource = 0;
 
@@ -166,7 +166,7 @@ namespace SvOsl
 
 		if( 0 != MenuResource && Menu.LoadMenu( MenuResource ) )
 		{
-			if( pPopupMenu = Menu.GetSubMenu( 0 ) )
+			if(nullptr != (pPopupMenu = Menu.GetSubMenu(0)))
 			{
 				CPoint Point = getContextPoint();
 				ClientToScreen( &Point );

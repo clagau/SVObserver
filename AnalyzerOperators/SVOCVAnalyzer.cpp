@@ -130,7 +130,7 @@ bool SVOCVAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCont
 }
 
 
-bool SVOCVAnalyzerClass::IsPtOverResult( const POINT& rPoint )
+bool SVOCVAnalyzerClass::IsPtOverResult(const POINT&)
 {
 	return true;
 }

@@ -209,7 +209,7 @@ bool ToolSetView::ToolSetListHasChanged()
 
 	return false;
 }
-void ToolSetView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
+void ToolSetView::OnUpdate(CView* , LPARAM lHint, CObject* )
 {
 	if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST))
 	{
@@ -324,7 +324,7 @@ void ToolSetView::OnClickToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 	PostMessage(WM_COMMAND, ID_RUN_ONCE);
 }
 
-void ToolSetView::OnRightClickToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
+void ToolSetView::OnRightClickToolSetList(NMHDR* , LRESULT* pResult)
 {
 	if (!SvOi::isOkToEdit())
 	{
@@ -469,7 +469,7 @@ void ToolSetView::OnDblClkToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 	}
 }
 
-void ToolSetView::OnBeginLabelEditToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
+void ToolSetView::OnBeginLabelEditToolSetList(NMHDR*, LRESULT* pResult)
 {
 	// Don't allow editing if running.
 	if (!SvOi::isOkToEdit())
@@ -507,7 +507,7 @@ void ToolSetView::OnBeginLabelEditToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 void ToolSetView::ValidateLabelText(std::string& rNewText)
 {
 	// strip leading and trailing spaces
-	SvUl::Trim(rNewText);
+	rNewText = SvUl::Trim(rNewText.c_str());
 
 	SvUl::RemoveCharacters(rNewText, SvDef::cExcludeCharsToolIpName);
 
@@ -571,7 +571,7 @@ void ToolSetView::OnEditLabelEnds()
 	if (m_labelingIndex >= 0 && m_labelingIndex < m_toolSetListCtrl.GetItemCount())
 	{
 		BOOL bResult = m_toolSetListCtrl.SetItemText(m_labelingIndex, 0, m_LabelEdited.c_str());
-		ASSERT(bResult);
+		assert(bResult); UNREFERENCED_PARAMETER(bResult);
 
 		// Cause a redraw.
 		m_toolSetListCtrl.Update(m_labelingIndex);
@@ -761,11 +761,9 @@ bool ToolSetView::ShowDuplicateNameMessage(const std::string& rName) const
 	return (IDRETRY == res);
 }
 
-void ToolSetView::OnEndLabelEditToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
+void ToolSetView::OnEndLabelEditToolSetList(NMHDR*, LRESULT* pResult)
 {
 	m_showDuplicateNameMessage = false;
-	LV_DISPINFO* pDispInfo = reinterpret_cast<LV_DISPINFO*>(pNMHDR);
-
 	m_isLabeling = false;
 	*pResult = 0;
 
@@ -791,7 +789,6 @@ void ToolSetView::OnEndLabelEditToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 		return;
 	}
 	std::string Selection(NavElement->m_DisplayName);
-	bool RenameSubTool(false);
 	CString Text;
 	pEdit->GetWindowText(Text);
 	std::string NewText(Text);
@@ -873,7 +870,6 @@ void ToolSetView::OnEndLabelEditToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 		pIODoc->UpdateAllViews(nullptr);
 	}
 	*pResult = true;
-
 }
 
 void ToolSetView::OnLButtonDown(UINT nFlags, CPoint point)

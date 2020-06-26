@@ -160,7 +160,7 @@ namespace SvOg
 		// Parameter: ControlID <in> The ID of the control which we would like to control
 		// Return: True if the ID of the control has the focus
 		//************************************
-		bool doesControlHaveFocus( UINT ControlID ) const;
+		bool doesControlHaveFocus( int ControlID ) const;
 #pragma endregion Protected Methods
 
 	private:

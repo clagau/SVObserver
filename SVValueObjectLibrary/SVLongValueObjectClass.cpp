@@ -65,7 +65,7 @@ long SVLongValueObjectClass::ConvertString2Type( const std::string& rValue ) con
 	std::string Digits = SvUl::ValidateString( rValue, _T("-0123456789 .xXabcdefABCDEF") );
 	if( Digits == rValue )
 	{
-		SvUl::MakeLower(Digits);
+		Digits = SvUl::MakeLower(Digits.c_str());
 		TCHAR* p = nullptr;
 		long lValue;
 		if ( std::string::npos != Digits.find( 'x' ) )

@@ -75,10 +75,6 @@ public:
 	afx_msg void OnViewPPQBar();
 	//}}AFX_MSG
 
-	// End Object Script Parsing
-	afx_msg LRESULT OnEndObjectScriptParse( WPARAM wParam, LPARAM lParam );
-	afx_msg LRESULT OnEndObjectCreation( WPARAM wParam, LPARAM lParam );
-
 	afx_msg LRESULT OnUserChanged( WPARAM wParam, LPARAM lParam );
 
 	afx_msg LRESULT RemoteRegisterMonitorList(WPARAM wParam, LPARAM lParam);

@@ -100,7 +100,7 @@ namespace SvMc
 		}
 	}
 
-	LRESULT SVHorizListBox::OnAddString(WPARAM wParam, LPARAM lParam)
+	LRESULT SVHorizListBox::OnAddString(WPARAM , LPARAM lParam)
 	{
 		LRESULT lResult = Default();
 		if (LB_ERR != lResult && LB_ERRSPACE != lResult)
@@ -110,7 +110,7 @@ namespace SvMc
 		return lResult;
 	}
 
-	LRESULT SVHorizListBox::OnInsertString(WPARAM wParam, LPARAM lParam)
+	LRESULT SVHorizListBox::OnInsertString(WPARAM , LPARAM lParam)
 	{
 		LRESULT lResult = Default();
 		if (LB_ERR != lResult && LB_ERRSPACE != lResult)
@@ -120,7 +120,7 @@ namespace SvMc
 		return lResult;
 	}
 
-	LRESULT SVHorizListBox::OnDeleteString(WPARAM wParam, LPARAM lParam)
+	LRESULT SVHorizListBox::OnDeleteString(WPARAM , LPARAM )
 	{
 		LRESULT lResult = Default();
 		if (LB_ERR != lResult && LB_ERRSPACE != lResult)
@@ -130,7 +130,7 @@ namespace SvMc
 		return lResult;
 	}
 
-	LRESULT SVHorizListBox::OnSetTabStops(WPARAM wParam, LPARAM lParam)
+	LRESULT SVHorizListBox::OnSetTabStops(WPARAM , LPARAM )
 	{
 		LRESULT lResult = Default();
 		if (LB_ERR != lResult && LB_ERRSPACE != lResult)
@@ -140,7 +140,7 @@ namespace SvMc
 		return lResult;
 	}
 
-	LRESULT SVHorizListBox::OnResetContent(WPARAM wParam, LPARAM lParam)
+	LRESULT SVHorizListBox::OnResetContent(WPARAM , LPARAM )
 	{
 		LRESULT lResult = Default();
 		SetHorizontalExtent(0);

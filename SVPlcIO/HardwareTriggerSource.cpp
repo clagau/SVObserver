@@ -18,11 +18,8 @@ namespace SvPlc
 constexpr uint8_t cUnitControlActive = 1;
 constexpr int32_t cMicrosecondsPerMillisecond = 1000;
 constexpr uint32_t cTimeWrap = 65536;		//Constant when time offset negative need to wrap it by 16 bits
-
-const size_t m_numberOfEntriesPerChannel = 25;
-
-const uint32_t cCifXNodeId = 11; //< The Powerlink Node Id used for the Hilscher CifX card value shall be 11-14 (SVIM1-SVIM4)
-const uint32_t cmaxPLC_DataSize = 456; //< the maximum size of the PLC-data in bytes Telegram = 20 Bytes Dynamic = 436 Bytes
+constexpr uint16_t cCifXNodeId = 11; //< The Powerlink Node Id used for the Hilscher CifX card value shall be 11-14 (SVIM1-SVIM4)
+constexpr uint16_t cmaxPLC_DataSize = 456; //< the maximum size of the PLC-data in bytes Telegram = 20 Bytes Dynamic = 436 Bytes
 //Make sure that the telegram in structure is smaller than the Hilscher card incoming buffer size
 static_assert(sizeof(Telegram) + sizeof(InspectionCommand) <= cmaxPLC_DataSize, "Read buffer size is to small");
 static_assert(sizeof(Telegram) + sizeof(InspectionState) <= cmaxPLC_DataSize, "Write buffer size is to small");

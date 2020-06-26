@@ -88,7 +88,7 @@ VariantParamMap CSVROI::GetParameterMap() const
 	return m_ParameterMap;
 }
 
-HRESULT CSVROI::SetOverlay(VARIANT* pParameterList, VARIANT* pParameterValue, LONG bAllowEdit)
+HRESULT CSVROI::SetOverlay(VARIANT* pParameterList, VARIANT* pParameterValue, LONG)
 {
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 

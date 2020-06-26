@@ -104,7 +104,7 @@ BOOL SVRemoteOutputsView::PreCreateWindow(CREATESTRUCT& cs)
 	return CListView::PreCreateWindow(cs);
 }
 
-void SVRemoteOutputsView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
+void SVRemoteOutputsView::OnUpdate(CView* , LPARAM , CObject* )
 {
 	SVConfigurationObject* pConfig = nullptr;
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
@@ -120,7 +120,6 @@ void SVRemoteOutputsView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 		int j = 0;
 		int k = 1;
 		int iCurrentPPQ = 0;
-		int l_PPQNum = 0;
 	
 		// Get the number of PPQs
 		if( nullptr == pConfig  )
@@ -138,8 +137,6 @@ void SVRemoteOutputsView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 		if( lPPQSize == 0 )
 			return;
 
-		// Result Outputs
-		DWORD maxOutput = 0;
 		// Get the DLL List...
 
 		SvDef::StringVector GroupNames;
@@ -189,7 +186,7 @@ void SVRemoteOutputsView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 				for( j = 0; j < lSize; j++ )
 				{
 					SVRemoteOutputObject* l_pOutput = nullptr;
-					HRESULT l_hr = pConfig->GetRemoteOutputItem( rGroupName, j, l_pOutput);
+					pConfig->GetRemoteOutputItem( rGroupName, j, l_pOutput);
 
 					if( nullptr == l_pOutput )
 					{
@@ -227,7 +224,7 @@ void SVRemoteOutputsView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 	//CListView::OnUpdate( pSender, lHint, pHint );   // This call will cause flicker
 }
 
-void SVRemoteOutputsView::OnLButtonDblClk(UINT nFlags, CPoint point)
+void SVRemoteOutputsView::OnLButtonDblClk(UINT, CPoint point)
 {
 	CString strAddress;
 	SVRemoteOutputObject* pRemoteOutput = nullptr;

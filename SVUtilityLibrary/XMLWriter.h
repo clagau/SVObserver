@@ -106,32 +106,32 @@ namespace xml
 	{
 	public:
 		// create a new element tag, bound to an xml::writer
-		element(const char* name, writer& wr) : name(name), wr(wr)
+		element(const char* name, writer& wr) : m_name(name), m_writer(wr)
 		{
-			assert(name != 0);
+			assert(m_name != nullptr);
 			check_parent( true );
 			wr.header().putc('<').puts(name);
 			tagopen = true;
-			wr.elements.push(this);
+			m_writer.elements.push(this);
 		}
 
 		// close the current element tag
 		~element()
 		{
-			if (!wr.elements.empty() && wr.elements.top() == this)
+			if (!m_writer.elements.empty() && m_writer.elements.top() == this)
 			{
-				wr.elements.pop();
+				m_writer.elements.pop();
 				if (tagopen)
 				{
-					wr.puts("/>");
+					m_writer.puts("/>");
 				}
 				else
 				{
-					wr.puts("</").puts(name).puts(">");
+					m_writer.puts("</").puts(m_name).puts(">");
 				}
-				if( wr.m_NewLine )
+				if( m_writer.m_NewLine )
 				{
-					wr.putc('\n');
+					m_writer.putc('\n');
 				}
 			}
 		}
@@ -142,9 +142,9 @@ namespace xml
 			assert(name != 0);
 			assert(value != 0);
 			assert(tagopen);
-			wr.putc(' ').puts(name).puts("=\"");
+			m_writer.putc(' ').puts(name).puts("=\"");
 			qputs(value);
-			wr.putc('"');
+			m_writer.putc('"');
 			return *this;
 		}
 
@@ -187,9 +187,9 @@ namespace xml
 		element& cdata(const char* str) {
 			assert(str != 0);
 			check_parent( false );
-			wr.puts("<![CDATA[");
-			wr.puts(str);
-			wr.puts("]]>");
+			m_writer.puts("<![CDATA[");
+			m_writer.puts(str);
+			m_writer.puts("]]>");
 			return *this;
 		}
 
@@ -203,12 +203,12 @@ namespace xml
 			for (; *str; ++str)
 				switch (*str)
 				{
-					case '&': wr.puts("&amp;"); break;
-					case '<': wr.puts("&lt;"); break;
-					case '>': wr.puts("&gt;"); break;
-					case '\'': wr.puts("&apos;"); break;
-					case '"': wr.puts("&quot;"); break;
-					default: wr.putc(*str); break;
+					case '&': m_writer.puts("&amp;"); break;
+					case '<': m_writer.puts("&lt;"); break;
+					case '>': m_writer.puts("&gt;"); break;
+					case '\'': m_writer.puts("&apos;"); break;
+					case '"': m_writer.puts("&quot;"); break;
+					default: m_writer.putc(*str); break;
 				}
 			return *this;
 		}
@@ -216,20 +216,20 @@ namespace xml
 		// check to see if we have a parent tag which needs to be closed
 		void check_parent(bool NewLine)
 		{
-			if (!wr.elements.empty() && wr.elements.top()->tagopen)
+			if (!m_writer.elements.empty() && m_writer.elements.top()->tagopen)
 			{
-				if(NewLine && wr.m_NewLine)
-					wr.puts(">\n");
+				if(NewLine && m_writer.m_NewLine)
+					m_writer.puts(">\n");
 				else
-					wr.putc('>');
+					m_writer.putc('>');
 
-				wr.elements.top()->tagopen = false;
+				m_writer.elements.top()->tagopen = false;
 			}
 		}
 
 	private:
-		writer& wr; // bound XML writer
-		const char* name; // name of current element
+		writer& m_writer; // bound XML writer
+		const char* m_name; // name of current element
 		bool tagopen; // is the element tag for this element still open?
 	};
 }

@@ -189,8 +189,7 @@ static bool WriteDependentFileList(SvOi::IObjectWriter& rWriter, const std::stri
 				TCHAR ext[_MAX_EXT];
 				_tsplitpath(findFileData.cFileName, drive, dir, filename, ext);
 				
-				std::string lowercaseExt = ext;
-				SvUl::MakeLower(lowercaseExt);
+				std::string lowercaseExt = SvUl::MakeLower(ext);
 
 				if (lowercaseExt != SvDef::cConfigExtension)
 				{

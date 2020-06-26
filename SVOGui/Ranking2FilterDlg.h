@@ -91,7 +91,7 @@ protected:
 	/// This method determines if the control has the focus currently
 	/// \param ControlID [in] The ID of the control which we would like to control
 	/// \returns bool True if the ID of the control has the focus
-	bool doesControlHaveFocus(UINT ControlID) const;
+	bool doesControlHaveFocus(int ControlID) const;
 
 	void enableCells();
 

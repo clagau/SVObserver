@@ -247,8 +247,6 @@ BOOL SVIOAdjustDialogClass::OnInitDialog()
 
 void SVIOAdjustDialogClass::OnSelChangeIOCombo()
 {
-	CWnd* pWnd{nullptr};
-
 	int curSel = IOCombo.GetCurSel();
 	if(curSel != CB_ERR)
 	{

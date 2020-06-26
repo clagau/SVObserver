@@ -65,39 +65,42 @@ namespace SvUl
 		return Result;
 	}
 
-	int CompareNoCase(const std::string& rStringValue, const std::string & rStringValue2)
+	int CompareNoCase(const std::string& rLhs, const std::string& rRhs)
 	{
-		std::string i_left(rStringValue), i_right(rStringValue2);
-		return MakeLower(i_left).compare(MakeLower(i_right));
+		return MakeLower(rLhs.c_str()).compare(MakeLower(rRhs.c_str()));
 	}
 
-	std::string& MakeLower(std::string& rStringValue)
+	std::string MakeLower(LPCTSTR pString)
 	{
-		boost::to_lower(rStringValue);
-		return rStringValue;
+		std::string result{pString};
+		boost::to_lower(result);
+		return result;
 	}
 
-	std::string& MakeUpper(std::string& rStringValue)
+	std::string MakeUpper(LPCTSTR pString)
 	{
-		boost::to_upper(rStringValue);
-		return rStringValue;
+		std::string result {pString};
+		boost::to_upper(result);
+		return result;
 	}
 
-	std::string& Trim(std::string& rStringValue, LPCTSTR pTrimChar)
+	std::string Trim(LPCTSTR pString, LPCTSTR pTrimChar)
 	{
-		return TrimLeft(TrimRight(rStringValue, pTrimChar), pTrimChar);
+		return TrimLeft(TrimRight(pString, pTrimChar).c_str(), pTrimChar);
 	}
 
-	std::string& TrimLeft(std::string& rStringValue, LPCTSTR pTrimChar)
+	std::string TrimLeft(LPCTSTR pString, LPCTSTR pTrimChar)
 	{
-		rStringValue.erase(0, rStringValue.find_first_not_of(pTrimChar));
-		return rStringValue;
+		std::string result(pString);
+		result.erase(0, result.find_first_not_of(pTrimChar));
+		return result;
 	}
 
-	std::string& TrimRight(std::string& rStringValue, LPCTSTR pTrimChar)
+	std::string TrimRight(LPCTSTR pString, LPCTSTR pTrimChar)
 	{
-		rStringValue.erase(rStringValue.find_last_not_of(pTrimChar) + 1);
-		return rStringValue;
+		std::string temp(pString);
+		temp.erase(temp.find_last_not_of(pTrimChar) + 1);
+		return temp;
 	}
 
 	std::string Left( const std::string& rStringValue, size_t count )
@@ -233,8 +236,7 @@ namespace SvUl
 	template<typename T>
 	bool Convert2Number(const std::string& rStringValue, T& Value, bool failIfLeftoverChars)
 	{
-		std::string text = rStringValue;
-		Trim(text);
+		std::string text = Trim(rStringValue.c_str());
 		std::istringstream stream(text.c_str());
 		char c;
 		if (!(stream >> Value) || (failIfLeftoverChars && stream.get(c)))

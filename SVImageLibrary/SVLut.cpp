@@ -437,7 +437,7 @@ const SVLut& SVLut::operator = ( const SVLut& rhs )
 {
 	if ( this != &rhs )
 	{
-		maBands = rhs.maBands;
+		m_Bands = rhs.m_Bands;
 		mInfo = rhs.mInfo;
 	}
 	return *this;
@@ -447,16 +447,16 @@ void SVLut::CopyNoTransform( const SVLut& rhs )
 {
 	if ( this != &rhs )
 	{
-		assert( rhs.mInfo.Bands() == rhs.maBands.size() );
+		assert( rhs.mInfo.Bands() == rhs.m_Bands.size() );
 		mInfo.CopyNoTransform( rhs.mInfo );
-		if ( maBands.size() != rhs.maBands.size() )
+		if ( m_Bands.size() != rhs.m_Bands.size() )
 		{
-			maBands.clear();
-			maBands.resize(mInfo.Bands());	// this constructs the SVLutBand objects
+			m_Bands.clear();
+			m_Bands.resize(mInfo.Bands());	// this constructs the SVLutBand objects
 		}
 		for (UINT i = 0; i < rhs.mInfo.Bands(); i++)
 		{
-			maBands[i].CopyNoTransform( rhs(i) );
+			m_Bands[i].CopyNoTransform( rhs(i) );
 		}
 	}
 }
@@ -467,7 +467,7 @@ bool SVLut::CopyBandData(const SVLutBand& lutband)
 	assert( lutband.Band() >= 0 && lutband.Band() < mInfo.Bands() );
 	if ( lutband.Band() >= 0 && lutband.Band() < mInfo.Bands() )
 	{
-		maBands[ lutband.Band() ].CopyBandData(lutband);
+		m_Bands[ lutband.Band() ].CopyBandData(lutband);
 		return true;
 	}
 	return false;
@@ -477,7 +477,7 @@ bool SVLut::CopyBandData(const SVLut& lut, int iBand)
 {
 	bool bRet = false;
 
-	if (   maBands.size()   == lut.maBands.size()
+	if (   m_Bands.size()   == lut.m_Bands.size()
 	    && mInfo.BandSize() == lut.Info().BandSize() )
 	{
 		if (iBand == -1)
@@ -485,16 +485,16 @@ bool SVLut::CopyBandData(const SVLut& lut, int iBand)
 			// loop through all bands & copy data
 			for (UINT i = 0; i < mInfo.Bands(); i++)
 			{
-				maBands[i].CopyBandData(lut(i));
+				m_Bands[i].CopyBandData(lut(i));
 			}
 			bRet = true;
 		}
 		else
 		{
-			assert( static_cast< unsigned long >( iBand ) < maBands.size() && iBand >= 0);
-			if ( static_cast< unsigned long >( iBand ) < maBands.size() && iBand >= 0)
+			assert( static_cast< unsigned long >( iBand ) < m_Bands.size() && iBand >= 0);
+			if ( static_cast< unsigned long >( iBand ) < m_Bands.size() && iBand >= 0)
 			{
-				maBands[iBand].CopyBandData(lut(iBand));
+				m_Bands[iBand].CopyBandData(lut(iBand));
 				bRet = true;
 			}
 		}
@@ -505,24 +505,24 @@ bool SVLut::CopyBandData(const SVLut& lut, int iBand)
 
 bool SVLut::IsCreated() const
 {
-	return maBands.size() > 0;
+	return m_Bands.size() > 0;
 }
 
 bool SVLut::Create(const SVLutInfo& info)
 {
 	bool bRet = true;
 
-	if ( maBands.size() > 0 )
+	if ( m_Bands.size() > 0 )
 	{
 		Destroy();
 	}
 
 	mInfo = info;
-	maBands.clear();
-	maBands.resize(mInfo.Bands());	// this constructs the SVLutBand objects
+	m_Bands.clear();
+	m_Bands.resize(mInfo.Bands());	// this constructs the SVLutBand objects
 	for (UINT i=0; i < mInfo.Bands(); i++)
 	{
-		SVLutBand& rBand = maBands[i];
+		SVLutBand& rBand = m_Bands[i];
 		rBand.Create(mInfo, i);
 	}
 
@@ -533,7 +533,7 @@ bool SVLut::Destroy()
 {
 	bool bRet = true;
 
-	maBands.clear();
+	m_Bands.clear();
 
 	return bRet;
 }
@@ -543,34 +543,34 @@ bool SVLut::Transform(const SVLutTransformParameters& param)
 	bool bRet = true;
 	for (UINT i=0; i<mInfo.Bands(); i++)
 	{
-		bRet = bRet && maBands[i].Transform(param);
+		bRet = bRet && m_Bands[i].Transform(param);
 	}
 	return bRet;
 }
 
 SVLutBand& SVLut::operator () (UINT nBand)
 {
-	return maBands[nBand];
+	return m_Bands[nBand];
 }
 
 const SVLutBand& SVLut::operator () (UINT nBand) const
 {
-	return maBands[nBand];
+	return m_Bands[nBand];
 }
 
 SVLutEntry& SVLut::operator () (UINT nBand, UINT nIndex)
 {
-	return maBands[nBand](nIndex);
+	return m_Bands[nBand](nIndex);
 }
 
 const SVLutEntry& SVLut::operator () (UINT nBand, UINT nIndex) const
 {
-	return maBands[nBand](nIndex);
+	return m_Bands[nBand](nIndex);
 }
 
-ULONG SVLut::NumBands() const
+int SVLut::NumBands() const
 {
-	return static_cast< ULONG >( maBands.size() );
+	return static_cast<int>( m_Bands.size() );
 }
 
 const SVLutInfo& SVLut::Info() const
@@ -588,10 +588,10 @@ bool SVLut::SetTransform(const SVLutTransform& rTransform)
 	bool bRet = nullptr == mInfo.GetTransform();
 	if ( bRet )
 	{
-		assert( mInfo.Bands() == maBands.size() );
+		assert( mInfo.Bands() == m_Bands.size() );
 		for (UINT i=0; i<mInfo.Bands(); i++)
 		{
-			bRet = bRet && maBands[i].mInfo.SetTransform(rTransform);
+			bRet = bRet && m_Bands[i].mInfo.SetTransform(rTransform);
 		}
 		bRet = mInfo.SetTransform(rTransform) && bRet;
 	}
@@ -603,7 +603,7 @@ bool SVLut::SetTransformOperation(const SVLutTransformOperation& pType)
 	bool bRet = true;
 	for (UINT i=0; i<mInfo.Bands(); i++)
 	{
-		bRet = bRet && maBands[i].mInfo.SetTransformOperation(pType);
+		bRet = bRet && m_Bands[i].mInfo.SetTransformOperation(pType);
 	}
 	return mInfo.SetTransformOperation(pType) && bRet;
 }
@@ -654,7 +654,7 @@ bool SVLut::SetBandData(SAFEARRAY* psaBands)
 								HRESULT hr = ::SafeArrayGetElement(psaBands, alDimIndex, (void*) &lVal);
 								if (S_OK == hr)
 								{
-									maBands[lBand].maTable[l-lBegin] = lVal;
+									m_Bands[lBand].maTable[l-lBegin] = lVal;
 								}
 							}// end for (long l = lBegin; l < lEnd; l++)
 						}// end for (long lBand=0; lBand < lNumBands; lBand++)
@@ -691,7 +691,7 @@ bool SVLut::GetBandData(SAFEARRAY*& rpsaBands) const
 				for (unsigned long l = 0; l < mInfo.BandSize(); l++)
 				{
 					alDimIndex[0] = l;
-					long lVal = maBands[lBand](l);
+					long lVal = m_Bands[lBand](l);
 					::SafeArrayPutElement(rpsaBands, alDimIndex, (void*) &lVal);
 				}
 			}
@@ -709,7 +709,6 @@ SVLutTestCases::SVLutTestCases()
 
 	SVLutEntry entry;
 	entry = 5;
-	ULONG ul = entry;
 	SVLutValueType val = 3;
 	val = entry;
 	entry = val;

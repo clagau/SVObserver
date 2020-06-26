@@ -76,7 +76,7 @@ BOOL PlcOutputsView::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD
 	return RetVal;
 }
 
-void PlcOutputsView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
+void PlcOutputsView::OnUpdate(CView*, LPARAM , CObject* )
 {
 	if (::IsWindow(m_hWnd))
 	{
@@ -157,7 +157,7 @@ void PlcOutputsView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 	}
 }
 
-void PlcOutputsView::OnLButtonDblClk(UINT nFlags, CPoint point)
+void PlcOutputsView::OnLButtonDblClk(UINT, CPoint point)
 {
 	UINT flags;
 

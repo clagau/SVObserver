@@ -152,13 +152,15 @@ namespace Gdiplus
 #include <boost/function.hpp>
 #include <boost/fusion/container.hpp>						//Used by static library
 #include <boost/fusion/algorithm.hpp>						//Used by static library
+#pragma warning(disable : 4458 4459)
+#pragma warning(push)
 #include <boost/graph/adjacency_list.hpp>					//Used by static library
 #include <boost/graph/depth_first_search.hpp>				//Used by static library
 #include <boost/graph/breadth_first_search.hpp>				//Used by static library
 #include <boost/graph/reverse_graph.hpp>					//Used by static library
 #include <boost/graph/filtered_graph.hpp>					//Used by static library
 #include <boost/graph/graphviz.hpp>							//Used by static library
-#define BOOST_DATE_TIME_NO_LIB
+#pragma warning(pop)
 #include <boost/lexical_cast.hpp>
 #include <boost/math/special_functions/round.hpp>
 #include <boost/scoped_array.hpp>							//Used by static library

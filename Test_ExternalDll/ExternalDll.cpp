@@ -31,7 +31,7 @@ bool operator < (const GUID& guid1, const GUID& guid2)
 }
 
 extern "C" int APIENTRY
-DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID lpReserved)
+DllMain(HINSTANCE , DWORD dwReason, LPVOID lpReserved)
 {
 	// Remove this if you use lpReserved
 	UNREFERENCED_PARAMETER(lpReserved);
@@ -96,6 +96,7 @@ HRESULT LookupTool(GUID guidTool, CDllTool*& rpDllTool)
 // ******* Simple Test function to check that the calling convention is correct.
 TOOLDLL_API long __stdcall SVSimpleTest(long lValue1, long lValue2)
 {
+	UNREFERENCED_PARAMETER(lValue1); 
 #if _DEBUG
 	fdb("===== SVSimpleTest - lValue1=%ld lValue2=%ld\n", lValue1, lValue2);
 #endif
@@ -437,7 +438,7 @@ TOOLDLL_API HRESULT __stdcall SVGetErrorMessageString(unsigned long ulErrorNumbe
 }
 
 // cppcheck-suppress unusedFunction
-TOOLDLL_API HRESULT __stdcall SVValidateValueParameter(GUID guidTool, long lParameterNumber,
+TOOLDLL_API HRESULT __stdcall SVValidateValueParameter(GUID , long lParameterNumber,
 	VARIANT vParameterValue)
 {
 #if _DEBUG
@@ -488,7 +489,7 @@ TOOLDLL_API HRESULT __stdcall SVGetNumberOfInputImages(long* plNumberOfInputImag
 
 // Only implement One of the set of InputImages / ResultImages
 // cppcheck-suppress unusedFunction
-TOOLDLL_API HRESULT __stdcall SVSetMILInputImages(GUID guidTool, long lArraySize, long* paMILhandles)
+TOOLDLL_API HRESULT __stdcall SVSetMILInputImages(GUID guidTool, long , long* paMILhandles)
 {
 #if _DEBUG
 	fdb("===== SVSetMILInputImages - Enter\n");
@@ -725,7 +726,8 @@ TOOLDLL_API HRESULT __stdcall SVGetInputValueDefinitions(long* plArraySize, Inpu
 		
 		(*ppaStructs)[index].bstrHelpText = InputsEx[index].HelpText.copy();
 		(*ppaStructs)[index].bstrGroup =  InputsEx[index].Group.copy();
-		(*ppaStructs)[index].vDefaultValue.Attach(InputsEx[index].vDefaultValue.Detach());
+		VARIANT defaultValue = InputsEx[index].vDefaultValue.Detach();
+		(*ppaStructs)[index].vDefaultValue.Attach(defaultValue);
 
 	
 	}
@@ -856,7 +858,8 @@ TOOLDLL_API HRESULT __stdcall GetResultTableDefinitions(long* pSize, ResultTable
 		
 		(*ppaResultTableDefs)[index].ColoumnCount = ResultsEx[index].ColoumnCount;
 		(*ppaResultTableDefs)[index].RowCount = ResultsEx[index].RowCount;
-		(*ppaResultTableDefs)[index].ColumnNames.Attach(ResultsEx[index].ColumnNames.Detach());
+		VARIANT columnName = ResultsEx[index].ColumnNames.Detach();
+		(*ppaResultTableDefs)[index].ColumnNames.Attach(columnName);
 		//smart array of bstr with names
 	}
 	

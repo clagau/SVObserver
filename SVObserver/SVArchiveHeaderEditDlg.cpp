@@ -88,10 +88,8 @@ void SVArchiveHeaderEditDlg::OnSize(UINT nType, int cx, int cy)
 	}
 }
 
-void SVArchiveHeaderEditDlg::OnLvnItemchangedStringListEdit(NMHDR *pNMHDR, LRESULT *pResult)
+void SVArchiveHeaderEditDlg::OnLvnItemchangedStringListEdit(NMHDR*, LRESULT* pResult)
 {
-	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
-	// TODO: Add your control notification handler code here
 	DisplaySelectedText();
 	*pResult = 0;
 }
@@ -111,9 +109,6 @@ BOOL SVArchiveHeaderEditDlg::OnInitDialog()
 	GetClientRect( m_PreviousClient );
 	GetWindowRect( m_OriginalRec );
 
-	RECT rec;
-	m_HeaderListCtrl.GetClientRect(&rec);
-	int iSize = (rec.right - rec.left - 1)/2;
 	m_HeaderListCtrl.InsertColumn(0, _T("Result Name"));
 	m_HeaderListCtrl.InsertColumn(1, _T("Header Label"));
 
@@ -212,7 +207,7 @@ void SVArchiveHeaderEditDlg::DisplaySelectedText(  )
 	if( iSel < 0 )
 	{
 		iSel = 0;
-		HRESULT hr = m_HeaderListCtrl.SetItemState(0, NSTCIS_SELECTED, NSTCIS_SELECTED );
+		m_HeaderListCtrl.SetItemState(0, NSTCIS_SELECTED, NSTCIS_SELECTED );
 	}
 	if( m_HeaderListCtrl.GetItemCount() > 0 )
 	{

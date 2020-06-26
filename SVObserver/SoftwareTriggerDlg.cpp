@@ -171,7 +171,7 @@ int SVSoftwareTriggerDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
-LRESULT SVSoftwareTriggerDlg::OnTriggerChange(WPARAM wParam, LPARAM lParam)
+LRESULT SVSoftwareTriggerDlg::OnTriggerChange(WPARAM wParam, LPARAM)
 {
 	int Value = static_cast< int >( wParam );
 	std::string Text = SvUl::Format( _T("%d"), Value );
@@ -216,19 +216,10 @@ BOOL SVSoftwareTriggerDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	m_pSpins = 
-		new SVSpinGroup(
-			m_msecSpin, 
-			m_msecEdit, 
-			m_msecLabel, 
-			sv::Def(true, 1000), 
-			new SVSpinGroup(
-				m_secSpin,
-				m_secEdit,
-				m_secLabel,
-				sv::Def(false, 121), 0
-			)				
-		);
+	sv::Def limit1(true, 1000);
+	sv::Def limit2(false, 121);
+	SVSpinGroup* pNext = new SVSpinGroup(m_secSpin, m_secEdit, m_secLabel, limit2, nullptr);
+	m_pSpins = new SVSpinGroup(m_msecSpin, m_msecEdit, m_msecLabel, limit1, pNext);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 }

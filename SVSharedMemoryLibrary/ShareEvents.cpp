@@ -202,7 +202,7 @@ namespace SvSml
 			SetEvent(m_StopEvent);
 			if (::WaitForSingleObject(m_hWatchThread, 2000) != WAIT_OBJECT_0)
 			{
-				::TerminateThread(m_hWatchThread, E_FAIL);
+				::TerminateThread(m_hWatchThread, static_cast<DWORD> (E_FAIL));
 			}
 			CloseHandle(m_StopEvent);
 			CloseHandle(m_hWatchThread);
@@ -219,7 +219,7 @@ namespace SvSml
 			SetEvent(m_StopEvent);
 			if(::WaitForSingleObject(m_hWatchThread,2000) != WAIT_OBJECT_0)
 			{
-				::TerminateThread( m_hWatchThread, E_FAIL );
+				::TerminateThread( m_hWatchThread, static_cast<DWORD> (E_FAIL));
 			}
 		}
 		

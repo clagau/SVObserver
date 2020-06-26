@@ -41,7 +41,7 @@ SVRCCommand::~SVRCCommand()
 {
 }
 
-void SVRCCommand::GetVersion(const SvPb::GetSVObserverVersionRequest& rRequest, SvRpc::Task<SvPb::GetVersionResponse> task)
+void SVRCCommand::GetVersion(const SvPb::GetSVObserverVersionRequest& , SvRpc::Task<SvPb::GetVersionResponse> task)
 {
 	SvPb::GetVersionResponse Response;
 
@@ -52,7 +52,7 @@ void SVRCCommand::GetVersion(const SvPb::GetSVObserverVersionRequest& rRequest, 
 	task.finish(std::move(Response));
 }
 
-void SVRCCommand::GetDeviceMode(const SvPb::GetDeviceModeRequest& rRequest, SvRpc::Task<SvPb::GetDeviceModeResponse> task)
+void SVRCCommand::GetDeviceMode(const SvPb::GetDeviceModeRequest& , SvRpc::Task<SvPb::GetDeviceModeResponse> task)
 {
 	SvPb::GetDeviceModeResponse Response;
 	SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
@@ -90,7 +90,7 @@ void SVRCCommand::SetDeviceMode(const SvPb::SetDeviceModeRequest& rRequest, SvRp
 	task.finish(std::move(Response));
 }
 
-void SVRCCommand::GetState(const SvPb::GetStateRequest& rRequest, SvRpc::Task<SvPb::GetStateResponse> task)
+void SVRCCommand::GetState(const SvPb::GetStateRequest& , SvRpc::Task<SvPb::GetStateResponse> task)
 {
 	SvPb::GetStateResponse Response;
 	unsigned long State {0L};
@@ -260,9 +260,8 @@ void SVRCCommand::PutConfig(const SvPb::PutConfigRequest& rRequest, SvRpc::Task<
 	task.finish(std::move(Response));
 }
 
-void SVRCCommand::GetOfflineCount(const SvPb::GetOfflineCountRequest& rRequest, SvRpc::Task<SvPb::GetOfflineCountResponse> task)
+void SVRCCommand::GetOfflineCount(const SvPb::GetOfflineCountRequest& , SvRpc::Task<SvPb::GetOfflineCountResponse> task)
 {
-	HRESULT Result {S_OK};
 	SvPb::GetOfflineCountResponse Response;
 
 	SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
@@ -617,10 +616,8 @@ void SVRCCommand::PutFile(const SvPb::PutFileRequest& rRequest, SvRpc::Task<SvPb
 		{
 			destinationPath = SvStl::GlobalPath::Inst().GetRunPath(destinationPath.c_str());
 		}
-		std::string runPath{SvStl::GlobalPath::Inst().GetRunPath()};
-		std::string comparePath{destinationPath};
-		SvUl::MakeLower(comparePath);
-		SvUl::MakeLower(runPath);
+		std::string runPath = SvUl::MakeLower(SvStl::GlobalPath::Inst().GetRunPath().c_str());
+		std::string comparePath = SvUl::MakeLower(destinationPath.c_str());
 		if(rRequest.saveinconfig() && 0 != comparePath.find(runPath))
 		{
 			Result = E_INVALIDARG;
@@ -694,7 +691,7 @@ void SVRCCommand::RegisterMonitorList(const SvPb::RegisterMonitorListRequest& rR
 	task.finish(std::move(Response));
 }
 
-void SVRCCommand::GetInspectionNames(const SvPb::GetInspectionNamesRequest& rRequest, SvRpc::Task<SvPb::NamesResponse> task)
+void SVRCCommand::GetInspectionNames(const SvPb::GetInspectionNamesRequest& , SvRpc::Task<SvPb::NamesResponse> task)
 {
 	SvPb::NamesResponse Response;
 
@@ -762,7 +759,7 @@ void SVRCCommand::GetMonitorListProperties(const SvPb::GetMonitorListPropertiesR
 	task.finish(std::move(Response));
 }
 
-void SVRCCommand::GetMaxRejectDepth(const SvPb::GetMaxRejectDepthRequest& rRequest, SvRpc::Task<SvPb::GetMaxRejectDepthResponse> task)
+void SVRCCommand::GetMaxRejectDepth(const SvPb::GetMaxRejectDepthRequest& , SvRpc::Task<SvPb::GetMaxRejectDepthResponse> task)
 {
 	SvPb::GetMaxRejectDepthResponse Response;
 
@@ -770,7 +767,7 @@ void SVRCCommand::GetMaxRejectDepth(const SvPb::GetMaxRejectDepthRequest& rReque
 	task.finish(std::move(Response));
 }
 
-void SVRCCommand::GetConfigReport(const SvPb::GetConfigReportRequest& rRequest, SvRpc::Task<SvPb::GetConfigReportResponse> task)
+void SVRCCommand::GetConfigReport(const SvPb::GetConfigReportRequest& , SvRpc::Task<SvPb::GetConfigReportResponse> task)
 {
 	HRESULT Result {S_OK};
 	SvPb::GetConfigReportResponse Response;
@@ -867,7 +864,7 @@ void SVRCCommand::QueryMonitorList(const SvPb::QueryMonitorListRequest& rRequest
 	task.finish(std::move(Response));
 }
 
-void SVRCCommand::QueryMonitorListNames(const SvPb::QueryMonitorListNamesRequest& rRequest, SvRpc::Task<SvPb::NamesResponse> task)
+void SVRCCommand::QueryMonitorListNames(const SvPb::QueryMonitorListNamesRequest& , SvRpc::Task<SvPb::NamesResponse> task)
 {
 	HRESULT Result {S_OK};
 
@@ -971,7 +968,6 @@ void SVRCCommand::ExecuteInspectionCmd(const SvPb::InspectionCmdRequest& rReques
 	if(S_OK == response.hresult())
 	{
 		bool isCreate{true};
-		SVIPDoc::SVIPViewUpdateHints refreshHint{SVIPDoc::RefreshView};
 		switch (rRequest.message_case())
 		{
 			case SvPb::InspectionCmdRequest::kDeleteObjectRequest:
@@ -1006,7 +1002,7 @@ void SVRCCommand::ExecuteInspectionCmd(const SvPb::InspectionCmdRequest& rReques
 	task.finish(std::move(response));
 }
 
-void SVRCCommand::GetConfigurationTree(const SvPb::GetConfigurationTreeRequest& rRequest, SvRpc::Task<SvPb::GetConfigurationTreeResponse> task)
+void SVRCCommand::GetConfigurationTree(const SvPb::GetConfigurationTreeRequest&, SvRpc::Task<SvPb::GetConfigurationTreeResponse> task)
 {
 	SvPb::GetConfigurationTreeResponse response;
 

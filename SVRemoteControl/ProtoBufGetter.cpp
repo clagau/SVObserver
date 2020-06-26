@@ -51,7 +51,7 @@ ValuePtr GetValueObjectPtr(int Count, const std::string& rName, const SvPb::Vari
 	return pvo;
 }
 
-ErrorPtr GetErrorObjectPtr(LONG Status, const std::string& rName, const SvPb::Variant& rValue)
+ErrorPtr GetErrorObjectPtr(LONG Status, const std::string& rName, const SvPb::Variant&)
 {
 	CComObject<SVErrorObject>* pErrorObject{nullptr};
 	CComObject<SVErrorObject>::CreateInstance(&pErrorObject);
@@ -133,9 +133,6 @@ ProductPtr GetProductPtr(SvWsl::SVRCClientServicePtr& rpSvrcClientService, const
 	CComObject<SVProductItems>::CreateInstance(&pProdItems);
 	ProductPtr pProdItemsPtr(pProdItems);
 
-	bool bpImageName = rResp.images_size() == rResp.imagenames_size();
-	bool bpValueName = rResp.values_size() == rResp.valuenames_size();
-
 	for (int v = 0; v < rResp.values_size(); v++)
 	{
 		pProdItems->AddValue(GetValueObjectPtr(rResp.trigger(), rResp.valuenames(v), rResp.values(v)));
@@ -164,7 +161,7 @@ ProductPtr GetProductPtr(SvWsl::SVRCClientServicePtr& rpSvrcClientService, const
 
 }
 
-FailList GetFailList(SvWsl::SVRCClientServicePtr& rpSvrcClientService, const SvPb::GetFailStatusResponse& resp)
+FailList GetFailList(SvWsl::SVRCClientServicePtr& , const SvPb::GetFailStatusResponse& resp)
 {
 	FailList list;
 	int TriggerCount = resp.products_size();

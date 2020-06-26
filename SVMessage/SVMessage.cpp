@@ -41,9 +41,9 @@ extern "C"
 	SVMESSAGE_API NotifyFunctor g_Notify;
 };
 
-BOOL APIENTRY DllMain( HMODULE hModule,
+BOOL APIENTRY DllMain( HMODULE,
 	DWORD  ul_reason_for_call,
-	LPVOID lpReserved
+	LPVOID
 	)
 {
 	g_LastDllMainReason = ul_reason_for_call;

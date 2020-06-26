@@ -245,7 +245,7 @@ HDC SVImageProcessingClass::CreateBufferDC(const SVImageInfoClass& rInfo, SvOi::
 	return Result;
 }
 
-HRESULT SVImageProcessingClass::DestroyBufferDC(SvOi::SVImageBufferHandlePtr rHandle, HDC hDC)
+HRESULT SVImageProcessingClass::DestroyBufferDC(SvOi::SVImageBufferHandlePtr rHandle, HDC)
 {
 	HRESULT Result(S_OK);
 
@@ -543,7 +543,7 @@ HRESULT SVImageProcessingClass::CreateDataBuffer(SVDataBufferInfoClass* pDataInf
 	if (nullptr != pDataInfo && pDataInfo->Length > 0 &&
 		M_NULL == pDataInfo->HBuffer.milResult)
 	{
-		SVImageOperationTypeEnum l_eType;
+		SVImageOperationTypeEnum l_eType{SVImageValue};
 
 		switch (pDataInfo->Type)
 		{
@@ -570,6 +570,8 @@ HRESULT SVImageProcessingClass::CreateDataBuffer(SVDataBufferInfoClass* pDataInf
 				break;
 			case SVDataBufferInfoClass::SVHistResult:
 				l_eType = SVImageHistList;
+				break;
+			default:
 				break;
 		}
 
@@ -631,7 +633,7 @@ HRESULT SVImageProcessingClass::FillBufferStructFromInfo(const SVImageInfoClass&
 	int pixelDepth = 0;
 	long width = 0;
 	long height = 0;
-	SVMatroxBufferAttributeEnum format;
+	SVMatroxBufferAttributeEnum format{SVBufAttUnknown};
 
 	HRESULT Result = GetOutputImageCreateData(rInfo, l_eFormat, pixelDepth, bandNumber, bandLink, width, height);
 

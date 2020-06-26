@@ -98,10 +98,8 @@ BOOL SVCameraFilePropertyPageDlg::OnInitDialog()
 	// Create a root item (root items should always be SVRPropertyItem object since they
 	// can not have properties
 	SVRPropertyItem*        pRoot = nullptr;
-	SVRPropertyItemFile*    pFile = nullptr;
 	SVRPropertyItemCombo*   pCombo = nullptr;
 	SVRPropertyItemEdit*    pEdit = nullptr;
-	bool                    bResult = false;
 	
 	
 	pRoot = m_Tree.InsertItem(new SVRPropertyItem());

@@ -27,7 +27,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-SVBarCodeGeneralDialog::SVBarCodeGeneralDialog(CWnd* pParent /*=nullptr*/)
+SVBarCodeGeneralDialog::SVBarCodeGeneralDialog(CWnd*  /*=nullptr*/)
 	: CPropertyPage(SVBarCodeGeneralDialog::IDD)
 	, m_iThresholdRadio(0)
 {
@@ -768,7 +768,7 @@ void SVBarCodeGeneralDialog::OnDeltaposSpinTimeout(NMHDR* pNMHDR, LRESULT* pResu
 }
 
 
-void SVBarCodeGeneralDialog::OnBnClickedThresholdNormalRadio(UINT nID)
+void SVBarCodeGeneralDialog::OnBnClickedThresholdNormalRadio(UINT)
 {
 	UpdateData();
 	switch (m_iThresholdRadio)

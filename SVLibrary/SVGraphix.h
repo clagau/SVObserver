@@ -44,7 +44,7 @@ public:
 
 	virtual ~SVGraphixDrawObjectClass();
 
-	virtual void Draw(HDC HDeviceContext){};
+	virtual void Draw(HDC ){};
 
 	void SetPenStyle( int NewStyle );
 	void SetBrushStyle( bool bSolidBrush );

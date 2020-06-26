@@ -46,21 +46,21 @@ SharedMemoryAccess::~SharedMemoryAccess()
 	unsubscribe_from_trc();
 }
 
-void SharedMemoryAccess::GetVersion(const SvPb::GetGatewayVersionRequest& rRequest, SvRpc::Task<SvPb::GetVersionResponse> task)
+void SharedMemoryAccess::GetVersion(const SvPb::GetGatewayVersionRequest& , SvRpc::Task<SvPb::GetVersionResponse> task)
 {
 	SvPb::GetVersionResponse Response;
 	Response.set_version(SvUl::to_utf8(SvSyl::SVVersionInfo::GetShortTitleVersion()));
 	task.finish(std::move(Response));
 }
 
-void SharedMemoryAccess::GetWebAppVersion(const SvPb::GetWebAppVersionRequest& rRequest, SvRpc::Task<SvPb::GetVersionResponse> task)
+void SharedMemoryAccess::GetWebAppVersion(const SvPb::GetWebAppVersionRequest& , SvRpc::Task<SvPb::GetVersionResponse> task)
 {
 	SvPb::GetVersionResponse Response;
 	Response.set_version(m_rWebAppVersionLoader.getVersion());
 	task.finish(std::move(Response));
 }
 
-void SharedMemoryAccess::GetInspections(const SvPb::GetInspectionsRequest& rRequest, SvRpc::Task<SvPb::GetInspectionsResponse> task)
+void SharedMemoryAccess::GetInspections(const SvPb::GetInspectionsRequest&, SvRpc::Task<SvPb::GetInspectionsResponse> task)
 {
 	SvPenv::Error Error;
 	SvPb::GetInspectionsResponse Response;
@@ -446,9 +446,9 @@ void SharedMemoryAccess::flush_product_stream_queue(std::shared_ptr<product_stre
 static bool read_image(SvPb::Image& resImg, SvTrc::IImagePtr imgPtr)
 {
 	auto hdl = imgPtr->getHandle();
-	auto& info = hdl->GetBitmapInfo();
-	auto& buffer = hdl->GetBuffer();
-	auto& out = *resImg.mutable_rgbdata();
+	auto info = hdl->GetBitmapInfo();
+	auto buffer = hdl->GetBuffer();
+	auto out = *resImg.mutable_rgbdata();
 	auto rc = SVMatroxBufferInterface::CopyBufferToFileDIB(out, info, buffer);
 	// height can be negative to indicate that the image origin is the upper-left corner
 	// See https://docs.microsoft.com/en-us/previous-versions/dd183376(v=vs.85)

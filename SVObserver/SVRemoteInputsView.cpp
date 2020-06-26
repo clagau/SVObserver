@@ -70,7 +70,7 @@ BOOL SVRemoteInputsView::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, D
 	return RetVal;
 }
 
-void SVRemoteInputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint )
+void SVRemoteInputsView::OnUpdate( CView* , LPARAM , CObject*  )
 {
 	if(::IsWindow( m_hWnd ) )
 	{
@@ -147,7 +147,7 @@ void SVRemoteInputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint 
 	}
 }
 
-void SVRemoteInputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
+void SVRemoteInputsView::OnLButtonDblClk(UINT, CPoint point)
 {
 	UINT flags;
 

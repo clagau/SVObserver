@@ -51,7 +51,7 @@ struct yy_buffer_state* SVEquationLexClass::yy_scan_buffer( char *base, yy_size_
 
 	b = (struct yy_buffer_state*) yy_flex_alloc( sizeof( struct yy_buffer_state ) );
 	if ( ! b )
-		YY_FATAL_ERROR( "out of dynamic memory in yy_scan_buffer()" );
+		YY_FATAL_ERROR( "out of dynamic memory in yy_can_buffer()" );
 
 	b->yy_buf_size = size - 2;	/* "- 2" to take care of EOB's */
 	b->yy_buf_pos = b->yy_ch_buf = base;
@@ -119,7 +119,7 @@ struct yy_buffer_state* SVEquationLexClass::yy_scan_string( const char *yy_str )
 	return yy_scan_bytes( yy_str, len );
 }
 
-void SVEquationLexClass::LexerError( const char* msg )
+void SVEquationLexClass::LexerError(const char*)
 {
 	lex_err = 1;
 	position = currentPos;

@@ -31,11 +31,6 @@ SVFileAcquisitionDevice::~SVFileAcquisitionDevice()
 {
 	Destroy(true);
 }
-// Handle is just the original
-static unsigned long GetDigitizerHandle(unsigned long index)
-{
-	return index;
-}
 
 bool SVFileAcquisitionDevice::IsValidDigitizer(unsigned long triggerchannel) const
 {
@@ -268,7 +263,7 @@ HRESULT SVFileAcquisitionDevice::CameraGetParameterName( unsigned long index, in
 	return l_hrOk;
 }
 
-HRESULT SVFileAcquisitionDevice::CameraGetParameter( unsigned long index, int p_iParameterID, int *p_piParameterIDType, VARIANT *p_pvarValue )
+HRESULT SVFileAcquisitionDevice::CameraGetParameter( unsigned long index, int p_iParameterID, int *, VARIANT *p_pvarValue )
 {
 	HRESULT l_hrOk = S_FALSE;
 
@@ -349,7 +344,7 @@ HRESULT SVFileAcquisitionDevice::CameraGetParameter( unsigned long index, int p_
 	return l_hrOk;
 }
 
-HRESULT SVFileAcquisitionDevice::CameraSetParameter( unsigned long index, int p_iParameterID, int p_iParameterIDType, VARIANT *p_pvarValue )
+HRESULT SVFileAcquisitionDevice::CameraSetParameter( unsigned long index, int p_iParameterID, int , VARIANT *p_pvarValue )
 {
 	HRESULT l_hrOk = S_FALSE;
 
@@ -599,13 +594,13 @@ HRESULT SVFileAcquisitionDevice::CameraProcessEndFrame( unsigned long index )
 	return l_hrOk;
 }
 
-HRESULT SVFileAcquisitionDevice::CameraLoadFiles(unsigned long index, SAFEARRAY* p_psaFileNames)
+HRESULT SVFileAcquisitionDevice::CameraLoadFiles(unsigned long , SAFEARRAY* )
 {
 	HRESULT hr = S_FALSE;
 	return hr;
 }
 
-HRESULT SVFileAcquisitionDevice::InternalTriggerEnable( unsigned long index )
+HRESULT SVFileAcquisitionDevice::InternalTriggerEnable( unsigned long )
 {
 	HRESULT hr = S_OK;
 	return hr;

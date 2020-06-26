@@ -62,14 +62,12 @@ namespace SvXml
 		/* [in] */ HRESULT errCode)
 	{
 		return ReportError(pLocator, pwchErrorMessage, errCode, true);
-
-		return S_OK;
 	}
 
 	HRESULT STDMETHODCALLTYPE SaxErrorHandler::ignorableWarning( 
-		/* [in] */ ISAXLocator  *pLocator,
-		/* [in] */ const wchar_t * pwchErrorMessage,
-		/* [in] */ HRESULT errCode)
+		/* [in] */ ISAXLocator* ,
+		/* [in] */ const wchar_t* ,
+		/* [in] */ HRESULT )
 	{
 		return S_OK;
 	}

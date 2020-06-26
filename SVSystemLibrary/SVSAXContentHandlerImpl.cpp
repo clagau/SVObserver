@@ -20,7 +20,7 @@ SVSAXContentHandlerImpl::~SVSAXContentHandlerImpl()
 {
 }
 
-HRESULT STDMETHODCALLTYPE SVSAXContentHandlerImpl::putDocumentLocator(MSXML2::ISAXLocator* pLocator)
+HRESULT STDMETHODCALLTYPE SVSAXContentHandlerImpl::putDocumentLocator(MSXML2::ISAXLocator* )
 {
     return S_OK;
 }
@@ -35,47 +35,47 @@ HRESULT STDMETHODCALLTYPE SVSAXContentHandlerImpl::endDocument()
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE SVSAXContentHandlerImpl::startPrefixMapping(unsigned short* pwchPrefix, int cchPrefix, unsigned short* pwchUri, int cchUri)
+HRESULT STDMETHODCALLTYPE SVSAXContentHandlerImpl::startPrefixMapping(unsigned short* , int , unsigned short* , int )
 {
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE SVSAXContentHandlerImpl::endPrefixMapping(unsigned short* pwchPrefix, int cchPrefix)
+HRESULT STDMETHODCALLTYPE SVSAXContentHandlerImpl::endPrefixMapping(unsigned short* , int )
 {
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE SVSAXContentHandlerImpl::startElement(unsigned short* pwchNamespaceUri, int cchNamespaceUri, unsigned short* pwchLocalName, int cchLocalName, unsigned short* pwchRawName, int cchRawName, MSXML2::ISAXAttributes* pAttributes)
+HRESULT STDMETHODCALLTYPE SVSAXContentHandlerImpl::startElement(unsigned short* , int , unsigned short* , int , unsigned short* , int , MSXML2::ISAXAttributes* )
 {
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE SVSAXContentHandlerImpl::endElement(unsigned short* pwchNamespaceUri, int cchNamespaceUri, unsigned short* pwchLocalName, int cchLocalName, unsigned short* pwchRawName, int cchRawName)
+HRESULT STDMETHODCALLTYPE SVSAXContentHandlerImpl::endElement(unsigned short* , int , unsigned short* , int , unsigned short* , int )
 {
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE SVSAXContentHandlerImpl::characters(unsigned short* pwchChars, int cchChars)
+HRESULT STDMETHODCALLTYPE SVSAXContentHandlerImpl::characters(unsigned short* , int )
 {
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE SVSAXContentHandlerImpl::ignorableWhitespace(unsigned short* pwchChars, int cchChars)
+HRESULT STDMETHODCALLTYPE SVSAXContentHandlerImpl::ignorableWhitespace(unsigned short* , int )
 {
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE SVSAXContentHandlerImpl::processingInstruction(unsigned short* pwchTarget, int cchTarget, unsigned short* pwchData, int cchData)
+HRESULT STDMETHODCALLTYPE SVSAXContentHandlerImpl::processingInstruction(unsigned short* , int , unsigned short* , int )
 {
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE SVSAXContentHandlerImpl::skippedEntity(unsigned short* pwchVal, int cchVal)
+HRESULT STDMETHODCALLTYPE SVSAXContentHandlerImpl::skippedEntity(unsigned short* , int )
 {
     return S_OK;
 }
 
-long __stdcall SVSAXContentHandlerImpl::QueryInterface(const struct _GUID &riid, void** ppvObject)
+long __stdcall SVSAXContentHandlerImpl::QueryInterface(const struct _GUID&, void** )
 {
     // hack-hack-hack!
     return 0;

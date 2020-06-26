@@ -79,7 +79,7 @@ protected:
 	virtual HRESULT ProcessResponse( SVResponseQueue &rUsedQueue, SVOResponseClass& p_rResponse );
 
 	virtual HRESULT ExecuteCallback(SVOResponseClass& rResponse);
-	virtual HRESULT processAcquisitionTriggers(const SVOResponseClass& rResponse) const { return S_OK; } 
+	virtual HRESULT processAcquisitionTriggers(const SVOResponseClass& ) const { return S_OK; } 
 
 	virtual HRESULT GetIsValid( bool &rbIsValid )const;
 	virtual HRESULT SetIsValid( bool bIsValid );

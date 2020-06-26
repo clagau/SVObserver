@@ -58,7 +58,7 @@ void SVToolAdjustmentDialogStatisticsPageClass::DoDataExchange(CDataExchange* pD
 	//}}AFX_DATA_MAP
 }
 
-SVToolAdjustmentDialogStatisticsPageClass::SVToolAdjustmentDialogStatisticsPageClass(uint32_t inspectionId, uint32_t taskObjectId, SVToolAdjustmentDialogSheetClass* pParent) 
+SVToolAdjustmentDialogStatisticsPageClass::SVToolAdjustmentDialogStatisticsPageClass(uint32_t, uint32_t taskObjectId, SVToolAdjustmentDialogSheetClass* pParent) 
 : CPropertyPage( SVToolAdjustmentDialogStatisticsPageClass::IDD )
 , m_pParent(pParent)
 , m_pTool(nullptr)
@@ -99,7 +99,6 @@ BOOL SVToolAdjustmentDialogStatisticsPageClass::OnInitDialog()
 void SVToolAdjustmentDialogStatisticsPageClass::OnButtonAdd() 
 {
 	DWORD_PTR lAvailableIndex = m_lbAvailableList.GetItemData( m_lbAvailableList.GetCurSel() );
-	DWORD_PTR lCurrentIndex = m_lbSelectedList.GetItemData( m_lbSelectedList.GetCurSel() );
 
 	if( lAvailableIndex != LB_ERR && lAvailableIndex >= 0)
 	{

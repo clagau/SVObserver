@@ -1146,11 +1146,11 @@ void SVConfigXMLPrint::WriteChildren(Writer writer, SVObjectClass* pObj) const
 		writer->WriteStartElement(nullptr, L"Children", nullptr);
 		if (SVToolSetClass* pToolSet = dynamic_cast <SVToolSetClass *>(pObj))
 		{
-			SVToolGrouping& rToolGroupings = GetToolGroupings(pToolSet->GetInspection()->getObjectId());
-			if (rToolGroupings.size())
+			SVToolGrouping toolGroupings = GetToolGroupings(pToolSet->GetInspection()->getObjectId());
+			if (toolGroupings.size())
 			{
 				bool bToolGroupActive = false;
-				for (SVToolGrouping::iterator it = rToolGroupings.begin(); it != rToolGroupings.end(); ++it)
+				for (SVToolGrouping::iterator it = toolGroupings.begin(); it != toolGroupings.end(); ++it)
 				{
 					switch (it->second.m_type)
 					{
@@ -1350,7 +1350,7 @@ inline SVDeviceParamConfigXMLHelper::SVDeviceParamConfigXMLHelper(
 {
 }
 
-inline HRESULT SVDeviceParamConfigXMLHelper::Visit(SVDeviceParam& param)
+inline HRESULT SVDeviceParamConfigXMLHelper::Visit(SVDeviceParam& )
 {
 	return S_OK;
 }
@@ -1436,17 +1436,17 @@ inline HRESULT SVDeviceParamConfigXMLHelper::Visit(SVStringValueDeviceParam& par
 	return S_OK;
 }
 
-inline HRESULT SVDeviceParamConfigXMLHelper::Visit(SVParamListDeviceParam& param)
+inline HRESULT SVDeviceParamConfigXMLHelper::Visit(SVParamListDeviceParam& )
 {
 	return S_OK;
 }
 
-inline HRESULT SVDeviceParamConfigXMLHelper::Visit(SVLutDeviceParam& param)
+inline HRESULT SVDeviceParamConfigXMLHelper::Visit(SVLutDeviceParam& )
 {
 	return S_OK;
 }
 
-inline HRESULT SVDeviceParamConfigXMLHelper::Visit(SVLightReferenceDeviceParam& param)
+inline HRESULT SVDeviceParamConfigXMLHelper::Visit(SVLightReferenceDeviceParam&)
 {
 	return S_OK;
 }

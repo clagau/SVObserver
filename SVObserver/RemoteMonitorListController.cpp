@@ -274,7 +274,7 @@ size_t RemoteMonitorListController::CalcSizeForMonitorList(const RemoteMonitorLi
 }
 
 
-void RemoteMonitorListController::WriteMonitorListToMLContainer(const std::string& name, const RemoteMonitorNamedList& remoteMonitorNamedlist)
+void RemoteMonitorListController::WriteMonitorListToMLContainer(const std::string&, const RemoteMonitorNamedList& remoteMonitorNamedlist)
 {
 	SvSml::MonitorListCpyPointer  MLCpPtr = RemoteMonitorListHelper::CreateMLcopy(remoteMonitorNamedlist);
 	SvSml::SharedMemWriter::Instance().Insert(MLCpPtr);

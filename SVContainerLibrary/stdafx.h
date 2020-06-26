@@ -62,12 +62,15 @@
 #include <boost/config.hpp>
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
+#pragma warning(disable : 4458 4459)
+#pragma warning(push)
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/breadth_first_search.hpp>
 #include <boost/graph/depth_first_search.hpp>
 #include <boost/graph/filtered_graph.hpp>
 #include <boost/graph/graphviz.hpp>
 #include <boost/graph/reverse_graph.hpp>
+#pragma warning(pop)
 #include <boost/utility.hpp>
 #pragma endregion Precompiled Headers
 

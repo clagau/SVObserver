@@ -44,7 +44,7 @@ HRESULT SVMatroxGigeDeviceParameterManager::GetParameterName(const SVMatroxGigeD
 	return l_hr;
 }
 
-HRESULT SVMatroxGigeDeviceParameterManager::GetParameter(const SVMatroxGigeDigitizer& p_rCamera, int p_iParameterID, int *p_piParameterTypeID, VARIANT *p_pvarValue)
+HRESULT SVMatroxGigeDeviceParameterManager::GetParameter(const SVMatroxGigeDigitizer& p_rCamera, int p_iParameterID, int *, VARIANT *p_pvarValue)
 {
 	HRESULT l_hr = S_FALSE;
 	const SVGigeDeviceParameterMap& gigeParameters = SVMatroxGigeDeviceParameterManager::GetParameterMap();
@@ -98,7 +98,7 @@ HRESULT SVMatroxGigeDeviceParameterManager::GetParameter(const SVMatroxGigeDigit
 	return l_hr;
 }
 
-HRESULT SVMatroxGigeDeviceParameterManager::SetParameter(const SVMatroxGigeDigitizer& p_rCamera, int p_iParameterID, int p_iParameterTypeID, VARIANT *p_pvarValue)
+HRESULT SVMatroxGigeDeviceParameterManager::SetParameter(const SVMatroxGigeDigitizer& p_rCamera, int p_iParameterID, int, VARIANT *p_pvarValue)
 {
 	HRESULT l_hr = S_FALSE;
 

@@ -155,7 +155,7 @@ namespace SvMc
 
 			BITMAP bmInfo;
 			bitmap.GetBitmap( &bmInfo );
-			UINT colNum = ( ( UINT ) 1 ) << bmInfo.bmBitsPixel; 
+			WORD colNum = static_cast<WORD> (1 << bmInfo.bmBitsPixel);
 
 			RGBQUAD* pColors = new RGBQUAD[colNum];
 			::GetDIBColorTable( memDC.GetSafeHdc(), 0, colNum, pColors );

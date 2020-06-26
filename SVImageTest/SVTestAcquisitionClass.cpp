@@ -58,7 +58,7 @@ SvTrc::IImagePtr SVTestAcquisitionClass::GetNextBuffer()
 	return (nullptr != m_pDisplay) ?  m_pDisplay->m_CameraImage.GetNextBuffer() :  SvTrc::IImagePtr();
 }
 
-HRESULT SVTestAcquisitionClass::UpdateWithCompletedBuffer(const SvTrc::IImagePtr& rImage, const double StartTick, const double StopTick)
+HRESULT SVTestAcquisitionClass::UpdateWithCompletedBuffer(const SvTrc::IImagePtr& rImage, const double , const double )
 {
 	HRESULT l_Status = S_OK;
 
@@ -80,7 +80,7 @@ HRESULT SVTestAcquisitionClass::ReadCameraFile( const std::string& )
 	return hr;
 }
 
-HRESULT SVTestAcquisitionClass::InitializeDevice( const SVDeviceParamCollection& rDeviceParams )
+HRESULT SVTestAcquisitionClass::InitializeDevice( const SVDeviceParamCollection&  )
 {
 	HRESULT hr = E_NOTIMPL;
 	return hr;
@@ -112,7 +112,7 @@ HRESULT SVTestAcquisitionClass::SetDeviceParameters( const SVDeviceParamCollecti
 	return hr;
 }
 
-HRESULT SVTestAcquisitionClass::IsValidCameraFileParameters( SVDeviceParamCollection& rDeviceParams )
+HRESULT SVTestAcquisitionClass::IsValidCameraFileParameters( SVDeviceParamCollection&  )
 {
 	HRESULT hr = E_NOTIMPL;
 	return hr;
@@ -133,7 +133,7 @@ bool SVTestAcquisitionClass::CameraMatchesCameraFile()
 }
 	
 
-HRESULT SVTestAcquisitionClass::SetStandardCameraParameter( const SVDeviceParamWrapper& rw )
+HRESULT SVTestAcquisitionClass::SetStandardCameraParameter(const SVDeviceParamWrapper&)
 {
 	HRESULT hr = E_NOTIMPL;
 	return hr;
@@ -146,8 +146,6 @@ bool SVTestAcquisitionClass::IsOnline()
 
 bool SVTestAcquisitionClass::StartAcquire( SVCameraPage& p_rDisplay )
 {
-	unsigned long triggerchannel = 0;
-
 	m_pDisplay = &p_rDisplay;
 
 	m_rSubsystem.m_svDigitizers.CreateBuffers( m_hDigitizer );
@@ -162,8 +160,6 @@ bool SVTestAcquisitionClass::StartAcquire( SVCameraPage& p_rDisplay )
 
 void SVTestAcquisitionClass::StopAcquire( )
 {
-	unsigned long triggerchannel = 0;
-
 	m_bOnline = false;
 	
 	m_rSubsystem.m_svDigitizers.Stop( m_hDigitizer );

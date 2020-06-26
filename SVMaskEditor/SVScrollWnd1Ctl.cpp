@@ -151,7 +151,7 @@ SVScrollWnd1Ctrl::~SVScrollWnd1Ctrl()
 // SVScrollWnd1Ctrl::OnDraw - Drawing function
 
 void SVScrollWnd1Ctrl::OnDraw(
-			CDC* pdc, const CRect& rcBounds, const CRect& rcInvalid)
+			CDC* pdc, const CRect& rcBounds, const CRect& )
 {
 	DoSuperclassPaint(pdc, rcBounds);
 }
@@ -199,16 +199,8 @@ BOOL SVScrollWnd1Ctrl::IsSubclassedControl()
 /////////////////////////////////////////////////////////////////////////////
 // SVScrollWnd1Ctrl::OnOcmCommand - Handle command messages
 
-LRESULT SVScrollWnd1Ctrl::OnOcmCommand(WPARAM wParam, LPARAM lParam)
+LRESULT SVScrollWnd1Ctrl::OnOcmCommand(WPARAM, LPARAM)
 {
-#ifdef _WIN32
-	WORD wNotifyCode = HIWORD(wParam);
-#else
-	WORD wNotifyCode = HIWORD(lParam);
-#endif
-
-	// TODO: Switch on wNotifyCode here.
-
 	return 0;
 }
 

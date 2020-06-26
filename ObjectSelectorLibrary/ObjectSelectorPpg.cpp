@@ -53,7 +53,7 @@ namespace SvOsl
 	#pragma endregion Constructor
 
 	#pragma region Public Methods
-	void ObjectSelectorPpg::updateData( const ObjectTreeCtrl* const pFromTree )
+	void ObjectSelectorPpg::updateData( const ObjectTreeCtrl* const)
 	{
 		m_NodeTree.updateTree();
 		m_LeafTree.updateTree();
@@ -67,7 +67,8 @@ namespace SvOsl
 		DDX_Control(pDX, IDC_TREE_NODES, m_NodeTree);
 		DDX_Control(pDX, IDC_TREE_VALUES, m_LeafTree);
 		//This is ok when std::string is only being read, input from the dialog would be lost
-		DDX_Text(pDX, IDC_HIGHLIGHTED_NODE, CString(m_HighlightedNode.c_str()));
+		CString tempStr{m_HighlightedNode.c_str()};
+		DDX_Text(pDX, IDC_HIGHLIGHTED_NODE, tempStr);
 	}
 
 	BOOL ObjectSelectorPpg::OnInitDialog()

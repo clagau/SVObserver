@@ -68,8 +68,7 @@ void SVUserMaskOperatorClass::init()
 	m_idShapeHelper = pShapeHelper->getObjectId();
 
 	bool bAddFriend = AddFriend( pShapeHelper->getObjectId() );
-	assert( bAddFriend );
-
+	assert( bAddFriend );	UNREFERENCED_PARAMETER(bAddFriend);
 
 
 	RegisterEmbeddedObject( &m_Data.bvoActivated, SvPb::MaskEnabledEId, IDS_OBJECTNAME_ENABLED, false, SvOi::SVResetItemIP );
@@ -234,7 +233,7 @@ SVShapeMaskHelperClass* SVUserMaskOperatorClass::GetShapeHelper()
 	for( size_t i = 0; i < m_friendList.size(); i++ )
 	{
 		const SVObjectInfoStruct& friendObjectInfo = m_friendList[i];
-		if( pMaskHelper = dynamic_cast<SVShapeMaskHelperClass*> (friendObjectInfo.getObject()) )
+		if(nullptr != (pMaskHelper = dynamic_cast<SVShapeMaskHelperClass*> (friendObjectInfo.getObject())))
 		{
 			m_idShapeHelper = pMaskHelper->getObjectId();
 			break;
@@ -248,7 +247,7 @@ SVShapeMaskHelperClass* SVUserMaskOperatorClass::GetShapeHelper()
 		m_idShapeHelper = pShapeHelper->getObjectId();
 
 		bool bAddFriend = AddFriend( pShapeHelper->getObjectId() );
-		assert( bAddFriend );
+		assert(bAddFriend);	UNREFERENCED_PARAMETER(bAddFriend);
 
 		if( CreateChildObject(pShapeHelper) )
 		{
@@ -341,7 +340,7 @@ bool SVUserMaskOperatorClass::isInputImage(uint32_t imageId) const
 	return Result;
 }
 
-HRESULT SVUserMaskOperatorClass::onCollectOverlays(SvIe::SVImageClass *pImage, SVExtentMultiLineStructVector &p_MultiLineArray )
+HRESULT SVUserMaskOperatorClass::onCollectOverlays(SvIe::SVImageClass*, SVExtentMultiLineStructVector& p_MultiLineArray )
 {
 	HRESULT l_hr = S_FALSE;
 	if ( m_bUseOverlays )
@@ -606,19 +605,19 @@ void SVUserMaskOperatorClass::Persist( SvOi::IObjectWriter& rWriter )
 HRESULT SVUserMaskOperatorClass::SetObjectValue( SVObjectAttributeClass* pDataObject )
 {
 	HRESULT hr = S_FALSE;
-	bool bOk = false;
 	
 	SvCl::SVObjectStdStringArrayClass StringArray;
 	SvCl::SVObjectLongArrayClass svLongArray;
+	bool bOk{pDataObject->GetAttributeData( _T("MaskOperator"), svLongArray)};
 
-	if ( ( bOk = pDataObject->GetAttributeData( _T("MaskOperator"), svLongArray ) ) )
+	if (bOk)
 	{
 		for( int i = 0; i < static_cast<int> (svLongArray.size()); i++ )
 		{
 			m_Data.evoCurrentMaskOperator.SetValue(svLongArray[i]);
 		}
 	}
-	else if ( ( bOk = pDataObject->GetAttributeData( _T("MaskData"), StringArray ) ) )
+	else if (true == (bOk = pDataObject->GetAttributeData( _T("MaskData"), StringArray)))
 	{
 		for( int i = 0; i < static_cast<int> (StringArray.size()); i++ )
 		{

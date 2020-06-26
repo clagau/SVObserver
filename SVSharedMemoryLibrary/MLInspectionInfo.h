@@ -15,10 +15,9 @@ namespace SvSml
 	///struct with size Information for Imagestore
 	struct MLInspectionInfo
 	{
-		MLInspectionInfo():StoreIndex(-1) {};
-		DWORD StoreIndex;
+		int StoreIndex{-1};
 		std::string PPQName;
-		DWORD PPQIndex;
+		DWORD PPQIndex{0};
 	};
 	typedef std::unique_ptr<MLInspectionInfo> MLInspectionInfoPointer;
 	typedef  std::map<std::string, MLInspectionInfoPointer>  MLInspectionInfoMap; //< map InspectionName  InspectionInfoPtr

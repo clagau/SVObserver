@@ -205,7 +205,7 @@ void TADialogTableDefinesPage::OnGridDblClick(NMHDR *pNotifyStruct, LRESULT* /*p
 	}
 }
 
-void TADialogTableDefinesPage::OnGridRClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
+void TADialogTableDefinesPage::OnGridRClick(NMHDR *, LRESULT* /*pResult*/)
 {
 	CPoint p;
 	if (GetCursorPos(&p))
@@ -303,7 +303,7 @@ void TADialogTableDefinesPage::OnGridEndEdit(NMHDR *pNotifyStruct, LRESULT* pRes
 	*pResult = (bAcceptChange) ? 0 : -1;
 }
 
-void TADialogTableDefinesPage::OnSelectionChanged(NMHDR *pNotifyStruct, LRESULT* pResult)
+void TADialogTableDefinesPage::OnSelectionChanged(NMHDR*, LRESULT*)
 {
 	UpdateEnableButtons();
 }

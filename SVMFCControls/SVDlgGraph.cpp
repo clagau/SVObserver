@@ -205,7 +205,7 @@ namespace SvMc
 	/////////////////////////////////////////////////////////////////////////////
 	// SVDlgGraphClass message handlers
 
-	void SVDlgGraphClass::OnLButtonDown(UINT nFlags, CPoint point) 
+	void SVDlgGraphClass::OnLButtonDown(UINT , CPoint point) 
 	{
 		bButtonDown = TRUE;
 		if( pProcFunc )
@@ -225,7 +225,7 @@ namespace SvMc
 		}
 	}
 
-	void SVDlgGraphClass::OnLButtonUp(UINT nFlags, CPoint point) 
+	void SVDlgGraphClass::OnLButtonUp(UINT , CPoint ) 
 	{
 		bButtonDown = FALSE;
 
@@ -234,7 +234,7 @@ namespace SvMc
 			ReleaseCapture();
 	}
 
-	void SVDlgGraphClass::OnMouseMove(UINT nFlags, CPoint point) 
+	void SVDlgGraphClass::OnMouseMove(UINT , CPoint point) 
 	{
 		if( bButtonDown && pProcFunc )
 		{

@@ -182,7 +182,7 @@ void SVFileCamera::OnAPCEvent( ULONG_PTR data )
 	}
 }
 
-void SVFileCamera::OnThreadEvent( bool& p_WaitForEvents )
+void SVFileCamera::OnThreadEvent(bool& )
 {
 	// check file Load status ?
 	if (M_NULL != m_image)

@@ -31,7 +31,7 @@ class IsValidObject
 public:
 	explicit IsValidObject(bool showHidden = false) : m_showHidden(showHidden) {};
 
-	bool operator()(const SvOi::IObjectClass* pObject, bool& bStop) const
+	bool operator()(const SvOi::IObjectClass* pObject, bool&) const
 	{
 		bool Result {false};
 		if (nullptr != pObject)
@@ -96,11 +96,14 @@ IsAllowedFunc getAllowedFunc(const SvPb::GetAvailableObjectsRequest& rMessage)
 			return AllowedFunctionHelper::IsObjectFromPriorTool(rMessage.isbeforetoolmethod().toolid());
 		}
 		case SvPb::GetAvailableObjectsRequest::kDefaultPlusHidden:
+		{
 			return AllowedFunctionHelper::IsValidObject(true);
+		}
 		default:
+		{
 			return AllowedFunctionHelper::IsValidObject();
+		}
 	}
-	return AllowedFunctionHelper::IsValidObject();
 }
 
 IsObjectInfoAllowed getObjectSelectorFilterFunc(const SvPb::GetObjectSelectorItemsRequest& rRequest, const std::string& rObjectName)

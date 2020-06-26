@@ -16,7 +16,7 @@
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
-HRESULT SVGigeReadIPAddress::operator()(SVMatroxDigitizerPtr Digitizer, const SVGigeFeature& rFeature, _variant_t& rValue) const
+HRESULT SVGigeReadIPAddress::operator()(SVMatroxDigitizerPtr Digitizer, const SVGigeFeature& , _variant_t& rValue) const
 { 
 	//SVMatroxString value;
 	__int64 value;

@@ -95,12 +95,12 @@ std::string ArchiveToolHelper::TranslatePath(const std::string& sPath)
 #pragma region Private Methods
 void ArchiveToolHelper::ParseTokens(const std::string& sPath)
 {
-	std::string::size_type iPos = -1;
+	std::string::size_type iPos = std::string::npos;
 	bool bDone = false;
 	
 	std::string::size_type BeginToken = std::string::npos;
 
-	std::string::size_type EndToken = -1;
+	std::string::size_type EndToken = std::string::npos;
 	
 	std::string sToken;
 	bool bBeginQuote = false;

@@ -20,7 +20,7 @@ constexpr long SVDefaultTimerPeriod = 200;
 constexpr unsigned int cTimerResolution = 1;
 constexpr LPCTSTR cTriggerName = "SoftwareTrigger_1.Dig_";			///This name must match the name in the SVHardwareManifest
 
-void CALLBACK TimerProc(UINT timerID, UINT uReserved1, DWORD_PTR pData, DWORD_PTR dwReserved2, DWORD_PTR dwReserved3)
+void CALLBACK TimerProc(UINT timerID, UINT , DWORD_PTR pData, DWORD_PTR , DWORD_PTR )
 {
 	SVSoftwareTriggerDevice* pDevice = reinterpret_cast<SVSoftwareTriggerDevice*> (pData);
 
@@ -84,7 +84,7 @@ BSTR SVSoftwareTriggerDevice::GetTriggerName(unsigned long triggerIndex)
 	return name;
 }
 
-HRESULT SVSoftwareTriggerDevice::TriggerGetParameterCount(unsigned long triggerIndex, unsigned long* pCount)
+HRESULT SVSoftwareTriggerDevice::TriggerGetParameterCount(unsigned long , unsigned long* pCount)
 {
 	HRESULT l_hrOk = S_FALSE;
 
@@ -96,7 +96,7 @@ HRESULT SVSoftwareTriggerDevice::TriggerGetParameterCount(unsigned long triggerI
 	return l_hrOk;
 }
 
-HRESULT SVSoftwareTriggerDevice::TriggerGetParameterName( unsigned long triggerIndex, unsigned long index, BSTR* pName )
+HRESULT SVSoftwareTriggerDevice::TriggerGetParameterName( unsigned long, unsigned long index, BSTR* pName )
 {
 	HRESULT l_hrOk = S_FALSE;
 

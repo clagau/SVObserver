@@ -293,7 +293,7 @@ namespace SvOg
 		}
 	}
 
-	void Custom2FilterDlg::OnGridSelChanged( NMHDR* pNotifyStruct, LRESULT* pResult )
+	void Custom2FilterDlg::OnGridSelChanged(NMHDR*, LRESULT*)
 	{
 		updateEditCellandStatus();
 		m_GridEditMode = false;
@@ -916,7 +916,7 @@ namespace SvOg
 		}
 	}
 
-	bool Custom2FilterDlg::doesControlHaveFocus( UINT ControlID ) const
+	bool Custom2FilterDlg::doesControlHaveFocus( int ControlID ) const
 	{
 		bool Result( false );
 

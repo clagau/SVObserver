@@ -108,7 +108,7 @@ namespace
 			setForeColor(mil::color::black());
 		}
 
-		void Draw(const RECT& rRect, int color)
+		void Draw(const RECT& rRect, int)
 		{
 			rectFill( m_buffer, rRect );
 		}
@@ -476,7 +476,7 @@ SVHistogramAnalyzerClass::~SVHistogramAnalyzerClass()
 
 bool SVHistogramAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-   DWORD LastError(0);
+	int LastError{0};
 
     while (1)
     {

@@ -310,7 +310,7 @@ CInitializeIOSubsystemDlg::~CInitializeIOSubsystemDlg()
 void CInitializeIOSubsystemDlg::OnDestroy()
 {
 	FILE* fh = nullptr;
-	errno_t err = fopen_s(&fh, "c:\\SVObserver\\InitializeIOSubsystem Log.txt", "a" );
+	fopen_s(&fh, "c:\\SVObserver\\InitializeIOSubsystem Log.txt", "a" );
 
 	if( nullptr != fh )
 	{

@@ -178,14 +178,14 @@ void Ranking2FilterDlg::OnSelchangeRankingRank()
 
 }// end OnSelchangeRankingRank
 
-void Ranking2FilterDlg::OnGridSelChanged(NMHDR* pNotifyStruct, LRESULT* pResult)
+void Ranking2FilterDlg::OnGridSelChanged(NMHDR* , LRESULT* )
 {
 	UpdateData(FALSE);
 	updateEditCellandStatus();
 	setKernelFromControl();
 }
 
-void Ranking2FilterDlg::OnGridClick(NMHDR *pNotifyStruct, LRESULT* pResult)
+void Ranking2FilterDlg::OnGridClick(NMHDR*, LRESULT*)
 {
 	setKernelFromControl();
 }
@@ -537,7 +537,7 @@ void Ranking2FilterDlg::isDataValid() const
 	}
 }
 
-bool Ranking2FilterDlg::doesControlHaveFocus(UINT ControlID) const
+bool Ranking2FilterDlg::doesControlHaveFocus(int ControlID) const
 {
 	bool Result(false);
 

@@ -34,7 +34,7 @@ public:
 #pragma region Public Methods
 public:
 	//For Remote Outputs these virtual methods don't do anything
-	virtual HRESULT Write(const _variant_t& p_rValue) override { return S_OK; }
+	virtual HRESULT Write(const _variant_t&) override { return S_OK; }
 	virtual HRESULT Reset() override { return S_OK; }
 	virtual bool isCombined() const override { return false; }
 	virtual bool isAndACK() const override { return false; }

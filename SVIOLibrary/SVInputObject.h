@@ -12,7 +12,6 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <map>
-#include "SVOResource/resource.h"
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #pragma endregion Includes
@@ -20,8 +19,8 @@
 class SVInputObject : public SVObjectClass
 {
 public:
-	explicit SVInputObject( LPCSTR strObjectName ) { m_isCreated = true; }
-	explicit SVInputObject(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVINPUTOBJECT)
+	explicit SVInputObject( LPCSTR  ) { m_isCreated = true; }
+	explicit SVInputObject(SVObjectClass*, int)
 	{
 		m_isCreated = true;
 	}

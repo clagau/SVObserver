@@ -1,5 +1,4 @@
-#ifndef __PROTOBUF_2_RAPIDJSON_H__
-#define __PROTOBUF_2_RAPIDJSON_H__
+#pragma once
 
 // Protobuf 2 Rapidjson - Conversion of protobuf and rapidjson
 // Copyright (c) 2013, Maurizio Monge - maurizio.monge@gmail.com
@@ -11,8 +10,11 @@
 #include <rapidjson/document.h>
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/writer.h>
+#pragma warning( push )
+#pragma warning( disable : 4127 )
 #include <google/protobuf/descriptor.h>
 #include <google/protobuf/message.h>
+#pragma warning( pop )
 
 namespace Protobuf2Rapidjson
 {
@@ -543,8 +545,3 @@ using priv::encode_to_string;
 
 } //end namespace Protobuf2Rapidjson
 
-#endif //__PROTOBUF_2_RAPIDJSON_H__
-
-  // Local Variables:
-  // mode: c++
-  // End:

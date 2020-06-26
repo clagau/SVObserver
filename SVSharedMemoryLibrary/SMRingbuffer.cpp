@@ -204,10 +204,10 @@ namespace SvSml
 				return -1;
 			}
 
-			long prevSync = m_pRingBufferLast[slot].SyncDWord;
+			DWORD prevSync = m_pRingBufferLast[slot].SyncDWord;
 			if (WRITE_FLAG & prevSync)
 				continue;
-			long newSync = prevSync + 1;
+			DWORD newSync = prevSync + 1;
 
 			if (InterlockedCompareExchange(&(m_pRingBufferLast[slot].SyncDWord), newSync, prevSync) == prevSync)
 			{
@@ -225,7 +225,7 @@ namespace SvSml
 		return  -1;
 	}
 
-	int  SMRingBuffer::GetReaderSlotByTrigger(DWORD Triggercount)
+	int  SMRingBuffer::GetReaderSlotByTrigger(int Triggercount)
 	{
 
 		if (!m_pRingBufferInfos)
@@ -281,7 +281,7 @@ namespace SvSml
 			throw std::exception("No Ringbuffer or invalid slot");
 		}
 
-		long sync = InterlockedDecrement(&(m_pRingBufferLast[readerslot].SyncDWord));
+		InterlockedDecrement(&(m_pRingBufferLast[readerslot].SyncDWord));
 #if defined(TRACE_MANAGER) 
 		std::string DebugStr = SvUl::Format("Release ReaderSlot: %i to %i \n", readerslot, sync);
 		::OutputDebugString(DebugStr.c_str());
@@ -326,7 +326,7 @@ namespace SvSml
 		return  -1;
 	}
 	
-	void	SMRingBuffer::ReleaseWriteSlot(int slot, DWORD triggerNumber, bool isValid)
+	void	SMRingBuffer::ReleaseWriteSlot(int slot, int triggerNumber, bool isValid)
 	{
 		if (!m_pRingBufferInfos || !m_pRingBufferLast || slot < 0)
 		{
@@ -369,7 +369,7 @@ namespace SvSml
 
 	}
 
-	DWORD SMRingBuffer::GetTriggerNumber(int slot) const
+	int SMRingBuffer::GetTriggerNumber(int slot) const
 	{
 		if (!m_pRingBufferInfos || !m_pRingBufferLast || slot < 0)
 		{
@@ -378,7 +378,7 @@ namespace SvSml
 		return m_pRingBufferLast[slot].TriggerNumber;
 	}
 
-	int SMRingBuffer::GetRejects(std::vector<DWORD> &rRejects)  const
+	int SMRingBuffer::GetRejects(std::vector<int> &rRejects)  const
 	{
 		if (!m_pRingBufferInfos || !m_pRingBufferReject)
 		{
@@ -399,8 +399,8 @@ namespace SvSml
 			//The newest reject is the first to insert in rRejects
 			if (m_pRingBufferReject[rejectSlot].SlotNumberLast >= 0)
 			{
-				DWORD TriggerNumber = m_pRingBufferReject[rejectSlot].TriggerNumber;
-				rRejects.push_back(TriggerNumber);
+				int triggerNumber = m_pRingBufferReject[rejectSlot].TriggerNumber;
+				rRejects.push_back(triggerNumber);
 			}
 			DecreaseSlotNumber(rejectSlot, m_RejectSlotCount);
 

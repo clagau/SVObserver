@@ -329,16 +329,6 @@ __int64 SVMatroxOcrInterface::Convert2MatroxResultType(SVOcrResultEnum p_eType)
 			l_lControlType = M_CHAR_SCORE;
 			break;
 		}
-		case SVOcrCharSizeX:
-		{
-			l_lControlType = M_CHAR_SIZE_X;
-			break;
-		}
-		case SVOcrCharSizeY:
-		{
-			l_lControlType = M_CHAR_SIZE_Y;
-			break;
-		}
 		case SVOcrCharSpacing:
 		{
 			l_lControlType = M_CHAR_SPACING;

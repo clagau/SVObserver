@@ -397,8 +397,8 @@ const std::string SVTaskObjectListClass::checkName( LPCTSTR ToolName ) const
 			if ( std::string::npos != objectName.find( ToolName ))
 			{
 				// see if the name ends in a number
-				int lastNum;
-				bool digit = false;
+				int lastNum{0};
+				bool digit{false};
 
 				for (int i = static_cast<int> (objectName.size()) - 1; i >= 0; i--)
 				{

@@ -89,7 +89,6 @@ BOOL SVSecuritySetupPage::OnInitDialog()
 	m_pAccess = pPropSheet->m_pAccess;
 	// Tree Control Init.
 
-	SVSecurityStorage& svStore( m_pAccess->m_svStorage );
 	HTREEITEM hItem( TVI_ROOT );
 
 	//-RPY 270215
@@ -110,8 +109,6 @@ BOOL SVSecuritySetupPage::OnInitDialog()
 void SVSecuritySetupPage::BuildTree( long& p_NodeIndex, HTREEITEM hParent, bool p_Root ) 
 {
 	HTREEITEM hItem;
-
-	HRESULT hr = S_OK;
 
 	SVSecurityStorage& svStore = m_pAccess->m_svStorage;
 
@@ -140,7 +137,6 @@ void SVSecuritySetupPage::BuildTree( long& p_NodeIndex, HTREEITEM hParent, bool 
 
 void SVSecuritySetupPage::OnSelchangeNetGroups() 
 {
-	int	count = 0;
 	CString	Group;
 	UpdateData();
 
@@ -215,10 +211,8 @@ BOOL SVSecuritySetupPage::OnApply()
 	return CPropertyPage::OnApply();
 }
 
-void SVSecuritySetupPage::OnSelchangedAccessTree(NMHDR* pNMHDR, LRESULT* pResult) 
+void SVSecuritySetupPage::OnSelchangedAccessTree(NMHDR*, LRESULT* pResult) 
 {
-	NM_TREEVIEW* pNMTreeView = (NM_TREEVIEW*)pNMHDR;
-
 	SVSecurityStorage& svStore = m_pAccess->m_svStorage;
 
 	UpdateData();

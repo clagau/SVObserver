@@ -126,11 +126,10 @@ SVMatroxBuffer SVBitmapToMilBuffer( HBITMAP HBM )
 	l_BufIntf.Get( l_MilBuffer, SVWindowDC, Handle );
 	hDC = reinterpret_cast<HDC> (Handle);
 
-    HDC hMemDC = nullptr;
-
     if( nullptr != hDC )
 	{
-        if( hMemDC = ::CreateCompatibleDC( hDC ) )
+	    HDC hMemDC = ::CreateCompatibleDC(hDC);
+        if(nullptr != hMemDC)
         {
             // Select source bitmap...
             HBITMAP hOldBM = ( HBITMAP ) ::SelectObject( hMemDC, HBM );

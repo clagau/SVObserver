@@ -56,15 +56,15 @@ public:
 	virtual HRESULT getValue(double& rValue, int Index = -1) const override;
 
 	//! For these methods see IValueObject documentation
-	virtual HRESULT setDefaultValue(const _variant_t& rValue) override { return E_NOTIMPL; }
+	virtual HRESULT setDefaultValue(const _variant_t& ) override { return E_NOTIMPL; }
 	virtual _variant_t getDefaultValue() const override { return _variant_t(); };
 	virtual HRESULT setValue(const _variant_t& rValue, int Index = -1, bool fixArrasize = false ) override;
 	virtual HRESULT getValue(_variant_t& rValue, int Index = -1) const override;
-	virtual HRESULT getValues(std::vector<_variant_t>& rValues) const override { return E_NOTIMPL; }
+	virtual HRESULT getValues(std::vector<_variant_t>& ) const override { return E_NOTIMPL; }
 	virtual HRESULT setValue(const std::string& rValueString, int Index = -1) override;
 	virtual HRESULT getValue(std::string& rValueString, int Index = -1, const std::string& rFormatString = _T("")/*currently always ignored*/) const override;
-	virtual void setResetOptions( bool bResetAlways, SvOi::SVResetItemEnum eResetItem ) override {};
-	virtual void validateValue( const _variant_t& rValue ) const override {};
+	virtual void setResetOptions( bool , SvOi::SVResetItemEnum  ) override {};
+	virtual void validateValue( const _variant_t&  ) const override {};
 	virtual bool isArray() const override { return false; };
 	virtual int32_t getArraySize() const override { return 1; };
 	virtual int32_t getResultSize() const override { return 1; };
@@ -72,7 +72,7 @@ public:
 	virtual bool ResetAlways() const override { return false; };
 	virtual int32_t getByteSize(bool useResultSize, bool memBlockData) const override;
 	virtual DWORD GetType() const override { return m_Value.vt; };
-	virtual void setSaveValueFlag(bool shouldSaveValue) override { };
+	virtual void setSaveValueFlag(bool ) override { };
 	virtual void setTrData(int32_t memOffset, int32_t memSize, int32_t pos) override;
 	virtual int32_t getTrPos() const override { return m_trPos; }
 	virtual int32_t getMemOffset() const override { return 0L; }

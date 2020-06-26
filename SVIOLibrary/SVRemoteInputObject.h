@@ -12,6 +12,7 @@
 
 #pragma region Includes
 #include "SVInputObject.h"
+#include "SVOResource/resource.h"
 #pragma endregion Includes
 
 class SVRemoteInputObject : public SVInputObject 

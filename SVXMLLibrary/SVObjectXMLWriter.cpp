@@ -309,7 +309,6 @@ namespace  SvXml
 			}
 			else
 			{
-				long encryption = m_pEncryption->m_lEncryptionMethod;
 				m_pEncryption->EncryptNameAttribute(Name, EnName);
 			}
 			std::wstring encryptedName = static_cast<LPWSTR> (EnName);

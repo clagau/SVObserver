@@ -23,7 +23,7 @@ struct InspectionState;
 class CifXCard
 {
 public:
-	CifXCard(uint32_t CifXNodeId, uint32_t MaxRtdSize);
+	CifXCard(uint16_t CifXNodeId, uint16_t MaxRtdSize);
 	~CifXCard() = default;
 
 	HRESULT OpenAndInitializeCifX(); ///< starts the Powerlink connection to the PLC-CPU
@@ -57,17 +57,17 @@ public:
 	void setReady(bool ready);
 
 private:
-	uint32_t SendRecvPkt(CIFX_PACKET* pSendPkt, CIFX_PACKET* pRecvPkt);
-	uint32_t SendRecvEmptyPkt(uint32_t ulCmd);
-	void BuildConfigurationReq(CIFX_PACKET* ptPacket, uint8_t NodeId, uint16_t DataLength);
+	int32_t SendRecvPkt(CIFX_PACKET* pSendPkt, CIFX_PACKET* pRecvPkt);
+	int32_t SendRecvEmptyPkt(uint32_t ulCmd);
+	void BuildConfigurationReq(CIFX_PACKET* ptPacket, uint16_t NodeId, uint16_t DataLength);
 
 	std::vector<ConfigDataSet> createConfigList(TelegramLayout layout);
 	void writeResponseData(const uint8_t* pSdoDynamic, size_t sdoDynamicSize);
 
 	uint32_t m_currentResult {0UL};
 
-	const uint32_t m_CifXNodeId {0UL}; //< The powerlink node ID used for the Hilscher CifX card
-	const uint32_t m_maxPlcDataSize {0UL}; // the size of the PLC data in bytes
+	const uint16_t m_CifXNodeId {0};			//< The powerlink node ID used for the Hilscher CifX card
+	const uint16_t m_maxPlcDataSize {0UL};		// the size of the PLC data in bytes
 
 	CIFXHANDLE m_hDriver {nullptr};				/// Cifx driver handle
 	CIFXHANDLE m_hChannel {nullptr};			/// Cifx channel handle

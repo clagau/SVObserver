@@ -90,7 +90,7 @@ DataControllerBase::~DataControllerBase()
 {
 }
 #pragma endregion Constructor
-void DataControllerBase::clearImageBuffer(bool shouldResetImageStruct)
+void DataControllerBase::clearImageBuffer(bool)
 {
 	m_bufferVector.clear();
 }

@@ -214,7 +214,7 @@ void SVRPropertyItemEdit::OnKillFocus(CWnd *pNewWnd)
 		// Send message for custom user message to 
 		// parent to handle loosing focus to a button belonging to a parent.
 		TCHAR l_buff[256];
-		int nChars = GetClassName( pNewWnd->GetSafeHwnd(), l_buff, sizeof(l_buff));
+		GetClassName( pNewWnd->GetSafeHwnd(), l_buff, sizeof(l_buff));
 		if(_tcsicmp(l_buff, _T("Button")) ==0)
 		{
 			long l_ID = ::GetWindowLong( pNewWnd->GetSafeHwnd(), GWL_ID ) ;
@@ -351,8 +351,7 @@ void SVRPropertyItemEdit::ButtonClicked()
 {
 	if ( m_bShowButton )
 	{
-		bool bResult = false;
-		LRESULT lr = m_pProp->SendNotify(PTN_ITEMBUTTONCLICK, this);
+		m_pProp->SendNotify(PTN_ITEMBUTTONCLICK, this);
 		m_bCommitOnce = false;	// always commit
 		CommitChanges();
 	}

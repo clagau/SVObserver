@@ -15,8 +15,8 @@ template<typename Insertor>
 class SVFileSystemScanner
 {
 public:
-	static HRESULT ScanForFiles(LPCTSTR dirName, LPCTSTR filter, Insertor& insertor, bool bScanSubDirs=false);
-	static HRESULT ScanForDirectories(LPCTSTR dirName, LPCTSTR filter, Insertor& insertor, bool bScanSubDirs=false);
+	static HRESULT ScanForFiles(LPCTSTR dirName, LPCTSTR filter, Insertor insertor, bool bScanSubDirs=false);
+	static HRESULT ScanForDirectories(LPCTSTR dirName, LPCTSTR filter, Insertor insertor, bool bScanSubDirs=false);
 };
 
 #include "SVFileSystemScanner.inl"

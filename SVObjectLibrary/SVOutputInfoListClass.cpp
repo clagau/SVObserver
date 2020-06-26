@@ -270,27 +270,9 @@ void SVOutputInfoListClass::GetSetAttributesList( UINT uAttributeMask, SVOutputI
 				if ( nullptr != pInfoObject->getObject() )
 				{
 
-					SVObjectClass* pObject = nullptr;
+					SVObjectClass* pObject = dynamic_cast<SVObjectClass*>( pInfoObject->getObject() );
 
-					try
-					{
-						pObject = dynamic_cast<SVObjectClass*>( pInfoObject->getObject() );
-					}
-					catch ( std::bad_cast& e )
-					{
-						e;
-						pObject = nullptr;
-						m_svObjectSet.erase( pInfoObject ); m_svObjectArray[i] = nullptr;
-						debug.Add(_T("BAD OBJECT (bad_cast)"));
-					}
-					catch( ... )
-					{
-						pObject = nullptr;
-						m_svObjectSet.erase( pInfoObject ); m_svObjectArray[i] = nullptr;
-						debug.Add(_T("BAD OBJECT (...)"));
-					}
-
-					if( pObject )
+					if(nullptr != pObject)
 					{
 						UINT uAttributes = pObject->ObjectAttributesSet();
 

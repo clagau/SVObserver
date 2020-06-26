@@ -47,13 +47,12 @@ void LoopTool::Initialize()
 	BuildEmbeddedObjectList();
 }
 
-
-
-bool LoopTool::AddTool(SVToolClass *pTool)
+bool LoopTool::AddTool(SVToolClass*)
 {
 	return false;
 }
-bool LoopTool::RemoveTool(SVToolClass *pTool)
+
+bool LoopTool::RemoveTool(SVToolClass*)
 {
 	return false;
 }

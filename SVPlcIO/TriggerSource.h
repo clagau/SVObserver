@@ -27,8 +27,8 @@ public:
 	virtual bool setTriggerChannel(uint8_t channel, bool active);
 	virtual bool isReady() { return true; }
 	virtual bool analyzeTelegramData() = 0;
-	virtual void queueResult(uint8_t channel, ChannelOut&& channelOut) {}
-	virtual void setReady(bool ready) {}
+	virtual void queueResult(uint8_t , ChannelOut&& ) {}
+	virtual void setReady(bool ) {}
 
 protected:
 	virtual void createTriggerReport(uint8_t channel) = 0;

@@ -62,7 +62,6 @@ SVStringValueObjectClass& SVStringValueObjectClass::operator = (const SVStringVa
 HRESULT  SVStringValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataObject)
 {
 	HRESULT Result( E_FAIL );
-	bool	bOk( false );
 
 	std::vector<ValueVector> BucketArray;		//This is for backward compatibility
 	ValueVector ValueArray;
@@ -70,7 +69,8 @@ HRESULT  SVStringValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataO
 	///Note SVFileNameValueObjectClass uses SVStringValueObjectClass as a base class and needs to converts escape characters differently 
 	///This flag uses getTypeName to check which conversion to use
 	bool convertControl = (cTextType == getTypeName()) ? true : false;
-	if (bOk = pDataObject->GetAttributeData(scDefaultTag, ValueArray))
+	bool bOk{pDataObject->GetAttributeData(scDefaultTag, ValueArray)};
+	if (bOk)
 	{
 		if (0 < ValueArray.size())
 		{
@@ -80,7 +80,7 @@ HRESULT  SVStringValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataO
 
 		SetDefaultValue(GetDefaultValue().c_str(), false);
 	}
-	else if(bOk = pDataObject->GetAttributeData(SvDef::cBucketTag, BucketArray, DefaultValue()))
+	else if(true == (bOk = pDataObject->GetAttributeData(SvDef::cBucketTag, BucketArray, DefaultValue())))
 	{
 		for (int i = 0; i < static_cast<int> (BucketArray.size()); i++)
 		{
@@ -89,7 +89,7 @@ HRESULT  SVStringValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataO
 		}
 	}
 	// new-style: store all array elements:
-	else if ( bOk = pDataObject->GetArrayData( SvDef::cArrayTag, ValueArray, DefaultValue() ) )
+	else if (true == (bOk = pDataObject->GetArrayData( SvDef::cArrayTag, ValueArray, DefaultValue())))
 	{
 		int32_t arraySize = static_cast<int32_t> (ValueArray.size());
 		SetArraySize(arraySize);
@@ -100,7 +100,7 @@ HRESULT  SVStringValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataO
 			SetValue(ValueArray[i], i);
 		}
 	}
-	else if ( bOk = pDataObject->GetAttributeData(_T("StrDefault"), ValueArray) )
+	else if (true == (bOk = pDataObject->GetAttributeData(_T("StrDefault"), ValueArray)))
 	{
 		if ( 0 < ValueArray.size() )
 		{
@@ -110,7 +110,7 @@ HRESULT  SVStringValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataO
 
 		SetDefaultValue( GetDefaultValue().c_str(), false );
 	}
-	else if ( bOk = pDataObject->GetAttributeData( _T("StrArray"), BucketArray, DefaultValue() ) )
+	else if (true == (bOk = pDataObject->GetAttributeData(_T("StrArray"), BucketArray, DefaultValue())))
 	{
 		for (int i = 0; i < static_cast<int > (BucketArray.size()); i++)
 		{

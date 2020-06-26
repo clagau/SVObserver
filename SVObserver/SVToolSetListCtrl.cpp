@@ -465,7 +465,7 @@ void SVToolSetListCtrl::RebuildImages()
 	}
 }
 // OnKeyDown added to handle down arrow and up arrow, tool selection and scroll bars. 
-void SVToolSetListCtrl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+void SVToolSetListCtrl::OnKeyDown(UINT nChar, UINT, UINT)
 {
 	bool l_bUpdate = false;
 	int l_iNext = 0;

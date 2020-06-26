@@ -266,10 +266,10 @@ HRESULT ToolClipboard::streamToolToZip( const std::string& rFileName, uint32_t t
 
 		if (!SvUl::makeZipFile(ZipFileName, FileNames, _T(""), false))
 		{
+			Result = E_FAIL;
 			SvStl::MessageMgrStd e(SvStl::MsgType::Data);
 			e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ClipboardZipFailed, SvStl::SourceFileParams(StdMessageParams));
 			e.Throw();
-			Result = E_FAIL;
 		}
 		::DeleteFile(XmlFileName.c_str());
 	}

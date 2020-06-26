@@ -14,11 +14,11 @@
 #include "SVBitmapInfo.h"
 #pragma endregion Includes
 
-SVBitmapInfo::SVColorTable SVBitmapInfo::GetDefaultColorTable( unsigned short p_BitCount )
+SVBitmapInfo::SVColorTable SVBitmapInfo::GetDefaultColorTable(int bitCount )
 {
 	SVColorTable l_Colors;
 
-	switch( p_BitCount )
+	switch(bitCount)
 	{
 		case 8:
 		{
@@ -40,39 +40,24 @@ SVBitmapInfo::SVColorTable SVBitmapInfo::GetDefaultColorTable( unsigned short p_
 	return l_Colors;
 }
 
-unsigned long SVBitmapInfo::GetColorTableSize( unsigned short p_BitCount, unsigned long p_Compression )
+unsigned long SVBitmapInfo::GetColorTableSize(int bitCount, unsigned long compression )
 {
 	unsigned long l_Size = 0;
 
-	switch( p_BitCount )
+	switch( bitCount )
 	{
 		case 1:
-		{
-			l_Size = 1 << p_BitCount;
-
-			break;
-		}
 		case 2:
-		{
-			l_Size = 1 << p_BitCount;
-
-			break;
-		}
 		case 4:
-		{
-			l_Size = 1 << p_BitCount;
-
-			break;
-		}
 		case 8:
 		{
-			l_Size = 1 << p_BitCount;
-
+			l_Size = 1 << bitCount;
 			break;
 		}
 		case 16:
+		case 32:
 		{
-			switch( p_Compression )
+			switch( compression )
 			{
 				case BI_RGB:
 				{
@@ -96,36 +81,16 @@ unsigned long SVBitmapInfo::GetColorTableSize( unsigned short p_BitCount, unsign
 
 			break;
 		}
-		case 32:
-		{
-			switch( p_Compression )
-			{
-				case BI_RGB:
-				{
-					l_Size = 0;
-
-					break;
-				}
-				case BI_BITFIELDS:
-				{
-					l_Size = 3;
-
-					break;
-				}
-			}
-
-			break;
-		}
 	}
 
 	return l_Size;
 }
 
-unsigned long SVBitmapInfo::GetImageStrideInBytes( long p_Width, unsigned short p_BitCount )
+unsigned long SVBitmapInfo::GetImageStrideInBytes( long width, int bitCount)
 {
 	unsigned long l_Stride = 0;
-	unsigned long l_Width = ::labs( p_Width );
-	unsigned long l_BitCount = p_BitCount;
+	unsigned long l_Width = ::labs(width);
+	unsigned long l_BitCount = bitCount;
 
 	if( 0 != l_Width && 0 != l_BitCount )
 	{
@@ -138,9 +103,9 @@ unsigned long SVBitmapInfo::GetImageStrideInBytes( long p_Width, unsigned short 
 	return l_Stride;
 }
 
-unsigned long SVBitmapInfo::GetImageSizeInBytes( long p_Width, long p_Height, unsigned short p_BitCount )
+unsigned long SVBitmapInfo::GetImageSizeInBytes( long width, long height, int bitCount )
 {
-	unsigned long l_Size = ::labs( p_Height ) * GetImageStrideInBytes( p_Width, p_BitCount );
+	unsigned long l_Size = ::labs(height) * GetImageStrideInBytes(width, bitCount);
 
 	return l_Size;
 }
@@ -151,28 +116,28 @@ SVBitmapInfo::SVBitmapInfo()
 {
 }
 
-SVBitmapInfo::SVBitmapInfo( const SVBitmapInfo& p_rObject )
+SVBitmapInfo::SVBitmapInfo( const SVBitmapInfo& rObject )
 :	m_BufferSize( 0 )
 , m_pBuffer( nullptr )
 {
-	if( nullptr != p_rObject.m_pBuffer )
+	if( nullptr != rObject.m_pBuffer )
 	{
-		Assign( *( p_rObject.GetBitmapInfo() ) );
+		Assign( *( rObject.GetBitmapInfo() ) );
 	}
 }
 
-SVBitmapInfo::SVBitmapInfo( const BITMAPINFO& p_rObject )
+SVBitmapInfo::SVBitmapInfo( const BITMAPINFO& rObject )
 :	m_BufferSize( 0 )
 , m_pBuffer( nullptr )
 {
-	Assign( p_rObject );
+	Assign( rObject );
 }
 
-SVBitmapInfo::SVBitmapInfo( long p_Width, long p_Height, unsigned short p_BitCount, const SVColorTable& p_rColorTable )
+SVBitmapInfo::SVBitmapInfo( long width, long height, int bitCount, const SVColorTable& rColorTable )
 :	m_BufferSize( 0 )
 , m_pBuffer( nullptr )
 {
-	Assign( p_Width, p_Height, p_BitCount, p_rColorTable );
+	Assign(width, height, bitCount, rColorTable);
 }
 
 SVBitmapInfo::~SVBitmapInfo()
@@ -274,15 +239,15 @@ long SVBitmapInfo::GetHeight() const
 	return l_Size;
 }
 
-unsigned short SVBitmapInfo::GetBitCount() const
+int SVBitmapInfo::GetBitCount() const
 {
-	unsigned short l_Size = 0;
+	int l_Size = 0;
 
 	if( nullptr != m_pBuffer )
 	{
 		BITMAPINFO* l_pBitmapInfo = reinterpret_cast< BITMAPINFO* >( m_pBuffer );
 
-		l_Size = l_pBitmapInfo->bmiHeader.biBitCount;
+		l_Size = static_cast<int> (l_pBitmapInfo->bmiHeader.biBitCount);
 	}
 
 	return l_Size;
@@ -387,9 +352,9 @@ void SVBitmapInfo::Assign( const BITMAPINFO& p_rObject )
 	::memcpy( m_pBuffer, &p_rObject, l_Size );
 }
 
-void SVBitmapInfo::Assign( long p_Width, long p_Height, unsigned short p_BitCount, const SVColorTable& p_rColorTable )
+void SVBitmapInfo::Assign( long width, long height, int bitCount, const SVColorTable& rColorTable )
 {
-	size_t l_Size = sizeof( BITMAPINFOHEADER ) + ( p_rColorTable.size() * sizeof( RGBQUAD ) );
+	size_t l_Size = sizeof( BITMAPINFOHEADER ) + ( rColorTable.size() * sizeof( RGBQUAD ) );
 
 	if( nullptr != m_pBuffer && m_BufferSize < l_Size )
 	{
@@ -407,30 +372,30 @@ void SVBitmapInfo::Assign( long p_Width, long p_Height, unsigned short p_BitCoun
 	BITMAPINFO* l_pBitmapInfo = reinterpret_cast< BITMAPINFO* >( m_pBuffer );
 
 	l_pBitmapInfo->bmiHeader.biSize = sizeof( l_pBitmapInfo->bmiHeader ); 
-	l_pBitmapInfo->bmiHeader.biWidth = p_Width;
-	l_pBitmapInfo->bmiHeader.biHeight = p_Height;
+	l_pBitmapInfo->bmiHeader.biWidth = width;
+	l_pBitmapInfo->bmiHeader.biHeight = height;
 	l_pBitmapInfo->bmiHeader.biPlanes = 1;
-	l_pBitmapInfo->bmiHeader.biBitCount = p_BitCount;
+	l_pBitmapInfo->bmiHeader.biBitCount = static_cast<WORD> (bitCount);
 	l_pBitmapInfo->bmiHeader.biCompression = BI_RGB;
-	l_pBitmapInfo->bmiHeader.biSizeImage = GetImageSizeInBytes( p_Width, p_Height, p_BitCount ); 
+	l_pBitmapInfo->bmiHeader.biSizeImage = GetImageSizeInBytes( width, height, bitCount ); 
 	l_pBitmapInfo->bmiHeader.biXPelsPerMeter = 0;
 	l_pBitmapInfo->bmiHeader.biYPelsPerMeter = 0;
-	l_pBitmapInfo->bmiHeader.biClrUsed = static_cast< unsigned long >( p_rColorTable.size() ); 
+	l_pBitmapInfo->bmiHeader.biClrUsed = static_cast< unsigned long >( rColorTable.size() ); 
 	l_pBitmapInfo->bmiHeader.biClrImportant = 0;
 
 	for( size_t i = 0; i < l_pBitmapInfo->bmiHeader.biClrUsed; ++i )
 	{
-		l_pBitmapInfo->bmiColors[ i ] = p_rColorTable[ i ];
+		l_pBitmapInfo->bmiColors[ i ] = rColorTable[ i ];
 	}
 }
 
-const SVBitmapInfo& SVBitmapInfo::operator=( const SVBitmapInfo& p_rObject )
+const SVBitmapInfo& SVBitmapInfo::operator=( const SVBitmapInfo& rObject )
 {
-	if( this != &p_rObject )
+	if( this != &rObject )
 	{
-		if( nullptr != p_rObject.m_pBuffer )
+		if( nullptr != rObject.m_pBuffer )
 		{
-			Assign( *( p_rObject.GetBitmapInfo() ) );
+			Assign( *( rObject.GetBitmapInfo() ) );
 		}
 		else
 		{
@@ -441,12 +406,12 @@ const SVBitmapInfo& SVBitmapInfo::operator=( const SVBitmapInfo& p_rObject )
 	return *this;
 }
 
-bool SVBitmapInfo::operator==( const SVBitmapInfo& p_rObject ) const
+bool SVBitmapInfo::operator==( const SVBitmapInfo& rObject ) const
 {
 	bool l_Status = true;
 
 	const BITMAPINFO* l_pLeftInfo = GetBitmapInfo();
-	const BITMAPINFO* l_pRightInfo = p_rObject.GetBitmapInfo();
+	const BITMAPINFO* l_pRightInfo = rObject.GetBitmapInfo();
 
 	l_Status = l_Status && ( nullptr != l_pLeftInfo ) && ( nullptr != l_pRightInfo );
 
@@ -478,15 +443,15 @@ bool SVBitmapInfo::operator==( const SVBitmapInfo& p_rObject ) const
 	return l_Status;
 }
 
-bool SVBitmapInfo::operator==( const BITMAPINFO& p_rObject ) const
+bool SVBitmapInfo::operator==( const BITMAPINFO& rObject ) const
 {
 	bool l_Status = true;
 
-	size_t l_ColorCount = p_rObject.bmiHeader.biClrUsed;
+	size_t l_ColorCount = rObject.bmiHeader.biClrUsed;
 
 	if( 0 == l_ColorCount )
 	{
-		l_ColorCount = GetColorTableSize( p_rObject.bmiHeader.biBitCount, p_rObject.bmiHeader.biCompression );
+		l_ColorCount = GetColorTableSize( rObject.bmiHeader.biBitCount, rObject.bmiHeader.biCompression );
 	}
 
 	size_t l_Size = sizeof( BITMAPINFOHEADER ) + ( l_ColorCount * sizeof( RGBQUAD ) );
@@ -497,15 +462,15 @@ bool SVBitmapInfo::operator==( const BITMAPINFO& p_rObject ) const
 
 	if( l_Status )
 	{
-		l_Status = ( ::memcmp( l_pBitmapInfo, &p_rObject, l_Size ) == 0 );
+		l_Status = ( ::memcmp( l_pBitmapInfo, &rObject, l_Size ) == 0 );
 
 		if( !l_Status )
 		{
 			bool l_Temp = true;
 
-			l_Temp = l_Temp && ( l_pBitmapInfo->bmiHeader.biWidth == p_rObject.bmiHeader.biWidth );
-			l_Temp = l_Temp && ( ::labs( l_pBitmapInfo->bmiHeader.biHeight ) == ::labs( p_rObject.bmiHeader.biHeight ) );
-			l_Temp = l_Temp && ( l_pBitmapInfo->bmiHeader.biBitCount == p_rObject.bmiHeader.biBitCount );
+			l_Temp = l_Temp && ( l_pBitmapInfo->bmiHeader.biWidth == rObject.bmiHeader.biWidth );
+			l_Temp = l_Temp && ( ::labs( l_pBitmapInfo->bmiHeader.biHeight ) == ::labs( rObject.bmiHeader.biHeight ) );
+			l_Temp = l_Temp && ( l_pBitmapInfo->bmiHeader.biBitCount == rObject.bmiHeader.biBitCount );
 
 			l_Status = l_Temp;
 		}
@@ -514,7 +479,7 @@ bool SVBitmapInfo::operator==( const BITMAPINFO& p_rObject ) const
 	return l_Status;
 }
 
-bool SVBitmapInfo::operator==( const BITMAPINFOHEADER& p_rObject ) const
+bool SVBitmapInfo::operator==( const BITMAPINFOHEADER& rObject ) const
 {
 	bool l_Status = true;
 
@@ -526,15 +491,15 @@ bool SVBitmapInfo::operator==( const BITMAPINFOHEADER& p_rObject ) const
 
 	if( l_Status )
 	{
-		l_Status = ( 0 == ::memcmp( l_pBitmapInfo, &p_rObject, l_Size ) );
+		l_Status = ( 0 == ::memcmp( l_pBitmapInfo, &rObject, l_Size ) );
 
 		if( !l_Status )
 		{
 			bool l_Temp = true;
 
-			l_Temp = l_Temp && ( l_pBitmapInfo->bmiHeader.biWidth == p_rObject.biWidth );
-			l_Temp = l_Temp && ( ::labs( l_pBitmapInfo->bmiHeader.biHeight ) == ::labs( p_rObject.biHeight ) );
-			l_Temp = l_Temp && ( l_pBitmapInfo->bmiHeader.biBitCount == p_rObject.biBitCount );
+			l_Temp = l_Temp && ( l_pBitmapInfo->bmiHeader.biWidth == rObject.biWidth );
+			l_Temp = l_Temp && ( ::labs( l_pBitmapInfo->bmiHeader.biHeight ) == ::labs( rObject.biHeight ) );
+			l_Temp = l_Temp && ( l_pBitmapInfo->bmiHeader.biBitCount == rObject.biBitCount );
 
 			l_Status = l_Temp;
 		}
@@ -543,49 +508,49 @@ bool SVBitmapInfo::operator==( const BITMAPINFOHEADER& p_rObject ) const
 	return l_Status;
 }
 
-bool SVBitmapInfo::operator!=( const SVBitmapInfo& p_rObject ) const
+bool SVBitmapInfo::operator!=( const SVBitmapInfo& rObject ) const
 {
-	return !( *this == p_rObject );
+	return !( *this == rObject );
 }
 
-bool SVBitmapInfo::operator!=( const BITMAPINFO& p_rObject ) const
+bool SVBitmapInfo::operator!=( const BITMAPINFO& rObject ) const
 {
-	return !( *this == p_rObject );
+	return !( *this == rObject );
 }
 
-bool SVBitmapInfo::operator!=( const BITMAPINFOHEADER& p_rObject ) const
+bool SVBitmapInfo::operator!=( const BITMAPINFOHEADER& rObject ) const
 {
-	return !( *this == p_rObject );
+	return !( *this == rObject );
 }
 
-bool operator==( const BITMAPINFO& p_rLeft, const SVBitmapInfo& p_rRight )
+bool operator==( const BITMAPINFO& rLhs, const SVBitmapInfo& rRhs )
 {
 	bool l_Status = true;
 
-	size_t l_ColorCount = p_rLeft.bmiHeader.biClrUsed;
+	size_t l_ColorCount = rLhs.bmiHeader.biClrUsed;
 
 	if( 0 == l_ColorCount )
 	{
-		l_ColorCount = SVBitmapInfo::GetColorTableSize( p_rLeft.bmiHeader.biBitCount, p_rLeft.bmiHeader.biCompression );
+		l_ColorCount = SVBitmapInfo::GetColorTableSize( rLhs.bmiHeader.biBitCount, rLhs.bmiHeader.biCompression );
 	}
 
 	size_t l_Size = sizeof( BITMAPINFOHEADER ) + ( l_ColorCount * sizeof( RGBQUAD ) );
 
-	const BITMAPINFO* l_pRightInfo = p_rRight.GetBitmapInfo();
+	const BITMAPINFO* l_pRightInfo = rRhs.GetBitmapInfo();
 
 	l_Status = l_Status && ( nullptr != l_pRightInfo );
 
 	if( l_Status )
 	{
-		l_Status = l_Status && ( ::memcmp( &p_rLeft, l_pRightInfo, l_Size ) == 0 );
+		l_Status = l_Status && ( ::memcmp( &rLhs, l_pRightInfo, l_Size ) == 0 );
 
 		if( !l_Status )
 		{
 			bool l_Temp = true;
 
-			l_Temp = l_Temp && ( p_rLeft.bmiHeader.biWidth == l_pRightInfo->bmiHeader.biWidth );
-			l_Temp = l_Temp && ( ::labs( p_rLeft.bmiHeader.biHeight ) == ::labs( l_pRightInfo->bmiHeader.biHeight ) );
-			l_Temp = l_Temp && ( p_rLeft.bmiHeader.biBitCount == l_pRightInfo->bmiHeader.biBitCount );
+			l_Temp = l_Temp && ( rLhs.bmiHeader.biWidth == l_pRightInfo->bmiHeader.biWidth );
+			l_Temp = l_Temp && ( ::labs( rLhs.bmiHeader.biHeight ) == ::labs( l_pRightInfo->bmiHeader.biHeight ) );
+			l_Temp = l_Temp && ( rLhs.bmiHeader.biBitCount == l_pRightInfo->bmiHeader.biBitCount );
 
 			l_Status = l_Temp;
 		}
@@ -594,27 +559,27 @@ bool operator==( const BITMAPINFO& p_rLeft, const SVBitmapInfo& p_rRight )
 	return l_Status;
 }
 
-bool operator==( const BITMAPINFOHEADER& p_rLeft, const SVBitmapInfo& p_rRight )
+bool operator==( const BITMAPINFOHEADER& rLhs, const SVBitmapInfo& rRhs )
 {
 	bool l_Status = true;
 
 	size_t l_Size = sizeof( BITMAPINFOHEADER );
 
-	const BITMAPINFO* l_pRightInfo = p_rRight.GetBitmapInfo();
+	const BITMAPINFO* l_pRightInfo = rRhs.GetBitmapInfo();
 
 	l_Status = l_Status && ( nullptr != l_pRightInfo );
 
 	if( l_Status )
 	{
-		l_Status = l_Status && ( ::memcmp( &p_rLeft, l_pRightInfo, l_Size ) == 0 );
+		l_Status = l_Status && ( ::memcmp( &rLhs, l_pRightInfo, l_Size ) == 0 );
 
 		if( !l_Status )
 		{
 			bool l_Temp = true;
 
-			l_Temp = l_Temp && ( p_rLeft.biWidth == l_pRightInfo->bmiHeader.biWidth );
-			l_Temp = l_Temp && ( ::labs( p_rLeft.biHeight ) == ::labs( l_pRightInfo->bmiHeader.biHeight ) );
-			l_Temp = l_Temp && ( p_rLeft.biBitCount == l_pRightInfo->bmiHeader.biBitCount );
+			l_Temp = l_Temp && ( rLhs.biWidth == l_pRightInfo->bmiHeader.biWidth );
+			l_Temp = l_Temp && ( ::labs( rLhs.biHeight ) == ::labs( l_pRightInfo->bmiHeader.biHeight ) );
+			l_Temp = l_Temp && ( rLhs.biBitCount == l_pRightInfo->bmiHeader.biBitCount );
 
 			l_Status = l_Temp;
 		}

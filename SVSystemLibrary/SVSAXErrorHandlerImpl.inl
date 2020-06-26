@@ -22,21 +22,21 @@ SVSAXErrorHandlerImpl<ErrorStrategy>::~SVSAXErrorHandlerImpl()
 }
 
 template<typename ErrorStrategy>
-HRESULT STDMETHODCALLTYPE SVSAXErrorHandlerImpl<ErrorStrategy>::error(MSXML2::ISAXLocator* pLocator, unsigned short* pwchErrorMessage, HRESULT errCode)
+HRESULT STDMETHODCALLTYPE SVSAXErrorHandlerImpl<ErrorStrategy>::error(MSXML2::ISAXLocator* , unsigned short* pwchErrorMessage, HRESULT errCode)
 {
 	m_rStrategy.ReportError(reinterpret_cast<wchar_t *>(pwchErrorMessage), errCode);
 	return S_OK;
 }
 
 template<typename ErrorStrategy>
-HRESULT STDMETHODCALLTYPE SVSAXErrorHandlerImpl<ErrorStrategy>::fatalError(MSXML2::ISAXLocator* pLocator, unsigned short* pwchErrorMessage, HRESULT errCode)
+HRESULT STDMETHODCALLTYPE SVSAXErrorHandlerImpl<ErrorStrategy>::fatalError(MSXML2::ISAXLocator* , unsigned short* pwchErrorMessage, HRESULT errCode)
 {
 	m_rStrategy.ReportError(reinterpret_cast<wchar_t *>(pwchErrorMessage), errCode);
 	return S_OK;
 }
 
 template<typename ErrorStrategy>
-HRESULT STDMETHODCALLTYPE SVSAXErrorHandlerImpl<ErrorStrategy>::ignorableWarning(MSXML2::ISAXLocator* pLocator, unsigned short* pwchErrorMessage, HRESULT errCode)
+HRESULT STDMETHODCALLTYPE SVSAXErrorHandlerImpl<ErrorStrategy>::ignorableWarning(MSXML2::ISAXLocator* , unsigned short* , HRESULT )
 {
 	return S_OK;
 }

@@ -60,7 +60,7 @@ public:
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure );
 	virtual bool CloseObject() override;
 	virtual HRESULT SetArraySize(int32_t iSize);
-	virtual HRESULT SetOutputFormat(OutputFormat outputFormat) { return E_NOTIMPL; };
+	virtual HRESULT SetOutputFormat(OutputFormat ) { return E_NOTIMPL; };
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* pDataObject );
 	virtual HRESULT SetValue( const T& rValue, int Index = -1 );
 	virtual HRESULT GetValue(T&  rValue, int Index = -1) const;
@@ -172,7 +172,7 @@ protected:
 	virtual void WriteDefaultValues(SvOi::IObjectWriter& rWriter) = 0;
 
 	/// !!can throw Exception!!
-	T convertVariantValue(const _variant_t& rValue) const;
+	T convertVariantValue(const _variant_t& ) const;
 	/// !!can throw Exception!!
 	ValueVector variant2VectorType(const _variant_t& rValue) const;
 

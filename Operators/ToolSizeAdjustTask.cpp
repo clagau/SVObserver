@@ -111,13 +111,13 @@ bool ToolSizeAdjustTask::AddEvaluationObject(SvOl::SVInObjectInfoStruct* pInfo, 
 	return RegisterInputObject( pInfo, Name );
 }
 
-bool ToolSizeAdjustTask::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool ToolSizeAdjustTask::onRun(SVRunStatusClass& , SvStl::MessageContainerVector*)
 {
 	//DoNothing in onRun
 	return true;
 }
 
-bool  ToolSizeAdjustTask::Run( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool  ToolSizeAdjustTask::Run( SVRunStatusClass&, SvStl::MessageContainerVector* )
 {
 	//DoNothing in Run
 	return true;
@@ -260,8 +260,8 @@ bool ToolSizeAdjustTask::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 	}
 	if (!bDone && Result)
 	{
-		long ParentOutputWidth(0), ParentOutputHeight(0), oldWidth(0), oldHeight(0);
-		long  oldPosX, oldPosY;
+		long ParentOutputWidth{0L}, ParentOutputHeight{0L}, oldWidth{0L}, oldHeight{0L};
+		long  oldPosX{0L}, oldPosY{0L};
 		SVImageExtentClass ImageExtent = pTool->GetImageExtent();
 		SVImageExtentClass ParentImageExtent;
 

@@ -30,7 +30,7 @@ namespace SvXml
 	{
 	}
 		
-	long STDMETHODCALLTYPE SaxContentHandler::QueryInterface(const struct _GUID &riid,void ** ppvObject)
+	long STDMETHODCALLTYPE SaxContentHandler::QueryInterface(const struct _GUID &,void ** )
 	{
 		// Not implemented as this class is not a COM object.
 		return 0;
@@ -49,7 +49,7 @@ namespace SvXml
 	}
 
 	HRESULT STDMETHODCALLTYPE SaxContentHandler::putDocumentLocator( 
-		/* [in] */ ISAXLocator  *pLocator)
+		/* [in] */ ISAXLocator  *)
 	{
 		return S_OK;
 	}
@@ -67,17 +67,17 @@ namespace SvXml
 	}
 
 	HRESULT STDMETHODCALLTYPE SaxContentHandler::startPrefixMapping( 
-		/* [in] */ const  wchar_t *pwchPrefix,
-		/* [in] */ int cchPrefix,
-		/* [in] */ const  wchar_t *pwchUri,
-		/* [in] */ int cchUri)
+		/* [in] */ const  wchar_t *,
+		/* [in] */ int ,
+		/* [in] */ const  wchar_t *,
+		/* [in] */ int )
 	{
 		return S_OK;
 	}
 
 	HRESULT STDMETHODCALLTYPE SaxContentHandler::endPrefixMapping( 
-		/* [in] */ const wchar_t  *pwchPrefix,
-		/* [in] */ int cchPrefix)
+		/* [in] */ const wchar_t  *,
+		/* [in] */ int )
 	{
 		return S_OK;
 	}
@@ -87,8 +87,8 @@ namespace SvXml
 		/* [in] */ int cchNamespaceUri,
 		/* [in] */ const wchar_t  *pwchLocalName,
 		/* [in] */ int cchLocalName,
-		/* [in] */ const wchar_t  *pwchRawName,
-		/* [in] */ int cchRawName,
+		/* [in] */ const wchar_t  *,
+		/* [in] */ int ,
 		/* [in] */ ISAXAttributes  *pAttributes)
 	{
 			
@@ -106,8 +106,8 @@ namespace SvXml
 		/* [in] */ int cchNamespaceUri,
 		/* [in] */ const wchar_t  *pwchLocalName,
 		/* [in] */ int cchLocalName,
-		/* [in] */ const wchar_t  *pwchRawName,
-		/* [in] */ int cchRawName)
+		/* [in] */ const wchar_t  *,
+		/* [in] */ int )
 	{
 		--m_depth;
 		if( nullptr != m_pElementHandler )
@@ -132,24 +132,24 @@ namespace SvXml
 	}
 
 	HRESULT STDMETHODCALLTYPE SaxContentHandler::ignorableWhitespace( 
-		/* [in] */ const wchar_t *pwchChars,
-		/* [in] */ int cchChars)
+		/* [in] */ const wchar_t *,
+		/* [in] */ int )
 	{
 		return S_OK;
 	}
 
 	HRESULT STDMETHODCALLTYPE SaxContentHandler::processingInstruction( 
-		/* [in] */ const wchar_t *pwchTarget,
-		/* [in] */ int cchTarget,
-		/* [in] */ const wchar_t  *pwchData,
-		/* [in] */ int cchData)
+		/* [in] */ const wchar_t *,
+		/* [in] */ int ,
+		/* [in] */ const wchar_t  *,
+		/* [in] */ int )
 	{
 		return S_OK;
 	}
 
 	HRESULT STDMETHODCALLTYPE SaxContentHandler::skippedEntity( 
-		/* [in] */ const wchar_t __RPC_FAR *pwchVal,
-		/* [in] */ int cchVal)
+		/* [in] */ const wchar_t __RPC_FAR*,
+		/* [in] */ int )
 	{
 		return S_OK;
 	}

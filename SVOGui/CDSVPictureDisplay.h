@@ -25,9 +25,9 @@ public:
 			= { 0x8174991A, 0xA5F5, 0x4CB3, { 0x85, 0xE3, 0x3B, 0x31, 0xFA, 0xEF, 0x23, 0x14 } };
 		return clsid;
 	}
-	virtual BOOL Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle,
+	virtual BOOL Create(LPCTSTR , LPCTSTR lpszWindowName, DWORD dwStyle,
 						const RECT& rect, CWnd* pParentWnd, UINT nID, 
-						CCreateContext* pContext = nullptr) override
+						CCreateContext*) override
 	{ 
 		return CreateControl(GetClsid(), lpszWindowName, dwStyle, rect, pParentWnd, nID); 
 	}

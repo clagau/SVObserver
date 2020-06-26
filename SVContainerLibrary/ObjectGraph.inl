@@ -6,6 +6,9 @@
 /// This is the object graph template for dependencies
 //******************************************************************************
 
+#pragma warning(disable : 4701 4703)
+#pragma warning(push)
+
 namespace SvCl
 {
 	#pragma region Constructor
@@ -234,7 +237,11 @@ namespace SvCl
 	{
 		boost::property_map<DependencyGraph, boost::vertex_index_t>::type my_vertex_index_map=get(boost::vertex_index, m_Graph);
 		std::size_t current_index=0;
-		BGL_FORALL_VERTICES(v,m_Graph, DependencyGraph) put(my_vertex_index_map, v, current_index++);
+
+		BGL_FORALL_VERTICES(vertex, m_Graph, DependencyGraph)
+		{
+			put(my_vertex_index_map, vertex, current_index++);
+		}
 	}
 
 	template< typename VertexName, typename EdgeType >
@@ -321,3 +328,4 @@ namespace SvCl
 	}
 } //namespace SvCl
 
+#pragma warning(pop)

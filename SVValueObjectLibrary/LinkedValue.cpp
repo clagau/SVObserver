@@ -190,7 +190,7 @@ HRESULT LinkedValue::GetValue(_variant_t& rValue, int Index /*= -1*/) const
 			//If the Linked Value is of type BOOL and is to be converted to the default type then we need the absolute value
 			if (VT_BOOL == rValue.vt && GetDefaultType() != rValue.vt)
 			{
-				rValue.boolVal = abs(rValue.boolVal);
+				rValue.boolVal = rValue.boolVal ? 1 : 0;
 			}
 			if (S_OK != ::VariantChangeTypeEx(&rValue, &rValue, SvDef::LCID_USA, VARIANT_ALPHABOOL, GetDefaultType()))
 			{

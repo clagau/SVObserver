@@ -31,9 +31,13 @@ static char THIS_FILE[] = __FILE__;
 #define MAX_VISIBLE_PROGRESS_COLUMNS	2 // 3
 #define MAX_VISIBLE_PROGRESS_BARS (MAX_VISIBLE_PROGRESS_ROWS * MAX_VISIBLE_PROGRESS_COLUMNS)
 
-/////////////////////////////////////////////////////////////////////////////
-// SVParserProgressDialog dialog
-
+BEGIN_MESSAGE_MAP(SVParserProgressDialog, SVProgressDialog)
+	//{{AFX_MSG_MAP(SVParserProgressDialog)
+	ON_WM_HSCROLL()
+	//}}AFX_MSG_MAP
+	ON_MESSAGE(SV_UPDATE_PROGRESS, OnUpdateProgress)
+	ON_MESSAGE(SV_END_PROGRESS_DIALOG, OnEndProgressDialog)
+END_MESSAGE_MAP()
 
 SVParserProgressDialog::SVParserProgressDialog(LPCTSTR title, CWnd* pParent /*=nullptr*/)
 : SVProgressDialog(title, pParent)
@@ -240,18 +244,7 @@ bool SVParserProgressDialog::CheckComplete()
 	return rc;
 }
 
-BEGIN_MESSAGE_MAP(SVParserProgressDialog, SVProgressDialog)
-	//{{AFX_MSG_MAP(SVParserProgressDialog)
-	ON_WM_HSCROLL()
-	//}}AFX_MSG_MAP
-	ON_MESSAGE( SV_UPDATE_PROGRESS, OnUpdateProgress )
-	ON_MESSAGE( SV_END_PROGRESS_DIALOG, OnEndProgressDialog )
-END_MESSAGE_MAP()
-
-/////////////////////////////////////////////////////////////////////////////
-// SVParserProgressDialog message handlers
-
-LRESULT SVParserProgressDialog::OnUpdateProgress( WPARAM wParam, LPARAM lParam )
+LRESULT SVParserProgressDialog::OnUpdateProgress( WPARAM , LPARAM lParam )
 {
 	SVParserProgressStruct* pParserProgress = reinterpret_cast<SVParserProgressStruct *>(lParam);
 	int cnt = static_cast<int>(pParserProgress->amtProcessed); //(int)wParam;
@@ -283,59 +276,40 @@ LRESULT SVParserProgressDialog::OnUpdateProgress( WPARAM wParam, LPARAM lParam )
 	return TRUE;
 }
 
-LRESULT SVParserProgressDialog::OnEndProgressDialog( WPARAM wParam, LPARAM lParam )
+LRESULT SVParserProgressDialog::OnEndProgressDialog( WPARAM, LPARAM lParam )
 {
    msvEndDialogLock.Lock ();
 
 	bool allDone = false;
 
 	// Get Parser
-	unsigned long parserHandle = static_cast<unsigned long>(lParam);
+	unsigned long parserHandle = static_cast<unsigned long> (lParam);
 
 	try
 	{
-		SVParserProgressControlStruct& parserControl = GetParserControl(parserHandle);
-		ProgressCtrlSharedPtr pProgressCtrl = parserControl.pProgressCtrl;
+		SVParserProgressControlStruct& rParserControl = GetParserControl(parserHandle);
+		ProgressCtrlSharedPtr pProgressCtrl = rParserControl.pProgressCtrl;
 		
 		// Update Progress Control
 		pProgressCtrl->SetPos( 100 );
 
 		// Delete the Parser
-		delete parserControl.pParser;
-		parserControl.pParser = nullptr;
-
-		// Post Message to MainFrame
-		CWnd* pWnd = GetParent();
+		delete rParserControl.pParser;
+		rParserControl.pParser = nullptr;
 
 		// if all complete
 		allDone = CheckComplete();
 		if( allDone )
 		{
-			if (pWnd)
-			{
-				// Setup and create all objects
-				for( SVParserControlList::iterator it = m_parserControlList.begin();it != m_parserControlList.end();++it )
-				{
-					SVParserProgressControlStruct& parserControl = it->second;
-					parserControl.bValidate = static_cast<BOOL>(pWnd->SendMessage( SV_PARSE_OBJECT_SCRIPT_END, 0, ( LPARAM )&parserControl.m_OwnerId ));
-				}
-
-				// Validate and init all objects
-				for( SVParserControlList::iterator it = m_parserControlList.begin();it != m_parserControlList.end();++it )
-				{
-					SVParserProgressControlStruct& parserControl = it->second;
-					parserControl.bValidate = static_cast<int>(pWnd->SendMessage( SV_PARSE_OBJECT_CREATE_DONE, 0, ( LPARAM )&parserControl.m_OwnerId ));
-				}
-			}
 			EndDialog( IDOK );
 		}
 		else
 		{
 			try
 			{
-				SVParserProgressControlStruct& parserControl = GetFirstAvailableParserControl();
+				SVParserProgressControlStruct& rParserStart = GetFirstAvailableParserControl();
 				// Start next worker thread
-				CWinThread* pParseThread = AfxBeginThread( SVObjectScriptParserClass::ParserThread, parserControl.pParser );
+				AfxBeginThread( SVObjectScriptParserClass::ParserThread, rParserStart.pParser );
 			}
 #if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 			catch(std::exception& e)
@@ -497,7 +471,7 @@ BOOL SVParserProgressDialog::OnInitDialog()
 		SetProgressLocations();
 
 		// Start a worker thread
-		CWinThread* pParseThread = AfxBeginThread( SVObjectScriptParserClass::ParserThread, parserControl.pParser );
+		AfxBeginThread( SVObjectScriptParserClass::ParserThread, parserControl.pParser );
 	}
 	
 	return TRUE;  // return TRUE unless you set the focus to a control

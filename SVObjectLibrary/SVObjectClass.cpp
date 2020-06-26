@@ -181,7 +181,7 @@ HRESULT SVObjectClass::ResetObjectInputs()
 	return l_hrOk;
 }
 
-HRESULT SVObjectClass::RefreshObject(const SVObjectClass* const pSender, RefreshObjectType Type)
+HRESULT SVObjectClass::RefreshObject(const SVObjectClass* const , RefreshObjectType )
 {
 	HRESULT Result = S_OK;
 
@@ -347,7 +347,7 @@ bool SVObjectClass::is_Created() const
 	return IsCreated();
 }
 
-SvUl::NameClassIdList SVObjectClass::GetCreatableObjects(const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo) const
+SvUl::NameClassIdList SVObjectClass::GetCreatableObjects(const SvDef::SVObjectTypeInfoStruct& ) const
 {
 	return {};
 }
@@ -357,7 +357,7 @@ void SVObjectClass::SetName(LPCTSTR Name)
 	m_Name = Name;
 }
 
-SvOi::IObjectClass* SVObjectClass::getFirstObject(const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends, const SvOi::IObjectClass* pRequestor) const
+SvOi::IObjectClass* SVObjectClass::getFirstObject(const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo, bool , const SvOi::IObjectClass* pRequestor) const
 {
 	// check the owner of this class
 	if (nullptr != pRequestor && (pRequestor == this || pRequestor == GetParent()))
@@ -509,7 +509,7 @@ HRESULT SVObjectClass::SetObjectValue(SVObjectAttributeClass* pDataObject)
 		SvCl::SVObjectDWordArrayClass svDWordArray;
 		SvCl::SVObjectStdStringArrayClass StringArray;
 
-		if ((bOk = pDataObject->GetAttributeData(_T("AttributesSet"), svDWordArray)))
+		if( true == (bOk = pDataObject->GetAttributeData(_T("AttributesSet"), svDWordArray)))
 		{
 			int iSize = static_cast<int> (svDWordArray.size());
 			{
@@ -520,7 +520,7 @@ HRESULT SVObjectClass::SetObjectValue(SVObjectAttributeClass* pDataObject)
 				}
 			}
 		}
-		else if ((bOk = pDataObject->GetAttributeData(_T("AttributesAllowed"), svDWordArray)))
+		else if( true == (bOk = pDataObject->GetAttributeData(_T("AttributesAllowed"), svDWordArray)))
 		{
 			; // Do nothing as it's obsolete
 		}
@@ -538,7 +538,7 @@ void SVObjectClass::SetDisabled()
 /*
 This method is a placeholder for derived functionality.  This method performs no operation.
 */
-SVObjectClass* SVObjectClass::UpdateObject(uint32_t friendId, SVObjectClass* pObject, SVObjectClass* pNewOwner)
+SVObjectClass* SVObjectClass::UpdateObject(uint32_t , SVObjectClass* , SVObjectClass* )
 {
 	return nullptr;
 }
@@ -743,7 +743,7 @@ SVObjectClass* SVObjectClass::OverwriteEmbeddedObject(uint32_t uniqueID, SvPb::E
 	return nullptr;
 }
 
-HRESULT SVObjectClass::RemoveObjectConnection(uint32_t objectID)
+HRESULT SVObjectClass::RemoveObjectConnection(uint32_t )
 {
 	return S_OK;
 }
@@ -872,7 +872,7 @@ UINT SVObjectClass::SetObjectAttributesSet(UINT Attributes, SvOi::SetAttributeTy
 /*
 This method must be overridden if the derived class desires this functionality
 */
-HRESULT SVObjectClass::RegisterSubObject(SVObjectClass* pObject)
+HRESULT SVObjectClass::RegisterSubObject(SVObjectClass*)
 {
 	return S_FALSE;
 }
@@ -880,7 +880,7 @@ HRESULT SVObjectClass::RegisterSubObject(SVObjectClass* pObject)
 /*
 This method must be overridden if the derived class desires this functionality
 */
-HRESULT SVObjectClass::UnregisterSubObject(SVObjectClass* pObject)
+HRESULT SVObjectClass::UnregisterSubObject(SVObjectClass*)
 {
 	return S_FALSE;
 }

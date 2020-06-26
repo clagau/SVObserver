@@ -27,7 +27,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-SVToolAdjustmentDialogPolarTransformPageClass::SVToolAdjustmentDialogPolarTransformPageClass( uint32_t inspectionId, uint32_t taskObjectId, SVToolAdjustmentDialogSheetClass* Parent )
+SVToolAdjustmentDialogPolarTransformPageClass::SVToolAdjustmentDialogPolarTransformPageClass( uint32_t, uint32_t , SVToolAdjustmentDialogSheetClass* Parent )
 : CPropertyPage(SVToolAdjustmentDialogPolarTransformPageClass::IDD)
 {
 	//{{AFX_DATA_INIT(SVToolAdjustmentDialogPolarTransformPageClass)
@@ -113,19 +113,30 @@ void SVToolAdjustmentDialogPolarTransformPageClass::refresh()
 			m_pUseFormula->GetValue( bUseFormula );
 
 			// Update Formula Button activation states...
-			if( pWnd = GetDlgItem( IDC_CENTER_X_FORMULA_BUTTON ) )
+			if( nullptr != (pWnd = GetDlgItem( IDC_CENTER_X_FORMULA_BUTTON )))
+			{
 				pWnd->EnableWindow( bUseFormula );
-			if( pWnd = GetDlgItem( IDC_CENTER_Y_FORMULA_BUTTON ) )
+			}
+			if (nullptr != (pWnd = GetDlgItem(IDC_CENTER_Y_FORMULA_BUTTON)))
+			{
 				pWnd->EnableWindow( bUseFormula );
-			if( pWnd = GetDlgItem( IDC_START_RADIUS_FORMULA_BUTTON ) )
+			}
+			if (nullptr != (pWnd = GetDlgItem(IDC_START_RADIUS_FORMULA_BUTTON)))
+			{
 				pWnd->EnableWindow( bUseFormula );
-			if( pWnd = GetDlgItem( IDC_END_RADIUS_FORMULA_BUTTON ) )
+			}
+			if (nullptr != (pWnd = GetDlgItem(IDC_END_RADIUS_FORMULA_BUTTON)))
+			{
 				pWnd->EnableWindow( bUseFormula );
-			if( pWnd = GetDlgItem( IDC_START_ANGLE_FORMULA_BUTTON ) )
+			}
+			if (nullptr != (pWnd = GetDlgItem(IDC_START_ANGLE_FORMULA_BUTTON)))
+			{
 				pWnd->EnableWindow( bUseFormula );
-			if( pWnd = GetDlgItem( IDC_END_ANGLE_FORMULA_BUTTON ) )
+			}
+			if (nullptr != (pWnd = GetDlgItem(IDC_END_ANGLE_FORMULA_BUTTON)))
+			{
 				pWnd->EnableWindow( bUseFormula );
-
+			}
 		}
 		if( nullptr != m_pAngleMethod )
 		{
@@ -255,7 +266,7 @@ BOOL SVToolAdjustmentDialogPolarTransformPageClass::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 
-	if( m_pParentDialog && ( m_pTaskObject = m_pParentDialog->GetTaskObject() ) )
+	if(nullptr != m_pParentDialog && nullptr != (m_pTaskObject = m_pParentDialog->GetTaskObject()))
 	{
 		// Get Evaluate Object...
 		SvDef::SVObjectTypeInfoStruct evaluateObjectInfo;

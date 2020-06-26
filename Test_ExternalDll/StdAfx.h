@@ -9,9 +9,11 @@
 #define WIN32_LEAN_AND_MEAN             // Selten verwendete Teile der Windows-Header nicht einbinden.
 // Windows-Headerdateien:
 #include <windows.h>
-#include <comdef.h>
 #include <atlbase.h>
-#include <iostream>
+#include <comdef.h>
+
 #include <array>
+#include <assert.h>
+#include <iostream>
 #include <map>
 

@@ -156,11 +156,10 @@ namespace SvXml
 		return hr;
 	}
 
-	HRESULT  SaxExtractPropertiesHandler::OnStartElement(const wchar_t  *pwchNamespaceUri, int cchNamespaceUri, const wchar_t *pwchName,  int cchName,ISAXAttributes *pAttributes,int depth ) 
+	HRESULT  SaxExtractPropertiesHandler::OnStartElement(const wchar_t  *, int , const wchar_t *pwchName,  int cchName,ISAXAttributes *pAttributes,int  ) 
 	{
-		SpTreeElement spNewElement = SpTreeElement( new SaxTreeElement(pwchName, cchName));	
-		int NoOfAt  = spNewElement->SetAttributes(pAttributes);
-		bool ParseArray = false;
+		SpTreeElement spNewElement = std::make_shared<SaxTreeElement>(pwchName, cchName);
+		spNewElement->SetAttributes(pAttributes);
 
 		if(m_status == PARSING_NONE)
 		{
@@ -250,7 +249,7 @@ namespace SvXml
 		return pElement;
 	}
 
-	HRESULT  SaxExtractPropertiesHandler::OnElementData( const wchar_t *pwchData,  int cchData, int depth) 
+	HRESULT  SaxExtractPropertiesHandler::OnElementData( const wchar_t *pwchData,  int cchData, int ) 
 	{
 		if(m_status != PARSING_NONE)
 		{
@@ -271,7 +270,7 @@ namespace SvXml
 	}
 
 	
-	HRESULT  SaxExtractPropertiesHandler::OnEndElement(const wchar_t  *pwchNamespaceUri, int cchNamespaceUri,const wchar_t *pwchName,  int cchName, int depth )
+	HRESULT  SaxExtractPropertiesHandler::OnEndElement(const wchar_t  *, int ,const wchar_t*,  int , int  )
 	{
 		if(m_status == PARSING_NONE)
 		{
@@ -279,9 +278,6 @@ namespace SvXml
 		}
 
 		m_depth--;
-		SpTreeElement	spNewElement = SpTreeElement( new SaxTreeElement(pwchName, cchName));	
-		SaxTreeElement::EType Elementtype =  spNewElement->GetElementType();
-
 
 		SaxTreeElement* pElement  = GetCurrentSaxTreeElement(); 
 		if(pElement)
@@ -362,7 +358,7 @@ namespace SvXml
 			
 			std::map<std::wstring, SaxProperty>::iterator it =   m_Properties.begin();
 			int notfound = 0;
-			for(; it != m_Properties.end(); it++ )
+			for(; it != m_Properties.end(); ++it)
 			{
 				if(it->second.IsFound == false )
 				{
@@ -390,7 +386,7 @@ namespace SvXml
 	}
 
 
-	HRESULT   SaxExtractPropertiesHandler::OnXMLError(int line, int column, const wchar_t *pwchErrorText, unsigned long errorCode, bool fatal )
+	HRESULT   SaxExtractPropertiesHandler::OnXMLError(int line, int column, const wchar_t *pwchErrorText, unsigned long errorCode, bool )
 	{
 		if(m_Complete && errorCode == E_ABORT)
 		{

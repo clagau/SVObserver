@@ -39,24 +39,27 @@ SVMatroxResourceMonitor& SVMatroxResourceMonitor::Instance()
 }
 #endif 
 
-HRESULT SVMatroxResourceMonitor::InsertIdentifier( SVMatroxIdentifierEnum p_IdentifierType, __int64 p_Identifier )
+HRESULT SVMatroxResourceMonitor::InsertIdentifier( SVMatroxIdentifierEnum identifierType, __int64 identifier )
 {
 	HRESULT l_Status = S_OK;
+	UNREFERENCED_PARAMETER(identifierType);
+	UNREFERENCED_PARAMETER(identifier);
+
 #ifdef MONITOR_MIL_RESOURCES
 	SVMatroxResourceMonitor& monitor = SVMatroxResourceMonitor::Instance();
 
 	std::lock_guard<std::mutex> Autolock(monitor.m_Mutex);
 
-	SVIdentifierSet::iterator l_AllIter = monitor.m_AllIdentifiers.find(p_Identifier);
+	SVIdentifierSet::iterator l_AllIter = monitor.m_AllIdentifiers.find(identifier);
 
-	if (0 <= p_IdentifierType && p_IdentifierType < static_cast<int>(monitor.m_Identifiers.size()))
+	if (0 <= identifierType && identifierType < static_cast<int>(monitor.m_Identifiers.size()))
 	{
-		SVIdentifierSet& p_rSet = monitor.m_Identifiers[p_IdentifierType];
-		SVIdentifierSet::iterator l_Iter = p_rSet.find(p_Identifier);
+		SVIdentifierSet& p_rSet = monitor.m_Identifiers[identifierType];
+		SVIdentifierSet::iterator l_Iter = p_rSet.find(identifier);
 
 		if (l_Iter == p_rSet.end())
 		{
-			p_rSet.insert(p_Identifier);
+			p_rSet.insert(identifier);
 		}
 		else
 		{
@@ -64,7 +67,7 @@ HRESULT SVMatroxResourceMonitor::InsertIdentifier( SVMatroxIdentifierEnum p_Iden
 		}
 		if (l_AllIter == monitor.m_AllIdentifiers.end())
 		{
-			monitor.m_AllIdentifiers.insert(p_Identifier);
+			monitor.m_AllIdentifiers.insert(identifier);
 		}
 	}
 	else
@@ -91,21 +94,23 @@ bool SVMatroxResourceMonitor::FindReference(__int64 Identifier) const
 }
 #endif 
 
-HRESULT SVMatroxResourceMonitor::EraseIdentifier(SVMatroxIdentifierEnum p_IdentifierType, __int64 p_Identifier)
+HRESULT SVMatroxResourceMonitor::EraseIdentifier(SVMatroxIdentifierEnum identifierType, __int64 identifier)
 {
 	HRESULT l_Status = S_OK;
+	UNREFERENCED_PARAMETER(identifierType);
+	UNREFERENCED_PARAMETER(identifier);
 #ifdef MONITOR_MIL_RESOURCES
 	SVMatroxResourceMonitor& monitor = SVMatroxResourceMonitor::Instance();
 	std::lock_guard<std::mutex> Autolock(monitor.m_Mutex);
 	// remove the indentifier from the Set of Type Indentifiers
-	if (0 <= p_IdentifierType && p_IdentifierType < static_cast<int>(monitor.m_Identifiers.size()))
+	if (0 <= identifierType && identifierType < static_cast<int>(monitor.m_Identifiers.size()))
 	{
-		SVIdentifierSet& p_rSet = monitor.m_Identifiers[p_IdentifierType];
-		SVIdentifierSet::iterator l_Iter = p_rSet.find(p_Identifier);
+		SVIdentifierSet& p_rSet = monitor.m_Identifiers[identifierType];
+		SVIdentifierSet::iterator l_Iter = p_rSet.find(identifier);
 
 		if (l_Iter != p_rSet.end())
 		{
-			p_rSet.erase(p_Identifier);
+			p_rSet.erase(identifier);
 		}
 		else
 		{
@@ -118,13 +123,13 @@ HRESULT SVMatroxResourceMonitor::EraseIdentifier(SVMatroxIdentifierEnum p_Identi
 	}
 
 	// If there are no other references to the identifier - remove it from the all identifiers list
-	if (!monitor.FindReference(p_Identifier))
+	if (!monitor.FindReference(identifier))
 	{
-		SVIdentifierSet::iterator l_AllIter = monitor.m_AllIdentifiers.find(p_Identifier);
+		SVIdentifierSet::iterator l_AllIter = monitor.m_AllIdentifiers.find(identifier);
 
 		if (l_AllIter != monitor.m_AllIdentifiers.end())
 		{
-			monitor.m_AllIdentifiers.erase(p_Identifier);
+			monitor.m_AllIdentifiers.erase(identifier);
 		}
 		else
 		{

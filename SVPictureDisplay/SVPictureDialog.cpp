@@ -1204,7 +1204,7 @@ void SVPictureDialog::SetZoomFit()
 	CloneScrollPosition(SB_BOTH);
 }
 
-BOOL SVPictureDialog::OnHelpInfo(HELPINFO* pHelpInfo)
+BOOL SVPictureDialog::OnHelpInfo(HELPINFO*)
 {
 	return TRUE;
 }

@@ -81,9 +81,9 @@ void SVPatAdvancedPageClass::InitializeControlValues()
 {
 	// populate Fast Find ComboBox
 	int index = m_FastFindComboBox.AddString(scENABLE);
-	m_FastFindComboBox.SetItemData(index, SVValueEnable);
+	m_FastFindComboBox.SetItemData(index, static_cast<DWORD_PTR> (SVValueEnable));
 	index = m_FastFindComboBox.AddString(scDISABLE);
-	m_FastFindComboBox.SetItemData(index, SVValueDisable);
+	m_FastFindComboBox.SetItemData(index, static_cast<DWORD_PTR> (SVValueDisable));
 	index = m_FastFindComboBox.AddString(scAUTO);
 	m_FastFindComboBox.SetItemData(index, SVValueDefault);
 

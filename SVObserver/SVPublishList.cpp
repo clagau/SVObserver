@@ -187,8 +187,6 @@ void SVPublishListClass::Refresh(SvIe::SVTaskObjectClass * pRootObject)
 					}
 
 					// Add Outputs to the PPQ
-					SVIOEntryHostStructPtr pIOEntry;
-
 					pPPQ = m_pInspection->GetPPQ();
 
 					if(SvPb::SVBoolValueObjectType == pObject->GetObjectSubType())
@@ -229,7 +227,7 @@ void SVPublishListClass::Refresh(SvIe::SVTaskObjectClass * pRootObject)
 	}// end for
 }// end Refresh
 
-void SVPublishListClass::Release(SvIe::SVTaskObjectClass * pRootObject)
+void SVPublishListClass::Release(SvIe::SVTaskObjectClass*)
 {
 	// We must release all the outputs that had been marked for publishing
 	// all outputs marked as selected for publishing

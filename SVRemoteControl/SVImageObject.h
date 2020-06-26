@@ -47,10 +47,10 @@ public:
 
 	HRESULT FinalConstruct()
 	{
-		status = 0;
-		trigger = 0;
-		len = 0;
-		format = SVImageFormatsEnum::BMP;
+		m_status = 0;
+		m_trigger = 0;
+		m_length = 0;
+		m_format = SVImageFormatsEnum::BMP;
 		return S_OK;
 	}
 
@@ -75,11 +75,11 @@ public:
 
 
 	void SetOverlays(VARIANT bsOverlays);
-	void SetDIB(bytes dib) { DIB.swap(dib); }
-	void SetLen(ULONG l) { len = l; }
+	void SetDIB(bytes dib) { m_DIB.swap(dib); }
+	void SetLen(ULONG l) { m_length = l; }
 
-	const std::string & GetUrl() const { return url; }
-	void SetUrl(const std::string & u) { url = u; }
+	const std::string & GetUrl() const { return m_url; }
+	void SetUrl(const std::string & u) { m_url = u; }
 	void SetClientService(SvWsl::SVRCClientServicePtr& rpSvrcClientService);
 	void SetImageId(const SvPb::ImageId& CurImageId);
 private:
@@ -92,16 +92,15 @@ private:
 	HRESULT SaveBitmap(gdi::Bitmap & bmp);
 	HRESULT FetchImage();
 
-	//::CComPtr<IPictureDisp> m_image;
-	CComBSTR name;
-	std::string url;
-	bytes DIB;
-	LONG status = 0;
-	LONG trigger = 0;
-	ULONG len = 0;
-	SVImageFormatsEnum format = BMP;
+	CComBSTR m_name;
+	std::string m_url;
+	bytes m_DIB;
+	long m_status = 0;
+	long m_trigger{0L};
+	unsigned long m_length{0UL};
+	SVImageFormatsEnum m_format{BMP};
 	SvPb::ImageId m_CurrentImageId;
-	SvWsl::SVRCClientServicePtr*  m_pClientService = nullptr;
+	SvWsl::SVRCClientServicePtr*  m_pClientService{nullptr};
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(SVImageObject), SVImageObject)

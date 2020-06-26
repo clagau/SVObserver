@@ -1282,7 +1282,6 @@ bool CSVOConfigAssistantDlg::SendPPQDataToConfiguration(SVPPQObjectPtrVector& rP
 			}
 			else
 			{
-				long lSize = 0;
 				long lInsCnt;
 				pPPQ->GetInspectionCount(lInsCnt);
 				
@@ -1400,7 +1399,6 @@ bool CSVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 	{
 		svFiles.clear();
 		int CameraIndex(iAcq);
-		bool IsAcqDevice( false );
 		SvIe::SVAcquisitionClassPtr psvDevice;
 
 		const SVOCameraObjPtr pCameraObj( GetCameraObject( CameraIndex ) );
@@ -1474,7 +1472,7 @@ bool CSVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 					psvDevice->DestroyBuffers();
 
 					// create the buffers
-					HRESULT hrCreateBuffers = psvDevice->CreateBuffers( svImageInfo );
+					psvDevice->CreateBuffers( svImageInfo );
 
 					// Add the acquisition device
 					bRet = pConfig->AddAcquisitionDevice( DigName.c_str(), svFiles, lightRef, lut, &deviceParams ) && bRet;
@@ -1551,7 +1549,7 @@ bool CSVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 					psvDevice->SetDeviceParameters( svDeviceParams );	// must be done before CreateBuffers (in case CameraFormat changes)
 					psvDevice->GetDeviceParameters( svDeviceParams );	// LoadFiles may have created CameraFormat params which were not in the original list; retrieve the new complete list
 					psvDevice->GetImageInfo(&svImageInfo);
-					HRESULT hrCreateBuffers = psvDevice->CreateBuffers( svImageInfo );
+					psvDevice->CreateBuffers( svImageInfo );
 
 					// needs to happen AFTER SetDeviceParameters on a New
 					if ( bGetLightReference )
@@ -1969,8 +1967,6 @@ bool CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 					}
 				}
 
-				bool bAddInspection = FALSE;
-
 				if ( nullptr == pInspection )
 				{
 					const std::string& importFilename = pInspectionObj->GetImportFilename();
@@ -2017,7 +2013,7 @@ bool CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 							SvDef::StringVector msgList;
 							msgList.push_back(SvUl::Format(_T("%d"), hr));
 							SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
-							INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Config_InspectionImportFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10140);
+							Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Config_InspectionImportFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10140);
 						}
 						pInspectionObj->ClearImportFilename();
 					}
@@ -2103,9 +2099,9 @@ bool CSVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectPtrVec
 			Key = pPPQObj->GetPPQName();
 			bool bNew = FALSE;
 
-			for ( long l = lCPPQCnt -1; -1 < l; l-- )
+			for ( long j = lCPPQCnt -1; -1 < j; j-- )
 			{
-				pPPQ = pConfig->GetPPQ(l);
+				pPPQ = pConfig->GetPPQ(j);
 				
 				if ( nullptr != pPPQ )
 				{
@@ -2135,10 +2131,6 @@ bool CSVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectPtrVec
 
 				pPPQ->SetPPQOutputMode((SvDef::SVPPQOutputModeEnum)pPPQObj->GetPPQMode());
 
-				// EB 20050225
-				long lOldPPQLength=pPPQ->getPPQLength();
-				bool bPPQLengthChanged = lOldPPQLength != pPPQObj->GetPPQLength();
-
 				pPPQ->SetPPQLength(pPPQObj->GetPPQLength());
 				pPPQ->SetResetDelay(pPPQObj->GetPPQOutputResetDelay());
 				pPPQ->SetOutputDelay(pPPQObj->GetPPQOutputDelayTime());
@@ -2150,12 +2142,11 @@ bool CSVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectPtrVec
 				int iAttachedCamCnt = pPPQObj->GetAttachedCameraCount();
 				int iAttachedInsCnt = pPPQObj->GetAttachedInspectionCount();
 
-				for (int i = 0; i < iAttachedCamCnt; i++)
+				for (int j = 0; j < iAttachedCamCnt; ++j)
 				{
-					bool bFound = FALSE;
 					long lPosition = 0;
 
-					PPQCameraName = pPPQObj->GetAttachedCamera(i);
+					PPQCameraName = pPPQObj->GetAttachedCamera(j);
 
 					SvIe::SVVirtualCameraPtrVector cameraVector = pPPQ->GetVirtualCameras();
 
@@ -2178,9 +2169,9 @@ bool CSVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectPtrVec
 
 					long lCfgAttachedCam = pConfig->GetCameraCount();
 
-					for (long l = 0; l < lCfgAttachedCam; ++l)
+					for (long k = 0; k < lCfgAttachedCam; ++k)
 					{
-						SvIe::SVVirtualCamera* pCamera = pConfig->GetCamera(l);
+						SvIe::SVVirtualCamera* pCamera = pConfig->GetCamera(k);
 						if ( nullptr != pCamera )
 						{
 							if ( PPQCameraName == pCamera->GetName() )
@@ -2222,11 +2213,11 @@ bool CSVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectPtrVec
 					}
 				}
 
-				for (int k = 0; k < iAttachedInsCnt; k++)
+				for (int j = 0; j < iAttachedInsCnt; j++)
 				{
 					bool bFound = false;
 
-					std::string PpqInspectionName = pPPQObj->GetAttachedInspection(k);
+					std::string PpqInspectionName = pPPQObj->GetAttachedInspection(j);
 					const SVOInspectionObjPtr pInspectionObj = GetInspectionObjectByLabel(PpqInspectionName.c_str());
 					if( nullptr != pInspectionObj )
 					{
@@ -3193,7 +3184,7 @@ void CSVOConfigAssistantDlg::CameraDeletedCheckAgainstPPQ(LPCTSTR CameraName)
 	}
 }
 
-void CSVOConfigAssistantDlg::CameraDeletedCheckAgainstInspection(LPCTSTR CameraName)
+void CSVOConfigAssistantDlg::CameraDeletedCheckAgainstInspection(LPCTSTR )
 {
 	long lSize;
 	long l;
@@ -3214,7 +3205,7 @@ void CSVOConfigAssistantDlg::CameraDeletedCheckAgainstInspection(LPCTSTR CameraN
 	}// end for
 }// end CameraDeletedCheckAgainstInspection
 
-void CSVOConfigAssistantDlg::CameraDetachedCheckAgainstInspection(LPCTSTR CameraName)
+void CSVOConfigAssistantDlg::CameraDetachedCheckAgainstInspection(LPCTSTR)
 {
 	long lSize;
 	long l;
@@ -3590,7 +3581,7 @@ HRESULT CSVOConfigAssistantDlg::CheckCamera( SVOCameraObj& rCameraObj, bool SetF
 			pDevice->GetDeviceParameters( DeviceParams );
 			rCameraObj.SetCameraDeviceParams( DeviceParams );
 
-			HRESULT hr = pDevice->ReadCameraFile( rCameraObj.GetCameraFile(), DeviceParams );
+			pDevice->ReadCameraFile( rCameraObj.GetCameraFile(), DeviceParams );
 
 			if( SetFileParameters )
 			{

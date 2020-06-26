@@ -18,7 +18,10 @@
 #include "SVMessage/SVMessage.h"
 
 #pragma warning( push )
-#pragma warning( disable : 4102 4013 4244 ) 
+#pragma warning( disable : 4102) 
+#pragma warning( disable : 4013) 
+#pragma warning( disable : 4244) 
+#pragma warning( disable : 4706) 
 
 bool g_bUseCorrectListRecursion = true;
 
@@ -51,7 +54,7 @@ SVEquationYaccClass::~SVEquationYaccClass()
 {
 }
 
-int SVEquationYaccClass::yyerror(char *s) 
+int SVEquationYaccClass::yyerror(char*) 
 { 
 	yacc_err = 1;
 	current_recursive_depth = 0;	// reset this var on error

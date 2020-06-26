@@ -30,40 +30,33 @@ HRESULT SVMatroxLicenseInterface::InitMatroxLicense()
 	HRESULT hrRet = S_OK;
 
 	long long LicenseModules=0;
-	try
+	long long appID = MappInquire( M_CURRENT_APPLICATION, 0 );
+	MappInquire(appID, M_LICENSE_MODULES, &LicenseModules);//get all licenses off dongle, dev dongle
+																				//only have M_LICENSE_DEBUG
+	long long milVal = MappInquire(M_ID_KEY_FINGERPRINT,M_NULL);
+
+	//check to see if it is a dev license
+	bool bDebug = false;
+	if ( LicenseModules & M_LICENSE_DEBUG )
 	{
-		long long appID = MappInquire( M_CURRENT_APPLICATION, 0 );
-		MappInquire(appID, M_LICENSE_MODULES, &LicenseModules);//get all licenses off dongle, dev dongle
-																					//only have M_LICENSE_DEBUG
-		long long milVal = MappInquire(M_ID_KEY_FINGERPRINT,M_NULL);
-
-		//check to see if it is a dev license
-		bool bDebug = false;
-		if ( LicenseModules & M_LICENSE_DEBUG )
-		{
-			bDebug = true;
-		}
-		//Set Matrox Dongle License
-		if ( milVal || bDebug)
-		{
-			m_bMatroxImageLicense = true;
-		}
-
-		//Set Matrox Identy License
-		if ( (LicenseModules & ( M_LICENSE_CODE )) || bDebug )
-		{
-			m_bMatroxIdentificationLicense = true;
-		}
-
-		//Set Matrox GigE License
-		if ( (LicenseModules & ( M_LICENSE_INTERFACE )) || bDebug )
-		{
-			m_bMatroxGigELicense = true;
-		}
+		bDebug = true;
 	}
-	catch(...)
+	//Set Matrox Dongle License
+	if ( milVal || bDebug)
 	{
-		hrRet = E_FAIL;
+		m_bMatroxImageLicense = true;
+	}
+
+	//Set Matrox Identy License
+	if ( (LicenseModules & ( M_LICENSE_CODE )) || bDebug )
+	{
+		m_bMatroxIdentificationLicense = true;
+	}
+
+	//Set Matrox GigE License
+	if ( (LicenseModules & ( M_LICENSE_INTERFACE )) || bDebug )
+	{
+		m_bMatroxGigELicense = true;
 	}
 
 	return hrRet;

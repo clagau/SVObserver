@@ -333,7 +333,7 @@ HRESULT SVAcquisitionClass::CreateLightReference(int iBands)
 	return hrOk;
 }
 
-HRESULT SVAcquisitionClass::LoadLightReference(SVLightReference& rLR)
+HRESULT SVAcquisitionClass::LoadLightReference(SVLightReference& )
 {
 	HRESULT hrOk = S_FALSE;
 
@@ -375,28 +375,28 @@ HRESULT SVAcquisitionClass::CreateLightReferenceBand(int iBand, int iAttributes)
 	return hrOk;
 }
 
-HRESULT SVAcquisitionClass::GetMaxLightReferenceValue(unsigned long ulType, long &rlValue) const
+HRESULT SVAcquisitionClass::GetMaxLightReferenceValue(unsigned long , long &) const
 {
 	HRESULT hrOk = S_FALSE;
 
 	return hrOk;
 }
 
-HRESULT SVAcquisitionClass::GetMinLightReferenceValue(unsigned long ulType, long &rlValue) const
+HRESULT SVAcquisitionClass::GetMinLightReferenceValue(unsigned long , long &) const
 {
 	HRESULT hrOk = S_FALSE;
 
 	return hrOk;
 }
 
-HRESULT SVAcquisitionClass::GetLightReferenceValueStep(unsigned long ulType, unsigned long &rulValue) const
+HRESULT SVAcquisitionClass::GetLightReferenceValueStep(unsigned long , unsigned long &) const
 {
 	HRESULT hrOk = S_FALSE;
 
 	return hrOk;
 }
 
-HRESULT SVAcquisitionClass::SetStandardCameraParameter(const SVDeviceParamWrapper& rwParam)
+HRESULT SVAcquisitionClass::SetStandardCameraParameter(const SVDeviceParamWrapper& )
 {
 	return E_NOTIMPL;
 }
@@ -406,7 +406,7 @@ bool SVAcquisitionClass::IsOnline() const
 	return IsStarted();
 }
 
-HRESULT SVAcquisitionClass::SetLightReferenceImpl(SVLightReference& rLR)
+HRESULT SVAcquisitionClass::SetLightReferenceImpl(SVLightReference& )
 {
 	HRESULT hrOk = S_FALSE;
 
@@ -486,7 +486,7 @@ HRESULT SVAcquisitionClass::GetLut(SVLut& lut)
 	return S_OK;
 }
 
-HRESULT SVAcquisitionClass::GetLutImpl(SVLut& lut)
+HRESULT SVAcquisitionClass::GetLutImpl(SVLut& )
 {
 	return S_FALSE;
 }
@@ -547,13 +547,13 @@ HRESULT SVAcquisitionClass::SetLut(const SVLut& lut, int iBand)
 	return hr;
 }
 
-HRESULT SVAcquisitionClass::SetLutImpl(const SVLut& lut)
+HRESULT SVAcquisitionClass::SetLutImpl(const SVLut& )
 {
 	HRESULT hr = S_FALSE;
 	return hr;
 }
 
-HRESULT SVAcquisitionClass::CreateLut(const SVLutInfo& info)
+HRESULT SVAcquisitionClass::CreateLut(const SVLutInfo& )
 {
 	HRESULT hr = S_FALSE;
 	return hr;
@@ -634,7 +634,7 @@ HRESULT SVAcquisitionClass::SetDeviceParameters(const SVDeviceParamCollection& r
 	return hr;
 }
 
-HRESULT SVAcquisitionClass::IsValidCameraFileParameters(SVDeviceParamCollection& rDeviceParams)
+HRESULT SVAcquisitionClass::IsValidCameraFileParameters(SVDeviceParamCollection& )
 {
 	return E_NOTIMPL;	// derived class needs to override this
 }
@@ -657,7 +657,7 @@ SVDeviceParamCollection& SVAcquisitionClass::HardwareCapabilities()
 	return m_DeviceParams;
 }
 
-HRESULT SVAcquisitionClass::ReadCameraFile(const std::string&, SVDeviceParamCollection& rParams)
+HRESULT SVAcquisitionClass::ReadCameraFile(const std::string&, SVDeviceParamCollection&)
 {
 	return E_NOTIMPL;
 }

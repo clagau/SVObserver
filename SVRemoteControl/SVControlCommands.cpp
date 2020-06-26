@@ -902,7 +902,7 @@ HRESULT SVControlCommands::QueryMonitorList(const _bstr_t& rListName, SvPb::List
 		return Result;
 }
 
-HRESULT SVControlCommands::GetProduct(const _bstr_t& rListName, long TriggerCount, long ImageScale, ISVProductItems** ppViewItems, SVCommandStatus& rStatus)
+HRESULT SVControlCommands::GetProduct(const _bstr_t& rListName, long TriggerCount, long , ISVProductItems** ppViewItems, SVCommandStatus& rStatus)
 {
 	HRESULT Result {E_FAIL};
 	try
@@ -944,7 +944,7 @@ HRESULT SVControlCommands::GetProduct(const _bstr_t& rListName, long TriggerCoun
 
 		return Result;
 }
-HRESULT SVControlCommands::GetRejects(const _bstr_t& rListName, long TriggerCount, long ImageScale, ISVProductItems** ppViewItems, SVCommandStatus& rStatus)
+HRESULT SVControlCommands::GetRejects(const _bstr_t& rListName, long TriggerCount, long , ISVProductItems** ppViewItems, SVCommandStatus& rStatus)
 {
 	HRESULT Result {E_FAIL};
 	try
@@ -1282,14 +1282,20 @@ void SVControlCommands::OnConnectionStatus(SvRpc::ClientStatus Status)
 	switch (Status)
 	{
 		case SvRpc::ClientStatus::Connected:
+		{
 			SV_LOG_GLOBAL(info) << "OnConnectionStatus Connect";
-			m_Notifier(_variant_t(_T("Conneted")), SVNotificationTypesEnum::Connected);
+			_variant_t connected(_T("Conneted"));
+			m_Notifier(connected, SVNotificationTypesEnum::Connected);
 			StartNotificationStreaming();
 			break;
+		}
 		case SvRpc::ClientStatus::Disconnected:
+		{
 			SV_LOG_GLOBAL(info) << "OnConnectionStatus Disconnect";
-			m_Notifier(_variant_t(_T("Disconneted")), SVNotificationTypesEnum::Disconnected);
+			_variant_t disconnected(_T("Disconneted"));
+			m_Notifier(disconnected, SVNotificationTypesEnum::Disconnected);
 			break;
+		}
 	}
 }
 

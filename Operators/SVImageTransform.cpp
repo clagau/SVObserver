@@ -393,7 +393,7 @@ HRESULT SVImageTransformClass::UpdateTransformData( )
 
 	if( nullptr != pInputImage && nullptr != pTool )
 	{
-		POINT UseExtentsOnlyPoint;
+		POINT UseExtentsOnlyPoint{0L, 0L};
 
 		SvVol::SVDoubleValueObjectClass* pTranslationXResult = SvOl::getInput<SvVol::SVDoubleValueObjectClass>(m_inputTranslationXResult, true);
 		SvVol::SVDoubleValueObjectClass* pTranslationYResult = SvOl::getInput<SvVol::SVDoubleValueObjectClass>(m_inputTranslationYResult, true);

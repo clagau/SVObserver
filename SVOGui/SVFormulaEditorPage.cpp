@@ -295,7 +295,7 @@ void SVFormulaEditorPageClass::advanceInEditor(long Pos)
 	enableUndoButton();
 }
 
-void SVFormulaEditorPageClass::deleteInEditor(long Pos)
+void SVFormulaEditorPageClass::deleteInEditor(long )
 {
 	if (nullptr != m_EditWnd.GetSafeHwnd())
 	{
@@ -723,7 +723,7 @@ void SVFormulaEditorPageClass::onUndo()
 	enableUndoButton();
 }
 
-void SVFormulaEditorPageClass::OnEquationFieldChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
+void SVFormulaEditorPageClass::OnEquationFieldChanged(NMHDR*, LRESULT*)
 {
 	if (nullptr != m_EditWnd.GetSafeHwnd())
 	{
@@ -905,7 +905,7 @@ void SVFormulaEditorPageClass::CheckBrace()
 	}
 	else
 	{
-		m_EditWnd.SendMessage(SCI_BRACEHIGHLIGHT, -1, -1);
+		m_EditWnd.SendMessage(SCI_BRACEHIGHLIGHT, static_cast<WPARAM> (-1), static_cast<LPARAM> (-1));
 	}
 }
 

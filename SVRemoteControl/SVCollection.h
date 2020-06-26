@@ -101,7 +101,7 @@ namespace SVCollection
 		static HRESULT copy(T** p1, const Adapter* p2)
 		{
 			HRESULT hr = E_POINTER;
-			if (*p1 = p2->m_T)
+			if (nullptr != (*p1 = p2->m_T))
 			{
 				hr = (*p1)->AddRef();
 			}

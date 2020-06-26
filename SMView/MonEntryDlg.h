@@ -28,7 +28,7 @@ protected:
 public:
 	afx_msg void OnStnClickedName();
 	CString m_Name;
-	DWORD m_InspectionStoreId;
+	int m_InspectionStoreId;
 	DWORD m_ItemId;
 	DWORD m_Type;
 	DWORD m_SToreOffset;

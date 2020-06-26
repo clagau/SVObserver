@@ -284,7 +284,7 @@ void SVInspectionProcess::BuildWatchlist()
 	DWORD RejectConditionFlag = SvSml::ListFlags[SvSml::ListType::rejectCondition];
 	for (auto& it : pMonitorlist->m_EntriesMap)
 	{
-		if (it.second->data.InspectionStoreId == m_StoreIndex)
+		if (it.second->data.m_inspectionStoreId == m_StoreIndex)
 		{
 			SVObjectReference ObjectRef;
 			if (S_OK == GetInspectionObject(it.first.c_str(), ObjectRef))
@@ -500,7 +500,7 @@ bool SVInspectionProcess::CreateInspection(LPCTSTR szDocName)
 	return true;
 }// end Create
 
-void CALLBACK SVInspectionProcess::APCThreadProcess(DWORD_PTR dwParam)
+void CALLBACK SVInspectionProcess::APCThreadProcess(DWORD_PTR)
 {
 }
 
@@ -1880,8 +1880,7 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum &rResetItem
 
 						/*hrSet = */ObjectRef.getValueObject()->getValue(PrevValue, ObjectRef.ArrayIndex());
 
-						std::string strNewValue(Value);
-						SvUl::MakeLower(strNewValue);
+						std::string strNewValue= SvUl::MakeLower(Value.c_str());
 						TCHAR* p = nullptr;
 						long lValue = 0;
 						if (std::string::npos != strNewValue.find(_T('x')))
@@ -2928,7 +2927,7 @@ SVInspectionProcess::SVObjectPtrDeque SVInspectionProcess::GetPostProcessObjects
 	return l_Objects;
 }
 
-SVObjectClass *SVInspectionProcess::UpdateObject(uint32_t friendId, SVObjectClass *p_psvObject, SVObjectClass *p_psvNewOwner)
+SVObjectClass *SVInspectionProcess::UpdateObject(uint32_t, SVObjectClass *p_psvObject, SVObjectClass *p_psvNewOwner)
 {
 	p_psvObject->SetObjectOwner(p_psvNewOwner);
 

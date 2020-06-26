@@ -19,9 +19,9 @@ namespace SvXml
 		//************************************
 		//! Convert a string to a Variant Type
 		//! \param ptype [in]
-		//! \returns UINT
+		//! \returns VARTYPE
 		//************************************
-		static  UINT WCHAR2Type(const wchar_t *ptype );
+		static VARTYPE WCHAR2Type(const wchar_t *ptype );
 
 		//************************************
 		//! Convert a type and value string to a variant 
@@ -39,7 +39,7 @@ namespace SvXml
 		//! \param pVar [in,out]
 		//! \returns void
 		//************************************
-		static void ToVariant( unsigned vartype, const wchar_t  *pVal, _variant_t* pVar);
+		static void ToVariant(VARTYPE vartype, const wchar_t  *pVal, _variant_t* pVar);
 	#pragma endregion Public Methods
 	
 	#pragma region Member variables

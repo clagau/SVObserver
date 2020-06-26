@@ -212,8 +212,6 @@ CRect SVROIFigureEditor::GetParentImageRect()
 
 CSize SVROIFigureEditor::GetSizeImpl()
 {
-	long lWidth=0;
-	long lHeight=0;
 	CRect rect = m_pShape->GetParentImageRect();
 	CSize size(rect.Width(), rect.Height());
 	return size;
@@ -226,7 +224,7 @@ CPoint SVROIFigureEditor::GetReferencePoint()
 	return m_pShape->GetRect().TopLeft();	// we need top left for ROI purposes
 }
 
-HRESULT SVROIFigureEditor::MouseMove(UINT nFlags, CPoint point)
+HRESULT SVROIFigureEditor::MouseMove(UINT, CPoint point)
 {
 	HRESULT hr = S_OK;
 

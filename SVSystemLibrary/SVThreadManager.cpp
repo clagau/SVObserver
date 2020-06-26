@@ -52,7 +52,7 @@ SVThreadManager::~SVThreadManager()
 }
 
 
-HRESULT SVThreadManager::GetThreadInfo( std::list<std::string>& p_rStrList) const
+HRESULT SVThreadManager::GetThreadInfo( std::list<std::string>& ) const
 {
 	HRESULT hr = S_FALSE;
 	if( nullptr != m_pGetThreadInfo )

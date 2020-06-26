@@ -66,7 +66,6 @@ bool  ShareControl::GetFailstatus(const SvPb::GetFailStatusRequest& rRequest, Sv
 		return false;
 	}
 
-	bool nameInresponse = rRequest.nameinresponse();
 	std::string listName = SvUl::to_ansi(rRequest.listname());
 
 	bool bValid(false);
@@ -85,7 +84,7 @@ bool  ShareControl::GetFailstatus(const SvPb::GetFailStatusRequest& rRequest, Sv
 	std::unique_ptr<SvSml::vecpProd>  new_FailstatusPtr(new SvSml::vecpProd);
 	{
 		std::lock_guard<std::mutex> guard(m_pLastResponseData->m_ProtectLastFailstatus);
-		auto& it = m_pLastResponseData->m_LastFailstatus.find(listName);
+		auto it = m_pLastResponseData->m_LastFailstatus.find(listName);
 		if (it != m_pLastResponseData->m_LastFailstatus.end())
 		{
 			pLastFailstatus = it->second.get();
@@ -241,7 +240,7 @@ bool ShareControl::GetProductItem(bool isReject, int triggerCount, int peviousTr
 
 		std::lock_guard<std::mutex> guard(rProtectLast);
 
-		auto& it = rLastMap.find(rListName);
+		auto it = rLastMap.find(rListName);
 		if (rLastMap.end() != it)
 		{
 			pLastProduct = it->second.get();
@@ -346,15 +345,16 @@ bool  ShareControl::SetProductResponse(bool nameInResponse, const SvSml::MLProdu
 			*pProductMsg->add_valuenames() = SvUl::to_utf8(pProduct->m_dataEntries[i]->name);
 		}
 	}
-	int slot = pProduct->m_slot;
 
-	int i(0);
+	int index(0);
 	for (auto& MeP : pProduct->m_ImageEntries)
 	{
 		if (!MeP.get())
+		{
 			break;
+		}
 		auto pImage = pProductMsg->add_images();
-		auto mapIter = pProduct->m_triggerRecordMap.find(MeP->data.InspectionStoreId);
+		auto mapIter = pProduct->m_triggerRecordMap.find(MeP->data.m_inspectionStoreId);
 		if (pProduct->m_triggerRecordMap.end() != mapIter && nullptr != mapIter->second)
 		{
 			pImage->set_trid(mapIter->second->getId());
@@ -364,7 +364,7 @@ bool  ShareControl::SetProductResponse(bool nameInResponse, const SvSml::MLProdu
 
 		if (nameInResponse)
 		{
-			*pProductMsg->add_imagenames() = SvUl::to_utf8(pProduct->m_ImageEntries[i++]->name);
+			*pProductMsg->add_imagenames() = SvUl::to_utf8(pProduct->m_ImageEntries[index++]->name);
 		}
 	}
 	return true;

@@ -181,8 +181,8 @@ void SVArchiveRecord::ConnectInputObject()
 		InObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
 
 		bool rc = SVObjectManagerClass::Instance().ConnectObjectInput(m_svObjectReference.getObjectId(), &InObjectInfo);
-
 		assert(rc);
+		UNREFERENCED_PARAMETER(rc);
 	}
 }
 

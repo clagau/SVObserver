@@ -54,7 +54,6 @@ const SVInt64ValueObjectClass& SVInt64ValueObjectClass::operator = (const SVInt6
 
 __int64 SVInt64ValueObjectClass::ConvertString2Type( const std::string& rValue ) const
 {
-	__int64 Result(0LL);
 	std::string Digits = SvUl::ValidateString( rValue, _T("0123456789- ") );
 	if( Digits == rValue )
 	{
@@ -67,8 +66,6 @@ __int64 SVInt64ValueObjectClass::ConvertString2Type( const std::string& rValue )
 	SvStl::MessageMgrStd Exception(SvStl::MsgType::Log );
 	Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValueObject_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 	Exception.Throw();
-
-	return Result;
 }
 
 void SVInt64ValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter)

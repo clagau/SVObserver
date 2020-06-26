@@ -253,7 +253,7 @@ HRESULT SVMatroxBarCodeInterface::Set(const __int64& p_rCodeID, SVBarCodeControl
 
 @SVOperationDescription Uses McodeControl to set the control type with value.
 
-*/HRESULT SVMatroxBarCodeInterface::Set(const __int64& p_rCodeID, SVBarCodeControlTypeEnum p_eType, const std::string& p_dValue)
+*/HRESULT SVMatroxBarCodeInterface::Set(const __int64& , SVBarCodeControlTypeEnum , const std::string& )
 {
 	// Currently there are no strings to set.
 	return SVMEE_INVALID_PARAMETER;
@@ -333,7 +333,7 @@ HRESULT SVMatroxBarCodeInterface::Get(const __int64& p_rCodeID, SVBarCodeControl
 @SVOperationDescription Get returns the selected control value from the provided SVMatroxBarCode handle.
 
 */
-HRESULT SVMatroxBarCodeInterface::Get(const __int64& p_rCodeID, SVBarCodeControlTypeEnum p_eType, std::string& p_rstrValue)
+HRESULT SVMatroxBarCodeInterface::Get(const __int64&, SVBarCodeControlTypeEnum , std::string& )
 {
 	// Currently there are no strings to Get.
 	return SVMEE_INVALID_PARAMETER;

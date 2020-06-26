@@ -130,14 +130,13 @@ std::string SVCameraImageTemplate::GetCameraName() const
 	return l_String;
 }
 
-HRESULT SVCameraImageTemplate::SetObjectValue(SVObjectAttributeClass* PDataObject)
+HRESULT SVCameraImageTemplate::SetObjectValue(SVObjectAttributeClass* pDataObject)
 {
 	HRESULT hr = S_FALSE;
-	bool bOk = false;
 
 	SvCl::SVObjectStdStringArrayClass ClassIDList;
-
-	if ((bOk = PDataObject->GetAttributeData(scDigitizerIDTag, ClassIDList)))
+	bool bOk{pDataObject->GetAttributeData(scDigitizerIDTag, ClassIDList)};
+	if (bOk)
 	{
 		for (int i = 0; i < static_cast<int> (ClassIDList.size()); i++)
 		{
@@ -146,7 +145,7 @@ HRESULT SVCameraImageTemplate::SetObjectValue(SVObjectAttributeClass* PDataObjec
 	}
 	else
 	{
-		hr = SVImageClass::SetObjectValue(PDataObject);
+		hr = SVImageClass::SetObjectValue(pDataObject);
 
 		m_ObjectAttributesAllowed |= SvPb::remotelySetable;
 

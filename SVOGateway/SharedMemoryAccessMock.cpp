@@ -69,14 +69,14 @@ SharedMemoryAccessMock::SharedMemoryAccessMock()
 
 SharedMemoryAccessMock::~SharedMemoryAccessMock() {}
 
-void SharedMemoryAccessMock::GetVersion(const SvPb::GetGatewayVersionRequest& req, SvRpc::Task<SvPb::GetVersionResponse> task)
+void SharedMemoryAccessMock::GetVersion(const SvPb::GetGatewayVersionRequest& , SvRpc::Task<SvPb::GetVersionResponse> task)
 {
 	SvPb::GetVersionResponse resp;
 	resp.set_version("Mock Version");
 	task.finish(std::move(resp));
 }
 
-void SharedMemoryAccessMock::GetWebAppVersion(const SvPb::GetWebAppVersionRequest& req, SvRpc::Task<SvPb::GetVersionResponse> task)
+void SharedMemoryAccessMock::GetWebAppVersion(const SvPb::GetWebAppVersionRequest& , SvRpc::Task<SvPb::GetVersionResponse> task)
 {
 	SvPb::GetVersionResponse resp;
 	resp.set_version("Mock Version");
@@ -96,7 +96,7 @@ void SharedMemoryAccessMock::GetProduct(const SvPb::GetProductRequest& request, 
 	task.finish(std::move(resp));
 }
 
-void SharedMemoryAccessMock::GetProductData(const SvPb::GetProductDataRequest& request, SvRpc::Task<SvPb::GetProductDataResponse> task)
+void SharedMemoryAccessMock::GetProductData(const SvPb::GetProductDataRequest& , SvRpc::Task<SvPb::GetProductDataResponse> task)
 {
 	SvPb::GetProductDataResponse resp;
 	task.finish(std::move(resp));
@@ -149,7 +149,7 @@ void SharedMemoryAccessMock::StoreClientLogs(const SvPb::StoreClientLogsRequest&
 	task.finish(SvPb::EmptyResponse());
 }
 
-void SharedMemoryAccessMock::SetRejectStreamPauseState(const SvPb::SetRejectStreamPauseStateRequest& rRequest, SvRpc::Task<SvPb::EmptyResponse> task)
+void SharedMemoryAccessMock::SetRejectStreamPauseState(const SvPb::SetRejectStreamPauseStateRequest& , SvRpc::Task<SvPb::EmptyResponse> task)
 {
 	SvPenv::Error err;
 	err.set_errorcode(SvPenv::ErrorCode::notImplemented);
@@ -157,7 +157,7 @@ void SharedMemoryAccessMock::SetRejectStreamPauseState(const SvPb::SetRejectStre
 }
 
 void SharedMemoryAccessMock::GetGatewayNotificationStream(
-	const SvPb::GetGatewayNotificationStreamRequest& rRequest,
+	const SvPb::GetGatewayNotificationStreamRequest& ,
 	SvRpc::Observer<SvPb::GetGatewayNotificationStreamResponse> observer,
 	SvRpc::ServerStreamContext::Ptr ctx)
 {
@@ -165,7 +165,7 @@ void SharedMemoryAccessMock::GetGatewayNotificationStream(
 }
 
 void SharedMemoryAccessMock::GetProductStream(
-	const SvPb::GetProductStreamRequest& req,
+	const SvPb::GetProductStreamRequest&,
 	SvRpc::Observer<SvPb::GetProductStreamResponse> observer,
 	SvRpc::ServerStreamContext::Ptr ctx)
 {

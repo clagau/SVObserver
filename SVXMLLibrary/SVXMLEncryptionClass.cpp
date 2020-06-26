@@ -62,7 +62,7 @@ constexpr long c_lookUpTable1[256] =
 //! Disables compile warning conversion from char to unsigned char
 //! This type has to remain unsigned char for the encryption to function
 #pragma warning (push)
-#pragma warning (disable : 4838)
+#pragma warning (disable : 4245)
 constexpr unsigned char c_CharTable[128] =
 {
 	//-                            1   1   1
@@ -636,12 +636,12 @@ HRESULT SVXMLEncryptionClass::Method1Encryption(
 {
 	HRESULT			hr;
 
-	long				l_lNewDestinationIndex;
-	long				l_lTempOffset;
+	long				l_lNewDestinationIndex{0L};
+	long				l_lTempOffset{0L};
 
-	unsigned long	l_ulTempRand1;
-	unsigned long	l_ulTempSourceValue;
-	unsigned long	l_ulTempResultValue;
+	unsigned long	l_ulTempRand1{0UL};
+	unsigned long	l_ulTempSourceValue{0UL};
+	unsigned long	l_ulTempResultValue{0UL};
 
 
 
@@ -832,15 +832,6 @@ HRESULT SVXMLEncryptionClass::Method1Encryption(
 			l_lCounter = l_lCounter + 1;
 		} while (l_lCounter != 8);
 
-
-		{
-			//-			Development code.
-			if ((l_lRelativeJump != c_JumpingOffset + 1) &&
-				(l_lFoundGoodIndex == TRUE))
-			{
-				short a = 1;
-			}
-		}
 
 		//-		If no good local (within 4 forward or 3 back) address was found, 
 		//-		then we will use the first available index

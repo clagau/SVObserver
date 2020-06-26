@@ -82,31 +82,31 @@ public:
 
 	
 	///Deprecated Function returns E_NOTIMPL 
-	STDMETHOD (PutSVIMConfig)(BSTR XMLConfig, BSTR* pXMLError) {return E_NOTIMPL;} 
+	STDMETHOD (PutSVIMConfig)(BSTR , BSTR* ) {return E_NOTIMPL;} 
 
 	///Deprecated Function returns E_NOTIMPL 
-	STDMETHOD (GetSVIMConfigName)(BSTR * pszXMLData, BSTR* pXMLError) {return E_NOTIMPL;}
+	STDMETHOD (GetSVIMConfigName)(BSTR * , BSTR* ) {return E_NOTIMPL;}
 
 	///Deprecated Function returns E_NOTIMPL 
-	STDMETHOD (GetSVIMFile)(BSTR * pszXMLData, BSTR* pXMLError) {return E_NOTIMPL;}
+	STDMETHOD (GetSVIMFile)(BSTR * , BSTR* ) {return E_NOTIMPL;}
 
 	///Deprecated Function returns E_NOTIMPL 
-	STDMETHOD (PutSVIMFile)(BSTR szXMLData, BSTR* pXMLError) {return E_NOTIMPL;}
+	STDMETHOD (PutSVIMFile)(BSTR , BSTR* ) {return E_NOTIMPL;}
 
 	///Deprecated Function returns E_NOTIMPL 
-	STDMETHOD (SetSVIMState)(BSTR szXMLData, BSTR* pXMLError) {return E_NOTIMPL;}
+	STDMETHOD (SetSVIMState)(BSTR , BSTR* ) {return E_NOTIMPL;}
 
 	///Deprecated Function returns E_NOTIMPL 
-	STDMETHOD (GetSVIMConfig)(BSTR* pXMLConfig, BSTR* pXMLError){return E_NOTIMPL;}
+	STDMETHOD (GetSVIMConfig)(BSTR* , BSTR* ){return E_NOTIMPL;}
 
 	///Deprecated Function returns E_NOTIMPL 
-	STDMETHOD (LoadSVIMConfig)(BSTR szXMLData, BSTR* pXMLError){return E_NOTIMPL;}
+	STDMETHOD (LoadSVIMConfig)(BSTR , BSTR* ){return E_NOTIMPL;}
 
 	///Deprecated Function returns E_NOTIMPL 
-	STDMETHOD (GetSVIMInspectionResults)(BSTR* pszXMLData, BSTR* pXMLError){return E_NOTIMPL;}
+	STDMETHOD (GetSVIMInspectionResults)(BSTR* , BSTR* ){return E_NOTIMPL;}
 
 	///Deprecated Function returns E_NOTIMPL 
-	STDMETHOD(GetSVIMState)(/*[out]*/ BSTR *pXMLState, /*[out]*/ BSTR *pXMLError){return E_NOTIMPL;}
+	STDMETHOD(GetSVIMState)(/*[out]*/ BSTR*, /*[out]*/ BSTR*){return E_NOTIMPL;}
 
 //  The following group of functions are the same as above but they
 //  do NOT use XML to wrap each function call. These functions also
@@ -231,7 +231,7 @@ public:
 	//
 	//S_OK indicates success.
 	///This functionality was removed.
-	STDMETHOD (SVGetSVIMInspectionResults)(BSTR bstrInspection, BSTR *bstrXMLResults) {return E_NOTIMPL;}
+	STDMETHOD (SVGetSVIMInspectionResults)(BSTR , BSTR *) {return E_NOTIMPL;}
 
 	//Retrieves the current operating state of the SVIM.
 	//
@@ -388,91 +388,91 @@ public:
 
 
 	///Deprecated Function returns E_NOTIMPL 
-	STDMETHOD(SVSetConditionalHistoryProperties)(BSTR bstrInspectionName, SAFEARRAY*  psaNames,  SAFEARRAY*  psaValues,  SAFEARRAY** ppsaStatus) {return E_NOTIMPL;};
+	STDMETHOD(SVSetConditionalHistoryProperties)(BSTR , SAFEARRAY*  ,  SAFEARRAY*  ,  SAFEARRAY** ) {return E_NOTIMPL;};
 	///Deprecated Function returns E_NOTIMPL 
-	STDMETHOD(SVGetConditionalHistoryProperties)(BSTR bstrInspectionName, SAFEARRAY** ppsaNames, SAFEARRAY** ppsaValues, SAFEARRAY** ppsaStatus) {return E_NOTIMPL;};
+	STDMETHOD(SVGetConditionalHistoryProperties)(BSTR , SAFEARRAY** , SAFEARRAY** , SAFEARRAY** ) {return E_NOTIMPL;};
 	///Deprecated Function returns E_NOTIMPL 
-	STDMETHOD(SVSetConditionalHistoryList)(BSTR bstrInspectionName, SAFEARRAY*  psaValueNames,  SAFEARRAY*  psaImageNames,  SAFEARRAY*  psaConditionalNames,  
-		SAFEARRAY** ppsaValueStatus, SAFEARRAY** ppsaImageStatus, SAFEARRAY** ppsaConditionalStatus) {return E_NOTIMPL;};
+	STDMETHOD(SVSetConditionalHistoryList)(BSTR , SAFEARRAY*  ,  SAFEARRAY*  ,  SAFEARRAY*  ,  
+		SAFEARRAY** , SAFEARRAY** , SAFEARRAY** ) {return E_NOTIMPL;};
 	///Deprecated Function returns E_NOTIMPL 
-	STDMETHOD(SVGetConditionalHistoryList)(BSTR bstrInspectionName, SAFEARRAY** ppsaValueNames, SAFEARRAY** ppsaImageNames, SAFEARRAY** ppsaConditionalNames, 
-		SAFEARRAY** ppsaValueStatus, SAFEARRAY** ppsaImageStatus, SAFEARRAY** ppsaConditionalStatus) {return E_NOTIMPL;};
+	STDMETHOD(SVGetConditionalHistoryList)(BSTR , SAFEARRAY** , SAFEARRAY** , SAFEARRAY** , 
+		SAFEARRAY** , SAFEARRAY** , SAFEARRAY** ) {return E_NOTIMPL;};
 	///Deprecated Function returns E_NOTIMPL 
-	STDMETHOD(SVGetConditionalHistoryAndClear)  (BSTR bstrInspectionName, long lCompression, SAFEARRAY** ppsaImageNames, SAFEARRAY** ppsaImages, SAFEARRAY** ppsaOverlays, 
-		SAFEARRAY** ppsaValueNames, SAFEARRAY** ppsaValues, SAFEARRAY** ppsaConditionalNames, SAFEARRAY** ppsaConditionalValues, SAFEARRAY** ppsaImageStatus, 
-		SAFEARRAY** ppsaValueStatus, SAFEARRAY** ppsaConditionalStatus, SAFEARRAY** ppsaProcessCount ) {return E_NOTIMPL;};
+	STDMETHOD(SVGetConditionalHistoryAndClear)  (BSTR , long , SAFEARRAY** , SAFEARRAY** , SAFEARRAY** , 
+		SAFEARRAY** , SAFEARRAY** , SAFEARRAY** , SAFEARRAY** , SAFEARRAY** , 
+		SAFEARRAY** , SAFEARRAY** , SAFEARRAY**  ) {return E_NOTIMPL;};
 	///Deprecated Function returns E_NOTIMPL 
-	STDMETHOD(SVGetMostRecentConditionalHistory)(BSTR bstrInspectionName, long lCompression, SAFEARRAY** ppsaImageNames, SAFEARRAY** ppsaImages, SAFEARRAY** ppsaOverlays,
-		SAFEARRAY** ppsaValueNames, SAFEARRAY** ppsaValues, SAFEARRAY** ppsaConditionalNames, SAFEARRAY** ppsaConditionalValues, SAFEARRAY** ppsaImageStatus, 
-		SAFEARRAY** ppsaValueStatus, SAFEARRAY** ppsaConditionalStatus, long* ppsaProcessCount ) {return E_NOTIMPL;};
+	STDMETHOD(SVGetMostRecentConditionalHistory)(BSTR , long , SAFEARRAY** , SAFEARRAY** , SAFEARRAY** ,
+		SAFEARRAY** , SAFEARRAY** , SAFEARRAY** , SAFEARRAY** , SAFEARRAY** , 
+		SAFEARRAY** , SAFEARRAY** , long*  ) {return E_NOTIMPL;};
 
 
 	// New functions to support Matrox Font Aalyzers - // Stage 1 runtime only, no setup.
-	STDMETHOD(SVConnectFont)(long* lFontIdentifier)	{ return E_FAIL; };
+	STDMETHOD(SVConnectFont)(long* )	{ return E_FAIL; };
 
-	STDMETHOD(SVDisconnectFont)(long lFontIdentifier) { return E_FAIL; };
+	STDMETHOD(SVDisconnectFont)(long ) { return E_FAIL; };
 
-	STDMETHOD(SVGetCellSize)(long lFontIdentifier, long* plWidth, long* plHeight, long* plSpacing) { return E_FAIL; };
+	STDMETHOD(SVGetCellSize)(long , long* , long* , long* ) { return E_FAIL; };
 
-	STDMETHOD(SVSetCellSize)(long lFontIdentifier, long lWidth, long lHeight) { return E_FAIL; };
+	STDMETHOD(SVSetCellSize)(long , long , long ) { return E_FAIL; };
 
-	STDMETHOD(SVGetSearchSettings)(long lFontIdentifier, long* plLength, double* pdStringAcceptance, double* pdCharacterAcceptance, BSTR* pbstrInvalidCharacter, BSTR* pbstrSearchSpeed) { return E_FAIL; };
+	STDMETHOD(SVGetSearchSettings)(long , long* , double* , double* , BSTR* , BSTR* ) { return E_FAIL; };
 
-	STDMETHOD(SVSetSearchSettings)(long lFontIdentifier, long lLength, double dStringAcceptance, double dCharacterAcceptance, BSTR bstrInvalidCharacter, BSTR bstrSearchSpeed) { return E_FAIL; };
+	STDMETHOD(SVSetSearchSettings)(long , long , double , double , BSTR , BSTR ) { return E_FAIL; };
 
-	STDMETHOD(SVGetPositionVariance)(long lFontIdentifier, double* pdXDirection, double* pdYDirection) { return E_FAIL; };
+	STDMETHOD(SVGetPositionVariance)(long , double* , double* ) { return E_FAIL; };
  
-	STDMETHOD(SVSetPositionVariance)(long lFontIdentifier, double dXDirection, double dYDirection) { return E_FAIL; };
+	STDMETHOD(SVSetPositionVariance)(long , double , double ) { return E_FAIL; };
 
-	STDMETHOD(SVGetSearchAngleSettings)(long lFontIdentifier, double* pdSearchAngle, long* plInterpolation, double* pdDeltaPositive, double* pdDeltaNegative) { return E_FAIL; };
+	STDMETHOD(SVGetSearchAngleSettings)(long , double* , long* , double* , double* ) { return E_FAIL; };
 
-	STDMETHOD(SVSetSearchAngleSettings)(long lFontIdentifier, double dSearchAngle, long lInterpolation, double dDeltaPositive, double dDeltaNegative) { return E_FAIL; };
+	STDMETHOD(SVSetSearchAngleSettings)(long , double , long , double , double ) { return E_FAIL; };
 
-	STDMETHOD(SVGetCharacterEnhancementSettings)(long lFontIdentifier, long* plMorphIterations, double* pdThickenCharacters, long* plBrokenCharacters, long* plTouchingCharacters) { return E_FAIL; };
+	STDMETHOD(SVGetCharacterEnhancementSettings)(long , long* , double* , long* , long* ) { return E_FAIL; };
 
-	STDMETHOD(SVSetCharacterEnhancementSettings)(long lFontIdentifier, long lMorphIterations, double dThickenCharacters, long lBrokenCharacters, long lTouchingCharacters) { return E_FAIL; };
+	STDMETHOD(SVSetCharacterEnhancementSettings)(long , long , double , long , long ) { return E_FAIL; };
 
-	STDMETHOD(SVLoadFont)(long lFontIdentifier, BSTR bstrFontFile, BSTR bstrFontControls, BSTR bstrFontConstraints) { return E_FAIL; };
+	STDMETHOD(SVLoadFont)(long , BSTR , BSTR , BSTR ) { return E_FAIL; };
 
-	STDMETHOD(SVSaveFont)(long lFontIdentifier, BSTR* bstrFontFile, BSTR* bstrFontControls, BSTR* bstrFontConstraints) { return E_FAIL; };
+	STDMETHOD(SVSaveFont)(long , BSTR* , BSTR* , BSTR* ) { return E_FAIL; };
 
-	STDMETHOD(SVCalibrateFont)(long lFontIdentifier, BSTR bstrCalibrateString, BSTR bstrCalibrateImage, double dXMinSize, double dXMaxSize, double dXStepSize, double dYMinSize, double dYMaxSize, double dYStepSize ) { return E_FAIL; };
+	STDMETHOD(SVCalibrateFont)(long , BSTR , BSTR , double , double , double , double , double , double  ) { return E_FAIL; };
 
-	STDMETHOD(SVReadString)(long lFontIdentifier, BSTR* bstrFoundString, BSTR bstrReadImage, double* dMatchScore ) { return E_FAIL; };
+	STDMETHOD(SVReadString)(long , BSTR* , BSTR , double*  ) { return E_FAIL; };
 
-	STDMETHOD(SVVerifyString)(long lFontIdentifier, BSTR bstrVerifyString, BSTR bstrVerifyImage, double* dMatchScore ) { return E_FAIL; };
+	STDMETHOD(SVVerifyString)(long , BSTR , BSTR , double*  ) { return E_FAIL; };
 
-	STDMETHOD(SVGetConstraints)(long lFontIdentifier, long* plPosition, long* plType, BSTR* pbstrValues) { return E_FAIL; };
+	STDMETHOD(SVGetConstraints)(long , long* , long* , BSTR* ) { return E_FAIL; };
 
-	STDMETHOD(SVSetConstraints)(long lFontIdentifier, long lPosition, long lType, BSTR bstrValues) { return E_FAIL; };
+	STDMETHOD(SVSetConstraints)(long , long , long , BSTR ) { return E_FAIL; };
 
-	STDMETHOD(SVCreateNew)(long lFontIdentifier, BSTR bstrImage) { return E_FAIL; };
+	STDMETHOD(SVCreateNew)(long , BSTR ) { return E_FAIL; };
 
-	STDMETHOD(SVSetTrainingImage)(long lFontIdentifier, BSTR bstrImage) { return E_FAIL; };
+	STDMETHOD(SVSetTrainingImage)(long , BSTR ) { return E_FAIL; };
 
-	STDMETHOD(SVAddCharacter)(long lFontIdentifier, long lXPosition, long lYPosition, long lHeight, long lWidth, BSTR bstrLabel, long *lCharID) { return E_FAIL; };
+	STDMETHOD(SVAddCharacter)(long , long , long , long , long , BSTR , long *) { return E_FAIL; };
 
-	STDMETHOD(SVAddCharacters)(long lFontIdentifier, BSTR bstrLabelList) { return E_FAIL; };
+	STDMETHOD(SVAddCharacters)(long , BSTR ) { return E_FAIL; };
 
-	STDMETHOD(SVDeleteCharacters)(long lFontIdentifier, SAFEARRAY* psaCharIds) { return E_FAIL; };
+	STDMETHOD(SVDeleteCharacters)(long , SAFEARRAY* ) { return E_FAIL; };
 
-	STDMETHOD(SVThresholdImage)(long lFontIdentifier, BSTR bstrImage, long lThreshold, BSTR* pbstrThresholdImage) { return E_FAIL; };
+	STDMETHOD(SVThresholdImage)(long , BSTR , long , BSTR* ) { return E_FAIL; };
 
-	STDMETHOD(SVGetFontCharacterCount)(long lFontIdentifier, long* plCharacterCount) { return E_FAIL; };
+	STDMETHOD(SVGetFontCharacterCount)(long , long* ) { return E_FAIL; };
 
-	STDMETHOD(SVGetFontCharacter)(long lFontIdentifier, long lIndex, BSTR* pbstrLabelImage) { return E_FAIL; };
+	STDMETHOD(SVGetFontCharacter)(long , long , BSTR* ) { return E_FAIL; };
 
-	STDMETHOD(SVGetStringLength)(long p_lFontIdentifier, double* p_pdLength ) { return E_FAIL; };
+	STDMETHOD(SVGetStringLength)(long , double*  ) { return E_FAIL; };
 
-	STDMETHOD(SVSetStringLength)(long p_lFontIdentifier, double p_dLength ) { return E_FAIL; };
+	STDMETHOD(SVSetStringLength)(long , double  ) { return E_FAIL; };
 
-	STDMETHOD(SVLoadFontImage)(long p_lFontIdentifier, BSTR bstrFontImage ) { return E_FAIL; };
+	STDMETHOD(SVLoadFontImage)(long , BSTR  ) { return E_FAIL; };
 
-	STDMETHOD(SVGetFontCharacterList)(long p_lFontIdentifier, BSTR *bstrCharacterList, SAFEARRAY** ppsaCharIds) { return E_FAIL; };
+	STDMETHOD(SVGetFontCharacterList)(long , BSTR *, SAFEARRAY** ) { return E_FAIL; };
 
-	STDMETHOD(SVGetExpectedTargetCharacterSize)(long p_lFontIdentifier, long *plWidth, long *plHeight) { return E_FAIL; };
+	STDMETHOD(SVGetExpectedTargetCharacterSize)(long , long *, long *) { return E_FAIL; };
 
-	STDMETHOD(SVGetFontCharacterSize)(long p_lFontIdentifier, long *plWidth, long *plHeight) { return E_FAIL; };
+	STDMETHOD(SVGetFontCharacterSize)(long , long *, long *) { return E_FAIL; };
 
 		// **********************************************************************************
 		//////// *********** Transfer Definition List Functions ************** //////////////
@@ -486,7 +486,7 @@ public:
 														  long* p_plVersion, 
 														  VARIANT* p_pvData);
 
-  STDMETHOD(SVConstructCommand)( long p_CommandType, ISVRemoteCommand **p_ppCommand ) { return E_FAIL; };
+  STDMETHOD(SVConstructCommand)(long , ISVRemoteCommand**) { return E_FAIL; };
 
   STDMETHOD(SVIsAvailiable)();
 

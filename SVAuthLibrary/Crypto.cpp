@@ -79,7 +79,7 @@ std::string Crypto::md5sum(const std::string& msg)
 	return res;
 }
 
-std::string Crypto::hmac(const std::string& msg, const std::string& key, ALG_ID alg)
+std::string Crypto::hmac(const std::string& msg, const std::string& key, ALG_ID)
 {
 	unsigned int res_len = SHA256_DIGEST_LENGTH;
 	unsigned char result[SHA256_DIGEST_LENGTH];
@@ -100,18 +100,19 @@ std::string Crypto::rsaSign(const std::string& payload, const std::string& priva
 	SHA256_CTX sha256;
 	unsigned char hash[SHA256_DIGEST_LENGTH];
 	unsigned int sig_len = 0u;
-	unsigned char* sig = nullptr;
-	int rc;
+	unsigned char* pSig{nullptr};
+	int rc{0};
+	RSA* pRsa{nullptr};
 
-	BIO* bio = BIO_new_mem_buf(privateKey.data(), static_cast<int>(privateKey.size()));
-	if (!bio)
+	BIO* pBio = BIO_new_mem_buf(privateKey.data(), static_cast<int>(privateKey.size()));
+	if (nullptr == pBio)
 	{
 		// TODO: fail
 		goto cleanup;
 	}
 
-	RSA* rsa = PEM_read_bio_RSAPrivateKey(bio, NULL, NULL, NULL);
-	if (!rsa)
+	pRsa = PEM_read_bio_RSAPrivateKey(pBio, NULL, NULL, NULL);
+	if (nullptr == pRsa)
 	{
 		goto cleanup;
 	}
@@ -135,9 +136,9 @@ std::string Crypto::rsaSign(const std::string& payload, const std::string& priva
 	}
 
 	sig_len = 0u;
-	sig = static_cast<unsigned char*>(calloc(1, RSA_size(rsa)));
+	pSig = static_cast<unsigned char*>(calloc(1, RSA_size(pRsa)));
 
-	rc = RSA_sign(NID_sha256, hash, SHA256_DIGEST_LENGTH, sig, &sig_len, rsa);
+	rc = RSA_sign(NID_sha256, hash, SHA256_DIGEST_LENGTH, pSig, &sig_len, pRsa);
 	if (rc == 0)
 	{
 		auto errorTrack = ERR_get_error();
@@ -147,12 +148,12 @@ std::string Crypto::rsaSign(const std::string& payload, const std::string& priva
 		goto cleanup;
 	}
 
-	result = std::string(sig, sig + sig_len);
+	result = std::string(pSig, pSig + sig_len);
 
 cleanup:
-	if (bio) BIO_free(bio);
-	if (rsa) RSA_free(rsa);
-	if (sig) free(sig);
+	if (nullptr != pBio) BIO_free(pBio);
+	if (nullptr != pRsa) RSA_free(pRsa);
+	if (nullptr != pSig) free(pSig);
 
 	return result;
 }
@@ -166,19 +167,19 @@ bool Crypto::rsaVerify(
 	SHA256_CTX sha256;
 	unsigned char hash[SHA256_DIGEST_LENGTH];
 	unsigned int sig_len = static_cast<unsigned int>(signature.size());
-	unsigned char* sig =
-		reinterpret_cast<unsigned char*>(const_cast<char*>(signature.data()));
-	int rc;
+	unsigned char* pSig = reinterpret_cast<unsigned char*>(const_cast<char*>(signature.data()));
+	RSA* pRsa {nullptr};
+	int rc{0};
 
-	BIO* bio = BIO_new_mem_buf(publicKey.data(), static_cast<int>(publicKey.size()));
-	if (!bio)
+	BIO* pBio = BIO_new_mem_buf(publicKey.data(), static_cast<int>(publicKey.size()));
+	if (nullptr == pBio)
 	{
 		//@Todo[][8.10] [05.10.2018] TODO: fail
 		goto cleanup;
 	}
 
-	RSA* rsa = PEM_read_bio_RSA_PUBKEY(bio, NULL, NULL, NULL);
-	if (!rsa)
+	pRsa = PEM_read_bio_RSA_PUBKEY(pBio, NULL, NULL, NULL);
+	if (nullptr == pRsa)
 	{
 		auto errorTrack = ERR_get_error();
 		char *errorChar = new char[120];
@@ -205,7 +206,7 @@ bool Crypto::rsaVerify(
 		goto cleanup;
 	}
 
-	rc = RSA_verify(NID_sha256, hash, SHA256_DIGEST_LENGTH, sig, sig_len, rsa);
+	rc = RSA_verify(NID_sha256, hash, SHA256_DIGEST_LENGTH, pSig, sig_len, pRsa);
 	if (rc == 0)
 	{
 		auto errorTrack = ERR_get_error();
@@ -218,8 +219,8 @@ bool Crypto::rsaVerify(
 	result = true;
 
 cleanup:
-	if (bio) BIO_free(bio);
-	if (rsa) RSA_free(rsa);
+	if (nullptr != pBio) BIO_free(pBio);
+	if (nullptr != pRsa) RSA_free(pRsa);
 
 	return result;
 }

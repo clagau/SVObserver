@@ -116,12 +116,12 @@ HRESULT SVDeviceParam::SetType( SVDeviceParamEnum e )
 	return S_FALSE;
 }
 
-HRESULT SVDeviceParam::GetValue( VARIANT& rv ) const
+HRESULT SVDeviceParam::GetValue( VARIANT&  ) const
 {
 	return S_FALSE;	// derived class needs to implement
 }
 
-HRESULT SVDeviceParam::SetValue( const VARIANT& rv )
+HRESULT SVDeviceParam::SetValue( const VARIANT&  )
 {
 	return S_FALSE;	// derived class needs to implement
 }

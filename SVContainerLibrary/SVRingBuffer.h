@@ -16,7 +16,7 @@
 struct SVElementDoNothing
 {
 	template< typename SVElement >
-	void operator()( SVElement& p_rElement ) const
+	void operator()( SVElement&  ) const
 	{
 	}
 

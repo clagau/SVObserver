@@ -23,7 +23,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-SVBarCodeAttributesDialog::SVBarCodeAttributesDialog(CWnd* pParent /*=nullptr*/)
+SVBarCodeAttributesDialog::SVBarCodeAttributesDialog(CWnd* /*=nullptr*/)
 	: CPropertyPage(SVBarCodeAttributesDialog::IDD)
 {
 	//{{AFX_DATA_INIT(SVBarCodeAttributesDialog)

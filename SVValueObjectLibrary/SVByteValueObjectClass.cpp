@@ -106,7 +106,7 @@ BYTE SVByteValueObjectClass::ConvertString2Type(const std::string& rValue ) cons
 	std::string Digits = SvUl::ValidateString( rValue, _T("0123456789 .xXabcdefABCDEF") );
 	if ( Digits == rValue )
 	{
-		SvUl::MakeLower( Digits );
+		Digits = SvUl::MakeLower(Digits.c_str());
 		TCHAR* p = nullptr;
 		DWORD Value;
 		if ( std::string::npos != Digits.find( 'x' ) )

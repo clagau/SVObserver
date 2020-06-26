@@ -446,10 +446,7 @@ HRESULT SVThreadManagerImpl::StopAffinityMgmt()
 
 			if( ::WaitForSingleObject( m_hThreadComplete, 5000 ) != WAIT_OBJECT_0 )
 			{
-				DWORD l_ErrorCode = GetLastError();
-
-				::TerminateThread( m_hThread, E_FAIL );
-
+				::TerminateThread(m_hThread, static_cast<DWORD> (E_FAIL));
 				::SetEvent( m_hThreadComplete );
 			}
 
@@ -459,9 +456,7 @@ HRESULT SVThreadManagerImpl::StopAffinityMgmt()
 		{
 			if( ::WaitForSingleObject( m_hThread, 0 ) == WAIT_TIMEOUT )
 			{
-				DWORD l_ErrorCode = GetLastError();
-
-				::TerminateThread( m_hThread, E_FAIL );
+				::TerminateThread(m_hThread, static_cast<DWORD> (E_FAIL));
 			}
 		}
 
@@ -519,16 +514,12 @@ DWORD WINAPI SVThreadManagerImpl::Process(LPVOID lpParam)
 				}
 			}
 		}
-
-
+ 
 		::SetEvent( pThread->m_hThreadComplete );
 	}
 	else
 	{
-		DWORD errorCode = GetLastError();
-
 		hrOk = -1;
-
 	}
 
 	return hrOk;

@@ -672,7 +672,7 @@ HRESULT SVToolSetClass::ClearResetCounts()
 	return m_ResetCounts.SetValue(BOOL(false));
 }
 
-HRESULT SVToolSetClass::onCollectOverlays(SvIe::SVImageClass* pImage, SVExtentMultiLineStructVector& rMultiLineArray)
+HRESULT SVToolSetClass::onCollectOverlays(SvIe::SVImageClass*, SVExtentMultiLineStructVector& )
 {
 	// override TaskObjectList implementation
 	return S_FALSE;	// no overlays for toolset

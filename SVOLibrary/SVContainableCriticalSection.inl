@@ -36,7 +36,7 @@ inline void SVContainableCriticalSection::Acquire( const SVContainableCriticalSe
 	m_pCritSec = rhs.m_pCritSec;
 	m_dwSpinCount = rhs.m_dwSpinCount;
 	long lRefCount = ::InterlockedIncrement( const_cast <long*> (m_plRefCount) );	// cast away volatile
-	assert( lRefCount > 1 );
+	assert( lRefCount > 1 ); UNREFERENCED_PARAMETER(lRefCount);
 }
 
 inline void SVContainableCriticalSection::Release()
@@ -80,7 +80,7 @@ inline HRESULT SVContainableCriticalSection::Lock()
 	return S_OK;
 }
 
-inline HRESULT SVContainableCriticalSection::Lock(DWORD dwTimeout)
+inline HRESULT SVContainableCriticalSection::Lock(DWORD )
 {
 	return Lock();
 }

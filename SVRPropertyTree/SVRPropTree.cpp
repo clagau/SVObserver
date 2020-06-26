@@ -264,7 +264,7 @@ void SVRPropTree::FreeGlobalResources()
 	}
 }
 
-void SVRPropTree::EnableListBoxStyle(bool bEnable)
+void SVRPropTree::EnableListBoxStyle(bool)
 {
 	SetExpandColumnSize(1);
 }
@@ -954,7 +954,7 @@ bool CALLBACK SVRPropTree::EnumMoveAll(SVRPropTree*, SVRPropertyItem* pItem, LPA
 }
 
 
-LRESULT SVRPropTree::SendNotify(UINT nNotifyCode, SVRPropertyItem* pItem)
+LRESULT SVRPropTree::SendNotify(PropTreeNotification nNotifyCode, SVRPropertyItem* pItem)
 {
 	if (!IsWindow(m_hWnd))
 	{
@@ -967,9 +967,7 @@ LRESULT SVRPropTree::SendNotify(UINT nNotifyCode, SVRPropertyItem* pItem)
 	}
 
 	NMPROPTREE nmmp;
-	LPNMHDR lpnm;
-
-	lpnm = nullptr;
+	LPNMHDR lpnm {nullptr};
 
 	switch (nNotifyCode)
 	{

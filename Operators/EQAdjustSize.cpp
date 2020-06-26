@@ -73,13 +73,13 @@ bool EQAdjustSize::CreateObject(const SVObjectLevelCreateStruct& rCreateStructur
 }
 
 
-bool EQAdjustSize::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool EQAdjustSize::onRun( SVRunStatusClass&, SvStl::MessageContainerVector* )
 {
 	///This function is not called
 	return true;
 }
 
-bool EQAdjustSize::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
+bool EQAdjustSize::ResetObject(SvStl::MessageContainerVector* pErrorMessages)
 {
 	bool Result = SVEquationClass::ResetObject(pErrorMessages);
 

@@ -396,7 +396,7 @@ SvPb::SVExtentLocationPropertyEnum SVImageExtentClass::GetLocationPropertyAt(con
 
 	SVPoint<double> outputPoint;
 
-	RECT l_oRect;
+	RECT l_oRect{0L, 0L, 0L, 0L};
 	bool l_bValid = false;
 
 	if (m_eTranslation == SvPb::SVExtentTranslationPolarUnwrap)
@@ -856,7 +856,7 @@ HRESULT SVImageExtentClass::Update(SvPb::SVExtentLocationPropertyEnum eLocation,
 		SVPoint<double> outputStart;
 		SVPoint<double> outputEnd;
 
-		RECT l_oRect;
+		RECT l_oRect{0L, 0L, 0L, 0L};
 
 		bool l_bValid = false;
 		switch (m_eTranslation)
@@ -3959,10 +3959,7 @@ HRESULT SVImageExtentClass::BuildOutputDimensions()
 			SVPoint<double> startPoint;
 			SVPoint<double> endPoint;
 
-			double l_dValue = 0.0;
-
 			DisableExtentProperty(SvPb::SVExtentPropertyPie);
-
 			result = GetExtentProperty(SvPb::SVExtentPropertyPositionPoint, startPoint);
 
 			if (S_OK == result)

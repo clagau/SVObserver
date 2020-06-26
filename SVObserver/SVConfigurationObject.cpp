@@ -1045,7 +1045,7 @@ bool SVConfigurationObject::LoadIO(SVTreeType& rTree)
 		bool	bInverted{false};
 		bool	bCombined{false};
 		bool	bCombinedACK{false};
-		SvPb::SVObjectSubTypeEnum ioType;
+		SvPb::SVObjectSubTypeEnum ioType{SvPb::SVObjectSubTypeEnum::SVNotSetSubObjectType};
 
 		bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_IO_ENTRY_NAME, hSubChild, Data);
 		if (bOk && VT_BSTR == Data.vt)
@@ -1218,7 +1218,7 @@ bool SVConfigurationObject::LoadAcquisitionDevice(SVTreeType& rTree, std::string
 		// test for File Acquisition, since there is no LUT, Light, or DeviceParams
 		if (BoardName == _T("File"))
 		{
-			HRESULT Result = LoadFileAcquisitionConfiguration(rTree, hBoardChild, lNumAcqDig);
+			LoadFileAcquisitionConfiguration(rTree, hBoardChild, lNumAcqDig);
 		}
 		else
 		{
@@ -1419,7 +1419,7 @@ bool SVConfigurationObject::LoadAcquisitionDevice(SVTreeType& rTree, std::string
 
 									if (bLutCreated && 0 < l_BandData.size())
 									{
-										bool bSetData = lut(iBand).SetBandData(l_BandData);
+										lut(iBand).SetBandData(l_BandData);
 									}
 
 								}
@@ -1644,13 +1644,10 @@ bool  SVConfigurationObject::LoadCameras(SVTreeType&  rTree, long& lNumCameras, 
 		if (bOk)
 		{
 			_variant_t Value;
-			long lBandLink = 0;
 			std::string DeviceName;
 			int CameraID = -1;
 
 			pCamera->SetName(ItemName.c_str());
-			SVTreeType::SVBranchHandle hDataChild(nullptr);
-
 			if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_ACQUISITION_DEVICE, hSubChild, Value))
 			{
 				_bstr_t l_String(Value);
@@ -2188,9 +2185,8 @@ bool SVConfigurationObject::LoadPPQ(SVTreeType& rTree)
 		{
 			std::string DataName = rTree.getBranchName(hDataChild);
 
-			SVRemoteInputObject *pRemoteInput = nullptr;
-			long lIndex;
-			long lPPQPosition = 0;
+			long lIndex{0L};
+			long lPPQPosition{0L};
 
 			if (!SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_IO_TYPE, hDataChild, Value))
 			{
@@ -2295,7 +2291,7 @@ bool SVConfigurationObject::LoadPPQ(SVTreeType& rTree)
 
 HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 {
-	HRESULT	Result(S_OK);
+	HRESULT	result(S_OK);
 
 	try
 	{
@@ -2314,7 +2310,7 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 		// EB 20031203
 		// a temp solution
 		// the better solution is to have the acqs subscribe and the triggers provide
-		HRESULT hrAttach = AttachAcqToTriggers();
+		AttachAcqToTriggers();
 	}
 	catch (SvStl::MessageContainer&)
 	{
@@ -2323,7 +2319,7 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 	}
 	m_bConfigurationValid = true;
 
-	return Result;
+	return result;
 }
 
 HRESULT SVConfigurationObject::ValidateOutputList()
@@ -2447,7 +2443,6 @@ HRESULT SVConfigurationObject::LoadFileAcquisitionConfiguration(SVTreeType& rTre
 			// need to determine Digitizer Number and Channel
 			std::string DeviceName;
 
-			const SVDeviceParam* pParam = svDeviceParams.GetParameter(DeviceParamFileAcqImageFormat);
 			DeviceName = SvUl::Format(_T("%s.%s"), BoardName.c_str(), DigName.c_str());
 
 			SvIe::SVAcquisitionClassPtr psvDevice(SvIe::SVDigitizerProcessingClass::Instance().GetAcquisitionDevice(DeviceName.c_str()));
@@ -2501,7 +2496,7 @@ HRESULT SVConfigurationObject::LoadDeviceParameters(SVTreeType& rTree, SVTreeTyp
 
 			if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_DEVICE_PARAM_VALUE, hParam, svValue))
 			{
-				HRESULT hrParam = svDeviceParams.CreateParameter((SVDeviceParamEnum)lType, svValue);
+				svDeviceParams.CreateParameter((SVDeviceParamEnum)lType, svValue);
 				SVDeviceParam* pParam = svDeviceParams.GetParameter((SVDeviceParamEnum)lType);
 				LoadDeviceParamSpecial(rTree, hParam, pParam);
 			}
@@ -3092,7 +3087,7 @@ void SVConfigurationObject::SaveAcquistionConfiguration(SvOi::IObjectWriter& rWr
 		rWriter.StartElement(Band.c_str());
 
 		SAFEARRAY* psaParam = nullptr;
-		bool bGotParam = rLut(iBand).Info().GetTransformParameters(psaParam);
+		rLut(iBand).Info().GetTransformParameters(psaParam);
 		svVariant = SvUl::SVSAFEARRAY(psaParam);
 		rWriter.WriteAttribute(SvXml::CTAG_LUT_TRANSFORM_PARAMETERS, svVariant);
 		svVariant.Clear();
@@ -3105,7 +3100,7 @@ void SVConfigurationObject::SaveAcquistionConfiguration(SvOi::IObjectWriter& rWr
 		svVariant.Clear();
 
 		SAFEARRAY* psaBandData = nullptr;
-		bool bGotData = rLut(iBand).GetBandData(psaBandData);
+		rLut(iBand).GetBandData(psaBandData);
 		svVariant = SvUl::SVSAFEARRAY(psaBandData);
 		rWriter.WriteAttribute(SvXml::CTAG_LUT_BAND_DATA, svVariant);
 		svVariant.Clear();
@@ -3830,8 +3825,6 @@ bool SVConfigurationObject::RebuildInputOutputLists(bool isLoad)
 {
 	bool bOk = true;
 
-	long l(0);
-
 	try
 	{
 		//avoid that TRC-memory will be recreated for every inspection, but do it once at the end.
@@ -3897,11 +3890,6 @@ bool SVConfigurationObject::IsConfigurationLoaded() const
 void SVConfigurationObject::SetConfigurationLoaded()
 {
 	m_bConfigurationValid = true;
-}
-
-unsigned long SVConfigurationObject::GetFileVersion() const
-{
-	return m_ulVersion;
 }
 
 unsigned long SVConfigurationObject::GetSVXFileVersion(SVTreeType& rTree)
@@ -5003,7 +4991,6 @@ void SVConfigurationObject::GetRemoteInputInspections(const std::string& p_rRemo
 
 	for (SVInspectionProcessVector::const_iterator l_Iter = m_arInspectionArray.begin(); l_Iter != m_arInspectionArray.end(); ++l_Iter)
 	{
-		HRESULT l_LoopStatus = S_OK;
 		SVInspectionProcess* l_pInspection = *l_Iter;
 
 		if (nullptr != l_pInspection)
@@ -5169,7 +5156,7 @@ bool SVConfigurationObject::areParametersInMonitorList(LPCTSTR ppqName, uint32_t
 				}
 				else
 				{
-					auto& findIter = find_if(productList.begin(), productList.end(), [monitoredObj](const auto& item)->bool
+					auto findIter = find_if(productList.begin(), productList.end(), [monitoredObj](const auto& item)->bool
 					{
 						return monitoredObj.isSimilar(item);
 					});
@@ -5217,7 +5204,7 @@ SvStl::MessageContainerVector SVConfigurationObject::addParameter2MonitorList(LP
 				const MonitoredObject& monitoredObj = RemoteMonitorListHelper::GetMonitoredObjectFromName(ObjectName);
 				if (SvDef::InvalidObjectId != monitoredObj.m_objectId)
 				{
-					auto& findIter = find_if(productList.begin(), productList.end(), [monitoredObj](const auto& item)->bool
+					auto findIter = find_if(productList.begin(), productList.end(), [monitoredObj](const auto& item)->bool
 					{
 						return monitoredObj.isSimilar(item);
 					});
@@ -5265,7 +5252,7 @@ SvStl::MessageContainerVector SVConfigurationObject::removeParameter2MonitorList
 				const MonitoredObject& monitoredObj = RemoteMonitorListHelper::GetMonitoredObjectFromName(ObjectName);
 				if (SvDef::InvalidObjectId != monitoredObj.m_objectId)
 				{
-					auto& findIter = find_if(productList.begin(), productList.end(), [monitoredObj](const auto& item)->bool
+					auto findIter = find_if(productList.begin(), productList.end(), [monitoredObj](const auto& item)->bool
 					{
 						return monitoredObj.isSimilar(item);
 					});

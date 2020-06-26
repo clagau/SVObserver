@@ -328,18 +328,18 @@ bool SVThresholdClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputIma
 					}
 				}
 
-				long m_autoThreshold = ( long ) ( ( ( double ) ( sum / m_pixelNumber ) ) * dTemp );
+				long autoThreshold = ( long ) ( ( ( double ) ( sum / m_pixelNumber ) ) * dTemp );
 
 				if( bBlackBackground )
 				{
 					upper = 255L;
-					lower = m_autoThreshold;
+					lower = autoThreshold;
 					if( lower > 255L )
 						lower = 255L;
 				}
 				else
 				{
-					upper = m_autoThreshold;
+					upper = autoThreshold;
 					if( upper > 255L )
 						upper = 255L;
 					lower = 0L;

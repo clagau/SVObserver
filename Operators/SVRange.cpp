@@ -147,7 +147,7 @@ void SVRangeClass::addEntriesToMonitorList(std::back_insert_iterator<SvOi::Param
 	inserter = SvOi::ParameterPairForML(m_LinkedValues[RangeEnum::ER_WarnHigh].GetCompleteName(), m_LinkedValues[RangeEnum::ER_WarnHigh].getObjectId());
 }
 
-bool SVRangeClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool SVRangeClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector*)
 {
 	double InputValue, rangeValues[RangeEnum::ER_COUNT];
 	getInputValue(InputValue);

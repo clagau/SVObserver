@@ -28,34 +28,34 @@ namespace SvUl
 
 	//************************************
 	/// Compare to strings like the std::string.compare function, but ignore upper and lower cases.
-	/// \param rStringValue [in]
-	/// \param rStringValue2 [in]
+	/// \param rLhs [in]
+	/// \param rRhs [in]
 	/// \returns int 0 = strings are similar
 	//************************************
-	int CompareNoCase(const std::string& rStringValue, const std::string & rStringValue2);
+	int CompareNoCase(const std::string& rLhs, const std::string & rRhs);
 
 	//************************************
 	/// Make all character to lower case.
-	/// \param rStringValue [in,out] The source string to be changed.
-	/// \returns std::string& Reference to rStringValue
+	/// \param pString [in] The source string to be changed.
+	/// \returns std::string
 	//************************************
-	std::string& MakeLower(std::string& rStringValue);
+	std::string MakeLower(LPCTSTR pString);
 	//************************************
 	/// Make all character to upper case.
-	/// \param rStringValue [in,out] The source string to be changed.
-	/// \returns std::string& Reference to rStringValue
+	/// \param pString [in] The source string to be changed.
+	/// \returns std::string
 	//************************************
-	std::string& MakeUpper(std::string& rStringValue);
+	std::string MakeUpper(LPCTSTR pString);
 
 	//************************************
 	/// Trim defined character until another character is found from the left (TrimLeft), right (TrimRight) or both (Trim)
-	/// \param rStringValue [in,out] The source string to be changed.
+	/// \param pString[in] The source string to be changed
 	/// \param pTrimChar [in,out] Character to trim.
-	/// \returns std::string& Reference to rStringValue
+	/// \returns std::string
 	//************************************
-	std::string& Trim(std::string& rStringValue, LPCTSTR pTrimChar = _T(" \t\n"));
-	std::string& TrimLeft(std::string& rStringValue, LPCTSTR pTrimChar = _T(" \t\n"));
-	std::string& TrimRight(std::string& rStringValue, LPCTSTR pTrimChar = _T(" \t\n"));
+	std::string Trim(LPCTSTR pString, LPCTSTR pTrimChar = _T(" \t\n"));
+	std::string TrimLeft(LPCTSTR pString, LPCTSTR pTrimChar = _T(" \t\n"));
+	std::string TrimRight(LPCTSTR pString, LPCTSTR pTrimChar = _T(" \t\n"));
 
 	//************************************
 	/// Copy a number of character from the Left of the string

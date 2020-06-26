@@ -23,10 +23,10 @@ namespace SvCl
 	ObjectTreeItems::ObjectTreeItems() : SVTree<std::string, ObjectSelectorItem>()
 		, m_SingleSelect( false )
 	{
-		SVTreeElement* pElement( get() );
-		if( nullptr != pElement && nullptr == pElement->second )
+		SVTreeElement* pTreeElement( get() );
+		if( nullptr != pTreeElement && nullptr == pTreeElement->second )
 		{
-			pElement->second = ObjectSelectorItemPtr{ new ObjectSelectorItem };
+			pTreeElement->second = ObjectSelectorItemPtr{ new ObjectSelectorItem };
 		}
 	}
 

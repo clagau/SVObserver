@@ -57,7 +57,7 @@ namespace SvOsl
 	#pragma endregion Constructor
 
 	#pragma region Protected Methods
-	void ObjectTreeCtrl::OnTvnSelChanged(NMHDR *pNMHDR, LRESULT *pResult)
+	void ObjectTreeCtrl::OnTvnSelChanged(NMHDR*, LRESULT* pResult)
 	{
 		*pResult = 0;
 

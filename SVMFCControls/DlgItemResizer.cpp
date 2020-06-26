@@ -67,21 +67,20 @@ namespace SvMc
 			return;
 		}
 
-		CRect rc;
-		pCtrl->GetWindowRect(rc);
-		pParent->ScreenToClient(rc);
+		CRect rect;
+		pCtrl->GetWindowRect(rect);
+		pParent->ScreenToClient(rect);
 
 		DLGITEMINFO *item    = new DLGITEMINFO;
 		item->m_uFlags       = uFlags;
 		item->m_hWnd         = pCtrl->m_hWnd;
-		item->m_rectPosition = rc;
+		item->m_rectPosition = rect;
 
 		// Set initial size if not set
 		if (0 == m_szInitial.cx || 0 == m_szInitial.cy) 
 		{
-			CRect rc;
-			pParent->GetClientRect(rc);
-			m_szInitial = rc.Size();
+			pParent->GetClientRect(rect);
+			m_szInitial = rect.Size();
 		}
 
 		// Add it to the array

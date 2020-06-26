@@ -268,14 +268,11 @@ protected:
 
 	struct SVUniqueObjectEntryStruct
 	{
-		int32_t m_ObjectID = 0;
-		SVObjectClass* m_pObject;
+		uint32_t m_ObjectID{SvDef::InvalidObjectId};
+		SVObjectClass* m_pObject{nullptr};
 
 		SVSubjectDataNameSubjectIDMap m_SubjectIDs;
 		SVSubjectDataNameObserverMap m_DataNameSubjectObservers;
-
-		SVUniqueObjectEntryStruct()
-		: m_pObject( nullptr ), m_SubjectIDs(), m_DataNameSubjectObservers() {}
 	};
 
 	typedef std::shared_ptr< SVUniqueObjectEntryStruct > SVUniqueObjectEntryStructPtr;

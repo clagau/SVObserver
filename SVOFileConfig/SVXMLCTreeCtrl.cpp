@@ -90,7 +90,7 @@ SVXMLCTreeCtrl::SVBranchHandle SVXMLCTreeCtrl::getFirstBranch( const SVBranchHan
 	return pResult;
 }
 
-SVXMLCTreeCtrl::SVBranchHandle SVXMLCTreeCtrl::getNextBranch( const SVBranchHandle pParent, const SVBranchHandle pBranch )
+SVXMLCTreeCtrl::SVBranchHandle SVXMLCTreeCtrl::getNextBranch( const SVBranchHandle , const SVBranchHandle pBranch )
 {
 	SVBranchHandle pResult( pBranch );
 
@@ -236,7 +236,7 @@ SVXMLCTreeCtrl::SVLeafHandle SVXMLCTreeCtrl::getFirstLeaf( const SVBranchHandle 
 	return pResult;
 }
 
-SVXMLCTreeCtrl::SVLeafHandle SVXMLCTreeCtrl::getNextLeaf( const SVBranchHandle pParent, const SVLeafHandle pLeaf )
+SVXMLCTreeCtrl::SVLeafHandle SVXMLCTreeCtrl::getNextLeaf( const SVBranchHandle, const SVLeafHandle pLeaf )
 {
 	SVLeafHandle pResult( pLeaf );
 

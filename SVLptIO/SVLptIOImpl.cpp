@@ -261,7 +261,7 @@ HRESULT SVLptIOImpl::SetOutputValue(unsigned long val)
 	return hr;
 }
 
-HRESULT SVLptIOImpl::SetPortOutputValue(unsigned portNo, unsigned long val)
+HRESULT SVLptIOImpl::SetPortOutputValue(unsigned , unsigned long val)
 {
 	return SetOutputValue(val);
 }
@@ -585,8 +585,6 @@ HRESULT SVLptIOImpl::SetRTC(unsigned long lValue)
 HRESULT SVLptIOImpl::SetLogValue(unsigned long lValue)
 {
 	HRESULT hr = S_OK;
-	unsigned long lTmp = 0;
-
 	unsigned long lCommand = WRITE_LOG;	// Get the Rabbit ready to receive a string of bytes for RTC set
 	hr = SVReadWriteLpt(lCommand, SVControlCommand);
 	if (S_OK == hr)
@@ -688,7 +686,7 @@ HRESULT SVLptIOImpl::afterStopTrigger(HRESULT hr)
 
 
 
-HRESULT SVLptIOImpl::TriggerGetParameterCount(unsigned long triggerIndex, unsigned long* pCount)
+HRESULT SVLptIOImpl::TriggerGetParameterCount(unsigned long, unsigned long* pCount)
 {
 	HRESULT hr = S_FALSE;
 
@@ -700,7 +698,7 @@ HRESULT SVLptIOImpl::TriggerGetParameterCount(unsigned long triggerIndex, unsign
 	return hr;
 }
 
-HRESULT SVLptIOImpl::TriggerGetParameterName(unsigned long triggerIndex, unsigned long Index, BSTR* pName)
+HRESULT SVLptIOImpl::TriggerGetParameterName(unsigned long, unsigned long Index, BSTR* pName)
 {
 	HRESULT hr = S_FALSE;
 
@@ -746,7 +744,7 @@ HRESULT SVLptIOImpl::TriggerGetParameterValue(unsigned long triggerIndex, unsign
 		// as an array and therefore this enum may not apply.
 		if (SVSignalEdge == Index)
 		{
-			long lMask;
+			long lMask{0};
 			switch (triggerIndex)
 			{
 				case 1: 
@@ -1350,7 +1348,7 @@ HRESULT SVLptIOImpl::SVReadWriteLpt(unsigned long& rlValue, long prevControl, lo
 				hr = SetControlPort(static_cast<unsigned char>(nVal | lControl));	// Move Data to outputs
 				if (S_OK == hr)
 				{
-					unsigned char nNewOutput;
+					short nNewOutput;
 					if (lBit < 0) // no bits  -  use entire port.
 					{
 						nNewOutput = static_cast<unsigned char>(rlValue);
@@ -1366,7 +1364,7 @@ HRESULT SVLptIOImpl::SVReadWriteLpt(unsigned long& rlValue, long prevControl, lo
 							nNewOutput = GetPreviousOutputs(prevControl) & ~(1 << lBit);
 						}
 					}
-					hr = SetDataPort(nNewOutput);					// Write Data to Data Port
+					hr = SetDataPort(static_cast<unsigned char> (nNewOutput));					// Write Data to Data Port
 					if (S_OK == hr)
 					{
 						SetPreviousOutputs(prevControl, nNewOutput); //
@@ -1375,7 +1373,6 @@ HRESULT SVLptIOImpl::SVReadWriteLpt(unsigned long& rlValue, long prevControl, lo
 						{
 							// **** Wait for Acknowledge...
 							Start = SvTl::GetTimeStamp();
-							unsigned char status;
 							hr = GetStatusPort(status);
 							while (S_OK == hr && 0 != (status & 128))
 							{
@@ -1408,7 +1405,6 @@ HRESULT SVLptIOImpl::SVReadWriteLpt(unsigned long& rlValue, long prevControl, lo
 					{
 						// **** Wait for Acknoledge...
 						Start = SvTl::GetTimeStamp();
-						unsigned char status;
 						hr = GetStatusPort(status);
 						while (S_OK == hr && 0 != (status & 128))
 						{

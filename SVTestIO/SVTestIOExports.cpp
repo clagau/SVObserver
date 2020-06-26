@@ -125,7 +125,7 @@ HRESULT WINAPI SVOutputGetPortCount( unsigned long *p_pulCount )
 	return l_hrOk;
 }
 
-HRESULT WINAPI SVOutputSetPortValue( unsigned long p_ulPort, unsigned long p_ulValue )
+HRESULT WINAPI SVOutputSetPortValue( unsigned long , unsigned long  )
 {
 	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
 
@@ -286,7 +286,7 @@ HRESULT WINAPI SVTriggerGetParameterCount( unsigned long triggerchannel, unsigne
 	return l_hrOk;
 }
 
-HRESULT WINAPI SVTriggerGetParameterName( unsigned long triggerchannel, unsigned long p_ulIndex, BSTR *p_pbstrName )
+HRESULT WINAPI SVTriggerGetParameterName( unsigned long , unsigned long , BSTR *p_pbstrName )
 {
 	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
 
@@ -306,7 +306,7 @@ HRESULT WINAPI SVTriggerGetParameterName( unsigned long triggerchannel, unsigned
 	return l_hrOk;
 }
 
-HRESULT WINAPI SVTriggerGetParameterValue( unsigned long triggerchannel, unsigned long p_ulIndex, VARIANT *p_pvarValue )
+HRESULT WINAPI SVTriggerGetParameterValue( unsigned long triggerchannel, unsigned long , VARIANT *p_pvarValue )
 {
 	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
 
@@ -327,7 +327,7 @@ HRESULT WINAPI SVTriggerGetParameterValue( unsigned long triggerchannel, unsigne
 }
 
 
-HRESULT WINAPI SVTriggerSetParameterValue( unsigned long triggerchannel, unsigned long p_ulIndex, VARIANT *p_pvarValue )
+HRESULT WINAPI SVTriggerSetParameterValue( unsigned long triggerchannel, unsigned long, VARIANT *p_pvarValue )
 {
 	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
 

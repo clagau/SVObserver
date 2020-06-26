@@ -70,10 +70,8 @@ HRESULT SVBoolValueObjectClass::GetValidTypes( SvDef::StringVector& rTypes ) con
 BOOL SVBoolValueObjectClass::ConvertString2Type( const std::string &rValue ) const
 {
 	bool Result(true);
-	std::string Value = rValue;
+	std::string Value = SvUl::TrimLeft(rValue.c_str());
 
-	Value = SvUl::TrimLeft( Value );
-	Value = SvUl::TrimRight( Value );
 	if ( _T("1") == Value  || _T("-1") == Value /*for VB weenies*/ || (SvUl::CompareNoCase( Value, SvDef::cTrue) == 0) )
 	{
 		Result = true;

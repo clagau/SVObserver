@@ -21,7 +21,7 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvOg
 {
-	SVThickeningFilterDlg::SVThickeningFilterDlg(uint32_t inspectionId, uint32_t filterId, CWnd* pParent) :
+	SVThickeningFilterDlg::SVThickeningFilterDlg(uint32_t inspectionId, uint32_t filterId, CWnd*) :
 		CDialog(SVThickeningFilterDlg::IDD)
 		, m_filterID(filterId)
 		, m_InspectionID(inspectionId)

@@ -48,7 +48,7 @@ HRESULT WINAPI SVInputGetCount( unsigned long *p_pulCount )
 	return l_hrOk;
 }
 
-HRESULT WINAPI SVInputGetValue( unsigned long p_ulChannel, bool *p_pbValue )
+HRESULT WINAPI SVInputGetValue( unsigned long , bool* p_pbValue )
 {
 	HRESULT l_hrOk = S_FALSE;
 
@@ -88,7 +88,7 @@ HRESULT WINAPI SVOutputGetCount( unsigned long *p_pulCount )
 	return l_hrOk;
 }
 
-HRESULT WINAPI SVOutputSetValue( unsigned long p_ulChannel, bool p_bValue )
+HRESULT WINAPI SVOutputSetValue( unsigned long , bool  )
 {
 	return S_OK;
 }
@@ -107,7 +107,7 @@ HRESULT WINAPI SVOutputGetPortCount( unsigned long *p_pulCount )
 	return l_hrOk;
 }
 
-HRESULT WINAPI SVOutputSetPortValue( unsigned long p_ulPort, unsigned long p_ulValue )
+HRESULT WINAPI SVOutputSetPortValue( unsigned long , unsigned long  )
 {
 	return S_OK;
 }
@@ -246,7 +246,7 @@ HRESULT WINAPI SVTriggerGetParameterCount( unsigned long triggerchannel, unsigne
 	return l_hrOk;
 }
 
-HRESULT WINAPI SVTriggerGetParameterName( unsigned long triggerchannel, unsigned long p_ulIndex, BSTR *p_pbstrName )
+HRESULT WINAPI SVTriggerGetParameterName( unsigned long , unsigned long , BSTR *p_pbstrName )
 {
 	HRESULT l_hrOk = S_FALSE;
 
@@ -265,7 +265,7 @@ HRESULT WINAPI SVTriggerGetParameterName( unsigned long triggerchannel, unsigned
 	return l_hrOk;
 }
 
-HRESULT WINAPI SVTriggerGetParameterValue( unsigned long triggerchannel, unsigned long p_ulIndex, VARIANT *p_pvarValue )
+HRESULT WINAPI SVTriggerGetParameterValue( unsigned long triggerchannel, unsigned long , VARIANT *p_pvarValue )
 {
 	HRESULT l_hrOk = S_FALSE;
 
@@ -325,7 +325,7 @@ HRESULT WINAPI SVDigitizerGetCount( unsigned long *p_pulCount )
 	return l_hrOk;
 }
 
-HRESULT WINAPI SVDigitizerGetHandle( unsigned long *pTriggerchannel, unsigned long p_ulIndex )
+HRESULT WINAPI SVDigitizerGetHandle( unsigned long *pTriggerchannel, unsigned long  )
 {
 	HRESULT l_hrOk = S_FALSE;
 
@@ -337,7 +337,7 @@ HRESULT WINAPI SVDigitizerGetHandle( unsigned long *pTriggerchannel, unsigned lo
 	return l_hrOk;
 }
 
-HRESULT WINAPI SVDigitizerGetName( unsigned long triggerchannel, BSTR *p_pbstrName )
+HRESULT WINAPI SVDigitizerGetName( unsigned long , BSTR *p_pbstrName )
 {
 	HRESULT l_hrOk = S_FALSE;
 
@@ -356,12 +356,12 @@ HRESULT WINAPI SVDigitizerGetName( unsigned long triggerchannel, BSTR *p_pbstrNa
 	return l_hrOk;
 }
 
-HRESULT WINAPI SVDigitizerLoadCameraFiles( unsigned long triggerchannel, SAFEARRAY* p_psaFileNames )
+HRESULT WINAPI SVDigitizerLoadCameraFiles( unsigned long , SAFEARRAY*  )
 {
 	return S_FALSE;
 }
 
-HRESULT WINAPI SVDigitizerGetBufferWidth( unsigned long triggerchannel, unsigned long *p_pulWidth )
+HRESULT WINAPI SVDigitizerGetBufferWidth( unsigned long , unsigned long *p_pulWidth )
 {
 	HRESULT l_hrOk = S_FALSE;
 
@@ -373,7 +373,7 @@ HRESULT WINAPI SVDigitizerGetBufferWidth( unsigned long triggerchannel, unsigned
 	return l_hrOk;
 }
 
-HRESULT WINAPI SVDigitizerGetBufferHeight( unsigned long triggerchannel, unsigned long *p_pulHeight )
+HRESULT WINAPI SVDigitizerGetBufferHeight( unsigned long , unsigned long *p_pulHeight )
 {
 	HRESULT l_hrOk = S_FALSE;
 
@@ -385,7 +385,7 @@ HRESULT WINAPI SVDigitizerGetBufferHeight( unsigned long triggerchannel, unsigne
 	return l_hrOk;
 }
 
-HRESULT WINAPI SVDigitizerGetBufferFormat( unsigned long triggerchannel, int *p_piFormat )
+HRESULT WINAPI SVDigitizerGetBufferFormat( unsigned long , int *p_piFormat )
 {
 	HRESULT l_hrOk = S_FALSE;
 
@@ -397,67 +397,67 @@ HRESULT WINAPI SVDigitizerGetBufferFormat( unsigned long triggerchannel, int *p_
 	return l_hrOk;
 }
 
-HRESULT WINAPI SVDigitizerCreateBuffers( unsigned long triggerchannel )
+HRESULT WINAPI SVDigitizerCreateBuffers( unsigned long  )
 {
 	return S_FALSE;
 }
 
-HRESULT WINAPI SVDigitizerRegisterBufferInterface( unsigned long triggerchannel, SVAcquisitionBufferInterface* p_pInterface )
+HRESULT WINAPI SVDigitizerRegisterBufferInterface( unsigned long , SVAcquisitionBufferInterface*  )
 {
 	return S_FALSE;
 }
 
-HRESULT WINAPI SVDigitizerStart( unsigned long triggerchannel )
+HRESULT WINAPI SVDigitizerStart( unsigned long  )
 {
 	return S_FALSE;
 }
 
-HRESULT WINAPI SVDigitizerStop( unsigned long triggerchannel )
+HRESULT WINAPI SVDigitizerStop( unsigned long  )
 {
 	return S_OK;
 }
 
-HRESULT WINAPI SVDigitizerUnregisterBufferInterface( unsigned long triggerchannel )
+HRESULT WINAPI SVDigitizerUnregisterBufferInterface( unsigned long  )
 {
 	return S_FALSE;
 }
 
-HRESULT WINAPI SVDigitizerInternalTriggerEnable( unsigned long triggerchannel )
+HRESULT WINAPI SVDigitizerInternalTriggerEnable( unsigned long  )
 {
 	return S_OK;
 }
 
-HRESULT WINAPI SVDigitizerInternalTrigger( unsigned long triggerchannel )
+HRESULT WINAPI SVDigitizerInternalTrigger( unsigned long  )
 {
 	return S_FALSE;
 }
 
-HRESULT WINAPI SVDigitizerDestroyBuffers( unsigned long triggerchannel )
+HRESULT WINAPI SVDigitizerDestroyBuffers( unsigned long  )
 {
 	return S_OK;
 }
 
-HRESULT WINAPI SVDigitizerUnloadCameraFile( unsigned long triggerchannel )
+HRESULT WINAPI SVDigitizerUnloadCameraFile( unsigned long  )
 {
 	return S_OK;
 }
 
-HRESULT WINAPI SVDigitizerSetParameters( unsigned long triggerchannel, const SVDeviceParamCollection* p_pParameters )
+HRESULT WINAPI SVDigitizerSetParameters( unsigned long , const SVDeviceParamCollection*  )
 {
 	return S_OK;
 }
 
-HRESULT WINAPI SVDigitizerSetParameter( unsigned long triggerchannel, const SVDeviceParamWrapper* p_pParameter )
+HRESULT WINAPI SVDigitizerSetParameter( unsigned long , const SVDeviceParamWrapper*  )
 {
 	return S_OK;
 }
 
-HRESULT WINAPI SVDigitizerGetParameter( unsigned long triggerchannel, SVDeviceParamEnum p_eParameter, SVDeviceParamWrapper** p_ppParameter )
+HRESULT WINAPI SVDigitizerGetParameter( unsigned long , SVDeviceParamEnum , SVDeviceParamWrapper**  )
 {
 	return S_OK;
 }
 
-HRESULT WINAPI SVDigitizerDestroyParameter( unsigned long triggerchannel, SVDeviceParamWrapper* p_pParameter )
+HRESULT WINAPI SVDigitizerDestroyParameter( unsigned long , SVDeviceParamWrapper* p_pParameter )
 {
 	HRESULT l_hrOk = S_OK;
 

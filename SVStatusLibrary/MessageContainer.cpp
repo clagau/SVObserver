@@ -253,7 +253,7 @@ namespace SvStl
 			HANDLE hEventLog = RegisterEventSource ( nullptr, getFacilityName().c_str() );
 			if( nullptr != hEventLog )
 			{
-				UINT Severity;
+				WORD Severity{0};
 
 				switch (getSeverity())
 				{

@@ -103,7 +103,7 @@ BOOL SVToolAdjustmentDialogAnalyzerPageClass::OnInitDialog()
 		switch (rToolType.m_SubType)
 		{
 			case SvPb::SVLinearToolObjectType:
-				if (pWnd = GetDlgItem(IDC_PUBLISH_BUTTON))
+				if (nullptr != (pWnd = GetDlgItem(IDC_PUBLISH_BUTTON)))
 				{
 					pWnd->EnableWindow(FALSE);
 					pWnd->ShowWindow(SW_HIDE);
@@ -112,7 +112,7 @@ BOOL SVToolAdjustmentDialogAnalyzerPageClass::OnInitDialog()
 
 			case SvPb::SVWindowToolObjectType:  // fall through...
 			default:
-				if (pWnd = GetDlgItem(IDC_RESULT_BUTTON))
+				if (nullptr != (pWnd = GetDlgItem(IDC_RESULT_BUTTON)))
 				{
 					pWnd->EnableWindow(FALSE);
 					pWnd->ShowWindow(SW_HIDE);
@@ -120,7 +120,7 @@ BOOL SVToolAdjustmentDialogAnalyzerPageClass::OnInitDialog()
 
 				if (!m_pCurrentAnalyzer)
 				{
-					if (pWnd = GetDlgItem(IDC_PUBLISH_BUTTON))
+					if (nullptr != (pWnd = GetDlgItem(IDC_PUBLISH_BUTTON)))
 					{
 						pWnd->EnableWindow(FALSE);
 					}
@@ -352,16 +352,16 @@ void SVToolAdjustmentDialogAnalyzerPageClass::updateButtons()
 
 	CWnd* pWnd;
 
-	if ((pWnd = GetDlgItem(IDC_DETAILS_BUTTON)))
+	if (nullptr != (pWnd = GetDlgItem(IDC_DETAILS_BUTTON)))
 		pWnd->EnableWindow(state);
 
-	if ((pWnd = GetDlgItem(IDC_RESULT_BUTTON)))
+	if (nullptr != (pWnd = GetDlgItem(IDC_RESULT_BUTTON)))
 	{
 		if (pWnd->IsWindowVisible())
 			pWnd->EnableWindow(state);
 	}
 
-	if ((pWnd = GetDlgItem(IDC_PUBLISH_BUTTON)))
+	if (nullptr != (pWnd = GetDlgItem(IDC_PUBLISH_BUTTON)))
 	{
 		if (pWnd->IsWindowVisible())
 			pWnd->EnableWindow(state);

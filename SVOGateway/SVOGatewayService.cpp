@@ -27,8 +27,6 @@ static char THIS_FILE[] = __FILE__;
 
 void WINAPI ServiceMain( DWORD argc, LPTSTR *argv )
 {
-    DWORD Status( E_FAIL );
-
     gStatusHandle = RegisterServiceCtrlHandlerEx(cServiceName, ControlHandler, nullptr);
 
     if( nullptr != gStatusHandle )
@@ -98,7 +96,7 @@ void WINAPI ServiceMain( DWORD argc, LPTSTR *argv )
 	}
 }
 
-DWORD WINAPI ControlHandler(DWORD ControlCode, DWORD eventType, void *pEventData, void *pContext)
+DWORD WINAPI ControlHandler(DWORD ControlCode, DWORD, void *, void *)
 {
     switch( ControlCode ) 
 	{

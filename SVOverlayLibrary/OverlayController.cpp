@@ -36,7 +36,7 @@ SvSyl::SVFuture<SvPb::OverlayDesc> OverlayController::getOverlays(std::shared_pt
 			{
 				if (nullptr != pTr && pTr->isObjectUpToTime())
 				{
-					auto& desc = future.get();
+					auto desc = future.get();
 					fillOverlay(desc, *pTr.get());
 					promise->set_value(desc);
 				}

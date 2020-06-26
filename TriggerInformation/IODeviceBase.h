@@ -37,9 +37,9 @@ namespace SvTi
 	#pragma region protected methods
 
 	protected:
-		virtual void beforeStartTrigger(unsigned long triggerIndex){}
+		virtual void beforeStartTrigger(unsigned long ){}
 		virtual HRESULT afterStartTrigger(HRESULT hr){return hr;}
-		virtual void beforeStopTrigger(unsigned long triggerIndex){}
+		virtual void beforeStopTrigger(unsigned long ){}
 		virtual HRESULT afterStopTrigger(HRESULT hr){return hr;}
 	#pragma endregion protected methods
 

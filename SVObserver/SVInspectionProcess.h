@@ -450,7 +450,7 @@ namespace SVDetail
 	{
 		typedef T value_type;
 		typedef SvVol::SVValueObjectClass<T> object_type;
-		inline static bool validate(const std::string &rString) { return true; }
+		inline static bool validate(const std::string&) { return true; }
 	};
 
 	template<>

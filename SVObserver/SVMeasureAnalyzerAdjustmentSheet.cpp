@@ -69,13 +69,7 @@ BOOL SVMeasureAnalyzerAdjustmentSheetClass::OnInitDialog()
 
     // Position this dialog at saved (or initial) location.
     //
-    BOOL bResult2 = SetWindowPos(
-        nullptr,          // Z order not used
-        gPtPosition.x,
-        gPtPosition.y,
-        0,0,           // Width and Height Not Used
-        SWP_NOSIZE | SWP_NOZORDER | SWP_NOREDRAW 
-    );
+    SetWindowPos(nullptr, gPtPosition.x, gPtPosition.y, 0,0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOREDRAW);
 	
 	return bResult;
 }

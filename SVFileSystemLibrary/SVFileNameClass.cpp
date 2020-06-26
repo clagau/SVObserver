@@ -355,7 +355,7 @@ void SVFileNameClass::SetPathName(LPCTSTR szPathName)
 		m_PathName = szPathName;
 
 		SvUl::searchAndReplace(m_PathName, "/", "\\");
-		SvUl::TrimRight(m_PathName, "\\" );
+		m_PathName = SvUl::TrimRight(m_PathName.c_str(), "\\" );
 	}
 	else
 	{
@@ -387,8 +387,7 @@ void SVFileNameClass::SetFileNameOnly(LPCTSTR szFileName)
 {
 	if (szFileName)
 	{
-		m_FileNameOnly = szFileName;
-		SvUl::TrimRight(m_FileNameOnly);
+		m_FileNameOnly = SvUl::TrimRight(szFileName);
 	}
 	else
 	{
@@ -474,7 +473,7 @@ void SVFileNameClass::SetDefaultPathName(const std::string& rPath)
 		m_DefaultPathName = rPath;
 
 		SvUl::searchAndReplace(m_DefaultPathName, "/", "\\");
-		SvUl::TrimRight(m_DefaultPathName, "\\" );
+		m_DefaultPathName = SvUl::TrimRight(m_DefaultPathName.c_str(), "\\" );
 	}
 	else
 	{

@@ -416,7 +416,7 @@ void SVPatGeneralPageClass::SetSliderPosition(UINT nId)
 	double	dValue = atof(strValue.Left(10));
 	dValue *= 10.0;
 
-	CSliderCtrl	*pSlider;
+	CSliderCtrl	*pSlider{nullptr};
 
 	switch (nId)
 	{
@@ -437,17 +437,23 @@ void SVPatGeneralPageClass::SetSliderPosition(UINT nId)
 			break;
 	}
 
-	int	nPos = (int)dValue;
-	if (nPos < pSlider->GetRangeMin())
-		nPos = pSlider->GetRangeMin();
-
-	if (nPos > pSlider->GetRangeMax())
-		nPos = pSlider->GetRangeMax();
+	if(nullptr != pSlider)
+	{
+		int	nPos = (int)dValue;
+		if (nPos < pSlider->GetRangeMin())
+		{
+			nPos = pSlider->GetRangeMin();
+		}
+		if (nPos > pSlider->GetRangeMax())
+		{
+			nPos = pSlider->GetRangeMax();
+		}
 	
-	dValue = ((double)nPos) / 10.0;
-	strValue.Format("%.1f", dValue);
-	SetDlgItemText(nId, strValue);
-	pSlider->SetPos(nPos);
+		dValue = ((double)nPos) / 10.0;
+		strValue.Format("%.1f", dValue);
+		SetDlgItemText(nId, strValue);
+		pSlider->SetPos(nPos);
+	}
 }
 
 void SVPatGeneralPageClass::OnInterpoleMode1() 

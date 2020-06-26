@@ -301,7 +301,7 @@ namespace SvOg
 		// Do not call CStatic::OnPaint() for painting messages
 	}
 
-	void SVDlgImageClass::OnPaintOverlay(CPaintDC& dc)	// derived classes implement this to draw after picture is displayed
+	void SVDlgImageClass::OnPaintOverlay(CPaintDC&)	// derived classes implement this to draw after picture is displayed
 	{
 	}
 

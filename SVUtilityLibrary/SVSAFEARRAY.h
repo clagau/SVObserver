@@ -172,7 +172,7 @@ inline std::vector<T> getVectorFromOneDim(const _variant_t& rValue)
 //Template specialization to avoid compile error
 
 template<>
-inline std::vector<SVPoint<double>> getVectorFromOneDim<SVPoint<double>>(const _variant_t& rValue)
+inline std::vector<SVPoint<double>> getVectorFromOneDim<SVPoint<double>>(const _variant_t& )
 {
 	std::vector<SVPoint<double>> result;
 	assert(false);
@@ -180,7 +180,7 @@ inline std::vector<SVPoint<double>> getVectorFromOneDim<SVPoint<double>>(const _
 }
 
 template<>
-inline std::vector<SVPoint<long>> getVectorFromOneDim<SVPoint<long>>(const _variant_t& rValue)
+inline std::vector<SVPoint<long>> getVectorFromOneDim<SVPoint<long>>(const _variant_t& )
 {
 	std::vector<SVPoint<long>> result;
 	assert(false);
@@ -188,7 +188,7 @@ inline std::vector<SVPoint<long>> getVectorFromOneDim<SVPoint<long>>(const _vari
 }
 
 template<>
-inline std::vector<std::string> getVectorFromOneDim<std::string>(const _variant_t& rValue)
+inline std::vector<std::string> getVectorFromOneDim<std::string>(const _variant_t& )
 {
 	std::vector<std::string> result;
 	assert(false);

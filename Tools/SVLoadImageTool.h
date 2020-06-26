@@ -48,7 +48,7 @@ public:
 	virtual HRESULT GetParentExtent( SVImageExtentClass& rExtent) const override;
 
 	//No overlay for this tool.
-	virtual void addOverlays(const SvIe::SVImageClass* pImage, SvPb::OverlayDesc& rOverlay) const  override {};
+	virtual void addOverlays(const SvIe::SVImageClass*, SvPb::OverlayDesc& ) const  override {};
 
 protected:
 	void init();

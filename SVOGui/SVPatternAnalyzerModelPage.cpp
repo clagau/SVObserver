@@ -418,7 +418,7 @@ namespace SvOg
 			////////////////////////////////////////////////////////
 			// SET SHAPE PROPERTIES
 			VariantParamMap ParaMap;
-			int count = SvOg::DisplayHelper::FillParameterMap(ParaMap, ParameterList, ParameterValue);
+			SvOg::DisplayHelper::FillParameterMap(ParaMap, ParameterList, ParameterValue);
 
 			if( ParaMap.end() != ParaMap.find(CDSVPictureDisplay::P_X1) && VT_I4 == ParaMap[CDSVPictureDisplay::P_X1].vt &&
 				ParaMap.end() != ParaMap.find(CDSVPictureDisplay::P_X2) && VT_I4 == ParaMap[CDSVPictureDisplay::P_X2].vt &&
@@ -438,7 +438,7 @@ namespace SvOg
 		else if (ModelImageTab == Tab && m_handleToModelCenterOverlay == Handle)
 		{
 			VariantParamMap ParaMap;
-			int count = SvOg::DisplayHelper::FillParameterMap(ParaMap, ParameterList, ParameterValue);
+			SvOg::DisplayHelper::FillParameterMap(ParaMap, ParameterList, ParameterValue);
 
 			if( ParaMap.end() != ParaMap.find(CDSVPictureDisplay::P_ARRAY_XY) && VT_ARRAY == (ParaMap[CDSVPictureDisplay::P_ARRAY_XY].vt & VT_ARRAY) 
 				&& (VT_I4 == (ParaMap[CDSVPictureDisplay::P_ARRAY_XY].vt & VT_I4) ))

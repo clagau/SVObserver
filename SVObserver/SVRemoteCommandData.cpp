@@ -429,6 +429,7 @@ STDMETHODIMP SVRemoteCommandData::SetBlock( BSTR p_Name, IStream* p_pStream )
 	if( S_OK == l_Status )
 	{
 		STATSTG l_Stat;
+		memset(&l_Stat, 0, sizeof(l_Stat));
 		LARGE_INTEGER l_Position;
 		CComPtr< IStream > l_StreamPtr = p_pStream;
 
@@ -571,6 +572,7 @@ STDMETHODIMP SVRemoteCommandData::SetImage( BSTR p_Name, IStream* p_pStream )
 	if( S_OK == l_Status )
 	{
 		STATSTG l_Stat;
+		memset(&l_Stat, 0, sizeof(l_Stat));
 		LARGE_INTEGER l_Position;
 		CComPtr< IStream > l_StreamPtr = p_pStream;
 

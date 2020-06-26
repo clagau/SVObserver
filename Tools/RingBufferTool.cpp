@@ -198,7 +198,7 @@ SvIe::SVImageClass* RingBufferTool::getOutputImage(int index)
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
-bool RingBufferTool::isInputImage(uint32_t imageId) const
+bool RingBufferTool::isInputImage(uint32_t) const
 {
 	bool Result(false);
 	//@Hack: [MZA][24.04.15] This method is only used by CollectOverlays and the recursive functionality of IsInputImage. 

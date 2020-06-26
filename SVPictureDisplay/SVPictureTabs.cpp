@@ -212,7 +212,7 @@ HRESULT SVPictureTabs::ShowTab( long p_lTabHandle, bool p_bShow )
 		{
 			if( lCurrentLogicalTab != p_lTabHandle )
 			{
-				int iCurrentTab = GetTabIndexFromTabHandle( lCurrentLogicalTab );
+				iCurrentTab = GetTabIndexFromTabHandle( lCurrentLogicalTab );
 				SelectActiveTab( iCurrentTab );
 			}
 			else
@@ -241,7 +241,7 @@ void SVPictureTabs::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_TAB1, m_TabCtrl );
 }
 
-void SVPictureTabs::OnTcnSelChangeTab(NMHDR *pNMHDR, LRESULT *pResult)
+void SVPictureTabs::OnTcnSelChangeTab(NMHDR *, LRESULT *pResult)
 {
 	int l_iSel = m_TabCtrl.GetCurSel();
 	SelectActiveTab( l_iSel );
@@ -801,7 +801,7 @@ HRESULT SVPictureTabs::GetSelectedTab(long& Tab) const
 	return l_hr;
 }
 
-BOOL SVPictureTabs::OnEraseBkgnd(CDC* pDC)
+BOOL SVPictureTabs::OnEraseBkgnd(CDC* )
 {
 	return true;
 }
@@ -866,7 +866,7 @@ HRESULT SVPictureTabs::GetObjectParameter( long lTab, long lHandle, VariantParam
 }
 
 // This is called from the control...
-void SVPictureTabs::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+void SVPictureTabs::OnKeyDown(UINT, UINT , UINT )
 {
 	int i = m_TabCtrl.GetCurSel();
 	long lTabHandle = GetHandleFromTabIndex( i );

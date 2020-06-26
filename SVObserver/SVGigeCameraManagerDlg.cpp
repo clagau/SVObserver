@@ -87,8 +87,6 @@ HRESULT SVGigeCameraManagerDlg::Refresh()
 
 	m_CamList = SVGigeCameraManager::Instance().GetCameraOrder();
 	
-	int iCnt = m_ctlCameraList.GetItemCount();
-	
 	int Size = std::max<int> (m_ctlCameraList.GetItemCount(), static_cast<int> (m_CamList.size()));
 
 	for( int x = 0 ; x < Size ; x ++)

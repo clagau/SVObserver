@@ -97,7 +97,7 @@ bool SVLinearPixelCountingLineAnalyzerClass::CreateObject( const SVObjectLevelCr
 	return bOk;
 }
 
-HRESULT SVLinearPixelCountingLineAnalyzerClass::GetSelectedEdgeOverlays(SVExtentMultiLineStruct &p_MultiLine)
+HRESULT SVLinearPixelCountingLineAnalyzerClass::GetSelectedEdgeOverlays(SVExtentMultiLineStruct&)
 {
 	return S_OK;
 }

@@ -33,10 +33,10 @@ public:
 
 	virtual SvOi::IObjectClass* GetResultObject();
 	
-	virtual bool IsPtOverResult( const POINT& rPoint ){ return false;}
+	virtual bool IsPtOverResult( const POINT&  ){ return false;}
 	virtual SvDef::StringVector getAnalyzerResult() {return SvDef::StringVector{};}
 
-	virtual void addParameterForMonitorList(SvStl::MessageContainerVector& rMessages, std::back_insert_iterator<SvOi::ParametersForML> inserter) const {};
+	virtual void addParameterForMonitorList(SvStl::MessageContainerVector& , std::back_insert_iterator<SvOi::ParametersForML> ) const {};
 
 protected:
 	virtual bool createAllObjectsFromChild( SVObjectClass& rChildObject ) override;

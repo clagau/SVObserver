@@ -168,8 +168,8 @@ bool SVPolarTransformationToolClass::SetDefaultFormulas(SvStl::MessageContainerV
 HRESULT SVPolarTransformationToolClass::SetImageExtent( const SVImageExtentClass& rImageExtent )
 {
 	HRESULT l_hrOk = S_FALSE;
-	double l_dInnerRadius;
-	double l_dOuterRadius;
+	double l_dInnerRadius{0.0};
+	double l_dOuterRadius{0.0};
 
 	if( S_OK == (l_hrOk = rImageExtent.GetExtentProperty( SvPb::SVExtentPropertyOuterRadius, l_dOuterRadius )) )
 	{
@@ -190,7 +190,7 @@ SvVol::SVStringValueObjectClass* SVPolarTransformationToolClass::GetInputImageNa
 	return &m_SourceImageNames;
 }
 
-void SVPolarTransformationToolClass::addOverlays(const SvIe::SVImageClass* pImage, SvPb::OverlayDesc& rOverlay) const
+void SVPolarTransformationToolClass::addOverlays(const SvIe::SVImageClass*, SvPb::OverlayDesc& rOverlay) const
 {
 	SvDef::SVObjectTypeInfoStruct objectInfo;
 	objectInfo.m_SubType = SvPb::SVImagePolarTransformObjectType;

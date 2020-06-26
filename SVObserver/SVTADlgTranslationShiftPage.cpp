@@ -31,7 +31,7 @@ enum {IDC_SHIFT_VALUE_TRUE = 100};
 #pragma endregion Declarations
 
 #pragma region Constructor
-SVTADlgTranslationShiftPageClass::SVTADlgTranslationShiftPageClass(uint32_t inspectionId, uint32_t taskObjectId, SVToolAdjustmentDialogSheetClass* Parent)
+SVTADlgTranslationShiftPageClass::SVTADlgTranslationShiftPageClass(uint32_t inspectionId, uint32_t, SVToolAdjustmentDialogSheetClass* Parent)
 : CPropertyPage(SVTADlgTranslationShiftPageClass::IDD)
 , m_TranslationXValue(_T(""))
 , m_TranslationYValue(_T(""))
@@ -119,7 +119,6 @@ BOOL SVTADlgTranslationShiftPageClass::OnInitDialog()
 		// Create SVRPropTree control IDC_SHIFT_VALUE_TRUE
 		m_Tree.Create(dwStyle, rc, this, IDC_SHIFT_VALUE_TRUE);
 		m_Tree.ShowInfoText(false);
-		long lVal = m_Tree.GetColumn();
 		m_Tree.SetColumn(200);
 
 		// Check...
@@ -141,7 +140,6 @@ BOOL SVTADlgTranslationShiftPageClass::OnInitDialog()
 HRESULT SVTADlgTranslationShiftPageClass::SetInspectionData()
 {
 	HRESULT l_hrOk = S_FALSE;
-	bool l_bRequestAdded = false;
 
 	if (nullptr != m_pTool)
 	{

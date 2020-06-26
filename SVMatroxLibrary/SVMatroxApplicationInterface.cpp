@@ -27,7 +27,7 @@ constexpr long MATROX_FILTER_EVENT = 525843;
 constexpr long MATROX_FILTER_EVENT_STATUS_CODE = 5901;
 constexpr long MATROX_FILTER_EVENT_SUBCODE_COUNT = 3;
 
-long long _stdcall SVMatroxApplicationInterface::SVMatroxHookHandler( long long HookType, __int64 EventId, void* UserDataPtr )
+long long _stdcall SVMatroxApplicationInterface::SVMatroxHookHandler( long long, __int64 EventId, void*  )
 {
 	MIL_TEXT_CHAR l_strMilText[M_ERROR_MESSAGE_SIZE] = MIL_TEXT("");
 	SVMatroxStatusInformation l_StatusInfo;
@@ -495,6 +495,7 @@ void SVMatroxApplicationInterface::LocalInitialize()
 		else
 		{
 			__int64 l_Status = MappGetError( M_THREAD_CURRENT + M_CURRENT, nullptr );
+			UNREFERENCED_PARAMETER(l_Status);
 
 			#ifdef _DEBUG
 			if( l_Status != M_NULL_ERROR )

@@ -74,7 +74,7 @@ bool CDisplayPicture::UpdateDisplayBufferInfo( long bufWidth, long bufHeight, in
 	}
 
 	SVMatroxBuffer newBuffer;
-	HRESULT l_Code = SVMatroxBufferInterface::Create(newBuffer, create);
+	SVMatroxBufferInterface::Create(newBuffer, create);
 
 	SvOi::SVImageBufferHandlePtr pImagePtr = SvOi::SVImageBufferHandlePtr {new SVImageBufferHandleImage{newBuffer} };
 	m_pImage = std::make_shared<SvTrc::Image>(pImagePtr, 0, SvTrc::Image::cLocalTmpImagePos, false, false);

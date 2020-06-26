@@ -178,7 +178,6 @@ namespace SvMc
 		{
 			UINT nNotifyCode = HIWORD(wParam); // notification code 
 			UINT nID = LOWORD(wParam);         // item, control, or accelerator identifier 
-			HWND hwndCtl = (HWND)lParam;       // handle of control 
 
 			if (nNotifyCode == BN_CLICKED && (nID == ID_WIZNEXT || nID == ID_WIZBACK || nID == ID_WIZFINISH)) 
 			{

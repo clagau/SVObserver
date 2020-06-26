@@ -27,12 +27,12 @@ void RPCServer::onConnect(int id, SvHttp::HttpServerConnection& rConnection)
 	m_ServerStreamContexts[id] = {};
 }
 
-bool RPCServer::onHandshake(int id, const std::string& token)
+bool RPCServer::onHandshake(int , const std::string& token)
 {
 	return m_pRequestHandler->onHandshake(token);
 }
 
-void RPCServer::onTextMessage(int id, std::vector<char>&&)
+void RPCServer::onTextMessage(int, std::vector<char>&&)
 {
 	throw std::runtime_error("only binary messages expected!");
 }

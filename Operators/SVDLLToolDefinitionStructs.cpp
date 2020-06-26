@@ -405,7 +405,7 @@ std::vector<std::string>  ResultTableDefinition::getColoumnNames() const
 	{
 		CComSafeArray<BSTR> saInput(m_ColumnNames.parray);
 		int dim = saInput.GetDimensions();
-		ATLASSERT(dim == 1);
+		assert(dim == 1);	UNREFERENCED_PARAMETER(dim);
 		int len = saInput.GetCount();
 		for (int y = 0; y < len; y++)
 		{

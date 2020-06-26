@@ -34,7 +34,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-CSVOCameraDlg::CSVOCameraDlg(CWnd* pParent /*=nullptr*/)
+CSVOCameraDlg::CSVOCameraDlg(CWnd* /*=nullptr*/)
 	: CPropertyPage(CSVOCameraDlg::IDD)
 {
 }

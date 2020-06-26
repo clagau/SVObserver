@@ -51,7 +51,7 @@ private:
 	LogClass& m_rLogClass;
 };
 
-static uint32_t getNextObjectId()
+inline uint32_t getNextObjectId()
 {
 	static uint32_t nextId = 1;
 	return nextId++;

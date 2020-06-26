@@ -309,10 +309,10 @@ void SVImageViewClass::DetachFromImage()
 	}
 
 	ReleaseImageSurface();
-
-	SetScrollPosition( CPoint( 0, 0 ) );
-
-	SetImageRect( CRect( 0, 0, 0, 0 ) );
+	CPoint point(0, 0);
+	SetScrollPosition(point);
+	CRect rect(0, 0, 0, 0);
+	SetImageRect(rect);
 
 	m_imageName.clear();
 	m_ImageId = SvDef::InvalidObjectId;
@@ -354,8 +354,6 @@ void SVImageViewClass::GetImageRect( CRect& p_rect )
 
 BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 {
-	long l_index = 0;
-
 	switch( p_wParam )
 	{
 		case ID_CONFIG_ANALYZER:
@@ -522,7 +520,7 @@ void SVImageViewClass::SaveViewOrImageToDisk(bool ViewOnly, bool showOverlays)
 // -----------------------------------------------------------------------------
 // .Description : ...
 ////////////////////////////////////////////////////////////////////////////////
-void SVImageViewClass::OnContextMenu( CWnd* p_pWnd, CPoint p_point )
+void SVImageViewClass::OnContextMenu( CWnd* , CPoint p_point )
 {
 	CMenu l_menu;
 	bool RunOrTestMode( false );
@@ -718,7 +716,7 @@ void SVImageViewClass::ShowExtremeLUT( bool p_show /* = true */ )
 	}
 }
 
-void SVImageViewClass::OnDraw( CDC* p_pDC )
+void SVImageViewClass::OnDraw( CDC*  )
 {
 	if (SvDef::InvalidObjectId == m_ImageId || SVSVIMStateClass::CheckState(SV_STATE_CLOSING))
 	{
@@ -736,7 +734,7 @@ void SVImageViewClass::OnDraw( CDC* p_pDC )
 	}
 }
 
-BOOL SVImageViewClass::Create( LPCTSTR p_className, LPCTSTR p_windowName, DWORD p_style, const RECT& p_rect, CWnd* p_pParentWnd, UINT p_NID, CCreateContext* p_pContext )
+BOOL SVImageViewClass::Create( LPCTSTR , LPCTSTR , DWORD p_style, const RECT& p_rect, CWnd* p_pParentWnd, UINT p_NID, CCreateContext* p_pContext )
 {
 	BOOL Result( TRUE );
 
@@ -1861,7 +1859,7 @@ bool SVImageViewClass::CheckParameters( SVTreeType& p_tree, SVTreeType::SVBranch
 	return l_bOk;
 }
 
-BOOL SVImageViewClass::OnEraseBkgnd( CDC* p_pDC )
+BOOL SVImageViewClass::OnEraseBkgnd(CDC*)
 {
 	BOOL l_bOk = TRUE;
 
@@ -1957,11 +1955,11 @@ HRESULT SVImageViewClass::UpdateImageSurfaces( const SVBitmapInfo& p_rBitmapInfo
 	return status;
 }
 
-HRESULT SVImageViewClass::CopyBitsToSurface( const CRect& p_rSourceRect, const SVBitmapInfo& p_rBitmapInfo, const unsigned char* p_pBitmapBits )
+HRESULT SVImageViewClass::CopyBitsToSurface( const CRect& rSourceRect, const SVBitmapInfo& rBitmapInfo, const unsigned char* pBitmapBits )
 {
 	HRESULT status = S_OK;
 
-	if( !( p_rBitmapInfo.empty() ) && ( nullptr != p_pBitmapBits ) && ( nullptr != m_pDDImageSurface ) )
+	if( !( rBitmapInfo.empty() ) && ( nullptr != pBitmapBits ) && ( nullptr != m_pDDImageSurface ) )
 	{
 		DDSURFACEDESC2 l_ddSurfaceDesc;
 		memset( &l_ddSurfaceDesc, 0, sizeof( l_ddSurfaceDesc ) );
@@ -1970,42 +1968,42 @@ HRESULT SVImageViewClass::CopyBitsToSurface( const CRect& p_rSourceRect, const S
 		status = m_pDDImageSurface->Lock( nullptr, &l_ddSurfaceDesc, DDLOCK_NOSYSLOCK | DDLOCK_WAIT | DDLOCK_WRITEONLY, nullptr );
 		if( DD_OK == status )
 		{
-			unsigned short l_BitmapBitCount = p_rBitmapInfo.GetBitCount();
-			unsigned long l_BitmapWidth = p_rBitmapInfo.GetWidth();
-			unsigned long l_BitmapPitch = static_cast<unsigned long>(p_rBitmapInfo.GetBitmapImageStrideInBytes());
-			unsigned long l_VisiblePitch = ( p_rSourceRect.Width() * l_BitmapBitCount / 8 );
+			DWORD bitmapBitCount = static_cast<DWORD> (rBitmapInfo.GetBitCount());
+			DWORD bitmapWidth = static_cast<DWORD> (rBitmapInfo.GetWidth());
+			unsigned long bitmapPitch = static_cast<unsigned long> (rBitmapInfo.GetBitmapImageStrideInBytes());
+			unsigned long visiblePitch = ( rSourceRect.Width() * bitmapBitCount / 8 );
 
-			if( ( l_BitmapWidth == l_ddSurfaceDesc.dwWidth ) && 
-				( l_BitmapBitCount == l_ddSurfaceDesc.ddpfPixelFormat.dwRGBBitCount ) &&
-				( l_VisiblePitch <= l_BitmapPitch ) )
+			if( ( bitmapWidth == l_ddSurfaceDesc.dwWidth ) && 
+				( bitmapBitCount == l_ddSurfaceDesc.ddpfPixelFormat.dwRGBBitCount ) &&
+				( visiblePitch <= bitmapPitch ) )
 			{
 				unsigned long l_Mask = l_ddSurfaceDesc.ddpfPixelFormat.dwRBitMask | l_ddSurfaceDesc.ddpfPixelFormat.dwGBitMask | l_ddSurfaceDesc.ddpfPixelFormat.dwBBitMask;
 				unsigned long l_UpperValue = l_ddSurfaceDesc.ddpfPixelFormat.dwGBitMask;
 				unsigned long l_LowerValue = l_ddSurfaceDesc.ddpfPixelFormat.dwBBitMask;
 
 				BYTE* l_pTo = static_cast< BYTE* >( l_ddSurfaceDesc.lpSurface );
-				BYTE* l_pFrom = const_cast< BYTE* >( p_pBitmapBits );
+				BYTE* l_pFrom = const_cast< BYTE* >( pBitmapBits );
 
-				unsigned long l_SurfaceOffset = ( p_rSourceRect.top * l_ddSurfaceDesc.lPitch ) + ( p_rSourceRect.left * l_ddSurfaceDesc.ddpfPixelFormat.dwRGBBitCount / 8 );
-				unsigned long l_BitmapOffset = ( p_rSourceRect.top * l_BitmapPitch ) + ( p_rSourceRect.left * p_rBitmapInfo.GetBitCount() / 8 );
+				unsigned long l_SurfaceOffset = ( rSourceRect.top * l_ddSurfaceDesc.lPitch ) + ( rSourceRect.left * l_ddSurfaceDesc.ddpfPixelFormat.dwRGBBitCount / 8 );
+				unsigned long l_BitmapOffset = ( rSourceRect.top * bitmapPitch ) + ( rSourceRect.left * rBitmapInfo.GetBitCount() / 8 );
 
 				l_pTo += l_SurfaceOffset;
 				l_pFrom += l_BitmapOffset;
 				size_t l_PixelWidth = l_ddSurfaceDesc.ddpfPixelFormat.dwRGBBitCount / 8;
 
-				for( long l_row = p_rSourceRect.top; l_row < p_rSourceRect.bottom; ++l_row )
+				for( long l_row = rSourceRect.top; l_row < rSourceRect.bottom; ++l_row )
 				{
-					if (m_showExtremeLUT && l_BitmapBitCount > 8)
+					if (m_showExtremeLUT && bitmapBitCount > 8)
 					{
-						CalcLut(l_pFrom, l_pTo, l_VisiblePitch, l_Mask, l_LowerValue, l_UpperValue, l_PixelWidth);
+						CalcLut(l_pFrom, l_pTo, visiblePitch, l_Mask, l_LowerValue, l_UpperValue, l_PixelWidth);
 					}
 					else
 					{
-						memcpy( l_pTo, l_pFrom, l_VisiblePitch );
+						memcpy( l_pTo, l_pFrom, visiblePitch );
 					}
 
 					l_pTo += l_ddSurfaceDesc.lPitch;
-					l_pFrom += l_BitmapPitch;
+					l_pFrom += bitmapPitch;
 				}
 			}
 			else

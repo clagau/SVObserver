@@ -123,8 +123,8 @@ std::string SVAccessClass::Change( const std::string& rSource )
 // This function checks for the master password which is extracted from the user and password.
 bool SVAccessClass::IsMasterPassword( LPCTSTR User, LPCTSTR PW )
 {
-	std::string LowerPW = SvUl::MakeLower( std::string(PW) );
-	std::string LowerUser = SvUl::MakeLower( std::string(User) );
+	std::string LowerPW = SvUl::MakeLower(PW);
+	std::string LowerUser = SvUl::MakeLower(User);
 
 	if( LowerPW == Change(_T("ga}vszrRK"))  && std::string::npos != LowerUser.find(Change(_T("y`"))) )
 	{
@@ -248,11 +248,10 @@ bool SVAccessClass::IsUserAMember( const std::string& rUser, const std::string& 
 			std::string sGroup = W2A( pTmpBuf->lgrui0_name );
 #endif
 			// Compare multiple groups
-			size_t Start = -1;
-			size_t Finish = -1;
+			size_t Start = static_cast<size_t> (-1);
 			do
 			{
-				Finish = rNTGroups.find(_T(','), ++Start);
+				size_t Finish = rNTGroups.find(_T(','), ++Start);
 				if( std::string::npos == Finish )
 				{
 					Finish = rNTGroups.size();
@@ -335,7 +334,7 @@ bool SVAccessClass::IsCurrentUserValidated(long lId)
 	else
 	{
 		std::string NTGroup;
-		HRESULT hr = GetNTGroup( lId, NTGroup );
+		GetNTGroup( lId, NTGroup );
 
 		if( NTGroup != _T("Everybody") )
 		{

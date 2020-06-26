@@ -103,7 +103,7 @@ static void GetNotifications(SvWsl::SVRCClientService& client)
 	ctx.cancel();
 }
 
-static bool GetImageId(SvWsl::SVRCClientService& client, int imageWidth, SvPb::ImageId& rImageIdOut)
+static bool GetImageId(SvWsl::SVRCClientService& client, uint32_t imageWidth, SvPb::ImageId& rImageIdOut)
 {
 	SvPb::QueryListNameRequest mListReq;
 	auto mListRes = runRequest(client, &SvWsl::SVRCClientService::QueryListName, std::move(mListReq)).get();
@@ -126,7 +126,7 @@ static bool GetImageId(SvWsl::SVRCClientService& client, int imageWidth, SvPb::I
 	}
 	return false;
 }
-static void RunBenchmark2(SvWsl::SVRCClientService& rClient, int iterations, int imageWitdh, bool use_streaming)
+static void RunBenchmark2(SvWsl::SVRCClientService& rClient, int iterations, uint32_t imageWitdh, bool)
 {
 	SvPb::ImageId ImageId;
 	if (!GetImageId(rClient, imageWitdh, ImageId))
@@ -242,10 +242,12 @@ int main(int argc, char* argv[])
 //	clientSettings.Host = "192.168.10.111";
 	clientSettings.Port = SvHttp::Default_Port;
 	if (argc > 1)
+	{
 		clientSettings.Host = argv[1];
+	}
 	if (argc > 2)
 	{
-		clientSettings.Port = atoi(argv[2]);
+		clientSettings.Port = static_cast<uint16_t> (atoi(argv[2]));
 	}
 	
 	auto pRpcClient = std::make_unique<SvRpc::RPCClient>(clientSettings);
@@ -278,7 +280,7 @@ int main(int argc, char* argv[])
 					uint16_t port = SvHttp::Default_Port;
 					if (wordsize > 2)
 					{
-						port = atoi(words[2].c_str());
+						port = static_cast<uint16_t> (atoi(words[2].c_str()));
 					}
 					std::string ipAdress = words[1];
 
@@ -466,12 +468,12 @@ int main(int argc, char* argv[])
 			}
 			else if (words[0] == "b2" || words[0] == "B2")
 			{
-				int imgWidth = 200;
+				uint32_t imgWidth = 200;
 				int iterations = 1000;
 				int repeats = 1;
 				if (wordsize >= 2)
 				{
-					imgWidth = atoi(words[1].c_str());
+					imgWidth = static_cast<uint32_t> (atoi(words[1].c_str()));
 				}
 				if (wordsize >= 3)
 				{
@@ -488,12 +490,12 @@ int main(int argc, char* argv[])
 			}
 			else if (words[0] == "b3" || words[0] == "B3")
 			{
-				int imgWidth = 200;
+				uint32_t imgWidth = 200;
 				int iterations = 1000;
 				int repeats = 1;
 				if (wordsize >= 2)
 				{
-					imgWidth = atoi(words[1].c_str());
+					imgWidth = static_cast<uint32_t> (atoi(words[1].c_str()));
 				}
 				if (wordsize >= 3)
 				{

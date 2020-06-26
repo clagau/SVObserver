@@ -1117,7 +1117,7 @@ HRESULT SVMatroxBufferInterface::GetBitmapInfo(SVBitmapInfo& p_rBitmapInfo, cons
 	{
 		long l_Width = 0;
 		long l_Height = 0;
-		unsigned short l_BitCount = 0;
+		int l_BitCount = 0;
 
 		l_Status = SVMatroxBufferInterface::Get(p_rBuffer, SVSizeX, l_Width);
 
@@ -1152,7 +1152,7 @@ HRESULT SVMatroxBufferInterface::GetBitmapInfo(SVBitmapInfo& p_rBitmapInfo, cons
 
 				if (l_BitCount < 1 || p_rBuffer.GetIdentifier() != parentId)
 				{
-					l_BitCount = static_cast<unsigned short>(l_PixelDepth * l_BandSize);
+					l_BitCount = static_cast<int>(l_PixelDepth * l_BandSize);
 				}
 			}
 		}
@@ -1452,6 +1452,7 @@ HRESULT SVMatroxBufferInterface::CopyBuffer(const SVMatroxBuffer& p_rMilId, HBIT
 #endif
 	{
 		DIBSECTION dib;
+		memset(&dib, 0, sizeof(dib));
 
 		if (p_rMilId.empty())
 		{
@@ -1548,6 +1549,7 @@ HRESULT SVMatroxBufferInterface::CopyBufferToFileDIB(std::string& rTo, SVBitmapI
 			size_t l_ImageSize = rBitMapInfo.GetBitmapImageSizeInBytes();
 
 			BITMAPFILEHEADER hdr;
+			memset(&hdr, 0, sizeof(hdr));
 			size_t toSize = 0;
 			size_t bitmapPos = 0;
 			if (addFileHeader)

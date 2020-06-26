@@ -332,8 +332,8 @@ namespace SvTrcT
 		if (nullptr != pMainImage)
 		{
 			int lastTRid = m_recordController.getLastTrId(m_inspectionPos);
-			auto& lastTriggerRecord = m_recordController.createTriggerRecordObject(m_inspectionPos, lastTRid);
-			auto& triggerRecord = SvTrc::getTriggerRecordControllerRWInstance().createTriggerRecordObjectToWrite(m_inspectionPos);
+			auto lastTriggerRecord = m_recordController.createTriggerRecordObject(m_inspectionPos, lastTRid);
+			auto triggerRecord = SvTrc::getTriggerRecordControllerRWInstance().createTriggerRecordObjectToWrite(m_inspectionPos);
 			if (m_isCopyTR && nullptr != lastTriggerRecord)
 			{
 				triggerRecord->setImages(*(lastTriggerRecord.get()));
@@ -650,11 +650,12 @@ namespace SvTrcT
 		SvTrc::IImagePtr pImage = SvTrc::getTriggerRecordControllerRWInstance().getImageBuffer(bufferStruct);
 		if (nullptr != pImage)
 		{
-			auto& imageHandle = pImage->getHandle();
+			auto imageHandle = pImage->getHandle();
 			if (nullptr != imageHandle)
 			{
 				HRESULT hr = SVMatroxBufferInterface::Import(imageHandle->GetBuffer(), std::string(rPath), SVFileBitmap, false);
 				assert(S_OK == hr);
+				UNREFERENCED_PARAMETER(hr);
 			}
 		}
 		return pImage;

@@ -162,7 +162,7 @@ SVMaskEditorCtrl::~SVMaskEditorCtrl()
 // SVMaskEditorCtrl::OnDraw - Drawing function
 
 void SVMaskEditorCtrl::OnDraw(
-			CDC* pdc, const CRect& rcBounds, const CRect& rcInvalid)
+			CDC* pdc, const CRect& rcBounds, const CRect&)
 {
 	if( pdc )
 	{
@@ -186,7 +186,7 @@ void SVMaskEditorCtrl::OnDraw(
 
 		BITMAP bmInfo;
 		bitmap.GetBitmap( &bmInfo );
-		UINT colNum = ( ( UINT ) 1 ) << bmInfo.bmBitsPixel; 
+		WORD colNum = static_cast<WORD> (1 << bmInfo.bmBitsPixel);
 
 		RGBQUAD* pColors = new RGBQUAD[colNum];
 		::GetDIBColorTable( memDC.GetSafeHdc(), 0, colNum, pColors );

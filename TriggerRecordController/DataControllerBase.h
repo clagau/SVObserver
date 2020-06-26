@@ -126,12 +126,12 @@ public:
 	const std::unordered_map<uint32_t, int>& getChildImageMap() const { return m_ChildImageDefMap; };
 	virtual const SvPb::DataDefinitionList& getDataList() const = 0;
 	const std::unordered_map<uint32_t, int>& getDataMap() const { return m_DataDefMap; };
-	virtual void createTriggerRecordsBuffer(int trNumbers) { assert(false); throw E_NOTIMPL; };
+	virtual void createTriggerRecordsBuffer(int ) { assert(false); throw E_NOTIMPL; };
 	virtual void resetFreeTrNumber() {};
 	virtual void increaseFreeTrNumber() {};
 	virtual void decreaseFreeTrNumber() {};
 	virtual bool isEnoughFreeForLock() const { return true; };
-	virtual void setTrOfInterestNumber(int number) { assert(false); throw E_NOTIMPL; };
+	virtual void setTrOfInterestNumber(int ) { assert(false); throw E_NOTIMPL; };
 	virtual void setTrOfInterest(int inspectionPos, int pos) = 0;
 
 protected:
@@ -161,7 +161,7 @@ public:
 
 	TriggerRecordData& getTRData(int inspectionPos, int pos) const;
 
-	virtual bool setInspections(SvPb::InspectionList&& rInspectionList) { assert(false); throw E_NOTIMPL; };
+	virtual bool setInspections(SvPb::InspectionList&& ) { assert(false); throw E_NOTIMPL; };
 	virtual long getResetId() const = 0;
 	virtual volatile long* getResetLockCounterRef() = 0;
 	virtual const SvPb::InspectionList& getInspections() const = 0;
@@ -176,13 +176,13 @@ public:
 	const SvPb::ImageList& getImageDefList(int inspectionPos, bool onlyIfInit = true) const;
 	const std::unordered_map<uint32_t, int>& getImageMap(int inspectionPos) const;
 	const std::unordered_map<uint32_t, int>& getChildImageMap(int inspectionPos) const;
-	virtual void setImageDefList(int inspectionPos, SvPb::ImageList&& imageList) { assert(false); throw E_NOTIMPL; };
+	virtual void setImageDefList(int , SvPb::ImageList&& ) { assert(false); throw E_NOTIMPL; };
 
 	virtual const SvPb::ImageStructList& getImageStructList() const = 0;
 	/// Set the ImageStructList
 	/// ATTENTION: Throw exception if ImageStructList cannot set (e.g. in writer object to large for the space in sharedMemory).
 	/// \param list [in]
-	virtual void setImageStructList(SvPb::ImageStructList&& list) { assert(false); throw E_NOTIMPL; };
+	virtual void setImageStructList(SvPb::ImageStructList&& ) { assert(false); throw E_NOTIMPL; };
 
 	virtual void resetImageRefCounter() { assert(false); throw E_NOTIMPL; };
 
@@ -190,18 +190,18 @@ public:
 
 	const SvPb::DataDefinitionList& getDataDefList(int inspectionPos) const;
 	const std::unordered_map<uint32_t, int>& getDataDefMap(int inspectionPos) const;
-	virtual void changeDataDef(SvPb::DataDefinitionList&& rDataDefList, long valueObjectMemSize, int inspectionPos) { assert(false); throw E_NOTIMPL; };
+	virtual void changeDataDef(SvPb::DataDefinitionList&& , long , int ) { assert(false); throw E_NOTIMPL; };
 
 	virtual ITriggerRecordRPtr createTriggerRecordObject(int inspectionPos, std::function<bool(TriggerRecordData&)> validFunc) = 0;
-	virtual ITriggerRecordRWPtr createTriggerRecordObjectToWrite(int inspectionPos) { assert(false); throw E_NOTIMPL; };
+	virtual ITriggerRecordRWPtr createTriggerRecordObjectToWrite(int ) { assert(false); throw E_NOTIMPL; };
 
-	virtual std::vector<std::pair<int, int>> ResetTriggerRecordStructure(int inspectionId, int triggerRecordNumber, SvPb::ImageList&& rImageList, SvPb::ImageStructList&& rImageStructList) { assert(false); throw E_NOTIMPL; };
+	virtual std::vector<std::pair<int, int>> ResetTriggerRecordStructure(int , int , SvPb::ImageList&& , SvPb::ImageStructList&& ) { assert(false); throw E_NOTIMPL; };
 
 	virtual long* getImageRefCountPtr(int pos) = 0;
 
 	virtual void removeImageMemory(std::string memoryName) { assert(false); throw E_NOTIMPL; };
-	virtual int createMilBufferinMemory(int requiredNumbers, SvPb::ImageStructData& rImageStruct, int vectorPos) { assert(false); throw E_NOTIMPL; };
-	virtual int contractMilBufferinMemory(int requiredNumbers, SvPb::ImageStructData& rImageStruct, int vectorPos) { assert(false); throw E_NOTIMPL; };
+	virtual int createMilBufferinMemory(int , SvPb::ImageStructData& , int ) { assert(false); throw E_NOTIMPL; };
+	virtual int contractMilBufferinMemory(int , SvPb::ImageStructData& , int ) { assert(false); throw E_NOTIMPL; };
 
 	std::vector<SVMatroxBuffer>& getBufferVectorRef() { return m_bufferVector; }
 
@@ -217,7 +217,7 @@ public:
 
 	/// Set the InspectionList
 	/// \param rInspectionList [in]
-	virtual void setInspectionList(SvPb::InspectionList&& rInspectionList) { assert(false); throw E_NOTIMPL; };
+	virtual void setInspectionList(SvPb::InspectionList&& ) { assert(false); throw E_NOTIMPL; };
 
 	bool isIPInit(int inspectionPos);
 	void createTriggerRecordsBuffer(int inspectionPos, int trNumbers);

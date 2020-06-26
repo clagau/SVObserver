@@ -235,7 +235,7 @@ IDC_LUT_MIN_INPUT_STATIC, IDC_LUT_MAX_INPUT_STATIC, IDC_LUT_MIN_OUTPUT_STATIC, I
 		refresh();
 	}
 
-	LRESULT SVToolAdjustmentLUTPage::OnGraphRefresh( WPARAM mp1, LPARAM mp2 )
+	LRESULT SVToolAdjustmentLUTPage::OnGraphRefresh(WPARAM, LPARAM)
 	{
 		refresh();
 
@@ -481,7 +481,7 @@ IDC_LUT_MIN_INPUT_STATIC, IDC_LUT_MAX_INPUT_STATIC, IDC_LUT_MIN_OUTPUT_STATIC, I
 		CWnd* pWnd = nullptr;
 		for (const int id : otherControls)
 		{
-			if (pWnd = GetDlgItem(id))
+			if( nullptr != (pWnd = GetDlgItem(id)))
 			{
 				pWnd->ShowWindow(SW_HIDE);
 			}
@@ -489,7 +489,7 @@ IDC_LUT_MIN_INPUT_STATIC, IDC_LUT_MAX_INPUT_STATIC, IDC_LUT_MIN_OUTPUT_STATIC, I
 		// Show Formula Button...
 		for (const int id : cFormulaControls)
 		{
-			if (pWnd = GetDlgItem(id))
+			if (nullptr != (pWnd = GetDlgItem(id)))
 			{
 				pWnd->ShowWindow(SW_SHOW);
 			}
@@ -504,7 +504,7 @@ IDC_LUT_MIN_INPUT_STATIC, IDC_LUT_MAX_INPUT_STATIC, IDC_LUT_MIN_OUTPUT_STATIC, I
 		CWnd* pWnd = nullptr;
 		for (const int id : otherControls)
 		{
-			if (pWnd = GetDlgItem(id))
+			if (nullptr != (pWnd = GetDlgItem(id)))
 			{
 				pWnd->ShowWindow(SW_HIDE);
 			}
@@ -513,7 +513,7 @@ IDC_LUT_MIN_INPUT_STATIC, IDC_LUT_MAX_INPUT_STATIC, IDC_LUT_MIN_OUTPUT_STATIC, I
 		// Show Clip Slider, Edit, Captions...
 		for (const int id : cClipControls)
 		{
-			if (pWnd = GetDlgItem(id))
+			if (nullptr != (pWnd = GetDlgItem(id)))
 			{
 				pWnd->ShowWindow(SW_SHOW);
 			}
@@ -528,7 +528,7 @@ IDC_LUT_MIN_INPUT_STATIC, IDC_LUT_MAX_INPUT_STATIC, IDC_LUT_MIN_OUTPUT_STATIC, I
 		CWnd* pWnd = nullptr;
 		for (const int id : otherControls)
 		{
-			if (pWnd = GetDlgItem(id))
+			if (nullptr != (pWnd = GetDlgItem(id)))
 			{
 				pWnd->ShowWindow(SW_HIDE);
 			}
@@ -536,7 +536,7 @@ IDC_LUT_MIN_INPUT_STATIC, IDC_LUT_MAX_INPUT_STATIC, IDC_LUT_MIN_OUTPUT_STATIC, I
 
 		for (const int id : cStretchnControls)
 		{
-			if (pWnd = GetDlgItem(id))
+			if (nullptr != (pWnd = GetDlgItem(id)))
 			{
 				pWnd->ShowWindow(SW_SHOW);
 			}
@@ -553,7 +553,7 @@ IDC_LUT_MIN_INPUT_STATIC, IDC_LUT_MAX_INPUT_STATIC, IDC_LUT_MIN_OUTPUT_STATIC, I
 		// Hide all controls...
 		for (const int id : allControls)
 		{
-			if (pWnd = GetDlgItem(id))
+			if (nullptr != (pWnd = GetDlgItem(id)))
 			{
 				pWnd->ShowWindow(SW_HIDE);
 			}
@@ -572,7 +572,7 @@ IDC_LUT_MIN_INPUT_STATIC, IDC_LUT_MAX_INPUT_STATIC, IDC_LUT_MIN_OUTPUT_STATIC, I
 		// Set controls activation states...
 		for (const int id : allControls)
 		{
-			if (pWnd = GetDlgItem(id))
+			if (nullptr != (pWnd = GetDlgItem(id)))
 			{
 				pWnd->EnableWindow(isEnable);
 			}

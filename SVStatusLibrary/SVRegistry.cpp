@@ -251,8 +251,6 @@ bool SVRegistryClass::SetRegistryValue( LPCTSTR szValueName, LPCTSTR szValue )
 		Exception.setMessage( SVMSG_LIB_SET_REGISTRY_VALUE_FAILED, szValueName, SvStl::SourceFileParams(StdMessageParams) );
 		Exception.Throw();
   }
-
-	return false;
 }
 
 bool SVRegistryClass::GetRegistryValue( LPCTSTR szValueName, DWORD *pdwValue)
@@ -305,7 +303,6 @@ bool SVRegistryClass::SetRegistryValue( LPCTSTR szValueName, DWORD dwValue )
 		Exception.setMessage( SVMSG_LIB_SET_REGISTRY_VALUE_FAILED, szValueName, SvStl::SourceFileParams(StdMessageParams) );
 		Exception.Throw();
 	}
-	return false;
 }
 
 bool SVRegistryClass::GetRegistryValue( LPCTSTR szValueName, SVByteVector& rValueVector)
@@ -356,8 +353,6 @@ bool SVRegistryClass::SetRegistryValue( LPCTSTR szValueName, SVByteVector& rValu
 		Exception.setMessage( SVMSG_LIB_SET_REGISTRY_VALUE_FAILED, szValueName, SvStl::SourceFileParams(StdMessageParams) );
 		Exception.Throw();
 	}
-
-	return false;
 }
 
 bool SVRegistryClass::SetRegistryValue( LPCTSTR szValueName, SVByteVector& rValueVector, DWORD dwType, DWORD dwLength )
@@ -381,7 +376,6 @@ bool SVRegistryClass::SetRegistryValue( LPCTSTR szValueName, SVByteVector& rValu
 		Exception.setMessage( SVMSG_LIB_SET_REGISTRY_VALUE_FAILED, szValueName, SvStl::SourceFileParams(StdMessageParams) );
 		Exception.Throw();
 	}
-	return false;
 }
 
 bool SVRegistryClass::AdjustPrivileges(TCHAR *pszPrivilege)
@@ -483,7 +477,7 @@ bool SVRegistryClass::Import(LPCTSTR szFileName)
 	bool rc = false;
 	TCHAR cNewLine = _T('0');
 
-	if (pFile = _tfopen (szFileName, _T("r")))
+	if (nullptr != (pFile = _tfopen (szFileName, _T("r"))))
 	{
 		if (_ftscanf (pFile, SV_SHADOWFILEHEADER _T("%c"), &cNewLine) &&
 			cNewLine == _T('\n'))
@@ -558,9 +552,8 @@ int SVRegistryClass::GetImportString(FILE * pFile, std::string& rName, SVByteVec
 	int i;
 
 	// skip white space characters
-	for (tBuffer = _fgettc (pFile); 
-		!feof (pFile) && !ferror (pFile) && _istspace (tBuffer); 
-		tBuffer = _fgettc (pFile));
+	for (tBuffer = static_cast<TCHAR> (_fgettc(pFile)); 
+		 !feof (pFile) && !ferror (pFile) && _istspace (tBuffer); tBuffer = static_cast<TCHAR> (_fgettc(pFile)));
 
 	if (feof (pFile))
 		return SV_ISEOF;
@@ -577,7 +570,7 @@ int SVRegistryClass::GetImportString(FILE * pFile, std::string& rName, SVByteVec
 	case _T('[') :
 		// read the key name
 		for (rName.clear();
-			(_T('\n') != (tBuffer = _fgettc (pFile))) && !feof (pFile) && !ferror (pFile);
+			(_T('\n') != (tBuffer = static_cast<TCHAR> (_fgettc(pFile)))) && !feof (pFile) && !ferror (pFile);
 			rName += tBuffer);
 
 		if (ferror (pFile))
@@ -600,12 +593,12 @@ int SVRegistryClass::GetImportString(FILE * pFile, std::string& rName, SVByteVec
 	case _T('"') :
 		// get the value name
 		for (rName.clear();
-			(_T('"') != (tBuffer = _fgettc (pFile))) && !feof (pFile) && !ferror (pFile);
+			(_T('"') != (tBuffer = static_cast<TCHAR> (_fgettc(pFile)))) && !feof (pFile) && !ferror (pFile);
 			)
 		{
 			if (tBuffer == _T('\\'))
 			{
-				tBuffer = _fgettc (pFile);
+				tBuffer = static_cast<TCHAR> (_fgettc(pFile));
 				if (ferror (pFile) || feof (pFile) || tBuffer == _T('\n'))
 					return SV_ISERROR;
 			}
@@ -698,8 +691,6 @@ int SVRegistryClass::GetImportString(FILE * pFile, std::string& rName, SVByteVec
 		return SV_ISGARBAGE;
 		break;
 	}
-
-	return SV_ISERROR;
 }
 
 bool SVRegistryClass::Export()
@@ -728,10 +719,10 @@ bool SVRegistryClass::Export(LPCTSTR szFileName)
 	FILE *pFile;
 	bool rc = false;
 
-	if (pFile = _tfopen (szFileName, _T("w")))
+	if (nullptr != (pFile = _tfopen (szFileName, _T("w"))))
 	{
 		_ftprintf (pFile, _T("%s\n\n"), SV_SHADOWFILEHEADER);
-		if (rc = ExportKeys (pFile))
+		if (true == (rc = ExportKeys (pFile)))
 		{
 			SetShadowFileName (szFileName);
 		}

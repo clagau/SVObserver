@@ -145,11 +145,6 @@ const SVGigeDeviceParameterStruct& SVMatroxGigeDigitizer::GetFeature(SvDef::SVGi
 	return emptyStruct;
 }
 
-unsigned long SVMatroxGigeDigitizer::GetDeviceNumber() const
-{
-	return m_deviceNumber;
-}
-
 bool SVMatroxGigeDigitizer::HasLineInput() const
 {
 	return !m_lineInputMoniker.empty();

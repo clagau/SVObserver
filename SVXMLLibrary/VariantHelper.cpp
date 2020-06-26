@@ -29,34 +29,34 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvXml
 {
-	static std::map<std::wstring, UINT>  map_wstring2Type
+	static std::map<std::wstring, VARTYPE>  map_wstring2Type
 	{
-		{L"VT_EMPTY",	static_cast<UINT> (VT_EMPTY)},
-		{L"VT_NULL",	static_cast<UINT> (VT_NULL)},
-		{L"VT_BOOL",	static_cast<UINT> (VT_BOOL)},
-		{L"VT_INT",		static_cast<UINT> (VT_INT)},
-		{L"VT_I4",		static_cast<UINT> (VT_I4)},
-		{L"VT_UINT",	static_cast<UINT> (VT_UINT)},
-		{L"VT_UI4",		static_cast<UINT> (VT_UI4)},
-		{L"VT_R4",		static_cast<UINT> (VT_R4)},
-		{L"VT_R8",		static_cast<UINT> (VT_R8)},
-		{L"VT_I8",		static_cast<UINT> (VT_I8)},
-		{L"VT_UI8",		static_cast<UINT> (VT_UI8)},
-		{L"VT_UI1",		static_cast<UINT> (VT_UI1)},
-		{L"VT_I1",		static_cast<UINT> (VT_I1)},
-		{L"VT_I2",		static_cast<UINT> (VT_I2)},
-		{L"VT_UI2",		static_cast<UINT> (VT_UI2)},
-		{L"VT_BSTR",	static_cast<UINT> (VT_BSTR)},
-		{L"VT_ARRAY",	static_cast<UINT> (VT_ARRAY)},
+		{L"VT_EMPTY",	VT_EMPTY},
+		{L"VT_NULL",	VT_NULL},
+		{L"VT_BOOL",	VT_BOOL},
+		{L"VT_INT",		VT_INT},
+		{L"VT_I4",		VT_I4},
+		{L"VT_UINT",	VT_UINT},
+		{L"VT_UI4",		VT_UI4},
+		{L"VT_R4",		VT_R4},
+		{L"VT_R8",		VT_R8},
+		{L"VT_I8",		VT_I8},
+		{L"VT_UI8",		VT_UI8},
+		{L"VT_UI1",		VT_UI1},
+		{L"VT_I1",		VT_I1},
+		{L"VT_I2",		VT_I2},
+		{L"VT_UI2",		VT_UI2},
+		{L"VT_BSTR",	VT_BSTR},
+		{L"VT_ARRAY",	VT_ARRAY},
 		{L"SV_ARRAYNODE", VT_SVARRAYNODE},  /// not used ?
 		{L"SV_NODEWITHDATA", VT_SVNODEWITHDATA}, /// not used ?
 		{L"SV_SVBASENODE", VT_SVBASENODE}
 	};
 
 
-	UINT  VariantHelper::WCHAR2Type(const wchar_t *ptype )
+	VARTYPE  VariantHelper::WCHAR2Type(const wchar_t *ptype )
 	{
-		std::map<std::wstring, UINT>::iterator it =  map_wstring2Type.find(ptype);
+		auto it =  map_wstring2Type.find(ptype);
 		if(it != map_wstring2Type.end())
 		{
 			return it->second;
@@ -83,7 +83,7 @@ namespace SvXml
 
 	const  WCHAR* VariantHelper::pWhitespace = L"\a\b\f\n\r\t\v ";
 
-	void  VariantHelper::ToVariant( unsigned vartype, const wchar_t  *pVal, _variant_t* pVar)
+	void  VariantHelper::ToVariant(VARTYPE vartype, const wchar_t  *pVal, _variant_t* pVar)
 	{
 		bool bInvalidArgument(false);
 
@@ -306,8 +306,8 @@ namespace SvXml
 			}
 		default:
 			{
-				break;
 				bInvalidArgument = true;
+				break;
 			}
 
 		}

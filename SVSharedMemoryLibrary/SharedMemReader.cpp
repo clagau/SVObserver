@@ -33,7 +33,7 @@ void SharedMemReader::Clear(void)
 	m_MLContainer.Clear();
 }
 
-void SharedMemReader::Reload(DWORD version)
+void SharedMemReader::Reload(DWORD )
 {
 	
 	m_MonitorListStore.OpenMonitorStore("Monitor");
@@ -74,7 +74,7 @@ RingBufferPointer SharedMemReader::GetSlotManager(int index)
 }
 int SharedMemReader::GetSlotManagerIndexForPPQName(LPCTSTR PPQname)
 {
-	auto& it = m_MLContainer.m_PPQInfoMap.find(PPQname);
+	auto it = m_MLContainer.m_PPQInfoMap.find(PPQname);
 	if (it != m_MLContainer.m_PPQInfoMap.end() && it->second.get())
 	{
 		return it->second->SlotManagerIndex;
@@ -157,7 +157,7 @@ SharedMemReader::retvalues  SharedMemReader::_GetProduct(const GetProdPar& par, 
 	const MonitorEntries& ProdEnties = pML->GetMonitorEntries(t);
 	for (MonitorEntryPointer mep : ProdEnties)
 	{
-		auto pTr = pProduct->m_triggerRecordMap[mep->data.InspectionStoreId];
+		auto pTr = pProduct->m_triggerRecordMap[mep->data.m_inspectionStoreId];
 		variant_t valueV = (nullptr != pTr) ? pTr->getDataValue(mep->data.m_triggerRecordPos) : variant_t();
 		bool isArray = (VT_ARRAY == (valueV.vt & VT_ARRAY));
 		if (isArray && mep->data.arrayIndex >= 0)
@@ -243,7 +243,7 @@ SharedMemReader::retvalues SharedMemReader::GetFailstatus(LPCTSTR Monitorlist, v
 	{
 		return fail;
 	}
-	std::vector<DWORD> rejectsTrigger;
+	std::vector<int> rejectsTrigger;
 	m_DataContainer.GetSlotManager(SlotManagerIndex)->GetRejects(rejectsTrigger);
 	int max = m_DataContainer.GetSlotManager(SlotManagerIndex)->GetRejectSlotCount();
 	max -= (MLPPQInfo::NumRejectSizeDelta);

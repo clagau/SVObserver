@@ -268,8 +268,6 @@ void SVRPropTreeCtrl::OnLButtonDown(UINT, CPoint point)
 	if (m_pProp->IsDisableInput())
 		return;
 
-	m_pProp->SendNotify(NM_CLICK);
-
 	if (!m_pProp->IsWindowEnabled())
 		return;
 
@@ -388,8 +386,6 @@ void SVRPropTreeCtrl::OnLButtonUp(UINT, CPoint point)
 void SVRPropTreeCtrl::OnLButtonDblClk(UINT, CPoint point)
 {
 	ASSERT(nullptr != m_pProp);
-
-	m_pProp->SendNotify(NM_DBLCLK);
 
 	SVRPropertyItem* pItem;
 	SVRPropertyItem* pOldFocus;

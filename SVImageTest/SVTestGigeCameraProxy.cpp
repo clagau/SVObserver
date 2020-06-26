@@ -216,8 +216,6 @@ HRESULT SVTestGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParamWr
 	{
 		_variant_t l_oValue;
 
-		int l_iParameterID = 0;
-
 		SVDeviceParamEnum l_eType = rw->Type();
 
 		switch ( l_eType )
@@ -660,10 +658,6 @@ HRESULT SVTestGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParamWr
 				const SVLutDeviceParam* pLutParam = rw.DerivedValue( pLutParam );
 				ASSERT( pLutParam );
 
-				// why plus one?
-				int l_FileMaxValue = pLutParam->lut.Info().MaxValue() + 1;
-				int l_FileBandSize = pLutParam->lut.Info().BandSize();
-
 				// convert to safearray
 				hr = SVLUTToSafeArray(pLutParam->lut, l_oValue);
 				if (S_OK == hr)
@@ -766,8 +760,6 @@ HRESULT SVTestGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParamWr
 					const SVDeviceParam* pHeldParam = rDeviceParamWrapper.DerivedValue(pHeldParam); 
 					if (pHeldParam)
 					{
-						_variant_t l_oValue;
-
 						switch (pHeldParam->DataType())
 						{
 							case DeviceDataTypeLong:

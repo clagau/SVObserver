@@ -45,7 +45,7 @@ private:
 	typedef SVMatroxGigeBufferCreator<SVBufAttGrabImageProc> AcqBufferCreator;
 	SVMatroxBufferArray m_AcqBuffers;
 	SVGigeDeviceParameterMap m_featuresMap;
-	unsigned long m_deviceNumber{0UL};
+	long m_deviceNumber{0L};
 	std::string m_lineInputMoniker;
 	std::string m_lineInputRisingEventName;
 	std::string m_lineInputFallingEventName;
@@ -70,7 +70,7 @@ public:
 	HRESULT BuildGigeFeaturesMap(BSTR xmlData);
 	const SVGigeDeviceParameterStruct& GetFeature(SvDef::SVGigeParameterEnum paramEnum) const;
 
-	unsigned long GetDeviceNumber() const;
+	long GetDeviceNumber() const { return m_deviceNumber; }
 
 	bool HasLineInput() const;
 	void SetLineInputMoniker(const std::string& moniker);

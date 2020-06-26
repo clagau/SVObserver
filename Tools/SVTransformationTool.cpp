@@ -114,7 +114,7 @@ bool SVTransformationToolClass::ResetObject(SvStl::MessageContainerVector *pErro
 }
 
 
-SVToolClass* SVTransformationToolClass::GetObjectAtPoint( const SVPoint<double>& rPoint )
+SVToolClass* SVTransformationToolClass::GetObjectAtPoint( const SVPoint<double>&)
 {
 	return nullptr;
 }

@@ -523,7 +523,7 @@ namespace SvXml
 		if( m_Tree.end() != pLeaf )
 		{
 			::VariantInit( &rData.GetVARIANT() );
-			::VariantCopy( &rData.GetVARIANT(), &pLeaf->second->GetVARIANT() );
+			::VariantCopy( &rData.GetVARIANT(), &pLeaf->second->GetVARIANT());
 			Result = S_OK;
 		}
 

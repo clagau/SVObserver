@@ -83,7 +83,7 @@ HRESULT SVFileAcquisitionClass::SetDeviceParameters( const SVDeviceParamCollecti
 	return hr;
 }
 
-HRESULT SVFileAcquisitionClass::LoadFiles(SVFileNameArrayClass& rFiles)
+HRESULT SVFileAcquisitionClass::LoadFiles(SVFileNameArrayClass& )
 {
 	HRESULT hrOk = S_OK;
 	GetCameraImageInfo( &msvImageInfo );
@@ -96,25 +96,25 @@ HRESULT SVFileAcquisitionClass::UnloadFiles()
 	return hrOk;
 }
 
-HRESULT SVFileAcquisitionClass::GetLightReference( SVLightReference& rArray ) const
+HRESULT SVFileAcquisitionClass::GetLightReference( SVLightReference&  ) const
 {
 	HRESULT hr = S_FALSE;
 	return hr;
 }
 
-HRESULT SVFileAcquisitionClass::SetLightReference( SVLightReference& rArray, int iBand /* = -1 */)
+HRESULT SVFileAcquisitionClass::SetLightReference( SVLightReference& , int  /* = -1 */)
 {
 	HRESULT hr = S_FALSE;
 	return hr;
 }
 
-HRESULT SVFileAcquisitionClass::CreateLightReference( int iBands )
+HRESULT SVFileAcquisitionClass::CreateLightReference( int  )
 {
 	HRESULT hrOk = S_FALSE;
 	return hrOk;
 }
 
-HRESULT SVFileAcquisitionClass::CreateLightReferenceBand( int iBand, int iAttributes )
+HRESULT SVFileAcquisitionClass::CreateLightReferenceBand( int , int  )
 {
 	HRESULT hrOk = S_FALSE;
 	return hrOk;
@@ -169,19 +169,19 @@ HRESULT SVFileAcquisitionClass::DestroyLocal()
 	return hrOk;
 }
 
-HRESULT SVFileAcquisitionClass::GetLut( SVLut& lut )
+HRESULT SVFileAcquisitionClass::GetLut( SVLut&  )
 {
 	HRESULT hr = S_FALSE;
 	return hr;
 }
 
-HRESULT SVFileAcquisitionClass::SetLut( const SVLutBand& lutBand )
+HRESULT SVFileAcquisitionClass::SetLut( const SVLutBand&  )
 {
 	HRESULT hr = S_FALSE;
 	return hr;
 }
 
-HRESULT SVFileAcquisitionClass::SetLut( const SVLut& lut, int iBand )
+HRESULT SVFileAcquisitionClass::SetLut(const SVLut& , int)
 {
 	HRESULT hr = S_FALSE;
 	return hr;
@@ -193,7 +193,7 @@ HRESULT SVFileAcquisitionClass::ResetLut()
 	return hr;
 }	
 
-HRESULT SVFileAcquisitionClass::GetLutImpl( SVLut& lut )
+HRESULT SVFileAcquisitionClass::GetLutImpl(SVLut&)
 {
 	HRESULT l_hrOk = S_FALSE;
 	return l_hrOk;

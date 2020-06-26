@@ -206,7 +206,7 @@ namespace SvSml
 				newEntry->PPQName = m_ppqName;
 				newEntry->PPQIndex = PPQIndex;
 			}
-			inspectionInfoMap[inspectionName]->StoreIndex = it->second->data.InspectionStoreId;
+			inspectionInfoMap[inspectionName]->StoreIndex = it->second->data.m_inspectionStoreId;
 		}
 		return res;
 	}

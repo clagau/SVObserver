@@ -618,7 +618,7 @@ HRESULT SVVisionProcessorHelper::GetRemoteInputItems(const SvDef::StringSet& rNa
 	return l_Status;
 }
 
-HRESULT SVVisionProcessorHelper::SetStandardItems(const SVNameStorageMap& rItems, SVNameStatusMap& rStatus, bool RunOnce)
+HRESULT SVVisionProcessorHelper::SetStandardItems(const SVNameStorageMap& rItems, SVNameStatusMap& rStatus, bool)
 {
 	HRESULT Status = S_OK;
 
@@ -697,7 +697,7 @@ HRESULT SVVisionProcessorHelper::SetInspectionItems(const SVNameStorageMap& rIte
 	return l_Status;
 }
 
-HRESULT SVVisionProcessorHelper::SetRemoteInputItems(const SVNameStorageMap& rItems, SVNameStatusMap& rStatus, bool RunOnce)
+HRESULT SVVisionProcessorHelper::SetRemoteInputItems(const SVNameStorageMap& rItems, SVNameStatusMap& rStatus, bool )
 {
 	HRESULT l_Status = S_OK;
 
@@ -725,7 +725,7 @@ HRESULT SVVisionProcessorHelper::SetRemoteInputItems(const SVNameStorageMap& rIt
 	return l_Status;
 }
 
-HRESULT SVVisionProcessorHelper::SetCameraItems(const SVNameStorageMap& rItems, SVNameStatusMap& rStatus, bool RunOnce)
+HRESULT SVVisionProcessorHelper::SetCameraItems(const SVNameStorageMap& rItems, SVNameStatusMap& rStatus, bool )
 {
 	HRESULT l_Status = S_OK;
 
@@ -833,7 +833,7 @@ HRESULT SVVisionProcessorHelper::GetObjectDefinition(const SVObjectClass& rObjec
 						long l_lSize = pSourceNames->getArraySize();
 						for (long l_lIndex = 0; l_lIndex < l_lSize; l_lIndex++)
 						{
-							HRESULT l_hr = pSourceNames->GetValue(Temp, l_lIndex);
+							pSourceNames->GetValue(Temp, l_lIndex);
 							// Prepend the "Inspections." prefix for use with SVRC.
 							Temp = _T("Inspections.") + Temp;
 							rDataDef.m_AdditionalInfo.push_back(Temp);
@@ -1274,7 +1274,7 @@ void SVVisionProcessorHelper::SetValuesOrImagesMonitoredObjectLists(const SvDef:
 	}
 }
 
-void SVVisionProcessorHelper::RegisterNotificationStream(const SvPb::GetNotificationStreamRequest& request,
+void SVVisionProcessorHelper::RegisterNotificationStream(const SvPb::GetNotificationStreamRequest&,
 	SvRpc::Observer<SvPb::GetNotificationStreamResponse> observer,
 	SvRpc::ServerStreamContext::Ptr ctx)
 {

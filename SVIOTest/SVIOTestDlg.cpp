@@ -407,7 +407,6 @@ void CSVIOTESTDlg::OnButton2()
 
 void CSVIOTESTDlg::OnTimer( UINT_PTR nIDEvent )
 {
-	DWORD Channel =0;
 	bool bValue = 0;
 	CStatic *pCStatic;
 
@@ -474,12 +473,9 @@ void CSVIOTESTDlg::OnTimer( UINT_PTR nIDEvent )
 		}
 		if( S_OK == SVIOConfigurationInterfaceClass::Instance().GetParameterValue(SVFanFreq, &l_vValue) )
 		{
-			for (unsigned int triggerchannel = 1; triggerchannel < c_upperBoundForTriggerChannel; triggerchannel++)
+			for (int triggerchannel = 1; triggerchannel < c_upperBoundForTriggerChannel; ++triggerchannel)
 			{
-				for (int triggerchannel = 1; triggerchannel < c_upperBoundForTriggerChannel; triggerchannel++)
-				{
-					m_FanFreq[triggerchannel] = l_vValue.lVal >> (8 * ( triggerchannel - 1 )) & 0xff;
-				}
+				m_FanFreq[triggerchannel] = l_vValue.lVal >> (8 * ( triggerchannel - 1 )) & 0xff;
 			}
 			UpdateData(FALSE);
 		}

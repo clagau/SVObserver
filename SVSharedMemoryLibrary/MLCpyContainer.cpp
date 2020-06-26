@@ -95,9 +95,9 @@ namespace SvSml
 		return nullptr;
 	}
 	
-	DWORD MLCpyContainer::GetInspectionStoreId(const std::string& InspectionName) const
+	int MLCpyContainer::GetInspectionStoreId(const std::string& InspectionName) const
 	{
-		auto& it = m_InspectionInfoMap.find(InspectionName);
+		auto it = m_InspectionInfoMap.find(InspectionName);
 		if (it != m_InspectionInfoMap.end())
 		{
 			return it->second->StoreIndex;
@@ -162,7 +162,7 @@ namespace SvSml
 				assert(m_InspectionInfoMap.find(inspectionName) != m_InspectionInfoMap.end());
 				assert(MEMIt->second->name == MEMIt->first);
 
-				MEMIt->second->data.InspectionStoreId = m_InspectionInfoMap[inspectionName]->StoreIndex;
+				MEMIt->second->data.m_inspectionStoreId = m_InspectionInfoMap[inspectionName]->StoreIndex;
 			}
 		}
 	}
@@ -179,7 +179,7 @@ namespace SvSml
 
 			for (auto& rEntry : rMLCPy.second->m_EntriesMap)
 			{
-				if (nullptr == rEntry.second || rEntry.second->data.InspectionStoreId != inspectionStoreId)
+				if (nullptr == rEntry.second || rEntry.second->data.m_inspectionStoreId != inspectionStoreId)
 				{
 					continue;
 				}
@@ -231,7 +231,7 @@ namespace SvSml
 		}
 	}
 
-	bool  MLCpyContainer::QueryListName(const SvPb::QueryListNameRequest&, SvPb::QueryListNameResponse& resp, SvPenv::Error& err) const
+	bool  MLCpyContainer::QueryListName(const SvPb::QueryListNameRequest&, SvPb::QueryListNameResponse& resp, SvPenv::Error&) const
 	{
 		for (auto& mlc : m_MonitorListCpyMap)
 		{

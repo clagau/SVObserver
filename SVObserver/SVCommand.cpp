@@ -609,19 +609,15 @@ STDMETHODIMP CSVCommand::SVGetSVIMConfigName(BSTR *bstrConfigFilename)
 	return Result;
 }
 
-STDMETHODIMP CSVCommand::SVGetSVIMOfflineCount(unsigned long *ulOfflineCount)
+STDMETHODIMP CSVCommand::SVGetSVIMOfflineCount(unsigned long* pOfflineCount)
 {
 	HRESULT hrResult = S_OK;
 	bool bSuccess = false;
 
-	try
+	if(nullptr != pOfflineCount)
 	{
-		*ulOfflineCount = TheSVObserverApp.getOfflineCount();
+		*pOfflineCount = TheSVObserverApp.getOfflineCount();
 		bSuccess = true;
-	}
-	catch (...)
-	{
-		bSuccess = false;
 	}
 
 	if (!bSuccess)
@@ -634,19 +630,15 @@ STDMETHODIMP CSVCommand::SVGetSVIMOfflineCount(unsigned long *ulOfflineCount)
 	return hrResult;
 }
 
-STDMETHODIMP CSVCommand::SVGetSVIMVersion(unsigned long *ulVersion)
+STDMETHODIMP CSVCommand::SVGetSVIMVersion(unsigned long* pVersion)
 {
 	HRESULT hrResult = S_OK;
 	bool bSuccess = false;
 
-	try
+	if(nullptr != pVersion)
 	{
-		*ulVersion = TheSVObserverApp.getCurrentVersion();
+		*pVersion = TheSVObserverApp.getCurrentVersion();
 		bSuccess = true;
-	}
-	catch (...)
-	{
-		bSuccess = false;
 	}
 
 	if (!bSuccess)
@@ -659,7 +651,7 @@ STDMETHODIMP CSVCommand::SVGetSVIMVersion(unsigned long *ulVersion)
 	return hrResult;
 }
 
-STDMETHODIMP CSVCommand::SVGetSVIMConfigPrint(long lOffset, long *lBlockSize, BSTR *bstrConfigPrint, BOOL *bLastFlag)
+STDMETHODIMP CSVCommand::SVGetSVIMConfigPrint(long , long *lBlockSize, BSTR *bstrConfigPrint, BOOL *bLastFlag)
 {
 	std::string ConfigPrint;
 	HRESULT hrResult = S_OK;
@@ -707,7 +699,7 @@ struct SVGetImageListImageInfo
 
 
 // Currently used only through external DCOM connection.
-STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, SAFEARRAY** ppsaImages, SAFEARRAY** ppsaOverlays, SAFEARRAY** ppsaStatus, SAFEARRAY** ppsaProcCounts)
+STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long , SAFEARRAY** ppsaImages, SAFEARRAY** ppsaOverlays, SAFEARRAY** ppsaStatus, SAFEARRAY** ppsaProcCounts)
 {
 	HRESULT hrResult = S_OK;
 
@@ -725,7 +717,7 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, 
 			throw SVMSG_CONFIGURATION_NOT_LOADED;
 		}
 
-		long lNumberOfElements = psaNames->rgsabound[0].cElements;
+		unsigned long lNumberOfElements = psaNames->rgsabound[0].cElements;
 
 		ASSERT(nullptr != ppsaStatus);
 		ASSERT(nullptr != *ppsaStatus);	// must provide allocated SafeArray(LONG)
@@ -746,7 +738,7 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, 
 		long lDefaultStatus = S_FALSE;
 
 		// set default status for objects in list
-		for (long lIndex = 0; lIndex < lNumberOfElements; lIndex++)
+		for (long lIndex = 0; lIndex < static_cast<long> (lNumberOfElements); lIndex++)
 		{
 			/*HRESULT hrTemp = */SafeArrayPutElement(*ppsaStatus, &lIndex, &lDefaultStatus);
 		}
@@ -763,7 +755,7 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, 
 		SVInspectionProcess* pInspection(nullptr);
 		HRESULT hrOK = S_OK;
 
-		for (long i = 0; i < lNumberOfElements && SUCCEEDED(hrOK); i++)
+		for (long i = 0; i < static_cast<long> (lNumberOfElements) && SUCCEEDED(hrOK); i++)
 		{
 			BSTR bstrName = nullptr;
 			SafeArrayGetElementNoCopy(psaNames, &i, &bstrName);
@@ -830,7 +822,7 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, 
 			}
 		}
 
-		for (long l = 0; l < lNumberOfElements; l++)
+		for (long l = 0; l < static_cast<long> (lNumberOfElements); l++)
 		{
 			Sleep(0);
 
@@ -961,12 +953,12 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, 
 }
 
 
-STDMETHODIMP CSVCommand::SVRegisterStream(SAFEARRAY* psaName, VARIANT vtInterface, SAFEARRAY** ppsaStatus)
+STDMETHODIMP CSVCommand::SVRegisterStream(SAFEARRAY* , VARIANT , SAFEARRAY** )
 {
 	return E_FAIL;
 }
 
-STDMETHODIMP CSVCommand::SVUnRegisterStream(VARIANT vtInterface)
+STDMETHODIMP CSVCommand::SVUnRegisterStream(VARIANT )
 {
 	return E_FAIL;
 }
@@ -993,7 +985,7 @@ STDMETHODIMP CSVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psa
 	SVConfigurationObject* pConfig(nullptr);
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 
-	long lNumberOfElements = psaNames->rgsabound[0].cElements;
+	unsigned long lNumberOfElements = psaNames->rgsabound[0].cElements;
 
 	ASSERT(nullptr != ppsaStatus);
 	ASSERT(nullptr != *ppsaStatus);	// must provide allocated SafeArray(LONG)
@@ -1006,7 +998,7 @@ STDMETHODIMP CSVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psa
 	long lDefaultStatus = S_FALSE;
 
 	// create String array of value names; set default Status
-	for (long lIndex = 0; lIndex < lNumberOfElements; lIndex++)
+	for (long lIndex = 0; lIndex < static_cast<long> (lNumberOfElements); lIndex++)
 	{
 		SafeArrayGetElementNoCopy(psaNames, &lIndex, &bstr);
 		std::string sName = SvUl::createStdString(_bstr_t(bstr));
@@ -1028,7 +1020,7 @@ STDMETHODIMP CSVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psa
 	HRESULT hrOK = S_OK;
 	uint32_t l_PPQId = SvDef::InvalidObjectId;
 
-	for (long i = 0; i < lNumberOfElements && SUCCEEDED(hrOK); i++)
+	for (long i = 0; i < static_cast<long> (lNumberOfElements) && SUCCEEDED(hrOK); i++)
 	{
 		SVInspectionProcess* pInspection(nullptr);
 		//GetInspectionObject is only true if the pointer is valid
@@ -1052,7 +1044,7 @@ STDMETHODIMP CSVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psa
 					{
 						hrOK = SVMSG_REQUESTED_OBJECTS_ON_DIFFERENT_PPQS;
 						// set the status of all objects to this error
-						for (long l = 0; l < lNumberOfElements; l++)
+						for (long l = 0; l < static_cast<long> (lNumberOfElements); l++)
 						{
 							/*HRESULT hrTemp = */SafeArrayPutElement(*ppsaStatus, &l, (void*)&hrOK);
 						}
@@ -1093,7 +1085,7 @@ STDMETHODIMP CSVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psa
 		// Product is still valid; 
 		// Build the array containing the result data
 
-		for (long i = 0; i < lNumberOfElements; i++)
+		for (long i = 0; i < static_cast<long> (lNumberOfElements); i++)
 		{
 			SVObjectReference ObjectRef = aValueObjects[i];
 			std::string Value;
@@ -1195,7 +1187,7 @@ STDMETHODIMP CSVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psa
 	return hr;
 }
 
-STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* psaNames, long lCompression, SAFEARRAY** ppsaImages, SAFEARRAY** ppsaOverlays, SAFEARRAY** ppsaStatus)
+STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* psaNames, long , SAFEARRAY** ppsaImages, SAFEARRAY** ppsaOverlays, SAFEARRAY** ppsaStatus)
 {
 	HRESULT hrResult = S_OK;
 
@@ -1211,7 +1203,7 @@ STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* ps
 		// SETUP
 		long l(0);
 
-		long lNumberOfElements = psaNames->rgsabound[0].cElements;
+		unsigned long lNumberOfElements = psaNames->rgsabound[0].cElements;
 
 		ASSERT(nullptr != ppsaStatus);
 		ASSERT(nullptr != *ppsaStatus);	// must provide allocated SafeArray(LONG)
@@ -1235,7 +1227,7 @@ STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* ps
 		long lDefaultStatus = S_FALSE;
 
 		// set default status for objects in list
-		for (long lIndex = 0; lIndex < lNumberOfElements; lIndex++)
+		for (long lIndex = 0; lIndex < static_cast<long> (lNumberOfElements); lIndex++)
 		{
 			/*HRESULT hrTemp = */SafeArrayPutElement(*ppsaStatus, &lIndex, &lDefaultStatus);
 			// No overlays for no for product source images
@@ -1259,7 +1251,7 @@ STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* ps
 		HRESULT hrOK = S_OK;
 		uint32_t l_PPQId = SvDef::InvalidObjectId;
 
-		for (l = 0; l < lNumberOfElements && SUCCEEDED(hrOK); l++)
+		for (l = 0; l < static_cast<long> (lNumberOfElements) && SUCCEEDED(hrOK); l++)
 		{
 			BSTR bstrName = nullptr;
 			SafeArrayGetElementNoCopy(psaNames, &l, &bstrName);
@@ -1303,7 +1295,7 @@ STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* ps
 							{
 								hrOK = SVMSG_REQUESTED_OBJECTS_ON_DIFFERENT_PPQS;
 								// set the status of all objects to this error
-								for (long i = 0; i < lNumberOfElements; i++)
+								for (long i = 0; i < static_cast<long> (lNumberOfElements); i++)
 								{
 									/*HRESULT hrTemp = */SafeArrayPutElement(*ppsaStatus, &i, (void*)&hrOK);
 								}
@@ -1351,7 +1343,7 @@ STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* ps
 			{
 				// Product is still valid; 
 				// Build the output images from the result data index in the product and the source images by name  (?)
-				for (l = 0; l < lNumberOfElements; l++)
+				for (l = 0; l < static_cast<long> (lNumberOfElements); l++)
 				{
 					HRESULT hrImage = S_OK;
 					if (nullptr != aInspections[l])
@@ -1759,7 +1751,7 @@ HRESULT CSVCommand::SVGetDataList(SAFEARRAY* psaNames, SAFEARRAY** ppsaValues, S
 	bool    InspectionNotFound = false;
 
 	//get number of elements out of the incoming safearray
-	long Size = psaNames->rgsabound[0].cElements;
+	unsigned long Size = psaNames->rgsabound[0].cElements;
 
 	ASSERT(nullptr != ppsaStatus);
 	ASSERT(nullptr != *ppsaStatus);	// must provide allocated SafeArray(LONG)
@@ -1776,7 +1768,7 @@ HRESULT CSVCommand::SVGetDataList(SAFEARRAY* psaNames, SAFEARRAY** ppsaValues, S
 	SVConfigurationObject* pConfig(nullptr);
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 
-	for (long l = 0; l < Size; l++)
+	for (long l = 0; l < static_cast<long> (Size); l++)
 	{
 		std::string Name;
 		std::string Value;
@@ -1817,7 +1809,6 @@ HRESULT CSVCommand::SVGetDataList(SAFEARRAY* psaNames, SAFEARRAY** ppsaValues, S
 			}
 			else
 			{
-				SVObjectReference ObjectRef;
 				SVObjectManagerClass::Instance().GetObjectByDottedName(Name.c_str(), ObjectRef);
 
 				if (nullptr != ObjectRef.getObject())
@@ -1975,7 +1966,7 @@ STDMETHODIMP CSVCommand::SVSetSourceImage(BSTR bstrName, BSTR bstrImage)
 	return hrResult;
 }
 
-STDMETHODIMP CSVCommand::SVSetInputs(SAFEARRAY* psaNames, SAFEARRAY* psaValues, SAFEARRAY** ppsaStatus)
+STDMETHODIMP CSVCommand::SVSetInputs(SAFEARRAY* psaNames, SAFEARRAY* psaValues, SAFEARRAY** )
 {
 	USES_CONVERSION;
 
@@ -2165,7 +2156,7 @@ HRESULT CSVCommand::SVSetImageList(SAFEARRAY *psaNames, SAFEARRAY *psaImages, SA
 	return hr;
 }
 
-HRESULT CSVCommand::SVSetToolParameterList(SAFEARRAY* psaNames, SAFEARRAY* psaValues, SAFEARRAY** ppsaStatus)
+HRESULT CSVCommand::SVSetToolParameterList(SAFEARRAY* psaNames, SAFEARRAY* psaValues, SAFEARRAY** )
 {
 	USES_CONVERSION;
 
@@ -2236,17 +2227,17 @@ HRESULT CSVCommand::SVSetToolParameterList(SAFEARRAY* psaNames, SAFEARRAY* psaVa
 	return Result;
 }
 
-HRESULT CSVCommand::SVLockImage(long ProcessCount, long Index, BSTR bName)
+HRESULT CSVCommand::SVLockImage(long , long , BSTR )
 {
 	return E_FAIL;
 }
 
-HRESULT CSVCommand::SVGetLockedImage(long Index, long Compression, BSTR* bstrImage, BSTR* bstrOverlay)
+HRESULT CSVCommand::SVGetLockedImage(long , long , BSTR* , BSTR* )
 {
 	return E_FAIL;
 }
 
-HRESULT CSVCommand::SVUnlockImage(long Index)
+HRESULT CSVCommand::SVUnlockImage(long )
 {
 	return E_FAIL;
 }
@@ -2326,20 +2317,20 @@ STDMETHODIMP CSVCommand::SVSetRemoteInput(long lIndex, VARIANT vtValue)
 }// end SVSetRemoteInput
 
 // This method is used to connect the event object to the application.
-HRESULT CSVCommand::StoreEventObserver(DWORD dwCookie, CComPtr< CSVCommand > p_pObserver)
+HRESULT CSVCommand::StoreEventObserver(DWORD , CComPtr< CSVCommand > p_pObserver)
 {
 	return S_OK;
 }
 
 // This method is used to disconnect the event object to the application.
-HRESULT CSVCommand::ReleaseEventObserver(DWORD dwCookie, CComPtr< CSVCommand > p_pObserver)
+HRESULT CSVCommand::ReleaseEventObserver(DWORD , CComPtr< CSVCommand > p_pObserver)
 {
 	return S_OK;
 }
 
 // Stub for SVGetTransferValueDefinitionList
 STDMETHODIMP CSVCommand::SVGetTransferValueDefinitionList(BSTR bstrInspectionName,
-	long* p_plVersion,
+	long* ,
 	VARIANT* p_pvData)
 {
 	USES_CONVERSION;
@@ -2507,7 +2498,7 @@ STDMETHODIMP CSVCommand::SVGetTransferValueDefinitionList(BSTR bstrInspectionNam
 
 // Stub for SVGetTransferImageDefinitionList
 STDMETHODIMP CSVCommand::SVGetTransferImageDefinitionList(BSTR bstrInspectionName,
-	long* p_plVersion,
+	long* ,
 	VARIANT* p_pvData)
 {
 	USES_CONVERSION;

@@ -491,7 +491,7 @@ BITMAPINFOHEADER SVImageInfoClass::GetBitmapInfoHeader() const
 
 	l_info.biWidth = width;
 	l_info.biHeight = height;
-	l_info.biBitCount = pixelDepth;
+	l_info.biBitCount = static_cast<WORD> (pixelDepth);
 
 	WORD wClrBits = 8;
 	if (format == SvDef::SVImageFormatBGR888)

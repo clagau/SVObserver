@@ -41,7 +41,7 @@ public:
 	SVInPlaceImageOperatorListClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVINPLACEIMAGEOPERATORLIST );
 	virtual ~SVInPlaceImageOperatorListClass();
 
-	virtual bool isInputImage(uint32_t imageId) const override { return false; };
+	virtual bool isInputImage(uint32_t) const override { return false; };
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 	virtual bool Run( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;

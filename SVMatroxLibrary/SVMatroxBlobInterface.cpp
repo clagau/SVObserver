@@ -836,7 +836,7 @@ bool SVMatroxBlobInterface::IsValidDimension(int value)
 	return bRetVal;
 }
 
-bool SVMatroxBlobInterface::IsValidCandidate(const SVBlob& blob, const SIZE& size, const POINT& offset)
+bool SVMatroxBlobInterface::IsValidCandidate(const SVBlob& blob, const SIZE&, const POINT& offset)
 {
 	bool bRetVal = false;
 

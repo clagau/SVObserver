@@ -86,7 +86,7 @@ BOOL SVDiscreteOutputsView::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName
 	return RetVal;
 }
 
-void SVDiscreteOutputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint ) 
+void SVDiscreteOutputsView::OnUpdate( CView* , LPARAM , CObject*  ) 
 {
 	SVIOController* pIOController{nullptr};
 
@@ -174,7 +174,7 @@ void SVDiscreteOutputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHi
 	}
 }
 
-void SVDiscreteOutputsView::OnLButtonDblClk( UINT nFlags, CPoint point ) 
+void SVDiscreteOutputsView::OnLButtonDblClk(UINT, CPoint point) 
 {
 	SVIOEntryHostStructPtr pIOEntry;
 	SVOutputObjectPtr pOutput;

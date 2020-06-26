@@ -200,7 +200,7 @@ bool SVShapeMaskHelperClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 	return Result;
 }
 
-bool SVShapeMaskHelperClass::onRun( bool First, SvOi::SVImageBufferHandlePtr RInputImageHandle, SvOi::SVImageBufferHandlePtr ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVShapeMaskHelperClass::onRun( bool, SvOi::SVImageBufferHandlePtr RInputImageHandle, SvOi::SVImageBufferHandlePtr ROutputImageHandle, SVRunStatusClass& , SvStl::MessageContainerVector * )
 {
 	return TRUE;	// what do we want to do here for the status?
 }

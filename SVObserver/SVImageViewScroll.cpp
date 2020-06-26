@@ -82,7 +82,7 @@ BOOL SVImageViewScroll::OnEraseBkgnd( CDC* p_pDC )
 	return l_bOk;
 }
 
-void SVImageViewScroll::OnDraw(CDC *pDC)
+void SVImageViewScroll::OnDraw(CDC*)
 {
 }
 

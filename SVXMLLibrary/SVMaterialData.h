@@ -31,7 +31,7 @@ namespace  SvXml
 
 		void clear();
 
-		VARIANT GetVARIANT();
+		VARIANT& GetVARIANT();
 
 		operator const _variant_t & () const;
 

@@ -40,9 +40,9 @@ struct checkStruct
 
 SvSyl::SVVersionUnion convertToVersion(std::string versionString)
 {
-	int majorV = 0;
-	int minorV = 0;
-	if (2 == sscanf_s(versionString.c_str(), "%d.%d", &majorV, &minorV))
+	uint8_t majorV = 0;
+	uint8_t minorV = 0;
+	if (2 == sscanf_s(versionString.c_str(), "%hhu.%hhu", &majorV, &minorV))
 	{
 		SvSyl::SVVersionUnion version;
 		version.m_VersionParts.m_Major = majorV;

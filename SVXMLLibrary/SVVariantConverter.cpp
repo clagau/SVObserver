@@ -21,7 +21,6 @@ namespace  SvXml
 	HRESULT SVVariantConverter::TranslateVariant(VARIANT* avpValue, BSTR* abstrpValue, BSTR* abstrpType)
 	{
 		HRESULT hr = 0;
-		long lIsArray = 0;
 		WCHAR wszTempBuildBuffer[500];
 
 		while (1)

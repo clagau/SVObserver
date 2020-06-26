@@ -69,7 +69,7 @@ void SVUnloadDeviceDialog::OnClose()
 	// TODO: Add your message handler code here and/or call default
 }
 
-BOOL SVUnloadDeviceDialog::OnCommand(WPARAM wParam, LPARAM lParam) 
+BOOL SVUnloadDeviceDialog::OnCommand(WPARAM, LPARAM ) 
 {
 	// TODO: Add your specialized code here and/or call the base class
 

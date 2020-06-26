@@ -163,13 +163,13 @@ public:
 	// the following template functions are defined in-class because out-of-class is not supported yet (Q241949)
 	template<typename DERIVED>
 	    //DERIVED* DerivedValue(const DERIVED*& rpDummyArg)
-		DERIVED* DerivedValue(DERIVED*& rpDummyArg)
+		DERIVED* DerivedValue(DERIVED*& )
 	                            { DERIVED* p = nullptr;
 	                              if (m_pImpl) {p = dynamic_cast< DERIVED* > ((BASETYPE*) *this);
 								              assert(p); }	// if the assert hits, the type is incorrect
 	                              return p;}
 	template<typename DERIVED>
-	    const DERIVED* DerivedValue(const DERIVED*& rpDummyArg) const
+	    const DERIVED* DerivedValue(const DERIVED*& ) const
 	                            { const DERIVED* p = nullptr;
 	                              if (m_pImpl) { p = dynamic_cast< const DERIVED* > ((const BASETYPE*) *this);
 								               assert(p); }  // if the assert hits, the type is incorrect

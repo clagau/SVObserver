@@ -178,7 +178,7 @@ SVPictureDisplayCtrl::~SVPictureDisplayCtrl()
 	// TODO: Cleanup your control's instance data here.
 }
 
-void SVPictureDisplayCtrl::OnDraw(CDC* pdc, const CRect& rcBounds, const CRect& rcInvalid)
+void SVPictureDisplayCtrl::OnDraw(CDC* pdc, const CRect& rcBounds, const CRect& )
 {
 	if (!pdc)
 	{
@@ -252,16 +252,8 @@ BOOL SVPictureDisplayCtrl::IsSubclassedControl()
 
 // SVPictureDisplayCtrl::OnOcmCommand - Handle command messages
 
-LRESULT SVPictureDisplayCtrl::OnOcmCommand(WPARAM wParam, LPARAM lParam)
+LRESULT SVPictureDisplayCtrl::OnOcmCommand(WPARAM, LPARAM)
 {
-#ifdef _WIN32
-	WORD wNotifyCode = HIWORD(wParam);
-#else
-	WORD wNotifyCode = HIWORD(lParam);
-#endif
-
-	// TODO: Switch on wNotifyCode here.
-
 	return 0;
 }
 
@@ -285,8 +277,8 @@ int SVPictureDisplayCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_TabDisplay.SetIsClearOverlayByNewImage( m_isClearOverlayByNewImage );
 	m_TabDisplay.SetBoundaryCheck( m_isBoundaryCheck );
 	m_TabDisplay.SetShowZoomSlider( m_ShowZoomSlider );
-	m_TabDisplay.SetHideTabControl( m_HideTabControl );
-	m_TabDisplay.SetHideScrollBar( m_HideScrollBar );
+	m_TabDisplay.SetHideTabControl( m_HideTabControl ? VARIANT_TRUE : VARIANT_FALSE );
+	m_TabDisplay.SetHideScrollBar( m_HideScrollBar ? VARIANT_TRUE : VARIANT_FALSE);
 	m_TabDisplay.ShowWindow( SW_SHOW );
 
 	return 0;
@@ -494,7 +486,7 @@ LRESULT SVPictureDisplayCtrl::OnMouseMovedIm( WPARAM x, LPARAM y )
 	long Tab = -1;
 	long xParam = static_cast< long >( x ); // MouseMovedIm takes LONG because it's a COM method, but WPARAM is LONG_PTR
 	long yParam = static_cast< long >( y ); // MouseMovedIm takes LONG because it's a COM method, but LPARAM is LONG_PTR
-	HRESULT l_hr = m_TabDisplay.GetSelectedTab( Tab );
+	m_TabDisplay.GetSelectedTab( Tab );
 	MouseMovedIm( Tab, xParam, yParam );
 	return 0L;
 }
@@ -507,7 +499,7 @@ LRESULT SVPictureDisplayCtrl::OnObjectDeleted( WPARAM tabIndex, LPARAM handle )
 	return 0L;
 }
 
-LRESULT SVPictureDisplayCtrl::OnTabChanged( WPARAM tabIndex, LPARAM lParam )
+LRESULT SVPictureDisplayCtrl::OnTabChanged( WPARAM tabIndex, LPARAM)
 {
 	TabChange( static_cast<long>(tabIndex) );
 	return 0L;
@@ -641,7 +633,7 @@ VARIANT_BOOL SVPictureDisplayCtrl::GetIsClearOverlayByNewImage()
 {
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 
-	return m_isClearOverlayByNewImage;
+	return m_isClearOverlayByNewImage ? VARIANT_TRUE : VARIANT_FALSE;
 }
 
 void SVPictureDisplayCtrl::SetIsClearOverlayByNewImage(VARIANT_BOOL newVal)
@@ -656,7 +648,7 @@ VARIANT_BOOL SVPictureDisplayCtrl::GetZoomSimultaneous()
 {
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 
-	return m_isZoomSimultaneous;
+	return m_isZoomSimultaneous ? VARIANT_TRUE : VARIANT_FALSE;
 }
 
 void SVPictureDisplayCtrl::SetZoomSimultaneous(VARIANT_BOOL newVal)
@@ -672,7 +664,7 @@ VARIANT_BOOL SVPictureDisplayCtrl::GetZoomSlider()
 {
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 
-	return m_ShowZoomSlider;
+	return m_ShowZoomSlider ? VARIANT_TRUE : VARIANT_FALSE;
 }
 
 void SVPictureDisplayCtrl::SetZoomSlider(VARIANT_BOOL newVal)
@@ -687,7 +679,7 @@ VARIANT_BOOL SVPictureDisplayCtrl::GetBoundaryCheck()
 {
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 
-	return m_isBoundaryCheck;
+	return m_isBoundaryCheck ? VARIANT_TRUE : VARIANT_FALSE;
 }
 
 void SVPictureDisplayCtrl::SetBoundaryCheck(VARIANT_BOOL newVal)
@@ -703,7 +695,7 @@ VARIANT_BOOL SVPictureDisplayCtrl::GetHideScrollBar()
 {
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 
-	return m_HideScrollBar;
+	return m_HideScrollBar ? VARIANT_TRUE : VARIANT_FALSE;
 }
 
 void SVPictureDisplayCtrl::SetHideScrollBar(VARIANT_BOOL newVal)
@@ -718,7 +710,7 @@ VARIANT_BOOL SVPictureDisplayCtrl::GetHideTabControl()
 {
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 
-	return m_HideTabControl;
+	return m_HideTabControl ? VARIANT_TRUE : VARIANT_FALSE;
 }
 
 void SVPictureDisplayCtrl::SetHideTabControl(VARIANT_BOOL newVal)

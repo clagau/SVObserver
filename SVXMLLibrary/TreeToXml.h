@@ -31,7 +31,6 @@ public:
 	template<typename SVT_TREE>
 	static bool  CopyTreeNodeToWriter(SVT_TREE& rTree, const typename SVT_TREE::SVBranchHandle& TreeNodeHandle, SVObjectXMLWriter& rWriter)
 	{
-		bool status(true);
 		std::string  TreeNodeName;
 		TreeNodeName = rTree.getBranchName(TreeNodeHandle);
 		if (TreeNodeHandle == rTree.getRoot() && TreeNodeName == "Base")

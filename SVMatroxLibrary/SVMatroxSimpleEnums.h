@@ -648,19 +648,19 @@ enum SVOcrControlEnum
 enum SVOcrResultEnum
 {
 	// Result types
-	SVOcrStringValidFlag		= 1L ,			// M_STRING_VALID_FLAG  
-	SVOcrString					= 3L ,			// M_STRING
-	SVOcrCharValidFlag			= 4L ,			// M_CHAR_VALID_FLAG
-	SVOcrCharScore				= 5L ,			// M_CHAR_SCORE
-	SVOcrCharPosX				= 6L ,			// M_CHAR_POSITION_X
-	SVOcrCharPosY				= 7L ,			// M_CHAR_POSITION_Y
-	SVOcrCharSpacing			= 14L ,			// M_CHAR_SPACING
-	SVOcrTextScore				= 15L ,			// M_TEXT_SCORE
-	SVOcrResultText				= 16L ,			// M_TEXT
-	SVOcrResultTextLen			= 17L ,			// M_TEXT_LENGTH
-	SVOcrStringAllocSize		= 18L ,			// M_STRING_ALLOC_SIZE
-	SVOcrThreshold				= 82 ,			// M_THRESHOLD  
-	SVOcrNbrString				= 74L ,			// M_NB_STRING
+	SVOcrStringValidFlag		= 1L,			// M_STRING_VALID_FLAG  
+	SVOcrString					= 3L,			// M_STRING
+	SVOcrCharValidFlag			= 4L,			// M_CHAR_VALID_FLAG
+	SVOcrCharScore				= 5L,			// M_CHAR_SCORE
+	SVOcrCharPosX				= 6L,			// M_CHAR_POSITION_X
+	SVOcrCharPosY				= 7L,			// M_CHAR_POSITION_Y
+	SVOcrCharSpacing			= 14L,			// M_CHAR_SPACING
+	SVOcrTextScore				= 15L,			// M_TEXT_SCORE
+	SVOcrResultText				= 16L,			// M_TEXT
+	SVOcrResultTextLen			= 17L,			// M_TEXT_LENGTH
+	SVOcrStringAllocSize		= 18L,			// M_STRING_ALLOC_SIZE
+	SVOcrThreshold				= 82L,			// M_THRESHOLD  
+	SVOcrNbrString				= 74L,			// M_NB_STRING
 	SVOcrResultStringSize		= 0x00008003L , // M_STRING_SIZE
 	SVOcrStringScore			= 0x00001400L , // M_STRING_SCORE
 	SVOcrSum					= 0x00004000L , // M_SUM

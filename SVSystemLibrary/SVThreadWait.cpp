@@ -81,7 +81,7 @@ void SVThreadWait::Sleep()
 	}
 }
 
-void SVThreadWait::Dispatch( bool& p_WaitForEvents )
+void SVThreadWait::Dispatch( bool& )
 {
 	::SetEvent( m_WaitEvent );
 }

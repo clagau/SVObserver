@@ -63,13 +63,13 @@ SVVariantValueObjectClass::~SVVariantValueObjectClass()
 HRESULT SVVariantValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataObject)
 {
 	HRESULT Result( E_FAIL );
-	bool	bOk( false );
 
 	std::vector<ValueVector> BucketArray;		//This is for backward compatibility
 	ValueVector ValueArray;
 	
+	bool bOk{pDataObject->GetArrayData( SvDef::cArrayTag, ValueArray, DefaultValue())};
 	// new-style: store all array elements:
-	if ( bOk = pDataObject->GetArrayData( SvDef::cArrayTag, ValueArray, DefaultValue() ) )
+	if (bOk)
 	{
 		int32_t arraySize = static_cast<int32_t> (ValueArray.size());
 		SetArraySize(arraySize);
@@ -87,14 +87,14 @@ HRESULT SVVariantValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataO
 			SetValue(rValue, i);
 		}
 	}
-	else if ( bOk = pDataObject->GetAttributeData(_T("m_vtDefault"), ValueArray) )
+	else if(true == (bOk = pDataObject->GetAttributeData(_T("m_vtDefault"), ValueArray)))
 	{
 		if ( 0 < ValueArray.size() )
 		{
 			DefaultValue() = ValueArray[ValueArray.size()-1];
 		}
 	}
-	else if ( bOk = pDataObject->GetAttributeData(_T("m_pavtArray"), BucketArray, DefaultValue() ) )
+	else if(true == (bOk = pDataObject->GetAttributeData(_T("m_pavtArray"), BucketArray, DefaultValue())))
 	{
 		int32_t arraySize = static_cast<int32_t> (ValueArray.size());
 		SetArraySize(arraySize);
@@ -339,7 +339,7 @@ std::string SVVariantValueObjectClass::ToString(const VARIANT& rValue, bool bScr
 					Result += SvUl::createStdString( rValue.bstrVal );
 					if( VT_BOOL == rValue.vt )
 					{
-						SvUl::MakeUpper( Result );
+						Result = SvUl::MakeUpper(Result.c_str());
 					}
 				}
 				else
@@ -440,7 +440,7 @@ std::string SVVariantValueObjectClass::ConvertType2String( const _variant_t& rVa
 				Result = SvUl::createStdString( Value );
 				if( VT_BOOL == rValue.vt )
 				{
-					SvUl::MakeUpper( Result );
+					Result = SvUl::MakeUpper( Result.c_str());
 				}
 			}
 		}
