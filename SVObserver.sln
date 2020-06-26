@@ -578,6 +578,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVPlcIO", "SVPlcIO\SVPlcIO.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Test_ExternalDll", "Test_ExternalDll\ExternalDll.vcxproj", "{F18E13E9-FE92-8282-1B1F-4312951A3D6B}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVAuthUtility", "SVAuthUtility\SVAuthUtility.vcxproj", "{74112EF9-1ABD-4594-98EE-079CB33858E4}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E7DFC94C-271B-42E0-B86A-F39CCE1A50FF} = {E7DFC94C-271B-42E0-B86A-F39CCE1A50FF}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -1050,6 +1055,14 @@ Global
 		{F18E13E9-FE92-8282-1B1F-4312951A3D6B}.Release|x64.ActiveCfg = Release|x64
 		{F18E13E9-FE92-8282-1B1F-4312951A3D6B}.Release|x64.Build.0 = Release|x64
 		{F18E13E9-FE92-8282-1B1F-4312951A3D6B}.Release|x86.ActiveCfg = Release|x64
+		{74112EF9-1ABD-4594-98EE-079CB33858E4}.Debug|x64.ActiveCfg = Debug|x64
+		{74112EF9-1ABD-4594-98EE-079CB33858E4}.Debug|x64.Build.0 = Debug|x64
+		{74112EF9-1ABD-4594-98EE-079CB33858E4}.Debug|x86.ActiveCfg = Debug|Win32
+		{74112EF9-1ABD-4594-98EE-079CB33858E4}.Debug|x86.Build.0 = Debug|Win32
+		{74112EF9-1ABD-4594-98EE-079CB33858E4}.Release|x64.ActiveCfg = Release|x64
+		{74112EF9-1ABD-4594-98EE-079CB33858E4}.Release|x64.Build.0 = Release|x64
+		{74112EF9-1ABD-4594-98EE-079CB33858E4}.Release|x86.ActiveCfg = Release|Win32
+		{74112EF9-1ABD-4594-98EE-079CB33858E4}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

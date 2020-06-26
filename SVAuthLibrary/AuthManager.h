@@ -26,6 +26,7 @@ public:
 	Jwks getJsonWebKeySet() const;
 
 	bool login(const LoginRequest&, LoginResponse&);
+	bool loginNoPassword(const LoginRequest&, LoginResponse&);
 	bool auth(const AuthRequest&, AuthResponse&);
 	bool rpcAuth(const std::string& token);
 	void logout(const LogoutRequest&, LogoutResponse&);

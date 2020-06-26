@@ -88,6 +88,22 @@ bool AuthManager::login(const LoginRequest& req, LoginResponse& res)
 	return true;
 }
 
+bool AuthManager::loginNoPassword(const LoginRequest& req, LoginResponse& res)
+{
+	res.Clear();
+
+	auto accessToken = std::string();
+	if (!generateAccessToken(req.username(), accessToken))
+	{
+		SV_LOG_GLOBAL(info) << "Error while generating access token for user " << req.username();
+		return false;
+	}
+
+	res.set_accesstoken(accessToken);
+
+	return true;
+}
+
 bool AuthManager::auth(const AuthRequest& req, AuthResponse& res)
 {
 	const auto& accessToken = req.accesstoken();

@@ -462,6 +462,49 @@ static bool read_variant(SvPb::Variant& resVar, const _variant_t& variant)
 	return SvPb::ConvertVariantToProtobuf(variant, &resVar) == S_OK;
 }
 
+void SharedMemoryAccess::clear_duplicate_images(const product_stream_t& stream, SvPb::GetProductStreamResponse& res)
+{
+	if (!res.isreject())
+	{
+		return;
+	}
+
+	const auto& imageIds = stream.req.imageids();
+	const auto& rejectImageIds = stream.req.rejectimageids();
+
+	auto imageIdIt = imageIds.cbegin();
+	for (int i = 0; imageIdIt != imageIds.cend(); ++imageIdIt, ++i)
+	{
+		const auto it = std::find(rejectImageIds.cbegin(), rejectImageIds.cend(), *imageIdIt);
+		if (it != rejectImageIds.cend())
+		{
+			res.mutable_images()->at(i).Clear();
+			res.mutable_overlays()->at(i).Clear();
+		}
+	}
+}
+
+void SharedMemoryAccess::clear_duplicate_values(const product_stream_t& stream, SvPb::GetProductStreamResponse& res)
+{
+	if (!res.isreject())
+	{
+		return;
+	}
+
+	const auto& valueIds = stream.req.valueids();
+	const auto& rejectValueIds = stream.req.rejectvalueids();
+
+	auto valueIdIt = valueIds.cbegin();
+	for (int i = 0; valueIdIt != valueIds.cend(); ++valueIdIt, ++i)
+	{
+		const auto it = std::find(rejectValueIds.cbegin(), rejectValueIds.cend(), *valueIdIt);
+		if (it != rejectValueIds.cend())
+		{
+			res.mutable_values()->at(i).Clear();
+		}
+	}
+}
+
 SvSyl::SVFuture<void> SharedMemoryAccess::handle_new_trigger_record(std::shared_ptr<product_stream_t> stream, SvTrc::ITriggerRecordRPtr pTro, int inspectionPos, uint32_t inspectionId, int trId, bool is_reject)
 {
 	auto res = std::make_shared<SvPb::GetProductStreamResponse>();
@@ -471,8 +514,14 @@ SvSyl::SVFuture<void> SharedMemoryAccess::handle_new_trigger_record(std::shared_
 
 	std::vector<SvSyl::SVFuture<void>> imageFutures;
 	const auto includeoverlays = stream->req.includeoverlays();
-	{ // collect images for live-data stream
-		auto future = collect_images(
+
+	{ // always collect images and values for live-data stream
+		collect_values(
+			*res->mutable_values(),
+			*pTro,
+			stream->req.valueids(),
+			stream->valuePositions);
+		imageFutures.emplace_back(collect_images(
 			*res->mutable_images(),
 			*res->mutable_overlays(),
 			pTro,
@@ -480,11 +529,18 @@ SvSyl::SVFuture<void> SharedMemoryAccess::handle_new_trigger_record(std::shared_
 			stream->imagePositions,
 			inspectionPos,
 			inspectionId,
-			includeoverlays);
-		imageFutures.emplace_back(std::move(future));
+			includeoverlays));
 	}
-	{ // collect reject images
-		auto future = collect_images(
+
+	// collect reject images and values
+	if (is_reject)
+	{
+		collect_values(
+			*res->mutable_rejectvalues(),
+			*pTro,
+			stream->req.rejectvalueids(),
+			stream->rejectValuePositions);
+		imageFutures.emplace_back(collect_images(
 			*res->mutable_rejectimages(),
 			*res->mutable_rejectoverlays(),
 			pTro,
@@ -492,12 +548,8 @@ SvSyl::SVFuture<void> SharedMemoryAccess::handle_new_trigger_record(std::shared_
 			stream->rejectImagePositions,
 			inspectionPos,
 			inspectionId,
-			includeoverlays);
-		imageFutures.emplace_back(std::move(future));
+			includeoverlays));
 	}
-
-	collect_values(*res->mutable_values(), *pTro, stream->req.valueids(), stream->valuePositions);
-	collect_values(*res->mutable_rejectvalues(), *pTro, stream->req.rejectvalueids(), stream->rejectValuePositions);
 
 	auto promise = std::make_shared<SvSyl::SVPromise<void>>();
 	SvSyl::SVPromise<void>::all(m_io_service, imageFutures).then(m_io_service, [this, stream, res, promise](SvSyl::SVFuture<void> future)
@@ -510,6 +562,20 @@ SvSyl::SVFuture<void> SharedMemoryAccess::handle_new_trigger_record(std::shared_
 			promise->set_exception(SvRpc::errorToExceptionPtr(err));
 			return;
 		}
+
+		// nothing to send
+		if (res->images().empty() &&
+			res->values().empty() &&
+			res->rejectimages().empty() &&
+			res->rejectvalues().empty())
+		{
+			promise->set_value();
+			return;
+		}
+
+		// skip duplicate values/images
+		clear_duplicate_images(*stream, *res);
+		clear_duplicate_values(*stream, *res);
 
 		stream->observer.onNext(std::move(*res)).then(m_io_service, [promise](SvSyl::SVFuture<void> future)
 		{

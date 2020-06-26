@@ -85,6 +85,8 @@ private:
 	void update_product_stream_queue(product_stream_t&);
 	void flush_product_stream_queue(std::shared_ptr<product_stream_t>);
 	void clear_cancelled_product_streams();
+	void clear_duplicate_images(const product_stream_t& stream, SvPb::GetProductStreamResponse& res);
+	void clear_duplicate_values(const product_stream_t& stream, SvPb::GetProductStreamResponse& res);
 	SvSyl::SVFuture<void> handle_new_trigger_record(std::shared_ptr<product_stream_t>, SvTrc::ITriggerRecordRPtr, int inspectionPos, uint32_t inspectionId, int trId, bool is_reject);
 	SvSyl::SVFuture<void> get_product_data(SvPb::GetProductDataResponse&, const SvPb::GetProductDataRequest& rRequest);
 	SvSyl::SVFuture<void> collect_images(::google::protobuf::RepeatedPtrField<SvPb::Image>&, ::google::protobuf::RepeatedPtrField<SvPb::OverlayDesc>&, SvTrc::ITriggerRecordRPtr, const ::google::protobuf::RepeatedField<uint32_t>& imageIds, const std::vector<std::pair<bool, int>>& imagePositions, int inspectionPos, uint32_t inspectionId, bool includeOverlays);
