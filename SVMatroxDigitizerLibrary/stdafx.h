@@ -61,7 +61,5 @@
 #include <boost/config.hpp>
 #include <boost/utility.hpp>
 
-#define M_MIL_USE_SAFE_TYPE 0
-
 #include <mil.h>
 #pragma endregion Precompiled Headers

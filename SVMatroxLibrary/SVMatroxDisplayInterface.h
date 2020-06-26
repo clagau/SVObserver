@@ -71,8 +71,6 @@ public:
 	static HRESULT Deselect( const __int64& p_rDispId);
 
 	static HRESULT GetBitmapInfo( LPBITMAPINFO& p_rpBitmapInfo, const SVMatroxBuffer& p_rBuffer );
-	static HRESULT GetHostAddress( LPVOID p_rpHostAddress, const SVMatroxBuffer& p_rBuffer );
-
 	
 	// This function replaces MdispSelectWindow
 	static HRESULT SelectWindow( const __int64& p_rDispId, const SVMatroxBuffer& p_rImageId, const HWND& p_hClientWindowHandle );

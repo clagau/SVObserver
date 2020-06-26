@@ -84,9 +84,7 @@ public:
 	// This function replaces MimGetResult
 	static HRESULT GetResult( const __int64& rResultId, std::vector<double>& p_adArray);
 	static HRESULT GetResult( const __int64& rResultId, std::vector<long>& p_alArray);
-	static HRESULT GetResult( const __int64& rResultId, std::vector<BYTE>& p_acArray);
-	static HRESULT GetResult( const __int64& rResultId, void * p_pArray);
-
+	
 	// This function replaces MimHistogram
 	static HRESULT Histogram( const __int64& rResultId, const SVMatroxBuffer& p_rSource);
 	// This function replaces MimLutMap

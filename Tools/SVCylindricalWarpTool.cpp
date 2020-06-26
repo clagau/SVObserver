@@ -412,8 +412,8 @@ bool SVCylindricalWarpToolClass::CreateLUT()
 
 		long* plLutXData = nullptr;
 		long* plLutYData = nullptr;
-		SVMatroxBufferInterface::GetHostAddress( static_cast<void*>(&plLutXData), m_LutX );
-		SVMatroxBufferInterface::GetHostAddress( static_cast<void*>(&plLutYData), m_LutY );
+		SVMatroxBufferInterface::GetHostAddress( &plLutXData, m_LutX );
+		SVMatroxBufferInterface::GetHostAddress( &plLutYData, m_LutY );
 
 		for ( long y = 0; y < lOutputHeight; y++ )
 		{

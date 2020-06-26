@@ -100,74 +100,13 @@ HRESULT SVMatroxSystemInterface::Release(SVMatroxSystem& SystemId)
 	return l_Code;
 }
 
-/**
-@SVOperationName Get
-
-@SVOperationDescription This method gets the Matrox System Control values.
-
-*/
-
-HRESULT SVMatroxSystemInterface::Get(const SVMatroxSystem& SystemId, SVMatroxSystemInquire::SVMatroxSystemInquireEnum InquireType, double& value)
-{
-	HRESULT l_Code( S_OK );
-#ifdef USE_TRY_BLOCKS
-	try
-#endif
-	{
-		MIL_INT mValue;
-		MsysInquire( SystemId.m_SystemIdentifier, InquireType, &mValue);
-		value = static_cast<double>(mValue);
-		l_Code =  SVMatroxApplicationInterface::GetLastStatus();
-	}
-#ifdef USE_TRY_BLOCKS
-	catch(...)
-	{
-		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
-		SVMatroxApplicationInterface::LogMatroxException();
-	}
-#endif
-	return l_Code;
-}
-
-/**
-@SVOperationName Get
-
-@SVOperationDescription This method gets the Matrox System Control values.
-
-*/
-
-HRESULT SVMatroxSystemInterface::Get(const SVMatroxSystem& SystemId, SVMatroxSystemInquire::SVMatroxSystemInquireEnum InquireType, std::string& value)
-{
-	HRESULT l_Code( S_OK );
-#ifdef USE_TRY_BLOCKS
-	try
-#endif
-	{
-		MIL_TEXT_CHAR l_String[256];
-		MsysInquire( SystemId.m_SystemIdentifier, InquireType, reinterpret_cast<void *>(l_String));
-		l_Code =  SVMatroxApplicationInterface::GetLastStatus();
-		if (l_Code == S_OK)
-		{
-			value = l_String;
-		}
-	}
-#ifdef USE_TRY_BLOCKS
-	catch(...)
-	{
-		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
-		SVMatroxApplicationInterface::LogMatroxException();
-	}
-#endif
-	return l_Code;
-}
-
-/**
-@SVOperationName Get
-
-@SVOperationDescription This method gets the Matrox System Control values.
-
-*/
-
+///**
+//@SVOperationName Get
+//
+//@SVOperationDescription This method gets the Matrox System Control values.
+//
+//*/
+//
 HRESULT SVMatroxSystemInterface::Get(const SVMatroxSystem& SystemId, SVMatroxSystemInquire::SVMatroxSystemInquireEnum InquireType, long& InquireValue)
 {
 	HRESULT l_Code( S_OK );

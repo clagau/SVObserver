@@ -972,12 +972,12 @@ HRESULT SVMatroxOcrInterface::GetResult(const __int64& rResultId, SVOcrResultEnu
 		{
 			if (M_NULL != rResultId)
 			{
-				MIL_TEXT_CHAR l_cBuf[256];
-				MocrGetResult(rResultId, l_lControlType, &l_cBuf);
+				MIL_STRING strBuf;
+				MocrGetResult(rResultId, l_lControlType, strBuf);
 				l_Code = SVMatroxApplicationInterface::GetLastStatus();
 				if (l_Code == S_OK)
 				{
-					p_rStrValue = l_cBuf;
+					p_rStrValue = strBuf;
 				}
 			}
 			else

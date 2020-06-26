@@ -193,7 +193,7 @@ HRESULT SVMatroxApplicationInterface::GetLastStatus()
 			SVMatroxApplicationInterface::GetLastStatus( l_info );
 #if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 			TCHAR buf[M_ERROR_MESSAGE_SIZE * 2];
-			_stprintf_s( buf, M_ERROR_MESSAGE_SIZE * 2, _T("%ld - %s\n"), l_info.m_FunctionCode, l_info.m_FunctionString.c_str() );
+			_stprintf_s( buf, M_ERROR_MESSAGE_SIZE * 2, _T("%lld - %s\n"), l_info.m_FunctionCode, l_info.m_FunctionString.c_str() );
 			::OutputDebugString(buf );
 #endif
 		}
@@ -420,8 +420,8 @@ HRESULT SVMatroxApplicationInterface::GetSystemName( long long p_lSystemNumber, 
 		try
 		#endif
 		{
-			char name[256];
-			MappInquire(M_INSTALLED_SYSTEM_DESCRIPTOR + p_lSystemNumber, &name);
+			MIL_STRING name;
+			MappInquire(M_INSTALLED_SYSTEM_DESCRIPTOR + p_lSystemNumber, name);
 			Result = SVMatroxApplicationInterface::GetLastStatus();
 			if ( S_OK == Result )
 			{
@@ -475,18 +475,6 @@ void SVMatroxApplicationInterface::LocalInitialize()
 			MappControl( M_ERROR, M_PRINT_DISABLE );
 #endif // DEBUG
 
-
-
-			// Retrieve previous handler ptr and user handler ptr
-			MappInquire( M_CURRENT_ERROR_HANDLER_PTR, &l_pHandlerFunction );
-			MappInquire( M_CURRENT_ERROR_HANDLER_USER_PTR, &l_pHandlerUserData );
-
-			if (nullptr != l_pHandlerFunction && nullptr != l_pHandlerUserData)
-			{
-			// disable previous
-			MappHookFunction( M_DEFAULT, M_ERROR_CURRENT + M_UNHOOK, l_pHandlerFunction, l_pHandlerUserData );
-			}
-
 			// Hook into MIL error handling
 			MappHookFunction( M_DEFAULT, M_ERROR_CURRENT, SVMatroxHookHandler, nullptr );
 
@@ -515,7 +503,7 @@ void SVMatroxApplicationInterface::LocalInitialize()
 				SVMatroxApplicationInterface::GetLastStatus( l_info );
 #if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 				TCHAR buf[M_ERROR_MESSAGE_SIZE * 2];
-				_stprintf_s( buf, M_ERROR_MESSAGE_SIZE * 2, _T("%ld - %s\n"), l_info.m_FunctionCode, l_info.m_FunctionString.c_str() );
+				_stprintf_s( buf, M_ERROR_MESSAGE_SIZE * 2, _T("%lld - %s\n"), l_info.m_FunctionCode, l_info.m_FunctionString.c_str() );
 				::OutputDebugString(buf );
 #endif
 			}

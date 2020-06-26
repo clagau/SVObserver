@@ -1176,45 +1176,6 @@ HRESULT SVMatroxBufferInterface::GetBitmapInfo(SVBitmapInfo& p_rBitmapInfo, cons
 }
 
 /**
-@SVOperationName GetHostAddress
-
-@SVOperationDescription This function returns the Host address of the buffer, if the buffer is visible from the Host address space and is not a planar 3-band buffer
-
-*/
-HRESULT SVMatroxBufferInterface::GetHostAddress(LPVOID p_rpHostAddress, const SVMatroxBuffer& p_rBuffer)
-{
-	HRESULT l_Code(S_OK);
-#ifdef USE_TRY_BLOCKS
-	try
-#endif
-	{
-		if (!p_rBuffer.empty())
-		{
-			/*MIL_ID l_NewBuf = */MbufInquire(p_rBuffer.GetIdentifier(),
-				M_HOST_ADDRESS,
-				p_rpHostAddress);
-
-			l_Code = SVMatroxApplicationInterface::GetLastStatus();
-
-			assert(p_rpHostAddress);
-		}
-		else
-		{
-			l_Code = SVMEE_INVALID_HANDLE;
-		}
-	}
-#ifdef USE_TRY_BLOCKS
-	catch (...)
-	{
-		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
-		SVMatroxApplicationInterface::LogMatroxException();
-	}
-#endif
-	assert(S_OK == l_Code);
-	return l_Code;
-}
-
-/**
 @SVOperationName CopyBuffer (SVMatroxBuffer to SVMatroxBuffer)
 
 @SVOperationDescription This function copies the data from a SVMatroxBuffer to a SVMatroxBuffer.
@@ -1554,7 +1515,7 @@ HRESULT SVMatroxBufferInterface::CopyBufferToFileDIB(std::string& rTo, SVBitmapI
 	if (S_OK == hres)
 	{
 		void* pHostBuffer = nullptr;
-		std::vector<char> bufferVector;	//this vector is for the data-store for milBuffer with no BitmapInfo. It must be valid as long as pHostBuffer is used.
+		std::vector<BYTE> bufferVector;	//this vector is for the data-store for milBuffer with no BitmapInfo. It must be valid as long as pHostBuffer is used.
 
 		if (isMilInfo)
 		{

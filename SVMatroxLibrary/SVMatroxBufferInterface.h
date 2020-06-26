@@ -12,7 +12,9 @@
 #pragma once
 
 #pragma region Includes
+#include "SVMatroxApplicationInterface.h"
 #include "SVMatroxBuffer.h"
+#include "SVMatroxErrorEnum.h"
 #include "SVMatroxSimpleEnums.h"
 #include "SVMatroxBufferCreateExtStruct.h"
 #include "SVUtilityLibrary/SVPoint.h"
@@ -106,7 +108,35 @@ public:
 public:
 	static HRESULT GetBitmapInfo( SVBitmapInfo& p_rBitmapInfo, const SVMatroxBuffer& p_rBuffer, bool* pIsMilInfo = nullptr );
 
-	static HRESULT GetHostAddress( LPVOID p_rpHostAddress, const SVMatroxBuffer& p_rBuffer );
+	template <typename T>
+	static HRESULT GetHostAddress(T** p_rpHostAddress, const SVMatroxBuffer& p_rBuffer)
+	{
+		HRESULT l_Code(S_OK);
+#ifdef USE_TRY_BLOCKS
+		try
+#endif
+		{
+			if (!p_rBuffer.empty())
+			{
+				MbufInquire(p_rBuffer.GetIdentifier(), M_HOST_ADDRESS, p_rpHostAddress);
+				l_Code = SVMatroxApplicationInterface::GetLastStatus();
+				assert(p_rpHostAddress);
+			}
+			else
+			{
+				l_Code = SVMEE_INVALID_HANDLE;
+			}
+		}
+#ifdef USE_TRY_BLOCKS
+		catch (...)
+		{
+			l_Code = SVMEE_MATROX_THREW_EXCEPTION;
+			SVMatroxApplicationInterface::LogMatroxException();
+		}
+#endif
+		assert(S_OK == l_Code);
+		return l_Code;
+	}
 
 	// ****** Get and Set Functions **********
 	static HRESULT Get( const SVMatroxBuffer& p_rBuf, SVMatroxBufferInfoEnum p_eWhat, double& rResult );

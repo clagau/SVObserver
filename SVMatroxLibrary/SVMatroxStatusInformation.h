@@ -10,6 +10,7 @@
 // ******************************************************************************
 
 #pragma once
+#include <mil.h>
 
 //Moved to precompiled header: #include <string>
 
@@ -25,8 +26,6 @@
 class SVMatroxStatusInformation  
 {
 public:
-	typedef long SVFunctionCode;
-
 	SVMatroxStatusInformation();
 	SVMatroxStatusInformation( const SVMatroxStatusInformation& p_rObject );
 
@@ -43,10 +42,10 @@ public:
 	HRESULT m_StatusCode;
 	std::string m_StatusString;
 
-	SVFunctionCode m_FunctionCode;
+	MIL_INT m_FunctionCode;
 	std::string m_FunctionString;
 
-	long m_StatusSubCodeCount;
+	MIL_INT m_StatusSubCodeCount;
 
 	HRESULT m_StatusSubCode[ 3 ];
 	std::string m_StatusSubString[ 3 ];

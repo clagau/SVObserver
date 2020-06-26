@@ -390,11 +390,10 @@ HRESULT SVUserMaskOperatorClass::BuildMaskLines( SVExtentMultiLineStruct& p_Mult
 			l_hr = m_MaskBufferInfo.GetOutputRectangle( l_rec );
 			// User Mask draw with lines 
 
-			LPVOID pSrcHostBuffer = nullptr;
-			SVMatroxBufferInterface::GetHostAddress( &pSrcHostBuffer, m_MaskBufferHandlePtr->GetBuffer() );
+			unsigned char* pSrcLine = nullptr;
+			SVMatroxBufferInterface::GetHostAddress( &pSrcLine, m_MaskBufferHandlePtr->GetBuffer() );
 			long l_lSrcBytes;
 			SVMatroxBufferInterface::Get(m_MaskBufferHandlePtr->GetBuffer(), SVPitchByte, l_lSrcBytes );
-			unsigned char* pSrcLine = ( unsigned char* )pSrcHostBuffer;
 
 			long l_lSkip = 1;
 		

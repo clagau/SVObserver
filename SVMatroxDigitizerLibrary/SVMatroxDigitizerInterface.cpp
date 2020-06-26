@@ -181,34 +181,6 @@ HRESULT SVMatroxDigitizerInterface::IsCorruptedFrame(__int64 milEventID, bool& b
 }
 
 /**
-@SVOperationName GetGrabTimeStamp
-
-@SVOperationDescription This method gets the timestamp for the grabbed image
-
-*/
-
-HRESULT SVMatroxDigitizerInterface::GetGrabTimeStamp(const SVMatroxDigitizer& DigitizerID, double& timestamp)
-{
-	HRESULT l_Code (S_OK );
-#ifdef USE_TRY_BLOCKS
-	try
-#endif
-	{
-		MdigGetHookInfo(DigitizerID.m_DigitizerIdentifier, M_MODIFIED_BUFFER + M_GRAB_TIME_STAMP, &timestamp);
-		l_Code =  SVMatroxApplicationInterface::GetLastStatus();
-	}
-#ifdef USE_TRY_BLOCKS
-	catch(...)
-	{
-		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
-		SVMatroxApplicationInterface::LogMatroxException();
-	}
-#endif
-
-	return l_Code;
-}
-
-/**
 @SVOperationName GetGrabBuffer
 
 @SVOperationDescription This method gets the buffer that was grabbed into.
@@ -237,49 +209,6 @@ HRESULT SVMatroxDigitizerInterface::GetGrabBuffer(__int64 milEventID, __int64& b
 	return l_Code;
 }
 
-/**
-@SVOperationName GetHookInfo
-
-@SVOperationDescription This method gets the Hook Info for the Digitizer
-
-*/
-
-HRESULT SVMatroxDigitizerInterface::GetHookInfo(__int64 milEventID, SVMatroxDigitizerHook::SVHookInfoEnum InfoType, void* UserPtr)
-{
-	HRESULT l_Code( S_OK );
-#ifdef USE_TRY_BLOCKS
-	try
-#endif
-	{
-		long long l_matroxType = 0;
-		HRESULT hr = ConvertEnumToMatroxType(SVMatroxDigitizerHook::m_HookInfoEnumConvertor, InfoType, l_matroxType);
-		if (S_OK == hr)
-		{
-			MdigGetHookInfo(milEventID, l_matroxType, UserPtr);
-			l_Code =  SVMatroxApplicationInterface::GetLastStatus();
-		}
-		else
-		{
-			l_Code = hr;
-		}
-	}
-#ifdef USE_TRY_BLOCKS
-	catch(...)
-	{
-		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
-		SVMatroxApplicationInterface::LogMatroxException();
-	}
-#endif
-
-	return l_Code;
-}
-
-/**
-@SVOperationName GetGigeEventType
-
-@SVOperationDescription This method gets the Event Type
-
-*/
 
 /**
 @SVOperationName SetHookFunction
@@ -377,34 +306,6 @@ bool SVMatroxDigitizerInterface::IsEventGrabFrameStart(__int64 EventType)
 }
 
 /**
-@SVOperationName AbortGrab
-
-@SVOperationDescription This method aborts the grab in progress for the Digitizer
-
-*/
-
-HRESULT SVMatroxDigitizerInterface::AbortGrab(const SVMatroxDigitizer& DigitizerID)
-{
-	HRESULT l_Code( S_OK );
-#ifdef USE_TRY_BLOCKS
-	try
-#endif
-	{
-		MdigControl(DigitizerID.m_DigitizerIdentifier, M_GRAB_ABORT, (double)M_DEFAULT);
-		l_Code =  SVMatroxApplicationInterface::GetLastStatus();
-	}
-#ifdef USE_TRY_BLOCKS
-	catch(...)
-	{
-		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
-		SVMatroxApplicationInterface::LogMatroxException();
-	}
-#endif
-
-	return l_Code;
-}
-
-/**
 @SVOperationName SetGrabMode
 
 @SVOperationDescription This method sets the Grab Mode for the Digitizer
@@ -429,35 +330,6 @@ HRESULT SVMatroxDigitizerInterface::SetGrabMode(const SVMatroxDigitizer& Digitiz
 		{
 			l_Code = hr;
 		}
-	}
-
-#ifdef USE_TRY_BLOCKS
-	catch(...)
-	{
-		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
-		SVMatroxApplicationInterface::LogMatroxException();
-	}
-#endif
-
-	return l_Code;
-}
-
-/**
-@SVOperationName SetGrabTimeout
-
-@SVOperationDescription This method sets the Grab Timeout value for the Digitizer
-
-*/
-
-HRESULT SVMatroxDigitizerInterface::SetGrabTimeout(const SVMatroxDigitizer& DigitizerID, long value)
-{
-	HRESULT l_Code( S_OK );
-#ifdef USE_TRY_BLOCKS
-	try
-#endif
-	{
-		MdigControl(DigitizerID.m_DigitizerIdentifier, M_GRAB_TIMEOUT, static_cast<MIL_INT32>(value));
-		l_Code =  SVMatroxApplicationInterface::GetLastStatus();
 	}
 
 #ifdef USE_TRY_BLOCKS
@@ -525,80 +397,6 @@ HRESULT SVMatroxDigitizerInterface::Get(const SVMatroxDigitizer& DigitizerID, SV
 		{
 			// conversion error
 			l_Code = hr;
-		}
-	}
-#ifdef USE_TRY_BLOCKS
-	catch(...)
-	{
-		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
-		SVMatroxApplicationInterface::LogMatroxException();
-	}
-#endif
-
-	return l_Code;
-}
-
-/**
-@SVOperationName GetColorMode
-
-@SVOperationDescription This method gets the Color Mode for the Digitizer
-
-*/
-
-HRESULT SVMatroxDigitizerInterface::GetColorMode(const SVMatroxDigitizer& DigitizerID, SVMatroxDigitizerInquire::SVColorModeEnum& ColorMode)
-{
-	HRESULT l_Code( S_OK );
-#ifdef USE_TRY_BLOCKS
-	try
-#endif
-	{
-		long matroxValue;
-		MdigInquire(DigitizerID.m_DigitizerIdentifier, M_COLOR_MODE, &matroxValue);
-		l_Code =  SVMatroxApplicationInterface::GetLastStatus();
-		if (l_Code == S_OK)
-		{
-			HRESULT hr = ConvertEnumFromMatroxType(SVMatroxDigitizerInquire::m_ColorModeEnumConvertor, matroxValue, ColorMode);
-			if (S_OK != hr) // Converison Error
-			{
-				l_Code = hr;
-			}
-		}
-	}
-#ifdef USE_TRY_BLOCKS
-	catch(...)
-	{
-		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
-		SVMatroxApplicationInterface::LogMatroxException();
-	}
-#endif
-
-	return l_Code;
-}
-
-/**
-@SVOperationName GetScanMode
-
-@SVOperationDescription This method gets the Scan Mode for the Digitizer
-
-*/
-
-HRESULT SVMatroxDigitizerInterface::GetScanMode(const SVMatroxDigitizer& DigitizerID, SVMatroxDigitizerInquire::SVScanModeEnum& ScanMode)
-{
-	HRESULT l_Code( S_OK );
-#ifdef USE_TRY_BLOCKS
-	try
-#endif
-	{
-		long matroxValue;
-		MdigInquire(DigitizerID.m_DigitizerIdentifier, M_SCAN_MODE, &matroxValue);
-		l_Code =  SVMatroxApplicationInterface::GetLastStatus();
-		if (S_OK == l_Code)
-		{
-			HRESULT hr = ConvertEnumFromMatroxType(SVMatroxDigitizerInquire::m_ScanModeEnumConvertor, matroxValue, ScanMode);
-			if (S_OK != hr) // Converison Error
-			{
-				l_Code = hr;
-			}
 		}
 	}
 #ifdef USE_TRY_BLOCKS
@@ -843,145 +641,6 @@ HRESULT SVMatroxDigitizerInterface::GetOffset(const SVMatroxDigitizer& Digitizer
 }
 
 /**
-@SVOperationName SetOffset
-
-@SVOperationDescription This method sets the offset for the source image for the Digitizer
-
-*/
-HRESULT SVMatroxDigitizerInterface::SetOffset(const SVMatroxDigitizer& DigitizerID, long XOffset, long YOffset)
-{
-	HRESULT l_Code( S_OK );
-#ifdef USE_TRY_BLOCKS
-	try
-#endif
-	{
-		MdigControlFeature(DigitizerID.m_DigitizerIdentifier, cFeatureControlType, MIL_TEXT("OffsetX"), M_TYPE_MIL_INT32, &XOffset);
-		l_Code =  SVMatroxApplicationInterface::GetLastStatus();
-
-		if (l_Code == S_OK)
-		{
-			MdigControlFeature(DigitizerID.m_DigitizerIdentifier, cFeatureControlType, MIL_TEXT("OffsetY"), M_TYPE_MIL_INT32, &YOffset);
-			l_Code =  SVMatroxApplicationInterface::GetLastStatus();
-		}
-	}
-#ifdef USE_TRY_BLOCKS
-	catch(...)
-	{
-		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
-		SVMatroxApplicationInterface::LogMatroxException();
-	}
-#endif
-
-	return l_Code;
-}
-
-/**
-@SVOperationName GetVendor
-
-@SVOperationDescription This method gets the vendor string for the Digitizer
-
-*/
-
-HRESULT SVMatroxDigitizerInterface::GetVendor(const SVMatroxDigitizer& DigitizerID, std::string& Value)
-{
-	HRESULT l_Code( S_OK );
-#ifdef USE_TRY_BLOCKS
-	try
-#endif
-	{
-		MIL_INT len;
-		MdigInquire(DigitizerID.m_DigitizerIdentifier, cCameraVendorSizeType, &len);
-		l_Code =  SVMatroxApplicationInterface::GetLastStatus();
-		if (l_Code == S_OK)
-		{
-			MIL_TEXT_PTR pVendor = new MIL_TEXT_CHAR[len + 1];
-			MdigInquire(DigitizerID.m_DigitizerIdentifier, M_CAMERA_VENDOR, pVendor);
-			l_Code =  SVMatroxApplicationInterface::GetLastStatus();
-			if (l_Code == S_OK)
-			{
-				Value = pVendor;
-			}
-			delete [] pVendor;
-		}
-	}
-#ifdef USE_TRY_BLOCKS
-	catch(...)
-	{
-		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
-		SVMatroxApplicationInterface::LogMatroxException();
-	}
-#endif
-
-	return l_Code;
-}
-
-/**
-@SVOperationName GetModel
-
-@SVOperationDescription This method gets the model name string for the Digitizer
-
-*/
-
-HRESULT SVMatroxDigitizerInterface::GetModel(const SVMatroxDigitizer& DigitizerID, std::string& Value)
-{
-	HRESULT l_Code( S_OK );
-#ifdef USE_TRY_BLOCKS
-	try
-#endif
-	{
-		MIL_TEXT_CHAR Model[256];
-		MdigInquireFeature(DigitizerID.m_DigitizerIdentifier, cFeatureControlType, MIL_TEXT("DeviceModelName"), M_TYPE_STRING, &Model);
-		l_Code =  SVMatroxApplicationInterface::GetLastStatus();
-		if (l_Code == S_OK)
-		{
-			Value = Model;
-		}
-	}
-#ifdef USE_TRY_BLOCKS
-	catch(...)
-	{
-		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
-		SVMatroxApplicationInterface::LogMatroxException();
-	}
-#endif
-
-	return l_Code;
-}
-
-/**
-@SVOperationName GrabInprogress
-
-@SVOperationDescription This method gets whether a Grab is in Progress for the Digitizer
-
-*/
-
-HRESULT SVMatroxDigitizerInterface::GrabInProgress(const SVMatroxDigitizer& DigitizerID, bool& bInProgress)
-{
-	HRESULT l_Code( S_OK );
-#ifdef USE_TRY_BLOCKS
-	try
-#endif
-	{
-		MIL_INT value = 0;
-		MdigInquire(DigitizerID.m_DigitizerIdentifier, M_GRAB_IN_PROGRESS, &value);
-		l_Code =  SVMatroxApplicationInterface::GetLastStatus();
-		if (l_Code == S_OK)
-		{
-			bInProgress = (value) ? true : false;
-		}
-	}
-#ifdef USE_TRY_BLOCKS
-	catch(...)
-	{
-		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
-		SVMatroxApplicationInterface::LogMatroxException();
-	}
-#endif
-
-	return l_Code;
-}
-
-/**
 @SVOperationName Get
 
 @SVOperationDescription This method gets the Frame Count values for the Digitizer
@@ -1060,34 +719,6 @@ HRESULT SVMatroxDigitizerInterface::GetGigeSerialNumber(const SVMatroxDigitizer&
 }
 
 /**
-@SVOperationName GetMACAddress
-
-@SVOperationDescription This method gets the MAC Address for the Digitizer
-
-*/
-
-HRESULT SVMatroxDigitizerInterface::GetGigeMACAddress(const SVMatroxDigitizer& DigitizerID, __int64& Value)
-{
-	HRESULT l_Code( S_OK );
-#ifdef USE_TRY_BLOCKS
-	try
-#endif
-	{
-		MdigInquire(DigitizerID.m_DigitizerIdentifier, M_GC_MAC_ADDRESS, &Value);
-		l_Code =  SVMatroxApplicationInterface::GetLastStatus();
-	}
-#ifdef USE_TRY_BLOCKS
-	catch(...)
-	{
-		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
-		SVMatroxApplicationInterface::LogMatroxException();
-	}
-#endif
-
-	return l_Code;
-}
-
-/**
 @SVOperationName GetIPAdsress
 
 @SVOperationDescription This method gets the IP Address for the Digitizer
@@ -1115,34 +746,6 @@ HRESULT SVMatroxDigitizerInterface::GetGigeIPAddress(const SVMatroxDigitizer& Di
 	return l_Code;
 }
 
-/**
-@SVOperationName Set
-
-@SVOperationDescription This method sets the Control Camera Value for the Digitizer.
-
-*/
-
-HRESULT SVMatroxDigitizerInterface::EnableLastGrabInTrueBuffer(const SVMatroxDigitizer& DigitizerID, bool bEnable)
-{
-	HRESULT l_Code( S_OK );
-#ifdef USE_TRY_BLOCKS
-	try
-#endif
-	{
-		MdigControl(DigitizerID.m_DigitizerIdentifier, M_LAST_GRAB_IN_TRUE_BUFFER, (bEnable) ? M_ENABLE : M_DISABLE);
-		l_Code =  SVMatroxApplicationInterface::GetLastStatus();
-	}
-#ifdef USE_TRY_BLOCKS
-	catch(...)
-	{
-		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
-		SVMatroxApplicationInterface::LogMatroxException();
-	}
-#endif
-
-	return l_Code;
-}
-		
 /**
 @SVOperationName Set
 
@@ -1209,34 +812,6 @@ HRESULT SVMatroxDigitizerInterface::EnableCorruptedFrameMonitoring(const SVMatro
 }
 
 /**
-@SVOperationName ShowGigeProperties
-
-@SVOperationDescription This method shows the built-in Matrox Gige properties Dialog for the Digitizer.
-
-*/
-HRESULT SVMatroxDigitizerInterface::ShowGigeProperties(const SVMatroxDigitizer& DigitizerID)
-{
-	HRESULT l_Code( S_OK );
-#ifdef USE_TRY_BLOCKS
-	try
-#endif
-	{
-		double value = M_DEFAULT;
-		MdigControl(DigitizerID.m_DigitizerIdentifier, M_GC_FEATURE_BROWSER, value);
-		l_Code =  SVMatroxApplicationInterface::GetLastStatus();
-	}
-#ifdef USE_TRY_BLOCKS
-	catch(...)
-	{
-		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
-		SVMatroxApplicationInterface::LogMatroxException();
-	}
-#endif
-
-	return l_Code;
-}
-
-/**
 @SVOperationName GetFeature
 
 @SVOperationDescription This method gets the Camera Feature from the XML camera data for the Digitizer
@@ -1277,12 +852,12 @@ HRESULT SVMatroxDigitizerInterface::GetFeature(const SVMatroxDigitizer& Digitize
 				case VT_I2:		// Short
 				case VT_UI2:
 				{
-					unsigned short value;
+					MIL_INT value;
 					MdigInquireFeature(DigitizerID.m_DigitizerIdentifier, cFeatureControlType, featureNameStr, l_matroxFeatureType, &value);
 					l_Code = SVMatroxApplicationInterface::GetLastStatus();
 					if (l_Code == S_OK)
 					{
-						FeatureValue = value;
+						FeatureValue = static_cast<unsigned short>(value);
 					}
 				}
 				break;
@@ -1330,12 +905,12 @@ HRESULT SVMatroxDigitizerInterface::GetFeature(const SVMatroxDigitizer& Digitize
 
 				case VT_R4:		// Float
 				{
-					float value;
+					double value;
 					MdigInquireFeature(DigitizerID.m_DigitizerIdentifier, cFeatureControlType, featureNameStr, l_matroxFeatureType, &value);
 					l_Code = SVMatroxApplicationInterface::GetLastStatus();
 					if (l_Code == S_OK)
 					{
-						FeatureValue.fltVal = value;
+						FeatureValue.fltVal = static_cast<float>(value);
 					}
 				}
 				break;
@@ -1433,7 +1008,7 @@ HRESULT SVMatroxDigitizerInterface::SetFeature(const SVMatroxDigitizer& Digitize
 				case VT_I2:		// Short
 				case VT_UI2:
 					{
-						short value = FeatureValue.iVal;
+						MIL_INT value = FeatureValue.iVal;
 						MdigControlFeature(DigitizerID.m_DigitizerIdentifier, controlType, featureNameStr, l_matroxFeatureType, &value);
 						l_Code =  SVMatroxApplicationInterface::GetLastStatus();
 					}
@@ -1473,7 +1048,7 @@ HRESULT SVMatroxDigitizerInterface::SetFeature(const SVMatroxDigitizer& Digitize
 
 				case VT_R4:		// Float
 					{
-						float value = FeatureValue.fltVal;
+						double value = FeatureValue.fltVal;
 						MdigControlFeature(DigitizerID.m_DigitizerIdentifier, controlType, featureNameStr, l_matroxFeatureType, &value);
 						l_Code =  SVMatroxApplicationInterface::GetLastStatus();
 					}
@@ -1512,87 +1087,6 @@ HRESULT SVMatroxDigitizerInterface::SetFeature(const SVMatroxDigitizer& Digitize
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	return l_Code;
-}
-
-/**
-@SVOperationName Grab
-
-@SVOperationDescription This method grabs an image from the Digitizer
-
-*/
-HRESULT SVMatroxDigitizerInterface::Grab(const SVMatroxDigitizer& DigitizerID, const SVMatroxBuffer& DestImageId)
-{
-	HRESULT l_Code( S_OK );
-#ifdef USE_TRY_BLOCKS
-	try
-#endif
-	{
-		MdigGrab(DigitizerID.m_DigitizerIdentifier, DestImageId.GetIdentifier());
-		l_Code =  SVMatroxApplicationInterface::GetLastStatus();
-	}
-#ifdef USE_TRY_BLOCKS
-	catch(...)
-	{
-		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
-		SVMatroxApplicationInterface::LogMatroxException();
-	}
-#endif
-
-	return l_Code;
-}
-
-/**
-@SVOperationName GrabContinuous
-
-@SVOperationDescription This method cause the Digitizer to perform a continuous grab.
-
-*/
-HRESULT SVMatroxDigitizerInterface::GrabContinuous(const SVMatroxDigitizer& DigitizerID, const SVMatroxBuffer& DestImageId)
-{
-	HRESULT l_Code( S_OK );
-#ifdef USE_TRY_BLOCKS
-	try
-#endif
-	{
-		MdigGrabContinuous(DigitizerID.m_DigitizerIdentifier, DestImageId.GetIdentifier());
-		l_Code =  SVMatroxApplicationInterface::GetLastStatus();
-	}
-#ifdef USE_TRY_BLOCKS
-	catch(...)
-	{
-		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
-		SVMatroxApplicationInterface::LogMatroxException();
-	}
-#endif
-
-	return l_Code;
-}
-
-/**
-@SVOperationName GrabWait
-
-@SVOperationDescription This method causes the Digitizer to grab and wait for it to complete.
-
-*/
-HRESULT SVMatroxDigitizerInterface::GrabWait(const SVMatroxDigitizer& DigitizerID, long Flag)
-{
-	HRESULT l_Code( S_OK );
-#ifdef USE_TRY_BLOCKS
-	try
-#endif
-	{
-		MdigGrabWait(DigitizerID.m_DigitizerIdentifier, Flag);
-		l_Code =  SVMatroxApplicationInterface::GetLastStatus();
-	}
-#ifdef USE_TRY_BLOCKS
-	catch(...)
-	{
-		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
-		SVMatroxApplicationInterface::LogMatroxException();
-	}
-#endif
-
 	return l_Code;
 }
 
@@ -1704,33 +1198,6 @@ HRESULT SVMatroxDigitizerInterface::StopGrabArray(const SVMatroxDigitizer& Digit
 }
 
 /**
-@SVOperationName Halt
-
-@SVOperationDescription This method halts any pending grabs.
-
-*/
-HRESULT SVMatroxDigitizerInterface::Halt(const SVMatroxDigitizer& DigitizerID)
-{
-	HRESULT l_Code( S_OK );
-#ifdef USE_TRY_BLOCKS
-	try
-#endif
-	{
-		MdigHalt(DigitizerID.m_DigitizerIdentifier);
-		l_Code =  SVMatroxApplicationInterface::GetLastStatus();
-	}
-#ifdef USE_TRY_BLOCKS
-	catch(...)
-	{
-		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
-		SVMatroxApplicationInterface::LogMatroxException();
-	}
-#endif
-
-	return l_Code;
-}
-
-/**
 @SVOperationName Destroy
 
 @SVOperationDescription This method destroys the Handle for the Digitizer.
@@ -1754,14 +1221,19 @@ HRESULT SVMatroxDigitizerInterface::Destroy(SVMatroxDigitizer& p_rDigitizer)
 */
 HRESULT SVMatroxDigitizerInterface::SetGigeEvent(const SVMatroxDigitizer& DigitizerID, const std::string& eventName, const std::string& value)
 {
-	HRESULT l_Code( S_OK );
-
 	MdigControlFeature(DigitizerID.m_DigitizerIdentifier, cFeatureControlType, MIL_TEXT("EventSelector"), cFeatureControlValueEnumType, eventName.c_str());
-	l_Code =  SVMatroxApplicationInterface::GetLastStatus();
+	HRESULT code =  SVMatroxApplicationInterface::GetLastStatus();
 
 	MdigControlFeature(DigitizerID.m_DigitizerIdentifier, cFeatureControlType, MIL_TEXT("EventNotification"), cFeatureControlValueEnumType, value.c_str());
-	l_Code =  SVMatroxApplicationInterface::GetLastStatus();
-	return l_Code;
+	HRESULT code2 =  SVMatroxApplicationInterface::GetLastStatus();
+	if (S_OK != code)
+	{
+		return code;
+	}
+	else
+	{
+		return code2;
+	}
 }
 
 /**

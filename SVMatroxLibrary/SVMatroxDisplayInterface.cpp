@@ -492,42 +492,6 @@ HRESULT SVMatroxDisplayInterface::GetBitmapInfo(LPBITMAPINFO& p_rpBitmapInfo,
 
 
 /**
-@SVOperationName GetHostAddress
-
-@SVOperationDescription Gets the host address for the specified display.
-
-*/
-HRESULT SVMatroxDisplayInterface::GetHostAddress(LPVOID p_rpHostAddress, const SVMatroxBuffer& p_rBuffer)
-{
-	HRESULT l_Code;
-
-#ifdef USE_TRY_BLOCKS
-	try
-#endif
-
-	{
-		if (!p_rBuffer.empty())
-		{
-			MbufInquire(p_rBuffer.GetIdentifier(), M_HOST_ADDRESS, p_rpHostAddress);
-			l_Code = SVMatroxApplicationInterface::GetLastStatus();
-		}
-		else
-		{
-			l_Code = SVMEE_INVALID_HANDLE;
-		}
-	}
-#ifdef USE_TRY_BLOCKS
-	catch (...)
-	{
-		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
-		SVMatroxApplicationInterface::LogMatroxException();
-	}
-#endif
-	assert(l_Code == S_OK);
-	return l_Code;
-}
-
-/**
 @SVOperationName Display Lut
 
 @SVOperationDescription This function associates a LUT buffer with the specified display.

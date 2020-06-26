@@ -14,7 +14,7 @@
 #include "SMView.h"
 #include "SMViewDlg.h"
 #include "TriggerRecordController\ITriggerRecordControllerR.h"
-#define M_MIL_USE_SAFE_TYPE 0
+
 #include <mil.h>
 
 #ifdef _DEBUG
