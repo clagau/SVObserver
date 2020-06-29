@@ -464,8 +464,6 @@ void SVMatroxApplicationInterface::LocalInitialize()
 			double l_MilVersion( 0.0 );
 
 			typedef __int64(_stdcall *SVMatroxHookFunctionPtr)(__int64, __int64, void*);
-			SVMatroxHookFunctionPtr l_pHandlerFunction = nullptr;
-			void* l_pHandlerUserData = nullptr;
 
 #ifdef _DEBUG
 			// Enable MIL error message to be displayed by MIL
