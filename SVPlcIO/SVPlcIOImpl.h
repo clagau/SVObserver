@@ -79,10 +79,14 @@ private:
 	std::atomic_bool m_engineStarted {false};
 	std::atomic_bool m_engineInitialized {false};
 	std::atomic_bool m_triggerStarted[cMaxPlcTriggers]{false, false, false, false};
+	std::atomic_uint32_t m_inputCount[cMaxPlcTriggers] {0UL, 0UL, 0UL, 0UL};
+	std::atomic_uint32_t m_outputCount[cMaxPlcTriggers] {0UL, 0UL, 0UL, 0UL};
 	std::atomic_int8_t m_currentTriggerChannel{-1};
 
 	std::string m_plcSimulateFile;
-	std::string m_OutputFileName;
+	std::string m_logFileName;
+	std::ofstream m_logInFile;
+	std::ofstream m_logOutFile;
 #pragma endregion Member Variables
 };
 

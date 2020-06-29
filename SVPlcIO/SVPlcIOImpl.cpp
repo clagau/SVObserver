@@ -18,20 +18,20 @@
 
 namespace SvPlc
 {
-
-std::vector<TriggerReport> g_PlcListInput;
-std::vector<ResultReport> g_PlcListOutput;
-
 #pragma region Declarations
 constexpr unsigned long cInputCount = 0;
 constexpr unsigned long cOutputCount = 14;
-constexpr LPCTSTR cIniFile = "SVPLCIO.ini";
-constexpr LPCTSTR cSettingsGroup = "Settings";
-constexpr LPCTSTR cPLCSimulation = "PLCSimulation";
-constexpr LPCTSTR cPLCTransferTime = "PLC-TransferTime";
-constexpr LPCTSTR cPLCNodeID = "PLC-NodeID";
-constexpr LPCTSTR cOutputFileName = "OutputFileName";
-constexpr LPCTSTR cTriggerName = "HardwareTrigger.Dig_";			///This name must match the name in the SVHardwareManifest
+constexpr LPCTSTR cIniFile = _T("SVPLCIO.ini");
+constexpr LPCTSTR cSettingsGroup = _T("Settings");
+constexpr LPCTSTR cPLCSimulation = _T("PLCSimulation");
+constexpr LPCTSTR cPLCTransferTime = _T("PLC-TransferTime");
+constexpr LPCTSTR cPLCNodeID = _T("PLC-NodeID");
+constexpr LPCTSTR cOutputFileName = _T("OutputFileName");
+constexpr LPCTSTR cPlcInputName = _T("_PlcInput.txt");
+constexpr LPCTSTR cPlcOutputName = _T("_PlcOutput.txt");
+constexpr LPCTSTR cPlcInputHeading = _T("Channel; Count; Timestamp; ObjectID; Trigger Index; Trigger per ObjectID\r\n");
+constexpr LPCTSTR cPlcOutputHeading = _T("Channel; Count; Timestamp; ObjectID; Results\r\n");
+constexpr LPCTSTR cTriggerName = _T("HardwareTrigger.Dig_");			///This name must match the name in the SVHardwareManifest
 #pragma endregion Declarations
 
 void triggerDispatcher(SvTh::IntVariantMap&& triggerData, SvTh::DispatcherVector&& dispatchVector)
@@ -57,7 +57,7 @@ HRESULT SVPlcIOImpl::Initialize(bool bInit)
 		memset(buffer, 0, 255);
 		std::string iniFile = SvStl::GlobalPath::Inst().GetBinPath(cIniFile);
 		::GetPrivateProfileString(cSettingsGroup, cOutputFileName, "", buffer, 255, iniFile.c_str());
-		m_OutputFileName = buffer;
+		m_logFileName = buffer;
 		memset(buffer, 0, 255);
 		::GetPrivateProfileString(cSettingsGroup, cPLCSimulation, "", buffer, 255, iniFile.c_str());
 		m_plcSimulateFile = buffer;
@@ -109,7 +109,6 @@ HRESULT SVPlcIOImpl::SetOutputValue(unsigned long )
 
 HRESULT SVPlcIOImpl::SetOutputData(unsigned long triggerIndex, const SvTh::IntVariantMap& rData)
 {
-	HRESULT result {E_FAIL};
 	ResultReport reportResult;
 
 	//PLC channel is zero based while SVObserver trigger index is one based!
@@ -129,13 +128,21 @@ HRESULT SVPlcIOImpl::SetOutputData(unsigned long triggerIndex, const SvTh::IntVa
 			memcpy(&reportResult.m_results[0], rResult.parray->pvData, cResultSize * sizeof(uint8_t));
 		}
 	}
+
 	Tec::writeResult(reportResult);
-	result = S_OK;
-	if (false == m_OutputFileName.empty())
+
+	if (m_logOutFile.is_open() && cMaxPlcTriggers > reportResult.m_channel)
 	{
-		g_PlcListOutput.emplace_back(reportResult);
+		++m_outputCount[reportResult.m_channel];
+		std::string resultString;
+		for (auto& rResult : reportResult.m_results)
+		{
+			resultString += std::to_string(rResult) + ' ';
+		}
+		std::string fileData = SvUl::Format(_T("%d; %d; %f; %d; %s\r\n"), triggerIndex, m_outputCount[reportResult.m_channel], reportResult.m_timestamp, reportResult.m_currentObjectID, resultString.c_str());
+		m_logOutFile.write(fileData.c_str(), fileData.size());
 	}
-	return result;
+	return S_OK;
 }
 
 HRESULT SVPlcIOImpl::GetBoardVersion(long& )
@@ -178,12 +185,24 @@ void SVPlcIOImpl::beforeStartTrigger(unsigned long triggerIndex)
 
 	if (false == m_engineStarted)
 	{
-		g_PlcListInput.clear();
-		g_PlcListOutput.clear();
-		if(false == m_OutputFileName.empty())
+		if(false == m_logFileName.empty())
 		{
-			g_PlcListInput.reserve(20000);
-			g_PlcListOutput.reserve(20000);
+			std::string fileName = m_logFileName;
+			fileName += cPlcInputName;
+			m_logInFile.open(fileName.c_str(), std::ofstream::out | std::ofstream::binary | std::ofstream::trunc);
+			if(m_logInFile.is_open())
+			{
+				std::string fileData(cPlcInputHeading);
+				m_logInFile.write(fileData.c_str(), fileData.size());
+			}
+			fileName = m_logFileName;
+			fileName += cPlcOutputName;
+			m_logOutFile.open(fileName.c_str(), std::ofstream::out | std::ofstream::binary | std::ofstream::trunc);
+			if (m_logOutFile.is_open())
+			{
+				std::string fileData(cPlcOutputHeading);
+				m_logOutFile.write(fileData.c_str(), fileData.size());
+			}
 		}
 		Tec::startTriggerEngine(std::bind(&SVPlcIOImpl::reportTrigger, this, std::placeholders::_1), m_plcNodeID, m_plcTransferTime, m_plcSimulateFile);
 		Tec::setReady(m_moduleReady);
@@ -201,7 +220,7 @@ HRESULT SVPlcIOImpl::afterStartTrigger(HRESULT result)
 	}
 	if(S_OK == result)
 	{
-		if(0 <= m_currentTriggerChannel && cNumberOfChannels > m_currentTriggerChannel)
+		if(0 <= m_currentTriggerChannel && cMaxPlcTriggers > m_currentTriggerChannel)
 		{
 			if (false == m_triggerStarted[m_currentTriggerChannel])
 			{
@@ -254,54 +273,17 @@ void SVPlcIOImpl::beforeStopTrigger(unsigned long triggerIndex)
 			::OutputDebugString("Irq Enabled reset\n");
 			::SetThreadPriority(::GetCurrentThread(), THREAD_PRIORITY_NORMAL);
 
-			if(false == m_OutputFileName.empty())
+			if(m_logInFile.is_open())
 			{
-				std::string fileName = m_OutputFileName;
-				fileName += "_PlcInput.txt";
-				::DeleteFile(fileName.c_str());
-
-				uint32_t inputCount[cMaxPlcTriggers] {0, 0, 0, 0};
-				std::string fileData = _T("Channel; Count; Timestamp; ObjectID; Trigger Index; Trigger per ObjectID\r\n");
-				for (const auto& rData : g_PlcListInput)
-				{
-					++inputCount[rData.m_channel];
-					fileData += SvUl::Format(_T("%d; %d; %f; %d; %d; %d\r\n"), rData.m_channel + 1, inputCount[rData.m_channel], rData.m_triggerTimestamp, rData.m_currentObjectID, rData.m_triggerIndex, rData.m_triggerPerObjectID);
-				}
-				std::ofstream outputFile {fileName.c_str(), std::ofstream::out | std::ofstream::binary | std::ofstream::app};
-				if(outputFile.is_open())
-				{
-					outputFile.write(fileData.c_str(), fileData.size());
-					outputFile.close();
-				}
-
-				fileName = m_OutputFileName;
-				fileName += "_PlcOutput.txt";
-				::DeleteFile(fileName.c_str());
-
-				uint32_t outputCount[cMaxPlcTriggers] {0, 0, 0, 0};
-				fileData = _T("Channel; Count; Timestamp; ObjectID; Results\r\n");
-				for (const auto& rData : g_PlcListOutput)
-				{
-					std::string resultString;
-					for(auto& rResult : rData.m_results)
-					{
-						resultString += std::to_string(rResult) + ' ';
-					}
-					++outputCount[rData.m_channel];
-					fileData += SvUl::Format(_T("%d; %d; %f; %d; %s\r\n"), rData.m_channel + 1, outputCount[rData.m_channel], rData.m_timestamp, rData.m_currentObjectID, resultString.c_str());
-				}
-				outputFile.open(fileName.c_str(), std::ofstream::out | std::ofstream::binary | std::ofstream::app);
-				if (outputFile.is_open())
-				{
-					outputFile.write(fileData.c_str(), fileData.size());
-					outputFile.close();
-				}
+				m_logInFile.close();
+			}
+			if (m_logOutFile.is_open())
+			{
+				m_logOutFile.close();
 			}
 		}
 	}
 }
-
-
 
 HRESULT SVPlcIOImpl::TriggerGetParameterCount(unsigned long , unsigned long* pCount)
 {
@@ -463,13 +445,9 @@ void SVPlcIOImpl::reportTrigger(const TriggerReport& rTriggerReport)
 		{
 			return;
 		}
+		++m_inputCount[rTriggerReport.m_channel];
 	}
 	
-
-	if(false == m_OutputFileName.empty())
-	{
-		g_PlcListInput.emplace_back(rTriggerReport);
-	}
 
 	/// Only call trigger callbacks if the module ready is set this avoids problems with the PPQ Object not being ready
 	if(m_moduleReady)
@@ -493,6 +471,12 @@ void SVPlcIOImpl::reportTrigger(const TriggerReport& rTriggerReport)
 				std::async(std::launch::async, [&] { triggerDispatcher(std::move(triggerData), std::move(dispatchVector)); });
 				break;
 			}
+		}
+		if(m_logInFile.is_open() && cMaxPlcTriggers > rTriggerReport.m_channel)
+		{
+			const TriggerReport& rData = rTriggerReport;
+			std::string fileData = SvUl::Format(_T("%d; %d; %f; %d; %d; %d\r\n"), triggerIndex, m_inputCount[rData.m_channel], rData.m_triggerTimestamp, rData.m_currentObjectID, rData.m_triggerIndex, rData.m_triggerPerObjectID);
+			m_logInFile.write(fileData.c_str(), fileData.size());
 		}
 	}
 }

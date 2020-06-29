@@ -52,7 +52,7 @@ void ChannelTimer(std::atomic_bool& rRun, SimulatedTriggerData simTriggerData)
 				std::lock_guard<std::mutex> guard {gTriggerDataMutex};
 				std::swap(gTriggerReport[triggerReport.m_channel], triggerReport);
 			}
-			gNewTrigger[triggerReport.m_channel] = true;
+			gNewTrigger[simTriggerData.m_channel] = true;
 			currentIndex++;
 			::SetEvent(g_hSignalEvent);
 		}
