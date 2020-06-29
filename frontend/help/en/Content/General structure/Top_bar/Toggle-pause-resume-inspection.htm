@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:MadCap="http://www.madcapsoftware.com/Schemas/MadCap.xsd" lang="en-us" xml:lang="en-us" class="topic" data-mc-search-type="Stem" data-mc-help-system-file-name="SVOWebApp_WebHelp.xml" data-mc-path-to-help-system="../../../" data-mc-target-type="WebHelp2" data-mc-runtime-file-type="Topic" data-mc-preload-images="false" data-mc-in-preview-mode="false" data-mc-toc-path="General structure|Top Bar">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>Toggle button to pause or resume inspections</title>
+        <link href="../../../Skins/Default/Stylesheets/Slideshow.css" rel="stylesheet" />
+        <link href="../../../Skins/Default/Stylesheets/TextEffects.css" rel="stylesheet" />
+        <link href="../../../Skins/Default/Stylesheets/Topic.css" rel="stylesheet" />
+        <link href="../../../Skins/Default/Stylesheets/Components/Styles.css" rel="stylesheet" />
+        <link href="../../../Skins/Default/Stylesheets/Components/Tablet.css" rel="stylesheet" />
+        <link href="../../../Skins/Default/Stylesheets/Components/Mobile.css" rel="stylesheet" />
+        <link href="../../Resources/Stylesheets/Styles.css" rel="stylesheet" />
+        <script src="../../../Resources/Scripts/jquery.min.js">
+        </script>
+        <script src="../../../Resources/Scripts/require.min.js" defer="defer">
+        </script>
+        <script src="../../../Resources/Scripts/require.config.js" defer="defer">
+        </script>
+        <script src="../../../Resources/Scripts/foundation.min.js" defer="defer">
+        </script>
+        <script src="../../../Resources/Scripts/plugins.min.js" defer="defer">
+        </script>
+        <script src="../../../Resources/Scripts/MadCapAll.js" defer="defer">
+        </script>
+    </head>
+    <body>
+        <div class="nocontent">
+            <div class="MCBreadcrumbsBox_0 breadcrumbs" role="navigation" aria-label="Breadcrumbs" data-mc-breadcrumbs-divider=" &gt; " data-mc-breadcrumbs-count="3" data-mc-toc="True"><span class="MCBreadcrumbsPrefix">You are here: </span>
+            </div>
+        </div>
+        <div role="main" id="mc-main-content">
+            <h3>Toggle button to pause or resume inspections</h3>
+            <p>With this toggle button you can pause or resume all or individual inspections in the view set.</p>
+            <p>The button Inspection state shows how many inspections of the configuration are running. By clicking on the button, a drop-down list appears. You can pause or resume all or individual inspections in this drop-down list. The drop-down list shows only the inspections that are part of the SVObserver configuration. A paused inspection continues to run in SVObserver.</p>
+            <p>When you are in Edit or in Stop mode, no inspection is active. When you press on the button to resume inspections when in Edit or in Stop mode, this has no effect.</p>
+            <p>&#160;</p>
+            <div class="MCDropDown MCDropDown_Closed dropDown"><span class="MCDropDownHead dropDownHead"><a href="javascript:void(0)" class="MCDropDownHotSpot dropDownHotspot MCDropDownHotSpot_ MCHotSpotImage" aria-expanded="false"><img class="MCDropDown_Image_Icon" src="../../../Skins/Default/Stylesheets/Images/transparent.gif" height="16" width="18" alt="Closed" data-mc-alt2="Open" />Pause all inspections </a></span>
+                <div class="MCDropDownBody dropDownBody">
+                    <p>→ Press the button <b>Inspection state</b> to open a drop-down list.</p>
+                    <p>→ Press the button <b>Pause all inspections.</b></p>
+                    <p>→ All inspections pause at the currently displayed image and the corresponding inspection results.</p>
+                    <p>→ The inspections continue to run in the background when you are in Run mode. You can verify in SVObserver that the inspections were not paused.</p>
+                    <p>→ The notification "Reject stream was paused" shows in the top bar.</p>
+                    <p>→ Images resulting from the ongoing inspections are not buffered and are not shown in the Image Strip View when you press Play.</p>
+                </div>
+            </div>
+            <div class="MCDropDown MCDropDown_Closed dropDown"><span class="MCDropDownHead dropDownHead"><a href="javascript:void(0)" class="MCDropDownHotSpot dropDownHotspot MCDropDownHotSpot_ MCHotSpotImage" aria-expanded="false"><img class="MCDropDown_Image_Icon" src="../../../Skins/Default/Stylesheets/Images/transparent.gif" height="16" width="18" alt="Closed" data-mc-alt2="Open" />Pause an individual inspection</a></span>
+                <div class="MCDropDownBody dropDownBody">
+                    <p>→ Press the button <b>Inspection state</b> to open a drop-down list.</p>
+                    <p>→ Select the inspection you want to pause.</p>
+                    <p>→ Press the button <b>Pause</b> <img src="../../Resources/Images/src_assets_icons_pause.svg" /> in front of the inspection's name.</p>
+                    <p>→ The inspection pauses at the currently displayed image and the corresponding inspection results.</p>
+                    <p>→ The inspection continues to run in the background when you are in Run mode. You can verify in SVObserver that the inspection was not paused.</p>
+                    <p>→ The notification "Reject stream was paused" shows in the top bar.</p>
+                    <p>→ Images resulting from the ongoing inspection are not buffered and are not shown in the Image Strip View when you press Play.</p>
+                </div>
+            </div>
+            <div class="MCDropDown MCDropDown_Closed dropDown"><span class="MCDropDownHead dropDownHead"><a href="javascript:void(0)" class="MCDropDownHotSpot dropDownHotspot MCDropDownHotSpot_ MCHotSpotImage" aria-expanded="false"><img class="MCDropDown_Image_Icon" src="../../../Skins/Default/Stylesheets/Images/transparent.gif" height="16" width="18" alt="Closed" data-mc-alt2="Open" />Resume all inspections</a></span>
+                <div class="MCDropDownBody dropDownBody">
+                    <p>
+                        <p>→ Press the button <b>Inspection state</b> to open a drop-down list.<![CDATA[ 
+]]></p>
+                        <p>→ Press the button <b>Resume all inspections</b>.</p>
+                        <p>→ All inspections resume with the current image and inspection results . Please note that the inspections continued to run in SVObserver after you had pressed <b>Pause all inspections</b> in the top bar as long as the system was in Run mode.</p>
+                        <p>→ Images that were taken during a pause are not shown in the image strip view. Thus, results to these images cannot be displayed in the List View.</p>
+                    </p>
+                </div>
+            </div>
+            <div class="MCDropDown MCDropDown_Closed dropDown"><span class="MCDropDownHead dropDownHead"><a href="javascript:void(0)" class="MCDropDownHotSpot dropDownHotspot MCDropDownHotSpot_ MCHotSpotImage" aria-expanded="false"><img class="MCDropDown_Image_Icon" src="../../../Skins/Default/Stylesheets/Images/transparent.gif" height="16" width="18" alt="Closed" data-mc-alt2="Open" />Resume an individual inspection</a></span>
+                <div class="MCDropDownBody dropDownBody">
+                    <p>
+                        <p>→ Press the button <b>Inspection state</b> to open a drop-down list. </p>
+                        <p>→ Select the inspection you want to resume.
+</p>
+                        <p>→ Press the button <b>Resume</b><img src="../../Resources/Images/src_assets_icons_play.svg" /> in front of the inspection's name.</p>
+                        <p>→ The inspection resumes with the current image and inspection results . Please note that the inspection continued to run in SVObserver after you had pressed <b>Pause all inspections</b> in the top bar as long as the system was in Run mode.</p>
+                        <p>→ Images that were taken during a pause are not shown in the image strip view. Thus, results to these images cannot be displayed in the List View.</p>
+                    </p>
+                </div>
+            </div>
+            <p style="font-weight: bold;">Interaction between image strip and inspection state</p>
+            <p>It is also possible to pause and resume an individual inspection by clicking on an image shown in image strip view. Alternatively, you can click on the <b>Play/Pause</b> button at the bottom of the image strip view.</p>
+        </div>
+    </body>
+</html>

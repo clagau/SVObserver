@@ -33,7 +33,7 @@
             </div>
         </div>
         <div role="main" id="mc-main-content">
-            <h1><a name="kanchor40"></a>Image Strip View</h1>
+            <h1><a name="kanchor49"></a>Image Strip View</h1>
             <p>This view type features images from an inspection or from a specific inspection tool in sequence. The most recent image is featured as the first image on the left.</p>
             <p>You can select if you want to display the image containing the overlays of the toolset or the image resulting from one tool.</p>
             <p>The image strip view includes the following specific components:</p>
@@ -44,7 +44,7 @@
                 </li>
             </ol>
             <p>You can navigate through the image strip by dragging the scroll bar or by pressing the arrow keys on your keyboard.</p>
-            <p class="Zwischenüberschrift"><a name="Image_Strip"></a><a name="kanchor41"></a><span style="font-size: 18pt; font-weight: bold;">Select Image</span>
+            <p class="Zwischenüberschrift"><a name="Image_Strip"></a><a name="kanchor50"></a><span style="font-size: 18pt; font-weight: bold;">Select Image</span>
             </p>
             <p>You can select whether you want to display images from an inspection or from a specific inspection tool.</p>
             <p>The image from an inspection includes all inspection and custom overlays. Overlays cannot be hidden in an image strip view.</p>
@@ -65,9 +65,6 @@
             </div>
             <p class="Zwischenüberschrift"><a name="Image_Strip_View_Controls"></a><span style="font-size: 18pt; font-weight: bold;">Image Strip Controls</span>
             </p>
-            <p>
-                <img src="Resources/Images/Image_strip_view_controls_neu.png" />
-            </p>
             <p>The image strip view offers the following controls:</p>
             <table style="width: 100%;mc-table-style: url('Resources/TableStyles/Basic.css');caption-side: top;" class="TableStyle-Basic" cellspacing="0">
                 <col style="width: 99px;" class="TableStyle-Basic-Column-Column1" />
@@ -83,13 +80,13 @@
                         <td class="TableStyle-Basic-BodyE-Column1-Body1">
                             <img src="Resources/Images/Image_strip_view_controls_play.png" />
                         </td>
-                        <td class="TableStyle-Basic-BodyD-Column1-Body1">Play</td>
+                        <td class="TableStyle-Basic-BodyD-Column1-Body1">Play/Resume inspection</td>
                     </tr>
                     <tr class="TableStyle-Basic-Body-Body1">
                         <td class="TableStyle-Basic-BodyB-Column1-Body1">
                             <img src="Resources/Images/Image_strip_view_controls_pause.png" />
                         </td>
-                        <td class="TableStyle-Basic-BodyA-Column1-Body1">Pause</td>
+                        <td class="TableStyle-Basic-BodyA-Column1-Body1">Pause inspection</td>
                     </tr>
                 </tbody>
             </table>
@@ -97,19 +94,16 @@
                 <tbody>
                     <tr>
                         <td class="TableStyle_Instruction_Body_0_0_RowEnd_ColEnd">
-                            <div class="MCDropDown MCDropDown_Closed dropDown"><span class="MCDropDownHead dropDownHead"><a href="javascript:void(0)" class="MCDropDownHotSpot dropDownHotspot MCDropDownHotSpot_ MCHotSpotImage" aria-expanded="false"><img class="MCDropDown_Image_Icon" src="../Skins/Default/Stylesheets/Images/transparent.gif" height="16" width="18" alt="Closed" data-mc-alt2="Open" />Pause image strip
- </a></span>
+                            <div class="MCDropDown MCDropDown_Closed dropDown"><span class="MCDropDownHead dropDownHead"><a href="javascript:void(0)" class="MCDropDownHotSpot dropDownHotspot MCDropDownHotSpot_ MCHotSpotImage" aria-expanded="false"><img class="MCDropDown_Image_Icon" src="../Skins/Default/Stylesheets/Images/transparent.gif" height="16" width="18" alt="Closed" data-mc-alt2="Open" />Pause inspection<![CDATA[
+ ]]></a></span>
                                 <div class="MCDropDownBody dropDownBody">
                                     <p>
-                                        <p>→ In the view menu, press the button <b>Pause</b> or click on one of the currently displayed images</p>
-                                        <p>
-                                            <img src="Resources/Images/Image_strip_view_controls_pause.png" />
-                                        </p>
-                                        <p>→ The image strips pauses at the currently displayed image.</p>
-                                        <p>→ The image in an image view (if applicable) is paused as well.</p>
+                                        <p>→ In the view menu, press the button <b>Pause</b> <img src="Resources/Images/Image_strip_view_controls_pause.png" /> or click on one of the currently displayed images</p>
+                                        <p>→ The image strips pauses at the currently displayed image. The image in an image view (if applicable) and its corresponding inspection results are paused as well.</p>
+                                        <p>→ The number of running inspections displayed in the top bar after Inspection state changes accordingly.</p>
                                         <p>→ The inspection continues to run. You can verify in SVObserver that the inspection was not paused.</p>
                                         <p>→ The notification "Reject stream was paused" shows in the top bar.</p>
-                                        <p>→ Images resulting from the ongoing inspection are not buffered and will not be shown when you press Play.</p>
+                                        <p>→ Images resulting from the ongoing inspection are not buffered and are not shown when you resume the inspection by pressing <b>Play</b> or one of the displayed images in the image strip view.</p>
                                     </p>
                                 </div>
                             </div>
@@ -121,13 +115,14 @@
                 <tbody>
                     <tr>
                         <td class="TableStyle_Instruction_Body_0_0_RowEnd_ColEnd">
-                            <div class="MCDropDown MCDropDown_Closed dropDown"><span class="MCDropDownHead dropDownHead"><a href="javascript:void(0)" class="MCDropDownHotSpot dropDownHotspot MCDropDownHotSpot_ MCHotSpotImage" aria-expanded="false"><img class="MCDropDown_Image_Icon" src="../Skins/Default/Stylesheets/Images/transparent.gif" height="16" width="18" alt="Closed" data-mc-alt2="Open" /></a><a name="Play_image_strip"></a><a href="javascript:void(0)" class="MCDropDownHotSpot dropDownHotspot MCDropDownHotSpot_" aria-expanded="false">Play image strip</a></span>
+                            <div class="MCDropDown MCDropDown_Closed dropDown"><span class="MCDropDownHead dropDownHead"><a href="javascript:void(0)" class="MCDropDownHotSpot dropDownHotspot MCDropDownHotSpot_ MCHotSpotImage" aria-expanded="false"><img class="MCDropDown_Image_Icon" src="../Skins/Default/Stylesheets/Images/transparent.gif" height="16" width="18" alt="Closed" data-mc-alt2="Open" /></a><a name="Play_image_strip"></a><a href="javascript:void(0)" class="MCDropDownHotSpot dropDownHotspot MCDropDownHotSpot_" aria-expanded="false">Resume inspection</a></span>
                                 <div class="MCDropDownBody dropDownBody">
                                     <p>
                                         <p> 
 → In the view menu, press the button <b>Play</b> <img src="Resources/Images/Image_strip_view_controls_play.png" />.</p>
-                                        <p>→ The image strip resumes at the image that was taken last in the inspection. Please note that the inspection ran in SVObserver after you had pressed <b>Pause</b> in the image strip.</p>
-                                        <p>→ The image in an image view (if applicable) resumes to update as well.</p>
+                                        <p>→ The image strip resumes at the image that was taken last in the inspection. Please note that the inspection continued to run in SVObserver after you had pressed <b>Pause</b> in the image strip.</p>
+                                        <p>→ The number of running inspections displayed in the top bar after Inspection state changes accordingly.</p>
+                                        <p>→ The image in an image view (if applicable)  and its corresponding inspection results resume to update as well.</p>
                                         <p>→ The notification "Reject stream was resumed" shows in the top bar.</p>
                                         <p>→ Images that were taken during a pause are not shown in the image strip view.</p>
                                     </p>

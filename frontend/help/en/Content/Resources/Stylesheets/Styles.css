@@ -616,12 +616,11 @@ p.TOC6
 		font-weight: normal;
 		page-break-inside: auto;
 		mc-auto-number-format: 'GH:{n}.{n+} ';
-		margin-top: 0;
 		margin-bottom: 0;
 		font-size: 18 pt;
 		color: #000000;
-		page-break-before: auto;
-		page-break-after: avoid;
+		page-break-before: avoid;
+		margin-top: 18pt;
 	}
 
 	h3
@@ -631,11 +630,11 @@ p.TOC6
 		line-height: 17pt;
 		page-break-inside: auto;
 		mc-auto-number-format: 'GH:{n}.{n}.{n+} ';
-		margin-top: 0;
 		margin-bottom: 0;
 		color: #000000;
 		page-break-before: auto;
 		page-break-after: avoid;
+		margin-top: 15pt;
 	}
 
 	/* Links */
@@ -721,6 +720,8 @@ p.TOC6
 		margin-top: 0;
 		margin-bottom: 0;
 		line-height: 1.5em;
+		font-size: 11pt;
+		color: #000000;
 	}
 
 	p.TOC2
@@ -728,6 +729,8 @@ p.TOC6
 		margin-top: 0;
 		margin-bottom: 0;
 		line-height: 1.5em;
+		font-size: 11pt;
+		color: #000000;
 	}
 
 	p.TOC3
@@ -735,6 +738,8 @@ p.TOC6
 		margin-top: 0;
 		margin-bottom: 0;
 		line-height: 1.5em;
+		font-size: 11pt;
+		color: #000000;
 	}
 
 	p.TOC4
@@ -742,6 +747,7 @@ p.TOC6
 		margin-top: 0;
 		margin-bottom: 0;
 		line-height: 1.5em;
+		font-size: 11pt;
 	}
 
 	p.TOC5
@@ -749,6 +755,7 @@ p.TOC6
 		margin-top: 0;
 		margin-bottom: 0;
 		line-height: 1.5em;
+		font-size: 11pt;
 	}
 
 	h6
@@ -771,6 +778,7 @@ p.TOC6
 	MadCap|dropDown
 	{
 		color: #000000;
+		page-break-inside: Avoid;
 	}
 
 	MadCap|dropDownBody
@@ -804,6 +812,11 @@ p.TOC6
 	MadCap|relationshipsItem
 	{
 		color: #808080;
+	}
+
+	MadCap|dropDownHead
+	{
+		page-break-after: Avoid;
 	}
 }
 

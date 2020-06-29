@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CatapultAliasFile>
-    <Map Name="Shortcuts" Link="General structure/Menu/Shortcuts.htm" Skin="SVOWebAppHelp" ResolvedId="-2147483648" />
-    <Map Name="Menu" Link="General structure/Menu/Menu.htm" Skin="SVOWebAppHelp" ResolvedId="-2147483648" />
+    <Map Name="Shortcuts" Link="General structure/Top_bar/Shortcuts.htm" Skin="SVOWebAppHelp" ResolvedId="-2147483648" />
+    <Map Name="Menu" Link="Obsolete/Menu.htm" Skin="SVOWebAppHelp" ResolvedId="-2147483648" />
     <Map Name="Connection" Link="Getting started/Connection.htm" Skin="SVOWebAppHelp" ResolvedId="-2147483648" />
-    <Map Name="View_Manager" Link="General structure/Menu/View_manager.htm" Skin="SVOWebAppHelp" ResolvedId="-2147483648" />
+    <Map Name="View_Manager" Link="Obsolete/View_manager.htm" Skin="SVOWebAppHelp" ResolvedId="-2147483648" />
     <Map Name="Date_Time" Link="General structure/Top_bar/5_Date_and_time.htm" Skin="SVOWebAppHelp" ResolvedId="-2147483648" />
     <Map Name="Language_Settings" Link="General structure/Top_bar/4_Notifications.htm" Skin="SVOWebAppHelp" ResolvedId="-2147483648" />
     <Map Name="Notifications" Link="General structure/Top_bar/4_Notifications.htm" Skin="SVOWebAppHelp" ResolvedId="-2147483648" />
