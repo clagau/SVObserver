@@ -76,6 +76,11 @@ HRESULT LinkedValue::GetArrayValue(_variant_t& rValue)
 	{
 		Result = __super::getValue(rValue, -1);
 	}
+	//if (rValue.vt == VT_EMPTY)
+	//{
+	//	rValue = SvUl::GetEmptySafeArray(GetDefaultValue().vt | VT_ARRAY);
+
+	//}
 	return Result;
 }
 

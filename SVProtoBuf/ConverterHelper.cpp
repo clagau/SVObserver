@@ -113,12 +113,17 @@ HRESULT ConvertVariantToProtobuf(const _variant_t& rVariant, SvPb::Variant* pPbV
 				{
 					std::vector<char> DataBlock;
 					int BlockSize = count * rVariant.parray->cbElements;
-					DataBlock.resize(BlockSize);
-					memcpy(&DataBlock[0], rVariant.parray->pvData, BlockSize);
-
+					
+					if (BlockSize > 0)
+					{
+						DataBlock.resize(BlockSize);
+						memcpy(&DataBlock[0], rVariant.parray->pvData, BlockSize);
+						pPbVariant->set_bytesval(&DataBlock[0], DataBlock.size());
+					}
+				
 					pPbVariant->set_count(count);
 					pPbVariant->set_type(rVariant.vt);
-					pPbVariant->set_bytesval(&DataBlock[0], DataBlock.size());
+					
 				}
 			}
 		}

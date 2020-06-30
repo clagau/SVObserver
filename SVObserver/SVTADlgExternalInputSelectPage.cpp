@@ -424,11 +424,14 @@ void SVExternalToolInputSelectPage::OnOK()
 					pItem->GetItemValue(Value);
 					bool done {false};
 					_variant_t  array;
+					SvOp::ExDllInterfaceType  type = m_pTask->m_Data.m_InputDefinitions[iIndex].getType();
+					if (type == SvOp::ExDllInterfaceType::Array)
+					{
 					switch (m_pTask->m_Data.m_InputDefinitions[iIndex].getVt())
 					{
 						case VT_ARRAY | VT_R8:
 						{
-							if (SvUl::StringToSafeArray<double>(Value, array) > 0)
+							if (SvUl::StringToSafeArray<double>(Value, array) >= 0)
 							{
 								m_Values.Set<_variant_t>(SvPb::ExternalInputEId + LVIndex, array);
 								done = true;
@@ -437,12 +440,13 @@ void SVExternalToolInputSelectPage::OnOK()
 						}
 						case VT_ARRAY | VT_I4:
 						{
-							if (SvUl::StringToSafeArray<long>(Value, array) > 0)
+							if (SvUl::StringToSafeArray<long>(Value, array) >= 0)
 							{
 								m_Values.Set<_variant_t>(SvPb::ExternalInputEId + LVIndex, array);
 								done = true;
 							}
 							break;
+						}
 						}
 					}
 					if (!done)
@@ -572,7 +576,7 @@ HRESULT SVExternalToolInputSelectPage::ValidateItem(SVRPropertyItem* pItem)
 		//@todo[mec] allow arrays of size 1
 		if (vt == (VT_ARRAY | VT_R8))
 		{
-			if (SvUl::StringToSafeArray<double>(Value, vtNew) > 0)
+			if (SvUl::StringToSafeArray<double>(Value, vtNew) >= 0)
 			{
 				hr = S_OK;
 			}
@@ -580,7 +584,7 @@ HRESULT SVExternalToolInputSelectPage::ValidateItem(SVRPropertyItem* pItem)
 		}
 		else if (vt == (VT_ARRAY | VT_I4))
 		{
-			if (SvUl::StringToSafeArray<long>(Value, vtNew) > 0)
+			if (SvUl::StringToSafeArray<long>(Value, vtNew) >= 0)
 			{
 				hr = S_OK;
 			}
