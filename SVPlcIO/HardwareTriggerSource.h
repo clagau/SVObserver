@@ -42,9 +42,6 @@ private:
 
 	uint32_t m_ProcessDataChanges {0UL};
 
-	int8_t m_NewSequenceCode[cNumberOfChannels] = {0, 0, 0, 0};
-	int8_t m_OldSequenceCode[cNumberOfChannels] = {0, 0, 0, 0};
-
 	bool m_triggerDataChanged {false};
 	InspectionCommand m_previousTriggerData;
 	InspectionState m_inspectionState;

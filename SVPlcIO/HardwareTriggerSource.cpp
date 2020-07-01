@@ -139,13 +139,11 @@ int32_t HardwareTriggerSource::getPlcTriggerTime(int32_t socRelative, int16_t ti
 void HardwareTriggerSource::createTriggerReport(uint8_t channel)
 {
 	const ChannelIn& rChannel = m_cifXCard.getInspectionCmd().m_channels[channel];
-	m_OldSequenceCode[channel] = m_NewSequenceCode[channel];
-	m_NewSequenceCode[channel] = rChannel.m_sequence;
 
 	double triggerTimeStamp = getExecutionTime(channel);
 
-	//When unit control is 1, sequence number has changed and is odd generate new trigger
-	if (cUnitControlActive == rChannel.m_unitControl && m_OldSequenceCode[channel] != m_NewSequenceCode[channel] && (m_NewSequenceCode[channel] % 2))
+	//When unit control is 1, trigger index is not 0
+	if (cUnitControlActive == rChannel.m_unitControl && 0 != rChannel.m_triggerIndex)
 	{
 		TriggerReport report;
 		report.m_channel = channel;
