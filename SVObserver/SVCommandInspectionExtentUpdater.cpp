@@ -66,7 +66,7 @@ HRESULT SVCommandInspectionExtentUpdater::Execute()
 
 		if (S_OK == retVal)
 		{
-			pInspection->m_bForceOffsetUpdate = true;
+			pInspection->ForceOffsetUpdate();
 			/// correct tool size when it does not fit to the parent image 
 			pInspection->AddResetState( SvDef::SVResetAutoMoveAndResize );
 			

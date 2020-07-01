@@ -363,7 +363,7 @@ void ResultViewReferences::InsertFromPPQInputs(SVInspectionProcess* pInspection)
 	
 	if( nullptr != pInspection )
 	{
-		for(const auto& rpInputEntry : pInspection->m_PPQInputs)
+		for(const auto& rpInputEntry : pInspection->getPpqInputs())
 		{
 			if(nullptr != rpInputEntry)
 			{

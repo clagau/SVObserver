@@ -170,6 +170,8 @@ public:
 
 	SVResultListClass* GetResultList() const;
 
+	const SVIOEntryHostStructPtrVector& getPpqInputs() const { return m_PPQInputs; }
+
 	HRESULT RebuildInspection(bool shouldCreateAllObject = true);
 	void ValidateAndInitialize( bool p_Validate );
 	void ClearResetCounts();
@@ -243,10 +245,6 @@ public:
 	virtual bool ConnectAllInputs() override;
 	virtual bool replaceObject(SVObjectClass* pObject, uint32_t newId) override;
 #pragma endregion Methods to replace processMessage
-
-	SVIOEntryHostStructPtrVector m_PPQInputs;
-
-	bool m_bForceOffsetUpdate; // Force Global Extent data to update
 
 	/// Get the controller for the play condition equation
 	/// \returns SvOi::IFormulaControllerPtr
@@ -364,12 +362,24 @@ protected:
 	
 	void BuildWatchlist();
 
-	uint32_t m_PPQId;
+private:
+	void Init();
+
+	HRESULT FindPPQInputObjectByName(SVObjectClass*& p_rpObject, LPCTSTR p_FullName) const;
+
+	HRESULT LastProductUpdate(SVProductInfoStruct *p_psvProduct);
+	SVProductInfoStruct LastProductGet() const;
+
+	SVIOEntryHostStructPtrVector m_PPQInputs;
+
+	bool m_bForceOffsetUpdate{true}; // Force Global Extent data to update
+
+	uint32_t m_PPQId{SvDef::InvalidObjectId};
 
 	mutable SVAsyncProcedure< SVAPCSignalHandler, SVThreadProcessHandler > m_AsyncProcedure;
 	long m_NotifyWithLastInspected;
 
-	volatile long m_lInputRequestMarkerCount;
+	volatile long m_lInputRequestMarkerCount{0L};
 	SVInputRequestQueue m_InputRequests;
 	SVInputImageRequestQueue m_InputImageRequests;
 
@@ -382,9 +392,9 @@ protected:
 	SVRunStatusClass m_runStatus;
 
 	// Inspection pointers
-	SVToolSetClass* m_pCurrentToolset;
+	SVToolSetClass* m_pCurrentToolset{nullptr};
 
-	volatile bool m_bInspecting;
+	volatile bool m_bInspecting{false};
 
 	// Inspection Queue
 	SVProductQueue       m_qInspectionsQueue;
@@ -405,30 +415,22 @@ protected:
 	SVInspectionTracking m_InspectionTracking;
 #endif
 
-private:
-	void Init();
-
-	HRESULT FindPPQInputObjectByName( SVObjectClass*& p_rpObject, LPCTSTR p_FullName ) const;
-
-	HRESULT LastProductUpdate(SVProductInfoStruct *p_psvProduct);
-	SVProductInfoStruct LastProductGet() const;
-	
 	mutable std::mutex m_LastRunMutex;
-	bool m_LastRunProductNULL;
+	bool m_LastRunProductNULL{false};
 	SVProductInfoStruct m_svLastRunProduct;
 
-	bool m_bNewDisableMethod;
+	bool m_bNewDisableMethod{false};
 	bool m_initialAuxiliaryExtents {false}; //This is only required to be able to read old configuration files with extents set
 
-	DWORD               m_dwThreadId;
+	DWORD               m_dwThreadId{0};
 
 	// JMS - this variable is only used for configuration conversion.
-	SvOp::SVConditionalClass* m_pToolSetConditional;
+	SvOp::SVConditionalClass* m_pToolSetConditional{nullptr};
 	SVCommandQueue m_CommandQueue;
 	
 	std::vector<WatchlistelementPtr> m_WatchListDatas;
 	
-	int m_StoreIndex; 
+	int m_StoreIndex{-1}; 
 	SvSml::RingBufferPointer m_SlotManager;
 
 	//For RegressionTest
@@ -439,6 +441,7 @@ private:
 	long m_memValueDataOffset{0L};			///Is the current memory data offset 
 	SvOi::IValueObjectPtrSet m_updateValueObjectSet; //The value objects which need updating
 	std::vector<uint8_t> m_valueData;		///The memory block used to store all value objects of the inspection
+	std::atomic_bool m_resetting{false};
 };
 
 typedef std::vector<SVInspectionProcess*> SVInspectionProcessVector;

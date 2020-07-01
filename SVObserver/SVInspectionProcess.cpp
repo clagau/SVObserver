@@ -408,18 +408,8 @@ void SVInspectionProcess::Init()
 {
 	// Set up your type...
 	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVInspectionObjectType;
-	m_LastRunProductNULL = false;
-	m_pCurrentToolset = nullptr;
-	m_PPQId = SvDef::InvalidObjectId;
-	m_bNewDisableMethod = false;
-	m_lInputRequestMarkerCount = 0L;
-	m_bInspecting = false;
-	m_dwThreadId = 0;
 	m_svReset.RemoveState(SvDef::SVResetStateAll);
-	m_bForceOffsetUpdate = true;
 	m_publishList.m_pInspection = this;
-	m_pToolSetConditional = nullptr;
-	m_StoreIndex = -1;
 }
 
 SVInspectionProcess::~SVInspectionProcess()
@@ -1640,9 +1630,12 @@ bool SVInspectionProcess::ProcessInputRequests(bool &rForceOffsetUpdate)
 bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum &rResetItem)
 {
 	bool bRet = true;
-	long l;
 
-	SVInputRequestInfoStructPtr l_pInputRequest;
+	///If doing reset do not process input requests
+	if(m_resetting)
+	{
+		return false;
+	}
 
 	// Process all input requests
 	if (!m_InputRequests.Lock())
@@ -1652,6 +1645,7 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum &rResetItem
 		DebugBreak();
 	}
 
+	SVInputRequestInfoStructPtr pInputRequest;
 	SVStdMapSVToolClassPtrSVInspectionProcessResetStruct toolMap;
 	while (m_lInputRequestMarkerCount > 0L)
 	{
@@ -1661,9 +1655,9 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum &rResetItem
 		// Preprocessing phase
 		m_InputRequests.GetSize(l_lSize);
 
-		for (l = 0; l < l_lSize; l++)
+		for (long l = 0; l < l_lSize; l++)
 		{
-			if (!m_InputRequests.RemoveHead(&l_pInputRequest))
+			if (!m_InputRequests.RemoveHead(&pInputRequest))
 			{
 				bRet = false;
 
@@ -1672,10 +1666,10 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum &rResetItem
 
 			std::string Value;
 
-			if (VT_ARRAY == (l_pInputRequest->m_Value.vt & VT_ARRAY))
+			if (VT_ARRAY == (pInputRequest->m_Value.vt & VT_ARRAY))
 			{
 				SvUl::SVSAFEARRAY::SVBounds l_Bounds;
-				SvUl::SVSAFEARRAY l_SafeArray = l_pInputRequest->m_Value;
+				SvUl::SVSAFEARRAY l_SafeArray = pInputRequest->m_Value;
 
 				l_SafeArray.GetBounds(l_Bounds);
 
@@ -1705,7 +1699,7 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum &rResetItem
 			}
 			else
 			{
-				Value = SvUl::createStdString(l_pInputRequest->m_Value);
+				Value = SvUl::createStdString(pInputRequest->m_Value);
 			}
 
 			// New delimiter added after each SVSetToolParameterList call
@@ -1718,7 +1712,7 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum &rResetItem
 			}// end if
 
 			// Get the ValueObject that they are trying to set
-			SVObjectReference ObjectRef = l_pInputRequest->m_ValueObjectRef;
+			SVObjectReference ObjectRef = pInputRequest->m_ValueObjectRef;
 			HRESULT hrSet = S_OK;
 			if (nullptr != ObjectRef.getValueObject())
 			{
@@ -1938,7 +1932,7 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum &rResetItem
 			{
 				int l_iSize = m_pCurrentToolset->GetSize();
 
-				for (l = 0; l < l_iSize; l++)
+				for (long l = 0; l < l_iSize; l++)
 				{
 					SvTo::SVToolClass *pTool = dynamic_cast<SvTo::SVToolClass*> (m_pCurrentToolset->GetAt(l));
 
@@ -2546,6 +2540,7 @@ bool SVInspectionProcess::CreateObject(const SVObjectLevelCreateStruct& rCreateS
 
 bool SVInspectionProcess::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
+	m_resetting = true;
 	bool Result = __super::ResetObject(pErrorMessages);
 
 	if (!m_pCurrentToolset->IsCreated())
@@ -2563,7 +2558,8 @@ bool SVInspectionProcess::ResetObject(SvStl::MessageContainerVector *pErrorMessa
 	BuildValueObjectMap();
 
 	m_bForceOffsetUpdate = true;
-
+	
+	m_resetting = false;
 	return Result;
 }
 
@@ -2728,6 +2724,11 @@ bool SVInspectionProcess::RunInspection(SVInspectionInfoStruct& rIPInfo, SvIe::S
 	std::string DebugString = SvUl::Format(_T("!\n!!Reset, %7.1lf: SVInspectionProcess::RunInspection(), del = %7.1lf\n"), SvTl::GetRelTimeStamp(), del);
 	::OutputDebugString(DebugString.c_str());
 #endif
+
+	if (true == m_resetting)
+	{
+		return false;
+	}
 
 	bool l_bOk = false;
 	bool l_bInputRequest = false;
@@ -3296,15 +3297,14 @@ SvOi::ITaskObject* SVInspectionProcess::GetToolSetInterface() const
 	return GetToolSet();
 }
 
-
 HRESULT SVInspectionProcess::RunOnce()
 {
 	SvOi::SVResetItemEnum eResetItem = SvOi::SVResetItemNone;
-	bool bRet = ProcessInputRequests(eResetItem);
+	bool result = ProcessInputRequests(eResetItem);
 
 	SingleRunModeLoop(true);
 
-	return bRet ? S_OK : SvStl::cCustomHRSVO_RunOnceFailed;
+	return result ? S_OK : SvStl::cCustomHRSVO_RunOnceFailed;
 }
 
 HRESULT SVInspectionProcess::SubmitCommand(const SvOi::ICommandPtr& rCommandPtr)
@@ -3377,17 +3377,18 @@ HRESULT SVInspectionProcess::addSharedCamera(uint32_t cameraID)
 
 HRESULT SVInspectionProcess::resetTool(SvOi::IObjectClass& rTool)
 {
-	HRESULT retVal = E_FAIL;
+	HRESULT result{E_FAIL};
+	m_resetting = true;
 	m_bForceOffsetUpdate = true;
 	/// correct tool size when it does not fit to the parent image 
 	AddResetState(SvDef::SVResetAutoMoveAndResize);
-	bool result = rTool.resetAllObjects();
-	if (result)
+	if (rTool.resetAllObjects())
 	{
-		retVal = RunOnce();
+		result = RunOnce();
 	}
 	RemoveResetState(SvDef::SVResetAutoMoveAndResize);
-	return retVal;
+	m_resetting = false;
+	return result;
 }
 
 HRESULT SVInspectionProcess::propagateSizeAndPosition()
