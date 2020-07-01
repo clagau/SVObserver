@@ -570,7 +570,7 @@ LRESULT SVToolAdjustmentDialogSheetClass::AddPagesForTestedExternalTool(WPARAM, 
 {
 	auto taskinfo = getExternalToolTaskInfo(m_InspectionID, m_TaskObjectID);
 
-	AddPage(new SvOg::SVExternalToolImageSelectPage(m_InspectionID, taskinfo.second, taskinfo.first->InputImageInformationStructs()));
+	AddPage(new SvOg::SVExternalToolImageSelectPage(m_InspectionID, m_TaskObjectID, taskinfo.first->InputImageInformationStructs()));
 	AddPage(new SVExternalToolInputSelectPage(_T("Input Values"), m_InspectionID, m_TaskObjectID, taskinfo.second));
 	AddPage(new SVExternalToolResultPage(_T("Result Values"), m_InspectionID, taskinfo.second));
 
