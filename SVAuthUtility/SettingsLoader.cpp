@@ -16,6 +16,7 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/ini_parser.hpp>
 
+#include "SVAuthUtility/Settings.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVLogLibrary/Logging.h"
 

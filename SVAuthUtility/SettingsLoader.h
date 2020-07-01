@@ -9,10 +9,10 @@
 
 #pragma once
 
-#include "SVAuthUtility/Settings.h"
-
 namespace SvAuth
 {
+struct Settings;
+
 class SettingsLoader
 {
 public:
