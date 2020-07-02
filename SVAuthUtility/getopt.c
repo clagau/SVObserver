@@ -66,6 +66,7 @@ Getopt for GNU.
 #include "getopt.h"
 #include "getopt_int.h"
 
+static long cMaxLengthSize = 255;
 /* For communication from `getopt' to the caller.
    When `getopt' finds an option that takes an argument,
    the argument value is returned here.
@@ -232,10 +233,12 @@ exchange (TCHAR **argv, struct _getopt_data *d)
 /* Initialize the internal data when the first call is made.  */
 
 static const TCHAR *
-_getopt_initialize (int argc, TCHAR *const *argv, const TCHAR *optstring,
+_getopt_initialize (int argc, TCHAR* const *argv, const TCHAR *optstring,
 		    struct _getopt_data *d, int posixly_correct)
 {
-  /* Start processing options with ARGV-element 1 (since ARGV-element 0
+	UNREFERENCED_PARAMETER(argc);
+	UNREFERENCED_PARAMETER(argv);
+	/* Start processing options with ARGV-element 1 (since ARGV-element 0
      is the program name); the sequence of previously skipped
      non-option ARGV-elements is empty.  */
 
@@ -243,7 +246,7 @@ _getopt_initialize (int argc, TCHAR *const *argv, const TCHAR *optstring,
 
   d->__nextchar = NULL;
 
-  d->__posixly_correct = posixly_correct | !!getenv ("POSIXLY_CORRECT");
+  d->__posixly_correct = posixly_correct | !(!getenv ("POSIXLY_CORRECT"));
 
   /* Determine how to handle the ordering of options and nonoptions.  */
 
@@ -274,7 +277,7 @@ _getopt_initialize (int argc, TCHAR *const *argv, const TCHAR *optstring,
 	  else
 	    {
 	      const TCHAR *orig_str = __getopt_nonoption_flags;
-	      int len = d->__nonoption_flags_max_len = lstrlen (orig_str);
+	      int len = d->__nonoption_flags_max_len = strnlen_s(orig_str, cMaxLengthSize);
 	      if (d->__nonoption_flags_max_len < argc)
 		d->__nonoption_flags_max_len = argc;
 	      __getopt_nonoption_flags =
@@ -498,14 +501,14 @@ _getopt_internal_r (int argc, TCHAR *const *argv, const TCHAR *optstring,
 
 	  for (nameend = d->__nextchar; *nameend && *nameend != _T('='); nameend++)
 	/* Do nothing.  */ ;
-      namelen = nameend - d->__nextchar;
+      namelen = (unsigned int) (nameend - d->__nextchar);
 
       /* Test all long options for either exact match
 	 or abbreviated matches.  */
       for (p = longopts, option_index = 0; p->name; p++, option_index++)
 	if (!_tcsnccmp (p->name, d->__nextchar, namelen))
 	  {
-	    if (namelen == (unsigned int) lstrlen (p->name))
+	    if (namelen == (unsigned int) strnlen_s(p->name, cMaxLengthSize))
 	      {
 		/* Exact match found.  */
 		pfound = p;
@@ -590,7 +593,7 @@ _getopt_internal_r (int argc, TCHAR *const *argv, const TCHAR *optstring,
 		fputc(_T('\n'), stderr);
 #endif
 	    }
-	  d->__nextchar += lstrlen (d->__nextchar);
+	  d->__nextchar += strnlen_s(d->__nextchar, cMaxLengthSize);
 	  d->optind++;
 	  d->optopt = 0;
 	  return _T('?');
@@ -663,7 +666,7 @@ _getopt_internal_r (int argc, TCHAR *const *argv, const TCHAR *optstring,
 #endif
 		    }
 
-		  d->__nextchar += lstrlen (d->__nextchar);
+		  d->__nextchar += strnlen_s(d->__nextchar, cMaxLengthSize);
 
 		  d->optopt = pfound->val;
 		  return _T('?');
@@ -703,12 +706,12 @@ _getopt_internal_r (int argc, TCHAR *const *argv, const TCHAR *optstring,
 			       argv[0], pfound->name);
 #endif
 		    }
-		  d->__nextchar += lstrlen (d->__nextchar);
+		  d->__nextchar += strnlen_s(d->__nextchar, cMaxLengthSize);
 		  d->optopt = pfound->val;
 		  return optstring[0] == _T(':') ? _T(':') : _T('?');
 		}
 	    }
-	  d->__nextchar += lstrlen (d->__nextchar);
+	  d->__nextchar += strnlen_s(d->__nextchar, cMaxLengthSize);
 	  if (longind != NULL)
 	    *longind = option_index;
 	  if (pfound->flag)
@@ -901,7 +904,7 @@ _getopt_internal_r (int argc, TCHAR *const *argv, const TCHAR *optstring,
 	for (p = longopts, option_index = 0; p->name; p++, option_index++)
 	  if (!_tcsnccmp (p->name, d->__nextchar, nameend - d->__nextchar))
 	    {
-	      if ((unsigned int) (nameend - d->__nextchar) == lstrlen (p->name))
+	      if ((unsigned int) (nameend - d->__nextchar) == strnlen_s(p->name,cMaxLengthSize))
 		{
 		  /* Exact match found.  */
 		  pfound = p;
@@ -949,7 +952,7 @@ _getopt_internal_r (int argc, TCHAR *const *argv, const TCHAR *optstring,
 			 argv[0], d->optarg);
 #endif
 	      }
-	    d->__nextchar += lstrlen (d->__nextchar);
+	    d->__nextchar += strnlen_s(d->__nextchar, cMaxLengthSize);
 	    d->optind++;
 		return _T('?');
 	  }
@@ -993,7 +996,7 @@ _getopt_internal_r (int argc, TCHAR *const *argv, const TCHAR *optstring,
 #endif
 		      }
 
-		    d->__nextchar += lstrlen (d->__nextchar);
+		    d->__nextchar += strnlen_s(d->__nextchar, cMaxLengthSize);
 			return _T('?');
 		  }
 	      }
@@ -1031,13 +1034,13 @@ _getopt_internal_r (int argc, TCHAR *const *argv, const TCHAR *optstring,
 				 argv[0], pfound->name);
 #endif
 		      }
-		    d->__nextchar += lstrlen (d->__nextchar);
+		    d->__nextchar += strnlen_s(d->__nextchar, cMaxLengthSize);
 			return optstring[0] == _T(':') ? _T(':') : _T('?');
 		  }
 	      }
 	    else
 	      d->optarg = NULL;
-	    d->__nextchar += lstrlen (d->__nextchar);
+	    d->__nextchar += strnlen_s(d->__nextchar, cMaxLengthSize);
 	    if (longind != NULL)
 	      *longind = option_index;
 	    if (pfound->flag)
@@ -1153,6 +1156,7 @@ getopt (int argc, TCHAR *const *argv, const TCHAR *optstring)
 }
 
 #ifdef _LIBC
+// cppcheck-suppress unusedFunction ;
 int
 __posix_getopt (int argc, TCHAR *const *argv, const TCHAR *optstring)
 {

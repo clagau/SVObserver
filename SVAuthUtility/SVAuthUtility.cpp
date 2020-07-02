@@ -12,7 +12,6 @@
 #include "getopt.h"
 
 #include "SVAuthLibrary/AuthManager.h"
-#include "SVAuthLibrary/AuthManagerSettings.h"
 #include "SVAuthUtility/Settings.h"
 #include "SVAuthUtility/SettingsLoader.h"
 #include "SVLogLibrary/Logging.h"
