@@ -4805,6 +4805,9 @@ BEGIN
     IDS_OBJECTNAME_HEADER_LABELS "Archive Header Label Strings"
     IDS_OBJECTNAME_HEADER_OBJECT_STRINGS "Archive Header Result Strings"
     IDS_OBJECTNAME_ENABLE_HEADERS "Enable Column Headers"
+	IDS_BASE_FILENAME "Base Filename"
+	IDS_CENTER_FILENAME "Center Filename"
+	IDS_BASE_DIRECTORYNAME "Base Directoryname"
     IDS_OBJECTNAME_FILENAME_INDEX1 "Filename Index 1"
     IDS_OBJECTNAME_FILENAME_INDEX2 "Filename Index 2"
     IDS_OBJECTNAME_DIRECTORYNAME_INDEX "Directoryname Index"
@@ -5198,6 +5201,10 @@ BEGIN
                             "Archive Image File Path Root Part1"
     IDS_OBJECTNAME_ARCHIVE_IMAGE_ROOT_PART2 
                             "Archive Image File Path Root Part2"
+    IDS_OBJECTNAME_ARCHIVE_IMAGE_ROOT_PART3 
+                            "Archive Image File Path Root Part3"
+	IDC_USE_ALTERNATIVE_IMAGE_PATHS
+							"Use Alternative Image Paths"
 END
 
 STRINGTABLE
