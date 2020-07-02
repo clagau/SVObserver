@@ -246,7 +246,7 @@ _getopt_initialize (int argc, TCHAR* const *argv, const TCHAR *optstring,
 
   d->__nextchar = NULL;
 
-  d->__posixly_correct = posixly_correct | !(!getenv ("POSIXLY_CORRECT"));
+  d->__posixly_correct = posixly_correct | (int) !!getenv ("POSIXLY_CORRECT");
 
   /* Determine how to handle the ordering of options and nonoptions.  */
 
@@ -1146,19 +1146,14 @@ _getopt_internal (int argc, TCHAR *const *argv, const TCHAR *optstring,
   return result;
 }
 
-int
-getopt (int argc, TCHAR *const *argv, const TCHAR *optstring)
+int getopt (int argc, TCHAR *const *argv, const TCHAR *optstring)
 {
-  return _getopt_internal (argc, argv, optstring,
-			   (const struct option *) 0,
-			   (int *) 0,
-			   0, 0);
+  return _getopt_internal (argc, argv, optstring, (const struct option *) 0, (int *) 0, 0, 0);
 }
 
 #ifdef _LIBC
-// cppcheck-suppress unusedFunction ;
-int
-__posix_getopt (int argc, TCHAR *const *argv, const TCHAR *optstring)
+// cppcheck-suppress unusedFunction
+int _posix_getopt (int argc, TCHAR *const *argv, const TCHAR *optstring)
 {
   return _getopt_internal (argc, argv, optstring,
 			   (const struct option *) 0,

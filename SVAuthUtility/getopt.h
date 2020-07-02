@@ -144,17 +144,10 @@ struct option
    arguments to the option '\0'.  This behavior is specific to the GNU
    `getopt'.  */
 
-int getopt (int ___argc, TCHAR *const *___argv, const TCHAR *__shortopts)
-       __THROW;
+int getopt (int ___argc, TCHAR *const *___argv, const TCHAR *__shortopts);
 
-int getopt_long (int ___argc, TCHAR *const *___argv,
-			const TCHAR *__shortopts,
-		        const struct option *__longopts, int *__longind)
-       __THROW;
-int getopt_long_only (int ___argc, TCHAR *const *___argv,
-			     const TCHAR *__shortopts,
-		             const struct option *__longopts, int *__longind)
-       __THROW;
+int getopt_long(int ___argc, TCHAR *const *___argv, const TCHAR *__shortopts, const struct option *__longopts, int *__longind);
+int getopt_long_only(int ___argc, TCHAR *const *___argv, const TCHAR *__shortopts, const struct option *__longopts, int *__longind);
 
 
 
