@@ -21,6 +21,7 @@ namespace SvPlc
 #pragma region Declarations
 constexpr unsigned long cInputCount = 0;
 constexpr unsigned long cOutputCount = 14;
+constexpr unsigned long cBuffSize = 255;
 constexpr LPCTSTR cIniFile = _T("SVPLCIO.ini");
 constexpr LPCTSTR cSettingsGroup = _T("Settings");
 constexpr LPCTSTR cPLCSimulation = _T("PLCSimulation");
@@ -50,19 +51,51 @@ HRESULT SVPlcIOImpl::Initialize(bool bInit)
 {
 	HRESULT hr = S_OK;
 
+	///This is a map which defines the PLC node ID depending on the SVIM computer name
+	static const std::map<std::string, uint16_t> cComputerNameNodeID = 
+	{
+		{std::string {"SVIM01"}, 11},
+		{std::string {"SVIM02"}, 12},
+		{std::string {"SVIM03"}, 13},
+		{std::string {"SVIM04"}, 14},
+		{std::string {"SVIM05"}, 21},
+		{std::string {"SVIM06"}, 22},
+		{std::string {"SVIM07"}, 23},
+		{std::string {"SVIM08"}, 24},
+		{std::string {"SVIM09"}, 31},
+		{std::string {"SVIM10"}, 32},
+		{std::string {"SVIM11"}, 33},
+		{std::string {"SVIM12"}, 34},
+	};
+
 	if (bInit)
 	{
 		std::lock_guard<std::mutex> guard(m_protectIO);
-		char buffer[255];
-		memset(buffer, 0, 255);
+		TCHAR buffer[cBuffSize];
+		memset(buffer, 0, cBuffSize);
 		std::string iniFile = SvStl::GlobalPath::Inst().GetBinPath(cIniFile);
-		::GetPrivateProfileString(cSettingsGroup, cOutputFileName, "", buffer, 255, iniFile.c_str());
+		::GetPrivateProfileString(cSettingsGroup, cOutputFileName, "", buffer, cBuffSize, iniFile.c_str());
 		m_logFileName = buffer;
-		memset(buffer, 0, 255);
-		::GetPrivateProfileString(cSettingsGroup, cPLCSimulation, "", buffer, 255, iniFile.c_str());
+		memset(buffer, 0, cBuffSize);
+		::GetPrivateProfileString(cSettingsGroup, cPLCSimulation, "", buffer, cBuffSize, iniFile.c_str());
 		m_plcSimulateFile = buffer;
 		m_plcTransferTime = static_cast<uint16_t> (::GetPrivateProfileInt(cSettingsGroup, cPLCTransferTime, 0, iniFile.c_str()));
 		m_plcNodeID = static_cast<uint16_t> (::GetPrivateProfileInt(cSettingsGroup, cPLCNodeID, 0, iniFile.c_str()));
+		///If no setting then try to derive the PLC node ID from the SVIM computer name
+		if(0 == m_plcNodeID)
+		{
+			DWORD size{cBuffSize};
+			memset(buffer, 0, cBuffSize);
+			if(::GetComputerName(buffer, &size))
+			{
+				std::string computerName{buffer};
+				auto iter = cComputerNameNodeID.find(computerName);
+				if(cComputerNameNodeID.end() != iter)
+				{
+					m_plcNodeID = iter->second;
+				}
+			}
+		}
 	}
 	else
 	{
