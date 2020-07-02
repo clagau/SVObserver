@@ -22,8 +22,8 @@ typedef std::vector<SVLightReference> SVLightReferenceVector;
 class SVLightReferenceDialogPropertySheetClass : public CPropertySheet
 {
 public:
-	SVLightReferenceDialogPropertySheetClass(UINT nIDCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
-	SVLightReferenceDialogPropertySheetClass(LPCTSTR pszCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
+	explicit SVLightReferenceDialogPropertySheetClass(UINT nIDCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
+	explicit SVLightReferenceDialogPropertySheetClass(LPCTSTR pszCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
 
 	virtual ~SVLightReferenceDialogPropertySheetClass();
 

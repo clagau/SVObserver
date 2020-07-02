@@ -21,7 +21,7 @@ namespace SvMc
 		DECLARE_DYNAMIC(SVDlgFolder)
 
 	public:
-		SVDlgFolder(bool bFullAccess, LPCTSTR initialDir=nullptr);
+		explicit SVDlgFolder(bool bFullAccess, LPCTSTR initialDir = nullptr);
 		virtual ~SVDlgFolder();
 		void InitDlgFolder(LPCTSTR csTextOKButton, LPCTSTR csTextCaptionBar);
 

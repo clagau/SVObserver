@@ -21,7 +21,7 @@ struct ShareControlSettings;
 class ShareControl
 {
 public:
-	ShareControl(const ShareControlSettings& ControlParameter);
+	explicit ShareControl(const ShareControlSettings& ControlParameter);
 	~ShareControl();
 	bool EventHandler(DWORD event);
 	bool QueryListName(const SvPb::QueryListNameRequest& rRequest, SvPb::QueryListNameResponse& rResponse, SvPenv::Error& rError);

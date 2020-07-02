@@ -27,7 +27,7 @@ public:
 	
 	SVSecuritySetupPage();
 	
-	SVSecuritySetupPage(UINT nIDTemplate, UINT nIDCaption=0);
+	explicit SVSecuritySetupPage(UINT nIDTemplate, UINT nIDCaption = 0);
 	
 	~SVSecuritySetupPage();
 	void BuildTree( long& p_NodeIndex, HTREEITEM hParent, bool p_Root );

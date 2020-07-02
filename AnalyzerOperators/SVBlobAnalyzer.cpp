@@ -1473,7 +1473,7 @@ bool SVBlobAnalyzerClass::IsPtOverResult( const POINT& rPoint )
 				l_oRect.bottom = static_cast<long>(pyMax[l]);
 				l_oRect.right = static_cast<long>(pxMax[l]);
 				
-				SVExtentFigureStruct l_svFigure = l_oRect;
+				SVExtentFigureStruct l_svFigure{ l_oRect };
 				pTool->GetImageExtent().TranslateFromOutputSpace( l_svFigure, l_svFigure );
 
 				if( S_OK == l_svFigure.IsPointOverFigure( SVPoint<double>(rPoint) ) )
@@ -1619,7 +1619,7 @@ HRESULT SVBlobAnalyzerClass::onCollectOverlays(SvIe::SVImageClass* , SVExtentMul
 					m_Value[SvOi::SV_BOXY_MAX].GetValue(Value, i);
 					Rect.bottom = static_cast<long> (Value);
 
-					SVExtentFigureStruct l_svFigure = Rect;
+					SVExtentFigureStruct l_svFigure{ Rect };
 					
 					rImageExtents.TranslateFromOutputSpace( l_svFigure, l_svFigure );
 
@@ -1651,7 +1651,7 @@ HRESULT SVBlobAnalyzerClass::onCollectOverlays(SvIe::SVImageClass* , SVExtentMul
 					l_oRect.bottom = static_cast<long> (pyMax[l]);
 					l_oRect.right = static_cast<long> (pxMax[l]);
 
-					SVExtentFigureStruct l_svFigure = l_oRect;
+					SVExtentFigureStruct l_svFigure{ l_oRect };
 					rImageExtents.TranslateFromOutputSpace( l_svFigure, l_svFigure );
 
 					SVExtentMultiLineStruct l_multiLine;

@@ -36,7 +36,7 @@ class SVTADlgColorThresholdBasePage : public CPropertyPage
 // Construction
 public:
 	SVTADlgColorThresholdBasePage() {}	// dummy for DYNCREATE macros
-	SVTADlgColorThresholdBasePage(UINT nIDTemplate);
+	explicit SVTADlgColorThresholdBasePage(UINT nIDTemplate);
 	virtual ~SVTADlgColorThresholdBasePage();
 
 // Dialog Data

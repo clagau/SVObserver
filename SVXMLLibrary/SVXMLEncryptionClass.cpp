@@ -873,8 +873,6 @@ HRESULT SVXMLEncryptionClass::Method2Encryption(
 {
 	HRESULT	hr;
 
-	long				l_lCounter;
-
 	unsigned long	l_ulTempSourceValue;
 	unsigned long	l_ulTempResultValue;
 
@@ -913,7 +911,7 @@ HRESULT SVXMLEncryptionClass::Method2Encryption(
 		//-	Grab the next 4, 8 bit bytes for encryption.
 		//-	Add in the local "for loop counter" and an arbitrary 8.
 		//-	Look the result up in the lookup table.
-		for (l_lCounter = 0; l_lCounter < 4; l_lCounter++)
+		for (unsigned long l_lCounter = 0; l_lCounter < 4; ++l_lCounter)
 		{
 			((char*)(&l_ulTempResultValue))[l_lCounter] =
 				(char)(((char*)&l_ulTempSourceValue)[l_lCounter] +

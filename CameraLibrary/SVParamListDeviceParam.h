@@ -19,7 +19,7 @@ class SVParamListDeviceParam : public SVDeviceParam
 {
 public:
 	SVParamListDeviceParam();
-	SVParamListDeviceParam(SVDeviceParamEnum typeEnum);
+	explicit SVParamListDeviceParam(SVDeviceParamEnum typeEnum);
 	SVParamListDeviceParam(const SVParamListDeviceParam& rRhs);
 	virtual ~SVParamListDeviceParam();
 	virtual SVClonable* CloneImpl() const override;

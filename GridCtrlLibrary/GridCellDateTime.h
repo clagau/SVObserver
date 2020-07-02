@@ -39,7 +39,7 @@ namespace SvGcl
 
 	public:
 		CGridCellDateTime();
-		CGridCellDateTime(DWORD dwStyle);
+		explicit CGridCellDateTime(DWORD dwStyle);
 		virtual ~CGridCellDateTime();
 		virtual CSize GetCellExtent(CDC* pDC) override;
 

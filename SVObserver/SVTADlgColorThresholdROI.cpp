@@ -193,7 +193,7 @@ void SVTADlgColorThresholdROI::UpdateToolFigure()
 	SetInspectionData();
 
 	// Update Tool Figure
-	SVExtentFigureStruct l_svFigure = m_pSheet->m_rectROI;
+	SVExtentFigureStruct l_svFigure{ m_pSheet->m_rectROI };
 
 	mcsROIX.Format(_T("%d"),m_pSheet->m_rectROI.left );
 	mcsROIY.Format(_T("%d"),m_pSheet->m_rectROI.top );

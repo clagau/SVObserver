@@ -34,7 +34,7 @@ class SVRemoteOutputDataController : public SVObjectClass
 	SV_DECLARE_CLASS( SVRemoteOutputDataController );
 
 public:
-	SVRemoteOutputDataController( LPCTSTR ObjectName );
+	explicit SVRemoteOutputDataController(LPCTSTR ObjectName);
 	SVRemoteOutputDataController( SVObjectClass *pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVREMOTEOUTPUTCONTROLLER );
 
 	virtual ~SVRemoteOutputDataController();

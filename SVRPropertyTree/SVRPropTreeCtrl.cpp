@@ -388,7 +388,6 @@ void SVRPropTreeCtrl::OnLButtonDblClk(UINT, CPoint point)
 	ASSERT(nullptr != m_pProp);
 
 	SVRPropertyItem* pItem;
-	SVRPropertyItem* pOldFocus;
 
 	if (nullptr != (pItem = m_pProp->FindItem(point)) && pItem->GetChild())
 	{
@@ -410,13 +409,17 @@ void SVRPropTreeCtrl::OnLButtonDblClk(UINT, CPoint point)
 				// pass thru to default
 
 			default:
-				pOldFocus = m_pProp->GetFocusedItem();
+			{
+				SVRPropertyItem* pOldFocus = m_pProp->GetFocusedItem();
 				m_pProp->SelectItems(nullptr, FALSE);
 				m_pProp->SetFocusedItem(pItem);
 				pItem->Select();
 
-				if (pItem!=pOldFocus)
+				if (pItem != pOldFocus)
+				{
 					m_pProp->SendNotify(PTN_SELCHANGE, pItem);
+				}
+			}
 
 				// pass thru to HTEXPAND
 

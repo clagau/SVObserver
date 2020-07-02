@@ -36,7 +36,7 @@ public:
 	// Description:  Constructor for the ResultViewItemDef class.
 	// Parameter:  objectId <in>:  Initial value for the object ID.
 	//************************************
-	ResultViewItemDef(uint32_t objectId);
+	explicit ResultViewItemDef(uint32_t objectId);
 
 	//************************************
 	// Description:  Constructor for the ResultViewItemDef class.
@@ -49,7 +49,7 @@ public:
 	// Description:  Constructor for the ResultViewItemDef class.
 	// Parameter:  objRef <in>:  a reference to the object whose data should be used to populate member variables
 	//************************************
-	ResultViewItemDef(const SVObjectReference& objRef);
+	explicit ResultViewItemDef(const SVObjectReference& objRef);
 
 	//************************************
 	// Description:  Destructor for the ResultViewItemDef class.

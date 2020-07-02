@@ -27,7 +27,7 @@ protected:
 	CString m_Title;
 
 public:
-	SVProgressDialog(LPCTSTR rTitle, CWnd* pParent = nullptr); // standard constructor
+	explicit SVProgressDialog(LPCTSTR rTitle, CWnd* pParent = nullptr); // standard constructor
 	virtual ~SVProgressDialog();
 
 // Dialog Data

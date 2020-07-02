@@ -172,21 +172,13 @@ HRESULT SVMaskShapeEditorDlg::SetInspectionData(bool bResetObject/* = false*/)
 	SvOp::SVMaskShape::MapType mapProperties;
 	GetCurrentShape()->GetProperties(mapProperties);
 
-	SvIe::SVInputRequestStructMap mapData;
-
 	for (auto const& rEntry : mapProperties)
 	{
 		SVObjectClass* pObject = m_pMask->GetShapeHelper()->GetEmbeddedValueObject(rEntry.first);
 		if ( nullptr != dynamic_cast<SvOi::IValueObject*> (pObject) )
 		{
-			mapData[ SVObjectReference( pObject ) ] = _variant_t( rEntry.second.value );
+			m_ShapeHelperValues.Set<long>(pObject->GetEmbeddedID(), rEntry.second.value);
 		}
-	}
-
-	for (auto const& rEntry : mapData)
-	{
-		SvPb::EmbeddedIdEnum embeddedID = rEntry.first.m_ObjectRef.getObject()->GetEmbeddedID();
-		m_ShapeHelperValues.Set<long>(embeddedID, static_cast<long> (rEntry.second));
 	}
 
 	m_ShapeHelperValues.Commit();

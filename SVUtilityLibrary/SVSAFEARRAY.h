@@ -37,8 +37,8 @@ public:
 	SVSAFEARRAY(VARTYPE p_Type, size_type p_Size);
 	SVSAFEARRAY(VARTYPE p_Type, const SVBounds& p_rBounds);
 	SVSAFEARRAY(const SVSAFEARRAY& p_rObject);
-	SVSAFEARRAY(const VARIANT& p_rVariant);
-	SVSAFEARRAY(SAFEARRAY* p_pObject);
+	explicit SVSAFEARRAY(const VARIANT& p_rVariant);
+	explicit SVSAFEARRAY(SAFEARRAY* p_pObject);
 
 	virtual ~SVSAFEARRAY();
 

@@ -20,12 +20,6 @@
 
 //This comment is to avoid that the SVDeviceParamCollection include is marked as forward declaration due to TheDeviceParamFactory
 
-class SVDeviceParamStructTestCases
-{
-public:
-	SVDeviceParamStructTestCases( SVDeviceParamCollection& rDeviceStruct );
-};
-
 #define DEVICE_PARAM_CREATE_FN(x) x##::CreateNew
 #define REGISTER_DEVICE_PARAM(x,y,fn) const bool bRegister##x = TheDeviceParamFactory::Instance().Register(x, y, DEVICE_PARAM_CREATE_FN(fn));
 

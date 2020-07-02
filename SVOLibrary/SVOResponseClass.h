@@ -30,7 +30,7 @@ public:
 	virtual ~SVOResponseClass() = default;
 
 
-	virtual void reset()
+	virtual void reset() override
 	{
 		__super::reset();
 		m_Data.clear();

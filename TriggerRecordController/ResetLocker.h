@@ -16,7 +16,7 @@ namespace SvTrc
 	class ResetLocker final
 	{
 	public:
-		ResetLocker(volatile long& rRefCount) : m_rRefCount(rRefCount)
+		explicit ResetLocker(volatile long& rRefCount) : m_rRefCount(rRefCount)
 		{
 			InterlockedIncrement(&m_rRefCount);
 		};

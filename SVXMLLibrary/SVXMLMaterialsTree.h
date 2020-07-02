@@ -33,7 +33,7 @@ namespace SvXml
 		//! The class constructor
 		//! \param rTree [in] reference to a copy of the tree to create
 		//************************************
-		SVXMLMaterialsTree( const SVMaterialsTree::SVTreeContainer& rTree );
+		explicit SVXMLMaterialsTree(const SVMaterialsTree::SVTreeContainer& rTree);
 
 		virtual ~SVXMLMaterialsTree();
 	#pragma endregion Constructor

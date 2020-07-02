@@ -25,34 +25,6 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SVDataBufferInfoClass::SVDataBufferInfoClass() : 
- pOwnerTool( nullptr )
-,Length(0L)
-,Type(0L)
-{
-}
-
-SVDataBufferInfoClass::SVDataBufferInfoClass( const SVDataBufferInfoClass& rRhs )
-{
-	pOwnerTool	= rRhs.pOwnerTool;
-	Length		= rRhs.Length;
-	Type		= rRhs.Type;
-	HBuffer		= rRhs.HBuffer;
-}
-
-SVDataBufferInfoClass SVDataBufferInfoClass::operator=( SVDataBufferInfoClass& rRhs )
-{
-	if( &rRhs != this )
-	{
-		pOwnerTool	= rRhs.pOwnerTool;
-		Length		= rRhs.Length;
-		Type		= rRhs.Type;
-		HBuffer		= rRhs.HBuffer;
-	}
-
-	return ( *this );
-}
-
 SV_IMPLEMENT_CLASS( SVDataBufferClass, SvPb::DataBufferClassId);
 
 SVDataBufferClass::SVDataBufferClass( SVObjectClass* pOwner, int StringResourceID )

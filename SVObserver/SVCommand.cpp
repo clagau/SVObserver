@@ -866,17 +866,10 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long , SAFEARRAY** 
 					{
 						// Copy data to DIB memory locations
 						memcpy(pDIB, &(l_ImageIter->second.m_ImageDIB[0]), l_ImageIter->second.m_ImageDIB.size());
-					}
 
-					if (S_OK == hr)
-					{
 						lProcessCount = l_DataPtr->GetProduct().m_TriggerCount;
-
 						l_OverlayClass = l_ImageIter->second.m_OverlayData;
-					}
 
-					if (S_OK == hr)
-					{
 						// Add the status to the outgoing array
 						HRESULT hrItem = S_OK;
 						hr = SafeArrayPutElement(*ppsaStatus, &l, (void*)&hrItem);
@@ -1447,8 +1440,7 @@ STDMETHODIMP CSVCommand::SVSetLUT(BSTR bstrCameraName, SAFEARRAY* paulLUTTable)
 		if (vt == VT_UI4 || vt == VT_I4)
 		{
 			SVLut lut;
-
-			hr = pCamera->GetLut(lut);
+			/*hr = */pCamera->GetLut(lut);
 
 			// Anything from the ActiveX we will set to freeform
 			lut.SetTransformOperation(SVLutTransformOperationFreeform());
@@ -1502,7 +1494,7 @@ STDMETHODIMP CSVCommand::SVGetLUT(BSTR bstrCameraName, SAFEARRAY** ppaulLUTTable
 	return hr;
 }
 
-HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo, SvOi::SVImageBufferHandlePtr rImageHandle, BSTR* pbstr)
+HRESULT CSVCommand::ImageToBSTR(const SVImageInfoClass&  rImageInfo, SvOi::SVImageBufferHandlePtr rImageHandle, BSTR* pbstr)
 {
 	HRESULT hr = S_OK;
 

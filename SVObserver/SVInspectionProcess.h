@@ -26,12 +26,10 @@
 #include "SVStatusLibrary/SVRunStatus.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "InspectionEngine/SVTaskObject.h" // For SVImageClassPtrSet
-#include "InspectionEngine/SVImageBuffer.h" //SVImageOverlayClass; used for getting overlay data for the ActiveX
 #include "SVInfoStructs.h"
 #include "SVPublishList.h"
 #include "InspectionEngine/SVCameraImageTemplate.h"
 #include "InspectionEngine/SVVirtualCamera.h"
-#include "SVMonitorList.h"
 #include "SVValueObjectLibrary/SVValueObjectClass.h"
 #include "Operators/SVEquation.h"
 #include "SVSharedMemoryLibrary/MonitorEntry.h"
@@ -315,8 +313,6 @@ protected:
 	typedef boost::function<void ( bool& )> SVThreadProcessHandler;
 
 	typedef SVTQueueObject<SvOi::ICommandPtr> SVCommandQueue;
-	typedef SVTQueueObject<SVMonitorList> SVMonitorListQueue;
-	typedef SVTQueueObject<SVMonitorItemList> SVImageNameDequeQueue;
 	typedef SVTQueueObject<SVInputRequestInfoStructPtr> SVInputRequestQueue;
 	typedef SVTQueueObject<SVInputImageRequestInfoStructPtr> SVInputImageRequestQueue;
 	typedef SVTQueueObject<SVProductInfoStruct> SVProductQueue;

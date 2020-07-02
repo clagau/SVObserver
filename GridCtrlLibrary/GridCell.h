@@ -133,13 +133,13 @@ namespace SvGcl
 		virtual void  SetHeight(int nHeight)                { m_Size.cy = nHeight;   }
 
 		// Disable these properties
-		virtual void     SetData(LPARAM /*lParam*/)             { ASSERT(FALSE);         }      
-		virtual void     SetState(DWORD /*nState*/)             { ASSERT(FALSE);         }
-		virtual DWORD    GetState() const                       { return CGridCell::GetState()|GVIS_READONLY; }
-		virtual void     SetCoords( int /*row*/, int /*col*/)   { ASSERT(FALSE);         }
-		virtual void     SetFont(const LOGFONT* /*plf*/);
-		virtual LOGFONT* GetFont() const;   
-		virtual CFont*   GetFontObject() const;
+		virtual void     SetData(LPARAM /*lParam*/) override { ASSERT(FALSE);         }      
+		virtual void     SetState(DWORD /*nState*/) override { ASSERT(FALSE);         }
+		virtual DWORD    GetState() const override { return CGridCell::GetState()|GVIS_READONLY; }
+		virtual void     SetCoords( int /*row*/, int /*col*/) override { ASSERT(FALSE);         }
+		virtual void     SetFont(const LOGFONT* /*plf*/) override;
+		virtual LOGFONT* GetFont() const override;
+		virtual CFont*   GetFontObject() const override;
 
 	protected:
 		CSize m_Size;       // Default Size

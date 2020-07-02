@@ -31,8 +31,8 @@ private:
 public:
 	SVInspectionTreeParser(SVTreeType& rTreeCtrl, typename SVTreeType::SVBranchHandle hItem, unsigned long parserHandle, uint32_t OwnerId, SVObjectClass* pOwnerObject, CWnd* pWnd);
 	virtual ~SVInspectionTreeParser();
-	virtual HRESULT DoParse();
-	virtual size_t GetTotal() const;
+	virtual HRESULT DoParse() override;
+	virtual size_t GetTotal() const override;
 
 	static HRESULT CreateInspectionObject(uint32_t& rInspectionId, SVTreeType& p_rTree, typename SVTreeType::SVBranchHandle hItem);
 

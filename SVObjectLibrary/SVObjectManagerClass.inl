@@ -174,34 +174,13 @@ HRESULT SVObjectManagerClass::UpdateObserver( uint32_t observerID, const SVDataT
 }
 
 template< typename SVDataType >
-HRESULT SVObjectManagerClass::UpdateObserver( long Cookie, const SVDataType& rData )
-{
-	HRESULT Result = E_FAIL;
-
-	SVCookieEntryStructPtr pCookie = GetCookieEntry( Cookie );
-
-	if(nullptr != pCookie)
-	{
-		SVObserverTemplate<SVDataType>* pObserver = dynamic_cast< SVObserverTemplate<SVDataType>* > ( pCookie->m_pFunctor.get() );
-		// cppcheck-suppress knownConditionTrueFalse //dynamic_cast can change pObserver to nullptr
-		if( nullptr != pObserver )
-		{
-			Result = pObserver->ObserverUpdate( rData );
-		}
-	}
-
-	return Result;
-}
-
-template< typename SVDataType >
 HRESULT SVObjectManagerClass::UpdateObservers( const std::string& rSubjectDataName, uint32_t subjectID, const SVDataType& rData )
 {
 	HRESULT Result = S_OK;
 
 	SVSubjectEnabledObserverMap Observers;
-	SVSubjectEnabledCookieMap Cookies;
 
-	Result = GetObservers( rSubjectDataName, subjectID, Observers, Cookies );
+	Result = GetObservers( rSubjectDataName, subjectID, Observers );
 
 	if( S_OK == Result )
 	{
@@ -211,21 +190,6 @@ HRESULT SVObjectManagerClass::UpdateObservers( const std::string& rSubjectDataNa
 			if( Iter->second == 1 )
 			{
 				HRESULT Temp = UpdateObserver( Iter->first, rData );
-
-				if( S_OK == Result )
-				{
-					Result = Temp;
-				}
-			}
-		}
-
-		SVSubjectEnabledCookieMap::iterator CookieIter = Cookies.begin();
-
-		for( ; Cookies.end() != CookieIter;  ++CookieIter )
-		{
-			if( CookieIter->second == 1 )
-			{
-				HRESULT Temp = UpdateObserver( CookieIter->first, rData );
 
 				if( S_OK == Result )
 				{

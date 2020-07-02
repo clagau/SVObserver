@@ -33,7 +33,7 @@ class SVObjectAppClass : public SVObjectClass, public SvOi::IObjectAppClass
 
 public:
 	virtual ~SVObjectAppClass();
-	SVObjectAppClass( LPCSTR LPSZObjectName );
+	explicit SVObjectAppClass(LPCSTR LPSZObjectName);
 	SVObjectAppClass( SVObjectClass* pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVOBJECTAPPCLASS );
 
 	virtual bool CreateObject(const SVObjectLevelCreateStruct& rCreateStructure) override;

@@ -26,17 +26,17 @@ public:
 
 	CPropVariant() { vt = VT_EMPTY; wReserved1 = 0; }
 	~CPropVariant() { Clear(); }
-	CPropVariant(const PROPVARIANT &varSrc);
+	explicit CPropVariant(const PROPVARIANT &varSrc);
 	CPropVariant(const CPropVariant &varSrc);
-	CPropVariant(BSTR bstrSrc);
-	CPropVariant(LPCOLESTR lpszSrc);
-	CPropVariant(bool bSrc) { vt = VT_BOOL; wReserved1 = 0; boolVal = (bSrc ? VARIANT_TRUE : VARIANT_FALSE); };
-	CPropVariant(Byte value) { vt = VT_UI1; wReserved1 = 0; bVal = value; }
-	CPropVariant(Int16 value) { vt = VT_I2; wReserved1 = 0; iVal = value; }
-	CPropVariant(Int32 value) { vt = VT_I4; wReserved1 = 0; lVal = value; }
-	CPropVariant(UInt32 value) { vt = VT_UI4; wReserved1 = 0; ulVal = value; }
-	CPropVariant(UInt64 value) { vt = VT_UI8; wReserved1 = 0; uhVal.QuadPart = value; }
-	CPropVariant(const FILETIME &value) { vt = VT_FILETIME; wReserved1 = 0; filetime = value; }
+	explicit CPropVariant(BSTR bstrSrc);
+	explicit CPropVariant(LPCOLESTR lpszSrc);
+	explicit CPropVariant(bool bSrc) { vt = VT_BOOL; wReserved1 = 0; boolVal = (bSrc ? VARIANT_TRUE : VARIANT_FALSE); };
+	explicit CPropVariant(Byte value) { vt = VT_UI1; wReserved1 = 0; bVal = value; }
+	explicit CPropVariant(Int16 value) { vt = VT_I2; wReserved1 = 0; iVal = value; }
+	explicit CPropVariant(Int32 value) { vt = VT_I4; wReserved1 = 0; lVal = value; }
+	explicit CPropVariant(UInt32 value) { vt = VT_UI4; wReserved1 = 0; ulVal = value; }
+	explicit CPropVariant(UInt64 value) { vt = VT_UI8; wReserved1 = 0; uhVal.QuadPart = value; }
+	explicit CPropVariant(const FILETIME &value) { vt = VT_FILETIME; wReserved1 = 0; filetime = value; }
 
 	CPropVariant& operator=(const CPropVariant &varSrc);
 	CPropVariant& operator=(const PROPVARIANT &varSrc);

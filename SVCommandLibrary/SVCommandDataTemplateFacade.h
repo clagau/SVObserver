@@ -24,14 +24,14 @@ public:
 
 	virtual ~SVCommandDataTemplateFacade();
 
-	virtual unsigned long GetDataType() const;
+	virtual unsigned long GetDataType() const override;
 
 	virtual HRESULT GetData( SVArgType& p_rData ) const = 0;
 	virtual HRESULT SetData( const SVDataType& p_rData ) = 0;
 
 protected:
 	SVCommandDataTemplateFacade();
-	SVCommandDataTemplateFacade( bool p_ReadOnly );
+	explicit SVCommandDataTemplateFacade(bool p_ReadOnly);
 
 	const unsigned long m_DataType;
 

@@ -26,7 +26,7 @@ class SVEnumerateValueObjectClass : public SVValueObjectClass<long>, public SvOi
 {
 	SV_DECLARE_CLASS( SVEnumerateValueObjectClass );
 public:
-	SVEnumerateValueObjectClass( LPCTSTR ObjectName );
+	explicit SVEnumerateValueObjectClass(LPCTSTR ObjectName);
 	SVEnumerateValueObjectClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVENUMERATEVALUEOBJECT );
 	const SVEnumerateValueObjectClass& operator = (const SVEnumerateValueObjectClass& rhs);
 

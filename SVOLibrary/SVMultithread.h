@@ -22,7 +22,7 @@ public:
 
 struct SVCriticalSectionAdapter
 {
-	SVCriticalSectionAdapter( CRITICAL_SECTION& rCritSec ) : m_rCriticalSection( rCritSec ) {}
+	explicit SVCriticalSectionAdapter(CRITICAL_SECTION& rCritSec) : m_rCriticalSection(rCritSec) {}
 	inline void Lock()                  { ::EnterCriticalSection( &m_rCriticalSection ); }
 	inline void Unlock()                { ::LeaveCriticalSection( &m_rCriticalSection ); }
 
@@ -31,14 +31,14 @@ struct SVCriticalSectionAdapter
 
 struct SVEmptySyncObject : public SVSyncObject	// to be used as a placeholder when synchronization isn't necessary
 {
-	HRESULT Unlock() {return S_OK;}
-	HRESULT Lock()   {return S_OK;}
+	HRESULT Unlock() override { return S_OK; }
+	HRESULT Lock() override {return S_OK;}
 };
 
 class SVSingleLock
 {
 public:
-	SVSingleLock( SVSyncObject& rSync );
+	explicit SVSingleLock( SVSyncObject& rSync );
 	~SVSingleLock();
 
 protected:

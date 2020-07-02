@@ -105,8 +105,8 @@ class SVPPQEntryDialogPropertySheetClass : public CPropertySheet
 
 // Construction
 public:
-	SVPPQEntryDialogPropertySheetClass(UINT nIDCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
-	SVPPQEntryDialogPropertySheetClass(LPCTSTR pszCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
+	explicit SVPPQEntryDialogPropertySheetClass(UINT nIDCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
+	explicit SVPPQEntryDialogPropertySheetClass(LPCTSTR pszCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
 	virtual ~SVPPQEntryDialogPropertySheetClass();
 
 protected:

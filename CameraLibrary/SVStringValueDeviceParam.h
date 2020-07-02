@@ -20,9 +20,9 @@ class SVStringValueDeviceParam : public SVDeviceParam
 {
 public:
 	SVStringValueDeviceParam();
-	SVStringValueDeviceParam(SVDeviceParamEnum typeEnum);
+	explicit SVStringValueDeviceParam(SVDeviceParamEnum typeEnum);
 	SVStringValueDeviceParam(const SVStringValueDeviceParam& rRhs);
-	SVStringValueDeviceParam(const std::string& rRhs);
+	explicit SVStringValueDeviceParam(const std::string& rRhs);
 	virtual ~SVStringValueDeviceParam();
 	virtual SVClonable* CloneImpl() const override;
 

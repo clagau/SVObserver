@@ -217,7 +217,6 @@ echo %time%
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="SVAboutDialogClass.cpp" />
-    <ClCompile Include="SVActiveXLockStruct.cpp" />
     <ClCompile Include="SVArchiveHeaderEditDlg.cpp" />
     <ClCompile Include="SVArchiveWritingDlg.cpp" />
     <ClCompile Include="SVChildrenSetupDialog.cpp" />
@@ -269,7 +268,6 @@ echo %time%
     <ClCompile Include="SVMaskShapeEditorDlg.cpp" />
     <ClCompile Include="SVMeasureAnalyzerAdjustmentSheet.cpp" />
     <ClCompile Include="SVMessageWindow.cpp" />
-    <ClCompile Include="SVMonitorList.cpp" />
     <ClCompile Include="SVMultiDocTemplate.cpp" />
     <ClCompile Include="SVOApp_Helper.cpp" />
     <ClCompile Include="SVObjectScriptParser.cpp" />
@@ -406,7 +404,6 @@ echo %time%
     <ClInclude Include="SoftwareTriggerDlg.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="SVAboutDialogClass.h" />
-    <ClInclude Include="SVActiveXLockStruct.h" />
     <ClInclude Include="SVArchiveHeaderEditDlg.h" />
     <ClInclude Include="SVArchiveWritingDlg.h" />
     <ClInclude Include="SVChildrenSetupDialog.h" />
@@ -461,7 +458,7 @@ echo %time%
     <ClInclude Include="SVMaskShapeEditorDlg.h" />
     <ClInclude Include="SVMeasureAnalyzerAdjustmentSheet.h" />
     <ClInclude Include="SVMessageWindow.h" />
-    <ClInclude Include="SVMonitorList.h" />
+    <ClInclude Include="MonitorListAttributeStruct.h" />
     <ClInclude Include="SVMultiDocTemplate.h" />
     <ClInclude Include="SVObjectScriptParser.h" />
     <ClInclude Include="SVObjectScriptParserBase.h" />

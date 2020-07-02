@@ -13,6 +13,7 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <map>
+#include "MonitorListAttributeStruct.h"
 #include "RemoteMonitorList.h"
 #include "SVInspectionProcess.h"
 #include "SVPPQObject.h"
@@ -101,8 +102,6 @@ public:
 	virtual ~SVConfigurationObject();
 
 	virtual HRESULT GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index = 0 ) const override;
-
-	unsigned long GetSVXFileVersion(SVTreeType& rTree);
 
 	void SaveConfiguration(SvXml::SVObjectXMLWriter& rWriter) const;
 
@@ -486,7 +485,6 @@ private:
 	SvIe::SVVirtualCameraPtrVector  m_arCameraArray;
 	SVInspectionProcessVector   m_arInspectionArray;
 	SVIMProductEnum             m_eProductType{SVIM_PRODUCT_TYPE_UNKNOWN};
-	unsigned long				m_ulVersion = 0;
 	volatile bool               m_bConfigurationValid = false;
 
 	SVAcquisitionDeviceMap m_AcquisitionDeviceMap;

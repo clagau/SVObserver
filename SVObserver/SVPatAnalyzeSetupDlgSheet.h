@@ -16,8 +16,8 @@ class SVPatAnalyzeSetupDlgSheet : public CPropertySheet
 	DECLARE_DYNAMIC(SVPatAnalyzeSetupDlgSheet)
 
 public:
-	SVPatAnalyzeSetupDlgSheet(UINT nIDCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
-	SVPatAnalyzeSetupDlgSheet(LPCTSTR pszCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
+	explicit SVPatAnalyzeSetupDlgSheet(UINT nIDCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
+	explicit SVPatAnalyzeSetupDlgSheet(LPCTSTR pszCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
 	virtual ~SVPatAnalyzeSetupDlgSheet();
 
 // Overrides

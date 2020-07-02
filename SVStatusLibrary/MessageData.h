@@ -29,7 +29,7 @@ namespace SvStl
 		//! \param AdditionalTextId <in> Id for the additional text
 		//! \param rAdditionalTextList <in> Reference to list of strings for the additional text
 		//************************************
-		MessageData( DWORD MessageCode, MessageTextEnum AdditionalTextId = SvStl::Tid_Empty, const SvDef::StringVector& rAdditionalTextList = SvDef::StringVector() );
+		explicit MessageData(DWORD MessageCode, MessageTextEnum AdditionalTextId = SvStl::Tid_Empty, const SvDef::StringVector& rAdditionalTextList = SvDef::StringVector());
 
 		//************************************
 		//! This is the copy constructor

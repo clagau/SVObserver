@@ -34,7 +34,7 @@ class SVIOController : public SVObjectClass
 	//SV_DECLARE_CLASS( SVIOController );
 
 public:
-	SVIOController( LPCTSTR ObjectName );
+	explicit SVIOController(LPCTSTR ObjectName);
 	SVIOController( SVObjectClass *pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVIOCONTROLLER );
 
 	virtual ~SVIOController();

@@ -16,22 +16,12 @@
 namespace SvSml
 {
 	SVSharedMemorySettings::SVSharedMemorySettings()
-	: m_MonitorStoreSize(DefaultMonitorStoreSize),
-	m_NumProductSlot(DefaultNumProductSlot),
+	: m_NumProductSlot(DefaultNumProductSlot),
 	m_CreateTimeout(DefaultConnectionTimout),
 	m_CreateWaitTime(DefaultCreateWaitTime)
 	{
 	}
 
-
-	int SVSharedMemorySettings::GetMonitorStoreSize() const
-	{
-		return m_MonitorStoreSize;
-	}
-	void  SVSharedMemorySettings::SetMonitorStoreSize(int StoreSize)
-	{
-		m_MonitorStoreSize = StoreSize;
-	}
 	int SVSharedMemorySettings::GetNumProductSlot() const
 	{
 		return m_NumProductSlot;

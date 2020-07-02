@@ -127,7 +127,7 @@ int SVEquationYaccClass::AddToList(double val)
 double SVEquationYaccClass::CalcMin()
 {
 	double val = 0.0;
-	int& rCurrentNumListEntries = iNumListEntries[current_recursive_depth];
+	const int& rCurrentNumListEntries = iNumListEntries[current_recursive_depth];
 
 	if (rCurrentNumListEntries)
 	{
@@ -145,7 +145,7 @@ double SVEquationYaccClass::CalcMin()
 double SVEquationYaccClass::CalcMax()
 {
 	double val = 0.0;
-	int& rCurrentNumListEntries = iNumListEntries[current_recursive_depth];
+	const int& rCurrentNumListEntries = iNumListEntries[current_recursive_depth];
 
 	if (rCurrentNumListEntries)
 	{
@@ -163,7 +163,7 @@ double SVEquationYaccClass::CalcMax()
 double SVEquationYaccClass::CalcAverage()
 {
 	double val = 0.0;
-	int& rCurrentNumListEntries = iNumListEntries[current_recursive_depth];
+	const int& rCurrentNumListEntries = iNumListEntries[current_recursive_depth];
 
 	if (rCurrentNumListEntries)
 	{
@@ -179,7 +179,7 @@ double SVEquationYaccClass::CalcAverage()
 double SVEquationYaccClass::CalcMedian()
 {
 	double val = 0.0;
-	int& rCurrentNumListEntries = iNumListEntries[current_recursive_depth];
+	const int& rCurrentNumListEntries = iNumListEntries[current_recursive_depth];
 
 	if (rCurrentNumListEntries)
 	{
@@ -216,7 +216,7 @@ double SVEquationYaccClass::CalcMedian()
 double SVEquationYaccClass::CalcSum()
 {
 	double val = 0.0;
-	int& rCurrentNumListEntries = iNumListEntries[current_recursive_depth];
+	const int& rCurrentNumListEntries = iNumListEntries[current_recursive_depth];
 	
 	if (rCurrentNumListEntries)
 	{
@@ -231,7 +231,7 @@ double SVEquationYaccClass::CalcSum()
 double SVEquationYaccClass::CalcStdDeviation()
 {
 	double val = 0.0;
-	int& rCurrentNumListEntries = iNumListEntries[current_recursive_depth];
+	const int& rCurrentNumListEntries = iNumListEntries[current_recursive_depth];
 
 	if ( rCurrentNumListEntries )
 	{

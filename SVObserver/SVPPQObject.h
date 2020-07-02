@@ -16,7 +16,6 @@
 //Moved to precompiled header: #include <boost/function.hpp>
 #include "SVInfoStructs.h"
 #include "SVInspectionProcess.h"
-#include "SVMonitorList.h"
 #include "SVPPQShiftRegister.h"
 #include "Definitions/SVPPQEnums.h"
 #include "InspectionEngine/SVVirtualCamera.h"
@@ -44,6 +43,7 @@ class IObjectWriter;
 }
 class SVInputObjectList;
 class SVOutputObjectList;
+struct MonitorListAttributeStruct;
 #pragma endregion Declarations
 
 constexpr long getMaxPpqLength()
@@ -201,7 +201,7 @@ public:
 	/// Set or unset Monitor list and activated the shared memory for it.
 	/// \param rActiveList [in] The new monitor list.
 	/// In error cases (only possible in set case) this method throw Exception
-	void SetMonitorList(const ActiveMonitorList& rActiveList);
+	void SetMonitorList(const MonitorListAttributeStruct& rActiveList);
 	bool HasActiveMonitorList() const;
 	
 	///Set the slotmanager 

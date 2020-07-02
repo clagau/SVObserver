@@ -21,7 +21,7 @@ class SVGetObjectDequeByTypeVisitor
 public:
 	typedef std::deque< SVObjectClass* > SVObjectPtrDeque;
 
-	SVGetObjectDequeByTypeVisitor( const SvDef::SVObjectTypeInfoStruct& p_rObjectInfo );
+	explicit SVGetObjectDequeByTypeVisitor(const SvDef::SVObjectTypeInfoStruct& p_rObjectInfo);
 	virtual ~SVGetObjectDequeByTypeVisitor();
 
 	HRESULT VisitElement( SVObjectClass& p_rElement );

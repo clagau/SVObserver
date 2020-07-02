@@ -17,7 +17,7 @@ struct SVParserProgressStruct
 	size_t amtTotal;
 	unsigned long parserHandle;
 
-	SVParserProgressStruct(unsigned long p_parserHandle)
+	explicit SVParserProgressStruct(unsigned long p_parserHandle)
 	: parserHandle(p_parserHandle), amtProcessed(0), amtTotal(0) 
 	{
 	}

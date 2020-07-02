@@ -21,7 +21,7 @@ namespace SvOg
 	class SVOCVGeneralDlg : public CPropertyPage
 	{
 	public:
-		SVOCVGeneralDlg(SVOCVSheet& rParent);
+		explicit SVOCVGeneralDlg(SVOCVSheet& rParent);
 		virtual ~SVOCVGeneralDlg();
 
 		HRESULT SetInspectionData();

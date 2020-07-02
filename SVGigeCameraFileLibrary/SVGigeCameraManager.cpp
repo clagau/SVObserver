@@ -62,7 +62,7 @@ HRESULT SVGigeCameraManager::UpdateConnectedCameras( const SVGigeCameraStructVec
 		SVGigeCameraStruct GigeCamera(rIniCamera);
 		for(auto const& rCamera : rCameraList)
 		{
-			if(rIniCamera.GetIPAddress() == rCamera.GetIPAddress() )
+			if(rIniCamera.m_IPAddress == rCamera.m_IPAddress )
 			{
 				GigeCamera = rCamera;
 				GigeCamera.m_CameraID = rIniCamera.m_CameraID;

@@ -90,7 +90,7 @@ namespace sv_xml
 	{
 		HGLOBAL hg;
 	public:
-		HG2String(HGLOBAL h): hg(h)
+		explicit HG2String(HGLOBAL h) : hg(h)
 		{
 		}
 		~HG2String()

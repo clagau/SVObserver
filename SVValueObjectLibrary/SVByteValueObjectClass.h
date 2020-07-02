@@ -32,7 +32,7 @@ class SVByteValueObjectClass : public SVValueObjectClass<BYTE>
 	SV_DECLARE_CLASS( SVByteValueObjectClass );
 
 public:
-	SVByteValueObjectClass( LPCTSTR ObjectName );
+	explicit SVByteValueObjectClass(LPCTSTR ObjectName);
 	SVByteValueObjectClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVBYTEVALUEOBJECT );
 	SVByteValueObjectClass( const SVByteValueObjectClass& rhs );
 	const SVByteValueObjectClass& operator = ( const SVByteValueObjectClass& rhs );

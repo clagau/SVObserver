@@ -22,7 +22,7 @@ enum class NavElementType
 };
 struct NavigatorElement
 {
-	NavigatorElement(LPCSTR displayName) :m_DisplayName(displayName)
+	explicit NavigatorElement(LPCSTR displayName) :m_DisplayName(displayName)
 	{
 	};
 

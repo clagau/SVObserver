@@ -29,8 +29,8 @@ namespace SvMc
 	public:
 	#pragma region Constructor
 		ResizablePropertySheet();
-		ResizablePropertySheet(UINT nIDCaption, CWnd *pParentWnd = nullptr, UINT iSelectPage = 0);
-		ResizablePropertySheet(LPCTSTR pszCaption, CWnd *pParentWnd = nullptr, UINT iSelectPage = 0);
+		explicit ResizablePropertySheet(UINT nIDCaption, CWnd *pParentWnd = nullptr, UINT iSelectPage = 0);
+		explicit ResizablePropertySheet(LPCTSTR pszCaption, CWnd *pParentWnd = nullptr, UINT iSelectPage = 0);
 		virtual ~ResizablePropertySheet();
 	#pragma endregion Constructor
 

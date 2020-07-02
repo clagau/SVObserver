@@ -26,7 +26,7 @@ namespace SvOg
 
 	#pragma region Constructor
 	public:
-		GlobalConstantConflictDlg( SvDef::GlobalConflictPairVector& rGlobalPairs, CWnd* pParent = nullptr );
+		explicit GlobalConstantConflictDlg(SvDef::GlobalConflictPairVector& rGlobalPairs, CWnd* pParent = nullptr);
 		virtual ~GlobalConstantConflictDlg();
 	#pragma endregion Constructor
 

@@ -538,30 +538,6 @@ HRESULT SVODeviceClass::ExecuteCallback(SVOResponseClass& rResponse)
 }
 
 /*
-This method provide the current validity state of this object.
-*/
-HRESULT SVODeviceClass::GetIsValid(bool &rbIsValid) const
-{
-	HRESULT hrOk = S_OK;
-
-	rbIsValid = mbIsValid;
-
-	return hrOk;
-}
-
-/*
-This method sets the current validity state of this object.
-*/
-HRESULT SVODeviceClass::SetIsValid(bool bIsValid)
-{
-	HRESULT hrOk = S_OK;
-
-	mbIsValid = bIsValid;
-
-	return hrOk;
-}
-
-/*
 This method will clear and destroy the local attribute of this object.
 */
 HRESULT SVODeviceClass::DestroyLocal()

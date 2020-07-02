@@ -45,7 +45,7 @@ class SVDisplayPicture : public CStatic
 {
 public:
 #pragma region Constructor
-	SVDisplayPicture(long p_lTab);
+	explicit SVDisplayPicture(long p_lTab);
 	virtual ~SVDisplayPicture();
 #pragma endregion Constructor
 

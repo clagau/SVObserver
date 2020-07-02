@@ -22,7 +22,7 @@ namespace SvOg
 	class SVFormulaEditorPageClass : public CPropertyPage
 	{
 	public:
-		SVFormulaEditorPageClass( SvOi::IFormulaControllerPtr controller, bool isDisableCheckboxesVisible = false, UINT captionID = IDS_FORMULA_STRING, UINT disableExtentionID = IDS_TOOL_STRING );   // standard constructor
+		explicit SVFormulaEditorPageClass(SvOi::IFormulaControllerPtr controller, bool isDisableCheckboxesVisible = false, UINT captionID = IDS_FORMULA_STRING, UINT disableExtentionID = IDS_TOOL_STRING);   // standard constructor
 		virtual ~SVFormulaEditorPageClass();
 
 		bool validateAndSetEquation();

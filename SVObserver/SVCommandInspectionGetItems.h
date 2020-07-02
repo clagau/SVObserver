@@ -34,7 +34,6 @@ struct SVCommandInspectionGetItems
 
 	bool empty() const;
 
-	const SVNameObjectSet& GetItemNames() const;
 	const SVNameStorageResultMap& GetResultItems() const;
 
 protected:

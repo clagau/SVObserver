@@ -16,7 +16,7 @@ class SVProcessFunctor
 {
 public:
 	SVProcessFunctor();
-	SVProcessFunctor( SVT_CLASS* p_pObject );
+	explicit SVProcessFunctor(SVT_CLASS* p_pObject);
 	SVProcessFunctor( const SVProcessFunctor& p_rObject );
 
 	const SVProcessFunctor& operator=( const SVProcessFunctor& p_rObject );

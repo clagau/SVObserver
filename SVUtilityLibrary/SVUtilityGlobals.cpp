@@ -75,26 +75,6 @@ void KeepPrevError( HRESULT& p_rhrPrev, HRESULT p_hrNew )
 	}
 }
 
-HRESULT KeepPrevErrorReturnPrev( HRESULT& p_rhrPrev, HRESULT p_hrNew )
-{
-	if( S_OK == p_rhrPrev )
-	{
-		p_rhrPrev = p_hrNew;
-	}
-
-	return p_rhrPrev;
-}
-
-HRESULT KeepPrevErrorReturnNew( HRESULT& p_rhrPrev, HRESULT p_hrNew )
-{
-	if( S_OK == p_rhrPrev )
-	{
-		p_rhrPrev = p_hrNew;
-	}
-
-	return p_hrNew;
-}
-
 // TStrPathName must be the full pathname of a file
 // or a full pathname of a directory with a slash on the end!
 // e.g.: c:/dir1/dir2/dir3/filename.ext
@@ -115,14 +95,13 @@ bool SVCheckPathDir( LPCTSTR PathName, bool CreateIfDoesNotExist )
 		curPath[0] = '\0';
 	}
 	// check path
-	TCHAR  path[ _MAX_PATH ];
-	TCHAR* pLast = ( TCHAR* ) PathName;
-	TCHAR  drive[ _MAX_DRIVE ];
-	TCHAR  dir[ _MAX_DIR ];
-	TCHAR  fname[ _MAX_FNAME ];  
-	TCHAR  ext[ _MAX_EXT ];
 	if( PathName && _tcslen( PathName ) < _MAX_PATH )
 	{
+		TCHAR* pLast = (TCHAR*)PathName;
+		TCHAR  drive[_MAX_DRIVE];
+		TCHAR  dir[_MAX_DIR];
+		TCHAR  fname[_MAX_FNAME];
+		TCHAR  ext[_MAX_EXT];
 		_tsplitpath( pLast, drive, dir, fname, ext );
 		if( _tcslen( drive ) == 0 && nullptr != _tcschr( pLast, _TCHAR( ':' ) ) )
 		{
@@ -133,6 +112,7 @@ bool SVCheckPathDir( LPCTSTR PathName, bool CreateIfDoesNotExist )
 
 		while(nullptr != (pLast = _tcspbrk( pLast, _T( "\\/" ))))
 		{
+			TCHAR  path[_MAX_PATH];
 			_tcsncpy( path, PathName, pLast++ - PathName + 1 );
 			path[ pLast - PathName ] = _TCHAR( '\0' );
 
@@ -178,13 +158,12 @@ bool SVDeleteFiles( LPCTSTR PathName, bool IncludeSubDirectories )
 	// true. 
 	// In all other cases it returns false.
 
-	TCHAR  path[ _MAX_PATH ];
-	TCHAR  drive[ _MAX_DRIVE ];
-	TCHAR  dir[ _MAX_DIR ];
-	TCHAR  fname[ _MAX_FNAME ];  
-	TCHAR  ext[ _MAX_EXT ];
 	if( PathName && _tcslen( PathName ) < _MAX_PATH )
 	{
+		TCHAR  drive[_MAX_DRIVE];
+		TCHAR  dir[_MAX_DIR];
+		TCHAR  fname[_MAX_FNAME];
+		TCHAR  ext[_MAX_EXT];
 		_tsplitpath( PathName, drive, dir, fname, ext );
 
 		// Search for file(s)...
@@ -195,6 +174,7 @@ bool SVDeleteFiles( LPCTSTR PathName, bool IncludeSubDirectories )
 		{
 			if( hFindFile )
 			{
+				TCHAR  path[_MAX_PATH];
 				_tmakepath( path, drive, dir, findData.cFileName, _T( "" ) );
 				if( findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY )
 				{

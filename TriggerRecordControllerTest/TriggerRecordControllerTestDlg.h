@@ -18,7 +18,7 @@ namespace SvTrcT
 	{
 		// Konstruktion
 	public:
-		CTriggerRecordControllerTestDlg(bool isReader, CWnd* pParent = NULL);	// Standardkonstruktor
+		explicit CTriggerRecordControllerTestDlg(bool isReader, CWnd* pParent = NULL);	// Standardkonstruktor
 		~CTriggerRecordControllerTestDlg();
 
 	// Dialogfelddaten

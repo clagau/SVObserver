@@ -374,7 +374,7 @@ HRESULT LoadInspectionXml(SvXml::SVXMLMaterialsTree& rXmlTree, const std::string
 		if( SvXml::SVNavigateTree::FindBranch(rXmlTree, Root, SVFindPredicate(rXmlTree, SvXml::CTAG_SVIPDOC ), IPDocItem ) )
 		{
 			inspectionInfo.m_materialsTree.clear();
-			inspectionInfo.m_materialsTree = *IPDocItem;
+			inspectionInfo.m_materialsTree = SVMaterialsTree(*IPDocItem);
 		}
 		else
 		{

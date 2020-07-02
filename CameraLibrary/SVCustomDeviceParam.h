@@ -24,7 +24,7 @@ public:
 	SVCustomDeviceParam();
 
 	template<typename T>
-	SVCustomDeviceParam(const T& value) 
+	explicit SVCustomDeviceParam(const T& value)
 	: SVDeviceParam(value->Type())
 	, m_holder(value) 
 	{
@@ -45,8 +45,8 @@ public:
 
 	virtual HRESULT SetMetadata(const SVDeviceParam* pParam) override;
 
-	HRESULT GetValue(VARIANT& rv) const;
-	HRESULT SetValue(const VARIANT& rv);
+	HRESULT GetValue(VARIANT& rv) const override;
+	HRESULT SetValue(const VARIANT& rv) override;
 
 	SVDeviceParamWrapper& GetHeldParam();
 	const SVDeviceParamWrapper& GetHeldParam() const;

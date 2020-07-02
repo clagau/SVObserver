@@ -32,7 +32,6 @@ namespace SvStl
 	constexpr char* DefaultTempFolder = _T( "C:\\Temp" );
 	constexpr char* DefaultRunFolder = _T( "C:\\RUN" );
 	constexpr char* DefaultObserverBinPath = _T( "C:\\SVObserver\\bin" );
-	constexpr char* DefaultExternalToolPath = _T( "C:\\SVObserver\\ExternalTool" );	
 	constexpr char* DefaultObserverPath = _T( "C:\\SVObserver" );	
 	constexpr char* DefaultSecondObserverPath = _T( "D:\\SVObserver" );	
 	constexpr char* DefaultRamDrive = _T("V:");
@@ -48,7 +47,6 @@ namespace SvStl
 	///TAGS 
 	constexpr char* SVIMDirectorySectionTag = _T("SVIM Directories");
 	constexpr char* SVIMObserverBinPathTag = _T("ObserverBinPath");
-	constexpr char* SVIMObserverExternalToolPathTag = _T("ObserverExternalToolPath");
 	constexpr char* SVIMSVObserverRunPathTag = _T("ObserverRunPath");
 	constexpr char* SVIMSVObserverTempPath = _T("ObserverTempPath");
 	constexpr char* SVIMSVObserverPath = _T("ObserverPath");
@@ -64,7 +62,6 @@ namespace SvStl
 		m_SVObserverBinFolder{DefaultObserverBinPath},
 		m_SVObserverRunFolder{DefaultRunFolder},
 		m_TempFolder{DefaultTempFolder},
-		m_SVObserverExternalToolFolder{DefaultExternalToolPath},
 		m_AutosaveTemp1FileName{AutoSaveTemp1FileName},
 		m_AutosaveTemp2FileName{AutoSaveTemp2FileName},
 		m_AutosaveTemp3FileName{AutoSaveTemp3FileName}
@@ -98,6 +95,7 @@ namespace SvStl
 		}
 	}
 
+	// cppcheck-suppress unusedFunction
 	LPCTSTR GlobalPath::GetIniFolder()
 	{
 		InitializeIniFolder();
@@ -139,13 +137,6 @@ namespace SvStl
 		InitializeIniFolder();
 		return m_SVObserver_ini.c_str();
 	}
-
-	std::string GlobalPath::GetExternalToolPath(LPCTSTR filename)
-	{
-		InitializePath();
-		return AppendFilename(m_SVObserverExternalToolFolder, filename);
-	}
-
 
 	std::string GlobalPath::GetRunPath(LPCTSTR filename )
 	{
@@ -232,9 +223,6 @@ namespace SvStl
 		{
 			m_SVObserverBinFolder  = GetValueString(SVIMDirectorySectionTag,SVIMObserverBinPathTag, DefaultObserverBinPath,GetSVIMIniPath());
 			::WritePrivateProfileString( SVIMDirectorySectionTag, SVIMObserverBinPathTag,  m_SVObserverBinFolder.c_str() , GetSVIMIniPath() );
-  
-			m_SVObserverExternalToolFolder = GetValueString(SVIMDirectorySectionTag,SVIMObserverExternalToolPathTag,DefaultExternalToolPath,GetSVIMIniPath());
-			::WritePrivateProfileString( SVIMDirectorySectionTag, SVIMObserverExternalToolPathTag, m_SVObserverExternalToolFolder.c_str(), GetSVIMIniPath() );
   
 			m_SVObserverRunFolder = GetValueString(SVIMDirectorySectionTag,SVIMSVObserverRunPathTag,DefaultRunFolder,GetSVIMIniPath());
 			::WritePrivateProfileString( SVIMDirectorySectionTag, SVIMSVObserverRunPathTag, m_SVObserverRunFolder.c_str(), GetSVIMIniPath() );

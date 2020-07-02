@@ -84,8 +84,8 @@ HRESULT SVODataDeviceClass::Create(unsigned long )
 
 		if( mUsedQueue.IsCreated() && m_CallbackList.IsCreated() && S_OK == hrOk )
 		{
-			mbIsValid = TRUE;
-			mbIsCreated = TRUE;
+			mbIsValid = true;
+			mbIsCreated = true;
 		}
 		else
 		{
@@ -140,9 +140,7 @@ HRESULT SVODataDeviceClass::RegisterCallback(SVOCallbackPtr pCallback, void *pvO
 							 pData->mpvCaller == pvCaller )
 					{
 						pData->m_lRefCount++;
-
 						hrOk = S_OK;
-
 						break;
 					}
 				}
@@ -332,7 +330,7 @@ HRESULT SVODataDeviceClass::Start()
 
 				if ( S_OK == hrOk )
 				{
-					mbIsStarted = TRUE;
+					mbIsStarted = true;
 				}
 				else
 				{
@@ -360,7 +358,7 @@ HRESULT SVODataDeviceClass::Stop()
 {
 	HRESULT hrOk = S_OK;
 
-	mbIsStarted = FALSE;
+	mbIsStarted = false;
 
 	m_Thread.SetPriority( THREAD_PRIORITY_NORMAL );
 
@@ -398,15 +396,12 @@ HRESULT SVODataDeviceClass::Process( bool&  )
 {
 	HRESULT hrOk = S_OK;
 
-	long lRes = 0;
-
 	if ( mbIsValid )
 	{
-		bool bDone = true;
-
+		long lRes = 0;
 		mUsedQueue.GetSize( lRes );
 
-		bDone = lRes < 1;
+		bool bDone = lRes < 1;
 		
 		while( ! bDone && S_OK == hrOk )
 		{
@@ -573,38 +568,14 @@ HRESULT SVODataDeviceClass::ExecuteCallback( SVCallbackClassPtrQueue&, SVODataRe
 }
 
 /*
-This method provide the current validity state of this object.
-*/
-HRESULT SVODataDeviceClass::GetIsValid(bool &rbIsValid) const
-{
-	HRESULT hrOk = S_OK;
-
-	rbIsValid = mbIsValid;
-
-	return hrOk;
-}
-
-/*
-This method sets the current validity state of this object.
-*/
-HRESULT SVODataDeviceClass::SetIsValid(bool bIsValid)
-{
-	HRESULT hrOk = S_OK;
-
-	mbIsValid = bIsValid;
-
-	return hrOk;
-}
-
-/*
 This method will clear and destroy the local attribute of this object.
 */
 HRESULT SVODataDeviceClass::DestroyLocal()
 {
 	HRESULT hrOk = S_OK;
 
-	mbIsValid = FALSE;
-	mbIsStarted = FALSE;
+	mbIsValid = false;
+	mbIsStarted = false;
 
 	m_Thread.Destroy();
 

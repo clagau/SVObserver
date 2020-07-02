@@ -23,7 +23,7 @@ private:
 
 public:
 	SVGigeFeatureSelector();
-	SVGigeFeatureSelector(const std::string& featureName);
+	explicit SVGigeFeatureSelector(const std::string& featureName);
 	SVGigeFeatureSelector(const std::string& featureName, const std::string& featureValue);
 	SVGigeFeatureSelector(const SVGigeFeatureSelector& rSelector);
 	SVGigeFeatureSelector& operator=(const SVGigeFeatureSelector& rSelector);

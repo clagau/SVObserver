@@ -32,7 +32,7 @@ namespace SvTi
 	class SVTriggerObject : public SVObjectClass
 	{
 	public:
-		SVTriggerObject( LPCSTR ObjectName );
+		explicit SVTriggerObject(LPCSTR ObjectName);
 		SVTriggerObject( SVObjectClass *pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTRIGGEROBJECT );
 		virtual ~SVTriggerObject();
 

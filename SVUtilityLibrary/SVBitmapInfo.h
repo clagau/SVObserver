@@ -28,7 +28,7 @@ public:
 
 	SVBitmapInfo();
 	SVBitmapInfo( const SVBitmapInfo& rObject );
-	SVBitmapInfo( const BITMAPINFO& rObject );
+	explicit SVBitmapInfo(const BITMAPINFO& rObject);
 	SVBitmapInfo( long width, long height, int bitCount, const SVColorTable& rColorTable );
 
 	virtual ~SVBitmapInfo();

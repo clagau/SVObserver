@@ -34,7 +34,7 @@ namespace sv
 class SVTriggerProxy
 {
 public:
-	SVTriggerProxy(SvTi::SVTriggerObject* t): m_pTrigger(t), m_paused(false), m_period(200)
+	explicit SVTriggerProxy(SvTi::SVTriggerObject* t) : m_pTrigger(t), m_paused(false), m_period(200)
 	{
 	}
 	int GetSoftwareTriggerPeriod() { if( !m_paused){m_period = m_pTrigger->GetSoftwareTriggerPeriod();} return m_period; }

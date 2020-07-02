@@ -27,7 +27,7 @@ struct SVOverlayFigureStruct
 		oFigureColor = 0;
 	}
 
-	SVOverlayFigureStruct(const SVExtentLineStruct& p_ExtentLineStruct)
+	explicit SVOverlayFigureStruct(const SVExtentLineStruct& p_ExtentLineStruct)
 	{
 		lFigureSize = 0;
 		pFigurePoints = nullptr;
@@ -81,7 +81,7 @@ struct SVOverlayStruct
 		m_TextColor = 0;
 	}
 	
-	SVOverlayStruct(const SVExtentMultiLineStruct& p_MultiLineStruct)
+	explicit SVOverlayStruct(const SVExtentMultiLineStruct& p_MultiLineStruct)
 	{
 		lFigureSize = 0;
 		pOverlays = nullptr;
@@ -144,7 +144,7 @@ public:
 	// Construction section
 	SVImageOverlayClass();
 	SVImageOverlayClass( const SVImageOverlayClass& rRhs );
-	SVImageOverlayClass(const SVExtentMultiLineStructVector& rMultiLineArrayStruct);
+	explicit SVImageOverlayClass(const SVExtentMultiLineStructVector& rMultiLineArrayStruct);
 	~SVImageOverlayClass();
 
 	const SVImageOverlayClass& operator = ( const SVImageOverlayClass& rRhs );

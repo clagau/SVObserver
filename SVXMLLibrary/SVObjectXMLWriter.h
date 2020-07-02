@@ -33,7 +33,7 @@ namespace  SvXml
 	class SVObjectXMLWriter : public SvOi::IObjectWriter
 	{
 	public:
-		SVObjectXMLWriter(std::ostream& os);
+		explicit SVObjectXMLWriter(std::ostream& os);
 		~SVObjectXMLWriter();
 
 		///Write <DATA ...>

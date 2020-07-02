@@ -20,12 +20,12 @@ class SVBoolValueDeviceParam : public SVDeviceParam
 {
 public:
 	SVBoolValueDeviceParam();
-	SVBoolValueDeviceParam(SVDeviceParamEnum typeEnum);
+	explicit SVBoolValueDeviceParam(SVDeviceParamEnum typeEnum);
 	SVBoolValueDeviceParam( const SVBoolValueDeviceParam& rhs );
 	virtual SVClonable* CloneImpl() const override;
 
 	// automatic conversions
-	SVBoolValueDeviceParam(bool rhs);	// not const bool& so that we get automatic conversion from other integral types for free
+	explicit SVBoolValueDeviceParam(bool rhs);	// not const bool& so that we get automatic conversion from other integral types for free
 	operator bool() const;
 	SVBoolValueDeviceParam& operator=(const SVBoolValueDeviceParam& rhs);
 	SVBoolValueDeviceParam& operator=(bool bVal);

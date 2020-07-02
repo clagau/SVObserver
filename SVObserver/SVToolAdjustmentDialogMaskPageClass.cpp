@@ -299,7 +299,7 @@ void SVToolAdjustmentDialogMaskPageClass::OnEditStaticMaskButton()
 			{
 				if (nullptr != pStreamMaskController )
 				{
-					hr = GetHGlobalFromStream(pStreamMaskController, &hg);
+					/*hr = */GetHGlobalFromStream(pStreamMaskController, &hg);
 					m_maskController.SetMaskData(hg);
 				}
 			}

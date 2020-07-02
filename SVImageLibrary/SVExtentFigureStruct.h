@@ -22,7 +22,7 @@ struct SVExtentFigureStruct
 {
 	SVExtentFigureStruct();
 	SVExtentFigureStruct( const SVExtentFigureStruct &p_rsvValue );
-	SVExtentFigureStruct( RECT p_oRect );
+	explicit SVExtentFigureStruct(RECT p_oRect);
 	~SVExtentFigureStruct();
 
 	const SVExtentFigureStruct& operator = ( const SVExtentFigureStruct &p_rsvValue );

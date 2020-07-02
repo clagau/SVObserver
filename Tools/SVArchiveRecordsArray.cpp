@@ -131,7 +131,7 @@ void SVArchiveRecordsArray::ValidateImageObjects()
 		SvIe::SVImageClass* pImageObject = entry.GetImage();
 		if (pImageObject)
 		{
-			entry.m_svObjectReference = pImageObject;
+			entry.m_svObjectReference = SVObjectReference{ pImageObject };
 			entry.BuildImageFileName();
 			entry.ConnectInputObject();
 

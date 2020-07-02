@@ -19,7 +19,7 @@ namespace SvCl
 		typedef std::pair<Key, Data > Element;
 
 	public:
-		SVCompareKeys(const Key& elementKey) : m_elementKey(elementKey) {}
+		explicit SVCompareKeys(const Key& elementKey) : m_elementKey(elementKey) {}
 	
 		bool operator()(const Element& element) const 
 		{

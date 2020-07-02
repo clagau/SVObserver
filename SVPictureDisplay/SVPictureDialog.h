@@ -22,7 +22,7 @@ class SVPictureDialog : public CDialog
 
 public:
 #pragma region Constructor
-	SVPictureDialog( long p_lTab, AppearanceTypes p_lAppearance = TopButtons );
+	explicit SVPictureDialog(long p_lTab, AppearanceTypes p_lAppearance = TopButtons);
 	virtual ~SVPictureDialog();
 #pragma endregion Constructor
 

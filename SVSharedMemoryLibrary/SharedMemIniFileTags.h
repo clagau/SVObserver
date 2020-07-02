@@ -9,7 +9,6 @@
 namespace SvSml
 {
 	constexpr char* SharedMemorySectionTag = _T("SharedMemory");
-	constexpr char* MonitorStoreSizeTag = _T("MonitorStoreSize");
 	constexpr char* NumProductSlotTag = _T("NumProductSlot");
 	constexpr char* CreateTimeoutTag = _T("CreateTimeout");
 	constexpr char* CreateWaitTimeTag = _T("CreateWaitTime");

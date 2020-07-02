@@ -19,7 +19,7 @@ class SVNullDeviceParam : public SVDeviceParam
 {
 public:
 	SVNullDeviceParam();
-	SVNullDeviceParam(SVDeviceParamEnum typeEnum);
+	explicit SVNullDeviceParam(SVDeviceParamEnum typeEnum);
 	SVNullDeviceParam(const SVNullDeviceParam& rhs);
 	virtual ~SVNullDeviceParam();
 	virtual SVClonable* CloneImpl() const override;

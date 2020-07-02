@@ -27,7 +27,7 @@ class SVDWordValueObjectClass : public SVValueObjectClass<DWORD>
 	SV_DECLARE_CLASS( SVDWordValueObjectClass );
 
 public:
-	SVDWordValueObjectClass( LPCTSTR ObjectName );
+	explicit SVDWordValueObjectClass(LPCTSTR ObjectName);
 	SVDWordValueObjectClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVDWORDVALUEOBJECT );
 	SVDWordValueObjectClass( const SVDWordValueObjectClass& rhs );
 	const SVDWordValueObjectClass& operator = ( const SVDWordValueObjectClass& rhs );

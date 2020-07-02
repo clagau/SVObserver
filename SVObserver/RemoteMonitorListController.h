@@ -12,7 +12,7 @@
 
 #pragma region Includes
 #include "RemoteMonitorList.h"
-#include "SVMonitorList.h"
+#include "MonitorListAttributeStruct.h"
 #include "SVSharedMemoryLibrary/SVProductFilterEnum.h"
 
 #pragma endregion Includes

@@ -118,7 +118,7 @@ public:
 		m_pFormatsParam->options[ m_strName ].m_lHeight = height; 
 	}
 
-	void Update(SvIe::SVAcquisitionClassPtr pAcqDevice)
+	void Update(SvIe::SVAcquisitionClassPtr pAcqDevice) override
 	{
 		if (nullptr != pAcqDevice)
 		{

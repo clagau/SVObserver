@@ -23,7 +23,7 @@ class SVInt64ValueObjectClass : public SVValueObjectClass<__int64>
 	SV_DECLARE_CLASS( SVInt64ValueObjectClass );
 
 public:
-	SVInt64ValueObjectClass( LPCTSTR ObjectName);
+	explicit SVInt64ValueObjectClass(LPCTSTR ObjectName);
 	SVInt64ValueObjectClass( SVObjectClass* pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVINT64VALUEOBJECT );
 	const SVInt64ValueObjectClass& operator = (const SVInt64ValueObjectClass& rhs );
 

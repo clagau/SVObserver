@@ -57,7 +57,7 @@ class SVTaskObjectClass : public SVObjectAppClass, public SvOi::ITaskObject
 	friend class SvTo::LoopTool; // For access to Run()
 	friend class SVToolSetClass; // For access to Run()
 public:
-	SVTaskObjectClass(LPCSTR LPSZObjectName);
+	explicit SVTaskObjectClass(LPCSTR LPSZObjectName);
 	SVTaskObjectClass(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTASKOBJECT);
 
 	virtual ~SVTaskObjectClass();

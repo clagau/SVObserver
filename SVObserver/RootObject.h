@@ -32,7 +32,7 @@ public:
 	//! The class constructor
 	//! \param ObjectName <in> the name of the object
 	//************************************
-	RootObject( LPCSTR ObjectName );
+	explicit RootObject(LPCSTR ObjectName);
 
 	//************************************
 	//! The class constructor

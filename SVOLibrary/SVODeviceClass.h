@@ -36,7 +36,7 @@ public:
 
 	static VOID CALLBACK APCProc( ULONG_PTR dwParam );
 
-	SVODeviceClass( LPCTSTR deviceName );
+	explicit SVODeviceClass(LPCTSTR deviceName);
 	virtual ~SVODeviceClass();
 
 	virtual bool IsValid() const;
@@ -80,9 +80,6 @@ protected:
 
 	virtual HRESULT ExecuteCallback(SVOResponseClass& rResponse);
 	virtual HRESULT processAcquisitionTriggers(const SVOResponseClass& ) const { return S_OK; } 
-
-	virtual HRESULT GetIsValid( bool &rbIsValid )const;
-	virtual HRESULT SetIsValid( bool bIsValid );
 
 	//This attribute is a container that holds the list of registered recipients of the acquisition notifications.
 	SVCallbackClassPtrQueue m_CallbackList;

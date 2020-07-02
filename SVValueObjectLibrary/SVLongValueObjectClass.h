@@ -23,7 +23,7 @@ class SVLongValueObjectClass : public SVValueObjectClass<long>
 	SV_DECLARE_CLASS( SVLongValueObjectClass );
 
 public:
-	SVLongValueObjectClass( LPCTSTR ObjectName );
+	explicit SVLongValueObjectClass(LPCTSTR ObjectName);
 	SVLongValueObjectClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVLONGVALUEOBJECT );
 	SVLongValueObjectClass( const SVLongValueObjectClass& rhs );
 	const SVLongValueObjectClass& operator = (const SVLongValueObjectClass& rhs);

@@ -29,8 +29,6 @@ public:
 
 	///Get Ptr to data in shared memory
 	BYTE* GetPtr();
-	///Get m_MapFileName 
-	LPCTSTR GetMapFileName() const;
 	///Get size 
 	DWORD GetSize() const;
 

@@ -36,9 +36,6 @@
 #include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
 #include "Definitions/Color.h"
-#ifdef _DEBUG_PERFORMANCE_INFO //Arvid 160212 this is helpful for debugging the creation of Performance Information
-#include "SVTimerLibrary\SVProfiler.h"
-#endif
 #include "SVSharedMemoryLibrary\SharedMemWriter.h"
 #include "SVOGui\FormulaController.h"
 #include "SVProtoBuf/ConverterHelper.h"
@@ -1121,7 +1118,7 @@ bool SVInspectionProcess::AddInputRequest(SVInputRequestInfoStructPtr pInRequest
 
 bool SVInspectionProcess::AddInputRequestMarker()
 {
-	return AddInputRequest(nullptr, SvO::SVTOOLPARAMETERLIST_MARKER);
+	return AddInputRequest(SVObjectReference{ nullptr }, SvO::SVTOOLPARAMETERLIST_MARKER);
 }
 
 HRESULT SVInspectionProcess::AddInputImageRequest(SvIe::SVImageClass* p_psvImage, BSTR& p_rbstrValue)
@@ -1669,7 +1666,7 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum &rResetItem
 			if (VT_ARRAY == (pInputRequest->m_Value.vt & VT_ARRAY))
 			{
 				SvUl::SVSAFEARRAY::SVBounds l_Bounds;
-				SvUl::SVSAFEARRAY l_SafeArray = pInputRequest->m_Value;
+				SvUl::SVSAFEARRAY l_SafeArray{ pInputRequest->m_Value };
 
 				l_SafeArray.GetBounds(l_Bounds);
 
@@ -2719,12 +2716,6 @@ bool SVInspectionProcess::Run(SVRunStatusClass& rRunStatus)
 
 bool SVInspectionProcess::RunInspection(SVInspectionInfoStruct& rIPInfo, SvIe::SVObjectIdSVCameraInfoStructMap& rCameraInfos, long triggerCount, bool p_UpdateCounts)
 {
-#ifdef _DEBUG_PERFORMANCE_INFO //Arvid 160212 this is helpful for debugging the creation of Performance Information
-	double del = SvTl::setReferenceTime();
-	std::string DebugString = SvUl::Format(_T("!\n!!Reset, %7.1lf: SVInspectionProcess::RunInspection(), del = %7.1lf\n"), SvTl::GetRelTimeStamp(), del);
-	::OutputDebugString(DebugString.c_str());
-#endif
-
 	if (true == m_resetting)
 	{
 		return false;

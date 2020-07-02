@@ -44,11 +44,11 @@ public:
 	SVObjectReference( const SVObjectReference& rhs );
 	SVObjectReference( SVObjectClass* pObject, long lArrayIndex, std::string strDefaultValue = std::string() );
 	SVObjectReference( SVObjectClass* pObject, const SVObjectNameInfo& p_rNameInfo );
-	SVObjectReference( SVObjectClass* pObject );
-	SVObjectReference( int32_t objectId );
+	explicit SVObjectReference(SVObjectClass* pObject);
+	explicit SVObjectReference( int32_t objectId );
 	/// This constructor create an object depending of a ID and if required an index. 
 	/// \param objectIdAndIndexString [in] A string with a ID and if required an index (e.g.{7407F882-3AA5-48E2-B2E9-542538CB1650}[1])
-	SVObjectReference(const std::string& objectIdAndIndexString);
+	explicit SVObjectReference(const std::string& objectIdAndIndexString);
 	const SVObjectReference& operator = ( const SVObjectReference& rhs );
 	bool operator == ( const SVObjectReference& rhs ) const;
 

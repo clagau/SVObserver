@@ -652,18 +652,15 @@ SvStl::MessageContainerVector SVTaskObjectClass::validateAndSetEmbeddedValues(co
 SvStl::MessageContainerVector SVTaskObjectClass::setEmbeddedDefaultValues(const SvOi::SetValueStructVector& rValueVector)
 {
 	SvStl::MessageContainerVector messages;
-	HRESULT Result(S_OK);
 
 	for (auto const& rEntry : rValueVector)
 	{
+		HRESULT Result(E_POINTER);
 		if (nullptr != rEntry.m_pValueObject)
 		{
 			Result = rEntry.m_pValueObject->setDefaultValue(rEntry.m_Value);
 		}
-		else
-		{
-			Result = E_POINTER;
-		}
+
 		if (S_OK != Result)
 		{
 			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log);

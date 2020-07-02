@@ -159,7 +159,7 @@ class SVDeviceParam : public SVClonable, public SvCam::BaseVisitable<HRESULT>
 {
 public:
 	SVDeviceParam();
-	SVDeviceParam( SVDeviceParamEnum e );
+	explicit SVDeviceParam( SVDeviceParamEnum e );
 	virtual ~SVDeviceParam();
 	static SVDeviceParam* Create(SVDeviceParamEnum eType);
 	static std::string GetParameterName( SVDeviceParamEnum e );

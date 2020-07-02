@@ -23,7 +23,7 @@ class SVTriggerSelectionDlg : public CDialog
 	DECLARE_DYNAMIC(SVTriggerSelectionDlg)
 
 public:
-	SVTriggerSelectionDlg(const SVTriggerNameIdList& triggerList, CWnd* pParent = nullptr);   // standard constructor
+	explicit SVTriggerSelectionDlg(const SVTriggerNameIdList& triggerList, CWnd* pParent = nullptr);   // standard constructor
 	virtual ~SVTriggerSelectionDlg();
 
 // Dialog Data

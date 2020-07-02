@@ -33,6 +33,7 @@ void SVMatroxGigeCameraParamTracker::TrackCameraParams(const std::string& camera
 	}
 }
 
+// cppcheck-suppress unusedFunction
 void SVMatroxGigeCameraParamTracker::UnTrackCameraParams(const std::string& cameraID)
 {
 	SVMatroxGigeCameraParamCollection::iterator it = m_cameraParamCollection.find(cameraID);
@@ -76,7 +77,7 @@ HRESULT SVMatroxGigeCameraParamTracker::AddCameraParam(const std::string& camera
 	return hr;
 }
 
-HRESULT SVMatroxGigeCameraParamTracker::ReloadCameraParams(const std::string& cameraID, SVMatroxGigeDigitizer& p_rCamera)
+HRESULT SVMatroxGigeCameraParamTracker::ReloadCameraParams(const std::string& cameraID, const SVMatroxGigeDigitizer& p_rCamera)
 {
 	HRESULT hr = S_FALSE;
 
@@ -95,7 +96,7 @@ HRESULT SVMatroxGigeCameraParamTracker::ReloadCameraParams(const std::string& ca
 	return hr;
 }
 	
-HRESULT SVMatroxGigeCameraParamTracker::ReloadCameraParamList(const SVMatroxGigeCameraParamDeque& list, SVMatroxGigeDigitizer& p_rCamera)
+HRESULT SVMatroxGigeCameraParamTracker::ReloadCameraParamList(const SVMatroxGigeCameraParamDeque& list, const SVMatroxGigeDigitizer& p_rCamera)
 {
 	HRESULT hr = S_OK;
 

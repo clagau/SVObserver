@@ -35,7 +35,7 @@ public:
 
 	SVGigeFeatureStringEnumList(const SVGigeFeatureStringEnumList& );
 	//This is the initializer list constructor
-	SVGigeFeatureStringEnumList(_XSTD initializer_list<StringPairVector::value_type> _Ilist);
+	explicit SVGigeFeatureStringEnumList(_XSTD initializer_list<StringPairVector::value_type> _Ilist);
 	SVGigeFeatureStringEnumList& operator=(const SVGigeFeatureStringEnumList& rList);
 
 	bool HasTranslation() const;

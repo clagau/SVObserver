@@ -17,7 +17,7 @@ class SVRCCommand;
 class SVRCRequestHandler :public SvRpc::RequestHandler
 {
 public:
-	SVRCRequestHandler(SVRCCommand* pCommand);
+	explicit SVRCRequestHandler(SVRCCommand* pCommand);
 	~SVRCRequestHandler();
 private:
 	boost::asio::io_service m_IoRunService;

@@ -74,7 +74,6 @@ public:
 	bool IsStartTag(const std::string& rName, bool& bState) const;
 	bool IsStartTag(const std::string& rName) const;
 	bool IsEndTag(const std::string& rName) const;
-	bool HasEndTag(const std::string& rName) const;
 	bool IsCollapsed(const std::string& rName) const;
 	bool Collapse(const std::string& rName, bool bCollapse);
 

@@ -33,7 +33,7 @@ SVTaskObjectInterfaceInputRequestStruct::SVTaskObjectInterfaceInputRequestStruct
 
 }
 
-SVTaskObjectInterfaceInputRequestStruct::SVTaskObjectInterfaceInputRequestStruct( const SVObjectReference& rObjectRef )
+SVTaskObjectInterfaceInputRequestStruct::SVTaskObjectInterfaceInputRequestStruct(const SVObjectReference& rObjectRef )
 	: m_ObjectRef(rObjectRef)
 {
 	if( nullptr != m_ObjectRef.getObject() )
@@ -84,7 +84,7 @@ HRESULT SVInputRequestStructMap::Add( SVObjectClass* pObject )
 		Result = pValueObject->getValue( Value );
 		if ( S_OK == Result )
 		{
-			(*this)[ SVObjectReference( pObject ) ] = Value;
+			(*this)[SVTaskObjectInterfaceInputRequestStruct(SVObjectReference( pObject )) ] = Value;
 		}
 	}
 	return Result;
@@ -102,7 +102,7 @@ HRESULT SVInputRequestStructMap::Add( const SVObjectReference& rObjectRef )
 		Result = pValueObject->getValue( Value, rObjectRef.ArrayIndex() );
 		if ( S_OK == Result )
 		{
-			(*this)[ rObjectRef ] = Value;
+			(*this)[SVTaskObjectInterfaceInputRequestStruct(rObjectRef) ] = Value;
 		}
 	}
 	return Result;

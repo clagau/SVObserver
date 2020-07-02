@@ -60,11 +60,9 @@ namespace SvSml
 	void SharedMemWriter::ReadSettings()
 	{
 		SvLib::SVOINIClass reader(SvStl::GlobalPath::Inst().GetSVIMIniPath());
-		int  monitorStoreSize = reader.GetValueInt(SharedMemorySectionTag, MonitorStoreSizeTag, SvSml::SVSharedMemorySettings::DefaultMonitorStoreSize);
 		int  numProductSlot = reader.GetValueInt(SharedMemorySectionTag, NumProductSlotTag, SvSml::SVSharedMemorySettings::DefaultNumProductSlot);
 		int ConnectionTimout = reader.GetValueInt(SharedMemorySectionTag, CreateTimeoutTag, SvSml::SVSharedMemorySettings::DefaultConnectionTimout);
 		int CreateWaitTime = reader.GetValueInt(SharedMemorySectionTag, CreateWaitTimeTag, SvSml::SVSharedMemorySettings::DefaultCreateWaitTime);
-		m_settings.SetMonitorStoreSize(monitorStoreSize);
 		m_settings.SetNumProductSlot(numProductSlot);
 		m_settings.SeCreateTimout(ConnectionTimout);
 		m_settings.SetCreateWaitTime(CreateWaitTime);

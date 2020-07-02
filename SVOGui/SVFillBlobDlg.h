@@ -22,7 +22,7 @@ namespace SvOg
 	class SVFillBlobDlg : public CDialog
 	{
 	public:
-		SVFillBlobDlg(ValueController& rValues, CWnd* pParent = nullptr);   // standard constructor
+		explicit SVFillBlobDlg(ValueController& rValues, CWnd* pParent = nullptr);   // standard constructor
 		virtual ~SVFillBlobDlg();
 		HRESULT SetInspectionData();
 

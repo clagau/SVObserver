@@ -55,7 +55,7 @@ namespace SvOl
 	private:
 	struct DependencySort
 	{
-		DependencySort(bool SortRight) : m_SortRight(SortRight) {};
+		explicit DependencySort(bool SortRight) : m_SortRight(SortRight) {};
 
 		bool operator()(const Dependency &rLhs, const Dependency &rRhs);
 

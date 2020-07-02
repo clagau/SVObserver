@@ -36,15 +36,6 @@ struct SVGigeCameraStruct
 	bool operator < (const SVGigeCameraStruct& rRhs) const;
 	bool operator > (const SVGigeCameraStruct& rRhs) const;
 
-	bool HasSerialNumber() const;
-	std::string GetSerialNumber() const;
-	bool HasModelName() const;
-	std::string GetModelName() const;
-	bool HasVendorName() const;
-	std::string GetVendorName() const;
-	bool HasIPAddress() const;
-	std::string GetIPAddress() const;
-
 	std::string m_SerialNum;
 	std::string m_ModelName;
 	std::string m_VendorName;

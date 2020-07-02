@@ -53,7 +53,7 @@ public:
 	//! constructor for the ResultViewReferences class.
 	//! \param tagname [in] default tagname for entrie in cfg file 
 	//************************************
-	ResultViewReferences(LPCTSTR tagname);
+	explicit ResultViewReferences(LPCTSTR tagname);
 
 	//************************************
 	// Description:  Destructor for the ResultViewReferences class.

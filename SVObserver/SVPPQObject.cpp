@@ -17,6 +17,7 @@
 //Moved to precompiled header: #include <limits>
 //Moved to precompiled header: #include <boost/bind.hpp>
 
+#include "MonitorListAttributeStruct.h"
 #include "SVPPQObject.h"
 #include "SVConfigurationObject.h"
 #include "SVGlobal.h"
@@ -1298,7 +1299,7 @@ bool SVPPQObject::GoOffline()
 	}
 	if (HasActiveMonitorList())
 	{
-		SetMonitorList(ActiveMonitorList(false, RejectDepthAndMonitorList()));
+		SetMonitorList({});
 	}
 
 	return true;
@@ -3942,12 +3943,12 @@ SvTi::SVCameraTriggerData& SVPPQObject::GetCameraInputData()
 	return m_CameraInputData;
 }
 
-void SVPPQObject::SetMonitorList(const ActiveMonitorList& rActiveList)
+void SVPPQObject::SetMonitorList(const MonitorListAttributeStruct& rActiveList)
 {
-	m_bActiveMonitorList = rActiveList.first;
+	m_bActiveMonitorList = rActiveList.m_isActive;
 	if (m_bActiveMonitorList)
 	{
-		setRejectDepth(rActiveList.second.rejectDepth);
+		setRejectDepth(rActiveList.m_rejectDepth);
 	}
 }
 

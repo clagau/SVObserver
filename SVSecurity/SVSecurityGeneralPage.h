@@ -24,7 +24,7 @@ class SVSecurityGeneralPage : public CPropertyPage
 
 public:
 	SVSecurityGeneralPage();
-	SVSecurityGeneralPage(UINT nIDTemplate, UINT nIDCaption=0);
+	explicit SVSecurityGeneralPage(UINT nIDTemplate, UINT nIDCaption = 0);
 	virtual ~SVSecurityGeneralPage();
 
 	//{{AFX_DATA(SVSecurityGeneralPage)

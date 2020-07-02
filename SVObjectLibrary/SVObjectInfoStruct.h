@@ -22,7 +22,7 @@ struct SVObjectInfoStruct
 {
 	SVObjectInfoStruct();
 	SVObjectInfoStruct( const SVObjectInfoStruct& rObjectInfo );
-	SVObjectInfoStruct( const SVObjectReference& rObjectRef );
+	explicit SVObjectInfoStruct(const SVObjectReference& rObjectRef);
 
 	virtual ~SVObjectInfoStruct();
 

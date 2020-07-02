@@ -646,7 +646,7 @@ HRESULT SVToolSetClass::ResetCounts()
 		SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(GetInspection());
 
 		//add request to inspection process
-		if (nullptr != pInspection && pInspection->AddInputRequest(&m_ResetCounts, _T("true")))
+		if (nullptr != pInspection && pInspection->AddInputRequest(SVObjectReference{ &m_ResetCounts }, _T("true")))
 		{
 			//add request to inspection process
 			if (!pInspection->AddInputRequestMarker())

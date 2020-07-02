@@ -208,10 +208,9 @@ bool SVToolGrouping::AddEndGroup(const std::string& rGroupName, const std::strin
 		{
 			endName = MakeNumericUniqueName(endName);
 		}
-		ToolGroupList::iterator it = m_list.end();
 		if (!rInsertBefore.empty())
 		{
-			it = std::find_if(m_list.begin(), m_list.end(),
+			auto it = std::find_if(m_list.begin(), m_list.end(),
 				[&rInsertBefore](const ToolGroup& rGroup)->bool { return rInsertBefore == rGroup.first; });
 			m_list.insert(it, std::make_pair(endName, ToolGroupData(ToolGroupData::EndOfGroup, rGroupName, endName, false)));
 
@@ -227,7 +226,7 @@ bool SVToolGrouping::AddEndGroup(const std::string& rGroupName, const std::strin
 		else
 		{
 			// Find End of this group
-			it = std::find_if(m_list.begin(), m_list.end(),
+			auto it = std::find_if(m_list.begin(), m_list.end(),
 				[&rGroupName](const ToolGroup& rGroup)->bool { return rGroupName == rGroup.first; });
 			if (it != m_list.end())
 			{
@@ -409,18 +408,6 @@ bool SVToolGrouping::IsEndTag(const std::string& rName) const
 	return bRetVal;
 }
 
-bool SVToolGrouping::HasEndTag(const std::string& rName) const
-{
-	bool bRetVal = false;
-	ToolGroupList::const_iterator it = std::find_if(m_list.begin(), m_list.end(),
-		[&rName](const ToolGroup& rGroup)->bool { return rName == rGroup.first && ToolGroupData::StartOfGroup == rGroup.second.m_type; });
-	if (it != m_list.end())
-	{
-		bRetVal = !it->second.m_endName.empty();
-	}
-	return bRetVal;
-}
-
 bool SVToolGrouping::IsCollapsed(const std::string& rName) const
 {
 	bool bCollapsed = false;
@@ -516,10 +503,9 @@ HRESULT SVToolGrouping::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHan
 					std::string endGroupName;
 					std::string startGroupComment;
 					std::string endGroupComment;
-					bool bCollapsed = false;
 					if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_COLLAPSED, htiSubChild, svValue))
 					{
-						bCollapsed = (VARIANT_TRUE == svValue.boolVal);
+						bool bCollapsed = (VARIANT_TRUE == svValue.boolVal);
 
 						if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_STARTGROUP_COMMENT, htiSubChild, svValue))
 						{
@@ -639,7 +625,6 @@ bool SVToolGrouping::GetParameters(SvOi::IObjectWriter& rWriter)
 				if (bGroupActive)
 				{
 					rWriter.EndElement();
-					bGroupActive = false;
 				}
 				rWriter.StartElement(SvXml::CTAG_GROUP);
 				bGroupActive = true;
@@ -694,12 +679,10 @@ bool SVToolGrouping::GetParameters(SvOi::IObjectWriter& rWriter)
 		if (bToolListActive)
 		{
 			rWriter.EndElement();
-			bToolListActive = false;
 		}
 		if (bGroupActive)
 		{
 			rWriter.EndElement();
-			bGroupActive = false;
 		}
 		// End Element for Toolgroupings
 		rWriter.EndElement();

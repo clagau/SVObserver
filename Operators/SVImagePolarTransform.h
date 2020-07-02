@@ -33,7 +33,7 @@ public:
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 
-	bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr);
+	bool ResetObject(SvStl::MessageContainerVector *pErrorMessages = nullptr) override;
 
 	SvIe::SVImageClass* GetOutputImage();
 

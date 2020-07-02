@@ -23,7 +23,7 @@ namespace SvLib
 	{
 
 	public:
-		SVOIniLoader(InitialInformation &inifileInfo);
+		explicit SVOIniLoader(InitialInformation &inifileInfo);
 	
 		const struct InitialInformation &GetInitialInfo() const { return m_rInitialInfo; }
 

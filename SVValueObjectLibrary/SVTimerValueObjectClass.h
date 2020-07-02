@@ -23,7 +23,7 @@ class SVTimerValueObjectClass : public SVInt64ValueObjectClass
 	SV_DECLARE_CLASS( SVTimerValueObjectClass );
 
 public:
-	SVTimerValueObjectClass( LPCTSTR ObjectName);
+	explicit SVTimerValueObjectClass(LPCTSTR ObjectName);
 	SVTimerValueObjectClass( SVObjectClass *pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVINT64VALUEOBJECT );
 	virtual ~SVTimerValueObjectClass();
 

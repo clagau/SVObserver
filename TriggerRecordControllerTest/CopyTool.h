@@ -21,7 +21,7 @@ class CopyTool : public ToolObject
 {
 #pragma region Constructor
 public:
-	CopyTool(uint32_t id) : ToolObject(id) {};
+	explicit CopyTool(uint32_t id) : ToolObject(id) {};
 	virtual ~CopyTool() = default;
 
 #pragma endregion Constructor

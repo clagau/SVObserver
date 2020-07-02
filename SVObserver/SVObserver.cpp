@@ -42,7 +42,6 @@
 #include "SVIPDocInfoImporter.h"
 #include "SVMainFrm.h"
 #include "SVMessageWindow.h"
-#include "SVMonitorList.h"
 #include "SVMultiDocTemplate.h"
 #include "SVPPQObject.h"
 #include "SVRCCommand.h"

@@ -60,9 +60,6 @@
     <ClCompile Include="SVObjectReference.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVObserverNotificationFunctor.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVOutObjectInfoStruct.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -138,9 +135,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVObjectScriptEnums.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVObserverNotificationFunctor.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVObserverTemplate.h">

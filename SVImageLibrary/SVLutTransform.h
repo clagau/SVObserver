@@ -73,7 +73,7 @@ class SVLutTransform
 {
 public:
 	SVLutTransform();
-	SVLutTransform(const SVLutTransformOperation& rType);
+	explicit SVLutTransform(const SVLutTransformOperation& rType);
 	SVLutTransform(const SVLutTransform& rhs);
 	virtual ~SVLutTransform();
 	virtual SVLutTransform* Clone() const = 0;
@@ -183,7 +183,7 @@ class SVDefaultLutTransform : public SVLutTransform
 {
 public:
 	SVDefaultLutTransform() {}
-	SVDefaultLutTransform(const SVLutTransformOperation& rType) : SVLutTransform(rType) {}
+	explicit SVDefaultLutTransform(const SVLutTransformOperation& rType) : SVLutTransform(rType) {}
 	SVDefaultLutTransform(const SVDefaultLutTransform& rhs) : SVLutTransform(rhs) {}
 	virtual ~SVDefaultLutTransform() {}
 	virtual SVLutTransform* Clone() const override {return new SVDefaultLutTransform(*this);}

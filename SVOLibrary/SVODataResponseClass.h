@@ -30,7 +30,7 @@ public:
 
 	virtual ~SVODataResponseClass() {}
 
-	virtual void reset()
+	virtual void reset() override
 	{ 
 		__super::reset();
 		m_pImage.reset();

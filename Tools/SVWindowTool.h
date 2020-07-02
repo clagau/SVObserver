@@ -23,7 +23,7 @@ class SVWindowToolClass : public SVToolClass
 	SV_DECLARE_CLASS( SVWindowToolClass );
 
 public:
-	SVWindowToolClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVWINDOWTOOL );
+	explicit SVWindowToolClass(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVWINDOWTOOL);
 	virtual ~SVWindowToolClass();
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;

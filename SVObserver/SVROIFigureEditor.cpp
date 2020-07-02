@@ -310,7 +310,7 @@ CSize SVROIFigureEditor::CalculateDeltaPos(CPoint point)
 /* this should be SVFigureEditor::SVHitTestStruct but for some reason it won't compile (VC6 bug?) */
 SVROIFigureEditor::SVHitTestStruct SVROIFigureEditor::HitTest( CPoint point )
 {
-	SVHitTestStruct HitTest = HTNOWHERE;
+	SVHitTestStruct HitTest{ HTNOWHERE };
 
 	CRect rect = m_pShape->GetRect();
 

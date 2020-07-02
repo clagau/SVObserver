@@ -21,7 +21,7 @@ namespace SvTrcT
 	{
 #pragma region Constructor
 	public:
-		RotationTool(uint32_t id) : ToolObject(id) {};
+		explicit RotationTool(uint32_t id) : ToolObject(id) {};
 		virtual ~RotationTool() = default;
 
 #pragma endregion Constructor

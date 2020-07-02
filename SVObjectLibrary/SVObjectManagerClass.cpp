@@ -44,7 +44,6 @@ SVObjectManagerClass::SVObjectManagerClass()
 	, m_PendingImageIndicator(0)
 	, m_InspectionIndicator(0)
 	, m_LastFrameRate(10)
-	, m_ObserverCookie(1)
 	, m_FileSequenceNumber(0)
 {
 	m_TranslationMap[SvDef::FqnInspections] = SvDef::FqnConfiguration;
@@ -161,11 +160,6 @@ void SVObjectManagerClass::Shutdown()
 	::Sleep(100);
 
 	std::lock_guard<std::recursive_mutex> lock(m_Mutex);
-
-	if (!(m_CookieEntries.empty()))
-	{
-		m_CookieEntries.clear();
-	}
 
 	if (!(m_UniqueObjectEntries.empty()))
 	{
@@ -576,8 +570,7 @@ bool SVObjectManagerClass::CloseUniqueObjectID(SVObjectClass* pObject)
 		if (Result)
 		{
 			uint32_t ObjectID(pObject->getObjectId());
-			DetachObservers(ObjectID);
-			DetachSubjects(ObjectID);
+			DetachSubjectsAndObservers(ObjectID);
 
 			SvOl::DependencyManager::Instance().Remove(ObjectID);
 
@@ -739,81 +732,9 @@ std::string SVObjectManagerClass::GetCompleteObjectName(uint32_t objectId)
 	return Result;
 }
 
-HRESULT SVObjectManagerClass::InsertObserver(SVObserverNotificationFunctorPtr pFunctor, long& rCookie)
-{
-	HRESULT Result = S_OK;
-
-	std::unique_lock<std::recursive_mutex> Autolock(m_Mutex, std::defer_lock);
-
-	if (ReadWrite == m_State && (Autolock.owns_lock() == false))
-	{
-		Autolock.lock();
-		rCookie = ::InterlockedExchangeAdd(&m_ObserverCookie, 1);
-
-		SVCookieEntryStructPtr pCookieEntry(new SVCookieEntryStruct(rCookie, pFunctor));
-		m_CookieEntries[rCookie] = pCookieEntry;
-	}
-	else
-	{
-		Result = E_FAIL;
-	}
-
-	return Result;
-}
-
-HRESULT SVObjectManagerClass::EraseObserver(long Cookie)
-{
-	HRESULT Result = S_OK;
-
-	std::unique_lock<std::recursive_mutex> Autolock(m_Mutex, std::defer_lock);
-
-	if (ReadWrite == m_State && (Autolock.owns_lock() == false))
-	{
-		Autolock.lock();
-		DetachSubjects(Cookie);
-
-		m_CookieEntries.erase(Cookie);
-	}
-	else
-	{
-		Result = E_FAIL;
-	}
-
-	return Result;
-}
-
 uint32_t SVObjectManagerClass::getObserverSubject(const std::string& rSubjectDataName, uint32_t observerID) const
 {
 	return GetSubjectID(rSubjectDataName, getUniqueObjectEntry(observerID));
-}
-
-uint32_t SVObjectManagerClass::getObserverSubject(const std::string& rSubjectDataName, long Cookie) const
-{
-	return GetSubjectID(rSubjectDataName, GetCookieEntry(Cookie));
-}
-
-HRESULT SVObjectManagerClass::GetObserverIds(const std::string& rSubjectDataName, uint32_t subjectID, std::set<uint32_t>& rObserverIds)
-{
-	rObserverIds.clear();
-
-	SVSubjectEnabledObserverMap Observers;
-
-	HRESULT Result = GetObservers(rSubjectDataName, subjectID, Observers);
-
-	if (S_OK == Result)
-	{
-		SVSubjectEnabledObserverMap::iterator Iter;
-
-		for (Iter = Observers.begin(); Observers.end() != Iter; ++Iter)
-		{
-			if (Iter->second == 1)
-			{
-				rObserverIds.insert(Iter->first);
-			}
-		}
-	}
-
-	return Result;
 }
 
 HRESULT SVObjectManagerClass::AttachObserver(const std::string& rSubjectDataName, uint32_t subjectID, uint32_t observerID)
@@ -837,7 +758,7 @@ HRESULT SVObjectManagerClass::AttachObserver(const std::string& rSubjectDataName
 				DetachObserver(rSubjectDataName, oldSubjectId, observerID);
 			}
 
-			pSubjectObject->m_DataNameSubjectObservers[rSubjectDataName].m_SubjectObservers[observerID] = 1;
+			pSubjectObject->m_DataNameSubjectObservers[rSubjectDataName][observerID] = 1;
 			pObserverObject->m_SubjectIDs[rSubjectDataName] = subjectID;
 		}
 		else
@@ -848,155 +769,6 @@ HRESULT SVObjectManagerClass::AttachObserver(const std::string& rSubjectDataName
 	else
 	{
 		Result = E_FAIL;
-	}
-
-	return Result;
-}
-
-HRESULT SVObjectManagerClass::AttachObserver(const std::string& rSubjectDataName, uint32_t subjectID, long p_Cookie)
-{
-	HRESULT Result = S_OK;
-
-	std::unique_lock<std::recursive_mutex> Autolock(m_Mutex, std::defer_lock);
-
-	if (ReadWrite == m_State && (Autolock.owns_lock() == false))
-	{
-		Autolock.lock();
-		SVUniqueObjectEntryStructPtr pSubjectObject = getUniqueObjectEntry(subjectID);
-		SVCookieEntryStructPtr pObserverObject = GetCookieEntry(p_Cookie);
-
-		if (nullptr != pSubjectObject && nullptr != pObserverObject)
-		{
-			uint32_t l_SubjectID = GetSubjectID(rSubjectDataName, pObserverObject);
-
-			if (SvDef::InvalidObjectId != l_SubjectID && l_SubjectID == subjectID)
-			{
-				DetachObserver(rSubjectDataName, l_SubjectID, p_Cookie);
-			}
-
-			pSubjectObject->m_DataNameSubjectObservers[rSubjectDataName].m_SubjectCookies[p_Cookie] = 1;
-			pObserverObject->m_SubjectIDs[rSubjectDataName] = subjectID;
-		}
-		else
-		{
-			Result = E_FAIL;
-		}
-	}
-	else
-	{
-		Result = E_FAIL;
-	}
-
-	return Result;
-}
-
-HRESULT SVObjectManagerClass::EnableObserver(const std::string& rSubjectDataName, uint32_t subjectID, uint32_t observerID)
-{
-	HRESULT Result = S_OK;
-
-	std::unique_lock<std::recursive_mutex> Autolock(m_Mutex, std::defer_lock);
-
-	if (ReadWrite == m_State && (Autolock.owns_lock() == false))
-	{
-		Autolock.lock();
-	}
-
-	if (S_OK == Result)
-	{
-		SVUniqueObjectEntryStructPtr pSubjectObject = getUniqueObjectEntry(subjectID);
-
-		if (nullptr != pSubjectObject)
-		{
-			pSubjectObject->m_DataNameSubjectObservers[rSubjectDataName].m_SubjectObservers[observerID] = 1;
-		}
-		else
-		{
-			Result = E_FAIL;
-		}
-	}
-
-	return Result;
-}
-
-HRESULT SVObjectManagerClass::EnableObserver(const std::string& rSubjectDataName, uint32_t subjectID, long Cookie)
-{
-	HRESULT Result = S_OK;
-
-	std::unique_lock<std::recursive_mutex> Autolock(m_Mutex, std::defer_lock);
-
-	if (ReadWrite == m_State && (Autolock.owns_lock() == false))
-	{
-		Autolock.lock();
-	}
-
-	if (S_OK == Result)
-	{
-		SVUniqueObjectEntryStructPtr pSubjectObject = getUniqueObjectEntry(subjectID);
-
-		if (nullptr != pSubjectObject)
-		{
-			pSubjectObject->m_DataNameSubjectObservers[rSubjectDataName].m_SubjectCookies[Cookie] = 1;
-		}
-		else
-		{
-			Result = E_FAIL;
-		}
-	}
-
-	return Result;
-}
-
-HRESULT SVObjectManagerClass::DisableObserver(const std::string& rSubjectDataName, uint32_t subjectID, uint32_t observerID)
-{
-	HRESULT Result = S_OK;
-
-	std::unique_lock<std::recursive_mutex> Autolock(m_Mutex, std::defer_lock);
-
-	if (ReadWrite == m_State && (Autolock.owns_lock() == false))
-	{
-		Autolock.lock();
-	}
-
-	if (S_OK == Result)
-	{
-		SVUniqueObjectEntryStructPtr pSubjectObject = getUniqueObjectEntry(subjectID);
-
-		if (nullptr != pSubjectObject)
-		{
-			pSubjectObject->m_DataNameSubjectObservers[rSubjectDataName].m_SubjectObservers[observerID] = 0;
-		}
-		else
-		{
-			Result = E_FAIL;
-		}
-	}
-
-	return Result;
-}
-
-HRESULT SVObjectManagerClass::DisableObserver(const std::string& rSubjectDataName, uint32_t subjectID, long Cookie)
-{
-	HRESULT Result = S_OK;
-
-	std::unique_lock<std::recursive_mutex> Autolock(m_Mutex, std::defer_lock);
-
-	if (ReadWrite == m_State && (Autolock.owns_lock() == false))
-	{
-		Autolock.lock();
-	}
-
-	if (S_OK == Result)
-	{
-		SVUniqueObjectEntryStructPtr pSubjectObject = getUniqueObjectEntry(subjectID);
-
-		if (nullptr != pSubjectObject)
-		{
-			pSubjectObject->m_DataNameSubjectObservers[rSubjectDataName].m_SubjectCookies[Cookie] = 0;
-		}
-		else
-		{
-			Result = E_FAIL;
-		}
 	}
 
 	return Result;
@@ -1022,38 +794,7 @@ HRESULT SVObjectManagerClass::DetachObserver(const std::string& rSubjectDataName
 
 		if (nullptr != pSubjectObject)
 		{
-			pSubjectObject->m_DataNameSubjectObservers[rSubjectDataName].m_SubjectObservers.erase(observerID);
-		}
-	}
-	else
-	{
-		Result = E_FAIL;
-	}
-
-	return Result;
-}
-
-HRESULT SVObjectManagerClass::DetachObserver(const std::string& rSubjectDataName, uint32_t subjectID, long Cookie)
-{
-	HRESULT Result = S_OK;
-
-	std::unique_lock<std::recursive_mutex> Autolock(m_Mutex, std::defer_lock);
-
-	if (ReadWrite == m_State && (Autolock.owns_lock() == false))
-	{
-		Autolock.lock();
-		SVCookieEntryStructPtr pObserverObject = GetCookieEntry(Cookie);
-
-		if (nullptr != pObserverObject)
-		{
-			pObserverObject->m_SubjectIDs.erase(rSubjectDataName);
-		}
-
-		SVUniqueObjectEntryStructPtr pSubjectObject = getUniqueObjectEntry(subjectID);
-
-		if (nullptr != pSubjectObject)
-		{
-			pSubjectObject->m_DataNameSubjectObservers[rSubjectDataName].m_SubjectCookies.erase(Cookie);
+			pSubjectObject->m_DataNameSubjectObservers[rSubjectDataName].erase(observerID);
 		}
 	}
 	else
@@ -1067,9 +808,8 @@ HRESULT SVObjectManagerClass::DetachObserver(const std::string& rSubjectDataName
 HRESULT SVObjectManagerClass::DetachObservers(const std::string& rSubjectDataName, uint32_t subjectID)
 {
 	SVSubjectEnabledObserverMap Observers;
-	SVSubjectEnabledCookieMap CookieObservers;
 
-	HRESULT Result = GetObservers(rSubjectDataName, subjectID, Observers, CookieObservers);
+	HRESULT Result = GetObservers(rSubjectDataName, subjectID, Observers);
 
 	if (S_OK == Result)
 	{
@@ -1086,20 +826,6 @@ HRESULT SVObjectManagerClass::DetachObservers(const std::string& rSubjectDataNam
 
 			++Iter;
 		}
-
-		SVSubjectEnabledCookieMap::iterator CookieIter = CookieObservers.begin();
-
-		while (CookieIter != CookieObservers.end())
-		{
-			HRESULT l_Temp = DetachObserver(rSubjectDataName, subjectID, CookieIter->first);
-
-			if (S_OK == Result)
-			{
-				Result = l_Temp;
-			}
-
-			++CookieIter;
-		}
 	}
 
 	return Result;
@@ -1113,25 +839,6 @@ HRESULT SVObjectManagerClass::DetachSubjectsAndObservers(uint32_t objectID)
 	if (S_OK == Result)
 	{
 		Result = SubjectStatus;
-	}
-
-	return Result;
-}
-
-HRESULT SVObjectManagerClass::DetachSubjects(long Cookie)
-{
-	SVSubjectDataNameDeque SubjectDataNames;
-	HRESULT Result = GetObserverDataNames(Cookie, SubjectDataNames);
-
-	if (S_OK == Result)
-	{
-		SVSubjectDataNameDeque::iterator Iter;
-
-		for (Iter = SubjectDataNames.begin(); SubjectDataNames.end() != Iter; ++Iter)
-		{
-			uint32_t subjectId = getObserverSubject(*Iter, Cookie);
-			DetachObserver(*Iter, subjectId, Cookie);
-		}
 	}
 
 	return Result;
@@ -1395,31 +1102,6 @@ HRESULT SVObjectManagerClass::getTreeList(const std::string& rPath, SVObjectRefe
 	return Result;
 }
 
-SVObjectManagerClass::SVCookieEntryStructPtr SVObjectManagerClass::GetCookieEntry(long Cookie) const
-{
-	SVCookieEntryStructPtr pResult;
-
-	std::unique_lock<std::recursive_mutex> Autolock(m_Mutex, std::defer_lock);
-
-
-
-	if (ReadWrite == m_State && (Autolock.owns_lock() == false))
-	{
-		Autolock.lock();
-	}
-
-
-	SVCookieEntryMap::const_iterator Iter(m_CookieEntries.find(Cookie));
-
-	if (Iter != m_CookieEntries.end())
-	{
-		pResult = Iter->second;
-	}
-
-
-	return pResult;
-}
-
 uint32_t SVObjectManagerClass::GetSubjectID(const std::string& rSubjectDataName, SVUniqueObjectEntryStructPtr pObjectEntry) const
 {
 	uint32_t Result = SvDef::InvalidObjectId;
@@ -1440,33 +1122,6 @@ uint32_t SVObjectManagerClass::GetSubjectID(const std::string& rSubjectDataName,
 		if (l_Iter != pObjectEntry->m_SubjectIDs.end())
 		{
 			Result = l_Iter->second;
-		}
-
-	}
-
-	return Result;
-}
-
-uint32_t SVObjectManagerClass::GetSubjectID(const std::string& rSubjectDataName, SVCookieEntryStructPtr pCookieEntry) const
-{
-	uint32_t Result = SvDef::InvalidObjectId;
-
-	if (nullptr != pCookieEntry)
-	{
-		std::unique_lock<std::recursive_mutex> Autolock(m_Mutex, std::defer_lock);
-
-
-		if (ReadWrite == m_State && (Autolock.owns_lock() == false))
-		{
-			Autolock.lock();
-		}
-
-
-		SVSubjectDataNameSubjectIDMap::const_iterator Iter = pCookieEntry->m_SubjectIDs.find(rSubjectDataName);
-
-		if (Iter != pCookieEntry->m_SubjectIDs.end())
-		{
-			Result = Iter->second;
 		}
 
 	}
@@ -1574,41 +1229,6 @@ HRESULT SVObjectManagerClass::GetSubjectDataNames(uint32_t subjectID, SVSubjectD
 	return Result;
 }
 
-HRESULT SVObjectManagerClass::GetObserverDataNames(long Cookie, SVSubjectDataNameDeque& rSubjectDataNames) const
-{
-	HRESULT Result = S_OK;
-
-	rSubjectDataNames.clear();
-
-	SVCookieEntryStructPtr pCookie = GetCookieEntry(Cookie);
-
-	if (nullptr != pCookie)
-	{
-		std::unique_lock<std::recursive_mutex> Autolock(m_Mutex, std::defer_lock);
-
-
-		if (ReadWrite == m_State && (Autolock.owns_lock() == false))
-		{
-			Autolock.lock();
-		}
-
-
-		SVSubjectDataNameSubjectIDMap::const_iterator Iter;
-
-		for (Iter = pCookie->m_SubjectIDs.begin(); pCookie->m_SubjectIDs.end() != Iter; ++Iter)
-		{
-			rSubjectDataNames.push_back(Iter->first);
-		}
-
-	}
-	else
-	{
-		Result = E_FAIL;
-	}
-
-	return Result;
-}
-
 HRESULT SVObjectManagerClass::GetObserverDataNames(uint32_t observerID, SVSubjectDataNameDeque& rSubjectDataNames) const
 {
 	HRESULT Result = S_OK;
@@ -1662,7 +1282,7 @@ HRESULT SVObjectManagerClass::GetObservers(const std::string& rSubjectDataName, 
 
 		if (Iter != pUniqueObject->m_DataNameSubjectObservers.end())
 		{
-			rObservers = Iter->second.m_SubjectObservers;
+			rObservers = Iter->second;
 		}
 		else
 		{
@@ -1676,47 +1296,6 @@ HRESULT SVObjectManagerClass::GetObservers(const std::string& rSubjectDataName, 
 	}
 
 	return Result;
-}
-
-HRESULT SVObjectManagerClass::GetObservers(const std::string& rSubjectDataName, uint32_t subjectID, SVSubjectEnabledObserverMap& rObservers, SVSubjectEnabledCookieMap& rObserverCookies)
-{
-	HRESULT l_Status = S_OK;
-
-	rObservers.clear();
-
-	SVUniqueObjectEntryStructPtr pUniqueObject = getUniqueObjectEntry(subjectID);
-
-	if (nullptr != pUniqueObject)
-	{
-		std::unique_lock<std::recursive_mutex> Autolock(m_Mutex, std::defer_lock);
-
-
-
-		if (ReadWrite == m_State && (Autolock.owns_lock() == false))
-		{
-			Autolock.lock();
-		}
-
-
-		SVSubjectDataNameObserverMap::iterator Iter = pUniqueObject->m_DataNameSubjectObservers.find(rSubjectDataName);
-
-		if (Iter != pUniqueObject->m_DataNameSubjectObservers.end())
-		{
-			rObservers = Iter->second.m_SubjectObservers;
-			rObserverCookies = Iter->second.m_SubjectCookies;
-		}
-		else
-		{
-			l_Status = E_FAIL;
-		}
-
-	}
-	else
-	{
-		l_Status = E_FAIL;
-	}
-
-	return l_Status;
 }
 
 HRESULT SVObjectManagerClass::RegisterSubObject(uint32_t subObjectID)

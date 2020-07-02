@@ -23,7 +23,7 @@ struct SVObjectNameInfo
 	static HRESULT ParseObjectName(SVObjectNameInfo& rNameInfo, const std::string& p_rObjectName);
 
 	SVObjectNameInfo();
-	SVObjectNameInfo(const SVNameVector& rNameArray);
+	explicit SVObjectNameInfo(const SVNameVector& rNameArray);
 	SVObjectNameInfo(const SVNameVector& rNameArray, const std::string& rIndex);
 	SVObjectNameInfo(const SVNameVector& rNameArray, const std::string& rIndex, const std::string& rDefaultValue);
 	SVObjectNameInfo(const SVObjectNameInfo& rNameInfo);

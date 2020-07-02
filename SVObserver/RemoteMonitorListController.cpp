@@ -306,6 +306,7 @@ HRESULT RemoteMonitorListController::BuildPPQMonitorList(PPQMonitorList& ppqMoni
 			// Insert the monitorlist copies SvSml::SharedMemWriter Singelton 
 			WriteMonitorListToMLContainer(it->first.c_str(), it->second);
 
+			typedef std::set<std::string> SVMonitorItemList;
 			SVMonitorItemList remoteValueList;
 			SVMonitorItemList remoteImageList;
 			SVMonitorItemList remoteRejectCondList;
@@ -327,10 +328,7 @@ HRESULT RemoteMonitorListController::BuildPPQMonitorList(PPQMonitorList& ppqMoni
 			// If there is something to monitor, add it to the PPQ Monitor List
 			if (!remoteValueList.empty() || !remoteImageList.empty() || !remoteRejectCondList.empty())
 			{
-				RejectDepthAndMonitorList list;
-				list.rejectDepth = it->second.GetRejectDepthQueue();
-				list.monitorList = SVMonitorList(remoteValueList, remoteImageList, remoteValueList, remoteImageList, remoteRejectCondList);
-				ppqMonitorList[ppqName] = std::make_pair(bActive, list);
+				ppqMonitorList[ppqName] = MonitorListAttributeStruct( bActive, it->second.GetRejectDepthQueue() );
 			}
 		}
 	}
@@ -349,7 +347,7 @@ HRESULT  RemoteMonitorListController::ActivateRemoteMonitorList(RemoteMonitorLis
 		{
 			long rejectDepth = it->second.GetRejectDepthQueue();
 			uint32_t PPQ_ID = it->second.GetPPQObjectID();
-			for (RemoteMonitorListMap::iterator it_S = rRemoteMonitorList.begin(); it_S != rRemoteMonitorList.end(); it_S++)
+			for (RemoteMonitorListMap::iterator it_S = rRemoteMonitorList.begin(); it_S != rRemoteMonitorList.end(); ++it_S)
 			{
 				if (it_S->second.GetPPQObjectID() == PPQ_ID && it_S != it)
 				{
@@ -396,15 +394,7 @@ void RemoteMonitorListController::GetActiveRemoteMonitorList(RemoteMonitorListMa
 
 int RemoteMonitorListController::GetActiveMonitorListCount() const
 {
-	int ret(0);
-	for (const auto &y : m_list)
-	{
-		if (y.second.IsActive())
-		{
-			ret++;
-		}
-	}
-	return ret;
+	return static_cast<int>(std::count_if(m_list.cbegin(), m_list.cend(), [](const auto& rEntry) { return rEntry.second.IsActive(); }));
 }
 
 HRESULT RemoteMonitorListController::SetRemoteMonitorListProductFilter(const std::string& listName, SvSml::SVProductFilterEnum filter)

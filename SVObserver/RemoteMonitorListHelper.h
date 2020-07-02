@@ -31,7 +31,6 @@ public:
 private:	
 	
 	static void AddMonitorObject2MonitorListcpy(const MonitoredObjectList& values, SvSml::ListType::typ listtype,SvSml::MonitorListCpy& molcpy );
-	static DWORD GetTypeFromMonitoredObject(const MonitoredObject& rMonitoredObject);
 	///retrieves MonitorEntryData for Monitorobject from the data manager 
 	static void GetPropertiesFromMonitoredObject(const MonitoredObject& rMonitoredObject, SvSml::MonitorEntryData &data);
 

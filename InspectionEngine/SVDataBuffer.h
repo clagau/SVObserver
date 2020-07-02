@@ -22,14 +22,14 @@ namespace SvIe
 class SVDataBufferInfoClass
 {
 public:
-	SVDataBufferInfoClass();
-	SVDataBufferInfoClass( const SVDataBufferInfoClass& S2 );
-	SVDataBufferInfoClass operator=( SVDataBufferInfoClass& S2 );
+	SVDataBufferInfoClass() = default;
+	SVDataBufferInfoClass( const SVDataBufferInfoClass& S2 ) = default;
+	SVDataBufferInfoClass& operator=( SVDataBufferInfoClass& S2 ) = default;
 
-	SVObjectClass				*pOwnerTool;
-	long						Length;
-	DWORD						Type;
-	SVDataBufferHandleStruct	HBuffer;
+	SVObjectClass				*pOwnerTool{ nullptr };
+	long						Length{ 0L };
+	DWORD						Type{ 0L };
+	SVDataBufferHandleStruct	HBuffer{};
 
 	// Data Buffer Types
 	enum 

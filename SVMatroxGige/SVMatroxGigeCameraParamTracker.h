@@ -34,9 +34,9 @@ public:
 	void SetMainListLocked(const std::string& cameraID, bool bLock=true);
 
 	HRESULT AddCameraParam(const std::string& cameraID, const SVMatroxGigeCameraParam& param);
-	HRESULT ReloadCameraParams(const std::string& cameraID, SVMatroxGigeDigitizer& p_rCamera);
+	HRESULT ReloadCameraParams(const std::string& cameraID, const SVMatroxGigeDigitizer& p_rCamera);
 	
 private:	
-	HRESULT ReloadCameraParamList(const SVMatroxGigeCameraParamDeque& list, SVMatroxGigeDigitizer& p_rCamera);
+	HRESULT ReloadCameraParamList(const SVMatroxGigeCameraParamDeque& list, const SVMatroxGigeDigitizer& p_rCamera);
 };
 

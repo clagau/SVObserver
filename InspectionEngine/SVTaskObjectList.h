@@ -33,7 +33,7 @@ public:
 	typedef std::vector<SVTaskObjectClass*> SVTaskObjectPtrVector;
 
 #pragma region Constructor
-	SVTaskObjectListClass( LPCSTR LPSZObjectName );
+	explicit SVTaskObjectListClass(LPCSTR LPSZObjectName);
 	SVTaskObjectListClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTASKOBJECTLIST );
 	virtual ~SVTaskObjectListClass();
 #pragma endregion Constructor

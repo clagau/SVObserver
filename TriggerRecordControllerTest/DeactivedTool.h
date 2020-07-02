@@ -21,7 +21,7 @@ namespace SvTrcT
 	{
 #pragma region Constructor
 	public:
-		DeactivedTool(uint32_t id) : ToolObject(id) {};
+		explicit DeactivedTool(uint32_t id) : ToolObject(id) {};
 		virtual ~DeactivedTool() = default;
 
 #pragma endregion Constructor

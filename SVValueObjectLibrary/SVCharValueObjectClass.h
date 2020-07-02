@@ -27,7 +27,7 @@ class SVCharValueObjectClass : public SVValueObjectClass<char>
 	SV_DECLARE_CLASS( SVCharValueObjectClass );
 
 public:
-	SVCharValueObjectClass( LPCTSTR ObjectName );
+	explicit SVCharValueObjectClass(LPCTSTR ObjectName);
 	SVCharValueObjectClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVCHARVALUEOBJECT );
 	SVCharValueObjectClass( const SVCharValueObjectClass& rhs );
 	const SVCharValueObjectClass& operator = ( const SVCharValueObjectClass& rhs );

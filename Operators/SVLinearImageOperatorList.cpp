@@ -158,7 +158,7 @@ bool SVLinearImageOperatorListClass::Run(SVRunStatusClass& rRunStatus, SvStl::Me
 
 	if (result)
 	{
-		SvIe::SVDataBufferInfoClass& rDataBufferInfo = m_svProfileResultData.GetDataBufferInfo();
+		const SvIe::SVDataBufferHandleStruct& rDataBufferHandle = m_svProfileResultData.GetDataBufferHandle();
 
 		long ProjectAngle(0L);
 
@@ -177,9 +177,9 @@ bool SVLinearImageOperatorListClass::Run(SVRunStatusClass& rRunStatus, SvStl::Me
 			{
 				buffer = pOutputBuffer->getHandle()->GetBuffer();
 			}
-			SVMatroxImageInterface::Project(rDataBufferInfo.HBuffer.milResult, buffer, static_cast<double> (ProjectAngle));
+			SVMatroxImageInterface::Project(rDataBufferHandle.milResult, buffer, static_cast<double> (ProjectAngle));
 
-			SVMatroxImageInterface::GetResult(rDataBufferInfo.HBuffer.milResult, m_aulLineData);
+			SVMatroxImageInterface::GetResult(rDataBufferHandle.milResult, m_aulLineData);
 
 			if (0 == ProjectAngle)
 			{

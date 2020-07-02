@@ -149,11 +149,6 @@ BYTE* MonitorListStore::GetPtr()
 
 }
 
-LPCTSTR MonitorListStore::GetMapFileName() const
-{
-	return m_MapFileName.c_str();
-}
-
 DWORD MonitorListStore::GetSize() const
 {
 	return m_DataSize;

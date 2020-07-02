@@ -156,13 +156,13 @@ typedef TDoubleFactorySingleton<SVDeviceParamEnum, std::string, SVDeviceParam>::
 class SVDeviceParamIndexer : public std::vector<SVDeviceParamEnum>
 {
 public:
-	SVDeviceParamIndexer(const SVDeviceParamMap& map);
+	explicit SVDeviceParamIndexer(const SVDeviceParamMap& map);
 
 private:
 	class keycomp : public std::binary_function<SVDeviceParamEnum, SVDeviceParamEnum, bool>
 	{
 	public:
-		keycomp(const SVDeviceParamMap& map) : m_mapIndexed(map) {}
+		explicit keycomp(const SVDeviceParamMap& map) : m_mapIndexed(map) {}
 		bool operator () (const SVDeviceParamEnum& a, const SVDeviceParamEnum& b) const;
 
 	private:

@@ -48,7 +48,7 @@ protected:
 
 		SVHitTestStruct() {nHitTest = HTNOWHERE;}
 		SVHitTestStruct(const SVHitTestStruct& rhs) {nHitTest = rhs.nHitTest;}
-		SVHitTestStruct(UINT p_nHitTest) {nHitTest = p_nHitTest;}
+		explicit SVHitTestStruct(UINT p_nHitTest) { nHitTest = p_nHitTest; }
 		const SVHitTestStruct& operator = (UINT p_nHitTest) {nHitTest = p_nHitTest; return *this;}
 	};
 

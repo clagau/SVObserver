@@ -27,7 +27,7 @@ class SVLutDeviceParam : public SVDeviceParam
 {
 public:
 	SVLutDeviceParam();
-	SVLutDeviceParam(SVDeviceParamEnum typeEnum);
+	explicit SVLutDeviceParam(SVDeviceParamEnum typeEnum);
 	SVLutDeviceParam(const SVLutDeviceParam& rhs);
 	virtual ~SVLutDeviceParam();
 
@@ -50,7 +50,7 @@ class SVLightReferenceDeviceParam : public SVDeviceParam
 {
 public:
 	SVLightReferenceDeviceParam();
-	SVLightReferenceDeviceParam(SVDeviceParamEnum typeEnum);
+	explicit SVLightReferenceDeviceParam(SVDeviceParamEnum typeEnum);
 	SVLightReferenceDeviceParam( const SVLightReferenceDeviceParam& rhs);
 	virtual ~SVLightReferenceDeviceParam();
 
@@ -73,7 +73,7 @@ class SVCameraFormatsDeviceParam : public SVStringValueDeviceParam
 {
 public:
 	SVCameraFormatsDeviceParam();
-	SVCameraFormatsDeviceParam(SVDeviceParamEnum typeEnum);
+	explicit SVCameraFormatsDeviceParam(SVDeviceParamEnum typeEnum);
 	SVCameraFormatsDeviceParam(const SVCameraFormatsDeviceParam& rhs);
 	virtual ~SVCameraFormatsDeviceParam();
 

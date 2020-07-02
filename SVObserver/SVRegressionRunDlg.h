@@ -23,7 +23,7 @@ class CSVRegressionRunDlg : public CDialog
 {
 #pragma region Constructor
 public:
-	CSVRegressionRunDlg(SvOi::IFormulaControllerPtr pFormulaController, CWnd* pParent = nullptr);   // standard constructor
+	explicit CSVRegressionRunDlg(SvOi::IFormulaControllerPtr pFormulaController, CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CSVRegressionRunDlg();
 #pragma endregion Constructor
 

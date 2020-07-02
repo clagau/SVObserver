@@ -92,7 +92,7 @@ std::string SVGUID::ToString() const
 		);
 }
 
-const SVGUID& SVGUID::operator=( const SVGUID& rGuid )
+SVGUID& SVGUID::operator=( const SVGUID& rGuid )
 {
 	if( this != &rGuid )
 	{
@@ -102,7 +102,7 @@ const SVGUID& SVGUID::operator=( const SVGUID& rGuid )
 	return *this;
 }
 
-const SVGUID& SVGUID::operator=( const GUID& rGuid )
+SVGUID& SVGUID::operator=( const GUID& rGuid )
 {
 	if( &m_Guid != &rGuid )
 	{
@@ -112,14 +112,14 @@ const SVGUID& SVGUID::operator=( const GUID& rGuid )
 	return *this;
 }
 
-const SVGUID& SVGUID::operator=( const _bstr_t& rString )
+SVGUID& SVGUID::operator=( const _bstr_t& rString )
 {
 	*this = SvUl::createStdString( rString );
 
 	return *this;
 }
 
-const SVGUID& SVGUID::operator=(const std::string& rString)
+SVGUID& SVGUID::operator=(const std::string& rString)
 {
 	GUID Guid(GUID_NULL);
 

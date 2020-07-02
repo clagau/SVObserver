@@ -44,20 +44,6 @@ static LPCTSTR scExportExt = _T(".bxp");
 static LPCTSTR scColorExportExt = _T(".cxp");
 #pragma endregion Declarations
 
-static void WriteBaseNode(SvOi::IObjectWriter& rWriter)
-{
-	//<NODE xmlns="x-schema:#SVR00001" Name="Base" Type="SV_BASENODE">
-	_variant_t xmlnsValue;
-	_variant_t value;
-
-	xmlnsValue.SetString("x-schema:#SVR00001");
-	value.SetString("SV_BASENODE");
-
-	rWriter.StartElement("Base");
-	rWriter.ElementAttribute("xmlns", xmlnsValue);
-	rWriter.ElementAttribute("Type", value);
-}
-
 static void WriteVersion(SvOi::IObjectWriter& rWriter, unsigned long p_version)
 {
 	_variant_t version(p_version);
@@ -227,19 +213,6 @@ static std::string GetFilenameWithoutExt(const std::string& filename)
 		result = filename.substr(0, pos).c_str();
 	}
 	return result;
-}
-
-static std::string RemovePath(const std::string& fname)
-{
-	std::string name;
-
-	char filename[_MAX_FNAME];
-	char ext[_MAX_EXT];
-	_splitpath(fname.c_str(), nullptr, nullptr, filename, ext);
-
-	name = filename;
-	name += ext;
-	return  name;
 }
 
 static void PersistDocument(uint32_t inspectionId, SvOi::IObjectWriter& rWriter)

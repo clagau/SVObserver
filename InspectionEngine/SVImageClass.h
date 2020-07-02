@@ -38,7 +38,7 @@ class SVImageClass : public SVObjectAppClass, public SvOi::ISVImage
 
 public:
 
-	SVImageClass( LPCSTR ObjectName );
+	explicit SVImageClass(LPCSTR ObjectName);
 	SVImageClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVIMAGE );
 	virtual ~SVImageClass();
 

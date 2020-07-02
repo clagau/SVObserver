@@ -21,9 +21,9 @@ struct SVTaskObjectInterfaceInputRequestStruct
 {
 	SVTaskObjectInterfaceInputRequestStruct() = default;
 	SVTaskObjectInterfaceInputRequestStruct( const SVObjectReference& rObjectRef, uint32_t objectId, const std::string& rName );
-	SVTaskObjectInterfaceInputRequestStruct( const SVObjectReference& rObjectRef );
+	explicit SVTaskObjectInterfaceInputRequestStruct(const SVObjectReference& rObjectRef);
 	explicit SVTaskObjectInterfaceInputRequestStruct(uint32_t objectId );
-	SVTaskObjectInterfaceInputRequestStruct( const std::string& rName );
+	explicit SVTaskObjectInterfaceInputRequestStruct( const std::string& rName );
 
 	bool operator < ( const SVTaskObjectInterfaceInputRequestStruct& rRhs ) const;
 

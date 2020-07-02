@@ -33,15 +33,21 @@ inline bool operator < (const GUID& guid1, const GUID& guid2)
 	return ::UuidCompare(const_cast<GUID*>(&guid1), const_cast<GUID*>(&guid2), &l_Status) < 0;
 }
 
+inline bool operator > (const GUID& guid1, const GUID& guid2)
+{
+	RPC_STATUS l_Status;
+	return ::UuidCompare(const_cast<GUID*>(&guid1), const_cast<GUID*>(&guid2), &l_Status) > 0;
+}
+
 class SVGUID
 {
 public:
 	SVGUID();
 	SVGUID( const SVGUID& rObject );
-	SVGUID( const GUID& rGuid );
-	SVGUID(const _bstr_t& rString);
-	SVGUID(const std::string& rString);
-	SVGUID( const _variant_t& rVariant );
+	explicit SVGUID(const GUID& rGuid);
+	explicit SVGUID(const _bstr_t& rString);
+	explicit SVGUID(const std::string& rString);
+	explicit SVGUID( const _variant_t& rVariant );
 
 	virtual ~SVGUID();
 
@@ -56,10 +62,10 @@ public:
 	
 	std::string ToString() const;
 
-	const SVGUID& operator=(const SVGUID& rGuid);
-	const SVGUID& operator=(const GUID& rGuid);
-	const SVGUID& operator=(const _bstr_t& rString);
-	const SVGUID& operator=(const std::string& rString);
+	SVGUID& operator=(const SVGUID& rGuid);
+	SVGUID& operator=(const GUID& rGuid);
+	SVGUID& operator=(const _bstr_t& rString);
+	SVGUID& operator=(const std::string& rString);
 
 	bool operator==(const SVGUID& rGuid ) const;
 	bool operator==(const GUID& rGuid ) const;

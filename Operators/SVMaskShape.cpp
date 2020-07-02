@@ -342,10 +342,9 @@ HRESULT SVMaskShape::TranslateToDisplay(const RECT rectViewport, const RECT rect
 		figureSource = figureDest;	// viewport is now the input
 		figureDest = rectDisplay;   // display is the output
 		// translate viewport to display
-		hr = TranslateCoordinates(rectViewport, rectDisplay, vecPoints);
+		hr = TranslateCoordinates(SVExtentFigureStruct{ rectViewport }, SVExtentFigureStruct{ rectDisplay }, vecPoints);
 	}
-
-
+	
 	std::transform( vecPoints.begin(), vecPoints.end(), rvecPoints.begin(), [](SVPoint<double> point) { return static_cast<POINT> (point); });
 
 	return hr;

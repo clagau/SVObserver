@@ -335,7 +335,7 @@ public:
 	//    
 	//HKEY_LOCAL_MACHINE\Software\Seidenader Vision Inc.\OtherApp\OtherApp
 	//Key.
-	SVRegistryClass(LPCTSTR szKey);
+	explicit SVRegistryClass(LPCTSTR szKey);
 
 	//delete pRegistry;
 	//

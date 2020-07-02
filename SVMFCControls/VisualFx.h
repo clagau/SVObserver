@@ -432,13 +432,13 @@ private:
   TIteratorType m_nType;
 
 public:
-  TVisualFrameworkIterator(TVisualFramework& obj)
+	explicit TVisualFrameworkIterator(TVisualFramework& obj)
     :m_pObjectMap(&(obj.m_ObjectMap))
   {
     m_MapIt = m_pObjectMap->begin();
     m_nType = IT_MAP;
   }
-  TVisualFrameworkIterator(TVisualObject& obj)
+	explicit TVisualFrameworkIterator(TVisualObject& obj)
     :m_pObjectList(&(obj.m_ObjectList))
   {
     m_ListIt = m_pObjectList->begin();
@@ -486,8 +486,8 @@ class TVisualFormView : public CFormView {
 	DECLARE_DYNAMIC(TVisualFormView)
 
 protected:
-	TVisualFormView(LPCTSTR lpszTemplateName);
-	TVisualFormView(UINT nIDTemplate);
+	explicit TVisualFormView(LPCTSTR lpszTemplateName);
+	explicit TVisualFormView(UINT nIDTemplate);
 
 public:
   void SetFont(CFont *pFont);

@@ -25,13 +25,13 @@ public:
 	long GetScaledValue() const;
 	_variant_t GetNormalizedValue() const;
 	SVLongValueDeviceParam();
-	SVLongValueDeviceParam(SVDeviceParamEnum typeEnum);
+	explicit SVLongValueDeviceParam(SVDeviceParamEnum typeEnum);
 	SVLongValueDeviceParam(const SVLongValueDeviceParam& rhs);
 	virtual ~SVLongValueDeviceParam();
 	virtual SVClonable* CloneImpl() const override;
 
 	// automatic conversions
-	SVLongValueDeviceParam(long rhs);	// not const long& so that we get automatic conversion from other integral types for free
+	explicit SVLongValueDeviceParam(long rhs);	// not const long& so that we get automatic conversion from other integral types for free
 	operator long() const;
 	SVLongValueDeviceParam& operator=(long lVal);
 	SVLongValueDeviceParam& operator=(const SVLongValueDeviceParam& rhs);

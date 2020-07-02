@@ -16,7 +16,7 @@ namespace SvMc
 	{
 		// Construction
 	public:
-		CSVOConfigNameEdit(LPCTSTR const sExcludedChars);
+		explicit CSVOConfigNameEdit(LPCTSTR const sExcludedChars);
 
 		// Attributes
 	public:

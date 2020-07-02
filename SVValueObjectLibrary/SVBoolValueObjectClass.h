@@ -26,7 +26,7 @@ class SVBoolValueObjectClass : public SVValueObjectClass<BOOL>
 	SV_DECLARE_CLASS( SVBoolValueObjectClass );
 
 public:
-	SVBoolValueObjectClass( LPCTSTR ObjectName );
+	explicit SVBoolValueObjectClass(LPCTSTR ObjectName);
 	SVBoolValueObjectClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVBOOLVALUEOBJECT );
 	SVBoolValueObjectClass(const SVBoolValueObjectClass& rhs);
 	const SVBoolValueObjectClass& operator = (const SVBoolValueObjectClass& rhs);

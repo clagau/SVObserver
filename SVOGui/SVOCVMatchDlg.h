@@ -22,7 +22,7 @@ namespace SvOg
 	class SVOCVMatchDlg : public CPropertyPage
 	{
 	public:
-		SVOCVMatchDlg(SVOCVSheet& rParent);
+		explicit SVOCVMatchDlg(SVOCVSheet& rParent);
 		virtual ~SVOCVMatchDlg();
 
 		HRESULT SetInspectionData();

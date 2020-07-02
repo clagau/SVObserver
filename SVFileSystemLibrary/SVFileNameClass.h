@@ -46,7 +46,7 @@ public:
 	//extension.  These three pieces of information are 
 	//collected from the full file name string pass as a 
 	//parameter.
-	SVFileNameClass(LPCTSTR FullFileName);
+	explicit SVFileNameClass(LPCTSTR FullFileName);
 
 	//This operator is the copy constructor.  This method 
 	//will create an exact copy of the object supplied as the 
@@ -57,7 +57,7 @@ public:
 	//constructor.  This method takes a pointer to a 
 	//SVFileNameClass and copies the elements into the new 
 	//object.
-	SVFileNameClass(SVFileNameClass * svFileName);
+	explicit SVFileNameClass(SVFileNameClass * svFileName);
 
 	virtual ~SVFileNameClass();
 

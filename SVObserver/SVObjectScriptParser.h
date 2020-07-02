@@ -17,7 +17,7 @@
 class SVObjectScriptParserClass
 {
 public:	
-	SVObjectScriptParserClass(SVObjectScriptParserBase* pParser);
+	explicit SVObjectScriptParserClass(SVObjectScriptParserBase* pParser);
 	~SVObjectScriptParserClass();	// not to be inherited from
 
 	HRESULT Parse();

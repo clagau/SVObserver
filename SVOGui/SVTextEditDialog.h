@@ -30,7 +30,7 @@ namespace SvOg
 		//! \param Title [in] the window Title
 		//! \param pParent [in] the parent window for the dialog
 		//************************************
-		SVTextEditDialog( LPCTSTR Text, CWnd* pParent = nullptr );
+		explicit SVTextEditDialog(LPCTSTR Text, CWnd* pParent = nullptr);
 		virtual ~SVTextEditDialog();
 	#pragma endregion Constructor
 

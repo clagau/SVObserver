@@ -22,8 +22,8 @@ class SVRegressionFileSelectSheet : public CPropertySheet
 
 // Construction
 public:
-	SVRegressionFileSelectSheet(UINT nIDCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
-	SVRegressionFileSelectSheet(LPCTSTR pszCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
+	explicit SVRegressionFileSelectSheet(UINT nIDCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
+	explicit SVRegressionFileSelectSheet(LPCTSTR pszCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
 
 // Overrides
 	// ClassWizard generated virtual function overrides

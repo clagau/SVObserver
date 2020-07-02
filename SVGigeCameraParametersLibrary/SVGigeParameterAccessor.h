@@ -28,7 +28,7 @@ struct SVGigeParameterAccessor
 	SVGigeFeature feature;
 
 	// This Method uses the default Setter and getter
-	SVGigeParameterAccessor(const SVGigeFeature& rFeature);
+	explicit SVGigeParameterAccessor(const SVGigeFeature& rFeature);
 
 	// This Method is for overriding Setter and Getter
 	SVGigeParameterAccessor(const SVGigeFeature& rFeature, const ParamGetter& getterFunc, const ParamSetter& setterFunc);

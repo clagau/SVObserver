@@ -866,8 +866,6 @@ bool MonitorListView::EditMonitoredItem(int item, bool bEditImage)
 
 	m_rCtrl.GetItem(&lvItem);
 	MonitorListViewNodeType nodeType = static_cast<MonitorListViewNodeType>(lvItem.lParam);
-	bool ImageTab(false);
-	
 	SVConfigurationObject* pConfig(nullptr);
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 	if (nullptr != pConfig)
@@ -875,6 +873,7 @@ bool MonitorListView::EditMonitoredItem(int item, bool bEditImage)
 		const std::string& listName = GetListName(m_rCtrl, item);
 		RemoteMonitorListMap rList = pConfig->GetRemoteMonitorList();
 		RemoteMonitorListMap::iterator it = rList.find(listName);
+		bool ImageTab(false);
 
 		if (it != rList.end())
 		{
@@ -1099,14 +1098,13 @@ void MonitorListView::OnAddRemoveList()
 {
 	if (TheSVObserverApp.OkToEdit())
 	{
-		bool bRet = true;
 		SVSVIMStateClass::AddState(SV_STATE_EDITING);
 		SVConfigurationObject* pConfig(nullptr);
 		SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 
 		if (nullptr != pConfig)
 		{
-			bRet = pConfig->SetupRemoteMonitorList();
+			bool bRet = pConfig->SetupRemoteMonitorList();
 			if (bRet)
 			{
 				SVSVIMStateClass::AddState(SV_STATE_MODIFIED);

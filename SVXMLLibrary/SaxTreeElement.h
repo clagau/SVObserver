@@ -47,7 +47,7 @@ namespace SvXml
 	#pragma region Constructor
 	public:
 		SaxTreeElement(const wchar_t  *pwchName, int cchName);
-		SaxTreeElement(std::wstring const &name);
+		explicit SaxTreeElement(std::wstring const &name);
 	#pragma endregion Constructor
 
 	#pragma region Public Methods

@@ -22,7 +22,7 @@ public:
 	typedef SVCommandDataTemplateFacade< p_BaseDataType, SVTemplateDataType, SVTemplateArgType > SVCommandDataInterface;
 
 	SVCommandDataTemplate();
-	SVCommandDataTemplate( const SVDataType& p_rValue, bool p_ReadOnly = false );
+	explicit SVCommandDataTemplate(const SVDataType& p_rValue, bool p_ReadOnly = false);
 
 	virtual ~SVCommandDataTemplate();
 

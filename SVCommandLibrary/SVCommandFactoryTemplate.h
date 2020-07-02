@@ -30,7 +30,7 @@ public:
 	virtual SvOi::ICommandPtr CreateCommand() const = 0;
 
 protected:
-	SVCommandFactoryTemplate(unsigned long CommandType);
+	explicit SVCommandFactoryTemplate(unsigned long CommandType);
 
 	const unsigned long m_CommandType;
 };

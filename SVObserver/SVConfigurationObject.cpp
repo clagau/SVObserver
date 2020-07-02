@@ -918,8 +918,6 @@ void SVConfigurationObject::LoadEnviroment(SVTreeType& rTree, bool &Configuratio
 
 	TheSVObserverApp.setLoadingVersion(Value);
 
-	m_ulVersion = TheSVObserverApp.getLoadingVersion();
-
 	//This is the deprecated tag and has changed to SvXml::CTAG_IMAGE_UPDATE and SvXml::CTAG_RESULT_UPDATE
 	//Needs to be read for older configurations and becomes the standard default
 	bool UpdateFlag = true;
@@ -3890,30 +3888,6 @@ bool SVConfigurationObject::IsConfigurationLoaded() const
 void SVConfigurationObject::SetConfigurationLoaded()
 {
 	m_bConfigurationValid = true;
-}
-
-unsigned long SVConfigurationObject::GetSVXFileVersion(SVTreeType& rTree)
-{
-	SVTreeType::SVBranchHandle hChild = nullptr;
-	unsigned long ulVersion{0UL};
-
-	if (SvXml::SVNavigateTree::GetItemBranch(rTree, SvXml::CTAG_ENVIRONMENT, nullptr, hChild))
-	{
-		_variant_t svValue;
-		if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_CONFIGURATION_TYPE, hChild, svValue))
-		{
-			int iType(svValue);
-
-			SetProductType((SVIMProductEnum)iType);
-		}
-
-		if(SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_VERSION_NUMBER, hChild, svValue))
-		{
-			ulVersion = svValue;
-		}
-	}
-
-	return ulVersion;
 }
 
 void SVConfigurationObject::SetupSoftwareTrigger(SvTh::SVTriggerClass* pTrigger, int iDigNum, long triggerPeriod, SVPPQObject* pPPQ)

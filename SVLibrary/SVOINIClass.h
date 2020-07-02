@@ -19,7 +19,7 @@ namespace SvLib
 	class SVOINIClass
 	{
 	public:
-		SVOINIClass( LPCTSTR FileName );
+		explicit SVOINIClass(LPCTSTR FileName);
 		virtual ~SVOINIClass();
 
 		std::string GetValueString( LPCTSTR Section, LPCTSTR Key, LPCTSTR Default ) const;

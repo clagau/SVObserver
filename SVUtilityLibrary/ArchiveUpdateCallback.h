@@ -28,7 +28,7 @@ class ArchiveUpdateCallback : public IArchiveUpdateCallback, public ICryptoGetTe
 {
 public:
 
-	ArchiveUpdateCallback(const std::vector<std::string>& rFiles, const std::string& rFolderPrefix = std::string());
+	explicit ArchiveUpdateCallback(const std::vector<std::string>& rFiles, const std::string& rFolderPrefix = std::string());
 	virtual ~ArchiveUpdateCallback();
 
 	STDMETHOD(QueryInterface)( REFIID iid, void** ppvObject );

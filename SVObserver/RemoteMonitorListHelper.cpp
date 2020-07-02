@@ -57,13 +57,6 @@ std::string RemoteMonitorListHelper::GetNameFromMonitoredObject(const MonitoredO
 	return Result;
 }
 
-DWORD RemoteMonitorListHelper::GetTypeFromMonitoredObject(const MonitoredObject& rMonitoredObject)
-{
-	SVObjectReference objectRef(SVObjectManagerClass::Instance().GetObject(rMonitoredObject.m_objectId));
-	return  objectRef.getObject()->GetObjectType();
-}
-
-
 void RemoteMonitorListHelper::GetPropertiesFromMonitoredObject(const MonitoredObject& rMonitoredObject, SvSml::MonitorEntryData &data)
 {
 	SVObjectReference ObjectRef(SVObjectManagerClass::Instance().GetObject(rMonitoredObject.m_objectId));
@@ -97,8 +90,6 @@ void RemoteMonitorListHelper::GetPropertiesFromMonitoredObject(const MonitoredOb
 MonitoredObject RemoteMonitorListHelper::GetMonitoredObjectFromName(const std::string& name)
 {
 	MonitoredObject Result;
-
-	std::string sObjectName;
 	SVObjectNameInfo nameInfo;
 	SVObjectNameInfo::ParseObjectName(nameInfo, name.c_str());
 	//Check to see that first part of name is Inspections

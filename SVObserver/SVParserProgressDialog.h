@@ -50,7 +50,7 @@ class SVParserProgressDialog : public SVProgressDialog
 {
 // Construction
 public:
-	SVParserProgressDialog(LPCTSTR title, CWnd* pParent = nullptr);   // standard constructor
+	explicit SVParserProgressDialog(LPCTSTR title, CWnd* pParent = nullptr);   // standard constructor
 	virtual ~SVParserProgressDialog();
 
 	BOOL AddParser( unsigned long parserHandle, SVObjectScriptParserClass* pParser );

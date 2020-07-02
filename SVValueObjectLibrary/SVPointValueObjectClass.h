@@ -26,7 +26,7 @@ class SVPointValueObjectClass : public SVValueObjectClass<SVPoint<long>>
 	SV_DECLARE_CLASS( SVPointValueObjectClass );
 
 public:
-	SVPointValueObjectClass( LPCTSTR ObjectName );
+	explicit SVPointValueObjectClass(LPCTSTR ObjectName);
 	SVPointValueObjectClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVPOINTVALUEOBJECT );
 	SVPointValueObjectClass( const SVPointValueObjectClass& rhs );
 

@@ -20,14 +20,14 @@ class SVi64ValueDeviceParam : public SVDeviceParam
 {
 public:
 	SVi64ValueDeviceParam();
-	SVi64ValueDeviceParam(SVDeviceParamEnum typeEnum);
+	explicit SVi64ValueDeviceParam(SVDeviceParamEnum typeEnum);
 	SVi64ValueDeviceParam(const SVi64ValueDeviceParam& rhs);
 	virtual ~SVi64ValueDeviceParam();
 	virtual SVClonable* CloneImpl() const override;
 
 	// automatic conversions
-	SVi64ValueDeviceParam(const __int64& rhs);
-	SVi64ValueDeviceParam(const LARGE_INTEGER& rhs);
+	explicit SVi64ValueDeviceParam(const __int64& rhs);
+	explicit SVi64ValueDeviceParam(const LARGE_INTEGER& rhs);
 	operator __int64() const;
 	SVi64ValueDeviceParam& operator=(const SVi64ValueDeviceParam& rhs);
 	virtual HRESULT GetValue(VARIANT& rv) const override;
@@ -50,15 +50,3 @@ public:
 private:
 	void init();
 };
-
-#if defined(_DEBUG)
-	__int64& i64Value(SVDeviceParamWrapper& w);
-	__int64 i64Value(const SVDeviceParamWrapper& w);
-	SVDeviceParamWrapper DeviceParam(__int64 i);
-#else
-	inline __int64& i64Value(SVDeviceParamWrapper& w) {SVi64ValueDeviceParam* p = w.DerivedValue(p); if (nullptr == p) {w = SVi64ValueDeviceParam(); p = w.DerivedValue(p);} assert(p); return p->iValue;}
-	inline __int64 i64Value(const SVDeviceParamWrapper& w) {const SVi64ValueDeviceParam* p = w.DerivedValue(p); if (p) return p->iValue; else {assert(FALSE); return 0;} }
-	inline SVDeviceParamWrapper DeviceParam(__int64 i) {return SVi64ValueDeviceParam(i);}
-#endif
-
-

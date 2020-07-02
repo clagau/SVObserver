@@ -35,7 +35,7 @@ namespace SvCl
 		//! The class constructor
 		//! \param rTree [in] reference to a copy of the tree to create
 		//************************************
-		SVTree( const SVTreeContainer& rTree );
+		explicit SVTree(const SVTreeContainer& rTree);
 
 		virtual ~SVTree();
 	#pragma endregion Constructor

@@ -27,7 +27,7 @@ class SVDisplayObject :
 	public SVObserverTemplate< SVRemoveSubjectStruct >
 {
 public:
-	SVDisplayObject( LPCSTR ObjectName );
+	explicit SVDisplayObject(LPCSTR ObjectName);
 	SVDisplayObject( SVObjectClass *pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVDISPLAYOBJECT );
 	virtual ~SVDisplayObject();
 

@@ -103,11 +103,6 @@ bool SVCommandInspectionGetItems::empty() const
 	return Status;
 }
 
-const SVCommandInspectionGetItems::SVNameObjectSet& SVCommandInspectionGetItems::GetItemNames() const
-{
-	return m_ItemNames;
-}
-
 const SVNameStorageResultMap& SVCommandInspectionGetItems::GetResultItems() const
 {
 	return m_ResultItems;

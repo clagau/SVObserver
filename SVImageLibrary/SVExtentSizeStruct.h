@@ -15,7 +15,7 @@ struct SVExtentSizeStruct
 {
 	SVExtentSizeStruct();
 	SVExtentSizeStruct( const SVExtentSizeStruct& p_rsvValue );
-	SVExtentSizeStruct( const SIZE& p_roValue );
+	explicit SVExtentSizeStruct(const SIZE& p_roValue);
 	SVExtentSizeStruct( double p_dCX, double p_dCY );
 	~SVExtentSizeStruct();
 

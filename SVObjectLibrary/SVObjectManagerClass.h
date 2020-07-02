@@ -18,7 +18,6 @@
 
 #include "SVClsids.h"
 #include "SVObjectReference.h"
-#include "SVObserverNotificationFunctor.h"
 #include "SVObjectClass.h"
 #include "JoinType.h"
 
@@ -117,37 +116,19 @@ public:
 	template< typename ObjectVisitor >
 	HRESULT VisitElements( ObjectVisitor& rVisitor, uint32_t startingObjectID=InvalidObjectId );
 
-	HRESULT InsertObserver( SVObserverNotificationFunctorPtr pFunctor, long& rCookie );
-	HRESULT EraseObserver( long p_Cookie );
-
-	HRESULT GetObserverDataNames( long Cookie, SVSubjectDataNameDeque& rSubjectDataNames ) const;
 	HRESULT GetObserverDataNames(uint32_t observerID, SVSubjectDataNameDeque& rSubjectDataNames ) const;
 
 	uint32_t getObserverSubject( const std::string& rSubjectDataName, uint32_t observerID ) const;
-	uint32_t getObserverSubject( const std::string& rSubjectDataName, long Cookie ) const;
-
-	HRESULT GetObserverIds( const std::string& rSubjectDataName, uint32_t subjectID, std::set<uint32_t>& rObserverIds );
 
 	HRESULT AttachObserver( const std::string& rSubjectDataName, uint32_t subjectID, uint32_t observerID );
-	HRESULT AttachObserver( const std::string& rSubjectDataName, uint32_t subjectID, long Cookie );
-
-	HRESULT EnableObserver( const std::string& rSubjectDataName, uint32_t subjectID, uint32_t observerID );
-	HRESULT EnableObserver( const std::string& rSubjectDataName, uint32_t subjectID, long Cookie );
-
-	HRESULT DisableObserver( const std::string& rSubjectDataName, uint32_t subjectID, uint32_t observerID );
-	HRESULT DisableObserver( const std::string& rSubjectDataName, uint32_t subjectID, long Cookie );
 
 	HRESULT DetachObserver( const std::string& rSubjectDataName, uint32_t subjectID, uint32_t observerID );
-	HRESULT DetachObserver( const std::string& rSubjectDataName, uint32_t subjectID, long Cookie );
 	HRESULT DetachObservers( const std::string& rSubjectDataName, uint32_t subjectID );
 
 	HRESULT DetachSubjectsAndObservers( uint32_t objectID );
 
 	template< typename SVDataType >
 	HRESULT UpdateObserver( uint32_t observerID, const SVDataType& rData );
-
-	template< typename SVDataType >
-	HRESULT UpdateObserver( long Cookie, const SVDataType& rData );
 
 	template< typename SVDataType >
 	HRESULT UpdateObservers( const std::string& rSubjectDataName, uint32_t subjectID, const SVDataType& rData );
@@ -233,38 +214,9 @@ public:
 protected:
 	typedef std::map<std::string, uint32_t> SVSubjectDataNameSubjectIDMap;
 
-	struct SVCookieEntryStruct
-	{
-		long m_Cookie;
-		SVObserverNotificationFunctorPtr m_pFunctor;
-
-		SVSubjectDataNameSubjectIDMap m_SubjectIDs;
-
-		SVCookieEntryStruct()
-		: m_Cookie( 0 ), m_pFunctor( nullptr ), m_SubjectIDs() {}
-
-		SVCookieEntryStruct( long Cookie, SVObserverNotificationFunctorPtr pFunctor )
-		: m_Cookie( Cookie ), m_pFunctor( pFunctor ), m_SubjectIDs() {}
-	};
-
-	typedef std::shared_ptr< SVCookieEntryStruct > SVCookieEntryStructPtr;
-	typedef std::map< long, SVCookieEntryStructPtr > SVCookieEntryMap;
-
-	typedef std::set< long > SVSubjectCookieSet;
-
 	typedef std::map< uint32_t, long > SVSubjectEnabledObserverMap;
-	typedef std::map< long, long > SVSubjectEnabledCookieMap;
 
-	struct SVSubjectObserverStruct
-	{
-		SVSubjectEnabledObserverMap m_SubjectObservers;
-		SVSubjectEnabledCookieMap m_SubjectCookies;
-
-		SVSubjectObserverStruct()
-			: m_SubjectObservers(), m_SubjectCookies() {}
-	};
-
-	typedef std::map<std::string, SVSubjectObserverStruct> SVSubjectDataNameObserverMap;
+	typedef std::map<std::string, SVSubjectEnabledObserverMap> SVSubjectDataNameObserverMap;
 
 	struct SVUniqueObjectEntryStruct
 	{
@@ -283,17 +235,12 @@ protected:
 	HRESULT GetSubjectDataNames( uint32_t subjectID, SVSubjectDataNameDeque& rSubjectDataNames ) const;
 
 	HRESULT GetObservers( const std::string& rSubjectDataName, uint32_t subjectID, SVSubjectEnabledObserverMap& rObservers );
-	HRESULT GetObservers( const std::string& rSubjectDataName, uint32_t subjectID, SVSubjectEnabledObserverMap& rObservers, SVSubjectEnabledCookieMap& rObserverCookies );
-
-	SVCookieEntryStructPtr GetCookieEntry( long Cookie ) const;
 
 	uint32_t GetSubjectID( const std::string& rSubjectDataName, SVUniqueObjectEntryStructPtr pObjectEntry ) const;
-	uint32_t GetSubjectID( const std::string& rSubjectDataName, SVCookieEntryStructPtr pCookieEntry ) const;
 
 	SVUniqueObjectEntryStructPtr getUniqueObjectEntry( uint32_t objectId ) const;
 	SVUniqueObjectEntryStructPtr getUniqueObjectEntry( const std::string& rName ) const;
 
-	HRESULT DetachSubjects( long Cookie );
 	HRESULT DetachSubjects( uint32_t observerID );
 
 	HRESULT DetachObservers( uint32_t subjectID );
@@ -302,7 +249,6 @@ protected:
 
 	//@Todo[MEC][8.20] [15.05.2019] probaly after some code cleanup std::mutex would be enough  
 	mutable std::recursive_mutex m_Mutex;
-	SVCookieEntryMap		m_CookieEntries;
 	SVUniqueObjectEntryMap	m_UniqueObjectEntries;
 	std::set<uint32_t>		m_deletedObjectIdSet;
 	bool					m_addToDeletedList = true;
@@ -315,8 +261,6 @@ protected:
 	long m_InspectionIndicator;
 
 	long m_LastFrameRate;
-
-	long m_ObserverCookie;
 
 	long m_FileSequenceNumber;
 	uint32_t m_nextObjectId = ObjectIdEnum::FirstPossibleObjectId;	

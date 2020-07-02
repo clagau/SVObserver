@@ -24,7 +24,6 @@ namespace SvStl
 		LPCTSTR GetSVAuthUtilityIniPath();
 		LPCTSTR GetHardwareIniPath();
 		LPCTSTR GetSVObserverIniPath();
-		std::string GetExternalToolPath(LPCTSTR filename = nullptr);
 		std::string GetRunPath(LPCTSTR filename = nullptr);
 		std::string GetBinPath(LPCTSTR filename = nullptr);
 		std::string GetTempPath(LPCTSTR filename = nullptr);
@@ -69,7 +68,6 @@ namespace SvStl
 		std::string m_SVObserverFolder;
 		std::string m_SVSecondObserverFolder;
 		std::string m_SVObserverBinFolder;
-		std::string m_SVObserverExternalToolFolder;
 		std::string m_SVObserverRunFolder;
 		std::string m_TempFolder;
 		std::string m_LastValidFolder;

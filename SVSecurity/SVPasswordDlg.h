@@ -18,7 +18,7 @@
 class SVPasswordDlg : public CDialog
 {
 public:
-	SVPasswordDlg(LPCTSTR Stsus, CWnd* pParent = nullptr);
+	explicit SVPasswordDlg(LPCTSTR Stsus, CWnd* pParent = nullptr);
 	virtual ~SVPasswordDlg();
 	enum { IDD = IDD_PASSWORD_DLG };
 

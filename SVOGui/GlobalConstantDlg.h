@@ -32,7 +32,7 @@ namespace SvOg
 		//! \param rData [in] reference to the Global Constant data
 		//! \param pParent [in] the parent window for the dialog
 		//************************************
-		GlobalConstantDlg( SvDef::GlobalConstantData& rData, CWnd* pParent = nullptr );
+		explicit GlobalConstantDlg(SvDef::GlobalConstantData& rData, CWnd* pParent = nullptr);
 
 		virtual ~GlobalConstantDlg();
 	#pragma endregion Constructor

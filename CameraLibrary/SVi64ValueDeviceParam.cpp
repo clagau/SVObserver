@@ -99,35 +99,3 @@ HRESULT SVi64ValueDeviceParam::SetMetadata(const SVDeviceParam* pBaseParam)
 	}
 	return hr;
 }
-
-#if defined(_DEBUG)
-
-__int64& i64Value(SVDeviceParamWrapper& w) 
-{
-	const SVi64ValueDeviceParam* p = w.DerivedValue(p); 
-	if (nullptr == p) 
-	{
-		w = SVi64ValueDeviceParam(); 
-		p = w.DerivedValue(p);
-	} 
-	assert(p); 
-	return const_cast<SVi64ValueDeviceParam*>(p)->iValue;
-}
-
-__int64 i64Value(const SVDeviceParamWrapper& w) 
-{
-	const SVi64ValueDeviceParam* p = w.DerivedValue(p); 
-	if (p) 
-		return p->iValue; 
-	
-	assert(false);
-	return 0;
-}
-
-SVDeviceParamWrapper DeviceParam(__int64 i) 
-{
-	return SVi64ValueDeviceParam(i);
-}
-
-#endif
-

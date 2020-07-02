@@ -166,7 +166,7 @@ void SVArchiveRecord::ConnectInputObject()
 		if (pObject != m_svObjectReference.getObject())
 		{
 			long lArrayIndex = m_svObjectReference.ArrayIndex();
-			m_svObjectReference = pObject;
+			m_svObjectReference = SVObjectReference{ pObject };
 			m_svObjectReference.SetArrayIndex(lArrayIndex);
 		}
 	}

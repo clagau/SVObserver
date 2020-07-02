@@ -191,11 +191,7 @@ namespace SvGcl
 			return FALSE;
 
 		// We are over text - but are we over a URL?
-		bOverURL = FALSE;
 		strURL = GetText();
-
-		// Use float, otherwise we get an incorrect letter from the point
-		float width = (float)size.cx/(float)strURL.GetLength();
 
 		// remove left of cell so we have original point again 
 		pt.x -= m_Rect.left;
@@ -216,9 +212,10 @@ namespace SvGcl
 		}
 
 		// Turn point into a letter
-		int ltrs = (int)((float)pt.x/width);
 	#if  !defined(_WIN32_WCE) || (_WIN32_WCE > 210)
+		float width = (float)size.cx / (float)strURL.GetLength();
 		// Find spaces before and after letter, process text between
+		int ltrs = (int)((float)pt.x / width);
 		int endSpace = strURL.Find(_T(' '), ltrs);
 		if (endSpace != -1)
 			strURL.Delete(endSpace, strURL.GetLength()-endSpace);

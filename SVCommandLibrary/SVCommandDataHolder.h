@@ -27,7 +27,7 @@ public:
 	typedef SVCommandResultsFacade<SVCommandDataHolder> SVCommandResults;
 
 	SVCommandDataHolder();
-	SVCommandDataHolder( const SVNameDataMap& rData );
+	explicit SVCommandDataHolder(const SVNameDataMap& rData);
 	SVCommandDataHolder( const SVCommandDataHolder& rObject );
 
 	virtual ~SVCommandDataHolder();

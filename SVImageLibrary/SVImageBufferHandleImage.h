@@ -18,7 +18,7 @@ class SVImageBufferHandleImage : public SvOi::SVImageBufferHandleInterface
 {
 public:
 	SVImageBufferHandleImage();
-	SVImageBufferHandleImage(const SVMatroxBuffer& rMilImage);
+	explicit SVImageBufferHandleImage(const SVMatroxBuffer& rMilImage);
 	virtual ~SVImageBufferHandleImage();
 
 	bool empty() const;

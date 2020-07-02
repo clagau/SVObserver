@@ -104,7 +104,7 @@ private:
 		}
 	};
 
-	SVGigeDeviceParameterStructInfo m_GigeDeviceParameterInfo;
+	SVGigeDeviceParameterStructInfo m_GigeDeviceParameterInfo {};
 	SvDef::SVGigeParameterEnum m_GigeParameterEnum; // SVGigeDeviceParameterMap Key
 	SVGigeDeviceParameterMap m_GigeDeviceParameterMap;
 	HRESULT m_errorCode;

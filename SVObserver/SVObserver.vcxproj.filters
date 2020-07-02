@@ -90,9 +90,6 @@
     <ClCompile Include="SVAboutDialogClass.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVActiveXLockStruct.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVArchiveHeaderEditDlg.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -226,9 +223,6 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVMessageWindow.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVMonitorList.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVMultiDocTemplate.cpp">
@@ -595,9 +589,6 @@
     <ClInclude Include="SVAboutDialogClass.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVActiveXLockStruct.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVArchiveHeaderEditDlg.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -758,9 +749,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMessageWindow.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVMonitorList.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMultiDocTemplate.h">
@@ -1061,6 +1049,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVTADlgExternalInputSelectPage.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="MonitorListAttributeStruct.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

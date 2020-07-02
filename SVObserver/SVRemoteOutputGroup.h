@@ -27,7 +27,7 @@ class SVRemoteOutputGroup : public SVObjectClass
 public:
 	SV_DECLARE_CLASS( SVRemoteOutputGroup );
 
-	SVRemoteOutputGroup( LPCTSTR ObjectName );
+	explicit SVRemoteOutputGroup(LPCTSTR ObjectName);
 	SVRemoteOutputGroup( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVREMOTEOUTPUTGROUP);
 
 	virtual ~SVRemoteOutputGroup();
