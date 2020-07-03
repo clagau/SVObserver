@@ -260,7 +260,7 @@ bool ShareControl::GetProductItem(bool isReject, int triggerCount, int peviousTr
 		{
 			case SvSml::SharedMemReader::success:
 			{
-				DWORD index = m_MemReader.GetSlotManagerIndexForMonitorList(rListName.c_str());
+				int index = m_MemReader.GetSlotManagerIndexForMonitorList(rListName.c_str());
 				if (nullptr != pLastProduct)
 				{
 					///release Readerslot for last product

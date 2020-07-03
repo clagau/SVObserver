@@ -410,6 +410,14 @@ inline bool getSingleVariantFromArrayOneDim<_variant_t>(const _variant_t& rValue
 				value = shortv;
 				break;
 			}
+			case VT_ARRAY | VT_BSTR:
+			{
+				_bstr_t str;
+				::SafeArrayGetElement(rValue.parray, &pos, str.GetAddress());
+				value = str;
+				break;
+			}
+
 			default:
 			{
 				hr = ::SafeArrayGetElement(rValue.parray, &pos, &value);
