@@ -246,7 +246,7 @@ _getopt_initialize (int argc, TCHAR* const *argv, const TCHAR *optstring,
 
   d->__nextchar = NULL;
 
-  d->__posixly_correct = posixly_correct | (int) !!getenv ("POSIXLY_CORRECT");
+  d->__posixly_correct = posixly_correct | (int) (NULL != getenv ("POSIXLY_CORRECT"));
 
   /* Determine how to handle the ordering of options and nonoptions.  */
 
