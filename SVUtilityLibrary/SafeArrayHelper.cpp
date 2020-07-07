@@ -14,14 +14,87 @@
 namespace SvUl
 {
 
-_variant_t VariantToSafeArray(_variant_t var)
-{
-	if (0 != (var.vt & VT_ARRAY))
-		return var;
-	_variant_t res;
-
-	switch (var.vt)
+	_variant_t GetEmptySafeArray(VARTYPE  vart)
 	{
+
+		VARTYPE type = vart & (~VT_ARRAY);
+		_variant_t res;
+
+		switch (type)
+		{
+		case VT_R8 :
+		{
+			CComSafeArray<double> sa(ULONG(0), LONG(0));
+			res.vt = VT_R8 | VT_ARRAY;
+			res.parray = sa.Detach();
+		}
+		break;
+
+		case VT_R4:
+		{
+			CComSafeArray<float> sa(ULONG(0), LONG(0));
+
+			res.vt = VT_R4 | VT_ARRAY;
+			res.parray = sa.Detach();
+		}
+		break;
+
+		case VT_I4:
+		{
+			CComSafeArray<long>  sa(ULONG(0), LONG(0));
+			res.vt = VT_I4 | VT_ARRAY;
+			res.parray = sa.Detach();
+		}
+		break;
+
+		case VT_UI4:
+		{
+			CComSafeArray<unsigned long>  sa(ULONG(0), LONG(0));
+
+			res.vt = VT_UI4 | VT_ARRAY;
+			res.parray = sa.Detach();
+		}
+		break;
+		case VT_I2:
+		{
+
+			CComSafeArray<short>  sa(ULONG(0), LONG(0));
+
+			res.vt = VT_I2 | VT_ARRAY;
+			res.parray = sa.Detach();
+		}
+		break;
+		case VT_UI2:
+		{
+			CComSafeArray<unsigned short> sa(ULONG(0), LONG(0));
+
+			res.vt = VT_I2 | VT_ARRAY;
+			res.parray = sa.Detach();
+		}
+		break;
+
+		case VT_BSTR:
+		{
+			CComSafeArray<BSTR> sa(ULONG(0), LONG(0));
+
+			res.vt = VT_BSTR | VT_ARRAY;
+			res.parray = sa.Detach();
+		}
+		break;
+
+		}
+		return res;
+	}
+
+
+	_variant_t VariantToSafeArray(_variant_t var)
+	{
+		if (0 != (var.vt & VT_ARRAY))
+			return var;
+		_variant_t res;
+
+		switch (var.vt)
+		{
 		case VT_R8:
 		{
 			CComSafeArray<double> sa(1);
@@ -78,70 +151,70 @@ _variant_t VariantToSafeArray(_variant_t var)
 		default:
 			res = var;
 
-	}
-	return res;
-}
-
-std::string VariantToString(_variant_t var)
-{
-	_bstr_t temp;
-	if ((var.vt & VT_ARRAY) == 0)
-	{
-		if (VT_BOOL == var.vt)
-		{
-			return (0 == var.boolVal) ? "FALSE" : "TRUE";
 		}
-		else
+		return res;
+	}
+
+	std::string VariantToString(_variant_t var)
+	{
+		_bstr_t temp;
+		if ((var.vt & VT_ARRAY) == 0)
 		{
-			temp = (_bstr_t)var;
-			return  std::string(temp);
-		}		
+			if (VT_BOOL == var.vt)
+			{
+				return (0 == var.boolVal) ? "FALSE" : "TRUE";
+			}
+			else
+			{
+				temp = (_bstr_t)var;
+				return  std::string(temp);
+			}
+		}
+		else if (var.vt == (VT_ARRAY | VT_R8))
+		{
+
+			return SafeArrayToString<double>(var.parray);
+
+		}
+		else if (var.vt == (VT_ARRAY | VT_R4))
+		{
+
+			return SafeArrayToString<float>(var.parray);
+
+		}
+		else if (var.vt == (VT_ARRAY | VT_I4))
+		{
+
+			return SafeArrayToString<long>(var.parray);
+
+		}
+		else if (var.vt == (VT_ARRAY | VT_UI4))
+		{
+
+			return SafeArrayToString<unsigned long>(var.parray);
+
+		}
+		else if (var.vt == (VT_ARRAY | VT_I8))
+		{
+
+			return SafeArrayToString<long long>(var.parray);
+
+		}
+		else if (var.vt == (VT_ARRAY | VT_I2))
+		{
+
+			return SafeArrayToString<short>(var.parray);
+
+		}
+		else if (var.vt == (VT_ARRAY | VT_UI2))
+		{
+
+			return SafeArrayToString<unsigned short>(var.parray);
+
+		}
+		else return std::string();
+
 	}
-	else if (var.vt == (VT_ARRAY | VT_R8))
-	{
-
-		return SafeArrayToString<double>(var.parray);
-
-	}
-	else if (var.vt == (VT_ARRAY | VT_R4))
-	{
-
-		return SafeArrayToString<float>(var.parray);
-
-	}
-	else if (var.vt == (VT_ARRAY | VT_I4))
-	{
-
-		return SafeArrayToString<long>(var.parray);
-
-	}
-	else if (var.vt == (VT_ARRAY | VT_UI4))
-	{
-
-		return SafeArrayToString<unsigned long>(var.parray);
-
-	}
-	else if (var.vt == (VT_ARRAY | VT_I8))
-	{
-
-		return SafeArrayToString<long long>(var.parray);
-
-	}
-	else if (var.vt == (VT_ARRAY | VT_I2))
-	{
-
-		return SafeArrayToString<short>(var.parray);
-
-	}
-	else if (var.vt == (VT_ARRAY | VT_UI2))
-	{
-
-		return SafeArrayToString<unsigned short>(var.parray);
-
-	}
-	else return std::string();
-
-}
 
 
 

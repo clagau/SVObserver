@@ -27,573 +27,573 @@ namespace SvVol
 #pragma region Declarations
 #ifdef _DEBUG
 #undef THIS_FILE
-static char THIS_FILE[] = __FILE__;
+	static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
 #pragma region Constructor
-LinkedValue::LinkedValue() :
-	m_CircularReference(false)
-{
-}
+	LinkedValue::LinkedValue() :
+		m_CircularReference(false)
+	{
+	}
 
-LinkedValue::~LinkedValue()
-{
-}
+	LinkedValue::~LinkedValue()
+	{
+	}
 #pragma endregion Constructor
 
 #pragma region Public Methods
 
 
-HRESULT LinkedValue::GetArrayValue(_variant_t& rValue) 
-{
-	
-	//! If this flag is still set then this value is trying to reference itself!
-	if (m_CircularReference)
+	HRESULT LinkedValue::GetArrayValue(_variant_t& rValue)
 	{
-		return SVMSG_SVO_105_CIRCULAR_REFERENCE;
-	}
-	HRESULT Result {S_OK};
-	//! When getting the value from an indirect value make sure it is not referencing this object
-	if (nullptr != m_LinkedObjectRef.getValueObject())
-	{
-		
-		m_CircularReference = true;
-		if (m_LinkedObjectRef.isEntireArray())
+
+		//! If this flag is still set then this value is trying to reference itself!
+		if (m_CircularReference)
 		{
-			Result = m_LinkedObjectRef.getValue(rValue);
+			return SVMSG_SVO_105_CIRCULAR_REFERENCE;
+		}
+		HRESULT Result{ S_OK };
+		//! When getting the value from an indirect value make sure it is not referencing this object
+		if (nullptr != m_LinkedObjectRef.getValueObject())
+		{
+
+			m_CircularReference = true;
+			if (m_LinkedObjectRef.isEntireArray())
+			{
+				Result = m_LinkedObjectRef.getValue(rValue);
+			}
+			else
+			{
+				_variant_t skalvalue;
+				Result = m_LinkedObjectRef.getValue(skalvalue);
+				rValue = SvUl::VariantToSafeArray(skalvalue);
+			}
+
+			m_CircularReference = false;
 		}
 		else
 		{
-			_variant_t skalvalue;
-			Result = m_LinkedObjectRef.getValue(skalvalue);
-			rValue = SvUl::VariantToSafeArray(skalvalue);
+			Result = __super::getValue(rValue, -1);
 		}
+		if (rValue.vt == VT_EMPTY)
+		{
+			rValue = SvUl::GetEmptySafeArray(GetDefaultValue().vt | VT_ARRAY);
 
-		m_CircularReference = false;
+		}
+		return Result;
 	}
-	else
-	{
-		Result = __super::getValue(rValue, -1);
-	}
-	//if (rValue.vt == VT_EMPTY)
-	//{
-	//	rValue = SvUl::GetEmptySafeArray(GetDefaultValue().vt | VT_ARRAY);
 
-	//}
-	return Result;
-}
+	HRESULT LinkedValue::SetDefaultValue(const _variant_t& rValue, bool bResetAll)
+	{
+		if (0 == (rValue.vt & VT_ARRAY))
+		{
+			return __super::SetDefaultValue(rValue, bResetAll);
+		}
+		else
+		{
+			HRESULT hres;
+			_variant_t value;
+			value.ChangeType(rValue.vt & ~VT_ARRAY);
+			hres = __super::SetDefaultValue(value, bResetAll);
 
-HRESULT LinkedValue::SetDefaultValue(const _variant_t& rValue, bool bResetAll)
-{
-	if (0 == (rValue.vt & VT_ARRAY))
-	{
-		return __super::SetDefaultValue(rValue, bResetAll);
+			if (bResetAll)
+			{
+				long lBound(0), uBound(0);
+				SafeArrayGetUBound(const_cast<SAFEARRAY *>(rValue.parray), 1, &uBound);
+				SafeArrayGetLBound(const_cast<SAFEARRAY *>(rValue.parray), 1, &lBound);
+				int32_t cnt_elements = uBound - lBound + 1;
+				if (getArraySize() != cnt_elements)
+				{
+					SetArraySize(cnt_elements);
+				}
+				hres = __super::setValue(rValue);
+			}
+			return hres;
+		}
 	}
-	else
+
+	HRESULT LinkedValue::setValue(const _variant_t& rValue, int Index /*= -1*/, bool fixArraysize)
 	{
-		HRESULT hres;
-		_variant_t value;
-		value.ChangeType(rValue.vt & ~VT_ARRAY);
-		hres = __super::SetDefaultValue(value, bResetAll);
-		
-		if (bResetAll)
+		if ((rValue.vt & VT_ARRAY) && Index == -1)
 		{
 			long lBound(0), uBound(0);
 			SafeArrayGetUBound(const_cast<SAFEARRAY *>(rValue.parray), 1, &uBound);
 			SafeArrayGetLBound(const_cast<SAFEARRAY *>(rValue.parray), 1, &lBound);
 			int32_t cnt_elements = uBound - lBound + 1;
-			if (getArraySize() != cnt_elements)
+			if (getArraySize() != cnt_elements && !fixArraysize)
 			{
 				SetArraySize(cnt_elements);
 			}
-			hres = __super::setValue(rValue);
+			if (!fixArraysize && cnt_elements < 2)
+			{
+				//make sure we have an arraysize of at least 2
+				SetArraySize(2);
+				SetResultSize(cnt_elements);
+			}
+			return __super::setValue(rValue, Index, true);
 		}
-		return hres;
-	}
-}
-
-HRESULT LinkedValue::setValue(const _variant_t& rValue, int Index /*= -1*/, bool fixArraysize)
-{
-	if( (rValue.vt & VT_ARRAY) && Index == -1)
-	{
-		long lBound(0), uBound(0);
-		SafeArrayGetUBound(const_cast<SAFEARRAY *>(rValue.parray), 1, &uBound);
-		SafeArrayGetLBound(const_cast<SAFEARRAY *>(rValue.parray), 1, &lBound);
-		int32_t cnt_elements = uBound - lBound + 1;
-		if (getArraySize() != cnt_elements && !fixArraysize)
+		else
 		{
-			SetArraySize(cnt_elements);
+			return __super::setValue(rValue, Index, fixArraysize);
 		}
-		if (!fixArraysize && cnt_elements < 2)
+	}
+
+	HRESULT LinkedValue::setValue(const std::string& rValueString, int Index /*= -1*/)
+	{
+		return __super::setValue(rValueString, Index);
+	}
+
+	void LinkedValue::updateMemBlockData()
+	{
+		///When the linked value is an indirect value we need to always update it
+		if (isIndirectValue())
 		{
-			//make sure we have an arraysize of at least 2
-			SetArraySize(2);
-			SetResultSize(cnt_elements);
+			setHasChanged(true);
 		}
-		return __super::setValue(rValue, Index, true);
+		__super::updateMemBlockData();
 	}
-	else
+
+	HRESULT  LinkedValue::SetValue(const _variant_t& rValue, int Index)
 	{
-		return __super::setValue(rValue, Index, fixArraysize);
-	}
-}
-
-HRESULT LinkedValue::setValue(const std::string& rValueString, int Index /*= -1*/)
-{
-	return __super::setValue(rValueString, Index);
-}
-
-void LinkedValue::updateMemBlockData()
-{
-	///When the linked value is an indirect value we need to always update it
-	if(isIndirectValue())
-	{
-		setHasChanged(true);
-	}
-	__super::updateMemBlockData();
-}
-
-HRESULT  LinkedValue::SetValue(const _variant_t& rValue, int Index)
-{
-	///enabling setting Linked Value
-	if ((Index == -1) && isArray())
-	{
-		Index = 0;
-		SetArraySize(0L);
-	}
-	return __super::SetValue(rValue, Index);
-}
-
-
-HRESULT LinkedValue::GetValue(_variant_t& rValue, int Index /*= -1*/) const
-{
-	HRESULT Result( ValidateIndex(Index) );
-
-	//! If this flag is still set then this value is trying to reference itself!
-	if (m_CircularReference)
-	{
-		Result = SVMSG_SVO_105_CIRCULAR_REFERENCE;
-	}
-	if (S_OK == Result)
-	{
-		//! When getting the value from an indirect value make sure it is not referencing this object
-		if (nullptr != m_LinkedObjectRef.getValueObject())
+		///enabling setting Linked Value
+		if ((Index == -1) && isArray())
 		{
+			Index = 0;
+			SetArraySize(0L);
+		}
+		return __super::SetValue(rValue, Index);
+	}
+
+
+	HRESULT LinkedValue::GetValue(_variant_t& rValue, int Index /*= -1*/) const
+	{
+		HRESULT Result(ValidateIndex(Index));
+
+		//! If this flag is still set then this value is trying to reference itself!
+		if (m_CircularReference)
+		{
+			Result = SVMSG_SVO_105_CIRCULAR_REFERENCE;
+		}
+		if (S_OK == Result)
+		{
+			//! When getting the value from an indirect value make sure it is not referencing this object
+			if (nullptr != m_LinkedObjectRef.getValueObject())
+			{
 			m_CircularReference = true;
 			Result = m_LinkedObjectRef.getValue(rValue);
+			m_CircularReference = false;
+			}
+			else
+			{
+
+				Result = __super::GetValue(rValue, Index);
+			}
+
+			if (S_OK == Result)
+			{
+				//If the Linked Value is of type BOOL and is to be converted to the default type then we need the absolute value
+				if (VT_BOOL == rValue.vt && GetDefaultType() != rValue.vt)
+				{
+				rValue.boolVal = rValue.boolVal ? 1 : 0;
+				}
+				if (S_OK != ::VariantChangeTypeEx(&rValue, &rValue, SvDef::LCID_USA, VARIANT_ALPHABOOL, GetDefaultType()))
+				{
+					//empty value if variant can not be converted in the right type
+					::VariantClear(&rValue);
+				}
+			}
+		}
+
+		return Result;
+	}
+
+
+
+
+	bool LinkedValue::DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo)
+	{
+		if (nullptr != pObjectInInfo && pObjectInInfo->GetInputObjectInfo().getObject() == m_LinkedObjectRef.getObject())
+		{
+			DisconnectInput();
+		}
+		return __super::DisconnectObjectInput(pObjectInInfo);
+	}
+
+	void LinkedValue::UpdateLinkedName()
+	{
+		if (nullptr != m_LinkedObjectRef.getObject())
+		{
+			m_LinkedName.SetValue(m_LinkedObjectRef.GetObjectNameToObjectType(SvPb::SVObjectTypeEnum::SVToolSetObjectType, true));
+			m_LinkedName.SetObjectAttributesAllowed(SvDef::selectableAttributes | SvPb::printable, SvOi::SetAttributeType::OverwriteAttribute);
+			SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
+		}
+		else
+		{
+			std::string Value = m_LinkedName.GetDefaultValue();
+			m_LinkedName.SetValue(Value);
+			m_LinkedName.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
+			SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::AddAttribute);
+		}
+	}
+
+	void LinkedValue::setIndirectValueSaveFlag(bool shouldSaveValue)
+	{
+		if (nullptr != m_LinkedObjectRef.getValueObject())
+		{
+			m_LinkedObjectRef.getValueObject()->setSaveValueFlag(shouldSaveValue);
+		}
+	}
+
+	DWORD LinkedValue::GetType() const
+	{
+		DWORD result;
+		if (!m_CircularReference && nullptr != m_LinkedObjectRef.getValueObject())
+		{
+			m_CircularReference = true;
+			result = m_LinkedObjectRef.getValueObject()->GetType();
 			m_CircularReference = false;
 		}
 		else
 		{
-
-			Result = __super::GetValue(rValue, Index);
+			result = __super::GetType();
 		}
-		
-		if (S_OK == Result)
+		return result;
+	};
+
+	bool LinkedValue::isCircularReference() const
+	{
+		if (m_CircularReference)
 		{
-			//If the Linked Value is of type BOOL and is to be converted to the default type then we need the absolute value
-			if (VT_BOOL == rValue.vt && GetDefaultType() != rValue.vt)
-			{
-				rValue.boolVal = rValue.boolVal ? 1 : 0;
-			}
-			if (S_OK != ::VariantChangeTypeEx(&rValue, &rValue, SvDef::LCID_USA, VARIANT_ALPHABOOL, GetDefaultType()))
-			{
-				//empty value if variant can not be converted in the right type
-				::VariantClear(&rValue);
-			}
+			return true;
 		}
-	}
-
-	return Result;
-}
-
-
-
-
-bool LinkedValue::DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo)
-{
-	if (nullptr != pObjectInInfo && pObjectInInfo->GetInputObjectInfo().getObject() == m_LinkedObjectRef.getObject())
-	{
-		DisconnectInput();
-	}
-	return __super::DisconnectObjectInput(pObjectInInfo);
-}
-
-void LinkedValue::UpdateLinkedName()
-{
-	if (nullptr != m_LinkedObjectRef.getObject())
-	{
-		m_LinkedName.SetValue(m_LinkedObjectRef.GetObjectNameToObjectType(SvPb::SVObjectTypeEnum::SVToolSetObjectType, true));
-		m_LinkedName.SetObjectAttributesAllowed(SvDef::selectableAttributes | SvPb::printable, SvOi::SetAttributeType::OverwriteAttribute);
-		SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
-	}
-	else
-	{
-		std::string Value = m_LinkedName.GetDefaultValue();
-		m_LinkedName.SetValue(Value);
-		m_LinkedName.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
-		SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::AddAttribute);
-	}
-}
-
-void LinkedValue::setIndirectValueSaveFlag(bool shouldSaveValue)
-{
-	if (nullptr != m_LinkedObjectRef.getValueObject())
-	{
-		m_LinkedObjectRef.getValueObject()->setSaveValueFlag(shouldSaveValue);
-	}
-}
-
-DWORD LinkedValue::GetType() const
-{
-	DWORD result;
-	if (!m_CircularReference && nullptr != m_LinkedObjectRef.getValueObject())
-	{
+		LinkedValue* pRefObject = dynamic_cast<LinkedValue*>(m_LinkedObjectRef.getObject());
+		if (nullptr == pRefObject)
+		{
+			return false;
+		}
 		m_CircularReference = true;
-		result = m_LinkedObjectRef.getValueObject()->GetType();
+		bool result = pRefObject->isCircularReference();
 		m_CircularReference = false;
+		return result;
 	}
-	else
-	{
-		result = __super::GetType();
-	}
-	return result;
-};
-
-bool LinkedValue::isCircularReference() const
-{
-	if (m_CircularReference)
-	{
-		return true;
-	}
-	LinkedValue* pRefObject = dynamic_cast<LinkedValue*>(m_LinkedObjectRef.getObject());
-	if (nullptr == pRefObject)
-	{
-		return false;
-	}
-	m_CircularReference = true;
-	bool result = pRefObject->isCircularReference();
-	m_CircularReference = false;
-	return result;
-}
 
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
-_variant_t LinkedValue::ConvertString2Type(const std::string& rValue) const
-{
-	_variant_t Result;
-
-	SVObjectReference LinkedObjectRef(rValue);
-
-	//If string is not object ID then check if it is a dotted name
-	if(nullptr == LinkedObjectRef.getObject())
+	_variant_t LinkedValue::ConvertString2Type(const std::string& rValue) const
 	{
-		LinkedObjectRef = ConvertStringInObject(rValue);
-	}
+		_variant_t Result;
 
-	if (nullptr != LinkedObjectRef.getObject())
-	{
-		if (CheckLinkedObject(LinkedObjectRef.getObject()))
+		SVObjectReference LinkedObjectRef(rValue);
+
+		//If string is not object ID then check if it is a dotted name
+		if (nullptr == LinkedObjectRef.getObject())
 		{
-			//Change the value directly as the default value may have a different variant type
-			Result = _variant_t(LinkedObjectRef.GetObjectIdAndIndexOneBased().c_str());
+			LinkedObjectRef = ConvertStringInObject(rValue);
 		}
-		else
-		{
-			//! This means the linked object is invalid
-			SvDef::StringVector msgList;
-			msgList.push_back(GetName());
-			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
-			Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_LinkedValue_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
-			Exception.Throw();
-		}
-	}
-	else
-	{
-		_variant_t vtTemp;
-		vtTemp.SetString(rValue.c_str());
 
-		if (GetDefaultValue().vt != VT_EMPTY)
+		if (nullptr != LinkedObjectRef.getObject())
 		{
-			if (S_OK != ::VariantChangeTypeEx(&vtTemp, &vtTemp, SvDef::LCID_USA, 0, GetDefaultValue().vt))
+			if (CheckLinkedObject(LinkedObjectRef.getObject()))
 			{
+				//Change the value directly as the default value may have a different variant type
+				Result = _variant_t(LinkedObjectRef.GetObjectIdAndIndexOneBased().c_str());
+			}
+			else
+			{
+				//! This means the linked object is invalid
 				SvDef::StringVector msgList;
 				msgList.push_back(GetName());
 				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
 				Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_LinkedValue_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 				Exception.Throw();
 			}
-			Result = vtTemp;
 		}
 		else
 		{
-			Result = SVVariantValueObjectClass::ConvertString2Type(rValue);
+			_variant_t vtTemp;
+			vtTemp.SetString(rValue.c_str());
+
+			if (GetDefaultValue().vt != VT_EMPTY)
+			{
+				if (S_OK != ::VariantChangeTypeEx(&vtTemp, &vtTemp, SvDef::LCID_USA, 0, GetDefaultValue().vt))
+				{
+					SvDef::StringVector msgList;
+					msgList.push_back(GetName());
+					SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+					Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_LinkedValue_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+					Exception.Throw();
+				}
+				Result = vtTemp;
+			}
+			else
+			{
+				Result = SVVariantValueObjectClass::ConvertString2Type(rValue);
+			}
 		}
+		return Result;
 	}
-	return Result;
-}
 #pragma endregion Protected Methods
 
 #pragma region Private Methods
-bool LinkedValue::UpdateConnection(SvStl::MessageContainerVector *pErrorMessages)
-{
-	bool Result = true;
-	bool convertOldName(false);
-	_variant_t Value;
-
-	//! Here we need the non linked value (objectId as string or constant value)
-	__super::GetValue(Value);
-
-
-	std::string objectIdAndIndexString;
-	try
+	bool LinkedValue::UpdateConnection(SvStl::MessageContainerVector *pErrorMessages)
 	{
-		objectIdAndIndexString = SvUl::createStdString(Value);
-	}
-	catch (...)
-	{
-		objectIdAndIndexString.clear();
-	}
+		bool Result = true;
+		bool convertOldName(false);
+		_variant_t Value;
 
-	SVObjectReference LinkedObjectRef(objectIdAndIndexString);
+		//! Here we need the non linked value (objectId as string or constant value)
+		__super::GetValue(Value);
 
-	//If valid objectId then should be able to get the linked value from the object manager
-	if (nullptr != LinkedObjectRef.getObject())
-	{
-		Result = CheckLinkedObject(LinkedObjectRef.getObject(), pErrorMessages);
-		if (!Result)
+
+		std::string objectIdAndIndexString;
+		try
 		{
-			LinkedObjectRef = SVObjectReference();
+			objectIdAndIndexString = SvUl::createStdString(Value);
 		}
-		else
+		catch (...)
 		{
-			//check if objectIdString is from old style (GUID) with more than 30, instead of new style ({#123456}) with less than 15 
-			if (15 < objectIdAndIndexString.size())
+			objectIdAndIndexString.clear();
+		}
+
+		SVObjectReference LinkedObjectRef(objectIdAndIndexString);
+
+		//If valid objectId then should be able to get the linked value from the object manager
+		if (nullptr != LinkedObjectRef.getObject())
+		{
+			Result = CheckLinkedObject(LinkedObjectRef.getObject(), pErrorMessages);
+			if (!Result)
 			{
-				convertOldName = true;
+				LinkedObjectRef = SVObjectReference();
 			}
-		}
-	}
-	else
-	{
-		//Check if current value is a objectId, but not exist anymore. In this case it is probably an deleted object. Set this value to invalid.
-		std::string::size_type Pos = objectIdAndIndexString.find_first_of(_T("["));
-		std::string idString = objectIdAndIndexString.substr(0, Pos);
-		if (SvDef::InvalidObjectId != calcObjectId(idString))
-		{
-			Result = false;
-			if (nullptr != pErrorMessages)
+			else
 			{
-				SvDef::StringVector msgList;
-				
-				std::string linkedValueName;
-				getLinkedName().GetValue(linkedValueName);
-				std::string objectName = GetObjectNameBeforeObjectType(SvPb::SVObjectTypeEnum::SVToolObjectType);
-
-				msgList.push_back(linkedValueName);
-				msgList.push_back(objectName);
-
-				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ConnectInputFailedLinkedValueNotFound, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
-				pErrorMessages->push_back(Msg);
-			}
-		}
-		else
-		{
-			//this part is only for backward compatibility, because in older version the name was saved and not the ID.
-			std::string ToolSetName;
-			std::string ObjectName = objectIdAndIndexString;
-
-			ToolSetName = SvUl::LoadStdString(IDS_CLASSNAME_SVTOOLSET);
-
-			//Default name
-		
-			//If the tool set name is at the start then add the inspection name at the beginning
-			if (0 == ObjectName.find(ToolSetName))
-			{
-				SvOi::IObjectClass* pInspection = GetAncestorInterface(SvPb::SVInspectionObjectType);
-				if (nullptr != pInspection)
+				//check if objectIdString is from old style (GUID) with more than 30, instead of new style ({#123456}) with less than 15 
+				if (15 < objectIdAndIndexString.size())
 				{
-					ObjectName = pInspection->GetName();
-					ObjectName += _T(".");
-					ObjectName += objectIdAndIndexString;
-		
+					convertOldName = true;
 				}
 			}
-			if (S_OK == SVObjectManagerClass::Instance().GetObjectByDottedName(ObjectName, LinkedObjectRef) && nullptr != LinkedObjectRef.getObject())
-			{
-				convertOldName = true;
-			}
 		}
-	}
-	if (nullptr != LinkedObjectRef.getObject())	// input is another VO
-	{
-		//disconnect old object and connect new object if old and new different.
-		if (LinkedObjectRef.getObject() != m_LinkedObjectRef.getObject())
+		else
 		{
-			//First disconnect and then set the new Linked object
-			DisconnectInput();
-			m_LinkedObjectRef = LinkedObjectRef;
-
-			//Convert old dotted name format to Unique ID
-			if (convertOldName)
-			{
-				SVVariantValueObjectClass::setValue(m_LinkedObjectRef.GetCompleteName(true));
-			}
-			bool messageReturn = ConnectInput();
-			assert(messageReturn);
-			if (!messageReturn)
+			//Check if current value is a objectId, but not exist anymore. In this case it is probably an deleted object. Set this value to invalid.
+			std::string::size_type Pos = objectIdAndIndexString.find_first_of(_T("["));
+			std::string idString = objectIdAndIndexString.substr(0, Pos);
+			if (SvDef::InvalidObjectId != calcObjectId(idString))
 			{
 				Result = false;
 				if (nullptr != pErrorMessages)
 				{
-					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ConnectInputFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+					SvDef::StringVector msgList;
+
+					std::string linkedValueName;
+					getLinkedName().GetValue(linkedValueName);
+					std::string objectName = GetObjectNameBeforeObjectType(SvPb::SVObjectTypeEnum::SVToolObjectType);
+
+					msgList.push_back(linkedValueName);
+					msgList.push_back(objectName);
+
+					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ConnectInputFailedLinkedValueNotFound, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 					pErrorMessages->push_back(Msg);
 				}
 			}
+			else
+			{
+				//this part is only for backward compatibility, because in older version the name was saved and not the ID.
+				std::string ToolSetName;
+				std::string ObjectName = objectIdAndIndexString;
+
+				ToolSetName = SvUl::LoadStdString(IDS_CLASSNAME_SVTOOLSET);
+
+				//Default name
+
+				//If the tool set name is at the start then add the inspection name at the beginning
+				if (0 == ObjectName.find(ToolSetName))
+				{
+					SvOi::IObjectClass* pInspection = GetAncestorInterface(SvPb::SVInspectionObjectType);
+					if (nullptr != pInspection)
+					{
+						ObjectName = pInspection->GetName();
+						ObjectName += _T(".");
+						ObjectName += objectIdAndIndexString;
+
+					}
+				}
+				if (S_OK == SVObjectManagerClass::Instance().GetObjectByDottedName(ObjectName, LinkedObjectRef) && nullptr != LinkedObjectRef.getObject())
+				{
+					convertOldName = true;
+				}
+			}
 		}
-		else
+		if (nullptr != LinkedObjectRef.getObject())	// input is another VO
 		{
-			m_LinkedObjectRef = LinkedObjectRef;
+			//disconnect old object and connect new object if old and new different.
+			if (LinkedObjectRef.getObject() != m_LinkedObjectRef.getObject())
+			{
+				//First disconnect and then set the new Linked object
+				DisconnectInput();
+				m_LinkedObjectRef = LinkedObjectRef;
+
+				//Convert old dotted name format to Unique ID
+				if (convertOldName)
+				{
+					SVVariantValueObjectClass::setValue(m_LinkedObjectRef.GetCompleteName(true));
+				}
+				bool messageReturn = ConnectInput();
+				assert(messageReturn);
+				if (!messageReturn)
+				{
+					Result = false;
+					if (nullptr != pErrorMessages)
+					{
+						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ConnectInputFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+						pErrorMessages->push_back(Msg);
+					}
+				}
+			}
+			else
+			{
+				m_LinkedObjectRef = LinkedObjectRef;
+			}
 		}
-	}
-	else	// plain data
-	{
+		else	// plain data
+		{
+			if (Result)
+			{
+				DisconnectInput();
+
+				VARTYPE defaultType = GetDefaultType();
+				//@TODO[mec] enable array size 0 
+				//if (VT_EMPTY != defaultType && Value.vt != defaultType &&  ( ~VT_ARRAY & Value.vt) != defaultType)
+				if (VT_EMPTY != defaultType && Value.vt != defaultType)
+				{
+					Result = false;
+					if (nullptr != pErrorMessages)
+					{
+						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WrongType, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+						pErrorMessages->push_back(Msg);
+					}
+				}
+			}
+		}
 		if (Result)
 		{
-			DisconnectInput();
+			UpdateLinkedName();
+		}
 
-			VARTYPE defaultType = GetDefaultType();
-			//@TODO[mec] enable array size 0 
-			//if (VT_EMPTY != defaultType && Value.vt != defaultType &&  ( ~VT_ARRAY & Value.vt) != defaultType)
-			if (VT_EMPTY != defaultType && Value.vt != defaultType)
-			{
-				Result = false;
-				if (nullptr != pErrorMessages)
-				{
-					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WrongType, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
-					pErrorMessages->push_back(Msg);
-				}
-			}
+		return Result;
+	}
+
+	void LinkedValue::DisconnectInput()
+	{
+		if (nullptr != m_LinkedObjectRef.getObject())
+		{
+			SvOl::SVInObjectInfoStruct InputConnectionInfo;
+			InputConnectionInfo.SetInputObject(m_LinkedObjectRef.getObject());
+			InputConnectionInfo.SetObject(this);
+			m_LinkedObjectRef.getObject()->DisconnectObjectInput(&InputConnectionInfo);
+			m_LinkedObjectRef = SVObjectReference();
 		}
 	}
-	if (Result)
-	{
-		UpdateLinkedName();
-	}
 
-	return Result;
-}
-
-void LinkedValue::DisconnectInput()
-{
-	if (nullptr != m_LinkedObjectRef.getObject())
+	bool LinkedValue::ConnectInput()
 	{
+		bool Result = false;
 		SvOl::SVInObjectInfoStruct InputConnectionInfo;
 		InputConnectionInfo.SetInputObject(m_LinkedObjectRef.getObject());
 		InputConnectionInfo.SetObject(this);
-		m_LinkedObjectRef.getObject()->DisconnectObjectInput(&InputConnectionInfo);
-		m_LinkedObjectRef = SVObjectReference();
-	}
-}
-
-bool LinkedValue::ConnectInput()
-{
-	bool Result = false;
-	SvOl::SVInObjectInfoStruct InputConnectionInfo;
-	InputConnectionInfo.SetInputObject(m_LinkedObjectRef.getObject());
-	InputConnectionInfo.SetObject(this);
-	if (nullptr != m_LinkedObjectRef.getObject())
-	{
-		Result = m_LinkedObjectRef.getObject()->ConnectObjectInput(&InputConnectionInfo);
-	}
-	return Result;
-}
-
-bool LinkedValue::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
-{
-	bool Result = SVVariantValueObjectClass::ResetObject(pErrorMessages);
-	Result = Result && UpdateConnection(pErrorMessages);
-	if (isCircularReference())
-	{
-		Result = false;
-		if (nullptr != pErrorMessages)
+		if (nullptr != m_LinkedObjectRef.getObject())
 		{
-			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CircularReference, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
-			pErrorMessages->push_back(Msg);
+			Result = m_LinkedObjectRef.getObject()->ConnectObjectInput(&InputConnectionInfo);
 		}
-	}
-	return Result;
-}
-
-SVObjectReference LinkedValue::ConvertStringInObject(const std::string& rValue) const
-{
-	std::string ToolSetName;
-	std::string ObjectName;
-
-	ToolSetName = SvUl::LoadStdString(IDS_CLASSNAME_SVTOOLSET);
-
-	//If the tool set name is at the start then add the inspection name at the beginning
-	if (0 == rValue.find(ToolSetName.c_str()))
-	{
-		const SvOi::IObjectClass* pInspection = GetAncestorInterface(SvPb::SVInspectionObjectType);
-		if (nullptr != pInspection)
-		{
-			ObjectName = pInspection->GetName();
-			ObjectName += _T(".");
-			ObjectName += rValue;
-		}
-	}
-	else
-	{
-		ObjectName = rValue;
+		return Result;
 	}
 
-	SVObjectReference objectRef;
-	SVObjectManagerClass::Instance().GetObjectByDottedName(ObjectName, objectRef);
-	return objectRef;
-}
-
-bool LinkedValue::CheckLinkedObject(const SVObjectClass* const pLinkedObject, SvStl::MessageContainerVector *pErrorMessages) const
-{
-	bool Result(true);
-
-	//! Check if a valid object and make sure it does not link to itself
-	if (nullptr == pLinkedObject || this == pLinkedObject)
+	bool LinkedValue::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	{
-		Result = false;
-		if (nullptr != pErrorMessages)
-		{
-			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidOrRecursiveLinkedObject, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
-			pErrorMessages->push_back(Msg);
-		}
-	}
-	else
-	{
-		//! This is important when copying tools that the value of another inspection is not used due to the object ID being valid
-		//! That is why check that the linked value of an object is in the same inspection
-		const IObjectClass* pLinkedObjectInspection = pLinkedObject->GetAncestorInterface(SvPb::SVInspectionObjectType);
-		bool isSameInpection = GetAncestorInterface(SvPb::SVInspectionObjectType) == pLinkedObjectInspection;
-		//! If linked object has no inspection (e.g. Global Constants) then we don't need to check that the inspections are the same
-		if (nullptr != pLinkedObjectInspection && !isSameInpection)
+		bool Result = SVVariantValueObjectClass::ResetObject(pErrorMessages);
+		Result = Result && UpdateConnection(pErrorMessages);
+		if (isCircularReference())
 		{
 			Result = false;
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WrongInspection, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CircularReference, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 				pErrorMessages->push_back(Msg);
 			}
 		}
+		return Result;
 	}
 
-	return Result;
-}
+	SVObjectReference LinkedValue::ConvertStringInObject(const std::string& rValue) const
+	{
+		std::string ToolSetName;
+		std::string ObjectName;
 
-const SVObjectClass* LinkedValue::GetLinkedObject() const
-{
-	return m_LinkedObjectRef.getObject(); 
-} 
+		ToolSetName = SvUl::LoadStdString(IDS_CLASSNAME_SVTOOLSET);
+
+		//If the tool set name is at the start then add the inspection name at the beginning
+		if (0 == rValue.find(ToolSetName.c_str()))
+		{
+			const SvOi::IObjectClass* pInspection = GetAncestorInterface(SvPb::SVInspectionObjectType);
+			if (nullptr != pInspection)
+			{
+				ObjectName = pInspection->GetName();
+				ObjectName += _T(".");
+				ObjectName += rValue;
+			}
+		}
+		else
+		{
+			ObjectName = rValue;
+		}
+
+		SVObjectReference objectRef;
+		SVObjectManagerClass::Instance().GetObjectByDottedName(ObjectName, objectRef);
+		return objectRef;
+	}
+
+	bool LinkedValue::CheckLinkedObject(const SVObjectClass* const pLinkedObject, SvStl::MessageContainerVector *pErrorMessages) const
+	{
+		bool Result(true);
+
+		//! Check if a valid object and make sure it does not link to itself
+		if (nullptr == pLinkedObject || this == pLinkedObject)
+		{
+			Result = false;
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidOrRecursiveLinkedObject, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				pErrorMessages->push_back(Msg);
+			}
+		}
+		else
+		{
+			//! This is important when copying tools that the value of another inspection is not used due to the object ID being valid
+			//! That is why check that the linked value of an object is in the same inspection
+			const IObjectClass* pLinkedObjectInspection = pLinkedObject->GetAncestorInterface(SvPb::SVInspectionObjectType);
+			bool isSameInpection = GetAncestorInterface(SvPb::SVInspectionObjectType) == pLinkedObjectInspection;
+			//! If linked object has no inspection (e.g. Global Constants) then we don't need to check that the inspections are the same
+			if (nullptr != pLinkedObjectInspection && !isSameInpection)
+			{
+				Result = false;
+				if (nullptr != pErrorMessages)
+				{
+					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WrongInspection, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+					pErrorMessages->push_back(Msg);
+				}
+			}
+		}
+
+		return Result;
+	}
+
+	const SVObjectClass* LinkedValue::GetLinkedObject() const
+	{
+		return m_LinkedObjectRef.getObject();
+	}
 #pragma endregion Private Methods
 
 } //namespace SvVol

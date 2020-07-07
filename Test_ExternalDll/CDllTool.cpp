@@ -259,11 +259,7 @@ HRESULT CDllTool::validateInputValues(long lParameterNumber, const	VARIANT vPara
 			{
 				hr = ERRORCODE_INPUTVALUE_DOUBLE_ARRAY_WRONGTYPE;
 			}
-			else
-			{
-				CComSafeArray<double> saInput(vParameterValue.parray);
-				
-			}
+			
 
 			break;
 		}
@@ -421,6 +417,8 @@ HRESULT CDllTool::initRun(const ImageDefinitionStruct* const p_paStructs, const 
 
 HRESULT CDllTool::run_copyTableInput2Output()
 {
+	
+	
 	if (m_ResultTables[FirstResultTable].vt == (VT_ARRAY | VT_R8) && m_ResultTables[FirstResultTable].parray)
 	{
 		SafeArrayDestroy(m_ResultTables[FirstResultTable].parray);
@@ -428,6 +426,7 @@ HRESULT CDllTool::run_copyTableInput2Output()
 		m_ResultTables[FirstResultTable].vt = VT_EMPTY;
 	}
 
+	ATLASSERT(m_aInputValues[InputValue_TABLE_ARRAY].vt == (VT_ARRAY | VT_R8));
 	if (m_aInputValues[InputValue_TABLE_ARRAY].vt == (VT_ARRAY | VT_R8))
 	{
 		CComSafeArray<double> saInput((m_aInputValues[InputValue_TABLE_ARRAY].parray));
@@ -470,7 +469,9 @@ HRESULT CDllTool::run_copyTableInput2Output()
 HRESULT CDllTool::run_copySelectedTableInput2Output(int Select)
 {
 
+	
 	m_aResultValues[RESULTVALUE_DOUBLE_ARRAY_ROW].Clear();
+	ATLASSERT(m_aInputValues[InputValue_TABLE_ARRAY].vt == (VT_ARRAY | VT_R8));
 	if (m_aInputValues[InputValue_TABLE_ARRAY].vt == (VT_ARRAY | VT_R8))
 	{
 		CComSafeArray<double> saInput((m_aInputValues[InputValue_TABLE_ARRAY].parray));
@@ -568,7 +569,7 @@ HRESULT CDllTool::run()
 	m_aResultValues[ResultValue_DOUBLE_ARRAY].Clear();
 
 
-
+	ATLASSERT(m_aInputValues[InputValue_DOUBLE_ARRAY].vt == (VT_ARRAY | VT_R8));
 	if (m_aInputValues[InputValue_DOUBLE_ARRAY].vt == (VT_ARRAY | VT_R8))
 	{
 		int inputarrayLen = 0;
@@ -593,6 +594,7 @@ HRESULT CDllTool::run()
 
 	m_aResultValues[ResultValue_INT_ARRAY].Clear();
 
+	ATLASSERT(m_aInputValues[InputValue_INT_ARRAY].vt == (VT_ARRAY | VT_I4));
 	if (m_aInputValues[InputValue_INT_ARRAY].vt == (VT_ARRAY | VT_I4))
 	{
 		int inputarrayLen = 0;
@@ -616,6 +618,7 @@ HRESULT CDllTool::run()
 		}
 	}
 
+	ATLASSERT(m_aInputValues[InputValue_Second_Double_Array].vt == (VT_ARRAY | VT_R8));
 	if (m_aInputValues[InputValue_Second_Double_Array].vt == (VT_ARRAY | VT_R8))
 		{
 			double out{ 0 };
