@@ -217,6 +217,12 @@ void TableObject::clearTable()
 	}
 	m_spSortContainer->clear();
 	
+
+	for ( auto&   sp : m_ValueList)
+	{
+		sp->setSaveValueFlag(false);
+	}
+
 	m_NumberOfRows.SetValue(0L);
 }
 
