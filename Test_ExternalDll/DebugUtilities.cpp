@@ -30,7 +30,8 @@ int cdecl fdb(char *msg,...)
 
 	FILE* mydbhFile = NULL;
 	fopen_s( &mydbhFile, DEBUGFILE ,"a+t");
-
+	if (mydbhFile == NULL)
+		return 0;
 	va_start(marker,msg);
 	vfprintf(mydbhFile,msg,marker);
 	va_end(marker);

@@ -3,7 +3,7 @@
 //TODO: set all defines and static parameters to you needed values
 #define	DLLVERSION 1,0,0,0
 #define TOOLNAME					"Test External DLL"
-#define	DLLINTERFACEVERSION		"DLL-V 0.1.2.3 (27.02.2018)"
+#define	DLLINTERFACEVERSION		"DLL-V 0.1.2.3 (14.07.2020)"
 #define	LSTRGROUPNAME			TOOLNAME "-ExternalDll"
 #define DEBUGFILE				"C:\\SVIMDLLDebug_" TOOLNAME ".txt"
 

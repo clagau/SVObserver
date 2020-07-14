@@ -502,25 +502,34 @@ HRESULT SVExternalToolTask::InitializeResultObjects()
 			std::string resPrefix = SvUl::LoadStdString(IDS_EXTERNAL_DLL_RESULT_PREFIX);
 			std::stringstream str;
 			str << resPrefix << std::setfill('0') << std::setw(2) << i + 1 << "_" << m_Data.m_ResultDefinitions[i].getDisplayName();
-			m_Data.m_aResultObjects[i].SetName(str.str().c_str());
+			std::string newName = str.str();
+			bool bRenameResultName = (oldName != newName);
 			
-			std::string prevRangeName,rangeName;
+			bool bRenameRangeName{ false };
+			std::string prevRangeName;
 
-			
-			if (nullptr != pResult)
+			if (bRenameResultName)
 			{
-				prevRangeName = pResult->GetName();
-				rangeName= _T("Range");
-				rangeName += _T(" ");
-				rangeName += str.str();
-				pResult->SetName(rangeName.c_str());
+				m_Data.m_aResultObjects[i].SetName(newName.c_str());
+				
+				if (nullptr != pResult)
+				{
+					prevRangeName = pResult->GetName();
+					std::string rangeName  = _T("Range");
+					rangeName += _T(" ");
+					rangeName += newName;
+					if (prevRangeName != rangeName)
+					{
+						pResult->SetName(rangeName.c_str());
+						bRenameRangeName = true;
+					}
+				}
 			}
 
-
-			if (NoExFktInLoadVersion() && GetInspection())
+			if (NoExFktInLoadVersion() && GetInspection()&& bRenameResultName)
 			{
 				GetInspection()->OnObjectRenamed(m_Data.m_aResultObjects[i], oldName);
-				if (pResult && prevRangeName != rangeName)
+				if (pResult && bRenameRangeName)
 				{
 					GetInspection()->OnObjectRenamed(*pResult, prevRangeName);
 				}
@@ -597,13 +606,14 @@ HRESULT SVExternalToolTask::InitializeResultObjects()
 				std::string name = str.str();
 				if (GetResultTableObject(j))
 				{
-				
 					std::string oldName = GetResultTableObject(j)->GetName();
-					GetResultTableObject(j)->SetName(name.c_str());
-					if (NoExFktInLoadVersion() && GetInspection())
+					if (name != oldName)
 					{
-						GetInspection()->OnObjectRenamed(*GetResultTableObject(j), oldName);
-
+						GetResultTableObject(j)->SetName(name.c_str());
+						if (NoExFktInLoadVersion() && GetInspection())
+						{
+							GetInspection()->OnObjectRenamed(*GetResultTableObject(j), oldName);
+						}
 					}
 				}
 			}
@@ -1688,7 +1698,8 @@ void SVExternalToolTaskData::InitializeInputs(SVExternalToolTask*  pExternalTool
 		int LinkValueIndex = rInputDef.getLinkedValueIndex();
 		SvVol::LinkedValue& rInputValue = m_aInputObjects[LinkValueIndex];
 
-		if (rInputDef.getType() == SvOp::ExDllInterfaceType::Scalar || rInputDef.getType() == SvOp::ExDllInterfaceType::Array)
+		bool bTypeIsArrayOrScalar = rInputDef.getType() == SvOp::ExDllInterfaceType::Scalar || rInputDef.getType() == SvOp::ExDllInterfaceType::Array;
+		if (bTypeIsArrayOrScalar)
 		{
 			if (rInputValue.GetDefaultType() == VT_EMPTY)
 			{
@@ -1707,7 +1718,8 @@ void SVExternalToolTaskData::InitializeInputs(SVExternalToolTask*  pExternalTool
 		//But this method will called also in Create-process and there is not a reset called before.
 		rInputValue.resetAllObjects();
 
-		if (rInputDef.UseDisplayNames())
+		//for tableobject only the linked object is usefull
+		if (rInputDef.UseDisplayNames() && bTypeIsArrayOrScalar)
 		{
 			
 			std::string oldname = m_aInputObjects[LinkValueIndex].GetName();
@@ -1715,10 +1727,14 @@ void SVExternalToolTaskData::InitializeInputs(SVExternalToolTask*  pExternalTool
 			std::stringstream str;
 			str << InputPrefix << std::setfill('0') << std::setw(2) << LinkValueIndex +1 << "_" << rInputDef.getDisplayName();
 			std::string name = str.str();
-			m_aInputObjects[LinkValueIndex].SetName(name.c_str());
-			if (nullptr != pExternalToolTask &&  pExternalToolTask->NoExFktInLoadVersion() && pExternalToolTask->GetInspection())
+			
+			if (oldname != name)
 			{
-				pExternalToolTask->GetInspection()->OnObjectRenamed(m_aInputObjects[LinkValueIndex], oldname);
+				m_aInputObjects[LinkValueIndex].SetName(name.c_str());
+				if (nullptr != pExternalToolTask &&  pExternalToolTask->NoExFktInLoadVersion() && pExternalToolTask->GetInspection())
+				{
+					pExternalToolTask->GetInspection()->OnObjectRenamed(m_aInputObjects[LinkValueIndex], oldname);
+				}
 			}
 			//@Todo[mec] rename linked value 
 			
