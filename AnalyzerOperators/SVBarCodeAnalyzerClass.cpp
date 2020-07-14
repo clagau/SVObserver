@@ -13,6 +13,7 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <algorithm>
 #include "SVBarCodeAnalyzerClass.h"
+#include "ObjectInterfaces\IBarCode.h"
 #include "SVLibrary/SVOIniClass.h"
 #include "Operators/SVBarCodeResult.h"   
 #include "InspectionEngine/SVBarCodeBuffer.h"
@@ -155,14 +156,22 @@ bool SVBarCodeAnalyzerClass::InitMil (SvStl::MessageContainerVector *pErrorMessa
 	SvIe::SVImageClass *pInputImage = getInputImage();
 	if (nullptr != pInputImage)
 	{
-		// &&&
 		SvIe::SVBarCodeBufferInfoClass svData;
-
 		svData.HBuffer.milBarCode = m_MilCodeId;
 
-		long l_lTmpType;
-		msv_lBarCodeType.GetValue( l_lTmpType );
-		svData.m_lCodeType = static_cast<SVBarCodeTypesEnum>( l_lTmpType );
+		long type;
+		msv_lBarCodeType.GetValue(type);
+		//check if ecc and enc correct to type
+		double encValue = 0;
+		msv_dEncoding.GetValue(encValue);
+		double eccValue = 0;
+		msv_dErrorCorrection.GetValue(eccValue);
+		if (!checkEccAndEncValues(type, eccValue, encValue, pErrorMessages))
+		{
+			return false;
+		}
+
+		svData.m_lCodeType = static_cast<SVBarCodeTypesEnum>(type);
 		if ( S_OK == SvIe::SVImageProcessingClass::CreateBarCodeBuffer( &svData ) )
 		{
 			m_MilCodeId = svData.HBuffer.milBarCode;
@@ -232,11 +241,8 @@ bool SVBarCodeAnalyzerClass::InitMil (SvStl::MessageContainerVector *pErrorMessa
 			}
 			/*MatroxCode = */SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCBarcodeStringSize, dParm);
 
-			msv_dEncoding.GetValue (dParm);
-			/*MatroxCode = */SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCEncoding, dParm);
-
-			msv_dErrorCorrection.GetValue (dParm);
-			/*MatroxCode = */SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCErrorCorrection, dParm);
+			/*MatroxCode = */SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCEncoding, encValue);
+			/*MatroxCode = */SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCErrorCorrection, eccValue);
 
 			msv_dForegroundColor.GetValue (dParm);
 			/*MatroxCode = */SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCForeGroundValue, dParm);
@@ -280,30 +286,15 @@ void SVBarCodeAnalyzerClass::CloseMil ()
 
 bool SVBarCodeAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 {
-	bool bOk = false;
-
-
 	if ( !m_bHasLicenseError )
 	{
 		if (SVImageAnalyzerClass::CreateObject (rCreateStructure))
 		{
-
 			if (InitMil ())
 			{
 				LoadRegExpression();
-
-				bOk = true;
-			}
-			else
-			{
-				// InitMil
-				SVImageAnalyzerClass::CloseObject ();
 			}
 		}
-	}
-	else
-	{
-		bOk = true;
 	}
 
 	// *** Set/Reset Printable Attributes ***
@@ -328,14 +319,14 @@ bool SVBarCodeAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCrea
 	m_bWarnOnFailedRead.SetObjectAttributesAllowed( SvPb::printable | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
 	msv_lBarcodeTimeout.SetObjectAttributesAllowed( SvPb::printable | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
 	msv_RawData.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
-	m_isCreated = bOk;
+	m_isCreated = true;
 
 	if ( m_bHasLicenseError )
 	{
 		SVOLicenseManager::Instance().AddLicenseErrorToList(getObjectId());
 	}
 
-	return bOk;
+	return true;
 }
 
 SVBarCodeAnalyzerClass::~SVBarCodeAnalyzerClass()
@@ -667,7 +658,7 @@ bool SVBarCodeAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 
 	//Get the pointer on reset
 	m_pBarCodeResult = dynamic_cast<SvOp::SVBarCodeResultClass*> (GetResultObject());
-	if(nullptr == m_pBarCodeResult)
+	if(!Result || nullptr == m_pBarCodeResult)
 	{
 		Result = false;
 		if (nullptr != pErrorMessages)
@@ -676,22 +667,24 @@ bool SVBarCodeAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 			pErrorMessages->push_back(Msg);
 		}
 	}
-
-	if ( Result && !m_bHasLicenseError )
+	else
 	{
-		if ( InitMil(pErrorMessages) )
+		if (!m_bHasLicenseError)
 		{
-			std::string TempRegExpressionValue;
-			std::string TempStringFileName;
-
-			msv_szRegExpressionValue.GetValue( TempRegExpressionValue );
-			msv_szStringFileName.GetValue( TempStringFileName );
-			if( TempRegExpressionValue != m_RegExpressionValue || TempStringFileName != m_StringFileName )
+			if (InitMil(pErrorMessages))
 			{
-				Result = SaveRegExpression(pErrorMessages) && Result;
-			}
+				std::string TempRegExpressionValue;
+				std::string TempStringFileName;
 
-			Result = LoadRegExpression( false, pErrorMessages ) && Result;
+				msv_szRegExpressionValue.GetValue(TempRegExpressionValue);
+				msv_szStringFileName.GetValue(TempStringFileName);
+				if (TempRegExpressionValue != m_RegExpressionValue || TempStringFileName != m_StringFileName)
+				{
+					Result = SaveRegExpression(pErrorMessages) && Result;
+				}
+
+				Result = LoadRegExpression(false, pErrorMessages) && Result;
+			}
 		}
 		else
 		{
@@ -707,4 +700,178 @@ bool SVBarCodeAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 	return Result;
 }
 
+bool SVBarCodeAnalyzerClass::checkEccAndEncValues(long type, double eccValue, double encValue, SvStl::MessageContainerVector* pErrorMessages)
+{
+	const auto& rTypeInfoMessage = SvOi::getBarCodeTypeInfo();
+	auto iter = std::find_if(rTypeInfoMessage.typeparameters().cbegin(), rTypeInfoMessage.typeparameters().cend(), [type](const auto& rEntry) { return rEntry.type() == type; });
+	if (iter != rTypeInfoMessage.typeparameters().cend())
+	{
+		if (SVValueDefault != eccValue)
+		{
+			auto eccIter = std::find_if(iter->possibleecctypes().cbegin(), iter->possibleecctypes().cend(), [eccValue](const auto& rEntry) { return rEntry == eccValue; });
+			if (eccIter == iter->possibleecctypes().cend())
+			{
+				if (nullptr != pErrorMessages)
+				{
+					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_MilBarCodeECCNotFit, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+					pErrorMessages->push_back(Msg);
+				}
+				return false;
+			}
+		}
+		if (SVValueDefault != encValue)
+		{
+			auto encIter = std::find_if(iter->possibleenctypes().cbegin(), iter->possibleenctypes().cend(), [encValue](const auto& rEntry) { return rEntry == encValue; });
+			if (encIter == iter->possibleenctypes().cend())
+			{
+				if (nullptr != pErrorMessages)
+				{
+					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_MilBarCodeENCNotFit, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+					pErrorMessages->push_back(Msg);
+				}
+				return false;
+			}
+		}
+	}
+	else
+	{
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_MilBarCodeUnknowType, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+			pErrorMessages->push_back(Msg);
+		}
+		return false;
+	}
+	return true;
+}
+
 } //namespace SvAo
+#include <array>
+#include <tuple>
+#include "SVMatroxLibrary\SVMatroxSimpleEnums.h"
+
+SvPb::GetBarCodeTypeInfosResponse SvOi::getBarCodeTypeInfo()
+{
+	static SvPb::GetBarCodeTypeInfosResponse response;
+	if (0 == response.eccnames_size())
+	{
+		std::array <std::pair<long, std::string>, 21> tmpArray = { 
+			std::pair<long, std::string>{SVValueEccNone, "None" },
+			std::pair<long, std::string>{SVValueAny, "Any" },
+			std::pair<long, std::string>{SVValueEcc050, "ECC-50" },
+			std::pair<long, std::string>{SVValueEcc080, "ECC-80" },
+			std::pair<long, std::string>{SVValueEcc100, "ECC-100" },
+			std::pair<long, std::string>{SVValueEcc140, "ECC-140" },
+			std::pair<long, std::string>{SVValueEcc200, "ECC-200" },
+			std::pair<long, std::string>{SVValueEccCheckDigit, "Check Digit" },
+			std::pair<long, std::string>{SVValueEccReedSolomon, "Reed-Solomon" },
+			std::pair<long, std::string>{SVValueEccReedSolomon1, "Reed-Solomon 1" },
+			std::pair<long, std::string>{SVValueEccReedSolomon2, "Reed-Solomon 2" },
+			std::pair<long, std::string>{SVValueEccReedSolomon3, "Reed-Solomon 3" },
+			std::pair<long, std::string>{SVValueEccReedSolomon4, "Reed-Solomon 4" },
+			std::pair<long, std::string>{SVValueEccReedSolomon5, "Reed-Solomon 5" },
+			std::pair<long, std::string>{SVValueEccReedSolomon6, "Reed-Solomon 6" },
+			std::pair<long, std::string>{SVValueEccReedSolomon7, "Reed-Solomon 7" },
+			std::pair<long, std::string>{SVValueEccReedSolomon8, "Reed-Solomon 8" },
+			std::pair<long, std::string>{SVValueEccH, "ECC-H" },
+			std::pair<long, std::string>{SVValueEccL, "ECC-L" },
+			std::pair<long, std::string>{SVValueEccM, "ECC-M" },
+			std::pair<long, std::string>{SVValueEccQ, "ECC-Q" }
+		};
+
+		for (const auto& rValue : tmpArray)
+		{
+			auto* pPair = response.add_eccnames();
+			pPair->set_value(rValue.first);
+			pPair->set_name(rValue.second);
+		}
+	}
+	
+	if (0 == response.encnames_size())
+	{
+		std::array <std::pair<long, std::string>, 24> tmpArray = {
+			std::pair<long, std::string>{SVValueAny, "Any" },
+			std::pair<long, std::string>{SVValueEncStandard, "Standard" },
+			std::pair<long, std::string>{SVValueEncNum, "Numeric" },
+			std::pair<long, std::string>{SVValueEncUpcAAddOn, "UpcA AddOn" },
+			std::pair<long, std::string>{SVValueEncUpcEAddOn, "UpcE AddOn" },
+			std::pair<long, std::string>{SVValueENCAlpha, "Alpha" },
+			std::pair<long, std::string>{SVValueENCAlphaNum, "Alpha-Numeric" },
+			std::pair<long, std::string>{SVValueENCAlphaNumPunc, "Alpha-Numeric with Punctuation" },
+			std::pair<long, std::string>{SVValueENCAscii, "ASCII" },
+			std::pair<long, std::string>{SVValueENCIso8, "ISO-8" },
+			std::pair<long, std::string>{SVValueENCMode2, "Mode 2" },
+			std::pair<long, std::string>{SVValueENCMode3, "Mode 3" },
+			std::pair<long, std::string>{SVValueENCMode4, "Mode 4" },
+			std::pair<long, std::string>{SVValueENCMode5, "Mode 5" },
+			std::pair<long, std::string>{SVValueENCMode6, "Mode 6" },
+			std::pair<long, std::string>{SVValueENCGS1, "GS1" },
+			std::pair<long, std::string>{SVValueENCGS1Trunc, "GS1 Truncated" },
+			std::pair<long, std::string>{SVValueENCGS1Limited, "GS1 Limited" },
+			std::pair<long, std::string>{SVValueENCGS1Expanded, "GS1 Expanded" },
+			std::pair<long, std::string>{SVValueENCGS1Stacked, "GS1 Stacked" },
+			std::pair<long, std::string>{SVValueENCGS1StackedOmni, "GS1 Stacked Omni" },
+			std::pair<long, std::string>{SVValueENCGS1ExpandedStacked, "GS1 Expanded Stacked" },
+			std::pair<long, std::string>{SVValueEncQRCodeModel1, "QRCode Model1" },
+			std::pair<long, std::string>{SVValueEncQRCodeModel2, "QRCode Model2" }
+		};
+
+		for (const auto& rValue : tmpArray)
+		{
+			auto* pPair = response.add_encnames();
+			pPair->set_value(rValue.first);
+			pPair->set_name(rValue.second);
+		}
+	}
+
+	if (0 == response.typeparameters_size())
+	{
+		std::array<std::tuple<long, std::string, std::vector<long>, long, std::vector<long>, long>, 16> arrTmp = { 
+			std::make_tuple(SVDataMatrix, "Data Matrix", std::vector<long>{ SVValueEncNum, SVValueENCAlpha, SVValueENCAlphaNum, SVValueENCAlphaNumPunc, SVValueENCAscii, SVValueENCIso8, SVValueAny}, SVValueAny, 
+				std::vector<long>{ SVValueEccNone, SVValueAny, SVValueEcc050, SVValueEcc080, SVValueEcc100, SVValueEcc140, SVValueEcc200 }, SVValueAny),
+			std::make_tuple(SVEan13, "EAN-13", std::vector<long>{ SVValueEncNum }, SVValueEncNum, std::vector<long>{ SVValueEccCheckDigit }, SVValueEccCheckDigit),
+			std::make_tuple(SVCode39, "3 of 9", std::vector<long>{ SVValueEncStandard, SVValueENCAscii }, SVValueEncStandard, std::vector<long>{ SVValueEccNone, SVValueEccCheckDigit }, SVValueEccNone),
+			std::make_tuple(SVInterleaved25, "Interleaved 2 of 5", std::vector<long>{ SVValueEncNum }, SVValueEncNum, std::vector<long>{ SVValueEccNone, SVValueEccCheckDigit }, SVValueEccNone),
+			std::make_tuple(SVCode128, "Code 128", std::vector<long>{ SVValueENCAscii }, SVValueENCAscii, std::vector<long>{ SVValueEccCheckDigit }, SVValueEccCheckDigit),
+			std::make_tuple(SVPDF417, "PDF417", std::vector<long>{ SVValueEncStandard }, SVValueEncStandard, 
+					std::vector<long>{ SVValueAny, SVValueEccReedSolomon1, SVValueEccReedSolomon2, SVValueEccReedSolomon3, SVValueEccReedSolomon4, SVValueEccReedSolomon5, SVValueEccReedSolomon6, SVValueEccReedSolomon7, SVValueEccReedSolomon8 }, SVValueAny),
+			std::make_tuple(SVBC412, "BC412", std::vector<long>{ SVValueEncStandard }, SVValueEncStandard, std::vector<long>{ SVValueEccNone }, SVValueEccNone),
+			std::make_tuple(SVCodeABar, "Codabar", std::vector<long>{ SVValueEncStandard }, SVValueEncStandard, std::vector<long>{ SVValueEccNone }, SVValueEccNone),
+			std::make_tuple(SVMaxiCode, "Maxicode", std::vector<long>{ SVValueAny, SVValueENCMode2, SVValueENCMode3, SVValueENCMode4, SVValueENCMode5, SVValueENCMode6 }, SVValueAny, std::vector<long>{ SVValueEccReedSolomon }, SVValueEccReedSolomon),
+			std::make_tuple(SVPostNet, "Postnet", std::vector<long>{ SVValueEncNum }, SVValueEncNum, std::vector<long>{ SVValueEccCheckDigit }, SVValueEccCheckDigit),
+			std::make_tuple(SVPlanet, "Planet", std::vector<long>{ SVValueEncNum }, SVValueEncNum, std::vector<long>{ SVValueEccCheckDigit }, SVValueEccCheckDigit),
+			std::make_tuple(SVUpcA, "UPC-A", std::vector<long>{ SVValueEncNum, SVValueEncUpcAAddOn }, SVValueEncNum, std::vector<long>{ SVValueEccCheckDigit }, SVValueEccCheckDigit),
+			std::make_tuple(SVUpcE, "UPC-E", std::vector<long>{ SVValueEncNum, SVValueEncUpcEAddOn }, SVValueEncNum, std::vector<long>{ SVValueEccCheckDigit }, SVValueEccCheckDigit),
+			std::make_tuple(SVPharmaCode, "Pharmacode", std::vector<long>{ SVValueEncNum }, SVValueEncNum, std::vector<long>{ SVValueEccNone }, SVValueEccNone),
+			std::make_tuple(SVGS1Code, "GS1", std::vector<long>{ SVValueENCGS1, SVValueENCGS1Trunc, SVValueENCGS1Limited, SVValueENCGS1Expanded, SVValueENCGS1Stacked, SVValueENCGS1StackedOmni, SVValueENCGS1ExpandedStacked }, 
+					SVValueENCGS1, std::vector<long>{ SVValueEccCheckDigit }, SVValueEccCheckDigit),
+			std::make_tuple(SVQRCode, "QR Code", std::vector<long>{ SVValueEncQRCodeModel1, SVValueEncQRCodeModel2, SVValueAny }, SVValueAny, std::vector<long>{ SVValueAny, SVValueEccH, SVValueEccL, SVValueEccM, SVValueEccQ }, SVValueAny),
+		};
+
+		for (const auto& tupleTmp  : arrTmp)
+		{
+			long type;
+			std::string name;
+			std::vector<long> eccVec;
+			long defaultEcc;
+			std::vector<long> encVec;
+			long defaultEnc;
+			std::tie(type, name, encVec, defaultEnc, eccVec, defaultEcc) = tupleTmp;
+			auto* pTypes = response.add_typeparameters();
+			pTypes->set_type(type);
+			pTypes->set_name(name);
+			pTypes->set_defaultecctype(defaultEcc);
+			for (auto eccType : eccVec)
+			{
+				pTypes->add_possibleecctypes(eccType);
+			}
+			pTypes->set_defaultenctype(defaultEnc);
+			for (auto encType : encVec)
+			{
+				pTypes->add_possibleenctypes(encType);
+			}
+		}
+	}
+
+	return response;
+}

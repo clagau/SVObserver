@@ -85,6 +85,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="EquationTestResult.h" />
+    <ClInclude Include="IBarCode.h" />
     <ClInclude Include="IBlobAnalyzer.h" />
     <ClInclude Include="ICommand.h" />
     <ClInclude Include="ICustom2Filter.h" />

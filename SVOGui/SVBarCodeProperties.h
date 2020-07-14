@@ -12,39 +12,51 @@
 #pragma once
 
 #pragma region Includes
+#include "DataController.h"
 #include "SVBarCodeGeneralDialog.h"		// Added by ClassView
 #include "SVBarCodeStringMatchDialog.h"	// Added by ClassView
 #include "SVBarCodeAttributesDialog.h"	// Added by ClassView
 #include "SVBarCodeDataMatrixDialog.h"	// Added by ClassView
 #pragma endregion Includes
 
-class SVBarCodeProperties : public CPropertySheet
+namespace SvOg
 {
-	DECLARE_DYNAMIC(SVBarCodeProperties)
+	class SVBarCodeProperties : public CPropertySheet
+	{
+		DECLARE_DYNAMIC(SVBarCodeProperties)
 
-public:
-	SVBarCodeProperties(UINT nIDCaption = IDS_DIALOG_TITLE_BARCODEPROPERTIES, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
-	virtual ~SVBarCodeProperties();
+	public:
+		SVBarCodeProperties(uint32_t inspectionId, uint32_t analyzerId, uint32_t resultId, UINT nIDCaption = IDS_DIALOG_TITLE_BARCODEPROPERTIES, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
+		virtual ~SVBarCodeProperties();
 
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(SVBarCodeProperties)
-	//}}AFX_VIRTUAL
+		// Overrides
+			// ClassWizard generated virtual function overrides
+			//{{AFX_VIRTUAL(SVBarCodeProperties)
+			//}}AFX_VIRTUAL
 
-// Implementation
-public:
-	SVBarCodeDataMatrixDialog m_dlgBarCodeDataMatrix;
-	SVBarCodeAttributesDialog m_dlgBarCodeAttributes;
-	SVBarCodeStringMatchDialog m_dlgBarCodeStringMatch;
-	SVBarCodeGeneralDialog m_dlgBarCodeGeneral;
+		void SetInspectionData();
 
-	// Generated message map functions
-protected:
-	//{{AFX_MSG(SVBarCodeProperties)
-		// NOTE - the ClassWizard will add and remove member functions here.
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
-};
+		// Implementation
+	public:
+		SVBarCodeDataMatrixDialog m_dlgBarCodeDataMatrix;
+		SVBarCodeAttributesDialog m_dlgBarCodeAttributes;
+		SVBarCodeStringMatchDialog m_dlgBarCodeStringMatch;
+		SVBarCodeGeneralDialog m_dlgBarCodeGeneral;
+
+		// Generated message map functions
+	protected:
+		//{{AFX_MSG(SVBarCodeProperties)
+			// NOTE - the ClassWizard will add and remove member functions here.
+		//}}AFX_MSG
+		DECLARE_MESSAGE_MAP()
+
+		uint32_t m_inspectionId;
+		uint32_t m_analyzerId;
+		uint32_t m_resultId;
+		ValueController m_analyzerValues;
+		ValueController m_resultValues;
+	};
+}
 
 /////////////////////////////////////////////////////////////////////////////
 

@@ -38,11 +38,33 @@ enum
 
 class SVBarCodeAnalyzerClass : public SVImageAnalyzerClass  
 {
-	friend class SVSetupDialogManager;
-
 	SV_DECLARE_CLASS (SVBarCodeAnalyzerClass);
 
 public:
+	SVBarCodeAnalyzerClass(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVBARCODEANALYZER);
+	virtual ~SVBarCodeAnalyzerClass();
+
+	void CloseMil();
+	bool InitMil(SvStl::MessageContainerVector *pErrorMessages=nullptr);
+	virtual bool CreateObject(const SVObjectLevelCreateStruct& rCreateStructure) override;
+
+	virtual bool CloseObject() override;
+
+	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
+	static bool CharIsControl(TCHAR p_Char);
+
+protected:
+	void init();
+	virtual bool onRun(SVRunStatusClass &rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
+
+private:
+	bool SaveRegExpression( SvStl::MessageContainerVector *pErrorMessages=nullptr );
+	bool LoadRegExpression( bool DisplayErrorMessage = true, SvStl::MessageContainerVector *pErrorMessages=nullptr );
+	bool checkEccAndEncValues(long type, double eccValue, double encValue, SvStl::MessageContainerVector* pErrorMessages);
+
+
+	bool m_bHasLicenseError;
+	SvOp::SVBarCodeResultClass* m_pBarCodeResult{nullptr};
 	std::string m_RegExpressionValue;
 	std::string m_StringFileName;
 
@@ -73,32 +95,8 @@ public:
 
 	//for MIL 9.0 - New only for DataMatrix Codes
 	SvVol::SVBoolValueObjectClass msv_bUnEvenGrid;
-	
+
 	__int64 m_MilCodeId = 0LL;
-
-	SVBarCodeAnalyzerClass(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVBARCODEANALYZER);
-	virtual ~SVBarCodeAnalyzerClass();
-
-	void CloseMil();
-	bool InitMil(SvStl::MessageContainerVector *pErrorMessages=nullptr);
-	virtual bool CreateObject(const SVObjectLevelCreateStruct& rCreateStructure) override;
-
-	virtual bool CloseObject() override;
-
-	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
-	static bool CharIsControl(TCHAR p_Char);
-
-protected:
-	void init();
-	virtual bool onRun(SVRunStatusClass &rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
-
-private:
-	bool SaveRegExpression( SvStl::MessageContainerVector *pErrorMessages=nullptr );
-	bool LoadRegExpression( bool DisplayErrorMessage = true, SvStl::MessageContainerVector *pErrorMessages=nullptr );
-
-	bool m_bHasLicenseError;
-
-	SvOp::SVBarCodeResultClass* m_pBarCodeResult{nullptr};
 };
 
 } //namespace SvAo

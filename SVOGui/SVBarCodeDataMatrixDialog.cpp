@@ -12,7 +12,6 @@
 #include "stdafx.h"
 #include "SVBarCodeDataMatrixDialog.h"
 #include "SVMatroxLibrary/SVMatroxSimpleEnums.h"
-#include "SVValueObjectLibrary/SVDoubleValueObjectClass.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -28,18 +27,6 @@ SVBarCodeDataMatrixDialog::SVBarCodeDataMatrixDialog(CWnd* /*=nullptr*/)
 	: CPropertyPage(SVBarCodeDataMatrixDialog::IDD)
 {
 	//{{AFX_DATA_INIT(SVBarCodeDataMatrixDialog)
-	m_szCellX = _T("");
-	m_iCellX = 0;
-	m_bCellX = FALSE;
-	m_iCellY = 0;
-	m_bCellY = FALSE;
-	m_szCellY = _T("");
-	m_iMaxCellSize = 0;
-	m_bMaxCellSize = FALSE;
-	m_szMaxCellSize = _T("");
-	m_iMinCellSize = 0;
-	m_bMinCellSize = FALSE;
-	m_szMinCellSize = _T("");
 	//}}AFX_DATA_INIT
 }
 
@@ -84,389 +71,365 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // SVBarCodeDataMatrixDialog message handlers
 
-BOOL SVBarCodeDataMatrixDialog::OnInitDialog() 
+BOOL SVBarCodeDataMatrixDialog::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
-	
-  CSliderCtrl *pControl;
 
-  pControl = (CSliderCtrl *) GetDlgItem (IDC_BARCODE_MINCELLSIZE);
-  pControl->SetRangeMin (1, FALSE);
-  pControl->SetRangeMax (255, TRUE);
-  
-  pControl = (CSliderCtrl *) GetDlgItem (IDC_BARCODE_MAXCELLSIZE);
-  pControl->SetRangeMin (1, FALSE);
-  pControl->SetRangeMax (255, TRUE);
+	CSliderCtrl* pControl;
 
-  pControl = (CSliderCtrl *) GetDlgItem (IDC_BARCODE_CELLX);
-  pControl->SetRangeMin (1, FALSE);
-  pControl->SetRangeMax (255, TRUE);
+	pControl = (CSliderCtrl*)GetDlgItem(IDC_BARCODE_MINCELLSIZE);
+	pControl->SetRangeMin(1, FALSE);
+	pControl->SetRangeMax(255, TRUE);
 
-  pControl = (CSliderCtrl *) GetDlgItem (IDC_BARCODE_CELLY);
-  pControl->SetRangeMin (1, FALSE);
-  pControl->SetRangeMax (255, TRUE);
+	pControl = (CSliderCtrl*)GetDlgItem(IDC_BARCODE_MAXCELLSIZE);
+	pControl->SetRangeMin(1, FALSE);
+	pControl->SetRangeMax(255, TRUE);
 
-  EnableControls (IDC_BARCODE_MINCELLSIZE, IDC_BARCODE_MINCELLSIZE_EDIT, !m_bMinCellSize);
-  EnableControls (IDC_BARCODE_MAXCELLSIZE, IDC_BARCODE_MAXCELLSIZE_EDIT, !m_bMaxCellSize);
-  EnableControls (IDC_BARCODE_CELLX, IDC_BARCODE_CELLX_EDIT, !m_bCellX);
-  EnableControls (IDC_BARCODE_CELLY, IDC_BARCODE_CELLY_EDIT, !m_bCellY);
+	pControl = (CSliderCtrl*)GetDlgItem(IDC_BARCODE_CELLX);
+	pControl->SetRangeMin(1, FALSE);
+	pControl->SetRangeMax(255, TRUE);
 
-  UpdateData (FALSE);
+	pControl = (CSliderCtrl*)GetDlgItem(IDC_BARCODE_CELLY);
+	pControl->SetRangeMin(1, FALSE);
+	pControl->SetRangeMax(255, TRUE);
+
+	EnableControls(IDC_BARCODE_MINCELLSIZE, IDC_BARCODE_MINCELLSIZE_EDIT, !m_bMinCellSize);
+	EnableControls(IDC_BARCODE_MAXCELLSIZE, IDC_BARCODE_MAXCELLSIZE_EDIT, !m_bMaxCellSize);
+	EnableControls(IDC_BARCODE_CELLX, IDC_BARCODE_CELLX_EDIT, !m_bCellX);
+	EnableControls(IDC_BARCODE_CELLY, IDC_BARCODE_CELLY_EDIT, !m_bCellY);
+
+	UpdateData(FALSE);
 
 	return TRUE;
 }
 
-void SVBarCodeDataMatrixDialog::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
+void SVBarCodeDataMatrixDialog::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
 	CPropertyPage::OnHScroll(nSBCode, nPos, pScrollBar);
 
-  CSliderCtrl *pSlider = (CSliderCtrl *) pScrollBar;
-  int iNewPos;
+	CSliderCtrl* pSlider = (CSliderCtrl*)pScrollBar;
+	int iNewPos;
 
-  iNewPos = pSlider->GetPos ();
+	iNewPos = pSlider->GetPos();
 
-  switch (nSBCode)
-  {
-    case SB_LEFT :
-      iNewPos = pSlider->GetRangeMin();
-      break;
+	switch (nSBCode)
+	{
+	case SB_LEFT:
+		iNewPos = pSlider->GetRangeMin();
+		break;
 
-    case SB_ENDSCROLL :
-      break;
+	case SB_ENDSCROLL:
+		break;
 
-    case SB_LINELEFT :
-      iNewPos--;
-      break;
+	case SB_LINELEFT:
+		iNewPos--;
+		break;
 
-    case SB_LINERIGHT :
-      iNewPos++;
-      break;
+	case SB_LINERIGHT:
+		iNewPos++;
+		break;
 
-    case SB_PAGELEFT :
-      iNewPos -= 10;
-      break;
+	case SB_PAGELEFT:
+		iNewPos -= 10;
+		break;
 
-    case SB_PAGERIGHT :
-      iNewPos += 10;
-      break;
+	case SB_PAGERIGHT:
+		iNewPos += 10;
+		break;
 
-    case SB_RIGHT :
-      iNewPos = pSlider->GetRangeMax();
-      break;
+	case SB_RIGHT:
+		iNewPos = pSlider->GetRangeMax();
+		break;
 
-    case SB_THUMBPOSITION :
-      iNewPos = nPos;
-      break;
+	case SB_THUMBPOSITION:
+		iNewPos = nPos;
+		break;
 
-    case SB_THUMBTRACK :
-      iNewPos = nPos;
-      break;
-  }
-  if (iNewPos < pSlider->GetRangeMin())
-    iNewPos = pSlider->GetRangeMin();
+	case SB_THUMBTRACK:
+		iNewPos = nPos;
+		break;
+	}
+	if (iNewPos < pSlider->GetRangeMin())
+		iNewPos = pSlider->GetRangeMin();
 
-  if (iNewPos > pSlider->GetRangeMax())
-    iNewPos = pSlider->GetRangeMax();
+	if (iNewPos > pSlider->GetRangeMax())
+		iNewPos = pSlider->GetRangeMax();
 
-  switch (pSlider->GetDlgCtrlID())
-  {
-  case IDC_BARCODE_MINCELLSIZE :
-    m_iMinCellSize = iNewPos;
-    m_szMinCellSize.Format(_T("%d"), m_iMinCellSize);
-    break;
+	switch (pSlider->GetDlgCtrlID())
+	{
+	case IDC_BARCODE_MINCELLSIZE:
+		m_iMinCellSize = iNewPos;
+		m_szMinCellSize.Format(_T("%d"), m_iMinCellSize);
+		break;
 
-  case IDC_BARCODE_MAXCELLSIZE :
-    m_iMaxCellSize = iNewPos;
-    m_szMaxCellSize.Format(_T("%d"), m_iMaxCellSize);
-    break;
+	case IDC_BARCODE_MAXCELLSIZE:
+		m_iMaxCellSize = iNewPos;
+		m_szMaxCellSize.Format(_T("%d"), m_iMaxCellSize);
+		break;
 
-  case IDC_BARCODE_CELLX :
-    m_iCellX = iNewPos;
-    m_szCellX.Format(_T("%d"), m_iCellX);
-    break;
+	case IDC_BARCODE_CELLX:
+		m_iCellX = iNewPos;
+		m_szCellX.Format(_T("%d"), m_iCellX);
+		break;
 
-  case IDC_BARCODE_CELLY :
-    m_iCellY = iNewPos;
-    m_szCellY.Format(_T("%d"), m_iCellY);
-    break;
-  }
+	case IDC_BARCODE_CELLY:
+		m_iCellY = iNewPos;
+		m_szCellY.Format(_T("%d"), m_iCellY);
+		break;
+	}
 
-  UpdateData (FALSE);
+	UpdateData(FALSE);
 }
 
-void SVBarCodeDataMatrixDialog::OnChangeBarCodeMinCellSizeEdit() 
+void SVBarCodeDataMatrixDialog::OnChangeBarCodeMinCellSizeEdit()
 {
-	UpdateData (TRUE);
-  m_iMinCellSize = atoi (m_szMinCellSize);
-  if (m_iMinCellSize < 1)
-  {
-    m_iMinCellSize = 1;
-    m_szMinCellSize = _T("1");
-  }
-  if (m_iMinCellSize > 255)
-  {
-    m_iMinCellSize = 255;
-    m_szMinCellSize = _T("255");
-  }
-  UpdateData (FALSE);
+	UpdateData(TRUE);
+	m_iMinCellSize = atoi(m_szMinCellSize);
+	if (m_iMinCellSize < 1)
+	{
+		m_iMinCellSize = 1;
+		m_szMinCellSize = _T("1");
+	}
+	if (m_iMinCellSize > 255)
+	{
+		m_iMinCellSize = 255;
+		m_szMinCellSize = _T("255");
+	}
+	UpdateData(FALSE);
 }
 
-void SVBarCodeDataMatrixDialog::OnChangeBarCodeMaxCellSizeEdit() 
+void SVBarCodeDataMatrixDialog::OnChangeBarCodeMaxCellSizeEdit()
 {
-	UpdateData (TRUE);
-  m_iMaxCellSize = atoi (m_szMaxCellSize);
-  if (m_iMaxCellSize < 1)
-  {
-    m_iMaxCellSize = 1;
-    m_szMaxCellSize = _T("1");
-  }
-  if (m_iMaxCellSize > 255)
-  {
-    m_iMaxCellSize = 255;
-    m_szMaxCellSize = _T("255");
-  }
-  UpdateData (FALSE);
+	UpdateData(TRUE);
+	m_iMaxCellSize = atoi(m_szMaxCellSize);
+	if (m_iMaxCellSize < 1)
+	{
+		m_iMaxCellSize = 1;
+		m_szMaxCellSize = _T("1");
+	}
+	if (m_iMaxCellSize > 255)
+	{
+		m_iMaxCellSize = 255;
+		m_szMaxCellSize = _T("255");
+	}
+	UpdateData(FALSE);
 }
 
-void SVBarCodeDataMatrixDialog::OnChangeBarCodeCellXEdit() 
+void SVBarCodeDataMatrixDialog::OnChangeBarCodeCellXEdit()
 {
-	UpdateData (TRUE);
-  m_iCellX = atoi (m_szCellX);
-  if (m_iCellX < 1)
-  {
-    m_iCellX = 1;
-    m_szCellX = _T("1");
-  }
-  if (m_iCellX > 255)
-  {
-    m_iCellX = 255;
-    m_szCellX = _T("255");
-  }
-  UpdateData (FALSE);
+	UpdateData(TRUE);
+	m_iCellX = atoi(m_szCellX);
+	if (m_iCellX < 1)
+	{
+		m_iCellX = 1;
+		m_szCellX = _T("1");
+	}
+	if (m_iCellX > 255)
+	{
+		m_iCellX = 255;
+		m_szCellX = _T("255");
+	}
+	UpdateData(FALSE);
 }
 
-void SVBarCodeDataMatrixDialog::OnChangeBarCodeCellYEdit() 
+void SVBarCodeDataMatrixDialog::OnChangeBarCodeCellYEdit()
 {
-	UpdateData (TRUE);
-  m_iCellY = atoi (m_szCellY);
-  if (m_iCellY < 1)
-  {
-    m_iCellY = 1;
-    m_szCellY = _T("1");
-  }
-  if (m_iCellY > 255)
-  {
-    m_iCellY = 255;
-    m_szCellY = _T("255");
-  }
-  UpdateData (FALSE);
+	UpdateData(TRUE);
+	m_iCellY = atoi(m_szCellY);
+	if (m_iCellY < 1)
+	{
+		m_iCellY = 1;
+		m_szCellY = _T("1");
+	}
+	if (m_iCellY > 255)
+	{
+		m_iCellY = 255;
+		m_szCellY = _T("255");
+	}
+	UpdateData(FALSE);
 }
 
-void SVBarCodeDataMatrixDialog::EnableControls (int iIdSlider, int iIdEdit, BOOL bEnable)
+void SVBarCodeDataMatrixDialog::EnableControls(int iIdSlider, int iIdEdit, BOOL bEnable)
 {
-  CSliderCtrl *pSlider;
-  CEdit *pEdit;
+	CSliderCtrl* pSlider;
+	CEdit* pEdit;
 
-  pSlider = (CSliderCtrl *) GetDlgItem (iIdSlider);
-  pEdit = (CEdit *) GetDlgItem (iIdEdit);
-  pSlider->EnableWindow (bEnable);
-  pEdit->EnableWindow (bEnable);
+	pSlider = (CSliderCtrl*)GetDlgItem(iIdSlider);
+	pEdit = (CEdit*)GetDlgItem(iIdEdit);
+	pSlider->EnableWindow(bEnable);
+	pEdit->EnableWindow(bEnable);
 }
 
-void SVBarCodeDataMatrixDialog::OnBarCodeMinCellSizeAuto() 
+void SVBarCodeDataMatrixDialog::OnBarCodeMinCellSizeAuto()
 {
-  UpdateData (TRUE);
+	UpdateData(TRUE);
 
-  if (m_bMinCellSize)
-  {
-    m_iMinCellSize = SVValueDefault;
-    m_szMinCellSize = _T("Auto");
-  }
-  else
-  {
-    m_iMinCellSize = 1;
-    m_szMinCellSize.Format ("%d", m_iMinCellSize);
-  }
+	if (m_bMinCellSize)
+	{
+		m_iMinCellSize = SVValueDefault;
+		m_szMinCellSize = _T("Auto");
+	}
+	else
+	{
+		m_iMinCellSize = 1;
+		m_szMinCellSize.Format("%d", m_iMinCellSize);
+	}
 
-  EnableControls (IDC_BARCODE_MINCELLSIZE, IDC_BARCODE_MINCELLSIZE_EDIT, !m_bMinCellSize);
+	EnableControls(IDC_BARCODE_MINCELLSIZE, IDC_BARCODE_MINCELLSIZE_EDIT, !m_bMinCellSize);
 
-  UpdateData (FALSE);
+	UpdateData(FALSE);
 }
 
-void SVBarCodeDataMatrixDialog::OnBarCodeMaxCellSizeAuto() 
+void SVBarCodeDataMatrixDialog::OnBarCodeMaxCellSizeAuto()
 {
-  UpdateData (TRUE);
+	UpdateData(TRUE);
 
-  if (m_bMaxCellSize)
-  {
-    m_iMaxCellSize = SVValueDefault;
-    m_szMaxCellSize = _T("Auto");
-  }
-  else
-  {
-    m_iMaxCellSize = 1;
-    m_szMaxCellSize.Format ("%d", m_iMaxCellSize);
-  }
+	if (m_bMaxCellSize)
+	{
+		m_iMaxCellSize = SVValueDefault;
+		m_szMaxCellSize = _T("Auto");
+	}
+	else
+	{
+		m_iMaxCellSize = 1;
+		m_szMaxCellSize.Format("%d", m_iMaxCellSize);
+	}
 
-  EnableControls (IDC_BARCODE_MAXCELLSIZE, IDC_BARCODE_MAXCELLSIZE_EDIT, !m_bMaxCellSize);
+	EnableControls(IDC_BARCODE_MAXCELLSIZE, IDC_BARCODE_MAXCELLSIZE_EDIT, !m_bMaxCellSize);
 
-  UpdateData (FALSE);
+	UpdateData(FALSE);
 }
 
-void SVBarCodeDataMatrixDialog::OnBarCodeCellXAuto() 
+void SVBarCodeDataMatrixDialog::OnBarCodeCellXAuto()
 {
-  UpdateData (TRUE);
+	UpdateData(TRUE);
 
-  if (m_bCellX)
-  {
-    m_iCellX = SVValueAny;
-    m_szCellX = _T("Auto");
-  }
-  else
-  {
-    m_iCellX = 1;
-    m_szCellX.Format ("%d", m_iCellX);
-  }
+	if (m_bCellX)
+	{
+		m_iCellX = SVValueAny;
+		m_szCellX = _T("Auto");
+	}
+	else
+	{
+		m_iCellX = 1;
+		m_szCellX.Format("%d", m_iCellX);
+	}
 
-  EnableControls (IDC_BARCODE_CELLX, IDC_BARCODE_CELLX_EDIT, !m_bCellX);
+	EnableControls(IDC_BARCODE_CELLX, IDC_BARCODE_CELLX_EDIT, !m_bCellX);
 
-  UpdateData (FALSE);
+	UpdateData(FALSE);
 }
 
-void SVBarCodeDataMatrixDialog::OnBarCodeCellYAuto() 
+void SVBarCodeDataMatrixDialog::OnBarCodeCellYAuto()
 {
-  UpdateData (TRUE);
+	UpdateData(TRUE);
 
-  if (m_bCellY)
-  {
-    m_iCellY = SVValueAny;
-    m_szCellY = _T("Auto");
-  }
-  else
-  {
-    m_iCellY = 1;
-    m_szCellY.Format ("%d", m_iCellY);
-  }
+	if (m_bCellY)
+	{
+		m_iCellY = SVValueAny;
+		m_szCellY = _T("Auto");
+	}
+	else
+	{
+		m_iCellY = 1;
+		m_szCellY.Format("%d", m_iCellY);
+	}
 
-  EnableControls (IDC_BARCODE_CELLY, IDC_BARCODE_CELLY_EDIT, !m_bCellY);
+	EnableControls(IDC_BARCODE_CELLY, IDC_BARCODE_CELLY_EDIT, !m_bCellY);
 
-  UpdateData (FALSE);
+	UpdateData(FALSE);
 }
 
-int SVBarCodeDataMatrixDialog::SetCellX (SvVol::SVDoubleValueObjectClass &svdCellX)
+void SVBarCodeDataMatrixDialog::SetCellX(long cellX)
 {
-  double dCellX;
-
-  svdCellX.GetValue (dCellX);
-
-  m_iCellX = (int) dCellX;
-  if (m_iCellX == SVValueAny)
-  {
-    m_szCellX = _T("Auto");
-    m_bCellX = TRUE;
-  }
-  else
-  {
-    m_szCellX.Format ("%d", m_iCellX);
-    m_bCellX = FALSE;
-  }
-
-  return m_iCellX;
+	m_iCellX = cellX;
+	if (m_iCellX == SVValueAny)
+	{
+		m_szCellX = _T("Auto");
+		m_bCellX = TRUE;
+	}
+	else
+	{
+		m_szCellX.Format("%d", m_iCellX);
+		m_bCellX = FALSE;
+	}
 }
 
-int SVBarCodeDataMatrixDialog::SetCellY (SvVol::SVDoubleValueObjectClass &svdCellY)
+void SVBarCodeDataMatrixDialog::SetCellY(long cellY)
 {
-  double dCellY;
-
-  svdCellY.GetValue (dCellY);
-
-  m_iCellY = (int) dCellY;
-  if (m_iCellY == SVValueAny)
-  {
-    m_szCellY = _T("Auto");
-    m_bCellY = TRUE;
-  }
-  else
-  {
-    m_szCellY.Format ("%d", m_iCellY);
-    m_bCellY = FALSE;
-  }
-
-  return m_iCellY;
+	m_iCellY = cellY;
+	if (m_iCellY == SVValueAny)
+	{
+		m_szCellY = _T("Auto");
+		m_bCellY = TRUE;
+	}
+	else
+	{
+		m_szCellY.Format("%d", m_iCellY);
+		m_bCellY = FALSE;
+	}
 }
 
-int SVBarCodeDataMatrixDialog::SetMinCellSize (SvVol::SVDoubleValueObjectClass &svdMinCellSize)
+void SVBarCodeDataMatrixDialog::SetMinCellSize(long minCellSize)
 {
-  double dMinCellSize;
-
-  svdMinCellSize.GetValue (dMinCellSize);
-
-  m_iMinCellSize = (int) dMinCellSize;
-  if (m_iMinCellSize == SVValueDefault)
-  {
-    m_szMinCellSize = _T("Auto");
-    m_bMinCellSize = TRUE;
-  }
-  else
-  {
-    m_szMinCellSize.Format ("%d", m_iMinCellSize);
-    m_bMinCellSize = FALSE;
-  }
-
-  return m_iMinCellSize;
+	m_iMinCellSize = minCellSize;
+	if (m_iMinCellSize == SVValueDefault)
+	{
+		m_szMinCellSize = _T("Auto");
+		m_bMinCellSize = TRUE;
+	}
+	else
+	{
+		m_szMinCellSize.Format("%d", m_iMinCellSize);
+		m_bMinCellSize = FALSE;
+	}
 }
 
-int SVBarCodeDataMatrixDialog::SetMaxCellSize (SvVol::SVDoubleValueObjectClass &svdMaxCellSize)
+void SVBarCodeDataMatrixDialog::SetMaxCellSize(long maxCellSize)
 {
-  double dMaxCellSize;
-
-  svdMaxCellSize.GetValue (dMaxCellSize);
-
-  m_iMaxCellSize = (int) dMaxCellSize;
-  if (m_iMaxCellSize == SVValueDefault)
-  {
-    m_szMaxCellSize = _T("Auto");
-    m_bMaxCellSize = TRUE;
-  }
-  else
-  {
-    m_szMaxCellSize.Format ("%d", m_iMaxCellSize);
-    m_bMaxCellSize = FALSE;
-  }
-
-  return m_iMaxCellSize;
+	m_iMaxCellSize = maxCellSize;
+	if (m_iMaxCellSize == SVValueDefault)
+	{
+		m_szMaxCellSize = _T("Auto");
+		m_bMaxCellSize = TRUE;
+	}
+	else
+	{
+		m_szMaxCellSize.Format("%d", m_iMaxCellSize);
+		m_bMaxCellSize = FALSE;
+	}
 }
 
-int SVBarCodeDataMatrixDialog::GetCellX ()
+int SVBarCodeDataMatrixDialog::GetCellX()
 {
-  if (m_bCellX)
-    return SVValueAny;
-  else
-    return m_iCellX;
+	if (m_bCellX)
+		return SVValueAny;
+	else
+		return m_iCellX;
 }
 
-int SVBarCodeDataMatrixDialog::GetCellY ()
+int SVBarCodeDataMatrixDialog::GetCellY()
 {
-  if (m_bCellY)
-    return SVValueAny;
-  else
-    return m_iCellY;
+	if (m_bCellY)
+		return SVValueAny;
+	else
+		return m_iCellY;
 }
 
-int SVBarCodeDataMatrixDialog::GetMinCellSize ()
+int SVBarCodeDataMatrixDialog::GetMinCellSize()
 {
-  if (m_bMinCellSize)
-    return SVValueDefault;
-  else
-    return m_iMinCellSize;
+	if (m_bMinCellSize)
+		return SVValueDefault;
+	else
+		return m_iMinCellSize;
 }
 
-int SVBarCodeDataMatrixDialog::GetMaxCellSize ()
+int SVBarCodeDataMatrixDialog::GetMaxCellSize()
 {
-  if (m_bMaxCellSize)
-    return SVValueDefault;
-  else
-    return m_iMaxCellSize;
+	if (m_bMaxCellSize)
+		return SVValueDefault;
+	else
+		return m_iMaxCellSize;
 }
 
 

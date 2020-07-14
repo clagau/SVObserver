@@ -165,6 +165,9 @@ public:
 			case SvPb::InspectionCmdRequest::kSetDefaultInputsRequest:
 				m_response = setDefaultInputsRequest(m_rRequest.setdefaultinputsrequest());
 				break;
+			case SvPb::InspectionCmdRequest::kGetBarCodeTypeInfosRequest:
+				m_response = getBarCodeTypeInfos(m_rRequest.getbarcodetypeinfosrequest());
+				break;
 			default:;
 		}
 

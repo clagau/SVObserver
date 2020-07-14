@@ -142,5 +142,7 @@ SvPb::InspectionCmdResponse getOverlayStruct(SvPb::GetOverlayStructRequest reque
 SvPb::InspectionCmdResponse getObjectSelectorItems(SvPb::GetObjectSelectorItemsRequest request);
 SvPb::InspectionCmdResponse setDefaultInputsRequest(SvPb::SetDefaultInputsRequest request);
 
+SvPb::InspectionCmdResponse getBarCodeTypeInfos(SvPb::GetBarCodeTypeInfosRequest request);
+
 std::vector<SvPb::TreeItem> getSelectorList(SvPb::GetObjectSelectorItemsRequest request, SvPb::ObjectSelectorType selectorType);
 } //namespace SvCmd

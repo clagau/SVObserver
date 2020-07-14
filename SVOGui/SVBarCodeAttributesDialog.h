@@ -10,82 +10,76 @@
 //******************************************************************************
 #pragma once
 
-#pragma warning( disable: 4786 )	// identifier truncation 255 chars
-
 #pragma region Includes
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <vector>
+#include "SVProtoBuf/InspectionCommands.h"
 #pragma endregion Includes
 
-namespace SvVol
+namespace SvOg
 {
-class SVDoubleValueObjectClass;
-}
-
-class SVBarCodeAttributesDialog : public CPropertyPage
-{
-// Construction
-public:
-	DWORD SetErrCorrection (DWORD dwErrCorrection);
-	DWORD SetEncoding (DWORD dwEncoding);
-	double m_dErrorCorrection;
-	double m_dEncoding;
-	void InitSelections();
-	void InitSelections (long lBarCodeType);
-	double SetErrCorrection (SvVol::SVDoubleValueObjectClass &svdErrCorrection);
-	double SetEncoding (SvVol::SVDoubleValueObjectClass &svdEncoding);
-	double GetErrorCorrection();
-	double GetEncoding ();
-	BOOL OnSetActive ();
-	SVBarCodeAttributesDialog(CWnd* pParent = nullptr);   // standard constructor
-	virtual ~SVBarCodeAttributesDialog();
-
-// Dialog Data
-	//{{AFX_DATA(SVBarCodeAttributesDialog)
-	enum { IDD = IDD_BARCODE_ATTRIBUTES };
-	int		m_iEncoding;
-	int		m_iCorrection;
-	//}}AFX_DATA
-
-
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(SVBarCodeAttributesDialog)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
-	//}}AFX_VIRTUAL
-
-// Implementation
-protected:
-
-	// Generated message map functions
-	//{{AFX_MSG(SVBarCodeAttributesDialog)
-	virtual BOOL OnInitDialog() override;
-	afx_msg void OnSelchangeBarcodeErrorCorrection();
-	afx_msg void OnSelchangeBarcodeEncoding();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
-
-private:
-	struct SVBarCodeErrorCorrectionEncodingStruct
+	class SVBarCodeAttributesDialog : public CPropertyPage
 	{
-		long m_Mil;
-		std::string m_Name;
+		// Construction
+	public:
+		SVBarCodeAttributesDialog(CWnd* pParent = nullptr);   // standard constructor
+		virtual ~SVBarCodeAttributesDialog();
 
-		SVBarCodeErrorCorrectionEncodingStruct() { m_Mil = 0; }
-		SVBarCodeErrorCorrectionEncodingStruct(long Mil, const std::string& rName )
+		DWORD SetErrCorrection(DWORD dwErrCorrection);
+		DWORD SetEncoding(DWORD dwEncoding);
+		void InitSelections();
+		void InitSelections(long lBarCodeType);
+		void SetErrCorrection(double errCorrection);
+		void SetEncoding(double encoding);
+		double GetErrorCorrection();
+		double GetEncoding();
+		BOOL OnSetActive();
+		void setBarCodeTypeInfos(const SvPb::GetBarCodeTypeInfosResponse& barCodeTypeInfos) { m_barCodeTypeInfos = barCodeTypeInfos; };
+
+		// Dialog Data
+			//{{AFX_DATA(SVBarCodeAttributesDialog)
+		enum { IDD = IDD_BARCODE_ATTRIBUTES };
+		int		m_iEncoding = -1;
+		int		m_iCorrection = -1;
+		//}}AFX_DATA
+
+
+	// Overrides
+		// ClassWizard generated virtual function overrides
+		//{{AFX_VIRTUAL(SVBarCodeAttributesDialog)
+	protected:
+		virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
+		//}}AFX_VIRTUAL
+
+	// Implementation
+	protected:
+
+		// Generated message map functions
+		//{{AFX_MSG(SVBarCodeAttributesDialog)
+		virtual BOOL OnInitDialog() override;
+		afx_msg void OnSelchangeBarcodeErrorCorrection();
+		afx_msg void OnSelchangeBarcodeEncoding();
+		//}}AFX_MSG
+		DECLARE_MESSAGE_MAP()
+
+	private:
+		const SvPb::BarCodeTypeParameter& getBarCodeInfoByType(long type) const;
+
+		template <typename T>
+		std::string GetInfoNameByMil(const T& rMilVector, long MilID)
 		{
-			m_Mil = Mil;
-			m_Name = rName;
-		}
+			auto iter = std::find_if(rMilVector.begin(), rMilVector.end(), [MilID](const auto& rElement) { return MilID == rElement.value(); });
+			if (rMilVector.end() != iter)
+			{
+				return iter->name();
+			}
+
+			assert(false);
+			return {};
+		};
+
+		double m_dErrorCorrection;
+		double m_dEncoding;
+		SvPb::GetBarCodeTypeInfosResponse m_barCodeTypeInfos;
 	};
-	typedef std::vector<SVBarCodeErrorCorrectionEncodingStruct> SVBarCodeEccEncVector;
-
-
-	std::string GetInfoNameByMil(const SVBarCodeEccEncVector& rMilVector, long MilID);
-	SVBarCodeEccEncVector m_aMilEnc;
-	SVBarCodeEccEncVector m_aMilEcc;
-
-	std::map<long, std::vector< long > > m_mapBarCodeEcc;
-	std::map<long, std::vector< long > > m_mapBarCodeEnc;
-};
+}

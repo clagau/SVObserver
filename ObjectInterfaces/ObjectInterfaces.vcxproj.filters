@@ -99,5 +99,8 @@
     <ClInclude Include="SVImageBufferHandleInterface.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="IBarCode.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

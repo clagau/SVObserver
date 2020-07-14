@@ -117,8 +117,10 @@ HRESULT SVSetupDialogManager::SVBarCodeAnalyzerClassSetupDialog(uint32_t objectI
 	SvAo::SVBarCodeAnalyzerClass* pAnalyzer = dynamic_cast<SvAo::SVBarCodeAnalyzerClass*>(SVObjectManagerClass::Instance().GetObject(objectId));
 
 	SVInspectionProcess* pInspection(nullptr);
+	SvOp::SVBarCodeResultClass *pResult{ nullptr };
 
-	if (nullptr != pAnalyzer && nullptr != (pInspection = dynamic_cast<SVInspectionProcess*>(pAnalyzer->GetInspection())))
+	if (nullptr != pAnalyzer && nullptr != (pInspection = dynamic_cast<SVInspectionProcess*>(pAnalyzer->GetInspection())) &&
+		nullptr != (pResult = dynamic_cast<SvOp::SVBarCodeResultClass*>(pAnalyzer->GetResultObject())))
 	{
 		SVIPDoc* pIPDoc = TheSVObserverApp.GetIPDoc(pInspection->getObjectId());
 
@@ -126,115 +128,14 @@ HRESULT SVSetupDialogManager::SVBarCodeAnalyzerClassSetupDialog(uint32_t objectI
 		{
 			pIPDoc->SetModifiedFlag();
 		}
-
-		SVBarCodeProperties dlgProp;
-		int iResult;
-		BOOL bUseSingle;
-		std::string RegExp;
-		BOOL bSaveInFile;
-		std::string SingleFile;
-		BOOL bUseMultiple;
-		std::string MultiFile;
-
-		SvOp::SVBarCodeResultClass *pResult = dynamic_cast<SvOp::SVBarCodeResultClass*>(pAnalyzer->GetResultObject());
-
-		dlgProp.m_dlgBarCodeGeneral.SetBarCodeSearchSpeed(pAnalyzer->msv_dSpeed);
-		dlgProp.m_dlgBarCodeGeneral.SetBarCodeType(pAnalyzer->msv_lBarCodeType);
-		dlgProp.m_dlgBarCodeGeneral.SetOrientation(pAnalyzer->msv_dOrientation);
-		dlgProp.m_dlgBarCodeGeneral.SetSkewNegative(pAnalyzer->msv_dSkewNegative);
-		dlgProp.m_dlgBarCodeGeneral.SetSkewPositive(pAnalyzer->msv_dSkewPositive);
-		dlgProp.m_dlgBarCodeGeneral.SetThreshold(pAnalyzer->msv_dThreshold);
-		dlgProp.m_dlgBarCodeGeneral.SetForegroundColor(pAnalyzer->msv_dForegroundColor);
-		dlgProp.m_dlgBarCodeGeneral.SetBarCodeStringSize(pAnalyzer->msv_dStringSize);
-		dlgProp.m_dlgBarCodeGeneral.SetTimeout(pAnalyzer->msv_lBarcodeTimeout);
-
-		// To support special DMCs May 2008.
-		dlgProp.m_dlgBarCodeGeneral.SetBarcodeStringFormat(pAnalyzer->msv_eStringFormat);
-		dlgProp.m_dlgBarCodeGeneral.SetBarcodeThresholdType(pAnalyzer->msv_lThresholdType);
-
-		//for support for the Uneven grid step for DMCs
-		dlgProp.m_dlgBarCodeGeneral.SetUnEvenGrid(pAnalyzer->msv_bUnEvenGrid);
-
-		BOOL bTmp = FALSE;
-		pAnalyzer->m_bWarnOnFailedRead.GetValue(bTmp);
-		dlgProp.m_dlgBarCodeGeneral.SetWarnOnFail(bTmp);
-
-		dlgProp.m_dlgBarCodeAttributes.SetEncoding(pAnalyzer->msv_dEncoding);
-		dlgProp.m_dlgBarCodeAttributes.SetErrCorrection(pAnalyzer->msv_dErrorCorrection);
-
-		pAnalyzer->LoadRegExpression();
-
-		pResult->msv_bUseSingleMatchString.GetValue(bUseSingle);
-		pAnalyzer->msv_szRegExpressionValue.GetValue(RegExp);
-		pAnalyzer->msv_bSaveStringInFile.GetValue(bSaveInFile);
-		pAnalyzer->msv_szStringFileName.GetValue(SingleFile);
-		pResult->msv_bUseMatchStringFile.GetValue(bUseMultiple);
-		pResult->msv_szMatchStringFileName.GetValue(MultiFile);
-
-		dlgProp.m_dlgBarCodeStringMatch.SetUseSingle(bUseSingle);
-		dlgProp.m_dlgBarCodeStringMatch.SetRegExpression(RegExp.c_str());
-		dlgProp.m_dlgBarCodeStringMatch.SetSaveInFile(bSaveInFile);
-		dlgProp.m_dlgBarCodeStringMatch.SetSingleFileName(SingleFile.c_str());
-		dlgProp.m_dlgBarCodeStringMatch.SetUseMultiple(bUseMultiple);
-		dlgProp.m_dlgBarCodeStringMatch.SetMultiFileName(MultiFile.c_str());
-
-		dlgProp.m_dlgBarCodeDataMatrix.SetCellX(pAnalyzer->msv_dCellNumberX);
-		dlgProp.m_dlgBarCodeDataMatrix.SetCellY(pAnalyzer->msv_dCellNumberY);
-		dlgProp.m_dlgBarCodeDataMatrix.SetMinCellSize(pAnalyzer->msv_dCellMinSize);
-		dlgProp.m_dlgBarCodeDataMatrix.SetMaxCellSize(pAnalyzer->msv_dCellMaxSize);
-
-		//remove the apply button
-		dlgProp.m_psh.dwFlags |= PSH_NOAPPLYNOW;
-
-		iResult = static_cast<int>(dlgProp.DoModal());
+		
+		SvOg::SVBarCodeProperties dlgProp(pInspection->getObjectId(), objectId, pResult->getObjectId());
+		
+		int iResult = static_cast<int>(dlgProp.DoModal());
 
 		if (iResult == IDOK)
 		{
-			bUseSingle = dlgProp.m_dlgBarCodeStringMatch.GetUseSingle();
-			RegExp = dlgProp.m_dlgBarCodeStringMatch.GetRegExpression();
-			bSaveInFile = dlgProp.m_dlgBarCodeStringMatch.GetSaveInFile();
-			SingleFile = dlgProp.m_dlgBarCodeStringMatch.GetSingleFileName();
-			bUseMultiple = dlgProp.m_dlgBarCodeStringMatch.GetUseMultiple();
-			MultiFile = dlgProp.m_dlgBarCodeStringMatch.GetMultiFileName();
-
-			//@TODO[gra][8.00][15.01.2018]: The data controller should be moved into the dialog
-			SvOg::ValueController Values {SvOg::BoundValues{ pInspection->getObjectId(), objectId }};
-			Values.Init();
-
-			Values.Set<long>(SvPb::BCTypeEId, dlgProp.m_dlgBarCodeGeneral.GetBarCodeType());
-			Values.Set<double>(SvPb::BCSpeedEId, dlgProp.m_dlgBarCodeGeneral.GetBarCodeSearchSpeed());
-			Values.Set<double>(SvPb::BCOrientationEId, dlgProp.m_dlgBarCodeGeneral.GetOrientation());
-			Values.Set<double>(SvPb::BCSkewNegativeEId, dlgProp.m_dlgBarCodeGeneral.GetSkewNegative());
-			Values.Set<double>(SvPb::BCSkewPositiveEId, dlgProp.m_dlgBarCodeGeneral.GetSkewPositive());
-			Values.Set<double>(SvPb::BCThresholdEId, dlgProp.m_dlgBarCodeGeneral.GetThreshold());
-			Values.Set<double>(SvPb::BCForegroundColorEId, dlgProp.m_dlgBarCodeGeneral.GetForegroundColor());
-			Values.Set<double>(SvPb::BCStringSizeEId, dlgProp.m_dlgBarCodeGeneral.GetBarCodeStringSize());
-			Values.Set<bool>(SvPb::BCWarnOnFailedReadEId, dlgProp.m_dlgBarCodeGeneral.GetWarnedOnFail() ? true : false);
-			Values.Set<long>(SvPb::BCTimeoutEId, dlgProp.m_dlgBarCodeGeneral.GetTimeout());
-			Values.Set<CString>(SvPb::BCStringFormatEId, dlgProp.m_dlgBarCodeGeneral.GetBarcodeStringFormat());
-			Values.Set<long>(SvPb::BCThresholdTypeEId, dlgProp.m_dlgBarCodeGeneral.GetBarcodeThresholdType());
-			Values.Set<bool>(SvPb::BCUnevenGridEId, dlgProp.m_dlgBarCodeGeneral.GetUnEvenGrid() ? true : false);
-
-			Values.Set<double>(SvPb::BCEncodingEId, dlgProp.m_dlgBarCodeAttributes.GetEncoding());
-			Values.Set<double>(SvPb::BCErrorCorrectionEId, dlgProp.m_dlgBarCodeAttributes.GetErrorCorrection());
-			Values.Set<CString>(SvPb::RegExpressionEId, RegExp.c_str());
-			Values.Set<bool>(SvPb::BCSaveStringInFileEId, bSaveInFile ? true : false);
-			Values.Set<CString>(SvPb::BCStringFileNameEId, SingleFile.c_str());
-
-			Values.Set<double>(SvPb::BCCellNumberXEId, static_cast<double> (dlgProp.m_dlgBarCodeDataMatrix.GetCellX()));
-			Values.Set<double>(SvPb::BCCellNumberYEId, static_cast<double> (dlgProp.m_dlgBarCodeDataMatrix.GetCellY()));
-			Values.Set<double>(SvPb::BCCellMinSizeEId, static_cast<double> (dlgProp.m_dlgBarCodeDataMatrix.GetMinCellSize()));
-			Values.Set<double>(SvPb::BCCellMaxSizeEId, static_cast<double> (dlgProp.m_dlgBarCodeDataMatrix.GetMaxCellSize()));
-
-			Values.Commit();
-
-			SvOg::ValueController Result {SvOg::BoundValues{ pInspection->getObjectId(), pResult->getObjectId() }};
-			Result.Init();
-
-			Result.Set<bool>(SvPb::BCUseSingleMatchStringEId, bUseSingle ? true : false);
-			Result.Set<bool>(SvPb::BCUseMatchStringFileEId, bUseMultiple ? true : false);
-			Result.Set<CString>(SvPb::BCMatchStringFileNameEId, MultiFile.c_str());
-			Result.Commit();
+			dlgProp.SetInspectionData();
 		}
 	}
 	else

@@ -10,6 +10,7 @@
 #include "StdAfx.h"
 #include "CommandFunction.h"
 #include "CommandExternalHelper.h"
+#include "ObjectInterfaces\IBarCode.h"
 #include "ObjectInterfaces\IEnumerateValueObject.h"
 #include "ObjectInterfaces\IEquation.h"
 #include "ObjectInterfaces\IFormulaController.h"
@@ -1446,6 +1447,16 @@ SvPb::InspectionCmdResponse setDefaultInputsRequest(SvPb::SetDefaultInputsReques
 	{
 		cmdResponse.set_hresult(E_POINTER);
 	}
+	return cmdResponse;
+}
+
+SvPb::InspectionCmdResponse getBarCodeTypeInfos(SvPb::GetBarCodeTypeInfosRequest request)
+{
+	SvPb::InspectionCmdResponse cmdResponse;
+	
+	auto* pResponseTmp = cmdResponse.mutable_getbarcodetypeinfosresponse();
+	auto tmp = SvOi::getBarCodeTypeInfo();
+	pResponseTmp->Swap(&tmp);	
 	return cmdResponse;
 }
 

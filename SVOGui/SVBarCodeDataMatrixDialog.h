@@ -14,19 +14,15 @@
 #pragma region Includes
 #pragma endregion Includes
 
-namespace SvVol
-{
-class SVDoubleValueObjectClass;
-}
 
 class SVBarCodeDataMatrixDialog : public CPropertyPage
 {
 // Construction
 public:
-  int SetCellX (SvVol::SVDoubleValueObjectClass &svdCellX);
-  int SetCellY (SvVol::SVDoubleValueObjectClass &svdCellY);
-  int SetMinCellSize (SvVol::SVDoubleValueObjectClass &svdMinCellSize);
-  int SetMaxCellSize (SvVol::SVDoubleValueObjectClass &svdMaxCellSize);
+  void SetCellX (long cellX);
+  void SetCellY (long cellY);
+  void SetMinCellSize (long minCellSize);
+  void SetMaxCellSize (long maxCellSize);
   int GetCellX ();
   int GetCellY ();
   int GetMinCellSize ();
@@ -38,20 +34,19 @@ public:
 // Dialog Data
 	//{{AFX_DATA(SVBarCodeDataMatrixDialog)
 	enum { IDD = IDD_BARCODE_DATAMATRIX };
-	CString	m_szCellX;
-	int 	m_iCellX;
-	BOOL	m_bCellX;
-	int 	m_iCellY;
-	BOOL	m_bCellY;
-	CString	m_szCellY;
-	int 	m_iMaxCellSize;
-	BOOL	m_bMaxCellSize;
-	CString	m_szMaxCellSize;
-	int 	m_iMinCellSize;
-	BOOL	m_bMinCellSize;
-	CString	m_szMinCellSize;
+	CString	m_szCellX{ _T("") };
+	int 	m_iCellX = 0;
+	BOOL	m_bCellX = false;
+	int 	m_iCellY = 0;
+	BOOL	m_bCellY = false;
+	CString	m_szCellY{ _T("") };
+	int 	m_iMaxCellSize = 0;
+	BOOL	m_bMaxCellSize = false;
+	CString	m_szMaxCellSize{ _T("") };
+	int 	m_iMinCellSize = 0;
+	BOOL	m_bMinCellSize = false;
+	CString	m_szMinCellSize{ _T("") };
 	//}}AFX_DATA
-
 
 // Overrides
 	// ClassWizard generated virtual function overrides

@@ -568,6 +568,26 @@ message SetDefaultInputsRequest
 	uint32 objectId = 1; //ID of the inspection object.
 }
 
+message BarCodeTypeParameter
+{
+	int32 type = 1;
+	bytes name = 2;
+	repeated int32 PossibleECCTypes = 3;
+	int32 DefaultEccType = 4;
+	repeated int32 PossibleENCTypes = 5;
+	int32 DefaultEncType = 6;
+}
+
+message GetBarCodeTypeInfosRequest
+{
+}
+
+message GetBarCodeTypeInfosResponse
+{
+	repeated NameValuePair ECCNames = 1;
+	repeated NameValuePair ENCNames = 2;
+	repeated BarCodeTypeParameter typeParameters = 3;
+}
 
 message InspectionCmdRequest
 {
@@ -617,6 +637,7 @@ message InspectionCmdRequest
 		UsePropagateSizeAndPositionRequest usePropagateSizeAndPositionRequest = 41;
 		GetOverlayStructRequest getOverlayStructRequest = 42;
 		SetDefaultInputsRequest  setDefaultInputsRequest = 43;
+		GetBarCodeTypeInfosRequest getBarCodeTypeInfosRequest = 44;
 	}
 }
 
@@ -654,5 +675,6 @@ message InspectionCmdResponse
 		IsAllowedLocationResponse isAllowedLocationResponse = 27;
 		UsePropagateSizeAndPositionResponse usePropagateSizeAndPositionResponse = 28;
 		GetOverlayStructResponse getOverlayStructResponse = 29;
+		GetBarCodeTypeInfosResponse getBarCodeTypeInfosResponse = 30;
 	}
 }

@@ -13,162 +13,131 @@
 
 #pragma region Includes
 #include "SVMFCControls/SVEnumerateCombo.h"
+#include "SVProtoBuf/InspectionCommands.h"
 #pragma endregion Includes
 
-namespace SvVol
+namespace SvOg
 {
-class SVBoolValueObjectClass;
-class SVDoubleValueObjectClass;
-class SVEnumerateValueObjectClass;
-class SVLongValueObjectClass;
-}
-
-
-// Enum for threshold type radio
-enum 
-{
-	SVBCThresholdNormal = 0,
-	SVBCThresholdAuto = 1,
-	SVBCThresholdAdaptive = 2,
-};
-
-/////////////////////////////////////////////////////////////////////////////
-// SVBarCodeGeneralDialog dialog
-
-class SVBarCodeGeneralDialog : public CPropertyPage
-{
-// Construction
-public:
-	double SetThreshold (SvVol::SVDoubleValueObjectClass& rThreshold);
-	double GetThreshold ();
-	double SetSkewPositive (SvVol::SVDoubleValueObjectClass& rSkewPositive);
-	double GetSkewPositive ();
-	double SetSkewNegative (SvVol::SVDoubleValueObjectClass& rSkewNegative);
-	double GetSkewNegative ();
-	double SetOrientation (SvVol::SVDoubleValueObjectClass& rOrientation);
-	double GetOrientation ();
-	double SetForegroundColor (SvVol::SVDoubleValueObjectClass& rForegroundColor);
-	double GetForegroundColor ();
-	double SetBarCodeSearchSpeed (SvVol::SVDoubleValueObjectClass& rSearchSpeed);
-	double GetBarCodeSearchSpeed ();
-	double SetBarCodeStringSize (SvVol::SVDoubleValueObjectClass& rStringSize);
-	double GetBarCodeStringSize ();
-
-	bool SetBarcodeStringFormat(SvVol::SVEnumerateValueObjectClass& rStringFormat );
-	CString GetBarcodeStringFormat( );
-
-	bool SetBarcodeThresholdType(SvVol::SVLongValueObjectClass& rThresholdType );
-	int GetBarcodeThresholdType( );
-
-	long SetBarCodeType (SvVol::SVLongValueObjectClass& rBarCodeType);
-	long GetBarCodeType();
-	BOOL GetWarnedOnFail();
-	void SetWarnOnFail( BOOL bWarnOnFail );
-	long SetTimeout(SvVol::SVLongValueObjectClass &svlTimeout );
-	long GetTimeout();
-
-	bool SetUnEvenGrid(SvVol::SVBoolValueObjectClass& rUnEvenGrid );
-	BOOL GetUnEvenGrid ();
-
-	void UpdateUnEvenGrid();
-
-	SVBarCodeGeneralDialog(CWnd* pParent = nullptr);   // standard constructor
-	virtual ~SVBarCodeGeneralDialog();
-	BOOL	m_bWarnOnFail;
-
-// Dialog Data
-	//{{AFX_DATA(SVBarCodeGeneralDialog)
-	enum { IDD = IDD_BARCODE_GENERAL };
-	CSpinButtonCtrl	m_spnTimeout;
-	CEdit	m_ctlTimeout;
-	CComboBox	m_cbBarcodeType;
-	int		m_iBarCodeColor;
-	int		m_iOrientation;
-	CString	m_szOrientation;
-	int		m_iSkewNegative;
-	CString	m_szSkewNegative;
-	int		m_iSkewPositive;
-	CString	m_szSkewPositive;
-	CString	m_szStringSize;
-	int		m_iThreshold;
-	CString	m_szThreshold;
-	int		m_iBarCodeType;
-	int		m_iSearchSpeed;
-	long	m_lTimeout;
-	//}}AFX_DATA
-
-
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(SVBarCodeGeneralDialog)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
-	//}}AFX_VIRTUAL
-
-// Implementation
-protected:
-
-	// Generated message map functions
-	//{{AFX_MSG(SVBarCodeGeneralDialog)
-	virtual BOOL OnInitDialog() override;
-	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
-	afx_msg void OnUpdateBarcodeOrientationEdit();
-	afx_msg void OnUpdateBarcodeSkewNegativeEdit();
-	afx_msg void OnUpdateBarcodeSkewPositiveEdit();
-	afx_msg void OnUpdateBarcodeThresholdEdit();
-	afx_msg void OnEditChangeBarCodeStringSize();
-	afx_msg void OnSelChangeBarCodeColor();
-	afx_msg void OnSelChangeSearchSpeed();
-	afx_msg void OnSelChangeBarCodeType();
-	afx_msg void OnSelChangeBarCodeStringSize();
-	afx_msg void OnSelChangeStringFormat();
-	afx_msg void OnDeltaposSpinTimeout(NMHDR* pNMHDR, LRESULT* pResult);
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
-
-public:
-	struct SVBarCodeInfoStruct
+	// Enum for threshold type radio
+	enum
 	{
-		SVBarCodeInfoStruct()
-		{
-			iIndex = CB_ERR;
-			lMil = 0;
-			lDefaultEncoding = 0;
-			lDefaultErrorCorrection = 0;
-		};
-		SVBarCodeInfoStruct(long l_lMil, const CString& l_strName, long l_DefEnc, long l_DefECC )
-		{
-			iIndex = CB_ERR;
-			lMil = l_lMil;
-			strName = l_strName;
-			lDefaultEncoding = l_DefEnc;
-			lDefaultErrorCorrection = l_DefECC;
-		}
-		long lMil;
-		CString strName;
-		long lDefaultEncoding;
-		long lDefaultErrorCorrection;
-		int iIndex;
+		SVBCThresholdNormal = 0,
+		SVBCThresholdAuto = 1,
+		SVBCThresholdAdaptive = 2,
 	};
-	typedef std::vector<SVBarCodeInfoStruct> SVBarCodeInfoVector;
 
-	const SVBarCodeInfoStruct* GetInfoByIndex(int iIndex);
-	const SVBarCodeInfoStruct* GetInfoByMilID(long lMilID);
+	/////////////////////////////////////////////////////////////////////////////
+	// SVBarCodeGeneralDialog dialog
 
-	SVBarCodeInfoVector m_aBarCodeInfo;
-	long m_lInitialBarCodeType;
-	SvMc::SVEnumerateComboClass m_StringFormatCombo;
-	SvVol::SVEnumerateValueObjectClass* m_pStringFormat{nullptr};
-	CString m_StringFormat;
+	class SVBarCodeGeneralDialog : public CPropertyPage
+	{
+		// Construction
+	public:
+		void SetThreshold(long threshold);
+		double GetThreshold();
+		void SetSkewPositive(long skewPositive);
+		double GetSkewPositive();
+		void SetSkewNegative(long skewNegative);
+		double GetSkewNegative();
+		void SetOrientation(long orientation);
+		double GetOrientation();
+		void SetForegroundColor(long foregroundColor);
+		double GetForegroundColor();
+		void SetBarCodeSearchSpeed(long searchSpeed);
+		double GetBarCodeSearchSpeed();
+		void SetBarCodeStringSize(long stringSize);
+		double GetBarCodeStringSize();
 
-	bool  m_bUnEvenGrid;
+		void setBarCodeTypeInfos(const SvPb::GetBarCodeTypeInfosResponse& barCodeTypeInfos) { m_barCodeTypeInfos = barCodeTypeInfos; };
+		void SetBarcodeStringFormat(SvOi::NameValueVector&& rStringFormatList, long stringFormatPos);
+		CString GetBarcodeStringFormat();
 
-	// Threshold Type Radio
-	CButton m_ThresholdRadio;
-	int m_iThresholdRadio;
-	afx_msg void OnBnClickedThresholdNormalRadio(UINT nID );
-	CButton m_UnevenCheck;
-	afx_msg void OnBnClickedChkUnevenGrid();
-};
+		void SetBarcodeThresholdType(long thresholdType);
+		int GetBarcodeThresholdType();
 
+		void SetBarCodeType(long barCodeType);
+		long GetBarCodeType();
+		BOOL GetWarnedOnFail();
+		void SetWarnOnFail(BOOL bWarnOnFail);
+		void SetTimeout(long lTimeout);
+		long GetTimeout();
 
+		void SetUnEvenGrid(bool unEvenGrid);
+		BOOL GetUnEvenGrid();
+
+		void UpdateUnEvenGrid();
+
+		SVBarCodeGeneralDialog(CWnd* pParent = nullptr);   // standard constructor
+		virtual ~SVBarCodeGeneralDialog();
+		BOOL	m_bWarnOnFail = false;
+
+		// Dialog Data
+			//{{AFX_DATA(SVBarCodeGeneralDialog)
+		enum { IDD = IDD_BARCODE_GENERAL };
+		CSpinButtonCtrl	m_spnTimeout;
+		CEdit	m_ctlTimeout;
+		CComboBox	m_cbBarcodeType;
+		int		m_iBarCodeColor = -1;
+		int		m_iOrientation = 0;
+		CString	m_szOrientation { _T("") };
+		int		m_iSkewNegative = 0;
+		CString	m_szSkewNegative { _T("") };
+		int		m_iSkewPositive = 0;
+		CString	m_szSkewPositive { _T("") };
+		CString	m_szStringSize { _T("") };
+		int		m_iThreshold = 0;
+		CString	m_szThreshold { _T("") };
+		int		m_iBarCodeType = -1;
+		int		m_iSearchSpeed = -1;
+		long	m_lTimeout = 0;
+		//}}AFX_DATA
+
+	// Overrides
+		// ClassWizard generated virtual function overrides
+		//{{AFX_VIRTUAL(SVBarCodeGeneralDialog)
+	protected:
+		virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
+		//}}AFX_VIRTUAL
+
+	// Implementation
+	protected:
+
+		// Generated message map functions
+		//{{AFX_MSG(SVBarCodeGeneralDialog)
+		virtual BOOL OnInitDialog() override;
+		afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
+		afx_msg void OnUpdateBarcodeOrientationEdit();
+		afx_msg void OnUpdateBarcodeSkewNegativeEdit();
+		afx_msg void OnUpdateBarcodeSkewPositiveEdit();
+		afx_msg void OnUpdateBarcodeThresholdEdit();
+		afx_msg void OnEditChangeBarCodeStringSize();
+		afx_msg void OnSelChangeBarCodeColor();
+		afx_msg void OnSelChangeSearchSpeed();
+		afx_msg void OnSelChangeBarCodeType();
+		afx_msg void OnSelChangeBarCodeStringSize();
+		afx_msg void OnSelChangeStringFormat();
+		afx_msg void OnDeltaposSpinTimeout(NMHDR* pNMHDR, LRESULT* pResult);
+		//}}AFX_MSG
+		DECLARE_MESSAGE_MAP()
+
+	private:
+		const SvPb::BarCodeTypeParameter* GetInfoByMilID(long MilID) const;
+		long GetIndexByMilID(long MilID) const;
+
+		SvPb::GetBarCodeTypeInfosResponse m_barCodeTypeInfos;
+		long m_lInitialBarCodeType;
+		SvMc::SVEnumerateComboClass m_StringFormatCombo;
+		SvOi::NameValueVector m_stringFormatList;
+		long m_stringFormatPos = -1;
+		CString m_StringFormat;
+
+		bool  m_bUnEvenGrid = false;
+
+		// Threshold Type Radio
+		CButton m_ThresholdRadio;
+		int m_iThresholdRadio;
+		afx_msg void OnBnClickedThresholdNormalRadio(UINT nID);
+		CButton m_UnevenCheck;
+		afx_msg void OnBnClickedChkUnevenGrid();
+	};
+}
