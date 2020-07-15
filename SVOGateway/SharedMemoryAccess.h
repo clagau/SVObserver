@@ -75,6 +75,7 @@ private:
 		std::vector<int> rejectValuePositions;
 		std::vector<std::pair<bool, int>> imagePositions;
 		std::vector<std::pair<bool, int>> rejectImagePositions;
+		bool interestedInAllProducts;
 		bool interestedInRejects;
 	};
 	void on_new_trigger_record(const SvTrc::TrInterestEventData&);

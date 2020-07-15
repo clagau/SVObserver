@@ -280,7 +280,8 @@ SharedMemoryAccess::product_stream_t::product_stream_t(
 	SvRpc::ServerStreamContext::Ptr ctx)
 	: observer(observer)
 	, ctx(ctx)
-	, interestedInRejects(req.rejectsonly() || req.rejectimageids_size() > 0 || req.rejectvalueids_size() > 0)
+	, interestedInAllProducts(streamReq.imageids_size() > 0 || streamReq.valueids_size() > 0)
+	, interestedInRejects(streamReq.rejectsonly() || streamReq.rejectimageids_size() > 0 || streamReq.rejectvalueids_size() > 0)
 {
 	this->req.CopyFrom(streamReq);
 }
@@ -341,7 +342,7 @@ void SharedMemoryAccess::add_new_triggers_to_product_stream(product_stream_t& pr
 	for (const auto& new_trigger : new_triggers)
 	{
 		const auto& inspection = inspections.list(new_trigger.m_inspectionPos);
-		if (is_subscribed_to(product_stream.req, inspection) && !(!new_trigger.m_isInterest && product_stream.interestedInRejects))
+		if (is_subscribed_to(product_stream.req, inspection) && ((new_trigger.m_isInterest && product_stream.interestedInRejects) || product_stream.interestedInAllProducts))
 		{
 			product_stream.newTriggerQueue.push_back(new_trigger);
 		}
@@ -752,7 +753,7 @@ void SharedMemoryAccess::collect_historical_triggers(product_stream_t& stream)
 			return;
 		}
 
-		if (stream.req.rejectsonly())
+		if (stream.interestedInRejects)
 		{
 			int numHistoricalTrigger = lastTrId - startAtTriggerCount + 1;
 			auto trList = trc.getTrsOfInterest(inspectionPos, numHistoricalTrigger);
@@ -772,7 +773,7 @@ void SharedMemoryAccess::collect_historical_triggers(product_stream_t& stream)
 	else
 	{
 		int numHistoricalTrigger = std::labs(startAtTriggerCount);
-		if (stream.req.rejectsonly())
+		if (stream.interestedInRejects)
 		{
 			auto trList = trc.getTrsOfInterest(inspectionPos, numHistoricalTrigger);
 			for (const auto& tr : trList)
@@ -805,16 +806,24 @@ void SharedMemoryAccess::collect_historical_triggers(product_stream_t& stream)
 
 void SharedMemoryAccess::schedule_historical_triggers(std::shared_ptr<product_stream_t> stream)
 {
-	if (stream->historicalTriggerQueue.empty() || stream->ctx->isCancelled())
+	if (stream->ctx->isCancelled())
 	{
 		return;
 	}
 
-	const SvTrc::TrInterestEventData new_trigger = stream->historicalTriggerQueue.front();
-	stream->historicalTriggerQueue.erase(stream->historicalTriggerQueue.begin());
-
 	auto& trc = SvTrc::getTriggerRecordControllerRInstance();
-	auto triggerRecord = trc.createTriggerRecordObject(new_trigger.m_inspectionPos, new_trigger.m_trId);
+	
+	SvTrc::ITriggerRecordRPtr triggerRecord = nullptr;
+	SvTrc::TrInterestEventData new_trigger(0, 0, false);
+	while (!triggerRecord && !stream->historicalTriggerQueue.empty())
+	{
+		new_trigger = stream->historicalTriggerQueue.front();
+		stream->historicalTriggerQueue.erase(stream->historicalTriggerQueue.begin());
+
+		triggerRecord = trc.createTriggerRecordObject(new_trigger.m_inspectionPos, new_trigger.m_trId);
+	}
+
+	// There is no valid trigger record left to send. We are done.
 	if (!triggerRecord)
 	{
 		stream->historicalTriggerQueue.clear();
