@@ -133,13 +133,10 @@ DWORD SVArchiveImageThreadClass::ThreadFunction( )
 	DWORD dwWait;
 	while ( (dwWait = ::WaitForMultipleObjects( 2, &(ahObjects[0]), FALSE, dwTimeoutMilliseconds ) ) == WAIT_TIMEOUT )
 	{
-		int iNumTimes = 1;
-		while ( iNumTimes-- > 0 )
+		while ( m_Queue.size() > 0)
 		{
-			if ( m_Queue.size() > 0 )
-			{
-				PopAndWrite();
-			}
+			PopAndWrite();
+			std::this_thread::yield();
 		}
 	}
 

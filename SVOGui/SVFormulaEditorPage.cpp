@@ -839,10 +839,11 @@ void SVFormulaEditorPageClass::enableControls()
 void SVFormulaEditorPageClass::createScintillaControl()
 {
 	//This is not called when the Scintilla DLL could not be loaded
-	m_EditWnd.Create(ScintillaControlName, "", WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_CLIPCHILDREN, CRect(327, 13, 665, 362), this, IDC_MATHCOND_EDITOR);
+	m_EditWnd.Create(ScintillaControlName, "", WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_CLIPCHILDREN, CRect(340, 13, 665, 362), this, IDC_MATHCOND_EDITOR);
 
 	// Use Default as Default for all styles
 	m_EditWnd.SendMessage(SCI_STYLECLEARALL);
+	m_EditWnd.SendMessage(SCI_SETMARGINWIDTHN, 1, 0);
 
 	// Set Lexer
 	m_EditWnd.SendMessage(SCI_SETLEXER, SCLEX_SVO);
