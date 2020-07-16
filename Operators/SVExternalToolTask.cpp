@@ -417,6 +417,8 @@ bool SVExternalToolTask::CreateObject(const SVObjectLevelCreateStruct& rCreateSt
 
 	return ok;
 }
+
+
 HRESULT SVExternalToolTask::InitializeResultObjects()
 {
 	// Initialize Result Objects
@@ -468,7 +470,17 @@ HRESULT SVExternalToolTask::InitializeResultObjects()
 
 		SVResultClass* pResult(nullptr);
 		long vt = m_Data.m_ResultDefinitions[i].getVT();
-		if (vt != VT_BSTR && !( vt & VT_ARRAY ))	// Do not allocate result if already exists....
+		if ( vt & VT_ARRAY )
+		{
+			//Destroy Range Object for Arrays
+			pResult = GetResultRangeObject(i);
+			if (pResult)
+			{
+				DestroyChildObject(pResult, SvDef::SVMFSetDefaultInputs);
+				pResult = NULL;
+			}
+		}
+		else if (vt != VT_BSTR )	// Do not allocate result if already exists....
 		{
 			pResult = GetResultRangeObject(i);
 			if (nullptr == pResult)
