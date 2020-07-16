@@ -241,7 +241,6 @@ void SVSelectExternalDllPage::OnAdd()
 		}
 		testExternalDll();
 	}
-	
 }
 
 void SVSelectExternalDllPage::OnBrowse() 
@@ -276,6 +275,8 @@ void SVSelectExternalDllPage::OnBrowse()
 
 		if (m_ResetInput)
 		{
+			m_pTask->Initialize();
+			m_pTask->resetAllObjects();
 			m_pTask->SetDefaultValues();
 		}
 
@@ -342,6 +343,7 @@ void SVSelectExternalDllPage::InitializeDll(bool jumpToInputPage)
 
 		m_strStatus.Empty();
 		UpdateData(FALSE);
+
 		m_pTask->Initialize(boost::bind(&SVSelectExternalDllPage::NotifyProgress, this, _1));
 
 		m_pTask->resetAllObjects();
@@ -353,7 +355,7 @@ void SVSelectExternalDllPage::InitializeDll(bool jumpToInputPage)
 
 		//if we arrive here, Initialization has been successful
 		pParent->SendMessage(SV_ADD_PAGES_FOR_TESTED_DLL);
-
+		
 		if (jumpToInputPage)
 		{
 			pParent->PostMessage(PSM_SETCURSEL, c_indexOfInputValuePage, 0);

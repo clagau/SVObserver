@@ -64,7 +64,7 @@ SVExternalToolInputSelectPage::SVExternalToolInputSelectPage(LPCTSTR Title, uint
 	, m_InspectionID(inspectionID)
 	, m_ToolObjectID(toolObjectID)
 	, m_TaskObjectID(taskObjectID)
-	, m_Values {SvOg::BoundValues{ inspectionID, taskObjectID }}
+	, m_InputValues {SvOg::BoundValues{ inspectionID, taskObjectID }}
 {
 	SVObjectClass* pObject = nullptr;
 	SVObjectManagerClass::Instance().GetObjectByIdentifier(m_TaskObjectID, pObject);
@@ -101,7 +101,7 @@ BOOL SVExternalToolInputSelectPage::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 
-	m_Values.Init();
+	m_InputValues.Init();
 
 	if (m_inputValueCount > 0)
 	{
@@ -125,9 +125,8 @@ BOOL SVExternalToolInputSelectPage::OnInitDialog()
 		pRoot->SetCanShrink(false);
 		pRoot->SetLabelText(_T("External Tool Input"));
 		pRoot->SetInfoText(_T(""));
-		
+
 		std::map<std::string, SVRPropertyItem*> mapGroupItems;
-		std::map<std::string, SVRPropertyItem*>::iterator iterGroup;
 
 		SVRPropertyItem* pGroupItem = nullptr;
 
@@ -141,109 +140,13 @@ BOOL SVExternalToolInputSelectPage::OnInitDialog()
 				continue;
 			}
 
-			int iID = ID_BASE + i;
-
-			std::string GroupName = rDefinition.getGroup();
-
-			if ((iterGroup = mapGroupItems.find(GroupName)) == mapGroupItems.end())
-			{	// if group does not already exist
-
-				bool bTreeStyle = true;	// false = list-style
-
-				pGroupItem = m_Tree.InsertItem(new SVRPropertyItem(), pRoot);
-				pGroupItem->SetCanShrink(bTreeStyle);
-				pGroupItem->SetLabelText(GroupName.c_str());
-				pGroupItem->SetInfoText(_T(""));
-				pGroupItem->Expand();
-
-				pGroupItem->SetBold(true);
-
-				if (!bTreeStyle)
-				{
-					pGroupItem->SetBackColor(::GetSysColor(COLOR_INACTIVECAPTION));
-					pGroupItem->SetForeColor(::GetSysColor(COLOR_HIGHLIGHTTEXT));
-					pGroupItem->SetCanHighlight(false);
-				}
-
-				mapGroupItems[GroupName] = pGroupItem;
-			}
-			else	// group already exists; use existing
-			{
-				pGroupItem = iterGroup->second;
-			}
+			pGroupItem = AddGroupToTree(rDefinition, mapGroupItems, pRoot);
 
 			iItemCount++;
 
 			assert(pGroupItem);
 
-			SVRPropertyItemEdit* pEdit = (SVRPropertyItemEdit*)m_Tree.InsertItem(new SVRPropertyItemEdit(), pGroupItem);
-			if (nullptr == pEdit)
-			{
-				break;
-			}
-
-			pEdit->SetCtrlID(iID);
-
-			int LVIndex = rDefinition.getLinkedValueIndex();
-
-
-			std::string  ObjectName = m_Values.GetName(SvPb::ExternalInputEId + LVIndex).c_str();
-			std::string sLabel = SvUl::LoadStdString(IDS_OBJECTNAME_INPUT_01 + static_cast<int>(LVIndex));
-				sLabel += " (";
-				sLabel += rDefinition.getDisplayName();
-				sLabel += ")";
-
-			
-			pEdit->SetLabelText(sLabel.c_str());
-
-			std::string strType;
-			switch (rDefinition.getVt())
-			{
-				case VT_BOOL: strType = _T("Bool");   break;
-				case VT_I4:   strType = _T("Long");   break;
-				case VT_R8:   strType = _T("Double"); break;
-				case VT_BSTR: strType = _T("String"); break;
-				case VT_R8 | VT_ARRAY:
-
-					if (rDefinition.getType() == SvOp::ExDllInterfaceType::TableArray)
-					{
-						strType = _T("Table or Table Element");
-					}
-					else
-					{
-						strType = _T("Double array");
-					}
-					break;
-
-				case VT_I4 | VT_ARRAY:
-					if (rDefinition.getType() == SvOp::ExDllInterfaceType::TableArray)
-					{
-						strType = _T("Table or Table Element");
-					}
-					else
-					{
-						strType = _T("Long Array");
-					}
-					break;
-
-
-				default:      strType = _T("???");    break;
-			}
-
-			std::string Description = rDefinition.getHelpText();
-			Description = _T(" (Type: ") + strType + _T(")  ") + Description;
-			pEdit->SetInfoText(Description.c_str());
-
-			std::string Value(m_Values.Get<CString>(SvPb::ExternalInputLinkedEId + LVIndex));
-			if (Value.empty())
-			{
-				_variant_t temp = m_Values.Get<_variant_t>(SvPb::ExternalInputEId + LVIndex);
-
-				Value = SvUl::VariantToString(temp);
-
-			}
-			pEdit->SetItemValue(Value.c_str());
-			pEdit->OnRefresh();
+			AddItemToTree(rDefinition, pGroupItem, ID_BASE + i);
 		}
 
 		bool bOk = m_Tree.RestoreState(m_pTask->m_Data.m_PropTreeState);
@@ -268,6 +171,127 @@ BOOL SVExternalToolInputSelectPage::OnInitDialog()
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // EXCEPTION: OCX Property Pages should return FALSE
 }
+
+SVRPropertyItem* SVExternalToolInputSelectPage::AddGroupToTree(const SvOp::InputValueDefinition& rDefinition, std::map<std::string, SVRPropertyItem*>& rMapGroupItems, SVRPropertyItem* pRoot)
+{
+	std::map<std::string, SVRPropertyItem*>::iterator iterGroup;
+
+	std::string GroupName = rDefinition.getGroup();
+
+	SVRPropertyItem* pGroupItem = nullptr;
+
+	if ((iterGroup = rMapGroupItems.find(GroupName)) == rMapGroupItems.end())
+	{	// if group does not already exist
+
+		bool bTreeStyle = true;	// false = list-style
+
+		pGroupItem = m_Tree.InsertItem(new SVRPropertyItem(), pRoot);
+		pGroupItem->SetCanShrink(bTreeStyle);
+		pGroupItem->SetLabelText(GroupName.c_str());
+		pGroupItem->SetInfoText(_T(""));
+		pGroupItem->Expand();
+
+		pGroupItem->SetBold(true);
+
+		if (!bTreeStyle)
+		{
+			pGroupItem->SetBackColor(::GetSysColor(COLOR_INACTIVECAPTION));
+			pGroupItem->SetForeColor(::GetSysColor(COLOR_HIGHLIGHTTEXT));
+			pGroupItem->SetCanHighlight(false);
+		}
+
+		rMapGroupItems[GroupName] = pGroupItem;
+	}
+	else	// group already exists; use existing
+	{
+		pGroupItem = iterGroup->second;
+	}
+
+	return pGroupItem;
+}
+
+
+void SVExternalToolInputSelectPage::AddItemToTree(const SvOp::InputValueDefinition& rDefinition, SVRPropertyItem* pGroupItem, int iID)
+{
+	SVRPropertyItemEdit* pEdit = (SVRPropertyItemEdit*)m_Tree.InsertItem(new SVRPropertyItemEdit(), pGroupItem);
+	if (nullptr == pEdit)
+	{
+		return;
+	}
+
+	pEdit->SetCtrlID(iID);
+
+	int LVIndex = rDefinition.getLinkedValueIndex();
+
+	std::string ObjectName = m_InputValues.GetName(SvPb::ExternalInputEId + LVIndex).c_str();
+	std::string Label = SvUl::LoadStdString(IDS_OBJECTNAME_INPUT_01 + static_cast<int>(LVIndex));
+	Label += " (";
+	Label += rDefinition.getDisplayName();
+	Label += ")";
+
+	pEdit->SetLabelText(Label.c_str());
+
+	std::string Type;
+	switch (rDefinition.getVt())
+	{
+	case VT_BOOL: Type = _T("Bool");
+		break;
+
+	case VT_I4:   Type = _T("Long");
+		break;
+
+	case VT_R8:   Type = _T("Double");
+		break;
+
+	case VT_BSTR: Type = _T("String");
+		break;
+
+	case VT_R8 | VT_ARRAY:
+
+		if (rDefinition.getType() == SvOp::ExDllInterfaceType::TableArray)
+		{
+			Type = _T("Table or Table Element");
+		}
+		else
+		{
+			Type = _T("Double array");
+		}
+		break;
+
+	case VT_I4 | VT_ARRAY:
+		if (rDefinition.getType() == SvOp::ExDllInterfaceType::TableArray)
+		{
+			Type = _T("Table or Table Element");
+		}
+		else
+		{
+			Type = _T("Long Array");
+		}
+		break;
+
+
+	default:
+		Type = _T("???");
+		break;
+	}
+
+	std::string Description = rDefinition.getHelpText();
+
+	Description = _T(" (Type: ") + Type + _T(")  ") + Description;
+	pEdit->SetInfoText(Description.c_str());
+
+	std::string Value(m_InputValues.Get<CString>(SvPb::ExternalInputLinkedEId + LVIndex));
+	if (Value.empty())
+	{
+		_variant_t temp = m_InputValues.Get<_variant_t>(SvPb::ExternalInputEId + LVIndex);
+
+		Value = SvUl::VariantToString(temp);
+	}
+
+	pEdit->SetItemValue(Value.c_str());
+	pEdit->OnRefresh();
+}
+
 
 void SVExternalToolInputSelectPage::OnUndoChanges()
 {
@@ -433,7 +457,7 @@ void SVExternalToolInputSelectPage::OnOK()
 						{
 							if (SvUl::StringToSafeArray<double>(Value, array) >= 0)
 							{
-								m_Values.Set<_variant_t>(SvPb::ExternalInputEId + LVIndex, array);
+								m_InputValues.Set<_variant_t>(SvPb::ExternalInputEId + LVIndex, array);
 								done = true;
 							}
 							break;
@@ -442,7 +466,7 @@ void SVExternalToolInputSelectPage::OnOK()
 						{
 							if (SvUl::StringToSafeArray<long>(Value, array) >= 0)
 							{
-								m_Values.Set<_variant_t>(SvPb::ExternalInputEId + LVIndex, array);
+								m_InputValues.Set<_variant_t>(SvPb::ExternalInputEId + LVIndex, array);
 								done = true;
 							}
 							break;
@@ -451,7 +475,7 @@ void SVExternalToolInputSelectPage::OnOK()
 					}
 					if (!done)
 					{
-						m_Values.Set<CString>(SvPb::ExternalInputEId + LVIndex, Value.c_str());
+						m_InputValues.Set<CString>(SvPb::ExternalInputEId + LVIndex, Value.c_str());
 					}
 				}
 
@@ -460,7 +484,7 @@ void SVExternalToolInputSelectPage::OnOK()
 			pGroup = pGroup->GetSibling();
 		}
 		m_Tree.SaveState(m_pTask->m_Data.m_PropTreeState);
-		m_Values.Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
+		m_InputValues.Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
 		CPropertyPage::OnOK();
 	}
 }
@@ -489,6 +513,7 @@ SVObjectClass* SVExternalToolInputSelectPage::FindObject(SVRPropertyItem* pItem)
 	SVObjectManagerClass::Instance().GetObjectByDottedName(CompleteObjectName, pObject);
 	return pObject;
 }
+
 bool SVExternalToolInputSelectPage::ValidateValueObject(SVObjectClass* pObject, const SvOp::InputValueDefinition& rInputedef )
 {
 	bool res{ false };
@@ -538,7 +563,6 @@ bool SVExternalToolInputSelectPage::ValidateValueObject(SVObjectClass* pObject, 
 }
 
 
-
 const SvOp::InputValueDefinition* SVExternalToolInputSelectPage::GetInputValueDefinitionPtr(SVRPropertyItem* pItem)
 {
 	int iIndex = GetItemIndex(pItem);
@@ -550,9 +574,6 @@ const SvOp::InputValueDefinition* SVExternalToolInputSelectPage::GetInputValueDe
 	{
 		return nullptr;
 	}
-
-	
-
 }
 
 HRESULT SVExternalToolInputSelectPage::ValidateItem(SVRPropertyItem* pItem)

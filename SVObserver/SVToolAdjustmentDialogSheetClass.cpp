@@ -72,6 +72,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
+
 IMPLEMENT_DYNAMIC(SVToolAdjustmentDialogSheetClass, CPropertySheet)
 
 BEGIN_MESSAGE_MAP(SVToolAdjustmentDialogSheetClass, CPropertySheet)
@@ -80,6 +81,7 @@ BEGIN_MESSAGE_MAP(SVToolAdjustmentDialogSheetClass, CPropertySheet)
 	ON_COMMAND(IDOK, OnOK)
 	ON_MESSAGE(SV_REMOVE_PAGES_FOR_TESTED_DLL, RemovePagesForTestedExternalTool)
 	ON_MESSAGE(SV_ADD_PAGES_FOR_TESTED_DLL, AddPagesForTestedExternalTool)
+	
 	ON_WM_SYSCOMMAND()
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
@@ -572,6 +574,7 @@ LRESULT SVToolAdjustmentDialogSheetClass::AddPagesForTestedExternalTool(WPARAM, 
 
 	AddPage(new SvOg::SVExternalToolImageSelectPage(m_InspectionID, m_TaskObjectID, taskinfo.first->InputImageInformationStructs()));
 	AddPage(new SVExternalToolInputSelectPage(_T("Input Values"), m_InspectionID, m_TaskObjectID, taskinfo.second));
+
 	AddPage(new SVExternalToolResultPage(_T("Result Values"), m_InspectionID, taskinfo.second));
 
 	AddAdditionalPagesForExternalTool(true);
@@ -582,14 +585,12 @@ LRESULT SVToolAdjustmentDialogSheetClass::AddPagesForTestedExternalTool(WPARAM, 
 LRESULT SVToolAdjustmentDialogSheetClass::RemovePagesForTestedExternalTool(WPARAM, LPARAM)
 {
 	while (GetPageCount() > 1) //if the external DLL is uninitialized only the first page ("Select External DLL")
-			// plus "Conditional", "General" and "Comment" (which will be added elsewhere) should be displayed
+							   // plus "Conditional", "General" and "Comment" (which will be added elsewhere) should be displayed
 	{
 		RemovePage(1);
 	}
 	return S_OK;
 }
-
-
 
 
 SVIPDoc* SVToolAdjustmentDialogSheetClass::GetIPDoc() const

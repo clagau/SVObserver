@@ -88,7 +88,10 @@ namespace SvVol
 	{
 		if (0 == (rValue.vt & VT_ARRAY))
 		{
-			return __super::SetDefaultValue(rValue, bResetAll);
+			HRESULT hres = __super::SetDefaultValue(rValue, bResetAll);//@TODO[Arvid][10.00][16.07.2020] SetDefaultValue() (and several others) always return S_OK. they should be of type void instead!
+			SetArraySize(1); //@TODO[Arvid][10.00][15.07.2020] this was added for SVB-394. 
+							 //A more general solution for ensuring that array values are changed correctly to scalar ones should be found!
+			return hres;
 		}
 		else
 		{

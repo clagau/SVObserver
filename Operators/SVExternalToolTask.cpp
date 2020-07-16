@@ -388,8 +388,8 @@ bool SVExternalToolTask::CreateTableObjects()
 	}
 	return result;
 
-
 }
+
 bool SVExternalToolTask::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 {
 	bool ok = SVTaskObjectListClass::CreateObject(rCreateStructure);
@@ -401,7 +401,6 @@ bool SVExternalToolTask::CreateObject(const SVObjectLevelCreateStruct& rCreateSt
 			try
 			{
 				CreateTableObjects();
-
 				Initialize([](LPCTSTR) {}, true);
 			}
 			catch (const SvStl::MessageContainer& /*e*/)
@@ -653,7 +652,7 @@ HRESULT SVExternalToolTask::InitializeResultObjects()
 	return hr;
 }
 
-HRESULT SVExternalToolTask::Initialize(SVDllLoadLibraryCallback fnNotify, bool inCreationProces)
+HRESULT SVExternalToolTask::Initialize(SVDllLoadLibraryCallback fnNotify, bool inCreationProces) 
 {
 
 	HRESULT hr = S_FALSE;
@@ -1514,7 +1513,6 @@ HRESULT SVExternalToolTask::SetDefaultValues()
 	int size = m_Data.getNumInputs();
 	for (int i = 0; i < size; i++)
 	{
-
 		InputValueDefinition& rInputDef = m_Data.m_InputDefinitions[i];
 		if (rInputDef.getType() == SvOp::ExDllInterfaceType::Scalar || rInputDef.getType() == SvOp::ExDllInterfaceType::Array)
 		{
@@ -1677,6 +1675,7 @@ HRESULT SVExternalToolTask::collectInputImageNames()
 	}
 	return S_OK;
 }
+
 void SVExternalToolTaskData::SetInputValueDefinitions(long ArraySize, InputValueDefinitionStruct  InputValueDefs[])
 {
 	m_lNumInputValues = ArraySize;
@@ -1688,6 +1687,7 @@ void SVExternalToolTaskData::SetInputValueDefinitions(long ArraySize, InputValue
 		m_InputDefinitions[i].setDefinition(InputValueDefs[i], &m_NumLinkedValue);
 	}
 }
+
 void SVExternalToolTaskData::SetInputValueDefinitions(long ArraySize, InputValueDefinitionStructEx  InputValueDefs[])
 {
 	m_lNumInputValues = ArraySize;
@@ -1699,11 +1699,10 @@ void SVExternalToolTaskData::SetInputValueDefinitions(long ArraySize, InputValue
 		m_InputDefinitions[i].setDefinition(InputValueDefs[i], &m_NumLinkedValue);
 	}
 
-
 }
+
 void SVExternalToolTaskData::InitializeInputs(SVExternalToolTask*  pExternalToolTask)
 {
-
 	for (int i = 0; i < m_InputDefinitions.size(); i++)
 	{
 		InputValueDefinition& rInputDef = m_InputDefinitions[i];
@@ -1719,10 +1718,9 @@ void SVExternalToolTaskData::InitializeInputs(SVExternalToolTask*  pExternalTool
 				if (VT_BSTR == rInputValue.GetValueType() || (rInputDef.getDefaultValue().vt & ~VT_ARRAY) == rInputValue.GetValueType())
 				{
 					bSetVal = false;
-				}
+				} 
 
 				rInputValue.SetDefaultValue(rInputDef.getDefaultValue(), bSetVal);
-
 			}
 			
 		}

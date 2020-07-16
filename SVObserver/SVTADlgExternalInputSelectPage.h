@@ -31,7 +31,7 @@ public:
 	SVExternalToolInputSelectPage(LPCTSTR Title, uint32_t inspectionID, uint32_t toolObjectID, uint32_t taskObjectID, int id = IDD);
 	virtual ~SVExternalToolInputSelectPage();
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(SVExternalToolInputSelectPage)
 	enum { IDD = IDD_TA_EXTERNAL_INPUT };
 	//}}AFX_DATA
@@ -70,13 +70,13 @@ protected:
     afx_msg void OnItemQueryShowButton(NMHDR* pNotifyStruct, LRESULT* plResult);
     afx_msg void OnItemButtonClick(NMHDR* pNotifyStruct, LRESULT* plResult);
 	afx_msg void OnUndoChanges();
-
 	
 	DECLARE_MESSAGE_MAP()
 
 private:
 	std::string GetName(uint32_t id) const;
-
+	SVRPropertyItem *AddGroupToTree(const SvOp::InputValueDefinition& rDefinition, std::map<std::string, SVRPropertyItem*>& rMapGroupItems, SVRPropertyItem* pRoot);
+	void AddItemToTree(const SvOp::InputValueDefinition& rDefinition, SVRPropertyItem* pGroupItem, int iID);
 private:
 	SvOp::SVExternalToolTask* m_pTask;
 	SVRPropTree	m_Tree;
@@ -86,7 +86,7 @@ private:
 	const uint32_t m_ToolObjectID;
 	const uint32_t m_TaskObjectID;
 
-	SvOg::ValueController m_Values;
+	SvOg::ValueController m_InputValues;
 };
 
 
