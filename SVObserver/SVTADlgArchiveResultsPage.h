@@ -66,21 +66,21 @@ protected:
 
 #pragma region Private Members
 private:
-	SVToolAdjustmentDialogSheetClass* m_pParent; //Pointer to the Tool Adjust sheet
-	CListCtrl   m_ItemsSelected;				//The selected list control
-	SVObjectReferenceVector m_List;				//The selected list
-	SvTo::SVArchiveTool* m_pTool;				//Pointer to the Archive Tool
-	CImageList m_StateImageList;				//The state image list
-	CButton m_Select;							//The tree select button
-	CBitmap m_TreeBitmap;						//The bitmap for the tree button
-	CEdit	m_ArchiveFileName;					//Archive file name
-	BOOL	m_AppendArchive;					//Append archive flag
-	BOOL    m_FormatResults;					//Flag: Use special format for Archive Tool value strings?
-	DWORD   m_TotalWidth;						//Minimum total number of characters for Archive Tool value strings
-	CEdit	m_TotalWidthEdit;				    //Edit control for minimum total number of characters
-	DWORD   m_Decimals;							//Number of decimal places for Archive Tool value strings - but only if if that value has decimal places
-	CEdit	m_DecimalsEdit;					    //Edit control for number of decimal places 
-	BOOL	m_ColumnHeaders;					//Column headers flag
+	SVToolAdjustmentDialogSheetClass* m_pParent;		//Pointer to the Tool Adjust sheet
+	CListCtrl   m_ItemsSelected;						//The selected list control
+	SVObjectReferenceVector m_ResultsToBeArchived;      //contains references to objects that are to be archived
+	SvTo::SVArchiveTool* m_pTool;						//Pointer to the Archive Tool
+	CImageList m_StateImageList;						//The state image list
+	CButton m_Select;									//The tree select button
+	CBitmap m_TreeBitmap;								//The bitmap for the tree button
+	CEdit	m_ArchiveFileName;							//Archive file name
+	BOOL	m_AppendArchive;							//Append archive flag
+	BOOL    m_FormatResults;							//Flag: Use special format for Archive Tool value strings?
+	DWORD   m_TotalWidth;								//Minimum total number of characters for Archive Tool value strings
+	CEdit	m_TotalWidthEdit;						    //Edit control for minimum total number of characters
+	DWORD   m_Decimals;									//Number of decimal places for Archive Tool value strings - but only if if that value has decimal places
+	CEdit	m_DecimalsEdit;								//Edit control for number of decimal places 
+	BOOL	m_ColumnHeaders;							//Column headers flag
 #pragma endregion Private Members
 };
 

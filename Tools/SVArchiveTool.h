@@ -69,8 +69,8 @@ public:
 	//
 	// The arrays for results and images to archive.
 	//
-	SVArchiveRecordsArray  m_resultsToBeArchived;
-	SVArchiveRecordsArray  m_imagesToBeArchived;
+	SVArchiveRecordsArray  m_ResultCollection;
+	SVArchiveRecordsArray  m_ImageCollection;
 
 	SvVol::SVDWordValueObjectClass m_dwAppendArchiveFile;
 	SvVol::SVDWordValueObjectClass m_bvoFormatResults;

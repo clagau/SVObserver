@@ -139,7 +139,7 @@ bool SVTADlgArchiveResultsPage::QueryAllowExit()
 	m_pTool->m_dwArchiveResultsMinimumNumberOfCharacters.SetValue(m_TotalWidth);
 	m_pTool->m_dwArchiveResultsNumberOfDecimals.SetValue(m_Decimals);
 
-	m_pTool->refreshResultArchiveList(m_List);
+	m_pTool->refreshResultArchiveList(m_ResultsToBeArchived);
 
 	// Add newly selected values to headers.
 	BOOL bUseHeaders( false );
@@ -245,7 +245,7 @@ void SVTADlgArchiveResultsPage::OnSelectObjects()
 
 void SVTADlgArchiveResultsPage::OnRemoveAllItems()
 {
-	m_List.clear();
+	m_ResultsToBeArchived.clear();
 	ReadSelectedObjects();
 }
 
@@ -264,8 +264,8 @@ void SVTADlgArchiveResultsPage::OnRemoveItem()
 	std::vector<int>::const_reverse_iterator Iter;
 	for( Iter = SelectedVector.crbegin(); SelectedVector.crend() != Iter; ++Iter )
 	{
-		SVObjectReferenceVector::const_iterator SelectedIter( m_List.begin() + *Iter );
-		m_List.erase( SelectedIter );
+		SVObjectReferenceVector::const_iterator SelectedIter( m_ResultsToBeArchived.begin() + *Iter );
+		m_ResultsToBeArchived.erase( SelectedIter );
 	}
 
 	ReadSelectedObjects();
@@ -279,7 +279,7 @@ void SVTADlgArchiveResultsPage::ReadSelectedObjects()
 	Prefix += _T(".Tool Set.");
 
 	int Index = 0;
-	for (auto const& rEntry : m_List)
+	for (auto const& rEntry : m_ResultsToBeArchived)
 	{
 		std::string Name{ rEntry.GetCompleteName(true) };
 		SvUl::searchAndReplace( Name, Prefix.c_str(), _T("") );
@@ -312,7 +312,7 @@ void SVTADlgArchiveResultsPage::ShowObjectSelector()
 	}
 
 	SvDef::StringSet CheckItems;
-	for (auto const& rEntry : m_List)
+	for (auto const& rEntry : m_ResultsToBeArchived)
 	{
 		CheckItems.insert(rEntry.GetObjectNameToObjectType(SvPb::SVToolSetObjectType, true));
 	}
@@ -324,11 +324,11 @@ void SVTADlgArchiveResultsPage::ShowObjectSelector()
 
 	if( IDOK == Result )
 	{
-		m_List.clear();
+		m_ResultsToBeArchived.clear();
 		for (auto const& rEntry : SvOsl::ObjectTreeGenerator::Instance().getSelectedObjects())
 		{
 			SVObjectReference ObjectRef(rEntry);
-			m_List.push_back(ObjectRef);
+			m_ResultsToBeArchived.push_back(ObjectRef);
 		}
 		ReadSelectedObjects();
 	}
@@ -383,7 +383,7 @@ bool SVTADlgArchiveResultsPage::GetSelectedHeaderNamePairs(SvDef::StringPairVect
 
 		// ... Create List from selected...
 		SvDef::StringPairVector SelectedHeaderPairs;
-		for(auto const& rEntry : m_List)
+		for(auto const& rEntry : m_ResultsToBeArchived)
 		{
 			uint32_t objectId{ rEntry.getObjectId() };
 
@@ -461,7 +461,7 @@ void SVTADlgArchiveResultsPage::OnBnClickedHeaderCheck()
 {
 	UpdateData( TRUE );
 
-	BOOL bEnable = 0 != m_List.size() && m_ColumnHeaders;
+	BOOL bEnable = 0 != m_ResultsToBeArchived.size() && m_ColumnHeaders;
 	GetDlgItem(IDC_HEADER_BTN)->EnableWindow(bEnable);
 
 	m_pTool->m_bvoUseHeaders.SetValue(m_ColumnHeaders);

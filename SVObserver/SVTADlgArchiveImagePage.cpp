@@ -104,7 +104,7 @@ bool SVTADlgArchiveImagePage::QueryAllowExit()
 	{
 		//check to see if any items are selected in the image tree
 		
-		int iSize = static_cast<int> (m_List.size());
+		int iSize = static_cast<int> (m_ImagesToBeArchived.size());
 		if( 0 < iSize )
 		{
 			//if memory usage < 0 do not all them to exit
@@ -168,7 +168,7 @@ bool SVTADlgArchiveImagePage::QueryAllowExit()
 	m_ValueController.Set<DWORD>(SvPb::ArchiveMaxImagesCountEId, static_cast<DWORD> (m_ImagesToArchive));
 	m_ValueController.Set<DWORD>(SvPb::ArchiveStopAtMaxImagesEId, m_StopAtMaxImagesButton.GetCheck() ? 1 : 0);
 
-	m_pTool->setImageArchiveList(m_List);
+	m_pTool->setImageArchiveList(m_ImagesToBeArchived);
 	m_ValueController.Commit(SvOg::PostAction::doReset);
 
 	// Mark the document as 'dirty' so user will be prompted to save
@@ -348,7 +348,7 @@ void SVTADlgArchiveImagePage::OnSelectObjects()
 
 void SVTADlgArchiveImagePage::OnRemoveAllItems()
 {
-	m_List.clear();
+	m_ImagesToBeArchived.clear();
 	ReadSelectedObjects();
 }
 
@@ -367,8 +367,8 @@ void SVTADlgArchiveImagePage::OnRemoveItem()
 	std::vector<int>::const_reverse_iterator Iter;
 	for( Iter = SelectedVector.crbegin(); SelectedVector.crend() != Iter; ++Iter )
 	{
-		SVObjectReferenceVector::const_iterator SelectedIter( m_List.begin() + *Iter );
-		m_List.erase( SelectedIter );
+		SVObjectReferenceVector::const_iterator SelectedIter( m_ImagesToBeArchived.begin() + *Iter );
+		m_ImagesToBeArchived.erase( SelectedIter );
 	}
 
 	ReadSelectedObjects();
@@ -378,7 +378,7 @@ void SVTADlgArchiveImagePage::MemoryUsage()
 {
 	m_mapSelectedImageMemUsage.clear();
 
-	for (auto const& rEntry : m_List )
+	for (auto const& rEntry : m_ImagesToBeArchived )
 	{
 		SVObjectClass* pObject( nullptr );
 		SVObjectManagerClass::Instance().GetObjectByIdentifier(rEntry.getObjectId(), pObject );
@@ -409,7 +409,7 @@ void SVTADlgArchiveImagePage::ReadSelectedObjects()
 	std::string Prefix = SvUl::Format( _T("%s.%s."), m_pTool->GetInspection()->GetName(), ToolName.c_str() );
 
 	int Index = 0;
-	for (auto const& rEntry : m_List)
+	for (auto const& rEntry : m_ImagesToBeArchived)
 	{
 		std::string Name{ rEntry.GetCompleteName(true) };
 		SvUl::searchAndReplace( Name, Prefix.c_str(), _T("") );
@@ -442,7 +442,7 @@ void SVTADlgArchiveImagePage::ShowObjectSelector()
 	}
 
 	SvDef::StringSet CheckItems;
-	for (auto const& rEntry : m_List)
+	for (auto const& rEntry : m_ImagesToBeArchived)
 	{
 		CheckItems.insert(rEntry.GetObjectNameToObjectType(SvPb::SVToolSetObjectType, true));
 	}
@@ -475,11 +475,11 @@ void SVTADlgArchiveImagePage::ShowObjectSelector()
 			}
 		}
 
-		m_List.clear();
+		m_ImagesToBeArchived.clear();
 		for (auto const& rEntry : rSelectedList)
 		{
 			SVObjectReference ObjectRef(rEntry);
-			m_List.push_back(ObjectRef);
+			m_ImagesToBeArchived.push_back(ObjectRef);
 		}
 
 		ReadSelectedObjects();
