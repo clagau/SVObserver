@@ -275,7 +275,7 @@ void SVSelectExternalDllPage::OnBrowse()
 
 		if (m_ResetInput)
 		{
-			m_pTask->Initialize();
+			m_pTask->Initialize([](LPCTSTR) {}, false, true);
 			m_pTask->resetAllObjects();
 			m_pTask->SetDefaultValues();
 		}

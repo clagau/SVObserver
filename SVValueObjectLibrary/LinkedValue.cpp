@@ -86,16 +86,15 @@ namespace SvVol
 
 	HRESULT LinkedValue::SetDefaultValue(const _variant_t& rValue, bool bResetAll)
 	{
+		HRESULT hres(E_FAIL);
 		if (0 == (rValue.vt & VT_ARRAY))
 		{
-			HRESULT hres = __super::SetDefaultValue(rValue, bResetAll);//@TODO[Arvid][10.00][16.07.2020] SetDefaultValue() (and several others) always return S_OK. they should be of type void instead!
 			SetArraySize(1); //@TODO[Arvid][10.00][15.07.2020] this was added for SVB-394. 
 							 //A more general solution for ensuring that array values are changed correctly to scalar ones should be found!
-			return hres;
+			hres = __super::SetDefaultValue(rValue, bResetAll);//@TODO[Arvid][10.00][16.07.2020] SetDefaultValue() (and several others) always return S_OK. they should be of type void instead!
 		}
 		else
 		{
-			HRESULT hres;
 			_variant_t value;
 			value.ChangeType(rValue.vt & ~VT_ARRAY);
 			hres = __super::SetDefaultValue(value, bResetAll);
@@ -112,8 +111,15 @@ namespace SvVol
 				}
 				hres = __super::setValue(rValue);
 			}
-			return hres;
 		}
+		
+
+		///If the memory block size is wrong  then we need to reset the TR data
+		if (-1 != getMemOffset() && getMemSizeReserved() != getByteSize(false, false))
+		{
+			setTrData(-1L, -1L, -1L);
+		}
+		return hres;
 	}
 
 	HRESULT LinkedValue::setValue(const _variant_t& rValue, int Index /*= -1*/, bool fixArraysize)

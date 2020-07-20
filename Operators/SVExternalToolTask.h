@@ -54,7 +54,7 @@ struct SVExternalToolTaskData
 
 	void SetInputValueDefinitions(long ArraySize, InputValueDefinitionStruct  InputValueDefs[]);
 	void SetInputValueDefinitions(long ArraySize, InputValueDefinitionStructEx  InputValueDefs[]);
-	void  InitializeInputs(SVExternalToolTask*  pExternalToolTask);
+	void  InitializeInputs(SVExternalToolTask*  pExternalToolTask, bool initializeAll);
 	long  getNumInputs() const { return static_cast<long>(m_InputDefinitions.size()); };
 	long  getNumResults() const { return static_cast<long>(m_ResultDefinitions.size()); };
 	long  getNumTableResults() const { return static_cast<long>(m_TableResultDefinitions.size()); };
@@ -104,7 +104,7 @@ public:
 	void SetResultArraySize();
 	virtual bool CloseObject() override;
 	
-	HRESULT Initialize(SVDllLoadLibraryCallback fnNotify = [](LPCTSTR) {}, bool inCreationProcess = false);
+	HRESULT Initialize(SVDllLoadLibraryCallback fnNotify = [](LPCTSTR) {}, bool inCreationProcess = false, bool initializeAll = false);
 
 	virtual HRESULT DisconnectInputsOutputs(SVObjectPtrVector& rListOfObjects) override;
 	virtual HRESULT HideInputsOutputs(SVObjectPtrVector& rListOfObjects) override;

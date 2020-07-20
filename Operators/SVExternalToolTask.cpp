@@ -652,7 +652,7 @@ HRESULT SVExternalToolTask::InitializeResultObjects()
 	return hr;
 }
 
-HRESULT SVExternalToolTask::Initialize(SVDllLoadLibraryCallback fnNotify, bool inCreationProces) 
+HRESULT SVExternalToolTask::Initialize(SVDllLoadLibraryCallback fnNotify, bool inCreationProces, bool initializeAll)
 {
 
 	HRESULT hr = S_FALSE;
@@ -850,7 +850,7 @@ HRESULT SVExternalToolTask::Initialize(SVDllLoadLibraryCallback fnNotify, bool i
 			}
 			m_InspectionInputValues.resize(ArraySize);
 
-			m_Data.InitializeInputs(this);
+			m_Data.InitializeInputs(this, initializeAll);
 			for (int i = 0; i < ArraySize; i++)
 			{
 				HRESULT hres = ::VariantChangeTypeEx(&m_InspectionInputValues[i], &m_InspectionInputValues[i], SvDef::LCID_USA, 0, static_cast<VARTYPE>(m_Data.m_InputDefinitions[i].getVt()));
@@ -1544,7 +1544,7 @@ bool SVExternalToolTask::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 
 	try
 	{
-		HRESULT hr = Initialize([](LPCTSTR) {});
+		HRESULT hr = Initialize();
 		if (S_OK != hr)
 		{
 			Result = false;
@@ -1698,23 +1698,23 @@ void SVExternalToolTaskData::SetInputValueDefinitions(long ArraySize, InputValue
 	{
 		m_InputDefinitions[i].setDefinition(InputValueDefs[i], &m_NumLinkedValue);
 	}
-
 }
 
-void SVExternalToolTaskData::InitializeInputs(SVExternalToolTask*  pExternalToolTask)
+void SVExternalToolTaskData::InitializeInputs(SVExternalToolTask*  pExternalToolTask, bool initializeAll)
 {
-	for (int i = 0; i < m_InputDefinitions.size(); i++)
+	for (InputValueDefinition& rInputDef : m_InputDefinitions)
 	{
-		InputValueDefinition& rInputDef = m_InputDefinitions[i];
 		int LinkValueIndex = rInputDef.getLinkedValueIndex();
 		SvVol::LinkedValue& rInputValue = m_aInputObjects[LinkValueIndex];
 
 		bool bTypeIsArrayOrScalar = rInputDef.getType() == SvOp::ExDllInterfaceType::Scalar || rInputDef.getType() == SvOp::ExDllInterfaceType::Array;
-		if (bTypeIsArrayOrScalar)
+		bool bTypeIsTable = rInputDef.getType() == SvOp::ExDllInterfaceType::TableArray || rInputDef.getType() == SvOp::ExDllInterfaceType::TableNames;
+
+		if (initializeAll || rInputValue.GetDefaultType() == VT_EMPTY)
 		{
-			if (rInputValue.GetDefaultType() == VT_EMPTY)
+			bool bSetVal{ true };
+			if (bTypeIsArrayOrScalar)
 			{
-				bool bSetVal {true};
 				if (VT_BSTR == rInputValue.GetValueType() || (rInputDef.getDefaultValue().vt & ~VT_ARRAY) == rInputValue.GetValueType())
 				{
 					bSetVal = false;
@@ -1722,13 +1722,17 @@ void SVExternalToolTaskData::InitializeInputs(SVExternalToolTask*  pExternalTool
 
 				rInputValue.SetDefaultValue(rInputDef.getDefaultValue(), bSetVal);
 			}
-			
+			if (bTypeIsTable)
+			{
+				rInputValue.SetDefaultValue(_variant_t(), bSetVal);
+			}
 		}
-		//The linkedValues must be reset (to set the object reference correctly), before used them for get values (in InspectionInputsToVariantArray). 
-		//But this method will called also in Create-process and there is not a reset called before.
+
+		//The linkedValues must be reset (to set the object reference correctly), before using them for getting values (in InspectionInputsToVariantArray). 
+		//But this method will also be called in Create-process and no reset is done there before calling this function.
 		rInputValue.resetAllObjects();
 
-		//for tableobject only the linked object is usefull
+		//for table objects only the linked object is useful
 		if (rInputDef.UseDisplayNames() && bTypeIsArrayOrScalar)
 		{
 			
@@ -1747,10 +1751,7 @@ void SVExternalToolTaskData::InitializeInputs(SVExternalToolTask*  pExternalTool
 				}
 			}
 			//@Todo[mec] rename linked value 
-			
 		}
-
-
 	}
 
 }
