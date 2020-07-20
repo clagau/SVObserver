@@ -306,7 +306,7 @@ BOOL SVTADlgArchiveImagePage::OnInitDialog()
 	m_useAlternativeImagePaths = m_ValueController.Get<bool>(SvPb::UseAlternativeImagePathsEId);
 	
 	SVObjectReferenceVector imageVector{m_pTool->getImageArchiveList()};
-	m_List.swap(imageVector);
+	m_ImagesToBeArchived.swap(imageVector);
 
 	m_mapInitialSelectedImageMemUsage = m_mapSelectedImageMemUsage;
 	m_ToolImageMemoryUsage = CalculateToolMemoryUsage();

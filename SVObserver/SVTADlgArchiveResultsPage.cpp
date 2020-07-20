@@ -226,7 +226,7 @@ BOOL SVTADlgArchiveResultsPage::OnInitDialog()
 	GetDlgItem(IDC_HEADER_BTN)->EnableWindow(m_ColumnHeaders);
 
 	SVObjectReferenceVector resultVector = m_pTool->assembleResultReferenceVector();
-	m_List.swap(resultVector);
+	m_ResultsToBeArchived.swap(resultVector);
 
 	ReadSelectedObjects();
 	UpdateData(FALSE);
