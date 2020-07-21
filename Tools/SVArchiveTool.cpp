@@ -1236,7 +1236,7 @@ void SVArchiveTool::OnObjectRenamed( const SVObjectClass& rRenamedObject, const 
 }
 
 
-bool SVArchiveTool::updateCurrentImagePathRoot(bool displayMessageOnInvalidKeywords, bool ensureDirectoryExists)
+bool SVArchiveTool::updateCurrentImagePathRoot(bool displayMessageOnInvalidKeywords)
 {
 	m_currentImagePathRoot = getUntranslatedImagePathRoot();
 
@@ -1247,31 +1247,41 @@ bool SVArchiveTool::updateCurrentImagePathRoot(bool displayMessageOnInvalidKeywo
 	{
 		if (athImagePath.areTokensValid())
 		{
-			m_currentImagePathRoot = athImagePath.TranslatePath(m_currentImagePathRoot);
+			std::string tmpArchiveFileName = athImagePath.TranslatePath(m_currentImagePathRoot);
+			if (false == SVCheckPathDir(tmpArchiveFileName.c_str(), true))
+			{
+				return false;
+			}
+			m_currentImagePathRoot = tmpArchiveFileName;
+			return true;
 		}
 		else
 		{
 			if (displayMessageOnInvalidKeywords)
 			{
 				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
-				Exception.setMessage(SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_InvalidImagePath, SvStl::SourceFileParams(StdMessageParams));
+				Exception.setMessage(SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_InvalidKeywordsInPath, SvStl::SourceFileParams(StdMessageParams));
 			}
 			return false;
 		}
 	}
 
-	if (ensureDirectoryExists)
-	{
-		TCHAR lastCharacter = m_currentImagePathRoot.back();
-		if (lastCharacter != _T('\\') && lastCharacter != _T('/'))
-		{
-			m_currentImagePathRoot += _T("\\"); //ensure that SVCheckPathDir() can recognize this as a directory
-		}
+	//not using Keywords 
+	return SVCheckPathDir(m_currentImagePathRoot.c_str(), true);
+}
 
-		if (!SVCheckPathDir(m_currentImagePathRoot.c_str(), TRUE)) //create this directory if it does not exist yet
-		{
-			return false;
-		}
+
+bool SVArchiveTool::ensureCurrentImagePathRootExists()
+{
+	TCHAR lastCharacter = m_currentImagePathRoot.back();
+	if (lastCharacter != _T('\\') && lastCharacter != _T('/'))
+	{
+		m_currentImagePathRoot += _T("\\"); //ensure that SVCheckPathDir() can recognize this as a directory
+	}
+
+	if (!SVCheckPathDir(m_currentImagePathRoot.c_str(), TRUE)) //create this directory if it does not exist yet
+	{
+		return false;
 	}
 
 	return true;
@@ -1299,7 +1309,7 @@ bool SVArchiveTool::ValidateImageSpace(SvStl::MessageContainerVector *pErrorMess
 			{ //should not ever get here since the path is validated above
 				SvDef::StringVector msgList;
 				msgList.push_back(m_currentImagePathRoot);
-				SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_PathFileNotFound, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10037, getObjectId() ); 
+				SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_InvalidPath, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10037, getObjectId() ); 
 				pErrorMessages->push_back(Msg);
 			}
 		}
@@ -1337,11 +1347,15 @@ bool SVArchiveTool::ValidateOnRun(SvStl::MessageContainerVector *pErrorMessages)
 			bool setCurrentImagePathRoot = !SVSVIMStateClass::CheckState(SV_STATE_RUNNING);
 			if (setCurrentImagePathRoot)
 			{
-				bOk = updateCurrentImagePathRoot();
-			}
-			if (bOk)
-			{
-				bOk = ValidateImageSpace(pErrorMessages);
+				bOk = false;
+
+				if (updateCurrentImagePathRoot())
+				{
+					if (ensureCurrentImagePathRootExists())
+					{
+						bOk = ValidateImageSpace(pErrorMessages);
+					}
+				}
 			}
 		}
 	}

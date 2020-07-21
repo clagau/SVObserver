@@ -124,14 +124,17 @@ bool SVTADlgArchiveImagePage::QueryAllowExit()
 	m_ImageFilepathroot2WidgetHelper.EditboxToTextValue();
 	m_ImageFilepathroot3WidgetHelper.EditboxToTextValue();
 
-	m_ValueController.Commit(); //changed need to be committed before validateImageFilpathRoot() is called
+	m_ValueController.Commit(SvOg::PostAction::doReset); //changes need to be committed before validateImageFilepathRoot() is called
 
 	//update the image path
 
-	if (!validateImageFilpathRoot())
+	if (!validateImageFilepathRoot())
 	{
 		return false; //don't allow to exit with invalid path
 	}
+
+	m_pTool->ensureCurrentImagePathRootExists();
+
 
 	m_ValueController.Set<bool>(SvPb::UseAlternativeImagePathsEId, m_useAlternativeImagePaths ? true : false);
 
@@ -224,9 +227,9 @@ void SVTADlgArchiveImagePage::DoDataExchange(CDataExchange* pDX)
 }
 
 
-bool SVTADlgArchiveImagePage::validateImageFilpathRoot()
+bool SVTADlgArchiveImagePage::validateImageFilepathRoot()
 {
-	if (!m_pTool->updateCurrentImagePathRoot(true, true))
+	if (!m_pTool->updateCurrentImagePathRoot(true))
 	{
 		return false;
 	}
@@ -236,18 +239,8 @@ bool SVTADlgArchiveImagePage::validateImageFilpathRoot()
 	SvTo::ArchiveToolHelper athImagePath;
 	athImagePath.Init(fullImageFolder);
 
-	std::string Drive;
 	//check for valid drive for image archive
-	if (!SvTo::ArchiveToolHelper::ValidateDrive(fullImageFolder.c_str(), Drive) || fullImageFolder.empty())
-	{
-		SvDef::StringVector msgList;
-		msgList.push_back(Drive);
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
-		Exception.setMessage(SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_InvalidDrive, msgList, SvStl::SourceFileParams(StdMessageParams));
-		return false;
-	}
-
-	return true;
+	return ValidateDrive(fullImageFolder.c_str()) || fullImageFolder.empty();
 }
 
 

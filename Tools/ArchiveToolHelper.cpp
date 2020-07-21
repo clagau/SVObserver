@@ -77,19 +77,6 @@ std::string ArchiveToolHelper::TranslatePath(const std::string& sPath)
 	return sReturnPath;
 }
 
- bool ArchiveToolHelper::ValidateDrive(LPCTSTR szFilePath, std::string& rDrive)
-{
-	TCHAR szDrive[_MAX_DRIVE], szDir[_MAX_DIR], szFName[_MAX_FNAME], szExt[_MAX_EXT];
-
-	//Get the drive text
-	_tsplitpath(szFilePath, szDrive, szDir, szFName, szExt);
-
-	if(rDrive.empty())
-	{
-		rDrive = szDrive;
-	}
-	return ( _access( szDrive, 0 ) ) ? false : true;
-}
 #pragma endregion Public Methods
 
 #pragma region Private Methods
@@ -97,10 +84,6 @@ void ArchiveToolHelper::ParseTokens(const std::string& sPath)
 {
 	std::string::size_type iPos = std::string::npos;
 	bool bDone = false;
-	
-	std::string::size_type BeginToken = std::string::npos;
-
-	std::string::size_type EndToken = std::string::npos;
 	
 	std::string sToken;
 	bool bBeginQuote = false;
@@ -111,7 +94,7 @@ void ArchiveToolHelper::ParseTokens(const std::string& sPath)
 		bBeginQuote = false;
 		bEndQuote = false;
 
-		BeginToken = sPath.find('"',iPos+1);
+		std::string::size_type BeginToken = sPath.find('"',iPos+1);
 
 		if ( BeginToken != std::string::npos )
 		{
@@ -119,7 +102,7 @@ void ArchiveToolHelper::ParseTokens(const std::string& sPath)
 			m_IsUsingKeyWords = true;
 			bBeginQuote = true;
 
-			EndToken = sPath.find('"',BeginToken+1);
+			std::string::size_type EndToken = sPath.find('"',BeginToken+1);
 			if ( EndToken != std::string::npos )
 			{
 				bEndQuote = true;

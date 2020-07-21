@@ -56,7 +56,8 @@ public:
 	std::string getUntranslatedImagePathRoot() const;
 	/// used by SVArchiveRecord::BuildArchiveImageFilePath
 	const std::string getCurrentImagePathRoot() const;
-	bool updateCurrentImagePathRoot(bool displayMessageOnInvalidKeywords = false, bool ensureDirectoryExists=false);
+	bool updateCurrentImagePathRoot(bool displayMessageOnInvalidKeywords = false);
+	bool ensureCurrentImagePathRootExists();
 	long currentTriggerCount();
 	
 #pragma region Methods to replace processMessage

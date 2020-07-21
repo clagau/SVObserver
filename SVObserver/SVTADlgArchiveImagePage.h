@@ -131,7 +131,7 @@ protected:
 	void MemoryUsage();
 	void ReadSelectedObjects();
 	void ShowObjectSelector();
-	bool validateImageFilpathRoot();  ///< makes sure that the directory as defined in the Archive Tool Adjustment Dialog is available
+	bool validateImageFilepathRoot();  ///< makes sure that the directory as defined in the Archive Tool Adjustment Dialog is available
 
 	void OnButtonFilenameIndex1()		{m_alternativeImagePaths.SelectFilenameIndex1(m_objectSelector, this);}
 	void OnButtonFilenameIndex2()		{m_alternativeImagePaths.SelectFilenameIndex2(m_objectSelector, this);}

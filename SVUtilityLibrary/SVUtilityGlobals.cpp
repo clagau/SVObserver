@@ -12,7 +12,10 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVUtilityGlobals.h"
+#include "SVStatusLibrary/MessageManager.h"
+#include "SVMessage/SVMessage.h"
 #pragma endregion Includes
+
 
 HRESULT SafeArrayGetElementNoCopy(SAFEARRAY* psa, long* rgIndices, void* pv)
 // Does a blind copy of the requested element.
@@ -144,6 +147,28 @@ bool SVCheckPathDir( LPCTSTR PathName, bool CreateIfDoesNotExist )
 	// Restore settings...
 	_tchdir( curPath );
 	return false;
+}
+
+bool ValidateDrive(const std::string& rFilePath)
+{
+	TCHAR szDrive[_MAX_DRIVE], szDir[_MAX_DIR], szFName[_MAX_FNAME], szExt[_MAX_EXT];
+
+	//Get the drive text
+	_tsplitpath(rFilePath.c_str(), szDrive, szDir, szFName, szExt);
+
+	if (!_access(szDrive, 0))
+	{
+		return true;
+	}
+
+	//@TODO[Arvid][10.00][20.07.2020] a function here should not require GUI access!
+	SvDef::StringVector msgList;
+	msgList.push_back(rFilePath);
+	msgList.push_back(szDrive);
+	SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
+	Exception.setMessage(SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_InvalidDrive, msgList, SvStl::SourceFileParams(StdMessageParams)); 
+	return false;
+
 }
 
 bool SVDeleteFiles( LPCTSTR PathName, bool IncludeSubDirectories )

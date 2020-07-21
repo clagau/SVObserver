@@ -64,12 +64,6 @@ public:
 	/// \returns bool – true if parsed path is valid
 	//************************************
 	bool areTokensValid();
-
-	//************************************
-	/// this function will check the existence of the drive
-	/// \returns bool – true if valid
-	//************************************
-	static bool ValidateDrive(LPCTSTR szFilePath, std::string& rDrive);
 #pragma endregion Public Methods
 
 private:

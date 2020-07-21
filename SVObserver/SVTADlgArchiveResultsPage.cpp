@@ -98,37 +98,33 @@ bool SVTADlgArchiveResultsPage::QueryAllowExit()
 			std::string TmpArchiveFileName = athArchivePathAndName.TranslatePath( ArchiveFilepath );
 			if (false == SVCheckPathDir(TmpArchiveFileName.c_str(), true))
 			{
-				pathErrorDescriptionId = SvStl::Tid_InvalidKeywordsInFilePath;
+				pathErrorDescriptionId = SvStl::Tid_InvalidKeywordsInPath;
 			}
 		}
 		else
 		{
-			pathErrorDescriptionId = SvStl::Tid_InvalidFilePath;
+			pathErrorDescriptionId = SvStl::Tid_InvalidPath;
 		}
 	}
 	else
 	{	//not using Keywords 
 		if (false == SVCheckPathDir(ArchiveFilepath.c_str(), true))
 		{
-			pathErrorDescriptionId = SvStl::Tid_InvalidFilePath;
+			pathErrorDescriptionId = SvStl::Tid_InvalidPath;
 		}
 	}
 
 	if(SvStl::Tid_Empty != pathErrorDescriptionId)
 	{   //do not allow exiting with invalid path
+		SvDef::StringVector msgList;
+		msgList.push_back(ArchiveFilepath);
 		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		Exception.setMessage(SVMSG_SVO_73_ARCHIVE_MEMORY, pathErrorDescriptionId, SvStl::SourceFileParams(StdMessageParams));
 		return false;
 	}
 
-	std::string Drive;
-	if(!SvTo::ArchiveToolHelper::ValidateDrive(ArchiveFilepath.c_str(), Drive) || ArchiveFilepath.empty())
+	if(!ValidateDrive(ArchiveFilepath) || ArchiveFilepath.empty())
 	{
-		SvDef::StringVector msgList;
-		msgList.push_back( Drive );
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
-		Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_InvalidDrive, msgList, SvStl::SourceFileParams(StdMessageParams) );
-
 		return false; 
 	}
 

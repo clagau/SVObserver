@@ -96,6 +96,21 @@ HRESULT SVPlcIOImpl::Initialize(bool bInit)
 				}
 			}
 		}
+		///If no setting then try to derive the PLC node ID from the SVIM computer name
+		if(0 == m_plcNodeID)
+		{
+			DWORD size{cBuffSize};
+			memset(buffer, 0, cBuffSize);
+			if(::GetComputerName(buffer, &size))
+			{
+				std::string computerName{buffer};
+				auto iter = cComputerNameNodeID.find(computerName);
+				if(cComputerNameNodeID.end() != iter)
+				{
+					m_plcNodeID = iter->second;
+				}
+			}
+		}
 	}
 	else
 	{

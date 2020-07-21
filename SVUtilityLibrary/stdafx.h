@@ -60,6 +60,7 @@
 #include <direct.h>
 #include <iostream>
 #include <guiddef.h>
+#include  <io.h>
 #include <limits>
 #include <list>
 #include <locale>
