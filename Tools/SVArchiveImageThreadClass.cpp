@@ -51,7 +51,7 @@ HRESULT SVArchiveImageThreadClass::GoOnline()
 
 		m_hThread = ::CreateThread( nullptr, 0, SVArchiveImageThreadClass::ThreadEntry, this, 0, &m_dwThreadId );
 
-		::SetThreadPriority( m_hThread, THREAD_PRIORITY_NORMAL );
+		::SetThreadPriority( m_hThread, THREAD_PRIORITY_LOWEST );
 		
 		SVThreadManager::Instance().Add( m_hThread, "Archive Tools(Asynchronous)", SVAffinityUser );
 	}
