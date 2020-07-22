@@ -102,5 +102,8 @@
     <ClInclude Include="IBarCode.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="ISVLinearAnalyzer.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

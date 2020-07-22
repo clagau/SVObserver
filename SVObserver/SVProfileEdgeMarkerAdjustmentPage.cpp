@@ -29,8 +29,8 @@ static char THIS_FILE[] = __FILE__;
 #pragma endregion Declarations
 
 #pragma region Constructor
-SVProfileEdgeMarkerAdjustmentPageClass::SVProfileEdgeMarkerAdjustmentPageClass(uint32_t inspectionID, uint32_t taskObjectID, const std::vector<SvPb::EmbeddedIdEnum>& rEdgeEmbeddedIds, UINT nIDCaption /* = 0 */ )
-: SVEdgeMarkerAdjustmentPageClass(inspectionID, taskObjectID, rEdgeEmbeddedIds, nIDCaption, SVProfileEdgeMarkerAdjustmentPageClass::IDD )
+SVProfileEdgeMarkerAdjustmentPageClass::SVProfileEdgeMarkerAdjustmentPageClass(uint32_t inspectionID, uint32_t taskObjectID, const std::vector<SvPb::EmbeddedIdEnum>& rEdgeEmbeddedIds, uint32_t analyzerID, UINT nIDCaption /* = 0 */ )
+: SVEdgeMarkerAdjustmentPageClass(inspectionID, taskObjectID, rEdgeEmbeddedIds, analyzerID, nIDCaption, SVProfileEdgeMarkerAdjustmentPageClass::IDD )
 , m_lowerThresholdMaxOffset( 0 )
 , m_lowerThresholdMinOffset( 0 )
 , m_lowerThresholdMaxPercentDiff( 0 )
@@ -143,22 +143,22 @@ void SVProfileEdgeMarkerAdjustmentPageClass::OnHScroll( UINT nSBCode, UINT nPos,
 		{
 			case SvDef::SV_USE_SLIDER:
 			double dUpper;
-			dUpper = Normalizer.CalcRealValue( ( double ) UpperSliderCtrl.GetPos() );
+			dUpper = m_normalizerController.calcRealValueFromLocalValues((double)UpperSliderCtrl.GetPos());
 			StrUpper.Format( "%u", (int)dUpper );
 			break;
 
 			case SvDef::SV_USE_MAX_MINUS_PERCENT_DIFF:
-			m_upperThresholdMaxPercentDiff = (unsigned char) Normalizer.CalcRealValue( ( double ) UpperSliderCtrl.GetPos() );
+			m_upperThresholdMaxPercentDiff = (unsigned char)m_normalizerController.calcRealValueFromLocalValues((double)UpperSliderCtrl.GetPos());
 			StrUpper.Format( "%u", m_upperThresholdMaxPercentDiff );
 			break;
 
 			case SvDef::SV_USE_MAX_MINUS_OFFSET:
-			m_upperThresholdMaxOffset =	(unsigned char) Normalizer.CalcRealValue( ( double ) UpperSliderCtrl.GetPos() );
+			m_upperThresholdMaxOffset = (unsigned char)m_normalizerController.calcRealValueFromLocalValues((double)UpperSliderCtrl.GetPos());
 			StrUpper.Format( "%u", m_upperThresholdMaxOffset );
 			break;
 
 			case SvDef::SV_USE_MIN_PLUS_OFFSET:
-			m_upperThresholdMinOffset = (unsigned char) Normalizer.CalcRealValue( ( double ) UpperSliderCtrl.GetPos() );
+			m_upperThresholdMinOffset = (unsigned char)m_normalizerController.calcRealValueFromLocalValues((double)UpperSliderCtrl.GetPos());
 			StrUpper.Format( "%u", m_upperThresholdMinOffset );
 			break;
 		}
@@ -170,22 +170,22 @@ void SVProfileEdgeMarkerAdjustmentPageClass::OnHScroll( UINT nSBCode, UINT nPos,
 		{
 			case SvDef::SV_USE_SLIDER:
 			double dLower;
-			dLower = LowerNormalizer.CalcRealValue( ( double ) LowerSliderCtrl.GetPos() );
+			dLower = m_lowerNormalizerController.calcRealValueFromLocalValues((double)LowerSliderCtrl.GetPos());
 			StrLower.Format( "%u", (int)dLower );
 			break;
 
 			case SvDef::SV_USE_MAX_MINUS_PERCENT_DIFF:
-			m_lowerThresholdMaxPercentDiff = (unsigned char) LowerNormalizer.CalcRealValue( ( double ) LowerSliderCtrl.GetPos() );
+			m_lowerThresholdMaxPercentDiff = (unsigned char)m_lowerNormalizerController.calcRealValueFromLocalValues((double)LowerSliderCtrl.GetPos());
 			StrLower.Format( "%u", m_lowerThresholdMaxPercentDiff );
 			break;
 
 			case SvDef::SV_USE_MAX_MINUS_OFFSET:
-			m_lowerThresholdMaxOffset = (unsigned char) LowerNormalizer.CalcRealValue( ( double ) LowerSliderCtrl.GetPos() );
+			m_lowerThresholdMaxOffset = (unsigned char)m_lowerNormalizerController.calcRealValueFromLocalValues((double)LowerSliderCtrl.GetPos());
 			StrLower.Format( "%u", m_lowerThresholdMaxOffset );
 			break;
 
 			case SvDef::SV_USE_MIN_PLUS_OFFSET:
-			m_lowerThresholdMinOffset = (unsigned char) LowerNormalizer.CalcRealValue( ( double ) LowerSliderCtrl.GetPos() );
+			m_lowerThresholdMinOffset = (unsigned char)m_lowerNormalizerController.calcRealValueFromLocalValues((double)LowerSliderCtrl.GetPos());
 			StrLower.Format( "%u", m_lowerThresholdMinOffset );
 			break;
 		}
@@ -202,7 +202,7 @@ void SVProfileEdgeMarkerAdjustmentPageClass::OnUpperUserSelectable()
 
 	double dUpper;
 
-	dUpper = Normalizer.CalcRealValue( ( double ) UpperSliderCtrl.GetPos() );
+	dUpper = m_normalizerController.calcRealValueFromLocalValues((double)UpperSliderCtrl.GetPos());
 
 	StrUpper.Format( "%u", (int)dUpper );
 
@@ -217,7 +217,7 @@ void SVProfileEdgeMarkerAdjustmentPageClass::OnLowerUserSelectable()
 
 	double dLower;
 
-	dLower = LowerNormalizer.CalcRealValue( ( double ) LowerSliderCtrl.GetPos() );
+	dLower = m_lowerNormalizerController.calcRealValueFromLocalValues((double)LowerSliderCtrl.GetPos());
 
 	StrLower.Format( "%u", (int)dLower );
 

@@ -67,7 +67,7 @@ SVOCVAnalyzerClass::~SVOCVAnalyzerClass()
 	if ( m_bHasLicenseError )
 	{
 		m_bHasLicenseError = false;
-		SVOLicenseManager::Instance().RemoveLicenseErrorFromList(getObjectId());
+		SVOLicenseManager::Instance().RemoveLicenseErrorFromList(GetCompleteName());
 	}
 }
 
@@ -80,7 +80,7 @@ bool SVOCVAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rCreateS
 	
 	if ( m_bHasLicenseError )
 	{
-		SVOLicenseManager::Instance().AddLicenseErrorToList(getObjectId());
+		SVOLicenseManager::Instance().AddLicenseErrorToList(GetCompleteName());
 	}
 
 	return m_isCreated;

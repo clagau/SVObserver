@@ -50,6 +50,7 @@
 #include "SVToolSet.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "InspectionCommands/CommandExternalHelper.h"
+#include "InspectionCommands/CommandFunction.h"
 #pragma endregion Inlcudes
 
 SVSetupDialogManager& SVSetupDialogManager::Instance()
@@ -317,19 +318,18 @@ HRESULT SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog(uint32_t objectId
 
 		if (nullptr != pEdgeA)
 		{
-			pPageA = new SVProfileEdgeMarkerAdjustmentPageClass(pInspection->getObjectId(), pEdgeA->getObjectId(), pEdgeA->getEdgeEmbeddedIds(), IDS_EDGE_A);
+			pPageA = new SVProfileEdgeMarkerAdjustmentPageClass(pInspection->getObjectId(), pEdgeA->getObjectId(), pEdgeA->getEdgeEmbeddedIds(), objectId, IDS_EDGE_A);
 		}
 
 		if (nullptr != pEdgeB)
 		{
-			pPageB = new SVProfileEdgeMarkerAdjustmentPageClass(pInspection->getObjectId(), pEdgeB->getObjectId(), pEdgeB->getEdgeEmbeddedIds(), IDS_EDGE_B);
+			pPageB = new SVProfileEdgeMarkerAdjustmentPageClass(pInspection->getObjectId(), pEdgeB->getObjectId(), pEdgeB->getEdgeEmbeddedIds(), objectId, IDS_EDGE_B);
 		}
 
 		if (nullptr != pIPDoc && (nullptr != pPageA || nullptr != pPageB))
 		{
 			if (nullptr != pPageA && nullptr != pEdgeA)
 			{
-				pPageA->SetNormalizer(pAnalyzer->m_svNormalizer);
 				pPageA->m_bEdgeA = true;
 
 				//set enable flags
@@ -344,7 +344,6 @@ HRESULT SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog(uint32_t objectId
 
 			if (nullptr != pPageB && nullptr != pEdgeB)
 			{
-				pPageB->SetNormalizer(pAnalyzer->m_svNormalizer);
 				pPageB->m_bEdgeA = false;
 
 				//set enable flags

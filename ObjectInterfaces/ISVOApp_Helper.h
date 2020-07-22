@@ -58,9 +58,9 @@ namespace SvOi
 
 	//! Shows the modeless license manager dialog
 	//! \param rMessage [in] the message to display
-	//! \param rList [in] the list of object IDs which has no license
+	//! \param rList [in] the list of object names as strings which has no license
 	//! \param hCheckEvent [in] Handle to event which will close the dialog
-	void showLicenseManagerDialog(const std::string& rMessage, const std::set<uint32_t>& rList, HANDLE hCheckEvent);
+	void showLicenseManagerDialog(const std::string& rMessage, const std::set<std::string>& rList, HANDLE hCheckEvent);
 
 	//! Destroys the modeless license manager dialog
 	void destroyLicenseManagerDialog();

@@ -151,7 +151,7 @@ void SVImageClass::init()
 	::InitializeCriticalSection(&m_hCriticalSection);
 	m_bCriticalSectionCreated = true;
 
-	m_ImageType = SvDef::SVImageTypeEnum::SVImageTypeUnknown;
+	m_ImageType = SvPb::SVImageTypeEnum::SVImageTypeUnknown;
 
 	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVImageObjectType;
 	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVImageMonoType;
@@ -222,7 +222,7 @@ bool SVImageClass::DestroyImage()
 
 			assert(bOk);
 
-			m_ImageType = SvDef::SVImageTypeEnum::SVImageTypeUnknown;
+			m_ImageType = SvPb::SVImageTypeEnum::SVImageTypeUnknown;
 
 			m_isCreated = false;
 
@@ -241,7 +241,7 @@ bool SVImageClass::DestroyImage()
 	return bOk;
 }
 
-HRESULT SVImageClass::InitializeImage(SvDef::SVImageTypeEnum ImageType)
+HRESULT SVImageClass::InitializeImage(SvPb::SVImageTypeEnum ImageType)
 {
 	if (m_ImageType != ImageType)
 	{
@@ -335,7 +335,7 @@ HRESULT SVImageClass::UpdateImage(uint32_t parentID, const SVImageInfoClass& rIm
 	return Result;
 }
 
-HRESULT SVImageClass::UpdateImage(SvDef::SVImageTypeEnum ImageType)
+HRESULT SVImageClass::UpdateImage(SvPb::SVImageTypeEnum ImageType)
 {
 	HRESULT l_Status = S_OK;
 
@@ -433,7 +433,7 @@ HRESULT SVImageClass::UpdateFromParentInformation(SvStl::MessageContainerVector 
 {
 	HRESULT Result {S_OK};
 
-	if (m_ImageType != SvDef::SVImageTypeEnum::SVImageTypeMain)
+	if (m_ImageType != SvPb::SVImageTypeEnum::SVImageTypeMain)
 	{
 		SVImageClass* l_pParentImage = GetParentImage();
 
@@ -447,7 +447,7 @@ HRESULT SVImageClass::UpdateFromParentInformation(SvStl::MessageContainerVector 
 
 			l_ImageInfo.SetImageProperties(l_ImageProperties);
 
-			if (m_ImageType == SvDef::SVImageTypeEnum::SVImageTypeDependent)
+			if (m_ImageType == SvPb::SVImageTypeEnum::SVImageTypeDependent)
 			{
 				imageExtent = l_ImageInfo.GetExtents();
 
@@ -499,15 +499,15 @@ HRESULT SVImageClass::UpdateFromToolInformation()
 	SVTaskObjectClass*	pParentTask = dynamic_cast <SVTaskObjectClass*> (GetTool());
 	if (nullptr != pParentTask)
 	{
-		if ((SvDef::SVImageTypeEnum::SVImageTypeMain != m_ImageType) &&
-			(SvDef::SVImageTypeEnum::SVImageTypeIndependent != m_ImageType) &&
-			(SvDef::SVImageTypeEnum::SVImageTypeDependent != m_ImageType) &&
+		if ((SvPb::SVImageTypeEnum::SVImageTypeMain != m_ImageType) &&
+			(SvPb::SVImageTypeEnum::SVImageTypeIndependent != m_ImageType) &&
+			(SvPb::SVImageTypeEnum::SVImageTypeDependent != m_ImageType) &&
 			pParentTask->DoesObjectHaveExtents())
 		{
 			RECT l_Rect;
 			SVImageExtentClass tempExtent = pParentTask->GetImageExtent();
 
-			if (SvDef::SVImageTypeEnum::SVImageTypeLogical == m_ImageType)
+			if (SvPb::SVImageTypeEnum::SVImageTypeLogical == m_ImageType)
 			{
 				// @Hack
 				// It does not make sense that a logical buffer is not a 1:1 
@@ -534,8 +534,8 @@ HRESULT SVImageClass::UpdateFromToolInformation()
 			}
 		}
 
-		if (SvDef::SVImageTypeEnum::SVImageTypeIndependent != m_ImageType &&
-			SvDef::SVImageTypeEnum::SVImageTypeDependent != m_ImageType)
+		if (SvPb::SVImageTypeEnum::SVImageTypeIndependent != m_ImageType &&
+			SvPb::SVImageTypeEnum::SVImageTypeDependent != m_ImageType)
 		{
 			SvOi::ITool* pTool = GetToolInterface();
 			if (nullptr != pTool)
@@ -555,7 +555,7 @@ HRESULT SVImageClass::UpdateFromToolInformation()
 		m_LastUpdate = SvTl::GetTimeStamp();
 	}
 
-	if ((SvDef::SVImageTypeEnum::SVImageTypeMain != m_ImageType) && (SvDef::SVImageTypeEnum::SVImageTypeIndependent != m_ImageType))
+	if ((SvPb::SVImageTypeEnum::SVImageTypeMain != m_ImageType) && (SvPb::SVImageTypeEnum::SVImageTypeIndependent != m_ImageType))
 	{
 		l_Status = m_ImageInfo.SetExtents(toolExtent);
 
@@ -591,8 +591,8 @@ HRESULT SVImageClass::UpdateChild(uint32_t childID, const SVImageInfoClass& rIma
 
 	if (Lock())
 	{
-		if (SvDef::SVImageTypeEnum::SVImageTypeDependent == m_ImageType ||
-			SvDef::SVImageTypeEnum::SVImageTypeLogical == m_ImageType)
+		if (SvPb::SVImageTypeEnum::SVImageTypeDependent == m_ImageType ||
+			SvPb::SVImageTypeEnum::SVImageTypeLogical == m_ImageType)
 		{
 			SVImageClass* l_pParentImage = GetParentImage();
 
@@ -912,8 +912,8 @@ HRESULT SVImageClass::UpdatePosition()
 
 	m_ParentImageInfo.second = dynamic_cast<SVImageClass*>(SVObjectManagerClass::Instance().GetObject(m_ParentImageInfo.first));
 
-	if (SvDef::SVImageTypeEnum::SVImageTypeDependent == m_ImageType ||
-		SvDef::SVImageTypeEnum::SVImageTypeLogical == m_ImageType)
+	if (SvPb::SVImageTypeEnum::SVImageTypeDependent == m_ImageType ||
+		SvPb::SVImageTypeEnum::SVImageTypeLogical == m_ImageType)
 	{
 		if (nullptr != m_ParentImageInfo.second)
 		{
@@ -1222,7 +1222,7 @@ HRESULT SVImageClass::TranslateFromOutputSpaceToImage(SVImageClass* pImage, SVPo
 }
 
 #pragma region virtual method (ISVImage)
-SvDef::SVImageTypeEnum SVImageClass::GetImageType() const
+SvPb::SVImageTypeEnum SVImageClass::GetImageType() const
 {
 	return m_ImageType;
 }
@@ -1246,7 +1246,7 @@ SvOi::SVImageBufferHandlePtr SVImageClass::getImageData() const
 std::string SVImageClass::getDisplayedName() const
 {
 	std::string strName;
-	if (SvDef::SVImageTypeMain == m_ImageType)
+	if (SvPb::SVImageTypeEnum::SVImageTypeMain == m_ImageType)
 	{
 		auto pParent = GetParent();
 		if (nullptr != pParent)
@@ -1372,8 +1372,8 @@ bool SVImageClass::UpdateTRCBuffers(SvStl::MessageContainerVector *pErrorMessage
 	bool retValue = true;
 	if (0 <= m_inspectionPosInTRC)
 	{
-		if (SvDef::SVImageTypeEnum::SVImageTypeDependent == m_ImageType ||
-			SvDef::SVImageTypeEnum::SVImageTypeLogical == m_ImageType)
+		if (SvPb::SVImageTypeEnum::SVImageTypeDependent == m_ImageType ||
+			SvPb::SVImageTypeEnum::SVImageTypeLogical == m_ImageType)
 		{
 			SVImageClass* pParent = GetParentImage();
 			if (nullptr != pParent)

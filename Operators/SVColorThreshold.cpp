@@ -319,10 +319,10 @@ void SVColorThresholdClass::LocalInitialize()
 		m_BandThreshold[Band].m_UpperThreshold.SetDefaultValue(SvDef::cDefaultToolUpperThreshold, true);
 		m_BandThreshold[Band].m_LowerThreshold.SetDefaultValue(SvDef::cDefaultToolLowerThreshold, true);
 		m_BandThreshold[Band].m_ThresholdExclude.SetDefaultValue(BOOL(false), true);
-		GetBandOutputImage(Band).InitializeImage(SvDef::SVImageTypeEnum::SVImageTypeIndependent);
+		GetBandOutputImage(Band).InitializeImage(SvPb::SVImageTypeEnum::SVImageTypeIndependent);
 	}
 
-	m_OutputImage.InitializeImage(SvDef::SVImageTypeEnum::SVImageTypeIndependent);
+	m_OutputImage.InitializeImage(SvPb::SVImageTypeEnum::SVImageTypeIndependent);
 
 	// Identify our input type needs...
 	m_BandThreshold[SvDef::BandEnum::Band0].m_InputImage.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType, SvPb::Band0ImageEId);

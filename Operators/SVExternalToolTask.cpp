@@ -202,7 +202,7 @@ SVExternalToolTask::SVExternalToolTask(SVObjectClass* POwner, int StringResource
 		imageInfo.SetExtentProperty(SvPb::SVExtentPropertyHeight, 100);
 
 		SvIe::SVImageClass* pImage = &(m_aResultImages[i]);
-		pImage->InitializeImage(SvDef::SVImageTypeEnum::SVImageTypePhysical);
+		pImage->InitializeImage(SvPb::SVImageTypeEnum::SVImageTypePhysical);
 		pImage->UpdateImage(SvDef::InvalidObjectId, imageInfo);
 	}
 
@@ -948,7 +948,7 @@ HRESULT SVExternalToolTask::Initialize(SVDllLoadLibraryCallback fnNotify, bool i
 						imageInfo.SetOwner(SvDef::InvalidObjectId);
 					}
 
-					pImage->InitializeImage(SvDef::SVImageTypeEnum::SVImageTypePhysical);
+					pImage->InitializeImage(SvPb::SVImageTypeEnum::SVImageTypePhysical);
 					if (!m_dll.UseMil())
 					{
 						imageInfo.setDibBufferFlag(true);

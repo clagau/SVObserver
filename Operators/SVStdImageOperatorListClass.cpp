@@ -50,9 +50,9 @@ void SVStdImageOperatorListClass::init()
 
 	// This logical ROI image is referenced in the embedded list, but 
 	//  will be hidden from most exposure.
-	m_LogicalROIImage.InitializeImage(SvDef::SVImageTypeEnum::SVImageTypeLogical);
+	m_LogicalROIImage.InitializeImage(SvPb::SVImageTypeEnum::SVImageTypeLogical);
 	// Set Embedded defaults
-	m_OutputImage.InitializeImage(SvDef::SVImageTypeEnum::SVImageTypePhysical);
+	m_OutputImage.InitializeImage(SvPb::SVImageTypeEnum::SVImageTypePhysical);
 
 	// Set default inputs and outputs
 	addDefaultInputObjects();

@@ -145,4 +145,15 @@ SvPb::InspectionCmdResponse setDefaultInputsRequest(SvPb::SetDefaultInputsReques
 SvPb::InspectionCmdResponse getBarCodeTypeInfos(SvPb::GetBarCodeTypeInfosRequest request);
 
 std::vector<SvPb::TreeItem> getSelectorList(SvPb::GetObjectSelectorItemsRequest request, SvPb::ObjectSelectorType selectorType);
+
+SvPb::InspectionCmdResponse getNormalizerValues(SvPb::GetNormalizerValuesRequest request);
+
+SvPb::InspectionCmdResponse setNormalizerRanges(SvPb::SetNormalizerRangesRequest request);
+
+SvPb::InspectionCmdResponse getImageInfo(SvPb::GetImageInfoRequest request);
+
+SvPb::InspectionCmdResponse getBlobAnalyzerInfo(SvPb::GetBlobAnalyzerInfoRequest request);
+
+SvPb::InspectionCmdResponse computeOverscanRect(SvPb::ComputeOverscanRectRequest request);
+
 } //namespace SvCmd

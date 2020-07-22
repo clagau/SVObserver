@@ -103,6 +103,7 @@
     <ClInclude Include="IRootObject.h" />
     <ClInclude Include="ISVFilter.h" />
     <ClInclude Include="ISVImage.h" />
+    <ClInclude Include="ISVLinearAnalyzer.h" />
     <ClInclude Include="ISVOApp_Helper.h" />
     <ClInclude Include="ITaskObject.h" />
     <ClInclude Include="ITaskObjectListClass.h" />

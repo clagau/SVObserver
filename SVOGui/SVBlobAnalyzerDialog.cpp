@@ -15,13 +15,11 @@
 
 #include "SVFillBlobDlg.h"
 #include "SVBlobFeaturePropertiesDlg.h"
-#include "ObjectInterfaces/IBlobAnalyzer.h"
-#include "ObjectInterfaces/IObjectClass.h"
-#include "ObjectInterfaces/IObjectManager.h"
 #include "ObjectInterfaces/ISVOApp_Helper.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
+#include "SVProtoBuf/SVO-Enum.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -110,7 +108,7 @@ namespace SvOg
 		m_cbBlobColor.SetCurSelItemData(CurrentSelection);
 
 		m_FeaturesEnabled = std::string(m_values.Get<CString>(SvPb::BlobEnabledFeaturesEId));
-		assert(SvOi::SV_NUMBER_OF_BLOB_FEATURES == m_FeaturesEnabled.size());
+		assert(SvPb::SVBlobFeatureEnum::SV_NUMBER_OF_BLOB_FEATURES == m_FeaturesEnabled.size());
 
 		m_Ascending = m_values.Get<bool>(SvPb::SortAscendingEId);
 		m_bExclude = m_values.Get<bool>(SvPb::ExcludeFailedEId);
@@ -118,7 +116,7 @@ namespace SvOg
 		m_lMaxBlobDataArraySize = m_values.Get<long>(SvPb::MaxBlobDataArraySizeEId);
 
 		long SortFeature = m_values.Get<long>(SvPb::SortFeatureEId);
-		if (0 <= SortFeature && SvOi::SV_NUMBER_OF_BLOB_FEATURES > SortFeature)
+		if (0 <= SortFeature && SvPb::SVBlobFeatureEnum::SV_NUMBER_OF_BLOB_FEATURES > SortFeature)
 		{
 			m_SortFeatureEdt = m_values.GetName(SvPb::BlobFeatureEId + SortFeature).c_str();
 		}
@@ -200,9 +198,10 @@ namespace SvOg
 			{
 				state = true;
 				int iIndex = m_lbSelectedFeatures.GetCurSel();
-				SvOi::SVBlobFeatureEnum index = static_cast<SvOi::SVBlobFeatureEnum> (m_lbSelectedFeatures.GetItemData(iIndex));
+				SvPb::SVBlobFeatureEnum index = static_cast<SvPb::SVBlobFeatureEnum> (m_lbSelectedFeatures.GetItemData(iIndex));
 
-				if (SvOi::SV_AREA == index || SvOi::SV_BOXX_MAX == index || SvOi::SV_BOXX_MIN == index || SvOi::SV_BOXY_MAX == index || SvOi::SV_BOXY_MIN == index)
+				if (SvPb::SVBlobFeatureEnum::SV_AREA == index || SvPb::SVBlobFeatureEnum::SV_BOXX_MAX == index || SvPb::SVBlobFeatureEnum::SV_BOXX_MIN == index 
+					|| SvPb::SVBlobFeatureEnum::SV_BOXY_MAX == index || SvPb::SVBlobFeatureEnum::SV_BOXY_MIN == index)
 				{
 					GetDlgItem(IDC_BUTTON5)->EnableWindow(false);
 				}
@@ -211,7 +210,7 @@ namespace SvOg
 					GetDlgItem(IDC_BUTTON5)->EnableWindow(true);
 				}
 
-				if (SvOi::SV_CENTER_X_SOURCE == index || SvOi::SV_CENTER_Y_SOURCE == index)
+				if (SvPb::SVBlobFeatureEnum::SV_CENTER_X_SOURCE == index || SvPb::SVBlobFeatureEnum::SV_CENTER_Y_SOURCE == index)
 				{
 					pSetSortButtonWnd->EnableWindow(false);
 					pSetRangeButtonWnd->EnableWindow(false);
@@ -240,7 +239,7 @@ namespace SvOg
 		long lAvailableIndex = static_cast<long> (m_lbAvailableFeatures.GetItemData( m_lbAvailableFeatures.GetCurSel()));
 		long lCurrentIndex = static_cast<long> (m_lbSelectedFeatures.GetItemData( m_lbSelectedFeatures.GetCurSel()));
 
-		if(0 <= lAvailableIndex && SvOi::SV_NUMBER_OF_BLOB_FEATURES > lAvailableIndex)
+		if(0 <= lAvailableIndex && SvPb::SVBlobFeatureEnum::SV_NUMBER_OF_BLOB_FEATURES > lAvailableIndex)
 		{
 			if (LB_ERR == lCurrentIndex)
 			{
@@ -270,7 +269,7 @@ namespace SvOg
 	{
 		long index = static_cast<long> (m_lbSelectedFeatures.GetItemData(m_lbSelectedFeatures.GetCurSel()));
 
-		if(0 <= index && SvOi::SV_NUMBER_OF_BLOB_FEATURES > index)
+		if(0 <= index && SvPb::SVBlobFeatureEnum::SV_NUMBER_OF_BLOB_FEATURES > index)
 		{
 			m_FeaturesEnabled[index] = _T('0');
 			m_values.Set<CString>(SvPb::BlobEnabledFeaturesEId, m_FeaturesEnabled.c_str());
@@ -338,22 +337,25 @@ namespace SvOg
 	{
 
 		int Feature = static_cast<int> (m_lbSelectedFeatures.GetItemData( m_lbSelectedFeatures.GetCurSel()));
-
+	
 		if (0 <= Feature)
 		{
-			SvOi::IBlobAnalyzer* pBlobAnalyzer = dynamic_cast<SvOi::IBlobAnalyzer*> (SvOi::getObject(m_TaskObjectID));
-			if (nullptr != pBlobAnalyzer)
+			SvPb::InspectionCmdRequest requestCmd;
+			SvPb::InspectionCmdResponse responseCmd;
+			auto* pRequest = requestCmd.mutable_getblobanalyzerinforequest();
+			pRequest->set_feature(Feature);
+			pRequest->set_featureenabled(false);
+			pRequest->set_taskobjectid(m_TaskObjectID);
+
+			HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
+			if (S_OK == hr && responseCmd.has_getblobanalyzerinforesponse())
 			{
-				SvOi::IObjectClass* pResult = pBlobAnalyzer->getResultObject(Feature);
-				if (nullptr != pResult)
-				{
-					SvOi::SetupDialogManager(pResult->GetClassID(), pResult->getObjectId(), GetSafeHwnd());
-				}
-				else
-				{
-					SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log);
-					MesMan.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16088);
-				}
+				SvOi::SetupDialogManager(responseCmd.getblobanalyzerinforesponse().resultobjectclassid(), responseCmd.getblobanalyzerinforesponse().resultobjectid(), GetSafeHwnd());
+			}
+			else
+			{
+				SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log);
+				MesMan.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16088);
 			}
 		}
 		else
@@ -444,9 +446,10 @@ namespace SvOg
 
 		if( LB_ERR != Index )
 		{
-			int Feature = static_cast<SvOi::SVBlobFeatureEnum>(m_lbSelectedFeatures.GetItemData(Index));
+			int Feature = static_cast<SvPb::SVBlobFeatureEnum>(m_lbSelectedFeatures.GetItemData(Index));
 
-			if (SvOi::SV_AREA == Feature || SvOi::SV_BOXX_MAX == Feature || SvOi::SV_BOXX_MIN == Feature || SvOi::SV_BOXY_MAX == Feature || SvOi::SV_BOXY_MIN == Feature)
+			if (SvPb::SVBlobFeatureEnum::SV_AREA == Feature || SvPb::SVBlobFeatureEnum::SV_BOXX_MAX == Feature || SvPb::SVBlobFeatureEnum::SV_BOXX_MIN == Feature 
+				|| SvPb::SVBlobFeatureEnum::SV_BOXY_MAX == Feature || SvPb::SVBlobFeatureEnum::SV_BOXY_MIN == Feature)
 			{
 				GetDlgItem(IDC_BUTTON5)->EnableWindow(false);
 			}
@@ -454,7 +457,7 @@ namespace SvOg
 			{
 				GetDlgItem(IDC_BUTTON5)->EnableWindow(true);
 			}
-			if (SvOi::SV_CENTER_X_SOURCE == Feature || SvOi::SV_CENTER_Y_SOURCE == Feature)
+			if (SvPb::SVBlobFeatureEnum::SV_CENTER_X_SOURCE == Feature || SvPb::SVBlobFeatureEnum::SV_CENTER_Y_SOURCE == Feature)
 			{
 				GetDlgItem(IDC_SET_SORT_BTN)->EnableWindow(false);
 				GetDlgItem(IDC_BUTTON4)->EnableWindow(false);
@@ -469,14 +472,23 @@ namespace SvOg
 
 	void SVBlobAnalyzeFeatureDialogClass::OnNbrOfBlobs() 
 	{
-		SvOi::IBlobAnalyzer* pBlobAnalyzer = dynamic_cast<SvOi::IBlobAnalyzer*> (SvOi::getObject(m_TaskObjectID));
-		if (nullptr != pBlobAnalyzer)
+		//needed here only to fill-in the request to inspection commands
+		int Feature = static_cast<int> (m_lbSelectedFeatures.GetItemData(m_lbSelectedFeatures.GetCurSel()));
+
+		SvPb::InspectionCmdRequest requestCmd;
+		SvPb::InspectionCmdResponse responseCmd;
+		auto* pRequest = requestCmd.mutable_getblobanalyzerinforequest();
+		pRequest->set_feature(Feature);
+		pRequest->set_featureenabled(false);
+		pRequest->set_taskobjectid(m_TaskObjectID);
+
+		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
+		if (S_OK == hr && responseCmd.has_getblobanalyzerinforesponse())
 		{
-			SvOi::IObjectClass* pResultBlob = pBlobAnalyzer->getResultBlob();
-			if (nullptr != pResultBlob)
-			{
-				SvOi::SetupDialogManager(pResultBlob->GetClassID(), pResultBlob->getObjectId(), GetSafeHwnd());
-			}
+			SvOi::SetupDialogManager(responseCmd.getblobanalyzerinforesponse().resultblobclassid(), responseCmd.getblobanalyzerinforesponse().resultblobid(), GetSafeHwnd());
+		}
+		else
+		{
 		}
 	}
 
@@ -544,17 +556,30 @@ namespace SvOg
 	{
 		listBox.ResetContent();
 
-		SvOi::IBlobAnalyzer* pBlobAnalyzer = dynamic_cast<SvOi::IBlobAnalyzer*> (SvOi::getObject(m_TaskObjectID));
-		if (nullptr != pBlobAnalyzer)
+		//needed here only to fill-in the request to inspection commands
+		int Feature = static_cast<int> (m_lbSelectedFeatures.GetItemData(m_lbSelectedFeatures.GetCurSel()));
+
+		SvPb::InspectionCmdRequest requestCmd;
+		SvPb::InspectionCmdResponse responseCmd;
+		auto* pRequest = requestCmd.mutable_getblobanalyzerinforequest();
+		pRequest->set_feature(Feature);
+		pRequest->set_featureenabled(EnabledFeatures);
+		pRequest->set_taskobjectid(m_TaskObjectID);
+
+		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
+		if (S_OK == hr && responseCmd.has_getblobanalyzerinforesponse())
 		{
-			const SvOi::NameValueVector& rList = pBlobAnalyzer->getFeatureList(EnabledFeatures);
-			for (auto const& rEntry : rList)
+			auto featureList = responseCmd.getblobanalyzerinforesponse().list();
+			for (auto const& feature : featureList)
 			{
-				if (!rEntry.first.empty())
+				if (!feature.name().empty())
 				{
-					listBox.SetItemData(listBox.AddString(rEntry.first.c_str()), static_cast<DWORD_PTR>(rEntry.second));
+					listBox.SetItemData(listBox.AddString(feature.name().c_str()), static_cast<DWORD_PTR>(feature.value()));
 				}
 			}
+		}
+		else
+		{
 		}
 
 		if (0 >= listBox.GetCount())

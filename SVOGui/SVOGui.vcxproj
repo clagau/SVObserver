@@ -123,6 +123,7 @@
     <ClCompile Include="GlobalConstantDlg.cpp" />
     <ClCompile Include="ImageController.cpp" />
     <ClCompile Include="MaskController.cpp" />
+    <ClCompile Include="NormalizerController.cpp" />
     <ClCompile Include="ObjectSelectorController.cpp" />
     <ClCompile Include="PictureDisplay.cpp" />
     <ClCompile Include="RangeController.cpp" />
@@ -200,6 +201,7 @@
     <ClInclude Include="ImageController.h" />
     <ClInclude Include="ISVPropertyPageDialog.h" />
     <ClInclude Include="MaskController.h" />
+    <ClInclude Include="NormalizerController.h" />
     <ClInclude Include="ObjectSelectorController.h" />
     <ClInclude Include="PictureDisplay.h" />
     <ClInclude Include="RangeController.h" />

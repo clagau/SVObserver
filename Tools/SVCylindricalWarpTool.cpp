@@ -89,7 +89,7 @@ void SVCylindricalWarpToolClass::LocalInitialize()
 	// Register SourceImageNames Value Object
 	RegisterEmbeddedObject( &m_SourceImageNames, SvPb::SourceImageNamesEId, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemTool );
 
-	m_OutputImage.InitializeImage( SvDef::SVImageTypeEnum::SVImageTypePhysical );
+	m_OutputImage.InitializeImage( SvPb::SVImageTypeEnum::SVImageTypePhysical );
 
 	// Set Default Warp Method to Use Horizontal
 	RegisterEmbeddedObject( &m_svWarpType, SvPb::WarpTypeEId, IDS_OBJECTNAME_WARPTYPE, false, SvOi::SVResetItemTool );

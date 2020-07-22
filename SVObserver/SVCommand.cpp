@@ -1521,7 +1521,7 @@ HRESULT CSVCommand::ImageToBSTR(const SVImageInfoClass&  rImageInfo, SvOi::SVIma
 		oChildInfo = rImageInfo;
 		oChildHandle = rImageHandle;
 
-		long l_lType = SvDef::SVImageTypeEnum::SVImageTypeUnknown;
+		long l_lType = SvPb::SVImageTypeEnum::SVImageTypeUnknown;
 		long l_lBandNumber = 1;
 		long l_lBandLink = 0;
 
@@ -1542,7 +1542,7 @@ HRESULT CSVCommand::ImageToBSTR(const SVImageInfoClass&  rImageInfo, SvOi::SVIma
 		oChildInfo.GetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, l_lBandNumber);
 		oChildInfo.GetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, l_lBandLink);
 
-		if (IsColor && l_lType == SvDef::SVImageTypeEnum::SVImageTypePhysical && l_lBandNumber == 3)
+		if (IsColor && l_lType == SvPb::SVImageTypeEnum::SVImageTypePhysical && l_lBandNumber == 3)
 		{
 			oChildInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 1);
 
@@ -1561,7 +1561,7 @@ HRESULT CSVCommand::ImageToBSTR(const SVImageInfoClass&  rImageInfo, SvOi::SVIma
 			}
 		}
 
-		if (l_lType == SvDef::SVImageTypeEnum::SVImageTypeLogical)
+		if (l_lType == SvPb::SVImageTypeEnum::SVImageTypeLogical)
 		{
 			/*HRESULT hrImage =*/ SvIe::SVImageProcessingClass::CreateImageBuffer(oChildInfo, oChildHandle);
 

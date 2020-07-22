@@ -192,13 +192,13 @@ HRESULT SVToolExtentClass::UpdateImageWithExtent(SVToolExtentTypeEnum p_ToolExte
 	{
 		SVImageExtentClass imageExtents;
 
-		SvDef::SVImageTypeEnum l_Type = m_pToolImage->GetImageType();
+		SvPb::SVImageTypeEnum l_Type = m_pToolImage->GetImageType();
 
 		SvIe::SVImageClass* pParent = m_pToolImage->GetParentImage();
 
 		if (nullptr != pParent)
 		{
-			if (SvDef::SVImageTypeEnum::SVImageTypeDependent == l_Type)
+			if (SvPb::SVImageTypeEnum::SVImageTypeDependent == l_Type)
 			{
 				imageExtents = pParent->GetImageExtents();
 

@@ -85,7 +85,7 @@ SVImageArithmeticClass::SVImageArithmeticClass( SVObjectClass* POwner, int Strin
 
 	// Set Embedded defaults
 
-	m_OutputImage.InitializeImage( SvDef::SVImageTypeEnum::SVImageTypePhysical );
+	m_OutputImage.InitializeImage( SvPb::SVImageTypeEnum::SVImageTypePhysical );
 
 	// Set up draw objects...
 //	graphFigure.SetDrawPen( TRUE, PS_SOLID, 1, SvDef::DefaultSubFunctionColor1 );

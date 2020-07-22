@@ -27,11 +27,11 @@ public:
 	bool HasMatroxLicense()  const;
 	bool HasMatroxGigELicense()  const;
 	bool HasMatroxIdentificationLicense()  const;
-	void AddLicenseErrorToList(uint32_t objectId);
+	void AddLicenseErrorToList(const std::string& objectName);
 	void ShowLicenseManagerErrors();
 	bool HasToolErrors()  const;
 	void ClearLicenseErrors();
-	void RemoveLicenseErrorFromList(uint32_t objectId);
+	void RemoveLicenseErrorFromList(const std::string& objectName);
 	
 //private member variables
 private:
@@ -39,7 +39,7 @@ private:
 	bool m_bMatroxIdentificationLicense;
 	bool m_bMatroxGigELicense;
 
-	std::set<uint32_t> m_svErrorList;
+	std::set<std::string> m_svStrErrorList;
 
 protected:
 	HANDLE m_hCheckEvent;

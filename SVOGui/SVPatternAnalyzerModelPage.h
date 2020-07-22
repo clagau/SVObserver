@@ -117,6 +117,10 @@ namespace SvOg
 		/// Set the enable state for the don't care controls.
 		/// \returns void
 		void SetEnableStateDontCareControls();
+
+		/// Compute an overscan rectangle using InspectionCommand, i.e. send a request and fetch the response. 
+		/// \returns resulted overscan CRect object
+		CRect computeOverscanRect(const POINT& point, const SIZE& size, SvPb::OverscanRectKindEnum rectKind);
 	#pragma endregion Private Methods
 
 	#pragma region Member Variables

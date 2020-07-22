@@ -44,11 +44,11 @@ class SVLicenseMgrModelessDlg : public CDialog
 public:
 	SVLicenseMgrModelessDlg();
 	virtual ~SVLicenseMgrModelessDlg();
-	static void Show(const std::string& sMsg, const std::set<uint32_t>& rList, HANDLE hEvent);
+	static void Show(const std::string& sMsg, const std::set<std::string>& rList, HANDLE hEvent);
 	static void Destroy();
 
 private:
-	void Init(const std::string& rMsg, const std::set<uint32_t>& rList, HANDLE hEvent);
+	void Init(const std::string& rMsg, const std::set<std::string>& rList, HANDLE hEvent);
 	static SVLicenseMgrModelessDlg& Instance();
 	void CleanUp();
 
@@ -84,7 +84,7 @@ protected:
 private:
 	std::string m_Msg;
 	HANDLE m_hEvent;
-	std::set<uint32_t> m_sList;
+	std::set<std::string> m_sNameList;
 
 	CString m_sMessageTitle;
 	CListBox m_ctlErrorList;

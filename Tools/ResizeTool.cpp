@@ -50,10 +50,10 @@ void ResizeTool::LocalInitialize()
 	BuildInputObjectList();
 
 	// The output image is referenced in the embedded list.
-	m_OutputImage.InitializeImage(SvDef::SVImageTypeEnum::SVImageTypePhysical);
+	m_OutputImage.InitializeImage(SvPb::SVImageTypeEnum::SVImageTypePhysical);
 	// This logical ROI image is also referenced in the embedded list, but 
 	//  will be hidden from most exposure (within ResizeTool::Create).
-	m_LogicalROIImage.InitializeImage(SvDef::SVImageTypeEnum::SVImageTypeLogical);
+	m_LogicalROIImage.InitializeImage(SvPb::SVImageTypeEnum::SVImageTypeLogical);
 
 	BuildEmbeddedObjectList();
 

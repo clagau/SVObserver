@@ -130,7 +130,7 @@ SVImagePolarTransformClass::SVImagePolarTransformClass( SVObjectClass* POwner, i
 	m_startAngle.SetDefaultValue( ( double ) SvDef::cDefaultPolarTransformStartAngle );
 	m_endAngle.SetDefaultValue( ( double ) SvDef::cDefaultPolarTransformEndAngle );
 
-	m_outputImage.InitializeImage( SvDef::SVImageTypeEnum::SVImageTypePhysical );
+	m_outputImage.InitializeImage( SvPb::SVImageTypeEnum::SVImageTypePhysical );
 
 	m_useFormulaInput.SetDefaultValue( BOOL(false) );	// Default: Don't use formulas...
 

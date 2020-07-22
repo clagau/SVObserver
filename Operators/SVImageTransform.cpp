@@ -98,7 +98,7 @@ SVImageTransformClass::SVImageTransformClass( SVObjectClass* POwner, int StringR
 	m_extentWidth.SetDefaultValue( SvDef::cDefaultWindowToolWidth );
 	m_extentHeight.SetDefaultValue( SvDef::cDefaultWindowToolHeight );
 
-	m_outputImage.InitializeImage( SvDef::SVImageTypeEnum::SVImageTypePhysical );
+	m_outputImage.InitializeImage( SvPb::SVImageTypeEnum::SVImageTypePhysical );
 
 	// Add Default Inputs and Outputs
 	addDefaultInputObjects();

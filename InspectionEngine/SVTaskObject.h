@@ -24,6 +24,7 @@
 #include "SVStatusLibrary/MessageContainer.h"
 #include "SVImageLibrary/SVImageExtentClass.h"
 #include "Definitions/StringTypeDef.h"
+
 #pragma endregion Includes
 
 namespace SvTo

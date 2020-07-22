@@ -284,7 +284,7 @@ void RingBufferTool::LocalInitialize ()
 	for (int i=0; i<SvDef::cRingBufferNumberOutputImages; i++)
 	{
 		// The output image is referenced in the embedded list.
-		m_OutputImages[i].InitializeImage( SvDef::SVImageTypeEnum::SVImageTypePhysical );
+		m_OutputImages[i].InitializeImage( SvPb::SVImageTypeEnum::SVImageTypePhysical );
 	}
 
 	// Set up your type... in this case this will reference that this tool is a 

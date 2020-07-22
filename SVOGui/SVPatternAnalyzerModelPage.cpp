@@ -21,12 +21,12 @@
 #include "Definitions/Color.h"
 #include "Definitions/TextDefineSvDef.h"
 #include "SVMessage/SVMessage.h"
-#include "SVMatroxLibrary/SVMatroxPatternInterface.h"
 #include "SVUtilityLibrary/SVPoint.h"
 #include "SVImageLibrary/SVImageExtentClass.h"
 #include "Definitions/GlobalConst.h"
 #include "SVFileSystemLibrary/SVFileNameClass.h"
 #include "SVRPropertyTree/SVRPropTreeItemEdit.h"
+#include "InspectionCommands/CommandExternalHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -495,8 +495,8 @@ namespace SvOg
 		if (m_bCircularOverscan)
 		{
 			// Get the Outer Rectangle
-			CRect outerRect = SVMatroxPatternInterface::CalculateOverscanOuterRect(CPoint(minWidth << 1, minWidth << 1), CSize(minWidth, minWidth));
-
+			CRect outerRect = computeOverscanRect(CPoint(minWidth << 1, minWidth << 1), CSize(minWidth, minWidth), SvPb::OverscanRectKindEnum::OuterRect);
+			
 			minWidth = outerRect.Width();
 		}
 	
@@ -520,8 +520,8 @@ namespace SvOg
 		if (m_bCircularOverscan)
 		{
 			// Get the Outer Rectangle
-			CRect outerRect = SVMatroxPatternInterface::CalculateOverscanOuterRect(CPoint(minHeight << 1, minHeight << 1), CSize(minHeight, minHeight));
-
+			CRect outerRect = computeOverscanRect(CPoint(minHeight << 1, minHeight << 1), CSize(minHeight, minHeight), SvPb::OverscanRectKindEnum::OuterRect);
+			
 			minHeight = outerRect.Height();
 		}
 
@@ -947,8 +947,9 @@ namespace SvOg
 		Parmap[CDSVPictureDisplay::P_Color] = SvDef::Green;
 		Parmap[CDSVPictureDisplay::P_SelectedColor] = SvDef::Green;
 		Parmap[CDSVPictureDisplay::P_AllowEdit] = CDSVPictureDisplay::AllowNone;
-		CRect innerRect = SVMatroxPatternInterface::CalculateOverscanInnerRect(CPoint(m_nXPos, m_nYPos), CSize(m_lModelWidth, m_lModelHeight));
-		CRect outerRect = SVMatroxPatternInterface::CalculateOverscanOuterRect(CPoint(innerRect.left, innerRect.top), innerRect.Size() );
+		CRect innerRect = computeOverscanRect(CPoint(m_nXPos, m_nYPos), CSize(m_lModelWidth, m_lModelHeight), SvPb::OverscanRectKindEnum::InnerRect);
+		CRect outerRect = computeOverscanRect(CPoint(innerRect.left, innerRect.top), innerRect.Size(), SvPb::OverscanRectKindEnum::OuterRect);
+
 		//Circle overlay
 		Parmap[CDSVPictureDisplay::P_Type] = CDSVPictureDisplay::EllipseROI;
 		Parmap[CDSVPictureDisplay::P_X1] = outerRect.left;
@@ -988,8 +989,8 @@ namespace SvOg
 		IPictureDisp* pModelImage = GetImage(SvDef::PatternModelImageName, modelWidth, modelHeight);
 		if (nullptr != pModelImage)
 		{
-			CRect innerRect = SVMatroxPatternInterface::CalculateOverscanInnerRect(CPoint(0, 0), CSize(modelWidth, modelHeight));
-			CRect outerRect = SVMatroxPatternInterface::CalculateOverscanOuterRect(CPoint(innerRect.left, innerRect.top), innerRect.Size() );
+			CRect innerRect = computeOverscanRect(CPoint(0, 0), CSize(modelWidth, modelHeight), SvPb::OverscanRectKindEnum::InnerRect);
+			CRect outerRect = computeOverscanRect(CPoint(innerRect.left, innerRect.top), innerRect.Size(), SvPb::OverscanRectKindEnum::OuterRect);
 			LongParamMap Parmap;
 			Parmap[CDSVPictureDisplay::P_Color] = SvDef::Green;
 			Parmap[CDSVPictureDisplay::P_SelectedColor] = SvDef::Green;
@@ -1102,6 +1103,32 @@ namespace SvOg
 		GetDlgItem(IDC_PAT_USE_DONT_CARE)->EnableWindow(!m_bCircularOverscan);
 		GetDlgItem(IDC_PAT_DONT_CARE_FILE_BUTTON)->EnableWindow(!m_bCircularOverscan && m_bDontCare);
 		GetDlgItem(IDC_PAT_DONT_CARE_FILE_NAME)->EnableWindow(!m_bCircularOverscan && m_bDontCare);
+	}
+
+	CRect SVPatternAnalyzerModelPage::computeOverscanRect(const POINT& point, const SIZE& size, SvPb::OverscanRectKindEnum rectKind)
+	{
+		SvPb::InspectionCmdRequest requestCmd;
+		SvPb::InspectionCmdResponse responseCmd;
+		auto* pRequest = requestCmd.mutable_computeoverscanrectrequest();
+		pRequest->mutable_point()->set_x(point.x);
+		pRequest->mutable_point()->set_y(point.y);
+		pRequest->mutable_size()->set_sizex(size.cx);
+		pRequest->mutable_size()->set_sizey(size.cy);
+		pRequest->set_rectkind(rectKind);
+
+		CRect overscanRect; 
+		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
+
+		if (S_OK == hr && responseCmd.has_computeoverscanrectresponse())
+		{
+			overscanRect = CRect(responseCmd.computeoverscanrectresponse().overscanrect().left(),
+				responseCmd.computeoverscanrectresponse().overscanrect().top(),
+				responseCmd.computeoverscanrectresponse().overscanrect().right(),
+				responseCmd.computeoverscanrectresponse().overscanrect().bottom());
+
+		}
+		
+		return overscanRect;
 	}
 
 	#pragma endregion Private Methods

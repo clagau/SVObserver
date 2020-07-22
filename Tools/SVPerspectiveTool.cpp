@@ -359,7 +359,7 @@ void SVPerspectiveToolClass::LocalInitialize()
 	SetImageExtentProperty( SvPb::SVExtentPropertyTranslationOffsetX, &m_svXOffset );
 	SetImageExtentProperty( SvPb::SVExtentPropertyTranslationOffsetY, &m_svYOffset );
 
-	m_OutputImage.InitializeImage( SvDef::SVImageTypeEnum::SVImageTypePhysical );
+	m_OutputImage.InitializeImage( SvPb::SVImageTypeEnum::SVImageTypePhysical );
 
 	// Set Default Warp Method to Use Horizontal
 	RegisterEmbeddedObject( &m_svWarpType, SvPb::WarpTypeEId, IDS_OBJECTNAME_WARPTYPE, false, SvOi::SVResetItemTool );

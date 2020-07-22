@@ -41,7 +41,7 @@ SVOLicenseManager::~SVOLicenseManager()
 
 HRESULT SVOLicenseManager::InitLicenseManager()
 {
-	m_svErrorList.clear();
+	m_svStrErrorList.clear();
 
 	SVMatroxLicenseInterface svMatroxLicense; 
 
@@ -72,18 +72,19 @@ bool SVOLicenseManager::HasMatroxLicense()  const
 	return m_bMatroxImageLicense;
 }
 
-void SVOLicenseManager::AddLicenseErrorToList(uint32_t objectId)
+
+void SVOLicenseManager::AddLicenseErrorToList(const std::string& objectName)
 {
-	m_svErrorList.insert(objectId);
+	m_svStrErrorList.insert(objectName);
 }
 
-void SVOLicenseManager::RemoveLicenseErrorFromList(uint32_t objectId)
+void SVOLicenseManager::RemoveLicenseErrorFromList(const std::string& objectName)
 {
-	auto iter = m_svErrorList.find(objectId);
+	auto iter = m_svStrErrorList.find(objectName);
 
-	if ( iter != m_svErrorList.end() )
+	if (iter != m_svStrErrorList.end())
 	{
-		m_svErrorList.erase(objectId);
+		m_svStrErrorList.erase(objectName);
 	}
 
 	//update the dialog
@@ -94,7 +95,7 @@ void SVOLicenseManager::ClearLicenseErrors()
 {
 	if ( HasToolErrors() )
 	{
-		m_svErrorList.clear();
+		m_svStrErrorList.clear();
 
 		if ( nullptr != m_hCheckEvent )
 		{
@@ -127,7 +128,7 @@ void SVOLicenseManager::ShowLicenseManagerErrors()
 					if( ::SetEvent( m_hCheckEvent ) )
 					{
 						std::string Temp( _T("The following tools are invalid because no Matrox Identification License was found") );
-						SvOi::showLicenseManagerDialog( Temp, m_svErrorList, m_hCheckEvent );
+						SvOi::showLicenseManagerDialog(Temp, m_svStrErrorList, m_hCheckEvent);
 					}
 				}
 				case WAIT_OBJECT_0:
@@ -145,5 +146,5 @@ void SVOLicenseManager::ShowLicenseManagerErrors()
 
 bool SVOLicenseManager::HasToolErrors() const
 {
-	return !m_svErrorList.empty();
+	return !m_svStrErrorList.empty();
 }

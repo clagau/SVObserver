@@ -55,7 +55,7 @@ void SVLoadImageToolClass::init()
 	m_currentPathName.SetDefaultValue( _T( "" ), true );
 	m_continuousReload.SetDefaultValue( false, true );
 
-	m_fileImage.InitializeImage( SvDef::SVImageTypeEnum::SVImageTypePhysical );
+	m_fileImage.InitializeImage( SvPb::SVImageTypeEnum::SVImageTypePhysical );
 
 	// Default taskObjectList items:
 

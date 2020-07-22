@@ -11,8 +11,6 @@
 
 #include "stdafx.h"
 #include "SVLicenseMgrModelessDlg.h"
-#include "ObjectInterfaces/IObjectClass.h"
-#include "ObjectInterfaces/IObjectManager.h"
 
 
 // SVLicenseMgrModelessDlg dialog
@@ -34,18 +32,20 @@ SVLicenseMgrModelessDlg::SVLicenseMgrModelessDlg(): CDialog(SVLicenseMgrModeless
 {
 }
 
-void SVLicenseMgrModelessDlg::Init(const std::string& rMsg,const std::set<uint32_t>& rList, HANDLE hEvent)
+
+void SVLicenseMgrModelessDlg::Init(const std::string& rMsg, const std::set<std::string>& rList, HANDLE hEvent)
 {
 	m_Msg = rMsg;
-	m_sList = rList;
+	m_sNameList = rList;
 
-	DuplicateHandle( GetCurrentProcess(), hEvent, GetCurrentProcess(), &m_hEvent, 0, FALSE, DUPLICATE_SAME_ACCESS );
+	DuplicateHandle(GetCurrentProcess(), hEvent, GetCurrentProcess(), &m_hEvent, 0, FALSE, DUPLICATE_SAME_ACCESS);
 }
 
-void SVLicenseMgrModelessDlg::Show(const std::string& rMsg,const std::set<uint32_t>& rList, HANDLE hEvent)
+
+void SVLicenseMgrModelessDlg::Show(const std::string& rMsg, const std::set<std::string>& rList, HANDLE hEvent)
 {
 	SVLicenseMgrModelessDlg& rDlg = SVLicenseMgrModelessDlg::Instance();
-	rDlg.Init( rMsg, rList, hEvent);
+	rDlg.Init(rMsg, rList, hEvent);
 	rDlg.Create(SVLicenseMgrModelessDlg::IDD, nullptr);
 }
 
@@ -110,15 +110,11 @@ BOOL SVLicenseMgrModelessDlg::OnInitDialog()
 	GetDlgItem(IDC_STATIC_TITLE)->SetWindowText(m_Msg.c_str());
 
 	//fill ListControl with items in m_dList
-	auto l_Iter = m_sList.begin();
-
-	while ( l_Iter != m_sList.end() )
+	auto l_Iter = m_sNameList.begin();
+	
+	while (l_Iter != m_sNameList.end())
 	{
-		SvOi::IObjectClass* pObj = SvOi::getObject( *l_Iter );
-		if ( nullptr != pObj )
-		{
-			m_ctlErrorList.AddString( pObj->GetCompleteName().c_str() );
-		}
+		m_ctlErrorList.AddString(l_Iter->c_str());
 		++l_Iter;
 	}
 

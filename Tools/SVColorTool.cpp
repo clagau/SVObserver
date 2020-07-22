@@ -318,13 +318,13 @@ void SVColorToolClass::LocalInitialize()
 	ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 3L);
 	ImageInfo.SetTranslation(SvPb::SVExtentTranslationNone);
 	m_LogicalROIImage.UpdateImage(SvDef::InvalidObjectId, ImageInfo);
-	m_LogicalROIImage.InitializeImage(SvDef::SVImageTypeEnum::SVImageTypeLogical);
+	m_LogicalROIImage.InitializeImage(SvPb::SVImageTypeEnum::SVImageTypeLogical);
 	m_OutputImage.UpdateImage(SvDef::InvalidObjectId, ImageInfo);
-	m_OutputImage.InitializeImage(SvDef::SVImageTypeEnum::SVImageTypePhysical);
+	m_OutputImage.InitializeImage(SvPb::SVImageTypeEnum::SVImageTypePhysical);
 
 	for (SvDef::BandEnum Band : SvDef::BandList)
 	{
-		m_bandImage[Band].InitializeImage(SvDef::SVImageTypeEnum::SVImageTypeDependent);
+		m_bandImage[Band].InitializeImage(SvPb::SVImageTypeEnum::SVImageTypeDependent);
 	}
 
 	SvOp::ToolSizeAdjustTask::AddToFriendlist(this, true, true, true);

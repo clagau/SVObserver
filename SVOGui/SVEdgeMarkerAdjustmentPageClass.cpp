@@ -23,11 +23,19 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvOg
 {
-	SVEdgeMarkerAdjustmentPageClass::SVEdgeMarkerAdjustmentPageClass(uint32_t inspectionId, uint32_t taskObjectId, const std::vector<SvPb::EmbeddedIdEnum>& rEdgeEmbeddedIds, UINT nIDCaption /*= 0*/, int ID /*= IDD*/)
+	SVEdgeMarkerAdjustmentPageClass::SVEdgeMarkerAdjustmentPageClass(uint32_t inspectionId, uint32_t taskObjectId, const std::vector<SvPb::EmbeddedIdEnum>& rEdgeEmbeddedIds, uint32_t analyzerID, UINT nIDCaption /*= 0*/, int ID /*= IDD*/)
 	: CPropertyPage(ID, nIDCaption)
+	, m_bEnableDirection(false)
+	, m_bEnableEdgeSelect(false)
+	, m_bEnablePolarisation(false)
+	, m_bEnablePosition(false)
+	, m_bEnableThreshold(false)
+	, m_bEdgeA(false)
 	, m_values{ SvOg::BoundValues{ inspectionId, taskObjectId } }
 	, m_InspectionID{ inspectionId }
 	, m_TaskObjectID{ taskObjectId }
+    , m_normalizerController(inspectionId, analyzerID)
+	, m_lowerNormalizerController(inspectionId, analyzerID)
 	, m_rEdgeEmbeddedIds{ rEdgeEmbeddedIds }
 	, StrLower( _T("") )
 	, StrUpper( _T("") )
@@ -382,11 +390,7 @@ namespace SvOg
 		return Result;
 	}
 
-	void SVEdgeMarkerAdjustmentPageClass::SetNormalizer( const SVValueBaseNormalizerClass &l_rsvNormalizer )
-	{
-		Normalizer = l_rsvNormalizer;
-		LowerNormalizer = l_rsvNormalizer;
-	}
+
 
 	HRESULT SVEdgeMarkerAdjustmentPageClass::UpdateSliderData(DWORD Lower, DWORD Upper)
 	{
@@ -403,33 +407,39 @@ namespace SvOg
 
 	void SVEdgeMarkerAdjustmentPageClass::setScrollRange( CSliderCtrl* pSliderCtrl, int min, int max )
 	{
-		SVValueBaseNormalizerClass* pNormalizer;
-
-		if( pSliderCtrl == &UpperSliderCtrl )
-			pNormalizer = &Normalizer;
+		NormalizerController* pNormalizerController = nullptr;
+		if (pSliderCtrl == &UpperSliderCtrl)
+			pNormalizerController = &m_normalizerController;
 		else
-			pNormalizer = &LowerNormalizer;
+			pNormalizerController = &m_lowerNormalizerController;
 
-		// Revise the scale ?
-		pNormalizer->SetRealRange( ( double )min, ( double )max );
-		pNormalizer->SetNormalRange( (double)min, (double)max);
+		try
+		{
+			auto normalizerValues = pNormalizerController->setRanges((double)min, (double)max, 1.0, (double)min, (double)max, 1.0);
 
-		pSliderCtrl->SetRange( ( int ) pNormalizer->GetNormalRangeMin(), ( int ) pNormalizer->GetNormalRangeMax(), TRUE );
-		pSliderCtrl->SetTic( ( int ) ( pNormalizer->GetNormalRangeBaseSize() / 2 + pNormalizer->GetNormalRangeMin() ) );
-		int pageSize = ( int ) ( ( double ) ( pNormalizer->GetNormalRangeBaseSize() / pNormalizer->GetRealRangeBaseSize() ) );
-		pSliderCtrl->SetPageSize( pageSize > 0 ? pageSize : 1 );
+			pSliderCtrl->SetRange((int)normalizerValues.normalMin, (int)normalizerValues.normalMax, TRUE);
+			pSliderCtrl->SetTic((int)(normalizerValues.normalBaseSize / 2 + normalizerValues.normalMin));
+			int pageSize = (int)((double)(normalizerValues.normalBaseSize / normalizerValues.rangeBaseSize));
+
+			pSliderCtrl->SetPageSize(pageSize > 0 ? pageSize : 1);
+		}
+		catch (const SvStl::MessageContainer& rExp)
+		{
+			SvStl::MessageMgrStd msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+			msg.setMessage(rExp.getMessage());
+		}
 	}
 
 	void SVEdgeMarkerAdjustmentPageClass::setScrollPos( CSliderCtrl* pSliderCtrl, int pos )
 	{
-		SVValueBaseNormalizerClass* pNormalizer;
-
-		if( pSliderCtrl == &UpperSliderCtrl )
-			pNormalizer = &Normalizer;
+		NormalizerController* pNormalizerController = nullptr;
+		if (pSliderCtrl == &UpperSliderCtrl)
+			pNormalizerController = &m_normalizerController;
 		else
-			pNormalizer = &LowerNormalizer;
+			pNormalizerController = &m_lowerNormalizerController;
 
-		pSliderCtrl->SetPos( (int)pNormalizer->CalcNormalizedValue( ( double ) pos ) );
+		int newPos1 = (int)pNormalizerController->calcNormalizedValueFromLocalValues((double)pos);
+		pSliderCtrl->SetPos(newPos1);
 	}
 
 	void SVEdgeMarkerAdjustmentPageClass::DoDataExchange( CDataExchange* pDX )
@@ -487,8 +497,19 @@ namespace SvOg
 			GetParent()->SendMessage(WM_CLOSE);
 		}
 
-		setScrollRange( &UpperSliderCtrl, static_cast<int>(Normalizer.GetRealRangeMin()), static_cast<int>(Normalizer.GetRealRangeMax()) );
-		setScrollRange( &LowerSliderCtrl, static_cast<int>(LowerNormalizer.GetRealRangeMin()), static_cast<int>(LowerNormalizer.GetRealRangeMax()) );
+		try
+		{
+			auto normalizerValues = m_normalizerController.getValues();
+			auto lowerNormalizerValues = m_lowerNormalizerController.getValues();
+
+			setScrollRange(&UpperSliderCtrl, static_cast<int>(normalizerValues.rangeMin), static_cast<int>(normalizerValues.rangeMax));
+			setScrollRange(&LowerSliderCtrl, static_cast<int>(lowerNormalizerValues.rangeMin), static_cast<int>(lowerNormalizerValues.rangeMax));
+		}
+		catch (const SvStl::MessageContainer& rExp)
+		{
+			SvStl::MessageMgrStd msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+			msg.setMessage(rExp.getMessage());
+		}
 
 		// initialize edge parameters
 		GetInspectionData();
@@ -619,9 +640,9 @@ namespace SvOg
 	{
 		if( &UpperSliderCtrl == ( CSliderCtrl* ) pScrollBar )
 		{
-			double dUpperThreshold = Normalizer.CalcRealValue(UpperSliderCtrl.GetPos());
+			double dUpperThreshold = m_normalizerController.calcRealValueFromLocalValues(UpperSliderCtrl.GetPos());
 
-			StrUpper.Format( "%u", (int)dUpperThreshold );
+			StrUpper.Format( "%d", (int)dUpperThreshold );
 
 			UpdateData( FALSE );
 
@@ -630,9 +651,9 @@ namespace SvOg
 
 		if( &LowerSliderCtrl == ( CSliderCtrl* ) pScrollBar )
 		{
-			double dLowerThreshold = Normalizer.CalcRealValue(LowerSliderCtrl.GetPos());
+			double dLowerThreshold = m_lowerNormalizerController.calcRealValueFromLocalValues(LowerSliderCtrl.GetPos());
 
-			StrLower.Format( "%u", (int)dLowerThreshold );
+			StrLower.Format( "%d", (int)dLowerThreshold );
 
 			UpdateData( FALSE );
 

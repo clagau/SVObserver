@@ -86,7 +86,7 @@ HRESULT SvOi::SetupDialogManager(SvPb::ClassIdEnum classId, uint32_t objectId, H
 	return SVSetupDialogManager::Instance().SetupDialog(classId, objectId, CWnd::FromHandle(hWnd));
 }
 
-void SvOi::showLicenseManagerDialog(const std::string& rMessage, const std::set<uint32_t>& rList, HANDLE hCheckEvent)
+void SvOi::showLicenseManagerDialog(const std::string& rMessage, const std::set<std::string>& rList, HANDLE hCheckEvent)
 {
 	SVLicenseMgrModelessDlg::Show(rMessage, rList, hCheckEvent);
 }

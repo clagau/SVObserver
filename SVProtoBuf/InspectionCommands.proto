@@ -14,7 +14,7 @@ import "BasicStructure.proto";
 import "SVO-Enum.proto";
 import "GetObjectSelector.proto";
 import "Overlay.proto";
-
+import "PatternUtils.proto";
 //***************************************************************************
 // Help Structs
 //***************************************************************************
@@ -111,6 +111,7 @@ message SetExtentList
 {
 	repeated ExtentParameter extentList = 1;
 }
+
 //***************************************************************************
 // InspectionCommands - can be send with method InspectionCommands
 //***************************************************************************
@@ -577,6 +578,31 @@ message BarCodeTypeParameter
 	repeated int32 PossibleENCTypes = 5;
 	int32 DefaultEncType = 6;
 }
+message GetNormalizerValuesRequest
+{
+	uint32 linearAnalyzerId = 1; //ID of the analyzer object (SVLinearAnalyzerClass)
+}
+message GetNormalizerValuesResponse
+{
+	double normalRangeMax = 1;
+	double normalRangeMin = 2;
+	double normalRangeStepWidth = 3;
+	double normalRangeBaseSize = 4;
+	double realRangeMax = 5;
+	double realRangeMin = 6;
+	double realRangeStepWidth = 7;
+	double realRangeBaseSize = 8;	
+}
+message SetNormalizerRangesRequest
+{
+	uint32 linearAnalyzerId = 1; //ID of the analyzer object (SVLinearAnalyzerClass)
+	double normalMax = 2;
+	double normalMin = 3;
+	double normalStepWidth = 4;
+	double realMax = 5;
+	double realMin = 6;
+	double realStepWidth = 7;
+}
 
 message GetBarCodeTypeInfosRequest
 {
@@ -588,6 +614,37 @@ message GetBarCodeTypeInfosResponse
 	repeated NameValuePair ENCNames = 2;
 	repeated BarCodeTypeParameter typeParameters = 3;
 }
+
+//Request Information from an ISVImage based on image id
+message GetImageInfoRequest
+{
+	uint32 imageId = 1; //id of the image
+}
+//Contains Information from an ISVImage 
+//Currently, only SVImageType, other info can be added here!
+message GetImageInfoResponse
+{
+	SVImageTypeEnum imageType = 1; 
+}
+
+//request information from a IBlobAnalyzer object
+message GetBlobAnalyzerInfoRequest
+{
+	uint32 taskObjectId = 1;
+	uint32 feature = 2;
+	bool featureEnabled = 3;
+}
+
+//Contains information from an IBlobAnalyzer
+message GetBlobAnalyzerInfoResponse
+{
+	uint32 resultObjectId = 1;
+	ClassIdEnum resultObjectClassId = 2;
+	uint32 resultBlobId = 3;
+	ClassIdEnum resultBlobClassId = 4;
+	repeated NameValuePair list = 5;
+}
+
 
 message InspectionCmdRequest
 {
@@ -638,6 +695,11 @@ message InspectionCmdRequest
 		GetOverlayStructRequest getOverlayStructRequest = 42;
 		SetDefaultInputsRequest  setDefaultInputsRequest = 43;
 		GetBarCodeTypeInfosRequest getBarCodeTypeInfosRequest = 44;
+		GetNormalizerValuesRequest getNormalizerValuesRequest = 45;
+		SetNormalizerRangesRequest setNormalizerRangesRequest = 46;
+		GetImageInfoRequest getImageInfoRequest = 47;
+		GetBlobAnalyzerInfoRequest getBlobAnalyzerInfoRequest = 48;
+		ComputeOverscanRectRequest computeOverscanRectRequest = 49;
 	}
 }
 
@@ -676,5 +738,9 @@ message InspectionCmdResponse
 		UsePropagateSizeAndPositionResponse usePropagateSizeAndPositionResponse = 28;
 		GetOverlayStructResponse getOverlayStructResponse = 29;
 		GetBarCodeTypeInfosResponse getBarCodeTypeInfosResponse = 30;
+		GetNormalizerValuesResponse getNormalizerValuesResponse = 31;
+		GetImageInfoResponse getImageInfoResponse = 32;
+		GetBlobAnalyzerInfoResponse getBlobAnalyzerInfoResponse = 33;
+		ComputeOverscanRectResponse computeOverscanRectResponse = 34;
 	}
 }

@@ -15,6 +15,7 @@
 #include "SVAnalyzer.h"
 #include "SVLibrary/SVValueBaseNormalizerClass.h"
 #include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
+#include "ObjectInterfaces/ISVLinearAnalyzer.h"
 #pragma endregion Includes
 
 namespace SvOp
@@ -25,7 +26,7 @@ class SVLinearEdgeProcessingClass;
 namespace SvAo
 {
 
-class SVLinearAnalyzerClass : public SVAnalyzerClass  
+class SVLinearAnalyzerClass : public SVAnalyzerClass, public SvOi::ISVLinearAnalyzer
 {
 	///This class does not need to call SV_DECLARE_CLASS as it is a base class and only derived classes are instantiated
 	//SV_DECLARE_CLASS( SVLinearAnalyzerClass );
@@ -48,6 +49,9 @@ public:
 	SvOp::SVLinearEdgeProcessingClass* GetEdgeB() const;
 
 	HRESULT GetPixelDepth();
+
+	virtual SvPb::GetNormalizerValuesResponse getNormalizerValues() override;
+	virtual SvPb::GetNormalizerValuesResponse setNormalizerRanges(const SvPb::SetNormalizerRangesRequest&) override;
 
 	SvVol::SVBoolValueObjectClass m_svShowAllEdgeAOverlays;
 	SvVol::SVBoolValueObjectClass m_svShowAllEdgeBOverlays;

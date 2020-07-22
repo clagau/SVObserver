@@ -7,8 +7,8 @@
 
 #pragma once
 #pragma region Includes
-#include "Definitions/SVImageEnums.h"
 #include "SVImageBufferHandleInterface.h"
+#include "SVProtoBuf/SVO-Enum.h"
 #pragma endregion Includes
 
 namespace SvPb
@@ -28,7 +28,7 @@ namespace SvOi
 		/// Return the image type.
 		/// \returns SvDef::SVImageTypeEnum
 		//************************************
-		virtual SvDef::SVImageTypeEnum GetImageType() const = 0;
+		virtual SvPb::SVImageTypeEnum GetImageType() const = 0;
 
 		//************************************
 		/// Return the parent image.

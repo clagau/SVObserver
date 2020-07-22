@@ -27,6 +27,7 @@
 #include "ObjectInterfaces\IObjectAppClass.h"
 #include "ObjectInterfaces\IObjectManager.h"
 #include "ObjectInterfaces\IPatternAnalyzer.h"
+#include "ObjectInterfaces\IBlobAnalyzer.h"
 #include "Definitions\ObjectDefines.h"
 #include "Definitions\TextDefineSvDef.h"
 #include "SVStatusLibrary\ErrorNumbers.h"
@@ -35,6 +36,7 @@
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
 #include "SVMatroxLibrary\SVMatroxBufferInterface.h"
 #include "SVMatroxLibrary\SVMatroxSimpleEnums.h"
+#include "SVMatroxLibrary\SVMatroxPatternInterface.h"
 #include "SVMessage\SVMessage.h"
 #include "SVUtilityLibrary\StringHelper.h"
 #include "SVObjectLibrary\SVGetObjectDequeByTypeVisitor.h"
@@ -44,6 +46,10 @@
 #include "SVProtoBuf\ConverterHelper.h"
 #include "CommandInternalHelper.h"
 #include "ObjectSelectorFilter.h"
+#include "ObjectInterfaces\ISVLinearAnalyzer.h"
+
+#include <atltypes.h>
+
 #pragma endregion Includes
 
 namespace SvCmd
@@ -1432,6 +1438,149 @@ std::vector<SvPb::TreeItem> getSelectorList(SvPb::GetObjectSelectorItemsRequest 
 	return result;
 }
 
+SvPb::InspectionCmdResponse getNormalizerValues(SvPb::GetNormalizerValuesRequest request)
+{
+	SvPb::InspectionCmdResponse cmdResponse;
+
+	SvOi::ISVLinearAnalyzer* pAnalyzer = dynamic_cast<SvOi::ISVLinearAnalyzer*>(SvOi::getObject(request.linearanalyzerid()));
+
+	if(nullptr != pAnalyzer )
+	{
+		auto tempResponse = pAnalyzer->getNormalizerValues();
+		SvPb::GetNormalizerValuesResponse* pResponse = cmdResponse.mutable_getnormalizervaluesresponse();
+		if (nullptr != pResponse)
+		{
+			pResponse->Swap(&tempResponse);
+		}
+		else
+		{
+			cmdResponse.set_hresult(E_POINTER);
+		}
+	}
+	else
+	{
+		cmdResponse.set_hresult(E_POINTER);
+	}
+
+	return cmdResponse;
+}
+
+SvPb::InspectionCmdResponse setNormalizerRanges(SvPb::SetNormalizerRangesRequest request)
+{
+	SvPb::InspectionCmdResponse cmdResponse;
+
+	SvOi::ISVLinearAnalyzer* pAnalyzer = dynamic_cast<SvOi::ISVLinearAnalyzer*>(SvOi::getObject(request.linearanalyzerid()));
+	if (nullptr != pAnalyzer)
+	{
+		auto tempResponse = pAnalyzer->setNormalizerRanges(request);
+		SvPb::GetNormalizerValuesResponse* pResponse = cmdResponse.mutable_getnormalizervaluesresponse();
+		if (nullptr != pResponse)
+		{
+			pResponse->Swap(&tempResponse);
+		}
+		else
+		{
+			cmdResponse.set_hresult(E_POINTER);
+		}
+	}
+	else
+	{
+		cmdResponse.set_hresult(E_POINTER);
+	}
+
+	return cmdResponse;
+}
+
+SvPb::InspectionCmdResponse getImageInfo(SvPb::GetImageInfoRequest request)
+{
+	SvPb::InspectionCmdResponse cmdResponse;
+
+	SvOi::ISVImage* pImage = dynamic_cast<SvOi::ISVImage*>(SvOi::getObject(request.imageid()));
+
+	if (nullptr != pImage )
+	{
+		SvPb::GetImageInfoResponse* pResponse = cmdResponse.mutable_getimageinforesponse();
+		pResponse->set_imagetype(pImage->GetImageType());
+	}
+	else
+	{
+		cmdResponse.set_hresult(E_POINTER);
+	}
+
+	return cmdResponse;
+}
+
+SvPb::InspectionCmdResponse getBlobAnalyzerInfo(SvPb::GetBlobAnalyzerInfoRequest request)
+{
+	SvPb::InspectionCmdResponse cmdResponse;
+
+	SvOi::IBlobAnalyzer* pBlobAnalyzer = dynamic_cast<SvOi::IBlobAnalyzer*>(SvOi::getObject(request.taskobjectid()));
+	
+	if (nullptr != pBlobAnalyzer)
+	{
+		SvPb::GetBlobAnalyzerInfoResponse* pResponse = cmdResponse.mutable_getblobanalyzerinforesponse();
+		auto resultObject = pBlobAnalyzer->getResultObject(request.feature());
+		if (nullptr != resultObject)
+		{
+			pResponse->set_resultobjectid(resultObject->getObjectId());
+			pResponse->set_resultobjectclassid(resultObject->GetClassID());
+		}
+		auto resultBlob = pBlobAnalyzer->getResultBlob();
+		if (nullptr != resultBlob)
+		{
+			pResponse->set_resultblobid(resultBlob->getObjectId());
+			pResponse->set_resultblobclassid(resultBlob->GetClassID());
+		}
+		
+		auto featureList = pBlobAnalyzer->getFeatureList(request.featureenabled());
+		for (auto const& feature : featureList)
+		{
+			if (!feature.first.empty())
+			{
+				auto newFeature = pResponse->mutable_list()->Add();
+				newFeature->set_name(feature.first);
+				newFeature->set_value(feature.second);
+			}
+		}
+	}
+	else
+	{
+		cmdResponse.set_hresult(E_POINTER);
+	}
+
+	return cmdResponse;
+}
+
+SvPb::InspectionCmdResponse computeOverscanRect(SvPb::ComputeOverscanRectRequest request)
+{
+	SvPb::InspectionCmdResponse cmdResponse;
+
+
+	auto rect = RECT{ 0 };
+	if (SvPb::OverscanRectKindEnum::InnerRect == request.rectkind())
+	{
+		rect = SVMatroxPatternInterface::CalculateOverscanInnerRect(CPoint(request.point().x(), request.point().y()),
+			CSize(request.size().sizex(), request.size().sizey()));
+	}
+	else if (SvPb::OverscanRectKindEnum::OuterRect == request.rectkind())
+	{
+		rect = SVMatroxPatternInterface::CalculateOverscanOuterRect(CPoint(request.point().x(), request.point().y()),
+			CSize(request.size().sizex(), request.size().sizey()));
+	}
+	else
+	{ }
+	
+		
+	SvPb::ComputeOverscanRectResponse* pResponse = cmdResponse.mutable_computeoverscanrectresponse();
+	pResponse->mutable_overscanrect()->set_left(rect.left);
+	pResponse->mutable_overscanrect()->set_right(rect.right);
+	pResponse->mutable_overscanrect()->set_top(rect.top);
+	pResponse->mutable_overscanrect()->set_bottom(rect.bottom);
+
+	return cmdResponse;
+}
+
+
 SvPb::InspectionCmdResponse setDefaultInputsRequest(SvPb::SetDefaultInputsRequest request)
 {
 	SvPb::InspectionCmdResponse cmdResponse;
@@ -1459,5 +1608,6 @@ SvPb::InspectionCmdResponse getBarCodeTypeInfos(SvPb::GetBarCodeTypeInfosRequest
 	pResponseTmp->Swap(&tmp);	
 	return cmdResponse;
 }
+
 
 } //namespace SvCmd

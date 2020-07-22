@@ -268,6 +268,38 @@ HRESULT SVLinearAnalyzerClass::GetPixelDepth()
 	return l_hrOk;
 }
 
+
+SvPb::GetNormalizerValuesResponse SVLinearAnalyzerClass::getNormalizerValues()
+{
+	SvPb::GetNormalizerValuesResponse response;
+	response.set_normalrangebasesize(m_svNormalizer.GetNormalRangeBaseSize());
+	response.set_normalrangemax(m_svNormalizer.GetNormalRangeMax());
+	response.set_normalrangemin(m_svNormalizer.GetNormalRangeMin());
+	response.set_normalrangestepwidth(m_svNormalizer.GetNormalRangeStepWidth());
+	response.set_realrangebasesize(m_svNormalizer.GetRealRangeBaseSize());
+	response.set_realrangemax(m_svNormalizer.GetRealRangeMax());
+	response.set_realrangemin(m_svNormalizer.GetRealRangeMin());
+	response.set_realrangestepwidth(m_svNormalizer.GetRealRangeStepWidth());
+	return response;
+}
+
+SvPb::GetNormalizerValuesResponse SVLinearAnalyzerClass::setNormalizerRanges(const SvPb::SetNormalizerRangesRequest& request)
+{
+	m_svNormalizer.SetRealRange(request.realmin(), request.realmax(), request.realstepwidth());
+	m_svNormalizer.SetNormalRange(request.normalmin(), request.normalmax(), request.normalstepwidth());
+
+	SvPb::GetNormalizerValuesResponse response;
+	response.set_normalrangebasesize(m_svNormalizer.GetNormalRangeBaseSize());
+	response.set_normalrangemax(m_svNormalizer.GetNormalRangeMax());
+	response.set_normalrangemin(m_svNormalizer.GetNormalRangeMin());
+	response.set_normalrangestepwidth(m_svNormalizer.GetNormalRangeStepWidth());
+	response.set_realrangebasesize(m_svNormalizer.GetRealRangeBaseSize());
+	response.set_realrangemax(m_svNormalizer.GetRealRangeMax());
+	response.set_realrangemin(m_svNormalizer.GetRealRangeMin());
+	response.set_realrangestepwidth(m_svNormalizer.GetRealRangeStepWidth());
+	return response;
+}
+
 HRESULT SVLinearAnalyzerClass::GetInputProfileOrientation(long& rProfileOrientation) const
 {
 	HRESULT Result(E_FAIL);

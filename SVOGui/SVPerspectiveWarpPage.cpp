@@ -12,8 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVPerspectiveWarpPage.h"
-#include "Tools/SVTool.h"
-#include "ObjectInterfaces/IObjectManager.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -118,26 +116,42 @@ namespace SvOg
 		long lType = m_values.Get<long>(SvPb::WarpTypeEId);
 		if( lType != m_lLastWarpType )
 		{
-			SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (SvOi::getObject(m_TaskObjectID));
-			if (nullptr != pTool)
+			WarpType eWarpType = static_cast<WarpType> (lType);
+ 			if (eWarpType == WarpTypeVertical)
 			{
-				SVImageExtentClass imageExtents = pTool->GetImageExtent();
-				WarpType eWarpType = static_cast<WarpType> (lType);
-				if (eWarpType == WarpTypeVertical)
-				{
-					imageExtents.SetExtentProperty(SvPb::SVExtentPropertyTranslationOffsetY, 10);
-					imageExtents.SetExtentProperty(SvPb::SVExtentPropertyTranslationOffsetX, 0);
-				}
-				else
-					if (eWarpType == WarpTypeHorizontal)
-					{
-						imageExtents.SetExtentProperty(SvPb::SVExtentPropertyTranslationOffsetX, 10);
-						imageExtents.SetExtentProperty(SvPb::SVExtentPropertyTranslationOffsetY, 0);
-					}
-				pTool->SetImageExtent(imageExtents);
+				setExtentImageProperty(SvPb::SVExtentPropertyTranslationOffsetY, 10);
+				setExtentImageProperty(SvPb::SVExtentPropertyTranslationOffsetX, 0);
+			}
+			else if (eWarpType == WarpTypeHorizontal)
+			{
+				setExtentImageProperty(SvPb::SVExtentPropertyTranslationOffsetX, 10);
+				setExtentImageProperty(SvPb::SVExtentPropertyTranslationOffsetY, 0);
+			}
+			else
+			{ 
+				//nothing to do
 			}
 		}
 		CPropertyPage::OnDestroy();
+	}
+
+	bool SVPerspectiveWarpPage::setExtentImageProperty(SvPb::SVExtentPropertyEnum eProperty, double value)
+	{
+		SvPb::InspectionCmdRequest requestCmd;
+		SvPb::InspectionCmdResponse responseCmd;
+		auto* pRequest = requestCmd.mutable_setextentparameterrequest();
+		pRequest->set_objectid(m_TaskObjectID);
+		pRequest->mutable_setproperty()->set_propertyflag(eProperty);
+		pRequest->mutable_setproperty()->set_value(value);
+
+		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
+
+		if ((S_OK != hr) || (false == responseCmd.has_setextentparameterresponse()))
+		{
+			return false;
+		}
+
+		return true;
 	}
 
 	void SVPerspectiveWarpPage::OnSelchangeInterpolationModeCombo() 

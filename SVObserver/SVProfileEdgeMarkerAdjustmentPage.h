@@ -39,7 +39,7 @@ class SVProfileEdgeMarkerAdjustmentPageClass : public SvOg::SVEdgeMarkerAdjustme
 {
 #pragma region Constructor
 public:
-	SVProfileEdgeMarkerAdjustmentPageClass(uint32_t inspectionID, uint32_t taskObjectID, const std::vector<SvPb::EmbeddedIdEnum>& rEdgeEmbeddedIds, UINT nIDCaption = 0 );
+	SVProfileEdgeMarkerAdjustmentPageClass(uint32_t inspectionID, uint32_t taskObjectID, const std::vector<SvPb::EmbeddedIdEnum>& rEdgeEmbeddedIds, uint32_t analyzerID, UINT nIDCaption = 0 );
 	virtual ~SVProfileEdgeMarkerAdjustmentPageClass();
 #pragma endregion Constructor
 

@@ -276,7 +276,7 @@ bool SVUserMaskOperatorClass::getSpecialImage(const std::string& rName, SvOi::SV
 		const SvIe::SVImageClass* pImage = getReferenceImage();
 		if (pImage)
 		{
-			if (SvDef::SVImageTypeEnum::SVImageTypePhysical == pImage->GetImageType())
+			if (SvPb::SVImageTypeEnum::SVImageTypePhysical == pImage->GetImageType())
 			{
 				rImagePtr = pImage->GetParentImageInterface()->getImageData();
 			}

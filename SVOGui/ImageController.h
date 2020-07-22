@@ -10,7 +10,6 @@
 #pragma region Includes
 #include "SVUtilityLibrary\NameObjectIdList.h"
 #include "Definitions/StringTypeDef.h"
-#include "Definitions/SVImageEnums.h"
 #include "SVProtoBuf/SVO-Enum.h"
 #include "SVStatusLibrary\MessageContainer.h"
 #pragma endregion Includes
@@ -54,7 +53,7 @@ namespace SvOg
 		HRESULT ResetTask(SvStl::MessageContainerVector& messages) const;
 		HRESULT ToolRunOnce();
 			
-		SvDef::SVImageTypeEnum GetImageType(uint32_t imageID) const;
+		SvPb::SVImageTypeEnum GetImageType(uint32_t imageID) const;
 
 	private:
 		HRESULT RetrieveAvailableImageList();

@@ -48,7 +48,7 @@ public:
 	SVImageClass* GetParentImage() const;
 	const SVImageInfoClass& GetImageInfo() const; //@TODO: Change the logic so that this is never needed outside this class
 
-	HRESULT InitializeImage( SvDef::SVImageTypeEnum ImageType );
+	HRESULT InitializeImage( SvPb::SVImageTypeEnum ImageType );
 	HRESULT InitializeImage( SVImageClass* pParentImage );
 
 	//@WARNING [Jim][8 July 2015] - Look into and evaluate this behavior.
@@ -57,7 +57,7 @@ public:
 	//-  sent in anyhow????
 	HRESULT UpdateImage( const SVImageExtentClass& rExtent, bool doNotRebuildStorage = false );
 	HRESULT UpdateImage(uint32_t parentID, const SVImageInfoClass& rImageInfo);
-	HRESULT UpdateImage( SvDef::SVImageTypeEnum ImageType );
+	HRESULT UpdateImage( SvPb::SVImageTypeEnum ImageType );
 
 	virtual const double& GetLastResetTimeStamp() const;
 	
@@ -119,7 +119,7 @@ public:
 	bool isChildImageInTRC() const { return m_isChildImageInTRC; };
 
 #pragma region virtual method (ISVImage)
-	virtual SvDef::SVImageTypeEnum GetImageType() const override;
+	virtual SvPb::SVImageTypeEnum GetImageType() const override;
 	virtual SvOi::ISVImage* GetParentImageInterface() const override;
 	virtual SvOi::SVImageBufferHandlePtr getImageData() const override;
 	virtual std::string getDisplayedName() const override;
@@ -166,7 +166,7 @@ protected:
 	mutable double m_LastUpdate;
 	mutable double m_LastReset;
 
-	SvDef::SVImageTypeEnum m_ImageType;
+	SvPb::SVImageTypeEnum m_ImageType;
 	SVImageInfoClass m_ImageInfo;
 	
 	typedef std::unordered_map< uint32_t, SVImageInfoClass > ImageIdInfoMap;

@@ -14,8 +14,8 @@
 #pragma region Includes
 #include "SVOResource/resource.h"
 #include "SVMFCControls/SVEditNumbers.h"
-#include "SVLibrary/SVValueBaseNormalizerClass.h"
 #include "DataController.h"
+#include "NormalizerController.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -55,13 +55,11 @@ namespace SvOg
 	class SVEdgeMarkerAdjustmentPageClass : public CPropertyPage
 	{
 	public:
-		SVEdgeMarkerAdjustmentPageClass(uint32_t inspectionId, uint32_t taskObjectId, const std::vector<SvPb::EmbeddedIdEnum>& rEdgeEmbeddedIds, UINT nIDCaption = 0, int ID = IDD);
+		SVEdgeMarkerAdjustmentPageClass(uint32_t inspectionId, uint32_t taskObjectId, const std::vector<SvPb::EmbeddedIdEnum>& rEdgeEmbeddedIds, uint32_t analyzerID, UINT nIDCaption = 0, int ID = IDD);
 		virtual ~SVEdgeMarkerAdjustmentPageClass();
 
 		virtual HRESULT GetInspectionData();
 		virtual HRESULT SetInspectionData();
-
-		void SetNormalizer( const SVValueBaseNormalizerClass &l_rsvNormalizer );
 
 		//flags
 		bool m_bEnableDirection;
@@ -97,10 +95,6 @@ namespace SvOg
 
 		void setScrollRange( CSliderCtrl* pSliderCtrl, int min, int max );
 		void setScrollPos( CSliderCtrl* pSliderCtrl, int pos );
-
-		// Normalizer for Lower threshold
-		SVValueBaseNormalizerClass LowerNormalizer;
-		SVValueBaseNormalizerClass Normalizer;
 
 		// Generierte Nachrichtenzuordnungsfunktionen
 		//{{AFX_MSG(SVEdgeMarkerAdjustmentPageClass)
@@ -142,5 +136,7 @@ namespace SvOg
 		const uint32_t m_InspectionID;
 		const uint32_t m_TaskObjectID;
 		ValueController m_values;
+		NormalizerController m_normalizerController;
+		NormalizerController m_lowerNormalizerController;
 	};
 } //namespace SvOg

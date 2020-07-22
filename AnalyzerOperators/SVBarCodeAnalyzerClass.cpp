@@ -323,7 +323,7 @@ bool SVBarCodeAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCrea
 
 	if ( m_bHasLicenseError )
 	{
-		SVOLicenseManager::Instance().AddLicenseErrorToList(getObjectId());
+		SVOLicenseManager::Instance().AddLicenseErrorToList(GetCompleteName());
 	}
 
 	return true;
@@ -334,7 +334,7 @@ SVBarCodeAnalyzerClass::~SVBarCodeAnalyzerClass()
 	if ( m_bHasLicenseError )
 	{
 		m_bHasLicenseError = false;
-		SVOLicenseManager::Instance().RemoveLicenseErrorFromList(getObjectId());
+		SVOLicenseManager::Instance().RemoveLicenseErrorFromList(GetCompleteName());
 	}
 
 	SVBarCodeAnalyzerClass::CloseObject();

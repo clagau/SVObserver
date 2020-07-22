@@ -41,6 +41,7 @@ namespace SvOg
 		DECLARE_MESSAGE_MAP()
 
 	private:
+		bool setExtentImageProperty(SvPb::SVExtentPropertyEnum eProperty, double value);
 		const uint32_t m_InspectionID;
 		const uint32_t m_TaskObjectID;
 		ValueController m_values;

@@ -481,7 +481,7 @@ void SVShiftTool::LocalInitialize()
 
 	m_EnableSourceImageExtents.SetDefaultValue(true, true); // this embedded value object is not used anymore
 
-	m_OutputImage.InitializeImage( SvDef::SVImageTypeEnum::SVImageTypePhysical );
+	m_OutputImage.InitializeImage( SvPb::SVImageTypeEnum::SVImageTypePhysical );
 
 	m_evoShiftMode.SetEnumTypes(g_strShiftToolEnum);
 	m_evoShiftMode.SetDefaultValue(SV_SHIFT_NONE, true);

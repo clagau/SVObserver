@@ -11,9 +11,6 @@
 //Moved to precompiled header: #include <boost/bind.hpp>
 #include "ImageController.h"
 #include "DisplayHelper.h"
-#include "ObjectInterfaces/IObjectClass.h"
-#include "ObjectInterfaces/IObjectManager.h"
-#include "ObjectInterfaces/ISVImage.h"
 #include "InspectionCommands\CommandExternalHelper.h"
 #include "SVProtoBuf/ConverterHelper.h"
 #include "SVStatusLibrary\MessageManager.h"
@@ -302,14 +299,21 @@ namespace SvOg
 		return SvCmd::RunOnceSynchronous(m_InspectionID);
 	}
 
-	SvDef::SVImageTypeEnum ImageController::GetImageType(uint32_t imageID) const
+	SvPb::SVImageTypeEnum ImageController::GetImageType(uint32_t imageID) const
 	{
-		SvDef::SVImageTypeEnum Result{ SvDef::SVImageTypeEnum::SVImageTypeUnknown };
-		SvOi::ISVImage* pImage = dynamic_cast<SvOi::ISVImage*> (SvOi::getObject(imageID));
-		if (nullptr != pImage)
+		SvPb::InspectionCmdRequest requestCmd;
+		SvPb::InspectionCmdResponse responseCmd;
+		auto* pRequest = requestCmd.mutable_getimageinforequest();
+		pRequest->set_imageid(imageID);
+
+		SvPb::SVImageTypeEnum Result{ SvPb::SVImageTypeEnum::SVImageTypeUnknown };
+
+		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
+		if (hr == S_OK && responseCmd.has_getimageinforesponse())
 		{
-			Result = pImage->GetImageType();
+			Result = responseCmd.getimageinforesponse().imagetype();
 		}
+		
 		return Result;
 	}
 

@@ -168,6 +168,21 @@ public:
 			case SvPb::InspectionCmdRequest::kGetBarCodeTypeInfosRequest:
 				m_response = getBarCodeTypeInfos(m_rRequest.getbarcodetypeinfosrequest());
 				break;
+			case SvPb::InspectionCmdRequest::kGetNormalizerValuesRequest:
+				m_response = getNormalizerValues(m_rRequest.getnormalizervaluesrequest());
+				break;
+			case SvPb::InspectionCmdRequest::kSetNormalizerRangesRequest:
+				m_response = setNormalizerRanges(m_rRequest.setnormalizerrangesrequest());
+				break;
+			case SvPb::InspectionCmdRequest::kGetImageInfoRequest:
+				m_response = getImageInfo(m_rRequest.getimageinforequest());
+				break;
+			case SvPb::InspectionCmdRequest::kGetBlobAnalyzerInfoRequest:
+				m_response = getBlobAnalyzerInfo(m_rRequest.getblobanalyzerinforequest());
+				break;
+			case SvPb::InspectionCmdRequest::kComputeOverscanRectRequest:
+				m_response = computeOverscanRect(m_rRequest.computeoverscanrectrequest());
+				break;
 			default:;
 		}
 

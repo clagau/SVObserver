@@ -62,8 +62,8 @@ namespace SvOg
 		if (images.size())
 		{
 			// Check if Main Image Type
-			const SvDef::SVImageTypeEnum& rImageType = getImageController().GetImageType(images.begin()->second.second);
-			if (SvDef::SVImageTypeMain == rImageType)
+			const SvPb::SVImageTypeEnum& rImageType = getImageController().GetImageType(images.begin()->second.second);
+			if (SvPb::SVImageTypeMain == rImageType)
 			{
 				m_useExtentsOnly = false;
 				// use Extents Only does not Apply
