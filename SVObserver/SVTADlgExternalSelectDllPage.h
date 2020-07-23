@@ -55,10 +55,10 @@ public:
 
 // Implementation
 protected:
-	void InitializeDll(bool jumpToInputPage);
+	void InitializeDll(bool jumpToInputPage, bool setDefaultValues = false);
 	void SetDependencies();
 	void NotifyProgress(LPCTSTR Message);
-	void testExternalDll();
+	void testExternalDll(bool setDefaultValues = false);
 
 	SVToolAdjustmentDialogSheetClass* m_pSheet;
 	SvOp::SVExternalToolTask* m_pTask;

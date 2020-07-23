@@ -146,7 +146,7 @@ HRESULT SVDLLToolLoadLibraryClass::Open(LPCTSTR p_szLibrary, SVDllLoadLibraryCal
 		// Check bitness
 		if (CheckBitness(p_szLibrary) != ImageFileMachineAMD64)
 		{
-			std::string Message = SvUl::Format(_T("External Tool %s is not 64Bit"), p_szLibrary);
+			std::string Message = SvUl::Format(_T("%s is not 64 Bit!"), p_szLibrary);
 			fnNotifyProgress(Message.c_str());
 		}
 	}

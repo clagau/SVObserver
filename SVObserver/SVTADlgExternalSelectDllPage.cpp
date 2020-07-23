@@ -273,13 +273,6 @@ void SVSelectExternalDllPage::OnBrowse()
 
 		m_pTask->ClearData();
 
-		if (m_ResetInput)
-		{
-			m_pTask->Initialize([](LPCTSTR) {}, false, true);
-			m_pTask->resetAllObjects();
-			m_pTask->SetDefaultValues();
-		}
-
 		m_strStatus = _T("Dll needs to be tested.");
 		m_strStatus += cCRLF;
 		UpdateData(FALSE);
@@ -289,11 +282,11 @@ void SVSelectExternalDllPage::OnBrowse()
 		{
 			pParent->SendMessage(SV_REMOVE_PAGES_FOR_TESTED_DLL);
 		}
-		testExternalDll();
+		testExternalDll(m_ResetInput==TRUE);
 	}
 }// end void SVSelectExternalDllPage::OnBrowse() 
 
-void SVSelectExternalDllPage::testExternalDll() 
+void SVSelectExternalDllPage::testExternalDll(bool setDefaultValues)
 {
 	UpdateData();
 
@@ -302,7 +295,7 @@ void SVSelectExternalDllPage::testExternalDll()
 	// DLL Path
 	m_pTask->m_Data.m_voDllPath.SetDefaultValue( std::string(m_strDLLPath), true );
 
-	InitializeDll(false);
+	InitializeDll(false, setDefaultValues);
 }
 
 void SVSelectExternalDllPage::SetDependencies() 
@@ -329,8 +322,9 @@ void SVSelectExternalDllPage::SetDependencies()
 	m_pTask->SetAllAttributes();	// update dependency attributes
 }
 
-void SVSelectExternalDllPage::InitializeDll(bool jumpToInputPage)
+void SVSelectExternalDllPage::InitializeDll(bool jumpToInputPage, bool setDefaultValues)
 {
+
 	try
 	{
 		CWnd *pParent = GetParent();
@@ -347,6 +341,11 @@ void SVSelectExternalDllPage::InitializeDll(bool jumpToInputPage)
 		m_pTask->Initialize(boost::bind(&SVSelectExternalDllPage::NotifyProgress, this, _1));
 
 		m_pTask->resetAllObjects();
+
+		if (setDefaultValues)
+		{
+			m_pTask->SetDefaultValues();
+		}
 
 		m_strStatus += _T("DLL passes the tests.");
 		m_strStatus += cCRLF;
