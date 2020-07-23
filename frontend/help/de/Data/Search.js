@@ -1,0 +1,1 @@
+define({r:0.5,st:'Stem',n:1,t:[0],m:[],u:['../Content/General structure/General structure.htm'],s:['$','even','patent','wide'],p:[['$',42],['and',40],['but',8],['copies',40],['elaborations',59],['granted',35],['inspection',31],['made',43],['of',42],['patent',56],['required',50],['starts',40],['the',56],['use',50],['you',60]]});
