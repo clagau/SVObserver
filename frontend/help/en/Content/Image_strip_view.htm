@@ -34,8 +34,9 @@
         </div>
         <div role="main" id="mc-main-content">
             <h1><a name="kanchor49"></a>Image Strip View</h1>
-            <p>This view type features images from an inspection or from a specific inspection tool in sequence. The most recent image is featured as the first image on the left.</p>
-            <p>You can select if you want to display the image containing the overlays of the toolset or the image resulting from one tool.</p>
+            <p>This view type features images from an inspection or from a specific inspection tool in sequence. An image is added at the most left place, previous images move to the right when a new image is added to the strip. Image strip view only adds an image of the current object to the image strip when the reject condition specified in the SVObserver's monitor list is fulfilled (i.e. when the result is TRUE). If there is no reject condition specified, no images are displayed.</p>
+            <p>The most recent image is featured as the first image on the left.</p>
+            <p>You can select whether you want to display the image containing the overlays of the toolset or the image resulting from one tool.</p>
             <p>The image strip view includes the following specific components:</p>
             <ol>
                 <li value="1"><a href="#Image_Strip">Image strip</a>
@@ -47,14 +48,15 @@
             <p class="Zwischenüberschrift"><a name="Image_Strip"></a><a name="kanchor50"></a><span style="font-size: 18pt; font-weight: bold;">Select Image</span>
             </p>
             <p>You can select whether you want to display images from an inspection or from a specific inspection tool.</p>
-            <p>The image from an inspection includes all inspection and custom overlays. Overlays cannot be hidden in an image strip view.</p>
-            <p>Images from a specific inspection tool represent the image that results from the SVObserver configuration of this inspection tool. Images can look different from other images due to applied SVObserver configuration (e.g. filters, thresholds).</p>
+            <p>The image from an inspection includes all inspection overlays.</p>
+            <p>Images from an inspection represent the image that results from the SVObserver configuration of this inspection tool. An image from a specific tool represents the applied SVObserver configuration of this tool (filter, threshold etc. included).</p>
+            <p>This may lead to the effect that an image from a specific tool might look different than the image from the whole inspection or from another tool of the same inspection.</p>
             <p>&#160;</p>
             <p style="font-size: 10pt;"><span class="boolean"> You can find more details on how to configure&#160;inspection tools and overlays in the SVObserver manual.</span>&#160;</p>
             <p>&#160;</p>
             <div class="MCDropDown MCDropDown_Closed dropDown"><span class="MCDropDownHead dropDownHead"><a href="javascript:void(0)" class="MCDropDownHotSpot dropDownHotspot MCDropDownHotSpot_ MCHotSpotImage" aria-expanded="false"><img class="MCDropDown_Image_Icon" src="../Skins/Default/Stylesheets/Images/transparent.gif" height="16" width="18" alt="Closed" data-mc-alt2="Open" /></a><a name="Add_image_to_image_strip"></a><a href="javascript:void(0)" class="MCDropDownHotSpot dropDownHotspot MCDropDownHotSpot_" aria-expanded="false">Add image source to image strip</a></span>
                 <div class="MCDropDownBody dropDownBody">
-                    <p>→ In an empty view, click on the button "Add view" in the upper right corner, and select the desired inspection and "Image Strip".</p>
+                    <p>→ In an empty view, click on the button <b>Image Strip</b> and select the desired inspection.</p>
                     <p>→ Scroll in the <a href="General structure/Selection Tree.htm">selection tree</a> to the inspection tool for which you want to display the images.</p>
                     <p>→ Click on the plus button to expand the line below. Click on the plus button in the line below.</p>
                     <p>→ Click in the check box next to the image you want to display.</p>
@@ -94,13 +96,17 @@
                 <tbody>
                     <tr>
                         <td class="TableStyle_Instruction_Body_0_0_RowEnd_ColEnd">
+                            <p><span style="font-size: 18pt; font-weight: bold;">Interaction between image strip view and image view</span>
+                            </p>
+                            <p>If you click on an image in the image strip view, the linked image view automatically shows the corresponding image. If you pause or resume an inspection, images in image strip view and image view are paused or resumed as well. For an instruction on how to pause or resume an inspection, see below.</p>
+                            <p>&#160;</p>
                             <div class="MCDropDown MCDropDown_Closed dropDown"><span class="MCDropDownHead dropDownHead"><a href="javascript:void(0)" class="MCDropDownHotSpot dropDownHotspot MCDropDownHotSpot_ MCHotSpotImage" aria-expanded="false"><img class="MCDropDown_Image_Icon" src="../Skins/Default/Stylesheets/Images/transparent.gif" height="16" width="18" alt="Closed" data-mc-alt2="Open" />Pause inspection<![CDATA[
  ]]></a></span>
                                 <div class="MCDropDownBody dropDownBody">
                                     <p>
                                         <p>→ In the view menu, press the button <b>Pause</b> <img src="Resources/Images/Image_strip_view_controls_pause.png" /> or click on one of the currently displayed images</p>
                                         <p>→ The image strips pauses at the currently displayed image. The image in an image view (if applicable) and its corresponding inspection results are paused as well.</p>
-                                        <p>→ The number of running inspections displayed in the top bar after Inspection state changes accordingly.</p>
+                                        <p>→ The number of running inspections displayed in the top bar next to <b style="font-style: normal;">Inspection state</b> changes accordingly.</p>
                                         <p>→ The inspection continues to run. You can verify in SVObserver that the inspection was not paused.</p>
                                         <p>→ The notification "Reject stream was paused" shows in the top bar.</p>
                                         <p>→ Images resulting from the ongoing inspection are not buffered and are not shown when you resume the inspection by pressing <b>Play</b> or one of the displayed images in the image strip view.</p>
@@ -121,7 +127,7 @@
                                         <p> 
 → In the view menu, press the button <b>Play</b> <img src="Resources/Images/Image_strip_view_controls_play.png" />.</p>
                                         <p>→ The image strip resumes at the image that was taken last in the inspection. Please note that the inspection continued to run in SVObserver after you had pressed <b>Pause</b> in the image strip.</p>
-                                        <p>→ The number of running inspections displayed in the top bar after Inspection state changes accordingly.</p>
+                                        <p>→ The number of running inspections displayed in the top bar next to <b>Inspection state</b> changes accordingly.</p>
                                         <p>→ The image in an image view (if applicable)  and its corresponding inspection results resume to update as well.</p>
                                         <p>→ The notification "Reject stream was resumed" shows in the top bar.</p>
                                         <p>→ Images that were taken during a pause are not shown in the image strip view.</p>
@@ -132,6 +138,19 @@
                     </tr>
                 </tbody>
             </table>
+            <div class="MCDropDown MCDropDown_Closed dropDown"><span class="MCDropDownHead dropDownHead"><a href="javascript:void(0)" class="MCDropDownHotSpot dropDownHotspot MCDropDownHotSpot_ MCHotSpotImage" aria-expanded="false"><img class="MCDropDown_Image_Icon" src="../Skins/Default/Stylesheets/Images/transparent.gif" height="16" width="18" alt="Closed" data-mc-alt2="Open" />Show image in bigger size</a></span>
+                <div class="MCDropDownBody dropDownBody">
+                    <p>→ Right-click on the image and select <b>Open image in new tab</b>.</p>
+                    <p>→ A new tab opens where you can see the same image in bigger size.</p>
+                </div>
+            </div>
+            <div class="MCDropDown MCDropDown_Closed dropDown"><span class="MCDropDownHead dropDownHead"><a href="javascript:void(0)" class="MCDropDownHotSpot dropDownHotspot MCDropDownHotSpot_ MCHotSpotImage" aria-expanded="false"><img class="MCDropDown_Image_Icon" src="../Skins/Default/Stylesheets/Images/transparent.gif" height="16" width="18" alt="Closed" data-mc-alt2="Open" />Save image</a></span>
+                <div class="MCDropDownBody dropDownBody">
+                    <p>→ Right-click on the image and select <b>Save image as...</b>.</p>
+                    <p>→ Define a file name, file extension and a location.</p>
+                    <p>→ Press <b>Save</b>.</p>
+                </div>
+            </div>
         </div>
     </body>
 </html>

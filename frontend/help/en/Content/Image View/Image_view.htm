@@ -34,15 +34,15 @@
             </div>
         </div>
         <div role="main" id="mc-main-content">
-            <h1><a name="kanchor38"></a>Image View</h1>
+            <h1><a name="kanchor22"></a>Image View</h1>
             <p><a class="MCPopupThumbnailLink MCPopupThumbnailHover" href="../Resources/Images/Image_view_w_overlays.PNG"><img class="MCPopupThumbnail img" data-mc-width="614" data-mc-height="520" src="../Resources/Images/Image_view_w_overlays_thumb_216_0.png" style="mc-thumbnail-max-height: auto;mc-thumbnail-max-width: 216px;mc-thumbnail: hover;" tabindex="" /></a>
             </p>
             <p>
                 <img src="../Resources/Images/Hand.png" /> Hover over image to enlarge</p>
             <hr />
-            <p>This view type features images acquired by the SVObserver. It contains overlays from the selected inspection or tool. </p>
+            <p>This view type features images acquired by SVObserver. It contains overlays from the selected inspection or tool. </p>
             <p>The image view includes the following specific components:</p>
-            <ol>
+            <ol style="color: #000000;">
                 <li value="1">Featured image (center), depicted with <a href="#Overlays">overlays</a></li>
                 <li value="2"><a href="#Image_View_Controls">Image controls</a> (bottom left)</li>
             </ol>
@@ -59,7 +59,8 @@
             <p class="Zwischenüberschrift"><span style="font-size: 18pt; font-weight: bold;"><a name="Select_image"></a>Select Image</span>&#160;</p>
             <p>You can select whether you want to display images from an inspection or from a specific inspection tool.</p>
             <p>The image from an inspection includes all inspection overlays.</p>
-            <p>Images from a specific inspection tool represent the image that results from the SVObserver configuration of this inspection tool. An image from a specific tool represents the applied SVObserver configuration of this tool. Due to this configuration, it can look differently than images from the tool set or other tools.</p>
+            <p>Images from an inspection represent the image that results from the SVObserver configuration of this inspection tool. An image from a specific tool represents the applied SVObserver configuration of this tool (filter, threshold etc. included).</p>
+            <p>This may lead to the effect that an image from a specific tool might look different than the image from the whole inspection or from another tool of the same inspection.</p>
             <p>&#160;</p>
             <p style="font-size: 10pt;"><span class="boolean"> You can find more details on how to configure&#160;inspection tools and overlays in the SVObserver manual.</span>&#160;</p>
             <p>&#160;</p>
@@ -74,11 +75,11 @@
                     <p style="font-size: 10pt;"><span class="boolean"> You can find more details on how to use the filter and about the displayed results in <a href="../General structure/Using the filter.htm">Using the Filter</a>.</span>&#160;</p>
                 </div>
             </div>
-            <p class="Zwischenüberschrift"><a name="kanchor39"></a><a name="Overlays"></a><span style="font-size: 18pt; font-weight: bold;">Overlays</span>
+            <p class="Zwischenüberschrift"><a name="kanchor23"></a><a name="Overlays"></a><span style="font-size: 18pt; font-weight: bold;">Overlays</span>
             </p>
-            <p>An overlay is a shape superimposed on an image displayed in image view. You can hide or show overlays. There are two different types of overlays. Inspection overlays and custom overlays.</p>
+            <p>An overlay is a shape superimposed on an image displayed in image view. There are two different types of overlays. Inspection overlays and custom overlays.</p>
             <p>Inspection overlays are transferred from the SVObserver inspection tools.</p>
-            <p>You can create custom overlays to highlight areas in the <a href="../Parameter_view.htm">Parameter View</a>.</p>
+            <p>You can create custom overlays to highlight areas in the <a href="../Parameter_view.htm">Parameter View</a>. You can hide or show custom overlays.</p>
             <p>&#160;</p>
             <p style="font-size: 10pt;"><span class="boolean"> You can find more details about overlays and the difference between custom overlays and inspection overlays in <a href="Overlays.htm">Overlays</a>.</span>
             </p>
@@ -197,7 +198,7 @@
                                 <div class="MCDropDownBody dropDownBody">
                                     <p>You can save the image without any overlays to any location</p>
                                     <p>
-                                        <p>→ In the view menu, press <b>Save</b><img src="../Resources/Images/Image_view_control_Save.png" />.</p>
+                                        <p>→ In the view menu, press <b>Save</b> <img src="../Resources/Images/Image_view_control_Save.png" />.</p>
                                         <p>→ The image is saved to the location specified in the browser settings. The saved image does not contain any inspection or custom overlays.</p>
                                     </p>
                                 </div>
@@ -214,7 +215,7 @@
                                 <div class="MCDropDownBody dropDownBody">
                                     <p>You can save the image with inspection and custom overlays to any location</p>
                                     <p>
-                                        <p>→ In the view menu, press <b>Save with overlays</b><img src="../Resources/Images/Image_view_control_SaveWOl.png" />.</p>
+                                        <p>→ In the view menu, press <b>Save with overlays</b> <img src="../Resources/Images/Image_view_control_SaveWOl.png" />.</p>
                                         <p>→ The image is saved to the location specified in the browser settings.</p>
                                     </p>
                                 </div>
@@ -289,17 +290,17 @@
                                     <p><u>Hide all custom overlays</u>
                                     </p>
                                     <p>
-                                        <p>→ In the view menu, click on the button <b>Overlay list</b><img src="../Resources/Images/Image_view_control_OverlayList.png" />.</p>
+                                        <p>→ In the view menu, click on the button <b>Overlay list</b> <img src="../Resources/Images/Image_view_control_OverlayList.png" />.</p>
                                         <p>→ The overlay list opens within the active view.</p>
                                     </p>
                                     <p>
-                                        <p>→ Click on the button <b>Hide overlays</b><img src="../Resources/Images/Image_view_ov_list_hide.png" />.</p>
+                                        <p>→ Click on the button <b>Hide overlays</b> <img src="../Resources/Images/Image_view_ov_list_hide.png" />.</p>
                                         <p>→   Custom overlays are no longer displayed with the featured image.</p>
                                     </p>
                                     <p><b style="text-decoration: underline; font-weight: normal;">Hide individual custom overlays</b>
                                     </p>
                                     <p style="font-style: normal;">
-                                        <p>→ In the view menu, click on the button <b>Overlay list</b><img src="../Resources/Images/Image_view_control_OverlayList.png" />.</p>
+                                        <p>→ In the view menu, click on the button <b>Overlay list</b> <img src="../Resources/Images/Image_view_control_OverlayList.png" />.</p>
                                         <p>→ The overlay list opens in the active view.</p>
                                     </p>
                                     <p style="font-style: normal;">
@@ -322,17 +323,17 @@
                                     <p><u>Show all custom overlays</u>
                                     </p>
                                     <p>
-                                        <p>→ In the view menu, click on the button <b>Overlay list</b><img src="../Resources/Images/Image_view_control_OverlayList.png" />.</p>
+                                        <p>→ In the view menu, click on the button <b>Overlay list</b> <img src="../Resources/Images/Image_view_control_OverlayList.png" />.</p>
                                         <p>→   The overlay list opens in the active view.</p>
                                     </p>
                                     <p>
-                                        <p>→ Click on the button <b>Show overlays</b><img src="../Resources/Images/Image_view_ov_list_show.png" />.</p>
+                                        <p>→ Click on the button <b>Show overlays</b> <img src="../Resources/Images/Image_view_ov_list_show.png" />.</p>
                                         <p>→   Custom overlays are displayed in the image.</p>
                                     </p>
                                     <p><u>Show individual custom overlays</u>
                                     </p>
                                     <p style="font-style: normal;">
-                                        <p>→   In the view menu, click on the button <b>Overlay list</b><img src="../Resources/Images/Image_view_control_OverlayList.png" />.</p>
+                                        <p>→   In the view menu, click on the button <b>Overlay list</b> <img src="../Resources/Images/Image_view_control_OverlayList.png" />.</p>
                                         <p>→   The overlay list opens in the active view.</p>
                                     </p>
                                     <p style="font-style: normal;">
@@ -345,7 +346,7 @@
                     </tr>
                 </tbody>
             </table>
-            <p class="Zwischenüberschrift"><a name="Image_Information"></a><a name="kanchor40"></a><span style="font-weight: bold; font-size: 18pt;">Image Information</span>
+            <p class="Zwischenüberschrift"><a name="Image_Information"></a><a name="kanchor24"></a><span style="font-weight: bold; font-size: 18pt;">Image Information</span>
             </p>
             <p>You can display additional information about the image and the cursor position.</p>
             <p>→ To display image information, click on the button <b>Image information</b> in the image controls bar. </p>
@@ -357,12 +358,13 @@
             <p>
                 <img src="../Resources/Images/Image_view_image_info_2.PNG" />
             </p>
-            <p class="Zwischenüberschrift"><a name="kanchor41"></a><span style="font-weight: bold; font-size: 18pt;">Image View during Run Mode</span>
+            <p class="Zwischenüberschrift"><a name="kanchor25"></a><span style="font-weight: bold; font-size: 18pt;">Image View during Run Mode</span>
             </p>
             <p>The image shown in an Image View is constantly updated when in Run Mode. The image view shows in Run Mode always the current image of the SVObserver configuration.</p>
             <p>You can pause the image shown in the Image View:</p>
-            <p>→ You need an Image Strip View.</p>
-            <p>→ Press Pause in the Image Strip View.</p>
+            <p>→ Click on the top bar on Inspection state and select the inspection you want to pause.</p>
+            <p>→ Alternatively, press <b>Pause</b> in an Image Strip View that refers to the same inspection.</p>
+            <p>&#160;</p>
             <p>→ The notification "Reject stream was paused" shows in the top bar.</p>
             <p>→ The inspection continues to run. You can verify in SVObserver that the inspection was not paused.</p>
             <p>For more information about how to resume the automatic update of images, refer to <a href="../Image_strip_view.htm#Play_image_strip">Play image strip</a>.</p>
@@ -371,7 +373,7 @@
                     <p>If you have an image view and an image strip view, both referring to the same inspection, you can select an image from the image strip to be displayed in the image view.</p>
                     <p>→ You need an Image Strip View and an Image View for the same inspection.</p>
                     <p>→ Click on an image in the image strip.</p>
-                    <p>→ The respective image is displayed in the image view.</p>
+                    <p>→ An image of the corresponding object is displayed in the image view.</p>
                     <p>→ The image strip is paused and the notification "Reject stream was paused" shows in the top bar.</p>
                 </div>
             </div>

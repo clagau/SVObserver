@@ -778,7 +778,7 @@ p.TOC6
 	MadCap|dropDown
 	{
 		color: #000000;
-		page-break-inside: Avoid;
+		page-break-inside: avoid;
 	}
 
 	MadCap|dropDownBody

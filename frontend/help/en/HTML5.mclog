@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<MadCapLog Protocol="2" Description="MadCap Flare 2019 r2 Generated HTML5.fltar" Date="2020-06-29T09:29:03.8327265+02:00">
+<MadCapLog Protocol="2" Description="MadCap Flare 2019 r2 Generated HTML5.fltar" Date="2020-07-23T15:14:38.1710294+02:00">
     <Messages>Compiling target HTML5...
 Removing previously generated content...
 Loading skin info...
@@ -20,6 +20,7 @@ Excluded from output:file:///C:/Users/1342/Desktop/WebApp/Content/Title.htm.
 Image "Bottom-bar_ViewSetManager.png" regenerated for "" medium: Resources\Images\Bottom-bar_ViewSetManager.png
 Image "Bottom_bar_menu.png" regenerated for "" medium: Resources\Images\Bottom_bar_menu.png
 Image "Image_view_w_overlays.PNG" regenerated for "" medium: Resources\Images\Image_view_w_overlays.png
+Image "list-view_set-alias.png" regenerated for "" medium: Resources\Images\list-view_set-alias.png
 Image "List_view_intro_neu.png" regenerated for "" medium: Resources\Images\List_view_intro_neu.png
 You must install Ghostscript if you insert a postscript file (e.g., EPS, PS). Ghostscript allows these elements to be converted to a supported file type in the output. Ghostscript is also used to render vector graphics in the XML Editor. To install the latest version of Ghostscript, click the link below.
 
@@ -35,9 +36,14 @@ Image "Op_mode_stop.png" regenerated for "" medium: Resources\Images\Op_mode_sto
 Image "Op_mode_test.png" regenerated for "" medium: Resources\Images\Op_mode_test.png
 Image "ParamView.PNG" regenerated for "" medium: Resources\Images\ParamView.png
 Image "ParamView_ImageView.PNG" regenerated for "" medium: Resources\Images\ParamView_ImageView.png
+Image "save-button.png" regenerated for "" medium: Resources\Images\save-button.png
 Image "select-view-type_image.png" regenerated for "" medium: Resources\Images\select-view-type_image.png
 Image "select-view-type_toolset.png" regenerated for "" medium: Resources\Images\select-view-type_toolset.png
 Image "ShowHideBar_1.PNG" regenerated for "" medium: Resources\Images\ShowHideBar_1.png
+Image "Start-screen.bmp" regenerated for "" medium: Resources\Images\Start-screen.bmp
+Image "Start-screen1.png" regenerated for "" medium: Resources\Images\Start-screen1.png
+Image "toggle-button_pause-resume-inspections-dropdown.png" regenerated for "" medium: Resources\Images\toggle-button_pause-resume-inspections-dropdown.png
+Image "toggle-button_pause-resume-inspections.png" regenerated for "" medium: Resources\Images\toggle-button_pause-resume-inspections.png
 Image "TopBar.png" regenerated for "" medium: Resources\Images\TopBar.png
 Image "TopBar_notifications_example.png" regenerated for "" medium: Resources\Images\TopBar_notifications_example.png
 Image "UserInterfacePlain.png" regenerated for "" medium: Resources\Images\UserInterfacePlain.png
@@ -293,8 +299,8 @@ Generated Skins\Default\Stylesheets\TextEffects.micro-content.css
 Generated Skins\Default\Stylesheets\Topic.micro-content.css
 Generated SVOWebApp_WebHelp.htm
 Saving result set...
-Ignored Compiler Warnings: 260
-Output generated in 24 second(s).
+Ignored Compiler Warnings: 273
+Output generated in 31 second(s).
 
 Done
 Saving log to "C:\Users\1342\Desktop\WebApp\Output\1342\HTML5\HTML5.mclog"
