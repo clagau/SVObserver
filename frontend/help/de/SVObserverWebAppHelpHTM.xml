@@ -1,2 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<WebHelpSystem DefaultUrl="Content/Information/General.htm" Toc="Data/Toc.xml" Index="Data/Index.xml" Concepts="Data/Concepts.xml" Glossary="Content/Glossary.htm" SearchDatabase="Data/Search.xml" Alias="Data/Alias.xml" Synonyms="Data/Synonyms.xml" Skin="Data/SkinSVOWebAppHelp/Skin.xml" Skins="SVOWebAppHelp" BuildTime="20.11.2018 11:20:45" BuildVersion="6.1.0.0" TargetType="WebHelp" SkinTemplateFolder="Skin/" InPreviewMode="false" MoveOutputContentToRoot="false" MakeFileLowerCase="false" UseCustomTopicFileExtension="false" />
