@@ -727,6 +727,10 @@ bool SVPatternAnalyzerClass::CloseObject()
 
 void SVPatternAnalyzerClass::ResetResultValues()
 {
+	msv_dpatResultMatchScore.SetResultSize(0);
+	msv_dpatResultAngle.SetResultSize(0);
+	msv_dpatResultX.SetResultSize(0);
+	msv_dpatResultY.SetResultSize(0);
 	int ArraySize = msv_dpatResultMatchScore.getArraySize();
 	for(int i=0; i < ArraySize; i++)
 	{
@@ -975,6 +979,7 @@ void SVPatternAnalyzerClass::addOverlayGroups(const SvIe::SVImageClass*, SvPb::O
 	pRectArray->set_xtrpos(msv_dpatResultX.getTrPos() + 1);
 	pRectArray->set_ytrpos(msv_dpatResultY.getTrPos() + 1);
 	pRectArray->set_angletrpos(msv_dpatResultAngle.getTrPos() + 1);
+	pRectArray->set_numberpos(msv_lpatNumFoundOccurances.getTrPos() + 1);
 
 	long width = 0;
 	long height = 0;

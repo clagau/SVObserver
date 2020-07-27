@@ -171,6 +171,7 @@ message SVORectArrayPatternData
 	int32 centerY = 7; //only single value
 	double centerAngle = 8; //only single value
 	double centerRadius = 9; //only single value
+	int32 numberPos = 10; //number of patterns found
 }
 
 // An Array of rectangular shape.

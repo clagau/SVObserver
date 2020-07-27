@@ -56,7 +56,7 @@ namespace SvOv
 			{
 				return SvUl::getVectorFromOneDim<double>(varX1);
 			}
-			else
+			else if (varX1.vt != VT_EMPTY)
 			{
 				return{ varX1 };
 			}
@@ -89,6 +89,20 @@ namespace SvOv
 
 	bool fillRectArray(const SvTrc::ITriggerRecordR& rTr, const SvPb::SVORectArrayPatternData& rRectArrayData, SvPb::OverlayShapeRectArray& rRectArray)
 	{
+		int numberOfPattern = 0;
+		if (0 < rRectArrayData.numberpos())
+		{
+			//trPos in PB is one based and in tr it is zero based.
+			_variant_t var = rTr.getDataValue(rRectArrayData.numberpos() - 1);
+			if (VT_EMPTY != var.vt)
+			{
+				numberOfPattern = var;
+			}
+		}
+		if (0 == numberOfPattern)
+		{
+			return false;
+		}
 		auto xArray = getDataArray(rTr, rRectArrayData.xtrpos());
 		auto yArray = getDataArray(rTr, rRectArrayData.ytrpos());
 		auto angleArray = getDataArray(rTr, rRectArrayData.angletrpos());
