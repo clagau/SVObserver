@@ -85,6 +85,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="FileVersion.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -99,6 +100,7 @@
     <ClCompile Include="SVWaitFuncs.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="FileVersion.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SVAsyncProcedure.h" />
     <ClInclude Include="SVEncodeDecodeUtilities.h" />

@@ -62,6 +62,7 @@ enum MessageTextEnum
 	Tid_ToolLoadError,
 	Tid_RunTool_Exception,
 	Tid_SVInitializeRun_Exception,
+	Tid_CouldNotCopyDll,
 
 	///Defines for SVConfigurationObjects
 	Tid_CreateSFailed,

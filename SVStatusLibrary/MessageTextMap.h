@@ -73,6 +73,7 @@ namespace SvStl
 		{Tid_ToolLoadError, _T("Could not load DLL (LoadLibrary failed).")},
 		{Tid_RunTool_Exception, _T("Exception in SVRunTool of some External Dll %s")},
 		{Tid_SVInitializeRun_Exception, _T("Exception in SVInitializeRun in some External Dll %s")},
+		{Tid_CouldNotCopyDll, _T("Could not copy DLL because a different version is used by another tool")},
 		
 		//Defines for SVConfigurationObjects
 		{Tid_CreateSFailed, _T("Create %s failed")},

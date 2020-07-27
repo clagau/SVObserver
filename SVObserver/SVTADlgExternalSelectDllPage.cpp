@@ -24,6 +24,8 @@
 #include "SVStatusLibrary\GlobalPath.h"
 #include "SVStatusLibrary\MessageContainer.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "SVSystemLibrary/FileVersion.h"
+#include "SVStatusLibrary/MessageTextGenerator.h"
 #pragma endregion Includes
 
 
@@ -34,9 +36,9 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-constexpr char* cCRLF (_T("\r\n"));
+constexpr char* cCRLF(_T("\r\n"));
 
-enum {WM_UPDATE_STATUS = WM_APP + 100};
+enum { WM_UPDATE_STATUS = WM_APP + 100 };
 
 //@TODO [Arvid][10.00][16.6.2020] this helper function should be placed elsewhere and generalized (and not return a tool pointer)
 std::pair<SvOp::SVExternalToolTask*, uint32_t> getExternalToolTaskInfo(uint32_t inspectionID, uint32_t ownerID)
@@ -55,7 +57,7 @@ std::pair<SvOp::SVExternalToolTask*, uint32_t> getExternalToolTaskInfo(uint32_t 
 		return std::pair<SvOp::SVExternalToolTask*, uint32_t>(pTask, taskObjectID);
 	}
 
-	return std::pair<SvOp::SVExternalToolTask*, uint32_t> (nullptr,0);
+	return std::pair<SvOp::SVExternalToolTask*, uint32_t>(nullptr, 0);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -65,9 +67,9 @@ namespace	// file scope
 {
 	void YieldPaintMessages(HWND hWnd /* = nullptr */)
 	{// Let other PAINT messages through
-		
+
 		MSG msg;
-		
+
 		while (PeekMessage(&msg, hWnd, WM_PAINT, WM_PAINT, PM_REMOVE))
 		{
 			TranslateMessage(&msg);
@@ -83,20 +85,20 @@ BEGIN_MESSAGE_MAP(SVSelectExternalDllPage, CPropertyPage)
 	ON_BN_CLICKED(IDC_ADD, OnAdd)
 	ON_BN_CLICKED(IDC_BROWSE, OnBrowse)
 	//}}AFX_MSG_MAP
-    ON_MESSAGE(WM_UPDATE_STATUS, OnUpdateStatus)
+	ON_MESSAGE(WM_UPDATE_STATUS, OnUpdateStatus)
 END_MESSAGE_MAP()
 
-SVSelectExternalDllPage::SVSelectExternalDllPage(uint32_t inspectionID, uint32_t toolObjectID, SVToolAdjustmentDialogSheetClass* pSheet )
-: CPropertyPage(IDD)
-, m_InspectionID(inspectionID)
-, m_ToolObjectID(toolObjectID) //attention: SVToolAdjustmentDialogSheetClass::m_TaskObjectID is passed to this value when this constructor is called by SVToolAdjustmentDialogSheetClass!
-, m_pSheet(pSheet)
+SVSelectExternalDllPage::SVSelectExternalDllPage(uint32_t inspectionID, uint32_t toolObjectID, SVToolAdjustmentDialogSheetClass* pSheet)
+	: CPropertyPage(IDD)
+	, m_InspectionID(inspectionID)
+	, m_ToolObjectID(toolObjectID) //attention: SVToolAdjustmentDialogSheetClass::m_TaskObjectID is passed to this value when this constructor is called by SVToolAdjustmentDialogSheetClass!
+	, m_pSheet(pSheet)
 {
 	auto taskinfo = getExternalToolTaskInfo(inspectionID, toolObjectID);
 
 	m_pTask = taskinfo.first;
 
-	assert( m_pTask );
+	assert(m_pTask);
 
 	//{{AFX_DATA_INIT(SVSelectExternalDllPage)
 	m_strDLLPath = _T("");
@@ -125,11 +127,11 @@ void SVSelectExternalDllPage::DoDataExchange(CDataExchange* pDX)
 /////////////////////////////////////////////////////////////////////////////
 // SVSelectExternalDllPage message handlers
 
-BOOL SVSelectExternalDllPage::OnInitDialog() 
+BOOL SVSelectExternalDllPage::OnInitDialog()
 {
 	std::string Value;
 	// stuff the value before base OnInitDialog
-	m_pTask->m_Data.m_voDllPath.GetValue( Value );
+	m_pTask->m_Data.m_voDllPath.GetValue(Value);
 	// cppcheck-suppress danglingLifetime //m_strDLLPath is a CString and will not merely hold a copy of a pointer
 	m_strDLLPath = Value.c_str();
 
@@ -139,31 +141,31 @@ BOOL SVSelectExternalDllPage::OnInitDialog()
 
 	m_ToolTip.Create(this, TTS_NOPREFIX | WS_VISIBLE);
 	m_ToolTip.Activate(TRUE);
-	m_ToolTip.SetDelayTime( 32000, TTDT_AUTOPOP );
-	m_ToolTip.SetDelayTime( 10,    TTDT_INITIAL );
-	m_ToolTip.SetDelayTime( 250,   TTDT_RESHOW );
-	
+	m_ToolTip.SetDelayTime(32000, TTDT_AUTOPOP);
+	m_ToolTip.SetDelayTime(10, TTDT_INITIAL);
+	m_ToolTip.SetDelayTime(250, TTDT_RESHOW);
+
 	InitializeDll(true);
 
-	int iDependentsSize = static_cast< int >( m_pTask->m_Data.m_aDllDependencies.size() );
-	for( int i = 0 ; i < iDependentsSize ; i++)
+	int iDependentsSize = static_cast<int>(m_pTask->m_Data.m_aDllDependencies.size());
+	for (int i = 0; i < iDependentsSize; i++)
 	{
 		std::string Temp;
-		m_pTask->m_Data.m_aDllDependencies[i].GetValue( Temp );
-		if( !Temp.empty() )
+		m_pTask->m_Data.m_aDllDependencies[i].GetValue(Temp);
+		if (!Temp.empty())
 		{
-			m_lbDependentList.AddString( Temp.c_str() );
+			m_lbDependentList.AddString(Temp.c_str());
 		}
 	}
-	
+
 	PostMessage(WM_UPDATE_STATUS, 0, 0);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+				  // EXCEPTION: OCX Property Pages should return FALSE
 
 }
 
-void SVSelectExternalDllPage::OnOK() 
+void SVSelectExternalDllPage::OnOK()
 {
 	UpdateData();
 
@@ -179,7 +181,7 @@ void SVSelectExternalDllPage::OnOK()
 		m_pTask->Initialize();
 		m_pTask->resetAllObjects();
 	}
-	catch ( const SvStl::MessageContainer&)
+	catch (const SvStl::MessageContainer&)
 	{
 	}
 
@@ -193,37 +195,37 @@ void SVSelectExternalDllPage::OnOK()
 	CPropertyPage::OnOK();
 }
 
-void SVSelectExternalDllPage::OnDeleteAll() 
+void SVSelectExternalDllPage::OnDeleteAll()
 {
 	// Clear List Box
 	m_lbDependentList.ResetContent();
 	testExternalDll();
 }
 
-void SVSelectExternalDllPage::OnDelete() 
+void SVSelectExternalDllPage::OnDelete()
 {
 	int iCurrentPos = m_lbDependentList.GetCurSel();
-	if ( iCurrentPos > -1 && iCurrentPos < m_lbDependentList.GetCount() )
+	if (iCurrentPos > -1 && iCurrentPos < m_lbDependentList.GetCount())
 	{
 		m_lbDependentList.DeleteString(iCurrentPos);
 		testExternalDll();
 	}
-	
+
 }
 
-void SVSelectExternalDllPage::OnAdd() 
+void SVSelectExternalDllPage::OnAdd()
 {
 	bool bFullAccess = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
 	SvMc::SVFileDialog cfd(true, bFullAccess, _T("dll"), _T(""),
 		OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
 		_T("All Files (*.*)|*.*|Dynamic Link Library(*.dll)|*.dll||"));
 
-	TCHAR tszPath[MAX_PATH]={0};
+	TCHAR tszPath[MAX_PATH] = { 0 };
 	_tcscpy(tszPath, m_strLastDllPath);
 	cfd.m_ofn.lpstrInitialDir = tszPath;
 	cfd.m_ofn.lpstrTitle = _T("Select File");
-	
-	if( cfd.DoModal() == IDOK)
+
+	if (cfd.DoModal() == IDOK)
 	{
 		// Extract File Name
 		m_strLastDllPath = cfd.GetPathName();
@@ -235,15 +237,15 @@ void SVSelectExternalDllPage::OnAdd()
 		AfxGetApp()->WriteProfileString(_T("Settings"), _T("Last External Tool Dll Path"), m_strLastDllPath);
 
 		// Check for already existing DLL Paths
-		if( LB_ERR == m_lbDependentList.FindString( 0, cfd.GetPathName() )  )
+		if (LB_ERR == m_lbDependentList.FindString(0, cfd.GetPathName()))
 		{
-			m_lbDependentList.AddString( cfd.GetPathName() );
+			m_lbDependentList.AddString(cfd.GetPathName());
 		}
 		testExternalDll();
 	}
 }
 
-void SVSelectExternalDllPage::OnBrowse() 
+void SVSelectExternalDllPage::OnBrowse()
 {
 	UpdateData();
 	bool bFullAccess = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
@@ -251,12 +253,12 @@ void SVSelectExternalDllPage::OnBrowse()
 		OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
 		_T("Dynamic Link Library(*.dll)|*.dll|All Files (*.*)|*.*||"));
 
-	TCHAR tszPath[MAX_PATH]={0};
+	TCHAR tszPath[MAX_PATH] = { 0 };
 	_tcscpy(tszPath, m_strLastDllPath);
 	cfd.m_ofn.lpstrInitialDir = tszPath;
 	cfd.m_ofn.lpstrTitle = _T("Select File");
-	
-	if( cfd.DoModal() == IDOK)
+
+	if (cfd.DoModal() == IDOK)
 	{
 		m_strLastDllPath = cfd.GetPathName();
 		int iFind = m_strLastDllPath.ReverseFind(_T('\\'));
@@ -269,20 +271,39 @@ void SVSelectExternalDllPage::OnBrowse()
 		m_strDLLPath = cfd.GetPathName();
 		UpdateData(FALSE);
 
+		std::string dllPath(m_strDLLPath.GetString());
 		m_pTask->m_Data.m_voDllPath.SetValue(std::string(m_strDLLPath));
 
-		m_pTask->ClearData();
+		std::string runpath;
+		m_pTask->m_Data.m_voDllPath.GetValue(runpath);
+		m_preserveStatus = false;
+		if (runpath != dllPath)
+		{
+			VS_FIXEDFILEINFO runpathFileInfo, dllPathrunpathFileInfo;
+			SvSyl::FileVersion::getFileInfo(runpathFileInfo, runpath.c_str());
+			SvSyl::FileVersion::getFileInfo(dllPathrunpathFileInfo, dllPath.c_str());
+			bool eq = SvSyl::FileVersion::isEqual(runpathFileInfo, dllPathrunpathFileInfo);
 
-		m_strStatus = _T("Dll needs to be tested.");
-		m_strStatus += cCRLF;
-		UpdateData(FALSE);
+			if (!eq)
+			{
+				std::string Status= SvStl::MessageTextGenerator::Instance().getText(SvStl::Tid_CouldNotCopyDll);
+				m_strStatus = Status.c_str();
+				m_strStatus += cCRLF;
+				m_preserveStatus = true;
+
+				m_strDLLPath = _T("");
+				UpdateData(FALSE);
+				m_pTask->m_Data.m_voDllPath.SetDefaultValue(std::string(m_strDLLPath), true);
+			}
+		}
+		m_pTask->ClearData();
 
 		CWnd *pParent = GetParent();
 		if (nullptr != pParent)
 		{
 			pParent->SendMessage(SV_REMOVE_PAGES_FOR_TESTED_DLL);
 		}
-		testExternalDll(m_ResetInput==TRUE);
+		testExternalDll(m_ResetInput == TRUE);
 	}
 }// end void SVSelectExternalDllPage::OnBrowse() 
 
@@ -293,30 +314,30 @@ void SVSelectExternalDllPage::testExternalDll(bool setDefaultValues)
 	SetDependencies();
 
 	// DLL Path
-	m_pTask->m_Data.m_voDllPath.SetDefaultValue( std::string(m_strDLLPath), true );
+	m_pTask->m_Data.m_voDllPath.SetDefaultValue(std::string(m_strDLLPath), true);
 
 	InitializeDll(false, setDefaultValues);
 }
 
-void SVSelectExternalDllPage::SetDependencies() 
+void SVSelectExternalDllPage::SetDependencies()
 {
-	int i( 0 );
+	int i(0);
 
 	// Clear All File Paths
-	int iDepSize = static_cast< int >( m_pTask->m_Data.m_aDllDependencies.size() );
-	for ( i = 0 ; i < iDepSize ; i++)
+	int iDepSize = static_cast<int>(m_pTask->m_Data.m_aDllDependencies.size());
+	for (i = 0; i < iDepSize; i++)
 	{
-		m_pTask->m_Data.m_aDllDependencies[i].SetDefaultValue( std::string(), true );
+		m_pTask->m_Data.m_aDllDependencies[i].SetDefaultValue(std::string(), true);
 	}
 
 	// Set all File Paths from listbox
 	int ilbSize = m_lbDependentList.GetCount();
-	for ( i = 0 ; i < ilbSize ; i++ )
+	for (i = 0; i < ilbSize; i++)
 	{
 		CString Temp;
 		m_lbDependentList.GetText(i, Temp);
-		m_pTask->m_Data.m_aDllDependencies[i].SetDefaultValue( std::string(Temp), true );
-		m_pTask->m_Data.m_aDllDependencies[i].SetValue( std::string(Temp));
+		m_pTask->m_Data.m_aDllDependencies[i].SetDefaultValue(std::string(Temp), true);
+		m_pTask->m_Data.m_aDllDependencies[i].SetValue(std::string(Temp));
 	}
 
 	m_pTask->SetAllAttributes();	// update dependency attributes
@@ -330,12 +351,15 @@ void SVSelectExternalDllPage::InitializeDll(bool jumpToInputPage, bool setDefaul
 		CWnd *pParent = GetParent();
 		if (nullptr == pParent)//this should never happen!
 		{
-			return; 
+			return;
 		}
-		
+
 		pParent->SendMessage(SV_REMOVE_PAGES_FOR_TESTED_DLL);
 
-		m_strStatus.Empty();
+		if (!m_preserveStatus)
+		{
+			m_strStatus.Empty();
+		}
 		UpdateData(FALSE);
 
 		m_pTask->Initialize(boost::bind(&SVSelectExternalDllPage::NotifyProgress, this, _1));
@@ -350,17 +374,17 @@ void SVSelectExternalDllPage::InitializeDll(bool jumpToInputPage, bool setDefaul
 		m_strStatus += _T("DLL passes the tests.");
 		m_strStatus += cCRLF;
 		UpdateData(FALSE);
-		m_StatusEdit.SetSel( m_strStatus.GetLength(), m_strStatus.GetLength());
+		m_StatusEdit.SetSel(m_strStatus.GetLength(), m_strStatus.GetLength());
 
 		//if we arrive here, Initialization has been successful
 		pParent->SendMessage(SV_ADD_PAGES_FOR_TESTED_DLL);
-		
+
 		if (jumpToInputPage)
 		{
 			pParent->PostMessage(PSM_SETCURSEL, c_indexOfInputValuePage, 0);
 		}
 	}
-	catch ( const SvStl::MessageContainer& e)
+	catch (const SvStl::MessageContainer& e)
 	{
 		//if we arrive here, Initialization has failed
 		m_pSheet->AddAdditionalPagesForExternalTool(true);
@@ -369,12 +393,12 @@ void SVSelectExternalDllPage::InitializeDll(bool jumpToInputPage, bool setDefaul
 		m_strStatus += _T("DLL did not pass.");
 		m_strStatus += cCRLF;
 
-		if ( !e.getMessage().getAdditionalText().empty() )
+		if (!e.getMessage().getAdditionalText().empty())
 		{
 			m_strStatus += e.getMessage().getAdditionalText().c_str();
 			m_strStatus += cCRLF;
 		}
-		const SvStl::Messages& AdditionalMessages( e.getAdditionalMessages() );
+		const SvStl::Messages& AdditionalMessages(e.getAdditionalMessages());
 		SvStl::Messages::const_iterator iter;
 		for (iter = AdditionalMessages.begin(); iter != AdditionalMessages.end(); ++iter)
 		{
@@ -388,14 +412,14 @@ void SVSelectExternalDllPage::InitializeDll(bool jumpToInputPage, bool setDefaul
 // Override PreTranslateMessage() so RelayEvent() can be 
 // called to pass a mouse message to the 
 // tooltip control for processing.
-BOOL SVSelectExternalDllPage::PreTranslateMessage(MSG* pMsg) 
+BOOL SVSelectExternalDllPage::PreTranslateMessage(MSG* pMsg)
 {
 	m_ToolTip.RelayEvent(pMsg);
 
 	return CDialog::PreTranslateMessage(pMsg);
 }
 
-void SVSelectExternalDllPage::NotifyProgress( LPCTSTR Message )
+void SVSelectExternalDllPage::NotifyProgress(LPCTSTR Message)
 {
 	UpdateData();
 
@@ -409,7 +433,7 @@ void SVSelectExternalDllPage::NotifyProgress( LPCTSTR Message )
 LRESULT SVSelectExternalDllPage::OnUpdateStatus(WPARAM, LPARAM)
 {
 	UpdateData();
-	m_StatusEdit.SetSel( m_strStatus.GetLength(), m_strStatus.GetLength());
+	m_StatusEdit.SetSel(m_strStatus.GetLength(), m_strStatus.GetLength());
 	return 0;
 }
 
@@ -424,7 +448,7 @@ SVIPDoc* SVSelectExternalDllPage::GetIPDoc() const
 {
 	SVIPDoc* l_pIPDoc = nullptr;
 
-	if( nullptr != m_pSheet )
+	if (nullptr != m_pSheet)
 	{
 		l_pIPDoc = m_pSheet->GetIPDoc();
 	}

@@ -83,6 +83,7 @@ protected:
 	virtual BOOL PreTranslateMessage(MSG* pMsg) override;
 
 	BOOL m_ResetInput{true};
+	bool m_preserveStatus{ false };
 };
 
 std::pair<SvOp::SVExternalToolTask*, uint32_t> getExternalToolTaskInfo(uint32_t inspectionID, uint32_t toolObjectID);
