@@ -41,7 +41,7 @@ public:
 	std::string GetName() const { return std::string( m_pTrigger->GetName() ); }
 	void SetSoftwareTriggerPeriod(long period, bool setTimer = false) { m_period = period; if (!m_paused) m_pTrigger->SetSoftwareTriggerPeriod(period, setTimer); }
 	SvTi::SVTriggerObject* GetTrigger() { return m_pTrigger; }
-	void Pause() { m_paused = true; m_period = GetSoftwareTriggerPeriod(); m_pTrigger->SetSoftwareTriggerPeriod(INT_MAX, true); }
+	void Pause() { m_paused = true; m_period = GetSoftwareTriggerPeriod(); m_pTrigger->SetSoftwareTriggerPeriod(0, true); }
 	void Continue() { if (m_paused) { m_paused = false; m_pTrigger->SetSoftwareTriggerPeriod(m_period, true); } }
 	std::string ButtonText() const { return m_paused ? std::string(_T("Continue")) : std::string(_T("Pause")); }
 	bool Toggle() { if (m_paused) Continue(); else Pause(); return m_paused; }

@@ -211,7 +211,10 @@ void SVSoftwareTriggerDevice::dispatchTrigger(unsigned long triggerIndex)
 		{
 			::timeKillEvent(m_timerList[triggerChannel].m_timerID);
 			m_timerList[triggerChannel].m_newPeriod = false;
-			m_timerList[triggerChannel].m_timerID = ::timeSetEvent(m_timerList[triggerChannel].m_period, 0, TimerProc, reinterpret_cast<DWORD_PTR> (this), TIME_PERIODIC | TIME_CALLBACK_FUNCTION);
+			if(0 != m_timerList[triggerChannel].m_period)
+			{
+				m_timerList[triggerChannel].m_timerID = ::timeSetEvent(m_timerList[triggerChannel].m_period, 0, TimerProc, reinterpret_cast<DWORD_PTR> (this), TIME_PERIODIC | TIME_CALLBACK_FUNCTION);
+			}
 		}
 	}
 }
@@ -259,9 +262,21 @@ HRESULT SVSoftwareTriggerDevice::SetTriggerPeriod(unsigned long triggerIndex, lo
 	if(0 <= period)
 	{
 		int triggerChannel = triggerIndex - 1;
-		m_timerList[triggerChannel].m_period = static_cast<uint16_t> (period);
-		m_timerList[triggerChannel].m_triggerIndex = triggerIndex;
-		m_timerList[triggerChannel].m_newPeriod = true;
+		TimerInfo& rTimer = m_timerList[triggerChannel];
+		bool restartTimer = (0 == rTimer.m_period);
+		rTimer.m_period = static_cast<uint16_t> (period);
+		rTimer.m_triggerIndex = triggerIndex;
+		if (true == m_moduleReady)
+		{
+			if(restartTimer && 0 != rTimer.m_period)
+			{
+				rTimer.m_timerID = ::timeSetEvent(rTimer.m_period, 0, TimerProc, reinterpret_cast<DWORD_PTR> (this), TIME_PERIODIC | TIME_CALLBACK_FUNCTION);
+			}
+			else
+			{
+				rTimer.m_newPeriod = true;
+			}
+		}
 	}
 	return S_OK;
 }
