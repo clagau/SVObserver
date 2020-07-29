@@ -59,6 +59,7 @@
 #include <memory>
 #include <mmsystem.h>
 #include <mutex>
+#include <queue>
 #include <set>				//Used by static library
 #include <string>
 #include <sstream>

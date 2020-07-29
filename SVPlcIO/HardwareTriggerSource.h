@@ -44,7 +44,7 @@ private:
 
 	bool m_triggerDataChanged {false};
 	InspectionCommand m_previousTriggerData;
-	InspectionState m_inspectionState;
+	std::queue<InspectionState> m_inspectionStateQueue;
 
 	CifXCard m_cifXCard;
 

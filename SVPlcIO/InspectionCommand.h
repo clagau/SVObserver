@@ -25,8 +25,8 @@ struct ChannelIn
 public:
 	ChannelIn() = default;
 	~ChannelIn() = default;
-	explicit ChannelIn(const ChannelIn& rRhs) = default;
-	explicit ChannelIn(ChannelIn&& rRhs) = default;
+	ChannelIn(const ChannelIn& rRhs) = default;
+	ChannelIn(ChannelIn&& rRhs) = default;
 	ChannelIn& operator=(const ChannelIn& rRhs) = default;
 	ChannelIn& operator=(ChannelIn&& rRhs) = default;
 	bool operator!=(const ChannelIn& rRhs)
@@ -69,8 +69,8 @@ struct InspectionCommand
 public:
 	InspectionCommand() = default;
 	~InspectionCommand() = default;
-	explicit InspectionCommand(const InspectionCommand& rRhs) = default;
-	explicit InspectionCommand(InspectionCommand&& rRhs) = default;
+	InspectionCommand(const InspectionCommand& rRhs) = default;
+	InspectionCommand(InspectionCommand&& rRhs) = default;
 	InspectionCommand& operator=(const InspectionCommand& rRhs) = default;
 	InspectionCommand& operator=(InspectionCommand&& rRhs) = default;
 

@@ -21,8 +21,8 @@ struct ChannelOut
 public:
 	ChannelOut() = default;
 	~ChannelOut() = default;
-	explicit ChannelOut(const ChannelOut& rRhs) = default;
-	explicit ChannelOut(ChannelOut&& rRhs) = default;
+	ChannelOut(const ChannelOut& rRhs) = default;
+	ChannelOut(ChannelOut&& rRhs) = default;
 	ChannelOut& operator=(const ChannelOut& rRhs) = default;
 	ChannelOut& operator=(ChannelOut&& rRhs) = default;
 
@@ -40,8 +40,8 @@ struct InspectionState
 public:
 	InspectionState() = default;
 	~InspectionState() = default;
-	explicit InspectionState(const InspectionState& rRhs) = default;
-	explicit InspectionState(InspectionState&& rRhs) = default;
+	InspectionState(const InspectionState& rRhs) = default;
+	InspectionState(InspectionState&& rRhs) = default;
 	InspectionState& operator=(const InspectionState& rRhs) = default;
 	InspectionState& operator=(InspectionState&& rRhs) = default;
 

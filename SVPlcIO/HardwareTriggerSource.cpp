@@ -60,7 +60,11 @@ void HardwareTriggerSource::queueResult(uint8_t channel, ChannelOut&& channelOut
 {
 	///Channel has already been checked
 	std::lock_guard<std::mutex> guard {m_triggerSourceMutex};
-	m_inspectionState.m_channels[channel] = channelOut;
+	if(true == m_inspectionStateQueue.empty() || 0 != m_inspectionStateQueue.front().m_channels[channel].m_currentObjectID)
+	{
+		m_inspectionStateQueue.emplace(InspectionState{});
+	}
+	std::swap(m_inspectionStateQueue.back().m_channels[channel], channelOut);
 }
 
 bool HardwareTriggerSource::analyzeTelegramData()
@@ -86,12 +90,16 @@ bool HardwareTriggerSource::analyzeTelegramData()
 		}
 		case TelegramContent::OperationData:
 		{
+			InspectionState sendInpectionState;
 			{
 				std::lock_guard<std::mutex> guard {m_triggerSourceMutex};
-				m_cifXCard.sendOperationData(m_inspectionState);
-				//Clear the data
-				m_inspectionState = InspectionState{};
+				if(false == m_inspectionStateQueue.empty())
+				{
+					std::swap(sendInpectionState, m_inspectionStateQueue.front());
+					m_inspectionStateQueue.pop();
+				}
 			}
+			m_cifXCard.sendOperationData(sendInpectionState);
 			const InspectionCommand& rInsCmd = m_cifXCard.getInspectionCmd();
 			m_triggerDataChanged = m_previousTriggerData.hasTriggerDataChanged(rInsCmd);
 
