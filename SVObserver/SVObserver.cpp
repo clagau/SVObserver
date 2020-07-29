@@ -2300,12 +2300,11 @@ HRESULT SVObserverApp::OpenFile(LPCTSTR PathName, bool editMode /*= false*/, Con
 		}
 		else
 		{
-			m_ConfigFileName.SetFileName(OriginalFile.c_str());
+			m_ConfigFileName.SetFileNameOnly(OriginalFile.c_str());
 			m_ConfigFileName.SetExtension(SvDef::cPackedConfigExtension);
 			m_ConfigFileName.SetPathName(nullptr);
 
-			std::string filenameWithExtension = OriginalFile + SvDef::cPackedConfigExtension;
-			RootObject::setRootChildValue(SvDef::FqnEnvironmentConfigurationFileName, filenameWithExtension);
+			RootObject::setRootChildValue(SvDef::FqnEnvironmentConfigurationFileName, m_ConfigFileName.GetFileName());
 			RootObject::setRootChildValue(SvDef::FqnEnvironmentConfigurationName, OriginalFile);
 		}
 		result = OpenSVXFile();
