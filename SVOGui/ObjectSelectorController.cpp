@@ -29,6 +29,7 @@ ObjectSelectorController::ObjectSelectorController(uint32_t inspectionID, uint32
 	: m_InspectionID(inspectionID)
 	, m_InstanceID(instanceID)
 	, m_objectAttributes(objectAttributes)
+	, m_ItemTypes{SvPb::ObjectSelectorType::globalConstantItems, SvPb::ObjectSelectorType::toolsetItems }
 {
 }
 
@@ -44,7 +45,7 @@ bool ObjectSelectorController::Show(std::string& rName, const std::string& rTitl
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
-		{SvPb::ObjectSelectorType::globalConstantItems, SvPb::ObjectSelectorType::toolsetItems},
+		m_ItemTypes,
 		m_InspectionID, m_objectAttributes, m_InstanceID, false, FilterType);
 	SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 

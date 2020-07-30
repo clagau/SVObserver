@@ -72,13 +72,14 @@ constexpr long MaxImagesWarningLimit = 100L;
 SVTADlgArchiveImagePage::SVTADlgArchiveImagePage(uint32_t inspectionId, uint32_t taskObjectId, SVToolAdjustmentDialogSheetClass* Parent) 
 : CPropertyPage(SVTADlgArchiveImagePage::IDD)
 , m_pParent(Parent)
-, m_objectSelector(inspectionId, SvDef::InvalidObjectId, SvPb::viewable)
+, m_RootPathObjectSelectorController(inspectionId, SvDef::InvalidObjectId, SvPb::viewable)
 , m_ValueController{ SvOg::BoundValues{ inspectionId, taskObjectId } }
-, m_alternativeImagePaths(m_ValueController)
+, m_alternativeImagePaths(m_ValueController, inspectionId)
 , m_ImageFilepathroot1WidgetHelper(m_ImageFilepathroot1, SvPb::ArchiveImageFileRootPart1EId, &m_ImageFilepathroot1Button, SvPb::ArchiveImageFileRootPart1LinkEId, m_ValueController)
 , m_ImageFilepathroot2WidgetHelper(m_ImageFilepathroot2, SvPb::ArchiveImageFileRootPart2EId, &m_ImageFilepathroot2Button, SvPb::ArchiveImageFileRootPart2LinkEId, m_ValueController)
 , m_ImageFilepathroot3WidgetHelper(m_ImageFilepathroot3, SvPb::ArchiveImageFileRootPart3EId, &m_ImageFilepathroot3Button, SvPb::ArchiveImageFileRootPart3LinkEId, m_ValueController)
 {
+	m_RootPathObjectSelectorController.setItemTypes({ SvPb::ObjectSelectorType::globalConstantItems });
 
 	SvOg::ValueEditWidgetHelper::EnsureDownArrowBitmapIsLoaded();
 
@@ -722,7 +723,7 @@ afx_msg void SVTADlgArchiveImagePage::OnButtonImageFilepathroot1()
 	m_ImageFilepathroot1.GetWindowText(Temp);
 	std::string Value = Temp;
 	std::string Title = SvUl::LoadStdString(IDC_ARCHIVE_IMAGE_FILEPATHROOT1);
-	if (m_objectSelector.Show(Value, Title, this))
+	if (m_RootPathObjectSelectorController.Show(Value, Title, this))
 	{
 		m_ImageFilepathroot1.SetWindowText(Value.c_str());
 	}
@@ -736,7 +737,7 @@ afx_msg void SVTADlgArchiveImagePage::OnButtonImageFilepathroot2()
 	m_ImageFilepathroot2.GetWindowText(Temp);
 	std::string Value = Temp;
 	std::string Title = SvUl::LoadStdString(IDC_ARCHIVE_IMAGE_FILEPATHROOT2);
-	if (m_objectSelector.Show(Value, Title, this))
+	if (m_RootPathObjectSelectorController.Show(Value, Title, this))
 	{
 		m_ImageFilepathroot2.SetWindowText(Value.c_str());
 	}
@@ -750,14 +751,14 @@ afx_msg void SVTADlgArchiveImagePage::OnButtonImageFilepathroot3()
 	m_ImageFilepathroot3.GetWindowText(Temp);
 	std::string Value = Temp;
 	std::string Title = SvUl::LoadStdString(IDC_ARCHIVE_IMAGE_FILEPATHROOT3);
-	if (m_objectSelector.Show(Value, Title, this))
+	if (m_RootPathObjectSelectorController.Show(Value, Title, this))
 	{
 		m_ImageFilepathroot3.SetWindowText(Value.c_str());
 	}
 
 }
 
-void SVTADlgArchiveImagePage::AlternativeImagePaths::DoDataExchange(CDataExchange* pDX)
+void SVTADlgArchiveImagePage::AlternativeImagePathController::DoDataExchange(CDataExchange* pDX)
 {
 	DDX_Control(pDX, IDC_EDIT_FILENAME_INDEX1, m_EditFilenameIndex1);
 	DDX_Control(pDX, IDC_BUTTON_FILENAME_INDEX1, m_ButtonFilenameIndex1);
@@ -774,72 +775,72 @@ void SVTADlgArchiveImagePage::AlternativeImagePaths::DoDataExchange(CDataExchang
 	DDX_Control(pDX, IDC_BUTTON_DIRECTORYNAME_INDEX, m_ButtonDirectorynameIndex);
 }
 
-void SVTADlgArchiveImagePage::AlternativeImagePaths::SelectFilenameIndex1(SvOg::ObjectSelectorController& rObjectSelector, CWnd* pParent)
+void SVTADlgArchiveImagePage::AlternativeImagePathController::SelectFilenameIndex1(CWnd* pParent)
 {
 	CString Temp;
 	m_EditFilenameIndex1.GetWindowText(Temp);
 	std::string Value = Temp;
 	std::string Title = SvUl::LoadStdString(IDS_OBJECTNAME_FILENAME_INDEX1);
-	if (rObjectSelector.Show(Value, Title, pParent))
+	if (m_ObjectSelectorController.Show(Value, Title, pParent))
 	{
 		m_EditFilenameIndex1.SetWindowText(Value.c_str());
 	}
 }
 
 
-void SVTADlgArchiveImagePage::AlternativeImagePaths::SelectFilenameIndex2(SvOg::ObjectSelectorController& rObjectSelector, CWnd* pParent)
+void SVTADlgArchiveImagePage::AlternativeImagePathController::SelectFilenameIndex2(CWnd* pParent)
 {
 	CString Temp;
 	m_EditFilenameIndex2.GetWindowText(Temp);
 	std::string Value = Temp;
 	std::string Title = SvUl::LoadStdString(IDS_OBJECTNAME_FILENAME_INDEX2);
-	if (rObjectSelector.Show(Value, Title, pParent))
+	if (m_ObjectSelectorController.Show(Value, Title, pParent))
 	{
 		m_EditFilenameIndex2.SetWindowText(Value.c_str());
 	}
 }
 
 
-void SVTADlgArchiveImagePage::AlternativeImagePaths::SelectDirectorynameIndex(SvOg::ObjectSelectorController& rObjectSelector, CWnd* pParent)
+void SVTADlgArchiveImagePage::AlternativeImagePathController::SelectDirectorynameIndex(CWnd* pParent)
 {
 	CString Temp;
 	m_EditDirectorynameIndex.GetWindowText(Temp);
 	std::string Value = Temp;
 	std::string Title = SvUl::LoadStdString(IDS_OBJECTNAME_DIRECTORYNAME_INDEX);
-	if (rObjectSelector.Show(Value, Title, pParent))
+	if (m_ObjectSelectorController.Show(Value, Title, pParent))
 	{
 		m_EditDirectorynameIndex.SetWindowText(Value.c_str());
 	}
 }
 
 
-void SVTADlgArchiveImagePage::AlternativeImagePaths::SelectSubfolderSelection(SvOg::ObjectSelectorController& rObjectSelector, CWnd* pParent)
+void SVTADlgArchiveImagePage::AlternativeImagePathController::SelectSubfolderSelection(CWnd* pParent)
 {
 	CString Temp;
 	m_EditSubfolderSelection.GetWindowText(Temp);
 	std::string Value = Temp;
 	std::string Title = SvUl::LoadStdString(IDS_OBJECTNAME_SUBFOLDER_SELECTION);
-	if (rObjectSelector.Show(Value, Title, pParent))
+	if (m_ObjectSelectorController.Show(Value, Title, pParent))
 	{
 		m_EditSubfolderSelection.SetWindowText(Value.c_str());
 	}
 }
 
 
-void SVTADlgArchiveImagePage::AlternativeImagePaths::SelectSubfolderLocation(SvOg::ObjectSelectorController& rObjectSelector, CWnd* pParent)
+void SVTADlgArchiveImagePage::AlternativeImagePathController::SelectSubfolderLocation(CWnd* pParent)
 {
 	CString Temp;
 	m_EditSubfolderLocation.GetWindowText(Temp);
 	std::string Value = Temp;
 	std::string Title = SvUl::LoadStdString(IDS_OBJECTNAME_SUBFOLDER_LOCATION);
-	if (rObjectSelector.Show(Value, Title, pParent))
+	if (m_ObjectSelectorController.Show(Value, Title, pParent))
 	{
 		m_EditSubfolderLocation.SetWindowText(Value.c_str());
 	}
 }
 
 
-afx_msg void SVTADlgArchiveImagePage::AlternativeImagePaths::OnButtonUseAlternativeImagePaths(BOOL enable) 
+afx_msg void SVTADlgArchiveImagePage::AlternativeImagePathController::OnButtonUseAlternativeImagePaths(BOOL enable) 
 {
 	for (auto & uiInfo : m_vecValueAndGuiInfo)
 	{
@@ -847,7 +848,7 @@ afx_msg void SVTADlgArchiveImagePage::AlternativeImagePaths::OnButtonUseAlternat
 	}
 }
 
-void SVTADlgArchiveImagePage::AlternativeImagePaths::EditboxesToTextValues()
+void SVTADlgArchiveImagePage::AlternativeImagePathController::EditboxesToTextValues()
 {
 	for (auto & uiInfo : m_vecValueAndGuiInfo)
 	{
@@ -855,7 +856,7 @@ void SVTADlgArchiveImagePage::AlternativeImagePaths::EditboxesToTextValues()
 	}
 }
 
-void SVTADlgArchiveImagePage::AlternativeImagePaths::TextValuesToEditboxes()
+void SVTADlgArchiveImagePage::AlternativeImagePathController::TextValuesToEditboxes()
 {
 	for (auto & uiInfo : m_vecValueAndGuiInfo)
 	{

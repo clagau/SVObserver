@@ -371,9 +371,13 @@ bool SVArchiveTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	m_uiValidateCount = 0;
 
 	if (m_ImageCollection.GetSize() > 0)
-	{//Only need to verify space if there are images to be archived.  If no images are checked we do not need to run through the checking of disk space.
+	{//Only need to verify space if there are images to be archived. If no images are checked we do not need to run through the checking of disk space.
 		
-		updateCurrentImagePathRoot();
+		if (!updateCurrentImagePathRoot())
+		{
+			return false;
+		}
+		ensureCurrentImagePathRootExists();
 		result = ValidateImageSpace(pErrorMessages) && result;
 	}
 
@@ -563,23 +567,23 @@ bool SVArchiveTool::initializeOnRun(SvStl::MessageContainerVector *pErrorMessage
 	m_evoArchiveMethod.GetValue( Method );
 	m_eArchiveMethod = static_cast<SVArchiveMethodEnum> (Method);
 
-	updateCurrentImagePathRoot();
-
-	if (!m_currentImagePathRoot.empty())
+	if (!updateCurrentImagePathRoot())
 	{
-		if (_access(m_currentImagePathRoot.c_str(), 0) != 0)
+		return false;
+	}
+
+	if (_access(m_currentImagePathRoot.c_str(), 0) != 0)
+	{
+		if (!SVFileNameManagerClass::Instance().CreatePath(m_currentImagePathRoot.c_str()))
 		{
-			if (!SVFileNameManagerClass::Instance().CreatePath(m_currentImagePathRoot.c_str()))
+			if (nullptr != pErrorMessages)
 			{
-				if (nullptr != pErrorMessages)
-				{
-					SvDef::StringVector msgList;
-					msgList.push_back(m_currentImagePathRoot);
-					SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ArchiveTool_CreatePathFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId()); 
-					pErrorMessages->push_back(Msg);
-				}
-				return false;
+				SvDef::StringVector msgList;
+				msgList.push_back(m_currentImagePathRoot);
+				SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ArchiveTool_CreatePathFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId()); 
+				pErrorMessages->push_back(Msg);
 			}
+			return false;
 		}
 	}
 
@@ -1248,12 +1252,7 @@ bool SVArchiveTool::updateCurrentImagePathRoot(bool displayMessageOnInvalidKeywo
 		if (athImagePath.areTokensValid())
 		{
 			std::string tmpArchiveFileName = athImagePath.TranslatePath(m_currentImagePathRoot);
-			if (false == SVCheckPathDir(tmpArchiveFileName.c_str(), true))
-			{
-				return false;
-			}
 			m_currentImagePathRoot = tmpArchiveFileName;
-			return true;
 		}
 		else
 		{
@@ -1266,8 +1265,7 @@ bool SVArchiveTool::updateCurrentImagePathRoot(bool displayMessageOnInvalidKeywo
 		}
 	}
 
-	//not using Keywords 
-	return SVCheckPathDir(m_currentImagePathRoot.c_str(), true);
+	return !m_currentImagePathRoot.empty();
 }
 
 
@@ -1320,7 +1318,7 @@ bool SVArchiveTool::ValidateImageSpace(SvStl::MessageContainerVector *pErrorMess
 	// Make sure we have at least 100 Meg bytes space on the drive.
 	//
 	//For systems with 16GB of memory the amount of memory will be 300Meg
-	if (((__int64)100000000) > lFreeBytesAvailableToCaller.QuadPart)
+	if (((__int64)100'000'000) > lFreeBytesAvailableToCaller.QuadPart)
 	{
 		if (nullptr != pErrorMessages)  
 		{
@@ -1341,21 +1339,12 @@ bool SVArchiveTool::ValidateOnRun(SvStl::MessageContainerVector *pErrorMessages)
 
 	if ( (0 == m_uiValidateCount % 10))
 	{
-		if (m_ImageCollection.GetSize() > 0)
-		{//Only need to verify space if there are images to be archived.  If no images are checked we do not need to run through the checking of disk space.
-			
+		if (m_ImageCollection.GetSize() > 0) //If no images are to be archived we do not need to run through the checking of disk space.
+		{
 			bool setCurrentImagePathRoot = !SVSVIMStateClass::CheckState(SV_STATE_RUNNING);
 			if (setCurrentImagePathRoot)
 			{
-				bOk = false;
-
-				if (updateCurrentImagePathRoot())
-				{
-					if (ensureCurrentImagePathRootExists())
-					{
-						bOk = ValidateImageSpace(pErrorMessages);
-					}
-				}
+				bOk = ValidateImageSpace(pErrorMessages);
 			}
 		}
 	}
