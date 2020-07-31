@@ -249,10 +249,29 @@ void SVExternalToolTask::SetAllAttributes()
 		SvOi::SetAttributeType addOverwriteType = (i < m_Data.m_NumLinkedValue) ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::OverwriteAttribute;
 		m_Data.m_aInputObjects[i].SetObjectAttributesAllowed(attribute, addOverwriteType);
 
-		attribute = (i < m_Data.m_NumLinkedValue) ? SvDef::defaultValueObjectAttributes : SvPb::noAttributes;
-		attribute &= ~SvPb::viewable;
 
 	}
+	
+	//Hide direct table value 
+	int size = m_Data.getNumInputs();
+	for (int i = 0; i < size; i++)
+	{
+		InputValueDefinition& rInputDef = m_Data.m_InputDefinitions[i];
+	
+		if (rInputDef.getType() == SvOp::ExDllInterfaceType::TableArray || rInputDef.getType() == SvOp::ExDllInterfaceType::TableNames)
+		{
+			int LinkValueIndex = rInputDef.getLinkedValueIndex();
+
+			UINT attribute =SvPb::noAttributes;
+			SvOi::SetAttributeType addOverwriteType = SvOi::SetAttributeType::OverwriteAttribute;
+			m_Data.m_aInputObjects[LinkValueIndex].SetObjectAttributesAllowed(attribute, addOverwriteType);
+
+	
+		}
+
+	}
+
+
 
 	for (int i = 0; i < SVExternalToolTaskData::NUM_RESULT_OBJECTS; i++)
 	{
@@ -1520,6 +1539,11 @@ HRESULT SVExternalToolTask::SetDefaultValues()
 
 			m_Data.m_aInputObjects[LinkValueIndex].SetDefaultValue(rInputDef.getDefaultValue(), true);
 		}
+		else if (rInputDef.getType() == SvOp::ExDllInterfaceType::TableArray || rInputDef.getType() == SvOp::ExDllInterfaceType::TableNames)
+		{
+			int LinkValueIndex = rInputDef.getLinkedValueIndex();
+			m_Data.m_aInputObjects[LinkValueIndex].SetDefaultValue(_variant_t(), true);
+		}
 
 	}
 
@@ -1722,9 +1746,10 @@ void SVExternalToolTaskData::InitializeInputs(SVExternalToolTask*  pExternalTool
 
 				rInputValue.SetDefaultValue(rInputDef.getDefaultValue(), bSetVal);
 			}
-			if (bTypeIsTable)
+			if (bTypeIsTable && initializeAll)
 			{
-				rInputValue.SetDefaultValue(_variant_t(), bSetVal);
+				
+				rInputValue.SetDefaultValue(_variant_t(), true);
 			}
 		}
 
