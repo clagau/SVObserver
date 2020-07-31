@@ -21,6 +21,7 @@ enum TriggerDataEnum
 	TriggerIndex,
 	TriggerPerObjectID,
 	OutputData,
+	TriggerChannel,
 };
 
 //! This struct was introduced to facilitate the passing of further parameters 

@@ -46,8 +46,8 @@ struct SVIOTriggerDataStruct
 
 };
 
-const int c_upperBoundForTriggerChannel = 5;
-const int c_upperBoundForFanId = 5;
+const int c_upperBoundForTriggerChannel = 4;
+const int c_upperBoundForFanId = 4;
 const int c_upperBoundForInputChannel = 9;
 
 class CSVIOTESTDlg : public CDialog
@@ -67,6 +67,8 @@ public:
 
 	CSVIOTESTDlg(CWnd* pParent = nullptr);	// standard constructor
 	virtual ~CSVIOTESTDlg();
+
+	SVIOTriggerDataStruct* getTriggerData(unsigned long triggerChannel);
 
 // Dialog Data
 	//{{AFX_DATA(CSVIOTESTDlg)

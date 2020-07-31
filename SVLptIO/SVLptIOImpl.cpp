@@ -1588,6 +1588,8 @@ void SVLptIOImpl::HandleIRQ()
 
 				SvTh::IntVariantMap triggerData;
 				triggerData[SvTh::TriggerDataEnum::TimeStamp] = _variant_t(timeStamp);
+				///Trigger channel 0 based
+				triggerData[SvTh::TriggerDataEnum::TriggerChannel] = _variant_t(ChannelAndDispatcherList.first - 1);
 					
 				SvTh::DispatcherVector dispatchVector = ChannelAndDispatcherList.second;
 				std::async(std::launch::async, [&] { triggerDispatcher(std::move(triggerData), std::move(dispatchVector)); });

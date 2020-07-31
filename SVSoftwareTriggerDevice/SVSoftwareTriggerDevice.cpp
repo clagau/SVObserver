@@ -189,8 +189,11 @@ void SVSoftwareTriggerDevice::dispatchTrigger(unsigned long triggerIndex)
 {
 	if (m_moduleReady)
 	{
+		int triggerChannel = triggerIndex - 1;
+
 		SvTh::IntVariantMap triggerData;
 		triggerData[SvTh::TriggerDataEnum::TimeStamp] = _variant_t(SvTl::GetTimeStamp());
+		triggerData[SvTh::TriggerDataEnum::TriggerChannel] = _variant_t(triggerChannel);
 
 		///The trigger dispatcher can not be changed when the module ready flag is set so no mutex is needed
 		for (auto ChannelAndDispatcherList : m_TriggerDispatchers.GetDispatchers())
@@ -205,8 +208,6 @@ void SVSoftwareTriggerDevice::dispatchTrigger(unsigned long triggerIndex)
 		}
 
 		///Check if a new trigger period
-		int triggerChannel = triggerIndex - 1;
-
 		if(triggerChannel >= 0 && triggerChannel < m_timerList.size() && m_timerList[triggerChannel].m_newPeriod)
 		{
 			::timeKillEvent(m_timerList[triggerChannel].m_timerID);

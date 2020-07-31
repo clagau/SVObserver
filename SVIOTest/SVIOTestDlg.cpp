@@ -34,7 +34,6 @@ UINT_PTR m_nTimer;
 extern CSVIOTESTApp theApp;
 
 static LPCTSTR SVLPTIODLL = _T("SVLptIO.dll");
-constexpr int cTriggerDataPointer = 0x100;
 
 /////////////////////////////////////////////////////////////////////////////
 // CAboutDlg dialog used for App About
@@ -94,7 +93,7 @@ CSVIOTESTDlg::CSVIOTESTDlg(CWnd* pParent /*=nullptr*/)
 	// Note that LoadIcon does not require a subsequent DestroyIcon in Win32
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 
-	for (int triggerchannel = 1; triggerchannel < c_upperBoundForTriggerChannel; triggerchannel++)
+	for (int triggerchannel = 0; triggerchannel < c_upperBoundForTriggerChannel; triggerchannel++)
 	{
 		m_FanFreq[triggerchannel] = 0;
 		m_TriggerData[triggerchannel].OnTriggerStart();
@@ -103,6 +102,16 @@ CSVIOTESTDlg::CSVIOTESTDlg(CWnd* pParent /*=nullptr*/)
 
 CSVIOTESTDlg::~CSVIOTESTDlg()
 {
+}
+
+SVIOTriggerDataStruct* CSVIOTESTDlg::getTriggerData(unsigned long triggerChannel)
+{
+	SVIOTriggerDataStruct* pResult{nullptr};
+	if(c_upperBoundForTriggerChannel > triggerChannel)
+	{
+		pResult = &m_TriggerData[triggerChannel];
+	}
+	return pResult;
 }
 
 bool CSVIOTESTDlg::IsSoftwareTrigger() const
@@ -132,23 +141,23 @@ void CSVIOTESTDlg::DoDataExchange(CDataExchange* pDX)
 	// IDC_FAN_FREQ1 to IDC_FAN_FREQ4,
 	// IDC_FAN1_TXT to IDC_FAN4_TXT,
 	// and IDC_FAN1 to IDC_FAN4 must be contiguous and sequential for this to work:
-	for (int fanID = 1; fanID < c_upperBoundForFanId; fanID++)
+	for (int fanID = 0; fanID < c_upperBoundForFanId; ++fanID)
 	{
-		DDX_Text(pDX, IDC_FAN_FREQ1 + fanID - 1, m_FanFreq[fanID]);
-		DDX_Control(pDX, IDC_FAN1_TXT + fanID - 1, m_FanTxt[fanID]);
-		DDX_Control(pDX, IDC_FAN1 + fanID - 1, m_Fan[fanID]);
+		DDX_Text(pDX, IDC_FAN_FREQ1 + fanID, m_FanFreq[fanID]);
+		DDX_Control(pDX, IDC_FAN1_TXT + fanID, m_FanTxt[fanID]);
+		DDX_Control(pDX, IDC_FAN1 + fanID, m_Fan[fanID]);
 	}
 	// IDC_TRIGGER1_MINIMUM to IDC_TRIGGER4_MINIMUM,
 	// IDC_TRIGGER1_AVERAGE to IDC_TRIGGER4_AVERAGE
 	// IDC_TRIGGER1_MAXIMUM to IDC_TRIGGER4_MAXIMUM,
 	// and IDC_TRIGGER1_COUNT to IDC_TRIGGER4_COUNT must be contiguous and sequential for this to work:
-	for (int triggerchannel = 1; triggerchannel < c_upperBoundForTriggerChannel; triggerchannel++)
+	for (int triggerchannel = 0; triggerchannel < c_upperBoundForTriggerChannel; ++triggerchannel)
 	{
-		DDX_Control(pDX, IDC_TRIGGER1_MINIMUM + triggerchannel -1, m_TriggerMinimum[triggerchannel]);
-		DDX_Control(pDX, IDC_TRIGGER1_AVERAGE + triggerchannel -1, m_TriggerAverage[triggerchannel]);
-		DDX_Control(pDX, IDC_TRIGGER1_MAXIMUM + triggerchannel -1, m_TriggerMaximum[triggerchannel]);
-		DDX_Control(pDX, IDC_TRIGGER1_DISTANCE + triggerchannel -1, m_TriggerDistance[triggerchannel]);
-		DDX_Control(pDX, IDC_TRIGGER1_COUNT + triggerchannel -1, m_TriggerCountWnd[triggerchannel]);
+		DDX_Control(pDX, IDC_TRIGGER1_MINIMUM + triggerchannel, m_TriggerMinimum[triggerchannel]);
+		DDX_Control(pDX, IDC_TRIGGER1_AVERAGE + triggerchannel, m_TriggerAverage[triggerchannel]);
+		DDX_Control(pDX, IDC_TRIGGER1_MAXIMUM + triggerchannel, m_TriggerMaximum[triggerchannel]);
+		DDX_Control(pDX, IDC_TRIGGER1_DISTANCE + triggerchannel, m_TriggerDistance[triggerchannel]);
+		DDX_Control(pDX, IDC_TRIGGER1_COUNT + triggerchannel, m_TriggerCountWnd[triggerchannel]);
 	}
 
 	// IDC_INPUT1 to IDC_INPUT8 must be contiguous and sequential for this to work:
@@ -466,16 +475,16 @@ void CSVIOTESTDlg::OnTimer( UINT_PTR nIDEvent )
 		::VariantInit( &l_vValue);
 		if( S_OK == SVIOConfigurationInterfaceClass::Instance().GetParameterValue(SVFanState, &l_vValue) )
 		{
-			for (unsigned int triggerchannel = 1; triggerchannel < c_upperBoundForTriggerChannel; triggerchannel++)
+			for (unsigned int triggerchannel = 0; triggerchannel < c_upperBoundForTriggerChannel; ++triggerchannel)
 			{
-				m_Fan[triggerchannel].SetIcon( AfxGetApp()->LoadIcon( ( l_vValue.lVal & (1 << ( triggerchannel - 1 ))) ? IDI_ICON4 : IDI_ICON3 ));
+				m_Fan[triggerchannel].SetIcon( AfxGetApp()->LoadIcon( ( l_vValue.lVal & (1 << triggerchannel)) ? IDI_ICON4 : IDI_ICON3 ));
 			}
 		}
 		if( S_OK == SVIOConfigurationInterfaceClass::Instance().GetParameterValue(SVFanFreq, &l_vValue) )
 		{
-			for (int triggerchannel = 1; triggerchannel < c_upperBoundForTriggerChannel; ++triggerchannel)
+			for (unsigned int triggerchannel = 0; triggerchannel < c_upperBoundForTriggerChannel; ++triggerchannel)
 			{
-				m_FanFreq[triggerchannel] = l_vValue.lVal >> (8 * ( triggerchannel - 1 )) & 0xff;
+				m_FanFreq[triggerchannel] = l_vValue.lVal >> (8 * triggerchannel) & 0xff;
 			}
 			UpdateData(FALSE);
 		}
@@ -525,21 +534,9 @@ void CSVIOTESTDlg::OnTimer( UINT_PTR nIDEvent )
 	unsigned long numTriggers = 0;
 	m_psvTriggers->GetCount(&numTriggers);
 
-	if (numTriggers > 0)
+	for(unsigned long i = 0; i < numTriggers; ++i)
 	{
-		updateValues(1);
-	}
-	if (numTriggers > 1)
-	{
-		updateValues(2);
-	}
-	if (numTriggers > 2)
-	{
-		updateValues(3);
-	}
-	if (numTriggers > 3)
-	{
-		updateValues(4);
+		updateValues(i);
 	}
 	CDialog::OnTimer(nIDEvent);
 }
@@ -592,14 +589,20 @@ void CSVIOTESTDlg::OnTestOutputs()
 
 HRESULT CALLBACK SVCallback(const SvTh::TriggerParameters& rTriggerData)
 {
-	double l_TimeStamp = SvTl::GetTimeStamp();
-
-	_variant_t dataAddress;
+	double timestamp{0.0};
 	SvTh::IntVariantMap::const_iterator Iter(rTriggerData.m_Data.end());
-	Iter = rTriggerData.m_Data.find(cTriggerDataPointer);
+	Iter = rTriggerData.m_Data.find(SvTh::TriggerDataEnum::TimeStamp);
 	if (rTriggerData.m_Data.end() != Iter)
 	{
-		SVIOTriggerDataStruct *pData = reinterpret_cast<SVIOTriggerDataStruct *>(Iter->second.llVal);
+		timestamp = Iter->second;
+	}
+
+	CSVIOTESTDlg* pDlg = reinterpret_cast<CSVIOTESTDlg*> (rTriggerData.m_pOwner);
+	Iter = rTriggerData.m_Data.find(SvTh::TriggerDataEnum::TriggerChannel);
+	if(nullptr != pDlg && rTriggerData.m_Data.end() != Iter)
+	{
+		unsigned long triggerChannel = Iter->second;
+		SVIOTriggerDataStruct* pData = pDlg->getTriggerData(triggerChannel);
 
 		if (nullptr != pData)
 		{
@@ -611,7 +614,7 @@ HRESULT CALLBACK SVCallback(const SvTh::TriggerParameters& rTriggerData)
 										   pData->m_TimeStamp[ pData->ulIndex ] ) ;
 			}
 
-			pData->m_TimeStamp[ pData->ulIndex ] = l_TimeStamp;
+			pData->m_TimeStamp[ pData->ulIndex ] = timestamp;
 
 			if ( 1 < pData->lTriggerCount )
 			{
@@ -681,15 +684,6 @@ void CSVIOTESTDlg::OnStartTriggers()
 
 	for(unsigned int triggerchannel = 1; triggerchannel < 5; triggerchannel++)
 	{
-		SvTh::IntVariantMap triggerData;
-
-		_variant_t dataAddress;
-		dataAddress.ChangeType(VT_I8);
-		dataAddress.llVal = reinterpret_cast<long long> (&m_TriggerData[triggerchannel]);
-		triggerData[cTriggerDataPointer] = dataAddress;
-		
-		dispatcher.SetData(triggerData);
-
 		StartTrigger(triggerchannel);
 		if (numTriggers >= triggerchannel)
 		{
@@ -705,8 +699,10 @@ void CSVIOTESTDlg::OnStartTriggers()
 		}
 	}
 
-
 	m_bInterruptEnabled = true;
+	_variant_t moduleReady = m_bInterruptEnabled;
+	SVIOConfigurationInterfaceClass::Instance().SetParameterValue(SVModuleReady, &moduleReady.GetVARIANT());
+
 	if (IsSoftwareTrigger())
 	{
 		GetDlgItem(IDC_TRIGGER_PARAM)->EnableWindow(false);
@@ -760,7 +756,8 @@ void CSVIOTESTDlg::OnStopTriggers()
 		m_psvTriggers->Unregister( 1, dispatcher );
 	}
 	m_bInterruptEnabled = false;
-
+	_variant_t moduleReady = m_bInterruptEnabled;
+	SVIOConfigurationInterfaceClass::Instance().SetParameterValue(SVModuleReady, &moduleReady.GetVARIANT());
 
 	if (IsSoftwareTrigger())
 	{
@@ -997,7 +994,7 @@ void CSVIOTESTDlg::ShowFans( bool p_bShow )
 {
 	UINT cmd = (p_bShow) ? SW_SHOW : SW_HIDE;
 	
-	for (unsigned int triggerchannel = 1; triggerchannel < c_upperBoundForTriggerChannel; triggerchannel++)
+	for (unsigned int triggerchannel = 0; triggerchannel < c_upperBoundForTriggerChannel; ++triggerchannel)
 	{
 		m_Fan[ triggerchannel ].ShowWindow( cmd );
 		m_FanTxt[ triggerchannel ].ShowWindow( cmd );

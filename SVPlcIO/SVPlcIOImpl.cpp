@@ -505,6 +505,7 @@ void SVPlcIOImpl::reportTrigger(const TriggerReport& rTriggerReport)
 
 		SvTh::IntVariantMap triggerData;
 		triggerData[SvTh::TriggerDataEnum::TimeStamp] = _variant_t(rTriggerReport.m_triggerTimestamp);
+		triggerData[SvTh::TriggerDataEnum::TriggerChannel] = _variant_t(rTriggerReport.m_channel);
 		triggerData[SvTh::TriggerDataEnum::ObjectID] = _variant_t(rTriggerReport.m_currentObjectID);
 		triggerData[SvTh::TriggerDataEnum::TriggerIndex] = _variant_t(rTriggerReport.m_triggerIndex);
 		triggerData[SvTh::TriggerDataEnum::TriggerPerObjectID] = _variant_t(rTriggerReport.m_triggerPerObjectID);
