@@ -364,12 +364,13 @@ void SVSelectExternalDllPage::InitializeDll(bool jumpToInputPage, bool setDefaul
 
 		m_pTask->Initialize(boost::bind(&SVSelectExternalDllPage::NotifyProgress, this, _1));
 
-		m_pTask->resetAllObjects();
+
 
 		if (setDefaultValues)
 		{
 			m_pTask->SetDefaultValues();
 		}
+		m_pTask->resetAllObjects();
 
 		m_strStatus += _T("DLL passes the tests.");
 		m_strStatus += cCRLF;
