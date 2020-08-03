@@ -87,34 +87,38 @@ HRESULT SVValueObjectClass<T>::SetArraySize(int32_t iSize)
 
 	int32_t newSize = std::max(iSize, 1);	// minimum one array element
 	int32_t oldSize = (0 == iSize) ? 0 : m_ArraySize;
-	if (newSize == oldSize)
+	if (newSize != oldSize)
 	{
-		return hr;
-	}
-	bool tooSmall = newSize > m_ArraySize;
-	m_ArraySize = newSize;
-	if (tooSmall)
-	{
-		m_pValue = reserveLocalMemory();
-		///Setting memory offset to -1 insures that the values will be redirected to block memory if necessary
-		m_memOffset = -1;
-		clearMemoryBlockPointer();
-		m_memSizeReserved = 0L;
-	}
+		bool tooSmall = newSize > m_ArraySize;
+		m_ArraySize = newSize;
+		if (tooSmall)
+		{
+			m_pValue = reserveLocalMemory();
+			///Setting memory offset to -1 insures that the values will be redirected to block memory if necessary
+			m_memOffset = -1;
+			clearMemoryBlockPointer();
+			m_memSizeReserved = 0L;
+		}
 
-	if (getArraySize() <= 1)
-	{
-		if (std::string::npos != m_TypeName.find(_T(" Array")))
+		if (getArraySize() <= 1)
 		{
-			m_TypeName = SvUl::Left(m_TypeName, m_TypeName.size() - 6);
+			if (std::string::npos != m_TypeName.find(_T(" Array")))
+			{
+				m_TypeName = SvUl::Left(m_TypeName, m_TypeName.size() - 6);
+			}
+		}
+		else
+		{
+			if (std::string::npos == m_TypeName.find(_T(" Array")))
+			{
+				m_TypeName += _T(" Array");
+			}
 		}
 	}
-	else
+	//When array size is set to 0 minimum is 1 so set first index to default value
+	if(0 == iSize)
 	{
-		if (std::string::npos == m_TypeName.find(_T(" Array")))
-		{
-			m_TypeName += _T(" Array");
-		}
+		SetValue(GetDefaultValue(), 0);
 	}
 
 	m_ResultSize = iSize;

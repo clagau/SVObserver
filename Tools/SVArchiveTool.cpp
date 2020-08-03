@@ -888,7 +888,6 @@ void SVArchiveTool::refreshResultArchiveList(const SVObjectReferenceVector& rObj
 
 	auto size = static_cast<int> (rObjectRefVector.size());
 	m_svoArchiveResultNames.SetArraySize(size);
-	m_svoArchiveResultNames.SetResultSize(size); //added to fix SVB-368
 
 	for (int i = 0; i < size; i++)
 	{
