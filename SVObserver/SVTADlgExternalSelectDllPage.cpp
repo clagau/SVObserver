@@ -26,8 +26,10 @@
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVSystemLibrary/FileVersion.h"
 #include "SVStatusLibrary/MessageTextGenerator.h"
+//#include <Psapi.h>
 #pragma endregion Includes
-
+#include <tlhelp32.h> 
+#include "SVSystemLibrary/ModuleInfo.h"
 
 
 #ifdef _DEBUG
@@ -39,6 +41,10 @@ static char THIS_FILE[] = __FILE__;
 constexpr char* cCRLF(_T("\r\n"));
 
 enum { WM_UPDATE_STATUS = WM_APP + 100 };
+
+
+
+
 
 //@TODO [Arvid][10.00][16.6.2020] this helper function should be placed elsewhere and generalized (and not return a tool pointer)
 std::pair<SvOp::SVExternalToolTask*, uint32_t> getExternalToolTaskInfo(uint32_t inspectionID, uint32_t ownerID)
@@ -269,8 +275,10 @@ void SVSelectExternalDllPage::OnBrowse()
 		AfxGetApp()->WriteProfileString(_T("Settings"), _T("Last External Tool Dll Path"), m_strLastDllPath);
 
 		m_strDLLPath = cfd.GetPathName();
+		std::string DLLname = cfd.GetFileName();
 		UpdateData(FALSE);
 
+		
 		std::string dllPath(m_strDLLPath.GetString());
 		m_pTask->m_Data.m_voDllPath.SetValue(std::string(m_strDLLPath));
 
@@ -279,21 +287,31 @@ void SVSelectExternalDllPage::OnBrowse()
 		m_preserveStatus = false;
 		if (runpath != dllPath)
 		{
-			VS_FIXEDFILEINFO runpathFileInfo, dllPathrunpathFileInfo;
-			SvSyl::FileVersion::getFileInfo(runpathFileInfo, runpath.c_str());
-			SvSyl::FileVersion::getFileInfo(dllPathrunpathFileInfo, dllPath.c_str());
-			bool eq = SvSyl::FileVersion::isEqual(runpathFileInfo, dllPathrunpathFileInfo);
-
-			if (!eq)
+			bool isVersionEqual = SvSyl::FileVersion::isEqual(runpath.c_str(), dllPath.c_str());
+	
+			std::vector<std::string> Modulnames;
+			if (false == isVersionEqual)
 			{
-				std::string Status= SvStl::MessageTextGenerator::Instance().getText(SvStl::Tid_CouldNotCopyDll);
-				m_strStatus = Status.c_str();
-				m_strStatus += cCRLF;
-				m_preserveStatus = true;
+				//check if previous Version is still used 
+				//Unload current dll  
+				m_pTask->m_Data.m_voDllPath.SetValue(std::string());
+				InitializeDll(false, false);
+				m_pTask->m_Data.m_voDllPath.SetValue(std::string(m_strDLLPath));
+				
+				bool isUsed =  SvSyl::ModuleInfo::isProcessModuleName(GetCurrentProcessId(), DLLname);
 
-				m_strDLLPath = _T("");
-				UpdateData(FALSE);
-				m_pTask->m_Data.m_voDllPath.SetDefaultValue(std::string(m_strDLLPath), true);
+				if (isUsed)
+				{
+					std::string Status = SvStl::MessageTextGenerator::Instance().getText(SvStl::Tid_CouldNotCopyDll);
+					m_strStatus = Status.c_str();
+					m_strStatus += cCRLF;
+					m_preserveStatus = true;
+
+					m_strDLLPath = _T("");
+					UpdateData(FALSE);
+					m_pTask->m_Data.m_voDllPath.SetDefaultValue(std::string(m_strDLLPath), true);
+				}
+			
 			}
 		}
 		m_pTask->ClearData();

@@ -86,6 +86,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="FileVersion.cpp" />
+    <ClCompile Include="ModuleInfo.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -101,6 +102,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FileVersion.h" />
+    <ClInclude Include="ModuleInfo.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SVAsyncProcedure.h" />
     <ClInclude Include="SVEncodeDecodeUtilities.h" />
