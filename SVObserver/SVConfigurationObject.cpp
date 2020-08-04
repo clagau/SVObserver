@@ -764,7 +764,8 @@ HRESULT SVConfigurationObject::AddImportedDigitalInput(SVPPQObject* pPPQ, const 
 
 			pIOEntry->m_ObjectType = IO_DIGITAL_INPUT;
 			pIOEntry->m_PPQIndex = ppqPosition;
-			pIOEntry->m_Enabled = true;
+			pIOEntry->m_Enabled = ppqPosition != -1;
+
 		}
 	}
 	return hr;

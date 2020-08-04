@@ -131,7 +131,6 @@ static bool ImportPPQInputs(SVTreeType& rTree, Insertor insertor)
 				}
 				///Remote imput must be imported even it is not assigned to a ppq otherwise
 				//we get corrupt configurations 
-				//if (l_PPQPosition >= 0) 
 				{
 					// This means it is a Digital input
 					if( _T("Digital") == Type )
