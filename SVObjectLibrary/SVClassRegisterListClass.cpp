@@ -1583,6 +1583,14 @@ bool isSafeToDeleteWebAppIdsJson()
 		return true;
 	}
 
+	if (!it->value.IsString())
+	{
+		// With v3.0.0 with switched from int versions to string version.
+		// Before, it was just "version":3 and for these old version we
+		// do need the file. return false so the file is not deleted.
+		return false;
+	}
+
 	const auto version = std::string(it->value.GetString());
 	const auto prefix = version.substr(0, 2);
 
