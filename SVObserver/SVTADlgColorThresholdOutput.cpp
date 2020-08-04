@@ -63,7 +63,7 @@ BOOL SVTADlgColorThresholdOutput::OnInitDialog()
 {
 	SVTADlgColorThresholdBasePage::OnInitDialog();
 
-	ASSERT( m_pSheet );
+	assert( m_pSheet );
 
 	m_pTool = m_pSheet->GetTool();
 

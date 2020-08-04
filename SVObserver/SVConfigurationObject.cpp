@@ -200,7 +200,7 @@ bool SVConfigurationObject::GetChildObjectByName(LPCTSTR tszName, SvTi::SVTrigge
 	bool bReturn = false;
 
 	//Only do an assert check so that in release mode no check is made
-	ASSERT(nullptr != ppTrigger);
+	assert(nullptr != ppTrigger);
 
 	long lCount = GetTriggerCount();
 
@@ -224,7 +224,7 @@ SvTi::SVTriggerObject* SVConfigurationObject::GetTrigger(long lIndex) const
 {
 	SvTi::SVTriggerObject* retValue = nullptr;
 
-	ASSERT(0 <= lIndex && static_cast<long> (m_arTriggerArray.size()) > lIndex);
+	assert(0 <= lIndex && static_cast<long> (m_arTriggerArray.size()) > lIndex);
 
 	if (0 <= lIndex && static_cast<long> (m_arTriggerArray.size()) > lIndex)
 	{
@@ -471,7 +471,7 @@ bool SVConfigurationObject::GetChildObjectByName(LPCTSTR tszName, SVPPQObject** 
 	bool bReturn = false;
 
 	//Only do an assert check so that in release mode no check is made
-	ASSERT(nullptr != ppPPQ);
+	assert(nullptr != ppPPQ);
 
 	long lCount = GetPPQCount();
 
@@ -494,7 +494,7 @@ bool SVConfigurationObject::GetChildObjectByName(LPCTSTR tszName, SVPPQObject** 
 SVPPQObject* SVConfigurationObject::GetPPQ(long lIndex) const
 {
 	SVPPQObject* retValue = nullptr;
-	ASSERT(0 <= lIndex && static_cast<long> (m_arPPQArray.size()) > lIndex);
+	assert(0 <= lIndex && static_cast<long> (m_arPPQArray.size()) > lIndex);
 
 	if (0 <= lIndex && static_cast<long>(m_arPPQArray.size()) > lIndex)
 	{
@@ -509,7 +509,7 @@ bool SVConfigurationObject::GetPPQByName(LPCTSTR name, SVPPQObject** ppPPQ) cons
 	bool bReturn = false;
 
 	//Only do an assert check so that in release mode no check is made
-	ASSERT(nullptr != ppPPQ);
+	assert(nullptr != ppPPQ);
 
 	int Size = static_cast<int> (m_arPPQArray.size());
 	for (int i = 0; i < Size && !bReturn; i++)
@@ -567,7 +567,7 @@ bool SVConfigurationObject::GetChildObjectByName(LPCTSTR tszName, SvIe::SVVirtua
 	bool bReturn = false;
 
 	//Only do an assert check so that in release mode no check is made
-	ASSERT(nullptr != ppCamera);
+	assert(nullptr != ppCamera);
 
 	long lCount = GetCameraCount();
 	std::string Name = tszName;
@@ -590,7 +590,7 @@ SvIe::SVVirtualCamera* SVConfigurationObject::GetCamera(long lIndex) const
 {
 	SvIe::SVVirtualCamera* pCamera = nullptr;
 
-	ASSERT(0 <= lIndex && static_cast<long>(m_arCameraArray.size()) > lIndex);
+	assert(0 <= lIndex && static_cast<long>(m_arCameraArray.size()) > lIndex);
 
 	if (0 <= lIndex && static_cast<long>(m_arCameraArray.size()) > lIndex)
 	{
@@ -670,7 +670,7 @@ bool SVConfigurationObject::GetChildObjectByName(LPCTSTR tszName, SVInspectionPr
 	bool bReturn = false;
 
 	//Only do an assert check so that in release mode no check is made
-	ASSERT(nullptr != ppInspection);
+	assert(nullptr != ppInspection);
 
 	long lCount = GetInspectionCount();
 	std::string Name = tszName;
@@ -696,7 +696,7 @@ bool SVConfigurationObject::GetChildObjectByName(LPCTSTR tszName, SVInspectionPr
 SVInspectionProcess* SVConfigurationObject::GetInspection(long lIndex) const
 {
 	SVInspectionProcess* pResult = nullptr;
-	ASSERT(0 <= lIndex && static_cast<long>(m_arInspectionArray.size()) > lIndex);
+	assert(0 <= lIndex && static_cast<long>(m_arInspectionArray.size()) > lIndex);
 
 	if (0 <= lIndex && static_cast<long>(m_arInspectionArray.size()) > lIndex)
 	{
@@ -713,7 +713,7 @@ HRESULT SVConfigurationObject::AddImportedRemoteInput(SVPPQObject* pPPQ, const s
 	HRESULT hr = S_OK;
 
 	//Only do an assert check so that in release mode no check is made
-	ASSERT(nullptr != pPPQ);
+	assert(nullptr != pPPQ);
 
 	SVIOEntryHostStructPtr pIOEntry = pPPQ->GetInput(name);
 	if (nullptr == pIOEntry)
@@ -749,7 +749,7 @@ HRESULT SVConfigurationObject::AddImportedDigitalInput(SVPPQObject* pPPQ, const 
 	HRESULT hr = S_OK;
 
 	//Only do an assert check so that in release mode no check is made
-	ASSERT(nullptr != pPPQ);
+	assert(nullptr != pPPQ);
 
 	SVIOEntryHostStructPtr pIOEntry = pPPQ->GetInput(name);
 	if (nullptr == pIOEntry)
@@ -870,7 +870,7 @@ HRESULT SVConfigurationObject::AddCameraDataInput(SVPPQObject* pPPQ, SVIOEntryHo
 	HRESULT hr = S_OK;
 
 	//Only do an assert check so that in release mode no check is made
-	ASSERT(nullptr != pPPQ);
+	assert(nullptr != pPPQ);
 
 	std::string name = pIOEntry->getObject()->GetName();
 	SVCameraDataInputObject* pInput = dynamic_cast<SVCameraDataInputObject*> (m_pInputObjectList->GetInputFlyweight(name, SvPb::SVCameraDataInputObjectType).get());
@@ -1262,7 +1262,7 @@ bool SVConfigurationObject::LoadAcquisitionDevice(SVTreeType& rTree, std::string
 					{
 						int iBands = Value;
 
-						ASSERT(iBands > 0);
+						assert(iBands > 0);
 
 						if (svLight.Create(iBands))
 						{
@@ -1407,7 +1407,7 @@ bool SVConfigurationObject::LoadAcquisitionDevice(SVTreeType& rTree, std::string
 										long lTransformOperation = Value;
 
 										const SVLutTransformOperation* pOperation = SVLutTransform::GetEquivalentType((SVLutTransformOperationEnum)lTransformOperation);
-										ASSERT(pOperation);
+										assert(pOperation);
 										if (pOperation)
 										{
 											lut(iBand).SetTransformOperation(*pOperation);
@@ -1501,7 +1501,7 @@ bool SVConfigurationObject::LoadAcquisitionDevice(SVTreeType& rTree, std::string
 						{
 							psvDevice = SvIe::SVDigitizerProcessingClass::Instance().GetAcquisitionDevice(DigitizerName.c_str());
 							bOk = nullptr != psvDevice;
-							ASSERT(bOk);
+							assert(bOk);
 							if (bOk)
 							{
 								psvDevice->GetLut(lut);
@@ -3092,7 +3092,7 @@ void SVConfigurationObject::SaveAcquistionConfiguration(SvOi::IObjectWriter& rWr
 
 		const SVLutTransformOperation* pOperation = rLut(iBand).GetTransformOperation();
 		SVLutTransformOperationEnum e = SVLutTransform::GetEquivalentType(pOperation);
-		ASSERT(e != LutTransformTypeUnknown);
+		assert(e != LutTransformTypeUnknown);
 		svVariant = (long)e;
 		rWriter.WriteAttribute(SvXml::CTAG_LUT_TRANSFORM_OPERATION, svVariant);
 		svVariant.Clear();
@@ -3892,7 +3892,7 @@ void SVConfigurationObject::SetConfigurationLoaded()
 
 void SVConfigurationObject::SetupSoftwareTrigger(SvTh::SVTriggerClass* pTrigger, int iDigNum, long triggerPeriod, SVPPQObject* pPPQ)
 {
-	ASSERT(nullptr != pTrigger && nullptr != pPPQ);
+	assert(nullptr != pTrigger && nullptr != pPPQ);
 	if (nullptr == pTrigger || nullptr == pPPQ)
 	{
 		return;
@@ -3931,7 +3931,7 @@ void SVConfigurationObject::SetupSoftwareTrigger(SvTh::SVTriggerClass* pTrigger,
 
 void SVConfigurationObject::SetupCameraTrigger(SvTh::SVTriggerClass* pTriggerDevice, int iDigNum, SVPPQObject* pPPQ, bool bSoftwareTrigger, long triggerPeriod)
 {
-	ASSERT(nullptr != pTriggerDevice && nullptr != pPPQ);
+	assert(nullptr != pTriggerDevice && nullptr != pPPQ);
 	if (nullptr == pTriggerDevice || nullptr == pPPQ)
 	{
 		return;

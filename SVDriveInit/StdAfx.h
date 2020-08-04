@@ -50,6 +50,7 @@
 #include <afxdisp.h>        // MFC Automation classes
 #include <afxdtctl.h>		// MFC support for Internet Explorer 4 Common Controls
 #include <afxcmn.h>			// MFC support for Windows Common Controls
+#include <assert.h>
 
 #include <comutil.h>		//Used by static library
 #include <concrt.h>			//Used by static library

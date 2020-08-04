@@ -773,7 +773,7 @@ namespace SvOg
 		m_Tree.DeleteAllItems();
 
 		SVRPropertyItem* pRoot = m_Tree.InsertItem(new SVRPropertyItem());
-		ASSERT( pRoot );
+		assert( pRoot );
 		pRoot->SetCanShrink(false);
 		pRoot->SetInfoText(_T(""));
 		pRoot->HideItem();
@@ -834,7 +834,7 @@ namespace SvOg
 	HRESULT SVPatternAnalyzerModelPage::RefreshProperties()
 	{
 		SVRPropertyItem* pRoot = m_Tree.GetRootItem()->GetChild();
-		ASSERT( pRoot );
+		assert( pRoot );
 		SVRPropertyItem* pChild = pRoot->GetChild();
 
 		while ( nullptr != pChild )

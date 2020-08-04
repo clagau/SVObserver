@@ -260,7 +260,7 @@ namespace SvGcl
 
 	void CGridDefaultCell::SetFont(const LOGFONT* plf)
 	{
-		ASSERT(plf);
+		assert(plf);
 
 		if (!plf) return;
 
@@ -291,13 +291,13 @@ namespace SvGcl
 
 	LOGFONT* CGridDefaultCell::GetFont() const
 	{
-		ASSERT(m_plfFont);  // This is the default - it CAN'T be NULL!
+		assert(m_plfFont);  // This is the default - it CAN'T be NULL!
 		return m_plfFont;
 	}
 
 	CFont* CGridDefaultCell::GetFontObject() const
 	{
-		ASSERT(m_Font.GetSafeHandle());
+		assert(m_Font.GetSafeHandle());
 		return (CFont*) &m_Font; 
 	}
 

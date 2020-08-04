@@ -341,7 +341,7 @@ IStream* SVMaskEditorCtrl::GetMaskData()
 {
 	CComPtr<IStream> stream;
 	HRESULT hr = CreateStreamOnHGlobal(maskEditorDlg.GraphixObject.GetGraphixData(), true, &stream );
-	ASSERT( S_OK == hr );
+	assert( S_OK == hr );
 	return stream.Detach();
 }
 
@@ -358,7 +358,7 @@ void SVMaskEditorCtrl::SetMaskData(IStream* nNewValue)
 	}
 	else
 	{
-		ASSERT(FALSE);
+		assert(FALSE);
 	}
 }
 

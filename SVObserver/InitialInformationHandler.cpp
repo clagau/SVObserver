@@ -94,7 +94,7 @@ void InitialInformationHandler::LoadIniFilesAndDlls()
 	{
 		if (S_OK != IniLoader.m_hrDecodeModelNumber)
 		{
-			ASSERT(FALSE);
+			assert(FALSE);
 			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 			Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SVObserver_ModelNumberInvalid, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10236);
 		}

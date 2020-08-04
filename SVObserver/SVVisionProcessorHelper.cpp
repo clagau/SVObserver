@@ -219,7 +219,7 @@ HRESULT SVVisionProcessorHelper::GetDataDefinitionList(const std::string& rInspe
 				}
 				else
 				{
-					ASSERT(0);
+					assert(0);
 					break;
 				}
 

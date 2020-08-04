@@ -51,5 +51,6 @@
 #include "TCHAR.h"
 
 #include <algorithm>
+#include <assert.h>
 #include <vector>
 #pragma endregion Precompiled Headers

@@ -74,7 +74,7 @@ void GraphObject::Draw( POINT p_Offset, double p_fZoomWidth, double p_fZoomHeigh
 		calcPointsForDrawing(X_DIRECTION, m_min_x, m_max_x, m_imageSize.cx, p_Offset.x, p_fZoomWidth, m_isHorizontalFlip, points, m_points.size());
 		break;
 	default: //should never happens
-		ASSERT(0);
+		assert(0);
 		break;
 	}
 	switch (m_subType_Y)
@@ -92,12 +92,12 @@ void GraphObject::Draw( POINT p_Offset, double p_fZoomWidth, double p_fZoomHeigh
 		calcPointsForDrawing(Y_DIRECTION, m_min_y, m_max_y, m_imageSize.cy, p_Offset.y, p_fZoomHeight, m_isVerticalFlip, points, m_points.size());
 		break;
 	default: //should never happens
-		ASSERT(0);
+		assert(0);
 		break;
 	}
 
 	size_t numPoints = m_points.size();
-	ASSERT( INT_MAX > numPoints );
+	assert( INT_MAX > numPoints );
 	rDC.Polyline( points, static_cast< int >( numPoints ) );
 	delete[] points;
 	rDC.SelectObject( pOldPen );
@@ -196,7 +196,7 @@ void GraphObject::SetParameter(long parameterId, _variant_t parameterValue)
 	switch (parameterId)
 	{
 	case P_Type:
-		ASSERT( GraphROI == parameterValue.lVal );
+		assert( GraphROI == parameterValue.lVal );
 		break;
 	//this parameter set scale option to both direction. 
 	// ATTENTIONS: Should only be used if both should be the same, else it should used P_SubType_X and P_SubType_Y.
@@ -294,7 +294,7 @@ void GraphObject::setPoints( const _variant_t& variantPoints )
 	{
 		long length = variantPoints.parray->rgsabound[0].cElements;
 		//length must be modulo 2, because it is the xy pair
-		ASSERT(0 == length % 2);
+		assert(0 == length % 2);
 		if (1 < length)
 		{
 			void* data = nullptr;
@@ -319,12 +319,12 @@ void GraphObject::setPoints( const _variant_t& variantPoints )
 		}
 		else
 		{
-			ASSERT(false);
+			assert(false);
 		}
 	}
 	else
 	{
-		ASSERT(false);
+		assert(false);
 	}
 }
 
@@ -340,7 +340,7 @@ _variant_t GraphObject::getPointsAsVariant() const
 		}
 		COleSafeArray arraySafe;
 		size_t doubleNumPoints = m_points.size() * 2;
-		ASSERT( ULONG_MAX > doubleNumPoints );
+		assert( ULONG_MAX > doubleNumPoints );
 		arraySafe.CreateOneDim( VT_I4, static_cast< DWORD >( doubleNumPoints ), pointList );
 		delete[] pointList;
 		return arraySafe;

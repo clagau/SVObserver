@@ -227,8 +227,8 @@ namespace SvMc
 	void SVSlideBarClass::invertTracker( const CRect& rect )
 	{
 		ASSERT_VALID(this);
-		ASSERT(!rect.IsRectEmpty());
-		ASSERT((GetStyle() & WS_CLIPCHILDREN) == 0);
+		assert(!rect.IsRectEmpty());
+		assert((GetStyle() & WS_CLIPCHILDREN) == 0);
 
 		// pat-blt without clip children on
 		CDC* pDC = GetDC();

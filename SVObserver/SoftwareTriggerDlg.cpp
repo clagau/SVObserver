@@ -243,7 +243,7 @@ void SVSoftwareTriggerDlg::ClearTriggers()
 
 bool SVSoftwareTriggerDlg::AddTrigger(SvTi::SVTriggerObject* pTrigger)
 {
-	ASSERT( nullptr != pTrigger );
+	assert( nullptr != pTrigger );
 	if( nullptr == pTrigger ){ return false; }
 
 	int l_count = m_triggerTabs.GetItemCount();

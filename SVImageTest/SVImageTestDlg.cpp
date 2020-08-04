@@ -100,8 +100,8 @@ BOOL CSVImageTestDlg::OnInitDialog()
 	// Add "About..." menu item to system menu.
 
 	// IDM_ABOUTBOX must be in the system command range.
-	ASSERT((IDM_ABOUTBOX & 0xFFF0) == IDM_ABOUTBOX);
-	ASSERT(IDM_ABOUTBOX < 0xF000);
+	assert((IDM_ABOUTBOX & 0xFFF0) == IDM_ABOUTBOX);
+	assert(IDM_ABOUTBOX < 0xF000);
 
 	CMenu* pSysMenu = GetSystemMenu(FALSE);
 	if (nullptr != pSysMenu)

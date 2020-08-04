@@ -303,7 +303,7 @@ void SVChildrenSetupDialogClass::OnCancel()
 
 void SVChildrenSetupDialogClass::OnOK()
 {
-	ASSERT(m_pDocument);
+	assert(m_pDocument);
 	if(m_pDocument)
 	{
 		m_pDocument->SetModifiedFlag();   // Mark document as changed.

@@ -99,7 +99,7 @@ void SVLicenseMgrModelessDlg::PostNcDestroy()
 		// we tried to delete something that was already deleted
 		// or created on the stack.
 		// or an invalid pointer
-		ASSERT(FALSE);
+		assert(FALSE);
 	}
 }
 

@@ -34,7 +34,7 @@ constexpr char* cDefaultFontName = _T("MS Sans Serif");
 
 static int CALLBACK FontFamilyProcFonts(const LOGFONT FAR* lplf, const TEXTMETRIC FAR*, ULONG, LPARAM)
 {
-	ASSERT(nullptr != lplf);
+	assert(nullptr != lplf);
 	CString strFont = lplf->lfFaceName;
 	return strFont.CollateNoCase (cOfficeFontName) == 0 ? 0 : 1;
 }
@@ -574,7 +574,8 @@ void SVRPropTree::EnsureVisible(SVRPropertyItem* pItem)
 		UpdateWindow();
 	}
 
-	ASSERT(IsItemVisible(pItem));
+	bool itemVisible = IsItemVisible(pItem);
+	assert(itemVisible); UNREFERENCED_PARAMETER(itemVisible);
 
 	CRect rc;
 
@@ -716,7 +717,7 @@ SVRPropertyItem* SVRPropTree::FindItem(UINT nCtrlID)
 
 bool CALLBACK SVRPropTree::EnumFindItem(SVRPropTree*, SVRPropertyItem* pItem, LPARAM lParam)
 {
-	ASSERT(nullptr != pItem);
+	assert(nullptr != pItem);
 
 	if (pItem->GetCtrlID()==(UINT)lParam)
 	{

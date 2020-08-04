@@ -258,7 +258,7 @@ void SVPublishListClass::Release(SvIe::SVTaskObjectClass*)
 		RemoveAt(i);
 
 		// Now remove it from all of the PPQs
-        ASSERT( m_pInspection );
+        assert( m_pInspection );
 		pPPQ = m_pInspection->GetPPQ();
 		if ( nullptr != pPPQ )
 		{

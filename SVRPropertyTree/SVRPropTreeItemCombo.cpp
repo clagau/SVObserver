@@ -77,7 +77,7 @@ void SVRPropertyItemCombo::Initialize()
 
 void SVRPropertyItemCombo::DrawAttribute(CDC* pDC, const RECT& rRect)
 {
-	ASSERT(nullptr != m_pProp);
+	assert(nullptr != m_pProp);
 
 	CFont*	l_pOldFont;
 
@@ -184,7 +184,7 @@ void SVRPropertyItemCombo::OnLossFocus()
 
 BOOL SVRPropertyItemCombo::CreateComboBox(DWORD dwStyle)
 {
-	ASSERT(nullptr != m_pProp);
+	assert(nullptr != m_pProp);
 
 	if (IsWindow(m_hWnd))
 	{
@@ -232,7 +232,7 @@ void SVRPropertyItemCombo::DisplayButton()
 
 BOOL SVRPropertyItemCombo::CreateComboBoxBool()
 {
-	ASSERT(nullptr != m_pProp);
+	assert(nullptr != m_pProp);
 
 	if (IsWindow(m_hWnd))
 	{

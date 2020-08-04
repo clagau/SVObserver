@@ -175,7 +175,7 @@ void EllipseObject::SetParameter(long parameterId, _variant_t parameterValue)
 	switch (parameterId)
 	{
 	case P_Type:
-		ASSERT( EllipseROI == parameterValue.lVal );
+		assert( EllipseROI == parameterValue.lVal );
 		break;
 	default:
 		RectangleObject::SetParameter(parameterId, parameterValue);

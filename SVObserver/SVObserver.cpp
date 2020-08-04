@@ -4188,7 +4188,7 @@ HRESULT SVObserverApp::DisplayCameraManager(SVIMProductEnum eProductType)
 	}
 	catch (...)
 	{
-		ASSERT(FALSE);
+		assert(FALSE);
 	}
 
 	try
@@ -4206,7 +4206,7 @@ HRESULT SVObserverApp::DisplayCameraManager(SVIMProductEnum eProductType)
 	}
 	catch (...)
 	{
-		ASSERT(FALSE);
+		assert(FALSE);
 	}
 
 	hCursor = ::LoadCursor(nullptr, IDC_WAIT);
@@ -4288,7 +4288,7 @@ HRESULT SVObserverApp::DisconnectCameras()
 	}
 	catch (...)
 	{
-		ASSERT(FALSE);
+		assert(FALSE);
 		hr = E_FAIL;
 	}
 
@@ -4309,7 +4309,7 @@ HRESULT SVObserverApp::ConnectCameras()
 	}
 	catch (...)
 	{
-		ASSERT(FALSE);
+		assert(FALSE);
 		hr = E_FAIL;
 	}
 
@@ -4874,7 +4874,7 @@ HRESULT SVObserverApp::CheckDrive(const std::string& rDrive) const
 			Exception.setMessage(SVMSG_SVO_5052_DRIVENOTNTFSFORMAT, Drive.c_str(), SvStl::SourceFileParams(StdMessageParams));
 
 #ifndef _DEBUG
-			ASSERT(false);
+			assert(false);
 #else
 #if defined (TRACE_THEM_ALL) || defined (TRACE_SVO)
 			::OutputDebugString(Drive.c_str());
@@ -4920,7 +4920,7 @@ void SVObserverApp::Start()
 
 	SVConfigurationObject* pConfig(nullptr);
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-	ASSERT(nullptr != pConfig);
+	assert(nullptr != pConfig);
 
 	if (nullptr == m_pMainWnd || nullptr == pConfig)
 	{
@@ -5444,12 +5444,12 @@ void SVObserverApp::StartTrigger(SVConfigurationObject* pConfig)
 bool SVObserverApp::OpenConfigFileFromMostRecentList(int nID)
 {
 	ASSERT_VALID(this);
-	ASSERT(nullptr != m_pRecentFileList);
+	assert(nullptr != m_pRecentFileList);
 
-	ASSERT(nID >= ID_FILE_MRU_FILE1);
-	ASSERT(nID < ID_FILE_MRU_FILE1 + (int)m_pRecentFileList->GetSize());
+	assert(nID >= ID_FILE_MRU_FILE1);
+	assert(nID < ID_FILE_MRU_FILE1 + (int)m_pRecentFileList->GetSize());
 	int nIndex = nID - ID_FILE_MRU_FILE1;
-	ASSERT((*m_pRecentFileList)[nIndex].GetLength() != 0);
+	assert((*m_pRecentFileList)[nIndex].GetLength() != 0);
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_SVO)
 	TRACE2("MRU: open file (%d) '%s'.\n", (nIndex)+1,
@@ -6038,8 +6038,8 @@ bool SVObserverApp::AddSecurityNode(HMODULE hMessageDll, long lId)
 
 int SVObserverApp::FindMenuItem(CMenu* Menu, LPCTSTR MenuString)
 {
-	ASSERT(Menu);
-	ASSERT(::IsMenu(Menu->GetSafeHmenu()));
+	assert(Menu);
+	assert(::IsMenu(Menu->GetSafeHmenu()));
 
 	int count = Menu->GetMenuItemCount();
 	for (int i = 0; i < count; i++)

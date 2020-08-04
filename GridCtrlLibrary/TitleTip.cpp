@@ -152,7 +152,7 @@ namespace SvGcl
 		if (!IsWindow(m_hWnd))
 			Create(m_pParentWnd);
 
-		ASSERT( ::IsWindow( GetSafeHwnd() ) );
+		assert( ::IsWindow( GetSafeHwnd() ) );
 
 		if (rectTitle.IsRectEmpty())
 			return;

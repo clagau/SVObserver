@@ -74,7 +74,7 @@ SVRPropertyItemEdit::~SVRPropertyItemEdit()
 
 void SVRPropertyItemEdit::DrawAttribute(CDC* pDC, const RECT& rRect)
 {
-	ASSERT(nullptr != m_pProp);
+	assert(nullptr != m_pProp);
 
 	pDC->SelectObject(IsReadOnly() ? m_pProp->GetNormalFont() : m_pProp->GetBoldFont());
 	pDC->SetTextColor( m_rgbForeColor );

@@ -44,7 +44,7 @@ SVImageViewScroll::SVImageViewScroll()
 {
 	CRuntimeClass* pImageRunTime = RUNTIME_CLASS(SVImageViewClass);
 	m_pView = static_cast< SVImageViewClass* >( pImageRunTime->CreateObject() );
-	ASSERT(m_pView->IsKindOf(RUNTIME_CLASS(SVImageViewClass)));
+	assert(m_pView->IsKindOf(RUNTIME_CLASS(SVImageViewClass)));
 
 	m_oOldScrollPoint = CPoint( 0, 0 );
 	m_oOldMaxScrollPoint = CPoint( 0, 0 );

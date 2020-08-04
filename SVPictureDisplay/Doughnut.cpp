@@ -50,7 +50,7 @@ void Doughnut::SetParameter(long parameterId, _variant_t parameterValue)
 	switch (parameterId)
 	{
 	case P_Type:
-		ASSERT( DoughnutROI == parameterValue.lVal );
+		assert( DoughnutROI == parameterValue.lVal );
 		break;
 	case P_SideThickness:
 		m_TwiceSideThickness = parameterValue.lVal * 2;

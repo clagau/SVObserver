@@ -211,7 +211,7 @@ HRESULT SVSetupDialogManager::SVColorToolClassSetupDialog(uint32_t objectId, CWn
 		if (nullptr != pInspection)
 		{
 			SVIPDoc* pIPDoc = TheSVObserverApp.GetIPDoc(pInspection->getObjectId());
-			ASSERT(nullptr != pIPDoc);
+			assert(nullptr != pIPDoc);
 
 			if (nullptr != pIPDoc)
 			{

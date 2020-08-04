@@ -410,7 +410,7 @@ void SVToolAdjustmentDialogSizePage::OnBnClickedButtonFormula(SvDef::ToolSizeAdj
 {
 	if (mode < 0 || mode >= SvDef::ToolSizeAdjustEnum::TSValuesCount)
 	{
-		ASSERT(false);
+		assert(false);
 		return;
 	}
 	

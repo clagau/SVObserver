@@ -719,21 +719,21 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long , SAFEARRAY** 
 
 		unsigned long lNumberOfElements = psaNames->rgsabound[0].cElements;
 
-		ASSERT(nullptr != ppsaStatus);
-		ASSERT(nullptr != *ppsaStatus);	// must provide allocated SafeArray(LONG)
-		ASSERT((*ppsaStatus)->rgsabound[0].cElements == lNumberOfElements);
+		assert(nullptr != ppsaStatus);
+		assert(nullptr != *ppsaStatus);	// must provide allocated SafeArray(LONG)
+		assert((*ppsaStatus)->rgsabound[0].cElements == lNumberOfElements);
 
-		ASSERT(nullptr != ppsaImages);
-		ASSERT(nullptr != *ppsaImages);	// must provide allocated SafeArray(LONG)
-		ASSERT((*ppsaImages)->rgsabound[0].cElements == lNumberOfElements);
+		assert(nullptr != ppsaImages);
+		assert(nullptr != *ppsaImages);	// must provide allocated SafeArray(LONG)
+		assert((*ppsaImages)->rgsabound[0].cElements == lNumberOfElements);
 
-		ASSERT(nullptr != ppsaOverlays);
-		ASSERT(nullptr != *ppsaOverlays);// must provide allocated SafeArray(LONG)
-		ASSERT((*ppsaOverlays)->rgsabound[0].cElements == lNumberOfElements);
+		assert(nullptr != ppsaOverlays);
+		assert(nullptr != *ppsaOverlays);// must provide allocated SafeArray(LONG)
+		assert((*ppsaOverlays)->rgsabound[0].cElements == lNumberOfElements);
 
-		ASSERT(nullptr != ppsaProcCounts);
-		ASSERT(nullptr != *ppsaProcCounts);// must provide allocated SafeArray(LONG)
-		ASSERT((*ppsaProcCounts)->rgsabound[0].cElements == lNumberOfElements);
+		assert(nullptr != ppsaProcCounts);
+		assert(nullptr != *ppsaProcCounts);// must provide allocated SafeArray(LONG)
+		assert((*ppsaProcCounts)->rgsabound[0].cElements == lNumberOfElements);
 
 		long lDefaultStatus = S_FALSE;
 
@@ -980,13 +980,13 @@ STDMETHODIMP CSVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psa
 
 	unsigned long lNumberOfElements = psaNames->rgsabound[0].cElements;
 
-	ASSERT(nullptr != ppsaStatus);
-	ASSERT(nullptr != *ppsaStatus);	// must provide allocated SafeArray(LONG)
-	ASSERT((*ppsaStatus)->rgsabound[0].cElements == lNumberOfElements);
+	assert(nullptr != ppsaStatus);
+	assert(nullptr != *ppsaStatus);	// must provide allocated SafeArray(LONG)
+	assert((*ppsaStatus)->rgsabound[0].cElements == lNumberOfElements);
 
-	ASSERT(nullptr != ppsaData);
-	ASSERT(nullptr != *ppsaData);	// must provide allocated SafeArray(LONG)
-	ASSERT((*ppsaData)->rgsabound[0].cElements == lNumberOfElements);
+	assert(nullptr != ppsaData);
+	assert(nullptr != *ppsaData);	// must provide allocated SafeArray(LONG)
+	assert((*ppsaData)->rgsabound[0].cElements == lNumberOfElements);
 
 	long lDefaultStatus = S_FALSE;
 
@@ -1116,7 +1116,7 @@ STDMETHODIMP CSVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psa
 					}// else invalid or out of range index
 					else	// some generic error; currently should not get here
 					{
-						ASSERT(false);
+						assert(false);
 						hrStatus = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
 						// did not get value.  set value to -1
 						Value = _T("-1");
@@ -1198,17 +1198,17 @@ STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* ps
 
 		unsigned long lNumberOfElements = psaNames->rgsabound[0].cElements;
 
-		ASSERT(nullptr != ppsaStatus);
-		ASSERT(nullptr != *ppsaStatus);	// must provide allocated SafeArray(LONG)
-		ASSERT((*ppsaStatus)->rgsabound[0].cElements == lNumberOfElements);
+		assert(nullptr != ppsaStatus);
+		assert(nullptr != *ppsaStatus);	// must provide allocated SafeArray(LONG)
+		assert((*ppsaStatus)->rgsabound[0].cElements == lNumberOfElements);
 
-		ASSERT(nullptr != ppsaImages);
-		ASSERT(nullptr != *ppsaImages);	// must provide allocated SafeArray(LONG)
-		ASSERT((*ppsaImages)->rgsabound[0].cElements == lNumberOfElements);
+		assert(nullptr != ppsaImages);
+		assert(nullptr != *ppsaImages);	// must provide allocated SafeArray(LONG)
+		assert((*ppsaImages)->rgsabound[0].cElements == lNumberOfElements);
 
-		ASSERT(nullptr != ppsaOverlays);
-		ASSERT(nullptr != *ppsaOverlays);// must provide allocated SafeArray(LONG)
-		ASSERT((*ppsaOverlays)->rgsabound[0].cElements == lNumberOfElements);
+		assert(nullptr != ppsaOverlays);
+		assert(nullptr != *ppsaOverlays);// must provide allocated SafeArray(LONG)
+		assert((*ppsaOverlays)->rgsabound[0].cElements == lNumberOfElements);
 
 		BSTR bstr = nullptr;
 		SvIe::SVImageClassPtrVector ImageObjects;
@@ -1745,17 +1745,17 @@ HRESULT CSVCommand::SVGetDataList(SAFEARRAY* psaNames, SAFEARRAY** ppsaValues, S
 	//get number of elements out of the incoming safearray
 	unsigned long Size = psaNames->rgsabound[0].cElements;
 
-	ASSERT(nullptr != ppsaStatus);
-	ASSERT(nullptr != *ppsaStatus);	// must provide allocated SafeArray(LONG)
-	ASSERT((*ppsaStatus)->rgsabound[0].cElements == Size);
+	assert(nullptr != ppsaStatus);
+	assert(nullptr != *ppsaStatus);	// must provide allocated SafeArray(LONG)
+	assert((*ppsaStatus)->rgsabound[0].cElements == Size);
 
-	ASSERT(nullptr != ppsaValues);
-	ASSERT(nullptr != *ppsaValues);	// must provide allocated SafeArray(LONG)
-	ASSERT((*ppsaValues)->rgsabound[0].cElements == Size);
+	assert(nullptr != ppsaValues);
+	assert(nullptr != *ppsaValues);	// must provide allocated SafeArray(LONG)
+	assert((*ppsaValues)->rgsabound[0].cElements == Size);
 
-	ASSERT(nullptr != ppsaProcCounts);
-	ASSERT(nullptr != *ppsaProcCounts);// must provide allocated SafeArray(LONG)
-	ASSERT((*ppsaProcCounts)->rgsabound[0].cElements == Size);
+	assert(nullptr != ppsaProcCounts);
+	assert(nullptr != *ppsaProcCounts);// must provide allocated SafeArray(LONG)
+	assert((*ppsaProcCounts)->rgsabound[0].cElements == Size);
 
 	SVConfigurationObject* pConfig(nullptr);
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
@@ -2361,7 +2361,7 @@ STDMETHODIMP CSVCommand::SVGetTransferValueDefinitionList(BSTR bstrInspectionNam
 			}
 			else
 			{
-				ASSERT(0);
+				assert(0);
 				break;
 			}
 

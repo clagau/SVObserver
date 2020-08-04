@@ -106,7 +106,7 @@ HRESULT CSVROIList::Remove(long lIndex)
 
 	if( lIndex < 0 || lIndex >= m_arROIObjects.GetSize() )
 	{
-        ASSERT(FALSE);
+        assert(FALSE);
 		// Throw some exception here
 		return S_FALSE;
 	}// end if
@@ -144,7 +144,7 @@ LPDISPATCH CSVROIList::GetItem(long lIndex)
 
 	if( lIndex < 0 || lIndex >= m_arROIObjects.GetSize() )
 	{
-        ASSERT(FALSE);
+        assert(FALSE);
         // Throw some exception here
 		return (LPDISPATCH) VT_EMPTY;
 	}

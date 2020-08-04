@@ -106,7 +106,7 @@ std::string FormulaController::GetEquationText() const
 		msgList.push_back(SvUl::Format(_T("%d"), hr));
 		SvStl::MessageMgrStd e(SvStl::MsgType::Log);
 		e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownCommandError, SvStl::SourceFileParams(StdMessageParams));
-		ASSERT(false);
+		assert(false);
 	}
 	return equationText;
 }
@@ -233,7 +233,7 @@ int FormulaController::ValidateEquation(const std::string& equationString, doubl
 		msgList.push_back(SvUl::Format(_T("%d"), hr));
 		SvStl::MessageMgrStd e(SvStl::MsgType::Log);
 		e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownCommandError, SvStl::SourceFileParams(StdMessageParams));
-		ASSERT(false);
+		assert(false);
 	}
 	return retValue;
 }

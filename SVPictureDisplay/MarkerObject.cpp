@@ -156,7 +156,7 @@ void MarkerObject::SetParameter(long parameterId, _variant_t parameterValue)
 	switch (parameterId)
 	{
 	case P_Type:
-		ASSERT( MarkerROI == parameterValue.lVal );
+		assert( MarkerROI == parameterValue.lVal );
 		break;
 	case P_SubType:
 		m_subtype = static_cast<ROISubType_Marker>(parameterValue.lVal);

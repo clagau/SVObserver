@@ -610,7 +610,7 @@ bool SVTADlgArchiveImagePage::checkImageMemory(uint32_t imageId, bool bNewState)
 	SVObjectClass* pObject( nullptr );
 	SVObjectManagerClass::Instance().GetObjectByIdentifier(imageId, pObject );
 	SvIe::SVImageClass* pImage = dynamic_cast <SvIe::SVImageClass*> ( pObject );
-	ASSERT(pImage);
+	assert(pImage);
 
 	//Get amount of memory needed for the selected image.
 	long MemoryForSelectedImage = SvTo::SVArchiveTool::CalculateImageMemory( pImage );

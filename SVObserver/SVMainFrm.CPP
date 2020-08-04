@@ -203,8 +203,8 @@ BOOL SVMainFrame::Create( LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD d
 ////////////////////////////////////////////////////////////////////////////////
 BOOL SVMainFrame::CreateClient(LPCREATESTRUCT lpCreateStruct, CMenu* pWindowMenu)
 {
-	ASSERT( nullptr != m_hWnd );
-	ASSERT( nullptr == m_hWndMDIClient );
+	assert( nullptr != m_hWnd );
+	assert( nullptr == m_hWndMDIClient );
 	DWORD dwStyle = WS_VISIBLE | WS_CHILD | WS_BORDER | 
 		WS_CLIPCHILDREN | WS_CLIPSIBLINGS | 
 		MDIS_ALLCHILDSTYLES;    // allow children to be created invisible
@@ -447,7 +447,7 @@ int SVMainFrame::OnCreate( LPCREATESTRUCT lpCreateStruct )
 	catch (CException* e)
 	{
 		e->Delete();
-		ASSERT(FALSE);
+		assert(FALSE);
 	}
 
 	InitToolBars();
@@ -526,7 +526,7 @@ void SVMainFrame::OnClose()
 		catch (CException* e)
 		{
 			e->Delete();
-			ASSERT(FALSE);
+			assert(FALSE);
 		}
 
 		// Log out...
@@ -1378,7 +1378,7 @@ BOOL SVMainFrame::VerifyBarStates(LPCTSTR lpszProfileName)
 	{
 		CControlBarInfo* pInfo = (CControlBarInfo*)state.m_arrBarInfo[i];
 
-		ASSERT(nullptr != pInfo);
+		assert(nullptr != pInfo);
 
 		int nDockedCount = static_cast<int>(pInfo->m_arrBarID.GetSize());
 		if (nDockedCount > 0)

@@ -193,7 +193,7 @@ BOOL SVToolAdjustmentDialogMaskPageClass::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 	// See if we can 'connect' to the Mask Editor Active X control.
-	ASSERT(nullptr == m_pMaskEditorCtl);
+	assert(nullptr == m_pMaskEditorCtl);
 	
 	m_ImageController.Init();
 	m_Values.Init();
@@ -276,7 +276,7 @@ void SVToolAdjustmentDialogMaskPageClass::OnEditStaticMaskButton()
 		}
 		else
 		{
-			ASSERT(false);
+			assert(false);
 		}
 		// Set current mask operator...
 		int item = m_cbMaskOperator.GetCurSel();

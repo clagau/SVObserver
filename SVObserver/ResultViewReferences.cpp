@@ -330,7 +330,7 @@ void ResultViewReferences::InsertFromOutputList(SVInspectionProcess* pInspection
 
 	if(nullptr == pToolSet)
 	{
-		ASSERT(FALSE);
+		assert(FALSE);
 		return;
 	}
 

@@ -560,7 +560,7 @@ SVGraphixDrawObjectClass* SVMaskEditorDialogClass::getDrawObject()
 {
 	if (!bNewDrawObject)
 	{
-		ASSERT(pCurrentDrawObject);
+		assert(pCurrentDrawObject);
 		return pCurrentDrawObject;
 	}
 

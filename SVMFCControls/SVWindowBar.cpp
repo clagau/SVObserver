@@ -67,7 +67,7 @@ namespace SvMc
 
 	BOOL SVWindowBarClass::Create( CWnd* pParentWnd, DWORD dwStyle, UINT nID ) 
 	{
-		ASSERT( nullptr != pParentWnd );
+		assert( nullptr != pParentWnd );
 		ASSERT_KINDOF( CFrameWnd, pParentWnd );
 
 		CRect rect;

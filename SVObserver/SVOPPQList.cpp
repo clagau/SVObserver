@@ -66,7 +66,7 @@ bool SVOPPQList::AttachCameraToPPQ(LPCTSTR PPQName, LPCTSTR Camera)
 {
 	bool Result( false );
 	SVOPPQObjPtr pPPQObj = GetPPQObjectByName( PPQName );
-	ASSERT(nullptr != pPPQObj);
+	assert(nullptr != pPPQObj);
 
 	if( nullptr != pPPQObj )
 	{
@@ -80,7 +80,7 @@ bool SVOPPQList::AttachInspectToPPQ(LPCTSTR PPQName, LPCTSTR Inspect)
 {
 	bool Result( false );
 	SVOPPQObjPtr pPPQObj = GetPPQObjectByName( PPQName );
-	ASSERT(nullptr != pPPQObj);
+	assert(nullptr != pPPQObj);
 
 	if( nullptr != pPPQObj )
 	{
@@ -93,7 +93,7 @@ bool SVOPPQList::AttachInspectToPPQ(LPCTSTR PPQName, LPCTSTR Inspect)
 void SVOPPQList::AttachTriggerToPPQ(LPCTSTR PPQName, LPCTSTR Trigger)
 {
 	SVOPPQObjPtr pPPQObj = GetPPQObjectByName( PPQName );
-	ASSERT(nullptr != pPPQObj);
+	assert(nullptr != pPPQObj);
 
 	if( nullptr != pPPQObj )
 	{

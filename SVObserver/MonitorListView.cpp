@@ -1026,7 +1026,7 @@ void MonitorListView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 			case MonitorListNameNode:
 			{
 				CMenu* PupupMenu = m_ContextMenuNamedList.GetSubMenu(0);
-				ASSERT(nullptr != PupupMenu);
+				assert(nullptr != PupupMenu);
 				CWnd* PopupOwner = this;
 				while (PopupOwner->GetStyle() & WS_CHILD)
 				{
@@ -1040,7 +1040,7 @@ void MonitorListView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 			case ProductItemListNode:
 			{
 				CMenu* PupupMenu = m_ContextMenuProductList.GetSubMenu(0);
-				ASSERT(nullptr != PupupMenu);
+				assert(nullptr != PupupMenu);
 				CWnd* PopupOwner = this;
 				while (PopupOwner->GetStyle() & WS_CHILD)
 				{
@@ -1058,7 +1058,7 @@ void MonitorListView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 			case FailStatusValuesNode:
 			{
 				CMenu* PupupMenu = m_ContextMenuSubList.GetSubMenu(0);
-				ASSERT(nullptr != PupupMenu);
+				assert(nullptr != PupupMenu);
 				CWnd* PopupOwner = this;
 				while (PopupOwner->GetStyle() & WS_CHILD)
 				{
@@ -1075,7 +1075,7 @@ void MonitorListView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 			case FailStatusValuesItemNode:
 			{
 				CMenu* PupupMenu = m_ContextMenuNode.GetSubMenu(0);
-				ASSERT(nullptr != PupupMenu);
+				assert(nullptr != PupupMenu);
 				CWnd* PopupOwner = this;
 				while (PopupOwner->GetStyle() & WS_CHILD)
 				{

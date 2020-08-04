@@ -142,7 +142,7 @@ namespace SvOg
 									 0,0,           // Width and Height Not Used
 									 SWP_NOSIZE | SWP_NOZORDER | SWP_NOREDRAW 
 									);
-		ASSERT(bResult2);
+		assert(bResult2);
 
 		return TRUE;  // return TRUE unless you set the focus to a control
 					  // EXCEPTION: OCX-Eigenschaftenseiten sollten FALSE zurückgeben

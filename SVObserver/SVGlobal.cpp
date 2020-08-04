@@ -239,7 +239,7 @@ LPCTSTR SVRCGetSVCPathName()
 		pszBuff = nullptr;
 		FormatMessage (FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
 					   nullptr, dwResult, 0, (char *) &pszBuff, 0, nullptr);
-		ASSERT( false );// pszBuff
+		assert( false );// pszBuff
 		LocalFree (pszBuff);
 #endif
 	}

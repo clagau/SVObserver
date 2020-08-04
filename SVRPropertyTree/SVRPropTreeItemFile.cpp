@@ -112,7 +112,7 @@ END_MESSAGE_MAP()
 
 void SVRPropertyItemFile::DrawAttribute(CDC* pDC, const RECT& rRect)
 {
-	ASSERT(nullptr != m_pProp);
+	assert(nullptr != m_pProp);
 	CFont*	l_pOldFont;
 
 	l_pOldFont = pDC->SelectObject(IsReadOnly() ? m_pProp->GetNormalFont() : m_pProp->GetBoldFont());
@@ -574,11 +574,11 @@ bool SVRPropertyItemFile::SetItemType(DWORD dwFlags, LPCTSTR sFilter /*=nullptr*
 
 	if (m_bFindFolder)
 	{
-		ASSERT(!(dwFlags & SVR_FILE));			// can not specify SVR_FILE with SVR_FOLDER
+		assert(!(dwFlags & SVR_FILE));			// can not specify SVR_FILE with SVR_FOLDER
 	}
 	else
 	{
-		ASSERT(dwFlags & SVR_FILE);			// must specify either SVR_FILE or SVR_FOLDER
+		assert(dwFlags & SVR_FILE);			// must specify either SVR_FILE or SVR_FOLDER
 	}
 	return true;
 }

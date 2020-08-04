@@ -624,8 +624,8 @@ void SVGigeCameraROIDlg::Normalize( CRect &l_roRect )
 		l_roRect.top += l_roRect.Height() - m_pFormat->m_lVStep;
 	}
 
-	ASSERT( l_roRect.Width() >= 0 );
-	ASSERT( l_roRect.Height() >= 0 );
+	assert( l_roRect.Width() >= 0 );
+	assert( l_roRect.Height() >= 0 );
 }
 
 void SVGigeCameraROIDlg::UpdateSpinTopRange()

@@ -127,7 +127,7 @@ void SVRPropTreeCtrl::UpdateResize()
 	LONG nHeight;
 	CRect rc;
 
-	ASSERT(nullptr != m_pProp);
+	assert(nullptr != m_pProp);
 
 	GetClientRect(rc);
 	nHeight = rc.Height() + 1;
@@ -174,7 +174,7 @@ void SVRPropTreeCtrl::OnPaint()
 	CBitmap* pOldBitmap;
 	HBRUSH		l_hOldBrush;
 
-	ASSERT(nullptr != m_pProp);
+	assert(nullptr != m_pProp);
 
 	m_pProp->ClearVisibleList();
 
@@ -203,7 +203,8 @@ void SVRPropTreeCtrl::OnPaint()
 	SVRPropertyItem* pItem;
 	LONG nTotal = 0;
 
-	ASSERT(nullptr != m_pProp->GetRootItem());
+	SVRPropertyItem* rootItem = m_pProp->GetRootItem();
+	assert(nullptr != rootItem); UNREFERENCED_PARAMETER(rootItem);
 
 	rc.DeflateRect(2,2);
 
@@ -239,7 +240,7 @@ BOOL SVRPropTreeCtrl::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
 	{
 		CPoint pt;
 
-		ASSERT(nullptr != m_pProp);
+		assert(nullptr != m_pProp);
 
 		GetCursorPos(&pt);
 		ScreenToClient(&pt);
@@ -263,7 +264,7 @@ BOOL SVRPropTreeCtrl::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
 
 void SVRPropTreeCtrl::OnLButtonDown(UINT, CPoint point) 
 {
-	ASSERT(nullptr != m_pProp);
+	assert(nullptr != m_pProp);
 
 	if (m_pProp->IsDisableInput())
 		return;
@@ -385,7 +386,7 @@ void SVRPropTreeCtrl::OnLButtonUp(UINT, CPoint point)
 
 void SVRPropTreeCtrl::OnLButtonDblClk(UINT, CPoint point)
 {
-	ASSERT(nullptr != m_pProp);
+	assert(nullptr != m_pProp);
 
 	SVRPropertyItem* pItem;
 
@@ -484,7 +485,7 @@ void SVRPropTreeCtrl::OnKeyDown(UINT nChar, UINT, UINT)
 {
 	SVRPropertyItem* pItem;
 
-	ASSERT(nullptr != m_pProp);
+	assert(nullptr != m_pProp);
 
 	if (m_pProp->IsDisableInput() || !m_pProp->IsWindowEnabled())
 		return;
@@ -623,7 +624,7 @@ void SVRPropTreeCtrl::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar*)
 
 void SVRPropTreeCtrl::CheckVisibleFocus()
 {
-	ASSERT(nullptr != m_pProp);
+	assert(nullptr != m_pProp);
 
 	SVRPropertyItem* pItem;
 	

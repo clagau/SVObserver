@@ -289,7 +289,7 @@ void SVConfigurationPrint::DoPrintConfig()
 {
     SVObserverApp* pApp = dynamic_cast <SVObserverApp*> (AfxGetApp());
 	
-	ASSERT(nullptr != m_printInfo.m_pPD);    // must be set
+	assert(nullptr != m_printInfo.m_pPD);    // must be set
 	
 	_AFX_THREAD_STATE* pThreadState = AfxGetThreadState();
 	
@@ -323,7 +323,7 @@ void SVConfigurationPrint::DoPrintConfig()
 	if (DoPreparePrinting(&m_printInfo))
 	{
 		// hDC must be set (did you remember to call DoPreparePrinting?)
-		ASSERT(nullptr != m_printInfo.m_pPD->m_pd.hDC);
+		assert(nullptr != m_printInfo.m_pPD->m_pd.hDC);
 		
 		// gather file to print to if print-to-file selected
 		std::string strOutput;
@@ -484,7 +484,7 @@ void SVConfigurationPrint::DoPrintConfig()
 			
 			OnPrepareDC();
 			
-			ASSERT(m_printInfo.m_bContinuePrinting);
+			assert(m_printInfo.m_bContinuePrinting);
 			
 			// page successfully started, so now render the page
 			PrintPage();
@@ -534,8 +534,8 @@ void SVConfigurationPrint::printConfigToStringBuffer(std::string& rBuffer)
 BOOL SVConfigurationPrint::DoPreparePrinting(CPrintInfo* pPrintInfo)
 {
     SVObserverApp* pApp = dynamic_cast <SVObserverApp*> (AfxGetApp());
-	ASSERT(nullptr != pPrintInfo);
-	ASSERT(nullptr != pPrintInfo->m_pPD);
+	assert(nullptr != pPrintInfo);
+	assert(nullptr != pPrintInfo->m_pPD);
 	
 	if (pPrintInfo->m_pPD->m_pd.nMinPage > pPrintInfo->m_pPD->m_pd.nMaxPage)
 		pPrintInfo->m_pPD->m_pd.nMaxPage = pPrintInfo->m_pPD->m_pd.nMinPage;
@@ -582,9 +582,9 @@ BOOL SVConfigurationPrint::DoPreparePrinting(CPrintInfo* pPrintInfo)
 			return FALSE;       // do not print
 	}
 	
-	ASSERT(nullptr != pPrintInfo->m_pPD);
+	assert(nullptr != pPrintInfo->m_pPD);
 	
-	ASSERT(nullptr != pPrintInfo->m_pPD->m_pd.hDC);
+	assert(nullptr != pPrintInfo->m_pPD->m_pd.hDC);
 	
 	if (nullptr == pPrintInfo->m_pPD->m_pd.hDC)
 		return FALSE;
@@ -1440,7 +1440,7 @@ void SVConfigurationPrint::OnBeginPrinting()
 			DEFAULT_PITCH | TMPF_TRUETYPE | FF_ROMAN,	// pitch and family 
 			nullptr									    // pointer to typeface name string 
 			);
-		ASSERT(bResult);
+		assert(bResult);
 		
 		// Create sub title font
 		bResult = m_fontSection.CreateFont(
@@ -1459,7 +1459,7 @@ void SVConfigurationPrint::OnBeginPrinting()
 			DEFAULT_PITCH | TMPF_TRUETYPE | FF_ROMAN,	// pitch and family 
 			nullptr										// pointer to typeface name string 
 			);
-		ASSERT(bResult);
+		assert(bResult);
 		
 		// Create sub title font
 		bResult = m_fontSubSection.CreateFont(
@@ -1478,7 +1478,7 @@ void SVConfigurationPrint::OnBeginPrinting()
 			DEFAULT_PITCH | TMPF_TRUETYPE | FF_ROMAN,	// pitch and family 
 			nullptr										// pointer to typeface name string 
 			);
-		ASSERT(bResult);
+		assert(bResult);
 		
 		// Create text font
 		bResult = m_fontText.CreateFont(
@@ -1497,7 +1497,7 @@ void SVConfigurationPrint::OnBeginPrinting()
 			DEFAULT_PITCH | TMPF_TRUETYPE | FF_ROMAN,	// pitch and family 
 			nullptr									    // pointer to typeface name string 
 			);
-		ASSERT(bResult);
+		assert(bResult);
 		
 		// Create sub title font
 		bResult = m_fontPageNbr.CreateFont(
@@ -1516,7 +1516,7 @@ void SVConfigurationPrint::OnBeginPrinting()
 			DEFAULT_PITCH | TMPF_TRUETYPE | FF_ROMAN,	// pitch and family 
 			nullptr										// pointer to typeface name string 
 			);
-		ASSERT(bResult);
+		assert(bResult);
 		
 		// Save space for page number
 		m_printInfo.m_rectDraw.bottom -=(m_heightPageNumberPixels*2);
@@ -1581,10 +1581,10 @@ void SVConfigurationPrint::PrintCameraSummary(CDC* pDC, CPoint& ptCurPos, int nI
 			SVLut* plutDummy = nullptr;
 			SVDeviceParamCollection* pDeviceParams = nullptr;
 			SvIe::SVAcquisitionClassPtr pAcqDevice = pCamera->GetAcquisitionDevice();
-			ASSERT( nullptr != pAcqDevice);
+			assert( nullptr != pAcqDevice);
 			bool bOk = pConfig->GetAcquisitionDevice( pAcqDevice->DeviceName().c_str(), pfnac, plrcDummy, plutDummy, pDeviceParams );
-			ASSERT( bOk );
-			ASSERT( pfnac );
+			assert( bOk );
+			assert( pfnac );
 			if ( bOk )
 			{
 				// print camera name

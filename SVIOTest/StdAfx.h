@@ -53,6 +53,7 @@
 #include <afxext.h>         // MFC extensions
 #include <afxdisp.h>        // MFC Automation classes
 #include <afxtempl.h>
+#include <assert.h>
 
 #include <atomic>			//Used by static library
 #include <comutil.h>		//Used by static library

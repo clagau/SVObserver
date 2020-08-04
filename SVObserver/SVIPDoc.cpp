@@ -966,7 +966,7 @@ void SVIPDoc::OnAdjustLut()
 		}
 		SVConfigurationObject* pConfig(nullptr);
 		SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-		ASSERT(nullptr != pConfig);
+		assert(nullptr != pConfig);
 
 		if (nullptr != pConfig)
 		{
@@ -2213,7 +2213,7 @@ void SVIPDoc::OnUpdateViewToolSetDrawSubMenus(CCmdUI* PCmdUI)
 ////////////////////////////////////////////////////////////////////////////////
 void SVIPDoc::OnChangeToolSetDrawFlag(UINT nId)
 {
-	ASSERT(nId >= ID_VIEW_TOOLSETDRAW_POP_BASE && nId <= ID_VIEW_TOOLSETDRAW_POP_MAX);
+	assert(nId >= ID_VIEW_TOOLSETDRAW_POP_BASE && nId <= ID_VIEW_TOOLSETDRAW_POP_MAX);
 
 	// Access denied...
 	if (!TheSVObserverApp.OkToEdit()) { return; }
@@ -2496,7 +2496,7 @@ void SVIPDoc::SaveViewPlacements(SvOi::IObjectWriter& rWriter)
 		if (pWndSplitter && pWndSplitter->GetSafeHwnd())
 		{
 			CSplitterWnd* pWndSplitter2 = dynamic_cast<CSplitterWnd*>(pWndSplitter->GetParent());
-			ASSERT(pWndSplitter2 && pWndSplitter2->GetSafeHwnd());
+			assert(pWndSplitter2 && pWndSplitter2->GetSafeHwnd());
 
 			SVIPSplitterFrame* pFrame = dynamic_cast<SVIPSplitterFrame*>(pWndSplitter2->GetParent());
 
@@ -2733,7 +2733,7 @@ bool SVIPDoc::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle htiPar
 					// This the one we want to retrieve the size and position.
 					//
 					CSplitterWnd* pWndSplitter2 = dynamic_cast<CSplitterWnd*>(pWndSplitter->GetParent());
-					ASSERT(pWndSplitter2 && pWndSplitter2->GetSafeHwnd());
+					assert(pWndSplitter2 && pWndSplitter2->GetSafeHwnd());
 
 					SVIPSplitterFrame* pFrame = dynamic_cast<SVIPSplitterFrame*>(pWndSplitter2->GetParent());
 

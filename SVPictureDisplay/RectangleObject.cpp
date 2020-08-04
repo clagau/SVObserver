@@ -290,7 +290,7 @@ void RectangleObject::SetParameter(long parameterId, _variant_t parameterValue)
 	switch (parameterId)
 	{
 	case P_Type:
-		ASSERT( RectangleROI == parameterValue.lVal );
+		assert( RectangleROI == parameterValue.lVal );
 		break;
 	case P_X1:
 		m_rect.left = parameterValue.lVal;

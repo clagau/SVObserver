@@ -26,7 +26,7 @@ namespace SvMc
 
 	void SVUpDownButton::OnLButtonDown(UINT nFlags, CPoint point)
 	{
-		ASSERT(GetParent());
+		assert(GetParent());
 		m_bLButtonDown = true;
 		SetFocus();
 		CButton::OnLButtonDown(nFlags, point);
@@ -35,7 +35,7 @@ namespace SvMc
 
 	void SVUpDownButton::OnLButtonUp(UINT nFlags, CPoint point)
 	{
-		ASSERT(GetParent());
+		assert(GetParent());
 		m_bLButtonDown = false;
 		CButton::OnLButtonUp(nFlags, point);
 		GetParent()->SendMessage(WM_SV_NOTIFY_LBUTTONUP, nFlags, (LPARAM) this);
@@ -45,7 +45,7 @@ namespace SvMc
 	{
 		if (m_bLButtonDown)
 		{
-			ASSERT(GetParent());
+			assert(GetParent());
 			CButton::OnKillFocus(pNewWnd);
 			GetParent()->SendMessage(WM_SV_NOTIFY_LBUTTONUP, 0, (LPARAM) this);
 		}

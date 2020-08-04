@@ -77,7 +77,7 @@ void SVRPropertyInfo::OnPaint()
 	dc.DrawEdge(&ClientRect, BDR_SUNKENOUTER, BF_RECT);
 	ClientRect.DeflateRect(4, 4);
 
-	ASSERT(nullptr != m_pProp);
+	assert(nullptr != m_pProp);
 
 	SVRPropertyItem* pItem = m_pProp->GetFocusedItem();
 

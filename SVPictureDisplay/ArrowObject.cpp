@@ -138,7 +138,7 @@ void ArrowObject::SetParameter(long parameterId, _variant_t parameterValue)
 	switch (parameterId)
 	{
 	case P_Type:
-		ASSERT( ArrowROI == parameterValue.lVal );
+		assert( ArrowROI == parameterValue.lVal );
 		break;
 	case P_Orientation:
 		m_eOrient = static_cast<SVOrientation>( parameterValue.lVal );

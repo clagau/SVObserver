@@ -119,7 +119,7 @@ HCURSOR CPropTreeTestDlg::OnQueryDragIcon()
 void CPropTreeTestDlg::AddItemEdit( CString p_Name, CString p_Value, UINT p_ID )
 {
     SVRPropertyItem* pRoot = m_Tree.InsertItem(new SVRPropertyItem());
-	ASSERT( pRoot );
+	assert( pRoot );
 	pRoot->SetCanShrink(false);
     pRoot->SetInfoText(_T(""));
 	pRoot->HideItem();
@@ -146,7 +146,7 @@ void CPropTreeTestDlg::AddItemEdit( CString p_Name, CString p_Value, UINT p_ID )
 void CPropTreeTestDlg::AddItemCombo( CString p_Name, CString p_Value, UINT p_ID )
 {
     SVRPropertyItem* pRoot = m_Tree.InsertItem(new SVRPropertyItem());
-	ASSERT( pRoot );
+	assert( pRoot );
 	pRoot->SetCanShrink(false);
 	pRoot->SetLabelText( CString( "Label Text" ) );
     pRoot->SetInfoText( CString( "Info Text" ) );

@@ -337,7 +337,7 @@ void SVCameraPage::SetGigePacketSizeDeviceParam(SVDeviceParamCollection* pDevice
 	{
 		pDeviceParams->SetParameter( DeviceParamGigePacketSize, (const SVDeviceParam*) SVDeviceParamTempWrapper(SVDeviceParam::Create( DeviceParamGigePacketSize )) );
 		SVLongValueDeviceParam* pParam = pDeviceParams->GetParameter( DeviceParamGigePacketSize ).DerivedValue(pParam);
-		ASSERT( pParam );
+		assert( pParam );
 		pParam->lValue = pApp->m_iniLoader.GetInitialInfo().m_gigePacketSize;
 		pParam->SetName(DeviceParamGigePacketSize_String);
 	}

@@ -127,8 +127,8 @@ namespace SvTrcT
 		// Hinzufügen des Menübefehls "Info..." zum Systemmenü.
 
 		// IDM_ABOUTBOX muss sich im Bereich der Systembefehle befinden.
-		ASSERT((IDM_ABOUTBOX & 0xFFF0) == IDM_ABOUTBOX);
-		ASSERT(IDM_ABOUTBOX < 0xF000);
+		assert((IDM_ABOUTBOX & 0xFFF0) == IDM_ABOUTBOX);
+		assert(IDM_ABOUTBOX < 0xF000);
 
 		CMenu* pSysMenu = GetSystemMenu(FALSE);
 		if (pSysMenu != NULL)
@@ -136,7 +136,7 @@ namespace SvTrcT
 			BOOL bNameValid;
 			CString strAboutMenu;
 			bNameValid = strAboutMenu.LoadString(IDS_ABOUTBOX);
-			ASSERT(bNameValid);
+			assert(bNameValid);
 			if (!strAboutMenu.IsEmpty())
 			{
 				pSysMenu->AppendMenu(MF_SEPARATOR);

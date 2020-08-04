@@ -136,7 +136,7 @@ namespace SvGcl
 		// depend on it's value being that which was passed in.
 
 		CGridCtrl* pGrid = GetGrid();
-		ASSERT(pGrid);
+		assert(pGrid);
 
 		if (!pGrid || !pDC)
 			return FALSE;
@@ -290,7 +290,7 @@ namespace SvGcl
 	#endif
 		{
 			CFont *pFont = GetFontObject();
-			ASSERT(pFont);
+			assert(pFont);
 			if (pFont)
 				pDC->SelectObject(pFont);
 		}
@@ -493,7 +493,7 @@ namespace SvGcl
 
 	void CGridCellBase::OnEndEdit() 
 	{
-		ASSERT( FALSE); 
+		assert( FALSE); 
 	}
 
 	BOOL CGridCellBase::ValidateEdit(LPCTSTR str)
@@ -528,7 +528,7 @@ namespace SvGcl
 	CSize CGridCellBase::GetTextExtent(LPCTSTR szText, CDC* pDC /*= nullptr*/)
 	{
 		CGridCtrl* pGrid = GetGrid();
-		ASSERT(pGrid);
+		assert(pGrid);
 
 		BOOL bReleaseDC = FALSE;
 		if (nullptr == pDC || nullptr == szText)
@@ -538,7 +538,7 @@ namespace SvGcl
 			if (nullptr == pDC || nullptr == szText) 
 			{
 				CGridDefaultCell* pDefCell = (CGridDefaultCell*) GetDefaultCell();
-				ASSERT(pDefCell);
+				assert(pDefCell);
 				return CSize(pDefCell->GetWidth(), pDefCell->GetHeight());
 			}
 			bReleaseDC = TRUE;
@@ -615,7 +615,7 @@ namespace SvGcl
 		if (nImage >= 0)    
 		{        
 			CGridCtrl* pGrid = GetGrid();        
-			ASSERT(pGrid);        
+			assert(pGrid);        
 			IMAGEINFO Info;        
 			if (pGrid->GetImageList() && pGrid->GetImageList()->GetImageInfo(nImage, &Info))         
 			{            

@@ -63,7 +63,7 @@ BOOL SVTADlgColorThresholdBasePage::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 
-	ASSERT( m_pSheet );
+	assert( m_pSheet );
 
 	m_svDlgImage.SetFigureEditor( m_pSheet->m_pFigureEditor );
 	

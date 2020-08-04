@@ -163,7 +163,7 @@ SvOp::SVMaskShape* SVMaskShapeEditorDlg::GetCurrentShape()	// holds the properti
 #pragma region Protected Methods
 HRESULT SVMaskShapeEditorDlg::GetCancelData(SvIe::SVInputRequestStructMap& rMap)
 {
-	ASSERT( m_pMask );
+	assert( m_pMask );
 	return m_pMask->GetCancelData( rMap );
 }
 
@@ -620,7 +620,7 @@ UINT_PTR CALLBACK SVMaskShapeEditorDlg::ColorDlgHookFn( HWND hdlg, UINT uiMsg, W
 #endif
 
 	CWnd* pwndTmp = CWnd::FromHandle(hdlg);
-	ASSERT(pwndTmp);
+	assert(pwndTmp);
 	CColorDialog* pDlg = dynamic_cast< CColorDialog* >( pwndTmp );
 	switch (uiMsg)
 	{
@@ -646,7 +646,7 @@ UINT_PTR CALLBACK SVMaskShapeEditorDlg::ColorDlgHookFn( HWND hdlg, UINT uiMsg, W
 	case WM_PAINT:
 		{
 			CWnd* pWndRed = pDlg->GetDlgItem(COLOR_RED);
-			ASSERT( pWndRed );
+			assert( pWndRed );
 			if ( pWndRed )
 			{
 				CString sText;
@@ -701,7 +701,7 @@ HRESULT SVMaskShapeEditorDlg::BuildPropertyList()
 	m_Tree.DeleteAllItems();
 
 	SVRPropertyItem* pRoot = m_Tree.InsertItem(new SVRPropertyItem());
-	ASSERT( pRoot );
+	assert( pRoot );
 	pRoot->SetCanShrink(false);
 	pRoot->SetInfoText(_T(""));
 	pRoot->HideItem();
@@ -719,7 +719,7 @@ HRESULT SVMaskShapeEditorDlg::BuildPropertyList()
 		const SvOp::SVMaskShapeProperty& rData = (*iter)->second;
 
 		SVObjectClass* pValueObject = m_pMask->GetShapeHelper()->GetEmbeddedValueObject( key );
-		ASSERT( pValueObject );
+		assert( pValueObject );
 		if( nullptr != pValueObject )
 		{
 			std::string Name = pValueObject->GetName();
@@ -750,7 +750,7 @@ HRESULT SVMaskShapeEditorDlg::BuildPropertyList()
 				pEdit->SetItemValue( SvUl::AsString(lValue).c_str() );
 			}
 
-			ASSERT( pItem );
+			assert( pItem );
 
 			pItem->SetCtrlID( GetPropertyID(key) );
 			pItem->SetBold( false );
@@ -780,7 +780,7 @@ HRESULT SVMaskShapeEditorDlg::RefreshProperties()
 	GetCurrentShape()->GetProperties( mapProperties );
 
 	SVRPropertyItem* pRoot = m_Tree.GetRootItem()->GetChild();
-	ASSERT( pRoot );
+	assert( pRoot );
 	SVRPropertyItem* pChild = pRoot->GetChild();
 
 	while ( pChild )

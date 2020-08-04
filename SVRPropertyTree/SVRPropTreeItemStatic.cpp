@@ -45,7 +45,7 @@ SVRPropertyItemStatic::~SVRPropertyItemStatic()
 
 void SVRPropertyItemStatic::DrawAttribute(CDC* pDC, const RECT& rRect)
 {
-	ASSERT(nullptr != m_pProp);
+	assert(nullptr != m_pProp);
 	CFont*	l_pOldFont;
 
 

@@ -256,7 +256,7 @@ namespace SvMc
 		GetItemRect(lpDrawItemStruct->itemID, rcLabel, LVIR_LABEL);
 
 		CDC* pDC = CDC::FromHandle(lpDrawItemStruct->hDC);
-		ASSERT(pDC);
+		assert(pDC);
 
 		CRect rcClipBox;
 		pDC->GetClipBox(rcClipBox);
@@ -551,7 +551,7 @@ namespace SvMc
 		// Get the order array to total the column offset.
 		CHeaderCtrl* pHeader = (CHeaderCtrl*)GetDlgItem(0);
 		int nColCount = pHeader->GetItemCount();
-		ASSERT(nCol < nColCount);
+		assert(nCol < nColCount);
 		int *pOrderarray = new int[nColCount];
 		Header_GetOrderArray(pHeader->m_hWnd, nColCount, pOrderarray);
 		// Get the column offset
