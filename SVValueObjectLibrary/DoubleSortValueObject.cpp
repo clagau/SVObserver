@@ -146,11 +146,10 @@ HRESULT DoubleSortValueObject::SetArrayValues(const ValueVector& rValues)
 		}
 		else
 		{
-			double value = 0;
-			for (int i = 0; i < Size && S_OK == Result; i++)
+			for (int i = 0; i < Size; i++)
 			{
 				//must get one by one, because values can be disordered
-				Result = SetValue(value, i);
+				SetValue(rValues[i], i);
 			}
 		}
 		Result = S_OK;

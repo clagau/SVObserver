@@ -104,7 +104,7 @@ public:
 
 #pragma region Public Methods
 	// ISVPropertyPageDialog
-	bool QueryAllowExit();
+	bool QueryAllowExit() override;
 
 #pragma endregion Public Methods
 

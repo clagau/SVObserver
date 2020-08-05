@@ -1204,6 +1204,14 @@ void SVImageViewClass::DisplayAnalyzerResult(const SvDef::StringVector& rAnalyze
 				break;
 			}
 
+			case SvPb::BlobAnalyzer2ObjectType:
+			{
+
+				SVAnalyzerResultDlg	resultDlg{ rAnalyzerResults, IDD_BA_RESULT_DIALOG };
+				resultDlg.DoModal();
+				break;
+			}
+
 			case SvPb::SVOCVAnalyzerObjectType:
 			{
 				

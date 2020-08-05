@@ -34,6 +34,7 @@
 #pragma region Precompiled Headers
 #include <Windows.h>
 
+#include <array>
 #include <algorithm>
 #include <concrt.h>
 #include <ctime>

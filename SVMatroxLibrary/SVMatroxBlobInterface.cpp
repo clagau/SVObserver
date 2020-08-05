@@ -147,7 +147,7 @@ HRESULT SVMatroxBlobInterface::DestroyResult(__int64& rResultId)
 @SVOperationDescription This function does the work of finding blobs in the "Blob Identifier Image".
 
 */
-HRESULT SVMatroxBlobInterface::Execute(const __int64& rResultId, const SVMatroxBuffer& rIdentId, const __int64& rBlobId)
+HRESULT SVMatroxBlobInterface::Execute(const __int64& rResultId, const SVMatroxBuffer& rIdentId, const __int64& rBlobId, MIL_ID grayImageId)
 {
 	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
@@ -156,7 +156,7 @@ HRESULT SVMatroxBlobInterface::Execute(const __int64& rResultId, const SVMatroxB
 	{
 		if (!rIdentId.empty() && M_NULL != rBlobId && M_NULL != rResultId)
 		{
-			MblobCalculate(rBlobId, rIdentId.GetIdentifier(), M_NULL, rResultId);
+			MblobCalculate(rBlobId, rIdentId.GetIdentifier(), grayImageId, rResultId);
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 		}
 		else
@@ -280,14 +280,19 @@ HRESULT SVMatroxBlobInterface::GetNumber(const __int64& rResultId, long& rNumber
 	return l_Code;
 }
 
+///This function sets the selected control type
+HRESULT SVMatroxBlobInterface::Set(const __int64& rContextId, SVBlobControlEnum lControlType, const long lControlValue)
+{
+	return Set(rContextId, static_cast<MIL_INT64>(lControlType), static_cast<double>(lControlValue));
+}
 
-/**
-@SVOperationName Set - double
 
-@SVOperationDescription This function sets the selected control type with the supplied double value
-
-*/
 HRESULT SVMatroxBlobInterface::Set(const __int64& rContextId, SVBlobControlEnum lControlType, const double lControlValue)
+{
+	return Set(rContextId, static_cast<MIL_INT64>(lControlType), static_cast<double>(lControlValue));
+}
+
+HRESULT SVMatroxBlobInterface::Set(const __int64& rContextId, MIL_INT64 lControlType, const double lControlValue)
 {
 	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
@@ -315,16 +320,6 @@ HRESULT SVMatroxBlobInterface::Set(const __int64& rContextId, SVBlobControlEnum 
 
 }
 
-/**
-@SVOperationName Set - long
-
-@SVOperationDescription This function sets the selected control type with the supplied long value
-
-*/
-HRESULT SVMatroxBlobInterface::Set(const __int64& rContextId, SVBlobControlEnum lControlType, const long lControlValue)
-{
-	return Set(rContextId, lControlType, static_cast<double>(lControlValue));
-}
 
 /**
 @SVOperationName GetForeground - bool
@@ -332,6 +327,7 @@ HRESULT SVMatroxBlobInterface::Set(const __int64& rContextId, SVBlobControlEnum 
 @SVOperationDescription This function gets the Foreground control value
 
 */
+// cppcheck-suppress unusedFunction ; get-function can stay as long set-function is used.
 HRESULT SVMatroxBlobInterface::GetForeground(const __int64& rContextId, bool& rIsDarkForeground)
 {
 	HRESULT l_Code(S_OK);
@@ -377,74 +373,6 @@ HRESULT SVMatroxBlobInterface::SetForeground(const __int64& rContextId, bool isD
 		if (M_NULL != rContextId)
 		{
 			MblobControl(rContextId, M_FOREGROUND_VALUE, (isDarkForeground) ? M_ZERO : M_NONZERO);
-			l_Code = SVMatroxApplicationInterface::GetLastStatus();
-		}
-		else
-		{
-			l_Code = SVMEE_INVALID_HANDLE;
-		}
-	}
-#ifdef USE_TRY_BLOCKS
-	catch (...)
-	{
-		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
-		SVMatroxApplicationInterface::LogMatroxException();
-	}
-#endif
-	return l_Code;
-}
-
-/**
-@SVOperationName GetIdentifier - bool
-
-@SVOperationDescription This function gets the Blob Identifier Type control value
-
-*/
-HRESULT SVMatroxBlobInterface::GetIdentifier(const __int64& rContextId, bool& bBinary)
-{
-	HRESULT l_Code(S_OK);
-#ifdef USE_TRY_BLOCKS
-	try
-#endif
-	{
-		if (M_NULL != rContextId)
-		{
-			long value;
-			MblobInquire(rContextId, M_IDENTIFIER_TYPE, &value);
-			bBinary = (value) ? true : false;
-			l_Code = SVMatroxApplicationInterface::GetLastStatus();
-		}
-		else
-		{
-			l_Code = SVMEE_INVALID_HANDLE;
-		}
-	}
-#ifdef USE_TRY_BLOCKS
-	catch (...)
-	{
-		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
-		SVMatroxApplicationInterface::LogMatroxException();
-	}
-#endif
-	return l_Code;
-}
-
-/**
-@SVOperationName SetIdentifier - bool
-
-@SVOperationDescription This function sets the Blob Identifier Type control value
-
-*/
-HRESULT SVMatroxBlobInterface::SetIdentifier(const __int64& rContextId, bool bBinary)
-{
-	HRESULT l_Code(S_OK);
-#ifdef USE_TRY_BLOCKS
-	try
-#endif
-	{
-		if (M_NULL != rContextId)
-		{
-			MblobControl(rContextId, M_IDENTIFIER_TYPE, (bBinary) ? M_BINARY : M_GRAYSCALE);
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 		}
 		else

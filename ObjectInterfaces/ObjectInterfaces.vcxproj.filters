@@ -105,5 +105,8 @@
     <ClInclude Include="ISVLinearAnalyzer.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="IBlobAnalyzer2.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

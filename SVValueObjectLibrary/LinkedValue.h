@@ -59,6 +59,7 @@ public:
 	void UpdateLinkedName();
 
 	SVStringValueObjectClass& getLinkedName() { return m_LinkedName; };
+	const SVStringValueObjectClass& getLinkedName() const { return m_LinkedName; };
 
 	virtual bool isIndirectValue() const override { return (nullptr != m_LinkedObjectRef.getObject()); };
 

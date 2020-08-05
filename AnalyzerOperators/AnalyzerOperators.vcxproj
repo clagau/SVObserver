@@ -84,6 +84,8 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BlobAnalyzer2.cpp" />
+    <ClCompile Include="BlobFeatureTask.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -111,6 +113,8 @@
     <ClCompile Include="TableSortAnalyzer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BlobAnalyzer2.h" />
+    <ClInclude Include="BlobFeatureTask.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SVAnalyzer.h" />
     <ClInclude Include="SVBarCodeAnalyzerClass.h" />

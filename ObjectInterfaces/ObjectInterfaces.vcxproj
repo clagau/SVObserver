@@ -87,6 +87,7 @@
     <ClInclude Include="EquationTestResult.h" />
     <ClInclude Include="IBarCode.h" />
     <ClInclude Include="IBlobAnalyzer.h" />
+    <ClInclude Include="IBlobAnalyzer2.h" />
     <ClInclude Include="ICommand.h" />
     <ClInclude Include="ICustom2Filter.h" />
     <ClInclude Include="IDependencyManager.h" />

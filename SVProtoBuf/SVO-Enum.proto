@@ -56,6 +56,7 @@ enum SVObjectTypeEnum
 	SVValueObjectType						= 0x00000200;
 
 	SVOperatorObjectType					= 0x00001000;
+	BlobFeatureObjectType					= 0x00001100;
 	SVUnaryOperatorObjectType				= 0x00003000;
 	SVUnaryImageOperatorObjectType			= 0x00004000;
 	SVFilterObjectType						= 0x00005000;
@@ -121,6 +122,7 @@ enum SVObjectSubTypeEnum
 	SVLuminanceAnalyzerObjectType				= 0x00000102;
 	SVOCVAnalyzerObjectType						= 0x00000105;
 	SVHistogramAnalyzerObjectType				= 0x00000106;
+	BlobAnalyzer2ObjectType						= 0x00000107;
 	SVPixelAnalyzerResultObjectType		        = 0x00000200;
 	SVPixelCountObjectType						= 0x00000201;
 
@@ -536,6 +538,8 @@ enum ClassIdEnum
 	TableAnaylzerExcludeClassId = 115;
 	TableAnaylzerLimitClassId = 116;
 	TableAnaylzerAddColumnClassId = 117;
+	BlobAnalyzer2ClassId = 118;
+	BlobFeatureTaskClassId = 119;
 
 	//Result Class Ids
 	PointXResultClassId = 200;
@@ -1005,7 +1009,6 @@ enum EmbeddedIdEnum
 	PatAdditionalCandidatesEId = 381;
 	PatCandidateSpacingXMinEId = 382;
 	PatCandidateSpacingYMinEId = 383;
-
 	PatResultMatchScoreEId = 384;
 	PatResultXEId = 385;
 	PatResultYEId = 386;
@@ -1120,8 +1123,18 @@ enum EmbeddedIdEnum
 	ArchiveImageFileRootPart3LinkEId = 498;
 
 	TriggerPerObjectIDEId = 500;
-
-
+	FeatureTypeEId = 501;
+	SortEnumEId = 502;
+	IsExcludeEId = 503;
+	IsInnerExcludeEId = 504;
+	ExcludeLowerBoundEId = 505;
+	ExcludeLowerBoundIndirectEId = 506;
+	ExcludeUpperBoundEId = 507;
+	ExcludeUpperBoundIndirectEId = 508;
+	ConnectivityBlobEId = 509;
+	IsGrayImageEId = 510;
+	IsRangeEId = 511;
+	
 	//The following Ids are the first of an array and must have 100 reserved Ids 
 	OutputImageEId = 1000; //Output Images, e.g. External needs 4
 	RingBufferIndexEId = 1100; //For ringBuffer index of output images (by now 2 indexes)

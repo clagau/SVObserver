@@ -424,6 +424,10 @@ enum MessageTextEnum
 	Tid_ValidateValue_InvalidElementInVariantArray,
 	Tid_ValidateValue_ArraySizeInvalid,
 	Tid_UnexpectedError,
+	Tid_Too_Many_Blobs,
+	Tid_SetFeatureParameterFailed,
+	Tid_RemoveGrayFeature,
+	Tid_ExcludeBlobUpperBoundLowerThanLowerBound,
 
 	Tid_FailedtoStart,
 	Tid_SocketInvalid,

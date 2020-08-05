@@ -79,7 +79,7 @@ public:
 
 
 	// This function replaces MblobCalculate( 
-	static HRESULT Execute( const __int64& rResultId, const SVMatroxBuffer& rIdentId,  const __int64& rContextId );
+	static HRESULT Execute( const __int64& rResultId, const SVMatroxBuffer& rIdentId,  const __int64& rContextId, MIL_ID grayImageId = M_NULL );
 
 	static HRESULT GetNumber( const __int64& rResultId, long& rNumber ) ;
 	static HRESULT GetResult( const __int64& rResultId, SVBlobSelectionEnum lControlType, double* pdResultsArray ) ;
@@ -87,14 +87,13 @@ public:
 
 
 	// These functions replace MblobControl
-	static HRESULT Set( const __int64& rContextId, SVBlobControlEnum lControlType, const long lControlValue);
-	static HRESULT Set( const __int64& rContextId, SVBlobControlEnum lControlType, const double lControlValue);
+	static HRESULT Set(const __int64& rContextId, SVBlobControlEnum lControlType, const long lControlValue);
+	static HRESULT Set(const __int64& rContextId, SVBlobControlEnum lControlType, const double lControlValue);
+	static HRESULT Set(const __int64& rContextId, MIL_INT64 lControlType, const double lControlValue);
 
 	//
 	static HRESULT GetForeground( const __int64& rContextId, bool& rIsDarkForeground);
 	static HRESULT SetForeground( const __int64& rContextId, bool isDarkForeground);
-	static HRESULT GetIdentifier( const __int64& rContextId, bool& bBinary);
-	static HRESULT SetIdentifier( const __int64& rContextId, bool bBinary);
 
 	static HRESULT BlobFill( const __int64& rResultId, const SVMatroxBuffer& rImageID, SVBlobControlEnum eCriterion, const long& lColor);
 	// This function replaces MblobSelect

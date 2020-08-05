@@ -29,7 +29,7 @@ public:
 	virtual ~SVSelectExternalDllPage() {};
 
 	// ISVPropertyPageDialog
-	bool QueryAllowExit();
+	bool QueryAllowExit() override;
 
 	SVIPDoc* GetIPDoc() const;
 

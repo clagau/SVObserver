@@ -645,6 +645,75 @@ message GetBlobAnalyzerInfoResponse
 	repeated NameValuePair list = 5;
 }
 
+message FeatureData
+{
+	uint32 type = 1;
+	bytes name = 2;
+	bool is_gray = 3;
+	bool is_sort = 4;
+	bool is_Ascent = 5;
+	bool is_Exclude = 6;
+	bool is_Exclude_Inner = 7;
+	double lower_bound = 8;
+	bytes lower_bound_indirect = 9;
+	double upper_bound = 10;
+	bytes upper_bound_indirect = 11;
+	bool is_range = 12;
+	double range_fail_high = 13;
+	bytes range_fail_high_indirect = 14;
+	double range_warn_high = 15;
+	bytes range_warn_high_indirect = 16;
+	double range_warn_low = 17;
+	bytes range_warn_low_indirect = 18;
+	double range_fail_low = 19;
+	bytes range_fail_low_indirect = 20;	
+}
+
+//List of Feature-Data for Blob Analyzer 2
+message GetFeaturesRequest
+{
+	uint32 objectId = 1;
+}
+
+message GetFeaturesResponse
+{
+	repeated FeatureData list = 1;
+}
+
+message SetFeaturesRequest
+{
+	uint32 objectId = 1;
+	repeated FeatureData list = 2;
+}
+
+message FeatureSetError
+{
+	int32 row = 1;
+	int32 fieldId = 2; //this is the id of the FeatureData message
+}
+
+message SetFeaturesResponse
+{
+	repeated FeatureSetError error_list = 1;
+	MessageContainerVector Messages = 2;
+}
+
+message GetAvailableFeaturesRequest
+{
+}
+
+message AvailableFeature
+{
+	uint32 id = 1;
+	bytes name = 2;
+	bool isNecessary = 3;
+	bool isGray = 4;
+}
+
+message GetAvailableFeaturesResponse
+{
+	repeated AvailableFeature list = 1;
+}
 
 message InspectionCmdRequest
 {
@@ -700,6 +769,9 @@ message InspectionCmdRequest
 		GetImageInfoRequest getImageInfoRequest = 47;
 		GetBlobAnalyzerInfoRequest getBlobAnalyzerInfoRequest = 48;
 		ComputeOverscanRectRequest computeOverscanRectRequest = 49;
+		GetFeaturesRequest getFeaturesRequest = 50;
+		SetFeaturesRequest setFeaturesRequest = 51;
+		GetAvailableFeaturesRequest getAvailableFeaturesRequest = 52;
 	}
 }
 
@@ -742,5 +814,8 @@ message InspectionCmdResponse
 		GetImageInfoResponse getImageInfoResponse = 32;
 		GetBlobAnalyzerInfoResponse getBlobAnalyzerInfoResponse = 33;
 		ComputeOverscanRectResponse computeOverscanRectResponse = 34;
+		GetFeaturesResponse getFeaturesResponse = 35;
+		SetFeaturesResponse setFeaturesResponse = 36;
+		GetAvailableFeaturesResponse getAvailableFeaturesResponse = 37;
 	}
 }

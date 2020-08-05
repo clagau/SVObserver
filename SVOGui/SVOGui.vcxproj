@@ -114,6 +114,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AuxiliaryExtentsController.cpp" />
+    <ClCompile Include="BlobAnalyzer2Draw.cpp" />
+    <ClCompile Include="BlobAnalyzer2Feature.cpp" />
+    <ClCompile Include="BlobAnalyzer2FeatureSelector.cpp" />
+    <ClCompile Include="BlobAnalyzer2Range.cpp" />
+    <ClCompile Include="BlobAnalyzer2Sheet.cpp" />
+    <ClCompile Include="BlobAnalyzer2General.cpp" />
     <ClCompile Include="BlobReconstructFilterDlg.cpp" />
     <ClCompile Include="CDSVPictureDisplay.cpp" />
     <ClCompile Include="Custom2FilterDlg.cpp" />
@@ -188,7 +194,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AuxiliaryExtentsController.h" />
+    <ClInclude Include="BlobAnalyzer2Draw.h" />
+    <ClInclude Include="BlobAnalyzer2Feature.h" />
+    <ClInclude Include="BlobAnalyzer2FeatureSelector.h" />
+    <ClInclude Include="BlobAnalyzer2General.h" />
+    <ClInclude Include="BlobAnalyzer2Range.h" />
     <ClInclude Include="BlobReconstructFilterDlg.h" />
+    <ClInclude Include="BlobAnalyzer2Sheet.h" />
     <ClInclude Include="BoundValue.h" />
     <ClInclude Include="CDSVPictureDisplay.h" />
     <ClInclude Include="Custom2FilterDlg.h" />

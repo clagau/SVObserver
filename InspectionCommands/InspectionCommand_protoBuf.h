@@ -183,6 +183,15 @@ public:
 			case SvPb::InspectionCmdRequest::kComputeOverscanRectRequest:
 				m_response = computeOverscanRect(m_rRequest.computeoverscanrectrequest());
 				break;
+			case SvPb::InspectionCmdRequest::kGetFeaturesRequest:
+				m_response = getFeatures(m_rRequest.getfeaturesrequest());
+				break;
+			case SvPb::InspectionCmdRequest::kSetFeaturesRequest:
+				m_response = setFeatures(m_rRequest.setfeaturesrequest());
+				break;
+			case SvPb::InspectionCmdRequest::kGetAvailableFeaturesRequest:
+				m_response = getAvailableFeatures(m_rRequest.getavailablefeaturesrequest());
+				break;
 			default:;
 		}
 

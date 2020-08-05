@@ -224,11 +224,9 @@ bool TableCopyObject::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContaine
 				}
 				if (rSourceValues.size() < m_ValueList.size())
 				{
-					std::vector<double> Values(m_spSortContainer->size(), 0.0);
 					for (size_t i = rSourceValues.size(); i < m_ValueList.size(); i++)
 					{
 						m_ValueList[i]->setSortContainerPtr(m_spSortContainer);
-						m_ValueList[i]->SetArrayValues(Values);
 					}
 				}
 

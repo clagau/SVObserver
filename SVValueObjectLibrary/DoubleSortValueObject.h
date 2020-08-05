@@ -56,6 +56,7 @@ public:
 	virtual HRESULT GetValue(double& rValue, int Index = -1) const override;
 	virtual HRESULT SetArrayValues(const ValueVector& rValues) override;
 	virtual HRESULT getValues(std::vector<_variant_t>&  rValues) const override;
+	virtual HRESULT GetArrayValues(std::vector<double>& rValues) const override;
 	virtual bool isArray() const override { return true; };
 
 	virtual void setMemBlockPointer(uint8_t* pMemBlockBase) override;
@@ -68,7 +69,6 @@ protected:
 	/// ATTENTION: Do not use m_ResultSize, this must be on ArraySize because otherwise ValidateIndexes can failed even if index valid.
 	/// \returns int Result size
 	virtual int32_t getResultSize() const override;
-	virtual HRESULT GetArrayValues( std::vector<double>& rValues) const override;
 
 	virtual double* reserveLocalMemory() override;
 	virtual void clearMemoryBlockPointer() override { m_pMemBlockData = nullptr; }

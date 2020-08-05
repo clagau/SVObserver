@@ -144,6 +144,10 @@ SvPb::InspectionCmdResponse setDefaultInputsRequest(SvPb::SetDefaultInputsReques
 
 SvPb::InspectionCmdResponse getBarCodeTypeInfos(SvPb::GetBarCodeTypeInfosRequest request);
 
+SvPb::InspectionCmdResponse getFeatures(SvPb::GetFeaturesRequest request);
+SvPb::InspectionCmdResponse setFeatures(SvPb::SetFeaturesRequest request);
+SvPb::InspectionCmdResponse getAvailableFeatures(SvPb::GetAvailableFeaturesRequest request);
+
 std::vector<SvPb::TreeItem> getSelectorList(SvPb::GetObjectSelectorItemsRequest request, SvPb::ObjectSelectorType selectorType);
 
 SvPb::InspectionCmdResponse getNormalizerValues(SvPb::GetNormalizerValuesRequest request);

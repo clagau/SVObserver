@@ -11,6 +11,7 @@
 #include "CommandFunction.h"
 #include "CommandExternalHelper.h"
 #include "ObjectInterfaces\IBarCode.h"
+#include "ObjectInterfaces\IBlobAnalyzer2.h"
 #include "ObjectInterfaces\IEnumerateValueObject.h"
 #include "ObjectInterfaces\IEquation.h"
 #include "ObjectInterfaces\IFormulaController.h"
@@ -1580,7 +1581,6 @@ SvPb::InspectionCmdResponse computeOverscanRect(SvPb::ComputeOverscanRectRequest
 	return cmdResponse;
 }
 
-
 SvPb::InspectionCmdResponse setDefaultInputsRequest(SvPb::SetDefaultInputsRequest request)
 {
 	SvPb::InspectionCmdResponse cmdResponse;
@@ -1591,6 +1591,34 @@ SvPb::InspectionCmdResponse setDefaultInputsRequest(SvPb::SetDefaultInputsReques
 	if (nullptr != pInspection)
 	{
 		pInspection->SetDefaultInputs();
+		}
+		else
+		{
+			cmdResponse.set_hresult(E_POINTER);
+		}
+	return cmdResponse;
+}
+
+SvPb::InspectionCmdResponse getBarCodeTypeInfos(SvPb::GetBarCodeTypeInfosRequest request)
+{
+	SvPb::InspectionCmdResponse cmdResponse;
+
+	auto* pResponseTmp = cmdResponse.mutable_getbarcodetypeinfosresponse();
+	auto tmp = SvOi::getBarCodeTypeInfo();
+	pResponseTmp->Swap(&tmp);	
+	return cmdResponse;
+}
+
+SvPb::InspectionCmdResponse getFeatures(SvPb::GetFeaturesRequest request)
+{
+	SvPb::InspectionCmdResponse cmdResponse;
+
+	SvOi::IObjectClass* pObject = SvOi::getObject(request.objectid());
+	auto* pAnalyzer = dynamic_cast<SvOi::IBlobAnalyzer2*> (pObject);
+
+	if (nullptr != pAnalyzer)
+	{
+		return pAnalyzer->getFeaturesData();
 	}
 	else
 	{
@@ -1599,15 +1627,27 @@ SvPb::InspectionCmdResponse setDefaultInputsRequest(SvPb::SetDefaultInputsReques
 	return cmdResponse;
 }
 
-SvPb::InspectionCmdResponse getBarCodeTypeInfos(SvPb::GetBarCodeTypeInfosRequest request)
+SvPb::InspectionCmdResponse setFeatures(SvPb::SetFeaturesRequest request)
 {
 	SvPb::InspectionCmdResponse cmdResponse;
-	
-	auto* pResponseTmp = cmdResponse.mutable_getbarcodetypeinfosresponse();
-	auto tmp = SvOi::getBarCodeTypeInfo();
-	pResponseTmp->Swap(&tmp);	
+
+	SvOi::IObjectClass* pObject = SvOi::getObject(request.objectid());
+	auto* pAnalyzer = dynamic_cast<SvOi::IBlobAnalyzer2*> (pObject);
+
+	if (nullptr != pAnalyzer)
+	{
+		cmdResponse = pAnalyzer->setFeatures(request);
+	}
+	else
+	{
+		cmdResponse.set_hresult(E_POINTER);
+	}
 	return cmdResponse;
 }
 
+SvPb::InspectionCmdResponse getAvailableFeatures(SvPb::GetAvailableFeaturesRequest request)
+{
+	return SvOi::getAvailableFeatures();
+}
 
 } //namespace SvCmd

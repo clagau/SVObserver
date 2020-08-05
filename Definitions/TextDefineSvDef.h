@@ -20,6 +20,7 @@ constexpr char* MaskImageName = _T("Mask Image");
 constexpr char* ReferenceImageName = _T("Reference Image");
 constexpr char* TableClearEquationName = _T("ClearConditionalFormula");
 constexpr char* cInputTag_SourceTable = _T("SourceTable");
+constexpr char* GrayImageConnectionName = _T("Gray Image");
 
 constexpr char* cTrue = _T("TRUE");
 constexpr char* cFalse = _T("FALSE");

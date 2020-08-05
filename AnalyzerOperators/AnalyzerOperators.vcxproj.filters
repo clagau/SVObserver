@@ -81,6 +81,12 @@
     <ClCompile Include="TableSortAnalyzer.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="BlobAnalyzer2.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="BlobFeatureTask.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -147,6 +153,12 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="TableSortAnalyzer.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="BlobAnalyzer2.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="BlobFeatureTask.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

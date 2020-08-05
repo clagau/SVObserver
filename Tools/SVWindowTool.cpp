@@ -78,6 +78,13 @@ void SVWindowToolClass::BuildAvailableAnalyzerList ()
 	analyzerClassInfo.m_ClassName = SvUl::LoadStdString( IDS_CLASSNAME_SVBLOBANALYZER );
 	m_availableChildren.push_back( analyzerClassInfo );
 
+	// Add the Blob analyzer
+	analyzerClassInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVAnalyzerObjectType;
+	analyzerClassInfo.m_ObjectTypeInfo.m_SubType = SvPb::BlobAnalyzer2ObjectType;
+	analyzerClassInfo.m_ClassId = SvPb::BlobAnalyzer2ClassId;
+	analyzerClassInfo.m_ClassName = SvUl::LoadStdString(IDS_CLASSNAME_SVBLOBANALYZER2);
+	m_availableChildren.push_back(analyzerClassInfo);
+
 	// Add the White Pixel Analyzer
 	analyzerClassInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVAnalyzerObjectType;
 	analyzerClassInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVPixelAnalyzerObjectType;

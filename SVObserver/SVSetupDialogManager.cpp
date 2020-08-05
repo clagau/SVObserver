@@ -51,6 +51,7 @@
 #include "SVUtilityLibrary/StringHelper.h"
 #include "InspectionCommands/CommandExternalHelper.h"
 #include "InspectionCommands/CommandFunction.h"
+#include "SVOGui/BlobAnalyzer2Sheet.h"
 #pragma endregion Inlcudes
 
 SVSetupDialogManager& SVSetupDialogManager::Instance()
@@ -87,6 +88,7 @@ SVSetupDialogManager::SVSetupDialogManager()
 		{SvPb::LuminanceAnalyzerClassId, &SVSetupDialogManager::SVLuminanceAnalyzerClassSetupDialog},
 		{SvPb::BarCodeAnalyzerClassId, &SVSetupDialogManager::SVBarCodeAnalyzerClassSetupDialog},
 		{SvPb::BlobAnalyzerClassId, &SVSetupDialogManager::SVBlobAnalyzerClassSetupDialog},
+		{SvPb::BlobAnalyzer2ClassId, &SVSetupDialogManager::BlobAnalyzer2SetupDialog },
 		{SvPb::ColorToolClassId, &SVSetupDialogManager::SVColorToolClassSetupDialog},
 		{SvPb::DPointXResultClassId, &SVSetupDialogManager::SVResultClassSetupDialog},
 		{SvPb::DPointYResultClassId, &SVSetupDialogManager::SVResultClassSetupDialog},
@@ -191,6 +193,20 @@ HRESULT SVSetupDialogManager::SVBlobAnalyzerClassSetupDialog(uint32_t objectId, 
 	}
 
 	return l_Status;
+}
+
+HRESULT SVSetupDialogManager::BlobAnalyzer2SetupDialog(uint32_t objectId, CWnd* pParentWnd)
+{
+	HRESULT status = E_FAIL;
+	auto* pAnalyzer = dynamic_cast<SvIe::SVObjectAppClass*> (SVObjectManagerClass::Instance().GetObject(objectId));
+
+	if (nullptr != pAnalyzer && nullptr != pAnalyzer->GetInspection() && nullptr != pAnalyzer->GetTool())
+	{
+		SvOg::BlobAnalyzer2Sheet dlg(pAnalyzer->GetInspection()->getObjectId(), pAnalyzer->GetTool()->getObjectId(), objectId, "Blob Analyzer 2 Adjustment", pParentWnd);
+		dlg.DoModal();
+		status = S_OK;
+	}
+	return status;
 }
 
 HRESULT SVSetupDialogManager::SVColorToolClassSetupDialog(uint32_t objectId, CWnd* )

@@ -11,9 +11,6 @@
 //Moved to precompiled header: #include <sstream>
 //Moved to precompiled header: #include <boost/lexical_cast.hpp>
 #include "RangeController.h"
-#include "Definitions/SVObjectTypeInfoStruct.h"
-#include "ObjectInterfaces/IObjectClass.h"
-#include "ObjectInterfaces/IObjectManager.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -42,17 +39,16 @@ namespace SvOg
 	{
 		if (SvDef::InvalidObjectId == m_RangeID)
 		{
-			SvDef::SVObjectTypeInfoStruct ObjectInfo;
-			ObjectInfo.m_ObjectType = SvPb::SVRangeObjectType;
-			ObjectInfo.m_SubType = SvPb::SVNotSetSubObjectType;
-			SvOi::IObjectClass* pTool = SvOi::getObject(m_TaskObjectID);
-			if (nullptr != pTool)
+			SvPb::InspectionCmdRequest requestCmd;
+			SvPb::InspectionCmdResponse responseCmd;
+			auto* pRequest = requestCmd.mutable_getobjectidrequest()->mutable_info();
+			pRequest->set_ownerid(m_TaskObjectID);
+			pRequest->mutable_infostruct()->set_objecttype(SvPb::SVRangeObjectType);
+
+			HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
+			if (S_OK == hr && responseCmd.has_getobjectidresponse())
 			{
-				SvOi::IObjectClass* pRange = pTool->getFirstObject(ObjectInfo);
-				if (nullptr != pRange)
-				{
-					m_RangeID = pRange->getObjectId();
-				}
+				m_RangeID = responseCmd.getobjectidresponse().objectid();
 			}
 		}
 		
