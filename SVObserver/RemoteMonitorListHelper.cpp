@@ -17,7 +17,6 @@
 #include "SVSharedMemoryLibrary/MonitorListCpy.h"
 #include "SVSharedMemoryLibrary/SVSharedMemorySettings.h"
 #include "SVSharedMemoryLibrary/SharedMemWriter.h"
-#include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "ObjectInterfaces/IValueObject.h"
 #include "SVPPQObject.h"
 #include "SVConfigurationObject.h"
@@ -75,11 +74,11 @@ void RemoteMonitorListHelper::GetPropertiesFromMonitoredObject(const MonitoredOb
 		SvIe::SVImageClass* pImageObject = dynamic_cast<SvIe::SVImageClass*>(ObjectRef.getObject());
 		if (nullptr != pImageObject)
 		{
-			SvTrc::IImagePtr pImageBuffer = pImageObject->getLastImage(true);
-			if (nullptr != pImageBuffer && !pImageBuffer->isEmpty())
+			SvOi::SVImageBufferHandlePtr pImageBuffer = pImageObject->getLastImage(true);
+			if (nullptr != pImageBuffer && !pImageBuffer->empty())
 			{
 				MatroxImageProps Imageprops;
-				SVMatroxBufferInterface::InquireBufferProperties(pImageBuffer->getHandle()->GetBuffer(), Imageprops);
+				SVMatroxBufferInterface::InquireBufferProperties(pImageBuffer->GetBuffer(), Imageprops);
 				data.SetMatroxImageProps(Imageprops);
 			}
 		}

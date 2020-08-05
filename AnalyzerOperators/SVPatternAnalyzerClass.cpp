@@ -281,11 +281,11 @@ bool SVPatternAnalyzerClass::UpdateModelFromInputImage(long posX, long posY)
 		m_lpatModelHeight.GetValue(tmp);
 		childImageInfo.SetExtentProperty( SvPb::SVExtentPropertyHeight, tmp );
 
-		SvTrc::IImagePtr pImageBuffer = pInputImage->getLastImage(true);
+		SvOi::SVImageBufferHandlePtr pImageBuffer = pInputImage->getLastImage(true);
 
-		if (nullptr != pImageBuffer && !pImageBuffer->isEmpty())
+		if (nullptr != pImageBuffer && !pImageBuffer->empty())
 		{
-			HRESULT hr = SvIe::SVImageProcessingClass::CreateImageChildBuffer(imageInfo, pImageBuffer->getHandle(), childImageInfo, childImageHandle);
+			HRESULT hr = SvIe::SVImageProcessingClass::CreateImageChildBuffer(imageInfo, pImageBuffer, childImageInfo, childImageHandle);
 			if (S_OK == hr && nullptr != childImageHandle && nullptr != m_patBufferHandlePtr)
 			{
 				// Copy from source child to Model Image buffer
@@ -412,12 +412,12 @@ bool SVPatternAnalyzerClass::SetSearchParameters ()
 			long	lParam;
 			msv_lpatMaxOccurances.GetValue(lParam);
 
-			SvTrc::IImagePtr pImageBuffer = pImage->getLastImage(true);
+			SvOi::SVImageBufferHandlePtr pImageBuffer = pImage->getLastImage(true);
 
 			SVMatroxBuffer ImageBufId;
-			if(nullptr !=  pImageBuffer && !pImageBuffer->isEmpty())
+			if(nullptr !=  pImageBuffer && !pImageBuffer->empty())
 			{
-				ImageBufId = pImageBuffer->getHandle()->GetBuffer();
+				ImageBufId = pImageBuffer->GetBuffer();
 			}
 
 			long modelWidth = 0;

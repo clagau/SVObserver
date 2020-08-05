@@ -20,7 +20,6 @@
 #include "SVCommand.h"
 
 #include "SVLibrary/DirectoryUtilities.h"
-#include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVMatroxLibrary/SVMatroxApplicationInterface.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVMessage/SVMessage.h"
@@ -1498,7 +1497,6 @@ HRESULT CSVCommand::ImageToBSTR(const SVImageInfoClass&  rImageInfo, SvOi::SVIma
 {
 	HRESULT hr = S_OK;
 
-	SVImageBufferHandleImage l_MilBuffer;
 	if (nullptr == rImageHandle || rImageHandle->empty())
 	{
 		hr = -1578;
@@ -1506,8 +1504,8 @@ HRESULT CSVCommand::ImageToBSTR(const SVImageInfoClass&  rImageInfo, SvOi::SVIma
 
 	if (S_OK == hr)
 	{
-		SVImageInfoClass oChildInfo;
-		SvOi::SVImageBufferHandlePtr oChildHandle;
+		SVImageInfoClass oChildInfo = rImageInfo;
+		SvOi::SVImageBufferHandlePtr oChildHandle = rImageHandle;
 		BITMAPINFOHEADER* pbmhInfo = nullptr;
 		SVBitmapInfo l_BitmapInfo;
 		long lNumColor;
@@ -1517,9 +1515,6 @@ HRESULT CSVCommand::ImageToBSTR(const SVImageInfoClass&  rImageInfo, SvOi::SVIma
 		bool IsColor(false);
 
 		char* pDIB = nullptr;
-
-		oChildInfo = rImageInfo;
-		oChildHandle = rImageHandle;
 
 		long l_lType = SvPb::SVImageTypeEnum::SVImageTypeUnknown;
 		long l_lBandNumber = 1;
@@ -1548,8 +1543,6 @@ HRESULT CSVCommand::ImageToBSTR(const SVImageInfoClass&  rImageInfo, SvOi::SVIma
 
 			/*HRESULT hrImage =*/ SvIe::SVImageProcessingClass::CreateImageBuffer(oChildInfo, oChildHandle);
 
-			SVImageBufferHandleImage l_ChildMilBuffer;
-
 			if (nullptr != oChildHandle)
 			{
 				// Copy input image to output image
@@ -1564,8 +1557,6 @@ HRESULT CSVCommand::ImageToBSTR(const SVImageInfoClass&  rImageInfo, SvOi::SVIma
 		if (l_lType == SvPb::SVImageTypeEnum::SVImageTypeLogical)
 		{
 			/*HRESULT hrImage =*/ SvIe::SVImageProcessingClass::CreateImageBuffer(oChildInfo, oChildHandle);
-
-			SVImageBufferHandleImage l_ChildMilBuffer;
 
 			if (nullptr != oChildHandle)
 			{
@@ -1762,23 +1753,21 @@ HRESULT CSVCommand::SVGetDataList(SAFEARRAY* psaNames, SAFEARRAY** ppsaValues, S
 
 	for (long l = 0; l < static_cast<long> (Size); l++)
 	{
-		std::string Name;
 		std::string Value;
-		BSTR bstrName = nullptr;
-		SVObjectReference ObjectRef;
 		SVInspectionProcess* pInspection(nullptr);
-
 		Status = S_OK;
 
 		// Get name of requested value out of the safearray
+		BSTR bstrName = nullptr;
 		SafeArrayGetElementNoCopy(psaNames, &l, &bstrName);
-		Name = SvUl::createStdString(bstrName);
+		std::string Name = SvUl::createStdString(bstrName);
 		long ProcessCount = -1;
 		if (nullptr != pConfig)
 		{
 			pConfig->GetInspectionObject(Name.c_str(), &pInspection);
 		}
 
+		SVObjectReference ObjectRef;
 		SVObjectManagerClass::Instance().GetObjectByDottedName(Name.c_str(), ObjectRef);
 
 		if (nullptr != ObjectRef.getObject() || nullptr != pInspection)
@@ -1801,8 +1790,6 @@ HRESULT CSVCommand::SVGetDataList(SAFEARRAY* psaNames, SAFEARRAY** ppsaValues, S
 			}
 			else
 			{
-				SVObjectManagerClass::Instance().GetObjectByDottedName(Name.c_str(), ObjectRef);
-
 				if (nullptr != ObjectRef.getObject())
 				{
 					ProcessCount = pInspection->getLastProductData().first.lTriggerCount;
@@ -2437,7 +2424,7 @@ STDMETHODIMP CSVCommand::SVGetTransferValueDefinitionList(BSTR bstrInspectionNam
 					SAFEARRAY *l_psaTemp = SafeArrayCreate(VT_BSTR, 1, l_rgsabound);
 					for (long j = 0; j < static_cast<long>(pEnumVO->GetEnumVector().size()); ++j)
 					{
-						_bstr_t bstTmp = pEnumVO->GetEnumVector()[i].first.c_str();
+						_bstr_t bstTmp = pEnumVO->GetEnumVector()[j].first.c_str();
 						SafeArrayPutElement(l_psaTemp, &j, bstTmp.Detach());
 					}
 					// Put the Safearray in the Variant.

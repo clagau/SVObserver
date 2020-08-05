@@ -95,7 +95,6 @@ public:
 	/// ATTENTION: In error case the method throw an exception of the type SvStl::MessageContainer.
 	/// \param pTriggerRecord [in] The triggerRecord.
 	void resetImage(const SvTrc::ITriggerRecordRWPtr& pTriggerRecord);
-	SvTrc::IImagePtr getLastImage(bool newIfNotAvailable = false) const;
 
 	/// Get a new image buffer which is not connected to this object. The buffer is blocked as long as the caller hold the handle.
 	/// \returns SvTrc::IImagePtr
@@ -118,10 +117,12 @@ public:
 
 	bool isChildImageInTRC() const { return m_isChildImageInTRC; };
 
+	void setErrorMessageToTool(SvStl::MessageContainer& rErrorMessage);
+
 #pragma region virtual method (ISVImage)
 	virtual SvPb::SVImageTypeEnum GetImageType() const override;
 	virtual SvOi::ISVImage* GetParentImageInterface() const override;
-	virtual SvOi::SVImageBufferHandlePtr getImageData() const override;
+	virtual SvOi::SVImageBufferHandlePtr getLastImage(bool newIfNotAvailable = false) const override;
 	virtual std::string getDisplayedName() const override;
 	virtual long getPixelDepth() const override;
 	virtual HRESULT Save(const std::string& rFilename) override; 

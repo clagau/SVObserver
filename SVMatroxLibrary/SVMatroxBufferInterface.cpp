@@ -761,7 +761,7 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& rBuffer, const SVMatroxB
 		MIL_INT l_lSizeY;
 
 		// Clear first error...
-		l_Code = SVMatroxApplicationInterface::GetFirstError();
+		/*l_Code = */SVMatroxApplicationInterface::GetFirstError();
 		MbufInquire(p_CreateFrom.GetIdentifier(), M_SIZE_BAND, &l_lBandSize);
 		MbufInquire(p_CreateFrom.GetIdentifier(), M_SIZE_X, &l_lSizeX);
 		MbufInquire(p_CreateFrom.GetIdentifier(), M_SIZE_Y, &l_lSizeY);
@@ -1978,8 +1978,7 @@ HRESULT SVMatroxBufferInterface::ControlNeighborhood(const SVMatroxBuffer& p_rBu
 @SVOperationDescription This function clears the entire specified buffer to the specified color.
 
 */
-HRESULT SVMatroxBufferInterface::ClearBuffer(const SVMatroxBuffer& p_rBuffer,
-	double p_dColor)
+HRESULT SVMatroxBufferInterface::ClearBuffer(const SVMatroxBuffer& p_rBuffer, double p_dColor)
 {
 	HRESULT l_Code;
 #ifdef USE_TRY_BLOCKS

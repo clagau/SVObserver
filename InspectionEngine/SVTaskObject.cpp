@@ -284,7 +284,6 @@ HRESULT SVTaskObjectClass::FindNextInputImageInfo(SvOl::SVInObjectInfoStruct*& p
 
 void SVTaskObjectClass::removeTaskMessage(DWORD MessageCode, SvStl::MessageTextEnum AdditionalTextId)
 {
-	
 	auto it = std::find_if(m_ResetErrorMessages.begin(), m_ResetErrorMessages.end(),
 		[&](SvStl::MessageContainer &mc)
 	{
@@ -304,8 +303,11 @@ void SVTaskObjectClass::removeTaskMessage(DWORD MessageCode, SvStl::MessageTextE
 	{
 		m_RunErrorMessages.erase(it2);
 	}
+}
 
-
+void SVTaskObjectClass::addResetErrorMessage(SvStl::MessageContainer& rErrorMessage)
+{
+	m_ResetErrorMessages.push_back(rErrorMessage);
 }
 
 HRESULT SVTaskObjectClass::SetValuesForAnObject(uint32_t aimObjectID, SVObjectAttributeClass* pDataObject)

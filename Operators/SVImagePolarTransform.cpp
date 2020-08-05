@@ -23,7 +23,6 @@
 #include "SVEquation.h"
 #include "Definitions/GlobalConst.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
-#include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVMatroxLibrary/SVMatroxPolarTransformStruct.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"

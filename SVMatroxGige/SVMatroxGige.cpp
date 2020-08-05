@@ -17,7 +17,6 @@
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVMatroxGigeDeviceParameterManager.h"
 #include "SVImageLibrary/SVAcquisitionBufferInterface.h"
-#include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVMatroxLibrary/SVMatroxApplicationInterface.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVStatusLibrary/MessageManager.h"

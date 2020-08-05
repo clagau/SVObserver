@@ -11,7 +11,6 @@
 #include "Definitions/StringTypeDef.h"
 #include "Definitions/TextDefineSvDef.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
-#include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"

@@ -13,7 +13,6 @@
 #include "stdafx.h"
 #include "SVImageArithmetic.h"
 #include "Definitions/ImageOperatorEnums.h"
-#include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "InspectionEngine/SVImageClass.h"
 #include "Tools/SVTool.h"
@@ -263,8 +262,6 @@ bool SVImageArithmeticClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Message
 			nullptr != pImageBufferB && !pImageBufferB->isEmpty() &&
 			nullptr != pOutputImageBuffer && !pOutputImageBuffer->isEmpty())
 		{
-			HRESULT l_Code;
-
 			// Filter for special image arithmetic operators...
 			// e.g. SvDef::SVImageOperatorAverage ( not defined by MIL )
 			switch( lOperator )
@@ -272,7 +269,7 @@ bool SVImageArithmeticClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Message
 			case SvDef::SVImageOperatorAverage:
 				{
 
-					l_Code = SVMatroxImageInterface::Arithmetic(pOutputImageBuffer->getHandle()->GetBuffer(), pImageBufferA->getHandle()->GetBuffer(), pImageBufferB->getHandle()->GetBuffer(), SVImageMultipleAccumulate );
+					/*l_Code = */SVMatroxImageInterface::Arithmetic(pOutputImageBuffer->getHandle()->GetBuffer(), pImageBufferA->getHandle()->GetBuffer(), pImageBufferB->getHandle()->GetBuffer(), SVImageMultipleAccumulate );
 					// Build average of two input images and store resulting image in output image...
 					// NOTE: 
 					//		 M_MULTIPLY_ACCUMULATE_2 
@@ -290,13 +287,13 @@ bool SVImageArithmeticClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Message
 
 			case SvDef::SVImageOperatorFlipVertical:
 				{
-					l_Code = SVMatroxImageInterface::Flip(pOutputImageBuffer->getHandle()->GetBuffer(), pImageBufferA->getHandle()->GetBuffer(), SVImageFlipVertical );
+					/*l_Code = */SVMatroxImageInterface::Flip(pOutputImageBuffer->getHandle()->GetBuffer(), pImageBufferA->getHandle()->GetBuffer(), SVImageFlipVertical );
 				}
 				break;
 
 			case SvDef::SVImageOperatorFlipHorizontal:
 				{
-					l_Code = SVMatroxImageInterface::Flip(pOutputImageBuffer->getHandle()->GetBuffer(), pImageBufferA->getHandle()->GetBuffer(), SVImageFlipHorizontal );
+					/*l_Code = */SVMatroxImageInterface::Flip(pOutputImageBuffer->getHandle()->GetBuffer(), pImageBufferA->getHandle()->GetBuffer(), SVImageFlipHorizontal );
 				}
 				break;
 
@@ -316,7 +313,7 @@ bool SVImageArithmeticClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Message
 
 			default:
 				// Default Operation,,,
-				l_Code = SVMatroxImageInterface::Arithmetic(pOutputImageBuffer->getHandle()->GetBuffer(), pImageBufferA->getHandle()->GetBuffer(), pImageBufferB->getHandle()->GetBuffer(),
+				/*l_Code = */SVMatroxImageInterface::Arithmetic(pOutputImageBuffer->getHandle()->GetBuffer(), pImageBufferA->getHandle()->GetBuffer(), pImageBufferB->getHandle()->GetBuffer(),
 					static_cast<SVImageOperationTypeEnum>(lOperator) );
 			}
 

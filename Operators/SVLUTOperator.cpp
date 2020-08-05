@@ -15,7 +15,6 @@
 #include "SVLUTOperator.h"
 #include "InspectionEngine/SVImageClass.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
-#include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVMatroxLibrary/SVMatroxBufferCreateLineStruct.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
@@ -193,7 +192,6 @@ bool SVLUTOperatorClass::RecalcLUT( SVRunStatusClass& rRunStatus )
 	{
 		long pixelDepth = getOutputImage()->getPixelDepth();
 
-		HRESULT l_Code;
 		
 		// Check Pixel depth...
 		m_lutElementNumber = 1 << (  pixelDepth & SVBufferSize );
@@ -206,7 +204,7 @@ bool SVLUTOperatorClass::RecalcLUT( SVRunStatusClass& rRunStatus )
 			l_Create.m_eAttribute = SVBufAttLut;
 			l_Create.SetImageDepth( pixelDepth );
 			l_Create.m_lSizeX = m_lutElementNumber;
-			l_Code = SVMatroxBufferInterface::Create( m_lutBufID, l_Create );
+			SVMatroxBufferInterface::Create( m_lutBufID, l_Create );
 			if( m_lutBufID.empty() )
 			{
 				// Something is wrong, cannot allocate LUT buffer...
@@ -398,7 +396,7 @@ bool SVLUTOperatorClass::RecalcLUT( SVRunStatusClass& rRunStatus )
 					assert( byteVec.size() == m_lutElementNumber );
 					if ( byteVec.size() == m_lutElementNumber )
 					{
-						l_Code = SVMatroxBufferInterface::PutLine( m_lutBufID, m_lutElementNumber, reinterpret_cast<unsigned char*>(&(byteVec[0])));
+						/*l_Code = */SVMatroxBufferInterface::PutLine( m_lutBufID, m_lutElementNumber, reinterpret_cast<unsigned char*>(&(byteVec[0])));
 					}
 
 					// Success...

@@ -15,7 +15,6 @@
 #include "SVShapeMaskHelperClass.h"
 #include "SVUserMaskOperatorClass.h"
 #include "InspectionEngine/SVTaskObjectInterfaceInputRequestStruct.h"
-#include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 

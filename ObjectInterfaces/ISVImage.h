@@ -40,7 +40,7 @@ namespace SvOi
 		/// Return the data of the image.
 		/// \returns SVImageBufferHandlePtr
 		//************************************
-		virtual SVImageBufferHandlePtr getImageData() const = 0;
+		virtual SVImageBufferHandlePtr getLastImage(bool newIfNotAvailable = false) const = 0;
 
 		//************************************
 		/// Return the display name the image.

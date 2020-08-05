@@ -776,11 +776,11 @@ HRESULT SVExternalToolTask::Initialize(SVDllLoadLibraryCallback fnNotify, bool i
 					m_aPreviousInputImageRect.push_back(rect);
 
 					// remember MIL handle
-					SvTrc::IImagePtr pImageBuffer = pImage->getLastImage(true);
-					if (nullptr != pImageBuffer && !pImageBuffer->isEmpty())
+					SvOi::SVImageBufferHandlePtr pImageBuffer = pImage->getLastImage(true);
+					if (nullptr != pImageBuffer && !pImageBuffer->empty())
 					{
 						// this cast assumes that a mil handle will never be larger than 32 bits.
-						m_aInspectionInputImages[i] = static_cast<long>(pImageBuffer->getHandle()->GetBuffer().GetIdentifier());
+						m_aInspectionInputImages[i] = static_cast<long>(pImageBuffer->GetBuffer().GetIdentifier());
 					}
 
 					if (!m_dll.UseMil())

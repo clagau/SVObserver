@@ -19,7 +19,6 @@
 #include "Definitions/StringTypeDef.h"
 #include "InspectionEngine/SVDataBuffer.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
-#include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "SVStatusLibrary/SVRunStatus.h"
 #include "Tools/SVTool.h"

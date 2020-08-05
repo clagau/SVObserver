@@ -60,9 +60,7 @@ void SVMatroxBuffer::clear()
 
 void SVMatroxBuffer::swap( SVMatroxBuffer& p_rBuf )
 {
-	SVMatroxBufferPtr l_ID = m_BufferPtr;
-	m_BufferPtr = p_rBuf.m_BufferPtr;
-	p_rBuf.m_BufferPtr = l_ID;
+	std::swap(m_BufferPtr, p_rBuf.m_BufferPtr);
 }
 
 const SVMatroxBuffer& SVMatroxBuffer::operator=( const SVMatroxBuffer& p_rBuf )

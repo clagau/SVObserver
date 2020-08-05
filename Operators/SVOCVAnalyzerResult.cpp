@@ -16,7 +16,6 @@
 #include "Definitions/StringTypeDef.h"
 #include "InspectionEngine/SVImageClass.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
-#include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVMatroxLibrary/SVMatroxOcrInterface.h"
 #include "SVMatroxLibrary/SVOLicenseManager.h"

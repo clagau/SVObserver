@@ -13,7 +13,6 @@
 #include "ObjectInterfaces/IValueObject.h"
 #include "SVFileSystemLibrary/SVFileNameClass.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
-#include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "TriggerRecordController/ITriggerRecordR.h"
 #pragma endregion Includes

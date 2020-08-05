@@ -10,7 +10,6 @@
 
 #include "InspectionEngine/SVImageClass.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
-#include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVStatusLibrary/SVRunStatus.h"
 #include "SVUnaryImageOperatorClass.h"
 #pragma endregion Includes

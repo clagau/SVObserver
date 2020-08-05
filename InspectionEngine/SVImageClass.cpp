@@ -614,11 +614,21 @@ HRESULT SVImageClass::UpdateChild(uint32_t childID, const SVImageInfoClass& rIma
 		}
 		else
 		{
+			//add entry to childMap if not exist.
 			SVImageInfoClass& rChildInfo = m_ChildArrays[childID];
-
 			rChildInfo = rImageInfo;
 
 			l_hrOk = m_ImageInfo.ValidateAgainstOutputSpace(rChildInfo.GetExtents());
+			if (S_OK != l_hrOk)
+			{
+				auto* pChildObject = dynamic_cast<SVImageClass*>(SvOi::getObject(childID));
+				if (nullptr != pChildObject)
+				{
+					SvStl::MessageMgrStd e(SvStl::MsgType::Data);
+					e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SizeOfChildROIInvalid, SvStl::SourceFileParams(StdMessageParams), 0, childID);
+					pChildObject->setErrorMessageToTool(e.getMessageContainer());
+				}
+			}
 		}
 
 		if (!Unlock())
@@ -1039,26 +1049,26 @@ void SVImageClass::resetImage(const SvTrc::ITriggerRecordRWPtr& pTriggerRecord)
 	}
 }
 
-SvTrc::IImagePtr SVImageClass::getLastImage(bool newIfNotAvailable) const
+SvOi::SVImageBufferHandlePtr SVImageClass::getLastImage(bool newIfNotAvailable) const
 {
 	SvTrc::ITriggerRecordRPtr lastTriggerRecord = nullptr;
 	auto& rRecordController = SvTrc::getTriggerRecordControllerRWInstance();
 	if (0 <= m_inspectionPosInTRC && !rRecordController.isResetStarted())
 	{
-		SvTrc::IImagePtr pImage = nullptr;
 		int lastTRid = rRecordController.getLastTrId(m_inspectionPosInTRC);
 		lastTriggerRecord = rRecordController.createTriggerRecordObject(m_inspectionPosInTRC, lastTRid);
 	}
+	SvTrc::IImagePtr pImage;
 	if (nullptr == lastTriggerRecord && newIfNotAvailable)
 	{
-		return getTempImageBuffer();
+		pImage = getTempImageBuffer();
 	}
 
 	if (nullptr != lastTriggerRecord)
 	{
-		return getImageReadOnly(lastTriggerRecord.get());
+		pImage = getImageReadOnly(lastTriggerRecord.get());
 	}
-	return nullptr;
+	return nullptr != pImage ? pImage->getHandle() : nullptr;
 }
 
 SvTrc::IImagePtr SVImageClass::getTempImageBuffer(bool createBufferExternIfNecessary) const
@@ -1195,6 +1205,15 @@ void SVImageClass::copiedSavedImage(SvTrc::ITriggerRecordRWPtr pTr)
 	}
 }
 
+void SVImageClass::setErrorMessageToTool(SvStl::MessageContainer& rErrorMessage)
+{
+	auto* pTool = dynamic_cast<SVTaskObjectClass*>(GetTool());
+	if (nullptr != pTool)
+	{
+		pTool->addResetErrorMessage(rErrorMessage);
+	}
+}
+
 HRESULT SVImageClass::TranslateFromOutputSpaceToImage(SVImageClass* pImage, SVPoint<double> inPoint, SVPoint<double>& rOutPoint) const
 {
 	HRESULT l_hr = E_FAIL;
@@ -1230,17 +1249,6 @@ SvPb::SVImageTypeEnum SVImageClass::GetImageType() const
 SvOi::ISVImage* SVImageClass::GetParentImageInterface() const
 {
 	return GetParentImage();
-}
-
-SvOi::SVImageBufferHandlePtr SVImageClass::getImageData() const
-{
-	SvOi::SVImageBufferHandlePtr dataSmartPointer;
-	SvTrc::IImagePtr pImage = getLastImage();
-	if (nullptr != pImage && !pImage->isEmpty())
-	{
-		dataSmartPointer = pImage->getHandle();
-	}
-	return dataSmartPointer;
 }
 
 std::string SVImageClass::getDisplayedName() const
@@ -1286,8 +1294,8 @@ HRESULT SVImageClass::Save(const std::string& rFilename)
 	HRESULT hr = S_OK;
 
 	// Get output buffer handle...
-	SvTrc::IImagePtr pImage = getLastImage();
-	if (nullptr != pImage && !pImage->isEmpty())
+	SvOi::SVImageBufferHandlePtr pImage = getLastImage();
+	if (nullptr != pImage && !pImage->empty())
 	{
 		std::string ext;
 		size_t pos = rFilename.find_last_of(".");
@@ -1300,7 +1308,7 @@ HRESULT SVImageClass::Save(const std::string& rFilename)
 		if (efileformat != SVFileUnknown)
 		{
 			std::string strPath = rFilename.c_str();
-			hr = SVMatroxBufferInterface::Export(pImage->getHandle()->GetBuffer(), strPath, efileformat);
+			hr = SVMatroxBufferInterface::Export(pImage->GetBuffer(), strPath, efileformat);
 		}
 		else
 		{
@@ -1474,7 +1482,7 @@ void SVImageClass::copyCurrent2SaveImage()
 		SVImageProcessingClass::CreateImageBuffer(m_ImageInfoOfSavedBuffer, m_savedBuffer);
 	}
 
-	auto image = getImageData();
+	auto image = getLastImage();
 	assert(nullptr != m_savedBuffer);
 	if (nullptr != m_savedBuffer && nullptr != image)
 	{

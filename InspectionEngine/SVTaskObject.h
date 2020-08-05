@@ -116,7 +116,7 @@ public:
 	void clearRunErrorMessages() { m_RunErrorMessages.clear(); };
 
 	void removeTaskMessage(DWORD MessageCode, SvStl::MessageTextEnum AdditionalTextId);
-
+	void addResetErrorMessage(SvStl::MessageContainer& rErrorMessage);
 
 	bool IsRunErrorMessageEmpty() { return m_RunErrorMessages.empty(); };
 

@@ -799,7 +799,7 @@ bool SVInspectionProcess::GoOffline()
 			if (nullptr != pCameraImage)
 			{
 				SvIe::SVVirtualCamera* pCamera = pCameraImage->GetCamera();
-				auto pImageData = pCameraImage->getImageData();
+				auto pImageData = pCameraImage->getLastImage();
 				if (nullptr != pCamera && nullptr != pImageData && !pImageData->empty())
 				{
 					pCamera->setTempImage(pImageData->GetBuffer());

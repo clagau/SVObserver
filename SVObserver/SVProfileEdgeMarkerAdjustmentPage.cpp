@@ -122,7 +122,7 @@ BOOL SVProfileEdgeMarkerAdjustmentPageClass::OnInitDialog()
 			if(nullptr != pImage)
 			{
 				m_dialogImage.AddTab("Image");
-				m_dialogImage.setImage(pImage->getImageData(), 0);
+				m_dialogImage.setImage(pImage->getLastImage(), 0);
 				m_dialogImage.Refresh();
 			}
 		}

@@ -27,7 +27,6 @@
 #include "Definitions/GlobalConst.h"
 #include "ObjectInterfaces/IObjectWriter.h"
 #include "SVImageLibrary/SVDrawContext.h"
-#include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVImageLibrary/ImageFileUtilities.h"
 #include "SVMFCControls/SVAnalyzerResultDlg.h"
 #include "SVObjectLibrary/SVClsids.h"
@@ -523,9 +522,7 @@ void SVImageViewClass::SaveViewOrImageToDisk(bool ViewOnly, bool showOverlays)
 void SVImageViewClass::OnContextMenu( CWnd* , CPoint p_point )
 {
 	CMenu l_menu;
-	bool RunOrTestMode( false );
-
-	RunOrTestMode = SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST );
+	bool RunOrTestMode = SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST );
 
 	m_mousePoint.x = p_point.x;
 	m_mousePoint.y = p_point.y;
@@ -558,7 +555,7 @@ void SVImageViewClass::OnContextMenu( CWnd* , CPoint p_point )
 				l_pPopup->DeleteMenu( ID_ANALYZER_RESULT, MF_BYCOMMAND );
 			}
 			else
-			{
+			{	//RunOrTestMode is false if entry the else
 				bool l_resultFound = false;
 				SvAo::SVAnalyzerClass* pAnalyzer = nullptr;
 				SVIPDoc *l_psvIPDoc = GetIPDoc();
@@ -588,17 +585,17 @@ void SVImageViewClass::OnContextMenu( CWnd* , CPoint p_point )
 					}
 				}
 
-				if( !l_resultFound || RunOrTestMode )
+				if( !l_resultFound )
 				{
 					l_pPopup->DeleteMenu( ID_ANALYZER_RESULT, MF_BYCOMMAND );
 				}
 
-				if( !pAnalyzer || RunOrTestMode )
+				if( !pAnalyzer )
 				{
 					l_pPopup->DeleteMenu( ID_CONFIG_ANALYZER, MF_BYCOMMAND );
 				}
 
-				if( !TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_MODE_MENU_EDIT_TOOLSET ) || RunOrTestMode )
+				if( !TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_MODE_MENU_EDIT_TOOLSET ) )
 				{
 					l_pPopup->DeleteMenu( ID_CONFIG_ANALYZER, MF_BYCOMMAND );
 				}

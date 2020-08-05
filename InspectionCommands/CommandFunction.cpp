@@ -460,7 +460,7 @@ SvPb::InspectionCmdResponse getImage(SvPb::GetImageRequest request)
 		SvOi::ISVImage* pImage = dynamic_cast<SvOi::ISVImage*>(SvOi::getObject(request.imageid()));
 		if (pImage)
 		{
-			data = pImage->getImageData();
+			data = pImage->getLastImage();
 		}
 	}
 	else if (!request.imagename().empty() && SvDef::InvalidObjectId != request.parentid())

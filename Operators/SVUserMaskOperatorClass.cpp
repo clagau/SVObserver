@@ -18,7 +18,6 @@
 #include "Definitions/TextDefineSvDef.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "InspectionEngine/SVTaskObjectInterfaceInputRequestStruct.h"
-#include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
@@ -278,11 +277,11 @@ bool SVUserMaskOperatorClass::getSpecialImage(const std::string& rName, SvOi::SV
 		{
 			if (SvPb::SVImageTypeEnum::SVImageTypePhysical == pImage->GetImageType())
 			{
-				rImagePtr = pImage->GetParentImageInterface()->getImageData();
+				rImagePtr = pImage->GetParentImageInterface()->getLastImage();
 			}
 			else
 			{ 
-				rImagePtr = pImage->getImageData();
+				rImagePtr = pImage->getLastImage();
 			}
 			return true;
 		}

@@ -390,7 +390,7 @@ void SVTADlgColorThresholdAdjustment::updateHistogram()
 					childImageInfo.SetExtentProperty(SvPb::SVExtentPropertyPositionPointY, rectRoi.top);
 					childImageInfo.SetExtentProperty(SvPb::SVExtentPropertyWidth, rectRoi.Width());
 					childImageInfo.SetExtentProperty(SvPb::SVExtentPropertyHeight, rectRoi.Height());
-					SvIe::SVImageProcessingClass::CreateImageChildBuffer(pImage->GetImageInfo(), pImage->getImageData(), childImageInfo, m_histogramImage);
+					SvIe::SVImageProcessingClass::CreateImageChildBuffer(pImage->GetImageInfo(), pImage->getLastImage(), childImageInfo, m_histogramImage);
 				}
 			}
 

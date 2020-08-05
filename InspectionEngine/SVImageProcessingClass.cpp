@@ -130,7 +130,8 @@ HRESULT SVImageProcessingClass::CreateImageChildBuffer(const SVImageInfoClass& r
 {
 	SVMatroxBufferCreateChildStruct childBufferStruct(rParentHandle->GetBuffer());
 
-	HRESULT Result = nullptr != rParentHandle && nullptr != rChildHandle;
+	HRESULT Result = nullptr != rParentHandle ? S_OK : S_FALSE;
+	rChildHandle.reset();
 	if (S_OK == Result)
 	{
 		Result = FillChildBufferStructFromInfo(rParentInfo, rChildInfo, childBufferStruct.m_data);
@@ -838,8 +839,6 @@ HRESULT SVImageProcessingClass::FillChildBufferStructFromInfo(const SVImageInfoC
 				if (ChildBandLink < ParentBandNumber &&
 					ChildBandLink >= 0 && ChildBandNumber == 1)
 				{
-					SVMatroxBuffer l_NewBuffer;
-
 					// Single band child of the BandLink band of a multi band parent
 					// MIL Restriction: It is not possible to derive a 
 					//                  multi band child of a multi band
@@ -855,8 +854,6 @@ HRESULT SVImageProcessingClass::FillChildBufferStructFromInfo(const SVImageInfoC
 			}// end if( PChildInfo->BandNumber < PParentInfo->BandNumber && PChildInfo->BandNumber > 0 )
 			else
 			{
-				SVMatroxBuffer l_NewBuffer;
-
 				// Multi/single band child of a multi/single band parent 
 				// (all bands!)
 				rChildBufferStruct.m_lBand = SVValueAllBands;

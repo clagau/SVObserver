@@ -25,6 +25,7 @@ Image::Image(const SvOi::SVImageBufferHandlePtr& pBuffer, long ResetId, int buff
 
 Image::~Image()
 {
+	// cppcheck-suppress knownConditionTrueFalse //constructor can change values and if can be true
 	if (m_shouldUnlockAuto && 0 <= m_bufferPos)
 	{
 		auto pLock = ResetLocker::lockReset(m_ResetId);
@@ -37,6 +38,7 @@ Image::~Image()
 
 bool Image::isValid() const
 {
+	// cppcheck-suppress knownConditionTrueFalse //constructor can change values and if can be true
 	return (getTriggerRecordControllerInstance().getResetId() == m_ResetId && 0 < m_ResetId) || (cLocalTmpImagePos == m_bufferPos);
 }
 

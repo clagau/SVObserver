@@ -23,7 +23,6 @@
 #include "ObjectInterfaces/IInspectionProcess.h"
 #include "SVFileSystemLibrary/SVFileNameClass.h"
 #include "SVFileSystemLibrary/SVFileNameManagerClass.h"
-#include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVLibrary/SVOINIClass.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVOLibrary/SVMemoryManager.h"
