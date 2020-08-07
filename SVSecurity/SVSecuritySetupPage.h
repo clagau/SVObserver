@@ -29,7 +29,7 @@ public:
 	
 	explicit SVSecuritySetupPage(UINT nIDTemplate, UINT nIDCaption = 0);
 	
-	~SVSecuritySetupPage();
+	virtual ~SVSecuritySetupPage();
 	void BuildTree( long& p_NodeIndex, HTREEITEM hParent, bool p_Root );
 
 // Dialog Data

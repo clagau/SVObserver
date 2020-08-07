@@ -24,7 +24,7 @@ public:
 #pragma region Constructor
 	SVPictureDisplayCtrl();
 protected:
-	~SVPictureDisplayCtrl();
+	virtual ~SVPictureDisplayCtrl();
 #pragma endregion Constructor
 public:
 

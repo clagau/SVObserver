@@ -30,7 +30,7 @@ namespace SvOl
 	public:
 		DependencyManager();
 
-		~DependencyManager();
+		virtual ~DependencyManager();
 	#pragma endregion Constructor
 
 	#pragma region Public Methods

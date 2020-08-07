@@ -31,7 +31,7 @@ public:
 
 // Implementation
 protected:
-	~SVScrollWnd1Ctrl();
+	virtual ~SVScrollWnd1Ctrl();
 
 	DECLARE_OLECREATE_EX(SVScrollWnd1Ctrl)    // Class factory and guid
 	DECLARE_OLETYPELIB(SVScrollWnd1Ctrl)      // GetTypeInfo

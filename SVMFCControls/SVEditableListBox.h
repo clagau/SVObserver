@@ -22,7 +22,7 @@ namespace SvMc
 	{
 	public:
 		SVEditableListBox(void);
-		~SVEditableListBox(void);
+		virtual ~SVEditableListBox(void);
 
 	protected:
 		void    EditStarts  ();

@@ -34,7 +34,7 @@ namespace  SvXml
 	{
 	public:
 		explicit SVObjectXMLWriter(std::ostream& os);
-		~SVObjectXMLWriter();
+		virtual ~SVObjectXMLWriter();
 
 		///Write <DATA ...>
 		void WriteAttribute(LPCTSTR Name, const _variant_t& value) override;

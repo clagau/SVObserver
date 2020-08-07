@@ -23,7 +23,7 @@ class CInitializeIOSubsystemDlg : public CDialog
 // Construction
 public:
 	CInitializeIOSubsystemDlg(CWnd* pParent = NULL);	// standard constructor
-	~CInitializeIOSubsystemDlg();
+	virtual ~CInitializeIOSubsystemDlg();
 // Dialog Data
 	enum { IDD = IDD_INITIALIZEIOSUBSYSTEM_DIALOG };
 

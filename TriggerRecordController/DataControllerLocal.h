@@ -21,7 +21,7 @@ class TRControllerLocalDataPerIP : public TRControllerBaseDataPerIP
 {
 public:
 	TRControllerLocalDataPerIP() = default;
-	~TRControllerLocalDataPerIP();
+	virtual ~TRControllerLocalDataPerIP();
 
 
 	BasicData getBasicData() const override { return m_basicData; };

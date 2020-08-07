@@ -38,7 +38,7 @@ public:
 
 // Implementation
 protected:
-	~SVMaskEditorCtrl();
+	virtual ~SVMaskEditorCtrl();
 
 	DECLARE_OLECREATE_EX(SVMaskEditorCtrl)    // Class factory and guid
 	DECLARE_OLETYPELIB(SVMaskEditorCtrl)      // GetTypeInfo

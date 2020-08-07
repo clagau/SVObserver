@@ -22,7 +22,7 @@ class TRControllerWriterDataPerIP : public TRControllerBaseDataPerIP
 {
 public:
 	TRControllerWriterDataPerIP() = default;
-	~TRControllerWriterDataPerIP();
+	virtual ~TRControllerWriterDataPerIP();
 
 	void init(const std::function<void(const std::string&, int)>& smDataCBFunc);
 

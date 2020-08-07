@@ -24,7 +24,7 @@ class TRControllerReaderDataPerIP : public TRControllerBaseDataPerIP
 {
 public:
 	TRControllerReaderDataPerIP() = default;
-	~TRControllerReaderDataPerIP();
+	virtual ~TRControllerReaderDataPerIP();
 
 	void init(const std::string& smName);
 	void reloadData();
