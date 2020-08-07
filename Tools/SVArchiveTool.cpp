@@ -376,8 +376,11 @@ bool SVArchiveTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 		{
 			return false;
 		}
-		ensureCurrentImagePathRootExists();
 		result = ValidateImageSpace(pErrorMessages) && result;
+		if (result)
+		{
+			ensureCurrentImagePathRootExists();
+		}
 	}
 
 	return result;

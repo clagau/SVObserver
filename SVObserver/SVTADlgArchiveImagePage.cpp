@@ -121,13 +121,9 @@ bool SVTADlgArchiveImagePage::QueryAllowExit()
 
 	m_alternativeImagePaths.EditboxesToTextValues();
 
-	m_ImageFilepathroot1WidgetHelper.EditboxToTextValue();
-	m_ImageFilepathroot2WidgetHelper.EditboxToTextValue();
-	m_ImageFilepathroot3WidgetHelper.EditboxToTextValue();
-
-	m_ValueController.Commit(SvOg::PostAction::doReset); //changes need to be committed before validateImageFilepathRoot() is called
-
 	//update the image path
+
+	updateImageFilePathRootElements();
 
 	if (!validateImageFilepathRoot())
 	{
@@ -188,6 +184,16 @@ bool SVTADlgArchiveImagePage::QueryAllowExit()
 	}
 
 	return true;
+}
+
+
+void SVTADlgArchiveImagePage::updateImageFilePathRootElements()
+{
+	m_ImageFilepathroot1WidgetHelper.EditboxToTextValue();
+	m_ImageFilepathroot2WidgetHelper.EditboxToTextValue();
+	m_ImageFilepathroot3WidgetHelper.EditboxToTextValue();
+
+	m_ValueController.Commit(SvOg::PostAction::doReset); //changes need to be committed before validateImageFilepathRoot() is called
 }
 
 

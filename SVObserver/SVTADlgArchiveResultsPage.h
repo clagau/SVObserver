@@ -26,13 +26,16 @@ class SVArchiveTool;
 class SVToolAdjustmentDialogSheetClass;
 #pragma endregion Declarations
 
+
+class SVTADlgArchiveImagePage; //@TODO [Arvid][10.00][7.8.2020] should be removed
+	
 class SVTADlgArchiveResultsPage : public CPropertyPage, public SvOg::ISVPropertyPageDialog
 {
 	enum { IDD = IDD_TA_ARCHIVE_RESULTS_PAGE };
 
 #pragma region Constructor
 public:
-	SVTADlgArchiveResultsPage( uint32_t inspectionId, uint32_t taskObjectId, SVToolAdjustmentDialogSheetClass* pParent );
+	SVTADlgArchiveResultsPage( uint32_t inspectionId, uint32_t taskObjectId, SVToolAdjustmentDialogSheetClass* pParent,  SVTADlgArchiveImagePage *pArchiveImagePage);
 	virtual ~SVTADlgArchiveResultsPage();
 #pragma endregion Constructor
 
@@ -67,6 +70,7 @@ protected:
 #pragma region Private Members
 private:
 	SVToolAdjustmentDialogSheetClass* m_pParent;		//Pointer to the Tool Adjust sheet
+	class SVTADlgArchiveImagePage *m_pArchiveImagePage;	//@TODO [Arvid][10.00][7.8.2020] should be removed
 	CListCtrl   m_ItemsSelected;						//The selected list control
 	SVObjectReferenceVector m_ResultsToBeArchived;      //contains references to objects that are to be archived
 	SvTo::SVArchiveTool* m_pTool;						//Pointer to the Archive Tool

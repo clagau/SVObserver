@@ -13,6 +13,7 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <numeric>
 #include "SVTADlgArchiveResultsPage.h"
+#include "SVTADlgArchiveImagePage.h" //@TODO [Arvid][10.00][7.8.2020] should be removed
 #include "SVArchiveHeaderEditDlg.h"
 #include "SVIPDoc.h"
 #include "SVInspectionProcess.h"
@@ -53,9 +54,10 @@ constexpr int IconGrowBy = 2;
 #pragma endregion Declarations
 
 #pragma region Constructor
-SVTADlgArchiveResultsPage::SVTADlgArchiveResultsPage(uint32_t , uint32_t , SVToolAdjustmentDialogSheetClass* Parent) 
+SVTADlgArchiveResultsPage::SVTADlgArchiveResultsPage(uint32_t inspectionId, uint32_t taskObjectId, SVToolAdjustmentDialogSheetClass* Parent, SVTADlgArchiveImagePage *pArchiveImagePage)
 : CPropertyPage(SVTADlgArchiveResultsPage::IDD)
 , m_pParent(Parent)
+, m_pArchiveImagePage(pArchiveImagePage)
 , m_pTool(nullptr)
 , m_ColumnHeaders(false)
 , m_AppendArchive(false)
@@ -88,6 +90,8 @@ bool SVTADlgArchiveResultsPage::QueryAllowExit()
 	//check for valid drive for text archive
 	SvTo::ArchiveToolHelper athArchivePathAndName;
 	athArchivePathAndName.Init( ArchiveFilepath );
+
+	m_pArchiveImagePage->updateImageFilePathRootElements();
 
 	SvStl::MessageTextEnum pathErrorDescriptionId = SvStl::Tid_Empty;
 
@@ -221,15 +225,14 @@ BOOL SVTADlgArchiveResultsPage::OnInitDialog()
 	m_pTool->m_bvoUseHeaders.GetValue(m_ColumnHeaders);
 	GetDlgItem(IDC_HEADER_BTN)->EnableWindow(m_ColumnHeaders);
 
-	SVObjectReferenceVector resultVector = m_pTool->assembleResultReferenceVector();
-	m_ResultsToBeArchived.swap(resultVector);
+	m_ResultsToBeArchived.swap(m_pTool->assembleResultReferenceVector());
 
 	ReadSelectedObjects();
 	UpdateData(FALSE);
 	return TRUE;
 }
 
-void SVTADlgArchiveResultsPage::OnDblClickListSelected(NMHDR*, LRESULT*)
+void SVTADlgArchiveResultsPage::OnDblClickListSelected( NMHDR *pNMHDR, LRESULT *pResult )
 {
 	ShowObjectSelector();
 }

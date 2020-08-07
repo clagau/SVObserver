@@ -105,6 +105,7 @@ public:
 #pragma region Public Methods
 	// ISVPropertyPageDialog
 	bool QueryAllowExit() override;
+	void updateImageFilePathRootElements();
 
 #pragma endregion Public Methods
 

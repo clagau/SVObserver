@@ -271,11 +271,17 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 			break;
 
 		case SvPb::SVObjectSubTypeEnum::SVToolArchiveObjectType:   // Archive tool
-			AddPage(new SVTADlgArchiveResultsPage(m_InspectionID, m_TaskObjectID, this));
-			AddPage(new SVTADlgArchiveImagePage(m_InspectionID, m_TaskObjectID, this));
-			addConditionalDialog();
-			break;
+			{	
+				//@TODO [Arvid][10.00][7.8.2020] A SVTADlgArchiveImagePage pointer passed to the SVTADlgArchiveResultsPage constructor so that
+				// the image file path root can be updated before the SVArchiveTool::ResetObject is called by SVTADlgArchiveResultsPage::QueryAllowExit()
+				// this is a quick hack introduced shortly befoe the release of SVO 10.00 and should be removed when possible!
 
+				SVTADlgArchiveImagePage* archiveImagePage = new SVTADlgArchiveImagePage(m_InspectionID, m_TaskObjectID, this);
+				AddPage(new SVTADlgArchiveResultsPage(m_InspectionID, m_TaskObjectID, this, archiveImagePage));
+				AddPage(archiveImagePage);
+				addConditionalDialog();
+			}
+			break;
 		case SvPb::SVObjectSubTypeEnum::SVMathToolObjectType:
 		{
 			if (nullptr != pMathEquation)
