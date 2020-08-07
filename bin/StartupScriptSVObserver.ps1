@@ -1,12 +1,14 @@
+Set-PSDebug -Trace 1
+
 $MTXsrvName = "Matrox GigE Vision Assistant Service"
 $SVOWebSrvName = "SVO Gateway"
 $waitLoop=0
 $maxLoop=30
 $WaitTimeMs=500
 
-$cmdout = get-WmiObject win32_networkadapterconfiguration -Filter "Description=""Intel(R) PRO/1000 MT Desktop Adapter""" | select-object -expand IPAddress
+$cmdout = get-WmiObject win32_networkadapterconfiguration -Filter "Description=""Intel(R) I210 Gigabit Network Connection""" | select-object -expand IPAddress
 write-eventlog -logname Application -source SVException -eventID 13 -entrytype Information -message "... Starting SVObserver powershell script. $env:computername - $cmdout" -Category 0
-echo $cmdout.IPAddress
+echo $cmdout[0]
 
 $cmdout = imdisk -d -m V:
 if ($LastExitCode -ne 0)
