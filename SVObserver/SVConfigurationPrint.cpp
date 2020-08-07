@@ -620,7 +620,11 @@ BOOL SVConfigurationPrint::DoPreparePrinting(CPrintInfo* pPrintInfo)
 void SVConfigurationPrint::PrintObject( CDC* pDC, SVObjectClass* pObj, CPoint& ptCurPos, int nIndentLevel )
 {
 	PrintDetails(pDC, pObj, ptCurPos, nIndentLevel);
-	PrintFriends(pDC, pObj, ptCurPos, nIndentLevel + 1);
+	auto* pTask = dynamic_cast<SvIe::SVTaskObjectClass*>(pObj);
+	if (nullptr != pTask)
+	{
+		PrintFriends(pDC, pTask, ptCurPos, nIndentLevel + 1);
+	}
 	PrintChildren(pDC, pObj, ptCurPos, nIndentLevel + 1);
 }
 
@@ -992,7 +996,7 @@ void SVConfigurationPrint::PrintChildren( CDC* pDC, SVObjectClass* pObj, CPoint&
 // .Return Value
 //	:  none
 ////////////////////////////////////////////////////////////////////////////////
-void SVConfigurationPrint::PrintFriends( CDC* pDC, SVObjectClass* pObj, CPoint& ptCurPos, int nIndentLevel )
+void SVConfigurationPrint::PrintFriends( CDC* pDC, SvIe::SVTaskObjectClass* pObj, CPoint& ptCurPos, int nIndentLevel )
 {
 	const SVObjectInfoArrayClass& rFriendList = pObj->GetFriendList();
 	

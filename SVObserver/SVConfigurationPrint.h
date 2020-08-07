@@ -31,6 +31,7 @@ enum
 
 namespace SvIe
 {
+class SVTaskObjectClass;
 class SVTaskObjectListClass;
 }
 class SVObjectClass;
@@ -69,7 +70,7 @@ protected:
 	void PrintPage();
 	void OnEndPrinting();
 
-	void PrintFriends(CDC* pDC, SVObjectClass* pObj, CPoint& ptCurPos, int nIndentLevel);
+	void PrintFriends(CDC* pDC, SvIe::SVTaskObjectClass* pObj, CPoint& ptCurPos, int nIndentLevel);
 	void PrintAllChildren(CDC* pDC, SvIe::SVTaskObjectListClass* pTaskObj,  CPoint& ptCurPos, int nIndentLevel);
 	void PrintChildren(CDC* pDC, SVObjectClass* pObj, CPoint& ptCurPos, int nIndentLevel);
 	void PrintDetails(CDC* pDC, SVObjectClass* pObj, CPoint& ptCurPos, int nIndentLevel);

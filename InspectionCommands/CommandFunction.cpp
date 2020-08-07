@@ -417,7 +417,17 @@ SvPb::InspectionCmdResponse MoveObject(SvPb::MoveObjectRequest request)
 				break;
 			}
 			case SvPb::MoveObjectRequest::FriendList:
-				pObject->moveFriendObject(request.objectid(), request.movepreid());
+			{
+				auto* pTask = dynamic_cast<SvOi::ITaskObject*>(pObject);
+				if (nullptr != pTask)
+				{
+					pTask->moveFriendObject(request.objectid(), request.movepreid());
+				}
+				else
+				{
+					cmdResponse.set_hresult(E_FAIL);
+				}
+			}
 				break;
 			default:
 				cmdResponse.set_hresult(E_FAIL);

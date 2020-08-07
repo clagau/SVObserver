@@ -564,20 +564,20 @@ HRESULT ToolSizeAdjustTask::EnsureInFriendList(SvTo::SVToolClass* pTool, bool Al
 	return hres;
 }
 
-ToolSizeAdjustTask* ToolSizeAdjustTask::GetToolSizeAdjustTask(const SVObjectClass *pObject)
+ToolSizeAdjustTask* ToolSizeAdjustTask::GetToolSizeAdjustTask(const SVTaskObjectClass* pTask)
 {
 	ToolSizeAdjustTask* pToolSizeAdjustTask = nullptr;
-	if (nullptr != pObject)
+	if (nullptr != pTask)
 	{
 		SvDef::SVObjectTypeInfoStruct ToolSizeAdjustTaskInfo;
 		ToolSizeAdjustTaskInfo.m_ObjectType = SvPb::SVToolSizeAdjustTaskType;
 		ToolSizeAdjustTaskInfo.m_SubType = SvPb::SVNotSetSubObjectType;
-		pToolSizeAdjustTask = dynamic_cast<ToolSizeAdjustTask*>(pObject->GetFriend(ToolSizeAdjustTaskInfo));
+		pToolSizeAdjustTask = dynamic_cast<ToolSizeAdjustTask*>(pTask->GetFriend(ToolSizeAdjustTaskInfo));
 	}
 	return pToolSizeAdjustTask;
 }
 
-bool ToolSizeAdjustTask::UseSizeAdjust(const SVObjectClass *pObject)
+bool ToolSizeAdjustTask::UseSizeAdjust(const SVTaskObjectClass *pObject)
 {
 	bool ret = false;
 	const ToolSizeAdjustTask* pToolSizeAdjustTask = GetToolSizeAdjustTask(pObject);

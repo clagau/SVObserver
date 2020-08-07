@@ -1101,7 +1101,8 @@ inline void SVConfigXMLPrint::WriteObject(Writer writer, SVObjectClass* pObject)
 				}
 			}
 
-			if (SV_IS_KIND_OF(pObject, SvIe::SVTaskObjectClass))
+			auto* pTask = dynamic_cast<SvIe::SVTaskObjectClass*>(pObject);
+			if (nullptr != pTask)
 			{
 				if (SvOp::SVEquationClass* pEquation = dynamic_cast <SvOp::SVEquationClass*> (pObject))
 				{
@@ -1115,9 +1116,9 @@ inline void SVConfigXMLPrint::WriteObject(Writer writer, SVObjectClass* pObject)
 					WriteValueObject(writer, L"Equation", utf16(sLabel), utf16(sValue));
 				}
 				WriteInputOutputList(writer, pObject);
+				WriteFriends(writer, pTask);
 			}
 
-			WriteFriends(writer, pObject);
 			WriteChildren(writer, pObject);
 			writer->WriteComment(objName.c_str());
 			writer->WriteEndElement();
@@ -1207,7 +1208,7 @@ void SVConfigXMLPrint::WriteChildren(Writer writer, SVObjectClass* pObj) const
 	}
 }  // end function void SVConfigXMLPrint:::PrintChildren( ... )
 
-void SVConfigXMLPrint::WriteFriends(Writer writer, SVObjectClass* pObj) const
+void SVConfigXMLPrint::WriteFriends(Writer writer, SvIe::SVTaskObjectClass* pObj) const
 {
 	const SVObjectInfoArrayClass& rFriendList = pObj->GetFriendList();
 	size_t sz = rFriendList.size();

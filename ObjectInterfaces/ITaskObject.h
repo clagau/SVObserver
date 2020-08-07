@@ -121,5 +121,16 @@ namespace SvOi
 		virtual std::vector<uint32_t> getEmbeddedList() const = 0;
 
 		virtual bool isErrorMessageEmpty() const = 0;
+
+		/// Add the object to the friend list.
+		/// \param rFriendID [in] id of the object
+		/// \param rAddPreid [in] The new object will be added before this object. Default: SvDef::InvalidObjectId This means: it will be added at the end.
+		/// \returns bool
+		virtual bool AddFriend(uint32_t friendId, uint32_t addPreId = SvDef::InvalidObjectId) = 0;
+
+		/// Move an object in the friend-list to a position in front of another object.
+		/// \param objectToMoveId [in] ID of the object to move.
+		/// \param preObjectId [in] ID of the object in front of the other object should moved. If this ID is SvDef::InvalidObjectId, the other object will be moved to the end of the list.
+		virtual void moveFriendObject(uint32_t objectToMoveId, uint32_t preObjectId = SvDef::InvalidObjectId) = 0;
 	};
 } //namespace SvOi

@@ -27,6 +27,7 @@
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
+#include "ObjectInterfaces/ITaskObject.h"
 #pragma warning (pop)
 #pragma endregion Includes
 
@@ -198,7 +199,8 @@ SvOi::IObjectClass* SVObjectBuilder::CreateFriendObject(SvPb::ClassIdEnum classI
 
 	SVObjectClass* pOwnerObject = nullptr;
 	SVObjectManagerClass::Instance().GetObjectByIdentifier(ownerUniqueID, pOwnerObject);
-	if(nullptr == pOwnerObject)
+	auto* pTaskOwner = dynamic_cast<SvOi::ITaskObject*>(pOwnerObject);
+	if(nullptr == pTaskOwner)
 	{
 		return nullptr;
 	}
@@ -225,7 +227,7 @@ SvOi::IObjectClass* SVObjectBuilder::CreateFriendObject(SvPb::ClassIdEnum classI
 		}
 		if (SvDef::InvalidObjectId != friendId)
 		{
-			bool Result = pOwnerObject->AddFriend(friendId, addPreId);
+			bool Result = pTaskOwner->AddFriend(friendId, addPreId);
 			if (Result)
 			{
 				pOwnerObject->CreateChildObject(pObject);

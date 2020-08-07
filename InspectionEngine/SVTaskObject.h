@@ -18,13 +18,13 @@
 #include "ObjectInterfaces/ITaskObject.h"
 #include "ObjectInterfaces/IValueObject.h"
 #include "SVObjectLibrary/SVInputInfoListClass.h"
+#include "SVObjectLibrary/SVObjectInfoArrayClass.h"
 #include "SVObjectAppClass.h"
 #include "SVValueObjectLibrary/SVDWordValueObjectClass.h"
 #include "SVImageLibrary/SVExtentMultiLineStruct.h"
 #include "SVStatusLibrary/MessageContainer.h"
 #include "SVImageLibrary/SVImageExtentClass.h"
 #include "Definitions/StringTypeDef.h"
-
 #pragma endregion Includes
 
 namespace SvTo
@@ -125,6 +125,19 @@ public:
 	/// Set the flag, that the first friend (is normally the conditional task, if it is a tool) should be skipped in runFriends.
 	void setSkipFirstFriendFromRun() { m_bSkipFirstFriend = true; };
 
+	/// This method destroys all friends on the friends list owned by this object.  All other objects are disconnected from this object.
+	virtual void DestroyFriends() override;
+	void DestroyFriend(SVObjectClass* pObject);
+
+	//************************************
+	//! this function returns a pointer to the friendobject which fit the ObjectType, if any. Otherwise it returns nullptr. 
+	//! \param rObjectType [in]
+	//! \returns SVObjectClass*
+	//************************************
+	SVObjectClass* GetFriend(const SvDef::SVObjectTypeInfoStruct& rObjectType) const;
+	
+	/// This method returns a reference to the friends list attribute of this object.
+	const SVObjectInfoArrayClass& GetFriendList() const { return m_friendList;	};
 	
 #pragma region virtual method (ITaskObject)
 	virtual int GetObjectSelectorList(SvOi::IsObjectInfoAllowed pFunctor, std::vector<SvPb::TreeItem>& rTreeItems ) const override;
@@ -147,12 +160,13 @@ public:
 	virtual bool getSpecialImage(const std::string& , SvOi::SVImageBufferHandlePtr& ) const override { return false; };
 	virtual std::vector<uint32_t> getEmbeddedList() const override;
 	virtual bool isErrorMessageEmpty() const override { return m_ResetErrorMessages.empty() && m_RunErrorMessages.empty(); };
+	virtual bool AddFriend(uint32_t friendId, uint32_t addPreId = SvDef::InvalidObjectId) override;
+	virtual void moveFriendObject(uint32_t objectToMoveId, uint32_t preObjectId = SvDef::InvalidObjectId) override;
 #pragma endregion virtual method (ITaskObject)
 
 #pragma region Methods to replace processMessage
 	virtual SVObjectClass* OverwriteEmbeddedObject(uint32_t uniqueID, SvPb::EmbeddedIdEnum embeddedID) override;
 	virtual void GetInputInterface(SvOl::SVInputInfoListClass& rInputList, bool bAlsoFriends) const override;
-	virtual void DestroyFriend(SVObjectClass* pObject) override;
 	virtual SvOi::IObjectClass* getFirstObject(const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends = true, const SvOi::IObjectClass* pRequestor = nullptr) const override;
 	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName) override;
 #pragma endregion Methods to replace processMessage
@@ -251,6 +265,8 @@ protected:
 	SvVol::SVDWordValueObjectClass m_statusTag;
 	SvVol::SVDWordValueObjectClass m_statusColor;
 	bool m_bSkipFirstFriend; //if true first friend will not be "run" by "runFriends". Is used for conditionalTask, because it will be run before the normal run separately.
+	//Contains a list of friend objects, which will be informed about certain actions or messages this object is doing/processing.
+	SVObjectInfoArrayClass m_friendList;
 
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	// .Description : Contains pointer to SVObjectClass items, but doesn't owns these

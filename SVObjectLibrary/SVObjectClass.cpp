@@ -96,35 +96,6 @@ void SVObjectClass::init()
 }
 
 /*
-This method destroys all friends on the friends list owned by this object.  All other objects are disconnected from this object.
-*/
-void SVObjectClass::DestroyFriends()
-{
-	for (size_t i = 0; i < m_friendList.size(); ++i)
-	{
-		const SVObjectInfoStruct& rFriend = m_friendList[i];
-		// Check if Friend is alive...
-		SVObjectClass* pFriend = SVObjectManagerClass::Instance().GetObject(rFriend.getObjectId());
-		if (pFriend)
-		{
-			SVObjectClass* pOwner = pFriend->GetParent();
-			if (pOwner)
-			{
-				// Close, Disconnect and Delete Friend...
-				pOwner->DestroyFriend(pFriend);
-			}
-			else
-			{
-				// Friend has no owner...
-				pFriend->CloseObject();
-				delete pFriend;
-			}
-		}
-	}
-	m_friendList.RemoveAll();
-}
-
-/*
 This destructor unregisters itself from the object manager and frees all of the allocated names.
 */
 SVObjectClass::~SVObjectClass()
@@ -146,25 +117,6 @@ bool SVObjectClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 		return false;
 	}
 	return true;
-}
-
-SVObjectClass::SVObjectPtrDeque SVObjectClass::GetPreProcessObjects() const
-{
-	SVObjectPtrDeque l_Objects;
-
-	for (size_t i = 0; i < m_friendList.size(); i++)
-	{
-		const SVObjectInfoStruct& rFriend = m_friendList[i];
-
-		// Check if Friend is alive...
-		SVObjectClass* pFriend = SVObjectManagerClass::Instance().GetObject(rFriend.getObjectId());
-		if (pFriend)
-		{
-			l_Objects.push_back(pFriend);
-		}
-	}
-
-	return l_Objects;
 }
 
 SVObjectClass::SVObjectPtrDeque SVObjectClass::GetPostProcessObjects() const
@@ -384,39 +336,6 @@ SvOi::IObjectClass* SVObjectClass::getFirstObject(const SvDef::SVObjectTypeInfoS
 
 	return nullptr;
 }
-
-void SVObjectClass::moveFriendObject(uint32_t objectToMoveId, uint32_t preObjectId)
-{
-	int currentPos = -1;
-	int newPos = -1;
-	for (int i = 0; i <= m_friendList.size(); i++)
-	{
-		if (m_friendList[i].getObjectId() == objectToMoveId)
-		{
-			currentPos = i;
-		}
-		if (m_friendList[i].getObjectId() == preObjectId)
-		{
-			newPos = i;
-		}
-	}
-
-	if (0 <= currentPos && m_friendList.size() > currentPos)
-	{
-		auto object = m_friendList[currentPos];
-		//change first object which is later in the list.
-		if (currentPos > newPos)
-		{
-			m_friendList.RemoveAt(currentPos);
-			m_friendList.Insert(newPos, object);
-		}
-		else
-		{
-			m_friendList.Insert(newPos, object);
-			m_friendList.RemoveAt(currentPos);
-		}
-	}
-}
 #pragma endregion virtual method (IObjectClass)
 
 /*
@@ -544,85 +463,6 @@ SVObjectClass* SVObjectClass::UpdateObject(uint32_t , SVObjectClass* , SVObjectC
 }
 
 /*
-This method is used to add an object to the friends list via the object's unique object identifier.
-*/
-bool SVObjectClass::AddFriend(uint32_t friendId, uint32_t addPreId)
-{
-	size_t position = m_friendList.size();
-	// Check ID...
-	if (SvDef::InvalidObjectId == friendId)
-	{
-		return false;
-	}
-	// Check if friend is already applied...
-	if (m_friendList.size())
-	{
-		for (int i = static_cast<int>(m_friendList.size()) - 1; i >= 0; --i)
-		{
-			if (m_friendList[i].getObjectId() == friendId)
-			{
-				return false;
-			}
-
-			if (m_friendList[i].getObjectId() == addPreId)
-			{
-				position = i;
-			}
-		}
-	}
-
-	SVObjectInfoStruct newFriendInfo;
-	// Check if Friend is alive...
-	SVObjectClass* pNewFriend = SVObjectManagerClass::Instance().GetObject(friendId);
-	if (pNewFriend)
-	{
-		// Check if we are the Owner
-		// Note:: Special hack for friend scripting
-		// if we are the owner - it's not from the script
-		SVObjectClass* l_psvOwner = pNewFriend->GetParent();
-
-		if (l_psvOwner == this)
-		{
-			newFriendInfo.SetObject(pNewFriend);
-		}
-		else
-		{
-			if (nullptr != l_psvOwner)
-			{
-				SVObjectClass* l_psvNewObject = l_psvOwner->UpdateObject(friendId, pNewFriend, this);
-
-				assert(nullptr != l_psvNewObject);
-
-				newFriendInfo.SetObject(l_psvNewObject);
-			}
-		}
-	}
-	else
-	{
-		newFriendInfo.GetObjectReference().setObjectId(friendId);
-	}
-
-	return (m_friendList.Insert(position, newFriendInfo) >= 0);
-}
-
-SVObjectClass*  SVObjectClass::GetFriend(const SvDef::SVObjectTypeInfoStruct& rObjectType) const
-{
-	// Check if friend is already applied...
-	for (int i = 0; i < static_cast<int>(m_friendList.size()); i++)
-	{
-		const SvDef::SVObjectTypeInfoStruct* pInfoStruct = &(m_friendList[i].m_ObjectTypeInfo);
-		if (pInfoStruct->m_ObjectType == rObjectType.m_ObjectType && pInfoStruct->m_SubType == rObjectType.m_SubType)
-		{
-			if (SvPb::NoEmbeddedId == pInfoStruct->m_EmbeddedID || pInfoStruct->m_EmbeddedID == rObjectType.m_EmbeddedID)
-			{
-				return 	m_friendList[i].getObject();
-			}
-		}
-	}
-	return nullptr;
-}
-
-/*
 This method returns Ancestor Object of specified Object Type of this Object, if any.  Otherwise it returns NULL.
 */
 SVObjectClass* SVObjectClass::GetAncestor(SvPb::SVObjectTypeEnum AncestorObjectType, bool topLevel /*= false*/) const
@@ -705,14 +545,6 @@ std::string SVObjectClass::GetObjectNameBeforeObjectType(SvPb::SVObjectTypeEnum 
 	Result += GetName();
 
 	return Result;
-}
-
-/*
-This method returns a reference to the friends list attribute of this object.
-*/
-const SVObjectInfoArrayClass& SVObjectClass::GetFriendList() const
-{
-	return m_friendList;
 }
 
 bool SVObjectClass::createAllObjects(const SVObjectLevelCreateStruct& rCreateStructure)

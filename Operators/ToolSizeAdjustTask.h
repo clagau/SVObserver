@@ -58,14 +58,14 @@ public:
 	//! \param pObject [in]
 	//! \returns ToolSizeAdjustTask*
 	//************************************
-	static ToolSizeAdjustTask* GetToolSizeAdjustTask(const SVObjectClass *pObject);
+	static ToolSizeAdjustTask* GetToolSizeAdjustTask(const SVTaskObjectClass* pObject);
 	
 	//************************************
 	//! returns True if pObject has a ToolSizeAdjustTaskObject in the friendlist, which formula or AutoSize  
 	//! \param pObject [in]
 	//! \returns bool
 	//************************************
-	static bool UseSizeAdjust(const SVObjectClass *pObject);
+	static bool UseSizeAdjust(const SVTaskObjectClass* pObject);
 
 	//************************************
 	//! returns True if a formula or Autosize is used 

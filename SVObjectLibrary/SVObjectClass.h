@@ -20,7 +20,6 @@
 #include "SVObjectInfoStruct.h"
 #include "SVObjectLibrary.h"
 #include "SVOutObjectInfoStruct.h"
-#include "SVObjectInfoArrayClass.h"
 #include "SVUtilityLibrary/NameObjectIdList.h"
 #include "SVStatusLibrary/MessageContainer.h"
 #include "TriggerRecordController/ITriggerRecordRW.h"
@@ -109,22 +108,8 @@ public:
 
 	void SetObjectEmbedded(SvPb::EmbeddedIdEnum embeddedID, SVObjectClass* pOwner, LPCTSTR NewObjectName);
 
-	/// Add the object to the friend list.
-	/// \param rFriendID [in] id of the object
-	/// \param rAddPreid [in] The new object will be added before this object. Default: SvDef::InvalidObjectId This means: it will be added at the end.
-	/// \returns bool
-	bool AddFriend(uint32_t friendId, uint32_t addPreId = SvDef::InvalidObjectId);
-	void DestroyFriends();
-
-	/// Destroy a friend (Disconnect, CloseObject and Destroy his friend), but it must be a taskObject. 
-	/// \param pObject [in] object to destroy.
-	virtual void DestroyFriend(SVObjectClass* ) {};
-	//************************************
-	//! this function returns a pointer to the friendobject which fit the ObjectType, if any. Otherwise it returns nullptr. 
-	//! \param rObjectType [in]
-	//! \returns SVObjectClass*
-	//************************************
-	SVObjectClass* GetFriend( const SvDef::SVObjectTypeInfoStruct& rObjectType ) const; 
+	//@TODO[MZA][10.10][06.08.2020] SVTaskObjectClass has only friends. Other object has to do nothing. Maybe the method can be moved from here to SVTaskObjectClass later.
+	virtual void DestroyFriends() {};
 
 	//************************************
 	// Method:    GetAncestor
@@ -171,7 +156,6 @@ public:
 	virtual SvUl::NameClassIdList GetCreatableObjects(const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo) const override;
 	virtual void SetName( LPCTSTR Name ) override;
 	virtual SvOi::IObjectClass* getFirstObject(const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends = true, const SvOi::IObjectClass* pRequestor = nullptr) const override;
-	virtual void moveFriendObject(uint32_t objectToMoveId, uint32_t preObjectId = SvDef::InvalidObjectId) override;
 	virtual bool resetAllObjects( SvStl::MessageContainerVector *pErrorMessages=nullptr ) override { return ResetObject(pErrorMessages); };
 	virtual HRESULT getValue(double& , int = 0) const override { return E_NOTIMPL; };
 	virtual HRESULT getValues(std::vector<double>& ) const override { return E_NOTIMPL; };
@@ -179,7 +163,6 @@ public:
 
 	const SVObjectInfoStruct& GetOwnerInfo() const;
 	const SVObjectInfoStruct& GetObjectInfo() const;
-	const SVObjectInfoArrayClass& GetFriendList() const;
 
 #pragma region Methods to replace processMessage
 	/// Call the method createObject for all children and itself.
@@ -216,11 +199,13 @@ public:
 	virtual bool replaceObject(SVObjectClass* , uint32_t ) { return false; };
 #pragma endregion Methods to replace processMessage
 
-protected:
-	virtual SVObjectPtrDeque GetPreProcessObjects() const;
-	virtual SVObjectPtrDeque GetPostProcessObjects() const;
+	virtual SVObjectClass* UpdateObject(uint32_t friendId, SVObjectClass* pObject, SVObjectClass* pNewOwner);
 
-	virtual SVObjectClass* UpdateObject(uint32_t friendId, SVObjectClass* pObject, SVObjectClass* pNewOwner );
+protected:
+	//@TODO[MZA][10.10][06.08.2020] SVTaskObjectClass has only friends. Other object has to do nothing. Maybe the method can be moved from here to SVTaskObjectClass later.
+	virtual SVObjectPtrDeque GetPreProcessObjects() const { return {}; };
+
+	virtual SVObjectPtrDeque GetPostProcessObjects() const;
 
 	virtual HRESULT RemoveObjectConnection(uint32_t objectID );
 
@@ -243,8 +228,7 @@ protected:
 	SVObjectInfoStruct m_ownerObjectInfo;
 	//Contains the object info and could also be used as task out info.
 	SVOutObjectInfoStruct m_outObjectInfo;
-	//Contains a list of friend objects, which will be informed about certain actions or messages this object is doing/processing.
-	SVObjectInfoArrayClass m_friendList;
+
 	bool m_editModeFreezeFlag = false;
 
 private:
