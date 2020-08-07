@@ -1592,18 +1592,12 @@ void SVLptIOImpl::HandleIRQ()
 				triggerData[SvTh::TriggerDataEnum::TriggerChannel] = _variant_t(ChannelAndDispatcherList.first - 1);
 					
 				SvTh::DispatcherVector dispatchVector = ChannelAndDispatcherList.second;
-				std::async(std::launch::async, [&] { triggerDispatcher(std::move(triggerData), std::move(dispatchVector)); });
+				auto dispatchThread = std::thread(triggerDispatcher, std::move(triggerData), std::move(dispatchVector));
+				dispatchThread.detach();
 			}
 		}
 		m_lLastTriggerState = StatusReg;
 	}
-/* SEJ - don't think we should be doing this...
-	unsigned short TmpStatusReg = GetStatusPort();
-	if (TmpStatusReg != StatusReg)
-	{
-		OnLptInterrupt(irqNo);
-	}
-*/
 
 #ifdef LogDebugData
 	// **** Debug logging ****

@@ -517,7 +517,8 @@ void SVPlcIOImpl::reportTrigger(const TriggerReport& rTriggerReport)
 			if(triggerIndex == ChannelAndDispatcherList.first)
 			{
 				SvTh::DispatcherVector dispatchVector = ChannelAndDispatcherList.second;
-				std::async(std::launch::async, [&] { triggerDispatcher(std::move(triggerData), std::move(dispatchVector)); });
+				auto dispatchThread = std::thread(triggerDispatcher, std::move(triggerData), std::move(dispatchVector));
+				dispatchThread.detach();
 				break;
 			}
 		}

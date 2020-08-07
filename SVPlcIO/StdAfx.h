@@ -53,7 +53,6 @@
 #include <ctime>			//Used by static library
 #include <fstream>
 #include <functional>
-#include <future>
 #include <iterator>			//Used by static library
 #include <map>
 #include <memory>
@@ -64,6 +63,7 @@
 #include <string>
 #include <sstream>
 #include <tchar.h>			//Used by static library
+#include <thread>
 #include <time.h>
 #include <typeindex>
 #include <typeinfo>

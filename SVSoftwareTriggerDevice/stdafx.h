@@ -56,7 +56,6 @@
 #include <comdef.h>
 #include <comutil.h>		//Used by static library
 #include <ctime>			//Used by static library
-#include <future>
 #include <functional>
 #include <iterator>			//Used by static library
 #include <list>				//Used by static library
@@ -66,6 +65,7 @@
 #include <set>				//Used by static library
 #include <string>
 #include <tchar.h>			//Used by static library
+#include <thread>
 #include <unordered_map>
 #include <vector>
 #pragma endregion Precompiled Headers
