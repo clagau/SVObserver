@@ -173,7 +173,7 @@ HRESULT SVPolarTransformationToolClass::SetImageExtent( const SVImageExtentClass
 
 	if( S_OK == (l_hrOk = rImageExtent.GetExtentProperty( SvPb::SVExtentPropertyOuterRadius, l_dOuterRadius )) )
 	{
-		l_hrOk = rImageExtent.GetExtentProperty( SvPb::SVExtentPropertyOuterRadius, l_dInnerRadius );
+		l_hrOk = rImageExtent.GetExtentProperty( SvPb::SVExtentPropertyInnerRadius, l_dInnerRadius );
 	}
 	// Validate that at least one radius is greater than or equal to 1.
 	if( S_OK == l_hrOk && (l_dOuterRadius >= 1 || l_dInnerRadius >= 1) )
