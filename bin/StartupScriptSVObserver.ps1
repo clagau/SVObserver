@@ -58,19 +58,6 @@ else
 }
 
 
-# Check the screen bit depth and set it to 16bit
-$cmdout = C:\SVObserver\bin\qres.exe /S | find "16 bits"
-if ($LastExitCode -ne 0)
-{
-  echo "Display changed to 16bit"
-  write-eventlog -logname Application -source SVException -eventID 13 -entrytype Information -message "The display has been changed to 16bit. $cmdout"  -Category 0
-  & C:\SVObserver\bin\qres.exe /c:16
-}
-else
-{
-  echo "No display chnage"
-}
-
 restart-service $SVOWebSrvName
 
 $MTXservicePrior = Get-Service $MTXsrvName 
