@@ -24,10 +24,10 @@ namespace SvPlc
 constexpr uint32_t cCifxChannel = 0;
 constexpr uint32_t cDriverTimeout = 100;
 constexpr uint32_t cWaitTimeout = 500;
-constexpr uint32_t cResetTimeout = 2000;
+constexpr uint32_t cResetTimeout = 5000;
 constexpr uint32_t cTimeout = 2;
 
-constexpr uint16_t cMaxHostTries = 10;
+constexpr uint16_t cMaxHostTries = 50;
 constexpr char* cBoardName = "CIFx0";
 /* Identity Information */
 constexpr uint32_t cVendorId = 0x00000044UL;	///Hilscher Vendor ID
@@ -100,7 +100,6 @@ int32_t CifXCard::OpenCifX()
 
 	printOutput("Processing system restart...\n");
 	result = m_cifxLoadLib.m_pChannelReset(m_hChannel, CIFX_SYSTEMSTART, cResetTimeout);
-
 	if (CIFX_NO_ERROR == result)
 	{
 		int hostTries{1};
@@ -209,6 +208,21 @@ int32_t CifXCard::WarmstartAndInitializeCifX()
 			return result;
 		}
 
+		uint32_t State {0UL};
+		result = m_cifxLoadLib.m_pChannelDMAState(m_hChannel, CIFX_DMA_STATE_ON, &State);
+		if (CIFX_NO_ERROR != result)
+		{
+			return result;
+		}
+		printOutput("DMA is on\n");
+
+		result = m_cifxLoadLib.m_pChannelRegisterNotification(m_hChannel, CIFX_NOTIFY_PD0_IN, interruptHandler, reinterpret_cast<void*> (this));
+		if (CIFX_NO_ERROR != result)
+		{
+			return result;
+		}
+		printOutput("Cifx Interrupt Handler Ready\n");
+
 		/* variable for host state */
 		uint32_t  HostState{0UL};
 		/* bus on */
@@ -220,21 +234,6 @@ int32_t CifXCard::WarmstartAndInitializeCifX()
 		}
 		printOutput("Bus state is on\n");
 	}
-
-	uint32_t State{0UL};
-	result = m_cifxLoadLib.m_pChannelDMAState(m_hChannel, CIFX_DMA_STATE_ON, &State);
-	if (CIFX_NO_ERROR != result)
-	{
-		return result;
-	}
-	printOutput("DMA is on\n");
-
-	result = m_cifxLoadLib.m_pChannelRegisterNotification(m_hChannel, CIFX_NOTIFY_PD0_IN, interruptHandler, reinterpret_cast<void*> (this));
-	if (CIFX_NO_ERROR != result)
-	{
-		return result;
-	}
-	printOutput("Cifx Interrupt Handler Ready\n");
 
 	return result;
 }
