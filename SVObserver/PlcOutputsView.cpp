@@ -117,6 +117,7 @@ void PlcOutputsView::OnUpdate(CView*, LPARAM , CObject* )
 			}
 			else
 			{
+				SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount(m_maxOutputNumber);
 				for (unsigned long j=0; j < m_maxOutputNumber; ++j)
 				{
 					int indexRow = j + m_maxOutputNumber * i;
@@ -166,6 +167,7 @@ void PlcOutputsView::OnLButtonDblClk(UINT, CPoint point)
 	{
 		if (item >= 0 && item < m_rCtrl.GetItemCount() && (flags & LVHT_ONITEM))
 		{
+			SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount(m_maxOutputNumber);
 			SVConfigurationObject* pConfig(nullptr);
 			SVOutputObjectList* pOutputList(nullptr);
 

@@ -289,7 +289,6 @@ void SVSelectExternalDllPage::OnBrowse()
 		{
 			bool isVersionEqual = SvSyl::FileVersion::isEqual(runpath.c_str(), dllPath.c_str());
 	
-			std::vector<std::string> Modulnames;
 			if (false == isVersionEqual)
 			{
 				//check if previous Version is still used 
