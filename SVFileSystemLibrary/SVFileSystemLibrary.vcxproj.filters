@@ -18,9 +18,6 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVFileInfoComparator.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVFileNameArrayClass.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>

@@ -54,7 +54,10 @@
 #include <map>
 #include <memory>
 #include <ppl.h>							//Used by static library
-#include <sequential_tree.h>				//Used by static library
+#pragma warning(push)
+#pragma warning(disable : 4996)
+#include <sequential_tree.h>
+#pragma warning(pop)
 #include <set>
 #include <string>
 #include <tchar.h>

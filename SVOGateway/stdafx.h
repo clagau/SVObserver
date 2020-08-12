@@ -58,12 +58,15 @@
 
 #include <boost/any.hpp>
 #include <boost/array.hpp>
+#pragma warning(push)
+#pragma warning(disable : 4702)
 #include <boost/asio.hpp>
 #include <boost/asio/io_service.hpp>
+#pragma warning(pop)
 #include <boost/bind.hpp>
 #include <boost/function.hpp> //Used by static library
-#pragma warning(disable : 4714)
 #pragma warning(push)
+#pragma warning(disable : 4714)
 #include <boost/log/trivial.hpp>
 #pragma warning(pop)
 #include <boost/thread.hpp>

@@ -179,7 +179,7 @@ namespace SvUl
 		return retVal;
 	}
 
-	std::string& searchAndReplace( std::string& rStringValue, const std::string::traits_type::_Elem* pFromStr, const std::string::traits_type::_Elem* pToStr, size_t beginPos)
+	std::string& searchAndReplace( std::string& rStringValue, const std::string::traits_type::char_type* pFromStr, const std::string::traits_type::char_type* pToStr, size_t beginPos)
 	{
 		if (nullptr != pFromStr && nullptr != pToStr && 0 < strlen(pFromStr))
 		{

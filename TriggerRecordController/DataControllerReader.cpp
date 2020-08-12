@@ -58,7 +58,7 @@ void TRControllerReaderDataPerIP::init(const std::string& smName)
 	
 	m_SMHandle = nullptr;
 	SvDef::StringVector msgList;
-	msgList.push_back(SvUl::Format(_T("%s"), smName));
+	msgList.push_back(SvUl::Format(_T("%s"), smName.c_str()));
 	SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
 	Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_SMLoad, msgList, SvStl::SourceFileParams(StdMessageParams));
 	Exception.Throw();

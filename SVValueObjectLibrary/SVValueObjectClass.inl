@@ -760,13 +760,27 @@ std::string SVValueObjectClass<T>::FormatOutput(const T& rValue, const std::stri
 	std::string Result;
 	if (!rFormatString.empty())
 	{
-		Result = SvUl::Format(rFormatString.c_str(), rValue);
+		if constexpr (true == std::is_same<T, std::string>::value)
+		{
+			Result = SvUl::Format(rFormatString.c_str(), rValue.c_str());
+		}
+		else if constexpr(true == std::is_arithmetic<T>::value)
+		{
+			Result = SvUl::Format(rFormatString.c_str(), rValue);
+		}
 	}
 	else
 	{
 		if (!m_OutFormat.empty())
 		{
-			Result = SvUl::Format(m_OutFormat.c_str(), rValue);
+			if constexpr (true == std::is_same<T, std::string>::value)
+			{
+				Result = SvUl::Format(m_OutFormat.c_str(), rValue.c_str());
+			}
+			else if constexpr (true == std::is_arithmetic<T>::value)
+			{
+				Result = SvUl::Format(m_OutFormat.c_str(), rValue);
+			}
 		}
 	}
 	return Result;

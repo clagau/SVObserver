@@ -30,8 +30,8 @@ SVGigeFeatureStringEnumList::SVGigeFeatureStringEnumList(const SVGigeFeatureStri
 	}
 }
 
-SVGigeFeatureStringEnumList::SVGigeFeatureStringEnumList(_XSTD initializer_list<StringPairVector::value_type> _Ilist) :
-m_stringEnums{_Ilist}
+SVGigeFeatureStringEnumList::SVGigeFeatureStringEnumList(const StringPairVector& rRhs) :
+m_stringEnums{rRhs}
 {
 }
 

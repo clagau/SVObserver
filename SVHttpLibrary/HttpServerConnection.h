@@ -72,8 +72,8 @@ private:
 	boost::beast::http::response<boost::beast::http::string_body> http_build_not_authorized(boost::beast::string_view reason);
 	boost::beast::http::response<boost::beast::http::string_body> http_build_bad_request(boost::beast::string_view why);
 	boost::beast::http::response<boost::beast::http::string_body> http_build_server_error(boost::beast::string_view what);
-	boost::beast::http::response<boost::beast::http::empty_body> http_build_file_head(const std::experimental::filesystem::path&, boost::beast::http::file_body::value_type body);
-	boost::beast::http::response<boost::beast::http::file_body> http_build_file_get(const std::experimental::filesystem::path&, boost::beast::http::file_body::value_type body);
+	boost::beast::http::response<boost::beast::http::empty_body> http_build_file_head(const std::filesystem::path&, boost::beast::http::file_body::value_type body);
+	boost::beast::http::response<boost::beast::http::file_body> http_build_file_get(const std::filesystem::path&, boost::beast::http::file_body::value_type body);
 
 private:
 	std::string ws_get_access_token(std::string& protocol);

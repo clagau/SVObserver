@@ -43,8 +43,6 @@
 #include <list>
 #include <map>
 #include <mutex>
-//#include <ppl.h>
-//#include <sequential_tree.h>
 #include <set>
 #include <string>
 #include <tchar.h>
@@ -57,8 +55,8 @@
 #include <boost/config.hpp>
 #define BOOST_DATE_TIME_NO_LIB
 //
-#pragma warning(disable : 4458 4459)
 #pragma warning(push)
+#pragma warning(disable : 4244 4458 4459)
 #include <boost/graph/adjacency_list.hpp>				//Used by static library
 #include <boost/graph/depth_first_search.hpp>			//Used by static library
 #include <boost/graph/breadth_first_search.hpp>			//Used by static library

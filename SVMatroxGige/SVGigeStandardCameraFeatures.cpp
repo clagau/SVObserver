@@ -302,7 +302,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 						SVGigeFeatureSelector(),
 						SVGigeFeatureStringEnumList
 						{
-							{_T("Y"),			_T("Mono8")},
+							{{_T("Y"),			_T("Mono8")},
 							{_T("YUV422"),		_T("YUV422Packed")},
 							{_T("BayerRG8"),	_T("BayerRG8")},
 							{_T("BayerRG12"),	_T("BayerRG12")},
@@ -310,7 +310,7 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 							{_T("BayerGB10"),	_T("BayerGB10")},
 							{_T("BayerGB12"),	_T("BayerGB12")},
 							{_T("RGB8"),		_T("RGB8")},
-							{_T("BGR8"),		_T("BGR8")}
+							{_T("BGR8"),		_T("BGR8")}}
 						}
 					}
 				}
@@ -537,8 +537,8 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 						},
 						SVGigeFeatureStringEnumList
 						{
-							{_T("External Trigger"), _T("Line0")},
-							{_T("Software Trigger"), _T("Software")}
+							{{_T("External Trigger"), _T("Line0")},
+							{_T("Software Trigger"), _T("Software")}}
 						}
 					}
 				}
@@ -565,8 +565,8 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 						},
 						SVGigeFeatureStringEnumList
 						{
-							{_T("Rising"), _T("RisingEdge")},
-							{_T("Falling"), _T("FallingEdge")}
+							{{_T("Rising"), _T("RisingEdge")},
+							{_T("Falling"), _T("FallingEdge")}}
 						}
 					}
 				}
@@ -656,8 +656,8 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 						},
 						SVGigeFeatureStringEnumList
 						{
-							{_T("Enable"), _T("On")},
-							{_T("Disable"), _T("Off")}
+							{{_T("Enable"), _T("On")},
+							{_T("Disable"), _T("Off")}}
 						}
 					}
 				}
@@ -958,8 +958,8 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 						},
 						SVGigeFeatureStringEnumList
 						{
-							{_T("Enable"), _T("On")},
-							{_T("Disable"), _T("Off")}
+							{{_T("Enable"), _T("On")},
+							{_T("Disable"), _T("Off")}}
 						}
 					},
 					SVGigeEmptyGetter(),
@@ -1060,8 +1060,8 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 						SVGigeFeatureSelector(),
 						SVGigeFeatureStringEnumList
 						{
-							{_T("Enable"),	_T("Default")},
-							{_T("Disable"), _T("UserSet1")}
+							{{_T("Enable"),	_T("Default")},
+							{_T("Disable"), _T("UserSet1")}}
 						}
 					}
 				}

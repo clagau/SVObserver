@@ -70,7 +70,10 @@
 #include <map>				//Used by static library
 #include <memory>			//Used by static library
 #include <set>				//Used by static library
-#include <sequential_tree.h> //Used by static library
+#pragma warning(push)
+#pragma warning(disable : 4996)
+#include <sequential_tree.h>
+#pragma warning(pop)
 #include <Shellapi.h>
 #include <sstream>			//Used by static library
 #include <string>

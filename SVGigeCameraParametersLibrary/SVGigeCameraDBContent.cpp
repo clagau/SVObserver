@@ -133,9 +133,10 @@ static const GigeParameterEnumMap cGigeParameterEnums
 
 
 // VariantTypeEnum Map
-typedef std::map<WString, VARTYPE> VariantTypeEnumMap;
+typedef std::map<WString, VARENUM> VariantTypeEnumMap;
 static const VariantTypeEnumMap cVariantTypeEnum
 {
+	{
 	{L"VT_I1",		VT_I1},
 	{L"VT_I2",		VT_I2},
 	{L"VT_I4",		VT_I4},
@@ -145,6 +146,7 @@ static const VariantTypeEnumMap cVariantTypeEnum
 	{L"VT_R4",		VT_R4},
 	{L"VT_R8",		VT_R8},
 	{L"VT_BSTR",	VT_BSTR}
+	}
 };
 
 // FeatureTypeStringEnum Map
@@ -306,7 +308,7 @@ void SVGigeCameraDBContent::GetGigeParameterAttributes(MSXML2::ISAXAttributes* p
 
 		if (wcsncmp(name, L"SVGigeParameterEnum", nameSize) == 0)
 		{
-			SvDef::SVGigeParameterEnum enumValue;
+			SvDef::SVGigeParameterEnum enumValue{ SvDef::SVGigeParameterEnum::SVGigeParameterStart };
 			bool bRetVal = StringToEnum<SvDef::SVGigeParameterEnum, GigeParameterEnumMap, LPCWSTR>::GetEnum(cGigeParameterEnums, value, enumValue); 
 			if (bRetVal)
 			{
@@ -388,7 +390,7 @@ void SVGigeCameraDBContent::GetGigeFeatureAttributes(MSXML2::ISAXAttributes* pAt
 		}
 		else if (wcsncmp(name, L"FeatureType", nameSize) == 0)
 		{
-			SVMatroxDigitizerFeature::SVFeatureTypeEnum enumValue;
+			SVMatroxDigitizerFeature::SVFeatureTypeEnum enumValue{ SVMatroxDigitizerFeature::SVFeatureTypeEnum::SVTypeCommand};
 			bool bRetVal = StringToEnum<SVMatroxDigitizerFeature::SVFeatureTypeEnum, FeatureTypeStringEnumMap, LPCWSTR>::GetEnum(cFeatureTypeStringEnums, value, enumValue);
 			if (bRetVal)
 			{
@@ -576,7 +578,7 @@ SVGigeParameterAccessor SVGigeCameraDBContent::ConstructGigeParameterAccessor()
 // Convert String to Variant VARTYPE
 VARTYPE SVGigeCameraDBContent::GetVarType(wchar_t* vartypeString) const
 {
-	VARTYPE varType = VT_EMPTY;
+	VARTYPE varType = static_cast<VARTYPE> (VT_EMPTY);
 
 	// check for array
 	wchar_t* pPtr = wcsstr(vartypeString, L"VT_ARRAY");
@@ -596,7 +598,7 @@ VARTYPE SVGigeCameraDBContent::GetVarType(wchar_t* vartypeString) const
 		VariantTypeEnumMap::const_iterator it = cVariantTypeEnum.find(vartypeString);
 		if (it != cVariantTypeEnum.end())
 		{
-			varType = it->second | VT_ARRAY;
+			varType = static_cast<VARTYPE> (it->second | VT_ARRAY);
 		}
 	}
 	else
@@ -604,7 +606,7 @@ VARTYPE SVGigeCameraDBContent::GetVarType(wchar_t* vartypeString) const
 		VariantTypeEnumMap::const_iterator it = cVariantTypeEnum.find(vartypeString);
 		if (it != cVariantTypeEnum.end())
 		{
-			varType = it->second;
+			varType = static_cast<VARTYPE> (it->second);
 		}
 	}
 	return varType;

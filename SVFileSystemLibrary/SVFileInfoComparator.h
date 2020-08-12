@@ -11,14 +11,15 @@
 
 #pragma once
 
-//Moved to precompiled header: #include <functional>
-
 struct SVFileInfo;
 
-class SVFileInfoComparator : public std::binary_function<SVFileInfo, SVFileInfo, bool>
+struct SVFileInfoComparator
 {
 public:
-	bool operator()(const SVFileInfo& info1, const SVFileInfo& info2) const;
+	bool operator()(const SVFileInfo& rLhs, const SVFileInfo& rRhs) const
+	{
+		return rLhs.filename < rRhs.filename;
+	}
 };
 
 

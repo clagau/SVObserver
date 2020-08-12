@@ -17,7 +17,7 @@
 namespace SvCl
 {
 	template <typename Key, typename Data>
-	class SVTree: public tcl::sequential_tree< std::pair<Key, std::shared_ptr<Data> > >
+	class SVTree: public tcl::sequential_tree<std::pair<Key, std::shared_ptr<Data>>>
 	{
 	#pragma region Declarations
 	public:
@@ -64,7 +64,7 @@ namespace SvCl
 		//! \param rKey [in] reference to the key to search for in the children's list
 		//! \returns iterator to the corresponding element
 		//************************************
-		static iterator find( SVTreeContainer& rTree, const Key& rKey );
+		static typename SVTree<Key, Data>::iterator find( SVTreeContainer& rTree, const Key& rKey );
 
 		//************************************
 		//! Static method to find the element of a child corresponding to the key
@@ -72,7 +72,7 @@ namespace SvCl
 		//! \param rKey [in] reference to the key to search for in the children's list
 		//! \returns a constant iterator to the corresponding element
 		//************************************
-		static const_iterator find( const SVTreeContainer& rTree, const Key& rKey );
+		static typename SVTree<Key, Data>::const_iterator find( const SVTreeContainer& rTree, const Key& rKey );
 	#pragma endregion Public Methods
 	};
 } //namespace SvCl

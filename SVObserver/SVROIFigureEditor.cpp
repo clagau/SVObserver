@@ -321,10 +321,10 @@ SVROIFigureEditor::SVHitTestStruct SVROIFigureEditor::HitTest( CPoint point )
 
 	CRect rectHotSpot = GetHotSpot( point );
 
-	std::auto_ptr<CRgn> prgnTop = GetHotSpot( ptTopLeft, ptTopRight );
-	std::auto_ptr<CRgn> prgnLeft = GetHotSpot( ptTopLeft, ptBottomLeft );
-	std::auto_ptr<CRgn> prgnBottom = GetHotSpot( ptBottomLeft, ptBottomRight );
-	std::auto_ptr<CRgn> prgnRight = GetHotSpot( ptTopRight, ptBottomRight );
+	std::shared_ptr<CRgn> prgnTop = GetHotSpot( ptTopLeft, ptTopRight );
+	std::shared_ptr<CRgn> prgnLeft = GetHotSpot( ptTopLeft, ptBottomLeft );
+	std::shared_ptr<CRgn> prgnBottom = GetHotSpot( ptBottomLeft, ptBottomRight );
+	std::shared_ptr<CRgn> prgnRight = GetHotSpot( ptTopRight, ptBottomRight );
 
 	if ( rectHotSpot.PtInRect( ptTopLeft ) )
 		HitTest = HTTOPLEFT;

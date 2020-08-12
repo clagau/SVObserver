@@ -54,7 +54,10 @@
 #include <ctime>			//Used by static library
 #include <list>				//Used by static library
 #include <map>				//Used by static library
-#include <sequential_tree.h> //Used by static library
+#pragma warning(push)
+#pragma warning(disable : 4996)
+#include <sequential_tree.h>//Used by static library
+#pragma warning(pop)
 #include <set>
 #include <string>			//Used by static library
 #include <tchar.h>			//Used by static library

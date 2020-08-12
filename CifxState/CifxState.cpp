@@ -114,7 +114,7 @@ void printMessage(CifxMessage messageID, LPCTSTR pText = nullptr)
 	}
 }
 
-void APIENTRY interruptHandler(uint32_t notification, uint32_t ulDataLen, void* pvData, void* pvUser)
+void APIENTRY interruptHandler(uint32_t notification, uint32_t , void* , void* )
 {
 	if (CIFX_NOTIFY_PD0_IN == notification)
 	{
@@ -126,7 +126,7 @@ uint32_t SendRecvPkt(CIFX_PACKET* pSendPkt, CIFX_PACKET* pRecvPkt)
 {
 	if (nullptr == pSendPkt || nullptr == pRecvPkt)
 	{
-		return E_POINTER;
+		return static_cast<uint32_t> (E_POINTER);
 	}
 	/* fire the packet */
 	uint32_t result = g_cifxLoadLib.m_pChannelPutPacket(g_hChannel, pSendPkt, cDriverTimeout);
@@ -295,7 +295,7 @@ int main(int argc, char* args[])
 	{
 		std::string cmdOption{args[1]};
 		std::transform(cmdOption.begin(), cmdOption.end(), cmdOption.begin(),
-					   [](unsigned char c) { return std::toupper(c); } // correct
+					   [](unsigned char c) { return static_cast<char> (std::toupper(c)); }
 		);
 
 		if(cmdOption == cCheckPlcC)

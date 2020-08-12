@@ -52,20 +52,20 @@ HRESULT SVPlcIOImpl::Initialize(bool bInit)
 	HRESULT hr = S_OK;
 
 	///This is a map which defines the PLC node ID depending on the SVIM computer name
-	static const std::map<std::string, uint16_t> cComputerNameNodeID = 
+	static const std::map<std::string, uint32_t> cComputerNameNodeID = 
 	{
-		{std::string {"SVIM01"}, 11},
-		{std::string {"SVIM02"}, 12},
-		{std::string {"SVIM03"}, 13},
-		{std::string {"SVIM04"}, 14},
-		{std::string {"SVIM05"}, 21},
-		{std::string {"SVIM06"}, 22},
-		{std::string {"SVIM07"}, 23},
-		{std::string {"SVIM08"}, 24},
-		{std::string {"SVIM09"}, 31},
-		{std::string {"SVIM10"}, 32},
-		{std::string {"SVIM11"}, 33},
-		{std::string {"SVIM12"}, 34},
+		{std::string {"SVIM01"}, 11u},
+		{std::string {"SVIM02"}, 12u},
+		{std::string {"SVIM03"}, 13u},
+		{std::string {"SVIM04"}, 14u},
+		{std::string {"SVIM05"}, 21u},
+		{std::string {"SVIM06"}, 22u},
+		{std::string {"SVIM07"}, 23u},
+		{std::string {"SVIM08"}, 24u},
+		{std::string {"SVIM09"}, 31u},
+		{std::string {"SVIM10"}, 32u},
+		{std::string {"SVIM11"}, 33u},
+		{std::string {"SVIM12"}, 34u},
 	};
 
 	if (bInit)
@@ -92,22 +92,7 @@ HRESULT SVPlcIOImpl::Initialize(bool bInit)
 				auto iter = cComputerNameNodeID.find(computerName);
 				if(cComputerNameNodeID.end() != iter)
 				{
-					m_plcNodeID = iter->second;
-				}
-			}
-		}
-		///If no setting then try to derive the PLC node ID from the SVIM computer name
-		if(0 == m_plcNodeID)
-		{
-			DWORD size{cBuffSize};
-			memset(buffer, 0, cBuffSize);
-			if(::GetComputerName(buffer, &size))
-			{
-				std::string computerName{buffer};
-				auto iter = cComputerNameNodeID.find(computerName);
-				if(cComputerNameNodeID.end() != iter)
-				{
-					m_plcNodeID = iter->second;
+					m_plcNodeID = static_cast<uint16_t> (iter->second);
 				}
 			}
 		}
@@ -181,13 +166,13 @@ HRESULT SVPlcIOImpl::SetOutputData(unsigned long triggerIndex, const SvTh::IntVa
 
 	if (m_logOutFile.is_open() && cMaxPlcTriggers > reportResult.m_channel)
 	{
-		++m_outputCount[reportResult.m_channel];
+		uint32_t outputCount = ++m_outputCount[reportResult.m_channel];
 		std::string resultString;
 		for (auto& rResult : reportResult.m_results)
 		{
 			resultString += std::to_string(rResult) + ' ';
 		}
-		std::string fileData = SvUl::Format(_T("%d; %d; %f; %d; %s\r\n"), triggerIndex, m_outputCount[reportResult.m_channel], reportResult.m_timestamp, reportResult.m_currentObjectID, resultString.c_str());
+		std::string fileData = SvUl::Format(_T("%d; %d; %f; %d; %s\r\n"), triggerIndex, outputCount, reportResult.m_timestamp, reportResult.m_currentObjectID, resultString.c_str());
 		m_logOutFile.write(fileData.c_str(), fileData.size());
 	}
 	return S_OK;
@@ -525,7 +510,8 @@ void SVPlcIOImpl::reportTrigger(const TriggerReport& rTriggerReport)
 		if(m_logInFile.is_open() && cMaxPlcTriggers > rTriggerReport.m_channel)
 		{
 			const TriggerReport& rData = rTriggerReport;
-			std::string fileData = SvUl::Format(_T("%d; %d; %f; %d; %d; %d\r\n"), triggerIndex, m_inputCount[rData.m_channel], rData.m_triggerTimestamp, rData.m_currentObjectID, rData.m_triggerIndex, rData.m_triggerPerObjectID);
+			uint32_t inputCount = m_inputCount[rData.m_channel];
+			std::string fileData = SvUl::Format(_T("%d; %d; %f; %d; %d; %d\r\n"), triggerIndex, inputCount, rData.m_triggerTimestamp, rData.m_currentObjectID, rData.m_triggerIndex, rData.m_triggerPerObjectID);
 			m_logInFile.write(fileData.c_str(), fileData.size());
 		}
 	}

@@ -14,16 +14,16 @@
 namespace SvCl
 {
 	template<typename Key, typename Data>
-	class SVCompareKeys : public std::unary_function< std::pair<Key, Data >, bool>
+	struct SVCompareKeys
 	{
 		typedef std::pair<Key, Data > Element;
 
 	public:
-		explicit SVCompareKeys(const Key& elementKey) : m_elementKey(elementKey) {}
+		explicit SVCompareKeys(const Key& rElementKey) : m_elementKey(rElementKey) {}
 	
-		bool operator()(const Element& element) const 
+		bool operator()(const Element& rElement) const 
 		{
-			return (m_elementKey == element.first);
+			return (m_elementKey == rElement.first);
 		}
 	private:
 		Key m_elementKey;

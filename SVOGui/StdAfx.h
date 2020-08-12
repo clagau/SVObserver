@@ -57,6 +57,7 @@
 #include <WinDef.h>
 
 #include <algorithm>
+#include <array>
 #include <atlsafe.h>
 #include <comdef.h>
 #include <concrt.h>										//Used by static library
@@ -71,7 +72,10 @@
 #include <mutex>
 #include <oleauto.h>
 #include <regex>
-#include <sequential_tree.h> //Used by static library
+#pragma warning(push)
+#pragma warning(disable : 4996)
+#include <sequential_tree.h>
+#pragma warning(pop)
 #include <set>				//Used by static library
 #include <sstream>
 #include <string>

@@ -63,7 +63,10 @@
 #include <deque>			//Used by static library
 #include <map>
 #include <memory>			//Used by static library
-#include <sequential_tree.h> //Used by static library
+#pragma warning(push)
+#pragma warning(disable : 4996)
+#include <sequential_tree.h>
+#pragma warning(pop)
 #include <set>
 #include <sstream>			//Used by static library
 #include <stdio.h>

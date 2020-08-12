@@ -19,6 +19,8 @@
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/array.hpp>
+#pragma warning(push)
+#pragma warning(disable : 4702)
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
 

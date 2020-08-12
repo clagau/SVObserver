@@ -21,7 +21,7 @@ namespace SvHttp
 class MediaType
 {
 public:
-	std::string determine(const std::experimental::filesystem::path& path) const;
+	std::string determine(const std::filesystem::path& path) const;
 };
 
 } // namespace SvHttp

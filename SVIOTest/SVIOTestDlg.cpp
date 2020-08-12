@@ -322,10 +322,10 @@ BOOL CSVIOTESTDlg::OnInitDialog()
 		l_strValue = l_vVersion.bstrVal;
 		::VariantClear( &l_vVersion );
 		l_strNewName.Format("%s - %s (%s - %s)",
-			l_strWindowName,
-			m_csDigital,
-			l_strName, 
-			l_strValue );
+			l_strWindowName.GetString(),
+			m_csDigital.GetString(),
+			l_strName.GetString(), 
+			l_strValue.GetString() );
 			
 		SetWindowText( l_strNewName );
 	}

@@ -36,7 +36,7 @@ const WCHAR* const	cRevision = L"Revision";
 const WCHAR* const	cFormat = L"Format";
 const WCHAR* const	cFormatVersion = L"FormatVersion";
 
-typedef std::map<VARTYPE, std::string> VariantTypeToStringLookup;
+typedef std::map<VARENUM, std::string> VariantTypeToStringLookup;
 
 static const VariantTypeToStringLookup cVarTypes
 {
@@ -108,7 +108,7 @@ namespace  SvXml
 
 	static std::string VariantTypeToString(VARTYPE vt)
 	{
-		return cVarTypes.at(vt);
+		return cVarTypes.at(static_cast<VARENUM> (vt));
 	}
 
 	static std::string VariantToString(_variant_t value)

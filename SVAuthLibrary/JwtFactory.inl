@@ -10,7 +10,10 @@
 
 #pragma region Includes
 #include <boost/optional.hpp>
+#pragma warning(push)
+#pragma warning(disable : 4996)
 #include <rapidjson/document.h>
+#pragma warning(pop)
 
 #include "Crypto.h"
 #include "SVProtoBuf/SVAuth.h"

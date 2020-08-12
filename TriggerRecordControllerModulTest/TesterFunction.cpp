@@ -57,7 +57,7 @@ bool checkImages(const TrcTesterConfiguration::InspectionsDef& rIPData, SvTrc::I
 	bool retValue = true;
 	for (int imagePos = 0; imagePos < rIPData.m_imageFilesList.size(); imagePos++)
 	{
-		const auto imageId = rIPData.m_imageFilesList[imagePos][writerRunId%rIPData.m_imageFilesList[imagePos].size()];
+		auto imageId = rIPData.m_imageFilesList[imagePos]->at(writerRunId%rIPData.m_imageFilesList[imagePos]->size());
 		auto imageHandle = tr2R->getImage(imagePos);
 		if (nullptr == imageHandle || imageHandle->isEmpty())
 		{
@@ -88,7 +88,7 @@ bool checkImages(const TrcTesterConfiguration::InspectionsDef& rIPData, SvTrc::I
 	}
 	//check special image
 	{
-		const auto imageId = rIPData.m_imageFilesList[0][0];
+		auto imageId = rIPData.m_imageFilesList[0]->at(0);
 		auto imageHandle = tr2R->getImage(static_cast<int>(rIPData.m_imageFilesList.size()));
 		if (nullptr == imageHandle || imageHandle->isEmpty())
 		{
@@ -270,15 +270,15 @@ bool writerTest(LogClass& rLogClass, const int numberOfRuns, const TrcTesterConf
 		{
 			try
 			{
-				cameraStructList.emplace_back(specifyBufferFromImage(rInspectionsData[i].m_imageFilesList[0][0]));
+				cameraStructList.emplace_back(specifyBufferFromImage(rInspectionsData[i].m_imageFilesList[0]->at(0)));
 				rTrController.startResetTriggerRecordStructure(i);
 
-				for (const auto& rImageList : rInspectionsData[i].m_imageFilesList)
+				for (const auto* pImageList : rInspectionsData[i].m_imageFilesList)
 				{
-					rTrController.addOrChangeImage(getNextObjectId(), specifyBufferFromImage(rImageList[0]));
+					rTrController.addOrChangeImage(getNextObjectId(), specifyBufferFromImage(pImageList->at(0)));
 				}
 				//add a special buffer which will be set only once and then should all the run the same.
-				rTrController.addOrChangeImage(getNextObjectId(), specifyBufferFromImage(rInspectionsData[i].m_imageFilesList[0][0]));
+				rTrController.addOrChangeImage(getNextObjectId(), specifyBufferFromImage(rInspectionsData[i].m_imageFilesList[0]->at(0)));
 
 				rTrController.finishResetTriggerRecordStructure();
 			}
@@ -353,7 +353,7 @@ bool writerTest(LogClass& rLogClass, const int numberOfRuns, const TrcTesterConf
 				}
 				else
 				{
-					const auto imageId = rIPData.m_imageFilesList[0][runId%rIPData.m_imageFilesList[0].size()];
+					auto imageId = rIPData.m_imageFilesList[0]->at(runId%rIPData.m_imageFilesList[0]->size());
 					MbufCopy(imageId, cameraImageHandle->getHandle()->GetBuffer().GetIdentifier());
 					if (!areImageEqual(cameraImageHandle->getHandle()->GetBuffer().GetIdentifier(), imageId))
 					{
@@ -398,7 +398,7 @@ bool writerTest(LogClass& rLogClass, const int numberOfRuns, const TrcTesterConf
 				}
 				for (int imagePos = 1; imagePos < rIPData.m_imageFilesList.size(); imagePos++)
 				{
-					const auto imageId = rIPData.m_imageFilesList[imagePos][runId%rIPData.m_imageFilesList[imagePos].size()];
+					auto imageId = rIPData.m_imageFilesList[imagePos]->at(runId%rIPData.m_imageFilesList[imagePos]->size());
 					auto imageHandle = tr2W->createNewImageHandle(imagePos);
 					if (nullptr == imageHandle || imageHandle->isEmpty())
 					{

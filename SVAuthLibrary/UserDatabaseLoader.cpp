@@ -13,7 +13,6 @@
 #include <comutil.h>
 #include <codecvt>
 #include <locale>
-#include <sequential_tree.h>
 
 #include <boost/function.hpp>
 #include <boost/lexical_cast.hpp>
@@ -50,7 +49,10 @@ enum ParserState
 
 std::string ws2s(const std::wstring& wstr)
 {
+#pragma warning(push)
+#pragma warning(disable : 4996)
 	return std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t>().to_bytes(wstr);
+#pragma warning(pop)
 }
 
 using TItFnMap = std::map<std::string, std::function<void(const std::string&)>>;
@@ -265,7 +267,7 @@ private:
 };
 }
 
-UserDatabase UserDatabaseLoader::load(std::experimental::filesystem::path path)
+UserDatabase UserDatabaseLoader::load(std::filesystem::path path)
 {
 	UserDatabase db;
 	UserDatabaseXmlElementHandler handler(db.m_Entries);

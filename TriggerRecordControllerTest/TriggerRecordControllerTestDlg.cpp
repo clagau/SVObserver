@@ -354,7 +354,7 @@ namespace SvTrcT
 				if (!tool->run(triggerRecord))
 				{
 					CString text;
-					text.Format("Trigger: Tool %s (%d) failed!", tool->getName(), pos);
+					text.Format("Trigger: Tool %s (%d) failed!", tool->getName().GetString(), pos);
 					MessageBox(text);
 					break;
 				}
@@ -574,7 +574,7 @@ namespace SvTrcT
 				for (const auto tool : m_toolList)
 				{
 					CString text;
-					text.Format("%s - %d", tool->getName(), i++);
+					text.Format("%s - %d", tool->getName().GetString(), i++);
 					m_ImageCombo.AddString(text);
 				}
 			}

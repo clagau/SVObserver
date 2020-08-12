@@ -96,7 +96,7 @@ struct HttpServerSettings
 	bool bEnableFileServing {false};
 
 	/// Data dir that is used for serving.
-	std::experimental::filesystem::path DataDir = {"."};
+	std::filesystem::path DataDir = {"."};
 
 	/// Default index html file
 	std::string DefaultIndexHtmlFile = {"index.html"};

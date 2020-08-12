@@ -31,26 +31,26 @@ namespace SvXml
 {
 	static std::map<std::wstring, VARTYPE>  map_wstring2Type
 	{
-		{L"VT_EMPTY",	VT_EMPTY},
-		{L"VT_NULL",	VT_NULL},
-		{L"VT_BOOL",	VT_BOOL},
-		{L"VT_INT",		VT_INT},
-		{L"VT_I4",		VT_I4},
-		{L"VT_UINT",	VT_UINT},
-		{L"VT_UI4",		VT_UI4},
-		{L"VT_R4",		VT_R4},
-		{L"VT_R8",		VT_R8},
-		{L"VT_I8",		VT_I8},
-		{L"VT_UI8",		VT_UI8},
-		{L"VT_UI1",		VT_UI1},
-		{L"VT_I1",		VT_I1},
-		{L"VT_I2",		VT_I2},
-		{L"VT_UI2",		VT_UI2},
-		{L"VT_BSTR",	VT_BSTR},
-		{L"VT_ARRAY",	VT_ARRAY},
-		{L"SV_ARRAYNODE", VT_SVARRAYNODE},  /// not used ?
-		{L"SV_NODEWITHDATA", VT_SVNODEWITHDATA}, /// not used ?
-		{L"SV_SVBASENODE", VT_SVBASENODE}
+		{L"VT_EMPTY",	static_cast<VARTYPE> (VT_EMPTY)},
+		{L"VT_NULL",	static_cast<VARTYPE> (VT_NULL)},
+		{L"VT_BOOL",	static_cast<VARTYPE> (VT_BOOL)},
+		{L"VT_INT",		static_cast<VARTYPE> (VT_INT)},
+		{L"VT_I4",		static_cast<VARTYPE> (VT_I4)},
+		{L"VT_UINT",	static_cast<VARTYPE> (VT_UINT)},
+		{L"VT_UI4",		static_cast<VARTYPE> (VT_UI4)},
+		{L"VT_R4",		static_cast<VARTYPE> (VT_R4)},
+		{L"VT_R8",		static_cast<VARTYPE> (VT_R8)},
+		{L"VT_I8",		static_cast<VARTYPE> (VT_I8)},
+		{L"VT_UI8",		static_cast<VARTYPE> (VT_UI8)},
+		{L"VT_UI1",		static_cast<VARTYPE> (VT_UI1)},
+		{L"VT_I1",		static_cast<VARTYPE> (VT_I1)},
+		{L"VT_I2",		static_cast<VARTYPE> (VT_I2)},
+		{L"VT_UI2",		static_cast<VARTYPE> (VT_UI2)},
+		{L"VT_BSTR",	static_cast<VARTYPE> (VT_BSTR)},
+		{L"VT_ARRAY",	static_cast<VARTYPE> (VT_ARRAY)},
+		{L"SV_ARRAYNODE", static_cast<VARTYPE> (VT_SVARRAYNODE)},  /// not used ?
+		{L"SV_NODEWITHDATA", static_cast<VARTYPE> (VT_SVNODEWITHDATA)}, /// not used ?
+		{L"SV_SVBASENODE", static_cast<VARTYPE> (VT_SVBASENODE)}
 	};
 
 

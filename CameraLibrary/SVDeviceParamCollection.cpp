@@ -33,17 +33,21 @@ SVDeviceParamIndexer::SVDeviceParamIndexer(const SVDeviceParamMap& map) : m_mapI
 	std::sort(begin(), end(), keycomp(m_mapIndexed));
 }
 
-bool SVDeviceParamIndexer::keycomp::operator () (const SVDeviceParamEnum& a, const SVDeviceParamEnum& b) const
+bool SVDeviceParamIndexer::keycomp::operator () (const SVDeviceParamEnum& rLhs, const SVDeviceParamEnum& rRhs) const
 {
-	SVDeviceParamMap::const_iterator iterA = m_mapIndexed.find(a);
-	SVDeviceParamMap::const_iterator iterB = m_mapIndexed.find(b);
-	const SVDeviceParam* pA = iterA->second;
-	const SVDeviceParam* pB = iterB->second;
-	if (nullptr == pB)
+	SVDeviceParamMap::const_iterator iterLhs = m_mapIndexed.find(rLhs);
+	SVDeviceParamMap::const_iterator iterRhs = m_mapIndexed.find(rRhs);
+	const SVDeviceParam* pLhs = iterLhs->second;
+	const SVDeviceParam* pRhs = iterRhs->second;
+	if (nullptr == pRhs)
+	{
 		return true;
-	else if (nullptr == pA)
+	}
+	else if (nullptr == pLhs)
+	{
 		return false;
-	return iterA->second->GetOrder() < iterB->second->GetOrder();
+	}
+	return iterLhs->second->GetOrder() < iterRhs->second->GetOrder();
 }
 
 SVDeviceParamCollection::SVDeviceParamCollection( const SVDeviceParamCollection& rhs )

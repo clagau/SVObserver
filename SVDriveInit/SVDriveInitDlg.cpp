@@ -1084,25 +1084,25 @@ HRESULT SVDriveInitDlg::RemoveMatroxBootIniMaxMem()
 
 						if (l_MaxMemEndSpacePos == -1 && l_MaxMemEndSlashPos == -1)
 						{
-							l_NewOption.Format(_T("%s\""), l_Option.Left(l_MemoryPos));
+							l_NewOption.Format(_T("%s\""), l_Option.Left(l_MemoryPos).GetString());
 						}
 						else if (l_MaxMemEndSpacePos == -1)
 						{
-							l_NewOption.Format(_T("%s\" %s"), l_Option.Left(l_MemoryPos), l_Option.Mid(l_MaxMemEndSlashPos));
+							l_NewOption.Format(_T("%s\" %s"), l_Option.Left(l_MemoryPos).GetString(), l_Option.Mid(l_MaxMemEndSlashPos).GetString());
 						}
 						else if (l_MaxMemEndSlashPos == -1)
 						{
-							l_NewOption.Format(_T("%s\"%s"), l_Option.Left(l_MemoryPos), l_Option.Mid(l_MaxMemEndSpacePos));
+							l_NewOption.Format(_T("%s\"%s"), l_Option.Left(l_MemoryPos).GetString(), l_Option.Mid(l_MaxMemEndSpacePos).GetString());
 						}
 						else
 						{
 							if (l_MaxMemEndSpacePos < l_MaxMemEndSlashPos)
 							{
-								l_NewOption.Format(_T("%s\"%s"), l_Option.Left(l_MemoryPos), l_Option.Mid(l_MaxMemEndSpacePos));
+								l_NewOption.Format(_T("%s\"%s"), l_Option.Left(l_MemoryPos).GetString(), l_Option.Mid(l_MaxMemEndSpacePos).GetString());
 							}
 							else
 							{
-								l_NewOption.Format(_T("%s\" %s"), l_Option.Left(l_MemoryPos), l_Option.Mid(l_MaxMemEndSlashPos));
+								l_NewOption.Format(_T("%s\" %s"), l_Option.Left(l_MemoryPos).GetString(), l_Option.Mid(l_MaxMemEndSlashPos).GetString());
 							}
 						}
 
@@ -1217,7 +1217,7 @@ void DisplayLastSystemError()
 {
 	CString szTemp, szText;
 	DWORD dwError = GetLastSystemErrorText(szText);
-	szTemp.Format(_T("(%04X) %s"), dwError, szText);
+	szTemp.Format(_T("(%04X) %s"), dwError, szText.GetString());
 	MessageBox(nullptr, szTemp, _T("ERROR"), MB_OK);
 }
 

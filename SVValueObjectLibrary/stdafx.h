@@ -47,7 +47,10 @@
 #include <set>
 #include <sstream>
 #include <string>
+#pragma warning(push)
+#pragma warning(disable : 4996)
 #include <sequential_tree.h>
+#pragma warning(pop)
 #include <tchar.h>
 #include <type_traits>
 #include <vector>

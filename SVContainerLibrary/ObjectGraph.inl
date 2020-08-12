@@ -6,8 +6,8 @@
 /// This is the object graph template for dependencies
 //******************************************************************************
 
-#pragma warning(disable : 4701 4703)
 #pragma warning(push)
+#pragma warning(disable : 4701 4703)
 
 namespace SvCl
 {

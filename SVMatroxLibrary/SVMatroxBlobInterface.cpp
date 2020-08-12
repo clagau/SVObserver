@@ -587,7 +587,7 @@ HRESULT SVMatroxBlobInterface::FillResults(const SVBlobOffsetList& rBlobList, SV
 ///////////////////////////////////////////////////////////////////////
 //
 ///////////////////////////////////////////////////////////////////////
-class SortBlobs : std::binary_function<const SVMatroxBlobInterface::SVBlob&, const SVMatroxBlobInterface::SVBlob&, bool>
+struct SortBlobs
 {
 private:
 	int m_type;
@@ -595,9 +595,9 @@ private:
 public:
 	explicit SortBlobs(int sortCriteria) : m_type(sortCriteria) {}
 
-	bool operator()(const SVMatroxBlobInterface::SVBlob& lBlob, const SVMatroxBlobInterface::SVBlob& rBlob)
+	bool operator()(const SVMatroxBlobInterface::SVBlob& rLhs, const SVMatroxBlobInterface::SVBlob& rRhs)
 	{
-		return SVMatroxBlobInterface::Compare(m_type, lBlob, rBlob);
+		return SVMatroxBlobInterface::Compare(m_type, rLhs, rRhs);
 	}
 };
 

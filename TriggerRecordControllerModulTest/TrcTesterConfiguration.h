@@ -39,10 +39,10 @@ public:
 
 	struct InspectionsDef
 	{
-		InspectionsDef(int minRecord, int maxRecord, int minInterest, int maxInterest, const std::vector<ImageList>& rImages, const ParamDefList& rParamDefs, const ParamValueList& rParamValues)
+		InspectionsDef(int minRecord, int maxRecord, int minInterest, int maxInterest, const std::vector<ImageList*>& rImages, const ParamDefList* pParamDefs, const ParamValueList* pParamValues)
 			: m_imageFilesList(rImages)
-			, m_ParamDefs(rParamDefs)
-			, m_ParamValues(rParamValues)
+			, m_pParamDefs(pParamDefs)
+			, m_pParamValues(pParamValues)
 			, m_minRecordSize(minRecord)
 			, m_maxRecordSize(maxRecord)
 			, m_minRecordInterestSize(minInterest)
@@ -53,15 +53,15 @@ public:
 
 		void recalcRecordSizes();
 
-		const int m_minRecordSize;
-		const int m_maxRecordSize;
+		int m_minRecordSize;
+		int m_maxRecordSize;
 		int m_recordSize;
-		const int m_minRecordInterestSize;
-		const int m_maxRecordInterestSize;
+		int m_minRecordInterestSize;
+		int m_maxRecordInterestSize;
 		int m_recordInterestSize;
-		const std::vector<ImageList> m_imageFilesList;
-		const ParamDefList& m_ParamDefs;
-		const ParamValueList& m_ParamValues; //(Size of m_ParamDefs and any m_ParamValue[n] must be equal)
+		std::vector<ImageList*> m_imageFilesList;
+		const ParamDefList* m_pParamDefs{ nullptr };
+		const ParamValueList* m_pParamValues{ nullptr }; //(Size of m_ParamDefs and any m_ParamValue[n] must be equal)
 	};
 
 	typedef std::vector<std::vector<InspectionsDef>> TestDataList;

@@ -36,7 +36,7 @@ std::string SVToolGrouping::GetDefaultName() const
 bool SVToolGrouping::IsNameUnique(const std::string& rName, LPCTSTR pExclude) const
 {
 	std::string nameLower;
-	std::transform(rName.begin(), rName.end(), std::back_inserter(nameLower), ::tolower);
+	std::transform(rName.begin(), rName.end(), std::back_inserter(nameLower), [](unsigned char c) { return static_cast<char> (std::tolower(c)); });
 
 	bool bRetVal = std::none_of(m_list.begin(), m_list.end(),
 		[&nameLower, pExclude, rName](const ToolGroup& rGroup)->bool
@@ -50,7 +50,7 @@ bool SVToolGrouping::IsNameUnique(const std::string& rName, LPCTSTR pExclude) co
 		}
 		// case insensitive compare
 		std::string itemNameLower;
-		std::transform(rGroup.first.begin(), rGroup.first.end(), std::back_inserter(itemNameLower), ::tolower);
+		std::transform(rGroup.first.begin(), rGroup.first.end(), std::back_inserter(itemNameLower), [](unsigned char c) { return static_cast<char> (std::tolower(c)); });
 		return (itemNameLower == nameLower);
 	});
 
@@ -61,7 +61,7 @@ std::string SVToolGrouping::MakeNumericUniqueName(const std::string& rName) cons
 {
 	std::string newName = rName;
 	std::string nameLower;
-	std::transform(rName.begin(), rName.end(), std::back_inserter(nameLower), ::tolower);
+	std::transform(rName.begin(), rName.end(), std::back_inserter(nameLower), [](unsigned char c) { return static_cast<char> (std::tolower(c)); });
 
 	//This strips any numbers at the end of the name
 	size_t last_char_pos = nameLower.find_last_not_of(_T("0123456789"));
@@ -75,7 +75,7 @@ std::string SVToolGrouping::MakeNumericUniqueName(const std::string& rName) cons
 	std::for_each(m_list.begin(), m_list.end(), [&nameLower, &num](const ToolGroup& rGroup)->void
 	{
 		std::string itemNameLower;
-		std::transform(rGroup.first.begin(), rGroup.first.end(), std::back_inserter(itemNameLower), ::tolower);
+		std::transform(rGroup.first.begin(), rGroup.first.end(), std::back_inserter(itemNameLower), [](unsigned char c) { return static_cast<char> (std::tolower(c)); });
 		size_t pos = itemNameLower.find(nameLower);
 		if (0 == pos)
 		{

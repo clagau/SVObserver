@@ -21,13 +21,13 @@
     <ConfigurationType>Utility</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>NotSet</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Utility</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>NotSet</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -58,6 +58,9 @@
       <HeaderFileName>
       </HeaderFileName>
     </Midl>
+    <ClCompile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <PreBuildEvent>
@@ -69,6 +72,9 @@
       <HeaderFileName>
       </HeaderFileName>
     </Midl>
+    <ClCompile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="FlexLexer.h" />
@@ -80,15 +86,15 @@
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">echo flex SVEquation.lex
 flex -oflex.cc SVEquation.lex
 move flex.cc "$(IntDir)"
-echo Using ssed to comment out invalid istream definition
-ssed "s/class istream%3b/\/\/class istream%3b/" "$(IntDir)flex.cc" &gt; "$(IntDir)lex.yy.cc"
+echo Using ssed to comment out invalid istream definition and remove register variables
+ssed -e "s/class istream%3b/\/\/class istream%3b/" -e "s/register //" "$(IntDir)flex.cc" &gt; "$(IntDir)lex.yy.cc"
 call CopyIfDifferent.bat "$(IntDir)lex.yy.cc" lex.yy.cc      </Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)lex.yy.cc;%(Outputs)</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">echo flex SVEquation.lex
 flex -oflex.cc SVEquation.lex
 move flex.cc "$(IntDir)"
-echo Using ssed to comment out invalid istream definition
-ssed "s/class istream%3b/\/\/class istream%3b/" "$(IntDir)flex.cc" &gt; "$(IntDir)lex.yy.cc"
+echo Using ssed to comment out invalid istream definition and remove register variables
+ssed -e "s/class istream%3b/\/\/class istream%3b/" -e "s/register //" "$(IntDir)flex.cc" &gt; "$(IntDir)lex.yy.cc"
 call CopyIfDifferent.bat "$(IntDir)lex.yy.cc" lex.yy.cc      </Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)lex.yy.cc;%(Outputs)</Outputs>
     </CustomBuild>

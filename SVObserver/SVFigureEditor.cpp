@@ -137,12 +137,12 @@ CRect SVFigureEditor::GetHotSpot( CPoint pt )
 	return rect;
 }
 
-std::auto_ptr<CRgn> SVFigureEditor::GetHotSpot( CPoint pt1, CPoint pt2 )
+std::shared_ptr<CRgn> SVFigureEditor::GetHotSpot( CPoint pt1, CPoint pt2 )
 {
 	// this assumes right angles for hot spot
 	//assert( pt1.x == pt2.x || pt1.y == pt2.y );
 
-	std::auto_ptr<CRgn> pRegion( new CRgn );
+	std::shared_ptr<CRgn> pRegion = std::make_shared<CRgn>();
 	CSize sizeHotSpot = GetHotSpotSize();
 
 	if ( pt1.x == pt2.x )	// vertical orientation

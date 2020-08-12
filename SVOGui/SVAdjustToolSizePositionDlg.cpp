@@ -595,7 +595,7 @@ bool SVAdjustToolSizePositionDlg::IsFullSizeAllowed()
 		bAllowFullsize = false;
 	}
 
-	std::tr1::array<SvPb::SVExtentPropertyEnum, 4> PropArray = {SvPb::SVExtentPropertyWidth, SvPb::SVExtentPropertyHeight, SvPb::SVExtentPropertyPositionPointX, SvPb::SVExtentPropertyPositionPointY};
+	std::array<SvPb::SVExtentPropertyEnum, 4> PropArray = {SvPb::SVExtentPropertyWidth, SvPb::SVExtentPropertyHeight, SvPb::SVExtentPropertyPositionPointX, SvPb::SVExtentPropertyPositionPointY};
 	std::for_each(PropArray.begin(), PropArray.end(), [&](SvPb::SVExtentPropertyEnum p)
 	{
 		if (bAllowFullsize)

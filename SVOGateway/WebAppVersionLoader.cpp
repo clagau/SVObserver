@@ -10,7 +10,10 @@
 #include <fstream>
 #include <streambuf>
 
+#pragma warning(push)
+#pragma warning(disable : 4996)
 #include <rapidjson/document.h>
+#pragma warning(pop)
 #include <rapidjson/istreamwrapper.h>
 
 #include "WebAppVersionLoader.h"
@@ -35,7 +38,7 @@ std::string  WebAppVersionLoader::getVersion() const
 		return UNKNOWN_VERSION;
 	}
 
-	const auto versionJsonPath = std::experimental::filesystem::path(m_rHttpServerSettings.DataDir).append("/version.json");
+	const auto versionJsonPath = std::filesystem::path(m_rHttpServerSettings.DataDir).append("/version.json");
 
 	std::ifstream versionJsonStream(versionJsonPath.c_str());
 	if (!versionJsonStream.is_open())

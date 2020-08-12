@@ -47,7 +47,10 @@
 #include <string>
 #include <unordered_map>
 
+#pragma warning(push)
+#pragma warning(disable : 4702)
 #include <boost/asio/deadline_timer.hpp>
 #include <boost/asio/io_service.hpp>
+#pragma warning(pop)
 
 // TODO: reference additional headers your program requires here

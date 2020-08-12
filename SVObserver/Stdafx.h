@@ -125,7 +125,10 @@ namespace Gdiplus
 #include <numeric>
 #include <Objidl.h>
 #include <regex>
+#pragma warning(push)
+#pragma warning(disable : 4996)
 #include <sequential_tree.h>
+#pragma warning(pop)
 #include <set>
 #include <sstream>
 #include <string>
@@ -141,8 +144,11 @@ namespace Gdiplus
 #include <boost\algorithm\string.hpp>
 #include <boost\algorithm\string\replace.hpp>
 #include <boost/any.hpp>
+#pragma warning(push)
+#pragma warning(disable : 4702)
 #include <boost/asio.hpp>
 #include <boost/asio/io_service.hpp>
+#pragma warning(pop)
 #include <boost/bind.hpp>
 #include <boost/circular_buffer.hpp>
 #include <boost/config.hpp>
@@ -152,8 +158,8 @@ namespace Gdiplus
 #include <boost/function.hpp>
 #include <boost/fusion/container.hpp>						//Used by static library
 #include <boost/fusion/algorithm.hpp>						//Used by static library
-#pragma warning(disable : 4458 4459)
 #pragma warning(push)
+#pragma warning(disable : 4244 4458 4459)
 #include <boost/graph/adjacency_list.hpp>					//Used by static library
 #include <boost/graph/depth_first_search.hpp>				//Used by static library
 #include <boost/graph/breadth_first_search.hpp>				//Used by static library

@@ -63,7 +63,7 @@ protected:
 	HRESULT LButtonUp(UINT nFlags, CPoint point);
 
 	CRect GetHotSpot( CPoint pt );
-	std::auto_ptr<CRgn> GetHotSpot( CPoint pt1, CPoint pt2 );
+	std::shared_ptr<CRgn> GetHotSpot( CPoint pt1, CPoint pt2 );
 
 	SVHitTestStruct m_HitType;	// use this for actual hit type ( can have different hit points for the same cursor )
 	CPoint m_ptMouseDown;	// original mouse press location

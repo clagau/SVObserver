@@ -48,7 +48,7 @@ static void RegGetBoolIfExists(const boost::property_tree::ptree& pt, bool& dst,
 	if (v)
 	{
 		std::string str = *v;
-		std::transform(str.begin(), str.end(), str.begin(), ::tolower);
+		std::transform(str.begin(), str.end(), str.begin(), [](unsigned char c) { return static_cast<char> (std::tolower(c)); });
 		dst = (str == "1" || str == "true");
 	}
 }

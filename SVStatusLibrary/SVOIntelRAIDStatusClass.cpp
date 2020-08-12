@@ -57,7 +57,7 @@ namespace SvStl
 						{
 							std::string Message = SvUl::Format( _T("The RAID system is not reporting a functional status.\n\n"
 								"STATUS : %s\n\n"
-								"Please contact your support representative for assistance."), m_RaidStatus );
+								"Please contact your support representative for assistance."), m_RaidStatus.c_str() );
 
 							SvOi::CallModelessMessageBox( Message, m_hCheckEvent );
 						}
@@ -91,7 +91,7 @@ namespace SvStl
 
 	HRESULT SVOIntelRAIDStatusClass::CheckStatus()
 	{
-		std::auto_ptr<SVEventLogClass> l_psvLog (new SVEventLogClass);
+		std::unique_ptr<SVEventLogClass> pLog = std::make_unique<SVEventLogClass>();
 
 		unsigned long l_ulItem = 0;
 		long lType = 0;
@@ -99,13 +99,13 @@ namespace SvStl
 		m_RaidStatus.clear();
 		m_ErrorStatus.clear();
 
-		HRESULT l_svOk = l_psvLog->Open( _T("Application") );
+		HRESULT l_svOk = pLog->Open( _T("Application") );
 
 		if( S_OK == l_svOk )
 		{
 			unsigned long l_ulCount = 0;
 
-			l_svOk = l_psvLog->GetRecordCount( l_ulCount );
+			l_svOk = pLog->GetRecordCount( l_ulCount );
 
 			if( S_OK == l_svOk )
 			{
@@ -113,7 +113,7 @@ namespace SvStl
 
 				CString l_csStatus;
 
-				l_svOk = l_psvLog->ReadLast( l_svRecord );
+				l_svOk = pLog->ReadLast( l_svRecord );
 
 				if( S_OK == l_svOk )
 				{
@@ -166,7 +166,7 @@ namespace SvStl
 							m_RaidStatus = l_csStatus;
 						}
 
-						l_svOk = l_psvLog->ReadPrevious( l_svRecord );
+						l_svOk = pLog->ReadPrevious( l_svRecord );
 
 						l_ulItem++;
 					}

@@ -334,8 +334,8 @@ HRESULT SVMaskShape::TranslateToDisplay(const RECT rectViewport, const RECT rect
 
 	// translate mask image to viewport
 	SVPoint<double> ptOffset = figureDest.m_svTopLeft - figureSource.m_svTopLeft;
-	std::transform( vecPoints.begin(), vecPoints.end(), vecPoints.begin(),
-	                std::bind2nd( std::minus<SVPoint<double>>(), ptOffset) );	// subtract the offset from each point
+	std::transform( vecPoints.begin(), vecPoints.end(), vecPoints.begin(), 
+		std::bind( std::minus<SVPoint<double>>(), std::placeholders::_1, ptOffset) );	// subtract the offset from each point
 
 	if ( S_OK == hr )
 	{

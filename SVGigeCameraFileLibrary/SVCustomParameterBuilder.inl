@@ -19,7 +19,7 @@ void SVCustomParameterBuilder::BuildCustomDeviceParams(const SVMaterialsTree::SV
 {
 	for (SVMaterialsTree::const_iterator it = rTree.begin();it!= rTree.end();++it)
 	{
-		std::auto_ptr<SVCustomDeviceParam> pParam(SVCustomParameterBuilder::BuildCustomDeviceParam( *it.node() ));
+		std::shared_ptr<SVCustomDeviceParam> pParam(SVCustomParameterBuilder::BuildCustomDeviceParam( *it.node() ));
 		if (pParam.get())
 		{
 			// Add to list (makes a copy)

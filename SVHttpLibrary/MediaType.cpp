@@ -15,7 +15,7 @@
 
 namespace SvHttp
 {
-std::string MediaType::determine(const std::experimental::filesystem::path& path) const
+std::string MediaType::determine(const std::filesystem::path& path) const
 {
 	auto const ext = [&path]
 	{

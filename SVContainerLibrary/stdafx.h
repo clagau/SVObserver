@@ -52,7 +52,10 @@
 #include <memory>
 #include <map>
 #include <ppl.h>
+#pragma warning(push)
+#pragma warning(disable : 4996)
 #include <sequential_tree.h>
+#pragma warning(pop)
 #include <set>
 #include <string>			//Used by static library
 #include <tchar.h>			//Used by static library
@@ -62,8 +65,8 @@
 #include <boost/config.hpp>
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
-#pragma warning(disable : 4458 4459)
 #pragma warning(push)
+#pragma warning(disable : 4244 4458 4459)
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/breadth_first_search.hpp>
 #include <boost/graph/depth_first_search.hpp>

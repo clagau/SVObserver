@@ -16,72 +16,72 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="StdAfx.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVNotifyButton.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVRPropTree.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVRPropTreeCtrl.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVRPropTreeInfo.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVRPropTreeItem.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVRPropTreeItemCombo.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVRPropTreeItemEdit.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVRPropTreeItemFile.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVRPropTreeItemStatic.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVRPropTreeState.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StdAfx.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVNotifyButton.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVRPropTree.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVRPropTreeCtrl.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVRPropTreeInfo.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVRPropTreeItem.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVRPropTreeItemCombo.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVRPropTreeItemEdit.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVRPropTreeItemFile.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVRPropTreeItemStatic.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVRPropTreeState.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

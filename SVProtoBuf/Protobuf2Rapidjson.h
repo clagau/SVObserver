@@ -7,7 +7,10 @@
 //  Inspired from pb2json, but using rapidjson and adding support for decoding
 
 #include <sstream>
+#pragma warning(push)
+#pragma warning(disable : 4996)
 #include <rapidjson/document.h>
+#pragma warning(pop)
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/writer.h>
 #pragma warning( push )

@@ -256,8 +256,8 @@ void SVAboutDialogClass::LoadVersionList()
 		::VariantClear( &l_vVersion );
 
 		l_strTmp.Format("I/O %s - %s",
-			l_strName, 
-			l_strValue );
+			l_strName.GetString(), 
+			l_strValue.GetString() );
 
 		CDC* dc = GetDC();
 		// Get the length of the strings to insert

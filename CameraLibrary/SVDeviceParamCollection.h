@@ -159,11 +159,11 @@ public:
 	explicit SVDeviceParamIndexer(const SVDeviceParamMap& map);
 
 private:
-	class keycomp : public std::binary_function<SVDeviceParamEnum, SVDeviceParamEnum, bool>
+	struct keycomp
 	{
 	public:
 		explicit keycomp(const SVDeviceParamMap& map) : m_mapIndexed(map) {}
-		bool operator () (const SVDeviceParamEnum& a, const SVDeviceParamEnum& b) const;
+		bool operator() (const SVDeviceParamEnum& rLhs, const SVDeviceParamEnum& rRhs) const;
 
 	private:
 		const SVDeviceParamMap& m_mapIndexed;

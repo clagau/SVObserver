@@ -40,4 +40,4 @@ private:
 
 };
 
-typedef std::tr1::shared_ptr< SVCommandTemplate > SVCommandTemplatePtr;
+typedef std::shared_ptr< SVCommandTemplate > SVCommandTemplatePtr;

@@ -122,7 +122,7 @@ void TrcTesterConfiguration::init(LogClass& rLogClass)
 
 	for (auto imageFileList : m_imageFileNameLists)
 	{
-		std::vector<MIL_ID> imageIds;
+		ImageList imageIds;
 		try
 		{
 			imageIds = loadImages(imageFileList);
@@ -140,7 +140,6 @@ void TrcTesterConfiguration::init(LogClass& rLogClass)
 			m_imageLists.push_back(imageIds);
 		}
 	}
-
-	m_testData = {{{10, 30, 1, 20, {m_imageLists[0],m_imageLists[1], m_imageLists[2]}, getValueObjectSet(), m_valueSet}},
-		{{10,30, 0, 0, {m_imageLists[1], m_imageLists[2]}, getValueObjectSet(), m_valueSet}, {10, 300, 0, 0, {m_imageLists[0]}, getValueObjectSet(), m_valueSet}}};
+	m_testData = {{{10, 30, 1, 20, {&m_imageLists[0],&m_imageLists[1], &m_imageLists[2]}, &m_valueObjectSet, &m_valueSet}},
+		{{10,30, 0, 0, {&m_imageLists[1], &m_imageLists[2]}, &m_valueObjectSet, &m_valueSet}, {10, 300, 0, 0, {&m_imageLists[0]}, &m_valueObjectSet, &m_valueSet}}};
 }

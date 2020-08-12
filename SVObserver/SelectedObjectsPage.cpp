@@ -217,7 +217,7 @@ void SelectedObjectsPage::ShowObjectSelector()
 	}
 	SvOsl::ObjectTreeGenerator::Instance().setCheckItems(CheckItems);
 
-	std::string Title = SvUl::Format(_T("%s - %s"), m_strCaption, InspectionName.c_str());
+	std::string Title = SvUl::Format(_T("%s - %s"), m_strCaption.GetString(), InspectionName.c_str());
 	std::string Filter = SvUl::LoadStdString(IDS_FILTER);
 	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog(Title.c_str(), m_strCaption, Filter.c_str(), this);
 

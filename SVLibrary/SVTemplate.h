@@ -30,7 +30,7 @@ public:
 	typedef std::vector<T> row_type;
 	typedef std::vector< std::vector<T> > base;
 	void resize ( int iNewRows, int iNewCols );
-	void resize(size_type n, T x = T()) {base::resize(n,x);}
+	void resize(typename base::size_type n, T x = T()) {base::resize(n,x);}
 	void fill( T value );
 	void fill( int iRow, T value );
 	T& at(int iRow, int iCol);

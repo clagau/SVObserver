@@ -46,7 +46,10 @@
 #include <list>
 #include <map>
 #include <ppl.h>
+#pragma warning(push)
+#pragma warning(disable : 4996)
 #include <sequential_tree.h>
+#pragma warning(pop)
 #include <set>
 #include <string>
 #include <tchar.h>

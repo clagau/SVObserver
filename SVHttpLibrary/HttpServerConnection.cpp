@@ -176,7 +176,7 @@ void HttpServerConnection::http_on_read(const boost::system::error_code& error, 
 	}
 
 	// Build the path to the requested file
-	auto path = std::experimental::filesystem::path(m_rSettings.DataDir).append(url_path);
+	auto path = std::filesystem::path(m_rSettings.DataDir).append(url_path);
 	if (m_Request.target().back() == '/')
 	{
 		path.append(m_rSettings.DefaultIndexHtmlFile);
@@ -490,7 +490,7 @@ HttpServerConnection::http_build_server_error(boost::beast::string_view what)
 }
 
 boost::beast::http::response<boost::beast::http::empty_body>
-HttpServerConnection::http_build_file_head(const std::experimental::filesystem::path& path, boost::beast::http::file_body::value_type body)
+HttpServerConnection::http_build_file_head(const std::filesystem::path& path, boost::beast::http::file_body::value_type body)
 {
 	boost::beast::http::response<boost::beast::http::empty_body> res {
 		boost::beast::http::status::ok,
@@ -504,7 +504,7 @@ HttpServerConnection::http_build_file_head(const std::experimental::filesystem::
 }
 
 boost::beast::http::response<boost::beast::http::file_body>
-HttpServerConnection::http_build_file_get(const std::experimental::filesystem::path& path, boost::beast::http::file_body::value_type body)
+HttpServerConnection::http_build_file_get(const std::filesystem::path& path, boost::beast::http::file_body::value_type body)
 {
 	// Cache the size since we need it after the move
 	auto const size = body.size();

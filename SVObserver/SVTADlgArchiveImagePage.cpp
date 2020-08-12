@@ -448,9 +448,9 @@ void SVTADlgArchiveImagePage::ShowObjectSelector()
 	}
 	SvOsl::ObjectTreeGenerator::Instance().setCheckItems( CheckItems );
 
-	std::string Title = SvUl::Format( _T("%s - %s"), m_strCaption, m_pTool->GetInspection()->GetName());
+	std::string Title = SvUl::Format( _T("%s - %s"), m_strCaption.GetString(), m_pTool->GetInspection()->GetName());
 	std::string Filter = SvUl::LoadStdString( IDS_FILTER );
-	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title.c_str(), m_strCaption, Filter.c_str(), this );
+	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title.c_str(), m_strCaption.GetString(), Filter.c_str(), this );
 
 	if( IDOK == Result )
 	{

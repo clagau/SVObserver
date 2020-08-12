@@ -33,12 +33,12 @@ static void RegGetStringIfExists(const boost::property_tree::ptree& pt, std::str
 	}
 }
 
-static void RegGetPathIfExists(const boost::property_tree::ptree& pt, std::experimental::filesystem::path& dst, const std::string& path)
+static void RegGetPathIfExists(const boost::property_tree::ptree& pt, std::filesystem::path& dst, const std::string& path)
 {
 	const auto v = pt.get_optional<std::string>(path);
 	if (v)
 	{
-		dst = std::experimental::filesystem::path(*v);
+		dst = std::filesystem::path(*v);
 	}
 }
 
@@ -58,7 +58,7 @@ static void RegGetBoolIfExists(const boost::property_tree::ptree& pt, bool& dst,
 	if (v)
 	{
 		std::string str = *v;
-		std::transform(str.begin(), str.end(), str.begin(), ::tolower);
+		std::transform(str.begin(), str.end(), str.begin(), [](unsigned char c) { return static_cast<char> (std::tolower(c)); });
 		dst = (str == "1" || str == "true");
 	}
 }

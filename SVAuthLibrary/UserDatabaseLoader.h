@@ -18,7 +18,7 @@ namespace SvAuth
 class UserDatabaseLoader
 {
 public:
-	static UserDatabase load(std::experimental::filesystem::path);
+	static UserDatabase load(std::filesystem::path);
 };
 
 } // namespace SvAuth

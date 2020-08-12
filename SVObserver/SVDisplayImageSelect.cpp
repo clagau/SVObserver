@@ -160,7 +160,7 @@ void SVDisplayImageSelect::SetTitle()
 	{
 		CString title;
 		GetWindowText(title);
-		title.Format(_T("%s - [%s]"), title, pInspection->GetName());
+		title.Format(_T("%s - [%s]"), title.GetString(), pInspection->GetName());
 		SetWindowText(title);
 	}
 }
