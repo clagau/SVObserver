@@ -312,7 +312,7 @@ int32_t SendConfigurationToCifX()
 	memset(&recvPkt, 0, sizeof(recvPkt));
 
 	/* build configuration packet */
-	BuildConfigurationReq(&sendPkt, g_plcNodeID, cMaxPLC_DataSize);
+	BuildConfigurationReq(&sendPkt, static_cast<uint8_t> (g_plcNodeID), static_cast<uint16_t> (cMaxPLC_DataSize));
 
 	return SendRecvPkt(&sendPkt, &recvPkt);
 }
