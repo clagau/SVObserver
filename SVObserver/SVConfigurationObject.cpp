@@ -726,7 +726,7 @@ HRESULT SVConfigurationObject::AddImportedRemoteInput(SVPPQObject* pPPQ, const s
 		{
 			pIOEntry->m_ObjectType = IO_REMOTE_INPUT;
 			pIOEntry->m_PPQIndex = ppqPosition;
-			pIOEntry->m_Enabled = true;
+			pIOEntry->m_Enabled = ppqPosition != -1;
 
 			SVRemoteInputObject* pRemoteInput = nullptr;
 			int number = -1;
