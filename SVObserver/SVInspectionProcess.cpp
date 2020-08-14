@@ -3373,12 +3373,13 @@ HRESULT SVInspectionProcess::resetTool(SvOi::IObjectClass& rTool)
 	m_bForceOffsetUpdate = true;
 	/// correct tool size when it does not fit to the parent image 
 	AddResetState(SvDef::SVResetAutoMoveAndResize);
-	if (rTool.resetAllObjects())
+	bool resetAllObjects = rTool.resetAllObjects();
+	m_resetting = false;
+	if (resetAllObjects)
 	{
 		result = RunOnce();
 	}
 	RemoveResetState(SvDef::SVResetAutoMoveAndResize);
-	m_resetting = false;
 	return result;
 }
 
