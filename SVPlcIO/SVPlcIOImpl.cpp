@@ -35,18 +35,6 @@ constexpr LPCTSTR cPlcOutputHeading = _T("Channel; Count; Timestamp; ObjectID; R
 constexpr LPCTSTR cTriggerName = _T("HardwareTrigger.Dig_");			///This name must match the name in the SVHardwareManifest
 #pragma endregion Declarations
 
-void triggerDispatcher(SvTh::IntVariantMap&& triggerData, SvTh::DispatcherVector&& dispatchVector)
-{
-	for (auto& rDispatcher : dispatchVector)
-	{
-		if (rDispatcher.m_IsStarted)
-		{
-			rDispatcher.SetData(triggerData);
-			rDispatcher.Dispatch();
-		}
-	}
-}
-
 HRESULT SVPlcIOImpl::Initialize(bool bInit)
 {
 	HRESULT hr = S_OK;
@@ -501,9 +489,14 @@ void SVPlcIOImpl::reportTrigger(const TriggerReport& rTriggerReport)
 			//Trigger channel is one based
 			if(triggerIndex == ChannelAndDispatcherList.first)
 			{
-				SvTh::DispatcherVector dispatchVector = ChannelAndDispatcherList.second;
-				auto dispatchThread = std::thread(triggerDispatcher, std::move(triggerData), std::move(dispatchVector));
-				dispatchThread.detach();
+				for (auto& rDispatcher : ChannelAndDispatcherList.second)
+				{
+					if (rDispatcher.m_IsStarted)
+					{
+						rDispatcher.SetData(triggerData);
+						rDispatcher.Dispatch();
+					}
+				}
 				break;
 			}
 		}

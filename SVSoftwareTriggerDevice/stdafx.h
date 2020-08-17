@@ -65,7 +65,6 @@
 #include <set>				//Used by static library
 #include <string>
 #include <tchar.h>			//Used by static library
-#include <thread>
 #include <unordered_map>
 #include <vector>
 #pragma endregion Precompiled Headers

@@ -53,18 +53,6 @@ TriggerDebugData g_TDebugData[MaxDebugData];
 long g_CallbackCount = 0;
 #endif
 
-void triggerDispatcher(SvTh::IntVariantMap&& triggerData, SvTh::DispatcherVector&& dispatchVector)
-{
-	for (auto& rDispatcher : dispatchVector)
-	{
-		if (rDispatcher.m_IsStarted)
-		{
-			rDispatcher.SetData(triggerData);
-			rDispatcher.Dispatch();
-		}
-	}
-}
-
 SVLptIOImpl::SVLptIOImpl() 
 {
 	m_bUseSingleTrigger = false;
@@ -1591,9 +1579,14 @@ void SVLptIOImpl::HandleIRQ()
 				///Trigger channel 0 based
 				triggerData[SvTh::TriggerDataEnum::TriggerChannel] = _variant_t(ChannelAndDispatcherList.first - 1);
 					
-				SvTh::DispatcherVector dispatchVector = ChannelAndDispatcherList.second;
-				auto dispatchThread = std::thread(triggerDispatcher, std::move(triggerData), std::move(dispatchVector));
-				dispatchThread.detach();
+				for (auto& rDispatcher : ChannelAndDispatcherList.second)
+				{
+					if (rDispatcher.m_IsStarted)
+					{
+						rDispatcher.SetData(triggerData);
+						rDispatcher.Dispatch();
+					}
+				}
 			}
 		}
 		m_lLastTriggerState = StatusReg;

@@ -36,18 +36,6 @@ void CALLBACK TimerProc(UINT timerID, UINT , DWORD_PTR pData, DWORD_PTR , DWORD_
 	}
 }
 
-void triggerDispatcher(SvTh::IntVariantMap&& triggerData, SvTh::DispatcherVector&& dispatchVector)
-{
-	for (auto& rDispatcher : dispatchVector)
-	{
-		if (rDispatcher.m_IsStarted)
-		{
-			rDispatcher.SetData(triggerData);
-			rDispatcher.Dispatch();
-		}
-	}
-}
-
 HRESULT SVSoftwareTriggerDevice::Initialize(bool init)
 {
 	HRESULT hr = S_OK;
@@ -201,9 +189,14 @@ void SVSoftwareTriggerDevice::dispatchTrigger(unsigned long triggerIndex)
 			//Trigger index is one based
 			if (triggerIndex == ChannelAndDispatcherList.first)
 			{
-				SvTh::DispatcherVector dispatchVector = ChannelAndDispatcherList.second;
-				auto dispatchThread = std::thread(triggerDispatcher, std::move(triggerData), std::move(dispatchVector));
-				dispatchThread.detach();
+				for (auto& rDispatcher : ChannelAndDispatcherList.second)
+				{
+					if (rDispatcher.m_IsStarted)
+					{
+						rDispatcher.SetData(triggerData);
+						rDispatcher.Dispatch();
+					}
+				}
 				break;
 			}
 		}
