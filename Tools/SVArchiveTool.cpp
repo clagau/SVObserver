@@ -1266,7 +1266,7 @@ bool SVArchiveTool::updateCurrentImagePathRoot(bool displayMessageOnInvalidKeywo
 		}
 	}
 
-	return !m_currentImagePathRoot.empty();
+	return true;
 }
 
 

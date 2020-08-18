@@ -189,6 +189,11 @@ bool SVTADlgArchiveImagePage::QueryAllowExit()
 
 void SVTADlgArchiveImagePage::updateImageFilePathRootElements()
 {
+	if (false == ::IsWindow(m_hWnd))
+	{
+		return; //this avoids this function from having undefined effects if it is called from SVTADlgArchiveResultsPage::QueryAllowExit() 
+				//before the SVTADlgArchiveImagePage window is created
+	}
 	m_ImageFilepathroot1WidgetHelper.EditboxToTextValue();
 	m_ImageFilepathroot2WidgetHelper.EditboxToTextValue();
 	m_ImageFilepathroot3WidgetHelper.EditboxToTextValue();
@@ -247,7 +252,7 @@ bool SVTADlgArchiveImagePage::validateImageFilepathRoot()
 	athImagePath.Init(fullImageFolder);
 
 	//check for valid drive for image archive
-	return ValidateDrive(fullImageFolder.c_str()) || fullImageFolder.empty();
+	return ValidateDrive(fullImageFolder.c_str());
 }
 
 
@@ -869,5 +874,3 @@ void SVTADlgArchiveImagePage::AlternativeImagePathController::TextValuesToEditbo
 		uiInfo.TextValueToEditbox();
 	}
 }
-
-
