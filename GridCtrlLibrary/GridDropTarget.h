@@ -32,7 +32,7 @@
 // The author accepts no liability for any damage/loss of business that
 // this product may cause.
 //
-// For use with CGridCtrl v2.10+
+// For use with GridCtrl v2.10+
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -42,22 +42,22 @@
 
 namespace SvGcl
 {
-	class CGridCtrl;
+	class GridCtrl;
 
-	class CGridDropTarget : public COleDropTarget
+	class GridDropTarget : public COleDropTarget
 	{
 	public:
-		CGridDropTarget();
-		virtual ~CGridDropTarget();
+		GridDropTarget();
+		virtual ~GridDropTarget();
 
 	// Attributes
 	public:
-		CGridCtrl* m_pGridCtrl;
+		GridCtrl* m_pGridCtrl;
 		BOOL       m_bRegistered;
 
 	// Operations
 	public:
-		BOOL Register(CGridCtrl *pGridCtrl);
+		BOOL Register(GridCtrl *pGridCtrl);
 		virtual void Revoke();
 
 		BOOL        OnDrop(CWnd* pWnd, COleDataObject* pDataObject, DROPEFFECT dropEffect, CPoint point);
@@ -68,14 +68,14 @@ namespace SvGcl
 
 	// Overrides
 		// ClassWizard generated virtual function overrides
-		//{{AFX_VIRTUAL(CGridDropTarget)
+		//{{AFX_VIRTUAL(GridDropTarget)
 		//}}AFX_VIRTUAL
 
 	// Implementation
 	protected:
 
 		// Generated message map functions
-		//{{AFX_MSG(CGridDropTarget)
+		//{{AFX_MSG(GridDropTarget)
 		//}}AFX_MSG
 
 		DECLARE_MESSAGE_MAP()

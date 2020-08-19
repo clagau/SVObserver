@@ -18,7 +18,7 @@
 // Copyright (c) 1998-2002. All Rights Reserved.
 //
 // The code contained in this file is based on the original
-// CInPlaceEdit from http://www.codeguru.com/listview/edit_subitems.shtml
+// InPlaceEdit from http://www.codeguru.com/listview/edit_subitems.shtml
 //
 // This code may be used in compiled form in any way you desire. This
 // file may be redistributed unmodified by any means PROVIDING it is 
@@ -32,7 +32,7 @@
 // The author accepts no liability for any damage/loss of business that
 // this product may cause.
 //
-// For use with CGridCtrl v2.10+
+// For use with GridCtrl v2.10+
 //
 // History:
 //         10 May 1998  Uses GVN_ notifications instead of LVN_,
@@ -74,9 +74,9 @@ static char THIS_FILE[] = __FILE__;
 namespace SvGcl
 {
 	/////////////////////////////////////////////////////////////////////////////
-	// CInPlaceEdit
+	// InPlaceEdit
 
-	CInPlaceEdit::CInPlaceEdit(CWnd* pParent, CRect& rect, DWORD dwStyle, UINT nID,
+	InPlaceEdit::InPlaceEdit(CWnd* pParent, CRect& rect, DWORD dwStyle, UINT nID,
 							   int nRow, int nColumn, CString sInitText, 
 							   UINT nFirstChar)
 	{
@@ -123,12 +123,12 @@ namespace SvGcl
 			PostMessage(WM_IME_CHAR, nFirstChar);
 	}
 
-	CInPlaceEdit::~CInPlaceEdit()
+	InPlaceEdit::~InPlaceEdit()
 	{
 	}
 
-	BEGIN_MESSAGE_MAP(CInPlaceEdit, CEdit)
-		//{{AFX_MSG_MAP(CInPlaceEdit)
+	BEGIN_MESSAGE_MAP(InPlaceEdit, CEdit)
+		//{{AFX_MSG_MAP(InPlaceEdit)
 		ON_WM_KILLFOCUS()
 		ON_WM_CHAR()
 		ON_WM_KEYDOWN()
@@ -138,12 +138,12 @@ namespace SvGcl
 	END_MESSAGE_MAP()
 
 	////////////////////////////////////////////////////////////////////////////
-	// CInPlaceEdit message handlers
+	// InPlaceEdit message handlers
 
 	// If an arrow key (or associated) is pressed, then exit if
 	//  a) The Ctrl key was down, or
 	//  b) m_bExitOnArrows == TRUE
-	void CInPlaceEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) 
+	void InPlaceEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) 
 	{
 		if ((nChar == VK_PRIOR || nChar == VK_NEXT ||
 			nChar == VK_DOWN  || nChar == VK_UP   ||
@@ -159,13 +159,13 @@ namespace SvGcl
 	}
 
 	// As soon as this edit loses focus, kill it.
-	void CInPlaceEdit::OnKillFocus(CWnd* pNewWnd)
+	void InPlaceEdit::OnKillFocus(CWnd* pNewWnd)
 	{
 		CEdit::OnKillFocus(pNewWnd);
 		EndEdit();
 	}
 
-	void CInPlaceEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
+	void InPlaceEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 	{
 		if (nChar == VK_TAB || nChar == VK_RETURN)
 		{
@@ -213,16 +213,16 @@ namespace SvGcl
 		}
 	}
 
-	UINT CInPlaceEdit::OnGetDlgCode() 
+	UINT InPlaceEdit::OnGetDlgCode() 
 	{
 		return DLGC_WANTALLKEYS;
 	}
 
 	////////////////////////////////////////////////////////////////////////////
-	// CInPlaceEdit overrides
+	// InPlaceEdit overrides
 
 	// Stoopid win95 accelerator key problem workaround - Matt Weagle.
-	BOOL CInPlaceEdit::PreTranslateMessage(MSG* pMsg) 
+	BOOL InPlaceEdit::PreTranslateMessage(MSG* pMsg) 
 	{
 		// Catch the Alt key so we don't choke if focus is going to an owner drawn button
 		if (pMsg->message == WM_SYSCHAR)
@@ -232,7 +232,7 @@ namespace SvGcl
 	}
 
 	// Auto delete
-	void CInPlaceEdit::PostNcDestroy() 
+	void InPlaceEdit::PostNcDestroy() 
 	{
 		CEdit::PostNcDestroy();
     
@@ -240,9 +240,9 @@ namespace SvGcl
 	}
 
 	////////////////////////////////////////////////////////////////////////////
-	// CInPlaceEdit implementation
+	// InPlaceEdit implementation
 
-	void CInPlaceEdit::EndEdit()
+	void InPlaceEdit::EndEdit()
 	{
 		CString str;
 

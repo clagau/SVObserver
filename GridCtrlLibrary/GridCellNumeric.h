@@ -12,7 +12,7 @@
 //* .Check In Date   : $Date:   24 Oct 2014 10:32:32  $
 //******************************************************************************
 
-// GridCellNumeric.h: interface for the CGridCellNumeric class.
+// GridCellNumeric.h: interface for the GridCellNumeric class.
 //
 // Written by Andrew Truckle [ajtruckle@wsatkins.co.uk]
 //
@@ -25,9 +25,9 @@
 
 namespace SvGcl
 {
-	class CGridCellNumeric : public CGridCell  
+	class GridCellNumeric : public GridCell  
 	{
-		DECLARE_DYNCREATE(CGridCellNumeric)
+		DECLARE_DYNCREATE(GridCellNumeric)
 
 	public:
 		virtual BOOL Edit(int nRow, int nCol, CRect rect, CPoint point, UINT nID, UINT nChar) override;

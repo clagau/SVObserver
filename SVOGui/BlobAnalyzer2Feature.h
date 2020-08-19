@@ -96,7 +96,7 @@ namespace SvOg
 		const uint32_t m_InspectionID;
 		const uint32_t m_TaskObjectID;
 
-		SvGcl::CGridCtrl m_Grid;						//The grid displaying the name and the formulas
+		SvGcl::GridCtrl m_Grid;						//The grid displaying the name and the formulas
 		google::protobuf::RepeatedPtrField< SvPb::FeatureData > m_featureData;
 
 		ObjectSelectorController m_objectSelector;

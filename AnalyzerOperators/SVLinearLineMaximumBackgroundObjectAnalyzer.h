@@ -2,7 +2,7 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVLinearMaximumBackgroundObjectLineAnalyzerClass
+//* .Module Name     : SVLinearMaximumBackgroundObjectLineAnalyzer
 //* .File Name       : $Workfile:   SVLinearLineMaximumBackgroundObjectAnalyzer.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $
@@ -18,13 +18,13 @@
 namespace SvAo
 {
 
-class SVLinearMaximumBackgroundObjectLineAnalyzerClass : public SVLinearAnalyzerClass
+class SVLinearMaximumBackgroundObjectLineAnalyzer : public SVLinearAnalyzerClass
 {
-	SV_DECLARE_CLASS( SVLinearMaximumBackgroundObjectLineAnalyzerClass );
+	SV_DECLARE_CLASS( SVLinearMaximumBackgroundObjectLineAnalyzer );
 
 public:
-	SVLinearMaximumBackgroundObjectLineAnalyzerClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVLINEARMAXIMUMBACKGROUNDOBJECTLINEANALYZER );
-	virtual ~SVLinearMaximumBackgroundObjectLineAnalyzerClass();
+	SVLinearMaximumBackgroundObjectLineAnalyzer( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVLINEARMAXIMUMBACKGROUNDOBJECTLINEANALYZER );
+	virtual ~SVLinearMaximumBackgroundObjectLineAnalyzer();
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;

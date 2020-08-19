@@ -2,7 +2,7 @@
 // * COPYRIGHT (c) 2005 by SVResearch, Harrisburg
 // * All Rights Reserved
 // ******************************************************************************
-// * .Module Name     : SVLinearEdgePositionLineAnalyzerClass
+// * .Module Name     : SVLinearEdgePositionLineAnalyzer
 // * .File Name       : $Workfile:   SVLinearLineEdgePositionAnalyzer.h  $
 // * ----------------------------------------------------------------------------
 // * .Current Version : $Revision:   1.0  $
@@ -20,13 +20,13 @@
 namespace SvAo
 {
 
-class SVLinearEdgePositionLineAnalyzerClass : public SVLinearAnalyzerClass
+class SVLinearEdgePositionLineAnalyzer : public SVLinearAnalyzerClass
 {
-	SV_DECLARE_CLASS( SVLinearEdgePositionLineAnalyzerClass );
+	SV_DECLARE_CLASS( SVLinearEdgePositionLineAnalyzer );
 
 public:
-	SVLinearEdgePositionLineAnalyzerClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVLINEAREDGEPOSITIONLINEANALYZER );
-	virtual ~SVLinearEdgePositionLineAnalyzerClass();
+	SVLinearEdgePositionLineAnalyzer( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVLINEAREDGEPOSITIONLINEANALYZER );
+	virtual ~SVLinearEdgePositionLineAnalyzer();
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;

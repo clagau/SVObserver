@@ -29,21 +29,21 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVPixelAnalyzerClass, SvPb::PixelAnalyzerClassId);
+SV_IMPLEMENT_CLASS( SVPixelAnalyzer, SvPb::PixelAnalyzerClassId);
 
-SVPixelAnalyzerClass::SVPixelAnalyzerClass( LPCSTR ObjectName )
+SVPixelAnalyzer::SVPixelAnalyzer( LPCSTR ObjectName )
 : SVImageAnalyzerClass( ObjectName )
 {
 	init();
 }
 
-SVPixelAnalyzerClass::SVPixelAnalyzerClass(SVObjectClass* POwner, int StringResourceID )
+SVPixelAnalyzer::SVPixelAnalyzer(SVObjectClass* POwner, int StringResourceID )
 : SVImageAnalyzerClass( POwner, StringResourceID ) 
 {
 	init();
 }
 
-void SVPixelAnalyzerClass::init()
+void SVPixelAnalyzer::init()
 {
 	// Identify our output type
 	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVPixelAnalyzerObjectType;
@@ -77,12 +77,12 @@ void SVPixelAnalyzerClass::init()
 	}
 }
 
-SVPixelAnalyzerClass::~SVPixelAnalyzerClass()
+SVPixelAnalyzer::~SVPixelAnalyzer()
 {
-	SVPixelAnalyzerClass::CloseObject();
+	SVPixelAnalyzer::CloseObject();
 }
 
-bool SVPixelAnalyzerClass::CloseObject()
+bool SVPixelAnalyzer::CloseObject()
 {
 	SVMatroxImageInterface::Destroy(m_contextID);
 	SVMatroxImageInterface::Destroy(m_ResultID);
@@ -90,7 +90,7 @@ bool SVPixelAnalyzerClass::CloseObject()
 	return SVImageAnalyzerClass::CloseObject();
 }
 
-bool SVPixelAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
+bool SVPixelAnalyzer::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
 	bool isError(false);
     	
@@ -144,7 +144,7 @@ bool SVPixelAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rCreat
 	return m_isCreated;
 }
 
-bool SVPixelAnalyzerClass::onRun(SVRunStatusClass &rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool SVPixelAnalyzer::onRun(SVRunStatusClass &rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result{true};
 	while (1)
@@ -188,7 +188,7 @@ bool SVPixelAnalyzerClass::onRun(SVRunStatusClass &rRunStatus, SvStl::MessageCon
 	return Result;
 }
 
-bool SVPixelAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
+bool SVPixelAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 
@@ -210,7 +210,7 @@ bool SVPixelAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMess
 	return Result;
 }
 
-void SVPixelAnalyzerClass::addParameterForMonitorList(SvStl::MessageContainerVector& rMessages, std::back_insert_iterator<SvOi::ParametersForML> inserter) const
+void SVPixelAnalyzer::addParameterForMonitorList(SvStl::MessageContainerVector& rMessages, std::back_insert_iterator<SvOi::ParametersForML> inserter) const
 {
 	bool isNoError = true;
 

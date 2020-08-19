@@ -83,7 +83,7 @@ namespace SvOg
 
 		if (0 == pItem->iColumn)
 		{
-			auto* pCell = dynamic_cast<SvGcl::CGridCellCheck*>(m_Grid.GetCell(pItem->iRow, 0));
+			auto* pCell = dynamic_cast<SvGcl::GridCellCheck*>(m_Grid.GetCell(pItem->iRow, 0));
 			if (nullptr != pCell)
 			{
 				bool isActive = (TRUE == pCell->GetCheck());
@@ -143,8 +143,8 @@ namespace SvOg
 			if (!m_featureData[i].m_isNecessary)
 			{
 				using namespace SvGcl;
-				m_Grid.SetCellType(row, 0, RUNTIME_CLASS(CGridCellCheck));
-				auto* pCell = dynamic_cast<SvGcl::CGridCellCheck*>(m_Grid.GetCell(row, 0));
+				m_Grid.SetCellType(row, 0, RUNTIME_CLASS(GridCellCheck));
+				auto* pCell = dynamic_cast<SvGcl::GridCellCheck*>(m_Grid.GetCell(row, 0));
 				if (nullptr != pCell)
 				{
 					pCell->SetCheck(m_featureData[i].m_isActive);

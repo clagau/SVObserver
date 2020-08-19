@@ -75,7 +75,7 @@ namespace SvOg
 
 		int m_numberOfAcitve = 0;
 
-		SvGcl::CGridCtrl m_Grid;						//The grid displaying the name and the formulas
+		SvGcl::GridCtrl m_Grid;						//The grid displaying the name and the formulas
 		CStatic m_numberLabel;
 		SvUl::NameObjectIdList m_gridList;
 #pragma endregion Member Variables

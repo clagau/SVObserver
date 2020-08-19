@@ -2,7 +2,7 @@
 //* COPYRIGHT (c) 2005 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVLinearPixelCountingLineAnalyzerClass
+//* .Module Name     : SVLinearPixelCountingLineAnalyzer
 //* .File Name       : $Workfile:   SVLinearLinePixelCountingAnalyzer.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $
@@ -18,13 +18,13 @@
 namespace SvAo
 {
 
-class SVLinearPixelCountingLineAnalyzerClass : public SVLinearAnalyzerClass
+class SVLinearPixelCountingLineAnalyzer : public SVLinearAnalyzerClass
 {
-	SV_DECLARE_CLASS( SVLinearPixelCountingLineAnalyzerClass );
+	SV_DECLARE_CLASS( SVLinearPixelCountingLineAnalyzer );
 
 public:
-	SVLinearPixelCountingLineAnalyzerClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVLINEARPIXELCOUNTINGLINEANALYZER );
-	virtual ~SVLinearPixelCountingLineAnalyzerClass();
+	SVLinearPixelCountingLineAnalyzer( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVLINEARPIXELCOUNTINGLINEANALYZER );
+	virtual ~SVLinearPixelCountingLineAnalyzer();
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 	

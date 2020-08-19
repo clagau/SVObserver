@@ -2,7 +2,7 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVLinearMaximumObjectLineAnalyzerClass
+//* .Module Name     : SVLinearMaximumObjectLineAnalyzer
 //* .File Name       : $Workfile:   SVLinearLineMaximumObjectAnalyzer.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $
@@ -19,13 +19,13 @@
 namespace SvAo
 {
 
-class SVLinearMaximumObjectLineAnalyzerClass : public SVLinearAnalyzerClass
+class SVLinearMaximumObjectLineAnalyzer : public SVLinearAnalyzerClass
 {
-	SV_DECLARE_CLASS( SVLinearMaximumObjectLineAnalyzerClass );
+	SV_DECLARE_CLASS( SVLinearMaximumObjectLineAnalyzer );
 
 public:
-	SVLinearMaximumObjectLineAnalyzerClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVLINEARMAXIMUMOBJECTLINEANALYZER );
-	virtual ~SVLinearMaximumObjectLineAnalyzerClass();
+	SVLinearMaximumObjectLineAnalyzer( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVLINEARMAXIMUMOBJECTLINEANALYZER );
+	virtual ~SVLinearMaximumObjectLineAnalyzer();
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;

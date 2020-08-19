@@ -144,7 +144,7 @@ namespace SvOsl
 
 		if (CheckColumn == pItem->iColumn)
 		{
-			SvGcl::CGridCellCheck* cell = dynamic_cast<SvGcl::CGridCellCheck*>(m_Grid.GetCell(pItem->iRow, CheckColumn));
+			SvGcl::GridCellCheck* cell = dynamic_cast<SvGcl::GridCellCheck*>(m_Grid.GetCell(pItem->iRow, CheckColumn));
 			if (nullptr != cell)
 			{
 				std::string* pLocation = reinterpret_cast<std::string*> ( m_Grid.GetItemData(pItem->iRow, LocationColumn) );
@@ -206,7 +206,7 @@ namespace SvOsl
 		//First line is header, start with second line
 		for (int i=1; i < count; i++)
 		{
-			SvGcl::CGridCellCheck* cell = dynamic_cast<SvGcl::CGridCellCheck*>(m_Grid.GetCell(i, CheckColumn));
+			SvGcl::GridCellCheck* cell = dynamic_cast<SvGcl::GridCellCheck*>(m_Grid.GetCell(i, CheckColumn));
 			if (nullptr != cell)
 			{
 				std::string* pLocation = reinterpret_cast<std::string*> ( m_Grid.GetItemData(i, LocationColumn) );
@@ -307,8 +307,8 @@ namespace SvOsl
 					m_Grid.SetItemData(i, LocationColumn, reinterpret_cast<LPARAM> (&Iter->first) );
 					//We need to use the using here because the macro RUNTIME_CLASS cannot handle namespaces
 					using namespace SvGcl;
-					m_Grid.SetCellType(i, CheckColumn, RUNTIME_CLASS( CGridCellCheck ));
-					SvGcl::CGridCellCheck* cell = dynamic_cast<SvGcl::CGridCellCheck*>(m_Grid.GetCell(i, CheckColumn));
+					m_Grid.SetCellType(i, CheckColumn, RUNTIME_CLASS( GridCellCheck ));
+					SvGcl::GridCellCheck* cell = dynamic_cast<SvGcl::GridCellCheck*>(m_Grid.GetCell(i, CheckColumn));
 					if (nullptr != cell)
 					{
 						if (SvCl::ObjectSelectorItem::CheckedEnabled == Iter->second->m_CheckedState)
@@ -369,7 +369,7 @@ namespace SvOsl
 						m_rTreeContainer.clearItem( m_CheckedLocation );
 
 						//remove selection in grid
-						SvGcl::CGridCellCheck* cellOld = dynamic_cast<SvGcl::CGridCellCheck*>(m_Grid.GetCell(m_CheckedRow, CheckColumn));
+						SvGcl::GridCellCheck* cellOld = dynamic_cast<SvGcl::GridCellCheck*>(m_Grid.GetCell(m_CheckedRow, CheckColumn));
 						if (nullptr != cellOld)
 						{
 							cellOld->SetCheck(FALSE);

@@ -14,7 +14,7 @@
 
 ///////////////////////////////////////////////////////////////////////////
 //
-// GridCellDateTime.cpp: implementation of the CGridCellDateTime class.
+// GridCellDateTime.cpp: implementation of the GridCellDateTime class.
 //
 // Provides the implementation for a datetime picker cell type of the
 // grid control.
@@ -23,7 +23,7 @@
 // Modified:
 //    31 May 2001  Fixed m_cTime bug (Chris Maunder)
 //
-// For use with CGridCtrl v2.22+
+// For use with GridCtrl v2.22+
 //
 ///////////////////////////////////////////////////////////////////////////
 
@@ -45,61 +45,61 @@ static char THIS_FILE[] = __FILE__;
 namespace SvGcl
 {
 	//////////////////////////////////////////////////////////////////////
-	// CGridCellDateTime
+	// GridCellDateTime
 
-	IMPLEMENT_DYNCREATE(CGridCellDateTime, CGridCell)
+	IMPLEMENT_DYNCREATE(GridCellDateTime, GridCell)
 
 	//////////////////////////////////////////////////////////////////////
 	// Construction/Destruction
 	//////////////////////////////////////////////////////////////////////
 
-	CGridCellDateTime::CGridCellDateTime() : CGridCell()
+	GridCellDateTime::GridCellDateTime() : GridCell()
 	{
 		m_dwStyle = 0;
 		m_cTime   = CTime::GetCurrentTime();
 	}
 
-	CGridCellDateTime::CGridCellDateTime(DWORD dwStyle) : CGridCell()
+	GridCellDateTime::GridCellDateTime(DWORD dwStyle) : GridCell()
 	{
 		Init(dwStyle);
 	}
 
-	CGridCellDateTime::~CGridCellDateTime()
+	GridCellDateTime::~GridCellDateTime()
 	{
 	}
 
-	CSize CGridCellDateTime::GetCellExtent(CDC* pDC)
+	CSize GridCellDateTime::GetCellExtent(CDC* pDC)
 	{    
 		CSize sizeScroll (GetSystemMetrics(SM_CXVSCROLL), GetSystemMetrics(SM_CYHSCROLL));	
-		CSize sizeCell (CGridCell::GetCellExtent(pDC));	
+		CSize sizeCell (GridCell::GetCellExtent(pDC));	
 		sizeCell.cx += sizeScroll.cx;	
 		sizeCell.cy = std::max<LONG>(sizeCell.cy,sizeScroll.cy);	
 		return sizeCell;
 	}
 
-	BOOL CGridCellDateTime::Edit(int nRow, int nCol, CRect rect, CPoint /* point */, 
+	BOOL GridCellDateTime::Edit(int nRow, int nCol, CRect rect, CPoint /* point */, 
 								 UINT nID, UINT nChar)
 	{
 		m_bEditing = TRUE;
 
-		// CInPlaceDateTime auto-deletes itself
-		m_pEditWnd = new CInPlaceDateTime(GetGrid(), rect,
+		// InPlaceDateTime auto-deletes itself
+		m_pEditWnd = new InPlaceDateTime(GetGrid(), rect,
 			m_dwStyle|DTS_UPDOWN, nID, nRow, nCol, 
 			GetTextClr(), GetBackClr(), GetTime(), nChar);
 		return TRUE;
 	}
 
-	CWnd* CGridCellDateTime::GetEditWnd() const
+	CWnd* GridCellDateTime::GetEditWnd() const
 	{
 		return m_pEditWnd;
 	}
 
-	void CGridCellDateTime::EndEdit()
+	void GridCellDateTime::EndEdit()
 	{
-		if (m_pEditWnd) ((CInPlaceDateTime*)m_pEditWnd)->EndEdit();
+		if (m_pEditWnd) ((InPlaceDateTime*)m_pEditWnd)->EndEdit();
 	}
 
-	void CGridCellDateTime::Init(DWORD dwStyle)
+	void GridCellDateTime::Init(DWORD dwStyle)
 	{
 		m_dwStyle = dwStyle;
 
@@ -113,7 +113,7 @@ namespace SvGcl
 	}
 
 	// Should be changed to use locale settings
-	void CGridCellDateTime::SetTime(CTime time)
+	void GridCellDateTime::SetTime(CTime time)
 	{
 		m_cTime = time;
 
@@ -145,9 +145,9 @@ namespace SvGcl
 	}
 
 	/////////////////////////////////////////////////////////////////////////////
-	// CInPlaceDateTime
+	// InPlaceDateTime
 
-	CInPlaceDateTime::CInPlaceDateTime(CWnd* pParent, CRect& rect, DWORD dwStyle, UINT nID,
+	InPlaceDateTime::InPlaceDateTime(CWnd* pParent, CRect& rect, DWORD dwStyle, UINT nID,
 									   int nRow, int nColumn, 
 									   COLORREF crFore, COLORREF crBack,
 									   CTime* pcTime,
@@ -190,11 +190,11 @@ namespace SvGcl
 		SendMessage(WM_CHAR, nFirstChar);
 	}
 
-	CInPlaceDateTime::~CInPlaceDateTime()
+	InPlaceDateTime::~InPlaceDateTime()
 	{
 	}
 
-	void CInPlaceDateTime::EndEdit()
+	void InPlaceDateTime::EndEdit()
 	{
 		CString str;
 		if (::IsWindow(m_hWnd)) 
@@ -227,14 +227,14 @@ namespace SvGcl
 		}
 	}
 
-	void CInPlaceDateTime::PostNcDestroy() 
+	void InPlaceDateTime::PostNcDestroy() 
 	{
 		CDateTimeCtrl::PostNcDestroy();
 		delete this;
 	}
 
-	BEGIN_MESSAGE_MAP(CInPlaceDateTime, CDateTimeCtrl)
-		//{{AFX_MSG_MAP(CInPlaceDateTime)
+	BEGIN_MESSAGE_MAP(InPlaceDateTime, CDateTimeCtrl)
+		//{{AFX_MSG_MAP(InPlaceDateTime)
 		ON_WM_KILLFOCUS()
 		ON_WM_KEYDOWN()
 		ON_WM_KEYUP()
@@ -244,9 +244,9 @@ namespace SvGcl
 
 
 	/////////////////////////////////////////////////////////////////////////////
-	// CInPlaceDateTime message handlers
+	// InPlaceDateTime message handlers
 
-	void CInPlaceDateTime::OnKillFocus(CWnd* pNewWnd) 
+	void InPlaceDateTime::OnKillFocus(CWnd* pNewWnd) 
 	{
 		CDateTimeCtrl::OnKillFocus(pNewWnd);
 
@@ -256,12 +256,12 @@ namespace SvGcl
 		EndEdit();
 	}
 
-	UINT CInPlaceDateTime::OnGetDlgCode() 
+	UINT InPlaceDateTime::OnGetDlgCode() 
 	{
 		return DLGC_WANTALLKEYS;
 	}
 
-	void CInPlaceDateTime::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) 
+	void InPlaceDateTime::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) 
 	{
 		if (( nChar == VK_PRIOR || nChar == VK_NEXT ||
 			nChar == VK_DOWN  || nChar == VK_UP   ||
@@ -276,7 +276,7 @@ namespace SvGcl
 		CDateTimeCtrl::OnKeyDown(nChar, nRepCnt, nFlags);
 	}
 
-	void CInPlaceDateTime::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags) 
+	void InPlaceDateTime::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags) 
 	{
 		if (nChar == VK_TAB || nChar == VK_RETURN || nChar == VK_ESCAPE)
 		{

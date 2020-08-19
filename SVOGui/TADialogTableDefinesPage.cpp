@@ -103,7 +103,7 @@ BOOL TADialogTableDefinesPage::OnKillActive()
 
 void TADialogTableDefinesPage::OnBnClickedButtonRemove()
 {
-	SvGcl::CCellRange Selection = m_Grid.GetSelectedCellRange();
+	SvGcl::CellRange Selection = m_Grid.GetSelectedCellRange();
 	for (int i = Selection.GetMinRow(); i <= Selection.GetMaxRow() && i <= m_gridList.size(); i++)
 	{
 		for (int j = Selection.GetMinCol(); j <= Selection.GetMaxCol(); j++)
@@ -132,7 +132,7 @@ void TADialogTableDefinesPage::OnBnClickedButtonRemove()
 
 void TADialogTableDefinesPage::OnBnClickedMoveUp()
 {
-	SvGcl::CCellRange Selection = m_Grid.GetSelectedCellRange();
+	SvGcl::CellRange Selection = m_Grid.GetSelectedCellRange();
 	if (Selection.GetMinRow() == Selection.GetMaxRow() && 1 < Selection.GetMinRow())
 	{
 		uint32_t moveId = m_gridList[Selection.GetMinRow() - 1].second;
@@ -148,7 +148,7 @@ void TADialogTableDefinesPage::OnBnClickedMoveUp()
 
 void TADialogTableDefinesPage::OnBnClickedMoveDown()
 {
-	SvGcl::CCellRange Selection = m_Grid.GetSelectedCellRange();
+	SvGcl::CellRange Selection = m_Grid.GetSelectedCellRange();
 	if (Selection.GetMinRow() == Selection.GetMaxRow() && 0 < Selection.GetMinRow() && Selection.GetMinRow() + 1 < m_Grid.GetRowCount())
 	{
 		uint32_t moveIid = m_gridList[Selection.GetMinRow() - 1].second;
@@ -170,7 +170,7 @@ void TADialogTableDefinesPage::OnBnClickedMoveDown()
 void TADialogTableDefinesPage::OnBnClickedButtonAdd()
 {
 	uint32_t addPreId = SvDef::InvalidObjectId;
-	SvGcl::CCellRange Selection = m_Grid.GetSelectedCellRange();
+	SvGcl::CellRange Selection = m_Grid.GetSelectedCellRange();
 	if (Selection.GetMinRow() == Selection.GetMaxRow() && 0 < Selection.GetMinRow() && m_gridList.size() >= Selection.GetMaxRow())
 	{
 		addPreId = m_gridList[Selection.GetMinRow() - 1].second;
@@ -463,7 +463,7 @@ void TADialogTableDefinesPage::MoveColumn(uint32_t moveId, uint32_t preId)
 
 void TADialogTableDefinesPage::UpdateEnableButtons()
 {
-	SvGcl::CCellRange Selection = m_Grid.GetSelectedCellRange();
+	SvGcl::CellRange Selection = m_Grid.GetSelectedCellRange();
 	bool bMoveUpEnable = false;
 	bool bMoveDownEnable = false;
 	if (Selection.GetMinRow() == Selection.GetMaxRow())

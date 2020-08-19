@@ -34,11 +34,11 @@
 // The author accepts no liability for any damage/loss of business that
 // this product may cause.
 //
-// For use with CGridCtrl v2.20+
+// For use with GridCtrl v2.20+
 //
 // History:
 // Eric Woodruff - 20 Feb 2000 - Added PrintCell() plus other minor changes
-// Ken Bertelson - 12 Apr 2000 - Split CGridCell into CGridCell and CGridCellBase
+// Ken Bertelson - 12 Apr 2000 - Split GridCell into GridCell and GridCellBase
 // <kenbertelson@hotmail.com>
 // C Maunder     - 17 Jun 2000 - Font handling optimsed, Added CGridDefaultCell
 //
@@ -61,19 +61,19 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvGcl
 {
-	IMPLEMENT_DYNCREATE(CGridCell, CGridCellBase)
-	IMPLEMENT_DYNCREATE(CGridDefaultCell, CGridCell)
+	IMPLEMENT_DYNCREATE(GridCell, GridCellBase)
+	IMPLEMENT_DYNCREATE(CGridDefaultCell, GridCell)
 
 	/////////////////////////////////////////////////////////////////////////////
 	// GridCell
 
-	CGridCell::CGridCell()
+	GridCell::GridCell()
 	{
 		m_plfFont = nullptr;
-		CGridCell::Reset();
+		GridCell::Reset();
 	}
 
-	CGridCell::~CGridCell()
+	GridCell::~GridCell()
 	{
 		delete m_plfFont;
 	}
@@ -81,14 +81,14 @@ namespace SvGcl
 	/////////////////////////////////////////////////////////////////////////////
 	// GridCell Attributes
 
-	void CGridCell::operator=(const CGridCell& cell)
+	void GridCell::operator=(const GridCell& cell)
 	{
-		if (this != &cell) CGridCellBase::operator=(cell);
+		if (this != &cell) GridCellBase::operator=(cell);
 	}
 
-	void CGridCell::Reset()
+	void GridCell::Reset()
 	{
-		CGridCellBase::Reset();
+		GridCellBase::Reset();
 
 		m_strText.Empty();
 		m_nImage   = -1;
@@ -106,7 +106,7 @@ namespace SvGcl
 		m_plfFont = nullptr;            // Cell font
 	}
 
-	void CGridCell::SetFont(const LOGFONT* plf)
+	void GridCell::SetFont(const LOGFONT* plf)
 	{
 		if (nullptr == plf)
 		{
@@ -122,7 +122,7 @@ namespace SvGcl
 		}
 	}
 
-	LOGFONT* CGridCell::GetFont() const
+	LOGFONT* GridCell::GetFont() const
 	{
 		if (nullptr == m_plfFont)
 		{
@@ -136,7 +136,7 @@ namespace SvGcl
 		return m_plfFont; 
 	}
 
-	CFont* CGridCell::GetFontObject() const
+	CFont* GridCell::GetFontObject() const
 	{
 		// If the default font is specified, use the default cell implementation
 		if (nullptr == m_plfFont)
@@ -156,7 +156,7 @@ namespace SvGcl
 		}
 	}
 
-	DWORD CGridCell::GetFormat() const
+	DWORD GridCell::GetFormat() const
 	{
 		if (m_nFormat == (DWORD)-1)
 		{
@@ -170,7 +170,7 @@ namespace SvGcl
 		return m_nFormat; 
 	}
 
-	UINT CGridCell::GetMargin() const           
+	UINT GridCell::GetMargin() const           
 	{
 		if (m_nMargin == (UINT)-1)
 		{
@@ -187,7 +187,7 @@ namespace SvGcl
 	/////////////////////////////////////////////////////////////////////////////
 	// GridCell Operations
 
-	BOOL CGridCell::Edit(int nRow, int nCol, CRect rect, CPoint /* point */, UINT nID, UINT nChar)
+	BOOL GridCell::Edit(int nRow, int nCol, CRect rect, CPoint /* point */, UINT nID, UINT nChar)
 	{
 		if ( m_bEditing )
 		{      
@@ -205,19 +205,19 @@ namespace SvGcl
 			m_bEditing = TRUE;
 		
 			// InPlaceEdit auto-deletes itself
-			CGridCtrl* pGrid = GetGrid();
-			m_pEditWnd = new CInPlaceEdit(pGrid, rect, dwStyle, nID, nRow, nCol, GetText(), nChar);
+			GridCtrl* pGrid = GetGrid();
+			m_pEditWnd = new InPlaceEdit(pGrid, rect, dwStyle, nID, nRow, nCol, GetText(), nChar);
 		}
 		return TRUE;
 	}
 
-	void CGridCell::EndEdit()
+	void GridCell::EndEdit()
 	{
 		if (m_pEditWnd)
-			((CInPlaceEdit*)m_pEditWnd)->EndEdit();
+			((InPlaceEdit*)m_pEditWnd)->EndEdit();
 	}
 
-	void CGridCell::OnEndEdit()
+	void GridCell::OnEndEdit()
 	{
 		m_bEditing = FALSE;
 		m_pEditWnd = nullptr;
@@ -267,7 +267,7 @@ namespace SvGcl
 		m_Font.DeleteObject();
 		m_Font.CreateFontIndirect(plf);
 
-		CGridCell::SetFont(plf);
+		GridCell::SetFont(plf);
 
 		// Get the font size and hence the default cell size
 		CDC* pDC = CDC::FromHandle(::GetDC(nullptr));

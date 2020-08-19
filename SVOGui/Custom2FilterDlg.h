@@ -166,7 +166,7 @@ namespace SvOg
 	private:
 #pragma region Member Variables
 		std::vector<long> m_KernelArray;						//List of values for the kernel
-		SvGcl::CGridCtrl m_Grid;						//The grid displaying the kernel
+		SvGcl::GridCtrl m_Grid;						//The grid displaying the kernel
 		CComboBox m_WidthCtrl;							//The kernel width control
 		CComboBox m_HeightCtrl;							//The kernel height control
 		CComboBox m_SumSelectorCtrl;					//The sum selector control

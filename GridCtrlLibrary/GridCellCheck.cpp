@@ -23,7 +23,7 @@
 // Copyright (c) 1998-2005. All Rights Reserved.
 //
 // Parts of the code contained in this file are based on the original
-// CInPlaceList from http://www.codeguru.com/listview
+// InPlaceList from http://www.codeguru.com/listview
 //
 // This code may be used in compiled form in any way you desire. This
 // file may be redistributed unmodified by any means PROVIDING it is 
@@ -37,7 +37,7 @@
 // The author accepts no liability for any damage/loss of business that
 // this product may cause.
 //
-// For use with CGridCtrl v2.22+
+// For use with GridCtrl v2.22+
 //
 // History:
 // 23 Jul 2001 - Complete rewrite
@@ -63,28 +63,28 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvGcl
 {
-	IMPLEMENT_DYNCREATE(CGridCellCheck, CGridCell)
+	IMPLEMENT_DYNCREATE(GridCellCheck, GridCell)
 
-	CGridCellCheck::CGridCellCheck() : CGridCell()
+	GridCellCheck::GridCellCheck() : GridCell()
 	{
 		m_bChecked = FALSE;
 		//m_Rect.IsRectNull();
 	}
 
-	CSize CGridCellCheck::GetCellExtent(CDC* pDC)
+	CSize GridCellCheck::GetCellExtent(CDC* pDC)
 	{
 		// Using SM_CXHSCROLL as a guide to the size of the checkbox
 		int nWidth = GetSystemMetrics(SM_CXHSCROLL) + 2*GetMargin();	
-		CSize	cellSize = CGridCell::GetCellExtent(pDC);	
+		CSize	cellSize = GridCell::GetCellExtent(pDC);	
 		cellSize.cx += nWidth;	
 		cellSize.cy = std::max<LONG> (cellSize.cy, nWidth);	
 		return  cellSize;
 	}
 
 	// i/o:  i=dims of cell rect; o=dims of text rect
-	BOOL CGridCellCheck::GetTextRect( LPRECT pRect)
+	BOOL GridCellCheck::GetTextRect( LPRECT pRect)
 	{
-		BOOL bResult = CGridCell::GetTextRect(pRect);
+		BOOL bResult = GridCell::GetTextRect(pRect);
 		if (bResult)
 		{
 			int nWidth = GetSystemMetrics(SM_CXHSCROLL) + 2*GetMargin();
@@ -96,9 +96,9 @@ namespace SvGcl
 	}
 
 	// Override draw so that when the cell is selected, a drop arrow is shown in the RHS.
-	BOOL CGridCellCheck::Draw(CDC* pDC, int nRow, int nCol, CRect rect,  BOOL bEraseBkgnd /*=TRUE*/)
+	BOOL GridCellCheck::Draw(CDC* pDC, int nRow, int nCol, CRect rect,  BOOL bEraseBkgnd /*=TRUE*/)
 	{
-		BOOL bResult = CGridCell::Draw(pDC, nRow, nCol, rect,  bEraseBkgnd);
+		BOOL bResult = GridCell::Draw(pDC, nRow, nCol, rect,  bEraseBkgnd);
 
 	#ifndef _WIN32_WCE
 		// Store the cell's dimensions for later
@@ -119,7 +119,7 @@ namespace SvGcl
 		return bResult;
 	}
 
-	void CGridCellCheck::OnClick(CPoint PointCellRelative)
+	void GridCellCheck::OnClick(CPoint PointCellRelative)
 	{
 		// PointCellRelative is relative to the topleft of the cell. Convert to client coords
 		PointCellRelative += m_Rect.TopLeft();
@@ -142,7 +142,7 @@ namespace SvGcl
 	// Operations
 	//////////////////////////////////////////////////////////////////////
 
-	BOOL CGridCellCheck::SetCheck(BOOL bChecked /*=TRUE*/)
+	BOOL GridCellCheck::SetCheck(BOOL bChecked /*=TRUE*/)
 	{
 		BOOL bTemp = m_bChecked;
 		m_bChecked = bChecked;
@@ -152,7 +152,7 @@ namespace SvGcl
 		return bTemp;
 	}
 
-	BOOL CGridCellCheck::GetCheck()
+	BOOL GridCellCheck::GetCheck()
 	{
 		return m_bChecked;
 	}
@@ -162,7 +162,7 @@ namespace SvGcl
 	//////////////////////////////////////////////////////////////////////
 
 	// Returns the dimensions and placement of the checkbox in client coords.
-	CRect CGridCellCheck::GetCheckPlacement()
+	CRect GridCellCheck::GetCheckPlacement()
 	{
 		int nWidth = GetSystemMetrics(SM_CXHSCROLL);
 		CRect place = m_Rect + CSize(GetMargin(), GetMargin());

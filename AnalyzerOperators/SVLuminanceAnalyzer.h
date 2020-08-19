@@ -2,7 +2,7 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVLuminanceAnalyzerClass
+//* .Module Name     : SVLuminanceAnalyzer
 //* .File Name       : $Workfile:   SVAnalyzerLuminance.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $
@@ -21,15 +21,15 @@
 namespace SvAo
 {
 
-class SVLuminanceAnalyzerClass : public SVImageAnalyzerClass
+class SVLuminanceAnalyzer : public SVImageAnalyzerClass
 {
-	SV_DECLARE_CLASS( SVLuminanceAnalyzerClass );
+	SV_DECLARE_CLASS( SVLuminanceAnalyzer );
 
 public:
-	explicit SVLuminanceAnalyzerClass( LPCSTR ObjectName /* = "Luminace Analyzer" */ );
-	SVLuminanceAnalyzerClass( SVObjectClass* POwner = nullptr , int StringResourceID = IDS_CLASSNAME_SVLUMINANCEANALYZER );
+	explicit SVLuminanceAnalyzer( LPCSTR ObjectName /* = "Luminace Analyzer" */ );
+	SVLuminanceAnalyzer( SVObjectClass* POwner = nullptr , int StringResourceID = IDS_CLASSNAME_SVLUMINANCEANALYZER );
 
-	virtual ~SVLuminanceAnalyzerClass();
+	virtual ~SVLuminanceAnalyzer();
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 

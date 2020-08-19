@@ -2,7 +2,7 @@
 // * COPYRIGHT (c) 2005 by SVResearch, Harrisburg
 // * All Rights Reserved
 // ******************************************************************************
-// * .Module Name     : SVLinearMaximumForegroundObjectLineAnalyzerClass
+// * .Module Name     : SVLinearMaximumForegroundObjectLineAnalyzer
 // * .File Name       : $Workfile:   SVLinearLineMaximumForegroundObjectAnalyzer.cpp  $
 // * ----------------------------------------------------------------------------
 // * .Current Version : $Revision:   1.1  $
@@ -29,9 +29,9 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVLinearMaximumForegroundObjectLineAnalyzerClass, SvPb::LinearMaximumForegroundObjectLineAnalyzerClassId);
+SV_IMPLEMENT_CLASS( SVLinearMaximumForegroundObjectLineAnalyzer, SvPb::LinearMaximumForegroundObjectLineAnalyzerClassId);
 
-SVLinearMaximumForegroundObjectLineAnalyzerClass::SVLinearMaximumForegroundObjectLineAnalyzerClass( SVObjectClass* POwner, int StringResourceID )
+SVLinearMaximumForegroundObjectLineAnalyzer::SVLinearMaximumForegroundObjectLineAnalyzer( SVObjectClass* POwner, int StringResourceID )
 										   :SVLinearAnalyzerClass( POwner, StringResourceID ) 
 {
 	m_bEnableDirection = false;
@@ -43,7 +43,7 @@ SVLinearMaximumForegroundObjectLineAnalyzerClass::SVLinearMaximumForegroundObjec
 	init();
 }
 
-void SVLinearMaximumForegroundObjectLineAnalyzerClass::init()
+void SVLinearMaximumForegroundObjectLineAnalyzer::init()
 {
 	// Identify our type
 	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVLinearMaximumForegroundObjectAnalyzerObjectType;
@@ -122,12 +122,12 @@ void SVLinearMaximumForegroundObjectLineAnalyzerClass::init()
 	addScalarResultToAvailableChildren(SvPb::LinearDistanceEdgeBEId, SvPb::SVResultDoubleObjectType, IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_B, IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_B_RESULT);
 }
 
-SVLinearMaximumForegroundObjectLineAnalyzerClass::~SVLinearMaximumForegroundObjectLineAnalyzerClass()
+SVLinearMaximumForegroundObjectLineAnalyzer::~SVLinearMaximumForegroundObjectLineAnalyzer()
 {
-	SVLinearMaximumForegroundObjectLineAnalyzerClass::CloseObject();
+	SVLinearMaximumForegroundObjectLineAnalyzer::CloseObject();
 }
 
-bool SVLinearMaximumForegroundObjectLineAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
+bool SVLinearMaximumForegroundObjectLineAnalyzer::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
 	bool bOk = SVLinearAnalyzerClass::CreateObject(rCreateStructure);
 	mdpEdgeA.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
@@ -142,12 +142,12 @@ bool SVLinearMaximumForegroundObjectLineAnalyzerClass::CreateObject( const SVObj
 	return bOk;
 }
 
-bool SVLinearMaximumForegroundObjectLineAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
+bool SVLinearMaximumForegroundObjectLineAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	return __super::ResetObject(pErrorMessages) && ValidateEdgeA(pErrorMessages) && ValidateEdgeB(pErrorMessages);
 }
 
-HRESULT SVLinearMaximumForegroundObjectLineAnalyzerClass::GetSelectedEdgeOverlays( SVExtentMultiLineStruct& rMultiLine )
+HRESULT SVLinearMaximumForegroundObjectLineAnalyzer::GetSelectedEdgeOverlays( SVExtentMultiLineStruct& rMultiLine )
 {
 	double dDistance = 0.0;
 
@@ -178,7 +178,7 @@ HRESULT SVLinearMaximumForegroundObjectLineAnalyzerClass::GetSelectedEdgeOverlay
 	return S_OK;
 }
 
-void SVLinearMaximumForegroundObjectLineAnalyzerClass::addOverlayResults(SvPb::Overlay& rOverlay, bool isVertical) const
+void SVLinearMaximumForegroundObjectLineAnalyzer::addOverlayResults(SvPb::Overlay& rOverlay, bool isVertical) const
 {
 	auto* pGroup = rOverlay.add_shapegroups();
 	pGroup->set_detaillevel(SvPb::Level1);
@@ -224,7 +224,7 @@ void SVLinearMaximumForegroundObjectLineAnalyzerClass::addOverlayResults(SvPb::O
 	}
 }
 
-bool SVLinearMaximumForegroundObjectLineAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVLinearMaximumForegroundObjectLineAnalyzer::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	std::vector<double> AEdges;
 	std::vector<double> BEdges;

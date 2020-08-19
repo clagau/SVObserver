@@ -16,15 +16,15 @@
 namespace SvAo
 {
 
-class SVPixelAnalyzerClass : public SVImageAnalyzerClass
+class SVPixelAnalyzer : public SVImageAnalyzerClass
 {
-	SV_DECLARE_CLASS( SVPixelAnalyzerClass );
+	SV_DECLARE_CLASS( SVPixelAnalyzer );
 
 public:
-	explicit SVPixelAnalyzerClass( LPCSTR ObjectName /* = "Pixel Analyzer" */ );
-	SVPixelAnalyzerClass(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVPIXELANALYZER );
+	explicit SVPixelAnalyzer( LPCSTR ObjectName /* = "Pixel Analyzer" */ );
+	SVPixelAnalyzer(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVPIXELANALYZER );
 
-	virtual ~SVPixelAnalyzerClass();
+	virtual ~SVPixelAnalyzer();
 	virtual bool CloseObject() override;
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;

@@ -2,7 +2,7 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVHistogramAnalyzerClass
+//* .Module Name     : SVHistogramAnalyzer
 //* .File Name       : $Workfile:   SVHistogramAnalyzer.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $
@@ -22,9 +22,9 @@
 namespace SvAo
 {
 
-class SVHistogramAnalyzerClass : public SVImageAnalyzerClass
+class SVHistogramAnalyzer : public SVImageAnalyzerClass
 {
-	SV_DECLARE_CLASS( SVHistogramAnalyzerClass );
+	SV_DECLARE_CLASS( SVHistogramAnalyzer );
 
 	friend class SVSetupDialogManager;
 
@@ -32,8 +32,8 @@ class SVHistogramAnalyzerClass : public SVImageAnalyzerClass
 // Constructor(s):
 //******************************************************************************
 public:
-	explicit SVHistogramAnalyzerClass( LPCSTR ObjectName /* = "Histogram Analyzer" */ );
-	SVHistogramAnalyzerClass( SVObjectClass* POwner = nullptr , int StringResourceID = IDS_CLASSNAME_SVHISTOGRAMANALYZER );
+	explicit SVHistogramAnalyzer( LPCSTR ObjectName /* = "Histogram Analyzer" */ );
+	SVHistogramAnalyzer( SVObjectClass* POwner = nullptr , int StringResourceID = IDS_CLASSNAME_SVHISTOGRAMANALYZER );
 
 public:
    long             msvlHistValueArraySize;
@@ -65,7 +65,7 @@ public:
 	SvVol::SVBoolValueObjectClass		msvAccumulateCounts;
 	SvVol::SVBoolValueObjectClass		msvDynamicHeight;
 
-	virtual        ~SVHistogramAnalyzerClass();
+	virtual        ~SVHistogramAnalyzer();
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 

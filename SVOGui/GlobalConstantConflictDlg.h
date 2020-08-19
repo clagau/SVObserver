@@ -45,7 +45,7 @@ namespace SvOg
 
 	#pragma region Member variables
 	private:
-		SvGcl::CGridCtrl m_Grid;						//The grid displaying the conflicting values
+		SvGcl::GridCtrl m_Grid;						//The grid displaying the conflicting values
 		SvDef::GlobalConflictPairVector& m_rGlobalPairs;  //This is the conflict Global Data as data pair
 	#pragma endregion Member variables
 	};

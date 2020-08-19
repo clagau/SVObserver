@@ -18,7 +18,7 @@
 
 namespace SvAo
 {
-class SVPixelAnalyzerClass;
+class SVPixelAnalyzer;
 }
 
 class SVPixelAnalyzerDlg : public CDialog
@@ -59,7 +59,7 @@ public:
 
     void SetGrayscale(long lGrayscale);
 
-	SvAo::SVPixelAnalyzerClass*   m_pAnalyzer{ nullptr };
+	SvAo::SVPixelAnalyzer*   m_pAnalyzer{ nullptr };
 	unsigned long           msvulMaxGrayscale{ 0L };
 	unsigned long           msvulMinGrayscale{ 0L };
 

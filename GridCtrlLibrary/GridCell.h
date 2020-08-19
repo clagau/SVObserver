@@ -32,7 +32,7 @@
 // The author accepts no liability for any damage/loss of business that
 // this product may cause.
 //
-// For use with CGridCtrl v2.20+
+// For use with GridCtrl v2.20+
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -44,26 +44,26 @@
 
 namespace SvGcl
 {
-	class CGridCtrl;
+	class GridCtrl;
 
-	class CGridCell : public CGridCellBase
+	class GridCell : public GridCellBase
 	{
-		friend class CGridCtrl;
-		DECLARE_DYNCREATE(CGridCell)
+		friend class GridCtrl;
+		DECLARE_DYNCREATE(GridCell)
 
 	// Construction/Destruction
 	public:
-		CGridCell();
-		virtual ~CGridCell();
+		GridCell();
+		virtual ~GridCell();
 
 	// Attributes
 	public:
-		void operator=(const CGridCell& cell);
+		void operator=(const GridCell& cell);
 
 		virtual void  SetText(LPCTSTR szText) override        { m_strText = szText;  }                       
 		virtual void  SetImage(int nImage) override           { m_nImage = nImage;   }                        
 		virtual void  SetData(LPARAM lParam) override         { m_lParam = lParam;   }      
-		virtual void  SetGrid(CGridCtrl* pGrid) override      { m_pGrid = pGrid;     }                          
+		virtual void  SetGrid(GridCtrl* pGrid) override      { m_pGrid = pGrid;     }                          
 		// virtual void SetState(const DWORD nState);  -  use base class version   
 		virtual void  SetFormat(DWORD nFormat) override       { m_nFormat = nFormat; }                      
 		virtual void  SetTextClr(COLORREF clr) override       { m_crFgClr = clr;     }                          
@@ -77,7 +77,7 @@ namespace SvGcl
 		virtual LPCTSTR     GetText() const override             { return (m_strText.IsEmpty())? _T("") : LPCTSTR(m_strText); }
 		virtual int         GetImage() const override            { return m_nImage;  }
 		virtual LPARAM      GetData() const override             { return m_lParam;  }
-		virtual CGridCtrl*  GetGrid() const override	            { return m_pGrid;   }
+		virtual GridCtrl*  GetGrid() const override	            { return m_pGrid;   }
 		// virtual DWORD    GetState() const - use base class
 		virtual DWORD       GetFormat() const override;
 		virtual COLORREF    GetTextClr() const override          { return m_crFgClr; } // TODO: change to use default cell
@@ -109,13 +109,13 @@ namespace SvGcl
 
 		BOOL       m_bEditing;     // Cell being edited?
 
-		CGridCtrl* m_pGrid;        // Parent grid control
+		GridCtrl* m_pGrid;        // Parent grid control
 		CWnd*      m_pEditWnd;
 	};
 
 	// This class is for storing grid default values. It's a little heavy weight, so
 	// don't use it in bulk 
-	class CGridDefaultCell : public CGridCell
+	class CGridDefaultCell : public GridCell
 	{
 		DECLARE_DYNCREATE(CGridDefaultCell)
 
@@ -135,7 +135,7 @@ namespace SvGcl
 		// Disable these properties
 		virtual void     SetData(LPARAM /*lParam*/) override { ASSERT(FALSE);         }      
 		virtual void     SetState(DWORD /*nState*/) override { ASSERT(FALSE);         }
-		virtual DWORD    GetState() const override { return CGridCell::GetState()|GVIS_READONLY; }
+		virtual DWORD    GetState() const override { return GridCell::GetState()|GVIS_READONLY; }
 		virtual void     SetCoords( int /*row*/, int /*col*/) override { ASSERT(FALSE);         }
 		virtual void     SetFont(const LOGFONT* /*plf*/) override;
 		virtual LOGFONT* GetFont() const override;

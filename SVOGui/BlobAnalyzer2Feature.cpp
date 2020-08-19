@@ -142,7 +142,7 @@ namespace SvOg
 		SvGcl::CCellID focusId = m_Grid.GetFocusCell();
 		if (focusId.IsValid())
 		{
-			SvGcl::CGridCellBase* pCell = m_Grid.GetCell(focusId.row, focusId.col);
+			SvGcl::GridCellBase* pCell = m_Grid.GetCell(focusId.row, focusId.col);
 			if (nullptr != pCell)
 			{
 				pCell->EndEdit();
@@ -159,7 +159,7 @@ namespace SvOg
 
 	void BlobAnalyzer2Feature::OnBnClickedMoveUp()
 	{
-		SvGcl::CCellRange Selection = m_Grid.GetSelectedCellRange();
+		SvGcl::CellRange Selection = m_Grid.GetSelectedCellRange();
 		if (Selection.GetMinRow() == Selection.GetMaxRow() && 1 < Selection.GetMinRow())
 		{
 			m_featureData.SwapElements(Selection.GetMinRow() - 1, Selection.GetMinRow() - 2);
@@ -173,7 +173,7 @@ namespace SvOg
 
 	void BlobAnalyzer2Feature::OnBnClickedMoveDown()
 	{
-		SvGcl::CCellRange Selection = m_Grid.GetSelectedCellRange();
+		SvGcl::CellRange Selection = m_Grid.GetSelectedCellRange();
 		if (Selection.GetMinRow() == Selection.GetMaxRow() && 0 < Selection.GetMinRow() && Selection.GetMinRow() + 1 < m_Grid.GetRowCount())
 		{
 			m_featureData.SwapElements(Selection.GetMinRow() - 1, Selection.GetMinRow());
@@ -236,7 +236,7 @@ namespace SvOg
 		{
 		case SortEnableColumn:
 		{
-			auto* pCell = dynamic_cast<SvGcl::CGridCellCheck*>(m_Grid.GetCell(pItem->iRow, SortEnableColumn));
+			auto* pCell = dynamic_cast<SvGcl::GridCellCheck*>(m_Grid.GetCell(pItem->iRow, SortEnableColumn));
 			if (nullptr != pCell)
 			{
 				bool isSort = (TRUE == pCell->GetCheck());
@@ -251,7 +251,7 @@ namespace SvOg
 		}
 		case SortDirectionColumn:
 		{
-			auto* pCell = dynamic_cast<SvGcl::CGridCellCheck*>(m_Grid.GetCell(pItem->iRow, SortDirectionColumn));
+			auto* pCell = dynamic_cast<SvGcl::GridCellCheck*>(m_Grid.GetCell(pItem->iRow, SortDirectionColumn));
 			if (nullptr != pCell)
 			{
 				m_featureData[pItem->iRow - 1].set_is_ascent(TRUE == pCell->GetCheck());
@@ -260,7 +260,7 @@ namespace SvOg
 		}
 		case ExcludeEnabledColumn:
 		{
-			auto* pCell = dynamic_cast<SvGcl::CGridCellCheck*>(m_Grid.GetCell(pItem->iRow, ExcludeEnabledColumn));
+			auto* pCell = dynamic_cast<SvGcl::GridCellCheck*>(m_Grid.GetCell(pItem->iRow, ExcludeEnabledColumn));
 			if (nullptr != pCell)
 			{
 				bool isExclude = (TRUE == pCell->GetCheck());
@@ -274,7 +274,7 @@ namespace SvOg
 		}
 		case ExcludeInnerColumn:
 		{
-			auto* pCell = dynamic_cast<SvGcl::CGridCellCheck*>(m_Grid.GetCell(pItem->iRow, ExcludeInnerColumn));
+			auto* pCell = dynamic_cast<SvGcl::GridCellCheck*>(m_Grid.GetCell(pItem->iRow, ExcludeInnerColumn));
 			if (nullptr != pCell)
 			{
 				m_featureData[pItem->iRow - 1].set_is_exclude_inner(TRUE == pCell->GetCheck());
@@ -378,7 +378,7 @@ namespace SvOg
 					CRect rect;
 					if (m_Grid.GetCellRect(range.row(), iter->first, rect))
 					{
-						SvGcl::CGridCellBase* pCell = m_Grid.GetCell(range.row(), iter->first);
+						SvGcl::GridCellBase* pCell = m_Grid.GetCell(range.row(), iter->first);
 						if (pCell)
 						{
 							pCell->Edit(range.row(), iter->first, rect, CPoint(-1, -1), IDC_INPLACE_CONTROL, 0);
@@ -433,8 +433,8 @@ namespace SvOg
 			using namespace SvGcl;
 			if (3 > sortNumber)
 			{
-				m_Grid.SetCellType(row, SortEnableColumn, RUNTIME_CLASS(CGridCellCheck));
-				auto* pCell = dynamic_cast<SvGcl::CGridCellCheck*>(m_Grid.GetCell(row, SortEnableColumn));
+				m_Grid.SetCellType(row, SortEnableColumn, RUNTIME_CLASS(GridCellCheck));
+				auto* pCell = dynamic_cast<SvGcl::GridCellCheck*>(m_Grid.GetCell(row, SortEnableColumn));
 				if (nullptr != pCell)
 				{
 					pCell->SetCheck(m_featureData[i].is_sort());
@@ -443,14 +443,14 @@ namespace SvOg
 			}
 			else
 			{
-				m_Grid.SetCellType(row, SortEnableColumn, RUNTIME_CLASS(CGridCell));
+				m_Grid.SetCellType(row, SortEnableColumn, RUNTIME_CLASS(GridCell));
 				m_Grid.SetItemState(row, SortEnableColumn, m_Grid.GetItemState(row, SortEnableColumn) | GVIS_READONLY);
 			}
 			UINT state = m_Grid.GetItemState(row, SortDirectionColumn);
 			if (m_featureData[i].is_sort())
 			{
-				m_Grid.SetCellType(row, SortDirectionColumn, RUNTIME_CLASS(CGridCellCheck));
-				auto* pCell = dynamic_cast<SvGcl::CGridCellCheck*>(m_Grid.GetCell(row, SortDirectionColumn));
+				m_Grid.SetCellType(row, SortDirectionColumn, RUNTIME_CLASS(GridCellCheck));
+				auto* pCell = dynamic_cast<SvGcl::GridCellCheck*>(m_Grid.GetCell(row, SortDirectionColumn));
 				if (nullptr != pCell)
 				{
 					pCell->SetCheck(m_featureData[i].is_ascent());
@@ -459,20 +459,20 @@ namespace SvOg
 			}
 			else
 			{
-				m_Grid.SetCellType(row, SortDirectionColumn, RUNTIME_CLASS(CGridCell));
+				m_Grid.SetCellType(row, SortDirectionColumn, RUNTIME_CLASS(GridCell));
 				state |= GVIS_READONLY;
 			}
 			m_Grid.SetItemState(row, SortDirectionColumn, state);
-			m_Grid.SetCellType(row, ExcludeEnabledColumn, RUNTIME_CLASS(CGridCellCheck));
-			auto* pCell = dynamic_cast<SvGcl::CGridCellCheck*>(m_Grid.GetCell(row, ExcludeEnabledColumn));
+			m_Grid.SetCellType(row, ExcludeEnabledColumn, RUNTIME_CLASS(GridCellCheck));
+			auto* pCell = dynamic_cast<SvGcl::GridCellCheck*>(m_Grid.GetCell(row, ExcludeEnabledColumn));
 			if (nullptr != pCell)
 			{
 				pCell->SetCheck(m_featureData[i].is_exclude());
 			}
 			if (m_featureData[i].is_exclude())
 			{
-				m_Grid.SetCellType(row, ExcludeInnerColumn, RUNTIME_CLASS(CGridCellCheck));
-				pCell = dynamic_cast<SvGcl::CGridCellCheck*>(m_Grid.GetCell(row, ExcludeInnerColumn));
+				m_Grid.SetCellType(row, ExcludeInnerColumn, RUNTIME_CLASS(GridCellCheck));
+				pCell = dynamic_cast<SvGcl::GridCellCheck*>(m_Grid.GetCell(row, ExcludeInnerColumn));
 				if (nullptr != pCell)
 				{
 					pCell->SetCheck(m_featureData[i].is_exclude_inner());
@@ -495,7 +495,7 @@ namespace SvOg
 			}
 			else
 			{
-				m_Grid.SetCellType(row, ExcludeInnerColumn, RUNTIME_CLASS(CGridCell));
+				m_Grid.SetCellType(row, ExcludeInnerColumn, RUNTIME_CLASS(GridCell));
 				m_Grid.SetItemState(row, ExcludeInnerColumn, m_Grid.GetItemState(row, ExcludeInnerColumn) | GVIS_READONLY);
 				m_Grid.SetItemText(row, LowerBoundColumn, "");
 				m_Grid.SetItemState(row, LowerBoundColumn, m_Grid.GetItemState(row, LowerBoundColumn) | GVIS_READONLY);
@@ -533,7 +533,7 @@ namespace SvOg
 
 	void BlobAnalyzer2Feature::UpdateEnableButtons()
 	{
-		SvGcl::CCellRange Selection = m_Grid.GetSelectedCellRange();
+		SvGcl::CellRange Selection = m_Grid.GetSelectedCellRange();
 		bool bMoveUpEnable = false;
 		bool bMoveDownEnable = false;
 

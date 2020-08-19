@@ -2,7 +2,7 @@
 // * COPYRIGHT (c) 2005 by SVResearch, Harrisburg
 // * All Rights Reserved
 // ******************************************************************************
-// * .Module Name     : SVLinearEdgePositionLineAnalyzerClass
+// * .Module Name     : SVLinearEdgePositionLineAnalyzer
 // * .File Name       : $Workfile:   SVLinearLineEdgePositionAnalyzer.cpp  $
 // * ----------------------------------------------------------------------------
 // * .Current Version : $Revision:   1.0  $
@@ -28,15 +28,15 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVLinearEdgePositionLineAnalyzerClass, SvPb::LinearEdgePositionLineAnalyzerClassId);
+SV_IMPLEMENT_CLASS( SVLinearEdgePositionLineAnalyzer, SvPb::LinearEdgePositionLineAnalyzerClassId);
 
-SVLinearEdgePositionLineAnalyzerClass::SVLinearEdgePositionLineAnalyzerClass( SVObjectClass* POwner, int StringResourceID )
+SVLinearEdgePositionLineAnalyzer::SVLinearEdgePositionLineAnalyzer( SVObjectClass* POwner, int StringResourceID )
 								:SVLinearAnalyzerClass( POwner, StringResourceID ) 
 {
 	init();
 }
 
-void SVLinearEdgePositionLineAnalyzerClass::init()
+void SVLinearEdgePositionLineAnalyzer::init()
 {
 	// Identify our type
 	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVLinearEdgePositionAnalyzerObjectType;
@@ -71,12 +71,12 @@ void SVLinearEdgePositionLineAnalyzerClass::init()
 	addDefaultInputObjects();
 }
 
-SVLinearEdgePositionLineAnalyzerClass::~SVLinearEdgePositionLineAnalyzerClass()
+SVLinearEdgePositionLineAnalyzer::~SVLinearEdgePositionLineAnalyzer()
 {
-	SVLinearEdgePositionLineAnalyzerClass::CloseObject();
+	SVLinearEdgePositionLineAnalyzer::CloseObject();
 }
 
-bool SVLinearEdgePositionLineAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
+bool SVLinearEdgePositionLineAnalyzer::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
 	bool bOk = SVLinearAnalyzerClass::CreateObject(rCreateStructure);
 
@@ -88,12 +88,12 @@ bool SVLinearEdgePositionLineAnalyzerClass::CreateObject( const SVObjectLevelCre
 	return bOk;
 }
 
-bool SVLinearEdgePositionLineAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
+bool SVLinearEdgePositionLineAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	return __super::ResetObject(pErrorMessages) && ValidateEdgeA(pErrorMessages);
 }
 
-void SVLinearEdgePositionLineAnalyzerClass::addOverlayResults(SvPb::Overlay& rOverlay, bool isVertical) const
+void SVLinearEdgePositionLineAnalyzer::addOverlayResults(SvPb::Overlay& rOverlay, bool isVertical) const
 {
 	auto* pGroup = rOverlay.add_shapegroups();
 	pGroup->set_detaillevel(SvPb::Level1);
@@ -105,7 +105,7 @@ void SVLinearEdgePositionLineAnalyzerClass::addOverlayResults(SvPb::Overlay& rOv
 	}
 }
 
-std::vector<std::string> SVLinearEdgePositionLineAnalyzerClass::getParameterNamesForML() const
+std::vector<std::string> SVLinearEdgePositionLineAnalyzer::getParameterNamesForML() const
 {
 	return {
 		SvUl::LoadStdString(IDS_OBJECTNAME_DPEDGE) + " " + SvUl::LoadStdString(IDS_CLASSNAME_RESULT_POINT_X) + "." + SvUl::LoadStdString(IDS_OBJECTNAME_DX),
@@ -113,7 +113,7 @@ std::vector<std::string> SVLinearEdgePositionLineAnalyzerClass::getParameterName
 	};
 }
 
-bool SVLinearEdgePositionLineAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVLinearEdgePositionLineAnalyzer::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	SVPoint<double> edgePoint;
 	double Distance( 0.0 );

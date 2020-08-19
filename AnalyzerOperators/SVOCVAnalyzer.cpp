@@ -27,10 +27,10 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVOCVAnalyzerClass, SvPb::OCVAnalyzerClassId);
+SV_IMPLEMENT_CLASS( SVOCVAnalyzer, SvPb::OCVAnalyzerClassId);
 
 /////////////////////////////////////////////////////////////////////////////
-SVOCVAnalyzerClass::SVOCVAnalyzerClass( SVObjectClass* POwner, int StringResourceID )
+SVOCVAnalyzer::SVOCVAnalyzer( SVObjectClass* POwner, int StringResourceID )
 		:SVImageAnalyzerClass( POwner, StringResourceID ) 
 {
 	init();
@@ -46,7 +46,7 @@ SVOCVAnalyzerClass::SVOCVAnalyzerClass( SVObjectClass* POwner, int StringResourc
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void SVOCVAnalyzerClass::init()
+void SVOCVAnalyzer::init()
 {
 	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVAnalyzerObjectType;
 	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVOCVAnalyzerObjectType;
@@ -62,7 +62,7 @@ void SVOCVAnalyzerClass::init()
 }
 
 
-SVOCVAnalyzerClass::~SVOCVAnalyzerClass()
+SVOCVAnalyzer::~SVOCVAnalyzer()
 {
 	if ( m_bHasLicenseError )
 	{
@@ -74,7 +74,7 @@ SVOCVAnalyzerClass::~SVOCVAnalyzerClass()
 
 
 ////////////////////////////////////////////////////////////////////////////////
-bool SVOCVAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
+bool SVOCVAnalyzer::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
 	m_isCreated = SVImageAnalyzerClass::CreateObject(rCreateStructure);
 	
@@ -86,7 +86,7 @@ bool SVOCVAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rCreateS
 	return m_isCreated;
 }
 
-bool SVOCVAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
+bool SVOCVAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 
@@ -107,7 +107,7 @@ bool SVOCVAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 //
 //
 //
-bool SVOCVAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVOCVAnalyzer::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	if ( !m_bHasLicenseError )
 	{
@@ -130,12 +130,12 @@ bool SVOCVAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCont
 }
 
 
-bool SVOCVAnalyzerClass::IsPtOverResult(const POINT&)
+bool SVOCVAnalyzer::IsPtOverResult(const POINT&)
 {
 	return true;
 }
 
-SvDef::StringVector SVOCVAnalyzerClass::getAnalyzerResult()
+SvDef::StringVector SVOCVAnalyzer::getAnalyzerResult()
 {
 	SvDef::StringVector result;
 

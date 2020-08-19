@@ -32,7 +32,7 @@
 // The author accepts no liability for any damage/loss of business that
 // this product may cause.
 //
-// For use with CGridCtrl v2.22+
+// For use with GridCtrl v2.22+
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -101,17 +101,17 @@ namespace SvGcl
 	// will usually have acces to them in other ways, and they are an extra 8 bytes per
 	// cell that is probably unnecessary.
 
-	class CGridCtrl;
+	class GridCtrl;
 
-	class CGridCellBase : public CObject
+	class GridCellBase : public CObject
 	{
-		friend class CGridCtrl;
-		DECLARE_DYNAMIC(CGridCellBase)
+		friend class GridCtrl;
+		DECLARE_DYNAMIC(GridCellBase)
 
 	// Construction/Destruction
 	public:
-		CGridCellBase();
-		virtual ~CGridCellBase();
+		GridCellBase();
+		virtual ~GridCellBase();
 
 	// Attributes
 	public:
@@ -124,7 +124,7 @@ namespace SvGcl
 		virtual void SetBackClr(COLORREF /* clr */)             = 0 ;
 		virtual void SetFont(const LOGFONT* /* plf */)          = 0 ;
 		virtual void SetMargin( UINT /* nMargin */)             = 0 ;
-		virtual void SetGrid(CGridCtrl* /* pGrid */)            = 0 ;
+		virtual void SetGrid(GridCtrl* /* pGrid */)            = 0 ;
 		virtual void SetCoords( int /* nRow */, int /* nCol */) = 0 ;
 
 		virtual LPCTSTR    GetText()       const                = 0 ;
@@ -137,11 +137,11 @@ namespace SvGcl
 		virtual COLORREF   GetBackClr()    const                = 0 ;
 		virtual LOGFONT  * GetFont()       const                = 0 ;
 		virtual CFont    * GetFontObject() const                = 0 ;
-		virtual CGridCtrl* GetGrid()       const                = 0 ;
+		virtual GridCtrl* GetGrid()       const                = 0 ;
 		virtual CWnd     * GetEditWnd()    const                = 0 ;
 		virtual UINT       GetMargin()     const                = 0 ;
 
-		virtual CGridCellBase* GetDefaultCell() const;
+		virtual GridCellBase* GetDefaultCell() const;
 
 		virtual BOOL IsDefaultFont()       const                = 0 ;
 		virtual BOOL IsEditing()           const                = 0 ;
@@ -156,7 +156,7 @@ namespace SvGcl
 
 	// Operators
 	public:
-		virtual void operator=(const CGridCellBase& cell);
+		virtual void operator=(const GridCellBase& cell);
 
 	// Operations
 	public:

@@ -32,7 +32,7 @@
 // The author accepts no liability for any damage/loss of business that
 // this product may cause.
 //
-// For use with CGridCtrl v2.20+
+// For use with GridCtrl v2.20+
 //
 // History
 //         10 Apr 1999  Now accepts a LOGFONT pointer and 
@@ -66,9 +66,9 @@ static char THIS_FILE[] = __FILE__;
 namespace SvGcl
 {
 	/////////////////////////////////////////////////////////////////////////////
-	// CTitleTip
+	// TitleTip
 
-	CTitleTip::CTitleTip()
+	TitleTip::TitleTip()
 	{
 		// Register the window class if it has not already been registered.
 		WNDCLASS wndcls;
@@ -96,22 +96,22 @@ namespace SvGcl
 		m_pParentWnd        = nullptr;
 	}
 
-	CTitleTip::~CTitleTip()
+	TitleTip::~TitleTip()
 	{
 	}
 
 
-	BEGIN_MESSAGE_MAP(CTitleTip, CWnd)
-		//{{AFX_MSG_MAP(CTitleTip)
+	BEGIN_MESSAGE_MAP(TitleTip, CWnd)
+		//{{AFX_MSG_MAP(TitleTip)
 		ON_WM_MOUSEMOVE()
 		//}}AFX_MSG_MAP
 	END_MESSAGE_MAP()
 
 
 	/////////////////////////////////////////////////////////////////////////////
-	// CTitleTip message handlers
+	// TitleTip message handlers
 
-	BOOL CTitleTip::Create(CWnd * pParentWnd)
+	BOOL TitleTip::Create(CWnd * pParentWnd)
 	{
 		ASSERT_VALID(pParentWnd);
 
@@ -130,7 +130,7 @@ namespace SvGcl
 		return m_bCreated;
 	}
 
-	BOOL CTitleTip::DestroyWindow() 
+	BOOL TitleTip::DestroyWindow() 
 	{
 		m_bCreated = FALSE;
 	
@@ -143,7 +143,7 @@ namespace SvGcl
 	// lpszTitleText - The text to be displayed
 	// xoffset		 - Number of pixel that the text is offset from
 	//				   left border of the cell
-	void CTitleTip::Show(CRect rectTitle, LPCTSTR lpszTitleText, int xoffset /*=0*/,
+	void TitleTip::Show(CRect rectTitle, LPCTSTR lpszTitleText, int xoffset /*=0*/,
 						 LPRECT lpHoverRect /*=nullptr*/,
 						 const LOGFONT* lpLogFont /*=nullptr*/,
 						 COLORREF crTextClr /* CLR_DEFAULT */,
@@ -240,7 +240,7 @@ namespace SvGcl
 		dc.SelectObject( pOldFont );
 	}
 
-	void CTitleTip::Hide()
+	void TitleTip::Hide()
 	{
   		if (!::IsWindow(GetSafeHwnd()))
 			return;
@@ -251,7 +251,7 @@ namespace SvGcl
 		ShowWindow( SW_HIDE );
 	}
 
-	void CTitleTip::OnMouseMove(UINT nFlags, CPoint point) 
+	void TitleTip::OnMouseMove(UINT nFlags, CPoint point) 
 	{
 		if (!m_rectHover.PtInRect(point)) 
 		{
@@ -274,7 +274,7 @@ namespace SvGcl
 		}
 	}
 
-	BOOL CTitleTip::PreTranslateMessage(MSG* pMsg) 
+	BOOL TitleTip::PreTranslateMessage(MSG* pMsg) 
 	{
 		// Used to qualify WM_LBUTTONDOWN messages as double-clicks
 		DWORD dwTick=0;

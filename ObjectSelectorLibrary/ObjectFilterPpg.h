@@ -108,7 +108,7 @@ namespace SvOsl
 
 		SvCl::ObjectTreeItems& m_rTreeContainer; //The tree container reference
 		SvMc::DlgItemResizer m_Resizer;				//Object which handles the resizing of all controls
-		SvGcl::CGridCtrl m_Grid;						//The grid control to display the filtered items
+		SvGcl::GridCtrl m_Grid;						//The grid control to display the filtered items
 		CImageList m_StateImageList;					//The state image list
 		CImageList m_ImageList;							//The image list
 		bool m_SingleSelect;							//True when the Object Selector is in single selection mode

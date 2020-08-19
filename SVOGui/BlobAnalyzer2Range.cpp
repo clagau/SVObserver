@@ -161,7 +161,7 @@ namespace SvOg
 		SvGcl::CCellID focusId = m_Grid.GetFocusCell();
 		if (focusId.IsValid())
 		{
-			SvGcl::CGridCellBase* pCell = m_Grid.GetCell(focusId.row, focusId.col);
+			SvGcl::GridCellBase* pCell = m_Grid.GetCell(focusId.row, focusId.col);
 			if (nullptr != pCell)
 			{
 				pCell->EndEdit();
@@ -188,7 +188,7 @@ namespace SvOg
 		{
 		case RangeEnableColumn:
 		{
-			auto* pCell = dynamic_cast<SvGcl::CGridCellCheck*>(m_Grid.GetCell(pItem->iRow, RangeEnableColumn));
+			auto* pCell = dynamic_cast<SvGcl::GridCellCheck*>(m_Grid.GetCell(pItem->iRow, RangeEnableColumn));
 			if (nullptr != pCell)
 			{
 				bool isRange = (TRUE == pCell->GetCheck());
@@ -350,7 +350,7 @@ namespace SvOg
 					CRect rect;
 					if (m_Grid.GetCellRect(range.row(), iter->first, rect))
 					{
-						SvGcl::CGridCellBase* pCell = m_Grid.GetCell(range.row(), iter->first);
+						SvGcl::GridCellBase* pCell = m_Grid.GetCell(range.row(), iter->first);
 						if (pCell)
 						{
 							pCell->Edit(range.row(), iter->first, rect, CPoint(-1, -1), IDC_INPLACE_CONTROL, 0);
@@ -424,8 +424,8 @@ namespace SvOg
 			m_Grid.SetItemText(row, NameColumn, m_featureData[i].name().c_str());
 			m_Grid.SetItemState(row, NameColumn, m_Grid.GetItemState(row, NameColumn) | GVIS_READONLY);
 			using namespace SvGcl;
-			m_Grid.SetCellType(row, RangeEnableColumn, RUNTIME_CLASS(CGridCellCheck));
-			auto* pCell = dynamic_cast<SvGcl::CGridCellCheck*>(m_Grid.GetCell(row, RangeEnableColumn));
+			m_Grid.SetCellType(row, RangeEnableColumn, RUNTIME_CLASS(GridCellCheck));
+			auto* pCell = dynamic_cast<SvGcl::GridCellCheck*>(m_Grid.GetCell(row, RangeEnableColumn));
 			if (nullptr != pCell)
 			{
 				pCell->SetCheck(m_featureData[i].is_range());

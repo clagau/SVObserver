@@ -104,7 +104,7 @@ namespace SvOg
 		CBitmap m_downArrowBitmap;
 		CImageList m_ImageList;
 
-		SvGcl::CGridCtrl m_Grid;						//The grid displaying the name and the formulas
+		SvGcl::GridCtrl m_Grid;						//The grid displaying the name and the formulas
 		SvUl::NameObjectIdList m_gridList;
 		google::protobuf::RepeatedPtrField< SvPb::FeatureData > m_featureData;
 #pragma endregion Member Variables

@@ -17,14 +17,14 @@
 namespace SvAo
 {
 
-class SVOCVAnalyzerClass : public SVImageAnalyzerClass
+class SVOCVAnalyzer : public SVImageAnalyzerClass
 {
-	SV_DECLARE_CLASS( SVOCVAnalyzerClass );
+	SV_DECLARE_CLASS( SVOCVAnalyzer );
 
 public:
-	SVOCVAnalyzerClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVOCVANALYZER	);
+	SVOCVAnalyzer( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVOCVANALYZER	);
 
-	virtual ~SVOCVAnalyzerClass();
+	virtual ~SVOCVAnalyzer();
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 

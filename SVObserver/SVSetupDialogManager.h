@@ -43,7 +43,7 @@ protected:
 	static HRESULT SVBlobAnalyzerClassSetupDialog( uint32_t objectId, CWnd* PParentWnd );
 	static HRESULT BlobAnalyzer2SetupDialog(uint32_t objectId, CWnd* pParentWnd);
 	static HRESULT SVColorToolClassSetupDialog( uint32_t objectId, CWnd* PParentWnd );
-	static HRESULT SVHistogramAnalyzerClassSetupDialog( uint32_t objectId, CWnd* PParentWnd );
+	static HRESULT SVHistogramAnalyzerSetupDialog( uint32_t objectId, CWnd* PParentWnd );
 	static HRESULT SVLinearAnalyzerClassSetupDialog( uint32_t objectId, CWnd* PParentWnd );
 	static HRESULT SVLuminanceAnalyzerClassSetupDialog( uint32_t objectId, CWnd* PParentWnd );
 	static HRESULT SVOCVAnalyzerClassSetupDialog( uint32_t objectId, CWnd* PParentWnd );

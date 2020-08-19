@@ -32,7 +32,7 @@
 // The author accepts no liability for any damage/loss of business that
 // this product may cause.
 //
-// For use with CGridCtrl v2.10+
+// For use with GridCtrl v2.10+
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -42,12 +42,12 @@ namespace SvGcl
 {
 	#define TITLETIP_CLASSNAME _T("ZTitleTip")
 
-	class CTitleTip : public CWnd
+	class TitleTip : public CWnd
 	{
 	// Construction
 	public:
-		CTitleTip();
-		virtual ~CTitleTip();
+		TitleTip();
+		virtual ~TitleTip();
 		virtual BOOL Create( CWnd *pParentWnd) override;
 
 	// Attributes
@@ -65,7 +65,7 @@ namespace SvGcl
 
 	// Overrides
 		// ClassWizard generated virtual function overrides
-		//{{AFX_VIRTUAL(CTitleTip)
+		//{{AFX_VIRTUAL(TitleTip)
 		public:
 		virtual BOOL PreTranslateMessage(MSG* pMsg) override;
 		virtual BOOL DestroyWindow() override;
@@ -82,7 +82,7 @@ namespace SvGcl
 
 		// Generated message map functions
 	protected:
-		//{{AFX_MSG(CTitleTip)
+		//{{AFX_MSG(TitleTip)
 		afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 		//}}AFX_MSG
 		DECLARE_MESSAGE_MAP()

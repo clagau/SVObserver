@@ -18,13 +18,13 @@
 namespace SvAo
 {
 
-class SVLinearEdgeCountingLineAnalyzerClass : public SVLinearAnalyzerClass
+class SVLinearEdgeCountingLineAnalyzer : public SVLinearAnalyzerClass
 {
-	SV_DECLARE_CLASS( SVLinearEdgeCountingLineAnalyzerClass );
+	SV_DECLARE_CLASS( SVLinearEdgeCountingLineAnalyzer );
 
 public:
-	SVLinearEdgeCountingLineAnalyzerClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVLINEAREDGECOUNTINGLINEANALYZER );
-	virtual ~SVLinearEdgeCountingLineAnalyzerClass();
+	SVLinearEdgeCountingLineAnalyzer( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVLINEAREDGECOUNTINGLINEANALYZER );
+	virtual ~SVLinearEdgeCountingLineAnalyzer();
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;

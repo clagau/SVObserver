@@ -12,7 +12,7 @@
 //* .Check In Date   : $Date:   24 Oct 2014 10:35:16  $
 //******************************************************************************
 
-// GridCellNumeric.cpp: implementation of the CGridCellNumeric class.
+// GridCellNumeric.cpp: implementation of the GridCellNumeric class.
 //
 // Written by Andrew Truckle [ajtruckle@wsatkins.co.uk]
 //
@@ -35,29 +35,29 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvGcl
 {
-	IMPLEMENT_DYNCREATE(CGridCellNumeric, CGridCell)
+	IMPLEMENT_DYNCREATE(GridCellNumeric, GridCell)
 
 	//////////////////////////////////////////////////////////////////////
 	// Construction/Destruction
 	//////////////////////////////////////////////////////////////////////
 
 	// Create a control to do the editing
-	BOOL CGridCellNumeric::Edit(int nRow, int nCol, CRect rect, CPoint /* point */, UINT nID, UINT nChar)
+	BOOL GridCellNumeric::Edit(int nRow, int nCol, CRect rect, CPoint /* point */, UINT nID, UINT nChar)
 	{
 		m_bEditing = TRUE;
     
-		// CInPlaceEdit auto-deletes itself
-		m_pEditWnd = new CInPlaceEdit(GetGrid(), rect, /*GetStyle() |*/ ES_NUMBER, nID, nRow, nCol,
+		// InPlaceEdit auto-deletes itself
+		m_pEditWnd = new InPlaceEdit(GetGrid(), rect, /*GetStyle() |*/ ES_NUMBER, nID, nRow, nCol,
 			GetText(), nChar);
 
 		return TRUE;
 	}
 
 	// Cancel the editing.
-	void CGridCellNumeric::EndEdit()
+	void GridCellNumeric::EndEdit()
 	{
 		if (m_pEditWnd)
-			((CInPlaceEdit*)m_pEditWnd)->EndEdit();
+			((InPlaceEdit*)m_pEditWnd)->EndEdit();
 	}
 
 } // namespace SvGcl

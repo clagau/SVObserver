@@ -32,7 +32,7 @@
 // The author accepts no liability for any damage/loss of business that
 // this product may cause.
 //
-// For use with CGridCtrl v2.20+
+// For use with GridCtrl v2.20+
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -184,24 +184,24 @@ namespace SvGcl
 	// This is sent to the Grid from child in-place edit controls
 	typedef struct tagGV_CACHEHINT {
 		NMHDR      hdr;
-		CCellRange range;
+		CellRange range;
 	} GV_CACHEHINT;
 
 	// storage typedef for each row in the grid
-	typedef CTypedPtrArray<CObArray, CGridCellBase*> GRID_ROW;
+	typedef CTypedPtrArray<CObArray, GridCellBase*> GRID_ROW;
 
 	// For virtual mode callback
 	typedef BOOL (CALLBACK* GRIDCALLBACK)(GV_DISPINFO *, LPARAM);
 
-	class CGridCtrl : public CWnd
+	class GridCtrl : public CWnd
 	{
-		DECLARE_DYNCREATE(CGridCtrl)
-		friend class CGridCell;
-		friend class CGridCellBase;
+		DECLARE_DYNCREATE(GridCtrl)
+		friend class GridCell;
+		friend class GridCellBase;
 
 	// Construction
 	public:
-		CGridCtrl(int nRows = 0, int nCols = 0, int nFixedRows = 0, int nFixedCols = 0);
+		GridCtrl(int nRows = 0, int nCols = 0, int nFixedRows = 0, int nFixedCols = 0);
 
 		BOOL Create(const RECT& rect, CWnd* parent, UINT nID,
 					DWORD dwStyle = WS_CHILD | WS_BORDER | WS_TABSTOP | WS_VISIBLE);
@@ -363,13 +363,13 @@ namespace SvGcl
 	// default Grid cells. Use these for setting default values such as colors and fonts
 	///////////////////////////////////////////////////////////////////////////////////
 	public:
-		CGridCellBase* GetDefaultCell(BOOL bFixedRow, BOOL bFixedCol) const;
+		GridCellBase* GetDefaultCell(BOOL bFixedRow, BOOL bFixedCol) const;
 
 	///////////////////////////////////////////////////////////////////////////////////
 	// Grid cell Attributes
 	///////////////////////////////////////////////////////////////////////////////////
 	public:
-		CGridCellBase* GetCell(int nRow, int nCol) const;   // Get the actual cell!
+		GridCellBase* GetCell(int nRow, int nCol) const;   // Get the actual cell!
 
 		void SetModified(BOOL bModified = TRUE, int nRow = -1, int nCol = -1);
 		BOOL GetModified(int nRow = -1, int nCol = -1);
@@ -379,7 +379,7 @@ namespace SvGcl
 		BOOL   GetItem(GV_ITEM* pItem);
 		BOOL   SetItemText(int nRow, int nCol, LPCTSTR str);
 		// The following was virtual. If you want to override, use 
-		//  CGridCellBase-derived class's GetText() to accomplish same thing
+		//  GridCellBase-derived class's GetText() to accomplish same thing
 		CString GetItemText(int nRow, int nCol) const;
 
 		// EFW - 06/13/99 - Added to support printf-style formatting codes.
@@ -421,7 +421,7 @@ namespace SvGcl
 		BOOL DeleteNonFixedRows();
 		BOOL DeleteAllItems();
 
-		void ClearCells(CCellRange Selection);
+		void ClearCells(CellRange Selection);
 
 		BOOL AutoSizeRow(int nRow, BOOL bResetScroll = TRUE);
 		BOOL AutoSizeColumn(int nCol, UINT nAutoSizeStyle = GVS_DEFAULT, BOOL bResetScroll = TRUE);
@@ -462,14 +462,14 @@ namespace SvGcl
 	// Cell Ranges
 	///////////////////////////////////////////////////////////////////////////////////
 		public:
-		CCellRange GetCellRange() const;
-		CCellRange GetSelectedCellRange() const;
-		void SetSelectedRange(const CCellRange& Range, BOOL bForceRepaint = FALSE, BOOL bSelectCells = TRUE);
+		CellRange GetCellRange() const;
+		CellRange GetSelectedCellRange() const;
+		void SetSelectedRange(const CellRange& Range, BOOL bForceRepaint = FALSE, BOOL bSelectCells = TRUE);
 		void SetSelectedRange(int nMinRow, int nMinCol, int nMaxRow, int nMaxCol,
 								BOOL bForceRepaint = FALSE, BOOL bSelectCells = TRUE);
 		BOOL IsValid(int nRow, int nCol) const;
 		BOOL IsValid(const CCellID& cell) const;
-		BOOL IsValid(const CCellRange& range) const;
+		BOOL IsValid(const CellRange& range) const;
 
 	///////////////////////////////////////////////////////////////////////////////////
 	// Clipboard, drag and drop, and cut n' paste operations
@@ -547,7 +547,7 @@ namespace SvGcl
 
 	// Implementation
 	public:
-		virtual ~CGridCtrl();
+		virtual ~GridCtrl();
 
 	protected:
 		BOOL RegisterWindowClass();
@@ -556,16 +556,16 @@ namespace SvGcl
 
 		LRESULT SendMessageToParent(int nRow, int nCol, int nMessage) const;
 		LRESULT SendDisplayRequestToParent(GV_DISPINFO* pDisplayInfo) const;
-		LRESULT SendCacheHintToParent(const CCellRange& range) const;
+		LRESULT SendCacheHintToParent(const CellRange& range) const;
 
 		BOOL InvalidateCellRect(const int row, const int col);
 		BOOL InvalidateCellRect(const CCellID& cell);
-		BOOL InvalidateCellRect(const CCellRange& cellRange);
+		BOOL InvalidateCellRect(const CellRange& cellRange);
 		void EraseBkgnd(CDC* pDC);
 
-		BOOL GetCellRangeRect(const CCellRange& cellRange, LPRECT lpRect);
+		BOOL GetCellRangeRect(const CellRange& cellRange, LPRECT lpRect);
 
-		BOOL SetCell(int nRow, int nCol, CGridCellBase* pCell);
+		BOOL SetCell(int nRow, int nCol, GridCellBase* pCell);
 
 		int  SetMouseMode(int nMode) { int nOldMode = m_MouseMode; m_MouseMode = nMode; return nOldMode; }
 		int  GetMouseMode() const    { return m_MouseMode; }
@@ -574,9 +574,9 @@ namespace SvGcl
 		BOOL MouseOverColumnResizeArea(CPoint& point);
 
 		CCellID GetTopleftNonFixedCell(BOOL bForceRecalculation = FALSE);
-		CCellRange GetUnobstructedNonFixedCellRange(BOOL bForceRecalculation = FALSE);
-		CCellRange GetVisibleNonFixedCellRange(LPRECT pRect = nullptr, BOOL bForceRecalculation = FALSE);
-		CCellRange GetVisibleFixedCellRange(LPRECT pRect = nullptr, BOOL bForceRecalculation = FALSE);
+		CellRange GetUnobstructedNonFixedCellRange(BOOL bForceRecalculation = FALSE);
+		CellRange GetVisibleNonFixedCellRange(LPRECT pRect = nullptr, BOOL bForceRecalculation = FALSE);
+		CellRange GetVisibleFixedCellRange(LPRECT pRect = nullptr, BOOL bForceRecalculation = FALSE);
 
 		BOOL IsVisibleVScroll() { return ( (m_nBarState & GVL_VERT) > 0); } 
 		BOOL IsVisibleHScroll() { return ( (m_nBarState & GVL_HORZ) > 0); }
@@ -596,7 +596,7 @@ namespace SvGcl
 
 	// Overrrides
 		// ClassWizard generated virtual function overrides
-		//{{AFX_VIRTUAL(CGridCtrl)
+		//{{AFX_VIRTUAL(GridCtrl)
 		protected:
 		virtual void PreSubclassWindow();
 		//}}AFX_VIRTUAL
@@ -630,8 +630,8 @@ namespace SvGcl
 		// Drawing
 		virtual void  OnDraw(CDC* pDC);
 
-		// CGridCellBase Creation and Cleanup
-		virtual CGridCellBase* CreateCell(int nRow, int nCol);
+		// GridCellBase Creation and Cleanup
+		virtual GridCellBase* CreateCell(int nRow, int nCol);
 		virtual void DestroyCell(int nRow, int nCol);
 
 	// Attributes
@@ -699,13 +699,13 @@ namespace SvGcl
 		CMap<DWORD,DWORD, CCellID, CCellID&> m_SelectedCellMap, m_PrevSelectedCellMap;
 
 	#ifndef GRIDCONTROL_NO_TITLETIPS
-		CTitleTip   m_TitleTip;             // Title tips for cells
+		TitleTip   m_TitleTip;             // Title tips for cells
 	#endif
 
 		// Drag and drop
 		CCellID     m_LastDragOverCell;
 	#ifndef GRIDCONTROL_NO_DRAGDROP
-		CGridDropTarget m_DropTarget;       // OLE Drop target for the grid
+		GridDropTarget m_DropTarget;       // OLE Drop target for the grid
 	#endif
 
 		// Printing information
@@ -742,7 +742,7 @@ namespace SvGcl
 		void OnSelecting(const CCellID& currentCell);
 
 		// Generated message map functions
-		//{{AFX_MSG(CGridCtrl)
+		//{{AFX_MSG(GridCtrl)
 		afx_msg void OnPaint();
 		afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 		afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
@@ -811,7 +811,7 @@ namespace SvGcl
 		void AllowSelectRowInFixedCol(bool b=true) { m_AllowSelectRowInFixedCol = b;} // 
 	//    allow acces?
 		intlist m_arRowOrder, m_arColOrder;
-		static CGridCtrl* m_This;
+		static GridCtrl* m_This;
 	protected:
 		virtual void AddSubVirtualRow(int Num, int Nb);
 		bool m_bDragRowMode;
@@ -828,22 +828,22 @@ namespace SvGcl
 	};
 
 	// Returns the default cell implementation for the given grid region
-	inline CGridCellBase* CGridCtrl::GetDefaultCell(BOOL bFixedRow, BOOL bFixedCol) const
+	inline GridCellBase* GridCtrl::GetDefaultCell(BOOL bFixedRow, BOOL bFixedCol) const
 	{ 
-		if (bFixedRow && bFixedCol) return (CGridCellBase*) &m_cellFixedRowColDef;
-		if (bFixedRow)              return (CGridCellBase*) &m_cellFixedRowDef;
-		if (bFixedCol)              return (CGridCellBase*) &m_cellFixedColDef;
-		return (CGridCellBase*) &m_cellDefault;
+		if (bFixedRow && bFixedCol) return (GridCellBase*) &m_cellFixedRowColDef;
+		if (bFixedRow)              return (GridCellBase*) &m_cellFixedRowDef;
+		if (bFixedCol)              return (GridCellBase*) &m_cellFixedColDef;
+		return (GridCellBase*) &m_cellDefault;
 	}
 
-	inline CGridCellBase* CGridCtrl::GetCell(int nRow, int nCol) const
+	inline GridCellBase* GridCtrl::GetCell(int nRow, int nCol) const
 	{
 		if (nRow < 0 || nRow >= m_nRows || nCol < 0 || nCol >= m_nCols) 
 			return nullptr;
 
 		if (GetVirtualMode())
 		{
-			CGridCellBase* pCell = GetDefaultCell(nRow < m_nFixedRows, nCol < m_nFixedCols);
+			GridCellBase* pCell = GetDefaultCell(nRow < m_nFixedRows, nCol < m_nFixedCols);
 			static GV_DISPINFO gvdi;
 			gvdi.item.row     = nRow;
 			gvdi.item.col     = nCol;
@@ -875,7 +875,7 @@ namespace SvGcl
 				gvdi.item.row = nRow;        
 				gvdi.item.col = nCol;
 			}
-			static CGridCell cell;
+			static GridCell cell;
 			cell.SetState(gvdi.item.nState);
 			cell.SetFormat(gvdi.item.nFormat);
 			cell.SetImage(gvdi.item.iImage);
@@ -885,9 +885,9 @@ namespace SvGcl
 			cell.SetFont(&(gvdi.item.lfFont));
 			cell.SetMargin(gvdi.item.nMargin);
 			cell.SetText(gvdi.item.strText);
-			cell.SetGrid((CGridCtrl*) this);
+			cell.SetGrid((GridCtrl*) this);
 
-			return (CGridCellBase*) &cell;
+			return (GridCellBase*) &cell;
 		}
 
 		GRID_ROW* pRow = m_RowData[nRow];
@@ -895,7 +895,7 @@ namespace SvGcl
 		return pRow->GetAt(m_arColOrder[nCol]);
 	}
 
-	inline BOOL CGridCtrl::SetCell(int nRow, int nCol, CGridCellBase* pCell)
+	inline BOOL GridCtrl::SetCell(int nRow, int nCol, GridCellBase* pCell)
 	{
 		if (GetVirtualMode())
 			return FALSE;

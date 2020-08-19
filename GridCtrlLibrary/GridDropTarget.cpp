@@ -16,7 +16,7 @@
 //
 // MFC Grid Control - Drag/Drop target implementation
 //
-// CGridDropTarget is an OLE drop target for CGridCtrl. All it does
+// GridDropTarget is an OLE drop target for GridCtrl. All it does
 // is handle the drag and drop windows messages and pass them
 // directly onto the grid control.
 //
@@ -35,7 +35,7 @@
 // The author accepts no liability for any damage/loss of business that
 // this product may cause.
 //
-// For use with CGridCtrl v2.10+
+// For use with GridCtrl v2.10+
 //
 /////////////////////////////////////////////////////////////////////////////
 
@@ -60,22 +60,22 @@ static char THIS_FILE[] = __FILE__;
 namespace SvGcl
 {
 	/////////////////////////////////////////////////////////////////////////////
-	// CGridDropTarget
+	// GridDropTarget
 
-	CGridDropTarget::CGridDropTarget()
+	GridDropTarget::GridDropTarget()
 	{
 		m_pGridCtrl = nullptr;
 		m_bRegistered = FALSE;
 	}
 
-	CGridDropTarget::~CGridDropTarget()
+	GridDropTarget::~GridDropTarget()
 	{
 	}
 
 	// Overloaded Register() function performs the normal COleDropTarget::Register
 	// but also serves to connect this COleDropTarget with the parent grid control,
 	// where all drop messages will ultimately be forwarded.
-	BOOL CGridDropTarget::Register(CGridCtrl *pGridCtrl)
+	BOOL GridDropTarget::Register(GridCtrl *pGridCtrl)
 	{
 		if (m_bRegistered)
 			return FALSE;
@@ -86,10 +86,10 @@ namespace SvGcl
 			return FALSE;
 		bInProcedure = TRUE;
 
-		assert(pGridCtrl->IsKindOf(RUNTIME_CLASS(CGridCtrl)));
+		assert(pGridCtrl->IsKindOf(RUNTIME_CLASS(GridCtrl)));
 		assert(pGridCtrl);
 
-		if (!pGridCtrl || !pGridCtrl->IsKindOf(RUNTIME_CLASS(CGridCtrl)))
+		if (!pGridCtrl || !pGridCtrl->IsKindOf(RUNTIME_CLASS(GridCtrl)))
 		{
 			bInProcedure = FALSE;
 			return FALSE;
@@ -103,21 +103,21 @@ namespace SvGcl
 		return m_bRegistered;
 	}
 
-	void CGridDropTarget::Revoke()
+	void GridDropTarget::Revoke()
 	{
 		m_bRegistered = FALSE;
 		COleDropTarget::Revoke();
 	}
 
-	BEGIN_MESSAGE_MAP(CGridDropTarget, COleDropTarget)
-		//{{AFX_MSG_MAP(CGridDropTarget)
+	BEGIN_MESSAGE_MAP(GridDropTarget, COleDropTarget)
+		//{{AFX_MSG_MAP(GridDropTarget)
 		//}}AFX_MSG_MAP
 	END_MESSAGE_MAP()
 
 	/////////////////////////////////////////////////////////////////////////////
-	// CGridDropTarget message handlers
+	// GridDropTarget message handlers
 
-	DROPEFFECT CGridDropTarget::OnDragScroll(CWnd* pWnd, DWORD dwKeyState, CPoint /*point*/)
+	DROPEFFECT GridDropTarget::OnDragScroll(CWnd* pWnd, DWORD dwKeyState, CPoint /*point*/)
 	{
 		if (pWnd->GetSafeHwnd() == m_pGridCtrl->GetSafeHwnd())
 		{
@@ -129,11 +129,11 @@ namespace SvGcl
 			return DROPEFFECT_NONE;
 	}
 
-	DROPEFFECT CGridDropTarget::OnDragEnter(CWnd* pWnd, COleDataObject* pDataObject, 
+	DROPEFFECT GridDropTarget::OnDragEnter(CWnd* pWnd, COleDataObject* pDataObject, 
 											DWORD dwKeyState, CPoint point)
 	{
 #if defined (TRACE_THEM_ALL) || defined (TRACE_GRIDCTRL)
-		TRACE(_T("In CGridDropTarget::OnDragEnter\n"));
+		TRACE(_T("In GridDropTarget::OnDragEnter\n"));
 #endif
 		assert(m_pGridCtrl);
 
@@ -143,10 +143,10 @@ namespace SvGcl
 			return DROPEFFECT_NONE;
 	}
 
-	void CGridDropTarget::OnDragLeave(CWnd* pWnd)
+	void GridDropTarget::OnDragLeave(CWnd* pWnd)
 	{
 #if defined (TRACE_THEM_ALL) || defined (TRACE_GRIDCTRL)
-		TRACE(_T("In CGridDropTarget::OnDragLeave\n"));
+		TRACE(_T("In GridDropTarget::OnDragLeave\n"));
 #endif
 		assert(m_pGridCtrl);
 
@@ -154,7 +154,7 @@ namespace SvGcl
 			m_pGridCtrl->OnDragLeave();
 	}
 
-	DROPEFFECT CGridDropTarget::OnDragOver(CWnd* pWnd, COleDataObject* pDataObject, 
+	DROPEFFECT GridDropTarget::OnDragOver(CWnd* pWnd, COleDataObject* pDataObject, 
 										   DWORD dwKeyState, CPoint point)
 	{
 		assert(m_pGridCtrl);
@@ -165,11 +165,11 @@ namespace SvGcl
 			return DROPEFFECT_NONE;
 	}
 
-	BOOL CGridDropTarget::OnDrop(CWnd* pWnd, COleDataObject* pDataObject,
+	BOOL GridDropTarget::OnDrop(CWnd* pWnd, COleDataObject* pDataObject,
 								 DROPEFFECT dropEffect, CPoint point)
 	{
 #if defined (TRACE_THEM_ALL) || defined (TRACE_GRIDCTRL)
-		TRACE(_T("In CGridDropTarget::OnDrop\n"));
+		TRACE(_T("In GridDropTarget::OnDrop\n"));
 #endif
 		assert(m_pGridCtrl);
 

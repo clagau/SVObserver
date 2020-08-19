@@ -92,7 +92,7 @@ SVSetupDialogManager::SVSetupDialogManager()
 		{SvPb::ColorToolClassId, &SVSetupDialogManager::SVColorToolClassSetupDialog},
 		{SvPb::DPointXResultClassId, &SVSetupDialogManager::SVResultClassSetupDialog},
 		{SvPb::DPointYResultClassId, &SVSetupDialogManager::SVResultClassSetupDialog},
-		{SvPb::HistogramAnalyzerClassId, &SVSetupDialogManager::SVHistogramAnalyzerClassSetupDialog},
+		{SvPb::HistogramAnalyzerClassId, &SVSetupDialogManager::SVHistogramAnalyzerSetupDialog},
 		{SvPb::LinearEdgeCountingLineAnalyzerClassId, &SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog},
 		{SvPb::LinearEdgePositionLineAnalyzerClassId, &SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog},
 		{SvPb::LinearMaximumBackgroundObjectLineAnalyzerClassId, &SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog},
@@ -249,11 +249,11 @@ HRESULT SVSetupDialogManager::SVColorToolClassSetupDialog(uint32_t objectId, CWn
 	return l_Status;
 }
 
-HRESULT SVSetupDialogManager::SVHistogramAnalyzerClassSetupDialog(uint32_t objectId, CWnd* )
+HRESULT SVSetupDialogManager::SVHistogramAnalyzerSetupDialog(uint32_t objectId, CWnd* )
 {
 	HRESULT l_Status = S_OK;
 
-	SvAo::SVHistogramAnalyzerClass* l_pAnalyzer = dynamic_cast<SvAo::SVHistogramAnalyzerClass*>(SVObjectManagerClass::Instance().GetObject(objectId));
+	SvAo::SVHistogramAnalyzer* l_pAnalyzer = dynamic_cast<SvAo::SVHistogramAnalyzer*>(SVObjectManagerClass::Instance().GetObject(objectId));
 
 	if (nullptr != l_pAnalyzer)
 	{
@@ -427,7 +427,7 @@ HRESULT SVSetupDialogManager::SVOCVAnalyzerClassSetupDialog(uint32_t objectId, C
 {
 	HRESULT l_Status = S_OK;
 
-	SvAo::SVOCVAnalyzerClass* pAnalyzer = dynamic_cast<SvAo::SVOCVAnalyzerClass*>(SVObjectManagerClass::Instance().GetObject(objectId));
+	SvAo::SVOCVAnalyzer* pAnalyzer = dynamic_cast<SvAo::SVOCVAnalyzer*>(SVObjectManagerClass::Instance().GetObject(objectId));
 
 	if (nullptr != pAnalyzer)
 	{
@@ -506,7 +506,7 @@ HRESULT SVSetupDialogManager::SVPixelAnalyzerClassSetupDialog(uint32_t objectId,
 {
 	HRESULT l_Status = S_FALSE;
 
-	SvAo::SVPixelAnalyzerClass* pAnalyzer = dynamic_cast<SvAo::SVPixelAnalyzerClass*> (SVObjectManagerClass::Instance().GetObject(objectId));
+	SvAo::SVPixelAnalyzer* pAnalyzer = dynamic_cast<SvAo::SVPixelAnalyzer*> (SVObjectManagerClass::Instance().GetObject(objectId));
 
 	if (nullptr != pAnalyzer)
 	{

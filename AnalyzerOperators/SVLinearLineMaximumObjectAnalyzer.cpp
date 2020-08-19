@@ -29,9 +29,9 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVLinearMaximumObjectLineAnalyzerClass, SvPb::LinearMaximumObjectLineAnalyzerClassId);
+SV_IMPLEMENT_CLASS( SVLinearMaximumObjectLineAnalyzer, SvPb::LinearMaximumObjectLineAnalyzerClassId);
 
-SVLinearMaximumObjectLineAnalyzerClass::SVLinearMaximumObjectLineAnalyzerClass( SVObjectClass* POwner, int StringResourceID )
+SVLinearMaximumObjectLineAnalyzer::SVLinearMaximumObjectLineAnalyzer( SVObjectClass* POwner, int StringResourceID )
 									 :SVLinearAnalyzerClass( POwner, StringResourceID ) 
 {
 	m_bEnableDirection = false;
@@ -43,7 +43,7 @@ SVLinearMaximumObjectLineAnalyzerClass::SVLinearMaximumObjectLineAnalyzerClass( 
 	init();
 }
 
-void SVLinearMaximumObjectLineAnalyzerClass::init()
+void SVLinearMaximumObjectLineAnalyzer::init()
 {
 	// Identify our type
 	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVLinearMaximumObjectAnalyzerObjectType;
@@ -120,12 +120,12 @@ void SVLinearMaximumObjectLineAnalyzerClass::init()
 	addScalarResultToAvailableChildren(SvPb::LinearDistanceEdgeBEId, SvPb::SVResultDoubleObjectType, IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_B, IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_B_RESULT);
 }
 
-SVLinearMaximumObjectLineAnalyzerClass::~SVLinearMaximumObjectLineAnalyzerClass()
+SVLinearMaximumObjectLineAnalyzer::~SVLinearMaximumObjectLineAnalyzer()
 {
-	SVLinearMaximumObjectLineAnalyzerClass::CloseObject();
+	SVLinearMaximumObjectLineAnalyzer::CloseObject();
 }
 
-bool SVLinearMaximumObjectLineAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
+bool SVLinearMaximumObjectLineAnalyzer::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
 	bool bOk = SVLinearAnalyzerClass::CreateObject(rCreateStructure);
 
@@ -142,12 +142,12 @@ bool SVLinearMaximumObjectLineAnalyzerClass::CreateObject( const SVObjectLevelCr
 	return bOk;
 }
 
-bool SVLinearMaximumObjectLineAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
+bool SVLinearMaximumObjectLineAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	return __super::ResetObject(pErrorMessages) && ValidateEdgeA(pErrorMessages) && ValidateEdgeB(pErrorMessages);
 }
 
-HRESULT SVLinearMaximumObjectLineAnalyzerClass::GetSelectedEdgeOverlays( SVExtentMultiLineStruct &p_MultiLine )
+HRESULT SVLinearMaximumObjectLineAnalyzer::GetSelectedEdgeOverlays( SVExtentMultiLineStruct &p_MultiLine )
 {
 	double dDistance = 0.0;
 
@@ -177,7 +177,7 @@ HRESULT SVLinearMaximumObjectLineAnalyzerClass::GetSelectedEdgeOverlays( SVExten
 	return S_OK;
 }
 
-void SVLinearMaximumObjectLineAnalyzerClass::addOverlayResults(SvPb::Overlay& rOverlay, bool isVertical) const
+void SVLinearMaximumObjectLineAnalyzer::addOverlayResults(SvPb::Overlay& rOverlay, bool isVertical) const
 {
 	auto* pGroup = rOverlay.add_shapegroups();
 	pGroup->set_detaillevel(SvPb::Level1);
@@ -223,7 +223,7 @@ void SVLinearMaximumObjectLineAnalyzerClass::addOverlayResults(SvPb::Overlay& rO
 	}
 }
 
-bool SVLinearMaximumObjectLineAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVLinearMaximumObjectLineAnalyzer::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	SVImageExtentClass Extents;
 	std::vector<double> AEdges;

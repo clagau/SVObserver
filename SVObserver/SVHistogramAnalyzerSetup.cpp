@@ -2,7 +2,7 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVHistogramAnalyzerClass
+//* .Module Name     : SVHistogramAnalyzer
 //* .File Name       : $Workfile:   SVHistogramAnalyzerSetup.cpp  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $

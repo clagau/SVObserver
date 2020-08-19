@@ -12,7 +12,7 @@
 //* .Check In Date   : $Date:   24 Oct 2014 10:32:34  $
 //******************************************************************************
 
-// GridURLCell.h: interface for the CGridURLCell class.
+// GridURLCell.h: interface for the GridURLCell class.
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -31,13 +31,13 @@ namespace SvGcl
 		size_t  nLength;
 	} URLStruct;
 
-	class CGridURLCell : public CGridCell  
+	class GridURLCell : public GridCell  
 	{
-		DECLARE_DYNCREATE(CGridURLCell)
+		DECLARE_DYNCREATE(GridURLCell)
 
 	public:
-		CGridURLCell();
-		virtual ~CGridURLCell();
+		GridURLCell();
+		virtual ~GridURLCell();
 
 		virtual BOOL     Draw(CDC* pDC, int nRow, int nCol, CRect rect, BOOL bEraseBkgnd = TRUE) override;
 		virtual BOOL     Edit(int nRow, int nCol, CRect rect, CPoint point, UINT nID, UINT nChar) override;

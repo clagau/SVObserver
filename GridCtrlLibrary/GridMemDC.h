@@ -16,7 +16,7 @@
 //
 
 //////////////////////////////////////////////////
-// CGridMemDC - memory DC
+// GridMemDC - memory DC
 //
 // Author: Keith Rule
 // Email:  keithr@europa.com
@@ -35,12 +35,12 @@
 
 namespace SvGcl
 {
-	class CGridMemDC : public CDC
+	class GridMemDC : public CDC
 	{
 	public:
 
 		// constructor sets up the memory DC
-		CGridMemDC(CDC* pDC) : CDC()
+		GridMemDC(CDC* pDC) : CDC()
 		{
 			ASSERT(nullptr != pDC);
 
@@ -78,7 +78,7 @@ namespace SvGcl
 		}
 
 		// Destructor copies the contents of the mem DC to the original DC
-		virtual ~CGridMemDC()
+		virtual ~GridMemDC()
 		{
 			if (m_bMemDC)
 			{
@@ -97,14 +97,14 @@ namespace SvGcl
 		}
 
 		// Allow usage as a pointer
-		CGridMemDC* operator->() {return this;}
+		GridMemDC* operator->() {return this;}
 
 		// Allow usage as a pointer
-		operator CGridMemDC*() {return this;}
+		operator GridMemDC*() {return this;}
 
 	private:
 		CBitmap  m_bitmap;      // Offscreen bitmap
-		CBitmap* m_pOldBitmap;  // bitmap originally found in CGridMemDC
+		CBitmap* m_pOldBitmap;  // bitmap originally found in GridMemDC
 		CDC*     m_pDC;         // Saves CDC passed in constructor
 		CRect    m_rect;        // Rectangle of drawing area.
 		BOOL     m_bMemDC;      // TRUE if CDC really is a Memory DC.

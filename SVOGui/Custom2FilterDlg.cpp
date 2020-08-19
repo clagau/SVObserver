@@ -273,7 +273,7 @@ namespace SvOg
 		if( 0 == HIBYTE( GetKeyState( VK_LBUTTON ) ) )
 		{
 			SvGcl::CCellID CellFocus;
-			SvGcl::CCellRange CellSelection;
+			SvGcl::CellRange CellSelection;
 			//Instead of the edit cell we want the first or last cell of the grid to have the selection
 			if( 0 == HIBYTE( GetKeyState( VK_SHIFT ) ) )
 			{
@@ -521,7 +521,7 @@ namespace SvOg
 			}
 			else if( -1 == Cell.row && -1 == Cell.col )
 			{
-				SvGcl::CCellRange Selection = m_Grid.GetSelectedCellRange();
+				SvGcl::CellRange Selection = m_Grid.GetSelectedCellRange();
 				for( int i = Selection.GetMinRow(); i <= Selection.GetMaxRow(); i++ )
 				{
 					for( int j = Selection.GetMinCol(); j <= Selection.GetMaxCol(); j++ )
@@ -644,7 +644,7 @@ namespace SvOg
 		m_Grid.SetRowHeight( 0, CellSize );
 
 		//Deselect when changing size etc..
-		SvGcl::CCellRange CellSelection;
+		SvGcl::CellRange CellSelection;
 		m_Grid.SetSelectedRange( CellSelection );
 		SvGcl::CCellID CellFocus;
 		m_Grid.SetFocusCell( CellFocus );
@@ -777,7 +777,7 @@ namespace SvOg
 
 	void Custom2FilterDlg::updateGridSelection( LPCTSTR Value )
 	{
-		SvGcl::CCellRange Selection = m_Grid.GetSelectedCellRange();
+		SvGcl::CellRange Selection = m_Grid.GetSelectedCellRange();
 		for( int i = Selection.GetMinRow(); i <= Selection.GetMaxRow(); i++ )
 		{
 			for( int j = Selection.GetMinCol(); j <= Selection.GetMaxCol(); j++ )
@@ -809,7 +809,7 @@ namespace SvOg
 		long MarkedSum = 0;
 
 
-		SvGcl::CCellRange Selection = m_Grid.GetSelectedCellRange();
+		SvGcl::CellRange Selection = m_Grid.GetSelectedCellRange();
 		for( int i = Selection.GetMinRow(); i <= Selection.GetMaxRow(); i++ )
 		{
 			for( int j = Selection.GetMinCol(); j <= Selection.GetMaxCol(); j++ )

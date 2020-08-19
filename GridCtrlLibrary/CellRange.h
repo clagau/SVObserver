@@ -15,7 +15,7 @@
 ///////////////////////////////////////////////////////////////////////
 // CellRange.h: header file
 //
-// MFC Grid Control - interface for the CCellRange class.
+// MFC Grid Control - interface for the CellRange class.
 //
 // Written by Chris Maunder <cmaunder@mail.com>
 // Copyright (c) 1998-2002. All Rights Reserved.
@@ -32,7 +32,7 @@
 // The author accepts no liability for any damage/loss of business that
 // this product may cause.
 //
-// For use with CGridCtrl v2.20+
+// For use with GridCtrl v2.20+
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -62,11 +62,11 @@ namespace SvGcl
 		int operator!=(const CCellID& rhs) const { return !operator==(rhs); }
 	};
 
-	class CCellRange
+	class CellRange
 	{ 
 	public:
     
-		CCellRange(int nMinRow = -1, int nMinCol = -1, int nMaxRow = -1, int nMaxCol = -1)
+		CellRange(int nMinRow = -1, int nMinCol = -1, int nMaxRow = -1, int nMaxCol = -1)
 		{
 			Set(nMinRow, nMinCol, nMaxRow, nMaxCol);
 		}
@@ -79,7 +79,7 @@ namespace SvGcl
 		int  Count() { return (m_nMaxRow - m_nMinRow + 1) * (m_nMaxCol - m_nMinCol + 1); }
     
 		CCellID  GetTopLeft() const;
-		CCellRange  Intersect(const CCellRange& rhs) const;
+		CellRange  Intersect(const CellRange& rhs) const;
     
 		int GetMinRow() const {return m_nMinRow;}
 		void SetMinRow(int minRow) {m_nMinRow = minRow;}
@@ -96,9 +96,9 @@ namespace SvGcl
 		int GetRowSpan() const {return m_nMaxRow - m_nMinRow + 1;}
 		int GetColSpan() const {return m_nMaxCol - m_nMinCol + 1;}
     
-		void operator=(const CCellRange& rhs);
-		int  operator==(const CCellRange& rhs);
-		int  operator!=(const CCellRange& rhs);
+		void operator=(const CellRange& rhs);
+		int  operator==(const CellRange& rhs);
+		int  operator!=(const CellRange& rhs);
     
 	protected:
 		int m_nMinRow;
@@ -107,7 +107,7 @@ namespace SvGcl
 		int m_nMaxCol;
 	};
 
-	inline void CCellRange::Set(int minRow, int minCol, int maxRow, int maxCol)
+	inline void CellRange::Set(int minRow, int minCol, int maxRow, int maxCol)
 	{
 			m_nMinRow = minRow;
 			m_nMinCol = minCol;
@@ -115,46 +115,46 @@ namespace SvGcl
 			m_nMaxCol = maxCol;
 	}
 
-	inline void CCellRange::operator=(const CCellRange& rhs)
+	inline void CellRange::operator=(const CellRange& rhs)
 	{
 		if (this != &rhs) Set(rhs.m_nMinRow, rhs.m_nMinCol, rhs.m_nMaxRow, rhs.m_nMaxCol);
 	}
 
-	inline int CCellRange::operator==(const CCellRange& rhs)
+	inline int CellRange::operator==(const CellRange& rhs)
 	{
 			return ((m_nMinRow == rhs.m_nMinRow) && (m_nMinCol == rhs.m_nMinCol) &&
 					(m_nMaxRow == rhs.m_nMaxRow) && (m_nMaxCol == rhs.m_nMaxCol));
 	}
 
-	inline int CCellRange::operator!=(const CCellRange& rhs)
+	inline int CellRange::operator!=(const CellRange& rhs)
 	{
 			return !operator==(rhs);
 	}
 
-	inline int CCellRange::IsValid() const
+	inline int CellRange::IsValid() const
 	{
 			return (m_nMinRow >= 0 && m_nMinCol >= 0 && m_nMaxRow >= 0 && m_nMaxCol >= 0 &&
 					m_nMinRow <= m_nMaxRow && m_nMinCol <= m_nMaxCol);
 	}
 
-	inline int CCellRange::InRange(int row, int col) const
+	inline int CellRange::InRange(int row, int col) const
 	{
 			return (row >= m_nMinRow && row <= m_nMaxRow && col >= m_nMinCol && col <= m_nMaxCol);
 	}
 
-	inline int CCellRange::InRange(const CCellID& cellID) const
+	inline int CellRange::InRange(const CCellID& cellID) const
 	{
 			return InRange(cellID.row, cellID.col);
 	}
 
-	inline CCellID CCellRange::GetTopLeft() const
+	inline CCellID CellRange::GetTopLeft() const
 	{
 			return CCellID(m_nMinRow, m_nMinCol);
 	}
 
-	inline CCellRange CCellRange::Intersect(const CCellRange& rhs) const
+	inline CellRange CellRange::Intersect(const CellRange& rhs) const
 	{
-			return CCellRange(std::max<int>(m_nMinRow,rhs.m_nMinRow), std::max<int>(m_nMinCol,rhs.m_nMinCol),
+			return CellRange(std::max<int>(m_nMinRow,rhs.m_nMinRow), std::max<int>(m_nMinCol,rhs.m_nMinCol),
 							std::min<int>(m_nMaxRow,rhs.m_nMaxRow), std::min<int>(m_nMaxCol,rhs.m_nMaxCol));
 	}
 

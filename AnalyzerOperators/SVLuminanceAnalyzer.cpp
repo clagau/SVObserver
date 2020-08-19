@@ -33,23 +33,23 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVLuminanceAnalyzerClass, SvPb::LuminanceAnalyzerClassId);
+SV_IMPLEMENT_CLASS( SVLuminanceAnalyzer, SvPb::LuminanceAnalyzerClassId);
 
-SVLuminanceAnalyzerClass::SVLuminanceAnalyzerClass( LPCSTR ObjectName )
+SVLuminanceAnalyzer::SVLuminanceAnalyzer( LPCSTR ObjectName )
 : SVImageAnalyzerClass( ObjectName )
 , msvlHistValueArraySize( 0 )
 {
 	init();
 }
 
-SVLuminanceAnalyzerClass::SVLuminanceAnalyzerClass( SVObjectClass* POwner, int StringResourceID )
+SVLuminanceAnalyzer::SVLuminanceAnalyzer( SVObjectClass* POwner, int StringResourceID )
 : SVImageAnalyzerClass( POwner, StringResourceID ) 
 , msvlHistValueArraySize( 0 )
 {
 	init();
 }
 
-void SVLuminanceAnalyzerClass::init()
+void SVLuminanceAnalyzer::init()
 {
 	// init () should instantiate any dynamic children and 
 	//   add them to the task object list.  
@@ -122,7 +122,7 @@ void SVLuminanceAnalyzerClass::init()
 	}
 }
 
-bool SVLuminanceAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
+bool SVLuminanceAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 
@@ -148,12 +148,12 @@ bool SVLuminanceAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pError
 	return Result;
 }
 
-SVLuminanceAnalyzerClass::~SVLuminanceAnalyzerClass()
+SVLuminanceAnalyzer::~SVLuminanceAnalyzer()
 {
-	SVLuminanceAnalyzerClass::CloseObject();
+	SVLuminanceAnalyzer::CloseObject();
 }
 
-bool SVLuminanceAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
+bool SVLuminanceAnalyzer::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
 	SvIe::SVImageClass* pImage(nullptr);
 	bool bError(false);
@@ -228,7 +228,7 @@ bool SVLuminanceAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rC
 }
 
 
-bool SVLuminanceAnalyzerClass::CloseObject()
+bool SVLuminanceAnalyzer::CloseObject()
 {
 
 	msvplHistValues.clear();
@@ -239,7 +239,7 @@ bool SVLuminanceAnalyzerClass::CloseObject()
 	return true;
 }
 
-void SVLuminanceAnalyzerClass::addParameterForMonitorList(SvStl::MessageContainerVector& rMessages, std::back_insert_iterator<SvOi::ParametersForML> inserter) const
+void SVLuminanceAnalyzer::addParameterForMonitorList(SvStl::MessageContainerVector& rMessages, std::back_insert_iterator<SvOi::ParametersForML> inserter) const
 {
 	bool isNoError = true;
 
@@ -261,7 +261,7 @@ void SVLuminanceAnalyzerClass::addParameterForMonitorList(SvStl::MessageContaine
 	}
 }
 
-bool SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVLuminanceAnalyzer::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	__int64          sum(0);
 	long             lNbrPixels(0);
@@ -469,7 +469,7 @@ bool SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 	return true;
 }
 
-double SVLuminanceAnalyzerClass::calculateVariance( double aNumberOfSamples, double aAverageValue, double aAccumulatedSquares )
+double SVLuminanceAnalyzer::calculateVariance( double aNumberOfSamples, double aAverageValue, double aAccumulatedSquares )
 {
 	///////////////////////////////////////////////////////////////////
 	// Variance is a cumulative measure of the

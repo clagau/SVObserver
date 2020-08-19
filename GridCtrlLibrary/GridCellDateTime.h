@@ -12,12 +12,12 @@
 //* .Check In Date   : $Date:   24 Oct 2014 10:32:32  $
 //******************************************************************************
 
-// GridCellDateTime.h: interface for the CGridCellDateTime class.
+// GridCellDateTime.h: interface for the GridCellDateTime class.
 //
 // Provides the implementation for a datetime picker cell type of the
 // grid control.
 //
-// For use with CGridCtrl v2.22+
+// For use with GridCtrl v2.22+
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -29,18 +29,18 @@
 
 namespace SvGcl
 {
-	class CGridCellDateTime : public CGridCell  
+	class GridCellDateTime : public GridCell  
 	{
-		friend class CGridCtrl;
-		DECLARE_DYNCREATE(CGridCellDateTime)
+		friend class GridCtrl;
+		DECLARE_DYNCREATE(GridCellDateTime)
 
 		CTime m_cTime;
 		DWORD m_dwStyle;
 
 	public:
-		CGridCellDateTime();
-		explicit CGridCellDateTime(DWORD dwStyle);
-		virtual ~CGridCellDateTime();
+		GridCellDateTime();
+		explicit GridCellDateTime(DWORD dwStyle);
+		virtual ~GridCellDateTime();
 		virtual CSize GetCellExtent(CDC* pDC) override;
 
 		// editing cells
@@ -55,11 +55,11 @@ namespace SvGcl
 		void   SetTime(CTime time);
 	};
 
-	class CInPlaceDateTime : public CDateTimeCtrl
+	class InPlaceDateTime : public CDateTimeCtrl
 	{
 	// Construction
 	public:
-		CInPlaceDateTime(CWnd* pParent,         // parent
+		InPlaceDateTime(CWnd* pParent,         // parent
 						CRect& rect,           // dimensions & location
 						DWORD dwStyle,         // window/combobox style
 						UINT nID,              // control ID
@@ -70,19 +70,19 @@ namespace SvGcl
 
 	// Overrides
 		// ClassWizard generated virtual function overrides
-		//{{AFX_VIRTUAL(CInPlaceList)
+		//{{AFX_VIRTUAL(InPlaceList)
 		protected:
 		virtual void PostNcDestroy() override;
 		//}}AFX_VIRTUAL
 
 	// Implementation
 	public:
-		virtual ~CInPlaceDateTime();
+		virtual ~InPlaceDateTime();
 		void EndEdit();
 
 	// Generated message map functions
 	protected:
-		//{{AFX_MSG(CInPlaceList)
+		//{{AFX_MSG(InPlaceList)
 		afx_msg void OnKillFocus(CWnd* pNewWnd);
 		afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 		afx_msg void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);

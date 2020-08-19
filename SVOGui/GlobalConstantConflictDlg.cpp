@@ -114,8 +114,8 @@ namespace SvOg
 	{
 		//The using is needed due to the RUNTIME_CLASS which does not accept namespaces
 		using namespace SvGcl;
-		m_Grid.SetCellType(RowIndex, rColumnIndex, RUNTIME_CLASS( CGridCellCheck ));
-		SvGcl::CGridCellCheck* pCell = dynamic_cast<SvGcl::CGridCellCheck*>(m_Grid.GetCell( RowIndex, rColumnIndex ));
+		m_Grid.SetCellType(RowIndex, rColumnIndex, RUNTIME_CLASS( GridCellCheck ));
+		SvGcl::GridCellCheck* pCell = dynamic_cast<SvGcl::GridCellCheck*>(m_Grid.GetCell( RowIndex, rColumnIndex ));
 		if( nullptr != pCell )
 		{
 			pCell->SetCheck( rGlobalData.m_Selected );
@@ -161,7 +161,7 @@ namespace SvOg
 	{
 		SvGcl::NM_GRIDVIEW* pItem = reinterpret_cast<SvGcl::NM_GRIDVIEW*> (pNotifyStruct);
 
-		SvGcl::CGridCellCheck* pCell = dynamic_cast<SvGcl::CGridCellCheck*>( m_Grid.GetCell(pItem->iRow,  pItem->iColumn ));
+		SvGcl::GridCellCheck* pCell = dynamic_cast<SvGcl::GridCellCheck*>( m_Grid.GetCell(pItem->iRow,  pItem->iColumn ));
 		if( nullptr != pCell )
 		{
 			//Check if Current Import checkbox clicked
@@ -169,7 +169,7 @@ namespace SvOg
 			BOOL State( pCell->GetCheck() );
 			pCell->SetCheck( !State );
 			//Set the other checkbox to the opposite state
-			pCell = dynamic_cast<SvGcl::CGridCellCheck*>( m_Grid.GetCell(pItem->iRow,  OtherCheckCol ));
+			pCell = dynamic_cast<SvGcl::GridCellCheck*>( m_Grid.GetCell(pItem->iRow,  OtherCheckCol ));
 			if( nullptr != pCell )
 			{
 				pCell->SetCheck( State );

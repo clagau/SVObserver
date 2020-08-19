@@ -32,7 +32,7 @@
 // The author accepts no liability for any damage/loss of business that
 // this product may cause.
 //
-// For use with CGridCtrl v2.10+
+// For use with GridCtrl v2.10+
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -40,11 +40,11 @@
 
 namespace SvGcl
 {
-	class CInPlaceEdit : public CEdit
+	class InPlaceEdit : public CEdit
 	{
 	// Construction
 	public:
-		CInPlaceEdit(CWnd* pParent, CRect& rect, DWORD dwStyle, UINT nID,
+		InPlaceEdit(CWnd* pParent, CRect& rect, DWORD dwStyle, UINT nID,
 						int nRow, int nColumn, CString sInitText, UINT nFirstChar);
 
 	// Attributes
@@ -56,7 +56,7 @@ namespace SvGcl
  
 	// Overrides
 			// ClassWizard generated virtual function overrides
-			//{{AFX_VIRTUAL(CInPlaceEdit)
+			//{{AFX_VIRTUAL(InPlaceEdit)
 		public:
 		virtual BOOL PreTranslateMessage(MSG* pMsg) override;
 		protected:
@@ -65,11 +65,11 @@ namespace SvGcl
  
 	// Implementation
 	public:
-			virtual ~CInPlaceEdit();
+			virtual ~InPlaceEdit();
  
 	// Generated message map functions
 	protected:
-		//{{AFX_MSG(CInPlaceEdit)
+		//{{AFX_MSG(InPlaceEdit)
 		afx_msg void OnKillFocus(CWnd* pNewWnd);
 		afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
 		afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);

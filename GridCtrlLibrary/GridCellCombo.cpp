@@ -23,7 +23,7 @@
 // Copyright (c) 1998-2005. All Rights Reserved.
 //
 // Parts of the code contained in this file are based on the original
-// CInPlaceList from http://www.codeguru.com/listview
+// InPlaceList from http://www.codeguru.com/listview
 //
 // This code may be used in compiled form in any way you desire. This
 // file may be redistributed unmodified by any means PROVIDING it is 
@@ -37,10 +37,10 @@
 // The author accepts no liability for any damage/loss of business that
 // this product may cause.
 //
-// For use with CGridCtrl v2.22+
+// For use with GridCtrl v2.22+
 //
 // History:
-// 6 Aug 1998 - Added CComboEdit to subclass the edit control - code 
+// 6 Aug 1998 - Added ComboEdit to subclass the edit control - code 
 //              provided by Roelf Werkman <rdw@inn.nl>. Added nID to 
 //              the constructor param list.
 // 29 Nov 1998 - bug fix in onkeydown (Markus Irtenkauf)
@@ -66,18 +66,20 @@ static char THIS_FILE[] = __FILE__;
 namespace SvGcl
 {
 	/////////////////////////////////////////////////////////////////////////////
-	// CComboEdit
+	// ComboEdit
 
-	CComboEdit::CComboEdit()
+	ComboEdit::ComboEdit()
 	{
 	}
 
-	CComboEdit::~CComboEdit()
+	ComboEdit::~ComboEdit()
 	{
 	}
 
+	//@TODO [Arvid][10.00][17.8.2020] can this class be removed? after all, it is 'stoopid' (sic) and was introduced ages ago to solve a Win95 (!) Problem
 	// Stoopid win95 accelerator key problem workaround - Matt Weagle.
-	BOOL CComboEdit::PreTranslateMessage(MSG* pMsg) 
+	//
+	BOOL ComboEdit::PreTranslateMessage(MSG* pMsg) 
 	{
 		// Make sure that the keystrokes continue to the appropriate handlers
 		if (pMsg->message == WM_KEYDOWN || pMsg->message == WM_KEYUP)
@@ -94,8 +96,8 @@ namespace SvGcl
 		return CEdit::PreTranslateMessage(pMsg);
 	}
 
-	BEGIN_MESSAGE_MAP(CComboEdit, CEdit)
-		//{{AFX_MSG_MAP(CComboEdit)
+	BEGIN_MESSAGE_MAP(ComboEdit, CEdit)
+		//{{AFX_MSG_MAP(ComboEdit)
 		ON_WM_KILLFOCUS()
 		ON_WM_KEYDOWN()
 		ON_WM_KEYUP()
@@ -103,18 +105,18 @@ namespace SvGcl
 	END_MESSAGE_MAP()
 
 	/////////////////////////////////////////////////////////////////////////////
-	// CComboEdit message handlers
+	// ComboEdit message handlers
 
-	void CComboEdit::OnKillFocus(CWnd* pNewWnd) 
+	void ComboEdit::OnKillFocus(CWnd* pNewWnd) 
 	{
 		CEdit::OnKillFocus(pNewWnd);
 	
-		CInPlaceList* pOwner = (CInPlaceList*) GetOwner();  // This MUST be a CInPlaceList
+		InPlaceList* pOwner = (InPlaceList*) GetOwner();  // This MUST be a InPlaceList
 		if (pOwner)
 			pOwner->EndEdit();	
 	}
 
-	void CComboEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) 
+	void ComboEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) 
 	{
 		if ((nChar == VK_PRIOR || nChar == VK_NEXT ||
 			 nChar == VK_DOWN  || nChar == VK_UP   ||
@@ -130,7 +132,7 @@ namespace SvGcl
 		CEdit::OnKeyDown(nChar, nRepCnt, nFlags);
 	}
 
-	void CComboEdit::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags) 
+	void ComboEdit::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags) 
 	{
 		if (nChar == VK_ESCAPE) 
 		{
@@ -153,9 +155,9 @@ namespace SvGcl
 
 
 	/////////////////////////////////////////////////////////////////////////////
-	// CInPlaceList
+	// InPlaceList
 
-	CInPlaceList::CInPlaceList(CWnd* pParent, CRect& rect, DWORD dwStyle, UINT nID,
+	InPlaceList::InPlaceList(CWnd* pParent, CRect& rect, DWORD dwStyle, UINT nID,
 							   int nRow, int nColumn, 
 							   COLORREF crFore, COLORREF crBack,
 							   CStringArray& Items, CString sInitText, 
@@ -229,11 +231,11 @@ namespace SvGcl
  			SetFocus();
 	}
 
-	CInPlaceList::~CInPlaceList()
+	InPlaceList::~InPlaceList()
 	{
 	}
 
-	void CInPlaceList::EndEdit()
+	void InPlaceList::EndEdit()
 	{
 		CString str;
 		if (::IsWindow(m_hWnd))
@@ -261,7 +263,7 @@ namespace SvGcl
 			PostMessage(WM_CLOSE, 0, 0);
 	}
 
-	int CInPlaceList::GetCorrectDropWidth()
+	int InPlaceList::GetCorrectDropWidth()
 	{
 		const int nMaxWidth = 200;  // don't let the box be bigger than this
 
@@ -295,7 +297,7 @@ namespace SvGcl
 
 	/*
 	// Fix by Ray (raybie@Exabyte.COM)
-	void CInPlaceList::OnSelendOK() 
+	void InPlaceList::OnSelendOK() 
 	{
 		int iIndex = GetCurSel(); 
 		if( iIndex != CB_ERR) 
@@ -311,15 +313,15 @@ namespace SvGcl
 	}
 	*/
 
-	void CInPlaceList::PostNcDestroy() 
+	void InPlaceList::PostNcDestroy() 
 	{
 		CComboBox::PostNcDestroy();
 
 		delete this;
 	}
 
-	BEGIN_MESSAGE_MAP(CInPlaceList, CComboBox)
-		//{{AFX_MSG_MAP(CInPlaceList)
+	BEGIN_MESSAGE_MAP(InPlaceList, CComboBox)
+		//{{AFX_MSG_MAP(InPlaceList)
 		ON_WM_KILLFOCUS()
 		ON_WM_KEYDOWN()
 		ON_WM_KEYUP()
@@ -332,19 +334,19 @@ namespace SvGcl
 
 
 	/////////////////////////////////////////////////////////////////////////////
-	// CInPlaceList message handlers
+	// InPlaceList message handlers
 
-	UINT CInPlaceList::OnGetDlgCode() 
+	UINT InPlaceList::OnGetDlgCode() 
 	{
 		return DLGC_WANTALLKEYS;
 	}
 
-	void CInPlaceList::OnDropdown() 
+	void InPlaceList::OnDropdown() 
 	{
 		SetDroppedWidth(GetCorrectDropWidth());
 	}
 
-	void CInPlaceList::OnKillFocus(CWnd* pNewWnd) 
+	void InPlaceList::OnKillFocus(CWnd* pNewWnd) 
 	{
 		CComboBox::OnKillFocus(pNewWnd);
 
@@ -359,7 +361,7 @@ namespace SvGcl
 	// If an arrow key (or associated) is pressed, then exit if
 	//  a) The Ctrl key was down, or
 	//  b) m_bExitOnArrows == TRUE
-	void CInPlaceList::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) 
+	void InPlaceList::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) 
 	{
 		if ((nChar == VK_PRIOR || nChar == VK_NEXT ||
 			 nChar == VK_DOWN  || nChar == VK_UP   ||
@@ -375,7 +377,7 @@ namespace SvGcl
 	}
 
 	// Need to keep a lookout for Tabs, Esc and Returns.
-	void CInPlaceList::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags) 
+	void InPlaceList::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags) 
 	{
 		if (nChar == VK_ESCAPE) 
 			SetWindowText(m_sInitText);	// restore previous text
@@ -390,7 +392,7 @@ namespace SvGcl
 		CComboBox::OnKeyUp(nChar, nRepCnt, nFlags);
 	}
 
-	HBRUSH CInPlaceList::CtlColor(CDC* /*pDC*/, UINT /*nCtlColor*/) 
+	HBRUSH InPlaceList::CtlColor(CDC* /*pDC*/, UINT /*nCtlColor*/) 
 	{
 		/*
 		static CBrush brush(m_crBackClr);
@@ -404,59 +406,59 @@ namespace SvGcl
 	}
 
 	/////////////////////////////////////////////////////////////////////////////
-	// CGridCellCombo 
+	// GridCellCombo 
 	/////////////////////////////////////////////////////////////////////////////
 
 
-	IMPLEMENT_DYNCREATE(CGridCellCombo, CGridCell)
+	IMPLEMENT_DYNCREATE(GridCellCombo, GridCell)
 
-	CGridCellCombo::CGridCellCombo() : CGridCell()
+	GridCellCombo::GridCellCombo() : GridCell()
 	{
 		SetStyle(CBS_DROPDOWN);  // CBS_DROPDOWN, CBS_DROPDOWNLIST, CBS_SIMPLE, CBS_SORT
 	}
 
 	// Create a control to do the editing
-	BOOL CGridCellCombo::Edit(int nRow, int nCol, CRect rect, CPoint /* point */, UINT nID, UINT nChar)
+	BOOL GridCellCombo::Edit(int nRow, int nCol, CRect rect, CPoint /* point */, UINT nID, UINT nChar)
 	{
 		m_bEditing = TRUE;
     
-		// CInPlaceList auto-deletes itself
-		m_pEditWnd = new CInPlaceList(GetGrid(), rect, GetStyle(), nID, nRow, nCol, 
+		// InPlaceList auto-deletes itself
+		m_pEditWnd = new InPlaceList(GetGrid(), rect, GetStyle(), nID, nRow, nCol, 
 									  GetTextClr(), GetBackClr(), m_Strings, GetText(), nChar);
 
 		return TRUE;
 	}
 
-	CWnd* CGridCellCombo::GetEditWnd() const
+	CWnd* GridCellCombo::GetEditWnd() const
 	{
 		if (m_pEditWnd && (m_pEditWnd->GetStyle() & CBS_DROPDOWNLIST) != CBS_DROPDOWNLIST )
-			return &(((CInPlaceList*)m_pEditWnd)->m_edit);
+			return &(((InPlaceList*)m_pEditWnd)->m_edit);
 
 		return nullptr;
 	}
 
 
-	CSize CGridCellCombo::GetCellExtent(CDC* pDC)
+	CSize GridCellCombo::GetCellExtent(CDC* pDC)
 	{    
 		CSize sizeScroll (GetSystemMetrics(SM_CXVSCROLL), GetSystemMetrics(SM_CYHSCROLL));    
-		CSize sizeCell (CGridCell::GetCellExtent(pDC));    
+		CSize sizeCell (GridCell::GetCellExtent(pDC));    
 		sizeCell.cx += sizeScroll.cx;    
 		sizeCell.cy = std::max<LONG>(sizeCell.cy,sizeScroll.cy);    
 		return sizeCell;
 	}
 
 	// Cancel the editing.
-	void CGridCellCombo::EndEdit()
+	void GridCellCombo::EndEdit()
 	{
 		if (m_pEditWnd)
-			((CInPlaceList*)m_pEditWnd)->EndEdit();
+			((InPlaceList*)m_pEditWnd)->EndEdit();
 	}
 
 	// Override draw so that when the cell is selected, a drop arrow is shown in the RHS.
-	BOOL CGridCellCombo::Draw(CDC* pDC, int nRow, int nCol, CRect rect,  BOOL bEraseBkgnd /*=TRUE*/)
+	BOOL GridCellCombo::Draw(CDC* pDC, int nRow, int nCol, CRect rect,  BOOL bEraseBkgnd /*=TRUE*/)
 	{
 	#ifdef _WIN32_WCE
-		return CGridCell::Draw(pDC, nRow, nCol, rect,  bEraseBkgnd);
+		return GridCell::Draw(pDC, nRow, nCol, rect,  bEraseBkgnd);
 	#else
 		// Cell selected?
 		//if ( !IsFixed() && IsFocused())
@@ -486,7 +488,7 @@ namespace SvGcl
 			SetText(_T(""));
 
 		// drop through and complete the cell drawing using the base class' method
-		BOOL bResult = CGridCell::Draw(pDC, nRow, nCol, rect,  bEraseBkgnd);
+		BOOL bResult = GridCell::Draw(pDC, nRow, nCol, rect,  bEraseBkgnd);
 
 		if (IsEditing())
 			SetText(strTempText);
@@ -496,7 +498,7 @@ namespace SvGcl
 	}
 
 	// For setting the strings that will be displayed in the drop list
-	void CGridCellCombo::SetOptions(const CStringArray& ar)
+	void GridCellCombo::SetOptions(const CStringArray& ar)
 	{ 
 		m_Strings.RemoveAll();
 		for (int i = 0; i < ar.GetSize(); i++)

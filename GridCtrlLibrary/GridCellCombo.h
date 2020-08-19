@@ -32,7 +32,7 @@
 // The author accepts no liability for any damage/loss of business that
 // this product may cause.
 //
-// For use with CGridCtrl v2.10
+// For use with GridCtrl v2.10
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -44,13 +44,13 @@
 
 namespace SvGcl
 {
-	class CGridCellCombo : public CGridCell
+	class GridCellCombo : public GridCell
 	{
-		friend class CGridCtrl;
-		DECLARE_DYNCREATE(CGridCellCombo)
+		friend class GridCtrl;
+		DECLARE_DYNCREATE(GridCellCombo)
 
 	public:
-		CGridCellCombo();
+		GridCellCombo();
 
 	// editing cells
 	public:
@@ -62,7 +62,7 @@ namespace SvGcl
 	public:
 		virtual CSize GetCellExtent(CDC* pDC) override;
 
-	// CGridCellCombo specific calls
+	// GridCellCombo specific calls
 	public:
 		void  SetOptions(const CStringArray& ar);
 		void  SetStyle(DWORD dwStyle)           { m_dwStyle = dwStyle; }
@@ -76,15 +76,15 @@ namespace SvGcl
 	};
 
 	/////////////////////////////////////////////////////////////////////////////
-	// CComboEdit window
+	// ComboEdit window
 
 	#define IDC_COMBOEDIT 1001
 
-	class CComboEdit : public CEdit
+	class ComboEdit : public CEdit
 	{
 		// Construction
 	public:
-		CComboEdit();
+		ComboEdit();
 
 		// Attributes
 	public:
@@ -94,17 +94,17 @@ namespace SvGcl
 
 		// Overrides
 		// ClassWizard generated virtual function overrides
-		//{{AFX_VIRTUAL(CComboEdit)
+		//{{AFX_VIRTUAL(ComboEdit)
 		virtual BOOL PreTranslateMessage(MSG* pMsg) override;
 		//}}AFX_VIRTUAL
 
 		// Implementation
 	public:
-		virtual ~CComboEdit();
+		virtual ~ComboEdit();
 
 		// Generated message map functions
 	protected:
-		//{{AFX_MSG(CComboEdit)
+		//{{AFX_MSG(ComboEdit)
 		afx_msg void OnKillFocus(CWnd* pNewWnd);
 		afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 		afx_msg void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
@@ -114,15 +114,15 @@ namespace SvGcl
 	};
 
 	/////////////////////////////////////////////////////////////////////////////
-	// CInPlaceList window
+	// InPlaceList window
 
-	class CInPlaceList : public CComboBox
+	class InPlaceList : public CComboBox
 	{
-		friend class CComboEdit;
+		friend class ComboEdit;
 
 		// Construction
 	public:
-		CInPlaceList(CWnd* pParent,         // parent
+		InPlaceList(CWnd* pParent,         // parent
 			CRect& rect,           // dimensions & location
 			DWORD dwStyle,         // window/combobox style
 			UINT nID,              // control ID
@@ -134,21 +134,21 @@ namespace SvGcl
 
 		// Attributes
 	public:
-		CComboEdit m_edit;  // subclassed edit control
+		ComboEdit m_edit;  // subclassed edit control
 
 		// Operations
 	public:
 
 		// Overrides
 		// ClassWizard generated virtual function overrides
-		//{{AFX_VIRTUAL(CInPlaceList)
+		//{{AFX_VIRTUAL(InPlaceList)
 	protected:
 		virtual void PostNcDestroy() override;
 		//}}AFX_VIRTUAL
 
 		// Implementation
 	public:
-		virtual ~CInPlaceList();
+		virtual ~InPlaceList();
 		void EndEdit();
 
 	protected:
@@ -156,7 +156,7 @@ namespace SvGcl
 
 		// Generated message map functions
 	protected:
-		//{{AFX_MSG(CInPlaceList)
+		//{{AFX_MSG(InPlaceList)
 		afx_msg void OnKillFocus(CWnd* pNewWnd);
 		afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 		afx_msg void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);

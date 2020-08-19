@@ -36,10 +36,10 @@
 // The author accepts no liability for any damage/loss of business that
 // this product may cause.
 //
-// For use with CGridCtrl v2.22+
+// For use with GridCtrl v2.22+
 //
 // History:
-// Ken Bertelson - 12 Apr 2000 - Split CGridCell into CGridCell and CGridCellBase
+// Ken Bertelson - 12 Apr 2000 - Split GridCell into GridCell and GridCellBase
 // C Maunder     - 19 May 2000 - Fixed sort arrow drawing (Ivan Ilinov)
 // C Maunder     - 29 Aug 2000 - operator= checks for NULL font before setting (Martin Richter)
 // C Maunder     - 15 Oct 2000 - GetTextExtent fixed (Martin Richter)
@@ -72,29 +72,29 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvGcl
 {
-	IMPLEMENT_DYNAMIC(CGridCellBase, CObject)
+	IMPLEMENT_DYNAMIC(GridCellBase, CObject)
 
 	/////////////////////////////////////////////////////////////////////////////
 	// GridCellBase
 
-	CGridCellBase::CGridCellBase()
+	GridCellBase::GridCellBase()
 	{
 		Reset();
 	}
 
-	CGridCellBase::~CGridCellBase()
+	GridCellBase::~GridCellBase()
 	{
 	}
 
 	/////////////////////////////////////////////////////////////////////////////
 	// GridCellBase Operations
 
-	void CGridCellBase::Reset()
+	void GridCellBase::Reset()
 	{
 		m_nState  = 0;
 	}
 
-	void CGridCellBase::operator=(const CGridCellBase& cell)
+	void GridCellBase::operator=(const GridCellBase& cell)
 	{
 		if (this == &cell) return;
 
@@ -112,10 +112,10 @@ namespace SvGcl
 	}
 
 	/////////////////////////////////////////////////////////////////////////////
-	// CGridCellBase Attributes
+	// GridCellBase Attributes
 
 	// Returns a pointer to a cell that holds default values for this particular type of cell
-	CGridCellBase* CGridCellBase::GetDefaultCell() const
+	GridCellBase* GridCellBase::GetDefaultCell() const
 	{
 		if (GetGrid())
 			return GetGrid()->GetDefaultCell(IsFixedRow(), IsFixedCol());
@@ -124,18 +124,18 @@ namespace SvGcl
 
 
 	/////////////////////////////////////////////////////////////////////////////
-	// CGridCellBase Operations
+	// GridCellBase Operations
 
 	// EFW - Various changes to make it draw cells better when using alternate
 	// color schemes.  Also removed printing references as that's now done
 	// by PrintCell() and fixed the sort marker so that it doesn't draw out
 	// of bounds.
-	BOOL CGridCellBase::Draw(CDC* pDC, int nRow, int nCol, CRect rect,  BOOL bEraseBkgnd /*=TRUE*/)
+	BOOL GridCellBase::Draw(CDC* pDC, int nRow, int nCol, CRect rect,  BOOL bEraseBkgnd /*=TRUE*/)
 	{
 		// Note - all through this function we totally brutalise 'rect'. Do not
 		// depend on it's value being that which was passed in.
 
-		CGridCtrl* pGrid = GetGrid();
+		GridCtrl* pGrid = GetGrid();
 		assert(pGrid);
 
 		if (!pGrid || !pDC)
@@ -424,30 +424,30 @@ namespace SvGcl
 	}
 
 	/////////////////////////////////////////////////////////////////////////////
-	// CGridCellBase Mouse and Cursor events
+	// GridCellBase Mouse and Cursor events
 
 	// Not yet implemented
-	void CGridCellBase::OnMouseEnter()
+	void GridCellBase::OnMouseEnter()
 	{
 #if defined (TRACE_THEM_ALL) || defined (TRACE_GRIDCTRL)
 		TRACE0("Mouse entered cell\n");
 #endif
 	}
 
-	void CGridCellBase::OnMouseOver()
+	void GridCellBase::OnMouseOver()
 	{
 		//TRACE0("Mouse over cell\n");
 	}
 
 	// Not Yet Implemented
-	void CGridCellBase::OnMouseLeave()
+	void GridCellBase::OnMouseLeave()
 	{
 #if defined (TRACE_THEM_ALL) || defined (TRACE_GRIDCTRL)
 		TRACE0("Mouse left cell\n");
 #endif
 	}
 
-	void CGridCellBase::OnClick( CPoint PointCellRelative)
+	void GridCellBase::OnClick( CPoint PointCellRelative)
 	{
 		UNUSED_ALWAYS(PointCellRelative);
 #if defined (TRACE_THEM_ALL) || defined (TRACE_GRIDCTRL)
@@ -455,7 +455,7 @@ namespace SvGcl
 #endif
 	}
 
-	void CGridCellBase::OnClickDown( CPoint PointCellRelative)
+	void GridCellBase::OnClickDown( CPoint PointCellRelative)
 	{
 		UNUSED_ALWAYS(PointCellRelative);
 #if defined (TRACE_THEM_ALL) || defined (TRACE_GRIDCTRL)
@@ -463,7 +463,7 @@ namespace SvGcl
 #endif
 	}
 
-	void CGridCellBase::OnRClick( CPoint PointCellRelative)
+	void GridCellBase::OnRClick( CPoint PointCellRelative)
 	{
 		UNUSED_ALWAYS(PointCellRelative);
 #if defined (TRACE_THEM_ALL) || defined (TRACE_GRIDCTRL)
@@ -471,7 +471,7 @@ namespace SvGcl
 #endif
 	}
 
-	void CGridCellBase::OnDblClick( CPoint PointCellRelative)
+	void GridCellBase::OnDblClick( CPoint PointCellRelative)
 	{
 		UNUSED_ALWAYS(PointCellRelative);
 #if defined (TRACE_THEM_ALL) || defined (TRACE_GRIDCTRL)
@@ -480,7 +480,7 @@ namespace SvGcl
 	}
 
 	// Return TRUE if you set the cursor
-	BOOL CGridCellBase::OnSetCursor()
+	BOOL GridCellBase::OnSetCursor()
 	{
 	#ifndef _WIN32_WCE_NO_CURSOR
 		SetCursor(AfxGetApp()->LoadStandardCursor(IDC_ARROW));
@@ -489,29 +489,29 @@ namespace SvGcl
 	}
 
 	/////////////////////////////////////////////////////////////////////////////
-	// CGridCellBase editing
+	// GridCellBase editing
 
-	void CGridCellBase::OnEndEdit() 
+	void GridCellBase::OnEndEdit() 
 	{
 		assert( FALSE); 
 	}
 
-	BOOL CGridCellBase::ValidateEdit(LPCTSTR str)
+	BOOL GridCellBase::ValidateEdit(LPCTSTR str)
 	{
 		UNUSED_ALWAYS(str);
 		return TRUE;
 	}
 
 	/////////////////////////////////////////////////////////////////////////////
-	// CGridCellBase Sizing
+	// GridCellBase Sizing
 
-	BOOL CGridCellBase::GetTextRect( LPRECT pRect)  // i/o:  i=dims of cell rect; o=dims of text rect
+	BOOL GridCellBase::GetTextRect( LPRECT pRect)  // i/o:  i=dims of cell rect; o=dims of text rect
 	{
 		if (GetImage() >= 0)
 		{
 			IMAGEINFO Info;
 
-			CGridCtrl* pGrid = GetGrid();
+			GridCtrl* pGrid = GetGrid();
 			CImageList* pImageList = pGrid->GetImageList();
         
 			if (pImageList && pImageList->GetImageInfo( GetImage(), &Info))
@@ -525,9 +525,9 @@ namespace SvGcl
 	}
 
 	// By default this uses the selected font (which is a bigger font)
-	CSize CGridCellBase::GetTextExtent(LPCTSTR szText, CDC* pDC /*= nullptr*/)
+	CSize GridCellBase::GetTextExtent(LPCTSTR szText, CDC* pDC /*= nullptr*/)
 	{
-		CGridCtrl* pGrid = GetGrid();
+		GridCtrl* pGrid = GetGrid();
 		assert(pGrid);
 
 		BOOL bReleaseDC = FALSE;
@@ -606,7 +606,7 @@ namespace SvGcl
 	}
 
 
-	CSize CGridCellBase::GetCellExtent(CDC* pDC)
+	CSize GridCellBase::GetCellExtent(CDC* pDC)
 	{    
 		CSize size = GetTextExtent(GetText(), pDC);    
 		CSize ImageSize(0,0);    
@@ -614,7 +614,7 @@ namespace SvGcl
 		int nImage = GetImage();    
 		if (nImage >= 0)    
 		{        
-			CGridCtrl* pGrid = GetGrid();        
+			GridCtrl* pGrid = GetGrid();        
 			assert(pGrid);        
 			IMAGEINFO Info;        
 			if (pGrid->GetImageList() && pGrid->GetImageList()->GetImageInfo(nImage, &Info))         
@@ -638,7 +638,7 @@ namespace SvGcl
 
 	// EFW - Added to print cells so that grids that use different colors are
 	// printed correctly.
-	BOOL CGridCellBase::PrintCell(CDC* pDC, int /*nRow*/, int /*nCol*/, CRect rect)
+	BOOL GridCellBase::PrintCell(CDC* pDC, int /*nRow*/, int /*nCol*/, CRect rect)
 	{
 	#if defined(_WIN32_WCE_NO_PRINTING) || defined(GRIDCONTROL_NO_PRINTING)
 		return FALSE;
@@ -646,7 +646,7 @@ namespace SvGcl
 		COLORREF crFG, crBG;
 		GV_ITEM Item;
 
-		CGridCtrl* pGrid = GetGrid();
+		GridCtrl* pGrid = GetGrid();
 		if (!pGrid || !pDC)
 			return FALSE;
 
@@ -793,9 +793,9 @@ namespace SvGcl
 	/*****************************************************************************
 	Callable by derived classes, only
 	*****************************************************************************/
-	LRESULT CGridCellBase::SendMessageToParent(int nRow, int nCol, int nMessage)
+	LRESULT GridCellBase::SendMessageToParent(int nRow, int nCol, int nMessage)
 	{
-		CGridCtrl* pGrid = GetGrid();
+		GridCtrl* pGrid = GetGrid();
 		if( pGrid)
 			return pGrid->SendMessageToParent(nRow, nCol, nMessage);
 		else

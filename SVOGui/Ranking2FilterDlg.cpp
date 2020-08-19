@@ -239,7 +239,7 @@ bool Ranking2FilterDlg::inputGridCtrlKey(WPARAM Key)
 		}
 		else if (-1 == Cell.row && -1 == Cell.col)
 		{
-			SvGcl::CCellRange Selection = m_Grid.GetSelectedCellRange();
+			SvGcl::CellRange Selection = m_Grid.GetSelectedCellRange();
 			for (int i = Selection.GetMinRow(); i <= Selection.GetMaxRow(); i++)
 			{
 				for (int j = Selection.GetMinCol(); j <= Selection.GetMaxCol(); j++)
@@ -321,8 +321,8 @@ void Ranking2FilterDlg::recalculateKernel(int Width, int Height)
 				//We need to use the using here because the macro RUNTIME_CLASS cannot handle namespaces
 				using namespace SvGcl;
 				m_Grid.SetItem(&Item);
-				m_Grid.SetCellType(row, col, RUNTIME_CLASS(CGridCellCheck));
-				SvGcl::CGridCellCheck* cell = dynamic_cast<SvGcl::CGridCellCheck*>(m_Grid.GetCell(row, col));
+				m_Grid.SetCellType(row, col, RUNTIME_CLASS(GridCellCheck));
+				SvGcl::GridCellCheck* cell = dynamic_cast<SvGcl::GridCellCheck*>(m_Grid.GetCell(row, col));
 				cell->SetCheck(1 == Value);
 			}
 		}
@@ -370,7 +370,7 @@ void Ranking2FilterDlg::initializeKernel(int Width, int Height)
 	m_Grid.SetRowHeight(0, CellSize);
 
 	//Deselect when changing size etc..
-	SvGcl::CCellRange CellSelection;
+	SvGcl::CellRange CellSelection;
 	m_Grid.SetSelectedRange(CellSelection);
 	SvGcl::CCellID CellFocus;
 	m_Grid.SetFocusCell(CellFocus);
@@ -441,14 +441,14 @@ void Ranking2FilterDlg::updateGridSelection()
 	bool value = false;
 	bool first = true;
 
-	SvGcl::CCellRange Selection = m_Grid.GetSelectedCellRange();
+	SvGcl::CellRange Selection = m_Grid.GetSelectedCellRange();
 	for (int row = Selection.GetMinRow(); row <= Selection.GetMaxRow(); row++)
 	{
 		for (int col = Selection.GetMinCol(); col <= Selection.GetMaxCol(); col++)
 		{
 			if (m_Grid.IsCellSelected(row, col))
 			{
-				SvGcl::CGridCellCheck* cell = dynamic_cast<SvGcl::CGridCellCheck*>(m_Grid.GetCell(row, col));
+				SvGcl::GridCellCheck* cell = dynamic_cast<SvGcl::GridCellCheck*>(m_Grid.GetCell(row, col));
 				if (first)
 				{
 					value = (TRUE != cell->GetCheck()); //switch from true to false or in the other way
@@ -475,7 +475,7 @@ void Ranking2FilterDlg::updateEditCellandStatus()
 	int Col = 0;
 	int CellCount = 0;
 
-	SvGcl::CCellRange Selection = m_Grid.GetSelectedCellRange();
+	SvGcl::CellRange Selection = m_Grid.GetSelectedCellRange();
 	for (int i = Selection.GetMinRow(); i <= Selection.GetMaxRow(); i++)
 	{
 		for (int j = Selection.GetMinCol(); j <= Selection.GetMaxCol(); j++)
@@ -579,7 +579,7 @@ void Ranking2FilterDlg::setKernelFromControl()
 	{
 		for (int row = 1; row <= m_KernelHeight; row++)
 		{
-			SvGcl::CGridCellCheck* cell = dynamic_cast<SvGcl::CGridCellCheck*>(m_Grid.GetCell(row, col));
+			SvGcl::GridCellCheck* cell = dynamic_cast<SvGcl::GridCellCheck*>(m_Grid.GetCell(row, col));
 			assert(nullptr != cell);
 			if (nullptr != cell)
 			{
