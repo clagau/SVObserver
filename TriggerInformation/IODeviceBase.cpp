@@ -17,7 +17,6 @@ namespace SvTi
 		///When module ready is true we are in run mode no changes to dispatcher!
 		if(false == m_moduleReady)
 		{
-			std::lock_guard<std::mutex> guard(m_protectIO);
 			return m_TriggerDispatchers.AddDispatcher(handle, rDispatcher);
 		}
 
@@ -30,7 +29,6 @@ namespace SvTi
 		///When module ready is true we are in run mode no changes to dispatcher!
 		if (false == m_moduleReady)
 		{
-			std::lock_guard<std::mutex> guard(m_protectIO);
 			return m_TriggerDispatchers.RemoveDispatcher(handle, rDispatcher);
 		}
 
@@ -43,7 +41,6 @@ namespace SvTi
 		///When module ready is true we are in run mode no changes to dispatcher!
 		if (false == m_moduleReady)
 		{
-			std::lock_guard<std::mutex> guard(m_protectIO);
 			m_TriggerDispatchers.RemoveAllDispatchers(handle);
 			return S_OK;
 		}

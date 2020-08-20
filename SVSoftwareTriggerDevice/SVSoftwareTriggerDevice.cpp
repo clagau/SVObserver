@@ -238,11 +238,11 @@ void SVSoftwareTriggerDevice::beforeStopTrigger(unsigned long triggerIndex)
 		assert(false);
 	}
 	rTimer.m_timerID = 0;
+	m_moduleReady = false;
 
 	if (std::none_of(m_timerList.begin(), m_timerList.end(), [](const auto& rEntry) { return rEntry.m_timerID != 0; }))
 	{
 		::timeEndPeriod(cTimerResolution);
-		m_moduleReady = false;
 		::SetThreadPriority(::GetCurrentThread(), THREAD_PRIORITY_NORMAL);
 	}
 }
