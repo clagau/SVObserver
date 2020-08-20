@@ -13,17 +13,19 @@
   <ItemGroup>
     <ClCompile Include="BlobReconstructBasicFilter.cpp" />
     <ClCompile Include="Custom2Filter.cpp" />
+    <ClCompile Include="CustomFilter.cpp" />
     <ClCompile Include="EraseBorderBlobsFilter.cpp" />
     <ClCompile Include="ExtractHolesFilter.cpp" />
     <ClCompile Include="FillHolesFilter.cpp" />
     <ClCompile Include="Ranking2Filter.cpp" />
+    <ClCompile Include="RankingFilter.cpp" />
     <ClCompile Include="ReconstructFilter.cpp" />
+    <ClCompile Include="SkeletonFilter.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="SVClosingFilterClass.cpp" />
-    <ClCompile Include="SVCustomFilters.cpp" />
     <ClCompile Include="SVDilationFilterClass.cpp" />
     <ClCompile Include="SVEdgeDetect2FilterClass.cpp" />
     <ClCompile Include="SVEdgeDetectFilterClass.cpp" />
@@ -34,27 +36,27 @@
     <ClCompile Include="SVLaplacianEdgeFilterClass.cpp" />
     <ClCompile Include="SVMaxMinusMinFilterClass.cpp" />
     <ClCompile Include="SVOpeningFilterClass.cpp" />
-    <ClCompile Include="SVRankingFilters.cpp" />
     <ClCompile Include="SVSharpen2FilterClass.cpp" />
     <ClCompile Include="SVSharpenFilterClass.cpp" />
-    <ClCompile Include="SVSkeletonFilter.cpp" />
     <ClCompile Include="SVSmoothFilterClass.cpp" />
-    <ClCompile Include="SVThickeningFilter.cpp" />
-    <ClCompile Include="SVThinningFilter.cpp" />
     <ClCompile Include="SVVertEdgeFilterClass.cpp" />
-    <ClCompile Include="SVWaterShedFilter.cpp" />
+    <ClCompile Include="ThickeningFilter.cpp" />
+    <ClCompile Include="ThinningFilter.cpp" />
+    <ClCompile Include="WaterShedFilter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BlobReconstructBasicFilter.h" />
     <ClInclude Include="Custom2Filter.h" />
+    <ClInclude Include="CustomFilter.h" />
     <ClInclude Include="EraseBorderBlobsFilter.h" />
     <ClInclude Include="ExtractHolesFilter.h" />
     <ClInclude Include="FillHolesFilter.h" />
     <ClInclude Include="Ranking2Filter.h" />
+    <ClInclude Include="RankingFilter.h" />
     <ClInclude Include="ReconstructFilter.h" />
+    <ClInclude Include="SkeletonFilter.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SVClosingFilterClass.h" />
-    <ClInclude Include="SVCustomFilters.h" />
     <ClInclude Include="SVDilationFilterClass.h" />
     <ClInclude Include="SVEdgeDetect2FilterClass.h" />
     <ClInclude Include="SVEdgeDetectFilterClass.h" />
@@ -65,15 +67,13 @@
     <ClInclude Include="SVLaplacianEdgeFilterClass.h" />
     <ClInclude Include="SVMaxMinusMinFilterClass.h" />
     <ClInclude Include="SVOpeningFilterClass.h" />
-    <ClInclude Include="SVRankingFilters.h" />
     <ClInclude Include="SVSharpen2FilterClass.h" />
     <ClInclude Include="SVSharpenFilterClass.h" />
-    <ClInclude Include="SVSkeletonFilter.h" />
     <ClInclude Include="SVSmoothFilterClass.h" />
-    <ClInclude Include="SVThickeningFilter.h" />
-    <ClInclude Include="SVThinningFilter.h" />
     <ClInclude Include="SVVertEdgeFilterClass.h" />
-    <ClInclude Include="SVWaterShedFilter.h" />
+    <ClInclude Include="ThickeningFilter.h" />
+    <ClInclude Include="ThinningFilter.h" />
+    <ClInclude Include="WaterShedFilter.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{F854F11D-EDDB-4795-996A-D9FD0C795744}</ProjectGuid>

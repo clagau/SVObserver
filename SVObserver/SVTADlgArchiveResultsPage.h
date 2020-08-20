@@ -78,11 +78,11 @@ private:
 	// auf SVArchiveTool zugegriffen wird - und zwar nicht nur deswegen, weil es direkt über Pointer und nicht über geeignete Commands geschieht
 	// (was übrigens schlimm genug ist) sondern auch (und aus meiner Sicht vor allem) deswegen, weil alle möglichen Resets und RunOnce-Aufrufe stattfinden,
 	// was im Zusammenhang mit stark erweiterten Pfadänderungsmöglichkeiten im Rahmen der Version 10.00 dazu führt, dass ToolAdjustment-Pages aufeinander 
-	// zugreifen müssen.
-	// Außerdem werden zurzeit vom Tool zu unterschiedlichen Zeiten alle möglichen Checks durchgeführt (und die Existenz von Pfaden) sichergestellt,
+	// zugreifen müssen, um sinnvoll prüfen zu können, ob sie geschlossen werden dürfen.
+	// Außerdem werden zurzeit vom Tool zu unterschiedlichen Zeiten alle möglichen Checks durchgeführt (und die Existenz von Pfaden sichergestellt),
 	// was auch zu verschiedenen Verrenkungen in den TA-Dialogen zwingt.
 	// Lösungsvorschlag: im TA-Dialog wird nur eine "Konfiguration" für das Archive Tool zusammengestellt (und beim Schließen überprüft), das Tool
-	// selber tut noch gar nichts. Erst wenn geprüft werden, ob in den Run-Modus gegangen werden kann, verwendet das Tool diese "Konfiguration" 
+	// selber tut noch gar nichts. Erst wenn geprüft wird, ob in den Run-Modus gegangen werden kann, verwendet das Tool diese "Konfiguration" 
 	// und prüft seine eigene Lauffähigkeit
 	SvTo::SVArchiveTool* m_pTool;						//Pointer to the Archive Tool
 	CImageList m_StateImageList;						//The state image list

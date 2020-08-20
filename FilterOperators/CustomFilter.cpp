@@ -10,7 +10,7 @@
 //******************************************************************************
 #pragma region Includes
 #include "stdafx.h"
-#include "SVCustomFilters.h"
+#include "CustomFilter.h"
 #include "Definitions/StringTypeDef.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
@@ -37,23 +37,23 @@ static char THIS_FILE[] = __FILE__;
 #define KERNEL_BIT_DEPTH     8L
 
 
-SV_IMPLEMENT_CLASS(SVCustomFilterClass, SvPb::CustomFilterClassId)
+SV_IMPLEMENT_CLASS(CustomFilter, SvPb::CustomFilterClassId)
 
 //******************************************************************************
 // Constructor(s):
 //******************************************************************************
-SVCustomFilterClass::SVCustomFilterClass( SVObjectClass* POwner, int StringResourceID )
+CustomFilter::CustomFilter( SVObjectClass* POwner, int StringResourceID )
 					: SVFilterClass( POwner, StringResourceID )
 {
 	init();
 }
 
-SVCustomFilterClass::~SVCustomFilterClass()
+CustomFilter::~CustomFilter()
 {
 	m_milKernel.clear();
 }
 
-void SVCustomFilterClass::init()
+void CustomFilter::init()
 {
 	long l( 0 );
 
@@ -197,7 +197,7 @@ void SVCustomFilterClass::init()
 // -----------------------------------------------------------------------------
 // .Description : ...
 ////////////////////////////////////////////////////////////////////////////////
-bool SVCustomFilterClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
+bool CustomFilter::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
 	bool bOk = SVFilterClass::CreateObject(rCreateStructure);
 
@@ -206,7 +206,7 @@ bool SVCustomFilterClass::CreateObject( const SVObjectLevelCreateStruct& rCreate
 	return bOk;
 }
 
-bool SVCustomFilterClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
+bool CustomFilter::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = SVFilterClass::ResetObject(pErrorMessages);
 
@@ -216,11 +216,11 @@ bool SVCustomFilterClass::ResetObject(SvStl::MessageContainerVector *pErrorMessa
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// .Title       : Initialization of class SVCustomFilterClass
+// .Title       : Initialization of class CustomFilter
 // -----------------------------------------------------------------------------
 // .Description : Initialization of newly Instantiated Object
 ////////////////////////////////////////////////////////////////////////////////
-void SVCustomFilterClass::RebuildKernel()
+void CustomFilter::RebuildKernel()
 {
 	// First free old kernel
 	m_milKernel.clear();
@@ -337,7 +337,7 @@ void SVCustomFilterClass::RebuildKernel()
 // .Description : Runs this operator.
 //              : Returns FALSE, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
-bool SVCustomFilterClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool CustomFilter::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 { 
 	if (m_pCurrentUIOPL && nullptr != rInputImageHandle && nullptr != rOutputImageHandle)
 	{
@@ -374,7 +374,7 @@ bool SVCustomFilterClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInput
 	return false;
 }
 
-bool SVCustomFilterClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const
+bool CustomFilter::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const
 {
 	bool bRetVal = true;
 	long lWidth;

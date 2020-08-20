@@ -89,11 +89,6 @@ namespace SvGcl
 		return TRUE;
 	}
 
-	CWnd* GridCellDateTime::GetEditWnd() const
-	{
-		return m_pEditWnd;
-	}
-
 	void GridCellDateTime::EndEdit()
 	{
 		if (m_pEditWnd) ((InPlaceDateTime*)m_pEditWnd)->EndEdit();

@@ -2,27 +2,27 @@
 // * COPYRIGHT (c) 2004 by SVResearch, Harrisburg
 // * All Rights Reserved
 // ******************************************************************************
-// * .Module Name     : SVThickeningFilter
-// * .File Name       : $Workfile:   SVThickeningFilter.h  $
+// * .Module Name     : SVThinningFilter
+// * .File Name       : $Workfile:   SVThinningFilter.h  $
 // * ----------------------------------------------------------------------------
 // * .Current Version : $Revision:   1.1  $
-// * .Check In Date   : $Date:   13 Aug 2013 10:37:30  $
+// * .Check In Date   : $Date:   13 Aug 2013 10:37:28  $
 // ******************************************************************************
 #pragma once
 
 #pragma region Includes
 #include "SVFilterClass.h"
-#include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
-#include "SVValueObjectLibrary/SVLongValueObjectClass.h"
+#include "SVValueObjectLibrary\SVBoolValueObjectClass.h"
+#include "SVValueObjectLibrary\SVLongValueObjectClass.h"
 #pragma endregion Includes
 
-class SVThickeningFilterClass : public SVFilterClass
+class ThinningFilter : public SVFilterClass
 {
-	SV_DECLARE_CLASS( SVThickeningFilterClass );
-public:
+	SV_DECLARE_CLASS( ThinningFilter );
 
-	SVThickeningFilterClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTHICKENINGFILTER );
-	virtual ~SVThickeningFilterClass();
+public:
+	ThinningFilter( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTHINNINGFILTER );
+	virtual ~ThinningFilter();
 	
 #pragma region virtual method (IFilter)
 	virtual bool shouldResetInspection() const override { return true; }

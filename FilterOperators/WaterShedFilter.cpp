@@ -10,7 +10,7 @@
 // ******************************************************************************
 #pragma region Includes
 #include "stdafx.h"
-#include "SVWaterShedFilter.h"
+#include "WaterShedFilter.h"
 #include "Definitions/TextDefineSVDef.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "InspectionEngine/SVImageClass.h"
@@ -27,19 +27,19 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 
-SV_IMPLEMENT_CLASS(SVWatershedFilterClass, SvPb::WatershedFilterClassId)
+SV_IMPLEMENT_CLASS(WatershedFilter, SvPb::WatershedFilterClassId)
 
-SVWatershedFilterClass::SVWatershedFilterClass( SVObjectClass* POwner, int StringResourceID )
+WatershedFilter::WatershedFilter( SVObjectClass* POwner, int StringResourceID )
 					: SVFilterClass( POwner, StringResourceID )
 {
 	init();
 }
 
-SVWatershedFilterClass::~SVWatershedFilterClass()
+WatershedFilter::~WatershedFilter()
 {
 }
 
-void SVWatershedFilterClass::init()
+void WatershedFilter::init()
 {
 	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVWatershedFilterObjectType;
 
@@ -69,7 +69,7 @@ void SVWatershedFilterClass::init()
 
 }
 
-bool SVWatershedFilterClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
+bool WatershedFilter::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 
@@ -86,7 +86,7 @@ bool SVWatershedFilterClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 // .Description : Runs this operator.
 //              : Returns FALSE, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
-bool SVWatershedFilterClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool WatershedFilter::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	long lMinVariation;
 	long lControlFlag;
@@ -157,7 +157,7 @@ bool SVWatershedFilterClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rIn
 	return false;
 }
 
-bool SVWatershedFilterClass::ValidateLocal( SvStl::MessageContainerVector * pErrorMessages ) const
+bool WatershedFilter::ValidateLocal( SvStl::MessageContainerVector * pErrorMessages ) const
 {
 	bool Result = true;
 	BOOL bUseMarker;

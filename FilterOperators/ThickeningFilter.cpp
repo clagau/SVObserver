@@ -10,7 +10,7 @@
 // ******************************************************************************
 #pragma region Includes
 #include "stdafx.h"
-#include "SVThickeningFilter.h"
+#include "ThickeningFilter.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
@@ -23,19 +23,19 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 
-SV_IMPLEMENT_CLASS(SVThickeningFilterClass, SvPb::ThickeningFilterClassId)
+SV_IMPLEMENT_CLASS(ThickeningFilter, SvPb::ThickeningFilterClassId)
 
-SVThickeningFilterClass::SVThickeningFilterClass( SVObjectClass* POwner, int StringResourceID )
+ThickeningFilter::ThickeningFilter( SVObjectClass* POwner, int StringResourceID )
 					: SVFilterClass( POwner, StringResourceID )
 {
 	init();
 }
 
-SVThickeningFilterClass::~SVThickeningFilterClass()
+ThickeningFilter::~ThickeningFilter()
 {
 }
 
-void SVThickeningFilterClass::init()
+void ThickeningFilter::init()
 {
 	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVThickeningFilterObjectType;
 
@@ -61,7 +61,7 @@ void SVThickeningFilterClass::init()
 // .Description : Runs this operator.
 //              : Returns FALSE, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
-bool SVThickeningFilterClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool ThickeningFilter::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 { 
 	long lItterations;
 	long lMode;

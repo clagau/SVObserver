@@ -55,7 +55,6 @@ namespace SvGcl
 	// editing cells
 	public:
 		virtual BOOL  Edit(int nRow, int nCol, CRect rect, CPoint point, UINT nID, UINT nChar) override;
-		virtual CWnd* GetEditWnd() const override;
 		virtual void  EndEdit() override;
 
 	// Operations

@@ -156,7 +156,7 @@ namespace SvGcl
 
 	// Operators
 	public:
-		virtual void operator=(const GridCellBase& cell);
+		virtual const GridCellBase& operator=(const GridCellBase& cell);
 
 	// Operations
 	public:

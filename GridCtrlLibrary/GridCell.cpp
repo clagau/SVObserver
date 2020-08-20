@@ -81,9 +81,13 @@ namespace SvGcl
 	/////////////////////////////////////////////////////////////////////////////
 	// GridCell Attributes
 
-	void GridCell::operator=(const GridCell& cell)
+	const GridCell& GridCell::operator=(const GridCell& cell)
 	{
-		if (this != &cell) GridCellBase::operator=(cell);
+		if (this != &cell)
+		{
+			GridCellBase::operator=(cell);
+		}
+		return *this;
 	}
 
 	void GridCell::Reset()

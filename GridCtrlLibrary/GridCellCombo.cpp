@@ -158,16 +158,16 @@ namespace SvGcl
 	// InPlaceList
 
 	InPlaceList::InPlaceList(CWnd* pParent, CRect& rect, DWORD dwStyle, UINT nID,
-							   int nRow, int nColumn, 
-							   COLORREF crFore, COLORREF crBack,
-							   CStringArray& Items, CString sInitText, 
-							   UINT nFirstChar)
+		int nRow, int nColumn,
+		COLORREF crFore, COLORREF crBack,
+		CStringArray& Items, CString sInitText,
+		UINT nFirstChar) :
+		m_sInitText(sInitText)
 	{
 		m_crForeClr = crFore;
 		m_crBackClr = crBack;
 
 		m_nNumLines = 4;
-		m_sInitText = sInitText;
  		m_nRow		= nRow;
  		m_nCol      = nColumn;
  		m_nLastChar = 0; 
@@ -428,15 +428,6 @@ namespace SvGcl
 
 		return TRUE;
 	}
-
-	CWnd* GridCellCombo::GetEditWnd() const
-	{
-		if (m_pEditWnd && (m_pEditWnd->GetStyle() & CBS_DROPDOWNLIST) != CBS_DROPDOWNLIST )
-			return &(((InPlaceList*)m_pEditWnd)->m_edit);
-
-		return nullptr;
-	}
-
 
 	CSize GridCellCombo::GetCellExtent(CDC* pDC)
 	{    

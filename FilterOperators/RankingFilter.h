@@ -17,17 +17,17 @@
 #pragma endregion Includes
 
 ////////////////////////////////////////////////////////////////////////////////
-// .Title       : SVRankingFilterClass
+// .Title       : RankingFilter
 // -----------------------------------------------------------------------------
 // .Description : Base class for all kinds of custom filters
 ////////////////////////////////////////////////////////////////////////////////
-class SVRankingFilterClass : public SVFilterClass
+class RankingFilter : public SVFilterClass
 {
-	SV_DECLARE_CLASS( SVRankingFilterClass );
+	SV_DECLARE_CLASS( RankingFilter );
 
 public:
-	SVRankingFilterClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVRANKINGFILTER );
-	virtual ~SVRankingFilterClass();
+	RankingFilter( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVRANKINGFILTER );
+	virtual ~RankingFilter();
 	
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 

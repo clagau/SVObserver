@@ -10,7 +10,7 @@
 // ******************************************************************************
 #pragma region Includes
 #include "stdafx.h"
-#include "SVThinningFilter.h"
+#include "ThinningFilter.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
@@ -23,19 +23,19 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 
-SV_IMPLEMENT_CLASS(SVThinningFilterClass, SvPb::ThinningFilterClassId)
+SV_IMPLEMENT_CLASS(ThinningFilter, SvPb::ThinningFilterClassId)
 
-SVThinningFilterClass::SVThinningFilterClass( SVObjectClass* POwner, int StringResourceID )
+ThinningFilter::ThinningFilter( SVObjectClass* POwner, int StringResourceID )
 					: SVFilterClass( POwner, StringResourceID )
 {
 	init();
 }
 
-SVThinningFilterClass::~SVThinningFilterClass()
+ThinningFilter::~ThinningFilter()
 {
 }
 
-void SVThinningFilterClass::init()
+void ThinningFilter::init()
 {
 	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVThinningFilterObjectType;
 
@@ -61,7 +61,7 @@ void SVThinningFilterClass::init()
 // .Description : Runs this operator.
 //              : Returns FALSE, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
-bool SVThinningFilterClass::onRun(bool First, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool ThinningFilter::onRun(bool First, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 { 
 	long lItterations;
 	long lMode;

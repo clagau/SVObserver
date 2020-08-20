@@ -94,9 +94,12 @@ namespace SvGcl
 		m_nState  = 0;
 	}
 
-	void GridCellBase::operator=(const GridCellBase& cell)
+	const GridCellBase& GridCellBase::operator=(const GridCellBase& cell)
 	{
-		if (this == &cell) return;
+		if (this == &cell)
+		{
+			return *this;
+		}
 
 		SetGrid(cell.GetGrid());    // do first in case of dependencies
 
@@ -109,6 +112,8 @@ namespace SvGcl
 		SetBackClr(cell.GetBackClr());
 		SetFont(cell.IsDefaultFont()? nullptr: cell.GetFont());
 		SetMargin(cell.GetMargin());
+
+		return *this;
 	}
 
 	/////////////////////////////////////////////////////////////////////////////

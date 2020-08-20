@@ -19,17 +19,17 @@
 #pragma endregion Includes
 
 ////////////////////////////////////////////////////////////////////////////////
-// .Title       : SVCustomFilterClass
+// .Title       : CustomFilter
 // -----------------------------------------------------------------------------
 // .Description : Base class for all kinds of custom filters
 ////////////////////////////////////////////////////////////////////////////////
-class SVCustomFilterClass : public SVFilterClass
+class CustomFilter : public SVFilterClass
 {
-	SV_DECLARE_CLASS( SVCustomFilterClass );
+	SV_DECLARE_CLASS( CustomFilter );
 
 public:
-	SVCustomFilterClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVCUSTOMFILTER );
-	virtual ~SVCustomFilterClass();
+	CustomFilter( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVCUSTOMFILTER );
+	virtual ~CustomFilter();
 	
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 

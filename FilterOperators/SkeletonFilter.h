@@ -2,39 +2,28 @@
 // * COPYRIGHT (c) 2004 by SVResearch, Harrisburg
 // * All Rights Reserved
 // ******************************************************************************
-// * .Module Name     : SVThinningFilter
-// * .File Name       : $Workfile:   SVThinningFilter.h  $
+// * .Module Name     : SVSkeletonFilter
+// * .File Name       : $Workfile:   SVSkeletonFilter.h  $
 // * ----------------------------------------------------------------------------
 // * .Current Version : $Revision:   1.1  $
-// * .Check In Date   : $Date:   13 Aug 2013 10:37:28  $
+// * .Check In Date   : $Date:   13 Aug 2013 10:32:12  $
 // ******************************************************************************
+
 #pragma once
 
 #pragma region Includes
 #include "SVFilterClass.h"
-#include "SVValueObjectLibrary\SVBoolValueObjectClass.h"
-#include "SVValueObjectLibrary\SVLongValueObjectClass.h"
 #pragma endregion Includes
 
-class SVThinningFilterClass : public SVFilterClass
+class SkeletonFilter : public SVFilterClass
 {
-	SV_DECLARE_CLASS( SVThinningFilterClass );
+	SV_DECLARE_CLASS( SkeletonFilter );
 
 public:
-	SVThinningFilterClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTHINNINGFILTER );
-	virtual ~SVThinningFilterClass();
+	SkeletonFilter( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVSKELETONFILTER );
+	virtual ~SkeletonFilter();
 	
-#pragma region virtual method (IFilter)
-	virtual bool shouldResetInspection() const override { return true; }
-#pragma region virtual method (IFilter)
-
 protected:
 	virtual bool onRun( bool First, SvOi::SVImageBufferHandlePtr RInputImageHandle, SvOi::SVImageBufferHandlePtr ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
-
-private:
-	void init();
-
-	SvVol::SVLongValueObjectClass m_lvoItterations;
-	SvVol::SVBoolValueObjectClass m_bvoGrayOn;
 };
 

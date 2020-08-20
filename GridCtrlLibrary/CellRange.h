@@ -96,7 +96,7 @@ namespace SvGcl
 		int GetRowSpan() const {return m_nMaxRow - m_nMinRow + 1;}
 		int GetColSpan() const {return m_nMaxCol - m_nMinCol + 1;}
     
-		void operator=(const CellRange& rhs);
+		const CellRange& operator=(const CellRange& rhs);
 		int  operator==(const CellRange& rhs);
 		int  operator!=(const CellRange& rhs);
     
@@ -115,9 +115,14 @@ namespace SvGcl
 			m_nMaxCol = maxCol;
 	}
 
-	inline void CellRange::operator=(const CellRange& rhs)
+	inline const CellRange& CellRange::operator=(const CellRange& rhs)
 	{
-		if (this != &rhs) Set(rhs.m_nMinRow, rhs.m_nMinCol, rhs.m_nMaxRow, rhs.m_nMaxCol);
+		if (this != &rhs)
+		{
+			Set(rhs.m_nMinRow, rhs.m_nMinCol, rhs.m_nMaxRow, rhs.m_nMaxCol);
+		}
+
+		return *this;
 	}
 
 	inline int CellRange::operator==(const CellRange& rhs)

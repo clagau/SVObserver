@@ -10,7 +10,7 @@
 // ******************************************************************************
 #pragma region Includes
 #include "stdafx.h"
-#include "SVSkeletonFilter.h"
+#include "SkeletonFilter.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
@@ -23,19 +23,19 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 
-SV_IMPLEMENT_CLASS(SVSkeletonFilterClass, SvPb::SkeletonFilterClassId)
+SV_IMPLEMENT_CLASS(SkeletonFilter, SvPb::SkeletonFilterClassId)
 
-SVSkeletonFilterClass::SVSkeletonFilterClass( SVObjectClass* POwner, int StringResourceID )
+SkeletonFilter::SkeletonFilter( SVObjectClass* POwner, int StringResourceID )
 					: SVFilterClass( POwner, StringResourceID )
 {
 	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVSkeletonFilterObjectType;
 }
 
-SVSkeletonFilterClass::~SVSkeletonFilterClass()
+SkeletonFilter::~SkeletonFilter()
 {
 }
 
-bool SVSkeletonFilterClass::onRun(bool First, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool SkeletonFilter::onRun(bool First, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	if( m_pCurrentUIOPL && nullptr != rInputImageHandle && nullptr != rOutputImageHandle )
 	{

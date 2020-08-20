@@ -10,7 +10,7 @@
 //******************************************************************************
 #pragma region Includes
 #include "stdafx.h"
-#include "SVRankingFilters.h"
+#include "RankingFilter.h"
 #include "Definitions/StringTypeDef.h"
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
@@ -29,20 +29,20 @@ static char THIS_FILE[] = __FILE__;
 #define RANKING_BIT_DEPTH SV32BitSigned
 
 
-SV_IMPLEMENT_CLASS(SVRankingFilterClass, SvPb::RankingFilterClassId)
+SV_IMPLEMENT_CLASS(RankingFilter, SvPb::RankingFilterClassId)
 
-SVRankingFilterClass::SVRankingFilterClass( SVObjectClass* POwner, int StringResourceID )
+RankingFilter::RankingFilter( SVObjectClass* POwner, int StringResourceID )
 					: SVFilterClass( POwner, StringResourceID )
 {
 	init();
 }
 
-SVRankingFilterClass::~SVRankingFilterClass()
+RankingFilter::~RankingFilter()
 {
 	m_milRanking.clear();
 }
 
-void SVRankingFilterClass::init()
+void RankingFilter::init()
 {
 	long l( 0 );
 
@@ -181,7 +181,7 @@ void SVRankingFilterClass::init()
 // -----------------------------------------------------------------------------
 // .Description : ...
 ////////////////////////////////////////////////////////////////////////////////
-bool SVRankingFilterClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
+bool RankingFilter::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
 	bool bOk = SVFilterClass::CreateObject(rCreateStructure);
 
@@ -190,7 +190,7 @@ bool SVRankingFilterClass::CreateObject( const SVObjectLevelCreateStruct& rCreat
 	return bOk;
 }
 
-bool SVRankingFilterClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
+bool RankingFilter::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 
@@ -200,11 +200,11 @@ bool SVRankingFilterClass::ResetObject(SvStl::MessageContainerVector *pErrorMess
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// .Title       : Initialization of class SVRankingFilterClass
+// .Title       : Initialization of class RankingFilter
 // -----------------------------------------------------------------------------
 // .Description : Initialization of newly Instantiated Object
 ////////////////////////////////////////////////////////////////////////////////
-void SVRankingFilterClass::RebuildRanking()
+void RankingFilter::RebuildRanking()
 {
 	// First free old ranking
 	m_milRanking.clear();
@@ -298,7 +298,7 @@ void SVRankingFilterClass::RebuildRanking()
 // .Description : Runs this operator.
 //              : Returns FALSE, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
-bool SVRankingFilterClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool RankingFilter::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 { 
 	if (m_pCurrentUIOPL && nullptr != rInputImageHandle && nullptr != rOutputImageHandle)
 	{
@@ -336,7 +336,7 @@ bool SVRankingFilterClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInpu
 	return false;
 }
 
-bool SVRankingFilterClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const
+bool RankingFilter::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const
 {
 	bool bRetVal = true;
 	long lWidth;

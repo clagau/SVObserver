@@ -17,13 +17,13 @@
 #include "SVValueObjectLibrary/SVLongValueObjectClass.h"
 #pragma endregion Includes
 
-class SVWatershedFilterClass : public SVFilterClass
+class WatershedFilter : public SVFilterClass
 {
-	SV_DECLARE_CLASS( SVWatershedFilterClass );
+	SV_DECLARE_CLASS( WatershedFilter );
 
 public:
-	SVWatershedFilterClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVWATERSHEDFILTER );
-	virtual ~SVWatershedFilterClass();
+	WatershedFilter( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVWATERSHEDFILTER );
+	virtual ~WatershedFilter();
 	
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
