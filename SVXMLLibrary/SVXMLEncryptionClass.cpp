@@ -496,7 +496,7 @@ HRESULT SVXMLEncryptionClass::EncryptString(long encryptionMethod, const _bstr_t
 	wchar_t* pSource = rSourceString;
 	SVValue64Union	valueUnion;
 	std::vector<wchar_t>  encryptedVector;
-	constexpr long c_MaxEncryptSize = 512;
+	constexpr long c_MaxEncryptSize = 4096;
 	encryptedVector.resize(c_MaxEncryptSize, L'\0');
 
 	//-   OK, in theory this architecture allows for the encryption method to be 
@@ -572,13 +572,21 @@ HRESULT SVXMLEncryptionClass::EncryptString(long encryptionMethod, const _bstr_t
 		for (int i = 0; i < 8; ++i)
 		{
 			long index = static_cast<long> ((valueUnion.int64Value >>  (i * 6)) & 0x000000000000003f);
-
-			encryptedVector[(destinationIndex * 8 + i)] =  c_CharTable[index];
-			if (encryptedVector[(destinationIndex * 8 + i)] == 0)
+			
+			long vectorIndex = (destinationIndex * 8 + i);
+			if(vectorIndex < c_MaxEncryptSize)
 			{
+				encryptedVector[vectorIndex] =  c_CharTable[index];
+				if (encryptedVector[vectorIndex] == 0)
+				{
+					assert(false);
+				}
+			}
+			else
+			{
+				///Encrypt vector is to small!
 				assert(false);
 			}
-
 		}
 	}
 		
