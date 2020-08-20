@@ -558,10 +558,6 @@ std::vector<ConfigDataSet> CifXCard::createConfigList(TelegramLayout layout)
 			startByte += result[configIndex].m_byteSize;
 			configIndex++;
 
-			result[configIndex] = ConfigDataSet {0, dataTypeList[typeid(insCmd.m_reserved[0])], startByte, sizeof(insCmd.m_reserved)};
-			startByte += result[configIndex].m_byteSize;
-			configIndex++;
-
 			for(int i=0; i < insCmd.m_channels.size(); ++i)
 			{
 				result[configIndex] = ConfigDataSet {cModeSingleDirect, dataTypeList[typeid(ChannelIn::m_unitControl)], startByte, sizeof(ChannelIn::m_unitControl)};
@@ -610,14 +606,6 @@ std::vector<ConfigDataSet> CifXCard::createConfigList(TelegramLayout layout)
 		{
 			InspectionState insState;
 			
-			if (insState.m_header.size() > 0)
-			{
-				result[configIndex] = ConfigDataSet {0, dataTypeList[typeid(insState.m_header[0])], startByte, sizeof(insState.m_header)};
-				//Do startByte always before configIndex
-				startByte += result[configIndex].m_byteSize;
-				configIndex++;
-			}
-
 			for (int i = 0; i < insState.m_channels.size(); ++i)
 			{
 				result[configIndex] = ConfigDataSet {cModeSingleDirect, dataTypeList[typeid(ChannelOut::m_currentObjectType)], startByte, sizeof(ChannelOut::m_currentObjectType)};

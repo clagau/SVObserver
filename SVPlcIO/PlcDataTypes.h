@@ -19,7 +19,6 @@ constexpr uint8_t cMinorVersion = 2;
 constexpr unsigned int cNumberOfChannels = 4; /// the number of trigger channels
 constexpr unsigned int cConfigListSize = 62; /// The config list size
 constexpr uint8_t cResultSize = 14;
-constexpr uint8_t cHeaderSize = 8;
 constexpr uint8_t cModeSingleDirect = 1;
 
 struct TriggerReport
