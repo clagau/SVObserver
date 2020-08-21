@@ -58,7 +58,7 @@ namespace SvGcl
 
 	// Attributes
 	public:
-		const GridCell& operator=(const GridCell& cell);
+		GridCell& operator=(const GridCell& cell);
 
 		virtual void  SetText(LPCTSTR szText) override        { m_strText = szText;  }                       
 		virtual void  SetImage(int nImage) override           { m_nImage = nImage;   }                        

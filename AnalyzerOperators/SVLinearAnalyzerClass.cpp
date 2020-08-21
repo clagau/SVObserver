@@ -545,7 +545,7 @@ bool SVLinearAnalyzerClass::setParameterToList(const std::string& rName, std::ba
 	//Value objects need to have the SV_VIEWABLE attribute to insert it to the monitor list
 	if (nullptr != pObject && 0 != (pObject->ObjectAttributesAllowed() &  SvPb::viewable))
 	{
-		// cppcheck-suppress unreadVariable symbolName=inserter ; cppCheck don't know back_insert_iterator
+		// cppcheck-suppress unreadVariable symbolName=inserter ; cppCheck doesn't know back_insert_iterator
 		inserter = SvOi::ParameterPairForML(pObject->GetCompleteName(), pObject->getObjectId());
 		return true;
 	}

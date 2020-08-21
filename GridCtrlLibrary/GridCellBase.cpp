@@ -94,7 +94,7 @@ namespace SvGcl
 		m_nState  = 0;
 	}
 
-	const GridCellBase& GridCellBase::operator=(const GridCellBase& cell)
+	GridCellBase& GridCellBase::operator=(const GridCellBase& cell)
 	{
 		if (this == &cell)
 		{

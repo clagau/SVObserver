@@ -156,10 +156,14 @@ namespace SvGcl
 
 	// Operators
 	public:
-		virtual const GridCellBase& operator=(const GridCellBase& cell);
+		virtual GridCellBase& operator=(const GridCellBase& cell);
 
 	// Operations
 	public:
+		// cppcheck-suppress virtualCallInConstructor 
+		//@TODO [Arvid][10.00][17.6.2020] ; Arvid dieser Issue ist schon länger drin und wurde nur 
+		//durch Umbenennung der Klasse im BuildController-Lauf sichtbar.
+		//Sollte natürlich mal behoben werden!
 		virtual void Reset();
 
 		virtual BOOL Draw(CDC* pDC, int nRow, int nCol, CRect rect, BOOL bEraseBkgnd = TRUE);
