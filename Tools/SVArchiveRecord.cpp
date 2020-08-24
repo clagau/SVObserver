@@ -322,7 +322,7 @@ HRESULT SVArchiveRecord::WriteImage(const SvTrc::ITriggerRecordR* pTriggerRecord
 
 	HRESULT hr = GetNextImageFilePath(ImageFilePath, useAlternativeImagePaths==TRUE);
 
-	if (hr & 0xc000) //@TODO[Arvid] What does this $%&*! magic number mean?
+	if (hr & 0xc000) //@TODO[Arvid] What does this magic number mean?
 	{
 		return hr;
 	}

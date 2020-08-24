@@ -1,7 +1,6 @@
 //*****************************************************************************
 /// \copyright COPYRIGHT (c) 2015,2015 by Seidenader Maschinenbau GmbH
 /// All Rights Reserved 
-/// \Author	Arvid Breitenbach
 //*****************************************************************************
 /// Contains the class ExtrasEngine which contains all functionality for menu entries 
 /// in the Mainframe Pull-down Menu "Extras".

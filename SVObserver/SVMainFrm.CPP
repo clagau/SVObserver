@@ -1335,7 +1335,7 @@ void SVMainFrame::OnExtrasEnableAutoSave()
 {
 	if (S_OK != TheSVObserverApp.m_svSecurityMgr.SVValidate(SECURITY_POINT_EXTRAS_MENU_AUTOSAVE_CONFIGURATION))
 	{
-		return; //Arvid: not validated:do nothing
+		return;
 	}
 
 	ExtrasEngine::Instance().ToggleEnableAutoSave();
@@ -1361,7 +1361,7 @@ void SVMainFrame::OnExtrasEnableFbwf()
 
 void SVMainFrame::OnUpdateExtrasEnableFbwf(CCmdUI *pCmdUI)
 {
-	//Arvid temporarily disabled as per SVO-1084. Parameter was: (ExtrasEngine::Instance().IsFbwfAvailable()==true)
+	//temporarily disabled as per SVO-1084. Parameter was: (ExtrasEngine::Instance().IsFbwfAvailable()==true)
 	//bool bEnable = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_EXTRAS_MENU_FBWF_CONFIGURATION );
 	bool bEnable = false;
 	pCmdUI->Enable(bEnable);

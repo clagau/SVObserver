@@ -2421,7 +2421,7 @@ namespace SvGcl
 		// Now store in generic TCHAR form so we no longer have to deal with
 		// ANSI/UNICODE problems
 		CString strText(szBuffer);
-		delete[] szBuffer; // Arvid 2015-01-08 added brackets 
+		delete[] szBuffer;
 
 		// Parse text data and set in cells...
 		strText.LockBuffer();

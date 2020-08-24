@@ -58,7 +58,5 @@ private:
 	SvLib::InitialInformation m_iniFileInfo;
 
 	SVTestAcquisitionSubsystem* m_pSubsystem;
-
-	bool ReadSVIMModelNo();
 };
 

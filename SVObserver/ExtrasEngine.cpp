@@ -1,7 +1,6 @@
 //*****************************************************************************
 /// \copyright COPYRIGHT (c) 2015, 2015 by Seidenader Maschinenbau GmbH
 /// All Rights Reserved 
-/// \Author	Arvid
 //*****************************************************************************
 /// Contains the class ExtrasEngine which contains functionality for actions
 /// chosen from the Extras Pull down in the SVObserver Main Menu

@@ -47,7 +47,7 @@ namespace SvLib
 
 		SvDef::StringVector GetModelNumberVector() const;
 
-		std::string GetModelNumberString() const;
+		std::string ModelNumberString() const;
 
 		std::string InitializationFailureDescription(HRESULT InitializationStatusFlags) const;
 #pragma endregion Public Methods

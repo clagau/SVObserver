@@ -104,7 +104,8 @@ BOOL CSVImageTestApp::InitInstance()
 	}
 
 	// Read model number
-	if (ReadSVIMModelNo())
+	m_iniLoader.LoadIniFiles(m_svimIniFile.c_str(), m_oemIniFile.c_str(), m_hardwareIniFile.c_str());
+	if (m_iniLoader.isModelNumberDecodable())
 	{
 		if ( nullptr == LoadDigitizer() )
 		{
@@ -144,12 +145,6 @@ int CSVImageTestApp::ExitInstance()
 	}
 
 	return CWinApp::ExitInstance();
-}
-
-bool CSVImageTestApp::ReadSVIMModelNo()
-{
-	HRESULT hr = m_iniLoader.LoadIniFiles( m_svimIniFile.c_str(), m_oemIniFile.c_str(), m_hardwareIniFile.c_str() );
-	return (S_OK == hr) ? true : false;
 }
 
 SVTestAcquisitionSubsystem* CSVImageTestApp::LoadDigitizer()

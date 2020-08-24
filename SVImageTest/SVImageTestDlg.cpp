@@ -144,7 +144,7 @@ BOOL CSVImageTestDlg::OnInitDialog()
 	}
 
 	CSVImageTestApp* pApp = (CSVImageTestApp *)AfxGetApp();
-	m_modelNo = pApp->m_iniLoader.m_ModelNumber.c_str();
+	m_modelNo = pApp->m_iniLoader.ModelNumberString();
 
 	UpdateData( FALSE );
 	
@@ -274,8 +274,8 @@ void CSVImageTestDlg::OnUpdateModelNumber()
 	CSVImageTestApp* pApp = (CSVImageTestApp *)AfxGetApp();	
 	CString l_modelNumber = m_modelNo;
 	UpdateData();
-	HRESULT hr = pApp->m_iniLoader.DecodeModelNumber( static_cast<LPCTSTR> (m_modelNo) );
-	if (S_OK == hr)
+	pApp->m_iniLoader.DecodeModelNumber( static_cast<LPCTSTR> (m_modelNo) );
+	if (pApp->m_iniLoader.isModelNumberDecodable())
 	{
 		StopAllCameras();
 

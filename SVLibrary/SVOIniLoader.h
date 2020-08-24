@@ -21,43 +21,47 @@ namespace SvLib
 
 	class SVOIniLoader
 	{
-
 	public:
-		explicit SVOIniLoader(InitialInformation &inifileInfo);
-	
+		explicit SVOIniLoader(InitialInformation& inifileInfo) : m_rInitialInfo(inifileInfo) {}
+
 		const struct InitialInformation &GetInitialInfo() const { return m_rInitialInfo; }
 
-		HRESULT LoadIniFiles(LPCTSTR svimIniFile, LPCTSTR oemIniFile, LPCTSTR hardwareIniFile);
-		HRESULT LoadOEMIni(LPCTSTR oemIniFile);
-		HRESULT LoadSVIMIni(LPCTSTR svimIniFile);
+		void LoadIniFiles(LPCTSTR svimIniFile, LPCTSTR oemIniFile, LPCTSTR hardwareIniFile);
+		void LoadOEMIni(LPCTSTR oemIniFile);
+		void LoadSVIMIni(LPCTSTR svimIniFile);
 		HRESULT LoadHardwareIni(LPCTSTR hardwareIniFile);
-		HRESULT DecodeModelNumber(LPCTSTR modelNumber);
+		void DecodeModelNumber(LPCTSTR modelNumber);
 
-		//@TODO [Arvid][7.50][09.06.2017] most of the remaining public data members in this class could be made private with moderate effort
+		bool isModelNumberDecodable() {return  m_modelNumberIsDecodable;}
+
+		auto ModelNumberString() const { return m_ModelNumber.c_str(); }
+		auto SerialNumberString() const { return m_SerialNumber.c_str(); }
+		auto WinKeyString() const {return m_WinKey.c_str(); }
+		bool UseCorrectListRecursion() const { return m_bUseCorrectListRecursion; }
+
+		//@TODO [Arvid][10.10][20.08.2020] the remaining public data members in this class should also be private
+		std::string m_TriggerEdge[MaxTriggers];
+		std::string m_StrobeEdge[MaxTriggers];
+		std::string m_StartFrameType[MaxTriggers];
+
+	private:
+		struct InitialInformation &m_rInitialInfo;
 
 		std::string m_ModelNumber;
 		std::string m_WinKey;
 		std::string m_SerialNumber;
 
-		std::string m_TriggerEdge[MaxTriggers];
-		std::string m_StrobeEdge[MaxTriggers];
-		std::string m_StartFrameType[MaxTriggers];
-
-		bool m_bUseCorrectListRecursion;
-
-		HRESULT m_hrDecodeModelNumber;
-
-	private:
-		struct InitialInformation &m_rInitialInfo;
-
-		bool m_bSingleCameraModel;
+		bool m_modelNumberIsDecodable = false;
+		bool m_bSingleCameraModel = false;
+		bool m_bUseCorrectListRecursion = false;
 
 		std::string m_Opto22InputInvert;
 		std::string m_Opto22OutputInvert;
+
 	};
 
 	/// Read SerialNumber from BIOS and if it a valid (8 oder 9 character) the return true
 	/// \param serialNumber [in]
-	/// \returns bool True if serialNumber could be read and it have (after trim) 8 oder 9 character.
+	/// \returns bool True if serialNumber could be read and it has (after trim) 8 oder 9 characters.
 	bool readSerialNumberFromSystem(std::string& serialNumber);
 } //namespace SvLib

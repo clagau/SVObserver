@@ -1258,8 +1258,8 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 				}
 				else
 				{
-					//Arvid set array size to 1 even if no blobs are present so as not to cause errors in math tools in "old style" configurations
-					//Arvid this will in practice, however, undo the changes of SVO-322
+					//set array size to 1 even if no blobs are present so as not to cause errors in math tools in "old style" configurations
+					//this will in practice, however, undo the changes of SVO-322
 					m_Value[i].SetResultSize(1); 
 					m_Value[i].SetValue(0.0, 0);
 				}

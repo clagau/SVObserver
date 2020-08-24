@@ -62,15 +62,16 @@ void InitialInformationHandler::LoadIniFilesAndDlls()
 	m_InitialInfo.ResetModelNumberInformation();
 
 	// load the SVIM.ini, OEMINFO.ini, and HARDWARE.ini
-	HRESULT l_hrOk = IniLoader.LoadIniFiles(SvStl::GlobalPath::Inst().GetSVIMIniPath(), l_csSystemDir, SvStl::GlobalPath::Inst().GetHardwareIniPath());
+	IniLoader.LoadIniFiles(SvStl::GlobalPath::Inst().GetSVIMIniPath(), l_csSystemDir, SvStl::GlobalPath::Inst().GetHardwareIniPath());
 
-	if (S_OK == l_hrOk)
+	if (true == IniLoader.isModelNumberDecodable())
 	{
-		g_bUseCorrectListRecursion = IniLoader.m_bUseCorrectListRecursion;
+		m_InitializationStatusFlags = S_OK;
+		g_bUseCorrectListRecursion = IniLoader.UseCorrectListRecursion();
 
-		RootObject::setRootChildValue(SvDef::FqnEnvironmentModelNumber, IniLoader.m_ModelNumber.c_str());
-		RootObject::setRootChildValue(SvDef::FqnEnvironmentSerialNumber, IniLoader.m_SerialNumber.c_str());
-		RootObject::setRootChildValue(SvDef::FqnEnvironmentWinKey, IniLoader.m_WinKey.c_str());
+		RootObject::setRootChildValue(SvDef::FqnEnvironmentModelNumber, IniLoader.ModelNumberString());
+		RootObject::setRootChildValue(SvDef::FqnEnvironmentSerialNumber, IniLoader.SerialNumberString());
+		RootObject::setRootChildValue(SvDef::FqnEnvironmentWinKey, IniLoader.WinKeyString());
 
 		for (int i = 0; i < SvLib::MaxTriggers; i++)
 		{
@@ -83,24 +84,21 @@ void InitialInformationHandler::LoadIniFilesAndDlls()
 			SVIOConfigurationInterfaceClass::Instance().SetSVIMStrobeStartFrameActive(i, Value);
 		}
 
-		l_hrOk = l_hrOk | LoadDigitalDLL();
-		l_hrOk = l_hrOk | LoadTriggerDLL();
-		l_hrOk = l_hrOk | LoadSoftwareTriggerDLL();
-		l_hrOk = l_hrOk | LoadCameraTriggerDLL();
-		l_hrOk = l_hrOk | LoadAcquisitionDLL();
-		l_hrOk = l_hrOk | LoadFileAcquisitionDLL();
+		m_InitializationStatusFlags |= LoadDigitalDLL();
+		m_InitializationStatusFlags |= LoadTriggerDLL();
+		m_InitializationStatusFlags |= LoadSoftwareTriggerDLL();
+		m_InitializationStatusFlags |= LoadCameraTriggerDLL();
+		m_InitializationStatusFlags |= LoadAcquisitionDLL();
+		m_InitializationStatusFlags |= LoadFileAcquisitionDLL();
 	}
 	else
 	{
-		if (S_OK != IniLoader.m_hrDecodeModelNumber)
-		{
-			assert(FALSE);
-			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-			Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SVObserver_ModelNumberInvalid, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10236);
-		}
+		assert(FALSE);
 
+		m_InitializationStatusFlags = S_FALSE;
+		SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+		Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SVObserver_ModelNumberInvalid, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10236);
 	}
-	m_InitializationStatusFlags = l_hrOk;
 }
 
 

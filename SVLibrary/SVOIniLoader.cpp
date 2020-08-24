@@ -73,30 +73,19 @@ constexpr char* CameraTriggerDeviceFilename = _T("SVEmptyIO.DLL");
 
 namespace SvLib
 {
-SVOIniLoader::SVOIniLoader(InitialInformation &inifileInfo)
-	: m_rInitialInfo(inifileInfo)
-	, m_bUseCorrectListRecursion(false)
-	, m_hrDecodeModelNumber(S_OK)
-	, m_bSingleCameraModel(false)
+void SVOIniLoader::LoadIniFiles(LPCTSTR svimIniFile, LPCTSTR oemIniFile, LPCTSTR hardwareIniFile)
 {
+	LoadOEMIni(oemIniFile);
+
+	if (isModelNumberDecodable())
+	{
+		LoadSVIMIni(svimIniFile);
+		LoadHardwareIni(hardwareIniFile);
+	}
+	//@TODO [Arvid][7.50][6.6.2017] hier sollte man besser eine Liste der Dateien zurückgeben, die nicht geladen werden konnten. Das würde die Erzeugung vernünftiger Fehlerbeschreibungen "weiter oben" erleichtern.
 }
 
-HRESULT SVOIniLoader::LoadIniFiles(LPCTSTR svimIniFile, LPCTSTR oemIniFile, LPCTSTR hardwareIniFile)
-{
-	HRESULT l_hrOk = LoadOEMIni(oemIniFile);
-
-	if (S_OK == l_hrOk)
-	{
-		l_hrOk = LoadSVIMIni(svimIniFile);
-	}
-	if (S_OK == l_hrOk)
-	{
-		l_hrOk = LoadHardwareIni(hardwareIniFile);
-	}
-	return l_hrOk;  //@TODO [Arvid][7.50][6.6.2017] hier sollte man besser eine Liste der Dateien zurückgeben, die nicht geladen werden konnten. Das würde die Erzeugung vernünftiger Fehlerbeschreibungen "weiter oben" erleichtern.
-}
-
-HRESULT SVOIniLoader::LoadOEMIni(LPCTSTR oemIniFile)
+void SVOIniLoader::LoadOEMIni(LPCTSTR oemIniFile)
 {
 	SVOINIClass OemIni(oemIniFile);
 
@@ -114,9 +103,9 @@ HRESULT SVOIniLoader::LoadOEMIni(LPCTSTR oemIniFile)
 		OemIni.SetValueString(OEMSpecificSectionTag, SerialNoTag, serialNumber.c_str());
 	}
 
-	m_hrDecodeModelNumber = DecodeModelNumber(ModelNumber.c_str());
+	DecodeModelNumber(ModelNumber.c_str());
 
-	if (S_OK == m_hrDecodeModelNumber)
+	if (m_modelNumberIsDecodable)
 	{
 		m_WinKey = WinKey;
 		m_ModelNumber = ModelNumber;
@@ -134,14 +123,12 @@ HRESULT SVOIniLoader::LoadOEMIni(LPCTSTR oemIniFile)
 		m_ModelNumber.clear();
 		m_SerialNumber.clear();
 	}
-
-	return m_hrDecodeModelNumber;
 }
 
-HRESULT SVOIniLoader::LoadSVIMIni(LPCTSTR svimIniFile)
+void  SVOIniLoader::LoadSVIMIni(LPCTSTR svimIniFile)
 {
-	HRESULT Result = S_OK;
-	SVOINIClass SvimIni(svimIniFile);
+	SVOINIClass SvimIni(svimIniFile); //@TODO [Arvid][10.00][20.8.2020] hier sollte geprüft werden, ob diese Datei überhaupt existiert! 
+	//aktuell: wenn nicht, erscheint keine Fehlermeldung!
 
 	int LegacyEquation = SvimIni.GetValueInt(SVIMInfoSectionTag, LegacyEquationParsingTag, 0);
 	m_bUseCorrectListRecursion = (0 == LegacyEquation);
@@ -171,14 +158,14 @@ HRESULT SVOIniLoader::LoadSVIMIni(LPCTSTR svimIniFile)
 	m_rInitialInfo.m_forcedImageUpdateTimeInSeconds = static_cast<unsigned char> (forcedImageUpdateTime);
 	m_rInitialInfo.m_NAKMode = static_cast<SvDef::NakGeneration>(SvimIni.GetValueInt(NAKSectionTag, NAKMode, SvDef::NakGeneration::Bursts));
 	m_rInitialInfo.m_NAKParameter = SvimIni.GetValueInt(NAKSectionTag, NAKParameter, SvDef::DefaultNakParameter);
-	return Result;
 }
 
 HRESULT SVOIniLoader::LoadHardwareIni(LPCTSTR hardwareIniFile)
 {
 	HRESULT l_hrOk = S_OK;
 
-	SVOINIClass HardwareINI(hardwareIniFile);
+	SVOINIClass HardwareINI(hardwareIniFile); //@TODO [Arvid][10.00][20.8.2020] hier sollte geprüft werden, ob diese Datei überhaupt existiert! 
+	//aktuell: wenn nicht, erscheint keine Fehlermeldung!
 
 	m_rInitialInfo.m_ProductName.clear();
 	m_rInitialInfo.m_SoftwareTriggerDLL.clear();
@@ -319,15 +306,18 @@ HRESULT SVOIniLoader::LoadHardwareIni(LPCTSTR hardwareIniFile)
 	return l_hrOk;
 }
 
-HRESULT SVOIniLoader::DecodeModelNumber(LPCTSTR modelNumber)
+void SVOIniLoader::DecodeModelNumber(LPCTSTR modelNumber)
 {
 	std::string CheckModelNumber = SvUl::Trim(modelNumber);
 	CheckModelNumber = SvUl::MakeUpper(CheckModelNumber.c_str());
 
 	if (11 != CheckModelNumber.size() || EmptyModelNo == CheckModelNumber)
 	{
-		return S_FALSE;
+		m_modelNumberIsDecodable = false;
+		return;
 	}
+
+	m_modelNumberIsDecodable = true;
 
 	m_rInitialInfo.ResetModelNumberInformation();
 
@@ -378,9 +368,8 @@ HRESULT SVOIniLoader::DecodeModelNumber(LPCTSTR modelNumber)
 	}
 
 	m_rInitialInfo.m_Trigger = m_rInitialInfo.m_IOBoard;
-
-	return S_OK;
 }
+
 
 bool readSerialNumberFromSystem(std::string& serialNumber)
 {

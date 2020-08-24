@@ -1489,7 +1489,7 @@ void SVIPDoc::OpenToolAdjustmentDialog(int tab)
 				INT_PTR dlgResult = toolAdjustmentDialog.DoModal();
 				if (IDOK == dlgResult)
 				{
-					ExtrasEngine::Instance().ExecuteAutoSaveIfAppropriate(false);//Arvid: after tool was edited: update the autosave timestamp
+					ExtrasEngine::Instance().ExecuteAutoSaveIfAppropriate(false);//after tool was edited: update the autosave timestamp
 					SVConfigurationObject* pConfig = nullptr;
 					SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 					if (nullptr != pConfig)

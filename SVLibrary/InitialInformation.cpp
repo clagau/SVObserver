@@ -77,7 +77,7 @@ namespace SvLib
 		return msgList;
 	}
 
-	std::string InitialInformation::GetModelNumberString() const
+	std::string InitialInformation::ModelNumberString() const
 	{
 		return boost::algorithm::join(GetModelNumberVector(), " ");
 	}

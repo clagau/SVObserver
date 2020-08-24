@@ -407,12 +407,11 @@ bool SVDriveInitDlg::IsValidModelNumber() const
 	m_model_number.GetWindowText(Model);
 	Model.MakeUpper();
 
-	HRESULT hr = iniLoader.DecodeModelNumber(static_cast<LPCTSTR> (Model));
-	if (S_OK == hr)
-	{
-		hr = iniLoader.LoadHardwareIni(SvStl::GlobalPath::Inst().GetHardwareIniPath());
+	iniLoader.DecodeModelNumber(static_cast<LPCTSTR> (Model));
 
-		if (S_OK == hr)
+	if (iniLoader.isModelNumberDecodable())
+	{
+		if (S_OK == iniLoader.LoadHardwareIni(SvStl::GlobalPath::Inst().GetHardwareIniPath()))
 		{
 			if (iniLoader.GetInitialInfo().m_ProcessorBoardName.empty() || //@TODO [Arvid][8.00][16.01.2018] better create a new method here
 				iniLoader.GetInitialInfo().m_TriggerBoardName.empty() ||

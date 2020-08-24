@@ -441,7 +441,7 @@ void SVObserverApp::OnFileOpenSVC()
 				{
 					SVOLicenseManager::Instance().ShowLicenseManagerErrors();
 				}
-				ExtrasEngine::Instance().ResetAutoSaveInformation(); //Arvid: reset autosave timestamp after configuration was loaded
+				ExtrasEngine::Instance().ResetAutoSaveInformation(); //reset autosave timestamp after configuration was loaded
 			}
 		}// end if ( svFileName.SelectFile() )
 	}// end if ( S_OK == m_svSecurityMgr.Validate( SECURITY_POINT_FILE_MENU_SELECT_CONFIGURATION) )
@@ -466,7 +466,7 @@ void SVObserverApp::OnTestMode()
 {
 	if (SVSVIMStateClass::CheckState(SV_STATE_REMOTE_CMD))
 		return;
-	ExtrasEngine::Instance().ExecuteAutoSaveIfAppropriate(false);//Arvid: before entering test mode: perform autosave
+	ExtrasEngine::Instance().ExecuteAutoSaveIfAppropriate(false);//before entering test mode: perform autosave
 	SetTestMode();
 }
 
@@ -1199,7 +1199,7 @@ void SVObserverApp::OnGoOnline()
 			else
 			{
 				SvDef::StringVector msgList;
-				msgList.push_back(m_rInitialInfo.GetModelNumberString());
+				msgList.push_back(m_rInitialInfo.ModelNumberString());
 				msgList.push_back(m_rInitialInfo.InitializationFailureDescription(m_IniInfoHandler.GetInitializationStatusFlags()));
 
 				SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
@@ -1888,7 +1888,7 @@ BOOL SVObserverApp::InitInstance()
 	if (S_OK != m_IniInfoHandler.GetInitializationStatusFlags())
 	{
 		SvDef::StringVector msgList;
-		msgList.push_back(m_rInitialInfo.GetModelNumberString());
+		msgList.push_back(m_rInitialInfo.ModelNumberString());
 		msgList.push_back(m_rInitialInfo.InitializationFailureDescription(m_IniInfoHandler.GetInitializationStatusFlags()));
 
 #ifndef _DEBUG                    // 23 Mar 1999 - frb.
@@ -2024,9 +2024,9 @@ BOOL SVObserverApp::InitInstance()
 
 	SVDirectX::Instance().Initialize();
 
-	int AutoSaveValue = SvimIni.GetValueInt(_T("Settings"), _T("EnableAutosave"), 0); //Arvid accept a number: non-zero enables
+	int AutoSaveValue = SvimIni.GetValueInt(_T("Settings"), _T("EnableAutosave"), 0); //accept a number: non-zero enables
 
-	std::string AutoSaveValueString = SvimIni.GetValueString(_T("Settings"), _T("EnableAutosave"), _T("FALSE")); //Arvid accept a string
+	std::string AutoSaveValueString = SvimIni.GetValueString(_T("Settings"), _T("EnableAutosave"), _T("FALSE"));
 
 	if (AutoSaveValueString == std::string("TRUE") || AutoSaveValueString == std::string("true"))
 	{
