@@ -24,7 +24,7 @@ static char THIS_FILE[] = __FILE__;
 SV_IMPLEMENT_CLASS( SVEvaluateCenterYClass, SvPb::EvaluateCenterYClassId)
 
 SVEvaluateCenterYClass::SVEvaluateCenterYClass( SVObjectClass* pOwner, int StringResourceID )
-: SVEvaluateClass( pOwner, StringResourceID )
+: SVEvaluate( pOwner, StringResourceID )
 {
 	// Identify yourself
 	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVEvaluateCenterYObjectType;

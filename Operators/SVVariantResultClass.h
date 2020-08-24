@@ -19,7 +19,7 @@
 namespace SvOp
 {
 
-class SVVariantResultClass : public SVResultClass  
+class SVVariantResultClass : public SVResult  
 {
 public:
 	SVVariantResultClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_RESULT_VARIANT );

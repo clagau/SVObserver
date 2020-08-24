@@ -3,7 +3,7 @@
 //* All Rights Reserved
 //******************************************************************************
 //* .Module Name     : SVIPSplitterFrame
-//* .File Name       : $Workfile:   SVIPChildFrm.cpp  $
+//* .File Name       : $Workfile:   SVIPSplitterFrame.cpp  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.2  $
 //* .Check In Date   : $Date:   02 Sep 2014 12:15:38  $
@@ -11,7 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "SVIPChildFrm.h"
+#include "SVIPSplitterFrame.h"
 #include "Definitions/GlobalConst.h"
 #include "SVIPDoc.h"
 #include "ToolSetView.h"
@@ -318,7 +318,7 @@ BOOL SVIPSplitterFrame::OnCreateClient( LPCREATESTRUCT, CCreateContext* pContext
 	// Set min and ideal sizes...
 	// NOTE: 
 	// The height of tool set view and image view panes, and the width of the 
-	// image view pane will be set in BOOL SVImageViewClass::BuildImageWindow()
+	// image view pane will be set in BOOL SVImageView::BuildImageWindow()
 
 	// Set width of tool set view pane...
 	m_oWndSplitter2.SetColumnInfo( 0, SvDef::cDefaultToolsetViewWidth, 10 );
@@ -336,7 +336,7 @@ BOOL SVIPSplitterFrame::OnCreateClient( LPCREATESTRUCT, CCreateContext* pContext
 	return TRUE;
 }// end OnCreateClient
 
-void SVIPSplitterFrame::SetDefaultPaneSizes(RECT &BoundingRect)
+void SVIPSplitterFrame::SetDefaultPaneSizes(const RECT &BoundingRect)
 {
 	CRect oRect = BoundingRect;
 	long lHeight = oRect.Height();

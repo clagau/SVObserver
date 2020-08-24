@@ -2,7 +2,7 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVUtilitiesCustomizeDialogClass
+//* .Module Name     : SVUtilitiesCustomizeDialog
 //* .File Name       : $Workfile:   SVUtilitiesCustomizeDialog.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $
@@ -14,23 +14,22 @@
 #pragma region Includes
 #pragma region Includes
 
-class SVUtilitiesClass;
+class SVUtilities;
 
-class SVUtilitiesCustomizeDialogClass : public CDialog
+class SVUtilitiesCustomizeDialog : public CDialog
 {
 // Construction
 public:
-	SVUtilitiesCustomizeDialogClass(CWnd* pParent = nullptr);   // standard constructor
-	virtual ~SVUtilitiesCustomizeDialogClass();
+	SVUtilitiesCustomizeDialog(CWnd* pParent = nullptr);   // standard constructor
+	virtual ~SVUtilitiesCustomizeDialog();
 
 private:
 	void SetDeleteState (BOOL bEnabled);
 	void SetApplyState (BOOL bEnabled);
-	UINT    muiId;
-	SVUtilitiesClass *m_pUtilityClass;
+	SVUtilities *m_pUtilityClass;
 
 // Dialog Data
-	//{{AFX_DATA(SVUtilitiesCustomizeDialogClass)
+	//{{AFX_DATA(SVUtilitiesCustomizeDialog)
 	enum { IDD = IDD_EXTRAS_UTILITIES_CUSTOMIZE };
 	CString	m_Arguments;
 	CString	m_Command;
@@ -41,7 +40,7 @@ private:
 
 // Overrides
 	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(SVUtilitiesCustomizeDialogClass)
+	//{{AFX_VIRTUAL(SVUtilitiesCustomizeDialog)
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
@@ -49,7 +48,7 @@ private:
 // Implementation
 protected:
 	// Generated message map functions
-	//{{AFX_MSG(SVUtilitiesCustomizeDialogClass)
+	//{{AFX_MSG(SVUtilitiesCustomizeDialog)
 	virtual BOOL OnInitDialog() override;
 	afx_msg void OnSelEndOkCustomizeMenuText();
 	afx_msg void OnEditChangeCustomizeMenuText();

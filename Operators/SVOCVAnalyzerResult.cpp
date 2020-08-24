@@ -43,10 +43,10 @@ static char THIS_FILE[] = __FILE__;
 #pragma endregion Declarations
 
 
-SV_IMPLEMENT_CLASS( SVOCVAnalyzeResultClass, SvPb::OCVAnalyzerResultClassId);
+SV_IMPLEMENT_CLASS( SVOCVAnalyzeResult, SvPb::OCVAnalyzerResultClassId);
 
-SVOCVAnalyzeResultClass::SVOCVAnalyzeResultClass( SVObjectClass* POwner, int StringResourceID  )
-						:SVResultClass(POwner, StringResourceID )
+SVOCVAnalyzeResult::SVOCVAnalyzeResult( SVObjectClass* POwner, int StringResourceID  )
+						:SVResult(POwner, StringResourceID )
 {
 	m_lCurrentFoundStringLength = 0;
 
@@ -65,7 +65,7 @@ SVOCVAnalyzeResultClass::SVOCVAnalyzeResultClass( SVObjectClass* POwner, int Str
 }
 
 
-void SVOCVAnalyzeResultClass::clearAll()
+void SVOCVAnalyzeResult::clearAll()
 {	
 	// Identify yourself
 	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVResultObjectType;
@@ -153,7 +153,7 @@ void SVOCVAnalyzeResultClass::clearAll()
 	
 	for( long l = 0; l < OCV_MAX_RESULTS; l++ )
 	{
-		SVOCVCharacterResultClass *pResult = new SVOCVCharacterResultClass( this );
+		SVOCVCharacterResult *pResult = new SVOCVCharacterResult( this );
 		// Add it to our task object list
 		Add( pResult );
 
@@ -202,7 +202,7 @@ void SVOCVAnalyzeResultClass::clearAll()
 	m_pIndexTable = nullptr;
 }
 
-SVOCVAnalyzeResultClass::~SVOCVAnalyzeResultClass()
+SVOCVAnalyzeResult::~SVOCVAnalyzeResult()
 {
 	// First destroy the MIL font and result buffer
 
@@ -227,9 +227,9 @@ SVOCVAnalyzeResultClass::~SVOCVAnalyzeResultClass()
 	}
 }
 
-bool SVOCVAnalyzeResultClass::CreateObject(	const SVObjectLevelCreateStruct& rCreateStructure )
+bool SVOCVAnalyzeResult::CreateObject(	const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool bOk = SVResultClass::CreateObject(rCreateStructure);
+	bool bOk = SVResult::CreateObject(rCreateStructure);
 
 	if ( bOk )
 	{
@@ -269,7 +269,7 @@ bool SVOCVAnalyzeResultClass::CreateObject(	const SVObjectLevelCreateStruct& rCr
 	return bOk;
 }
 
-void SVOCVAnalyzeResultClass::HideResults()
+void SVOCVAnalyzeResult::HideResults()
 {
 	if ( !m_bHasLicenseError )
 	{
@@ -278,7 +278,7 @@ void SVOCVAnalyzeResultClass::HideResults()
 
 		for( long l = 0; l < OCV_MAX_RESULTS; l++ )
 		{
-			SVOCVCharacterResultClass *pResult = dynamic_cast<SVOCVCharacterResultClass*>(GetAt( l ));
+			SVOCVCharacterResult *pResult = dynamic_cast<SVOCVCharacterResult*>(GetAt( l ));
 			pResult->SetObjectAttributesAllowed( SvPb::embedable, SvOi::SetAttributeType::OverwriteAttribute );
 
 			if( l < m_lFontStringLength )
@@ -301,9 +301,9 @@ void SVOCVAnalyzeResultClass::HideResults()
 //
 //
 //
-bool SVOCVAnalyzeResultClass::CloseObject()
+bool SVOCVAnalyzeResult::CloseObject()
 {
-	bool bOk = SVResultClass::CloseObject();
+	bool bOk = SVResult::CloseObject();
 
 	if( bOk )
 	{
@@ -325,7 +325,7 @@ bool SVOCVAnalyzeResultClass::CloseObject()
 // .Description : Generates the mil font model from the Font file and the
 //				  entered sampling rate.
 ////////////////////////////////////////////////////////////////////////////////
-bool SVOCVAnalyzeResultClass::GenerateFontModel()
+bool SVOCVAnalyzeResult::GenerateFontModel()
 {
 	// First destroy the MIL font and result buffer
 	if( !m_milFontID.empty() )
@@ -472,7 +472,7 @@ bool SVOCVAnalyzeResultClass::GenerateFontModel()
 	return bOk;
 }
 
-HRESULT SVOCVAnalyzeResultClass::LoadMatchString()
+HRESULT SVOCVAnalyzeResult::LoadMatchString()
 {
 	//
 	// Check to see if match string is to read from a file.
@@ -591,9 +591,9 @@ HRESULT SVOCVAnalyzeResultClass::LoadMatchString()
 	return hrRet;
 }
 
-bool SVOCVAnalyzeResultClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
+bool SVOCVAnalyzeResult::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	bool Result = SVResultClass::ResetObject(pErrorMessages);
+	bool Result = SVResult::ResetObject(pErrorMessages);
 
 	if ( !m_bHasLicenseError )
 	{
@@ -634,7 +634,7 @@ bool SVOCVAnalyzeResultClass::ResetObject(SvStl::MessageContainerVector *pErrorM
 //
 //
 //
-bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVOCVAnalyzeResult::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	std::string FoundString;
 	std::string MatchString;
@@ -1002,7 +1002,7 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messag
 					                             // the length must be 0 at 
 												 // this point.
 				{
-					SVOCVCharacterResultClass *pResult = m_OCVCharacterResults[k];
+					SVOCVCharacterResult *pResult = m_OCVCharacterResults[k];
 
 					pResult->m_cvoLabelValue.SetValue(l_strLabel[k]);
 
@@ -1030,7 +1030,7 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messag
 //-				Set unused indexes.
 				for( long l = l_lLength; l < OCV_MAX_RESULTS; l++ )
 				{
-					SVOCVCharacterResultClass *pResult = m_OCVCharacterResults[l];
+					SVOCVCharacterResult *pResult = m_OCVCharacterResults[l];
 
 					pResult->m_cvoLabelValue.SetValue(0L);
 
@@ -1217,7 +1217,7 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messag
 		rRunStatus.SetInvalid();
 
 		SvDef::StringVector msgList;
-		msgList.push_back(_T("SVOCVAnalyzeResultClass::onRun"));
+		msgList.push_back(_T("SVOCVAnalyzeResult::onRun"));
 
 		if (nullptr != pErrorMessages)
 		{
@@ -1230,7 +1230,7 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messag
 	return bOk;
 }
 
-bool SVOCVAnalyzeResultClass::BuildHashTable( char *pBuffer )
+bool SVOCVAnalyzeResult::BuildHashTable( char *pBuffer )
 {
 	long lBufIndex = 0;
 	bool  bRet = true;
@@ -1346,7 +1346,7 @@ bool SVOCVAnalyzeResultClass::BuildHashTable( char *pBuffer )
 //  4-25-00    sri			First Implementation
 //	:
 ////////////////////////////////////////////////////////////////////////////////
-void SVOCVAnalyzeResultClass::InsertValueToTable ( short nValue, int nIndex )
+void SVOCVAnalyzeResult::InsertValueToTable ( short nValue, int nIndex )
 {
 	// Check whether the location contains a data
 	
@@ -1381,7 +1381,7 @@ void SVOCVAnalyzeResultClass::InsertValueToTable ( short nValue, int nIndex )
 //  4-25-00    sri			First Implementation
 //	:
 ////////////////////////////////////////////////////////////////////////////////
-long SVOCVAnalyzeResultClass::CheckStringInTable(const std::string& rMatchString)
+long SVOCVAnalyzeResult::CheckStringInTable(const std::string& rMatchString)
 {
 	long Result( -1L );
 	
@@ -1421,7 +1421,7 @@ long SVOCVAnalyzeResultClass::CheckStringInTable(const std::string& rMatchString
 	return Result;
 } 
 
-HRESULT SVOCVAnalyzeResultClass::onCollectOverlays(SvIe::SVImageClass*, SVExtentMultiLineStructVector& rMultiLineArray)
+HRESULT SVOCVAnalyzeResult::onCollectOverlays(SvIe::SVImageClass*, SVExtentMultiLineStructVector& rMultiLineArray)
 {
 	HRESULT l_hr = S_OK;
 
@@ -1434,7 +1434,7 @@ HRESULT SVOCVAnalyzeResultClass::onCollectOverlays(SvIe::SVImageClass*, SVExtent
 			{
 				SVExtentFigureStruct l_svFigure;
 
-				SVOCVCharacterResultClass *pResult = m_OCVCharacterResults[i];
+				SVOCVCharacterResult *pResult = m_OCVCharacterResults[i];
 
 				double Value;
 				pResult->m_dvoOverlayLeft.GetValue( Value );

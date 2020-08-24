@@ -26,15 +26,15 @@
 #include "Definitions/ObjectNames.h"
 #pragma endregion Includes
 
-SV_IMPLEMENT_CLASS(SVToolSetClass, SvPb::ToolSetClassId);
+SV_IMPLEMENT_CLASS(SVToolSet, SvPb::ToolSetClassId);
 
-SVToolSetClass::SVToolSetClass(SVObjectClass* POwner, int StringResourceID)
+SVToolSet::SVToolSet(SVObjectClass* POwner, int StringResourceID)
 	:SVTaskObjectListClass(POwner, StringResourceID)
 {
 	init();
 }
 
-void SVToolSetClass::init()
+void SVToolSet::init()
 {
 	// Identify our output type
 	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolSetObjectType;
@@ -164,7 +164,7 @@ void SVToolSetClass::init()
 	m_SetNumber = 0;
 	m_isCreated = false;
 
-	SvOp::SVConditionalClass* pConditional = new SvOp::SVConditionalClass(this);
+	SvOp::SVConditional* pConditional = new SvOp::SVConditional(this);
 	AddFriend(pConditional->getObjectId());
 
 	// Identify our input type needs
@@ -179,11 +179,11 @@ void SVToolSetClass::init()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// .Title       : ~SVToolSetClass
+// .Title       : ~SVToolSet
 // -----------------------------------------------------------------------------
-// .Description : Standard destructor of class SVToolSetClass
+// .Description : Standard destructor of class SVToolSet
 ////////////////////////////////////////////////////////////////////////////////
-SVToolSetClass::~SVToolSetClass()
+SVToolSet::~SVToolSet()
 {
 	Destroy();
 }
@@ -191,7 +191,7 @@ SVToolSetClass::~SVToolSetClass()
 ////////////////////////////////////////////////////////////////////////////////
 // Create Operator
 ////////////////////////////////////////////////////////////////////////////////
-bool SVToolSetClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
+bool SVToolSet::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 {
 	bool bOk = SVTaskObjectListClass::CreateObject(rCreateStructure);
 
@@ -258,11 +258,11 @@ bool SVToolSetClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStruct
 ////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
-// .Title       : Destroy All Array Member operator of class SVToolSetClass
+// .Title       : Destroy All Array Member operator of class SVToolSet
 // -----------------------------------------------------------------------------
 // .Description : Destroys all array members
 ////////////////////////////////////////////////////////////////////////////////
-void SVToolSetClass::Destroy()
+void SVToolSet::Destroy()
 {
 	// Delete our friends
 	DestroyFriends();
@@ -274,19 +274,19 @@ void SVToolSetClass::Destroy()
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : Check the Enabled State
-//              : SVToolSetClass
+//              : SVToolSet
 // -----------------------------------------------------------------------------
-// .Description : Checks the Enabled state of the SVToolSetClass Object
+// .Description : Checks the Enabled state of the SVToolSet Object
 //              : SVToolClass* argument
 ////////////////////////////////////////////////////////////////////////////////
-bool SVToolSetClass::IsEnabled() const
+bool SVToolSet::IsEnabled() const
 {
 	BOOL bEnabled(true);
 	m_Enabled.GetValue(bEnabled);
 	return bEnabled ? true : false;
 }
 
-bool SVToolSetClass::WasEnabled() const
+bool SVToolSet::WasEnabled() const
 {
 	bool bEnabled = IsEnabled();
 
@@ -298,7 +298,7 @@ bool SVToolSetClass::WasEnabled() const
 	return bEnabled;
 }
 
-void SVToolSetClass::updateToolPosition()
+void SVToolSet::updateToolPosition()
 {
 	for (long i(0), position(1); i < GetSize(); i++)
 	{
@@ -314,7 +314,7 @@ void SVToolSetClass::updateToolPosition()
 ////////////////////////////////////////////////////////////////////////////////
 // Called by CreateObject
 ////////////////////////////////////////////////////////////////////////////////
-void SVToolSetClass::SetDefaultInputs()
+void SVToolSet::SetDefaultInputs()
 {
 	// Connects all not valid ( Invalid ) input objects to default...
 
@@ -326,32 +326,32 @@ void SVToolSetClass::SetDefaultInputs()
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : Get Current Result List member function of class
-//              : SVToolSetClass
+//              : SVToolSet
 // -----------------------------------------------------------------------------
-// .Description : Returns a pointer to the current SVResultListClass object
+// .Description : Returns a pointer to the current SVResultList object
 ////////////////////////////////////////////////////////////////////////////////
-SVResultListClass* SVToolSetClass::GetResultList()
+SVResultList* SVToolSet::GetResultList()
 {
 	return &m_ResultList;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : Get Current Image member function of class
-//              : SVToolSetClass
+//              : SVToolSet
 // -----------------------------------------------------------------------------
 // .Description : Returns a pointer to the current SVImageClass object
 ////////////////////////////////////////////////////////////////////////////////
-SvIe::SVImageClass* SVToolSetClass::getCurrentImage()
+SvIe::SVImageClass* SVToolSet::getCurrentImage()
 {
 	return &m_MainImageObject;
 }
 
-SvOi::ISVImage* SVToolSetClass::getCurrentImageInterface()
+SvOi::ISVImage* SVToolSet::getCurrentImageInterface()
 {
 	return &m_MainImageObject;
 }
 
-bool SVToolSetClass::getConditionalResult(bool bRunMode /*= false*/) const
+bool SVToolSet::getConditionalResult(bool bRunMode /*= false*/) const
 {
 	BOOL Value(false);
 
@@ -369,12 +369,12 @@ bool SVToolSetClass::getConditionalResult(bool bRunMode /*= false*/) const
 // .Description : Returns pointer to enumeration value object which is used as 
 //				: conditional tool set draw flag.
 ////////////////////////////////////////////////////////////////////////////////
-SvVol::SVEnumerateValueObjectClass* SVToolSetClass::GetDrawFlagObject()
+SvVol::SVEnumerateValueObjectClass* SVToolSet::GetDrawFlagObject()
 {
 	return &m_DrawFlag;
 }
 
-HRESULT SVToolSetClass::getResetCounts(bool& rResetCounts)  const
+HRESULT SVToolSet::getResetCounts(bool& rResetCounts)  const
 {
 	BOOL Value(false);
 	HRESULT Result = m_ResetCounts.GetValue(Value);
@@ -382,14 +382,14 @@ HRESULT SVToolSetClass::getResetCounts(bool& rResetCounts)  const
 	return Result;
 }
 
-long SVToolSetClass::getTriggerCount() const
+long SVToolSet::getTriggerCount() const
 {
 	long count = 0;
 	m_TriggerCount.GetValue(count);
 	return count;
 }
 
-SvPb::OverlayDesc SVToolSetClass::getOverlayStruct(const SvOi::ISVImage& rImage) const
+SvPb::OverlayDesc SVToolSet::getOverlayStruct(const SvOi::ISVImage& rImage) const
 {
 	SvPb::OverlayDesc overlayDesc;
 	auto* pImage = dynamic_cast<const SvIe::SVImageClass*>(&rImage);
@@ -408,7 +408,7 @@ SvPb::OverlayDesc SVToolSetClass::getOverlayStruct(const SvOi::ISVImage& rImage)
 }
 
 #pragma region virtual method (IToolSet)
-bool SVToolSetClass::IsToolPreviousToSelected(uint32_t toolID) const
+bool SVToolSet::IsToolPreviousToSelected(uint32_t toolID) const
 {
 	bool Result(false);
 
@@ -423,7 +423,7 @@ bool SVToolSetClass::IsToolPreviousToSelected(uint32_t toolID) const
 	return Result;
 }
 
-SvOi::IObjectClass* SVToolSetClass::getBand0Image() const
+SvOi::IObjectClass* SVToolSet::getBand0Image() const
 {
 	SvOi::IObjectClass* pResult(nullptr);
 
@@ -441,11 +441,11 @@ SvOi::IObjectClass* SVToolSetClass::getBand0Image() const
 #pragma endregion virtual method (IToolSet)
 
 ////////////////////////////////////////////////////////////////////////////////
-// .Title       : onRun member function of class SVToolSetClass
+// .Title       : onRun member function of class SVToolSet
 // -----------------------------------------------------------------------------
 // .Description : runs this toolset
 ////////////////////////////////////////////////////////////////////////////////
-bool SVToolSetClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool SVToolSet::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	m_TriggerCount.SetValue(rRunStatus.m_lTriggerCount > 0L ? rRunStatus.m_lTriggerCount : 0L);
 
@@ -470,7 +470,7 @@ bool SVToolSetClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainer
 //				: Otherwise it returns FALSE, that means: if the Tool Set should
 //				: not run, because the Tool Set Condition failed!
 ////////////////////////////////////////////////////////////////////////////////
-bool SVToolSetClass::Run(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool SVToolSet::Run(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool bRetVal = true;
 	clearRunErrorMessages();
@@ -591,14 +591,14 @@ bool SVToolSetClass::Run(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVe
 	return bRetVal;
 }// end Run
 
-bool SVToolSetClass::resetAllObjects(SvStl::MessageContainerVector *pErrorMessages)
+bool SVToolSet::resetAllObjects(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool result = __super::resetAllObjects(pErrorMessages);
 	m_isObjectValid.SetValue(BOOL(result));
 	return result;
 }
 
-bool SVToolSetClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
+bool SVToolSet::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::ResetObject(pErrorMessages) && ValidateLocal(pErrorMessages);
 
@@ -637,7 +637,7 @@ bool SVToolSetClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	return Result;
 }
 
-HRESULT SVToolSetClass::ResetCounts()
+HRESULT SVToolSet::ResetCounts()
 {
 	HRESULT Result = S_OK;
 
@@ -667,18 +667,18 @@ HRESULT SVToolSetClass::ResetCounts()
 	return Result;
 }
 
-HRESULT SVToolSetClass::ClearResetCounts()
+HRESULT SVToolSet::ClearResetCounts()
 {
 	return m_ResetCounts.SetValue(BOOL(false));
 }
 
-HRESULT SVToolSetClass::onCollectOverlays(SvIe::SVImageClass*, SVExtentMultiLineStructVector& )
+HRESULT SVToolSet::onCollectOverlays(SvIe::SVImageClass*, SVExtentMultiLineStructVector& )
 {
 	// override TaskObjectList implementation
 	return S_FALSE;	// no overlays for toolset
 }
 
-bool SVToolSetClass::createAllObjectsFromChild(SVObjectClass& rChildObject)
+bool SVToolSet::createAllObjectsFromChild(SVObjectClass& rChildObject)
 {
 	//MZA: 5. Nov 2014: the method call SetDefaultInputs is missing in the other method
 	//do we need this method call SetDefaultInputs here?
@@ -692,7 +692,7 @@ bool SVToolSetClass::createAllObjectsFromChild(SVObjectClass& rChildObject)
 	return rChildObject.createAllObjects(createStruct);
 }
 
-void SVToolSetClass::connectChildObject(SVTaskObjectClass& rChildObject)
+void SVToolSet::connectChildObject(SVTaskObjectClass& rChildObject)
 {
 	SVObjectLevelCreateStruct createStruct;
 	createStruct.OwnerObjectInfo.SetObject(this);
@@ -701,7 +701,7 @@ void SVToolSetClass::connectChildObject(SVTaskObjectClass& rChildObject)
 	rChildObject.ConnectObject(createStruct);
 }
 
-void SVToolSetClass::UpdateRunStatus(SVRunStatusClass& rRunStatus, const SVRunStatusClass& rToolRunStatus) const
+void SVToolSet::UpdateRunStatus(SVRunStatusClass& rRunStatus, const SVRunStatusClass& rToolRunStatus) const
 {
 	if (rToolRunStatus.IsWarned())
 	{
@@ -721,7 +721,7 @@ void SVToolSetClass::UpdateRunStatus(SVRunStatusClass& rRunStatus, const SVRunSt
 	}
 }
 
-bool SVToolSetClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const
+bool SVToolSet::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const
 {
 	if (m_inputConditionBoolObjectInfo.IsConnected() && m_inputConditionBoolObjectInfo.GetInputObjectInfo().getObject())
 	{
@@ -740,7 +740,7 @@ bool SVToolSetClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages
 	}
 }
 
-void SVToolSetClass::setPostRunStatus(double timer, SVRunStatusClass &rRunStatus)
+void SVToolSet::setPostRunStatus(double timer, SVRunStatusClass &rRunStatus)
 {
 	double l_Elapsed = (SvTl::GetTimeStamp() - timer);
 	m_EndTime = SvTl::ConvertTo(SvTl::Seconds, l_Elapsed);

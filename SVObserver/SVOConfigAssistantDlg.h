@@ -65,18 +65,18 @@ enum ConfigMsgTypeEnum
 
 
 /////////////////////////////////////////////////////////////////////////////
-// CSVOConfigAssistantDlg dialog
+// SVOConfigAssistantDlg dialog
 
 class SVOTriggerList;
 
-class CSVOConfigAssistantDlg : public CDialog
+class SVOConfigAssistantDlg : public CDialog
 {
 public:
 	typedef std::vector<std::pair<SVIMProductEnum, std::string>> SVProductStringVector;
 
-	CSVOConfigAssistantDlg(CWnd* pParent = nullptr);   // standard constructor
+	SVOConfigAssistantDlg(CWnd* pParent = nullptr);   // standard constructor
 
-	virtual ~CSVOConfigAssistantDlg() = default;
+	virtual ~SVOConfigAssistantDlg() = default;
 
 	void SetNewConfiguration(bool bNewFlag);
 	bool IsNewConfiguration();
@@ -172,11 +172,11 @@ public:
 	bool IsFileAcquisition(int iDig) const;
 
 	// Dialog Data
-	//{{AFX_DATA(CSVOConfigAssistantDlg)
+	//{{AFX_DATA(SVOConfigAssistantDlg)
 	enum { IDD = IDD_DLG_CONFIG_ASSISTANT };
 	CButton	m_btnOk;
 	CListBox	m_ctlMsgList;
-	SvMc::CSVOConfigNameEdit	m_ctlConfigurationName;
+	SvMc::SVOConfigNameEdit	m_ctlConfigurationName;
 	CEdit	m_ctlCurrentSys;
 	CComboBox	m_ctlAvailableSys;
 	CString	m_AvailableSystem;
@@ -186,7 +186,7 @@ public:
 
 	// Overrides
 	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CSVOConfigAssistantDlg)
+	//{{AFX_VIRTUAL(SVOConfigAssistantDlg)
 	protected:
 
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
@@ -195,13 +195,13 @@ public:
 // Implementation
 protected:
 	CPropertySheet m_dlgPropSheet;
-	CSVOTriggerDeviceDlg    m_Page1;
-	CSVOCameraDlg           m_Page2;
-	CSVOInspectionSourceDlg m_Page3;
-	CSVOProPosQueDlg        m_Page4;
+	SVOTriggerDeviceDlg    m_Page1;
+	SVOCameraDlg           m_Page2;
+	SVOInspectionSourceDlg m_Page3;
+	SVOProPosQueDlg        m_Page4;
 
 	// Generated message map functions
-	//{{AFX_MSG(CSVOConfigAssistantDlg)
+	//{{AFX_MSG(SVOConfigAssistantDlg)
 	virtual BOOL OnInitDialog() override;
 	afx_msg void OnSelchangeComboAvalSys();
 	virtual void OnOK() override;

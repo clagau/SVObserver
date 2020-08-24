@@ -14,7 +14,7 @@
 namespace SvOp
 {
 
-class SVEvaluateStartAngleClass : public SVEvaluateClass
+class SVEvaluateStartAngleClass : public SVEvaluate
 {
 	SV_DECLARE_CLASS( SVEvaluateStartAngleClass )
 

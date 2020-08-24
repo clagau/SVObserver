@@ -65,7 +65,7 @@ namespace SvOg
 		CEdit	m_ctlMaxNbrBlobs;
 		CButton	m_chkFillBlob;
 		CButton	m_btnFillBlobs;
-		SvMc::SVEnumerateComboClass m_cbBlobColor;
+		SvMc::SVEnumerateCombo m_cbBlobColor;
 		CListBox m_lbSelectedFeatures;
 		CListBox m_lbAvailableFeatures;
 		CString m_SortFeatureEdt;

@@ -75,7 +75,7 @@ enum PROPERTY_PAGE_PROPERTY
 
 
 /////////////////////////////////////////////////////////////////////////////
-// CSVOPropertyPageDlg dialog
+// SVOPropertyPageDlg dialog
 
 namespace SvTi
 {
@@ -83,14 +83,14 @@ namespace SvTi
 } //namespace SvTi
 class SVOInspectionObj;
 class SVOPPQObj;
-class CSVOConfigAssistantDlg;
+class SVOConfigAssistantDlg;
 
-class CSVOPropertyPageDlg : public CDialog
+class SVOPropertyPageDlg : public CDialog
 {
 // Construction
 public:
-	CSVOPropertyPageDlg(CWnd* pParent = nullptr);   // standard constructor
-	virtual ~CSVOPropertyPageDlg();
+	SVOPropertyPageDlg(CWnd* pParent = nullptr);   // standard constructor
+	virtual ~SVOPropertyPageDlg();
 
 	SVOCameraObj& getCameraObject() { return m_CameraObj; };
     SvTi::SVOTriggerObj& getTriggerObject() { return m_TriggerObj; };
@@ -101,19 +101,19 @@ public:
 
     void SetProductType(SVIMProductEnum eType);
 
-	void SetConfigAssistantDlg(CSVOConfigAssistantDlg* pAssistant);
+	void SetConfigAssistantDlg(SVOConfigAssistantDlg* pAssistant);
 
 	HRESULT AdjustCameraImageFormat(LPCTSTR sSelectedFormat, SVDeviceParamWrapper& rw);
 
 // Dialog Data
-	//{{AFX_DATA(CSVOPropertyPageDlg)
+	//{{AFX_DATA(SVOPropertyPageDlg)
 	enum { IDD = IDD_DLG_PROPERTIES_PAGE };
 //	SVPropertyListBox	m_PropertyListBox;
 	//}}AFX_DATA
 
 // Overrides
 	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CSVOPropertyPageDlg)
+	//{{AFX_VIRTUAL(SVOPropertyPageDlg)
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
@@ -124,7 +124,7 @@ protected:
 	SVRPropTree	m_Tree;
     
 	// Generated message map functions
-	//{{AFX_MSG(CSVOPropertyPageDlg)
+	//{{AFX_MSG(SVOPropertyPageDlg)
 	virtual BOOL OnInitDialog() override;
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
@@ -143,7 +143,7 @@ private: //data members
     SvTi::SVOTriggerObj m_TriggerObj;
     SVOInspectionObj m_InspectionObj;
     SVOPPQObj m_PPQObj;
-	CSVOConfigAssistantDlg* m_pAssistant;
+	SVOConfigAssistantDlg* m_pAssistant;
 
 	CMapStringToPtr	*m_pMap;
 	int				m_nID;

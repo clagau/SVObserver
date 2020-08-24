@@ -2,7 +2,7 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVIOAdjustDialogClass
+//* .Module Name     : SVIOAdjustDialog
 //* .File Name       : $Workfile:   SVIOAdjustDialog.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.1  $
@@ -19,7 +19,7 @@ class SVDigitalInputObject;
 class SVDigitalOutputObject;
 class SVIODoc;
 
-class SVIOAdjustDialogClass : public CDialog
+class SVIOAdjustDialog : public CDialog
 {
 	DECLARE_MESSAGE_MAP()
 
@@ -29,10 +29,10 @@ protected:
 	afx_msg void OnSelChangeIOCombo();
 	
 public:
-	SVIOAdjustDialogClass( CWnd* pParent = nullptr );
-	virtual ~SVIOAdjustDialogClass() = default;
+	SVIOAdjustDialog( CWnd* pParent = nullptr );
+	virtual ~SVIOAdjustDialog() = default;
 
-	//{{AFX_VIRTUAL(SVIOAdjustDialogClass)
+	//{{AFX_VIRTUAL(SVIOAdjustDialog)
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV-Unterstützung
 	//}}AFX_VIRTUAL
@@ -44,7 +44,7 @@ public:
 	PlcOutputObject* m_pPlcOutput {nullptr};
 	int m_PpqIndex {-1};		///This is only required when the type is PLC Output
 
-	//{{AFX_DATA(SVIOAdjustDialogClass)
+	//{{AFX_DATA(SVIOAdjustDialog)
 	enum { IDD = IDD_IOADJUST_DIALOG };
 	CComboBox	IOCombo;
 	CString		IOName;

@@ -19,7 +19,7 @@
 #pragma region Declarations
 namespace SvOp
 {
-class SVEvaluateClass;
+class SVEvaluate;
 }
 #pragma endregion
 
@@ -52,7 +52,7 @@ protected:
 	//{{AFX_DATA(SVToolAdjustmentDialogTranslationPageClass)
 public:
 	enum { IDD = IDD_TA_TRANSLATION_DIALOG };
-	SvMc::SVEnumerateComboClass	m_cbInterpolation;
+	SvMc::SVEnumerateCombo	m_cbInterpolation;
 	CString	m_TranslationXValue;
 	CString	m_TranslationYValue;
 	BOOL	m_performTranslation{ false };
@@ -60,8 +60,8 @@ public:
 #pragma endregion Data Elements
 
 protected:
-	SvOp::SVEvaluateClass* m_pEvaluateTranslationX{ nullptr };
-	SvOp::SVEvaluateClass* m_pEvaluateTranslationY{ nullptr };
+	SvOp::SVEvaluate* m_pEvaluateTranslationX{ nullptr };
+	SvOp::SVEvaluate* m_pEvaluateTranslationY{ nullptr };
 
 	const uint32_t m_InspectionID;
 	const uint32_t m_TaskObjectID;

@@ -19,16 +19,16 @@
 namespace SvOp
 {
 
-class SVConditionalClass : public SVEquationClass
+class SVConditional : public SVEquation
 {
-	SV_DECLARE_CLASS( SVConditionalClass );
+	SV_DECLARE_CLASS( SVConditional );
 
 //******************************************************************************
 // Serialization Declaration(s):
 //******************************************************************************
 public:
-	SVConditionalClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVCONDITIONAL );
-	virtual ~SVConditionalClass();
+	SVConditional( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVCONDITIONAL );
+	virtual ~SVConditional();
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 

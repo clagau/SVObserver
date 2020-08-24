@@ -25,23 +25,23 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVUpperThresholdEquationClass, SvPb::UpperThresholdEquationClassId);
+SV_IMPLEMENT_CLASS( SVUpperThresholdEquation, SvPb::UpperThresholdEquationClassId);
 
 ////////////////////////////////////////////////////////////////////////////////
 // 
 ////////////////////////////////////////////////////////////////////////////////
-SVUpperThresholdEquationClass::SVUpperThresholdEquationClass( SVObjectClass* POwner, int StringResourceID )
-							  :SVEquationClass( POwner, StringResourceID )
+SVUpperThresholdEquation::SVUpperThresholdEquation( SVObjectClass* POwner, int StringResourceID )
+							  :SVEquation( POwner, StringResourceID )
 {
 	init();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// .Title       : Initialization of class SVUpperThresholdEquationClass
+// .Title       : Initialization of class SVUpperThresholdEquation
 // -----------------------------------------------------------------------------
 // .Description : Initialization of newly Instantiated Object
 ////////////////////////////////////////////////////////////////////////////////
-void SVUpperThresholdEquationClass::init()
+void SVUpperThresholdEquation::init()
 {
 	// Identify our output type
 	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVEquationObjectType;
@@ -65,7 +65,7 @@ void SVUpperThresholdEquationClass::init()
 ////////////////////////////////////////////////////////////////////////////////
 // 
 ////////////////////////////////////////////////////////////////////////////////
-SVUpperThresholdEquationClass::~SVUpperThresholdEquationClass()
+SVUpperThresholdEquation::~SVUpperThresholdEquation()
 {
 }
 
@@ -74,7 +74,7 @@ SVUpperThresholdEquationClass::~SVUpperThresholdEquationClass()
 ////////////////////////////////////////////////////////////////////////////////
 // If Conditional is disabled conditional.Run() returns always TRUE.
 // Otherwise the return value depends on the Conditional equation result!
-bool SVUpperThresholdEquationClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVUpperThresholdEquation::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	double value = 0.0;
 
@@ -97,9 +97,9 @@ bool SVUpperThresholdEquationClass::onRun( SVRunStatusClass& rRunStatus, SvStl::
 }
 
 
-bool SVUpperThresholdEquationClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
+bool SVUpperThresholdEquation::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool bOk = SVEquationClass::CreateObject(rCreateStructure);
+	bool bOk = SVEquation::CreateObject(rCreateStructure);
 
 	// Set/Reset printable Flags
 	result.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );

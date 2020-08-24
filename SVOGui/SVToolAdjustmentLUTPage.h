@@ -143,8 +143,8 @@ namespace SvOg
 		CSliderCtrl m_upperSlider;
 		CSliderCtrl m_lowerSlider;
 		CSliderCtrl m_stretchSliders[MAX_STRETCH_CONTROLS];
-		SvMc::SVDlgGraphClass m_LUTGraph;
-		SvMc::SVEnumerateComboClass m_LUTModeCombo;
+		SvMc::SVDlgGraph m_LUTGraph;
+		SvMc::SVEnumerateCombo m_LUTModeCombo;
 		CString m_strUpperClipValue;
 		CString m_strLowerClipValue;
 		CString m_strStretchValues[MAX_STRETCH_CONTROLS];

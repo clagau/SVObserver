@@ -1019,7 +1019,7 @@ void SVRCCommand::GetConfigurationTree(const SvPb::GetConfigurationTreeRequest&,
 				uint32_t inspectionID{pInspection->getObjectId()};
 				std::vector<uint32_t> objectVector;
 				objectVector.emplace_back(inspectionID);
-				SVToolSetClass* pToolSet = pInspection->GetToolSet();
+				SVToolSet* pToolSet = pInspection->GetToolSet();
 				if(nullptr != pToolSet)
 				{
 					uint32_t toolsetID{pToolSet->getObjectId()};

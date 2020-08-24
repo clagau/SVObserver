@@ -31,7 +31,7 @@ static char THIS_FILE[] = __FILE__;
 //SV_IMPLEMENT_CLASS( SVUnaryImageOperatorClass, SVUnaryImageOperatorClassGuid )
 
 SVUnaryImageOperatorClass::SVUnaryImageOperatorClass( SVObjectClass* POwner, int StringResourceID )
-						  :SVOperatorClass( POwner, StringResourceID )
+						  :SVOperator( POwner, StringResourceID )
 {
 	init();
 }
@@ -58,8 +58,8 @@ void SVUnaryImageOperatorClass::init()
 
 bool SVUnaryImageOperatorClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	// Owner can only be : SVUnaryImageOperatorListClass !!!
-	m_isCreated = __super::CreateObject(rCreateStructure) && (nullptr != (m_pCurrentUIOPL = dynamic_cast<SVUnaryImageOperatorListClass*>(GetParent())));
+	// Owner can only be : SVUnaryImageOperatorList !!!
+	m_isCreated = __super::CreateObject(rCreateStructure) && (nullptr != (m_pCurrentUIOPL = dynamic_cast<SVUnaryImageOperatorList*>(GetParent())));
 	return m_isCreated;
 }
 

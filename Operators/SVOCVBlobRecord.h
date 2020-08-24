@@ -20,15 +20,15 @@
 namespace SvOp
 {
 
-class SVOCVCharacterResultClass : public SvIe::SVTaskObjectClass
+class SVOCVCharacterResult : public SvIe::SVTaskObjectClass
 {
 protected:
-	SV_DECLARE_CLASS( SVOCVCharacterResultClass )
+	SV_DECLARE_CLASS( SVOCVCharacterResult )
 
 public:
-	explicit SVOCVCharacterResultClass(LPCSTR ObjectName );
-	SVOCVCharacterResultClass(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVOCVCHARACTERRESULTOBJECT );
-	virtual ~SVOCVCharacterResultClass();
+	explicit SVOCVCharacterResult(LPCSTR ObjectName );
+	SVOCVCharacterResult(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVOCVCHARACTERRESULTOBJECT );
+	virtual ~SVOCVCharacterResult();
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 	void init();
@@ -50,6 +50,6 @@ public:
 	SvVol::SVDoubleValueObjectClass m_dvoMatchScore;
 };
 
-typedef std::vector<SVOCVCharacterResultClass*> SVOCVCharacterResultPtrVector;
+typedef std::vector<SVOCVCharacterResult*> SVOCVCharacterResultPtrVector;
 
 } //namespace SvOp

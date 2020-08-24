@@ -2,7 +2,7 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVSlideBarClass
+//* .Module Name     : SVSlideBar
 //* .File Name       : $Workfile:   SVSlideBar.cpp  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $
@@ -25,19 +25,19 @@ namespace SvMc
 {
 	static SvSyl::SVLockableClass SVSlideBarLock;
 
-	SVSlideBarClass::SVSlideBarClass()
+	SVSlideBar::SVSlideBar()
 	{
 		bTracking = false;
 		dwSlideBarType	= SV_SLIDEBAR_VERT;
 		trackRect.SetRectEmpty();
 	}
 
-	SVSlideBarClass::~SVSlideBarClass()
+	SVSlideBar::~SVSlideBar()
 	{
 	}
 
-	BEGIN_MESSAGE_MAP(SVSlideBarClass, CWnd)
-		//{{AFX_MSG_MAP(SVSlideBarClass)
+	BEGIN_MESSAGE_MAP(SVSlideBar, CWnd)
+		//{{AFX_MSG_MAP(SVSlideBar)
 		ON_WM_MOUSEMOVE()
 		ON_WM_LBUTTONDOWN()
 		ON_WM_LBUTTONUP()
@@ -46,9 +46,9 @@ namespace SvMc
 	END_MESSAGE_MAP()
 
 	/////////////////////////////////////////////////////////////////////////////
-	// SVSlideBarClass message handlers
+	// SVSlideBar message handlers
 
-	void SVSlideBarClass::OnMouseMove(UINT nFlags, CPoint point) 
+	void SVSlideBar::OnMouseMove(UINT nFlags, CPoint point) 
 	{
 		if( SVSlideBarLock.Lock() )
 		{
@@ -89,7 +89,7 @@ namespace SvMc
 		}
 	}
 
-	void SVSlideBarClass::OnLButtonDown(UINT nFlags, CPoint point) 
+	void SVSlideBar::OnLButtonDown(UINT nFlags, CPoint point) 
 	{
 		if( SVSlideBarLock.Lock() )
 		{
@@ -110,7 +110,7 @@ namespace SvMc
 		}
 	}
 
-	void SVSlideBarClass::OnLButtonUp(UINT nFlags, CPoint point) 
+	void SVSlideBar::OnLButtonUp(UINT nFlags, CPoint point) 
 	{
 		if( SVSlideBarLock.Lock() )
 		{
@@ -131,7 +131,7 @@ namespace SvMc
 		}
 	}
 
-	void SVSlideBarClass::OnWindowPosChanged(WINDOWPOS FAR* lpwndpos) 
+	void SVSlideBar::OnWindowPosChanged(WINDOWPOS FAR* lpwndpos) 
 	{
 		CWnd::OnWindowPosChanged(lpwndpos);
 
@@ -224,7 +224,7 @@ namespace SvMc
 		}
 	}
 
-	void SVSlideBarClass::invertTracker( const CRect& rect )
+	void SVSlideBar::invertTracker( const CRect& rect )
 	{
 		ASSERT_VALID(this);
 		assert(!rect.IsRectEmpty());

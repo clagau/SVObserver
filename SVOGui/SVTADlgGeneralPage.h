@@ -56,7 +56,7 @@ namespace SvOg
 
 	protected:
 		SvMc::AvailableObjectListComboBox<uint32_t> m_AvailableSourceImageCombo;
-		SvMc::SVEnumerateComboClass m_drawToolCombo;
+		SvMc::SVEnumerateCombo m_drawToolCombo;
 		BOOL m_bUpdateAuxiliaryExtents;
 
 		bool m_bAuxExtentsAvailable;

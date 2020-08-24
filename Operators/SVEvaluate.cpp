@@ -27,10 +27,10 @@ static char THIS_FILE[] = __FILE__;
 #pragma endregion Declarations
 
 ///For this class it is not necessary to call SV_IMPLEMENT_CLASS as it is a base class and only derived classes are instantiated.
-//SV_IMPLEMENT_CLASS( SVEvaluateClass, SVEvaluateClassGuid )
+//SV_IMPLEMENT_CLASS( SVEvaluate, SVEvaluateClassGuid )
 
-SVEvaluateClass::SVEvaluateClass( SVObjectClass* POwner, int StringResourceID )
-: SVMathContainerClass( POwner, StringResourceID ) 
+SVEvaluate::SVEvaluate( SVObjectClass* POwner, int StringResourceID )
+: SVMathContainer( POwner, StringResourceID ) 
 {
 	// Identify yourself
 	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVEvaluateObjectType;
@@ -46,14 +46,14 @@ SVEvaluateClass::SVEvaluateClass( SVObjectClass* POwner, int StringResourceID )
 	m_outputMathResult.setSaveValueFlag(false);
 }
 
-SVEvaluateClass::~SVEvaluateClass()
+SVEvaluate::~SVEvaluate()
 {
-	SVEvaluateClass::CloseObject();
+	SVEvaluate::CloseObject();
 }
 
-bool SVEvaluateClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
+bool SVEvaluate::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	m_isCreated = SVMathContainerClass::CreateObject(rCreateStructure);
+	m_isCreated = SVMathContainer::CreateObject(rCreateStructure);
 
 	// Set / Reset Printable flag
 	m_outputMathResult.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
@@ -61,12 +61,12 @@ bool SVEvaluateClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStru
 	return m_isCreated;
 }
 
-SvVol::SVDoubleValueObjectClass* SVEvaluateClass::getOutputMathResult()
+SvVol::SVDoubleValueObjectClass* SVEvaluate::getOutputMathResult()
 {
 	return &m_outputMathResult;
 }
 
-bool SVEvaluateClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVEvaluate::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	SvVol::SVDoubleValueObjectClass* pResult = getOutputMathResult();
 	

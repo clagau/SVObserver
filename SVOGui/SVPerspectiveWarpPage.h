@@ -29,8 +29,8 @@ namespace SvOg
 		void SetInspectionData();
 
 		enum { IDD = IDD_TA_PERSPECTIVE_TOOL_DIALOG };
-		SvMc::SVEnumerateComboClass	m_FunctionCombo;
-		SvMc::SVEnumerateComboClass	m_cbInterpolation;
+		SvMc::SVEnumerateCombo	m_FunctionCombo;
+		SvMc::SVEnumerateCombo	m_cbInterpolation;
 		protected:
 		virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	protected:

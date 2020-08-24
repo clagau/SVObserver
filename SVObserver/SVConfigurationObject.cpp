@@ -3604,7 +3604,7 @@ void SVConfigurationObject::getInspectionObjectAttributesSet(const SVInspectionP
 {
 	if (nullptr != pInspection)
 	{
-		SVToolSetClass* pToolSet = pInspection->GetToolSet();
+		SVToolSet* pToolSet = pInspection->GetToolSet();
 		if (nullptr != pToolSet)
 		{
 			SVOutputInfoListClass ToolSetOutputList;

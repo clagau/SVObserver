@@ -2,7 +2,7 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : CSVOCameraDlg
+//* .Module Name     : SVOCameraDlg
 //* .File Name       : $Workfile:   SVOCameraDlg.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.1  $
@@ -11,18 +11,18 @@
 
 #pragma once
 
-class CSVOConfigAssistantDlg;
+class SVOConfigAssistantDlg;
 
-class CSVOCameraDlg : public CPropertyPage
+class SVOCameraDlg : public CPropertyPage
 {
 // Construction
 public:
-	CSVOCameraDlg(CWnd* pParent = nullptr);   // standard constructor
-	virtual ~CSVOCameraDlg() = default;
+	SVOCameraDlg(CWnd* pParent = nullptr);   // standard constructor
+	virtual ~SVOCameraDlg() = default;
 
     void SetupList();
 // Dialog Data
-	//{{AFX_DATA(CSVOCameraDlg)
+	//{{AFX_DATA(SVOCameraDlg)
 	enum { IDD = IDD_DLG_PROPPAGE_AA_CAMERA };
 	CButton	m_btnCameraManager;
 	CListBox	m_ctlCameraList;
@@ -35,7 +35,7 @@ public:
 
 // Overrides
 	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CSVOCameraDlg)
+	//{{AFX_VIRTUAL(SVOCameraDlg)
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
@@ -44,7 +44,7 @@ public:
 protected:
 
 	// Generated message map functions
-	//{{AFX_MSG(CSVOCameraDlg)
+	//{{AFX_MSG(SVOCameraDlg)
 	afx_msg void OnSelchangeLstCamera();
 	afx_msg void OnBtnAdvanced();
 	afx_msg void OnBtnDeleteVc();
@@ -59,7 +59,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-    CSVOConfigAssistantDlg *m_pParent;
+    SVOConfigAssistantDlg *m_pParent;
 	bool m_bModified{false};
 	bool m_bNewConfig{false};
     

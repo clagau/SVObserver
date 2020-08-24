@@ -41,9 +41,9 @@ private:
 
 // SVHistogramAnalyzerSetup dialog
 
-class SVHistogramAnalyzerSetupClass : public CDialog
+class SVHistogramAnalyzerSetup : public CDialog
 {
-//	DECLARE_DYNAMIC(SVHistogramAnalyzerSetupClass)
+//	DECLARE_DYNAMIC(SVHistogramAnalyzerSetup)
 public:
 	SvAo::SVHistogramAnalyzer* m_pAnalyzer;
 
@@ -56,8 +56,8 @@ private:
 	void SetResultRange(SvPb::EmbeddedIdEnum embeddedID);
 
 public:
-	SVHistogramAnalyzerSetupClass(CWnd* pParent = nullptr);   // standard constructor
-	virtual ~SVHistogramAnalyzerSetupClass();
+	SVHistogramAnalyzerSetup(CWnd* pParent = nullptr);   // standard constructor
+	virtual ~SVHistogramAnalyzerSetup();
 
 // Dialog Data
 	enum { IDD = IDD_HISTOGRAM_ANALYZER_SETUP };

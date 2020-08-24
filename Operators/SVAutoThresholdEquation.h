@@ -19,16 +19,16 @@
 namespace SvOp
 {
 
-class SVAutoThresholdEquationClass : public SVEquationClass
+class SVAutoThresholdEquation : public SVEquation
 {
-	SV_DECLARE_CLASS( SVAutoThresholdEquationClass);
+	SV_DECLARE_CLASS( SVAutoThresholdEquation);
 
 //******************************************************************************
 // Serialization Declaration(s):
 //******************************************************************************
 public:
-	SVAutoThresholdEquationClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVAUTOTHRESHOLDEQUATION );
-	virtual ~SVAutoThresholdEquationClass();
+	SVAutoThresholdEquation( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVAUTOTHRESHOLDEQUATION );
+	virtual ~SVAutoThresholdEquation();
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 

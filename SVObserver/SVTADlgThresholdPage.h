@@ -11,7 +11,7 @@
 
 #pragma once
 #pragma region Includes
-#include "SVMFCControls\SVEditNumbers.h"
+#include "SVMFCControls\EditNumbers.h"
 #include "SVMFCControls\SVHistogram.h"
 //TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
 #include "SVOGui/PictureDisplay.h"
@@ -103,8 +103,8 @@ protected:
 protected:
 	//{{AFX_DATA(SVToolAdjustmentDialogThresholdPageClass)
 	enum { IDD = IDD_TA_THRESHOLD_DIALOG };
-	SvMc::CEditNumbers	m_editLowerThres;
-	SvMc::CEditNumbers	m_editUpperThres;
+	SvMc::EditNumbers	m_editLowerThres;
+	SvMc::EditNumbers	m_editUpperThres;
 	SvMc::CEditNumbersFloat	m_editAutoThreshold;
 	CButton	m_autoThresholdWhiteRadio;
 	CButton	m_autoThresholdBlackRadio;

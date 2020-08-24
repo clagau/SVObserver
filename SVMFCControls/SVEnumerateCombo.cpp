@@ -23,21 +23,21 @@ static char THIS_FILE[]=__FILE__;
 
 namespace SvMc
 {
-	BEGIN_MESSAGE_MAP(SVEnumerateComboClass, CComboBox)
-		//{{AFX_MSG_MAP(SVEnumerateComboClass)
+	BEGIN_MESSAGE_MAP(SVEnumerateCombo, CComboBox)
+		//{{AFX_MSG_MAP(SVEnumerateCombo)
 		// NOTE - the ClassWizard will add and remove mapping macros here.
 		//}}AFX_MSG_MAP
 	END_MESSAGE_MAP()
 
-	SVEnumerateComboClass::SVEnumerateComboClass()
+	SVEnumerateCombo::SVEnumerateCombo()
 	{
 	}
 
-	SVEnumerateComboClass::~SVEnumerateComboClass()
+	SVEnumerateCombo::~SVEnumerateCombo()
 	{
 	}
 
-	bool SVEnumerateComboClass::SetEnumTypes(const SvOi::NameValueVector& rEnumList)
+	bool SVEnumerateCombo::SetEnumTypes(const SvOi::NameValueVector& rEnumList)
 	{
 		bool Result{ true };
 	
@@ -61,7 +61,7 @@ namespace SvMc
 		return Result;
 	}
 
-	int  SVEnumerateComboClass::SetCurSelItemData( DWORD_PTR ItemData )
+	int  SVEnumerateCombo::SetCurSelItemData( DWORD_PTR ItemData )
 	{
 		for(int i =0 ; i < GetCount(); i++)
 		{
@@ -74,7 +74,7 @@ namespace SvMc
 		return -1;
 	}
 
-	DWORD_PTR  SVEnumerateComboClass::GetCurSelItemData()
+	DWORD_PTR  SVEnumerateCombo::GetCurSelItemData()
 	{
 		int sel = GetCurSel();
 		if(0 <= sel && GetCount() > sel)

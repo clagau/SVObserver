@@ -16,22 +16,22 @@
 #define INTERNAL_INSPECTION_NAME "Inspection_"
 
 /////////////////////////////////////////////////////////////////////////////
-// CSVOInspectionSourceDlg dialog
+// SVOInspectionSourceDlg dialog
 
-class CSVOConfigAssistantDlg;
+class SVOConfigAssistantDlg;
 
-class CSVOInspectionSourceDlg : public CPropertyPage
+class SVOInspectionSourceDlg : public CPropertyPage
 {
-	DECLARE_DYNCREATE(CSVOInspectionSourceDlg)
+	DECLARE_DYNCREATE(SVOInspectionSourceDlg)
 
 // Construction
 public:
-	CSVOInspectionSourceDlg();
-	virtual ~CSVOInspectionSourceDlg() = default;
+	SVOInspectionSourceDlg();
+	virtual ~SVOInspectionSourceDlg() = default;
     
     void SetupList();
 // Dialog Data  
-	//{{AFX_DATA(CSVOInspectionSourceDlg)
+	//{{AFX_DATA(SVOInspectionSourceDlg)
 	enum { IDD = IDD_DLG_PROPPAGE_AA_INSPECTION };
 	CListBox m_ctlIPDlist;
 	CEdit	m_ctlInspectionEdt;
@@ -48,7 +48,7 @@ public:
 
 // Overrides
 	// ClassWizard generate virtual function overrides
-	//{{AFX_VIRTUAL(CSVOInspectionSourceDlg)
+	//{{AFX_VIRTUAL(SVOInspectionSourceDlg)
 	public:
 	virtual BOOL OnKillActive() override;
 	virtual BOOL OnSetActive() override;
@@ -59,7 +59,7 @@ public:
 // Implementation
 protected:
 	// Generated message map functions
-	//{{AFX_MSG(CSVOInspectionSourceDlg)
+	//{{AFX_MSG(SVOInspectionSourceDlg)
 	afx_msg void OnBtnAddIpd();
 	afx_msg void OnBtnDeleteVi();
 	afx_msg void OnBtnPropVi();
@@ -82,7 +82,7 @@ private:
 
 	int m_iVIHorzScroll{0};
 	int m_iIPDHorzScroll{0};
-    CSVOConfigAssistantDlg *m_pParent;
+    SVOConfigAssistantDlg *m_pParent;
 	int m_iInspectionNextCount{1};
 	int m_iCursel{-1};
 

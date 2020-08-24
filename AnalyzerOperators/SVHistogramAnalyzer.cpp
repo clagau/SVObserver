@@ -434,7 +434,7 @@ void SVHistogramAnalyzer::AddResult(const std::pair<SvPb::EmbeddedIdEnum, DWORD>
 	l_resultInfo.m_ClassId = SvPb::LongResultClassId;
 	l_resultInfo.m_ClassName = SvUl::LoadStdString(p.second);
 
-	SvOp::SVLongResultClass* pAnalyzerResult = dynamic_cast<SvOp::SVLongResultClass*> (l_resultInfo.Construct());
+	SvOp::SVLongResult* pAnalyzerResult = dynamic_cast<SvOp::SVLongResult*> (l_resultInfo.Construct());
 
 	if (nullptr != pAnalyzerResult)
 	{
@@ -604,7 +604,7 @@ SvOi::IObjectClass* SVHistogramAnalyzer::GetResultObject(SvPb::EmbeddedIdEnum em
 {
 	for(int i = 0; i < GetSize(); ++i)
 	{
-		SvOp::SVLongResultClass* pResult = dynamic_cast<SvOp::SVLongResultClass*> (GetAt(i));
+		SvOp::SVLongResult* pResult = dynamic_cast<SvOp::SVLongResult*> (GetAt(i));
 		if (nullptr != pResult && embeddedID == pResult->GetInputEmbeddedID())
 		{
 			return dynamic_cast<SvOi::IObjectClass*> (pResult);

@@ -9,7 +9,7 @@
 #include "stdafx.h"
 #include "ResultTabbedView.h"
 #include "ResultTableListCtrl.h"
-#include "SVIPChildFrm.h"
+#include "SVIPSplitterFrame.h"
 #include "SVIPDoc.h"
 #include "ObjectInterfaces/IObjectWriter.h"
 #include "SVXMLLibrary/SVNavigateTree.h"

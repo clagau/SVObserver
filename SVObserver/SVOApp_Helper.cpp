@@ -76,9 +76,9 @@ INT_PTR SvOi::OpenSVFolderDialog(std::string& Path, LPCTSTR Title)
 
 void SvOi::CallModelessMessageBox(std::string &rMessage, HANDLE hCheckEvent)
 {
-	CModelessMsgBox* pBox = new CModelessMsgBox(rMessage, hCheckEvent);
+	ModelessMessageBox* pBox = new ModelessMessageBox(rMessage, hCheckEvent);
 
-	pBox->Create(CModelessMsgBox::IDD, nullptr);
+	pBox->Create(ModelessMessageBox::IDD, nullptr);
 }
 
 HRESULT SvOi::SetupDialogManager(SvPb::ClassIdEnum classId, uint32_t objectId, HWND hWnd)

@@ -21,14 +21,14 @@
 namespace SvOp
 {
 
-class SVImageTransformClass : public SVTransformClass
+class SVImageTransform : public SVTransform
 {
-	SV_DECLARE_CLASS( SVImageTransformClass )
+	SV_DECLARE_CLASS( SVImageTransform )
 
 #pragma region Constructor
 public:
-	SVImageTransformClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVIMAGETRANSFORM );
-	virtual ~SVImageTransformClass();
+	SVImageTransform( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVIMAGETRANSFORM );
+	virtual ~SVImageTransform();
 #pragma endregion
 
 #pragma region Public Methods

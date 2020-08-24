@@ -297,7 +297,7 @@ void SVStatisticsToolClass::AllocateResult (SVStatisticsFeatureEnum aFeatureInde
 		resultClassInfo.m_ClassName += _T(" ") + std::string(m_Value [aFeatureIndex].GetName());
 
 		// Construct the result class
-		SvOp::SVDoubleResultClass* pResult = dynamic_cast<SvOp::SVDoubleResultClass*> (resultClassInfo.Construct());
+		SvOp::SVDoubleResult* pResult = dynamic_cast<SvOp::SVDoubleResult*> (resultClassInfo.Construct());
 
 		if( nullptr == pResult)
 		{
@@ -355,7 +355,7 @@ DWORD SVStatisticsToolClass::FreeResult (SVStatisticsFeatureEnum aFeatureIndex)
 {
 	DWORD LastError(0);
 	
-	SvOp::SVResultClass* pResult = GetResult(aFeatureIndex);
+	SvOp::SVResult* pResult = GetResult(aFeatureIndex);
 		
 	if (nullptr != pResult)
 	{
@@ -372,7 +372,7 @@ DWORD SVStatisticsToolClass::FreeResult (SVStatisticsFeatureEnum aFeatureIndex)
 	return LastError;
 }
 
-SvOp::SVResultClass* SVStatisticsToolClass::GetResult(SVStatisticsFeatureEnum aFeatureIndex)
+SvOp::SVResult* SVStatisticsToolClass::GetResult(SVStatisticsFeatureEnum aFeatureIndex)
 {
 	SvOl::SVInputInfoListClass	resultInputList;
 	SVOutputInfoListClass	resultOutputList;
@@ -380,7 +380,7 @@ SvOp::SVResultClass* SVStatisticsToolClass::GetResult(SVStatisticsFeatureEnum aF
 	SvOl::SVInObjectInfoStruct*	pResultInputInfo;
 	
 	SvDef::SVObjectTypeInfoStruct  info;
-	SvOp::SVDoubleResultClass* pResult{nullptr};
+	SvOp::SVDoubleResult* pResult{nullptr};
 	SVObjectClass*          pSVObject;
 	
 	bool                    bDone = false;
@@ -396,7 +396,7 @@ SvOp::SVResultClass* SVStatisticsToolClass::GetResult(SVStatisticsFeatureEnum aF
 
 	for( l_Iter = l_Visitor.GetObjects().begin(); l_Iter != l_Visitor.GetObjects().end() && !bDone; ++l_Iter )
 	{
-		pResult = dynamic_cast<SvOp::SVDoubleResultClass*>(const_cast< SVObjectClass* > (*l_Iter));
+		pResult = dynamic_cast<SvOp::SVDoubleResult*>(const_cast< SVObjectClass* > (*l_Iter));
 
 		if( nullptr != pResult )
 		{

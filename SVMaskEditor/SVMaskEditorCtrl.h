@@ -2,8 +2,8 @@
 //* COPYRIGHT (c) 2013 by Seidenader Vision Inc., Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVMaskEditorCtl
-//* .File Name       : $Workfile:   SVMaskEditorCtl.h  $
+//* .Module Name     : SVMaskEditorCtrl
+//* .File Name       : $Workfile:   SVMaskEditorCtrl.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.2  $
 //* .Check In Date   : $Date:   03 Jun 2014 13:20:54  $
@@ -16,7 +16,7 @@
 #pragma endregion Includes
 
 /////////////////////////////////////////////////////////////////////////////
-// SVMaskEditorCtrl : See SVMaskEditorCtl.cpp for implementation.
+// SVMaskEditorCtrl : See SVMaskEditorCtrl.cpp for implementation.
 
 class SVMaskEditorCtrl : public COleControl
 {
@@ -84,7 +84,7 @@ public:
 
 protected:
 	CBitmap		bitmap;
-	SVMaskEditorDialogClass maskEditorDlg;
+	SVMaskEditorDialog maskEditorDlg;
 };
 
 //{{AFX_INSERT_LOCATION}}

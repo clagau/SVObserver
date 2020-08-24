@@ -78,7 +78,7 @@ void SVImageToolClass::init()
 
 	// Default taskObjectList items:
 
-	SvOp::SVImageArithmeticClass* pArithmetic = new SvOp::SVImageArithmeticClass;
+	SvOp::SVImageArithmetic* pArithmetic = new SvOp::SVImageArithmetic;
 	if(nullptr != pArithmetic)
 	{
 		Add( pArithmetic );
@@ -88,10 +88,10 @@ void SVImageToolClass::init()
 	// ...use In Place Image Operator list, 
 	//	because we DON'T want another output image in the image tool!!!
 	//
-	//	We are using image output of SVImageArithmeticClass and do an
+	//	We are using image output of SVImageArithmetic and do an
 	//	in place processing.
 	//	RO_20Mar2000
-	SvOp::SVUnaryImageOperatorListClass* pOperatorList = new SvOp::SVInPlaceImageOperatorListClass;
+	SvOp::SVUnaryImageOperatorList* pOperatorList = new SvOp::SVInPlaceImageOperatorListClass;
 
 	// Operator list defaults:
 	if( pOperatorList )
@@ -111,15 +111,15 @@ void SVImageToolClass::init()
 		// Deactivated by default!
 		pOperatorList->Add( new SvOp::SVUserMaskOperatorClass(pOperatorList) );
 
-		// and Requires a SVLUTOperatorClass Object
+		// and Requires a SVLUTOperator Object
 		// Deactivated by default!
-		pOperatorList->Add( new SvOp::SVLUTOperatorClass(pOperatorList) );
+		pOperatorList->Add( new SvOp::SVLUTOperator(pOperatorList) );
 
 		// Add the UnaryImageOperatorList to the Tool's List
 		Add( pOperatorList );
 
 		// Ensure input image gets connected to preceeding image output 
-		// ( SVImageArithmeticClass image output !!! )
+		// ( SVImageArithmetic image output !!! )
 		pOperatorList->ConnectAllInputs();
 	}
 
@@ -216,7 +216,7 @@ bool SVImageToolClass::SetDefaultFormulas(SvStl::MessageContainerVector *pErrorM
 	SvDef::SVObjectTypeInfoStruct lutEquationInfo;
 	lutEquationInfo.m_ObjectType	= SvPb::SVEquationObjectType;
 	lutEquationInfo.m_SubType		= SvPb::SVLUTEquationObjectType;
-	SvOp::SVLUTEquationClass* pLUTEquation = dynamic_cast<SvOp::SVLUTEquationClass*>(getFirstObject(lutEquationInfo));
+	SvOp::SVLUTEquation* pLUTEquation = dynamic_cast<SvOp::SVLUTEquation*>(getFirstObject(lutEquationInfo));
 	if( pLUTEquation )
 	{
 		bRetVal = pLUTEquation->SetDefaultFormula(pErrorMessages) && bRetVal;

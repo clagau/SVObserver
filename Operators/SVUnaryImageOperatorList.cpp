@@ -29,30 +29,30 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SVUnaryImageOperatorListClass::SVUnaryImageOperatorListClass( SVObjectClass* POwner, int StringResourceID )
+SVUnaryImageOperatorList::SVUnaryImageOperatorList( SVObjectClass* POwner, int StringResourceID )
 							  :SVTaskObjectListClass( POwner, StringResourceID ) 
 {
 	init();
 }
 
-SVUnaryImageOperatorListClass::~SVUnaryImageOperatorListClass() 
+SVUnaryImageOperatorList::~SVUnaryImageOperatorList() 
 { 
-	SVUnaryImageOperatorListClass::CloseObject();
+	SVUnaryImageOperatorList::CloseObject();
 }
 
-bool SVUnaryImageOperatorListClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
+bool SVUnaryImageOperatorList::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
 	m_isCreated = SVTaskObjectListClass::CreateObject(rCreateStructure) && nullptr != GetTool() && nullptr != GetInspection() && nullptr != getInputImage();
 
 	return m_isCreated;
 }
 
-SvIe::SVImageClass* SVUnaryImageOperatorListClass::getInputImage(bool bRunMode /*=false*/) const
+SvIe::SVImageClass* SVUnaryImageOperatorList::getInputImage(bool bRunMode /*=false*/) const
 {
 	return SvOl::getInput<SvIe::SVImageClass>(m_inputImageObjectInfo, bRunMode);
 }
 
-bool SVUnaryImageOperatorListClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
+bool SVUnaryImageOperatorList::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 
@@ -87,7 +87,7 @@ bool SVUnaryImageOperatorListClass::ResetObject(SvStl::MessageContainerVector *p
 }
 
 #pragma region Protected Methods
-bool SVUnaryImageOperatorListClass::isInputImage(uint32_t imageId) const
+bool SVUnaryImageOperatorList::isInputImage(uint32_t imageId) const
 {
 	bool Result(false);
 
@@ -102,7 +102,7 @@ bool SVUnaryImageOperatorListClass::isInputImage(uint32_t imageId) const
 #pragma endregion Protected Methods
 
 #pragma region Private Methods
-void SVUnaryImageOperatorListClass::init()
+void SVUnaryImageOperatorList::init()
 {
 	// Identify our output type
 	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVUnaryImageOperatorListObjectType;

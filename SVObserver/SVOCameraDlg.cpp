@@ -2,7 +2,7 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : CSVOCameraDlg
+//* .Module Name     : SVOCameraDlg
 //* .File Name       : $Workfile:   SVOCameraDlg.cpp  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.4  $
@@ -34,15 +34,15 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-CSVOCameraDlg::CSVOCameraDlg(CWnd* /*=nullptr*/)
-	: CPropertyPage(CSVOCameraDlg::IDD)
+SVOCameraDlg::SVOCameraDlg(CWnd* /*=nullptr*/)
+	: CPropertyPage(SVOCameraDlg::IDD), m_pParent(nullptr)
 {
 }
 
-void CSVOCameraDlg::DoDataExchange(CDataExchange* pDX)
+void SVOCameraDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(CSVOCameraDlg)
+	//{{AFX_DATA_MAP(SVOCameraDlg)
 	DDX_Control(pDX, IDC_CAMERA_MANAGER, m_btnCameraManager);
 	DDX_Control(pDX, IDC_LST_CAMERA, m_ctlCameraList);
 	DDX_Control(pDX, IDC_BTN_PROP_VC, m_btnVCProp);
@@ -52,8 +52,8 @@ void CSVOCameraDlg::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-BEGIN_MESSAGE_MAP(CSVOCameraDlg, CDialog)
-	//{{AFX_MSG_MAP(CSVOCameraDlg)
+BEGIN_MESSAGE_MAP(SVOCameraDlg, CDialog)
+	//{{AFX_MSG_MAP(SVOCameraDlg)
 	ON_LBN_SELCHANGE(IDC_LST_CAMERA, OnSelchangeLstCamera)
 	ON_BN_CLICKED(IDC_BTN_ADVANCED, OnBtnAdvanced)
 	ON_UPDATE_COMMAND_UI(IDC_BTN_ADVANCED, OnUpdateAdvancedBtn)
@@ -66,10 +66,10 @@ BEGIN_MESSAGE_MAP(CSVOCameraDlg, CDialog)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-BOOL CSVOCameraDlg::OnInitDialog() 
+BOOL SVOCameraDlg::OnInitDialog() 
 {
 	CDialog::OnInitDialog();
-    m_pParent = (CSVOConfigAssistantDlg*)GetParent()->GetParent();
+    m_pParent = (SVOConfigAssistantDlg*)GetParent()->GetParent();
     m_bNewConfig = m_pParent->GetNewConfigFlag();
 	
 	if( SvTi::SVHardwareManifest::IsDigitalSVIM( m_pParent->GetProductType() )
@@ -88,7 +88,7 @@ BOOL CSVOCameraDlg::OnInitDialog()
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void CSVOCameraDlg::OnUpdateAdvancedBtn( CCmdUI* pCmdUI )
+void SVOCameraDlg::OnUpdateAdvancedBtn( CCmdUI* pCmdUI )
 {
 	bool Enabled( true );
 
@@ -121,12 +121,12 @@ void CSVOCameraDlg::OnUpdateAdvancedBtn( CCmdUI* pCmdUI )
 	pCmdUI->Enable( Enabled );
 }
 
-void CSVOCameraDlg::OnSelchangeLstCamera() 
+void SVOCameraDlg::OnSelchangeLstCamera() 
 {
 	UpdateDialogControls( this, false );
 }
 
-void CSVOCameraDlg::OnBtnAdvanced() 
+void SVOCameraDlg::OnBtnAdvanced() 
 {
     int iCurSel = m_ctlCameraList.GetCurSel();
     CString sTxt;
@@ -134,7 +134,7 @@ void CSVOCameraDlg::OnBtnAdvanced()
     SVOCameraObjPtr pCameraObj = m_pParent->GetCameraObjectByName(sTxt);
 	if( nullptr != pCameraObj )
 	{
-		CSVOPropertyPageDlg oDlg;
+		SVOPropertyPageDlg oDlg;
 		SVOCameraObj& rTmpObj( oDlg.getCameraObject() );
 
 		rTmpObj = *pCameraObj;
@@ -154,7 +154,7 @@ void CSVOCameraDlg::OnBtnAdvanced()
 	}
 }
 
-void CSVOCameraDlg::OnBtnDeleteVc() 
+void SVOCameraDlg::OnBtnDeleteVc() 
 {
 	int iCursel = m_ctlCameraList.GetCurSel();
     if (iCursel != LB_ERR)
@@ -195,7 +195,7 @@ void CSVOCameraDlg::OnBtnDeleteVc()
     }
 }
 
-void CSVOCameraDlg::OnBtnNewVc() 
+void SVOCameraDlg::OnBtnNewVc() 
 {
 	std::string NewCamera = m_pParent->GetNextCameraName();
     int Dig  = m_pParent->GetNextCameraNumber() - 1;
@@ -214,7 +214,7 @@ void CSVOCameraDlg::OnBtnNewVc()
     }	
 }
 
-void CSVOCameraDlg::OnBtnPropVc() 
+void SVOCameraDlg::OnBtnPropVc() 
 {
     int iCurSel = m_ctlCameraList.GetCurSel();
     CString CameraName;
@@ -227,7 +227,7 @@ void CSVOCameraDlg::OnBtnPropVc()
 			assert(FALSE);
 			return;
 		}
-        CSVOPropertyPageDlg oDlg;
+        SVOPropertyPageDlg oDlg;
 		SVOCameraObj& rTmpObj( oDlg.getCameraObject() );
 
         rTmpObj = *pCameraObj;
@@ -299,7 +299,7 @@ void CSVOCameraDlg::OnBtnPropVc()
     }
 }
 
-void CSVOCameraDlg::SetupList()
+void SVOCameraDlg::SetupList()
 {
     m_ctlCameraList.ResetContent();
     int iCamCnt = m_pParent->GetCameraListCount();
@@ -323,12 +323,12 @@ void CSVOCameraDlg::SetupList()
 	OnSelchangeLstCamera();
 }
 
-void CSVOCameraDlg::OnDblclkLstCamera() 
+void SVOCameraDlg::OnDblclkLstCamera() 
 {
 	OnBtnPropVc();	
 }
 
-void CSVOCameraDlg::SetCameraPropForAll( LPCTSTR CurrentCamera )
+void SVOCameraDlg::SetCameraPropForAll( LPCTSTR CurrentCamera )
 {
     int iCamCnt = m_pParent->GetCameraListCount();
     SVOCameraObjPtr pObj;
@@ -353,13 +353,13 @@ void CSVOCameraDlg::SetCameraPropForAll( LPCTSTR CurrentCamera )
     }
 }
 
-BOOL CSVOCameraDlg::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL SVOCameraDlg::OnHelpInfo(HELPINFO* pHelpInfo) 
 {
 	::SendMessage( m_pParent->GetSafeHwnd(), WM_HELP, 0, reinterpret_cast<DWORD_PTR>(pHelpInfo) );
 	return TRUE;
 }
 
-void CSVOCameraDlg::OnCameraManager() 
+void SVOCameraDlg::OnCameraManager() 
 {
 	TheSVObserverApp.DisplayCameraManager(m_pParent->GetProductType());
 	m_pParent->ItemChanged(CAMERA_DLG, _T(""), ITEM_ACTION_REFRESH);

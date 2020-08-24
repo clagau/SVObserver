@@ -24,7 +24,7 @@ static char THIS_FILE[] = __FILE__;
 SV_IMPLEMENT_CLASS( SVEvaluateStartRadiusClass, SvPb::EvaluateStartRadiusClassId)
 
 SVEvaluateStartRadiusClass::SVEvaluateStartRadiusClass( SVObjectClass* POwner, int StringResourceID )
-					       :SVEvaluateClass( POwner, StringResourceID ) 
+					       :SVEvaluate( POwner, StringResourceID ) 
 {
 	// Identify yourself
 	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVEvaluateStartRadiusObjectType;

@@ -2,7 +2,7 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVToolBarClass
+//* .Module Name     : SVToolBar
 //* .File Name       : $Workfile:   SVToolBar.cpp  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $
@@ -20,24 +20,24 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvMc
 {
-	BEGIN_MESSAGE_MAP(SVToolBarClass, CToolBarCtrl)
-		//{{AFX_MSG_MAP(SVToolBarClass)
+	BEGIN_MESSAGE_MAP(SVToolBar, CToolBarCtrl)
+		//{{AFX_MSG_MAP(SVToolBar)
 		//}}AFX_MSG_MAP
 	END_MESSAGE_MAP()
 
-	SVToolBarClass::SVToolBarClass()
+	SVToolBar::SVToolBar()
 	{
 		m_pTBButtons = nullptr;
 	}
 
-	SVToolBarClass::~SVToolBarClass()
+	SVToolBar::~SVToolBar()
 	{
 		if (m_pTBButtons)
 			delete []m_pTBButtons;
 	}
 
 
-	BOOL SVToolBarClass::Create(	DWORD dwStyle, const RECT& rect, 
+	BOOL SVToolBar::Create(	DWORD dwStyle, const RECT& rect, 
 		CWnd* pParentWnd, UINT nID, UINT nBaseID,
 		int nCount, const SIZE& size )
 	{

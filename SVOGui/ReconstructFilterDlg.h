@@ -33,7 +33,7 @@ public:
 	//{{AFX_DATA(ReconstructFilterDlg)
 	enum { IDD = IDD_RECONSTRUCT_FILTER };
 	BOOL	m_bGrayScale;
-	SvMc::SVEnumerateComboClass m_cbBlobColor;
+	SvMc::SVEnumerateCombo m_cbBlobColor;
 	CComboBox	m_SeedImageCombo;
 	//}}AFX_DATA
 

@@ -45,11 +45,11 @@ class SVCameraImageTemplate;
 }
 namespace SvOp
 {
-class SVConditionalClass;
+class SVConditional;
 }
 class SVPPQObject;
-class SVToolSetClass;
-class SVResultListClass;
+class SVToolSet;
+class SVResultList;
 #pragma endregion Declarations
 
 #define  BUFFER_IMAGE_FILENAME_LEN 1024
@@ -164,9 +164,9 @@ public:
 
 	HRESULT LastProductNotify();
 
-	SVToolSetClass* GetToolSet() const;
+	SVToolSet* GetToolSet() const;
 
-	SVResultListClass* GetResultList() const;
+	SVResultList* GetResultList() const;
 
 	const SVIOEntryHostStructPtrVector& getPpqInputs() const { return m_PPQInputs; }
 
@@ -175,7 +175,7 @@ public:
 	void ClearResetCounts();
 	void SetResetCounts( );
 
-	SVPublishListClass& GetPublishList();
+	SVPublishList& GetPublishList();
 
 	LPCTSTR GetDeviceName() const;
 	void SetDeviceName( LPCTSTR p_szDeviceName );
@@ -382,13 +382,13 @@ private:
 	SvIe::SVCameraImagePtrSet m_CameraImages;
 
 	// Published List
-	SVPublishListClass m_publishList;
+	SVPublishList m_publishList;
 
 	// Run status of last tool set run, if any...
 	SVRunStatusClass m_runStatus;
 
 	// Inspection pointers
-	SVToolSetClass* m_pCurrentToolset{nullptr};
+	SVToolSet* m_pCurrentToolset{nullptr};
 
 	volatile bool m_bInspecting{false};
 
@@ -421,7 +421,7 @@ private:
 	DWORD               m_dwThreadId{0};
 
 	// JMS - this variable is only used for configuration conversion.
-	SvOp::SVConditionalClass* m_pToolSetConditional{nullptr};
+	SvOp::SVConditional* m_pToolSetConditional{nullptr};
 	SVCommandQueue m_CommandQueue;
 	
 	std::vector<WatchlistelementPtr> m_WatchListDatas;
@@ -430,7 +430,7 @@ private:
 	SvSml::RingBufferPointer m_SlotManager;
 
 	//For RegressionTest
-	SvOp::SVEquationClass m_RegressionTestPlayEquation;
+	SvOp::SVEquation m_RegressionTestPlayEquation;
 	SvOi::IFormulaControllerPtr m_pRegressionTestPlayEquationController;
 	///TRC and Memory block data
 	int m_trcPos = -1;

@@ -33,7 +33,7 @@ struct SVExtentPropertyInfoStruct;
 
 namespace SvOp
 {
-class SVConditionalClass;
+class SVConditional;
 }
 
 class SVRunStatusClass;
@@ -196,7 +196,7 @@ private:
 
 protected:
 	SvVol::SVBoolValueObjectClass ToolSelectedForOperatorMove;
-	SvOp::SVConditionalClass* m_pToolConditional;
+	SvOp::SVConditional* m_pToolConditional;
 
 	SvVol::SVBoolValueObjectClass enabled;
 

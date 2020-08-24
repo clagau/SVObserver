@@ -579,7 +579,7 @@ HRESULT ToolClipboard::validateIds(std::string& rXmlData, uint32_t postId, uint3
 	}
 
 	SVIPDoc* pDoc = TheSVObserverApp.GetIPDoc(m_pInspection->getObjectId());
-	SVToolSetClass* pToolSet = m_pInspection->GetToolSet();
+	SVToolSet* pToolSet = m_pInspection->GetToolSet();
 	bool isColorCamera = m_pInspection->IsColorCamera();
 	SvTo::SVToolClass* pPostTool = dynamic_cast<SvTo::SVToolClass*>(SVObjectManagerClass::Instance().GetObject(postId));
 	if (nullptr != pDoc && nullptr != pToolSet)
@@ -802,9 +802,9 @@ HRESULT ToolClipboard::parseTreeToTool(SVTreeType& rTree, SVObjectClass* pOwner,
 			if( nullptr != pOwnerTmp)
 			{
 				SVParserProgressDialog ParserProgressDialog( SvO::InsertingTool, AfxGetMainWnd() );
-				unsigned long parserHandle = SVObjectScriptParserClass::GetParserHandle();
+				unsigned long parserHandle = SVObjectScriptParser::GetParserHandle();
 
-				SVObjectScriptParserClass* pParser = new SVObjectScriptParserClass(new SVInspectionTreeParser< SVTreeType >(rTree, ToolItem, parserHandle, pOwnerTmp->getObjectId(), pOwnerTmp, &ParserProgressDialog));
+				SVObjectScriptParser* pParser = new SVObjectScriptParser(new SVInspectionTreeParser< SVTreeType >(rTree, ToolItem, parserHandle, pOwnerTmp->getObjectId(), pOwnerTmp, &ParserProgressDialog));
 				if( nullptr != pParser )
 				{
 					// Set the Parser Object

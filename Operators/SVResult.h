@@ -19,7 +19,7 @@
 
 namespace SvOp
 {
-class SVRangeClass;
+class SVRange;
 
 enum
 {
@@ -33,15 +33,15 @@ enum
 // .Title       : Base Class of module SVResult 
 ////////////////////////////////////////////////////////////////////////////////
 
-class SVResultClass : public SvIe::SVTaskObjectListClass, public ISVCancel
+class SVResult : public SvIe::SVTaskObjectListClass, public ISVCancel
 {
 	///This class does not need to call SV_DECLARE_CLASS as it is a base class and only derived classes are instantiated
-	//SV_DECLARE_CLASS( SVResultClass );
+	//SV_DECLARE_CLASS( SVResult );
 
 public:
-	SVResultClass ( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVRESULT );
+	SVResult ( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVRESULT );
 
-	virtual ~SVResultClass();
+	virtual ~SVResult();
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
@@ -56,7 +56,7 @@ public:
 
 	// derived class overrides...
 
-	SVRangeClass* GetResultRange();
+	SVRange* GetResultRange();
 
 	virtual bool Run(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 	

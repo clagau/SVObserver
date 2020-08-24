@@ -16,7 +16,7 @@
 #pragma endregion Includes
 
 class SVObjectClass;
-class SVObjectScriptParserClass;
+class SVObjectScriptParser;
 
 template< typename SVTreeType >
 class SVInspectionTreeParser : public SVObjectScriptParserBase

@@ -37,15 +37,15 @@ struct BandThreshold
 //! The class has the 3 bands from the color tool is input images
 //! It has 3 Threshold images as an output
 //! An extra output image which is a combined image of all 3 Threshold images as bitwise AND
-class SVColorThresholdClass : public SVOperatorClass
+class SVColorThreshold : public SVOperator
 {
-	SV_DECLARE_CLASS( SVColorThresholdClass );
+	SV_DECLARE_CLASS( SVColorThreshold );
 
 #pragma region Constructor
 public:
-	SVColorThresholdClass( SVObjectClass* pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVCOLORTHRESHOLD );
+	SVColorThreshold( SVObjectClass* pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVCOLORTHRESHOLD );
 
-	virtual ~SVColorThresholdClass();
+	virtual ~SVColorThreshold();
 #pragma endregion Constructor
 
 #pragma region Public Methods
@@ -82,7 +82,7 @@ private:
 #pragma region Member Variables
 private:
 	// Contents the current pixel number, call
-	// BOOL SVColorThresholdClass::Resize( SVExtentClass& RExtent );
+	// BOOL SVColorThreshold::Resize( SVExtentClass& RExtent );
 	// to (re-)calculate...
 	__int64 m_PixelNumber;
 

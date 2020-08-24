@@ -19,7 +19,7 @@
 
 namespace SvOp
 {
-class SVEvaluateClass;
+class SVEvaluate;
 }
 namespace SvTo
 {
@@ -77,8 +77,8 @@ protected:
 	SVToolAdjustmentDialogSheetClass* m_pParentDialog;
 	SvTo::SVShiftTool* m_pTool;
 
-	SvOp::SVEvaluateClass* pEvaluateTranslationX;
-	SvOp::SVEvaluateClass* pEvaluateTranslationY;
+	SvOp::SVEvaluate* pEvaluateTranslationX;
+	SvOp::SVEvaluate* pEvaluateTranslationY;
 
 
 public:
@@ -88,7 +88,7 @@ public:
 	afx_msg void OnBnClickedTranslationYFormulaButton();
 	CString m_TranslationXValue;
 	CString m_TranslationYValue;
-	SvMc::SVEnumerateComboClass m_ctlShiftModeCombo;
+	SvMc::SVEnumerateCombo m_ctlShiftModeCombo;
 
 public:
 	SvVol::SVEnumerateValueObjectClass *m_pvoShiftMode;

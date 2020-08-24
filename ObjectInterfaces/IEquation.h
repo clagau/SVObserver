@@ -2,7 +2,7 @@
 /// COPYRIGHT (c) 2015 by Seidenader Maschinenbau GmbH
 /// All Rights Reserved
 //******************************************************************************
-/// IEquation is the interface to the SVEquationClass for the GUI.
+/// IEquation is the interface to the SVEquation for the GUI.
 //******************************************************************************
 #pragma once
 

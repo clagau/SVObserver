@@ -14,7 +14,7 @@
 namespace SvOp
 {
 
-class SVEvaluateTranslationYClass : public SVEvaluateClass
+class SVEvaluateTranslationYClass : public SVEvaluate
 {
 	SV_DECLARE_CLASS( SVEvaluateTranslationYClass )
 

@@ -141,7 +141,7 @@ void SVBarCodeAnalyzerClass::init()
 	addDefaultInputObjects();
 	
 	// Instantiate Children
-	SvOp::SVBarCodeResultClass* pAnalyzerResult = new SvOp::SVBarCodeResultClass (this, IDS_CLASSNAME_SVBARCODEANALYZERESULT);
+	SvOp::SVBarCodeResult* pAnalyzerResult = new SvOp::SVBarCodeResult (this, IDS_CLASSNAME_SVBARCODEANALYZERESULT);
 	
 	if (nullptr != pAnalyzerResult)
 	{
@@ -657,7 +657,7 @@ bool SVBarCodeAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 	bool Result = __super::ResetObject(pErrorMessages);
 
 	//Get the pointer on reset
-	m_pBarCodeResult = dynamic_cast<SvOp::SVBarCodeResultClass*> (GetResultObject());
+	m_pBarCodeResult = dynamic_cast<SvOp::SVBarCodeResult*> (GetResultObject());
 	if(!Result || nullptr == m_pBarCodeResult)
 	{
 		Result = false;

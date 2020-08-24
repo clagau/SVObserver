@@ -25,23 +25,23 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVMathEquationClass, SvPb::MathEquationClassId);
+SV_IMPLEMENT_CLASS( SVMathEquation, SvPb::MathEquationClassId);
 
 ////////////////////////////////////////////////////////////////////////////////
 // 
 ////////////////////////////////////////////////////////////////////////////////
-SVMathEquationClass::SVMathEquationClass( SVObjectClass* POwner, int StringResourceID )
-				  :SVEquationClass( POwner, StringResourceID )
+SVMathEquation::SVMathEquation( SVObjectClass* POwner, int StringResourceID )
+				  :SVEquation( POwner, StringResourceID )
 {
 	init();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// .Title       : Initialization of class SVMathEquationClass
+// .Title       : Initialization of class SVMathEquation
 // -----------------------------------------------------------------------------
 // .Description : Initialization of newly Instantiated Object
 ////////////////////////////////////////////////////////////////////////////////
-void SVMathEquationClass::init()
+void SVMathEquation::init()
 {
 	m_bUseOverlays = false;
 
@@ -64,9 +64,9 @@ void SVMathEquationClass::init()
 	addDefaultInputObjects();
 }
 
-bool SVMathEquationClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
+bool SVMathEquation::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 {
-	m_isCreated = SVEquationClass::CreateObject(rCreateStructure);
+	m_isCreated = SVEquation::CreateObject(rCreateStructure);
 
 	// Set / Reset Printable Flag
 	result.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
@@ -76,7 +76,7 @@ bool SVMathEquationClass::CreateObject(const SVObjectLevelCreateStruct& rCreateS
 ////////////////////////////////////////////////////////////////////////////////
 // 
 ////////////////////////////////////////////////////////////////////////////////
-SVMathEquationClass::~SVMathEquationClass()
+SVMathEquation::~SVMathEquation()
 {
 }
 
@@ -85,7 +85,7 @@ SVMathEquationClass::~SVMathEquationClass()
 ////////////////////////////////////////////////////////////////////////////////
 // If Conditional is disabled conditional.Run() returns always TRUE.
 // Otherwise the return value depends on the Conditional equation result!
-bool SVMathEquationClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVMathEquation::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	double value = 0.0;
 

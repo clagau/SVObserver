@@ -31,18 +31,19 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-SVPublishListClass::SVPublishListClass()
+SVPublishList::SVPublishList()
 {
 	hProtectionMutex   = hProtectionMutex = CreateMutex( nullptr, false, nullptr );
 	dwWaitTime		   = 2000;
+	m_pInspection	   = nullptr;
 }
 
-SVPublishListClass::~SVPublishListClass()
+SVPublishList::~SVPublishList()
 {
 	Destroy();
 }
 
-void SVPublishListClass::Destroy()
+void SVPublishList::Destroy()
 {
 	if( hProtectionMutex )
 	{
@@ -56,13 +57,13 @@ void SVPublishListClass::Destroy()
 	RemoveAll();
 }
 
-void SVPublishListClass::Refresh(SvIe::SVTaskObjectClass * pRootObject)
+void SVPublishList::Refresh(SvIe::SVTaskObjectClass * pRootObject)
 {
 	SVOutputInfoListClass newList;
 
 	// Find all outputs marked as selected for publishing
 	// Note:: both Lists must be from the same root object
-	// which at this point is SVToolSetClass
+	// which at this point is SVToolSet
 	SVOutputInfoListClass l_OutputList;
 
 	pRootObject->GetOutputList( l_OutputList );
@@ -227,12 +228,12 @@ void SVPublishListClass::Refresh(SvIe::SVTaskObjectClass * pRootObject)
 	}// end for
 }// end Refresh
 
-void SVPublishListClass::Release(SvIe::SVTaskObjectClass*)
+void SVPublishList::Release(SvIe::SVTaskObjectClass*)
 {
 	// We must release all the outputs that had been marked for publishing
 	// all outputs marked as selected for publishing
 	// Note:: both Lists must be from the same root object
-	// which at this point is SVToolSetClass
+	// which at this point is SVToolSet
 
 	SVPPQObject* pPPQ( nullptr );
 	SVIOEntryHostStructPtrVector ppPPQEntries;
@@ -283,7 +284,7 @@ void SVPublishListClass::Release(SvIe::SVTaskObjectClass*)
 
 }// end Release
 
-bool SVPublishListClass::RemovePublishedEntry(uint32_t id )
+bool SVPublishList::RemovePublishedEntry(uint32_t id )
 {
 	SVPPQObject* pPPQ( nullptr );
 	SVIOEntryHostStructPtrVector ppPPQEntries;

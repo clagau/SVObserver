@@ -35,16 +35,16 @@ class SVToolClass;
 }
 #pragma endregion Declarations
 
-class SVProfileEdgeMarkerAdjustmentPageClass : public SvOg::SVEdgeMarkerAdjustmentPageClass
+class SVProfileEdgeMarkerAdjustmentPage : public SvOg::SVEdgeMarkerAdjustmentPageClass
 {
 #pragma region Constructor
 public:
-	SVProfileEdgeMarkerAdjustmentPageClass(uint32_t inspectionID, uint32_t taskObjectID, const std::vector<SvPb::EmbeddedIdEnum>& rEdgeEmbeddedIds, uint32_t analyzerID, UINT nIDCaption = 0 );
-	virtual ~SVProfileEdgeMarkerAdjustmentPageClass();
+	SVProfileEdgeMarkerAdjustmentPage(uint32_t inspectionID, uint32_t taskObjectID, const std::vector<SvPb::EmbeddedIdEnum>& rEdgeEmbeddedIds, uint32_t analyzerID, UINT nIDCaption = 0 );
+	virtual ~SVProfileEdgeMarkerAdjustmentPage();
 #pragma endregion Constructor
 
 #pragma region MFC Methods
-	//{{AFX_VIRTUAL(SVProfileEdgeMarkerAdjustmentPageClass)
+	//{{AFX_VIRTUAL(SVProfileEdgeMarkerAdjustmentPage)
 public:
 	virtual void OnCancel() override;
 	virtual BOOL OnSetActive() override;
@@ -53,7 +53,7 @@ protected:
 	virtual BOOL OnInitDialog() override;
 	//}}AFX_VIRTUAL
 
-	//{{AFX_MSG(SVProfileEdgeMarkerAdjustmentPageClass)
+	//{{AFX_MSG(SVProfileEdgeMarkerAdjustmentPage)
 	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	afx_msg void OnUpperUserSelectable();
 	afx_msg void OnLowerUserSelectable();

@@ -20,7 +20,7 @@
 
 namespace SvOp
 {
-class SVLongResultClass;
+class SVLongResult;
 class TableObject;
 }
 
@@ -63,7 +63,7 @@ public:
 
 	/// When the user right clicks inside a tool figure, checks whether it is on a blob. 
 	/// If it finds a blob at that point, gets the index of the blob and returns true.
-	///	Called from SVImageViewClass::OnContextMenu
+	///	Called from SVImageView::OnContextMenu
 	virtual bool IsPtOverResult( const POINT& rPoint ) override;
 	virtual	SvDef::StringVector getAnalyzerResult() override;
 
@@ -86,7 +86,7 @@ private:
 
 	SvVol::SVLongValueObjectClass       m_maxBlobDataArraySize;
 	SvVol::SVLongValueObjectClass       m_numberOfBlobsFound;
-	SvOp::SVLongResultClass* m_pResultBlob;
+	SvOp::SVLongResult* m_pResultBlob;
 
 	int                          m_nBlobIndex;
 

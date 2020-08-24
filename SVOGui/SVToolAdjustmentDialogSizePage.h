@@ -55,7 +55,7 @@ public:
 
 
 private:
-	SvMc::SVEnumerateComboClass m_ComboBox[SvDef::ToolSizeAdjustEnum::TSValuesCount];
+	SvMc::SVEnumerateCombo m_ComboBox[SvDef::ToolSizeAdjustEnum::TSValuesCount];
 	
 	std::unique_ptr<ValueController> m_pTaskValueController;
 

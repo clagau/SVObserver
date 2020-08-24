@@ -477,7 +477,7 @@ bool SVInspectionProcess::CreateInspection(LPCTSTR szDocName)
 		return false;
 	}
 
-	m_pCurrentToolset = new SVToolSetClass(this);
+	m_pCurrentToolset = new SVToolSet(this);
 
 	if (!CreateChildObject(m_pCurrentToolset))
 	{
@@ -537,7 +537,7 @@ void SVInspectionProcess::DestroyInspection()
 	m_qInspectionsQueue.Destroy();
 	m_PPQInputs.clear();
 	m_PPQId = SvDef::InvalidObjectId;
-	SVResultListClass* pResultlist = GetResultList();
+	SVResultList* pResultlist = GetResultList();
 	if (pResultlist)
 	{
 		pResultlist->RebuildReferenceVector(this);
@@ -1037,7 +1037,7 @@ bool SVInspectionProcess::RebuildInspectionInputList()
 		m_PPQInputs[iList]->getObject()->SetObjectAttributesAllowed(SvPb::selectableForEquation | SvPb::viewable, SvOi::SetAttributeType::AddAttribute);
 	}// end for
 
-	SVResultListClass* pResultlist = GetResultList();
+	SVResultList* pResultlist = GetResultList();
 	if (pResultlist)
 	{
 		pResultlist->RebuildReferenceVector(this);
@@ -1375,7 +1375,7 @@ void SVInspectionProcess::SetResetCounts()
 void SVInspectionProcess::ValidateAndInitialize(bool p_Validate)
 {
 	// Call ToolSet Validate 
-	// so the SVEquationClass can rebuild its symbol table
+	// so the SVEquation can rebuild its symbol table
 	if (p_Validate)
 	{
 		SetResetCounts();
@@ -2187,7 +2187,7 @@ HRESULT SVInspectionProcess::CollectOverlays(SvIe::SVImageClass* pImage, SVExten
 
 	rMultiLineArray.clear();
 
-	SVToolSetClass *l_pToolSet = GetToolSet();
+	SVToolSet *l_pToolSet = GetToolSet();
 
 	if (nullptr != l_pToolSet)
 	{
@@ -2512,7 +2512,7 @@ HRESULT SVInspectionProcess::RemoveImage(SvIe::SVImageClass* pImage)
 	return l_Status;
 }
 
-SVToolSetClass* SVInspectionProcess::GetToolSet() const
+SVToolSet* SVInspectionProcess::GetToolSet() const
 {
 	return m_pCurrentToolset;
 }
@@ -2887,7 +2887,7 @@ void SVInspectionProcess::SetDefaultInputs()
 	GetPublishList().Refresh(m_pCurrentToolset);
 }
 
-SVPublishListClass& SVInspectionProcess::GetPublishList()
+SVPublishList& SVInspectionProcess::GetPublishList()
 {
 	return m_publishList;
 }
@@ -3043,7 +3043,7 @@ SvIe::SVCameraImageTemplate* SVInspectionProcess::GetToolSetMainImage()
 {
 	SvIe::SVCameraImageTemplate* pImage = nullptr;
 
-	SVToolSetClass* l_pToolSet = GetToolSet();
+	SVToolSet* l_pToolSet = GetToolSet();
 
 	if (nullptr != l_pToolSet)
 	{
@@ -3191,16 +3191,16 @@ void SVInspectionProcess::Persist(SvOi::IObjectWriter& rWriter)
 	value.Clear();
 
 	// Save the Toolset
-	SVToolSetClass* pToolSet = GetToolSet();
+	SVToolSet* pToolSet = GetToolSet();
 	pToolSet->Persist(rWriter);
 
 	rWriter.EndElement();
 }
 
-SVResultListClass* SVInspectionProcess::GetResultList() const
+SVResultList* SVInspectionProcess::GetResultList() const
 {
-	SVResultListClass* retVal = nullptr;
-	SVToolSetClass *pToolSet = GetToolSet();
+	SVResultList* retVal = nullptr;
+	SVToolSet *pToolSet = GetToolSet();
 	if (pToolSet)
 	{
 		retVal = pToolSet->GetResultList();
@@ -3387,7 +3387,7 @@ HRESULT SVInspectionProcess::propagateSizeAndPosition()
 {
 	HRESULT retVal = S_OK;
 	bool result = false;
-	SVToolSetClass* pToolSet = GetToolSet();
+	SVToolSet* pToolSet = GetToolSet();
 	if (pToolSet)
 	{
 		for (int index = 0; index < pToolSet->GetSize(); index++)
@@ -3412,7 +3412,7 @@ HRESULT SVInspectionProcess::propagateSizeAndPosition()
 
 bool SVInspectionProcess::usePropagateSizeAndPosition() const
 {
-	SVToolSetClass* pToolSet = GetToolSet();
+	SVToolSet* pToolSet = GetToolSet();
 	if (pToolSet)
 	{
 		for (int index = 0; index < pToolSet->GetSize(); index++)
@@ -3497,7 +3497,7 @@ DWORD SVInspectionProcess::GetObjectColor() const
 
 void SVInspectionProcess::getToolMessages(SvStl::MessageContainerInserter& rInserter) const
 {
-	SVToolSetClass* pToolSet(GetToolSet());
+	SVToolSet* pToolSet(GetToolSet());
 
 	if (nullptr != pToolSet)
 	{
@@ -3691,9 +3691,9 @@ bool SVInspectionProcess::replaceObject(SVObjectClass* pObject, uint32_t newId)
 
 		if (SVObjectManagerClass::Instance().ChangeUniqueObjectID(pObject, newId))
 		{
-			SVToolSetClass* l_pToolSet(nullptr);
+			SVToolSet* l_pToolSet(nullptr);
 
-			l_pToolSet = dynamic_cast<SVToolSetClass*>(pObject);
+			l_pToolSet = dynamic_cast<SVToolSet*>(pObject);
 
 			if (nullptr != l_pToolSet)
 			{
@@ -3719,7 +3719,7 @@ bool SVInspectionProcess::replaceObject(SVObjectClass* pObject, uint32_t newId)
 			}
 			else
 			{
-				SvOp::SVConditionalClass* pConditional = dynamic_cast<SvOp::SVConditionalClass*>(pObject);
+				SvOp::SVConditional* pConditional = dynamic_cast<SvOp::SVConditional*>(pObject);
 
 				if (nullptr != pConditional)
 				{

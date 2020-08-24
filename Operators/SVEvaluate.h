@@ -19,14 +19,14 @@
 namespace SvOp
 {
 
-class SVEvaluateClass : public SVMathContainerClass
+class SVEvaluate : public SVMathContainer
 {
 	///This class does not need to call SV_DECLARE_CLASS as it is a base class and only derived classes are instantiated
-	//SV_DECLARE_CLASS( SVEvaluateClass )
+	//SV_DECLARE_CLASS( SVEvaluate )
 
 public:
-	SVEvaluateClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVEVALUATE );
-	virtual ~SVEvaluateClass();
+	SVEvaluate( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVEVALUATE );
+	virtual ~SVEvaluate();
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 

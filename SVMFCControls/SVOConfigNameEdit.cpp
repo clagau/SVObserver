@@ -20,26 +20,26 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvMc
 {
-	CSVOConfigNameEdit::CSVOConfigNameEdit(LPCTSTR const sExcludedChars)
+	SVOConfigNameEdit::SVOConfigNameEdit(LPCTSTR const sExcludedChars)
 	{
 		m_sExcludedChars = sExcludedChars;
 	}
 
-	CSVOConfigNameEdit::~CSVOConfigNameEdit()
+	SVOConfigNameEdit::~SVOConfigNameEdit()
 	{
 	}
 
 
-	BEGIN_MESSAGE_MAP(CSVOConfigNameEdit, CEdit)
-		//{{AFX_MSG_MAP(CSVOConfigNameEdit)
+	BEGIN_MESSAGE_MAP(SVOConfigNameEdit, CEdit)
+		//{{AFX_MSG_MAP(SVOConfigNameEdit)
 		ON_WM_CHAR()
 		//}}AFX_MSG_MAP
 	END_MESSAGE_MAP()
 
 	/////////////////////////////////////////////////////////////////////////////
-	// CSVOConfigNameEdit message handlers
+	// SVOConfigNameEdit message handlers
 
-	void CSVOConfigNameEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) 
+	void SVOConfigNameEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) 
 	{
 		switch (nChar)
 		{

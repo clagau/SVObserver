@@ -12,11 +12,11 @@
 
 namespace SvMc
 {
-	class CSVOConfigNameEdit : public CEdit
+	class SVOConfigNameEdit : public CEdit
 	{
 		// Construction
 	public:
-		explicit CSVOConfigNameEdit(LPCTSTR const sExcludedChars);
+		explicit SVOConfigNameEdit(LPCTSTR const sExcludedChars);
 
 		// Attributes
 	public:
@@ -26,16 +26,16 @@ namespace SvMc
 
 		// Overrides
 		// ClassWizard generated virtual function overrides
-		//{{AFX_VIRTUAL(CSVOConfigNameEdit)
+		//{{AFX_VIRTUAL(SVOConfigNameEdit)
 		//}}AFX_VIRTUAL
 
 		// Implementation
 	public:
-		virtual ~CSVOConfigNameEdit();
+		virtual ~SVOConfigNameEdit();
 
 		// Generated message map functions
 	protected:
-		//{{AFX_MSG(CSVOConfigNameEdit)
+		//{{AFX_MSG(SVOConfigNameEdit)
 		afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
 		//}}AFX_MSG
 

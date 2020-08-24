@@ -21,7 +21,7 @@
 #include "SVPatResultDlgClass.h"
 #include "SVSetupDialogManager.h"
 #include "SVMainFrm.h"
-#include "SVIPChildFrm.h"
+#include "SVIPSplitterFrame.h"
 #include "SVOResource/ConstGlobalSvOr.h"
 #include "AnalyzerOperators/SVAnalyzer.h"
 #include "Definitions/GlobalConst.h"
@@ -54,10 +54,10 @@ const  LPCTSTR  RegSection = _T( "Settings" );
 const  LPCTSTR  RegKeySaveViewPath = _T( "SaveViewFilePath" );
 const LPCTSTR  DefaultPath =  _T( "C:\\Images" );  
 
-IMPLEMENT_DYNCREATE(SVImageViewClass, CView)
+IMPLEMENT_DYNCREATE(SVImageView, CView)
 
-BEGIN_MESSAGE_MAP(SVImageViewClass, CView)
-	//{{AFX_MSG_MAP( SVImageViewClass )
+BEGIN_MESSAGE_MAP(SVImageView, CView)
+	//{{AFX_MSG_MAP( SVImageView )
 	ON_WM_LBUTTONDOWN()
 	ON_WM_MOUSEMOVE()
 	ON_WM_LBUTTONUP()
@@ -145,7 +145,7 @@ static void CalcLut(BYTE* p_pFrom, BYTE* p_pTo, unsigned long p_Width, unsigned 
 	}
 }
 
-SVImageViewClass::SVImageViewClass()
+SVImageView::SVImageView()
 : CView()
 , m_sourceImageWidth( 0 )
 , m_sourceImageHeight( 0 )
@@ -156,7 +156,7 @@ SVImageViewClass::SVImageViewClass()
 	Initialize();
 }
 
-void SVImageViewClass::Initialize()
+void SVImageView::Initialize()
 {
 	EnableAutomation();
 
@@ -176,7 +176,7 @@ void SVImageViewClass::Initialize()
 	m_hWindowBackgroundColor = ::CreateSolidBrush( SvDef::cDefaultImageViewBackgroundColor );
 }
 
-SVImageViewClass::~SVImageViewClass()
+SVImageView::~SVImageView()
 {
 	DetachFromImage();
 
@@ -192,7 +192,7 @@ SVImageViewClass::~SVImageViewClass()
 	}
 }
 
-void SVImageViewClass::ReleaseImageSurface()
+void SVImageView::ReleaseImageSurface()
 {
 	m_sourceImageWidth = 0;
 	m_sourceImageHeight = 0;
@@ -218,7 +218,7 @@ void SVImageViewClass::ReleaseImageSurface()
 	}
 }
 
-HRESULT SVImageViewClass::GetToolExtents( SVImageExtentClass& rToolExtents )
+HRESULT SVImageView::GetToolExtents( SVImageExtentClass& rToolExtents )
 {
 	HRESULT l_hrOk = S_OK;
 
@@ -234,7 +234,7 @@ HRESULT SVImageViewClass::GetToolExtents( SVImageExtentClass& rToolExtents )
 	return l_hrOk;
 }
 
-void SVImageViewClass::AttachToImage(uint32_t imageId)
+void SVImageView::AttachToImage(uint32_t imageId)
 {
 	if( SvDef::InvalidObjectId != imageId )
 	{
@@ -267,7 +267,7 @@ void SVImageViewClass::AttachToImage(uint32_t imageId)
 	}
 }
 
-void SVImageViewClass::AttachToImage( LPCTSTR p_imageName )
+void SVImageView::AttachToImage( LPCTSTR p_imageName )
 {
 	uint32_t l_ImageId = SvDef::InvalidObjectId;
 	bool Attach( false );
@@ -298,7 +298,7 @@ void SVImageViewClass::AttachToImage( LPCTSTR p_imageName )
 	}
 }
 
-void SVImageViewClass::DetachFromImage()
+void SVImageView::DetachFromImage()
 {
 	SVIPDoc* l_pIPDoc = GetIPDoc();
 
@@ -319,7 +319,7 @@ void SVImageViewClass::DetachFromImage()
 	m_OverlayData.clear();
 }
 
-void SVImageViewClass::GetImageRect( CRect& p_rect )
+void SVImageView::GetImageRect( CRect& p_rect )
 {
 	p_rect.top = 0;
 	p_rect.left = 0;
@@ -351,7 +351,7 @@ void SVImageViewClass::GetImageRect( CRect& p_rect )
 	}
 }
 
-BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
+BOOL SVImageView::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 {
 	switch( p_wParam )
 	{
@@ -474,7 +474,7 @@ BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 	return CView::OnCommand( p_wParam, p_lParam );
 }
 
-void SVImageViewClass::SaveViewOrImageToDisk(bool ViewOnly, bool showOverlays)
+void SVImageView::SaveViewOrImageToDisk(bool ViewOnly, bool showOverlays)
 {
 	auto pCurrentImage = GetImage();
 
@@ -519,7 +519,7 @@ void SVImageViewClass::SaveViewOrImageToDisk(bool ViewOnly, bool showOverlays)
 // -----------------------------------------------------------------------------
 // .Description : ...
 ////////////////////////////////////////////////////////////////////////////////
-void SVImageViewClass::OnContextMenu( CWnd* , CPoint p_point )
+void SVImageView::OnContextMenu( CWnd* , CPoint p_point )
 {
 	CMenu l_menu;
 	bool RunOrTestMode = SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST );
@@ -606,14 +606,14 @@ void SVImageViewClass::OnContextMenu( CWnd* , CPoint p_point )
 	}
 }
 
-void SVImageViewClass::TransformFromViewSpace( CPoint& p_point )
+void SVImageView::TransformFromViewSpace( CPoint& p_point )
 {
 	SVDrawContext l_svDrawContext( nullptr, m_ZoomHelper.GetZoom() );
 
 	l_svDrawContext.InverseTransform( &p_point, &p_point, 1 );
 }
 
-void SVImageViewClass::SelectDisplayImage()
+void SVImageView::SelectDisplayImage()
 {
 	SVDisplayImageSelect l_svDlg;
 	
@@ -638,17 +638,17 @@ void SVImageViewClass::SelectDisplayImage()
 	}
 }
 
-uint32_t SVImageViewClass::GetImageID() const
+uint32_t SVImageView::GetImageID() const
 {
 	return m_ImageId;
 }
 
-SvIe::SVImageClass* SVImageViewClass::GetImage()
+SvIe::SVImageClass* SVImageView::GetImage()
 {
 	return dynamic_cast<SvIe::SVImageClass*> (SVObjectManagerClass::Instance().GetObject(m_ImageId));
 }
 
-SvIe::SVImageClass* SVImageViewClass::GetImageByName( LPCTSTR ImageName ) const
+SvIe::SVImageClass* SVImageView::GetImageByName( LPCTSTR ImageName ) const
 {
 	SvIe::SVImageClass* pImage = nullptr;
 	SVIPDoc* l_pDocument = GetIPDoc();
@@ -660,7 +660,7 @@ SvIe::SVImageClass* SVImageViewClass::GetImageByName( LPCTSTR ImageName ) const
 	return pImage;
 }
 
-HRESULT SVImageViewClass::RecreateImageSurface()
+HRESULT SVImageView::RecreateImageSurface()
 {
 	HRESULT hr = DD_FALSE;
 
@@ -673,7 +673,7 @@ HRESULT SVImageViewClass::RecreateImageSurface()
 #if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 		if (DD_OK != hr)
 		{
-			TRACE( _T( "SVImageViewClass::RecreateImageSurface - CreateSurface failed (%08lx)\n" ), hr );
+			TRACE( _T( "SVImageView::RecreateImageSurface - CreateSurface failed (%08lx)\n" ), hr );
 		}
 #endif
 		if (DD_OK == hr)
@@ -687,7 +687,7 @@ HRESULT SVImageViewClass::RecreateImageSurface()
 #if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 			if (DD_OK != hr)
 			{
-				TRACE( _T( "SVImageViewClass::RecreateImageSurface - CreateSurface failed (%08lx)\n" ), hr );
+				TRACE( _T( "SVImageView::RecreateImageSurface - CreateSurface failed (%08lx)\n" ), hr );
 			}
 #endif
 		}
@@ -700,7 +700,7 @@ HRESULT SVImageViewClass::RecreateImageSurface()
 	return hr;
 }
 
-void SVImageViewClass::ShowExtremeLUT( bool p_show /* = true */ )
+void SVImageView::ShowExtremeLUT( bool p_show /* = true */ )
 {
 	m_showExtremeLUT = p_show;
 	if( m_pDDImageSurface )
@@ -713,7 +713,7 @@ void SVImageViewClass::ShowExtremeLUT( bool p_show /* = true */ )
 	}
 }
 
-void SVImageViewClass::OnDraw( CDC*  )
+void SVImageView::OnDraw( CDC*  )
 {
 	if (SvDef::InvalidObjectId == m_ImageId || SVSVIMStateClass::CheckState(SV_STATE_CLOSING))
 	{
@@ -731,7 +731,7 @@ void SVImageViewClass::OnDraw( CDC*  )
 	}
 }
 
-BOOL SVImageViewClass::Create( LPCTSTR , LPCTSTR , DWORD p_style, const RECT& p_rect, CWnd* p_pParentWnd, UINT p_NID, CCreateContext* p_pContext )
+BOOL SVImageView::Create( LPCTSTR , LPCTSTR , DWORD p_style, const RECT& p_rect, CWnd* p_pParentWnd, UINT p_NID, CCreateContext* p_pContext )
 {
 	BOOL Result( TRUE );
 
@@ -762,12 +762,12 @@ BOOL SVImageViewClass::Create( LPCTSTR , LPCTSTR , DWORD p_style, const RECT& p_
 	return Result;
 }
 
-void SVImageViewClass::OnInitialUpdate()
+void SVImageView::OnInitialUpdate()
 {
 	CView::OnInitialUpdate();
 }
 
-void SVImageViewClass::OnUpdate( CView* p_pSender, LPARAM p_lHint, CObject* p_pHint )
+void SVImageView::OnUpdate( CView* p_pSender, LPARAM p_lHint, CObject* p_pHint )
 {
 	bool Update = true;
 
@@ -807,7 +807,7 @@ void SVImageViewClass::OnUpdate( CView* p_pSender, LPARAM p_lHint, CObject* p_pH
 	}
 }
 
-void SVImageViewClass::OnLButtonDblClk( UINT p_nFlags, CPoint p_point )
+void SVImageView::OnLButtonDblClk( UINT p_nFlags, CPoint p_point )
 {
 	if( !SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
 	{
@@ -837,7 +837,7 @@ void SVImageViewClass::OnLButtonDblClk( UINT p_nFlags, CPoint p_point )
 	}
 }
 
-void SVImageViewClass::OnRButtonDblClk( UINT p_nFlags, CPoint p_point )
+void SVImageView::OnRButtonDblClk( UINT p_nFlags, CPoint p_point )
 {
 	if( !SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
 	{
@@ -873,7 +873,7 @@ void SVImageViewClass::OnRButtonDblClk( UINT p_nFlags, CPoint p_point )
 	}
 }
 
-void SVImageViewClass::OnLButtonDown( UINT p_nFlags, CPoint p_point )
+void SVImageView::OnLButtonDown( UINT p_nFlags, CPoint p_point )
 {
 	if( !SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&
 		TheSVObserverApp.OkToEdit() )
@@ -925,7 +925,7 @@ void SVImageViewClass::OnLButtonDown( UINT p_nFlags, CPoint p_point )
 	}
 }
 
-void SVImageViewClass::OnMouseMove( UINT nFlags, CPoint point ) 
+void SVImageView::OnMouseMove( UINT nFlags, CPoint point ) 
 {
 	if( !SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&
 		TheSVObserverApp.OkToEdit() )
@@ -1041,7 +1041,7 @@ void SVImageViewClass::OnMouseMove( UINT nFlags, CPoint point )
 // -----------------------------------------------------------------------------
 // .Description : ...
 ////////////////////////////////////////////////////////////////////////////////
-void SVImageViewClass::OnLButtonUp( UINT p_nFlags, CPoint p_point )
+void SVImageView::OnLButtonUp( UINT p_nFlags, CPoint p_point )
 {
 	m_isPicked = FALSE;
 
@@ -1065,7 +1065,7 @@ void SVImageViewClass::OnLButtonUp( UINT p_nFlags, CPoint p_point )
 // -----------------------------------------------------------------------------
 // .Description : ...
 ////////////////////////////////////////////////////////////////////////////////
-void SVImageViewClass::OnCaptureChanged( CWnd* p_pWnd )
+void SVImageView::OnCaptureChanged( CWnd* p_pWnd )
 {
 	TheSVObserverApp.SetStatusText( nullptr );
 
@@ -1077,7 +1077,7 @@ void SVImageViewClass::OnCaptureChanged( CWnd* p_pWnd )
 // -----------------------------------------------------------------------------
 // .Description : ...
 ////////////////////////////////////////////////////////////////////////////////
-void SVImageViewClass::OnNcMouseMove( UINT p_hitTest, CPoint p_point )
+void SVImageView::OnNcMouseMove( UINT p_hitTest, CPoint p_point )
 {
 	TheSVObserverApp.SetStatusText( nullptr );
 
@@ -1089,7 +1089,7 @@ void SVImageViewClass::OnNcMouseMove( UINT p_hitTest, CPoint p_point )
 // -----------------------------------------------------------------------------
 // .Description : ...
 ////////////////////////////////////////////////////////////////////////////////
-void SVImageViewClass::OnDestroy()
+void SVImageView::OnDestroy()
 {
 	DetachFromImage();
 
@@ -1098,24 +1098,24 @@ void SVImageViewClass::OnDestroy()
 
 #ifdef _DEBUG
 
-void SVImageViewClass::AssertValid() const
+void SVImageView::AssertValid() const
 {
 	CView::AssertValid();
 }
 
-void SVImageViewClass::Dump(CDumpContext& dc) const
+void SVImageView::Dump(CDumpContext& dc) const
 {
 	CView::Dump(dc);
 }
 
 #endif //_DEBUG
 
-SVIPDoc* SVImageViewClass::GetIPDoc() const
+SVIPDoc* SVImageView::GetIPDoc() const
 {
 	return dynamic_cast< SVIPDoc* >( GetDocument() );
 }
 
-bool SVImageViewClass::GetScrollPosition( CPoint& p_point )
+bool SVImageView::GetScrollPosition( CPoint& p_point )
 {
 	bool l_bOk = false;
 
@@ -1134,7 +1134,7 @@ bool SVImageViewClass::GetScrollPosition( CPoint& p_point )
 	return l_bOk;
 }
 
-bool SVImageViewClass::SetScrollPosition( CPoint& p_point )
+bool SVImageView::SetScrollPosition( CPoint& p_point )
 {
 	bool l_bOk = false;
 
@@ -1153,12 +1153,12 @@ bool SVImageViewClass::SetScrollPosition( CPoint& p_point )
 	return l_bOk;
 }
 
-bool SVImageViewClass::ImageIsEmpty() const
+bool SVImageView::ImageIsEmpty() const
 {
 	return SvDef::InvalidObjectId == m_ImageId;
 }
 
-bool SVImageViewClass::CalculateZoomFit(ZoomEnum ZoomType)
+bool SVImageView::CalculateZoomFit(ZoomEnum ZoomType)
 {
 	bool Result{false};
 
@@ -1185,7 +1185,7 @@ bool SVImageViewClass::CalculateZoomFit(ZoomEnum ZoomType)
 	return Result;
 }
 
-void SVImageViewClass::DisplayAnalyzerResult(const SvDef::StringVector& rAnalyzerResults, SvPb::SVObjectSubTypeEnum analyzerType) const
+void SVImageView::DisplayAnalyzerResult(const SvDef::StringVector& rAnalyzerResults, SvPb::SVObjectSubTypeEnum analyzerType) const
 {
 	constexpr size_t cPatternResults = 4;
 
@@ -1240,7 +1240,7 @@ void SVImageViewClass::DisplayAnalyzerResult(const SvDef::StringVector& rAnalyze
 	}
 }
 
-double SVImageViewClass::SetZoomValue(double Value, bool bSetZoomSlider )
+double SVImageView::SetZoomValue(double Value, bool bSetZoomSlider )
 {
 	m_ZoomHelper.ExtendMinMax(Value);
 	m_ZoomHelper.SetZoom(Value);
@@ -1256,7 +1256,7 @@ double SVImageViewClass::SetZoomValue(double Value, bool bSetZoomSlider )
 	return m_ZoomHelper.GetZoom();
 }
 
-bool SVImageViewClass::SetZoom(ZoomEnum ZoomType, unsigned  scaleIndex, bool bSetZoomSlider)
+bool SVImageView::SetZoom(ZoomEnum ZoomType, unsigned  scaleIndex, bool bSetZoomSlider)
 {
 	if (ZoomEnum::ZoomValue == ZoomType)
 	{
@@ -1294,12 +1294,12 @@ bool SVImageViewClass::SetZoom(ZoomEnum ZoomType, unsigned  scaleIndex, bool bSe
 	return true;
 }
 
-const ZoomHelper& SVImageViewClass::GetZoomHelper() const
+const ZoomHelper& SVImageView::GetZoomHelper() const
 {
 	return m_ZoomHelper;
 }
 
-bool SVImageViewClass::SetImageRect( CRect& p_rect )
+bool SVImageView::SetImageRect( CRect& p_rect )
 {
 	bool l_bOk = false;
 
@@ -1317,7 +1317,7 @@ bool SVImageViewClass::SetImageRect( CRect& p_rect )
 	return l_bOk;
 }
 
-HRESULT SVImageViewClass::ShouldDraw( const SVExtentMultiLineStruct& p_rMultiLine )
+HRESULT SVImageView::ShouldDraw( const SVExtentMultiLineStruct& p_rMultiLine )
 {
 	HRESULT l_hrOk = S_OK;
 
@@ -1430,7 +1430,7 @@ HRESULT SVImageViewClass::ShouldDraw( const SVExtentMultiLineStruct& p_rMultiLin
 	return l_hrOk;
 }
 
-void SVImageViewClass::DrawOverlay( SVDrawContext* PDrawContext, const SVExtentMultiLineStruct& p_rMultiLine )
+void SVImageView::DrawOverlay( SVDrawContext* PDrawContext, const SVExtentMultiLineStruct& p_rMultiLine )
 {
 	BOOL bDrawAllowed = ( ( nullptr != PDrawContext ) && ( S_OK == ShouldDraw( p_rMultiLine ) ) );
 
@@ -1469,7 +1469,7 @@ void SVImageViewClass::DrawOverlay( SVDrawContext* PDrawContext, const SVExtentM
 
 		hPenOld = SelectObject( PDrawContext->DC, hPen );
 
-		SVDrawObjectListClass drawObjectList;
+		SVDrawObjectList drawObjectList;
 
 		drawObjectList.AddExtentMultiLineData( p_rMultiLine, l_PenStyle );
 		drawObjectList.m_bDrawFigureHatched = p_rMultiLine.m_bDrawFigureHatched;
@@ -1480,7 +1480,7 @@ void SVImageViewClass::DrawOverlay( SVDrawContext* PDrawContext, const SVExtentM
 	}
 }
 
-void SVImageViewClass::UpdateOverlays(HDC hDC, long p_X, long p_Y)
+void SVImageView::UpdateOverlays(HDC hDC, long p_X, long p_Y)
 {
 	// Get drawing device context...
 	::SetBkMode(hDC, TRANSPARENT);
@@ -1504,7 +1504,7 @@ void SVImageViewClass::UpdateOverlays(HDC hDC, long p_X, long p_Y)
 	::SelectObject(hDC, hFontOld);
 }
 
-HICON SVImageViewClass::GetObjectCursor( POINT p_point )
+HICON SVImageView::GetObjectCursor( POINT p_point )
 {
 	HICON l_hCursor = nullptr;
 
@@ -1516,7 +1516,7 @@ HICON SVImageViewClass::GetObjectCursor( POINT p_point )
 	return l_hCursor;
 }
 
-HICON SVImageViewClass::GetObjectCursor( SvPb::SVExtentLocationPropertyEnum p_svLocation, POINT p_point )
+HICON SVImageView::GetObjectCursor( SvPb::SVExtentLocationPropertyEnum p_svLocation, POINT p_point )
 {
 	HICON l_hCursor = nullptr;
 
@@ -1655,7 +1655,7 @@ HICON SVImageViewClass::GetObjectCursor( SvPb::SVExtentLocationPropertyEnum p_sv
 // -----------------------------------------------------------------------------
 // .Description : Get Object under Mouse point
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVImageViewClass::GetObjectAtPoint( POINT p_point )
+BOOL SVImageView::GetObjectAtPoint( POINT p_point )
 {
 	BOOL l_bOk = FALSE;
 
@@ -1693,7 +1693,7 @@ BOOL SVImageViewClass::GetObjectAtPoint( POINT p_point )
 	return l_bOk;
 }
 
-void SVImageViewClass::GetParameters(SvOi::IObjectWriter& rWriter)
+void SVImageView::GetParameters(SvOi::IObjectWriter& rWriter)
 {
 	_variant_t l_svVariant;
 
@@ -1716,7 +1716,7 @@ void SVImageViewClass::GetParameters(SvOi::IObjectWriter& rWriter)
 	}
 }
 
-bool SVImageViewClass::SetParameters( SVTreeType& p_tree, SVTreeType::SVBranchHandle p_parent )
+bool SVImageView::SetParameters( SVTreeType& p_tree, SVTreeType::SVBranchHandle p_parent )
 {
 	bool bZoomExOK = false;
 
@@ -1786,7 +1786,7 @@ bool SVImageViewClass::SetParameters( SVTreeType& p_tree, SVTreeType::SVBranchHa
 	return l_bOk;
 }
 
-bool SVImageViewClass::CheckParameters( SVTreeType& p_tree, SVTreeType::SVBranchHandle p_parent )
+bool SVImageView::CheckParameters( SVTreeType& p_tree, SVTreeType::SVBranchHandle p_parent )
 {
 	_variant_t Value;
 
@@ -1864,7 +1864,7 @@ bool SVImageViewClass::CheckParameters( SVTreeType& p_tree, SVTreeType::SVBranch
 	return l_bOk;
 }
 
-BOOL SVImageViewClass::OnEraseBkgnd(CDC*)
+BOOL SVImageView::OnEraseBkgnd(CDC*)
 {
 	BOOL l_bOk = TRUE;
 
@@ -1873,7 +1873,7 @@ BOOL SVImageViewClass::OnEraseBkgnd(CDC*)
 	return l_bOk;
 }
 
-SVBitmapInfo SVImageViewClass::GetBitmapInfo() const
+SVBitmapInfo SVImageView::GetBitmapInfo() const
 {
 	SVBitmapInfo l_Info;
 
@@ -1899,7 +1899,7 @@ SVBitmapInfo SVImageViewClass::GetBitmapInfo() const
 	return l_Info;
 }
 
-const unsigned char* SVImageViewClass::GetBitmapBits() const
+const unsigned char* SVImageView::GetBitmapBits() const
 {
 	SVBitmapInfo l_Info = GetBitmapInfo();
 
@@ -1911,7 +1911,7 @@ const unsigned char* SVImageViewClass::GetBitmapBits() const
 	return nullptr;
 }
 
-HRESULT SVImageViewClass::UpdateImageSurfaces( const SVBitmapInfo& p_rBitmapInfo )
+HRESULT SVImageView::UpdateImageSurfaces( const SVBitmapInfo& p_rBitmapInfo )
 {
 	HRESULT status = S_OK;
 
@@ -1960,7 +1960,7 @@ HRESULT SVImageViewClass::UpdateImageSurfaces( const SVBitmapInfo& p_rBitmapInfo
 	return status;
 }
 
-HRESULT SVImageViewClass::CopyBitsToSurface( const CRect& rSourceRect, const SVBitmapInfo& rBitmapInfo, const unsigned char* pBitmapBits )
+HRESULT SVImageView::CopyBitsToSurface( const CRect& rSourceRect, const SVBitmapInfo& rBitmapInfo, const unsigned char* pBitmapBits )
 {
 	HRESULT status = S_OK;
 
@@ -2034,16 +2034,16 @@ HRESULT SVImageViewClass::CopyBitsToSurface( const CRect& rSourceRect, const SVB
 	return status;
 }
 
-bool SVImageViewClass::IsZoomAllowed() const
+bool SVImageView::IsZoomAllowed() const
 {
 	bool allowed  =  !ImageIsEmpty();
 	return allowed;
 }
 
-void SVImageViewClass::UpdateZoomToolbar()
+void SVImageView::UpdateZoomToolbar()
 {
 	//only when we have the focus 
-	SVImageViewClass* pFocus = dynamic_cast<SVImageViewClass*>(GetFocus());
+	SVImageView* pFocus = dynamic_cast<SVImageView*>(GetFocus());
 
 	SVMainFrame* pFrame = dynamic_cast<SVMainFrame*>( AfxGetMainWnd() );
 
@@ -2056,7 +2056,7 @@ void SVImageViewClass::UpdateZoomToolbar()
 	}
 }
 
-HRESULT SVImageViewClass::BlitToScaledSurface( CRect& p_rSourceRect, CRect& p_rDestRect, LPCTSTR Filepath, bool showOverlays)
+HRESULT SVImageView::BlitToScaledSurface( CRect& p_rSourceRect, CRect& p_rDestRect, LPCTSTR Filepath, bool showOverlays)
 {
 	HRESULT status = S_OK;
 
@@ -2112,7 +2112,7 @@ HRESULT SVImageViewClass::BlitToScaledSurface( CRect& p_rSourceRect, CRect& p_rD
 #if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 		if( DD_OK != status)
 		{
-			TRACE(_T( "SVImageViewClass::UpdateImage - Surface Blit failed %08lx\n" ), status );
+			TRACE(_T( "SVImageView::UpdateImage - Surface Blit failed %08lx\n" ), status );
 		}
 #endif
 	}
@@ -2124,7 +2124,7 @@ HRESULT SVImageViewClass::BlitToScaledSurface( CRect& p_rSourceRect, CRect& p_rD
 	return status;
 }
 
-HRESULT SVImageViewClass::BlitToPrimarySurface( CRect& p_rDestRect )
+HRESULT SVImageView::BlitToPrimarySurface( CRect& p_rDestRect )
 {
 	HRESULT status = S_OK;
 
@@ -2162,7 +2162,7 @@ HRESULT SVImageViewClass::BlitToPrimarySurface( CRect& p_rDestRect )
 	return status;
 }
 
-HRESULT SVImageViewClass::RecreateLostSurface()
+HRESULT SVImageView::RecreateLostSurface()
 {
 	HRESULT status = S_OK;
 
@@ -2181,7 +2181,7 @@ HRESULT SVImageViewClass::RecreateLostSurface()
 #if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 				if (DD_OK != l_hrRestore)
 				{
-					TRACE( _T( "SVImageViewClass::UpdateImage - CreateSurface failed\n" ) );
+					TRACE( _T( "SVImageView::UpdateImage - CreateSurface failed\n" ) );
 				}
 #endif
 			}
@@ -2204,7 +2204,7 @@ HRESULT SVImageViewClass::RecreateLostSurface()
 	return status;
 }
 
-HRESULT SVImageViewClass::GetRectInfo( CRect& p_rSourceRect, CRect& p_rDestRect )
+HRESULT SVImageView::GetRectInfo( CRect& p_rSourceRect, CRect& p_rDestRect )
 {
 	HRESULT status = S_OK;
 
@@ -2246,7 +2246,7 @@ HRESULT SVImageViewClass::GetRectInfo( CRect& p_rSourceRect, CRect& p_rDestRect 
 	return status;
 }
 
-HRESULT SVImageViewClass::UpdateBufferFromIPDoc()
+HRESULT SVImageView::UpdateBufferFromIPDoc()
 {
 	HRESULT status = S_OK;
 	SVIPDoc* l_pIPDoc = GetIPDoc();
@@ -2272,7 +2272,7 @@ HRESULT SVImageViewClass::UpdateBufferFromIPDoc()
 }
 
 // DisplayImage copies an image to the DirectDraw image surface.
-HRESULT SVImageViewClass::UpdateSurface()
+HRESULT SVImageView::UpdateSurface()
 {
 	HRESULT status = S_OK;
 
@@ -2303,7 +2303,7 @@ HRESULT SVImageViewClass::UpdateSurface()
 			if( DDERR_SURFACELOST == status )
 			{
 #if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
-				TRACE( _T( "SVImageViewClass::UpdateImage - DDERR_SURFACELOST\n" ) );
+				TRACE( _T( "SVImageView::UpdateImage - DDERR_SURFACELOST\n" ) );
 #endif
 				RecreateLostSurface();
 			}
@@ -2322,7 +2322,7 @@ HRESULT SVImageViewClass::UpdateSurface()
 }
 
 // DisplayImage copies an image to the DirectDraw image surface.
-HRESULT SVImageViewClass::DisplaySurface()
+HRESULT SVImageView::DisplaySurface()
 {
 	HRESULT status = S_OK;
 
@@ -2352,7 +2352,7 @@ HRESULT SVImageViewClass::DisplaySurface()
 			if( DDERR_SURFACELOST == status )
 			{
 #if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
-				TRACE( _T( "SVImageViewClass::UpdateImage - DDERR_SURFACELOST\n" ) );
+				TRACE( _T( "SVImageView::UpdateImage - DDERR_SURFACELOST\n" ) );
 #endif
 
 				RecreateLostSurface();
@@ -2371,7 +2371,7 @@ HRESULT SVImageViewClass::DisplaySurface()
 	return status;
 }
 
-HRESULT SVImageViewClass::NotifyIPDocDisplayComplete()
+HRESULT SVImageView::NotifyIPDocDisplayComplete()
 {
 	HRESULT status = S_OK;
 	SVIPDoc* l_pIPDoc = GetIPDoc();
@@ -2388,7 +2388,7 @@ HRESULT SVImageViewClass::NotifyIPDocDisplayComplete()
 	return status;
 }
 
-void SVImageViewClass::OnSetFocus(CWnd* pOldWnd)
+void SVImageView::OnSetFocus(CWnd* pOldWnd)
 {
 	CView::OnSetFocus(pOldWnd);
 
@@ -2411,7 +2411,7 @@ void SVImageViewClass::OnSetFocus(CWnd* pOldWnd)
 	}
 }
 
-void SVImageViewClass::OnKillFocus(CWnd* pNewWnd)
+void SVImageView::OnKillFocus(CWnd* pNewWnd)
 {
 	CView::OnKillFocus(pNewWnd);
 
@@ -2427,7 +2427,7 @@ void SVImageViewClass::OnKillFocus(CWnd* pNewWnd)
 	}
 }
 
-void SVImageViewClass::OnZoomTypeChanged(UINT nId)
+void SVImageView::OnZoomTypeChanged(UINT nId)
 {
 	if (ID_ZOOM_SMALLEST <= nId && ID_ZOOM_FIT_HEIGHT >= nId)
 	{
@@ -2436,7 +2436,7 @@ void SVImageViewClass::OnZoomTypeChanged(UINT nId)
 	}
 }
 
-void SVImageViewClass::OnUpdateZoomTypeChanged(CCmdUI* pCmdUI)
+void SVImageView::OnUpdateZoomTypeChanged(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(IsZoomAllowed());
 	//For the Zoom Toolbar check once, when ID_ZOOM_NORMAL is checked to set the slider

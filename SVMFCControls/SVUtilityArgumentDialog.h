@@ -2,7 +2,7 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVUtilityArgumentDialogClass
+//* .Module Name     : SVUtilityArgumentDialog
 //* .File Name       : $Workfile:   SVUtilityArgumentDialog.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $
@@ -11,22 +11,22 @@
 
 #pragma once
 
-class SVUtilityArgumentDialogClass : public CDialog
+class SVUtilityArgumentDialog : public CDialog
 {
 // Construction
 public:
-	SVUtilityArgumentDialogClass(CWnd* pParent = nullptr);   // standard constructor
-	virtual ~SVUtilityArgumentDialogClass();
+	SVUtilityArgumentDialog(CWnd* pParent = nullptr);   // standard constructor
+	virtual ~SVUtilityArgumentDialog();
 
 // Dialog Data
-	//{{AFX_DATA(SVUtilityArgumentDialogClass)
+	//{{AFX_DATA(SVUtilityArgumentDialog)
 	enum { IDD = IDD_ARGUMENT_PROMPT };
 	CString	mszArguments;
 	//}}AFX_DATA
 
 // Overrides
 	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(SVUtilityArgumentDialogClass)
+	//{{AFX_VIRTUAL(SVUtilityArgumentDialog)
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
@@ -34,7 +34,7 @@ public:
 // Implementation
 protected:
 	// Generated message map functions
-	//{{AFX_MSG(SVUtilityArgumentDialogClass)
+	//{{AFX_MSG(SVUtilityArgumentDialog)
 		// NOTE: the ClassWizard will add member functions here
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()

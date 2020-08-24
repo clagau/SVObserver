@@ -65,7 +65,7 @@ void SVPolarTransformationToolClass::init()
 	// Default taskObjectList items:
 
 	// Setup the evaluation clases
-	SvOp::SVEvaluateClass* pEvaluate = new SvOp::SVEvaluateCenterXClass;
+	SvOp::SVEvaluate* pEvaluate = new SvOp::SVEvaluateCenterXClass;
 	if( pEvaluate )
 		Add( pEvaluate );
 
@@ -96,7 +96,7 @@ void SVPolarTransformationToolClass::init()
 	m_svAngularMethod.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
 
 	// Add the Image Transformation Class
-	SvOp::SVImagePolarTransformClass* pTransform = new SvOp::SVImagePolarTransformClass;
+	SvOp::SVImagePolarTransform* pTransform = new SvOp::SVImagePolarTransform;
 	if( nullptr != pTransform )
 	{
 		Add( pTransform );
@@ -157,7 +157,7 @@ bool SVPolarTransformationToolClass::SetDefaultFormulas(SvStl::MessageContainerV
 	// Find image polar transform child...
 	SvDef::SVObjectTypeInfoStruct objectInfo;
 	objectInfo.m_SubType = SvPb::SVImagePolarTransformObjectType;
-	SvOp::SVImagePolarTransformClass* pImagePolarTransform = dynamic_cast<SvOp::SVImagePolarTransformClass*>(getFirstObject(objectInfo));
+	SvOp::SVImagePolarTransform* pImagePolarTransform = dynamic_cast<SvOp::SVImagePolarTransform*>(getFirstObject(objectInfo));
 	if(nullptr !=  pImagePolarTransform)
 	{
 		return pImagePolarTransform->SetDefaultFormulas(pErrorMessages);
@@ -194,7 +194,7 @@ void SVPolarTransformationToolClass::addOverlays(const SvIe::SVImageClass*, SvPb
 {
 	SvDef::SVObjectTypeInfoStruct objectInfo;
 	objectInfo.m_SubType = SvPb::SVImagePolarTransformObjectType;
-	SvOp::SVImagePolarTransformClass* pImagePolarTransform = dynamic_cast<SvOp::SVImagePolarTransformClass*>(getFirstObject(objectInfo));
+	SvOp::SVImagePolarTransform* pImagePolarTransform = dynamic_cast<SvOp::SVImagePolarTransform*>(getFirstObject(objectInfo));
 	if (nullptr != pImagePolarTransform)
 	{
 		auto* pOverlay = rOverlay.add_overlays();

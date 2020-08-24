@@ -22,42 +22,42 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvMc
 {
-	CSVOSelectItemListDlg::CSVOSelectItemListDlg(CWnd* pParent /*=nullptr*/)
-		: CDialog(CSVOSelectItemListDlg::IDD, pParent)
+	SVOSelectItemListDlg::SVOSelectItemListDlg(CWnd* pParent /*=nullptr*/)
+		: CDialog(SVOSelectItemListDlg::IDD, pParent), m_iSelectedItemPosition(0)
 	{
-		//{{AFX_DATA_INIT(CSVOSelectItemListDlg)
+		//{{AFX_DATA_INIT(SVOSelectItemListDlg)
 		m_sSelectItemListValue = _T("");
 		//}}AFX_DATA_INIT
 	}
 
-	CSVOSelectItemListDlg::~CSVOSelectItemListDlg()
+	SVOSelectItemListDlg::~SVOSelectItemListDlg()
 	{
 	}
 
-	void CSVOSelectItemListDlg::DoDataExchange(CDataExchange* pDX)
+	void SVOSelectItemListDlg::DoDataExchange(CDataExchange* pDX)
 	{
 		CDialog::DoDataExchange(pDX);
-		//{{AFX_DATA_MAP(CSVOSelectItemListDlg)
+		//{{AFX_DATA_MAP(SVOSelectItemListDlg)
 		DDX_Control(pDX, IDC_LST_SELECT_ITEM, m_ctlSelectItemList);
 		DDX_LBString(pDX, IDC_LST_SELECT_ITEM, m_sSelectItemListValue);
 		//}}AFX_DATA_MAP
 	}
 
 
-	BEGIN_MESSAGE_MAP(CSVOSelectItemListDlg, CDialog)
-		//{{AFX_MSG_MAP(CSVOSelectItemListDlg)
+	BEGIN_MESSAGE_MAP(SVOSelectItemListDlg, CDialog)
+		//{{AFX_MSG_MAP(SVOSelectItemListDlg)
 		//}}AFX_MSG_MAP
 	END_MESSAGE_MAP()
 
 	/////////////////////////////////////////////////////////////////////////////
-	// CSVOSelectItemListDlg message handlers
+	// SVOSelectItemListDlg message handlers
 
-	void CSVOSelectItemListDlg::AddListBoxItem(CString sItem)
+	void SVOSelectItemListDlg::AddListBoxItem(CString sItem)
 	{
 		m_DisplayList.insert(m_DisplayList.end(), sItem);
 	}
 
-	BOOL CSVOSelectItemListDlg::OnInitDialog() 
+	BOOL SVOSelectItemListDlg::OnInitDialog() 
 	{
 		CDialog::OnInitDialog();
 		SVDisplayList::iterator pos;
@@ -77,14 +77,14 @@ namespace SvMc
 		// EXCEPTION: OCX Property Pages should return FALSE
 	}
 
-	void CSVOSelectItemListDlg::OnOK() 
+	void SVOSelectItemListDlg::OnOK() 
 	{
 		// TODO: Add extra validation here
 		m_iSelectedItemPosition = m_ctlSelectItemList.GetCurSel();
 		CDialog::OnOK();
 	}
 
-	void CSVOSelectItemListDlg::SetDisplayName(LPCTSTR sDisplayName)
+	void SVOSelectItemListDlg::SetDisplayName(LPCTSTR sDisplayName)
 	{
 		m_sDisplay = sDisplayName;
 	}

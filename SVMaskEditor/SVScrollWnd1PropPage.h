@@ -2,32 +2,34 @@
 //* COPYRIGHT (c) 2013 by Seidenader Vision Inc., Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVMaskEditorPpg
-//* .File Name       : $Workfile:   SVMaskEditorPpg.h  $
+//* .Module Name     : SVScrollWnd1PropPage
+//* .File Name       : $Workfile:   SVScrollWnd1PropPage.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   26 Apr 2013 14:08:22  $
+//* .Check In Date   : $Date:   26 Apr 2013 14:05:46  $
 //******************************************************************************
 
 #pragma once
 
-////////////////////////////////////////////////////////////////////////////
-// SVMaskEditorPropPage : See SVMaskEditorPpg.cpp.cpp for implementation.
+#pragma region Includes
+#include "resource.h"
+#pragma endregion Includes
 
-class SVMaskEditorPropPage : public COlePropertyPage
+class SVScrollWnd1PropPage : public COlePropertyPage
 {
-	DECLARE_DYNCREATE(SVMaskEditorPropPage)
-	DECLARE_OLECREATE_EX(SVMaskEditorPropPage)
+	DECLARE_DYNCREATE(SVScrollWnd1PropPage)
+	DECLARE_OLECREATE_EX(SVScrollWnd1PropPage)
 
 // Constructor
 public:
-	SVMaskEditorPropPage();
-	virtual ~SVMaskEditorPropPage();
+	SVScrollWnd1PropPage();
+	virtual ~SVScrollWnd1PropPage();
 
 // Dialog Data
-	//{{AFX_DATA(SVMaskEditorPropPage)
-	enum { IDD = IDD_PROPPAGE_SVMASKEDITOR };
-	CStatic	image;
+	//{{AFX_DATA(SVScrollWnd1PropPage)
+	enum { IDD = IDD_PROPPAGE_SVSCROLLWND1 };
+		// NOTE - ClassWizard will add data members here.
+		//    DO NOT EDIT what you see in these blocks of generated code !
 	//}}AFX_DATA
 
 // Implementation
@@ -36,12 +38,12 @@ protected:
 
 // Message maps
 protected:
-	//{{AFX_MSG(SVMaskEditorPropPage)
-	virtual BOOL OnInitDialog() override;
+	//{{AFX_MSG(SVScrollWnd1PropPage)
+		// NOTE - ClassWizard will add and remove member functions here.
+		//    DO NOT EDIT what you see in these blocks of generated code !
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-

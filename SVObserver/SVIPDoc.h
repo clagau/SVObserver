@@ -26,13 +26,13 @@
 
 
 #pragma region Declarations
-class SVConditionalClass;
-class SVResultListClass;
-class SVToolSetClass;
+class SVConditional;
+class SVResultList;
+class SVToolSet;
 class SVInspectionProcess;
-class CSVRegressionRunDlg;
+class SVRegressionRunDlg;
 class SVRegressionFileSelectSheet;
-class SVImageViewClass;
+class SVImageView;
 class ToolSetView;
 class ResultTabbedView;
 namespace SvIe
@@ -51,7 +51,7 @@ class SVIPDoc : public CDocument
 	DECLARE_DYNCREATE( SVIPDoc )
 
 	friend class SVDisplayObject;
-	friend class SVImageViewClass;
+	friend class SVImageView;
 	friend class SVIPSplitterFrame;
 
 public:
@@ -248,7 +248,7 @@ public:
 
 	
 	ToolSetView* GetToolSetView() const;
-	SVToolSetClass* GetToolSet() const;
+	SVToolSet* GetToolSet() const;
 	void SetRegressionTestUsePlayCondition(bool usePlayCondition) { m_bRegressionTestUsePlayCondition = usePlayCondition; };
 	void SetRegressionTestPlayEquationController(SvOi::IFormulaControllerPtr pRegressionTestPlayEquationController) { m_pRegressionTestPlayEquationController = pRegressionTestPlayEquationController; }
 	/// Return true if Regression Test should go to pause because of the Play condition.
@@ -273,9 +273,9 @@ protected:
 		SVImageViewStatusStruct() : m_ViewNotified( false ), m_ViewDataUpdated( false ), m_DisplayComplete( false ) {}
 	};
 
-	typedef std::set< SVImageViewClass* > SVImageViewPtrSet;
+	typedef std::set< SVImageView* > SVImageViewPtrSet;
 	typedef std::map< uint32_t, SVImageViewPtrSet > SVMasterImageRegisterMap;
-	typedef std::map< SVImageViewClass*, SVImageViewStatusStruct > SVImageViewPtrImageViewStatusMap;
+	typedef std::map< SVImageView*, SVImageViewStatusStruct > SVImageViewPtrImageViewStatusMap;
 
 	typedef SVRingBuffer< SVIPProductStruct, SVElementClear > SVProductDataQueue;
 
@@ -299,10 +299,10 @@ protected:
 	bool AddToolGrouping(bool bStartGroup = true);
 
 	CView* getView() const;
-	SVImageViewClass* GetImageView( int p_Index = 0 );
+	SVImageView* GetImageView( int p_Index = 0 );
 	ResultTabbedView* GetResultView();
 	SVInspectionProcess* GetInspectionProcess() const;
-	SVResultListClass* GetResultList() const;
+	SVResultList* GetResultList() const;
 
 	void RefreshDocument();
 
@@ -311,15 +311,15 @@ protected:
 	HRESULT RebuildImages();
 	HRESULT CheckImages();
 
-	HRESULT RegisterImage(uint32_t imageId, SVImageViewClass* p_pImageView );
-	HRESULT UnregisterImageView( SVImageViewClass* p_pImageView );
+	HRESULT RegisterImage(uint32_t imageId, SVImageView* p_pImageView );
+	HRESULT UnregisterImageView( SVImageView* p_pImageView );
 
-	HRESULT IsImageDataUpdated(uint32_t imageId, SVImageViewClass* p_pImageView ) const;
+	HRESULT IsImageDataUpdated(uint32_t imageId, SVImageView* p_pImageView ) const;
 	HRESULT GetBitmapInfo(uint32_t imageId, SVBitmapInfo& p_rBitmapInfo) const;
 	HRESULT GetImageData( uint32_t imageId, std::string& p_rImageData, SVExtentMultiLineStructVector& p_rMultiLineArray ) const;
 	HRESULT SetImageData( uint32_t imageId, const std::string& p_rImageData, const SVExtentMultiLineStructVector& p_rMultiLineArray );
-	HRESULT MarkImageDataUpdated( uint32_t imageId, SVImageViewClass* p_pImageView );
-	HRESULT MarkImageDataDisplayed( uint32_t imageId, SVImageViewClass* p_pImageView );
+	HRESULT MarkImageDataUpdated( uint32_t imageId, SVImageView* p_pImageView );
+	HRESULT MarkImageDataDisplayed( uint32_t imageId, SVImageView* p_pImageView );
 
 	HRESULT UpdateExtents(SvIe::SVTaskObjectClass* pTask, const SVImageExtentClass& rExtents);
 	HRESULT UpdateExtentsToFit(SvIe::SVTaskObjectClass* pTask, const SVImageExtentClass& rExtents);

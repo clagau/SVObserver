@@ -23,17 +23,17 @@ class SVTaskObjectListClass;
 class SVIPDoc;
 class SVObjectClass;
 
-class SVChildrenSetupDialogClass : public CDialog
+class SVChildrenSetupDialog : public CDialog
 {
 public:
-	SVChildrenSetupDialogClass( CWnd* pParent = nullptr );
-	virtual ~SVChildrenSetupDialogClass();
+	SVChildrenSetupDialog( CWnd* pParent = nullptr );
+	virtual ~SVChildrenSetupDialog();
 
 //******************************************************************************
 // Message Handler(s):
 //******************************************************************************
 protected:
-	//{{AFX_MSG(SVChildrenSetupDialogClass)
+	//{{AFX_MSG(SVChildrenSetupDialog)
 	afx_msg void OnAddButton();
 	bool CreateSelectedResults(SvIe::SVClassInfoStruct& rChildInfo);
 	afx_msg void OnRemoveButton();
@@ -52,7 +52,7 @@ protected:
 // Virtual(s):
 //******************************************************************************
 
-	//{{AFX_VIRTUAL(SVChildrenSetupDialogClass)
+	//{{AFX_VIRTUAL(SVChildrenSetupDialog)
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV-Unterstützung
 	//}}AFX_VIRTUAL
@@ -77,7 +77,7 @@ public:
 protected:
 	SVObjectClass* m_pParentOwner;
 
-	//{{AFX_DATA(SVChildrenSetupDialogClass)
+	//{{AFX_DATA(SVChildrenSetupDialog)
 	enum { IDD = IDD_CHILDREN_DIALOG };
 	CListCtrl m_ChildrenListCtrl;
 	CListCtrl m_AvailableChildrenListCtrl;

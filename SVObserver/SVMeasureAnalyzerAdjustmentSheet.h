@@ -13,27 +13,27 @@
 class SVTaskObjectClass;
 class SVIPDoc;
 
-class SVMeasureAnalyzerAdjustmentSheetClass : public CPropertySheet
+class SVMeasureAnalyzerAdjustmentSheet : public CPropertySheet
 {
-	DECLARE_DYNAMIC(SVMeasureAnalyzerAdjustmentSheetClass)
+	DECLARE_DYNAMIC(SVMeasureAnalyzerAdjustmentSheet)
 
 protected:
-	//{{AFX_MSG(SVMeasureAnalyzerAdjustmentSheetClass)
+	//{{AFX_MSG(SVMeasureAnalyzerAdjustmentSheet)
 	afx_msg void OnDestroy();
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
 public:
-	explicit SVMeasureAnalyzerAdjustmentSheetClass(UINT nIDCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
-	explicit SVMeasureAnalyzerAdjustmentSheetClass(LPCTSTR pszCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
+	explicit SVMeasureAnalyzerAdjustmentSheet(UINT nIDCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
+	explicit SVMeasureAnalyzerAdjustmentSheet(LPCTSTR pszCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
 
-	virtual ~SVMeasureAnalyzerAdjustmentSheetClass();
+	virtual ~SVMeasureAnalyzerAdjustmentSheet();
 
 public:
 	// Überschreibungen
 	// Vom Klassen-Assistenten generierte virtuelle Funktionsüberschreibungen
-	//{{AFX_VIRTUAL(SVMeasureAnalyzerAdjustmentSheetClass)
+	//{{AFX_VIRTUAL(SVMeasureAnalyzerAdjustmentSheet)
 	public:
 	virtual BOOL OnInitDialog() override;
 	//}}AFX_VIRTUAL

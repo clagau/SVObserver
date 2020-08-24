@@ -14,7 +14,7 @@
 namespace SvOp
 {
 
-class TableColumnEquation : public SVEquationClass
+class TableColumnEquation : public SVEquation
 {
 	SV_DECLARE_CLASS( TableColumnEquation );
 

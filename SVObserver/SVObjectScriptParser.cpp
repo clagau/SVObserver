@@ -12,27 +12,27 @@
 #include "stdafx.h"
 #include "SVObjectScriptParser.h"
 
-unsigned long SVObjectScriptParserClass::GetParserHandle()
+unsigned long SVObjectScriptParser::GetParserHandle()
 {
 	static unsigned long handle=0;
 	return ++handle;
 }
 
-UINT SVObjectScriptParserClass::ParserThread( LPVOID lParam )
+UINT SVObjectScriptParser::ParserThread( LPVOID lParam )
 {
-	SVObjectScriptParserClass* pParser = reinterpret_cast<SVObjectScriptParserClass*> (lParam);
+	SVObjectScriptParser* pParser = reinterpret_cast<SVObjectScriptParser*> (lParam);
 	
 	pParser->Parse(); 
 	pParser->Complete();
 	return 0;
 }
 
-SVObjectScriptParserClass::SVObjectScriptParserClass(SVObjectScriptParserBase* pParser)
+SVObjectScriptParser::SVObjectScriptParser(SVObjectScriptParserBase* pParser)
 : m_pParser(pParser)
 {
 }
 
-SVObjectScriptParserClass::~SVObjectScriptParserClass()
+SVObjectScriptParser::~SVObjectScriptParser()
 {
 	if (m_pParser)
 	{
@@ -41,22 +41,22 @@ SVObjectScriptParserClass::~SVObjectScriptParserClass()
 	}
 }
 
-uint32_t SVObjectScriptParserClass::GetOwnerId() const
+uint32_t SVObjectScriptParser::GetOwnerId() const
 {
 	return m_pParser->GetOwnerId();
 }
 
-SVObjectClass* SVObjectScriptParserClass::GetOwnerObject()
+SVObjectClass* SVObjectScriptParser::GetOwnerObject()
 {
 	return m_pParser->GetOwnerObject();
 }
 
-unsigned long SVObjectScriptParserClass::GetTotal() const
+unsigned long SVObjectScriptParser::GetTotal() const
 {
 	return static_cast<int>(m_pParser->GetTotal());
 }
 
-HRESULT SVObjectScriptParserClass::Parse()
+HRESULT SVObjectScriptParser::Parse()
 {
 	HRESULT hr = E_FAIL;
 	if( m_pParser->GetOwnerObject() )
@@ -66,7 +66,7 @@ HRESULT SVObjectScriptParserClass::Parse()
 	return hr;
 }
 
-void SVObjectScriptParserClass::Complete()
+void SVObjectScriptParser::Complete()
 {
 	m_pParser->Complete();
 }

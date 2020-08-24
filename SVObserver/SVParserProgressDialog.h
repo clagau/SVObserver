@@ -18,7 +18,7 @@
 #include "SVSystemLibrary/SVLockableClass.h"
 #pragma endregion Includes
 
-class SVObjectScriptParserClass;
+class SVObjectScriptParser;
 
 typedef std::shared_ptr<CProgressCtrl> ProgressCtrlSharedPtr;
 typedef std::shared_ptr<CStatic> StaticSharedPtr;
@@ -27,7 +27,7 @@ struct SVParserProgressControlStruct
 {
 	BOOL bValidate;
 	uint32_t m_OwnerId;
-	SVObjectScriptParserClass* pParser;
+	SVObjectScriptParser* pParser;
 	ProgressCtrlSharedPtr pProgressCtrl;
 	StaticSharedPtr pStaticTextCtrl;
 	std::string Text;
@@ -53,7 +53,7 @@ public:
 	explicit SVParserProgressDialog(LPCTSTR title, CWnd* pParent = nullptr);   // standard constructor
 	virtual ~SVParserProgressDialog();
 
-	BOOL AddParser( unsigned long parserHandle, SVObjectScriptParserClass* pParser );
+	BOOL AddParser( unsigned long parserHandle, SVObjectScriptParser* pParser );
 	
 	CProgressCtrl* GetProgressControl( unsigned long parserHandle );
 	CStatic* GetTextControl( unsigned long parserHandle );

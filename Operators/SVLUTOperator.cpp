@@ -31,9 +31,9 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVLUTOperatorClass, SvPb::LUTOperatorClassId)
+SV_IMPLEMENT_CLASS( SVLUTOperator, SvPb::LUTOperatorClassId)
 
-SVLUTOperatorClass::SVLUTOperatorClass( SVObjectClass* POwner, int StringResourceID )
+SVLUTOperator::SVLUTOperator( SVObjectClass* POwner, int StringResourceID )
 				   :SVUnaryImageOperatorClass( POwner, StringResourceID ) 
 {
 	init();
@@ -44,7 +44,7 @@ SVLUTOperatorClass::SVLUTOperatorClass( SVObjectClass* POwner, int StringResourc
 // -----------------------------------------------------------------------------
 // .Description : Initialization of newly Instantiated Object
 ////////////////////////////////////////////////////////////////////////////////
-void SVLUTOperatorClass::init()
+void SVLUTOperator::init()
 {
 	// Identify our output type
 	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVUnaryImageOperatorObjectType;
@@ -98,7 +98,7 @@ void SVLUTOperatorClass::init()
 	m_lutElementNumber = 0;
 
 	// Add equation friends...
-	SVLUTEquationClass* pLUTEquationFriend = new SVLUTEquationClass( this );
+	SVLUTEquation* pLUTEquationFriend = new SVLUTEquation( this );
 	if( pLUTEquationFriend )
 		AddFriend( pLUTEquationFriend->getObjectId() );
 
@@ -115,9 +115,9 @@ void SVLUTOperatorClass::init()
 	m_bForceLUTRecalc = true;
 }
 
-SVLUTOperatorClass::~SVLUTOperatorClass()
+SVLUTOperator::~SVLUTOperator()
 {
-	SVLUTOperatorClass::CloseObject();
+	SVLUTOperator::CloseObject();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -125,7 +125,7 @@ SVLUTOperatorClass::~SVLUTOperatorClass()
 // -----------------------------------------------------------------------------
 // .Description : ...
 ////////////////////////////////////////////////////////////////////////////////
-bool SVLUTOperatorClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
+bool SVLUTOperator::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
 	bool bOk = SVUnaryImageOperatorClass::CreateObject(rCreateStructure);
 
@@ -148,7 +148,7 @@ bool SVLUTOperatorClass::CreateObject( const SVObjectLevelCreateStruct& rCreateS
 	return bOk;
 }
 
-bool SVLUTOperatorClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
+bool SVLUTOperator::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = SVUnaryImageOperatorClass::ResetObject(pErrorMessages);
 
@@ -170,7 +170,7 @@ bool SVLUTOperatorClass::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 // -----------------------------------------------------------------------------
 // .Description : ...
 ////////////////////////////////////////////////////////////////////////////////
-bool SVLUTOperatorClass::CloseObject()
+bool SVLUTOperator::CloseObject()
 {
 	m_lutBufID.clear();
 
@@ -186,7 +186,7 @@ bool SVLUTOperatorClass::CloseObject()
 //              : If MIL LUT buffer is not yet allocated, it tries to do this, 
 //				: also.
 ////////////////////////////////////////////////////////////////////////////////
-bool SVLUTOperatorClass::RecalcLUT( SVRunStatusClass& rRunStatus )
+bool SVLUTOperator::RecalcLUT( SVRunStatusClass& rRunStatus )
 {
 	if( getOutputImage() )
 	{
@@ -414,7 +414,7 @@ bool SVLUTOperatorClass::RecalcLUT( SVRunStatusClass& rRunStatus )
 	return false;
 }
 
-bool SVLUTOperatorClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVLUTOperator::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 { 
 	// Is doing special friend routing !!!
 	// Don't call base class onRun(...).

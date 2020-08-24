@@ -21,7 +21,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SVDrawObjectClass::SVDrawObjectClass()
+SVDrawObject::SVDrawObject()
 {
 	oldPen  = nullptr;
 	drawPen = nullptr;
@@ -32,12 +32,12 @@ SVDrawObjectClass::SVDrawObjectClass()
 	m_PenColor = RGB( 255, 255, 255 );
 }
 
-SVDrawObjectClass::SVDrawObjectClass( const SVDrawObjectClass &p_rsvObject )
+SVDrawObject::SVDrawObject( const SVDrawObject &p_rsvObject )
 {
 	*this = p_rsvObject;
 }
 
-SVDrawObjectClass::~SVDrawObjectClass()
+SVDrawObject::~SVDrawObject()
 {
 	if( drawPen )
 	{
@@ -45,7 +45,7 @@ SVDrawObjectClass::~SVDrawObjectClass()
 	}
 }
 
-const SVDrawObjectClass &SVDrawObjectClass::operator=( const SVDrawObjectClass& rObject )
+SVDrawObject &SVDrawObject::operator=( const SVDrawObject& rObject )
 {
 	oldPen  = nullptr;
 	drawPen = nullptr;
@@ -64,7 +64,7 @@ const SVDrawObjectClass &SVDrawObjectClass::operator=( const SVDrawObjectClass& 
 	return *this;
 }
 
-void SVDrawObjectClass::AddExtentLineData( SVExtentLineStruct p_svLine, int PenStyle )
+void SVDrawObject::AddExtentLineData( SVExtentLineStruct p_svLine, int PenStyle )
 {
 	long l_lCount = static_cast<long> (p_svLine.m_PointVector.size());
 
@@ -76,7 +76,7 @@ void SVDrawObjectClass::AddExtentLineData( SVExtentLineStruct p_svLine, int PenS
 	SetDrawPen( TRUE, PenStyle, 1, p_svLine.m_dwColor );
 }
 
-BOOL SVDrawObjectClass::Draw( SVDrawContext* PDrawContext )
+BOOL SVDrawObject::Draw( SVDrawContext* PDrawContext )
 {
 	BOOL BRetVal = false;
 	HDC DC = PDrawContext->DC;
@@ -99,7 +99,7 @@ BOOL SVDrawObjectClass::Draw( SVDrawContext* PDrawContext )
 	return BRetVal;
 }
 
-BOOL SVDrawObjectClass::DrawHatch( SVDrawContext* PDrawContext, int& LastY )
+BOOL SVDrawObject::DrawHatch( SVDrawContext* PDrawContext, int& LastY )
 {
 	BOOL BRetVal = FALSE;
 	HDC DC = PDrawContext->DC;
@@ -156,7 +156,7 @@ BOOL SVDrawObjectClass::DrawHatch( SVDrawContext* PDrawContext, int& LastY )
 	return BRetVal;
 }
 
-BOOL SVDrawObjectClass::SetDrawPen( BOOL BUseThisPen, int PenStyle, int PenWidth, COLORREF PenColor )
+BOOL SVDrawObject::SetDrawPen( BOOL BUseThisPen, int PenStyle, int PenWidth, COLORREF PenColor )
 {
 	if( drawPen )
 	{
@@ -172,13 +172,13 @@ BOOL SVDrawObjectClass::SetDrawPen( BOOL BUseThisPen, int PenStyle, int PenWidth
 	return true;
 }
 
-int SVDrawObjectClass::AddPoint( const POINT Point )
+int SVDrawObject::AddPoint( const POINT Point )
 {
 	m_Points.push_back(Point);
 	return static_cast<int>(m_Points.size() - 1);
 }
 
-void SVDrawObjectClass::SetPointAtGrow( int Index, POINT Point )
+void SVDrawObject::SetPointAtGrow( int Index, POINT Point )
 {
 	if (Index >= static_cast<int> (m_Points.size()))
 	{
@@ -187,22 +187,22 @@ void SVDrawObjectClass::SetPointAtGrow( int Index, POINT Point )
 	m_Points[Index] = Point;
 }
 
-void SVDrawObjectClass::SetListSize( int NewSize )
+void SVDrawObject::SetListSize( int NewSize )
 {
 	m_Points.resize( NewSize );
 }
 
-POINT SVDrawObjectClass::GetPointAt( int Index )
+POINT SVDrawObject::GetPointAt( int Index )
 {
 	return (Index < static_cast<int> (m_Points.size())) ? m_Points[Index] : POINT();
 }
 
-const std::vector<POINT>& SVDrawObjectClass::GetPointArray()
+const std::vector<POINT>& SVDrawObject::GetPointArray()
 {
 	return m_Points;
 }
 	
-HGDIOBJ SVDrawObjectClass::GetDrawPen()
+HGDIOBJ SVDrawObject::GetDrawPen()
 { 
 	if( m_BUseThisPen && nullptr == drawPen )
 	{
@@ -212,7 +212,7 @@ HGDIOBJ SVDrawObjectClass::GetDrawPen()
 	return drawPen;
 }
 
-BOOL SVDrawObjectClass::beginDraw( SVDrawContext* pDrawContext )
+BOOL SVDrawObject::beginDraw( SVDrawContext* pDrawContext )
 {
 	// Set Pen...
 	if( m_BUseThisPen && nullptr == drawPen )
@@ -232,7 +232,7 @@ BOOL SVDrawObjectClass::beginDraw( SVDrawContext* pDrawContext )
 	return true;
 }
 
-void SVDrawObjectClass::endDraw( HDC DC )
+void SVDrawObject::endDraw( HDC DC )
 {
 	// Deselect default pen if exists...
 	if( drawPen && oldPen )
@@ -246,7 +246,7 @@ void SVDrawObjectClass::endDraw( HDC DC )
 	}
 }
 
-void SVDrawObjectClass::Transform( SVDrawContext* pDrawContext )
+void SVDrawObject::Transform( SVDrawContext* pDrawContext )
 {
 	m_CalcPoints.resize( m_Points.size() );
 

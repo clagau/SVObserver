@@ -21,7 +21,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-SVMaskEditorApp theApp;
+SVMaskEditor theApp;
 
 const GUID CDECL BASED_CODE _tlid =
 		{ 0xc87c9b70, 0xe6dc, 0x11d2, { 0xa7, 0x7b, 0, 0x10, 0x6f, 0, 0xc, 0x7d } };
@@ -29,9 +29,9 @@ const WORD _wVerMajor = 1;
 const WORD _wVerMinor = 0;
 
 ////////////////////////////////////////////////////////////////////////////
-// SVMaskEditorApp::InitInstance - DLL initialization
+// SVMaskEditor::InitInstance - DLL initialization
 
-BOOL SVMaskEditorApp::InitInstance()
+BOOL SVMaskEditor::InitInstance()
 {
 	BOOL bInit = COleControlModule::InitInstance();
 
@@ -44,9 +44,9 @@ BOOL SVMaskEditorApp::InitInstance()
 }
 
 ////////////////////////////////////////////////////////////////////////////
-// SVMaskEditorApp::ExitInstance - DLL termination
+// SVMaskEditor::ExitInstance - DLL termination
 
-int SVMaskEditorApp::ExitInstance()
+int SVMaskEditor::ExitInstance()
 {
 	// TODO: Add your own module termination code here.
 

@@ -258,12 +258,12 @@ echo %time%
     <ClCompile Include="SVIOController.cpp" />
     <ClCompile Include="SVIODoc.cpp" />
     <ClCompile Include="SVIOTabbedView.cpp" />
-    <ClCompile Include="SVIPChildFrm.cpp" />
     <ClCompile Include="SVIPDoc.cpp">
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</MultiProcessorCompilation>
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</MultiProcessorCompilation>
     </ClCompile>
     <ClCompile Include="SVIPDocInfoImporter.cpp" />
+    <ClCompile Include="SVIPSplitterFrame.cpp" />
     <ClCompile Include="SVLightReferenceDialog.cpp" />
     <ClCompile Include="SVLutDlg.cpp" />
     <ClCompile Include="SVMainFrm.cpp" />
@@ -448,12 +448,12 @@ echo %time%
     <ClInclude Include="SVIOController.h" />
     <ClInclude Include="SVIODoc.h" />
     <ClInclude Include="SVIOTabbedView.h" />
-    <ClInclude Include="SVIPChildFrm.h" />
     <ClInclude Include="SVIPDoc.h" />
     <ClInclude Include="SVIPDocInfoImporter.h" />
     <ClInclude Include="SVIPImageDataElement.h" />
     <ClInclude Include="SVIPProductStruct.h" />
     <ClInclude Include="SVIProgress.h" />
+    <ClInclude Include="SVIPSplitterFrame.h" />
     <ClInclude Include="SVLightReferenceDialog.h" />
     <ClInclude Include="SVLutDlg.h" />
     <ClInclude Include="SVMainFrm.h" />

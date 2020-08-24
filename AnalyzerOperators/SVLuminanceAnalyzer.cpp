@@ -109,7 +109,7 @@ void SVLuminanceAnalyzer::init()
 
 	// Set Local
 
-	SvOp::SVLongResultClass* pAnalyzerResult = new SvOp::SVLongResultClass(this, IDS_CLASSNAME_SVLUMINANCEANALYZERESULT);
+	SvOp::SVLongResult* pAnalyzerResult = new SvOp::SVLongResult(this, IDS_CLASSNAME_SVLUMINANCEANALYZERESULT);
 
 	if(nullptr == pAnalyzerResult)
 	{
@@ -244,7 +244,7 @@ void SVLuminanceAnalyzer::addParameterForMonitorList(SvStl::MessageContainerVect
 	bool isNoError = true;
 
 	inserter = SvOi::ParameterPairForML(msvLuminanceValue.GetCompleteName(), msvLuminanceValue.getObjectId());
-	SvOp::SVRangeClass* pRangeObject = dynamic_cast<SvOp::SVRangeClass*>(getFirstObject(SvDef::SVObjectTypeInfoStruct(SvPb::SVObjectTypeEnum::SVRangeObjectType)));
+	SvOp::SVRange* pRangeObject = dynamic_cast<SvOp::SVRange*>(getFirstObject(SvDef::SVObjectTypeInfoStruct(SvPb::SVObjectTypeEnum::SVRangeObjectType)));
 	if (nullptr != pRangeObject)
 	{
 		pRangeObject->addEntriesToMonitorList(inserter);

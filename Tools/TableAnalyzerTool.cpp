@@ -66,7 +66,7 @@ bool TableAnalyzerTool::CreateObject(const SVObjectLevelCreateStruct& rCreateStr
 	}
 
 	// add input of result
-	SvOp::SVLongResultClass* pResult = dynamic_cast<SvOp::SVLongResultClass*>(SvOi::FindObject(getObjectId(), SvDef::SVObjectTypeInfoStruct(SvPb::SVResultObjectType, SvPb::SVResultLongObjectType)));
+	SvOp::SVLongResult* pResult = dynamic_cast<SvOp::SVLongResult*>(SvOi::FindObject(getObjectId(), SvDef::SVObjectTypeInfoStruct(SvPb::SVResultObjectType, SvPb::SVResultLongObjectType)));
 	if (nullptr != pResult)
 	{
 		SvOl::SVInputInfoListClass inputInterface;
@@ -278,7 +278,7 @@ void TableAnalyzerTool::LocalInitialize()
 	std::string Title = SvUl::LoadStdString(IDS_OBJECTNAME_RESULT);
 	resultClassInfo.m_ClassName += _T(" ") + Title;
 	// Construct the result
-	SvOp::SVLongResultClass* pResult = dynamic_cast<SvOp::SVLongResultClass*> (resultClassInfo.Construct());
+	SvOp::SVLongResult* pResult = dynamic_cast<SvOp::SVLongResult*> (resultClassInfo.Construct());
 	Add(pResult);
 }
 

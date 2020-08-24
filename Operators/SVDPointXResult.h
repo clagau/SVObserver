@@ -24,12 +24,12 @@ class SVDPointValueObjectClass;
 namespace SvOp
 {
 
-class SVDPointXResultClass : public SVResultClass  
+class SVDPointXResult : public SVResult  
 {
-	SV_DECLARE_CLASS( SVDPointXResultClass );
+	SV_DECLARE_CLASS( SVDPointXResult );
 public:
-	SVDPointXResultClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_RESULT_DPOINT_X );
-	virtual ~SVDPointXResultClass();
+	SVDPointXResult( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_RESULT_DPOINT_X );
+	virtual ~SVDPointXResult();
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 

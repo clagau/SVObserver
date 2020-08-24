@@ -35,21 +35,21 @@ struct SVResultClassCancelData : public SVCancelData	// this does not need to be
 };
 
 ///For this class it is not necessary to call SV_IMPLEMENT_CLASS as it is a base class and only derived classes are instantiated.
-//SV_IMPLEMENT_CLASS( SVResultClass, SvPb::ResultClassId);
+//SV_IMPLEMENT_CLASS( SVResult, SvPb::ResultClassId);
 
 ////////////////////////////////////////////////////////////////////////////////
-// .Title       :  SVResultClass
+// .Title       :  SVResult
 // -----------------------------------------------------------------------------
 // .Description : Standard constructor
 ////////////////////////////////////////////////////////////////////////////////
 
-SVResultClass::SVResultClass ( SVObjectClass* POwner, int StringResourceID )
+SVResult::SVResult ( SVObjectClass* POwner, int StringResourceID )
 				  :SVTaskObjectListClass( POwner, StringResourceID )
 {
 	init();
 }
 
-void SVResultClass::init()
+void SVResult::init()
 {
 	m_bUseOverlays = false;
 
@@ -73,11 +73,11 @@ void SVResultClass::init()
 	addDefaultInputObjects();
 }
 
-SVResultClass::~SVResultClass()
+SVResult::~SVResult()
 {
 }
 
-bool SVResultClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
+bool SVResult::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
 	bool bOk = SVTaskObjectClass::CreateObject(rCreateStructure);
 
@@ -91,7 +91,7 @@ bool SVResultClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStruct
 	return bOk;
 }
 
-bool SVResultClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
+bool SVResult::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 
@@ -100,36 +100,36 @@ bool SVResultClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	return Result && ValidateLocal(pErrorMessages);
 }
 
-bool SVResultClass::IsFailed()
+bool SVResult::IsFailed()
 {
 	BOOL RVal = true;
 	m_Failed.GetValue( RVal );
 	return( TRUE == RVal );
 }
 
-bool SVResultClass::IsWarned()
+bool SVResult::IsWarned()
 {
 	BOOL RVal = true;
 	m_Warned.GetValue( RVal );
 	return( TRUE == RVal );
 }
 
-bool SVResultClass::IsGood()
+bool SVResult::IsGood()
 {
 	BOOL RVal = true;
 	m_Passed.GetValue( RVal );
 	return( TRUE == RVal );
 }
 
-SVRangeClass* SVResultClass::GetResultRange()
+SVRange* SVResult::GetResultRange()
 {
 	SvDef::SVObjectTypeInfoStruct info;
 	info.m_ObjectType = SvPb::SVRangeObjectType;
-	SVRangeClass* pRange = dynamic_cast<SVRangeClass*>(getFirstObject(info));
+	SVRange* pRange = dynamic_cast<SVRange*>(getFirstObject(info));
 	return pRange;
 }
 
-bool SVResultClass::Run( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVResult::Run( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	const SvOi::IValueObject* pValueObject = dynamic_cast<const SvOi::IValueObject*> (getInput());
 	
@@ -181,7 +181,7 @@ bool SVResultClass::Run( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVe
 	return false;
 }
 
-const SVObjectClass* SVResultClass::getInput() const
+const SVObjectClass* SVResult::getInput() const
 {
 	if( m_inputObjectInfo.IsConnected() )
 	{
@@ -191,7 +191,7 @@ const SVObjectClass* SVResultClass::getInput() const
 	return nullptr;
 }
 
-bool SVResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVResult::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	//@WARNING[MZA][7.50][17.01.2017] Not sure if we need to check ValidateLocal in Run-mode, maybe it is enough to check it in ResetObject
 	if( __super::onRun( rRunStatus, pErrorMessages ) && ValidateLocal(pErrorMessages) )
@@ -203,13 +203,13 @@ bool SVResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainer
 	return false;
 }
 
-HRESULT SVResultClass::GetCancelData(SVCancelData*& rpCancelData)
+HRESULT SVResult::GetCancelData(SVCancelData*& rpCancelData)
 {
 	assert(nullptr == rpCancelData);
 	SVResultClassCancelData* pData = new SVResultClassCancelData;
 	rpCancelData = pData;
 
-	if ( SVRangeClass* pRange = GetResultRange() )
+	if ( SVRange* pRange = GetResultRange() )
 	{
 		pRange->GetCancelData( pData->m_pRangeData );
 	}
@@ -217,12 +217,12 @@ HRESULT SVResultClass::GetCancelData(SVCancelData*& rpCancelData)
 	return S_OK;
 }
 
-HRESULT SVResultClass::SetCancelData(SVCancelData* pCancelData)
+HRESULT SVResult::SetCancelData(SVCancelData* pCancelData)
 {
 	SVResultClassCancelData* pData = dynamic_cast<SVResultClassCancelData*> (pCancelData);
 	if ( pData )
 	{
-		if ( SVRangeClass* pRange = GetResultRange() )
+		if ( SVRange* pRange = GetResultRange() )
 		{
 			return pRange->SetCancelData( pData->m_pRangeData );
 		}
@@ -237,7 +237,7 @@ HRESULT SVResultClass::SetCancelData(SVCancelData* pCancelData)
 	}
 }
 
-bool SVResultClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const
+bool SVResult::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const
 {
 	if( !m_inputObjectInfo.IsConnected() || nullptr == m_inputObjectInfo.GetInputObjectInfo().getObject() ) 
 	{

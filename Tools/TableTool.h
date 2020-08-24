@@ -13,7 +13,7 @@
 
 namespace SvOp
 {
-class SVEquationClass;
+class SVEquation;
 class TableColumnEquation;
 }
 
@@ -68,7 +68,7 @@ private:
 	static const int c_defaultMaxRow = 50;
 	//embedded parameter
 	SvVol::SVLongValueObjectClass m_MaxRow;
-	SvOp::SVEquationClass* m_pClearEquation;
+	SvOp::SVEquation* m_pClearEquation;
 	std::vector<SvOp::TableColumnEquation*> m_ColumnEquationList;
 	SvOp::TableFillByEquationObject* m_pTable;
 #pragma endregion Member Variables

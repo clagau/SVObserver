@@ -47,7 +47,7 @@ void SVMathToolClass::init(void)
 	removeEmbeddedExtents();
 
 	// Set up the friend
-	m_pMathEquation = new SvOp::SVMathEquationClass( this );
+	m_pMathEquation = new SvOp::SVMathEquation( this );
 	AddFriend( m_pMathEquation->getObjectId() );
 
 	// Setup the result
@@ -66,7 +66,7 @@ void SVMathToolClass::init(void)
 	resultClassInfo.m_ClassName += _T(" ") + strTitle;
 
 	// Construct the result
-	SvOp::SVDoubleResultClass* pResult = dynamic_cast<SvOp::SVDoubleResultClass*> (resultClassInfo.Construct());
+	SvOp::SVDoubleResult* pResult = dynamic_cast<SvOp::SVDoubleResult*> (resultClassInfo.Construct());
 	Add( pResult );
 }
 
@@ -107,7 +107,7 @@ SvOi::ParametersForML SVMathToolClass::getParameterForMonitorList(SvStl::Message
 		isNoError = false;
 	}
 	isNoError = addEntryToMonitorList(retList, SvPb::ValueEId) && isNoError;
-	SvOp::SVRangeClass* pRangeObject = dynamic_cast<SvOp::SVRangeClass*>(getFirstObject(SvDef::SVObjectTypeInfoStruct(SvPb::SVObjectTypeEnum::SVRangeObjectType)));
+	SvOp::SVRange* pRangeObject = dynamic_cast<SvOp::SVRange*>(getFirstObject(SvDef::SVObjectTypeInfoStruct(SvPb::SVObjectTypeEnum::SVRangeObjectType)));
 	if (nullptr != pRangeObject)
 	{
 		pRangeObject->addEntriesToMonitorList(std::back_inserter(retList));

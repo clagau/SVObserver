@@ -24,25 +24,25 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 ///For this class it is not necessary to call SV_IMPLEMENT_CLASS as it is a base class and only derived classes are instantiated.
-//SV_IMPLEMENT_CLASS( SVOperatorClass, SVOperatorClassGuid )
+//SV_IMPLEMENT_CLASS( SVOperator, SVOperatorClassGuid )
 
-SVOperatorClass::SVOperatorClass( SVObjectClass* POwner, int StringResourceID )
+SVOperator::SVOperator( SVObjectClass* POwner, int StringResourceID )
 				:SVTaskObjectClass( POwner, StringResourceID )
 {
 	init();
 }
 
-SVOperatorClass::~SVOperatorClass()
+SVOperator::~SVOperator()
 {
 }
 
-bool SVOperatorClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
+bool SVOperator::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
 	m_isCreated = SVTaskObjectClass::CreateObject(rCreateStructure) && nullptr != GetTool();
 	return m_isCreated;
 }
 
-void SVOperatorClass::init()
+void SVOperator::init()
 {
 	m_bUseOverlays = false;	// in general, operators don't have overlays
 

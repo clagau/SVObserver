@@ -15,7 +15,7 @@
 #include "SVOResource/resource.h"
 #include "SVObjectLibrary/SVObjectReference.h"
 #include "SVOGui/ISVPropertyPageDialog.h"
-#include "SVMFCControls/SVEditNumbers.h"
+#include "SVMFCControls/EditNumbers.h"
 #include "Tools/ArchiveMethodEnum.h"
 #include "SVOGui/ObjectSelectorController.h"
 #include "SVOGui/DataController.h"
@@ -161,7 +161,7 @@ private:
 
 	CStatic	m_wndAvailableArchiveImageMemory;
 	CComboBox	m_WhenToArchive;
-	SvMc::CEditNumbers	m_EditMaxImages;
+	SvMc::EditNumbers	m_EditMaxImages;
 	CEdit	m_ImageFilepathroot1;
 	CEdit	m_ImageFilepathroot2;
 	CButton m_ImageFilepathroot1Button;

@@ -18,13 +18,13 @@
 namespace SvOp
 {
 
-class SVMathEquationClass : public SVEquationClass
+class SVMathEquation : public SVEquation
 {
-	SV_DECLARE_CLASS( SVMathEquationClass);
+	SV_DECLARE_CLASS( SVMathEquation);
 
 public:
-	SVMathEquationClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVMATHEQUATION );
-	virtual ~SVMathEquationClass();
+	SVMathEquation( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVMATHEQUATION );
+	virtual ~SVMathEquation();
 
 protected:
 	void init();

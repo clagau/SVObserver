@@ -17,7 +17,7 @@
 
 namespace SvOp
 {
-class SVColorThresholdClass;
+class SVColorThreshold;
 }
 namespace SvTo
 {
@@ -63,7 +63,7 @@ public:
 
 protected:
 	SvTo::SVColorToolClass* m_pTool;
-	SvOp::SVColorThresholdClass* m_pThreshold;
+	SvOp::SVColorThreshold* m_pThreshold;
 	SvVol::SVDoubleValueObjectClass* m_pExtentLeft;
 	SvVol::SVDoubleValueObjectClass* m_pExtentTop;
 	SvVol::SVDoubleValueObjectClass* m_pExtentWidth;

@@ -18,7 +18,7 @@
 #pragma region Declarations
 namespace SvOp
 {
-class SVEvaluateClass;
+class SVEvaluate;
 }
 #pragma endregion;
 
@@ -59,7 +59,7 @@ protected:
 public:
 	//{{AFX_DATA(SVToolAdjustmentDialogRotationPageClass)
 	enum { IDD = IDD_TA_ROTATION_DIALOG };
-	SvMc::SVEnumerateComboClass	m_cbInterpolation;
+	SvMc::SVEnumerateCombo	m_cbInterpolation;
 	CString	m_RotationAngleValue;
 	CString	m_RotationXValue;
 	CString	m_RotationYValue;
@@ -70,9 +70,9 @@ public:
 protected:
 	CFont angleFont;
 
-	SvOp::SVEvaluateClass*	m_pEvaluateRotationX{ nullptr };
-	SvOp::SVEvaluateClass*	m_pEvaluateRotationY{ nullptr };
-	SvOp::SVEvaluateClass*	m_pEvaluateRotationAngle{ nullptr };
+	SvOp::SVEvaluate*	m_pEvaluateRotationX{ nullptr };
+	SvOp::SVEvaluate*	m_pEvaluateRotationY{ nullptr };
+	SvOp::SVEvaluate*	m_pEvaluateRotationAngle{ nullptr };
 
 	const uint32_t m_InspectionID;
 	const uint32_t m_TaskObjectID;

@@ -24,7 +24,7 @@ static char THIS_FILE[] = __FILE__;
 SV_IMPLEMENT_CLASS( SVEvaluateTranslationXClass, SvPb::EvaluateTranslationXClassId)
 
 SVEvaluateTranslationXClass::SVEvaluateTranslationXClass( SVObjectClass* pOwner, int StringResourceID )
-: SVEvaluateClass( pOwner, StringResourceID ) 
+: SVEvaluate( pOwner, StringResourceID ) 
 {
 	// Identify yourself
 	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVEvaluateTranslationXObjectType;

@@ -183,7 +183,7 @@ void SVDiscreteInputsView::OnLButtonDblClk(UINT, CPoint point)
 			pDigInput = dynamic_cast< SVDigitalInputObject* >( SVObjectManagerClass::Instance().GetObject( pIOEntry->m_IOId ) );
 			if( pDigInput )
 			{
-				SVIOAdjustDialogClass dlg;
+				SVIOAdjustDialog dlg;
 				dlg.IOName = _T( "Module " ) + m_rCtrl.GetItemText( item, 0 );
 				dlg.IOName += _T( ", " ) + m_rCtrl.GetItemText( item, 1 );
 				dlg.IOValue.Format( "%d", pDigInput->GetValue() ? 1 : 0 );

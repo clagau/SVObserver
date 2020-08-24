@@ -18,14 +18,14 @@
 namespace SvOp
 {
 
-class SVMathContainerClass : public SvIe::SVTaskObjectClass
+class SVMathContainer : public SvIe::SVTaskObjectClass
 {
 	///This class does not need to call SV_DECLARE_CLASS as it is a base class and only derived classes are instantiated
-	//SV_DECLARE_CLASS( SVMathContainerClass )
+	//SV_DECLARE_CLASS( SVMathContainer )
 
 public:
-	SVMathContainerClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVMATHCONTAINER );
-	virtual ~SVMathContainerClass();
+	SVMathContainer( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVMATHCONTAINER );
+	virtual ~SVMathContainer();
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;

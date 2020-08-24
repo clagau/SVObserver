@@ -18,16 +18,16 @@
 class SVRegressionFileSelectSheet;
 
 /////////////////////////////////////////////////////////////////////////////
-// CSVRegressionFileSelectDlg dialog
+// SVRegressionFileSelectDlg dialog
 
-class CSVRegressionFileSelectDlg : public CPropertyPage/*, public ISVPropertyPageDialog*/
+class SVRegressionFileSelectDlg : public CPropertyPage/*, public ISVPropertyPageDialog*/
 {
-	DECLARE_DYNCREATE(CSVRegressionFileSelectDlg)
+	DECLARE_DYNCREATE(SVRegressionFileSelectDlg)
 
 // Construction
 public:
-	CSVRegressionFileSelectDlg(LPCTSTR lptstrDialogName = nullptr);
-	virtual ~CSVRegressionFileSelectDlg();
+	SVRegressionFileSelectDlg(LPCTSTR lptstrDialogName = nullptr);
+	virtual ~SVRegressionFileSelectDlg();
 
 	void SetDlgTitle( LPCTSTR lpszTitle );
 
@@ -39,7 +39,7 @@ public:
 
 
 // Dialog Data
-	//{{AFX_DATA(CSVRegressionFileSelectDlg)
+	//{{AFX_DATA(SVRegressionFileSelectDlg)
 	enum { IDD = IDD_PROPPAGE_REGRESSION_FILESELECT };
 	CButton	m_btnBrowseFiles;
 	int		m_iSelectFileRadio;
@@ -49,7 +49,7 @@ public:
 
 // Overrides
 	// ClassWizard generate virtual function overrides
-	//{{AFX_VIRTUAL(CSVRegressionFileSelectDlg)
+	//{{AFX_VIRTUAL(SVRegressionFileSelectDlg)
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
@@ -57,7 +57,7 @@ public:
 // Implementation
 protected:
 	// Generated message map functions
-	//{{AFX_MSG(CSVRegressionFileSelectDlg)
+	//{{AFX_MSG(SVRegressionFileSelectDlg)
 	afx_msg void OnBtnRegTestBrowseFiles();
 	virtual BOOL OnInitDialog() override;
 	afx_msg void OnRadioRegUpdate();

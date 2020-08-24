@@ -55,24 +55,24 @@ SVVariantResultClass::SVVariantResultClass(BOOL , SVObjectClass*, int)
 
 	// Instantiate Dynamic Objects
 
-	// Construct the SVRangeClass via the ClassInfoStruct
+	// Construct the SVRange via the ClassInfoStruct
 	SvIe::SVClassInfoStruct rangeClassInfo;
 	SvDef::SVObjectTypeInfoStruct interfaceInfo;
 
-	// Declare Input Interface of the SVRangeClass...
+	// Declare Input Interface of the SVRange...
 	interfaceInfo.m_ObjectType = SvPb::SVValueObjectType;
 	interfaceInfo.m_SubType = SvPb::SVVariantValueObjectType;
 	interfaceInfo.m_EmbeddedID = SvPb::ValueEId;
 	rangeClassInfo.m_DesiredInputVector.push_back( interfaceInfo );
 
-	// Describe the SVRangeClass ...
+	// Describe the SVRange ...
 	rangeClassInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVRangeObjectType;
 	rangeClassInfo.m_ObjectTypeInfo.m_SubType	= SvPb::SVNotSetSubObjectType;
 	rangeClassInfo.m_ClassId = SvPb::RangeClassId;
 	rangeClassInfo.m_ClassName = SvUl::LoadStdString( IDS_CLASSNAME_SVRANGE );
 
 	// Construct it
-	SVRangeClass* pRange = dynamic_cast<SVRangeClass*> (rangeClassInfo.Construct()); 
+	SVRange* pRange = dynamic_cast<SVRange*> (rangeClassInfo.Construct()); 
 	if( pRange )
 		Add( pRange );
 
@@ -88,7 +88,7 @@ SVVariantResultClass::~SVVariantResultClass()
 
 bool SVVariantResultClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool bOk = SVResultClass::CreateObject(rCreateStructure);
+	bool bOk = SVResult::CreateObject(rCreateStructure);
 	bOk &= nullptr != GetInputValue();
 
 	m_Value.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );

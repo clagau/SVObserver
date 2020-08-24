@@ -33,21 +33,21 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS(SVLinearImageOperatorListClass, SvPb::LinearImageOperatorListClassId)
+SV_IMPLEMENT_CLASS(SVLinearImageOperatorList, SvPb::LinearImageOperatorListClassId)
 
 
-SVLinearImageOperatorListClass::SVLinearImageOperatorListClass(SVObjectClass* POwner, int StringResourceID)
+SVLinearImageOperatorList::SVLinearImageOperatorList(SVObjectClass* POwner, int StringResourceID)
 	:SVStdImageOperatorListClass(POwner, StringResourceID)
 {
 	init();
 }
 
-SVLinearImageOperatorListClass::~SVLinearImageOperatorListClass()
+SVLinearImageOperatorList::~SVLinearImageOperatorList()
 {
-	SVLinearImageOperatorListClass::CloseObject();
+	SVLinearImageOperatorList::CloseObject();
 }
 
-bool SVLinearImageOperatorListClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
+bool SVLinearImageOperatorList::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 {
 	bool l_bOk = SVStdImageOperatorListClass::CreateObject(rCreateStructure);
 
@@ -68,7 +68,7 @@ bool SVLinearImageOperatorListClass::CreateObject(const SVObjectLevelCreateStruc
 	return l_bOk;
 }
 
-bool SVLinearImageOperatorListClass::CloseObject()
+bool SVLinearImageOperatorList::CloseObject()
 {
 	bool l_bOk = m_svProfileResultData.CloseObject();
 
@@ -77,7 +77,7 @@ bool SVLinearImageOperatorListClass::CloseObject()
 	return l_bOk;
 }
 
-bool SVLinearImageOperatorListClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
+bool SVLinearImageOperatorList::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 	ResetLogicalROIImage();
@@ -111,7 +111,7 @@ bool SVLinearImageOperatorListClass::ResetObject(SvStl::MessageContainerVector *
 	return Result;
 }
 
-bool SVLinearImageOperatorListClass::Run(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool SVLinearImageOperatorList::Run(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	clearRunErrorMessages();
 
@@ -253,7 +253,7 @@ bool SVLinearImageOperatorListClass::Run(SVRunStatusClass& rRunStatus, SvStl::Me
 	return result;
 }
 
-HRESULT SVLinearImageOperatorListClass::getUseRotationAngle(BOOL& rUseRotationAngle)
+HRESULT SVLinearImageOperatorList::getUseRotationAngle(BOOL& rUseRotationAngle)
 {
 	HRESULT Result(E_FAIL);
 
@@ -267,7 +267,7 @@ HRESULT SVLinearImageOperatorListClass::getUseRotationAngle(BOOL& rUseRotationAn
 	return Result;
 }
 
-HRESULT SVLinearImageOperatorListClass::getInputProfileOrientation(long& rProfileOrientation)
+HRESULT SVLinearImageOperatorList::getInputProfileOrientation(long& rProfileOrientation)
 {
 	HRESULT Result(E_FAIL);
 
@@ -281,7 +281,7 @@ HRESULT SVLinearImageOperatorListClass::getInputProfileOrientation(long& rProfil
 	return Result;
 }
 
-void SVLinearImageOperatorListClass::init()
+void SVLinearImageOperatorList::init()
 {
 	// Identify our output type
 	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVUnaryImageOperatorListObjectType;
@@ -317,7 +317,7 @@ void SVLinearImageOperatorListClass::init()
 	addDefaultInputObjects();
 }
 
-HRESULT SVLinearImageOperatorListClass::UpdateLineExtentData()
+HRESULT SVLinearImageOperatorList::UpdateLineExtentData()
 {
 	HRESULT l_hrOk = S_FALSE;
 
@@ -360,7 +360,7 @@ HRESULT SVLinearImageOperatorListClass::UpdateLineExtentData()
 	return l_hrOk;
 }
 
-void SVLinearImageOperatorListClass::ResetLogicalROIImage()
+void SVLinearImageOperatorList::ResetLogicalROIImage()
 {
 	BOOL UseRotation = TRUE;
 	if ((S_OK == getUseRotationAngle(UseRotation)) && !UseRotation)
@@ -383,7 +383,7 @@ void SVLinearImageOperatorListClass::ResetLogicalROIImage()
 	}
 }
 
-bool SVLinearImageOperatorListClass::RunLocalRotation(SVRunStatusClass &rRunStatus, SvTrc::IImagePtr pInputBuffer, SvTrc::IImagePtr pOutputBuffer, const SVImageExtentClass& rImageExtent)
+bool SVLinearImageOperatorList::RunLocalRotation(SVRunStatusClass &rRunStatus, SvTrc::IImagePtr pInputBuffer, SvTrc::IImagePtr pOutputBuffer, const SVImageExtentClass& rImageExtent)
 {
 	bool childUpdateCounters = rRunStatus.m_UpdateCounters;
 

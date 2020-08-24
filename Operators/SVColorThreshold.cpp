@@ -29,27 +29,27 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS(SVColorThresholdClass, SvPb::ColorThresholdClassId)
+SV_IMPLEMENT_CLASS(SVColorThreshold, SvPb::ColorThresholdClassId)
 
 #pragma region Constructor
-SVColorThresholdClass::SVColorThresholdClass(SVObjectClass* POwner, int StringResourceID)
-	:SVOperatorClass(POwner, StringResourceID)
+SVColorThreshold::SVColorThreshold(SVObjectClass* POwner, int StringResourceID)
+	:SVOperator(POwner, StringResourceID)
 {
 	LocalInitialize();
 }
 
-SVColorThresholdClass::~SVColorThresholdClass()
+SVColorThreshold::~SVColorThreshold()
 {
-	SVColorThresholdClass::CloseObject();
+	SVColorThreshold::CloseObject();
 }
 #pragma endregion Constructor
 
 #pragma region Public Methods
-bool SVColorThresholdClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
+bool SVColorThreshold::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 {
-	bool bOk = SVOperatorClass::CreateObject(rCreateStructure);
+	bool bOk = SVOperator::CreateObject(rCreateStructure);
 
-	// Owner can only be : SVOperatorClass !!!
+	// Owner can only be : SVOperator !!!
 	if (bOk)
 	{
 		try
@@ -80,7 +80,7 @@ bool SVColorThresholdClass::CreateObject(const SVObjectLevelCreateStruct& rCreat
 	return bOk;
 }
 
-bool SVColorThresholdClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
+bool SVColorThreshold::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	for (auto& rEntry : m_BandThreshold)
 	{
@@ -125,10 +125,10 @@ bool SVColorThresholdClass::ResetObject(SvStl::MessageContainerVector *pErrorMes
 		}
 	}
 
-	return SVOperatorClass::ResetObject(pErrorMessages) && Result;
+	return SVOperator::ResetObject(pErrorMessages) && Result;
 }
 
-BandThreshold* SVColorThresholdClass::GetBandThreshold(SvDef::BandEnum Band)
+BandThreshold* SVColorThreshold::GetBandThreshold(SvDef::BandEnum Band)
 {
 	if (SvDef::BandEnum::Band0 <= Band && SvDef::BandEnum::Band2 >= Band)
 	{
@@ -139,7 +139,7 @@ BandThreshold* SVColorThresholdClass::GetBandThreshold(SvDef::BandEnum Band)
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
-bool SVColorThresholdClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool SVColorThreshold::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = true;
 
@@ -253,7 +253,7 @@ bool SVColorThresholdClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageCo
 #pragma endregion Protected Methods
 
 #pragma region Private Methods
-void SVColorThresholdClass::LocalInitialize()
+void SVColorThreshold::LocalInitialize()
 {
 	// Identify our output type
 	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVOperatorObjectType;
@@ -340,7 +340,7 @@ void SVColorThresholdClass::LocalInitialize()
 	addDefaultInputObjects();
 }
 
-bool SVColorThresholdClass::createImages()
+bool SVColorThreshold::createImages()
 {
 	for (SvDef::BandEnum Band : SvDef::BandList)
 	{
@@ -353,7 +353,7 @@ bool SVColorThresholdClass::createImages()
 	return true;
 }
 
-bool SVColorThresholdClass::createOutputImage(SvIe::SVImageClass* pInputImage, SvIe::SVImageClass* pOutputImage)
+bool SVColorThreshold::createOutputImage(SvIe::SVImageClass* pInputImage, SvIe::SVImageClass* pOutputImage)
 {
 	bool Result(false);
 
@@ -382,7 +382,7 @@ bool SVColorThresholdClass::createOutputImage(SvIe::SVImageClass* pInputImage, S
 	return Result;
 }
 
-bool SVColorThresholdClass::Binarize(long lower, long upper, BOOL bExclude, SvTrc::IImagePtr pInputImage, SvTrc::IImagePtr pOutputImage)
+bool SVColorThreshold::Binarize(long lower, long upper, BOOL bExclude, SvTrc::IImagePtr pInputImage, SvTrc::IImagePtr pOutputImage)
 {
 	bool Result(false);
 
@@ -412,7 +412,7 @@ bool SVColorThresholdClass::Binarize(long lower, long upper, BOOL bExclude, SvTr
 	return Result;
 }
 
-bool SVColorThresholdClass::ValidateLocal() const
+bool SVColorThreshold::ValidateLocal() const
 {
 	bool Result(true);
 
@@ -436,7 +436,7 @@ bool SVColorThresholdClass::ValidateLocal() const
 	return Result;
 }
 
-SvIe::SVImageClass* SVColorThresholdClass::GetBandInputImage(SvDef::BandEnum Band, bool bRunMode /*= false*/)
+SvIe::SVImageClass* SVColorThreshold::GetBandInputImage(SvDef::BandEnum Band, bool bRunMode /*= false*/)
 {
 	return SvOl::getInput<SvIe::SVImageClass>(m_BandThreshold[Band].m_InputImage, bRunMode);
 }

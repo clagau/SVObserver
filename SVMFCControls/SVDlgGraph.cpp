@@ -26,7 +26,7 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvMc
 {
-	SVDlgGraphClass::SVDlgGraphClass()
+	SVDlgGraph::SVDlgGraph()
 	{
 		pProcFunc = nullptr;
 		pUserData = nullptr;
@@ -40,15 +40,17 @@ namespace SvMc
 		mrgbGraphColor = RGB(0,0,0);	// default black
 		m_lXMax = 0;
 		m_lYMax = 0;
+		m_lXMin = 0;
+		m_lYMin = 0;
 	}
 
-	SVDlgGraphClass::~SVDlgGraphClass()
+	SVDlgGraph::~SVDlgGraph()
 	{
 	}
 
 
-	BEGIN_MESSAGE_MAP(SVDlgGraphClass, CStatic)
-		//{{AFX_MSG_MAP(SVDlgGraphClass)
+	BEGIN_MESSAGE_MAP(SVDlgGraph, CStatic)
+		//{{AFX_MSG_MAP(SVDlgGraph)
 		ON_WM_LBUTTONDOWN()
 		ON_WM_LBUTTONUP()
 		ON_WM_MOUSEMOVE()
@@ -56,7 +58,7 @@ namespace SvMc
 		//}}AFX_MSG_MAP
 	END_MESSAGE_MAP()
 
-	BOOL SVDlgGraphClass::SetPoints( const SvCl::SVObjectByteArrayClass& rByteVec ) 
+	BOOL SVDlgGraph::SetPoints( const SvCl::SVObjectByteArrayClass& rByteVec ) 
 	{
 		int size = static_cast<int> (rByteVec.size());
 		m_PointVec.resize( size );
@@ -70,7 +72,7 @@ namespace SvMc
 		return( Normalize() && RedrawWindow() );
 	}
 
-	BOOL SVDlgGraphClass::SetPoints( const SvCl::SVObjectLongArrayClass& rLongVec ) 
+	BOOL SVDlgGraph::SetPoints( const SvCl::SVObjectLongArrayClass& rLongVec ) 
 	{
 		int size = static_cast<int> (rLongVec.size());
 		m_PointVec.resize( size );
@@ -84,7 +86,7 @@ namespace SvMc
 		return( Normalize() && RedrawWindow() );
 	}
 
-	BOOL SVDlgGraphClass::SetPoints( const SvCl::SVObjectDoubleArrayClass& rDoubleVec ) 
+	BOOL SVDlgGraph::SetPoints( const SvCl::SVObjectDoubleArrayClass& rDoubleVec ) 
 	{
 		int size = static_cast<int> (rDoubleVec.size());
 		m_PointVec.resize( size );
@@ -98,14 +100,14 @@ namespace SvMc
 		return( Normalize() && RedrawWindow() );
 	}
 
-	BOOL SVDlgGraphClass::SetPoints( const SvCl::SVObjectPointArrayClass& rPointVec ) 
+	BOOL SVDlgGraph::SetPoints( const SvCl::SVObjectPointArrayClass& rPointVec ) 
 	{
 		m_PointVec = rPointVec;
 
 		return( Normalize() && RedrawWindow() );
 	}
 
-	BOOL SVDlgGraphClass::SetMousePointProcFunc( SVProcMousePointFunc PFunc, LPVOID PUserData )
+	BOOL SVDlgGraph::SetMousePointProcFunc( SVProcMousePointFunc PFunc, LPVOID PUserData )
 	{
 		pProcFunc = PFunc;
 		pUserData = PUserData;
@@ -113,12 +115,12 @@ namespace SvMc
 		return TRUE;
 	}
 
-	void SVDlgGraphClass::SetNormalizeMode( SVNormalizeModeEnum NormalizeMode ) 
+	void SVDlgGraph::SetNormalizeMode( SVNormalizeModeEnum NormalizeMode ) 
 	{
 		normalizeMode = NormalizeMode;
 	}
 
-	BOOL SVDlgGraphClass::Normalize() 
+	BOOL SVDlgGraph::Normalize() 
 	{
 		if( ::IsWindow( m_hWnd ) )
 		{
@@ -193,7 +195,7 @@ namespace SvMc
 		return FALSE;
 	}
 
-	void SVDlgGraphClass::Retransform( CPoint& RPoint ) 
+	void SVDlgGraph::Retransform( CPoint& RPoint ) 
 	{
 		if( xMult != 0.0 )
 			RPoint.x = ( long ) ( ( double ) RPoint.x / xMult ) - xDisp;
@@ -203,9 +205,9 @@ namespace SvMc
 	}
 
 	/////////////////////////////////////////////////////////////////////////////
-	// SVDlgGraphClass message handlers
+	// SVDlgGraph message handlers
 
-	void SVDlgGraphClass::OnLButtonDown(UINT , CPoint point) 
+	void SVDlgGraph::OnLButtonDown(UINT , CPoint point) 
 	{
 		bButtonDown = TRUE;
 		if( pProcFunc )
@@ -225,7 +227,7 @@ namespace SvMc
 		}
 	}
 
-	void SVDlgGraphClass::OnLButtonUp(UINT , CPoint ) 
+	void SVDlgGraph::OnLButtonUp(UINT , CPoint ) 
 	{
 		bButtonDown = FALSE;
 
@@ -234,7 +236,7 @@ namespace SvMc
 			ReleaseCapture();
 	}
 
-	void SVDlgGraphClass::OnMouseMove(UINT , CPoint point) 
+	void SVDlgGraph::OnMouseMove(UINT , CPoint point) 
 	{
 		if( bButtonDown && pProcFunc )
 		{
@@ -247,7 +249,7 @@ namespace SvMc
 		}
 	}
 
-	void SVDlgGraphClass::OnPaint() 
+	void SVDlgGraph::OnPaint() 
 	{
 		CPaintDC dc(this); // device context for painting
 
@@ -284,7 +286,7 @@ namespace SvMc
 		// Do not call CStatic::OnPaint() for painting messages
 	}
 
-	BOOL SVDlgGraphClass::SetColor(COLORREF rgb, BOOL bRedraw)
+	BOOL SVDlgGraph::SetColor(COLORREF rgb, BOOL bRedraw)
 	{
 		mrgbGraphColor = rgb;
 		if ( bRedraw )
@@ -292,7 +294,7 @@ namespace SvMc
 		return TRUE;
 	}
 
-	void SVDlgGraphClass::SetXYMinMax(long lXMin, long lYMin, long lXMax, long lYMax)
+	void SVDlgGraph::SetXYMinMax(long lXMin, long lYMin, long lXMax, long lYMax)
 	{
 		m_lXMin = lXMin;
 		m_lYMin = lYMin;

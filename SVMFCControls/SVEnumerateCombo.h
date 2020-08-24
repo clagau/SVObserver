@@ -17,11 +17,11 @@
 
 namespace SvMc
 {
-	class SVEnumerateComboClass : public CComboBox
+	class SVEnumerateCombo : public CComboBox
 	{
 	public:
-		SVEnumerateComboClass();
-		virtual ~SVEnumerateComboClass();
+		SVEnumerateCombo();
+		virtual ~SVEnumerateCombo();
 
 		bool SetEnumTypes(const SvOi::NameValueVector& rEnumList);
 

@@ -1082,7 +1082,7 @@ inline void SVConfigXMLPrint::WriteObject(Writer writer, SVObjectClass* pObject)
 				}
 			}
 
-			if (SvOp::SVDoubleResultClass* pBlobResult = dynamic_cast<SvOp::SVDoubleResultClass*>(pObject))
+			if (SvOp::SVDoubleResult* pBlobResult = dynamic_cast<SvOp::SVDoubleResult*>(pObject))
 			{
 				if (SV_IS_KIND_OF(pBlobResult->GetParent(), SvAo::SVBlobAnalyzerClass))
 				{
@@ -1104,7 +1104,7 @@ inline void SVConfigXMLPrint::WriteObject(Writer writer, SVObjectClass* pObject)
 			auto* pTask = dynamic_cast<SvIe::SVTaskObjectClass*>(pObject);
 			if (nullptr != pTask)
 			{
-				if (SvOp::SVEquationClass* pEquation = dynamic_cast <SvOp::SVEquationClass*> (pObject))
+				if (SvOp::SVEquation* pEquation = dynamic_cast <SvOp::SVEquation*> (pObject))
 				{
 					sValue = pEquation->GetEquationText();
 
@@ -1145,7 +1145,7 @@ void SVConfigXMLPrint::WriteChildren(Writer writer, SVObjectClass* pObj) const
 	if (SvIe::SVTaskObjectListClass* pTaskObj = dynamic_cast <SvIe::SVTaskObjectListClass*> (pObj))
 	{
 		writer->WriteStartElement(nullptr, L"Children", nullptr);
-		if (SVToolSetClass* pToolSet = dynamic_cast <SVToolSetClass *>(pObj))
+		if (SVToolSet* pToolSet = dynamic_cast <SVToolSet *>(pObj))
 		{
 			SVToolGrouping toolGroupings = GetToolGroupings(pToolSet->GetInspection()->getObjectId());
 			if (toolGroupings.size())

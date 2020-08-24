@@ -57,7 +57,7 @@ bool TableTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure 
 	//set equation for table tool
 	for( size_t j = 0; j < m_friendList.size(); j++ )
 	{
-		SvOp::SVEquationClass* pEquation = dynamic_cast<SvOp::SVEquationClass*> (m_friendList[j].getObject());
+		SvOp::SVEquation* pEquation = dynamic_cast<SvOp::SVEquation*> (m_friendList[j].getObject());
 		if (nullptr != pEquation)
 		{
 			if (SvDef::TableClearEquationName == std::string(pEquation->GetName()))

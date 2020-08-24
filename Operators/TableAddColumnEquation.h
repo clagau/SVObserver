@@ -20,7 +20,7 @@ class SVLongValueObjectClass;
 namespace SvOp
 {
 
-class TableAddColumnEquation : public SVEquationClass
+class TableAddColumnEquation : public SVEquation
 {
 	SV_DECLARE_CLASS(TableAddColumnEquation);
 

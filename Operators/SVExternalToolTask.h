@@ -32,7 +32,7 @@
 namespace SvOp
 {
 class TableObject;
-class SVResultClass;
+class SVResult;
 class SVExternalToolTask;
 struct SVExternalToolTaskData
 {
@@ -155,8 +155,8 @@ protected:
 
 	SvVol::SVVariantValueObjectClass* GetResultValueObject(int iIndex);
 	SvOp::TableObject*  GetResultTableObject(int iIndex);
-	SVResultClass* GetResultRangeObject(int iIndex);
-	std::vector<SVResultClass*> GetResultRangeObjects();
+	SVResult* GetResultRangeObject(int iIndex);
+	std::vector<SVResult*> GetResultRangeObjects();
 
 	HRESULT AllocateResult (int iIndex);
 

@@ -322,7 +322,7 @@ HRESULT  ResultViewReferences::GetResultDefinitions( SVResultDefinitionVector &r
 
 void ResultViewReferences::InsertFromOutputList(SVInspectionProcess* pInspection)
 {
-	SVToolSetClass* pToolSet = nullptr;
+	SVToolSet* pToolSet = nullptr;
 	if( nullptr != pInspection )
 	{
 		pToolSet = pInspection->GetToolSet();

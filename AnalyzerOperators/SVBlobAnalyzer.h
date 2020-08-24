@@ -26,7 +26,7 @@
 
 namespace SvOp
 {
-class SVLongResultClass;
+class SVLongResult;
 class TableObject;
 }
 
@@ -121,7 +121,7 @@ public:
 /*- Each enabled feature is associated with its own result. This function      */
 /*- will hand back the associated with the feature which is referenced by      */ 
 /*- aFeatureIndex. ------------------------------------------------------------*/
-	SvOp::SVLongResultClass* GetBlobResultObject();
+	SvOp::SVLongResult* GetBlobResultObject();
 
 	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
@@ -129,7 +129,7 @@ public:
 	virtual	SvDef::StringVector getAnalyzerResult() override;
 	virtual void addParameterForMonitorList(SvStl::MessageContainerVector& rMessages, std::back_insert_iterator<SvOi::ParametersForML> inserter) const override;
 
-	SvOp::SVLongResultClass*           m_pResultBlob;
+	SvOp::SVLongResult*           m_pResultBlob;
 	SvVol::SVStringValueObjectClass     m_PersistantFeaturesEnabled;
 
 	SvVol::SVDoubleValueObjectClass     m_Value[SvOi::SV_NUMBER_OF_BLOB_FEATURES];

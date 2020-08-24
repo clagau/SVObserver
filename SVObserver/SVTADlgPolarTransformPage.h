@@ -27,7 +27,7 @@ namespace SvOi
 }
 namespace SvOp
 {
-class SVEvaluateClass;
+class SVEvaluate;
 }
 namespace SvVol
 {
@@ -75,8 +75,8 @@ protected:
 public:
 	//{{AFX_DATA(SVToolAdjustmentDialogPolarTransformPageClass)
 	enum { IDD = IDD_TA_POLARTRANSFORM_DIALOG };
-	SvMc::SVEnumerateComboClass	m_AngularMethodCombo;
-	SvMc::SVEnumerateComboClass	interpolationComboCtrl;
+	SvMc::SVEnumerateCombo	m_AngularMethodCombo;
+	SvMc::SVEnumerateCombo	interpolationComboCtrl;
 	CString	m_CenterXValue;
 	CString	m_CenterYValue;
 	CString	m_StartRadiusValue;
@@ -92,22 +92,22 @@ protected:
 
 	uint32_t m_ImagePolarTransformID = SvDef::InvalidObjectId;
 
-	SvOp::SVEvaluateClass* m_pEvaluateCenterX;
+	SvOp::SVEvaluate* m_pEvaluateCenterX;
 	SvVol::SVDoubleValueObjectClass* m_pCenterXResult;
 
-	SvOp::SVEvaluateClass* m_pEvaluateCenterY;
+	SvOp::SVEvaluate* m_pEvaluateCenterY;
 	SvVol::SVDoubleValueObjectClass* m_pCenterYResult;
 
-	SvOp::SVEvaluateClass* m_pEvaluateStartRadius;
+	SvOp::SVEvaluate* m_pEvaluateStartRadius;
 	SvVol::SVDoubleValueObjectClass* m_pStartRadiusResult;
 
-	SvOp::SVEvaluateClass* m_pEvaluateEndRadius;
+	SvOp::SVEvaluate* m_pEvaluateEndRadius;
 	SvVol::SVDoubleValueObjectClass* m_pEndRadiusResult;
 
-	SvOp::SVEvaluateClass* m_pEvaluateStartAngle;
+	SvOp::SVEvaluate* m_pEvaluateStartAngle;
 	SvVol::SVDoubleValueObjectClass* m_pStartAngleResult;
 
-	SvOp::SVEvaluateClass* m_pEvaluateEndAngle;
+	SvOp::SVEvaluate* m_pEvaluateEndAngle;
 	SvVol::SVDoubleValueObjectClass* m_pEndAngleResult;
 
 	SvVol::SVBoolValueObjectClass*	m_pUseFormula;

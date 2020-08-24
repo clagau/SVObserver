@@ -2,7 +2,7 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVIOAdjustDialogClass
+//* .Module Name     : SVIOAdjustDialog
 //* .File Name       : $Workfile:   SVIOAdjustDialog.cpp  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.6  $
@@ -31,20 +31,20 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-BEGIN_MESSAGE_MAP(SVIOAdjustDialogClass, CDialog)
-	//{{AFX_MSG_MAP(SVIOAdjustDialogClass)
+BEGIN_MESSAGE_MAP(SVIOAdjustDialog, CDialog)
+	//{{AFX_MSG_MAP(SVIOAdjustDialog)
 	ON_CBN_SELCHANGE(IDC_IONAME_COMBO, OnSelChangeIOCombo)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-SVIOAdjustDialogClass::SVIOAdjustDialogClass(CWnd* pParent /*=nullptr*/) : CDialog(SVIOAdjustDialogClass::IDD, pParent)
+SVIOAdjustDialog::SVIOAdjustDialog(CWnd* pParent /*=nullptr*/) : CDialog(SVIOAdjustDialog::IDD, pParent)
 {
 }
 
-void SVIOAdjustDialogClass::DoDataExchange(CDataExchange* pDX)
+void SVIOAdjustDialog::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(SVIOAdjustDialogClass)
+	//{{AFX_DATA_MAP(SVIOAdjustDialog)
 	DDX_Control(pDX, IDC_IONAME_COMBO, IOCombo);
 	DDX_Text(pDX, IDC_VALUE_STATIC, IOValue);
 	DDX_Check(pDX, IDC_FORCE_CHECK, IsForced);
@@ -57,7 +57,7 @@ void SVIOAdjustDialogClass::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-void SVIOAdjustDialogClass::OnOK()
+void SVIOAdjustDialog::OnOK()
 {
 	CDialog::OnOK();
 
@@ -97,7 +97,7 @@ void SVIOAdjustDialogClass::OnOK()
 	}
 }
 
-BOOL SVIOAdjustDialogClass::OnInitDialog()
+BOOL SVIOAdjustDialog::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
@@ -245,7 +245,7 @@ BOOL SVIOAdjustDialogClass::OnInitDialog()
 	              // EXCEPTION: OCX-Eigenschaftenseiten sollten FALSE zurückgeben
 }// end OnInitDialog
 
-void SVIOAdjustDialogClass::OnSelChangeIOCombo()
+void SVIOAdjustDialog::OnSelChangeIOCombo()
 {
 	int curSel = IOCombo.GetCurSel();
 	if(curSel != CB_ERR)
@@ -325,7 +325,7 @@ void SVIOAdjustDialogClass::OnSelChangeIOCombo()
 
 }// end OnSelChangeIOCombo
 
-void SVIOAdjustDialogClass::showForcedGroup(int showState)
+void SVIOAdjustDialog::showForcedGroup(int showState)
 {
 	 CWnd* pWnd = GetDlgItem(IDC_FORCE_GROUP);
 	if (pWnd) { pWnd->ShowWindow(showState); }
@@ -337,7 +337,7 @@ void SVIOAdjustDialogClass::showForcedGroup(int showState)
 	if (pWnd) { pWnd->ShowWindow(showState); }
 }
 
-void SVIOAdjustDialogClass::showInvertGroup(int showState)
+void SVIOAdjustDialog::showInvertGroup(int showState)
 {
 	CWnd* pWnd = GetDlgItem(IDC_INVERT_GROUP);
 	if (pWnd) { pWnd->ShowWindow(showState); }
@@ -345,7 +345,7 @@ void SVIOAdjustDialogClass::showInvertGroup(int showState)
 	if (pWnd) { pWnd->ShowWindow(showState); }
 }
 
-void SVIOAdjustDialogClass::showCombinedGroup(int showState)
+void SVIOAdjustDialog::showCombinedGroup(int showState)
 {
 	CWnd* pWnd = GetDlgItem(IDC_COMBINE_GROUP);
 	if (pWnd) { pWnd->ShowWindow(showState); }

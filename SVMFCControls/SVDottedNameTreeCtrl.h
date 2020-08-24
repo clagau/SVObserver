@@ -13,13 +13,13 @@
 
 namespace SvMc
 {
-	class SVDottedNameTreeCtrlClass : public CTreeCtrl
+	class SVDottedNameTreeCtrl : public CTreeCtrl
 	{
-		DECLARE_DYNCREATE(SVDottedNameTreeCtrlClass)
+		DECLARE_DYNCREATE(SVDottedNameTreeCtrl)
 
 		// Construction
 	public:
-		SVDottedNameTreeCtrlClass();
+		SVDottedNameTreeCtrl();
 
 		// Attributes
 	public:
@@ -32,16 +32,16 @@ namespace SvMc
 
 		// Overrides
 		// ClassWizard generated virtual function overrides
-		//{{AFX_VIRTUAL(SVDottedNameTreeCtrlClass)
+		//{{AFX_VIRTUAL(SVDottedNameTreeCtrl)
 		//}}AFX_VIRTUAL
 
 		// Implementation
 	public:
-		virtual ~SVDottedNameTreeCtrlClass();
+		virtual ~SVDottedNameTreeCtrl();
 
 		// Generated message map functions
 	protected:
-		//{{AFX_MSG(SVDottedNameTreeCtrlClass)
+		//{{AFX_MSG(SVDottedNameTreeCtrl)
 		// NOTE - the ClassWizard will add and remove member functions here.
 		//}}AFX_MSG
 

@@ -56,7 +56,7 @@ void SVTransformationToolClass::init()
 	// Default taskObjectList items:
 
 	// Setup the evaluation clases
-	SvOp::SVEvaluateClass* pEvaluate = new SvOp::SVEvaluateTranslationXClass;
+	SvOp::SVEvaluate* pEvaluate = new SvOp::SVEvaluateTranslationXClass;
 	if( pEvaluate ) Add( pEvaluate );
 
 	pEvaluate = new SvOp::SVEvaluateTranslationYClass;
@@ -72,7 +72,7 @@ void SVTransformationToolClass::init()
 	if( pEvaluate )	Add( pEvaluate );
 
 	// Add the Image Transformation Class
-	SvOp::SVImageTransformClass* pTransform = new SvOp::SVImageTransformClass;
+	SvOp::SVImageTransform* pTransform = new SvOp::SVImageTransform;
 	if( pTransform ) Add( pTransform );
 
 	removeEmbeddedExtents();

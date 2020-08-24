@@ -20,7 +20,7 @@ class SVStatisticsToolClass;
 }
 
 class SVToolAdjustmentDialogSheetClass;
-class SVToolSetClass;
+class SVToolSet;
 
 class SVToolAdjustmentDialogStatisticsPageClass : public CPropertyPage
 {

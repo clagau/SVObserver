@@ -2,8 +2,8 @@
 //* COPYRIGHT (c) 2013 by Seidenader Vision Inc., Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVScrollWnd1Ctl
-//* .File Name       : $Workfile:   SVScrollWnd1Ctl.h  $
+//* .Module Name     : SVScrollWnd1Ctrl
+//* .File Name       : $Workfile:   SVScrollWnd1Ctrl.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   26 Apr 2013 14:09:24  $

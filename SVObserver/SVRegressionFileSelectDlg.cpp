@@ -34,30 +34,32 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
-// CSVRegressionFileSelectDlg property page
+// SVRegressionFileSelectDlg property page
 
-IMPLEMENT_DYNCREATE(CSVRegressionFileSelectDlg, CPropertyPage)
+IMPLEMENT_DYNCREATE(SVRegressionFileSelectDlg, CPropertyPage)
 
-CSVRegressionFileSelectDlg::CSVRegressionFileSelectDlg(LPCTSTR lptstrDialogName) : CPropertyPage(CSVRegressionFileSelectDlg::IDD)
+SVRegressionFileSelectDlg::SVRegressionFileSelectDlg(LPCTSTR lptstrDialogName) : CPropertyPage(SVRegressionFileSelectDlg::IDD)
 {
 	
-	//{{AFX_DATA_INIT(CSVRegressionFileSelectDlg)
+	//{{AFX_DATA_INIT(SVRegressionFileSelectDlg)
 	m_iSelectFileRadio = RegressionFileEnum::RegNone;
 	m_RegTestFiles = _T("");
 	//}}AFX_DATA_INIT
 	m_strCaption = lptstrDialogName;
 	m_psp.pszTitle = m_strCaption;
 	m_psp.dwFlags |= PSP_USETITLE;
+	m_pParent = nullptr;
+
 }
 
-CSVRegressionFileSelectDlg::~CSVRegressionFileSelectDlg()
+SVRegressionFileSelectDlg::~SVRegressionFileSelectDlg()
 {
 }
 
-void CSVRegressionFileSelectDlg::DoDataExchange(CDataExchange* pDX)
+void SVRegressionFileSelectDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CPropertyPage::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(CSVRegressionFileSelectDlg)
+	//{{AFX_DATA_MAP(SVRegressionFileSelectDlg)
 	DDX_Control(pDX, IDC_BTN_REG_TEST_BROWSE_FILES, m_btnBrowseFiles);
 	DDX_Radio(pDX, IDC_RADIO_REG_LIST, m_iSelectFileRadio);
 	DDX_Text(pDX, IDC_EDIT_REG_SELECTED_FILES, m_RegTestFiles);
@@ -65,8 +67,8 @@ void CSVRegressionFileSelectDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 
-BEGIN_MESSAGE_MAP(CSVRegressionFileSelectDlg, CPropertyPage)
-	//{{AFX_MSG_MAP(CSVRegressionFileSelectDlg)
+BEGIN_MESSAGE_MAP(SVRegressionFileSelectDlg, CPropertyPage)
+	//{{AFX_MSG_MAP(SVRegressionFileSelectDlg)
 	ON_BN_CLICKED(IDC_BTN_REG_TEST_BROWSE_FILES, OnBtnRegTestBrowseFiles)
 	ON_BN_CLICKED(IDC_RADIO_REG_LIST, OnRadioRegUpdate)
 	ON_BN_CLICKED(IDC_RADIO_REG_NONE, OnRadioRegUpdate)
@@ -77,14 +79,14 @@ BEGIN_MESSAGE_MAP(CSVRegressionFileSelectDlg, CPropertyPage)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
-// CSVRegressionFileSelectDlg message handlers
+// SVRegressionFileSelectDlg message handlers
 
-void CSVRegressionFileSelectDlg::SetDlgTitle( LPCTSTR lpszTitle )
+void SVRegressionFileSelectDlg::SetDlgTitle( LPCTSTR lpszTitle )
 {
 	m_DialogName = lpszTitle;
 }
 
-void CSVRegressionFileSelectDlg::OnBtnRegTestBrowseFiles() 
+void SVRegressionFileSelectDlg::OnBtnRegTestBrowseFiles() 
 {
 	UpdateData(true);
 	int CameraNumber(0); 
@@ -130,7 +132,7 @@ void CSVRegressionFileSelectDlg::OnBtnRegTestBrowseFiles()
 	UpdateData(FALSE);
 }
 
-BOOL CSVRegressionFileSelectDlg::OnInitDialog() 
+BOOL SVRegressionFileSelectDlg::OnInitDialog() 
 {
 	CPropertyPage::OnInitDialog();
 
@@ -142,29 +144,29 @@ BOOL CSVRegressionFileSelectDlg::OnInitDialog()
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-RegressionFileEnum CSVRegressionFileSelectDlg::GetFileSelectType()
+RegressionFileEnum SVRegressionFileSelectDlg::GetFileSelectType()
 {
 	UpdateData(TRUE);
 	return (RegressionFileEnum)m_iSelectFileRadio;
 }
 
-CString CSVRegressionFileSelectDlg::GetSelectedFile()
+CString SVRegressionFileSelectDlg::GetSelectedFile()
 {
 	return m_RegTestFiles;
 }
 
-CString CSVRegressionFileSelectDlg::GetPageName()
+CString SVRegressionFileSelectDlg::GetPageName()
 {
 	return m_strCaption;
 }
 
 
-void CSVRegressionFileSelectDlg::OnRadioRegUpdate() 
+void SVRegressionFileSelectDlg::OnRadioRegUpdate() 
 {
 	UpdateData(TRUE);
 }
 
-void CSVRegressionFileSelectDlg::SetRegressionData(RegressionTestStruct *pDataStruct)
+void SVRegressionFileSelectDlg::SetRegressionData(RegressionTestStruct *pDataStruct)
 {
 	//set data from the struct...
 	m_iSelectFileRadio = pDataStruct->iFileMethod;
@@ -173,7 +175,7 @@ void CSVRegressionFileSelectDlg::SetRegressionData(RegressionTestStruct *pDataSt
 	UpdateData(FALSE);
 }
 
-void CSVRegressionFileSelectDlg::ShowSelectFileDlg(bool bFullAccess)
+void SVRegressionFileSelectDlg::ShowSelectFileDlg(bool bFullAccess)
 {
 	static TCHAR Filter[] = _T("BMP Files (*.bmp)|*.bmp|Image Files (*.bmp)|*.bmp||");
 	SvMc::SVFileDialog dlg(true, bFullAccess, nullptr, nullptr, 0, Filter, nullptr);
@@ -209,7 +211,7 @@ void CSVRegressionFileSelectDlg::ShowSelectFileDlg(bool bFullAccess)
 	}
 }
 
-void CSVRegressionFileSelectDlg::ShowSelectDirectoryDlg(bool bFullAccess)
+void SVRegressionFileSelectDlg::ShowSelectDirectoryDlg(bool bFullAccess)
 {
 //	CFolderDialog dlg(_T("Select Directories"), m_RegistryPath.c_str(), this);
 	SvMc::SVDlgFolder dlg(bFullAccess, m_RegistryPath.c_str());

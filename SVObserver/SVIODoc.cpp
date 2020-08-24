@@ -320,7 +320,7 @@ void SVIODoc::OnEditGlobalConstantAdd()
 void SVIODoc::InitMenu()
 {
 	// Load Utilities Menu
-	SVUtilitiesClass util;
+	SVUtilities util;
 
 	CWnd* pWindow = AfxGetMainWnd();
 	CMenu* pMenu = (nullptr != pWindow) ? pWindow->GetMenu() : nullptr;

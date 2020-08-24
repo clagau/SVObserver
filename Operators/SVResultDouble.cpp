@@ -27,10 +27,10 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVDoubleResultClass, SvPb::DoubleResultClassId);
+SV_IMPLEMENT_CLASS( SVDoubleResult, SvPb::DoubleResultClassId);
 
-SVDoubleResultClass::SVDoubleResultClass( SVObjectClass* POwner, int StringResourceID )
-				  :SVResultClass( POwner, StringResourceID )
+SVDoubleResult::SVDoubleResult( SVObjectClass* POwner, int StringResourceID )
+				  :SVResult( POwner, StringResourceID )
 {
 	// Identify yourself
 	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVResultObjectType;
@@ -49,24 +49,24 @@ SVDoubleResultClass::SVDoubleResultClass( SVObjectClass* POwner, int StringResou
 	m_Value.setSaveValueFlag(false);
 	// Instantiate Dynamic Objects
 
-	// Construct the SVRangeClass via the ClassInfoStruct
+	// Construct the SVRange via the ClassInfoStruct
 	SvIe::SVClassInfoStruct rangeClassInfo;
 	SvDef::SVObjectTypeInfoStruct interfaceInfo;
 
-	// Declare Input Interface of the SVRangeClass...
+	// Declare Input Interface of the SVRange...
 	interfaceInfo.m_ObjectType = SvPb::SVValueObjectType;
 	interfaceInfo.m_SubType = SvPb::SVDoubleValueObjectType;
 	interfaceInfo.m_EmbeddedID = SvPb::ValueEId;
 	rangeClassInfo.m_DesiredInputVector.push_back( interfaceInfo );
 
-	// Describe the SVRangeClass...
+	// Describe the SVRange...
 	rangeClassInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVRangeObjectType;
 	rangeClassInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVNotSetSubObjectType;
 	rangeClassInfo.m_ClassId = SvPb::RangeClassId;
 	rangeClassInfo.m_ClassName = SvUl::LoadStdString( IDS_CLASSNAME_SVRANGE );
 
 	//  Construct it
-	SVRangeClass* pRange = dynamic_cast<SVRangeClass*>(rangeClassInfo.Construct()); 
+	SVRange* pRange = dynamic_cast<SVRange*>(rangeClassInfo.Construct()); 
 	if (pRange)
 	{
 		Add(pRange);
@@ -76,14 +76,14 @@ SVDoubleResultClass::SVDoubleResultClass( SVObjectClass* POwner, int StringResou
 	addDefaultInputObjects();
 }
 
-SVDoubleResultClass::~SVDoubleResultClass()
+SVDoubleResult::~SVDoubleResult()
 {
-	SVDoubleResultClass::CloseObject();
+	SVDoubleResult::CloseObject();
 }
 
-bool SVDoubleResultClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
+bool SVDoubleResult::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool bOk = SVResultClass::CreateObject(rCreateStructure ) && nullptr != getInput();
+	bool bOk = SVResult::CreateObject(rCreateStructure ) && nullptr != getInput();
 
 	m_Value.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
 
@@ -92,7 +92,7 @@ bool SVDoubleResultClass::CreateObject( const SVObjectLevelCreateStruct& rCreate
 	return bOk;
 }
 
-bool SVDoubleResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVDoubleResult::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	// All inputs and outputs must be validated first
 	if( __super::onRun(rRunStatus, pErrorMessages) )

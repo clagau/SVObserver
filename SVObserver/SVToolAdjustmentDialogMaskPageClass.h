@@ -77,15 +77,15 @@ protected:
 	CButton	m_btnEditStaticMask;
 	CButton	m_btnEditShapeMask;
 	CEdit m_ebFillColor;
-	SvMc::SVEnumerateComboClass m_cbFillOptions;
+	SvMc::SVEnumerateCombo m_cbFillOptions;
 	CButton	m_btnFillColorMore;
 	SvMc::AvailableObjectListComboBox<uint32_t> m_cbAvailableSourceImageList;
-	SvMc::SVEnumerateComboClass m_cbMaskOperator;
+	SvMc::SVEnumerateCombo m_cbMaskOperator;
 	SvOg::PictureDisplay m_dialogImage;
 	BOOL m_bActivateMask;
 	int m_iMaskType;
 	CString	m_sFillColor;
-	SvMc::SVEnumerateComboClass m_DrawCriteriaCombo;
+	SvMc::SVEnumerateCombo m_DrawCriteriaCombo;
 	//}}AFX_DATA
 
 	SvMc::SVMaskEditor* m_pMaskEditorCtl;

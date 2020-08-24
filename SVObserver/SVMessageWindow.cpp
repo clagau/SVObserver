@@ -2,7 +2,7 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVMessageWindowClass
+//* .Module Name     : SVMessageWindow
 //* .File Name       : $Workfile:   SVMessageWindow.cpp  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $
@@ -20,32 +20,32 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
-// Dialogfeld SVMessageWindowClass 
+// Dialogfeld SVMessageWindow 
 
 
-SVMessageWindowClass::SVMessageWindowClass(CWnd* pParent /*=nullptr*/)
-	: CDialog(SVMessageWindowClass::IDD, pParent)
+SVMessageWindow::SVMessageWindow(CWnd* pParent /*=nullptr*/)
+	: CDialog(SVMessageWindow::IDD, pParent)
 {
-	//{{AFX_DATA_INIT(SVMessageWindowClass)
+	//{{AFX_DATA_INIT(SVMessageWindow)
 		// HINWEIS: Der Klassen-Assistent fügt hier Elementinitialisierung ein
 	//}}AFX_DATA_INIT
 }
 
-SVMessageWindowClass::~SVMessageWindowClass()
+SVMessageWindow::~SVMessageWindow()
 {
 }
 
-void SVMessageWindowClass::DoDataExchange(CDataExchange* pDX)
+void SVMessageWindow::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(SVMessageWindowClass)
+	//{{AFX_DATA_MAP(SVMessageWindow)
 		// HINWEIS: Der Klassen-Assistent fügt hier DDX- und DDV-Aufrufe ein
 	//}}AFX_DATA_MAP
 }
 
 
-BEGIN_MESSAGE_MAP(SVMessageWindowClass, CDialog)
-	//{{AFX_MSG_MAP(SVMessageWindowClass)
+BEGIN_MESSAGE_MAP(SVMessageWindow, CDialog)
+	//{{AFX_MSG_MAP(SVMessageWindow)
 		// HINWEIS: Der Klassen-Assistent fügt hier Zuordnungsmakros für Nachrichten ein
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()

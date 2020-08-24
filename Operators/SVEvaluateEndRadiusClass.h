@@ -14,7 +14,7 @@
 namespace SvOp
 {
 
-class SVEvaluateEndRadiusClass : public SVEvaluateClass
+class SVEvaluateEndRadiusClass : public SVEvaluate
 {
 	SV_DECLARE_CLASS( SVEvaluateEndRadiusClass )
 

@@ -128,9 +128,9 @@ The Get Subscripted Property Value operator returns the value at a particular su
 The Get Array Values operator fills the provided array with the values of the specified token by its symbol index.
 
 */
-class SVEquationClass : public SvIe::SVTaskObjectClass, public SVEquationBase, public SvOi::IEquation
+class SVEquation : public SvIe::SVTaskObjectClass, public SVEquationBase, public SvOi::IEquation
 {
-	SV_DECLARE_CLASS( SVEquationClass );
+	SV_DECLARE_CLASS( SVEquation );
 
 	/**
 	@SVObjectName Equation Parsing Data
@@ -162,8 +162,8 @@ class SVEquationClass : public SvIe::SVTaskObjectClass, public SVEquationBase, p
 	};
 
 public:
-	SVEquationClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVEQUATION );
-	virtual ~SVEquationClass();
+	SVEquation( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVEQUATION );
+	virtual ~SVEquation();
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 	

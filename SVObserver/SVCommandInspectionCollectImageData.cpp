@@ -120,7 +120,7 @@ const SVIPProductStruct& SVCommandInspectionCollectImageData::GetProduct() const
 HRESULT SVCommandInspectionCollectImageData::UpdateResults(SVInspectionProcess* pInspection, SvIe::SVIPResultData& rResultData )
 {
 	HRESULT hRet = E_FAIL;
-	SVResultListClass* pResultList(nullptr);
+	SVResultList* pResultList(nullptr);
 
 	if( nullptr != pInspection )
 	{

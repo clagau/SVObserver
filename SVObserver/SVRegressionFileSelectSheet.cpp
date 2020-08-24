@@ -44,7 +44,7 @@ SVRegressionFileSelectSheet::~SVRegressionFileSelectSheet()
 
 	for (int i = iPageCnt-1; i >= 0; i-- )
 	{
-		CSVRegressionFileSelectDlg* pPage = dynamic_cast<CSVRegressionFileSelectDlg*>(GetPage(i));
+		SVRegressionFileSelectDlg* pPage = dynamic_cast<SVRegressionFileSelectDlg*>(GetPage(i));
 		RemovePage(i);
 		if (pPage)
 		{
@@ -73,7 +73,7 @@ void SVRegressionFileSelectSheet::CreatePages(std::vector<RegressionTestStruct>*
 	{
 		if ( 0 != SvUl::CompareNoCase( PrevName, std::string(pCamera->GetName()) ) )
 		{
-			CSVRegressionFileSelectDlg *pPage = new CSVRegressionFileSelectDlg(pCamera->GetName());
+			SVRegressionFileSelectDlg *pPage = new SVRegressionFileSelectDlg(pCamera->GetName());
 			AddPage(pPage);
 			PrevName = pCamera->GetName();
 		}
@@ -98,7 +98,7 @@ void SVRegressionFileSelectSheet::OnOK()
 
 	for ( int i = 0; i < iNumPages; i++ )
 	{
-		CSVRegressionFileSelectDlg *pPage = dynamic_cast<CSVRegressionFileSelectDlg*>(GetPage(i));
+		SVRegressionFileSelectDlg *pPage = dynamic_cast<SVRegressionFileSelectDlg*>(GetPage(i));
 		if ( (pPage) && (pPage->GetSafeHwnd()) )
 		{
 			if ( pPage->GetFileSelectType() != RegNone )
@@ -118,7 +118,7 @@ void SVRegressionFileSelectSheet::OnOK()
 		ValidateAndFillFileList();
 		for (int i = 0; i < iNumPages; i++)
 		{
-			CSVRegressionFileSelectDlg *pPage = dynamic_cast<CSVRegressionFileSelectDlg*>(GetPage(i));
+			SVRegressionFileSelectDlg *pPage = dynamic_cast<SVRegressionFileSelectDlg*>(GetPage(i));
 			if ((pPage) && (pPage->GetSafeHwnd()))
 			{
 				pPage->OnOK();
@@ -420,12 +420,12 @@ BOOL SVRegressionFileSelectSheet::OnInitDialog()
 	}
 	SetActivePage(0);
 
-	CSVRegressionFileSelectDlg *pPage;
+	SVRegressionFileSelectDlg *pPage;
 	if (m_pRegressionList->size() > 0 )
 	{
 		for ( int l_iCount = 0; l_iCount <= iPageCnt-1; l_iCount++ )
 		{
-			pPage = dynamic_cast<CSVRegressionFileSelectDlg*>(GetPage(l_iCount));
+			pPage = dynamic_cast<SVRegressionFileSelectDlg*>(GetPage(l_iCount));
 			if ( pPage )
 			{
 				std::string TmpName = pPage->GetPageName();
@@ -442,7 +442,7 @@ BOOL SVRegressionFileSelectSheet::OnInitDialog()
 	}
 	else //No list set yet, set in first tab the mode to RegFileList
 	{
-		pPage = dynamic_cast<CSVRegressionFileSelectDlg*>(GetPage(0));
+		pPage = dynamic_cast<SVRegressionFileSelectDlg*>(GetPage(0));
 		if (nullptr != pPage)
 		{
 			RegressionTestStruct tmpStruct;

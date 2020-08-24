@@ -41,13 +41,13 @@ class SVIPDoc;
 class SVDrawContext;
 class SVImageExtentClass;
 
-class SVImageViewClass : public CView
+class SVImageView : public CView
 {
-	DECLARE_DYNCREATE( SVImageViewClass )
+	DECLARE_DYNCREATE( SVImageView )
 
 public:
-	SVImageViewClass();
-	virtual ~SVImageViewClass();
+	SVImageView();
+	virtual ~SVImageView();
 
 	SVIPDoc* GetIPDoc() const;
 
@@ -76,7 +76,7 @@ public:
 
 	BOOL GetObjectAtPoint( POINT p_point );
 
-	//{{AFX_MSG(SVImageViewClass)
+	//{{AFX_MSG(SVImageView)
 	afx_msg void OnLButtonDown( UINT p_nFlags, CPoint p_point );
 	afx_msg void OnMouseMove( UINT p_nFlags, CPoint p_point );
 	afx_msg void OnLButtonUp( UINT p_nFlags, CPoint p_point );
@@ -95,7 +95,7 @@ public:
 
 	DECLARE_MESSAGE_MAP()
 
-	//{{AFX_VIRTUAL( SVImageViewClass )
+	//{{AFX_VIRTUAL( SVImageView )
 	public:
 	virtual BOOL Create( LPCTSTR p_className, LPCTSTR p_windowName, DWORD p_style, const RECT& p_rect, CWnd* p_pParentWnd, UINT p_NID, CCreateContext* p_pContext = nullptr ) override;
 	virtual void OnInitialUpdate() override;

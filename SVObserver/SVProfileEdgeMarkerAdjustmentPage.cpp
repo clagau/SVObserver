@@ -29,8 +29,8 @@ static char THIS_FILE[] = __FILE__;
 #pragma endregion Declarations
 
 #pragma region Constructor
-SVProfileEdgeMarkerAdjustmentPageClass::SVProfileEdgeMarkerAdjustmentPageClass(uint32_t inspectionID, uint32_t taskObjectID, const std::vector<SvPb::EmbeddedIdEnum>& rEdgeEmbeddedIds, uint32_t analyzerID, UINT nIDCaption /* = 0 */ )
-: SVEdgeMarkerAdjustmentPageClass(inspectionID, taskObjectID, rEdgeEmbeddedIds, analyzerID, nIDCaption, SVProfileEdgeMarkerAdjustmentPageClass::IDD )
+SVProfileEdgeMarkerAdjustmentPage::SVProfileEdgeMarkerAdjustmentPage(uint32_t inspectionID, uint32_t taskObjectID, const std::vector<SvPb::EmbeddedIdEnum>& rEdgeEmbeddedIds, uint32_t analyzerID, UINT nIDCaption /* = 0 */ )
+: SVEdgeMarkerAdjustmentPageClass(inspectionID, taskObjectID, rEdgeEmbeddedIds, analyzerID, nIDCaption, SVProfileEdgeMarkerAdjustmentPage::IDD )
 , m_lowerThresholdMaxOffset( 0 )
 , m_lowerThresholdMinOffset( 0 )
 , m_lowerThresholdMaxPercentDiff( 0 )
@@ -40,11 +40,11 @@ SVProfileEdgeMarkerAdjustmentPageClass::SVProfileEdgeMarkerAdjustmentPageClass(u
 , m_lowerThresholdOption( 0 )
 , m_upperThresholdOption( 0 )
 {
-	//{{AFX_DATA_INIT(SVProfileEdgeMarkerAdjustmentPageClass)
+	//{{AFX_DATA_INIT(SVProfileEdgeMarkerAdjustmentPage)
 	//}}AFX_DATA_INIT
 }
 
-SVProfileEdgeMarkerAdjustmentPageClass::~SVProfileEdgeMarkerAdjustmentPageClass()
+SVProfileEdgeMarkerAdjustmentPage::~SVProfileEdgeMarkerAdjustmentPage()
 {
 	if (nullptr != m_pAnalyzerValues)
 	{
@@ -57,12 +57,12 @@ SVProfileEdgeMarkerAdjustmentPageClass::~SVProfileEdgeMarkerAdjustmentPageClass(
 #pragma endregion Constructor
 
 #pragma region MFC Methods
-void SVProfileEdgeMarkerAdjustmentPageClass::OnCancel()
+void SVProfileEdgeMarkerAdjustmentPage::OnCancel()
 {
 	SVEdgeMarkerAdjustmentPageClass::OnCancel();
 }
 
-BOOL SVProfileEdgeMarkerAdjustmentPageClass::OnSetActive()
+BOOL SVProfileEdgeMarkerAdjustmentPage::OnSetActive()
 {
 	BOOL bRetVal = SVEdgeMarkerAdjustmentPageClass::OnSetActive();
 
@@ -72,10 +72,10 @@ BOOL SVProfileEdgeMarkerAdjustmentPageClass::OnSetActive()
 	return bRetVal;
 }
 
-void SVProfileEdgeMarkerAdjustmentPageClass::DoDataExchange( CDataExchange* pDX )
+void SVProfileEdgeMarkerAdjustmentPage::DoDataExchange( CDataExchange* pDX )
 {
 	SVEdgeMarkerAdjustmentPageClass::DoDataExchange( pDX );
-	//{{AFX_DATA_MAP(SVProfileEdgeMarkerAdjustmentPageClass)
+	//{{AFX_DATA_MAP(SVProfileEdgeMarkerAdjustmentPage)
 	DDX_Control(pDX, IDC_LOWER_MIN_OFFSET, m_LowerMinOffsetEditCtrl);
 	DDX_Control(pDX, IDC_LOWER_MAX_OFFSET, m_LowerMaxOffsetEditCtrl);
 	DDX_Control(pDX, IDC_LOWER_PERCENT_DIFF, m_LowerMaxDiffEditCtrl);
@@ -96,7 +96,7 @@ void SVProfileEdgeMarkerAdjustmentPageClass::DoDataExchange( CDataExchange* pDX 
 	//}}AFX_DATA_MAP
 }
 
-BOOL SVProfileEdgeMarkerAdjustmentPageClass::OnInitDialog()
+BOOL SVProfileEdgeMarkerAdjustmentPage::OnInitDialog()
 {
 	SVEdgeMarkerAdjustmentPageClass::OnInitDialog();
 
@@ -131,7 +131,7 @@ BOOL SVProfileEdgeMarkerAdjustmentPageClass::OnInitDialog()
 	return TRUE;  // return TRUE unless you set the focus to a control
 }
 
-void SVProfileEdgeMarkerAdjustmentPageClass::OnHScroll( UINT nSBCode, UINT nPos, CScrollBar* pScrollBar )
+void SVProfileEdgeMarkerAdjustmentPage::OnHScroll( UINT nSBCode, UINT nPos, CScrollBar* pScrollBar )
 {
 	SVEdgeMarkerAdjustmentPageClass::OnHScroll( nSBCode, nPos, pScrollBar );
 
@@ -196,7 +196,7 @@ void SVProfileEdgeMarkerAdjustmentPageClass::OnHScroll( UINT nSBCode, UINT nPos,
 	SetInspectionData();
 }
 
-void SVProfileEdgeMarkerAdjustmentPageClass::OnUpperUserSelectable()
+void SVProfileEdgeMarkerAdjustmentPage::OnUpperUserSelectable()
 {
 	UpdateData(TRUE);
 
@@ -211,7 +211,7 @@ void SVProfileEdgeMarkerAdjustmentPageClass::OnUpperUserSelectable()
 	SetInspectionData();
 }
 
-void SVProfileEdgeMarkerAdjustmentPageClass::OnLowerUserSelectable()
+void SVProfileEdgeMarkerAdjustmentPage::OnLowerUserSelectable()
 {
 	UpdateData(TRUE);
 
@@ -226,7 +226,7 @@ void SVProfileEdgeMarkerAdjustmentPageClass::OnLowerUserSelectable()
 	SetInspectionData();
 }
 
-void SVProfileEdgeMarkerAdjustmentPageClass::OnUpperUseMaxMinusDiff()
+void SVProfileEdgeMarkerAdjustmentPage::OnUpperUseMaxMinusDiff()
 {
 	UpdateData(TRUE);
 
@@ -237,7 +237,7 @@ void SVProfileEdgeMarkerAdjustmentPageClass::OnUpperUseMaxMinusDiff()
 	SetInspectionData();
 }
 
-void SVProfileEdgeMarkerAdjustmentPageClass::OnUpperUseMaxMinusOffset()
+void SVProfileEdgeMarkerAdjustmentPage::OnUpperUseMaxMinusOffset()
 {
 	UpdateData(TRUE);
 
@@ -248,7 +248,7 @@ void SVProfileEdgeMarkerAdjustmentPageClass::OnUpperUseMaxMinusOffset()
 	SetInspectionData();
 }
 
-void SVProfileEdgeMarkerAdjustmentPageClass::OnUpperUseMinPlusOffset()
+void SVProfileEdgeMarkerAdjustmentPage::OnUpperUseMinPlusOffset()
 {
 	UpdateData(TRUE);
 
@@ -259,7 +259,7 @@ void SVProfileEdgeMarkerAdjustmentPageClass::OnUpperUseMinPlusOffset()
 	SetInspectionData();
 }
 
-void SVProfileEdgeMarkerAdjustmentPageClass::OnLowerUseMaxMinusDiff()
+void SVProfileEdgeMarkerAdjustmentPage::OnLowerUseMaxMinusDiff()
 {
 	UpdateData(TRUE);
 
@@ -270,7 +270,7 @@ void SVProfileEdgeMarkerAdjustmentPageClass::OnLowerUseMaxMinusDiff()
 	SetInspectionData();
 }
 
-void SVProfileEdgeMarkerAdjustmentPageClass::OnLowerUseMaxMinusOffset()
+void SVProfileEdgeMarkerAdjustmentPage::OnLowerUseMaxMinusOffset()
 {
 	UpdateData(TRUE);
 
@@ -281,7 +281,7 @@ void SVProfileEdgeMarkerAdjustmentPageClass::OnLowerUseMaxMinusOffset()
 	SetInspectionData();
 }
 
-void SVProfileEdgeMarkerAdjustmentPageClass::OnLowerUseMinPlusOffset()
+void SVProfileEdgeMarkerAdjustmentPage::OnLowerUseMinPlusOffset()
 {
 	UpdateData(TRUE);
 
@@ -292,7 +292,7 @@ void SVProfileEdgeMarkerAdjustmentPageClass::OnLowerUseMinPlusOffset()
 	SetInspectionData();
 }
 
-void SVProfileEdgeMarkerAdjustmentPageClass::OnChangeUpperPercentDiff()
+void SVProfileEdgeMarkerAdjustmentPage::OnChangeUpperPercentDiff()
 {
 	if( m_upperThresholdOption != SvDef::SV_USE_SLIDER )
 	{
@@ -313,7 +313,7 @@ void SVProfileEdgeMarkerAdjustmentPageClass::OnChangeUpperPercentDiff()
 	}
 }
 
-void SVProfileEdgeMarkerAdjustmentPageClass::OnChangeUpperMaxOffset()
+void SVProfileEdgeMarkerAdjustmentPage::OnChangeUpperMaxOffset()
 {
 	if( m_upperThresholdOption != SvDef::SV_USE_SLIDER )
 	{
@@ -327,7 +327,7 @@ void SVProfileEdgeMarkerAdjustmentPageClass::OnChangeUpperMaxOffset()
 	}
 }
 
-void SVProfileEdgeMarkerAdjustmentPageClass::OnChangeUpperMinOffset()
+void SVProfileEdgeMarkerAdjustmentPage::OnChangeUpperMinOffset()
 {
 	if( m_upperThresholdOption != SvDef::SV_USE_SLIDER )
 	{
@@ -341,7 +341,7 @@ void SVProfileEdgeMarkerAdjustmentPageClass::OnChangeUpperMinOffset()
 	}
 }
 
-void SVProfileEdgeMarkerAdjustmentPageClass::OnChangeLowerPercentDiff()
+void SVProfileEdgeMarkerAdjustmentPage::OnChangeLowerPercentDiff()
 {
 	if( m_lowerThresholdOption != SvDef::SV_USE_SLIDER )
 	{
@@ -362,7 +362,7 @@ void SVProfileEdgeMarkerAdjustmentPageClass::OnChangeLowerPercentDiff()
 	}
 }
 
-void SVProfileEdgeMarkerAdjustmentPageClass::OnChangeLowerMaxOffset()
+void SVProfileEdgeMarkerAdjustmentPage::OnChangeLowerMaxOffset()
 {
 	if( m_lowerThresholdOption != SvDef::SV_USE_SLIDER )
 	{
@@ -376,7 +376,7 @@ void SVProfileEdgeMarkerAdjustmentPageClass::OnChangeLowerMaxOffset()
 	}
 }
 
-void SVProfileEdgeMarkerAdjustmentPageClass::OnChangeLowerMinOffset()
+void SVProfileEdgeMarkerAdjustmentPage::OnChangeLowerMinOffset()
 {
 	if( m_lowerThresholdOption != SvDef::SV_USE_SLIDER )
 	{
@@ -390,8 +390,8 @@ void SVProfileEdgeMarkerAdjustmentPageClass::OnChangeLowerMinOffset()
 	}
 }
 
-BEGIN_MESSAGE_MAP( SVProfileEdgeMarkerAdjustmentPageClass, SVEdgeMarkerAdjustmentPageClass )
-	//{{AFX_MSG_MAP(SVProfileEdgeMarkerAdjustmentPageClass)
+BEGIN_MESSAGE_MAP( SVProfileEdgeMarkerAdjustmentPage, SVEdgeMarkerAdjustmentPageClass )
+	//{{AFX_MSG_MAP(SVProfileEdgeMarkerAdjustmentPage)
 	ON_WM_HSCROLL()
 	ON_BN_CLICKED(IDC_UPPER_USER_SELECTABLE, OnUpperUserSelectable)
 	ON_BN_CLICKED(IDC_LOWER_USER_SELECTABLE, OnLowerUserSelectable)
@@ -412,7 +412,7 @@ END_MESSAGE_MAP()
 #pragma endregion MFC Methods
 
 #pragma region Public Methods
-HRESULT SVProfileEdgeMarkerAdjustmentPageClass::GetInspectionData()
+HRESULT SVProfileEdgeMarkerAdjustmentPage::GetInspectionData()
 {
 	HRESULT Result{ S_OK };
 
@@ -505,7 +505,7 @@ HRESULT SVProfileEdgeMarkerAdjustmentPageClass::GetInspectionData()
 	return Result;
 }
 
-HRESULT SVProfileEdgeMarkerAdjustmentPageClass::SetInspectionData()
+HRESULT SVProfileEdgeMarkerAdjustmentPage::SetInspectionData()
 {
 	HRESULT Result{ S_OK };
 
@@ -626,7 +626,7 @@ HRESULT SVProfileEdgeMarkerAdjustmentPageClass::SetInspectionData()
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
-HRESULT SVProfileEdgeMarkerAdjustmentPageClass::UpdateSliderData(DWORD Lower, DWORD Upper)
+HRESULT SVProfileEdgeMarkerAdjustmentPage::UpdateSliderData(DWORD Lower, DWORD Upper)
 {
 	DWORD l_Upper{ 0 };
 	DWORD l_Lower{ 0 };
@@ -683,7 +683,7 @@ HRESULT SVProfileEdgeMarkerAdjustmentPageClass::UpdateSliderData(DWORD Lower, DW
 #pragma region Protected Methods
 
 #pragma region Private Methods
-void SVProfileEdgeMarkerAdjustmentPageClass::updateControls()
+void SVProfileEdgeMarkerAdjustmentPage::updateControls()
 {
 	switch( m_lowerThresholdOption )
 	{
@@ -764,7 +764,7 @@ void SVProfileEdgeMarkerAdjustmentPageClass::updateControls()
 	}
 }
 
-void SVProfileEdgeMarkerAdjustmentPageClass::updateGraphDisplay()
+void SVProfileEdgeMarkerAdjustmentPage::updateGraphDisplay()
 {
 	// Remove old points
 	m_dialogImage.RemoveAllOverlays(0);
@@ -796,7 +796,7 @@ void SVProfileEdgeMarkerAdjustmentPageClass::updateGraphDisplay()
 	m_dialogImage.Refresh();
 }
 
-void SVProfileEdgeMarkerAdjustmentPageClass::setGraphOverlayToPicture(bool bVertical)
+void SVProfileEdgeMarkerAdjustmentPage::setGraphOverlayToPicture(bool bVertical)
 {
 	if (nullptr != m_pEdge)
 	{
@@ -864,7 +864,7 @@ void SVProfileEdgeMarkerAdjustmentPageClass::setGraphOverlayToPicture(bool bVert
 	}
 }
 
-void SVProfileEdgeMarkerAdjustmentPageClass::setMarkerOverlayToPicture(DWORD value, bool bVertical, long allowType /*= CDSVPictureDisplay::AllowNone */)
+void SVProfileEdgeMarkerAdjustmentPage::setMarkerOverlayToPicture(DWORD value, bool bVertical, long allowType /*= CDSVPictureDisplay::AllowNone */)
 {
 	long handle = -1;
 

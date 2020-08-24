@@ -20,11 +20,11 @@
 
 class SVGraphixDrawObjectClass;
 
-class SVMaskEditorDialogClass : public CDialog
+class SVMaskEditorDialog : public CDialog
 {
 // Construction
 public:
-	SVMaskEditorDialogClass( CWnd* pParent = nullptr );   // standard constructor
+	SVMaskEditorDialog( CWnd* pParent = nullptr );   // standard constructor
 
     void PanX( int OffsetX );
     void PanY( int OffsetY );
@@ -36,7 +36,7 @@ public:
 	void CanvasMouseMove( UINT nFlags, CPoint point );
 
 // Dialog Data
-	//{{AFX_DATA(SVMaskEditorDialogClass)
+	//{{AFX_DATA(SVMaskEditorDialog)
 	enum { IDD = IDD_EDITOR_DIALOG };
 	CComboBox	ArithmeticComboCtl;
 	CString	StrZoom;
@@ -45,7 +45,7 @@ public:
 
 // Overrides
 	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(SVMaskEditorDialogClass)
+	//{{AFX_VIRTUAL(SVMaskEditorDialog)
 	public:
 	virtual void OnFinalRelease() override;
 	protected:
@@ -56,7 +56,7 @@ public:
 protected:
 
 	// Generated message map functions
-	//{{AFX_MSG(SVMaskEditorDialogClass)
+	//{{AFX_MSG(SVMaskEditorDialog)
 	virtual BOOL OnInitDialog() override;
 	virtual void OnCancel() override;
 	virtual void OnOK() override;
@@ -78,7 +78,7 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 	// Generated OLE dispatch map functions
-	//{{AFX_DISPATCH(SVMaskEditorDialogClass)
+	//{{AFX_DISPATCH(SVMaskEditorDialog)
 		// NOTE - the ClassWizard will add and remove member functions here.
 	//}}AFX_DISPATCH
 	DECLARE_DISPATCH_MAP()
@@ -96,7 +96,7 @@ public:
     HBITMAP         HImageBitmap;
     SVGraphixClass  GraphixObject;
     long          m_lMilArithmeticOperation;
-	SVMaskEditorWndClass	DisplayWndCtl;
+	SVMaskEditorWnd	DisplayWndCtl;
 
 protected:
 

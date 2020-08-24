@@ -17,9 +17,9 @@
 
 namespace SvOp
 {
-class SVUnaryImageOperatorListClass;
+class SVUnaryImageOperatorList;
 
-class SVUnaryImageOperatorClass : public SVOperatorClass
+class SVUnaryImageOperatorClass : public SVOperator
 {
 	///This class does not need to call SV_DECLARE_CLASS as it is a base class and only derived classes are instantiated
 	//SV_DECLARE_CLASS( SVUnaryImageOperatorClass );
@@ -38,7 +38,7 @@ protected:
 	const SvIe::SVImageClass* getReferenceImage() const;
 	const SvIe::SVImageClass* getOutputImage(bool bRunMode = false) const;
 
-	SVUnaryImageOperatorListClass* m_pCurrentUIOPL;
+	SVUnaryImageOperatorList* m_pCurrentUIOPL;
 	
 private:
 	void init();

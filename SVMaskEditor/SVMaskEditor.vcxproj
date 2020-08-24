@@ -163,12 +163,12 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="SVMaskEditor.cpp" />
-    <ClCompile Include="SVMaskEditorCtl.cpp" />
+    <ClCompile Include="SVMaskEditorCtrl.cpp" />
     <ClCompile Include="SVMaskEditorDialog.cpp" />
-    <ClCompile Include="SVMaskEditorPpg.cpp" />
+    <ClCompile Include="SVMaskEditorPropPage.cpp" />
     <ClCompile Include="SVMaskEditorWnd.cpp" />
-    <ClCompile Include="SVScrollWnd1Ctl.cpp" />
-    <ClCompile Include="SVScrollWnd1Ppg.cpp" />
+    <ClCompile Include="SVScrollWnd1Ctrl.cpp" />
+    <ClCompile Include="SVScrollWnd1PropPage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\SVMaskEditor.rc2" />
@@ -200,6 +200,8 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="SVScrollWnd1Ctrl.h" />
+    <ClInclude Include="SVScrollWnd1PropPage.h" />
     <CustomBuild Include="Resource.h">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Performing Custom Build Step</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -213,12 +215,10 @@
     <ClInclude Include="..\AutoBuild\AutoBuild.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="SVMaskEditor.h" />
-    <ClInclude Include="SVMaskEditorCtl.h" />
+    <ClInclude Include="SVMaskEditorCtrl.h" />
     <ClInclude Include="SVMaskEditorDialog.h" />
-    <ClInclude Include="SVMaskEditorPpg.h" />
+    <ClInclude Include="SVMaskEditorPropPage.h" />
     <ClInclude Include="SVMaskEditorWnd.h" />
-    <ClInclude Include="SVScrollWnd1Ctl.h" />
-    <ClInclude Include="SVScrollWnd1Ppg.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

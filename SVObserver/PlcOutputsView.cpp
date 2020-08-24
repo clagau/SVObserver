@@ -209,7 +209,7 @@ void PlcOutputsView::OnLButtonDblClk(UINT, CPoint point)
 
 			if (nullptr != pPlcOutput)
 			{
-				SVIOAdjustDialogClass dlg;
+				SVIOAdjustDialog dlg;
 				dlg.IOName = _T("Result ") + m_rCtrl.GetItemText(item, 0);
 				dlg.IOName += _T(", ") + m_rCtrl.GetItemText(item, 1);
 				dlg.m_pIOEntry = pIOEntry;
@@ -268,7 +268,7 @@ void PlcOutputsView::OnLButtonDblClk(UINT, CPoint point)
 			}
 			else
 			{
-				SVIOAdjustDialogClass dlg;
+				SVIOAdjustDialog dlg;
 				dlg.IOName = _T("");
 				dlg.IOValue.Format("%d", 0);
 

@@ -2,7 +2,7 @@
 // * COPYRIGHT (c) 2005 by SVResearch, Harrisburg
 // * All Rights Reserved
 // ******************************************************************************
-// * .Module Name     : CModelessMsgBox
+// * .Module Name     : ModelessMessageBox
 // * .File Name       : $Workfile:   ModelessMessageBox.h  $
 // * ----------------------------------------------------------------------------
 // * .Current Version : $Revision:   1.0  $
@@ -11,14 +11,14 @@
 
 #pragma once
 
-//@TODO [Arvid][7.50][10.05.2017] At some point in time, CModelessMsgBox should be removed altogether and a different modeless message box be used instead
+//@TODO [Arvid][7.50][10.05.2017] At some point in time, ModelessMessageBox should be removed altogether and a different modeless message box be used instead
 
-class CModelessMsgBox : public CDialog
+class ModelessMessageBox : public CDialog
 {
 	// Construction
 public:
-	CModelessMsgBox(const std::string& rMsg, HANDLE p_hEvent);   // standard constructor
-	virtual ~CModelessMsgBox();
+	ModelessMessageBox(const std::string& rMsg, HANDLE p_hEvent);   // standard constructor
+	virtual ~ModelessMessageBox();
 
 
 protected:
@@ -27,7 +27,7 @@ protected:
 
 public:
 	// Dialog Data
-	//{{AFX_DATA(CModelessMsgBox)
+	//{{AFX_DATA(ModelessMessageBox)
 	enum { IDD = IDD_MODELESS_MESSAGE_BOX };
 	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
@@ -35,7 +35,7 @@ protected:
 
 	// Overrides
 	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CModelessMsgBox)
+	//{{AFX_VIRTUAL(ModelessMessageBox)
 public:
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
@@ -46,7 +46,7 @@ protected:
 protected:
 
 	// Generated message map functions
-	//{{AFX_MSG(CModelessMsgBox)
+	//{{AFX_MSG(ModelessMessageBox)
 	virtual BOOL OnInitDialog() override;
 	virtual void OnOK() override;
 	virtual void OnCancel() override;

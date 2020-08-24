@@ -25,10 +25,10 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVStringResultClass, SvPb::StringResultClassId);
+SV_IMPLEMENT_CLASS( SVStringResult, SvPb::StringResultClassId);
 
-SVStringResultClass::SVStringResultClass( SVObjectClass* POwner, int StringResourceID )
-				  :SVResultClass( POwner, StringResourceID )
+SVStringResult::SVStringResult( SVObjectClass* POwner, int StringResourceID )
+				  :SVResult( POwner, StringResourceID )
 {
 	// Identify yourself
 	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVResultObjectType;
@@ -51,14 +51,14 @@ SVStringResultClass::SVStringResultClass( SVObjectClass* POwner, int StringResou
 	addDefaultInputObjects();
 }
 
-SVStringResultClass::~SVStringResultClass()
+SVStringResult::~SVStringResult()
 {
 
 }
 
-bool SVStringResultClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
+bool SVStringResult::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool bOk = SVResultClass::CreateObject(rCreateStructure) && nullptr != SvOl::getInput<SvVol::SVStringValueObjectClass>(m_inputObjectInfo);
+	bool bOk = SVResult::CreateObject(rCreateStructure) && nullptr != SvOl::getInput<SvVol::SVStringValueObjectClass>(m_inputObjectInfo);
 
 	m_Value.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
 
@@ -68,7 +68,7 @@ bool SVStringResultClass::CreateObject( const SVObjectLevelCreateStruct& rCreate
 	return bOk;
 }
 
-bool SVStringResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVStringResult::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	// All inputs and outputs must be validated first
 	if( __super::onRun( rRunStatus, pErrorMessages ) )

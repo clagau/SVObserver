@@ -18,13 +18,13 @@
 namespace SvOp
 {
 
-class SVUpperThresholdEquationClass : public SVEquationClass
+class SVUpperThresholdEquation : public SVEquation
 {
-	SV_DECLARE_CLASS( SVUpperThresholdEquationClass);
+	SV_DECLARE_CLASS( SVUpperThresholdEquation);
 
 public:
-	SVUpperThresholdEquationClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVUPPERTHRESHOLDEQUATION );
-	virtual ~SVUpperThresholdEquationClass();
+	SVUpperThresholdEquation( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVUPPERTHRESHOLDEQUATION );
+	virtual ~SVUpperThresholdEquation();
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 

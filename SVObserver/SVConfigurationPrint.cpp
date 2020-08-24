@@ -833,7 +833,7 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObject, CPoin
 				}
 			}
 
-			SvOp::SVDoubleResultClass* pBlobResult = dynamic_cast<SvOp::SVDoubleResultClass*> (pObject);
+			SvOp::SVDoubleResult* pBlobResult = dynamic_cast<SvOp::SVDoubleResult*> (pObject);
 			if( nullptr != pBlobResult )
 			{
 				if (SV_IS_KIND_OF(pBlobResult->GetParent(), SvAo::SVBlobAnalyzerClass))
@@ -852,7 +852,7 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObject, CPoin
 		} while (false);// end do
 	}// End if( nullptr != pValueObject ) else
 
-	SvOp::SVEquationClass* pEquation = dynamic_cast <SvOp::SVEquationClass*> (pObject);
+	SvOp::SVEquation* pEquation = dynamic_cast <SvOp::SVEquation*> (pObject);
 	if( nullptr != pEquation )
 	{
 		sValue = pEquation->GetEquationText();
@@ -909,7 +909,7 @@ void SVConfigurationPrint::PrintChildren( CDC* pDC, SVObjectClass* pObj, CPoint&
 {
 	if (SvIe::SVTaskObjectListClass* pTaskObj = dynamic_cast<SvIe::SVTaskObjectListClass*> (pObj) )
     {
-		if (SVToolSetClass* pToolSet = dynamic_cast<SVToolSetClass*>(pObj))
+		if (SVToolSet* pToolSet = dynamic_cast<SVToolSet*>(pObj))
 		{
 			SVToolGrouping toolGroupings = GetToolGroupings(pToolSet->GetInspection()->getObjectId());
 			if (toolGroupings.size())
@@ -2004,7 +2004,7 @@ void SVConfigurationPrint::PrintInspectionToolSet(CDC* pDC, CPoint& ptCurPos, in
 		pInspection = pConfig->GetInspection(nIPDNumber);
 		if( nullptr != pInspection )
 		{
-			SVToolSetClass* pToolSet = pInspection->GetToolSet();
+			SVToolSet* pToolSet = pInspection->GetToolSet();
 			pDC->SelectObject(&m_fontSection);
 		
 			m_toolNumber = 0;

@@ -64,22 +64,23 @@ HRESULT GetAndEnableWindow( CWnd* dialog, const int ctrlId, const BOOL enable = 
 	return hr;
 }
 
-SVChildrenSetupDialogClass::SVChildrenSetupDialogClass(CWnd* pParent /*=nullptr*/)
-: CDialog(SVChildrenSetupDialogClass::IDD, pParent)
+SVChildrenSetupDialog::SVChildrenSetupDialog(CWnd* pParent /*=nullptr*/)
+: CDialog(SVChildrenSetupDialog::IDD, pParent)
 , m_pAvailableChildrenList( nullptr )
 , m_pParentObject( nullptr )
 , m_pParentOwner( nullptr )
 , m_AllowMultipleChildrenInstances( FALSE )
+, m_pDocument (nullptr)
 {
-	//{{AFX_DATA_INIT(SVChildrenSetupDialogClass)
+	//{{AFX_DATA_INIT(SVChildrenSetupDialog)
 	//}}AFX_DATA_INIT
 }
 
-SVChildrenSetupDialogClass::~SVChildrenSetupDialogClass()
+SVChildrenSetupDialog::~SVChildrenSetupDialog()
 {
 }
 
-void SVChildrenSetupDialogClass::redrawLists()
+void SVChildrenSetupDialog::redrawLists()
 {
 	if( m_pAvailableChildrenList && m_pParentObject )
 	{
@@ -132,10 +133,10 @@ void SVChildrenSetupDialogClass::redrawLists()
 	}
 }
 
-void SVChildrenSetupDialogClass::DoDataExchange(CDataExchange* pDX)
+void SVChildrenSetupDialog::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(SVChildrenSetupDialogClass)
+	//{{AFX_DATA_MAP(SVChildrenSetupDialog)
 	DDX_Control(pDX, IDC_CHILDREN_LIST, m_ChildrenListCtrl);
 	DDX_Control(pDX, IDC_AVAILABLE_CHILDREN_LIST, m_AvailableChildrenListCtrl);
 	//}}AFX_DATA_MAP
@@ -145,8 +146,8 @@ void SVChildrenSetupDialogClass::DoDataExchange(CDataExchange* pDX)
 // Message Map Entries
 //******************************************************************************
 
-BEGIN_MESSAGE_MAP(SVChildrenSetupDialogClass, CDialog)
-	//{{AFX_MSG_MAP(SVChildrenSetupDialogClass)
+BEGIN_MESSAGE_MAP(SVChildrenSetupDialog, CDialog)
+	//{{AFX_MSG_MAP(SVChildrenSetupDialog)
 	ON_BN_CLICKED(IDC_ADD_BUTTON, OnAddButton)
 	ON_BN_CLICKED(IDC_REMOVE_BUTTON, OnRemoveButton)
 	ON_BN_CLICKED(IDC_SETUP_BUTTON, OnSetupButton)
@@ -160,7 +161,7 @@ END_MESSAGE_MAP()
 // Message Handler
 //******************************************************************************
 
-BOOL SVChildrenSetupDialogClass::OnInitDialog()
+BOOL SVChildrenSetupDialog::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 	
@@ -194,7 +195,7 @@ BOOL SVChildrenSetupDialogClass::OnInitDialog()
 	              // EXCEPTION: OCX-Eigenschaftenseiten sollten FALSE zurückgeben
 }
 
-void SVChildrenSetupDialogClass::OnAddButton()
+void SVChildrenSetupDialog::OnAddButton()
 {
 	CWaitCursor l_cwcMouse;
 
@@ -227,7 +228,7 @@ void SVChildrenSetupDialogClass::OnAddButton()
 
 
 
-bool SVChildrenSetupDialogClass::CreateSelectedResults(SvIe::SVClassInfoStruct& rChildInfo)
+bool SVChildrenSetupDialog::CreateSelectedResults(SvIe::SVClassInfoStruct& rChildInfo)
 {
 	// Construct Children...
 	SvIe::SVTaskObjectClass* pObject = dynamic_cast<SvIe::SVTaskObjectClass*> (rChildInfo.Construct());
@@ -268,7 +269,7 @@ bool SVChildrenSetupDialogClass::CreateSelectedResults(SvIe::SVClassInfoStruct& 
 
 
 
-void SVChildrenSetupDialogClass::OnRemoveButton()
+void SVChildrenSetupDialog::OnRemoveButton()
 {
 	if( m_pAvailableChildrenList && m_pParentObject )
 	{
@@ -296,12 +297,12 @@ void SVChildrenSetupDialogClass::OnRemoveButton()
 	}
 }
 
-void SVChildrenSetupDialogClass::OnCancel()
+void SVChildrenSetupDialog::OnCancel()
 {
 	CDialog::OnCancel();
 }
 
-void SVChildrenSetupDialogClass::OnOK()
+void SVChildrenSetupDialog::OnOK()
 {
 	assert(m_pDocument);
 	if(m_pDocument)
@@ -312,7 +313,7 @@ void SVChildrenSetupDialogClass::OnOK()
 	CDialog::OnOK();
 }
 
-void SVChildrenSetupDialogClass::OnSetupButton()
+void SVChildrenSetupDialog::OnSetupButton()
 {
 	if( m_pAvailableChildrenList && m_pParentObject )
 	{
@@ -332,7 +333,7 @@ void SVChildrenSetupDialogClass::OnSetupButton()
 	}
 }
 
-void SVChildrenSetupDialogClass::OnPublishButton()
+void SVChildrenSetupDialog::OnPublishButton()
 {
 	if( nullptr == m_pParentObject || nullptr == m_pParentOwner ) { return; }
 
@@ -372,7 +373,7 @@ void SVChildrenSetupDialogClass::OnPublishButton()
 	}
 }
 
-void SVChildrenSetupDialogClass::OnItemChangedChildrenList(NMHDR*, LRESULT* pResult)
+void SVChildrenSetupDialog::OnItemChangedChildrenList(NMHDR*, LRESULT* pResult)
 {
 	//
 	// Check for a selection count and if selection is not the
@@ -418,7 +419,7 @@ void SVChildrenSetupDialogClass::OnItemChangedChildrenList(NMHDR*, LRESULT* pRes
 	*pResult = 0;
 }
 
-void SVChildrenSetupDialogClass::OnItemChangedAvailableChildrenList(NMHDR*, LRESULT* pResult)
+void SVChildrenSetupDialog::OnItemChangedAvailableChildrenList(NMHDR*, LRESULT* pResult)
 {
 	BOOL enable = m_AvailableChildrenListCtrl.GetSelectedCount();
 	GetAndEnableWindow( this, IDC_ADD_BUTTON, enable );
@@ -428,7 +429,7 @@ void SVChildrenSetupDialogClass::OnItemChangedAvailableChildrenList(NMHDR*, LRES
 	*pResult = 0;
 }
 
-BOOL SVChildrenSetupDialogClass::checkOkToDelete(SvIe::SVTaskObjectClass* pTaskObject)
+BOOL SVChildrenSetupDialog::checkOkToDelete(SvIe::SVTaskObjectClass* pTaskObject)
 {
 	BOOL bRetVal = false;
 

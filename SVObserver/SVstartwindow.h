@@ -19,21 +19,21 @@
 // -----------------------------------------------------------------------------
 // .Description : e.g. This base class capsules an Image and provides its ...
 ////////////////////////////////////////////////////////////////////////////////
-class SVStartWindowClass : public CDialog
+class SVStartWindow : public CDialog
 {
 //******************************************************************************
 // Class Wizard Generated Message Map Entries
 //******************************************************************************
 public:
 // Dialogfelddaten
-	//{{AFX_DATA(SVStartWindowClass)
+	//{{AFX_DATA(SVStartWindow)
 	enum { IDD = IDD_START };
 	SvMc::SVDlgBitmapClass	startImage;
 	//}}AFX_DATA
 protected:
 
 	// Generierte Nachrichtenzuordnungsfunktionen
-	//{{AFX_MSG(SVStartWindowClass)
+	//{{AFX_MSG(SVStartWindow)
 	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 	afx_msg void OnPaletteIsChanging(CWnd* pRealizeWnd);
 	virtual BOOL OnInitDialog() override;
@@ -42,12 +42,12 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 public:
-	SVStartWindowClass(CWnd* pParent = nullptr);   // Standardkonstruktor
-	virtual ~SVStartWindowClass();
+	SVStartWindow(CWnd* pParent = nullptr);   // Standardkonstruktor
+	virtual ~SVStartWindow();
 
 // Überschreibungen
 	// Vom Klassen-Assistenten generierte virtuelle Funktionsüberschreibungen
-	//{{AFX_VIRTUAL(SVStartWindowClass)
+	//{{AFX_VIRTUAL(SVStartWindow)
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV-Unterstützung
 	//}}AFX_VIRTUAL

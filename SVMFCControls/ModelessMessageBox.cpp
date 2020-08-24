@@ -2,7 +2,7 @@
 // * COPYRIGHT (c) 2005 by SVResearch, Harrisburg
 // * All Rights Reserved
 // ******************************************************************************
-// * .Module Name     : CModelessMsgBox
+// * .Module Name     : ModelessMessageBox
 // * .File Name       : $Workfile:   ModelessMessageBox.cpp  $
 // * ----------------------------------------------------------------------------
 // * .Current Version : $Revision:   1.0  $
@@ -22,8 +22,8 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-BEGIN_MESSAGE_MAP(CModelessMsgBox, CDialog)
-	//{{AFX_MSG_MAP(CModelessMsgBox)
+BEGIN_MESSAGE_MAP(ModelessMessageBox, CDialog)
+	//{{AFX_MSG_MAP(ModelessMessageBox)
 	ON_WM_SIZE()
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
@@ -50,8 +50,8 @@ private:
 	WORD m_duYx8;	// dialog units on the Y axis times 8
 };
 
-CModelessMsgBox::CModelessMsgBox(const std::string& rMsg, HANDLE p_hEvent)
-	: CDialog(CModelessMsgBox::IDD, nullptr)
+ModelessMessageBox::ModelessMessageBox(const std::string& rMsg, HANDLE p_hEvent)
+	: CDialog(ModelessMessageBox::IDD, nullptr)
 , m_Msg( rMsg )
 {
 	DuplicateHandle( GetCurrentProcess(), p_hEvent,
@@ -59,7 +59,7 @@ CModelessMsgBox::CModelessMsgBox(const std::string& rMsg, HANDLE p_hEvent)
 		0, FALSE, DUPLICATE_SAME_ACCESS );
 }
 
-CModelessMsgBox::~CModelessMsgBox()
+ModelessMessageBox::~ModelessMessageBox()
 {
 	if( nullptr != m_hEvent )
 	{
@@ -72,22 +72,22 @@ CModelessMsgBox::~CModelessMsgBox()
 	m_Msg.clear();
 }
 
-void CModelessMsgBox::DoDataExchange(CDataExchange* pDX)
+void ModelessMessageBox::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(CModelessMsgBox)
+	//{{AFX_DATA_MAP(ModelessMessageBox)
 		// NOTE: the ClassWizard will add DDX and DDV calls here
 	//}}AFX_DATA_MAP
 }
 
-void CModelessMsgBox::PostNcDestroy() 
+void ModelessMessageBox::PostNcDestroy() 
 {
 	CDialog::PostNcDestroy();
 
 	delete this;
 }
 
-BOOL CModelessMsgBox::OnInitDialog() 
+BOOL ModelessMessageBox::OnInitDialog() 
 {
 	CDialog::OnInitDialog();
 	
@@ -98,17 +98,17 @@ BOOL CModelessMsgBox::OnInitDialog()
 }
 
 
-void CModelessMsgBox::OnOK() 
+void ModelessMessageBox::OnOK() 
 {
 	DestroyWindow();
 }
 
-void CModelessMsgBox::OnCancel()
+void ModelessMessageBox::OnCancel()
 {
 	DestroyWindow();
 }
 
-void CModelessMsgBox::OnSize(UINT nType, int cx, int cy) 
+void ModelessMessageBox::OnSize(UINT nType, int cx, int cy) 
 {
 	DialogUnits du;
 	CWnd* pOK = GetDlgItem(IDOK);

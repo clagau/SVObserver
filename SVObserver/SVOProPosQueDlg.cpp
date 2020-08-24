@@ -30,26 +30,27 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
-// CSVOProPosQueDlg property page
+// SVOProPosQueDlg property page
 
-IMPLEMENT_DYNCREATE(CSVOProPosQueDlg, CPropertyPage)
+IMPLEMENT_DYNCREATE(SVOProPosQueDlg, CPropertyPage)
 
-CSVOProPosQueDlg::CSVOProPosQueDlg() : CPropertyPage(CSVOProPosQueDlg::IDD)
+SVOProPosQueDlg::SVOProPosQueDlg() : CPropertyPage(SVOProPosQueDlg::IDD)
 {
-	//{{AFX_DATA_INIT(CSVOProPosQueDlg)
+	//{{AFX_DATA_INIT(SVOProPosQueDlg)
 	//}}AFX_DATA_INIT
+    m_pParent = nullptr;
     m_iVCHorzScroll = 0;
     m_bIsListSetup = FALSE;
 }
 
-CSVOProPosQueDlg::~CSVOProPosQueDlg()
+SVOProPosQueDlg::~SVOProPosQueDlg()
 {
 }
 
-void CSVOProPosQueDlg::DoDataExchange(CDataExchange* pDX)
+void SVOProPosQueDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CPropertyPage::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(CSVOProPosQueDlg)
+	//{{AFX_DATA_MAP(SVOProPosQueDlg)
 	DDX_Control(pDX, IDC_EDT_TRIGGER, m_ctlVTEdit);
 	DDX_Control(pDX, IDC_LST_IP, m_ctlVIPList);
 	DDX_Control(pDX, IDC_LST_VC, m_ctlVCList);
@@ -67,8 +68,8 @@ void CSVOProPosQueDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 
-BEGIN_MESSAGE_MAP(CSVOProPosQueDlg, CPropertyPage)
-	//{{AFX_MSG_MAP(CSVOProPosQueDlg)
+BEGIN_MESSAGE_MAP(SVOProPosQueDlg, CPropertyPage)
+	//{{AFX_MSG_MAP(SVOProPosQueDlg)
 	ON_BN_CLICKED(IDC_BTN_ADD_VC, OnBtnAddVc)
 	ON_BN_CLICKED(IDC_BTN_ADD_VI, OnBtnAddVi)
 	ON_BN_CLICKED(IDC_BTN_ADD_VT, OnBtnAddVt)
@@ -85,9 +86,9 @@ BEGIN_MESSAGE_MAP(CSVOProPosQueDlg, CPropertyPage)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
-// CSVOProPosQueDlg message handlers
+// SVOProPosQueDlg message handlers
 
-void CSVOProPosQueDlg::OnBtnAddVc() 
+void SVOProPosQueDlg::OnBtnAddVc() 
 {
     int iCnt = m_pParent->GetCameraListCount();
     SVOCameraObjPtr pCameraObj;
@@ -97,7 +98,7 @@ void CSVOProPosQueDlg::OnBtnAddVc()
     if ( iPPQ != LB_ERR)
     {
 		CString PPQName;
-		SvMc::CSVOSelectItemListDlg Dlg;
+		SvMc::SVOSelectItemListDlg Dlg;
         
 		m_ctlPPQList.GetText(iPPQ,PPQName);
         pPPQObj = m_pParent->GetPPQObjectByName( PPQName);
@@ -128,7 +129,7 @@ void CSVOProPosQueDlg::OnBtnAddVc()
     }
 }
 
-void CSVOProPosQueDlg::OnBtnAddVi() 
+void SVOProPosQueDlg::OnBtnAddVi() 
 {
     int iCnt = m_pParent->GetInspectionListCount();
     SVOInspectionObjPtr pInspectionObj( nullptr );
@@ -138,7 +139,7 @@ void CSVOProPosQueDlg::OnBtnAddVi()
 
     if ( iPPQ != LB_ERR )
     {
-		SvMc::CSVOSelectItemListDlg Dlg;
+		SvMc::SVOSelectItemListDlg Dlg;
         
 		CString PPQName;
 		std::string InspectName;
@@ -181,7 +182,7 @@ void CSVOProPosQueDlg::OnBtnAddVi()
     }
 }
 
-void CSVOProPosQueDlg::OnBtnAddVt() 
+void SVOProPosQueDlg::OnBtnAddVt() 
 {
     int iTrigCount = m_pParent->GetTriggerListCount();
     SvTi::SVOTriggerObjPtr pTriggerObj( nullptr );
@@ -192,7 +193,7 @@ void CSVOProPosQueDlg::OnBtnAddVt()
     {       
 		CString sPPQ;
 		CString sCurrentTrig;
-		SvMc::CSVOSelectItemListDlg Dlg;
+		SvMc::SVOSelectItemListDlg Dlg;
 
         m_ctlPPQList.GetText(iPPQ,sPPQ);
 
@@ -240,7 +241,7 @@ void CSVOProPosQueDlg::OnBtnAddVt()
     }
 }
 
-void CSVOProPosQueDlg::OnBtnDeletePpq() 
+void SVOProPosQueDlg::OnBtnDeletePpq() 
 {
     int iCurSel = m_ctlPPQList.GetCurSel();
 	SVOPPQObjPtr pPPQObj( nullptr );
@@ -276,7 +277,7 @@ void CSVOProPosQueDlg::OnBtnDeletePpq()
     }
 }
 
-void CSVOProPosQueDlg::OnBtnNewPpq() 
+void SVOProPosQueDlg::OnBtnNewPpq() 
 {
     std::string NewPPQ = m_pParent->GetNextPPQName();
     m_pParent->AddToPPQList( NewPPQ.c_str() );
@@ -288,7 +289,7 @@ void CSVOProPosQueDlg::OnBtnNewPpq()
     m_pParent->ItemChanged( PPQ_DLG, NewPPQ.c_str(), ITEM_ACTION_NEW);
 }
 
-void CSVOProPosQueDlg::OnBtnPropPpq() 
+void SVOProPosQueDlg::OnBtnPropPpq() 
 {
     bool l_bSrcImgProp;
     int iCurSel = m_ctlPPQList.GetCurSel();
@@ -300,7 +301,7 @@ void CSVOProPosQueDlg::OnBtnPropPpq()
 		if( nullptr != pPPQObj )
 		{
 			l_bSrcImgProp = pPPQObj->GetMaintainSourceImageProperty();
-			CSVOPropertyPageDlg oDlg;
+			SVOPropertyPageDlg oDlg;
 			SVOPPQObj& rTmpObj( oDlg.getPPQObject() );
 
 			rTmpObj = *pPPQObj;
@@ -323,7 +324,7 @@ void CSVOProPosQueDlg::OnBtnPropPpq()
     }
 }
 
-void CSVOProPosQueDlg::OnBtnRemoveVc() 
+void SVOProPosQueDlg::OnBtnRemoveVc() 
 {
 	SVOInspectionObjPtr pInspectionObj;
 	SVOPPQObjPtr pPPQObj( nullptr );
@@ -362,7 +363,7 @@ void CSVOProPosQueDlg::OnBtnRemoveVc()
     }// end if
 }
 
-void CSVOProPosQueDlg::OnBtnRemoveVi() 
+void SVOProPosQueDlg::OnBtnRemoveVi() 
 {
 	SVOPPQObjPtr pPPQObj( nullptr );
     int iCurPPQ = m_ctlPPQList.GetCurSel();
@@ -387,7 +388,7 @@ void CSVOProPosQueDlg::OnBtnRemoveVi()
     }
 }
 
-void CSVOProPosQueDlg::OnBtnRemoveVt() 
+void SVOProPosQueDlg::OnBtnRemoveVt() 
 {
 	SVOPPQObjPtr pPPQObj( nullptr );
     int iCurPPQ = m_ctlPPQList.GetCurSel();
@@ -413,12 +414,12 @@ void CSVOProPosQueDlg::OnBtnRemoveVt()
     }
 }
 
-BOOL CSVOProPosQueDlg::OnKillActive() 
+BOOL SVOProPosQueDlg::OnKillActive() 
 {
 	return CPropertyPage::OnKillActive();
 }
 
-BOOL CSVOProPosQueDlg::OnSetActive() 
+BOOL SVOProPosQueDlg::OnSetActive() 
 {
     if (m_bIsListSetup)
     {
@@ -428,11 +429,11 @@ BOOL CSVOProPosQueDlg::OnSetActive()
 	return CPropertyPage::OnSetActive();
 }
 
-BOOL CSVOProPosQueDlg::OnInitDialog() 
+BOOL SVOProPosQueDlg::OnInitDialog() 
 {
 	CPropertyPage::OnInitDialog();
     
-    m_pParent = (CSVOConfigAssistantDlg*)GetParent()->GetParent();
+    m_pParent = (SVOConfigAssistantDlg*)GetParent()->GetParent();
 
 	SetWindowContextHelpId(IDD+SvOr::HELPFILE_DLG_IDD_OFFSET);
 
@@ -441,7 +442,7 @@ BOOL CSVOProPosQueDlg::OnInitDialog()
 }
 
 
-void CSVOProPosQueDlg::OnSelchangeLstPpqList() 
+void SVOProPosQueDlg::OnSelchangeLstPpqList() 
 {
     int iCursel = m_ctlPPQList.GetCurSel();
 	SVOPPQObjPtr pPPQObj( nullptr );
@@ -504,7 +505,7 @@ void CSVOProPosQueDlg::OnSelchangeLstPpqList()
 }
 
 
-void CSVOProPosQueDlg::SetupList()
+void SVOProPosQueDlg::SetupList()
 {
     int iCount = m_pParent->GetPPQListCount();
     m_ctlVIPList.ResetContent();
@@ -528,12 +529,12 @@ void CSVOProPosQueDlg::SetupList()
 
 
 
-void CSVOProPosQueDlg::OnDblclkLstPpqList() 
+void SVOProPosQueDlg::OnDblclkLstPpqList() 
 {
     OnBtnPropPpq();
 }
 
-BOOL CSVOProPosQueDlg::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL SVOProPosQueDlg::OnHelpInfo(HELPINFO* pHelpInfo) 
 {
 	::SendMessage( m_pParent->GetSafeHwnd(), WM_HELP, 0, reinterpret_cast<DWORD_PTR>(pHelpInfo) );
 

@@ -48,18 +48,18 @@ static LPCTSTR AllInspectionExportFileFilters = _T("All Inspection Export Files 
 static LPCTSTR AllInspectionExportFileExt = _T("bxp;cxp");
 
 /////////////////////////////////////////////////////////////////////////////
-// CSVOInspectionSourceDlg property page
+// SVOInspectionSourceDlg property page
 
-IMPLEMENT_DYNCREATE(CSVOInspectionSourceDlg, CPropertyPage)
+IMPLEMENT_DYNCREATE(SVOInspectionSourceDlg, CPropertyPage)
 
-CSVOInspectionSourceDlg::CSVOInspectionSourceDlg() : CPropertyPage(CSVOInspectionSourceDlg::IDD)
+SVOInspectionSourceDlg::SVOInspectionSourceDlg() : CPropertyPage(SVOInspectionSourceDlg::IDD), m_pParent(nullptr)
 {
 }
 
-void CSVOInspectionSourceDlg::DoDataExchange(CDataExchange* pDX)
+void SVOInspectionSourceDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CPropertyPage::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(CSVOInspectionSourceDlg)
+	//{{AFX_DATA_MAP(SVOInspectionSourceDlg)
 	DDX_Control(pDX, IDC_LST_IPD_LIST, m_ctlIPDlist);
 	DDX_Control(pDX, IDC_BTN_PROP_VI, m_ctlPropVIbtn);
 	DDX_Control(pDX, IDC_BTN_DELETE_VI, m_ctlDeleteVIbtn);
@@ -70,8 +70,8 @@ void CSVOInspectionSourceDlg::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-BEGIN_MESSAGE_MAP(CSVOInspectionSourceDlg, CPropertyPage)
-	//{{AFX_MSG_MAP(CSVOInspectionSourceDlg)
+BEGIN_MESSAGE_MAP(SVOInspectionSourceDlg, CPropertyPage)
+	//{{AFX_MSG_MAP(SVOInspectionSourceDlg)
 	ON_BN_CLICKED(IDC_BTN_ADD_IPD, OnBtnAddIpd)
 	ON_BN_CLICKED(IDC_BTN_DELETE_VI, OnBtnDeleteVi)
 	ON_BN_CLICKED(IDC_BTN_PROP_VI, OnBtnPropVi)
@@ -85,9 +85,9 @@ BEGIN_MESSAGE_MAP(CSVOInspectionSourceDlg, CPropertyPage)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
-// CSVOInspectionSourceDlg message handlers
+// SVOInspectionSourceDlg message handlers
 
-void CSVOInspectionSourceDlg::OnBtnAddIpd() 
+void SVOInspectionSourceDlg::OnBtnAddIpd() 
 {
 	std::string NewInspection = m_pParent->GetNextInspectionName();
 	std::string NewDisplayName = GetNextInspectionDisplayName(NewInspection);
@@ -102,7 +102,7 @@ void CSVOInspectionSourceDlg::OnBtnAddIpd()
 	m_ctlExportIPDbtn.EnableWindow(false);
 }
 
-void CSVOInspectionSourceDlg::OnBtnDeleteVi() 
+void SVOInspectionSourceDlg::OnBtnDeleteVi() 
 {
 	int iCurSel = m_ctlIPDlist.GetCurSel();
 
@@ -137,7 +137,7 @@ void CSVOInspectionSourceDlg::OnBtnDeleteVi()
 	}
 }
 
-void CSVOInspectionSourceDlg::EnableDisableExport()
+void SVOInspectionSourceDlg::EnableDisableExport()
 {
 	if ( !m_pParent->IsNewConfiguration() )
 	{
@@ -169,7 +169,7 @@ void CSVOInspectionSourceDlg::EnableDisableExport()
 	}
 }
 
-void CSVOInspectionSourceDlg::OnBtnPropVi() 
+void SVOInspectionSourceDlg::OnBtnPropVi() 
 {
 	int iCurSel = m_ctlIPDlist.GetCurSel();
 
@@ -201,7 +201,7 @@ void CSVOInspectionSourceDlg::OnBtnPropVi()
 				}// end for
 			}// end for
 
-			CSVOPropertyPageDlg oDlg;
+			SVOPropertyPageDlg oDlg;
 			SVOInspectionObj& rTmpObj( oDlg.getInspectObject() );
 
 			rTmpObj = *pInpectionObj;
@@ -234,7 +234,7 @@ static bool IsColorImport(LPCTSTR filename)
 	return bRetVal;
 }
 
-void CSVOInspectionSourceDlg::OnBtnImportIpd() 
+void SVOInspectionSourceDlg::OnBtnImportIpd() 
 {
 	// prompt for file 
 	DWORD dwFlags = OFN_DONTADDTORECENT | OFN_ENABLESIZING | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
@@ -297,7 +297,7 @@ void CSVOInspectionSourceDlg::OnBtnImportIpd()
 	}
 }
 
-void CSVOInspectionSourceDlg::OnBtnExportIpd() 
+void SVOInspectionSourceDlg::OnBtnExportIpd() 
 {
 	// Get Selected IP
 	int iCurSel = m_ctlIPDlist.GetCurSel();
@@ -339,20 +339,20 @@ void CSVOInspectionSourceDlg::OnBtnExportIpd()
 	}
 }
 
-BOOL CSVOInspectionSourceDlg::OnKillActive() 
+BOOL SVOInspectionSourceDlg::OnKillActive() 
 {
 	return CPropertyPage::OnKillActive();
 }
 
-BOOL CSVOInspectionSourceDlg::OnSetActive() 
+BOOL SVOInspectionSourceDlg::OnSetActive() 
 {
 	return CPropertyPage::OnSetActive();
 }
 
-BOOL CSVOInspectionSourceDlg::OnInitDialog() 
+BOOL SVOInspectionSourceDlg::OnInitDialog() 
 {
 	CPropertyPage::OnInitDialog();
-	m_pParent = dynamic_cast<CSVOConfigAssistantDlg*> (GetParent()->GetParent());
+	m_pParent = dynamic_cast<SVOConfigAssistantDlg*> (GetParent()->GetParent());
 
 	if ( m_pParent->IsNewConfiguration() )
 	{
@@ -365,13 +365,13 @@ BOOL CSVOInspectionSourceDlg::OnInitDialog()
 				  // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void CSVOInspectionSourceDlg::ClearList()
+void SVOInspectionSourceDlg::ClearList()
 {
 	m_Items.clear();
 	m_ctlIPDlist.ResetContent();
 }
 
-void CSVOInspectionSourceDlg::SetupList()
+void SVOInspectionSourceDlg::SetupList()
 {
 	int iCount = m_pParent->GetInspectionListCount();
 	ClearList();
@@ -390,7 +390,7 @@ void CSVOInspectionSourceDlg::SetupList()
 	m_ctlIPDlist.SetCurSel(0);
 }
 
-void CSVOInspectionSourceDlg::OnSelchangeLstIpdList() 
+void SVOInspectionSourceDlg::OnSelchangeLstIpdList() 
 {
 	int iCurSel = m_ctlIPDlist.GetCurSel();
 
@@ -436,17 +436,17 @@ void CSVOInspectionSourceDlg::OnSelchangeLstIpdList()
 	EnableDisableExport();
 }
 
-void CSVOInspectionSourceDlg::OnDblclkLstIpdList() 
+void SVOInspectionSourceDlg::OnDblclkLstIpdList() 
 {
 	OnBtnPropVi();
 }
 
-void CSVOInspectionSourceDlg::OnDestroy() 
+void SVOInspectionSourceDlg::OnDestroy() 
 {
 	CPropertyPage::OnDestroy();
 }
 
-std::string CSVOInspectionSourceDlg::GetNextInspectionDisplayName( const std::string& rLabeName )
+std::string SVOInspectionSourceDlg::GetNextInspectionDisplayName( const std::string& rLabeName )
 {
 	BOOL bFound = false;
 	std::string Result;
@@ -468,7 +468,7 @@ std::string CSVOInspectionSourceDlg::GetNextInspectionDisplayName( const std::st
 	return Result;
 }
 
-BOOL CSVOInspectionSourceDlg::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL SVOInspectionSourceDlg::OnHelpInfo(HELPINFO* pHelpInfo) 
 {
 	::SendMessage( m_pParent->GetSafeHwnd(), WM_HELP, 0, reinterpret_cast<DWORD_PTR>(pHelpInfo) );
 

@@ -29,34 +29,42 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 #pragma region Constructor
-CSVRegressionRunDlg::CSVRegressionRunDlg(SvOi::IFormulaControllerPtr pFormulaController, CWnd* pParent /*=nullptr*/)
-	: CDialog(CSVRegressionRunDlg::IDD, pParent)
-	,m_pFormulaController(pFormulaController)
-	,m_iconPlay(nullptr)
-	,m_iconPause(nullptr)
-	,m_iconStop(nullptr)
-	,m_iconModeContinue(nullptr)
-	,m_iconModeRunToEnd(nullptr)
-	,m_iconFrameUp(nullptr)
-	,m_iconFrameBack(nullptr)
-	,m_timeDelayText( _T( " 0.0" ) ) // Lead with a space for all values less than 10.
+SVRegressionRunDlg::SVRegressionRunDlg(SvOi::IFormulaControllerPtr pFormulaController, CWnd* pParent /*=nullptr*/)
+	: CDialog(SVRegressionRunDlg::IDD, pParent)
+	, m_pFormulaController(pFormulaController)
+	, m_iconPlay(nullptr)
+	, m_iconPause(nullptr)
+	, m_iconStop(nullptr)
+	, m_iconModeContinue(nullptr)
+	, m_iconModeRunToEnd(nullptr)
+	, m_iconFrameUp(nullptr)
+	, m_iconFrameBack(nullptr)
+	, m_timeDelayText( _T( " 0.0" ) ) // Lead with a space for all values less than 10.
+	, m_bFirst(false)
+	, m_bPlayByEquation(false)
+	, m_ctlToolTip(nullptr)
+	, m_enumMode(RunToEnd)
+	, m_enumPlayPause(Pause)
+	, m_iconBeginning(nullptr)
+	, m_pIPDocParent(nullptr)
+	, m_timeDelayInMS(0)
 {
 	m_sliderDelayTime.SetInvertVerticalArrowKeys(true);
-	//{{AFX_DATA_INIT(CSVRegressionRunDlg)
+	//{{AFX_DATA_INIT(SVRegressionRunDlg)
 	//}}AFX_DATA_INIT
 }
 
-CSVRegressionRunDlg::~CSVRegressionRunDlg()
+SVRegressionRunDlg::~SVRegressionRunDlg()
 {
 	DestroyIcons();
 }
 #pragma endregion Constructor
 
 #pragma region MFC Methods
-void CSVRegressionRunDlg::DoDataExchange(CDataExchange* pDX)
+void SVRegressionRunDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(CSVRegressionRunDlg)
+	//{{AFX_DATA_MAP(SVRegressionRunDlg)
 	DDX_Control(pDX, IDC_BTN_EXIT, m_btnExit);
 	DDX_Control(pDX, IDC_BTN_SETTINGS, m_btnSettings);
 	DDX_Control(pDX, IDC_SPIN_DELAY_TIME, m_sliderDelayTime);
@@ -73,8 +81,8 @@ void CSVRegressionRunDlg::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-BEGIN_MESSAGE_MAP(CSVRegressionRunDlg, CDialog)
-	//{{AFX_MSG_MAP(CSVRegressionRunDlg)
+BEGIN_MESSAGE_MAP(SVRegressionRunDlg, CDialog)
+	//{{AFX_MSG_MAP(SVRegressionRunDlg)
 	ON_BN_CLICKED(IDC_BTN_BEGINNING, OnBtnBeginning)
 	ON_BN_CLICKED(IDC_BTN_FRAME_BACK, OnBtnFrameBack)
 	ON_BN_CLICKED(IDC_BTN_FRAME_UP, OnBtnFrameUp)
@@ -97,9 +105,9 @@ BEGIN_MESSAGE_MAP(CSVRegressionRunDlg, CDialog)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
-// CSVRegressionRunDlg message handlers
+// SVRegressionRunDlg message handlers
 
-BOOL CSVRegressionRunDlg::OnInitDialog()
+BOOL SVRegressionRunDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 	BOOL bRet;
@@ -184,15 +192,15 @@ BOOL CSVRegressionRunDlg::OnInitDialog()
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void CSVRegressionRunDlg::OnOK()
+void SVRegressionRunDlg::OnOK()
 {
 }
 
-void CSVRegressionRunDlg::OnCancel()
+void SVRegressionRunDlg::OnCancel()
 {
 }
 
-BOOL CSVRegressionRunDlg::PreTranslateMessage(MSG* pMsg)
+BOOL SVRegressionRunDlg::PreTranslateMessage(MSG* pMsg)
 {
 	if ( pMsg->message && m_ctlToolTip )
 		m_ctlToolTip->RelayEvent(pMsg);
@@ -252,7 +260,7 @@ BOOL CSVRegressionRunDlg::PreTranslateMessage(MSG* pMsg)
 	return retValue;
 }
 
-void CSVRegressionRunDlg::OnBtnBeginning()
+void SVRegressionRunDlg::OnBtnBeginning()
 {
 	if ( m_enumPlayPause == Play )
 	{
@@ -264,17 +272,17 @@ void CSVRegressionRunDlg::OnBtnBeginning()
 	}
 }
 
-void CSVRegressionRunDlg::OnBtnFrameBack()
+void SVRegressionRunDlg::OnBtnFrameBack()
 {
 	m_pIPDocParent->SetRegressionTestRunMode(RegModeSingleStepBack);
 }
 
-void CSVRegressionRunDlg::OnBtnFrameUp()
+void SVRegressionRunDlg::OnBtnFrameUp()
 {
 	m_pIPDocParent->SetRegressionTestRunMode(RegModeSingleStepForward);
 }
 
-void CSVRegressionRunDlg::OnBtnMode()
+void SVRegressionRunDlg::OnBtnMode()
 {
 	if ( m_enumMode == RunToEnd )
 	{
@@ -294,7 +302,7 @@ void CSVRegressionRunDlg::OnBtnMode()
 	}
 }
 
-void CSVRegressionRunDlg::OnBtnPlay()
+void SVRegressionRunDlg::OnBtnPlay()
 {
 	if ( m_enumPlayPause == Play )
 	{
@@ -318,19 +326,19 @@ void CSVRegressionRunDlg::OnBtnPlay()
 	}
 }
 
-void CSVRegressionRunDlg::OnBtnStop()
+void SVRegressionRunDlg::OnBtnStop()
 {
 	m_enumPlayPause = Pause;
 	OnBtnBeginning();
 }
 
-void CSVRegressionRunDlg::OnCheckPlayCond()
+void SVRegressionRunDlg::OnCheckPlayCond()
 {
 	UpdateData(true); // get data from dialog
 	m_pIPDocParent->SetRegressionTestUsePlayCondition(m_bPlayByEquation?true:false);
 }
 
-void CSVRegressionRunDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
+void SVRegressionRunDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
 	UpdateData( TRUE ); // get data from dialog
 
@@ -343,19 +351,19 @@ void CSVRegressionRunDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScroll
 	CDialog::OnHScroll(nSBCode, nPos, pScrollBar);
 }
 
-void CSVRegressionRunDlg::OnShowWindow(BOOL bShow, UINT nStatus)
+void SVRegressionRunDlg::OnShowWindow(BOOL bShow, UINT nStatus)
 {
 	CDialog::OnShowWindow(bShow, nStatus);
 
 	m_pIPDocParent->SetRegressionTimeoutPeriod(m_timeDelayInMS);
 }
-void CSVRegressionRunDlg::OnClose()
+void SVRegressionRunDlg::OnClose()
 {
 	DestroyIcons();
 	CDialog::OnClose();
 }
 
-void CSVRegressionRunDlg::OnBtnSettings()
+void SVRegressionRunDlg::OnBtnSettings()
 {
 	if ( m_enumPlayPause != Pause )
 	{ //set to pause...
@@ -396,14 +404,14 @@ void CSVRegressionRunDlg::OnBtnSettings()
 	}
 }
 
-void CSVRegressionRunDlg::OnBtnExit()
+void SVRegressionRunDlg::OnBtnExit()
 {
 	SVRegressionExitDlg Dlg;
 
 	Dlg.DoModal();
 }
 
-LRESULT  CSVRegressionRunDlg::SetNextFiles(WPARAM wParam, LPARAM )
+LRESULT  SVRegressionRunDlg::SetNextFiles(WPARAM wParam, LPARAM )
 {
 	HRESULT hRet = S_OK;
 
@@ -462,7 +470,7 @@ LRESULT  CSVRegressionRunDlg::SetNextFiles(WPARAM wParam, LPARAM )
 	return hRet;
 }
 
-LRESULT CSVRegressionRunDlg::SetPlayPauseBtn(WPARAM , LPARAM )
+LRESULT SVRegressionRunDlg::SetPlayPauseBtn(WPARAM , LPARAM )
 {
 	HRESULT hRet = S_OK;
 
@@ -492,7 +500,7 @@ LRESULT CSVRegressionRunDlg::SetPlayPauseBtn(WPARAM , LPARAM )
 	return hRet;
 }
 
-LRESULT CSVRegressionRunDlg::SetPreviousFrameBtn(WPARAM, LPARAM lParam)
+LRESULT SVRegressionRunDlg::SetPreviousFrameBtn(WPARAM, LPARAM lParam)
 {
 	HRESULT hRet = S_OK;
 
@@ -503,7 +511,7 @@ LRESULT CSVRegressionRunDlg::SetPreviousFrameBtn(WPARAM, LPARAM lParam)
 	return hRet;
 }
 
-LRESULT CSVRegressionRunDlg::CloseRegressionTest(WPARAM, LPARAM)
+LRESULT SVRegressionRunDlg::CloseRegressionTest(WPARAM, LPARAM)
 {
 	WINDOWPLACEMENT lpwndpl;
 
@@ -519,14 +527,14 @@ LRESULT CSVRegressionRunDlg::CloseRegressionTest(WPARAM, LPARAM)
 #pragma endregion MFC Methods
 
 #pragma region Public Methods
-void CSVRegressionRunDlg::SetIPDocParent(SVIPDoc* pIPDocParent)
+void SVRegressionRunDlg::SetIPDocParent(SVIPDoc* pIPDocParent)
 {
 	m_pIPDocParent = pIPDocParent;
 }
 #pragma endregion Public Methods
 
 #pragma region Private Methods
-BOOL CSVRegressionRunDlg::EnableButtons(BOOL p_bValue)
+BOOL SVRegressionRunDlg::EnableButtons(BOOL p_bValue)
 {
 	//if false first time, all btns enable = false, except for 'Settings'
 	//if true, files have been selected
@@ -540,7 +548,7 @@ BOOL CSVRegressionRunDlg::EnableButtons(BOOL p_bValue)
 	return TRUE;
 }
 
-void CSVRegressionRunDlg::DestroyIcons()
+void SVRegressionRunDlg::DestroyIcons()
 {
 	if(m_iconPlay)
 	{
@@ -584,7 +592,7 @@ void CSVRegressionRunDlg::DestroyIcons()
 	}
 }
 
-void CSVRegressionRunDlg::setDelayTime( int position )
+void SVRegressionRunDlg::setDelayTime( int position )
 {
 	m_timeDelayInMS = position*100;
 
@@ -608,7 +616,7 @@ void CSVRegressionRunDlg::setDelayTime( int position )
 	m_pIPDocParent->SetRegressionTimeoutPeriod(m_timeDelayInMS);
 }
 
-void CSVRegressionRunDlg::OnBnClickedButtonFormula()
+void SVRegressionRunDlg::OnBnClickedButtonFormula()
 {
 	BOOL updateState = UpdateData(TRUE);
 	if (updateState)
@@ -621,7 +629,7 @@ void CSVRegressionRunDlg::OnBnClickedButtonFormula()
 	}
 }
 
-void CSVRegressionRunDlg::setEquationText()
+void SVRegressionRunDlg::setEquationText()
 {
 	// Get text from EquationStruct and place into Editor
 	m_equationString = _T("");

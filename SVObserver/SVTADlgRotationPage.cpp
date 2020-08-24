@@ -99,14 +99,14 @@ BOOL SVToolAdjustmentDialogRotationPageClass::OnInitDialog()
 
 		// Get Evaluate Object for the X coordinate...
 		evaluateObjectInfo.m_SubType = SvPb::SVEvaluateRotationXObjectType;
-		m_pEvaluateRotationX = dynamic_cast<SvOp::SVEvaluateClass*> (pTool->getFirstObject(evaluateObjectInfo));
+		m_pEvaluateRotationX = dynamic_cast<SvOp::SVEvaluate*> (pTool->getFirstObject(evaluateObjectInfo));
 
 		// Get Evaluate Object for the Y coordinate...
 		evaluateObjectInfo.m_SubType = SvPb::SVEvaluateRotationYObjectType;
-		m_pEvaluateRotationY = dynamic_cast<SvOp::SVEvaluateClass*> (pTool->getFirstObject(evaluateObjectInfo));
+		m_pEvaluateRotationY = dynamic_cast<SvOp::SVEvaluate*> (pTool->getFirstObject(evaluateObjectInfo));
 
 		evaluateObjectInfo.m_SubType = SvPb::SVEvaluateRotationAngleObjectType;
-		m_pEvaluateRotationAngle = dynamic_cast<SvOp::SVEvaluateClass*>(pTool->getFirstObject(evaluateObjectInfo));
+		m_pEvaluateRotationAngle = dynamic_cast<SvOp::SVEvaluate*>(pTool->getFirstObject(evaluateObjectInfo));
 
 		//Image Transformation
 		SvDef::SVObjectTypeInfoStruct objectInfo;

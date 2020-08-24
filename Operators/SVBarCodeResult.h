@@ -2,7 +2,7 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVBarCodeResultClass
+//* .Module Name     : SVBarCodeResult
 //* .File Name       : $Workfile:   SVBarCodeResult.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.2  $
@@ -24,16 +24,16 @@ namespace SvOp
 #define  BC_MAX_ENTREES       10000  // Max number of lines allowed in the match file
 #define  BC_CAR_RETURN        0x0D
 
-class SVBarCodeResultClass : public SVStringResultClass  
+class SVBarCodeResult : public SVStringResult  
 {
-	SV_DECLARE_CLASS(SVBarCodeResultClass);
+	SV_DECLARE_CLASS(SVBarCodeResult);
 
 public:
 	bool m_bFailedToRead = false;
 	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
-	SVBarCodeResultClass(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVBARCODEANALYZERESULT);
-	virtual ~SVBarCodeResultClass();
+	SVBarCodeResult(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVBARCODEANALYZERESULT);
+	virtual ~SVBarCodeResult();
 
 	HRESULT LoadMatchStringFile();
 	bool BuildHashTable(char *szBuffer);

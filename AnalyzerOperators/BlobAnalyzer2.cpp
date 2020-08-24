@@ -1047,7 +1047,7 @@ namespace SvAo
 		resultClassInfo.m_ClassName += _T(" ") + Title;
 
 		// Construct the result class
-		m_pResultBlob = dynamic_cast<SvOp::SVLongResultClass*> (resultClassInfo.Construct());
+		m_pResultBlob = dynamic_cast<SvOp::SVLongResult*> (resultClassInfo.Construct());
 
 		if (nullptr == m_pResultBlob)
 		{

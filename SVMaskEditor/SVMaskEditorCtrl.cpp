@@ -2,22 +2,22 @@
 // * COPYRIGHT (c) 2007 by SVResearch, Harrisburg
 // * All Rights Reserved
 // ******************************************************************************
-// * .Module Name     : SVMaskEditorCtl
-// * .File Name       : $Workfile:   SVMaskEditorCtl.cpp  $
+// * .Module Name     : SVMaskEditorCtrl
+// * .File Name       : $Workfile:   SVMaskEditorCtrl.cpp  $
 // * ----------------------------------------------------------------------------
 // * .Current Version : $Revision:   1.2  $
 // * .Check In Date   : $Date:   03 Jun 2014 13:20:58  $
 // ******************************************************************************
 
-// SVMaskEditorCtl.cpp : Implementation of the SVMaskEditorCtrl ActiveX Control class.
+// SVMaskEditorCtrl.cpp : Implementation of the SVMaskEditorCtrl ActiveX Control class.
 
 #pragma region Includes
 #include "stdafx.h"
 #include "resource.h"
-#include "SVMaskEditorCtl.h"
+#include "SVMaskEditorCtrl.h"
 #include "SVMaskEditor.h"
 #include "SVSystemLibrary\SVImageConvertorGDI.h"
-#include "SVMaskEditorPpg.h"
+#include "SVMaskEditorPropPage.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG

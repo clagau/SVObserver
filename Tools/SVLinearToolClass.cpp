@@ -408,7 +408,7 @@ void SVLinearToolClass::init()
 	// Build an operator list...
 
 	// ...use in-place image operator list, because we already have an output image!
-	SvOp::SVUnaryImageOperatorListClass* pOperatorList = new SvOp::SVLinearImageOperatorListClass;
+	SvOp::SVUnaryImageOperatorList* pOperatorList = new SvOp::SVLinearImageOperatorList;
 
 	// Operator list defaults:
 	if(nullptr != pOperatorList)

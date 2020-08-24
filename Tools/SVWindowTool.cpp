@@ -136,7 +136,7 @@ void SVWindowToolClass::AddUnaryImageOperatorListAsChild ()
 {
 	// Build an operator list...
 	// ...use Standard image operator list, because we need an output image! RO_20Mar2000
-	SvOp::SVUnaryImageOperatorListClass* pOperatorList = new SvOp::SVStdImageOperatorListClass;
+	SvOp::SVUnaryImageOperatorList* pOperatorList = new SvOp::SVStdImageOperatorListClass;
 
 	// Operator list defaults:
 	if(nullptr != pOperatorList)
@@ -147,8 +147,8 @@ void SVWindowToolClass::AddUnaryImageOperatorListAsChild ()
 		// and Requires a SVUsermaskOperatorClass Object
 		pOperatorList->Add( new SvOp::SVUserMaskOperatorClass( pOperatorList ) );
 
-		// and Requires a SVLUTOperatorClass Object
-		pOperatorList->Add( new SvOp::SVLUTOperatorClass( pOperatorList ) );
+		// and Requires a SVLUTOperator Object
+		pOperatorList->Add( new SvOp::SVLUTOperator( pOperatorList ) );
 
 		// Add the UnaryImageOperatorList to the Tool's List
 		Add( pOperatorList );
@@ -187,7 +187,7 @@ bool SVWindowToolClass::SetDefaultFormulas(SvStl::MessageContainerVector *pError
 	SvDef::SVObjectTypeInfoStruct lutEquationInfo;
 	lutEquationInfo.m_ObjectType	= SvPb::SVEquationObjectType;
 	lutEquationInfo.m_SubType		= SvPb::SVLUTEquationObjectType;
-	SvOp::SVLUTEquationClass* pLUTEquation = dynamic_cast<SvOp::SVLUTEquationClass*>(getFirstObject(lutEquationInfo));
+	SvOp::SVLUTEquation* pLUTEquation = dynamic_cast<SvOp::SVLUTEquation*>(getFirstObject(lutEquationInfo));
 	if( pLUTEquation )
 	{
 		bRetVal = pLUTEquation->SetDefaultFormula(pErrorMessages) && bRetVal;

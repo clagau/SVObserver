@@ -27,9 +27,9 @@ static char THIS_FILE[] = __FILE__;
 #pragma endregion Declarations
 
 ///For this class it is not necessary to call SV_IMPLEMENT_CLASS as it is a base class and only derived classes are instantiated.
-//SV_IMPLEMENT_CLASS( SVMathContainerClass, SVMathContainerClassGuid )
+//SV_IMPLEMENT_CLASS( SVMathContainer, SVMathContainerClassGuid )
 
-SVMathContainerClass::SVMathContainerClass( SVObjectClass* POwner, int StringResourceID )
+SVMathContainer::SVMathContainer( SVObjectClass* POwner, int StringResourceID )
 					 :SVTaskObjectClass( POwner, StringResourceID ) 
 {
 	// Identify yourself
@@ -47,26 +47,26 @@ SVMathContainerClass::SVMathContainerClass( SVObjectClass* POwner, int StringRes
 	// Set Embedded defaults
 
 	// Make a friend
-	SVMathEquationClass* pMathEquation = new SVMathEquationClass( this );
+	SVMathEquation* pMathEquation = new SVMathEquation( this );
 	AddFriend( pMathEquation->getObjectId() );
 
 	// Add Default Inputs and Outputs
 	addDefaultInputObjects();
 }
 
-SVMathContainerClass::~SVMathContainerClass()
+SVMathContainer::~SVMathContainer()
 {
-	SVMathContainerClass::CloseObject();
+	SVMathContainer::CloseObject();
 }
 
-bool SVMathContainerClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
+bool SVMathContainer::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
 	m_isCreated = SVTaskObjectClass::CreateObject(rCreateStructure ) && nullptr != GetInspection() && 
 		nullptr != GetTool() && nullptr != SvOl::getInput<SvVol::SVDoubleValueObjectClass>(m_inputMathResult);
 	return m_isCreated;
 }
 
-bool SVMathContainerClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
+bool SVMathContainer::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 

@@ -22,7 +22,7 @@
 
 namespace SvOp
 {
-class SVConditionalClass;
+class SVConditional;
 }
 
 enum ToolSetTimes
@@ -39,17 +39,17 @@ enum ToolSetTimes
 
 // This class encapsules basic properties to handle and execute an Image Processing Tool Set
 
-class SVToolSetClass : public SvIe::SVTaskObjectListClass, public SvOi::IToolSet
+class SVToolSet : public SvIe::SVTaskObjectListClass, public SvOi::IToolSet
 {
-	SV_DECLARE_CLASS( SVToolSetClass );
+	SV_DECLARE_CLASS( SVToolSet );
 
 	friend class SVInspectionProcess; // for access to Run()
 
 #pragma region Public Methods
 public:
-	SVToolSetClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTOOLSET );
+	SVToolSet( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTOOLSET );
 
-	virtual ~SVToolSetClass();
+	virtual ~SVToolSet();
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 	virtual bool resetAllObjects(SvStl::MessageContainerVector *pErrorMessages = nullptr) override;
@@ -69,7 +69,7 @@ public:
 
 	void SetDefaultInputs();
 	
-	SVResultListClass* GetResultList();
+	SVResultList* GetResultList();
 
 	SvIe::SVImageClass* getCurrentImage();////@TODO[Arvid][7.50][08.05.2017] all occurrences of this function should be replaced by getCurrentImageInterface() when possible
 
@@ -159,7 +159,7 @@ protected:
 	SvVol::SVBoolValueObjectClass m_ResetCounts;
 	SvVol::SVLongValueObjectClass m_TriggerCount;
 
-	SVResultListClass m_ResultList;
+	SVResultList m_ResultList;
 
 	// Passed, if TRUE ( Reset Value: FALSE )
 	SvVol::SVBoolValueObjectClass m_Passed;

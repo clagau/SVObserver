@@ -29,8 +29,8 @@ namespace SvOg
 		// Dialog Data
 			//{{AFX_DATA(SVFillBlobDlg)
 		enum { IDD = IDD_DLG_FILL_BLOBS };
-		SvMc::SVEnumerateComboClass	m_ctlBlobFillType;
-		SvMc::SVEnumerateComboClass	m_ctlBlobFillColor;
+		SvMc::SVEnumerateCombo	m_ctlBlobFillType;
+		SvMc::SVEnumerateCombo	m_ctlBlobFillColor;
 		//}}AFX_DATA
 
 

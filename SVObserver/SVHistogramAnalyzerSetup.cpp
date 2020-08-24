@@ -66,19 +66,19 @@ BOOL SVSquare::RegisterWindowClass()
 	return TRUE;
 }
 
-SVHistogramAnalyzerSetupClass::SVHistogramAnalyzerSetupClass(CWnd* pParent /*=nullptr*/)
-	: CDialog(SVHistogramAnalyzerSetupClass::IDD, pParent)
+SVHistogramAnalyzerSetup::SVHistogramAnalyzerSetup(CWnd* pParent /*=nullptr*/)
+	: CDialog(SVHistogramAnalyzerSetup::IDD, pParent), m_pAnalyzer(nullptr)
 {
 	unsigned opt = m_histogram.GetOptions();
 	opt &= ~(histogram::color_mask | histogram::clip_mask | histogram::placement_mask);
 	m_histogram.SetOptions(opt | histogram::config | histogram::clip | histogram::analyzer);
 }
 
-SVHistogramAnalyzerSetupClass::~SVHistogramAnalyzerSetupClass()
+SVHistogramAnalyzerSetup::~SVHistogramAnalyzerSetup()
 {
 }
 
-void SVHistogramAnalyzerSetupClass::DoDataExchange(CDataExchange* pDX)
+void SVHistogramAnalyzerSetup::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_HISTOGRAM, m_histogram);
@@ -88,45 +88,45 @@ void SVHistogramAnalyzerSetupClass::DoDataExchange(CDataExchange* pDX)
 }
 
 
-BEGIN_MESSAGE_MAP(SVHistogramAnalyzerSetupClass, CDialog)
-	ON_BN_CLICKED(IDC_RADIOLIN, &SVHistogramAnalyzerSetupClass::OnBnClickedRadiolin)
-	ON_BN_CLICKED(IDC_RADIOLOG, &SVHistogramAnalyzerSetupClass::OnBnClickedRadiolog)
+BEGIN_MESSAGE_MAP(SVHistogramAnalyzerSetup, CDialog)
+	ON_BN_CLICKED(IDC_RADIOLIN, &SVHistogramAnalyzerSetup::OnBnClickedRadiolin)
+	ON_BN_CLICKED(IDC_RADIOLOG, &SVHistogramAnalyzerSetup::OnBnClickedRadiolog)
 	ON_WM_CREATE()
-	ON_BN_CLICKED(IDC_RESETBUTTON, &SVHistogramAnalyzerSetupClass::OnBnClickedResetbutton)
-	ON_BN_CLICKED(IDC_ACCUMULATE, &SVHistogramAnalyzerSetupClass::OnBnClickedAccumulate)
-	ON_EN_CHANGE(IDC_DIST_THRESHOLD, &SVHistogramAnalyzerSetupClass::OnEnChangeDistThreshold)
-	ON_EN_CHANGE(IDC_DEFAULT_PEAK, &SVHistogramAnalyzerSetupClass::OnEnChangeDefaultPeak)
-	ON_EN_CHANGE(IDC_HEIGHT_THRESHOLD, &SVHistogramAnalyzerSetupClass::OnEnChangeHeightThreshold)
-	ON_EN_KILLFOCUS(IDC_DIST_THRESHOLD, &SVHistogramAnalyzerSetupClass::OnEnKillfocusDistThreshold)
-	ON_EN_KILLFOCUS(IDC_HEIGHT_THRESHOLD, &SVHistogramAnalyzerSetupClass::OnEnKillfocusHeightThreshold)
-	ON_EN_KILLFOCUS(IDC_LOWCLIP, &SVHistogramAnalyzerSetupClass::OnEnKillfocusLowclip)
-	ON_EN_KILLFOCUS(IDC_HIGHCLIP, &SVHistogramAnalyzerSetupClass::OnEnKillfocusHighclip)
-	ON_EN_KILLFOCUS(IDC_DEFAULT_PEAK, &SVHistogramAnalyzerSetupClass::OnEnKillfocusDefaultPeak)
+	ON_BN_CLICKED(IDC_RESETBUTTON, &SVHistogramAnalyzerSetup::OnBnClickedResetbutton)
+	ON_BN_CLICKED(IDC_ACCUMULATE, &SVHistogramAnalyzerSetup::OnBnClickedAccumulate)
+	ON_EN_CHANGE(IDC_DIST_THRESHOLD, &SVHistogramAnalyzerSetup::OnEnChangeDistThreshold)
+	ON_EN_CHANGE(IDC_DEFAULT_PEAK, &SVHistogramAnalyzerSetup::OnEnChangeDefaultPeak)
+	ON_EN_CHANGE(IDC_HEIGHT_THRESHOLD, &SVHistogramAnalyzerSetup::OnEnChangeHeightThreshold)
+	ON_EN_KILLFOCUS(IDC_DIST_THRESHOLD, &SVHistogramAnalyzerSetup::OnEnKillfocusDistThreshold)
+	ON_EN_KILLFOCUS(IDC_HEIGHT_THRESHOLD, &SVHistogramAnalyzerSetup::OnEnKillfocusHeightThreshold)
+	ON_EN_KILLFOCUS(IDC_LOWCLIP, &SVHistogramAnalyzerSetup::OnEnKillfocusLowclip)
+	ON_EN_KILLFOCUS(IDC_HIGHCLIP, &SVHistogramAnalyzerSetup::OnEnKillfocusHighclip)
+	ON_EN_KILLFOCUS(IDC_DEFAULT_PEAK, &SVHistogramAnalyzerSetup::OnEnKillfocusDefaultPeak)
 	ON_WM_CLOSE()
-	ON_EN_CHANGE(IDC_LOWCLIP, &SVHistogramAnalyzerSetupClass::OnEnChangeLowclip)
-	ON_EN_CHANGE(IDC_HIGHCLIP, &SVHistogramAnalyzerSetupClass::OnEnChangeHighclip)
-	ON_EN_CHANGE(IDC_FIXEDEDIT, &SVHistogramAnalyzerSetupClass::OnEnChangeFixededit)
-	ON_EN_KILLFOCUS(IDC_FIXEDEDIT, &SVHistogramAnalyzerSetupClass::OnEnKillfocusFixededit)
-	ON_EN_CHANGE(IDC_LOW_VALLEY, &SVHistogramAnalyzerSetupClass::OnEnChangeLowValley)
-	ON_EN_KILLFOCUS(IDC_LOW_VALLEY, &SVHistogramAnalyzerSetupClass::OnEnKillfocusLowValley)
-	ON_EN_CHANGE(IDC_HIGH_VALLEY, &SVHistogramAnalyzerSetupClass::OnEnChangeHighValley)
-	ON_EN_KILLFOCUS(IDC_HIGH_VALLEY, &SVHistogramAnalyzerSetupClass::OnEnKillfocusHighValley)
-	ON_EN_CHANGE(IDC_DEFAULT_VALLEY, &SVHistogramAnalyzerSetupClass::OnEnChangeDefaultValley)
-	ON_EN_KILLFOCUS(IDC_DEFAULT_VALLEY, &SVHistogramAnalyzerSetupClass::OnEnKillfocusDefaultValley)
-	ON_BN_CLICKED(IDC_RADIODYNAMIC, &SVHistogramAnalyzerSetupClass::OnBnClickedRadiodynamic)
-	ON_BN_CLICKED(IDC_RADIOFIXED, &SVHistogramAnalyzerSetupClass::OnBnClickedRadiofixed)
-	ON_BN_CLICKED(IDC_VALLEY_RANGE, &SVHistogramAnalyzerSetupClass::OnBnClickedValleyRange)
-	ON_BN_CLICKED(IDC_SECONDPEAK_RANGE, &SVHistogramAnalyzerSetupClass::OnBnClickedSecondpeakRange)
-	ON_BN_CLICKED(IDC_FIRSTPEAK_RANGE, &SVHistogramAnalyzerSetupClass::OnBnClickedFirstpeakRange)
+	ON_EN_CHANGE(IDC_LOWCLIP, &SVHistogramAnalyzerSetup::OnEnChangeLowclip)
+	ON_EN_CHANGE(IDC_HIGHCLIP, &SVHistogramAnalyzerSetup::OnEnChangeHighclip)
+	ON_EN_CHANGE(IDC_FIXEDEDIT, &SVHistogramAnalyzerSetup::OnEnChangeFixededit)
+	ON_EN_KILLFOCUS(IDC_FIXEDEDIT, &SVHistogramAnalyzerSetup::OnEnKillfocusFixededit)
+	ON_EN_CHANGE(IDC_LOW_VALLEY, &SVHistogramAnalyzerSetup::OnEnChangeLowValley)
+	ON_EN_KILLFOCUS(IDC_LOW_VALLEY, &SVHistogramAnalyzerSetup::OnEnKillfocusLowValley)
+	ON_EN_CHANGE(IDC_HIGH_VALLEY, &SVHistogramAnalyzerSetup::OnEnChangeHighValley)
+	ON_EN_KILLFOCUS(IDC_HIGH_VALLEY, &SVHistogramAnalyzerSetup::OnEnKillfocusHighValley)
+	ON_EN_CHANGE(IDC_DEFAULT_VALLEY, &SVHistogramAnalyzerSetup::OnEnChangeDefaultValley)
+	ON_EN_KILLFOCUS(IDC_DEFAULT_VALLEY, &SVHistogramAnalyzerSetup::OnEnKillfocusDefaultValley)
+	ON_BN_CLICKED(IDC_RADIODYNAMIC, &SVHistogramAnalyzerSetup::OnBnClickedRadiodynamic)
+	ON_BN_CLICKED(IDC_RADIOFIXED, &SVHistogramAnalyzerSetup::OnBnClickedRadiofixed)
+	ON_BN_CLICKED(IDC_VALLEY_RANGE, &SVHistogramAnalyzerSetup::OnBnClickedValleyRange)
+	ON_BN_CLICKED(IDC_SECONDPEAK_RANGE, &SVHistogramAnalyzerSetup::OnBnClickedSecondpeakRange)
+	ON_BN_CLICKED(IDC_FIRSTPEAK_RANGE, &SVHistogramAnalyzerSetup::OnBnClickedFirstpeakRange)
 END_MESSAGE_MAP()
 
 
-HRESULT SVHistogramAnalyzerSetupClass::SetInspectionData()
+HRESULT SVHistogramAnalyzerSetup::SetInspectionData()
 {
 	return SvCmd::RunOnceSynchronous(m_pAnalyzer->GetInspection()->getObjectId());
 }
 
-int SVHistogramAnalyzerSetupClass::OnCreate(LPCREATESTRUCT lpCreateStruct)
+int SVHistogramAnalyzerSetup::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CDialog::OnCreate(lpCreateStruct) == -1)
 		return -1;
@@ -140,7 +140,7 @@ int SVHistogramAnalyzerSetupClass::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
-void SVHistogramAnalyzerSetupClass::OnBnClickedRadiolin()
+void SVHistogramAnalyzerSetup::OnBnClickedRadiolin()
 {
 	if (m_histogram.SetScale(histogram::linear))
 	{
@@ -148,7 +148,7 @@ void SVHistogramAnalyzerSetupClass::OnBnClickedRadiolin()
 	}
 }
 
-void SVHistogramAnalyzerSetupClass::OnBnClickedRadiolog()
+void SVHistogramAnalyzerSetup::OnBnClickedRadiolog()
 {
 	if (m_histogram.SetScale(histogram::logarithmic))
 	{
@@ -156,13 +156,13 @@ void SVHistogramAnalyzerSetupClass::OnBnClickedRadiolog()
 	}
 }
 
-void SVHistogramAnalyzerSetupClass::OnBnClickedResetbutton()
+void SVHistogramAnalyzerSetup::OnBnClickedResetbutton()
 {
 	SetDlgItemInt(IDC_LOWCLIP, c_zero, FALSE);
 	SetDlgItemInt(IDC_HIGHCLIP, c_255, FALSE);
 }
 
-void SVHistogramAnalyzerSetupClass::OnBnClickedAccumulate()
+void SVHistogramAnalyzerSetup::OnBnClickedAccumulate()
 {
 	HWND hWndCtrl;
 	GetDlgItem(IDC_ACCUMULATE, &hWndCtrl);
@@ -175,7 +175,7 @@ void SVHistogramAnalyzerSetupClass::OnBnClickedAccumulate()
 	}
 }
 
-void SVHistogramAnalyzerSetupClass::OnBnClickedRadiodynamic()
+void SVHistogramAnalyzerSetup::OnBnClickedRadiodynamic()
 {
 	CWnd * hFx = GetDlgItem(IDC_FIXEDEDIT);
 	if (hFx)
@@ -184,7 +184,7 @@ void SVHistogramAnalyzerSetupClass::OnBnClickedRadiodynamic()
 	Refresh();
 }
 
-void SVHistogramAnalyzerSetupClass::OnBnClickedRadiofixed()
+void SVHistogramAnalyzerSetup::OnBnClickedRadiofixed()
 {
 	CWnd * hFx = GetDlgItem(IDC_FIXEDEDIT);
 	if (hFx)
@@ -193,7 +193,7 @@ void SVHistogramAnalyzerSetupClass::OnBnClickedRadiofixed()
 	Refresh();
 }
 
-inline void SVHistogramAnalyzerSetupClass::SetResultRange(SvPb::EmbeddedIdEnum embeddedID)
+inline void SVHistogramAnalyzerSetup::SetResultRange(SvPb::EmbeddedIdEnum embeddedID)
 {
 	SvOi::IObjectClass* pAnalyzerResult = m_pAnalyzer->GetResultObject(embeddedID);
 	if (pAnalyzerResult)
@@ -207,22 +207,22 @@ inline void SVHistogramAnalyzerSetupClass::SetResultRange(SvPb::EmbeddedIdEnum e
 	}
 }
 
-void SVHistogramAnalyzerSetupClass::OnBnClickedValleyRange()
+void SVHistogramAnalyzerSetup::OnBnClickedValleyRange()
 {
 	SetResultRange(m_pAnalyzer->msvValley.GetEmbeddedID());
 }
 
-void SVHistogramAnalyzerSetupClass::OnBnClickedSecondpeakRange()
+void SVHistogramAnalyzerSetup::OnBnClickedSecondpeakRange()
 {
 	SetResultRange(m_pAnalyzer->msvLowPeak.GetEmbeddedID());
 }
 
-void SVHistogramAnalyzerSetupClass::OnBnClickedFirstpeakRange()
+void SVHistogramAnalyzerSetup::OnBnClickedFirstpeakRange()
 {
 	SetResultRange(m_pAnalyzer->msvHighPeak.GetEmbeddedID());
 }
 
-void SVHistogramAnalyzerSetupClass::OnEnChangeDistThreshold()
+void SVHistogramAnalyzerSetup::OnEnChangeDistThreshold()
 {
 	BOOL l_ok = false;
 	int l_threshold = static_cast<int>(GetDlgItemInt(IDC_DIST_THRESHOLD, &l_ok, FALSE));
@@ -232,7 +232,7 @@ void SVHistogramAnalyzerSetupClass::OnEnChangeDistThreshold()
 	}
 }
 
-void SVHistogramAnalyzerSetupClass::OnEnChangeDefaultPeak()
+void SVHistogramAnalyzerSetup::OnEnChangeDefaultPeak()
 {
 	BOOL l_ok = false;
 	int l_defaultPeak = static_cast<int>(GetDlgItemInt(IDC_DEFAULT_PEAK, &l_ok, FALSE));
@@ -242,7 +242,7 @@ void SVHistogramAnalyzerSetupClass::OnEnChangeDefaultPeak()
 	}
 }
 
-void SVHistogramAnalyzerSetupClass::OnEnChangeHeightThreshold()
+void SVHistogramAnalyzerSetup::OnEnChangeHeightThreshold()
 {
 	BOOL l_ok = false;
 	TCHAR buff[32];
@@ -255,7 +255,7 @@ void SVHistogramAnalyzerSetupClass::OnEnChangeHeightThreshold()
 	}
 }
 
-void SVHistogramAnalyzerSetupClass::OnEnChangeLowclip()
+void SVHistogramAnalyzerSetup::OnEnChangeLowclip()
 {
 	BOOL l_ok = false;
 	int l_low = static_cast<int>(GetDlgItemInt(IDC_LOWCLIP, &l_ok, FALSE));
@@ -265,7 +265,7 @@ void SVHistogramAnalyzerSetupClass::OnEnChangeLowclip()
 	}
 }
 
-void SVHistogramAnalyzerSetupClass::OnEnChangeHighclip()
+void SVHistogramAnalyzerSetup::OnEnChangeHighclip()
 {
 	BOOL l_ok = false;
 	int l_high = static_cast<int>(GetDlgItemInt(IDC_HIGHCLIP, &l_ok, FALSE));
@@ -275,7 +275,7 @@ void SVHistogramAnalyzerSetupClass::OnEnChangeHighclip()
 	}
 }
 
-void SVHistogramAnalyzerSetupClass::OnEnChangeFixededit()
+void SVHistogramAnalyzerSetup::OnEnChangeFixededit()
 {
 	BOOL l_ok = false;
 	TCHAR buff[32];
@@ -288,7 +288,7 @@ void SVHistogramAnalyzerSetupClass::OnEnChangeFixededit()
 	}
 }
 
-void SVHistogramAnalyzerSetupClass::OnEnChangeLowValley()
+void SVHistogramAnalyzerSetup::OnEnChangeLowValley()
 {
 	BOOL l_ok = false;
 	int l_tmp = static_cast<int>(GetDlgItemInt(IDC_LOW_VALLEY, &l_ok, FALSE));
@@ -298,7 +298,7 @@ void SVHistogramAnalyzerSetupClass::OnEnChangeLowValley()
 	}
 }
 
-void SVHistogramAnalyzerSetupClass::OnEnChangeHighValley()
+void SVHistogramAnalyzerSetup::OnEnChangeHighValley()
 {
 	BOOL l_ok = false;
 	int l_tmp = static_cast<int>(GetDlgItemInt(IDC_HIGH_VALLEY, &l_ok, FALSE));
@@ -308,7 +308,7 @@ void SVHistogramAnalyzerSetupClass::OnEnChangeHighValley()
 	}
 }
 
-void SVHistogramAnalyzerSetupClass::OnEnChangeDefaultValley()
+void SVHistogramAnalyzerSetup::OnEnChangeDefaultValley()
 {
 	BOOL l_ok = false;
 	int l_tmp = static_cast<int>(GetDlgItemInt(IDC_DEFAULT_VALLEY, &l_ok, FALSE));
@@ -318,59 +318,59 @@ void SVHistogramAnalyzerSetupClass::OnEnChangeDefaultValley()
 	}
 }
 
-void SVHistogramAnalyzerSetupClass::OnEnKillfocusDistThreshold()
+void SVHistogramAnalyzerSetup::OnEnKillfocusDistThreshold()
 {
 	SetDlgItemInt(IDC_DIST_THRESHOLD, m_histogram.GetPeakThreshold(), FALSE);
 }
 
-void SVHistogramAnalyzerSetupClass::OnEnKillfocusHeightThreshold()
+void SVHistogramAnalyzerSetup::OnEnKillfocusHeightThreshold()
 {
 	std::string Text = SvUl::Format(_T("%3.2f"), m_histogram.GetMinHeight());
 	SetDlgItemText(IDC_HEIGHT_THRESHOLD, Text.c_str());
 }
 
-void SVHistogramAnalyzerSetupClass::OnEnKillfocusLowclip()
+void SVHistogramAnalyzerSetup::OnEnKillfocusLowclip()
 {
 	SetDlgItemInt(IDC_LOWCLIP, m_histogram.GetLowClip(), FALSE);
 }
 
-void SVHistogramAnalyzerSetupClass::OnEnKillfocusHighclip()
+void SVHistogramAnalyzerSetup::OnEnKillfocusHighclip()
 {
 	SetDlgItemInt(IDC_HIGHCLIP, m_histogram.GetHighClip(), FALSE);
 }
 
-void SVHistogramAnalyzerSetupClass::OnEnKillfocusDefaultPeak()
+void SVHistogramAnalyzerSetup::OnEnKillfocusDefaultPeak()
 {
 	SetDlgItemInt(IDC_DEFAULT_PEAK, m_histogram.GetPeakDefault(), FALSE);
 }
 
-void SVHistogramAnalyzerSetupClass::OnEnKillfocusFixededit()
+void SVHistogramAnalyzerSetup::OnEnKillfocusFixededit()
 {
 	std::string Text = SvUl::Format(_T("%3.2f"), m_histogram.GetFixedHeight());
 	SetDlgItemText(IDC_FIXEDEDIT, Text.c_str());
 }
 
-void SVHistogramAnalyzerSetupClass::OnEnKillfocusLowValley()
+void SVHistogramAnalyzerSetup::OnEnKillfocusLowValley()
 {
 	SetDlgItemInt(IDC_LOW_VALLEY, m_histogram.GetValleyLow(), FALSE);
 }
 
-void SVHistogramAnalyzerSetupClass::OnEnKillfocusHighValley()
+void SVHistogramAnalyzerSetup::OnEnKillfocusHighValley()
 {
 	SetDlgItemInt(IDC_HIGH_VALLEY, m_histogram.GetValleyHigh(), FALSE);
 }
 
-void SVHistogramAnalyzerSetupClass::OnEnKillfocusDefaultValley()
+void SVHistogramAnalyzerSetup::OnEnKillfocusDefaultValley()
 {
 	SetDlgItemInt(IDC_DEFAULT_VALLEY, m_histogram.GetValleyDefault(), FALSE);
 }
 
-void SVHistogramAnalyzerSetupClass::OnClose()
+void SVHistogramAnalyzerSetup::OnClose()
 {
 	CDialog::OnClose();
 }
 
-void SVHistogramAnalyzerSetupClass::Refresh()
+void SVHistogramAnalyzerSetup::Refresh()
 {
 	m_histogram.CalcStats();
 	m_histogram.ForceRepaint();
@@ -397,7 +397,7 @@ void SVHistogramAnalyzerSetupClass::Refresh()
 }
 
 
-BOOL SVHistogramAnalyzerSetupClass::OnInitDialog()
+BOOL SVHistogramAnalyzerSetup::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 	Refresh();

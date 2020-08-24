@@ -28,12 +28,12 @@ namespace SvMc
 	};
 
 
-	class SVDlgGraphClass : public CStatic
+	class SVDlgGraph : public CStatic
 	{
 	public:
-		SVDlgGraphClass();
+		SVDlgGraph();
 
-		virtual ~SVDlgGraphClass();
+		virtual ~SVDlgGraph();
 
 		BOOL SetColor(COLORREF rgb, BOOL bRedraw = TRUE);
 
@@ -50,11 +50,11 @@ namespace SvMc
 		void Retransform(CPoint& RPoint);
 
 
-		//{{AFX_VIRTUAL(SVDlgGraphClass)
+		//{{AFX_VIRTUAL(SVDlgGraph)
 		//}}AFX_VIRTUAL
 
 	protected:
-		//{{AFX_MSG(SVDlgGraphClass)
+		//{{AFX_MSG(SVDlgGraph)
 		afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 		afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 		afx_msg void OnMouseMove(UINT nFlags, CPoint point);

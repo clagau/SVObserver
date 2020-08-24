@@ -40,7 +40,7 @@
 #include "SVImageViewScroll.h"
 #include "SVImageView.h"
 #include "SVMatroxLibrary/SVOLicenseManager.h"
-#include "SVIPChildFrm.h" 
+#include "SVIPSplitterFrame.h" 
 #include "ExtrasEngine.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVUtilityLibrary/StringHelper.h"
@@ -970,7 +970,7 @@ HRESULT SVMainFrame::ParseToolsetScripts( SVTreeType& p_rTree )
 
 			if( S_OK == l_Status && nullptr != pConfig )
 			{
-				unsigned long parserHandle = SVObjectScriptParserClass::GetParserHandle();
+				unsigned long parserHandle = SVObjectScriptParser::GetParserHandle();
 				if (nullptr == hItemToolset)
 				{
 					l_Status = E_FAIL;
@@ -978,7 +978,7 @@ HRESULT SVMainFrame::ParseToolsetScripts( SVTreeType& p_rTree )
 				else // new parsing
 				{
 					SVConfigurationObject::updateConfTreeToNewestVersion(p_rTree, hItemToolset);
-					SVObjectScriptParserClass* pParser = new SVObjectScriptParserClass(new SVInspectionTreeParser< SVTreeType >(p_rTree, hItemToolset, parserHandle, ownerId, pInspect, &l_ParserProgressDialog));
+					SVObjectScriptParser* pParser = new SVObjectScriptParser(new SVInspectionTreeParser< SVTreeType >(p_rTree, hItemToolset, parserHandle, ownerId, pInspect, &l_ParserProgressDialog));
 					if( nullptr != pParser )
 					{
 						// Set the Parser Object
@@ -1498,7 +1498,7 @@ bool SVMainFrame::IsZoomingPossible()
 		pView = pChild->GetActiveView();
 	}
 
-	SVImageViewClass* pImageView = dynamic_cast<SVImageViewClass*>(pView);
+	SVImageView* pImageView = dynamic_cast<SVImageView*>(pView);
 
 	if(nullptr != pImageView)
 	{

@@ -23,13 +23,13 @@
 namespace SvOp
 {
 
-class SVLUTOperatorClass : public SVUnaryImageOperatorClass
+class SVLUTOperator : public SVUnaryImageOperatorClass
 {
-	SV_DECLARE_CLASS( SVLUTOperatorClass );
+	SV_DECLARE_CLASS( SVLUTOperator );
 
 public:
-	SVLUTOperatorClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVLUTOPERATOR );
-	virtual ~SVLUTOperatorClass();
+	SVLUTOperator( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVLUTOPERATOR );
+	virtual ~SVLUTOperator();
 
 private:
 	void init();

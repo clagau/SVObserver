@@ -13,7 +13,7 @@
 
 #pragma region Includes
 #include "SVOResource/resource.h"
-#include "SVMFCControls/SVEditNumbers.h"
+#include "SVMFCControls/EditNumbers.h"
 #include "DataController.h"
 #include "NormalizerController.h"
 #pragma endregion Includes

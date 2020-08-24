@@ -2,7 +2,7 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVUtilitiesCustomizeDialogClass
+//* .Module Name     : SVUtilitiesCustomizeDialog
 //* .File Name       : $Workfile:   SVUtilitiesCustomizeDialog.cpp  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $
@@ -27,26 +27,28 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-SVUtilitiesCustomizeDialogClass::SVUtilitiesCustomizeDialogClass(CWnd* pParent /*=nullptr*/)
-	: CDialog(SVUtilitiesCustomizeDialogClass::IDD, pParent)
+SVUtilitiesCustomizeDialog::SVUtilitiesCustomizeDialog(CWnd* pParent /*=nullptr*/)
+	: CDialog(SVUtilitiesCustomizeDialog::IDD, pParent)
 {
-	//{{AFX_DATA_INIT(SVUtilitiesCustomizeDialogClass)
+	//{{AFX_DATA_INIT(SVUtilitiesCustomizeDialog)
 	m_Arguments = _T("");
 	m_Command = _T("");
 	m_MenuText = _T("");
 	mbPromptForArguments = FALSE;
 	m_WorkingDirectory = _T("");
+	m_pUtilityClass = nullptr;
+
 	//}}AFX_DATA_INIT
 }
 
-SVUtilitiesCustomizeDialogClass::~SVUtilitiesCustomizeDialogClass()
+SVUtilitiesCustomizeDialog::~SVUtilitiesCustomizeDialog()
 {
 }
 
-void SVUtilitiesCustomizeDialogClass::DoDataExchange(CDataExchange* pDX)
+void SVUtilitiesCustomizeDialog::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(SVUtilitiesCustomizeDialogClass)
+	//{{AFX_DATA_MAP(SVUtilitiesCustomizeDialog)
 	DDX_Text(pDX, IDC_CUSTOMIZE_ARGUMENTS, m_Arguments);
 	DDX_Text(pDX, IDC_CUSTOMIZE_COMMAND, m_Command);
 	DDX_Text(pDX, IDC_CUSTOMIZE_MENUTEXT, m_MenuText);
@@ -56,8 +58,8 @@ void SVUtilitiesCustomizeDialogClass::DoDataExchange(CDataExchange* pDX)
 }
 
 
-BEGIN_MESSAGE_MAP(SVUtilitiesCustomizeDialogClass, CDialog)
-	//{{AFX_MSG_MAP(SVUtilitiesCustomizeDialogClass)
+BEGIN_MESSAGE_MAP(SVUtilitiesCustomizeDialog, CDialog)
+	//{{AFX_MSG_MAP(SVUtilitiesCustomizeDialog)
 	ON_CBN_SELENDOK(IDC_CUSTOMIZE_MENUTEXT, OnSelEndOkCustomizeMenuText)
 	ON_CBN_EDITCHANGE(IDC_CUSTOMIZE_MENUTEXT, OnEditChangeCustomizeMenuText)
 	ON_EN_CHANGE(IDC_CUSTOMIZE_COMMAND, OnChangeCustomizeCommand)
@@ -72,7 +74,7 @@ BEGIN_MESSAGE_MAP(SVUtilitiesCustomizeDialogClass, CDialog)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-BOOL SVUtilitiesCustomizeDialogClass::OnInitDialog() 
+BOOL SVUtilitiesCustomizeDialog::OnInitDialog() 
 {
 	CDialog::OnInitDialog();
 
@@ -93,7 +95,7 @@ BOOL SVUtilitiesCustomizeDialogClass::OnInitDialog()
 	// EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void SVUtilitiesCustomizeDialogClass::OnSelEndOkCustomizeMenuText() 
+void SVUtilitiesCustomizeDialog::OnSelEndOkCustomizeMenuText() 
 {
 	CComboBox *pBox;
 	int iCurSel;
@@ -139,12 +141,12 @@ void SVUtilitiesCustomizeDialogClass::OnSelEndOkCustomizeMenuText()
 	}
 }
 
-void SVUtilitiesCustomizeDialogClass::OnEditChangeCustomizeMenuText() 
+void SVUtilitiesCustomizeDialog::OnEditChangeCustomizeMenuText() 
 {
 	SetApplyState (TRUE);
 }
 
-void SVUtilitiesCustomizeDialogClass::SetApplyState(BOOL bEnabled)
+void SVUtilitiesCustomizeDialog::SetApplyState(BOOL bEnabled)
 {
 	CButton *pApply;
 
@@ -153,27 +155,27 @@ void SVUtilitiesCustomizeDialogClass::SetApplyState(BOOL bEnabled)
 	SetDeleteState (!bEnabled);
 }
 
-void SVUtilitiesCustomizeDialogClass::OnChangeCustomizeCommand() 
+void SVUtilitiesCustomizeDialog::OnChangeCustomizeCommand() 
 {
 	SetApplyState (TRUE);
 }
 
-void SVUtilitiesCustomizeDialogClass::OnChangeCustomizeArguments() 
+void SVUtilitiesCustomizeDialog::OnChangeCustomizeArguments() 
 {
 	SetApplyState (TRUE);
 }
 
-void SVUtilitiesCustomizeDialogClass::OnChangeCustomizeWorkingDirectory() 
+void SVUtilitiesCustomizeDialog::OnChangeCustomizeWorkingDirectory() 
 {
 	SetApplyState (TRUE);
 }
 
-void SVUtilitiesCustomizeDialogClass::OnCustomizePromptForArguments() 
+void SVUtilitiesCustomizeDialog::OnCustomizePromptForArguments() 
 {
 	SetApplyState (TRUE);
 }
 
-void SVUtilitiesCustomizeDialogClass::SetDeleteState(BOOL bEnabled)
+void SVUtilitiesCustomizeDialog::SetDeleteState(BOOL bEnabled)
 {
 	CButton *pDelete;
 
@@ -181,7 +183,7 @@ void SVUtilitiesCustomizeDialogClass::SetDeleteState(BOOL bEnabled)
 	pDelete->EnableWindow (bEnabled);
 }
 
-void SVUtilitiesCustomizeDialogClass::OnApply() 
+void SVUtilitiesCustomizeDialog::OnApply() 
 {
 	CComboBox *pBox;
 
@@ -266,7 +268,7 @@ void SVUtilitiesCustomizeDialogClass::OnApply()
 	}
 }
 
-void SVUtilitiesCustomizeDialogClass::OnOK() 
+void SVUtilitiesCustomizeDialog::OnOK() 
 {
 	CButton *pApply;
 
@@ -277,7 +279,7 @@ void SVUtilitiesCustomizeDialogClass::OnOK()
 	CDialog::OnOK();
 }
 
-void SVUtilitiesCustomizeDialogClass::OnCustomizeDelete() 
+void SVUtilitiesCustomizeDialog::OnCustomizeDelete() 
 {
 	CComboBox *pBox;
 
@@ -343,15 +345,13 @@ void SVUtilitiesCustomizeDialogClass::OnCustomizeDelete()
 	m_Command.Empty ();
 	m_MenuText.Empty ();
 	m_WorkingDirectory.Empty ();
-	muiId = 0;
-
 
 	SetApplyState (FALSE);
 	SetDeleteState (FALSE);
 	UpdateData (FALSE);
 }
 
-void SVUtilitiesCustomizeDialogClass::OnCustomizeCommandSelect() 
+void SVUtilitiesCustomizeDialog::OnCustomizeCommandSelect() 
 {
 	SVFileNameClass	svfncCommand;
 
@@ -364,7 +364,7 @@ void SVUtilitiesCustomizeDialogClass::OnCustomizeCommandSelect()
 	}
 }
 
-void SVUtilitiesCustomizeDialogClass::OnCustomizeDirectorySelect() 
+void SVUtilitiesCustomizeDialog::OnCustomizeDirectorySelect() 
 {
 	SVFileNameClass	svfncWorkingDirectory;
 
@@ -378,7 +378,7 @@ void SVUtilitiesCustomizeDialogClass::OnCustomizeDirectorySelect()
 	}
 }
 
-void SVUtilitiesCustomizeDialogClass::OnKillfocusCustomizeMenutext() 
+void SVUtilitiesCustomizeDialog::OnKillfocusCustomizeMenutext() 
 {
 	GetDlgItem(IDC_CUSTOMIZE_MENUTEXT)->GetWindowText(m_MenuText);
 	UpdateData (FALSE);

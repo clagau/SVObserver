@@ -32,36 +32,36 @@ static char THIS_FILE[] = __FILE__;
 #pragma endregion Declarations
 
 #pragma region Constructor
-SVResultListClass::SVResultListClass()
-: m_ResultViewReferences(SvXml::CTAG_VIEWEDRESULTS)
+SVResultList::SVResultList()
+: m_ResultViewReferences(SvXml::CTAG_VIEWEDRESULTS), m_pToolSet(nullptr)
 {
 }
 
-SVResultListClass::~SVResultListClass()
+SVResultList::~SVResultList()
 {
 	Destroy();
 	m_results.clear();
 }
 #pragma endregion Constructor
 
-void SVResultListClass::Destroy()
+void SVResultList::Destroy()
 {
 	m_ResultViewReferences.Clear();
 }
 
-void SVResultListClass::SetToolSet(SVToolSetClass* pToolSet)
+void SVResultList::SetToolSet(SVToolSet* pToolSet)
 {
 	m_pToolSet = pToolSet;
 }
 
-void SVResultListClass::Refresh(SvIe::SVTaskObjectClass* pRootObject)
+void SVResultList::Refresh(SvIe::SVTaskObjectClass* pRootObject)
 {
 	Concurrency::critical_section::scoped_lock  AutoLock(m_Lock);
 
 	m_results.clear();
 
 	// find all result classes
-	// pRootObject is a pointer to SVToolSetClass at this time
+	// pRootObject is a pointer to SVToolSet at this time
 	SvDef::SVObjectTypeInfoStruct info;
 	info.m_ObjectType = SvPb::SVResultObjectType;
 
@@ -73,7 +73,7 @@ void SVResultListClass::Refresh(SvIe::SVTaskObjectClass* pRootObject)
 
 	for( l_Iter = l_Visitor.GetObjects().begin(); l_Iter != l_Visitor.GetObjects().end(); ++l_Iter )
 	{
-		SvOp::SVResultClass* pResult = dynamic_cast<SvOp::SVResultClass*> (const_cast<SVObjectClass*> (*l_Iter));
+		SvOp::SVResult* pResult = dynamic_cast<SvOp::SVResult*> (const_cast<SVObjectClass*> (*l_Iter));
 
 		m_results.push_back( pResult );
 	}
@@ -81,21 +81,21 @@ void SVResultListClass::Refresh(SvIe::SVTaskObjectClass* pRootObject)
 	m_ResultViewReferences.RebuildReferenceVector(dynamic_cast<SVInspectionProcess*>(m_pToolSet->GetInspection()));
 }
 
-double SVResultListClass::getUpdateTimeStamp()
+double SVResultList::getUpdateTimeStamp()
 {
 	Concurrency::critical_section::scoped_lock  AutoLock(m_Lock);
 
 	return m_ResultViewReferences.getUpdateTimeStamp();
 }
 
-void SVResultListClass::Save(SvOi::IObjectWriter& rWriter)
+void SVResultList::Save(SvOi::IObjectWriter& rWriter)
 {
 	Concurrency::critical_section::scoped_lock  AutoLock(m_Lock);
 
 	m_ResultViewReferences.Save(rWriter);
 }
 
-bool SVResultListClass::LoadViewedVariables(ResultViewReferences::SVTreeType& rTree, ResultViewReferences::SVTreeType::SVBranchHandle htiParent)
+bool SVResultList::LoadViewedVariables(ResultViewReferences::SVTreeType& rTree, ResultViewReferences::SVTreeType::SVBranchHandle htiParent)
 {
 	Concurrency::critical_section::scoped_lock  AutoLock(m_Lock);
 
@@ -136,27 +136,27 @@ bool SVResultListClass::LoadViewedVariables(ResultViewReferences::SVTreeType& rT
 	return true;
 }
 
-void SVResultListClass::RebuildReferenceVector(SVInspectionProcess* pInspection )
+void SVResultList::RebuildReferenceVector(SVInspectionProcess* pInspection )
 {
 	Concurrency::critical_section::scoped_lock  AutoLock(m_Lock);
 
 	return m_ResultViewReferences.RebuildReferenceVector(pInspection);
 }
 
-void  SVResultListClass::GetResultData(SvIe::SVIPResultData& rResultData) const
+void  SVResultList::GetResultData(SvIe::SVIPResultData& rResultData) const
 {
 	Concurrency::critical_section::scoped_lock  AutoLock(m_Lock);
 
 	m_ResultViewReferences.GetResultData( rResultData);
 }
 
-std::vector <SvIe::IPResultTableData> SVResultListClass::getResultTableData(const SvTrc::ITriggerRecordR& rTriggerRecord)
+std::vector <SvIe::IPResultTableData> SVResultList::getResultTableData(const SvTrc::ITriggerRecordR& rTriggerRecord)
 {
 	Concurrency::critical_section::scoped_lock  AutoLock(m_Lock);
 	return m_ResultViewReferences.getResultTableData(rTriggerRecord);
 }
 
-HRESULT SVResultListClass::GetResultDefinitions( ResultViewReferences::SVResultDefinitionVector& rDefinitions )  const
+HRESULT SVResultList::GetResultDefinitions( ResultViewReferences::SVResultDefinitionVector& rDefinitions )  const
 {
 	Concurrency::critical_section::scoped_lock  AutoLock(m_Lock);
 
@@ -165,7 +165,7 @@ HRESULT SVResultListClass::GetResultDefinitions( ResultViewReferences::SVResultD
 
 
 
-SVProductInspectedState SVResultListClass::GetInspectionState()
+SVProductInspectedState SVResultList::GetInspectionState()
 {
 	// Only if both values are false the product is good !!!!
 	bool masterFailed = false;
@@ -190,19 +190,19 @@ SVProductInspectedState SVResultListClass::GetInspectionState()
 	return( PRODUCT_INSPECTION_PASSED );
 }
 
-void SVResultListClass::Clear()
+void SVResultList::Clear()
 {
 	m_ResultViewReferences.Clear();
 }
 
-const SVObjectReferenceVector& SVResultListClass::GetSelectedObjects() const
+const SVObjectReferenceVector& SVResultList::GetSelectedObjects() const
 {
 	Concurrency::critical_section::scoped_lock  AutoLock(m_Lock);
 
 	return m_ResultViewReferences.GetSelectedObjects();
 }
 
-bool SVResultListClass::Insert( const std::string& rDottedName )
+bool SVResultList::Insert( const std::string& rDottedName )
 {
 	Concurrency::critical_section::scoped_lock  AutoLock(m_Lock);
 

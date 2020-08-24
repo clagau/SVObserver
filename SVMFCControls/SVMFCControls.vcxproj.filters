@@ -57,9 +57,6 @@
     <ClCompile Include="SVEditHelper.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVEditNumbers.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVEnumerateCombo.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -120,6 +117,9 @@
     <ClCompile Include="VisualFx.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="EditNumbers.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AvailableObjectListComboBox.h">
@@ -165,9 +165,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVEditHelper.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVEditNumbers.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVEnumerateCombo.h">
@@ -231,6 +228,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="VisualFx.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="EditNumbers.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

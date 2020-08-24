@@ -64,7 +64,7 @@ void SVPixelAnalyzer::init()
 	addDefaultInputObjects();
 
 	// Instantiate Children
-	SvOp::SVLongResultClass* pAnalyzerResult = new SvOp::SVLongResultClass(this, IDS_CLASSNAME_SVPIXELANALYZERESULT);
+	SvOp::SVLongResult* pAnalyzerResult = new SvOp::SVLongResult(this, IDS_CLASSNAME_SVPIXELANALYZERESULT);
 
 	if (nullptr != pAnalyzerResult)
 	{
@@ -215,7 +215,7 @@ void SVPixelAnalyzer::addParameterForMonitorList(SvStl::MessageContainerVector& 
 	bool isNoError = true;
 
 	inserter = SvOi::ParameterPairForML(m_pixelCount.GetCompleteName(), m_pixelCount.getObjectId());
-	SvOp::SVRangeClass* pRangeObject = dynamic_cast<SvOp::SVRangeClass*>(getFirstObject(SvDef::SVObjectTypeInfoStruct(SvPb::SVObjectTypeEnum::SVRangeObjectType)));
+	SvOp::SVRange* pRangeObject = dynamic_cast<SvOp::SVRange*>(getFirstObject(SvDef::SVObjectTypeInfoStruct(SvPb::SVObjectTypeEnum::SVRangeObjectType)));
 	if (nullptr != pRangeObject)
 	{
 		pRangeObject->addEntriesToMonitorList(inserter);

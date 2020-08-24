@@ -24,9 +24,9 @@ static char THIS_FILE[] = __FILE__;
 #pragma endregion Declarations
 
 ///For this class it is not necessary to call SV_IMPLEMENT_CLASS as it is a base class and only derived classes are instantiated.
-//SV_IMPLEMENT_CLASS( SVTransformClass, SVTransformClassGuid )
+//SV_IMPLEMENT_CLASS( SVTransform, SVTransformClassGuid )
 
-SVTransformClass::SVTransformClass( SVObjectClass* POwner, int StringResourceID )
+SVTransform::SVTransform( SVObjectClass* POwner, int StringResourceID )
 				 :SVTaskObjectClass( POwner, StringResourceID ) 
 {
 	// Identify yourself
@@ -82,12 +82,12 @@ SVTransformClass::SVTransformClass( SVObjectClass* POwner, int StringResourceID 
 	addDefaultInputObjects();
 }
 
-SVTransformClass::~SVTransformClass()
+SVTransform::~SVTransform()
 {
-	SVTransformClass::CloseObject();
+	SVTransform::CloseObject();
 }
 
-bool SVTransformClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
+bool SVTransform::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
 	bool bOk = SVTaskObjectClass::CreateObject(rCreateStructure);
 
@@ -105,7 +105,7 @@ bool SVTransformClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStr
 	return bOk;
 }
 
-bool SVTransformClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
+bool SVTransform::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 

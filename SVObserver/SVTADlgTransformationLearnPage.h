@@ -20,8 +20,8 @@ namespace SvOi
 }
 namespace SvOp
 {
-class SVImageTransformClass;
-class SVEvaluateClass;
+class SVImageTransform;
+class SVEvaluate;
 }
 namespace SvVol
 {
@@ -87,24 +87,24 @@ protected:
 
 	SvVol::SVBoolValueObjectClass* m_pPerformTranslation;
 
-	SvOp::SVEvaluateClass* m_pEvaluateTranslationX;
+	SvOp::SVEvaluate* m_pEvaluateTranslationX;
 	SvVol::SVDoubleValueObjectClass*	m_pTranslationXResult;
 
-	SvOp::SVEvaluateClass* m_pEvaluateTranslationY;
+	SvOp::SVEvaluate* m_pEvaluateTranslationY;
 	SvVol::SVDoubleValueObjectClass* m_pTranslationYResult;
 
 	SvVol::SVBoolValueObjectClass* m_pPerformRotation;
 
-	SvOp::SVEvaluateClass* m_pEvaluateRotationX;
+	SvOp::SVEvaluate* m_pEvaluateRotationX;
 	SvVol::SVDoubleValueObjectClass* m_pRotationXResult;
 
-	SvOp::SVEvaluateClass* m_pEvaluateRotationY;
+	SvOp::SVEvaluate* m_pEvaluateRotationY;
 	SvVol::SVDoubleValueObjectClass* m_pRotationYResult;
 
-	SvOp::SVEvaluateClass* m_pEvaluateRotationAngle;
+	SvOp::SVEvaluate* m_pEvaluateRotationAngle;
 	SvVol::SVDoubleValueObjectClass* m_pRotationAngleResult;
 
-	SvOp::SVImageTransformClass* m_pImageTransform;
+	SvOp::SVImageTransform* m_pImageTransform;
 
 	SvVol::SVDoubleValueObjectClass* m_pLearnedTranslationX;
 	SvVol::SVDoubleValueObjectClass* m_pLearnedTranslationY;

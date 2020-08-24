@@ -192,7 +192,7 @@ void SVDiscreteOutputsView::OnLButtonDblClk(UINT, CPoint point)
 		if( item >= 0 && item < m_rCtrl.GetItemCount() && 
 			( flags & ( LVHT_ONITEMSTATEICON | LVHT_ONITEMICON | LVHT_ONITEMLABEL ) ) )
 		{
-			SVIOAdjustDialogClass dlg;
+			SVIOAdjustDialog dlg;
 			SVConfigurationObject* pConfig(nullptr);
 			SVOutputObjectList* pOutputList(nullptr);
 

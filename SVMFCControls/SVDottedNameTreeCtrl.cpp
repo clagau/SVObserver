@@ -21,18 +21,18 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvMc
 {
-	IMPLEMENT_DYNCREATE(SVDottedNameTreeCtrlClass, CTreeCtrl)
+	IMPLEMENT_DYNCREATE(SVDottedNameTreeCtrl, CTreeCtrl)
 
-	BEGIN_MESSAGE_MAP(SVDottedNameTreeCtrlClass, CTreeCtrl)
-		//{{AFX_MSG_MAP(SVDottedNameTreeCtrlClass)
+	BEGIN_MESSAGE_MAP(SVDottedNameTreeCtrl, CTreeCtrl)
+		//{{AFX_MSG_MAP(SVDottedNameTreeCtrl)
 		//}}AFX_MSG_MAP
 	END_MESSAGE_MAP()
 
-	SVDottedNameTreeCtrlClass::SVDottedNameTreeCtrlClass()
+	SVDottedNameTreeCtrl::SVDottedNameTreeCtrl()
 	{
 	}
 
-	SVDottedNameTreeCtrlClass::~SVDottedNameTreeCtrlClass()
+	SVDottedNameTreeCtrl::~SVDottedNameTreeCtrl()
 	{
 	}
 
@@ -44,7 +44,7 @@ namespace SvMc
 	//				: ( Value could also be a pointer, e.g. SVObjectClass* )
 	//				: Expand Item if BExpand is TRUE ( default )
 	////////////////////////////////////////////////////////////////////////////////
-	BOOL SVDottedNameTreeCtrlClass::AddItem( LPCTSTR DottedItemName, DWORD_PTR DwItemValue, BOOL BExpand )
+	BOOL SVDottedNameTreeCtrl::AddItem( LPCTSTR DottedItemName, DWORD_PTR DwItemValue, BOOL BExpand )
 	{
 		LPTSTR Source = _tcsdup( DottedItemName );
 		if( Source )
@@ -143,7 +143,7 @@ namespace SvMc
 	// .Description : Get Item using dotted name. Starts always at the root.
 	//				: Returns nullptr, if Item not exists.
 	////////////////////////////////////////////////////////////////////////////////
-	HTREEITEM SVDottedNameTreeCtrlClass::GetItem( LPCTSTR DottedItemName )
+	HTREEITEM SVDottedNameTreeCtrl::GetItem( LPCTSTR DottedItemName )
 	{
 		LPTSTR tStrSource = _tcsdup( DottedItemName );
 		if( tStrSource )
@@ -205,7 +205,7 @@ namespace SvMc
 	// .Description : Returns applied Value of the currently selected Item.
 	//				: Returns 0, if nothing is selected.
 	////////////////////////////////////////////////////////////////////////////////
-	DWORD_PTR SVDottedNameTreeCtrlClass::GetSelectedItemValue()
+	DWORD_PTR SVDottedNameTreeCtrl::GetSelectedItemValue()
 	{
 		HTREEITEM hItem = GetSelectedItem();
 		if( nullptr != hItem )

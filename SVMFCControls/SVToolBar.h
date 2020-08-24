@@ -2,7 +2,7 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVToolBarClass
+//* .Module Name     : SVToolBar
 //* .File Name       : $Workfile:   SVToolBar.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $
@@ -16,11 +16,11 @@ namespace SvMc
 	#define SV_TOOLBAR_BORDER_W 4
 	#define SV_TOOLBAR_BORDER_H	4
 
-	class SVToolBarClass : public CToolBarCtrl
+	class SVToolBar : public CToolBarCtrl
 	{
 		// Construction
 	public:
-		SVToolBarClass();
+		SVToolBar();
 
 		// Attributes
 	public:
@@ -37,16 +37,16 @@ namespace SvMc
 			UINT nBaseID, int nCount,const SIZE &size);
 		// Overrides
 		// ClassWizard generated virtual function overrides
-		//{{AFX_VIRTUAL(SVToolBarClass)
+		//{{AFX_VIRTUAL(SVToolBar)
 		//}}AFX_VIRTUAL
 
 		// Implementation
 	public:
-		virtual ~SVToolBarClass();
+		virtual ~SVToolBar();
 
 		// Generated message map functions
 	protected:
-		//{{AFX_MSG(SVToolBarClass)
+		//{{AFX_MSG(SVToolBar)
 		// NOTE - the ClassWizard will add and remove member functions here.
 		//}}AFX_MSG
 

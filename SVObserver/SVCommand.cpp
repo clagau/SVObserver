@@ -63,13 +63,13 @@ static char THIS_FILE[] = __FILE__;
 #pragma endregion Declarations
 
 #pragma region Constructor
-CSVCommand::CSVCommand()
+SVCommand::SVCommand()
 	: m_pStream(nullptr)
 {
 
 }
 
-CSVCommand::~CSVCommand()
+SVCommand::~SVCommand()
 {
 
 }
@@ -83,7 +83,7 @@ CSVCommand::~CSVCommand()
 // ***************************************************************
 // ***************************************************************
 
-STDMETHODIMP CSVCommand::SVGetSVIMState(unsigned long *ulState)
+STDMETHODIMP SVCommand::SVGetSVIMState(unsigned long *ulState)
 {
 	HRESULT hrResult = S_OK;
 	bool bSuccess = false;
@@ -107,7 +107,7 @@ STDMETHODIMP CSVCommand::SVGetSVIMState(unsigned long *ulState)
 	return hrResult;
 }// end SVGetSVIMState
 
-STDMETHODIMP CSVCommand::SVSetSVIMMode(unsigned long lSVIMNewMode)
+STDMETHODIMP SVCommand::SVSetSVIMMode(unsigned long lSVIMNewMode)
 {
 	HRESULT hrResult;
 
@@ -144,7 +144,7 @@ STDMETHODIMP CSVCommand::SVSetSVIMMode(unsigned long lSVIMNewMode)
 	return hrResult;
 }// end SVSetSVIMMode
 
-STDMETHODIMP CSVCommand::SVGetSVIMMode(unsigned long* p_plSVIMMode)
+STDMETHODIMP SVCommand::SVGetSVIMMode(unsigned long* p_plSVIMMode)
 {
 	HRESULT hrResult;
 
@@ -168,7 +168,7 @@ STDMETHODIMP CSVCommand::SVGetSVIMMode(unsigned long* p_plSVIMMode)
 	return hrResult;
 }// end SVGetSVIMMode
 
-STDMETHODIMP CSVCommand::SVSetSVIMState(unsigned long ulSVIMState)
+STDMETHODIMP SVCommand::SVSetSVIMState(unsigned long ulSVIMState)
 {
 	HRESULT hrResult = S_OK;
 
@@ -213,7 +213,7 @@ STDMETHODIMP CSVCommand::SVSetSVIMState(unsigned long ulSVIMState)
 	return hrResult;
 }// end SVSetSVIMState
 
-STDMETHODIMP CSVCommand::SVGetSVIMConfig(long lOffset, long *lBlockSize, BSTR *bstrFileData, BOOL *bLastFlag)
+STDMETHODIMP SVCommand::SVGetSVIMConfig(long lOffset, long *lBlockSize, BSTR *bstrFileData, BOOL *bLastFlag)
 {
 	bool bHrSet = false;
 	HRESULT hrResult = S_OK;
@@ -306,7 +306,7 @@ STDMETHODIMP CSVCommand::SVGetSVIMConfig(long lOffset, long *lBlockSize, BSTR *b
 	return hrResult;
 }// end SVGetSVIMConfig
 
-STDMETHODIMP CSVCommand::SVPutSVIMConfig(long lOffset, long lBlockSize, BSTR* pFileData, BOOL bLastFlag)
+STDMETHODIMP SVCommand::SVPutSVIMConfig(long lOffset, long lBlockSize, BSTR* pFileData, BOOL bLastFlag)
 {
 	//PackedFileName is static due to SVPutConfig which can be called multiple times for each data block sent
 	//The file name is set only when the first block is sent (lOffset == 0) but is needed when the following blocks are sent
@@ -405,7 +405,7 @@ STDMETHODIMP CSVCommand::SVPutSVIMConfig(long lOffset, long lBlockSize, BSTR* pF
 	return hrResult;
 }// end SVPutSVIMConfig
 
-STDMETHODIMP CSVCommand::SVGetSVIMFile(BSTR bstrSourceFile, long lOffset, long *lBlockSize, BSTR *pFileData, long *lLastPacketFlag)
+STDMETHODIMP SVCommand::SVGetSVIMFile(BSTR bstrSourceFile, long lOffset, long *lBlockSize, BSTR *pFileData, long *lLastPacketFlag)
 {
 	HRESULT hrResult = S_OK;
 
@@ -493,7 +493,7 @@ STDMETHODIMP CSVCommand::SVGetSVIMFile(BSTR bstrSourceFile, long lOffset, long *
 	return hrResult;
 }
 
-STDMETHODIMP CSVCommand::SVPutSVIMFile(BSTR bstrDestFile, long lOffset, long lBlockSize, BSTR *pFileData)
+STDMETHODIMP SVCommand::SVPutSVIMFile(BSTR bstrDestFile, long lOffset, long lBlockSize, BSTR *pFileData)
 {
 	HRESULT hrResult = S_OK;
 
@@ -567,7 +567,7 @@ STDMETHODIMP CSVCommand::SVPutSVIMFile(BSTR bstrDestFile, long lOffset, long lBl
 	return hrResult;
 }
 
-STDMETHODIMP CSVCommand::SVLoadSVIMConfig(BSTR bstrConfigFilename)
+STDMETHODIMP SVCommand::SVLoadSVIMConfig(BSTR bstrConfigFilename)
 {
 	std::string ConfigFile = SvUl::createStdString(_bstr_t(bstrConfigFilename));
 
@@ -579,7 +579,7 @@ STDMETHODIMP CSVCommand::SVLoadSVIMConfig(BSTR bstrConfigFilename)
 }
 
 
-STDMETHODIMP CSVCommand::SVGetSVIMConfigName(BSTR *bstrConfigFilename)
+STDMETHODIMP SVCommand::SVGetSVIMConfigName(BSTR *bstrConfigFilename)
 {
 	HRESULT Result(S_OK);
 
@@ -608,7 +608,7 @@ STDMETHODIMP CSVCommand::SVGetSVIMConfigName(BSTR *bstrConfigFilename)
 	return Result;
 }
 
-STDMETHODIMP CSVCommand::SVGetSVIMOfflineCount(unsigned long* pOfflineCount)
+STDMETHODIMP SVCommand::SVGetSVIMOfflineCount(unsigned long* pOfflineCount)
 {
 	HRESULT hrResult = S_OK;
 	bool bSuccess = false;
@@ -629,7 +629,7 @@ STDMETHODIMP CSVCommand::SVGetSVIMOfflineCount(unsigned long* pOfflineCount)
 	return hrResult;
 }
 
-STDMETHODIMP CSVCommand::SVGetSVIMVersion(unsigned long* pVersion)
+STDMETHODIMP SVCommand::SVGetSVIMVersion(unsigned long* pVersion)
 {
 	HRESULT hrResult = S_OK;
 	bool bSuccess = false;
@@ -650,7 +650,7 @@ STDMETHODIMP CSVCommand::SVGetSVIMVersion(unsigned long* pVersion)
 	return hrResult;
 }
 
-STDMETHODIMP CSVCommand::SVGetSVIMConfigPrint(long , long *lBlockSize, BSTR *bstrConfigPrint, BOOL *bLastFlag)
+STDMETHODIMP SVCommand::SVGetSVIMConfigPrint(long , long *lBlockSize, BSTR *bstrConfigPrint, BOOL *bLastFlag)
 {
 	std::string ConfigPrint;
 	HRESULT hrResult = S_OK;
@@ -698,7 +698,7 @@ struct SVGetImageListImageInfo
 
 
 // Currently used only through external DCOM connection.
-STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long , SAFEARRAY** ppsaImages, SAFEARRAY** ppsaOverlays, SAFEARRAY** ppsaStatus, SAFEARRAY** ppsaProcCounts)
+STDMETHODIMP SVCommand::SVGetImageList(SAFEARRAY* psaNames, long , SAFEARRAY** ppsaImages, SAFEARRAY** ppsaOverlays, SAFEARRAY** ppsaStatus, SAFEARRAY** ppsaProcCounts)
 {
 	HRESULT hrResult = S_OK;
 
@@ -945,17 +945,17 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long , SAFEARRAY** 
 }
 
 
-STDMETHODIMP CSVCommand::SVRegisterStream(SAFEARRAY* , VARIANT , SAFEARRAY** )
+STDMETHODIMP SVCommand::SVRegisterStream(SAFEARRAY* , VARIANT , SAFEARRAY** )
 {
 	return E_FAIL;
 }
 
-STDMETHODIMP CSVCommand::SVUnRegisterStream(VARIANT )
+STDMETHODIMP SVCommand::SVUnRegisterStream(VARIANT )
 {
 	return E_FAIL;
 }
 
-STDMETHODIMP CSVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psaNames, SAFEARRAY** ppsaData, SAFEARRAY** ppsaStatus)
+STDMETHODIMP SVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psaNames, SAFEARRAY** ppsaData, SAFEARRAY** ppsaStatus)
 {
 	HRESULT hr = S_OK;
 
@@ -1179,7 +1179,7 @@ STDMETHODIMP CSVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psa
 	return hr;
 }
 
-STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* psaNames, long , SAFEARRAY** ppsaImages, SAFEARRAY** ppsaOverlays, SAFEARRAY** ppsaStatus)
+STDMETHODIMP SVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* psaNames, long , SAFEARRAY** ppsaImages, SAFEARRAY** ppsaOverlays, SAFEARRAY** ppsaStatus)
 {
 	HRESULT hrResult = S_OK;
 
@@ -1422,7 +1422,7 @@ STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* ps
 	return hrResult;
 }
 
-STDMETHODIMP CSVCommand::SVSetLUT(BSTR bstrCameraName, SAFEARRAY* paulLUTTable)
+STDMETHODIMP SVCommand::SVSetLUT(BSTR bstrCameraName, SAFEARRAY* paulLUTTable)
 {
 	HRESULT hr = S_OK;
 
@@ -1467,7 +1467,7 @@ STDMETHODIMP CSVCommand::SVSetLUT(BSTR bstrCameraName, SAFEARRAY* paulLUTTable)
 	return hr;
 }
 
-STDMETHODIMP CSVCommand::SVGetLUT(BSTR bstrCameraName, SAFEARRAY** ppaulLUTTable)
+STDMETHODIMP SVCommand::SVGetLUT(BSTR bstrCameraName, SAFEARRAY** ppaulLUTTable)
 {
 	HRESULT hr = S_OK;
 
@@ -1493,7 +1493,7 @@ STDMETHODIMP CSVCommand::SVGetLUT(BSTR bstrCameraName, SAFEARRAY** ppaulLUTTable
 	return hr;
 }
 
-HRESULT CSVCommand::ImageToBSTR(const SVImageInfoClass&  rImageInfo, SvOi::SVImageBufferHandlePtr rImageHandle, BSTR* pbstr)
+HRESULT SVCommand::ImageToBSTR(const SVImageInfoClass&  rImageInfo, SvOi::SVImageBufferHandlePtr rImageHandle, BSTR* pbstr)
 {
 	HRESULT hr = S_OK;
 
@@ -1644,7 +1644,7 @@ HRESULT CSVCommand::ImageToBSTR(const SVImageInfoClass&  rImageInfo, SvOi::SVIma
 	return hr;
 }
 
-HRESULT CSVCommand::SafeImageToBSTR(SvIe::SVImageClass *pImage, const SvTrc::ITriggerRecordRPtr pTriggerRecord, BSTR *pbstr)
+HRESULT SVCommand::SafeImageToBSTR(SvIe::SVImageClass *pImage, const SvTrc::ITriggerRecordRPtr pTriggerRecord, BSTR *pbstr)
 {
 	HRESULT hr = S_OK;
 
@@ -1669,7 +1669,7 @@ HRESULT CSVCommand::SafeImageToBSTR(SvIe::SVImageClass *pImage, const SvTrc::ITr
 	return hr;
 }
 
-HRESULT CSVCommand::SafeArrayGetElementNoCopy(SAFEARRAY* psa, long* rgIndices, void* pv)
+HRESULT SVCommand::SafeArrayGetElementNoCopy(SAFEARRAY* psa, long* rgIndices, void* pv)
 // Does a blind copy of the requested element.
 // E.G., if the element is a BSTR (wchar_t*), only the value of the pointer is copied,
 //      not the contents of the BSTR.
@@ -1684,7 +1684,7 @@ HRESULT CSVCommand::SafeArrayGetElementNoCopy(SAFEARRAY* psa, long* rgIndices, v
 	return hr;
 }
 
-HRESULT CSVCommand::SafeArrayPutElementNoCopy(SAFEARRAY* psa, long* rgIndices, void* pv)
+HRESULT SVCommand::SafeArrayPutElementNoCopy(SAFEARRAY* psa, long* rgIndices, void* pv)
 // Does a blind put of the specified element.
 // E.G., if the element is a BSTR (wchar_t*), only the value of the pointer is copied,
 //      not the contents of the BSTR.
@@ -1699,7 +1699,7 @@ HRESULT CSVCommand::SafeArrayPutElementNoCopy(SAFEARRAY* psa, long* rgIndices, v
 	return hr;
 }
 
-HRESULT CSVCommand::SafeArrayGetElementPointer(SAFEARRAY* psa, long* rgIndices, void** ppv)
+HRESULT SVCommand::SafeArrayGetElementPointer(SAFEARRAY* psa, long* rgIndices, void** ppv)
 // sets the pointer to point to the actual memory of the SAFEARRAY that contains the element.
 {
 	DWORD dwOffset = 0;
@@ -1726,7 +1726,7 @@ HRESULT CSVCommand::SafeArrayGetElementPointer(SAFEARRAY* psa, long* rgIndices, 
 	return S_OK;
 }
 
-HRESULT CSVCommand::SVGetDataList(SAFEARRAY* psaNames, SAFEARRAY** ppsaValues, SAFEARRAY** ppsaStatus, SAFEARRAY** ppsaProcCounts)
+HRESULT SVCommand::SVGetDataList(SAFEARRAY* psaNames, SAFEARRAY** ppsaValues, SAFEARRAY** ppsaStatus, SAFEARRAY** ppsaProcCounts)
 {
 	HRESULT Result = S_OK;
 	HRESULT Status = S_OK;
@@ -1886,7 +1886,7 @@ HRESULT CSVCommand::SVGetDataList(SAFEARRAY* psaNames, SAFEARRAY** ppsaValues, S
 	return Result;
 }
 
-STDMETHODIMP CSVCommand::SVRunOnce(BSTR bstrName)
+STDMETHODIMP SVCommand::SVRunOnce(BSTR bstrName)
 {
 	USES_CONVERSION;
 
@@ -1909,7 +1909,7 @@ STDMETHODIMP CSVCommand::SVRunOnce(BSTR bstrName)
 	return hrResult;
 }
 
-STDMETHODIMP CSVCommand::SVSetSourceImage(BSTR bstrName, BSTR bstrImage)
+STDMETHODIMP SVCommand::SVSetSourceImage(BSTR bstrName, BSTR bstrImage)
 {
 	USES_CONVERSION;
 
@@ -1945,7 +1945,7 @@ STDMETHODIMP CSVCommand::SVSetSourceImage(BSTR bstrName, BSTR bstrImage)
 	return hrResult;
 }
 
-STDMETHODIMP CSVCommand::SVSetInputs(SAFEARRAY* psaNames, SAFEARRAY* psaValues, SAFEARRAY** )
+STDMETHODIMP SVCommand::SVSetInputs(SAFEARRAY* psaNames, SAFEARRAY* psaValues, SAFEARRAY** )
 {
 	USES_CONVERSION;
 
@@ -2019,7 +2019,7 @@ STDMETHODIMP CSVCommand::SVSetInputs(SAFEARRAY* psaNames, SAFEARRAY* psaValues, 
 	return Result;
 }
 
-HRESULT CSVCommand::SVSetImageList(SAFEARRAY *psaNames, SAFEARRAY *psaImages, SAFEARRAY **ppsaStatus)
+HRESULT SVCommand::SVSetImageList(SAFEARRAY *psaNames, SAFEARRAY *psaImages, SAFEARRAY **ppsaStatus)
 {
 	USES_CONVERSION;
 
@@ -2135,7 +2135,7 @@ HRESULT CSVCommand::SVSetImageList(SAFEARRAY *psaNames, SAFEARRAY *psaImages, SA
 	return hr;
 }
 
-HRESULT CSVCommand::SVSetToolParameterList(SAFEARRAY* psaNames, SAFEARRAY* psaValues, SAFEARRAY** )
+HRESULT SVCommand::SVSetToolParameterList(SAFEARRAY* psaNames, SAFEARRAY* psaValues, SAFEARRAY** )
 {
 	USES_CONVERSION;
 
@@ -2206,27 +2206,27 @@ HRESULT CSVCommand::SVSetToolParameterList(SAFEARRAY* psaNames, SAFEARRAY* psaVa
 	return Result;
 }
 
-HRESULT CSVCommand::SVLockImage(long , long , BSTR )
+HRESULT SVCommand::SVLockImage(long , long , BSTR )
 {
 	return E_FAIL;
 }
 
-HRESULT CSVCommand::SVGetLockedImage(long , long , BSTR* , BSTR* )
+HRESULT SVCommand::SVGetLockedImage(long , long , BSTR* , BSTR* )
 {
 	return E_FAIL;
 }
 
-HRESULT CSVCommand::SVUnlockImage(long )
+HRESULT SVCommand::SVUnlockImage(long )
 {
 	return E_FAIL;
 }
 
-HRESULT CSVCommand::SVUnlockAllImages()
+HRESULT SVCommand::SVUnlockAllImages()
 {
 	return E_FAIL;
 }
 
-STDMETHODIMP CSVCommand::SVGetRemoteInputCount(long* pCount)
+STDMETHODIMP SVCommand::SVGetRemoteInputCount(long* pCount)
 {
 	HRESULT hrResult = S_OK;
 	bool bSuccess = false;
@@ -2261,7 +2261,7 @@ STDMETHODIMP CSVCommand::SVGetRemoteInputCount(long* pCount)
 	return hrResult;
 }// end SVGetRemoteInputCount
 
-STDMETHODIMP CSVCommand::SVSetRemoteInput(long lIndex, VARIANT vtValue)
+STDMETHODIMP SVCommand::SVSetRemoteInput(long lIndex, VARIANT vtValue)
 {
 	HRESULT hrResult = S_OK;
 	bool bSuccess = false;
@@ -2296,19 +2296,19 @@ STDMETHODIMP CSVCommand::SVSetRemoteInput(long lIndex, VARIANT vtValue)
 }// end SVSetRemoteInput
 
 // This method is used to connect the event object to the application.
-HRESULT CSVCommand::StoreEventObserver(DWORD , CComPtr< CSVCommand > p_pObserver)
+HRESULT SVCommand::StoreEventObserver(DWORD , CComPtr< SVCommand > p_pObserver)
 {
 	return S_OK;
 }
 
 // This method is used to disconnect the event object to the application.
-HRESULT CSVCommand::ReleaseEventObserver(DWORD , CComPtr< CSVCommand > p_pObserver)
+HRESULT SVCommand::ReleaseEventObserver(DWORD , CComPtr< SVCommand > p_pObserver)
 {
 	return S_OK;
 }
 
 // Stub for SVGetTransferValueDefinitionList
-STDMETHODIMP CSVCommand::SVGetTransferValueDefinitionList(BSTR bstrInspectionName,
+STDMETHODIMP SVCommand::SVGetTransferValueDefinitionList(BSTR bstrInspectionName,
 	long* ,
 	VARIANT* p_pvData)
 {
@@ -2325,7 +2325,7 @@ STDMETHODIMP CSVCommand::SVGetTransferValueDefinitionList(BSTR bstrInspectionNam
 	if (SVConfigurationObject::GetInspection(W2T(bstrInspectionName), pInspection))
 	{
 		// Get Data Definition list from inspection
-		SVToolSetClass* pToolSet = pInspection->GetToolSet();
+		SVToolSet* pToolSet = pInspection->GetToolSet();
 		SvIe::SVTaskObjectListClass* pTaskObjectList = static_cast <SvIe::SVTaskObjectListClass*> (pToolSet);
 
 		SVObjectPtrVector SelectedObjects;
@@ -2476,7 +2476,7 @@ STDMETHODIMP CSVCommand::SVGetTransferValueDefinitionList(BSTR bstrInspectionNam
 }
 
 // Stub for SVGetTransferImageDefinitionList
-STDMETHODIMP CSVCommand::SVGetTransferImageDefinitionList(BSTR bstrInspectionName,
+STDMETHODIMP SVCommand::SVGetTransferImageDefinitionList(BSTR bstrInspectionName,
 	long* ,
 	VARIANT* p_pvData)
 {
@@ -2494,7 +2494,7 @@ STDMETHODIMP CSVCommand::SVGetTransferImageDefinitionList(BSTR bstrInspectionNam
 	{
 		// Get Image list from the tool set.
 		SvIe::SVImageClassPtrVector ImageList;
-		SVToolSetClass* pToolSet = pInspection->GetToolSet();
+		SVToolSet* pToolSet = pInspection->GetToolSet();
 		pToolSet->GetImageList(ImageList);
 
 		std::vector<SvIe::SVImageClass*> objectList;
@@ -2603,7 +2603,7 @@ STDMETHODIMP CSVCommand::SVGetTransferImageDefinitionList(BSTR bstrInspectionNam
 	return hr;
 }
 
-STDMETHODIMP CSVCommand::SVIsAvailiable()
+STDMETHODIMP SVCommand::SVIsAvailiable()
 {
 	return S_OK;
 }

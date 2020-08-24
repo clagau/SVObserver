@@ -20,13 +20,13 @@
 namespace SvOp
 {
 
-class SVLUTEquationClass : public SVEquationClass
+class SVLUTEquation : public SVEquation
 {
-	SV_DECLARE_CLASS( SVLUTEquationClass );
+	SV_DECLARE_CLASS( SVLUTEquation );
 
 public:
-	SVLUTEquationClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVLUTEQUATION );
-	virtual ~SVLUTEquationClass();
+	SVLUTEquation( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVLUTEQUATION );
+	virtual ~SVLUTEquation();
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 

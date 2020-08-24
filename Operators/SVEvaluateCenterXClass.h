@@ -14,7 +14,7 @@
 namespace SvOp
 {
 
-class SVEvaluateCenterXClass : public SVEvaluateClass
+class SVEvaluateCenterXClass : public SVEvaluate
 {
 	SV_DECLARE_CLASS( SVEvaluateCenterXClass )
 

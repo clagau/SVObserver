@@ -29,8 +29,8 @@ namespace SvOg
 
 		//{{AFX_DATA(SVCylindricalWarpDlg)
 		enum { IDD = IDD_TA_CYLINDRICAL_TOOL_DIALOG };
-		SvMc::SVEnumerateComboClass	m_cbInterpolation;
-		SvMc::SVEnumerateComboClass	m_cbOrientation;
+		SvMc::SVEnumerateCombo	m_cbInterpolation;
+		SvMc::SVEnumerateCombo	m_cbOrientation;
 		double	m_dWarpAngle{ 0.0 };
 		//}}AFX_DATA
 

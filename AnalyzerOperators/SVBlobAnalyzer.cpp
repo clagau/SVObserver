@@ -309,7 +309,7 @@ DWORD SVBlobAnalyzerClass::AllocateResult(int FeatureIndex)
 	resultClassInfo.m_ClassName += _T(" ") + Title;
 
 	// Construct the result class
-	SvOp::SVDoubleResultClass* pResult = dynamic_cast<SvOp::SVDoubleResultClass*> (resultClassInfo.Construct());
+	SvOp::SVDoubleResult* pResult = dynamic_cast<SvOp::SVDoubleResult*> (resultClassInfo.Construct());
 	m_ResultIds[FeatureIndex] = pResult->getObjectId();
 
 	if(!pResult)
@@ -400,7 +400,7 @@ DWORD SVBlobAnalyzerClass::AllocateBlobResult ()
 		resultClassInfo.m_ClassName += _T(" ") + Title;
 		
 		// Construct the result class
-		m_pResultBlob = dynamic_cast<SvOp::SVLongResultClass*> (resultClassInfo.Construct());
+		m_pResultBlob = dynamic_cast<SvOp::SVLongResult*> (resultClassInfo.Construct());
 		
 		if(nullptr == m_pResultBlob)
 		{
@@ -500,7 +500,7 @@ void SVBlobAnalyzerClass::RebuildResultObjectArray()
 
 	for( l_Iter = l_Visitor.GetObjects().begin(); l_Iter != l_Visitor.GetObjects().end(); ++l_Iter )
 	{
-		SvOp::SVDoubleResultClass* pResult = dynamic_cast<SvOp::SVDoubleResultClass*> (const_cast<SVObjectClass*> (*l_Iter));
+		SvOp::SVDoubleResult* pResult = dynamic_cast<SvOp::SVDoubleResult*> (const_cast<SVObjectClass*> (*l_Iter));
 
 		pResult->GetPrivateInputList( resultInputList );
 
@@ -530,10 +530,10 @@ void SVBlobAnalyzerClass::RebuildResultObjectArray()
 // 	 Date		Author				Comment                                       
 //  04-12-00 	Sri				First Implementation
 ////////////////////////////////////////////////////////////////////////////////
-SvOp::SVLongResultClass* SVBlobAnalyzerClass::GetBlobResultObject()
+SvOp::SVLongResult* SVBlobAnalyzerClass::GetBlobResultObject()
 {
 	SvOl::SVInputInfoListClass	resultInputList;
-	SvOp::SVLongResultClass*    pResult = nullptr;
+	SvOp::SVLongResult*    pResult = nullptr;
 	SvDef::SVObjectTypeInfoStruct info {SvPb::SVResultObjectType, SvPb::SVResultLongObjectType};
 	SVGetObjectDequeByTypeVisitor l_Visitor( info );
 
@@ -543,7 +543,7 @@ SvOp::SVLongResultClass* SVBlobAnalyzerClass::GetBlobResultObject()
 
 	for( l_Iter = l_Visitor.GetObjects().begin(); l_Iter != l_Visitor.GetObjects().end(); ++l_Iter )
 	{
-		pResult = dynamic_cast<SvOp::SVLongResultClass* >( const_cast< SVObjectClass* >( *l_Iter ) );
+		pResult = dynamic_cast<SvOp::SVLongResult* >( const_cast< SVObjectClass* >( *l_Iter ) );
 
 		pResult->GetPrivateInputList( resultInputList );
 
@@ -670,7 +670,7 @@ bool SVBlobAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCreateS
 					break; // Break out of for loop 
 				}
 				
-				SvOp::SVRangeClass *pRange = dynamic_cast<SvOp::SVResultClass*>(pResult)->GetResultRange();
+				SvOp::SVRange *pRange = dynamic_cast<SvOp::SVResult*>(pResult)->GetResultRange();
 				if(nullptr == pRange)
 				{
 					SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
@@ -713,7 +713,7 @@ bool SVBlobAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCreateS
 				break; // Some error has occurred.
 			}
 			
-			SvOp::SVRangeClass* pRange = m_pResultBlob->GetResultRange();
+			SvOp::SVRange* pRange = m_pResultBlob->GetResultRange();
 			if(nullptr == pRange)
 			{
 			
@@ -927,7 +927,7 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 						continue;
 					}
 					
-					SvOp::SVResultClass* pResult = dynamic_cast<SvOp::SVResultClass*> (getResultObject(i));
+					SvOp::SVResult* pResult = dynamic_cast<SvOp::SVResult*> (getResultObject(i));
 					if(!pResult)
 					{
 						Result = false;
@@ -938,7 +938,7 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 						}
 						break;
 					}
-					SvOp::SVRangeClass* pRange = pResult->GetResultRange();
+					SvOp::SVRange* pRange = pResult->GetResultRange();
 					if(!pRange)
 					{
 						Result = false;
@@ -1438,7 +1438,7 @@ DWORD SVBlobAnalyzerClass::BuildFeatureListID ()
 // .Description : When the user right clicks inside a tool figure, checks whether its
 //              : on a blob. If it finds a blob at that point, gets the index of the  
 //				: blob and returns true.
-//				: Called from SVImageViewClass::OnContextMenu
+//				: Called from SVImageView::OnContextMenu
 ////////////////////////////////////////////////////////////////////////////////
 // 	 Date		Author				Comment                                       
 //  04-12-00	Sri				First Implementation
@@ -1511,7 +1511,7 @@ void SVBlobAnalyzerClass::addParameterForMonitorList(SvStl::MessageContainerVect
 				auto* pResultObject = SVObjectManagerClass::Instance().GetObject(m_ResultIds[i]);
 				if (nullptr != pResultObject)
 				{
-					SvOp::SVRangeClass* pRangeObject = dynamic_cast<SvOp::SVRangeClass*>(pResultObject->getFirstObject(SvDef::SVObjectTypeInfoStruct(SvPb::SVObjectTypeEnum::SVRangeObjectType)));
+					SvOp::SVRange* pRangeObject = dynamic_cast<SvOp::SVRange*>(pResultObject->getFirstObject(SvDef::SVObjectTypeInfoStruct(SvPb::SVObjectTypeEnum::SVRangeObjectType)));
 					if (nullptr != pRangeObject)
 					{
 						pRangeObject->addEntriesToMonitorList(inserter);

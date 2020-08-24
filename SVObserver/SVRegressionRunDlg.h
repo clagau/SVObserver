@@ -19,17 +19,17 @@
 
 class SVIPDoc;
 
-class CSVRegressionRunDlg : public CDialog
+class SVRegressionRunDlg : public CDialog
 {
 #pragma region Constructor
 public:
-	explicit CSVRegressionRunDlg(SvOi::IFormulaControllerPtr pFormulaController, CWnd* pParent = nullptr);   // standard constructor
-	virtual ~CSVRegressionRunDlg();
+	explicit SVRegressionRunDlg(SvOi::IFormulaControllerPtr pFormulaController, CWnd* pParent = nullptr);   // standard constructor
+	virtual ~SVRegressionRunDlg();
 #pragma endregion Constructor
 
 #pragma region MFC Methods
 	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CSVRegressionRunDlg)
+	//{{AFX_VIRTUAL(SVRegressionRunDlg)
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	virtual BOOL OnInitDialog() override;
@@ -40,7 +40,7 @@ protected:
 
 // Implementation
 	// Generated message map functions
-	//{{AFX_MSG(CSVRegressionRunDlg)
+	//{{AFX_MSG(SVRegressionRunDlg)
 	afx_msg void OnBtnBeginning();
 	afx_msg void OnBtnFrameBack();
 	afx_msg void OnBtnFrameUp();
@@ -90,7 +90,7 @@ private:
 #pragma region Member variables
 private:
 	// Dialog Data
-	//{{AFX_DATA(CSVRegressionRunDlg)
+	//{{AFX_DATA(SVRegressionRunDlg)
 	enum { IDD = IDD_DIALOG_REGRESSIONTEST_RUN };
 	CButton	m_btnExit;
 	CButton	m_btnSettings;

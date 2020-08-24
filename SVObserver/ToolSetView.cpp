@@ -24,7 +24,7 @@
 #include "ObjectInterfaces/IObjectWriter.h"
 #include "SVConfigurationObject.h"
 #include "SVMessage/SVMessage.h"
-#include "SVIPChildFrm.h"
+#include "SVIPSplitterFrame.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVOGui/SVTextEditDialog.h"
@@ -189,7 +189,7 @@ bool ToolSetView::ToolSetListHasChanged()
 		return false;
 	}
 
-	SVToolSetClass* pToolSet = pCurrentDocument ->GetToolSet();
+	SVToolSet* pToolSet = pCurrentDocument ->GetToolSet();
 	if (!pToolSet)
 	{
 		return false;
@@ -337,7 +337,7 @@ void ToolSetView::OnRightClickToolSetList(NMHDR* , LRESULT* pResult)
 	{
 		return;
 	}
-	SVToolSetClass* pToolSet = pCurrentDocument->GetToolSet();
+	SVToolSet* pToolSet = pCurrentDocument->GetToolSet();
 	if (nullptr == pToolSet)
 	{
 		return;
@@ -674,7 +674,7 @@ void ToolSetView::EditToolComment(uint32_t toolId)
 	{
 		return;
 	}
-	SVToolSetClass* pToolSet = pCurrentDocument->GetToolSet();
+	SVToolSet* pToolSet = pCurrentDocument->GetToolSet();
 	if (nullptr == pToolSet)
 	{
 		return;
@@ -772,7 +772,7 @@ void ToolSetView::OnEndLabelEditToolSetList(NMHDR*, LRESULT* pResult)
 	{
 		return;
 	}
-	SVToolSetClass* pToolSet = pCurrentDocument->GetToolSet();
+	SVToolSet* pToolSet = pCurrentDocument->GetToolSet();
 	if (nullptr == pToolSet)
 	{
 		return;

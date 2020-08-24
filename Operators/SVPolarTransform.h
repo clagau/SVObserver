@@ -18,13 +18,13 @@
 namespace SvOp
 {
 
-class SVPolarTransformClass : public SvIe::SVTaskObjectClass
+class SVPolarTransform : public SvIe::SVTaskObjectClass
 {
-	SV_DECLARE_CLASS( SVPolarTransformClass )
+	SV_DECLARE_CLASS( SVPolarTransform )
 
 public:
-	SVPolarTransformClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVPOLARTRANSFORM );
-	virtual ~SVPolarTransformClass();
+	SVPolarTransform( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVPOLARTRANSFORM );
+	virtual ~SVPolarTransform();
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 

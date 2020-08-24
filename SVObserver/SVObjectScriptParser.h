@@ -14,11 +14,11 @@
 #include "SVObjectScriptParserBase.h"
 #pragma endregion Includes
 
-class SVObjectScriptParserClass
+class SVObjectScriptParser
 {
 public:	
-	explicit SVObjectScriptParserClass(SVObjectScriptParserBase* pParser);
-	~SVObjectScriptParserClass();	// not to be inherited from
+	explicit SVObjectScriptParser(SVObjectScriptParserBase* pParser);
+	~SVObjectScriptParser();	// not to be inherited from
 
 	HRESULT Parse();
 	void Complete();

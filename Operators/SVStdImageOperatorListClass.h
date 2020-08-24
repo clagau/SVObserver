@@ -27,14 +27,14 @@ namespace SvOp
 //				: on output image
 //				: Output Image ---> Output Image
 //				:
-//				: Replaces the old SVUnaryImageOperatorListClass and 
+//				: Replaces the old SVUnaryImageOperatorList and 
 //				: for compatibility to older versions it inherits the classID
-//				: of the old SVUnaryImageOperatorListClass.
+//				: of the old SVUnaryImageOperatorList.
 // -----------------------------------------------------------------------------
 // .Special : Threshold Operator, if it thinks it is the first one, but 
 //			: thresholding is deactivated, it is doing a copy (input to output)
 ////////////////////////////////////////////////////////////////////////////////
-class SVStdImageOperatorListClass : public SVUnaryImageOperatorListClass 
+class SVStdImageOperatorListClass : public SVUnaryImageOperatorList 
 {
 	SV_DECLARE_CLASS( SVStdImageOperatorListClass )
 

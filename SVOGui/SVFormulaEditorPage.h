@@ -93,16 +93,16 @@ namespace SvOg
 		void CheckBrace();
 
 	protected:
-		SvMc::SVToolBarClass m_logicalOperatorBar;
-		SvMc::SVToolBarClass m_functionOperatorBar;
-		SvMc::SVToolBarClass m_conditionalOperatorBar;
-		SvMc::SVToolBarClass m_trigOperatorBar;
-		SvMc::SVToolBarClass m_miscOperatorBar;
-		SvMc::SVToolBarClass m_basicOperatorBar;
-		SvMc::SVToolBarClass m_cursorBar;
-		SvMc::SVToolBarClass m_validateBar;
-		SvMc::SVToolBarClass m_punctuationBar;
-		SvMc::SVToolBarClass m_statisticsOperatorBar;
+		SvMc::SVToolBar m_logicalOperatorBar;
+		SvMc::SVToolBar m_functionOperatorBar;
+		SvMc::SVToolBar m_conditionalOperatorBar;
+		SvMc::SVToolBar m_trigOperatorBar;
+		SvMc::SVToolBar m_miscOperatorBar;
+		SvMc::SVToolBar m_basicOperatorBar;
+		SvMc::SVToolBar m_cursorBar;
+		SvMc::SVToolBar m_validateBar;
+		SvMc::SVToolBar m_punctuationBar;
+		SvMc::SVToolBar m_statisticsOperatorBar;
 
 	private:
 		SvOi::IFormulaControllerPtr m_FormulaController;

@@ -14,18 +14,18 @@
 #include "SVTriggerSelectionDlg.h"
 #pragma endregion Includes
 
-class CSVOConfigAssistantDlg;
+class SVOConfigAssistantDlg;
 
-class CSVOTriggerDeviceDlg : public CPropertyPage
+class SVOTriggerDeviceDlg : public CPropertyPage
 {
 // Construction
 public:
-	CSVOTriggerDeviceDlg(CWnd* pParent = nullptr);   // standard constructor
-	virtual ~CSVOTriggerDeviceDlg();
+	SVOTriggerDeviceDlg(CWnd* pParent = nullptr);   // standard constructor
+	virtual ~SVOTriggerDeviceDlg();
     void SetupList();
 
 // Dialog Data
-	//{{AFX_DATA(CSVOTriggerDeviceDlg)
+	//{{AFX_DATA(SVOTriggerDeviceDlg)
 	enum { IDD = IDD_DLG_PROPPAGE_AA_TRIGGER };
 	CButton	m_btnPropTrigger;
 	CButton	m_btnNewTrigger;
@@ -37,7 +37,7 @@ public:
 
 // Overrides
 	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CSVOTriggerDeviceDlg)
+	//{{AFX_VIRTUAL(SVOTriggerDeviceDlg)
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
@@ -46,7 +46,7 @@ public:
 protected:
 
 	// Generated message map functions
-	//{{AFX_MSG(CSVOTriggerDeviceDlg)
+	//{{AFX_MSG(SVOTriggerDeviceDlg)
 	virtual BOOL OnInitDialog() override;
 	afx_msg void OnBtnPropTrig();
 	afx_msg void OnBtnNewTrig();
@@ -58,7 +58,7 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 private:
-    CSVOConfigAssistantDlg *m_pParent;
+    SVOConfigAssistantDlg *m_pParent;
 	void EnablePropertyEdit(int iSelection);
 	void EnablePropertyButton(bool bEnable);
 	void EnableAdvancedPropertyButton(bool bEnable);

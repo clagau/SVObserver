@@ -27,7 +27,7 @@ SV_IMPLEMENT_CLASS( SVEvaluateRotationAngleClass, SvPb::EvaluateRotationAngleCla
 // Construction
 //////////////////////////////////////////////////////////////////////
 SVEvaluateRotationAngleClass::SVEvaluateRotationAngleClass( SVObjectClass* pOwner, int StringResourceID )
-: SVEvaluateClass( pOwner, StringResourceID ) 
+: SVEvaluate( pOwner, StringResourceID ) 
 {
 	// Identify yourself
 	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVEvaluateRotationAngleObjectType;

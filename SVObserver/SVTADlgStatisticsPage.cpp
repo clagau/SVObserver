@@ -237,7 +237,7 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnSetRange()
 	if( item != LB_ERR )
 	{
 		DWORD_PTR index = m_lbSelectedList.GetItemData( item );
-		SvOp::SVResultClass* pResult = m_pTool->GetResult(static_cast<SvTo::SVStatisticsFeatureEnum> (index));
+		SvOp::SVResult* pResult = m_pTool->GetResult(static_cast<SvTo::SVStatisticsFeatureEnum> (index));
 
 		if (nullptr == pResult)
 		{
@@ -289,7 +289,7 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnPublishButton()
 			ObjectRef.SetObjectAttributesSet(SvPb::publishable, attributeType);
 		}
 
-		SVPublishListClass& PublishList = pInspection->GetPublishList();
+		SVPublishList& PublishList = pInspection->GetPublishList();
 		PublishList.Refresh( static_cast<SvIe::SVTaskObjectClass*>(pInspection->GetToolSet()) );
 		if (m_pParent)
 		{

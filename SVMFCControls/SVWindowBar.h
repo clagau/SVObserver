@@ -14,12 +14,12 @@
 
 namespace SvMc
 {
-	class SVWindowBarClass : public CControlBar
+	class SVWindowBar : public CControlBar
 	{
-		DECLARE_DYNCREATE( SVWindowBarClass )
+		DECLARE_DYNCREATE( SVWindowBar )
 
 	protected:
-		//{{AFX_MSG(SVWindowBarClass)
+		//{{AFX_MSG(SVWindowBar)
 		afx_msg void OnSizing(UINT fwSide, LPRECT pRect);
 		afx_msg void OnPaint();
 		afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -29,8 +29,8 @@ namespace SvMc
 		DECLARE_MESSAGE_MAP()
 
 	public:
-		SVWindowBarClass();
-		virtual ~SVWindowBarClass();
+		SVWindowBar();
+		virtual ~SVWindowBar();
 		virtual BOOL Create( CWnd* pParentWnd, DWORD dwStyle, UINT nID );
 		virtual void OnUpdateCmdUI( CFrameWnd* pTarget, BOOL bDisableIfNoHndler ) override;
 		virtual CSize CalcFixedLayout( BOOL bStretch, BOOL bHorz ) override;
@@ -41,7 +41,7 @@ namespace SvMc
 		//******************************************************************************
 		// Überschreibungen
 		// Vom Klassen-Assistenten generierte virtuelle Funktionsüberschreibungen
-		//{{AFX_VIRTUAL(SVWindowBarClass)
+		//{{AFX_VIRTUAL(SVWindowBar)
 	public:
 		virtual BOOL Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext = nullptr) override;
 	protected:
@@ -65,7 +65,7 @@ namespace SvMc
 		CString windowTitle;
 		CSize windowSize;
 
-		SVSlideBarClass	slidebar;
+		SVSlideBar	slidebar;
 		BOOL			m_bMenuRemoved;
 		HBRUSH			m_hWindowBackgroundColor;
 	};

@@ -27,7 +27,7 @@ static char THIS_FILE[] = __FILE__;
 SV_IMPLEMENT_CLASS( SVInPlaceImageOperatorListClass, SvPb::InPlaceImageOperatorListClassId)
 
 SVInPlaceImageOperatorListClass::SVInPlaceImageOperatorListClass( SVObjectClass* POwner, int StringResourceID )
-							    :SVUnaryImageOperatorListClass( POwner, StringResourceID ) 
+							    :SVUnaryImageOperatorList( POwner, StringResourceID ) 
 {
 	init();
 }
@@ -102,7 +102,7 @@ bool SVInPlaceImageOperatorListClass::Run( SVRunStatusClass& rRunStatus, SvStl::
 
 	if( bRetVal )
 	{
-		//The input image will be needed but will be overridden, because in SVImageArithmeticClass it was already called the write-method and this image will be used for both task as output.
+		//The input image will be needed but will be overridden, because in SVImageArithmetic it was already called the write-method and this image will be used for both task as output.
 		SvTrc::IImagePtr pImageBuffer = getInputImage(true)->getImageReadOnly(rRunStatus.m_triggerRecord.get());
 		SvOi::SVImageBufferHandlePtr imageHandle;
 		if (nullptr != pImageBuffer && !pImageBuffer->isEmpty())

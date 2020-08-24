@@ -22,7 +22,7 @@ static char THIS_FILE[] = __FILE__;
 SV_IMPLEMENT_CLASS( TableColumnEquation, SvPb::TableColumnEquationId);
 
 TableColumnEquation::TableColumnEquation( SVObjectClass* pOwner, int StringResourceID ) 
-: SVEquationClass( pOwner, StringResourceID )
+: SVEquation( pOwner, StringResourceID )
 {
 	init();
 }

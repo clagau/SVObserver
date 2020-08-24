@@ -75,13 +75,13 @@ private:
 	static int GetLimit() { return (std::numeric_limits<int>::max)(); }
 };
 
-class SVSoftwareTriggerDlg : public CDialog
+class SoftwareTriggerDlg : public CDialog
 {
-	DECLARE_DYNAMIC(SVSoftwareTriggerDlg)
+	DECLARE_DYNAMIC(SoftwareTriggerDlg)
 
-	SVSoftwareTriggerDlg(CWnd* pParent = nullptr);   // standard constructor
+	SoftwareTriggerDlg(CWnd* pParent = nullptr);   // standard constructor
 public:
-	virtual ~SVSoftwareTriggerDlg();
+	virtual ~SoftwareTriggerDlg();
 
 // Dialog Data
 	enum { IDD = IDD_TRIGGER_PERIOD_DLG };
@@ -115,7 +115,7 @@ public:
 
 	void OnStop();
 
-	static SVSoftwareTriggerDlg & Instance();
+	static SoftwareTriggerDlg & Instance();
 
 private:
 	CSpinButtonCtrl		m_msecSpin;

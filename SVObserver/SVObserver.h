@@ -31,7 +31,7 @@ class SVIOController;
 class SVIODoc;
 class SVIPDoc;
 class SVMainFrame;
-class SVMessageWindowClass;
+class SVMessageWindow;
 class SVUserObjectListClass;
 
 namespace SvOi
@@ -367,7 +367,7 @@ private:
 	long m_lSouceImageDepth;
 	long m_LogDataManager;
 
-	SVMessageWindowClass* m_pMessageWindow;
+	SVMessageWindow* m_pMessageWindow;
 
 	bool m_ATLInited;
 

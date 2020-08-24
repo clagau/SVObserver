@@ -27,24 +27,24 @@ static char THIS_FILE[] = __FILE__;
 
 #define SV_PPQ_BUTTON_WIDTH 30
 
-IMPLEMENT_DYNCREATE( SVPPQBarClass, SVWindowBarClass )
+IMPLEMENT_DYNCREATE( SVPPQBar, SVWindowBar )
 
-SVPPQBarClass::SVPPQBarClass()
-: SVWindowBarClass()
+SVPPQBar::SVPPQBar()
+: SVWindowBar()
 {
 }
 
-SVPPQBarClass::~SVPPQBarClass()
+SVPPQBar::~SVPPQBar()
 {
 }
 
-CSize SVPPQBarClass::CalcFixedLayout( BOOL , BOOL  )
+CSize SVPPQBar::CalcFixedLayout( BOOL , BOOL  )
 {
-	return SVWindowBarClass::CalcFixedLayout( TRUE, TRUE );
+	return SVWindowBar::CalcFixedLayout( TRUE, TRUE );
 }
 
-BEGIN_MESSAGE_MAP(SVPPQBarClass, SVWindowBarClass)
-	//{{AFX_MSG_MAP(SVPPQBarClass)
+BEGIN_MESSAGE_MAP(SVPPQBar, SVWindowBar)
+	//{{AFX_MSG_MAP(SVPPQBar)
 	ON_NOTIFY(TCN_SELCHANGE, IDC_PQ_TAB, OnSelChangePQTab)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
@@ -56,9 +56,9 @@ BEGIN_MESSAGE_MAP(SVPPQBarClass, SVWindowBarClass)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
-// Behandlungsroutinen für Nachrichten SVPPQBarClass 
+// Behandlungsroutinen für Nachrichten SVPPQBar 
 
-BOOL SVPPQBarClass::Create( CWnd* pParentWnd, DWORD dwStyle, UINT nID ) 
+BOOL SVPPQBar::Create( CWnd* pParentWnd, DWORD dwStyle, UINT nID ) 
 {
 	assert(nullptr != pParentWnd);
 	ASSERT_KINDOF(CFrameWnd, pParentWnd);
@@ -67,17 +67,17 @@ BOOL SVPPQBarClass::Create( CWnd* pParentWnd, DWORD dwStyle, UINT nID )
 
 	windowSize = CSize( 640, 120 );
 
-	return SVWindowBarClass::Create( pParentWnd, dwStyle, nID );
+	return SVWindowBar::Create( pParentWnd, dwStyle, nID );
 }
 
-void SVPPQBarClass::OnSize(UINT nType, int cx, int cy) 
+void SVPPQBar::OnSize(UINT nType, int cx, int cy) 
 {
-	SVWindowBarClass::OnSize(nType, cx, cy);
+	SVWindowBar::OnSize(nType, cx, cy);
 }
 
-int SVPPQBarClass::OnCreate(LPCREATESTRUCT lpCreateStruct) 
+int SVPPQBar::OnCreate(LPCREATESTRUCT lpCreateStruct) 
 {
-	if (SVWindowBarClass::OnCreate(lpCreateStruct) == -1)
+	if (SVWindowBar::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
 	CRect rect;
@@ -94,12 +94,12 @@ int SVPPQBarClass::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
-void SVPPQBarClass::OnDestroy() 
+void SVPPQBar::OnDestroy() 
 {
-	SVWindowBarClass::OnDestroy();
+	SVWindowBar::OnDestroy();
 }
 
-void SVPPQBarClass::OnSelChangePQTab( NMHDR*, LRESULT* pResult ) 
+void SVPPQBar::OnSelChangePQTab( NMHDR*, LRESULT* pResult ) 
 {
 	int index = pqTabCtrl.GetCurSel();
 	if( index >= 0 )
@@ -137,7 +137,7 @@ void SVPPQBarClass::OnSelChangePQTab( NMHDR*, LRESULT* pResult )
 }// end OnSelChangePQTab
 
 
-BOOL SVPPQBarClass::BuildButtons() 
+BOOL SVPPQBar::BuildButtons() 
 {
 	// Rebuild all PQ Tabs...
 	int tabIndex = 0;
@@ -198,14 +198,14 @@ BOOL SVPPQBarClass::BuildButtons()
 
 }// end BuildButtons
 
-BOOL SVPPQBarClass::DestroyButtons() 
+BOOL SVPPQBar::DestroyButtons() 
 {
 	return PPQWindow.DestroyButtons();
 }
 
-void SVPPQBarClass::OnWindowPosChanged( WINDOWPOS FAR* lpwndpos ) 
+void SVPPQBar::OnWindowPosChanged( WINDOWPOS FAR* lpwndpos ) 
 {
-	SVWindowBarClass::OnWindowPosChanged(lpwndpos);
+	SVWindowBar::OnWindowPosChanged(lpwndpos);
 
 	CRect rect;
 	GetClientRect( &rect );
@@ -226,12 +226,12 @@ void SVPPQBarClass::OnWindowPosChanged( WINDOWPOS FAR* lpwndpos )
 	}
 }// end OnWindowPosChanged
 
-void SVPPQBarClass::OnSizing(UINT fwSide, LPRECT pRect) 
+void SVPPQBar::OnSizing(UINT fwSide, LPRECT pRect) 
 {
-	SVWindowBarClass::OnSizing(fwSide, pRect);
+	SVWindowBar::OnSizing(fwSide, pRect);
 }
 
-LRESULT SVPPQBarClass::OnSizeParent( WPARAM, LPARAM lParam )
+LRESULT SVPPQBar::OnSizeParent( WPARAM, LPARAM lParam )
 {
 	AFX_SIZEPARENTPARAMS *lpLayout = (AFX_SIZEPARENTPARAMS*) lParam;
 	DWORD dwStyle = RecalcDelayShow( lpLayout );

@@ -69,8 +69,8 @@ public:
 	enum { IDD = IDD_LUT_DIALOG };
 	CSliderCtrl	m_UpperSlider;
 	CSliderCtrl	m_LowerSlider;
-	SvMc::SVDlgGraphClass m_LUTGraph;
-	SvMc::SVEnumerateComboClass m_LutModeCombo;
+	SvMc::SVDlgGraph m_LUTGraph;
+	SvMc::SVEnumerateCombo m_LutModeCombo;
 	CString	m_UpperClipValue;
 	CString	m_LowerClipValue;
 	BOOL m_bUseLUT;

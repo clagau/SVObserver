@@ -19,7 +19,7 @@
 #include "SVImageView.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
-#include "SVIPChildFrm.h"
+#include "SVIPSplitterFrame.h"
 #include "SVMainFrm.h"
 #pragma endregion Includes
 
@@ -42,9 +42,9 @@ END_MESSAGE_MAP()
 SVImageViewScroll::SVImageViewScroll()
 : CScrollView()
 {
-	CRuntimeClass* pImageRunTime = RUNTIME_CLASS(SVImageViewClass);
-	m_pView = static_cast< SVImageViewClass* >( pImageRunTime->CreateObject() );
-	assert(m_pView->IsKindOf(RUNTIME_CLASS(SVImageViewClass)));
+	CRuntimeClass* pImageRunTime = RUNTIME_CLASS(SVImageView);
+	m_pView = static_cast< SVImageView* >( pImageRunTime->CreateObject() );
+	assert(m_pView->IsKindOf(RUNTIME_CLASS(SVImageView)));
 
 	m_oOldScrollPoint = CPoint( 0, 0 );
 	m_oOldMaxScrollPoint = CPoint( 0, 0 );

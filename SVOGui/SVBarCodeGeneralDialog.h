@@ -126,7 +126,7 @@ namespace SvOg
 
 		SvPb::GetBarCodeTypeInfosResponse m_barCodeTypeInfos;
 		long m_lInitialBarCodeType;
-		SvMc::SVEnumerateComboClass m_StringFormatCombo;
+		SvMc::SVEnumerateCombo m_StringFormatCombo;
 		SvOi::NameValueVector m_stringFormatList;
 		long m_stringFormatPos = -1;
 		CString m_StringFormat;

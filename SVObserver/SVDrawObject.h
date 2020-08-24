@@ -23,14 +23,14 @@ enum
 	InvalidPoint = INT_MIN,
 };
 
-class SVDrawObjectClass
+class SVDrawObject
 {
 public:
-	SVDrawObjectClass();
-	SVDrawObjectClass( const SVDrawObjectClass &p_rsvObject );
-	~SVDrawObjectClass();
+	SVDrawObject();
+	SVDrawObject( const SVDrawObject &p_rsvObject );
+	~SVDrawObject();
 
-	const SVDrawObjectClass &operator=( const SVDrawObjectClass &p_rsvObject );
+	SVDrawObject &operator=( const SVDrawObject &p_rsvObject );
 
 	void AddExtentLineData( SVExtentLineStruct p_svLine, int PenStyle = PS_SOLID );
 
@@ -71,25 +71,25 @@ protected:
 	COLORREF m_PenColor;
 };
 
-typedef std::vector<SVDrawObjectClass> SVDrawObjectClassVector;
+typedef std::vector<SVDrawObject> SVDrawObjectClassVector;
 
 
 /////////////////////////////////////////////////////////////////////////////
 // SVPolyLineDrawObjectClass 
 
-class SVDrawObjectListClass
+class SVDrawObjectList
 {
 public:
-	SVDrawObjectListClass() {m_bDrawFigureHatched = false;};
+	SVDrawObjectList() {m_bDrawFigureHatched = false;};
 	
-	~SVDrawObjectListClass() {};
+	~SVDrawObjectList() {};
 
-	void Add( const SVDrawObjectListClass& rObjectList )
+	void Add( const SVDrawObjectList& rObjectList )
 	{
 		m_DrawObjectVector.insert(m_DrawObjectVector.end(), rObjectList.getList().begin(), rObjectList.getList().end());
 	};
 
-	void Add( SVDrawObjectClass& rObject )
+	void Add( SVDrawObject& rObject )
 	{
 		m_DrawObjectVector.push_back( rObject );
 	};
@@ -100,7 +100,7 @@ public:
 
 		for( long l = 0; l < Count; l++ )
 		{
-			SVDrawObjectClass DrawObject;
+			SVDrawObject DrawObject;
 
 			DrawObject.AddExtentLineData( p_svMultiLine.m_svLineArray[l] );
 
@@ -119,7 +119,7 @@ public:
 
 		for( long l = 0; l < l_lCount; l++ )
 		{
-			SVDrawObjectClass DrawObject;
+			SVDrawObject DrawObject;
 
 			DrawObject.AddExtentLineData( p_svMultiLine.m_svLineArray[l], PenStyle );
 
@@ -166,9 +166,9 @@ public:
 		return static_cast<int> (m_DrawObjectVector.size());
 	}
 
-	SVDrawObjectClass GetAt( int i ) const
+	SVDrawObject GetAt( int i ) const
 	{
-		return (0 < m_DrawObjectVector.size()) ? m_DrawObjectVector[i] : SVDrawObjectClass();
+		return (0 < m_DrawObjectVector.size()) ? m_DrawObjectVector[i] : SVDrawObject();
 	}
 
 	const SVDrawObjectClassVector& getList() const { return m_DrawObjectVector; };

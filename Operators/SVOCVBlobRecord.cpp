@@ -2,7 +2,7 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVOCVCharacterResultClass
+//* .Module Name     : SVOCVCharacterResult
 //* .File Name       : $Workfile:   SVOCVBlobRecord.cpp  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.2  $
@@ -25,15 +25,15 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVOCVCharacterResultClass, SvPb::OCVCharacterResultClassId);
+SV_IMPLEMENT_CLASS( SVOCVCharacterResult, SvPb::OCVCharacterResultClassId);
 
-SVOCVCharacterResultClass::SVOCVCharacterResultClass(LPCSTR ObjectName )
+SVOCVCharacterResult::SVOCVCharacterResult(LPCSTR ObjectName )
 					: SVTaskObjectClass( ObjectName )
 {
 	init();
 }
 
-SVOCVCharacterResultClass::SVOCVCharacterResultClass(SVObjectClass* POwner, int StringResourceID )
+SVOCVCharacterResult::SVOCVCharacterResult(SVObjectClass* POwner, int StringResourceID )
 						: SVTaskObjectClass( POwner, StringResourceID )
 {
 	init();
@@ -42,12 +42,12 @@ SVOCVCharacterResultClass::SVOCVCharacterResultClass(SVObjectClass* POwner, int 
 	addDefaultInputObjects();
 }
 
-SVOCVCharacterResultClass::~SVOCVCharacterResultClass()
+SVOCVCharacterResult::~SVOCVCharacterResult()
 {
-	SVOCVCharacterResultClass::CloseObject();
+	SVOCVCharacterResult::CloseObject();
 }
 
-void SVOCVCharacterResultClass::init()
+void SVOCVCharacterResult::init()
 {
 	//Special type names for extents
 	m_dvoOverlayWidth.SetTypeName( _T("Extent Width") );
@@ -69,7 +69,7 @@ void SVOCVCharacterResultClass::init()
 	m_dvoMatchScore.setSaveValueFlag(false);
 }
 
-void SVOCVCharacterResultClass::HideResults()
+void SVOCVCharacterResult::HideResults()
 {
 	m_statusColor.SetObjectAttributesAllowed( SvPb::embedable, SvOi::SetAttributeType::OverwriteAttribute );
 	m_statusTag.SetObjectAttributesAllowed( SvPb::embedable, SvOi::SetAttributeType::OverwriteAttribute );
@@ -84,7 +84,7 @@ void SVOCVCharacterResultClass::HideResults()
 	m_dvoMatchScore.SetObjectAttributesAllowed( SvPb::embedable, SvOi::SetAttributeType::OverwriteAttribute );
 }
 
-void SVOCVCharacterResultClass::UnhideResults()
+void SVOCVCharacterResult::UnhideResults()
 {
 	const UINT cAttributes = SvDef::defaultValueObjectAttributes & ~SvPb::printable;
 	m_statusColor.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::OverwriteAttribute );
@@ -100,7 +100,7 @@ void SVOCVCharacterResultClass::UnhideResults()
 	m_dvoMatchScore.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::OverwriteAttribute );
 }
 
-bool SVOCVCharacterResultClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
+bool SVOCVCharacterResult::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
 	bool bOk = SVTaskObjectClass::CreateObject(rCreateStructure);
 

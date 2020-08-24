@@ -2,7 +2,7 @@
 //* COPYRIGHT (c) 2009 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVSoftwareTriggerDlg
+//* .Module Name     : SoftwareTriggerDlg
 //* .File Name       : $Workfile:   SoftwareTriggerDlg.cpp  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.1  $
@@ -19,21 +19,22 @@
 
 // SoftwareTriggerDlg dialog
 
-IMPLEMENT_DYNAMIC(SVSoftwareTriggerDlg, CDialog)
+IMPLEMENT_DYNAMIC(SoftwareTriggerDlg, CDialog)
 
-SVSoftwareTriggerDlg::SVSoftwareTriggerDlg(CWnd* pParent /*=nullptr*/): 
-	CDialog(SVSoftwareTriggerDlg::IDD, pParent),
-	m_knobCtrl(SvTi::MinTimerPeriod_ms, SvTi::MaxTimerPeriod_ms)
+SoftwareTriggerDlg::SoftwareTriggerDlg(CWnd* pParent /*=nullptr*/): 
+	CDialog(SoftwareTriggerDlg::IDD, pParent),
+	m_knobCtrl(SvTi::MinTimerPeriod_ms, SvTi::MaxTimerPeriod_ms),
+	m_pBrush(nullptr)
 {
 }
 
-SVSoftwareTriggerDlg::~SVSoftwareTriggerDlg()
+SoftwareTriggerDlg::~SoftwareTriggerDlg()
 {
 	delete m_pSpins;
 	delete m_pBrush;
 }
 
-void SVSoftwareTriggerDlg::DoDataExchange(CDataExchange* pDX)
+void SoftwareTriggerDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_TRIGGER_TABS, m_triggerTabs);
@@ -60,26 +61,26 @@ void SVSoftwareTriggerDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 
-BEGIN_MESSAGE_MAP(SVSoftwareTriggerDlg, CDialog)
-	ON_NOTIFY(TCN_SELCHANGE, IDC_TRIGGER_TABS, &SVSoftwareTriggerDlg::OnTcnSelchangeTriggerTabs)
-	ON_EN_CHANGE(IDC_USEC_EDIT, &SVSoftwareTriggerDlg::OnEnChangeUsecEdit)
-	ON_BN_CLICKED(IDOK, &SVSoftwareTriggerDlg::OnBnClickedOk)
+BEGIN_MESSAGE_MAP(SoftwareTriggerDlg, CDialog)
+	ON_NOTIFY(TCN_SELCHANGE, IDC_TRIGGER_TABS, &SoftwareTriggerDlg::OnTcnSelchangeTriggerTabs)
+	ON_EN_CHANGE(IDC_USEC_EDIT, &SoftwareTriggerDlg::OnEnChangeUsecEdit)
+	ON_BN_CLICKED(IDOK, &SoftwareTriggerDlg::OnBnClickedOk)
 	ON_WM_CREATE()
-	ON_MESSAGE(WM_TRIGGER_CHANGE, &SVSoftwareTriggerDlg::OnTriggerChange)
-	ON_NOTIFY(UDN_DELTAPOS, IDC_SPINMSEC, &SVSoftwareTriggerDlg::OnDeltaposSpin)
-	ON_NOTIFY(UDN_DELTAPOS, IDC_SPINSEC, &SVSoftwareTriggerDlg::OnDeltaposSpin)
-	ON_NOTIFY(UDN_DELTAPOS, IDC_SPINMIN, &SVSoftwareTriggerDlg::OnDeltaposSpin)
-	ON_NOTIFY(UDN_DELTAPOS, IDC_SPINHOUR, &SVSoftwareTriggerDlg::OnDeltaposSpin)
-	ON_NOTIFY(UDN_DELTAPOS, IDC_SPINDAY, &SVSoftwareTriggerDlg::OnDeltaposSpin)
-	ON_EN_KILLFOCUS(IDC_USEC_EDIT, &SVSoftwareTriggerDlg::OnEnKillfocusUsecEdit)
+	ON_MESSAGE(WM_TRIGGER_CHANGE, &SoftwareTriggerDlg::OnTriggerChange)
+	ON_NOTIFY(UDN_DELTAPOS, IDC_SPINMSEC, &SoftwareTriggerDlg::OnDeltaposSpin)
+	ON_NOTIFY(UDN_DELTAPOS, IDC_SPINSEC, &SoftwareTriggerDlg::OnDeltaposSpin)
+	ON_NOTIFY(UDN_DELTAPOS, IDC_SPINMIN, &SoftwareTriggerDlg::OnDeltaposSpin)
+	ON_NOTIFY(UDN_DELTAPOS, IDC_SPINHOUR, &SoftwareTriggerDlg::OnDeltaposSpin)
+	ON_NOTIFY(UDN_DELTAPOS, IDC_SPINDAY, &SoftwareTriggerDlg::OnDeltaposSpin)
+	ON_EN_KILLFOCUS(IDC_USEC_EDIT, &SoftwareTriggerDlg::OnEnKillfocusUsecEdit)
 	ON_WM_CTLCOLOR()
-	ON_BN_CLICKED(IDC_PAUSEBUTTON, &SVSoftwareTriggerDlg::OnBnClickedPausebutton)
+	ON_BN_CLICKED(IDC_PAUSEBUTTON, &SoftwareTriggerDlg::OnBnClickedPausebutton)
 END_MESSAGE_MAP()
 
 
 // SoftwareTriggerDlg message handlers
 
-int SVSoftwareTriggerDlg::SelectTrigger()
+int SoftwareTriggerDlg::SelectTrigger()
 {
 	int result = 0;
 	int idx = m_triggerTabs.GetCurSel();
@@ -112,12 +113,12 @@ int SVSoftwareTriggerDlg::SelectTrigger()
 	return result;
 }
 
-void SVSoftwareTriggerDlg::OnTcnSelchangeTriggerTabs(NMHDR *, LRESULT *pResult)
+void SoftwareTriggerDlg::OnTcnSelchangeTriggerTabs(NMHDR *, LRESULT *pResult)
 {
 	*pResult = SelectTrigger();
 }
 
-void SVSoftwareTriggerDlg::OnStop()
+void SoftwareTriggerDlg::OnStop()
 {
 	for (int i = 0; i < m_triggerTabs.GetItemCount(); ++i)
 	{
@@ -132,7 +133,7 @@ void SVSoftwareTriggerDlg::OnStop()
 	}
 }
 
-bool SVSoftwareTriggerDlg::EditOK()
+bool SoftwareTriggerDlg::EditOK()
 {
 	CString Text;
 	m_intervalEdit.GetWindowText(Text);
@@ -140,7 +141,7 @@ bool SVSoftwareTriggerDlg::EditOK()
 	return (SvTi::MinTimerPeriod_ms <= Value && Value <= SvTi::MaxTimerPeriod_ms);
 }
 
-void SVSoftwareTriggerDlg::OnEnChangeUsecEdit()
+void SoftwareTriggerDlg::OnEnChangeUsecEdit()
 {
 	CString Text;
 	m_intervalEdit.GetWindowText(Text);
@@ -154,12 +155,12 @@ void SVSoftwareTriggerDlg::OnEnChangeUsecEdit()
 	}
 }
 
-void SVSoftwareTriggerDlg::OnBnClickedOk()
+void SoftwareTriggerDlg::OnBnClickedOk()
 {
 	ShowWindow(SW_HIDE);
 }
 
-int SVSoftwareTriggerDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
+int SoftwareTriggerDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CDialog::OnCreate(lpCreateStruct) == -1)
 	{
@@ -171,7 +172,7 @@ int SVSoftwareTriggerDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
-LRESULT SVSoftwareTriggerDlg::OnTriggerChange(WPARAM wParam, LPARAM)
+LRESULT SoftwareTriggerDlg::OnTriggerChange(WPARAM wParam, LPARAM)
 {
 	int Value = static_cast< int >( wParam );
 	std::string Text = SvUl::Format( _T("%d"), Value );
@@ -182,7 +183,7 @@ LRESULT SVSoftwareTriggerDlg::OnTriggerChange(WPARAM wParam, LPARAM)
 	return TRUE;
 }
 
-void SVSoftwareTriggerDlg::OnDeltaposSpin(NMHDR *pNMHDR, LRESULT *pResult)
+void SoftwareTriggerDlg::OnDeltaposSpin(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	LPNMUPDOWN pNMUpDown = reinterpret_cast<LPNMUPDOWN>(pNMHDR);
 	SVSpinGroup * l_spin = m_pSpins->find( static_cast< int >( pNMUpDown->hdr.idFrom ) );
@@ -212,7 +213,7 @@ void SVSoftwareTriggerDlg::OnDeltaposSpin(NMHDR *pNMHDR, LRESULT *pResult)
 }
 
 
-BOOL SVSoftwareTriggerDlg::OnInitDialog()
+BOOL SoftwareTriggerDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
@@ -224,7 +225,7 @@ BOOL SVSoftwareTriggerDlg::OnInitDialog()
 	return TRUE;  // return TRUE unless you set the focus to a control
 }
 
-void SVSoftwareTriggerDlg::ClearTriggers()
+void SoftwareTriggerDlg::ClearTriggers()
 {
 	OnStop();
 	for (int i = 0; i < m_triggerTabs.GetItemCount(); ++i)
@@ -241,7 +242,7 @@ void SVSoftwareTriggerDlg::ClearTriggers()
 	m_triggerTabs.DeleteAllItems();
 }
 
-bool SVSoftwareTriggerDlg::AddTrigger(SvTi::SVTriggerObject* pTrigger)
+bool SoftwareTriggerDlg::AddTrigger(SvTi::SVTriggerObject* pTrigger)
 {
 	assert( nullptr != pTrigger );
 	if( nullptr == pTrigger ){ return false; }
@@ -255,9 +256,9 @@ bool SVSoftwareTriggerDlg::AddTrigger(SvTi::SVTriggerObject* pTrigger)
 		reinterpret_cast<LPARAM>(new SVTriggerProxy(pTrigger))) > -1;
 }
 
-SVSoftwareTriggerDlg & SVSoftwareTriggerDlg::Instance()
+SoftwareTriggerDlg & SoftwareTriggerDlg::Instance()
 {
-	static SVSoftwareTriggerDlg dlg(nullptr);
+	static SoftwareTriggerDlg dlg(nullptr);
 	static bool created = false;
 	if (!created)
 	{
@@ -272,7 +273,7 @@ SVSoftwareTriggerDlg & SVSoftwareTriggerDlg::Instance()
 	return dlg;
 }
 
-void SVSoftwareTriggerDlg::SetTriggerPeriod(int val)
+void SoftwareTriggerDlg::SetTriggerPeriod(int val)
 {
 	int idx = m_triggerTabs.GetCurSel();
 	TCITEM item;
@@ -285,7 +286,7 @@ void SVSoftwareTriggerDlg::SetTriggerPeriod(int val)
 	}
 }
 
-void SVSoftwareTriggerDlg::SetFrequency( int Value )
+void SoftwareTriggerDlg::SetFrequency( int Value )
 {
 	double Frequency = 1000.0 / Value;
 	std::string Text = SvUl::Format( _T("%.4fHz"), Frequency);
@@ -295,14 +296,14 @@ void SVSoftwareTriggerDlg::SetFrequency( int Value )
 	m_ppmLabel.SetWindowText( Text.c_str() );
 }
 
-void SVSoftwareTriggerDlg::OnEnKillfocusUsecEdit()
+void SoftwareTriggerDlg::OnEnKillfocusUsecEdit()
 {
 	int Value = m_knobCtrl.GetValue();
 	std::string Text = SvUl::Format( _T("%d"), Value );
 	m_intervalEdit.SetWindowText( Text.c_str() );
 }
 
-HBRUSH SVSoftwareTriggerDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
+HBRUSH SoftwareTriggerDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 {
 	HBRUSH hbr = CDialog::OnCtlColor(pDC, pWnd, nCtlColor);
 	if (nCtlColor == CTLCOLOR_EDIT && !EditOK())
@@ -314,7 +315,7 @@ HBRUSH SVSoftwareTriggerDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 	return hbr;
 }
 
-void SVSoftwareTriggerDlg::OnBnClickedPausebutton()
+void SoftwareTriggerDlg::OnBnClickedPausebutton()
 {
 	int idx = m_triggerTabs.GetCurSel();
 	TCITEM item;

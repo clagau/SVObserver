@@ -13,11 +13,11 @@
 
 namespace SvMc
 {
-	class CEditNumbers : public CEdit
+	class EditNumbers : public CEdit
 	{
 		// Construction
 	public:
-		CEditNumbers();
+		EditNumbers();
 
 		// Attributes
 	public:
@@ -27,16 +27,16 @@ namespace SvMc
 
 		// Overrides
 		// ClassWizard generated virtual function overrides
-		//{{AFX_VIRTUAL(CEditNumbers)
+		//{{AFX_VIRTUAL(EditNumbers)
 		//}}AFX_VIRTUAL
 
 		// Implementation
 	public:
-		virtual ~CEditNumbers();
+		virtual ~EditNumbers();
 
 		// Generated message map functions
 	protected:
-		//{{AFX_MSG(CEditNumbers)
+		//{{AFX_MSG(EditNumbers)
 		afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
 		afx_msg void OnSetFocus(CWnd* pOldWnd);
 		//}}AFX_MSG

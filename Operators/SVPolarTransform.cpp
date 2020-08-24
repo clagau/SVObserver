@@ -25,9 +25,9 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVPolarTransformClass, SvPb::PolarTransformClassId)
+SV_IMPLEMENT_CLASS( SVPolarTransform, SvPb::PolarTransformClassId)
 
-SVPolarTransformClass::SVPolarTransformClass( SVObjectClass* POwner, int StringResourceID )
+SVPolarTransform::SVPolarTransform( SVObjectClass* POwner, int StringResourceID )
 				 :SVTaskObjectClass( POwner, StringResourceID ) 
 {
 	// Identify yourself
@@ -69,12 +69,12 @@ SVPolarTransformClass::SVPolarTransformClass( SVObjectClass* POwner, int StringR
 	addDefaultInputObjects();
 }
 
-SVPolarTransformClass::~SVPolarTransformClass()
+SVPolarTransform::~SVPolarTransform()
 {
-	SVPolarTransformClass::CloseObject();
+	SVPolarTransform::CloseObject();
 }
 
-bool SVPolarTransformClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
+bool SVPolarTransform::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 

@@ -27,25 +27,25 @@ class SVTaskObjectClass;
 }
 namespace SvOp
 {
-class SVResultClass;
+class SVResult;
 }
 
-class SVToolSetClass;
+class SVToolSet;
 enum SVInspectionStateEnum;
 
-class SVResultListClass
+class SVResultList
 {
 public:
 #pragma region Constructor
-	SVResultListClass();
-	virtual ~SVResultListClass();	// no hierarchy; but so we can have RTTI
+	SVResultList();
+	virtual ~SVResultList();	// no hierarchy; but so we can have RTTI
 #pragma endregion Constructor
 
 #pragma region Public Methods
 	void Destroy();
 	void Refresh(SvIe::SVTaskObjectClass* pRootObject);
 
-	void SetToolSet(SVToolSetClass* pToolSet);
+	void SetToolSet(SVToolSet* pToolSet);
 
 	SVProductInspectedState GetInspectionState();
 
@@ -89,8 +89,8 @@ public:
 protected:
 	mutable Concurrency::critical_section m_Lock;
 	ResultViewReferences  m_ResultViewReferences;
-	SVToolSetClass* m_pToolSet;
-	std::vector<SvOp::SVResultClass*> m_results;
+	SVToolSet* m_pToolSet;
+	std::vector<SvOp::SVResult*> m_results;
 #pragma endregion Member Variables
 };
 

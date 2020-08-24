@@ -242,12 +242,12 @@ HRESULT SVEquationSymbolTableClass::GetData(int SymbolIndex, std::vector<double>
 	return Result;
 }
 
-SV_IMPLEMENT_CLASS(SVEquationClass, SvPb::EquationClassId);
+SV_IMPLEMENT_CLASS(SVEquation, SvPb::EquationClassId);
 
 ////////////////////////////////////////////////////////////////////////////////
 // 
 ////////////////////////////////////////////////////////////////////////////////
-SVEquationClass::SVEquationClass(SVObjectClass* POwner, int StringResourceID)
+SVEquation::SVEquation(SVObjectClass* POwner, int StringResourceID)
 	:SVTaskObjectClass(POwner, StringResourceID)
 {
 	// Give SVEquationLexClass and SVEquationYaccClass a pointer to us
@@ -260,7 +260,7 @@ SVEquationClass::SVEquationClass(SVObjectClass* POwner, int StringResourceID)
 ////////////////////////////////////////////////////////////////////////////////
 // .Description : Initialization of newly Instantiated Object
 ////////////////////////////////////////////////////////////////////////////////
-void SVEquationClass::init()
+void SVEquation::init()
 {
 	m_bUseOverlays = false;
 
@@ -287,14 +287,14 @@ void SVEquationClass::init()
 ////////////////////////////////////////////////////////////////////////////////
 // 
 ////////////////////////////////////////////////////////////////////////////////
-SVEquationClass::~SVEquationClass()
+SVEquation::~SVEquation()
 {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // 
 ////////////////////////////////////////////////////////////////////////////////
-bool SVEquationClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
+bool SVEquation::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 {
 	bool bOk = SVTaskObjectClass::CreateObject(rCreateStructure) && nullptr != GetInspection();
 
@@ -318,22 +318,22 @@ bool SVEquationClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStruc
 	return bOk;
 }
 
-bool SVEquationClass::HasCondition()
+bool SVEquation::HasCondition()
 {
 	return !m_equationStruct.EquationBuffer.empty();
 }
 
-double SVEquationClass::GetYACCResult() const
+double SVEquation::GetYACCResult() const
 {
 	return m_Yacc.equationResult;
 }
 
-const std::string& SVEquationClass::GetEquationText() const
+const std::string& SVEquation::GetEquationText() const
 {
 	return m_equationStruct.GetEquationText();
 }
 
-void SVEquationClass::SetEquationText(const std::string& rText)
+void SVEquation::SetEquationText(const std::string& rText)
 {
 	m_equationStruct.SetEquationText(rText);
 	std::regex eSpace("[[:space:]]*");   
@@ -344,7 +344,7 @@ void SVEquationClass::SetEquationText(const std::string& rText)
 	}
 }
 
-void SVEquationClass::Persist(SvOi::IObjectWriter& rWriter)
+void SVEquation::Persist(SvOi::IObjectWriter& rWriter)
 {
 	SVTaskObjectClass::Persist(rWriter);
 
@@ -362,7 +362,7 @@ void SVEquationClass::Persist(SvOi::IObjectWriter& rWriter)
 ////////////////////////////////////////////////////////////////////////////////
 // 
 ////////////////////////////////////////////////////////////////////////////////
-HRESULT SVEquationClass::SetObjectValue(SVObjectAttributeClass* pDataObject)
+HRESULT SVEquation::SetObjectValue(SVObjectAttributeClass* pDataObject)
 {
 	HRESULT hr = S_FALSE;
 
@@ -390,7 +390,7 @@ HRESULT SVEquationClass::SetObjectValue(SVObjectAttributeClass* pDataObject)
 ////////////////////////////////////////////////////////////////////////////////
 // 
 ////////////////////////////////////////////////////////////////////////////////
-bool SVEquationClass::IsEnabled()
+bool SVEquation::IsEnabled()
 {
 	BOOL bEnabled;
 	enabled.GetValue(bEnabled);
@@ -401,7 +401,7 @@ bool SVEquationClass::IsEnabled()
 ////////////////////////////////////////////////////////////////////////////////
 // 
 ////////////////////////////////////////////////////////////////////////////////
-SvOi::EquationTestResult SVEquationClass::Test(SvStl::MessageContainerVector *pErrorMessages/*=nullptr */)
+SvOi::EquationTestResult SVEquation::Test(SvStl::MessageContainerVector *pErrorMessages/*=nullptr */)
 {
 	SvOi::EquationTestResult ret;
 	m_isDataValid = true;
@@ -476,7 +476,7 @@ SvOi::EquationTestResult SVEquationClass::Test(SvStl::MessageContainerVector *pE
 ////////////////////////////////////////////////////////////////////////////////
 // 
 ////////////////////////////////////////////////////////////////////////////////
-SvOi::EquationTestResult SVEquationClass::lexicalScan(LPCTSTR inBuffer)
+SvOi::EquationTestResult SVEquation::lexicalScan(LPCTSTR inBuffer)
 {
 	SvOi::EquationTestResult ret;
 	ret.bPassed = true;
@@ -538,7 +538,7 @@ SvOi::EquationTestResult SVEquationClass::lexicalScan(LPCTSTR inBuffer)
 	return ret;
 }
 
-double SVEquationClass::RunAndGetResult()
+double SVEquation::RunAndGetResult()
 {
 	m_isDataValid = true;
 
@@ -554,7 +554,7 @@ double SVEquationClass::RunAndGetResult()
 ////////////////////////////////////////////////////////////////////////////////
 // Rebuild Symbol table - Gets Called from lexer during scan of equation
 ////////////////////////////////////////////////////////////////////////////////
-int SVEquationClass::AddSymbol(LPCTSTR name)
+int SVEquation::AddSymbol(LPCTSTR name)
 {
 	int index = m_Symbols.AddSymbol(name, this);
 
@@ -566,7 +566,7 @@ int SVEquationClass::AddSymbol(LPCTSTR name)
 	return index;
 }
 
-bool SVEquationClass::DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pInObjectInfo)
+bool SVEquation::DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pInObjectInfo)
 {
 	// Update ToolSet Symbol table - Gets called when one of our inputs goes away
 	if (pInObjectInfo)
@@ -595,7 +595,7 @@ bool SVEquationClass::DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pInObjec
 ////////////////////////////////////////////////////////////////////////////////
 // If Conditional is disabled equation.Run() returns always true.
 // Otherwise the return value depends on the Conditional equation result!
-bool SVEquationClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool SVEquation::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool retVal = __super::onRun(rRunStatus, pErrorMessages);
 
@@ -634,7 +634,7 @@ bool SVEquationClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContaine
 ////////////////////////////////////////////////////////////////////////////////
 // 
 ////////////////////////////////////////////////////////////////////////////////
-double SVEquationClass::GetPropertyValue(int iSymbolIndex)
+double SVEquation::GetPropertyValue(int iSymbolIndex)
 {
 	HRESULT hr = S_FALSE;
 	double value = 0.0;
@@ -652,7 +652,7 @@ double SVEquationClass::GetPropertyValue(int iSymbolIndex)
 	return value;
 }
 
-HRESULT SVEquationClass::GetArrayValues(int iSymbolIndex, std::vector< double >& values)
+HRESULT SVEquation::GetArrayValues(int iSymbolIndex, std::vector< double >& values)
 {
 	HRESULT hr = S_FALSE;
 
@@ -669,7 +669,7 @@ HRESULT SVEquationClass::GetArrayValues(int iSymbolIndex, std::vector< double >&
 	return hr;
 }
 
-double SVEquationClass::GetSubscriptedPropertyValue(int SymbolIndex, int Index, double Default /*= 0.0*/)
+double SVEquation::GetSubscriptedPropertyValue(int SymbolIndex, int Index, double Default /*= 0.0*/)
 {
 	HRESULT hr = S_FALSE;
 	double Value = Default;
@@ -687,7 +687,7 @@ double SVEquationClass::GetSubscriptedPropertyValue(int SymbolIndex, int Index, 
 	return Value;
 }
 
-bool SVEquationClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
+bool SVEquation::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 
@@ -701,7 +701,7 @@ bool SVEquationClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	return Result;
 }
 
-void SVEquationClass::OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName)
+void SVEquation::OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName)
 {
 	std::string newPrefix;
 	std::string oldPrefix;
@@ -743,7 +743,7 @@ void SVEquationClass::OnObjectRenamed(const SVObjectClass& rRenamedObject, const
 	__super::OnObjectRenamed(rRenamedObject, rOldName);
 }
 
-void SVEquationClass::ParseYacc()
+void SVEquation::ParseYacc()
 {
 	m_Yacc.sIndex = 0;
 	m_Yacc.yacc_err = 0;

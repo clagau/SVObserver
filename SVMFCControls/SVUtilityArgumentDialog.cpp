@@ -2,7 +2,7 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVUtilityArgumentDialogClass
+//* .Module Name     : SVUtilityArgumentDialog
 //* .File Name       : $Workfile:   SVUtilityArgumentDialog.cpp  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $
@@ -22,30 +22,30 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
-// SVUtilityArgumentDialogClass dialog
+// SVUtilityArgumentDialog dialog
 
-SVUtilityArgumentDialogClass::SVUtilityArgumentDialogClass(CWnd* pParent /*=nullptr*/)
-	: CDialog(SVUtilityArgumentDialogClass::IDD, pParent)
+SVUtilityArgumentDialog::SVUtilityArgumentDialog(CWnd* pParent /*=nullptr*/)
+	: CDialog(SVUtilityArgumentDialog::IDD, pParent)
 {
-	//{{AFX_DATA_INIT(SVUtilityArgumentDialogClass)
+	//{{AFX_DATA_INIT(SVUtilityArgumentDialog)
 	mszArguments = _T("");
 	//}}AFX_DATA_INIT
 }
 
-SVUtilityArgumentDialogClass::~SVUtilityArgumentDialogClass()
+SVUtilityArgumentDialog::~SVUtilityArgumentDialog()
 {
 }
 
-void SVUtilityArgumentDialogClass::DoDataExchange(CDataExchange* pDX)
+void SVUtilityArgumentDialog::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(SVUtilityArgumentDialogClass)
+	//{{AFX_DATA_MAP(SVUtilityArgumentDialog)
 	DDX_Text(pDX, IDC_UTILITY_ARGUMENTS, mszArguments);
 	//}}AFX_DATA_MAP
 }
 
-BEGIN_MESSAGE_MAP(SVUtilityArgumentDialogClass, CDialog)
-	//{{AFX_MSG_MAP(SVUtilityArgumentDialogClass)
+BEGIN_MESSAGE_MAP(SVUtilityArgumentDialog, CDialog)
+	//{{AFX_MSG_MAP(SVUtilityArgumentDialog)
 		// NOTE: the ClassWizard will add message map macros here
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()

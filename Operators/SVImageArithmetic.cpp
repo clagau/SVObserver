@@ -34,9 +34,9 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVImageArithmeticClass, SvPb::ImageArithmeticClassId)
+SV_IMPLEMENT_CLASS( SVImageArithmetic, SvPb::ImageArithmeticClassId)
 
-SVImageArithmeticClass::SVImageArithmeticClass( SVObjectClass* POwner, int StringResourceID )
+SVImageArithmetic::SVImageArithmetic( SVObjectClass* POwner, int StringResourceID )
 					   :SVTaskObjectClass( POwner, StringResourceID ) 
 {
 
@@ -93,12 +93,12 @@ SVImageArithmeticClass::SVImageArithmeticClass( SVObjectClass* POwner, int Strin
 	addDefaultInputObjects();
 }
 
-SVImageArithmeticClass::~SVImageArithmeticClass()
+SVImageArithmetic::~SVImageArithmetic()
 {
-	SVImageArithmeticClass::CloseObject();
+	SVImageArithmetic::CloseObject();
 }
 
-bool SVImageArithmeticClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
+bool SVImageArithmetic::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
 	bool bOk = SVTaskObjectClass::CreateObject(rCreateStructure);
 
@@ -112,7 +112,7 @@ bool SVImageArithmeticClass::CreateObject( const SVObjectLevelCreateStruct& rCre
 	return bOk;
 }
 
-bool SVImageArithmeticClass::CloseObject()
+bool SVImageArithmetic::CloseObject()
 {
 	if( SVTaskObjectClass::CloseObject() && getOutputImage() )
 	{
@@ -121,7 +121,7 @@ bool SVImageArithmeticClass::CloseObject()
 	return false;
 }
 
-bool SVImageArithmeticClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
+bool SVImageArithmetic::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result{true};
 
@@ -155,7 +155,7 @@ bool SVImageArithmeticClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 	return Result;
 }
 
-bool SVImageArithmeticClass::isInputImage(uint32_t imageId) const
+bool SVImageArithmetic::isInputImage(uint32_t imageId) const
 {
 	bool Result(false);
 
@@ -169,7 +169,7 @@ bool SVImageArithmeticClass::isInputImage(uint32_t imageId) const
 	return Result;
 }
 
-bool SVImageArithmeticClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVImageArithmetic::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	// All inputs and outputs must be validated first
 	//@WARNING[MZA][7.50][17.01.2017] Not sure if we need to check ValidateLocal in Run-mode, maybe it is enough to check it in ResetObject
@@ -332,7 +332,7 @@ bool SVImageArithmeticClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Message
 	return false;
 }
 
-void SVImageArithmeticClass::ScaleWithAveraging(SvTrc::IImagePtr pInputImageBuffer, const RECT& rInputRect, SvTrc::IImagePtr pOutputImageBuffer, const RECT& rOutputRect)
+void SVImageArithmetic::ScaleWithAveraging(SvTrc::IImagePtr pInputImageBuffer, const RECT& rInputRect, SvTrc::IImagePtr pOutputImageBuffer, const RECT& rOutputRect)
 {
 	if(nullptr != pInputImageBuffer && !pInputImageBuffer->isEmpty() && nullptr != pOutputImageBuffer && !pOutputImageBuffer->isEmpty())
 	{
@@ -419,7 +419,7 @@ void SVImageArithmeticClass::ScaleWithAveraging(SvTrc::IImagePtr pInputImageBuff
 }
 
 // Set String value object for Source Image Names
-HRESULT SVImageArithmeticClass::CollectInputImageNames( )
+HRESULT SVImageArithmetic::CollectInputImageNames( )
 {
 	HRESULT l_hr = S_FALSE;
 	SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*>(GetTool());
@@ -443,7 +443,7 @@ HRESULT SVImageArithmeticClass::CollectInputImageNames( )
 }
 
 
-bool SVImageArithmeticClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const
+bool SVImageArithmetic::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const
 {
 	bool Result = true;
 

@@ -126,7 +126,7 @@ void SVParserProgressDialog::resizeAndMoveDialog( CRect& RRect, int cnt )
 	}
 }
 
-BOOL SVParserProgressDialog::AddParser( unsigned long parserHandle, SVObjectScriptParserClass* pParser )
+BOOL SVParserProgressDialog::AddParser( unsigned long parserHandle, SVObjectScriptParser* pParser )
 {
 	BOOL rc = false;
 
@@ -309,7 +309,7 @@ LRESULT SVParserProgressDialog::OnEndProgressDialog( WPARAM, LPARAM lParam )
 			{
 				SVParserProgressControlStruct& rParserStart = GetFirstAvailableParserControl();
 				// Start next worker thread
-				AfxBeginThread( SVObjectScriptParserClass::ParserThread, rParserStart.pParser );
+				AfxBeginThread( SVObjectScriptParser::ParserThread, rParserStart.pParser );
 			}
 #if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 			catch(std::exception& e)
@@ -471,7 +471,7 @@ BOOL SVParserProgressDialog::OnInitDialog()
 		SetProgressLocations();
 
 		// Start a worker thread
-		AfxBeginThread( SVObjectScriptParserClass::ParserThread, parserControl.pParser );
+		AfxBeginThread( SVObjectScriptParser::ParserThread, parserControl.pParser );
 	}
 	
 	return TRUE;  // return TRUE unless you set the focus to a control

@@ -4,7 +4,7 @@
 //******************************************************************************
 //* .Module Name     : SVRangeClassHelper
 //* .File Name       : $Workfile:   RangeClassHelper.h  $
-//* .Description     : Helper class for the SVRangeClass.  Implements the interface 
+//* .Description     : Helper class for the SVRange.  Implements the interface 
 //*                    Contains variables for range values.
 //*                    Allows the RangeClass to get, set, and check the values.
 //* ----------------------------------------------------------------------------

@@ -276,7 +276,7 @@ void SVExternalToolTask::SetAllAttributes()
 	for (int i = 0; i < SVExternalToolTaskData::NUM_RESULT_OBJECTS; i++)
 	{
 		UINT attribute = (i < m_Data.m_lNumResultValues) ? SvDef::defaultValueObjectAttributes : SvPb::noAttributes;
-		SVResultClass* pResultObject = GetResultRangeObject(i);
+		SVResult* pResultObject = GetResultRangeObject(i);
 		if (nullptr != pResultObject)
 		{
 			pResultObject->SetObjectAttributesAllowed(attribute, SvOi::OverwriteAttribute);
@@ -486,7 +486,7 @@ HRESULT SVExternalToolTask::InitializeResultObjects()
 			m_Data.m_ResultDefinitions[i].setMaxArraysize(MaxArraySize[i]);
 		}
 
-		SVResultClass* pResult(nullptr);
+		SVResult* pResult(nullptr);
 		long vt = m_Data.m_ResultDefinitions[i].getVT();
 		if ( vt & VT_ARRAY )
 		{
@@ -1445,7 +1445,7 @@ HRESULT SVExternalToolTask::AllocateResult(int iIndex)
 
 
 
-SVResultClass* SVExternalToolTask::GetResultRangeObject(int iIndex)
+SVResult* SVExternalToolTask::GetResultRangeObject(int iIndex)
 {
 	SVVariantResultClass*   pResult = nullptr;
 	if (iIndex < 0 || iIndex >= m_Data.m_aResultObjects.size())
@@ -1479,9 +1479,9 @@ SVResultClass* SVExternalToolTask::GetResultRangeObject(int iIndex)
 	return pResult;
 }
 
-std::vector<SVResultClass*> SVExternalToolTask::GetResultRangeObjects()
+std::vector<SVResult*> SVExternalToolTask::GetResultRangeObjects()
 {
-	std::vector<SVResultClass*> aObjects;
+	std::vector<SVResult*> aObjects;
 
 	SvDef::SVObjectTypeInfoStruct  info(SvPb::SVResultObjectType, SvPb::SVResultVariantObjectType);
 	SVGetObjectDequeByTypeVisitor l_Visitor(info);
@@ -1509,8 +1509,8 @@ HRESULT SVExternalToolTask::ClearData()
 		m_Data.m_aResultObjects[i].SetDefaultValue(vt, true);
 	}
 
-	std::vector< SVResultClass*> apResults = GetResultRangeObjects();
-	for (std::vector<SVResultClass*>::iterator iter = apResults.begin(); iter != apResults.end(); ++iter)
+	std::vector< SVResult*> apResults = GetResultRangeObjects();
+	for (std::vector<SVResult*>::iterator iter = apResults.begin(); iter != apResults.end(); ++iter)
 	{
 		HRESULT hrTmp = RemoveChild(*iter);
 		if (S_OK != hrTmp)

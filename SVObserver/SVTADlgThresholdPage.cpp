@@ -923,7 +923,7 @@ void SVToolAdjustmentDialogThresholdPageClass::OnUTFormulaButton()
 	UpdateData(true); // get data of dialog
 
 	SvDef::SVObjectTypeInfoStruct info(SvPb::SVEquationObjectType, SvPb::SVUpperThresholdEquationObjectType);
-	SvOp::SVUpperThresholdEquationClass* pEquation = dynamic_cast<SvOp::SVUpperThresholdEquationClass*>(m_pCurrentThreshold->getFirstObject(info));
+	SvOp::SVUpperThresholdEquation* pEquation = dynamic_cast<SvOp::SVUpperThresholdEquation*>(m_pCurrentThreshold->getFirstObject(info));
 	if (pEquation)
 	{
 		std::string Caption = pEquation->GetName();
@@ -948,7 +948,7 @@ void SVToolAdjustmentDialogThresholdPageClass::UpdateLowerThresholdFromFormula()
 	SvDef::SVObjectTypeInfoStruct info;
 	info.m_ObjectType = SvPb::SVEquationObjectType;
 	info.m_SubType    = SvPb::SVLowerThresholdEquationObjectType;
-	SvOp::SVLowerThresholdEquationClass* pEquation = dynamic_cast<SvOp::SVLowerThresholdEquationClass*>(m_pCurrentThreshold->getFirstObject(info));
+	SvOp::SVLowerThresholdEquation* pEquation = dynamic_cast<SvOp::SVLowerThresholdEquation*>(m_pCurrentThreshold->getFirstObject(info));
 	if (pEquation)
 	{
 		long l_lResult = static_cast<long>(pEquation->GetYACCResult());
@@ -961,7 +961,7 @@ void SVToolAdjustmentDialogThresholdPageClass::UpdateUpperThresholdFromFoumula()
 	SvDef::SVObjectTypeInfoStruct info;
 	info.m_ObjectType = SvPb::SVEquationObjectType;
 	info.m_SubType    = SvPb::SVUpperThresholdEquationObjectType;
-	SvOp::SVUpperThresholdEquationClass* pEquation = dynamic_cast<SvOp::SVUpperThresholdEquationClass*>(m_pCurrentThreshold->getFirstObject(info));
+	SvOp::SVUpperThresholdEquation* pEquation = dynamic_cast<SvOp::SVUpperThresholdEquation*>(m_pCurrentThreshold->getFirstObject(info));
 	if (pEquation)
 	{
 		long l_lResult = static_cast<long>(pEquation->GetYACCResult());
@@ -974,7 +974,7 @@ void SVToolAdjustmentDialogThresholdPageClass::OnATMFormulaButton()
 	UpdateData(true); // get data of dialog
 
 	SvDef::SVObjectTypeInfoStruct info(SvPb::SVEquationObjectType, SvPb::SVAutoThresholdEquationObjectType);
-	SvOp::SVAutoThresholdEquationClass* pEquation = dynamic_cast<SvOp::SVAutoThresholdEquationClass*>(m_pCurrentThreshold->getFirstObject(info));
+	SvOp::SVAutoThresholdEquation* pEquation = dynamic_cast<SvOp::SVAutoThresholdEquation*>(m_pCurrentThreshold->getFirstObject(info));
 	if (pEquation)
 	{
 		std::string Caption = pEquation->GetName();
@@ -994,7 +994,7 @@ void SVToolAdjustmentDialogThresholdPageClass::OnLTFormulaButton()
 	UpdateData(true); // get data of dialog
 
 	SvDef::SVObjectTypeInfoStruct info(SvPb::SVEquationObjectType, SvPb::SVLowerThresholdEquationObjectType);
-	SvOp::SVLowerThresholdEquationClass* pEquation = dynamic_cast<SvOp::SVLowerThresholdEquationClass*>(m_pCurrentThreshold->getFirstObject(info));
+	SvOp::SVLowerThresholdEquation* pEquation = dynamic_cast<SvOp::SVLowerThresholdEquation*>(m_pCurrentThreshold->getFirstObject(info));
 	if (pEquation)
 	{
 		std::string Caption = pEquation->GetName();

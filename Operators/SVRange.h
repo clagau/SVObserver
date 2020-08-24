@@ -2,7 +2,7 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVRangeClass
+//* .Module Name     : SVRange
 //* .File Name       : $Workfile:   SVRange.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.7  $
@@ -30,16 +30,16 @@ enum Range_defaults
 static const VARTYPE cVarType_Value = VT_R8;
 
 ////////////////////////////////////////////////////////////////////////////////
-// .Title       : Class SVRangeClass
+// .Title       : Class SVRange
 // -----------------------------------------------------------------------------
 ////////////////////////////////////////////////////////////////////////////////
-class SVRangeClass : public SvIe::SVTaskObjectClass, public ISVCancel
+class SVRange : public SvIe::SVTaskObjectClass, public ISVCancel
 {
-	SV_DECLARE_CLASS( SVRangeClass );
+	SV_DECLARE_CLASS( SVRange );
 
 public:
-	SVRangeClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVRANGE );
-	virtual ~SVRangeClass();
+	SVRange( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVRANGE );
+	virtual ~SVRange();
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 

@@ -2,17 +2,17 @@
 //* COPYRIGHT (c) 2013 by Seidenader Vision Inc., Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVScrollWnd1Ctl
-//* .File Name       : $Workfile:   SVScrollWnd1Ctl.cpp  $
+//* .Module Name     : SVScrollWnd1Ctrl
+//* .File Name       : $Workfile:   SVScrollWnd1Ctrl.cpp  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   26 Apr 2013 14:09:08  $
 //******************************************************************************
 #pragma region Includes
 #include "stdafx.h"
-#include "SVScrollWnd1Ctl.h"
+#include "SVScrollWnd1Ctrl.h"
 #include "SVMaskEditor.h"
-#include "SVScrollWnd1Ppg.h"
+#include "SVScrollWnd1PropPage.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG

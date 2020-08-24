@@ -392,7 +392,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnResultButton()
 		}
 
 		// Prepare result adjustment dialog...
-		SVChildrenSetupDialogClass dlg;
+		SVChildrenSetupDialog dlg;
 		dlg.m_pDocument = l_pIPDoc;
 		dlg.m_AllowMultipleChildrenInstances = FALSE;
 		dlg.m_pParentObject = m_pCurrentAnalyzer;
@@ -446,8 +446,8 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnPublishButton()
 			ObjectRef.SetObjectAttributesSet(SvPb::publishable, attributeType);
 		}
 
-		SVPublishListClass& PublishList = pInspection->GetPublishList();
-		//GetToolSet return SVToolSetClass and for this it needs #include "SVToolSet.h"
+		SVPublishList& PublishList = pInspection->GetPublishList();
+		//GetToolSet return SVToolSet and for this it needs #include "SVToolSet.h"
 		PublishList.Refresh(static_cast<SvIe::SVTaskObjectClass*>(pInspection->GetToolSet()));
 
 		SVIPDoc* pIPDoc = m_pParentDialog->GetIPDoc();

@@ -81,7 +81,7 @@ bool SVColorToolClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStr
 					SvDef::SVObjectTypeInfoStruct objectInfo;
 					objectInfo.m_ObjectType = SvPb::SVOperatorObjectType;
 					objectInfo.m_SubType = SvPb::SVColorThresholdObjectType;
-					SvOp::SVColorThresholdClass* pColorThreshold = dynamic_cast<SvOp::SVColorThresholdClass*> (getFirstObject(objectInfo));
+					SvOp::SVColorThreshold* pColorThreshold = dynamic_cast<SvOp::SVColorThreshold*> (getFirstObject(objectInfo));
 					if (nullptr != pColorThreshold)
 					{
 						for (SvDef::BandEnum Band : SvDef::BandList)
@@ -330,7 +330,7 @@ void SVColorToolClass::LocalInitialize()
 	SvOp::ToolSizeAdjustTask::AddToFriendlist(this, true, true, true);
 
 	//// Add the Color Threshold class object
-	SvOp::SVColorThresholdClass* pColorThreshold = new SvOp::SVColorThresholdClass;
+	SvOp::SVColorThreshold* pColorThreshold = new SvOp::SVColorThreshold;
 	if(nullptr != pColorThreshold)
 	{
 		Add(pColorThreshold);

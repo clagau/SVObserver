@@ -28,22 +28,22 @@ static char THIS_FILE[] = __FILE__;
 
 constexpr char* cCameraTriggerTag = _T("CameraTrigger_");
 
-CSVOTriggerDeviceDlg::CSVOTriggerDeviceDlg(CWnd* /*=nullptr*/)
-: CPropertyPage(CSVOTriggerDeviceDlg::IDD)
+SVOTriggerDeviceDlg::SVOTriggerDeviceDlg(CWnd* /*=nullptr*/)
+: CPropertyPage(SVOTriggerDeviceDlg::IDD), m_pParent(nullptr)
 {
-	//{{AFX_DATA_INIT(CSVOTriggerDeviceDlg)
+	//{{AFX_DATA_INIT(SVOTriggerDeviceDlg)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 }
 
-CSVOTriggerDeviceDlg::~CSVOTriggerDeviceDlg()
+SVOTriggerDeviceDlg::~SVOTriggerDeviceDlg()
 {
 }
 
-void CSVOTriggerDeviceDlg::DoDataExchange(CDataExchange* pDX)
+void SVOTriggerDeviceDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(CSVOTriggerDeviceDlg)
+	//{{AFX_DATA_MAP(SVOTriggerDeviceDlg)
 	DDX_Control(pDX, IDC_BTN_PROP_TRIG, m_btnPropTrigger);
 	DDX_Control(pDX, IDC_BTN_NEW_TRIG, m_btnNewTrigger);
 	DDX_Control(pDX, IDC_BTN_DELETE_TRIG, m_btnDeleteTrigger);
@@ -52,8 +52,8 @@ void CSVOTriggerDeviceDlg::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-BEGIN_MESSAGE_MAP(CSVOTriggerDeviceDlg, CDialog)
-	//{{AFX_MSG_MAP(CSVOTriggerDeviceDlg)
+BEGIN_MESSAGE_MAP(SVOTriggerDeviceDlg, CDialog)
+	//{{AFX_MSG_MAP(SVOTriggerDeviceDlg)
 	ON_BN_CLICKED(IDC_BTN_PROP_TRIG, OnBtnPropTrig)
 	ON_BN_CLICKED(IDC_BTN_NEW_TRIG, OnBtnNewTrig)
 	ON_BN_CLICKED(IDC_BTN_DELETE_TRIG, OnBtnDeleteTrig)
@@ -65,13 +65,13 @@ BEGIN_MESSAGE_MAP(CSVOTriggerDeviceDlg, CDialog)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
-// CSVOTriggerDeviceDlg message handlers
+// SVOTriggerDeviceDlg message handlers
 
-BOOL CSVOTriggerDeviceDlg::OnInitDialog() 
+BOOL SVOTriggerDeviceDlg::OnInitDialog() 
 {
 	CDialog::OnInitDialog();
 	
-    m_pParent = (CSVOConfigAssistantDlg*)GetParent()->GetParent();
+    m_pParent = (SVOConfigAssistantDlg*)GetParent()->GetParent();
     SetupList();
     
 	SetWindowContextHelpId(IDD+SvOr::HELPFILE_DLG_IDD_OFFSET);
@@ -80,7 +80,7 @@ BOOL CSVOTriggerDeviceDlg::OnInitDialog()
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void CSVOTriggerDeviceDlg::SetupList()
+void SVOTriggerDeviceDlg::SetupList()
 {
 	typedef std::map<long, std::string> SortedTriggerList;
 	SortedTriggerList sortedList;
@@ -123,7 +123,7 @@ void CSVOTriggerDeviceDlg::SetupList()
 // need to get a list of next trigger types based on:
 // 1. must be a digital system
 // 2. must have a corresponding camera
-void CSVOTriggerDeviceDlg::GetNextAvailableTriggerList(SVTriggerNameIdList& rList) const
+void SVOTriggerDeviceDlg::GetNextAvailableTriggerList(SVTriggerNameIdList& rList) const
 {
 	std::string name;
 	int id = m_pParent->GetNextTriggerID();
@@ -141,7 +141,7 @@ void CSVOTriggerDeviceDlg::GetNextAvailableTriggerList(SVTriggerNameIdList& rLis
 	}
 }
 
-void CSVOTriggerDeviceDlg::OnBtnNewTrig() 
+void SVOTriggerDeviceDlg::OnBtnNewTrig() 
 {
 	SVTriggerNameIdList list;
 	GetNextAvailableTriggerList(list);
@@ -192,7 +192,7 @@ void CSVOTriggerDeviceDlg::OnBtnNewTrig()
 	EnablePropertyEdit(m_ctlTriggerList.GetCurSel());
 }
 
-void CSVOTriggerDeviceDlg::OnBtnDeleteTrig() 
+void SVOTriggerDeviceDlg::OnBtnDeleteTrig() 
 {
 	CString TriggerName;
     int iPos = m_ctlTriggerList.GetCurSel();
@@ -223,7 +223,7 @@ void CSVOTriggerDeviceDlg::OnBtnDeleteTrig()
     }	
 }
 
-void CSVOTriggerDeviceDlg::OnBtnPropTrig() 
+void SVOTriggerDeviceDlg::OnBtnPropTrig() 
 {
     int iCurSel = m_ctlTriggerList.GetCurSel();
 	if (iCurSel != LB_ERR)
@@ -233,7 +233,7 @@ void CSVOTriggerDeviceDlg::OnBtnPropTrig()
 		SvTi::SVOTriggerObjPtr pTriggerObj = m_pParent->GetTriggerObjectByName(TriggerName);
 		if( nullptr != pTriggerObj )
 		{
-			CSVOPropertyPageDlg oDlg;
+			SVOPropertyPageDlg oDlg;
 			SvTi::SVOTriggerObj& rTmpObj( oDlg.getTriggerObject() );
 
 			rTmpObj = *pTriggerObj;
@@ -250,7 +250,7 @@ void CSVOTriggerDeviceDlg::OnBtnPropTrig()
 	}
 }
 
-void CSVOTriggerDeviceDlg::OnBtnAdvanced() 
+void SVOTriggerDeviceDlg::OnBtnAdvanced() 
 {
     int iCurSel = m_ctlTriggerList.GetCurSel();
 
@@ -261,7 +261,7 @@ void CSVOTriggerDeviceDlg::OnBtnAdvanced()
 		SvTi::SVOTriggerObjPtr pTriggerObj = m_pParent->GetTriggerObjectByName(TriggerName);
 		if( nullptr != pTriggerObj )
 		{
-			CSVOPropertyPageDlg oDlg;
+			SVOPropertyPageDlg oDlg;
 			SvTi::SVOTriggerObj& rTmpObj( oDlg.getTriggerObject() );
 
 			rTmpObj = *pTriggerObj;
@@ -276,12 +276,12 @@ void CSVOTriggerDeviceDlg::OnBtnAdvanced()
     }
 }
 
-void CSVOTriggerDeviceDlg::OnDblclkLstTriggers() 
+void SVOTriggerDeviceDlg::OnDblclkLstTriggers() 
 {
     OnBtnPropTrig();
 }
 
-void CSVOTriggerDeviceDlg::OnSelchangeLstTriggers() 
+void SVOTriggerDeviceDlg::OnSelchangeLstTriggers() 
 {
 	int iSelection = m_ctlTriggerList.GetCurSel();
 	if (iSelection != LB_ERR)
@@ -294,14 +294,14 @@ void CSVOTriggerDeviceDlg::OnSelchangeLstTriggers()
 	}
 }
 
-BOOL CSVOTriggerDeviceDlg::OnHelpInfo(HELPINFO* pHelpInfo) 
+BOOL SVOTriggerDeviceDlg::OnHelpInfo(HELPINFO* pHelpInfo) 
 {
 	::SendMessage( m_pParent->GetSafeHwnd(), WM_HELP, 0, reinterpret_cast<DWORD_PTR>(pHelpInfo) );
 
 	return TRUE;
 }
 
-void CSVOTriggerDeviceDlg::EnablePropertyEdit(int iSelection)
+void SVOTriggerDeviceDlg::EnablePropertyEdit(int iSelection)
 {
 	EnablePropertyButton(true);
 
@@ -319,18 +319,18 @@ void CSVOTriggerDeviceDlg::EnablePropertyEdit(int iSelection)
 	}
 }
 
-void CSVOTriggerDeviceDlg::DisablePropertyEdit()
+void SVOTriggerDeviceDlg::DisablePropertyEdit()
 {
 	EnablePropertyButton(false);
 	EnableAdvancedPropertyButton(false);
 }
 
-void CSVOTriggerDeviceDlg::EnablePropertyButton(bool bEnable)
+void SVOTriggerDeviceDlg::EnablePropertyButton(bool bEnable)
 {
 	m_btnPropTrigger.EnableWindow(bEnable);
 }
 
-void CSVOTriggerDeviceDlg::EnableAdvancedPropertyButton(bool bEnable)
+void SVOTriggerDeviceDlg::EnableAdvancedPropertyButton(bool bEnable)
 {
 	m_btnAdvanced.EnableWindow(bEnable);
 }

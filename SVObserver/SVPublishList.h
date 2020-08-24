@@ -20,12 +20,12 @@ class SVTaskObjectClass;
 }
 class SVInspectionProcess;
 
-class SVPublishListClass : public SVOutputInfoListClass
+class SVPublishList : public SVOutputInfoListClass
 {
 public:
-	SVPublishListClass();
+	SVPublishList();
 
-	virtual ~SVPublishListClass();
+	virtual ~SVPublishList();
 
 public:
 	void Destroy();

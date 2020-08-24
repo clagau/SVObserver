@@ -19,13 +19,13 @@
 namespace SvOp
 {
 
-class SVLongResultClass : public SVResultClass  
+class SVLongResult : public SVResult  
 {
-	SV_DECLARE_CLASS( SVLongResultClass );
+	SV_DECLARE_CLASS( SVLongResult );
 
 public:
-	SVLongResultClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_RESULT_LONG );
-	virtual ~SVLongResultClass();
+	SVLongResult( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_RESULT_LONG );
+	virtual ~SVLongResult();
 
 public:
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;

@@ -20,17 +20,18 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvMc
 {
-	IMPLEMENT_DYNCREATE( SVWindowBarClass, CControlBar )
+	IMPLEMENT_DYNCREATE( SVWindowBar, CControlBar )
 
-		SVWindowBarClass::SVWindowBarClass()
+		SVWindowBar::SVWindowBar()
 		: CControlBar()
 	{
-		windowTitle = _T( "SVWindowBarClass" );
+		windowTitle = _T( "SVWindowBar" );
 		windowSize  = CSize( 0, 0 );
 		m_hWindowBackgroundColor = ::CreateSolidBrush( ::GetSysColor( COLOR_BTNHILIGHT ));
+		m_bMenuRemoved = false;
 	}
 
-	SVWindowBarClass::~SVWindowBarClass()
+	SVWindowBar::~SVWindowBar()
 	{
 		if( m_hWindowBackgroundColor )
 		{
@@ -38,8 +39,8 @@ namespace SvMc
 		}
 	}
 
-	BEGIN_MESSAGE_MAP(SVWindowBarClass, CControlBar)
-		//{{AFX_MSG_MAP(SVWindowBarClass)
+	BEGIN_MESSAGE_MAP(SVWindowBar, CControlBar)
+		//{{AFX_MSG_MAP(SVWindowBar)
 		ON_WM_SIZING()
 		ON_WM_PAINT()
 		ON_WM_CREATE()
@@ -48,14 +49,14 @@ namespace SvMc
 	END_MESSAGE_MAP()
 
 	/////////////////////////////////////////////////////////////////////////////
-	// Behandlungsroutinen für Nachrichten SVWindowBarClass 
+	// Behandlungsroutinen für Nachrichten SVWindowBar 
 
-	void SVWindowBarClass::OnUpdateCmdUI( CFrameWnd* pTarget, BOOL bDisableIfNoHndler )
+	void SVWindowBar::OnUpdateCmdUI( CFrameWnd* pTarget, BOOL bDisableIfNoHndler )
 	{
 		UpdateDialogControls(pTarget, bDisableIfNoHndler);
 	}
 
-	BOOL SVWindowBarClass::Create( LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext ) 
+	BOOL SVWindowBar::Create( LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext ) 
 	{
 		dwStyle |= CBRS_BORDER_ANY;
 
@@ -65,7 +66,7 @@ namespace SvMc
 		return CControlBar::Create( lpszClassName, lpszWindowName, dwStyle, rect, pParentWnd, nID, pContext );
 	}
 
-	BOOL SVWindowBarClass::Create( CWnd* pParentWnd, DWORD dwStyle, UINT nID ) 
+	BOOL SVWindowBar::Create( CWnd* pParentWnd, DWORD dwStyle, UINT nID ) 
 	{
 		assert( nullptr != pParentWnd );
 		ASSERT_KINDOF( CFrameWnd, pParentWnd );
@@ -76,7 +77,7 @@ namespace SvMc
 		dwStyle |= WS_BORDER | WS_GROUP | WS_CLIPSIBLINGS; // | WS_MAXIMIZE; // | WS_CAPTION | WS_VISIBLE | WS_OVERLAPPEDWINDOW;
 
 		if( windowTitle == _T( "" ) )
-			windowTitle = _T( "SVWindowBarClass" );
+			windowTitle = _T( "SVWindowBar" );
 
 		LPCTSTR lpszClassName = AfxRegisterWndClass( CS_HREDRAW | CS_VREDRAW, 
 			AfxGetApp()->LoadStandardCursor( IDC_ARROW ),
@@ -86,7 +87,7 @@ namespace SvMc
 	}
 
 
-	CSize SVWindowBarClass::CalcFixedLayout( BOOL bStretch, BOOL bHorz )
+	CSize SVWindowBar::CalcFixedLayout( BOOL bStretch, BOOL bHorz )
 	{
 		CSize size = windowSize;
 		int maxCX = 32767;
@@ -108,7 +109,7 @@ namespace SvMc
 		return size;
 	}
 
-	CSize SVWindowBarClass::CalcDynamicLayout( int nLength, DWORD dwMode )
+	CSize SVWindowBar::CalcDynamicLayout( int nLength, DWORD dwMode )
 	{
 		if( ( nLength == -1 ) && !( dwMode & LM_MRUWIDTH ) && !( dwMode & LM_COMMIT ) &&
 			( ( dwMode & LM_HORZDOCK ) || ( dwMode & LM_VERTDOCK ) ) )
@@ -120,13 +121,13 @@ namespace SvMc
 	}
 
 
-	void SVWindowBarClass::CalcWindowRect(LPRECT lpClientRect, UINT nAdjustType) 
+	void SVWindowBar::CalcWindowRect(LPRECT lpClientRect, UINT nAdjustType) 
 	{
 
 		CControlBar::CalcWindowRect(lpClientRect, nAdjustType);
 	}
 
-	int SVWindowBarClass::OnCreate(LPCREATESTRUCT lpCreateStruct) 
+	int SVWindowBar::OnCreate(LPCREATESTRUCT lpCreateStruct) 
 	{
 		if (CControlBar::OnCreate(lpCreateStruct) == -1)
 			return -1;
@@ -146,7 +147,7 @@ namespace SvMc
 		return 0;
 	}
 
-	void SVWindowBarClass::OnSizing(UINT fwSide, LPRECT pRect) 
+	void SVWindowBar::OnSizing(UINT fwSide, LPRECT pRect) 
 	{
 		CControlBar::OnSizing(fwSide, pRect);
 		windowSize.cx = pRect->right - pRect->left;
@@ -157,7 +158,7 @@ namespace SvMc
 			parent->RecalcLayout();
 	}
 
-	void SVWindowBarClass::OnPaint() 
+	void SVWindowBar::OnPaint() 
 	{
 		CPaintDC dc(this); // device context for painting
 
@@ -182,7 +183,7 @@ namespace SvMc
 			// Do not call CControlBar::OnPaint() for painting messages
 	}
 
-	void SVWindowBarClass::OnWindowPosChanged(WINDOWPOS FAR* lpwndpos) 
+	void SVWindowBar::OnWindowPosChanged(WINDOWPOS FAR* lpwndpos) 
 	{
 		CControlBar::OnWindowPosChanged(lpwndpos);
 
@@ -212,12 +213,12 @@ namespace SvMc
 
 
 #ifdef _DEBUG
-	void SVWindowBarClass::AssertValid() const
+	void SVWindowBar::AssertValid() const
 	{
 		CControlBar::AssertValid();
 	}
 
-	void SVWindowBarClass::Dump(CDumpContext& dc) const
+	void SVWindowBar::Dump(CDumpContext& dc) const
 	{
 		CControlBar::Dump(dc);
 	}

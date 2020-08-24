@@ -21,36 +21,36 @@ static char THIS_FILE[] = __FILE__;
 //
 static CPoint gPtPosition(0,0);
 
-IMPLEMENT_DYNAMIC(SVMeasureAnalyzerAdjustmentSheetClass, CPropertySheet)
+IMPLEMENT_DYNAMIC(SVMeasureAnalyzerAdjustmentSheet, CPropertySheet)
 
-SVMeasureAnalyzerAdjustmentSheetClass::SVMeasureAnalyzerAdjustmentSheetClass(UINT nIDCaption, CWnd* pParentWnd, UINT iSelectPage)
+SVMeasureAnalyzerAdjustmentSheet::SVMeasureAnalyzerAdjustmentSheet(UINT nIDCaption, CWnd* pParentWnd, UINT iSelectPage)
 	:CPropertySheet(nIDCaption, pParentWnd, iSelectPage)
 {
 	m_psh.dwFlags |= PSH_NOAPPLYNOW;
 }
 
-SVMeasureAnalyzerAdjustmentSheetClass::SVMeasureAnalyzerAdjustmentSheetClass(LPCTSTR pszCaption, CWnd* pParentWnd, UINT iSelectPage)
+SVMeasureAnalyzerAdjustmentSheet::SVMeasureAnalyzerAdjustmentSheet(LPCTSTR pszCaption, CWnd* pParentWnd, UINT iSelectPage)
 	:CPropertySheet(pszCaption, pParentWnd, iSelectPage)
 {
 	m_psh.dwFlags |= PSH_NOAPPLYNOW;
 }
 
-SVMeasureAnalyzerAdjustmentSheetClass::~SVMeasureAnalyzerAdjustmentSheetClass()
+SVMeasureAnalyzerAdjustmentSheet::~SVMeasureAnalyzerAdjustmentSheet()
 {
 }
 
-BEGIN_MESSAGE_MAP(SVMeasureAnalyzerAdjustmentSheetClass, CPropertySheet)
-	//{{AFX_MSG_MAP(SVMeasureAnalyzerAdjustmentSheetClass)
+BEGIN_MESSAGE_MAP(SVMeasureAnalyzerAdjustmentSheet, CPropertySheet)
+	//{{AFX_MSG_MAP(SVMeasureAnalyzerAdjustmentSheet)
 	ON_WM_DESTROY()
 	ON_WM_SYSCOMMAND()
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
-// Behandlungsroutinen für Nachrichten SVMeasureAnalyzerAdjustmentSheetClass 
+// Behandlungsroutinen für Nachrichten SVMeasureAnalyzerAdjustmentSheet 
 
 
-BOOL SVMeasureAnalyzerAdjustmentSheetClass::OnInitDialog() 
+BOOL SVMeasureAnalyzerAdjustmentSheet::OnInitDialog() 
 {
 	BOOL bResult = CPropertySheet::OnInitDialog();
 	
@@ -74,7 +74,7 @@ BOOL SVMeasureAnalyzerAdjustmentSheetClass::OnInitDialog()
 	return bResult;
 }
 
-void SVMeasureAnalyzerAdjustmentSheetClass::OnDestroy() 
+void SVMeasureAnalyzerAdjustmentSheet::OnDestroy() 
 {
 	CPropertySheet::OnDestroy();
 
@@ -90,7 +90,7 @@ void SVMeasureAnalyzerAdjustmentSheetClass::OnDestroy()
 	
 }
 
-void SVMeasureAnalyzerAdjustmentSheetClass::OnSysCommand(UINT nID, LPARAM lParam) 
+void SVMeasureAnalyzerAdjustmentSheet::OnSysCommand(UINT nID, LPARAM lParam) 
 {
 	switch (nID & 0xFFF0)
 	{

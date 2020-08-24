@@ -32,7 +32,7 @@ public:
 
 	// Usage p_lIndex is used with the y component of the first point of a polyline
 	// when drawing horizontal lines to skip lines when zoomed in.
-	// called from SVDrawObjectListClass::Draw when used for drawing mask overlays.
+	// called from SVDrawObjectList::Draw when used for drawing mask overlays.
 	bool ShouldDrawPoints( long& p_lLastPointDrawn, long p_lIndex )
 	{
 		bool l_bOk = false;

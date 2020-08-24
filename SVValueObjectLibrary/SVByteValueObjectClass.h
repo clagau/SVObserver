@@ -27,7 +27,7 @@ class SVByteValueObjectClass : public SVValueObjectClass<BYTE>
 	// This is needed since SVByteVectorObjectClass has been changed
 	// to use SVByteValueObjectClass instead of SVObjectByteArrayClass
 	// and the MIL LUT functions needs the pointer to a BYTE block
-	friend class SVLUTOperatorClass;
+	friend class SVLUTOperator;
 
 	SV_DECLARE_CLASS( SVByteValueObjectClass );
 

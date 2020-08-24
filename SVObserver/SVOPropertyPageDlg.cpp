@@ -143,8 +143,8 @@ public:
 
 enum {IDC_PROPERTYTREE = 100};
 
-BEGIN_MESSAGE_MAP(CSVOPropertyPageDlg, CDialog)
-	//{{AFX_MSG_MAP(CSVOPropertyPageDlg)
+BEGIN_MESSAGE_MAP(SVOPropertyPageDlg, CDialog)
+	//{{AFX_MSG_MAP(SVOPropertyPageDlg)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_WM_SIZE()
@@ -156,25 +156,25 @@ BEGIN_MESSAGE_MAP(CSVOPropertyPageDlg, CDialog)
     ON_NOTIFY(PTN_ITEMBUTTONCLICK, IDC_PROPERTYTREE, OnItemButtonClick)
 END_MESSAGE_MAP()
 
-CSVOPropertyPageDlg::CSVOPropertyPageDlg(CWnd* pParent /*=nullptr*/)
-	: CDialog(CSVOPropertyPageDlg::IDD, pParent)
+SVOPropertyPageDlg::SVOPropertyPageDlg(CWnd* pParent /*=nullptr*/)
+	: CDialog(SVOPropertyPageDlg::IDD, pParent)
 ,	m_TriggerObj( _T(""), 0 )
 ,	m_eProduct( SVIM_PRODUCT_TYPE_UNKNOWN )
 {
 }
 
-CSVOPropertyPageDlg::~CSVOPropertyPageDlg()
+SVOPropertyPageDlg::~SVOPropertyPageDlg()
 {
 }
 
-void CSVOPropertyPageDlg::DoDataExchange(CDataExchange* pDX)
+void SVOPropertyPageDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(CSVOPropertyPageDlg)
+	//{{AFX_DATA_MAP(SVOPropertyPageDlg)
 	//}}AFX_DATA_MAP
 }
 
-void CSVOPropertyPageDlg::SetupCamera()
+void SVOPropertyPageDlg::SetupCamera()
 {
 	SetTitle( m_CameraObj.GetCameraDisplayName().c_str() );
 	if( !m_CameraObj.IsFileAcquisition() )
@@ -220,7 +220,7 @@ void CSVOPropertyPageDlg::SetupCamera()
 	}
 }
 
-void CSVOPropertyPageDlg::SetupFileCamera(SVRPropertyItem* pRoot)
+void SVOPropertyPageDlg::SetupFileCamera(SVRPropertyItem* pRoot)
 {
 	SVRPropertyItemCombo* pCombo = (SVRPropertyItemCombo*)m_Tree.InsertItem(new SVRPropertyItemCombo(), pRoot);
 	if (pCombo)
@@ -307,7 +307,7 @@ void CSVOPropertyPageDlg::SetupFileCamera(SVRPropertyItem* pRoot)
 	}
 }
 
-void CSVOPropertyPageDlg::SetupAdvancedFileCamera(SVRPropertyItem* pRoot)
+void SVOPropertyPageDlg::SetupAdvancedFileCamera(SVRPropertyItem* pRoot)
 {
 	SetTitle( m_CameraObj.GetCameraDisplayName().c_str() );
 
@@ -346,7 +346,7 @@ void CSVOPropertyPageDlg::SetupAdvancedFileCamera(SVRPropertyItem* pRoot)
 	SetImageSizeEditAttributes();
 }
 
-void CSVOPropertyPageDlg::SetupAdvancedCamera()
+void SVOPropertyPageDlg::SetupAdvancedCamera()
 {
 	assert( nullptr != m_pAssistant );
 	SetTitle( m_CameraObj.GetCameraDisplayName().c_str() );
@@ -450,7 +450,7 @@ void CSVOPropertyPageDlg::SetupAdvancedCamera()
     }// end if (pRoot)
 }
 
-void CSVOPropertyPageDlg::SetupCameraDeviceParam(SVRPropertyItem* pRoot, const SVDeviceParam* pDeviceParam, const SVDeviceParam* pFileParam, bool ColorCamera)
+void SVOPropertyPageDlg::SetupCameraDeviceParam(SVRPropertyItem* pRoot, const SVDeviceParam* pDeviceParam, const SVDeviceParam* pFileParam, bool ColorCamera)
 {
 	if (pDeviceParam && pFileParam)
 	{
@@ -644,7 +644,7 @@ void CSVOPropertyPageDlg::SetupCameraDeviceParam(SVRPropertyItem* pRoot, const S
 	}
 }
 
-void CSVOPropertyPageDlg::ShowCameraProperties()
+void SVOPropertyPageDlg::ShowCameraProperties()
 {
 	if (m_CameraObj.IsFileAcquisition())
 	{
@@ -664,7 +664,7 @@ void CSVOPropertyPageDlg::ShowCameraProperties()
 	}
 }
 
-void CSVOPropertyPageDlg::UpdateFileImageSize()
+void SVOPropertyPageDlg::UpdateFileImageSize()
 {
 	long width = m_CameraObj.GetFileImageWidth();
 	long height = m_CameraObj.GetFileImageHeight();
@@ -700,7 +700,7 @@ void CSVOPropertyPageDlg::UpdateFileImageSize()
 	}
 }
 
-bool CSVOPropertyPageDlg::ScanForImageSize(SIZE& size)
+bool SVOPropertyPageDlg::ScanForImageSize(SIZE& size)
 {
 	bool Result( false );
 	SVImageFile FileImage;
@@ -723,7 +723,7 @@ bool CSVOPropertyPageDlg::ScanForImageSize(SIZE& size)
 	return Result;
 }
 
-void CSVOPropertyPageDlg::SetImageSizeEditAttributes()
+void SVOPropertyPageDlg::SetImageSizeEditAttributes()
 {
 	if (m_CameraObj.IsFileImageSizeEditModeFileBased())
 	{
@@ -737,7 +737,7 @@ void CSVOPropertyPageDlg::SetImageSizeEditAttributes()
 	}
 }
 
-void CSVOPropertyPageDlg::SetupInspection()
+void SVOPropertyPageDlg::SetupInspection()
 {
 	SetTitle( m_InspectionObj.GetInspectionName().c_str() );
 			
@@ -813,7 +813,7 @@ void CSVOPropertyPageDlg::SetupInspection()
 	}
 }
 
-void CSVOPropertyPageDlg::SetupTrigger()
+void SVOPropertyPageDlg::SetupTrigger()
 {
 	SetTitle( m_TriggerObj.GetTriggerDisplayName() );
 	SVRPropertyItem* pRoot = m_Tree.InsertItem(new SVRPropertyItem());
@@ -846,7 +846,7 @@ void CSVOPropertyPageDlg::SetupTrigger()
 	}
 }
 
-void CSVOPropertyPageDlg::SetupAdvancedTrigger()
+void SVOPropertyPageDlg::SetupAdvancedTrigger()
 {
 	SetTitle( m_TriggerObj.GetTriggerDisplayName() );
 	SVRPropertyItem* pRoot = m_Tree.InsertItem(new SVRPropertyItem());
@@ -871,7 +871,7 @@ void CSVOPropertyPageDlg::SetupAdvancedTrigger()
 	}
 }
 
-void CSVOPropertyPageDlg::SetupPPQ()
+void SVOPropertyPageDlg::SetupPPQ()
 {
 	SetTitle( m_PPQObj.GetPPQName().c_str() );
 	SVRPropertyItem* pRoot = m_Tree.InsertItem(new SVRPropertyItem());
@@ -1020,8 +1020,8 @@ void CSVOPropertyPageDlg::SetupPPQ()
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// CSVOPropertyPageDlg message handlers
-BOOL CSVOPropertyPageDlg::OnInitDialog() 
+// SVOPropertyPageDlg message handlers
+BOOL SVOPropertyPageDlg::OnInitDialog() 
 {
 	CDialog::OnInitDialog();
 	// Set the icon for this dialog.  The framework does this automatically
@@ -1082,7 +1082,7 @@ BOOL CSVOPropertyPageDlg::OnInitDialog()
 //  to draw the icon.  For MFC applications using the document/view model,
 //  this is automatically done for you by the framework.
 
-void CSVOPropertyPageDlg::OnPaint() 
+void SVOPropertyPageDlg::OnPaint() 
 {
 	CPaintDC dc(this); // device context for painting
 
@@ -1109,12 +1109,12 @@ void CSVOPropertyPageDlg::OnPaint()
 
 // The system calls this to obtain the cursor to display while the user drags
 //  the minimized window.
-HCURSOR CSVOPropertyPageDlg::OnQueryDragIcon()
+HCURSOR SVOPropertyPageDlg::OnQueryDragIcon()
 {
 	return (HCURSOR) m_hIcon;
 }
 
-void CSVOPropertyPageDlg::OnSize(UINT nType, int cx, int cy) 
+void SVOPropertyPageDlg::OnSize(UINT nType, int cx, int cy) 
 {
 	CDialog::OnSize(nType, cx, cy);
 	
@@ -1123,7 +1123,7 @@ void CSVOPropertyPageDlg::OnSize(UINT nType, int cx, int cy)
 		m_Tree.SetWindowPos(nullptr, -1, -1, cx, cy, SWP_NOMOVE|SWP_NOZORDER);	
 }
 
-BOOL CSVOPropertyPageDlg::OnEraseBkgnd(CDC* pdc) 
+BOOL SVOPropertyPageDlg::OnEraseBkgnd(CDC* pdc) 
 {
     CDialog::OnEraseBkgnd(pdc);
 	// don't bother erasing the background since our control will always
@@ -1131,7 +1131,7 @@ BOOL CSVOPropertyPageDlg::OnEraseBkgnd(CDC* pdc)
 	return TRUE;
 }
 
-void CSVOPropertyPageDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
+void SVOPropertyPageDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 {
 	LPNMPROPTREE pNMPropTree = (LPNMPROPTREE) pNotifyStruct;
 	*plResult = S_OK;
@@ -1674,7 +1674,7 @@ void CSVOPropertyPageDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 	}// end if ( pNMPropTree->pItem )
 }
 
-void CSVOPropertyPageDlg::OnItemQueryShowButton(NMHDR* pNotifyStruct, LRESULT* plResult)
+void SVOPropertyPageDlg::OnItemQueryShowButton(NMHDR* pNotifyStruct, LRESULT* plResult)
 {
 	*plResult = FALSE;
 
@@ -1716,7 +1716,7 @@ void CSVOPropertyPageDlg::OnItemQueryShowButton(NMHDR* pNotifyStruct, LRESULT* p
 	}
 }
 
-void CSVOPropertyPageDlg::OnItemButtonClick(NMHDR* pNotifyStruct, LRESULT* plResult)
+void SVOPropertyPageDlg::OnItemButtonClick(NMHDR* pNotifyStruct, LRESULT* plResult)
 {
 	*plResult = TRUE;
 
@@ -1817,7 +1817,7 @@ static void ApplyGigeImageFormatChange(SvIe::SVAcquisitionClassPtr pDevice, cons
 }
 
 // For GigE ROI adjustments
-HRESULT CSVOPropertyPageDlg::AdjustCameraImageFormat( LPCTSTR sSelectedFormat, SVDeviceParamWrapper& rw)
+HRESULT SVOPropertyPageDlg::AdjustCameraImageFormat( LPCTSTR sSelectedFormat, SVDeviceParamWrapper& rw)
 {
 	HRESULT hr = S_OK;
 
@@ -1983,12 +1983,12 @@ HRESULT CSVOPropertyPageDlg::AdjustCameraImageFormat( LPCTSTR sSelectedFormat, S
 	return hr;
 }
 
-void CSVOPropertyPageDlg::OnClose() 
+void SVOPropertyPageDlg::OnClose() 
 {
 	CDialog::OnClose();
 }
 
-void CSVOPropertyPageDlg::CameraAdvancedHideItems()
+void SVOPropertyPageDlg::CameraAdvancedHideItems()
 {
 	SVRPropertyItem* l_pItem = m_Tree.GetRootItem();
 
@@ -2019,7 +2019,7 @@ void CSVOPropertyPageDlg::CameraAdvancedHideItems()
 	}
 }
 
-void CSVOPropertyPageDlg::PPQHideItems()
+void SVOPropertyPageDlg::PPQHideItems()
 {
     //get PPQMode
     long lPPQMode;
@@ -2057,29 +2057,29 @@ void CSVOPropertyPageDlg::PPQHideItems()
     }//end of switch...
 }
 
-void CSVOPropertyPageDlg::SetDlgPage(int nID)
+void SVOPropertyPageDlg::SetDlgPage(int nID)
 {
     m_nID = nID;
 }
 
-void CSVOPropertyPageDlg::SetProductType(SVIMProductEnum eType)
+void SVOPropertyPageDlg::SetProductType(SVIMProductEnum eType)
 {
     m_eProduct = eType;
 }
 
-void CSVOPropertyPageDlg::SetTitle( LPCTSTR Name )
+void SVOPropertyPageDlg::SetTitle( LPCTSTR Name )
 {
     std::string Label = _T("Property Settings  -  ");
 	Label += Name;
     SetWindowText( Label.c_str() );
 }
 
-void CSVOPropertyPageDlg::SetConfigAssistantDlg(CSVOConfigAssistantDlg* pAssistant)
+void SVOPropertyPageDlg::SetConfigAssistantDlg(SVOConfigAssistantDlg* pAssistant)
 {
 	m_pAssistant = pAssistant;
 }
 
-void CSVOPropertyPageDlg::checkAndSetMaxProcessingOffset(int ppqLen)
+void SVOPropertyPageDlg::checkAndSetMaxProcessingOffset(int ppqLen)
 {
 	long iVal;
 	m_Tree.FindItem(PROP_PPQ_MAX_PROCESSING_OFFSET)->GetItemValue(iVal);

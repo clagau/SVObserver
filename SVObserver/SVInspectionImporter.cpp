@@ -304,7 +304,7 @@ HRESULT LoadInspectionXml(SvXml::SVXMLMaterialsTree& rXmlTree, const std::string
 			// Set the Caption
 			SVParserProgressDialog l_ParserProgressDialog(_T("Loading Inspection(s) ..."));
 
-			unsigned long parserHandle = SVObjectScriptParserClass::GetParserHandle();
+			unsigned long parserHandle = SVObjectScriptParser::GetParserHandle();
 
 			// Create Inspection process - leave unattached for now
 			hr = SVInspectionTreeParser< SvXml::SVXMLMaterialsTree >::CreateInspectionObject(inspectionInfo.m_inspectionId, rXmlTree, hItem);
@@ -327,7 +327,7 @@ HRESULT LoadInspectionXml(SvXml::SVXMLMaterialsTree& rXmlTree, const std::string
 					SVConfigurationObject::updateConfTreeToNewestVersion(rXmlTree, hItemToolset);
 
 					// Launch parser progress
-					SVObjectScriptParserClass* pParser = new SVObjectScriptParserClass(new SVInspectionTreeParser< SvXml::SVXMLMaterialsTree >(rXmlTree, hItemToolset, parserHandle, inspectionInfo.m_inspectionId, pInspection, &l_ParserProgressDialog));
+					SVObjectScriptParser* pParser = new SVObjectScriptParser(new SVInspectionTreeParser< SvXml::SVXMLMaterialsTree >(rXmlTree, hItemToolset, parserHandle, inspectionInfo.m_inspectionId, pInspection, &l_ParserProgressDialog));
 					if (nullptr != pParser)
 					{
 						// Set the Parser Object

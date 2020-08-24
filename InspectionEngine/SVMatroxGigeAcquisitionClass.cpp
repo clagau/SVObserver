@@ -125,9 +125,9 @@ HRESULT SVMatroxGigeAcquisitionClass::GetFileNameArraySize( long &rlSize ) const
 }
 
 // Called from SVConfigurationObject::LoadConfiguration
-// Called from CSVOCameraDlg::OnBtnPropVc
-// Called from CSVOConfigAssistantDlg::SendAcquisitionDataToConfiguration
-// Called from CSVOPropertyPageDlg::AdjustCameraImageFormat
+// Called from SVOCameraDlg::OnBtnPropVc
+// Called from SVOConfigAssistantDlg::SendAcquisitionDataToConfiguration
+// Called from SVOPropertyPageDlg::AdjustCameraImageFormat
 HRESULT SVMatroxGigeAcquisitionClass::LoadFiles(SVFileNameArrayClass& rFiles)
 {
 	m_DeviceParams.Clear();
@@ -173,8 +173,8 @@ HRESULT SVMatroxGigeAcquisitionClass::LoadFiles(SVFileNameArrayClass& rFiles)
 }
 
 // Called from SVCameraPage::LoadSVCameraFiles (SVImageTest)
-// Called from CSVOConfigAssistantDlg::ItemChanged (SVObserver)
-// Called from CSVOConfigAssistantDlg::CheckCamera (SVObserver)
+// Called from SVOConfigAssistantDlg::ItemChanged (SVObserver)
+// Called from SVOConfigAssistantDlg::CheckCamera (SVObserver)
 HRESULT SVMatroxGigeAcquisitionClass::ReadCameraFile( const std::string& rFilename, SVDeviceParamCollection &rParams )
 {
 	SVGigeCameraFileReader reader(std::string(rFilename), IsColor());

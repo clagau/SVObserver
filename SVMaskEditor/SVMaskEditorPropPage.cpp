@@ -2,8 +2,8 @@
 //* COPYRIGHT (c) 2013 by Seidenader Vision Inc., Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVMaskEditorPpg
-//* .File Name       : $Workfile:   SVMaskEditorPpg.cpp  $
+//* .Module Name     : SVMaskEditorPropPage
+//* .File Name       : $Workfile:   SVMaskEditorPropPage.cpp  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   26 Apr 2013 14:08:06  $
@@ -12,7 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "resource.h"
-#include "SVMaskEditorPpg.h"
+#include "SVMaskEditorPropPage.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG

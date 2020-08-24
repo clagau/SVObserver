@@ -14,7 +14,7 @@
 namespace SvOp
 {
 
-class SVEvaluateRotationAngleClass : public SVEvaluateClass
+class SVEvaluateRotationAngleClass : public SVEvaluate
 {
 	SV_DECLARE_CLASS( SVEvaluateRotationAngleClass )
 

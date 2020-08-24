@@ -36,7 +36,7 @@ public:
 	struct OverlayStruct
 	{
 		SVDlgImageOverlayOptions  options;      // 
-		SVDrawObjectClass  svDrawObject; // Original Point set and Draw pen
+		SVDrawObject  svDrawObject; // Original Point set and Draw pen
 		std::vector<POINT>       vecPoints;    // Normalized points
 	};
 
@@ -50,8 +50,8 @@ public:
 	CPoint GetMouseCoordinates();	// in image coordinates, not screen
 
 	HRESULT ClearOverlayPoints();
-	HRESULT AddOverlayPoints(const SVDrawObjectListClass& rDrawObjectList, SVDlgImageOverlayOptions options );
-	HRESULT AddOverlayPoints(const SVDrawObjectClass& rDrawObject, SVDlgImageOverlayOptions options );
+	HRESULT AddOverlayPoints(const SVDrawObjectList& rDrawObjectList, SVDlgImageOverlayOptions options );
+	HRESULT AddOverlayPoints(const SVDrawObject& rDrawObject, SVDlgImageOverlayOptions options );
 
 protected:
 	virtual void OnPaintOverlay(CPaintDC& dc) override;

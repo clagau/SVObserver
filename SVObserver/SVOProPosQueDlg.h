@@ -11,21 +11,21 @@
 
 #pragma once
 
-class CSVOConfigAssistantDlg;
+class SVOConfigAssistantDlg;
 
-class CSVOProPosQueDlg : public CPropertyPage
+class SVOProPosQueDlg : public CPropertyPage
 {
-	DECLARE_DYNCREATE(CSVOProPosQueDlg)
+	DECLARE_DYNCREATE(SVOProPosQueDlg)
 
 // Construction
 public:
-	CSVOProPosQueDlg();
-	virtual ~CSVOProPosQueDlg();
+	SVOProPosQueDlg();
+	virtual ~SVOProPosQueDlg();
 
     void SetupList();
 
 // Dialog Data
-	//{{AFX_DATA(CSVOProPosQueDlg)
+	//{{AFX_DATA(SVOProPosQueDlg)
 	enum { IDD = IDD_DLG_PROPPAGE_AA_PPQ };
 	CEdit	m_ctlVTEdit;
 	CListBox	m_ctlVIPList;
@@ -45,7 +45,7 @@ public:
 
 // Overrides
 	// ClassWizard generate virtual function overrides
-	//{{AFX_VIRTUAL(CSVOProPosQueDlg)
+	//{{AFX_VIRTUAL(SVOProPosQueDlg)
 	public:
 	virtual BOOL OnKillActive() override;
 	virtual BOOL OnSetActive() override;
@@ -56,7 +56,7 @@ public:
 // Implementation
 protected:
 	// Generated message map functions
-	//{{AFX_MSG(CSVOProPosQueDlg)
+	//{{AFX_MSG(SVOProPosQueDlg)
 	afx_msg void OnBtnAddVc();
 	afx_msg void OnBtnAddVi();
 	afx_msg void OnBtnAddVt();
@@ -77,7 +77,7 @@ private:
     BOOL m_bIsListSetup;
 	int m_iVCHorzScroll;
 
-    CSVOConfigAssistantDlg *m_pParent;
+    SVOConfigAssistantDlg *m_pParent;
 };
 
 //{{AFX_INSERT_LOCATION}}

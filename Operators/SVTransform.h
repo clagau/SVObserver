@@ -19,17 +19,17 @@
 namespace SvOp
 {
 
-class SVTransformClass : public SvIe::SVTaskObjectClass
+class SVTransform : public SvIe::SVTaskObjectClass
 {
 	///This class does not need to call SV_DECLARE_CLASS as it is a base class and only derived classes are instantiated
-	//SV_DECLARE_CLASS( SVTransformClass )
+	//SV_DECLARE_CLASS( SVTransform )
 
 //******************************************************************************
 // Constructor(s):
 //******************************************************************************
 public:
-	SVTransformClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTRANSFORM );
-	virtual ~SVTransformClass();
+	SVTransform( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTRANSFORM );
+	virtual ~SVTransform();
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 

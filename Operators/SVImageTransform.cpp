@@ -33,11 +33,11 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVImageTransformClass, SvPb::ImageTransformClassId)
+SV_IMPLEMENT_CLASS( SVImageTransform, SvPb::ImageTransformClassId)
 
 #pragma region Constructor
-SVImageTransformClass::SVImageTransformClass( SVObjectClass* POwner, int StringResourceID )
-	:SVTransformClass( POwner, StringResourceID ) 
+SVImageTransform::SVImageTransform( SVObjectClass* POwner, int StringResourceID )
+	:SVTransform( POwner, StringResourceID ) 
 {
 
 	// Identify yourself
@@ -104,17 +104,17 @@ SVImageTransformClass::SVImageTransformClass( SVObjectClass* POwner, int StringR
 	addDefaultInputObjects();
 }
 
-SVImageTransformClass::~SVImageTransformClass()
+SVImageTransform::~SVImageTransform()
 {
-	SVImageTransformClass::CloseObject();
+	SVImageTransform::CloseObject();
 }
 #pragma endregion
 
 #pragma region Public Methods
 #pragma region virtual
-bool SVImageTransformClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
+bool SVImageTransform::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool result = SVTransformClass::CreateObject(rCreateStructure);
+	bool result = SVTransform::CreateObject(rCreateStructure);
 
 	SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*>(GetTool());
 	result = result && nullptr != pTool;
@@ -146,7 +146,7 @@ bool SVImageTransformClass::CreateObject( const SVObjectLevelCreateStruct& rCrea
 	return result;
 }
 
-bool SVImageTransformClass::ResetObject( SvStl::MessageContainerVector *pErrorMessages )
+bool SVImageTransform::ResetObject( SvStl::MessageContainerVector *pErrorMessages )
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 	
@@ -199,14 +199,14 @@ bool SVImageTransformClass::ResetObject( SvStl::MessageContainerVector *pErrorMe
 }
 #pragma endregion
 
-SvIe::SVImageClass* SVImageTransformClass::getOutputImage()
+SvIe::SVImageClass* SVImageTransform::getOutputImage()
 {
 	return &m_outputImage;
 }
 #pragma endregion
 
 #pragma region Protected Methods
-bool SVImageTransformClass::isInputImage(uint32_t imageId) const
+bool SVImageTransform::isInputImage(uint32_t imageId) const
 {
 	bool Result(false);
 
@@ -219,9 +219,9 @@ bool SVImageTransformClass::isInputImage(uint32_t imageId) const
 	return Result;
 }
 
-bool SVImageTransformClass::onRun( SVRunStatusClass& runStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVImageTransform::onRun( SVRunStatusClass& runStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
-	bool bRetVal = SVTransformClass::onRun( runStatus, pErrorMessages );
+	bool bRetVal = SVTransform::onRun( runStatus, pErrorMessages );
 
 	BOOL bUseExtentsOnly( false );
 	BOOL bTranslationEnabled( false );
@@ -384,7 +384,7 @@ bool SVImageTransformClass::onRun( SVRunStatusClass& runStatus, SvStl::MessageCo
 	return bRetVal;
 }
 
-HRESULT SVImageTransformClass::UpdateTransformData( )
+HRESULT SVImageTransform::UpdateTransformData( )
 {
 	HRESULT l_hrOk = S_OK;
 
@@ -525,7 +525,7 @@ HRESULT SVImageTransformClass::UpdateTransformData( )
 
 #pragma region Private Methods
 // Set String value object for Source Image Names
-HRESULT SVImageTransformClass::CollectInputImageNames()
+HRESULT SVImageTransform::CollectInputImageNames()
 {
 	HRESULT l_hr = S_FALSE;
 	SvIe::SVImageClass* pInputImage = SvOl::getInput<SvIe::SVImageClass>(m_inputImageObjectInfo);

@@ -21,13 +21,13 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
-// Dialogfeld SVStartWindowClass 
+// Dialogfeld SVStartWindow 
 
 
-SVStartWindowClass::SVStartWindowClass(CWnd* pParent /*=nullptr*/)
-	: CDialog(SVStartWindowClass::IDD, pParent)
+SVStartWindow::SVStartWindow(CWnd* pParent /*=nullptr*/)
+	: CDialog(SVStartWindow::IDD, pParent)
 {
-	//{{AFX_DATA_INIT(SVStartWindowClass)
+	//{{AFX_DATA_INIT(SVStartWindow)
 	//}}AFX_DATA_INIT
 	startImage.Init( IDB_START );
 
@@ -38,21 +38,21 @@ SVStartWindowClass::SVStartWindowClass(CWnd* pParent /*=nullptr*/)
 	startImage.TextOut( 0.42, 0.70, RGB( 0, 0, 0 ), Version.c_str() );
 }
 
-SVStartWindowClass::~SVStartWindowClass()
+SVStartWindow::~SVStartWindow()
 {
 }
 
-void SVStartWindowClass::DoDataExchange(CDataExchange* pDX)
+void SVStartWindow::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(SVStartWindowClass)
+	//{{AFX_DATA_MAP(SVStartWindow)
 	DDX_Control(pDX, IDC_START_BITMAP, startImage);
 	//}}AFX_DATA_MAP
 }
 
 
-BEGIN_MESSAGE_MAP(SVStartWindowClass, CDialog)
-	//{{AFX_MSG_MAP(SVStartWindowClass)
+BEGIN_MESSAGE_MAP(SVStartWindow, CDialog)
+	//{{AFX_MSG_MAP(SVStartWindow)
 	ON_WM_CTLCOLOR()
 	ON_WM_PALETTEISCHANGING()
 	ON_WM_PAINT()
@@ -60,9 +60,9 @@ BEGIN_MESSAGE_MAP(SVStartWindowClass, CDialog)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
-// Behandlungsroutinen für Nachrichten SVStartWindowClass 
+// Behandlungsroutinen für Nachrichten SVStartWindow 
 
-HBRUSH SVStartWindowClass::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor) 
+HBRUSH SVStartWindow::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor) 
 {
 	HBRUSH hbr = CDialog::OnCtlColor(pDC, pWnd, nCtlColor);
 	
@@ -72,7 +72,7 @@ HBRUSH SVStartWindowClass::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 	return hbr;
 }
 
-void SVStartWindowClass::OnPaletteIsChanging(CWnd* pRealizeWnd) 
+void SVStartWindow::OnPaletteIsChanging(CWnd* pRealizeWnd) 
 {
 	CDialog::OnPaletteIsChanging(pRealizeWnd);
 	
@@ -80,7 +80,7 @@ void SVStartWindowClass::OnPaletteIsChanging(CWnd* pRealizeWnd)
 	
 }
 
-BOOL SVStartWindowClass::OnInitDialog() 
+BOOL SVStartWindow::OnInitDialog() 
 {
 	CDialog::OnInitDialog();
 
@@ -120,7 +120,7 @@ BOOL SVStartWindowClass::OnInitDialog()
 	              // EXCEPTION: OCX-Eigenschaftenseiten sollten FALSE zurückgeben
 }
 
-void SVStartWindowClass::OnPaint() 
+void SVStartWindow::OnPaint() 
 {
 	CPaintDC dc(this); // device context for painting
 

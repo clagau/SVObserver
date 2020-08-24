@@ -42,14 +42,14 @@ namespace SvOp
 static char THIS_FILE[] = __FILE__;
 #endif
 
-double SVImagePolarTransformClass::g_dMaxAngularDistance  = 720.0;
+double SVImagePolarTransform::g_dMaxAngularDistance  = 720.0;
 #pragma endregion Declarations
 
 
-SV_IMPLEMENT_CLASS( SVImagePolarTransformClass, SvPb::ImagePolarTransformClassId)
+SV_IMPLEMENT_CLASS( SVImagePolarTransform, SvPb::ImagePolarTransformClassId)
 
-SVImagePolarTransformClass::SVImagePolarTransformClass( SVObjectClass* POwner, int StringResourceID )
-						   :SVPolarTransformClass( POwner, StringResourceID ) 
+SVImagePolarTransform::SVImagePolarTransform( SVObjectClass* POwner, int StringResourceID )
+						   :SVPolarTransform( POwner, StringResourceID ) 
 {
 	// Identify yourself
 	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVImagePolarTransformObjectType;
@@ -138,14 +138,14 @@ SVImagePolarTransformClass::SVImagePolarTransformClass( SVObjectClass* POwner, i
 	addDefaultInputObjects();
 }
 
-SVImagePolarTransformClass::~SVImagePolarTransformClass()
+SVImagePolarTransform::~SVImagePolarTransform()
 {
-	SVImagePolarTransformClass::CloseObject();
+	SVImagePolarTransform::CloseObject();
 }
 
-bool SVImagePolarTransformClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
+bool SVImagePolarTransform::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool result = SVPolarTransformClass::CreateObject(rCreateStructure);
+	bool result = SVPolarTransform::CreateObject(rCreateStructure);
 	SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (GetTool());
 	result = result && nullptr != pTool;
 
@@ -179,7 +179,7 @@ bool SVImagePolarTransformClass::CreateObject( const SVObjectLevelCreateStruct& 
 	return m_isCreated;
 }
 
-bool SVImagePolarTransformClass::isInputImage(uint32_t imageId) const
+bool SVImagePolarTransform::isInputImage(uint32_t imageId) const
 {
 	bool Result(false);
 
@@ -192,7 +192,7 @@ bool SVImagePolarTransformClass::isInputImage(uint32_t imageId) const
 	return Result;
 }
 
-SvIe::SVImageClass* SVImagePolarTransformClass::GetOutputImage()
+SvIe::SVImageClass* SVImagePolarTransform::GetOutputImage()
 {
 	return &m_outputImage;
 }
@@ -206,7 +206,7 @@ SvIe::SVImageClass* SVImagePolarTransformClass::GetOutputImage()
 // change the formulas.
 // Another possibility to call this function is in the setup
 // dialog, if a kind of reset formula button exists.
-bool SVImagePolarTransformClass::SetDefaultFormulas(SvStl::MessageContainerVector *pErrorMessages)
+bool SVImagePolarTransform::SetDefaultFormulas(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool bRetVal = true;
 	bool bOk;
@@ -222,7 +222,7 @@ bool SVImagePolarTransformClass::SetDefaultFormulas(SvStl::MessageContainerVecto
 	if( pEvaluateCenterX )
 	{
 		// Find equation object...
-		SVEquationClass* pEquation = dynamic_cast<SVEquationClass*>(pEvaluateCenterX->getFirstObject(equationObjectInfo));
+		SVEquation* pEquation = dynamic_cast<SVEquation*>(pEvaluateCenterX->getFirstObject(equationObjectInfo));
 		std::string Name = m_centerX.GetObjectNameToObjectType();
 		bOk = SetDefaultEquation( pEquation, Name, pErrorMessages );
 	}
@@ -238,7 +238,7 @@ bool SVImagePolarTransformClass::SetDefaultFormulas(SvStl::MessageContainerVecto
 	if( pEvaluateCenterY )
 	{
 		// Find equation object...
-		SVEquationClass* pEquation = dynamic_cast<SVEquationClass*>(pEvaluateCenterY->getFirstObject(equationObjectInfo));
+		SVEquation* pEquation = dynamic_cast<SVEquation*>(pEvaluateCenterY->getFirstObject(equationObjectInfo));
 		std::string Name = m_centerY.GetObjectNameToObjectType();
 		bOk = SetDefaultEquation( pEquation, Name, pErrorMessages );
 	}
@@ -254,7 +254,7 @@ bool SVImagePolarTransformClass::SetDefaultFormulas(SvStl::MessageContainerVecto
 	if( pEvaluateStartRadius )
 	{
 		// Find equation object...
-		SVEquationClass* pEquation = dynamic_cast<SVEquationClass*>(pEvaluateStartRadius->getFirstObject(equationObjectInfo));
+		SVEquation* pEquation = dynamic_cast<SVEquation*>(pEvaluateStartRadius->getFirstObject(equationObjectInfo));
 		std::string Name = m_startRadius.GetObjectNameToObjectType();
 		bOk = SetDefaultEquation( pEquation, Name, pErrorMessages );
 	}
@@ -270,7 +270,7 @@ bool SVImagePolarTransformClass::SetDefaultFormulas(SvStl::MessageContainerVecto
 	if( pEvaluateEndRadius )
 	{
 		// Find equation object...
-		SVEquationClass* pEquation = dynamic_cast<SVEquationClass*>(pEvaluateEndRadius->getFirstObject(equationObjectInfo));
+		SVEquation* pEquation = dynamic_cast<SVEquation*>(pEvaluateEndRadius->getFirstObject(equationObjectInfo));
 		std::string Name = m_endRadius.GetObjectNameToObjectType();
 		bOk = SetDefaultEquation( pEquation, Name, pErrorMessages );
 	}
@@ -286,7 +286,7 @@ bool SVImagePolarTransformClass::SetDefaultFormulas(SvStl::MessageContainerVecto
 	if( pEvaluateStartAngle )
 	{
 		// Find equation object...
-		SVEquationClass* pEquation = dynamic_cast<SVEquationClass*>(pEvaluateStartAngle->getFirstObject(equationObjectInfo));
+		SVEquation* pEquation = dynamic_cast<SVEquation*>(pEvaluateStartAngle->getFirstObject(equationObjectInfo));
 		std::string Name = m_startAngle.GetObjectNameToObjectType();
 		bOk = SetDefaultEquation( pEquation, Name, pErrorMessages );
 	}
@@ -302,7 +302,7 @@ bool SVImagePolarTransformClass::SetDefaultFormulas(SvStl::MessageContainerVecto
 	if( pEvaluateEndAngle )
 	{
 		// Find equation object...
-		SVEquationClass* pEquation = dynamic_cast<SVEquationClass*>(pEvaluateEndAngle->getFirstObject(equationObjectInfo));
+		SVEquation* pEquation = dynamic_cast<SVEquation*>(pEvaluateEndAngle->getFirstObject(equationObjectInfo));
 		std::string Name = m_endAngle.GetObjectNameToObjectType();
 		bOk = SetDefaultEquation( pEquation, Name, pErrorMessages );
 	}
@@ -314,7 +314,7 @@ bool SVImagePolarTransformClass::SetDefaultFormulas(SvStl::MessageContainerVecto
 	return bRetVal;
 }
 
-void SVImagePolarTransformClass::setSliceOverlay(SvPb::OverlayShapeSlice& rSlice) const
+void SVImagePolarTransform::setSliceOverlay(SvPb::OverlayShapeSlice& rSlice) const
 {
 	SvPb::setValueObject(m_centerX, *rSlice.mutable_centerx());
 	SvPb::setValueObject(m_centerY, *rSlice.mutable_centery());
@@ -324,7 +324,7 @@ void SVImagePolarTransformClass::setSliceOverlay(SvPb::OverlayShapeSlice& rSlice
 	SvPb::setValueObject(m_endAngle, *rSlice.mutable_endangle());
 }
 
-bool SVImagePolarTransformClass::SetDefaultEquation( SVEquationClass* pEquation, const std::string& rName, SvStl::MessageContainerVector *pErrorMessages )
+bool SVImagePolarTransform::SetDefaultEquation( SVEquation* pEquation, const std::string& rName, SvStl::MessageContainerVector *pErrorMessages )
 {
 	bool Result( false );
 
@@ -353,7 +353,7 @@ bool SVImagePolarTransformClass::SetDefaultEquation( SVEquationClass* pEquation,
 // start angle must always be lower than end angle, so that
 // MIL works all the time counter clockwise...
 
-void SVImagePolarTransformClass::NewCorrectAngles( double& RDStartAngle, double& RDEndAngle )
+void SVImagePolarTransform::NewCorrectAngles( double& RDStartAngle, double& RDEndAngle )
 {
 	double l_dDistance = RDEndAngle - RDStartAngle; 
 
@@ -417,7 +417,7 @@ void SVImagePolarTransformClass::NewCorrectAngles( double& RDStartAngle, double&
 // MIL works all the time counter clockwise...
 // This method limits the total angular distance to less than 360
 // degrees.
-void SVImagePolarTransformClass::correctAngles( double& RDStartAngle, double& RDEndAngle )
+void SVImagePolarTransform::correctAngles( double& RDStartAngle, double& RDEndAngle )
 {
 	RDStartAngle = fmod( RDStartAngle, 360.0 );
 	RDEndAngle   = fmod( RDEndAngle, 360.0 );
@@ -438,7 +438,7 @@ void SVImagePolarTransformClass::correctAngles( double& RDStartAngle, double& RD
 	}
 }
 
-void SVImagePolarTransformClass::AnglesTo360( double& p_dStart, double& p_dEnd)
+void SVImagePolarTransform::AnglesTo360( double& p_dStart, double& p_dEnd)
 {
 	// Shifts start and end angles to be between -360 and +350 degrees.
 	if( p_dEnd - p_dStart > 360.0 ) // 
@@ -458,7 +458,7 @@ void SVImagePolarTransformClass::AnglesTo360( double& p_dStart, double& p_dEnd)
 	}
 }	
 
-bool SVImagePolarTransformClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVImagePolarTransform::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	BOOL bUseFormula( false );
 	long AngularMethod = 0;
@@ -732,7 +732,7 @@ bool SVImagePolarTransformClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Mes
 // is... Operator(s)
 ////////////////////////////////////////////////////////////////////////////////
 
-void SVImagePolarTransformClass::SetCalculatedPrintableFlags()
+void SVImagePolarTransform::SetCalculatedPrintableFlags()
 {
 	const UINT cAttributes = SvPb::printable | SvPb::remotelySetable | SvPb::setableOnline;
 	BOOL bSetValue( false );
@@ -749,7 +749,7 @@ void SVImagePolarTransformClass::SetCalculatedPrintableFlags()
 
 }
 
-bool SVImagePolarTransformClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
+bool SVImagePolarTransform::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 	SvOl::ValidateInput(m_inputImageObjectInfo);
@@ -807,7 +807,7 @@ bool SVImagePolarTransformClass::ResetObject(SvStl::MessageContainerVector *pErr
 }
 
 // Set String value object for Source Image Names
-HRESULT SVImagePolarTransformClass::CollectInputImageNames()
+HRESULT SVImagePolarTransform::CollectInputImageNames()
 {
 	HRESULT l_hr = S_FALSE;
 	SvIe::SVImageClass* pInputImage = SvOl::getInput<SvIe::SVImageClass>(m_inputImageObjectInfo);
@@ -823,7 +823,7 @@ HRESULT SVImagePolarTransformClass::CollectInputImageNames()
 	return l_hr;
 }
 
-bool SVImagePolarTransformClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const
+bool SVImagePolarTransform::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const
 {
 	if(nullptr == SvOl::getInput<SvIe::SVImageClass>(m_inputImageObjectInfo))
 	{

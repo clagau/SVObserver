@@ -16,7 +16,7 @@
 #pragma endregion Includes
 
 #pragma region Declarations
-class SVImageViewClass;
+class SVImageView;
 namespace SvOi
 {
 	class IObjectWriter;
@@ -80,7 +80,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	SVImageViewClass* m_pView;
+	SVImageView* m_pView;
 
 	CPoint m_oOldMaxScrollPoint;
 	CPoint m_oOldScrollPoint;

@@ -17,18 +17,18 @@
 
 namespace SvMc
 {
-	class CSVOSelectItemListDlg : public CDialog
+	class SVOSelectItemListDlg : public CDialog
 	{
 		// Construction
 	public:
 		void AddListBoxItem(CString sItem);
-		CSVOSelectItemListDlg(CWnd* pParent = nullptr);   // standard constructor
-		virtual ~CSVOSelectItemListDlg();
+		SVOSelectItemListDlg(CWnd* pParent = nullptr);   // standard constructor
+		virtual ~SVOSelectItemListDlg();
 
 		void SetDisplayName(LPCTSTR sDisplayName);
 		int m_iSelectedItemPosition;
 		// Dialog Data
-		//{{AFX_DATA(CSVOSelectItemListDlg)
+		//{{AFX_DATA(SVOSelectItemListDlg)
 		enum { IDD = IDD_DLG_AA_SELECT_ITEM_DLG };
 		CListBox	m_ctlSelectItemList;
 		CString	m_sSelectItemListValue;
@@ -37,7 +37,7 @@ namespace SvMc
 
 		// Overrides
 		// ClassWizard generated virtual function overrides
-		//{{AFX_VIRTUAL(CSVOSelectItemListDlg)
+		//{{AFX_VIRTUAL(SVOSelectItemListDlg)
 	protected:
 		virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 		//}}AFX_VIRTUAL
@@ -46,7 +46,7 @@ namespace SvMc
 	protected:
 
 		// Generated message map functions
-		//{{AFX_MSG(CSVOSelectItemListDlg)
+		//{{AFX_MSG(SVOSelectItemListDlg)
 		virtual BOOL OnInitDialog() override;
 		virtual void OnOK() override;
 		//}}AFX_MSG

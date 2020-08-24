@@ -21,22 +21,22 @@
     <ClCompile Include="SVMaskEditor.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVMaskEditorCtl.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVMaskEditorDialog.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVMaskEditorPpg.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVMaskEditorWnd.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVScrollWnd1Ctl.cpp">
+    <ClCompile Include="SVMaskEditorCtrl.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVScrollWnd1Ppg.cpp">
+    <ClCompile Include="SVMaskEditorPropPage.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVScrollWnd1Ctrl.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVScrollWnd1PropPage.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
@@ -107,22 +107,22 @@
     <ClInclude Include="SVMaskEditor.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVMaskEditorCtl.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVMaskEditorDialog.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVMaskEditorPpg.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMaskEditorWnd.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVScrollWnd1Ctl.h">
+    <ClInclude Include="SVMaskEditorCtrl.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVScrollWnd1Ppg.h">
+    <ClInclude Include="SVMaskEditorPropPage.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVScrollWnd1Ctrl.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVScrollWnd1PropPage.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

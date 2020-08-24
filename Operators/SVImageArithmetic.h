@@ -19,13 +19,13 @@
 namespace SvOp
 {
 
-class SVImageArithmeticClass : public SvIe::SVTaskObjectClass
+class SVImageArithmetic : public SvIe::SVTaskObjectClass
 {
-	SV_DECLARE_CLASS( SVImageArithmeticClass )
+	SV_DECLARE_CLASS( SVImageArithmetic )
 
 public:
-	SVImageArithmeticClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVIMAGEARITHMETIC );
-	virtual ~SVImageArithmeticClass();
+	SVImageArithmetic( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVIMAGEARITHMETIC );
+	virtual ~SVImageArithmetic();
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 	virtual bool CloseObject() override;

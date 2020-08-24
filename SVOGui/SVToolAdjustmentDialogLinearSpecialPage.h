@@ -30,7 +30,7 @@ namespace SvOg
 
 		enum { IDD = IDD_TA_LINEAR_TOOL_PROPERTIES_DIALOG };
 		CButton	m_ctlUseRotation;
-		SvMc::SVEnumerateComboClass	m_ctlProfileOrientation;
+		SvMc::SVEnumerateCombo	m_ctlProfileOrientation;
 		virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 
 		// Generated message map functions

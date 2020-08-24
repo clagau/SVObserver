@@ -2,7 +2,7 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVUtilitiesClass
+//* .Module Name     : SVUtilities
 //* .File Name       : $Workfile:   SVUtilities.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $
@@ -15,15 +15,15 @@
 
 class SVSecurityManager;
 
-class SVUtilitiesClass  
+class SVUtilities  
 {
 public:
 	CMenu *FindSubMenuByName(CMenu *pMenu, LPCTSTR Name);
 	void LoadMenu (CMenu *pMenu);
 	void SetupUtilities (CMenu *pMenu);
 	void RunUtility (SVSecurityManager* pAccess, UINT uiUtilityId);
-	SVUtilitiesClass();
-	virtual ~SVUtilitiesClass();
+	SVUtilities();
+	virtual ~SVUtilities();
 	bool LoadMenuFromINI(CMenu *pMenu);
 
 	void CleanupIni();

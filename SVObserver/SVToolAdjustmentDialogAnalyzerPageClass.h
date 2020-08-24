@@ -29,7 +29,7 @@ namespace SvTo
 class SVToolClass;
 }
 class SVToolAdjustmentDialogSheetClass;
-class SVUnaryImageOperatorListClass;
+class SVUnaryImageOperatorList;
 
 struct SVToolPropertyEntryStruct;
 

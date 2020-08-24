@@ -20,13 +20,13 @@
 namespace SvOp
 {
 
-class SVLinearImageOperatorListClass : public SVStdImageOperatorListClass 
+class SVLinearImageOperatorList : public SVStdImageOperatorListClass 
 {
-	SV_DECLARE_CLASS( SVLinearImageOperatorListClass )
+	SV_DECLARE_CLASS( SVLinearImageOperatorList )
 
 public:
-	SVLinearImageOperatorListClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVLINEARIMAGEOPERATORLIST );
-	virtual ~SVLinearImageOperatorListClass();
+	SVLinearImageOperatorList( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVLINEARIMAGEOPERATORLIST );
+	virtual ~SVLinearImageOperatorList();
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 	virtual bool CloseObject() override;

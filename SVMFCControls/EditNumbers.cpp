@@ -10,7 +10,7 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include "SVEditNumbers.h"
+#include "EditNumbers.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -20,17 +20,17 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvMc
 {
-	CEditNumbers::CEditNumbers()
+	EditNumbers::EditNumbers()
 	{
 	}
 
-	CEditNumbers::~CEditNumbers()
+	EditNumbers::~EditNumbers()
 	{
 	}
 
 
-	BEGIN_MESSAGE_MAP(CEditNumbers, CEdit)
-		//{{AFX_MSG_MAP(CEditNumbers)
+	BEGIN_MESSAGE_MAP(EditNumbers, CEdit)
+		//{{AFX_MSG_MAP(EditNumbers)
 		ON_WM_CHAR()
 		ON_WM_SETFOCUS()
 		//}}AFX_MSG_MAP
@@ -40,7 +40,7 @@ namespace SvMc
 	// 
 	//
 	//
-	void CEditNumbers::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) 
+	void EditNumbers::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) 
 	{
 		//
 		// Limit valid characters to ASCII '0' to '9'
@@ -84,7 +84,7 @@ okChar:;
 	/////////////////////////////////////////////////////////////////////////////
 	//
 	//
-	void CEditNumbers::OnSetFocus(CWnd* pOldWnd) 
+	void EditNumbers::OnSetFocus(CWnd* pOldWnd) 
 	{
 		CEdit::OnSetFocus(pOldWnd);
 

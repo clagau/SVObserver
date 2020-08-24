@@ -23,7 +23,7 @@ static char THIS_FILE[] = __FILE__;
 #pragma endregion Declarations
 
 EQAdjustSize::EQAdjustSize(SvPb::SVObjectSubTypeEnum subType, SvPb::EmbeddedIdEnum resultId, SVObjectClass* POwner, int StringResourceID)
-: SVEquationClass( POwner, StringResourceID )
+: SVEquation( POwner, StringResourceID )
 , m_ResultId(resultId)
 , m_SubType(subType)
 {
@@ -64,7 +64,7 @@ void EQAdjustSize::Init()
 
 bool EQAdjustSize::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 {
-	m_isCreated = SVEquationClass::CreateObject(rCreateStructure);
+	m_isCreated = SVEquation::CreateObject(rCreateStructure);
 
 	// Set / Reset Printable Flag
 	m_result.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
@@ -81,7 +81,7 @@ bool EQAdjustSize::onRun( SVRunStatusClass&, SvStl::MessageContainerVector* )
 
 bool EQAdjustSize::ResetObject(SvStl::MessageContainerVector* pErrorMessages)
 {
-	bool Result = SVEquationClass::ResetObject(pErrorMessages);
+	bool Result = SVEquation::ResetObject(pErrorMessages);
 
 	if( Result )
 	{

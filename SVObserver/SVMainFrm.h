@@ -20,7 +20,7 @@
 #pragma endregion Includes
 
 #pragma region Declarations
-class CSVRegressionRunDlg;
+class SVRegressionRunDlg;
 #pragma endregion Declarations
 
 /**
@@ -122,7 +122,7 @@ public:
 	virtual BOOL CreateClient(LPCREATESTRUCT lpCreateStruct, CMenu* pWindowMenu) override;
 
 
-	CSVRegressionRunDlg *m_pregTestDlg;
+	SVRegressionRunDlg *m_pregTestDlg;
 
 	//{{AFX_VIRTUAL(SVMainFrame)
 public:
@@ -188,7 +188,7 @@ private:
 	CToolBar				m_wndToolBar;
 	ZoomToolBar				m_wndToolBarZoom;
 
-	SVPPQBarClass			m_PPQBar;
+	SVPPQBar			m_PPQBar;
 
 	CBrush m_BackgroundBrush;
 

@@ -37,7 +37,7 @@
 #include "SVIOController.h"
 #include "SVIODoc.h"
 #include "SVIOTabbedView.h"
-#include "SVIPChildFrm.h"
+#include "SVIPSplitterFrame.h"
 #include "SVIPDoc.h"
 #include "SVIPDocInfoImporter.h"
 #include "SVMainFrm.h"
@@ -1411,7 +1411,7 @@ void SVObserverApp::OnUpdateResultsPicker(CCmdUI* PCmdUI)
 
 void SVObserverApp::OnExtrasUtilitiesEdit()
 {
-	SVUtilitiesClass util;
+	SVUtilities util;
 
 	SVSVIMStateClass::AddState(SV_STATE_EDITING); /// do this before calling validate for security as it may display a logon dialog!
 	if (S_OK == m_svSecurityMgr.SVValidate(SECURITY_POINT_EXTRAS_MENU_UTILITIES_SETUP))
@@ -1440,7 +1440,7 @@ void SVObserverApp::OnUpdateRegressionTest(CCmdUI *pCmdUI)
 
 void SVObserverApp::OnRunUtility(UINT uiId)
 {
-	SVUtilitiesClass util;
+	SVUtilities util;
 
 	if (S_OK == m_svSecurityMgr.SVValidate(SECURITY_POINT_EXTRAS_MENU_UTILITIES_RUN))
 	{
@@ -1617,7 +1617,7 @@ void SVObserverApp::OnUpdateModeEdit(CCmdUI* pCmdUI)
 
 void SVObserverApp::OnTriggerSettings()
 {
-	SVSoftwareTriggerDlg::Instance().ShowWindow(SW_SHOW);
+	SoftwareTriggerDlg::Instance().ShowWindow(SW_SHOW);
 }
 
 void SVObserverApp::OnUpdateTriggerSettings(CCmdUI *pCmdUI)
@@ -1818,7 +1818,7 @@ BOOL SVObserverApp::InitInstance()
 	SetThreadPriority(THREAD_PRIORITY_NORMAL);
 
 	// The start window	
-	SVStartWindowClass sWin;
+	SVStartWindow sWin;
 #ifndef _DEBUG                    // 23 Mar 1999 - frb.
 	if (sWin.Create(IDD_START))
 	{
@@ -1910,7 +1910,7 @@ BOOL SVObserverApp::InitInstance()
 
 	// Dokumentvorlagen der Anwendung registrieren. Dokumentvorlagen
 	//  dienen als Verbindung zwischen Dokumenten, Rahmenfenstern und Ansichten.
-	SVMultiDocTemplateClass* pDocTemplate = new SVMultiDocTemplateClass(IDR_SVOBSERVER_IPDOCTYPE,
+	SVMultiDocTemplate* pDocTemplate = new SVMultiDocTemplate(IDR_SVOBSERVER_IPDOCTYPE,
 		RUNTIME_CLASS(SVIPDoc),			 // Doc
 		RUNTIME_CLASS(SVIPSplitterFrame),  // Frame
 		RUNTIME_CLASS(SVImageViewScroll));// View
@@ -1918,7 +1918,7 @@ BOOL SVObserverApp::InitInstance()
 	AddDocTemplate(pDocTemplate);
 
 	// IODoc
-	SVMultiDocTemplateClass* pDocTemplate1 = new SVMultiDocTemplateClass(IDR_SVOBSERVER_IODOCTYPE,
+	SVMultiDocTemplate* pDocTemplate1 = new SVMultiDocTemplate(IDR_SVOBSERVER_IODOCTYPE,
 		RUNTIME_CLASS(SVIODoc),
 		RUNTIME_CLASS(SVIOTabbedView),
 		RUNTIME_CLASS(SVDiscreteInputsView));
@@ -1936,7 +1936,7 @@ BOOL SVObserverApp::InitInstance()
 	m_pMainWnd = pMainFrame;
 
 	// Load Utilities Menu
-	SVUtilitiesClass util;
+	SVUtilities util;
 	CWnd *pWindow = AfxGetMainWnd();
 	CMenu* pMenu = (nullptr != pWindow) ? pWindow->GetMenu() : nullptr;
 	pMenu = util.FindSubMenuByName(pMenu, _T("&Utilities"));
@@ -2119,7 +2119,7 @@ int SVObserverApp::ExitInstance()
 
 #if !defined( _DEBUG )
 	// Display close window	
-	m_pMessageWindow = new SVMessageWindowClass;
+	m_pMessageWindow = new SVMessageWindow;
 	if (m_pMessageWindow && m_pMessageWindow->Create(IDD_MESSAGE_DIALOG))
 	{
 		m_pMessageWindow->ShowWindow(SW_SHOW);
@@ -3890,7 +3890,7 @@ bool SVObserverApp::ShowConfigurationAssistant(int /*= 3*/,
 
 	//****RPY - Start - added new AppAssistant
 
-	CSVOConfigAssistantDlg cDlg;
+	SVOConfigAssistantDlg cDlg;
 
 	SVIMProductEnum eSVIMType = GetSVIMType();
 
@@ -4096,7 +4096,7 @@ void SVObserverApp::OnRCOpenCurrentSVX()
 
 void SVObserverApp::UpdateAllMenuExtrasUtilities()
 {
-	SVUtilitiesClass util;
+	SVUtilities util;
 	CMDIFrameWnd* pMainFrame;
 	CString sMenuText;
 	CMenu menu;
@@ -4443,7 +4443,7 @@ void SVObserverApp::SetTestMode(bool p_bNoSecurity)
 				SVConfigurationObject* pConfig(nullptr);
 				SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 
-				SVSoftwareTriggerDlg & l_trgrDlg = SVSoftwareTriggerDlg::Instance();
+				SoftwareTriggerDlg & l_trgrDlg = SoftwareTriggerDlg::Instance();
 				l_trgrDlg.ShowWindow(SW_HIDE);
 				l_trgrDlg.ClearTriggers();
 				//If the pointer is a nullptr the lSize is 0
@@ -4533,7 +4533,7 @@ void SVObserverApp::SetTestMode(bool p_bNoSecurity)
 
 				SVObjectManagerClass::Instance().SetState(SVObjectManagerClass::ReadOnly);
 
-				if (SVSoftwareTriggerDlg::Instance().HasTriggers())
+				if (SoftwareTriggerDlg::Instance().HasTriggers())
 				{
 					EnableTriggerSettings();
 				}
@@ -4966,7 +4966,7 @@ void SVObserverApp::Start()
 			}
 		}
 
-		SVSoftwareTriggerDlg & l_trgrDlg = SVSoftwareTriggerDlg::Instance();
+		SoftwareTriggerDlg & l_trgrDlg = SoftwareTriggerDlg::Instance();
 		l_trgrDlg.ShowWindow(SW_HIDE);
 		l_trgrDlg.ClearTriggers();
 
@@ -5137,7 +5137,7 @@ void SVObserverApp::Start()
 
 		SVObjectManagerClass::Instance().SetState(SVObjectManagerClass::ReadOnly);
 
-		if (SVSoftwareTriggerDlg::Instance().HasTriggers())
+		if (SoftwareTriggerDlg::Instance().HasTriggers())
 		{
 			EnableTriggerSettings();
 		}
@@ -5513,7 +5513,7 @@ static CMultiDocTemplate* getIPDocTemplate()
 
 void SVObserverApp::EnableTriggerSettings()
 {
-	SVUtilitiesClass util;
+	SVUtilities util;
 	CWnd* pWindow = AfxGetMainWnd();
 	if (pWindow)
 	{
@@ -5536,8 +5536,8 @@ void SVObserverApp::EnableTriggerSettings()
 
 void SVObserverApp::DisableTriggerSettings()
 {
-	SVSoftwareTriggerDlg::Instance().ShowWindow(SW_HIDE);
-	SVUtilitiesClass util;
+	SoftwareTriggerDlg::Instance().ShowWindow(SW_HIDE);
+	SVUtilities util;
 	CWnd* pWindow = AfxGetMainWnd();
 	if (pWindow)
 	{
@@ -5832,7 +5832,7 @@ void SVObserverApp::OnStopAll()
 
 		SetPriorityClass(GetCurrentProcess(), NORMAL_PRIORITY_CLASS);
 
-		SVSoftwareTriggerDlg & l_trgrDlg = SVSoftwareTriggerDlg::Instance();
+		SoftwareTriggerDlg & l_trgrDlg = SoftwareTriggerDlg::Instance();
 		l_trgrDlg.ClearTriggers();
 	}
 }// end OnStopAll

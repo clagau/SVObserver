@@ -2,7 +2,7 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVMultiDocTemplateClass
+//* .Module Name     : SVMultiDocTemplate
 //* .File Name       : $Workfile:   SVMultiDocTemplate.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $
@@ -12,16 +12,16 @@
 #pragma once
 
 /////////////////////////////////////////////////////////////////////////////
-// SVMultiDocTemplateClass 
+// SVMultiDocTemplate 
 
 // MDI support (zero or more documents)
-class SVMultiDocTemplateClass : public CMultiDocTemplate
+class SVMultiDocTemplate : public CMultiDocTemplate
 {
-	DECLARE_DYNAMIC( SVMultiDocTemplateClass )
+	DECLARE_DYNAMIC( SVMultiDocTemplate )
 
 public:
-	SVMultiDocTemplateClass( UINT NIDResource, CRuntimeClass* PDocClass, CRuntimeClass* PFrameClass, CRuntimeClass* PViewClass );
-	virtual ~SVMultiDocTemplateClass();
+	SVMultiDocTemplate( UINT NIDResource, CRuntimeClass* PDocClass, CRuntimeClass* PFrameClass, CRuntimeClass* PViewClass );
+	virtual ~SVMultiDocTemplate();
 
 	virtual void SetDefaultTitle( CDocument* PDocument ) override;
 

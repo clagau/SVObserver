@@ -15,7 +15,7 @@ namespace SvOp
 {
 
 //! \brief  Base class for Formulas for Tool Width Height and Positions for ToolsSizeAdjust 
-class EQAdjustSize : public SVEquationClass
+class EQAdjustSize : public SVEquation
 {
 	
 public:

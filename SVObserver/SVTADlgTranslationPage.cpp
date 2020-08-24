@@ -63,11 +63,11 @@ BOOL SVToolAdjustmentDialogTranslationPageClass::OnInitDialog()
 
 		// Get Evaluate Object for the X coordinate...
 		evaluateObjectInfo.m_SubType = SvPb::SVEvaluateTranslationXObjectType;
-		m_pEvaluateTranslationX = dynamic_cast<SvOp::SVEvaluateClass*> (pTool->getFirstObject(evaluateObjectInfo));
+		m_pEvaluateTranslationX = dynamic_cast<SvOp::SVEvaluate*> (pTool->getFirstObject(evaluateObjectInfo));
 
 		// Get Evaluate Object for the Y coordinate...
 		evaluateObjectInfo.m_SubType = SvPb::SVEvaluateTranslationYObjectType;
-		m_pEvaluateTranslationY = dynamic_cast<SvOp::SVEvaluateClass*> (pTool->getFirstObject(evaluateObjectInfo));
+		m_pEvaluateTranslationY = dynamic_cast<SvOp::SVEvaluate*> (pTool->getFirstObject(evaluateObjectInfo));
 
 		//Image Transformation
 		SvDef::SVObjectTypeInfoStruct objectInfo;

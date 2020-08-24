@@ -198,9 +198,6 @@
     <ClCompile Include="SVIOTabbedView.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVIPChildFrm.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVIPDoc.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -501,6 +498,9 @@
     <ClCompile Include="SVTADlgExternalInputSelectPage.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="SVIPSplitterFrame.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="SVObserver.odl">
@@ -713,9 +713,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVIOTabbedView.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVIPChildFrm.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVIPDoc.h">
@@ -1052,6 +1049,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="MonitorListAttributeStruct.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVIPSplitterFrame.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

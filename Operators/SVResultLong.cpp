@@ -28,10 +28,10 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVLongResultClass, SvPb::LongResultClassId);
+SV_IMPLEMENT_CLASS( SVLongResult, SvPb::LongResultClassId);
 
-SVLongResultClass::SVLongResultClass( SVObjectClass* POwner, int StringResourceID )
-				  :SVResultClass( POwner, StringResourceID )
+SVLongResult::SVLongResult( SVObjectClass* POwner, int StringResourceID )
+				  :SVResult( POwner, StringResourceID )
 {
 	// Identify yourself
 	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVResultObjectType;
@@ -51,24 +51,24 @@ SVLongResultClass::SVLongResultClass( SVObjectClass* POwner, int StringResourceI
 
 	// Instantiate Dynamic Objects
 
-	// Construct the SVRangeClass via the ClassInfoStruct
+	// Construct the SVRange via the ClassInfoStruct
 	SvIe::SVClassInfoStruct rangeClassInfo;
 	SvDef::SVObjectTypeInfoStruct interfaceInfo;
 
-	// Declare Input Interface of the SVRangeClass...
+	// Declare Input Interface of the SVRange...
 	interfaceInfo.m_ObjectType = SvPb::SVValueObjectType;
 	interfaceInfo.m_SubType = SvPb::SVLongValueObjectType;
 	interfaceInfo.m_EmbeddedID = SvPb::ValueEId;
 	rangeClassInfo.m_DesiredInputVector.push_back( interfaceInfo );
 
-	// Describe the SVRangeClass ...
+	// Describe the SVRange ...
 	rangeClassInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVRangeObjectType;
 	rangeClassInfo.m_ObjectTypeInfo.m_SubType	= SvPb::SVNotSetSubObjectType;
 	rangeClassInfo.m_ClassId = SvPb::RangeClassId;
 	rangeClassInfo.m_ClassName = SvUl::LoadStdString( IDS_CLASSNAME_SVRANGE );
 
 	// Construct it
-	SVRangeClass* pRange = dynamic_cast<SVRangeClass*>(rangeClassInfo.Construct()); 
+	SVRange* pRange = dynamic_cast<SVRange*>(rangeClassInfo.Construct()); 
 	if (pRange)
 	{
 		Add(pRange);
@@ -78,14 +78,14 @@ SVLongResultClass::SVLongResultClass( SVObjectClass* POwner, int StringResourceI
 	addDefaultInputObjects();
 }
 
-SVLongResultClass::~SVLongResultClass()
+SVLongResult::~SVLongResult()
 {
 
 }
 
-bool SVLongResultClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
+bool SVLongResult::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool bOk = SVResultClass::CreateObject(rCreateStructure) && nullptr != getInput();
+	bool bOk = SVResult::CreateObject(rCreateStructure) && nullptr != getInput();
 	
 	m_Value.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
 
@@ -94,7 +94,7 @@ bool SVLongResultClass::CreateObject( const SVObjectLevelCreateStruct& rCreateSt
 	return bOk;
 }
 
-SvPb::EmbeddedIdEnum SVLongResultClass::GetInputEmbeddedID() const
+SvPb::EmbeddedIdEnum SVLongResult::GetInputEmbeddedID() const
 {
 	if (nullptr != getInput() && SvPb::SVLongValueObjectType == getInput()->GetObjectSubType())
 	{
@@ -106,7 +106,7 @@ SvPb::EmbeddedIdEnum SVLongResultClass::GetInputEmbeddedID() const
 	}
 }
 
-bool SVLongResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVLongResult::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	// All inputs and outputs must be validated first
 	if( __super::onRun( rRunStatus, pErrorMessages ) )

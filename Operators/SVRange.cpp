@@ -38,21 +38,21 @@ struct SVRangeClassCancelData : public SVCancelData	// this does not need to be 
 const TCHAR* const ToolSetName = _T("Tool Set");
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS(SVRangeClass, SvPb::RangeClassId);
+SV_IMPLEMENT_CLASS(SVRange, SvPb::RangeClassId);
 
 #pragma region Constructor
-SVRangeClass::SVRangeClass(SVObjectClass* POwner, int StringResourceID)
+SVRange::SVRange(SVObjectClass* POwner, int StringResourceID)
 	: SVTaskObjectClass(POwner, StringResourceID)
 {
 	init();
 }
 
-SVRangeClass::~SVRangeClass()
+SVRange::~SVRange()
 {
 }
 #pragma endregion Constructor
 
-void SVRangeClass::init()
+void SVRange::init()
 {
 	m_bUseOverlays = false;
 
@@ -93,7 +93,7 @@ void SVRangeClass::init()
 	addDefaultInputObjects();
 }
 
-bool SVRangeClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
+bool SVRange::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 {
 	m_isCreated = SVTaskObjectClass::CreateObject(rCreateStructure);
 
@@ -108,7 +108,7 @@ bool SVRangeClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructur
 	return m_isCreated;
 }
 
-bool SVRangeClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
+bool SVRange::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = true;
 
@@ -136,7 +136,7 @@ bool SVRangeClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	return Result;
 }
 
-void SVRangeClass::addEntriesToMonitorList(std::back_insert_iterator<SvOi::ParametersForML> inserter) const
+void SVRange::addEntriesToMonitorList(std::back_insert_iterator<SvOi::ParametersForML> inserter) const
 {
 	inserter = SvOi::ParameterPairForML(m_LinkedValues[RangeEnum::ER_FailLow].GetCompleteName(), m_LinkedValues[RangeEnum::ER_FailLow].getObjectId());
 	// cppcheck-suppress redundantAssignment symbolName=inserter ; cppCheck doesn't know back_insert_iterator
@@ -147,7 +147,7 @@ void SVRangeClass::addEntriesToMonitorList(std::back_insert_iterator<SvOi::Param
 	inserter = SvOi::ParameterPairForML(m_LinkedValues[RangeEnum::ER_WarnHigh].GetCompleteName(), m_LinkedValues[RangeEnum::ER_WarnHigh].getObjectId());
 }
 
-bool SVRangeClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector*)
+bool SVRange::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector*)
 {
 	double InputValue, rangeValues[RangeEnum::ER_COUNT];
 	getInputValue(InputValue);
@@ -180,7 +180,7 @@ bool SVRangeClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVe
 }
 
 // ISVCancel interface
-HRESULT SVRangeClass::GetCancelData(SVCancelData*& rpCancelData)
+HRESULT SVRange::GetCancelData(SVCancelData*& rpCancelData)
 {
 	assert(nullptr == rpCancelData);
 	SVRangeClassCancelData* pData = new SVRangeClassCancelData;
@@ -194,7 +194,7 @@ HRESULT SVRangeClass::GetCancelData(SVCancelData*& rpCancelData)
 	return S_OK;
 }
 
-HRESULT SVRangeClass::SetCancelData(SVCancelData* pCancelData)
+HRESULT SVRange::SetCancelData(SVCancelData* pCancelData)
 {
 	SVRangeClassCancelData* pData = dynamic_cast<SVRangeClassCancelData*> (pCancelData);
 	if (pData)
@@ -212,7 +212,7 @@ HRESULT SVRangeClass::SetCancelData(SVCancelData* pCancelData)
 	}
 }
 
-HRESULT SVRangeClass::SetValuesForAnObject(uint32_t aimObjectID, SVObjectAttributeClass* pDataObject)
+HRESULT SVRange::SetValuesForAnObject(uint32_t aimObjectID, SVObjectAttributeClass* pDataObject)
 {
 	//This method in this class is only for backward compatibility (configuration older then 8.10), to set the indirect values correct to the linkedValues
 	SvCl::SVObjectStdStringArrayClass valueStringArray;
@@ -267,25 +267,25 @@ HRESULT SVRangeClass::SetValuesForAnObject(uint32_t aimObjectID, SVObjectAttribu
 	return __super::SetValuesForAnObject(aimObjectID, pDataObject);
 }
 
-void SVRangeClass::setHighValues(double failHigh, double warnHigh)
+void SVRange::setHighValues(double failHigh, double warnHigh)
 {
 	m_LinkedValues[RangeEnum::ER_FailHigh].SetValue(failHigh);
 	m_LinkedValues[RangeEnum::ER_WarnHigh].SetValue(warnHigh);
 }
 
-void SVRangeClass::setLowValues(double failLow, double warnLow)
+void SVRange::setLowValues(double failLow, double warnLow)
 {
 	m_LinkedValues[RangeEnum::ER_FailLow].SetValue(failLow);
 	m_LinkedValues[RangeEnum::ER_WarnLow].SetValue(warnLow);
 }
 
-void SVRangeClass::setDefaultLowValues(double failLow, double warnLow)
+void SVRange::setDefaultLowValues(double failLow, double warnLow)
 {
 	m_LinkedValues[RangeEnum::ER_FailLow].SetDefaultValue(failLow);
 	m_LinkedValues[RangeEnum::ER_WarnLow].SetDefaultValue(warnLow);
 }
 
-bool SVRangeClass::getInputValue(double& rValue)
+bool SVRange::getInputValue(double& rValue)
 {
 	if (m_inputObjectInfo.IsConnected() && nullptr != m_inputObjectInfo.GetInputObjectInfo().getObject())
 	{
@@ -294,7 +294,7 @@ bool SVRangeClass::getInputValue(double& rValue)
 	return false;
 }
 
-HRESULT SVRangeClass::getValue(RangeEnum::ERange ra, double &rValue)
+HRESULT SVRange::getValue(RangeEnum::ERange ra, double &rValue)
 {
 	switch (ra)
 	{
@@ -310,7 +310,7 @@ HRESULT SVRangeClass::getValue(RangeEnum::ERange ra, double &rValue)
 	return S_OK;
 };
 
-bool SVRangeClass::checkLinkedValues(RangeEnum::ERange firstType, RangeEnum::ERange secondType, SvStl::MessageContainerVector* pErrorMessages)
+bool SVRange::checkLinkedValues(RangeEnum::ERange firstType, RangeEnum::ERange secondType, SvStl::MessageContainerVector* pErrorMessages)
 {
 	static std::map<RangeEnum::ERange, SvStl::MessageTextEnum> enumTids
 	{

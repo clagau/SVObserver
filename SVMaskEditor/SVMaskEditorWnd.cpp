@@ -11,7 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "SVMaskEditorCtl.h"
+#include "SVMaskEditorCtrl.h"
 #include "SVMaskEditorDialog.h"
 #include "SVMaskEditorWnd.h"
 #pragma endregion Includes
@@ -23,9 +23,9 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
-// SVMaskEditorWndClass
+// SVMaskEditorWnd
 
-SVMaskEditorWndClass::SVMaskEditorWndClass()
+SVMaskEditorWnd::SVMaskEditorWnd()
 {
 	EnableAutomation();
 
@@ -33,11 +33,11 @@ SVMaskEditorWndClass::SVMaskEditorWndClass()
 	bPerformDblClk = FALSE;
 }
 
-SVMaskEditorWndClass::~SVMaskEditorWndClass()
+SVMaskEditorWnd::~SVMaskEditorWnd()
 {
 }
 
-void SVMaskEditorWndClass::OnFinalRelease()
+void SVMaskEditorWnd::OnFinalRelease()
 {
 	// When the last reference for an automation object is released
 	// OnFinalRelease is called.  The base class will automatically
@@ -48,8 +48,8 @@ void SVMaskEditorWndClass::OnFinalRelease()
 }
 
 
-BEGIN_MESSAGE_MAP(SVMaskEditorWndClass, CWnd)
-	//{{AFX_MSG_MAP(SVMaskEditorWndClass)
+BEGIN_MESSAGE_MAP(SVMaskEditorWnd, CWnd)
+	//{{AFX_MSG_MAP(SVMaskEditorWnd)
 	ON_WM_HSCROLL()
 	ON_WM_VSCROLL()
 	ON_WM_PAINT()
@@ -60,8 +60,8 @@ BEGIN_MESSAGE_MAP(SVMaskEditorWndClass, CWnd)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-BEGIN_DISPATCH_MAP(SVMaskEditorWndClass, CWnd)
-	//{{AFX_DISPATCH_MAP(SVMaskEditorWndClass)
+BEGIN_DISPATCH_MAP(SVMaskEditorWnd, CWnd)
+	//{{AFX_DISPATCH_MAP(SVMaskEditorWnd)
 		// NOTE - the ClassWizard will add and remove mapping macros here.
 	//}}AFX_DISPATCH_MAP
 END_DISPATCH_MAP()
@@ -74,14 +74,14 @@ END_DISPATCH_MAP()
 constexpr IID IID_ISVMaskEditorWndClass =
 { 0x326bf441, 0xebc4, 0x11d2, { 0xa7, 0x5c, 0x0, 0x10, 0x6f, 0x0, 0xc, 0x7a } };
 
-BEGIN_INTERFACE_MAP(SVMaskEditorWndClass, CWnd)
-	INTERFACE_PART(SVMaskEditorWndClass, IID_ISVMaskEditorWndClass, Dispatch)
+BEGIN_INTERFACE_MAP(SVMaskEditorWnd, CWnd)
+	INTERFACE_PART(SVMaskEditorWnd, IID_ISVMaskEditorWndClass, Dispatch)
 END_INTERFACE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
-// SVMaskEditorWndClass message handlers
+// SVMaskEditorWnd message handlers
 
-void SVMaskEditorWndClass::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
+void SVMaskEditorWnd::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
 {
     SCROLLINFO sInfo;
     sInfo.cbSize = sizeof( SCROLLINFO );
@@ -126,7 +126,7 @@ void SVMaskEditorWndClass::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrol
 	CWnd::OnHScroll(nSBCode, nPos, pScrollBar);
 }
 
-void SVMaskEditorWndClass::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
+void SVMaskEditorWnd::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
 {
     SCROLLINFO sInfo;
     sInfo.cbSize = sizeof( SCROLLINFO );
@@ -170,7 +170,7 @@ void SVMaskEditorWndClass::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrol
 	CWnd::OnVScroll(nSBCode, nPos, pScrollBar);
 }
 
-void SVMaskEditorWndClass::OnPaint() 
+void SVMaskEditorWnd::OnPaint() 
 {
 	CPaintDC dc(this); // device context for painting
 
@@ -179,7 +179,7 @@ void SVMaskEditorWndClass::OnPaint()
 
 
 
-void SVMaskEditorWndClass::OnLButtonDown( UINT nFlags, CPoint point )
+void SVMaskEditorWnd::OnLButtonDown( UINT nFlags, CPoint point )
 {
 	if( PMother && ! bPerformDblClk )
 		PMother->CanvasLButtonDown( nFlags, point );
@@ -187,7 +187,7 @@ void SVMaskEditorWndClass::OnLButtonDown( UINT nFlags, CPoint point )
 	CWnd::OnLButtonDown( nFlags, point );
 }
 
-void SVMaskEditorWndClass::OnLButtonDblClk( UINT nFlags, CPoint point ) 
+void SVMaskEditorWnd::OnLButtonDblClk( UINT nFlags, CPoint point ) 
 {
 	if( PMother )
 	{
@@ -199,7 +199,7 @@ void SVMaskEditorWndClass::OnLButtonDblClk( UINT nFlags, CPoint point )
 	CWnd::OnLButtonDblClk( nFlags, point );
 }
 
-void SVMaskEditorWndClass::OnLButtonUp( UINT nFlags, CPoint point ) 
+void SVMaskEditorWnd::OnLButtonUp( UINT nFlags, CPoint point ) 
 {
 	if( PMother && ! bPerformDblClk )
 		PMother->CanvasLButtonUp( nFlags, point );
@@ -210,7 +210,7 @@ void SVMaskEditorWndClass::OnLButtonUp( UINT nFlags, CPoint point )
 	bPerformDblClk = FALSE;
 }
 
-void SVMaskEditorWndClass::OnMouseMove( UINT nFlags, CPoint point ) 
+void SVMaskEditorWnd::OnMouseMove( UINT nFlags, CPoint point ) 
 {
 	if( PMother && ! bPerformDblClk )
 		PMother->CanvasMouseMove( nFlags, point );

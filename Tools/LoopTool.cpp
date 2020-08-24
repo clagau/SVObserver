@@ -14,7 +14,7 @@
 #include "SVStatusLibrary/SVRunStatus.h"
 #pragma endregion Includes
 
-//This comment is to avoid that the SVConditionalClass include is marked as not required due to forward declaration from a base class
+//This comment is to avoid that the SVConditional include is marked as not required due to forward declaration from a base class
 
 namespace SvTo
 {

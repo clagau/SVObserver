@@ -26,10 +26,10 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVLUTEquationClass, SvPb::LUTEquationClassId);
+SV_IMPLEMENT_CLASS( SVLUTEquation, SvPb::LUTEquationClassId);
 
-SVLUTEquationClass::SVLUTEquationClass( SVObjectClass* POwner, int StringResourceID )
-				   :SVEquationClass( POwner, StringResourceID )
+SVLUTEquation::SVLUTEquation( SVObjectClass* POwner, int StringResourceID )
+				   :SVEquation( POwner, StringResourceID )
 {
 	init();
 }
@@ -39,7 +39,7 @@ SVLUTEquationClass::SVLUTEquationClass( SVObjectClass* POwner, int StringResourc
 // -----------------------------------------------------------------------------
 // .Description : Initialization of newly Instantiated Object
 ////////////////////////////////////////////////////////////////////////////////
-void SVLUTEquationClass::init()
+void SVLUTEquation::init()
 {
 	// Identify our output type
 	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVEquationObjectType;
@@ -72,7 +72,7 @@ void SVLUTEquationClass::init()
 	addDefaultInputObjects();
 }
 
-SVLUTEquationClass::~SVLUTEquationClass()
+SVLUTEquation::~SVLUTEquation()
 {
 }
 
@@ -81,9 +81,9 @@ SVLUTEquationClass::~SVLUTEquationClass()
 // -----------------------------------------------------------------------------
 // .Description : Creates this object.
 ////////////////////////////////////////////////////////////////////////////////
-bool SVLUTEquationClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
+bool SVLUTEquation::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool bOk = SVEquationClass::CreateObject(rCreateStructure);
+	bool bOk = SVEquation::CreateObject(rCreateStructure);
 
 	// Set / Reset Printable Flag
 	m_lutIndex.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
@@ -94,7 +94,7 @@ bool SVLUTEquationClass::CreateObject( const SVObjectLevelCreateStruct& rCreateS
 	return bOk;
 }
 
-bool SVLUTEquationClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
+bool SVLUTEquation::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 
@@ -115,7 +115,7 @@ bool SVLUTEquationClass::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 //				:
 //              : The LUT Index variable is running from 0 to 255, while  
 //				: onRun(...) of this class is processed. 
-//				: ( Refer to SVLUTEquationClass::onRun(...) ).
+//				: ( Refer to SVLUTEquation::onRun(...) ).
 //				: 
 //				: The result of this equation is then placed in the result vector
 //				:
@@ -124,7 +124,7 @@ bool SVLUTEquationClass::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 //				: ( i.e. if your correlated tool is added to the tool set,
 //				:   after the user clicked on 'Add XXXTool' ).
 ////////////////////////////////////////////////////////////////////////////////
-bool SVLUTEquationClass::SetDefaultFormula(SvStl::MessageContainerVector *pErrorMessages)
+bool SVLUTEquation::SetDefaultFormula(SvStl::MessageContainerVector *pErrorMessages)
 {
 	// Get current complete name of LUT Index...
 	std::string Name = m_lutIndex.GetObjectNameToObjectType();
@@ -161,7 +161,7 @@ bool SVLUTEquationClass::SetDefaultFormula(SvStl::MessageContainerVector *pError
 //				: Use the m_lutIndex as variable in the equation, if you want to
 //				: index the values. ( m_lutIndex is running from 0 to 255 )
 ////////////////////////////////////////////////////////////////////////////////
-bool SVLUTEquationClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVLUTEquation::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	bool   bRetVal   = true;
 	double dResult   = 0.0;

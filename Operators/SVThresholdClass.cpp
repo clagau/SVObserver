@@ -88,13 +88,13 @@ void SVThresholdClass::init()
 	m_pixelNumber		   = 0;
 
 	// Add equation friends...
-	SVUpperThresholdEquationClass* pUTFriend = new SVUpperThresholdEquationClass( this );
+	SVUpperThresholdEquation* pUTFriend = new SVUpperThresholdEquation( this );
 	if( pUTFriend )
 		AddFriend( pUTFriend->getObjectId() );
-	SVLowerThresholdEquationClass* pLTFriend = new SVLowerThresholdEquationClass( this );
+	SVLowerThresholdEquation* pLTFriend = new SVLowerThresholdEquation( this );
 	if( pLTFriend )
 		AddFriend( pLTFriend->getObjectId() );
-	SVAutoThresholdEquationClass* pATFriend = new SVAutoThresholdEquationClass( this );
+	SVAutoThresholdEquation* pATFriend = new SVAutoThresholdEquation( this );
 	if( pATFriend )
 		AddFriend( pATFriend->getObjectId() );
 

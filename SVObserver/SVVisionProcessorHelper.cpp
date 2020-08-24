@@ -193,7 +193,7 @@ HRESULT SVVisionProcessorHelper::GetDataDefinitionList(const std::string& rInspe
 	if (SVConfigurationObject::GetInspection(rInspectionName.c_str(), pInspection))
 	{
 		// Get Data Definition list from inspection
-		SVToolSetClass* pToolSet = pInspection->GetToolSet();
+		SVToolSet* pToolSet = pInspection->GetToolSet();
 		SvIe::SVTaskObjectListClass* pTaskObjectList = dynamic_cast <SvIe::SVTaskObjectListClass*> (pToolSet);
 
 		if (l_ValueFilter != -1)

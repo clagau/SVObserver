@@ -23,7 +23,7 @@
 
 namespace SvOp
 {
-class SVBarCodeResultClass;
+class SVBarCodeResult;
 }
 
 namespace SvAo
@@ -64,7 +64,7 @@ private:
 
 
 	bool m_bHasLicenseError;
-	SvOp::SVBarCodeResultClass* m_pBarCodeResult{nullptr};
+	SvOp::SVBarCodeResult* m_pBarCodeResult{nullptr};
 	std::string m_RegExpressionValue;
 	std::string m_StringFileName;
 

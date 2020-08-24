@@ -33,7 +33,7 @@ namespace SvOp
 // .Special : Threshold Operator, if he things he is the first one, but 
 //			: thresholding is deactivated, he is doing a copy (input to input)
 ////////////////////////////////////////////////////////////////////////////////
-class SVInPlaceImageOperatorListClass : public SVUnaryImageOperatorListClass 
+class SVInPlaceImageOperatorListClass : public SVUnaryImageOperatorList 
 {
 	SV_DECLARE_CLASS( SVInPlaceImageOperatorListClass )
 

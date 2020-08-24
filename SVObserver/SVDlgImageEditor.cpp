@@ -279,7 +279,7 @@ HRESULT SVDlgImageEditor::ClearOverlayPoints()
 }
 
 
-HRESULT SVDlgImageEditor::AddOverlayPoints(const SVDrawObjectListClass& rDrawObjectList, SVDlgImageOverlayOptions options )
+HRESULT SVDlgImageEditor::AddOverlayPoints(const SVDrawObjectList& rDrawObjectList, SVDlgImageOverlayOptions options )
 {
 	HRESULT hr = S_OK;
 
@@ -291,7 +291,7 @@ HRESULT SVDlgImageEditor::AddOverlayPoints(const SVDrawObjectListClass& rDrawObj
 	return hr;
 }
 
-HRESULT SVDlgImageEditor::AddOverlayPoints(const SVDrawObjectClass& rDrawObject, SVDlgImageOverlayOptions options )
+HRESULT SVDlgImageEditor::AddOverlayPoints(const SVDrawObject& rDrawObject, SVDlgImageOverlayOptions options )
 {
 	HRESULT hr = S_OK;
 

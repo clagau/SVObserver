@@ -27,15 +27,15 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
-// SVMaskEditorDialogClass dialog
+// SVMaskEditorDialog dialog
 
 
-SVMaskEditorDialogClass::SVMaskEditorDialogClass(CWnd* pParent /*=nullptr*/)
-	: CDialog(SVMaskEditorDialogClass::IDD, pParent)
+SVMaskEditorDialog::SVMaskEditorDialog(CWnd* pParent /*=nullptr*/)
+	: CDialog(SVMaskEditorDialog::IDD, pParent)
 {
 	EnableAutomation();
 
-	//{{AFX_DATA_INIT(SVMaskEditorDialogClass)
+	//{{AFX_DATA_INIT(SVMaskEditorDialog)
 	StrZoom = _T("");
 	//}}AFX_DATA_INIT
 
@@ -56,7 +56,7 @@ SVMaskEditorDialogClass::SVMaskEditorDialogClass(CWnd* pParent /*=nullptr*/)
 }
 
 
-void SVMaskEditorDialogClass::OnFinalRelease()
+void SVMaskEditorDialog::OnFinalRelease()
 {
 	// When the last reference for an automation object is released
 	// OnFinalRelease is called.  The base class will automatically
@@ -66,10 +66,10 @@ void SVMaskEditorDialogClass::OnFinalRelease()
 	CDialog::OnFinalRelease();
 }
 
-void SVMaskEditorDialogClass::DoDataExchange(CDataExchange* pDX)
+void SVMaskEditorDialog::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(SVMaskEditorDialogClass)
+	//{{AFX_DATA_MAP(SVMaskEditorDialog)
 	DDX_Control(pDX, IDC_ARITHMETIC_COMBO, ArithmeticComboCtl);
 	DDX_Text(pDX, IDC_ZOOM_VALUES_STATIC, StrZoom);
 	DDV_MaxChars(pDX, StrZoom, 25);
@@ -77,8 +77,8 @@ void SVMaskEditorDialogClass::DoDataExchange(CDataExchange* pDX)
 }
 
 
-BEGIN_MESSAGE_MAP(SVMaskEditorDialogClass, CDialog)
-	//{{AFX_MSG_MAP(SVMaskEditorDialogClass)
+BEGIN_MESSAGE_MAP(SVMaskEditorDialog, CDialog)
+	//{{AFX_MSG_MAP(SVMaskEditorDialog)
 	ON_BN_CLICKED(IDC_UNDO_BUTTON, OnUndoButton)
 	ON_BN_CLICKED(IDC_REDO_BUTTON, OnRedoButton)
 	ON_BN_CLICKED(IDC_ZOOM_IN_BUTTON, OnZoomInButton)
@@ -101,8 +101,8 @@ BEGIN_MESSAGE_MAP(SVMaskEditorDialogClass, CDialog)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-BEGIN_DISPATCH_MAP(SVMaskEditorDialogClass, CDialog)
-	//{{AFX_DISPATCH_MAP(SVMaskEditorDialogClass)
+BEGIN_DISPATCH_MAP(SVMaskEditorDialog, CDialog)
+	//{{AFX_DISPATCH_MAP(SVMaskEditorDialog)
 		// NOTE - the ClassWizard will add and remove mapping macros here.
 	//}}AFX_DISPATCH_MAP
 END_DISPATCH_MAP()
@@ -115,14 +115,14 @@ END_DISPATCH_MAP()
 constexpr IID IID_ISVMaskEditorDialogClass =
 {0xbb21d9ef, 0xe6f9, 0x11d2, { 0xa7, 0x7b, 0x0, 0x10, 0x6f, 0x0, 0xc, 0x7d }};
 
-BEGIN_INTERFACE_MAP(SVMaskEditorDialogClass, CDialog)
-	INTERFACE_PART(SVMaskEditorDialogClass, IID_ISVMaskEditorDialogClass, Dispatch)
+BEGIN_INTERFACE_MAP(SVMaskEditorDialog, CDialog)
+	INTERFACE_PART(SVMaskEditorDialog, IID_ISVMaskEditorDialogClass, Dispatch)
 END_INTERFACE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
-// SVMaskEditorDialogClass message handlers
+// SVMaskEditorDialog message handlers
 
-BOOL SVMaskEditorDialogClass::OnInitDialog()
+BOOL SVMaskEditorDialog::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
@@ -346,20 +346,20 @@ BOOL SVMaskEditorDialogClass::OnInitDialog()
 				  // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void SVMaskEditorDialogClass::OnCancel()
+void SVMaskEditorDialog::OnCancel()
 {
 	freeMilResources();
 	CDialog::OnCancel();
 }
 
-void SVMaskEditorDialogClass::OnOK()
+void SVMaskEditorDialog::OnOK()
 {
 	freeMilResources();
 	CDialog::OnOK();
 }
 
 
-void SVMaskEditorDialogClass::freeMilResources()
+void SVMaskEditorDialog::freeMilResources()
 {
 	if (!milDisplayBuffer.empty())
 	{
@@ -373,7 +373,7 @@ void SVMaskEditorDialogClass::freeMilResources()
 }
 
 
-void SVMaskEditorDialogClass::prepareMaskBuffer()
+void SVMaskEditorDialog::prepareMaskBuffer()
 {
 	// Get DC...
 	SVMatroxBufferInterface::Set(milMaskBuffer, SVBufWindowDCAlloc, (long long)SVValueDefault);
@@ -400,12 +400,12 @@ void SVMaskEditorDialogClass::prepareMaskBuffer()
 // Processes the Arithmetic Operation which is specified by m_lMilArithmeticOperation
 // using the original image defined by Input:HImageBitmap and 
 // prepared Mask Buffer defined by Input:Mask
-void SVMaskEditorDialogClass::evaluateMask()
+void SVMaskEditorDialog::evaluateMask()
 {
 	SVMatroxImageInterface::Arithmetic(milDisplayBuffer, milImageBuffer, milMaskBuffer, static_cast<SVImageOperationTypeEnum>(m_lMilArithmeticOperation));
 }
 
-void SVMaskEditorDialogClass::zoom(int ZoomOperand)
+void SVMaskEditorDialog::zoom(int ZoomOperand)
 {
 	// Update zoom factors...
 	double l_dZoomX = 0.0;
@@ -507,7 +507,7 @@ void SVMaskEditorDialogClass::zoom(int ZoomOperand)
 	}
 }
 
-void SVMaskEditorDialogClass::PanY(int OffsetY)
+void SVMaskEditorDialog::PanY(int OffsetY)
 {
 	SVMatroxDisplayInterface::Get(milDisplay, SVDispPanX, currentPanX);
 	// Update pan values...
@@ -532,7 +532,7 @@ void SVMaskEditorDialogClass::PanY(int OffsetY)
 }
 
 
-void SVMaskEditorDialogClass::PanX(int OffsetX)
+void SVMaskEditorDialog::PanX(int OffsetX)
 {
 	SVMatroxDisplayInterface::Get(milDisplay, SVDispPanY, currentPanY);
 	// Update pan values...
@@ -556,7 +556,7 @@ void SVMaskEditorDialogClass::PanX(int OffsetX)
 
 }
 
-SVGraphixDrawObjectClass* SVMaskEditorDialogClass::getDrawObject()
+SVGraphixDrawObjectClass* SVMaskEditorDialog::getDrawObject()
 {
 	if (!bNewDrawObject)
 	{
@@ -579,13 +579,13 @@ SVGraphixDrawObjectClass* SVMaskEditorDialogClass::getDrawObject()
 	return pCurrentDrawObject;
 }
 
-void SVMaskEditorDialogClass::enableButtons()
+void SVMaskEditorDialog::enableButtons()
 {
 	GetDlgItem(IDC_REDO_BUTTON)->EnableWindow(GraphixObject.canRedoSteps());
 	GetDlgItem(IDC_UNDO_BUTTON)->EnableWindow(GraphixObject.canUndoSteps());
 }
 
-void SVMaskEditorDialogClass::ScalePoint(CPoint& RPoint, BOOL BDown)
+void SVMaskEditorDialog::ScalePoint(CPoint& RPoint, BOOL BDown)
 {
 	int zX = currentZoomX;
 	int zY = currentZoomY;
@@ -604,7 +604,7 @@ void SVMaskEditorDialogClass::ScalePoint(CPoint& RPoint, BOOL BDown)
 
 }
 
-void SVMaskEditorDialogClass::OnUndoButton()
+void SVMaskEditorDialog::OnUndoButton()
 {
 	GraphixObject.undoOnStep();
 	prepareMaskBuffer();
@@ -612,7 +612,7 @@ void SVMaskEditorDialogClass::OnUndoButton()
 	enableButtons();
 }
 
-void SVMaskEditorDialogClass::OnRedoButton()
+void SVMaskEditorDialog::OnRedoButton()
 {
 	GraphixObject.redoOnStep();
 	prepareMaskBuffer();
@@ -620,7 +620,7 @@ void SVMaskEditorDialogClass::OnRedoButton()
 	enableButtons();
 }
 
-void SVMaskEditorDialogClass::OnZoomInButton()
+void SVMaskEditorDialog::OnZoomInButton()
 {
 	// Zoom in...
 	zoom(+1);
@@ -629,7 +629,7 @@ void SVMaskEditorDialogClass::OnZoomInButton()
 	UpdateData(FALSE);
 }
 
-void SVMaskEditorDialogClass::OnZoomOutButton()
+void SVMaskEditorDialog::OnZoomOutButton()
 {
 	// Zoom out...
 	zoom(-1);
@@ -638,7 +638,7 @@ void SVMaskEditorDialogClass::OnZoomOutButton()
 	UpdateData(FALSE);
 }
 
-void SVMaskEditorDialogClass::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
+void SVMaskEditorDialog::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
 
 	CDialog::OnHScroll(nSBCode, nPos, pScrollBar);
@@ -646,7 +646,7 @@ void SVMaskEditorDialogClass::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pSc
 	UpdateData(FALSE);
 }
 
-void SVMaskEditorDialogClass::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
+void SVMaskEditorDialog::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
 
 	CDialog::OnVScroll(nSBCode, nPos, pScrollBar);
@@ -654,55 +654,55 @@ void SVMaskEditorDialogClass::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pSc
 	UpdateData(FALSE);
 }
 
-void SVMaskEditorDialogClass::OnPenRadio()
+void SVMaskEditorDialog::OnPenRadio()
 {
 	currentDrawObjectSelection = SVDrawObjectPoint;
 	bNewDrawObject = TRUE;
 }
 
-void SVMaskEditorDialogClass::OnPolygonRadio()
+void SVMaskEditorDialog::OnPolygonRadio()
 {
 	currentDrawObjectSelection = SVDrawObjectPolygon;
 	bNewDrawObject = TRUE;
 }
 
-void SVMaskEditorDialogClass::OnRectRadio()
+void SVMaskEditorDialog::OnRectRadio()
 {
 	currentDrawObjectSelection = SVDrawObjectRect;
 	bNewDrawObject = TRUE;
 }
 
-void SVMaskEditorDialogClass::OnEllipseRadio()
+void SVMaskEditorDialog::OnEllipseRadio()
 {
 	currentDrawObjectSelection = SVDrawObjectEllipse;
 	bNewDrawObject = TRUE;
 }
 
-void SVMaskEditorDialogClass::OnFilledEllipseRadio()
+void SVMaskEditorDialog::OnFilledEllipseRadio()
 {
 	currentDrawObjectSelection = SVDrawObjectFilledEllipse;
 	bNewDrawObject = TRUE;
 }
 
-void SVMaskEditorDialogClass::OnFilledRectRadio()
+void SVMaskEditorDialog::OnFilledRectRadio()
 {
 	currentDrawObjectSelection = SVDrawObjectFilledRect;
 	bNewDrawObject = TRUE;
 }
 
-void SVMaskEditorDialogClass::OnPolylineRadio()
+void SVMaskEditorDialog::OnPolylineRadio()
 {
 	currentDrawObjectSelection = SVDrawObjectPolyline;
 	bNewDrawObject = TRUE;
 }
 
-void SVMaskEditorDialogClass::OnFillRadio()
+void SVMaskEditorDialog::OnFillRadio()
 {
 	currentDrawObjectSelection = SVDrawObjectFill;
 	bNewDrawObject = TRUE;
 }
 
-void SVMaskEditorDialogClass::OnSelchangeArithmeticCombo()
+void SVMaskEditorDialog::OnSelchangeArithmeticCombo()
 {
 	m_lMilArithmeticOperation = (long)ArithmeticComboCtl.GetItemData(ArithmeticComboCtl.GetCurSel());
 	// Update mask and perform masking...
@@ -711,7 +711,7 @@ void SVMaskEditorDialogClass::OnSelchangeArithmeticCombo()
 }
 
 
-void SVMaskEditorDialogClass::CanvasLButtonDown(UINT , CPoint point)
+void SVMaskEditorDialog::CanvasLButtonDown(UINT , CPoint point)
 {
 	CRect rect;
 	DisplayWndCtl.GetClientRect(&rect);
@@ -799,7 +799,7 @@ void SVMaskEditorDialogClass::CanvasLButtonDown(UINT , CPoint point)
 	UpdateData(FALSE);
 }
 
-void SVMaskEditorDialogClass::CanvasLButtonUp(UINT , CPoint point)
+void SVMaskEditorDialog::CanvasLButtonUp(UINT , CPoint point)
 {
 	// Regard Zoom Factors...
 	ScalePoint(point, TRUE);
@@ -872,7 +872,7 @@ void SVMaskEditorDialogClass::CanvasLButtonUp(UINT , CPoint point)
 }
 
 
-void SVMaskEditorDialogClass::CanvasLButtonDblClk(UINT , CPoint point)
+void SVMaskEditorDialog::CanvasLButtonDblClk(UINT , CPoint point)
 {
 	// Regard Zoom Factors...
 	ScalePoint(point, TRUE);
@@ -925,7 +925,7 @@ void SVMaskEditorDialogClass::CanvasLButtonDblClk(UINT , CPoint point)
 	UpdateData(FALSE);
 }
 
-void SVMaskEditorDialogClass::CanvasMouseMove(UINT, CPoint point)
+void SVMaskEditorDialog::CanvasMouseMove(UINT, CPoint point)
 {
 	// Regard Zoom Factors...
 	ScalePoint(point, TRUE);

@@ -3,7 +3,7 @@
 //* All Rights Reserved
 //******************************************************************************
 //* .Module Name     : SVIPSplitterFrame
-//* .File Name       : $Workfile:   SVIPChildFrm.h  $
+//* .File Name       : $Workfile:   SVIPSplitterFrame.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   14 Aug 2014 16:03:20  $
@@ -36,7 +36,7 @@ protected:
 	virtual BOOL OnCreateClient( LPCREATESTRUCT lpcs, CCreateContext* PContext ) override;
 
 public:
-	void SetDefaultPaneSizes( RECT &BoundingRect );
+	void SetDefaultPaneSizes(const RECT &BoundingRect );
 
 	//{{AFX_VIRTUAL(SVIPSplitterFrame)
 	public:

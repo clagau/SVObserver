@@ -26,23 +26,23 @@ static char THIS_FILE[] = __FILE__;
 #pragma endregion Declarations
 
 
-SV_IMPLEMENT_CLASS( SVAutoThresholdEquationClass, SvPb::AutoThresholdEquationClassId);
+SV_IMPLEMENT_CLASS( SVAutoThresholdEquation, SvPb::AutoThresholdEquationClassId);
 
 ////////////////////////////////////////////////////////////////////////////////
 // 
 ////////////////////////////////////////////////////////////////////////////////
-SVAutoThresholdEquationClass::SVAutoThresholdEquationClass( SVObjectClass* POwner, int StringResourceID )
-							  :SVEquationClass( POwner, StringResourceID )
+SVAutoThresholdEquation::SVAutoThresholdEquation( SVObjectClass* POwner, int StringResourceID )
+							  :SVEquation( POwner, StringResourceID )
 {
 	init();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// .Title       : Initialization of class SVAutoThresholdEquationClass
+// .Title       : Initialization of class SVAutoThresholdEquation
 // -----------------------------------------------------------------------------
 // .Description : Initialization of newly Instantiated Object
 ////////////////////////////////////////////////////////////////////////////////
-void SVAutoThresholdEquationClass::init()
+void SVAutoThresholdEquation::init()
 {
 	// Identify our output type
 	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVEquationObjectType;
@@ -66,14 +66,14 @@ void SVAutoThresholdEquationClass::init()
 ////////////////////////////////////////////////////////////////////////////////
 // 
 ////////////////////////////////////////////////////////////////////////////////
-SVAutoThresholdEquationClass::~SVAutoThresholdEquationClass()
+SVAutoThresholdEquation::~SVAutoThresholdEquation()
 {
 }
 
 
-bool SVAutoThresholdEquationClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
+bool SVAutoThresholdEquation::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	m_isCreated = SVEquationClass::CreateObject(rCreateStructure);
+	m_isCreated = SVEquation::CreateObject(rCreateStructure);
 
 	// Set/Reset printable Flags
 	result.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
@@ -86,7 +86,7 @@ bool SVAutoThresholdEquationClass::CreateObject( const SVObjectLevelCreateStruct
 ////////////////////////////////////////////////////////////////////////////////
 // If Conditional is disabled conditional.Run() returns always TRUE.
 // Otherwise the return value depends on the Conditional equation result!
-bool SVAutoThresholdEquationClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVAutoThresholdEquation::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	double Value = 0.0;
 

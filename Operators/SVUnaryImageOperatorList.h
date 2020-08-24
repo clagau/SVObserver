@@ -24,7 +24,7 @@ namespace SvOp
 {
 
 ////////////////////////////////////////////////////////////////////////////////
-// .Title       : SVUnaryImageOperatorListClass 
+// .Title       : SVUnaryImageOperatorList 
 // -----------------------------------------------------------------------------
 // .Description : New base class for 
 //				: #1 SVStdImageOperatorListClass		and
@@ -38,18 +38,18 @@ namespace SvOp
 //				: if we want to just apply image operators to an existing
 //				: image object ( to his owner TaskObject ).
 //				:
-//				: The #1 replaces the old SVUnaryImageOperatorListClass and 
+//				: The #1 replaces the old SVUnaryImageOperatorList and 
 //				: for compatibility to older versions it inherits the classID
-//				: of the old SVUnaryImageOperatorListClass.
+//				: of the old SVUnaryImageOperatorList.
 ////////////////////////////////////////////////////////////////////////////////
-class SVUnaryImageOperatorListClass : public SvIe::SVTaskObjectListClass
+class SVUnaryImageOperatorList : public SvIe::SVTaskObjectListClass
 {
 public:
 	friend class SVUnaryImageOperatorClass;
 
 public:
-	SVUnaryImageOperatorListClass( SVObjectClass* POwner = nullptr , int StringResourceID = IDS_CLASSNAME_SVUNARYIMAGEOPERATORLIST );
-	virtual ~SVUnaryImageOperatorListClass();
+	SVUnaryImageOperatorList( SVObjectClass* POwner = nullptr , int StringResourceID = IDS_CLASSNAME_SVUNARYIMAGEOPERATORLIST );
+	virtual ~SVUnaryImageOperatorList();
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 

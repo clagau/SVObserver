@@ -22,7 +22,7 @@ namespace SvOg
 		//{{AFX_DATA(BlobAnalyzer2Draw)
 		enum { IDD = IDD_BLOB2_DRAW_DIALOG };
 
-		SvMc::SVEnumerateComboClass m_cbBlobType;
+		SvMc::SVEnumerateCombo m_cbBlobType;
 		//}}AFX_DATA
 #pragma endregion Declarations
 

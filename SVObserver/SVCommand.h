@@ -44,30 +44,30 @@ enum SVIMCOMMANDSRV_VERSION
 @SVObjectOperations This object presents operations to perform the following functions: Get Application State, Load Configuration, Save Configuration, Get Parameter Data, Get Image Data, Set Parameter Data, Set Image Data, Stream Parameter Data, Collect Condition Image and Parameter Data, and Create and Modify OCR Font Files.
 
 */
-class __declspec(novtable) CSVCommand :
+class __declspec(novtable) SVCommand :
 	public CComObjectRootEx<CComSingleThreadModel>,
-	public CComCoClass<CSVCommand, &CLSID_SVCommand>,
+	public CComCoClass<SVCommand, &CLSID_SVCommand>,
 	public IDispatchImpl<ISVCommand, &IID_ISVCommand, &LIBID_SVObserver>,
-	public IConnectionPointContainerImpl<CSVCommand>,
-	public CProxy_ISVCommandObserverEvents< CSVCommand >
+	public IConnectionPointContainerImpl<SVCommand>,
+	public CProxy_ISVCommandObserverEvents< SVCommand >
 {
 
 public:
 
-	CSVCommand();
-	virtual ~CSVCommand();
+	SVCommand();
+	virtual ~SVCommand();
 	
 DECLARE_REGISTRY_RESOURCEID(IDR_SVCOMMAND)
 
 DECLARE_PROTECT_FINAL_CONSTRUCT()
 
-BEGIN_COM_MAP(CSVCommand)
+BEGIN_COM_MAP(SVCommand)
 	COM_INTERFACE_ENTRY(ISVCommand)
 	COM_INTERFACE_ENTRY2(IDispatch, ISVCommand)
 	COM_INTERFACE_ENTRY_IMPL(IConnectionPointContainer)
 END_COM_MAP()
 
-BEGIN_CONNECTION_POINT_MAP(CSVCommand)
+BEGIN_CONNECTION_POINT_MAP(SVCommand)
 	CONNECTION_POINT_ENTRY(IID__ISVCommandObserverEvents)
 END_CONNECTION_POINT_MAP()
 
@@ -500,13 +500,13 @@ public:
 protected:
     static HRESULT SafeArrayGetElementPointer(SAFEARRAY* psa, long* rgIndices, void** ppv);
 
-	virtual HRESULT StoreEventObserver( DWORD dwCookie, CComPtr< CSVCommand > p_pObserver ) override;
-	virtual HRESULT ReleaseEventObserver( DWORD dwCookie, CComPtr< CSVCommand > p_pObserver ) override;
+	virtual HRESULT StoreEventObserver( DWORD dwCookie, CComPtr< SVCommand > p_pObserver ) override;
+	virtual HRESULT ReleaseEventObserver( DWORD dwCookie, CComPtr< SVCommand > p_pObserver ) override;
 
     IStream *m_pStream;
 
 private:
-};// end class CSVCommand
+};// end class SVCommand
 
-OBJECT_ENTRY_AUTO( __uuidof(SVCommand), CSVCommand ) 
+OBJECT_ENTRY_AUTO( __uuidof(SVCommand), SVCommand ) 
 		

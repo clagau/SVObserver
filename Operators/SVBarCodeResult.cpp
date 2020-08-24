@@ -2,14 +2,14 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVBarCodeResultClass
+//* .Module Name     : SVBarCodeResult
 //* .File Name       : $Workfile:   SVBarCodeResult.cpp  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.4  $
 //* .Check In Date   : $Date:   15 May 2014 10:19:40  $
 //******************************************************************************
 
-// SVBarCodeResult.cpp: implementation of the SVBarCodeResultClass class.
+// SVBarCodeResult.cpp: implementation of the SVBarCodeResult class.
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -30,14 +30,14 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS(SVBarCodeResultClass, SvPb::BarCodeResultClassId);
+SV_IMPLEMENT_CLASS(SVBarCodeResult, SvPb::BarCodeResultClassId);
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-SVBarCodeResultClass::SVBarCodeResultClass(SVObjectClass* POwner, int StringResourceID)
-	: SVStringResultClass(POwner, StringResourceID)
+SVBarCodeResult::SVBarCodeResult(SVObjectClass* POwner, int StringResourceID)
+	: SVStringResult(POwner, StringResourceID)
 	, m_lTotalBytes(0L)
 	, m_nTotalCount(0)
 	, m_pBuffer(nullptr)
@@ -97,7 +97,7 @@ SVBarCodeResultClass::SVBarCodeResultClass(SVObjectClass* POwner, int StringReso
 	RegisterInputObject(&m_SVRegExpressionObjectInfo, _T("BarCodeResultString"));
 }
 
-SVBarCodeResultClass::~SVBarCodeResultClass()
+SVBarCodeResult::~SVBarCodeResult()
 {
 	if (m_pBuffer)
 	{
@@ -112,9 +112,9 @@ SVBarCodeResultClass::~SVBarCodeResultClass()
 	}
 }
 
-bool SVBarCodeResultClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
+bool SVBarCodeResult::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 {
-	bool Result = SVStringResultClass::CreateObject(rCreateStructure);
+	bool Result = SVStringResult::CreateObject(rCreateStructure);
 	Result = Result && nullptr != SvOl::getInput<SvVol::SVStringValueObjectClass>(m_inputObjectInfo);
 	SvVol::SVStringValueObjectClass* pRegExpression = SvOl::getInput<SvVol::SVStringValueObjectClass>(m_SVRegExpressionObjectInfo);
 	Result = Result && nullptr != pRegExpression;
@@ -134,7 +134,7 @@ bool SVBarCodeResultClass::CreateObject(const SVObjectLevelCreateStruct& rCreate
 	return Result;
 }
 
-bool SVBarCodeResultClass::onRun(SVRunStatusClass &rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool SVBarCodeResult::onRun(SVRunStatusClass &rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	//@WARNING[MZA][7.50][17.01.2017] Not sure if we need to check ValidateLocal in Run-mode, maybe it is enough to check it in ResetObject
 	if (__super::onRun(rRunStatus, pErrorMessages) && ValidateLocal(pErrorMessages))
@@ -194,9 +194,9 @@ bool SVBarCodeResultClass::onRun(SVRunStatusClass &rRunStatus, SvStl::MessageCon
 	return false;
 }
 
-bool SVBarCodeResultClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
+bool SVBarCodeResult::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	bool Result = SVStringResultClass::ResetObject(pErrorMessages);
+	bool Result = SVStringResult::ResetObject(pErrorMessages);
 
 	SvOl::ValidateInput(m_SVRegExpressionObjectInfo);
 
@@ -213,7 +213,7 @@ bool SVBarCodeResultClass::ResetObject(SvStl::MessageContainerVector *pErrorMess
 	return Result && ValidateLocal(pErrorMessages);
 }
 
-HRESULT SVBarCodeResultClass::LoadMatchStringFile()
+HRESULT SVBarCodeResult::LoadMatchStringFile()
 {
 	HRESULT Result = S_OK;
 	
@@ -303,7 +303,7 @@ HRESULT SVBarCodeResultClass::LoadMatchStringFile()
 	return Result;
 }
 
-bool SVBarCodeResultClass::BuildHashTable(char *pBuffer)
+bool SVBarCodeResult::BuildHashTable(char *pBuffer)
 {
 	long lBufIndex = 0;
 	bool  bRet = true;
@@ -398,7 +398,7 @@ bool SVBarCodeResultClass::BuildHashTable(char *pBuffer)
 	return bRet;
 }
 
-void SVBarCodeResultClass::InsertValueToTable(short nValue, int nIndex)
+void SVBarCodeResult::InsertValueToTable(short nValue, int nIndex)
 {
 	// Check whether the location contains a data
 
@@ -420,7 +420,7 @@ void SVBarCodeResultClass::InsertValueToTable(short nValue, int nIndex)
 	}
 }
 
-int SVBarCodeResultClass::CheckStringInTable(const std::string& rMatchString)
+int SVBarCodeResult::CheckStringInTable(const std::string& rMatchString)
 {
 	int Result = -1;
 
@@ -466,7 +466,7 @@ int SVBarCodeResultClass::CheckStringInTable(const std::string& rMatchString)
 	return  Result;
 }
 
-bool SVBarCodeResultClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const
+bool SVBarCodeResult::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const
 {
 	if (!m_SVRegExpressionObjectInfo.IsConnected() || nullptr == m_SVRegExpressionObjectInfo.GetInputObjectInfo().getObject())
 	{

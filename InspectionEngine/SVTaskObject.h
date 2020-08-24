@@ -42,7 +42,7 @@ namespace SvVol
 
 class SVOutputInfoListClass;
 class SVRunStatusClass;
-class SVToolSetClass;
+class SVToolSet;
 
 namespace SvIe
 {
@@ -56,7 +56,7 @@ class SVTaskObjectClass : public SVObjectAppClass, public SvOi::ITaskObject
 	friend class SVTaskObjectListClass; // For access to Run()
 	friend class SvTo::SVToolClass; // For access to Run()
 	friend class SvTo::LoopTool; // For access to Run()
-	friend class SVToolSetClass; // For access to Run()
+	friend class SVToolSet; // For access to Run()
 public:
 	explicit SVTaskObjectClass(LPCSTR LPSZObjectName);
 	SVTaskObjectClass(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTASKOBJECT);

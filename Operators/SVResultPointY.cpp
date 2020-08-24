@@ -28,10 +28,10 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVPointYResultClass, SvPb::PointYResultClassId);
+SV_IMPLEMENT_CLASS( SVPointYResult, SvPb::PointYResultClassId);
 
-SVPointYResultClass::SVPointYResultClass( SVObjectClass* POwner, int StringResourceID )
-					:SVResultClass( POwner, StringResourceID )
+SVPointYResult::SVPointYResult( SVObjectClass* POwner, int StringResourceID )
+					:SVResult( POwner, StringResourceID )
 {
 	// Identify yourself
 	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVResultObjectType;
@@ -53,24 +53,24 @@ SVPointYResultClass::SVPointYResultClass( SVObjectClass* POwner, int StringResou
 
 	// Instantiate Dynamic Objects
 
-	// Construct the SVRangeClass via the ClassInfoStruct
+	// Construct the SVRange via the ClassInfoStruct
 	SvIe::SVClassInfoStruct rangeClassInfo;
 	SvDef::SVObjectTypeInfoStruct interfaceInfo;
 
-	// Declare Input Interface of the SVRangeClass...
+	// Declare Input Interface of the SVRange...
 	interfaceInfo.m_ObjectType = SvPb::SVValueObjectType;
 	interfaceInfo.m_SubType = SvPb::SVLongValueObjectType;
 	interfaceInfo.m_EmbeddedID = SvPb::YEId;
 	rangeClassInfo.m_DesiredInputVector.push_back( interfaceInfo );
 
-	// Describe the SVRangeClass ...
+	// Describe the SVRange ...
 	rangeClassInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVRangeObjectType;
 	rangeClassInfo.m_ObjectTypeInfo.m_SubType	= SvPb::SVNotSetSubObjectType;
 	rangeClassInfo.m_ClassId = SvPb::RangeClassId;
 	rangeClassInfo.m_ClassName = SvUl::LoadStdString( IDS_CLASSNAME_SVRANGE );
 
 	// Construct it
-	SVRangeClass* pRange = dynamic_cast<SVRangeClass*>(rangeClassInfo.Construct()); 
+	SVRange* pRange = dynamic_cast<SVRange*>(rangeClassInfo.Construct()); 
 	if (pRange)
 	{
 		Add(pRange);
@@ -80,14 +80,14 @@ SVPointYResultClass::SVPointYResultClass( SVObjectClass* POwner, int StringResou
 	addDefaultInputObjects();
 }
 
-SVPointYResultClass::~SVPointYResultClass()
+SVPointYResult::~SVPointYResult()
 {
 
 }
 
-bool SVPointYResultClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
+bool SVPointYResult::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool bOk = SVResultClass::CreateObject(rCreateStructure) && nullptr != SvOl::getInput<SvVol::SVPointValueObjectClass>(m_inputObjectInfo);
+	bool bOk = SVResult::CreateObject(rCreateStructure) && nullptr != SvOl::getInput<SvVol::SVPointValueObjectClass>(m_inputObjectInfo);
 
 	m_Y.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
 
@@ -96,7 +96,7 @@ bool SVPointYResultClass::CreateObject( const SVObjectLevelCreateStruct& rCreate
 	return bOk;
 }
 
-bool SVPointYResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVPointYResult::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	// All inputs and outputs must be validated first
 	if( __super::onRun( rRunStatus, pErrorMessages ) )

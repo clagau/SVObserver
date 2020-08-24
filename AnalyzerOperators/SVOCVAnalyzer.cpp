@@ -51,7 +51,7 @@ void SVOCVAnalyzer::init()
 	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVAnalyzerObjectType;
 	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVOCVAnalyzerObjectType;
 
-	SvOp::SVOCVAnalyzeResultClass* pAnalyzerResult = new SvOp::SVOCVAnalyzeResultClass(this);
+	SvOp::SVOCVAnalyzeResult* pAnalyzerResult = new SvOp::SVOCVAnalyzeResult(this);
 
 	// Children list defaults:
 	if(nullptr != pAnalyzerResult )
@@ -139,7 +139,7 @@ SvDef::StringVector SVOCVAnalyzer::getAnalyzerResult()
 {
 	SvDef::StringVector result;
 
-	SvOp::SVOCVAnalyzeResultClass* pOCVResult = dynamic_cast<SvOp::SVOCVAnalyzeResultClass*> (GetResultObject());
+	SvOp::SVOCVAnalyzeResult* pOCVResult = dynamic_cast<SvOp::SVOCVAnalyzeResult*> (GetResultObject());
 
 	if(nullptr != pOCVResult)
 	{

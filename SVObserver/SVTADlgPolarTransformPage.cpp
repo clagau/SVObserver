@@ -279,7 +279,7 @@ BOOL SVToolAdjustmentDialogPolarTransformPageClass::OnInitDialog()
 
 		// Get Evaluate Center X...
 		evaluateObjectInfo.m_SubType = SvPb::SVEvaluateCenterXObjectType;
-		m_pEvaluateCenterX = dynamic_cast<SvOp::SVEvaluateClass*>(m_pTaskObject->getFirstObject(evaluateObjectInfo));
+		m_pEvaluateCenterX = dynamic_cast<SvOp::SVEvaluate*>(m_pTaskObject->getFirstObject(evaluateObjectInfo));
 		if( m_pEvaluateCenterX )
 		{
 			// Get Center X Result...
@@ -289,7 +289,7 @@ BOOL SVToolAdjustmentDialogPolarTransformPageClass::OnInitDialog()
 
 		// Get Evaluate Center Y...
 		evaluateObjectInfo.m_SubType = SvPb::SVEvaluateCenterYObjectType;
-		m_pEvaluateCenterY = dynamic_cast<SvOp::SVEvaluateClass*>(m_pTaskObject->getFirstObject(evaluateObjectInfo));
+		m_pEvaluateCenterY = dynamic_cast<SvOp::SVEvaluate*>(m_pTaskObject->getFirstObject(evaluateObjectInfo));
 		if( m_pEvaluateCenterY )
 		{
 			// Get Center Y Result...
@@ -299,7 +299,7 @@ BOOL SVToolAdjustmentDialogPolarTransformPageClass::OnInitDialog()
 
 		// Get Evaluate Start Radius...
 		evaluateObjectInfo.m_SubType = SvPb::SVEvaluateStartRadiusObjectType;
-		m_pEvaluateStartRadius = dynamic_cast<SvOp::SVEvaluateClass*>(m_pTaskObject->getFirstObject(evaluateObjectInfo));
+		m_pEvaluateStartRadius = dynamic_cast<SvOp::SVEvaluate*>(m_pTaskObject->getFirstObject(evaluateObjectInfo));
 		if( m_pEvaluateStartRadius )
 		{
 			// Get Start Radius Result...
@@ -309,7 +309,7 @@ BOOL SVToolAdjustmentDialogPolarTransformPageClass::OnInitDialog()
 
 		// Get Evaluate End Radius...
 		evaluateObjectInfo.m_SubType = SvPb::SVEvaluateEndRadiusObjectType;
-		m_pEvaluateEndRadius = dynamic_cast<SvOp::SVEvaluateClass*>(m_pTaskObject->getFirstObject(evaluateObjectInfo));
+		m_pEvaluateEndRadius = dynamic_cast<SvOp::SVEvaluate*>(m_pTaskObject->getFirstObject(evaluateObjectInfo));
 		if( m_pEvaluateEndRadius )
 		{
 			// Get End Radius Result...
@@ -319,7 +319,7 @@ BOOL SVToolAdjustmentDialogPolarTransformPageClass::OnInitDialog()
 
 		// Get Evaluate Start Angle...
 		evaluateObjectInfo.m_SubType = SvPb::SVEvaluateStartAngleObjectType;
-		m_pEvaluateStartAngle = dynamic_cast<SvOp::SVEvaluateClass*>(m_pTaskObject->getFirstObject(evaluateObjectInfo));
+		m_pEvaluateStartAngle = dynamic_cast<SvOp::SVEvaluate*>(m_pTaskObject->getFirstObject(evaluateObjectInfo));
 		if( m_pEvaluateStartAngle )
 		{
 			// Get Start Angle Result...
@@ -329,7 +329,7 @@ BOOL SVToolAdjustmentDialogPolarTransformPageClass::OnInitDialog()
 
 		// Get Evaluate End Angle...
 		evaluateObjectInfo.m_SubType = SvPb::SVEvaluateEndAngleObjectType;
-		m_pEvaluateEndAngle = dynamic_cast<SvOp::SVEvaluateClass*>(m_pTaskObject->getFirstObject(evaluateObjectInfo));
+		m_pEvaluateEndAngle = dynamic_cast<SvOp::SVEvaluate*>(m_pTaskObject->getFirstObject(evaluateObjectInfo));
 		if( m_pEvaluateEndAngle )
 		{
 			// Get End Angle Result...
@@ -366,7 +366,7 @@ BOOL SVToolAdjustmentDialogPolarTransformPageClass::OnInitDialog()
 		objectInfo.m_ObjectType = SvPb::SVPolarTransformObjectType;
 		objectInfo.m_SubType = SvPb::SVImagePolarTransformObjectType;
 		objectInfo.m_EmbeddedID = SvPb::NoEmbeddedId;
-		SvOp::SVImagePolarTransformClass* pImagePolarTransform = dynamic_cast<SvOp::SVImagePolarTransformClass*> (m_pTaskObject->getFirstObject(objectInfo));
+		SvOp::SVImagePolarTransform* pImagePolarTransform = dynamic_cast<SvOp::SVImagePolarTransform*> (m_pTaskObject->getFirstObject(objectInfo));
 		if(nullptr != pImagePolarTransform)
 		{
 			m_ImagePolarTransformID = pImagePolarTransform->getObjectId();

@@ -16,7 +16,7 @@
 
 namespace SvOp
 {
-class SVResultClass;
+class SVResult;
 }
 
 namespace SvTo
@@ -73,7 +73,7 @@ public:
 	/// \param aFeatureIndex [in] The Index of the feature with should allocated.
 	void AllocateResult( SVStatisticsFeatureEnum aFeatureIndex );
 	DWORD FreeResult( SVStatisticsFeatureEnum aFeatureIndex );
-	SvOp::SVResultClass* GetResult( SVStatisticsFeatureEnum aFeatureIndex );
+	SvOp::SVResult* GetResult( SVStatisticsFeatureEnum aFeatureIndex );
 
 	virtual bool DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo ) override;
 

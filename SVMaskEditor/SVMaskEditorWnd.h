@@ -11,18 +11,18 @@
 
 #pragma once
 
-class SVMaskEditorDialogClass;
+class SVMaskEditorDialog;
 
-class SVMaskEditorWndClass : public CWnd
+class SVMaskEditorWnd : public CWnd
 {
 // Construction
 public:
-	SVMaskEditorWndClass();
+	SVMaskEditorWnd();
 
 // Attributes
 public:
 
-    SVMaskEditorDialogClass* PMother;
+    SVMaskEditorDialog* PMother;
 
 protected:
 
@@ -33,7 +33,7 @@ public:
 
 // Overrides
 	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(SVMaskEditorWndClass)
+	//{{AFX_VIRTUAL(SVMaskEditorWnd)
 	public:
 	virtual void OnFinalRelease() override;
 	//}}AFX_VIRTUAL
@@ -41,11 +41,11 @@ public:
 
 // Implementation
 public:
-	virtual ~SVMaskEditorWndClass();
+	virtual ~SVMaskEditorWnd();
 
 	// Generated message map functions
 protected:
-	//{{AFX_MSG(SVMaskEditorWndClass)
+	//{{AFX_MSG(SVMaskEditorWnd)
 	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	afx_msg void OnPaint();
@@ -57,7 +57,7 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 	// Generated OLE dispatch map functions
-	//{{AFX_DISPATCH(SVMaskEditorWndClass)
+	//{{AFX_DISPATCH(SVMaskEditorWnd)
 		// NOTE - the ClassWizard will add and remove member functions here.
 	//}}AFX_DISPATCH
 	DECLARE_DISPATCH_MAP()

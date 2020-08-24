@@ -2,7 +2,7 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVMultiDocTemplateClass
+//* .Module Name     : SVMultiDocTemplate
 //* .File Name       : $Workfile:   SVMultiDocTemplate.cpp  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $
@@ -21,12 +21,12 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-SVMultiDocTemplateClass::SVMultiDocTemplateClass( UINT NIDResource, CRuntimeClass* PDocClass, CRuntimeClass* PFrameClass, CRuntimeClass* PViewClass )
+SVMultiDocTemplate::SVMultiDocTemplate( UINT NIDResource, CRuntimeClass* PDocClass, CRuntimeClass* PFrameClass, CRuntimeClass* PViewClass )
 						:CMultiDocTemplate( NIDResource, PDocClass,	PFrameClass, PViewClass )
 {
 }
 
-SVMultiDocTemplateClass::~SVMultiDocTemplateClass()
+SVMultiDocTemplate::~SVMultiDocTemplate()
 {
 //	CMultiDocTemplate::~CMultiDocTemplate();
 	// delete shared components
@@ -41,9 +41,9 @@ SVMultiDocTemplateClass::~SVMultiDocTemplateClass()
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// SVMultiDocTemplateClass commands
+// SVMultiDocTemplate commands
 
-void SVMultiDocTemplateClass::SetDefaultTitle( CDocument* PDocument )
+void SVMultiDocTemplate::SetDefaultTitle( CDocument* PDocument )
 {
 	CString strDocName;
 	if( GetDocString( strDocName, CDocTemplate::docName ) && ! strDocName.IsEmpty() )
@@ -76,15 +76,15 @@ void SVMultiDocTemplateClass::SetDefaultTitle( CDocument* PDocument )
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// SVMultiDocTemplateClass diagnostics
+// SVMultiDocTemplate diagnostics
 
 #ifdef _DEBUG
-void SVMultiDocTemplateClass::Dump( CDumpContext& dc ) const
+void SVMultiDocTemplate::Dump( CDumpContext& dc ) const
 {
 	CMultiDocTemplate::Dump( dc );
 }
 
-void SVMultiDocTemplateClass::AssertValid() const
+void SVMultiDocTemplate::AssertValid() const
 {
 	CMultiDocTemplate::AssertValid();
 }
@@ -94,6 +94,6 @@ void SVMultiDocTemplateClass::AssertValid() const
 #pragma code_seg(AFX_INIT_SEG)
 #endif
 
-IMPLEMENT_DYNAMIC( SVMultiDocTemplateClass, CMultiDocTemplate )
+IMPLEMENT_DYNAMIC( SVMultiDocTemplate, CMultiDocTemplate )
 
 /////////////////////////////////////////////////////////////////////////////

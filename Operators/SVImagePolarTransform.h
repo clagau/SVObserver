@@ -21,15 +21,15 @@
 namespace SvOp
 {
 
-class SVEquationClass;
+class SVEquation;
 
-class SVImagePolarTransformClass : public SVPolarTransformClass
+class SVImagePolarTransform : public SVPolarTransform
 {
-	SV_DECLARE_CLASS( SVImagePolarTransformClass )
+	SV_DECLARE_CLASS( SVImagePolarTransform )
 
 public:
-	SVImagePolarTransformClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVIMAGEPOLARTRANSFORM );
-	virtual ~SVImagePolarTransformClass();
+	SVImagePolarTransform( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVIMAGEPOLARTRANSFORM );
+	virtual ~SVImagePolarTransform();
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 
@@ -46,7 +46,7 @@ protected:
 	void correctAngles( double& RDStartAngle, double& RDEndAngle );
 	void AnglesTo360( double& p_dStart, double& p_dEnd);
 
-	bool SetDefaultEquation( SVEquationClass* pEquation, const std::string& rName, SvStl::MessageContainerVector *pErrorMessages=nullptr );
+	bool SetDefaultEquation( SVEquation* pEquation, const std::string& rName, SvStl::MessageContainerVector *pErrorMessages=nullptr );
 
 	virtual bool isInputImage(uint32_t imageId) const override;
 	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;

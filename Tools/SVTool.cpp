@@ -183,7 +183,7 @@ void SVToolClass::init()
 	RegisterInputObject(&m_AuxSourceImageObjectInfo, _T("ToolAuxSourceImage"));
 
 	// instantiate the Conditional class
-	SvOp::SVConditionalClass* pCondition = new SvOp::SVConditionalClass(this);
+	SvOp::SVConditional* pCondition = new SvOp::SVConditional(this);
 	AddFriend(pCondition->getObjectId());
 
 	// Identify our input type needs
@@ -220,7 +220,7 @@ bool SVToolClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure
 	{
 		//conditional must be the first friend because it will be blocked in runFriends if tool
 		assert(0 == j);
-		m_pToolConditional = dynamic_cast<SvOp::SVConditionalClass*> (m_friendList[j].getObject());
+		m_pToolConditional = dynamic_cast<SvOp::SVConditional*> (m_friendList[j].getObject());
 		setSkipFirstFriendFromRun();
 	}
 

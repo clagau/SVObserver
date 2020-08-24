@@ -113,7 +113,7 @@ BOOL SVTADlgColorThresholdAdjustment::OnInitDialog()
 	objectInfo.m_ObjectType = SvPb::SVOperatorObjectType;
 	objectInfo.m_SubType = SvPb::SVColorThresholdObjectType;
 
-	m_pThreshold = dynamic_cast<SvOp::SVColorThresholdClass*> (m_pTool->getFirstObject(objectInfo));
+	m_pThreshold = dynamic_cast<SvOp::SVColorThreshold*> (m_pTool->getFirstObject(objectInfo));
 
 	if( m_pThreshold )
 	{
@@ -156,7 +156,7 @@ BOOL SVTADlgColorThresholdAdjustment::OnInitDialog()
 		updateThresholdBars();
 		m_svDlgImage.AddOverlayPoints(m_thresholdBarFigures, options);
 
-		// Get the Graph Figure from the SVColorThresholdClass
+		// Get the Graph Figure from the SVColorThreshold
 		// Note: Do this last
 		options.sizeROI = m_pSheet->m_rectROI.Size();
 		options.bNormalizeY_ROI = true;
@@ -245,7 +245,7 @@ void SVTADlgColorThresholdAdjustment::updateGraphDisplay()
 		updateThresholdBars();
 		m_svDlgImage.AddOverlayPoints(m_thresholdBarFigures, options);
 
-		// Get the Graph Figure from the SVColorThresholdClass
+		// Get the Graph Figure from the SVColorThreshold
 		// Note: Do this last
 		options.sizeROI = m_pSheet->m_rectROI.Size();
 		options.bNormalizeY_ROI = true;
@@ -437,7 +437,7 @@ void SVTADlgColorThresholdAdjustment::updateThresholdBars()
 			m_thresholdBarFigures.Flush();
 
 
-			SVDrawObjectClass DrawObject;
+			SVDrawObject DrawObject;
 
 			DrawObject.SetDrawPen(true, PS_DOT, 1, SvDef::DefaultGoodColor);
 

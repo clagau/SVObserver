@@ -2,7 +2,7 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVUtilitiesClass
+//* .Module Name     : SVUtilities
 //* .File Name       : $Workfile:   SVUtilities.cpp  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.2  $
@@ -55,18 +55,18 @@ typedef struct UtilityInfoTag
 } UTILITYINFO, *PUTILITYINFO;
 #pragma endregion Declarations
 
-SVUtilitiesClass::SVUtilitiesClass()
+SVUtilities::SVUtilities()
 {
 }
 
-SVUtilitiesClass::~SVUtilitiesClass()
+SVUtilities::~SVUtilities()
 {
 }
 
-void SVUtilitiesClass::RunUtility(SVSecurityManager* pAccess, UINT uiUtilityId)
+void SVUtilities::RunUtility(SVSecurityManager* pAccess, UINT uiUtilityId)
 {
 	UTILITYINFO utilInfo;
-	SVUtilityArgumentDialogClass dlg;
+	SVUtilityArgumentDialog dlg;
 	SVObserverApp* pApp = static_cast<SVObserverApp*> (AfxGetApp());
 
 	utilInfo.m_UtilityFound = FALSE;
@@ -121,9 +121,9 @@ void SVUtilitiesClass::RunUtility(SVSecurityManager* pAccess, UINT uiUtilityId)
 	}
 }
 
-void SVUtilitiesClass::SetupUtilities(CMenu *pMenu)
+void SVUtilities::SetupUtilities(CMenu *pMenu)
 {
-	SVUtilitiesCustomizeDialogClass dlg;
+	SVUtilitiesCustomizeDialog dlg;
 
 	ClearMenu (pMenu);
 
@@ -134,7 +134,7 @@ void SVUtilitiesClass::SetupUtilities(CMenu *pMenu)
 	LoadMenu(pMenu);
 }
 
-void SVUtilitiesClass::ClearMenu(CMenu *pMenu)
+void SVUtilities::ClearMenu(CMenu *pMenu)
 {
 	while (pMenu->GetMenuItemCount () > 2)
 	{
@@ -142,7 +142,7 @@ void SVUtilitiesClass::ClearMenu(CMenu *pMenu)
 	}
 }
 
-void SVUtilitiesClass::LoadMenu(CMenu *pMenu)
+void SVUtilities::LoadMenu(CMenu *pMenu)
 {
 	if ( !LoadMenuFromINI(pMenu) )
 	{
@@ -151,7 +151,7 @@ void SVUtilitiesClass::LoadMenu(CMenu *pMenu)
 	}
 }
 
-CMenu *SVUtilitiesClass::FindSubMenuByName(CMenu *pMenu, LPCTSTR Name)
+CMenu *SVUtilities::FindSubMenuByName(CMenu *pMenu, LPCTSTR Name)
 {
 	if (nullptr != pMenu)
 	{
@@ -180,7 +180,7 @@ CMenu *SVUtilitiesClass::FindSubMenuByName(CMenu *pMenu, LPCTSTR Name)
 	return nullptr;
 }
 
-bool SVUtilitiesClass::LoadMenuFromINI(CMenu *pMenu)
+bool SVUtilities::LoadMenuFromINI(CMenu *pMenu)
 {
 	bool bRet = true;
 	SvLib::SVOINIClass UtilityIni( SvStl::GlobalPath::Inst().GetSVUtilityIniPath() );
@@ -237,7 +237,7 @@ bool SVUtilitiesClass::LoadMenuFromINI(CMenu *pMenu)
 	return bRet;
 }
 
-void SVUtilitiesClass::CleanupIni()
+void SVUtilities::CleanupIni()
 {  //this function will cleanup the utility ini file.  
 	int l_iHighestIndex = 0;
 
@@ -344,7 +344,7 @@ void SVUtilitiesClass::CleanupIni()
 	}
 }
 
-void SVUtilitiesClass::UpdateIni()
+void SVUtilities::UpdateIni()
 {
 	SVObserverApp* pApp = static_cast<SVObserverApp*> (AfxGetApp());
 	SvLib::SVOINIClass UtilityIni( SvStl::GlobalPath::Inst().GetSVUtilityIniPath() );

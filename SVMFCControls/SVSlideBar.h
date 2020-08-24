@@ -2,7 +2,7 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVSlideBarClass
+//* .Module Name     : SVSlideBar
 //* .File Name       : $Workfile:   SVSlideBar.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $
@@ -16,13 +16,13 @@ namespace SvMc
 	#define SV_SLIDEBAR_WIDTH		5
 	#define SV_SLIDEBAR_HEIGHT		5
 
-	class SVSlideBarClass : public CWnd
+	class SVSlideBar : public CWnd
 	{
 		// Construction
 	public:
-		SVSlideBarClass();
+		SVSlideBar();
 
-		virtual ~SVSlideBarClass();
+		virtual ~SVSlideBar();
 
 
 		// Operations
@@ -30,7 +30,7 @@ namespace SvMc
 
 		// Overrides
 		// ClassWizard generated virtual function overrides
-		//{{AFX_VIRTUAL(SVSlideBarClass)
+		//{{AFX_VIRTUAL(SVSlideBar)
 		//}}AFX_VIRTUAL
 
 		// Implementation
@@ -41,7 +41,7 @@ namespace SvMc
 
 		// Generated message map functions
 	protected:
-		//{{AFX_MSG(SVSlideBarClass)
+		//{{AFX_MSG(SVSlideBar)
 		afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 		afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 		afx_msg void OnLButtonUp(UINT nFlags, CPoint point);

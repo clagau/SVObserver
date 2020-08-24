@@ -22,7 +22,7 @@
 
 namespace SvOp
 {
-class SVColorThresholdClass;
+class SVColorThreshold;
 }
 namespace SvVol
 {
@@ -93,7 +93,7 @@ protected:
 public:
 
 protected:
-	SvOp::SVColorThresholdClass* m_pThreshold{nullptr};
+	SvOp::SVColorThreshold* m_pThreshold{nullptr};
 	SVValueBaseNormalizerClass m_Normalizer;
 
 private:
@@ -101,8 +101,8 @@ private:
 
 	SvDef::BandEnum m_band{SvDef::Band0};
 	SvOi::SVImageBufferHandlePtr m_histogramImage;
-	SVDrawObjectClass m_graphFigure;
-	SVDrawObjectListClass m_thresholdBarFigures;
+	SVDrawObject m_graphFigure;
+	SVDrawObjectList m_thresholdBarFigures;
 	__int64 m_histogramResultID{0LL};
 };
 

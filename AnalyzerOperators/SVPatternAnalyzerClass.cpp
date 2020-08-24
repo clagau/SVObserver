@@ -174,7 +174,7 @@ SVObjectClass* SVPatternAnalyzerClass::CreateResult()
 	resultClassInfo.m_ClassName += _T(" ") + Title;
 
 	// Construct the result class
-	SvOp::SVLongResultClass* pResult = dynamic_cast<SvOp::SVLongResultClass*> (resultClassInfo.Construct());
+	SvOp::SVLongResult* pResult = dynamic_cast<SvOp::SVLongResult*> (resultClassInfo.Construct());
 	if (nullptr == pResult)
 	{
 		SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
@@ -183,7 +183,7 @@ SVObjectClass* SVPatternAnalyzerClass::CreateResult()
 	}
 
 	// Set the defaults for the Range Object
-	SvOp::SVRangeClass *pRange = pResult->GetResultRange();
+	SvOp::SVRange *pRange = pResult->GetResultRange();
 	if (nullptr == pRange)
 	{
 		SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
@@ -1016,7 +1016,7 @@ void SVPatternAnalyzerClass::addOverlayGroups(const SvIe::SVImageClass*, SvPb::O
 // .Description : When the user right clicks inside a tool figure, checks whether its
 //              : on a pattern. If it finds a pattern at that point, gets the index of the  
 //				: pattern and returns true.
-//				: Called from SVImageViewClass::OnContextMenu
+//				: Called from SVImageView::OnContextMenu
 ////////////////////////////////////////////////////////////////////////////////
 // 	 Date		Author				Comment                                       
 //  04-12-00 	Sri				First Implementation
@@ -1048,7 +1048,7 @@ bool SVPatternAnalyzerClass::IsPtOverResult( const POINT& rPoint )
 // .Description : When the user right clicks on a pattern inside a tool figure and 
 //              : selects the Menu item 'Display Analyzer Result', display the 
 //				: Match Score, X & Y values and the Angle of this pattern.
-//				: Called from SVImageViewClass::OnCommand
+//				: Called from SVImageView::OnCommand
 SvDef::StringVector SVPatternAnalyzerClass::getAnalyzerResult()
 {
 	SvDef::StringVector result;

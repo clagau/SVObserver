@@ -120,10 +120,10 @@ HRESULT SVSetupDialogManager::SVBarCodeAnalyzerClassSetupDialog(uint32_t objectI
 	SvAo::SVBarCodeAnalyzerClass* pAnalyzer = dynamic_cast<SvAo::SVBarCodeAnalyzerClass*>(SVObjectManagerClass::Instance().GetObject(objectId));
 
 	SVInspectionProcess* pInspection(nullptr);
-	SvOp::SVBarCodeResultClass *pResult{ nullptr };
+	SvOp::SVBarCodeResult *pResult{ nullptr };
 
 	if (nullptr != pAnalyzer && nullptr != (pInspection = dynamic_cast<SVInspectionProcess*>(pAnalyzer->GetInspection())) &&
-		nullptr != (pResult = dynamic_cast<SvOp::SVBarCodeResultClass*>(pAnalyzer->GetResultObject())))
+		nullptr != (pResult = dynamic_cast<SvOp::SVBarCodeResult*>(pAnalyzer->GetResultObject())))
 	{
 		SVIPDoc* pIPDoc = TheSVObserverApp.GetIPDoc(pInspection->getObjectId());
 
@@ -257,7 +257,7 @@ HRESULT SVSetupDialogManager::SVHistogramAnalyzerSetupDialog(uint32_t objectId, 
 
 	if (nullptr != l_pAnalyzer)
 	{
-		SVHistogramAnalyzerSetupClass dlg;
+		SVHistogramAnalyzerSetup dlg;
 		dlg.m_pAnalyzer = l_pAnalyzer;
 		dlg.m_histogram.SetScale(static_cast<histogram::scale>(l_pAnalyzer->m_scale));
 		dlg.m_histogram.SetPeakThreshold(l_pAnalyzer->m_threshold);
@@ -325,21 +325,21 @@ HRESULT SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog(uint32_t objectId
 		SvOp::SVLinearEdgeProcessingClass *pEdgeA = pAnalyzer->GetEdgeA();
 		SvOp::SVLinearEdgeProcessingClass *pEdgeB = pAnalyzer->GetEdgeB();
 
-		SVMeasureAnalyzerAdjustmentSheetClass measureDialog(Title.c_str());
+		SVMeasureAnalyzerAdjustmentSheet measureDialog(Title.c_str());
 
 		measureDialog.m_psh.dwFlags |= PSH_NOAPPLYNOW;
 
-		SVProfileEdgeMarkerAdjustmentPageClass *pPageA = nullptr;
-		SVProfileEdgeMarkerAdjustmentPageClass *pPageB = nullptr;
+		SVProfileEdgeMarkerAdjustmentPage *pPageA = nullptr;
+		SVProfileEdgeMarkerAdjustmentPage *pPageB = nullptr;
 
 		if (nullptr != pEdgeA)
 		{
-			pPageA = new SVProfileEdgeMarkerAdjustmentPageClass(pInspection->getObjectId(), pEdgeA->getObjectId(), pEdgeA->getEdgeEmbeddedIds(), objectId, IDS_EDGE_A);
+			pPageA = new SVProfileEdgeMarkerAdjustmentPage(pInspection->getObjectId(), pEdgeA->getObjectId(), pEdgeA->getEdgeEmbeddedIds(), objectId, IDS_EDGE_A);
 		}
 
 		if (nullptr != pEdgeB)
 		{
-			pPageB = new SVProfileEdgeMarkerAdjustmentPageClass(pInspection->getObjectId(), pEdgeB->getObjectId(), pEdgeB->getEdgeEmbeddedIds(), objectId, IDS_EDGE_B);
+			pPageB = new SVProfileEdgeMarkerAdjustmentPage(pInspection->getObjectId(), pEdgeB->getObjectId(), pEdgeB->getEdgeEmbeddedIds(), objectId, IDS_EDGE_B);
 		}
 
 		if (nullptr != pIPDoc && (nullptr != pPageA || nullptr != pPageB))
@@ -431,7 +431,7 @@ HRESULT SVSetupDialogManager::SVOCVAnalyzerClassSetupDialog(uint32_t objectId, C
 
 	if (nullptr != pAnalyzer)
 	{
-		SvOp::SVOCVAnalyzeResultClass* pOCVResult = dynamic_cast<SvOp::SVOCVAnalyzeResultClass*> (pAnalyzer->GetResultObject());
+		SvOp::SVOCVAnalyzeResult* pOCVResult = dynamic_cast<SvOp::SVOCVAnalyzeResult*> (pAnalyzer->GetResultObject());
 		SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(pAnalyzer->GetInspection());
 
 		if (nullptr != pOCVResult && nullptr != pInspection)
@@ -463,7 +463,7 @@ HRESULT SVSetupDialogManager::SVOCVAnalyzerClassSetupDialog(uint32_t objectId, C
 						// 16 Dec 1999 - frb (100)
 						//
 						// Reset all objects...
-						//The GetToolSet return SVToolSetClass and need for this the include SVToolSet.h
+						//The GetToolSet return SVToolSet and need for this the include SVToolSet.h
 						bool bOk = pInspection->GetToolSet()->resetAllObjects();
 						if (bOk)
 						{
@@ -668,11 +668,11 @@ HRESULT SVSetupDialogManager::SVResultClassSetupDialog(uint32_t objectId, CWnd* 
 {
 	HRESULT l_Status = S_OK;
 
-	SvOp::SVResultClass* l_pResult = dynamic_cast<SvOp::SVResultClass*> (SVObjectManagerClass::Instance().GetObject(objectId));
+	SvOp::SVResult* l_pResult = dynamic_cast<SvOp::SVResult*> (SVObjectManagerClass::Instance().GetObject(objectId));
 
 	if (nullptr != l_pResult)
 	{
-		SvOp::SVRangeClass* pRange = l_pResult->GetResultRange();
+		SvOp::SVRange* pRange = l_pResult->GetResultRange();
 		if (pRange)
 		{
 			RangeXDialogClass dlg(pRange->GetInspection()->getObjectId(), pRange->GetParent()->getObjectId(), pRange->getObjectId(), pParentWnd);

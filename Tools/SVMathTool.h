@@ -16,7 +16,7 @@
 
 namespace SvOp
 {
-class SVMathEquationClass;
+class SVMathEquation;
 }
 
 namespace SvTo
@@ -38,7 +38,7 @@ public:
 private:
 	void init(void);
 
-	SvOp::SVMathEquationClass* m_pMathEquation;
+	SvOp::SVMathEquation* m_pMathEquation;
 };
 
 } //namespace SvTo

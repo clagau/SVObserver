@@ -25,23 +25,23 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVLowerThresholdEquationClass, SvPb::LowerThresholdEquationClassId);
+SV_IMPLEMENT_CLASS( SVLowerThresholdEquation, SvPb::LowerThresholdEquationClassId);
 
 ////////////////////////////////////////////////////////////////////////////////
 // 
 ////////////////////////////////////////////////////////////////////////////////
-SVLowerThresholdEquationClass::SVLowerThresholdEquationClass( SVObjectClass* POwner, int StringResourceID )
-							  :SVEquationClass( POwner, StringResourceID )
+SVLowerThresholdEquation::SVLowerThresholdEquation( SVObjectClass* POwner, int StringResourceID )
+							  :SVEquation( POwner, StringResourceID )
 {
 	init();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// .Title       : Initialization of class SVLowerThresholdEquationClass
+// .Title       : Initialization of class SVLowerThresholdEquation
 // -----------------------------------------------------------------------------
 // .Description : Initialization of newly Instantiated Object
 ////////////////////////////////////////////////////////////////////////////////
-void SVLowerThresholdEquationClass::init()
+void SVLowerThresholdEquation::init()
 {
 	// Identify our output type
 	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVEquationObjectType;
@@ -62,9 +62,9 @@ void SVLowerThresholdEquationClass::init()
 	addDefaultInputObjects();
 }
 
-bool SVLowerThresholdEquationClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
+bool SVLowerThresholdEquation::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	m_isCreated = SVEquationClass::CreateObject(rCreateStructure);
+	m_isCreated = SVEquation::CreateObject(rCreateStructure);
 
 	// Set / Reset Printable Flag
 	result.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
@@ -74,7 +74,7 @@ bool SVLowerThresholdEquationClass::CreateObject( const SVObjectLevelCreateStruc
 ////////////////////////////////////////////////////////////////////////////////
 // 
 ////////////////////////////////////////////////////////////////////////////////
-SVLowerThresholdEquationClass::~SVLowerThresholdEquationClass()
+SVLowerThresholdEquation::~SVLowerThresholdEquation()
 {
 }
 
@@ -83,7 +83,7 @@ SVLowerThresholdEquationClass::~SVLowerThresholdEquationClass()
 ////////////////////////////////////////////////////////////////////////////////
 // If Conditional is disabled conditional.Run() returns always TRUE.
 // Otherwise the return value depends on the Conditional equation result!
-bool SVLowerThresholdEquationClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVLowerThresholdEquation::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	double value = 0.0;
 

@@ -23,9 +23,9 @@
 #pragma comment( lib, "milim" )
 
 /////////////////////////////////////////////////////////////////////////////
-// SVMaskEditorApp : See SVMaskEditor.cpp for implementation.
+// SVMaskEditor : See SVMaskEditor.cpp for implementation.
 
-class SVMaskEditorApp : public COleControlModule
+class SVMaskEditor : public COleControlModule
 {
 public:
 	BOOL InitInstance();

@@ -57,12 +57,12 @@ protected:
 	SVPPQObject* m_pPPQ;
 };
 
-class SVPPQBarClass : public SvMc::SVWindowBarClass
+class SVPPQBar : public SvMc::SVWindowBar
 {
-	DECLARE_DYNCREATE( SVPPQBarClass )
+	DECLARE_DYNCREATE( SVPPQBar )
 
 protected:
-	//{{AFX_MSG(SVPPQBarClass)
+	//{{AFX_MSG(SVPPQBar)
 	afx_msg void OnSelChangePQTab( NMHDR* pNMHDR, LRESULT* pResult );
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
@@ -74,9 +74,9 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 public:
-	SVPPQBarClass();
+	SVPPQBar();
 
-	virtual ~SVPPQBarClass();
+	virtual ~SVPPQBar();
 
 	BOOL Create( CWnd* pParentWnd, DWORD dwStyle = WS_CHILD | WS_VISIBLE, UINT nID = AFX_IDW_CONTROLBAR_FIRST + 16 );
 	BOOL BuildButtons();
@@ -85,7 +85,7 @@ public:
 	
 	CSize CalcFixedLayout( BOOL bStretch, BOOL bHorz );
 
-	//{{AFX_VIRTUAL(SVPPQBarClass)
+	//{{AFX_VIRTUAL(SVPPQBar)
 	//}}AFX_VIRTUAL
 
 protected:

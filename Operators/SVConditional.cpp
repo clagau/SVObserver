@@ -26,22 +26,22 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVConditionalClass, SvPb::ConditionalClassId);
+SV_IMPLEMENT_CLASS( SVConditional, SvPb::ConditionalClassId);
 
 ////////////////////////////////////////////////////////////////////////////////
 // 
 ////////////////////////////////////////////////////////////////////////////////
-SVConditionalClass::SVConditionalClass( SVObjectClass* POwner, int StringResourceID ) 
-: SVEquationClass( POwner, StringResourceID )
+SVConditional::SVConditional( SVObjectClass* POwner, int StringResourceID ) 
+: SVEquation( POwner, StringResourceID )
 {
 	init();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// .Title       : Initialization of class SVConditionalClass
+// .Title       : Initialization of class SVConditional
 // -----------------------------------------------------------------------------
 // .Description : Initialization of newly Instantiated Object
-void SVConditionalClass::init()
+void SVConditional::init()
 {
 	// Identify our output type
 	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVEquationObjectType;
@@ -65,13 +65,13 @@ void SVConditionalClass::init()
 ////////////////////////////////////////////////////////////////////////////////
 // 
 ////////////////////////////////////////////////////////////////////////////////
-SVConditionalClass::~SVConditionalClass()
+SVConditional::~SVConditional()
 {
 }
 
-bool SVConditionalClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
+bool SVConditional::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	m_isCreated = SVEquationClass::CreateObject(rCreateStructure);
+	m_isCreated = SVEquation::CreateObject(rCreateStructure);
 
 	// Set/Reset printable Flags
 	result.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
@@ -84,7 +84,7 @@ bool SVConditionalClass::CreateObject( const SVObjectLevelCreateStruct& rCreateS
 ////////////////////////////////////////////////////////////////////////////////
 // If Conditional is disabled conditional.Run() returns always TRUE.
 // Otherwise the return value depends on the Conditional equation result!
-bool SVConditionalClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVConditional::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	BOOL Value = false;
 
