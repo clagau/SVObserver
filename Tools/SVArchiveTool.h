@@ -107,7 +107,7 @@ private:
 	bool initializeOnRun(SvStl::MessageContainerVector *pErrorMessages=nullptr);
 	bool AllocateImageBuffers(SvStl::MessageContainerVector *pErrorMessages=nullptr);
 	bool CreateTextArchiveFile(SvStl::MessageContainerVector *pErrorMessages=nullptr);
-	bool ValidateImageSpace(SvStl::MessageContainerVector *pErrorMessages=nullptr );///< Checks the available space for storing image archive files.
+	bool ValidateImagePathAndAvailableSpace(SvStl::MessageContainerVector *pErrorMessages=nullptr );///< Checks the directory and the available space for storing image archive files.
 	bool ValidateOnRun(SvStl::MessageContainerVector *pErrorMessages=nullptr);
 	void addToCurrentImageDirectorypathAndCreateIt(const std::string& rDirectoryName);
 

@@ -345,7 +345,7 @@ bool SVArchiveTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 
 	if (m_ImageCollection.GetSize() > 0)
 	{
-		if (!updateCurrentImagePathRoot()) //nedded for m_ImageCollection.InitializeObjects()
+		if (!updateCurrentImagePathRoot()) //needed for m_ImageCollection.InitializeObjects()
 		{
 			return false;
 		}
@@ -377,10 +377,10 @@ bool SVArchiveTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 
 	m_uiValidateCount = 0;
 
-	if (m_ImageCollection.GetSize() > 0)
-	{//We only need to verify space if there are images to be archived. If no images are checked we do not need to run through the checking of disk space.
+	if (m_ImageCollection.GetSize() > 0) //if no images are to be archived we do not need to run through the checking of disk space
+	{
 
-		result = ValidateImageSpace(pErrorMessages) && result;
+		result = ValidateImagePathAndAvailableSpace(pErrorMessages) && result;
 		if (result)
 		{
 			ensureCurrentImagePathRootExists();
@@ -1291,13 +1291,13 @@ bool SVArchiveTool::ensureCurrentImagePathRootExists()
 }
 
 
-bool SVArchiveTool::ValidateImageSpace(SvStl::MessageContainerVector *pErrorMessages )
+bool SVArchiveTool::ValidateImagePathAndAvailableSpace(SvStl::MessageContainerVector *pErrorMessages )
 {
 	ULARGE_INTEGER lFreeBytesAvailableToCaller;
 	ULARGE_INTEGER lTotalNumberOfBytes;
 	ULARGE_INTEGER lTotalNumberOfFreeBytes;
 
-	BOOL bOk = ::GetDiskFreeSpaceEx(m_currentImagePathRoot.c_str(),         // pointer to the directory name
+	BOOL bOk = ::GetDiskFreeSpaceEx(m_currentImagePathRoot.c_str(),   // pointer to the directory name (which must end in a slash or backslash and specify an existing directory)
 		&lFreeBytesAvailableToCaller, // receives the number of bytes on
 		// disk available to the caller
 		&lTotalNumberOfBytes,         // receives the number of bytes on disk
@@ -1349,7 +1349,7 @@ bool SVArchiveTool::ValidateOnRun(SvStl::MessageContainerVector *pErrorMessages)
 			bool setCurrentImagePathRoot = !SVSVIMStateClass::CheckState(SV_STATE_RUNNING);
 			if (setCurrentImagePathRoot)
 			{
-				bOk = ValidateImageSpace(pErrorMessages);
+				bOk = ValidateImagePathAndAvailableSpace(pErrorMessages);
 			}
 		}
 	}
