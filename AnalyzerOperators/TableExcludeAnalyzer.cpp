@@ -105,7 +105,7 @@ bool TableExcludeAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMess
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
-bool TableExcludeAnalyzer::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool TableExcludeAnalyzer::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	bool returnValue = __super::onRun( rRunStatus, pErrorMessages );
 	

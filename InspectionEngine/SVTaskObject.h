@@ -41,7 +41,7 @@ namespace SvVol
 
 
 class SVOutputInfoListClass;
-class SVRunStatusClass;
+class RunStatus;
 class SVToolSet;
 
 namespace SvIe
@@ -228,7 +228,7 @@ protected:
 	// Use onRun() to implement your special updating!
 	// Override this only if you have to reroute the call!
 	// NEVER call base class Run()! 
-	virtual bool Run(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages = nullptr);
+	virtual bool Run(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages = nullptr);
 
 	virtual HRESULT GetDrawInfo(SVExtentMultiLineStruct& p_rMultiLine);
 	virtual HRESULT UpdateOverlayIDs(SVExtentMultiLineStruct& p_rMultiLine);
@@ -249,8 +249,8 @@ protected:
 	// NOTE:
 	// Override this if you want to implement your own special run.
 	// Don't forget to call base class onRun() first.
-	virtual bool onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages = nullptr);
-	bool runFriends(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages = nullptr);
+	virtual bool onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages = nullptr);
+	bool runFriends(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages = nullptr);
 
 	virtual bool resetAllOutputListObjects(SvStl::MessageContainerVector *pErrorMessages = nullptr);
 

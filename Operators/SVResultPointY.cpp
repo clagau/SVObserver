@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVResultPointY.h"
 #include "SVRange.h"
-#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/RunStatus.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVValueObjectLibrary\SVPointValueObjectClass.h"
 #pragma endregion Includes
@@ -96,7 +96,7 @@ bool SVPointYResult::CreateObject( const SVObjectLevelCreateStruct& rCreateStruc
 	return bOk;
 }
 
-bool SVPointYResult::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVPointYResult::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	// All inputs and outputs must be validated first
 	if( __super::onRun( rRunStatus, pErrorMessages ) )

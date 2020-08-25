@@ -1306,7 +1306,7 @@ SvPb::InspectionCmdResponse getOverlayStruct(SvPb::GetOverlayStructRequest reque
 		}
 		catch (const SvStl::MessageContainer& rExp)
 		{
-			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+			SvStl::MessageManager Exception(SvStl::MsgType::Log);
 			Exception.setMessage(rExp.getMessage());
 			cmdResponse.set_hresult(E_FAIL);
 		}

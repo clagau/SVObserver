@@ -12,7 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVConditional.h"
-#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/RunStatus.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #pragma endregion Includes
 
@@ -84,7 +84,7 @@ bool SVConditional::CreateObject( const SVObjectLevelCreateStruct& rCreateStruct
 ////////////////////////////////////////////////////////////////////////////////
 // If Conditional is disabled conditional.Run() returns always TRUE.
 // Otherwise the return value depends on the Conditional equation result!
-bool SVConditional::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVConditional::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	BOOL Value = false;
 

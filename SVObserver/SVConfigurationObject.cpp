@@ -2360,7 +2360,7 @@ void SVConfigurationObject::UpgradeConfiguration()
 		const SvTo::SVColorToolClass* pColorTool = dynamic_cast<const SvTo::SVColorToolClass*> (pObject);
 		if (nullptr != pColorTool && pColorTool->isConverted())
 		{
-			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
+			SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
 			Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ColorToolExtentsChanged, SvStl::SourceFileParams(StdMessageParams));
 
 			SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
@@ -2380,7 +2380,7 @@ void SVConfigurationObject::UpgradeConfiguration()
 			constexpr LPCTSTR cPpqTriggerCount = R"(PPQ_[1-9]\.Trigger Count)";
 			if(std::regex_search(rEquaution.cbegin(), rEquaution.cend(), std::regex(cPpqTriggerCount)))
 			{
-				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
+				SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
 				Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ErrorPpqTriggerCount, SvStl::SourceFileParams(StdMessageParams));
 				break;
 			}
@@ -3839,7 +3839,7 @@ bool SVConfigurationObject::RebuildInputOutputLists(bool isLoad)
 	}
 	catch (const SvStl::MessageContainer& rSvE)
 	{
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
+		SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
 		Exception.setMessage(rSvE.getMessage());
 		return false;
 	}
@@ -5475,7 +5475,7 @@ HRESULT SVConfigurationObject::LoadMonitoredObjectList(SVTreeType& rTree, SVTree
 			else
 			{
 				
-				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
+				SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
 				SvDef::StringVector msgList;
 				msgList.push_back(Name);
 				INT_PTR DlgResult = Exception.setMessage(SVMSG_SVO_106_MONITOR_LIST_OBJECT_MISSING, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams), 0, SvDef::InvalidObjectId, MB_YESNO);

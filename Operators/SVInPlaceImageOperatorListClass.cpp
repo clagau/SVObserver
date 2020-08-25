@@ -10,7 +10,7 @@
 
 #include "InspectionEngine/SVImageClass.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
-#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/RunStatus.h"
 #include "SVUnaryImageOperatorClass.h"
 #pragma endregion Includes
 
@@ -83,7 +83,7 @@ bool SVInPlaceImageOperatorListClass::ResetObject(SvStl::MessageContainerVector 
 // .Description : Is doing in place processing on input image!!!
 //				:
 //				: Special routing for image operators here.
-bool SVInPlaceImageOperatorListClass::Run( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVInPlaceImageOperatorListClass::Run( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	clearRunErrorMessages();
 
@@ -111,7 +111,7 @@ bool SVInPlaceImageOperatorListClass::Run( SVRunStatusClass& rRunStatus, SvStl::
 		}
 	
 		bool bFirstFlag = true;
-		SVRunStatusClass ChildRunStatus;
+		RunStatus ChildRunStatus;
 		ChildRunStatus.m_UpdateCounters = childUpdateCounters;
 		ChildRunStatus.m_triggerRecord = std::move(rRunStatus.m_triggerRecord);
 		// Run children...

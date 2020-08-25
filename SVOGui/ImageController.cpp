@@ -177,7 +177,7 @@ namespace SvOg
 
 					if (0 < messageList.size())
 					{
-						SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+						SvStl::MessageManager Exception(SvStl::MsgType::Log);
 						Exception.setMessage(messageList[0].getMessage());
 					}
 				}
@@ -216,7 +216,7 @@ namespace SvOg
 
 			if (0 < messageList.size())
 			{
-				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+				SvStl::MessageManager Exception(SvStl::MsgType::Log);
 				Exception.setMessage(messageList[0].getMessage());
 			}
 		}

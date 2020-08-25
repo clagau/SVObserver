@@ -14,7 +14,7 @@
 #include "SVResult.h"
 #include "SVRange.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
-#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/RunStatus.h"
 #pragma endregion Includes
 
 namespace SvOp
@@ -129,7 +129,7 @@ SVRange* SVResult::GetResultRange()
 	return pRange;
 }
 
-bool SVResult::Run( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVResult::Run( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	const SvOi::IValueObject* pValueObject = dynamic_cast<const SvOi::IValueObject*> (getInput());
 	
@@ -191,7 +191,7 @@ const SVObjectClass* SVResult::getInput() const
 	return nullptr;
 }
 
-bool SVResult::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVResult::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	//@WARNING[MZA][7.50][17.01.2017] Not sure if we need to check ValidateLocal in Run-mode, maybe it is enough to check it in ResetObject
 	if( __super::onRun( rRunStatus, pErrorMessages ) && ValidateLocal(pErrorMessages) )

@@ -153,7 +153,7 @@ bool SVFileNameManagerClass::AddItem(SVFileNameClass* pFileName)
 			}
 			catch (std::bad_alloc& e)
 			{
-				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log );
+				SvStl::MessageManager Exception(SvStl::MsgType::Log );
 				Exception.setMessage( static_cast<DWORD> (E_UNEXPECTED), e.what(), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_15044_FileNameManagerAdd );
 			}
 		}

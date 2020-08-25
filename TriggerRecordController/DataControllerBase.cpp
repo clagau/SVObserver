@@ -13,7 +13,7 @@
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVStatusLibrary/SVRegistry.h"
+#include "SVStatusLibrary/RegistryAccess.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "ITriggerRecordControllerR.h"
 #pragma endregion Includes
@@ -37,7 +37,7 @@ int TRControllerBaseDataPerIP::getNumberOfTRKeepFreeForWrite() const
 constexpr int handleForRest = 1000;
 DataControllerBase::DataControllerBase()
 {
-	SVRegistryClass reg(_T(R"(HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\\Windows\)"));
+	RegistryAccess reg(_T(R"(HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\\Windows\)"));
 	DWORD value = 0;
 	if (reg.GetRegistryValue(_T("GDIProcessHandleQuota"), &value) || 0 < value)
 	{
@@ -69,7 +69,7 @@ DataControllerBase::DataControllerBase()
 		DWORD errorCode = GetLastError();
 		SvDef::StringVector msgList;
 		msgList.push_back(SvUl::Format(_T("%x"), errorCode));
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+		SvStl::MessageManager Exception(SvStl::MsgType::Log);
 		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_EventCreation, msgList, SvStl::SourceFileParams(StdMessageParams));
 		assert(false);
 	}
@@ -80,7 +80,7 @@ DataControllerBase::DataControllerBase()
 		DWORD errorCode = GetLastError();
 		SvDef::StringVector msgList;
 		msgList.push_back(SvUl::Format(_T("%x"), errorCode));
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+		SvStl::MessageManager Exception(SvStl::MsgType::Log);
 		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_EventCreation, msgList, SvStl::SourceFileParams(StdMessageParams));
 		assert(false);
 	}
@@ -138,7 +138,7 @@ const SvPb::ImageList& DataControllerBase::getImageDefList(int inspectionPos, bo
 		return pData->getImageList();
 	}
 
-	SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+	SvStl::MessageManager Exception(SvStl::MsgType::Data);
 	Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_GetImageDefList, SvStl::SourceFileParams(StdMessageParams));
 	Exception.Throw();
 }
@@ -152,7 +152,7 @@ const std::unordered_map<uint32_t, int>& DataControllerBase::getImageMap(int ins
 		return pData->getImageMap();
 	}
 
-	SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+	SvStl::MessageManager Exception(SvStl::MsgType::Data);
 	Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_GetImageDefList, SvStl::SourceFileParams(StdMessageParams));
 	Exception.Throw();
 }
@@ -166,7 +166,7 @@ const std::unordered_map<uint32_t, int>& DataControllerBase::getChildImageMap(in
 		return pData->getChildImageMap();
 	}
 
-	SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+	SvStl::MessageManager Exception(SvStl::MsgType::Data);
 	Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_GetImageDefList, SvStl::SourceFileParams(StdMessageParams));
 	Exception.Throw();
 }
@@ -190,7 +190,7 @@ const SvPb::DataDefinitionList& DataControllerBase::getDataDefList(int inspectio
 		return pData->getDataList();
 	}
 
-	SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+	SvStl::MessageManager Exception(SvStl::MsgType::Data);
 	Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_GetDataDefList, SvStl::SourceFileParams(StdMessageParams));
 	Exception.Throw();
 }
@@ -204,7 +204,7 @@ const std::unordered_map<uint32_t, int>& DataControllerBase::getDataDefMap(int i
 		return pData->getDataMap();
 	}
 
-	SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+	SvStl::MessageManager Exception(SvStl::MsgType::Data);
 	Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_GetDataDefList, SvStl::SourceFileParams(StdMessageParams));
 	Exception.Throw();
 }

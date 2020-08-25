@@ -11,7 +11,7 @@
 //Moved to precompiled header: #include <locale>
 #include "MessageContainer.h"
 #include "SVMessage\SVMessage.h"
-#include "SVRegistry.h"
+#include "RegistryAccess.h"
 #include "Definitions/GlobalConst.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
@@ -508,7 +508,7 @@ namespace SvStl
 
 			try
 			{
-				SVRegistryClass reg( RegKey.c_str());
+				RegistryAccess reg( RegKey.c_str());
 				if (!reg.CreatedNewKey())
 				{
 					std::string MessageDll;

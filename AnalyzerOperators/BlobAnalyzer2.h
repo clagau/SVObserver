@@ -59,7 +59,7 @@ public:
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages = nullptr) override;
 
-	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 	/// When the user right clicks inside a tool figure, checks whether it is on a blob. 
 	/// If it finds a blob at that point, gets the index of the blob and returns true.

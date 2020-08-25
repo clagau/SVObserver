@@ -91,7 +91,7 @@ private:
 	void AddResult(const std::pair<SvPb::EmbeddedIdEnum, DWORD> &);
 
 protected:
-	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 	__int64 m_HistResultID = 0LL;
 	std::vector<long>   msvplHistValues;

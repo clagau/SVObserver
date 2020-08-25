@@ -101,7 +101,7 @@ void SharedDataStore::CreateDataStore(LPCTSTR StoreName, DWORD slotsize, DWORD  
 	unsigned long long sharedSizeLong = m_slotCount * static_cast<unsigned long long>(m_slotSize) + m_DataStoreHeaderSize;
 	if (sharedSizeLong > ULONG_MAX)
 	{
-		SvStl::MessageMgrStd MesMan(SvStl::MsgType::Data);
+		SvStl::MessageManager MesMan(SvStl::MsgType::Data);
 		MesMan.setMessage(SVMSG_SVO_5080_CREATEFILEMAPPINGFAILED, SvStl::Tid_SharedMemorySizeTooBig, SvStl::SourceFileParams(StdMessageParams));
 		MesMan.Throw();
 	}

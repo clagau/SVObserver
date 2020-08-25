@@ -123,7 +123,7 @@ public:
 /*- aFeatureIndex. ------------------------------------------------------------*/
 	SvOp::SVLongResult* GetBlobResultObject();
 
-	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 	virtual bool IsPtOverResult( const POINT& rPoint ) override;
 	virtual	SvDef::StringVector getAnalyzerResult() override;

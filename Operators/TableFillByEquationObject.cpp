@@ -81,7 +81,7 @@ void TableFillByEquationObject::setColumnValueObjects(const std::vector<TableCol
 				SvPb::EmbeddedIdEnum newId = getNextFreeEmbeddedColumID();
 				if (SvPb::NoEmbeddedId == newId)
 				{
-					SvStl::MessageMgrStd e(SvStl::MsgType::Log);
+					SvStl::MessageManager e(SvStl::MsgType::Log);
 					e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableObject_columnValue_NoFreeID, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 					e.Throw();
 				}
@@ -112,7 +112,7 @@ void TableFillByEquationObject::setColumnValueObjects(const std::vector<TableCol
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
-bool TableFillByEquationObject::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool TableFillByEquationObject::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	bool returnValue = __super::onRun( rRunStatus, pErrorMessages );
 	if (returnValue)

@@ -36,7 +36,7 @@ namespace SvOp
 class SVConditional;
 }
 
-class SVRunStatusClass;
+class RunStatus;
 
 namespace SvTo
 {
@@ -172,15 +172,15 @@ public:
 
 protected:
 	void UpdateAuxiliaryExtents();
-	virtual bool Run(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages = nullptr) override;
+	virtual bool Run(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages = nullptr) override;
 
 	//Set the counter and State is called in Run()
-	inline  virtual void  UpdateStateAndCounter(SVRunStatusClass& rRunStatus);
+	inline  virtual void  UpdateStateAndCounter(RunStatus& rRunStatus);
 
 	// Remove Embedded Extents
 	void removeEmbeddedExtents();
 
-	virtual bool onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages = nullptr) override;
+	virtual bool onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages = nullptr) override;
 
 	virtual HRESULT UpdateOverlayIDs(SVExtentMultiLineStruct& p_rMultiLine) override;
 

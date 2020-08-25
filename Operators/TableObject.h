@@ -39,7 +39,7 @@ public:
 	SvVol::ValueObjectSortContainer& getSortContainer() ;
 	/// Set a new sort Container to this object and its column values.
 	/// \param sortMap [in] the new container
-	void setSortContainer(const SvVol::ValueObjectSortContainer& sortMap, SVRunStatusClass& rRunStatus);
+	void setSortContainer(const SvVol::ValueObjectSortContainer& sortMap, RunStatus& rRunStatus);
 
 	void  setSortContainerDummy(const SvVol::DummySortContainer& rDummy);
 	

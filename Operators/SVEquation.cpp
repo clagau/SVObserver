@@ -19,7 +19,7 @@
 #include "SVObjectLibrary/SVOutputInfoListClass.h"
 #include "SVObjectLibrary/SVToolsetScriptTags.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
-#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/RunStatus.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVProtobuf/SVO-Enum.h"
@@ -595,7 +595,7 @@ bool SVEquation::DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pInObjectInfo
 ////////////////////////////////////////////////////////////////////////////////
 // If Conditional is disabled equation.Run() returns always true.
 // Otherwise the return value depends on the Conditional equation result!
-bool SVEquation::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool SVEquation::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool retVal = __super::onRun(rRunStatus, pErrorMessages);
 

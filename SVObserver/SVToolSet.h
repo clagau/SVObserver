@@ -119,9 +119,9 @@ public:
 protected:
 	bool getConditionalResult(bool bRunMode = false) const;
 
-	virtual bool Run( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool Run( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
-	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 	virtual HRESULT onCollectOverlays(SvIe::SVImageClass* pImage, SVExtentMultiLineStructVector& rMultiLineArray ) override;
 
 	virtual bool createAllObjectsFromChild( SVObjectClass& rChildObject ) override;
@@ -133,11 +133,11 @@ protected:
 private:
 	void init();
 
-	void UpdateRunStatus(SVRunStatusClass& rRunStatus, const SVRunStatusClass& rToolRunStatus) const;
+	void UpdateRunStatus(RunStatus& rRunStatus, const RunStatus& rToolRunStatus) const;
 
 	bool ValidateLocal(SvStl::MessageContainerVector *pErrorMessages=nullptr) const;
 
-	void setPostRunStatus(double l_Timer, SVRunStatusClass &rRunStatus);
+	void setPostRunStatus(double l_Timer, RunStatus &rRunStatus);
 #pragma endregion Private Methods
 
 #pragma region Member Variables

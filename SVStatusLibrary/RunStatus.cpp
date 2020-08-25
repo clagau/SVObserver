@@ -2,24 +2,24 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVRunStatus
-//* .File Name       : $Workfile:   SVRunStatus.cpp  $
+//* .Module Name     : RunStatus
+//* .File Name       : $Workfile:   RunStatus.cpp  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   25 Apr 2013 16:21:20  $
 //******************************************************************************
 
 #include "stdafx.h"
-#include "SVRunStatus.h"
+#include "RunStatus.h"
 #include "Definitions/Color.h"
 
-SVRunStatusClass::SVRunStatusClass()
+RunStatus::RunStatus()
 {
 	run.state = SV_INVALID;
 	run.status.valid = true;
 }
 
-void SVRunStatusClass::ResetRunStateAndToolSetTimes()
+void RunStatus::ResetRunStateAndToolSetTimes()
 {
 	run.state = SV_INVALID;
 	run.status.valid = true;
@@ -28,7 +28,7 @@ void SVRunStatusClass::ResetRunStateAndToolSetTimes()
 }
 
 
-DWORD SVRunStatusClass::GetStatusColor() const
+DWORD RunStatus::GetStatusColor() const
 {
 	if (IsDisabled() || IsDisabledByCondition())
 	{

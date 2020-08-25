@@ -49,7 +49,7 @@ SvSyl::SVVersionUnion convertToVersion(std::string versionString)
 		version.m_VersionParts.m_Minor = minorV;
 		return version;
 	}
-	SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+	SvStl::MessageManager Exception(SvStl::MsgType::Data);
 	Exception.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Error_ConfigWarnSyntaxError, SvStl::SourceFileParams(StdMessageParams));
 	Exception.Throw();
 }
@@ -112,7 +112,7 @@ std::vector<checkStruct> setValueMap(unsigned long svoVersion)
 				{
 					SvDef::StringVector msgList;
 					msgList.emplace_back(warningFilePath);
-					SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+					SvStl::MessageManager Exception(SvStl::MsgType::Data);
 					Exception.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Error_ConfigWarnFileError, msgList, SvStl::SourceFileParams(StdMessageParams));
 					Exception.Throw();
 				}
@@ -122,14 +122,14 @@ std::vector<checkStruct> setValueMap(unsigned long svoVersion)
 	}
 	catch (const SvStl::MessageContainer& rExp)
 	{
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
+		SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		Exception.setMessage(rExp.getMessage());
 	}
 	catch (...)
 	{
 		SvDef::StringVector msgList;
 		msgList.emplace_back(warningFilePath);
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
+		SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		Exception.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Error_ConfigWarnFileError, msgList, SvStl::SourceFileParams(StdMessageParams));
 	}
 	return std::move(checkVec);
@@ -147,7 +147,7 @@ void checkVersionAndDisplayWarnings(unsigned long svoVersion, unsigned long conf
 	{
 		SvDef::StringVector msgList;
 		msgList.emplace_back(findIter->m_text);
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
+		SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams));
 	}
 }

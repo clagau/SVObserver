@@ -671,21 +671,21 @@ bool SVInspectionProcess::GoOnline()
 	catch (const SvStl::MessageContainer& rSvE)
 	{
 		//Now that we have caught the exception we would like to display it
-		SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		Msg.setMessage(rSvE.getMessage());
 		return false;
 	}
 	catch (std::exception& e)
 	{
 
-		SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, e.what(), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16223);
 		return false;
 	}
 
 	catch (...)
 	{
-		SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, _T("Unknown error Handler"), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16223);
 		return false;
 	}
@@ -1076,7 +1076,7 @@ bool SVInspectionProcess::AddInputRequest(SVInputRequestInfoStructPtr pInRequest
 
 	if (!m_InputRequests.Lock())
 	{
-		SvStl::MessageMgrStd e(SvStl::MsgType::Log);
+		SvStl::MessageManager e(SvStl::MsgType::Log);
 		e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorLockingInputRequests, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17013_ErrorLockingInputRequests);
 		DebugBreak();
 	}
@@ -1085,7 +1085,7 @@ bool SVInspectionProcess::AddInputRequest(SVInputRequestInfoStructPtr pInRequest
 	{
 		if (!m_InputRequests.Unlock())
 		{
-			SvStl::MessageMgrStd e(SvStl::MsgType::Log);
+			SvStl::MessageManager e(SvStl::MsgType::Log);
 			e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorUnlockingInputRequests, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17014_ErrorUnlockingInputRequests);
 			DebugBreak();
 		}
@@ -1108,7 +1108,7 @@ bool SVInspectionProcess::AddInputRequest(SVInputRequestInfoStructPtr pInRequest
 
 	if (!m_InputRequests.Unlock())
 	{
-		SvStl::MessageMgrStd e(SvStl::MsgType::Log);
+		SvStl::MessageManager e(SvStl::MsgType::Log);
 		e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorUnlockingInputRequests, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17015_ErrorUnlockingInputRequests);
 		DebugBreak();
 	}
@@ -1319,7 +1319,7 @@ HRESULT SVInspectionProcess::RebuildInspection(bool shouldCreateAllObject)
 			{
 				l_Status = E_FAIL;
 
-				SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 				Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_IPDoc_NoCameraColorAttached, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10052);
 			}
 		}
@@ -1343,7 +1343,7 @@ HRESULT SVInspectionProcess::RebuildInspection(bool shouldCreateAllObject)
 		//Configuration has changed need to set the modified flag
 		SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
 
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
+		SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		Exception.setMessage(SVMSG_SVO_CONDITIONAL_HISTORY, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
 	}
 
@@ -1460,15 +1460,15 @@ bool SVInspectionProcess::resetAllObjects(SvStl::MessageContainerVector *pErrorM
 	{
 		if (SVMSG_TRC_GENERAL_ERROR == rExp.getMessage().m_MessageCode && SvStl::Tid_TRC_Error_CreateBuffer == rExp.getMessage().m_AdditionalTextId)
 		{
-			SvStl::MessageMgrStd oldException(SvStl::MsgType::Log);
+			SvStl::MessageManager oldException(SvStl::MsgType::Log);
 			oldException.setMessage(rExp.getMessage());
-			SvStl::MessageMgrStd newException(SvStl::MsgType::Display);
+			SvStl::MessageManager newException(SvStl::MsgType::Display);
 			newException.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TRC_Error_ResetInspectionFailed, SvStl::SourceFileParams(StdMessageParams));
 			ErrorMessages.insert(ErrorMessages.begin(), newException.getMessageContainer());
 		}
 		else if (SVMSG_TRC_GENERAL_ERROR == rExp.getMessage().m_MessageCode && SvStl::Tid_TRC_Error_ResetBuffer_TooMany == rExp.getMessage().m_AdditionalTextId)
 		{
-			SvStl::MessageMgrStd oldException(SvStl::MsgType::Display | SvStl::MsgType::Log);
+			SvStl::MessageManager oldException(SvStl::MsgType::Display | SvStl::MsgType::Log);
 			oldException.setMessage(rExp.getMessage());
 			ErrorMessages.insert(ErrorMessages.begin(), oldException.getMessageContainer());
 		}
@@ -1482,7 +1482,7 @@ bool SVInspectionProcess::resetAllObjects(SvStl::MessageContainerVector *pErrorM
 	//log all error messages to event log
 	for (SvStl::MessageContainerVector::iterator iter = ErrorMessages.begin(); ErrorMessages.end() != iter; ++iter)
 	{
-		SvStl::MessageMgrStd message(SvStl::MsgType::Log);
+		SvStl::MessageManager message(SvStl::MsgType::Log);
 		message.setMessage(iter->getMessage());
 	}
 	if (nullptr != pErrorMessages)
@@ -1637,7 +1637,7 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum &rResetItem
 	// Process all input requests
 	if (!m_InputRequests.Lock())
 	{
-		SvStl::MessageMgrStd e(SvStl::MsgType::Log);
+		SvStl::MessageManager e(SvStl::MsgType::Log);
 		e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorLockingInputRequests, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17025_ErrorLockingInputRequests);
 		DebugBreak();
 	}
@@ -1979,7 +1979,7 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum &rResetItem
 
 	if (!m_InputRequests.Unlock())
 	{
-		SvStl::MessageMgrStd e(SvStl::MsgType::Log);
+		SvStl::MessageManager e(SvStl::MsgType::Log);
 		e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorUnlockingInputRequests, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17026_ErrorUnlockingInputRequests);
 		DebugBreak();
 	}
@@ -2582,7 +2582,7 @@ void SVInspectionProcess::UpdateMainImagesByProduct(SVInspectionInfoStruct& rIpI
 				{
 					if (nullptr == Iter->second.getImage())
 					{
-						SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+						SvStl::MessageManager Exception(SvStl::MsgType::Data);
 						Exception.setMessage(SVMSG_SVO_40_INFO_UPDATE_MAINIMAGE_FAILED, SvStl::Tid_UpdateMainImages_InvalidImageBuffer, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 						Exception.Throw();
 					}
@@ -2599,7 +2599,7 @@ void SVInspectionProcess::UpdateMainImagesByProduct(SVInspectionInfoStruct& rIpI
 						catch (const SvStl::MessageContainer& rExp)
 						{
 							//This is the topmost catch for MessageContainer exceptions
-							SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+							SvStl::MessageManager Exception(SvStl::MsgType::Data);
 							SvStl::MessageData Msg(rExp.getMessage());
 							Msg.m_MessageCode = SVMSG_SVO_40_INFO_UPDATE_MAINIMAGE_FAILED;
 							Exception.setMessage(Msg, getObjectId());
@@ -2618,21 +2618,21 @@ void SVInspectionProcess::UpdateMainImagesByProduct(SVInspectionInfoStruct& rIpI
 						//do nothing, because it is only a repair try and this part throw an exception by its own.
 					}
 
-					SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+					SvStl::MessageManager Exception(SvStl::MsgType::Data);
 					Exception.setMessage(SVMSG_SVO_40_INFO_UPDATE_MAINIMAGE_FAILED, SvStl::Tid_UpdateMainImages_CameraNotFound, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 					Exception.Throw();
 				}
 			}
 			else
 			{
-				SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+				SvStl::MessageManager Exception(SvStl::MsgType::Data);
 				Exception.setMessage(SVMSG_SVO_40_INFO_UPDATE_MAINIMAGE_FAILED, SvStl::Tid_UpdateMainImages_InvalidCamera, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 				Exception.Throw();
 			}
 		}
 		else
 		{
-			SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+			SvStl::MessageManager Exception(SvStl::MsgType::Data);
 			Exception.setMessage(SVMSG_SVO_40_INFO_UPDATE_MAINIMAGE_FAILED, SvStl::Tid_UpdateMainImages_InvalidImage, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 			Exception.Throw();
 		}
@@ -2641,7 +2641,7 @@ void SVInspectionProcess::UpdateMainImagesByProduct(SVInspectionInfoStruct& rIpI
 	}
 }
 
-HRESULT SVInspectionProcess::copyValues2TriggerRecord(SVRunStatusClass& rRunStatus)
+HRESULT SVInspectionProcess::copyValues2TriggerRecord(RunStatus& rRunStatus)
 {
 	if(nullptr != rRunStatus.m_triggerRecord)
 	{
@@ -2669,13 +2669,13 @@ HRESULT SVInspectionProcess::copyValues2TriggerRecord(SVRunStatusClass& rRunStat
 		std::string DebugString = SvUl::Format(_T("copyValues2TriggerRecord failed, no TR\n"), rRunStatus.m_triggerRecord->getId());
 		::OutputDebugString(DebugString.c_str());
 #endif
-		SvStl::MessageMgrStd e(SvStl::MsgType::Log);
+		SvStl::MessageManager e(SvStl::MsgType::Log);
 		e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TRC_Error_CopyValueObjData, SvStl::SourceFileParams(StdMessageParams));
 	}
 	return E_FAIL;
 }
 
-bool SVInspectionProcess::Run(SVRunStatusClass& rRunStatus)
+bool SVInspectionProcess::Run(RunStatus& rRunStatus)
 {
 	// Validate IPDoc's values...
 	bool retVal = IsCreated();
@@ -2685,7 +2685,7 @@ bool SVInspectionProcess::Run(SVRunStatusClass& rRunStatus)
 
 		// Run the Toolset
 		unsigned long l_state = rRunStatus.GetState();
-		if (GetToolSet() && l_state != SVRunStatusClass::SV_INVALID)
+		if (GetToolSet() && l_state != RunStatus::SV_INVALID)
 		{
 			retVal &= GetToolSet()->Run(rRunStatus);
 		}
@@ -2693,9 +2693,9 @@ bool SVInspectionProcess::Run(SVRunStatusClass& rRunStatus)
 		{
 			rRunStatus.SetInvalid();
 			rRunStatus.SetInspectionStarted(false);
-			if (SVRunStatusClass::SV_INVALID == rRunStatus.GetState())
+			if (RunStatus::SV_INVALID == rRunStatus.GetState())
 			{
-				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+				SvStl::MessageManager Exception(SvStl::MsgType::Log);
 				Exception.setMessage(SVMSG_SVO_37_INVALID_RUN_STATUS, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
 			}
 		}
@@ -2726,7 +2726,7 @@ bool SVInspectionProcess::RunInspection(SVInspectionInfoStruct& rIPInfo, SvIe::S
 	bool l_bImageRequest = false;
 	bool l_bUpdateMainImage = false;
 	bool l_bRestMainImage = false;
-	SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+	SvStl::MessageManager Exception(SvStl::MsgType::Log);
 
 	m_runStatus.ResetRunStateAndToolSetTimes();
 
@@ -2777,7 +2777,7 @@ bool SVInspectionProcess::RunInspection(SVInspectionInfoStruct& rIPInfo, SvIe::S
 		}
 		catch (const SvStl::MessageContainer& rSvE)
 		{
-			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log);
+			SvStl::MessageManager Msg(SvStl::MsgType::Log);
 			Msg.setMessage(rSvE.getMessage());
 
 			l_bUpdateMainImage = true;
@@ -2822,7 +2822,7 @@ bool SVInspectionProcess::RunInspection(SVInspectionInfoStruct& rIPInfo, SvIe::S
 	rIPInfo.m_BeginToolset = SvTl::GetTimeStamp();
 	if (!rIPInfo.m_BeginToolset)
 	{
-		SvStl::MessageMgrStd e(SvStl::MsgType::Log);
+		SvStl::MessageManager e(SvStl::MsgType::Log);
 		e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingTimeStamp, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17027_ErrorGettingTimeStamp);
 		DebugBreak();
 	}
@@ -2844,7 +2844,7 @@ bool SVInspectionProcess::RunInspection(SVInspectionInfoStruct& rIPInfo, SvIe::S
 	rIPInfo.m_EndToolset = SvTl::GetTimeStamp();
 	if (!rIPInfo.m_EndToolset)
 	{
-		SvStl::MessageMgrStd e(SvStl::MsgType::Log);
+		SvStl::MessageManager e(SvStl::MsgType::Log);
 		e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingTimeStamp, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17028_ErrorGettingTimeStamp);
 		DebugBreak();
 	}

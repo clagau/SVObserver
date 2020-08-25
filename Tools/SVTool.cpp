@@ -21,7 +21,7 @@
 #include "Operators/ToolSizeAdjustTask.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
-#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/RunStatus.h"
 #include "SVProtoBuf/ConverterHelper.h"
 #include "SVProtoBuf/Overlay.h"
 #pragma endregion Includes
@@ -414,7 +414,7 @@ void SVToolClass::UpdateAuxiliaryExtents()
 	}
 }
 
-inline  void SVToolClass::UpdateStateAndCounter(SVRunStatusClass& rRunStatus)
+inline  void SVToolClass::UpdateStateAndCounter(RunStatus& rRunStatus)
 {
 	// if disabled or disabled by condition
 	// leave in previous state
@@ -467,7 +467,7 @@ inline  void SVToolClass::UpdateStateAndCounter(SVRunStatusClass& rRunStatus)
 	m_statusTag.SetValue(dwValue);
 }
 
-bool SVToolClass::Run(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool SVToolClass::Run(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool retVal = true;
 	clearRunErrorMessages();
@@ -556,7 +556,7 @@ bool SVToolClass::Run(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVecto
 	return retVal;
 }// end Run
 
-bool SVToolClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool SVToolClass::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::onRun(rRunStatus, pErrorMessages);
 
@@ -1117,7 +1117,7 @@ void SVToolClass::finishAddTool()
 	SetDefaultFormulas(&ErrorMessages);
 	for (SvStl::MessageContainerVector::iterator iter = ErrorMessages.begin(); ErrorMessages.end() != iter; ++iter)
 	{
-		SvStl::MessageMgrStd message(SvStl::MsgType::Log | SvStl::MsgType::Display);
+		SvStl::MessageManager message(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		message.setMessage(iter->getMessage());
 	}
 }

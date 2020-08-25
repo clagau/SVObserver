@@ -222,7 +222,7 @@ namespace SvOg
 			HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, nullptr);
 			if (S_OK != hr)
 			{
-				SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
+				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_CreationFilterFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10231 );
 			}
 

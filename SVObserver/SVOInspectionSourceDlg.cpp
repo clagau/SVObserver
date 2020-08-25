@@ -287,7 +287,7 @@ void SVOInspectionSourceDlg::OnBtnImportIpd()
 					SvDef::StringVector msgList;
 					msgList.push_back(File);
 					msgList.push_back(App);
-					SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
+					SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
 					Exception.setMessage( SVMSG_SVO_56_INSPECTION_IMPORT_ERROR, SvStl::Tid_ImportInspectionError, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10008_ImportInspectionWrongVersion );
 
 					OnBtnDeleteVi();

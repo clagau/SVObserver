@@ -79,13 +79,13 @@ const GUID SVHistogramAnalyzerGuid = { 0x3e5c8100, 0x2e0d, 0x4ab0,{ 0x85, 0x12, 
 const GUID SVPatternAnalyzerClassGuid = { 0xf929719c, 0xeeab, 0x11d3,{ 0xa8, 0x90, 0x0, 0x10, 0x6f, 0x2, 0x17, 0x42 } };
 const GUID SVBarCodeAnalyzerClassGuid = { 0xf52e8df6, 0x7a94, 0x11d3,{ 0xa7, 0xce, 0x0, 0x10, 0x6f, 0x1, 0xa, 0x93 } };
 const GUID SVOCVAnalyzerClassGuid = { 0x70d8f917, 0x30e7, 0x48da,{ 0x9a, 0x58, 0x53, 0x82, 0xf1, 0xe4, 0xf8, 0xc } };
-const GUID SVLinearPixelCountingLineAnalyzerClassGuid = { 0x782d5b52, 0xb548, 0x4e03,{ 0xbd, 0x84, 0xff, 0xf6, 0xae, 0x48, 0x63, 0x39 } };
-const GUID SVLinearEdgeCountingLineAnalyzerGuid = { 0x31aeeb38, 0x9102, 0x4a50,{ 0xaf, 0x98, 0x7f, 0xaa, 0x2f, 0x60, 0xf8, 0x28 } };
-const GUID SVLinearEdgePositionLineAnalyzerClassGuid = { 0x58ab741e, 0x752a, 0x43fd,{ 0x95, 0x86, 0xa3, 0xa6, 0xf9, 0x42, 0x19, 0xb7 } };
+const GUID LinearPixelCountingAnalyzerClassGuid = { 0x782d5b52, 0xb548, 0x4e03,{ 0xbd, 0x84, 0xff, 0xf6, 0xae, 0x48, 0x63, 0x39 } };
+const GUID LinearEdgeCountingAnalyzerGuid = { 0x31aeeb38, 0x9102, 0x4a50,{ 0xaf, 0x98, 0x7f, 0xaa, 0x2f, 0x60, 0xf8, 0x28 } };
+const GUID LinearEdgePositionAnalyzerClassGuid = { 0x58ab741e, 0x752a, 0x43fd,{ 0x95, 0x86, 0xa3, 0xa6, 0xf9, 0x42, 0x19, 0xb7 } };
 const GUID SVLinearMeasurementAnalyzerClassGuid = { 0xe95676cf, 0x3658, 0x4d23,{ 0xbf, 0xee, 0xc5, 0x74, 0xc8, 0xf8, 0x4a, 0x1c } };
-const GUID SVLinearMaximumBackgroundObjectLineAnalyzerClassGuid = { 0x96f91065, 0x9ef2, 0x4b80,{ 0x90, 0x39, 0xdf, 0xd1, 0xbe, 0xd6, 0x57, 0x18 } };
-const GUID SVLinearMaximumForegroundObjectLineAnalyzerClassGuid = { 0xbb4f2275, 0x6481, 0x4914,{ 0x9d, 0x53, 0x9d, 0x6f, 0x1b, 0x9a, 0xf9, 0xa5 } };
-const GUID SVLinearMaximumObjectLineAnalyzerClassGuid = { 0x2d8a0bdc, 0xe0d3, 0x4127,{ 0xae, 0xbf, 0x97, 0x9f, 0xee, 0x42, 0x1a, 0xe5 } };
+const GUID LinearMaximumBackgroundObjectAnalyzerClassGuid = { 0x96f91065, 0x9ef2, 0x4b80,{ 0x90, 0x39, 0xdf, 0xd1, 0xbe, 0xd6, 0x57, 0x18 } };
+const GUID LinearMaximumForegroundObjectAnalyzerClassGuid = { 0xbb4f2275, 0x6481, 0x4914,{ 0x9d, 0x53, 0x9d, 0x6f, 0x1b, 0x9a, 0xf9, 0xa5 } };
+const GUID LinearMaximumObjectAnalyzerClassGuid = { 0x2d8a0bdc, 0xe0d3, 0x4127,{ 0xae, 0xbf, 0x97, 0x9f, 0xee, 0x42, 0x1a, 0xe5 } };
 const GUID TableAnaylzerSortGuid = { 0xb74bc930, 0xf60f, 0x4cea,{ 0xbf, 0x3a, 0xd0, 0x7e, 0x25, 0xa2, 0xe8, 0x19 } };
 const GUID TableAnaylzerExcludeGuid = { 0xb74bc930, 0xf60f, 0x4cea,{ 0xbf, 0x3a, 0xd0, 0x7e, 0x25, 0xa2, 0xe8, 0x1A } };
 const GUID TableAnaylzerLimitGuid = { 0xb74bc930, 0xf60f, 0x4cea,{ 0xbf, 0x3a, 0xd0, 0x7e, 0x25, 0xa2, 0xe8, 0x1B } };
@@ -225,13 +225,13 @@ ExchangeClassMap g_ExchangeClassID = {
 	{ SVPatternAnalyzerClassGuid, SvPb::PatternAnalyzerClassId },
 	{ SVBarCodeAnalyzerClassGuid, SvPb::BarCodeAnalyzerClassId },
 	{ SVOCVAnalyzerClassGuid, SvPb::OCVAnalyzerClassId },
-	{ SVLinearPixelCountingLineAnalyzerClassGuid , SvPb::LinearPixelCountingLineAnalyzerClassId },
-	{ SVLinearEdgeCountingLineAnalyzerGuid, SvPb::LinearEdgeCountingLineAnalyzerClassId },
-	{ SVLinearEdgePositionLineAnalyzerClassGuid, SvPb::LinearEdgePositionLineAnalyzerClassId },
+	{ LinearPixelCountingAnalyzerClassGuid , SvPb::LinearPixelCountingLineAnalyzerClassId },
+	{ LinearEdgeCountingAnalyzerGuid, SvPb::LinearEdgeCountingLineAnalyzerClassId },
+	{ LinearEdgePositionAnalyzerClassGuid, SvPb::LinearEdgePositionLineAnalyzerClassId },
 	{ SVLinearMeasurementAnalyzerClassGuid, SvPb::LinearMeasurementAnalyzerClassId },
-	{ SVLinearMaximumBackgroundObjectLineAnalyzerClassGuid, SvPb::LinearMaximumBackgroundObjectLineAnalyzerClassId },
-	{ SVLinearMaximumForegroundObjectLineAnalyzerClassGuid, SvPb::LinearMaximumForegroundObjectLineAnalyzerClassId },
-	{ SVLinearMaximumObjectLineAnalyzerClassGuid, SvPb::LinearMaximumObjectLineAnalyzerClassId },
+	{ LinearMaximumBackgroundObjectAnalyzerClassGuid, SvPb::LinearMaximumBackgroundObjectLineAnalyzerClassId },
+	{ LinearMaximumForegroundObjectAnalyzerClassGuid, SvPb::LinearMaximumForegroundObjectLineAnalyzerClassId },
+	{ LinearMaximumObjectAnalyzerClassGuid, SvPb::LinearMaximumObjectLineAnalyzerClassId },
 	{ TableAnaylzerSortGuid, SvPb::TableAnaylzerSortClassId },
 	{ TableAnaylzerExcludeGuid, SvPb::TableAnaylzerExcludeClassId },
 	{ TableAnaylzerLimitGuid, SvPb::TableAnaylzerLimitClassId },

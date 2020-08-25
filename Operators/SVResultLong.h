@@ -33,7 +33,7 @@ public:
 	SvPb::EmbeddedIdEnum GetInputEmbeddedID() const;
 
 protected:
-	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 // Data Element(s):
 protected:

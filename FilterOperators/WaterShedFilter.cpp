@@ -18,7 +18,7 @@
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "SVObjectLibrary/SVObjectLibrary.h"
-#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/RunStatus.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -86,7 +86,7 @@ bool WatershedFilter::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 // .Description : Runs this operator.
 //              : Returns FALSE, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
-bool WatershedFilter::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool WatershedFilter::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	long lMinVariation;
 	long lControlFlag;

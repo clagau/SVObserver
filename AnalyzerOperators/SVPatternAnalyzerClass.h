@@ -38,7 +38,7 @@ public:
 	virtual bool CloseObject() override;
 	
 	virtual bool CreateObject(const SVObjectLevelCreateStruct& rCreateStructure) override;
-	virtual bool onRun(SVRunStatusClass &rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
+	virtual bool onRun(RunStatus &rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	void CloseMIL();
 

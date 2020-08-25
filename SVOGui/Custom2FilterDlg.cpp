@@ -215,7 +215,7 @@ namespace SvOg
 		UpdateData( TRUE );
 		if( 0 == m_KernelSum )
 		{
-			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
+			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_DataInvalidNormalizationFactor, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10225 );
 		}
 		else
@@ -367,7 +367,7 @@ namespace SvOg
 			}
 			if( 0 != message.getMessage().m_MessageCode )
 			{
-				SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
+				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 				Msg.setMessage( message.getMessage() );
 				
 				//Need to restore the previous values before the import
@@ -407,7 +407,7 @@ namespace SvOg
 			}
 			catch( ... )
 			{
-				SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
+				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ExportFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10227 );
 			}
 		}
@@ -425,7 +425,7 @@ namespace SvOg
 		}
 		catch (const SvStl::MessageContainer& rSvE)
 		{
-			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
+			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 			Msg.setMessage( rSvE.getMessage() );
 		}
 	}

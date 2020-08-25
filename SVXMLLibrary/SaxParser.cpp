@@ -42,7 +42,7 @@ namespace SvXml
 		if((S_OK != hr) && (S_FALSE != hr) && (RPC_E_CHANGED_MODE != hr))
 		{
 			assert(false);
-			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+			SvStl::MessageManager Exception(SvStl::MsgType::Log);
 			Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvStl::Tid_Sax_ConInitializeExFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16073_COINITIALIZE_ );
 		}
 		else if(S_FALSE == hr)

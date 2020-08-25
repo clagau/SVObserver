@@ -16,7 +16,7 @@
 #include "SVMatroxLibrary\SVMatroxBufferCreateStruct.h"
 #include "SVMatroxLibrary\SVMatroxBufferInterface.h"
 #include "SVStatusLibrary\MessageContainer.h"
-#include "SVStatusLibrary\SVRegistry.h"
+#include "SVStatusLibrary\RegistryAccess.h"
 #include "SVTimerLibrary\SVClock.h"
 #include "SVUtilityLibrary\StringHelper.h"
 #include "TriggerRecordController\ITriggerRecordControllerRW.h"
@@ -656,7 +656,7 @@ bool TrcTester::setIndependentBuffers(LPCSTR testAreaStr)
 constexpr int handleForReset = 1000;
 int calcMaxBuffer()
 {
-	SVRegistryClass reg(_T(R"(HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\\Windows\)"));
+	RegistryAccess reg(_T(R"(HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\\Windows\)"));
 	DWORD value = 0;
 	if (reg.GetRegistryValue(_T("GDIProcessHandleQuota"), &value) || 0 < value)
 	{

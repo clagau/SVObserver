@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVDPointXResult.h"
 #include "SVRange.h"
-#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/RunStatus.h"
 #include "SVValueObjectLibrary/SVDPointValueObjectClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
@@ -111,7 +111,7 @@ SvVol::SVDPointValueObjectClass* SVDPointXResult::getInputPoint()
 	return nullptr;
 }
 
-bool SVDPointXResult::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVDPointXResult::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	// All inputs and outputs must be validated first
 	if( SVResult::onRun( rRunStatus, pErrorMessages ) )

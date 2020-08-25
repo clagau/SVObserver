@@ -314,7 +314,7 @@ namespace SvVol
 				//! This means the linked object is invalid
 				SvDef::StringVector msgList;
 				msgList.push_back(GetName());
-				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+				SvStl::MessageManager Exception(SvStl::MsgType::Log);
 				Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_LinkedValue_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 				Exception.Throw();
 			}
@@ -330,7 +330,7 @@ namespace SvVol
 				{
 					SvDef::StringVector msgList;
 					msgList.push_back(GetName());
-					SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+					SvStl::MessageManager Exception(SvStl::MsgType::Log);
 					Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_LinkedValue_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 					Exception.Throw();
 				}

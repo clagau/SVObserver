@@ -567,7 +567,7 @@ HRESULT SVFileAcquisitionDevice::CameraProcessEndFrame( unsigned long index )
 						::OutputDebugString(outputText.c_str());
 #endif
 
-					SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+					SvStl::MessageManager Exception(SvStl::MsgType::Log);
 					Exception.setMessage(SVMSG_IMAGE_FORMAT_ERROR, SvStl::Tid_FileAcquisition_FormatError, SvStl::SourceFileParams(StdMessageParams));
 				}
 			}
@@ -575,7 +575,7 @@ HRESULT SVFileAcquisitionDevice::CameraProcessEndFrame( unsigned long index )
 			{
 				SvDef::StringVector msgList;
 				msgList.push_back(rCamera.GetName()+" : "+rCamera.GetFileName());
-				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+				SvStl::MessageManager Exception(SvStl::MsgType::Log);
 				Exception.setMessage(SVMSG_IMAGE_FORMAT_ERROR, SvStl::Tid_CameraEndFrame_GetNextBufferFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
 				l_hrOk = E_FAIL;
 			}

@@ -598,7 +598,7 @@ void SVValueObjectClass<T>::validateValue(const _variant_t& rValue) const
 	std::vector<T> valueVector =  variant2VectorType(rValue);
 	if(valueVector.size() == 0)
 	{
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+		SvStl::MessageManager Exception(SvStl::MsgType::Log);
 		Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValidateValue_ArraySizeInvalid, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10029_ValueObject_Parameter_WrongSize, getObjectId());
 		Exception.Throw();
 	}
@@ -806,7 +806,7 @@ T SVValueObjectClass<T>::convertVariantValue(const _variant_t& rValue) const
 	{
 		//This happens if the variant to convert is of a different type then this value object!
 		assert(false);
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+		SvStl::MessageManager Exception(SvStl::MsgType::Log);
 		Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_WrongType, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 		Exception.Throw();
 	}
@@ -832,7 +832,7 @@ std::vector<T> SVValueObjectClass<T>::variant2VectorType(const _variant_t& rValu
 		{
 			//This happens if the variant to convert is of a different type then this value object!
 			assert(false);
-			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+			SvStl::MessageManager Exception(SvStl::MsgType::Log);
 			Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_WrongType, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 			Exception.Throw();
 		}
@@ -840,7 +840,7 @@ std::vector<T> SVValueObjectClass<T>::variant2VectorType(const _variant_t& rValu
 		//Allow arraysize 0
 		if (0 > result.size())
 		{
-			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+			SvStl::MessageManager Exception(SvStl::MsgType::Log);
 			Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValidateValue_ArraySizeInvalid, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10029_ValueObject_Parameter_WrongSize, getObjectId());
 			Exception.Throw();
 		}
@@ -977,7 +977,7 @@ std::string SVValueObjectClass<T>::getFixedWidthFormatString(uint32_t , uint32_t
 	SvDef::StringVector msgList;
 	msgList.push_back(SvUl::Format(_T("%s"), _T("getFixedWidthFormatString()")));
 	msgList.push_back(SvUl::Format(_T("ValueObject of type '%s'"), getTypeName().c_str()));
-	SvStl::MessageMgrStd Msg(SvStl::MsgType::Log);
+	SvStl::MessageManager Msg(SvStl::MsgType::Log);
 	Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_FunctionNotImplemented, msgList, SvStl::SourceFileParams(StdMessageParams));
 	return _T("<invalid>");
 }

@@ -111,13 +111,13 @@ bool ToolSizeAdjustTask::AddEvaluationObject(SvOl::SVInObjectInfoStruct* pInfo, 
 	return RegisterInputObject( pInfo, Name );
 }
 
-bool ToolSizeAdjustTask::onRun(SVRunStatusClass& , SvStl::MessageContainerVector*)
+bool ToolSizeAdjustTask::onRun(RunStatus& , SvStl::MessageContainerVector*)
 {
 	//DoNothing in onRun
 	return true;
 }
 
-bool  ToolSizeAdjustTask::Run( SVRunStatusClass&, SvStl::MessageContainerVector* )
+bool  ToolSizeAdjustTask::Run( RunStatus&, SvStl::MessageContainerVector* )
 {
 	//DoNothing in Run
 	return true;
@@ -397,7 +397,7 @@ bool ToolSizeAdjustTask::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 		}
 		SvStl::MessageContainer message;
 		message.setMessage( SVMSG_SVO_58_TOOLADJUST_RESET_ERROR, messageId, msgList, SvStl::SourceFileParams(StdMessageParams), hresult, getObjectId() );
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+		SvStl::MessageManager Exception(SvStl::MsgType::Log);
 		Exception.setMessage( message.getMessage() );
 		if (nullptr != pErrorMessages)
 		{

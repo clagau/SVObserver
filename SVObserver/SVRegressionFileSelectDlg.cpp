@@ -203,7 +203,7 @@ void SVRegressionFileSelectDlg::ShowSelectFileDlg(bool bFullAccess)
 		{
 			if (0 != m_RegTestFiles.Right(4).CompareNoCase(_T(".bmp")))
 			{
-				SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 				Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_RegressionTest_NoBmpFileSelected, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10187);
 				m_RegTestFiles = _T("");
 			}

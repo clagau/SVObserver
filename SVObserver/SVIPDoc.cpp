@@ -510,7 +510,7 @@ bool SVIPDoc::AddTool(SvPb::ClassIdEnum classId)
 		SvStl::MessageContainerVector errorMsgContainer = SvPb::setMessageVectorFromMessagePB(responseCmd.standardresponse().errormessages());
 		if (errorMsgContainer.size() > 0)
 		{
-			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 			Msg.setMessage(errorMsgContainer.at(0).getMessage());
 		}
 	}
@@ -736,7 +736,7 @@ BOOL SVIPDoc::CanCloseFrame(CFrameWnd* pFrame)
 
 	if (!bCanClose)
 	{
-		SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SVIPDoc_ClosingImpossible, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10056);
 	}
 
@@ -1506,7 +1506,7 @@ void SVIPDoc::OpenToolAdjustmentDialog(int tab)
 			catch (const SvStl::MessageContainer& rExp)
 			{
 				//This is the topmost catch of the TA for MessageContainer exceptions
-				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
+				SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
 				//Set the error code to unhandled exception but use the rest of the data from the original exception
 				SvStl::MessageData Msg(rExp.getMessage());
 				std::string OrgMessageCode = SvUl::Format(_T("0x%08X"), Msg.m_MessageCode);
@@ -1520,7 +1520,7 @@ void SVIPDoc::OpenToolAdjustmentDialog(int tab)
 			catch (...)
 			{
 				//This is the topmost catch of TA for other exceptions
-				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
+				SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
 				Exception.setMessage(SVMSG_SVO_UNHANDLED_EXCEPTION, SvStl::Tid_Default, SvStl::SourceFileParams(StdMessageParams));
 			}
 			SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
@@ -1807,7 +1807,7 @@ void SVIPDoc::OnSaveResultsToFile()
 		{
 			SvDef::StringVector msgList;
 			msgList.push_back(std::string {dlg.GetPathName()});
-			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 			Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WriteCSVFileFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10058);
 		}
 	}
@@ -1863,7 +1863,7 @@ void SVIPDoc::OnSaveTableResultsToFile()
 		{
 			SvDef::StringVector msgList;
 			msgList.push_back(std::string {dlg.GetPathName()});
-			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 			Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WriteCSVFileFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10058);
 		}
 	}
@@ -2047,7 +2047,7 @@ void SVIPDoc::RunRegressionTest()
 		m_pRegressionTestPlayEquationController->ValidateEquation(m_RegressionTestLoadEquationText, value, true, errorMessages);
 		if (!errorMessages.empty())
 		{
-			SvStl::MessageMgrStd msg(SvStl::MsgType::Log);
+			SvStl::MessageManager msg(SvStl::MsgType::Log);
 			msg.setMessage(errorMessages[0].getMessage());
 		}
 		m_bRegressionTestInitEquationText = true;
@@ -2099,7 +2099,7 @@ void SVIPDoc::RunRegressionTest()
 	}
 	else
 	{
-		SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SVIPDoc_GoIntoRegTestFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10058);
 	}
 }
@@ -3099,7 +3099,7 @@ bool SVIPDoc::deleteTool(NavigatorElement* pNaviElement)
 		SvStl::MessageContainerVector errorMsgContainer = SvPb::setMessageVectorFromMessagePB(responseCmd.standardresponse().errormessages());
 		if (errorMsgContainer.size() > 0)
 		{
-			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 			Msg.setMessage(errorMsgContainer.at(0).getMessage());
 		}
 	}

@@ -16,7 +16,7 @@
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "SVMatroxLibrary/SVMatroxResourceMonitor.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/RunStatus.h"
 #pragma endregion Includes
 
 namespace SvAo
@@ -72,7 +72,7 @@ void SVPixelAnalyzer::init()
 	}
 	else
 	{
-		SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
+		SvStl::MessageManager MesMan(SvStl::MsgType::Log );
 		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 	}
 }
@@ -99,7 +99,7 @@ bool SVPixelAnalyzer::CreateObject( const SVObjectLevelCreateStruct& rCreateStru
         if (! SVImageAnalyzerClass::CreateObject(rCreateStructure) )
         {
 			
-			SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
+			SvStl::MessageManager MesMan(SvStl::MsgType::Log );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 			isError = true;
 			break;
@@ -109,7 +109,7 @@ bool SVPixelAnalyzer::CreateObject( const SVObjectLevelCreateStruct& rCreateStru
 		
         if (!pImage)
         {
-			SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
+			SvStl::MessageManager MesMan(SvStl::MsgType::Log );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 			isError = true;
 			break;
@@ -121,7 +121,7 @@ bool SVPixelAnalyzer::CreateObject( const SVObjectLevelCreateStruct& rCreateStru
 		
 		if( M_NULL == m_contextID || M_NULL == m_ResultID )
 		{
-			SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
+			SvStl::MessageManager MesMan(SvStl::MsgType::Log );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 			isError = true;
 			break;
@@ -144,7 +144,7 @@ bool SVPixelAnalyzer::CreateObject( const SVObjectLevelCreateStruct& rCreateStru
 	return m_isCreated;
 }
 
-bool SVPixelAnalyzer::onRun(SVRunStatusClass &rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool SVPixelAnalyzer::onRun(RunStatus &rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result{true};
 	while (1)

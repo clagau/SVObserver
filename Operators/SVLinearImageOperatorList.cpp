@@ -18,7 +18,7 @@
 #include "SVMatroxLibrary/SVMatroxImageRotateStruct.h"
 #include "SVObjectLibrary/SVInObjectInfoStruct.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
-#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/RunStatus.h"
 #include "Tools/SVLinearToolClass.h"
 #include "Tools/SVTool.h"
 #pragma endregion Includes
@@ -111,7 +111,7 @@ bool SVLinearImageOperatorList::ResetObject(SvStl::MessageContainerVector *pErro
 	return Result;
 }
 
-bool SVLinearImageOperatorList::Run(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool SVLinearImageOperatorList::Run(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	clearRunErrorMessages();
 
@@ -383,7 +383,7 @@ void SVLinearImageOperatorList::ResetLogicalROIImage()
 	}
 }
 
-bool SVLinearImageOperatorList::RunLocalRotation(SVRunStatusClass &rRunStatus, SvTrc::IImagePtr pInputBuffer, SvTrc::IImagePtr pOutputBuffer, const SVImageExtentClass& rImageExtent)
+bool SVLinearImageOperatorList::RunLocalRotation(RunStatus &rRunStatus, SvTrc::IImagePtr pInputBuffer, SvTrc::IImagePtr pOutputBuffer, const SVImageExtentClass& rImageExtent)
 {
 	bool childUpdateCounters = rRunStatus.m_UpdateCounters;
 
@@ -412,7 +412,7 @@ bool SVLinearImageOperatorList::RunLocalRotation(SVRunStatusClass &rRunStatus, S
 			SVMatroxImageInterface::Rotate(pOutputBuffer->getHandle()->GetBuffer(), l_Rotate);
 		}
 
-		SVRunStatusClass ChildRunStatus;
+		RunStatus ChildRunStatus;
 		ChildRunStatus.m_UpdateCounters = childUpdateCounters;
 		ChildRunStatus.m_triggerRecord = std::move(rRunStatus.m_triggerRecord);
 		// Run children...

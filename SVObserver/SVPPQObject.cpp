@@ -2102,7 +2102,7 @@ SVProductInfoStruct* SVPPQObject::IndexPPQ(SvTi::SVTriggerInfoStruct&& rTriggerI
 		// Recycle the exiting SVProductInfoStruct
 		if (!RecycleProductInfo(l_pLastProduct))
 		{
-			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+			SvStl::MessageManager Exception(SvStl::MsgType::Log);
 			Exception.setMessage(SVMSG_SVO_69_PPQ_INDEX_NOT_RELEASED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
 		}
 	}
@@ -3282,14 +3282,14 @@ HRESULT SVPPQObject::ProcessTrigger( bool& rProcessed )
 						{
 							SvDef::StringVector msgList;
 							msgList.push_back(e.what());
-							SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+							SvStl::MessageManager Exception(SvStl::MsgType::Log);
 							Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ProcessTrigger, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_15026);
 						}
 						catch (...)
 						{
 							SvDef::StringVector msgList;
 							msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvStl::Tid_Unknown));
-							SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+							SvStl::MessageManager Exception(SvStl::MsgType::Log);
 							Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ProcessTrigger, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_15027);
 						}
 					} // if (HasActiveMonitorList())
@@ -4090,14 +4090,14 @@ void SVPPQObject::ReleaseSharedMemory( SVProductInfoStruct& rProduct)
 		{
 			SvDef::StringVector msgList;
 			msgList.push_back(e.what());
-			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+			SvStl::MessageManager Exception(SvStl::MsgType::Log);
 			Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ReleaseProduct, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_15029);
 		}
 		catch (...)
 		{
 			SvDef::StringVector msgList;
 			msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvStl::Tid_Unknown));
-			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+			SvStl::MessageManager Exception(SvStl::MsgType::Log);
 			Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ReleaseProduct, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_15030);
 		}
 	}
@@ -4122,14 +4122,14 @@ void SVPPQObject::CommitSharedMemory( SVProductInfoStruct& rProduct)
 		{
 			SvDef::StringVector msgList;
 			msgList.push_back(e.what());
-			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+			SvStl::MessageManager Exception(SvStl::MsgType::Log);
 			Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_CommitSharedMemory, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_15032);
 		}
 		catch (...)
 		{
 			SvDef::StringVector msgList;
 			msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvStl::Tid_Unknown));
-			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+			SvStl::MessageManager Exception(SvStl::MsgType::Log);
 			Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_CommitSharedMemory, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_15033);
 		}
 	}
@@ -4160,7 +4160,7 @@ bool SVPPQObject::setRejectDepth(long depth, SvStl::MessageContainerVector *pErr
 		}
 		catch (const SvStl::MessageContainer& rSvE)
 		{
-			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log);
+			SvStl::MessageManager Msg(SvStl::MsgType::Log);
 			Msg.setMessage(rSvE.getMessage());
 			if (nullptr != pErrorMessages)
 			{
@@ -4296,7 +4296,7 @@ void SVPPQObject::setTRofInterest(const SVProductInfoStruct& rProduct, bool isIn
 				assert("Error in getting next Slot");
 				SvDef::StringVector msgList;
 				msgList.push_back("Error in getting next Slot");
-				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+				SvStl::MessageManager Exception(SvStl::MsgType::Log);
 				Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ErrorProcessNotifyLastInspected, msgList, SvStl::SourceFileParams(StdMessageParams));
 			}
 		}
@@ -4305,14 +4305,14 @@ void SVPPQObject::setTRofInterest(const SVProductInfoStruct& rProduct, bool isIn
 	{
 		SvDef::StringVector msgList;
 		msgList.push_back(e.what());
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+		SvStl::MessageManager Exception(SvStl::MsgType::Log);
 		Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ErrorProcessNotifyLastInspected, msgList, SvStl::SourceFileParams(StdMessageParams));
 	}
 	catch (...)
 	{
 		SvDef::StringVector msgList;
 		msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvStl::Tid_Unknown));
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+		SvStl::MessageManager Exception(SvStl::MsgType::Log);
 		Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ErrorProcessNotifyLastInspected, msgList, SvStl::SourceFileParams(StdMessageParams));
 	}
 }
@@ -4325,7 +4325,7 @@ void SVPPQObject::setTR2StoreForInterestMap(uint32_t ipId, SVProductInfoStruct &
 		auto& rIter = rIpQueue.front();
 		if (!rIter.m_bReject)
 		{
-			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+			SvStl::MessageManager Exception(SvStl::MsgType::Log);
 			Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_RejectTRBeforeInterestDecision, SvStl::SourceFileParams(StdMessageParams));
 		}
 		
@@ -4340,7 +4340,7 @@ void SVPPQObject::setTR2StoreForInterestMap(uint32_t ipId, SVProductInfoStruct &
 			{
 				SvDef::StringVector msgList;
 				msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvStl::Tid_Unknown));
-				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+				SvStl::MessageManager Exception(SvStl::MsgType::Log);
 				Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ErrorProcessNotifyLastInspected, msgList, SvStl::SourceFileParams(StdMessageParams));
 			}
 		}

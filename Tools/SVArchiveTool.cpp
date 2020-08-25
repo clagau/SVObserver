@@ -27,7 +27,7 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVOLibrary/SVMemoryManager.h"
 #include "SVStatusLibrary/GlobalPath.h"
-#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/RunStatus.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVSystemLibrary/SVThreadManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
@@ -774,7 +774,7 @@ bool SVArchiveTool::AllocateImageBuffers(SvStl::MessageContainerVector *pErrorMe
 
 /////////////////////////////////////////////////////////////////////////////
 //
-bool SVArchiveTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVArchiveTool::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	if( ValidateOnRun(pErrorMessages) && __super::onRun( rRunStatus, pErrorMessages ) )
 	{
@@ -1259,7 +1259,7 @@ bool SVArchiveTool::updateCurrentImagePathRoot(bool displayMessageOnInvalidKeywo
 		{
 			if (displayMessageOnInvalidKeywords)
 			{
-				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
+				SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
 				Exception.setMessage(SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_InvalidKeywordsInPath, SvStl::SourceFileParams(StdMessageParams));
 			}
 			return false;

@@ -208,7 +208,7 @@ void TaTableAnalyzerPage::OnButtonInsertNewAnalyzer()
 		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 		if (S_OK != hr)
 		{
-			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 			Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_CreationAnalyzerFailed, SvStl::SourceFileParams(StdMessageParams));
 		}
 
@@ -250,7 +250,7 @@ void TaTableAnalyzerPage::OnChangeColumnSelection()
 		{
 			SvDef::StringVector msgList;
 			msgList.push_back(m_inputName);
-			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 			Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ConnectFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
 		}
 	}
@@ -381,7 +381,7 @@ HRESULT TaTableAnalyzerPage::SetInspectionData()
 	{
 		if (0 < errorMessageList.size())
 		{
-			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 			Msg.setMessage(errorMessageList[0].getMessage());
 		}
 		else
@@ -389,7 +389,7 @@ HRESULT TaTableAnalyzerPage::SetInspectionData()
 			//display an error if set failed.
 			SvDef::StringVector msgList;
 			msgList.push_back(SvUl::Format(_T("%d"), hrOk));
-			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 			Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_SetTableAnalyzerData, msgList, SvStl::SourceFileParams(StdMessageParams));
 		}
 	}
@@ -629,7 +629,7 @@ HRESULT TaTableAnalyzerPage::checkAllAnaylzer()
 			if (S_OK != hrOk && responseCmd.has_standardresponse())
 			{
 				SvStl::MessageContainerVector errorMessageList = SvPb::setMessageVectorFromMessagePB(responseCmd.standardresponse().errormessages());
-				SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 				if (0 < errorMessageList.size())
 				{
 					Msg.setMessage(errorMessageList[0].getMessage());
@@ -717,7 +717,7 @@ HRESULT TaTableAnalyzerPage::SetAddAnalyzerData(SvStl::MessageContainerVector &r
 						}
 						if (0 < rErrorMessageList.size())
 						{
-							SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+							SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 							Msg.setMessage(rErrorMessageList[0].getMessage());
 						}
 						else
@@ -730,7 +730,7 @@ HRESULT TaTableAnalyzerPage::SetAddAnalyzerData(SvStl::MessageContainerVector &r
 			else
 			{
 				hrOk = E_FAIL;
-				SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 				Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_TableColumnName_Empty, SvStl::SourceFileParams(StdMessageParams));
 			}
 		}

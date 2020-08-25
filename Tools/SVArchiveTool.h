@@ -92,7 +92,7 @@ public:
 protected:
 	SV_DECLARE_CLASS( SVArchiveTool )
 
-	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 	HRESULT QueueArchiveString( const std::string& rArchiveString );
 

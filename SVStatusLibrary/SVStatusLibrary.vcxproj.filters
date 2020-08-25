@@ -42,16 +42,16 @@
     <ClCompile Include="SVOIntelRAIDStatusClass.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVRegistry.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVRunStatus.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVSVIMStateClass.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="MessageManager.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="RegistryAccess.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="RunStatus.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
@@ -101,13 +101,13 @@
     <ClInclude Include="SVOIntelRAIDStatusClass.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVRegistry.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVRunStatus.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVSVIMStateClass.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="RegistryAccess.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="RunStatus.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

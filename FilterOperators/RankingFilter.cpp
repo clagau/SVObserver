@@ -17,7 +17,7 @@
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVMatroxLibrary/SVMatroxBufferCreateStruct.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
-#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/RunStatus.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
@@ -298,7 +298,7 @@ void RankingFilter::RebuildRanking()
 // .Description : Runs this operator.
 //              : Returns FALSE, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
-bool RankingFilter::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool RankingFilter::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 { 
 	if (m_pCurrentUIOPL && nullptr != rInputImageHandle && nullptr != rOutputImageHandle)
 	{

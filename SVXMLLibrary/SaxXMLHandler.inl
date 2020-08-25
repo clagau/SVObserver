@@ -300,7 +300,7 @@ namespace SvXml
 			else
 			{
 				assert(m_pCurrentNodeInRevisionTree);
-				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+				SvStl::MessageManager Exception(SvStl::MsgType::Log);
 				Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvStl::Tid_XML_InvalidPointer, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16069_INVALIDPOINTER );
 
 			}
@@ -320,7 +320,7 @@ namespace SvXml
 			}
 			else
 			{
-				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+				SvStl::MessageManager Exception(SvStl::MsgType::Log);
 				Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvStl::Tid_XML_InvalidPointer, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16070_INVALIDPOINTER );
 				assert(m_pCurrentNodeInEncryptionTree);
 			}
@@ -345,7 +345,7 @@ namespace SvXml
 			if(nullptr == pSaxTreeElement ||  Elementtype !=  pSaxTreeElement->GetElementType() )
 			{
 				assert(false);
-				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+				SvStl::MessageManager Exception(SvStl::MsgType::Log);
 				Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvStl::Tid_XML_InvalidPointer, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16071_INVALIDPOINTER );
 			}
 
@@ -378,7 +378,7 @@ namespace SvXml
 				default:
 					{
 						assert(false);
-						SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+						SvStl::MessageManager Exception(SvStl::MsgType::Log);
 						Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvStl::Tid_XML_InvalidArrayElement, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16074_InvalidArrayElement );
 						break;
 					}
@@ -408,7 +408,7 @@ namespace SvXml
 				else
 				{
 					assert(false);
-					SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+					SvStl::MessageManager Exception(SvStl::MsgType::Log);
 					Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvStl::Tid_XML_InvalidArrayElement, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16072_INVALID_ARRAYELEMENT );
 				}
 
@@ -434,7 +434,7 @@ namespace SvXml
 		messageList.push_back(SvUl::Format(_T("%i"), column));
 		messageList.push_back(SvUl::Format(_T("%i"), errorCode));
 		messageList.push_back(SvUl::createStdString(pwchErrorText));
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+		SvStl::MessageManager Exception(SvStl::MsgType::Log);
 		Exception.setMessage(SVMSG_SVO_83_SAX_PARSER_ERROR, SvStl::Tid_XML_Error, messageList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16063_SAXPARSER );
 		assert(false);
 		return S_OK;

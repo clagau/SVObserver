@@ -17,10 +17,10 @@
 namespace SvStl
 {
 	//! The static functor as pointers so that different instances ( exe dlls can still use one common functor)
-	ShowDisplayFunctor* MessageMgrStd::m_ppShowDisplay {nullptr};
-	NotifyFunctor* MessageMgrStd::m_ppNotify {nullptr};
+	ShowDisplayFunctor* MessageManager::m_ppShowDisplay {nullptr};
+	NotifyFunctor* MessageManager::m_ppNotify {nullptr};
 
-	MessageMgrStd::MessageMgrStd(MsgType type) :
+	MessageManager::MessageManager(MsgType type) :
 		m_Type(type)
 	{
 		if (MsgType::Data != type)
@@ -30,14 +30,14 @@ namespace SvStl
 	}
 
 
-	MessageMgrStd::~MessageMgrStd()
+	MessageManager::~MessageManager()
 	{
 	}
 	#pragma endregion Constructor
 
 	#pragma region Public Methods
 
-	void MessageMgrStd::setShowDisplayFunction(ShowDisplayFunctor ShowDisplay)
+	void MessageManager::setShowDisplayFunction(ShowDisplayFunctor ShowDisplay)
 	{
 		Initialize();
 		if (nullptr != m_ppShowDisplay)
@@ -47,7 +47,7 @@ namespace SvStl
 	}
 
 
-	void MessageMgrStd::setNotificationFunction(const NotifyFunctor& rNotify)
+	void MessageManager::setNotificationFunction(const NotifyFunctor& rNotify)
 	{
 		Initialize();
 		if (nullptr != m_ppNotify)
@@ -58,7 +58,7 @@ namespace SvStl
 
 
 
-	void MessageMgrStd::Throw()
+	void MessageManager::Throw()
 	{
 		throw m_MessageContainer;
 	}
@@ -66,7 +66,7 @@ namespace SvStl
 	constexpr uint32_t s_maximumNumberOfCodeRepeats = 4;
 
 
-	INT_PTR MessageMgrStd::Process(UINT MsgBoxType /*= MB_OK*/)
+	INT_PTR MessageManager::Process(UINT MsgBoxType /*= MB_OK*/)
 	{
 		if (!suppressLogAndNotify())
 		{
@@ -78,7 +78,7 @@ namespace SvStl
 	}
 
 
-	INT_PTR MessageMgrStd::setMessage(DWORD MessageCode, LPCTSTR AdditionalText, const SourceFileParams& rSourceFile, DWORD ProgramCode /*= 0*/, uint32_t objectId /*= 0*/, UINT MsgBoxType /*= MB_OK*/)
+	INT_PTR MessageManager::setMessage(DWORD MessageCode, LPCTSTR AdditionalText, const SourceFileParams& rSourceFile, DWORD ProgramCode /*= 0*/, uint32_t objectId /*= 0*/, UINT MsgBoxType /*= MB_OK*/)
 	{
 		SvDef::StringVector textList;
 		MessageTextEnum id = SvStl::Tid_Empty;
@@ -92,13 +92,13 @@ namespace SvStl
 	}
 
 
-	INT_PTR MessageMgrStd::setMessage(DWORD MessageCode, MessageTextEnum AdditionalTextId, const SourceFileParams& rSourceFile, DWORD ProgramCode /*= 0*/, uint32_t objectId /*= 0*/, UINT MsgBoxType /*= MB_OK*/)
+	INT_PTR MessageManager::setMessage(DWORD MessageCode, MessageTextEnum AdditionalTextId, const SourceFileParams& rSourceFile, DWORD ProgramCode /*= 0*/, uint32_t objectId /*= 0*/, UINT MsgBoxType /*= MB_OK*/)
 	{
 		return setMessage(MessageCode, AdditionalTextId, SvDef::StringVector(), rSourceFile, ProgramCode, objectId, MsgBoxType);
 	}
 
 
-	INT_PTR MessageMgrStd::setMessage(DWORD MessageCode, MessageTextEnum AdditionalTextId, const SvDef::StringVector& rAdditionalTextList, const SourceFileParams& rSourceFile, DWORD ProgramCode /*= 0*/, uint32_t objectId /*= 0*/, UINT MsgBoxType /*= MB_OK*/)
+	INT_PTR MessageManager::setMessage(DWORD MessageCode, MessageTextEnum AdditionalTextId, const SvDef::StringVector& rAdditionalTextList, const SourceFileParams& rSourceFile, DWORD ProgramCode /*= 0*/, uint32_t objectId /*= 0*/, UINT MsgBoxType /*= MB_OK*/)
 	{
 		INT_PTR Result(IDCANCEL);
 
@@ -110,7 +110,7 @@ namespace SvStl
 	}
 
 
-	INT_PTR MessageMgrStd::setMessage(const MessageData& rData, uint32_t objectId /*= 0*/, UINT MsgBoxType /*= MB_OK */)
+	INT_PTR MessageManager::setMessage(const MessageData& rData, uint32_t objectId /*= 0*/, UINT MsgBoxType /*= MB_OK */)
 	{
 		INT_PTR Result(IDCANCEL);
 
@@ -124,7 +124,7 @@ namespace SvStl
 
 	#pragma region Private Methods
 
-	void MessageMgrStd::Initialize()
+	void MessageManager::Initialize()
 	{
 		//Initialize the static members just once per instance
 		if (nullptr == m_ppShowDisplay && nullptr == m_ppNotify)
@@ -134,7 +134,7 @@ namespace SvStl
 		}
 	}
 
-	bool MessageMgrStd::suppressLogAndNotify() const
+	bool MessageManager::suppressLogAndNotify() const
 	{
 		// We want to avoid to log or notify successive "identical" messages.
 		// Comparing source file names was considered unnecessary, since messages with
@@ -170,7 +170,7 @@ namespace SvStl
 		return false;
 	}
 
-	void MessageMgrStd::Log() const 
+	void MessageManager::Log() const 
 	{
 		if (MsgType::Log & m_Type)
 		{
@@ -178,7 +178,7 @@ namespace SvStl
 		}
 	}
 
-	void MessageMgrStd::Notify() const
+	void MessageManager::Notify() const
 	{
 		bool doNotify = (MsgType::Notify & m_Type) || (SVSVIMStateClass::CheckState(SV_STATE_REMOTE_CMD) && (MsgType::Display& m_Type));
 
@@ -195,7 +195,7 @@ namespace SvStl
 
 
 
-	INT_PTR MessageMgrStd::Display(const UINT MsgBoxType)
+	INT_PTR MessageManager::Display(const UINT MsgBoxType)
 	{
 		INT_PTR Result(IDCANCEL);
 

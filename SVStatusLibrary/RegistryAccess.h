@@ -2,8 +2,8 @@
 //* COPYRIGHT (c) 2008 by Seidenader Vision Inc., Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVRegistry
-//* .File Name       : $Workfile:   SVRegistry.h  $
+//* .Module Name     : RegistryAccess
+//* .File Name       : $Workfile:   RegistryAccess.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   25 Apr 2013 17:43:56  $
@@ -17,10 +17,10 @@
 
 typedef bool (CALLBACK *PFKEYENUMPROC) (LPCTSTR p_szKey, LPVOID pUserData);
 
-//SVRegistryClass manages entries in the registry for 
+//RegistryAccess manages entries in the registry for 
 //Seidenader Vision Inc. Applications.
 
-class SVRegistryClass
+class RegistryAccess
 {
 	typedef std::vector<unsigned char> SVByteVector;
 
@@ -144,7 +144,7 @@ public:
 	//default shadow file.
 	bool Export();
 
-	//SVRegistryClass ();
+	//RegistryAccess ();
 	//throws SVException
 	//
 	//Return Value:
@@ -158,25 +158,25 @@ public:
 	//key opened is
 	//"HKEY_LOCAL_MACHINE\Software\Seidenader Vision Inc.\appname" where 
 	//appname is determined from the AfxGetAppName function.
-	SVRegistryClass();
+	RegistryAccess();
 
-	//SVRegistryClass& operator= (SVRegistryClass& svrRight);
+	//RegistryAccess& operator= (RegistryAccess& svrRight);
 	//
 	//Return Value:
 	//None.
 	//
 	//Parameters:
-	//svrRight -- Existing SVRegistryClass object.
+	//svrRight -- Existing RegistryAccess object.
 	//
 	//Remarks:
 	//Closes the current key and opens the key
-	SVRegistryClass& operator=(const SVRegistryClass &svrRight);
+	RegistryAccess& operator=(const RegistryAccess &svrRight);
 
 	//bool CreatedNewKey ()
 	//
 	//Return Value:
 	//true if the key specified in the call to the 
-	//SVRegistryClass constructor was a new key, false if the 
+	//RegistryAccess constructor was a new key, false if the 
 	//key existed before the call to the constructor.
 	//
 	//Parameters:
@@ -271,7 +271,7 @@ public:
 	//by szValueName.
 	bool GetRegistryValue( LPCTSTR szValueName, std::string& szValue );
 
-	//SVRegistryClass (LPCTSTR szKey)
+	//RegistryAccess (LPCTSTR szKey)
 	//throws SVException
 	//
 	//Return Value:
@@ -322,20 +322,20 @@ public:
 	//
 	//Example:  Assuming an application named "MyApp":
 	//
-	//    SVRegistryClass (_T("HKEY_LOCAL_MACHINE\Software")) 
+	//    RegistryAccess (_T("HKEY_LOCAL_MACHINE\Software")) 
 	//will open the
 	//    key HKEY_LOCAL_MACHINE\Software.
 	//
-	//    SVRegistryClass (_T("MyAppKey") ) will open the key
+	//    RegistryAccess (_T("MyAppKey") ) will open the key
 	//    
 	//HKEY_LOCAL_MACHINE\Software\Seidenader Vision Inc.\MyApp\MyAppKey.
 	//
-	//    SVRegistryClass (_T("\OtherApp\OtherAppKey")) will 
+	//    RegistryAccess (_T("\OtherApp\OtherAppKey")) will 
 	//open the key
 	//    
 	//HKEY_LOCAL_MACHINE\Software\Seidenader Vision Inc.\OtherApp\OtherApp
 	//Key.
-	explicit SVRegistryClass(LPCTSTR szKey);
+	explicit RegistryAccess(LPCTSTR szKey);
 
 	//delete pRegistry;
 	//
@@ -346,9 +346,9 @@ public:
 	//None.
 	//
 	//Remarks:
-	//Closes the current key and destroys the SVRegistryClass 
+	//Closes the current key and destroys the RegistryAccess 
 	//object.
-	virtual ~SVRegistryClass();
+	virtual ~RegistryAccess();
 
 private:
 	//int GetImportString (FILE *pFile, std::string &szName, 
@@ -423,26 +423,11 @@ private:
 
 	//The name of the key opened or created during 
 	//construction of the object.
-	std::string mszKey;
+	std::string m_keyString;
 
 	//Flag indicating if the key had to be created in the 
 	//constructor or not. The value of this element can be 
 	//read via the CreatedNewKey method.
 	bool mbCreatedNewKey;
-
-	//bool AdjustPrivileges (TCHAR *pszPrivilege);
-	//
-	//Return Value:
-	//true if the request privilege was granted.
-	//
-	//Parameters:
-	//Privilege to grant.
-	//
-	//Remarks:
-	//This member function is private scope.
-	//Alters the process's privileges to allow registry 
-	//modification.
-	bool AdjustPrivileges (TCHAR *pszPrivilege);
-
 };
 

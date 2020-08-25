@@ -16,7 +16,7 @@
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary/SVOutputInfoListClass.h"
-#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/RunStatus.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "ObjectInterfaces/IInspectionProcess.h"
@@ -996,7 +996,7 @@ bool SVTaskObjectListClass::isInputImage(uint32_t imageId) const
 	return Result;
 }
 
-bool SVTaskObjectListClass::Run(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVTaskObjectListClass::Run(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	clearRunErrorMessages();
 	bool childUpdateCounters = rRunStatus.m_UpdateCounters;
@@ -1006,7 +1006,7 @@ bool SVTaskObjectListClass::Run(SVRunStatusClass& rRunStatus, SvStl::MessageCont
 
 	if (!rRunStatus.IsDisabled() && !rRunStatus.IsDisabledByCondition())
 	{
-		SVRunStatusClass ChildRunStatus;
+		RunStatus ChildRunStatus;
 		ChildRunStatus.m_triggerRecord = std::move(rRunStatus.m_triggerRecord);
 		ChildRunStatus.m_UpdateCounters = childUpdateCounters;
 		// Run your children...

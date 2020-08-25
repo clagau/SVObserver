@@ -20,7 +20,7 @@
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
-#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/RunStatus.h"
 #pragma endregion Includes
 
 namespace SvTo
@@ -230,7 +230,7 @@ bool SVColorToolClass::isInputImage(uint32_t imageId) const
 	return Result;
 }
 
-bool SVColorToolClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool SVColorToolClass::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result(true);
 	BOOL convertToHSI(true);

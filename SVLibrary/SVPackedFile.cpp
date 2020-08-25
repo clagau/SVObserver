@@ -42,7 +42,7 @@ bool SVPackedFile::UnPackFiles( LPCTSTR PackedFileName, LPCTSTR UnPackDir /* = n
 	DWORD dwPackedFileVersion;
 	TCHAR szMessage[80];
 	std::string Path;
-	SvStl::MessageMgrStd Exception( SvStl::MsgType::Data);
+	SvStl::MessageManager Exception( SvStl::MsgType::Data);
 	UINT CountRead, PathLen, BytesRead;
 	BYTE Buffer[_MAX_PATH * sizeof (TCHAR)];
 	TCHAR szDrive[_MAX_DRIVE], szDir[_MAX_DIR], szFName[_MAX_FNAME], szExt[_MAX_EXT];

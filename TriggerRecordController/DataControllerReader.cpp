@@ -59,7 +59,7 @@ void TRControllerReaderDataPerIP::init(const std::string& smName)
 	m_SMHandle = nullptr;
 	SvDef::StringVector msgList;
 	msgList.push_back(SvUl::Format(_T("%s"), smName.c_str()));
-	SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+	SvStl::MessageManager Exception(SvStl::MsgType::Data);
 	Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_SMLoad, msgList, SvStl::SourceFileParams(StdMessageParams));
 	Exception.Throw();
 }
@@ -141,7 +141,7 @@ void TRControllerReaderDataPerIP::decreaseFreeTrNumber()
 		InterlockedDecrement(&m_pBasicData->m_numberOfFreeTR);
 		if (0 > m_pBasicData->m_numberOfFreeTR)
 		{
-			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+			SvStl::MessageManager Exception(SvStl::MsgType::Log);
 			Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_DecreaseFreeTRC, SvStl::SourceFileParams(StdMessageParams));
 			InterlockedExchange(&m_pBasicData->m_numberOfFreeTR, 0l);
 		}
@@ -216,7 +216,7 @@ std::vector<int> TRControllerReaderDataPerIP::getTRofInterestPos(int n)
 		}
 		else
 		{
-			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+			SvStl::MessageManager Exception(SvStl::MsgType::Log);
 			Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_GetInterestFailedLockFailed, SvStl::SourceFileParams(StdMessageParams));
 		}
 	}
@@ -313,7 +313,7 @@ ITriggerRecordRPtr DataControllerReader::createTriggerRecordObject(int inspectio
 			}
 			else
 			{
-				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+				SvStl::MessageManager Exception(SvStl::MsgType::Log);
 				Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_NotEnoughFreeForLock, SvStl::SourceFileParams(StdMessageParams));
 			}
 		}
@@ -451,7 +451,7 @@ void DataControllerReader::initAndreloadData()
 			else
 			{
 				assert(false);
-				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+				SvStl::MessageManager Exception(SvStl::MsgType::Log);
 				Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_CreateSMCommonData, SvStl::SourceFileParams(StdMessageParams));
 			}
 		}
@@ -521,7 +521,7 @@ void DataControllerReader::initAndreloadData()
 					{
 						m_lastResetId = -1;
 						//This is the topmost catch for MessageContainer exceptions
-						SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+						SvStl::MessageManager Exception(SvStl::MsgType::Log);
 						Exception.setMessage(rSvE.getMessage());
 					}
 				}
@@ -568,7 +568,7 @@ void DataControllerReader::addBuffer(const SvPb::ImageStructData &imageStruct)
 			assert(false);
 			SvDef::StringVector msgList;
 			msgList.push_back(SvUl::Format(_T("%s"), name.c_str()));
-			SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+			SvStl::MessageManager Exception(SvStl::MsgType::Data);
 			Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_SMLoad, msgList, SvStl::SourceFileParams(StdMessageParams));
 			Exception.Throw();
 		}
@@ -584,7 +584,7 @@ void DataControllerReader::addBuffer(const SvPb::ImageStructData &imageStruct)
 	else
 	{
 		assert(false);
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+		SvStl::MessageManager Exception(SvStl::MsgType::Data);
 		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_ImageProps, SvStl::SourceFileParams(StdMessageParams));
 		Exception.Throw();
 	}
@@ -602,7 +602,7 @@ void DataControllerReader::addBuffer(const SvPb::ImageStructData &imageStruct)
 		{
 			SvDef::StringVector msgList;
 			msgList.push_back(SvUl::Format(_T("%X"), errCode));
-			SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+			SvStl::MessageManager Exception(SvStl::MsgType::Data);
 			Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_CreateBuffer, msgList, SvStl::SourceFileParams(StdMessageParams));
 			Exception.Throw();
 		}
@@ -614,14 +614,14 @@ void DataControllerReader::addBuffer(const SvPb::ImageStructData &imageStruct)
 		{
 			SvDef::StringVector msgList;
 			msgList.push_back(SvUl::Format(_T("%d"), m_maxNumberOfRequiredBuffer));
-			SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+			SvStl::MessageManager Exception(SvStl::MsgType::Data);
 			Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_TooManyImageBuffer, msgList, SvStl::SourceFileParams(StdMessageParams));
 			Exception.Throw();
 		}
 
 		if (0 >= getResetId())
 		{
-			SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+			SvStl::MessageManager Exception(SvStl::MsgType::Data);
 			Exception.setMessage(SVMSG_TRC_GENERAL_WARNING, SvStl::Tid_TRC_Error_StopReloadingReader, SvStl::SourceFileParams(StdMessageParams));
 			Exception.Throw();
 		}

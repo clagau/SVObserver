@@ -17,7 +17,7 @@
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "SVMatroxLibrary/SVMatroxImageRotateStruct.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
-#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/RunStatus.h"
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "Tools/SVTool.h"
@@ -219,7 +219,7 @@ bool SVImageTransform::isInputImage(uint32_t imageId) const
 	return Result;
 }
 
-bool SVImageTransform::onRun( SVRunStatusClass& runStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVImageTransform::onRun( RunStatus& runStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	bool bRetVal = SVTransform::onRun( runStatus, pErrorMessages );
 

@@ -16,7 +16,7 @@
 #include "AnalyzerOperators/SVAnalyzer.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "Operators/ToolSizeAdjustTask.h"
-#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/RunStatus.h"
 #pragma endregion Includes
 
 namespace SvTo
@@ -113,7 +113,7 @@ bool SVLoadImageToolClass::CloseObject()
 	return false;
 }
 
-bool SVLoadImageToolClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool SVLoadImageToolClass::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	// All inputs and outputs must be validated first
 	if (ValidateLocal(pErrorMessages) && __super::onRun(rRunStatus, pErrorMessages))

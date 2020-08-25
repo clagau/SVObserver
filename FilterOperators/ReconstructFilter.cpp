@@ -13,7 +13,7 @@
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "SVMatroxLibrary/SVMatroxApplicationInterface.h"
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
-#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/RunStatus.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -81,7 +81,7 @@ bool ReconstructFilter::ResetObject(SvStl::MessageContainerVector *pErrorMessage
 	return Result;
 }
 
-bool ReconstructFilter::onRun(bool, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool ReconstructFilter::onRun(bool, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	auto* pSeedImage = SvOl::getInput<SvIe::SVImageClass>(m_SeedImageInfo);
 	if (nullptr != rInputImageHandle && !rInputImageHandle->empty() && nullptr != rOutputImageHandle && !rOutputImageHandle->empty() && nullptr != pSeedImage )

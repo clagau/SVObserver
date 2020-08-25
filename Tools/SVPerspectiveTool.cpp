@@ -17,7 +17,7 @@
 #include "SVMatroxLibrary/SVMatroxBufferCreateStruct.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
-#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/RunStatus.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVProtoBuf/ConverterHelper.h"
 #include "SVProtoBuf/Overlay.h"
@@ -293,7 +293,7 @@ bool SVPerspectiveToolClass::isInputImage(uint32_t imageId) const
 }
 
 
-bool SVPerspectiveToolClass::onRun( SVRunStatusClass &p_rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVPerspectiveToolClass::onRun( RunStatus &p_rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	bool l_bOk = SVToolClass::onRun( p_rRunStatus, pErrorMessages );
 

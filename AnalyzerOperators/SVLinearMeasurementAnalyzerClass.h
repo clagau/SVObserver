@@ -33,7 +33,7 @@ public:
 	virtual void addOverlayResults(SvPb::Overlay& rOverlay, bool isVertical = false) const override;
 
 protected:
-	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 	
 	virtual std::vector<std::string> getParameterNamesForML() const override;
 

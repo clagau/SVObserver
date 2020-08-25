@@ -12,7 +12,7 @@
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "SVMatroxLibrary/SVMatroxApplicationInterface.h"
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
-#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/RunStatus.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -60,7 +60,7 @@ void BlobReconstructBasicFilter::init()
 
 }
 
-bool BlobReconstructBasicFilter::onRun(bool, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool BlobReconstructBasicFilter::onRun(bool, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	if (nullptr != rInputImageHandle && !rInputImageHandle->empty() && nullptr != rOutputImageHandle && !rOutputImageHandle->empty())
 	{

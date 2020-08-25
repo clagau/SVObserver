@@ -87,7 +87,7 @@ bool RemoteMonitorListController::Setup(SVConfigurationObject* pConfig)
 		bRetVal = SetRemoteMonitorList(dlg.GetRemoteMonitorList(), &errorMessages); // Update the list
 		if (0 < errorMessages.size())
 		{
-			SvStl::MessageMgrStd Msg(SvStl::MsgType::Display);
+			SvStl::MessageManager Msg(SvStl::MsgType::Display);
 			Msg.setMessage(errorMessages[0].getMessage());
 		}
 	}

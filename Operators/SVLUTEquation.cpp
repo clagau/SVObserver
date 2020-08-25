@@ -12,7 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVLUTEquation.h"
-#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/RunStatus.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
@@ -161,7 +161,7 @@ bool SVLUTEquation::SetDefaultFormula(SvStl::MessageContainerVector *pErrorMessa
 //				: Use the m_lutIndex as variable in the equation, if you want to
 //				: index the values. ( m_lutIndex is running from 0 to 255 )
 ////////////////////////////////////////////////////////////////////////////////
-bool SVLUTEquation::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVLUTEquation::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	bool   bRetVal   = true;
 	double dResult   = 0.0;

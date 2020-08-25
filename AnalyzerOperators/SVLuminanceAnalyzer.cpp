@@ -20,7 +20,7 @@
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/RunStatus.h"
 #pragma endregion Includes
 
 namespace SvAo
@@ -113,7 +113,7 @@ void SVLuminanceAnalyzer::init()
 
 	if(nullptr == pAnalyzerResult)
 	{
-		SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
+		SvStl::MessageManager MesMan(SvStl::MsgType::Log );
 		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16092);
 	}
 	else
@@ -160,7 +160,7 @@ bool SVLuminanceAnalyzer::CreateObject( const SVObjectLevelCreateStruct& rCreate
 
 	if (! SVImageAnalyzerClass::CreateObject( rCreateStructure ) )
 	{
-		SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
+		SvStl::MessageManager MesMan(SvStl::MsgType::Log );
 		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16095);
 		bError = true;
 	}
@@ -169,7 +169,7 @@ bool SVLuminanceAnalyzer::CreateObject( const SVObjectLevelCreateStruct& rCreate
 		pImage = getInputImage ();
 		if (nullptr == pImage )
 		{
-			SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
+			SvStl::MessageManager MesMan(SvStl::MsgType::Log );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16096);
 			bError = true;
 		}
@@ -181,7 +181,7 @@ bool SVLuminanceAnalyzer::CreateObject( const SVObjectLevelCreateStruct& rCreate
 		msvplHistValues.resize( msvlHistValueArraySize );
 		if (msvplHistValues.size() == 0)
 		{
-			SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
+			SvStl::MessageManager MesMan(SvStl::MsgType::Log );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16097);
 			bError = true;
 		}
@@ -204,7 +204,7 @@ bool SVLuminanceAnalyzer::CreateObject( const SVObjectLevelCreateStruct& rCreate
 
 		if (M_NULL == m_HistResultID)
 		{
-			SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
+			SvStl::MessageManager MesMan(SvStl::MsgType::Log );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16098);
 			bError = true;
 		}
@@ -261,7 +261,7 @@ void SVLuminanceAnalyzer::addParameterForMonitorList(SvStl::MessageContainerVect
 	}
 }
 
-bool SVLuminanceAnalyzer::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVLuminanceAnalyzer::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	__int64          sum(0);
 	long             lNbrPixels(0);

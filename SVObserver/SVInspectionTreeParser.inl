@@ -648,7 +648,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::CreateInspectionObject(uint32_t& r
 		}
 		else
 		{
-			SvStl::MessageMgrStd e(SvStl::MsgType::Log );
+			SvStl::MessageManager e(SvStl::MsgType::Log );
 			e.setMessage( SVMSG_SVO_57_PARSERTREE_INSPECTIONCREATE_ERROR, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10010_TreeParser_InspectionCreateFailed );
 			hr = -SvStl::Err_10010_TreeParser_InspectionCreateFailed;
 		}

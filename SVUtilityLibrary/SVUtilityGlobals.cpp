@@ -165,7 +165,7 @@ bool ValidateDrive(const std::string& rFilePath)
 	SvDef::StringVector msgList;
 	msgList.push_back(rFilePath);
 	msgList.push_back(szDrive);
-	SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
+	SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
 	Exception.setMessage(SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_InvalidDrive, msgList, SvStl::SourceFileParams(StdMessageParams)); 
 	return false;
 

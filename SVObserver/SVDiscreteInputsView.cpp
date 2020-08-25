@@ -97,7 +97,7 @@ void SVDiscreteInputsView::OnUpdate( CView* , LPARAM , CObject*  )
 		if ( nullptr != pConfig ) { pInputList = pConfig->GetInputObjectList(); }
 		if ( nullptr == pInputList )
 		{
-			SvStl::MessageMgrStd e(SvStl::MsgType::Log );
+			SvStl::MessageManager e(SvStl::MsgType::Log );
 			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingInputObjectList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17006_ErrorGettingInputObjectList );
 			DebugBreak();
 			return; 

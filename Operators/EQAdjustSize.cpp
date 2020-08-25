@@ -73,7 +73,7 @@ bool EQAdjustSize::CreateObject(const SVObjectLevelCreateStruct& rCreateStructur
 }
 
 
-bool EQAdjustSize::onRun( SVRunStatusClass&, SvStl::MessageContainerVector* )
+bool EQAdjustSize::onRun( RunStatus&, SvStl::MessageContainerVector* )
 {
 	///This function is not called
 	return true;

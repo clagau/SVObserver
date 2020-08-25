@@ -27,7 +27,7 @@
 #include "Operators/SVRange.h"
 #include "Operators/SVResultLong.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
-#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/RunStatus.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "Tools/SVTool.h"
 #pragma endregion Includes
@@ -177,7 +177,7 @@ SVObjectClass* SVPatternAnalyzerClass::CreateResult()
 	SvOp::SVLongResult* pResult = dynamic_cast<SvOp::SVLongResult*> (resultClassInfo.Construct());
 	if (nullptr == pResult)
 	{
-		SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
+		SvStl::MessageManager MesMan(SvStl::MsgType::Log );
 		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16199);
 		return nullptr;
 	}
@@ -186,7 +186,7 @@ SVObjectClass* SVPatternAnalyzerClass::CreateResult()
 	SvOp::SVRange *pRange = pResult->GetResultRange();
 	if (nullptr == pRange)
 	{
-		SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
+		SvStl::MessageManager MesMan(SvStl::MsgType::Log );
 		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16200);
 		return nullptr;
 	}
@@ -626,7 +626,7 @@ bool SVPatternAnalyzerClass::SetSearchParameters ()
 	}
 	catch( ... )
 	{
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log );
+		SvStl::MessageManager Exception(SvStl::MsgType::Log );
 		Exception.setMessage( SVMSG_SVO_UNHANDLED_EXCEPTION, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 		bOk = false;
 	}
@@ -741,7 +741,7 @@ void SVPatternAnalyzerClass::ResetResultValues()
 	}
 }
 
-bool SVPatternAnalyzerClass::onRun (SVRunStatusClass &rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool SVPatternAnalyzerClass::onRun (RunStatus &rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	//@WARNING[MZA][7.50][17.01.2017] Not sure if we need to check ValidateLocal in Run-mode, maybe it is enough to check it in ResetObject
 	bool Result = __super::onRun(rRunStatus, pErrorMessages) && ValidateLocal(pErrorMessages);

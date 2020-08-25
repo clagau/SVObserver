@@ -3,7 +3,7 @@
 //* All Rights Reserved
 //******************************************************************************
 //* .Module Name     : SVLineEdgeCountingAnalyzer
-//* .File Name       : $Workfile:   SVLinearLineEdgeCountingAnalyzer.cpp  $
+//* .File Name       : $Workfile:   LinearEdgeCountingAnalyzer.cpp  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   02 Oct 2013 12:05:40  $
@@ -11,9 +11,9 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "SVLinearLineEdgeCountingAnalyzer.h"
+#include "LinearEdgeCountingAnalyzer.h"
 #include "Operators/SVLinearEdgeAProcessingClass.h"
-#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/RunStatus.h"
 #pragma endregion Includes
 
 namespace SvAo
@@ -26,9 +26,9 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVLinearEdgeCountingLineAnalyzer, SvPb::LinearEdgeCountingLineAnalyzerClassId);
+SV_IMPLEMENT_CLASS( LinearEdgeCountingAnalyzer, SvPb::LinearEdgeCountingLineAnalyzerClassId);
 
-SVLinearEdgeCountingLineAnalyzer::SVLinearEdgeCountingLineAnalyzer( SVObjectClass* POwner, int StringResourceID )
+LinearEdgeCountingAnalyzer::LinearEdgeCountingAnalyzer( SVObjectClass* POwner, int StringResourceID )
 								:SVLinearAnalyzerClass( POwner, StringResourceID ) 
 {
 	m_bEnableDirection = false;
@@ -40,7 +40,7 @@ SVLinearEdgeCountingLineAnalyzer::SVLinearEdgeCountingLineAnalyzer( SVObjectClas
 	init();
 }
 
-void SVLinearEdgeCountingLineAnalyzer::init()
+void LinearEdgeCountingAnalyzer::init()
 {
 	// Identify our type
 	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVLinearEdgeCountingAnalyzerObjectType;
@@ -64,12 +64,12 @@ void SVLinearEdgeCountingLineAnalyzer::init()
 	addScalarResultToAvailableChildren(SvPb::EdgeCountEId, SvPb::SVResultLongObjectType, IDS_OBJECTNAME_EDGE_COUNT, IDS_RESULT_STRING);
 }
 
-SVLinearEdgeCountingLineAnalyzer::~SVLinearEdgeCountingLineAnalyzer()
+LinearEdgeCountingAnalyzer::~LinearEdgeCountingAnalyzer()
 {
-	SVLinearEdgeCountingLineAnalyzer::CloseObject();
+	LinearEdgeCountingAnalyzer::CloseObject();
 }
 
-bool SVLinearEdgeCountingLineAnalyzer::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
+bool LinearEdgeCountingAnalyzer::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
 	bool bOk = SVLinearAnalyzerClass::CreateObject(rCreateStructure);
 
@@ -81,12 +81,12 @@ bool SVLinearEdgeCountingLineAnalyzer::CreateObject( const SVObjectLevelCreateSt
 	return bOk;
 }
 
-bool SVLinearEdgeCountingLineAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
+bool LinearEdgeCountingAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	return __super::ResetObject(pErrorMessages) && ValidateEdgeA(pErrorMessages);
 }
 
-bool SVLinearEdgeCountingLineAnalyzer::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool LinearEdgeCountingAnalyzer::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	// All inputs and outputs must be validated first
 	bool Result = SVLinearAnalyzerClass::onRun( rRunStatus, pErrorMessages ) && ValidateEdgeA(pErrorMessages);
@@ -127,7 +127,7 @@ bool SVLinearEdgeCountingLineAnalyzer::onRun( SVRunStatusClass& rRunStatus, SvSt
 	return Result;
 }
 
-HRESULT SVLinearEdgeCountingLineAnalyzer::GetSelectedEdgeOverlays( SVExtentMultiLineStruct &p_MultiLine )
+HRESULT LinearEdgeCountingAnalyzer::GetSelectedEdgeOverlays( SVExtentMultiLineStruct &p_MultiLine )
 {
 	if(nullptr != GetEdgeA())
 	{
@@ -142,7 +142,7 @@ HRESULT SVLinearEdgeCountingLineAnalyzer::GetSelectedEdgeOverlays( SVExtentMulti
 	return E_FAIL;
 }
 
-void SVLinearEdgeCountingLineAnalyzer::addOverlayResults(SvPb::Overlay& rOverlay, bool isVertical) const
+void LinearEdgeCountingAnalyzer::addOverlayResults(SvPb::Overlay& rOverlay, bool isVertical) const
 {
 	if (nullptr != GetEdgeA())
 	{

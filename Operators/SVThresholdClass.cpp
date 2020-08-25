@@ -20,7 +20,7 @@
 #include "InspectionEngine/SVDataBuffer.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
-#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/RunStatus.h"
 #include "Tools/SVTool.h"
 #pragma endregion Includes
 
@@ -210,7 +210,7 @@ SvVol::SVBoolValueObjectClass& SVThresholdClass::GetThresholdActivateAttribute()
 //              : Returns FALSE, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
 bool SVThresholdClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle,
-							  SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+							  RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 { 
 	// Binarizing: lowerThresh <= x <= m_upperThresh		--> 255 
 	//	 		   otherwise							--> 0
@@ -286,7 +286,7 @@ bool SVThresholdClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputIma
 		if( bUseExternalLT || bUseExternalUT || bUseExternalATM )
 		{
 			// Run equation friends...
-			SVRunStatusClass runStatus;
+			RunStatus runStatus;
 
 			runStatus.m_triggerRecord = std::move(rRunStatus.m_triggerRecord);
 			runStatus.m_UpdateCounters = rRunStatus.m_UpdateCounters;

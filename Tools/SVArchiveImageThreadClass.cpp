@@ -103,7 +103,7 @@ HRESULT SVArchiveImageThreadClass::QueueImage( BufferInfo p_BufferInfo )
 		{
 			SvDef::StringVector msgList;
 			msgList.push_back(p_BufferInfo.m_FileName);
-			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+			SvStl::MessageManager Exception(SvStl::MsgType::Log);
 			Exception.setMessage(SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_ArchiveQueueFull, msgList, SvStl::SourceFileParams(StdMessageParams));
 		}
 	}// end if not found filename in queue else
@@ -175,7 +175,7 @@ void SVArchiveImageThreadClass::PopAndWrite()
 	}
 	else
 	{
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+		SvStl::MessageManager Exception(SvStl::MsgType::Log);
 		Exception.setMessage(SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_ArchiveImageNotFound, SvStl::SourceFileParams(StdMessageParams));
 	}
 }

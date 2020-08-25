@@ -1135,13 +1135,13 @@ HRESULT SVVisionProcessorHelper::RegisterMonitorList(const std::string& rListNam
 
 void SVVisionProcessorHelper::Startup()
 {
-	SvStl::MessageMgrStd::setNotificationFunction(boost::bind(&SVVisionProcessorHelper::FireNotification, this, _1, _2, _3, _4));
+	SvStl::MessageManager::setNotificationFunction(boost::bind(&SVVisionProcessorHelper::FireNotification, this, _1, _2, _3, _4));
 	SVSVIMStateClass::setNotificationFunction(boost::bind(&SVVisionProcessorHelper::FireNotification, this, _1, _2, _3, _4));
 }
 
 void SVVisionProcessorHelper::Shutdown()
 {
-	SvStl::MessageMgrStd::setNotificationFunction(SvStl::NotifyFunctor());
+	SvStl::MessageManager::setNotificationFunction(SvStl::NotifyFunctor());
 	SVSVIMStateClass::setNotificationFunction(SvStl::NotifyFunctor());
 
 

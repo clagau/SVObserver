@@ -27,7 +27,7 @@
 #include "SVMatroxLibrary/SVMatroxPolarTransformStruct.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "SVProtoBuf/Overlay.h"
-#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/RunStatus.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "Tools/SVTool.h"
 #include "Tools/SVPolarTransformationTool.h"
@@ -458,7 +458,7 @@ void SVImagePolarTransform::AnglesTo360( double& p_dStart, double& p_dEnd)
 	}
 }	
 
-bool SVImagePolarTransform::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVImagePolarTransform::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	BOOL bUseFormula( false );
 	long AngularMethod = 0;

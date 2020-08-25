@@ -16,7 +16,7 @@
 #include "Operators/ToolSizeAdjustTask.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/RunStatus.h"
 #include "SVProtoBuf/ConverterHelper.h"
 #include "SVProtoBuf/Overlay.h"
 #pragma endregion Includes
@@ -169,7 +169,7 @@ bool SVShiftTool::isInputImage(uint32_t imageId) const
 	return Result;
 }
 
-bool SVShiftTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVShiftTool::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	//@WARNING[MZA][7.50][17.01.2017] Not sure if we need to check ValidateLocal in Run-mode, maybe it is enough to check it in ResetObject
 	bool Result = __super::onRun( rRunStatus, pErrorMessages ) && ValidateLocal(pErrorMessages);

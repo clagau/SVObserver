@@ -81,7 +81,7 @@ BOOL SVPixelAnalyzerDlg::OnInitDialog()
 
 	if (SvDef::InvalidObjectId == m_TaskObjectID)
 	{
-		SvStl::MessageMgrStd  Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
+		SvStl::MessageManager  Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
 		Exception.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16080);
 	}
 	else
@@ -96,7 +96,7 @@ BOOL SVPixelAnalyzerDlg::OnInitDialog()
 			}
 			catch (const SvStl::MessageContainer& rContain)
 			{
-				SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log);
+				SvStl::MessageManager MesMan(SvStl::MsgType::Log);
 				MesMan.setMessage(rContain.getMessage());
 				return TRUE;
 
@@ -240,7 +240,7 @@ void SVPixelAnalyzerDlg::OnPixelSetRange()
 		}
 		else
 		{
-			SvStl::MessageMgrStd  Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
+			SvStl::MessageManager  Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
 			Exception.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16085);
 		}
 	}

@@ -353,7 +353,7 @@ bool SVToolSetListCtrl::displayErrorBox(uint32_t toolId) const
 
 	if (0 < messageList.size())
 	{
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
+		SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		Exception.setMessage(messageList[0].getMessage());
 		return true;
 	}

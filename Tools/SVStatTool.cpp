@@ -19,7 +19,7 @@
 #include "SVObjectLibrary/SVOutputInfoListClass.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/RunStatus.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
@@ -364,7 +364,7 @@ DWORD SVStatisticsToolClass::FreeResult (SVStatisticsFeatureEnum aFeatureIndex)
 	}
 	else
 	{
-		SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
+		SvStl::MessageManager MesMan(SvStl::MsgType::Log );
 		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16208);
 		LastError = static_cast<DWORD> (-SvStl::Err_16208);
 	}
@@ -558,7 +558,7 @@ bool SVStatisticsToolClass::HasVariable() const
 	return bRetVal;
 }
 
-bool SVStatisticsToolClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool SVStatisticsToolClass::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::onRun(rRunStatus, pErrorMessages) && ValidateLocal(pErrorMessages);
 

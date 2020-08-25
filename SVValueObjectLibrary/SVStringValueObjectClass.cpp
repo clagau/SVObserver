@@ -222,7 +222,7 @@ void SVStringValueObjectClass::updateMemBlockData()
 			{
 				///Memory block reserved for value object is to small. This should not happen!
 				assert(false);
-				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+				SvStl::MessageManager Exception(SvStl::MsgType::Log);
 				Exception.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorMemoryBlockDataReservedSize, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 			}
 		}

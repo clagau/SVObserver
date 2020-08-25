@@ -106,12 +106,12 @@ namespace SvOg
 		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 		if (S_OK != hr || !responseCmd.has_getobjectidresponse())
 		{
-			SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
+			SvStl::MessageManager MesMan(SvStl::MsgType::Log );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16090);
 		}
 		else  if ( S_OK != SvOi::SetupDialogManager(SvPb::LongResultClassId, responseCmd.getobjectidresponse().objectid(), GetSafeHwnd()))
 		{
-			SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log );
+			SvStl::MessageManager MesMan(SvStl::MsgType::Log );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16091);
 		}
 	}

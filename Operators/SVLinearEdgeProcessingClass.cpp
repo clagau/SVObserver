@@ -215,7 +215,7 @@ bool SVLinearEdgeProcessingClass::ResetObject(SvStl::MessageContainerVector *pEr
 	return Result;
 }
 
-bool SVLinearEdgeProcessingClass::onRun( SVRunStatusClass &p_rsvRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVLinearEdgeProcessingClass::onRun( RunStatus &p_rsvRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	bool l_bOk = __super::onRun(p_rsvRunStatus, pErrorMessages);
 

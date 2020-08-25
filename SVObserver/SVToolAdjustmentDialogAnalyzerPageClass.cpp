@@ -219,7 +219,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnButtonDetails()
 	}
 	else
 	{
-		SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_Error_NoAnalyzerDetails, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10210);
 	}
 }
@@ -267,7 +267,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnSelchangeCurrentAnalyzer()
 					// And finally try to create the child object...
 					if (!m_pTool->CreateChildObject(m_pCurrentAnalyzer, SvDef::SVMFSetDefaultInputs | SvDef::SVMFResetInspection))
 					{
-						SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+						SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 						Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Error_AnalyzerCreationFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10211);
 
 						// Remove it from the Tool TaskObjectList ( Destruct it )
@@ -287,7 +287,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnSelchangeCurrentAnalyzer()
 			}
 			else
 			{
-				SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Error_AnalyzerInstantiationFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10212);
 			}
 		}

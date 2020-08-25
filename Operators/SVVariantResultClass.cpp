@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVVariantResultClass.h"
 #include "SVRange.h"
-#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/RunStatus.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
@@ -108,7 +108,7 @@ SVObjectClass* SVVariantResultClass::GetInputValue()
 	return nullptr;
 }
 
-bool SVVariantResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVVariantResultClass::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	if( __super::onRun( rRunStatus, pErrorMessages ) )
 	{

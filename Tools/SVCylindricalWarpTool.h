@@ -48,7 +48,7 @@ public:
 	virtual SvVol::SVStringValueObjectClass* GetInputImageNames() override;
 
 protected:
-	virtual bool onRun( SVRunStatusClass &p_rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool onRun( RunStatus &p_rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 private:
 	void LocalInitialize();

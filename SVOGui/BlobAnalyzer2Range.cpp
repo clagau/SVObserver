@@ -339,7 +339,7 @@ namespace SvOg
 		{
 			if (0 < responseCmd.setfeaturesresponse().error_list().size())
 			{
-				SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 				Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SetFeatureParameterFailed, SvStl::SourceFileParams(StdMessageParams));
 				const auto& range = responseCmd.setfeaturesresponse().error_list(0);
 				auto iter = std::find_if(g_columnRangeDefArray.begin(), g_columnRangeDefArray.end(), [range](const auto& rEntry) { return rEntry.second.m_protoBufFieldId == range.fieldid(); });
@@ -383,7 +383,7 @@ namespace SvOg
 		}
 		catch (const SvStl::MessageContainer& rSvE)
 		{
-			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 			Msg.setMessage(rSvE.getMessage());
 			return false;
 		}
@@ -538,7 +538,7 @@ namespace SvOg
 		catch (...)
 		{
 			assert(false);
-			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 			Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Init_RangeControlFailed, SvStl::SourceFileParams(StdMessageParams));
 		}
 		UpdateData(false);

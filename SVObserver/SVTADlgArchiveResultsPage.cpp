@@ -122,7 +122,7 @@ bool SVTADlgArchiveResultsPage::QueryAllowExit()
 	{   //do not allow exiting with invalid path
 		SvDef::StringVector msgList;
 		msgList.push_back(ArchiveFilepath);
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
+		SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		Exception.setMessage(SVMSG_SVO_73_ARCHIVE_MEMORY, pathErrorDescriptionId, SvStl::SourceFileParams(StdMessageParams));
 		return false;
 	}

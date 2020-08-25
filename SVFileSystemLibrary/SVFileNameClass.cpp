@@ -652,7 +652,7 @@ bool SVFileNameClass::SaveFile()
 					{
 						SvDef::StringVector msgList;
 						msgList.push_back(GetFullFileName());
-						SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
+						SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
 						bDone = IDYES == Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_FileName_Exists, msgList, SvStl::SourceFileParams(StdMessageParams), 0, SvDef::InvalidObjectId, MB_YESNO);
 					}
 				}

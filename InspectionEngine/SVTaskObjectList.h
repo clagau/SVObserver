@@ -18,7 +18,7 @@
 #include "SVProtoBuf/InspectionCommands.h"
 #pragma endregion Includes
 
-class SVRunStatusClass;
+class RunStatus;
 
 namespace SvIe
 {
@@ -125,7 +125,7 @@ protected:
 	// Use onRun() to implement your special updating!
 	// Override this only if you have to reroute the call!
 	// NEVER call base class Run()! 
-	virtual bool Run( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool Run( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 	virtual SVObjectPtrDeque GetPreProcessObjects() const override;
 	virtual SVObjectPtrDeque GetPostProcessObjects() const override;

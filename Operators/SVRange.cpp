@@ -14,7 +14,7 @@
 #include "SVRange.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
-#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/RunStatus.h"
 #include "Tools/SVTool.h"
 #pragma endregion Includes
 
@@ -147,7 +147,7 @@ void SVRange::addEntriesToMonitorList(std::back_insert_iterator<SvOi::Parameters
 	inserter = SvOi::ParameterPairForML(m_LinkedValues[RangeEnum::ER_WarnHigh].GetCompleteName(), m_LinkedValues[RangeEnum::ER_WarnHigh].getObjectId());
 }
 
-bool SVRange::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector*)
+bool SVRange::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector*)
 {
 	double InputValue, rangeValues[RangeEnum::ER_COUNT];
 	getInputValue(InputValue);

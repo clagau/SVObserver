@@ -484,7 +484,7 @@ void SVObserverApp::OnRunMode()
 	catch (const SvStl::MessageContainer& rExp)
 	{
 
-		SvStl::MessageMgrStd  Exception(SvStl::MsgType::Log | SvStl::MsgType::Notify);
+		SvStl::MessageManager  Exception(SvStl::MsgType::Log | SvStl::MsgType::Notify);
 		Exception.setMessage(rExp.getMessage());
 	}
 }
@@ -765,7 +765,7 @@ void SVObserverApp::OnStop()
 	GetTriggersAndCounts(TriggerCounts);
 
 	//add message to event viewer - gone off-line
-	SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+	SvStl::MessageManager Exception(SvStl::MsgType::Log);
 	Exception.setMessage(SVMSG_SVO_28_SVOBSERVER_GO_OFFLINE, TriggerCounts.c_str(), SvStl::SourceFileParams(StdMessageParams));
 
 	SVSVIMStateClass::changeState(SV_STATE_READY | SV_STATE_STOP, SV_STATE_UNAVAILABLE | SV_STATE_STOPING | SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT);
@@ -1191,7 +1191,7 @@ void SVObserverApp::OnGoOnline()
 				}
 				else
 				{
-					SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+					SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 					Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SVObserver_CannotRun_WrongModelNumber, m_rInitialInfo.GetModelNumberVector(), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10121);
 					SVSVIMStateClass::changeState(prevState, SV_STATE_RUNNING);
 				}
@@ -1202,7 +1202,7 @@ void SVObserverApp::OnGoOnline()
 				msgList.push_back(m_rInitialInfo.ModelNumberString());
 				msgList.push_back(m_rInitialInfo.InitializationFailureDescription(m_IniInfoHandler.GetInitializationStatusFlags()));
 
-				SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SVObserver_InitializationFailure, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10126);
 
 				SVSVIMStateClass::changeState(prevState, SV_STATE_RUNNING);
@@ -1214,7 +1214,7 @@ void SVObserverApp::OnGoOnline()
 			}
 			else if (0 != exceptionContainer.getMessage().m_MessageCode)
 			{
-				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
+				SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
 				Exception.setMessage(exceptionContainer.getMessage());
 				SVSVIMStateClass::changeState(prevState, SV_STATE_RUNNING);
 			}
@@ -1427,7 +1427,7 @@ void SVObserverApp::OnExtrasUtilitiesEdit()
 	}
 	else
 	{
-		SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SVObserver_AuthorizationFailed_Modification, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10123);
 	}
 	SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
@@ -1448,7 +1448,7 @@ void SVObserverApp::OnRunUtility(UINT uiId)
 	}
 	else
 	{
-		SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SVObserver_AuthorizationFailed_Execution, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10124);
 	}
 }
@@ -1718,13 +1718,13 @@ BOOL SVObserverApp::InitInstance()
 	if (S_OK != retValue || nullptr == ResourceInstance)
 	{
 		//Because our exception handler (message box) needs the resources, we have to use here the standard message box.
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+		SvStl::MessageManager Exception(SvStl::MsgType::Log);
 		Exception.setMessage(SVMSG_SVO_53_RESOURCE_DLL_LOADING_FAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10009_LoadOfResourceDllFailed);
 		MessageBox(nullptr, SvO::LoadingResourceDllFailed, nullptr, MB_OK | MB_ICONSTOP);
 		exit(-SvStl::Err_10009_LoadOfResourceDllFailed);
 	}
 
-	SvStl::MessageMgrStd::setShowDisplayFunction(boost::bind(&SvLib::DisplayMessageBox::showDialog, _1, _2, _3, _4));
+	SvStl::MessageManager::setShowDisplayFunction(boost::bind(&SvLib::DisplayMessageBox::showDialog, _1, _2, _3, _4));
 
 	// load File based write filter DLL. SVObserver will function normally (except for FBWF functionally, of course) if "fbwflib.dll" is not found
 	SvUl::LoadDll::Instance().getDll(SvO::FbwfDllName, ExtrasEngine::ms_FbwfDllInstance);
@@ -1742,7 +1742,7 @@ BOOL SVObserverApp::InitInstance()
 	// OLE-Bibliotheken initialisieren
 	if (!AfxOleInit())
 	{
-		SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SVObserver_OleInitFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10125);
 		return false;
 	}
@@ -1895,7 +1895,7 @@ BOOL SVObserverApp::InitInstance()
 		sWin.ShowWindow(SW_HIDE);
 #endif //_DEBUG                  // 23 Mar 1999 - frb.
 
-		SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SVObserver_InitializationFailure, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10126);
 	}
 
@@ -1965,7 +1965,7 @@ BOOL SVObserverApp::InitInstance()
 	//Log amount of physical memory - may help in debugging issues in the future.
 	SvDef::StringVector MessageList;
 	MessageList.push_back(SvUl::Format(_T("%d"), AmountOfRam));
-	SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+	SvStl::MessageManager Exception(SvStl::MsgType::Log);
 	Exception.setMessage(SVMSG_SVO_54_EMPTY, SvStl::Tid_AmountOfSystemMemoryText, MessageList, SvStl::SourceFileParams(StdMessageParams), SvStl::Memory_Log_45001);
 
 	//if amount of physical memory is around 16 GigE allocate the larger memory pools.
@@ -2067,13 +2067,13 @@ BOOL SVObserverApp::InitInstance()
 
 	if (!SVOLicenseManager::Instance().HasMatroxLicense())
 	{
-		SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		Msg.setMessage(SVMSG_SVO_52_NOMATROX_DONGLE, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25013_NoMatroxDongle);
 	}
 
 	if (SVOLicenseManager::Instance().HasMatroxLicense() && !SVOLicenseManager::Instance().HasMatroxGigELicense() && IsMatroxGige())
 	{
-		SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SVObserver_MatroxGigELicenseNotFound, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10127);
 	}
 
@@ -2147,10 +2147,10 @@ int SVObserverApp::ExitInstance()
 	// Shutdown MIL
 	SVMatroxApplicationInterface::Shutdown();
 
-	SvStl::MessageMgrStd::setShowDisplayFunction(SvStl::ShowDisplayFunctor());
+	SvStl::MessageManager::setShowDisplayFunction(SvStl::ShowDisplayFunctor());
 
 	//add message to event viewer - SVObserver stopped
-	SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+	SvStl::MessageManager Exception(SvStl::MsgType::Log);
 	Exception.setMessage(SVMSG_SVO_26_SVOBSERVER_STOPPED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
 	CloseHandle(m_hEvent);
 
@@ -2181,7 +2181,7 @@ int SVObserverApp::Run()
 	catch (const SvStl::MessageContainer& rExp)
 	{
 		//This is the topmost catch for MessageContainer exceptions
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
+		SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		//Set the error code to unhandled exception but use the rest of the data from the original exception
 		SvStl::MessageData Msg(rExp.getMessage());
 		std::string OrgMessageCode = SvUl::Format(_T("0x%08X"), Msg.m_MessageCode);
@@ -2278,7 +2278,7 @@ HRESULT SVObserverApp::OpenFile(LPCTSTR PathName, bool editMode /*= false*/, Con
 		{
 			SvDef::StringVector msgList;
 			msgList.emplace_back(FileName);
-			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 			Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnzipFileFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
 			return E_FAIL;
 		}
@@ -2368,7 +2368,7 @@ HRESULT SVObserverApp::OpenSVXFile()
 			}
 			catch (const SvStl::MessageContainer& rExp)
 			{
-				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+				SvStl::MessageManager Exception(SvStl::MsgType::Log);
 				Exception.setMessage(rExp.getMessage());
 				isGlobalInit = false;
 			}
@@ -2382,7 +2382,7 @@ HRESULT SVObserverApp::OpenSVXFile()
 				}
 				catch (const SvStl::MessageContainer& rExp)
 				{
-					SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
+					SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
 					Exception.setMessage(rExp.getMessage());
 					hr = E_FAIL;
 					break;
@@ -2397,7 +2397,7 @@ HRESULT SVObserverApp::OpenSVXFile()
 				hr = SvXml::CheckObsoleteItems(XMLTree, configVer, itemType, errorCode);
 				if (hr & SvDef::svErrorCondition)
 				{
-					SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
+					SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
 					Exception.setMessage(SVMSG_SVO_76_CONFIGURATION_HAS_OBSOLETE_ITEMS, itemType.c_str(), SvStl::SourceFileParams(StdMessageParams), errorCode);
 					break;
 				}
@@ -2414,7 +2414,7 @@ HRESULT SVObserverApp::OpenSVXFile()
 					msgList.push_back(File);
 					msgList.push_back(App);
 
-					SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+					SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 					INT_PTR result = Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SVObserver_WrongVersionNumber, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10128, SvDef::InvalidObjectId, MB_YESNO);
 					if (IDNO == result)
 					{
@@ -2454,7 +2454,7 @@ HRESULT SVObserverApp::OpenSVXFile()
 						//SVMSG_SVO_IGNORE_EXCEPTION can be used to stop the loading but not display any messages
 						if (SVMSG_SVO_IGNORE_EXCEPTION != rSvE.getMessage().m_MessageCode)
 						{
-							SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
+							SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
 							Exception.setMessage(rSvE.getMessage());
 						}
 					}
@@ -2497,7 +2497,7 @@ HRESULT SVObserverApp::OpenSVXFile()
 						}
 						catch (const SvStl::MessageContainer& rExp)
 						{
-							SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
+							SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
 							Exception.setMessage(rExp.getMessage());
 							hr = E_FAIL;
 							break;
@@ -2511,7 +2511,7 @@ HRESULT SVObserverApp::OpenSVXFile()
 						// Removes any invalid entries in the output list.
 						if (SVMSG_SVO_70_DUPLICATE_DISCRETE_OUTPUT == pConfig->ValidateOutputList())
 						{
-							SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
+							SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
 							Exception.setMessage(SVMSG_SVO_70_DUPLICATE_DISCRETE_OUTPUT, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
 						}
 						// Upgrade the configuration depending on the version being loaded
@@ -2530,7 +2530,7 @@ HRESULT SVObserverApp::OpenSVXFile()
 				msgList.push_back(getConfigFullFileName());
 				msgList.push_back(SvUl::Format(_T("%d"), l_lTime));
 
-				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+				SvStl::MessageManager Exception(SvStl::MsgType::Log);
 				Exception.setMessage(SVMSG_SVO_29_SVOBSERVER_CONFIG_LOADED, SvStl::Tid_ConfigLoadTime, msgList, SvStl::SourceFileParams(StdMessageParams));
 
 				break;
@@ -2546,7 +2546,7 @@ HRESULT SVObserverApp::OpenSVXFile()
 				{
 					SvDef::StringVector msgList;
 					msgList.push_back(SvUl::Format(_T("%d"), hr));
-					SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+					SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 					Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SVObserver_ConfigurationLoadFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10129);
 				}
 				return S_FALSE;
@@ -2806,7 +2806,7 @@ HRESULT SVObserverApp::DestroyConfig(bool AskForSavingOrClosing /* = true */,
 		{
 			SvDef::StringVector msgList;
 			msgList.push_back(getConfigFileName());
-			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 			INT_PTR result = Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_UserQuestionCloseConfig, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10130, SvDef::InvalidObjectId, MB_YESNO);
 			bClose = IDYES == result;
 			if (!bClose)
@@ -2829,7 +2829,7 @@ HRESULT SVObserverApp::DestroyConfig(bool AskForSavingOrClosing /* = true */,
 				{
 					SvDef::StringVector msgList;
 					msgList.push_back(getConfigFileName());
-					SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+					SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 					INT_PTR result = Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_UserQuestionSaveChanges, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10131, SvDef::InvalidObjectId, MB_YESNOCANCEL);
 					switch (result)
 					{
@@ -3534,7 +3534,7 @@ HRESULT SVObserverApp::SetMode(unsigned long lNewMode)
 			}
 			catch (const SvStl::MessageContainer& rExp)
 			{
-				SvStl::MessageMgrStd  Exception(SvStl::MsgType::Log | SvStl::MsgType::Notify);
+				SvStl::MessageManager  Exception(SvStl::MsgType::Log | SvStl::MsgType::Notify);
 				Exception.setMessage(rExp.getMessage());
 				l_hr = SVMSG_SVIMCMD_GO_ONLINE_FAILED;
 			}
@@ -3742,7 +3742,7 @@ bool SVObserverApp::setConfigFullFileName(LPCTSTR csFullFileName, bool bLoadFile
 				SvDef::StringVector msgList;
 				msgList.push_back(SvStl::MessageData::convertId2AddtionalText(bLoadFile ? SvStl::Tid_Load : SvStl::Tid_Save));
 				msgList.push_back(m_ConfigFileName.GetPathName());
-				SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 				Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_UnableConfig, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10132);
 			}
 		}
@@ -4063,7 +4063,7 @@ bool SVObserverApp::ShowConfigurationAssistant(int /*= 3*/,
 		// Validate Output List TB
 		if (SVMSG_SVO_70_DUPLICATE_DISCRETE_OUTPUT == pConfig->ValidateOutputList())
 		{
-			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
+			SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
 			Exception.setMessage(SVMSG_SVO_70_DUPLICATE_DISCRETE_OUTPUT, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
 		}
 	}// end if DoModal == IDOK
@@ -4462,7 +4462,7 @@ void SVObserverApp::SetTestMode(bool p_bNoSecurity)
 					catch (const SvStl::MessageContainer& rExp)
 					{
 						//This is the topmost catch for MessageContainer exceptions
-						SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
+						SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
 						Exception.setMessage(rExp.getMessage());
 						return;
 					}
@@ -4491,7 +4491,7 @@ void SVObserverApp::SetTestMode(bool p_bNoSecurity)
 						catch (const SvStl::MessageContainer& rExp)
 						{
 							//This is the topmost catch for MessageContainer exceptions
-							SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
+							SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
 							Exception.setMessage(rExp.getMessage());
 
 							//failed, goOffline, before return
@@ -4523,7 +4523,7 @@ void SVObserverApp::SetTestMode(bool p_bNoSecurity)
 				{
 					OnStop();
 
-					SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
+					SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
 					Exception.setMessage(rExp.getMessage());
 					return;
 				}
@@ -4847,7 +4847,7 @@ HRESULT SVObserverApp::CheckDrive(const std::string& rDrive) const
 		SvDef::StringVector msgList;
 		msgList.push_back(Drive);
 
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
+		SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		Exception.setMessage(SVMSG_SVO_5051_DRIVEDOESNOTEXIST, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams));
 	}
 	TCHAR VolumeName[100];
@@ -4870,7 +4870,7 @@ HRESULT SVObserverApp::CheckDrive(const std::string& rDrive) const
 		{
 			std::string Drive = SvUl::MakeUpper(SvUl::Left(rDrive, 1).c_str());
 
-			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+			SvStl::MessageManager Exception(SvStl::MsgType::Log);
 			Exception.setMessage(SVMSG_SVO_5052_DRIVENOTNTFSFORMAT, Drive.c_str(), SvStl::SourceFileParams(StdMessageParams));
 
 #ifndef _DEBUG
@@ -4961,7 +4961,7 @@ void SVObserverApp::Start()
 				SvDef::StringVector msgList;
 				msgList.push_back(SvUl::Format(_T("%.0f"), cNormalNonPageMemoryUsage));
 				msgList.push_back(SvUl::Format(_T("%.0f"), NonPagedMemUsage));
-				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+				SvStl::MessageManager Exception(SvStl::MsgType::Log);
 				Exception.setMessage(SVMSG_SVO_NON_PAGED_MEMORY_LOW, SvStl::Tid_MoreThanPercentUsed, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25023_NonPagedMemoryLow);
 			}
 		}
@@ -5034,7 +5034,7 @@ void SVObserverApp::Start()
 		RunAllIPDocuments();
 		SvDef::StringVector msgList;
 		msgList.push_back(ex.what());
-		SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log);
+		SvStl::MessageManager MesMan(SvStl::MsgType::Log);
 		MesMan.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_StdException, msgList, SvStl::SourceFileParams(StdMessageParams));
 		MesMan.Throw();
 	}
@@ -5132,7 +5132,7 @@ void SVObserverApp::Start()
 		msgList.push_back(TriggerCounts);
 		msgList.push_back(SvUl::Format(_T("%d"), l_lTime));
 		//add go-online message to the event viewer.
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+		SvStl::MessageManager Exception(SvStl::MsgType::Log);
 		Exception.setMessage(SVMSG_SVO_27_SVOBSERVER_GO_ONLINE, SvStl::Tid_GoOnlineTime, msgList, SvStl::SourceFileParams(StdMessageParams));
 
 		SVObjectManagerClass::Instance().SetState(SVObjectManagerClass::ReadOnly);
@@ -5272,7 +5272,7 @@ HRESULT SVObserverApp::InitializeSecurity()
 
 	if (m_svSecurityMgr.SVLoad(szGetBuf) != S_OK)
 	{
-		SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SVObserver_SecurityFileLoadFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10133);
 	}
 
@@ -5288,7 +5288,7 @@ bool SVObserverApp::fileSaveAsSVX(const std::string& rFileName, bool resetAutoSa
 	//When a file name is present it must have the correct extension
 	if (!rFileName.empty() && std::string::npos == rFileName.find(SvDef::cPackedConfigExtension))
 	{
-		SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SVObserver_WrongPathnameEntered, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10134);
 		return false;
 	}
@@ -5342,7 +5342,7 @@ bool SVObserverApp::fileSaveAsSVX(const std::string& rFileName, bool resetAutoSa
 			{
 				SvDef::StringVector msgList;
 				msgList.emplace_back(rFileName);
-				SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ZipFileFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
 				result = false;
 			}
@@ -5885,7 +5885,7 @@ bool SVObserverApp::InitATL()
 #ifdef _DEBUG
 		if (!l_AppRegister && !l_AppUnregister)
 		{
-			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 			INT_PTR result = Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SVObserver_RegisterClassObjectsFailed_Question, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10135, SvDef::InvalidObjectId, MB_YESNO);
 			if (IDYES == result)
 			{
@@ -5896,7 +5896,7 @@ bool SVObserverApp::InitATL()
 
 #endif
 		{
-			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 			Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SVObserver_RegisterClassObjectsFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10136);
 			return false;
 		}

@@ -176,7 +176,7 @@ void SVFileCamera::OnAPCEvent( ULONG_PTR data )
 				msgList.push_back(filename);
 				id = SvStl::Tid_FileCamera_LoadFailed;
 			}
-			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log );
+			SvStl::MessageManager Exception(SvStl::MsgType::Log );
 			Exception.setMessage( SVMSG_IMAGE_LOAD_ERROR, id, msgList, SvStl::SourceFileParams(StdMessageParams) );
 		}
 	}

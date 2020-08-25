@@ -359,7 +359,7 @@ namespace SvOg
 		{
 			if (0 < responseCmd.setfeaturesresponse().error_list().size())
 			{
-				SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 				SvStl::MessageContainerVector tmpMessages =  SvPb::setMessageVectorFromMessagePB(responseCmd.setfeaturesresponse().messages());
 				if (0 < tmpMessages.size())
 				{

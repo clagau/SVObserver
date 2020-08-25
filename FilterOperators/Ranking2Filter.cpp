@@ -15,7 +15,7 @@
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVMatroxLibrary/SVMatroxBufferCreateStruct.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
-#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/RunStatus.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
@@ -100,7 +100,7 @@ void Ranking2Filter::RebuildKernel()
 	SVMatroxBufferInterface::PutBuffer(m_milKernel, &kernelData[0]);
 }
 
-bool Ranking2Filter::onRun(bool First, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool Ranking2Filter::onRun(bool First, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	if (m_pCurrentUIOPL && nullptr != rInputImageHandle && nullptr != rOutputImageHandle)
 	{

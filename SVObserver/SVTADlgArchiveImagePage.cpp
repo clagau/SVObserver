@@ -112,7 +112,7 @@ bool SVTADlgArchiveImagePage::QueryAllowExit()
 			__int64 FreeMemory = CalculateFreeMem();
 			if (0 > FreeMemory)
 			{
-				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
+				SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
 				Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_AP_NotEnoughMemoryPleaseDeselect, SvStl::SourceFileParams(StdMessageParams) );
 				return false;
 			}
@@ -147,7 +147,7 @@ bool SVTADlgArchiveImagePage::QueryAllowExit()
 		SvDef::StringVector msgList;
 		msgList.push_back(SvUl::Format(_T("%ld"), m_ImagesToArchive));
 		msgList.push_back(SvUl::Format(_T("%ld"), UpperLimitImageNumbers));
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
+		SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
 		Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_Error_you_have_Selected_X_Must_less_then_Y, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16075_ImageNrToBig  );
 		return false;
 	}
@@ -156,7 +156,7 @@ bool SVTADlgArchiveImagePage::QueryAllowExit()
 	{
 		SvDef::StringVector msgList;
 		msgList.push_back(SvUl::Format(_T("%ld"),  m_ImagesToArchive));
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log );
+		SvStl::MessageManager Exception(SvStl::MsgType::Log );
 		Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ArchiveTool_WarningMaxImages, msgList, SvStl::SourceFileParams(StdMessageParams) );
 	}
 	//Max images must be at least 1
@@ -555,13 +555,13 @@ void SVTADlgArchiveImagePage::OnSelchangeWhenToArchive()
 			__int64 FreeMem = CalculateFreeMem();
 			if ( 0 > FreeMem )
 			{
-				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
+				SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
 				Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_AP_NotEnoughMemoryWhenChangingMode, SvStl::SourceFileParams(StdMessageParams) );
 			}
 		}
 		else if(SvTo::SVArchiveSynchronous == m_eSelectedArchiveMethod )
 		{
-			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
+			SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
 			Exception.setMessage( SVMSG_SVO_89_ARCHIVE_TOOL_SYNCHRONOUS_MODE, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
 		}
 	}
@@ -592,7 +592,7 @@ void SVTADlgArchiveImagePage::OnChangeEditMaxImages()
 				{
 					SvDef::StringVector msgList;
 					msgList.push_back(std::string(strNumImages));
-					SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
+					SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
 					Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_AP_NotEnoughImageMemoryWhenChangingMode, msgList, SvStl::SourceFileParams(StdMessageParams) );
 					m_ImagesToArchive = atol(m_sMaxImageNumber);
 					if(m_sMaxImageNumber != strNumImages)
@@ -662,7 +662,7 @@ bool SVTADlgArchiveImagePage::checkImageMemory(uint32_t imageId, bool bNewState)
 				bOk = false;
 				SvDef::StringVector msgList;
 				msgList.push_back(std::string(pImage->GetCompleteName()));
-				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
+				SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
 				Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_AP_NotEnoughImageMemoryToSelect, msgList, SvStl::SourceFileParams(StdMessageParams) );
 			}
 		}
@@ -682,7 +682,7 @@ bool SVTADlgArchiveImagePage::checkImageMemory(uint32_t imageId, bool bNewState)
 
 			if( 0 > FreeMem )
 			{
-				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
+				SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
 				Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_AP_NotEnoughMemoryPleaseDeselectImage, SvStl::SourceFileParams(StdMessageParams) );
 
 			}

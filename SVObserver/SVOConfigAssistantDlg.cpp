@@ -310,7 +310,7 @@ void SVOConfigAssistantDlg::OnSelchangeComboAvalSys()
 			// Check if I/O digital to Non I/O digital or vice versa
 			if (SvTi::SVHardwareManifest::IsNonIOSVIM(newConfigType) != SvTi::SVHardwareManifest::IsNonIOSVIM(currentConfigType))
 			{
-				SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
+				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 				INT_PTR result = Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_Config_SwitchResetQuestion, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10138, SvDef::InvalidObjectId, MB_YESNO);
 				if ( IDYES == result )
 				{
@@ -324,7 +324,7 @@ void SVOConfigAssistantDlg::OnSelchangeComboAvalSys()
 			if ((SvTi::SVHardwareManifest::isPlcSystem(newConfigType) != SvTi::SVHardwareManifest::isPlcSystem(currentConfigType)) ||
 				(SvTi::SVHardwareManifest::isDiscreteIOSystem(newConfigType) != SvTi::SVHardwareManifest::isDiscreteIOSystem(currentConfigType)))
 			{
-				SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
+				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 				INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_Config_SwitchIOQuestion, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10139, SvDef::InvalidObjectId, MB_YESNO);
 				if ( IDYES == result )
 				{
@@ -2012,7 +2012,7 @@ bool SVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 						{
 							SvDef::StringVector msgList;
 							msgList.push_back(SvUl::Format(_T("%d"), hr));
-							SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
+							SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 							Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Config_InspectionImportFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10140);
 						}
 						pInspectionObj->ClearImportFilename();

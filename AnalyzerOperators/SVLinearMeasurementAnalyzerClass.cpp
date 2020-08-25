@@ -16,7 +16,7 @@
 #include "Definitions/LinearEdgeEnums.h"
 #include "Operators/SVLinearEdgeAProcessingClass.h"
 #include "Operators/SVLinearEdgeBProcessingClass.h"
-#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/RunStatus.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "Tools/SVTool.h"
 #pragma endregion Includes
@@ -159,7 +159,7 @@ void SVLinearMeasurementAnalyzerClass::addOverlayResults(SvPb::Overlay& rOverlay
 	}
 }
 
-bool SVLinearMeasurementAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVLinearMeasurementAnalyzerClass::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	bool Result = __super::onRun( rRunStatus, pErrorMessages ) && ValidateEdgeA(pErrorMessages) && ValidateEdgeB(pErrorMessages);
 

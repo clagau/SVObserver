@@ -22,7 +22,7 @@
 #include "SVLibrary/SVTemplate.h"
 #include "Definitions/Color.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/RunStatus.h"
 #include "ObjectInterfaces/IInspectionProcess.h"
 #include "ObjectInterfaces/ITaskObjectListClass.h"
 #include "ObjectInterfaces/IToolSet.h"
@@ -671,7 +671,7 @@ SvStl::MessageContainerVector SVTaskObjectClass::validateAndSetEmbeddedValues(co
 			}
 			if (S_OK != Result)
 			{
-				SvStl::MessageMgrStd Msg(SvStl::MsgType::Log);
+				SvStl::MessageManager Msg(SvStl::MsgType::Log);
 				SvDef::StringVector msgList;
 				SvOi::IObjectClass* pObject = dynamic_cast<SvOi::IObjectClass*> (rEntry.m_pValueObject);
 				if (nullptr != pObject)
@@ -709,7 +709,7 @@ SvStl::MessageContainerVector SVTaskObjectClass::setEmbeddedDefaultValues(const 
 
 		if (S_OK != Result)
 		{
-			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log);
+			SvStl::MessageManager Msg(SvStl::MsgType::Log);
 			SvDef::StringVector msgList;
 			SvOi::IObjectClass* pObject = dynamic_cast<SvOi::IObjectClass*> (rEntry.m_pValueObject);
 			if (nullptr != pObject)
@@ -1274,7 +1274,7 @@ HRESULT SVTaskObjectClass::ConnectToObject(SvOl::SVInObjectInfoStruct* p_psvInpu
 					msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvStl::Tid_UnknownString));
 				}
 				// Should we really be doing this here?
-				SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 				Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_CriticalUnableToConnectTo, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10203);
 
 				// Try to recover old state...
@@ -1441,7 +1441,7 @@ bool SVTaskObjectClass::RegisterEmbeddedObjectAsClass(SVObjectClass* pEmbeddedOb
 			{
 				if (embeddedID == pObject->GetEmbeddedID())
 				{
-					SvStl::MessageMgrStd Msg(SvStl::MsgType::Log);
+					SvStl::MessageManager Msg(SvStl::MsgType::Log);
 					Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_DuplicateEmbeddedId, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10204);
 					assert(false);
 					return false;
@@ -1744,7 +1744,7 @@ void SVTaskObjectClass::PersistEmbeddeds(SvOi::IObjectWriter& rWriter)
 	}
 }
 
-bool SVTaskObjectClass::Run(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool SVTaskObjectClass::Run(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	clearRunErrorMessages();
 
@@ -1767,7 +1767,7 @@ bool SVTaskObjectClass::Run(SVRunStatusClass& rRunStatus, SvStl::MessageContaine
 	return bRetVal;
 }
 
-bool SVTaskObjectClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool SVTaskObjectClass::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool bRetVal = (S_OK == updateImageExtent());
 
@@ -1785,7 +1785,7 @@ bool SVTaskObjectClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContai
 	return bRetVal;
 }
 
-bool SVTaskObjectClass::runFriends(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool SVTaskObjectClass::runFriends(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool bRetVal = true;
 

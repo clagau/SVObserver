@@ -18,7 +18,7 @@
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVMatroxLibrary/SVMatroxBufferCreateLineStruct.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
-#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/RunStatus.h"
 #pragma endregion Includes
 
 namespace SvOp
@@ -186,7 +186,7 @@ bool SVLUTOperator::CloseObject()
 //              : If MIL LUT buffer is not yet allocated, it tries to do this, 
 //				: also.
 ////////////////////////////////////////////////////////////////////////////////
-bool SVLUTOperator::RecalcLUT( SVRunStatusClass& rRunStatus )
+bool SVLUTOperator::RecalcLUT( RunStatus& rRunStatus )
 {
 	if( getOutputImage() )
 	{
@@ -414,7 +414,7 @@ bool SVLUTOperator::RecalcLUT( SVRunStatusClass& rRunStatus )
 	return false;
 }
 
-bool SVLUTOperator::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVLUTOperator::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 { 
 	// Is doing special friend routing !!!
 	// Don't call base class onRun(...).

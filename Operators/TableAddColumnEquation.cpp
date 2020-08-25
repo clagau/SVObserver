@@ -9,7 +9,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "TableAddColumnEquation.h"
-#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/RunStatus.h"
 #include "SVValueObjectLibrary/SVLongValueObjectClass.h"
 #pragma endregion Includes
 
@@ -68,7 +68,7 @@ void TableAddColumnEquation::SetName(LPCTSTR Name)
 	}
 }
 
-bool TableAddColumnEquation::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool TableAddColumnEquation::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool   bRetVal = true;
 	if (nullptr != m_pResultColumn && nullptr != m_pIndex)

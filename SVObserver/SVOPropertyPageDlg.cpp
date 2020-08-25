@@ -1316,7 +1316,7 @@ void SVOPropertyPageDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 					//! Check if file exists
 					if (!FileName.empty() && 0 != _access(FileName.c_str(), 0))
 					{
-						SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
+						SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
 						SvDef::StringVector msgList;
 						msgList.push_back(FileName);
 						Exception.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Config_CameraFileNameInvalid, msgList, SvStl::SourceFileParams(StdMessageParams));
@@ -1707,7 +1707,7 @@ void SVOPropertyPageDlg::OnItemQueryShowButton(NMHDR* pNotifyStruct, LRESULT* pl
 					}
 					else
 					{
-						SvStl::MessageMgrStd Exception(SvStl::MsgType::Log );
+						SvStl::MessageManager Exception(SvStl::MsgType::Log );
 						Exception.setMessage( SVMSG_SVO_NULL_POINTER, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
 					}
 				}

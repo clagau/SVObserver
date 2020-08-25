@@ -375,7 +375,7 @@ HRESULT SVObjectBuilder::SetObjectValue(uint32_t ownerID, uint32_t objectID, con
 
 		if( S_OK != pOwnerObject->SetValuesForAnObject(objectID, &dataObject) )
 		{
-			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
+			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ObjectBuilder_SetObjectValueError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10248 );
 		}
 	}

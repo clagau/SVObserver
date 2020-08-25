@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVEvaluate.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
-#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/RunStatus.h"
 #pragma endregion Includes
 
 namespace SvOp
@@ -66,7 +66,7 @@ SvVol::SVDoubleValueObjectClass* SVEvaluate::getOutputMathResult()
 	return &m_outputMathResult;
 }
 
-bool SVEvaluate::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVEvaluate::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	SvVol::SVDoubleValueObjectClass* pResult = getOutputMathResult();
 	

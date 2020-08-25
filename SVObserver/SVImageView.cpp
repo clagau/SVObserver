@@ -480,7 +480,7 @@ void SVImageView::SaveViewOrImageToDisk(bool ViewOnly, bool showOverlays)
 
 	if (nullptr == pCurrentImage)
 	{
-		SvStl::MessageMgrStd NullImageWarning(SvStl::MsgType::Log | SvStl::MsgType::Display );
+		SvStl::MessageManager NullImageWarning(SvStl::MsgType::Log | SvStl::MsgType::Display );
 		NullImageWarning.setMessage(SVMSG_SVO_5018_NULLIMAGE, SvStl::Tid_DisplayedImageIsUnavailable, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_30000_NullImageOnSave);
 		return;
 	}
@@ -2146,7 +2146,7 @@ HRESULT SVImageView::BlitToPrimarySurface( CRect& p_rDestRect )
 		}
 		else
 		{
-			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log);
+			SvStl::MessageManager Msg(SvStl::MsgType::Log);
 			SvDef::StringVector msgList;
 			std::ostringstream oss;
 			oss << "GetBltStatus() Failed!! Result = " << status;

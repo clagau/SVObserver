@@ -119,7 +119,7 @@ BOOL SVTADlgColorThresholdAdjustment::OnInitDialog()
 	{
 		if(!initHistogram())
 		{
-			SvStl::MessageMgrStd message(SvStl::MsgType::Log | SvStl::MsgType::Display);
+			SvStl::MessageManager message(SvStl::MsgType::Log | SvStl::MsgType::Display);
 			message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CreateBufferFailed, SvStl::SourceFileParams(StdMessageParams));
 		}
 

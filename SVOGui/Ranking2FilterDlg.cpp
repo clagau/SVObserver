@@ -202,7 +202,7 @@ void Ranking2FilterDlg::OnBnClickedOk()
 	}
 	catch (const SvStl::MessageContainer& rSvE)
 	{
-		SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		Msg.setMessage(rSvE.getMessage());
 	}
 }

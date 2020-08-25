@@ -33,7 +33,7 @@ public:
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
-	virtual bool onRun( SVRunStatusClass &p_rsvRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool onRun( RunStatus &p_rsvRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 	HRESULT GetInputMinThreshold(double& rMinThreshold);
 	HRESULT GetInputMaxThreshold(double& rMaxThreshold);

@@ -327,7 +327,7 @@ namespace SvCl
 		catch( const std::exception& e )
 		{
 			//We only want to log otherwise it would need MFC 
-			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log );
+			SvStl::MessageManager Exception(SvStl::MsgType::Log );
 			Exception.setMessage( SVMSG_SVO_98_TREE_ITEM, e.what(), SvStl::SourceFileParams(StdMessageParams) );
 		}
 

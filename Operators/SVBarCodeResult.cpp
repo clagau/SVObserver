@@ -16,7 +16,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVBarCodeResult.h"
-#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/RunStatus.h"
 #include "Tools/SVTool.h"
 #pragma endregion Includes
 
@@ -134,7 +134,7 @@ bool SVBarCodeResult::CreateObject(const SVObjectLevelCreateStruct& rCreateStruc
 	return Result;
 }
 
-bool SVBarCodeResult::onRun(SVRunStatusClass &rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool SVBarCodeResult::onRun(RunStatus &rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	//@WARNING[MZA][7.50][17.01.2017] Not sure if we need to check ValidateLocal in Run-mode, maybe it is enough to check it in ResetObject
 	if (__super::onRun(rRunStatus, pErrorMessages) && ValidateLocal(pErrorMessages))

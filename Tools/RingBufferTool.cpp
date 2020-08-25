@@ -14,7 +14,7 @@
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/RunStatus.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "TriggerRecordController/ITriggerRecordControllerRW.h"
 #include "SVMatroxLibrary/SVMatroxBufferCreateStruct.h"
@@ -206,7 +206,7 @@ bool RingBufferTool::isInputImage(uint32_t) const
 	return Result;
 }	
 
-bool RingBufferTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool RingBufferTool::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	bool returnValue = SVToolClass::onRun( rRunStatus, pErrorMessages );
 	if (returnValue)
@@ -360,7 +360,7 @@ int RingBufferTool::SetOutputImage( int outputIndex, int imageIndex, int maxInde
 			}
 			catch (const SvStl::MessageContainer& rExp)
 			{
-				SvStl::MessageMgrStd  message(SvStl::MsgType::Log);
+				SvStl::MessageManager  message(SvStl::MsgType::Log);
 				message.setMessage(rExp.getMessage());
 				if (nullptr != pErrorMessages)
 				{

@@ -98,7 +98,7 @@ void PlcOutputsView::OnUpdate(CView*, LPARAM , CObject* )
 		}
 		else
 		{
-			SvStl::MessageMgrStd e(SvStl::MsgType::Log);
+			SvStl::MessageManager e(SvStl::MsgType::Log);
 			e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingPPQCount, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17010_ErrorGettingPPQCount);
 			assert(false);
 		}
@@ -111,7 +111,7 @@ void PlcOutputsView::OnUpdate(CView*, LPARAM , CObject* )
 			SVPPQObject* pPPQ = pConfig->GetPPQ(i);
 			if (nullptr == pPPQ)
 			{
-				SvStl::MessageMgrStd e(SvStl::MsgType::Log);
+				SvStl::MessageManager e(SvStl::MsgType::Log);
 				e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingPPQ, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17011_ErrorGettingPPQ);
 				assert(false);
 			}

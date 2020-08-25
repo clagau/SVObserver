@@ -11,7 +11,7 @@
 #include "Definitions/StringTypeDef.h"
 #include "Definitions/TextDefineSvDef.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
-#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/RunStatus.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
@@ -495,7 +495,7 @@ bool ResizeTool::isInputImage(uint32_t imageId) const
 	return Result;
 }
 
-bool ResizeTool::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool ResizeTool::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::onRun(rRunStatus, pErrorMessages);
 

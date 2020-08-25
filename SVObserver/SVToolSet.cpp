@@ -445,7 +445,7 @@ SvOi::IObjectClass* SVToolSet::getBand0Image() const
 // -----------------------------------------------------------------------------
 // .Description : runs this toolset
 ////////////////////////////////////////////////////////////////////////////////
-bool SVToolSet::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool SVToolSet::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	m_TriggerCount.SetValue(rRunStatus.m_lTriggerCount > 0L ? rRunStatus.m_lTriggerCount : 0L);
 
@@ -470,7 +470,7 @@ bool SVToolSet::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVecto
 //				: Otherwise it returns FALSE, that means: if the Tool Set should
 //				: not run, because the Tool Set Condition failed!
 ////////////////////////////////////////////////////////////////////////////////
-bool SVToolSet::Run(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool SVToolSet::Run(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool bRetVal = true;
 	clearRunErrorMessages();
@@ -507,7 +507,7 @@ bool SVToolSet::Run(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector 
 				m_EnabledCount.SetValue(++lCount);
 			}
 
-			SVRunStatusClass toolRunStatus;
+			RunStatus toolRunStatus;
 			toolRunStatus.m_triggerRecord = std::move(rRunStatus.m_triggerRecord);
 			// Run your children...
 			for (int i = 0; i < GetSize(); i++)
@@ -701,7 +701,7 @@ void SVToolSet::connectChildObject(SVTaskObjectClass& rChildObject)
 	rChildObject.ConnectObject(createStruct);
 }
 
-void SVToolSet::UpdateRunStatus(SVRunStatusClass& rRunStatus, const SVRunStatusClass& rToolRunStatus) const
+void SVToolSet::UpdateRunStatus(RunStatus& rRunStatus, const RunStatus& rToolRunStatus) const
 {
 	if (rToolRunStatus.IsWarned())
 	{
@@ -740,7 +740,7 @@ bool SVToolSet::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) con
 	}
 }
 
-void SVToolSet::setPostRunStatus(double timer, SVRunStatusClass &rRunStatus)
+void SVToolSet::setPostRunStatus(double timer, RunStatus &rRunStatus)
 {
 	double l_Elapsed = (SvTl::GetTimeStamp() - timer);
 	m_EndTime = SvTl::ConvertTo(SvTl::Seconds, l_Elapsed);

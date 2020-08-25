@@ -2,43 +2,43 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVOCVAnalyzer
-//* .File Name       : $Workfile:   SVOCVAnalyzer.h  $
+//* .Module Name     : LinearEdgeCountingAnalyzer
+//* .File Name       : $Workfile:   LinearEdgeCountingAnalyzer.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   15 May 2014 11:07:28  $
+//* .Current Version : $Revision:   1.0  $
+//* .Check In Date   : $Date:   23 Apr 2013 11:59:00  $
 //******************************************************************************
 #pragma once
 
 #pragma region Includes
-#include "SVImageAnalyzerClass.h"
+#include "SVLinearAnalyzerClass.h"
+#include "SVValueObjectLibrary/SVLongValueObjectClass.h"
 #pragma endregion Includes
 
 namespace SvAo
 {
 
-class SVOCVAnalyzer : public SVImageAnalyzerClass
+class LinearEdgeCountingAnalyzer : public SVLinearAnalyzerClass
 {
-	SV_DECLARE_CLASS( SVOCVAnalyzer );
+	SV_DECLARE_CLASS( LinearEdgeCountingAnalyzer );
 
 public:
-	SVOCVAnalyzer( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVOCVANALYZER	);
-
-	virtual ~SVOCVAnalyzer();
+	LinearEdgeCountingAnalyzer( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_LinearEdgeCountingAnalyzer );
+	virtual ~LinearEdgeCountingAnalyzer();
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
-
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
-	virtual bool IsPtOverResult( const POINT& rPoint ) override;
-	virtual	SvDef::StringVector getAnalyzerResult() override;
-
+	virtual HRESULT GetSelectedEdgeOverlays( SVExtentMultiLineStruct &p_MultiLine ) override;
+	virtual void addOverlayResults(SvPb::Overlay& rOverlay, bool isVertical = false) const override;
+	
 protected:
 	virtual bool onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
+	SvVol::SVLongValueObjectClass	m_svEdgeCount;
+
 private:
 	void init();
-	bool m_bHasLicenseError;
 };
 
 } //namespace SvAo

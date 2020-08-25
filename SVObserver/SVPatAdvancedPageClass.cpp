@@ -476,7 +476,7 @@ BOOL SVPatAdvancedPageClass::ProcessOnKillfocus(UINT nId)
 	catch ( const SvStl::MessageContainer& rSvE )
 	{
 		//Now that we have caught the exception we would like to display it
-		SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
+		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 		Msg.setMessage( rSvE.getMessage() );
 		GetDlgItem(nId)->SetFocus();
 		((CEdit *)GetDlgItem(nId))->SetSel(0, -1);
@@ -602,7 +602,7 @@ void SVPatAdvancedPageClass::OnOK()
 	catch ( const SvStl::MessageContainer& rSvE )
 	{
 		//Now that we have caught the exception we would like to display it
-		SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
+		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 		Msg.setMessage( rSvE.getMessage() );
 	}
 }
@@ -678,7 +678,7 @@ BOOL SVPatAdvancedPageClass::OnKillActive()
 	catch ( const SvStl::MessageContainer& rSvE )
 	{
 		//Now that we have caught the exception we would like to display it
-		SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
+		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 		Msg.setMessage( rSvE.getMessage() );
 		return false;
 	}

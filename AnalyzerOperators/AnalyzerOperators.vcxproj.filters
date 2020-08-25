@@ -36,24 +36,6 @@
     <ClCompile Include="SVLinearAnalyzerClass.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVLinearLineEdgeCountingAnalyzer.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVLinearLineEdgePositionAnalyzer.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVLinearLineMaximumBackgroundObjectAnalyzer.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVLinearLineMaximumForegroundObjectAnalyzer.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVLinearLineMaximumObjectAnalyzer.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVLinearLinePixelCountingAnalyzer.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVLinearMeasurementAnalyzerClass.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -87,6 +69,24 @@
     <ClCompile Include="BlobFeatureTask.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="LinearEdgeCountingAnalyzer.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="LinearEdgePositionAnalyzer.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="LinearMaximumBackgroundObjectAnalyzer.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="LinearMaximumForegroundObjectAnalyzer.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="LinearMaximumObjectAnalyzer.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="LinearPixelCountingAnalyzer.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -108,27 +108,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVLinearAnalyzerClass.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVLinearLineEdgeCountingAnalyzer.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVLinearLineEdgePositionAnalyzer.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVLinearLineMaximumBackgroundObjectAnalyzer.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVLinearLineMaximumForegroundObjectAnalyzer.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVLinearLineMaximumObjectAnalyzer.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVLinearLinePixelCountingAnalyzer.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVLinearMeasurementAnalyzerClass.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVLuminanceAnalyzer.h">
@@ -159,6 +138,24 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="BlobFeatureTask.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="LinearEdgeCountingAnalyzer.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="LinearEdgePositionAnalyzer.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="LinearMaximumBackgroundObjectAnalyzer.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="LinearMaximumForegroundObjectAnalyzer.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="LinearMaximumObjectAnalyzer.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="LinearPixelCountingAnalyzer.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

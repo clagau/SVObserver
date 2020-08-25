@@ -15,7 +15,7 @@
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
-#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/RunStatus.h"
 #include "TriggerRecordController/ITriggerRecordControllerRW.h"
 #pragma endregion Includes
 
@@ -122,7 +122,7 @@ bool SVStdImageOperatorListClass::ResetObject(SvStl::MessageContainerVector *pEr
 // -----------------------------------------------------------------------------
 // .Description : Special routing here.
 ////////////////////////////////////////////////////////////////////////////////
-bool SVStdImageOperatorListClass::Run(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool SVStdImageOperatorListClass::Run(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	clearRunErrorMessages();
 
@@ -184,7 +184,7 @@ HRESULT SVStdImageOperatorListClass::CollectInputImageNames()
 	return hr;
 }
 
-bool SVStdImageOperatorListClass::RunLocal(SVRunStatusClass &rRunStatus, SvTrc::IImagePtr pInputImageBuffer, SvIe::SVImageClass&)
+bool SVStdImageOperatorListClass::RunLocal(RunStatus &rRunStatus, SvTrc::IImagePtr pInputImageBuffer, SvIe::SVImageClass&)
 {
 	bool bRetVal = true;
 	SvTrc::IImagePtr pOutputImageBuffer = m_OutputImage.getImageToWrite(rRunStatus.m_triggerRecord);
@@ -211,7 +211,7 @@ bool SVStdImageOperatorListClass::RunLocal(SVRunStatusClass &rRunStatus, SvTrc::
 			return false;
 		}
 
-		SVRunStatusClass ChildRunStatus;
+		RunStatus ChildRunStatus;
 		ChildRunStatus.m_triggerRecord = std::move(rRunStatus.m_triggerRecord);
 		ChildRunStatus.m_UpdateCounters = rRunStatus.m_UpdateCounters;
 		// Run children...

@@ -69,7 +69,7 @@ public:
 	//************************************
 	static bool isClipboardDataValid();
 
-	const SvStl::MessageMgrStd& getLastErrorMessage() const { return m_errorMessage; }
+	const SvStl::MessageManager& getLastErrorMessage() const { return m_errorMessage; }
 #pragma endregion Public Methods
 
 protected:
@@ -191,7 +191,7 @@ protected:
 private:
 #pragma region Member Variables
 	mutable SVInspectionProcess* m_pInspection{nullptr};
-	mutable SvStl::MessageMgrStd m_errorMessage{SvStl::MsgType::Log | SvStl::MsgType::Display};
+	mutable SvStl::MessageManager m_errorMessage{SvStl::MsgType::Log | SvStl::MsgType::Display};
 #pragma endregion Member Variables
 };
 

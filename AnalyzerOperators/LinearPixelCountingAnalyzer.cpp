@@ -2,8 +2,8 @@
 // * COPYRIGHT (c) 2005 by SVResearch, Harrisburg
 // * All Rights Reserved
 // ******************************************************************************
-// * .Module Name     : SVLinearPixelCountingLineAnalyzer
-// * .File Name       : $Workfile:   SVLinearLinePixelCountingAnalyzer.cpp  $
+// * .Module Name     : LinearPixelCountingAnalyzer
+// * .File Name       : $Workfile:   LinearPixelCountingAnalyzer.cpp  $
 // * ----------------------------------------------------------------------------
 // * .Current Version : $Revision:   1.0  $
 // * .Check In Date   : $Date:   23 Apr 2013 12:03:42  $
@@ -11,10 +11,10 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "SVLinearLinePixelCountingAnalyzer.h"
+#include "LinearPixelCountingAnalyzer.h"
 #include "Definitions/LinearEdgeEnums.h"
 #include "Operators/SVLinearEdgeAProcessingClass.h"
-#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/RunStatus.h"
 #pragma endregion Includes
 
 namespace SvAo
@@ -27,10 +27,10 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVLinearPixelCountingLineAnalyzer, SvPb::LinearPixelCountingLineAnalyzerClassId);
+SV_IMPLEMENT_CLASS( LinearPixelCountingAnalyzer, SvPb::LinearPixelCountingLineAnalyzerClassId);
 
 
-SVLinearPixelCountingLineAnalyzer::SVLinearPixelCountingLineAnalyzer( SVObjectClass* POwner, int StringResourceID )
+LinearPixelCountingAnalyzer::LinearPixelCountingAnalyzer( SVObjectClass* POwner, int StringResourceID )
 								 :SVLinearAnalyzerClass( POwner, StringResourceID ) 
 {
 	m_bEnableDirection = false;
@@ -42,7 +42,7 @@ SVLinearPixelCountingLineAnalyzer::SVLinearPixelCountingLineAnalyzer( SVObjectCl
 	init();
 }
 
-void SVLinearPixelCountingLineAnalyzer::init()
+void LinearPixelCountingAnalyzer::init()
 {
 	// Identify our type
 	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVLinearPixelCountingAnalyzerObjectType;
@@ -78,13 +78,13 @@ void SVLinearPixelCountingLineAnalyzer::init()
 }
 
 
-SVLinearPixelCountingLineAnalyzer::~SVLinearPixelCountingLineAnalyzer()
+LinearPixelCountingAnalyzer::~LinearPixelCountingAnalyzer()
 {
-	SVLinearPixelCountingLineAnalyzer::CloseObject();
+	LinearPixelCountingAnalyzer::CloseObject();
 }
 
 
-bool SVLinearPixelCountingLineAnalyzer::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
+bool LinearPixelCountingAnalyzer::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
 	bool bOk = SVLinearAnalyzerClass::CreateObject(rCreateStructure);
 
@@ -97,12 +97,12 @@ bool SVLinearPixelCountingLineAnalyzer::CreateObject( const SVObjectLevelCreateS
 	return bOk;
 }
 
-HRESULT SVLinearPixelCountingLineAnalyzer::GetSelectedEdgeOverlays(SVExtentMultiLineStruct&)
+HRESULT LinearPixelCountingAnalyzer::GetSelectedEdgeOverlays(SVExtentMultiLineStruct&)
 {
 	return S_OK;
 }
 
-bool SVLinearPixelCountingLineAnalyzer::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool LinearPixelCountingAnalyzer::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	std::vector<double> Edges;
 
@@ -157,7 +157,7 @@ bool SVLinearPixelCountingLineAnalyzer::onRun( SVRunStatusClass& rRunStatus, SvS
 	return Result;
 }
 
-void SVLinearPixelCountingLineAnalyzer::addOverlayResultDetails(SvPb::Overlay& rOverlay, bool isVertical) const
+void LinearPixelCountingAnalyzer::addOverlayResultDetails(SvPb::Overlay& rOverlay, bool isVertical) const
 {
 	auto* pEdge = GetEdgeA();
 	if (nullptr != pEdge)

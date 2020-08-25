@@ -15,7 +15,7 @@
 #include "SVUnaryImageOperatorList.h"
 #include "SVStdImageOperatorListClass.h"
 #include "SVInplaceImageOperatorListClass.h"
-#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/RunStatus.h"
 #pragma region Includes
 
 namespace SvOp
@@ -70,7 +70,7 @@ bool SVUnaryImageOperatorClass::CreateObject( const SVObjectLevelCreateStruct& r
 // .Description : Runs this operator.
 //              : Returns FALSE, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
-bool SVUnaryImageOperatorClass::Run( bool First, SvOi::SVImageBufferHandlePtr RInputImageHandle, SvOi::SVImageBufferHandlePtr ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVUnaryImageOperatorClass::Run( bool First, SvOi::SVImageBufferHandlePtr RInputImageHandle, SvOi::SVImageBufferHandlePtr ROutputImageHandle, RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	// Should call Base Class Run() here but we have different parameters!!!
 
@@ -101,7 +101,7 @@ bool SVUnaryImageOperatorClass::Run( bool First, SvOi::SVImageBufferHandlePtr RI
 // .Description : Runs this operator. MUST BE OVERRIDDEN !!!
 //              : Returns FALSE, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
-bool SVUnaryImageOperatorClass::onRun( bool, SvOi::SVImageBufferHandlePtr, SvOi::SVImageBufferHandlePtr, SVRunStatusClass& , SvStl::MessageContainerVector* )
+bool SVUnaryImageOperatorClass::onRun( bool, SvOi::SVImageBufferHandlePtr, SvOi::SVImageBufferHandlePtr, RunStatus& , SvStl::MessageContainerVector* )
 {
 	assert(0);
 	return false;

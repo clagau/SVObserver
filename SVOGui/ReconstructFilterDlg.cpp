@@ -144,7 +144,7 @@ void ReconstructFilterDlg::OnSelchangeImageCombo()
 		if (S_OK != hrOk && responseCmd.has_standardresponse())
 		{
 			SvStl::MessageContainerVector errorMessageList = SvPb::setMessageVectorFromMessagePB(responseCmd.standardresponse().errormessages());
-			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 			if (0 < errorMessageList.size())
 			{
 				Msg.setMessage(errorMessageList[0].getMessage());

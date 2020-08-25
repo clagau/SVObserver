@@ -90,7 +90,7 @@ namespace SvOg
 		catch ( const SvStl::MessageContainer& rSvE )
 		{
 			//Now that we have caught the exception we would like to display it
-			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
+			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 			Msg.setMessage( rSvE.getMessage() );
 			INT_PTR result = Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Pattern_Invalid_ShouldLeave, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10184, SvDef::InvalidObjectId, MB_YESNO);
 			if (IDYES == result)
@@ -142,7 +142,7 @@ namespace SvOg
 		catch ( const SvStl::MessageContainer& rSvE )
 		{
 			//Now that we have caught the exception we would like to display it
-			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
+			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 			Msg.setMessage( rSvE.getMessage() );
 			return FALSE;
 		}
@@ -245,7 +245,7 @@ namespace SvOg
 				RestoreImagesFromFile(&ErrorMessages);
 				if (!ErrorMessages.empty())
 				{
-					SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
+					SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 					Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_PatAllocModelFailed, SvStl::SourceFileParams(StdMessageParams), 0, m_AnalyzerID );
 				}
 			}
@@ -254,7 +254,7 @@ namespace SvOg
 				SvStl::MessageContainerVector ErrorMessages = SvPb::setMessageVectorFromMessagePB(responseCmd.standardresponse().errormessages());
 				if (!ErrorMessages.empty())
 				{
-					SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
+					SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 					Msg.setMessage( ErrorMessages[0].getMessage() );
 				}
 			}
@@ -654,7 +654,7 @@ namespace SvOg
 					{
 						if (!ErrorMessages.empty())
 						{
-							SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
+							SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 							Msg.setMessage( ErrorMessages[0].getMessage() );
 						}
 					
@@ -681,7 +681,7 @@ namespace SvOg
 				{
 					if (!ErrorMessages.empty())
 					{
-						SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+						SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 						Msg.setMessage(ErrorMessages[0].getMessage());
 					}
 

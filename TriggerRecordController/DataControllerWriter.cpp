@@ -80,7 +80,7 @@ void TRControllerWriterDataPerIP::setDataDefList(SvPb::DataDefinitionList&& data
 	m_DataDefList.Swap(&dataDefList); 
 	if (nullptr == m_pBasicData || nullptr == m_pSmData)
 	{
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+		SvStl::MessageManager Exception(SvStl::MsgType::Data);
 		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_InspectionSMData, SvStl::SourceFileParams(StdMessageParams));
 		Exception.Throw();
 	}
@@ -121,7 +121,7 @@ void TRControllerWriterDataPerIP::setImageList(SvPb::ImageList&& imageList)
 	m_ImageList.Swap(&imageList); 
 	if (nullptr == m_pBasicData || nullptr == m_pSmData)
 	{
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+		SvStl::MessageManager Exception(SvStl::MsgType::Data);
 		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_InspectionSMData, SvStl::SourceFileParams(StdMessageParams));
 		Exception.Throw();
 	}
@@ -165,7 +165,7 @@ void* TRControllerWriterDataPerIP::createTriggerRecordsBuffer(long trBufferSize,
 	assert(m_pBasicData && m_pSmData);
 	if (nullptr == m_pBasicData || nullptr == m_pSmData)
 	{
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+		SvStl::MessageManager Exception(SvStl::MsgType::Data);
 		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_InspectionSMData, SvStl::SourceFileParams(StdMessageParams));
 		Exception.Throw();
 	}
@@ -212,7 +212,7 @@ void TRControllerWriterDataPerIP::decreaseFreeTrNumber()
 		InterlockedDecrement(&m_pBasicData->m_numberOfFreeTR);
 		if (0 > m_pBasicData->m_numberOfFreeTR)
 		{
-			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+			SvStl::MessageManager Exception(SvStl::MsgType::Log);
 			Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_DecreaseFreeTRC, SvStl::SourceFileParams(StdMessageParams));
 			InterlockedExchange(&m_pBasicData->m_numberOfFreeTR, 0l);
 		}
@@ -244,7 +244,7 @@ void TRControllerWriterDataPerIP::setTrOfInterestNumber(int number)
 		}
 		else
 		{
-			SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+			SvStl::MessageManager Exception(SvStl::MsgType::Data);
 			Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_setTrOfInterestNumberLockFailed, SvStl::SourceFileParams(StdMessageParams));
 			Exception.Throw();
 		}
@@ -290,7 +290,7 @@ void TRControllerWriterDataPerIP::setTrOfInterest(int inspectionPos, int pos)
 		}
 	}
 	
-	SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+	SvStl::MessageManager Exception(SvStl::MsgType::Log);
 	Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_setTrOfInterestFailed, SvStl::SourceFileParams(StdMessageParams));
 }
 
@@ -414,7 +414,7 @@ DataControllerWriter::DataControllerWriter()
 	if (!isInit || nullptr == pTemp)
 	{
 		assert(false);
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+		SvStl::MessageManager Exception(SvStl::MsgType::Data);
 		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_CreateSMCommonData, SvStl::SourceFileParams(StdMessageParams));
 		Exception.Throw();
 	}
@@ -527,7 +527,7 @@ bool DataControllerWriter::setInspections(SvPb::InspectionList&& rInspectionList
 		catch (const SvStl::MessageContainer& rSvE)
 		{
 			//This is the topmost catch for MessageContainer exceptions
-			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+			SvStl::MessageManager Exception(SvStl::MsgType::Log);
 			Exception.setMessage(rSvE.getMessage());
 		}
 	}
@@ -563,7 +563,7 @@ void DataControllerWriter::setImageStructList(SvPb::ImageStructList&& list)
 		if (list.ByteSizeLong() > cMaxImageStructPbSize)
 		{
 			assert(false);
-			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+			SvStl::MessageManager Exception(SvStl::MsgType::Log);
 			Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_InspectionPBTooLong, SvStl::SourceFileParams(StdMessageParams));
 			throw Exception;
 		}
@@ -587,7 +587,7 @@ void DataControllerWriter::resetImageRefCounter()
 	{
 		SvDef::StringVector msgList;
 		msgList.push_back(SvUl::Format(_T("%d"), m_maxNumberOfRequiredBuffer));
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+		SvStl::MessageManager Exception(SvStl::MsgType::Log);
 		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_TooManyImageBuffer, msgList, SvStl::SourceFileParams(StdMessageParams));
 	}
 	memset(m_imageRefCountArray, 0, sizeof(*m_imageRefCountArray)*m_pCommonData->m_imageRefCountSize);
@@ -598,7 +598,7 @@ void DataControllerWriter::changeDataDef(SvPb::DataDefinitionList&& dataDefList,
 	if (0 > inspectionPos || m_dataVector.size() < inspectionPos || nullptr == m_dataVector[inspectionPos])
 	{
 		assert(false);
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+		SvStl::MessageManager Exception(SvStl::MsgType::Data);
 		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_InvalidResetState, SvStl::SourceFileParams(StdMessageParams));
 		Exception.Throw();
 	}
@@ -640,7 +640,7 @@ ITriggerRecordRPtr DataControllerWriter::createTriggerRecordObject(int inspectio
 			}
 			else
 			{
-				SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+				SvStl::MessageManager Exception(SvStl::MsgType::Log);
 				Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_NotEnoughFreeForLock, SvStl::SourceFileParams(StdMessageParams));
 			}
 		}
@@ -781,7 +781,7 @@ void DataControllerWriter::setInspectionList(SvPb::InspectionList&& rInspectionL
 	if (rInspectionList.ByteSizeLong() > cMaxInspectionPbSize)
 	{
 		assert(false);
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+		SvStl::MessageManager Exception(SvStl::MsgType::Log);
 		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_InspectionPBTooLong, SvStl::SourceFileParams(StdMessageParams));
 		throw Exception;
 	}
@@ -849,7 +849,7 @@ void DataControllerWriter::prepareReset()
 			SvDef::StringVector msgList;
 			msgList.push_back(SvUl::Format(_T("%d"), maxWaitTime));
 			msgList.push_back(SvUl::Format(_T("%d"), m_pCommonData->m_resetLockCounter));
-			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+			SvStl::MessageManager Exception(SvStl::MsgType::Log);
 			Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_CounterTimeOut, SvStl::SourceFileParams(StdMessageParams));
 
 			InterlockedExchange(&m_pCommonData->m_resetLockCounter, 0);
@@ -1009,7 +1009,7 @@ void DataControllerWriter::setInspectionSMData(int ipPos, const std::string& rSm
 		if (m_inspectionList.ByteSizeLong() > cMaxInspectionPbSize)
 		{
 			assert(false);
-			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+			SvStl::MessageManager Exception(SvStl::MsgType::Log);
 			Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_InspectionPBTooLong, SvStl::SourceFileParams(StdMessageParams));
 		}
 		else

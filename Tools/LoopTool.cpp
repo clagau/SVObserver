@@ -11,7 +11,7 @@
 #include "Definitions/TextDefineSvDef.h"
 #include "ObjectInterfaces/IInspectionProcess.h"
 #include "Operators/SVConditional.h"
-#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/RunStatus.h"
 #pragma endregion Includes
 
 //This comment is to avoid that the SVConditional include is marked as not required due to forward declaration from a base class
@@ -93,7 +93,7 @@ void LoopTool::BuildEmbeddedObjectList()
 
 }
 
-bool LoopTool::Run(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool LoopTool::Run(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool retVal = true;
 	clearRunErrorMessages();
@@ -278,7 +278,7 @@ bool LoopTool::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 }
 
 
-bool LoopTool::RunAllChildren(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool LoopTool::RunAllChildren(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	clearRunErrorMessages();
 	bool childUpdateCounters = rRunStatus.m_UpdateCounters;
@@ -288,7 +288,7 @@ bool LoopTool::RunAllChildren(SVRunStatusClass& rRunStatus, SvStl::MessageContai
 
 	if (!rRunStatus.IsDisabled() && !rRunStatus.IsDisabledByCondition())
 	{
-		SVRunStatusClass ChildRunStatus;
+		RunStatus ChildRunStatus;
 		ChildRunStatus.m_triggerRecord = std::move(rRunStatus.m_triggerRecord);
 		ChildRunStatus.m_UpdateCounters = childUpdateCounters;
 		// Run your children...

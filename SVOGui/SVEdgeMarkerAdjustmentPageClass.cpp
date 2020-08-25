@@ -425,7 +425,7 @@ namespace SvOg
 		}
 		catch (const SvStl::MessageContainer& rExp)
 		{
-			SvStl::MessageMgrStd msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+			SvStl::MessageManager msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 			msg.setMessage(rExp.getMessage());
 		}
 	}
@@ -507,7 +507,7 @@ namespace SvOg
 		}
 		catch (const SvStl::MessageContainer& rExp)
 		{
-			SvStl::MessageMgrStd msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+			SvStl::MessageManager msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 			msg.setMessage(rExp.getMessage());
 		}
 

@@ -14,7 +14,7 @@
 #include "SVOCVAnalyzer.h"
 #include "Operators/SVOCVAnalyzerResult.h"
 #include "SVMatroxLibrary/SVOLicenseManager.h"
-#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/RunStatus.h"
 #pragma endregion Includes
 
 namespace SvAo
@@ -107,7 +107,7 @@ bool SVOCVAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 //
 //
 //
-bool SVOCVAnalyzer::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVOCVAnalyzer::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	if ( !m_bHasLicenseError )
 	{

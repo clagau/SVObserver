@@ -88,6 +88,12 @@
   <ItemGroup>
     <ClCompile Include="BlobAnalyzer2.cpp" />
     <ClCompile Include="BlobFeatureTask.cpp" />
+    <ClCompile Include="LinearEdgeCountingAnalyzer.cpp" />
+    <ClCompile Include="LinearEdgePositionAnalyzer.cpp" />
+    <ClCompile Include="LinearMaximumBackgroundObjectAnalyzer.cpp" />
+    <ClCompile Include="LinearMaximumForegroundObjectAnalyzer.cpp" />
+    <ClCompile Include="LinearMaximumObjectAnalyzer.cpp" />
+    <ClCompile Include="LinearPixelCountingAnalyzer.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -98,12 +104,6 @@
     <ClCompile Include="SVHistogramAnalyzer.cpp" />
     <ClCompile Include="SVImageAnalyzerClass.cpp" />
     <ClCompile Include="SVLinearAnalyzerClass.cpp" />
-    <ClCompile Include="SVLinearLineEdgeCountingAnalyzer.cpp" />
-    <ClCompile Include="SVLinearLineEdgePositionAnalyzer.cpp" />
-    <ClCompile Include="SVLinearLineMaximumBackgroundObjectAnalyzer.cpp" />
-    <ClCompile Include="SVLinearLineMaximumForegroundObjectAnalyzer.cpp" />
-    <ClCompile Include="SVLinearLineMaximumObjectAnalyzer.cpp" />
-    <ClCompile Include="SVLinearLinePixelCountingAnalyzer.cpp" />
     <ClCompile Include="SVLinearMeasurementAnalyzerClass.cpp" />
     <ClCompile Include="SVLuminanceAnalyzer.cpp" />
     <ClCompile Include="SVOCVAnalyzer.cpp" />
@@ -117,6 +117,12 @@
   <ItemGroup>
     <ClInclude Include="BlobAnalyzer2.h" />
     <ClInclude Include="BlobFeatureTask.h" />
+    <ClInclude Include="LinearEdgeCountingAnalyzer.h" />
+    <ClInclude Include="LinearEdgePositionAnalyzer.h" />
+    <ClInclude Include="LinearMaximumBackgroundObjectAnalyzer.h" />
+    <ClInclude Include="LinearMaximumForegroundObjectAnalyzer.h" />
+    <ClInclude Include="LinearMaximumObjectAnalyzer.h" />
+    <ClInclude Include="LinearPixelCountingAnalyzer.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SVAnalyzer.h" />
     <ClInclude Include="SVBarCodeAnalyzerClass.h" />
@@ -124,13 +130,6 @@
     <ClInclude Include="SVHistogramAnalyzer.h" />
     <ClInclude Include="SVImageAnalyzerClass.h" />
     <ClInclude Include="SVLinearAnalyzerClass.h" />
-    <ClInclude Include="SVLinearLineEdgeCountingAnalyzer.h" />
-    <ClInclude Include="SVLinearLineEdgePositionAnalyzer.h" />
-    <ClInclude Include="SVLinearLineMaximumBackgroundObjectAnalyzer.h" />
-    <ClInclude Include="SVLinearLineMaximumForegroundObjectAnalyzer.h" />
-    <ClInclude Include="SVLinearLineMaximumObjectAnalyzer.h" />
-    <ClInclude Include="SVLinearLinePixelCountingAnalyzer.h" />
-    <ClInclude Include="SVLinearMeasurementAnalyzerClass.h" />
     <ClInclude Include="SVLuminanceAnalyzer.h" />
     <ClInclude Include="SVOCVAnalyzer.h" />
     <ClInclude Include="SVPatternAnalyzerClass.h" />

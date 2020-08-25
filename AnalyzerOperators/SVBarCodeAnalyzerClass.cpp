@@ -25,7 +25,7 @@
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/MessageTextEnum.h"
-#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/RunStatus.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
@@ -351,7 +351,7 @@ bool SVBarCodeAnalyzerClass::CharIsControl( TCHAR p_Char )
 	return p_Char < ' ' || p_Char > 126;
 }
 
-bool SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool SVBarCodeAnalyzerClass::onRun (RunStatus &rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	if ( m_bHasLicenseError )
 	{
@@ -604,7 +604,7 @@ bool SVBarCodeAnalyzerClass::LoadRegExpression( bool DisplayErrorMessage, SvStl:
 			}
 			if( DisplayErrorMessage )
 			{
-				SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
+				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 				Msg.setMessage( message.getMessage() ); 
 			}
 			return false;

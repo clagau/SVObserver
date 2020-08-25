@@ -99,7 +99,7 @@ std::vector<std::pair<int, int>> ImageBufferController::reset(SvPb::ImageStructL
 		SvDef::StringVector msgList;
 		msgList.push_back(SvUl::Format(_T("%d"), completeNumberOfRequiredBuffer));
 		msgList.push_back(SvUl::Format(_T("%d"), m_rDataController.getMaxNumberOfRequiredBuffer()));
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+		SvStl::MessageManager Exception(SvStl::MsgType::Log);
 		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_ResetBuffer_TooMany, msgList, SvStl::SourceFileParams(StdMessageParams));
 		Exception.Throw();
 	}
@@ -125,7 +125,7 @@ std::vector<std::pair<int, int>> ImageBufferController::reset(SvPb::ImageStructL
 		{
 			m_rDataController.clearImageBuffer(true);
 			//This is the topmost catch for MessageContainer exceptions
-			SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+			SvStl::MessageManager Exception(SvStl::MsgType::Data);
 			Exception.setMessage(rSvE.getMessage());
 			Exception.Throw();
 		}
@@ -141,7 +141,7 @@ std::vector<std::pair<int, int>> ImageBufferController::reset(SvPb::ImageStructL
 		{
 			m_rDataController.clearImageBuffer(true);
 			//This is the topmost catch for MessageContainer exceptions
-			SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+			SvStl::MessageManager Exception(SvStl::MsgType::Data);
 			Exception.setMessage(rSvE.getMessage());
 			Exception.Throw();
 		}
@@ -170,7 +170,7 @@ bool ImageBufferController::decreaseImageRefCounter(int pos)
 		if (0 > value)
 		{
 			assert(false);
-			SvStl::MessageMgrStd e(SvStl::MsgType::Log);
+			SvStl::MessageManager e(SvStl::MsgType::Log);
 			e.setMessage(SVMSG_TRC_GENERAL_WARNING, SvStl::Tid_TRC_Error_ImageRefCount, SvStl::SourceFileParams(StdMessageParams));
 			InterlockedExchange(pImageCount, 0);
 			return false;
@@ -258,14 +258,14 @@ IImagePtr ImageBufferController::createNewImageHandle(int structId, int& rImageP
 
 		SvDef::StringVector msgList;
 		msgList.push_back(SvUl::Format(_T("%d"), structId));
-		SvStl::MessageMgrStd e(SvStl::MsgType::Log);
+		SvStl::MessageManager e(SvStl::MsgType::Log);
 		e.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_NoBufferFree, msgList, SvStl::SourceFileParams(StdMessageParams));
 	}
 	else
 	{
 		SvDef::StringVector msgList;
 		msgList.push_back(SvUl::Format(_T("%d"), structId));
-		SvStl::MessageMgrStd e(SvStl::MsgType::Log);
+		SvStl::MessageManager e(SvStl::MsgType::Log);
 		e.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_UnknownStructID, msgList, SvStl::SourceFileParams(StdMessageParams));
 	}
 	return nullptr;
@@ -294,7 +294,7 @@ void ImageBufferController::reduceRequiredBuffers(const SvPb::ImageList& imageLi
 	catch (const SvStl::MessageContainer& rSvE)
 	{
 		//This is the topmost catch for MessageContainer exceptions
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+		SvStl::MessageManager Exception(SvStl::MsgType::Log);
 		Exception.setMessage(rSvE.getMessage());
 	}	
 }
@@ -322,7 +322,7 @@ void ImageBufferController::addRequiredMemory(SvPb::ImageStructData& rStructData
 		SvDef::StringVector msgList;
 		msgList.push_back(SvUl::Format(_T("%d"), static_cast<long>(rNeededBufferSpace / 1024 / 1024)));
 		msgList.push_back(SvUl::Format(_T("%d"), static_cast<long>(m_rDataController.getMaxBufferSizeInBytes() / 1024 / 1024)));
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+		SvStl::MessageManager Exception(SvStl::MsgType::Log);
 		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_ResetBuffer_TooMuch, msgList, SvStl::SourceFileParams(StdMessageParams));
 		Exception.Throw();
 	}
@@ -407,7 +407,7 @@ void ImageBufferController::fitBufferToNewStruct(const SvPb::ImageStructList& rI
 			{
 				m_rDataController.clearImageBuffer(true);
 				//This is the topmost catch for MessageContainer exceptions
-				SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+				SvStl::MessageManager Exception(SvStl::MsgType::Data);
 				Exception.setMessage(rSvE.getMessage());
 				Exception.Throw();
 			}

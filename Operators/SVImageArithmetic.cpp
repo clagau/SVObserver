@@ -18,7 +18,7 @@
 #include "Tools/SVTool.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
-#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/RunStatus.h"
 #include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
 #include "SVValueObjectLibrary/SVLongValueObjectClass.h"
 #include "SVValueObjectLibrary/SVPointValueObjectClass.h"
@@ -169,7 +169,7 @@ bool SVImageArithmetic::isInputImage(uint32_t imageId) const
 	return Result;
 }
 
-bool SVImageArithmetic::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVImageArithmetic::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	// All inputs and outputs must be validated first
 	//@WARNING[MZA][7.50][17.01.2017] Not sure if we need to check ValidateLocal in Run-mode, maybe it is enough to check it in ResetObject

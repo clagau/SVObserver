@@ -165,7 +165,7 @@ namespace SvOg
 				{
 					if( !std::regex_match( NewValue.cbegin(), NewValue.cend(), std::regex( RegExp_AllRealNumbers ) ) )
 					{
-						SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
+						SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
 						Exception.setMessage( SVMSG_SVO_65_ENTERED_VALUE_INVALID, m_Value, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25014_GlobalConstantNumber );
 						pDX->Fail();
 					}
@@ -190,7 +190,7 @@ namespace SvOg
 			{
 				if( rName == *Iter )
 				{
-					SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
+					SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
 					Exception.setMessage( SVMSG_SVO_66_GLOBAL_NAME_INVALID, rName.c_str(), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25015_GlobalNameAlreadyUsed );
 					Failed = true;
 					break;
@@ -205,7 +205,7 @@ namespace SvOg
 			{
 				if( !std::regex_match( NewName.cbegin(), NewName.cend(), std::regex( RegExp_Name ) ) )
 				{
-					SvStl::MessageMgrStd Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
+					SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
 					Exception.setMessage( SVMSG_SVO_65_ENTERED_VALUE_INVALID, NewName.c_str(), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25016_GlobalNameInvalid );
 					Failed = true;
 				}

@@ -137,7 +137,7 @@ HRESULT TADialogLoopToolParameterPage::SetPageData()
 					valueString = m_values.Get<CString>(SvPb::LinkedLoopsEId);
 					messageList.push_back(valueString);
 					
-					SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+					SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 					Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_IsLessThan, messageList, SvStl::SourceFileParams(StdMessageParams), 0);
 					
 					
@@ -152,7 +152,7 @@ HRESULT TADialogLoopToolParameterPage::SetPageData()
 			SvStl::MessageContainerVector messages = m_values.getFailedMessageList();
 			if (messages.size() > 0 && 0 != messages[0].getMessage().m_MessageCode)
 			{
-				SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 				Msg.setMessage(messages[0].getMessage());
 			}
 			else
@@ -186,7 +186,7 @@ void TADialogLoopToolParameterPage::resetInspection()
 
 	if (messages.size() > 0 && 0 != messages[0].getMessage().m_MessageCode)
 	{
-		SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		Msg.setMessage(messages[0].getMessage());
 	}
 }

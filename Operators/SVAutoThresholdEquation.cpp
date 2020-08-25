@@ -12,7 +12,7 @@
 #include "stdafx.h"
 
 #include "SVAutoThresholdEquation.h"
-#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/RunStatus.h"
 #pragma endregion Includes
 
 namespace SvOp
@@ -86,7 +86,7 @@ bool SVAutoThresholdEquation::CreateObject( const SVObjectLevelCreateStruct& rCr
 ////////////////////////////////////////////////////////////////////////////////
 // If Conditional is disabled conditional.Run() returns always TRUE.
 // Otherwise the return value depends on the Conditional equation result!
-bool SVAutoThresholdEquation::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVAutoThresholdEquation::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	double Value = 0.0;
 

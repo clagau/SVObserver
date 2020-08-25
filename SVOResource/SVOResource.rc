@@ -4830,19 +4830,19 @@ BEGIN
     IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_B "Linear Distance Edge B"
     IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_A_RESULT "Result"
     IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_B_RESULT "Result"
-    IDS_CLASSNAME_SVLINEARPIXELCOUNTINGLINEANALYZER 
+    IDS_CLASSNAME_LinearPixelCountingAnalyzer 
                             "Linear Pixel Counting Analyzer"
-    IDS_CLASSNAME_SVLINEAREDGECOUNTINGLINEANALYZER 
+    IDS_CLASSNAME_LinearEdgeCountingAnalyzer 
                             "Linear Edge Counting Analyzer"
-    IDS_CLASSNAME_SVLINEAREDGEPOSITIONLINEANALYZER 
+    IDS_CLASSNAME_LinearEdgePositionAnalyzer 
                             "Linear Edge Position Analyzer"
     IDS_CLASSNAME_SVLINEARMEASUREMENTLINEANALYZER 
                             "Linear Measurement Line Analyzer"
-    IDS_CLASSNAME_SVLINEARMAXIMUMFOREGROUNDOBJECTLINEANALYZER 
+    IDS_CLASSNAME_LinearMaximumForegroundObjectAnalyzer 
                             "Linear Maximum Foreground Object Analyzer"
-    IDS_CLASSNAME_SVLINEARMAXIMUMBACKGROUNDOBJECTLINEANALYZER 
+    IDS_CLASSNAME_LinearMaximumBackgroundObjectAnalyzer 
                             "Linear Maximum Background Object Analyzer"
-    IDS_CLASSNAME_SVLINEARMAXIMUMOBJECTLINEANALYZER 
+    IDS_CLASSNAME_LinearMaximumObjectAnalyzer 
                             "Linear Maximum Object Analyzer"
     IDS_OBJECTNAME_HAS_ROI  "Has ROI"
     IDS_CLASSNAME_SVCYLINDRICALTOOL "Cylindrical Warp Tool"

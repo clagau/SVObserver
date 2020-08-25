@@ -16,7 +16,7 @@
 #include "Definitions/SVImageFormatEnum.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
-#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/RunStatus.h"
 #pragma endregion Includes
 
 namespace SvOp
@@ -139,7 +139,7 @@ BandThreshold* SVColorThreshold::GetBandThreshold(SvDef::BandEnum Band)
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
-bool SVColorThreshold::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool SVColorThreshold::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = true;
 

@@ -23,7 +23,7 @@
 #include "ObjectInterfaces/IFormulaController.h"
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVOLibrary/SVQueueObject.h"
-#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/RunStatus.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "InspectionEngine/SVTaskObject.h" // For SVImageClassPtrSet
 #include "SVInfoStructs.h"
@@ -81,7 +81,7 @@ public:
 	virtual HRESULT RegisterSubObject( SVObjectClass* pObject ) override;
 	virtual HRESULT UnregisterSubObject( SVObjectClass* pObject ) override;
 
-	bool Run( SVRunStatusClass& rRunStatus );
+	bool Run( RunStatus& rRunStatus );
 
 	void SetPPQIdentifier(uint32_t PPQId);
 	uint32_t GetPPQIdentifier() const;
@@ -343,7 +343,7 @@ protected:
 
 	void SingleRunModeLoop( bool p_Refresh = false );
 
-	HRESULT copyValues2TriggerRecord(SVRunStatusClass& rRunStatus);
+	HRESULT copyValues2TriggerRecord(RunStatus& rRunStatus);
 
 	static void CALLBACK APCThreadProcess( DWORD_PTR dwParam );
 
@@ -385,7 +385,7 @@ private:
 	SVPublishList m_publishList;
 
 	// Run status of last tool set run, if any...
-	SVRunStatusClass m_runStatus;
+	RunStatus m_runStatus;
 
 	// Inspection pointers
 	SVToolSet* m_pCurrentToolset{nullptr};

@@ -189,7 +189,7 @@ void SVRCCommand::GetConfig(const SvPb::GetConfigRequest& rRequest, SvRpc::Task<
 		else
 		{
 			// Log Exception (in case no one else did...)
-			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+			SvStl::MessageManager Exception(SvStl::MsgType::Log);
 			Exception.setMessage(Result, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
 		}
 	}
@@ -1388,7 +1388,7 @@ void SVRCCommand::clipboardAction(const SvPb::ClipboardRequest rRequest, SvPb::S
 			}
 			else
 			{
-				SvStl::MessageMgrStd message(SvStl::MsgType::Log);
+				SvStl::MessageManager message(SvStl::MsgType::Log);
 				message.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ClipboardUnzipFailed, SvStl::SourceFileParams(StdMessageParams));
 				setMessageToMessagePB(message.getMessageContainer(), pResponse->mutable_errormessages()->add_messages());
 			}

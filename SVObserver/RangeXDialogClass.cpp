@@ -71,7 +71,7 @@ void RangeXDialogClass::OnBnClickedOk()
 	}
 	catch (const SvStl::MessageContainer& rSvE)
 	{
-		SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		Msg.setMessage(rSvE.getMessage());
 	}
 }
@@ -133,7 +133,7 @@ void RangeXDialogClass::SetDlgData()
 	catch (...)
 	{
 		assert(false);
-		SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Init_RangeControlFailed, SvStl::SourceFileParams(StdMessageParams));
 	}
 	UpdateData(false);

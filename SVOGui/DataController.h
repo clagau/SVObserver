@@ -88,7 +88,7 @@ namespace SvOg
 			{
 				if (shouldDisplayErrors && 0 < rSvE.size())
 				{
-					SvStl::MessageMgrStd e(SvStl::MsgType::Log | SvStl::MsgType::Display);
+					SvStl::MessageManager e(SvStl::MsgType::Log | SvStl::MsgType::Display);
 					e.setMessage(rSvE[0].getMessage());
 				}
 				return E_FAIL;
@@ -97,7 +97,7 @@ namespace SvOg
 			{
 				if (shouldDisplayErrors)
 				{
-					SvStl::MessageMgrStd e(SvStl::MsgType::Log | SvStl::MsgType::Display);
+					SvStl::MessageManager e(SvStl::MsgType::Log | SvStl::MsgType::Display);
 					e.setMessage(rSvE.getMessage());
 				}
 				return E_FAIL;

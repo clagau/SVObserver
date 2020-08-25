@@ -26,7 +26,7 @@
 #include "SVMatroxLibrary/SVMatroxErrorEnum.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVStatusLibrary\MessageContainer.h"
-#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/RunStatus.h"
 #include "SVResult.h"
 #include "SVVariantResultClass.h"
 #include "Tools/SVTool.h"
@@ -366,7 +366,7 @@ void SVExternalToolTask::CreateArrayInTable()
 		{
 			resultTableSortContainer[i] = i;
 		}
-		SVRunStatusClass runStatus;
+		RunStatus runStatus;
 		pTab->setSortContainer(resultTableSortContainer, runStatus);
 	}
 }
@@ -398,7 +398,7 @@ bool SVExternalToolTask::CreateTableObjects()
 				result = false;
 				SvStl::MessageContainer message;
 				message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableObject_CreateFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
-				SvStl::MessageMgrStd Msg(SvStl::MsgType::Log);
+				SvStl::MessageManager Msg(SvStl::MsgType::Log);
 				Msg.setMessage(message.getMessage());
 				break;
 			}
@@ -1087,7 +1087,7 @@ bool SVExternalToolTask::CloseObject()
 	return true;
 }
 
-bool SVExternalToolTask::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool SVExternalToolTask::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool ok = true;
 
@@ -1782,7 +1782,7 @@ void SVExternalToolTaskData::InitializeInputs(SVExternalToolTask*  pExternalTool
 
 }
 
-bool SVExternalToolTask::prepareInput(SvTrc::IImagePtr pResultImageBuffers[], SVRunStatusClass& rRunStatus)
+bool SVExternalToolTask::prepareInput(SvTrc::IImagePtr pResultImageBuffers[], RunStatus& rRunStatus)
 {
 	collectInputValues();
 
@@ -1947,7 +1947,7 @@ void SVExternalToolTask::collectInputValues()
 }
 
 
-bool SVExternalToolTask::collectInputImages(SVRunStatusClass& rRunStatus)
+bool SVExternalToolTask::collectInputImages(RunStatus& rRunStatus)
 {
 	bool okToRun = true;
 
@@ -2094,7 +2094,7 @@ void SVExternalToolTask::collectResultValues()
 			{
 				m_InspectionResultValues[i].Clear();
 				GetResultValueObject(i)->SetResultSize(0);
-				SvStl::MessageMgrStd e(SvStl::MsgType::Log);
+				SvStl::MessageManager e(SvStl::MsgType::Log);
 				e.setMessage(rSvE.getMessage());
 			}
 			
@@ -2102,7 +2102,7 @@ void SVExternalToolTask::collectResultValues()
 			{
 				m_InspectionResultValues[i].Clear();
 				GetResultValueObject(i)->SetResultSize(0);
-				SvStl::MessageMgrStd e(SvStl::MsgType::Log);
+				SvStl::MessageManager e(SvStl::MsgType::Log);
 				e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownException, SvStl::SourceFileParams(StdMessageParams));
 			}
 

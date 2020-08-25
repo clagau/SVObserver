@@ -126,7 +126,7 @@ int ImageBufferSMHelper::createMilBufferinMemory(int requiredNumbers, SvPb::Imag
 		{
 			SvDef::StringVector msgList;
 			msgList.push_back(SvUl::Format(_T("%X"), errCode));
-			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+			SvStl::MessageManager Exception(SvStl::MsgType::Log);
 			Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_CreateBuffer, msgList, SvStl::SourceFileParams(StdMessageParams));
 			Exception.Throw();
 		}
@@ -150,7 +150,7 @@ int ImageBufferSMHelper::createMilBufferinMemory(int requiredNumbers, SvPb::Imag
 		{
 			SvDef::StringVector msgList;
 			msgList.push_back(SvUl::Format(_T("%d"), m_maxNumberOfRequiredBuffer));
-			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+			SvStl::MessageManager Exception(SvStl::MsgType::Log);
 			Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_TooManyImageBuffer, msgList, SvStl::SourceFileParams(StdMessageParams));
 			Exception.Throw();
 		}

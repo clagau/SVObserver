@@ -2,11 +2,11 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVLinearMaximumBackgroundObjectLineAnalyzer
-//* .File Name       : $Workfile:   SVLinearLineMaximumForegroundObjectAnalyzer.h  $
+//* .Module Name     : LinearMaximumBackgroundObjectAnalyzer
+//* .File Name       : $Workfile:   LinearMaximumBackgroundObjectAnalyzer.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 12:00:00  $
+//* .Check In Date   : $Date:   23 Apr 2013 11:59:40  $
 //******************************************************************************
 #pragma once
 
@@ -15,17 +15,16 @@
 #include "SVValueObjectLibrary/SVDoubleValueObjectClass.h"
 #include "SVValueObjectLibrary/SVDPointValueObjectClass.h"
 #pragma endregion Includes
-
 namespace SvAo
 {
 
-class SVLinearMaximumForegroundObjectLineAnalyzer : public SVLinearAnalyzerClass
+class LinearMaximumBackgroundObjectAnalyzer : public SVLinearAnalyzerClass
 {
-	SV_DECLARE_CLASS( SVLinearMaximumForegroundObjectLineAnalyzer );
+	SV_DECLARE_CLASS( LinearMaximumBackgroundObjectAnalyzer );
 
 public:
-	SVLinearMaximumForegroundObjectLineAnalyzer( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVLINEARMAXIMUMFOREGROUNDOBJECTLINEANALYZER );
-	virtual ~SVLinearMaximumForegroundObjectLineAnalyzer();
+	LinearMaximumBackgroundObjectAnalyzer( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_LinearMaximumBackgroundObjectAnalyzer );
+	virtual ~LinearMaximumBackgroundObjectAnalyzer();
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
@@ -34,7 +33,8 @@ public:
 	virtual void addOverlayResults(SvPb::Overlay& rOverlay, bool isVertical = false) const override;
 
 protected:
-	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual std::vector<std::string> getParameterNamesForML() const override;
+	virtual bool onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 	SvVol::SVDPointValueObjectClass mdpEdgeA;	// Point
 	SvVol::SVDPointValueObjectClass mdpEdgeB;	// Point

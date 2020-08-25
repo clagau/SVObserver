@@ -245,7 +245,7 @@ bool SVChildrenSetupDialog::CreateSelectedResults(SvIe::SVClassInfoStruct& rChil
 		{
 			SvDef::StringVector msgList;
 			msgList.push_back(std::string(pObject->GetName()));
-			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 			Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_CreationFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10043);
 
 			// Remove it from the Tool TaskObjectList ( Destruct it )

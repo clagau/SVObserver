@@ -482,7 +482,7 @@ std::string BasicValueObject::getFixedWidthFormatString(uint32_t, uint32_t )
 	SvDef::StringVector msgList;
 	msgList.push_back(SvUl::Format(_T("%s"), _T("getFixedWidthFormatString()")));
 	msgList.push_back(SvUl::Format(_T("ValueObject of type '%s'"), getTypeName().c_str()));
-	SvStl::MessageMgrStd Msg(SvStl::MsgType::Log);
+	SvStl::MessageManager Msg(SvStl::MsgType::Log);
 	Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_FunctionNotImplemented, msgList, SvStl::SourceFileParams(StdMessageParams));
 	return _T("<invalid>");
 }

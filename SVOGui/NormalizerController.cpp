@@ -41,7 +41,7 @@ SvOg::NormalizerController::NormalizerValues SvOg::NormalizerController::getValu
 	}
 	else
 	{
-		SvStl::MessageMgrStd msg(SvStl::MsgType::Data);
+		SvStl::MessageManager msg(SvStl::MsgType::Data);
 		msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownCommandError, SvStl::SourceFileParams(StdMessageParams));
 		msg.Throw();
 	}
@@ -79,7 +79,7 @@ SvOg::NormalizerController::NormalizerValues SvOg::NormalizerController::setRang
 	}
 	else
 	{
-		SvStl::MessageMgrStd msg(SvStl::MsgType::Data);
+		SvStl::MessageManager msg(SvStl::MsgType::Data);
 		msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownCommandError, SvStl::SourceFileParams(StdMessageParams));
 		msg.Throw();
 	}

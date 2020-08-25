@@ -2,8 +2,8 @@
 //* COPYRIGHT (c) 2008 by Seidenader Vision Inc., Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVRegistry
-//* .File Name       : $Workfile:   SVRegistry.cpp  $
+//* .Module Name     : RegistryAccess
+//* .File Name       : $Workfile:   RegistryAccess.cpp  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   02 Oct 2013 10:08:12  $
@@ -11,7 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "SVRegistry.h"
+#include "RegistryAccess.h"
 
 #include "SVMessage/SVMessage.h"
 #include "SVUtilityLibrary/StringHelper.h"
@@ -39,74 +39,74 @@
 #define SV_ISVALUE 2
 #define SV_ISGARBAGE 3
 
-void SVRegistryClass::InitRegistry(LPCTSTR p_szKey)
+void RegistryAccess::InitRegistry(LPCTSTR pKey)
 {
 	DWORD dwDisposition = 0L;
-	std::string szKey = p_szKey;
-	std::string szFullKey = p_szKey;
+	std::string keyString = (nullptr != pKey) ? pKey : std::string();
+	std::string fullKeyString = keyString;
 	HKEY hBaseKey = HKEY_LOCAL_MACHINE;
 	LONG lResult;
 	TCHAR szFname[_MAX_FNAME], szPath[_MAX_PATH];
 
-	mszKey = (nullptr != p_szKey) ? p_szKey : std::string();
+	m_keyString = keyString;
 
 	// check if first node of key is an HKEY Value
-	if (szFullKey.substr(0, 17) == SV_HKEY_CLASSES_ROOT)
+	if (fullKeyString.substr(0, 17) == SV_HKEY_CLASSES_ROOT)
 	{
 		hBaseKey = HKEY_CLASSES_ROOT;
-		szFullKey.erase(0, 18);
+		fullKeyString.erase(0, 18);
 	}
 	else
 	{
-		if (szFullKey.substr(0, 17) == SV_HKEY_CURRENT_USER)
+		if (fullKeyString.substr(0, 17) == SV_HKEY_CURRENT_USER)
 		{
 			hBaseKey = HKEY_CURRENT_USER;
-			szFullKey.erase(0, 18);
+			fullKeyString.erase(0, 18);
 		}
 		else
 		{
-			if (szFullKey.substr(0, 18) == SV_HKEY_LOCAL_MACHINE)
+			if (fullKeyString.substr(0, 18) == SV_HKEY_LOCAL_MACHINE)
 			{
 				hBaseKey = HKEY_LOCAL_MACHINE;
-				szFullKey.erase(0, 19);
+				fullKeyString.erase(0, 19);
 			}
 			else
 			{
-				if (szFullKey.substr(0, 10) == SV_HKEY_USERS)
+				if (fullKeyString.substr(0, 10) == SV_HKEY_USERS)
 				{
 					hBaseKey = HKEY_USERS;
-					szFullKey.erase(0, 11);
+					fullKeyString.erase(0, 11);
 				}
 				else
 				{
-					if (szFullKey.substr(0, strlen(SV_HKEY_PERFORMANCE_DATA)) == SV_HKEY_PERFORMANCE_DATA)
+					if (fullKeyString.substr(0, strlen(SV_HKEY_PERFORMANCE_DATA)) == SV_HKEY_PERFORMANCE_DATA)
 					{
 						hBaseKey = HKEY_PERFORMANCE_DATA;
-						szFullKey.erase(0, strlen(SV_HKEY_PERFORMANCE_DATA)+1);
+						fullKeyString.erase(0, strlen(SV_HKEY_PERFORMANCE_DATA)+1);
 					}
 					else
 					{
-						mszKey = SV_HKEY_LOCAL_MACHINE;
-						mszKey += SV_BACKSLASH;
-						mszKey += SV_ROOT_KEY;
+						m_keyString = SV_HKEY_LOCAL_MACHINE;
+						m_keyString += SV_BACKSLASH;
+						m_keyString += SV_ROOT_KEY;
 
-						szFullKey = SV_ROOT_KEY;
+						fullKeyString = SV_ROOT_KEY;
 
-						if (szKey.substr(0, 1) != SV_BACKSLASH)
+						if (keyString.substr(0, 1) != SV_BACKSLASH)
 						{
-							szFullKey += SV_BACKSLASH;
-							mszKey += SV_BACKSLASH;
+							fullKeyString += SV_BACKSLASH;
+							m_keyString += SV_BACKSLASH;
 							if (GetModuleFileName (nullptr, szPath, _MAX_PATH))
 							{
 								_tsplitpath (szPath, nullptr, nullptr, szFname, nullptr);
-								szFullKey += szFname;
-								szFullKey += SV_BACKSLASH;
-								mszKey += szFname;
-								mszKey += SV_BACKSLASH;
+								fullKeyString += szFname;
+								fullKeyString += SV_BACKSLASH;
+								m_keyString += szFname;
+								m_keyString += SV_BACKSLASH;
 							}
 						}
-						szFullKey += szKey;
-						mszKey += szKey;
+						fullKeyString += keyString;
+						m_keyString += keyString;
 					}
 				}
 			}
@@ -115,11 +115,11 @@ void SVRegistryClass::InitRegistry(LPCTSTR p_szKey)
 
 	mhKey = (HKEY) nullptr;
 
-	if (SvUl::Right(mszKey, 1) == SV_BACKSLASH)
-		mszKey.erase(mszKey.size() - 1);
+	if (SvUl::Right(m_keyString, 1) == SV_BACKSLASH)
+		m_keyString.erase(m_keyString.size() - 1);
 
 	lResult = RegOpenKeyEx (hBaseKey,
-		szFullKey.c_str(),
+		fullKeyString.c_str(),
 		static_cast< DWORD >( 0 ),
 		KEY_ALL_ACCESS,
 		&mhKey );
@@ -127,7 +127,7 @@ void SVRegistryClass::InitRegistry(LPCTSTR p_szKey)
 	if( lResult == ERROR_ACCESS_DENIED)
 	{
 		lResult = RegOpenKeyEx (hBaseKey,
-			szFullKey.c_str(),
+			fullKeyString.c_str(),
 			static_cast< DWORD >( 0 ),
 			KEY_READ,
 			&mhKey );
@@ -142,7 +142,7 @@ void SVRegistryClass::InitRegistry(LPCTSTR p_szKey)
 		if( lResult == ERROR_FILE_NOT_FOUND )
 		{
 			if( ERROR_SUCCESS != RegCreateKeyEx ( hBaseKey,
-				szFullKey.c_str(),
+				fullKeyString.c_str(),
 				static_cast< DWORD >( 0 ),
 				_T( "" ),
 				REG_OPTION_NON_VOLATILE,
@@ -152,8 +152,8 @@ void SVRegistryClass::InitRegistry(LPCTSTR p_szKey)
 				&dwDisposition ) )
 			{
 				mhKey = static_cast< HKEY >( nullptr );
-				SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
-				Exception.setMessage( SVMSG_LIB_REGISTRY_KEY_CREATE_FAILED, szFullKey.c_str(), SvStl::SourceFileParams(StdMessageParams) );
+				SvStl::MessageManager Exception(SvStl::MsgType::Data);
+				Exception.setMessage( SVMSG_LIB_REGISTRY_KEY_CREATE_FAILED, fullKeyString.c_str(), SvStl::SourceFileParams(StdMessageParams) );
 				Exception.Throw();
 			}
 
@@ -162,39 +162,39 @@ void SVRegistryClass::InitRegistry(LPCTSTR p_szKey)
 		else
 		{
 			mhKey = (HKEY) nullptr;
-			SvStl::MessageMgrStd Exception(SvStl::MsgType::Data );
-			Exception.setMessage( SVMSG_LIB_REGISTRY_KEY_OPEN_FAILED, szFullKey.c_str(), SvStl::SourceFileParams(StdMessageParams) );
+			SvStl::MessageManager Exception(SvStl::MsgType::Data );
+			Exception.setMessage( SVMSG_LIB_REGISTRY_KEY_OPEN_FAILED, fullKeyString.c_str(), SvStl::SourceFileParams(StdMessageParams) );
 			Exception.Throw();
 		}
 	}
 }
 
-SVRegistryClass::SVRegistryClass(LPCTSTR szKey)
+RegistryAccess::RegistryAccess(LPCTSTR keyString)
 {
-  InitRegistry (szKey);
+  InitRegistry (keyString);
 }
 
-SVRegistryClass::SVRegistryClass()
+RegistryAccess::RegistryAccess()
 {
   InitRegistry( _T("") ); 
 }
 
-SVRegistryClass& SVRegistryClass::operator=(const SVRegistryClass &svrRight)
+RegistryAccess& RegistryAccess::operator=(const RegistryAccess &svrRight)
 {
 	if (mhKey)
 		RegCloseKey (mhKey);
 
-	InitRegistry( svrRight.mszKey.c_str() );
+	InitRegistry( svrRight.m_keyString.c_str() );
 	return (*this);
 }
 
-SVRegistryClass::~SVRegistryClass()
+RegistryAccess::~RegistryAccess()
 {
 	if (mhKey)
 		RegCloseKey (mhKey);
 }
 
-bool SVRegistryClass::GetRegistryValue( LPCTSTR szValueName, std::string& szValue)
+bool RegistryAccess::GetRegistryValue( LPCTSTR szValueName, std::string& szValue)
 {
 	DWORD dwType = 0L, dwSize = 0L;
 
@@ -234,7 +234,7 @@ bool SVRegistryClass::GetRegistryValue( LPCTSTR szValueName, std::string& szValu
 	return false;
 }
 
-bool SVRegistryClass::SetRegistryValue( LPCTSTR szValueName, LPCTSTR szValue )
+bool RegistryAccess::SetRegistryValue( LPCTSTR szValueName, LPCTSTR szValue )
 {
 	if( ERROR_SUCCESS == RegSetValueEx( mhKey,
 		szValueName,
@@ -247,13 +247,13 @@ bool SVRegistryClass::SetRegistryValue( LPCTSTR szValueName, LPCTSTR szValue )
 	}
 	else
 	{
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Data );
+		SvStl::MessageManager Exception(SvStl::MsgType::Data );
 		Exception.setMessage( SVMSG_LIB_SET_REGISTRY_VALUE_FAILED, szValueName, SvStl::SourceFileParams(StdMessageParams) );
 		Exception.Throw();
   }
 }
 
-bool SVRegistryClass::GetRegistryValue( LPCTSTR szValueName, DWORD *pdwValue)
+bool RegistryAccess::GetRegistryValue( LPCTSTR szValueName, DWORD *pdwValue)
 {
 	DWORD dwType = 0L, dwSize = 0L;
 
@@ -286,7 +286,7 @@ bool SVRegistryClass::GetRegistryValue( LPCTSTR szValueName, DWORD *pdwValue)
 	return false;
 }
 
-bool SVRegistryClass::SetRegistryValue( LPCTSTR szValueName, DWORD dwValue )
+bool RegistryAccess::SetRegistryValue( LPCTSTR szValueName, DWORD dwValue )
 {
 	if( ERROR_SUCCESS == RegSetValueEx( mhKey,
 		szValueName,
@@ -299,13 +299,13 @@ bool SVRegistryClass::SetRegistryValue( LPCTSTR szValueName, DWORD dwValue )
 	}
 	else
 	{
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Data );
+		SvStl::MessageManager Exception(SvStl::MsgType::Data );
 		Exception.setMessage( SVMSG_LIB_SET_REGISTRY_VALUE_FAILED, szValueName, SvStl::SourceFileParams(StdMessageParams) );
 		Exception.Throw();
 	}
 }
 
-bool SVRegistryClass::GetRegistryValue( LPCTSTR szValueName, SVByteVector& rValueVector)
+bool RegistryAccess::GetRegistryValue( LPCTSTR szValueName, SVByteVector& rValueVector)
 {
 	DWORD dwType = 0L, dwSize = 0L;
 
@@ -334,7 +334,7 @@ bool SVRegistryClass::GetRegistryValue( LPCTSTR szValueName, SVByteVector& rValu
 	return false;
 }
 
-bool SVRegistryClass::SetRegistryValue( LPCTSTR szValueName, SVByteVector& rValueVector )
+bool RegistryAccess::SetRegistryValue( LPCTSTR szValueName, SVByteVector& rValueVector )
 {
 	 LONG lResult = RegSetValueEx( mhKey,
 		szValueName,
@@ -349,13 +349,13 @@ bool SVRegistryClass::SetRegistryValue( LPCTSTR szValueName, SVByteVector& rValu
 	}
 	else
 	{
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Data );
+		SvStl::MessageManager Exception(SvStl::MsgType::Data );
 		Exception.setMessage( SVMSG_LIB_SET_REGISTRY_VALUE_FAILED, szValueName, SvStl::SourceFileParams(StdMessageParams) );
 		Exception.Throw();
 	}
 }
 
-bool SVRegistryClass::SetRegistryValue( LPCTSTR szValueName, SVByteVector& rValueVector, DWORD dwType, DWORD dwLength )
+bool RegistryAccess::SetRegistryValue( LPCTSTR szValueName, SVByteVector& rValueVector, DWORD dwType, DWORD dwLength )
 {
 	LONG lResult;
 
@@ -372,34 +372,13 @@ bool SVRegistryClass::SetRegistryValue( LPCTSTR szValueName, SVByteVector& rValu
 	}
 	else
 	{
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Data );
+		SvStl::MessageManager Exception(SvStl::MsgType::Data );
 		Exception.setMessage( SVMSG_LIB_SET_REGISTRY_VALUE_FAILED, szValueName, SvStl::SourceFileParams(StdMessageParams) );
 		Exception.Throw();
 	}
 }
 
-bool SVRegistryClass::AdjustPrivileges(TCHAR *pszPrivilege)
-{
-	HANDLE hToken;
-	TOKEN_PRIVILEGES NewState;
-	LUID luid;
-
-	if (LookupPrivilegeValue (nullptr, pszPrivilege, &luid))
-	{
-		NewState.PrivilegeCount = 1;
-		NewState.Privileges[0].Luid = luid;
-		NewState.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
-
-		if (OpenProcessToken (GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES, &hToken))
-		{
-			return AdjustTokenPrivileges(hToken, false, &NewState, 0, nullptr, nullptr) ? true : false;
-		}
-	}
-
-	return false;
-}
-
-bool SVRegistryClass::DeleteKey()
+bool RegistryAccess::DeleteKey()
 {
 	if (ERROR_SUCCESS == RegDeleteKey (mhKey, _T("")))
 	{
@@ -410,25 +389,25 @@ bool SVRegistryClass::DeleteKey()
 	return false;
 }
 
-bool SVRegistryClass::CreatedNewKey()
+bool RegistryAccess::CreatedNewKey()
 {
 	return mbCreatedNewKey;
 }
 
-bool SVRegistryClass::SetShadowFileName(LPCTSTR szFileName)
+bool RegistryAccess::SetShadowFileName(LPCTSTR szFileName)
 {
 	return SetRegistryValue( SV_SHADOWFILE, szFileName );
 }
 
-bool SVRegistryClass::GetShadowFileName(std::string & szShadowFile)
+bool RegistryAccess::GetShadowFileName(std::string & szShadowFile)
 {
 	return GetRegistryValue( SV_SHADOWFILE, szShadowFile );
 }
 
-bool SVRegistryClass::GetDefaultShadowFileName(std::string & szShadowFile)
+bool RegistryAccess::GetDefaultShadowFileName(std::string & szShadowFile)
 {
 	TCHAR szPath[_MAX_PATH];
-	std::string szKey;
+	std::string keyString;
 
 	if (GetModuleFileName (nullptr, szPath, _MAX_PATH))
 	{
@@ -440,9 +419,9 @@ bool SVRegistryClass::GetDefaultShadowFileName(std::string & szShadowFile)
 		szShadowFile += SV_BACKSLASH;
 		szShadowFile += szFname;
 		szShadowFile += SV_UNDERLINE;
-		szKey = mszKey;
-		SvUl::searchAndReplace (szKey, SV_BACKSLASH, SV_UNDERLINE);
-		szShadowFile += szKey;
+		keyString = m_keyString;
+		SvUl::searchAndReplace (keyString, SV_BACKSLASH, SV_UNDERLINE);
+		szShadowFile += keyString;
 		szShadowFile += SV_SHADOWFILEEXT;
 		return true;
 	}
@@ -450,7 +429,7 @@ bool SVRegistryClass::GetDefaultShadowFileName(std::string & szShadowFile)
 	return false;
 }
 
-bool SVRegistryClass::Import()
+bool RegistryAccess::Import()
 {
 	std::string szShadowFile;
 
@@ -471,7 +450,7 @@ bool SVRegistryClass::Import()
 	}
 }
 
-bool SVRegistryClass::Import(LPCTSTR szFileName)
+bool RegistryAccess::Import(LPCTSTR szFileName)
 {
 	FILE *pFile;
 	bool rc = false;
@@ -487,14 +466,14 @@ bool SVRegistryClass::Import(LPCTSTR szFileName)
 		}
 		else
 		{
-			SvStl::MessageMgrStd Exception(SvStl::MsgType::Data );
+			SvStl::MessageManager Exception(SvStl::MsgType::Data );
 			Exception.setMessage( SVMSG_LIB_REGISTRY_INVALID_IMPORT_FILE, szFileName, SvStl::SourceFileParams(StdMessageParams) );
 			Exception.Throw();
 		}
 	}
 	else
 	{
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Data );
+		SvStl::MessageManager Exception(SvStl::MsgType::Data );
 		Exception.setMessage( SVMSG_LIB_REGISTRY_IMPORT_FAILED, szFileName, SvStl::SourceFileParams(StdMessageParams) );
 		Exception.Throw();
 	}
@@ -502,7 +481,7 @@ bool SVRegistryClass::Import(LPCTSTR szFileName)
 	return rc;
 }
 
-bool SVRegistryClass::ImportKeys(FILE * pFile)
+bool RegistryAccess::ImportKeys(FILE * pFile)
 {
 	bool rc = true;
 	std::string szName;
@@ -518,7 +497,7 @@ bool SVRegistryClass::ImportKeys(FILE * pFile)
 		{
 		case SV_ISKEY :
 			{
-				SVRegistryClass reg(szName.c_str());
+				RegistryAccess reg(szName.c_str());
 				reg.ImportKeys (pFile);
 			}
 			break;
@@ -532,7 +511,7 @@ bool SVRegistryClass::ImportKeys(FILE * pFile)
 
 		case SV_ISGARBAGE :
 			{
-				SvStl::MessageMgrStd Exception(SvStl::MsgType::Data );
+				SvStl::MessageManager Exception(SvStl::MsgType::Data );
 				Exception.setMessage( SVMSG_LIB_REGISTRY_IMPORT_EXPECTED_KEY, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
 				Exception.Throw();
 			}
@@ -546,7 +525,7 @@ bool SVRegistryClass::ImportKeys(FILE * pFile)
 	return rc;
 }
 
-int SVRegistryClass::GetImportString(FILE * pFile, std::string& rName, SVByteVector& rValueVector, DWORD * pdwType)
+int RegistryAccess::GetImportString(FILE * pFile, std::string& rName, SVByteVector& rValueVector, DWORD * pdwType)
 {
 	TCHAR tBuffer;
 	int i;
@@ -560,7 +539,7 @@ int SVRegistryClass::GetImportString(FILE * pFile, std::string& rName, SVByteVec
 
 	if (ferror (pFile))
 	{
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Data );
+		SvStl::MessageManager Exception(SvStl::MsgType::Data );
 		Exception.setMessage( SVMSG_LIB_REGISTRY_IMPORT_FILE_IO_ERROR, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
 		Exception.Throw();
 	}
@@ -575,7 +554,7 @@ int SVRegistryClass::GetImportString(FILE * pFile, std::string& rName, SVByteVec
 
 		if (ferror (pFile))
 		{
-			SvStl::MessageMgrStd Exception(SvStl::MsgType::Data );
+			SvStl::MessageManager Exception(SvStl::MsgType::Data );
 			Exception.setMessage( SVMSG_LIB_REGISTRY_IMPORT_FILE_IO_ERROR, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
 			Exception.Throw();
 		}
@@ -622,6 +601,7 @@ int SVRegistryClass::GetImportString(FILE * pFile, std::string& rName, SVByteVec
 			}
 			// get the binary data
 			rValueVector.clear();
+			// cppcheck-suppress invalidScanfArgType_int ; this became visible when the class RegistryAccess was renamed: cppcheck-suppress (and this problem) should be removed when possible
 			for (i = 0; _ftscanf (pFile, _T(" %hhx"), &tBuffer); i++)
 			{
 				rValueVector.push_back((BYTE) tBuffer);
@@ -693,7 +673,7 @@ int SVRegistryClass::GetImportString(FILE * pFile, std::string& rName, SVByteVec
 	}
 }
 
-bool SVRegistryClass::Export()
+bool RegistryAccess::Export()
 {
 	std::string szShadowFile;
 
@@ -714,7 +694,7 @@ bool SVRegistryClass::Export()
 	}
 }
 
-bool SVRegistryClass::Export(LPCTSTR szFileName)
+bool RegistryAccess::Export(LPCTSTR szFileName)
 {
 	FILE *pFile;
 	bool rc = false;
@@ -730,7 +710,7 @@ bool SVRegistryClass::Export(LPCTSTR szFileName)
 	}
 	else
 	{
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Data );
+		SvStl::MessageManager Exception(SvStl::MsgType::Data );
 		Exception.setMessage( SVMSG_LIB_REGISTRY_EXPORT_FAILED, szFileName, SvStl::SourceFileParams(StdMessageParams) );
 		Exception.Throw();
 	}
@@ -738,11 +718,11 @@ bool SVRegistryClass::Export(LPCTSTR szFileName)
 	return rc;
 }
 
-bool SVRegistryClass::ExportKeys(FILE * pFile)
+bool RegistryAccess::ExportKeys(FILE * pFile)
 {
 	bool rc = true;
 
-	_ftprintf (pFile, _T("[%s]\n"), mszKey.c_str());
+	_ftprintf (pFile, _T("[%s]\n"), m_keyString.c_str());
 
 	if (ExportValues (pFile))
 	{
@@ -757,18 +737,18 @@ bool SVRegistryClass::ExportKeys(FILE * pFile)
 			DWORD dwcbBuffSize = dwcbMaxSubKeyLen + 1;
 			TCHAR* pszKey = new TCHAR[dwcbBuffSize];
 			LONG lResult= RegEnumKeyEx (mhKey, dwIndex, pszKey, &dwcbBuffSize, nullptr, nullptr, nullptr, nullptr);
-			std::string szKey = pszKey;
+			std::string keyString = pszKey;
 			delete [] pszKey;
 
 			if (lResult == ERROR_SUCCESS)
 			{
 				try
 				{
-					szKey.insert (0, SV_BACKSLASH);
-					szKey.insert(0, mszKey.c_str());
-					SVRegistryClass reg(szKey.c_str());
+					keyString.insert (0, SV_BACKSLASH);
+					keyString.insert(0, m_keyString.c_str());
+					RegistryAccess reg(keyString.c_str());
 					rc &= reg.ExportKeys (pFile);
-					szKey.clear();
+					keyString.clear();
 				}
 				catch ( SvStl::MessageContainer& rSvE )
 				{
@@ -779,8 +759,8 @@ bool SVRegistryClass::ExportKeys(FILE * pFile)
 			else
 			{
 				rc = false;
-				SvStl::MessageMgrStd Exception(SvStl::MsgType::Data );
-				Exception.setMessage( SVMSG_LIB_REGISTRY_KEY_EXPORT_FAILED, szKey.c_str(), SvStl::SourceFileParams(StdMessageParams) );
+				SvStl::MessageManager Exception(SvStl::MsgType::Data );
+				Exception.setMessage( SVMSG_LIB_REGISTRY_KEY_EXPORT_FAILED, keyString.c_str(), SvStl::SourceFileParams(StdMessageParams) );
 				Exception.Throw();
 			}
 		}
@@ -793,7 +773,7 @@ bool SVRegistryClass::ExportKeys(FILE * pFile)
 	return rc;
 }
 
-bool SVRegistryClass::ExportValues(FILE * pFile)
+bool RegistryAccess::ExportValues(FILE * pFile)
 {
 	bool rc = true;
 	DWORD dwcValues, dwcbValueMax, dwcbNameMax;
@@ -879,6 +859,7 @@ bool SVRegistryClass::ExportValues(FILE * pFile)
 					break;
 
 				case REG_DWORD :
+					// cppcheck-suppress invalidPrintfArgType_uint ; this became visible when the class RegistryAccess was renamed: cppcheck-suppress (and this problem) should be removed when possible
 					lLineLen += _ftprintf (pFile, _T("dword:%08.8x\n"), *((DWORD *) pData));
 					break;
 
@@ -928,8 +909,8 @@ bool SVRegistryClass::ExportValues(FILE * pFile)
 			else
 			{
 				rc = false;
-				SvStl::MessageMgrStd Exception(SvStl::MsgType::Data );
-				Exception.setMessage( SVMSG_LIB_REGISTRY_VALUE_EXPORT_FAILED, mszKey.c_str(), SvStl::SourceFileParams(StdMessageParams) );
+				SvStl::MessageManager Exception(SvStl::MsgType::Data );
+				Exception.setMessage( SVMSG_LIB_REGISTRY_VALUE_EXPORT_FAILED, m_keyString.c_str(), SvStl::SourceFileParams(StdMessageParams) );
 				Exception.Throw();
 			}
 		}
@@ -940,7 +921,7 @@ bool SVRegistryClass::ExportValues(FILE * pFile)
 	return rc;
 }
 
-bool SVRegistryClass::GetRegistryValue(DWORD dwIndex, std::string& szValueName, std::string& szValue, LPDWORD pdwType)
+bool RegistryAccess::GetRegistryValue(DWORD dwIndex, std::string& szValueName, std::string& szValue, LPDWORD pdwType)
 {
 	bool rc = false;
 	DWORD dwcbNameMax, dwcbValueMax, dwcbName, dwcbValue;

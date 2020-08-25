@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVResultDouble.h"
 #include "SVRange.h"
-#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/RunStatus.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
@@ -92,7 +92,7 @@ bool SVDoubleResult::CreateObject( const SVObjectLevelCreateStruct& rCreateStruc
 	return bOk;
 }
 
-bool SVDoubleResult::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVDoubleResult::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	// All inputs and outputs must be validated first
 	if( __super::onRun(rRunStatus, pErrorMessages) )

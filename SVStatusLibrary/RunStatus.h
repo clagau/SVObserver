@@ -2,8 +2,8 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVRunStatus
-//* .File Name       : $Workfile:   SVRunStatus.h  $
+//* .Module Name     : RunStatus
+//* .File Name       : $Workfile:   RunStatus.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   25 Apr 2013 16:21:36  $
@@ -15,7 +15,7 @@
 #include "TriggerRecordController/ITriggerRecordRW.h"
 #pragma endregion Includes
 
-class SVRunStatusClass
+class RunStatus
 {
 public:
 	enum
@@ -41,7 +41,7 @@ private:
 	} run;
 
 public:
-	SVRunStatusClass();
+	RunStatus();
 	void ResetRunStateAndToolSetTimes();
 
 	void SetPassed();
@@ -76,94 +76,94 @@ public:
 	SvTrc::ITriggerRecordRWPtr m_triggerRecord = nullptr;
 };
 
-inline void SVRunStatusClass::SetPassed()
+inline void RunStatus::SetPassed()
 {
 	run.status.passed = ((!run.status.failed && !run.status.warned && run.status.valid) ? true : false);
 }
 
-inline void SVRunStatusClass::SetFailed()
+inline void RunStatus::SetFailed()
 {
 	run.status.failed = true;
 	run.status.warned = false;
 	run.status.passed = false;
 }
 
-inline void SVRunStatusClass::SetWarned()
+inline void RunStatus::SetWarned()
 {
 	run.status.warned = ((!run.status.failed) ? true : false);
 }
 
-inline void SVRunStatusClass::SetInvalid()
+inline void RunStatus::SetInvalid()
 {
 	run.status.valid = false;
 }
 
-inline void SVRunStatusClass::SetValid()
+inline void RunStatus::SetValid()
 {
 	run.status.valid = true;
 }
 
-inline void SVRunStatusClass::SetDisabled()
+inline void RunStatus::SetDisabled()
 {
 	run.status.disabled = true;
 }
 
-inline void SVRunStatusClass::SetDisabledByCondition()
+inline void RunStatus::SetDisabledByCondition()
 {
 	run.status.disabledByCondition = true;
 }
 
-inline void SVRunStatusClass::SetCriticalFailure()
+inline void RunStatus::SetCriticalFailure()
 {
 	run.status.criticalFailure = true;
 }
 
-inline void SVRunStatusClass::SetInspectionStarted(bool state)
+inline void RunStatus::SetInspectionStarted(bool state)
 {
 	run.status.run = state;
 }
 
-inline bool SVRunStatusClass::IsPassed() const
+inline bool RunStatus::IsPassed() const
 {
 	return (run.status.passed && !run.status.failed && !run.status.warned && run.status.valid);
 }
 
-inline bool SVRunStatusClass::IsFailed() const
+inline bool RunStatus::IsFailed() const
 {
 	return (run.status.failed && !run.status.warned && run.status.valid);
 }
 
-inline bool SVRunStatusClass::IsWarned() const
+inline bool RunStatus::IsWarned() const
 {
 	return (run.status.warned && run.status.valid);
 }
 
-inline bool SVRunStatusClass::IsValid() const
+inline bool RunStatus::IsValid() const
 {
 	return run.status.valid;
 }
 
-inline bool SVRunStatusClass::IsDisabled() const
+inline bool RunStatus::IsDisabled() const
 {
 	return run.status.disabled;
 }
 
-inline bool SVRunStatusClass::IsDisabledByCondition() const
+inline bool RunStatus::IsDisabledByCondition() const
 {
 	return run.status.disabledByCondition;
 }
 
-inline bool SVRunStatusClass::IsCriticalFailure() const
+inline bool RunStatus::IsCriticalFailure() const
 {
 	return run.status.criticalFailure;
 }
 
-inline bool SVRunStatusClass::HasInspectionStarted() const
+inline bool RunStatus::HasInspectionStarted() const
 {
 	return run.status.run;
 }
 
-inline DWORD SVRunStatusClass::GetState() const
+inline DWORD RunStatus::GetState() const
 {
 	return run.state;
 }

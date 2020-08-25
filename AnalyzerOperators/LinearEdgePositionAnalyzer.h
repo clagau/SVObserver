@@ -2,8 +2,8 @@
 // * COPYRIGHT (c) 2005 by SVResearch, Harrisburg
 // * All Rights Reserved
 // ******************************************************************************
-// * .Module Name     : SVLinearEdgePositionLineAnalyzer
-// * .File Name       : $Workfile:   SVLinearLineEdgePositionAnalyzer.h  $
+// * .Module Name     : LinearEdgePositionAnalyzer
+// * .File Name       : $Workfile:   LinearEdgePositionAnalyzer.h  $
 // * ----------------------------------------------------------------------------
 // * .Current Version : $Revision:   1.0  $
 // * .Check In Date   : $Date:   23 Apr 2013 11:59:18  $
@@ -20,13 +20,13 @@
 namespace SvAo
 {
 
-class SVLinearEdgePositionLineAnalyzer : public SVLinearAnalyzerClass
+class LinearEdgePositionAnalyzer : public SVLinearAnalyzerClass
 {
-	SV_DECLARE_CLASS( SVLinearEdgePositionLineAnalyzer );
+	SV_DECLARE_CLASS( LinearEdgePositionAnalyzer );
 
 public:
-	SVLinearEdgePositionLineAnalyzer( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVLINEAREDGEPOSITIONLINEANALYZER );
-	virtual ~SVLinearEdgePositionLineAnalyzer();
+	LinearEdgePositionAnalyzer( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_LinearEdgePositionAnalyzer );
+	virtual ~LinearEdgePositionAnalyzer();
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
@@ -35,7 +35,7 @@ public:
 protected:
 	virtual std::vector<std::string> getParameterNamesForML() const override;
 
-	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 	SvVol::SVDPointValueObjectClass dpEdge;	// Point
 	SvVol::SVDoubleValueObjectClass m_svLinearDistance;

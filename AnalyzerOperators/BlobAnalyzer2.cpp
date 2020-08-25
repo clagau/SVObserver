@@ -24,7 +24,7 @@
 #include "Tools/SVTool.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
-#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/RunStatus.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "Operators/SVResultLong.h"
 #include "SVProtoBuf/ConverterHelper.h"
@@ -303,7 +303,7 @@ namespace SvAo
 			if (list.end() != iter)
 			{
 				list.erase(iter, list.end());
-				SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log);
+				SvStl::MessageManager MesMan(SvStl::MsgType::Log);
 				MesMan.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_RemoveGrayFeature, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 			}
 		}
@@ -405,7 +405,7 @@ namespace SvAo
 					}
 					catch(...)
 					{
-						SvStl::MessageMgrStd Msg(SvStl::MsgType::Log);
+						SvStl::MessageManager Msg(SvStl::MsgType::Log);
 						Msg.setMessage(rMessage.getMessage());
 					}
 				}
@@ -437,7 +437,7 @@ namespace SvAo
 		{
 			if (!SVImageAnalyzerClass::CreateObject(rCreateStructure))
 			{
-				SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log);
+				SvStl::MessageManager MesMan(SvStl::MsgType::Log);
 				MesMan.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16116, getObjectId());
 				throw;
 			}
@@ -451,7 +451,7 @@ namespace SvAo
 				{
 					SvStl::MessageContainer message;
 					message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableObject_CreateFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
-					SvStl::MessageMgrStd Msg(SvStl::MsgType::Log);
+					SvStl::MessageManager Msg(SvStl::MsgType::Log);
 					Msg.setMessage(message.getMessage());
 					throw;
 				}
@@ -461,7 +461,7 @@ namespace SvAo
 
 			if (S_OK != MatroxCode || M_NULL == m_ResultBufferID)
 			{
-				SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log);
+				SvStl::MessageManager MesMan(SvStl::MsgType::Log);
 				MesMan.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16117, getObjectId());
 				throw;
 			}
@@ -470,7 +470,7 @@ namespace SvAo
 
 			if (S_OK != MatroxCode || M_NULL == m_BlobContextID)
 			{
-				SvStl::MessageMgrStd MesMan(SvStl::MsgType::Log);
+				SvStl::MessageManager MesMan(SvStl::MsgType::Log);
 				MesMan.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16148);
 				throw;
 			}
@@ -502,7 +502,7 @@ namespace SvAo
 		return m_isCreated;
 	}
 
-	bool BlobAnalyzer2::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+	bool BlobAnalyzer2::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 	{
 		try
 		{
@@ -514,7 +514,7 @@ namespace SvAo
 			SvIe::SVImageClass* pInputImage = getInputImage(true);
 			if (nullptr == pInputImage)
 			{
-				SvStl::MessageMgrStd msg(SvStl::MsgType::Data);
+				SvStl::MessageManager msg(SvStl::MsgType::Data);
 				msg.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 				msg.Throw();
 			}
@@ -522,14 +522,14 @@ namespace SvAo
 			if (nullptr == pImageBuffer)
 			{
 				assert(false);
-				SvStl::MessageMgrStd msg(SvStl::MsgType::Data);
+				SvStl::MessageManager msg(SvStl::MsgType::Data);
 				msg.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 				msg.Throw();
 			}
 			if (pImageBuffer->isEmpty())
 			{
 				assert(false);
-				SvStl::MessageMgrStd msg(SvStl::MsgType::Data);
+				SvStl::MessageManager msg(SvStl::MsgType::Data);
 				msg.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 				msg.Throw();
 			}
@@ -563,7 +563,7 @@ namespace SvAo
 			if (S_OK != MatroxCode)
 			{
 				assert(false);
-				SvStl::MessageMgrStd msg(SvStl::MsgType::Data);
+				SvStl::MessageManager msg(SvStl::MsgType::Data);
 				msg.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 				msg.Throw();
 			}
@@ -583,7 +583,7 @@ namespace SvAo
 					auto row = std::distance(m_featureTaskVec.begin(), std::find_if(m_featureTaskVec.begin(), m_featureTaskVec.end(), [data](const auto& rEntry) { return data.m_featureType == rEntry->getFeatureType(); }));
 					SvDef::StringVector msgList;
 					msgList.push_back(std::to_string(row));
-					SvStl::MessageMgrStd  Ex(SvStl::MsgType::Log);
+					SvStl::MessageManager  Ex(SvStl::MsgType::Log);
 					Ex.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ExcludeBlobUpperBoundLowerThanLowerBound, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 				}
 			}
@@ -596,7 +596,7 @@ namespace SvAo
 
 			if (S_OK != MatroxCode)
 			{
-				SvStl::MessageMgrStd msg(SvStl::MsgType::Data);
+				SvStl::MessageManager msg(SvStl::MsgType::Data);
 				msg.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 				msg.Throw();
 			}
@@ -607,7 +607,7 @@ namespace SvAo
 			m_numberOfBlobsFound.SetValue(numberOfBlobs);
 			if (numberOfBlobs > maxBlobDataArraySize)
 			{
-				SvStl::MessageMgrStd msg(SvStl::MsgType::Data);
+				SvStl::MessageManager msg(SvStl::MsgType::Data);
 				msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Too_Many_Blobs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 				msg.Throw();
 			}
@@ -1051,7 +1051,7 @@ namespace SvAo
 
 		if (nullptr == m_pResultBlob)
 		{
-			SvStl::MessageMgrStd  Ex(SvStl::MsgType::Log);
+			SvStl::MessageManager  Ex(SvStl::MsgType::Log);
 			Ex.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 			return;
 		}
@@ -1067,7 +1067,7 @@ namespace SvAo
 			// And finally try to create the child object...
 			if (!CreateChildObject(m_pResultBlob))
 			{
-				SvStl::MessageMgrStd Msg(SvStl::MsgType::Log);
+				SvStl::MessageManager Msg(SvStl::MsgType::Log);
 				Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_BlobAnalyzer_ResultCreationFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 
 				// Remove it from the Blob Analyzer TaskObjectList ( Destruct it )

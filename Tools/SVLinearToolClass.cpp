@@ -360,21 +360,21 @@ void SVLinearToolClass::init()
 	analyzerClassInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVAnalyzerObjectType;
 	analyzerClassInfo.m_ObjectTypeInfo.m_SubType	= SvPb::SVLinearPixelCountingAnalyzerObjectType;
 	analyzerClassInfo.m_ClassId = SvPb::LinearPixelCountingLineAnalyzerClassId;
-	analyzerClassInfo.m_ClassName = SvUl::LoadStdString( IDS_CLASSNAME_SVLINEARPIXELCOUNTINGLINEANALYZER );
+	analyzerClassInfo.m_ClassName = SvUl::LoadStdString( IDS_CLASSNAME_LinearPixelCountingAnalyzer );
 	m_availableChildren.push_back( analyzerClassInfo );
 
 	// Add the Line Edge Count Analyzer...
 	analyzerClassInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVAnalyzerObjectType;
 	analyzerClassInfo.m_ObjectTypeInfo.m_SubType	= SvPb::SVLinearEdgeCountingAnalyzerObjectType;
 	analyzerClassInfo.m_ClassId = SvPb::LinearEdgeCountingLineAnalyzerClassId;
-	analyzerClassInfo.m_ClassName = SvUl::LoadStdString( IDS_CLASSNAME_SVLINEAREDGECOUNTINGLINEANALYZER );
+	analyzerClassInfo.m_ClassName = SvUl::LoadStdString( IDS_CLASSNAME_LinearEdgeCountingAnalyzer );
 	m_availableChildren.push_back(analyzerClassInfo);
 	
 	// Add the Line Edge Position Analyzer...
 	analyzerClassInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVAnalyzerObjectType;
 	analyzerClassInfo.m_ObjectTypeInfo.m_SubType	= SvPb::SVLinearEdgePositionAnalyzerObjectType;
 	analyzerClassInfo.m_ClassId = SvPb::LinearEdgePositionLineAnalyzerClassId;
-	analyzerClassInfo.m_ClassName = SvUl::LoadStdString( IDS_CLASSNAME_SVLINEAREDGEPOSITIONLINEANALYZER );
+	analyzerClassInfo.m_ClassName = SvUl::LoadStdString( IDS_CLASSNAME_LinearEdgePositionAnalyzer );
 	m_availableChildren.push_back(analyzerClassInfo);
 
 	// Add the Line Linear Measurement Analyzer...
@@ -388,21 +388,21 @@ void SVLinearToolClass::init()
 	analyzerClassInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVAnalyzerObjectType;
 	analyzerClassInfo.m_ObjectTypeInfo.m_SubType	= SvPb::SVLinearMaximumForegroundObjectAnalyzerObjectType;
 	analyzerClassInfo.m_ClassId = SvPb::LinearMaximumForegroundObjectLineAnalyzerClassId;
-	analyzerClassInfo.m_ClassName = SvUl::LoadStdString( IDS_CLASSNAME_SVLINEARMAXIMUMFOREGROUNDOBJECTLINEANALYZER );
+	analyzerClassInfo.m_ClassName = SvUl::LoadStdString( IDS_CLASSNAME_LinearMaximumForegroundObjectAnalyzer );
 	m_availableChildren.push_back(analyzerClassInfo);
 
 	// Add the Line Maximum Background Object Analyzer...
 	analyzerClassInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVAnalyzerObjectType;
 	analyzerClassInfo.m_ObjectTypeInfo.m_SubType	= SvPb::SVLinearMaximumBackgroundObjectAnalyzerObjectType;
 	analyzerClassInfo.m_ClassId = SvPb::LinearMaximumBackgroundObjectLineAnalyzerClassId;
-	analyzerClassInfo.m_ClassName = SvUl::LoadStdString( IDS_CLASSNAME_SVLINEARMAXIMUMBACKGROUNDOBJECTLINEANALYZER );
+	analyzerClassInfo.m_ClassName = SvUl::LoadStdString( IDS_CLASSNAME_LinearMaximumBackgroundObjectAnalyzer );
 	m_availableChildren.push_back(analyzerClassInfo);
 
 	// Add the Line Maximum Object Analyzer...
 	analyzerClassInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVAnalyzerObjectType;
 	analyzerClassInfo.m_ObjectTypeInfo.m_SubType	= SvPb::SVLinearMaximumObjectAnalyzerObjectType;
 	analyzerClassInfo.m_ClassId = SvPb::LinearMaximumObjectLineAnalyzerClassId;
-	analyzerClassInfo.m_ClassName = SvUl::LoadStdString( IDS_CLASSNAME_SVLINEARMAXIMUMOBJECTLINEANALYZER );
+	analyzerClassInfo.m_ClassName = SvUl::LoadStdString( IDS_CLASSNAME_LinearMaximumObjectAnalyzer );
 	m_availableChildren.push_back(analyzerClassInfo);
 
 	// Build an operator list...

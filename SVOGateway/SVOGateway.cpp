@@ -69,7 +69,7 @@ bool on_http_request(SvAuth::RestHandler& rRestHandler, const SvHttp::HttpReques
 void StartWebServer(DWORD argc, LPTSTR  *argv)
 {
 	SvLog::bootstrap_logging();
-	SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+	SvStl::MessageManager Exception(SvStl::MsgType::Log);
 	Exception.setMessage(SVMSG_SVGateway_2_GENERAL_INFORMATIONAL, SvStl::Tid_Started, SvStl::SourceFileParams(StdMessageParams));
 	try
 	{
@@ -183,7 +183,7 @@ int main(int argc, _TCHAR* argv[])
 	//this command is to send the assert to a messagebox (otherwise the assert abort the application)
 	_set_error_mode(_OUT_TO_MSGBOX);
 	int Result {0};
-	SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+	SvStl::MessageManager Exception(SvStl::MsgType::Log);
 	Exception.setMessage(SVMSG_SVGateway_2_GENERAL_INFORMATIONAL, SvStl::Tid_Started, SvStl::SourceFileParams(StdMessageParams));
 
 	// Startup Matrox App

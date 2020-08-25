@@ -22,7 +22,7 @@
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
 #include "SVObjectLibrary/SVToolsetScriptTags.h"
-#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/RunStatus.h"
 #include "SVUtilityLibrary/SVSafeArray.h"
 #include "Tools/SVTool.h"
 #pragma endregion Includes
@@ -639,7 +639,7 @@ HRESULT SVUserMaskOperatorClass::SetObjectValue( SVObjectAttributeClass* pDataOb
 // .Description : Runs this operator.
 //              : Returns false, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
-bool SVUserMaskOperatorClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVUserMaskOperatorClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 { 
 	BOOL bActive;
 	m_Data.bvoActivated.GetValue( bActive );

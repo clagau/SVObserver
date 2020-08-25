@@ -16,7 +16,7 @@
 #include "SVMatroxLibrary/SVMatroxBufferCreateStruct.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
-#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/RunStatus.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
@@ -313,7 +313,7 @@ bool SVCylindricalWarpToolClass::DoesObjectHaveExtents() const
 	return false;
 }
 
-bool SVCylindricalWarpToolClass::onRun( SVRunStatusClass& p_rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVCylindricalWarpToolClass::onRun( RunStatus& p_rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	bool l_bOk = __super::onRun( p_rRunStatus, pErrorMessages );
 

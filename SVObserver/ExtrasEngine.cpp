@@ -198,7 +198,7 @@ void ExtrasEngine::ChangeFbwfState()
 			RootObject::setRootChildValue(SvDef::FqnEnvironmentAutoSave, IsFbwfSelected);
 		}
 
-		SvStl::MessageMgrStd toggleFbwfMessage(SvStl::MsgType::Log | SvStl::MsgType::Display );
+		SvStl::MessageManager toggleFbwfMessage(SvStl::MsgType::Log | SvStl::MsgType::Display );
 		toggleFbwfMessage.setMessage( (ret ? SVMSG_SVO_86_FBWF_CHANGE_ERROR : SVMSG_SVO_85_FBWF_CHANGE), msgId, msgList, SvStl::SourceFileParams(StdMessageParams) );
 
 		ReadCurrentFbwfSettings();

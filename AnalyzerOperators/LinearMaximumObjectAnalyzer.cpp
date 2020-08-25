@@ -2,8 +2,8 @@
 // * COPYRIGHT (c) 2005 by SVResearch, Harrisburg
 // * All Rights Reserved
 // ******************************************************************************
-// * .Module Name     : SVLinearLineMaximumObjectAnalyzer
-// * .File Name       : $Workfile:   SVLinearLineMaximumObjectAnalyzer.cpp  $
+// * .Module Name     : LinearMaximumObjectAnalyzer
+// * .File Name       : $Workfile:   LinearMaximumObjectAnalyzer.cpp  $
 // * ----------------------------------------------------------------------------
 // * .Current Version : $Revision:   1.1  $
 // * .Check In Date   : $Date:   01 Oct 2013 14:57:20  $
@@ -11,11 +11,11 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "SVLinearLineMaximumObjectAnalyzer.h"
+#include "LinearMaximumObjectAnalyzer.h"
 #include "Definitions/LinearEdgeEnums.h"
 #include "Operators/SVLinearEdgeAProcessingClass.h"
 #include "Operators/SVLinearEdgeBProcessingClass.h"
-#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/RunStatus.h"
 #include "Tools/SVTool.h"
 #pragma endregion Includes
 
@@ -29,9 +29,9 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVLinearMaximumObjectLineAnalyzer, SvPb::LinearMaximumObjectLineAnalyzerClassId);
+SV_IMPLEMENT_CLASS( LinearMaximumObjectAnalyzer, SvPb::LinearMaximumObjectLineAnalyzerClassId);
 
-SVLinearMaximumObjectLineAnalyzer::SVLinearMaximumObjectLineAnalyzer( SVObjectClass* POwner, int StringResourceID )
+LinearMaximumObjectAnalyzer::LinearMaximumObjectAnalyzer( SVObjectClass* POwner, int StringResourceID )
 									 :SVLinearAnalyzerClass( POwner, StringResourceID ) 
 {
 	m_bEnableDirection = false;
@@ -43,7 +43,7 @@ SVLinearMaximumObjectLineAnalyzer::SVLinearMaximumObjectLineAnalyzer( SVObjectCl
 	init();
 }
 
-void SVLinearMaximumObjectLineAnalyzer::init()
+void LinearMaximumObjectAnalyzer::init()
 {
 	// Identify our type
 	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVLinearMaximumObjectAnalyzerObjectType;
@@ -120,12 +120,12 @@ void SVLinearMaximumObjectLineAnalyzer::init()
 	addScalarResultToAvailableChildren(SvPb::LinearDistanceEdgeBEId, SvPb::SVResultDoubleObjectType, IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_B, IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_B_RESULT);
 }
 
-SVLinearMaximumObjectLineAnalyzer::~SVLinearMaximumObjectLineAnalyzer()
+LinearMaximumObjectAnalyzer::~LinearMaximumObjectAnalyzer()
 {
-	SVLinearMaximumObjectLineAnalyzer::CloseObject();
+	LinearMaximumObjectAnalyzer::CloseObject();
 }
 
-bool SVLinearMaximumObjectLineAnalyzer::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
+bool LinearMaximumObjectAnalyzer::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
 	bool bOk = SVLinearAnalyzerClass::CreateObject(rCreateStructure);
 
@@ -142,12 +142,12 @@ bool SVLinearMaximumObjectLineAnalyzer::CreateObject( const SVObjectLevelCreateS
 	return bOk;
 }
 
-bool SVLinearMaximumObjectLineAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
+bool LinearMaximumObjectAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	return __super::ResetObject(pErrorMessages) && ValidateEdgeA(pErrorMessages) && ValidateEdgeB(pErrorMessages);
 }
 
-HRESULT SVLinearMaximumObjectLineAnalyzer::GetSelectedEdgeOverlays( SVExtentMultiLineStruct &p_MultiLine )
+HRESULT LinearMaximumObjectAnalyzer::GetSelectedEdgeOverlays( SVExtentMultiLineStruct &p_MultiLine )
 {
 	double dDistance = 0.0;
 
@@ -177,7 +177,7 @@ HRESULT SVLinearMaximumObjectLineAnalyzer::GetSelectedEdgeOverlays( SVExtentMult
 	return S_OK;
 }
 
-void SVLinearMaximumObjectLineAnalyzer::addOverlayResults(SvPb::Overlay& rOverlay, bool isVertical) const
+void LinearMaximumObjectAnalyzer::addOverlayResults(SvPb::Overlay& rOverlay, bool isVertical) const
 {
 	auto* pGroup = rOverlay.add_shapegroups();
 	pGroup->set_detaillevel(SvPb::Level1);
@@ -223,7 +223,7 @@ void SVLinearMaximumObjectLineAnalyzer::addOverlayResults(SvPb::Overlay& rOverla
 	}
 }
 
-bool SVLinearMaximumObjectLineAnalyzer::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool LinearMaximumObjectAnalyzer::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	SVImageExtentClass Extents;
 	std::vector<double> AEdges;

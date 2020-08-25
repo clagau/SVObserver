@@ -42,7 +42,7 @@ public:
 	SvVol::SVByteValueObjectClass m_pixelCountColor;
 
 protected:
-	virtual bool onRun(SVRunStatusClass &rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
+	virtual bool onRun(RunStatus &rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	__int64		m_contextID = M_NULL;
 	__int64		m_ResultID = M_NULL;

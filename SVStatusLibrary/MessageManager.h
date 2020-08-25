@@ -54,7 +54,7 @@ namespace SvStl
 	//! \param M_Container [in] the message data container which stores and logs the information
 	//! \param M_Data [in] the message data structure
 	//************************************
-	class MessageMgrStd
+	class MessageManager
 	{
 	#pragma region Constructor
 	public:
@@ -64,9 +64,9 @@ namespace SvStl
 		//! Constructor which sets the message type 
 		//! \param Type [in] Determines if the message is logged, or displayed and logged
 		//************************************
-		explicit MessageMgrStd(MsgType Type);
+		explicit MessageManager(MsgType Type);
 
-		virtual ~MessageMgrStd();
+		virtual ~MessageManager();
 	#pragma endregion Constructor
 
 	#pragma region Public Methods
@@ -160,7 +160,7 @@ namespace SvStl
 		static void Initialize();
 
 		//!has this message been repeated so often it should be suppressed?
-		bool MessageMgrStd::suppressLogAndNotify() const;
+		bool MessageManager::suppressLogAndNotify() const;
 
 		//************************************
 		//! Logs the message if the type is set to be logged

@@ -143,7 +143,7 @@ HRESULT TADialogTableParameterPage::SetPageData()
 			SvStl::MessageContainerVector messages = m_values.getFailedMessageList();
 			if (messages.size() > 0 && 0 != messages[0].getMessage().m_MessageCode)
 			{
-				SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 				Msg.setMessage(messages[0].getMessage());
 			}
 			else
@@ -185,7 +185,7 @@ void TADialogTableParameterPage::resetInspection()
 		SvStl::MessageContainerVector messages = SvPb::setMessageVectorFromMessagePB(responseCmd.standardresponse().errormessages());
 		if (messages.size() > 0 && 0 != messages[0].getMessage().m_MessageCode)
 		{
-			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 			Msg.setMessage(messages[0].getMessage());
 		}
 	}

@@ -78,7 +78,7 @@ bool TableTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure 
 			bOk = false;
 			SvStl::MessageContainer message;
 			message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableObject_CreateFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
-			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log );
+			SvStl::MessageManager Msg(SvStl::MsgType::Log );
 			Msg.setMessage( message.getMessage() );
 		}
 	}
@@ -157,7 +157,7 @@ bool TableTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 		catch( const SvStl::MessageContainer& rSvE )
 		{
 			Result = false;
-			SvStl::MessageMgrStd e(SvStl::MsgType::Log );
+			SvStl::MessageManager e(SvStl::MsgType::Log );
 			e.setMessage( rSvE.getMessage() );
 			if (nullptr != pErrorMessages)
 			{
@@ -171,7 +171,7 @@ bool TableTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
-bool TableTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool TableTool::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	bool returnValue = __super::onRun( rRunStatus, pErrorMessages );
 	if (returnValue)

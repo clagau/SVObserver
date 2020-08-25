@@ -402,7 +402,7 @@ bool RootObject::createRootChild(LPCTSTR ChildName, SvPb::SVObjectSubTypeEnum Ob
 	}
 	else
 	{
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log );
+		SvStl::MessageManager Exception(SvStl::MsgType::Log );
 		Exception.setMessage( SVMSG_SVO_67_MAIN_BRANCH_NOT_CREATED, ChildName, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25017_RootChildCreate, getObjectId() );
 	}
 

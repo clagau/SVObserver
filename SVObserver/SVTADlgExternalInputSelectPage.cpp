@@ -556,7 +556,7 @@ bool SVExternalToolInputSelectPage::ValidateValueObject(SVObjectClass* pObject, 
 	}
 	if (!res)
 	{
-		SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_InvalidData, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10048);
 	}
 	return res;
@@ -631,7 +631,7 @@ HRESULT SVExternalToolInputSelectPage::ValidateItem(SVRPropertyItem* pItem)
 
 	if (S_OK != hr)
 	{
-		SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_InvalidData, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10048);
 	}
 	else
@@ -643,7 +643,7 @@ HRESULT SVExternalToolInputSelectPage::ValidateItem(SVRPropertyItem* pItem)
 			_bstr_t bMessage;
 			m_pTask->GetDLLMessageString(hr, bMessage.GetAddress());
 			std::string Message = SvUl::createStdString(bMessage);
-			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 			Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, Message.c_str(), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10049);
 		}
 	}

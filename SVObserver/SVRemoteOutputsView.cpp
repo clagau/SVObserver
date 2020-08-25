@@ -124,7 +124,7 @@ void SVRemoteOutputsView::OnUpdate(CView* , LPARAM , CObject* )
 		// Get the number of PPQs
 		if( nullptr == pConfig  )
 		{
-			SvStl::MessageMgrStd e(SvStl::MsgType::Log );
+			SvStl::MessageManager e(SvStl::MsgType::Log );
 			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingPPQCount, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17051_ErrorGettingPPQCount );
 			DebugBreak();
 		}
@@ -531,12 +531,12 @@ void SVRemoteOutputsView::OnRemoteOutputDelete()
 				size_t pos = pRemoteOutput->GetInputValueObjectName().find(SvDef::FqnPpqTriggerCount);
 				if( bFirst && pos != std::string::npos )
 				{
-					SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
+					SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_RemoteOutput_TriggerCountDeleteError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10194 ); 
 				}
 				else
 				{
-					SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
+					SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 					INT_PTR result = Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_RemoteOutput_DeletingOutput, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10195, SvDef::InvalidObjectId, MB_YESNO);
 					if( IDYES == result )
 					{
@@ -563,7 +563,7 @@ void SVRemoteOutputsView::OnRemoteOutputDelete()
 					std::string strGroup = pOutputGroup->GetGroupName();
 					SvDef::StringVector msgList;
 					msgList.push_back(strGroup);
-					SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
+					SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 					INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_RemoteOutput_DeletingAllOutput, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10196, SvDef::InvalidObjectId, MB_YESNO );
 					if( IDYES == result )
 					{

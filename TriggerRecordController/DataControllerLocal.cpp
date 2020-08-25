@@ -259,7 +259,7 @@ void DataControllerLocal::changeDataDef(SvPb::DataDefinitionList&& dataDefList, 
 	if (0 > inspectionPos || m_dataVector.size() < inspectionPos)
 	{
 		assert(false);
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Data);
+		SvStl::MessageManager Exception(SvStl::MsgType::Data);
 		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_InvalidResetState, SvStl::SourceFileParams(StdMessageParams));
 		Exception.Throw();
 	}

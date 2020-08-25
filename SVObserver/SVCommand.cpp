@@ -99,7 +99,7 @@ STDMETHODIMP SVCommand::SVGetSVIMState(unsigned long *ulState)
 
 	if (!bSuccess)
 	{
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+		SvStl::MessageManager Exception(SvStl::MsgType::Log);
 		Exception.setMessage(SVMSG_CMDCOMSRV_ERROR, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
 		hrResult = S_FALSE;
 	}
@@ -136,7 +136,7 @@ STDMETHODIMP SVCommand::SVSetSVIMMode(unsigned long lSVIMNewMode)
 
 		if (!(S_OK == hrResult))
 		{
-			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+			SvStl::MessageManager Exception(SvStl::MsgType::Log);
 			Exception.setMessage(SVMSG_CMDCOMSRV_ERROR, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
 		}
 	} while (0);
@@ -161,7 +161,7 @@ STDMETHODIMP SVCommand::SVGetSVIMMode(unsigned long* p_plSVIMMode)
 
 	if (S_OK != hrResult)
 	{
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+		SvStl::MessageManager Exception(SvStl::MsgType::Log);
 		Exception.setMessage(SVMSG_CMDCOMSRV_ERROR, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
 	}
 
@@ -204,7 +204,7 @@ STDMETHODIMP SVCommand::SVSetSVIMState(unsigned long ulSVIMState)
 
 		if (!bSuccess)
 		{
-			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+			SvStl::MessageManager Exception(SvStl::MsgType::Log);
 			Exception.setMessage(SVMSG_CMDCOMSRV_ERROR, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
 			hrResult = S_FALSE;
 		}
@@ -298,7 +298,7 @@ STDMETHODIMP SVCommand::SVGetSVIMConfig(long lOffset, long *lBlockSize, BSTR *bs
 
 	if ((!bSuccess) && (!bHrSet))
 	{
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+		SvStl::MessageManager Exception(SvStl::MsgType::Log);
 		Exception.setMessage(SVMSG_CMDCOMSRV_ERROR, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
 		hrResult = S_FALSE;
 	}
@@ -395,7 +395,7 @@ STDMETHODIMP SVCommand::SVPutSVIMConfig(long lOffset, long lBlockSize, BSTR* pFi
 
 	if ((!bSuccess) && (!bHrSet))
 	{
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+		SvStl::MessageManager Exception(SvStl::MsgType::Log);
 		Exception.setMessage(SVMSG_CMDCOMSRV_ERROR, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
 		hrResult = S_FALSE;
 	}
@@ -481,7 +481,7 @@ STDMETHODIMP SVCommand::SVGetSVIMFile(BSTR bstrSourceFile, long lOffset, long *l
 
 		if (!SUCCEEDED(hrResult))
 		{
-			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+			SvStl::MessageManager Exception(SvStl::MsgType::Log);
 			Exception.setMessage(hrResult, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
 		}
 	}
@@ -548,7 +548,7 @@ STDMETHODIMP SVCommand::SVPutSVIMFile(BSTR bstrDestFile, long lOffset, long lBlo
 			hrResult = SVMSG_CMDCOMCTRL_FILE_ERROR;
 			theEx->Delete();
 
-			SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+			SvStl::MessageManager Exception(SvStl::MsgType::Log);
 			Exception.setMessage(hrResult, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
 		}
 		catch (...)
@@ -601,7 +601,7 @@ STDMETHODIMP SVCommand::SVGetSVIMConfigName(BSTR *bstrConfigFilename)
 
 	if (S_OK != Result)
 	{
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+		SvStl::MessageManager Exception(SvStl::MsgType::Log);
 		Exception.setMessage(SVMSG_CMDCOMSRV_ERROR, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
 	}
 
@@ -621,7 +621,7 @@ STDMETHODIMP SVCommand::SVGetSVIMOfflineCount(unsigned long* pOfflineCount)
 
 	if (!bSuccess)
 	{
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+		SvStl::MessageManager Exception(SvStl::MsgType::Log);
 		Exception.setMessage(SVMSG_CMDCOMSRV_ERROR, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
 		hrResult = S_FALSE;
 	}
@@ -642,7 +642,7 @@ STDMETHODIMP SVCommand::SVGetSVIMVersion(unsigned long* pVersion)
 
 	if (!bSuccess)
 	{
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+		SvStl::MessageManager Exception(SvStl::MsgType::Log);
 		Exception.setMessage(SVMSG_CMDCOMSRV_ERROR, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
 		hrResult = S_FALSE;
 	}
@@ -674,7 +674,7 @@ STDMETHODIMP SVCommand::SVGetSVIMConfigPrint(long , long *lBlockSize, BSTR *bstr
 
 	if (!bSuccess)
 	{
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+		SvStl::MessageManager Exception(SvStl::MsgType::Log);
 		Exception.setMessage(SVMSG_CMDCOMSRV_ERROR, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
 		hrResult = S_FALSE;
 	}
@@ -937,7 +937,7 @@ STDMETHODIMP SVCommand::SVGetImageList(SAFEARRAY* psaNames, long , SAFEARRAY** p
 
 	if (FAILED(hrResult))
 	{
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+		SvStl::MessageManager Exception(SvStl::MsgType::Log);
 		Exception.setMessage(SVMSG_CMDCOMSRV_ERROR, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
 	}
 
@@ -1415,7 +1415,7 @@ STDMETHODIMP SVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* psa
 
 	if (FAILED(hrResult))
 	{
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+		SvStl::MessageManager Exception(SvStl::MsgType::Log);
 		Exception.setMessage(SVMSG_CMDCOMSRV_ERROR, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
 	}
 
@@ -2253,7 +2253,7 @@ STDMETHODIMP SVCommand::SVGetRemoteInputCount(long* pCount)
 
 	if (!bSuccess)
 	{
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+		SvStl::MessageManager Exception(SvStl::MsgType::Log);
 		Exception.setMessage(SVMSG_CMDCOMSRV_ERROR, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
 		hrResult = S_FALSE;
 	}
@@ -2287,7 +2287,7 @@ STDMETHODIMP SVCommand::SVSetRemoteInput(long lIndex, VARIANT vtValue)
 
 	if (!bSuccess)
 	{
-		SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+		SvStl::MessageManager Exception(SvStl::MsgType::Log);
 		Exception.setMessage(SVMSG_CMDCOMSRV_ERROR, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
 		hrResult = SVMSG_CMDCOMSRV_ERROR;
 	}

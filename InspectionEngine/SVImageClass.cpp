@@ -233,7 +233,7 @@ bool SVImageClass::DestroyImage()
 
 		if (!bOk)
 		{
-			SvStl::MessageMgrStd Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 			Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ImageClass_DestroyError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10051);
 		}
 	}
@@ -624,7 +624,7 @@ HRESULT SVImageClass::UpdateChild(uint32_t childID, const SVImageInfoClass& rIma
 				auto* pChildObject = dynamic_cast<SVImageClass*>(SvOi::getObject(childID));
 				if (nullptr != pChildObject)
 				{
-					SvStl::MessageMgrStd e(SvStl::MsgType::Data);
+					SvStl::MessageManager e(SvStl::MsgType::Data);
 					e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SizeOfChildROIInvalid, SvStl::SourceFileParams(StdMessageParams), 0, childID);
 					pChildObject->setErrorMessageToTool(e.getMessageContainer());
 				}
@@ -1101,7 +1101,7 @@ SvTrc::IImagePtr SVImageClass::getImageReadOnly(const SvTrc::ITriggerRecordR* pT
 	}
 	else
 	{
-		SvStl::MessageMgrStd e(SvStl::MsgType::Log);
+		SvStl::MessageManager e(SvStl::MsgType::Log);
 		e.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_GetImageFailed_NoTR, SvStl::SourceFileParams(StdMessageParams));
 	}
 	return pImage;
@@ -1118,7 +1118,7 @@ SvTrc::IImagePtr SVImageClass::getImageToWrite(const SvTrc::ITriggerRecordRWPtr&
 	}
 	else
 	{
-		SvStl::MessageMgrStd e(SvStl::MsgType::Log);
+		SvStl::MessageManager e(SvStl::MsgType::Log);
 		e.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_GetImageFailed_NoTR, SvStl::SourceFileParams(StdMessageParams));
 	}
 	return pImage;
@@ -1398,7 +1398,7 @@ bool SVImageClass::UpdateTRCBuffers(SvStl::MessageContainerVector *pErrorMessage
 					catch (const SvStl::MessageContainer& rExp)
 					{
 						//This is the topmost catch for MessageContainer exceptions
-						SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+						SvStl::MessageManager Exception(SvStl::MsgType::Log);
 						SvStl::MessageData Msg(rExp.getMessage());
 						Exception.setMessage(rExp.getMessage(), getObjectId());
 						if (nullptr != pErrorMessages)
@@ -1411,7 +1411,7 @@ bool SVImageClass::UpdateTRCBuffers(SvStl::MessageContainerVector *pErrorMessage
 				}
 				else
 				{
-					SvStl::MessageMgrStd Msg(SvStl::MsgType::Log);
+					SvStl::MessageManager Msg(SvStl::MsgType::Log);
 					Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UpdateTRCBuffersFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 					assert(false);
 					if (nullptr != pErrorMessages)
@@ -1446,7 +1446,7 @@ bool SVImageClass::UpdateTRCBuffers(SvStl::MessageContainerVector *pErrorMessage
 				catch (const SvStl::MessageContainer& rExp)
 				{
 					//This is the topmost catch for MessageContainer exceptions
-					SvStl::MessageMgrStd Exception(SvStl::MsgType::Log);
+					SvStl::MessageManager Exception(SvStl::MsgType::Log);
 					SvStl::MessageData Msg(rExp.getMessage());
 					Exception.setMessage(rExp.getMessage(), getObjectId());
 					if (nullptr != pErrorMessages)
@@ -1459,7 +1459,7 @@ bool SVImageClass::UpdateTRCBuffers(SvStl::MessageContainerVector *pErrorMessage
 			}
 			else
 			{
-				SvStl::MessageMgrStd Msg(SvStl::MsgType::Log);
+				SvStl::MessageManager Msg(SvStl::MsgType::Log);
 				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UpdateTRCBuffersFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 				assert(false);
 				if (nullptr != pErrorMessages)

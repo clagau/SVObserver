@@ -14,7 +14,7 @@
 #include "SVResultLong.h"
 #include "SVRange.h"
 #include "Definitions/TextDefineSvDef.h"
-#include "SVStatusLibrary/SVRunStatus.h"
+#include "SVStatusLibrary/RunStatus.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
@@ -106,7 +106,7 @@ SvPb::EmbeddedIdEnum SVLongResult::GetInputEmbeddedID() const
 	}
 }
 
-bool SVLongResult::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVLongResult::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	// All inputs and outputs must be validated first
 	if( __super::onRun( rRunStatus, pErrorMessages ) )
