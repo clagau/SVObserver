@@ -343,6 +343,14 @@ bool SVArchiveTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 		}
 	}
 
+	if (m_ImageCollection.GetSize() > 0)
+	{
+		if (!updateCurrentImagePathRoot()) //nedded for m_ImageCollection.InitializeObjects()
+		{
+			return false;
+		}
+	}
+
 	m_ImageCollection.InitializeObjects( this, m_svoArchiveImageNames );
 	m_ImageCollection.ValidateImageObjects();	// makes sure the images are connected as inputs
 	
@@ -370,12 +378,8 @@ bool SVArchiveTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	m_uiValidateCount = 0;
 
 	if (m_ImageCollection.GetSize() > 0)
-	{//Only need to verify space if there are images to be archived. If no images are checked we do not need to run through the checking of disk space.
-		
-		if (!updateCurrentImagePathRoot())
-		{
-			return false;
-		}
+	{//We only need to verify space if there are images to be archived. If no images are checked we do not need to run through the checking of disk space.
+
 		result = ValidateImageSpace(pErrorMessages) && result;
 		if (result)
 		{
