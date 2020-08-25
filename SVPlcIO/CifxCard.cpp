@@ -233,6 +233,7 @@ int32_t CifXCard::WarmstartAndInitializeCifX()
 			return result;
 		}
 		printOutput("Bus state is on\n");
+		result = CIFX_NO_ERROR;
 	}
 
 	return result;
