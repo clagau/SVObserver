@@ -16,6 +16,7 @@
 #include "SVObjectLibrary\SVObjectLevelCreateStruct.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary\SVSafeArray.h"
+#include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "CameraLibrary\SVBoolValueDeviceParam.h"
 #include "CameraLibrary\SVLongValueDeviceParam.h"
@@ -64,12 +65,12 @@ bool BasicValueObject::operator==(const BasicValueObject& rRhs) const
 	return Result;
 }
 
-HRESULT BasicValueObject::getValue(double& rValue, int  /*= -1*/) const
+HRESULT BasicValueObject::getValue(double& rValue, int Index /*= -1*/) const
 {
 	return getValue<double>(rValue);
 }
 
-HRESULT BasicValueObject::setValue(const _variant_t& rValue, int  /*= -1*/ ,bool  )
+HRESULT BasicValueObject::setValue(const _variant_t& rValue, int Index /*= -1*/ ,bool  )
 {
 	HRESULT	Result = S_OK;
 
@@ -112,7 +113,7 @@ HRESULT BasicValueObject::setValue(const _variant_t& rValue, int  /*= -1*/ ,bool
 	return Result;
 }
 
-HRESULT BasicValueObject::setValue( const std::string& rValue, int  /*= -1*/  )
+HRESULT BasicValueObject::setValue( const std::string& rValue, int Index /*= -1*/  )
 {
 	HRESULT Result( S_FALSE );
 
@@ -127,7 +128,7 @@ HRESULT BasicValueObject::setValue( const std::string& rValue, int  /*= -1*/  )
 	return Result;
 }
 
-HRESULT BasicValueObject::getValue(_variant_t& rValue, int  /*= -1*/) const
+HRESULT BasicValueObject::getValue(_variant_t& rValue, int Index /*= -1*/) const
 {
 	RefreshOwner( SVObjectClass::PreRefresh );
 
@@ -136,7 +137,7 @@ HRESULT BasicValueObject::getValue(_variant_t& rValue, int  /*= -1*/) const
 	return S_OK;
 }
 
-HRESULT BasicValueObject::getValue(std::string& rValueString, int , const std::string& ) const
+HRESULT BasicValueObject::getValue(std::string& rValueString, int Index, const std::string& rFormatString) const
 {
 	//BasicValueObject currently always ignores rFormatString!
 	HRESULT	Result = S_OK;
@@ -193,7 +194,7 @@ HRESULT BasicValueObject::getValue(std::string& rValueString, int , const std::s
 }
 
 
-int32_t BasicValueObject::getByteSize(bool , bool memBlockData) const
+int32_t BasicValueObject::getByteSize(bool useResultSize, bool memBlockData) const
 {
 	int32_t result(0L);
 
@@ -475,15 +476,9 @@ DWORD BasicValueObject::GetObjectColor() const
 }
 
 
-std::string BasicValueObject::getFixedWidthFormatString(uint32_t, uint32_t )
+std::string BasicValueObject::getFixedWidthFormatString(uint32_t totalWidth, uint32_t decimals)
 {
-	//@TODO[Arvid][10.00][21.04.2020] for the BasicValueObject this function has not been implemented yet. This may or may not be necessary in the future.
-	SvDef::StringVector msgList;
-	msgList.push_back(SvUl::Format(_T("%s"), _T("getFixedWidthFormatString()")));
-	msgList.push_back(SvUl::Format(_T("ValueObject of type '%s'"), getTypeName().c_str()));
-	SvStl::MessageManager Msg(SvStl::MsgType::Log);
-	Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_FunctionNotImplemented, msgList, SvStl::SourceFileParams(StdMessageParams));
-	return _T("<invalid>");
+	return _T("<invalid>"); //BasicValueObject::getValue(std::string& rValueString, int Index, const std::string& rFormatString) currently ignores rFormatString anyway!
 }
 
 #pragma endregion Public Methods
