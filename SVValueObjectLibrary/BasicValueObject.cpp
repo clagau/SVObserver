@@ -16,7 +16,6 @@
 #include "SVObjectLibrary\SVObjectLevelCreateStruct.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary\SVSafeArray.h"
-#include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "CameraLibrary\SVBoolValueDeviceParam.h"
 #include "CameraLibrary\SVLongValueDeviceParam.h"
