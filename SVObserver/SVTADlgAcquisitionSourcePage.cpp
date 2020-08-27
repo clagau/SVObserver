@@ -25,32 +25,32 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-BEGIN_MESSAGE_MAP(SVToolAdjustmentDialogAcquisitionSourcePageClass, CPropertyPage)
-	//{{AFX_MSG_MAP(SVToolAdjustmentDialogAcquisitionSourcePageClass)
+BEGIN_MESSAGE_MAP(SVTADlgAcquisitionSourcePage, CPropertyPage)
+	//{{AFX_MSG_MAP(SVTADlgAcquisitionSourcePage)
 	ON_CBN_SELCHANGE(IDC_COMBO_CAMERAS, OnSelchangeCameraCombo)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-SVToolAdjustmentDialogAcquisitionSourcePageClass::SVToolAdjustmentDialogAcquisitionSourcePageClass(uint32_t, uint32_t , SVToolAdjustmentDialogSheetClass* pSheet)
-: CPropertyPage(SVToolAdjustmentDialogAcquisitionSourcePageClass::IDD)
+SVTADlgAcquisitionSourcePage::SVTADlgAcquisitionSourcePage(uint32_t, uint32_t , SVToolAdjustmentDialogSheetClass* pSheet)
+: CPropertyPage(SVTADlgAcquisitionSourcePage::IDD)
 , m_pSheet(pSheet)
 {
 }
 
-SVToolAdjustmentDialogAcquisitionSourcePageClass::~SVToolAdjustmentDialogAcquisitionSourcePageClass()
+SVTADlgAcquisitionSourcePage::~SVTADlgAcquisitionSourcePage()
 {
 }
 
-void SVToolAdjustmentDialogAcquisitionSourcePageClass::DoDataExchange(CDataExchange* pDX)
+void SVTADlgAcquisitionSourcePage::DoDataExchange(CDataExchange* pDX)
 {
 	CPropertyPage::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(SVToolAdjustmentDialogAcquisitionSourcePageClass)
+	//{{AFX_DATA_MAP(SVTADlgAcquisitionSourcePage)
 	DDX_Control(pDX, IDC_COMBO_CAMERAS, m_CameraListBox);
 	//}}AFX_DATA_MAP
 }
 
 
-BOOL SVToolAdjustmentDialogAcquisitionSourcePageClass::OnInitDialog() 
+BOOL SVTADlgAcquisitionSourcePage::OnInitDialog() 
 {
 	CPropertyPage::OnInitDialog();
 
@@ -102,7 +102,7 @@ BOOL SVToolAdjustmentDialogAcquisitionSourcePageClass::OnInitDialog()
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void SVToolAdjustmentDialogAcquisitionSourcePageClass::OnSelchangeCameraCombo()
+void SVTADlgAcquisitionSourcePage::OnSelchangeCameraCombo()
 {
 	uint32_t SelectedCameraId = m_CameraListBox.getSelectedValue();
 	if (nullptr != m_pTaskObject && nullptr != m_pMainImage && SvDef::InvalidObjectId != SelectedCameraId)

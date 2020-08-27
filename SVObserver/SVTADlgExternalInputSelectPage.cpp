@@ -41,16 +41,16 @@
 #pragma endregion Declarations
 
 /////////////////////////////////////////////////////////////////////////////
-// SVExternalToolInputSelectPage property page
+// SVTADlgExternalInputSelectPage property page
 
 enum { IDC_INPUT_LIST_TREE = 99 };
 
 enum { MAX_ITEMS_FOR_AUTO_EXPAND = 8 };
 
-//IMPLEMENT_DYNCREATE(SVExternalToolInputSelectPage, CPropertyPage)
+//IMPLEMENT_DYNCREATE(SVTADlgExternalInputSelectPage, CPropertyPage)
 
-BEGIN_MESSAGE_MAP(SVExternalToolInputSelectPage, CPropertyPage)
-	//{{AFX_MSG_MAP(SVExternalToolInputSelectPage)
+BEGIN_MESSAGE_MAP(SVTADlgExternalInputSelectPage, CPropertyPage)
+	//{{AFX_MSG_MAP(SVTADlgExternalInputSelectPage)
 	//}}AFX_MSG_MAP
 	ON_NOTIFY(PTN_ITEMCHANGED, IDC_INPUT_LIST_TREE, OnItemChanged)
 	ON_NOTIFY(PTN_QUERY_SHOW_BUTTON, IDC_INPUT_LIST_TREE, OnItemQueryShowButton)
@@ -59,7 +59,7 @@ BEGIN_MESSAGE_MAP(SVExternalToolInputSelectPage, CPropertyPage)
 END_MESSAGE_MAP()
 
 
-SVExternalToolInputSelectPage::SVExternalToolInputSelectPage(LPCTSTR Title, uint32_t inspectionID, uint32_t toolObjectID, uint32_t taskObjectID, int id)
+SVTADlgExternalInputSelectPage::SVTADlgExternalInputSelectPage(LPCTSTR Title, uint32_t inspectionID, uint32_t toolObjectID, uint32_t taskObjectID, int id)
 	: CPropertyPage(id)
 	, m_InspectionID(inspectionID)
 	, m_ToolObjectID(toolObjectID)
@@ -78,26 +78,26 @@ SVExternalToolInputSelectPage::SVExternalToolInputSelectPage(LPCTSTR Title, uint
 		m_inputValueCount = COUNT_OF_INPUT_OUTPUT_IDs;
 	}
 
-	//{{AFX_DATA_INIT(SVExternalToolInputSelectPage)
+	//{{AFX_DATA_INIT(SVTADlgExternalInputSelectPage)
 	//}}AFX_DATA_INIT
 }
 
-SVExternalToolInputSelectPage::~SVExternalToolInputSelectPage()
+SVTADlgExternalInputSelectPage::~SVTADlgExternalInputSelectPage()
 {
 }
 
-void SVExternalToolInputSelectPage::DoDataExchange(CDataExchange* pDX)
+void SVTADlgExternalInputSelectPage::DoDataExchange(CDataExchange* pDX)
 {
 	CPropertyPage::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(SVExternalToolInputSelectPage)
+	//{{AFX_DATA_MAP(SVTADlgExternalInputSelectPage)
 	//}}AFX_DATA_MAP
 }
 
 
 /////////////////////////////////////////////////////////////////////////////
-// SVExternalToolInputSelectPage message handlers
+// SVTADlgExternalInputSelectPage message handlers
 
-BOOL SVExternalToolInputSelectPage::OnInitDialog()
+BOOL SVTADlgExternalInputSelectPage::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 
@@ -172,7 +172,7 @@ BOOL SVExternalToolInputSelectPage::OnInitDialog()
 				  // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-SVRPropertyItem* SVExternalToolInputSelectPage::AddGroupToTree(const SvOp::InputValueDefinition& rDefinition, std::map<std::string, SVRPropertyItem*>& rMapGroupItems, SVRPropertyItem* pRoot)
+SVRPropertyItem* SVTADlgExternalInputSelectPage::AddGroupToTree(const SvOp::InputValueDefinition& rDefinition, std::map<std::string, SVRPropertyItem*>& rMapGroupItems, SVRPropertyItem* pRoot)
 {
 	std::map<std::string, SVRPropertyItem*>::iterator iterGroup;
 
@@ -211,7 +211,7 @@ SVRPropertyItem* SVExternalToolInputSelectPage::AddGroupToTree(const SvOp::Input
 }
 
 
-void SVExternalToolInputSelectPage::AddItemToTree(const SvOp::InputValueDefinition& rDefinition, SVRPropertyItem* pGroupItem, int iID)
+void SVTADlgExternalInputSelectPage::AddItemToTree(const SvOp::InputValueDefinition& rDefinition, SVRPropertyItem* pGroupItem, int iID)
 {
 	SVRPropertyItemEdit* pEdit = (SVRPropertyItemEdit*)m_Tree.InsertItem(new SVRPropertyItemEdit(), pGroupItem);
 	if (nullptr == pEdit)
@@ -293,7 +293,7 @@ void SVExternalToolInputSelectPage::AddItemToTree(const SvOp::InputValueDefiniti
 }
 
 
-void SVExternalToolInputSelectPage::OnUndoChanges()
+void SVTADlgExternalInputSelectPage::OnUndoChanges()
 {
 	CWnd *pParent = GetParent();
 
@@ -307,12 +307,12 @@ void SVExternalToolInputSelectPage::OnUndoChanges()
 	}
 }
 
-void SVExternalToolInputSelectPage::OnItemQueryShowButton(NMHDR* , LRESULT* plResult)
+void SVTADlgExternalInputSelectPage::OnItemQueryShowButton(NMHDR* , LRESULT* plResult)
 {
 	*plResult = TRUE;	// always show button
 }
 
-void SVExternalToolInputSelectPage::OnItemButtonClick(NMHDR* pNotifyStruct, LRESULT* plResult)
+void SVTADlgExternalInputSelectPage::OnItemButtonClick(NMHDR* pNotifyStruct, LRESULT* plResult)
 {
 	*plResult = TRUE;
 
@@ -333,7 +333,7 @@ void SVExternalToolInputSelectPage::OnItemButtonClick(NMHDR* pNotifyStruct, LRES
 }
 
 // display VO picker dialog and return selection
-int SVExternalToolInputSelectPage::SelectObject(std::string& rObjectName, SVRPropertyItem* pItem)
+int SVTADlgExternalInputSelectPage::SelectObject(std::string& rObjectName, SVRPropertyItem* pItem)
 {
 	
 	const  SvOp::InputValueDefinition* pDef = GetInputValueDefinitionPtr(pItem);
@@ -391,7 +391,7 @@ int SVExternalToolInputSelectPage::SelectObject(std::string& rObjectName, SVRPro
 	return static_cast<int>(Result);
 }
 
-void SVExternalToolInputSelectPage::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
+void SVTADlgExternalInputSelectPage::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 {
 	LPNMPROPTREE pNMPropTree = (LPNMPROPTREE)pNotifyStruct;
 	*plResult = S_OK;
@@ -428,7 +428,7 @@ void SVExternalToolInputSelectPage::OnItemChanged(NMHDR* pNotifyStruct, LRESULT*
 
 // Loops through Tree Items to fill existing SVInputObjectInfo array (if input is another VO) and/or SVValueObjects with 
 // constant values (if input is not another VO)
-void SVExternalToolInputSelectPage::OnOK()
+void SVTADlgExternalInputSelectPage::OnOK()
 {
 	SVRPropertyItem* pGroup = nullptr;
 	if (m_Tree.GetRootItem() && nullptr != m_Tree.GetRootItem()->GetChild())
@@ -489,7 +489,7 @@ void SVExternalToolInputSelectPage::OnOK()
 	}
 }
 
-SVObjectClass* SVExternalToolInputSelectPage::FindObject(SVRPropertyItem* pItem)
+SVObjectClass* SVTADlgExternalInputSelectPage::FindObject(SVRPropertyItem* pItem)
 {
 	SVObjectClass* pObject = nullptr;
 	std::string CompleteObjectName = GetName(m_InspectionID);
@@ -514,7 +514,7 @@ SVObjectClass* SVExternalToolInputSelectPage::FindObject(SVRPropertyItem* pItem)
 	return pObject;
 }
 
-bool SVExternalToolInputSelectPage::ValidateValueObject(SVObjectClass* pObject, const SvOp::InputValueDefinition& rInputedef )
+bool SVTADlgExternalInputSelectPage::ValidateValueObject(SVObjectClass* pObject, const SvOp::InputValueDefinition& rInputedef )
 {
 	bool res{ false };
 	if (rInputedef.getType() == SvOp::ExDllInterfaceType::TableArray)
@@ -563,7 +563,7 @@ bool SVExternalToolInputSelectPage::ValidateValueObject(SVObjectClass* pObject, 
 }
 
 
-const SvOp::InputValueDefinition* SVExternalToolInputSelectPage::GetInputValueDefinitionPtr(SVRPropertyItem* pItem)
+const SvOp::InputValueDefinition* SVTADlgExternalInputSelectPage::GetInputValueDefinitionPtr(SVRPropertyItem* pItem)
 {
 	int iIndex = GetItemIndex(pItem);
 	if (m_pTask && iIndex >= 0 && m_pTask->m_Data.m_InputDefinitions.size() > iIndex)
@@ -576,7 +576,7 @@ const SvOp::InputValueDefinition* SVExternalToolInputSelectPage::GetInputValueDe
 	}
 }
 
-HRESULT SVExternalToolInputSelectPage::ValidateItem(SVRPropertyItem* pItem)
+HRESULT SVTADlgExternalInputSelectPage::ValidateItem(SVRPropertyItem* pItem)
 {
 
 	int iIndex = GetItemIndex(pItem);
@@ -651,13 +651,13 @@ HRESULT SVExternalToolInputSelectPage::ValidateItem(SVRPropertyItem* pItem)
 	return hr;
 }
 
-int SVExternalToolInputSelectPage::GetItemIndex(SVRPropertyItem* pItem)
+int SVTADlgExternalInputSelectPage::GetItemIndex(SVRPropertyItem* pItem)
 {
 	assert(pItem);
 	return pItem->GetCtrlID() - ID_BASE;
 }
 
-std::string SVExternalToolInputSelectPage::GetName(uint32_t id) const
+std::string SVTADlgExternalInputSelectPage::GetName(uint32_t id) const
 {
 	std::string inspectionName;
 	SvPb::InspectionCmdRequest requestCmd;

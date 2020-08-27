@@ -36,19 +36,19 @@ enum SVStatisticsFeatureEnum
 enum { SV_NUMBER_OF_STAT_FEATURES = SV_STATS_TOPOF_LIST };
 
 ////////////////////////////////////////////////////////////////////////////////
-// .Title       : Class SVStatisticsToolClass
+// .Title       : Class SVStatTool
 // -----------------------------------------------------------------------------
 // .Description : This class provides the functionality of a Math
 //              : processing Tool
 // -----------------------------------------------------------------------------
 ////////////////////////////////////////////////////////////////////////////////
 
-class SVStatisticsToolClass : public SVToolClass
+class SVStatTool : public SVToolClass
 {
-	SV_DECLARE_CLASS( SVStatisticsToolClass );
+	SV_DECLARE_CLASS( SVStatTool );
 public:
-	SVStatisticsToolClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVSTATISTICSTOOL );
-	virtual ~SVStatisticsToolClass();
+	SVStatTool( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVSTATISTICSTOOL );
+	virtual ~SVStatTool();
 
 	virtual bool CreateObject(const SVObjectLevelCreateStruct& rCreateStructure ) override;
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;

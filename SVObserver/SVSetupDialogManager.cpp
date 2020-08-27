@@ -166,7 +166,7 @@ HRESULT SVSetupDialogManager::SVBlobAnalyzerClassSetupDialog(uint32_t objectId, 
 			{
 				pIPDoc->SetModifiedFlag();
 
-				SvOg::SVBlobAnalyzeFeatureDialogClass dlg(InspectionID, objectId, pParentWnd);
+				SvOg::SVBlobAnalyzerDialog dlg(InspectionID, objectId, pParentWnd);
 
 				if (IDOK == dlg.DoModal())
 				{

@@ -33,16 +33,16 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVStatisticsToolClass, SvPb::StatisticsToolClassId );
+SV_IMPLEMENT_CLASS( SVStatTool, SvPb::StatisticsToolClassId );
 
 
-SVStatisticsToolClass::SVStatisticsToolClass( SVObjectClass* POwner, int StringResourceID )
+SVStatTool::SVStatTool( SVObjectClass* POwner, int StringResourceID )
 				:SVToolClass( POwner, StringResourceID )
 {
 	init();
 }
 
-void SVStatisticsToolClass::init(void)
+void SVStatTool::init(void)
 {
 	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
 	m_outObjectInfo.m_ObjectTypeInfo.m_SubType    = SvPb::SVStatisticsToolObjectType;
@@ -147,11 +147,11 @@ void SVStatisticsToolClass::init(void)
 
 }
 
-SVStatisticsToolClass::~SVStatisticsToolClass()
+SVStatTool::~SVStatTool()
 { 
 }
 
-bool SVStatisticsToolClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure )
+bool SVStatTool::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure )
 {
 	m_isCreated = SVToolClass::CreateObject(rCreateStructure);
 
@@ -173,7 +173,7 @@ bool SVStatisticsToolClass::CreateObject(const SVObjectLevelCreateStruct& rCreat
 	return m_isCreated;
 }
 
-bool SVStatisticsToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
+bool SVStatTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 	
@@ -201,21 +201,21 @@ bool SVStatisticsToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMes
 	return Result;
 }
 
-std::string SVStatisticsToolClass::GetFeatureString()
+std::string SVStatTool::GetFeatureString()
 {
 	std::string FeatureString;
 	m_PersistantFeaturesEnabled.GetValue( FeatureString );
 	return FeatureString;
 }
 
-std::string SVStatisticsToolClass::GetFeatureName( int aIndex )
+std::string SVStatTool::GetFeatureName( int aIndex )
 {
 	return std::string( m_Value[aIndex].GetName() );
 }
 
 /////////////////////////////////////////////////////////////////////////////
 //
-void SVStatisticsToolClass::EnableFeature (SVStatisticsFeatureEnum aIndex)
+void SVStatTool::EnableFeature (SVStatisticsFeatureEnum aIndex)
 {
 	m_Value[aIndex].SetObjectAttributesAllowed( m_DefaultAttributes, SvOi::SetAttributeType::OverwriteAttribute );
 
@@ -236,7 +236,7 @@ void SVStatisticsToolClass::EnableFeature (SVStatisticsFeatureEnum aIndex)
 // This function restores feature attributesAllowed
 // that were previously stored in the configuration.
 ////////////////////////////////////////////////////
-void SVStatisticsToolClass::RestoreFeatureAttributes()
+void SVStatTool::RestoreFeatureAttributes()
 {
 	std::string FeatureString;
 	m_PersistantFeaturesEnabled.GetValue( FeatureString );
@@ -256,7 +256,7 @@ void SVStatisticsToolClass::RestoreFeatureAttributes()
 
 /////////////////////////////////////////////////////////////////////////////
 //
-DWORD SVStatisticsToolClass::DisableFeature (SVStatisticsFeatureEnum aIndex)
+DWORD SVStatTool::DisableFeature (SVStatisticsFeatureEnum aIndex)
 {
 
 	m_Value[aIndex].SetObjectAttributesAllowed( SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::RemoveAttribute );
@@ -281,7 +281,7 @@ DWORD SVStatisticsToolClass::DisableFeature (SVStatisticsFeatureEnum aIndex)
 	return 0;
 }
 
-void SVStatisticsToolClass::AllocateResult (SVStatisticsFeatureEnum aFeatureIndex)
+void SVStatTool::AllocateResult (SVStatisticsFeatureEnum aFeatureIndex)
 {
 	SvIe::SVClassInfoStruct       resultClassInfo;
 	SvDef::SVObjectTypeInfoStruct  interfaceInfo;
@@ -351,7 +351,7 @@ void SVStatisticsToolClass::AllocateResult (SVStatisticsFeatureEnum aFeatureInde
 		}
 }
 
-DWORD SVStatisticsToolClass::FreeResult (SVStatisticsFeatureEnum aFeatureIndex)
+DWORD SVStatTool::FreeResult (SVStatisticsFeatureEnum aFeatureIndex)
 {
 	DWORD LastError(0);
 	
@@ -372,7 +372,7 @@ DWORD SVStatisticsToolClass::FreeResult (SVStatisticsFeatureEnum aFeatureIndex)
 	return LastError;
 }
 
-SvOp::SVResult* SVStatisticsToolClass::GetResult(SVStatisticsFeatureEnum aFeatureIndex)
+SvOp::SVResult* SVStatTool::GetResult(SVStatisticsFeatureEnum aFeatureIndex)
 {
 	SvOl::SVInputInfoListClass	resultInputList;
 	SVOutputInfoListClass	resultOutputList;
@@ -416,7 +416,7 @@ SvOp::SVResult* SVStatisticsToolClass::GetResult(SVStatisticsFeatureEnum aFeatur
 	return pResult;
 }
 
-std::string SVStatisticsToolClass::GetOccurenceTestValue()
+std::string SVStatTool::GetOccurenceTestValue()
 {
 	std::string Value;
 
@@ -424,12 +424,12 @@ std::string SVStatisticsToolClass::GetOccurenceTestValue()
 	return Value;
 }
 
-void SVStatisticsToolClass::SetOccurenceTestValue( const std::string& rValue )
+void SVStatTool::SetOccurenceTestValue( const std::string& rValue )
 {
 	m_OccurenceValue.SetValue( rValue);
 }
 
-SVObjectReference SVStatisticsToolClass::GetVariableSelected() const
+SVObjectReference SVStatTool::GetVariableSelected() const
 {
 	std::string Name;
 	m_VariableName.GetValue( Name );
@@ -444,7 +444,7 @@ SVObjectReference SVStatisticsToolClass::GetVariableSelected() const
 	return refObject;
 }
 
-void SVStatisticsToolClass::SetVariableSelected( const std::string& rName )
+void SVStatTool::SetVariableSelected( const std::string& rName )
 {
 	if( HasVariable() )
 	{
@@ -479,7 +479,7 @@ void SVStatisticsToolClass::SetVariableSelected( const std::string& rName )
 	}
 }
 
-bool SVStatisticsToolClass::DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo )
+bool SVStatTool::DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo )
 {
 	if( pObjectInInfo && pObjectInInfo->GetInputObjectInfo().getObjectId() == m_inputObjectInfo.GetInputObjectInfo().getObjectId() )
 	{
@@ -496,7 +496,7 @@ bool SVStatisticsToolClass::DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pO
 	return __super::DisconnectObjectInput(pObjectInInfo);
 }
 
-double SVStatisticsToolClass::getInputValue()
+double SVStatTool::getInputValue()
 {
 	double Result( 0.0 );
 	if(m_inputObjectInfo.IsConnected() && nullptr != m_inputObjectInfo.GetInputObjectInfo().getObject())
@@ -507,7 +507,7 @@ double SVStatisticsToolClass::getInputValue()
 	return Result;
 }
 
-double SVStatisticsToolClass::getNumberOfSamples()
+double SVStatTool::getNumberOfSamples()
 {
 	long count;
 	m_EnabledCount.GetValue( count );
@@ -516,7 +516,7 @@ double SVStatisticsToolClass::getNumberOfSamples()
 }
 
 // Reset Statistics values
-void SVStatisticsToolClass::resetValues()
+void SVStatTool::resetValues()
 {
 	m_Value[SV_STATS_MIN_VALUE].SetValue(0.0);
 	m_Value[SV_STATS_MAX_VALUE].SetValue(0.0);
@@ -529,7 +529,7 @@ void SVStatisticsToolClass::resetValues()
 	m_AccumulatedTotal = 0.0;
 }
 
-double SVStatisticsToolClass::calculateVariance( double aNumberOfSamples, double aAverageValue )
+double SVStatTool::calculateVariance( double aNumberOfSamples, double aAverageValue )
 {
 	double averageTimesSamples = aAverageValue * aNumberOfSamples; 
 	double averageTimesSamplesSquared = (averageTimesSamples * averageTimesSamples);
@@ -540,7 +540,7 @@ double SVStatisticsToolClass::calculateVariance( double aNumberOfSamples, double
 	return value;
 }
 
-bool SVStatisticsToolClass::HasVariable() const
+bool SVStatTool::HasVariable() const
 {
 	bool bRetVal = false;
 	SVObjectReference refObject = GetVariableSelected();
@@ -558,7 +558,7 @@ bool SVStatisticsToolClass::HasVariable() const
 	return bRetVal;
 }
 
-bool SVStatisticsToolClass::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool SVStatTool::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::onRun(rRunStatus, pErrorMessages) && ValidateLocal(pErrorMessages);
 
@@ -709,7 +709,7 @@ bool SVStatisticsToolClass::onRun(RunStatus& rRunStatus, SvStl::MessageContainer
 	return Result;
 }
 
-bool SVStatisticsToolClass::Test(SvStl::MessageContainerVector *pErrorMessages)
+bool SVStatTool::Test(SvStl::MessageContainerVector *pErrorMessages)
 {
 	if( !ValidateLocal(pErrorMessages) )
 	{
@@ -755,7 +755,7 @@ bool SVStatisticsToolClass::Test(SvStl::MessageContainerVector *pErrorMessages)
 	return false;
 }
 
-bool SVStatisticsToolClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const
+bool SVStatTool::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const
 {
 	if( HasVariable() )
 	{

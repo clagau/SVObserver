@@ -37,13 +37,13 @@ class SVBoolValueObjectClass;
 class SVToolAdjustmentDialogSheetClass;
 
 // Threshold Dialog
-class SVToolAdjustmentDialogThresholdPageClass : public CPropertyPage
+class SVTADlgThresholdPage : public CPropertyPage
 {
 	//******************************************************************************
 	// Class Wizard Generated Message Map Entries:
 	//******************************************************************************
 	// Generated message map functions
-	//{{AFX_MSG(SVToolAdjustmentDialogThresholdPageClass)
+	//{{AFX_MSG(SVTADlgThresholdPage)
 	virtual BOOL OnInitDialog() override;
 	afx_msg void OnChangeUpperEdit();
 	afx_msg void OnChangeLowerEdit();
@@ -71,8 +71,8 @@ class SVToolAdjustmentDialogThresholdPageClass : public CPropertyPage
 	void UpdateUpperThresholdFromFoumula();
 
 public:
-	SVToolAdjustmentDialogThresholdPageClass(uint32_t inspectionId, uint32_t taskObjectId, SVToolAdjustmentDialogSheetClass* pParent);
-	virtual ~SVToolAdjustmentDialogThresholdPageClass();
+	SVTADlgThresholdPage(uint32_t inspectionId, uint32_t taskObjectId, SVToolAdjustmentDialogSheetClass* pParent);
+	virtual ~SVTADlgThresholdPage();
 
 	HRESULT SetInspectionData();
 
@@ -89,7 +89,7 @@ public:
 	//******************************************************************************
 	// Class Wizard Generated Virtual Function(s):
 	//******************************************************************************
-	//{{AFX_VIRTUAL(SVToolAdjustmentDialogThresholdPageClass)
+	//{{AFX_VIRTUAL(SVTADlgThresholdPage)
 public:
 	virtual BOOL OnSetActive() override;
 
@@ -101,7 +101,7 @@ protected:
 	// Class Wizard Generated Dialog Data:
 	//******************************************************************************
 protected:
-	//{{AFX_DATA(SVToolAdjustmentDialogThresholdPageClass)
+	//{{AFX_DATA(SVTADlgThresholdPage)
 	enum { IDD = IDD_TA_THRESHOLD_DIALOG };
 	SvMc::EditNumbers	m_editLowerThres;
 	SvMc::EditNumbers	m_editUpperThres;

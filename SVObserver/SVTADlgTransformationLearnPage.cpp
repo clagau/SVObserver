@@ -24,10 +24,10 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-SVToolAdjustmentDialogTransformationLearnPageClass::SVToolAdjustmentDialogTransformationLearnPageClass( uint32_t, uint32_t , SVToolAdjustmentDialogSheetClass* Parent )
-: CPropertyPage(SVToolAdjustmentDialogTransformationLearnPageClass::IDD)
+SVTADlgTransformationLearnPage::SVTADlgTransformationLearnPage( uint32_t, uint32_t , SVToolAdjustmentDialogSheetClass* Parent )
+: CPropertyPage(SVTADlgTransformationLearnPage::IDD)
 {
-	//{{AFX_DATA_INIT(SVToolAdjustmentDialogTransformationLearnPageClass)
+	//{{AFX_DATA_INIT(SVTADlgTransformationLearnPage)
 	m_TranslationXValue = _T("");
 	m_TranslationYValue = _T("");
 	m_RotationXValue = _T("");
@@ -70,11 +70,11 @@ SVToolAdjustmentDialogTransformationLearnPageClass::SVToolAdjustmentDialogTransf
 	m_pLearnedRotationAngle	= nullptr;
 }
 
-SVToolAdjustmentDialogTransformationLearnPageClass::~SVToolAdjustmentDialogTransformationLearnPageClass()
+SVTADlgTransformationLearnPage::~SVTADlgTransformationLearnPage()
 {
 }
 
-HRESULT SVToolAdjustmentDialogTransformationLearnPageClass::SetInspectionData()
+HRESULT SVTADlgTransformationLearnPage::SetInspectionData()
 {
 	HRESULT l_hrOk = S_FALSE;
 
@@ -98,7 +98,7 @@ HRESULT SVToolAdjustmentDialogTransformationLearnPageClass::SetInspectionData()
 }
 
 
-void SVToolAdjustmentDialogTransformationLearnPageClass::refresh()
+void SVTADlgTransformationLearnPage::refresh()
 {
 	if( m_pTaskObject )
 	{
@@ -155,10 +155,10 @@ void SVToolAdjustmentDialogTransformationLearnPageClass::refresh()
 	UpdateData( TRUE );	// get data from dialog
 }
 
-void SVToolAdjustmentDialogTransformationLearnPageClass::DoDataExchange(CDataExchange* pDX)
+void SVTADlgTransformationLearnPage::DoDataExchange(CDataExchange* pDX)
 {
 	CPropertyPage::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(SVToolAdjustmentDialogTransformationLearnPageClass)
+	//{{AFX_DATA_MAP(SVTADlgTransformationLearnPage)
 	DDX_Text(pDX, IDC_TRANSLATION_X_EDIT, m_TranslationXValue);
 	DDX_Text(pDX, IDC_TRANSLATION_Y_EDIT, m_TranslationYValue);
 	DDX_Text(pDX, IDC_ROTATION_X_EDIT, m_RotationXValue);
@@ -173,16 +173,16 @@ void SVToolAdjustmentDialogTransformationLearnPageClass::DoDataExchange(CDataExc
 }
 
 
-BEGIN_MESSAGE_MAP(SVToolAdjustmentDialogTransformationLearnPageClass, CPropertyPage)
-	//{{AFX_MSG_MAP(SVToolAdjustmentDialogTransformationLearnPageClass)
+BEGIN_MESSAGE_MAP(SVTADlgTransformationLearnPage, CPropertyPage)
+	//{{AFX_MSG_MAP(SVTADlgTransformationLearnPage)
 	ON_BN_CLICKED(IDC_LEARN_BUTTON, OnLearnButton)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
-// SVToolAdjustmentDialogTransformationLearnPageClass message handlers
+// SVTADlgTransformationLearnPage message handlers
 
-BOOL SVToolAdjustmentDialogTransformationLearnPageClass::OnInitDialog() 
+BOOL SVTADlgTransformationLearnPage::OnInitDialog() 
 {
 	CPropertyPage::OnInitDialog();
 
@@ -337,7 +337,7 @@ BOOL SVToolAdjustmentDialogTransformationLearnPageClass::OnInitDialog()
 
 }
 
-void SVToolAdjustmentDialogTransformationLearnPageClass::OnLearnButton() 
+void SVTADlgTransformationLearnPage::OnLearnButton() 
 {
 	UpdateData( TRUE );
 
@@ -357,7 +357,7 @@ void SVToolAdjustmentDialogTransformationLearnPageClass::OnLearnButton()
 	}
 }
 
-void SVToolAdjustmentDialogTransformationLearnPageClass::refreshLearnedValues()
+void SVTADlgTransformationLearnPage::refreshLearnedValues()
 {
 	std::string Value;
 	// refresh Learned Translation X settings...
@@ -419,7 +419,7 @@ void SVToolAdjustmentDialogTransformationLearnPageClass::refreshLearnedValues()
 	UpdateData( FALSE );
 }
 
-BOOL SVToolAdjustmentDialogTransformationLearnPageClass::OnSetActive() 
+BOOL SVTADlgTransformationLearnPage::OnSetActive() 
 {
 	refresh();
 

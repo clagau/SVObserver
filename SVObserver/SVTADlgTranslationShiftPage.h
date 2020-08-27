@@ -42,13 +42,13 @@ enum SVShiftResultEnum
 	PROP_SHIFT_RESULT_LEFT	= 105,
 };
 
-class SVTADlgTranslationShiftPageClass : public CPropertyPage
+class SVTADlgTranslationShiftPage : public CPropertyPage
 {
 //	DECLARE_DYNAMIC(SVTADlgTranslationShiftPage)
 
 public:
-	SVTADlgTranslationShiftPageClass( uint32_t inspectionId, uint32_t taskObjectId, SVToolAdjustmentDialogSheetClass* Parent );
-	virtual ~SVTADlgTranslationShiftPageClass();
+	SVTADlgTranslationShiftPage( uint32_t inspectionId, uint32_t taskObjectId, SVToolAdjustmentDialogSheetClass* Parent );
+	virtual ~SVTADlgTranslationShiftPage();
 
 	HRESULT SetInspectionData();
 
@@ -77,12 +77,11 @@ protected:
 	SVToolAdjustmentDialogSheetClass* m_pParentDialog;
 	SvTo::SVShiftTool* m_pTool;
 
-	SvOp::SVEvaluate* pEvaluateTranslationX;
-	SvOp::SVEvaluate* pEvaluateTranslationY;
-
+	SvOp::SVEvaluate* pEvaluateTranslationX = nullptr;
+	SvOp::SVEvaluate* pEvaluateTranslationY = nullptr;
 
 public:
-	BOOL m_performTranslation;
+	BOOL m_performTranslation = false;
 	afx_msg void OnBnClickedPerformTranslation();
 	afx_msg void OnBnClickedTranslationXFormulaButton();
 	afx_msg void OnBnClickedTranslationYFormulaButton();
@@ -91,7 +90,7 @@ public:
 	SvMc::SVEnumerateCombo m_ctlShiftModeCombo;
 
 public:
-	SvVol::SVEnumerateValueObjectClass *m_pvoShiftMode;
+	SvVol::SVEnumerateValueObjectClass *m_pvoShiftMode = nullptr;
 	afx_msg void OnCbnSelchangeComboShiftMode();
 	CButton m_btnFormulaX;
 	CButton m_btnFormulaY;

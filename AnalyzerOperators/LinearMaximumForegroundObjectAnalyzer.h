@@ -24,7 +24,7 @@ class LinearMaximumForegroundObjectAnalyzer : public SVLinearAnalyzerClass
 	SV_DECLARE_CLASS( LinearMaximumForegroundObjectAnalyzer );
 
 public:
-	LinearMaximumForegroundObjectAnalyzer( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_LinearMaximumForegroundObjectAnalyzer );
+	LinearMaximumForegroundObjectAnalyzer( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_LINEARMAXIMUMFOREGROUNDOBJECTANALYZER );
 	virtual ~LinearMaximumForegroundObjectAnalyzer();
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;

@@ -22,24 +22,24 @@ class InputValueDefinition;
 }
 class SVObjectClass;
 
-class SVExternalToolInputSelectPage : public CPropertyPage
+class SVTADlgExternalInputSelectPage : public CPropertyPage
 {
-	//DECLARE_DYNCREATE(SVExternalToolInputSelectPage)
+	//DECLARE_DYNCREATE(SVTADlgExternalInputSelectPage)
 
 // Construction
 public:
-	SVExternalToolInputSelectPage(LPCTSTR Title, uint32_t inspectionID, uint32_t toolObjectID, uint32_t taskObjectID, int id = IDD);
-	virtual ~SVExternalToolInputSelectPage();
+	SVTADlgExternalInputSelectPage(LPCTSTR Title, uint32_t inspectionID, uint32_t toolObjectID, uint32_t taskObjectID, int id = IDD);
+	virtual ~SVTADlgExternalInputSelectPage();
 
 	// Dialog Data
-	//{{AFX_DATA(SVExternalToolInputSelectPage)
+	//{{AFX_DATA(SVTADlgExternalInputSelectPage)
 	enum { IDD = IDD_TA_EXTERNAL_INPUT };
 	//}}AFX_DATA
 
 
 // Overrides
 	// ClassWizard generate virtual function overrides
-	//{{AFX_VIRTUAL(SVExternalToolInputSelectPage)
+	//{{AFX_VIRTUAL(SVTADlgExternalInputSelectPage)
 	public:
 	virtual void OnOK() override;
 	protected:
@@ -62,7 +62,7 @@ protected:
 	};
 
 	// Generated message map functions
-	//{{AFX_MSG(SVExternalToolInputSelectPage)
+	//{{AFX_MSG(SVTADlgExternalInputSelectPage)
 	virtual BOOL OnInitDialog() override;
 	//}}AFX_MSG
 

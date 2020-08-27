@@ -38,15 +38,15 @@ class SVEnumerateValueObjectClass;
 class SVToolAdjustmentDialogSheetClass;
 #pragma endregion Declarations
 
-class SVToolAdjustmentDialogPolarTransformPageClass : public CPropertyPage
+class SVTADlgPolarTransformPage : public CPropertyPage
 {
 public:
-	SVToolAdjustmentDialogPolarTransformPageClass( uint32_t inspectionId, uint32_t taskObjectId, SVToolAdjustmentDialogSheetClass* Parent );
-	virtual ~SVToolAdjustmentDialogPolarTransformPageClass();
+	SVTADlgPolarTransformPage( uint32_t inspectionId, uint32_t taskObjectId, SVToolAdjustmentDialogSheetClass* Parent );
+	virtual ~SVTADlgPolarTransformPage();
 	void SetInspectionData();
 
 	// ClassWizard generate virtual function overrides
-	//{{AFX_VIRTUAL(SVToolAdjustmentDialogPolarTransformPageClass)
+	//{{AFX_VIRTUAL(SVTADlgPolarTransformPage)
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
@@ -55,7 +55,7 @@ protected:
 	void refresh();
 
 	// Generated message map functions
-	//{{AFX_MSG(SVToolAdjustmentDialogPolarTransformPageClass)
+	//{{AFX_MSG(SVTADlgPolarTransformPage)
 	virtual BOOL OnInitDialog() override;
 	afx_msg void OnCenterXFormulaButton();
 	afx_msg void OnCenterYFormulaButton();
@@ -73,7 +73,7 @@ protected:
 // Data Element(s):
 //******************************************************************************
 public:
-	//{{AFX_DATA(SVToolAdjustmentDialogPolarTransformPageClass)
+	//{{AFX_DATA(SVTADlgPolarTransformPage)
 	enum { IDD = IDD_TA_POLARTRANSFORM_DIALOG };
 	SvMc::SVEnumerateCombo	m_AngularMethodCombo;
 	SvMc::SVEnumerateCombo	interpolationComboCtrl;
@@ -111,7 +111,7 @@ protected:
 	SvVol::SVDoubleValueObjectClass* m_pEndAngleResult;
 
 	SvVol::SVBoolValueObjectClass*	m_pUseFormula;
-	SvVol::SVEnumerateValueObjectClass* m_pAngleMethod;
+	SvVol::SVEnumerateValueObjectClass* m_pAngleMethod = nullptr;
 	SvVol::SVEnumerateValueObjectClass* m_pInterpolationMode;
 };
 

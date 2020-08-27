@@ -25,14 +25,14 @@
 // SVTADlgTranslationShiftPage dialog
 
 // Put in by the wizard but not needed.
-//IMPLEMENT_DYNAMIC(SVTADlgTranslationShiftPageClass, CPropertyPage)
+//IMPLEMENT_DYNAMIC(SVTADlgTranslationShiftPage, CPropertyPage)
 
 enum {IDC_SHIFT_VALUE_TRUE = 100};
 #pragma endregion Declarations
 
 #pragma region Constructor
-SVTADlgTranslationShiftPageClass::SVTADlgTranslationShiftPageClass(uint32_t inspectionId, uint32_t, SVToolAdjustmentDialogSheetClass* Parent)
-: CPropertyPage(SVTADlgTranslationShiftPageClass::IDD)
+SVTADlgTranslationShiftPage::SVTADlgTranslationShiftPage(uint32_t inspectionId, uint32_t, SVToolAdjustmentDialogSheetClass* Parent)
+: CPropertyPage(SVTADlgTranslationShiftPage::IDD)
 , m_TranslationXValue(_T(""))
 , m_TranslationYValue(_T(""))
 , m_pParentDialog( Parent )
@@ -48,12 +48,12 @@ SVTADlgTranslationShiftPageClass::SVTADlgTranslationShiftPageClass(uint32_t insp
 	}
 }
 
-SVTADlgTranslationShiftPageClass::~SVTADlgTranslationShiftPageClass()
+SVTADlgTranslationShiftPage::~SVTADlgTranslationShiftPage()
 {
 }
 #pragma endregion Constructor
 
-void SVTADlgTranslationShiftPageClass::DoDataExchange(CDataExchange* pDX)
+void SVTADlgTranslationShiftPage::DoDataExchange(CDataExchange* pDX)
 {
 	CPropertyPage::DoDataExchange(pDX);
 	DDX_Text(pDX, IDC_TRANSLATIONX_EDIT, m_TranslationXValue);
@@ -66,18 +66,18 @@ void SVTADlgTranslationShiftPageClass::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_SHIFT_TOOL_VALUES, m_ShiftValueStatic);
 }
 
-BEGIN_MESSAGE_MAP(SVTADlgTranslationShiftPageClass, CPropertyPage)
-	ON_BN_CLICKED(IDC_BTN_LEARN, &SVTADlgTranslationShiftPageClass::OnBnClickedBtnLearn)
-	ON_BN_CLICKED(IDC_BTN_NORMALIZE, &SVTADlgTranslationShiftPageClass::OnBnClickedBtnNormalize)
-	ON_BN_CLICKED(IDC_PERFORM_TRANSLATION, &SVTADlgTranslationShiftPageClass::OnBnClickedPerformTranslation)
-	ON_BN_CLICKED(IDC_TRANSLATION_X_FORMULA_BUTTON, &SVTADlgTranslationShiftPageClass::OnBnClickedTranslationXFormulaButton)
-	ON_BN_CLICKED(IDC_TRANSLATION_Y_FORMULA_BUTTON, &SVTADlgTranslationShiftPageClass::OnBnClickedTranslationYFormulaButton)
-	ON_CBN_SELCHANGE(IDC_COMBO_SHIFT_MODE, &SVTADlgTranslationShiftPageClass::OnCbnSelchangeComboShiftMode)
+BEGIN_MESSAGE_MAP(SVTADlgTranslationShiftPage, CPropertyPage)
+	ON_BN_CLICKED(IDC_BTN_LEARN, &SVTADlgTranslationShiftPage::OnBnClickedBtnLearn)
+	ON_BN_CLICKED(IDC_BTN_NORMALIZE, &SVTADlgTranslationShiftPage::OnBnClickedBtnNormalize)
+	ON_BN_CLICKED(IDC_PERFORM_TRANSLATION, &SVTADlgTranslationShiftPage::OnBnClickedPerformTranslation)
+	ON_BN_CLICKED(IDC_TRANSLATION_X_FORMULA_BUTTON, &SVTADlgTranslationShiftPage::OnBnClickedTranslationXFormulaButton)
+	ON_BN_CLICKED(IDC_TRANSLATION_Y_FORMULA_BUTTON, &SVTADlgTranslationShiftPage::OnBnClickedTranslationYFormulaButton)
+	ON_CBN_SELCHANGE(IDC_COMBO_SHIFT_MODE, &SVTADlgTranslationShiftPage::OnCbnSelchangeComboShiftMode)
 END_MESSAGE_MAP()
 
 // SVTADlgTranslationShiftPage message handlers
 
-BOOL SVTADlgTranslationShiftPageClass::OnInitDialog() 
+BOOL SVTADlgTranslationShiftPage::OnInitDialog() 
 {
 	CPropertyPage::OnInitDialog();
 	
@@ -137,7 +137,7 @@ BOOL SVTADlgTranslationShiftPageClass::OnInitDialog()
 	return TRUE;
 }
 
-HRESULT SVTADlgTranslationShiftPageClass::SetInspectionData()
+HRESULT SVTADlgTranslationShiftPage::SetInspectionData()
 {
 	HRESULT l_hrOk = S_FALSE;
 
@@ -158,7 +158,7 @@ HRESULT SVTADlgTranslationShiftPageClass::SetInspectionData()
 	return l_hrOk;
 }
 
-void SVTADlgTranslationShiftPageClass::refresh()
+void SVTADlgTranslationShiftPage::refresh()
 {
 	if (nullptr != m_pTool)
 	{
@@ -176,26 +176,26 @@ void SVTADlgTranslationShiftPageClass::refresh()
 	}
 }
  
-void SVTADlgTranslationShiftPageClass::OnBnClickedBtnLearn()
+void SVTADlgTranslationShiftPage::OnBnClickedBtnLearn()
 {
 	SVShiftToolUtility::SetToolSetReference(m_pTool);
 
 	refresh();
 }
 
-void SVTADlgTranslationShiftPageClass::OnBnClickedBtnNormalize()
+void SVTADlgTranslationShiftPage::OnBnClickedBtnNormalize()
 {
 	SVShiftToolUtility::SetToolNormalize(m_pTool);
 
 	refresh();
 }
 
-void SVTADlgTranslationShiftPageClass::OnBnClickedPerformTranslation()
+void SVTADlgTranslationShiftPage::OnBnClickedPerformTranslation()
 {
 	refresh();
 }
 
-void SVTADlgTranslationShiftPageClass::OnBnClickedTranslationXFormulaButton()
+void SVTADlgTranslationShiftPage::OnBnClickedTranslationXFormulaButton()
 {
 	if (pEvaluateTranslationX)
 	{
@@ -212,7 +212,7 @@ void SVTADlgTranslationShiftPageClass::OnBnClickedTranslationXFormulaButton()
 	}
 }
 
-void SVTADlgTranslationShiftPageClass::OnBnClickedTranslationYFormulaButton()
+void SVTADlgTranslationShiftPage::OnBnClickedTranslationYFormulaButton()
 {
 	if (pEvaluateTranslationY)
 	{
@@ -229,13 +229,13 @@ void SVTADlgTranslationShiftPageClass::OnBnClickedTranslationYFormulaButton()
 	}
 }
 
-void SVTADlgTranslationShiftPageClass::OnCbnSelchangeComboShiftMode()
+void SVTADlgTranslationShiftPage::OnCbnSelchangeComboShiftMode()
 {
 	UpdateControls();
 	refresh();
 }
 
-void SVTADlgTranslationShiftPageClass::UpdateControls()
+void SVTADlgTranslationShiftPage::UpdateControls()
 {
 	int iCurSel = m_ctlShiftModeCombo.GetCurSel();
 
@@ -289,7 +289,7 @@ void SVTADlgTranslationShiftPageClass::UpdateControls()
 	}//end of switch iCurSel
 }
 
-void SVTADlgTranslationShiftPageClass::SetupShiftPropertyTree()
+void SVTADlgTranslationShiftPage::SetupShiftPropertyTree()
 {
 	SVRPropertyItem* pRoot = m_Tree.InsertItem(new SVRPropertyItem());
 	SVRPropertyItemStatic* pPropItem;
@@ -346,7 +346,7 @@ void SVTADlgTranslationShiftPageClass::SetupShiftPropertyTree()
 	}
 }
 
-void SVTADlgTranslationShiftPageClass::FillShiftProperties()
+void SVTADlgTranslationShiftPage::FillShiftProperties()
 {
 	//get each value and put into property tree
 	variant_t Value = m_Values.Get<variant_t>(SvPb::ShiftToolReferenceYEId);
@@ -394,7 +394,7 @@ void SVTADlgTranslationShiftPageClass::FillShiftProperties()
 	m_Tree.RefreshItems();
 }
 
-BOOL SVTADlgTranslationShiftPageClass::OnSetActive()
+BOOL SVTADlgTranslationShiftPage::OnSetActive()
 {
 	refresh();
 	return CPropertyPage::OnSetActive();

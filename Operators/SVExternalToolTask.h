@@ -204,9 +204,9 @@ private:
 	
 	
 public:
-	friend class SVSelectExternalDllPage;
-	friend class SVExternalToolInputSelectPage;
-	friend class SVExternalToolResultPage;
+	friend class SVTADlgExternalSelectDllPage;
+	friend class SVTADlgExternalInputSelectPage;
+	friend class SVTADlgExternalResultPage;
 };
 
 } //namespace SvOp

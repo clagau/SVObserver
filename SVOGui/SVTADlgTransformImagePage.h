@@ -17,21 +17,21 @@
 
 namespace SvOg
 {
-	class SVToolAdjustmentDialogTransformImagePageClass : public SVToolAdjustmentDialogImagePageClass
+	class SVTADlgTransformImagePage : public SVToolAdjustmentDialogImagePageClass
 	{
-		//{{AFX_VIRTUAL(SVToolAdjustmentDialogTransformImagePageClass)
+		//{{AFX_VIRTUAL(SVTADlgTransformImagePage)
 	protected:
 		virtual BOOL OnInitDialog() override;
 		virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV
 		//}}AFX_VIRTUAL
 
-		//{{AFX_MSG(SVToolAdjustmentDialogTransformImagePageClass)
+		//{{AFX_MSG(SVTADlgTransformImagePage)
 		afx_msg void OnSelchangeCombo1();
 		afx_msg void OnUseExtentsOnly();
 		//}}AFX_MSG
 		DECLARE_MESSAGE_MAP()
 
-		//{{AFX_DATA(SVToolAdjustmentDialogTransformImagePageClass)
+		//{{AFX_DATA(SVTADlgTransformImagePage)
 		enum { IDD = IDD_TA_TRANSFORM_IMAGE_DIALOG };
 		CButton	m_useExtentsOnlyCheckBox;
 		BOOL m_useExtentsOnly;
@@ -40,8 +40,8 @@ namespace SvOg
 		void CheckSourceImage();
 
 	public:
-		SVToolAdjustmentDialogTransformImagePageClass(uint32_t inspectionId, uint32_t toolID, uint32_t taskObjectId, SvPb::SVObjectSubTypeEnum SubType = SvPb::SVImageMonoType, int id = IDD);
-		virtual ~SVToolAdjustmentDialogTransformImagePageClass();
+		SVTADlgTransformImagePage(uint32_t inspectionId, uint32_t toolID, uint32_t taskObjectId, SvPb::SVObjectSubTypeEnum SubType = SvPb::SVImageMonoType, int id = IDD);
+		virtual ~SVTADlgTransformImagePage();
 		HRESULT SetInspectionData();
 
 	private:

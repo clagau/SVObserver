@@ -26,12 +26,12 @@ class IObjectClass;
 
 class SVToolAdjustmentDialogSheetClass;
 
-class SVToolAdjustmentDialogAcquisitionSourcePageClass : public CPropertyPage
+class SVTADlgAcquisitionSourcePage : public CPropertyPage
 {
 public:
-	SVToolAdjustmentDialogAcquisitionSourcePageClass(uint32_t inspectionID, uint32_t taskObjectID, SVToolAdjustmentDialogSheetClass* PSheet);
+	SVTADlgAcquisitionSourcePage(uint32_t inspectionID, uint32_t taskObjectID, SVToolAdjustmentDialogSheetClass* PSheet);
 
-	virtual ~SVToolAdjustmentDialogAcquisitionSourcePageClass();
+	virtual ~SVTADlgAcquisitionSourcePage();
 
 	enum { IDD = IDD_TA_ACQUISITION_DIALOG };
 

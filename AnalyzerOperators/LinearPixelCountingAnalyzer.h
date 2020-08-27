@@ -23,7 +23,7 @@ class LinearPixelCountingAnalyzer : public SVLinearAnalyzerClass
 	SV_DECLARE_CLASS( LinearPixelCountingAnalyzer );
 
 public:
-	LinearPixelCountingAnalyzer( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_LinearPixelCountingAnalyzer );
+	LinearPixelCountingAnalyzer( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_LINEARPIXELCOUNTINGANALYZER );
 	virtual ~LinearPixelCountingAnalyzer();
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;

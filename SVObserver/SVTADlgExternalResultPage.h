@@ -20,20 +20,20 @@ namespace SvOp
 class SVExternalToolTask;
 }
 
-class SVExternalToolResultPage : public CPropertyPage
+class SVTADlgExternalResultPage : public CPropertyPage
 {
 public:
-	SVExternalToolResultPage(LPCTSTR Title, uint32_t inspectionId, uint32_t taskObjectId, int id = IDD );
-	virtual ~SVExternalToolResultPage();
+	SVTADlgExternalResultPage(LPCTSTR Title, uint32_t inspectionId, uint32_t taskObjectId, int id = IDD );
+	virtual ~SVTADlgExternalResultPage();
 
-	//{{AFX_DATA(SVExternalToolResultPage)
+	//{{AFX_DATA(SVTADlgExternalResultPage)
 	enum { IDD = IDD_TA_EXTERNAL_RESULTS };
 		// NOTE - ClassWizard will add data members here.
 		//    DO NOT EDIT what you see in these blocks of generated code !
 	//}}AFX_DATA
 
 	// ClassWizard generate virtual function overrides
-	//{{AFX_VIRTUAL(SVExternalToolResultPage)
+	//{{AFX_VIRTUAL(SVTADlgExternalResultPage)
 	public:
 	virtual void OnOK() override;
 	protected:
@@ -61,7 +61,7 @@ protected:
     afx_msg void OnItemButtonClick(NMHDR* pNotifyStruct, LRESULT* plResult);
 
 	// Generated message map functions
-	//{{AFX_MSG(SVExternalToolResultPage)
+	//{{AFX_MSG(SVTADlgExternalResultPage)
 	virtual BOOL OnInitDialog() override;
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()

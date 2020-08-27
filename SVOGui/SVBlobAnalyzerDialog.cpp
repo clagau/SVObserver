@@ -24,8 +24,8 @@
 
 namespace SvOg
 {
-	BEGIN_MESSAGE_MAP(SVBlobAnalyzeFeatureDialogClass, CDialog)
-		//{{AFX_MSG_MAP(SVBlobAnalyzeFeatureDialogClass)
+	BEGIN_MESSAGE_MAP(SVBlobAnalyzerDialog, CDialog)
+		//{{AFX_MSG_MAP(SVBlobAnalyzerDialog)
 		ON_BN_CLICKED(IDC_BUTTON1, OnButtonAdd)
 		ON_BN_CLICKED(IDC_BUTTON5, OnButtonRemove)
 		ON_BN_CLICKED(IDC_BUTTON4, OnButtonSetRange) 
@@ -48,22 +48,22 @@ namespace SvOg
 	////////////////////////////////////////////////////////////////////////////
 	//
 	//
-	SVBlobAnalyzeFeatureDialogClass::SVBlobAnalyzeFeatureDialogClass(uint32_t InspectionID, uint32_t TaskObjectID, CWnd* pParent)
-	: CDialog( SVBlobAnalyzeFeatureDialogClass::IDD, pParent )
+	SVBlobAnalyzerDialog::SVBlobAnalyzerDialog(uint32_t InspectionID, uint32_t TaskObjectID, CWnd* pParent)
+	: CDialog( SVBlobAnalyzerDialog::IDD, pParent )
 	, m_InspectionID{ InspectionID }
 	, m_TaskObjectID{ TaskObjectID }
 	, m_values{ SvOg::BoundValues{ InspectionID, TaskObjectID } }
 	{
 	}
 
-	SVBlobAnalyzeFeatureDialogClass::~SVBlobAnalyzeFeatureDialogClass()
+	SVBlobAnalyzerDialog::~SVBlobAnalyzerDialog()
 	{
 	}
 
-	void SVBlobAnalyzeFeatureDialogClass::DoDataExchange(CDataExchange* pDX)
+	void SVBlobAnalyzerDialog::DoDataExchange(CDataExchange* pDX)
 	{
 		CDialog::DoDataExchange(pDX);
-		//{{AFX_DATA_MAP(SVBlobAnalyzeFeatureDialogClass)
+		//{{AFX_DATA_MAP(SVBlobAnalyzerDialog)
 		DDX_Control(pDX, IDC_EDIT_MAX_BLOB_DATA_ARRAY_SIZE, m_ebMaxBlobDataArraySize);
 		DDX_Control(pDX, IDC_EDIT_MAX_NBR_BLOBS, m_ctlMaxNbrBlobs);
 		DDX_Control(pDX, IDC_FILL_BLOBS, m_chkFillBlob);
@@ -86,7 +86,7 @@ namespace SvOg
 	//
 	static CPoint gPtPosition(0, 0);
 
-	BOOL SVBlobAnalyzeFeatureDialogClass::OnInitDialog() 
+	BOOL SVBlobAnalyzerDialog::OnInitDialog() 
 	{
 		CDialog::OnInitDialog();
 	
@@ -148,7 +148,7 @@ namespace SvOg
 					  // EXCEPTION: OCX-Eigenschaftenseiten sollten FALSE zurückgeben
 	}
 
-	HRESULT SVBlobAnalyzeFeatureDialogClass::SetInspectionData()
+	HRESULT SVBlobAnalyzerDialog::SetInspectionData()
 	{
 		HRESULT Result{E_FAIL};
 
@@ -178,7 +178,7 @@ namespace SvOg
 	/////////////////////////////////////////////////////////////////////////////
 	//
 	//
-	void SVBlobAnalyzeFeatureDialogClass::EnableButtons()
+	void SVBlobAnalyzerDialog::EnableButtons()
 	{
 		// Check for features selected
 		int count = m_lbSelectedFeatures.GetCount();
@@ -234,7 +234,7 @@ namespace SvOg
 		}
 	}
 
-	void SVBlobAnalyzeFeatureDialogClass::OnButtonAdd() 
+	void SVBlobAnalyzerDialog::OnButtonAdd() 
 	{
 		long lAvailableIndex = static_cast<long> (m_lbAvailableFeatures.GetItemData( m_lbAvailableFeatures.GetCurSel()));
 		long lCurrentIndex = static_cast<long> (m_lbSelectedFeatures.GetItemData( m_lbSelectedFeatures.GetCurSel()));
@@ -265,7 +265,7 @@ namespace SvOg
 		UpdateData(false);
 	}
 
-	void SVBlobAnalyzeFeatureDialogClass::OnButtonRemove() 
+	void SVBlobAnalyzerDialog::OnButtonRemove() 
 	{
 		long index = static_cast<long> (m_lbSelectedFeatures.GetItemData(m_lbSelectedFeatures.GetCurSel()));
 
@@ -333,7 +333,7 @@ namespace SvOg
 	/////////////////////////////////////////////////////////////////////////////
 	//
 	//
-	void SVBlobAnalyzeFeatureDialogClass::OnButtonSetRange() 
+	void SVBlobAnalyzerDialog::OnButtonSetRange() 
 	{
 
 		int Feature = static_cast<int> (m_lbSelectedFeatures.GetItemData( m_lbSelectedFeatures.GetCurSel()));
@@ -365,7 +365,7 @@ namespace SvOg
 		}
 	}
 
-	void SVBlobAnalyzeFeatureDialogClass::OnOK() 
+	void SVBlobAnalyzerDialog::OnOK() 
 	{
 		SetInspectionData();
 
@@ -395,12 +395,12 @@ namespace SvOg
 		CDialog::OnOK();
 	}
 
-	void SVBlobAnalyzeFeatureDialogClass::OnCancel() 
+	void SVBlobAnalyzerDialog::OnCancel() 
 	{
 		CDialog::OnCancel();
 	}
 
-	void SVBlobAnalyzeFeatureDialogClass::OnSetSortBtn() 
+	void SVBlobAnalyzerDialog::OnSetSortBtn() 
 	{
 		long lCurrentIndex = static_cast< long >( m_lbSelectedFeatures.GetItemData( m_lbSelectedFeatures.GetCurSel() ) );
 
@@ -418,12 +418,12 @@ namespace SvOg
 		UpdateData(false);
 	}
 
-	void SVBlobAnalyzeFeatureDialogClass::OnAscending() 
+	void SVBlobAnalyzerDialog::OnAscending() 
 	{
 		UpdateData(true);
 	}
 
-	void SVBlobAnalyzeFeatureDialogClass::OnDestroy() 
+	void SVBlobAnalyzerDialog::OnDestroy() 
 	{
 		CDialog::OnDestroy();
 	
@@ -440,7 +440,7 @@ namespace SvOg
 
 	// Features Area, Box X Max, Box X Min, Box Y Max and Box Y Min should not be removed from the list. 
 	// So if the selection is one of these features, disable the remove button.
-	void SVBlobAnalyzeFeatureDialogClass::OnSelchangeList2() 
+	void SVBlobAnalyzerDialog::OnSelchangeList2() 
 	{
 		int Index = m_lbSelectedFeatures.GetCurSel();
 
@@ -470,7 +470,7 @@ namespace SvOg
 		}
 	}
 
-	void SVBlobAnalyzeFeatureDialogClass::OnNbrOfBlobs() 
+	void SVBlobAnalyzerDialog::OnNbrOfBlobs() 
 	{
 		//needed here only to fill-in the request to inspection commands
 		int Feature = static_cast<int> (m_lbSelectedFeatures.GetItemData(m_lbSelectedFeatures.GetCurSel()));
@@ -492,30 +492,30 @@ namespace SvOg
 		}
 	}
 
-	void SVBlobAnalyzeFeatureDialogClass::OnExcludeBlob() 
+	void SVBlobAnalyzerDialog::OnExcludeBlob() 
 	{
 		SetInspectionData();
 	}
 
-	void SVBlobAnalyzeFeatureDialogClass::OnBtnFillBlobs() 
+	void SVBlobAnalyzerDialog::OnBtnFillBlobs() 
 	{
 		SVFillBlobDlg dlg(m_values);
 		dlg.DoModal();
 	}
 
-	void SVBlobAnalyzeFeatureDialogClass::OnFillBlobs() 
+	void SVBlobAnalyzerDialog::OnFillBlobs() 
 	{
 		m_btnFillBlobs.EnableWindow(m_chkFillBlob.GetCheck());
 	
 		SetInspectionData();
 	}
 
-	void SVBlobAnalyzeFeatureDialogClass::OnBlobColor()
+	void SVBlobAnalyzerDialog::OnBlobColor()
 	{
 		SetInspectionData();
 	}
 
-	void SVBlobAnalyzeFeatureDialogClass::OnChangeEditMaxNbrBlobs() 
+	void SVBlobAnalyzerDialog::OnChangeEditMaxNbrBlobs() 
 	{
 		CString Temp;
 		m_ctlMaxNbrBlobs.GetWindowText( Temp);
@@ -523,17 +523,17 @@ namespace SvOg
 		m_lMaxNumberBlobs = atol(Temp);
 	}
 
-	void SVBlobAnalyzeFeatureDialogClass::OnKillFocusMaxNbrBlobs()
+	void SVBlobAnalyzerDialog::OnKillFocusMaxNbrBlobs()
 	{
 		UpdateData(true);
 	}
 
-	void SVBlobAnalyzeFeatureDialogClass::OnChangeEditMaxBlobDataArraySize() 
+	void SVBlobAnalyzerDialog::OnChangeEditMaxBlobDataArraySize() 
 	{
 		SetInspectionData();
 	}
 
-	void SVBlobAnalyzeFeatureDialogClass::OnButtonSetFeatureProperties() 
+	void SVBlobAnalyzerDialog::OnButtonSetFeatureProperties() 
 	{
 		int Index = m_lbSelectedFeatures.GetCurSel();
 		if (LB_ERR != Index)
@@ -552,7 +552,7 @@ namespace SvOg
 		}
 	}
 
-	void SVBlobAnalyzeFeatureDialogClass::initFeatureListBox(CListBox& listBox, bool EnabledFeatures)
+	void SVBlobAnalyzerDialog::initFeatureListBox(CListBox& listBox, bool EnabledFeatures)
 	{
 		listBox.ResetContent();
 

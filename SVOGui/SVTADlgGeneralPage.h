@@ -21,14 +21,14 @@
 
 namespace SvOg
 {
-	class SVToolAdjustmentDialogGeneralPageClass : public CPropertyPage
+	class SVTADlgGeneralPage : public CPropertyPage
 	{
 	public:
-		SVToolAdjustmentDialogGeneralPageClass(uint32_t inspectionId, uint32_t taskObjectId);
-		virtual ~SVToolAdjustmentDialogGeneralPageClass();
+		SVTADlgGeneralPage(uint32_t inspectionId, uint32_t taskObjectId);
+		virtual ~SVTADlgGeneralPage();
 
 	protected:
-		//{{AFX_MSG(SVToolAdjustmentDialogGeneralPageClass)
+		//{{AFX_MSG(SVTADlgGeneralPage)
 		virtual BOOL OnInitDialog() override;
 		afx_msg void OnSelchangeDrawToolCombo();
 		afx_msg void OnUpdateAuxiliaryExtents();
@@ -37,7 +37,7 @@ namespace SvOg
 		//}}AFX_MSG
 		DECLARE_MESSAGE_MAP()
 
-		//{{AFX_VIRTUAL(SVToolAdjustmentDialogGeneralPageClass)
+		//{{AFX_VIRTUAL(SVTADlgGeneralPage)
 	public:
 		virtual BOOL OnSetActive() override;
 	protected:

@@ -22,11 +22,11 @@ class SVExternalToolTask;
 class SVToolAdjustmentDialogSheetClass;
 struct SVCancelData;
 
-class SVSelectExternalDllPage : public CPropertyPage, public SvOg::ISVPropertyPageDialog
+class SVTADlgExternalSelectDllPage : public CPropertyPage, public SvOg::ISVPropertyPageDialog
 {
 public:
-	SVSelectExternalDllPage(uint32_t inspectionID, uint32_t toolObjectID, SVToolAdjustmentDialogSheetClass* pSheet);   // standard constructor
-	virtual ~SVSelectExternalDllPage() {};
+	SVTADlgExternalSelectDllPage(uint32_t inspectionID, uint32_t toolObjectID, SVToolAdjustmentDialogSheetClass* pSheet);   // standard constructor
+	virtual ~SVTADlgExternalSelectDllPage() {};
 
 	// ISVPropertyPageDialog
 	bool QueryAllowExit() override;
@@ -34,7 +34,7 @@ public:
 	SVIPDoc* GetIPDoc() const;
 
 // Dialog Data
-	//{{AFX_DATA(SVSelectExternalDllPage)
+	//{{AFX_DATA(SVTADlgExternalSelectDllPage)
 	enum { IDD = IDD_TA_EXTERNAL_DLL_SELECT };
 	CEdit	m_StatusEdit;
 	CButton	m_btnDeleteAll;
@@ -48,7 +48,7 @@ public:
 
 // Overrides
 	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(SVSelectExternalDllPage)
+	//{{AFX_VIRTUAL(SVTADlgExternalSelectDllPage)
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
@@ -69,7 +69,7 @@ protected:
 	uint32_t m_TaskObjectID = SvDef::InvalidObjectId;
 
 	// Generated message map functions
-	//{{AFX_MSG(SVSelectExternalDllPage)
+	//{{AFX_MSG(SVTADlgExternalSelectDllPage)
 	virtual BOOL OnInitDialog() override;
 	virtual void OnOK() override;
 	afx_msg void OnDeleteAll();

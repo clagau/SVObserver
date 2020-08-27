@@ -27,7 +27,7 @@ namespace SvOg
 {
 
 BEGIN_MESSAGE_MAP(ToolAdjustToolSetPage, CPropertyPage)
-	//{{AFX_MSG_MAP(SVToolAdjustmentDialogStatisticsPageClass)
+	//{{AFX_MSG_MAP(SVTADlgStatisticsPage)
 	ON_BN_CLICKED(IDC_BTN_OBJECT_PICKER, OnBtnObjectPicker)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
@@ -57,7 +57,7 @@ void ToolAdjustToolSetPage::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 
-	//{{AFX_DATA_MAP(SVToolAdjustmentDialogStatisticsPageClass)
+	//{{AFX_DATA_MAP(SVTADlgStatisticsPage)
 	DDX_Text(pDX, IDC_INSPECTED_OBECT_ID, m_InspectedObjectID);
 	//}}AFX_DATA_MAP
 }

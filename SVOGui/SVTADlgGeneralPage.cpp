@@ -24,8 +24,8 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvOg
 {
-	SVToolAdjustmentDialogGeneralPageClass::SVToolAdjustmentDialogGeneralPageClass(uint32_t inspectionId, uint32_t taskObjectId) 
-	: CPropertyPage(SVToolAdjustmentDialogGeneralPageClass::IDD)
+	SVTADlgGeneralPage::SVTADlgGeneralPage(uint32_t inspectionId, uint32_t taskObjectId) 
+	: CPropertyPage(SVTADlgGeneralPage::IDD)
 	, m_bIsImageTool(false)
 	, m_bAuxExtentsAvailable(false)
 	, m_InspectionID(inspectionId)
@@ -33,16 +33,16 @@ namespace SvOg
 	, m_values(SvOg::BoundValues(inspectionId, taskObjectId))
 	, m_AuxExtentsController(inspectionId, taskObjectId)
 	{
-		//{{AFX_DATA_INIT(SVToolAdjustmentDialogGeneralPageClass)
+		//{{AFX_DATA_INIT(SVTADlgGeneralPage)
 		m_bUpdateAuxiliaryExtents = false;
 		//}}AFX_DATA_INIT
 	}
 
-	SVToolAdjustmentDialogGeneralPageClass::~SVToolAdjustmentDialogGeneralPageClass()
+	SVTADlgGeneralPage::~SVTADlgGeneralPage()
 	{
 	}
 
-	HRESULT SVToolAdjustmentDialogGeneralPageClass::SetInspectionData()
+	HRESULT SVTADlgGeneralPage::SetInspectionData()
 	{
 		HRESULT hr = S_OK;
 
@@ -66,7 +66,7 @@ namespace SvOg
 		return hr;
 	}
 
-	void SVToolAdjustmentDialogGeneralPageClass::refresh()
+	void SVTADlgGeneralPage::refresh()
 	{
 		// Update dialog with freeze tool attributes...
 		long CurrentSelection = m_values.Get<long>(SvPb::ConditionalToolDrawFlagEId);
@@ -86,13 +86,13 @@ namespace SvOg
 		UpdateData(false); // Send Data to Dialog...
 	}
 
-	void SVToolAdjustmentDialogGeneralPageClass::SetupAuxExtents()
+	void SVTADlgGeneralPage::SetupAuxExtents()
 	{
 		m_bUpdateAuxiliaryExtents = m_AuxExtentsController.IsUpdateAuxExtentsEnabled();
 		UpdateData(false);
 	}
 
-	void SVToolAdjustmentDialogGeneralPageClass::SetupDrawFlagComboBox()
+	void SVTADlgGeneralPage::SetupDrawFlagComboBox()
 	{
 		const SvOi::NameValueVector& rDrawCriteria = m_values.GetEnumTypes(SvPb::ConditionalToolDrawFlagEId);
 		m_drawToolCombo.SetEnumTypes(rDrawCriteria);
@@ -100,7 +100,7 @@ namespace SvOg
 		m_drawToolCombo.SetCurSelItemData(CurrentSelection);
 	}
 
-	void SVToolAdjustmentDialogGeneralPageClass::SetImages()
+	void SVTADlgGeneralPage::SetImages()
 	{
 		m_AvailableSourceImageCombo.ResetContent();
 		if (m_bAuxExtentsAvailable)
@@ -118,24 +118,24 @@ namespace SvOg
 		}
 	}
 
-	bool SVToolAdjustmentDialogGeneralPageClass::CheckAuxiliaryExtentsAvailable() const
+	bool SVTADlgGeneralPage::CheckAuxiliaryExtentsAvailable() const
 	{
 		bool bRetVal = m_AuxExtentsController.AreAuxiliaryExtentsAvailable();
 		return bRetVal;
 	}
 
-	void SVToolAdjustmentDialogGeneralPageClass::DoDataExchange(CDataExchange* pDX)
+	void SVTADlgGeneralPage::DoDataExchange(CDataExchange* pDX)
 	{
 		CPropertyPage::DoDataExchange(pDX);
-		//{{AFX_DATA_MAP(SVToolAdjustmentDialogGeneralPageClass)
+		//{{AFX_DATA_MAP(SVTADlgGeneralPage)
 		DDX_Control(pDX, IDC_SOURCE_IMAGE_COMBO, m_AvailableSourceImageCombo);
 		DDX_Control(pDX, IDC_DRAW_TOOL_COMBO, m_drawToolCombo);
 		DDX_Check(pDX, IDC_ENABLE_AUXILIARY_EXTENTS, m_bUpdateAuxiliaryExtents);
 		//}}AFX_DATA_MAP
 	}
 
-	BEGIN_MESSAGE_MAP(SVToolAdjustmentDialogGeneralPageClass, CPropertyPage)
-		//{{AFX_MSG_MAP(SVToolAdjustmentDialogGeneralPageClass)
+	BEGIN_MESSAGE_MAP(SVTADlgGeneralPage, CPropertyPage)
+		//{{AFX_MSG_MAP(SVTADlgGeneralPage)
 		ON_CBN_SELCHANGE(IDC_DRAW_TOOL_COMBO, OnSelchangeDrawToolCombo)
 		ON_BN_CLICKED(IDC_ENABLE_AUXILIARY_EXTENTS, OnUpdateAuxiliaryExtents)
 		ON_CBN_SELCHANGE(IDC_SOURCE_IMAGE_COMBO, OnSelchangeSourceImageCombo)
@@ -145,9 +145,9 @@ namespace SvOg
 
 
 	/////////////////////////////////////////////////////////////////////////////
-	// SVToolAdjustmentDialogGeneralPageClass message handlers
+	// SVTADlgGeneralPage message handlers
 
-	BOOL SVToolAdjustmentDialogGeneralPageClass::OnInitDialog() 
+	BOOL SVTADlgGeneralPage::OnInitDialog() 
 	{
 		CPropertyPage::OnInitDialog();
 
@@ -189,13 +189,13 @@ namespace SvOg
 						  // EXCEPTION: OCX Property Pages should return FALSE
 	}
 
-	void SVToolAdjustmentDialogGeneralPageClass::OnSelchangeDrawToolCombo() 
+	void SVTADlgGeneralPage::OnSelchangeDrawToolCombo() 
 	{
 		SetInspectionData();
 		refresh();
 	}
 
-	void SVToolAdjustmentDialogGeneralPageClass::OnUpdateAuxiliaryExtents() 
+	void SVTADlgGeneralPage::OnUpdateAuxiliaryExtents() 
 	{
 		SetInspectionData();
 
@@ -209,7 +209,7 @@ namespace SvOg
 		refresh();
 	}
 
-	void SVToolAdjustmentDialogGeneralPageClass::OnSelchangeSourceImageCombo() 
+	void SVTADlgGeneralPage::OnSelchangeSourceImageCombo() 
 	{
 		UpdateData( TRUE ); // get data from dialog
 
@@ -226,7 +226,7 @@ namespace SvOg
 		refresh();
 	}
 	
-	void SVToolAdjustmentDialogGeneralPageClass::OnShowRelations() 
+	void SVTADlgGeneralPage::OnShowRelations() 
 	{
 		std::set<uint32_t> DependencySet;
 		DependencySet.insert(m_TaskObjectID);
@@ -234,7 +234,7 @@ namespace SvOg
 		Dlg.DoModal();
 	}
 
-	BOOL SVToolAdjustmentDialogGeneralPageClass::OnSetActive() 
+	BOOL SVTADlgGeneralPage::OnSetActive() 
 	{
 		SetImages();
 		refresh();

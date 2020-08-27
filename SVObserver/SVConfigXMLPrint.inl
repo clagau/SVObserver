@@ -1059,7 +1059,7 @@ inline void SVConfigXMLPrint::WriteObject(Writer writer, SVObjectClass* pObject)
 				WriteArchiveTool(writer, pArchiveTool);
 			}
 
-			if (SvTo::SVStatisticsToolClass* pStatisticsTool = dynamic_cast<SvTo::SVStatisticsToolClass*> (pObject))
+			if (SvTo::SVStatTool* pStatisticsTool = dynamic_cast<SvTo::SVStatTool*> (pObject))
 			{
 				SVObjectReference refObject = pStatisticsTool->GetVariableSelected();
 				if (refObject.getObject())

@@ -22,24 +22,24 @@ class SVEvaluate;
 }
 #pragma endregion;
 
-class SVToolAdjustmentDialogRotationPageClass : public CPropertyPage
+class SVTADlgRotationPage : public CPropertyPage
 {
 public:
-	SVToolAdjustmentDialogRotationPageClass( uint32_t inspectionId, uint32_t taskObjectId);
-	virtual ~SVToolAdjustmentDialogRotationPageClass();
+	SVTADlgRotationPage( uint32_t inspectionId, uint32_t taskObjectId);
+	virtual ~SVTADlgRotationPage();
 
 #pragma region Protected Methods
 protected:
 #pragma region MFC Methods
 	// ClassWizard generate virtual function overrides
-	//{{AFX_VIRTUAL(SVToolAdjustmentDialogRotationPageClass)
+	//{{AFX_VIRTUAL(SVTADlgRotationPage)
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	virtual BOOL OnSetActive() override;
 	//}}AFX_VIRTUAL
 
 	// Generated message map functions
-	//{{AFX_MSG(SVToolAdjustmentDialogRotationPageClass)
+	//{{AFX_MSG(SVTADlgRotationPage)
 	virtual BOOL OnInitDialog() override;
 	afx_msg void OnAngleFormulaButton();
 	afx_msg void OnXFormulaButton();
@@ -57,7 +57,7 @@ protected:
 #pragma region Member variables
 #pragma region Data Elements
 public:
-	//{{AFX_DATA(SVToolAdjustmentDialogRotationPageClass)
+	//{{AFX_DATA(SVTADlgRotationPage)
 	enum { IDD = IDD_TA_ROTATION_DIALOG };
 	SvMc::SVEnumerateCombo	m_cbInterpolation;
 	CString	m_RotationAngleValue;

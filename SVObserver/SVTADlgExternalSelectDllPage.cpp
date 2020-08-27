@@ -67,7 +67,7 @@ std::pair<SvOp::SVExternalToolTask*, uint32_t> getExternalToolTaskInfo(uint32_t 
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// SVSelectExternalDllPage dialog
+// SVTADlgExternalSelectDllPage dialog
 
 namespace	// file scope
 {
@@ -84,8 +84,8 @@ namespace	// file scope
 	}
 }
 
-BEGIN_MESSAGE_MAP(SVSelectExternalDllPage, CPropertyPage)
-	//{{AFX_MSG_MAP(SVSelectExternalDllPage)
+BEGIN_MESSAGE_MAP(SVTADlgExternalSelectDllPage, CPropertyPage)
+	//{{AFX_MSG_MAP(SVTADlgExternalSelectDllPage)
 	ON_BN_CLICKED(IDC_DELETE_ALL, OnDeleteAll)
 	ON_BN_CLICKED(IDC_DELETE, OnDelete)
 	ON_BN_CLICKED(IDC_ADD, OnAdd)
@@ -94,7 +94,7 @@ BEGIN_MESSAGE_MAP(SVSelectExternalDllPage, CPropertyPage)
 	ON_MESSAGE(WM_UPDATE_STATUS, OnUpdateStatus)
 END_MESSAGE_MAP()
 
-SVSelectExternalDllPage::SVSelectExternalDllPage(uint32_t inspectionID, uint32_t toolObjectID, SVToolAdjustmentDialogSheetClass* pSheet)
+SVTADlgExternalSelectDllPage::SVTADlgExternalSelectDllPage(uint32_t inspectionID, uint32_t toolObjectID, SVToolAdjustmentDialogSheetClass* pSheet)
 	: CPropertyPage(IDD)
 	, m_InspectionID(inspectionID)
 	, m_ToolObjectID(toolObjectID) //attention: SVToolAdjustmentDialogSheetClass::m_TaskObjectID is passed to this value when this constructor is called by SVToolAdjustmentDialogSheetClass!
@@ -106,17 +106,17 @@ SVSelectExternalDllPage::SVSelectExternalDllPage(uint32_t inspectionID, uint32_t
 
 	assert(m_pTask);
 
-	//{{AFX_DATA_INIT(SVSelectExternalDllPage)
+	//{{AFX_DATA_INIT(SVTADlgExternalSelectDllPage)
 	m_strDLLPath = _T("");
 	m_strStatus = _T("");
 	//}}AFX_DATA_INIT
 }
 
 
-void SVSelectExternalDllPage::DoDataExchange(CDataExchange* pDX)
+void SVTADlgExternalSelectDllPage::DoDataExchange(CDataExchange* pDX)
 {
 	CPropertyPage::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(SVSelectExternalDllPage)
+	//{{AFX_DATA_MAP(SVTADlgExternalSelectDllPage)
 	DDX_Control(pDX, IDC_DLL_STATUS, m_StatusEdit);
 	DDX_Control(pDX, IDC_DELETE_ALL, m_btnDeleteAll);
 	DDX_Control(pDX, IDC_DELETE, m_btnDelete);
@@ -131,9 +131,9 @@ void SVSelectExternalDllPage::DoDataExchange(CDataExchange* pDX)
 
 
 /////////////////////////////////////////////////////////////////////////////
-// SVSelectExternalDllPage message handlers
+// SVTADlgExternalSelectDllPage message handlers
 
-BOOL SVSelectExternalDllPage::OnInitDialog()
+BOOL SVTADlgExternalSelectDllPage::OnInitDialog()
 {
 	std::string Value;
 	// stuff the value before base OnInitDialog
@@ -171,7 +171,7 @@ BOOL SVSelectExternalDllPage::OnInitDialog()
 
 }
 
-void SVSelectExternalDllPage::OnOK()
+void SVTADlgExternalSelectDllPage::OnOK()
 {
 	UpdateData();
 
@@ -201,14 +201,14 @@ void SVSelectExternalDllPage::OnOK()
 	CPropertyPage::OnOK();
 }
 
-void SVSelectExternalDllPage::OnDeleteAll()
+void SVTADlgExternalSelectDllPage::OnDeleteAll()
 {
 	// Clear List Box
 	m_lbDependentList.ResetContent();
 	testExternalDll();
 }
 
-void SVSelectExternalDllPage::OnDelete()
+void SVTADlgExternalSelectDllPage::OnDelete()
 {
 	int iCurrentPos = m_lbDependentList.GetCurSel();
 	if (iCurrentPos > -1 && iCurrentPos < m_lbDependentList.GetCount())
@@ -219,7 +219,7 @@ void SVSelectExternalDllPage::OnDelete()
 
 }
 
-void SVSelectExternalDllPage::OnAdd()
+void SVTADlgExternalSelectDllPage::OnAdd()
 {
 	bool bFullAccess = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
 	SvMc::SVFileDialog cfd(true, bFullAccess, _T("dll"), _T(""),
@@ -251,7 +251,7 @@ void SVSelectExternalDllPage::OnAdd()
 	}
 }
 
-void SVSelectExternalDllPage::OnBrowse()
+void SVTADlgExternalSelectDllPage::OnBrowse()
 {
 	UpdateData();
 	bool bFullAccess = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
@@ -322,9 +322,9 @@ void SVSelectExternalDllPage::OnBrowse()
 		}
 		testExternalDll(m_ResetInput == TRUE);
 	}
-}// end void SVSelectExternalDllPage::OnBrowse() 
+}// end void SVTADlgExternalSelectDllPage::OnBrowse() 
 
-void SVSelectExternalDllPage::testExternalDll(bool setDefaultValues)
+void SVTADlgExternalSelectDllPage::testExternalDll(bool setDefaultValues)
 {
 	UpdateData();
 
@@ -336,7 +336,7 @@ void SVSelectExternalDllPage::testExternalDll(bool setDefaultValues)
 	InitializeDll(false, setDefaultValues);
 }
 
-void SVSelectExternalDllPage::SetDependencies()
+void SVTADlgExternalSelectDllPage::SetDependencies()
 {
 	int i(0);
 
@@ -360,7 +360,7 @@ void SVSelectExternalDllPage::SetDependencies()
 	m_pTask->SetAllAttributes();	// update dependency attributes
 }
 
-void SVSelectExternalDllPage::InitializeDll(bool jumpToInputPage, bool setDefaultValues)
+void SVTADlgExternalSelectDllPage::InitializeDll(bool jumpToInputPage, bool setDefaultValues)
 {
 
 	try
@@ -379,7 +379,7 @@ void SVSelectExternalDllPage::InitializeDll(bool jumpToInputPage, bool setDefaul
 		}
 		UpdateData(FALSE);
 
-		m_pTask->Initialize(boost::bind(&SVSelectExternalDllPage::NotifyProgress, this, _1));
+		m_pTask->Initialize(boost::bind(&SVTADlgExternalSelectDllPage::NotifyProgress, this, _1));
 
 
 
@@ -430,14 +430,14 @@ void SVSelectExternalDllPage::InitializeDll(bool jumpToInputPage, bool setDefaul
 // Override PreTranslateMessage() so RelayEvent() can be 
 // called to pass a mouse message to the 
 // tooltip control for processing.
-BOOL SVSelectExternalDllPage::PreTranslateMessage(MSG* pMsg)
+BOOL SVTADlgExternalSelectDllPage::PreTranslateMessage(MSG* pMsg)
 {
 	m_ToolTip.RelayEvent(pMsg);
 
 	return CDialog::PreTranslateMessage(pMsg);
 }
 
-void SVSelectExternalDllPage::NotifyProgress(LPCTSTR Message)
+void SVTADlgExternalSelectDllPage::NotifyProgress(LPCTSTR Message)
 {
 	UpdateData();
 
@@ -448,7 +448,7 @@ void SVSelectExternalDllPage::NotifyProgress(LPCTSTR Message)
 	YieldPaintMessages(GetSafeHwnd());
 }
 
-LRESULT SVSelectExternalDllPage::OnUpdateStatus(WPARAM, LPARAM)
+LRESULT SVTADlgExternalSelectDllPage::OnUpdateStatus(WPARAM, LPARAM)
 {
 	UpdateData();
 	m_StatusEdit.SetSel(m_strStatus.GetLength(), m_strStatus.GetLength());
@@ -456,13 +456,13 @@ LRESULT SVSelectExternalDllPage::OnUpdateStatus(WPARAM, LPARAM)
 }
 
 
-bool SVSelectExternalDllPage::QueryAllowExit()
+bool SVTADlgExternalSelectDllPage::QueryAllowExit()
 {
 	return true;
 }
 
 
-SVIPDoc* SVSelectExternalDllPage::GetIPDoc() const
+SVIPDoc* SVTADlgExternalSelectDllPage::GetIPDoc() const
 {
 	SVIPDoc* l_pIPDoc = nullptr;
 

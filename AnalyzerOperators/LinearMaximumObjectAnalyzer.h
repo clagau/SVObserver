@@ -24,7 +24,7 @@ class LinearMaximumObjectAnalyzer : public SVLinearAnalyzerClass
 	SV_DECLARE_CLASS( LinearMaximumObjectAnalyzer );
 
 public:
-	LinearMaximumObjectAnalyzer( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_LinearMaximumObjectAnalyzer );
+	LinearMaximumObjectAnalyzer( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_LINEARMAXIMUMOBJECTANALYZER );
 	virtual ~LinearMaximumObjectAnalyzer();
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;

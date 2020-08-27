@@ -22,27 +22,27 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvOg
 {
-	BEGIN_MESSAGE_MAP(SVToolAdjustmentDialogTransformImagePageClass, CPropertyPage)
-		//{{AFX_MSG_MAP(SVToolAdjustmentDialogTransformImagePageClass)
+	BEGIN_MESSAGE_MAP(SVTADlgTransformImagePage, CPropertyPage)
+		//{{AFX_MSG_MAP(SVTADlgTransformImagePage)
 		ON_CBN_SELCHANGE(IDC_COMBO1, OnSelchangeCombo1)
 		ON_BN_CLICKED(IDC_USE_EXTENTS_ONLY, OnUseExtentsOnly)
 		//}}AFX_MSG_MAP
 	END_MESSAGE_MAP()
 
-	SVToolAdjustmentDialogTransformImagePageClass::SVToolAdjustmentDialogTransformImagePageClass(uint32_t inspectionId, uint32_t toolId, uint32_t taskObjectId, SvPb::SVObjectSubTypeEnum SubType /*= SvDef::SVImageMonoType*/, int id /*= IDD*/)
+	SVTADlgTransformImagePage::SVTADlgTransformImagePage(uint32_t inspectionId, uint32_t toolId, uint32_t taskObjectId, SvPb::SVObjectSubTypeEnum SubType /*= SvDef::SVImageMonoType*/, int id /*= IDD*/)
 	: SVToolAdjustmentDialogImagePageClass(inspectionId, toolId, SubType, id)
 		, m_values{ SvOg::BoundValues{ inspectionId, taskObjectId } }
 	{
-		//{{AFX_DATA_INIT(SVToolAdjustmentDialogTransformImagePageClass)
+		//{{AFX_DATA_INIT(SVTADlgTransformImagePage)
 		m_useExtentsOnly = FALSE;
 		//}}AFX_DATA_INIT
 	}
 
-	SVToolAdjustmentDialogTransformImagePageClass::~SVToolAdjustmentDialogTransformImagePageClass()
+	SVTADlgTransformImagePage::~SVTADlgTransformImagePage()
 	{
 	}
 
-	HRESULT SVToolAdjustmentDialogTransformImagePageClass::SetInspectionData()
+	HRESULT SVTADlgTransformImagePage::SetInspectionData()
 	{
 		HRESULT hr = S_OK;
 
@@ -56,7 +56,7 @@ namespace SvOg
 		return hr;
 	}
 
-	void SVToolAdjustmentDialogTransformImagePageClass::CheckSourceImage()
+	void SVTADlgTransformImagePage::CheckSourceImage()
 	{
 		const SvUl::InputNameObjectIdPairList& images = getImageController().GetInputImageList();
 		if (images.size())
@@ -76,15 +76,15 @@ namespace SvOg
 		}
 	}
 
-	void SVToolAdjustmentDialogTransformImagePageClass::DoDataExchange(CDataExchange* pDX)
+	void SVTADlgTransformImagePage::DoDataExchange(CDataExchange* pDX)
 	{
 		SVToolAdjustmentDialogImagePageClass::DoDataExchange(pDX);
-		//{{AFX_DATA_MAP(SVToolAdjustmentDialogTransformImagePageClass)
+		//{{AFX_DATA_MAP(SVTADlgTransformImagePage)
 		DDX_Control(pDX, IDC_USE_EXTENTS_ONLY, m_useExtentsOnlyCheckBox);
 		DDX_Check(pDX, IDC_USE_EXTENTS_ONLY, m_useExtentsOnly);
 		//}}AFX_DATA_MAP
 	}
-	BOOL SVToolAdjustmentDialogTransformImagePageClass::OnInitDialog() 
+	BOOL SVTADlgTransformImagePage::OnInitDialog() 
 	{
 	
 		BOOL rc = SVToolAdjustmentDialogImagePageClass::OnInitDialog();
@@ -111,13 +111,13 @@ namespace SvOg
 					  // EXCEPTION: OCX-Eigenschaftenseiten sollten FALSE zurückgeben
 	}
 
-	void SVToolAdjustmentDialogTransformImagePageClass::OnSelchangeCombo1() 
+	void SVTADlgTransformImagePage::OnSelchangeCombo1() 
 	{
 		SVToolAdjustmentDialogImagePageClass::OnSelchangeCombo1();
 		CheckSourceImage();
 	}
 
-	void SVToolAdjustmentDialogTransformImagePageClass::OnUseExtentsOnly() 
+	void SVTADlgTransformImagePage::OnUseExtentsOnly() 
 	{
 		SetInspectionData();
 	}

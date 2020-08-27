@@ -25,7 +25,7 @@ class LinearEdgePositionAnalyzer : public SVLinearAnalyzerClass
 	SV_DECLARE_CLASS( LinearEdgePositionAnalyzer );
 
 public:
-	LinearEdgePositionAnalyzer( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_LinearEdgePositionAnalyzer );
+	LinearEdgePositionAnalyzer( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_LINEAREDGEPOSITIONANALYZER );
 	virtual ~LinearEdgePositionAnalyzer();
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;

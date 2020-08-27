@@ -38,8 +38,8 @@ static double ScaleFactor = 10000.0;
 static long SliderRange = 20000;
 static long SliderTic = SliderRange / 2;
 
-BEGIN_MESSAGE_MAP(SVToolAdjustmentDialogThresholdPageClass, CPropertyPage)
-	//{{AFX_MSG_MAP(SVToolAdjustmentDialogThresholdPageClass)
+BEGIN_MESSAGE_MAP(SVTADlgThresholdPage, CPropertyPage)
+	//{{AFX_MSG_MAP(SVTADlgThresholdPage)
 	ON_EN_CHANGE(IDC_UPPER_EDIT, OnChangeUpperEdit)
 	ON_EN_CHANGE(IDC_LOWER_EDIT, OnChangeLowerEdit)
 	ON_BN_CLICKED(IDC_UPPER_CHECK, OnUpperActivateCheck)
@@ -61,8 +61,8 @@ BEGIN_MESSAGE_MAP(SVToolAdjustmentDialogThresholdPageClass, CPropertyPage)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-SVToolAdjustmentDialogThresholdPageClass::SVToolAdjustmentDialogThresholdPageClass( uint32_t inspectionId, uint32_t taskObjectId, SVToolAdjustmentDialogSheetClass* Parent ) 
-: CPropertyPage(SVToolAdjustmentDialogThresholdPageClass::IDD)
+SVTADlgThresholdPage::SVTADlgThresholdPage( uint32_t inspectionId, uint32_t taskObjectId, SVToolAdjustmentDialogSheetClass* Parent ) 
+: CPropertyPage(SVTADlgThresholdPage::IDD)
 , m_pUseExternATM(nullptr)
 , m_pUseExternLT(nullptr)
 , m_pUseExternUT(nullptr)
@@ -80,7 +80,7 @@ SVToolAdjustmentDialogThresholdPageClass::SVToolAdjustmentDialogThresholdPageCla
 , m_isEdit(false)
 , m_ImageController(inspectionId, taskObjectId)
 {
-	//{{AFX_DATA_INIT(SVToolAdjustmentDialogThresholdPageClass)
+	//{{AFX_DATA_INIT(SVTADlgThresholdPage)
 	m_bUseExternATM = false;
 	m_bUseExternLT = false;
 	m_bUseExternUT = false;
@@ -121,11 +121,11 @@ SVToolAdjustmentDialogThresholdPageClass::SVToolAdjustmentDialogThresholdPageCla
 	}
 }
 
-SVToolAdjustmentDialogThresholdPageClass::~SVToolAdjustmentDialogThresholdPageClass()
+SVTADlgThresholdPage::~SVTADlgThresholdPage()
 {
 }
 
-HRESULT SVToolAdjustmentDialogThresholdPageClass::SetInspectionData()
+HRESULT SVTADlgThresholdPage::SetInspectionData()
 {
 	HRESULT Result{ S_OK };
 
@@ -176,13 +176,13 @@ HRESULT SVToolAdjustmentDialogThresholdPageClass::SetInspectionData()
 	return Result;
 }
 
-void SVToolAdjustmentDialogThresholdPageClass::DoDataExchange(CDataExchange* pDX)
+void SVTADlgThresholdPage::DoDataExchange(CDataExchange* pDX)
 {
 	CPropertyPage::DoDataExchange(pDX);
 
 	if (FALSE == m_isEdit)
 	{
-		//{{AFX_DATA_MAP(SVToolAdjustmentDialogThresholdPageClass)
+		//{{AFX_DATA_MAP(SVTADlgThresholdPage)
 		DDX_Control(pDX, IDC_LOWER_EDIT, m_editLowerThres);
 		DDX_Control(pDX, IDC_UPPER_EDIT, m_editUpperThres);
 		DDX_Control(pDX, IDC_AUTOTHRESHOLD_EDIT, m_editAutoThreshold);
@@ -216,7 +216,7 @@ void SVToolAdjustmentDialogThresholdPageClass::DoDataExchange(CDataExchange* pDX
 	DDX_Control(pDX, IDC_HISTOGRAM, m_histogram);
 }
 
-void SVToolAdjustmentDialogThresholdPageClass::initThreshold()
+void SVTADlgThresholdPage::initThreshold()
 {
 	if( m_pCurrentThreshold )
 	{
@@ -255,14 +255,14 @@ void SVToolAdjustmentDialogThresholdPageClass::initThreshold()
 	}
 }
 
-BOOL SVToolAdjustmentDialogThresholdPageClass::OnSetActive()
+BOOL SVTADlgThresholdPage::OnSetActive()
 {
 	SetInspectionData();
 	setImages();
 	return CPropertyPage::OnSetActive();
 }
 
-BOOL SVToolAdjustmentDialogThresholdPageClass::OnInitDialog()
+BOOL SVTADlgThresholdPage::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 
@@ -385,7 +385,7 @@ BOOL SVToolAdjustmentDialogThresholdPageClass::OnInitDialog()
 	return TRUE;
 }
 
-void SVToolAdjustmentDialogThresholdPageClass::OnChangeUpperEdit()
+void SVTADlgThresholdPage::OnChangeUpperEdit()
 {
 	UpdateData(true); // get data of dialog
 	//
@@ -412,7 +412,7 @@ void SVToolAdjustmentDialogThresholdPageClass::OnChangeUpperEdit()
 	initThreshold();
 }
 
-void SVToolAdjustmentDialogThresholdPageClass::OnChangeLowerEdit()
+void SVTADlgThresholdPage::OnChangeLowerEdit()
 {
 	UpdateData(true); // get data of dialog
 	//
@@ -439,7 +439,7 @@ void SVToolAdjustmentDialogThresholdPageClass::OnChangeLowerEdit()
 	initThreshold();
 }
 
-void SVToolAdjustmentDialogThresholdPageClass::OnChangeAutothresholdEdit()
+void SVTADlgThresholdPage::OnChangeAutothresholdEdit()
 {
 	UpdateData(true); // get data of dialog
 
@@ -474,7 +474,7 @@ void SVToolAdjustmentDialogThresholdPageClass::OnChangeAutothresholdEdit()
 	initThreshold();
 }
 
-void SVToolAdjustmentDialogThresholdPageClass::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
+void SVTADlgThresholdPage::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
 	UpdateData(true); // get data of dialog
 
@@ -507,7 +507,7 @@ void SVToolAdjustmentDialogThresholdPageClass::OnHScroll(UINT nSBCode, UINT nPos
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : OnUpperActivateCheck
 ////////////////////////////////////////////////////////////////////////////////
-void SVToolAdjustmentDialogThresholdPageClass::OnUpperActivateCheck()
+void SVTADlgThresholdPage::OnUpperActivateCheck()
 {
 	// Activate or Deactivate upperThresholding
 	UpdateData(true); // get data of dialog
@@ -628,7 +628,7 @@ void SVToolAdjustmentDialogThresholdPageClass::OnUpperActivateCheck()
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : OnLowerActivateCheck
 ////////////////////////////////////////////////////////////////////////////////
-void SVToolAdjustmentDialogThresholdPageClass::OnLowerActivateCheck()
+void SVTADlgThresholdPage::OnLowerActivateCheck()
 {
 	// Activate or Deactivate lowerThresholding
 	UpdateData(true); // get data of dialog
@@ -753,7 +753,7 @@ void SVToolAdjustmentDialogThresholdPageClass::OnLowerActivateCheck()
 // .Title       : OnCheck1
 //	Activate or Deactivate Thresholding
 ////////////////////////////////////////////////////////////////////////////////
-void SVToolAdjustmentDialogThresholdPageClass::OnCheck1()
+void SVTADlgThresholdPage::OnCheck1()
 {
 	UpdateData( true ); // get data of dialog
 
@@ -899,26 +899,26 @@ void SVToolAdjustmentDialogThresholdPageClass::OnCheck1()
 	initThreshold();
 }
 
-void SVToolAdjustmentDialogThresholdPageClass::OnAutoThresholdCheck()
+void SVTADlgThresholdPage::OnAutoThresholdCheck()
 {
 	OnCheck1();
 }
 
-void SVToolAdjustmentDialogThresholdPageClass::OnWhiteBackgroundRadio()
+void SVTADlgThresholdPage::OnWhiteBackgroundRadio()
 {
 	UpdateData(true); // get data of dialog
 	CheckRadioButton(IDC_WHITE_BACKGROUND_RADIO, IDC_BLACK_BACKGROUND_RADIO, IDC_WHITE_BACKGROUND_RADIO);
 	initThreshold();
 }
 
-void SVToolAdjustmentDialogThresholdPageClass::OnBlackBackgroundRadio()
+void SVTADlgThresholdPage::OnBlackBackgroundRadio()
 {
 	UpdateData(true); // get data of dialog
 	CheckRadioButton(IDC_WHITE_BACKGROUND_RADIO, IDC_BLACK_BACKGROUND_RADIO, IDC_BLACK_BACKGROUND_RADIO);
 	initThreshold();
 }
 
-void SVToolAdjustmentDialogThresholdPageClass::OnUTFormulaButton()
+void SVTADlgThresholdPage::OnUTFormulaButton()
 {
 	UpdateData(true); // get data of dialog
 
@@ -943,7 +943,7 @@ void SVToolAdjustmentDialogThresholdPageClass::OnUTFormulaButton()
 	}
 }
 
-void SVToolAdjustmentDialogThresholdPageClass::UpdateLowerThresholdFromFormula()
+void SVTADlgThresholdPage::UpdateLowerThresholdFromFormula()
 {
 	SvDef::SVObjectTypeInfoStruct info;
 	info.m_ObjectType = SvPb::SVEquationObjectType;
@@ -956,7 +956,7 @@ void SVToolAdjustmentDialogThresholdPageClass::UpdateLowerThresholdFromFormula()
 	}
 }
 
-void SVToolAdjustmentDialogThresholdPageClass::UpdateUpperThresholdFromFoumula()
+void SVTADlgThresholdPage::UpdateUpperThresholdFromFoumula()
 {
 	SvDef::SVObjectTypeInfoStruct info;
 	info.m_ObjectType = SvPb::SVEquationObjectType;
@@ -969,7 +969,7 @@ void SVToolAdjustmentDialogThresholdPageClass::UpdateUpperThresholdFromFoumula()
 	}
 }
 
-void SVToolAdjustmentDialogThresholdPageClass::OnATMFormulaButton()
+void SVTADlgThresholdPage::OnATMFormulaButton()
 {
 	UpdateData(true); // get data of dialog
 
@@ -989,7 +989,7 @@ void SVToolAdjustmentDialogThresholdPageClass::OnATMFormulaButton()
 	}
 }
 
-void SVToolAdjustmentDialogThresholdPageClass::OnLTFormulaButton()
+void SVTADlgThresholdPage::OnLTFormulaButton()
 {
 	UpdateData(true); // get data of dialog
 
@@ -1013,25 +1013,25 @@ void SVToolAdjustmentDialogThresholdPageClass::OnLTFormulaButton()
 	}
 }
 
-void SVToolAdjustmentDialogThresholdPageClass::OnUseExternATMCheck()
+void SVTADlgThresholdPage::OnUseExternATMCheck()
 {
 	UpdateData(true); // get data of dialog
 	OnCheck1();	
 }
 
-void SVToolAdjustmentDialogThresholdPageClass::OnUseExternLTCheck()
+void SVTADlgThresholdPage::OnUseExternLTCheck()
 {
 	UpdateData(true); // get data of dialog
 	OnCheck1();	
 }
 
-void SVToolAdjustmentDialogThresholdPageClass::OnUseExternUTCheck()
+void SVTADlgThresholdPage::OnUseExternUTCheck()
 {
 	UpdateData(true); // get data of dialog
 	OnCheck1();
 }
 
-LRESULT SVToolAdjustmentDialogThresholdPageClass::OnBoundChange(WPARAM wParam, LPARAM lParam)
+LRESULT SVTADlgThresholdPage::OnBoundChange(WPARAM wParam, LPARAM lParam)
 {
 	switch (lParam)
 	{
@@ -1054,7 +1054,7 @@ LRESULT SVToolAdjustmentDialogThresholdPageClass::OnBoundChange(WPARAM wParam, L
 	return TRUE;
 }
 
-BOOL SVToolAdjustmentDialogThresholdPageClass::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
+BOOL SVTADlgThresholdPage::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 {
 	CRect rect;
 	m_histogram.GetWindowRect(&rect);
@@ -1069,7 +1069,7 @@ BOOL SVToolAdjustmentDialogThresholdPageClass::OnMouseWheel(UINT nFlags, short z
 	return true;
 }
 
-void SVToolAdjustmentDialogThresholdPageClass::setImages()
+void SVTADlgThresholdPage::setImages()
 {
 	IPictureDisp* pResultImage = m_ImageController.GetImage(m_resultImageID);
 	m_dialogImage.setImage(pResultImage);

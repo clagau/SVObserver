@@ -809,7 +809,7 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObject, CPoin
 				ptCurPos.x   = nIndentLevel * m_shortTabPixels;
 			}// end if ( SVArchiveTool* pArchiveTool = dynamic_cast <SVArchiveTool*> (pObj) )
 			
-			SvTo::SVStatisticsToolClass* pStatisticsTool = dynamic_cast<SvTo::SVStatisticsToolClass*> (pObject);
+			SvTo::SVStatTool* pStatisticsTool = dynamic_cast<SvTo::SVStatTool*> (pObject);
 			if( nullptr != pStatisticsTool )
 			{
 				SVObjectReference refObject = pStatisticsTool->GetVariableSelected();

@@ -2,7 +2,7 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVToolAdjustmentDialogPassFailPageClass
+//* .Module Name     : SVTADlgPassFailPage
 //* .File Name       : $Workfile:   SVTADlgPassFailPage.cpp  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.2  $
@@ -27,19 +27,19 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvOg
 {
-	BEGIN_MESSAGE_MAP(SVToolAdjustmentDialogPassFailPageClass, CPropertyPage)
-		//{{AFX_MSG_MAP(SVToolAdjustmentDialogPassFailPageClass)
-		ON_BN_CLICKED(IDC_BUTTON_FAILHIGH, &SVToolAdjustmentDialogPassFailPageClass::OnBnClickedFailHighIndirect)
-		ON_BN_CLICKED(IDC_BUTTON_WARNHIGH, &SVToolAdjustmentDialogPassFailPageClass::OnBnClickedWarnlHighIndirect)
-		ON_BN_CLICKED(IDC_BUTTON_WARNLOW, &SVToolAdjustmentDialogPassFailPageClass::OnBnClickedWarnLowIndirect)
-		ON_BN_CLICKED(IDC_BUTTON_FAILLOW, &SVToolAdjustmentDialogPassFailPageClass::OnBnClickedFailedLowIndirect)
+	BEGIN_MESSAGE_MAP(SVTADlgPassFailPage, CPropertyPage)
+		//{{AFX_MSG_MAP(SVTADlgPassFailPage)
+		ON_BN_CLICKED(IDC_BUTTON_FAILHIGH, &SVTADlgPassFailPage::OnBnClickedFailHighIndirect)
+		ON_BN_CLICKED(IDC_BUTTON_WARNHIGH, &SVTADlgPassFailPage::OnBnClickedWarnlHighIndirect)
+		ON_BN_CLICKED(IDC_BUTTON_WARNLOW, &SVTADlgPassFailPage::OnBnClickedWarnLowIndirect)
+		ON_BN_CLICKED(IDC_BUTTON_FAILLOW, &SVTADlgPassFailPage::OnBnClickedFailedLowIndirect)
 		//}}AFX_MSG_MAP
 	END_MESSAGE_MAP()
 	#pragma endregion Declarations
 
 	#pragma region Constructor
-	SVToolAdjustmentDialogPassFailPageClass::SVToolAdjustmentDialogPassFailPageClass(uint32_t inspectionID, uint32_t taskID, UINT captionID)
-	: CPropertyPage( SVToolAdjustmentDialogPassFailPageClass::IDD, captionID )
+	SVTADlgPassFailPage::SVTADlgPassFailPage(uint32_t inspectionID, uint32_t taskID, UINT captionID)
+	: CPropertyPage( SVTADlgPassFailPage::IDD, captionID )
 	, RangeController(inspectionID, taskID)
 	, m_objectSelector (inspectionID, taskID)
 	{
@@ -47,12 +47,12 @@ namespace SvOg
 	}
 	#pragma endregion Constructor
 
-	SVToolAdjustmentDialogPassFailPageClass::~SVToolAdjustmentDialogPassFailPageClass()
+	SVTADlgPassFailPage::~SVTADlgPassFailPage()
 	{
 	}
 
 	#pragma region Public Methods
-	bool SVToolAdjustmentDialogPassFailPageClass::QueryAllowExit()
+	bool SVTADlgPassFailPage::QueryAllowExit()
 	{
 		UpdateData(true);
 
@@ -60,7 +60,7 @@ namespace SvOg
 	}
 	#pragma endregion Public Methods
 
-	HRESULT SVToolAdjustmentDialogPassFailPageClass::SetInspectionData()
+	HRESULT SVTADlgPassFailPage::SetInspectionData()
 	{
 		UpdateData(true); // get data from dialog
 
@@ -79,11 +79,11 @@ namespace SvOg
 	}
 
 	#pragma region Protected Methods
-	void SVToolAdjustmentDialogPassFailPageClass::DoDataExchange(CDataExchange* pDX)
+	void SVTADlgPassFailPage::DoDataExchange(CDataExchange* pDX)
 	{
 		CPropertyPage::DoDataExchange(pDX);
 
-		//{{AFX_DATA_MAP(SVToolAdjustmentDialogPassFailPageClass)
+		//{{AFX_DATA_MAP(SVTADlgPassFailPage)
 		DDX_Text(pDX, IDC_EDIT_FAILHIGH, m_FailHigh);
 		DDX_Text(pDX, IDC_EDIT_WARNHIGH, m_WarnHigh);
 		DDX_Text(pDX, IDC_EDIT_WARNLOW, m_WarnLow);
@@ -95,7 +95,7 @@ namespace SvOg
 		//}}AFX_DATA_MAP
 	}
 
-	void SVToolAdjustmentDialogPassFailPageClass::InitData()
+	void SVTADlgPassFailPage::InitData()
 	{
 		try
 		{
@@ -112,7 +112,7 @@ namespace SvOg
 		}
 	}
 
-	BOOL SVToolAdjustmentDialogPassFailPageClass::OnInitDialog() 
+	BOOL SVTADlgPassFailPage::OnInitDialog() 
 	{
 		CPropertyPage::OnInitDialog();
 
@@ -133,13 +133,13 @@ namespace SvOg
 					  // EXCEPTION: OCX-Eigenschaftenseiten sollten FALSE zurückgeben
 	}
 
-	BOOL SVToolAdjustmentDialogPassFailPageClass::OnSetActive() 
+	BOOL SVTADlgPassFailPage::OnSetActive() 
 	{
 		InitData();
 		return CPropertyPage::OnSetActive();
 	}
 
-	BOOL SVToolAdjustmentDialogPassFailPageClass::OnKillActive() 
+	BOOL SVTADlgPassFailPage::OnKillActive() 
 	{
 		UpdateData(true);
 		bool bOk = UpdateRangeValues();
@@ -151,7 +151,7 @@ namespace SvOg
 		return bOk;
 	}
 
-	void SVToolAdjustmentDialogPassFailPageClass::OnBnClickedFailHighIndirect()
+	void SVTADlgPassFailPage::OnBnClickedFailHighIndirect()
 	{
 		UpdateData();
 		std::string Value( m_FailHigh );
@@ -162,7 +162,7 @@ namespace SvOg
 		}
 	}
 
-	void SVToolAdjustmentDialogPassFailPageClass::OnBnClickedWarnlHighIndirect()
+	void SVTADlgPassFailPage::OnBnClickedWarnlHighIndirect()
 	{
 		UpdateData();
 		std::string Value( m_WarnHigh );
@@ -173,7 +173,7 @@ namespace SvOg
 		}
 	}
 
-	void SVToolAdjustmentDialogPassFailPageClass::OnBnClickedWarnLowIndirect()
+	void SVTADlgPassFailPage::OnBnClickedWarnLowIndirect()
 	{
 		UpdateData();
 		std::string Value( m_WarnLow );
@@ -184,7 +184,7 @@ namespace SvOg
 		}
 	}
 
-	void SVToolAdjustmentDialogPassFailPageClass::OnBnClickedFailedLowIndirect()
+	void SVTADlgPassFailPage::OnBnClickedFailedLowIndirect()
 	{
 		UpdateData();
 		std::string Value( m_FailLow );
@@ -197,7 +197,7 @@ namespace SvOg
 	#pragma endregion Protected Methods
 
 	#pragma region Private Methods
-	bool SVToolAdjustmentDialogPassFailPageClass::UpdateRangeValues()
+	bool SVTADlgPassFailPage::UpdateRangeValues()
 	{
 		try
 		{
@@ -211,7 +211,7 @@ namespace SvOg
 		}
 	}
 
-	bool SVToolAdjustmentDialogPassFailPageClass::ShowObjectSelector(std::string& rName, RangeEnum::ERange fieldEnum)
+	bool SVTADlgPassFailPage::ShowObjectSelector(std::string& rName, RangeEnum::ERange fieldEnum)
 	{
 		std::string Title = GetOwnerName();
 		Title += _T(": ");

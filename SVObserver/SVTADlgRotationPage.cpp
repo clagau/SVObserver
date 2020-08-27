@@ -26,8 +26,8 @@ static char THIS_FILE[] = __FILE__;
 //* CLASS METHOD IMPLEMENTATION(S):
 //******************************************************************************
 
-BEGIN_MESSAGE_MAP(SVToolAdjustmentDialogRotationPageClass, CPropertyPage)
-	//{{AFX_MSG_MAP(SVToolAdjustmentDialogRotationPageClass)
+BEGIN_MESSAGE_MAP(SVTADlgRotationPage, CPropertyPage)
+	//{{AFX_MSG_MAP(SVTADlgRotationPage)
 	ON_BN_CLICKED(IDC_ROTATION_ANGLE_FORMULA_BUTTON, OnAngleFormulaButton)
 	ON_BN_CLICKED(IDC_ROTATION_X_FORMULA_BUTTON, OnXFormulaButton)
 	ON_BN_CLICKED(IDC_ROTATION_Y_FORMULA_BUTTON, OnYFormulaButton)
@@ -37,8 +37,8 @@ BEGIN_MESSAGE_MAP(SVToolAdjustmentDialogRotationPageClass, CPropertyPage)
 END_MESSAGE_MAP()
 
 #pragma region Constructor
-SVToolAdjustmentDialogRotationPageClass::SVToolAdjustmentDialogRotationPageClass( uint32_t inspectionId, uint32_t taskObjectId)
-: CPropertyPage(SVToolAdjustmentDialogRotationPageClass::IDD)
+SVTADlgRotationPage::SVTADlgRotationPage( uint32_t inspectionId, uint32_t taskObjectId)
+: CPropertyPage(SVTADlgRotationPage::IDD)
 , m_InspectionID{ inspectionId }
 , m_TaskObjectID{ taskObjectId }
 //TaskID is set later
@@ -47,16 +47,16 @@ SVToolAdjustmentDialogRotationPageClass::SVToolAdjustmentDialogRotationPageClass
 }
 #pragma endregion
 
-SVToolAdjustmentDialogRotationPageClass::~SVToolAdjustmentDialogRotationPageClass()
+SVTADlgRotationPage::~SVTADlgRotationPage()
 {
 }
 
 #pragma region Protected Methods
 #pragma region MFC Methods
-void SVToolAdjustmentDialogRotationPageClass::DoDataExchange(CDataExchange* pDX)
+void SVTADlgRotationPage::DoDataExchange(CDataExchange* pDX)
 {
 	CPropertyPage::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(SVToolAdjustmentDialogRotationPageClass)
+	//{{AFX_DATA_MAP(SVTADlgRotationPage)
 	DDX_Control(pDX, IDC_INTERPOLATION_MODE_COMBO, m_cbInterpolation);
 	DDX_Text(pDX, IDC_ROTATION_ANGLE_EDIT, m_RotationAngleValue);
 	DDX_Text(pDX, IDC_ROTATION_X_EDIT, m_RotationXValue);
@@ -65,7 +65,7 @@ void SVToolAdjustmentDialogRotationPageClass::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-BOOL SVToolAdjustmentDialogRotationPageClass::OnSetActive()
+BOOL SVTADlgRotationPage::OnSetActive()
 {
 	long CurrentSelection = m_Values.Get<long>(SvPb::OutputInterpolationModeEId);
 	m_cbInterpolation.SetCurSelItemData(CurrentSelection);
@@ -74,8 +74,8 @@ BOOL SVToolAdjustmentDialogRotationPageClass::OnSetActive()
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// SVToolAdjustmentDialogRotationPageClass message handlers
-BOOL SVToolAdjustmentDialogRotationPageClass::OnInitDialog() 
+// SVTADlgRotationPage message handlers
+BOOL SVTADlgRotationPage::OnInitDialog() 
 {
 	CPropertyPage::OnInitDialog();
 
@@ -137,7 +137,7 @@ BOOL SVToolAdjustmentDialogRotationPageClass::OnInitDialog()
 	              // EXCEPTION: OCX-Eigenschaftenseiten sollten FALSE zurückgeben
 }
 
-void SVToolAdjustmentDialogRotationPageClass::OnAngleFormulaButton() 
+void SVTADlgRotationPage::OnAngleFormulaButton() 
 {
 	if(nullptr != m_pEvaluateRotationAngle)
 	{
@@ -152,7 +152,7 @@ void SVToolAdjustmentDialogRotationPageClass::OnAngleFormulaButton()
 	}
 }
 
-void SVToolAdjustmentDialogRotationPageClass::OnXFormulaButton() 
+void SVTADlgRotationPage::OnXFormulaButton() 
 {
 	if(nullptr !=  m_pEvaluateRotationX)
 	{
@@ -167,7 +167,7 @@ void SVToolAdjustmentDialogRotationPageClass::OnXFormulaButton()
 	}
 }
 
-void SVToolAdjustmentDialogRotationPageClass::OnYFormulaButton() 
+void SVTADlgRotationPage::OnYFormulaButton() 
 {
 	if(nullptr != m_pEvaluateRotationY)
 	{
@@ -182,18 +182,18 @@ void SVToolAdjustmentDialogRotationPageClass::OnYFormulaButton()
 	}
 }
 
-void SVToolAdjustmentDialogRotationPageClass::OnPerformRotation() 
+void SVTADlgRotationPage::OnPerformRotation() 
 {
 	refresh();
 }
 
-void SVToolAdjustmentDialogRotationPageClass::OnSelChangeInterpolationModeCombo() 
+void SVTADlgRotationPage::OnSelChangeInterpolationModeCombo() 
 {
 	SetInspectionData();
 }
 #pragma endregion MFC Methods
 
-void SVToolAdjustmentDialogRotationPageClass::SetInspectionData()
+void SVTADlgRotationPage::SetInspectionData()
 {
 	UpdateData(true); // get data from dialog
 
@@ -209,7 +209,7 @@ void SVToolAdjustmentDialogRotationPageClass::SetInspectionData()
 	m_Values.Commit();
 }
 
-void SVToolAdjustmentDialogRotationPageClass::refresh()
+void SVTADlgRotationPage::refresh()
 {
 	SetInspectionData();
 

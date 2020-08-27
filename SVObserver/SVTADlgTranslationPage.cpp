@@ -22,8 +22,8 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-BEGIN_MESSAGE_MAP(SVToolAdjustmentDialogTranslationPageClass, CPropertyPage)
-	//{{AFX_MSG_MAP(SVToolAdjustmentDialogTranslationPageClass)
+BEGIN_MESSAGE_MAP(SVTADlgTranslationPage, CPropertyPage)
+	//{{AFX_MSG_MAP(SVTADlgTranslationPage)
 	ON_BN_CLICKED(IDC_TRANSLATION_X_FORMULA_BUTTON, OnXFormulaButton)
 	ON_BN_CLICKED(IDC_TRANSLATION_Y_FORMULA_BUTTON, OnYFormulaButton)
 	ON_BN_CLICKED(IDC_PERFORM_TRANSLATION, OnPerformTranslation)
@@ -32,8 +32,8 @@ BEGIN_MESSAGE_MAP(SVToolAdjustmentDialogTranslationPageClass, CPropertyPage)
 END_MESSAGE_MAP()
 
 #pragma region Constructor
-SVToolAdjustmentDialogTranslationPageClass::SVToolAdjustmentDialogTranslationPageClass(uint32_t inspectionId, uint32_t taskObjectId)
-: CPropertyPage(SVToolAdjustmentDialogTranslationPageClass::IDD)
+SVTADlgTranslationPage::SVTADlgTranslationPage(uint32_t inspectionId, uint32_t taskObjectId)
+: CPropertyPage(SVTADlgTranslationPage::IDD)
 , m_InspectionID{ inspectionId }
 , m_TaskObjectID{ taskObjectId }
 //TaskID is set later
@@ -42,15 +42,15 @@ SVToolAdjustmentDialogTranslationPageClass::SVToolAdjustmentDialogTranslationPag
 }
 #pragma endregion
 
-SVToolAdjustmentDialogTranslationPageClass::~SVToolAdjustmentDialogTranslationPageClass()
+SVTADlgTranslationPage::~SVTADlgTranslationPage()
 {
 }
 
 #pragma region Protected Methods
 #pragma region MFC Methods
 /////////////////////////////////////////////////////////////////////////////
-// SVToolAdjustmentDialogTranslationPageClass message handlers
-BOOL SVToolAdjustmentDialogTranslationPageClass::OnInitDialog() 
+// SVTADlgTranslationPage message handlers
+BOOL SVTADlgTranslationPage::OnInitDialog() 
 {
 	CPropertyPage::OnInitDialog();
 
@@ -99,10 +99,10 @@ BOOL SVToolAdjustmentDialogTranslationPageClass::OnInitDialog()
 	// EXCEPTION: OCX-Eigenschaftenseiten sollten FALSE zurückgeben
 }
 
-void SVToolAdjustmentDialogTranslationPageClass::DoDataExchange(CDataExchange* pDX)
+void SVTADlgTranslationPage::DoDataExchange(CDataExchange* pDX)
 {
 	CPropertyPage::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(SVToolAdjustmentDialogTranslationPageClass)
+	//{{AFX_DATA_MAP(SVTADlgTranslationPage)
 	DDX_Control(pDX, IDC_INTERPOLATION_MODE_COMBO, m_cbInterpolation);
 	DDX_Text(pDX, IDC_TRANSLATION_X_EDIT, m_TranslationXValue);
 	DDX_Text(pDX, IDC_TRANSLATION_Y_EDIT, m_TranslationYValue);
@@ -110,7 +110,7 @@ void SVToolAdjustmentDialogTranslationPageClass::DoDataExchange(CDataExchange* p
 	//}}AFX_DATA_MAP
 }
 
-BOOL SVToolAdjustmentDialogTranslationPageClass::OnSetActive()
+BOOL SVTADlgTranslationPage::OnSetActive()
 {
 	long CurrentSelection = m_Values.Get<long>(SvPb::OutputInterpolationModeEId);
 	m_cbInterpolation.SetCurSelItemData(CurrentSelection);
@@ -118,7 +118,7 @@ BOOL SVToolAdjustmentDialogTranslationPageClass::OnSetActive()
 	return CPropertyPage::OnSetActive();
 }
 
-void SVToolAdjustmentDialogTranslationPageClass::OnXFormulaButton() 
+void SVTADlgTranslationPage::OnXFormulaButton() 
 {
 	if (nullptr != m_pEvaluateTranslationX)
 	{
@@ -133,7 +133,7 @@ void SVToolAdjustmentDialogTranslationPageClass::OnXFormulaButton()
 	}
 }
 
-void SVToolAdjustmentDialogTranslationPageClass::OnYFormulaButton() 
+void SVTADlgTranslationPage::OnYFormulaButton() 
 {
 	if (nullptr != m_pEvaluateTranslationY)
 	{
@@ -148,18 +148,18 @@ void SVToolAdjustmentDialogTranslationPageClass::OnYFormulaButton()
 	}
 }
 
-void SVToolAdjustmentDialogTranslationPageClass::OnPerformTranslation() 
+void SVTADlgTranslationPage::OnPerformTranslation() 
 {
 	refresh();
 }
 
-void SVToolAdjustmentDialogTranslationPageClass::OnSelChangeInterpolationModeCombo() 
+void SVTADlgTranslationPage::OnSelChangeInterpolationModeCombo() 
 {
 	SetInspectionData();
 }
 #pragma endregion MFC Methods
 
-void SVToolAdjustmentDialogTranslationPageClass::SetInspectionData()
+void SVTADlgTranslationPage::SetInspectionData()
 {
 	UpdateData( true ); // get data from dialog
 
@@ -174,7 +174,7 @@ void SVToolAdjustmentDialogTranslationPageClass::SetInspectionData()
 	 m_Values.Commit();
 }
 
-void SVToolAdjustmentDialogTranslationPageClass::refresh()
+void SVTADlgTranslationPage::refresh()
 {
 	SetInspectionData();
 	

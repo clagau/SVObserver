@@ -21,23 +21,23 @@
 
 namespace SvOg
 {
-	class SVToolAdjustmentDialogFileImageSourcePageClass : public CPropertyPage
+	class SVTADlgFileImageSourcePage : public CPropertyPage
 	{
 	#pragma region Constructor
 	public:
-		SVToolAdjustmentDialogFileImageSourcePageClass(uint32_t inspectionId, uint32_t taskObjectId);
-		virtual ~SVToolAdjustmentDialogFileImageSourcePageClass();
+		SVTADlgFileImageSourcePage(uint32_t inspectionId, uint32_t taskObjectId);
+		virtual ~SVTADlgFileImageSourcePage();
 	#pragma endregion Constructor
 
 	#pragma region Protected Methods
 	protected:
-		//{{AFX_MSG(SVToolAdjustmentDialogFileImageSourcePageClass)
+		//{{AFX_MSG(SVTADlgFileImageSourcePage)
 		afx_msg void OnBrowseButton();
 		afx_msg void OnReloadCheck();
 		//}}AFX_MSG
 		DECLARE_MESSAGE_MAP()
 
-		//{{AFX_VIRTUAL(SVToolAdjustmentDialogFileImageSourcePageClass)
+		//{{AFX_VIRTUAL(SVTADlgFileImageSourcePage)
 		protected:
 		virtual BOOL OnInitDialog() override;
 		virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV-Unterstützung
@@ -56,7 +56,7 @@ namespace SvOg
 		SVFileNameClass m_svfncImageSourceFile;
 		SvOg::ImageController m_ImageController;
 		ValueController m_values;
-		//{{AFX_DATA(SVToolAdjustmentDialogFileImageSourcePageClass)
+		//{{AFX_DATA(SVTADlgFileImageSourcePage)
 		enum { IDD = IDD_TA_FILE_IMAGE_DIALOG };
 		SvOg::PictureDisplay m_imageCtrl;
 		CString	m_PathName;

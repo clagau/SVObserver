@@ -19,12 +19,12 @@
 
 namespace SvOg
 {
-	class SVBlobAnalyzeFeatureDialogClass : public CDialog
+	class SVBlobAnalyzerDialog : public CDialog
 	{
 	public:
 	protected:
 	// Generated message map functions
-		//{{AFX_MSG(SVBlobAnalyzeFeatureDialogClass)
+		//{{AFX_MSG(SVBlobAnalyzerDialog)
 		virtual BOOL OnInitDialog() override;
 		afx_msg void OnButtonAdd();
 		afx_msg void OnButtonRemove();
@@ -49,8 +49,8 @@ namespace SvOg
 		DECLARE_MESSAGE_MAP()
 
 	public:
-		SVBlobAnalyzeFeatureDialogClass(uint32_t inspectionID, uint32_t taskObjectID, CWnd* pParent = nullptr);
-		virtual ~SVBlobAnalyzeFeatureDialogClass();
+		SVBlobAnalyzerDialog(uint32_t inspectionID, uint32_t taskObjectID, CWnd* pParent = nullptr);
+		virtual ~SVBlobAnalyzerDialog();
 
 	private:
 		HRESULT SetInspectionData();

@@ -2,7 +2,7 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVToolAdjustmentDialogPassFailPageClass
+//* .Module Name     : SVTADlgPassFailPage
 //* .File Name       : $Workfile:   SVTADlgPassFailPage.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $
@@ -20,13 +20,13 @@
 
 namespace SvOg
 {
-	class SVToolAdjustmentDialogPassFailPageClass : public CPropertyPage, public SvOg::ISVPropertyPageDialog, public SvOg::RangeController
+	class SVTADlgPassFailPage : public CPropertyPage, public SvOg::ISVPropertyPageDialog, public SvOg::RangeController
 	{
 	public:
 #pragma region Constructor
-		SVToolAdjustmentDialogPassFailPageClass(uint32_t inspectionID, uint32_t taskID, UINT captionID = 0);
-		SVToolAdjustmentDialogPassFailPageClass();
-		virtual ~SVToolAdjustmentDialogPassFailPageClass();
+		SVTADlgPassFailPage(uint32_t inspectionID, uint32_t taskID, UINT captionID = 0);
+		SVTADlgPassFailPage();
+		virtual ~SVTADlgPassFailPage();
 #pragma endregion Constructor
 
 #pragma region Public Methods
@@ -37,7 +37,7 @@ namespace SvOg
 	protected:
 		DECLARE_MESSAGE_MAP()
 
-		//{{AFX_VIRTUAL(SVToolAdjustmentDialogPassFailPageClass)
+		//{{AFX_VIRTUAL(SVTADlgPassFailPage)
 	protected:
 		virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV-Unterstützung
 		virtual BOOL OnInitDialog() override;
@@ -45,7 +45,7 @@ namespace SvOg
 		virtual BOOL OnKillActive() override;
 		//}}AFX_VIRTUAL
 
-		//{{AFX_MSG(SVToolAdjustmentDialogPassFailPageClass)
+		//{{AFX_MSG(SVTADlgPassFailPage)
 		afx_msg void OnBnClickedFailHighIndirect();
 		afx_msg void OnBnClickedWarnlHighIndirect();
 		afx_msg void OnBnClickedWarnLowIndirect();
@@ -65,7 +65,7 @@ namespace SvOg
 
 #pragma region Member Variables
 	protected:
-		//{{AFX_DATA(SVToolAdjustmentDialogPassFailPageClass)
+		//{{AFX_DATA(SVTADlgPassFailPage)
 		enum { IDD = IDD_TA_PASS_FAIL_DIALOG };
 		CButton m_ButtonFailHigh;
 		CButton m_ButtonWarnHigh;

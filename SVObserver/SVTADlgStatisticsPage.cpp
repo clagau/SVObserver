@@ -2,7 +2,7 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVToolAdjustmentDialogStatisticsPageClass
+//* .Module Name     : SVTADlgStatisticsPage
 //* .File Name       : $Workfile:   SVTADlgStatisticsPage.cpp  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.5  $
@@ -35,8 +35,8 @@
 #endif
 #pragma endregion Declarations
 
-BEGIN_MESSAGE_MAP(SVToolAdjustmentDialogStatisticsPageClass, CPropertyPage)
-	//{{AFX_MSG_MAP(SVToolAdjustmentDialogStatisticsPageClass)
+BEGIN_MESSAGE_MAP(SVTADlgStatisticsPage, CPropertyPage)
+	//{{AFX_MSG_MAP(SVTADlgStatisticsPage)
 	ON_BN_CLICKED(IDC_ADD_BUTTON, OnButtonAdd)
 	ON_BN_CLICKED(IDC_REMOVE_BUTTON, OnButtonRemove)
 	ON_BN_CLICKED(IDC_SET_RANGE, OnSetRange)
@@ -46,11 +46,11 @@ BEGIN_MESSAGE_MAP(SVToolAdjustmentDialogStatisticsPageClass, CPropertyPage)
 END_MESSAGE_MAP()
 
 
-void SVToolAdjustmentDialogStatisticsPageClass::DoDataExchange(CDataExchange* pDX)
+void SVTADlgStatisticsPage::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 
-	//{{AFX_DATA_MAP(SVToolAdjustmentDialogStatisticsPageClass)
+	//{{AFX_DATA_MAP(SVTADlgStatisticsPage)
 	DDX_Control(pDX, IDC_CHILDREN_LIST, m_lbSelectedList);
 	DDX_Control(pDX, IDC_AVAILABLE_CHILDREN_LIST, m_lbAvailableList);
 	DDX_Text(pDX, IDC_OCCURANCE_TO_TRACK_EDT, m_strTestValue);
@@ -58,24 +58,24 @@ void SVToolAdjustmentDialogStatisticsPageClass::DoDataExchange(CDataExchange* pD
 	//}}AFX_DATA_MAP
 }
 
-SVToolAdjustmentDialogStatisticsPageClass::SVToolAdjustmentDialogStatisticsPageClass(uint32_t, uint32_t taskObjectId, SVToolAdjustmentDialogSheetClass* pParent) 
-: CPropertyPage( SVToolAdjustmentDialogStatisticsPageClass::IDD )
+SVTADlgStatisticsPage::SVTADlgStatisticsPage(uint32_t, uint32_t taskObjectId, SVToolAdjustmentDialogSheetClass* pParent) 
+: CPropertyPage( SVTADlgStatisticsPage::IDD )
 , m_pParent(pParent)
 , m_pTool(nullptr)
 {
-	//{{AFX_DATA_INIT(SVToolAdjustmentDialogStatisticsPageClass)
+	//{{AFX_DATA_INIT(SVTADlgStatisticsPage)
 	m_strTestValue = _T( "" );
 	m_strVariableToMonitor = _T("");
 	//}}AFX_DATA_INIT
 
-	 m_pTool = dynamic_cast <SvTo::SVStatisticsToolClass*> (SvOi::getObject(taskObjectId));
+	 m_pTool = dynamic_cast <SvTo::SVStatTool*> (SvOi::getObject(taskObjectId));
 }
 
-SVToolAdjustmentDialogStatisticsPageClass::~SVToolAdjustmentDialogStatisticsPageClass()
+SVTADlgStatisticsPage::~SVTADlgStatisticsPage()
 {
 }
 
-BOOL SVToolAdjustmentDialogStatisticsPageClass::OnInitDialog() 
+BOOL SVTADlgStatisticsPage::OnInitDialog() 
 {
 	CPropertyPage::OnInitDialog();
 
@@ -96,7 +96,7 @@ BOOL SVToolAdjustmentDialogStatisticsPageClass::OnInitDialog()
 
 /////////////////////////////////////////////////////////////////////////////
 //
-void SVToolAdjustmentDialogStatisticsPageClass::OnButtonAdd() 
+void SVTADlgStatisticsPage::OnButtonAdd() 
 {
 	DWORD_PTR lAvailableIndex = m_lbAvailableList.GetItemData( m_lbAvailableList.GetCurSel() );
 
@@ -124,7 +124,7 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnButtonAdd()
 
 /////////////////////////////////////////////////////////////////////////////
 //
-void SVToolAdjustmentDialogStatisticsPageClass::OnButtonRemove() 
+void SVTADlgStatisticsPage::OnButtonRemove() 
 {
 
 	int index = ( int ) m_lbSelectedList.GetItemData( m_lbSelectedList.GetCurSel() );
@@ -145,7 +145,7 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnButtonRemove()
 
 /////////////////////////////////////////////////////////////////////////////
 //
-void SVToolAdjustmentDialogStatisticsPageClass::initListBox(CListBox* pListBox, TCHAR atcTestChar)
+void SVTADlgStatisticsPage::initListBox(CListBox* pListBox, TCHAR atcTestChar)
 {
 	std::string FeatureString;
 	FeatureString = m_pTool->GetFeatureString();
@@ -176,7 +176,7 @@ void SVToolAdjustmentDialogStatisticsPageClass::initListBox(CListBox* pListBox, 
 
 /////////////////////////////////////////////////////////////////////////////
 //
-void SVToolAdjustmentDialogStatisticsPageClass::getParameters()
+void SVTADlgStatisticsPage::getParameters()
 {
 	// Get Occurence Value
 	if( nullptr != m_pTool )
@@ -193,7 +193,7 @@ void SVToolAdjustmentDialogStatisticsPageClass::getParameters()
 
 /////////////////////////////////////////////////////////////////////////////
 //
-void SVToolAdjustmentDialogStatisticsPageClass::UpdateStatisticsParameters()
+void SVTADlgStatisticsPage::UpdateStatisticsParameters()
 {
 	if( m_pTool )
 	{
@@ -207,19 +207,19 @@ void SVToolAdjustmentDialogStatisticsPageClass::UpdateStatisticsParameters()
 
 /////////////////////////////////////////////////////////////////////////////
 //
-void SVToolAdjustmentDialogStatisticsPageClass::OnOK()
+void SVTADlgStatisticsPage::OnOK()
 {
 	UpdateData(TRUE);
 
 	UpdateStatisticsParameters();
 }
 
-BOOL SVToolAdjustmentDialogStatisticsPageClass::OnSetActive() 
+BOOL SVTADlgStatisticsPage::OnSetActive() 
 {
 	return CPropertyPage::OnSetActive();
 }
 
-BOOL SVToolAdjustmentDialogStatisticsPageClass::OnKillActive() 
+BOOL SVTADlgStatisticsPage::OnKillActive() 
 {
 	UpdateData(TRUE);
 
@@ -230,7 +230,7 @@ BOOL SVToolAdjustmentDialogStatisticsPageClass::OnKillActive()
 
 /////////////////////////////////////////////////////////////////////////////
 //
-void SVToolAdjustmentDialogStatisticsPageClass::OnSetRange() 
+void SVTADlgStatisticsPage::OnSetRange() 
 {
 	// Get Selected feature
 	int item = m_lbSelectedList.GetCurSel();
@@ -254,7 +254,7 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnSetRange()
 
 /////////////////////////////////////////////////////////////////////////////
 //
-void SVToolAdjustmentDialogStatisticsPageClass::OnPublishButton()
+void SVTADlgStatisticsPage::OnPublishButton()
 {
 	if( nullptr == m_pTool ) { return; }
 
@@ -303,7 +303,7 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnPublishButton()
 	}
 }
 
-void SVToolAdjustmentDialogStatisticsPageClass::OnBtnObjectPicker()
+void SVTADlgStatisticsPage::OnBtnObjectPicker()
 {
 	if( nullptr == m_pTool) { return; }
 

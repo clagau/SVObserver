@@ -27,8 +27,8 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-SVExternalToolResultPage::SVExternalToolResultPage(LPCTSTR Title, uint32_t inspectionId, uint32_t taskObjectId, int )
-	: CPropertyPage(SVExternalToolResultPage::IDD)
+SVTADlgExternalResultPage::SVTADlgExternalResultPage(LPCTSTR Title, uint32_t inspectionId, uint32_t taskObjectId, int )
+	: CPropertyPage(SVTADlgExternalResultPage::IDD)
 	, m_InspectionID(inspectionId)
 	, m_TaskObjectID(taskObjectId)
 {
@@ -38,35 +38,35 @@ SVExternalToolResultPage::SVExternalToolResultPage(LPCTSTR Title, uint32_t inspe
 	m_psp.pszTitle = m_sTitle.c_str();
 	m_psp.dwFlags |= PSP_USETITLE;
 
-	//{{AFX_DATA_INIT(SVExternalToolResultPage)
+	//{{AFX_DATA_INIT(SVTADlgExternalResultPage)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 }
 
-SVExternalToolResultPage::~SVExternalToolResultPage()
+SVTADlgExternalResultPage::~SVTADlgExternalResultPage()
 {
 }
 
-void SVExternalToolResultPage::DoDataExchange(CDataExchange* pDX)
+void SVTADlgExternalResultPage::DoDataExchange(CDataExchange* pDX)
 {
 	CPropertyPage::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(SVExternalToolResultPage)
+	//{{AFX_DATA_MAP(SVTADlgExternalResultPage)
 		// NOTE: the ClassWizard will add DDX and DDV calls here
 	//}}AFX_DATA_MAP
 }
 
 
-BEGIN_MESSAGE_MAP(SVExternalToolResultPage, CPropertyPage)
-	//{{AFX_MSG_MAP(SVExternalToolResultPage)
+BEGIN_MESSAGE_MAP(SVTADlgExternalResultPage, CPropertyPage)
+	//{{AFX_MSG_MAP(SVTADlgExternalResultPage)
 	//}}AFX_MSG_MAP
 	ON_NOTIFY(PTN_QUERY_SHOW_BUTTON, IDC_RESULT_LIST, OnItemQueryShowButton)
 	ON_NOTIFY(PTN_ITEMBUTTONCLICK, IDC_RESULT_LIST, OnItemButtonClick)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
-// SVExternalToolResultPage message handlers
+// SVTADlgExternalResultPage message handlers
 
-BOOL SVExternalToolResultPage::OnInitDialog()
+BOOL SVTADlgExternalResultPage::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 
@@ -259,7 +259,7 @@ BOOL SVExternalToolResultPage::OnInitDialog()
 }
 
 
-void SVExternalToolResultPage::OnItemQueryShowButton(NMHDR* pNotifyStruct, LRESULT* plResult)
+void SVTADlgExternalResultPage::OnItemQueryShowButton(NMHDR* pNotifyStruct, LRESULT* plResult)
 {
 	LPNMPROPTREE pNMPropTree = (LPNMPROPTREE)pNotifyStruct;
 
@@ -282,7 +282,7 @@ void SVExternalToolResultPage::OnItemQueryShowButton(NMHDR* pNotifyStruct, LRESU
 	}
 }
 
-void SVExternalToolResultPage::OnItemButtonClick(NMHDR* pNotifyStruct, LRESULT* plResult)
+void SVTADlgExternalResultPage::OnItemButtonClick(NMHDR* pNotifyStruct, LRESULT* plResult)
 {
 	*plResult = TRUE;
 
@@ -304,7 +304,7 @@ void SVExternalToolResultPage::OnItemButtonClick(NMHDR* pNotifyStruct, LRESULT* 
 
 
 // display VO picker dialog and return selection
-int SVExternalToolResultPage::SelectObject(int iIndex)
+int SVTADlgExternalResultPage::SelectObject(int iIndex)
 {
 
 	SvOp::SVVariantResultClass* pResult = dynamic_cast<SvOp::SVVariantResultClass*> (m_pTask->GetResultRangeObject(iIndex));
@@ -317,7 +317,7 @@ int SVExternalToolResultPage::SelectObject(int iIndex)
 	return 0;
 }
 
-void SVExternalToolResultPage::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
+void SVTADlgExternalResultPage::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 {
 	LPNMPROPTREE pNMPropTree = (LPNMPROPTREE)pNotifyStruct;
 	*plResult = S_OK;
@@ -335,12 +335,12 @@ void SVExternalToolResultPage::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plRe
 
 // Loops through Tree Items to fill existing SVResultObjectInfo array (if input is another VO) and/or SVValueObjects with 
 // constant values (if input is not another VO)
-void SVExternalToolResultPage::OnOK()
+void SVTADlgExternalResultPage::OnOK()
 {
 		CPropertyPage::OnOK();
 }
 
-int SVExternalToolResultPage::GetItemIndex(SVRPropertyItem* pItem)
+int SVTADlgExternalResultPage::GetItemIndex(SVRPropertyItem* pItem)
 {
 	assert(pItem);
 	return pItem->GetCtrlID() - ID_BASE;

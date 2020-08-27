@@ -31,12 +31,12 @@ class SVDoubleValueObjectClass;
 
 class SVToolAdjustmentDialogSheetClass;
 
-class SVToolAdjustmentDialogTransformationLearnPageClass : public CPropertyPage
+class SVTADlgTransformationLearnPage : public CPropertyPage
 {
 // Construction
 public:
-	SVToolAdjustmentDialogTransformationLearnPageClass( uint32_t inspectionId, uint32_t taskObjectId, SVToolAdjustmentDialogSheetClass* Parent );
-	virtual ~SVToolAdjustmentDialogTransformationLearnPageClass();
+	SVTADlgTransformationLearnPage( uint32_t inspectionId, uint32_t taskObjectId, SVToolAdjustmentDialogSheetClass* Parent );
+	virtual ~SVTADlgTransformationLearnPage();
 	HRESULT SetInspectionData();
 
 //******************************************************************************
@@ -44,7 +44,7 @@ public:
 //******************************************************************************
 public:
 	// ClassWizard generate virtual function overrides
-	//{{AFX_VIRTUAL(SVToolAdjustmentDialogTransformationLearnPageClass)
+	//{{AFX_VIRTUAL(SVTADlgTransformationLearnPage)
 	public:
 	virtual BOOL OnSetActive() override;
 	protected:
@@ -57,7 +57,7 @@ protected:
 	void refreshLearnedValues();
 
 	// Generated message map functions
-	//{{AFX_MSG(SVToolAdjustmentDialogTransformationLearnPageClass)
+	//{{AFX_MSG(SVTADlgTransformationLearnPage)
 	virtual BOOL OnInitDialog() override;
 	afx_msg void OnLearnButton();
 	//}}AFX_MSG
@@ -67,7 +67,7 @@ protected:
 // Data Element(s):
 //******************************************************************************
 public:
-	//{{AFX_DATA(SVToolAdjustmentDialogTransformationLearnPageClass)
+	//{{AFX_DATA(SVTADlgTransformationLearnPage)
 	enum { IDD = IDD_TA_TRANSFORMATION_LEARN_DIALOG };
 	CString	m_TranslationXValue;
 	CString	m_TranslationYValue;
@@ -115,11 +115,11 @@ protected:
 	CFont angleFont;
 
 private:
-	double m_translationXValue;
-	double m_translationYValue;
-	double m_rotationXValue;
-	double m_rotationYValue;
-	double m_rotationAngleValue;
+	double m_translationXValue = 0.0;
+	double m_translationYValue = 0.0;
+	double m_rotationXValue = 0.0;
+	double m_rotationYValue = 0.0;
+	double m_rotationAngleValue = 0.0;
 };
 
 //{{AFX_INSERT_LOCATION}}

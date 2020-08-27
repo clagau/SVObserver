@@ -23,20 +23,20 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvOg
 {
-	SVToolAdjustmentDialogFileImageSourcePageClass::SVToolAdjustmentDialogFileImageSourcePageClass(uint32_t inspectionId, uint32_t taskObjectId)
-		: CPropertyPage(SVToolAdjustmentDialogFileImageSourcePageClass::IDD)
+	SVTADlgFileImageSourcePage::SVTADlgFileImageSourcePage(uint32_t inspectionId, uint32_t taskObjectId)
+		: CPropertyPage(SVTADlgFileImageSourcePage::IDD)
 		, m_ImageController(inspectionId, taskObjectId)
 		, m_values{ SvOg::BoundValues{ inspectionId, taskObjectId } }
 	{
-		//{{AFX_DATA_INIT(SVToolAdjustmentDialogFileImageSourcePageClass)
+		//{{AFX_DATA_INIT(SVTADlgFileImageSourcePage)
 		//}}AFX_DATA_INIT
 	}
 
-	SVToolAdjustmentDialogFileImageSourcePageClass::~SVToolAdjustmentDialogFileImageSourcePageClass()
+	SVTADlgFileImageSourcePage::~SVTADlgFileImageSourcePage()
 	{
 	}
 
-	HRESULT SVToolAdjustmentDialogFileImageSourcePageClass::SetInspectionData()
+	HRESULT SVTADlgFileImageSourcePage::SetInspectionData()
 	{
 		HRESULT hr = S_OK;
 
@@ -47,20 +47,20 @@ namespace SvOg
 		return hr;
 	}
 
-	void SVToolAdjustmentDialogFileImageSourcePageClass::refresh()
+	void SVTADlgFileImageSourcePage::refresh()
 	{
 		SetInspectionData();
 		setImages();
 	}
 
-	void SVToolAdjustmentDialogFileImageSourcePageClass::GetData()
+	void SVTADlgFileImageSourcePage::GetData()
 	{
 		m_PathName = m_values.Get<CString>(SvPb::PathNameEId);
 		m_BContinuousReload = m_values.Get<bool>(SvPb::ContinuousReloadEId);
 		UpdateData(false); // Set data to dialog
 	}
 
-	void SVToolAdjustmentDialogFileImageSourcePageClass::SetData()
+	void SVTADlgFileImageSourcePage::SetData()
 	{
 		UpdateData(true); // get data from dialog
 		// We want to Show C:\RUN instead of C:\Images or whatever directory was used to select the image
@@ -73,10 +73,10 @@ namespace SvOg
 		m_values.Set<bool>(SvPb::ContinuousReloadEId, m_BContinuousReload  ? true : false);
 	}
 
-	void SVToolAdjustmentDialogFileImageSourcePageClass::DoDataExchange(CDataExchange* pDX)
+	void SVTADlgFileImageSourcePage::DoDataExchange(CDataExchange* pDX)
 	{
 		CPropertyPage::DoDataExchange(pDX);
-		//{{AFX_DATA_MAP(SVToolAdjustmentDialogFileImageSourcePageClass)
+		//{{AFX_DATA_MAP(SVTADlgFileImageSourcePage)
 		DDX_Control(pDX, IDC_IMAGE, m_imageCtrl);
 		DDX_Text(pDX, IDC_IMAGE_SOURCE_EDIT, m_PathName);
 		DDX_Check(pDX, IDC_RELOAD_CHECK, m_BContinuousReload);
@@ -87,8 +87,8 @@ namespace SvOg
 	// Message Map Entries
 	//******************************************************************************
 
-	BEGIN_MESSAGE_MAP(SVToolAdjustmentDialogFileImageSourcePageClass, CPropertyPage)
-		//{{AFX_MSG_MAP(SVToolAdjustmentDialogFileImageSourcePageClass)
+	BEGIN_MESSAGE_MAP(SVTADlgFileImageSourcePage, CPropertyPage)
+		//{{AFX_MSG_MAP(SVTADlgFileImageSourcePage)
 		ON_BN_CLICKED(ID_BROWSE_BUTTON, OnBrowseButton)
 		ON_BN_CLICKED(IDC_RELOAD_CHECK, OnReloadCheck)
 		//}}AFX_MSG_MAP
@@ -98,7 +98,7 @@ namespace SvOg
 	// Message Handler
 	//******************************************************************************
 
-	BOOL SVToolAdjustmentDialogFileImageSourcePageClass::OnInitDialog() 
+	BOOL SVTADlgFileImageSourcePage::OnInitDialog() 
 	{
 		CPropertyPage::OnInitDialog();
 		m_ImageController.Init();
@@ -113,7 +113,7 @@ namespace SvOg
 					  // EXCEPTION: OCX-Eigenschaftenseiten sollten FALSE zurückgeben
 	}
 
-	void SVToolAdjustmentDialogFileImageSourcePageClass::OnBrowseButton() 
+	void SVTADlgFileImageSourcePage::OnBrowseButton() 
 	{
 		UpdateData(true);
 	
@@ -134,12 +134,12 @@ namespace SvOg
 		}
 	}
 
-	void SVToolAdjustmentDialogFileImageSourcePageClass::OnReloadCheck() 
+	void SVTADlgFileImageSourcePage::OnReloadCheck() 
 	{
 		refresh();
 	}
 
-	void SVToolAdjustmentDialogFileImageSourcePageClass::setImages()
+	void SVTADlgFileImageSourcePage::setImages()
 	{
 		IPictureDisp* pImage = m_ImageController.GetImage(getFirstResultImageId(m_ImageController));
 		m_imageCtrl.setImage(pImage, 0);

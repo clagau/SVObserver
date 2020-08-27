@@ -2,7 +2,7 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVToolAdjustmentDialogStatisticsPageClass
+//* .Module Name     : SVTADlgStatisticsPage
 //* .File Name       : $Workfile:   SVTADlgStatisticsPage.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $
@@ -16,17 +16,17 @@
 
 namespace SvTo
 {
-class SVStatisticsToolClass;
+class SVStatTool;
 }
 
 class SVToolAdjustmentDialogSheetClass;
 class SVToolSet;
 
-class SVToolAdjustmentDialogStatisticsPageClass : public CPropertyPage
+class SVTADlgStatisticsPage : public CPropertyPage
 {
 public:
-	SVToolAdjustmentDialogStatisticsPageClass(uint32_t inspectionId, uint32_t taskObjectId, SVToolAdjustmentDialogSheetClass* pParent);
-	virtual ~SVToolAdjustmentDialogStatisticsPageClass();
+	SVTADlgStatisticsPage(uint32_t inspectionId, uint32_t taskObjectId, SVToolAdjustmentDialogSheetClass* pParent);
+	virtual ~SVTADlgStatisticsPage();
 
 	void UpdateStatisticsParameters();
 	void OnOK();
@@ -38,7 +38,7 @@ protected:
 	void initListBox(CListBox* pListBox, TCHAR atcTestChar);
 
 protected:
-	//{{AFX_MSG(SVToolAdjustmentDialogStatisticsPageClass)
+	//{{AFX_MSG(SVTADlgStatisticsPage)
 	virtual BOOL OnInitDialog() override;
 	afx_msg void OnButtonAdd();
 	afx_msg void OnButtonRemove();
@@ -49,13 +49,13 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 
-	//{{AFX_VIRTUAL(SVToolAdjustmentDialogStatisticsPageClass)
+	//{{AFX_VIRTUAL(SVTADlgStatisticsPage)
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;
 	//}}AFX_VIRTUAL
 
 public:
-	//{{AFX_DATA(SVToolAdjustmentDialogStatisticsPageClass)
+	//{{AFX_DATA(SVTADlgStatisticsPage)
 	enum { IDD = IDD_TA_STATISTICS_PARAMETERS_DIALOG };
 	CListBox    m_lbSelectedList;
 	CListBox    m_lbAvailableList;
@@ -65,7 +65,7 @@ public:
 
 protected:
 	SVToolAdjustmentDialogSheetClass* m_pParent;
-	SvTo::SVStatisticsToolClass* m_pTool;
+	SvTo::SVStatTool* m_pTool;
 	CString                 m_strFullNameOfVariable;
 };
 

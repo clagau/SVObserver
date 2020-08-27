@@ -23,7 +23,7 @@ class LinearEdgeCountingAnalyzer : public SVLinearAnalyzerClass
 	SV_DECLARE_CLASS( LinearEdgeCountingAnalyzer );
 
 public:
-	LinearEdgeCountingAnalyzer( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_LinearEdgeCountingAnalyzer );
+	LinearEdgeCountingAnalyzer( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_LINEAREDGECOUNTINGANALYZER );
 	virtual ~LinearEdgeCountingAnalyzer();
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;

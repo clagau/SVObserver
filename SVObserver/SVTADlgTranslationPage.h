@@ -23,11 +23,11 @@ class SVEvaluate;
 }
 #pragma endregion
 
-class SVToolAdjustmentDialogTranslationPageClass : public CPropertyPage
+class SVTADlgTranslationPage : public CPropertyPage
 {
 public:
-	SVToolAdjustmentDialogTranslationPageClass(uint32_t inspectionId, uint32_t taskObjectId);
-	virtual ~SVToolAdjustmentDialogTranslationPageClass();
+	SVTADlgTranslationPage(uint32_t inspectionId, uint32_t taskObjectId);
+	virtual ~SVTADlgTranslationPage();
 
 #pragma region Protected Methods
 protected:
@@ -49,7 +49,7 @@ protected:
 
 #pragma region Member variables
 #pragma region Data Elements
-	//{{AFX_DATA(SVToolAdjustmentDialogTranslationPageClass)
+	//{{AFX_DATA(SVTADlgTranslationPage)
 public:
 	enum { IDD = IDD_TA_TRANSLATION_DIALOG };
 	SvMc::SVEnumerateCombo	m_cbInterpolation;

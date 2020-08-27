@@ -25,7 +25,7 @@ namespace SvOp
 class SVThresholdClass : public SVUnaryImageOperatorClass
 {
 	SV_DECLARE_CLASS( SVThresholdClass );
-	friend class SVToolAdjustmentDialogThresholdPageClass;
+	friend class SVTADlgThresholdPage;
 public:
 	SVThresholdClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTHRESHOLD );
 	virtual ~SVThresholdClass();

@@ -27,10 +27,10 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-SVToolAdjustmentDialogPolarTransformPageClass::SVToolAdjustmentDialogPolarTransformPageClass( uint32_t, uint32_t , SVToolAdjustmentDialogSheetClass* Parent )
-: CPropertyPage(SVToolAdjustmentDialogPolarTransformPageClass::IDD)
+SVTADlgPolarTransformPage::SVTADlgPolarTransformPage( uint32_t, uint32_t , SVToolAdjustmentDialogSheetClass* Parent )
+: CPropertyPage(SVTADlgPolarTransformPage::IDD)
 {
-	//{{AFX_DATA_INIT(SVToolAdjustmentDialogPolarTransformPageClass)
+	//{{AFX_DATA_INIT(SVTADlgPolarTransformPage)
 	m_CenterXValue = _T("");
 	m_CenterYValue = _T("");
 	m_StartRadiusValue = _T("");
@@ -60,11 +60,11 @@ SVToolAdjustmentDialogPolarTransformPageClass::SVToolAdjustmentDialogPolarTransf
 	m_pInterpolationMode	 = nullptr;
 }
 
-SVToolAdjustmentDialogPolarTransformPageClass::~SVToolAdjustmentDialogPolarTransformPageClass()
+SVTADlgPolarTransformPage::~SVTADlgPolarTransformPage()
 {
 }
 
-void SVToolAdjustmentDialogPolarTransformPageClass::SetInspectionData()
+void SVTADlgPolarTransformPage::SetInspectionData()
 {
 	if( nullptr != m_pTaskObject && nullptr != m_pParentDialog )
 	{
@@ -99,7 +99,7 @@ void SVToolAdjustmentDialogPolarTransformPageClass::SetInspectionData()
 }
 
 
-void SVToolAdjustmentDialogPolarTransformPageClass::refresh()
+void SVTADlgPolarTransformPage::refresh()
 {
 	if( m_pTaskObject )
 	{
@@ -228,10 +228,10 @@ void SVToolAdjustmentDialogPolarTransformPageClass::refresh()
 
 }
 
-void SVToolAdjustmentDialogPolarTransformPageClass::DoDataExchange(CDataExchange* pDX)
+void SVTADlgPolarTransformPage::DoDataExchange(CDataExchange* pDX)
 {
 	CPropertyPage::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(SVToolAdjustmentDialogPolarTransformPageClass)
+	//{{AFX_DATA_MAP(SVTADlgPolarTransformPage)
 	DDX_Control(pDX, IDC_ANGULAR_METHOD, m_AngularMethodCombo);
 	DDX_Control(pDX, IDC_INTERPOLATION_MODE_COMBO, interpolationComboCtrl);
 	DDX_Text(pDX, IDC_CENTER_X_EDIT, m_CenterXValue);
@@ -245,8 +245,8 @@ void SVToolAdjustmentDialogPolarTransformPageClass::DoDataExchange(CDataExchange
 }
 
 
-BEGIN_MESSAGE_MAP(SVToolAdjustmentDialogPolarTransformPageClass, CPropertyPage)
-	//{{AFX_MSG_MAP(SVToolAdjustmentDialogPolarTransformPageClass)
+BEGIN_MESSAGE_MAP(SVTADlgPolarTransformPage, CPropertyPage)
+	//{{AFX_MSG_MAP(SVTADlgPolarTransformPage)
 	ON_BN_CLICKED(IDC_CENTER_X_FORMULA_BUTTON, OnCenterXFormulaButton)
 	ON_BN_CLICKED(IDC_CENTER_Y_FORMULA_BUTTON, OnCenterYFormulaButton)
 	ON_BN_CLICKED(IDC_START_RADIUS_FORMULA_BUTTON, OnStartRadiusFormulaButton)
@@ -260,9 +260,9 @@ BEGIN_MESSAGE_MAP(SVToolAdjustmentDialogPolarTransformPageClass, CPropertyPage)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
-// SVToolAdjustmentDialogPolarTransformPageClass message handlers
+// SVTADlgPolarTransformPage message handlers
 
-BOOL SVToolAdjustmentDialogPolarTransformPageClass::OnInitDialog() 
+BOOL SVTADlgPolarTransformPage::OnInitDialog() 
 {
 	CPropertyPage::OnInitDialog();
 
@@ -399,7 +399,7 @@ BOOL SVToolAdjustmentDialogPolarTransformPageClass::OnInitDialog()
 
 }
 
-void SVToolAdjustmentDialogPolarTransformPageClass::OnCenterXFormulaButton() 
+void SVTADlgPolarTransformPage::OnCenterXFormulaButton() 
 {
 	if( m_pEvaluateCenterX )
 	{
@@ -417,7 +417,7 @@ void SVToolAdjustmentDialogPolarTransformPageClass::OnCenterXFormulaButton()
 	}
 }
 
-void SVToolAdjustmentDialogPolarTransformPageClass::OnCenterYFormulaButton() 
+void SVTADlgPolarTransformPage::OnCenterYFormulaButton() 
 {
 	if( m_pEvaluateCenterY )
 	{
@@ -435,7 +435,7 @@ void SVToolAdjustmentDialogPolarTransformPageClass::OnCenterYFormulaButton()
 	}
 }
 
-void SVToolAdjustmentDialogPolarTransformPageClass::OnStartRadiusFormulaButton() 
+void SVTADlgPolarTransformPage::OnStartRadiusFormulaButton() 
 {
 	if( m_pEvaluateStartRadius )
 	{
@@ -453,7 +453,7 @@ void SVToolAdjustmentDialogPolarTransformPageClass::OnStartRadiusFormulaButton()
 	}
 }
 
-void SVToolAdjustmentDialogPolarTransformPageClass::OnEndRadiusFormulaButton() 
+void SVTADlgPolarTransformPage::OnEndRadiusFormulaButton() 
 {
 	if( m_pEvaluateEndRadius )
 	{
@@ -471,7 +471,7 @@ void SVToolAdjustmentDialogPolarTransformPageClass::OnEndRadiusFormulaButton()
 	}
 }
 
-void SVToolAdjustmentDialogPolarTransformPageClass::OnStartAngleFormulaButton() 
+void SVTADlgPolarTransformPage::OnStartAngleFormulaButton() 
 {
 	if( m_pEvaluateStartAngle )
 	{
@@ -489,7 +489,7 @@ void SVToolAdjustmentDialogPolarTransformPageClass::OnStartAngleFormulaButton()
 	}
 }
 
-void SVToolAdjustmentDialogPolarTransformPageClass::OnEndAngleFormulaButton() 
+void SVTADlgPolarTransformPage::OnEndAngleFormulaButton() 
 {
 	if( m_pEvaluateEndAngle )
 	{
@@ -507,18 +507,18 @@ void SVToolAdjustmentDialogPolarTransformPageClass::OnEndAngleFormulaButton()
 	}
 }
 
-void SVToolAdjustmentDialogPolarTransformPageClass::OnUseFormulaCheck() 
+void SVTADlgPolarTransformPage::OnUseFormulaCheck() 
 {
 	refresh();
 }
 
-void SVToolAdjustmentDialogPolarTransformPageClass::OnSelchangeInterpolationModeCombo() 
+void SVTADlgPolarTransformPage::OnSelchangeInterpolationModeCombo() 
 {
 	refresh();
 }
 
 
-void SVToolAdjustmentDialogPolarTransformPageClass::OnSelchangeAngularMethod() 
+void SVTADlgPolarTransformPage::OnSelchangeAngularMethod() 
 {
 	refresh();
 }
