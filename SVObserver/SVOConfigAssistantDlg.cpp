@@ -715,13 +715,14 @@ std::string SVOConfigAssistantDlg::BuildTrgDig( const SvTi::SVOTriggerObj& rTrig
 
 	int iDig = rTriggerObj.GetTriggerDigNumber();
 
-	if (rTriggerObj.IsAcquisitionTrigger())
-	{
-		Result = SvTi::SVHardwareManifest::BuildAcquisitionTriggerDeviceName(iDig);
-	}
-	else if (rTriggerObj.IsSoftwareTrigger())
+	///First check if software trigger as camera trigger can be set to software trigger
+	if (rTriggerObj.IsSoftwareTrigger())
 	{
 		Result = SvTi::SVHardwareManifest::BuildSoftwareTriggerDeviceName(iDig);
+	}
+	else if (rTriggerObj.IsAcquisitionTrigger())
+	{
+		Result = SvTi::SVHardwareManifest::BuildAcquisitionTriggerDeviceName(iDig);
 	}
 	else
 	{
