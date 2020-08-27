@@ -16,7 +16,6 @@
 #include "SVObjectLibrary\SVObjectLevelCreateStruct.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary\SVSafeArray.h"
-#include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "CameraLibrary\SVBoolValueDeviceParam.h"
 #include "CameraLibrary\SVLongValueDeviceParam.h"
@@ -478,13 +477,7 @@ DWORD BasicValueObject::GetObjectColor() const
 
 std::string BasicValueObject::getFixedWidthFormatString(uint32_t, uint32_t )
 {
-	//@TODO[Arvid][10.00][21.04.2020] for the BasicValueObject this function has not been implemented yet. This may or may not be necessary in the future.
-	SvDef::StringVector msgList;
-	msgList.push_back(SvUl::Format(_T("%s"), _T("getFixedWidthFormatString()")));
-	msgList.push_back(SvUl::Format(_T("ValueObject of type '%s'"), getTypeName().c_str()));
-	SvStl::MessageManager Msg(SvStl::MsgType::Log);
-	Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_FunctionNotImplemented, msgList, SvStl::SourceFileParams(StdMessageParams));
-	return _T("<invalid>");
+	return _T("<invalid>"); //BasicValueObject::getValue(std::string& rValueString, int Index, const std::string& rFormatString) currently ignores rFormatString anyway!
 }
 
 #pragma endregion Public Methods
