@@ -47,6 +47,7 @@ public:
 
 #pragma region Member Variables
 public:
+	std::array<uint8_t, cHeaderSize> m_header {0, 0, 0, 0, 0, 0, 0, 0};
 	std::array<ChannelOut, cNumberOfChannels> m_channels;	//Out data for each of the 4 separate channels
 #pragma endregion Member Variables
 };

@@ -12,6 +12,10 @@
 #include "PlcDataTypes.h"
 #pragma endregion Includes
 
+#pragma region Declarations
+constexpr uint8_t c_ReservedInsCmd = 7;
+#pragma endregion Declarations
+
 namespace SvPlc
 {
 #pragma pack(push, 1)
@@ -88,6 +92,7 @@ public:
 	uint32_t m_socAbsSeconds {0UL};			//SOC time seconds
 	uint32_t m_socAbsNanoseconds {0UL};		//SOC time nano seconds
 	int32_t m_socRelative {0L};				//Relative SOC time
+	std::array<uint8_t, c_ReservedInsCmd>  m_reserved {0, 0, 0, 0, 0, 0, 0};	//Reserved data
 	std::array<ChannelIn, cNumberOfChannels> m_channels;	//In data for each of the 4 separate channels
 #pragma endregion Member Variables
 };
