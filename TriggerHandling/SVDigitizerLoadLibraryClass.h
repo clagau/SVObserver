@@ -13,7 +13,7 @@
 
 #pragma region Includes
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
-#include "TriggerHandling/TriggerDispatcher.h"
+#include "TriggerDispatcher.h"
 #include "CameraLibrary/SVDeviceParamCollection.h"
 #pragma endregion Includes
 

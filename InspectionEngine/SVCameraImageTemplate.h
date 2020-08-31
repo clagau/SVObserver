@@ -12,7 +12,7 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <set>
-#include "InspectionEngine/SVImageClass.h"
+#include "SVImageClass.h"
 #pragma endregion Includes
 
 namespace SvIe

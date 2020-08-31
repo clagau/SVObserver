@@ -10,13 +10,13 @@
 
 #pragma region Includes
 #include "stdafx.h"
+#include "EQAdjustSize.h"
 #include "ToolSizeAdjustTask.h"
 #include "Tools/SVTool.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVStatusLibrary\MessageManager.h"
-#include "Operators/EQAdjustSize.h"
 #include "Definitions/Color.h"
 #include "Definitions/StringTypeDef.h"
 #include "Definitions/TextDefineSvDef.h"

@@ -6,7 +6,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVDigitalInputObject.h"
-#include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
+#include "SVIOConfigurationInterfaceClass.h"
 #include "SVObjectLibrary/SVClsids.h"
 #pragma endregion Includes
 

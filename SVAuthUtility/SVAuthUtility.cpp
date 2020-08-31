@@ -12,8 +12,8 @@
 #include "getopt.h"
 
 #include "SVAuthLibrary/AuthManager.h"
-#include "SVAuthUtility/Settings.h"
-#include "SVAuthUtility/SettingsLoader.h"
+#include "Settings.h"
+#include "SettingsLoader.h"
 #include "SVLogLibrary/Logging.h"
 #pragma endregion Includes
 

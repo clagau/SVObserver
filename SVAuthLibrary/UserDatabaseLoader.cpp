@@ -17,7 +17,7 @@
 #include <boost/function.hpp>
 #include <boost/lexical_cast.hpp>
 
-#include "SVAuthLibrary/UserDatabaseLoader.h"
+#include "UserDatabaseLoader.h"
 #include "SVLogLibrary/Logging.h"
 #include "SVXmlLibrary/ISaxElementHandler.h"
 #include "SVXmlLibrary/SaxParser.h"

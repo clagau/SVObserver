@@ -14,6 +14,7 @@
 //Moved to precompiled header: #include <fstream>
 
 #include "SVAcquisitionClass.h"
+#include "SVImageProcessingClass.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "TriggerHandling/SVDigitizerLoadLibraryClass.h"
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
@@ -22,7 +23,6 @@
 #include "TriggerInformation/SVAcquisitionConstructParams.h"
 #include "SVDigitizerProcessingClass.h"
 #include "SVFileSystemLibrary/SVFileNameManagerClass.h"
-#include "InspectionEngine/SVImageProcessingClass.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "TriggerRecordController/ITriggerRecordControllerRW.h"

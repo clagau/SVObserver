@@ -14,7 +14,7 @@
 #pragma warning(disable : 4714)
 #include <boost/log/trivial.hpp>
 #include <boost/log/utility/manipulators/add_value.hpp>
-#include <SVLogLibrary/LogSettings.h>
+#include "LogSettings.h"
 #pragma warning(pop)
 
 namespace SvLog
@@ -34,4 +34,4 @@ extern void init_logging(const LogSettings& settings);
 
 } // namespace SvLog
 
-#include <SVLogLibrary/Logging.inl>
+#include "Logging.inl"

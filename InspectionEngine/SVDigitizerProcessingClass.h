@@ -15,7 +15,7 @@
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <set>
 //Moved to precompiled header: #include <utility>
-#include "InspectionEngine/SVAcquisitionClass.h"
+#include "SVAcquisitionClass.h"
 #include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 

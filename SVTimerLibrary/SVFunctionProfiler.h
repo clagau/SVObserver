@@ -14,7 +14,7 @@
 #pragma region Includes
 //Moved to precompiled header: #include <iostream>
 //Moved to precompiled header: #include <map>
-#include "SVTimerLibrary/SVClock.h"
+#include "SVClock.h"
 #pragma endregion Includes
 
 /* // this class is meant to be used like this:

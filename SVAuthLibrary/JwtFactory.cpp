@@ -8,7 +8,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "SVAuthLibrary/JwtFactory.h"
+#include "JwtFactory.h"
 #include "SVProtoBuf/Protobuf2Rapidjson.h"
 #pragma endregion Includes
 

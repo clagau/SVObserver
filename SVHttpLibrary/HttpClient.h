@@ -11,8 +11,8 @@
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/ip/tcp.hpp>
 
-#include "SVHttpLibrary/HttpRequest.h"
-#include "SVHttpLibrary/HttpResponse.h"
+#include "HttpRequest.h"
+#include "HttpResponse.h"
 
 namespace SvHttp
 {
@@ -36,4 +36,4 @@ private:
 
 } // namespace SvHttp
 
-#include <SVHttpLibrary/HttpClient.inl>
+#include "HttpClient.inl"

@@ -13,7 +13,7 @@
 #pragma region Includes
 #include "Definitions/BandEnums.h"
 #include "InspectionEngine/SVImageClass.h"
-#include "Operators/SVOperator.h"
+#include "SVOperator.h"
 #include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
 #include "SVValueObjectLibrary/SVDoubleValueObjectClass.h"
 #include "SVValueObjectLibrary/SVLongValueObjectClass.h"
