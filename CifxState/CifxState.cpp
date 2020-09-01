@@ -9,7 +9,6 @@
 #include "stdafx.h"
 #include "SVPlcIO/CifxLoadLibrary.h"
 #include "SVPlcIO/cifXErrors.h"
-#include "SVPlcIO/TLR_Types.h"
 #include "SVPlcIO/Epl_Common_Defines.h"
 #include "SVPlcIO/EplCn_If_Public.h"
 #pragma endregion Includes
