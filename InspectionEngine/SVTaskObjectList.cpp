@@ -595,6 +595,18 @@ void SVTaskObjectListClass::InsertBefore(uint32_t objectBeforeID, ITaskObject& r
 	InsertBefore(objectBeforeID, pObject);
 }
 
+void SVTaskObjectListClass::InsertAt(int pos, ITaskObject& rObject)
+{
+	if (0 <= pos && m_TaskObjectVector.size() > pos)
+	{
+		InsertBefore(m_TaskObjectVector[pos]->getObjectId(), rObject);
+	}
+	else
+	{
+		InsertBefore(SvDef::InvalidObjectId, rObject);
+	}
+}
+
 bool SVTaskObjectListClass::DestroyChild(SvOi::ITaskObject& rObject, DWORD context)
 {
 	SVTaskObjectClass* pTaskObject = dynamic_cast<SVTaskObjectClass*>(&rObject);

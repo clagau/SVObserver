@@ -210,14 +210,18 @@ namespace SvOg
 
 		if( SvPb::NoObjectClassId != classID )
 		{
-			uint32_t FilterInsertBeforeID = m_filterListBox.getObjectId(m_filterListBox.GetCurSel());
+			int destinyIndex = m_filterListBox.GetCurSel();
+			if (LB_ERR == destinyIndex) // First Entryitem
+			{
+				destinyIndex = 0;
+			}
 
 			// Construct and Create the Filter Class Object
 			SvPb::InspectionCmdRequest requestCmd;
 			auto* pRequest = requestCmd.mutable_createobjectrequest();
 			pRequest->set_ownerid(m_UnaryImageOperatorID);
 			pRequest->set_classid(classID);
-			pRequest->set_taskobjectinsertbeforeid(FilterInsertBeforeID);
+			pRequest->set_taskobjectpos(destinyIndex);
 
 			HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, nullptr);
 			if (S_OK != hr)

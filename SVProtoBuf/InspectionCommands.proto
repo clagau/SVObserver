@@ -402,6 +402,7 @@ message CreateObjectRequest
 	{
 		FriendTask friend = 3;	//Add the new object to the friend list.
 		uint32 taskObjectInsertBeforeId = 4; //Add the new object to the taskObject-list before the object with this ID. if SvDef::InvalidObjectId, add at the end.
+		int32 taskObjectPos = 5; //Add the new object to the taskObject list at the pos. int32 taskObjectPos = 4; //Add the new object to the taskObject list at the pos. 
 	}
 }
 

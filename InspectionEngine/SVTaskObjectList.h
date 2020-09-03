@@ -93,6 +93,7 @@ public:
 #pragma region virtual methods (ITaskObjectListClass)
 	virtual void Delete(uint32_t objectID) override;
 	virtual void InsertBefore(uint32_t objectBeforeID, ITaskObject& rObject) override;
+	virtual void InsertAt(int pos, ITaskObject& rObject) override;
 	virtual bool DestroyChild(SvOi::ITaskObject& rObject, DWORD context) override;
 	virtual SvUl::NameClassIdList GetCreatableObjects(const SvDef::SVObjectTypeInfoStruct& pObjectTypeInfo) const override;
 	virtual void moveTaskObject(uint32_t objectToMoveId, uint32_t preObjectId = SvDef::InvalidObjectId) override;

@@ -843,6 +843,7 @@ SvPb::InspectionCmdResponse createObject(SvPb::CreateObjectRequest request)
 			break;
 		}
 		case SvPb::CreateObjectRequest::kTaskObjectInsertBeforeId:
+		case SvPb::CreateObjectRequest::kTaskObjectPos:
 		{
 			SvOi::IObjectClass* pParent = SvOi::getObject(request.ownerid());
 			SvOi::ITaskObjectListClass* pParentTaskObjectList = dynamic_cast<SvOi::ITaskObjectListClass*>(pParent);
@@ -865,7 +866,14 @@ SvPb::InspectionCmdResponse createObject(SvPb::CreateObjectRequest request)
 				}
 				else
 				{
-					pParentTaskObjectList->InsertBefore(request.taskobjectinsertbeforeid(), *pTaskObject);
+					if (SvPb::CreateObjectRequest::kTaskObjectInsertBeforeId == request.message_case())
+					{
+						pParentTaskObjectList->InsertBefore(request.taskobjectinsertbeforeid(), *pTaskObject);
+					}
+					else
+					{
+						pParentTaskObjectList->InsertAt(request.taskobjectpos(), *pTaskObject);
+					}
 
 					// And last - Create (initialize) it
 					if (!pObject->is_Created())

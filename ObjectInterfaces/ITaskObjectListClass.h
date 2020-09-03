@@ -37,14 +37,15 @@ public:
 	***********/
 	virtual void Delete(uint32_t objectID) = 0;
 
-	/**********
-		The method inserts a task object to this task object list.
-		/param index <in> position where to insert.
-		/param <in> objectBeforeID the ID where the new object is to be inserted before
-		/param rObject <in> object to insert.
-		/param count <in> Default value is 1.
-		***********/
+	/// The method inserts a task object to this task object list.
+	/// \param objectBeforeID [in] the ID where the new object is to be inserted before. If SvDef::InvalidObjectId, add at the end.
+	/// \param rObject [in] object to insert
 	virtual void InsertBefore(uint32_t objectBeforeID, ITaskObject& rObject) = 0;
+
+	/// The method inserts a task object to this task object list.
+	/// \param pos [in] position where to insert. Is pos invalid, add at the end.
+	/// \param rObject [in] object to insert.
+	virtual void InsertAt(int pos, ITaskObject& rObject) = 0;
 
 	/**********
 		The method destroys a child object.
