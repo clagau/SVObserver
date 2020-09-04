@@ -131,6 +131,7 @@ namespace SvOg
 		DDX_Control(pDX, IDC_SOURCE_IMAGE_COMBO, m_AvailableSourceImageCombo);
 		DDX_Control(pDX, IDC_DRAW_TOOL_COMBO, m_drawToolCombo);
 		DDX_Check(pDX, IDC_ENABLE_AUXILIARY_EXTENTS, m_bUpdateAuxiliaryExtents);
+		DDX_Control(pDX, IDC_TOOL_OVERLAYCOLOR_COMBO, m_AvailableToolForColorOverlayCombo);
 		//}}AFX_DATA_MAP
 	}
 
@@ -139,6 +140,7 @@ namespace SvOg
 		ON_CBN_SELCHANGE(IDC_DRAW_TOOL_COMBO, OnSelchangeDrawToolCombo)
 		ON_BN_CLICKED(IDC_ENABLE_AUXILIARY_EXTENTS, OnUpdateAuxiliaryExtents)
 		ON_CBN_SELCHANGE(IDC_SOURCE_IMAGE_COMBO, OnSelchangeSourceImageCombo)
+		ON_CBN_SELCHANGE(IDC_TOOL_OVERLAYCOLOR_COMBO, OnSelchangeToolForOverlayColorCombo)
 		ON_BN_CLICKED(ID_SHOW_RELATIONS, OnShowRelations)
 		//}}AFX_MSG_MAP
 	END_MESSAGE_MAP()
@@ -182,6 +184,10 @@ namespace SvOg
 
 			SetImages();
 		}
+
+		initToolForOverlayColor();
+
+
 		UpdateData(false);
 		refresh();
 		// Success...
@@ -189,7 +195,7 @@ namespace SvOg
 						  // EXCEPTION: OCX Property Pages should return FALSE
 	}
 
-	void SVTADlgGeneralPage::OnSelchangeDrawToolCombo() 
+	void SVTADlgGeneralPage::OnSelchangeDrawToolCombo()
 	{
 		SetInspectionData();
 		refresh();
@@ -225,6 +231,33 @@ namespace SvOg
 		}
 		refresh();
 	}
+
+	void SVTADlgGeneralPage::OnSelchangeToolForOverlayColorCombo()
+	{
+		UpdateData(TRUE); // get data from dialog
+
+		int index = static_cast<int>(m_AvailableToolForColorOverlayCombo.GetCurSel());
+		if (CB_ERR != index)
+		{
+			CString name;
+			m_AvailableToolForColorOverlayCombo.GetLBText(index, name);
+			std::string stdName = name;
+			auto iter = std::find_if(m_availableToolList.begin(), m_availableToolList.end(), [stdName](const auto& rEntry) { return rEntry.first == stdName; });
+			if (m_availableToolList.end() != iter)
+			{
+				SvPb::InspectionCmdRequest requestCmd;
+				auto* pRequest = requestCmd.mutable_connecttoobjectrequest();
+				pRequest->set_objectid(m_TaskObjectID);
+				pRequest->set_inputname(m_inputName_toolForColorOverlay);
+				pRequest->set_newconnectedid(iter->second);
+				pRequest->set_objecttype(SvPb::SVToolObjectType);
+
+				HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, nullptr);
+				assert(S_OK == hr);
+			}
+		}
+		refresh();
+	}
 	
 	void SVTADlgGeneralPage::OnShowRelations() 
 	{
@@ -240,6 +273,54 @@ namespace SvOg
 		refresh();
 
 		return CPropertyPage::OnSetActive();
+	}
+
+	void SVTADlgGeneralPage::initToolForOverlayColor()
+	{
+		uint32_t selectedId = SvDef::InvalidObjectId;
+		SvPb::InspectionCmdRequest requestCmd;
+		SvPb::InspectionCmdResponse responseCmd;
+		auto* pRequest = requestCmd.mutable_getinputsrequest();
+		pRequest->set_objectid(m_TaskObjectID);
+		pRequest->mutable_typeinfo()->set_objecttype(SvPb::SVToolObjectType);
+		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
+		if (S_OK == hr && responseCmd.has_getinputsresponse() && 0 < responseCmd.getinputsresponse().list_size())
+		{
+			auto inputValues = responseCmd.getinputsresponse().list(0);
+			selectedId = inputValues.objectid();
+			m_inputName_toolForColorOverlay = inputValues.inputname();
+		}
+		else
+		{
+			assert(false);
+		}
+
+		auto* pAvailableRequest = requestCmd.mutable_getavailableobjectsrequest();
+		pAvailableRequest->set_objectid(m_InspectionID);
+		pAvailableRequest->mutable_typeinfo()->set_objecttype(SvPb::SVToolObjectType);
+		pAvailableRequest->set_objecttypetoinclude(SvPb::SVToolSetObjectType);
+
+		hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
+		if (S_OK == hr && responseCmd.has_getavailableobjectsresponse())
+		{
+			m_availableToolList = SvCmd::convertNameObjectIdList(responseCmd.getavailableobjectsresponse().list());
+			if (SvDef::InvalidObjectId == selectedId)
+			{
+				selectedId = m_TaskObjectID;
+			}
+
+			auto iter = std::find_if(m_availableToolList.begin(), m_availableToolList.end(), [selectedId](const auto& rEntry) { return rEntry.second == selectedId; });
+			std::string selectedName{};
+			if (m_availableToolList.end() != iter)
+			{
+				selectedName = iter->first;
+			}
+			m_AvailableToolForColorOverlayCombo.Init(m_availableToolList, selectedName, "");
+		}
+		else
+		{
+			assert(false);
+		}
 	}
 } //namespace SvOg
 

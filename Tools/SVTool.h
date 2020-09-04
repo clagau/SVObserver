@@ -145,6 +145,7 @@ public:
 	virtual bool usePropagateSizeAndPosition() const;
 	
 	 void removeTaskMessages(DWORD MessageCode, SvStl::MessageTextEnum AdditionalTextId);
+	 const SvVol::SVDWordValueObjectClass& getColorObject() const { return m_statusColor; };
 
 #pragma region ITool methods
 	virtual bool areAuxExtentsAvailable() const override;
@@ -205,6 +206,7 @@ protected:
 
 	SvOl::SVInObjectInfoStruct m_inputConditionBoolObjectInfo;
 	SvOl::SVInObjectInfoStruct m_AuxSourceImageObjectInfo;
+	SvOl::SVInObjectInfoStruct m_overlayColorToolObjectInfo;
 
 	SvVol::SVBoolValueObjectClass  m_isObjectValid;	//	Embedded
 

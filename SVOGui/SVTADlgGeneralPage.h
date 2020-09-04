@@ -30,9 +30,11 @@ namespace SvOg
 	protected:
 		//{{AFX_MSG(SVTADlgGeneralPage)
 		virtual BOOL OnInitDialog() override;
+
 		afx_msg void OnSelchangeDrawToolCombo();
 		afx_msg void OnUpdateAuxiliaryExtents();
 		afx_msg void OnSelchangeSourceImageCombo();
+		afx_msg void OnSelchangeToolForOverlayColorCombo();
 		afx_msg void OnShowRelations();
 		//}}AFX_MSG
 		DECLARE_MESSAGE_MAP()
@@ -51,6 +53,8 @@ namespace SvOg
 		void SetupDrawFlagComboBox();
 		void SetImages();
 
+		void initToolForOverlayColor();
+
 	public:
 		enum { IDD = IDD_TA_GENERAL_DIALOG };
 
@@ -58,6 +62,9 @@ namespace SvOg
 		SvMc::AvailableObjectListComboBox<uint32_t> m_AvailableSourceImageCombo;
 		SvMc::SVEnumerateCombo m_drawToolCombo;
 		BOOL m_bUpdateAuxiliaryExtents;
+		SvMc::AvailableObjectListComboBox<uint32_t> m_AvailableToolForColorOverlayCombo;
+		SvUl::NameObjectIdList m_availableToolList;
+		std::string m_inputName_toolForColorOverlay{};
 
 		bool m_bAuxExtentsAvailable;
 		bool m_bIsImageTool;

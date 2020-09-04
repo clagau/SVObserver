@@ -200,7 +200,6 @@ void SVPolarTransformationToolClass::addOverlays(const SvIe::SVImageClass*, SvPb
 		auto* pOverlay = rOverlay.add_overlays();
 		pOverlay->set_name(GetName());
 		pOverlay->set_objectid(getObjectId());
-		pOverlay->mutable_color()->set_trpos(m_statusColor.getTrPos() + 1);
 		pOverlay->set_displaybounding(true);
 		auto* pBoundingBox = pOverlay->mutable_boundingshape();
 		auto* pSlice = pBoundingBox->mutable_slice();

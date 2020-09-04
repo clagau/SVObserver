@@ -191,6 +191,9 @@ void SVToolClass::init()
 	m_inputConditionBoolObjectInfo.SetObject(GetObjectInfo());
 	RegisterInputObject(&m_inputConditionBoolObjectInfo, _T("ToolConditionalValue"));
 
+	m_overlayColorToolObjectInfo.SetInputObjectType(SvPb::SVToolObjectType);
+	RegisterInputObject(&m_overlayColorToolObjectInfo, _T("OverlayColor_Tool"));
+
 	// 
 	addDefaultInputObjects();
 }
@@ -668,6 +671,7 @@ bool SVToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 
 	SvOl::ValidateInput(m_AuxSourceImageObjectInfo);
 	SvOl::ValidateInput(m_inputConditionBoolObjectInfo);
+	SvOl::ValidateInput(m_overlayColorToolObjectInfo);
 
 	return Result;
 }
@@ -924,7 +928,6 @@ void SVToolClass::addOverlays(const SvIe::SVImageClass* pImage, SvPb::OverlayDes
 			auto* pOverlay = rOverlay.add_overlays();
 			pOverlay->set_name(GetName());
 			pOverlay->set_objectid(getObjectId());
-			pOverlay->mutable_color()->set_trpos(m_statusColor.getTrPos() + 1);
 			pOverlay->set_displaybounding(true);
 			auto* pBoundingBox = pOverlay->mutable_boundingshape();
 			auto* pRect = pBoundingBox->mutable_rect();
@@ -1169,6 +1172,16 @@ void SVToolClass::connectChildObject(SVTaskObjectClass& rChildObject)
 
 void SVToolClass::setStateValueToOverlay(SvPb::Overlay& rOverlay) const
 {
+	SVToolClass* pTool = dynamic_cast<SVToolClass*>(m_overlayColorToolObjectInfo.GetInputObjectInfo().getObject());
+	if (nullptr != pTool)
+	{
+		rOverlay.mutable_color()->set_trpos(pTool->getColorObject().getTrPos() + 1);
+	}
+	else
+	{
+		rOverlay.mutable_color()->set_trpos(m_statusColor.getTrPos() + 1);
+	}
+
 	SvPb::setValueObject(m_Passed, *rOverlay.mutable_passed(), true);
 	SvPb::setValueObject(m_Failed, *rOverlay.mutable_failed(), true);
 	SvPb::setValueObject(m_Warned, *rOverlay.mutable_warned(), true);

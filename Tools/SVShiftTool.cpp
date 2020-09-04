@@ -376,7 +376,6 @@ void SVShiftTool::addOverlays(const SvIe::SVImageClass* pImage, SvPb::OverlayDes
 	auto* pOverlay = rOverlay.add_overlays();
 	pOverlay->set_name(GetName());
 	pOverlay->set_objectid(getObjectId());
-	pOverlay->mutable_color()->set_trpos(m_statusColor.getTrPos() + 1);
 	pOverlay->set_displaybounding(true);
 	auto* pBoundingBox = pOverlay->mutable_boundingshape();
 	auto* pRect = pBoundingBox->mutable_rect();

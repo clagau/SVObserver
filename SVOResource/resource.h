@@ -2042,6 +2042,8 @@
 #define IDC_VERSION_LIST                15878
 #define IDC_CHECK_AUTO_RESIZE           15879
 #define IDC_NO_IMAGES_TXT               15880
+#define IDC_TOOL_OVERLAYCOLOR_TEXT		15881
+#define IDC_TOOL_OVERLAYCOLOR_COMBO	    15882
 #define IDC_NO_INPUT_TXT                15883
 #define IDC_NO_RESULT_TXT               15884
 #define IDC_COMBO_ZOOM                  15885
