@@ -14,7 +14,6 @@
 //Moved to precompiled header: #include <string>
 #include "SVIOTest.h"
 #include "SVIOTestDlg.h"
-#include "TriggerHandling/TriggerDispatcher.h"
 #include "SVTriggerSetupDlgClass.h"
 #include "SVSoftwareTriggerSetupDlg.h"
 #include "SVLibrary/SVOIniClass.h"
@@ -587,67 +586,6 @@ void CSVIOTESTDlg::OnTestOutputs()
 	SVIOConfigurationInterfaceClass::Instance().TestDigitalOutputs();
 }
 
-HRESULT CALLBACK SVCallback(const SvTh::TriggerParameters& rTriggerData)
-{
-	double timestamp{0.0};
-	SvTh::IntVariantMap::const_iterator Iter(rTriggerData.m_Data.end());
-	Iter = rTriggerData.m_Data.find(SvTh::TriggerDataEnum::TimeStamp);
-	if (rTriggerData.m_Data.end() != Iter)
-	{
-		timestamp = Iter->second;
-	}
-
-	CSVIOTESTDlg* pDlg = reinterpret_cast<CSVIOTESTDlg*> (rTriggerData.m_pOwner);
-	Iter = rTriggerData.m_Data.find(SvTh::TriggerDataEnum::TriggerChannel);
-	if(nullptr != pDlg && rTriggerData.m_Data.end() != Iter)
-	{
-		unsigned long triggerChannel = Iter->second;
-		SVIOTriggerDataStruct* pData = pDlg->getTriggerData(triggerChannel);
-
-		if (nullptr != pData)
-		{
-			(pData->lTriggerCount)++;
-
-			if ( 101 < pData->lTriggerCount )
-			{
-				pData->m_TotalTime -= ( pData->m_TimeStamp[ pData->ulNextIndex ] -
-										   pData->m_TimeStamp[ pData->ulIndex ] ) ;
-			}
-
-			pData->m_TimeStamp[ pData->ulIndex ] = timestamp;
-
-			if ( 1 < pData->lTriggerCount )
-			{
-				pData->m_LastTime = ( pData->m_TimeStamp[ pData->ulIndex ] -
-																 pData->m_TimeStamp[ pData->ulLastIndex ] ) ;
-
-				pData->m_TotalTime += pData->m_LastTime;
-
-				if ( 2 < pData->lTriggerCount )
-				{
-					if ( pData->m_MaxTime < pData->m_LastTime )
-					{
-						pData->m_MaxTime = pData->m_LastTime;
-					}
-
-					if ( pData->m_LastTime < pData->m_MinTime )
-					{
-						pData->m_MinTime = pData->m_LastTime;
-					}
-				}
-			}
-
-			pData->ulLastIndex = pData->ulIndex;
-			pData->ulIndex = pData->ulNextIndex;
-			pData->ulNextIndex = ( pData->ulNextIndex + 1 ) % 100;
-		}
-	}
-
-	return S_OK;
-}
-
-
-
 void SVIOTriggerDataStruct::OnTriggerStart()
 {
 	ulLastIndex = 0;
@@ -672,22 +610,75 @@ void CSVIOTESTDlg::StartTrigger(int triggerchannel)
 
 }
 
+void __stdcall CSVIOTESTDlg::triggerCallback(const SvTi::IntVariantMap& rTriggerData)
+{
+	double timestamp{ 0.0 };
+	SvTi::IntVariantMap::const_iterator Iter(rTriggerData.end());
+	Iter = rTriggerData.find(SvTi::TriggerDataEnum::TimeStamp);
+	if (rTriggerData.end() != Iter)
+	{
+		timestamp = Iter->second;
+	}
 
-void CSVIOTESTDlg::OnStartTriggers() 
+	Iter = rTriggerData.find(SvTi::TriggerDataEnum::TriggerChannel);
+	if (rTriggerData.end() != Iter)
+	{
+		unsigned long triggerChannel = Iter->second;
+		SVIOTriggerDataStruct* pData = getTriggerData(triggerChannel);
+
+		if (nullptr != pData)
+		{
+			(pData->lTriggerCount)++;
+
+			if (101 < pData->lTriggerCount)
+			{
+				pData->m_TotalTime -= (pData->m_TimeStamp[pData->ulNextIndex] -
+					pData->m_TimeStamp[pData->ulIndex]);
+			}
+
+			pData->m_TimeStamp[pData->ulIndex] = timestamp;
+
+			if (1 < pData->lTriggerCount)
+			{
+				pData->m_LastTime = (pData->m_TimeStamp[pData->ulIndex] -
+					pData->m_TimeStamp[pData->ulLastIndex]);
+
+				pData->m_TotalTime += pData->m_LastTime;
+
+				if (2 < pData->lTriggerCount)
+				{
+					if (pData->m_MaxTime < pData->m_LastTime)
+					{
+						pData->m_MaxTime = pData->m_LastTime;
+					}
+
+					if (pData->m_LastTime < pData->m_MinTime)
+					{
+						pData->m_MinTime = pData->m_LastTime;
+					}
+				}
+			}
+
+			pData->ulLastIndex = pData->ulIndex;
+			pData->ulIndex = pData->ulNextIndex;
+			pData->ulNextIndex = (pData->ulNextIndex + 1) % 100;
+		}
+	}
+}
+
+void CSVIOTESTDlg::OnStartTriggers()
 {
 	CString csText("0");
 
 	unsigned long numTriggers = 0;
 	m_psvTriggers->GetCount(&numTriggers);
 
-	SvTh::TriggerDispatcher dispatcher(SVCallback, SvTh::TriggerParameters{this});
-
 	for(unsigned int triggerchannel = 1; triggerchannel < 5; triggerchannel++)
 	{
 		StartTrigger(triggerchannel);
 		if (numTriggers >= triggerchannel)
 		{
-			m_psvTriggers->Register( triggerchannel, dispatcher );
+			m_psvTriggers->Register( triggerchannel, std::bind(&CSVIOTESTDlg::triggerCallback, this, std::placeholders::_1));
 		}
 	}
 
@@ -734,26 +725,24 @@ void CSVIOTESTDlg::OnStopTriggers()
 		m_psvTriggers->Stop( 1 );
 	}
 
-	SvTh::TriggerDispatcher dispatcher(SVCallback, SvTh::TriggerParameters{this});
-
 	if (numTriggers > 3)
 	{
-		m_psvTriggers->Unregister( 4, dispatcher );
+		m_psvTriggers->Unregister(4);
 	}
 
 	if (numTriggers > 2)
 	{
-		m_psvTriggers->Unregister( 3, dispatcher );
+		m_psvTriggers->Unregister(3);
 	}
 
 	if (numTriggers > 1)
 	{
-		m_psvTriggers->Unregister( 2, dispatcher );
+		m_psvTriggers->Unregister(2);
 	}
 
 	if (numTriggers > 1)
 	{
-		m_psvTriggers->Unregister( 1, dispatcher );
+		m_psvTriggers->Unregister(1);
 	}
 	m_bInterruptEnabled = false;
 	_variant_t moduleReady = m_bInterruptEnabled;

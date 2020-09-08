@@ -27,7 +27,7 @@ SVMatroxGigeDigitizer::SVMatroxGigeDigitizer(unsigned long deviceNumber, unsigne
 : m_deviceNumber(deviceNumber)
 , m_SystemHandle(systemHandle)
 {
-	m_params.TriggerType = SvDef::HardwareTrigger;
+	m_params.TriggerType = SvDef::TriggerType::HardwareTrigger;
 	m_params.TriggerMode = SVMatroxDigitizerGrab::SVEdgeRising;
 }
 
@@ -63,8 +63,6 @@ const SVMatroxGigeDigitizer& SVMatroxGigeDigitizer::operator=( const SVMatroxGig
 		m_params = p_rValue.m_params;
 
 		m_AcqBuffers = p_rValue.m_AcqBuffers;
-
-		m_dispatcher = p_rValue.m_dispatcher;
 
 		m_lineInputMoniker = p_rValue.m_lineInputMoniker;
 		m_lineInputRisingEventName = p_rValue.m_lineInputRisingEventName;

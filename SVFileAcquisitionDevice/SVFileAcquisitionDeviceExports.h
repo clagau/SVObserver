@@ -27,7 +27,6 @@ HRESULT WINAPI SVDestroy();
 HRESULT WINAPI SVDigitizerGetCount( unsigned long *p_pulCount );
 HRESULT WINAPI SVDigitizerGetHandle( unsigned long *pTriggerchannel, unsigned long p_ulIndex );
 HRESULT WINAPI SVDigitizerGetName( unsigned long triggerchannel, BSTR *p_pbstrName );
-HRESULT WINAPI SVDigitizerLoadCameraFiles( unsigned long triggerchannel, SAFEARRAY* p_psaFileNames );
 HRESULT WINAPI SVDigitizerGetBufferWidth( unsigned long triggerchannel, unsigned long *p_pulWidth );
 HRESULT WINAPI SVDigitizerGetBufferHeight( unsigned long triggerchannel, unsigned long *p_pulHeight );
 HRESULT WINAPI SVDigitizerGetBufferFormat( unsigned long triggerchannel, int *p_piFormat );
@@ -37,7 +36,6 @@ HRESULT WINAPI SVDigitizerStart( unsigned long triggerchannel );
 HRESULT WINAPI SVDigitizerStop( unsigned long triggerchannel );
 HRESULT WINAPI SVDigitizerUnregisterBufferInterface( unsigned long triggerchannel );
 HRESULT WINAPI SVDigitizerDestroyBuffers( unsigned long triggerchannel );
-HRESULT WINAPI SVDigitizerUnloadCameraFile( unsigned long triggerchannel );
 
 HRESULT WINAPI SVDigitizerParameterGetList( unsigned long triggerchannel, VARIANT *p_pvarValue );
 HRESULT WINAPI SVDigitizerParameterGetName( unsigned long triggerchannel, int p_iParameterID, BSTR *p_pbstrName );
@@ -47,7 +45,6 @@ HRESULT WINAPI SVDigitizerParameterSetValue( unsigned long triggerchannel, int p
 HRESULT WINAPI SVDigitizerSetParameters( unsigned long triggerchannel, const SVDeviceParamCollection* p_pParameters );
 HRESULT WINAPI SVDigitizerSetParameter( unsigned long triggerchannel, const SVDeviceParamWrapper* p_pParameter );
 HRESULT WINAPI SVDigitizerGetParameter( unsigned long triggerchannel, SVDeviceParamEnum p_eParameter, SVDeviceParamWrapper** p_ppParameter );
-HRESULT WINAPI SVDigitizerDestroyParameter( unsigned long triggerchannel, SVDeviceParamWrapper* p_pParameter );
 
 HRESULT WINAPI SVDigitizerInternalTriggerEnable( unsigned long triggerchannel );
 HRESULT WINAPI SVDigitizerInternalTrigger( unsigned long triggerchannel );

@@ -92,19 +92,13 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="SVDigitizerLoadLibraryClass.cpp" />
     <ClCompile Include="SVTriggerClass.cpp" />
-    <ClCompile Include="TriggerDispatcher.cpp" />
-    <ClCompile Include="TriggerDispatcherCollection.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Stdafx.h" />
     <ClInclude Include="SVDigitizerLoadLibraryClass.h" />
     <ClInclude Include="SVTriggerClass.h" />
-    <ClInclude Include="TriggerDispatcher.h" />
-    <ClInclude Include="TriggerDispatcherCollection.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="SVDigitizerLoadLibraryClass.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

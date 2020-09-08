@@ -114,7 +114,7 @@ HRESULT SVFileCamera::Start(const EventHandler& startFrameHandler, const EventHa
 	m_loadSequence.Init(m_fileList.begin(), m_fileList.end(), !IsSingleIterationLoadMode());
 
 	// start loader thread
-	hr = m_thread.Create(&SVFileCamera::OnAPCEvent, boost::bind(&SVFileCamera::OnThreadEvent, this, _1), m_name.c_str(), SVAffinityAcq);
+	hr = m_thread.Create(&SVFileCamera::OnAPCEvent, std::bind(&SVFileCamera::OnThreadEvent, this, std::placeholders::_1), m_name.c_str(), SVAffinityAcq);
 	return hr;
 }
 

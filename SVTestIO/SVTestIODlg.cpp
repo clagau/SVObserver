@@ -133,9 +133,14 @@ void SVTestIODlg::OnBnClickedClearButton()
 
 void SVTestIODlg::OnTriggerButtonClicked( UINT nID )
 {
-	int triggerchannel = nID - IDC_TRIGGER_1 + 1; //triggerchannel is one-based
+	unsigned long triggerIndex = nID - IDC_TRIGGER_1 + 1;
 
-	m_TriggerDispatchers.DispatchIfPossible(triggerchannel);
+	auto iter = m_triggerCallbackMap.find(triggerIndex);
+	if (m_triggerCallbackMap.end() != iter)
+	{
+		SvTi::IntVariantMap triggerData;
+		iter->second(std::move(triggerData));
+	}
 
 }
 

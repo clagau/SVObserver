@@ -94,13 +94,13 @@ bool SVMatroxGigeAcquisitionClass::IsStarted() const
 	return bOk;
 }
 
-HRESULT SVMatroxGigeAcquisitionClass::Create( unsigned long ulSize )
+HRESULT SVMatroxGigeAcquisitionClass::Create()
 {
 	HRESULT hr = S_OK;
 
-	if ( ! mbIsCreated )
+	if (false == IsCreated())
 	{
-		hr = SVAcquisitionClass::Create( ulSize );
+		hr = SVAcquisitionClass::Create();
 	}
 
 	return hr;

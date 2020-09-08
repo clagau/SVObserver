@@ -53,16 +53,6 @@ TriggerDebugData g_TDebugData[MaxDebugData];
 long g_CallbackCount = 0;
 #endif
 
-SVLptIOImpl::SVLptIOImpl() 
-{
-	m_bUseSingleTrigger = false;
-	m_lParallelBoardInterfaceBehavior = Function00ForWrite1;
-
-	#ifdef SV_LOG_STATUS_INFO
-		m_StatusLog.Create();
-	#endif
-}
-
 SVLptIOImpl::~SVLptIOImpl()
 {
 	DisableAckInterrupt();
@@ -74,6 +64,8 @@ HRESULT SVLptIOImpl::Initialize(bool bInit)
 
 	if (bInit && !IsActive())
 	{
+		m_lLptTriggerEdge = 0L;
+		m_lIOBrdTriggerEdge = 0L;
 		SetActive(1);
 	
 		if (!IsActive())
@@ -184,7 +176,8 @@ HRESULT SVLptIOImpl::Initialize(bool bInit)
 				SetActive(0);  
 			}
 			// Stop all triggers
-			m_TriggerDispatchers.Clear();
+			
+			m_triggerCallbackMap.clear();
 		}
 	}
 	return hr;
@@ -603,73 +596,37 @@ BSTR SVLptIOImpl::GetTriggerName(unsigned long triggerIndex)
 
 void SVLptIOImpl::beforeStartTrigger(unsigned long)
 {
-#ifdef SV_LOG_STATUS_INFO
-	m_StatusLog.clear();
-#endif
 }
 
 
-HRESULT SVLptIOImpl::afterStartTrigger(HRESULT hr)
+HRESULT SVLptIOImpl::afterStartTrigger()
 {
-	if (S_OK == hr)
+	// Initialize previous Trigger State
+	unsigned char status;
+	HRESULT result = GetStatusPort(status);
+	if (S_OK == result)
 	{
-		// Initialize previous Trigger State
-		unsigned char status;
-		hr = GetStatusPort(status);
-		if (S_OK == hr)
+		m_lLastTriggerState = status;
+		if( !isIrqHandlerEnabled() )
 		{
-			m_lLastTriggerState = status;
-			if( !isIrqHandlerEnabled() )
-			{
-				::SetThreadPriority(::GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
-				hr = EnableAckInterrupt(boost::bind(&SVLptIOImpl::HandleIRQ, this));
-			}
+			::SetThreadPriority(::GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
+			result = EnableAckInterrupt(boost::bind(&SVLptIOImpl::HandleIRQ, this));
 		}
 	}
 
-#ifdef SV_LOG_STATUS_INFO
-	if(S_OK != hr)
-	{
-		std::string String;
-		String.Format(_T("StartTrigger - Status = 0x%X"), hr);
-		m_StatusLog.push_back(String);
-	}
-#endif
-
-	return hr;
+	return result;
 }
 
 
-HRESULT SVLptIOImpl::afterStopTrigger(HRESULT hr)
+HRESULT SVLptIOImpl::afterStopTrigger()
 {
-	if (S_OK == hr)
+	if (true == m_triggerCallbackMap.empty()) // Make sure all triggers are stopped before Masking the IRQ
 	{
-		if (m_TriggerDispatchers.ContainsNoActiveTriggers()) // Make sure all triggers are stopped before Masking the IRQ
-		{
-			DisableAckInterrupt();
-			::SetThreadPriority(::GetCurrentThread(), THREAD_PRIORITY_NORMAL);
-		}
+		DisableAckInterrupt();
+		::SetThreadPriority(::GetCurrentThread(), THREAD_PRIORITY_NORMAL);
 	}
 
-#ifdef SV_LOG_STATUS_INFO
-	std::string FileName;
-
-	FileName.Format(_T("C:\\SVObserver\\SVLpt.log"));
-	std::fstream Stream(FileName.ToString(), std::ios_base::trunc | std::ios_base::out);
-	if (Stream.is_open())
-	{
-		for (int i = 0;i < m_StatusLog.GetCount(); ++i)
-		{
-			std::string String;
-			m_StatusLog.GetAt(i, &String);
-			Stream << String.ToString() << std::endl;
-		}
-		Stream.close();
-		m_StatusLog.clear();
-	}
-#endif
-
-	return hr;
+	return S_OK;
 }
 
 
@@ -1527,21 +1484,13 @@ void SVLptIOImpl::HandleIRQ()
 	if (S_OK == hr)
 	{
 		double timeStamp = SvTl::GetTimeStamp();
-		#ifdef SV_LOG_STATUS_INFO
-			std::string String;
 
-			String.Format(_T("FireLptInterrupt - StatusReg = 0x%X"), StatusReg);
-
-			m_StatusLog.push_back(String);
-		#endif
-
-		///The trigger dispatcher can not be changed when the module ready flag is set so no mutex is needed
-		for (auto ChannelAndDispatcherList : m_TriggerDispatchers.GetDispatchers())
+		for(unsigned long i = 1; i <= cMaxLptTriggers; ++i)
 		{
 			short nTriggerBit = SVTriggerNone;
 
 			// Get the trigger bit 
-			switch (ChannelAndDispatcherList.first) //the 1 based channel.
+			switch (i) //the 1 based channel.
 			{
 				case 1: // trigger 1 Bit 3 of Status port
 				{
@@ -1568,24 +1517,15 @@ void SVLptIOImpl::HandleIRQ()
 				((nTriggerBit & StatusReg) != (nTriggerBit & m_lLastTriggerState)) && 
 				 ((nTriggerBit & StatusReg) == (nTriggerBit & m_lLptTriggerEdge))) || m_bUseSingleTrigger)
 			{
-				#ifdef SV_LOG_STATUS_INFO
-					String.Format(_T("FireLptInterrupt - TriggerBit = 0x%X - TriggerEdge = 0x%X"), nTriggerBit, m_lLptTriggerEdge);
-
-					m_StatusLog.push_back(String);
-				#endif
-
-				SvTh::IntVariantMap triggerData;
-				triggerData[SvTh::TriggerDataEnum::TimeStamp] = _variant_t(timeStamp);
+				SvTi::IntVariantMap triggerData;
+				triggerData[SvTi::TriggerDataEnum::TimeStamp] = _variant_t(timeStamp);
 				///Trigger channel 0 based
-				triggerData[SvTh::TriggerDataEnum::TriggerChannel] = _variant_t(ChannelAndDispatcherList.first - 1);
-					
-				for (auto& rDispatcher : ChannelAndDispatcherList.second)
+				triggerData[SvTi::TriggerDataEnum::TriggerChannel] = _variant_t(i - 1);
+
+				auto iter = m_triggerCallbackMap.find(i);
+				if (m_triggerCallbackMap.end() != iter)
 				{
-					if (rDispatcher.m_IsStarted)
-					{
-						rDispatcher.SetData(triggerData);
-						rDispatcher.Dispatch();
-					}
+					iter->second(std::move(triggerData));
 				}
 			}
 		}

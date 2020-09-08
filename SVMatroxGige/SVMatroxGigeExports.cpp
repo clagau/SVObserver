@@ -92,13 +92,6 @@ HRESULT WINAPI SVDigitizerGetName( unsigned long triggerchannel, BSTR *p_pbstrNa
 	return l_hr;
 }
 
-HRESULT WINAPI SVDigitizerLoadCameraFiles( unsigned long triggerchannel, SAFEARRAY* p_psaFileNames )
-{
-	HRESULT l_hr = g_matroxAcqDevice.CameraLoadFiles(triggerchannel, p_psaFileNames);
-
-	return l_hr;
-}
-
 HRESULT WINAPI SVDigitizerGetBufferWidth( unsigned long triggerchannel, unsigned long *p_pulWidth )
 {
 	HRESULT l_hr = S_FALSE;
@@ -183,9 +176,9 @@ HRESULT WINAPI SVDigitizerInternalTriggerEnable( unsigned long triggerchannel )
 	return l_hr;
 }
 
-HRESULT WINAPI SVDigitizerInternalTrigger( unsigned long triggerchannel, const VARIANT& rTriggerTime)
+HRESULT WINAPI SVDigitizerInternalTrigger( unsigned long triggerchannel)
 {
-	HRESULT l_hr = g_matroxAcqDevice.InternalTrigger( triggerchannel, rTriggerTime);
+	HRESULT l_hr = g_matroxAcqDevice.InternalTrigger( triggerchannel);
 	
 	return l_hr;
 }
@@ -197,13 +190,6 @@ HRESULT WINAPI SVDigitizerDestroyBuffers( unsigned long triggerchannel )
 	return l_hr;
 }
 
-HRESULT WINAPI SVDigitizerUnloadCameraFile( unsigned long  )
-{
-	HRESULT l_hr = S_FALSE;
-
-	return l_hr;
-}
-
 HRESULT WINAPI SVDigitizerParameterGetList( unsigned long triggerchannel, VARIANT *p_pvarValue )
 {
 	HRESULT l_hr = g_matroxAcqDevice.CameraGetParameterList( triggerchannel, p_pvarValue );
@@ -211,9 +197,9 @@ HRESULT WINAPI SVDigitizerParameterGetList( unsigned long triggerchannel, VARIAN
 	return l_hr;
 }
 
-HRESULT WINAPI SVDigitizerParameterGetName( unsigned long triggerchannel, unsigned long p_ulParameter, BSTR *p_pbstrName )
+HRESULT WINAPI SVDigitizerParameterGetName( unsigned long triggerchannel, int p_iParameterID, BSTR *p_pbstrName )
 {
-	HRESULT l_hr = g_matroxAcqDevice.CameraGetParameterName( triggerchannel, p_ulParameter, p_pbstrName );
+	HRESULT l_hr = g_matroxAcqDevice.CameraGetParameterName( triggerchannel, p_iParameterID, p_pbstrName );
 
 	return l_hr;
 }
@@ -319,14 +305,6 @@ HRESULT WINAPI SVDigitizerGetParameter( unsigned long , SVDeviceParamEnum p_ePar
 		}
 	}
 	return l_hr;
-}
-
-HRESULT WINAPI SVDigitizerDestroyParameter( unsigned long, SVDeviceParamWrapper* p_pParameter )
-{
-	SVDeviceParamWrapper& rw = *p_pParameter;
-	rw.Clear();
-
-	return S_OK;
 }
 
 HRESULT WINAPI SVDigitizerScanForCameras()

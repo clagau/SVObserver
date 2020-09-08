@@ -12,75 +12,47 @@
 
 namespace SvTi
 {
-	HRESULT IODeviceBase::AddDispatcher(unsigned long handle, const SvTh::TriggerDispatcher &rDispatcher)
+HRESULT IODeviceBase::RegisterCallback(unsigned long triggerIndex, TriggerCallBack pTriggerCallback)
+{
+	///When module ready is true we are in run mode no changes to callback functions!
+	if(false == m_moduleReady)
 	{
-		///When module ready is true we are in run mode no changes to dispatcher!
-		if(false == m_moduleReady)
-		{
-			return m_TriggerDispatchers.AddDispatcher(handle, rDispatcher);
-		}
-
-		return E_FAIL;
+		m_triggerCallbackMap[triggerIndex] = pTriggerCallback;
+		return S_OK;
 	}
 
+	return E_FAIL;
+}
 
-	HRESULT IODeviceBase::RemoveDispatcher(unsigned long handle, const SvTh::TriggerDispatcher &rDispatcher)
+
+HRESULT IODeviceBase::UnRegisterCallback(unsigned long triggerIndex)
+{
+	///When module ready is true we are in run mode no changes to callback functions!
+	if (false == m_moduleReady)
 	{
-		///When module ready is true we are in run mode no changes to dispatcher!
-		if (false == m_moduleReady)
+		auto iter = m_triggerCallbackMap.find(triggerIndex);
+		if (m_triggerCallbackMap.end() != iter)
 		{
-			return m_TriggerDispatchers.RemoveDispatcher(handle, rDispatcher);
+			m_triggerCallbackMap.erase(iter);
 		}
-
-		return E_FAIL;
+		return S_OK;
 	}
 
-
-	HRESULT IODeviceBase::RemoveAllDispatchers(unsigned long handle)
-	{
-		///When module ready is true we are in run mode no changes to dispatcher!
-		if (false == m_moduleReady)
-		{
-			m_TriggerDispatchers.RemoveAllDispatchers(handle);
-			return S_OK;
-		}
-		return E_FAIL;
-	}
+	return E_FAIL;
+}
 
 
-	HRESULT IODeviceBase::StartTrigger(unsigned long triggerIndex)
-	{
-		HRESULT hr = E_FAIL;
-
-		beforeStartTrigger(triggerIndex);
-
-		///Note here the bool value is atomic so no need to use a mutex
-		if (m_TriggerDispatchers.StartTrigger(triggerIndex))
-		{
-			hr = S_OK;
-		}
-
-		hr = afterStartTrigger(hr);
-
-		return hr;
-	}
+HRESULT IODeviceBase::StartTrigger(unsigned long triggerIndex)
+{
+	beforeStartTrigger(triggerIndex);
+	return afterStartTrigger();
+}
 
 
-	HRESULT IODeviceBase::StopTrigger(unsigned long triggerIndex)
-	{
-		HRESULT hr = S_FALSE;
-
-		beforeStopTrigger(triggerIndex);
-
-		///Note here the bool value is atomic so no need to use a mutex
-		if (m_TriggerDispatchers.StopTrigger(triggerIndex))
-		{
-			hr = S_OK;
-		}
-
-		hr = afterStopTrigger(hr);
-
-		return hr;
-	}
+HRESULT IODeviceBase::StopTrigger(unsigned long triggerIndex)
+{
+	beforeStopTrigger(triggerIndex);
+	return afterStopTrigger();
+}
 
 } //namespace SvTi

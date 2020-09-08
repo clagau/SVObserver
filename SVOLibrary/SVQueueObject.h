@@ -108,10 +108,5 @@ typedef SVTQueueObject<void*> SVQueueObject;
 //This object is the specialization for the queue lock.
 typedef SVSingleLockT<SVQueueObject> SVQueueObjectLock;
 
-//#define SV_LOG_STATUS_INFO
-#ifdef SV_LOG_STATUS_INFO
-	typedef SVTQueueObject< std::string > SVStatusDeque;
-#endif
-
 #include "SVTQueueObject.inl"
 

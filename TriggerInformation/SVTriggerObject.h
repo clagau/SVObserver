@@ -15,11 +15,8 @@
 #include "Definitions/TriggerType.h"
 #include "SVOResource/resource.h"
 #include "SVObjectLibrary/SVObjectClass.h"
+#include "SVOLibrary/TriggerDevice.h"
 #pragma endregion Includes
-
-typedef HRESULT (CALLBACK *LPSVFINISHPROC)(void*,void*,void*);
-
-class SVOResponseClass; //defined in SVOLibrary/SVOResponseClass.cpp
 
 //Namespace used only for forward declaration
 namespace SvTh
@@ -46,10 +43,9 @@ namespace SvTi
 
 		bool Start();
 
-		bool RegisterFinishProcess( void *pOwner, LPSVFINISHPROC pFunc );
-		bool UnregisterFinishProcess( void *pOwner );
+		bool RegisterCallback(PpqTriggerCallBack pPpqTriggerCallback);
+		bool UnregisterCallback();
 
-		void FinishProcess( SVOResponseClass *pResponse );
 		///Fires a trigger with given time stamp
 		void Fire(double timeStamp);
 
@@ -59,22 +55,12 @@ namespace SvTi
 		SvTh::SVTriggerClass* getDevice() { return m_pTriggerDevice; }
 
 		SvDef::TriggerType getType() const;
-		void* getOwner() { return m_pOwner; }
-		long getTriggerCount() { return m_triggerCount; }
+		long getTriggerCount() const;
 
 	private:
 		long m_timerPeriod{0L};
-		void* m_pOwner {nullptr};
-
-		LPSVFINISHPROC m_pFinishProc{nullptr};
-
-		long m_triggerCount{0L};
 		SvTh::SVTriggerClass* m_pTriggerDevice{nullptr};
-
-		#ifdef SV_LOG_STATUS_INFO
-			std::vector<std::string> m_StatusLog;
-		#endif
 	};
-	typedef std::vector<SVTriggerObject*> SVTriggerObjectPtrVector;
 
+	typedef std::vector<SVTriggerObject*> SVTriggerObjectPtrVector;
 } //namespace SvTi

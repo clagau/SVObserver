@@ -586,6 +586,8 @@ enum MessageTextEnum
 	Tid_ErrorInRebuildTrcPosCache,
 	Tid_ErrorInGetProductData,
 
-		
+	Tid_CreateThread,
+	Tid_DestroyThread,
+
 };
 } //namespace SvStl

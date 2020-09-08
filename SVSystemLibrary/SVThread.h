@@ -13,6 +13,9 @@
 #pragma region Includes
 #include "SVThreadManager.h"
 #pragma endregion Includes
+
+//namespace SvSyl
+//{
 /*
 SVThreadSignalHandler must have the following prototype:
 
@@ -20,18 +23,19 @@ SVThreadSignalHandler must have the following prototype:
 
 */
 
-template <typename SVThreadSignalHandler>
+typedef std::function<void(bool&)> ProcessThread;
+
 class SVThread
 {
 #pragma region Constructor
 public:
-	SVThread();
+	SVThread() = default;
 	~SVThread();
 #pragma endregion Constructor
 
 #pragma region Public Methods
 public:
-	HRESULT Create(const SVThreadSignalHandler& threadHandler, LPCTSTR tag, SVThreadAttribute eAttribute );
+	HRESULT Create(const ProcessThread& rProcessThread, LPCTSTR tag, SVThreadAttribute eAttribute );
 	void Destroy();
 
 	unsigned long GetThreadID() const;
@@ -43,6 +47,8 @@ public:
 
 	bool IsActive() const;
 	HANDLE GetThreadHandle() const;
+
+	static void SetDiagnostic(bool diagnostic) { m_diagnostic = diagnostic; }
 #pragma endregion Public Methods
 
 #pragma region Private Methods
@@ -52,18 +58,13 @@ private:
 
 #pragma region Member Variables
 private:
-	HANDLE m_hShutdown;
-	HANDLE m_hThreadComplete;
-	HANDLE m_hThread;
-	unsigned long m_ulThreadID;
+	static bool m_diagnostic;
+	HANDLE m_hShutdown{ nullptr };
+	HANDLE m_hThreadComplete{ nullptr };
+	HANDLE m_hThread{ nullptr };
+	unsigned long m_ulThreadID{0UL};
 	std::string m_tag;
-	SVThreadSignalHandler m_threadHandler;
-	// This const defines how long the destroy should wait at most to complete the shutdown
-	// of the thread, before it will kill it.
-	// The old value was 5 s, but this was for some cases to short, so we have increased it to 10 s.
-	static const int m_timeoutShutdownThread = 10000; 
+	ProcessThread m_pProcessThread{ nullptr };
 #pragma endregion Member Variables
 };
-
-#include "SVThread.inl"
-
+//} //namespace SvSyl

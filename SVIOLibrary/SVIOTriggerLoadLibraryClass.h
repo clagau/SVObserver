@@ -11,20 +11,15 @@
 
 #pragma once
 
-//namespace used only for forward declaration
-namespace SvTh
-{
-	class TriggerDispatcher;
-} //namespace SvTh
+#include "TriggerInformation/SVTriggerInfoStruct.h"
 
 typedef HRESULT (WINAPI *SVCreatePtr)( void );
 typedef HRESULT (WINAPI *SVDestroyPtr)( void );
 typedef HRESULT (WINAPI *SVTriggerGetCountPtr)( unsigned long* );
 typedef HRESULT (WINAPI *SVTriggerGetHandlePtr)( unsigned long*, unsigned long );
 typedef HRESULT (WINAPI *SVTriggerGetNamePtr)( unsigned long, BSTR* );
-typedef HRESULT (WINAPI *SVTriggerRegisterPtr)( unsigned long, const SvTh::TriggerDispatcher& rDispatcher );
-typedef HRESULT (WINAPI *SVTriggerUnregisterPtr)( unsigned long, const SvTh::TriggerDispatcher& rDispatcher );
-typedef HRESULT (WINAPI *SVTriggerUnregisterAllPtr)( unsigned long );
+typedef HRESULT (WINAPI *SVTriggerRegisterPtr)( unsigned long, SvTi::TriggerCallBack pTriggerCallback);
+typedef HRESULT (WINAPI *SVTriggerUnregisterPtr)( unsigned long);
 typedef HRESULT (WINAPI *SVTriggerStartPtr)( unsigned long );
 typedef HRESULT (WINAPI *SVTriggerStopPtr)( unsigned long );
 typedef HRESULT (WINAPI *SVTriggerGetParameterCountPtr)( unsigned long, unsigned long* );
@@ -44,9 +39,8 @@ public:
 	HRESULT GetCount( unsigned long* pCount );
 	HRESULT GetHandle( unsigned long* pTriggerChannel, unsigned long index );
 	HRESULT GetName( unsigned long triggerChannel, BSTR* pName );
-	HRESULT Register( unsigned long triggerChannel, const SvTh::TriggerDispatcher& rDispatcher );
-	HRESULT Unregister( unsigned long triggerChannel, const SvTh::TriggerDispatcher& rDispatcher );
-	HRESULT UnregisterAll( unsigned long triggerChannel );
+	HRESULT Register( unsigned long triggerChannel, SvTi::TriggerCallBack pTriggerCallback);
+	HRESULT Unregister( unsigned long triggerChannel);
 	HRESULT Start( unsigned long triggerChannel );
 	HRESULT Stop( unsigned long triggerChannel );
 	HRESULT GetParameterCount( unsigned long triggerChannel, unsigned long* pCount );
@@ -64,7 +58,6 @@ private:
 	SVTriggerGetNamePtr m_pGetName {nullptr};
 	SVTriggerRegisterPtr m_pRegister {nullptr};
 	SVTriggerUnregisterPtr m_pUnregister {nullptr};
-	SVTriggerUnregisterAllPtr m_pUnregisterAll {nullptr};
 	SVTriggerStartPtr m_pStart {nullptr};
 	SVTriggerStopPtr m_pStop {nullptr};
 	SVTriggerGetParameterCountPtr m_pGetParameterCount {nullptr};

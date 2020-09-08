@@ -52,6 +52,7 @@
 #include <comutil.h>		//Used by static library
 #include <ctime>			//Used by static library
 #include <deque>			//Used by static library
+#include <functional>		//Used by static library
 #include <iterator>
 #include <list>				//Used by static library
 #include <map>

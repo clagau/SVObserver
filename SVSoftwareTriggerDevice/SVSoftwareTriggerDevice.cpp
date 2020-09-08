@@ -48,7 +48,7 @@ HRESULT SVSoftwareTriggerDevice::Initialize(bool init)
 		}
 		::timeEndPeriod(cTimerResolution);
 
-		m_TriggerDispatchers.Clear();
+		m_triggerCallbackMap.clear();
 	}
 	return hr;
 }
@@ -179,26 +179,14 @@ void SVSoftwareTriggerDevice::dispatchTrigger(unsigned long triggerIndex)
 	{
 		int triggerChannel = triggerIndex - 1;
 
-		SvTh::IntVariantMap triggerData;
-		triggerData[SvTh::TriggerDataEnum::TimeStamp] = _variant_t(SvTl::GetTimeStamp());
-		triggerData[SvTh::TriggerDataEnum::TriggerChannel] = _variant_t(triggerChannel);
+		SvTi::IntVariantMap triggerData;
+		triggerData[SvTi::TriggerDataEnum::TimeStamp] = _variant_t(SvTl::GetTimeStamp());
+		triggerData[SvTi::TriggerDataEnum::TriggerChannel] = _variant_t(triggerChannel);
 
-		///The trigger dispatcher can not be changed when the module ready flag is set so no mutex is needed
-		for (auto ChannelAndDispatcherList : m_TriggerDispatchers.GetDispatchers())
+		auto iter = m_triggerCallbackMap.find(triggerIndex);
+		if (m_triggerCallbackMap.end() != iter)
 		{
-			//Trigger index is one based
-			if (triggerIndex == ChannelAndDispatcherList.first)
-			{
-				for (auto& rDispatcher : ChannelAndDispatcherList.second)
-				{
-					if (rDispatcher.m_IsStarted)
-					{
-						rDispatcher.SetData(triggerData);
-						rDispatcher.Dispatch();
-					}
-				}
-				break;
-			}
+			iter->second(triggerData);
 		}
 
 		///Check if a new trigger period

@@ -67,22 +67,22 @@ void SVDigitizerProcessingClass::Startup()
 
 	while( l_Iter != l_rAcqParams.end() )
 	{
-		SVAcquisitionClassPtr l_AcqPtr;
+		SVAcquisitionClassPtr pAcqPtr;
 
 		if( 0 == l_Iter->m_DigitizerName.find( _T( "Matrox_GIGE" ) ) )
 		{
-			l_AcqPtr = SVAcquisitionClassPtr{ new SVMatroxGigeAcquisitionClass(*l_Iter) };
+			pAcqPtr = std::make_shared<SVMatroxGigeAcquisitionClass>(*l_Iter);
 		}
 		else if( 0 == l_Iter->m_DigitizerName.find( _T( "File" ) ) )
 		{
-			l_AcqPtr = SVAcquisitionClassPtr{ new SVFileAcquisitionClass(*l_Iter) };
+			pAcqPtr = std::make_shared<SVFileAcquisitionClass>(*l_Iter);
 		}
 
-		if(nullptr != l_AcqPtr)
+		if(nullptr != pAcqPtr)
 		{
-			if( S_OK == l_AcqPtr->Create() )
+			if (S_OK == pAcqPtr->Create())
 			{
-				m_AcquisitionDevices[ l_Iter->m_DigitizerName ] = l_AcqPtr;
+				m_AcquisitionDevices[l_Iter->m_DigitizerName] = pAcqPtr;
 			}
 		}
 

@@ -19,7 +19,6 @@
 #include <mil.h>
 #include "SVFileCameraStruct.h"
 #include "SVEventHandler.h"
-#include "TriggerHandling/TriggerDispatcher.h"
 #include "SVFileSystemLibrary/SVFileInfo.h"
 #include "SVFileSystemLibrary/SVFileInfoComparator.h"
 #include "SVSystemLibrary/SVSequencer.h"
@@ -39,9 +38,6 @@ private:
 	typedef SVFileList::const_iterator FileListIterator;
 	typedef std::insert_iterator<SVFileList> Insertor;
 
-	typedef void ( CALLBACK *APCSignalHandler )( ULONG_PTR );
-	typedef boost::function<void ( bool& )> ThreadSignalHandler;
-	
 public:
 	typedef boost::function<HRESULT (unsigned long)> EventHandler;
 	typedef SVEventHandler<EventHandler> SVFrameEventHandler;
@@ -53,7 +49,7 @@ private:
 	SVFileList m_fileList;
 	SVSequencer<FileListIterator> m_loadSequence;
 	MIL_ID m_image = M_NULL;
-	SVAsyncProcedure<APCSignalHandler, ThreadSignalHandler> m_thread;
+	SVAsyncProcedure m_thread;
 	SVFrameEventHandler m_startFrameEvent;
 	SVFrameEventHandler m_endFrameEvent;
 
@@ -104,7 +100,6 @@ public:
 
 
 	double m_StartTimeStamp{0.0};
-	SvTh::TriggerDispatcher m_dispatcher {nullptr,SvTh::TriggerParameters{}};
 	SVAcquisitionBufferInterface* m_pBufferInterface{nullptr};
 };
 

@@ -23,7 +23,8 @@
 #include "TriggerInformation/SVAcquisitionConstructParams.h"
 #include "SVDigitizerProcessingClass.h"
 #include "SVFileSystemLibrary/SVFileNameManagerClass.h"
-#include "SVStatusLibrary\MessageManager.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
+#include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "TriggerRecordController/ITriggerRecordControllerRW.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
@@ -40,7 +41,7 @@ static char THIS_FILE[] = __FILE__;
 #pragma endregion Declarations
 
 SVAcquisitionClass::SVAcquisitionClass(const SvTi::SVAcquisitionConstructParams& p_rParams)
-	: SVODataDeviceClass(p_rParams.m_DigitizerName.c_str())
+	: AcquisitionDevice(p_rParams.m_DigitizerName.c_str())
 	, m_LUTAndLRSet(p_rParams.m_LUTAndLRSet)
 	, m_rTRController{SvTrc::getTriggerRecordControllerRWInstance()}
 	, m_rDigitizerProc(SVDigitizerProcessingClass::Instance())
@@ -82,12 +83,12 @@ SVAcquisitionClass::~SVAcquisitionClass()
 
 bool SVAcquisitionClass::IsValid() const
 {
-	return (SVODataDeviceClass::IsValid());
+	return (AcquisitionDevice::IsValid());
 }
 
 bool SVAcquisitionClass::IsStarted() const
 {
-	return (SVODataDeviceClass::IsStarted());
+	return (AcquisitionDevice::IsStarted());
 }
 
 void SVAcquisitionClass::ClearDevice()
@@ -111,12 +112,12 @@ void SVAcquisitionClass::ClearDevice()
 
 	m_SingleGrabHandle.reset();
 
-	SVODataDeviceClass::ClearDevice();
+	AcquisitionDevice::ClearDevice();
 }
 
-HRESULT SVAcquisitionClass::Create(unsigned long ulSize)
+HRESULT SVAcquisitionClass::Create()
 {
-	HRESULT l_Status = SVODataDeviceClass::Create(ulSize);
+	HRESULT l_Status = AcquisitionDevice::Create();
 
 	return l_Status;
 }
@@ -125,7 +126,7 @@ HRESULT SVAcquisitionClass::Destroy()
 {
 	DestroyLut();
 
-	HRESULT hrOk = SVODataDeviceClass::Destroy();
+	HRESULT hrOk = AcquisitionDevice::Destroy();
 
 	HRESULT l_Status = DestroyBuffers();
 
@@ -144,7 +145,7 @@ HRESULT SVAcquisitionClass::Destroy()
 
 HRESULT SVAcquisitionClass::Start()
 {
-	HRESULT hrOk = SVODataDeviceClass::Start();
+	HRESULT hrOk = AcquisitionDevice::Start();
 
 	mlStartFrameIndex = -1;
 
@@ -185,7 +186,7 @@ HRESULT SVAcquisitionClass::Stop()
 		}
 	}
 
-	l_Temp = SVODataDeviceClass::Stop();
+	l_Temp = AcquisitionDevice::Stop();
 
 	if (S_OK == hr)
 	{
@@ -198,7 +199,7 @@ HRESULT SVAcquisitionClass::Stop()
 HRESULT SVAcquisitionClass::Reset()
 {
 	HRESULT l_Status = S_OK;
-	HRESULT l_Temp = SVODataDeviceClass::Reset();
+	HRESULT l_Temp = AcquisitionDevice::Reset();
 
 	if (S_OK == l_Status)
 	{
@@ -738,13 +739,13 @@ SvTrc::IImagePtr SVAcquisitionClass::GetNextBuffer()
 	return m_rTRController.getImageBuffer(m_bufferStruct);
 }
 
-HRESULT SVAcquisitionClass::UpdateWithCompletedBuffer(const SvTrc::IImagePtr& rImage, const double StartTick, const double StopTick)
+HRESULT SVAcquisitionClass::UpdateWithCompletedBuffer(const SvTrc::IImagePtr& rpImage, const double StartTick, const double StopTick)
 {
 	if (nullptr != m_SingleGrabHandle)
 	{
-		if (nullptr != rImage && nullptr != rImage->getHandle() && !(rImage->getHandle()->empty()) && !(m_SingleGrabHandle->empty()))
+		if (nullptr != rpImage && nullptr != rpImage->getHandle() && !(rpImage->getHandle()->empty()) && !(m_SingleGrabHandle->empty()))
 		{
-			SVMatroxBufferInterface::CopyBuffer(m_SingleGrabHandle->GetBuffer(), rImage->getHandle()->GetBuffer());
+			SVMatroxBufferInterface::CopyBuffer(m_SingleGrabHandle->GetBuffer(), rpImage->getHandle()->GetBuffer());
 		}
 		//This only resets this smart pointer as another smart pointer is still alive
 		m_SingleGrabHandle.reset();
@@ -752,14 +753,13 @@ HRESULT SVAcquisitionClass::UpdateWithCompletedBuffer(const SvTrc::IImagePtr& rI
 		this->mbTempOnline = false;
 	}
 
-	SVODataResponseClass l_Response;
-	l_Response.setImage(rImage);
-	l_Response.setStartTime(StartTick);
-	l_Response.setEndTime(StopTick);
-	l_Response.setIsValid(true);
-	l_Response.setIsComplete(true);
+	CameraInfo cameraInfo;
+	cameraInfo.m_pImage = rpImage;
+	cameraInfo.m_startFrameTime = StartTick;
+	cameraInfo.m_endFrameTime = StopTick;
 
-	return Notify(l_Response);
+	Notify(cameraInfo);
+	return S_OK;
 }
 
 void SVAcquisitionClass::setNeededBuffers(int neededBuffers)

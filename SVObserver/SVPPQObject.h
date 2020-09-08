@@ -41,6 +41,11 @@ namespace SvOi
 {
 class IObjectWriter;
 }
+
+namespace SvTi
+{
+	class SVTriggerObject;
+}
 class SVInputObjectList;
 class SVOutputObjectList;
 struct MonitorListAttributeStruct;
@@ -171,22 +176,9 @@ public:
 	void GetAllOutputs( SVIOEntryHostStructPtrVector& p_IOEntries ) const;
 	void AddDefaultOutputs();
 
-	//************************************
-	/// Writes DataResponse and Camera into the camera response queue
+	void __stdcall cameraCallback(ULONG_PTR pCaller, CameraInfo&& cameraInfo);
 
-	/// \param pCaller [unused]
-	/// \param p_rTriggerInfo [in]
-	//************************************
-	bool FinishCamera( void *pCaller, SVODataResponseClass* pResponse );
-
-	//************************************
-	/// Writes trigger information into SVTriggerInfoQueue m_oTriggerQueue;
-	/// Calls ResetOutputs() if in SVPPQTimeDelayMode or SVPPQTimeDelayAndDataCompleteMode
-
-	/// \param pCaller [unused]
-	/// \param p_rTriggerInfo [in] the trigger information to be queued
-	//************************************
-	bool FinishTrigger( void *pCaller, const SvTi::SVTriggerInfoStruct& rTriggerInfo);
+	void __stdcall triggerCallback(SvTi::SVTriggerInfoStruct&& triggerInfo);
 
 	bool IsProductAlive( long p_ProductCount ) const;
 
@@ -219,14 +211,14 @@ protected:
 	struct SVCameraQueueElement
 	{
 		SVCameraQueueElement() = default;
-		SVCameraQueueElement( const SVCameraQueueElement& p_rObject ) = default;
-		SVCameraQueueElement(SvIe::SVVirtualCamera* pCamera, const SVODataResponseClass& p_rData );
+		SVCameraQueueElement( const SVCameraQueueElement& rRhs) = default;
+		SVCameraQueueElement(SvIe::SVVirtualCamera* pCamera, const CameraInfo& p_rData );
 		SVCameraQueueElement& operator=(const SVCameraQueueElement&) = default;
 
 		virtual ~SVCameraQueueElement() = default;
 
-		SvIe::SVVirtualCamera* m_pCamera = nullptr;
-		SVODataResponseClass m_Data {};
+		SvIe::SVVirtualCamera* m_pCamera{ nullptr };
+		CameraInfo m_Data {};
 	};
 
 	struct SVCameraInfoElement
@@ -262,13 +254,11 @@ protected:
 	typedef SVTQueueObject< SVInspectionInfoPair > SVInspectionInfoQueue;
 	typedef SVTQueueObject< long > SVProcessCountQueue;
 	typedef SVTQueueObject< SVProductRequestPair > SVProductRequestQueue;
-	typedef void ( CALLBACK * SVAPCSignalHandler )( DWORD_PTR );
-	typedef boost::function<void ( bool& )> SVThreadProcessHandler;
 	typedef std::map<SvIe::SVVirtualCamera*, SVCameraInfoElement> SVCameraInfoMap;
 	typedef std::map<SvIe::SVVirtualCamera*, SVCameraQueueElement> SVPendingCameraResponseMap;
 
 	static void CALLBACK OutputTimerCallback( UINT uTimerID, UINT uRsvd, DWORD_PTR dwUser, DWORD_PTR dwRsvd1, DWORD_PTR dwRsvd2 );
-	static void CALLBACK APCThreadProcess( DWORD_PTR dwParam );
+	static void CALLBACK APCThreadProcess(ULONG_PTR pParam);
 
 	HRESULT MarkProductInspectionsMissingAcquisiton( SVProductInfoStruct& rProduct, SvIe::SVVirtualCamera* pCamera );
 
@@ -369,7 +359,7 @@ protected:
 
 	HRESULT BuildCameraInfos(SvIe::SVObjectIdSVCameraInfoStructMap& rCameraInfos) const;
 
-	mutable SVAsyncProcedure< SVAPCSignalHandler, SVThreadProcessHandler > m_AsyncProcedure;
+	mutable SVAsyncProcedure m_AsyncProcedure;
 
 	long m_ProcessingOutputDelay;
 	double m_NextOutputDelayTimestamp;
@@ -405,7 +395,7 @@ protected:
 	SVIOEntryHostStructPtr m_pDataValid;
 
 	// Pointers to the Subsystem objects used by the PPQ
-	SvTi::SVTriggerObject*            m_pTrigger;
+	SvTi::SVTriggerObject*       m_pTrigger;
 	SVInspectionProcessVector    m_arInspections;
 
 	// Pointer to the PPQ's buckets

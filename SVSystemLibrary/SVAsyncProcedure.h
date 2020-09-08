@@ -13,12 +13,11 @@
 
 #include "SVThread.h"
 
-template <typename SVAPCSignalHandler, typename SVThreadSignalHandler>
 class SVAsyncProcedure
 {
 private:
-	SVThread<SVThreadSignalHandler> m_thread;
-	SVAPCSignalHandler m_apcHandler;
+	SVThread m_thread;
+	PAPCFUNC m_apcHandler;
 	std::string m_tag;
 
 	// The APCSignal handler must implement this
@@ -28,7 +27,7 @@ public:
 	SVAsyncProcedure();
 	~SVAsyncProcedure();
 
-	HRESULT Create(const SVAPCSignalHandler& apcHandler, const SVThreadSignalHandler& threadHandler, LPCTSTR tag, SVThreadAttribute eAttribute );
+	HRESULT Create(PAPCFUNC apcHandler, const ProcessThread& rProceesThread, LPCTSTR tag, SVThreadAttribute eAttribute );
 	void Destroy();
 
 	unsigned long GetThreadID() const;
@@ -40,7 +39,5 @@ public:
 
 	HRESULT Signal(void* pData);
 };
-
-#include "SVAsyncProcedure.inl"
 
 

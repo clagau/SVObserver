@@ -8,7 +8,7 @@
 
 namespace SvDef
 {
-enum TriggerType
+enum class TriggerType
 {
 	HardwareTrigger,
 	SoftwareTrigger,

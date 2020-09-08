@@ -29,6 +29,7 @@
 #include "SVImageLibrary/SVImagingDeviceParams.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
+#include "SVStatusLibrary/MessageManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "TriggerHandling/SVDigitizerLoadLibraryClass.h"
 #pragma warning (pop)
@@ -1161,7 +1162,7 @@ HRESULT SVMatroxGigeCameraProxy::EnableSoftwareTrigger(unsigned long hDigitizer,
 // For SingleGrabHelper
 HRESULT SVMatroxGigeCameraProxy::SoftwareTrigger(unsigned long hDigitizer, SvTh::SVDigitizerLoadLibraryClass* pDigitizer)
 {
-	return pDigitizer->InternalTrigger(hDigitizer, _variant_t());
+	return pDigitizer->InternalTrigger(hDigitizer);
 }
 
 HRESULT SVMatroxGigeCameraProxy::SVLUTToSafeArray(const SVLut& lut, _variant_t& output)

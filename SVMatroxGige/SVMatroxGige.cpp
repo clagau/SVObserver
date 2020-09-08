@@ -761,7 +761,7 @@ HRESULT SVMatroxGige::CameraStop( unsigned long channel )
 			hr = StopDigitizer(l_rCamera);
 			
 			// reset to Hardware Trigger
-			l_rCamera.m_params.TriggerType = SvDef::HardwareTrigger;
+			l_rCamera.m_params.TriggerType = SvDef::TriggerType::HardwareTrigger;
 
 			if( S_OK == SVMatroxGigeDeviceParameterManager::IsParameterSupported(l_rCamera, SvDef::SVGigeParameterStrobeEnable) )
 			{
@@ -925,13 +925,6 @@ void SVMatroxGige::ProcessEndFrame(SVMatroxGigeDigitizer* pCamera, __int64 HookI
 	}
 }
 
-// Just a stub, actual loading is done in SVObserver via SVGigeCameraFileReader ?
-HRESULT SVMatroxGige::CameraLoadFiles(unsigned long , SAFEARRAY* )
-{
-	// in order to load the dcf file, we have to destroy and recreate the digitizer ?
-	return S_FALSE;
-}
-
 HRESULT SVMatroxGige::ReadCameraSerialNumber(SVMatroxGigeDigitizer& p_rCamera)
 {
 	HRESULT hr = S_FALSE;
@@ -1015,25 +1008,20 @@ HRESULT SVMatroxGige::InternalTriggerEnable(unsigned long channel)
 	{
 		SVMatroxGigeDigitizer& l_rCamera = GetDigitizer(channel);
 
-		l_rCamera.m_params.TriggerType = SvDef::SoftwareTrigger;
+		l_rCamera.m_params.TriggerType = SvDef::TriggerType::SoftwareTrigger;
 
 		hr = S_OK;
 	}
 	return hr;
 }
 
-HRESULT SVMatroxGige::InternalTrigger( unsigned long channel, const VARIANT& rTriggerTime)
+HRESULT SVMatroxGige::InternalTrigger( unsigned long channel)
 {
 	HRESULT hr = S_FALSE;
 	if ( IsValidDigitizer(channel) )
 	{
 		SVMatroxGigeDigitizer& l_rCamera = GetDigitizer(channel);
 		
-		if(VT_R8 == rTriggerTime.vt)
-		{
-			variant_t triggerDelay = (rTriggerTime.dblVal - SvTl::GetTimeStamp()) * SvTl::c_MicrosecondsPerMillisecond;
-			SVMatroxDigitizerInterface::SetFeature(*(l_rCamera.m_Digitizer.get()), "TriggerDelay", SVMatroxDigitizerFeature::SVTypeDouble, triggerDelay);
-		}
 		hr = SVMatroxDigitizerInterface::SetFeature(*(l_rCamera.m_Digitizer.get()), "TriggerSoftware", SVMatroxDigitizerFeature::SVTypeCommand, _variant_t(0L));
 	}
 	return hr;
@@ -1075,12 +1063,12 @@ HRESULT SVMatroxGige::EnableTriggering(const SVMatroxGigeDigitizer& p_rCamera)
 {
 	HRESULT hr = S_FALSE;
 
-	if (p_rCamera.m_params.TriggerType == SvDef::HardwareTrigger)
+	if (p_rCamera.m_params.TriggerType == SvDef::TriggerType::HardwareTrigger)
 	{
 		_variant_t value("External Trigger");
 		hr = SVMatroxGigeDeviceParameterManager::SetParameter(p_rCamera, SvDef::SVGigeParameterTriggerSource, 0, &value);
 	}
-	else if (p_rCamera.m_params.TriggerType == SvDef::SoftwareTrigger)
+	else if (p_rCamera.m_params.TriggerType == SvDef::TriggerType::SoftwareTrigger)
 	{
 		_variant_t value("Software Trigger");
 		hr = SVMatroxGigeDeviceParameterManager::SetParameter(p_rCamera, SvDef::SVGigeParameterTriggerSource, 0, &value);

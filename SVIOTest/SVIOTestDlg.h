@@ -12,6 +12,7 @@
 
 #pragma region Includes
 #include "resource.h"
+#include "TriggerInformation/SVTriggerInfoStruct.h"
 #pragma endregion Includes
 
 class SVIOConfigurationInterfaceClass;
@@ -67,6 +68,8 @@ public:
 
 	CSVIOTESTDlg(CWnd* pParent = nullptr);	// standard constructor
 	virtual ~CSVIOTESTDlg();
+
+	void __stdcall triggerCallback(const SvTi::IntVariantMap& rTriggerData);
 
 	SVIOTriggerDataStruct* getTriggerData(unsigned long triggerChannel);
 

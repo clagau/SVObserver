@@ -32,8 +32,6 @@ namespace SvTh
 class SVTriggerClass;
 }
 
-typedef HRESULT(CALLBACK *LPSVFINISHPROC)(void*, void*, void*);
-
 namespace SvIe
 {
 class SVVirtualCamera;
@@ -71,8 +69,8 @@ public:
 	bool GoOnline();
 	bool GoOffline();
 
-	bool RegisterFinishProcess( void *pOwner, LPSVFINISHPROC pFunc );
-	bool UnregisterFinishProcess( void *pOwner, LPSVFINISHPROC pFunc );
+	bool RegisterCallback(PpqCameraCallBack pPpqCameraCallbak);
+	bool UnregisterCallback();
 
     SVAcquisitionClassPtr GetAcquisitionDevice() const { return m_pDevice; }
 	
@@ -133,8 +131,6 @@ public:
 
 	void setRegFileName(const std::string& rFullFileName);
 
-	void FinishProcess( SVODataResponseClass *pResponse );
-
 	void addNeededBuffer(uint32_t id, int neededBufferSize);
 	void removeNeededBufferEntry(uint32_t id);
 #pragma endregion Public Methods
@@ -151,7 +147,6 @@ protected:
 
 private:
 	SVAcquisitionClassPtr m_pDevice;
-	SVCallbackClassPtrQueue m_CallbackList;
 	SvVol::BasicValueObjects m_CameraValues;
 	bool m_bFileAcquisition;
 	bool m_IsColor;

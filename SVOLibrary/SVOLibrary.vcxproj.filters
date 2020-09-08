@@ -15,32 +15,23 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="EventTime.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVContainableCriticalSection.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVOCallbackClass.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVODataDeviceClass.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVODeviceClass.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVQueueObject.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="AcquisitionDevice.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="TriggerDevice.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="EventTime.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="stdafx.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -53,36 +44,24 @@
     <ClInclude Include="SVMultithread.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVOCallbackClass.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVODataDeviceClass.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVODataResponseClass.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVODeviceClass.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVOLibrary.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVOResponseClass.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVProcessFunctor.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVQueueObject.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="CameraInfo.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="AcquisitionDevice.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="TriggerDevice.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SVContainableCriticalSection.inl">
-      <Filter>Headerdateien</Filter>
-    </None>
-    <None Include="SVProcessFunctor.inl">
       <Filter>Headerdateien</Filter>
     </None>
     <None Include="SVTQueueObject.inl">

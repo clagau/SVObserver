@@ -12,8 +12,10 @@
 //Moved to precompiled header: #include <comdef.h>
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <vector>
+#pragma region Includes
 #include "SVLptIO.h"
 #include "TriggerInformation/IODeviceBase.h"
+#pragma endregion Includes
 
 constexpr unsigned long cMaxLptTriggers = 3;
 
@@ -66,20 +68,13 @@ class SVLptIOImpl : public SVLptIO, public SvTi::IODeviceBase
 
 #pragma region Constructor
 public:
-	SVLptIOImpl();
+	SVLptIOImpl() = default;
 	virtual ~SVLptIOImpl();
 #pragma endregion Constructor
 
 #pragma region Public Methods
 public:
 	// Trigger Variables...
-	long m_lLastTriggerState;
-	long m_lLptTriggerEdge;
-	long m_lIOBrdTriggerEdge;
-
-	bool m_bUseSingleTrigger;
-	short m_nPreviousOutputs[SVNumOutputPorts + 1];
-
 	HRESULT Initialize(bool bInit);
 	
 	// Digital I/O
@@ -94,9 +89,6 @@ public:
 	
 	HRESULT SetPortOutputValue(unsigned portNo, unsigned long val);
 	HRESULT GetBoardVersion(long& p_rlVer);
-
-//	HRESULT GetPortInputBit(unsigned portNo, unsigned long bitNo, bool& bitVal);
-//	HRESULT SetPortOutputBit(unsigned portNo, unsigned long bitNo, bool bitVal);
 
 	HRESULT SetBoardType(unsigned long lBoardType);
 	HRESULT GetBoardType(unsigned long& rlBoardType);
@@ -114,8 +106,8 @@ public:
 	BSTR GetTriggerName(unsigned long triggerIndex);
 
 	void beforeStartTrigger(unsigned long) override;
-	HRESULT afterStartTrigger(HRESULT hr) override;
-	HRESULT afterStopTrigger(HRESULT hr) override;
+	HRESULT afterStartTrigger() override;
+	HRESULT afterStopTrigger() override;
 
 	HRESULT TriggerGetParameterCount(unsigned long triggerIndex, unsigned long* pCount);
 	HRESULT TriggerGetParameterName(unsigned long triggerIndex, unsigned long Index, BSTR* pName);
@@ -131,12 +123,6 @@ public:
 
 #pragma region Protected Methods
 protected:
-	#ifdef SV_LOG_STATUS_INFO
-		SVStatusDeque m_StatusLog;
-	#endif
-
-	long m_lBoardVersion{0L};
-	ParallelBoardInterfaceType m_lParallelBoardInterfaceBehavior;
 
 	short GetPreviousOutputs(long lControl);
 	void SetPreviousOutputs(long lControl, short sValue);
@@ -159,6 +145,16 @@ private:
 
 #pragma region Member Variables
 private:
+	long m_lLastTriggerState{0L};
+	long m_lLptTriggerEdge{0L};
+	long m_lIOBrdTriggerEdge{0L};
+
+	bool m_bUseSingleTrigger{ false };
+	short m_nPreviousOutputs[SVNumOutputPorts + 1]{0, 0, 0, 0};
+
+	long m_lBoardVersion{ 0L };
+	ParallelBoardInterfaceType m_lParallelBoardInterfaceBehavior{ ParallelBoardInterfaceType::Function00ForWrite1 };
+
 	bool m_isFirstTimeToReadOrWrite = true; //this variable introduced in SVO-1692 to suppress spurious "invalid line state" warning
 #pragma endregion Member Variables
 };

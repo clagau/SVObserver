@@ -3,39 +3,40 @@
 //* All Rights Reserved
 //******************************************************************************
 //* .Module Name     : SVAsyncProcedure
-//* .File Name       : $Workfile:   SVAsyncProcedure.inl  $
+//* .File Name       : $Workfile:   SVAsyncProcedure.cpp  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.2  $
 //* .Check In Date   : $Date:   01 Dec 2014 13:59:04  $
 //******************************************************************************
 
+#pragma region Includes
+#include "stdafx.h"
+
+#include "SVAsyncProcedure.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVMessage\SVMessage.h"
+#pragma endregion Includes
 
-template<typename SVAPCSignalHandler, typename SVThreadSignalHandler>
-SVAsyncProcedure<SVAPCSignalHandler, SVThreadSignalHandler>::SVAsyncProcedure()
+SVAsyncProcedure::SVAsyncProcedure()
 {
 }
 
-template<typename SVAPCSignalHandler, typename SVThreadSignalHandler>
-SVAsyncProcedure<SVAPCSignalHandler, SVThreadSignalHandler>::~SVAsyncProcedure()
+SVAsyncProcedure::~SVAsyncProcedure()
 {
 	Destroy();
 }
 
-template<typename SVAPCSignalHandler, typename SVThreadSignalHandler>
-HRESULT SVAsyncProcedure<SVAPCSignalHandler, SVThreadSignalHandler>::Create(const SVAPCSignalHandler& apcHandler, const SVThreadSignalHandler& threadHandler, LPCTSTR tag, SVThreadAttribute eAttribute )
+HRESULT SVAsyncProcedure::Create(PAPCFUNC apcHandler, const ProcessThread& rProceesThread, LPCTSTR tag, SVThreadAttribute eAttribute )
 {
 	m_tag = tag;
 	m_apcHandler = apcHandler;
 
-	HRESULT hr = m_thread.Create(threadHandler, m_tag.c_str(), eAttribute);
+	HRESULT hr = m_thread.Create(rProceesThread, m_tag.c_str(), eAttribute);
 	return hr;
 }
 
-template<typename SVAPCSignalHandler, typename SVThreadSignalHandler>
-HRESULT SVAsyncProcedure<SVAPCSignalHandler, SVThreadSignalHandler>::Signal(void* pData)
+HRESULT SVAsyncProcedure::Signal(void* pData)
 {
 	SvStl::MessageManager Exception(SvStl::MsgType::Log );
 
@@ -79,32 +80,27 @@ HRESULT SVAsyncProcedure<SVAPCSignalHandler, SVThreadSignalHandler>::Signal(void
 	return Result;
 }
 
-template<typename SVAPCSignalHandler, typename SVThreadSignalHandler>
-void SVAsyncProcedure<SVAPCSignalHandler, SVThreadSignalHandler>::Destroy()
+void SVAsyncProcedure::Destroy()
 {
 	m_thread.Destroy();
 }
 
-template<typename SVAPCSignalHandler, typename SVThreadSignalHandler>
-unsigned long SVAsyncProcedure<SVAPCSignalHandler, SVThreadSignalHandler>::GetThreadID() const
+unsigned long SVAsyncProcedure::GetThreadID() const
 {
 	return m_thread.GetThreadID();
 }
 
-template<typename SVAPCSignalHandler, typename SVThreadSignalHandler>
-int SVAsyncProcedure<SVAPCSignalHandler, SVThreadSignalHandler>::GetPriority() const
+int SVAsyncProcedure::GetPriority() const
 {
 	return m_thread.GetPriority();
 }
 
-template<typename SVAPCSignalHandler, typename SVThreadSignalHandler>
-void SVAsyncProcedure<SVAPCSignalHandler, SVThreadSignalHandler>::SetPriority(int priority)
+void SVAsyncProcedure::SetPriority(int priority)
 {
 	m_thread.SetPriority(priority);
 }
 
-template<typename SVAPCSignalHandler, typename SVThreadSignalHandler>
-bool SVAsyncProcedure<SVAPCSignalHandler, SVThreadSignalHandler>::IsActive() const
+bool SVAsyncProcedure::IsActive() const
 {
 	return m_thread.IsActive();
 }

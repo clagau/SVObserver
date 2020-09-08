@@ -512,34 +512,6 @@ void SVInputImageRequestInfoStruct::Init()
 	m_ObjectName.clear();
 }// end Init
 
-SVOutputRequestInfoStruct::SVOutputRequestInfoStruct()
-{
-	Reset();
-}
-
-SVOutputRequestInfoStruct::~SVOutputRequestInfoStruct()
-{
-	Reset();
-}
-
-void SVOutputRequestInfoStruct::Reset()
-{
-	m_ProductInfo.Reset();
-
-	pCaller		 = nullptr;
-	pOwner		 = nullptr;
-	pCallback	 = nullptr;
-}// end Reset
-
-void SVOutputRequestInfoStruct::Init()
-{
-	m_ProductInfo.Reset();
-
-	pCaller		 = nullptr;
-	pOwner		 = nullptr;
-	pCallback	 = nullptr;
-}// end Init
-
 SVProductInfoRequestStruct::SVProductInfoRequestStruct()
 : m_pProduct( nullptr ), m_WaitHandle( nullptr )
 {

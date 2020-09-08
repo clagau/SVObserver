@@ -7,11 +7,9 @@ EXPORTS
 	SVDigitizerGetCount @100
 	SVDigitizerGetHandle @101
 	SVDigitizerGetName @102
-	SVDigitizerLoadCameraFiles @110
 	SVDigitizerGetBufferWidth @111
 	SVDigitizerGetBufferHeight @112
 	SVDigitizerGetBufferFormat @113
-	SVDigitizerUnloadCameraFile @114
 	SVDigitizerCreateBuffers @120
 	SVDigitizerDestroyBuffers @121
 	SVDigitizerRegisterBufferInterface @125
@@ -25,7 +23,6 @@ EXPORTS
 	SVDigitizerSetParameters @150
 	SVDigitizerSetParameter @151
 	SVDigitizerGetParameter @155
-	SVDigitizerDestroyParameter @156
 
 	SVDigitizerParameterGetList @160
 	SVDigitizerParameterGetName @161

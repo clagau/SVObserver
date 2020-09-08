@@ -21,10 +21,7 @@
     <ClCompile Include="SVTriggerClass.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="TriggerDispatcherCollection.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="TriggerDispatcher.cpp">
+    <ClCompile Include="SVDigitizerLoadLibraryClass.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
@@ -38,16 +35,5 @@
     <ClInclude Include="SVTriggerClass.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="TriggerDispatcherCollection.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="TriggerDispatcher.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="SVDigitizerLoadLibraryClass.inl">
-      <Filter>Headerdateien</Filter>
-    </None>
   </ItemGroup>
 </Project>

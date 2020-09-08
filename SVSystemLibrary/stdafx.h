@@ -58,6 +58,7 @@
 #include <direct.h>
 #include <exception>
 #include <fstream>
+#include <functional>
 #include <io.h>
 #include <iomanip>
 #include <iterator>

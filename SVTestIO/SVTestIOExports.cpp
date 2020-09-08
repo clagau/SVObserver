@@ -14,7 +14,6 @@
 #include "SVTestIO.h"
 #include "SVTestIODlg.h"
 #include "SVTestIOExports.h"
-#include "TriggerHandling/TriggerDispatcher.h"
 #pragma endregion Includes
 
 extern CSVTestIOApp theApp;
@@ -193,46 +192,28 @@ HRESULT WINAPI SVTriggerGetName( unsigned long triggerchannel, BSTR *p_pbstrName
 	return l_hrOk;
 }
 
-HRESULT WINAPI SVTriggerRegister( unsigned long triggerchannel, const SvTh::TriggerDispatcher &rDispatcher)
+HRESULT WINAPI SVTriggerRegister( unsigned long triggerchannel, SvTi::TriggerCallBack pTriggerCallback)
 {
 	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
 
-	HRESULT l_hrOk = S_FALSE;
-
-	if ( rDispatcher.hasCallback() && 0 < triggerchannel && triggerchannel <= 4 )
+	if (0 < triggerchannel && triggerchannel <= 4 )
 	{
-		l_hrOk = theApp.m_pTestIODlg->AddDispatcher(triggerchannel, rDispatcher);
+		return theApp.m_pTestIODlg->RegisterCallback(triggerchannel, pTriggerCallback);
 	} 
 
-	return l_hrOk;
+	return E_FAIL;
 }
 
-HRESULT WINAPI SVTriggerUnregister( unsigned long triggerchannel, const SvTh::TriggerDispatcher &rDispatcher)
+HRESULT WINAPI SVTriggerUnregister( unsigned long triggerchannel)
 {
 	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
 
-	HRESULT l_hrOk = S_FALSE;
-
-	if ( rDispatcher.hasCallback() && 0 < triggerchannel && triggerchannel <= 4 )
+	if (0 < triggerchannel && triggerchannel <= 4 )
 	{
-		l_hrOk = theApp.m_pTestIODlg->RemoveDispatcher(triggerchannel, rDispatcher);
+		return theApp.m_pTestIODlg->UnRegisterCallback(triggerchannel);
 	} 
 
-	return l_hrOk;
-}
-
-HRESULT WINAPI SVTriggerUnregisterAll( unsigned long triggerchannel )
-{
-	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-
-	HRESULT l_hrOk = S_FALSE;
-
-	if ( 0 < triggerchannel && triggerchannel <= 4 )
-	{
-		l_hrOk = theApp.m_pTestIODlg->RemoveAllDispatchers(triggerchannel);
-	} 
-
-	return l_hrOk;
+	return E_FAIL;
 }
 
 HRESULT WINAPI SVTriggerStart( unsigned long triggerchannel )

@@ -13,8 +13,8 @@
 
 #pragma region Includes
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
-#include "TriggerDispatcher.h"
 #include "CameraLibrary/SVDeviceParamCollection.h"
+#include "SVImageLibrary/SVAcquisitionBufferInterface.h"
 #pragma endregion Includes
 
 namespace SvTh
@@ -24,26 +24,20 @@ namespace SvTh
 	typedef HRESULT(WINAPI *SVDigitizerGetCountPtr)(unsigned long *);
 	typedef HRESULT(WINAPI *SVDigitizerGetHandlePtr)(SVHANDLE *, unsigned long);
 	typedef HRESULT(WINAPI *SVDigitizerGetNamePtr)(SVHANDLE, BSTR *);
-	typedef HRESULT(WINAPI *SVDigitizerLoadCameraFilesPtr)(SVHANDLE, SAFEARRAY*);
 	typedef HRESULT(WINAPI *SVDigitizerGetBufferWidthPtr)(SVHANDLE, unsigned long *);
 	typedef HRESULT(WINAPI *SVDigitizerGetBufferHeightPtr)(SVHANDLE, unsigned long *);
 	typedef HRESULT(WINAPI *SVDigitizerGetBufferFormatPtr)(SVHANDLE, int *);
 	typedef HRESULT(WINAPI *SVDigitizerCreateBuffersPtr)(SVHANDLE);
-	typedef HRESULT(WINAPI *SVDigitizerRegisterBufferInterfacePtr)(SVHANDLE, class SVAcquisitionBufferInterface *);
+	typedef HRESULT(WINAPI *SVDigitizerRegisterBufferInterfacePtr)(SVHANDLE, SVAcquisitionBufferInterface*);
 	typedef HRESULT(WINAPI *SVDigitizerStartPtr)(SVHANDLE);
 	typedef HRESULT(WINAPI *SVDigitizerStopPtr)(SVHANDLE);
 	typedef HRESULT(WINAPI *SVDigitizerUnregisterBufferInterfacePtr)(SVHANDLE);
 	typedef HRESULT(WINAPI *SVDigitizerInternalTriggerEnablePtr)(SVHANDLE);
-	typedef HRESULT(WINAPI *SVDigitizerInternalTriggerPtr)(SVHANDLE, const VARIANT&);
-	typedef HRESULT(WINAPI *SVDigitizerUnregisterStartAcquirePtr)(SVHANDLE, unsigned long, const TriggerDispatcher &rDispatcher);
-	typedef HRESULT(WINAPI *SVDigitizerUnregisterStopAcquirePtr)(SVHANDLE, unsigned long, const TriggerDispatcher &rDispatcher);
-	typedef HRESULT(WINAPI *SVDigitizerUnregisterAllAcquirePtr)(SVHANDLE, unsigned long);
+	typedef HRESULT(WINAPI *SVDigitizerInternalTriggerPtr)(SVHANDLE);
 	typedef HRESULT(WINAPI *SVDigitizerDestroyBuffersPtr)(SVHANDLE);
-	typedef HRESULT(WINAPI *SVDigitizerUnloadCameraFilePtr)(SVHANDLE);
 	typedef HRESULT(WINAPI *SVDigitizerSetParametersPtr)(SVHANDLE, const SVDeviceParamCollection*);
 	typedef HRESULT(WINAPI *SVDigitizerSetParameterPtr)(SVHANDLE, const SVDeviceParamWrapper*);
 	typedef HRESULT(WINAPI *SVDigitizerGetParameterPtr)(SVHANDLE, SVDeviceParamEnum, SVDeviceParamWrapper**);
-	typedef HRESULT(WINAPI *SVDigitizerDestroyParameterPtr)(SVHANDLE, SVDeviceParamWrapper*);
 	typedef HRESULT(WINAPI *SVDigitizerParameterGetListPtr)(SVHANDLE, VARIANT *);
 	typedef HRESULT(WINAPI *SVDigitizerParameterGetNamePtr)(SVHANDLE, unsigned long, BSTR *);
 	typedef HRESULT(WINAPI *SVDigitizerParameterGetValuePtr)(SVHANDLE, int, int *, VARIANT *);
@@ -56,7 +50,7 @@ namespace SvTh
 	class SVDigitizerLoadLibraryClass
 	{
 	public:
-		SVDigitizerLoadLibraryClass();
+		SVDigitizerLoadLibraryClass() = default;
 		~SVDigitizerLoadLibraryClass();
 
 		HRESULT Open(LPCTSTR p_szLibrary);
@@ -68,25 +62,22 @@ namespace SvTh
 		HRESULT GetCount(unsigned long *p_pulCount);
 		HRESULT GetHandle(SVHANDLE *p_phHandle, unsigned long p_ulIndex);
 		HRESULT GetName(SVHANDLE p_hHandle, BSTR *p_pbstrName);
-		HRESULT LoadCameraFiles(SVHANDLE p_hHandle, SAFEARRAY* p_psaFileNames);
 		HRESULT GetBufferWidth(SVHANDLE p_hHandle, unsigned long *p_pulWidth);
 		HRESULT GetBufferHeight(SVHANDLE p_hHandle, unsigned long *p_pulHeight);
 		HRESULT GetBufferFormat(SVHANDLE p_hHandle, int *p_piFormat);
 		HRESULT CreateBuffers(SVHANDLE p_hHandle);
-		HRESULT RegisterBufferInterface(SVHANDLE p_hHandle, class SVAcquisitionBufferInterface* p_pInterface);
+		HRESULT RegisterBufferInterface(SVHANDLE p_hHandle, SVAcquisitionBufferInterface* _pInterface);
 		HRESULT Start(SVHANDLE p_hHandle);
 		HRESULT Stop(SVHANDLE p_hHandle);
 		HRESULT UnregisterBufferInterface(SVHANDLE p_hHandle);
 
 		HRESULT InternalTriggerEnable(SVHANDLE p_hHandle);
-		HRESULT InternalTrigger(SVHANDLE p_hHandle, const VARIANT& rTriggerTime) const;
+		HRESULT InternalTrigger(SVHANDLE p_hHandle) const;
 
 		HRESULT DestroyBuffers(SVHANDLE p_hHandle);
-		HRESULT UnloadCameraFile(SVHANDLE p_hHandle);
 		HRESULT SetParameters(SVHANDLE p_hHandle, const SVDeviceParamCollection* p_pParameters);
 		HRESULT SetParameter(SVHANDLE p_hHandle, const SVDeviceParamWrapper* p_pParameter);
 		HRESULT GetParameter(SVHANDLE p_hHandle, SVDeviceParamEnum p_eParameter, SVDeviceParamWrapper** p_ppParameter);
-		HRESULT DestroyParameter(SVHANDLE p_hHandle, SVDeviceParamWrapper* p_pParameter);
 		HRESULT ParameterGetList(SVHANDLE p_hHandle, VARIANT *p_pvarName);
 		HRESULT ParameterGetName(SVHANDLE p_hHandle, int p_iParameterID, BSTR *p_pbstrName);
 		HRESULT ParameterGetValue(SVHANDLE p_hHandle, int p_iParameterID, int *p_piParameterTypeID, VARIANT *p_pvarName);
@@ -96,66 +87,57 @@ namespace SvTh
 
 	private:
 		//This attribute holds the handle to the open DLL.
-		HMODULE m_hmHandle;
+		HMODULE m_handle{ nullptr };
 
 		//This attribute holds the address to the SVCreate function in the DLL.
-		SVCreatePtr m_psvCreate;
+		SVCreatePtr m_pCreate{ nullptr };
 		//This attribute holds the address to the SVDestroy function in the DLL.
-		SVDestroyPtr m_psvDestroy;
+		SVDestroyPtr m_pDestroy{ nullptr };
 		//This attribute holds the address to the SVDigitizerGetCount function in the DLL.
-		SVDigitizerGetCountPtr m_psvGetCount;
+		SVDigitizerGetCountPtr m_pGetCount{ nullptr };
 		//This attribute holds the address to the SVDigitizerGetHandle function in the DLL.
-		SVDigitizerGetHandlePtr m_psvGetHandle;
+		SVDigitizerGetHandlePtr m_pGetHandle{ nullptr };
 		//This attribute holds the address to the SVDigitizerGetName function in the DLL.
-		SVDigitizerGetNamePtr m_psvGetName;
-		//This attribute holds the address to the SVDigitizerLoadCameraFiles function in the DLL.
-		SVDigitizerLoadCameraFilesPtr m_psvLoadCameraFiles;
+		SVDigitizerGetNamePtr m_pGetName{ nullptr };
 		//This attribute holds the address to the SVDigitizerGetBufferWidth function in the DLL.
-		SVDigitizerGetBufferWidthPtr m_psvGetBufferWidth;
+		SVDigitizerGetBufferWidthPtr m_pGetBufferWidth{ nullptr };
 		//This attribute holds the address to the SVDigitizerGetBufferHeight function in the DLL.
-		SVDigitizerGetBufferHeightPtr m_psvGetBufferHeight;
+		SVDigitizerGetBufferHeightPtr m_pGetBufferHeight{ nullptr };
 		//This attribute holds the address to the SVDigitizerGetBufferFormat function in the DLL.
-		SVDigitizerGetBufferFormatPtr m_psvGetBufferFormat;
+		SVDigitizerGetBufferFormatPtr m_pGetBufferFormat{ nullptr };
 		//This attribute holds the address to the SVDigitizerCreateBuffers function in the DLL.
-		SVDigitizerCreateBuffersPtr m_psvCreateBuffers;
+		SVDigitizerCreateBuffersPtr m_pCreateBuffers{ nullptr };
 		//This attribute holds the address to the SVDigitizerRegisterBufferInterface function in the DLL.
-		SVDigitizerRegisterBufferInterfacePtr m_psvRegisterBufferInterface;
+		SVDigitizerRegisterBufferInterfacePtr m_pRegisterBufferInterface{ nullptr };
 		//This attribute holds the address to the SVDigitizerStart function in the DLL.
-		SVDigitizerStartPtr m_psvStart;
+		SVDigitizerStartPtr m_pStart{ nullptr };
 		//This attribute holds the address to the SVDigitizerStop function in the DLL.
-		SVDigitizerStopPtr m_psvStop;
+		SVDigitizerStopPtr m_pStop{ nullptr };
 		//This attribute holds the address to the SVDigitizerUnregisterBufferInterface function in the DLL.
-		SVDigitizerUnregisterBufferInterfacePtr m_psvUnregisterBufferInterface;
+		SVDigitizerUnregisterBufferInterfacePtr m_pUnregisterBufferInterface{ nullptr };
 		//This attribute holds the address to the SVDigitizerInternalTriggerEnable function in the DLL.
-		SVDigitizerInternalTriggerEnablePtr m_psvInternalTriggerEnable;
+		SVDigitizerInternalTriggerEnablePtr m_pInternalTriggerEnable{ nullptr };
 		//This attribute holds the address to the SVDigitizerInternalTrigger function in the DLL.
-		SVDigitizerInternalTriggerPtr m_psvInternalTrigger;
+		SVDigitizerInternalTriggerPtr m_pInternalTrigger{ nullptr };
 		//This attribute holds the address to the SVDigitizerDestroyBuffers function in the DLL.
-		SVDigitizerDestroyBuffersPtr m_psvDestroyBuffers;
-		//This attribute holds the address to the SVDigitizerUnloadCameraFile function in the DLL.
-		SVDigitizerUnloadCameraFilePtr m_psvUnloadCameraFile;
+		SVDigitizerDestroyBuffersPtr m_pDestroyBuffers{ nullptr };
 		//This attribute holds the address to the SVDigitizerSetParameters function in the DLL.
-		SVDigitizerSetParametersPtr m_psvSetParameters;
+		SVDigitizerSetParametersPtr m_pSetParameters{ nullptr };
 		//This attribute holds the address to the SVDigitizerSetParameter function in the DLL.
-		SVDigitizerSetParameterPtr m_psvSetParameter;
+		SVDigitizerSetParameterPtr m_pSetParameter{ nullptr };
 		//This attribute holds the address to the SVDigitizerGetParameter function in the DLL.
-		SVDigitizerGetParameterPtr m_psvGetParameter;
-		//This attribute holds the address to the SVDigitizerDestroyParameter function in the DLL.
-		SVDigitizerDestroyParameterPtr m_psvDestroyParameter;
+		SVDigitizerGetParameterPtr m_pGetParameter{ nullptr };
 		//This attribute holds the address to the SVDigitizerParameterGetList function in the DLL.
-		SVDigitizerParameterGetListPtr m_psvParameterGetList;
+		SVDigitizerParameterGetListPtr m_pParameterGetList{ nullptr };
 		//This attribute holds the address to the SVDigitizerParameterGetName function in the DLL.
-		SVDigitizerParameterGetNamePtr m_psvParameterGetName;
+		SVDigitizerParameterGetNamePtr m_pParameterGetName{ nullptr };
 		//This attribute holds the address to the SVDigitizerParameterGetValue function in the DLL.
-		SVDigitizerParameterGetValuePtr m_psvParameterGetValue;
+		SVDigitizerParameterGetValuePtr m_pParameterGetValue{ nullptr };
 		//This attribute holds the address to the SVDigitizerParameterSetValue function in the DLL.
-		SVDigitizerParameterSetValuePtr m_psvParameterSetValue;
+		SVDigitizerParameterSetValuePtr m_pParameterSetValue{ nullptr };
 		//This attribute holds the address to the SVDigitizerScanForCameras function in the DLL.
-		SVDigitizerScanForCamerasPtr m_psvScanForCameras;
+		SVDigitizerScanForCamerasPtr m_pScanForCameras{ nullptr };
 	};
 
 } //namespace SvTh
-
-#include "SVDigitizerLoadLibraryClass.inl"
-
 

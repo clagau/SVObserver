@@ -32,21 +32,6 @@ SVFileAcquisitionDevice::~SVFileAcquisitionDevice()
 	Destroy(true);
 }
 
-bool SVFileAcquisitionDevice::IsValidDigitizer(unsigned long triggerchannel) const
-{
-	return ( triggerchannel < MaxFileCameras);
-}
-
-SVFileCamera& SVFileAcquisitionDevice::GetDigitizer(unsigned long triggerchannel)
-{
-	return m_cameras[ triggerchannel ];
-}
-
-const SVFileCamera& SVFileAcquisitionDevice::GetDigitizer(unsigned long triggerchannel) const
-{
-	return m_cameras[ triggerchannel ];
-}
-
 HRESULT SVFileAcquisitionDevice::Create()
 {
 	HRESULT l_hrOk = S_OK;
@@ -592,12 +577,6 @@ HRESULT SVFileAcquisitionDevice::CameraProcessEndFrame( unsigned long index )
 #endif
 	}
 	return l_hrOk;
-}
-
-HRESULT SVFileAcquisitionDevice::CameraLoadFiles(unsigned long , SAFEARRAY* )
-{
-	HRESULT hr = S_FALSE;
-	return hr;
 }
 
 HRESULT SVFileAcquisitionDevice::InternalTriggerEnable( unsigned long )

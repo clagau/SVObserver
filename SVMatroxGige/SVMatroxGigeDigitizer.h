@@ -20,7 +20,6 @@
 #include "SVGigeCameraParametersLibrary/SVGigeDeviceParameterStruct.h"
 #include "SVMatroxDigitizerLibrary/SVMatroxDigitizerInterface.h"
 #include "SVMatroxLibrary/SVMatroxBufferArray.h"
-#include "TriggerHandling/TriggerDispatcher.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -105,6 +104,5 @@ public:
 	SVAcquisitionBufferInterface* m_pBufferInterface{nullptr};
 
 private:
-	SvTh::TriggerDispatcher m_dispatcher {nullptr,SvTh::TriggerParameters {}};
 #pragma endregion Member Variables
 };

@@ -39,7 +39,7 @@ public:
 
 	HRESULT GetInputValue(unsigned long* pValue);
 	HRESULT SetOutputValue(unsigned long value);
-	HRESULT SetOutputData(unsigned long triggerIndex, const SvTh::IntVariantMap& rData);
+	HRESULT SetOutputData(unsigned long triggerIndex, const SvTi::IntVariantMap& rData);
 	HRESULT GetInputBit(unsigned long bitNum, bool& bitVal);
 	HRESULT SetOutputBit(unsigned long bitNum, bool bitVal);
 	
@@ -65,7 +65,7 @@ public:
 #pragma region Private Methods
 private:
 	void beforeStartTrigger(unsigned long triggerIndex) override;
-	HRESULT afterStartTrigger(HRESULT hr) override;
+	HRESULT afterStartTrigger() override;
 	void beforeStopTrigger(unsigned long triggerIndex) override;
 
 	void reportTrigger(const TriggerReport&);

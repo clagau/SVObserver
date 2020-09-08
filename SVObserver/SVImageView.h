@@ -14,7 +14,6 @@
 #pragma region Includes
 #include "SVFileSystemLibrary/SVFileNameClass.h"
 #include "SVImageLibrary/SVExtentMultiLineStruct.h"
-#include "SVSystemLibrary/SVThreadWait.h"
 #include "SVProtoBuf/SVO-Enum.h"
 #include "SVOGui/ZoomHelper.h"
 #include "SVUtilityLibrary/SVBitmapInfo.h"
@@ -252,8 +251,6 @@ private:
 	int m_sourceBitCount;
 
 	CRect m_LastRect;
-
-	SVThreadWait m_ThreadWait;
 
 	SVFileNameClass m_ViewOrImageFilename; /// filepath under which the last view or image was saved
 

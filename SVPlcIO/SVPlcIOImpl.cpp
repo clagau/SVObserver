@@ -87,7 +87,7 @@ HRESULT SVPlcIOImpl::Initialize(bool bInit)
 	}
 	else
 	{
-		m_TriggerDispatchers.Clear();
+		m_triggerCallbackMap.clear();
 	}
 	return hr;
 }
@@ -128,19 +128,19 @@ HRESULT SVPlcIOImpl::SetOutputValue(unsigned long )
 	return S_OK;
 }
 
-HRESULT SVPlcIOImpl::SetOutputData(unsigned long triggerIndex, const SvTh::IntVariantMap& rData)
+HRESULT SVPlcIOImpl::SetOutputData(unsigned long triggerIndex, const SvTi::IntVariantMap& rData)
 {
 	ResultReport reportResult;
 
 	//PLC channel is zero based while SVObserver trigger index is one based!
 	reportResult.m_channel = static_cast<uint8_t> (triggerIndex - 1);
 	reportResult.m_timestamp = SvTl::GetTimeStamp();
-	auto iterData = rData.find(SvTh::TriggerDataEnum::ObjectID);
+	auto iterData = rData.find(SvTi::TriggerDataEnum::ObjectID);
 	if (rData.end() != iterData)
 	{
 		reportResult.m_currentObjectID = iterData->second;
 	}
-	iterData = rData.find(SvTh::TriggerDataEnum::OutputData);
+	iterData = rData.find(SvTi::TriggerDataEnum::OutputData);
 	if (rData.end() != iterData)
 	{
 		const _variant_t& rResult{iterData->second};
@@ -232,9 +232,11 @@ void SVPlcIOImpl::beforeStartTrigger(unsigned long triggerIndex)
 	}
 }
 
-HRESULT SVPlcIOImpl::afterStartTrigger(HRESULT result)
+HRESULT SVPlcIOImpl::afterStartTrigger()
 {
-	if (S_OK == result && false == m_engineInitialized)
+	HRESULT result{ S_OK };
+
+	if (false == m_engineInitialized)
 	{
 		result = Tec::initTriggerEngine();
 		m_engineInitialized = true;
@@ -476,30 +478,19 @@ void SVPlcIOImpl::reportTrigger(const TriggerReport& rTriggerReport)
 		//PLC channel is zero based while SVObserver trigger index is one based!
 		unsigned long triggerIndex = rTriggerReport.m_channel + 1;
 
-		SvTh::IntVariantMap triggerData;
-		triggerData[SvTh::TriggerDataEnum::TimeStamp] = _variant_t(rTriggerReport.m_triggerTimestamp);
-		triggerData[SvTh::TriggerDataEnum::TriggerChannel] = _variant_t(rTriggerReport.m_channel);
-		triggerData[SvTh::TriggerDataEnum::ObjectID] = _variant_t(rTriggerReport.m_currentObjectID);
-		triggerData[SvTh::TriggerDataEnum::TriggerIndex] = _variant_t(rTriggerReport.m_triggerIndex);
-		triggerData[SvTh::TriggerDataEnum::TriggerPerObjectID] = _variant_t(rTriggerReport.m_triggerPerObjectID);
+		SvTi::IntVariantMap triggerData;
+		triggerData[SvTi::TriggerDataEnum::TimeStamp] = _variant_t(rTriggerReport.m_triggerTimestamp);
+		triggerData[SvTi::TriggerDataEnum::TriggerChannel] = _variant_t(rTriggerReport.m_channel);
+		triggerData[SvTi::TriggerDataEnum::ObjectID] = _variant_t(rTriggerReport.m_currentObjectID);
+		triggerData[SvTi::TriggerDataEnum::TriggerIndex] = _variant_t(rTriggerReport.m_triggerIndex);
+		triggerData[SvTi::TriggerDataEnum::TriggerPerObjectID] = _variant_t(rTriggerReport.m_triggerPerObjectID);
 
-		///The trigger dispatcher can not be changed when the module ready flag is set so no mutex is needed
-		for (auto ChannelAndDispatcherList : m_TriggerDispatchers.GetDispatchers())
+		auto iter = m_triggerCallbackMap.find(rTriggerReport.m_channel);
+		if (m_triggerCallbackMap.end() != iter)
 		{
-			//Trigger channel is one based
-			if(triggerIndex == ChannelAndDispatcherList.first)
-			{
-				for (auto& rDispatcher : ChannelAndDispatcherList.second)
-				{
-					if (rDispatcher.m_IsStarted)
-					{
-						rDispatcher.SetData(triggerData);
-						rDispatcher.Dispatch();
-					}
-				}
-				break;
-			}
+			iter->second(std::move(triggerData));
 		}
+
 		if(m_logInFile.is_open() && cMaxPlcTriggers > rTriggerReport.m_channel)
 		{
 			const TriggerReport& rData = rTriggerReport;

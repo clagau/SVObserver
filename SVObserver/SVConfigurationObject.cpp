@@ -66,6 +66,7 @@
 #include "SVXMLLibrary/SVObjectXMLWriter.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "TriggerHandling/SVTriggerClass.h"
+#include "TriggerInformation/SVTriggerObject.h"
 #include "TriggerInformation/SVTriggerProcessingClass.h"
 #include "TriggerInformation/SVHardwareManifest.h"
 #include "Tools/SVColorTool.h"
@@ -3942,10 +3943,6 @@ void SVConfigurationObject::SetupCameraTrigger(SvTh::SVTriggerClass* pTriggerDev
 	{
 		std::string DeviceName = SvTi::SVHardwareManifest::BuildSoftwareTriggerDeviceName(iDigNum);
 		SvTh::SVTriggerClass* pTrigger = SvTi::SVTriggerProcessingClass::Instance().GetTrigger(DeviceName.c_str());
-		if (pTrigger)
-		{
-			pTrigger->Create();
-		}
 
 		SetupSoftwareTrigger(pTrigger, iDigNum, triggerPeriod, pPPQ);
 	}
@@ -4002,7 +3999,7 @@ HRESULT SVConfigurationObject::AttachAcqToTriggers()
 		if (bOk)
 		{
 			SvTh::SVTriggerClass* pTriggerDevice = pTrigger->getDevice();
-			SVPPQObject* pPPQ = reinterpret_cast<SVPPQObject*>(pTrigger->getOwner());
+			SVPPQObject* pPPQ = reinterpret_cast<SVPPQObject*>(pTrigger->GetParent());
 			if(nullptr != pTriggerDevice)
 			{
 				pTriggerDevice->clearAcquisitionTriggers();
@@ -5005,7 +5002,7 @@ bool SVConfigurationObject::HasCameraTrigger(SVPPQObject* pCameraPPQ) const
 				SvTh::SVTriggerClass* pTriggerDevice = pTrigger->getDevice();
 				if (nullptr != pTriggerDevice)
 				{
-					SVPPQObject* pPPQ = reinterpret_cast<SVPPQObject*>(pTrigger->getOwner());
+					SVPPQObject* pPPQ = reinterpret_cast<SVPPQObject*>(pTrigger->GetParent());
 					if (pCameraPPQ == pPPQ)
 					{
 						bRetVal = true;

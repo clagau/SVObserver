@@ -86,6 +86,7 @@
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVSystemLibrary/SVVersionInfo.h"
+#include "SVSystemLibrary/SVThread.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "SVUtilityLibrary/LoadDll.h"
 #include "SVUtilityLibrary/StringHelper.h"
@@ -1840,6 +1841,9 @@ BOOL SVObserverApp::InitInstance()
 	SvUl::LoadDll::Instance().setDefaultPath(SvStl::GlobalPath::Inst().GetBinPath(_T("\\")));
 
 	ValidateMRUList();
+
+	int diagnostic = SvimIni.GetValueInt(_T("Settings"), _T("Diagnostic"), 0);
+	SVThread::SetDiagnostic(diagnostic == 1);
 
 	// Get SourceImageDepth
 	m_lSouceImageDepth = GetProfileInt(_T("Settings"), _T("Source Image Depth"), -1);

@@ -44,10 +44,8 @@ public:
 	HRESULT CameraStart( unsigned long p_Handle );
 	HRESULT CameraStop( unsigned long p_Handle );
 
-	HRESULT CameraLoadFiles(unsigned long p_Handle, SAFEARRAY* p_psaFileNames);
-
 	HRESULT InternalTriggerEnable(unsigned long p_Handle);
-	HRESULT InternalTrigger(unsigned long p_Handle, const VARIANT& rTriggerTime);
+	HRESULT InternalTrigger(unsigned long p_Handle);
 
 	void ScanForCameras();
 

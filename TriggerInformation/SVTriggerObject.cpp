@@ -17,27 +17,10 @@
 #include "SVTriggerInfoStruct.h"
 #include "SVIOLibrary/SVIOTriggerLoadLibraryClass.h"
 #include "TriggerHandling/SVTriggerClass.h"
-#include "TriggerHandling/TriggerDispatcher.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 namespace SvTi
 {
-	HRESULT CALLBACK SVOTriggerObjectCallbackPtr( void* pvOwner, void*, void *pvResponse )
-	{
-		HRESULT hrOk = S_OK;
-
-		SVTriggerObject* pTrigger = reinterpret_cast<SVTriggerObject*> (pvOwner);	
-		SVOResponseClass* pResponse = reinterpret_cast<SVOResponseClass*> (pvResponse);
-
-		//Only do an assert check so that in release mode no check is made
-		assert( nullptr != pTrigger && nullptr != pResponse );
-
-		pTrigger->FinishProcess( pResponse );
-
-		return hrOk;
-	}
-
 	SVTriggerObject::SVTriggerObject( LPCSTR ObjectName )
 	: SVObjectClass( ObjectName )
 	, m_timerPeriod(TimerPeriod) 
@@ -62,10 +45,8 @@ namespace SvTi
 		if ( nullptr != pTrigger )
 		{
 			m_pTriggerDevice = pTrigger;
-
+			m_pTriggerDevice->resetTriggerCount();
 			m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVTriggerObjectType;
-
-			bOk = S_OK == m_pTriggerDevice->Create();
 		}
 		else 
 		{
@@ -76,15 +57,15 @@ namespace SvTi
 
 	bool SVTriggerObject::Destroy()
 	{
-		bool bOk = false;
-
 		if ( nullptr != m_pTriggerDevice )
 		{
-			bOk = S_OK == m_pTriggerDevice->Destroy();
+			m_pTriggerDevice->Destroy();
 
 			m_pTriggerDevice = nullptr;
+
+			return true;
 		}
-		return bOk;
+		return false;
 	}
 
 	bool SVTriggerObject::CanGoOnline()
@@ -94,135 +75,56 @@ namespace SvTi
 		{
 			m_pTriggerDevice->enableInternalTrigger();
 		}
-		return nullptr != m_pTriggerDevice && m_pTriggerDevice->IsValid();
+		return nullptr != m_pTriggerDevice;
 	}
 
 	bool SVTriggerObject::GoOnline()
 	{
-		bool bOk = true;
-
-		#ifdef SV_LOG_STATUS_INFO
-			m_StatusLog.clear();
-		#endif
-
-		if ( nullptr != m_pTriggerDevice && !m_pTriggerDevice->IsRegistered())
-		{
-			bOk = S_OK == m_pTriggerDevice->RegisterCallback( SVOTriggerObjectCallbackPtr, this, m_pTriggerDevice );
-		}
-		return bOk;
+		return (nullptr != m_pTriggerDevice);
 	}
 
 	bool SVTriggerObject::GoOffline()
 	{
-	  bool bOk = false;
-
-	  if ( nullptr != m_pTriggerDevice )
-	  {
-
-		bOk = S_OK == m_pTriggerDevice->Stop();
-
-		if ( m_pTriggerDevice->IsRegistered() )
+		if ( nullptr != m_pTriggerDevice )
 		{
-		  bOk = S_OK == m_pTriggerDevice->UnregisterCallback( SVOTriggerObjectCallbackPtr, this, m_pTriggerDevice ) && bOk;
+			return (S_OK == m_pTriggerDevice->Stop());
 		}
-	  }
-  
-		#ifdef SV_LOG_STATUS_INFO
-			std::string FileName = SvUl::Format( _T( "C:\\SVObserver\\%s.log" ), GetName() );
-
-			std::fstream l_Stream( FileName.c_str(), std::ios_base::trunc | std::ios_base::out );
-
-			if( l_Stream.is_open() )
-			{
-				for( auto const & rEntry : m_StatusLog )
-				{
-					l_Stream << rEntry.c_str() << std::endl;
-				}
-
-				l_Stream.close();
-
-				m_StatusLog.clear();
-			}
-		#endif
-
-	  return bOk;  
-	}// end GoOffline
+		return false;
+	}
 
 	bool SVTriggerObject::Start()
 	{ 
 		return (nullptr != m_pTriggerDevice) && (S_OK == m_pTriggerDevice->Start());
 	}
 
-	bool SVTriggerObject::RegisterFinishProcess( void *pOwner, LPSVFINISHPROC pFunc )
+	bool SVTriggerObject::RegisterCallback(PpqTriggerCallBack pPpqTriggerCallback)
 	{
-		bool bOk = false;
-
 		if ( nullptr != m_pTriggerDevice )
 		{
-			bOk = true;
-
-			m_pFinishProc	= pFunc;
-			m_pOwner		= pOwner;
+			m_pTriggerDevice->RegisterCallback(pPpqTriggerCallback);
 		}
-		return bOk;
+		return false;
 	}
 
-	bool SVTriggerObject::UnregisterFinishProcess( void *pOwner )
+	bool SVTriggerObject::UnregisterCallback()
 	{
-		bool bOk = ( m_pOwner == pOwner );
-
-		if( bOk )
+		if (nullptr != m_pTriggerDevice)
 		{
-			m_pFinishProc = nullptr;
-			m_pOwner = nullptr;
+			m_pTriggerDevice->UnregisterCallback();
 		}
-		return bOk;
-	}
-
-	void SVTriggerObject::FinishProcess(SVOResponseClass *pResponse)
-	{
-		if ( pResponse )
-		{
-			SVTriggerInfoStruct triggerInfo;
-			triggerInfo.m_Data = pResponse->getData();
-
-			//If in the input data it has a valid time stamp value then it is more accurate then use it
-			SvTh::IntVariantMap::const_iterator iterData {triggerInfo.m_Data.end()};
-			iterData = triggerInfo.m_Data.find(SvTh::TriggerDataEnum::TimeStamp);
-			if (triggerInfo.m_Data.end() != iterData && VT_R8 == iterData->second.vt && 0.0 < iterData->second.dblVal)
-			{
-				triggerInfo.m_triggerTimeStamp = iterData->second.dblVal;
-			}
-			else
-			{
-				///This is the fallback trigger time stamp
-				triggerInfo.m_triggerTimeStamp = pResponse->getStartTime();
-			}
-
-			triggerInfo.lTriggerCount = ++m_triggerCount;
-			triggerInfo.bValid = pResponse->isValid();
-
-			if ( m_pFinishProc )
-			{
-				(m_pFinishProc)( m_pOwner, this, &triggerInfo );
-			}
-		}
-
-		#ifdef SV_LOG_STATUS_INFO
-			std::string LogEntry = SvUl::Format( _T( "FinishProcess %s - TC = %d" ), GetName(), m_triggerCount );
-
-			m_StatusLog.push_back(LogEntry);
-		#endif
+		return false;
 	}
 
 	void SVTriggerObject::Fire(double timeStamp)
 	{
-		SVOResponseClass response;
-
-		 response.setStartTime(timeStamp);
-		 response.setIsValid(true);
-
-		 FinishProcess(&response);
+		if (nullptr != m_pTriggerDevice)
+		{
+			SvTi::SVTriggerInfoStruct triggerInfo;
+			triggerInfo.m_Data[SvTi::TriggerDataEnum::TimeStamp] = _variant_t(timeStamp);
+			///Trigger channel 0 based
+			triggerInfo.m_Data[SvTi::TriggerDataEnum::TriggerChannel] = _variant_t(m_pTriggerDevice->getTriggerChannel());
+			m_pTriggerDevice->Notify(triggerInfo);
+		}
 	}
 
 	long SVTriggerObject::GetSoftwareTriggerPeriod() const
@@ -259,5 +161,9 @@ namespace SvTi
 		}
 		
 		return result;
+	}
+	long SVTriggerObject::getTriggerCount() const
+	{ 
+		return (nullptr != m_pTriggerDevice) ? m_pTriggerDevice->getTriggerCount() : -1; 
 	}
 } //namespace SvTi

@@ -43,6 +43,11 @@ namespace SvPb
 {
 class InspectionCmdMsgs;
 }
+namespace SvTi
+{
+	class SVTriggerObject;
+	typedef std::vector<SVTriggerObject*> SVTriggerObjectPtrVector;
+}
 namespace SvTh
 {
 class SvTh::SVTriggerClass;

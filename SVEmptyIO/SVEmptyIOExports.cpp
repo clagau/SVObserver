@@ -14,7 +14,6 @@
 #include "SVEmptyIOExports.h"
 #include "Definitions/SVImageFormatEnum.h"
 #include "SVIOLibrary\SVIOParameterEnum.h"
-#include "TriggerHandling/TriggerDispatcher.h"
 #pragma endregion Includes
 
 
@@ -165,40 +164,24 @@ HRESULT WINAPI SVTriggerGetName( unsigned long triggerchannel, BSTR *p_pbstrName
 	return l_hrOk;
 }
 
-HRESULT WINAPI SVTriggerRegister( unsigned long triggerchannel, const SvTh::TriggerDispatcher &rDispatcher)
+HRESULT WINAPI SVTriggerRegister( unsigned long triggerchannel, SvTi::TriggerCallBack pTriggerCallback)
 {
-	HRESULT l_hrOk = S_FALSE;
-
-	if ( rDispatcher.hasCallback() && 0 < triggerchannel && triggerchannel <= 4 )
+	if (0 < triggerchannel && triggerchannel <= 4 )
 	{
-		l_hrOk = S_OK;
+		return S_OK;
 	} 
 
-	return l_hrOk;
+	return E_FAIL;
 }
 
-HRESULT WINAPI SVTriggerUnregister( unsigned long triggerchannel, const SvTh::TriggerDispatcher &rDispatcher)
+HRESULT WINAPI SVTriggerUnregister( unsigned long triggerchannel)
 {
-	HRESULT l_hrOk = S_FALSE;
-
-	if ( rDispatcher.hasCallback() && 0 < triggerchannel && triggerchannel <= 4 )
+	if (0 < triggerchannel && triggerchannel <= 4 )
 	{
-		l_hrOk = S_OK;
+		return S_OK;
 	} 
 
-	return l_hrOk;
-}
-
-HRESULT WINAPI SVTriggerUnregisterAll( unsigned long triggerchannel )
-{
-	HRESULT l_hrOk = S_FALSE;
-
-	if ( 0 < triggerchannel && triggerchannel <= 4 )
-	{
-		l_hrOk = S_OK;
-	} 
-
-	return l_hrOk;
+	return E_FAIL;
 }
 
 HRESULT WINAPI SVTriggerStart( unsigned long triggerchannel )
@@ -356,11 +339,6 @@ HRESULT WINAPI SVDigitizerGetName( unsigned long , BSTR *p_pbstrName )
 	return l_hrOk;
 }
 
-HRESULT WINAPI SVDigitizerLoadCameraFiles( unsigned long , SAFEARRAY*  )
-{
-	return S_FALSE;
-}
-
 HRESULT WINAPI SVDigitizerGetBufferWidth( unsigned long , unsigned long *p_pulWidth )
 {
 	HRESULT l_hrOk = S_FALSE;
@@ -437,11 +415,6 @@ HRESULT WINAPI SVDigitizerDestroyBuffers( unsigned long  )
 	return S_OK;
 }
 
-HRESULT WINAPI SVDigitizerUnloadCameraFile( unsigned long  )
-{
-	return S_OK;
-}
-
 HRESULT WINAPI SVDigitizerSetParameters( unsigned long , const SVDeviceParamCollection*  )
 {
 	return S_OK;
@@ -456,14 +429,3 @@ HRESULT WINAPI SVDigitizerGetParameter( unsigned long , SVDeviceParamEnum , SVDe
 {
 	return S_OK;
 }
-
-HRESULT WINAPI SVDigitizerDestroyParameter( unsigned long , SVDeviceParamWrapper* p_pParameter )
-{
-	HRESULT l_hrOk = S_OK;
-
-	SVDeviceParamWrapper& rw = *p_pParameter;
-	rw.Clear();
-
-	return l_hrOk;
-}
-

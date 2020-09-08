@@ -11,6 +11,7 @@
 
 #pragma once
 
+#include "TriggerInformation/SVTriggerInfoStruct.h"
 
 
 HRESULT WINAPI SVCreate();
@@ -19,9 +20,8 @@ HRESULT WINAPI SVDestroy();
 HRESULT WINAPI SVTriggerGetCount( unsigned long *pCount );
 HRESULT WINAPI SVTriggerGetHandle( unsigned long *pTriggerIndex, unsigned long Index );
 HRESULT WINAPI SVTriggerGetName( unsigned long triggerIndex, BSTR *pName );
-HRESULT WINAPI SVTriggerRegister( unsigned long triggerIndex, const SvTh::TriggerDispatcher &rDispatcher );
-HRESULT WINAPI SVTriggerUnregister( unsigned long triggerIndex, const SvTh::TriggerDispatcher &rDispatcher);
-HRESULT WINAPI SVTriggerUnregisterAll( unsigned long triggerIndex );
+HRESULT WINAPI SVTriggerRegister( unsigned long triggerIndex, SvTi::TriggerCallBack pTriggerCallback);
+HRESULT WINAPI SVTriggerUnregister( unsigned long triggerIndex);
 HRESULT WINAPI SVTriggerStart( unsigned long triggerIndex );
 HRESULT WINAPI SVTriggerStop( unsigned long triggerIndex );
 HRESULT WINAPI SVTriggerGetParameterCount( unsigned long triggerIndex, unsigned long *p_pulCount );

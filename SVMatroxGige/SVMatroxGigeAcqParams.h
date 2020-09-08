@@ -26,7 +26,7 @@ struct SVMatroxGigeAcqParams
 	UINT8 TriggerMode {0};				// Triggermode (Bulb mode ?)
 	UINT8 BayerPattern {0};				// Used bayer pattern
 
-	SvDef::TriggerType TriggerType {SvDef::HardwareTrigger};
+	SvDef::TriggerType TriggerType {SvDef::TriggerType::HardwareTrigger};
 	SVMatroxDigitizerGrab::SVGrabTriggerModeEnum TriggerEdge{SVMatroxDigitizerGrab::SVEdgeRising};
 
 	SVMatroxGigeAcqParams() = default;

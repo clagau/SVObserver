@@ -7,12 +7,10 @@
 
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <comdef.h>
-
-namespace SvTh
-{
-class TriggerDispatcher;
-}
+#include "TriggerInformation/SVTriggerInfoStruct.h"
+#pragma endregion Includes
 
 #pragma region exports
 
@@ -31,9 +29,8 @@ HRESULT WINAPI SVOutputSetPortValue(unsigned long port, unsigned long Value);
 HRESULT WINAPI SVTriggerGetCount(unsigned long* pCount);
 HRESULT WINAPI SVTriggerGetHandle(unsigned long* pTriggerIndex, unsigned long index);
 HRESULT WINAPI SVTriggerGetName(unsigned long triggerIndex, BSTR* pName);
-HRESULT WINAPI SVTriggerRegister(unsigned long triggerIndex, const SvTh::TriggerDispatcher& rDispatcher);
-HRESULT WINAPI SVTriggerUnregister(unsigned long triggerIndex, const SvTh::TriggerDispatcher& rDispatcher);
-HRESULT WINAPI SVTriggerUnregisterAll(unsigned long triggerIndex);
+HRESULT WINAPI SVTriggerRegister(unsigned long triggerIndex, SvTi::TriggerCallBack pTriggerCallback);
+HRESULT WINAPI SVTriggerUnregister(unsigned long triggerIndex);
 HRESULT WINAPI SVTriggerStart(unsigned long triggerIndex);
 HRESULT WINAPI SVTriggerStop(unsigned long triggerIndex);
 HRESULT WINAPI SVTriggerGetParameterCount(unsigned long triggerIndex, unsigned long* pCount);

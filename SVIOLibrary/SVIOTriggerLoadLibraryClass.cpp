@@ -38,7 +38,6 @@ HRESULT SVIOTriggerLoadLibraryClass::Open(LPCTSTR libraryPath)
 			m_pGetName = (SVTriggerGetNamePtr)::GetProcAddress( m_Handle, "SVTriggerGetName" );
 			m_pRegister = (SVTriggerRegisterPtr)::GetProcAddress( m_Handle, "SVTriggerRegister" );
 			m_pUnregister = (SVTriggerUnregisterPtr)::GetProcAddress( m_Handle, "SVTriggerUnregister" );
-			m_pUnregisterAll = (SVTriggerUnregisterAllPtr)::GetProcAddress( m_Handle, "SVTriggerUnregisterAll" );
 			m_pStart = (SVTriggerStartPtr)::GetProcAddress( m_Handle, "SVTriggerStart" );
 			m_pStop = (SVTriggerStopPtr)::GetProcAddress( m_Handle, "SVTriggerStop" );
 			m_pGetParameterCount = (SVTriggerGetParameterCountPtr)::GetProcAddress( m_Handle, "SVTriggerGetParameterCount" );
@@ -53,7 +52,6 @@ HRESULT SVIOTriggerLoadLibraryClass::Open(LPCTSTR libraryPath)
 			     nullptr != m_pGetName &&
 			     nullptr != m_pRegister &&
 			     nullptr != m_pUnregister &&
-			     nullptr != m_pUnregisterAll &&
 			     nullptr != m_pStart &&
 			     nullptr != m_pStop )
 			{
@@ -105,7 +103,6 @@ HRESULT SVIOTriggerLoadLibraryClass::Close()
 	m_pGetName = nullptr;
 	m_pRegister = nullptr;
 	m_pUnregister = nullptr;
-	m_pUnregisterAll = nullptr;
 	m_pStart = nullptr;
 	m_pStop = nullptr;
 	m_pGetParameterCount = nullptr;
@@ -152,37 +149,25 @@ HRESULT SVIOTriggerLoadLibraryClass::GetName( unsigned long triggerChannel, BSTR
 	return result;
 }
 
-HRESULT SVIOTriggerLoadLibraryClass::Register( unsigned long triggerChannel, const SvTh::TriggerDispatcher& rDispatcher )
+HRESULT SVIOTriggerLoadLibraryClass::Register( unsigned long triggerChannel, SvTi::TriggerCallBack pTriggerCallback)
 {
 	HRESULT result {E_FAIL};
 
 	if ( nullptr != m_pRegister )
 	{
-		result = m_pRegister( triggerChannel, rDispatcher);
+		result = m_pRegister( triggerChannel, pTriggerCallback);
 	}
 
 	return result;
 }
 
-HRESULT SVIOTriggerLoadLibraryClass::Unregister( unsigned long triggerChannel, const SvTh::TriggerDispatcher& rDispatcher )
+HRESULT SVIOTriggerLoadLibraryClass::Unregister( unsigned long triggerChannel)
 {
 	HRESULT result {E_FAIL};
 
 	if ( nullptr != m_pUnregister )
 	{
-		result = m_pUnregister( triggerChannel, rDispatcher);
-	}
-
-	return result;
-}
-	
-HRESULT SVIOTriggerLoadLibraryClass::UnregisterAll( unsigned long triggerChannel )
-{
-	HRESULT result {E_FAIL};
-
-	if ( nullptr != m_pUnregisterAll )
-	{
-		result = m_pUnregisterAll( triggerChannel );
+		result = m_pUnregister( triggerChannel);
 	}
 
 	return result;

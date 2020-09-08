@@ -9,7 +9,6 @@
 #include "stdafx.h"
 #include "ResultTableListCtrl.h"
 #include "SVIPDoc.h"
-#include "SVInspectionProcess.h"
 #include "SVObserver.h"
 #include "SVMessage/SVMessage.h"
 #include "SVObjectLibrary/SVClsids.h"

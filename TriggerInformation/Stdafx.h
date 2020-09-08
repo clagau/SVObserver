@@ -62,8 +62,10 @@
 #include <concrt.h>
 #include <cstdlib>
 #include <list>
+#include <functional>
 #include <memory>
 #include <mutex>
+#include <queue>				//Used by static library
 #include <set>					//Used by static library
 #include <tchar.h>				//Used by static library
 #include <unordered_map>

@@ -9,7 +9,6 @@
 #include "StdAfx.h"
 #include "SVLptIOExports.h"
 #include "SVLptIOImpl.h"
-#include "TriggerHandling/TriggerDispatcher.h"
 #pragma endregion Includes
 
 std::atomic_ulong gRefCount{0UL};
@@ -23,8 +22,6 @@ HRESULT WINAPI SVCreate()
 	if (1 == gRefCount)
 	{
 		result = gLpt.Initialize(true);
-		gLpt.m_lLptTriggerEdge = 0;
-		gLpt.m_lIOBrdTriggerEdge = 0;
 	}
 	return result;
 }
@@ -182,39 +179,22 @@ HRESULT WINAPI SVTriggerGetName(unsigned long triggerIndex, BSTR* pName)
 	return result;
 }
 
-HRESULT WINAPI SVTriggerRegister(unsigned long triggerIndex, const SvTh::TriggerDispatcher& rDispatcher)
+HRESULT WINAPI SVTriggerRegister(unsigned long triggerIndex, SvTi::TriggerCallBack pTriggerCallback)
 {
-	HRESULT result {E_FAIL};
-
-	if ( rDispatcher.hasCallback() && 0 < triggerIndex && cMaxLptTriggers >= triggerIndex)
-	{
-		result = S_OK;
-
-		gLpt.AddDispatcher(triggerIndex, rDispatcher);
-	} 
-	return result;
-}
-
-HRESULT WINAPI SVTriggerUnregister(unsigned long triggerIndex, const SvTh::TriggerDispatcher& rDispatcher)
-{
-	HRESULT result {E_FAIL};
-
-	if (rDispatcher.hasCallback() && 0 < triggerIndex && cMaxLptTriggers >= triggerIndex)
-	{
-		result = gLpt.RemoveDispatcher(triggerIndex, rDispatcher);
-	} 
-	return result;
-}
-
-HRESULT WINAPI SVTriggerUnregisterAll(unsigned long triggerIndex)
-{
-	HRESULT result {E_FAIL};
-
 	if (0 < triggerIndex && cMaxLptTriggers >= triggerIndex)
 	{
-		result = gLpt.RemoveAllDispatchers(triggerIndex);
+		return gLpt.RegisterCallback(triggerIndex, pTriggerCallback);
 	} 
-	return result;
+	return E_FAIL;
+}
+
+HRESULT WINAPI SVTriggerUnregister(unsigned long triggerIndex)
+{
+	if (0 < triggerIndex && cMaxLptTriggers >= triggerIndex)
+	{
+		return gLpt.UnRegisterCallback(triggerIndex);
+	} 
+	return E_FAIL;
 }
 
 HRESULT WINAPI SVTriggerStart(unsigned long triggerIndex)

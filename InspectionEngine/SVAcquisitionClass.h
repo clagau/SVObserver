@@ -18,8 +18,7 @@
 #include "SVImageLibrary/SVLut.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "SVMatroxLibrary/SVMatroxBufferCreateStruct.h"
-#include "SVOLibrary/SVODataDeviceClass.h"
-#include "SVOLibrary/SVODeviceClass.h"
+#include "SVOLibrary/AcquisitionDevice.h"
 #include "CameraLibrary/SVDeviceParamCollection.h"
 #include "SVFileSystemLibrary/SVFileNameArrayClass.h"
 #pragma endregion Includes
@@ -48,24 +47,24 @@ namespace SvIe
 class SVDigitizerProcessingClass;
 
 class SVAcquisitionClass :
-	public SVODataDeviceClass,
+	public AcquisitionDevice,
 	public SVAcquisitionBufferInterface
 {
 public:
 	explicit SVAcquisitionClass( const SvTi::SVAcquisitionConstructParams& p_rParams );
 	virtual ~SVAcquisitionClass();
 
-	virtual bool IsValid() const override;  // SVODataDeviceClass Override
-	virtual bool IsStarted() const override;  // SVODataDeviceClass Override
+	virtual bool IsValid() const override;
+	virtual bool IsStarted() const override;
 
-	virtual void ClearDevice() override;  // SVODataDeviceClass Override
+	virtual void ClearDevice() override;
 
-	virtual HRESULT Create( unsigned long ulSize = 50 ) override;  // SVODataDeviceClass Override
-	virtual HRESULT Destroy() override;  // SVODataDeviceClass Override
+	virtual HRESULT Create() override;
+	virtual HRESULT Destroy() override;
 
-	virtual HRESULT Start() override;  // SVODataDeviceClass Override
-	virtual HRESULT Stop() override;  // SVODataDeviceClass Override
-	virtual HRESULT Reset() override;  // SVODataDeviceClass Override
+	virtual HRESULT Start() override;
+	virtual HRESULT Stop() override;
+	virtual HRESULT Reset() override;
 
 	HRESULT CreateBuffers( SVImageInfoClass IInfo);
 	HRESULT DestroyBuffers();
@@ -96,7 +95,7 @@ public:
 
 	virtual HRESULT GetImageInfo( SVImageInfoClass* pImageInfo ) const;
 
-	inline std::string DeviceName() const { return m_DeviceName; }
+	inline std::string DeviceName() const { return GetDeviceName(); }
 	inline std::string DigName() const { return m_DigName; }
 	inline int Channel() const { return miChannel; }
 	inline int DigNumber() const { return miDigNumber; }

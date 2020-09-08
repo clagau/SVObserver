@@ -11,6 +11,7 @@
 #pragma once
 
 #pragma region Includes
+#include "SVTriggerInfoStruct.h"
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVValueObjectLibrary/SVDoubleValueObjectClass.h"
 #include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
@@ -21,7 +22,6 @@ namespace SvTi
 {
 	class SVCameraTriggerData : public SVObjectClass 
 	{
-		typedef  std::map<int, _variant_t> IntVariantMap;
 	public:
 		SVCameraTriggerData();
 		virtual ~SVCameraTriggerData();

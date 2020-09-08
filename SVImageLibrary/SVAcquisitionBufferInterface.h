@@ -16,7 +16,7 @@
 class SVAcquisitionBufferInterface  
 {
 public:
-	virtual ~SVAcquisitionBufferInterface();
+	virtual ~SVAcquisitionBufferInterface() = default;
 
 	virtual unsigned long GetBufferWidth() const = 0;
 	virtual unsigned long GetBufferHeight() const = 0;

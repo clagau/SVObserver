@@ -27,7 +27,6 @@
 #include "SVIOLibrary/SVIOEntryHostStruct.h"
 #include "SVObjectLibrary/SVObjectReference.h"
 #include "TriggerInformation/SVTriggerInfoStruct.h"
-#include "TriggerInformation/SVTriggerObject.h"
 #include "TriggerRecordController/ITriggerRecordRW.h"
 #pragma endregion Includes
 
@@ -267,20 +266,6 @@ private:
 
 typedef std::shared_ptr< SVInputImageRequestInfoStruct > SVInputImageRequestInfoStructPtr;
 typedef std::vector< SVInputImageRequestInfoStructPtr > SVInputImageRequestInfoStructPtrVector;
-
-struct SVOutputRequestInfoStruct
-{
-	SVOutputRequestInfoStruct();
-	virtual ~SVOutputRequestInfoStruct();
-
-	void Reset();
-	void Init();
-
-	SVProductInfoStruct m_ProductInfo;
-	void *pCaller;
-	void *pOwner;
-	LPSVFINISHPROC pCallback;
-};
 
 struct SVProductInfoRequestStruct
 {

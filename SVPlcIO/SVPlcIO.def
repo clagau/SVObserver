@@ -17,7 +17,6 @@ EXPORTS
 	SVTriggerGetName @62
 	SVTriggerRegister @64
 	SVTriggerUnregister @65
-	SVTriggerUnregisterAll @66
 	SVTriggerStart @68
 	SVTriggerStop @69
 	SVTriggerGetParameterCount @70

@@ -43,12 +43,10 @@ SVFileAcquisitionClass::~SVFileAcquisitionClass()
 
 bool SVFileAcquisitionClass::IsValid() const
 {
-	bool bOk = true;
+	bool result = (0 != m_hDigitizer);
+	result = SVAcquisitionClass::IsValid() && result;
 
-	bOk = 0 != m_hDigitizer && bOk;
-	bOk = SVAcquisitionClass::IsValid() && bOk;
-
-	return bOk;
+	return result;
 }
 
 bool SVFileAcquisitionClass::IsValidBoard() const

@@ -86,39 +86,22 @@ HRESULT WINAPI SVTriggerGetName( unsigned long triggerIndex, BSTR *pName )
 	return result;
 }
 
-HRESULT WINAPI SVTriggerRegister( unsigned long triggerIndex, const SvTh::TriggerDispatcher &rDispatcher )
+HRESULT WINAPI SVTriggerRegister( unsigned long triggerIndex, SvTi::TriggerCallBack pTriggerCallback)
 {
-	HRESULT result {E_FAIL};
-
-	if (rDispatcher.hasCallback() && 0 < triggerIndex && cMaxSoftwareTriggers >= triggerIndex)
-	{
-		result = S_OK;
-
-		gSoftwareTrigger.AddDispatcher(triggerIndex, rDispatcher);
-	} 
-	return result;
-}
-
-HRESULT WINAPI SVTriggerUnregister( unsigned long triggerIndex, const SvTh::TriggerDispatcher &rDispatcher)
-{
-	HRESULT result {E_FAIL};
-
-	if (rDispatcher.hasCallback() && 0 < triggerIndex && cMaxSoftwareTriggers >= triggerIndex)
-	{
-		result = gSoftwareTrigger.RemoveDispatcher(triggerIndex, rDispatcher);
-	} 
-	return result;
-}
-
-HRESULT WINAPI SVTriggerUnregisterAll( unsigned long triggerIndex )
-{
-	HRESULT result {E_FAIL};
-
 	if (0 < triggerIndex && cMaxSoftwareTriggers >= triggerIndex)
 	{
-		result = gSoftwareTrigger.RemoveAllDispatchers(triggerIndex);
+		return gSoftwareTrigger.RegisterCallback(triggerIndex, pTriggerCallback);
 	} 
-	return result;
+	return E_FAIL;
+}
+
+HRESULT WINAPI SVTriggerUnregister( unsigned long triggerIndex)
+{
+	if (0 < triggerIndex && cMaxSoftwareTriggers >= triggerIndex)
+	{
+		return gSoftwareTrigger.UnRegisterCallback(triggerIndex);
+	} 
+	return E_FAIL;
 }
 
 HRESULT WINAPI SVTriggerStart( unsigned long triggerIndex )

@@ -90,36 +90,29 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="EventTime.cpp" />
+    <ClCompile Include="AcquisitionDevice.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="SVContainableCriticalSection.cpp" />
-    <ClCompile Include="SVOCallbackClass.cpp" />
-    <ClCompile Include="SVODataDeviceClass.cpp" />
-    <ClCompile Include="SVODeviceClass.cpp" />
     <ClCompile Include="SVQueueObject.cpp" />
+    <ClCompile Include="TriggerDevice.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="EventTime.h" />
+    <ClInclude Include="AcquisitionDevice.h" />
+    <ClInclude Include="CameraInfo.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SVContainableCriticalSection.h" />
     <ClInclude Include="SVMemoryManager.h" />
     <ClInclude Include="SVMultithread.h" />
-    <ClInclude Include="SVOCallbackClass.h" />
-    <ClInclude Include="SVODataDeviceClass.h" />
-    <ClInclude Include="SVODataResponseClass.h" />
-    <ClInclude Include="SVODeviceClass.h" />
     <ClInclude Include="SVOLibrary.h" />
-    <ClInclude Include="SVOResponseClass.h" />
-    <ClInclude Include="SVProcessFunctor.h" />
     <ClInclude Include="SVQueueObject.h" />
+    <ClInclude Include="TriggerDevice.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SVContainableCriticalSection.inl" />
     <None Include="SVMemoryManager.inl" />
-    <None Include="SVProcessFunctor.inl" />
     <None Include="SVTQueueObject.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

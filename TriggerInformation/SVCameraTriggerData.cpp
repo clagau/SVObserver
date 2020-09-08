@@ -13,7 +13,6 @@
 #include "stdafx.h"
 #include "SVCameraTriggerData.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "TriggerHandling/TriggerDispatcher.h"
 #pragma endregion Includes
 
 namespace SvTi
@@ -34,11 +33,11 @@ namespace SvTi
 		_variant_t timeStamp;
 		_variant_t lineState;
 		IntVariantMap::const_iterator Iter( rSettings.end() );
-		Iter = rSettings.find(SvTh::TriggerDataEnum::TimeStamp);
+		Iter = rSettings.find(SvTi::TriggerDataEnum::TimeStamp);
 		if( rSettings.end() != Iter  )
 		{
 			timeStamp = Iter->second;
-			Iter = rSettings.find(SvTh::TriggerDataEnum::LineState);
+			Iter = rSettings.find(SvTi::TriggerDataEnum::LineState);
 			if( rSettings.end() != Iter  )
 			{
 				lineState = Iter->second;

@@ -151,18 +151,18 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed, SVProductInfoSt
 		m_pCurrentToolset->setTime(triggerToAcqTime, ToolSetTimes::TriggerToAcquisitionStart);
 		m_pCurrentToolset->setTime(acqTime, ToolSetTimes::AcquisitionTime);
 		
-		SvTh::IntVariantMap::const_iterator iterData{rProduct.m_triggerInfo.m_Data.end()};
-		iterData = rProduct.m_triggerInfo.m_Data.find(SvTh::TriggerDataEnum::ObjectID);
+		SvTi::IntVariantMap::const_iterator iterData{rProduct.m_triggerInfo.m_Data.end()};
+		iterData = rProduct.m_triggerInfo.m_Data.find(SvTi::TriggerDataEnum::ObjectID);
 		if (rProduct.m_triggerInfo.m_Data.end() != iterData)
 		{
 			m_pCurrentToolset->setObjectID(static_cast<double> (iterData->second));
 		}
-		iterData = rProduct.m_triggerInfo.m_Data.find(SvTh::TriggerDataEnum::TriggerIndex);
+		iterData = rProduct.m_triggerInfo.m_Data.find(SvTi::TriggerDataEnum::TriggerIndex);
 		if (rProduct.m_triggerInfo.m_Data.end() != iterData)
 		{
 			m_pCurrentToolset->setTriggerIndex(iterData->second);
 		}
-		iterData = rProduct.m_triggerInfo.m_Data.find(SvTh::TriggerDataEnum::TriggerPerObjectID);
+		iterData = rProduct.m_triggerInfo.m_Data.find(SvTi::TriggerDataEnum::TriggerPerObjectID);
 		if (rProduct.m_triggerInfo.m_Data.end() != iterData)
 		{
 			m_pCurrentToolset->setTriggerPerObjectID(iterData->second);
@@ -462,7 +462,7 @@ bool SVInspectionProcess::CreateInspection(LPCTSTR szDocName)
 
 	::InterlockedExchange(&m_NotifyWithLastInspected, 0);
 
-	if (S_OK != m_AsyncProcedure.Create(&SVInspectionProcess::APCThreadProcess, boost::bind(&SVInspectionProcess::ThreadProcess, this, _1), GetName(), SVThreadAttribute::SVAffinityUser))
+	if (S_OK != m_AsyncProcedure.Create(&SVInspectionProcess::APCThreadProcess, std::bind(&SVInspectionProcess::ThreadProcess, this, std::placeholders::_1), GetName(), SVThreadAttribute::SVAffinityUser))
 	{
 		return false;
 	}
@@ -487,7 +487,7 @@ bool SVInspectionProcess::CreateInspection(LPCTSTR szDocName)
 	return true;
 }// end Create
 
-void CALLBACK SVInspectionProcess::APCThreadProcess(DWORD_PTR)
+void CALLBACK SVInspectionProcess::APCThreadProcess(ULONG_PTR)
 {
 }
 

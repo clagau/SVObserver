@@ -15,6 +15,7 @@
 #include "SVRegressionFileSelectDlg.h"
 #include "Definitions/StringTypeDef.h"
 #include "InspectionEngine/SVVirtualCamera.h"
+#include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageContainer.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVUtilityLibrary/StringHelper.h"

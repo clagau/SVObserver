@@ -5,9 +5,11 @@
 //* .Module Name     : SVLptExports
 //******************************************************************************
 
+#pragma region Includes
 #include "StdAfx.h"
 #include "SVPlcIOExports.h"
 #include "SVPlcIOImpl.h"
+#pragma endregion Includes
 
 std::atomic_ulong gRefCount{0UL};
 SvPlc::SVPlcIOImpl gPlc;
@@ -125,7 +127,7 @@ HRESULT WINAPI SVOutputSetPortValue(unsigned long port, unsigned long value)
 	return result;
 }
 
-HRESULT WINAPI SVOutputSetData(unsigned long triggerIndex, const SvTh::IntVariantMap& rData)
+HRESULT WINAPI SVOutputSetData(unsigned long triggerIndex, const SvTi::IntVariantMap& rData)
 {
 	HRESULT result {E_FAIL};
 
@@ -182,39 +184,22 @@ HRESULT WINAPI SVTriggerGetName(unsigned long triggerIndex, BSTR* pName)
 	return result;
 }
 
-HRESULT WINAPI SVTriggerRegister(unsigned long triggerIndex, const SvTh::TriggerDispatcher &rDispatcher)
+HRESULT WINAPI SVTriggerRegister(unsigned long triggerIndex, SvTi::TriggerCallBack pTriggerCallback)
 {
-	HRESULT result {E_FAIL};
-
-	if ( rDispatcher.hasCallback() && 0 < triggerIndex && SvPlc::cMaxPlcTriggers >= triggerIndex)
-	{
-		result = S_OK;
-
-		gPlc.AddDispatcher(triggerIndex, rDispatcher);
-	} 
-	return result;
-}
-
-HRESULT WINAPI SVTriggerUnregister(unsigned long triggerIndex, const SvTh::TriggerDispatcher &rDispatcher)
-{
-	HRESULT result {E_FAIL};
-
-	if (rDispatcher.hasCallback() && 0 < triggerIndex && SvPlc::cMaxPlcTriggers >= triggerIndex)
-	{
-		result = gPlc.RemoveDispatcher(triggerIndex, rDispatcher);
-	} 
-	return result;
-}
-
-HRESULT WINAPI SVTriggerUnregisterAll(unsigned long triggerIndex)
-{
-	HRESULT result {E_FAIL};
-
 	if (0 < triggerIndex && SvPlc::cMaxPlcTriggers >= triggerIndex)
 	{
-		result = gPlc.RemoveAllDispatchers(triggerIndex);
+		return gPlc.RegisterCallback(triggerIndex, pTriggerCallback);
 	} 
-	return result;
+	return E_FAIL;
+}
+
+HRESULT WINAPI SVTriggerUnregister(unsigned long triggerIndex)
+{
+	if (0 < triggerIndex && SvPlc::cMaxPlcTriggers >= triggerIndex)
+	{
+		return gPlc.UnRegisterCallback(triggerIndex);
+	} 
+	return E_FAIL;
 }
 
 HRESULT WINAPI SVTriggerStart(unsigned long triggerIndex)

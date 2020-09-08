@@ -88,12 +88,6 @@ HRESULT WINAPI SVDigitizerGetName( unsigned long triggerchannel, BSTR *p_pbstrNa
 	return l_hrOk;
 }
 
-HRESULT WINAPI SVDigitizerLoadCameraFiles( unsigned long triggerchannel, SAFEARRAY* p_psaFileNames )
-{
-	HRESULT l_hrOk = g_fileAcqDevice.CameraLoadFiles(triggerchannel - 1, p_psaFileNames);
-	return l_hrOk;
-}
-
 HRESULT WINAPI SVDigitizerGetBufferWidth( unsigned long triggerchannel, unsigned long *p_pulWidth )
 {
 	HRESULT l_hrOk = S_FALSE;
@@ -185,11 +179,6 @@ HRESULT WINAPI SVDigitizerDestroyBuffers( unsigned long triggerchannel )
 {
 	HRESULT l_hrOk = g_fileAcqDevice.CameraBufferDestroyAll( triggerchannel - 1 );
 	return l_hrOk;
-}
-
-HRESULT WINAPI SVDigitizerUnloadCameraFile( unsigned long  )
-{
-	return S_FALSE;
 }
 
 HRESULT WINAPI SVDigitizerParameterGetList( unsigned long triggerchannel, VARIANT *p_pvarValue )
@@ -453,11 +442,3 @@ HRESULT WINAPI SVDigitizerGetParameter( unsigned long triggerchannel, SVDevicePa
 	return l_hrOk;
 }
 
-HRESULT WINAPI SVDigitizerDestroyParameter( unsigned long, SVDeviceParamWrapper* p_pParameter )
-{
-	HRESULT l_hrOk = S_OK;
-
-	SVDeviceParamWrapper& rw = *p_pParameter;
-	rw.Clear();
-	return l_hrOk;
-}

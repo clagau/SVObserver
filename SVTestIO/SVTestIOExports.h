@@ -10,11 +10,8 @@
 // ******************************************************************************
 
 #pragma once
+#include "TriggerInformation/SVTriggerInfoStruct.h"
 
-namespace SvTh
-{
-class TriggerDispatcher;
-}
 
 class SVAcquisitionBufferInterface;
 
@@ -34,9 +31,8 @@ HRESULT WINAPI SVOutputSetPortValue( unsigned long p_ulPort, unsigned long p_ulV
 HRESULT WINAPI SVTriggerGetCount( unsigned long *p_pulCount );
 HRESULT WINAPI SVTriggerGetHandle( unsigned long *pTriggerchannel, unsigned long p_ulIndex );
 HRESULT WINAPI SVTriggerGetName( unsigned long triggerchannel, BSTR *p_pbstrName );
-HRESULT WINAPI SVTriggerRegister( unsigned long triggerchannel, const SvTh::TriggerDispatcher &rDispatcher );
-HRESULT WINAPI SVTriggerUnregister( unsigned long triggerchannel, const SvTh::TriggerDispatcher &rDispatcher);
-HRESULT WINAPI SVTriggerUnregisterAll( unsigned long triggerchannel );
+HRESULT WINAPI SVTriggerRegister( unsigned long triggerchannel, SvTi::TriggerCallBack pTriggerCallback);
+HRESULT WINAPI SVTriggerUnregister( unsigned long triggerchannel);
 HRESULT WINAPI SVTriggerStart( unsigned long triggerchannel );
 HRESULT WINAPI SVTriggerStop( unsigned long triggerchannel );
 HRESULT WINAPI SVTriggerGetParameterCount( unsigned long triggerchannel, unsigned long *p_pulCount );

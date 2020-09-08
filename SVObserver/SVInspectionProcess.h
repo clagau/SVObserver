@@ -62,7 +62,6 @@ class SVInspectionProcess :
 
 public:
 	typedef std::unordered_map<std::string, SVObjectClass*> SVValueObjectMap;
-	typedef SVTQueueObject< SVOutputRequestInfoStruct > SVOutputRequestQueue;
 
 	explicit SVInspectionProcess( LPCSTR ObjectName );
 	SVInspectionProcess( SVObjectClass *pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVINSPECTIONOBJECT );
@@ -309,9 +308,6 @@ protected:
 	};
 #endif //EnableTracking
 
-	typedef void ( CALLBACK * SVAPCSignalHandler )( DWORD_PTR );
-	typedef boost::function<void ( bool& )> SVThreadProcessHandler;
-
 	typedef SVTQueueObject<SvOi::ICommandPtr> SVCommandQueue;
 	typedef SVTQueueObject<SVInputRequestInfoStructPtr> SVInputRequestQueue;
 	typedef SVTQueueObject<SVInputImageRequestInfoStructPtr> SVInputImageRequestQueue;
@@ -345,7 +341,7 @@ protected:
 
 	HRESULT copyValues2TriggerRecord(RunStatus& rRunStatus);
 
-	static void CALLBACK APCThreadProcess( DWORD_PTR dwParam );
+	static void CALLBACK APCThreadProcess(ULONG_PTR pParam);
 
 	void ThreadProcess( bool& p_WaitForEvents );
 
@@ -372,7 +368,7 @@ private:
 
 	uint32_t m_PPQId{SvDef::InvalidObjectId};
 
-	mutable SVAsyncProcedure< SVAPCSignalHandler, SVThreadProcessHandler > m_AsyncProcedure;
+	mutable SVAsyncProcedure m_AsyncProcedure;
 	long m_NotifyWithLastInspected;
 
 	volatile long m_lInputRequestMarkerCount{0L};

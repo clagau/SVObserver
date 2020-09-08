@@ -50,34 +50,11 @@ public:
 	HRESULT CameraUnregisterBufferInterface( unsigned long p_ulIndex );
 	HRESULT CameraStart( unsigned long p_ulIndex );
 	HRESULT CameraStop( unsigned long p_ulIndex );
-	HRESULT CameraLoadFiles(unsigned long p_ulIndex, SAFEARRAY* p_psaFileNames);
 
 	HRESULT InternalTriggerEnable( unsigned long p_ulIndex );
 	HRESULT InternalTrigger( unsigned long p_ulIndex );
 
-	// Trigger stuff...
-	HRESULT TriggerGetCount(unsigned long& p_ulCount);
-	
-	// convert ordinal to handle
-	unsigned long TriggerGetHandle(unsigned long p_ulIndex);
-
-	HRESULT TriggerGetName(unsigned long triggerchannel, BSTR& p_rbstrName);
-	HRESULT TriggerRegisterCallback(unsigned long triggerchannel, const SvTh::TriggerDispatcher &rDispatcher);
-	HRESULT TriggerUnregisterCallback(unsigned long triggerchannel, const SvTh::TriggerDispatcher &rDispatcher);
-	HRESULT TriggerUnregisterAllCallbacks(unsigned long triggerchannel);
-	HRESULT TriggerStart(unsigned long triggerchannel);
-	HRESULT TriggerStop(unsigned long triggerchannel);
-
-	HRESULT TriggerGetParameterCount( unsigned long triggerchannel, unsigned long *p_pulCount );
-	HRESULT TriggerGetParameterName( unsigned long triggerchannel, unsigned long p_ulIndex, BSTR *p_pbstrName );
-	HRESULT TriggerGetParameterValue( unsigned long triggerchannel, unsigned long p_ulIndex, VARIANT *p_pvarValue );
-	HRESULT TriggerSetParameterValue( unsigned long triggerchannel, unsigned long p_ulIndex, VARIANT *p_pvarValue );
-
 private:
-	bool IsValidDigitizer(unsigned long triggerchannel) const;
-	SVFileCamera& GetDigitizer(unsigned long triggerchannel);
-	const SVFileCamera& GetDigitizer(unsigned long triggerchannel) const;
-
 	HRESULT CameraProcessStartFrame( unsigned long p_ulIndex );
 	HRESULT CameraProcessEndFrame( unsigned long p_ulIndex );
 

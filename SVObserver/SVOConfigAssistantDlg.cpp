@@ -28,6 +28,7 @@
 #include "SVOInspectionObj.h"
 #include "TriggerInformation/SVTriggerConstants.h"
 #include "TriggerInformation/SVOTriggerObj.h"
+#include "TriggerInformation/SVTriggerObject.h"
 #include "SVOCameraObj.h"
 #include "InspectionEngine/SVVirtualCamera.h"
 #include "InspectionEngine/SVAcquisitionClass.h"
@@ -3636,7 +3637,7 @@ HRESULT SVOConfigAssistantDlg::CheckCamera( SVOCameraObj& rCameraObj, bool SetFi
 
 					// if camera file mismatch camera in color options - warning 
 					// do this only if True SVIM type matches selected product type - warning
-					if ( pDevice->IsValid() && l_HardwareParams.ParameterExists( DeviceParamCameraFormats ) )
+					if ( l_HardwareParams.ParameterExists( DeviceParamCameraFormats ) )
 					{
 						if ( bDisplayWarnings )
 						{

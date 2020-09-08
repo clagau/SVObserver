@@ -34,20 +34,6 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-HRESULT CALLBACK ImageCallback(void *, void *pCaller, void *pData)
-{
-	SVVirtualCamera* pCamera = reinterpret_cast<SVVirtualCamera*> (pCaller);
-	SVODataResponseClass* pResponse = reinterpret_cast<SVODataResponseClass*> (pData);
-
-	assert( nullptr != pCamera && nullptr != pResponse );
-	if(nullptr != pCamera)
-	{
-		pCamera->FinishProcess( pResponse );
-	}
-
-	return S_OK;
-}
-
 SVVirtualCamera::SVVirtualCamera( LPCSTR ObjectName ) : SVObjectClass( ObjectName )
  ,mlBandLink( 0 )
  ,m_bFileAcquisition( false )
@@ -126,8 +112,6 @@ bool SVVirtualCamera::Create( LPCTSTR DeviceName )
 
 		m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVVirtualCameraType;
 
-		bOk = m_CallbackList.Create() && bOk;
-
 		createCameraParameters();
 		updateCameraParameters();
 	}
@@ -177,141 +161,22 @@ bool SVVirtualCamera::GoOffline()
 	return (nullptr != m_pDevice) && ( S_OK == m_pDevice->Stop() );
 }
 
-bool SVVirtualCamera::RegisterFinishProcess( void *pvOwner, LPSVFINISHPROC pCallback )
+bool SVVirtualCamera::RegisterCallback(PpqCameraCallBack pPpqCameraCallback)
 {
-	bool bOk = false;
-
-	if ( m_CallbackList.IsCreated() )
+	if (nullptr != m_pDevice)
 	{
-		if ( m_CallbackList.Lock() )
-		{
-			long lSize = 0;
-
-			m_CallbackList.GetSize( lSize );
-			long l = 0;
-			for ( ; l < lSize; l++ )
-			{
-				SVOCallbackClassPtr pData;
-
-				m_CallbackList.GetAt( l, &pData );
-				if (nullptr != pData )
-				{
-					if ( pData->mpCallback == pCallback &&
-					     pData->mpvOwner == pvOwner &&
-					     pData->mpvCaller == this )
-					{
-						break;
-					}
-				}
-				else
-				{
-					break;
-				}
-			}
-
-			if ( lSize <= l )
-			{
-				SVOCallbackClassPtr pData{ new SVOCallbackClass };
-
-				if (nullptr != pData )
-				{
-					pData->mpCallback = pCallback;
-					pData->mpvOwner = pvOwner;
-					pData->mpvCaller = this;
-
-					if ( m_CallbackList.AddTail( pData ) )
-					{
-						bOk = true;
-					}
-
-					if( bOk )
-					{
-						bOk = S_OK == m_pDevice->RegisterCallback( ImageCallback, pData->mpvOwner, pData->mpvCaller );
-					}// end if
-
-				}
-			}
-
-			m_CallbackList.Unlock();
-		}
+		return (S_OK == m_pDevice->RegisterCallback(reinterpret_cast<ULONG_PTR> (this), pPpqCameraCallback));
 	}
-
-	return bOk;
+	return false;
 }
 
-bool SVVirtualCamera::UnregisterFinishProcess(void *pvOwner, LPSVFINISHPROC pCallback)
+bool SVVirtualCamera::UnregisterCallback()
 {
-	bool bOk = false;
-
-	if ( m_CallbackList.IsCreated() )
+	if (nullptr != m_pDevice)
 	{
-		if ( m_CallbackList.Lock() )
-		{
-			long lSize = 0;
-
-			m_CallbackList.GetSize( lSize );
-
-			for ( long l = lSize - 1; -1 < l; l-- )
-			{
-				SVOCallbackClassPtr pData;
-				
-				m_CallbackList.GetAt( l, &pData );
-
-				if (nullptr != pData)
-				{
-					if ( pData->mpCallback == pCallback &&
-					     pData->mpvOwner == pvOwner &&
-						 pData->mpvCaller == this )
-					{
-						if ( m_CallbackList.RemoveAt( l ) )
-						{
-							bOk = true;
-						}
-
-						if ( bOk && nullptr != m_pDevice )
-						{
-							bOk = S_OK == m_pDevice->UnregisterCallback( ImageCallback, pData->mpvOwner, pData->mpvCaller );
-						}	
-
-						break;
-					}
-				}
-				else
-				{
-					m_CallbackList.RemoveAt( l );
-				}
-			}
-
-			m_CallbackList.Unlock();
-		}
+		return (S_OK == m_pDevice->UnregisterCallback());
 	}
-
-	return bOk;
-}
-
-void SVVirtualCamera::FinishProcess( SVODataResponseClass *pResponse )
-{
-	if ( m_CallbackList.IsCreated() )
-	{
-		if ( pResponse )
-		{		
-			long lSize = 0;
-
-			m_CallbackList.GetSize( lSize );
-
-			for ( long l = 0; l < lSize; l++ )
-			{
-				SVOCallbackClassPtr pData;
-
-				m_CallbackList.GetAt( l, &pData );
-
-				if (nullptr != pData)
-				{
-					(pData->mpCallback)( pData->mpvOwner, pData->mpvCaller, (void*) pResponse );
-				}
-			}
-		}
-	}
+	return false;
 }
 
 void SVVirtualCamera::addNeededBuffer(uint32_t id, int neededBufferSize)
@@ -343,38 +208,7 @@ bool SVVirtualCamera::DestroyLocal()
 {
 	bool bOk = GoOffline();
 
-	if ( m_CallbackList.IsCreated() )
-	{
-		if ( m_CallbackList.Lock() )
-		{
-			long lSize = 0;
-
-			m_CallbackList.GetSize( lSize );
-
-			for ( long l = lSize - 1; -1 < l; l-- )
-			{
-				SVOCallbackClassPtr pData;
-				
-				m_CallbackList.GetAt( l, &pData );
-
-				if (nullptr != pData && nullptr != m_pDevice )
-				{
-					bOk &= S_OK == m_pDevice->UnregisterCallback( ImageCallback, 
-					                                       pData->mpvOwner, 
-					                                       pData->mpvCaller );
-				}
-
-				if ( ! m_CallbackList.RemoveAt( l ) )
-				{
-					bOk = false;
-				}
-			}
-
-			m_CallbackList.Unlock();
-		}
-
-		m_CallbackList.Destroy();
-	}
+	bOk &= (S_OK == m_pDevice->UnregisterCallback());
 
 	m_pDevice = nullptr;
 	mlBandLink = 0;

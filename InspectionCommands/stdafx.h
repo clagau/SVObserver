@@ -36,6 +36,7 @@
 #include <concrt.h>
 #include <ctime>
 #include <deque>
+#include <functional>
 #include <iostream>
 //#include <iomanip>
 #include <iterator>

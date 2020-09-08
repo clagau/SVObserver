@@ -95,14 +95,14 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="SVAsyncProcedure.cpp" />
     <ClCompile Include="SVEncodeDecodeUtilities.cpp" />
     <ClCompile Include="SVImageConvertorGDI.cpp" />
     <ClCompile Include="SVLockableClass.cpp" />
     <ClCompile Include="SVSAXContentHandlerImpl.cpp" />
+    <ClCompile Include="SVThread.cpp" />
     <ClCompile Include="SVThreadManager.cpp" />
-    <ClCompile Include="SVThreadWait.cpp" />
     <ClCompile Include="SVVersionInfo.cpp" />
-    <ClCompile Include="SVWaitFuncs.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FileVersion.h" />
@@ -110,7 +110,6 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SVAsyncProcedure.h" />
     <ClInclude Include="SVEncodeDecodeUtilities.h" />
-    <ClInclude Include="SVEventThread.h" />
     <ClInclude Include="SVFuture.h" />
     <ClInclude Include="SVImageConvertorGDI.h" />
     <ClInclude Include="SVLockableClass.h" />
@@ -120,17 +119,12 @@
     <ClInclude Include="SVSequencer.h" />
     <ClInclude Include="SVThread.h" />
     <ClInclude Include="SVThreadManager.h" />
-    <ClInclude Include="SVThreadWait.h" />
     <ClInclude Include="SVVersionInfo.h" />
-    <ClInclude Include="SVWaitFuncs.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="SVAsyncProcedure.inl" />
-    <None Include="SVEventThread.inl" />
     <None Include="SVFuture.inl" />
     <None Include="SVSAXErrorHandlerImpl.inl" />
     <None Include="SVSequencer.inl" />
-    <None Include="SVThread.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

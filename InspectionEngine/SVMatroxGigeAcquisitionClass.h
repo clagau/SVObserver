@@ -31,7 +31,7 @@ public:
 	virtual bool IsValid() const override;
 	virtual bool IsStarted() const override;
 
-	virtual HRESULT Create( unsigned long ulSize = 15 ) override;
+	virtual HRESULT Create() override;
 	virtual HRESULT Destroy() override;
 
 	virtual HRESULT GetFileNameArraySize( long &rlSize ) const override;

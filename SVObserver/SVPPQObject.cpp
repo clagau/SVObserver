@@ -65,44 +65,6 @@ constexpr double TwentyPercent = .20;
 const long MinReducedPPQPosition = 2;
 #pragma endregion Declarations
 
-HRESULT CALLBACK SVFinishTriggerCallback(void *pOwner, void *pCaller, void *pData)
-{
-	SVPPQObject* pPPQ = reinterpret_cast<SVPPQObject*>(pOwner);
-	SvTi::SVTriggerInfoStruct* pTriggerInfo = reinterpret_cast<SvTi::SVTriggerInfoStruct*>(pData);
-
-	bool bRet = (nullptr != pPPQ && nullptr != pTriggerInfo);
-
-	if (bRet)
-	{
-		bRet = pPPQ->FinishTrigger(pCaller, *pTriggerInfo);
-	}
-
-	return bRet ? S_OK : E_FAIL;
-}
-
-HRESULT CALLBACK SVFinishCameraCallback(void *pOwner, void *pCaller, void *pData)
-{
-	SVPPQObject* pPPQ = reinterpret_cast<SVPPQObject*> (pOwner);
-	SVODataResponseClass* pResponse = reinterpret_cast<SVODataResponseClass*> (pData);
-
-	bool bRet = (nullptr != pPPQ && nullptr != pResponse);
-
-	if (bRet)
-	{
-		if(nullptr != pPPQ->GetTrigger())
-		{
-			///If camera trigger we need to fire the trigger when a valid image has arrived
-			if(SvDef::TriggerType::CameraTrigger == pPPQ->GetTrigger()->getType() && nullptr != pResponse->getImage())
-			{
-				pPPQ->GetTrigger()->Fire(pResponse->getStartTime());
-			}
-		}
-		bRet = pPPQ->FinishCamera(pCaller, pResponse);
-	}
-
-	return bRet ? S_OK : E_FAIL;
-}
-
 HRESULT SVPPQObject::ProcessDelayOutputs( bool& rProcessed )
 /// Used in data completion mode, but not in next trigger mode.
 /// Retrieves the process (i.e. trigger) count from the m_oOutputsDelayQueue and uses it to get a "product pointer"
@@ -612,12 +574,15 @@ long SVPPQObject::getPPQLength() const
 
 bool SVPPQObject::AttachTrigger(SvTi::SVTriggerObject* pTrigger)
 {
-	if (nullptr == pTrigger) { return false; }
-
+	if (nullptr == pTrigger) 
+	{ 
+		return false;
+	}
 	m_pTrigger = pTrigger;
-	if (!m_pTrigger->RegisterFinishProcess(this, SVFinishTriggerCallback)) { return false; }
 
-	return true;
+	m_pTrigger->SetObjectOwner(this);
+
+	return m_pTrigger->RegisterCallback(std::bind(&SVPPQObject::triggerCallback, this, std::placeholders::_1));
 }
 
 bool SVPPQObject::AttachCamera(SvIe::SVVirtualCamera* pCamera, long lPosition, bool p_AllowMinusOne)
@@ -641,7 +606,7 @@ bool SVPPQObject::AttachCamera(SvIe::SVVirtualCamera* pCamera, long lPosition, b
 
 		RebuildProductCameraInfoStructs();
 
-		l_bOk &= pCamera->RegisterFinishProcess(this, SVFinishCameraCallback);
+		l_bOk &= pCamera->RegisterCallback(std::bind(&SVPPQObject::cameraCallback, this, std::placeholders::_1, std::placeholders::_2));
 		pCamera->addNeededBuffer(getObjectId(), getPPQLength());
 	}
 
@@ -665,7 +630,7 @@ bool SVPPQObject::DetachTrigger(SvTi::SVTriggerObject* pTrigger)
 
 	if (bOk)
 	{
-		bOk = m_pTrigger->UnregisterFinishProcess(this);
+		bOk = m_pTrigger->UnregisterCallback();
 
 		m_pTrigger = nullptr;
 	}
@@ -679,7 +644,7 @@ bool SVPPQObject::DetachCamera(SvIe::SVVirtualCamera* pCamera, bool bRemoveDepen
 
 	bool l_Status = true;
 
-	l_Status &= pCamera->UnregisterFinishProcess(this, SVFinishCameraCallback);
+	l_Status &= pCamera->UnregisterCallback();
 	pCamera->removeNeededBufferEntry(getObjectId());
 
 	SVCameraInfoMap::iterator l_svIter = m_Cameras.find(pCamera);
@@ -1102,7 +1067,7 @@ void SVPPQObject::GoOnline()
 	}// end if
 
 	// Create the PPQ's threads
-	if (S_OK != m_AsyncProcedure.Create(&SVPPQObject::APCThreadProcess, boost::bind(&SVPPQObject::ThreadProcess, this, _1), GetName(), SVAffinityPPQ))
+	if (S_OK != m_AsyncProcedure.Create(&SVPPQObject::APCThreadProcess, std::bind(&SVPPQObject::ThreadProcess, this, std::placeholders::_1), GetName(), SVAffinityPPQ))
 	{
 		SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_GoOnlineFailure_CreatePPQThread, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10185);
 		throw Msg;
@@ -1742,7 +1707,7 @@ bool SVPPQObject::WriteOutputs(SVProductInfoStruct *pProduct)
 			pProduct->m_outputsInfo.m_Outputs = m_pOutputList->getOutputValues(m_UsedOutputs, true, false, true);
 		}
 
-		SvTh::IntVariantMap::const_iterator iterData{pProduct->m_triggerInfo.m_Data.end()};
+		SvTi::IntVariantMap::const_iterator iterData{pProduct->m_triggerInfo.m_Data.end()};
 		//As all inspections have been tested to have the same object ID we will set it to the first inspection
 		ObjectIdSVInspectionInfoStructMap::const_iterator iter{pProduct->m_svInspectionInfos.begin()};
 		if(pProduct->m_svInspectionInfos.end() != iter)
@@ -1752,7 +1717,7 @@ bool SVPPQObject::WriteOutputs(SVProductInfoStruct *pProduct)
 		else
 		{
 			//Set the default inspected object ID which would be the input object ID
-			iterData = pProduct->m_triggerInfo.m_Data.find(SvTh::TriggerDataEnum::ObjectID);
+			iterData = pProduct->m_triggerInfo.m_Data.find(SvTi::TriggerDataEnum::ObjectID);
 			if (pProduct->m_triggerInfo.m_Data.end() != iterData)
 			{
 				inspectedObjectID = static_cast<DWORD> (iterData->second);
@@ -1760,12 +1725,12 @@ bool SVPPQObject::WriteOutputs(SVProductInfoStruct *pProduct)
 		}
 		DWORD triggerIndex{0};
 		DWORD triggerPerObjectID{0};
-		iterData = pProduct->m_triggerInfo.m_Data.find(SvTh::TriggerDataEnum::TriggerIndex);
+		iterData = pProduct->m_triggerInfo.m_Data.find(SvTi::TriggerDataEnum::TriggerIndex);
 		if (pProduct->m_triggerInfo.m_Data.end() != iterData)
 		{
 			triggerIndex = static_cast<DWORD> (iterData->second);
 		}
-		iterData = pProduct->m_triggerInfo.m_Data.find(SvTh::TriggerDataEnum::TriggerPerObjectID);
+		iterData = pProduct->m_triggerInfo.m_Data.find(SvTi::TriggerDataEnum::TriggerPerObjectID);
 		if (pProduct->m_triggerInfo.m_Data.end() != iterData)
 		{
 			triggerPerObjectID = static_cast<DWORD> (iterData->second);
@@ -1801,9 +1766,9 @@ bool SVPPQObject::WriteOutputs(SVProductInfoStruct *pProduct)
 			
 			if(triggerChannel >= 0 && rOutputValues.size() > 0)
 			{
-				SvTh::IntVariantMap outputData;
-				outputData[SvTh::TriggerDataEnum::ObjectID] = _variant_t(inspectedObjectID);
-				outputData[SvTh::TriggerDataEnum::OutputData] = rOutputValues[0].second;
+				SvTi::IntVariantMap outputData;
+				outputData[SvTi::TriggerDataEnum::ObjectID] = _variant_t(inspectedObjectID);
+				outputData[SvTi::TriggerDataEnum::OutputData] = rOutputValues[0].second;
 				m_pOutputList->WriteOutputData(triggerChannel, outputData);
 			}
 		}
@@ -2713,7 +2678,7 @@ HRESULT SVPPQObject::ProcessCameraResponse(const SVCameraQueueElement& rElement)
 {
 	HRESULT l_Status = S_OK;
 
-	if ((nullptr != rElement.m_pCamera) && (nullptr != rElement.m_Data.getImage()))
+	if ((nullptr != rElement.m_pCamera) && (nullptr != rElement.m_Data.m_pImage))
 	{
 		long l_CameraPositionOnPPQ = 0;
 		size_t l_ProductIndex = static_cast<size_t> (-1);
@@ -2728,7 +2693,7 @@ HRESULT SVPPQObject::ProcessCameraResponse(const SVCameraQueueElement& rElement)
 			l_CameraPositionOnPPQ = l_svIter->second.m_CameraPPQIndex;
 		}
 
-		double startTime = rElement.m_Data.getStartTime();
+		double startTime = rElement.m_Data.m_startFrameTime;
 
 		if (l_CameraPositionOnPPQ < ppqSize)
 		{
@@ -2806,16 +2771,9 @@ HRESULT SVPPQObject::ProcessCameraResponse(const SVCameraQueueElement& rElement)
 				// Queue notification.
 				if (priorCameraSF == 0.0)
 				{
-					double endTime = rElement.m_Data.getEndTime();
+					double endTime = rElement.m_Data.m_endFrameTime;
 
-					if (rElement.m_Data.isComplete())
-					{
-						IterCamera->second.Assign(startTime, endTime, rElement.m_Data.getImage());
-					}
-					else
-					{
-						IterCamera->second.ClearInfo();
-					}
+					IterCamera->second.Assign(startTime, endTime, rElement.m_Data.m_pImage);
 
 					pProduct->m_ProductState += _T("|");
 					pProduct->m_ProductState += rElement.m_pCamera->GetName();
@@ -2926,35 +2884,34 @@ HRESULT SVPPQObject::BuildCameraInfos(SvIe::SVObjectIdSVCameraInfoStructMap& p_r
 	return l_Status;
 }
 
-bool SVPPQObject::FinishCamera(void *pCaller, SVODataResponseClass *pResponse)
+void SVPPQObject::cameraCallback(ULONG_PTR pCaller, CameraInfo&& cameraInfo)
 {
-	bool l_Status = (m_bOnline && (nullptr != pCaller) && (nullptr != pResponse) && (nullptr != pResponse->getImage()));
+	SvIe::SVVirtualCamera* pCamera = reinterpret_cast<SvIe::SVVirtualCamera*> (pCaller);
+	bool valid = (m_bOnline && (nullptr != pCamera) && (nullptr != cameraInfo.m_pImage));
 
-	if (l_Status)
+	if (nullptr != GetTrigger())
 	{
-		SvIe::SVVirtualCamera* pCamera = reinterpret_cast<SvIe::SVVirtualCamera*>(pCaller);
-
-		if (nullptr != pCamera)
+		///If camera trigger we need to fire the trigger when a valid image has arrived
+		if (SvDef::TriggerType::CameraTrigger == GetTrigger()->getType() && nullptr != cameraInfo.m_pImage)
 		{
-			m_CameraResponseQueue.AddTail(SVCameraQueueElement(pCamera, *pResponse));
-#if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
-			::OutputDebugString(SvUl::Format(_T("GetName() Finished Camera Acquisition %s\n"), GetName(), pCamera->GetName()).c_str());
-#endif
+			GetTrigger()->Fire(cameraInfo.m_startFrameTime);
 		}
-		m_AsyncProcedure.Signal(nullptr);
 	}
 
-	return l_Status;
+	if (valid)
+	{
+		m_CameraResponseQueue.AddTail(SVCameraQueueElement(pCamera, cameraInfo));
+#if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
+		::OutputDebugString(SvUl::Format(_T("GetName() Finished Camera Acquisition %s\n"), GetName(), pCamera->GetName()).c_str());
+#endif
+		m_AsyncProcedure.Signal(nullptr);
+	}
 }
 
-bool SVPPQObject::FinishTrigger(void *, const SvTi::SVTriggerInfoStruct& rTriggerInfo)
+void __stdcall SVPPQObject::triggerCallback(SvTi::SVTriggerInfoStruct&& triggerInfo)
 {
-	bool l_Status = m_bOnline;
-
-	if (l_Status)
+	if (m_bOnline)
 	{
-		SvTi::SVTriggerInfoStruct triggerInfo{rTriggerInfo};
-
 		GetInputIOValues(triggerInfo.m_Inputs);
 
 		switch (m_outputMode)
@@ -2977,13 +2934,6 @@ bool SVPPQObject::FinishTrigger(void *, const SvTi::SVTriggerInfoStruct& rTrigge
 		triggerInfo.m_ToggleState = m_TriggerToggle;
 		triggerInfo.m_ToggleTimeStamp = SvTl::GetTimeStamp();
 
-		// Caution! enabling the logging here will cause thread contention because
-		// the tracking class is not lock-less. It needs more work before we can use it here.
-#ifdef EnableTracking
-		//long l_lTime = static_cast<long>( triggerInfo.m_ToggleTimeStamp - triggerInfo.m_BeginProcess );
-		//m_PPQTracking.IncrementTimeCount( _T( "Trigger Toggle"), l_lTime );
-#endif
-
 		m_oTriggerQueue.PushTail(triggerInfo);
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
@@ -2992,8 +2942,6 @@ bool SVPPQObject::FinishTrigger(void *, const SvTi::SVTriggerInfoStruct& rTrigge
 
 		m_AsyncProcedure.Signal(nullptr);
 	}
-
-	return l_Status;
 }
 
 bool SVPPQObject::IsProductAlive(long p_ProductCount) const
@@ -3108,7 +3056,7 @@ HRESULT SVPPQObject::MarkProductInspectionsMissingAcquisiton(SVProductInfoStruct
 	return l_Status;
 }
 
-void CALLBACK SVPPQObject::APCThreadProcess(DWORD_PTR)
+void CALLBACK SVPPQObject::APCThreadProcess(ULONG_PTR)
 {
 }
 
@@ -3981,7 +3929,7 @@ void SVPPQObject::SetConditionalOutputName(const std::string& conditionalOutputN
 }
 
 #pragma region SVCameraQueueElement Constructor
-SVPPQObject::SVCameraQueueElement::SVCameraQueueElement(SvIe::SVVirtualCamera* pCamera, const SVODataResponseClass& rData)
+SVPPQObject::SVCameraQueueElement::SVCameraQueueElement(SvIe::SVVirtualCamera* pCamera, const CameraInfo& rData)
 	: m_pCamera(pCamera)
 	, m_Data(rData)
 {

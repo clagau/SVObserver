@@ -57,6 +57,7 @@
 
 #include <atomic>			//Used by static library
 #include <comutil.h>		//Used by static library
+#include <functional>		//Used by static library
 #include <io.h>				//Used by static library
 #include <map>				//Used by static library
 #include <mutex>			//Used by static library

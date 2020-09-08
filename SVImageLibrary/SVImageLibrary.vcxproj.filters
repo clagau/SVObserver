@@ -21,9 +21,6 @@
     <ClCompile Include="StdAfx.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVAcquisitionBufferInterface.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVCameraFormat.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
