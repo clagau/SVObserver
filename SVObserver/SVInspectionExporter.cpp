@@ -95,6 +95,7 @@ static void WriteGlobalConstants(SvOi::IObjectWriter& rWriter, SVObjectClass* pO
 		//Only Global variables which the inspection is dependent on should be included
 		SvOl::DependencyManager::Dependencies DependencyList;
 		SvOl::DependencyManager::DependencyInserter Inserter(std::inserter(DependencyList, DependencyList.end()));
+		SvOl::DependencyManager::Instance().updateVertexIndex();
 		SvOl::DependencyManager::Instance().getDependents(GlobalConstantSet, Inserter, SvOl::JoinType::Dependent);
 
 		SvOl::DependencyManager::Dependencies::const_iterator PairIter( DependencyList.begin() );
