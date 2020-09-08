@@ -682,7 +682,7 @@ void SVFormulaEditorPageClass::onValidate()
 		SvDef::StringVector msgList;
 		if (m_isConditionalPage)
 		{
-			msgList.push_back(SvStl::MessageData::convertId2AddtionalText((value) ? SvStl::Tid_True : SvStl::Tid_False));
+			msgList.push_back(SvStl::MessageData::convertId2AdditionalText((value) ? SvStl::Tid_True : SvStl::Tid_False));
 			if (selectedEquationText.empty())
 			{
 				id = SvStl::Tid_ConditionalValidated;

@@ -55,7 +55,7 @@ namespace SvOg
 	protected:
 		virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV-Unterstützung
 																	 //}}AFX_VIRTUAL
-
+		BOOL OnKillActive() override;
 		virtual BOOL OnSetActive() override;
 		virtual void OnOK() override;
 

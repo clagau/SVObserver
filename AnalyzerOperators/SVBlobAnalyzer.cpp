@@ -1538,7 +1538,7 @@ void SVBlobAnalyzerClass::CreateArray()
 	// add array capability to blob results
 	for (int i = 0; i < SvOi::SV_NUMBER_OF_BLOB_FEATURES; i++ )
 	{
-		assert(i < c_maxTableColumn);
+		assert(i < SvDef::c_maxTableColumn);
 		if (_T('1') == FeaturesEnabled[i])
 		{
 			m_Value[i].SetArraySize( m_lMaxBlobDataArraySize );	// no longer sample size (max number of blobs found)

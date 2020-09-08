@@ -56,7 +56,7 @@ public:
 	/// \param newname [in]  the new name
 	/// \param arraysize [in] New array size.
 	/// \returns DoubleSortValueObject Pointer to the valueObject or nullptr if creation failed.
-	SvVol::DoubleSortValuePtr updateOrCreateColumn(SvPb::EmbeddedIdEnum embeddedId, std::string& newName, int arraysize);
+	SvVol::DoubleSortValuePtr updateOrCreateColumn(SvPb::EmbeddedIdEnum embeddedId, const std::string& newName, int arraysize);
 
 	/// Remove a column.
 	/// \param embeddedId [in] emdedded Id of the value object.

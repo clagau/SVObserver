@@ -12,10 +12,10 @@
 #include "FormulaController.h"
 #include "SVFormulaEditorSheet.h"
 #include "Definitions/GlobalConst.h"
+#include "Definitions/ObjectDefines.h"
 #include "Definitions/StringTypeDef.h"
 #include "InspectionCommands/CommandExternalHelper.h"
 #include "SVMessage/SVMessage.h"
-#include "SVObjectLibrary/SVClassRegisterListClass.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
@@ -476,7 +476,7 @@ void TADialogTableDefinesPage::UpdateEnableButtons()
 	GetDlgItem(IDC_BUTTON_MOVEDOWN)->EnableWindow(bMoveDownEnable);
 	GetDlgItem(IDC_BUTTON_REMOVE)->EnableWindow(-1 != Selection.GetMaxRow() && Selection.GetMinRow() <= m_gridList.size());
 
-	if (c_maxTableColumn > m_gridList.size())
+	if (SvDef::c_maxTableColumn > m_gridList.size())
 	{
 		GetDlgItem(IDC_BUTTON_ADD)->EnableWindow(true);
 	}

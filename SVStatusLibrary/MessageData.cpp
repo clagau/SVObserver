@@ -92,9 +92,14 @@ namespace SvStl
 		return MessageTextGenerator::Instance().getText(m_AdditionalTextId, m_AdditionalTextList);
 	}
 
-	std::string MessageData::convertId2AddtionalText(MessageTextEnum id)
+	std::string MessageData::convertId2AdditionalText(MessageTextEnum id)
 	{
 		return MessageTextGenerator::convertId2AddtionalText(id);
+	}
+
+	MessageTextEnum MessageData::convertAdditionalText2Id(const std::string& text)
+	{
+		return MessageTextGenerator::convertAdditionalText2Id(text);
 	}
 #pragma endregion Public Methods
 } //namespace SvStl

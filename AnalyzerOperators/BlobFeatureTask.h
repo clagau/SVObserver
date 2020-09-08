@@ -9,24 +9,32 @@
 #include "InspectionEngine/SVTaskObjectList.h"
 #include "Definitions/RangeEnum.h"
 #include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
+#include "SVValueObjectLibrary/DoubleSortValueObject.h"
 #include "SVValueObjectLibrary/SVEnumerateValueObjectClass.h"
 #include "SVValueObjectLibrary/SVLongValueObjectClass.h"
 #include "SVValueObjectLibrary/LinkedValue.h"
 #pragma endregion Includes
 
 #pragma region Declarations
+namespace SvOp
+{
+	class IndexEquation;
+}
 #pragma endregion Declarations
+
 namespace SvAo
 {
 	struct BlobExcludeData
 	{
-		BlobExcludeData(const SvVol::LinkedValue& rLowerBoundValue, const SvVol::LinkedValue& rUpperBoundValue, MIL_ID featureType = M_NULL, bool isEnabled = false, bool isInner = true)
-			: m_rLowerBoundValue(rLowerBoundValue)
+		BlobExcludeData(const std::string& name, const SvVol::LinkedValue& rLowerBoundValue, const SvVol::LinkedValue& rUpperBoundValue, MIL_ID featureType = M_NULL, bool isEnabled = false, bool isInner = true)
+			: m_name (name)
+			, m_rLowerBoundValue(rLowerBoundValue)
 			, m_rUpperBoundValue(rUpperBoundValue)
 			, m_featureType(featureType)
 			, m_isEnabled(isEnabled)
 			, m_isInner(isInner) {};
 
+		std::string m_name;
 		MIL_ID m_featureType = M_NULL;
 		bool m_isEnabled = false;
 		bool m_isInner = true;
@@ -69,8 +77,13 @@ namespace SvAo
 
 #pragma region Public Methods
 	public:
+		virtual bool CreateObject(const SVObjectLevelCreateStruct& rCreateStructure) override;
+		virtual bool onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages = nullptr) override;
+
 		long getFeatureType() const;
-		void setFeatureType(long type);
+		bool isCustomFeature() const;
+		uint32_t getEquationId() const;
+		void setFeatureType(long type, bool isCustomFeature);
 
 		/// Set the feature data to the task.
 		/// \param rData [in] The data in a protobuf message
@@ -81,6 +94,11 @@ namespace SvAo
 		BlobRangeData getRangeData() const;
 
 		SortEnum getSortEnum() const;
+
+		void fillValues(MIL_ID resultBufferId);
+
+		void setValueObject(SvVol::DoubleSortValuePtr pValue);
+		SvVol::DoubleSortValuePtr getValueObject() const { return m_pValue; };
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
@@ -89,12 +107,13 @@ namespace SvAo
 
 #pragma region Private Methods
 	private:
-
+		void updateEquation();
 #pragma endregion Private Methods
 
 #pragma region Member Variables
 	private:
 		SvVol::SVLongValueObjectClass  m_featureTypeValue;
+		SvVol::SVBoolValueObjectClass m_isCustomFeature;
 		SvVol::SVEnumerateValueObjectClass  m_sortEnumValue;
 		SvVol::SVBoolValueObjectClass m_isExcludeValue;
 		SvVol::SVBoolValueObjectClass m_isInnerExcludeValue;
@@ -102,6 +121,8 @@ namespace SvAo
 		SvVol::LinkedValue m_ExcludeUpperBoundValue;
 		SvVol::SVBoolValueObjectClass m_isRangeValue;
 		std::array<SvVol::LinkedValue, RangeEnum::ER_COUNT> m_RangeValues;
+		SvVol::DoubleSortValuePtr m_pValue;
+		SvOp::IndexEquation* m_pEquation = nullptr;
 #pragma endregion Member Variables
 	};
 }

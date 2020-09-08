@@ -41,6 +41,8 @@ namespace SvStl
 		/// \returns SVString
 		//************************************
 		static std::string convertId2AddtionalText(MessageTextEnum id);
+
+		static MessageTextEnum convertAdditionalText2Id(const std::string& text);
 #pragma endregion Public Methods
 
 #pragma region Protected Methods

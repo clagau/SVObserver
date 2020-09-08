@@ -428,6 +428,8 @@ enum MessageTextEnum
 	Tid_SetFeatureParameterFailed,
 	Tid_RemoveGrayFeature,
 	Tid_ExcludeBlobUpperBoundLowerThanLowerBound,
+	Tid_FeatureNameFailed,
+	Tid_RangeBlobUpperBoundLowerThanLowerBound,
 
 	Tid_FailedtoStart,
 	Tid_SocketInvalid,

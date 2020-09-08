@@ -167,7 +167,7 @@ namespace SvOg
 		if (!len)
 		{
 			SvDef::StringVector msgList;
-			msgList.push_back(SvStl::MessageData::convertId2AddtionalText(fieldName));
+			msgList.push_back(SvStl::MessageData::convertId2AdditionalText(fieldName));
 			SvStl::MessageContainer message(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RangeValue_EmptyString, msgList, SvStl::SourceFileParams(StdMessageParams));
 			throw message;
 		}
@@ -183,7 +183,7 @@ namespace SvOg
 				if (val > s_RangeMax || val < s_RangeMin)
 				{
 					SvDef::StringVector msgList;
-					msgList.push_back(SvStl::MessageData::convertId2AddtionalText(fieldName));
+					msgList.push_back(SvStl::MessageData::convertId2AdditionalText(fieldName));
 					msgList.push_back(SvUl::Format(_T("%d"), static_cast<int>(s_RangeMin)));
 					msgList.push_back(SvUl::Format(_T("%d"), static_cast<int>(s_RangeMax)));
 					SvStl::MessageContainer message(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RangeValue_WrongRange, msgList, SvStl::SourceFileParams(StdMessageParams));

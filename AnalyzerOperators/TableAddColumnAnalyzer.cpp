@@ -11,7 +11,7 @@
 #include "TableAddColumnAnalyzer.h"
 #include "Tools/TableAnalyzerTool.h"
 #include "Definitions/TextDefineSvDef.h"
-#include "Operators/TableAddColumnEquation.h"
+#include "Operators/IndexEquation.h"
 #pragma endregion Includes
 
 namespace SvAo
@@ -56,7 +56,7 @@ bool TableAddColumnAnalyzer::CreateObject(const SVObjectLevelCreateStruct& rCrea
 	bool bOk = __super::CreateObject(rCreateStructure);
 
 	SvTo::TableAnalyzerTool* pTool = dynamic_cast<SvTo::TableAnalyzerTool*> (m_ownerObjectInfo.getObject());
-	auto* pColumnEquation = dynamic_cast<SvOp::TableAddColumnEquation*>(getFirstObject({SvPb::SVEquationObjectType, SvPb::TableAddColumnEquationObjectType}));
+	auto* pColumnEquation = dynamic_cast<SvOp::IndexEquation*>(getFirstObject({SvPb::SVEquationObjectType, SvPb::IndexEquationObjectType}));
 	if (nullptr != pTool && nullptr != pColumnEquation)
 	{
 		SvDef::SVObjectTypeInfoStruct info(SvPb::SVNotSetObjectType, SvPb::SVNotSetSubObjectType, SvPb::TableAnalyzerIndexEId);
@@ -114,7 +114,7 @@ void TableAddColumnAnalyzer::Initialize()
 	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::TableAnalyzerType;
 	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::TableAnalyzerAddColumnType;
 
-	auto* pColumnEquation = new SvOp::TableAddColumnEquation(this);
+	auto* pColumnEquation = new SvOp::IndexEquation(this);
 	AddFriend(pColumnEquation->getObjectId());
 
 	// New Column Input.

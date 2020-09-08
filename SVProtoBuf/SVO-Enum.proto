@@ -57,6 +57,7 @@ enum SVObjectTypeEnum
 
 	SVOperatorObjectType					= 0x00001000;
 	BlobFeatureObjectType					= 0x00001100;
+	BlobFeatureListObjectType				= 0x00001101;
 	SVUnaryOperatorObjectType				= 0x00003000;
 	SVUnaryImageOperatorObjectType			= 0x00004000;
 	SVFilterObjectType						= 0x00005000;
@@ -161,7 +162,7 @@ enum SVObjectSubTypeEnum
 	EQSizePositionYType							= 0x00000409;
 
 	TableColumnEquationObjectType				= 0x0000040a;
-	TableAddColumnEquationObjectType			= 0x0000040b;
+	IndexEquationObjectType						= 0x0000040b;
 
 	// Math Container Subtypes:
 	SVEvaluateXObjectType						= 0x00000480;
@@ -540,6 +541,7 @@ enum ClassIdEnum
 	TableAnaylzerAddColumnClassId = 117;
 	BlobAnalyzer2ClassId = 118;
 	BlobFeatureTaskClassId = 119;
+	BlobFeatureListClassId = 120;
 
 	//Result Class Ids
 	PointXResultClassId = 200;
@@ -619,7 +621,7 @@ enum ClassIdEnum
 	ColorThresholdClassId = 432;
 	ToolSizeAdjustTaskId = 433;
 	TableColumnEquationId = 434;
-	TableAddColumnEquationId = 435;
+	IndexEquationId = 435;
 	TableFillObjectId = 436;
 	TableCopyObjectId = 437;
 	RemoteOutputObjectId = 438;
@@ -1134,6 +1136,7 @@ enum EmbeddedIdEnum
 	ConnectivityBlobEId = 509;
 	IsGrayImageEId = 510;
 	IsRangeEId = 511;
+	IsCustomFeatureEId = 512;
 	
 	//The following Ids are the first of an array and must have 100 reserved Ids 
 	OutputImageEId = 1000; //Output Images, e.g. External needs 4

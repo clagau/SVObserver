@@ -46,4 +46,7 @@ namespace SvDef
 		SvPb::selectableForEquation |
 		SvPb::selectableForStatistics
 	};
+
+	constexpr int c_maxTableColumn = 50;
+	constexpr int c_numberOfSortFeature = 3;
 } //namespace SvDef

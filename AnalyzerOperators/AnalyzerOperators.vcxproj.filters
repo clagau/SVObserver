@@ -87,6 +87,9 @@
     <ClCompile Include="LinearPixelCountingAnalyzer.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="BlobFeatureList.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -156,6 +159,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="LinearPixelCountingAnalyzer.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="BlobFeatureList.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

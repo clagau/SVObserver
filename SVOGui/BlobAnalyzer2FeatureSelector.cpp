@@ -29,17 +29,11 @@ namespace SvOg
 	END_MESSAGE_MAP()
 
 #pragma region Constructor
-	BlobAnalyzer2FeatureSelector::BlobAnalyzer2FeatureSelector(std::vector<FeatureData4Selector> featureVector)
+	BlobAnalyzer2FeatureSelector::BlobAnalyzer2FeatureSelector(std::vector<FeatureData4Selector> featureVector, int currentNumberOfActive)
 		: CDialog(BlobAnalyzer2FeatureSelector::IDD)
 		, m_featureData(featureVector)
+		, m_numberOfActive(currentNumberOfActive)
 	{
-		for (const auto& rPair : m_featureData)
-		{
-			if (rPair.m_isActive)
-			{
-				++m_numberOfAcitve;
-			}
-		}
 	}
 
 	BlobAnalyzer2FeatureSelector::~BlobAnalyzer2FeatureSelector()
@@ -91,18 +85,18 @@ namespace SvOg
 				{
 					if (isActive)
 					{
-						++m_numberOfAcitve;
+						++m_numberOfActive;
 					}
 					else
 					{
-						--m_numberOfAcitve;
+						--m_numberOfActive;
 					}
 					m_featureData[pItem->iRow - 1].m_isActive = isActive;
 				}
 			}
 		}
 		
-		updateControls();
+		FillGridControl();
 	}
 #pragma endregion Protected Methods
 
@@ -149,7 +143,7 @@ namespace SvOg
 				{
 					pCell->SetCheck(m_featureData[i].m_isActive);
 					UINT state = m_Grid.GetItemState(row, 0);
-					if (!m_featureData[i].m_isActive && m_numberOfAcitve >= 50)
+					if (!m_featureData[i].m_isActive && m_numberOfActive >= SvDef::c_maxTableColumn)
 					{
 						state |= GVIS_READONLY;
 					}
@@ -171,9 +165,8 @@ namespace SvOg
 	void BlobAnalyzer2FeatureSelector::updateControls()
 	{
 		CString text;
-		text.Format("%d from 50", m_numberOfAcitve);
+		text.Format("%d from %d", m_numberOfActive, SvDef::c_maxTableColumn);
 		m_numberLabel.SetWindowTextA(text);
-		UpdateData();
 	}
 #pragma endregion Private Mehods
 } //namespace SvOg

@@ -334,8 +334,8 @@ bool SVRange::checkLinkedValues(RangeEnum::ERange firstType, RangeEnum::ERange s
 			if (nullptr != pErrorMessages)
 			{
 				SvDef::StringVector messageList;
-				messageList.push_back(SvStl::MessageData::convertId2AddtionalText(enumTids[firstType]));
-				messageList.push_back(SvStl::MessageData::convertId2AddtionalText(enumTids[secondType]));
+				messageList.push_back(SvStl::MessageData::convertId2AdditionalText(enumTids[firstType]));
+				messageList.push_back(SvStl::MessageData::convertId2AdditionalText(enumTids[secondType]));
 				SvStl::MessageContainer message;
 				message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_IsLessThan, messageList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 				pErrorMessages->push_back(message);

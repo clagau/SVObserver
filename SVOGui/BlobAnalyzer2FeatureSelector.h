@@ -37,7 +37,7 @@ namespace SvOg
 
 	public:
 		// Standard constructor
-		explicit BlobAnalyzer2FeatureSelector(std::vector<FeatureData4Selector>);
+		explicit BlobAnalyzer2FeatureSelector(std::vector<FeatureData4Selector>, int currentNumberOfActive);
 
 		// Standard destructor
 		virtual ~BlobAnalyzer2FeatureSelector();
@@ -73,7 +73,7 @@ namespace SvOg
 	private:
 		std::vector<FeatureData4Selector> m_featureData;
 
-		int m_numberOfAcitve = 0;
+		int m_numberOfActive = 0;
 
 		SvGcl::GridCtrl m_Grid;						//The grid displaying the name and the formulas
 		CStatic m_numberLabel;

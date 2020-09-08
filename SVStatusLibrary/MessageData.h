@@ -60,11 +60,13 @@ namespace SvStl
 		std::string getAdditionalText() const;
 
 		//************************************
-	/// Convert an enum id to a string for setting it to the addtionalTextList.
-	/// \param id [in] the id
-	/// \returns SVString
-	//************************************
-		static std::string convertId2AddtionalText(MessageTextEnum id);
+		/// Convert an enum id to a string for setting it to the addtionalTextList.
+		/// \param id [in] the id
+		/// \returns SVString
+		//************************************
+		static std::string convertId2AdditionalText(MessageTextEnum id);
+
+		static MessageTextEnum convertAdditionalText2Id(const std::string& text);
 	#pragma endregion Public Methods
 
 	#pragma region Member Variables

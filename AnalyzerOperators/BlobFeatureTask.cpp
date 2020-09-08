@@ -7,8 +7,11 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "BlobFeatureTask.h"
+#include "Operators/IndexEquation.h"
 #include "SVProtoBuf/SVO-Enum.h"
 #include "SVObjectLibrary/SVObjectLibrary.h"
+#include "SVStatusLibrary/RunStatus.h"
+#include "SVValueObjectLibrary/DoubleSortValueObject.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -72,6 +75,7 @@ namespace SvAo
 		m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::BlobFeatureObjectType;
 
 		RegisterEmbeddedObject(&m_featureTypeValue, SvPb::FeatureTypeEId, IDS_BLOBFEATURE_TYPE, false, SvOi::SVResetItemOwner);
+		RegisterEmbeddedObject(&m_isCustomFeature, SvPb::IsCustomFeatureEId, IDS_BLOBFEATURE_ISCUSTOMFEATURE, false, SvOi::SVResetItemOwner);
 		RegisterEmbeddedObject(&m_sortEnumValue, SvPb::SortEnumEId, IDS_BLOBFEATURE_SORT, false, SvOi::SVResetItemOwner);
 		RegisterEmbeddedObject(&m_isExcludeValue, SvPb::IsExcludeEId, IDS_BLOBFEATURE_ISEXCLUDE, false, SvOi::SVResetItemOwner);
 		RegisterEmbeddedObject(&m_isInnerExcludeValue, SvPb::IsInnerExcludeEId, IDS_BLOBFEATURE_ISINNER_EXCLDUE, false, SvOi::SVResetItemOwner);
@@ -91,6 +95,7 @@ namespace SvAo
 		RegisterEmbeddedObject(&m_RangeValues[RangeEnum::ER_WarnLow].getLinkedName(), SvPb::RangeClassWarnLowIndirectEId, IDS_OBJECTNAME_WARN_LOW_INDIRECT, false, SvOi::SVResetItemOwner);
 
 		m_featureTypeValue.SetDefaultValue(0, true);
+		m_isCustomFeature.SetDefaultValue(BOOL(false), true);
 
 		m_sortEnumValue.SetEnumTypes(g_strSortEnums);
 		m_sortEnumValue.SetDefaultValue(static_cast<long>(SortEnum::None), true);
@@ -120,6 +125,76 @@ namespace SvAo
 #pragma endregion Constructor
 
 #pragma region Public Methods
+	bool BlobFeatureTask::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
+	{
+		bool l_bOk = SVTaskObjectClass::CreateObject(rCreateStructure);
+
+		updateEquation();
+
+		return l_bOk;
+	}
+
+	bool BlobFeatureTask::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages)
+	{
+		try
+		{
+			if (!__super::onRun(rRunStatus, pErrorMessages))
+			{
+				return false;
+			}
+
+			//range check
+			BOOL isRange = false;
+			m_isRangeValue.GetValue(isRange);
+			if (isRange)
+			{
+				double failHigh, warnHigh, warnLow, failLow;
+				bool isWarn = false, isFail = false;
+				m_RangeValues[RangeEnum::ER_FailHigh].getValue(failHigh);
+				m_RangeValues[RangeEnum::ER_WarnHigh].getValue(warnHigh);
+				m_RangeValues[RangeEnum::ER_WarnLow].getValue(warnLow);
+				m_RangeValues[RangeEnum::ER_FailLow].getValue(failLow);
+				std::vector<double> values;
+				m_pValue->GetArrayValues(values);
+				for (auto value : values)
+				{
+					if (failHigh < value || failLow > value)
+					{
+						isFail = true;
+						break;
+					}
+					if (!isWarn && (warnHigh < value || warnLow > value))
+					{
+						isWarn = true;
+					}
+				}
+				if (isFail)
+				{
+					rRunStatus.SetFailed();
+				}
+				else if (isWarn)
+				{
+					rRunStatus.SetWarned();
+				}
+				else
+				{
+					rRunStatus.SetPassed();
+				}
+			}
+		}
+		catch (const SvStl::MessageContainer& e)
+		{
+			rRunStatus.SetInvalid();
+			if (nullptr != pErrorMessages)
+			{
+				pErrorMessages->push_back(e);
+			}
+			return false;
+		}
+
+		return true;
+	}
+
 	long BlobFeatureTask::getFeatureType() const
 	{
 		long type = 0;
@@ -127,13 +202,38 @@ namespace SvAo
 		return type;
 	}
 
-	void BlobFeatureTask::setFeatureType(long type)
+	bool BlobFeatureTask::isCustomFeature() const
+	{
+		BOOL value = false;
+		m_isCustomFeature.GetValue(value);
+		return TRUE == value;
+	}
+
+	uint32_t BlobFeatureTask::getEquationId() const
+	{
+		if (nullptr != m_pEquation)
+		{
+			return m_pEquation->getObjectId();
+		}
+		else
+		{
+			return SvDef::InvalidObjectId;
+		}
+	}
+
+	void BlobFeatureTask::setFeatureType(long type, bool isCustomFeature)
 	{
 		m_featureTypeValue.SetValue(type);
+		m_isCustomFeature.SetValue(isCustomFeature);
+		updateEquation();
 	}
 
 	int BlobFeatureTask::setFeatureData(const SvPb::FeatureData& rData)
 	{
+		if (rData.is_custom())
+		{
+			SetName(rData.name().c_str());
+		}
 		SortEnum sortEnum = SortEnum::None;
 		if (rData.is_sort())
 		{
@@ -188,8 +288,7 @@ namespace SvAo
 
 	BlobExcludeData BlobFeatureTask::getExcludeData() const
 	{
-		BlobExcludeData data(m_ExcludeLowerBoundValue, m_ExcludeUpperBoundValue);
-		data.m_featureType = getFeatureType();
+		BlobExcludeData data(GetName(), m_ExcludeLowerBoundValue, m_ExcludeUpperBoundValue, getFeatureType());
 		BOOL tmpBool = false;
 		m_isExcludeValue.GetValue(tmpBool);
 		data.m_isEnabled = (TRUE == tmpBool);
@@ -222,11 +321,94 @@ namespace SvAo
 		m_sortEnumValue.GetValue(value);
 		return static_cast<SortEnum>(value);
 	}
+
+	void BlobFeatureTask::fillValues(MIL_ID resultBufferId)
+	{
+		if (nullptr != m_pValue && 0 < m_pValue->getSortContainerSize())
+		{
+			if (!isCustomFeature())
+			{
+				std::vector<double> valueArray;
+				valueArray.resize(m_pValue->getSortContainerSize(), 0);
+				MblobGetResult(resultBufferId, M_INCLUDED_BLOBS, getFeatureType(), valueArray);
+				m_pValue->SetArrayValues(valueArray);
+			}
+		}
+	}
+
+	void BlobFeatureTask::setValueObject(SvVol::DoubleSortValuePtr pValue) 
+	{ 
+		m_pValue = pValue; 
+		if (nullptr != m_pEquation)
+		{
+			m_pEquation->setResultColumn(m_pValue);
+		}
+	}
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
 #pragma endregion Protected Methods
 
 #pragma region Private Methods
+	void BlobFeatureTask::updateEquation()
+	{
+		for (size_t j = 0; j < m_friendList.size(); j++)
+		{
+			SvOp::IndexEquation* pEquation = dynamic_cast<SvOp::IndexEquation*> (m_friendList[j].getObject());
+			if (nullptr != pEquation)
+			{
+				if (SvDef::CustomFeatureEquationName == std::string(pEquation->GetName()))
+				{
+					m_pEquation = pEquation;
+					break;
+				}
+			}
+		}
+
+		BOOL isCustomFeature;
+		m_isCustomFeature.GetValue(isCustomFeature);
+		if (isCustomFeature)
+		{
+			if (nullptr == m_pEquation)
+			{
+				SvOp::IndexEquation* pObject = dynamic_cast<SvOp::IndexEquation*> (SvOi::ConstructObject(SvPb::IndexEquationId));
+				if (nullptr != pObject)
+				{
+					pObject->SetObjectOwner(this);
+					pObject->SetName(SvDef::CustomFeatureEquationName);
+					AddFriend(pObject->getObjectId());
+					if (CreateChildObject(pObject))
+					{
+						m_pEquation = pObject;
+					}
+					else
+					{
+						SvStl::MessageManager Msg(SvStl::MsgType::Log);
+						Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CreateChildBufferFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+						Delete(pObject->getObjectId());
+					}					
+				}
+			}
+			auto* pTool = GetTool();
+			if (nullptr != m_pEquation)
+			{
+				m_pEquation->setResultColumn(getValueObject());
+				if (nullptr != pTool)
+				{
+					SvDef::SVObjectTypeInfoStruct info(SvPb::SVNotSetObjectType, SvPb::SVNotSetSubObjectType, SvPb::TableAnalyzerIndexEId);
+					IObjectClass* pIndex = pTool->getFirstObject(info);
+					m_pEquation->setIndexObject(dynamic_cast<SvVol::SVLongValueObjectClass*>(pIndex));
+				}
+			}
+		}
+		else
+		{
+			if (nullptr != m_pEquation)
+			{
+				Delete(m_pEquation->getObjectId());
+				m_pEquation = nullptr;
+			}
+		}
+	}
 #pragma endregion Private Methods
 }

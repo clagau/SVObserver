@@ -1,9 +1,9 @@
 //*****************************************************************************
 /// \copyright (c) 2018,2018 by Seidenader Maschinenbau GmbH
-/// \file TableAddColumnEquation.h
+/// \file IndexEquation.h
 /// All Rights Reserved 
 //*****************************************************************************
-/// Equation class for the add column formula in table analyzer tool.
+/// Equation class to fill a DoubleSortValueObject (an array) by using an index value (e.g. used for the add column formula in table analyzer tool or custom feature in BlobAnalyzer2).
 //******************************************************************************
 #pragma once
 
@@ -20,14 +20,14 @@ class SVLongValueObjectClass;
 namespace SvOp
 {
 
-class TableAddColumnEquation : public SVEquation
+class IndexEquation : public SVEquation
 {
-	SV_DECLARE_CLASS(TableAddColumnEquation);
+	SV_DECLARE_CLASS(IndexEquation);
 
 #pragma region Constructor
 public:
-	TableAddColumnEquation(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_TABLEADDCOLUMN_EQUATION);
-	virtual ~TableAddColumnEquation();
+	IndexEquation(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_INDEX_EQUATION);
+	virtual ~IndexEquation();
 #pragma endregion Constructor
 
 #pragma region Public Methods

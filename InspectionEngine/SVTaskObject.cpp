@@ -1271,7 +1271,7 @@ HRESULT SVTaskObjectClass::ConnectToObject(SvOl::SVInObjectInfoStruct* p_psvInpu
 				}
 				else
 				{
-					msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvStl::Tid_UnknownString));
+					msgList.push_back(SvStl::MessageData::convertId2AdditionalText(SvStl::Tid_UnknownString));
 				}
 				// Should we really be doing this here?
 				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);

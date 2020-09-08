@@ -464,7 +464,9 @@ namespace SvStl
 		{Tid_Too_Many_Blobs, _T("Too many blobs found, analyzer failed.")},
 		{Tid_SetFeatureParameterFailed, _T("Feature parameter are invalid.")},
 		{Tid_RemoveGrayFeature, _T("Remove gray features, because gray image is not set.")},
-		{Tid_ExcludeBlobUpperBoundLowerThanLowerBound, _T("Upper Bound is lower than Lower Bound for feature row %s.")},
+		{Tid_ExcludeBlobUpperBoundLowerThanLowerBound, _T("Upper Bound is lower than Lower Bound for feature %s.")},
+		{Tid_FeatureNameFailed, _T("Rename failed: Feature name must be unique and is not a name of a standard feature.")},
+		{Tid_RangeBlobUpperBoundLowerThanLowerBound, _T("Range setting failed for feature %s: %s\nis less than\n%s") },
 
 		{Tid_FailedtoStart, _T("Failed to start %s")},
 		{Tid_SocketInvalid, _T("Invalid socket Error: %s")},

@@ -3744,7 +3744,7 @@ bool SVObserverApp::setConfigFullFileName(LPCTSTR csFullFileName, bool bLoadFile
 			if (!bOk)
 			{
 				SvDef::StringVector msgList;
-				msgList.push_back(SvStl::MessageData::convertId2AddtionalText(bLoadFile ? SvStl::Tid_Load : SvStl::Tid_Save));
+				msgList.push_back(SvStl::MessageData::convertId2AdditionalText(bLoadFile ? SvStl::Tid_Load : SvStl::Tid_Save));
 				msgList.push_back(m_ConfigFileName.GetPathName());
 				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 				Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_UnableConfig, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10132);

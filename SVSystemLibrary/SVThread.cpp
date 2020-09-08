@@ -293,7 +293,7 @@ DWORD WINAPI SVThread::ThreadProc(LPVOID pParam)
 	else
 	{
 		std::string UnknownThread;
-		UnknownThread = SvStl::MessageData::convertId2AddtionalText( SvStl::Tid_UnknowThread );
+		UnknownThread = SvStl::MessageData::convertId2AdditionalText( SvStl::Tid_UnknowThread );
 		SVThreadManager::setThreadError( static_cast<DWORD> (SVMSG_THREAD_EXIT_ERROR), UnknownThread.c_str(), SvStl::SourceFileParams(StdMessageParams) );
 	}
 

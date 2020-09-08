@@ -309,7 +309,7 @@ ExchangeClassMap g_ExchangeClassID = {
 	{ SVColorThresholdClassGuid, SvPb::ColorThresholdClassId },
 	{ ToolSizeAdjustTaskGuid, SvPb::ToolSizeAdjustTaskId },
 	{ TableColumnEquationGuid, SvPb::TableColumnEquationId },
-	{ TableAddColumnEquationGuid, SvPb::TableAddColumnEquationId },
+	{ TableAddColumnEquationGuid, SvPb::IndexEquationId },
 	{ TableFillObjectGuid, SvPb::TableFillObjectId },
 	{ TableCopyObjectGuid, SvPb::TableCopyObjectId },
 	{ SVRemoteOutputObjectGUID, SvPb::RemoteOutputObjectId },
@@ -1346,7 +1346,7 @@ void fillExchangeEmbedded()
 	fillExchangeEmbedded(aInputObject_LinkedGUID, COUNT_OF_INPUT_OUTPUT_IDs, SvPb::ExternalInputLinkedEId, true);
 	fillExchangeEmbedded(aSVVariantResultObjectGuid, COUNT_OF_INPUT_OUTPUT_IDs, SvPb::ExternalResultEId, true);
 	fillExchangeEmbedded(aSVDllDependencyFileNameGuid, COUNT_OF_INPUT_OUTPUT_IDs, SvPb::DllDependencyFileNameEId, true);
-	fillExchangeEmbedded(TableColumnValueObjectGuid, c_maxTableColumn, SvPb::TableColumnValueEId);
+	fillExchangeEmbedded(TableColumnValueObjectGuid, SvDef::c_maxTableColumn, SvPb::TableColumnValueEId);
 
 	for (int i = 0; i < SVBlobFeatureGuids.size(); ++i)
 	{

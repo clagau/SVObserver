@@ -458,7 +458,7 @@ HRESULT SVAccessClass::Validate(  long lId1 )
 	else
 	{
 		SvDef::StringVector msgList;
-		msgList.push_back( SvStl::MessageData::convertId2AddtionalText( SvStl::Tid_Security_Disabled) );
+		msgList.push_back( SvStl::MessageData::convertId2AdditionalText( SvStl::Tid_Security_Disabled) );
 		
 		SvStl::MessageManager Exception(SvStl::MsgType::Log );
 		Exception.setMessage( lId1, SvStl::Tid_Security_GainedAccess, msgList, SvStl::SourceFileParams(StdMessageParams) );
@@ -671,7 +671,7 @@ HRESULT SVAccessClass::Validate(  long lId1, long lId2)
 	else
 	{
 		msgList.clear();
-		msgList.push_back( SvStl::MessageData::convertId2AddtionalText(SvStl::Tid_Security_Disabled) );
+		msgList.push_back( SvStl::MessageData::convertId2AdditionalText(SvStl::Tid_Security_Disabled) );
 		SvStl::MessageManager Exception(SvStl::MsgType::Log );
 		Exception.setMessage( lId1, SvStl::Tid_Security_GainedAccess, msgList, SvStl::SourceFileParams(StdMessageParams) );
 		hr = S_OK;

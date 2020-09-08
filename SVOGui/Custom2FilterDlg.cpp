@@ -335,21 +335,21 @@ namespace SvOg
 					{
 						SvDef::StringVector msgList;
 						msgList.push_back(pathName);
-						msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvStl::Tid_XmlFormatInvalid));
+						msgList.push_back(SvStl::MessageData::convertId2AdditionalText(SvStl::Tid_XmlFormatInvalid));
 						message.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ImportFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10226 );
 					}
 					else if (SvOi::E_CUSTOM_IMPORT_VERSION_MISMATCH == hResult)
 					{
 						SvDef::StringVector msgList;
 						msgList.push_back(pathName);
-						msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvStl::Tid_VersionMismatch));
+						msgList.push_back(SvStl::MessageData::convertId2AdditionalText(SvStl::Tid_VersionMismatch));
 						message.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ImportFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10226 );
 					}
 					else
 					{
 						SvDef::StringVector msgList;
 						msgList.push_back(pathName);
-						msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvStl::Tid_Unknown));
+						msgList.push_back(SvStl::MessageData::convertId2AdditionalText(SvStl::Tid_Unknown));
 						message.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ImportFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10226 );
 					}
 				}
@@ -362,7 +362,7 @@ namespace SvOg
 			{
 				SvDef::StringVector msgList;
 				msgList.push_back(pathName);
-				msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvStl::Tid_Unknown));
+				msgList.push_back(SvStl::MessageData::convertId2AdditionalText(SvStl::Tid_Unknown));
 				message.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ImportFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10226 );
 			}
 			if( 0 != message.getMessage().m_MessageCode )

@@ -128,7 +128,7 @@ bool TableTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 			SvOp::TableColumnEquation* equation = dynamic_cast<SvOp::TableColumnEquation*> (m_friendList[j].getObject());
 			if (nullptr != equation)
 			{
-				if (c_maxTableColumn > m_ColumnEquationList.size())
+				if (SvDef::c_maxTableColumn > m_ColumnEquationList.size())
 				{
 					m_ColumnEquationList.push_back(equation);
 				}
@@ -140,7 +140,7 @@ bool TableTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 					if (nullptr != pErrorMessages)
 					{
 						SvDef::StringVector msgList;
-						msgList.push_back(SvUl::Format(_T("%d"), c_maxTableColumn));
+						msgList.push_back(SvUl::Format(_T("%d"), SvDef::c_maxTableColumn));
 						SvStl::MessageContainer message;
 						message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableColumn_TooManyEquation, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
 						pErrorMessages->push_back( message );

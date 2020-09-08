@@ -557,7 +557,7 @@ void TaTableAnalyzerPage::setAddColumnProperties()
 	if (nullptr == m_pSelectedAddEquationFormula || m_selectedAnalyzerID != m_pSelectedAddEquationFormula->GetTaskId())
 	{
 		m_pSelectedAddEquationFormula.reset();
-		SvDef::SVObjectTypeInfoStruct Info {SvPb::SVEquationObjectType, SvPb::TableAddColumnEquationObjectType};
+		SvDef::SVObjectTypeInfoStruct Info {SvPb::SVEquationObjectType, SvPb::IndexEquationObjectType };
 		m_pSelectedAddEquationFormula = SvOi::IFormulaControllerPtr {new FormulaController {m_InspectionID, m_selectedAnalyzerID, Info}};
 	}
 

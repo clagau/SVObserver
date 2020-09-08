@@ -130,7 +130,7 @@ void TableObject::UpdateNumberOfRows()
 	}
 }
 
-SvVol::DoubleSortValuePtr TableObject::updateOrCreateColumn(SvPb::EmbeddedIdEnum embeddedId, std::string& newName, int arraysize)
+SvVol::DoubleSortValuePtr TableObject::updateOrCreateColumn(SvPb::EmbeddedIdEnum embeddedId, const std::string& newName, int arraysize)
 {
 	std::vector<SvVol::DoubleSortValuePtr>::const_iterator valueIter = std::find_if(m_ValueList.begin(), m_ValueList.end(), [&](const SvVol::DoubleSortValuePtr& entry)->bool
 	{
@@ -230,7 +230,7 @@ SVObjectClass* TableObject::OverwriteEmbeddedObject(uint32_t uniqueID, SvPb::Emb
 {
 	//check if it is an embeddedID from an column-Value object. This will not generated automatically. Create it before it will be overwrite
 	bool isColumnValue = false;
-	for (int i = 0; i < c_maxTableColumn; ++i)
+	for (int i = 0; i < SvDef::c_maxTableColumn; ++i)
 	{
 		if (SvPb::TableColumnValueEId+i == embeddedID)
 		{
@@ -314,7 +314,7 @@ void TableObject::MoveValueColumn(int oldPos, int newPos)
 
 SvPb::EmbeddedIdEnum TableObject::getNextFreeEmbeddedColumID()
 {
-	for (int i = c_maxTableColumn - 1; i >= 0; --i)
+	for (int i = SvDef::c_maxTableColumn - 1; i >= 0; --i)
 	{
 		const auto& it = std::find_if(m_embeddedList.begin(), m_embeddedList.end(), [&](const auto* pEntry)->bool
 		{

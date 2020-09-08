@@ -201,9 +201,6 @@
     <ClCompile Include="SVVariantResultClass.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="TableAddColumnEquation.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="TableColumnEquation.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -217,6 +214,9 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="ToolSizeAdjustTask.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="IndexEquation.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
@@ -407,9 +407,6 @@
     <ClInclude Include="SVVariantResultClass.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="TableAddColumnEquation.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="TableColumnEquation.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -423,6 +420,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="ToolSizeAdjustTask.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="IndexEquation.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

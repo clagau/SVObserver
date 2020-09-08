@@ -67,4 +67,3 @@ private:
 
 constexpr int c_NumberOfFilterCells = 49;
 constexpr int COUNT_OF_INPUT_OUTPUT_IDs = 50;
-constexpr int c_maxTableColumn = 50;

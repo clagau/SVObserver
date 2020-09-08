@@ -26,6 +26,8 @@ class TableObject;
 
 namespace SvAo
 {
+class BlobFeatureList;
+
 enum SV_BLOB_FILL_TYPE_ENUM
 {
 	SV_BLOB_FILL_ALL       = 0x8000,
@@ -74,19 +76,11 @@ protected:
 private:
 	void init();
 	bool updateBlobFeatures(SvStl::MessageContainerVector* pErrorMessages = nullptr);
-	void fillFeatureTaskVec();
-	void addedMissingNeededFeatureTask();
-	std::set<MIL_ID> updateTableDefinition();
 	void allocateBlobNumberResult();
-
-	/// Check if range failed and return the state.
-	/// \returns std::pair<bool, bool> First value is if range failed and second if range warned.
-	std::pair<bool, bool> checkRange();
-
 
 	SvVol::SVLongValueObjectClass       m_maxBlobDataArraySize;
 	SvVol::SVLongValueObjectClass       m_numberOfBlobsFound;
-	SvOp::SVLongResult* m_pResultBlob;
+	SvOp::SVLongResult* m_pResultBlob = nullptr;
 
 	int                          m_nBlobIndex;
 
@@ -105,11 +99,15 @@ private:
 	SvVol::SVEnumerateValueObjectClass  m_evoBlobType;
 
 	SvOp::TableObject* m_pResultTable;
-	std::vector<std::pair<MIL_ID /*FeatureType*/, SvVol::DoubleSortValuePtr>> m_ResultTableColumnVector;
 	std::array<SvVol::DoubleSortValuePtr, 4> m_ResultColumnForOverlayArray{ nullptr };
-	std::vector<BlobFeatureTask*> m_featureTaskVec;
 	std::vector<BlobExcludeData> m_excludeDataVec;
-	std::vector<std::pair<SvVol::DoubleSortValuePtr, BlobRangeData>> m_rangeDataVec;
+	BlobFeatureList* m_pBlobFeatureList = nullptr;
+
+	// Index Counter...
+	// Can be used in Equation for e.g. Custom Feature.
+	// NOTE:
+	// If Equation supports vector calculations also in future time it can be replaced.
+	SvVol::SVLongValueObjectClass	m_Index;
 };
 
 } //namespace SvAo

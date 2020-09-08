@@ -62,6 +62,16 @@ namespace SvStl
 	{
 		return SvUl::Format(_T("[***%d***]"), id);
 	}
+
+	MessageTextEnum MessageTextGenerator::convertAdditionalText2Id(const std::string& text)
+	{
+		int number = -1;
+		if (1 == sscanf_s(text.c_str(), _T("[***%d***]"), &number))
+		{
+			return static_cast<MessageTextEnum>(number);
+		}
+		return MessageTextEnum::Tid_Empty;
+	}
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
@@ -71,7 +81,6 @@ namespace SvStl
 #pragma region Private Methods
 	std::string MessageTextGenerator::convertAddtionalListTextToString(const std::string& text) const
 	{
-		std::string retString;
 		int number = -1;
 		if (1 == sscanf_s(text.c_str(), _T("[***%d***]"), &number))
 		{

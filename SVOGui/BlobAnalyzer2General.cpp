@@ -90,6 +90,12 @@ namespace SvOg
 		//}}AFX_DATA_MAP
 	}
 
+	BOOL BlobAnalyzer2General::OnKillActive()
+	{
+		setInspectionData();
+		return CPropertyPage::OnKillActive();
+	}
+
 	BOOL BlobAnalyzer2General::OnSetActive()
 	{
 		setImages();

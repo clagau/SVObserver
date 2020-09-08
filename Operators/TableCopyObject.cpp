@@ -57,7 +57,7 @@ bool TableCopyObject::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	if (m_isCreated && nullptr != m_pSourceTable)
 	{
 		std::vector<SvVol::DoubleSortValuePtr> SourceValues = m_pSourceTable->getValueList();
-		if (SourceValues.size() + m_NewValueList.size() <= c_maxTableColumn)
+		if (SourceValues.size() + m_NewValueList.size() <= SvDef::c_maxTableColumn)
 		{
 			//remove all entries from m_ValueList which are not in sourceTable and not in the m_NewValueList
 			RemoveUnusedColumn();

@@ -13,6 +13,8 @@
 #include "SVStatusLibrary/MessageManager.h"
 #include "GridCtrlLibrary/GridCellCheck.h"
 #include "SVProtoBuf/ConverterHelper.h"
+#include "BoundValue.h"
+#include "SVFormulaEditorSheet.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -63,9 +65,12 @@ namespace SvOg
 	
 	BEGIN_MESSAGE_MAP(BlobAnalyzer2Feature, CPropertyPage)
 		//{{AFX_MSG_MAP(BlobAnalyzer2Feature)
-		ON_BN_CLICKED(IDC_BUTTON_ADD, OnBnClickedSelector)
+		ON_BN_CLICKED(IDC_BUTTON_SELECTOR, OnBnClickedSelector)
 		ON_BN_CLICKED(IDC_BUTTON_MOVEUP, OnBnClickedMoveUp)
 		ON_BN_CLICKED(IDC_BUTTON_MOVEDOWN, OnBnClickedMoveDown)
+		ON_BN_CLICKED(IDC_BUTTON_ADD, OnBnClickedAddCustom)
+		ON_BN_CLICKED(IDC_BUTTON_REMOVE, OnBnClickedDelete)
+		ON_NOTIFY(NM_DBLCLK, IDC_GRID, OnGridDblClick)
 		ON_NOTIFY(NM_CLICK, IDC_GRID, OnGridClick)
 		ON_NOTIFY(GVN_ENDLABELEDIT, IDC_GRID, OnGridEndEdit)
 		ON_NOTIFY(GVN_SELCHANGED, IDC_GRID, OnSelectionChanged)
@@ -78,6 +83,7 @@ namespace SvOg
 		, m_InspectionID(inspectionId)
 		, m_TaskObjectID(taskObjectId)
 		, m_objectSelector(inspectionId, taskObjectId)
+		, m_Values{ SvOg::BoundValues{ inspectionId, taskObjectId } }
 	{
 	}
 
@@ -185,17 +191,58 @@ namespace SvOg
 		}
 	}
 
+	void BlobAnalyzer2Feature::OnBnClickedAddCustom()
+	{
+		if (m_featureData.size() < SvDef::c_maxTableColumn)
+		{
+			auto* pNewFeature = m_featureData.Add();
+			pNewFeature->set_type(m_nextCustomId++);
+			pNewFeature->set_name(getNextCustomName());
+			pNewFeature->set_is_custom(true);
+			setInspectionData();
+			loadFeatureData();
+			FillGridControl();
+		}
+	}
+
+	void BlobAnalyzer2Feature::OnBnClickedDelete()
+	{
+		auto selection = m_Grid.GetSelectedCellRange();
+		for (int i = selection.GetMaxRow(); i >= selection.GetMinRow(); --i)
+		{
+			if (m_featureData.size() >= i && 0 < i && (m_featureData[i-1].is_custom() || !isFeatureNecessary(m_featureData[i-1].type())))
+			{
+				for (int j = selection.GetMinCol(); j <= selection.GetMaxCol(); ++j)
+				{
+					if (m_Grid.IsCellSelected(i, j))
+					{
+						m_featureData.erase(m_featureData.begin() + (i - 1));
+						break;
+					}
+				}
+			}
+		}
+		m_Grid.SetSelectedRange({});
+		setInspectionData();
+		FillGridControl();
+	}
+
 	void BlobAnalyzer2Feature::OnBnClickedSelector()
 	{
-		static const SvPb::GetAvailableFeaturesResponse availableFeature = getAvailableFeatures();
+		m_Values.Init();
+		bool useGrayImage = m_Values.Get<bool>(SvPb::IsGrayImageEId);
+
 		std::vector<FeatureData4Selector> features;
-		for (const auto& rEntry : availableFeature.list())
+		for (const auto& rEntry : m_availableFeature.list())
 		{
-			bool isActive = (m_featureData.end() != std::find_if(m_featureData.begin(), m_featureData.end(), [rEntry](const auto& rValue) { return rEntry.id() == rValue.type(); }));
-			features.emplace_back(rEntry.name(), rEntry.id(), isActive, rEntry.isnecessary());
+			if (useGrayImage || !rEntry.isgray())
+			{
+				bool isActive = (m_featureData.end() != std::find_if(m_featureData.begin(), m_featureData.end(), [rEntry](const auto& rValue) { return rEntry.id() == rValue.type() && !rValue.is_custom(); }));
+				features.emplace_back(rEntry.name(), rEntry.id(), isActive, rEntry.isnecessary());
+			}
 		}
 
-		BlobAnalyzer2FeatureSelector dlg(features);
+		BlobAnalyzer2FeatureSelector dlg(features, m_featureData.size());
 		if (IDOK == dlg.DoModal())
 		{
 			features = dlg.getFeatureData();
@@ -203,16 +250,23 @@ namespace SvOg
 			{
 				if (rEntry.m_isActive)
 				{ //add if not set yet
-					if (m_featureData.end() == std::find_if(m_featureData.begin(), m_featureData.end(), [rEntry](const auto& rValue) { return rEntry.m_type == rValue.type(); }))
+					if (m_featureData.end() == std::find_if(m_featureData.begin(), m_featureData.end(), [rEntry](const auto& rValue) { return rEntry.m_type == rValue.type() && !rValue.is_custom(); }))
 					{
 						auto* pNewFeature = m_featureData.Add();
 						pNewFeature->set_type(rEntry.m_type);
 						pNewFeature->set_name(rEntry.m_name);
+
+						//find first custom feature and add the new one before.
+						auto iter = std::find_if(m_featureData.begin(), m_featureData.end(), [rEntry](const auto& rValue) { return rValue.is_custom(); });
+						if (m_featureData.end() != iter)
+						{
+							m_featureData.SwapElements(static_cast<int>(std::distance(m_featureData.begin(), iter)), m_featureData.size() - 1);
+						}
 					}
 				}
 				else
 				{	//remove if set yet
-					auto iter = std::find_if(m_featureData.begin(), m_featureData.end(), [rEntry](const auto& rValue) { return rEntry.m_type == rValue.type(); });
+					auto iter = std::find_if(m_featureData.begin(), m_featureData.end(), [rEntry](const auto& rValue) { return rEntry.m_type == rValue.type() && !rValue.is_custom(); });
 					if (m_featureData.end() != iter)
 					{
 						m_featureData.erase(iter);
@@ -319,22 +373,57 @@ namespace SvOg
 	void BlobAnalyzer2Feature::OnGridEndEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
 	{
 		SvGcl::NM_GRIDVIEW* pItem = (SvGcl::NM_GRIDVIEW*) pNotifyStruct;
-
-		if ((LowerBoundColumn == pItem->iColumn || UpperBoundColumn == pItem->iColumn) && 0 < pItem->iRow && m_featureData.size() >= pItem->iRow)
-		{
-			std::string cellText = m_Grid.GetCell(pItem->iRow, pItem->iColumn)->GetText();
-			if (LowerBoundColumn == pItem->iColumn)
-			{
-				m_featureData[pItem->iRow - 1].set_lower_bound_indirect(cellText);
-			}
-			else
-			{
-				m_featureData[pItem->iRow - 1].set_upper_bound_indirect(cellText);
-			}
-			setInspectionData();
-		}
-
 		*pResult = 0;
+
+		if (nullptr != pItem && 0 < pItem->iRow && m_featureData.size() >= pItem->iRow)
+		{
+			switch (pItem->iColumn)
+			{
+			case UpperBoundColumn:
+			case LowerBoundColumn:
+			{
+				std::string cellText = m_Grid.GetCell(pItem->iRow, pItem->iColumn)->GetText();
+				if (LowerBoundColumn == pItem->iColumn)
+				{
+					m_featureData[pItem->iRow - 1].set_lower_bound_indirect(cellText);
+				}
+				else
+				{
+					m_featureData[pItem->iRow - 1].set_upper_bound_indirect(cellText);
+				}
+				setInspectionData();
+			}
+			break;
+			case NameColumn:
+			{
+				std::string cellText = m_Grid.GetCell(pItem->iRow, pItem->iColumn)->GetText();
+				if (isNameNotUsed(cellText))
+				{
+					m_featureData[pItem->iRow - 1].set_name(cellText);
+				}
+				else
+				{
+					SvStl::MessageManager Msg(SvStl::MsgType::Display);
+					Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_FeatureNameFailed, SvStl::SourceFileParams(StdMessageParams));
+					*pResult = -1;
+				}
+				return;
+			}
+			}
+		}
+	}
+
+	void BlobAnalyzer2Feature::OnGridDblClick(NMHDR* pNotifyStruct, LRESULT* /*pResult*/)
+	{
+		SvGcl::NM_GRIDVIEW* pItem = (SvGcl::NM_GRIDVIEW*) pNotifyStruct;
+
+		if (nullptr != pItem && NameColumn == pItem->iColumn && 0 < pItem->iRow && m_featureData.size() >= pItem->iRow && m_featureData[pItem->iRow-1].is_custom())
+		{
+			std::string strCaption = SvUl::Format(_T("%s %s"), m_featureData[pItem->iRow - 1].name().c_str(), _T("Formula"));
+
+			SvOg::SVFormulaEditorSheetClass dlg(m_InspectionID, m_TaskObjectID, m_featureData[pItem->iRow - 1].equationid(), strCaption.c_str());
+			dlg.DoModal();
+		}
 	}
 
 	void BlobAnalyzer2Feature::OnSelectionChanged(NMHDR*, LRESULT*)
@@ -429,9 +518,23 @@ namespace SvOg
 		{
 			auto row = i + 1;
 			m_Grid.SetItemText(row, NameColumn, m_featureData[i].name().c_str());
-			m_Grid.SetItemState(row, NameColumn, m_Grid.GetItemState(row, NameColumn) | GVIS_READONLY);
+			SvGcl::GV_ITEM buttonItem;
+			buttonItem.mask = GVIF_IMAGE;
+			buttonItem.iImage = m_featureData[i].is_custom() ? 0 : -1;
+			buttonItem.row = row;
+			buttonItem.col = NameColumn;
+			m_Grid.SetItem(&buttonItem);
+			if (m_featureData[i].is_custom())
+			{
+				m_Grid.SetItemState(row, NameColumn, m_Grid.GetItemState(row, NameColumn) & ~GVIS_READONLY);
+			}
+			else
+			{
+				m_Grid.SetItemState(row, NameColumn, m_Grid.GetItemState(row, NameColumn) | GVIS_READONLY);
+			}
+			
 			using namespace SvGcl;
-			if (3 > sortNumber)
+			if (SvDef::c_numberOfSortFeature > sortNumber  && !m_featureData[i].is_custom())
 			{
 				m_Grid.SetCellType(row, SortEnableColumn, RUNTIME_CLASS(GridCellCheck));
 				auto* pCell = dynamic_cast<SvGcl::GridCellCheck*>(m_Grid.GetCell(row, SortEnableColumn));
@@ -463,16 +566,26 @@ namespace SvOg
 				state |= GVIS_READONLY;
 			}
 			m_Grid.SetItemState(row, SortDirectionColumn, state);
-			m_Grid.SetCellType(row, ExcludeEnabledColumn, RUNTIME_CLASS(GridCellCheck));
-			auto* pCell = dynamic_cast<SvGcl::GridCellCheck*>(m_Grid.GetCell(row, ExcludeEnabledColumn));
-			if (nullptr != pCell)
+
+			if (!m_featureData[i].is_custom())
 			{
-				pCell->SetCheck(m_featureData[i].is_exclude());
+				m_Grid.SetCellType(row, ExcludeEnabledColumn, RUNTIME_CLASS(GridCellCheck));
+				auto* pCell = dynamic_cast<SvGcl::GridCellCheck*>(m_Grid.GetCell(row, ExcludeEnabledColumn));
+				if (nullptr != pCell)
+				{
+					pCell->SetCheck(m_featureData[i].is_exclude());
+				}
 			}
+			else
+			{
+				m_Grid.SetCellType(row, ExcludeEnabledColumn, RUNTIME_CLASS(GridCell));
+				m_Grid.SetItemState(row, ExcludeEnabledColumn, m_Grid.GetItemState(row, ExcludeEnabledColumn) | GVIS_READONLY);
+			}
+			
 			if (m_featureData[i].is_exclude())
 			{
 				m_Grid.SetCellType(row, ExcludeInnerColumn, RUNTIME_CLASS(GridCellCheck));
-				pCell = dynamic_cast<SvGcl::GridCellCheck*>(m_Grid.GetCell(row, ExcludeInnerColumn));
+				auto* pCell = dynamic_cast<SvGcl::GridCellCheck*>(m_Grid.GetCell(row, ExcludeInnerColumn));
 				if (nullptr != pCell)
 				{
 					pCell->SetCheck(m_featureData[i].is_exclude_inner());
@@ -481,7 +594,6 @@ namespace SvOg
 				std::string tmp = m_featureData[i].lower_bound_indirect().empty() ? std::to_string(m_featureData[i].lower_bound()) : m_featureData[i].lower_bound_indirect();
 				m_Grid.SetItemText(row, LowerBoundColumn, tmp.c_str());
 				m_Grid.SetItemState(row, LowerBoundColumn, m_Grid.GetItemState(row, LowerBoundColumn) & (~GVIS_READONLY));
-				SvGcl::GV_ITEM buttonItem;
 				buttonItem.mask = GVIF_IMAGE;
 				buttonItem.iImage = 0;
 				buttonItem.row = row;
@@ -499,7 +611,6 @@ namespace SvOg
 				m_Grid.SetItemState(row, ExcludeInnerColumn, m_Grid.GetItemState(row, ExcludeInnerColumn) | GVIS_READONLY);
 				m_Grid.SetItemText(row, LowerBoundColumn, "");
 				m_Grid.SetItemState(row, LowerBoundColumn, m_Grid.GetItemState(row, LowerBoundColumn) | GVIS_READONLY);
-				SvGcl::GV_ITEM buttonItem;
 				buttonItem.mask = GVIF_IMAGE;
 				buttonItem.iImage = -1;
 				buttonItem.row = row;
@@ -537,15 +648,29 @@ namespace SvOg
 		bool bMoveUpEnable = false;
 		bool bMoveDownEnable = false;
 
-		if (Selection.GetMinRow() == Selection.GetMaxRow() && m_featureData.size() > Selection.GetMinRow() + 1 && 0 < Selection.GetMinRow())
+		if (Selection.GetMinRow() == Selection.GetMaxRow() && m_featureData.size() >= Selection.GetMinRow() && 0 < Selection.GetMinRow())
 		{
-			bool isSort = m_featureData[Selection.GetMinRow() - 1].is_sort();
-			bMoveUpEnable = (isSort && 1 < Selection.GetMinRow());
-			bMoveDownEnable = (isSort && m_featureData.size() > Selection.GetMinRow() && m_featureData[Selection.GetMinRow()].is_sort());
+			const auto& rFeatureData = m_featureData[Selection.GetMinRow() - 1];
+			if (rFeatureData.is_sort())
+			{
+				bMoveUpEnable = (1 < Selection.GetMinRow());
+				bMoveDownEnable = (m_featureData.size() > Selection.GetMinRow() && m_featureData[Selection.GetMinRow()].is_sort());
+			}
+			else if (rFeatureData.is_custom())
+			{
+				bMoveUpEnable = (m_featureData[Selection.GetMinRow()-2].is_custom());
+				bMoveDownEnable = (m_featureData.size() > Selection.GetMinRow() && m_featureData[Selection.GetMinRow()].is_custom());
+			}
 		}
 		
 		GetDlgItem(IDC_BUTTON_MOVEUP)->EnableWindow(bMoveUpEnable);
 		GetDlgItem(IDC_BUTTON_MOVEDOWN)->EnableWindow(bMoveDownEnable);
+
+		bool bAddFeature = (m_featureData.size() < SvDef::c_maxTableColumn);
+		bool bDeleteFeature = (Selection.GetMinRow() > 0 && m_featureData.size() >= Selection.GetMinRow());
+
+		GetDlgItem(IDC_BUTTON_ADD)->EnableWindow(bAddFeature);
+		GetDlgItem(IDC_BUTTON_REMOVE)->EnableWindow(bDeleteFeature);
 	}
 
 	HRESULT BlobAnalyzer2Feature::loadFeatureData()
@@ -561,6 +686,9 @@ namespace SvOg
 			if (responseCmd.has_getfeaturesresponse())
 			{
 				m_featureData = responseCmd.getfeaturesresponse().list();
+				auto iter = std::max_element(m_featureData.begin(), m_featureData.end(),
+					[](const auto& rA, const auto& rB) { return ((rA.is_custom() ? rA.type() : 0) < (rB.is_custom() ? rB.type() : 0)); });
+				m_nextCustomId = (m_featureData.end() != iter && iter->is_custom()) ? iter->type() + 1 : 1;
 			}
 			else
 			{
@@ -583,6 +711,16 @@ namespace SvOg
 		}
 		assert(false);
 		return {};
+	}
+
+	bool BlobAnalyzer2Feature::isFeatureNecessary(unsigned int type) const
+	{
+		auto iter = std::find_if(m_availableFeature.list().begin(), m_availableFeature.list().end(), [type](const auto& rEntry) { return type == rEntry.id(); });
+		if (m_availableFeature.list().end() != iter)
+		{
+			return iter->isnecessary();
+		}
+		return false;
 	}
 
 	bool BlobAnalyzer2Feature::ShowObjectSelector(std::string& rName, const std::string& title)
@@ -611,6 +749,32 @@ namespace SvOg
 				m_featureData.SwapElements(pos, pos++);
 			}
 		}
+	}
+
+	bool BlobAnalyzer2Feature::isNameNotUsed(const std::string& rName) const
+	{
+		auto iter = std::find_if(m_availableFeature.list().begin(), m_availableFeature.list().end(), [rName](const auto& rEntry) { return rName == rEntry.name(); });
+		if (m_availableFeature.list().end() != iter)
+		{
+			return false;
+		}
+		auto iter2 = std::find_if(m_featureData.begin(), m_featureData.end(), [rName](const auto& rEntry) { return rName == rEntry.name(); });
+		if (m_featureData.end() != iter2)
+		{
+			return false;
+		}
+		return true;
+	}
+
+	std::string BlobAnalyzer2Feature::getNextCustomName() const
+	{
+		int addNumber = 1;
+		std::string name = "Custom Feature"; 
+		while (!isNameNotUsed(name))
+		{
+			name = "Custom Feature " + std::to_string(addNumber++);
+		}
+		return name;
 	}
 #pragma endregion Private Mehods
 } //namespace SvOg

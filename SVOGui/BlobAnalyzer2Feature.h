@@ -9,9 +9,10 @@
 #pragma region Includes
 #include "SVOResource/resource.h"
 #include "GridCtrlLibrary/GridCtrl.h"
+#include "SVProtoBuf/InspectionCommands.h"
+#include "DataController.h"
 #include "ISVPropertyPageDialog.h"
 #include "ObjectSelectorController.h"
-#include "SVProtoBuf/InspectionCommands.h"
 #pragma endregion Includes
 
 
@@ -58,8 +59,12 @@ namespace SvOg
 		void OnBnClickedMoveUp();
 		void OnBnClickedMoveDown();
 
+		void OnBnClickedAddCustom();
+		void OnBnClickedDelete();
+
 		void OnGridClick(NMHDR*, LRESULT*);
 		void OnGridEndEdit(NMHDR *pNotifyStruct, LRESULT* pResult);
+		void OnGridDblClick(NMHDR* pNotifyStruct, LRESULT* /*pResult*/);
 		void OnSelectionChanged(NMHDR *, LRESULT*);
 		//}}AFX_MSG
 
@@ -85,23 +90,32 @@ namespace SvOg
 		HRESULT loadFeatureData();
 
 		SvPb::GetAvailableFeaturesResponse getAvailableFeatures() const;
+		bool isFeatureNecessary(unsigned int type) const;
 
 		bool ShowObjectSelector(std::string& rName, const std::string& title);
 
 		void sortFeatures(int pos);
+
+		bool isNameNotUsed(const std::string& rName) const;
+
+		std::string getNextCustomName() const;
 #pragma endregion Private Methods
 
 #pragma region Member Variables
 	private:
 		const uint32_t m_InspectionID;
 		const uint32_t m_TaskObjectID;
+		ValueController m_Values;
 
 		SvGcl::GridCtrl m_Grid;						//The grid displaying the name and the formulas
 		google::protobuf::RepeatedPtrField< SvPb::FeatureData > m_featureData;
+		unsigned int m_nextCustomId = 0;
 
 		ObjectSelectorController m_objectSelector;
 		CBitmap m_downArrowBitmap;
 		CImageList m_ImageList;
+
+		const SvPb::GetAvailableFeaturesResponse m_availableFeature = getAvailableFeatures();
 #pragma endregion Member Variables
 	};
 } //namespace SvOg

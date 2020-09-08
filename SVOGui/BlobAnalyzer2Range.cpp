@@ -340,7 +340,16 @@ namespace SvOg
 			if (0 < responseCmd.setfeaturesresponse().error_list().size())
 			{
 				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-				Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SetFeatureParameterFailed, SvStl::SourceFileParams(StdMessageParams));
+				SvStl::MessageContainerVector tmpMessages = SvPb::setMessageVectorFromMessagePB(responseCmd.setfeaturesresponse().messages());
+				if (0 < tmpMessages.size())
+				{
+					Msg.setMessage(tmpMessages[0].getMessage());
+				}
+				else
+				{
+					Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SetFeatureParameterFailed, SvStl::SourceFileParams(StdMessageParams));
+				}
+
 				const auto& range = responseCmd.setfeaturesresponse().error_list(0);
 				auto iter = std::find_if(g_columnRangeDefArray.begin(), g_columnRangeDefArray.end(), [range](const auto& rEntry) { return rEntry.second.m_protoBufFieldId == range.fieldid(); });
 				if (g_columnRangeDefArray.end() != iter)

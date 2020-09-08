@@ -1,14 +1,14 @@
 //******************************************************************************
 /// \copyright (c) 2018 by Seidenader Maschinenbau GmbH
-/// \file TableAddColumnEquation.cpp
+/// \file IndexEquation.cpp
 /// All Rights Reserved 
 //*****************************************************************************
-/// Equation class for the add column formula in table analyzer tool.
+/// Equation class to fill a DoubleSortValueObject (an array) by using an index value (e.g. used for the add column formula in table analyzer tool or custom feature in BlobAnalyzer2).
 //******************************************************************************
 
 #pragma region Includes
 #include "stdafx.h"
-#include "TableAddColumnEquation.h"
+#include "IndexEquation.h"
 #include "SVStatusLibrary/RunStatus.h"
 #include "SVValueObjectLibrary/SVLongValueObjectClass.h"
 #pragma endregion Includes
@@ -23,19 +23,19 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS(TableAddColumnEquation, SvPb::TableAddColumnEquationId);
+SV_IMPLEMENT_CLASS(IndexEquation, SvPb::IndexEquationId);
 
-TableAddColumnEquation::TableAddColumnEquation(SVObjectClass* pOwner, int StringResourceID)
+IndexEquation::IndexEquation(SVObjectClass* pOwner, int StringResourceID)
 	: SVEquation(pOwner, StringResourceID)
 {
 	init();
 }
 
-TableAddColumnEquation::~TableAddColumnEquation()
+IndexEquation::~IndexEquation()
 {
 }
 
-bool TableAddColumnEquation::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
+bool IndexEquation::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 
@@ -53,7 +53,7 @@ bool TableAddColumnEquation::ResetObject(SvStl::MessageContainerVector *pErrorMe
 	return Result;
 }
 
-void TableAddColumnEquation::SetName(LPCTSTR Name)
+void IndexEquation::SetName(LPCTSTR Name)
 {
 	__super::SetName(Name);
 
@@ -68,7 +68,7 @@ void TableAddColumnEquation::SetName(LPCTSTR Name)
 	}
 }
 
-bool TableAddColumnEquation::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool IndexEquation::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool   bRetVal = true;
 	if (nullptr != m_pResultColumn && nullptr != m_pIndex)
@@ -113,11 +113,11 @@ bool TableAddColumnEquation::onRun(RunStatus& rRunStatus, SvStl::MessageContaine
 	return bRetVal;
 }
 
-void TableAddColumnEquation::init()
+void IndexEquation::init()
 {
 	// Identify our output type
 	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVEquationObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::TableAddColumnEquationObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::IndexEquationObjectType;
 
 	// Set default inputs and outputs
 	addDefaultInputObjects();

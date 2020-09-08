@@ -352,7 +352,7 @@ void SVExternalToolTask::CreateArrayInTable()
 
 		for (int i = 0; i < nCols; i++)
 		{
-			if (i >= c_maxTableColumn)
+			if (i >= SvDef::c_maxTableColumn)
 			{
 				assert(false);
 				break;
