@@ -111,7 +111,7 @@ BOOL SVDisplayImageSelect::OnInitDialog()
 			}
 			else
 			{
-				imageName = pImage->GetObjectNameToObjectType(SvPb::SVObjectTypeEnum::SVToolObjectType, true);
+				imageName = pImage->GetObjectNameBeforeObjectType(SvPb::SVObjectTypeEnum::SVToolSetObjectType);
 			}
 			return imageName;
 		};
