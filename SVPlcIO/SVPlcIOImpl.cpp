@@ -485,7 +485,7 @@ void SVPlcIOImpl::reportTrigger(const TriggerReport& rTriggerReport)
 		triggerData[SvTi::TriggerDataEnum::TriggerIndex] = _variant_t(rTriggerReport.m_triggerIndex);
 		triggerData[SvTi::TriggerDataEnum::TriggerPerObjectID] = _variant_t(rTriggerReport.m_triggerPerObjectID);
 
-		auto iter = m_triggerCallbackMap.find(rTriggerReport.m_channel);
+		auto iter = m_triggerCallbackMap.find(triggerIndex);
 		if (m_triggerCallbackMap.end() != iter)
 		{
 			iter->second(std::move(triggerData));
