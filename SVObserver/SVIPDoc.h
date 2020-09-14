@@ -155,8 +155,9 @@ public:
 	afx_msg void OnAddCylindricalWarpTool();
 	afx_msg void OnEditTool();
 	afx_msg void OnEditToolTab1();
+	afx_msg void OnEditCut();
+	afx_msg void OnUpdateEditCutCopy(CCmdUI* PCmdUI);
 	afx_msg void OnEditCopy();
-	afx_msg void OnUpdateEditCopy( CCmdUI* PCmdUI );
 	afx_msg void OnEditPaste();
 	afx_msg void OnUpdateEditPaste( CCmdUI* PCmdUI );
 	afx_msg void OnShowFirstError();

@@ -104,8 +104,9 @@ BEGIN_MESSAGE_MAP(SVIPDoc, CDocument)
 	ON_COMMAND(ID_ADD_CYLINDRICALWARPTOOL, OnAddCylindricalWarpTool)
 	ON_COMMAND(ID_EDIT_EDITTOOL, OnEditTool)
 	ON_COMMAND(ID_EDIT_EDITTOOLTAB1, OnEditToolTab1)
+	ON_COMMAND(ID_EDIT_CUT, OnEditCut)
 	ON_COMMAND(ID_EDIT_COPY, OnEditCopy)
-	ON_UPDATE_COMMAND_UI(ID_EDIT_COPY, OnUpdateEditCopy)
+	ON_UPDATE_COMMAND_UI(ID_EDIT_COPY, OnUpdateEditCutCopy)
 	ON_COMMAND(ID_EDIT_PASTE, OnEditPaste)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_PASTE, OnUpdateEditPaste)
 	ON_COMMAND(ID_SHOW_FIRST_ERROR, OnShowFirstError)
@@ -1189,6 +1190,22 @@ void SVIPDoc::OnEditDelete()
 
 	}
 }
+
+void SVIPDoc::OnEditCut()
+{
+	ToolSetView* pToolSetView = GetToolSetView();
+	if (nullptr != pToolSetView && !pToolSetView->IsLabelEditing())
+	{
+		uint32_t toolid = pToolSetView->GetSelectedTool();
+		if (SvDef::InvalidObjectId != toolid)
+		{
+			ToolClipboard clipboard;
+			clipboard.writeToClipboard(toolid);
+			OnEditDelete();
+		}
+	}
+}
+
 void SVIPDoc::OnEditCopy()
 {
 	if (!SVSVIMStateClass::CheckState(SV_STATE_READY) || !SVSVIMStateClass::CheckState(SV_STATE_EDIT))
@@ -1208,7 +1225,7 @@ void SVIPDoc::OnEditCopy()
 	}
 }
 
-void SVIPDoc::OnUpdateEditCopy(CCmdUI* pCmdUI)
+void SVIPDoc::OnUpdateEditCutCopy(CCmdUI* pCmdUI)
 {
 	// Check current user access...
 	bool Enabled(false);
