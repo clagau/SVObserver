@@ -631,66 +631,57 @@ std::pair<uint32_t, _variant_t>  SVOutputObjectList::getDigitalOutputValue(const
 	if( nullptr != pOutput )
 	{
 		_variant_t Value{false};
-		_variant_t CombinedValue;
 		SvOi::IValueObject* pValueObject = pIOEntry->getValueObject();
 
-		if(false == useDefault)
+		if(nullptr != pValueObject)
 		{
-			std::string l_String = pOutput->GetName();
-			if( ACK || l_String.substr( 0, 3 ).compare( _T( "PPQ" ) ) == 0 )
+			if (useDefault)
 			{
-				if( nullptr != pValueObject )
+				Value = pValueObject->getDefaultValue();
+			}
+			else
+			{
+				std::string l_String = pOutput->GetName();
+				if (ACK || l_String.substr(0, 3).compare(_T("PPQ")) == 0)
 				{
 					pValueObject->getValue(Value);
 				}
 			}
-
-			if( pOutput->isCombined() )
-			{
-				if(IO_DIGITAL_OUTPUT == pIOEntry->m_ObjectType)
-				{
-					CombinedValue = pOutput->isAndACK() ? Value && ACK : Value || NAK;
-				}
-				else if(IO_PLC_OUTPUT == pIOEntry->m_ObjectType)
-				{
-					if(pOutput->isAndACK())
-					{
-						CombinedValue = ACK ? Value ? cPlcGood : cPlcBad : cPlcInvalid;
-					}
-					else
-					{
-						///As this is value or NAK if it is set then is bad
-						Value = Value || NAK;
-						CombinedValue = Value ? cPlcBad : cPlcGood;
-					}
-				}
-			}
 		}
 
-		if(useDefault)
+		if( pOutput->isCombined() )
 		{
-			if( nullptr != pIOEntry->getValueObject())
+			if(IO_DIGITAL_OUTPUT == pIOEntry->m_ObjectType)
 			{
-				Value = pIOEntry->getValueObject()->getDefaultValue();
+				Value = pOutput->isAndACK() ? Value && ACK : Value || NAK;
 			}
-		}
-		else if( pOutput->isCombined() )
-		{
-			Value = CombinedValue;
+			else if(IO_PLC_OUTPUT == pIOEntry->m_ObjectType)
+			{
+				if(pOutput->isAndACK())
+				{
+					Value = ACK ? Value ? cPlcGood : cPlcBad : cPlcInvalid;
+				}
+				else
+				{
+					///As this is value or NAK if it is set then is bad
+					Value = Value || NAK;
+					Value = Value ? cPlcBad : cPlcGood;
+				}
+			}
 		}
 		else
 		{
 			if (nullptr != pValueObject)
 			{
 				pValueObject->getValue(Value);
-				///Need to convert bool value to variant
-				if (IO_PLC_OUTPUT == pIOEntry->m_ObjectType)
-				{
-					bool outputState = Value ? true : false;
-					Value.Clear();
-					Value = outputState ? cPlcGood : cPlcBad;
-				}
 			}
+		}
+		///Need to convert bool value to variant
+		if (VT_BOOL == Value.vt && IO_PLC_OUTPUT == pIOEntry->m_ObjectType)
+		{
+			bool outputState = Value ? true : false;
+			Value.Clear();
+			Value = outputState ? cPlcGood : cPlcBad;
 		}
 		///Discrete outputs has the first value the objectID while for PLC outputs its the channel number
 		Result.first = IO_PLC_OUTPUT == pIOEntry->m_ObjectType ? pOutput->GetChannel() : pIOEntry->m_IOId;

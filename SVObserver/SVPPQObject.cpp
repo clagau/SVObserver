@@ -1700,32 +1700,31 @@ bool SVPPQObject::WriteOutputs(SVProductInfoStruct *pProduct)
 
 	if (nullptr != pProduct)
 	{
-		if (false == pProduct->m_dataComplete)
+		if (true == pProduct->m_dataComplete)
+		{
+			//As all inspections have been tested to have the same object ID we will set it to the first inspection
+			ObjectIdSVInspectionInfoStructMap::const_iterator iter{ pProduct->m_svInspectionInfos.begin() };
+			if (pProduct->m_svInspectionInfos.end() != iter)
+			{
+				inspectedObjectID = iter->second.m_ObjectID;
+			}
+		}
+		else
 		{
 			SetProductIncomplete(*pProduct);
 			//Data index with -1 will return the default output values which is required in this case
 			pProduct->m_outputsInfo.m_Outputs = m_pOutputList->getOutputValues(m_UsedOutputs, true, false, true);
-		}
-
-		SvTi::IntVariantMap::const_iterator iterData{pProduct->m_triggerInfo.m_Data.end()};
-		//As all inspections have been tested to have the same object ID we will set it to the first inspection
-		ObjectIdSVInspectionInfoStructMap::const_iterator iter{pProduct->m_svInspectionInfos.begin()};
-		if(pProduct->m_svInspectionInfos.end() != iter)
-		{
-			inspectedObjectID = iter->second.m_ObjectID;
-		}
-		else
-		{
 			//Set the default inspected object ID which would be the input object ID
-			iterData = pProduct->m_triggerInfo.m_Data.find(SvTi::TriggerDataEnum::ObjectID);
+			SvTi::IntVariantMap::const_iterator iterData = pProduct->m_triggerInfo.m_Data.find(SvTi::TriggerDataEnum::ObjectID);
 			if (pProduct->m_triggerInfo.m_Data.end() != iterData)
 			{
 				inspectedObjectID = static_cast<DWORD> (iterData->second);
 			}
 		}
+
 		DWORD triggerIndex{0};
 		DWORD triggerPerObjectID{0};
-		iterData = pProduct->m_triggerInfo.m_Data.find(SvTi::TriggerDataEnum::TriggerIndex);
+		SvTi::IntVariantMap::const_iterator  iterData = pProduct->m_triggerInfo.m_Data.find(SvTi::TriggerDataEnum::TriggerIndex);
 		if (pProduct->m_triggerInfo.m_Data.end() != iterData)
 		{
 			triggerIndex = static_cast<DWORD> (iterData->second);
@@ -2024,48 +2023,62 @@ void SVPPQObject::GetAllOutputs(SVIOEntryHostStructPtrVector& ppIOEntries) const
 
 SVProductInfoStruct* SVPPQObject::IndexPPQ(SvTi::SVTriggerInfoStruct&& rTriggerInfo)
 {
-	SVProductInfoStruct* l_pProduct = nullptr;
-	SVProductInfoStruct* l_pNewProduct = nullptr;
-	SVProductInfoStruct* l_pPrevProduct = m_ppPPQPositions.GetProductAt(0);
-	SVProductInfoStruct* l_pLastProduct = m_ppPPQPositions.IndexRegister();
+	SVProductInfoStruct* pProduct{nullptr};
+	SVProductInfoStruct* pNewProduct{nullptr};
+	SVProductInfoStruct* pPrevProduct = m_ppPPQPositions.GetProductAt(0);
+	SVProductInfoStruct* pLastProduct = m_ppPPQPositions.IndexRegister();
 
-	if (m_qAvailableProductInfos.RemoveHead(&l_pNewProduct) && nullptr != l_pNewProduct)
+	if (m_qAvailableProductInfos.RemoveHead(&pNewProduct) && nullptr != pNewProduct)
 	{
-		l_pNewProduct->m_triggerInfo = std::move(rTriggerInfo);
+		pNewProduct->m_triggerInfo = std::move(rTriggerInfo);
 
-		if (nullptr != l_pPrevProduct)
+		if (nullptr != pPrevProduct)
 		{
-			l_pNewProduct->m_triggerInfo.m_PreviousTrigger = l_pPrevProduct->m_triggerInfo.m_triggerTimeStamp;
+			pNewProduct->m_triggerInfo.m_PreviousTrigger = pPrevProduct->m_triggerInfo.m_triggerTimeStamp;
 		}
 
-		l_pNewProduct->m_triggered = true;
+		pNewProduct->m_triggered = true;
 
-		l_pNewProduct->m_ProductState += _T("|");
-		l_pNewProduct->m_ProductState += GetName();
-		l_pNewProduct->m_ProductState += _T("|TRI=");
-		l_pNewProduct->m_ProductState += SvUl::Format(_T("%ld"), l_pNewProduct->m_triggerInfo.lTriggerCount);
+		pNewProduct->m_ProductState += _T("|");
+		pNewProduct->m_ProductState += GetName();
+		pNewProduct->m_ProductState += _T("|TRI=");
+		pNewProduct->m_ProductState += SvUl::Format(_T("%ld"), pNewProduct->m_triggerInfo.lTriggerCount);
 
-		l_pNewProduct->SetProductActive();
+		pNewProduct->SetProductActive();
 
-		m_ppPPQPositions.SetProductAt(0, l_pNewProduct);
+		m_ppPPQPositions.SetProductAt(0, pNewProduct);
 	}
 
-	if (SvDef::SVPPQNextTriggerMode == m_outputMode)
+	switch (m_outputMode)
 	{
-		l_pProduct = m_ppPPQPositions.GetProductAt(m_ppPPQPositions.size() - 1);
-	}
-	else
+	case SvDef::SVPPQNextTriggerMode:
 	{
-		l_pProduct = l_pNewProduct;
+		pProduct = m_ppPPQPositions.GetProductAt(m_ppPPQPositions.size() - 1);
+		break;
 	}
+	case SvDef::SVPPQExtendedTimeDelayAndDataCompleteMode:
+	{
+		pProduct = m_ppPPQPositions.GetProductAt(m_ppPPQPositions.size() - 1);
+		bool isProductIncomplete = nullptr != pProduct && 0 == m_outputDelay && true == pProduct->m_triggered && false == pProduct->m_dataComplete;
+		if (isProductIncomplete)
+		{
+			ProcessOutputs(*pProduct);
+		}
+		pProduct = pNewProduct;
+		break;
+	}
+	default:
+	{
+		pProduct = pNewProduct;
+		break;
+	}
+	}
+	StartOutputs(pProduct);
 
-	// Start the Outputs. This will notify the cameras to acquire
-	StartOutputs(l_pProduct);
-
-	if (nullptr != l_pLastProduct)
+	if (nullptr != pLastProduct)
 	{
 		// Recycle the exiting SVProductInfoStruct
-		if (!RecycleProductInfo(l_pLastProduct))
+		if (!RecycleProductInfo(pLastProduct))
 		{
 			SvStl::MessageManager Exception(SvStl::MsgType::Log);
 			Exception.setMessage(SVMSG_SVO_69_PPQ_INDEX_NOT_RELEASED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
@@ -2088,7 +2101,7 @@ SVProductInfoStruct* SVPPQObject::IndexPPQ(SvTi::SVTriggerInfoStruct&& rTriggerI
 	}
 #endif
 
-	return l_pNewProduct;
+	return pNewProduct;
 }
 
 void SVPPQObject::InitializeProduct(SVProductInfoStruct* pNewProduct)
