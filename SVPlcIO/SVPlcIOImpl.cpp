@@ -30,7 +30,7 @@ constexpr LPCTSTR cPLCNodeID = _T("PLC-NodeID");
 constexpr LPCTSTR cOutputFileName = _T("OutputFileName");
 constexpr LPCTSTR cPlcInputName = _T("_PlcInput.txt");
 constexpr LPCTSTR cPlcOutputName = _T("_PlcOutput.txt");
-constexpr LPCTSTR cPlcInputHeading = _T("Channel; Count; Timestamp; ObjectID; Trigger Index; Trigger per ObjectID\r\n");
+constexpr LPCTSTR cPlcInputHeading = _T("Channel; Count; Trigger Timestamp; ObjectID; Trigger Index; Trigger per ObjectID; TimeStamp\r\n");
 constexpr LPCTSTR cPlcOutputHeading = _T("Channel; Count; Timestamp; ObjectID; Results\r\n");
 constexpr LPCTSTR cTriggerName = _T("HardwareTrigger.Dig_");			///This name must match the name in the SVHardwareManifest
 #pragma endregion Declarations
@@ -494,8 +494,7 @@ void SVPlcIOImpl::reportTrigger(const TriggerReport& rTriggerReport)
 		if(m_logInFile.is_open() && cMaxPlcTriggers > rTriggerReport.m_channel)
 		{
 			const TriggerReport& rData = rTriggerReport;
-			uint32_t inputCount = m_inputCount[rData.m_channel];
-			std::string fileData = SvUl::Format(_T("%d; %d; %f; %d; %d; %d\r\n"), triggerIndex, inputCount, rData.m_triggerTimestamp, rData.m_currentObjectID, rData.m_triggerIndex, rData.m_triggerPerObjectID);
+			std::string fileData = SvUl::Format(_T("%d; %d; %f; %d; %d; %d; %f\r\n"), triggerIndex, m_inputCount[rData.m_channel], rData.m_triggerTimestamp, rData.m_currentObjectID, rData.m_triggerIndex, rData.m_triggerPerObjectID, SvTl::GetTimeStamp());
 			m_logInFile.write(fileData.c_str(), fileData.size());
 		}
 	}

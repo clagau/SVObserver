@@ -669,7 +669,7 @@ std::pair<uint32_t, _variant_t>  SVOutputObjectList::getDigitalOutputValue(const
 				}
 			}
 		}
-		else
+		else if(false == useDefault)
 		{
 			if (nullptr != pValueObject)
 			{
