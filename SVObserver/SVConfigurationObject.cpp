@@ -3869,7 +3869,7 @@ SVIMProductEnum SVConfigurationObject::GetProductType() const
 
 void SVConfigurationObject::SetProductType(SVIMProductEnum eProductType)
 {
-	SVIMProductEnum prevType{m_eProductType};
+	SVIMProductEnum prevType{ SVIM_PRODUCT_TYPE_UNKNOWN == m_eProductType ? eProductType : m_eProductType};
 	m_eProductType = eProductType;
 	///When the product type is changed the IO controller needs to initialize outputs
 	m_pIOController->initializeOutputs();
