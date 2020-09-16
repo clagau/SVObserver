@@ -20,25 +20,18 @@
 
 namespace SvCmd
 {
-	class SetMaskData
+
+	class SetMaskDataFunctor
 	{
 	public:
-		SetMaskData(const SetMaskData&) = delete;
-		SetMaskData& operator=(const SetMaskData&) = delete;
-
-		SetMaskData(uint32_t objectID, HGLOBAL hGlobal)
+		explicit SetMaskDataFunctor(uint32_t objectID, HGLOBAL hGlobal)
 			: m_InstanceID(objectID), m_hGlobal(hGlobal) {};
-
-		virtual ~SetMaskData() {};
-
-		// This method is where the real separation would occur by using sockets/named pipes/shared memory
-		// The logic contained within this method would be moved to the "Server" side of a Client/Server architecture
-		// and replaced with the building and sending of the command
-		HRESULT Execute()
+		
+		HRESULT operator() ()
 		{
 			HRESULT hr = S_OK;
 
-			SvOi::IMask* pObject = dynamic_cast<SvOi::IMask *>(SvOi::getObject(m_InstanceID));
+			SvOi::IMask* pObject = dynamic_cast<SvOi::IMask*>(SvOi::getObject(m_InstanceID));
 			if (pObject)
 			{
 				pObject->SetMaskData(m_hGlobal);
@@ -49,10 +42,12 @@ namespace SvCmd
 			}
 			return hr;
 		}
-		bool empty() const { return false; }
+		
 
 	private:
 		uint32_t m_InstanceID;
 		HGLOBAL m_hGlobal;
 	};
+
+
 } //namespace SvCmd

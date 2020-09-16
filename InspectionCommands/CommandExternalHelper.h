@@ -37,6 +37,9 @@ struct SVObjectTypeInfoStruct;
 
 namespace SvCmd
 {
+
+enum class ThreadPref { cur, inspection, async };
+
 /// Call an inspection command synchronous if required. (Send it to the inspection thread.)
 /// \param inspectionID [in] id for the inspection to find the inspection thread.
 /// \param rRequest [in] The request message.

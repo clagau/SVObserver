@@ -133,6 +133,7 @@ namespace Gdiplus
 #include <sstream>
 #include <string>
 #include <sys/stat.h>
+#include <tuple>
 #include <typeinfo>
 #include <utility>
 #include <vector>

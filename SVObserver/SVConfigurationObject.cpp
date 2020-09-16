@@ -48,7 +48,6 @@
 #include "SVIOLibrary/SVIOTriggerLoadLibraryClass.h"
 #include "SVIOLibrary/SVOutputObjectList.h"
 #include "SVIOLibrary/SVRemoteInputObject.h"
-#include "SVCommandLibrary/SVObjectAsynchronousCommandTemplate.h"
 #include "SVFileSystemLibrary/SVFileNameManagerClass.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary/SVToolsetScriptTags.h"
@@ -70,6 +69,7 @@
 #include "TriggerInformation/SVTriggerProcessingClass.h"
 #include "TriggerInformation/SVHardwareManifest.h"
 #include "Tools/SVColorTool.h"
+#include "ObjectInterfaces/ICommand.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -91,10 +91,10 @@ constexpr int cPlcOutputCount = 14;
 #pragma endregion Declarations
 
 #pragma region Constructor
-SVConfigurationObject::SVConfigurationObject(LPCSTR ObjectName) : SVObjectClass(ObjectName) 
-	,m_pIOController{std::make_unique<SVIOController>(this)}
-	,m_pInputObjectList{std::make_unique<SVInputObjectList>()}
-	,m_pOutputObjectList{std::make_unique<SVOutputObjectList>()}
+SVConfigurationObject::SVConfigurationObject(LPCSTR ObjectName) : SVObjectClass(ObjectName)
+, m_pIOController{ std::make_unique<SVIOController>(this) }
+, m_pInputObjectList{ std::make_unique<SVInputObjectList>() }
+, m_pOutputObjectList{ std::make_unique<SVOutputObjectList>() }
 {
 	SVObjectManagerClass::Instance().ChangeUniqueObjectID(this, ObjectIdEnum::ConfigObjectId);
 
@@ -114,9 +114,9 @@ SVConfigurationObject::SVConfigurationObject(LPCSTR ObjectName) : SVObjectClass(
 }
 
 SVConfigurationObject::SVConfigurationObject(SVObjectClass* pOwner, int StringResourceID) : SVObjectClass(pOwner, StringResourceID)
-	, m_pIOController {std::make_unique<SVIOController>(this)}
-	, m_pInputObjectList {std::make_unique<SVInputObjectList>()}
-	, m_pOutputObjectList {std::make_unique<SVOutputObjectList>()}
+, m_pIOController{ std::make_unique<SVIOController>(this) }
+, m_pInputObjectList{ std::make_unique<SVInputObjectList>() }
+, m_pOutputObjectList{ std::make_unique<SVOutputObjectList>() }
 {
 	SVObjectManagerClass::Instance().ChangeUniqueObjectID(this, ObjectIdEnum::ConfigObjectId);
 
@@ -337,7 +337,7 @@ bool SVConfigurationObject::RemoveAcquisitionDevice(LPCTSTR szName)
 {
 	bool Result = false;
 
-	SvIe::SVConfigurationAcquisitionDeviceInfoStruct *pDevice = nullptr;
+	SvIe::SVConfigurationAcquisitionDeviceInfoStruct* pDevice = nullptr;
 
 	SVAcquisitionDeviceMap::iterator Iter = m_AcquisitionDeviceMap.find(szName);
 	pDevice = (m_AcquisitionDeviceMap.end() != Iter) ? Iter->second : nullptr;
@@ -609,9 +609,9 @@ bool SVConfigurationObject::AddInspection(SVInspectionProcess* pInspection)
 	{
 		m_arInspectionArray.push_back(pInspection);
 		assert(m_arInspectionArray.end() != std::find_if(m_arInspectionArray.begin(), m_arInspectionArray.end(), [pInspection](auto data)->bool
-		{
-			return (data == pInspection);
-		}));
+			{
+				return (data == pInspection);
+			}));
 		auto inspId = m_inspList4TRC.add_list();
 		inspId->set_id(pInspection->getObjectId());
 		*inspId->mutable_name() = pInspection->GetName();
@@ -774,7 +774,7 @@ HRESULT SVConfigurationObject::AddImportedDigitalInput(SVPPQObject* pPPQ, const 
 
 HRESULT SVConfigurationObject::AddRemoteInput(SVPPQObject* pPPQ, const std::string& name, long ppqPosition, long index, const _variant_t& rValue)
 {
-	HRESULT result{S_OK};
+	HRESULT result{ S_OK };
 
 	//Only do an assert check so that in release mode no check is made
 	assert(nullptr != pPPQ);
@@ -788,7 +788,7 @@ HRESULT SVConfigurationObject::AddRemoteInput(SVPPQObject* pPPQ, const std::stri
 
 	// Add Remote Input to the PPQ
 	std::shared_ptr<SvOi::IValueObject> pInputValueObject = std::make_shared<SvVol::SVVariantValueObjectClass>();
-	if(nullptr != pInputValueObject)
+	if (nullptr != pInputValueObject)
 	{
 		SvVol::SVVariantValueObjectClass* pValueObject = dynamic_cast<SvVol::SVVariantValueObjectClass*> (pInputValueObject.get());
 		pValueObject->SetName(name.c_str());
@@ -826,7 +826,7 @@ HRESULT SVConfigurationObject::AddRemoteInput(SVPPQObject* pPPQ, const std::stri
 
 HRESULT SVConfigurationObject::AddDigitalInput(SVPPQObject* pPPQ, const std::string& name, long ppqPosition)
 {
-	HRESULT result{S_OK};
+	HRESULT result{ S_OK };
 
 	//Only do an assert check so that in release mode no check is made
 	assert(nullptr != pPPQ);
@@ -887,7 +887,7 @@ HRESULT SVConfigurationObject::AddCameraDataInput(SVPPQObject* pPPQ, SVIOEntryHo
 	return hr;
 }
 
-void SVConfigurationObject::LoadEnviroment(SVTreeType& rTree, bool &ConfigurationColor)
+void SVConfigurationObject::LoadEnviroment(SVTreeType& rTree, bool& ConfigurationColor)
 {
 	SVTreeType::SVBranchHandle hChild(nullptr);
 	bool bOk = SvXml::SVNavigateTree::GetItemBranch(rTree, SvXml::CTAG_ENVIRONMENT, nullptr, hChild);
@@ -1038,14 +1038,14 @@ bool SVConfigurationObject::LoadIO(SVTreeType& rTree)
 
 		_variant_t Data;
 		std::string IOName;
-		bool	bOutput{false};
-		long	channel{-1L};
-		bool	bForced{false};
-		DWORD	dwForcedValue{0};
-		bool	bInverted{false};
-		bool	bCombined{false};
-		bool	bCombinedACK{false};
-		SvPb::SVObjectSubTypeEnum ioType{SvPb::SVObjectSubTypeEnum::SVNotSetSubObjectType};
+		bool	bOutput{ false };
+		long	channel{ -1L };
+		bool	bForced{ false };
+		DWORD	dwForcedValue{ 0 };
+		bool	bInverted{ false };
+		bool	bCombined{ false };
+		bool	bCombinedACK{ false };
+		SvPb::SVObjectSubTypeEnum ioType{ SvPb::SVObjectSubTypeEnum::SVNotSetSubObjectType };
 
 		bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_IO_ENTRY_NAME, hSubChild, Data);
 		if (bOk && VT_BSTR == Data.vt)
@@ -1060,7 +1060,7 @@ bool SVConfigurationObject::LoadIO(SVTreeType& rTree)
 		}
 
 		//Default output type is Digital Output Object
-		if(bOutput)
+		if (bOutput)
 		{
 			ioType = SvPb::SVDigitalOutputObjectType;
 		}
@@ -1124,7 +1124,7 @@ bool SVConfigurationObject::LoadIO(SVTreeType& rTree)
 		{
 			if (bOutput)
 			{
-				if(SvPb::SVDigitalOutputObjectType == ioType)
+				if (SvPb::SVDigitalOutputObjectType == ioType)
 				{
 					SVDigitalOutputObject* pOutput = dynamic_cast<SVDigitalOutputObject*> (m_pOutputObjectList->GetOutputFlyweight(IOName.c_str(), ioType, channel).get());
 					if (nullptr != pOutput)
@@ -1188,7 +1188,7 @@ bool SVConfigurationObject::LoadIO(SVTreeType& rTree)
 			l_ModuleReadyId = pOutput->getObjectId();
 		}
 	}
-	if(nullptr != m_pIOController->GetModuleReady())
+	if (nullptr != m_pIOController->GetModuleReady())
 	{
 		m_pIOController->GetModuleReady()->m_IOId = l_ModuleReadyId;
 	}
@@ -1200,7 +1200,7 @@ bool SVConfigurationObject::LoadIO(SVTreeType& rTree)
 	return true;
 }
 
-bool SVConfigurationObject::LoadAcquisitionDevice(SVTreeType& rTree, std::string& BoardName, long &lNumBordDig)
+bool SVConfigurationObject::LoadAcquisitionDevice(SVTreeType& rTree, std::string& BoardName, long& lNumBordDig)
 {
 	SVTreeType::SVBranchHandle hChild(nullptr);
 	SVTreeType::SVBranchHandle hBoardChild(nullptr);
@@ -1456,11 +1456,11 @@ bool SVConfigurationObject::LoadAcquisitionDevice(SVTreeType& rTree, std::string
 						// Band number depends on video type...
 						switch (cf.m_eImageType)
 						{
-							case SvDef::SVImageFormatBGR888X:  // RGB
-							{
-								l_BandCount = 3;
-								break;
-							}
+						case SvDef::SVImageFormatBGR888X:  // RGB
+						{
+							l_BandCount = 3;
+							break;
+						}
 						}
 					}
 
@@ -1621,7 +1621,7 @@ bool SVConfigurationObject::LoadAcquisitionDevice(SVTreeType& rTree, std::string
 }
 
 
-bool  SVConfigurationObject::LoadCameras(SVTreeType&  rTree, long& lNumCameras, bool ConfigurationColor)
+bool  SVConfigurationObject::LoadCameras(SVTreeType& rTree, long& lNumCameras, bool ConfigurationColor)
 {
 	SVTreeType::SVBranchHandle hChild(nullptr);
 	bool bOk = SvXml::SVNavigateTree::GetItemBranch(rTree, SvXml::CTAG_CAMERA, nullptr, hChild);
@@ -1639,7 +1639,7 @@ bool  SVConfigurationObject::LoadCameras(SVTreeType&  rTree, long& lNumCameras, 
 
 		std::string ItemName = rTree.getBranchName(hSubChild);
 
-		SvIe::SVVirtualCamera *pCamera = new SvIe::SVVirtualCamera;
+		SvIe::SVVirtualCamera* pCamera = new SvIe::SVVirtualCamera;
 		bOk = nullptr != pCamera;
 		if (bOk)
 		{
@@ -1856,8 +1856,8 @@ bool SVConfigurationObject::LoadInspection(SVTreeType& rTree)
 		_variant_t Value;
 		std::string IPName;
 		std::string ToolsetName;
-		long NewDisableMethod {0L};
-		long EnableAuxiliaryExtent {-1L};
+		long NewDisableMethod{ 0L };
+		long EnableAuxiliaryExtent{ -1L };
 
 		pInspection->SetName(ItemName.c_str());
 
@@ -2185,8 +2185,8 @@ bool SVConfigurationObject::LoadPPQ(SVTreeType& rTree)
 		{
 			std::string DataName = rTree.getBranchName(hDataChild);
 
-			long lIndex{0L};
-			long lPPQPosition{0L};
+			long lIndex{ 0L };
+			long lPPQPosition{ 0L };
 
 			if (!SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_IO_TYPE, hDataChild, Value))
 			{
@@ -2374,12 +2374,12 @@ void SVConfigurationObject::UpgradeConfiguration()
 	for (const auto pObject : objectList)
 	{
 		const SvOi::IEquation* pEquation = dynamic_cast<const SvOi::IEquation*> (pObject);
-		if(nullptr != pEquation)
+		if (nullptr != pEquation)
 		{
 			const std::string& rEquaution = pEquation->GetEquationText();
 			//Check if we are using incorrect Trigger Count variable
 			constexpr LPCTSTR cPpqTriggerCount = R"(PPQ_[1-9]\.Trigger Count)";
-			if(std::regex_search(rEquaution.cbegin(), rEquaution.cend(), std::regex(cPpqTriggerCount)))
+			if (std::regex_search(rEquaution.cbegin(), rEquaution.cend(), std::regex(cPpqTriggerCount)))
 			{
 				SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
 				Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ErrorPpqTriggerCount, SvStl::SourceFileParams(StdMessageParams));
@@ -2519,48 +2519,48 @@ HRESULT SVConfigurationObject::LoadDeviceParamSpecial(SVTreeType& rTree, SVTreeT
 
 	switch (pParam->Type())
 	{
-		case DeviceParamCameraFormats:
+	case DeviceParamCameraFormats:
+	{
+		SVCameraFormatsDeviceParam* pcf = dynamic_cast<SVCameraFormatsDeviceParam*> (pParam);
+		SVTreeType::SVBranchHandle hParam(nullptr);
+		if (SvXml::SVNavigateTree::GetItemBranch(rTree, SvXml::CTAG_OPTIONS, hParent, hChild))
 		{
-			SVCameraFormatsDeviceParam* pcf = dynamic_cast<SVCameraFormatsDeviceParam*> (pParam);
-			SVTreeType::SVBranchHandle hParam(nullptr);
-			if (SvXml::SVNavigateTree::GetItemBranch(rTree, SvXml::CTAG_OPTIONS, hParent, hChild))
+			int iOption = 0;
+			std::string OptionTag = SvUl::Format(SvXml::CTAGF_OPTION_X, ++iOption);
+			while (SvXml::SVNavigateTree::GetItemBranch(rTree, OptionTag.c_str(), hChild, hParam))
 			{
-				int iOption = 0;
-				std::string OptionTag = SvUl::Format(SvXml::CTAGF_OPTION_X, ++iOption);
-				while (SvXml::SVNavigateTree::GetItemBranch(rTree, OptionTag.c_str(), hChild, hParam))
+				if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_NAME, hParam, svVariant))
 				{
-					if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_NAME, hParam, svVariant))
-					{
-						std::string Name = SvUl::createStdString(svVariant);
+					std::string Name = SvUl::createStdString(svVariant);
 
-						SVCameraFormat& rcf = pcf->options[Name];
-						rcf.ParseAndAssignCameraFormat(Name);
-						if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_VARIABLE_CAMERA_FORMAT, hParam, svVariant))
-						{
-							rcf.m_bVariableROI = svVariant;
-						}
-						if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_TOP, hParam, svVariant))
-						{
-							rcf.m_lVPos = svVariant;
-						}
-						if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_LEFT, hParam, svVariant))
-						{
-							rcf.m_lHPos = svVariant;
-						}
-						if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_CX, hParam, svVariant))
-						{
-							rcf.m_lWidth = svVariant;
-						}
-						if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_CY, hParam, svVariant))
-						{
-							rcf.m_lHeight = svVariant;
-						}
+					SVCameraFormat& rcf = pcf->options[Name];
+					rcf.ParseAndAssignCameraFormat(Name);
+					if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_VARIABLE_CAMERA_FORMAT, hParam, svVariant))
+					{
+						rcf.m_bVariableROI = svVariant;
 					}
-					OptionTag = SvUl::Format(SvXml::CTAGF_OPTION_X, ++iOption);
+					if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_TOP, hParam, svVariant))
+					{
+						rcf.m_lVPos = svVariant;
+					}
+					if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_LEFT, hParam, svVariant))
+					{
+						rcf.m_lHPos = svVariant;
+					}
+					if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_CX, hParam, svVariant))
+					{
+						rcf.m_lWidth = svVariant;
+					}
+					if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_CY, hParam, svVariant))
+					{
+						rcf.m_lHeight = svVariant;
+					}
 				}
+				OptionTag = SvUl::Format(SvXml::CTAGF_OPTION_X, ++iOption);
 			}
 		}
-		break;
+	}
+	break;
 	}
 	return hr;
 }
@@ -2588,7 +2588,7 @@ bool SVConfigurationObject::DestroyConfiguration()
 		delete pCamera;
 	}
 
-	SvIe::SVConfigurationAcquisitionDeviceInfoStruct *pDevice = nullptr;
+	SvIe::SVConfigurationAcquisitionDeviceInfoStruct* pDevice = nullptr;
 
 	for (auto& rItem : m_AcquisitionDeviceMap)
 	{
@@ -2643,13 +2643,13 @@ bool SVConfigurationObject::DestroyConfiguration()
 	SvTrc::getTriggerRecordControllerRWInstance().unlockReset();
 	SvTrc::getTriggerRecordControllerRWInstance().clearAll();
 
-	for(const auto& rFile : m_AdditionalFiles)
+	for (const auto& rFile : m_AdditionalFiles)
 	{
 		SVFileNameManagerClass::Instance().RemoveItem(&rFile);
 	}
 
 	SVObjectManagerClass::Instance().resetNextObjectId();
-	
+
 	return bOk;
 }
 
@@ -2814,7 +2814,7 @@ void SVConfigurationObject::SaveIO(SvOi::IObjectWriter& rWriter) const
 			_variant_t svVariant;
 
 			SVDigitalInputObject* pInput = dynamic_cast<SVDigitalInputObject*> (m_pInputObjectList->GetInput(inputEntryVector[lIn]->m_IOId).get());
-			if(nullptr == pInput) { continue; }
+			if (nullptr == pInput) { continue; }
 
 			std::string EntryName = pInput->GetName();
 			svVariant.SetString(EntryName.c_str());
@@ -2911,7 +2911,7 @@ void SVConfigurationObject::SaveIO(SvOi::IObjectWriter& rWriter) const
 
 			lCount++;
 		}
-		else if(outputEntryVector[lOut]->m_ObjectType == IO_PLC_OUTPUT)
+		else if (outputEntryVector[lOut]->m_ObjectType == IO_PLC_OUTPUT)
 		{
 			rWriter.StartElement(IOEntry.c_str());
 
@@ -2971,8 +2971,8 @@ void SVConfigurationObject::SaveAcquisitionDevice(SvOi::IObjectWriter& rWriter) 
 	rWriter.StartElement(SvXml::CTAG_ACQUISITION_DEVICE);
 
 	std::string Name;
-	SVFileNameArrayClass *pFiles = nullptr;
-	SVLightReference *pLight = nullptr;
+	SVFileNameArrayClass* pFiles = nullptr;
+	SVLightReference* pLight = nullptr;
 	SVLut* pLut = nullptr;
 	SVDeviceParamCollection* pDeviceParams = nullptr;
 
@@ -3363,7 +3363,7 @@ void SVConfigurationObject::SavePPQ_Cameras(SvOi::IObjectWriter& rWriter, const 
 	{
 		rWriter.StartElement(SvXml::CTAG_CAMERA);
 
-		for(const auto* const pCamera : cameraVector)
+		for (const auto* const pCamera : cameraVector)
 		{
 			if (nullptr != pCamera)
 			{
@@ -3390,7 +3390,7 @@ void SVConfigurationObject::SavePPQ_Inspections(SvOi::IObjectWriter& rWriter, co
 	if (lInspectCount)
 	{
 		rWriter.StartElement(SvXml::CTAG_INSPECTION);
-		SVInspectionProcess *pInspection(nullptr);
+		SVInspectionProcess* pInspection(nullptr);
 		for (long lInspect = 0; lInspect < lInspectCount; lInspect++)
 		{
 			rPPQ.GetInspection(lInspect, pInspection);
@@ -3477,7 +3477,7 @@ void SVConfigurationObject::SaveGlobalConstants(SvOi::IObjectWriter& rWriter) co
 	SvVol::BasicValueObjects::ValueVector GlobalConstantObjects;
 	RootObject::getRootChildObjectList(GlobalConstantObjects, SvDef::FqnGlobal, 0);
 	SvVol::BasicValueObjects::ValueVector::const_iterator Iter(GlobalConstantObjects.cbegin());
-	while (GlobalConstantObjects.cend() != Iter  && nullptr != *Iter)
+	while (GlobalConstantObjects.cend() != Iter && nullptr != *Iter)
 	{
 		std::string Name((*Iter)->GetCompleteName());
 		rWriter.StartElement(Name.c_str());
@@ -3525,15 +3525,15 @@ void SVConfigurationObject::SaveObjectAttributesSet(SvOi::IObjectWriter& rWriter
 			rWriter.StartElement(Iter->second.c_str());
 			uint32_t arrayId{ SvDef::InvalidObjectId };
 			std::string ArrayIndexList;
-			int StartIndex {-1};
-			int EndIndex {-1};
+			int StartIndex{ -1 };
+			int EndIndex{ -1 };
 			for (auto const& rObjectRef : rEntry.second)
 			{
 				//!If previous object is an array and new object is different then we need to save the array values
 				if (SvDef::InvalidObjectId != arrayId && rObjectRef.getObjectId() != arrayId)
 				{
 					ArrayIndexList += (StartIndex == EndIndex) ? SvUl::Format(_T("%d,"), StartIndex) : SvUl::Format(_T("%d-%d,"), StartIndex, EndIndex);
-					_variant_t Value {ArrayIndexList.c_str()};
+					_variant_t Value{ ArrayIndexList.c_str() };
 					rWriter.WriteAttribute(scUniqueReferenceIDTag, Value);
 
 					arrayId = SvDef::InvalidObjectId;
@@ -3544,7 +3544,7 @@ void SVConfigurationObject::SaveObjectAttributesSet(SvOi::IObjectWriter& rWriter
 				if (!rObjectRef.isArray())
 				{
 					//Not an array element is saved directly
-					_variant_t Value {rObjectRef.GetObjectIdAndIndexOneBased().c_str()};
+					_variant_t Value{ rObjectRef.GetObjectIdAndIndexOneBased().c_str() };
 					rWriter.WriteAttribute(scUniqueReferenceIDTag, Value);
 				}
 				else
@@ -3576,7 +3576,7 @@ void SVConfigurationObject::SaveObjectAttributesSet(SvOi::IObjectWriter& rWriter
 			if (SvDef::InvalidObjectId != arrayId)
 			{
 				ArrayIndexList += (StartIndex == EndIndex) ? SvUl::Format(_T("%d,"), StartIndex) : SvUl::Format(_T("%d-%d,"), StartIndex, EndIndex);
-				_variant_t Value {ArrayIndexList.c_str()};
+				_variant_t Value{ ArrayIndexList.c_str() };
 				rWriter.WriteAttribute(scUniqueReferenceIDTag, Value);
 			}
 			rWriter.EndElement();
@@ -3587,12 +3587,12 @@ void SVConfigurationObject::SaveObjectAttributesSet(SvOi::IObjectWriter& rWriter
 
 void SVConfigurationObject::SaveAdditionalFiles(SvOi::IObjectWriter& rWriter) const
 {
-	if(m_AdditionalFiles.size() > 0)
+	if (m_AdditionalFiles.size() > 0)
 	{
 		rWriter.StartElement(SvXml::CTAG_ADDITIONAL_CONFIG_FILES);
-		for(const auto& rFile : m_AdditionalFiles)
+		for (const auto& rFile : m_AdditionalFiles)
 		{
-			_variant_t Value{rFile.GetFullFileName().c_str()};
+			_variant_t Value{ rFile.GetFullFileName().c_str() };
 			rWriter.WriteAttribute(SvXml::CTAG_FILENAME, Value);
 			Value.Clear();
 		}
@@ -3728,49 +3728,49 @@ void SVConfigurationObject::SaveDeviceParamSpecial(SvOi::IObjectWriter& rWriter,
 
 	switch (pParam->Type())
 	{
-		case DeviceParamCameraFormats:
+	case DeviceParamCameraFormats:
+	{
+		const SVCameraFormatsDeviceParam* pcf = dynamic_cast<const SVCameraFormatsDeviceParam*> (pParam);
+		std::string Parameter(SvXml::CTAG_OPTIONS);
+		rWriter.StartElement(Parameter.c_str());
+
+		int iOption = 0;
+		SVCameraFormatsDeviceParam::OptionsType::const_iterator iter;
+		for (iter = pcf->options.begin(); iter != pcf->options.end(); ++iter)
 		{
-			const SVCameraFormatsDeviceParam* pcf = dynamic_cast<const SVCameraFormatsDeviceParam*> (pParam);
-			std::string Parameter(SvXml::CTAG_OPTIONS);
+			const SVCameraFormat& rcf = iter->second;
+			Parameter = SvUl::Format(SvXml::CTAGF_OPTION_X, ++iOption);
 			rWriter.StartElement(Parameter.c_str());
 
-			int iOption = 0;
-			SVCameraFormatsDeviceParam::OptionsType::const_iterator iter;
-			for (iter = pcf->options.begin(); iter != pcf->options.end(); ++iter)
-			{
-				const SVCameraFormat& rcf = iter->second;
-				Parameter = SvUl::Format(SvXml::CTAGF_OPTION_X, ++iOption);
-				rWriter.StartElement(Parameter.c_str());
+			svVariant.SetString(rcf.m_strName.c_str());
+			rWriter.WriteAttribute(SvXml::CTAG_NAME, svVariant);
+			svVariant.Clear();
 
-				svVariant.SetString(rcf.m_strName.c_str());
-				rWriter.WriteAttribute(SvXml::CTAG_NAME, svVariant);
-				svVariant.Clear();
+			svVariant = rcf.m_bVariableROI;
+			rWriter.WriteAttribute(SvXml::CTAG_VARIABLE_CAMERA_FORMAT, svVariant);
+			svVariant.Clear();
 
-				svVariant = rcf.m_bVariableROI;
-				rWriter.WriteAttribute(SvXml::CTAG_VARIABLE_CAMERA_FORMAT, svVariant);
-				svVariant.Clear();
+			svVariant = rcf.m_lHPos;
+			rWriter.WriteAttribute(SvXml::CTAG_LEFT, svVariant);
+			svVariant.Clear();
 
-				svVariant = rcf.m_lHPos;
-				rWriter.WriteAttribute(SvXml::CTAG_LEFT, svVariant);
-				svVariant.Clear();
+			svVariant = rcf.m_lVPos;
+			rWriter.WriteAttribute(SvXml::CTAG_TOP, svVariant);
+			svVariant.Clear();
 
-				svVariant = rcf.m_lVPos;
-				rWriter.WriteAttribute(SvXml::CTAG_TOP, svVariant);
-				svVariant.Clear();
+			svVariant = rcf.m_lWidth;
+			rWriter.WriteAttribute(SvXml::CTAG_CX, svVariant);
+			svVariant.Clear();
 
-				svVariant = rcf.m_lWidth;
-				rWriter.WriteAttribute(SvXml::CTAG_CX, svVariant);
-				svVariant.Clear();
+			svVariant = rcf.m_lHeight;
+			rWriter.WriteAttribute(SvXml::CTAG_CY, svVariant);
+			svVariant.Clear();
 
-				svVariant = rcf.m_lHeight;
-				rWriter.WriteAttribute(SvXml::CTAG_CY, svVariant);
-				svVariant.Clear();
-
-				rWriter.EndElement(); // SvXml::CTAGF_OPTION_X
-			}// end for ( iter = pcf->options.begin(); iter != pcf->options.end(); iter++)
-			rWriter.EndElement(); // SvXml::CTAG_OPTIONS
-		}// end case DeviceParamCameraFormats:	
-		break;
+			rWriter.EndElement(); // SvXml::CTAGF_OPTION_X
+		}// end for ( iter = pcf->options.begin(); iter != pcf->options.end(); iter++)
+		rWriter.EndElement(); // SvXml::CTAG_OPTIONS
+	}// end case DeviceParamCameraFormats:	
+	break;
 	}// end switch ( pParam->Type() )
 }
 
@@ -3840,7 +3840,7 @@ bool SVConfigurationObject::RebuildInputOutputLists(bool isLoad)
 	}
 	catch (const SvStl::MessageContainer& rSvE)
 	{
-		SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
+		SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		Exception.setMessage(rSvE.getMessage());
 		return false;
 	}
@@ -4000,7 +4000,7 @@ HRESULT SVConfigurationObject::AttachAcqToTriggers()
 		{
 			SvTh::SVTriggerClass* pTriggerDevice = pTrigger->getDevice();
 			SVPPQObject* pPPQ = reinterpret_cast<SVPPQObject*>(pTrigger->GetParent());
-			if(nullptr != pTriggerDevice)
+			if (nullptr != pTriggerDevice)
 			{
 				pTriggerDevice->clearAcquisitionTriggers();
 			}
@@ -4008,7 +4008,7 @@ HRESULT SVConfigurationObject::AttachAcqToTriggers()
 			{
 				int iDigNum = pTrigger->getDevice()->getDigitizerNumber();
 				if (nullptr != pPPQ && nullptr != pTriggerDevice)
-				{ 
+				{
 					SetupCameraTrigger(pTriggerDevice, iDigNum, pPPQ, true, pTrigger->GetSoftwareTriggerPeriod());
 				}
 			}
@@ -4292,10 +4292,10 @@ bool SVConfigurationObject::RenameOutputListInspectionNames(LPCTSTR OldInspectio
 HRESULT SVConfigurationObject::GetInspectionItems(const SvDef::StringSet& rNames, SVNameStorageResultMap& rItems) const
 {
 	typedef std::map<std::string, SVInspectionProcess*> SVInspectionMap;
-	typedef std::map<std::string, SVCommandInspectionGetItems::SVNameObjectSet> SVInspectionNameItemNameMap;
-	typedef SVObjectAsynchronousCommandTemplate< SVCommandInspectionGetItemsPtr > SVAsyncCommand;
-	typedef std::deque< SVAsyncCommand > SVAsyncCommandDeque;
+	typedef std::map<std::string, CommandInspectionGetItems::SVNameObjectSet> SVInspectionNameItemNameMap;
 
+	using taskResult = std::pair<HRESULT, std::shared_ptr<SVNameStorageResultMap>>;
+	using  taskResultFutureDeqeu = std::deque < std::future<taskResult>>;
 	HRESULT l_Status = S_OK;
 
 	rItems.clear();
@@ -4325,7 +4325,7 @@ HRESULT SVConfigurationObject::GetInspectionItems(const SvDef::StringSet& rNames
 					if (nullptr != pInspection)
 					{
 						l_Inspections[pInspection->GetName()] = pInspection;
-						SVCommandInspectionGetItems::SVFullNameObjectPair newPair(rEntry, ObjectRef);
+						CommandInspectionGetItems::SVFullNameObjectPair newPair(rEntry, ObjectRef);
 						InspectionItems[pInspection->GetName()].insert(newPair);
 					}
 					else
@@ -4359,7 +4359,9 @@ HRESULT SVConfigurationObject::GetInspectionItems(const SvDef::StringSet& rNames
 			}
 		}
 
-		SVAsyncCommandDeque l_AsyncCommands;
+		
+		taskResultFutureDeqeu AsyncCommandsResults;
+
 
 		for (SVInspectionNameItemNameMap::const_iterator l_InspectionIter = InspectionItems.begin(); l_InspectionIter != InspectionItems.end(); ++l_InspectionIter)
 		{
@@ -4367,14 +4369,29 @@ HRESULT SVConfigurationObject::GetInspectionItems(const SvDef::StringSet& rNames
 
 			if (l_ProcessIter != l_Inspections.end() && nullptr != l_ProcessIter->second)
 			{
-				SVCommandInspectionGetItemsPtr l_DataPtr {new SVCommandInspectionGetItems(*l_ProcessIter->second, l_InspectionIter->second)};
-				SVObjectAsynchronousCommandTemplate<SVCommandInspectionGetItemsPtr> l_Command(l_ProcessIter->second->getObjectId(), l_DataPtr);
 
-				HRESULT l_CommandStatus = l_Command.SubmitCommand();
+				HRESULT l_CommandStatus{ E_FAIL };
+		
+				SVInspectionProcess* pInspection = (l_ProcessIter->second);
+				CommandInspectionGetItems commandInspectionGetItemsHandler(*l_ProcessIter->second, l_InspectionIter->second);
+
+				std::packaged_task<taskResult()>  commandInspectionGetItemsTask(std::move(commandInspectionGetItemsHandler));
+				std::future<taskResult>   commandInspectionGetItemsfuture = commandInspectionGetItemsTask.get_future();
+
+				if (pInspection)
+				{
+					SvOi::ICommandPtr pCommand = std::make_shared < SvOi::CTaskWrapper<std::packaged_task<taskResult()>>>(std::move(commandInspectionGetItemsTask));
+					l_CommandStatus = pInspection->SubmitCommand(pCommand);
+				}
+				else
+				{
+					assert(false);
+
+				}
 
 				if (SUCCEEDED(l_CommandStatus))
 				{
-					l_AsyncCommands.push_back(l_Command);
+					AsyncCommandsResults.push_back(std::move(commandInspectionGetItemsfuture));
 
 					if (S_OK == l_Status)
 					{
@@ -4404,43 +4421,49 @@ HRESULT SVConfigurationObject::GetInspectionItems(const SvDef::StringSet& rNames
 		{
 			double l_EndTimeStamp = SvTl::GetTimeStamp() + SvTl::ConvertFrom(SvTl::Minutes, 10.0);
 
-			while (!(l_AsyncCommands.empty()) && (SvTl::GetTimeStamp() < l_EndTimeStamp))
+			while (!(AsyncCommandsResults.empty()) && (SvTl::GetTimeStamp() < l_EndTimeStamp))
 			{
-				SVAsyncCommandDeque::iterator l_AsyncIter = l_AsyncCommands.begin();
+				taskResultFutureDeqeu::iterator l_AsyncIter = AsyncCommandsResults.begin();
 
-				while (!(l_AsyncCommands.empty()) && (l_AsyncIter != l_AsyncCommands.end()))
+				while (!(AsyncCommandsResults.empty()) && (l_AsyncIter != AsyncCommandsResults.end()))
 				{
-					HRESULT l_CommandStatus = l_AsyncIter->IsCommandComplete();
 
-					if (SUCCEEDED(l_CommandStatus))
+					std::future_status status = l_AsyncIter->wait_for(std::chrono::milliseconds{ 0 });
+					switch (status)
 					{
-						if (S_OK == l_CommandStatus)
-						{
-							rItems.insert(l_AsyncIter->GetCommandPtr()->GetResultItems().begin(), l_AsyncIter->GetCommandPtr()->GetResultItems().end());
+					case std::future_status::ready:
+					{
+						auto TaskResult  = l_AsyncIter->get();
 
-							if (S_OK == l_Status)
-							{
-								l_Status = l_CommandStatus;
-							}
+						rItems.insert(TaskResult.second->begin(), TaskResult.second->end());
 
-							l_AsyncIter = l_AsyncCommands.erase(l_AsyncIter);
-						}
-						else
+						if (S_OK == l_Status)
 						{
-							++l_AsyncIter;
+							l_Status = TaskResult.first;
 						}
+
+						l_AsyncIter = AsyncCommandsResults.erase(l_AsyncIter);
+						break;
 					}
-					else
-					{
-						l_Status = l_CommandStatus;
+					case std::future_status::timeout:
+						++l_AsyncIter;
+						break;
+
+					default:
+
+						l_Status = E_FAIL;
 
 						rItems.clear();
 
-						l_AsyncCommands.clear();
+						AsyncCommandsResults.clear();
+						break;
+
+
 					}
 				}
 
-				if (!(l_AsyncCommands.empty()))
+
+				if (!(AsyncCommandsResults.empty()))
 				{
 					::Sleep(0);
 				}
@@ -4568,9 +4591,9 @@ HRESULT SVConfigurationObject::SetInspectionItems(const SVNameStorageMap& p_rIte
 								l_Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
 							}
 						}
-						if (l_AddParameter &&  ObjectRef.getValueObject() &&  ObjectRef.getValueObject()->isIndirectValue())
+						if (l_AddParameter && ObjectRef.getValueObject() && ObjectRef.getValueObject()->isIndirectValue())
 						{
-						
+
 							p_rStatus[l_Iter->first] = SVMSG_OBJECT_CANNOT_BE_SET_INDIRECT_VALUE;
 							l_AddParameter = false;
 							if (S_OK == l_Status)
@@ -5019,7 +5042,7 @@ void SVConfigurationObject::UpdateInspectionList4TRC()
 	m_inspList4TRC = SvTrc::getTriggerRecordControllerRInstance().getInspections();
 }
 
-void SVConfigurationObject::updateConfTreeToNewestVersion(SVTreeType &rTree, SVTreeType::SVBranchHandle &rToolset)
+void SVConfigurationObject::updateConfTreeToNewestVersion(SVTreeType& rTree, SVTreeType::SVBranchHandle& rToolset)
 {
 	DWORD version = TheSVObserverApp.getLoadingVersion();
 	if (version < 0x71400) //< 7.20  Add lut Equation  clip 
@@ -5066,16 +5089,16 @@ bool SVConfigurationObject::isAddParameter2MonitorListPossible(LPCTSTR ppqName, 
 	bool retVal = false;
 	RemoteMonitorListMap monitorList = GetRemoteMonitorList();
 	auto iter = find_if(monitorList.begin(), monitorList.end(), [ppqName](const auto item)->bool
-	{
-		return item.second.GetPPQName() == ppqName && item.second.IsActive();
-	});
+		{
+			return item.second.GetPPQName() == ppqName && item.second.IsActive();
+		});
 	if (iter != monitorList.end())
 	{
 		SvPb::InspectionCmdResponse response;
 		retVal = getObjectsForMonitorList(toolId, response);
 		retVal = retVal && response.has_getobjectsformonitorlistresponse();
 		retVal = retVal && (response.getobjectsformonitorlistresponse().list_size() > 0);
-		
+
 	}
 	return retVal;
 }
@@ -5085,9 +5108,9 @@ bool SVConfigurationObject::isRemoveParameter2MonitorListPossible(LPCTSTR ppqNam
 	bool retVal = false;
 	RemoteMonitorListMap monitorList = GetRemoteMonitorList();
 	auto iter = find_if(monitorList.begin(), monitorList.end(), [ppqName](const auto item)->bool
-	{
-		return item.second.GetPPQName() == ppqName && item.second.IsActive();
-	});
+		{
+			return item.second.GetPPQName() == ppqName && item.second.IsActive();
+		});
 	if (iter != monitorList.end())
 	{
 		SvPb::InspectionCmdResponse response;
@@ -5104,16 +5127,16 @@ bool SVConfigurationObject::areParametersInMonitorList(LPCTSTR ppqName, uint32_t
 	bool retVal = false;
 	RemoteMonitorListMap monitorList = GetRemoteMonitorList();
 	auto iter = find_if(monitorList.begin(), monitorList.end(), [ppqName](const auto item)->bool
-	{
-		return item.second.GetPPQName() == ppqName && item.second.IsActive();
-	});
+		{
+			return item.second.GetPPQName() == ppqName && item.second.IsActive();
+		});
 	if (iter != monitorList.end())
 	{
 		SvPb::InspectionCmdResponse response;
 		retVal = getObjectsForMonitorList(toolId, response);
-		retVal  = retVal && response.has_getobjectsformonitorlistresponse();
+		retVal = retVal && response.has_getobjectsformonitorlistresponse();
 		retVal = retVal && (response.getobjectsformonitorlistresponse().list_size() > 0);
-		
+
 		if (retVal)
 		{
 			MonitoredObjectList productList = iter->second.GetProductValuesList();
@@ -5129,9 +5152,9 @@ bool SVConfigurationObject::areParametersInMonitorList(LPCTSTR ppqName, uint32_t
 				else
 				{
 					auto findIter = find_if(productList.begin(), productList.end(), [monitoredObj](const auto& item)->bool
-					{
-						return monitoredObj.isSimilar(item);
-					});
+						{
+							return monitoredObj.isSimilar(item);
+						});
 					if (productList.end() == findIter)
 					{
 						retVal = false;
@@ -5156,14 +5179,14 @@ SvStl::MessageContainerVector SVConfigurationObject::addParameter2MonitorList(LP
 	SvStl::MessageContainerVector messages;
 	RemoteMonitorListMap monitorList = GetRemoteMonitorList();
 	auto iter = find_if(monitorList.begin(), monitorList.end(), [ppqName](const auto item)->bool
-	{
-		return item.second.GetPPQName() == ppqName && item.second.IsActive();
-	});
+		{
+			return item.second.GetPPQName() == ppqName && item.second.IsActive();
+		});
 	if (iter != monitorList.end())
 	{
-		
+
 		SvPb::InspectionCmdResponse response;
-		bool isOk =  getObjectsForMonitorList(toolId, response);
+		bool isOk = getObjectsForMonitorList(toolId, response);
 		isOk = isOk && response.has_getobjectsformonitorlistresponse();
 
 		if (isOk)
@@ -5177,9 +5200,9 @@ SvStl::MessageContainerVector SVConfigurationObject::addParameter2MonitorList(LP
 				if (SvDef::InvalidObjectId != monitoredObj.m_objectId)
 				{
 					auto findIter = find_if(productList.begin(), productList.end(), [monitoredObj](const auto& item)->bool
-					{
-						return monitoredObj.isSimilar(item);
-					});
+						{
+							return monitoredObj.isSimilar(item);
+						});
 					if (productList.end() == findIter)
 					{
 						productList.push_back(monitoredObj);
@@ -5204,12 +5227,12 @@ SvStl::MessageContainerVector SVConfigurationObject::removeParameter2MonitorList
 	SvStl::MessageContainerVector messages;
 	RemoteMonitorListMap monitorList = GetRemoteMonitorList();
 	auto iter = find_if(monitorList.begin(), monitorList.end(), [ppqName](const auto item)->bool
-	{
-		return item.second.GetPPQName() == ppqName && item.second.IsActive();
-	});
+		{
+			return item.second.GetPPQName() == ppqName && item.second.IsActive();
+		});
 	if (iter != monitorList.end())
 	{
-		
+
 		SvPb::InspectionCmdResponse response;
 		bool isOk = getObjectsForMonitorList(toolId, response);
 		isOk = isOk && response.has_getobjectsformonitorlistresponse();
@@ -5225,9 +5248,9 @@ SvStl::MessageContainerVector SVConfigurationObject::removeParameter2MonitorList
 				if (SvDef::InvalidObjectId != monitoredObj.m_objectId)
 				{
 					auto findIter = find_if(productList.begin(), productList.end(), [monitoredObj](const auto& item)->bool
-					{
-						return monitoredObj.isSimilar(item);
-					});
+						{
+							return monitoredObj.isSimilar(item);
+						});
 					if (productList.end() != findIter)
 					{
 						productList.erase(findIter);
@@ -5249,7 +5272,7 @@ SvStl::MessageContainerVector SVConfigurationObject::removeParameter2MonitorList
 
 void SVConfigurationObject::OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName)
 {
-	SVOutputObjectList *pOutputs = GetOutputObjectList();
+	SVOutputObjectList* pOutputs = GetOutputObjectList();
 
 	if (nullptr != pOutputs)
 	{
@@ -5471,7 +5494,7 @@ HRESULT SVConfigurationObject::LoadMonitoredObjectList(SVTreeType& rTree, SVTree
 			}
 			else
 			{
-				
+
 				SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
 				SvDef::StringVector msgList;
 				msgList.push_back(Name);
@@ -5566,7 +5589,7 @@ HRESULT SVConfigurationObject::LoadGlobalConstants(SVTreeType& rTree)
 
 HRESULT SVConfigurationObject::LoadObjectAttributesSet(SVTreeType& rTree)
 {
-	HRESULT Result {S_OK};
+	HRESULT Result{ S_OK };
 
 	const std::map<std::string, UINT> AttributeSetTypes
 	{
@@ -5598,7 +5621,7 @@ HRESULT SVConfigurationObject::LoadObjectAttributesSet(SVTreeType& rTree)
 						_variant_t Value;
 						if (S_OK == rTree.getLeafData(hLeaf, Value))
 						{
-							std::string ValueText {SvUl::createStdString(Value.bstrVal)};
+							std::string ValueText{ SvUl::createStdString(Value.bstrVal) };
 							std::string objectIdString;
 							auto Pos = ValueText.find('}');
 							if (std::string::npos != Pos)
@@ -5609,7 +5632,7 @@ HRESULT SVConfigurationObject::LoadObjectAttributesSet(SVTreeType& rTree)
 							}
 
 							uint32_t uniqueID = calcObjectId(objectIdString);
-							SVObjectReference ObjectRef {SVObjectManagerClass::Instance().GetObject(uniqueID)};
+							SVObjectReference ObjectRef{ SVObjectManagerClass::Instance().GetObject(uniqueID) };
 							if (nullptr != ObjectRef.getObject())
 							{
 								if (ValueText.empty())
@@ -5676,8 +5699,8 @@ HRESULT SVConfigurationObject::LoadAdditionalFiles(SVTreeType& rTree)
 				_variant_t Value;
 				if (S_OK == rTree.getLeafData(hLeaf, Value) && VT_BSTR == Value.vt)
 				{
-					std::string FilePath{SvUl::createStdString(Value.bstrVal)};
-					m_AdditionalFiles.emplace_back(SVFileNameClass{FilePath.c_str()});
+					std::string FilePath{ SvUl::createStdString(Value.bstrVal) };
+					m_AdditionalFiles.emplace_back(SVFileNameClass{ FilePath.c_str() });
 					SVFileNameManagerClass::Instance().AddItem(&m_AdditionalFiles.back());
 				}
 			}
@@ -5759,7 +5782,7 @@ void SVConfigurationObject::initializeIO(SVIMProductEnum newConfigType)
 				}
 			}
 			// Create all the default outputs
-			SVOutputObjectList *pOutputObjectList = pConfig->GetOutputObjectList();
+			SVOutputObjectList* pOutputObjectList = pConfig->GetOutputObjectList();
 			if (nullptr != pOutputObjectList)
 			{
 				SVDigitalOutputObject* pOutput = dynamic_cast<SVDigitalOutputObject*> (pOutputObjectList->GetOutputFlyweight(SvDef::cModuleReady, SvPb::SVDigitalOutputObjectType, cModuleReadyChannel).get());
@@ -5778,12 +5801,12 @@ void SVConfigurationObject::initializeIO(SVIMProductEnum newConfigType)
 		}
 	}
 	///Need to change the output type
-	for(auto& pPPQ : m_arPPQArray)
+	for (auto& pPPQ : m_arPPQArray)
 	{
 		SVIOEntryHostStructPtrVector IOEntriesVector;
 		pPPQ->GetAllOutputs(IOEntriesVector);
 
-		for(auto& pIoEntry : IOEntriesVector)
+		for (auto& pIoEntry : IOEntriesVector)
 		{
 			pIoEntry->m_ObjectType = SvTi::SVHardwareManifest::isPlcSystem(newConfigType) ? IO_PLC_OUTPUT : IO_DIGITAL_OUTPUT;
 		}
@@ -5799,19 +5822,19 @@ void SVConfigurationObject::changeSystemResetIO(SVIMProductEnum newConfigType)
 		{
 			switch (pInput->m_ObjectType)
 			{
-				case IO_DIGITAL_INPUT:
+			case IO_DIGITAL_INPUT:
+			{
+				for (auto& pPPQ : m_arPPQArray)
 				{
-					for (auto& pPPQ : m_arPPQArray)
-					{
-						pPPQ->RemoveInput(pInput);
-					}
-					m_pInputObjectList->DetachInput(pInput->m_IOId);
-					pInput->m_Enabled = false;
-					pInput->m_PPQIndex = -1;
-					break;
+					pPPQ->RemoveInput(pInput);
 				}
-				default:
-					break;
+				m_pInputObjectList->DetachInput(pInput->m_IOId);
+				pInput->m_Enabled = false;
+				pInput->m_PPQIndex = -1;
+				break;
+			}
+			default:
+				break;
 			}
 		}
 	}
@@ -5823,15 +5846,15 @@ void SVConfigurationObject::changeSystemResetIO(SVIMProductEnum newConfigType)
 		{
 			switch (pOutput->m_ObjectType)
 			{
-				case IO_DIGITAL_OUTPUT:
-				case IO_PLC_OUTPUT:
-				{
-					m_pOutputObjectList->DetachOutput(pOutput->m_IOId);
-					pOutput->m_Enabled = false;
-					break;
-				}
-				default:
-					break;
+			case IO_DIGITAL_OUTPUT:
+			case IO_PLC_OUTPUT:
+			{
+				m_pOutputObjectList->DetachOutput(pOutput->m_IOId);
+				pOutput->m_Enabled = false;
+				break;
+			}
+			default:
+				break;
 			}
 		}
 	}

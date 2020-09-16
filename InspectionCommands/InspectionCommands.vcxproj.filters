@@ -39,6 +39,9 @@
     <ClInclude Include="stdafx.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="InspectionCommandMap.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CommandExternalHelper.cpp">
@@ -51,6 +54,9 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="InspectionCommandMap.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>

@@ -23,33 +23,32 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-#pragma region Constructor
-SVCommandInspectionExtentUpdater::SVCommandInspectionExtentUpdater(uint32_t inspectionId, uint32_t toolId, SVCommandExtentUpdaterModeEnum mode, const SVImageExtentClass* pImageExtent)
-: m_InspectionId( inspectionId ), m_ToolId( toolId ), m_mode( mode )
+
+CommandInspectionExtentUpdater::CommandInspectionExtentUpdater(uint32_t inspectionId, uint32_t toolId, SVCommandExtentUpdaterModeEnum mode, const SVImageExtentClass* pImageExtent)
+	: m_InspectionId(inspectionId), m_ToolId(toolId), m_mode(mode)
 {
-	if(nullptr != pImageExtent )
+	if (nullptr != pImageExtent)
 	{
 		m_ImageExtent = *(pImageExtent);
 	}
 }
 
-SVCommandInspectionExtentUpdater::~SVCommandInspectionExtentUpdater()
+CommandInspectionExtentUpdater::~CommandInspectionExtentUpdater()
 {
 }
-#pragma endregion Constructor
 
 
-#pragma region Public Methods
-HRESULT SVCommandInspectionExtentUpdater::Execute()
+
+HRESULT CommandInspectionExtentUpdater::operator()()
 {
 	HRESULT retVal = S_OK;
 
-	SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject( m_InspectionId );
-	SVInspectionProcess* pInspection = dynamic_cast< SVInspectionProcess* >( pObject );
-	pObject = SVObjectManagerClass::Instance().GetObject( m_ToolId );
+	SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(m_InspectionId);
+	SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(pObject);
+	pObject = SVObjectManagerClass::Instance().GetObject(m_ToolId);
 	SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (pObject);
 
-	if( nullptr != pInspection && nullptr != pTool)
+	if (nullptr != pInspection && nullptr != pTool)
 	{
 		switch (m_mode)
 		{
@@ -68,19 +67,19 @@ HRESULT SVCommandInspectionExtentUpdater::Execute()
 		{
 			pInspection->ForceOffsetUpdate();
 			/// correct tool size when it does not fit to the parent image 
-			pInspection->AddResetState( SvDef::SVResetAutoMoveAndResize );
-			
-			bool result(false); 
-			SVObjectClass*  pResetObject = dynamic_cast<SVObjectClass*>  (pTool);
+			pInspection->AddResetState(SvDef::SVResetAutoMoveAndResize);
+
+			bool result(false);
+			SVObjectClass* pResetObject = dynamic_cast<SVObjectClass*>  (pTool);
 			if (nullptr != pResetObject)
 			{
 				result = pResetObject->resetAllObjects();
 			}
 
-			if ( result )
+			if (result)
 			{
 				retVal = pInspection->RunOnce();
-			
+
 			}
 			else
 			{
@@ -97,14 +96,13 @@ HRESULT SVCommandInspectionExtentUpdater::Execute()
 	return retVal;
 }
 
-bool SVCommandInspectionExtentUpdater::empty() const
+bool CommandInspectionExtentUpdater::empty() const
 {
 	bool bRet = true;
 
 	bRet = bRet && (SvDef::InvalidObjectId == m_InspectionId);
-	bRet = bRet && (SvDef::InvalidObjectId == m_ToolId );
-	bRet = bRet && ( m_mode == ExtentUpdaterMode_Undefined );
+	bRet = bRet && (SvDef::InvalidObjectId == m_ToolId);
+	bRet = bRet && (m_mode == ExtentUpdaterMode_Undefined);
 
 	return bRet;
 }
-#pragma endregion Public Methods

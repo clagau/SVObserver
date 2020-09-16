@@ -29,3 +29,4 @@ struct SVIPProductStruct
 };
 
 
+using SP_SVIPProductStruct = std::shared_ptr<SVIPProductStruct>;

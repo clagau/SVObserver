@@ -20,32 +20,31 @@
 
 class SVInspectionProcess;
 class SVObjectReference;
-
-struct SVCommandInspectionGetItems
+ 
+class  CommandInspectionGetItems
 {
+	
+public:	
+
 	typedef std::pair<std::string, SVObjectReference> SVFullNameObjectPair;
 	typedef std::set<SVFullNameObjectPair> SVNameObjectSet;
 
-	SVCommandInspectionGetItems(const SVInspectionProcess& p_rInspection, const SVNameObjectSet& p_rItemNames);
+	CommandInspectionGetItems(const SVInspectionProcess& p_rInspection, const SVNameObjectSet& p_rItemNames);
 
-	virtual ~SVCommandInspectionGetItems();
+	~CommandInspectionGetItems();
 
-	HRESULT Execute();
+	std::pair<HRESULT, std::shared_ptr<SVNameStorageResultMap>>  operator()();
+	
 
-	bool empty() const;
-
-	const SVNameStorageResultMap& GetResultItems() const;
-
-protected:
+private:
 	HRESULT UpdateResultsWithImageData(const std::string& rItemName, const SVObjectReference& rImageRef, unsigned long TriggerCount, const SvTrc::ITriggerRecordRPtr pTriggerRecord);
 	HRESULT UpdateResultsWithValueData(const std::string& rItemName, const SVObjectReference& rValueRef, unsigned long TriggerCount);
 	HRESULT UpdateResultsWithErrorData(const std::string& rItemName, HRESULT errorStatus, unsigned long TriggerCount);
 
-private:
+
 	const SVInspectionProcess* m_Inspection;
 	SVNameObjectSet m_ItemNames;
-	SVNameStorageResultMap m_ResultItems;
+	std::shared_ptr<SVNameStorageResultMap> m_pResultItems;
+	
 };
-
-typedef std::shared_ptr<SVCommandInspectionGetItems> SVCommandInspectionGetItemsPtr;
 

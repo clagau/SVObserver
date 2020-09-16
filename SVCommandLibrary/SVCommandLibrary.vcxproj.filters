@@ -24,9 +24,6 @@
     <ClCompile Include="SVCommandDataHolder.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVCommandFactoryTemplate.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -39,9 +36,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVCommandConcreteFactoryTemplate.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVCommandConcreteTemplate.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVCommandDataBlock.h">
@@ -68,28 +62,10 @@
     <ClInclude Include="SVCommandDataValue.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVCommandFactoryTemplate.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVCommandLibraryEnums.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVCommandResultsFacade.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVCommandResultsTemplate.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVObjectAsynchronousCommandTemplate.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVObjectCommandWrapperTemplate.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVObjectSynchronousCommandTemplate.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVObjectThreadCommandTemplate.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
@@ -100,28 +76,10 @@
     <None Include="SVCommandConcreteFactoryTemplate.inl">
       <Filter>Headerdateien</Filter>
     </None>
-    <None Include="SVCommandConcreteTemplate.inl">
-      <Filter>Headerdateien</Filter>
-    </None>
     <None Include="SVCommandDataTemplate.inl">
       <Filter>Headerdateien</Filter>
     </None>
     <None Include="SVCommandDataTemplateFacade.inl">
-      <Filter>Headerdateien</Filter>
-    </None>
-    <None Include="SVCommandResultsTemplate.inl">
-      <Filter>Headerdateien</Filter>
-    </None>
-    <None Include="SVObjectAsynchronousCommandTemplate.inl">
-      <Filter>Headerdateien</Filter>
-    </None>
-    <None Include="SVObjectCommandWrapperTemplate.inl">
-      <Filter>Headerdateien</Filter>
-    </None>
-    <None Include="SVObjectSynchronousCommandTemplate.inl">
-      <Filter>Headerdateien</Filter>
-    </None>
-    <None Include="SVObjectThreadCommandTemplate.inl">
       <Filter>Headerdateien</Filter>
     </None>
   </ItemGroup>

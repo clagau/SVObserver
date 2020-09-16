@@ -15,6 +15,7 @@
     <ClInclude Include="CommandFunction.h" />
     <ClInclude Include="CommandInternalHelper.h" />
     <ClInclude Include="GetMaskData.h" />
+    <ClInclude Include="InspectionCommandMap.h" />
     <ClInclude Include="InspectionCommand_protoBuf.h" />
     <ClInclude Include="ObjectSelectorFilter.h" />
     <ClInclude Include="SetMaskData.h" />
@@ -24,6 +25,7 @@
     <ClCompile Include="CommandExternalHelper.cpp" />
     <ClCompile Include="CommandFunction.cpp" />
     <ClCompile Include="CommandInternalHelper.cpp" />
+    <ClCompile Include="InspectionCommandMap.cpp" />
     <ClCompile Include="stdafx.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

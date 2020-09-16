@@ -22,17 +22,18 @@ enum SVCommandExtentUpdaterModeEnum
 };
 #pragma endregion Declarations
 
-class SVCommandInspectionExtentUpdater
+
+class CommandInspectionExtentUpdater
 	/// Class for synchronize method call (extent update methods) with the inspection thread.
 {
-	#pragma region Constructor
-public:
-	SVCommandInspectionExtentUpdater(const SVCommandInspectionExtentUpdater& rObject) = delete;
-	/// a pointer to SVImageExtentClass is used to avoid unnecessary copies in case of default arguments 
-	SVCommandInspectionExtentUpdater(uint32_t inspectionId, uint32_t toolId, SVCommandExtentUpdaterModeEnum mode, const SVImageExtentClass* pImageExtent = nullptr);
 
-	virtual ~SVCommandInspectionExtentUpdater();
-#pragma endregion Constructor
+public:
+	
+	/// a pointer to SVImageExtentClass is used to avoid unnecessary copies in case of default arguments 
+	CommandInspectionExtentUpdater(uint32_t inspectionId, uint32_t toolId, SVCommandExtentUpdaterModeEnum mode, const SVImageExtentClass* pImageExtent = nullptr);
+
+	 ~CommandInspectionExtentUpdater();
+
 
 #pragma region Public Methods
 public:
@@ -40,7 +41,7 @@ public:
 	//! Execute the extent updater. Should be called from the inspection thread and only if empty == false.
 	//! \returns HRESULT
 	//************************************
-	HRESULT Execute();
+	HRESULT operator()();
 
 	//************************************
 	//! Return if this class is empty (no parameter set yet.)
@@ -59,4 +60,3 @@ private:
 #pragma endregion Member Variables
 };
 
-typedef std::shared_ptr< SVCommandInspectionExtentUpdater > SVCommandInspectionSetImageExtentPtr;

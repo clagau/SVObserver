@@ -25,7 +25,6 @@
 #include "SVMessage/SVMessage.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary/SVObjectNameInfo.h"
-#include "SVCommandLibrary/SVObjectSynchronousCommandTemplate.h"
 #include "SVStatusLibrary/MessageContainer.h"
 #include "SVStatusLibrary/MessageManager.h"
 
@@ -83,7 +82,7 @@ SVCommand::~SVCommand()
 // ***************************************************************
 // ***************************************************************
 
-STDMETHODIMP SVCommand::SVGetSVIMState(unsigned long *ulState)
+STDMETHODIMP SVCommand::SVGetSVIMState(unsigned long* ulState)
 {
 	HRESULT hrResult = S_OK;
 	bool bSuccess = false;
@@ -213,7 +212,7 @@ STDMETHODIMP SVCommand::SVSetSVIMState(unsigned long ulSVIMState)
 	return hrResult;
 }// end SVSetSVIMState
 
-STDMETHODIMP SVCommand::SVGetSVIMConfig(long lOffset, long *lBlockSize, BSTR *bstrFileData, BOOL *bLastFlag)
+STDMETHODIMP SVCommand::SVGetSVIMConfig(long lOffset, long* lBlockSize, BSTR* bstrFileData, BOOL* bLastFlag)
 {
 	bool bHrSet = false;
 	HRESULT hrResult = S_OK;
@@ -273,7 +272,7 @@ STDMETHODIMP SVCommand::SVGetSVIMConfig(long lOffset, long *lBlockSize, BSTR *bs
 			}
 		}//end if
 	}
-	catch (CMemoryException *memEx)
+	catch (CMemoryException* memEx)
 	{
 		TCHAR szCause[255];
 		memEx->GetErrorMessage(szCause, 255);
@@ -282,7 +281,7 @@ STDMETHODIMP SVCommand::SVGetSVIMConfig(long lOffset, long *lBlockSize, BSTR *bs
 		bHrSet = true;
 		memEx->Delete();
 	}
-	catch (CFileException *ex)
+	catch (CFileException* ex)
 	{
 		TCHAR szCause[255];
 		ex->GetErrorMessage(szCause, 255);
@@ -312,7 +311,7 @@ STDMETHODIMP SVCommand::SVPutSVIMConfig(long lOffset, long lBlockSize, BSTR* pFi
 	//The file name is set only when the first block is sent (lOffset == 0) but is needed when the following blocks are sent
 	//After the last block the file name is cleared
 	static std::string PackedFileName;
-	static ConfigFileType fileType {ConfigFileType::SvzFormatDefaultName};
+	static ConfigFileType fileType{ ConfigFileType::SvzFormatDefaultName };
 	HRESULT hrResult = S_OK;
 	CFile binFile;
 	bool bHrSet = false;
@@ -380,7 +379,7 @@ STDMETHODIMP SVCommand::SVPutSVIMConfig(long lOffset, long lBlockSize, BSTR* pFi
 			fileType = ConfigFileType::SvzFormatDefaultName;
 		}
 	}
-	catch (CFileException *theEx)
+	catch (CFileException* theEx)
 	{
 		TCHAR szCause[255];
 		theEx->GetErrorMessage(szCause, 255);
@@ -405,7 +404,7 @@ STDMETHODIMP SVCommand::SVPutSVIMConfig(long lOffset, long lBlockSize, BSTR* pFi
 	return hrResult;
 }// end SVPutSVIMConfig
 
-STDMETHODIMP SVCommand::SVGetSVIMFile(BSTR bstrSourceFile, long lOffset, long *lBlockSize, BSTR *pFileData, long *lLastPacketFlag)
+STDMETHODIMP SVCommand::SVGetSVIMFile(BSTR bstrSourceFile, long lOffset, long* lBlockSize, BSTR* pFileData, long* lLastPacketFlag)
 {
 	HRESULT hrResult = S_OK;
 
@@ -493,7 +492,7 @@ STDMETHODIMP SVCommand::SVGetSVIMFile(BSTR bstrSourceFile, long lOffset, long *l
 	return hrResult;
 }
 
-STDMETHODIMP SVCommand::SVPutSVIMFile(BSTR bstrDestFile, long lOffset, long lBlockSize, BSTR *pFileData)
+STDMETHODIMP SVCommand::SVPutSVIMFile(BSTR bstrDestFile, long lOffset, long lBlockSize, BSTR* pFileData)
 {
 	HRESULT hrResult = S_OK;
 
@@ -543,7 +542,7 @@ STDMETHODIMP SVCommand::SVPutSVIMFile(BSTR bstrDestFile, long lOffset, long lBlo
 
 			binFile.Write(*pFileData, lBlockSize);
 		}
-		catch (CFileException *theEx)
+		catch (CFileException* theEx)
 		{
 			hrResult = SVMSG_CMDCOMCTRL_FILE_ERROR;
 			theEx->Delete();
@@ -579,7 +578,7 @@ STDMETHODIMP SVCommand::SVLoadSVIMConfig(BSTR bstrConfigFilename)
 }
 
 
-STDMETHODIMP SVCommand::SVGetSVIMConfigName(BSTR *bstrConfigFilename)
+STDMETHODIMP SVCommand::SVGetSVIMConfigName(BSTR* bstrConfigFilename)
 {
 	HRESULT Result(S_OK);
 
@@ -613,7 +612,7 @@ STDMETHODIMP SVCommand::SVGetSVIMOfflineCount(unsigned long* pOfflineCount)
 	HRESULT hrResult = S_OK;
 	bool bSuccess = false;
 
-	if(nullptr != pOfflineCount)
+	if (nullptr != pOfflineCount)
 	{
 		*pOfflineCount = TheSVObserverApp.getOfflineCount();
 		bSuccess = true;
@@ -634,7 +633,7 @@ STDMETHODIMP SVCommand::SVGetSVIMVersion(unsigned long* pVersion)
 	HRESULT hrResult = S_OK;
 	bool bSuccess = false;
 
-	if(nullptr != pVersion)
+	if (nullptr != pVersion)
 	{
 		*pVersion = TheSVObserverApp.getCurrentVersion();
 		bSuccess = true;
@@ -650,7 +649,7 @@ STDMETHODIMP SVCommand::SVGetSVIMVersion(unsigned long* pVersion)
 	return hrResult;
 }
 
-STDMETHODIMP SVCommand::SVGetSVIMConfigPrint(long , long *lBlockSize, BSTR *bstrConfigPrint, BOOL *bLastFlag)
+STDMETHODIMP SVCommand::SVGetSVIMConfigPrint(long, long* lBlockSize, BSTR* bstrConfigPrint, BOOL* bLastFlag)
 {
 	std::string ConfigPrint;
 	HRESULT hrResult = S_OK;
@@ -697,13 +696,16 @@ struct SVGetImageListImageInfo
 };
 
 
+
+
+
 // Currently used only through external DCOM connection.
-STDMETHODIMP SVCommand::SVGetImageList(SAFEARRAY* psaNames, long , SAFEARRAY** ppsaImages, SAFEARRAY** ppsaOverlays, SAFEARRAY** ppsaStatus, SAFEARRAY** ppsaProcCounts)
+STDMETHODIMP SVCommand::SVGetImageList(SAFEARRAY* psaNames, long, SAFEARRAY** ppsaImages, SAFEARRAY** ppsaOverlays, SAFEARRAY** ppsaStatus, SAFEARRAY** ppsaProcCounts)
 {
 	HRESULT hrResult = S_OK;
 
 	typedef std::map< SVInspectionProcess*, std::set<uint32_t> > SVInspectionImageIdMap;
-	typedef std::map< SVInspectionProcess*, SVCommandInspectionCollectImageDataPtr > SVInspectionImageDataMap;
+	typedef std::map< SVInspectionProcess*, std::shared_ptr<SVIPProductStruct> > InspectionImageDataMap;
 	typedef std::deque< SVGetImageListImageInfo > SVImageNameIdDeque;
 
 	try
@@ -799,7 +801,7 @@ STDMETHODIMP SVCommand::SVGetImageList(SAFEARRAY* psaNames, long , SAFEARRAY** p
 			throw hrOK;
 		}
 
-		SVInspectionImageDataMap l_InspectionImageData;
+		InspectionImageDataMap  InspectionImageData;
 
 		SVInspectionImageIdMap::iterator l_InspectionIter;
 
@@ -807,16 +809,41 @@ STDMETHODIMP SVCommand::SVGetImageList(SAFEARRAY* psaNames, long , SAFEARRAY** p
 		{
 			if (nullptr != l_InspectionIter->first)
 			{
-				SVCommandInspectionCollectImageDataPtr l_DataPtr {new SVCommandInspectionCollectImageData(l_InspectionIter->first->getObjectId(), l_InspectionIter->second)};
-				SVObjectSynchronousCommandTemplate< SVCommandInspectionCollectImageDataPtr > l_Command(l_InspectionIter->first->getObjectId(), l_DataPtr);
 
-				if (S_OK == l_Command.Execute(120000))
+				uint32_t inspectionId = l_InspectionIter->first->getObjectId();
+				CommandInspectionCollectImageData collectImageData(l_InspectionIter->first->getObjectId(), l_InspectionIter->second);
+				CollectImageDataTask collectImageDataTask(std::move(collectImageData));
+
+				
+			std::future< std::shared_ptr<SVIPProductStruct>> futureProductStruct = collectImageDataTask.get_future();
+
+				if (inspectionId > 0)
 				{
-					l_InspectionImageData[l_InspectionIter->first] = l_DataPtr;
-				}
-				else
-				{
-					l_bInspectionNotFound = true;
+
+					SvOi::IInspectionProcess* pInspec = dynamic_cast<SvOi::IInspectionProcess*>((SvOi::getObject(inspectionId)));
+					if (pInspec)
+					{
+						SvOi::ICommandPtr pCommand = std::make_shared<  SvOi::CTaskWrapper<CollectImageDataTask>>(std::move(collectImageDataTask));
+						pInspec->SubmitCommand(pCommand);
+					}
+					else
+					{
+						assert(false);
+
+					}
+
+					std::future_status status = futureProductStruct.wait_for(std::chrono::milliseconds{ 120000 });
+
+
+					if (status == std::future_status::ready)
+					{
+						InspectionImageData[l_InspectionIter->first] = futureProductStruct.get();
+					}
+					else
+					{
+						l_bInspectionNotFound = true;
+					}
+
 				}
 			}
 		}
@@ -830,20 +857,19 @@ STDMETHODIMP SVCommand::SVGetImageList(SAFEARRAY* psaNames, long , SAFEARRAY** p
 			long lProcessCount = -1;
 			SvIe::SVImageOverlayClass l_OverlayClass;
 
-			SVCommandInspectionCollectImageDataPtr l_DataPtr;
+			std::shared_ptr<SVIPProductStruct>  pProduct;
+			InspectionImageDataMap::iterator l_Iter = InspectionImageData.find(l_ImageNameIds[l].m_pInspection);
 
-			SVInspectionImageDataMap::iterator l_Iter = l_InspectionImageData.find(l_ImageNameIds[l].m_pInspection);
-
-			if (l_Iter != l_InspectionImageData.end())
+			if (l_Iter != InspectionImageData.end())
 			{
-				l_DataPtr = l_Iter->second;
+				pProduct = l_Iter->second;
 			}
 
-			if (nullptr != l_DataPtr)
+			if (nullptr != pProduct.get())
 			{
-				SVIPImageDataElementMap::const_iterator l_ImageIter = l_DataPtr->GetProduct().m_ImageData.find(l_ImageNameIds[l].m_ImageId);
+				SVIPImageDataElementMap::const_iterator l_ImageIter = pProduct->m_ImageData.find(l_ImageNameIds[l].m_ImageId);
 
-				if (l_ImageIter != l_DataPtr->GetProduct().m_ImageData.end())
+				if (l_ImageIter != pProduct->m_ImageData.end())
 				{
 					HRESULT hr = S_OK;
 
@@ -858,7 +884,7 @@ STDMETHODIMP SVCommand::SVGetImageList(SAFEARRAY* psaNames, long , SAFEARRAY** p
 					{
 						//------ Convert from wide character pointer to character 
 						//------ pointer. Doesn't matter for binary data.
-						pDIB = (char *)(bstrImage);
+						pDIB = (char*)(bstrImage);
 					}
 
 					if (S_OK == hr)
@@ -866,7 +892,7 @@ STDMETHODIMP SVCommand::SVGetImageList(SAFEARRAY* psaNames, long , SAFEARRAY** p
 						// Copy data to DIB memory locations
 						memcpy(pDIB, &(l_ImageIter->second.m_ImageDIB[0]), l_ImageIter->second.m_ImageDIB.size());
 
-						lProcessCount = l_DataPtr->GetProduct().m_TriggerCount;
+						lProcessCount = pProduct->m_TriggerCount;
 						l_OverlayClass = l_ImageIter->second.m_OverlayData;
 
 						// Add the status to the outgoing array
@@ -945,12 +971,12 @@ STDMETHODIMP SVCommand::SVGetImageList(SAFEARRAY* psaNames, long , SAFEARRAY** p
 }
 
 
-STDMETHODIMP SVCommand::SVRegisterStream(SAFEARRAY* , VARIANT , SAFEARRAY** )
+STDMETHODIMP SVCommand::SVRegisterStream(SAFEARRAY*, VARIANT, SAFEARRAY**)
 {
 	return E_FAIL;
 }
 
-STDMETHODIMP SVCommand::SVUnRegisterStream(VARIANT )
+STDMETHODIMP SVCommand::SVUnRegisterStream(VARIANT)
 {
 	return E_FAIL;
 }
@@ -1179,7 +1205,7 @@ STDMETHODIMP SVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psaN
 	return hr;
 }
 
-STDMETHODIMP SVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* psaNames, long , SAFEARRAY** ppsaImages, SAFEARRAY** ppsaOverlays, SAFEARRAY** ppsaStatus)
+STDMETHODIMP SVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* psaNames, long, SAFEARRAY** ppsaImages, SAFEARRAY** ppsaOverlays, SAFEARRAY** ppsaStatus)
 {
 	HRESULT hrResult = S_OK;
 
@@ -1493,7 +1519,7 @@ STDMETHODIMP SVCommand::SVGetLUT(BSTR bstrCameraName, SAFEARRAY** ppaulLUTTable)
 	return hr;
 }
 
-HRESULT SVCommand::ImageToBSTR(const SVImageInfoClass&  rImageInfo, SvOi::SVImageBufferHandlePtr rImageHandle, BSTR* pbstr)
+HRESULT SVCommand::ImageToBSTR(const SVImageInfoClass& rImageInfo, SvOi::SVImageBufferHandlePtr rImageHandle, BSTR* pbstr)
 {
 	HRESULT hr = S_OK;
 
@@ -1608,7 +1634,7 @@ HRESULT SVCommand::ImageToBSTR(const SVImageInfoClass&  rImageInfo, SvOi::SVImag
 		lBufSize = sizeof(BITMAPINFOHEADER) + lTabSize + pbmhInfo->biSizeImage;
 
 		*pbstr = SysAllocStringByteLen(nullptr, lBufSize);
-		if (nullptr  == *pbstr)
+		if (nullptr == *pbstr)
 		{
 			hr = -1568;
 		}
@@ -1616,7 +1642,7 @@ HRESULT SVCommand::ImageToBSTR(const SVImageInfoClass&  rImageInfo, SvOi::SVImag
 		{
 			//------ Convert from wide character pointer to character 
 			//------ pointer. Doesn't matter for binary data.
-			pDIB = (char *)(*pbstr);
+			pDIB = (char*)(*pbstr);
 		}
 
 		if (nullptr == oChildHandle)
@@ -1644,7 +1670,7 @@ HRESULT SVCommand::ImageToBSTR(const SVImageInfoClass&  rImageInfo, SvOi::SVImag
 	return hr;
 }
 
-HRESULT SVCommand::SafeImageToBSTR(SvIe::SVImageClass *pImage, const SvTrc::ITriggerRecordRPtr pTriggerRecord, BSTR *pbstr)
+HRESULT SVCommand::SafeImageToBSTR(SvIe::SVImageClass* pImage, const SvTrc::ITriggerRecordRPtr pTriggerRecord, BSTR* pbstr)
 {
 	HRESULT hr = S_OK;
 
@@ -1897,7 +1923,7 @@ STDMETHODIMP SVCommand::SVRunOnce(BSTR bstrName)
 		SVInspectionProcess* pInspection(nullptr);
 		if (SVConfigurationObject::GetInspection(W2T(bstrName), pInspection))
 		{
-			hrResult =  SvCmd::RunOnceSynchronous(pInspection->getObjectId());
+			hrResult = SvCmd::RunOnceSynchronous(pInspection->getObjectId());
 		}
 	}// end if
 	else
@@ -1945,7 +1971,7 @@ STDMETHODIMP SVCommand::SVSetSourceImage(BSTR bstrName, BSTR bstrImage)
 	return hrResult;
 }
 
-STDMETHODIMP SVCommand::SVSetInputs(SAFEARRAY* psaNames, SAFEARRAY* psaValues, SAFEARRAY** )
+STDMETHODIMP SVCommand::SVSetInputs(SAFEARRAY* psaNames, SAFEARRAY* psaValues, SAFEARRAY**)
 {
 	USES_CONVERSION;
 
@@ -1981,7 +2007,7 @@ STDMETHODIMP SVCommand::SVSetInputs(SAFEARRAY* psaNames, SAFEARRAY* psaValues, S
 		std::string Value = SvUl::createStdString(bstrValue);
 
 		//!Check if an inspection name
-		SVInspectionProcess*   pInspection(nullptr);
+		SVInspectionProcess* pInspection(nullptr);
 		if (nullptr != pConfig && pConfig->GetInspectionObject(Name.c_str(), &pInspection))
 		{
 			//If Remote inputs then the name must be replaced otherwise add "Inspections." to name
@@ -1991,7 +2017,7 @@ STDMETHODIMP SVCommand::SVSetInputs(SAFEARRAY* psaNames, SAFEARRAY* psaValues, S
 			}
 			else if (std::string::npos != Name.find(pInspection->GetName()))
 			{
-				std::string Prefix {SvDef::FqnInspections};
+				std::string Prefix{ SvDef::FqnInspections };
 				Prefix += '.';
 				Name = Prefix + Name;
 			}
@@ -2019,7 +2045,7 @@ STDMETHODIMP SVCommand::SVSetInputs(SAFEARRAY* psaNames, SAFEARRAY* psaValues, S
 	return Result;
 }
 
-HRESULT SVCommand::SVSetImageList(SAFEARRAY *psaNames, SAFEARRAY *psaImages, SAFEARRAY **ppsaStatus)
+HRESULT SVCommand::SVSetImageList(SAFEARRAY* psaNames, SAFEARRAY* psaImages, SAFEARRAY** ppsaStatus)
 {
 	USES_CONVERSION;
 
@@ -2060,9 +2086,9 @@ HRESULT SVCommand::SVSetImageList(SAFEARRAY *psaNames, SAFEARRAY *psaImages, SAF
 			if (FAILED(hrStatus)) { break; }
 
 			//GetInspectionObject is only true if the pointer is valid
-			if (nullptr != pConfig &&  pConfig->GetInspectionObject(TmpName.c_str(), &pInspection) && nullptr != pInspection)
+			if (nullptr != pConfig && pConfig->GetInspectionObject(TmpName.c_str(), &pInspection) && nullptr != pInspection)
 			{
-				SVObjectClass *l_pObject = nullptr;
+				SVObjectClass* l_pObject = nullptr;
 				//got the inspection.
 				if (S_OK == SVObjectManagerClass::Instance().GetObjectByDottedName(TmpName.c_str(), l_pObject))
 				{
@@ -2103,7 +2129,7 @@ HRESULT SVCommand::SVSetImageList(SAFEARRAY *psaNames, SAFEARRAY *psaImages, SAF
 			{
 				SVImageInfoClass l_ImageInfo;
 
-				SVInputImageRequestInfoStruct *pInRequest = new SVInputImageRequestInfoStruct;
+				SVInputImageRequestInfoStruct* pInRequest = new SVInputImageRequestInfoStruct;
 				pInRequest->m_ObjectName = TmpName;
 
 				l_ImageInfo = pImage->GetImageInfo();
@@ -2114,7 +2140,7 @@ HRESULT SVCommand::SVSetImageList(SAFEARRAY *psaNames, SAFEARRAY *psaImages, SAF
 					l_ImageInfo))
 				{
 					//add request to inspection process
-					pInspection->AddInputImageRequest(SVInputImageRequestInfoStructPtr {pInRequest});
+					pInspection->AddInputImageRequest(SVInputImageRequestInfoStructPtr{ pInRequest });
 				}
 				else
 				{
@@ -2135,7 +2161,7 @@ HRESULT SVCommand::SVSetImageList(SAFEARRAY *psaNames, SAFEARRAY *psaImages, SAF
 	return hr;
 }
 
-HRESULT SVCommand::SVSetToolParameterList(SAFEARRAY* psaNames, SAFEARRAY* psaValues, SAFEARRAY** )
+HRESULT SVCommand::SVSetToolParameterList(SAFEARRAY* psaNames, SAFEARRAY* psaValues, SAFEARRAY**)
 {
 	USES_CONVERSION;
 
@@ -2156,7 +2182,7 @@ HRESULT SVCommand::SVSetToolParameterList(SAFEARRAY* psaNames, SAFEARRAY* psaVal
 		return Result;
 	}
 
-	SVConfigurationObject*	pConfig = nullptr;
+	SVConfigurationObject* pConfig = nullptr;
 	SVNameStorageMap		ParameterObjects;
 
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
@@ -2176,12 +2202,12 @@ HRESULT SVCommand::SVSetToolParameterList(SAFEARRAY* psaNames, SAFEARRAY* psaVal
 		std::string Value = SvUl::createStdString(bstrValue);
 
 		//!Check if an inspection name
-		SVInspectionProcess*   pInspection(nullptr);
+		SVInspectionProcess* pInspection(nullptr);
 		if (nullptr != pConfig && pConfig->GetInspectionObject(Name.c_str(), &pInspection) && nullptr != pInspection)
 		{
 			if (std::string::npos != Name.find(pInspection->GetName()))
 			{
-				std::string Prefix {SvDef::FqnInspections};
+				std::string Prefix{ SvDef::FqnInspections };
 				Prefix += '.';
 				Name = Prefix + Name;
 			}
@@ -2206,17 +2232,17 @@ HRESULT SVCommand::SVSetToolParameterList(SAFEARRAY* psaNames, SAFEARRAY* psaVal
 	return Result;
 }
 
-HRESULT SVCommand::SVLockImage(long , long , BSTR )
+HRESULT SVCommand::SVLockImage(long, long, BSTR)
 {
 	return E_FAIL;
 }
 
-HRESULT SVCommand::SVGetLockedImage(long , long , BSTR* , BSTR* )
+HRESULT SVCommand::SVGetLockedImage(long, long, BSTR*, BSTR*)
 {
 	return E_FAIL;
 }
 
-HRESULT SVCommand::SVUnlockImage(long )
+HRESULT SVCommand::SVUnlockImage(long)
 {
 	return E_FAIL;
 }
@@ -2296,20 +2322,20 @@ STDMETHODIMP SVCommand::SVSetRemoteInput(long lIndex, VARIANT vtValue)
 }// end SVSetRemoteInput
 
 // This method is used to connect the event object to the application.
-HRESULT SVCommand::StoreEventObserver(DWORD , CComPtr< SVCommand > p_pObserver)
+HRESULT SVCommand::StoreEventObserver(DWORD, CComPtr< SVCommand > p_pObserver)
 {
 	return S_OK;
 }
 
 // This method is used to disconnect the event object to the application.
-HRESULT SVCommand::ReleaseEventObserver(DWORD , CComPtr< SVCommand > p_pObserver)
+HRESULT SVCommand::ReleaseEventObserver(DWORD, CComPtr< SVCommand > p_pObserver)
 {
 	return S_OK;
 }
 
 // Stub for SVGetTransferValueDefinitionList
 STDMETHODIMP SVCommand::SVGetTransferValueDefinitionList(BSTR bstrInspectionName,
-	long* ,
+	long*,
 	VARIANT* p_pvData)
 {
 	USES_CONVERSION;
@@ -2421,7 +2447,7 @@ STDMETHODIMP SVCommand::SVGetTransferValueDefinitionList(BSTR bstrInspectionName
 					SAFEARRAYBOUND l_rgsabound[1];
 					l_rgsabound[0].cElements = static_cast<ULONG>(pEnumVO->GetEnumVector().size());
 					l_rgsabound[0].lLbound = 0;
-					SAFEARRAY *l_psaTemp = SafeArrayCreate(VT_BSTR, 1, l_rgsabound);
+					SAFEARRAY* l_psaTemp = SafeArrayCreate(VT_BSTR, 1, l_rgsabound);
 					for (long j = 0; j < static_cast<long>(pEnumVO->GetEnumVector().size()); ++j)
 					{
 						_bstr_t bstTmp = pEnumVO->GetEnumVector()[j].first.c_str();
@@ -2443,7 +2469,7 @@ STDMETHODIMP SVCommand::SVGetTransferValueDefinitionList(BSTR bstrInspectionName
 					SAFEARRAYBOUND l_rgsabound[1];
 					l_rgsabound[0].cElements = static_cast<ULONG>(ValidTypes.size());
 					l_rgsabound[0].lLbound = 0;
-					SAFEARRAY *l_psaTemp = SafeArrayCreate(VT_BSTR, 1, l_rgsabound);
+					SAFEARRAY* l_psaTemp = SafeArrayCreate(VT_BSTR, 1, l_rgsabound);
 					for (long j = 0; j < static_cast<long>(ValidTypes.size()); ++j)
 					{
 						_bstr_t bstTmp = ValidTypes[j].c_str();
@@ -2477,7 +2503,7 @@ STDMETHODIMP SVCommand::SVGetTransferValueDefinitionList(BSTR bstrInspectionName
 
 // Stub for SVGetTransferImageDefinitionList
 STDMETHODIMP SVCommand::SVGetTransferImageDefinitionList(BSTR bstrInspectionName,
-	long* ,
+	long*,
 	VARIANT* p_pvData)
 {
 	USES_CONVERSION;
@@ -2570,7 +2596,7 @@ STDMETHODIMP SVCommand::SVGetTransferImageDefinitionList(BSTR bstrInspectionName
 					long l_lSize = pSourceNames->getArraySize();
 					l_rgsabound[0].cElements = l_lSize;
 					l_rgsabound[0].lLbound = 0;
-					SAFEARRAY *l_psaTemp = SafeArrayCreate(VT_BSTR, 1, l_rgsabound);
+					SAFEARRAY* l_psaTemp = SafeArrayCreate(VT_BSTR, 1, l_rgsabound);
 					for (long l_lIndex = 0; l_lIndex < l_lSize; l_lIndex++)
 					{
 						std::string strTmp;

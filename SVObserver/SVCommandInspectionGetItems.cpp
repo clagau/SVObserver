@@ -27,19 +27,22 @@
 #pragma endregion Declarations
 
 #pragma region Constructor
-SVCommandInspectionGetItems::SVCommandInspectionGetItems(const SVInspectionProcess& rInspection, const SVNameObjectSet& rItemNames)
-: m_Inspection(&rInspection)
-, m_ItemNames(rItemNames )
-, m_ResultItems()
+
+
+CommandInspectionGetItems::CommandInspectionGetItems(const SVInspectionProcess& rInspection, const SVNameObjectSet& rItemNames)
+	: m_Inspection(&rInspection)
+	, m_ItemNames(rItemNames)
 {
+	m_pResultItems = std::make_shared<SVNameStorageResultMap>();
+
 }
 
-SVCommandInspectionGetItems::~SVCommandInspectionGetItems()
+CommandInspectionGetItems::~CommandInspectionGetItems()
 {
+	;
 }
-#pragma endregion Constructor
 
-HRESULT SVCommandInspectionGetItems::Execute()
+std::pair<HRESULT, std::shared_ptr<SVNameStorageResultMap>> CommandInspectionGetItems::operator()()
 {
 	HRESULT Status = S_OK;
 
@@ -64,13 +67,13 @@ HRESULT SVCommandInspectionGetItems::Execute()
 				{
 					TempStatus = UpdateResultsWithValueData(Iter->first, rObjRef, TriggerCount);
 				}
-				else if( nullptr != (pImage = dynamic_cast<SvIe::SVImageClass*> (pObject)) )
+				else if (nullptr != (pImage = dynamic_cast<SvIe::SVImageClass*> (pObject)))
 				{
 					TempStatus = UpdateResultsWithImageData(Iter->first, rObjRef, TriggerCount, product.second.m_triggerRecordComplete);
 				}
 				else
 				{
-					 TempStatus = UpdateResultsWithErrorData(Iter->first, SVMSG_OBJECT_WRONG_TYPE, TriggerCount);
+					TempStatus = UpdateResultsWithErrorData(Iter->first, SVMSG_OBJECT_WRONG_TYPE, TriggerCount);
 				}
 
 				if (S_OK == Status)
@@ -89,26 +92,12 @@ HRESULT SVCommandInspectionGetItems::Execute()
 		Status = E_FAIL;
 	}
 
-	return Status;
+	return std::make_pair(Status, m_pResultItems);
 }
 
-bool SVCommandInspectionGetItems::empty() const
-{
-	bool Status = true;
 
-	Status = Status && (nullptr == m_Inspection);
-	Status = Status && (m_ItemNames.empty());
-	Status = Status && (m_ResultItems.empty());
 
-	return Status;
-}
-
-const SVNameStorageResultMap& SVCommandInspectionGetItems::GetResultItems() const
-{
-	return m_ResultItems;
-}
-
-HRESULT SVCommandInspectionGetItems::UpdateResultsWithImageData(const std::string& rItemName, const SVObjectReference& rImageRef, unsigned long TriggerCnt, const SvTrc::ITriggerRecordRPtr pTriggerRecord)
+HRESULT CommandInspectionGetItems::UpdateResultsWithImageData(const std::string& rItemName, const SVObjectReference& rImageRef, unsigned long TriggerCnt, const SvTrc::ITriggerRecordRPtr pTriggerRecord)
 {
 	HRESULT Status = S_OK;
 
@@ -121,13 +110,13 @@ HRESULT SVCommandInspectionGetItems::UpdateResultsWithImageData(const std::strin
 		SVStorage Storage;
 		unsigned long TriggerCount = TriggerCnt;
 		SvTrc::IImagePtr pImageBuffer = pImage->getImageReadOnly(pTriggerRecord.get());
-		
+
 		if (nullptr != pImageBuffer && !pImageBuffer->isEmpty())
 		{
 			std::string Temp = SvUl::Format(_T("%ld-%u.bmp"), TriggerCount, pImage->getObjectId());
 			std::string FileName = SvStl::GlobalPath::Inst().GetPathOnRamDrive(Temp.c_str());
 
-			GetStatus = SvIe::SVImageProcessingClass::SaveImageBuffer(FileName.c_str(),SVMatroxFileTypeEnum::SVFileBitmap , pImageBuffer->getHandle());
+			GetStatus = SvIe::SVImageProcessingClass::SaveImageBuffer(FileName.c_str(), SVMatroxFileTypeEnum::SVFileBitmap, pImageBuffer->getHandle());
 
 			if (S_OK == GetStatus)
 			{
@@ -147,7 +136,7 @@ HRESULT SVCommandInspectionGetItems::UpdateResultsWithImageData(const std::strin
 			Status = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
 		}
 
-		m_ResultItems[rItemName] = SVStorageResult(Storage, GetStatus, TriggerCount);
+		(*m_pResultItems)[rItemName] = SVStorageResult(Storage, GetStatus, TriggerCount);
 	}
 	else
 	{
@@ -157,16 +146,16 @@ HRESULT SVCommandInspectionGetItems::UpdateResultsWithImageData(const std::strin
 	return Status;
 }
 
-HRESULT SVCommandInspectionGetItems::UpdateResultsWithValueData(const std::string& rItemName, const SVObjectReference& rValueRef, unsigned long TriggerCnt)
+HRESULT CommandInspectionGetItems::UpdateResultsWithValueData(const std::string& rItemName, const SVObjectReference& rValueRef, unsigned long TriggerCnt)
 {
 	HRESULT Status = S_OK;
 	HRESULT GetStatus = S_OK;
 
 	SVStorage Storage;
 	unsigned long TriggerCount = TriggerCnt;
-	
+
 	SvOi::IValueObject* pValueObject = rValueRef.getValueObject();
-	if( nullptr != pValueObject)
+	if (nullptr != pValueObject)
 	{
 		int index = rValueRef.isEntireArray() ? -1 : rValueRef.getValidArrayIndex();
 		//Enumeration Value objects need to return the text and not the value
@@ -193,18 +182,17 @@ HRESULT SVCommandInspectionGetItems::UpdateResultsWithValueData(const std::strin
 		}
 	}
 
-	m_ResultItems[rItemName] = SVStorageResult(Storage, GetStatus, TriggerCount);
+	(*m_pResultItems)[rItemName] = SVStorageResult(Storage, GetStatus, TriggerCount);
 
 	return Status;
 }
 
-HRESULT SVCommandInspectionGetItems::UpdateResultsWithErrorData(const std::string& rItemName, HRESULT errorStatus, unsigned long triggerCount)
+HRESULT CommandInspectionGetItems::UpdateResultsWithErrorData(const std::string& rItemName, HRESULT errorStatus, unsigned long triggerCount)
 {
 	HRESULT Status = S_OK;
 	SVStorage storage;
-		
-	m_ResultItems[rItemName] = SVStorageResult(storage, errorStatus, triggerCount);
+
+	(*m_pResultItems)[rItemName] = SVStorageResult(storage, errorStatus, triggerCount);
 
 	return Status;
 }
-

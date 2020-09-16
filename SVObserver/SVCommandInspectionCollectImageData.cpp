@@ -20,135 +20,113 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #pragma endregion Includes
 
-#pragma region Constructor
-SVCommandInspectionCollectImageData::SVCommandInspectionCollectImageData(uint32_t inspectionId, const std::set<uint32_t>& p_rImageIds)
-: m_InspectionId( inspectionId )
-, m_ImageIds( p_rImageIds )
-, m_Product()
+
+
+
+
+CommandInspectionCollectImageData::CommandInspectionCollectImageData(uint32_t inspectionId, const std::set<uint32_t>& p_rImageIds)
+	: m_InspectionId(inspectionId)
+	, m_ImageIds(p_rImageIds)
 {
 }
 
-SVCommandInspectionCollectImageData::~SVCommandInspectionCollectImageData()
+CommandInspectionCollectImageData::~CommandInspectionCollectImageData()
 {
 }
 #pragma endregion Constructor
 
-HRESULT SVCommandInspectionCollectImageData::Execute()
+std::shared_ptr<SVIPProductStruct>  CommandInspectionCollectImageData::operator()()
 {
-	HRESULT l_Status = S_OK;
+	std::shared_ptr<SVIPProductStruct> pProduct = std::make_shared<SVIPProductStruct>();
 
-	SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( GetInspectionId() );
-	SVInspectionProcess* pInspection = dynamic_cast< SVInspectionProcess* >( l_pObject );
 
-	if( nullptr != pInspection )
+	SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject(m_InspectionId);
+	SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(l_pObject);
+
+	if (nullptr != pInspection)
 	{
 		auto product = pInspection->getLastProductData();
 		double l_TriggerDistance = 0.0f;
 		double l_ToolSetTime = 0.0f;
 
-		if(product.first.m_PreviousTrigger > 0 )
+		if (product.first.m_PreviousTrigger > 0)
 		{
-			l_TriggerDistance = (double) (product.first.m_triggerTimeStamp - product.first.m_PreviousTrigger );
+			l_TriggerDistance = (double)(product.first.m_triggerTimeStamp - product.first.m_PreviousTrigger);
 		}
 
-		if( (product.second.m_BeginToolset > 0 ) &&	(product.second.m_EndToolset > 0 ) )
+		if ((product.second.m_BeginToolset > 0) && (product.second.m_EndToolset > 0))
 		{
-			l_ToolSetTime = (double) (product.second.m_EndToolset - product.second.m_BeginToolset );
+			l_ToolSetTime = (double)(product.second.m_EndToolset - product.second.m_BeginToolset);
 		}
 
-		m_Product.m_TriggerCount = product.first.lTriggerCount;
+		pProduct->m_TriggerCount = product.first.lTriggerCount;
 
-		UpdateResults( pInspection, m_Product.m_ResultData );
+		UpdateResults(pInspection, pProduct->m_ResultData);
 
-		m_Product.m_triggerRecord = product.second.m_triggerRecordComplete;
-		m_Product.m_ResultData.m_ToolSetEndTime = product.second.m_ToolSetEndTime;
-		m_Product.m_ResultData.m_ToolSetAvgTime = product.second.m_ToolSetAvgTime;
-		m_Product.m_ResultData.m_ToolSetTime = l_ToolSetTime;
-		m_Product.m_ResultData.m_TriggerDistance = l_TriggerDistance;
+		pProduct->m_triggerRecord = product.second.m_triggerRecordComplete;
+		pProduct->m_ResultData.m_ToolSetEndTime = product.second.m_ToolSetEndTime;
+		pProduct->m_ResultData.m_ToolSetAvgTime = product.second.m_ToolSetAvgTime;
+		pProduct->m_ResultData.m_ToolSetTime = l_ToolSetTime;
+		pProduct->m_ResultData.m_TriggerDistance = l_TriggerDistance;
 
-		const std::set<uint32_t>& rImageIds = GetImageIds();
+		const std::set<uint32_t>& rImageIds = m_ImageIds;
 
 		for (auto imageId : rImageIds)
 		{
 			SVIPImageDataElement l_ImageData;
 
-			::Sleep( 0 );
+			::Sleep(0);
 
-			if( S_OK == UpdateBuffer(imageId, product.second.m_triggerRecordComplete, l_ImageData.m_ImageDIB , l_ImageData.m_OverlayData ) )
+			if (S_OK == UpdateBuffer(imageId, product.second.m_triggerRecordComplete, l_ImageData.m_ImageDIB, l_ImageData.m_OverlayData))
 			{
-				::Sleep( 0 );
+				::Sleep(0);
 
-				m_Product.m_ImageData[imageId] = l_ImageData;
+				pProduct->m_ImageData[imageId] = l_ImageData;
 			}
 		}
 	}
 	else
 	{
-		l_Status = E_FAIL;
+		throw(E_FAIL);
 	}
 
-	return l_Status;
+	return pProduct;
 }
 
-bool SVCommandInspectionCollectImageData::empty() const
-{
-	bool l_Status = true;
 
-	l_Status = l_Status && ( SvDef::InvalidObjectId == m_InspectionId );
-	l_Status = l_Status && ( m_ImageIds.empty() );
-	l_Status = l_Status && ( m_Product.m_ImageData.empty() );
-	l_Status = l_Status && ( m_Product.m_ResultData.m_ResultData.empty() );
 
-	return l_Status;
-}
-
-uint32_t SVCommandInspectionCollectImageData::GetInspectionId() const
-{
-	return m_InspectionId;
-}
-
-const std::set<uint32_t>& SVCommandInspectionCollectImageData::GetImageIds() const
-{
-	return m_ImageIds;
-}
-
-const SVIPProductStruct& SVCommandInspectionCollectImageData::GetProduct() const
-{
-	return m_Product;
-}
-
-HRESULT SVCommandInspectionCollectImageData::UpdateResults(SVInspectionProcess* pInspection, SvIe::SVIPResultData& rResultData )
+HRESULT CommandInspectionCollectImageData::UpdateResults(SVInspectionProcess* pInspection, SvIe::SVIPResultData& rResultData)
 {
 	HRESULT hRet = E_FAIL;
 	SVResultList* pResultList(nullptr);
 
-	if( nullptr != pInspection )
+	if (nullptr != pInspection)
 	{
 		pResultList = pInspection->GetResultList();
 	}
 
 
 	if (nullptr != pResultList)
-	{		
+	{
 		pResultList->GetResultData(rResultData);
 		hRet = S_OK;
-	} 
+	}
 
 
 	return hRet;
 }
 
-HRESULT SVCommandInspectionCollectImageData::UpdateBuffer(uint32_t imageId, const SvTrc::ITriggerRecordRPtr& pTriggerRecord, std::string& rImageDIB, SVExtentMultiLineStructVector& rMultiLineArray)
+HRESULT CommandInspectionCollectImageData::UpdateBuffer(uint32_t imageId, const SvTrc::ITriggerRecordRPtr& pTriggerRecord, std::string& rImageDIB, SVExtentMultiLineStructVector& rMultiLineArray)
 {
 	HRESULT l_Status = S_OK;
 
-	SvIe::SVImageClass* pImage = dynamic_cast<SvIe::SVImageClass*> ( SVObjectManagerClass::Instance().GetObject( imageId ) );
+	SvIe::SVImageClass* pImage = dynamic_cast<SvIe::SVImageClass*> (SVObjectManagerClass::Instance().GetObject(imageId));
 
-	if( nullptr != pImage && nullptr != pTriggerRecord )
+	if (nullptr != pImage && nullptr != pTriggerRecord)
 	{
 		SvTrc::IImagePtr pImageBuffer = pImage->getImageReadOnly(pTriggerRecord.get());
 
-		if(nullptr != pImageBuffer && !pImageBuffer->isEmpty())
+		if (nullptr != pImageBuffer && !pImageBuffer->isEmpty())
 		{
 			SVBitmapInfo BitmapInfo;
 			l_Status = SVMatroxBufferInterface::CopyBufferToFileDIB(rImageDIB, BitmapInfo, pImageBuffer->getHandle()->GetBuffer(), false);
@@ -158,11 +136,11 @@ HRESULT SVCommandInspectionCollectImageData::UpdateBuffer(uint32_t imageId, cons
 			l_Status = E_INVALIDARG;
 		}
 
-		if( S_OK == l_Status )
+		if (S_OK == l_Status)
 		{
-			if( nullptr != pImage->GetInspection() )
+			if (nullptr != pImage->GetInspection())
 			{
-				dynamic_cast<SVInspectionProcess*>(pImage->GetInspection())->CollectOverlays( pImage, rMultiLineArray );
+				dynamic_cast<SVInspectionProcess*>(pImage->GetInspection())->CollectOverlays(pImage, rMultiLineArray);
 			}
 			else
 			{

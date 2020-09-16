@@ -9,8 +9,8 @@
 #include "InspectionCommands\CommandExternalHelper.h"
 #include "InspectionCommands\GetMaskData.h"
 #include "InspectionCommands\SetMaskData.h"
-#include "SVCommandLibrary\SVObjectSynchronousCommandTemplate.h"
 #include "Definitions\TextDefineSvDef.h"
+#include "ObjectInterfaces\IInspectionProcess.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -100,27 +100,62 @@ namespace SvOg
 
 	HGLOBAL MaskController::GetMaskData() const
 	{
-		typedef SvCmd::GetMaskData Command;
-		typedef std::shared_ptr<Command> CommandPtr;
-
-		CommandPtr commandPtr{ new Command(m_maskOperatorID) };
-		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-		if (S_OK == hr)
+		HGLOBAL ret{ nullptr };
+		SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*>((SvOi::getObject(m_InspectionID)));
+		if (nullptr == pInspection)
 		{
-			return commandPtr->GetDataHandle();
+			return ret;
 		}
-		return nullptr;
+		
+		SvCmd::GetMaskDataFunctor getMaskDataFunctor(m_maskOperatorID);
+		std::packaged_task< HGLOBAL()> getMaskDataTask(std::move(getMaskDataFunctor));
+		std::future<HGLOBAL>  getMaskDataFuture = getMaskDataTask.get_future();
+		SvOi::ICommandPtr pCommand = std::make_shared<  SvOi::CTaskWrapper<std::packaged_task<HGLOBAL()>>>(std::move(getMaskDataTask));
+		pInspection->SubmitCommand(pCommand);
+		std::future_status status = getMaskDataFuture.wait_for(std::chrono::seconds{ 120});
+		try
+		{
+			if (status == std::future_status::ready)
+			{
+				ret = getMaskDataFuture.get();
+			}
+		}
+		catch (...)
+		{
+			ret = nullptr;
+		}
+		return ret;
+		
 	}
 
 	bool MaskController::SetMaskData(HGLOBAL hGlobal)
 	{
-		typedef SvCmd::SetMaskData Command;
-		typedef std::shared_ptr<Command> CommandPtr;
+		bool ret{ false };
+		SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*>((SvOi::getObject(m_InspectionID)));
+		if (nullptr == pInspection)
+		{
+			return ret;
+		}
+		SvCmd::SetMaskDataFunctor setMaskDataFunctor(m_maskOperatorID, hGlobal);
+		std::packaged_task< HRESULT()> setMaskDataTask(std::move(setMaskDataFunctor));
+		std::future<HRESULT>  setMaskDataFuture = setMaskDataTask.get_future();
 
-		CommandPtr commandPtr{ new Command(m_maskOperatorID, hGlobal) };
-		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-		return (S_OK == hr) ? true : false;
+		SvOi::ICommandPtr pCommand = std::make_shared<  SvOi::CTaskWrapper<std::packaged_task<HRESULT()>>>(std::move(setMaskDataTask));
+		pInspection->SubmitCommand(pCommand);
+		std::future_status status = setMaskDataFuture.wait_for(std::chrono::seconds{ 120});
+		try
+		{
+			if (status == std::future_status::ready && S_OK == setMaskDataFuture.get())
+			{
+				ret = true;
+			}
+		}
+		catch (...)
+		{
+			ret = false;
+		}
+		return ret;
+
+		
 	}
 } //namespace SvOg

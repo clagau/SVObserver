@@ -21,34 +21,26 @@
 
 class SVInspectionProcess;
 
-struct SVCommandInspectionCollectImageData
+class  CommandInspectionCollectImageData
 {
+public:
 #pragma region Constructor
-	SVCommandInspectionCollectImageData(const SVCommandInspectionCollectImageData& p_rObject) = delete;
-	SVCommandInspectionCollectImageData(uint32_t inspectionId, const std::set<uint32_t>& p_rImageIds);
-
-	virtual ~SVCommandInspectionCollectImageData();
+	CommandInspectionCollectImageData(uint32_t inspectionId, const std::set<uint32_t>& p_rImageIds);
+	~CommandInspectionCollectImageData();
 #pragma endregion Constructor
 
-	HRESULT Execute();
+	std::shared_ptr<SVIPProductStruct> operator() ();
+private:
 
-	bool empty() const;
-
-	uint32_t GetInspectionId() const;
-	const std::set<uint32_t>& GetImageIds() const;
-
-	const SVIPProductStruct& GetProduct() const;
-
-protected:
-	HRESULT UpdateResults( SVInspectionProcess* pInspection, SvIe::SVIPResultData& rResultData );
+	HRESULT UpdateResults(SVInspectionProcess* pInspection, SvIe::SVIPResultData& rResultData);
 
 	HRESULT UpdateBuffer(uint32_t imageId, const SvTrc::ITriggerRecordRPtr& pTriggerRecord, std::string& rImageDIB, SVExtentMultiLineStructVector& rMultiLineArray);
 
-private:
+
 	uint32_t m_InspectionId;
 	std::set<uint32_t> m_ImageIds;
-	SVIPProductStruct m_Product;
+
 };
 
-typedef std::shared_ptr< SVCommandInspectionCollectImageData > SVCommandInspectionCollectImageDataPtr;
 
+using CollectImageDataTask = std::packaged_task<std::shared_ptr<SVIPProductStruct>()>;

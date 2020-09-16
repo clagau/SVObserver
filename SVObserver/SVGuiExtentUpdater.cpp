@@ -15,7 +15,6 @@
 #include "SVCommandInspectionExtentUpdater.h"
 #include "SVInspectionProcess.h"
 #include "InspectionEngine/SVTaskObject.h"
-#include "SVCommandLibrary/SVObjectSynchronousCommandTemplate.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #pragma endregion Includes
 
@@ -29,9 +28,21 @@ HRESULT SVGuiExtentUpdater::SetImageExtent(SvIe::SVTaskObjectClass* pTaskObject,
 		SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(pTaskObject->GetInspection());
 		if ( nullptr != pInspection )
 		{
-			SVCommandInspectionSetImageExtentPtr commandPtr{ new SVCommandInspectionExtentUpdater(pInspection->getObjectId(), pTaskObject->getObjectId(), ExtentUpdaterMode_SetImageExtent, &rExtents) };
-			SVObjectSynchronousCommandTemplate< SVCommandInspectionSetImageExtentPtr > command( pInspection->getObjectId(), commandPtr );
-			status = command.Execute( TIMEOUT_FOR_SYNCHRONOUS_EXECUTE_IN_MS );
+			
+			CommandInspectionExtentUpdater inspectionExtentUpdateFunctor(pInspection->getObjectId(), pTaskObject->getObjectId(), ExtentUpdaterMode_SetImageExtent, &rExtents);
+			std::packaged_task<HRESULT()>  inspectionExtentUpdateTask(std::move(inspectionExtentUpdateFunctor));
+	
+		
+			std::future<HRESULT>  inspectionUpdateFuture = inspectionExtentUpdateTask.get_future();
+			SvOi::ICommandPtr pCommand = std::make_shared<  SvOi::CTaskWrapper<std::packaged_task<HRESULT()>>>(std::move(inspectionExtentUpdateTask));
+			pInspection->SubmitCommand(pCommand);
+
+			std::future_status fstatus = inspectionUpdateFuture.wait_for(std::chrono::milliseconds{ TIMEOUT_FOR_SYNCHRONOUS_EXECUTE_IN_MS });
+
+			if (fstatus == std::future_status::ready)
+			{
+				status = inspectionUpdateFuture.get();
+			}
 		}
 	}
 
@@ -48,9 +59,21 @@ HRESULT SVGuiExtentUpdater::SetImageExtentToFit(SvIe::SVTaskObjectClass* pTaskOb
 		SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(pTaskObject->GetInspection());
 		if ( nullptr != pInspection )
 		{
-			SVCommandInspectionSetImageExtentPtr commandPtr{ new SVCommandInspectionExtentUpdater(pInspection->getObjectId(), pTaskObject->getObjectId(), ExtentUpdaterMode_SetImageExtentToFit, &rExtents) };
-			SVObjectSynchronousCommandTemplate< SVCommandInspectionSetImageExtentPtr > command( pInspection->getObjectId(), commandPtr );
-			status = command.Execute( TIMEOUT_FOR_SYNCHRONOUS_EXECUTE_IN_MS );
+	
+			std::packaged_task<HRESULT()>  inspectionExtentUpdateTask(CommandInspectionExtentUpdater(pInspection->getObjectId(), pTaskObject->getObjectId(), ExtentUpdaterMode_SetImageExtentToFit, &rExtents));
+			std::future<HRESULT>  inspectionUpdateFuture = inspectionExtentUpdateTask.get_future();
+			SvOi::ICommandPtr pCommand = std::make_shared<  SvOi::CTaskWrapper<std::packaged_task<HRESULT()>>>(std::move(inspectionExtentUpdateTask));
+			pInspection->SubmitCommand(pCommand);
+
+			std::future_status fstatus = inspectionUpdateFuture.wait_for(std::chrono::milliseconds{ TIMEOUT_FOR_SYNCHRONOUS_EXECUTE_IN_MS });
+
+			if (fstatus == std::future_status::ready)
+			{
+				status = inspectionUpdateFuture.get();
+			}
+
+
+
 		}
 	}
 

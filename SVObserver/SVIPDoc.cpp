@@ -48,7 +48,6 @@
 #include "ObjectInterfaces/IObjectWriter.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "Operators/SVConditional.h"
-#include "SVCommandLibrary/SVObjectSynchronousCommandTemplate.h"
 #include "SVFileSystemLibrary/SVFileNameManagerClass.h"
 #include "SVHBitmapUtilitiesLibrary\SVHBitmapUtilities.h"
 #include "SVMessage/SVMessage.h"
@@ -2283,25 +2282,57 @@ void SVIPDoc::RefreshDocument()
 			}
 		}
 	}
-	SVCommandInspectionCollectImageDataPtr l_DataPtr {new SVCommandInspectionCollectImageData(m_InspectionID, imageIdSet)};
-	SVObjectSynchronousCommandTemplate< SVCommandInspectionCollectImageDataPtr > l_Command(m_InspectionID, l_DataPtr);
 
-	if (S_OK == l_Command.Execute(120000))
+	
+	CommandInspectionCollectImageData collectImageData(m_InspectionID, imageIdSet);
+	CollectImageDataTask collectImageDataTask(std::move(collectImageData));
+	
+
+	std::future<std::shared_ptr<SVIPProductStruct>> futureProductStruct = collectImageDataTask.get_future();
+
+	if( m_InspectionID > 0)
 	{
-		if (m_NewProductData.size() == m_NewProductData.capacity())
-		{
-			m_NewProductData.PopHead();
-		}
 
-		if (S_OK == m_NewProductData.PushTail(l_DataPtr->GetProduct()))
+		SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*>((SvOi::getObject(m_InspectionID)));
+		if (pInspection)
 		{
-			CWnd* pWnd = GetMDIChild();
-			if (nullptr != pWnd && ::IsWindow(pWnd->GetSafeHwnd()))
+			SvOi::ICommandPtr pCommand = std::make_shared<  SvOi::CTaskWrapper<CollectImageDataTask>>(std::move(collectImageDataTask));
+			pInspection->SubmitCommand(pCommand);
+		}
+		else
+		{
+			assert(false);
+			
+		}
+	
+		std::shared_ptr<SVIPProductStruct> pProduct;
+		std::future_status status = futureProductStruct.wait_for(std::chrono::milliseconds{ 120000 });
+		if (status == std::future_status::ready)
+		{
+			pProduct = futureProductStruct.get();
+			if (m_NewProductData.size() == m_NewProductData.capacity())
 			{
-				pWnd->PostMessage(SV_MDICHILDFRAME_UPDATE_ALL_DATA);
+				m_NewProductData.PopHead();
 			}
+
+			
+			if (S_OK == m_NewProductData.PushTail(*pProduct.get()))
+			{
+				CWnd* pWnd = GetMDIChild();
+				if (nullptr != pWnd && ::IsWindow(pWnd->GetSafeHwnd()))
+				{
+					pWnd->PostMessage(SV_MDICHILDFRAME_UPDATE_ALL_DATA);
+				}
+			}
+		
+		
+		}
+		else
+		{
+
 		}
 	}
+
 }
 
 void SVIPDoc::RecreateImageSurfaces()
