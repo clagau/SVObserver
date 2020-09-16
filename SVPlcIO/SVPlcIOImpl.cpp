@@ -494,7 +494,9 @@ void SVPlcIOImpl::reportTrigger(const TriggerReport& rTriggerReport)
 		if(m_logInFile.is_open() && cMaxPlcTriggers > rTriggerReport.m_channel)
 		{
 			const TriggerReport& rData = rTriggerReport;
-			std::string fileData = SvUl::Format(_T("%d; %d; %f; %d; %d; %d; %f\r\n"), triggerIndex, m_inputCount[rData.m_channel], rData.m_triggerTimestamp, rData.m_currentObjectID, rData.m_triggerIndex, rData.m_triggerPerObjectID, SvTl::GetTimeStamp());
+			///This is required as m_inputCount[rData.m_channel] is atomic
+			uint32_t inputCount = m_inputCount[rData.m_channel];
+			std::string fileData = SvUl::Format(_T("%d; %d; %f; %d; %d; %d; %f\r\n"), triggerIndex, inputCount, rData.m_triggerTimestamp, rData.m_currentObjectID, rData.m_triggerIndex, rData.m_triggerPerObjectID, SvTl::GetTimeStamp());
 			m_logInFile.write(fileData.c_str(), fileData.size());
 		}
 	}
