@@ -85,7 +85,7 @@ public:
 
 	bool AddToCameraList(LPCTSTR CameraName, int Dig, int CameraID);
 	bool AddToTriggerList(LPCTSTR TriggerName, int iDig);
-	bool AddToInspectList(LPCTSTR External, LPCTSTR Internal, bool NewInspection);
+	bool AddToInspectionList(LPCTSTR InspectionName, bool NewInspection);
 	bool AddToPPQList(LPCTSTR PPQ, LPCTSTR Camera, LPCTSTR Trigger, LPCTSTR Inspection);
 	bool AddToPPQList(LPCTSTR PPQ);
 
@@ -104,9 +104,7 @@ public:
 	std::string BuildDigName( const SVOCameraObj& rCameraObj ) const;
 	std::string BuildTrgDig(const SvTi::SVOTriggerObj& rTriggerObj) const;
 
-	std::string GetInspectionLabelFromName(LPCTSTR InspectName);
-	std::string GetInspectionNameFromLabel(LPCTSTR InspectLabel);
-	bool RenameInspection(LPCTSTR InspectLabel, LPCTSTR NewName);
+	bool RenameInspection(LPCTSTR InspectionName, LPCTSTR NewName);
 
 	int GetCameraListCount() const;
 	int GetInspectionListCount() const;
@@ -118,7 +116,7 @@ public:
 	SvTi::SVOTriggerObjPtr GetTriggerObject(int iPos);
 	SvTi::SVOTriggerObjPtr GetTriggerObjectByName(LPCTSTR TriggerName);
 	SVOInspectionObjPtr GetInspectionObject(int iPos);
-	SVOInspectionObjPtr GetInspectionObjectByLabel(LPCTSTR Name);
+	SVOInspectionObjPtr GetInspectionObjectByName(LPCTSTR Name);
 	SVOPPQObjPtr GetPPQObject(int iPos);
 	SVOPPQObjPtr GetPPQObjectByName(LPCTSTR PPQName);
 

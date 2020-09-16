@@ -263,9 +263,9 @@ bool SVOConfigAssistantDlg::AddToCameraList(LPCTSTR CameraName, int Dig, int Cam
 	return m_CameraList.AddCameraToList(CameraName, Dig, CameraID);
 }
 
-bool SVOConfigAssistantDlg::AddToInspectList(LPCTSTR External, LPCTSTR Internal, bool NewInspection)
+bool SVOConfigAssistantDlg::AddToInspectionList(LPCTSTR InspectionName, bool NewInspection)
 {
-	return m_InspectList.AddInspectionToList( External, Internal, NewInspection );
+	return m_InspectList.AddInspectionToList(InspectionName,  NewInspection);
 }
 
 bool SVOConfigAssistantDlg::AddToTriggerList(LPCTSTR TriggerName, int iDig)
@@ -477,7 +477,7 @@ void SVOConfigAssistantDlg::CreateDefaultForSVIMDigital(int Number, LPCTSTR Trig
 
 		//add an inspection...
 		std::string InspectionName = GetNextInspectionName();
-		m_InspectList.AddInspectionToList( InspectionName.c_str(), InspectionName.c_str(), true );
+		m_InspectList.AddInspectionToList( InspectionName.c_str(), true );
 		m_InspectList.SetToolsetImage( InspectionName.c_str(), CameraName.c_str() );
 		m_InspectionNamesUsed.push_back(InspectionName);
 		m_InspectionLabelsUsed.push_back(InspectionName);
@@ -563,19 +563,9 @@ std::string SVOConfigAssistantDlg::GetNextPPQName() const
 	return Result;
 }
 
-std::string SVOConfigAssistantDlg::GetInspectionNameFromLabel(LPCTSTR InspectLabel)
+bool SVOConfigAssistantDlg::RenameInspection(LPCTSTR InspectionName, LPCTSTR NewName)
 {
-	return m_InspectList.GetInspectionName( InspectLabel );
-}
-
-std::string SVOConfigAssistantDlg::GetInspectionLabelFromName(LPCTSTR InspectionName)
-{
-	return m_InspectList.GetInspectionLabel( InspectionName );
-}
-
-bool SVOConfigAssistantDlg::RenameInspection(LPCTSTR InspectLabel, LPCTSTR NewName)
-{
-	const SVOInspectionObjPtr pInspectionObj( GetInspectionObjectByLabel(InspectLabel) );
+	const SVOInspectionObjPtr pInspectionObj( GetInspectionObjectByName(InspectionName) );
 	std::string OldName;
 
 	if( nullptr != pInspectionObj )
@@ -603,8 +593,10 @@ bool SVOConfigAssistantDlg::RenameInspection(LPCTSTR InspectLabel, LPCTSTR NewNa
 		Message = BuildDisplayMessage(MESSAGE_TYPE_ERROR, NewName, TOOLSET_IMAGE_ERROR);
 		AddMessageToList(INSPECT_DLG, Message.c_str());
 	}
-	
-	return m_InspectList.ReNameInspection(InspectLabel, NewName);
+	bool result = m_InspectList.RenameInspection(InspectionName, NewName);
+	RenameInspectionObjects(InspectionName, NewName);
+
+	return result;
 }
 
 int SVOConfigAssistantDlg::GetCameraListCount() const
@@ -632,9 +624,9 @@ SVOInspectionObjPtr SVOConfigAssistantDlg::GetInspectionObject(int iPos)
 	return m_InspectList.GetInspectionByPosition(iPos);
 }
 
-SVOInspectionObjPtr SVOConfigAssistantDlg::GetInspectionObjectByLabel(LPCTSTR Name)
+SVOInspectionObjPtr SVOConfigAssistantDlg::GetInspectionObjectByName(LPCTSTR Name)
 {
-	return m_InspectList.GetInspectionByLabel(Name);
+	return m_InspectList.GetInspectionByName(Name);
 }
 
 SVOCameraObjPtr SVOConfigAssistantDlg::GetCameraObject(int iPos)
@@ -1297,7 +1289,7 @@ bool SVOConfigAssistantDlg::SendPPQDataToConfiguration(SVPPQObjectPtrVector& rPP
 					if ( nullptr != pInspection)
 					{
 						//Inspection has the old name by now
-						const SVOInspectionObjPtr pTmpInspection( GetInspectionObjectByLabel(pInspection->GetName()) );
+						const SVOInspectionObjPtr pTmpInspection( GetInspectionObjectByName(pInspection->GetName()) );
 						if ( nullptr != pTmpInspection )
 						{
 							if ( (!IsInspectionOnPPQ(pPPQ->GetName(), pInspection->GetName())) ||
@@ -1894,7 +1886,7 @@ bool SVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 		if ( nullptr != pInspection )
 		{
 			//Inspection has the old name by now
-			const SVOInspectionObjPtr pInspectionObj( GetInspectionObjectByLabel( pInspection->GetName()) );
+			const SVOInspectionObjPtr pInspectionObj( GetInspectionObjectByName( pInspection->GetName()) );
 			bool bDeleteInspect = FALSE;
 
 			if ( nullptr != pInspectionObj )
@@ -1935,7 +1927,7 @@ bool SVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 			const SVOInspectionObjPtr pInspectionObj( GetInspectionObject(i) );
 			if( nullptr != pInspectionObj )
 			{
-				Key = pInspectionObj->GetInspectionLabelName();
+				Key = pInspectionObj->GetOriginalName();
 				inspectionName = pInspectionObj->GetInspectionName();
 				ToolsetImage = pInspectionObj->GetToolsetImage();
 				NewDisableMethod = pInspectionObj->GetNewDisableMethodString();
@@ -2220,7 +2212,7 @@ bool SVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectPtrVect
 					bool bFound = false;
 
 					std::string PpqInspectionName = pPPQObj->GetAttachedInspection(j);
-					const SVOInspectionObjPtr pInspectionObj = GetInspectionObjectByLabel(PpqInspectionName.c_str());
+					const SVOInspectionObjPtr pInspectionObj = GetInspectionObjectByName(PpqInspectionName.c_str());
 					if( nullptr != pInspectionObj )
 					{
 						long lInsCnt{0L};
@@ -2409,8 +2401,6 @@ bool SVOConfigAssistantDlg::GetConfigurationForExisting()
 	long lCfgPPQCnt;
 	std::string CameraName;
 	std::string TriggerName;
-	std::string InspectLabel;
-	std::string InspectName;
 	std::string PPQName;
 	int iDigNumber;
 	int CameraID;
@@ -2535,19 +2525,18 @@ bool SVOConfigAssistantDlg::GetConfigurationForExisting()
 		pcfgInspection = pConfig->GetInspection(lIns);
 		if ( nullptr != pcfgInspection )
 		{
-			InspectLabel = pcfgInspection->GetName();  // label name
-			InspectName = pcfgInspection->GetName();
+			std::string InspectionName = pcfgInspection->GetName();
 
-			m_InspectList.AddInspectionToList(InspectLabel.c_str(), InspectName.c_str(), false);
-			m_InspectionNamesUsed.push_back( InspectName );
-			m_InspectionLabelsUsed.push_back( InspectLabel );
+			m_InspectList.AddInspectionToList(InspectionName.c_str(), false);
+			m_InspectionNamesUsed.push_back( InspectionName );
+			m_InspectionLabelsUsed.push_back(InspectionName);
 
 			// Determine which image is the main image
 			std::string ToolsetImage;
 			ToolsetImage = pcfgInspection->GetToolsetImage();
-			m_InspectList.SetToolsetImage( InspectLabel.c_str(), ToolsetImage.c_str() );
+			m_InspectList.SetToolsetImage(InspectionName.c_str(), ToolsetImage.c_str() );
 			
-			m_InspectList.SetColor( InspectLabel.c_str(), pcfgInspection->IsColorCamera() );
+			m_InspectList.SetColor(InspectionName.c_str(), pcfgInspection->IsColorCamera() );
 
 			if( pcfgInspection->IsNewDisableMethodSet() )
 			{
@@ -2558,9 +2547,9 @@ bool SVOConfigAssistantDlg::GetConfigurationForExisting()
 				sDisable = _T( "Method 1" );
 			}// end else
 
-			m_InspectList.SetNewDisableMethod( InspectLabel.c_str(), sDisable );
+			m_InspectList.SetNewDisableMethod(InspectionName.c_str(), sDisable );
 
-			m_InspectList.SetShowAuxExtent( InspectLabel.c_str() );
+			m_InspectList.SetShowAuxExtent(InspectionName.c_str() );
 
 			// Enable Auxiliary Extent
 			long l_lEnable = 0;
@@ -2572,7 +2561,7 @@ bool SVOConfigAssistantDlg::GetConfigurationForExisting()
 			{
 				l_lEnable = 0;
 			}
-			m_InspectList.SetEnableAuxiliaryExtent( InspectLabel.c_str(), l_lEnable );
+			m_InspectList.SetEnableAuxiliaryExtent(InspectionName.c_str(), l_lEnable );
 		}
 		else
 		{
@@ -2863,7 +2852,7 @@ bool SVOConfigAssistantDlg::ItemChanged(int iItemDlg, LPCTSTR LabelName, int iAc
 			{
 				case ITEM_ACTION_NEW:
 				{
-					pInspectionObj = GetInspectionObjectByLabel(LabelName);
+					pInspectionObj = GetInspectionObjectByName(LabelName);
 					if( nullptr != pInspectionObj )
 					{
 						pInspectionObj->SetNewInspection();
@@ -2900,7 +2889,7 @@ bool SVOConfigAssistantDlg::ItemChanged(int iItemDlg, LPCTSTR LabelName, int iAc
 
 				case ITEM_ACTION_PROP:
 				{
-					pInspectionObj = GetInspectionObjectByLabel(LabelName);
+					pInspectionObj = GetInspectionObjectByName(LabelName);
 					if( nullptr != pInspectionObj )
 					{
 						if( !pInspectionObj->GetToolsetImage().empty() )
@@ -3014,8 +3003,7 @@ bool SVOConfigAssistantDlg::ItemChanged(int iItemDlg, LPCTSTR LabelName, int iAc
 				}
 				case ITEM_PPQ_DEL_INS:
 				{
-					std::string sInsLabelName = GetInspectionLabelFromName(LabelName);
-					pInspectionObj = GetInspectionObjectByLabel(sInsLabelName.c_str());
+					pInspectionObj = GetInspectionObjectByName(LabelName);
 					if( nullptr != pInspectionObj )
 					{
 						pInspectionObj->SetToolsetImage(_T(""));
@@ -3680,7 +3668,7 @@ void SVOConfigAssistantDlg::CheckColor( const SVOCameraObj& rCameraObj )
 		{
 			if( pInspectionObj->GetToolsetImage() == rCameraObj.GetCameraDisplayName() )
 			{
-				std::string Message( BuildDisplayMessage(MESSAGE_TYPE_ERROR, pInspectionObj->GetInspectionLabelName().c_str(), MESSAGE_INSPECTION_CAMERA_COLOR) );
+				std::string Message( BuildDisplayMessage(MESSAGE_TYPE_ERROR, pInspectionObj->GetOriginalName().c_str(), MESSAGE_INSPECTION_CAMERA_COLOR) );
 				RemoveMessageFromList( Message.c_str() );
 
 				if ( !pInspectionObj->GetToolsetImage().empty() )

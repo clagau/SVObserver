@@ -21,8 +21,8 @@ public:
 	SVOInspectionObj();
 	virtual ~SVOInspectionObj();
 
-    const std::string& GetInspectionLabelName() const;
-    void SetInspectionLabelName(LPCTSTR Label);
+    const std::string& GetOriginalName() const;
+    void SetOriginalName(LPCTSTR pName);
 
     const std::string& GetInspectionName() const;
     void SetInspectionName(LPCTSTR Inspection);
@@ -53,7 +53,7 @@ public:
 
 private:
 	std::string m_ToolsetImage;
-    std::string m_LabelName;
+    std::string m_originalName;
     std::string m_InspectionName;
 	std::string m_NewDisableMethod;
 	std::string m_ImportFilename;

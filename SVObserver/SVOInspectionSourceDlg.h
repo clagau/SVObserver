@@ -85,8 +85,6 @@ private:
     SVOConfigAssistantDlg *m_pParent;
 	int m_iInspectionNextCount{1};
 	int m_iCursel{-1};
-
-	std::map<unsigned long, std::string> m_Items;
 };
 
 //{{AFX_INSERT_LOCATION}}

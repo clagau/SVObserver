@@ -35,14 +35,14 @@ SVOInspectionObj::~SVOInspectionObj()
 {
 }
 
-const std::string& SVOInspectionObj::GetInspectionLabelName() const
+const std::string& SVOInspectionObj::GetOriginalName() const
 {
-    return m_LabelName;
+    return m_originalName;
 }
 
-void SVOInspectionObj::SetInspectionLabelName(LPCTSTR Label)
+void SVOInspectionObj::SetOriginalName(LPCTSTR pName)
 {
-    m_LabelName = Label;
+    m_originalName = pName;
 }
 
 const std::string& SVOInspectionObj::GetInspectionName() const

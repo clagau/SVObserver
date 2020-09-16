@@ -153,7 +153,7 @@ void SVOProPosQueDlg::OnBtnAddVi()
 			if( nullptr != pInspectionObj )
 			{
 	            InspectName = pInspectionObj->GetInspectionName();
-		        InspectLabel = pInspectionObj->GetInspectionLabelName();
+		        InspectLabel = pInspectionObj->GetOriginalName();
 			}
             if ( !m_pParent->IsInspectUsed(InspectLabel.c_str()) )
             {
@@ -170,9 +170,9 @@ void SVOProPosQueDlg::OnBtnAddVi()
                 if (m_ctlVIPList.FindStringExact(-1, Dlg.m_sSelectItemListValue) == LB_ERR)
                 {
                     m_ctlVIPList.AddString( Dlg.m_sSelectItemListValue );
-                    m_pParent->AddUsedInspect(m_pParent->GetInspectionLabelFromName( Dlg.m_sSelectItemListValue ).c_str());
+                    m_pParent->AddUsedInspect(Dlg.m_sSelectItemListValue);
                 
-                    pPPQObj->AttachInspectionToPPQ(m_pParent->GetInspectionLabelFromName( Dlg.m_sSelectItemListValue ).c_str());
+                    pPPQObj->AttachInspectionToPPQ(Dlg.m_sSelectItemListValue);
                     m_pParent->SetModified(TRUE);
                     m_pParent->ItemChanged(PPQ_DLG, Dlg.m_sSelectItemListValue, ITEM_PPQ_ADD_INS);
                     m_pParent->ItemChanged(PPQ_DLG, pPPQObj->GetPPQName().c_str(), ITEM_PPQ_ATTACH_INS);
@@ -257,7 +257,7 @@ void SVOProPosQueDlg::OnBtnDeletePpq()
         for (int i = 0; i < iInsCnt; i++)
         {
             std::string InspectionName = pPPQObj->GetAttachedInspection(i);
-            m_pParent->ItemChanged(PPQ_DLG, m_pParent->GetInspectionNameFromLabel(InspectionName.c_str()).c_str(), ITEM_PPQ_DEL_INS);
+            m_pParent->ItemChanged(PPQ_DLG, InspectionName.c_str(), ITEM_PPQ_DEL_INS);
         }
 
         m_pParent->RemovePPQFromList( PPQName );
@@ -349,7 +349,7 @@ void SVOProPosQueDlg::OnBtnRemoveVc()
 		for( l = 0; l < lSize; l++ )
 		{
 			InspectionName = pPPQObj->GetAttachedInspection( l );
-			pInspectionObj = m_pParent->GetInspectionObjectByLabel( InspectionName.c_str() );
+			pInspectionObj = m_pParent->GetInspectionObjectByName( InspectionName.c_str() );
 			if( nullptr != pInspectionObj && CameraName == pInspectionObj->GetToolsetImage().c_str() )
 			{
 				pInspectionObj->SetToolsetImage( _T("") );
@@ -377,8 +377,8 @@ void SVOProPosQueDlg::OnBtnRemoveVi()
         m_ctlPPQList.GetText( iCurPPQ, PPQName );
         m_ctlVIPList.DeleteString(iCurIns);
         pPPQObj = m_pParent->GetPPQObjectByName( PPQName );
-        pPPQObj->DetachInspectionFromPPQ(m_pParent->GetInspectionLabelFromName( InspectorName ).c_str());
-        m_pParent->RemoveUsedInspect(m_pParent->GetInspectionLabelFromName( InspectorName ).c_str());
+        pPPQObj->DetachInspectionFromPPQ(InspectorName);
+        m_pParent->RemoveUsedInspect(InspectorName);
         m_pParent->SetModified( true );
         m_pParent->ItemChanged( PPQ_DLG, InspectorName, ITEM_PPQ_DEL_INS);
         if ( pPPQObj->GetAttachedInspectionCount() < 1 )
@@ -478,7 +478,7 @@ void SVOProPosQueDlg::OnSelchangeLstPpqList()
 			std::string InspectionName( pPPQObj->GetAttachedInspection(iI) );
             if (m_pParent->IsInspectionInList( InspectionName.c_str() ))
             {
-                m_ctlVIPList.AddString(m_pParent->GetInspectionNameFromLabel( InspectionName.c_str() ).c_str());
+                m_ctlVIPList.AddString(InspectionName.c_str());
             }
             else
             {
