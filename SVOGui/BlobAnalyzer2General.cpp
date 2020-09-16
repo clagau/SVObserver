@@ -218,7 +218,7 @@ namespace SvOg
 				bool isGrayFeature = std::any_of(featureData.begin(), featureData.end(), [](const auto& rEntry) { return rEntry.is_gray(); });
 				if (isGrayFeature)
 				{
-					int iRet = MessageBox(_T("If you disable gray image, all gray feature will be removed. Do you want this?"), NULL, MB_YESNO);
+					int iRet = MessageBox(_T("If you disable gray image, all gray features will be removed. Continue?"), NULL, MB_YESNO);
 					if (IDYES == iRet)
 					{
 						//Remove all gray feature

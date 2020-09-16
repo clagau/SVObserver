@@ -528,7 +528,7 @@ namespace SvAo
 	{
 		std::array<MIL_ID, SvDef::c_numberOfSortFeature> sortIdArray = { M_SORT1, M_SORT2, M_SORT3 };
 		std::array<MIL_ID, SvDef::c_numberOfSortFeature> sortDirectionIdArray = { M_SORT1_DIRECTION, M_SORT2_DIRECTION, M_SORT3_DIRECTION };
-		for (int i = 0; SvDef::c_numberOfSortFeature < i; ++i)
+		for (int i = 0; SvDef::c_numberOfSortFeature > i; ++i)
 		{
 			SortEnum sortValue = SortEnum::None;
 			if (i < m_featureTaskVec.size())

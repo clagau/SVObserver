@@ -388,14 +388,17 @@ namespace SvAo
 			long maxBlobDataArraySize = 0;
 			m_maxBlobDataArraySize.GetValue(maxBlobDataArraySize);
 
-			m_numberOfBlobsFound.SetValue(numberOfBlobs);
 			if (numberOfBlobs > maxBlobDataArraySize)
 			{
-				SvStl::MessageManager msg(SvStl::MsgType::Data);
+				SvStl::MessageManager msg(SvStl::MsgType::Log);
 				msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Too_Many_Blobs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
-				msg.Throw();
+				rRunStatus.SetFailed();
+				m_pResultTable->setSortContainerDummy(SvVol::DummySortContainer(0));
+				m_numberOfBlobsFound.SetValue(0);
+				return true;
 			}
 
+			m_numberOfBlobsFound.SetValue(numberOfBlobs);
 			m_pResultTable->setSortContainerDummy(SvVol::DummySortContainer(numberOfBlobs));
 			
 			// Now fill the blobs
