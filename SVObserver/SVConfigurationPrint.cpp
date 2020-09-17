@@ -1872,7 +1872,7 @@ void SVConfigurationPrint::PrintPPQSummary(CDC* pDC, CPoint& ptCurPos, int nInde
 			pPPQ->GetInspectionCount(lSize);
 			for (int intInspection = 0; intInspection < lSize; intInspection++)
 			{
-				SVInspectionProcess*	pInspection;
+				SVInspectionProcess* pInspection{ nullptr };
 				pPPQ->GetInspection(intInspection, pInspection);
 				
 				if ( nullptr != pInspection )

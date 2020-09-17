@@ -117,7 +117,6 @@
       <WarningLevel>Level4</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <WholeProgramOptimization>false</WholeProgramOptimization>
       <EnableEnhancedInstructionSet>AdvancedVectorExtensions</EnableEnhancedInstructionSet>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -137,7 +136,6 @@
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
       <AdditionalDependencies>CameraLibrary.lib;SVGigeCameraParametersLibrary.lib;SVImageLibrary.lib;SVMatroxDigitizerLibrary.lib;SVMatroxLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;SVXMLLibrary.lib;TriggerHandling.lib;TriggerInformation.lib;Gdi32.lib;Rpcrt4.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>

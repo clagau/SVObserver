@@ -142,7 +142,6 @@ echo %time%
       <WarningLevel>Level4</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <WholeProgramOptimization>false</WholeProgramOptimization>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <DisableSpecificWarnings>4101;</DisableSpecificWarnings>
       <AdditionalOptions>/Zm350 %(AdditionalOptions)</AdditionalOptions>
@@ -170,7 +169,6 @@ echo %time%
       <LargeAddressAware>true</LargeAddressAware>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
       <AdditionalOptions>/WHOLEARCHIVE:AnalyzerOperators.lib /WHOLEARCHIVE:FilterOperators.lib /WHOLEARCHIVE:InspectionEngine.lib /WHOLEARCHIVE:Operators.lib /WHOLEARCHIVE:SVValueObjectLibrary.lib /WHOLEARCHIVE:Tools.lib %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <Bscmake>

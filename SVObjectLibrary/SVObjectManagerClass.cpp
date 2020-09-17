@@ -633,7 +633,7 @@ SVObjectClass* SVObjectManagerClass::GetObjectCompleteName(LPCTSTR Name)
 
 	if (Status)
 	{
-		SVObjectClass* pConfig;
+		SVObjectClass* pConfig{ nullptr };
 		GetRootChildObject(pConfig, SvDef::FqnConfiguration);
 
 		if (nullptr != pConfig)

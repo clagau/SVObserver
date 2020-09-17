@@ -73,7 +73,6 @@
       <WarningLevel>Level4</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <WholeProgramOptimization>false</WholeProgramOptimization>
       <EnableEnhancedInstructionSet>AdvancedVectorExtensions</EnableEnhancedInstructionSet>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -92,7 +91,6 @@
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>CameraLibrary.lib;SVGigeCameraFileLibrary.lib;SVImageLibrary.lib;SVLibrary.lib;SVMatroxLibrary.lib;SVMFCControls.lib;SVProtoBuf.lib;SVRPropertyTree.lib;SVSharedMemoryLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;SVXmlLibrary.lib;TriggerHandling.lib;TriggerRecordController.lib;libprotobuf.lib;Rpcrt4.lib</AdditionalDependencies>
     </Link>
