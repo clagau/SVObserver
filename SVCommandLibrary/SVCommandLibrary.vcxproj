@@ -99,7 +99,6 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SVCommandAttributesFacade.h" />
     <ClInclude Include="SVCommandAttributesTemplate.h" />
-    <ClInclude Include="SVCommandConcreteFactoryTemplate.h" />
     <ClInclude Include="SVCommandDataBlock.h" />
     <ClInclude Include="SVCommandDataContainer.h" />
     <ClInclude Include="SVCommandDataFacade.h" />
@@ -113,7 +112,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="SVCommandAttributesTemplate.inl" />
-    <None Include="SVCommandConcreteFactoryTemplate.inl" />
     <None Include="SVCommandDataTemplate.inl" />
     <None Include="SVCommandDataTemplateFacade.inl" />
   </ItemGroup>

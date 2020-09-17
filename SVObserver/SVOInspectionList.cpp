@@ -141,7 +141,7 @@ bool SVOInspectionList::RenameInspection( LPCTSTR InspectionName,  LPCTSTR NewIn
 bool SVOInspectionList::RemoveInspectionFromList(LPCTSTR InspectionName)
 {
 	bool bRet = false;
-	auto& iter = std::find_if(m_InspectionList.begin(), m_InspectionList.end(), [&InspectionName](auto& rEntry)
+	auto iter = std::find_if(m_InspectionList.begin(), m_InspectionList.end(), [&InspectionName](auto& rEntry)
 	{
 		return (nullptr != rEntry && rEntry->GetInspectionName() == InspectionName);
 	});

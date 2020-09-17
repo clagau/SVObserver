@@ -49,7 +49,7 @@ namespace SvCmd
 
 			if ((inspectionID > 0) && (CurrentThread == ThreadPref::inspection))
 			{
-
+				/// IObjectClass required for include check
 				SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*>((SvOi::getObject(inspectionID)));
 				if (pInspection)
 				{

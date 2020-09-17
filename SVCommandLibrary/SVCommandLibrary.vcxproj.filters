@@ -35,9 +35,6 @@
     <ClInclude Include="SVCommandAttributesTemplate.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVCommandConcreteFactoryTemplate.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVCommandDataBlock.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -71,9 +68,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="SVCommandAttributesTemplate.inl">
-      <Filter>Headerdateien</Filter>
-    </None>
-    <None Include="SVCommandConcreteFactoryTemplate.inl">
       <Filter>Headerdateien</Filter>
     </None>
     <None Include="SVCommandDataTemplate.inl">

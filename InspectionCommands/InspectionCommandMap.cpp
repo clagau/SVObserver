@@ -10,7 +10,7 @@
 #pragma region Includes 
 #include "stdafx.h"
 #include "InspectionCommandMap.h"
-#include "SVProtoBuf/InspectionCommands.pb.h"
+#include "SVProtoBuf/InspectionCommands.h"
 #include "CommandExternalHelper.h"
 #include "CommandFunction.h"
 

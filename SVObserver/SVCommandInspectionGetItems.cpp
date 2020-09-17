@@ -12,7 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVCommandInspectionGetItems.h"
-#include "SVInfoStructs.h"
 #include "SVInspectionProcess.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "SVStatusLibrary/GlobalPath.h"
