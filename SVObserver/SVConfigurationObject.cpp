@@ -2295,6 +2295,8 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 
 	try
 	{
+		fillExchangeObjectId();
+
 		std::string BoardName;
 		long lNumBoardDig(0);
 		long lNumCameras(0);

@@ -25,6 +25,7 @@ namespace SvPb
 
 SvPb::ClassIdEnum calcClassId(const _variant_t& rClassIdVariant);
 SvPb::EmbeddedIdEnum calcEmbeddedId(const _variant_t& rEmbeddedIdVariant, const _variant_t& rObjectName);
+void fillExchangeObjectId();
 uint32_t calcObjectId(const std::string& objectIdString);
 uint32_t calcObjectId(const _variant_t& rObjectIdVariant);
 std::string convertObjectIdToString(uint32_t objectId);

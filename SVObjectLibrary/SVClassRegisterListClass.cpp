@@ -1435,29 +1435,7 @@ const GUID DigitalOutputUidGuid = { 0x6ce19200, 0xce64, 0x4b64,{ 0x90, 0xf1, 0x2
 const GUID RemoteInputUidGuid = { 0x6ce19300, 0xce64, 0x4b64,{ 0x90, 0xf1, 0x2a, 0xc7, 0x58, 0xc0, 0x4c, 0x4c } };
 #pragma endregion ObjectIdGuids
 
-std::unordered_map<GUID, uint32_t> g_ExchangeObjectID = {
-	{ RootUidGuid, ObjectIdEnum::RootId },
-	{ GlobalUidGuid, ObjectIdEnum::GlobalId },
-	{ EnvironmentUidGuid, ObjectIdEnum::EnvironmentId },
-	{ EnvironmentModelNumberUidGuid, ObjectIdEnum::EnvironmentModelNumberId },
-	{ EnvironmentWinKeyUidGuid, ObjectIdEnum::EnvironmentWinKeyId },
-	{ EnvironmentImageUpdateUidGuid, ObjectIdEnum::EnvironmentImageUpdateId },
-	{ EnvironmentResultUpdateUidGuid, ObjectIdEnum::EnvironmentResultUpdateId },
-	{ EnvironmentModeIsRunUidGuid, ObjectIdEnum::EnvironmentModeIsRunId },
-	{ EnvironmentModeIsStopUidGuid, ObjectIdEnum::EnvironmentModeIsStopId },
-	{ EnvironmentModeIsRegressionTestUidGuid, ObjectIdEnum::EnvironmentModeIsRegressionTestId },
-	{ EnvironmentModeIsTestUidGuid, ObjectIdEnum::EnvironmentModeIsTestId },
-	{ EnvironmentModeIsEditUidGuid, ObjectIdEnum::EnvironmentModeIsEditId },
-	{ EnvironmentModeValueUidGuid, ObjectIdEnum::EnvironmentModeValueId },
-	{ EnvironmentModeUidGuid, ObjectIdEnum::EnvironmentModeId },
-	{ EnvironmentAutoSaveUidGuid, ObjectIdEnum::EnvironmentAutoSaveId },
-	{ EnvironmentDiskProtectionUidGuid, ObjectIdEnum::EnvironmentDiskProtectionId },
-	{ EnvironmentStartLastConfigUidGuid, ObjectIdEnum::EnvironmentStartLastConfigId },
-	{ EnvironmentConfigurationName, ObjectIdEnum::EnvironmentConfigurationNameId },
-	{ EnvironmentConfigurationFileName, ObjectIdEnum::EnvironmentConfigurationFileNameId },
-	{ EnvironmentCurrentDate, ObjectIdEnum::EnvironmentCurrentDateId },
-	{ EnvironmentCurrentTime, ObjectIdEnum::EnvironmentCurrentTimeId },
-};
+std::unordered_map<GUID, uint32_t> g_ExchangeObjectID;
 
 void fillExchangeObjectId(GUID guid, uint32_t id, int numbers = 0x100)
 {
@@ -1470,6 +1448,30 @@ void fillExchangeObjectId(GUID guid, uint32_t id, int numbers = 0x100)
 
 void fillExchangeObjectId()
 {
+	g_ExchangeObjectID = {
+		{ RootUidGuid, ObjectIdEnum::RootId },
+		{ GlobalUidGuid, ObjectIdEnum::GlobalId },
+		{ EnvironmentUidGuid, ObjectIdEnum::EnvironmentId },
+		{ EnvironmentModelNumberUidGuid, ObjectIdEnum::EnvironmentModelNumberId },
+		{ EnvironmentWinKeyUidGuid, ObjectIdEnum::EnvironmentWinKeyId },
+		{ EnvironmentImageUpdateUidGuid, ObjectIdEnum::EnvironmentImageUpdateId },
+		{ EnvironmentResultUpdateUidGuid, ObjectIdEnum::EnvironmentResultUpdateId },
+		{ EnvironmentModeIsRunUidGuid, ObjectIdEnum::EnvironmentModeIsRunId },
+		{ EnvironmentModeIsStopUidGuid, ObjectIdEnum::EnvironmentModeIsStopId },
+		{ EnvironmentModeIsRegressionTestUidGuid, ObjectIdEnum::EnvironmentModeIsRegressionTestId },
+		{ EnvironmentModeIsTestUidGuid, ObjectIdEnum::EnvironmentModeIsTestId },
+		{ EnvironmentModeIsEditUidGuid, ObjectIdEnum::EnvironmentModeIsEditId },
+		{ EnvironmentModeValueUidGuid, ObjectIdEnum::EnvironmentModeValueId },
+		{ EnvironmentModeUidGuid, ObjectIdEnum::EnvironmentModeId },
+		{ EnvironmentAutoSaveUidGuid, ObjectIdEnum::EnvironmentAutoSaveId },
+		{ EnvironmentDiskProtectionUidGuid, ObjectIdEnum::EnvironmentDiskProtectionId },
+		{ EnvironmentStartLastConfigUidGuid, ObjectIdEnum::EnvironmentStartLastConfigId },
+		{ EnvironmentConfigurationName, ObjectIdEnum::EnvironmentConfigurationNameId },
+		{ EnvironmentConfigurationFileName, ObjectIdEnum::EnvironmentConfigurationFileNameId },
+		{ EnvironmentCurrentDate, ObjectIdEnum::EnvironmentCurrentDateId },
+		{ EnvironmentCurrentTime, ObjectIdEnum::EnvironmentCurrentTimeId },
+	};
+
 	fillExchangeObjectId(CameraBaseSerialNumberUidGuid, ObjectIdEnum::CameraBaseSerialNumberId);
 	fillExchangeObjectId(CameraBaseGainUidGuid, ObjectIdEnum::CameraBaseGainId);
 	fillExchangeObjectId(CameraBaseShutterUidGuid, ObjectIdEnum::CameraBaseShutterId);
@@ -1484,13 +1486,6 @@ void fillExchangeObjectId()
 
 uint32_t calcObjectId(const std::string& objectIdString)
 {
-	static bool init = false;
-	if (!init)
-	{
-		fillExchangeObjectId();
-		init = true;
-	}
-
 	uint32_t objectId = SvDef::InvalidObjectId;
 	int ret = std::sscanf(objectIdString.c_str(), "{#%u}", &objectId);
 	if (1 == ret)
@@ -1643,7 +1638,6 @@ std::string saveObjectIdMapping()
 void resetExchangeObjectIdMap()
 {
 	g_ExchangeObjectID.clear();
-	fillExchangeObjectId();
 }
 
 #pragma endregion Declarations
