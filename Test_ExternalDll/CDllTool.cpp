@@ -632,7 +632,7 @@ HRESULT CDllTool::run()
 			{
 				out+= saInput[i];
 			}
-			m_aResultValues[ResultValue_DOUBLE].dblVal += out;
+			//m_aResultValues[ResultValue_DOUBLE].dblVal += out;
 		}
 
 	run_copySelectedTableInput2Output(Select);

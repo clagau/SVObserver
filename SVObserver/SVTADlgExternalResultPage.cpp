@@ -19,6 +19,7 @@
 #include "SVRPropertyTree/SVRPropTreeItemEdit.h"
 #include "Operators/TableObject.h"
 #include "Operators/SVVariantResultClass.h"
+#include "InspectionCommands/CommandExternalHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -69,6 +70,12 @@ END_MESSAGE_MAP()
 BOOL SVTADlgExternalResultPage::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
+	if (m_pTask && m_pTask->GetInspection())
+	{
+		auto objectId = m_pTask->GetInspection()->getObjectId();
+		SvCmd::RunOnceSynchronous(objectId);
+	}
+
 
 	if (m_pTask->m_Data.m_lNumResultValues > 0)
 	{
