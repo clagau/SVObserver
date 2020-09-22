@@ -3869,7 +3869,7 @@ SVIMProductEnum SVConfigurationObject::GetProductType() const
 	return m_eProductType;
 }
 
-void SVConfigurationObject::SetProductType(SVIMProductEnum eProductType)
+void SVConfigurationObject::SetProductType(SVIMProductEnum eProductType, bool newConfig /*= false*/)
 {
 	SVIMProductEnum prevType{ SVIM_PRODUCT_TYPE_UNKNOWN == m_eProductType ? eProductType : m_eProductType};
 	m_eProductType = eProductType;
@@ -3878,7 +3878,8 @@ void SVConfigurationObject::SetProductType(SVIMProductEnum eProductType)
 
 	///When changing from discrete IO to PLC or vice versa then we need to reset the inputs and outputs
 	if ((SvTi::SVHardwareManifest::isPlcSystem(m_eProductType) != SvTi::SVHardwareManifest::isPlcSystem(prevType)) ||
-		(SvTi::SVHardwareManifest::isDiscreteIOSystem(m_eProductType) != SvTi::SVHardwareManifest::isDiscreteIOSystem(prevType)))
+		(SvTi::SVHardwareManifest::isDiscreteIOSystem(m_eProductType) != SvTi::SVHardwareManifest::isDiscreteIOSystem(prevType)) ||
+		newConfig)
 	{
 		changeSystemResetIO(m_eProductType);
 	}

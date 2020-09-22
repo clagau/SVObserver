@@ -258,7 +258,7 @@ public:
 	void UpgradeConfiguration();
 
 	SVIMProductEnum GetProductType() const;
-	void SetProductType( SVIMProductEnum eProductType );
+	void SetProductType( SVIMProductEnum eProductType, bool newConfig = false);
 	bool IsConfigurationLoaded() const;
 	void SetConfigurationLoaded();
 	bool RenameOutputListInspectionNames(LPCTSTR OldInspectionName, LPCTSTR NewInspectionName);

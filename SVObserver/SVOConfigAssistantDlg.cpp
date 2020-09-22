@@ -2312,7 +2312,7 @@ bool SVOConfigAssistantDlg::SendDataToConfiguration()
 
 	SVPPQObjectPtrVector aPPQsToDelete;
 
-	pConfig->SetProductType( m_lConfigurationType );
+	pConfig->SetProductType( m_lConfigurationType, m_bNewConfiguration);
 
 /*
 	Algorithm Nov 11, 2002
