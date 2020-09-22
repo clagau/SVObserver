@@ -1281,9 +1281,9 @@ bool SVOConfigAssistantDlg::SendPPQDataToConfiguration(SVPPQObjectPtrVector& rPP
 				
 				//loop thru inspections to see if they exist in dlg
 				//if not, delete them from ppqobj
-				for (long lI=0; lI < lInsCnt; ++lI)
+				for (long lI= lInsCnt-1; -1 < lI; --lI)
 				{
-					bool bDetachInspect = FALSE;
+					bool bDetachInspect{ false };
 					SVInspectionProcess* pInspection( nullptr );
 					bRet = pPPQ->GetInspection(lI, pInspection);
 					if ( nullptr != pInspection)
@@ -1295,12 +1295,12 @@ bool SVOConfigAssistantDlg::SendPPQDataToConfiguration(SVPPQObjectPtrVector& rPP
 							if ( (!IsInspectionOnPPQ(pPPQ->GetName(), pInspection->GetName())) ||
 								(pTmpInspection->IsNewInspection()) )
 							{
-								bDetachInspect = TRUE;
+								bDetachInspect = true;
 							}
 						}
 						else
 						{
-							bDetachInspect = TRUE;
+							bDetachInspect = true;
 						}
 						if ( bDetachInspect )
 						{
@@ -1338,7 +1338,7 @@ bool SVOConfigAssistantDlg::SendPPQDataToConfiguration(SVPPQObjectPtrVector& rPP
 		}// if ppq != null
 		else
 		{
-			bRet = FALSE;
+			bRet = false;
 		}
 	} // for ppq
 	return bRet;
