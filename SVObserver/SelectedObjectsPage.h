@@ -10,6 +10,7 @@
 #pragma region Includes
 #include "SVOGui\ISVPropertyPageDialog.h"
 #include "Definitions/StringTypeDef.h"
+#include "SVProtoBuf\SVO-Enum.h"
 #pragma endregion Includes
 
 class SelectedObjectsPage : public CPropertyPage, public SvOg::ISVPropertyPageDialog
@@ -17,7 +18,7 @@ class SelectedObjectsPage : public CPropertyPage, public SvOg::ISVPropertyPageDi
 	enum { IDD = IDD_SELECTED_OBJECTS_PAGE };
 #pragma region Constructor
 public:
-	SelectedObjectsPage(const std::string& rInspectionName, uint32_t inspectionID, LPCTSTR Caption, const SvDef::StringVector& rList, UINT AttributeFilters, int id = IDD);
+	SelectedObjectsPage(const std::string& rInspectionName, uint32_t inspectionID, LPCTSTR Caption, const SvDef::StringVector& rList, UINT AttributeFilters, SvPb::ObjectSelectorType type = SvPb::allValueObjects, int id = IDD);
 	virtual ~SelectedObjectsPage();
 #pragma endregion Constructor
 
@@ -62,5 +63,6 @@ private:
 	CBitmap m_TreeBitmap;						//The bitmap for the tree button
 	UINT	m_AttributeFilter;					//The attribute filter for the object selector
 	int m_helpID = 0;								//The help ID for help file
+	SvPb::ObjectSelectorType m_type;
 #pragma endregion Member variables
 };

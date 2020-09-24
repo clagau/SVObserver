@@ -79,7 +79,7 @@ SVTADlgArchiveImagePage::SVTADlgArchiveImagePage(uint32_t inspectionId, uint32_t
 , m_ImageFilepathroot2WidgetHelper(m_ImageFilepathroot2, SvPb::ArchiveImageFileRootPart2EId, &m_ImageFilepathroot2Button, SvPb::ArchiveImageFileRootPart2LinkEId, m_ValueController)
 , m_ImageFilepathroot3WidgetHelper(m_ImageFilepathroot3, SvPb::ArchiveImageFileRootPart3EId, &m_ImageFilepathroot3Button, SvPb::ArchiveImageFileRootPart3LinkEId, m_ValueController)
 {
-	m_RootPathObjectSelectorController.setItemTypes({ SvPb::ObjectSelectorType::globalConstantItems });
+	m_RootPathObjectSelectorController.setSearchAreas({ SvPb::SearchArea::globalConstantItems });
 
 	SvOg::ValueEditWidgetHelper::EnsureDownArrowBitmapIsLoaded();
 
@@ -437,7 +437,7 @@ void SVTADlgArchiveImagePage::ShowObjectSelector()
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
-		{SvPb::ObjectSelectorType::toolsetItems}, inspectionId, SvPb::archivableImage);
+		{SvPb::SearchArea::toolsetItems}, inspectionId, SvPb::archivableImage, SvDef::InvalidObjectId, false, SvPb::attributesAllowed, SvPb::allImageObjects);
 	SvCmd::InspectionCommands(inspectionId, requestCmd, &responseCmd);
 
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject, IDD + SvOr::HELPFILE_DLG_IDD_OFFSET);
@@ -831,7 +831,7 @@ void SVTADlgArchiveImagePage::AlternativeImagePathController::SelectSubfolderSel
 	m_EditSubfolderSelection.GetWindowText(Temp);
 	std::string Value = Temp;
 	std::string Title = SvUl::LoadStdString(IDS_OBJECTNAME_SUBFOLDER_SELECTION);
-	if (m_ObjectSelectorController.Show(Value, Title, pParent))
+	if (m_ObjectSelectorController.Show(Value, Title, pParent, SvPb::attributesAllowed, SvPb::allNumberValueObjects))
 	{
 		m_EditSubfolderSelection.SetWindowText(Value.c_str());
 	}
@@ -844,7 +844,7 @@ void SVTADlgArchiveImagePage::AlternativeImagePathController::SelectSubfolderLoc
 	m_EditSubfolderLocation.GetWindowText(Temp);
 	std::string Value = Temp;
 	std::string Title = SvUl::LoadStdString(IDS_OBJECTNAME_SUBFOLDER_LOCATION);
-	if (m_ObjectSelectorController.Show(Value, Title, pParent))
+	if (m_ObjectSelectorController.Show(Value, Title, pParent, SvPb::attributesAllowed, SvPb::allNumberValueObjects))
 	{
 		m_EditSubfolderLocation.SetWindowText(Value.c_str());
 	}

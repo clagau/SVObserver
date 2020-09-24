@@ -138,10 +138,10 @@ public:
 	
 	/// This method returns a reference to the friends list attribute of this object.
 	const SVObjectInfoArrayClass& GetFriendList() const { return m_friendList;	};
+
+	virtual void fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, SvOi::IsObjectAllowedFunc pFunctor, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum nameToType, SvPb::ObjectSelectorType requiredType) const override;
 	
 #pragma region virtual method (ITaskObject)
-	virtual int GetObjectSelectorList(SvOi::IsObjectInfoAllowed pFunctor, std::vector<SvPb::TreeItem>& rTreeItems ) const override;
-	virtual std::vector<SvPb::TreeItem> GetSelectorList(SvOi::IsObjectInfoAllowed pFunctor, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum objectType) const override;
 	virtual void GetInputImages(SvUl::InputNameObjectIdPairList& rList, int maxEntries) override;
 	virtual void GetInputs(SvUl::InputNameObjectIdPairList& rList, const SvDef::SVObjectTypeInfoStruct& typeInfo = SvDef::SVObjectTypeInfoStruct(SvPb::SVNotSetObjectType), SvPb::SVObjectTypeEnum objectTypeToInclude = SvPb::SVNotSetObjectType, bool shouldExcludeFirstObjectName = false) override;
 	virtual HRESULT ConnectToObject(const std::string& rInputName, uint32_t newID, SvPb::SVObjectTypeEnum objectType = SvPb::SVNotSetObjectType) override;

@@ -26,10 +26,18 @@ namespace SvStl
 	class MessageContainer;
 	typedef std::vector<MessageContainer> MessageContainerVector;
 }
+
+namespace SvPb
+{
+	class TreeItem;
+}
 #pragma endregion Declarations
 
 namespace SvOi
 {
+	class IObjectClass;
+	typedef std::function<bool(const IObjectClass* pObject, unsigned int Attribute, int ArrayIndex)> IsObjectAllowedFunc;
+
 	enum SetAttributeType
 	{
 		AddAttribute,
@@ -152,5 +160,7 @@ namespace SvOi
 		//! \param rValue [out] The reference to double vector to store the values
 		//! \returns S_OK if succeeded
 		virtual HRESULT getValues(std::vector<double>& rValues) const = 0;
+
+		virtual void fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, IsObjectAllowedFunc pFunctor, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum nameToType, SvPb::ObjectSelectorType requiredType) const = 0;
 	};
 } //namespace SvOi

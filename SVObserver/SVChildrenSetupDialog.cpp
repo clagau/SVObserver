@@ -340,7 +340,7 @@ void SVChildrenSetupDialog::OnPublishButton()
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
-		{SvPb::ObjectSelectorType::toolsetItems}, m_pDocument->GetInspectionID(),
+		{SvPb::SearchArea::toolsetItems}, m_pDocument->GetInspectionID(),
 		SvPb::publishable, m_pParentObject->getObjectId());
 
 	SvCmd::InspectionCommands(m_pDocument->GetInspectionID(), requestCmd, &responseCmd);

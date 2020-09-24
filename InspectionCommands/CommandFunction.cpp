@@ -1336,104 +1336,63 @@ SvPb::InspectionCmdResponse getObjectSelectorItems(SvPb::GetObjectSelectorItemsR
 	std::vector<SvPb::TreeItem> resultItemVector;
 
 	SvPb::GetObjectSelectorItemsResponse* pResponse = cmdResponse.mutable_getobjectselectoritemsresponse();
-	for (int i = 0; i < request.types_size(); i++)
+	for (int i = 0; i < request.areas_size(); i++)
 	{
-		std::vector<SvPb::TreeItem> itemVector;
-		switch (request.types(i))
-		{
-			case SvPb::ObjectSelectorType::globalConstantItems:
-			{
-
-				itemVector = SvOi::getRootChildSelectorList(_T(""), request.attribute());
-				break;
-			}
-
-			case SvPb::ObjectSelectorType::tableObjects:
-			case SvPb::ObjectSelectorType::ppqItems:
-			case SvPb::ObjectSelectorType::toolsetItems:
-			case SvPb::ObjectSelectorType::cameraObject:
-			{
-				itemVector = getSelectorList(request, request.types(i));
-				break;
-			}
-
-			default:
-			{
-				break;
-			}
-		}
-		resultItemVector.insert(resultItemVector.end(), itemVector.begin(), itemVector.end());
+		fillSelectorList(std::back_inserter(resultItemVector), request, request.areas(i));
 	}
 	*pResponse->mutable_tree()->mutable_children() = {resultItemVector.begin(), resultItemVector.end()};
 
 	return cmdResponse;
 }
 
-std::vector<SvPb::TreeItem> getSelectorList(SvPb::GetObjectSelectorItemsRequest request, SvPb::ObjectSelectorType selectorType)
+void fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, const SvPb::GetObjectSelectorItemsRequest& request, SvPb::SearchArea area)
 {
-	std::vector<SvPb::TreeItem> result;
-
-	if (SvPb::ObjectSelectorType::ppqItems == selectorType)
+	switch (area)
+	{
+	case SvPb::globalConstantItems:
+		SvOi::fillRootChildSelectorList(treeInserter, _T(""), request.attribute(), request.type());
+		return;
+	case SvPb::ppqItems:
 	{
 		SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*> (SvOi::getObject(request.inspectionid()));
 		if (nullptr != pInspection)
 		{
-			result = pInspection->GetPPQSelectorList(request.attribute());
-			return result;
+			pInspection->fillPPQSelectorList(treeInserter, request.attribute(), request.type());
 		}
+		return;
 	}
-
-	if (SvPb::ObjectSelectorType::cameraObject == selectorType)
+	case SvPb::cameraObject:
 	{
 		SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*> (SvOi::getObject(request.inspectionid()));
 		if (nullptr != pInspection)
 		{
-			result = pInspection->GetCameraSelectorList(request.attribute());
-			return result;
+			pInspection->fillCameraSelectorList(treeInserter, request.attribute(), request.type());
 		}
+		return;
 	}
-
-	if (SvPb::ObjectSelectorType::tableObjects == selectorType)
-	{
-
-		uint32_t id = (SvDef::InvalidObjectId != request.instanceid()) ? request.instanceid() : request.inspectionid();
-		SvOi::IObjectClass* pObject = SvOi::getObject(id);
-		SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*> (pObject);
-		SvOi::ITaskObject* pTaskObject(nullptr);
-		if (pInspection)
-		{
-			pTaskObject = pInspection->GetToolSetInterface();
-		}
-	
-		if (nullptr != pTaskObject)
-		{
-		
-			IsObjectInfoAllowed pFunc = SvCmd::TableObjectSelector();
-			pTaskObject->GetObjectSelectorList(pFunc, result);
-			return result;
-		}
+	case SvPb::toolsetItems:
+	default:
+		break;
 	}
 
 	uint32_t id = (SvDef::InvalidObjectId != request.instanceid()) ? request.instanceid() : request.inspectionid();
 	SvOi::IObjectClass* pObject = SvOi::getObject(id);
 	if (nullptr != pObject)
 	{
-		SvOi::ITaskObject* pTaskObject = dynamic_cast<SvOi::ITaskObject*> (pObject);
+		std::string name;
+		pObject->GetCompleteNameToType(SvPb::SVToolObjectType, name);
 
 		// When using the RangeSelectorFilter, the InstanceId is for the Range or Tool owning the Range
 		// which is needed to get the name for exclusion in filtering, so get the Toolset as well 
-		if (SvPb::SelectorFilter::rangeValue == request.filter())
+		if (SvPb::SelectorFilter::excludeSameLineage == request.filter())
 		{
-			pTaskObject = dynamic_cast<SvOi::ITaskObject *>(pObject->GetAncestorInterface(SvPb::SVToolSetObjectType));
+			pObject = pObject->GetAncestorInterface(SvPb::SVToolSetObjectType);
 		}
 
-		if (nullptr == pTaskObject)
+		SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*> (pObject);
+		if (nullptr != pInspection)
 		{
-			SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*> (pObject);
-			if (nullptr != pInspection)
-			{
-				pTaskObject = pInspection->GetToolSetInterface();
-			}
+			pObject = dynamic_cast<SvOi::IObjectClass*>(pInspection->GetToolSetInterface());
 		}
 
 		//If instance ID is set to the inspection ID then we need the name including the inspection name
@@ -1443,18 +1402,15 @@ std::vector<SvPb::TreeItem> getSelectorList(SvPb::GetObjectSelectorItemsRequest 
 			objectTypeToName = SvPb::SVInspectionObjectType;
 		}
 
-		if (nullptr != pTaskObject)
+		if (nullptr != pObject)
 		{
-			std::string name;
-			pObject->GetCompleteNameToType(SvPb::SVToolObjectType, name);
 			IsObjectInfoAllowed pFunc = getObjectSelectorFilterFunc(request, name);
 			if(nullptr != pFunc)
 			{
-				result = pTaskObject->GetSelectorList(pFunc, request.attribute(), request.wholearray(), objectTypeToName);
+				pObject->fillSelectorList(treeInserter, pFunc, request.attribute(), request.wholearray(), objectTypeToName, request.type());
 			}
 		}
 	}
-	return result;
 }
 
 SvPb::InspectionCmdResponse getNormalizerValues(SvPb::GetNormalizerValuesRequest request)

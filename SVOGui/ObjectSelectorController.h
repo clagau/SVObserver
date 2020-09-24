@@ -30,8 +30,8 @@ namespace SvOg
 		/// \param Title [in] The title of the object selector.
 		/// \param pParent [in] The parent control
 		/// \returns bool True if selector was closed by OK-button.
-		bool Show(std::string& rName, const std::string& rTitle, CWnd* pParent, SvPb::SelectorFilter FilterType = SvPb::SelectorFilter::attributesAllowed);
-		void setItemTypes(const std::vector<SvPb::ObjectSelectorType>& rItemTypes) { m_ItemTypes = rItemTypes; }
+		bool Show(std::string& rName, const std::string& rTitle, CWnd* pParent, SvPb::SelectorFilter FilterType = SvPb::SelectorFilter::attributesAllowed, SvPb::ObjectSelectorType type = SvPb::ObjectSelectorType::allValueObjects);
+		void setSearchAreas(const std::vector<SvPb::SearchArea>& rSearchAreas) { m_searchAreas = rSearchAreas; }
 #pragma endregion Public Methods
 
 #pragma endregion Private Methods
@@ -39,7 +39,7 @@ namespace SvOg
 
 #pragma region Member Variables
 	private:
-		std::vector<SvPb::ObjectSelectorType> m_ItemTypes;
+		std::vector<SvPb::SearchArea> m_searchAreas;
 		SvPb::ObjectAttributes m_objectAttributes;
 		uint32_t m_InspectionID;
 		uint32_t m_InstanceID;

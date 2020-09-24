@@ -159,6 +159,8 @@ public:
 	virtual bool resetAllObjects( SvStl::MessageContainerVector *pErrorMessages=nullptr ) override { return ResetObject(pErrorMessages); };
 	virtual HRESULT getValue(double& , int = 0) const override { return E_NOTIMPL; };
 	virtual HRESULT getValues(std::vector<double>& ) const override { return E_NOTIMPL; };
+
+	virtual void fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, SvOi::IsObjectAllowedFunc pFunctor, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum nameToType, SvPb::ObjectSelectorType requiredType) const override;
 #pragma endregion virtual method (IObjectClass)
 
 	const SVObjectInfoStruct& GetOwnerInfo() const;
@@ -200,6 +202,7 @@ public:
 #pragma endregion Methods to replace processMessage
 
 	virtual SVObjectClass* UpdateObject(uint32_t friendId, SVObjectClass* pObject, SVObjectClass* pNewOwner);
+	bool isCorrectType(SvPb::ObjectSelectorType requiredType) const;
 
 protected:
 	//@TODO[MZA][10.10][06.08.2020] SVTaskObjectClass has only friends. Other object has to do nothing. Maybe the method can be moved from here to SVTaskObjectClass later.

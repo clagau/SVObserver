@@ -80,22 +80,31 @@ HRESULT SVTaskObjectListClass::GetOutputList( SVOutputInfoListClass& p_rOutputIn
 
 	return l_Status;
 }
-int SVTaskObjectListClass::GetObjectSelectorList(SvOi::IsObjectInfoAllowed pFunctor, std::vector<SvPb::TreeItem>& rTreeItems) const
+
+
+void SVTaskObjectListClass::fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, SvOi::IsObjectAllowedFunc pFunctor, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum nameToType, SvPb::ObjectSelectorType requiredType) const
 {
-	int result = SVTaskObjectClass::GetObjectSelectorList(pFunctor, rTreeItems);
+	nameToType = (SvPb::SVNotSetObjectType == nameToType) ? GetObjectType() : nameToType;
+	__super::fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType);
+	
 
-	for (int i = 0; i < static_cast<int> (m_TaskObjectVector.size()); ++i)
+	for (size_t i = 0; i < m_friendList.size(); ++i)
 	{
-		SVTaskObjectClass* l_pObject(m_TaskObjectVector[i]);
-
-		if (nullptr != l_pObject)
+		// Check if Friend is alive...
+		auto* pObject = SVObjectManagerClass::Instance().GetObject(m_friendList[i].getObjectId());
+		if (nullptr != pObject)
 		{
-			result += l_pObject->GetObjectSelectorList(pFunctor, rTreeItems);
-
+			pObject->fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType);
 		}
 	}
 
-	return result;
+	for (const auto* pObject : m_TaskObjectVector)
+	{
+		if (nullptr != pObject)
+		{
+			pObject->fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType);
+		}
+	}
 }
 
 void SVTaskObjectListClass::AppendInputObjects()

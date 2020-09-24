@@ -56,7 +56,7 @@ SvUl::NameObjectIdList convertNameObjectIdList(const ::google::protobuf::Repeate
 
 void setTypeInfos(const SvDef::SVObjectTypeInfoStruct& destInfo, SvPb::SVObjectTypeInfoStruct& sourceInfo);
 
-SvPb::GetObjectSelectorItemsRequest createObjectSelectorRequest(const std::vector<SvPb::ObjectSelectorType>& rItemTypes, uint32_t inspectionID, SvPb::ObjectAttributes attribute, uint32_t instanceID = SvDef::InvalidObjectId, bool wholeArray = false, SvPb::SelectorFilter filter = SvPb::SelectorFilter::attributesAllowed);
+SvPb::GetObjectSelectorItemsRequest createObjectSelectorRequest(const std::vector<SvPb::SearchArea>& rSearchAreas, uint32_t inspectionID, SvPb::ObjectAttributes attribute, uint32_t instanceID = SvDef::InvalidObjectId, bool wholeArray = false, SvPb::SelectorFilter filter = SvPb::SelectorFilter::attributesAllowed, SvPb::ObjectSelectorType type = SvPb::allValueObjects);
 
 template<class T>
 T getValueForProperties(const ::google::protobuf::RepeatedPtrField< ::SvPb::ExtentParameter >& extents, SvPb::SVExtentPropertyEnum type)

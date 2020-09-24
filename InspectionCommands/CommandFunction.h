@@ -148,7 +148,7 @@ SvPb::InspectionCmdResponse getFeatures(SvPb::GetFeaturesRequest request);
 SvPb::InspectionCmdResponse setFeatures(SvPb::SetFeaturesRequest request);
 SvPb::InspectionCmdResponse getAvailableFeatures(SvPb::GetAvailableFeaturesRequest request);
 
-std::vector<SvPb::TreeItem> getSelectorList(SvPb::GetObjectSelectorItemsRequest request, SvPb::ObjectSelectorType selectorType);
+void fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, const SvPb::GetObjectSelectorItemsRequest& request, SvPb::SearchArea area);
 
 SvPb::InspectionCmdResponse getNormalizerValues(SvPb::GetNormalizerValuesRequest request);
 

@@ -725,7 +725,7 @@ namespace SvOg
 
 	bool BlobAnalyzer2Feature::ShowObjectSelector(std::string& rName, const std::string& title)
 	{
-		return m_objectSelector.Show(rName, title, this, SvPb::SelectorFilter::rangeValue);
+		return m_objectSelector.Show(rName, title, this, SvPb::SelectorFilter::excludeSameLineage, SvPb::allNumberValueObjects);
 	}
 
 	void BlobAnalyzer2Feature::sortFeatures(int pos)

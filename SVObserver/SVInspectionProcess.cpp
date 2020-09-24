@@ -51,35 +51,38 @@
 
 SV_IMPLEMENT_CLASS(SVInspectionProcess, SvPb::InspectionProcessClassId);
 
-void fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> result, const SVObjectReferenceVector& rObjectVector)
+void fillList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> result, const SVObjectReferenceVector& rObjectVector, SvPb::ObjectSelectorType type)
 {
 	for (auto ObjectRef : rObjectVector)
 	{
-		SvPb::TreeItem insertItem;
-		insertItem.set_name(ObjectRef.GetName());
-		if (nullptr != ObjectRef.getValueObject())
+		if (nullptr != ObjectRef.getObject() && ObjectRef.getObject()->isCorrectType(type))
 		{
-			insertItem.set_type(ObjectRef.getValueObject()->getTypeName());
-		}
-		if (ObjectRef.isArray())
-		{
-			// add array elements
-			int iArraySize = ObjectRef.getValueObject()->getArraySize();
-			for (int i = 0; i < iArraySize; i++)
+			SvPb::TreeItem insertItem;
+			insertItem.set_name(ObjectRef.GetName());
+			if (nullptr != ObjectRef.getValueObject())
 			{
-				ObjectRef.SetArrayIndex(i);
+				insertItem.set_type(ObjectRef.getValueObject()->getTypeName());
+			}
+			if (ObjectRef.isArray())
+			{
+				// add array elements
+				int iArraySize = ObjectRef.getValueObject()->getArraySize();
+				for (int i = 0; i < iArraySize; i++)
+				{
+					ObjectRef.SetArrayIndex(i);
+					insertItem.set_location(ObjectRef.GetCompleteName(true));
+					insertItem.set_objectidindex(ObjectRef.GetObjectIdAndIndexOneBased());
+					// cppcheck-suppress unreadVariable symbolName=result ; cppCheck don't know back_insert_iterator
+					result = insertItem;
+				}
+			}
+			else
+			{
 				insertItem.set_location(ObjectRef.GetCompleteName(true));
 				insertItem.set_objectidindex(ObjectRef.GetObjectIdAndIndexOneBased());
 				// cppcheck-suppress unreadVariable symbolName=result ; cppCheck don't know back_insert_iterator
 				result = insertItem;
 			}
-		}
-		else
-		{
-			insertItem.set_location(ObjectRef.GetCompleteName(true));
-			insertItem.set_objectidindex(ObjectRef.GetObjectIdAndIndexOneBased());
-			// cppcheck-suppress unreadVariable symbolName=result ; cppCheck don't know back_insert_iterator
-			result = insertItem;
 		}
 	}
 }
@@ -3209,10 +3212,8 @@ SVResultList* SVInspectionProcess::GetResultList() const
 }
 
 #pragma region IInspectionProcess methods
-std::vector<SvPb::TreeItem> SVInspectionProcess::GetPPQSelectorList(const UINT attribute) const
+void SVInspectionProcess::fillPPQSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, const UINT attribute, SvPb::ObjectSelectorType type) const
 {
-	std::vector<SvPb::TreeItem> result;
-
 	SVPPQObject *pPPQ = GetPPQ();
 	SVObjectReferenceVector objectVector;
 
@@ -3221,10 +3222,7 @@ std::vector<SvPb::TreeItem> SVInspectionProcess::GetPPQSelectorList(const UINT a
 		std::string PpqName(pPPQ->GetName());
 
 		SVObjectManagerClass::Instance().getTreeList(PpqName, objectVector, attribute);
-
-		result.reserve(objectVector.size());
-
-		fillSelectorList(std::back_inserter(result), objectVector);
+		fillList(treeInserter, objectVector, type);
 	}
 
 
@@ -3233,7 +3231,7 @@ std::vector<SvPb::TreeItem> SVInspectionProcess::GetPPQSelectorList(const UINT a
 
 	for (auto pObject : PpqVariables)
 	{
-		if (nullptr != pObject)
+		if (nullptr != pObject && pObject->isCorrectType(type))
 		{
 			//Check if the attribute of the object is allowed
 			if (0 != (attribute & pObject->ObjectAttributesAllowed()))
@@ -3252,20 +3250,16 @@ std::vector<SvPb::TreeItem> SVInspectionProcess::GetPPQSelectorList(const UINT a
 				SvUl::searchAndReplace(location, InspectionName.c_str(), SvDef::FqnPPQVariables);
 				insertItem.set_location(location);
 				insertItem.set_objectidindex(ObjectRef.GetObjectIdAndIndexOneBased());
-				result.emplace_back(insertItem);
+				// cppcheck-suppress unreadVariable symbolName=treeInserter ; cppCheck doesn't know back_insert_iterator
+				treeInserter = insertItem;
 			}
 		}
 	}
-
-	return result;
 }
 
-std::vector<SvPb::TreeItem> SVInspectionProcess::GetCameraSelectorList(const UINT attribute) const
+void SVInspectionProcess::fillCameraSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, const UINT attribute, SvPb::ObjectSelectorType type) const
 {
-	std::vector<SvPb::TreeItem> result;
-
 	const auto& rCameras = GetCameras();
-
 	for (const auto* pCamera : rCameras)
 	{
 		if (nullptr != pCamera)
@@ -3275,12 +3269,9 @@ std::vector<SvPb::TreeItem> SVInspectionProcess::GetCameraSelectorList(const UIN
 			SVObjectReferenceVector objectVector;
 			SVObjectManagerClass::Instance().getTreeList(cameraName, objectVector, attribute);
 
-			fillSelectorList(std::back_inserter(result), objectVector);
+			fillList(treeInserter, objectVector, type);
 		}
 	}
-
-
-	return result;
 }
 
 SvOi::ITaskObject* SVInspectionProcess::GetToolSetInterface() const

@@ -214,9 +214,9 @@ int main(int argc, char* argv[])
 				request.set_attribute(SvPb::ObjectAttributes::viewable);
 				request.set_wholearray(true);
 				request.set_filter(SvPb::SelectorFilter::attributesAllowed);
-				request.add_types(SvPb::ObjectSelectorType::globalConstantItems);
-				request.add_types(SvPb::ObjectSelectorType::ppqItems);
-				request.add_types(SvPb::ObjectSelectorType::toolsetItems);
+				request.add_areas(SvPb::SearchArea::globalConstantItems);
+				request.add_areas(SvPb::SearchArea::ppqItems);
+				request.add_areas(SvPb::SearchArea::toolsetItems);
 				SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::GetObjectSelectorItemsRequest, SvPb::GetObjectSelectorItemsResponse> client(*pRpcClient);
 				auto resposeTree = client.request(std::move(request), Timeout).get();
 				SV_LOG_GLOBAL(info) << resposeTree.DebugString();

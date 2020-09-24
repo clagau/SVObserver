@@ -13,6 +13,7 @@
 
 #pragma region Includes
 #include "Definitions/StringTypeDef.h"
+#include "SVProtoBuf/SVO-Enum.h"
 #pragma endregion Includes
 
 class SelectedObjectsPage;
@@ -45,7 +46,7 @@ private:
 	void DestroyPages();
 	void OnOK();
 
-	void initSelectedList(SvDef::StringVector* pList, UINT Attribute );
+	void initSelectedList(SvDef::StringVector* pList, UINT Attribute, SvPb::ObjectSelectorType type );
 	bool setChangedData( SelectedObjectsPage* const pPage );
 	void setAttributes( const SvDef::StringVector& rList, UINT Attribute, bool Clear ) const;
 	void insertObjectsToList(const SvPb::TreeItem& rTree, SvDef::StringVector* pList);

@@ -1612,7 +1612,7 @@ void SVIPDoc::OnResultsPicker()
 			SvPb::InspectionCmdRequest requestCmd;
 			SvPb::InspectionCmdResponse responseCmd;
 			*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
-			{SvPb::ObjectSelectorType::globalConstantItems, SvPb::ObjectSelectorType::cameraObject, SvPb::ObjectSelectorType::ppqItems, SvPb::ObjectSelectorType::toolsetItems},
+			{SvPb::SearchArea::globalConstantItems, SvPb::SearchArea::cameraObject, SvPb::SearchArea::ppqItems, SvPb::SearchArea::toolsetItems},
 				GetInspectionID(), SvPb::viewable, SvDef::InvalidObjectId, true);
 			SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 
@@ -1896,7 +1896,7 @@ void SVIPDoc::OnPublishedResultsPicker()
 		SvPb::InspectionCmdRequest requestCmd;
 		SvPb::InspectionCmdResponse responseCmd;
 		*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
-		{SvPb::ObjectSelectorType::toolsetItems}, GetInspectionID(), SvPb::publishable);
+		{SvPb::SearchArea::toolsetItems}, GetInspectionID(), SvPb::publishable);
 		SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 
 		SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject, IDD_PUBLISHED_RESULTS + SvOr::HELPFILE_DLG_IDD_OFFSET);
@@ -1960,7 +1960,7 @@ void SVIPDoc::OnPublishedResultImagesPicker()
 		SvPb::InspectionCmdRequest requestCmd;
 		SvPb::InspectionCmdResponse responseCmd;
 		*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
-		{SvPb::ObjectSelectorType::toolsetItems}, GetInspectionID(), SvPb::publishResultImage);
+		{SvPb::SearchArea::toolsetItems}, GetInspectionID(), SvPb::publishResultImage, SvDef::InvalidObjectId, false, SvPb::attributesAllowed, SvPb::allImageObjects);
 		SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 
 		SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject, ID_PUBLISHED_RESULT_IMAGES_PICKER + SvOr::HELPFILE_ID_OFFSET);

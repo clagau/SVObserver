@@ -119,6 +119,8 @@ public:
 
 	void setErrorMessageToTool(SvStl::MessageContainer& rErrorMessage);
 
+	virtual void fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, SvOi::IsObjectAllowedFunc pFunctor, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum nameToType, SvPb::ObjectSelectorType requiredType) const override;
+
 #pragma region virtual method (ISVImage)
 	virtual SvPb::SVImageTypeEnum GetImageType() const override;
 	virtual SvOi::ISVImage* GetParentImageInterface() const override;

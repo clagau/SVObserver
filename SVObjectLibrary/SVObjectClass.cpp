@@ -26,6 +26,7 @@
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/SVSafeArray.h"
+#include "SVProtoBuf/InspectionCommands.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -336,6 +337,62 @@ SvOi::IObjectClass* SVObjectClass::getFirstObject(const SvDef::SVObjectTypeInfoS
 
 	return nullptr;
 }
+
+void SVObjectClass::fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, SvOi::IsObjectAllowedFunc pFunctor, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum nameToType, SvPb::ObjectSelectorType requiredType) const
+{
+	SVObjectReference ObjectRef = GetObjectInfo().GetObjectReference();
+	if (isCorrectType(requiredType))
+	{
+		SvPb::TreeItem insertItem;
+
+		if (nullptr != ObjectRef.getValueObject())
+		{
+			insertItem.set_type(ObjectRef.getValueObject()->getTypeName());
+		}
+
+		if (ObjectRef.isArray())
+		{
+			if (wholeArray && pFunctor(ObjectRef.getObject(), attribute, 0))
+			{
+				ObjectRef.SetEntireArray();
+				insertItem.set_name(ObjectRef.GetName(true));
+				UINT AttributesSet = ObjectRef.ObjectAttributesSet();
+				insertItem.set_location(ObjectRef.GetObjectNameToObjectType(nameToType, true, true));
+				insertItem.set_objectidindex(ObjectRef.GetObjectIdAndIndexOneBased());
+				insertItem.set_selected((AttributesSet & attribute) == attribute);
+				// cppcheck-suppress unreadVariable symbolName=treeInserter ; cppCheck doesn't know back_insert_iterator
+				treeInserter = insertItem;
+			}
+
+			// add array elements
+			int iArraySize = ObjectRef.getValueObject()->getArraySize();
+			for (int i = 0; i < iArraySize; i++)
+			{
+				if (pFunctor(ObjectRef.getObject(), attribute, i))
+				{
+					ObjectRef.SetArrayIndex(i);
+					insertItem.set_name(ObjectRef.GetName(true));
+					UINT AttributesSet = ObjectRef.ObjectAttributesSet();
+					insertItem.set_location(ObjectRef.GetObjectNameToObjectType(nameToType, true, true));
+					insertItem.set_objectidindex(ObjectRef.GetObjectIdAndIndexOneBased());
+					insertItem.set_selected((AttributesSet & attribute) == attribute);
+					// cppcheck-suppress unreadVariable symbolName=treeInserter ; cppCheck doesn't know back_insert_iterator
+					treeInserter = insertItem;
+				}
+			}
+		}
+		else if (pFunctor(ObjectRef.getObject(), attribute, 0))
+		{
+			insertItem.set_name(ObjectRef.GetName());
+			UINT AttributesSet = ObjectRef.ObjectAttributesSet();
+			insertItem.set_location(ObjectRef.GetObjectNameToObjectType(nameToType, true));
+			insertItem.set_objectidindex(ObjectRef.GetObjectIdAndIndexOneBased());
+			insertItem.set_selected((AttributesSet & attribute) == attribute);
+			// cppcheck-suppress unreadVariable symbolName=treeInserter ; cppCheck doesn't know back_insert_iterator
+			treeInserter = insertItem;
+		}
+	}
+}
 #pragma endregion virtual method (IObjectClass)
 
 /*
@@ -460,6 +517,43 @@ This method is a placeholder for derived functionality.  This method performs no
 SVObjectClass* SVObjectClass::UpdateObject(uint32_t , SVObjectClass* , SVObjectClass* )
 {
 	return nullptr;
+}
+
+bool SVObjectClass::isCorrectType(SvPb::ObjectSelectorType requiredType) const
+{
+	switch (requiredType)
+	{
+	case SvPb::allValueObjects:
+		return (SvPb::SVValueObjectType == GetObjectType());
+	case SvPb::allNumberValueObjects:
+	{
+		auto pValueObject = dynamic_cast<const SvOi::IValueObject*>(this);
+		if (nullptr != pValueObject)
+		{
+			DWORD type = pValueObject->GetType();
+			constexpr std::array<DWORD, 11> filter{ VT_I2, VT_I4, VT_I8, VT_R4, VT_R8, VT_UI2, VT_UI4, VT_UI8, VT_INT, VT_UINT, VT_BOOL };
+			return (filter.end() != std::find(filter.begin(), filter.end(), type));
+		}
+		return false;
+	}
+	case SvPb::realNumberValueOjects:
+	{
+		constexpr std::array<SvPb::SVObjectSubTypeEnum, 11> filter{ SvPb::SVDWordValueObjectType, SvPb::SVLongValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::SVBoolValueObjectType, SvPb::SVByteValueObjectType, SvPb::SVInt64ValueObjectType, SvPb::DoubleSortValueObjectType };
+		return (SvPb::SVValueObjectType == GetObjectType() && filter.end() != std::find(filter.begin(), filter.end(), GetObjectSubType()));
+	}
+	case SvPb::stringValueObjects:
+		return (SvPb::SVValueObjectType == GetObjectType() && SvPb::SVStringValueObjectType == GetObjectSubType());
+	case SvPb::tableObjects:
+		return (SvPb::TableObjectType == GetObjectType());
+	case SvPb::allImageObjects:
+		return (SvPb::SVImageObjectType == GetObjectType());
+	case SvPb::grayImageObjects:
+		return (SvPb::SVImageObjectType == GetObjectType() && SvPb::SVImageMonoType == GetObjectSubType());
+	case SvPb::colorImageObjects:
+		return (SvPb::SVImageObjectType == GetObjectType() && SvPb::SVImageColorType == GetObjectSubType());
+	default:
+		return false;
+	}
 }
 
 /*

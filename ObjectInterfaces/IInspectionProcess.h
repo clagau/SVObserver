@@ -42,9 +42,9 @@ namespace SvOi
 		/***********
 		This method gets the PPQ Variables selector list
 		***********/
-		virtual std::vector<SvPb::TreeItem> GetPPQSelectorList(const UINT attribute) const = 0;
+		virtual void fillPPQSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, const UINT attribute, SvPb::ObjectSelectorType type) const = 0;
 
-		virtual std::vector<SvPb::TreeItem> GetCameraSelectorList(const UINT attribute) const = 0;
+		virtual void fillCameraSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, const UINT attribute, SvPb::ObjectSelectorType type) const = 0;
 
 		/***********
 		This method gets the Interface to the Tool Set

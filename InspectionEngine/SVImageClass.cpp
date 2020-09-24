@@ -1214,6 +1214,23 @@ void SVImageClass::setErrorMessageToTool(SvStl::MessageContainer& rErrorMessage)
 	}
 }
 
+void SVImageClass::fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, SvOi::IsObjectAllowedFunc pFunctor, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum nameToType, SvPb::ObjectSelectorType requiredType) const
+{
+	if (0 != ObjectAttributesAllowed())
+	{
+		nameToType = (SvPb::SVNotSetObjectType == nameToType) ? GetObjectType() : nameToType;
+		__super::fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType);
+
+		for (auto* pObject : m_embeddedList)
+		{
+			if (nullptr != pObject)
+			{
+				pObject->fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType);
+			}
+		}
+	}
+}
+
 HRESULT SVImageClass::TranslateFromOutputSpaceToImage(SVImageClass* pImage, SVPoint<double> inPoint, SVPoint<double>& rOutPoint) const
 {
 	HRESULT l_hr = E_FAIL;

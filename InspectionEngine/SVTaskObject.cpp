@@ -415,121 +415,31 @@ HRESULT SVTaskObjectClass::GetChildObject(SVObjectClass*& rpObject, const SVObje
 	return l_Status;
 }
 
-
-
-int  SVTaskObjectClass::GetObjectSelectorList(SvOi::IsObjectInfoAllowed  pFunctor, std::vector<SvPb::TreeItem>& rTreeItems) const
+void SVTaskObjectClass::fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, SvOi::IsObjectAllowedFunc pFunctor, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum nameToType, SvPb::ObjectSelectorType requiredType) const
 {
-	int result(0);
-	UINT AttributesSet = ObjectAttributesSet();
-	if (pFunctor(this, AttributesSet, 0))
-	{
-		SvPb::TreeItem insertItem;
-		insertItem.set_type("Object");
-		insertItem.set_name( GetName());
-		insertItem.set_location(GetCompleteName());
-		insertItem.set_objectidindex(convertObjectIdToString(getObjectId()));
-		insertItem.set_selected(false);
-		rTreeItems.emplace_back(insertItem);
-		result++;
-	}
-	
-	
+	nameToType = (SvPb::SVNotSetObjectType == nameToType) ? GetObjectType() : nameToType;
+	__super::fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType);
+
 	for (size_t i = 0; i < m_friendList.size(); ++i)
 	{
-		const SVObjectInfoStruct& rFriend = m_friendList[i];
-
 		// Check if Friend is alive...
-		SVTaskObjectClass* pObject(nullptr);
-
-		pObject = dynamic_cast<SVTaskObjectClass*>(SVObjectManagerClass::Instance().GetObject(rFriend.getObjectId()));
-
+		auto* pObject = SVObjectManagerClass::Instance().GetObject(m_friendList[i].getObjectId());
 		if (nullptr != pObject)
 		{
-			result += pObject->GetObjectSelectorList(pFunctor, rTreeItems);
-
+			pObject->fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType);
 		}
 	}
-	return result;
+
+	for (auto* pObject : m_embeddedList)
+	{
+		if (nullptr != pObject)
+		{
+			pObject->fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType);
+		}
+	}
 }
 
 #pragma region virtual method (ITaskObject)
-std::vector<SvPb::TreeItem> SVTaskObjectClass::GetSelectorList(SvOi::IsObjectInfoAllowed pFunctor, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum objectType) const
-{
-	std::vector<SvPb::TreeItem> result;
-
-	if (pFunctor)
-	{
-		objectType = (SvPb::SVNotSetObjectType == objectType) ? GetObjectType() : objectType;
-		SVOutputInfoListClass OutputList;
-		GetOutputList(OutputList);
-
-		result.reserve(OutputList.GetSize());
-
-		// Filter the list
-		for (const auto* pOutputInfo : OutputList)
-		{
-			SVObjectReference ObjectRef = pOutputInfo->GetObjectReference();
-			if (ObjectRef.isArray() || pFunctor(ObjectRef.getObject(), attribute, -1))
-			{
-				SvPb::TreeItem insertItem;
-
-				if (nullptr != ObjectRef.getValueObject())
-				{
-					insertItem.set_type(ObjectRef.getValueObject()->getTypeName());
-				}
-
-				if (ObjectRef.isArray())
-				{
-					if (wholeArray && pFunctor(ObjectRef.getObject(), attribute, -1))
-					{
-						ObjectRef.SetEntireArray();
-						insertItem.set_name(ObjectRef.GetName(true));
-						UINT AttributesSet = ObjectRef.ObjectAttributesSet();
-						insertItem.set_location(ObjectRef.GetObjectNameToObjectType(objectType, true, true));
-						insertItem.set_objectidindex(ObjectRef.GetObjectIdAndIndexOneBased());
-						insertItem.set_selected((AttributesSet & attribute) == attribute);
-						result.emplace_back(insertItem);
-					}
-
-					// add array elements
-					int iArraySize = ObjectRef.getValueObject()->getArraySize();
-					for (int i = 0; i < iArraySize; i++)
-					{
-						if (pFunctor(ObjectRef.getObject(), attribute, i))
-						{
-							ObjectRef.SetArrayIndex(i);
-							insertItem.set_name(ObjectRef.GetName(true));
-							UINT AttributesSet = ObjectRef.ObjectAttributesSet();
-							insertItem.set_location(ObjectRef.GetObjectNameToObjectType(objectType, true, true));
-							insertItem.set_objectidindex(ObjectRef.GetObjectIdAndIndexOneBased());
-							insertItem.set_selected((AttributesSet & attribute) == attribute);
-							result.emplace_back(insertItem);
-						}
-					}
-				}
-				else
-				{
-					insertItem.set_name(ObjectRef.GetName());
-					UINT AttributesSet = ObjectRef.ObjectAttributesSet();
-					insertItem.set_location(ObjectRef.GetObjectNameToObjectType(objectType, true));
-					insertItem.set_objectidindex(ObjectRef.GetObjectIdAndIndexOneBased());
-					insertItem.set_selected((AttributesSet & attribute) == attribute);
-					result.emplace_back(insertItem);
-				}
-			}
-		}
-	}
-	else
-	{
-		assert(false);
-#if defined (TRACE_THEM_ALL) || defined (TRACE_OTHER)
-		::OutputDebugString(_T("SVTaskObjectClass::SelectorList - empty functor"));
-#endif
-	}
-
-	return result;
-}
-
 void SVTaskObjectClass::GetInputImages(SvUl::InputNameObjectIdPairList& rList, int maxEntries)
 {
 	SvOl::SVInObjectInfoStruct* psvImageInfo(nullptr);

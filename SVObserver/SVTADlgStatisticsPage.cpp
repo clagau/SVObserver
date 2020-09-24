@@ -264,7 +264,7 @@ void SVTADlgStatisticsPage::OnPublishButton()
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
-		{SvPb::ObjectSelectorType::toolsetItems}, pInspection->getObjectId(), SvPb::publishable, m_pTool->getObjectId());
+		{SvPb::SearchArea::toolsetItems}, pInspection->getObjectId(), SvPb::publishable, m_pTool->getObjectId());
 	
 	SvCmd::InspectionCommands(pInspection->getObjectId(), requestCmd, &responseCmd);
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject, IDD_PUBLISHED_RESULTS + SvOr::HELPFILE_DLG_IDD_OFFSET);
@@ -313,7 +313,7 @@ void SVTADlgStatisticsPage::OnBtnObjectPicker()
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
-		{SvPb::ObjectSelectorType::toolsetItems}, pInspection->getObjectId(), SvPb::selectableForStatistics);
+		{SvPb::SearchArea::toolsetItems}, pInspection->getObjectId(), SvPb::selectableForStatistics, SvDef::InvalidObjectId, false, SvPb::attributesAllowed, SvPb::allNumberValueObjects);
 
 	SvCmd::InspectionCommands(pInspection->getObjectId(), requestCmd, &responseCmd);
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject);

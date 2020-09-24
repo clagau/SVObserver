@@ -347,16 +347,17 @@ int SVTADlgExternalInputSelectPage::SelectObject(std::string& rObjectName, SVRPr
 	SvPb::InspectionCmdResponse responseCmd;
 	if (!isTable)
 	{
+		SvPb::ObjectSelectorType type = (pDef->getVt() & VT_BSTR) == 0 ? SvPb::allNumberValueObjects : SvPb::allValueObjects;
 		*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
-		{SvPb::ObjectSelectorType::globalConstantItems, SvPb::ObjectSelectorType::cameraObject, SvPb::ObjectSelectorType::ppqItems, SvPb::ObjectSelectorType::toolsetItems},
-			m_InspectionID, SvPb::archivable, SvDef::InvalidObjectId, true);
+		{SvPb::SearchArea::globalConstantItems, SvPb::SearchArea::cameraObject, SvPb::SearchArea::ppqItems, SvPb::SearchArea::toolsetItems},
+			m_InspectionID, SvPb::archivable, SvDef::InvalidObjectId, true, SvPb::attributesAllowed, type);
 		SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 	}
 	else
 	{
 		*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
-		{SvPb::ObjectSelectorType::tableObjects},
-			m_InspectionID, SvPb::archivable, SvDef::InvalidObjectId, true);
+			{ SvPb::SearchArea::toolsetItems },
+			m_InspectionID, SvPb::taskObject, SvDef::InvalidObjectId, true, SvPb::attributesAllowed, SvPb::tableObjects);
 		SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 	}
 

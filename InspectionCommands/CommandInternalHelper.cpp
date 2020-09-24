@@ -110,35 +110,18 @@ IsObjectInfoAllowed getObjectSelectorFilterFunc(const SvPb::GetObjectSelectorIte
 {
 	switch (rRequest.filter())
 	{
-		case SvPb::SelectorFilter::rangeValue:
-		{
-			return RangeSelectorFilter(rObjectName);
-		}
-		break;
+		case SvPb::SelectorFilter::excludeSameLineage:
+			return ExcludeSameLineageSelectorFilter(rObjectName);
 
 		case SvPb::SelectorFilter::attributesAllowed:
-		{
 			return AttributesAllowedFilter();
-		}
-		break;
 
 		case SvPb::SelectorFilter::attributesSet:
-		{
 			return AttributesSetFilter();
-		}
-		break;
-
-		case  SvPb::SelectorFilter::monitorListRejectValue:
-		{
-			return MLRejectValueFilter();
-		}
-		break;
 
 		default:
-		break;
-	}
-
-	return nullptr;
+			return nullptr;
+	}	
 }
 
 } //namespace SvCmd

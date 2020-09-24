@@ -33,26 +33,11 @@ class SVOutputInfoListClass;
 
 namespace SvOi
 {
-	typedef std::function<bool(const IObjectClass* pObject, unsigned int Attribute, int ArrayIndex)> IsObjectInfoAllowed;
-
 	//this class is a interface. It should only have pure virtual public method and no member variables
 	class ITaskObject
 	{
 	public:
 		virtual ~ITaskObject() {}
-
-		//************************************
-		/// Return the output list of this task object, filtered by functor.
-		/// \param pFunctor <in> functor to check the attribute
-		/// \param Attribute <in> attribute
-		/// \param WholeArray <in> flag determines if whole arrays are used
-		/// \returns the vector of tree items
-		//************************************
-		virtual std::vector<SvPb::TreeItem> GetSelectorList(IsObjectInfoAllowed pFunctor, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum objectType) const = 0;
-		
-		///Insert all objects in this taskobject filterd by functor
-		/// returns the number of insert objects
-		virtual int GetObjectSelectorList(SvOi::IsObjectInfoAllowed pFunctor, std::vector<SvPb::TreeItem>& rTreeItems) const =0;
 
 		/// Get the List of Input Images to this Task Object.
 		/// \param rList <in> The List to be populated.

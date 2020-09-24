@@ -39,12 +39,13 @@ constexpr int IconGrowBy = 1;
 #pragma endregion Declarations
 
 #pragma region Constructor
-SelectedObjectsPage::SelectedObjectsPage(const std::string& rInspectionName, uint32_t inspectionID, LPCTSTR Caption, const SvDef::StringVector& rList, UINT AttributeFilters, int id)
+SelectedObjectsPage::SelectedObjectsPage(const std::string& rInspectionName, uint32_t inspectionID, LPCTSTR Caption, const SvDef::StringVector& rList, UINT AttributeFilters, SvPb::ObjectSelectorType type, int id)
 : CPropertyPage(id)
 , m_InspectionName( rInspectionName )
 , m_InspectionID ( inspectionID )
 , m_List( rList )
 , m_AttributeFilter( AttributeFilters )
+, m_type (type)
 {
 	m_strCaption = Caption;
 	m_psp.pszTitle = m_strCaption;
@@ -199,7 +200,7 @@ void SelectedObjectsPage::ShowObjectSelector()
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
-		{SvPb::ObjectSelectorType::toolsetItems}, m_InspectionID, static_cast<SvPb::ObjectAttributes> (AttributeFilters));
+		{SvPb::SearchArea::toolsetItems}, m_InspectionID, static_cast<SvPb::ObjectAttributes> (AttributeFilters), SvDef::InvalidObjectId, false, SvPb::attributesAllowed, m_type);
 	SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject, m_helpID);

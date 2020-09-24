@@ -31,11 +31,11 @@ namespace SvOi
 	//************************************
 	void getRootChildNameList(SvDef::StringVector& rObjectNameList, LPCTSTR Path = _T(""), UINT AttributesAllowedFilter = 0);
 
-	//************************************
-	/// Get the Root child selector list from a path and specified filter.
-	/// \param Path [in] Path of the root child desired. Default = "", this means all objects.
-	/// \param AttributesAllowedFilter [in] Filter of the environment which are wanted. Default = 0, this means all objects.
-	/// \returns the vector of tree items
-	//************************************
-	std::vector<SvPb::TreeItem> getRootChildSelectorList(LPCTSTR Path = _T(""), UINT AttributesAllowedFilter = 0);
+
+	/// Fill the treeItem-vector with objects, which fit the requirements.
+	/// \param treeInserter [in,out] inserter
+	/// \param Path [in] Start path, "" means all.
+	/// \param AttributesAllowedFilter [in] attribute filter
+	/// \param type [in] required type of the object.
+	void fillRootChildSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, LPCTSTR Path = _T(""), UINT AttributesAllowedFilter = 0, SvPb::ObjectSelectorType type = SvPb::allValueObjects);
 } //namespace SvOi

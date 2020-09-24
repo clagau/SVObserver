@@ -311,22 +311,31 @@ enum ObjectAttributes
 }
 
 ///Object selector types
-enum ObjectSelectorType
+enum SearchArea
 {
 	toolsetItems = 0;				//Inspection toolset items
 	globalConstantItems = 1;		//Global constant items
 	ppqItems = 2;					//PPQ variable items
-	tableObjects = 3;				//Inspection  table Objects 
-	cameraObject = 4;				//camera variable items
+	cameraObject = 3;				//camera variable items
+}
+
+enum ObjectSelectorType
+{
+	allValueObjects = 0;			//All valueObjects
+	allNumberValueObjects = 1;		//All ValueObjects which can be converted to a integer or double
+	realNumberValueOjects = 2;		//All number valueObjects, but not e.g. timer or enums
+	stringValueObjects = 3;
+	tableObjects = 4;				//Inspection  table Objects 
+	allImageObjects = 5;
+	grayImageObjects = 6;
+	colorImageObjects = 7;
 }
 
 enum SelectorFilter
 {
 	attributesAllowed = 0;			//Object selector filter for attributes allowed
 	attributesSet = 1;				//Object selector filter for attributes set
-	rangeValue = 2;					//Object selector filter for range values
-	monitorListRejectValue = 3;		//Object selector filter for monitor list reject values
-	ppqValue = 4;					//Object selector filter for ppq value
+	excludeSameLineage = 2;			//Object selector filter exclude all object from the same lineage
 }
 
 enum SVExtentPropertyEnum

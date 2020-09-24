@@ -53,13 +53,13 @@ SVDataDefinitionSheet::~SVDataDefinitionSheet()
 #pragma region Private Methods
 HRESULT SVDataDefinitionSheet::CreatePages()
 {
-	initSelectedList( &m_ValueList, SvPb::dataDefinitionValue );
-	initSelectedList( &m_ImageList, SvPb::dataDefinitionImage );
+	initSelectedList( &m_ValueList, SvPb::dataDefinitionValue, SvPb::allValueObjects );
+	initSelectedList( &m_ImageList, SvPb::dataDefinitionImage, SvPb::allImageObjects );
 
-	SelectedObjectsPage* pValuesDlg = new SelectedObjectsPage( m_InspectionName, m_InspectionID, _T("Value Names"), m_ValueList, SvPb::dataDefinitionValue );
+	SelectedObjectsPage* pValuesDlg = new SelectedObjectsPage( m_InspectionName, m_InspectionID, _T("Value Names"), m_ValueList, SvPb::dataDefinitionValue, SvPb::allValueObjects );
 	AddPage(pValuesDlg);
 
-	SelectedObjectsPage* pImagesDlg = new SelectedObjectsPage( m_InspectionName, m_InspectionID, _T("Image Names"), m_ImageList, SvPb::dataDefinitionImage );
+	SelectedObjectsPage* pImagesDlg = new SelectedObjectsPage( m_InspectionName, m_InspectionID, _T("Image Names"), m_ImageList, SvPb::dataDefinitionImage, SvPb::allImageObjects );
 	AddPage(pImagesDlg);
 
 	return S_OK;
@@ -113,18 +113,16 @@ void SVDataDefinitionSheet::OnOK()
 	EndDialog(IDOK);
 }
 
-void SVDataDefinitionSheet::initSelectedList(SvDef::StringVector* pList, UINT Attribute )
+void SVDataDefinitionSheet::initSelectedList(SvDef::StringVector* pList, UINT Attribute, SvPb::ObjectSelectorType type)
 {
 	if( nullptr != pList )
 	{
 		pList->clear();
 		//This is used to retrieve the list which have the attribute set
-		SvPb::SelectorFilter filter {SvPb::SelectorFilter::attributesSet};
-
 		SvPb::InspectionCmdRequest requestCmd;
 		SvPb::InspectionCmdResponse responseCmd;
 		*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
-		{ SvPb::ObjectSelectorType::toolsetItems }, m_InspectionID, static_cast<SvPb::ObjectAttributes> (Attribute), SvDef::InvalidObjectId, false, filter);
+		{ SvPb::SearchArea::toolsetItems }, m_InspectionID, static_cast<SvPb::ObjectAttributes> (Attribute), SvDef::InvalidObjectId, false, SvPb::SelectorFilter::attributesSet, type);
 
 		SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 		if (responseCmd.has_getobjectselectoritemsresponse())

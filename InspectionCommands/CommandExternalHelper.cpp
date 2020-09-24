@@ -132,19 +132,21 @@ namespace SvCmd
 		sourceInfo.set_embeddedid(destInfo.m_EmbeddedID);
 	}
 
-	SvPb::GetObjectSelectorItemsRequest createObjectSelectorRequest(const std::vector<SvPb::ObjectSelectorType>& rItemTypes, uint32_t inspectionID, SvPb::ObjectAttributes attribute, uint32_t instanceID /*= 0*/, bool wholeArray /*= false*/, SvPb::SelectorFilter filter /*= SvPb::SelectorFilter::attributesAllowed*/)
+	SvPb::GetObjectSelectorItemsRequest createObjectSelectorRequest(const std::vector<SvPb::SearchArea>& rSearchAreas, uint32_t inspectionID, SvPb::ObjectAttributes attribute, uint32_t instanceID /*= 0*/, bool wholeArray /*= false*/, SvPb::SelectorFilter filter /*= SvPb::SelectorFilter::attributesAllowed*/, SvPb::ObjectSelectorType type /*= SvPb::allValueObjects*/)
 	{
 		SvPb::GetObjectSelectorItemsRequest result;
 
-		for (const auto& rType : rItemTypes)
+		for (const auto& rArea : rSearchAreas)
 		{
-			result.add_types(rType);
+			result.add_areas(rArea);
 		}
 		result.set_inspectionid(inspectionID);
 		result.set_instanceid(instanceID);
 		result.set_attribute(attribute);
 		result.set_wholearray(wholeArray);
 		result.set_filter(filter);
+		result.set_type(type);
+
 		return result;
 	}
 } //namespace SvCmd

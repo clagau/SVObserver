@@ -417,26 +417,50 @@ void SvOi::getRootChildNameList(SvDef::StringVector& rObjectNameList, LPCTSTR Pa
 	RootObject::getRootChildNameList(rObjectNameList, Path, AttributesAllowedFilter);
 }
 
-std::vector<SvPb::TreeItem> SvOi::getRootChildSelectorList(LPCTSTR Path, UINT AttributesAllowedFilter)
+void SvOi::fillRootChildSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, LPCTSTR Path, UINT AttributesAllowedFilter, SvPb::ObjectSelectorType type)
 {
-	std::vector<SvPb::TreeItem> result;
 	SvVol::BasicValueObjects::ValueVector objectVector;
 
 	//To have the function available without knowing the class RootObject
 	RootObject::getRootChildObjectList(objectVector, Path, AttributesAllowedFilter);
-	result.reserve(objectVector.size());
 
 	for (const auto rpObject : objectVector)
 	{
-		SvPb::TreeItem insertItem;
-		insertItem.set_name(rpObject->GetName());
-		insertItem.set_location(rpObject->GetCompleteName());
-		insertItem.set_objectidindex(convertObjectIdToString(rpObject->getObjectId()));
-		insertItem.set_type(rpObject->getTypeName());
-		result.emplace_back(insertItem);
-	}
+		bool typeOk;
+		switch (type)
+		{
+		case SvPb::allValueObjects:
+			typeOk = true;
+			break;
+		case SvPb::allNumberValueObjects:
+		case SvPb::realNumberValueOjects:
+		{
+			constexpr std::array<DWORD, 11> filter{ VT_I2, VT_I4, VT_I8, VT_R4, VT_R8, VT_UI2, VT_UI4, VT_UI8, VT_INT, VT_UINT, VT_BOOL };
+			typeOk = (filter.end() != std::find(filter.begin(), filter.end(), rpObject->GetType()));
+			break;
+		}
+		case SvPb::stringValueObjects:
+			typeOk = (VT_BSTR == rpObject->GetType());
+			break;
+		case SvPb::tableObjects:
+		case SvPb::allImageObjects:
+		case SvPb::grayImageObjects:
+		case SvPb::colorImageObjects:
+		default:
+			typeOk = false;
+			break;
+		}
 
-	return result;
+		if (typeOk)
+		{
+			SvPb::TreeItem insertItem;
+			insertItem.set_name(rpObject->GetName());
+			insertItem.set_location(rpObject->GetCompleteName());
+			insertItem.set_objectidindex(convertObjectIdToString(rpObject->getObjectId()));
+			insertItem.set_type(rpObject->getTypeName());
+			treeInserter = insertItem;
+		}
+	}
 }
 #pragma endregion IRootObject-function
 

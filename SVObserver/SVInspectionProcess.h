@@ -94,8 +94,8 @@ public:
 #pragma region virtual method (IInspectionProcess)
 	virtual SvOi::IObjectClass* GetPPQInterface() const override;
 	virtual void SetDefaultInputs() override;
-	virtual std::vector<SvPb::TreeItem> GetPPQSelectorList(const UINT attribute) const override;
-	virtual std::vector<SvPb::TreeItem> GetCameraSelectorList(const UINT attribute) const override;
+	virtual void fillPPQSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, const UINT attribute, SvPb::ObjectSelectorType type) const override;
+	virtual void fillCameraSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, const UINT attribute, SvPb::ObjectSelectorType type) const override;
 	virtual SvOi::ITaskObject* GetToolSetInterface() const override;
 	virtual HRESULT RunOnce() override;
 	virtual HRESULT SubmitCommand(const SvOi::ICommandPtr& rCommandPtr) override;

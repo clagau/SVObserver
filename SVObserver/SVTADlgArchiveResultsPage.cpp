@@ -302,7 +302,7 @@ void SVTADlgArchiveResultsPage::ShowObjectSelector()
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
-		{SvPb::ObjectSelectorType::globalConstantItems, SvPb::ObjectSelectorType::cameraObject, SvPb::ObjectSelectorType::toolsetItems}, InspectionId, SvPb::archivable);
+		{ SvPb::SearchArea::globalConstantItems, SvPb::SearchArea::cameraObject, SvPb::SearchArea::toolsetItems }, InspectionId, SvPb::archivable);
 
 	SvCmd::InspectionCommands(InspectionId, requestCmd, &responseCmd);
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject, IDD + SvOr::HELPFILE_DLG_IDD_OFFSET);
