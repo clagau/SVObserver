@@ -1283,11 +1283,11 @@ bool SVOConfigAssistantDlg::SendPPQDataToConfiguration(SVPPQObjectPtrVector& rPP
 				//if not, delete them from ppqobj
 				for (long lI= lInsCnt-1; -1 < lI; --lI)
 				{
-					bool bDetachInspect{ false };
 					SVInspectionProcess* pInspection( nullptr );
 					bRet = pPPQ->GetInspection(lI, pInspection);
 					if ( nullptr != pInspection)
 					{
+						bool bDetachInspect{ false };
 						//Inspection has the old name by now
 						const SVOInspectionObjPtr pTmpInspection( GetInspectionObjectByName(pInspection->GetName()) );
 						if ( nullptr != pTmpInspection )
