@@ -853,7 +853,6 @@ STDMETHODIMP SVCommand::SVGetImageList(SAFEARRAY* psaNames, long, SAFEARRAY** pp
 			Sleep(0);
 
 			bool bImageOk = false;
-			BSTR bstrImage = nullptr;
 			long lProcessCount = -1;
 			SvIe::SVImageOverlayClass l_OverlayClass;
 
@@ -875,7 +874,7 @@ STDMETHODIMP SVCommand::SVGetImageList(SAFEARRAY* psaNames, long, SAFEARRAY** pp
 
 					char* pDIB = nullptr;
 
-					bstrImage = SysAllocStringByteLen(nullptr, static_cast<UINT>(l_ImageIter->second.m_ImageDIB.size()));
+					BSTR bstrImage = SysAllocStringByteLen(nullptr, static_cast<UINT>(l_ImageIter->second.m_ImageDIB.size()));
 					if (nullptr == bstrImage)
 					{
 						hr = -1568;

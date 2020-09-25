@@ -20,7 +20,6 @@
 #include "TextDefinesSvOl.h"
 #include "SVMessage\SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
-
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -28,6 +27,7 @@
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
+
 #pragma endregion Declarations
 
 SVObjectManagerClass& SVObjectManagerClass::Instance()
@@ -1379,6 +1379,29 @@ bool SVObjectManagerClass::DisconnectObjectInput(uint32_t sourceId, SvOl::SVInOb
 	return Result;
 }
 
+void SVObjectManagerClass::listAllObjects()
+{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_OBJECTS)
+	::OutputDebugString(_T("ObjectID; Name; Type; SubType\n"));
+	for (auto& rEntry : m_UniqueObjectEntries)
+	{
+		SVObjectClass* pObject{ rEntry.second->m_pObject };
+		std::string objectData{_T(";;")};
+		if (nullptr != pObject)
+		{
+			objectData = SvUl::Format(_T("%s; %ld; %ld"), pObject->GetCompleteName().c_str(), pObject->GetObjectType(), pObject->GetObjectSubType());
+		}
+		::OutputDebugString(SvUl::Format(_T("%lu; %s\n"), rEntry.second->m_ObjectID, objectData.c_str()).c_str());
+	}
+#endif
+}
+
+void SVObjectManagerClass::clearHeapMemory()
+{
+	/// is only called when CHECK_MEMORY_LEAKS is defined
+	std::unique_lock<std::recursive_mutex> Autolock(m_Mutex, std::defer_lock);
+	SVUniqueObjectEntryMap(m_UniqueObjectEntries).swap(m_UniqueObjectEntries);
+}
 
 #pragma region IObjectManager-function
 SvOi::IObjectClass* SvOi::getObjectByDottedName(const std::string& rFullName)

@@ -107,7 +107,7 @@ namespace SvXml
 			pVar->lVal =0 ;
 			break;
 		case VT_BSTR:
-			pVar->bstrVal = SysAllocStringLen(pVal, (UINT)wcslen(pVal)) ; 
+			*pVar = _bstr_t(SysAllocStringLen(pVal, (UINT)wcslen(pVal))); 
 			break;
 		case VT_BOOL:
 			{

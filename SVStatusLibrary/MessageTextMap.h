@@ -326,6 +326,7 @@ namespace SvStl
 		{Tid_Config_CameraFileNameInvalid, _T("Camera file name is invalid %s")},
 		{Tid_Config_CameraFileInvalid, _T("Camera file is invalid %s")},
 		{Tid_Error_NoMilHostBuffer, _T("No Mil Host Buffer Pointer")},
+		{Tid_Error_MilDestroy, _T("Mil destroy error")},
 		{Tid_Error_MilImageTypeInvalid, _T("MIL Image Type Not 8 Bit Unsigned: %s")},
 		{Tid_Error_FontNotMfoExt, _T( "Font File Requires '.mfo' Extension: %s" )},
 		{Tid_Error_NoFontConstraintsFileSpec, _T("No Font Constraints File Specified")},

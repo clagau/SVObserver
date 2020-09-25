@@ -2962,6 +2962,8 @@ HRESULT SVObserverApp::DestroyConfig(bool AskForSavingOrClosing /* = true */,
 		ConnectCameras();
 	}
 
+	::OutputDebugString(SvUl::Format(_T("Closing config %s\n"), getConfigFileName().c_str()).c_str());
+	SVObjectManagerClass::Instance().listAllObjects();
 	return hr;
 }
 

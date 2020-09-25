@@ -275,10 +275,20 @@ bool SVBlobAnalyzerClass::CloseObject()
 {
     SVImageAnalyzerClass::CloseObject ();
 	
-	SVMatroxBlobInterface::DestroyResult(m_ResultBufferID);
-	SVMatroxBlobInterface::DestroyContext(m_BlobContextID);
+	if (S_OK != SVMatroxBlobInterface::DestroyResult(m_ResultBufferID))
+	{
+		SvStl::MessageManager Msg(SvStl::MsgType::Log);
+		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_MilDestroy, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+	}
+	if (S_OK != SVMatroxBlobInterface::DestroyContext(m_BlobContextID))
+	{
+		SvStl::MessageManager Msg(SvStl::MsgType::Log);
+		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_MilDestroy, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+	}
 
-    return true;
+	m_ResultBufferID = M_NULL;
+	m_BlobContextID = M_NULL;
+	return true;
 }
 
 DWORD SVBlobAnalyzerClass::AllocateResult(int FeatureIndex)
@@ -614,6 +624,10 @@ bool SVBlobAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCreateS
 			}
 			m_Value[i].SetArraySize(m_lMaxBlobDataArraySize);	// no longer sample size (max number of blobs found)
 		}
+		if (M_NULL != m_ResultBufferID)
+		{
+			SVMatroxBlobInterface::DestroyResult(m_ResultBufferID);
+		}
 		
 		HRESULT MatroxCode = SVMatroxBlobInterface::CreateResult(m_ResultBufferID);
 
@@ -625,6 +639,10 @@ bool SVBlobAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCreateS
 			break;
 		}
 
+		if (M_NULL != m_BlobContextID)
+		{
+			SVMatroxBlobInterface::DestroyContext(m_BlobContextID);
+		}
 		MatroxCode = SVMatroxBlobInterface::CreateContext(m_BlobContextID);
 
 		if (S_OK != MatroxCode || M_NULL == m_BlobContextID)

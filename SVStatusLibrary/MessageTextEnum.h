@@ -290,6 +290,7 @@ enum MessageTextEnum
 	Tid_Config_CameraFileNameInvalid,
 	Tid_Config_CameraFileInvalid,
 	Tid_Error_NoMilHostBuffer,
+	Tid_Error_MilDestroy,
 	Tid_Error_MilImageTypeInvalid,
 	Tid_Error_FontNotMfoExt,
 	Tid_Error_NoFontConstraintsFileSpec,

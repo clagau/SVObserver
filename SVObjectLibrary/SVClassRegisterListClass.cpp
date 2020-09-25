@@ -1637,7 +1637,12 @@ std::string saveObjectIdMapping()
 
 void resetExchangeObjectIdMap()
 {
+#if defined CHECK_MEMORY_LEAKS
+	///This insures that no memory is still allocated on the heap
+	std::unordered_map<GUID, uint32_t>{}.swap(g_ExchangeObjectID);
+#else
 	g_ExchangeObjectID.clear();
+#endif
 }
 
 #pragma endregion Declarations

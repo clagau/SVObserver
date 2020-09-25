@@ -25,21 +25,22 @@ namespace SvSyl
 
 		DWORD dwHandle;
 		DWORD size = ::GetFileVersionInfoSize(moduleFilename, &dwHandle);
-		unsigned char* lpData = new unsigned char[size];
 
-		BOOL rc = ::GetFileVersionInfo(moduleFilename, 0, size, lpData);
+		std::vector<unsigned char> data;
+		data.resize(size);
+
+		BOOL rc = ::GetFileVersionInfo(moduleFilename, 0, size, &data.at(0));
 		if (rc)
 		{
 			VS_FIXEDFILEINFO* pFileInfo = nullptr;
 			UINT Len = 0;
-			if (::VerQueryValue(lpData, _T("\\"), (LPVOID *)&pFileInfo, (PUINT)&Len)) 
+			if (::VerQueryValue(&data.at(0), _T("\\"), (LPVOID *)&pFileInfo, (PUINT)&Len))
 			{
 				isValid = true;
 				rFileInfo = *pFileInfo;
 				//memcpy(pFileInfo, *rFileInfo, Len);
 			}
 		}
-		delete[] lpData;
 		return isValid;
 	}
 

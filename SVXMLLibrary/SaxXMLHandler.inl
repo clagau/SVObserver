@@ -518,26 +518,30 @@ namespace SvXml
 	template<typename TreeType>
 	_variant_t  SaxXMLHandler<TreeType>::GetVariantArray()
 	{
-		COleSafeArray saRet;
+		_variant_t result;
 		if(m_spIntVector.get())
 		{
-			saRet.CreateOneDim(VT_I4,static_cast<DWORD>(m_spIntVector->size()));
+			COleSafeArray saRet;
+			saRet.CreateOneDim(VT_I4, static_cast<DWORD>(m_spIntVector->size()));
 
 			for(long i =0 ; i < static_cast<long>(m_spIntVector->size());i++ )
 			{
 				saRet.PutElement(&i,&(m_spIntVector->at(i)));
 			}
+			result = saRet;
 		}
 		else if(m_spUINTVector.get())
 		{
+			COleSafeArray saRet;
 			saRet.CreateOneDim(VT_I4,static_cast<DWORD>(m_spUINTVector->size()));
 
 			for(long i =0 ; i < static_cast<long>(m_spUINTVector->size());i++ )
 			{
 				saRet.PutElement(&i,&(m_spUINTVector->at(i)));
 			}
+			result = saRet;
 		} 
-		return saRet.Detach();
+		return result;
 	}
 
 
