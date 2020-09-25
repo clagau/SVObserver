@@ -52,7 +52,7 @@ protected:
 		unsigned short bFailStatusValuesCollapsed : 1;
 		
 		ExpandCollapseState()
-		: bListCollapsed(0)
+		: bListCollapsed(1)
 		, bProductCollapsed(0)
 		, bProductValuesCollapsed(0)
 		, bProductImagesCollapsed(0)
@@ -62,6 +62,10 @@ protected:
 		, bFailStatusValuesCollapsed(0)
 		{
 		}
+
+		ExpandCollapseState(const ExpandCollapseState& rh) = default;
+		ExpandCollapseState& operator=(const ExpandCollapseState& rh) = default;
+		
 	};
 
 	typedef std::map<std::string, ExpandCollapseState> CollapseExpandMap;
@@ -85,6 +89,7 @@ protected:
 	CImageList ImageList;
 	CImageList StateImageList;
 	CollapseExpandMap m_ExpandCollapseStates;
+	
 #pragma endregion Protected
 
 #pragma region Public

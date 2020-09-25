@@ -400,6 +400,7 @@ bool MonitorListView::HandleExpandCollapse(MonitorListViewNodeType nodeType, Exp
 		bRetVal = false;
 		break;
 	}
+
 	return bRetVal;
 }
 
@@ -521,6 +522,9 @@ void MonitorListView::OnUpdate(CView* , LPARAM lHint, CObject* )
 	SVConfigurationObject* pConfig(nullptr);
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 
+	// save the actual state of all items so that can be restored
+	CollapseExpandMap expandCollapseStatesTemp(m_ExpandCollapseStates);
+
 	if (nullptr != pIODoc && ::IsWindow(m_hWnd) && nullptr != pConfig)
 	{
 		pConfig->ValidateRemoteMonitorList(); // prune the list if necessary 
@@ -541,6 +545,19 @@ void MonitorListView::OnUpdate(CView* , LPARAM lHint, CObject* )
 			{
 				m_ExpandCollapseStates[it->first] = ExpandCollapseState();
 			}
+			
+			// Try to restore collapsed state. 
+			// If the name was changed during an edit, its state cannot be recovered (since the map is indexed by name).
+			try
+			{
+				m_ExpandCollapseStates[it->first] = expandCollapseStatesTemp.at(it->first);
+			}
+			catch (...)
+			{
+				//value does not exists, set the default value 
+				m_ExpandCollapseStates[it->first] = ExpandCollapseState();
+			}
+			
 			// Get The Expand/Collapse State
 			ExpandCollapseState state = m_ExpandCollapseStates[it->first];
 
