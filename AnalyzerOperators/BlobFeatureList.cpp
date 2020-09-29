@@ -503,7 +503,6 @@ namespace SvAo
 				}
 				if (!pFeatureTask->isCustomFeature())
 				{
-					// cppcheck-suppress unreadVariable symbolName=excludeDataVecInserter ; cppCheck doesn't know back_insert_iterator
 					excludeDataVecInserter = excludeData;
 				}
 			}

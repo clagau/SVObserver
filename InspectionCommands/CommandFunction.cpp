@@ -299,7 +299,6 @@ SvPb::InspectionCmdResponse getObjectParameters(SvPb::GetObjectParametersRequest
 		pObjParamResponse->mutable_typeinfo()->set_objecttype(pObject->GetObjectType());
 		pObjParamResponse->mutable_typeinfo()->set_subtype(pObject->GetObjectSubType());
 		SvOi::ITaskObject* pTask = dynamic_cast<SvOi::ITaskObject*>(pObject);
-		// cppcheck-suppress knownConditionTrueFalse //dynamic_cast can change to nullptr
 		if (nullptr != pTask)
 		{
 			pObjParamResponse->set_isvalid(pTask->isErrorMessageEmpty());

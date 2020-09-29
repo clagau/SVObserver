@@ -141,7 +141,6 @@ bool SVLinearImageOperatorList::Run(RunStatus& rRunStatus, SvStl::MessageContain
 
 	if (result)
 	{
-		// cppcheck-suppress knownConditionTrueFalse //UseRotation can in fact be changed by getUseRotationAngle()
 		if (UseRotation) 
 		{
 			SvTrc::IImagePtr pInputBuffer = (nullptr != pInputImage) ? pInputImage->getImageReadOnly(rRunStatus.m_triggerRecord.get()) : nullptr;

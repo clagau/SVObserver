@@ -1142,7 +1142,7 @@ HRESULT SVInspectionProcess::AddInputImageRequest(SvIe::SVImageClass* p_psvImage
 
 				l_Status = SvIe::SVImageProcessingClass::LoadImageBuffer((void*)p_rbstrValue,
 					l_pInRequest->m_ImageInfo, l_pInRequest->m_ImageHandlePtr, l_ImageInfo);
-				// cppcheck-suppress knownConditionTrueFalse //dynamic_cast can change l_psvMainImage to nullptr
+
 				l_pInRequest->m_bUsingCameraName = nullptr != l_psvMainImage;
 
 				if (l_pInRequest->m_bUsingCameraName)
@@ -1195,7 +1195,6 @@ HRESULT SVInspectionProcess::AddInputImageFileNameRequest(SvIe::SVImageClass* pI
 			SvIe::SVCameraImageTemplate* pMainImage = dynamic_cast<SvIe::SVCameraImageTemplate*> (pImage);
 
 			l_Status = SvIe::SVImageProcessingClass::LoadImageBuffer(rImageFileName.c_str(), l_pInRequest->m_ImageInfo, l_pInRequest->m_ImageHandlePtr);
-			// cppcheck-suppress knownConditionTrueFalse //dynamic_cast can change pMainImage to nullptr
 			l_pInRequest->m_bUsingCameraName = nullptr != pMainImage;
 
 			if (l_pInRequest->m_bUsingCameraName)
@@ -3580,7 +3579,6 @@ bool SVInspectionProcess::DestroyChildObject(SVObjectClass* pChild)
 	if (nullptr != pChild)
 	{
 		SvIe::SVTaskObjectClass* pTaskObject = dynamic_cast<SvIe::SVTaskObjectClass*>(pChild);
-		// cppcheck-suppress knownConditionTrueFalse //dynamic_cast can change pTaskObject to nullptr
 		if (nullptr != pTaskObject)
 		{
 			// Notify the Owner of our inputs that they are not needed anymore

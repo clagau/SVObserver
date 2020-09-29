@@ -650,7 +650,6 @@ bool SVImagePolarTransform::onRun( RunStatus& rRunStatus, SvStl::MessageContaine
 					_controlfp( newCw, MCW_EM );
 
 					double l_dAngularDistance = dEndAngle - dStartAngle;
-					// cppcheck-suppress knownConditionTrueFalse ; I don't know why l_dAngularDistance should be always smaller than 720
 					if( l_dAngularDistance > 720.0 )
 					{
 						l_dAngularDistance = 720.0;
@@ -673,7 +672,6 @@ bool SVImagePolarTransform::onRun( RunStatus& rRunStatus, SvStl::MessageContaine
 
 					MatroxCode = SVMatroxImageInterface::PolarTransform(pOutputImageBuffer->getHandle()->GetBuffer(), l_Polar );
 
-					// cppcheck-suppress knownConditionTrueFalse ; I don't know why l_dAngularDistance should be always smaller than 360
 					if( l_dAngularDistance > 360 )
 					{
 						//  Small Part 

@@ -145,17 +145,20 @@ bool SVLinearMeasurementAnalyzerClass::ResetObject(SvStl::MessageContainerVector
 void SVLinearMeasurementAnalyzerClass::addOverlayResults(SvPb::Overlay& rOverlay, bool isVertical) const
 {
 	auto* pGroup = rOverlay.add_shapegroups();
-	pGroup->set_detaillevel(SvPb::Level1);
-	pGroup->set_name("LAnalyzer-Result");
-
-	if (nullptr != GetEdgeA() && nullptr != pGroup)
+	if (nullptr != pGroup)
 	{
-		GetEdgeA()->addOverlayResultMarker(*pGroup, isVertical);
-	}
+		pGroup->set_detaillevel(SvPb::Level1);
+		pGroup->set_name("LAnalyzer-Result");
 
-	if (nullptr != GetEdgeB() && nullptr != pGroup)
-	{
-		GetEdgeB()->addOverlayResultMarker(*pGroup, isVertical);
+		if (nullptr != GetEdgeA())
+		{
+			GetEdgeA()->addOverlayResultMarker(*pGroup, isVertical);
+		}
+
+		if (nullptr != GetEdgeB())
+		{
+			GetEdgeB()->addOverlayResultMarker(*pGroup, isVertical);
+		}
 	}
 }
 

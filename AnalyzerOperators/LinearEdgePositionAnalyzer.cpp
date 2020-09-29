@@ -96,11 +96,10 @@ bool LinearEdgePositionAnalyzer::ResetObject(SvStl::MessageContainerVector *pErr
 void LinearEdgePositionAnalyzer::addOverlayResults(SvPb::Overlay& rOverlay, bool isVertical) const
 {
 	auto* pGroup = rOverlay.add_shapegroups();
-	pGroup->set_detaillevel(SvPb::Level1);
-	pGroup->set_name("LAnalyzer-Result");
-
 	if (nullptr != GetEdgeA() && nullptr != pGroup)
 	{
+		pGroup->set_detaillevel(SvPb::Level1);
+		pGroup->set_name("LAnalyzer-Result");
 		GetEdgeA()->addOverlayResultMarker(*pGroup, isVertical);
 	}
 }

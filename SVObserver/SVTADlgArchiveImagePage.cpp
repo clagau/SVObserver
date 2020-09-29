@@ -390,7 +390,7 @@ void SVTADlgArchiveImagePage::MemoryUsage()
 
 		if( nullptr != pObject )
 		{
-			SvIe::SVImageClass* pImage = dynamic_cast <SvIe::SVImageClass*> ( pObject );// cppcheck-suppress knownConditionTrueFalse //dynamic cast can in fact return nullptr!
+			SvIe::SVImageClass* pImage = dynamic_cast <SvIe::SVImageClass*> ( pObject );
 			if ( nullptr != pImage )
 			{
 				m_mapSelectedImageMemUsage[ pImage ] = SvTo::SVArchiveTool::CalculateImageMemory( pImage );

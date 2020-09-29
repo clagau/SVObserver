@@ -25,7 +25,6 @@ Image::Image(const SvOi::SVImageBufferHandlePtr& pBuffer, long ResetId, int buff
 
 Image::~Image()
 {
-	// cppcheck-suppress knownConditionTrueFalse //constructor can change values and if can be true
 	if (m_shouldUnlockAuto && 0 <= m_bufferPos)
 	{
 		auto pLock = ResetLocker::lockReset(m_ResetId);

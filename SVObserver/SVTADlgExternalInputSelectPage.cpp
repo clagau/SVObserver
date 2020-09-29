@@ -338,10 +338,12 @@ int SVTADlgExternalInputSelectPage::SelectObject(std::string& rObjectName, SVRPr
 	
 	const  SvOp::InputValueDefinition* pDef = GetInputValueDefinitionPtr(pItem);
 	bool isTable(false);
-	if (pDef)
+	if (nullptr == pDef)
 	{
-		isTable = (pDef->getType() == SvOp::ExDllInterfaceType::TableArray);
+		assert(false);
+		return IDCANCEL;
 	}
+	isTable = (pDef->getType() == SvOp::ExDllInterfaceType::TableArray);
 	
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;

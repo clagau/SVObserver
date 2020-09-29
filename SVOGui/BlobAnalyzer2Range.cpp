@@ -257,7 +257,6 @@ namespace SvOg
 	void BlobAnalyzer2Range::OnGridEndEdit(NMHDR* pNotifyStruct, LRESULT* pResult)
 	{
 		SvGcl::NM_GRIDVIEW* pItem = (SvGcl::NM_GRIDVIEW*) pNotifyStruct;
-		bool bAcceptChange = true;
 
 		if (0 < pItem->iRow && m_featureData.size() >= pItem->iRow)
 		{
@@ -279,7 +278,7 @@ namespace SvOg
 			}
 		}
 
-		*pResult = (bAcceptChange) ? 0 : -1;
+		*pResult = 0;
 	}
 
 	void BlobAnalyzer2Range::OnBnClickedFailHighIndirect()
