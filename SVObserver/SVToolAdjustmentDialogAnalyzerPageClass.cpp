@@ -450,11 +450,9 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnPublishButton()
 		//GetToolSet return SVToolSet and for this it needs #include "SVToolSet.h"
 		PublishList.Refresh(static_cast<SvIe::SVTaskObjectClass*>(pInspection->GetToolSet()));
 
-		SVIPDoc* pIPDoc = m_pParentDialog->GetIPDoc();
-
-		if (nullptr != pIPDoc)
+		if (nullptr != m_pParentDialog)
 		{
-			pIPDoc->SetModifiedFlag();
+			m_pParentDialog->markDocumentAsDirty();
 		}
 	}
 }

@@ -39,11 +39,7 @@ public:
 #pragma endregion Constructor
 	
 #pragma region Public Methods
-	void InitArchiveRecord
-		(
-			SVArchiveTool*    pToolArchive,
-			SVObjectReference refObject    // a reference to an object required
-		);
+	void InitArchiveRecord(SVArchiveTool* pArchiveTool, SVObjectReference refObject);
 
 	void BuildImageFilePaths();
 	HRESULT	GetNextImageFilePath(std::string& rImageFile, bool useAlternativeImagePaths);

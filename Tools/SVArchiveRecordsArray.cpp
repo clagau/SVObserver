@@ -46,7 +46,7 @@ void SVArchiveRecordsArray::ClearArray()
 	m_vecRecords.clear();
 }
 
-HRESULT SVArchiveRecordsArray::InitializeObjects(SVArchiveTool* pToolArchive, SvVol::SVStringValueObjectClass& rObject )	// use array capability of string vo
+HRESULT SVArchiveRecordsArray::InitializeObjects(SvVol::SVStringValueObjectClass& rObject )	// use array capability of string vo
 {
 	HRESULT hr = S_OK;
 	assert( nullptr != m_pArchiveTool );
@@ -93,7 +93,7 @@ HRESULT SVArchiveRecordsArray::InitializeObjects(SVArchiveTool* pToolArchive, Sv
 			}
 			else
 			{
-				m_vecRecords.back().InitArchiveRecord(pToolArchive, ObjectRef);
+				m_vecRecords.back().InitArchiveRecord(m_pArchiveTool, ObjectRef);
 			}
 		}
 	}
@@ -147,9 +147,9 @@ void SVArchiveRecordsArray::ValidateImageObjects()
 }
 
 
-void SVArchiveRecordsArray::SetArchiveTool( SVArchiveTool* pTool )
+void SVArchiveRecordsArray::SetArchiveTool( SVArchiveTool* pArchiveTool)
 {
-	m_pArchiveTool = pTool;
+	m_pArchiveTool = pArchiveTool;
 	for ( auto& rRecord: m_vecRecords )
 	{
 		rRecord.SetArchiveTool(m_pArchiveTool);
@@ -303,12 +303,12 @@ int SVArchiveRecordsArray::GetSize()
 	return static_cast< int >( m_vecRecords.size() );
 }
 
-void SVArchiveRecordsArray::emplaceRecordAtBack(SVArchiveTool* pTool, const SVObjectReference& rObjectRef)
+void SVArchiveRecordsArray::emplaceRecordAtBack(const SVObjectReference& rObjectRef)
 {
 	m_vecRecords.emplace_back();
 	SVArchiveRecord& rArchiveRecord = m_vecRecords.back();
 
-	rArchiveRecord.InitArchiveRecord(pTool, rObjectRef);
+	rArchiveRecord.InitArchiveRecord(m_pArchiveTool, rObjectRef);
 	rArchiveRecord.GetObjectReference() = rObjectRef;
 	rArchiveRecord.ConnectInputObject();
 }

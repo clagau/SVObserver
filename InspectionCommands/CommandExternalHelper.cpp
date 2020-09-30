@@ -149,4 +149,5 @@ namespace SvCmd
 
 		return result;
 	}
+
 } //namespace SvCmd

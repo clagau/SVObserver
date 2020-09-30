@@ -13,9 +13,7 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <numeric>
 #include "SVTADlgArchiveResultsPage.h"
-#include "SVTADlgArchiveImagePage.h" //@TODO [Arvid][10.00][7.8.2020] should be removed
 #include "SVArchiveHeaderEditDlg.h"
-#include "SVIPDoc.h"
 #include "SVInspectionProcess.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "Definitions/StringTypeDef.h"
@@ -54,14 +52,13 @@ constexpr int IconGrowBy = 2;
 #pragma endregion Declarations
 
 #pragma region Constructor
-SVTADlgArchiveResultsPage::SVTADlgArchiveResultsPage(uint32_t, uint32_t, SVToolAdjustmentDialogSheetClass* Parent, SVTADlgArchiveImagePage *pArchiveImagePage) //@TODO [Arvid][10.00][7.8.2020] Remove unnamed parameters
+SVTADlgArchiveResultsPage::SVTADlgArchiveResultsPage(uint32_t inspectionId, uint32_t /*taskObjectId*/, SVToolAdjustmentDialogSheetClass* Parent)
 : CPropertyPage(SVTADlgArchiveResultsPage::IDD)
 , m_pParent(Parent)
-, m_pArchiveImagePage(pArchiveImagePage)
-, m_pTool(nullptr)
 , m_ColumnHeaders(false)
 , m_AppendArchive(false)
 , m_FormatResults(false)
+, m_inspectionId(inspectionId)
 , m_TotalWidth(8)
 , m_Decimals(2)
 {
@@ -69,6 +66,12 @@ SVTADlgArchiveResultsPage::SVTADlgArchiveResultsPage(uint32_t, uint32_t, SVToolA
 	if( nullptr != m_pParent )
 	{
 		m_pTool = dynamic_cast <SvTo::SVArchiveTool*> (m_pParent->GetTaskObject());
+		if (nullptr == m_pTool)
+		{
+			SvStl::MessageManager e(SvStl::MsgType::Data);
+			e.setMessage(SVMSG_SVO_5008_NULLTOOL, SvStl::Tid_ToolInvalid, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25002_ToolInvalid);
+			e.Throw();
+		}
 	}
 }
 
@@ -90,8 +93,6 @@ bool SVTADlgArchiveResultsPage::QueryAllowExit()
 	//check for valid drive for text archive
 	SvTo::ArchiveToolHelper athArchivePathAndName;
 	athArchivePathAndName.Init( ArchiveFilepath );
-
-	m_pArchiveImagePage->updateImageFilePathRootElements();
 
 	SvStl::MessageTextEnum pathErrorDescriptionId = SvStl::Tid_Empty;
 
@@ -132,7 +133,7 @@ bool SVTADlgArchiveResultsPage::QueryAllowExit()
 		return false; 
 	}
 
-	m_pTool->SetFileArchive( ArchiveFilepath.c_str() );
+	m_pTool->SetFileArchivePath( ArchiveFilepath.c_str() );
 
 	m_pTool->m_dwAppendArchiveFile.SetValue(static_cast<DWORD> (m_AppendArchive));
 	m_pTool->m_bvoFormatResults.SetValue(m_FormatResults);
@@ -151,15 +152,9 @@ bool SVTADlgArchiveResultsPage::QueryAllowExit()
 		StoreHeaderValuesToTool( l_HeaderPairs );
 	}
 
-	m_pTool->resetAllObjects();
-
-	// Mark the document as 'dirty' so user will be prompted to save
-	// this configuration on program exit.
-	SVIPDoc* l_pIPDoc = m_pParent->GetIPDoc();
-
-	if( nullptr != l_pIPDoc )
+	if (nullptr != m_pParent)
 	{
-		l_pIPDoc->SetModifiedFlag();
+		m_pParent->markDocumentAsDirty();
 	}
 
 	return true;   // Everything is OK
@@ -233,7 +228,7 @@ BOOL SVTADlgArchiveResultsPage::OnInitDialog()
 	return TRUE;
 }
 
-void SVTADlgArchiveResultsPage::OnDblClickListSelected(NMHDR*, LRESULT*) //@TODO [Arvid][10.00][7.8.2020] Remove unnamed parameter
+void SVTADlgArchiveResultsPage::OnDblClickListSelected(NMHDR*, LRESULT*)
 {
 	ShowObjectSelector();
 }
@@ -358,86 +353,74 @@ void SVTADlgArchiveResultsPage::OnFormatResults()
 	UpdateData(TRUE);
 }
 
-bool SVTADlgArchiveResultsPage::GetSelectedHeaderNamePairs(SvDef::StringPairVector& HeaderPairs)
+void SVTADlgArchiveResultsPage::GetSelectedHeaderNamePairs(SvDef::StringPairVector& HeaderPairs)
 {
-	bool bRet = false;
-	if( m_pTool )
+	// Inputs:
+	// Collect and build string pair vector from header id and Header Label from the archive tool.
+	// but only add if ids match the selected object ids
+	// output a vector of Object Name / Label pairs filtered by the selected objects..
+
+	// Get Lists....
+	SvDef::StringVector HeaderLabelNames;
+	SvDef::StringVector HeaderObjectIDs;
+	m_pTool->m_HeaderLabelNames.GetArrayValues( HeaderLabelNames );
+	m_pTool->m_HeaderObjectIDs.GetArrayValues( HeaderObjectIDs );
+
+	// Collect Object and Label into pairs.
+	for( SvDef::StringVector::const_iterator it = HeaderObjectIDs.begin(),it1 = HeaderLabelNames.begin() ; it != HeaderObjectIDs.end() ;++it1, ++it)
 	{
-		// Inputs:
-		// Collect and build string pair vector from header id and Header Label from the archive tool.
-		// but only add if ids match the selected object ids
-		// output a vector of Object Name / Label pairs filtered by the selected objects..
-
-		// Get Lists....
-		SvDef::StringVector HeaderLabelNames;
-		SvDef::StringVector HeaderObjectIDs;
-		m_pTool->m_HeaderLabelNames.GetArrayValues( HeaderLabelNames );
-		m_pTool->m_HeaderObjectIDs.GetArrayValues( HeaderObjectIDs );
-
-		// Collect Object and Label into pairs.
-		for( SvDef::StringVector::const_iterator it = HeaderObjectIDs.begin(),it1 = HeaderLabelNames.begin() ; it != HeaderObjectIDs.end() ;++it1, ++it)
-		{
-			SvDef::StringPair l_Pair(*it, *it1 );
-			HeaderPairs.push_back(l_Pair);
-		}
-
-		// ... Create List from selected...
-		SvDef::StringPairVector SelectedHeaderPairs;
-		for(auto const& rEntry : m_ResultsToBeArchived)
-		{
-			uint32_t objectId{ rEntry.getObjectId() };
-
-			SvDef::StringPair NewPair(convertObjectIdToString(objectId),
-			SVObjectManagerClass::Instance().GetObject(objectId)->GetCompleteName() );
-			SelectedHeaderPairs.push_back(NewPair);
-		}
-
-		// copy labels to the selected List...
-		for(SvDef::StringPairVector::iterator it = SelectedHeaderPairs.begin() ; it != SelectedHeaderPairs.end(); ++it)
-		{
-			bool bFound = false;
-			SvDef::StringPairVector::const_iterator it2 = HeaderPairs.begin();
-			for( ; it2 != HeaderPairs.end() ; ++it2)
-			{
-				if( it->first == it2->first ) // IDs match
-				{
-					// Found Stop looking...
-					bFound = true;
-					break;
-				}
-			}
-			if( bFound )
-			{
-				// copy label to new list.
-				it->second = it2->second;
-			}
-		}
-
-		HeaderPairs = SelectedHeaderPairs;
-		bRet = true;
+		SvDef::StringPair l_Pair(*it, *it1 );
+		HeaderPairs.push_back(l_Pair);
 	}
-	return bRet;
+
+	// ... Create List from selected...
+	SvDef::StringPairVector SelectedHeaderPairs;
+	for(auto const& rEntry : m_ResultsToBeArchived)
+	{
+		uint32_t objectId{ rEntry.getObjectId() };
+
+		SvDef::StringPair NewPair(convertObjectIdToString(objectId),
+		SVObjectManagerClass::Instance().GetObject(objectId)->GetCompleteName() );
+		SelectedHeaderPairs.push_back(NewPair);
+	}
+
+	// copy labels to the selected List...
+	for(SvDef::StringPairVector::iterator it = SelectedHeaderPairs.begin() ; it != SelectedHeaderPairs.end(); ++it)
+	{
+		bool bFound = false;
+		SvDef::StringPairVector::const_iterator it2 = HeaderPairs.begin();
+		for( ; it2 != HeaderPairs.end() ; ++it2)
+		{
+			if( it->first == it2->first ) // IDs match
+			{
+				// Found Stop looking...
+				bFound = true;
+				break;
+			}
+		}
+		if( bFound )
+		{
+			// copy label to new list.
+			it->second = it2->second;
+		}
+	}
+
+	HeaderPairs = SelectedHeaderPairs;
 }
 
-bool SVTADlgArchiveResultsPage::StoreHeaderValuesToTool(SvDef::StringPairVector& HeaderPairs)
+void SVTADlgArchiveResultsPage::StoreHeaderValuesToTool(SvDef::StringPairVector& HeaderPairs)
 {
-	bool bRet = false;
-	if( m_pTool )
+	SvDef::StringVector HeaderLabelNames;
+	SvDef::StringVector HeaderObjectIDs;
+	for(SvDef::StringPairVector::iterator it = HeaderPairs.begin(); it != HeaderPairs.end() ;++it)
 	{
-		SvDef::StringVector HeaderLabelNames;
-		SvDef::StringVector HeaderObjectIDs;
-		for(SvDef::StringPairVector::iterator it = HeaderPairs.begin(); it != HeaderPairs.end() ;++it)
-		{
-			HeaderObjectIDs.push_back( it->first );
-			HeaderLabelNames.push_back( it->second );
-		}
-		m_pTool->m_HeaderLabelNames.SetArraySize( static_cast<int>(HeaderPairs.size()) );
-		m_pTool->m_HeaderObjectIDs.SetArraySize( static_cast<int>(HeaderPairs.size()) );
-		m_pTool->m_HeaderLabelNames.SetArrayValues(HeaderLabelNames);
-		m_pTool->m_HeaderObjectIDs.SetArrayValues( HeaderObjectIDs);
-		bRet = true;
+		HeaderObjectIDs.push_back( it->first );
+		HeaderLabelNames.push_back( it->second );
 	}
-	return bRet;
+	m_pTool->m_HeaderLabelNames.SetArraySize( static_cast<int>(HeaderPairs.size()) );
+	m_pTool->m_HeaderObjectIDs.SetArraySize( static_cast<int>(HeaderPairs.size()) );
+	m_pTool->m_HeaderLabelNames.SetArrayValues(HeaderLabelNames);
+	m_pTool->m_HeaderObjectIDs.SetArrayValues( HeaderObjectIDs);
 }
 
 void SVTADlgArchiveResultsPage::OnBnClickedHeaderBtn()

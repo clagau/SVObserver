@@ -12,9 +12,9 @@
 #pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <numeric>
+#include <filesystem>
 #include "SVTADlgArchiveImagePage.h"
 #include "SVInspectionProcess.h"
-#include "SVIPDoc.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "TextDefinesSvO.h"
 #include "Definitions/StringTypeDef.h"
@@ -38,6 +38,7 @@
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
+
 
 BEGIN_MESSAGE_MAP(SVTADlgArchiveImagePage, CPropertyPage)
 	ON_NOTIFY(NM_DBLCLK, IDC_LIST_SELECTED, OnDblClickListSelected)
@@ -72,6 +73,7 @@ constexpr long MaxImagesWarningLimit = 100L;
 SVTADlgArchiveImagePage::SVTADlgArchiveImagePage(uint32_t inspectionId, uint32_t taskObjectId, SVToolAdjustmentDialogSheetClass* Parent) 
 : CPropertyPage(SVTADlgArchiveImagePage::IDD)
 , m_pParent(Parent)
+, m_inspectionId(inspectionId)
 , m_RootPathObjectSelectorController(inspectionId, SvDef::InvalidObjectId, SvPb::viewable)
 , m_ValueController{ SvOg::BoundValues{ inspectionId, taskObjectId } }
 , m_alternativeImagePaths(m_ValueController, inspectionId)
@@ -83,12 +85,19 @@ SVTADlgArchiveImagePage::SVTADlgArchiveImagePage(uint32_t inspectionId, uint32_t
 
 	SvOg::ValueEditWidgetHelper::EnsureDownArrowBitmapIsLoaded();
 
-	if( m_pParent )
+	m_strCaption = m_psp.pszTitle;
+	if( nullptr != m_pParent )
 	{
 		m_pTool = dynamic_cast <SvTo::SVArchiveTool*> (m_pParent->GetTaskObject());
+		if (nullptr == m_pTool)
+		{
+			SvStl::MessageManager e(SvStl::MsgType::Data);
+			e.setMessage(SVMSG_SVO_5008_NULLTOOL, SvStl::Tid_ToolInvalid, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25002_ToolInvalid);
+			e.Throw();
+		}
 	}
-
 }
+
 
 SVTADlgArchiveImagePage::~SVTADlgArchiveImagePage()
 {
@@ -130,9 +139,6 @@ bool SVTADlgArchiveImagePage::QueryAllowExit()
 		return false; //don't allow to exit with invalid path
 	}
 
-	m_pTool->ensureCurrentImagePathRootExists();
-
-
 	m_ValueController.Set<bool>(SvPb::UseAlternativeImagePathsEId, m_useAlternativeImagePaths ? true : false);
 
 	int iCurSel = m_WhenToArchive.GetCurSel();
@@ -171,16 +177,9 @@ bool SVTADlgArchiveImagePage::QueryAllowExit()
 	m_pTool->setImageArchiveList(m_ImagesToBeArchived);
 	m_ValueController.Commit(SvOg::PostAction::doReset);
 
-	// Mark the document as 'dirty' so user will be prompted to save
-	// this configuration on program exit.
-	if (m_pParent)
+	if (nullptr != m_pParent)
 	{
-		SVIPDoc* pIPDoc = m_pParent->GetIPDoc();
-
-		if( nullptr != pIPDoc )
-		{
-			pIPDoc->SetModifiedFlag();
-		}
+		m_pParent->markDocumentAsDirty();
 	}
 
 	return true;
@@ -243,19 +242,20 @@ bool SVTADlgArchiveImagePage::validateImageFilepathRoot()
 {
 	if (!m_pTool->updateCurrentImagePathRoot(true))
 	{
-		return false;
+		return false; //current m_currentImagePathRoot cannot even be determined
 	}
 
-	std::string fullImageFolder = m_pTool->getCurrentImagePathRoot();
+	std::string imagepathroot = m_pTool->getCurrentImagePathRoot();
 
-	SvTo::ArchiveToolHelper athImagePath;
-	athImagePath.Init(fullImageFolder);
+	if(std::filesystem::is_directory(imagepathroot))
+	{
+		return true; // m_currentImagePathRoot exists already
+	}
 
-	//check for valid drive for image archive
-	return ValidateDrive(fullImageFolder.c_str());
+	//since it is very hard to reliably determine whether a directory path can be created:
+	//we just check for a drive letter here:
+	return ValidateDrive(imagepathroot);
 }
-
-
 
 BOOL SVTADlgArchiveImagePage::OnInitDialog() 
 {

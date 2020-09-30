@@ -51,11 +51,13 @@ constexpr int cAsyncDefaultBufferNumber = 5;
 SV_IMPLEMENT_CLASS(SVArchiveTool, SvPb::ArchiveToolClassId);
 
 
+
 SVArchiveTool::SVArchiveTool( SVObjectClass* POwner, int StringResourceID )
               : SVToolClass(POwner, StringResourceID)
 {
 	initializeArchiveTool();
 }
+
 
 SVArchiveTool::~SVArchiveTool()
 {
@@ -73,30 +75,30 @@ void SVArchiveTool::initializeArchiveTool()
 
 	// Set up your type...
 	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType    = SvPb::SVToolArchiveObjectType;
-	
+	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVToolArchiveObjectType;
+
 	// Hide and Remove Embedded Extents
 	removeEmbeddedExtents();
 	
 	// Register Embedded Objects
-	RegisterEmbeddedObject(	
-		&m_stringFileArchivePath, 
+	RegisterEmbeddedObject(
+		&m_stringFileArchivePath,
 		SvPb::ArchiveFilePathEId,
 		IDS_OBJECTNAME_ARCHIVE_FILEPATH,
-		false, SvOi::SVResetItemTool );
-	
-	RegisterEmbeddedObject(	
-		&m_svoArchiveImageNames, 
+		false, SvOi::SVResetItemTool);
+
+	RegisterEmbeddedObject(
+		&m_svoArchiveImageNames,
 		SvPb::ArchiveImageNamesEId,
 		IDS_OBJECTNAME_ARCHIVE_IMAGE_NAMES,
-		false, SvOi::SVResetItemTool );
-	
-	RegisterEmbeddedObject(	
-		&m_svoArchiveResultNames, 
+		false, SvOi::SVResetItemTool);
+
+	RegisterEmbeddedObject(
+		&m_svoArchiveResultNames,
 		SvPb::ArchiveResultNamesEId,
 		IDS_OBJECTNAME_ARCHIVE_RESULT_NAMES,
-		false, SvOi::SVResetItemTool );
-	
+		false, SvOi::SVResetItemTool);
+
 	registerEmbeddedLinkedValue<_variant_t>(
 		&m_imageFileRootPath1,
 		SvPb::ArchiveImageFileRootPart1EId, SvPb::ArchiveImageFileRootPart1LinkEId,
@@ -157,14 +159,14 @@ void SVArchiveTool::initializeArchiveTool()
 		&m_dwArchiveMaxImagesCount,
 		SvPb::ArchiveMaxImagesCountEId,
 		IDS_OBJECTNAME_ARCHIVE_MAX_IMAGES_COUNT,
-		false, SvOi::SVResetItemNone );
+		false, SvOi::SVResetItemNone);
 	m_dwArchiveMaxImagesCount.SetOutputFormat(SvVol::OutputFormat_int);
 
-	RegisterEmbeddedObject(	
+	RegisterEmbeddedObject(
 		&m_evoArchiveMethod,
 		SvPb::ArchiveMethodEId,
 		IDS_OBJECTNAME_ARCHIVE_TOOL_METHOD,
-		false, SvOi::SVResetItemNone  );
+		false, SvOi::SVResetItemNone);
 
 	RegisterEmbeddedObject(
 		&m_HeaderLabelNames,
@@ -177,13 +179,14 @@ void SVArchiveTool::initializeArchiveTool()
 		SvPb::ArchiveHeaderEId,
 		IDS_OBJECTNAME_HEADER_OBJECT_STRINGS,
 		false, SvOi::SVResetItemNone);
-	
+
 	RegisterEmbeddedObject(
 		&m_bvoUseHeaders,
 		SvPb::ArchiveUseHeadersEId,
 		IDS_OBJECTNAME_ENABLE_HEADERS,
 		false, SvOi::SVResetItemNone);
 
+	// Register Embedded Objects
 	RegisterEmbeddedObject(
 		&m_baseFilename,
 		SvPb::BaseFilenameEId,
@@ -228,22 +231,22 @@ void SVArchiveTool::initializeArchiveTool()
 		IDS_OBJECTNAME_SUBFOLDER_LOCATION);
 
 	// no need to register image buffer
-	
-	// Set Embedded defaults
-	
+
 	//
 	// Use the user changeable tool name as the results archive name.
 	//
 	SVFileNameClass FileClass;
-	FileClass.SetExtension( _T(".txt") );
-	FileClass.SetPathName( _T("D:\\TEMP") );
-		
-	std::string FileName = SvUl::Format( _T("%s__0"), GetName() );
-	FileClass.SetFileNameOnly( FileName.c_str() );
+	FileClass.SetExtension(_T(".txt"));
+	FileClass.SetPathName(_T("D:\\TEMP"));
 
-	m_stringFileArchivePath.SetDefaultValue( FileClass.GetFullFileName(), true );
-	m_svoArchiveImageNames.SetDefaultValue( _T(""), true);
-	m_svoArchiveResultNames.SetDefaultValue( _T(""), true);
+	std::string FileName = SvUl::Format(_T("%s__0"), GetName());
+	FileClass.SetFileNameOnly(FileName.c_str());
+
+	// Set Embedded defaults
+
+	m_stringFileArchivePath.SetDefaultValue(FileClass.GetFullFileName(), true);
+	m_svoArchiveImageNames.SetDefaultValue(_T(""), true);
+	m_svoArchiveResultNames.SetDefaultValue(_T(""), true);
 	m_imageFileRootPath1.SetDefaultValue(_bstr_t("D:\\TEMP"), true);
 	m_imageFileRootPath2.SetDefaultValue(_bstr_t(""), true);
 	m_imageFileRootPath3.SetDefaultValue(_bstr_t(""), true);
@@ -254,7 +257,7 @@ void SVArchiveTool::initializeArchiveTool()
 	m_dwArchiveStopAtMaxImages.SetDefaultValue(1, true);
 	m_dwArchiveMaxImagesCount.SetDefaultValue(10, true);
 
-	m_evoArchiveMethod.SetDefaultValue( SVArchiveAsynchronous, true);
+	m_evoArchiveMethod.SetDefaultValue(SVArchiveAsynchronous, true);
 
 	SvOi::NameValueVector EnumVector
 	{
@@ -263,13 +266,14 @@ void SVArchiveTool::initializeArchiveTool()
 		{ _T("Asynchronous"), SVArchiveAsynchronous }
 	};
 	m_evoArchiveMethod.SetEnumTypes(EnumVector);
-	
-	m_svoArchiveImageNames.SetObjectAttributesAllowed( SvPb::remotelySetable, SvOi::SetAttributeType::OverwriteAttribute );
-	m_svoArchiveResultNames.SetObjectAttributesAllowed( SvPb::remotelySetable, SvOi::SetAttributeType::OverwriteAttribute );
-	m_HeaderObjectIDs.SetObjectAttributesAllowed( SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute );
+
+	m_svoArchiveImageNames.SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::OverwriteAttribute);
+	m_svoArchiveResultNames.SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::OverwriteAttribute);
+	m_HeaderObjectIDs.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
 	m_bInitializedForRun = false;
 	m_eArchiveMethod = SVArchiveInvalidMethod;
 	m_uiValidateCount = 0;
+
 }
 
 
@@ -282,8 +286,6 @@ bool SVArchiveTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStruct
 		long Method = SVArchiveInvalidMethod;
 		m_evoArchiveMethod.GetValue( Method );
 		m_eArchiveMethod = static_cast<SVArchiveMethodEnum> (Method);
-
-		bOk = true;
 	}
 
 	m_FilenameIndex1.SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
@@ -292,26 +294,26 @@ bool SVArchiveTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStruct
 	m_SubfolderSelection.SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
 	m_SubfolderLocation.SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
 
-	m_stringFileArchivePath.SetObjectAttributesAllowed( SvPb::printable | SvPb::remotelySetable & ~SvPb::setableOnline, SvOi::SetAttributeType::AddAttribute );
-	m_stringFileArchivePath.SetObjectAttributesAllowed( SvPb::setableOnline, SvOi::SetAttributeType::RemoveAttribute );
-	m_svoArchiveImageNames.SetObjectAttributesAllowed( SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
-	m_svoArchiveImageNames.SetObjectAttributesAllowed( SvPb::setableOnline, SvOi::SetAttributeType::RemoveAttribute );
-	m_svoArchiveResultNames.SetObjectAttributesAllowed( SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
-	m_svoArchiveResultNames.SetObjectAttributesAllowed( SvPb::setableOnline, SvOi::SetAttributeType::RemoveAttribute );
+	m_stringFileArchivePath.SetObjectAttributesAllowed(SvPb::printable | SvPb::remotelySetable & ~SvPb::setableOnline, SvOi::SetAttributeType::AddAttribute);
+	m_stringFileArchivePath.SetObjectAttributesAllowed(SvPb::setableOnline, SvOi::SetAttributeType::RemoveAttribute);
+	m_svoArchiveImageNames.SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
+	m_svoArchiveImageNames.SetObjectAttributesAllowed(SvPb::setableOnline, SvOi::SetAttributeType::RemoveAttribute);
+	m_svoArchiveResultNames.SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
+	m_svoArchiveResultNames.SetObjectAttributesAllowed(SvPb::setableOnline, SvOi::SetAttributeType::RemoveAttribute);
 	m_imageFileRootPath1.SetObjectAttributesAllowed(SvPb::printable | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
 	m_imageFileRootPath2.SetObjectAttributesAllowed(SvPb::printable | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
 	m_imageFileRootPath3.SetObjectAttributesAllowed(SvPb::printable | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
-	m_dwAppendArchiveFile.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
+	m_dwAppendArchiveFile.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::AddAttribute);
 	m_bvoFormatResults.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::AddAttribute);
 	m_dwArchiveResultsMinimumNumberOfCharacters.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::AddAttribute);
 	m_dwArchiveResultsNumberOfDecimals.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::AddAttribute);
 
-	m_dwArchiveStopAtMaxImages.SetObjectAttributesAllowed( SvPb::printable | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
-	m_dwArchiveMaxImagesCount.SetObjectAttributesAllowed( SvPb::printable | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
-	m_evoArchiveMethod.SetObjectAttributesAllowed( SvPb::printable | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
-	m_HeaderLabelNames.SetObjectAttributesAllowed( SvPb::printable | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
-	m_HeaderObjectIDs.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
-	m_bvoUseHeaders.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
+	m_dwArchiveStopAtMaxImages.SetObjectAttributesAllowed(SvPb::printable | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
+	m_dwArchiveMaxImagesCount.SetObjectAttributesAllowed(SvPb::printable | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
+	m_evoArchiveMethod.SetObjectAttributesAllowed(SvPb::printable | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
+	m_HeaderLabelNames.SetObjectAttributesAllowed(SvPb::printable | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
+	m_HeaderObjectIDs.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
+	m_bvoUseHeaders.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::AddAttribute);
 
 	// These values will not be exposed for this tool.
 	constexpr UINT cAttribute {SvDef::selectableAttributes | SvPb::printable};
@@ -321,6 +323,28 @@ bool SVArchiveTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStruct
 
 	return bOk;
 }
+
+bool SVArchiveTool::InitializeAndValidate()
+{
+	if (m_ImageCollection.GetSize() > 0)
+	{
+		if (!updateCurrentImagePathRoot()) //needed for m_ImageCollection.InitializeObjects()
+		{
+			return false;
+		}
+	}
+
+	m_ImageCollection.InitializeObjects(m_svoArchiveImageNames);
+	m_ImageCollection.ValidateImageObjects();	// makes sure the images are connected as inputs
+
+	m_ResultCollection.InitializeObjects(m_svoArchiveResultNames);
+	//the next line is needed to reset the names if objects have changed (e.g. because an array has become a single value).
+	refreshResultArchiveList(assembleResultReferenceVector());
+	m_ResultCollection.ValidateResultsObjects();	// makes sure the results are connected as inputs
+
+	return true;
+}
+
 
 bool SVArchiveTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
@@ -335,7 +359,7 @@ bool SVArchiveTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	m_eArchiveMethod = static_cast<SVArchiveMethodEnum>( l_lArchiveMethod );
 
 	// Put the archive tool text in the thread affinity list.
-	if( m_eArchiveMethod == SVArchiveAsynchronous )
+	if(m_eArchiveMethod == SVArchiveAsynchronous )
 	{	// IsAllowed will return S_FALSE if the thread is not found with SVNone.
 		if( S_FALSE == SVThreadManager::Instance().IsAllowed(_T( "Archive Tools(Asynchronous)") , SVNone))
 		{	// Add thread to list with null handle so the user can set affinity before the thread is created.
@@ -343,21 +367,10 @@ bool SVArchiveTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 		}
 	}
 
-	if (m_ImageCollection.GetSize() > 0)
+	if (false == InitializeAndValidate())
 	{
-		if (!updateCurrentImagePathRoot()) //needed for m_ImageCollection.InitializeObjects()
-		{
-			return false;
-		}
+		return false;
 	}
-
-	m_ImageCollection.InitializeObjects( this, m_svoArchiveImageNames );
-	m_ImageCollection.ValidateImageObjects();	// makes sure the images are connected as inputs
-	
-	m_ResultCollection.InitializeObjects( this, m_svoArchiveResultNames );
-	//the next line is needed to reset the names if objects have changed (e.g. because an array has become a single value).
-	refreshResultArchiveList(assembleResultReferenceVector());
-	m_ResultCollection.ValidateResultsObjects();	// makes sure the results are connected as inputs
 
 	SvOi::IInspectionProcess* pInspection = GetInspectionInterface();
 	if ( pInspection && pInspection->IsResetStateSet( SvDef::SVResetStateArchiveToolCreateFiles ) )
@@ -376,16 +389,6 @@ bool SVArchiveTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	InitialiseTriggercountObject();
 
 	m_uiValidateCount = 0;
-
-	if (m_ImageCollection.GetSize() > 0) //if no images are to be archived we do not need to run through the checking of disk space
-	{
-
-		result = ValidateImagePathAndAvailableSpace(pErrorMessages) && result;
-		if (result)
-		{
-			ensureCurrentImagePathRootExists();
-		}
-	}
 
 	return result;
 }
@@ -412,6 +415,7 @@ bool SVArchiveTool::CreateTextArchiveFile(SvStl::MessageContainerVector *pErrorM
 	// CFile object.
 	//
 	std::string FileArchivePath;
+
 	GetArchiveResultFilepath( FileArchivePath );
 
 	if( FileArchivePath.empty() )
@@ -569,35 +573,32 @@ void local_remove_items( SvDef::StringVector& rVec, SvVol::SVStringValueObjectCl
 
 bool SVArchiveTool::initializeOnRun(SvStl::MessageContainerVector *pErrorMessages)
 {
-	long Method( SVArchiveInvalidMethod );
-	m_evoArchiveMethod.GetValue( Method );
-	m_eArchiveMethod = static_cast<SVArchiveMethodEnum> (Method);
-
-	if (!updateCurrentImagePathRoot())
+	if (m_ImageCollection.GetSize() > 0) //if no images are to be archived we do not need to run through the checking of disk space
 	{
-		return false;
-	}
-
-	if (_access(m_currentImagePathRoot.c_str(), 0) != 0)
-	{
-		if (!SVFileNameManagerClass::Instance().CreatePath(m_currentImagePathRoot.c_str()))
+		if (false == ValidateImagePathAndAvailableSpace(getObjectId(), pErrorMessages))
 		{
-			if (nullptr != pErrorMessages)
-			{
-				SvDef::StringVector msgList;
-				msgList.push_back(m_currentImagePathRoot);
-				SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ArchiveTool_CreatePathFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId()); 
-				pErrorMessages->push_back(Msg);
-			}
 			return false;
+		}
+		if (_access(m_currentImagePathRoot.c_str(), 0) != 0)
+		{
+			if (!SVFileNameManagerClass::Instance().CreatePath(m_currentImagePathRoot.c_str()))
+			{
+				if (nullptr != pErrorMessages)
+				{
+					SvDef::StringVector msgList;
+					msgList.push_back(m_currentImagePathRoot);
+					SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ArchiveTool_CreatePathFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId()); 
+					pErrorMessages->push_back(Msg);
+				}
+				return false;
+			}
 		}
 	}
 
-	m_ImageCollection.SetArchiveTool( this );
-	//
-	// Make sure the image 'index' for image file creation is reset.
-	// 04 Jan 2000 - frb.
-	//
+	long Method(SVArchiveInvalidMethod);
+	m_evoArchiveMethod.GetValue(Method);
+	m_eArchiveMethod = static_cast<SVArchiveMethodEnum> (Method);
+
 	m_ImageCollection.ResetImageCounts();
 	
 	//
@@ -605,14 +606,14 @@ bool SVArchiveTool::initializeOnRun(SvStl::MessageContainerVector *pErrorMessage
 	//
 	m_ImageCollection.ValidateImageObjects();
 	
-	if ( m_eArchiveMethod == SVArchiveGoOffline || m_eArchiveMethod == SVArchiveAsynchronous )
+	if (m_eArchiveMethod == SVArchiveGoOffline || m_eArchiveMethod == SVArchiveAsynchronous )
 	{
 		if ( !AllocateImageBuffers(pErrorMessages) )
 		{
 			return false;
 		}
 
-		if ( m_eArchiveMethod == SVArchiveAsynchronous )
+		if (m_eArchiveMethod == SVArchiveAsynchronous )
 		{
 			/*HRESULT hrThreadOnline =*/ TheSVArchiveImageThreadClass().GoOnline();
 		}
@@ -658,7 +659,7 @@ bool SVArchiveTool::AllocateImageBuffers(SvStl::MessageContainerVector *pErrorMe
 {
 	TheSVMemoryManager().ReleasePoolMemory(SvDef::ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME, this);
 	TheSVMemoryManager().ReleasePoolMemory(SvDef::ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME, this);
-	if ( m_eArchiveMethod == SVArchiveGoOffline || m_eArchiveMethod == SVArchiveAsynchronous )
+	if (m_eArchiveMethod == SVArchiveGoOffline || m_eArchiveMethod == SVArchiveAsynchronous )
 	{
 		// async doesn't really allocate any buffers but it does preparation work (initm_ImageInfo)
 		DWORD dwMaxImages;
@@ -885,6 +886,7 @@ SVObjectReferenceVector SVArchiveTool::assembleResultReferenceVector()
 	return Result;
 }
 
+
 //  Called by SVToolAdjustmentArchivePage::OnOK().
 //
 void SVArchiveTool::refreshResultArchiveList(const SVObjectReferenceVector& rObjectRefVector)
@@ -899,7 +901,7 @@ void SVArchiveTool::refreshResultArchiveList(const SVObjectReferenceVector& rObj
 	{
 		const SVObjectReference& rObjectRef = rObjectRefVector[i];
 
-		m_ResultCollection.emplaceRecordAtBack(this, rObjectRef);
+		m_ResultCollection.emplaceRecordAtBack(rObjectRef);
 
 		m_svoArchiveResultNames.SetValue(rObjectRef.GetCompleteName(true), i);
 	}
@@ -908,7 +910,7 @@ void SVArchiveTool::refreshResultArchiveList(const SVObjectReferenceVector& rObj
 void SVArchiveTool::setImageArchiveList(const SVObjectReferenceVector& rObjectRefVector)
 {
 	m_ImageCollection.ClearArray();
-	
+
 	auto size = static_cast<int> (rObjectRefVector.size());
 	m_svoArchiveImageNames.SetArraySize(size);
 	m_svoArchiveImageNames.SetResultSize(size);
@@ -927,7 +929,7 @@ SVObjectReferenceVector SVArchiveTool::getImageArchiveList()
 	const auto& rRecVec = m_ImageCollection.getRecordVec();
 	for (const auto& rRecord : rRecVec)
 	{
-		SvIe::SVImageClass* pImage = dynamic_cast <SvIe::SVImageClass*> ( rRecord.GetObjectReference().getObject() );
+		SvIe::SVImageClass* pImage = dynamic_cast <SvIe::SVImageClass*> (rRecord.GetObjectReference().getObject());
 		if (nullptr != pImage)
 		{
 			if (SvPb::archivableImage == (pImage->ObjectAttributesAllowed() & SvPb::archivableImage))
@@ -940,9 +942,9 @@ SVObjectReferenceVector SVArchiveTool::getImageArchiveList()
 	return Result;
 }
 
-bool SVArchiveTool::GetArchiveResultFilepath( std::string& rName )
+bool SVArchiveTool::GetArchiveResultFilepath(std::string& rName)
 {
-	bool Result = (S_OK == m_stringFileArchivePath.GetValue( rName ));
+	bool Result = (S_OK == m_stringFileArchivePath.GetValue(rName));
 	return Result;
 }
 
@@ -961,9 +963,9 @@ const std::string SVArchiveTool::GetImageArchivePathPart3() const
 	return std::string(m_imageFileRootPath3.getValueAs<_bstr_t>());
 }
 
-bool SVArchiveTool::SetFileArchive( LPCTSTR lpszName )
+bool SVArchiveTool::SetFileArchivePath(LPCTSTR lpszName)
 {
-	return S_OK == m_stringFileArchivePath.SetValue( std::string( lpszName ) );
+	return S_OK == m_stringFileArchivePath.SetValue(std::string(lpszName));
 }
 
 HRESULT SVArchiveTool::WriteBuffers()
@@ -1061,29 +1063,20 @@ const std::string& SVArchiveTool::getNextImageDirectory(const std::string& rImag
 }
 
 
-std::string SVArchiveTool::getNextImageFileName(const std::string& rFileNameImage, bool useAlternativeImagePaths)
+std::string SVArchiveTool::getNextImageFileName()
 {
-	if (useAlternativeImagePaths)
-	{
-		std::string baseFilename;
-		m_baseFilename.GetValue(baseFilename);
+	std::string baseFilename;
+	m_baseFilename.GetValue(baseFilename);
 
-		uint32_t Index1 = m_FilenameIndex1.getValueAs<uint32_t>();
+	uint32_t Index1 = m_FilenameIndex1.getValueAs<uint32_t>();
 
-		std::string centerFilename;
-		m_centerFilename.GetValue(centerFilename);
+	std::string centerFilename;
+	m_centerFilename.GetValue(centerFilename);
 
-		uint32_t Index2 = m_FilenameIndex2.getValueAs<uint32_t>();
+	uint32_t Index2 = m_FilenameIndex2.getValueAs<uint32_t>();
 
-		return SvUl::Format(_T("%s%08ld%s%04ld.bmp"), baseFilename.c_str(), Index1, centerFilename.c_str(), Index2);
-	}
-	else
-	{
-		return SvUl::Format(_T("%s__trigger%06ld.bmp"), rFileNameImage.c_str(), currentTriggerCount());
-	}
+	return SvUl::Format(_T("%s%08ld%s%04ld.bmp"), baseFilename.c_str(), Index1, centerFilename.c_str(), Index2);
 }
-
-
 long SVArchiveTool::CalculateImageMemory(SvIe::SVImageClass* pImage)
 {
 	assert(nullptr != pImage);
@@ -1118,21 +1111,6 @@ const std::string SVArchiveTool::getCurrentImagePathRoot() const
 	return m_currentImagePathRoot;
 }
 
-long SVArchiveTool::currentTriggerCount()
-{
-	double triggerCount;
-	if (nullptr != m_pTriggerCountObject)
-	{
-		m_pTriggerCountObject->getValue(triggerCount);
-	}
-	else
-	{
-		triggerCount = -1;
-	}
-
-	return static_cast<long>(floor(triggerCount + 0.05)); //add 0.05 before floor just to be on the safe side
-}
-
 bool SVArchiveTool::DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo)
 {
 	if (nullptr != pObjectInInfo)
@@ -1150,12 +1128,12 @@ bool SVArchiveTool::DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInI
 
 void SVArchiveTool::goingOffline()
 {
-	if ( m_eArchiveMethod == SVArchiveAsynchronous )
+	if (m_eArchiveMethod == SVArchiveAsynchronous )
 	{
 		TheSVArchiveImageThreadClass().GoOffline();
 	}
 
-	if ( m_eArchiveMethod == SVArchiveGoOffline )
+	if (m_eArchiveMethod == SVArchiveGoOffline )
 	{
 		WriteBuffers();
 	}
@@ -1256,8 +1234,7 @@ bool SVArchiveTool::updateCurrentImagePathRoot(bool displayMessageOnInvalidKeywo
 	{
 		if (athImagePath.areTokensValid())
 		{
-			std::string tmpArchiveFileName = athImagePath.TranslatePath(m_currentImagePathRoot);
-			m_currentImagePathRoot = tmpArchiveFileName;
+			m_currentImagePathRoot = athImagePath.TranslatePath(m_currentImagePathRoot);
 		}
 		else
 		{
@@ -1291,28 +1268,34 @@ bool SVArchiveTool::ensureCurrentImagePathRootExists()
 }
 
 
-bool SVArchiveTool::ValidateImagePathAndAvailableSpace(SvStl::MessageContainerVector *pErrorMessages )
+bool SVArchiveTool::ValidateImagePathAndAvailableSpace(uint32_t objectId, SvStl::MessageContainerVector* pErrorMessages)
 {
+	if (!updateCurrentImagePathRoot())
+	{
+		return false;
+	}
+
+	ensureCurrentImagePathRootExists();
+
 	ULARGE_INTEGER lFreeBytesAvailableToCaller;
 	ULARGE_INTEGER lTotalNumberOfBytes;
 	ULARGE_INTEGER lTotalNumberOfFreeBytes;
 
 	BOOL bOk = ::GetDiskFreeSpaceEx(m_currentImagePathRoot.c_str(),   // pointer to the directory name (which must end in a slash or backslash and specify an existing directory)
-		&lFreeBytesAvailableToCaller, // receives the number of bytes on
-		// disk available to the caller
+		&lFreeBytesAvailableToCaller, // receives the number of bytes on disk available to the caller
 		&lTotalNumberOfBytes,         // receives the number of bytes on disk
-		&lTotalNumberOfFreeBytes );   // receives the free bytes on disk
+		&lTotalNumberOfFreeBytes);    // receives the free bytes on disk
 
-	if(!bOk)
+	if (!bOk)
 	{
-		if (nullptr != pErrorMessages)  
+		if (nullptr != pErrorMessages)
 		{
-			DWORD  ErrorCd =  GetLastError();
-			if ( ErrorCd == ERROR_PATH_NOT_FOUND )
+			DWORD  ErrorCd = GetLastError();
+			if (ErrorCd == ERROR_PATH_NOT_FOUND)
 			{ //should not ever get here since the path is validated above
 				SvDef::StringVector msgList;
 				msgList.push_back(m_currentImagePathRoot);
-				SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_InvalidPath, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10037, getObjectId() ); 
+				SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_InvalidPath, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10037, objectId);
 				pErrorMessages->push_back(Msg);
 			}
 		}
@@ -1325,11 +1308,11 @@ bool SVArchiveTool::ValidateImagePathAndAvailableSpace(SvStl::MessageContainerVe
 	//For systems with 16GB of memory the amount of memory will be 300Meg
 	if (((__int64)100'000'000) > lFreeBytesAvailableToCaller.QuadPart)
 	{
-		if (nullptr != pErrorMessages)  
+		if (nullptr != pErrorMessages)
 		{
 			SvDef::StringVector msgList;
-			msgList.push_back( std::string(m_currentImagePathRoot) );
-			SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Drive_Full, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
+			msgList.push_back(std::string(m_currentImagePathRoot));
+			SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Drive_Full, msgList, SvStl::SourceFileParams(StdMessageParams), 0, objectId);
 			pErrorMessages->push_back(Msg);
 		}
 		return false;
@@ -1349,7 +1332,7 @@ bool SVArchiveTool::ValidateOnRun(SvStl::MessageContainerVector *pErrorMessages)
 			bool setCurrentImagePathRoot = !SVSVIMStateClass::CheckState(SV_STATE_RUNNING);
 			if (setCurrentImagePathRoot)
 			{
-				bOk = ValidateImagePathAndAvailableSpace(pErrorMessages);
+				bOk = ValidateImagePathAndAvailableSpace(getObjectId(), pErrorMessages);
 			}
 		}
 	}

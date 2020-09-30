@@ -59,6 +59,10 @@ public:
 	bool updateCurrentImagePathRoot(bool displayMessageOnInvalidKeywords = false);
 	bool ensureCurrentImagePathRootExists();
 	long currentTriggerCount();
+
+	bool SVArchiveTool::SetFileArchivePath(LPCTSTR lpszName);
+	std::string getNextImageFileName();
+
 	
 #pragma region Methods to replace processMessage
 	virtual bool DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo ) override;
@@ -107,9 +111,11 @@ private:
 	bool initializeOnRun(SvStl::MessageContainerVector *pErrorMessages=nullptr);
 	bool AllocateImageBuffers(SvStl::MessageContainerVector *pErrorMessages=nullptr);
 	bool CreateTextArchiveFile(SvStl::MessageContainerVector *pErrorMessages=nullptr);
-	bool ValidateImagePathAndAvailableSpace(SvStl::MessageContainerVector *pErrorMessages=nullptr );///< Checks the directory and the available space for storing image archive files.
 	bool ValidateOnRun(SvStl::MessageContainerVector *pErrorMessages=nullptr);
 	void addToCurrentImageDirectorypathAndCreateIt(const std::string& rDirectoryName);
+
+	bool ValidateImagePathAndAvailableSpace(uint32_t objectId, SvStl::MessageContainerVector* pErrorMessages);///< Checks the directory and the available space for storing image archive files.
+	bool InitializeAndValidate();
 
 private:
 

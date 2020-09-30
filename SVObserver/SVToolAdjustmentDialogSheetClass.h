@@ -59,6 +59,8 @@ public:
 	virtual ~SVToolAdjustmentDialogSheetClass();
 
 	SVIPDoc* GetIPDoc() const;
+	void markDocumentAsDirty(); // Marks the document as 'dirty' so user will be prompted to save this configuration on program exit.
+
 	SvOi::IObjectClass* GetTaskObject() const;
 	uint32_t GetInspectionID() const {return m_InspectionID; }
 	uint32_t GetTaskObjectID() const {return m_TaskObjectID; }

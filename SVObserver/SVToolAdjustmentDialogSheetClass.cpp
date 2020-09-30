@@ -272,13 +272,8 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 
 		case SvPb::SVObjectSubTypeEnum::SVToolArchiveObjectType:   // Archive tool
 			{	
-				//@TODO [Arvid][10.00][7.8.2020] A SVTADlgArchiveImagePage pointer passed to the SVTADlgArchiveResultsPage constructor so that
-				// the image file path root can be updated before the SVArchiveTool::ResetObject is called by SVTADlgArchiveResultsPage::QueryAllowExit()
-				// this is a quick hack introduced shortly befoe the release of SVO 10.00 and should be removed when possible!
-
-				SVTADlgArchiveImagePage* archiveImagePage = new SVTADlgArchiveImagePage(m_InspectionID, m_TaskObjectID, this);
-				AddPage(new SVTADlgArchiveResultsPage(m_InspectionID, m_TaskObjectID, this, archiveImagePage));
-				AddPage(archiveImagePage);
+				AddPage(new SVTADlgArchiveResultsPage(m_InspectionID, m_TaskObjectID, this));
+				AddPage(new SVTADlgArchiveImagePage(m_InspectionID, m_TaskObjectID, this));
 				addConditionalDialog();
 			}
 			break;
@@ -522,15 +517,10 @@ void SVToolAdjustmentDialogSheetClass::OnOK()
 
 	if (resetResult)
 	{
-		SVIPDoc* pDocument = GetIPDoc();
-		if (pDocument)
-		{
-			pDocument->SetModifiedFlag();
-			pDocument->RunOnce();
-		}
-
+		markDocumentAsDirty();
 		EndDialog(IDOK);
 	}
+
 	else
 	{
 		SvOi::ITaskObject* pTaskObject = dynamic_cast<SvOi::ITaskObject*> (pObject);
@@ -551,6 +541,16 @@ void SVToolAdjustmentDialogSheetClass::OnOK()
 				EndDialog(IDOK);
 			}
 		}
+	}
+}
+
+
+void SVToolAdjustmentDialogSheetClass::markDocumentAsDirty()
+{
+	SVIPDoc* pDocument = GetIPDoc();
+	if (nullptr != pDocument)
+	{
+		pDocument->SetModifiedFlag();
 	}
 }
 

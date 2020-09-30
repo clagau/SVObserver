@@ -36,7 +36,7 @@ public:
 	void ClearArray();
 	void ResetImageCounts();
 
-	HRESULT InitializeObjects(SVArchiveTool* pToolArchive, SvVol::SVStringValueObjectClass& svoObjects );	// use array capability of string vo
+	HRESULT InitializeObjects(SvVol::SVStringValueObjectClass& svoObjects );	// use array capability of string vo
 
 	SvDef::StringVector RemoveDisconnectedObject(const SVObjectInfoStruct& p_rInfoObject);
 	void ValidateImageObjects();
@@ -52,7 +52,7 @@ public:
 
 	const std::vector <SVArchiveRecord>& getRecordVec() const;
 	int GetSize();
-	void emplaceRecordAtBack(SVArchiveTool* pTool, const SVObjectReference& rObjectRef);
+	void emplaceRecordAtBack(const SVObjectReference& rObjectRef);
 #pragma endregion Public Methods
 
 private:

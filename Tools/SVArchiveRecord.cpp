@@ -24,11 +24,11 @@ namespace SvTo
 #pragma endregion Constructor
 
 #pragma region Public Methods
-void SVArchiveRecord::InitArchiveRecord(SVArchiveTool* pToolArchive, SVObjectReference rObject)
+void SVArchiveRecord::InitArchiveRecord(SVArchiveTool* pArchiveTool, SVObjectReference rObject)
 {
-	assert(pToolArchive);
+	assert(pArchiveTool);
 
-	SetArchiveTool(pToolArchive);
+	SetArchiveTool(pArchiveTool);
 
 	m_svObjectReference = rObject;
 
@@ -125,7 +125,7 @@ HRESULT SVArchiveRecord::GetNextImageFilePath(std::string& rImageFile, bool useA
 	if (useAlternativeImagePaths)
 	{
 		svFileName.SetPathName(m_pArchiveTool->getNextImageDirectory(m_ImagePathRoot).c_str());
-		svFileName.SetFileName(m_pArchiveTool->getNextImageFileName(m_ImageFileName, useAlternativeImagePaths).c_str());
+		svFileName.SetFileName(m_pArchiveTool->getNextImageFileName().c_str());
 		m_FileNames[m_lLastIndex] = (svFileName.GetFullFileName()); 
 	}
 	//otherwise the file name already set elsewhere will be used
@@ -371,7 +371,6 @@ void SVArchiveRecord::SetArchiveTool(SVArchiveTool* pTool)
 	m_pArchiveTool = pTool;
 	m_eArchiveMethod = pTool->m_eArchiveMethod;
 }
-
 
 SvIe::SVImageClass* SVArchiveRecord::GetImage()
 {

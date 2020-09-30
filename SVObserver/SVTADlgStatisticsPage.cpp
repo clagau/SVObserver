@@ -291,14 +291,10 @@ void SVTADlgStatisticsPage::OnPublishButton()
 
 		SVPublishList& PublishList = pInspection->GetPublishList();
 		PublishList.Refresh( static_cast<SvIe::SVTaskObjectClass*>(pInspection->GetToolSet()) );
-		if (m_pParent)
-		{
-			SVIPDoc* l_pIPDoc = m_pParent->GetIPDoc();
 
-			if( nullptr != l_pIPDoc )
-			{
-				l_pIPDoc->SetModifiedFlag();
-			}
+		if (nullptr != m_pParent)
+		{
+			m_pParent->markDocumentAsDirty();
 		}
 	}
 }

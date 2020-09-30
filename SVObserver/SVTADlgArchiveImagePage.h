@@ -153,7 +153,7 @@ private:
 	SVToolAdjustmentDialogSheetClass* m_pParent;		//Pointer to the Tool Adjust sheet
 	CListCtrl   m_ItemsSelected;						//The selected list control
 	SVObjectReferenceVector m_ImagesToBeArchived;       //contains references to Images that are to be archived
-	SvTo::SVArchiveTool* m_pTool = nullptr;				//Pointer to the Archive Tool
+	SvTo::SVArchiveTool* m_pTool = nullptr;				//Pointer to Archive Tool
 	CImageList m_StateImageList;						//The state image list
 	CButton m_Select;									//The tree select button
 	CBitmap m_TreeBitmap;								//The bitmap for the tree button
@@ -170,6 +170,7 @@ private:
 	CEdit	m_ImageFilepathroot3;
 	CButton m_StopAtMaxImagesButton;
 	BOOL	m_useAlternativeImagePaths = FALSE;
+	uint32_t m_inspectionId;
 
 	int		m_WhenToArchiveIndex = -1;
 	SvTo::SVArchiveMethodEnum m_eSelectedArchiveMethod = SvTo::SVArchiveInvalidMethod;
