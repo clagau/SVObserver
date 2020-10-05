@@ -1956,37 +1956,10 @@ BOOL SVObserverApp::InitInstance()
 	// Close Start Window
 	sWin.DestroyWindow();
 
-	//Get Amount of System Memory
-	MEMORYSTATUSEX statex;
-	statex.dwLength = sizeof(statex);
-	GlobalMemoryStatusEx(&statex);
-	DWORDLONG AmountOfRam = (statex.ullTotalPhys / 1024) / 1024;
+	TheSVMemoryManager().InitializeMemoryManager(SvDef::ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME,
+		SvDef::ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME,
+		SvimIni); //ABXX
 
-	int iGoOfflineBufferSize = 0;
-	int iAsyncBufferSize = 0;
-	// allocate pools in the memory manager
-
-	//Log amount of physical memory - may help in debugging issues in the future.
-	SvDef::StringVector MessageList;
-	MessageList.push_back(SvUl::Format(_T("%d"), AmountOfRam));
-	SvStl::MessageManager Exception(SvStl::MsgType::Log);
-	Exception.setMessage(SVMSG_SVO_54_EMPTY, SvStl::Tid_AmountOfSystemMemoryText, MessageList, SvStl::SourceFileParams(StdMessageParams), SvStl::Memory_Log_45001);
-
-	//if amount of physical memory is around 16 GigE allocate the larger memory pools.
-	if (AmountOfRam >= UseLargerArchiveMemoryPool)
-	{
-		iGoOfflineBufferSize = SvimIni.GetValueInt(_T("Settings"), _T("ArchiveToolGoOfflineBufferSize"), GoOfflineDefault16GB);
-		iAsyncBufferSize = SvimIni.GetValueInt(_T("Settings"), _T("ArchiveToolAsyncBufferSize"), AsyncDefault16GB);
-		TheSVMemoryManager().CreatePool(SvDef::ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME, iGoOfflineBufferSize * 1024);
-		TheSVMemoryManager().CreatePool(SvDef::ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME, iAsyncBufferSize * 1024);
-	}
-	else
-	{
-		iGoOfflineBufferSize = SvimIni.GetValueInt(_T("Settings"), _T("ArchiveToolGoOfflineBufferSize"), GoOfflineDefault4GB);
-		iAsyncBufferSize = SvimIni.GetValueInt(_T("Settings"), _T("ArchiveToolAsyncBufferSize"), AsyncDefault4GB);
-		TheSVMemoryManager().CreatePool(SvDef::ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME, iGoOfflineBufferSize * 1024);
-		TheSVMemoryManager().CreatePool(SvDef::ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME, iAsyncBufferSize * 1024);
-	}
 	// Das Hauptfenster ist initialisiert und kann jetzt angezeigt und aktualisiert werden.
 #ifdef _DEBUG
 	//pMainFrame->ShowWindow(SW_SHOWNORMAL);           // 29 Mar 1999 - frb.
@@ -2024,7 +1997,8 @@ BOOL SVObserverApp::InitInstance()
 	// add message to event viewer - SVObserver Started
 	SvDef::StringVector msgList;
 	msgList.push_back(SvSyl::SVVersionInfo::GetShortTitleVersion());
-	Exception.setMessage(SVMSG_SVO_25_SVOBSERVER_STARTED, SvStl::Tid_Version, msgList, SvStl::SourceFileParams(StdMessageParams));
+	SvStl::MessageManager Info(SvStl::MsgType::Log);
+	Info.setMessage(SVMSG_SVO_25_SVOBSERVER_STARTED, SvStl::Tid_Version, msgList, SvStl::SourceFileParams(StdMessageParams));
 
 	SVDirectX::Instance().Initialize();
 
@@ -2085,6 +2059,7 @@ BOOL SVObserverApp::InitInstance()
 
 	return true;
 }
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : OnIdle(LONG lCount)
@@ -2154,8 +2129,8 @@ int SVObserverApp::ExitInstance()
 	SvStl::MessageManager::setShowDisplayFunction(SvStl::ShowDisplayFunctor());
 
 	//add message to event viewer - SVObserver stopped
-	SvStl::MessageManager Exception(SvStl::MsgType::Log);
-	Exception.setMessage(SVMSG_SVO_26_SVOBSERVER_STOPPED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
+	SvStl::MessageManager Msg(SvStl::MsgType::Log);
+	Msg.setMessage(SVMSG_SVO_26_SVOBSERVER_STOPPED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
 	CloseHandle(m_hEvent);
 
 #if !defined(_WIN32_WCE) || defined(_CE_DCOM)

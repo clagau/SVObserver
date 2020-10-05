@@ -22,13 +22,14 @@
 #include "InspectionEngine/SVImageClass.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVOLibrary/SVMemoryManager.h"
+#include "SVLibrary/SVOINIClass.h"
 #include "SVOResource/ConstGlobalSvOr.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "Tools/SVArchiveTool.h"
 #include "Tools/ArchiveToolHelper.h"
+#include "SVOLibrary/SVMemoryManager.h"
 #pragma endregion Includes
 
 
