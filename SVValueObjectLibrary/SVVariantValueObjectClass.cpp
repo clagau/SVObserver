@@ -192,7 +192,7 @@ void SVVariantValueObjectClass::updateMemBlockData()
 		if (hasChanged())
 		{
 			uint8_t* pMemoryLocation = m_pMemBlockData;
-			int32_t byteSize = dataByteSize / getArraySize();
+			int32_t byteSize = dataByteSize / getResultSize();
 			int resultSize = isArray() ? getResultSize() : 1;
 			for (int i = 0; i < resultSize; ++i)
 			{
