@@ -17,6 +17,8 @@
 #include "SVContainableCriticalSection.h"
 #include "SVLibrary/SVTemplate.h"	// for singleton
 #include "SVMessage/SVMessage.h"
+#include "SVLibrary/SVOINIClass.h"
+
 
 #pragma endregion Includes
 

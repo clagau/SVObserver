@@ -22,7 +22,6 @@
 #include "InspectionEngine/SVImageClass.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVLibrary/SVOINIClass.h"
 #include "SVOResource/ConstGlobalSvOr.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVStatusLibrary/MessageManager.h"
