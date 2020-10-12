@@ -1022,7 +1022,7 @@ HRESULT SVMatroxGige::InternalTrigger( unsigned long channel)
 	{
 		SVMatroxGigeDigitizer& l_rCamera = GetDigitizer(channel);
 		
-		hr = SVMatroxDigitizerInterface::SetFeature(*(l_rCamera.m_Digitizer.get()), "TriggerSoftware", SVMatroxDigitizerFeature::SVTypeCommand, _variant_t(0L));
+		hr = SVMatroxDigitizerInterface::SetFeature(*(l_rCamera.m_Digitizer.get()), "TriggerSoftware", SVMatroxDigitizerFeature::SVTypeCommand, _variant_t());
 	}
 	return hr;
 }
