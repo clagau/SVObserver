@@ -36,7 +36,8 @@ public:
 	bool RenameInspection( LPCTSTR InspectionName,  LPCTSTR NewInspectionName );
 	bool RemoveInspectionFromList( LPCTSTR InspectionName);
 
-	SVOInspectionObjPtr GetInspectionByName( LPCTSTR InspectionName );
+	SVOInspectionObjPtr GetInspectionByName(LPCTSTR InspectionName);
+	SVOInspectionObjPtr GetInspectionByOriginalName(LPCTSTR InspectionName);
 	SVOInspectionObjPtr GetInspectionByPosition(int iPos);
 	bool IsInspectionInList( LPCTSTR InspectLabel) const;
 	bool IsInspectionNameInList( LPCTSTR InspectName) const;

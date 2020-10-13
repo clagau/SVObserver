@@ -170,6 +170,21 @@ SVOInspectionObjPtr SVOInspectionList::GetInspectionByName( LPCTSTR InspectionNa
 	return nullptr;
 }
 
+SVOInspectionObjPtr SVOInspectionList::GetInspectionByOriginalName(LPCTSTR InspectionName)
+{
+	SVOInspectionObjPtr pResult(nullptr);
+	const auto& iter = std::find_if(m_InspectionList.begin(), m_InspectionList.end(), [&InspectionName](auto& rEntry)
+		{
+			return (nullptr != rEntry && rEntry->GetOriginalName() == InspectionName);
+		});
+
+	if (m_InspectionList.end() != iter)
+	{
+		return *iter;
+	}
+	return nullptr;
+}
+
 SVOInspectionObjPtr SVOInspectionList::GetInspectionByPosition( int iPos )
 {
 	SVOInspectionObjPtr pResult( nullptr );

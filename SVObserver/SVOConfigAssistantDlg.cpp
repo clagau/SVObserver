@@ -1288,8 +1288,7 @@ bool SVOConfigAssistantDlg::SendPPQDataToConfiguration(SVPPQObjectPtrVector& rPP
 					if ( nullptr != pInspection)
 					{
 						bool bDetachInspect{ false };
-						//Inspection has the old name by now
-						const SVOInspectionObjPtr pTmpInspection( GetInspectionObjectByName(pInspection->GetName()) );
+						const SVOInspectionObjPtr pTmpInspection(m_InspectList.GetInspectionByOriginalName(pInspection->GetName()));
 						if ( nullptr != pTmpInspection )
 						{
 							if ( (!IsInspectionOnPPQ(pPPQ->GetName(), pInspection->GetName())) ||
@@ -1885,20 +1884,19 @@ bool SVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 		SVInspectionProcess* pInspection = pConfig->GetInspection(l);
 		if ( nullptr != pInspection )
 		{
-			//Inspection has the old name by now
-			const SVOInspectionObjPtr pInspectionObj( GetInspectionObjectByName( pInspection->GetName()) );
-			bool bDeleteInspect = FALSE;
+			const SVOInspectionObjPtr pInspectionObj(m_InspectList.GetInspectionByOriginalName(pInspection->GetName()));
+			bool bDeleteInspect = false;
 
 			if ( nullptr != pInspectionObj )
 			{
 				if ( (!IsInspectionInList(pInspection->GetName()))  || (pInspectionObj->IsNewInspection()) )
 				{
-					bDeleteInspect = TRUE;
+					bDeleteInspect = true;
 				}
 			}
 			else
 			{
-				bDeleteInspect = TRUE;
+				bDeleteInspect = true;
 			}
 			if ( bDeleteInspect )
 			{
@@ -2212,7 +2210,7 @@ bool SVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectPtrVect
 					bool bFound = false;
 
 					std::string PpqInspectionName = pPPQObj->GetAttachedInspection(j);
-					const SVOInspectionObjPtr pInspectionObj = GetInspectionObjectByName(PpqInspectionName.c_str());
+					const SVOInspectionObjPtr pInspectionObj = m_InspectList.GetInspectionByOriginalName(PpqInspectionName.c_str());
 					if( nullptr != pInspectionObj )
 					{
 						long lInsCnt{0L};
@@ -2224,7 +2222,7 @@ bool SVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectPtrVect
 								
 							if ( ( nullptr != pInspection ) && (!pInspectionObj->IsNewInspection()) )
 							{
-								if (pInspectionObj->GetInspectionName() == pInspection->GetName() )
+								if (pInspectionObj->GetOriginalName() == pInspection->GetName())
 								{
 									bFound = true;
 									break;
