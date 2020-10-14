@@ -151,7 +151,7 @@ void SVToolSetListCtrl::Rebuild()
 		int itemNo {0};
 		bool bGroupingCollapsed {false};
 		int indent {0};
-		std::list<SVToolGrouping::iterator> ToDelete;
+		
 
 		for (SVToolGrouping::iterator GroupingIt = groupings.begin(); GroupingIt != groupings.end(); ++GroupingIt)
 		{
@@ -194,7 +194,7 @@ void SVToolSetListCtrl::Rebuild()
 					if (ToolSetIt == ToolSetInfos.end() || ToolSetIt->ObjectType != SvPb::SVToolObjectType)
 					{
 						//object kein tool oder nicht im toolset
-						ToDelete.push_back(GroupingIt);
+						
 						continue;
 					}
 
@@ -220,10 +220,7 @@ void SVToolSetListCtrl::Rebuild()
 				}
 			}
 		}
-		for (auto& rIt : ToDelete)
-		{
-			groupings.erase(rIt);
-		}
+		
 		if (!GetItemCount())
 		{
 			itemNo = InsertDelimiter(itemNo, 0, NavElementType::Empty, m_ToolSetId);

@@ -85,6 +85,8 @@ public:
 	iterator find(const std::string& rName) ;
 	bool empty() const;
 	size_t size() const;
+	/// return the number of items in the view, whereby  loop tool with subtools is counted as one
+	int GetNumberOfVisibleItems();
 
 	//************************************
 	/// Get the Comment for the Start or End Group

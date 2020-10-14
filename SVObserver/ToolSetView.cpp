@@ -199,11 +199,16 @@ bool ToolSetView::ToolSetListHasChanged()
 		return true;
 	}	
 
-	int toolgroupSize = static_cast<int>(GetToolGroupings().size());
-	int listctrlSize = static_cast<int> (m_toolSetListCtrl.GetItemCount());
 	
-	if (toolgroupSize > listctrlSize - 1)
+	int toolgroupSize= GetToolGroupings().GetNumberOfVisibleItems();
+	int listctrlSize = static_cast<int> (m_toolSetListCtrl.GetItemCount());
+
+	if (toolgroupSize >  listctrlSize - 1)
 	{
+		
+		//@TODO[MEC][10.10][13.10.2020] only the case of additonal entries in Toolgroupinglist  will be cured by a rebuild.
+		//@TODO[MEC][10.10][13.10.2020]  number of looptool subtools is not in toolgroupsize  therfore we check only if Toolgroupsize is to big
+		ASSERT((toolgroupSize >  listctrlSize - 1));
 		return true;
 	}
 
@@ -232,6 +237,10 @@ void ToolSetView::OnUpdate(CView* , LPARAM lHint, CObject* )
 					getListCtrl().EnsureVisible(index, true);
 				}
 			}
+			else if (ExpandCollapseHint == lHint)
+			{
+				m_toolSetListCtrl.Rebuild();
+			}
 			else if ((SVIPDoc::RefreshView == lHint) || ToolSetListHasChanged()) 
 			{
 				
@@ -252,10 +261,7 @@ void ToolSetView::OnUpdate(CView* , LPARAM lHint, CObject* )
 				
 				m_toolSetListCtrl.RebuildImages();
 			}
-			else if (ExpandCollapseHint == lHint)
-			{
-				m_toolSetListCtrl.Rebuild();
-			}
+			
 			else
 			{
 				m_toolSetListCtrl.RebuildImages();
@@ -527,8 +533,18 @@ void ToolSetView::RenameItem()
 	{
 		return;
 	}
+	
+	SVIPDoc* pDoc = GetIPDoc();
+	if (!pDoc)
+	{
+		return;
+		
+	}
+	SVToolGrouping& rGroupings = pDoc->GetToolGroupings();
+	
+
 	uint32_t toolId(NavElement->m_objectId);
-	bool renameGrouping(false);
+	
 	switch (NavElement->m_Type)
 	{
 
@@ -537,31 +553,24 @@ void ToolSetView::RenameItem()
 			if (SvDef::InvalidObjectId != toolId) // it's a Tool
 			{
 				TheSVObserverApp.OnObjectRenamed(m_LabelSaved, toolId);
-				renameGrouping = false;
+				
 			}
 			break;
 		case NavElementType::LoopTool:
 		case NavElementType::Tool:
 			if (SvDef::InvalidObjectId != toolId) // it's a Tool
 			{
+				rGroupings.RenameItem(m_LabelSaved, m_LabelEdited);
 				TheSVObserverApp.OnObjectRenamed(m_LabelSaved, toolId);
-				renameGrouping = true;
+				
 			}
 			break;
 		case NavElementType::EndGrouping:
 		case NavElementType::StartGrouping:
-			renameGrouping = true;
+			rGroupings.RenameItem(m_LabelSaved, m_LabelEdited);
 			break;
 	}
-	if (renameGrouping)
-	{
-		SVIPDoc* pDoc = GetIPDoc();
-		if (pDoc)
-		{
-			SVToolGrouping& rGroupings = pDoc->GetToolGroupings();
-			rGroupings.RenameItem(m_LabelSaved, m_LabelEdited);
-		}
-	}
+	
 
 }
 
@@ -837,6 +846,8 @@ void ToolSetView::OnEndLabelEditToolSetList(NMHDR*, LRESULT* pResult)
 				}
 				if (IsNameOk)
 				{
+					//@TODO[MEC][10.10][13.10.2020]  here the tool is renamed, would be the correct position to
+					// rename Grouping list.
 					pTool->SetName(NewText.c_str());
 				}
 				else

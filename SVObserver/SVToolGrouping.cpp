@@ -690,12 +690,12 @@ bool SVToolGrouping::GetParameters(SvOi::IObjectWriter& rWriter)
 	return bRetVal;
 }
 
-SVToolGrouping::iterator SVToolGrouping::begin() 
+SVToolGrouping::iterator SVToolGrouping::begin()
 {
 	return m_list.begin();
 }
 
-SVToolGrouping::iterator SVToolGrouping::end() 
+SVToolGrouping::iterator SVToolGrouping::end()
 {
 	return m_list.end();
 }
@@ -706,7 +706,7 @@ SVToolGrouping::iterator SVToolGrouping::erase(SVToolGrouping::iterator it)
 	return m_list.erase(it);
 }
 
-SVToolGrouping::iterator SVToolGrouping::find(const std::string& rName) 
+SVToolGrouping::iterator SVToolGrouping::find(const std::string& rName)
 {
 	SVToolGrouping::iterator it = std::find_if(begin(), end(),
 		[&rName](const ToolGroup& rGroup)->bool { return rGroup.first == rName; });
@@ -770,4 +770,40 @@ void SVToolGrouping::SetComment(const std::string& rName, const std::string& rCo
 		}
 	}
 }
+
+int SVToolGrouping::GetNumberOfVisibleItems()
+{
+	int res = 0;
+	bool isCollapsed = false;
+
+	for (auto const &tgr : m_list)
+	{
+		switch (tgr.second.m_type)
+		{
+		case ToolGroupData::Tool:
+			if (!isCollapsed)
+			{
+				res++;
+			}
+			break;
+		case ToolGroupData::EndOfGroup:
+			if (!isCollapsed)
+			{
+				res++;
+			}
+			isCollapsed = false;
+			break;
+
+		case ToolGroupData::StartOfGroup:
+			res++;
+			isCollapsed = tgr.second.m_bCollapsed;
+			break;
+		}
+	}
+
+	return res;
+}
+
+
+
 
