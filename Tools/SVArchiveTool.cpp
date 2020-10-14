@@ -99,17 +99,17 @@ void SVArchiveTool::initializeArchiveTool()
 		IDS_OBJECTNAME_ARCHIVE_RESULT_NAMES,
 		false, SvOi::SVResetItemTool);
 
-	registerEmbeddedLinkedValue<_variant_t>(
+	registerEmbeddedLinkedValue(
 		&m_imageFileRootPath1,
 		SvPb::ArchiveImageFileRootPart1EId, SvPb::ArchiveImageFileRootPart1LinkEId,
 		IDS_OBJECTNAME_ARCHIVE_IMAGE_ROOT_PART1, _variant_t(""));
 
-	registerEmbeddedLinkedValue<_variant_t>(
+	registerEmbeddedLinkedValue(
 		&m_imageFileRootPath2,
 		SvPb::ArchiveImageFileRootPart2EId, SvPb::ArchiveImageFileRootPart2LinkEId,
 		IDS_OBJECTNAME_ARCHIVE_IMAGE_ROOT_PART2, _variant_t(""));
 
-	registerEmbeddedLinkedValue<_variant_t>(
+	registerEmbeddedLinkedValue(
 		&m_imageFileRootPath3,
 		SvPb::ArchiveImageFileRootPart3EId, SvPb::ArchiveImageFileRootPart3LinkEId,
 		IDS_OBJECTNAME_ARCHIVE_IMAGE_ROOT_PART3, _variant_t(""));
@@ -205,30 +205,30 @@ void SVArchiveTool::initializeArchiveTool()
 		IDS_BASE_DIRECTORYNAME,
 		false, SvOi::SVResetItemNone);
 
-	registerEmbeddedLinkedValue<uint32_t>(
+	registerEmbeddedLinkedValue(
 		&m_FilenameIndex1,
 		SvPb::FilenameIndex1EId, SvPb::FilenameIndex1LinkEId,
-		IDS_OBJECTNAME_FILENAME_INDEX1);
+		IDS_OBJECTNAME_FILENAME_INDEX1, _variant_t(0UL));
 
-	registerEmbeddedLinkedValue<uint32_t>(
+	registerEmbeddedLinkedValue(
 		&m_FilenameIndex2,
 		SvPb::FilenameIndex2EId, SvPb::FilenameIndex2LinkEId,
-		IDS_OBJECTNAME_FILENAME_INDEX2);
+		IDS_OBJECTNAME_FILENAME_INDEX2, _variant_t(0UL));
 
-	registerEmbeddedLinkedValue<uint32_t>(
+	registerEmbeddedLinkedValue(
 		&m_DirectorynameIndex,
 		SvPb::DirectorynameIndexEId, SvPb::DirectorynameIndexLinkEId,
-		IDS_OBJECTNAME_DIRECTORYNAME_INDEX);
+		IDS_OBJECTNAME_DIRECTORYNAME_INDEX, _variant_t(0UL));
 
-	registerEmbeddedLinkedValue<uint32_t>(
+	registerEmbeddedLinkedValue(
 		&m_SubfolderSelection,
 		SvPb::SubfolderSelectionEId, SvPb::SubfolderSelectionLinkEId,
-		IDS_OBJECTNAME_SUBFOLDER_SELECTION);
+		IDS_OBJECTNAME_SUBFOLDER_SELECTION, _variant_t(0UL));
 
-	registerEmbeddedLinkedValue<uint32_t>(
+	registerEmbeddedLinkedValue(
 		&m_SubfolderLocation,
 		SvPb::SubfolderLocationEId, SvPb::SubfolderLocationLinkEId,
-		IDS_OBJECTNAME_SUBFOLDER_LOCATION);
+		IDS_OBJECTNAME_SUBFOLDER_LOCATION, _variant_t(0UL));
 
 	// no need to register image buffer
 
@@ -927,17 +927,23 @@ bool SVArchiveTool::GetArchiveResultFilepath(std::string& rName)
 
 const std::string SVArchiveTool::GetImageArchivePathPart1() const
 {
-	return std::string(m_imageFileRootPath1.getValueAs<_bstr_t>());
+	std::string result;
+	m_imageFileRootPath1.getValue(result);
+	return result;
 }
 
 const std::string SVArchiveTool::GetImageArchivePathPart2() const
 {
-	return std::string(m_imageFileRootPath2.getValueAs<_bstr_t>());
+	std::string result;
+	m_imageFileRootPath2.getValue(result);
+	return result;
 }
 
 const std::string SVArchiveTool::GetImageArchivePathPart3() const
 {
-	return std::string(m_imageFileRootPath3.getValueAs<_bstr_t>());
+	std::string result;
+	m_imageFileRootPath3.getValue(result);
+	return result;
 }
 
 bool SVArchiveTool::SetFileArchivePath(LPCTSTR lpszName)
@@ -1045,12 +1051,15 @@ std::string SVArchiveTool::getNextImageFileName()
 	std::string baseFilename;
 	m_baseFilename.GetValue(baseFilename);
 
-	uint32_t Index1 = m_FilenameIndex1.getValueAs<uint32_t>();
+		double index;
+		m_FilenameIndex1.getValue(index);
+		uint32_t Index1 = static_cast<uint32_t> (index);
 
 	std::string centerFilename;
 	m_centerFilename.GetValue(centerFilename);
 
-	uint32_t Index2 = m_FilenameIndex2.getValueAs<uint32_t>();
+		m_FilenameIndex2.getValue(index);
+		uint32_t Index2 = static_cast<uint32_t> (index);
 
 	return SvUl::Format(_T("%s%08ld%s%04ld.bmp"), baseFilename.c_str(), Index1, centerFilename.c_str(), Index2);
 }

@@ -2251,7 +2251,6 @@ HRESULT SVTaskObjectClass::onCollectOverlays(SVImageClass* p_Image, SVExtentMult
 	return l_Status;
 }
 
-template<>
 void SVTaskObjectClass::registerEmbeddedLinkedValue(SvVol::LinkedValue* pEmbeddedObject, SvPb::EmbeddedIdEnum embeddedID, SvPb::EmbeddedIdEnum embeddedLinkID, int StringResourceID, _variant_t defaultValue)
 {
 	RegisterEmbeddedObject(pEmbeddedObject, embeddedID, StringResourceID, true, SvOi::SVResetItemTool);
@@ -2260,14 +2259,6 @@ void SVTaskObjectClass::registerEmbeddedLinkedValue(SvVol::LinkedValue* pEmbedde
 	objectName += SvDef::cLinkName;
 	RegisterEmbeddedObject(&(pEmbeddedObject->getLinkedName()), embeddedLinkID, objectName.c_str(), false, SvOi::SVResetItemNone);
 	pEmbeddedObject->getLinkedName().SetDefaultValue(_T(""), false);
-}
-
-template<>
-void SVTaskObjectClass::registerEmbeddedLinkedValue(SvVol::LinkedValue* pEmbeddedObject, SvPb::EmbeddedIdEnum embeddedID, SvPb::EmbeddedIdEnum embeddedLinkID, int StringResourceID, uint32_t defaultValue)
-{
-	_variant_t vtTemp = defaultValue;
-	vtTemp.vt = VT_UI4;
-	registerEmbeddedLinkedValue<_variant_t>(pEmbeddedObject, embeddedID, embeddedLinkID, StringResourceID, vtTemp);
 }
 
 SVObjectClass* SVTaskObjectClass::GetEmbeddedValueObject(SvPb::EmbeddedIdEnum embeddedID)

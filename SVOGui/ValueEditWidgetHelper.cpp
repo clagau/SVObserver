@@ -27,7 +27,7 @@ namespace SvOg
 	{
 		CString Temp;
 		m_rValueEdit.GetWindowText(Temp);
-		m_rValueController.Set<_bstr_t>(m_embeddedId, static_cast<_bstr_t>(Temp));
+		m_rValueController.Set<CString>(m_embeddedId, Temp);
 	}
 
 	void ValueEditWidgetHelper::EnableGuiElements(BOOL enable)

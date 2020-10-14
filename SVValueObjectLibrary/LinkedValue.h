@@ -69,13 +69,6 @@ public:
 
 	bool isCircularReference() const;
 
-	template <typename T> T getValueAs() const  //this function may throw an exception if incompatible types are used, so use it with care!
-	{
-		_variant_t temporaryVariant;
-		this->GetValue(temporaryVariant);
-		return static_cast<T>(temporaryVariant);
-	}
-
 #pragma region Methods to replace processMessage
 	virtual void OnObjectRenamed(const SVObjectClass& , const std::string& ) override { UpdateLinkedName(); };
 #pragma endregion Methods to replace processMessage

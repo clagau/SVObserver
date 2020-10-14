@@ -181,8 +181,7 @@ protected:
 	virtual bool hasToAskFriendForConnection(const SvDef::SVObjectTypeInfoStruct& , SVObjectClass*& ) const { return true; }
 
 	/// calls RegisterEmbeddedObject(() twice to register a linked value referring to 'T' in one function call
-	template<typename T>
-	void registerEmbeddedLinkedValue(SvVol::LinkedValue* pEmbeddedObject, SvPb::EmbeddedIdEnum embeddedID, SvPb::EmbeddedIdEnum embeddedLinkID, int StringResourceID, T defaultValue = 0);
+	void registerEmbeddedLinkedValue(SvVol::LinkedValue* pEmbeddedObject, SvPb::EmbeddedIdEnum embeddedID, SvPb::EmbeddedIdEnum embeddedLinkID, int StringResourceID, _variant_t defaultValue);
 
 public:
 	// Get the local object color...
