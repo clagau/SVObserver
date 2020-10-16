@@ -624,33 +624,27 @@ bool SVBlobAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCreateS
 			}
 			m_Value[i].SetArraySize(m_lMaxBlobDataArraySize);	// no longer sample size (max number of blobs found)
 		}
-		if (M_NULL != m_ResultBufferID)
-		{
-			SVMatroxBlobInterface::DestroyResult(m_ResultBufferID);
-		}
 		
-		HRESULT MatroxCode = SVMatroxBlobInterface::CreateResult(m_ResultBufferID);
-
-		if (S_OK != MatroxCode || M_NULL == m_ResultBufferID)
+		if(M_NULL == m_ResultBufferID)
 		{
-			SvStl::MessageManager MesMan(SvStl::MsgType::Log);
-			MesMan.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16117, getObjectId());
-			Result = false;
-			break;
+			if (S_OK != SVMatroxBlobInterface::CreateResult(m_ResultBufferID) || M_NULL == m_ResultBufferID)
+			{
+				SvStl::MessageManager MesMan(SvStl::MsgType::Log);
+				MesMan.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16117, getObjectId());
+				Result = false;
+				break;
+			}
 		}
 
-		if (M_NULL != m_BlobContextID)
+		if(M_NULL == m_BlobContextID)
 		{
-			SVMatroxBlobInterface::DestroyContext(m_BlobContextID);
-		}
-		MatroxCode = SVMatroxBlobInterface::CreateContext(m_BlobContextID);
-
-		if (S_OK != MatroxCode || M_NULL == m_BlobContextID)
-		{
-			SvStl::MessageManager MesMan(SvStl::MsgType::Log);
-			MesMan.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16148);
-			Result = false;
-			break;
+			if (S_OK != SVMatroxBlobInterface::CreateContext(m_BlobContextID) || M_NULL == m_BlobContextID)
+			{
+				SvStl::MessageManager MesMan(SvStl::MsgType::Log);
+				MesMan.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16148);
+				Result = false;
+				break;
+			}
 		}
 
 		/*MatroxCode = */SVMatroxBlobInterface::Set(m_BlobContextID, SVEBlobIdentifier, static_cast<long>(SVValueBinary));
@@ -659,11 +653,11 @@ bool SVBlobAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCreateS
 		m_bvoFillBlobs.GetValue(l_bUseFillBlob);
 		if (l_bUseFillBlob)
 		{
-			MatroxCode = SVMatroxBlobInterface::Set(m_BlobContextID, SVEBlobSaveRuns, static_cast<long>(SVValueEnable));
+			/*MatroxCode = */SVMatroxBlobInterface::Set(m_BlobContextID, SVEBlobSaveRuns, static_cast<long>(SVValueEnable));
 		}
 		else
 		{
-			MatroxCode = SVMatroxBlobInterface::Set(m_BlobContextID, SVEBlobSaveRuns, static_cast<long>(SVValueDisable));
+			/*MatroxCode = */SVMatroxBlobInterface::Set(m_BlobContextID, SVEBlobSaveRuns, static_cast<long>(SVValueDisable));
 		}
 
 		// size to fit number of blobs MIL searches for

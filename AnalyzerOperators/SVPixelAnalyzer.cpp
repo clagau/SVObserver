@@ -86,7 +86,8 @@ bool SVPixelAnalyzer::CloseObject()
 {
 	SVMatroxImageInterface::Destroy(m_contextID);
 	SVMatroxImageInterface::Destroy(m_ResultID);
-
+	m_contextID = M_NULL;
+	m_ResultID = M_NULL;
 	return SVImageAnalyzerClass::CloseObject();
 }
 
@@ -115,9 +116,14 @@ bool SVPixelAnalyzer::CreateObject( const SVObjectLevelCreateStruct& rCreateStru
 			break;
         }
 
-        // &&&
-		m_contextID = MimAlloc(M_DEFAULT_HOST, M_STATISTICS_CONTEXT, M_DEFAULT, M_NULL);
-		m_ResultID = MimAllocResult(M_DEFAULT_HOST, M_DEFAULT, M_STATISTICS_RESULT, M_NULL);
+		if (M_NULL == m_contextID)
+		{
+			m_contextID = MimAlloc(M_DEFAULT_HOST, M_STATISTICS_CONTEXT, M_DEFAULT, M_NULL);
+		}
+		if (M_NULL == m_ResultID)
+		{
+			m_ResultID = MimAllocResult(M_DEFAULT_HOST, M_DEFAULT, M_STATISTICS_RESULT, M_NULL);
+		}
 		
 		if( M_NULL == m_contextID || M_NULL == m_ResultID )
 		{
