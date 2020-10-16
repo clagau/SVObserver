@@ -50,7 +50,7 @@ protected:
 
 	virtual bool isInputImage(uint32_t imageId) const override;
 	virtual bool onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
-	
+
 	SvIe::SVImageClass	m_outputImage;
 	
 	// Tool's center x value, comes from mouse positioning...

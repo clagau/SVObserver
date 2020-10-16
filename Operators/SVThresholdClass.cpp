@@ -195,6 +195,15 @@ bool SVThresholdClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages
 		}
 	}
 
+	BOOL bAutoThreshold, bUpperThreshActive, bUseExternalUT, bLowerThreshActive, bUseExternalLT;
+	m_autoThreshold.GetValue(bAutoThreshold);
+	m_upperThreshActivate.GetValue(bUpperThreshActive);
+	m_useExternalUT.GetValue(bUseExternalUT);
+	m_lowerThreshActivate.GetValue(bLowerThreshActive);
+	m_useExternalLT.GetValue(bUseExternalLT);
+	m_upperThresh.setSaveValueFlag(!bAutoThreshold && bUpperThreshActive && !bUseExternalUT);
+	m_lowerThresh.setSaveValueFlag(!bAutoThreshold && bLowerThreshActive && !bUseExternalLT);
+
 	return Result;
 }
 
@@ -343,8 +352,8 @@ bool SVThresholdClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputIma
 						upper = 255L;
 					lower = 0L;
 				}
-					m_upperThresh.SetValue(upper);
-					m_lowerThresh.SetValue(lower);
+				m_upperThresh.SetValue(upper);
+				m_lowerThresh.SetValue(lower);
 			} // if( /*m_pHistValueArray &&*/ m_histValueArraySize && m_pixelNumber )
 		} // if( bAutoThreshold )
 		else

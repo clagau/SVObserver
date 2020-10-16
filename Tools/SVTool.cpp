@@ -170,10 +170,15 @@ void SVToolClass::init()
 	m_svUpdateAuxiliaryExtents.SetDefaultValue(BOOL(false), true);
 
 	m_svAuxiliarySourceX.SetDefaultValue(0.0, true);
+	m_svAuxiliarySourceX.setSaveValueFlag(false);
 	m_svAuxiliarySourceY.SetDefaultValue(0.0, true);
+	m_svAuxiliarySourceY.setSaveValueFlag(false);
 	m_svAuxiliarySourceAngle.SetDefaultValue(0.0, true);
+	m_svAuxiliarySourceAngle.setSaveValueFlag(false);
 	m_svAuxiliarySourceImageName.SetDefaultValue(_T(""), true);
+	m_svAuxiliarySourceImageName.setSaveValueFlag(false);
 	m_svAuxiliaryDrawType.SetDefaultValue("", true);
+	m_svAuxiliaryDrawType.setSaveValueFlag(false);
 
 	m_pCurrentToolSet = nullptr;
 

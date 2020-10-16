@@ -542,13 +542,13 @@ bool SVImagePolarTransform::onRun( RunStatus& rRunStatus, SvStl::MessageContaine
 		}
 		else
 		{
-			result = result && ( S_OK == m_startAngle.GetValue( dStartAngle ) );
-			result = result && ( S_OK == m_endAngle.GetValue( dEndAngle ) );
+			result = result && (S_OK == m_startAngle.GetValue(dStartAngle));
+			result = result && (S_OK == m_endAngle.GetValue(dEndAngle));
 			if (!result && nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Error_NoResultObject, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Error_NoResultObject, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 				pErrorMessages->push_back(Msg);
-		}
+			}
 		}
 
 		// Correct start and end angle...

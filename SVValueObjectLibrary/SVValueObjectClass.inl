@@ -369,6 +369,11 @@ HRESULT SVValueObjectClass<T>::getValues(std::vector<double>&  rValues) const
 template <typename T>
 void SVValueObjectClass<T>::Persist(SvOi::IObjectWriter& rWriter)
 {
+	if (SvPb::noAttributes == ObjectAttributesAllowed())
+	{
+		return;
+	}
+
 	rWriter.StartElement(GetObjectName()); // use internal name for node name
 
 										   // Get the Heading (Class Info)
