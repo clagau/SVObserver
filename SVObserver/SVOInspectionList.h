@@ -39,9 +39,8 @@ public:
 	SVOInspectionObjPtr GetInspectionByName(LPCTSTR InspectionName);
 	SVOInspectionObjPtr GetInspectionByOriginalName(LPCTSTR InspectionName);
 	SVOInspectionObjPtr GetInspectionByPosition(int iPos);
-	bool IsInspectionInList( LPCTSTR InspectLabel) const;
-	bool IsInspectionNameInList( LPCTSTR InspectName) const;
-	bool IsInspectionInList( LPCTSTR InspectionName,  LPCTSTR InspectName ) const;
+	bool IsInspectionInList( LPCTSTR InspectionName) const;
+	bool IsOriginalInspectionInList(LPCTSTR InspectionName) const;
 
 	void ResetContent();
 	int GetInspectionListCount() const;

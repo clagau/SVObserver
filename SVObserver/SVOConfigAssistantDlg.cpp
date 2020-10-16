@@ -479,8 +479,6 @@ void SVOConfigAssistantDlg::CreateDefaultForSVIMDigital(int Number, LPCTSTR Trig
 		std::string InspectionName = GetNextInspectionName();
 		m_InspectList.AddInspectionToList( InspectionName.c_str(), true );
 		m_InspectList.SetToolsetImage( InspectionName.c_str(), CameraName.c_str() );
-		m_InspectionNamesUsed.push_back(InspectionName);
-		m_InspectionLabelsUsed.push_back(InspectionName);
 
 		//add a ppq, attach trigger, camera and inspection to it.
 		std::string PPQName = GetNextPPQName();
@@ -835,11 +833,6 @@ bool SVOConfigAssistantDlg::IsCameraInList(LPCTSTR CameraName) const
 bool SVOConfigAssistantDlg::IsInspectionInList(LPCTSTR InspectionName) const
 {
 	return m_InspectList.IsInspectionInList(InspectionName);
-}
-
-bool SVOConfigAssistantDlg::IsInspectionNameInList(LPCTSTR InspectionName) const
-{
-	return m_InspectList.IsInspectionNameInList(InspectionName);
 }
 
 bool SVOConfigAssistantDlg::IsTriggerInList(LPCTSTR TriggerName) const
@@ -1889,7 +1882,7 @@ bool SVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 
 			if ( nullptr != pInspectionObj )
 			{
-				if ( (!IsInspectionInList(pInspection->GetName()))  || (pInspectionObj->IsNewInspection()) )
+				if ( (false == m_InspectList.IsOriginalInspectionInList(pInspection->GetName()))  || (pInspectionObj->IsNewInspection()) )
 				{
 					bDeleteInspect = true;
 				}
@@ -2390,8 +2383,6 @@ bool SVOConfigAssistantDlg::GetConfigurationForExisting()
 	m_PPQList.ResetContent();
 	m_UsedTriggers.clear();
 	m_UsedInspections.clear();
-	m_InspectionNamesUsed.clear();
-	m_InspectionLabelsUsed.clear();
 
 	long lCfgCameraCnt;
 	long lCfgTriggerCnt;
@@ -2526,8 +2517,6 @@ bool SVOConfigAssistantDlg::GetConfigurationForExisting()
 			std::string InspectionName = pcfgInspection->GetName();
 
 			m_InspectList.AddInspectionToList(InspectionName.c_str(), false);
-			m_InspectionNamesUsed.push_back( InspectionName );
-			m_InspectionLabelsUsed.push_back(InspectionName);
 
 			// Determine which image is the main image
 			std::string ToolsetImage;
@@ -3427,18 +3416,6 @@ void SVOConfigAssistantDlg::LastInspectionLabelDeleted(LPCTSTR InspectionLabel)
 	{
 		m_iLastInspectionNum = iNum;
 	}
-}
-
-bool SVOConfigAssistantDlg::CanInspectionNameBeUsed(LPCTSTR Name)
-{
-	bool Result( false );
-
-	SvDef::StringVector::const_iterator Iter = std::find( m_InspectionNamesUsed.begin(), m_InspectionNamesUsed.end(), std::string(Name) );
-	if( m_InspectionNamesUsed.end() == Iter)
-	{
-		Result = true;
-	}
-	return Result;
 }
 
 void SVOConfigAssistantDlg::ClearMessages()

@@ -98,7 +98,6 @@ public:
 	bool IsCameraInList(LPCTSTR CameraName) const;
 	bool IsTriggerInList(LPCTSTR TriggerName) const;
 	bool IsInspectionInList(LPCTSTR InspectionName) const;
-	bool IsInspectionNameInList(LPCTSTR InspectionName) const;
 	bool IsPPQInList(LPCTSTR PPQName) const;
 
 	std::string BuildDigName( const SVOCameraObj& rCameraObj ) const;
@@ -129,8 +128,6 @@ public:
 
 	SvDef::StringVector m_UsedTriggers;
 	SvDef::StringVector m_UsedInspections;
-	SvDef::StringVector m_InspectionNamesUsed;
-	SvDef::StringVector m_InspectionLabelsUsed;
 
 	bool IsTriggerUsed(LPCTSTR TriggerName) const;
 	void AddUsedTrigger(LPCTSTR TriggerName);
@@ -156,7 +153,6 @@ public:
 	int GetAllowedNumberOfDigs(bool bTrigger = FALSE);
 
 	void LastInspectionLabelDeleted(LPCTSTR InspectionLabel);
-	bool CanInspectionNameBeUsed(LPCTSTR Name);
 	void SetIOBoardCapabilities(const SVIOBoardCapabilities& rCapable);
 
 	bool IsNonIOSVIM(SVIMProductEnum productType) const;

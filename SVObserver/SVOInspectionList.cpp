@@ -35,7 +35,7 @@ SVOInspectionList::~SVOInspectionList()
 bool SVOInspectionList::AddInspectionToList(LPCTSTR InspectionName, bool NewInspection)
 {
 	bool bRet = false;
-	if (!IsInspectionInList(InspectionName, InspectionName))
+	if (!IsInspectionInList(InspectionName))
 	{
 		SVOInspectionObjPtr pObj{ new SVOInspectionObj() };
 		pObj->SetOriginalName(InspectionName);
@@ -199,7 +199,7 @@ SVOInspectionObjPtr SVOInspectionList::GetInspectionByPosition( int iPos )
 	return pResult;
 }
 
-bool SVOInspectionList::IsInspectionInList( LPCTSTR InspectLabel ) const
+bool SVOInspectionList::IsInspectionInList( LPCTSTR InspectionName ) const
 {
 	const_iterator Iter( m_InspectionList.begin() );
 	bool Found = false;
@@ -209,8 +209,7 @@ bool SVOInspectionList::IsInspectionInList( LPCTSTR InspectLabel ) const
 		const SVOInspectionObjPtr pInspectionObj = *Iter;
 		if( nullptr != pInspectionObj )
 		{
-			//Check both InspectionLabelName & InspectionName - Can be different if an inspeciton has been renamed.
-			if ( (InspectLabel == pInspectionObj->GetOriginalName()) || (InspectLabel == pInspectionObj->GetInspectionName()) )
+			if (InspectionName == pInspectionObj->GetInspectionName())
 			{
 				Found = true;
 			}
@@ -221,48 +220,25 @@ bool SVOInspectionList::IsInspectionInList( LPCTSTR InspectLabel ) const
 	return Found;
 }
 
-bool SVOInspectionList::IsInspectionNameInList( LPCTSTR InspectName) const
+bool SVOInspectionList::IsOriginalInspectionInList(LPCTSTR InspectionName) const
 {
-	const_iterator Iter = m_InspectionList.begin();
-	bool bFound = false;
+	const_iterator Iter(m_InspectionList.begin());
+	bool Found = false;
 
-	while( Iter != m_InspectionList.end() && !bFound )
-	{
-		const SVOInspectionObjPtr pObj = *Iter;
-
-		if (InspectName == pObj->GetInspectionName())
-		{
-			bFound = true;
-		}
-		else
-		{
-			++Iter;
-		}
-	}
-	return bFound;    
-}
-bool SVOInspectionList::IsInspectionInList( LPCTSTR InspectLabel, LPCTSTR InspectName) const
-{
-	const_iterator Iter = m_InspectionList.begin();
-	bool bFound = false;
-
-	while( Iter != m_InspectionList.end() && !bFound )
+	while (Iter != m_InspectionList.end() && !Found)
 	{
 		const SVOInspectionObjPtr pInspectionObj = *Iter;
-
-		if( nullptr != pInspectionObj && InspectLabel == pInspectionObj->GetOriginalName())
+		if (nullptr != pInspectionObj)
 		{
-			if( InspectName == pInspectionObj->GetInspectionName() )
+			if (InspectionName == pInspectionObj->GetOriginalName())
 			{
-				bFound = true;
+				Found = true;
 			}
 		}
-		else
-		{
-			++Iter;
-		}
+
+		++Iter;
 	}
-	return bFound;
+	return Found;
 }
 
 int SVOInspectionList::GetInspectionListCount() const

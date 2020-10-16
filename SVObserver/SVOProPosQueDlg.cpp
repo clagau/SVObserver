@@ -153,9 +153,8 @@ void SVOProPosQueDlg::OnBtnAddVi()
 			if( nullptr != pInspectionObj )
 			{
 	            InspectName = pInspectionObj->GetInspectionName();
-		        InspectLabel = pInspectionObj->GetOriginalName();
 			}
-            if ( !m_pParent->IsInspectUsed(InspectLabel.c_str()) )
+            if ( !m_pParent->IsInspectUsed(InspectName.c_str()) )
             {
                 Dlg.AddListBoxItem(InspectName.c_str());
             }

@@ -377,7 +377,7 @@ void SVOInspectionSourceDlg::OnSelchangeLstIpdList()
 
 		CString sNewTxt;
 		m_ctlIPDlist.GetText(iCurSel, sNewTxt);
-		if ( !m_pParent->CanInspectionNameBeUsed(sNewTxt) )
+		if (m_pParent->IsInspectionInList(sNewTxt))
 		{
 			//Place MessageBox with error...
 			m_ctlIPDlist.InsertString(m_iCursel, sCurrentTxt);
