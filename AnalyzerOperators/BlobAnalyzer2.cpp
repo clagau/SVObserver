@@ -235,24 +235,22 @@ namespace SvAo
 				}
 			}
 
-			if (M_NULL == m_ResultBufferID)
+			HRESULT MatroxCode = SVMatroxBlobInterface::CreateResult(m_ResultBufferID);
+
+			if (S_OK != MatroxCode || M_NULL == m_ResultBufferID)
 			{
-				if (S_OK != SVMatroxBlobInterface::CreateResult(m_ResultBufferID) || M_NULL == m_ResultBufferID)
-				{
-					SvStl::MessageManager MesMan(SvStl::MsgType::Log);
-					MesMan.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16117, getObjectId());
-					throw;
-				}
+				SvStl::MessageManager MesMan(SvStl::MsgType::Log);
+				MesMan.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16117, getObjectId());
+				throw;
 			}
 
-			if (M_NULL == m_BlobContextID)
+			MatroxCode = SVMatroxBlobInterface::CreateContext(m_BlobContextID);
+
+			if (S_OK != MatroxCode || M_NULL == m_BlobContextID)
 			{
-				if (S_OK != SVMatroxBlobInterface::CreateContext(m_BlobContextID) || M_NULL == m_BlobContextID)
-				{
-					SvStl::MessageManager MesMan(SvStl::MsgType::Log);
-					MesMan.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16148);
-					throw;
-				}
+				SvStl::MessageManager MesMan(SvStl::MsgType::Log);
+				MesMan.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16148);
+				throw;
 			}
 
 			SvDef::SVObjectTypeInfoStruct info(SvPb::BlobFeatureListObjectType);
