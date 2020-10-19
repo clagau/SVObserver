@@ -143,7 +143,6 @@ void SVOProPosQueDlg::OnBtnAddVi()
         
 		CString PPQName;
 		std::string InspectName;
-		std::string InspectLabel;
 		m_ctlPPQList.GetText(iPPQ, PPQName);
         pPPQObj = m_pParent->GetPPQObjectByName( PPQName );
 
