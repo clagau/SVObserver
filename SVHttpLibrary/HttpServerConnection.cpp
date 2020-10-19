@@ -176,7 +176,7 @@ void HttpServerConnection::http_on_read(const boost::system::error_code& error, 
 	}
 
 	// Build the path to the requested file
-	auto path = std::filesystem::path(m_rSettings.DataDir).append(url_path);
+	auto path = std::filesystem::path(m_rSettings.DataDir).append(url_path.substr(1));
 	if (m_Request.target().back() == '/')
 	{
 		path.append(m_rSettings.DefaultIndexHtmlFile);

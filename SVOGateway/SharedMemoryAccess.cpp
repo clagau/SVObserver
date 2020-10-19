@@ -448,8 +448,8 @@ static bool read_image(SvPb::Image& resImg, SvTrc::IImagePtr imgPtr)
 {
 	auto hdl = imgPtr->getHandle();
 	auto info = hdl->GetBitmapInfo();
-	auto buffer = hdl->GetBuffer();
-	auto out = *resImg.mutable_rgbdata();
+	auto& buffer = hdl->GetBuffer();
+	auto& out = *resImg.mutable_rgbdata();
 	auto rc = SVMatroxBufferInterface::CopyBufferToFileDIB(out, info, buffer);
 	// height can be negative to indicate that the image origin is the upper-left corner
 	// See https://docs.microsoft.com/en-us/previous-versions/dd183376(v=vs.85)
