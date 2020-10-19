@@ -138,6 +138,7 @@ public:
 	HRESULT AddInputImageFileNameRequest(SvIe::SVImageClass* p_psvImage, const std::string& p_rFileName );
 	HRESULT AddInputImageRequest( SVInputImageRequestInfoStructPtr p_InRequestPtr );
 	HRESULT AddInputImageRequestByCameraName( const std::string& rCameraName, const std::string& rFileName);
+	void AddInputImageRequestToTool(const std::string& rName, uint32_t toolId, const std::string& rFileName);
 
 	//************************************
 	//! Checks if the configuration has conditional history attributes and resets them as they are deprecated

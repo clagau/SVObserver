@@ -306,17 +306,27 @@ bool SVShiftTool::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *p
 
 		if (Result)
 		{
-			SvIe::SVImageClass* pImageInput = SvOl::getInput<SvIe::SVImageClass>(m_ImageInput, true);
-			SvTrc::IImagePtr pInputImageBuffer = pImageInput->getImageReadOnly(rRunStatus.m_triggerRecord.get());
+			SvOi::SVImageBufferHandlePtr inputImage;
+			if (nullptr == m_replaceSourceImage)
+			{
+				SvIe::SVImageClass* pImageInput = SvOl::getInput<SvIe::SVImageClass>(m_ImageInput, true);
+				SvTrc::IImagePtr pInputImageBuffer = pImageInput->getImageReadOnly(rRunStatus.m_triggerRecord.get());
+				inputImage = (nullptr != pInputImageBuffer && !(pInputImageBuffer->isEmpty())) ? pInputImageBuffer->getHandle() : nullptr;
+
+			}
+			else
+			{
+				inputImage = m_replaceSourceImage;
+			}
+			
+
 
 			double l_OffsetX = 0.0;
 			double l_OffsetY = 0.0;
 
 			Result = Result && (S_OK == m_LeftResult.GetValue(l_OffsetX) && std::isfinite(l_OffsetX));
 			Result = Result && (S_OK == m_TopResult.GetValue(l_OffsetY) && std::isfinite(l_OffsetY));
-			Result = Result && (nullptr != pImageInput);
-			Result = Result && (nullptr != pInputImageBuffer);
-			Result = Result && !(pInputImageBuffer->isEmpty());
+			Result = Result && (nullptr != inputImage);
 
 			if (Result)
 			{
@@ -326,7 +336,7 @@ bool SVShiftTool::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *p
 					m_OutputImage.SetTranslationOffset(l_OffsetX, l_OffsetY);
 				}
 
-				HRESULT MatroxCode = SVMatroxBufferInterface::CopyBuffer(pOutputImageBuffer->getHandle()->GetBuffer(), pInputImageBuffer->getHandle()->GetBuffer(), static_cast<long>(-l_OffsetX), static_cast<long>(-l_OffsetY));
+				HRESULT MatroxCode = SVMatroxBufferInterface::CopyBuffer(pOutputImageBuffer->getHandle()->GetBuffer(), inputImage->GetBuffer(), static_cast<long>(-l_OffsetX), static_cast<long>(-l_OffsetY));
 
 				if (S_OK != MatroxCode)
 				{
@@ -385,6 +395,18 @@ void SVShiftTool::addOverlays(const SvIe::SVImageClass* pImage, SvPb::OverlayDes
 	SvPb::setValueObject(m_ExtentHeight, *pRect->mutable_h());
 	setStateValueToOverlay(*pOverlay);
 	collectOverlays(pImage, *pOverlay);
+}
+
+void SVShiftTool::overwriteInputSource(SvOi::SVImageBufferHandlePtr imageHandlePtr)
+{
+	m_replaceSourceImage = imageHandlePtr;
+}
+
+void SVShiftTool::getToolsWithReplaceableSourceImage(SvPb::GetToolsWithReplaceableSourceImageResponse& rResponse) const
+{
+	auto* rData = rResponse.add_list();
+	rData->set_objectname(GetName());
+	rData->set_objectid(getObjectId());
 }
 #pragma endregion Protected Methods
 

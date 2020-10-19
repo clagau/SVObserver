@@ -34,8 +34,11 @@ public:
 	virtual bool DoesObjectHaveExtents() const override;
 
 	virtual SvVol::SVStringValueObjectClass* GetInputImageNames( ) override;
+	virtual void overwriteInputSource(SvOi::SVImageBufferHandlePtr imageHandlePtr) override;
+	virtual void getToolsWithReplaceableSourceImage(SvPb::GetToolsWithReplaceableSourceImageResponse&) const override;
 
 protected:
+	virtual bool Run(RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages = nullptr) override;
 	void init();
 
 	// Embedded Objects:
@@ -43,6 +46,8 @@ protected:
 
 	// String value object for Source Image Names
 	SvVol::SVStringValueObjectClass m_SourceImageNames;
+
+	SvOi::SVImageBufferHandlePtr m_replaceSourceImage; ///< This image handle is set if regressionTest will replace the source image. Than use this.
 };
 
 } //namespace SvTo

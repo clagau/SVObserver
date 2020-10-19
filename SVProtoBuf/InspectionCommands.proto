@@ -718,6 +718,16 @@ message GetAvailableFeaturesResponse
 	repeated AvailableFeature list = 1;
 }
 
+message GetToolsWithReplaceableSourceImageRequest
+{
+	uint32 objectId = 1;
+}
+
+message GetToolsWithReplaceableSourceImageResponse
+{
+	repeated ObjectNameIdPair list = 1;
+}
+
 message InspectionCmdRequest
 {
 	uint32 inspectionID = 1;			//The inspection ID to perform the command on
@@ -775,6 +785,7 @@ message InspectionCmdRequest
 		GetFeaturesRequest getFeaturesRequest = 50;
 		SetFeaturesRequest setFeaturesRequest = 51;
 		GetAvailableFeaturesRequest getAvailableFeaturesRequest = 52;
+		GetToolsWithReplaceableSourceImageRequest getToolsWithReplaceableSourceImageRequest = 53;
 	}
 }
 
@@ -820,5 +831,6 @@ message InspectionCmdResponse
 		GetFeaturesResponse getFeaturesResponse = 35;
 		SetFeaturesResponse setFeaturesResponse = 36;
 		GetAvailableFeaturesResponse getAvailableFeaturesResponse = 37;
+		GetToolsWithReplaceableSourceImageResponse getToolsWithReplaceableSourceImageResponse = 38;
 	}
 }

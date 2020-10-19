@@ -136,6 +136,7 @@
 #define IDD_OCV_GENERAL_DIALOG          5106
 #define IDD_RANKING_FILTER              5107
 #define IDD_DLG_FILL_BLOBS              5109
+#define IDD_DLG_SELECT_TOOL				5110
 #define IDD_TA_EXTERNAL_DLL_SELECT      5111
 #define IDD_ADJUST_TOOL_SIZE_POSITION_DIALOG 5112
 #define IDD_CHOOSEGRAYCOLOR             5114
@@ -2314,6 +2315,7 @@
 #define IDC_RESET_INPUT                 16167
 #define IDC_FEATURE_NUMBER              16168
 #define IDC_BUTTON_SELECTOR             16169
+#define IDC_TOOL_COMBOBOX				16170
 #define ID_UNDO_CHANGES                 20000
 #define ID_BROWSE_BUTTON                20001
 #define ID_PLUSBUTTON                   20002
@@ -2541,7 +2543,7 @@
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        11150
 #define _APS_NEXT_COMMAND_VALUE         20359
-#define _APS_NEXT_CONTROL_VALUE         16170
+#define _APS_NEXT_CONTROL_VALUE         16171
 #define _APS_NEXT_SYMED_VALUE           3002
 #endif
 #endif

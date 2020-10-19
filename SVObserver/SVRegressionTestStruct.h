@@ -12,6 +12,7 @@
 #pragma once
 
 #pragma region Includes
+#include "Definitions/ObjectDefines.h"
 #include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
@@ -26,8 +27,9 @@ enum RegressionFileEnum
 
 struct RegressionTestStruct
 {
-	std::string Camera {};
+	std::string Name {};
 	std::string FirstFile {};
+	uint32_t objectId{ SvDef::InvalidObjectId };
 	RegressionFileEnum iFileMethod {};
 	SvDef::StringVector stdVectorFile {};
 	SvDef::StringVector::iterator stdIteratorStart {};
@@ -36,7 +38,7 @@ struct RegressionTestStruct
 
 struct RegressionRunFileStruct
 {
-	std::string CameraName;
+	std::string ObjectName;
 	std::string FileName;
 };
 

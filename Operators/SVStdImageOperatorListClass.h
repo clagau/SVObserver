@@ -54,10 +54,13 @@ public:
 	virtual const SvIe::SVImageClass* getOutputImage(bool) const override { return &m_OutputImage; };
 	virtual const SvIe::SVImageClass* getReferenceImage(bool ) const override { return &m_LogicalROIImage; };
 
+	void setTempSourceImageHandle(SvOi::SVImageBufferHandlePtr replaceSourceImage) { m_replaceSourceImage = replaceSourceImage; };
+
 protected:
 
 	HRESULT CollectInputImageNames();
-	bool RunLocal(RunStatus &rRunStatus, SvTrc::IImagePtr pInputImageBuffer, SvIe::SVImageClass& rOutputImage);
+	bool RunLocal(RunStatus &rRunStatus, SvOi::SVImageBufferHandlePtr input, SvIe::SVImageClass& rOutputImage);
+	SvOi::SVImageBufferHandlePtr createTmpSourceImage();
 	
 private:
 	void init();
@@ -75,6 +78,8 @@ protected:
 	SvIe::SVImageClass m_OutputImage;	// Embedded
 	SvOi::SVImageBufferHandlePtr m_milTmpImageObjectInfo1;
 	SvOi::SVImageBufferHandlePtr m_milTmpImageObjectInfo2;
+
+	SvOi::SVImageBufferHandlePtr m_replaceSourceImage; ///< This image handle is set if regressionTest will replace the source image. Than use this.
 };
 
 } //namespace SvOp

@@ -38,18 +38,20 @@ static char THIS_FILE[] = __FILE__;
 
 IMPLEMENT_DYNCREATE(SVRegressionFileSelectDlg, CPropertyPage)
 
-SVRegressionFileSelectDlg::SVRegressionFileSelectDlg(LPCTSTR lptstrDialogName) : CPropertyPage(SVRegressionFileSelectDlg::IDD)
+SVRegressionFileSelectDlg::SVRegressionFileSelectDlg(LPCTSTR lptstrDialogName, bool isCamera, uint32_t toolId)
+	: CPropertyPage(SVRegressionFileSelectDlg::IDD)
+	, m_isCamera(isCamera)
+	, m_toolId(toolId)
+	, m_RegTestFiles(_T(""))
+	, m_iSelectFileRadio(RegressionFileEnum::RegNone)
+	, m_pParent(nullptr)
 {
 	
 	//{{AFX_DATA_INIT(SVRegressionFileSelectDlg)
-	m_iSelectFileRadio = RegressionFileEnum::RegNone;
-	m_RegTestFiles = _T("");
 	//}}AFX_DATA_INIT
 	m_strCaption = lptstrDialogName;
 	m_psp.pszTitle = m_strCaption;
 	m_psp.dwFlags |= PSP_USETITLE;
-	m_pParent = nullptr;
-
 }
 
 SVRegressionFileSelectDlg::~SVRegressionFileSelectDlg()
@@ -75,6 +77,7 @@ BEGIN_MESSAGE_MAP(SVRegressionFileSelectDlg, CPropertyPage)
 	ON_BN_CLICKED(IDC_RADIO_REG_SINGLE, OnRadioRegUpdate)
 	ON_BN_CLICKED(IDC_RADIO_REG_DIRECTORY, OnRadioRegUpdate)
 	ON_BN_CLICKED(IDC_RADIO_REG_SUB_DIRECTORIES, OnRadioRegUpdate)
+	ON_BN_CLICKED(IDC_BTN_REMOVE, OnRemovePage)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -139,6 +142,8 @@ BOOL SVRegressionFileSelectDlg::OnInitDialog()
 	m_pParent = dynamic_cast<SVRegressionFileSelectSheet*>(GetParent());
 	m_pParent->m_psh.dwFlags |= PSH_NOAPPLYNOW;
 
+	GetDlgItem(IDC_BTN_REMOVE)->ShowWindow(m_isCamera ? SW_HIDE : SW_SHOW );
+
 	UpdateData(FALSE);
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
@@ -164,6 +169,11 @@ CString SVRegressionFileSelectDlg::GetPageName()
 void SVRegressionFileSelectDlg::OnRadioRegUpdate() 
 {
 	UpdateData(TRUE);
+}
+
+void SVRegressionFileSelectDlg::OnRemovePage()
+{
+	m_pParent->RemovePage(this);
 }
 
 void SVRegressionFileSelectDlg::SetRegressionData(RegressionTestStruct *pDataStruct)

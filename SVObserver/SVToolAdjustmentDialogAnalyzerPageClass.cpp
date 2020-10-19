@@ -149,7 +149,6 @@ BOOL SVToolAdjustmentDialogAnalyzerPageClass::OnInitDialog()
 		pRequest->mutable_typeinfo()->set_objecttype(SvPb::SVAnalyzerObjectType);
 
 		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
-		SvUl::InputNameObjectIdPairList connectedList;
 		if (S_OK == hr && responseCmd.has_getcreatableobjectsresponse())
 		{
 			for (auto item : responseCmd.getcreatableobjectsresponse().list())

@@ -147,6 +147,7 @@ SvPb::InspectionCmdResponse getBarCodeTypeInfos(SvPb::GetBarCodeTypeInfosRequest
 SvPb::InspectionCmdResponse getFeatures(SvPb::GetFeaturesRequest request);
 SvPb::InspectionCmdResponse setFeatures(SvPb::SetFeaturesRequest request);
 SvPb::InspectionCmdResponse getAvailableFeatures(SvPb::GetAvailableFeaturesRequest request);
+SvPb::InspectionCmdResponse getToolsWithReplaceableSourceImage(SvPb::GetToolsWithReplaceableSourceImageRequest request);
 
 void fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, const SvPb::GetObjectSelectorItemsRequest& request, SvPb::SearchArea area);
 

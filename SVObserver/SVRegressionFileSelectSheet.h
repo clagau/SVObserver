@@ -22,8 +22,8 @@ class SVRegressionFileSelectSheet : public CPropertySheet
 
 // Construction
 public:
-	explicit SVRegressionFileSelectSheet(UINT nIDCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
-	explicit SVRegressionFileSelectSheet(LPCTSTR pszCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
+	explicit SVRegressionFileSelectSheet(UINT nIDCaption, uint32_t inspectionID, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
+	explicit SVRegressionFileSelectSheet(LPCTSTR pszCaption, uint32_t inspectionID, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
 
 // Overrides
 	// ClassWizard generated virtual function overrides
@@ -32,6 +32,7 @@ public:
 	virtual BOOL OnInitDialog() override;
 	//}}AFX_VIRTUAL
 	void OnOK();
+	void OnAddImage();
 
 // Implementation
 public:
@@ -44,13 +45,18 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
+	
+
 public:
-	void CreatePages(std::vector<RegressionTestStruct>* rRegessionList, const SvIe::SVVirtualCameraPtrVector&  rCameraVector);
+	void CreatePages(std::vector<RegressionTestStruct>* rRegessionList, std::vector<RegressionTestStruct>* pRegessionImageList, const SvIe::SVVirtualCameraPtrVector&  rCameraVector);
 
 private: //methods
 	std::string MakeFileNameMask( const std::string& rFileName );
 	/// Validate the regression data and fill the list of files for all structs. If it valid it throw an exception.
 	void ValidateAndFillFileList();
+
+	bool ValidateAndFillFileList(RegressionTestStruct& rStruct, long& lListCountSize);
+
 	void ClearRegressionList();
 
 	/// Fill the list of files with the RegressionFileEnum::RegFileList mode for one struct
@@ -71,6 +77,9 @@ private: //methods
 
 private: //data members
 	CList<CString, CString&> m_listMasks;
-	std::vector<RegressionTestStruct>* m_pRegressionList = nullptr;
+	std::vector<RegressionTestStruct>* m_pRegressionCameraList = nullptr;
+	std::vector<RegressionTestStruct>* m_pRegressionImageList = nullptr;
+	CButton m_addImageButton;
+	uint32_t m_InspectionID;
 };
 

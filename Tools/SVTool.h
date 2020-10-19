@@ -146,6 +146,7 @@ public:
 	
 	 void removeTaskMessages(DWORD MessageCode, SvStl::MessageTextEnum AdditionalTextId);
 	 const SvVol::SVDWordValueObjectClass& getColorObject() const { return m_statusColor; };
+	 virtual void overwriteInputSource(SvOi::SVImageBufferHandlePtr imageHandlePtr) {};
 
 #pragma region ITool methods
 	virtual bool areAuxExtentsAvailable() const override;

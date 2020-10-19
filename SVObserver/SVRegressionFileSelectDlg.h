@@ -26,7 +26,7 @@ class SVRegressionFileSelectDlg : public CPropertyPage/*, public ISVPropertyPage
 
 // Construction
 public:
-	SVRegressionFileSelectDlg(LPCTSTR lptstrDialogName = nullptr);
+	SVRegressionFileSelectDlg(LPCTSTR lptstrDialogName = nullptr, bool isCamera = true, uint32_t toolId = SvDef::InvalidObjectId);
 	virtual ~SVRegressionFileSelectDlg();
 
 	void SetDlgTitle( LPCTSTR lpszTitle );
@@ -34,7 +34,9 @@ public:
 	RegressionFileEnum GetFileSelectType();
 	CString GetSelectedFile();
 	CString GetPageName();
+	uint32_t getToolId() const { return m_toolId; };
 	void SetRegressionData(RegressionTestStruct *p_pDataStruct);
+	bool isCamera() const { return m_isCamera; };
 
 
 
@@ -61,6 +63,7 @@ protected:
 	afx_msg void OnBtnRegTestBrowseFiles();
 	virtual BOOL OnInitDialog() override;
 	afx_msg void OnRadioRegUpdate();
+	afx_msg void OnRemovePage();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
@@ -76,6 +79,8 @@ private:
     SVRegressionFileSelectSheet *m_pParent;
 	std::string m_DialogName;
 	std::string m_RegistryPath;
+	bool m_isCamera = true;
+	uint32_t m_toolId = SvDef::InvalidObjectId;
 };
 
 //{{AFX_INSERT_LOCATION}}

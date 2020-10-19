@@ -597,14 +597,7 @@ SvPb::InspectionCmdResponse getInputs(SvPb::GetInputsRequest request)
 	{
 		SvDef::SVObjectTypeInfoStruct typeInfo {request.typeinfo().objecttype(), request.typeinfo().subtype(), request.typeinfo().embeddedid()};
 		SvUl::InputNameObjectIdPairList list;
-		if (SvPb::SVImageObjectType == typeInfo.m_ObjectType)
-		{
-			pTaskObject->GetInputImages(list, request.maxrequested());
-		}
-		else
-		{
-			pTaskObject->GetInputs(list, typeInfo, request.objecttypetoinclude(), request.shouldexcludefirstobjectname());
-		}
+		pTaskObject->GetInputs(list, typeInfo, request.objecttypetoinclude(), request.shouldexcludefirstobjectname(), request.maxrequested());
 		SvPb::GetInputsResponse* pResponse = cmdResponse.mutable_getinputsresponse();
 		for (auto& item : list)
 		{
@@ -1621,6 +1614,29 @@ SvPb::InspectionCmdResponse setFeatures(SvPb::SetFeaturesRequest request)
 SvPb::InspectionCmdResponse getAvailableFeatures(SvPb::GetAvailableFeaturesRequest request)
 {
 	return SvOi::getAvailableFeatures();
+}
+
+SvPb::InspectionCmdResponse getToolsWithReplaceableSourceImage(SvPb::GetToolsWithReplaceableSourceImageRequest request)
+{
+	SvPb::InspectionCmdResponse cmdResponse;
+
+	SvOi::ITaskObject* pTaskObject;
+	SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*> (SvOi::getObject(request.objectid()));
+	if (nullptr != pInspection)
+	{
+		pTaskObject = pInspection->GetToolSetInterface();
+	}
+	else
+	{
+		pTaskObject = dynamic_cast<SvOi::ITaskObject*> (SvOi::getObject(request.objectid()));
+	}
+
+	if (nullptr != pTaskObject)
+	{
+		SvPb::GetToolsWithReplaceableSourceImageResponse* pResponse = cmdResponse.mutable_gettoolswithreplaceablesourceimageresponse();
+		pTaskObject->getToolsWithReplaceableSourceImage(*pResponse);
+	}
+	return cmdResponse;
 }
 
 } //namespace SvCmd

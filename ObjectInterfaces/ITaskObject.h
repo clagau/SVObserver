@@ -39,17 +39,13 @@ namespace SvOi
 	public:
 		virtual ~ITaskObject() {}
 
-		/// Get the List of Input Images to this Task Object.
-		/// \param rList <in> The List to be populated.
-		/// \param maxEntries <in> maximum number of entries requested.
-		virtual void GetInputImages(SvUl::InputNameObjectIdPairList& rList, int maxEntries) = 0;
-
 		/// Get the List of inputs (and connected object) to this Task Object.
 		/// \param rList [in,out] The List to be populated.
 		/// \param typeInfo [in] Type of the requested inputs. SVNotSetObjectType return all inputs.
 		/// \param objectTypeToInclude [in] Object type until the name of the connected object will set. SVNotSetObjectType means only object name and e.g. SVToolSetObjectType means "Tool Set.Window Tool....". This parameter will not used for image objects.
 		/// \param shouldExcludeFirstObjectType [in] Remove first object name. (If objectTypeToInclude == SVNotsetObjectType this parameter will not used) e.g. SVToolSetObjectType means "Window Tool....". This parameter will not used for image objects.
-		virtual void GetInputs(SvUl::InputNameObjectIdPairList& rList, const SvDef::SVObjectTypeInfoStruct& typeInfo = SvDef::SVObjectTypeInfoStruct(SvPb::SVNotSetObjectType), SvPb::SVObjectTypeEnum objectTypeToInclude = SvPb::SVNotSetObjectType, bool shouldExcludeFirstObjectName = false) = 0;
+		/// \param maxNumbers [in] Define after how many inputs the search stops. 0 means all.
+		virtual void GetInputs(SvUl::InputNameObjectIdPairList& rList, const SvDef::SVObjectTypeInfoStruct& typeInfo = SvDef::SVObjectTypeInfoStruct(SvPb::SVNotSetObjectType), SvPb::SVObjectTypeEnum objectTypeToInclude = SvPb::SVNotSetObjectType, bool shouldExcludeFirstObjectName = false, int maxNumbers = 0) = 0;
 
 		/// Connects an input to an object.
 		/// \param rInputName [in] Name of the input.
@@ -117,5 +113,9 @@ namespace SvOi
 		/// \param objectToMoveId [in] ID of the object to move.
 		/// \param preObjectId [in] ID of the object in front of the other object should moved. If this ID is SvDef::InvalidObjectId, the other object will be moved to the end of the list.
 		virtual void moveFriendObject(uint32_t objectToMoveId, uint32_t preObjectId = SvDef::InvalidObjectId) = 0;
+
+		/// Fill the list with tools with have a replaceable source image. Will check itself and his children.
+		/// \param rRequest [in,out] The list
+		virtual void getToolsWithReplaceableSourceImage(SvPb::GetToolsWithReplaceableSourceImageResponse& rRequest) const = 0;
 	};
 } //namespace SvOi

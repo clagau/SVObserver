@@ -57,6 +57,8 @@ public:
 	virtual SvOi::ParametersForML getParameterForMonitorList(SvStl::MessageContainerVector& rMessages) const override;
 
 	virtual void addOverlays(const SvIe::SVImageClass* p_Image, SvPb::OverlayDesc& rOverlay) const override;
+	virtual void overwriteInputSource(SvOi::SVImageBufferHandlePtr imageHandlePtr) override;
+	virtual void getToolsWithReplaceableSourceImage(SvPb::GetToolsWithReplaceableSourceImageResponse&) const override;
 #pragma endregion Public Methods
 
 protected:

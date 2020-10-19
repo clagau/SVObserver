@@ -139,6 +139,7 @@
     <ClCompile Include="Ranking2FilterDlg.cpp" />
     <ClCompile Include="ReconstructFilterDlg.cpp" />
     <ClCompile Include="ResultTableSelectionDlg.cpp" />
+    <ClCompile Include="SelectToolForNewSourceImageDialog.cpp" />
     <ClCompile Include="StdAfx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -226,6 +227,7 @@
     <ClInclude Include="Sci_Position.h" />
     <ClInclude Include="SciLexer.h" />
     <ClInclude Include="Scintilla.h" />
+    <ClInclude Include="SelectToolForNewSourceImageDialog.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="SVAdjustToolSizePositionDlg.h" />
     <ClInclude Include="SVBarCodeAttributesDialog.h" />

@@ -253,9 +253,11 @@ struct SVInputImageRequestInfoStruct
 	void Init();
 
 	std::string m_ObjectName;
+	uint32_t m_toolId = SvDef::InvalidObjectId;
 	SVImageInfoClass m_ImageInfo;
 	SvOi::SVImageBufferHandlePtr m_ImageHandlePtr;
 	bool m_bUsingCameraName;
+	bool m_bChangingToolInput = false;
 
 private:
 	SVInputImageRequestInfoStruct( const SVInputImageRequestInfoStruct& p_rsvObject );

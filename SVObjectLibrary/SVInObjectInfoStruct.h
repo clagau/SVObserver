@@ -41,6 +41,8 @@ struct SVInObjectInfoStruct : public SVObjectInfoStruct
 
 	const std::string& GetInputName() const;
 	void SetInputName( const std::string& p_rInputName );
+	bool isAuxInputImage() const { return m_isAuxInputImage; };
+	void setAuxInputImageFlag(bool isAuxInputImage) { m_isAuxInputImage = isAuxInputImage; };
 
 protected:
 	// Who is my input object...
@@ -48,7 +50,7 @@ protected:
 	//  the object that needs the input ID! And use a pointer of this structure 
 	//	( of the input ) as a message parameter.
 	SVObjectInfoStruct m_InputObjectInfo;	// this is the Object, this Object is using
-
+	bool m_isAuxInputImage = false;
 	bool m_IsConnected;
 
 	std::string m_InputName;

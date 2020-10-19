@@ -1998,7 +1998,7 @@ bool SVInspectionProcess::ProcessInputImageRequests(SVInspectionInfoStruct& rIpI
 	{
 		SvIe::SVImageClass *pImage = nullptr;
 
-		if (l_pInRequest->m_bUsingCameraName) //not using camera name...
+		if (l_pInRequest->m_bUsingCameraName) 
 		{
 			SvIe::SVCameraImagePtrSet l_MainImages;
 
@@ -2018,6 +2018,16 @@ bool SVInspectionProcess::ProcessInputImageRequests(SVInspectionInfoStruct& rIpI
 				{
 					++l_Iter;
 				}
+			}
+		}
+		else if (l_pInRequest->m_bChangingToolInput)
+		{
+			SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*>(SVObjectManagerClass::Instance().GetObject(l_pInRequest->m_toolId));
+			if (nullptr != pTool)
+			{
+				pTool->overwriteInputSource(l_pInRequest->m_ImageHandlePtr);
+				l_pInRequest->m_ImageHandlePtr.reset();
+				return true;
 			}
 		}
 		else
@@ -2230,6 +2240,23 @@ HRESULT SVInspectionProcess::AddInputImageRequestByCameraName(const std::string&
 	}
 
 	return hrOk;
+}
+
+void SVInspectionProcess::AddInputImageRequestToTool(const std::string& rName, uint32_t toolId, const std::string& rFileName)
+{
+	SVImageInfoClass svInfo;
+	SvOi::SVImageBufferHandlePtr svHandleStruct;
+	SVInputImageRequestInfoStructPtr pInRequest = std::make_shared<SVInputImageRequestInfoStruct>();
+
+	if (pInRequest)
+	{
+		pInRequest->m_bUsingCameraName = false;
+		pInRequest->m_bChangingToolInput = true;
+		pInRequest->m_toolId = toolId;
+		pInRequest->m_ObjectName = rName;
+		SvIe::SVImageProcessingClass::LoadImageBuffer(rFileName.c_str(), pInRequest->m_ImageInfo, pInRequest->m_ImageHandlePtr);
+		AddInputImageRequest(pInRequest);
+	}
 }
 
 std::pair<SvTi::SVTriggerInfoStruct, SVInspectionInfoStruct> SVInspectionProcess::getLastProductData() const
@@ -2593,7 +2620,7 @@ void SVInspectionProcess::UpdateMainImagesByProduct(SVInspectionInfoStruct& rIpI
 						try
 						{
 							l_pImage->setImage(Iter->second.getImage(), rIpInfoStruct.m_triggerRecordWrite);
-							if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING) && SVSVIMStateClass::CheckState(SV_STATE_READY) && nullptr != pCamera && Iter->second.getImage()->isValid())
+							if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING) && SVSVIMStateClass::CheckState(SV_STATE_READY) && Iter->second.getImage()->isValid())
 							{
 								pCamera->setTempImage(Iter->second.getImage()->getHandle()->GetBuffer());
 							}
@@ -3760,34 +3787,36 @@ void SVInspectionProcess::buildValueObjectData()
 	auto* pList = dataDefList.mutable_list();
 	for (auto* pValueObject : m_ValueObjectSet)
 	{
-		long memSize = pValueObject->getByteSize(false, true);
-		if (nullptr != pValueObject && 0 != memSize)
+		if (nullptr != pValueObject)
 		{
-			auto* pValueObjectDef = pList->Add();
-			const SvOi::IObjectClass* const pObject = dynamic_cast<const SvOi::IObjectClass* const> (pValueObject);
-			pValueObjectDef->set_objectid(pObject->getObjectId());
-			pValueObjectDef->set_name(pObject->GetCompleteName());
-			pValueObjectDef->set_type(pObject->GetObjectSubType());
-			pValueObjectDef->set_typestring(pValueObject->getTypeName());
-			pValueObjectDef->set_vttype(pValueObject->GetType());
-			pValueObjectDef->set_arraysize(pValueObject->getArraySize());
-			int valueObjectMemOffset = pValueObject->getMemOffset();
-			if (-1 == valueObjectMemOffset)
+			long memSize = pValueObject->getByteSize(false, true);
+			if (0 != memSize)
 			{
-				///This value object has not yet been allocated in inspection memory block
-				pValueObjectDef->set_memoffset(m_memValueDataOffset);
-				pValueObject->setTrData(m_memValueDataOffset, memSize, pList->size() - 1);
-				m_memValueDataOffset += memSize;
-			}
-			else
-			{
-				///When the memory offset has already been set then it must match the calculated offset
-				pValueObjectDef->set_memoffset(valueObjectMemOffset);
-				///Only update the trigger record position and delete the pointer
-				pValueObject->setTrData(-1, -1, pList->size() - 1);
-			}
-			switch (pObject->GetObjectSubType())
-			{
+				auto* pValueObjectDef = pList->Add();
+				const SvOi::IObjectClass* const pObject = dynamic_cast<const SvOi::IObjectClass* const> (pValueObject);
+				pValueObjectDef->set_objectid(pObject->getObjectId());
+				pValueObjectDef->set_name(pObject->GetCompleteName());
+				pValueObjectDef->set_type(pObject->GetObjectSubType());
+				pValueObjectDef->set_typestring(pValueObject->getTypeName());
+				pValueObjectDef->set_vttype(pValueObject->GetType());
+				pValueObjectDef->set_arraysize(pValueObject->getArraySize());
+				int valueObjectMemOffset = pValueObject->getMemOffset();
+				if (-1 == valueObjectMemOffset)
+				{
+					///This value object has not yet been allocated in inspection memory block
+					pValueObjectDef->set_memoffset(m_memValueDataOffset);
+					pValueObject->setTrData(m_memValueDataOffset, memSize, pList->size() - 1);
+					m_memValueDataOffset += memSize;
+				}
+				else
+				{
+					///When the memory offset has already been set then it must match the calculated offset
+					pValueObjectDef->set_memoffset(valueObjectMemOffset);
+					///Only update the trigger record position and delete the pointer
+					pValueObject->setTrData(-1, -1, pList->size() - 1);
+				}
+				switch (pObject->GetObjectSubType())
+				{
 				case SvPb::DoubleSortValueObjectType:
 				case SvPb::SVStringValueObjectType:
 				case SvPb::SVVariantValueObjectType:
@@ -3799,11 +3828,9 @@ void SVInspectionProcess::buildValueObjectData()
 				{
 					break;
 				}
+				}
 			}
-		}
-		else
-		{
-			if(nullptr != pValueObject)
+			else
 			{
 				///Reset all TR settings including the memory block pointer
 				pValueObject->setTrData(-1, -1, -1);
@@ -3820,10 +3847,13 @@ void SVInspectionProcess::buildValueObjectData()
 	///We now need to set the value object pointer to the correct address
 	for (auto* pValueObject : m_ValueObjectSet)
 	{
-		long memSize = pValueObject->getByteSize(false, true);
-		if (nullptr != pValueObject && 0 != memSize && 0 < m_valueData.size())
+		if (nullptr != pValueObject)
 		{
-			pValueObject->setMemBlockPointer(&m_valueData.at(0));
+			long memSize = pValueObject->getByteSize(false, true);
+			if (0 != memSize && 0 < m_valueData.size())
+			{
+				pValueObject->setMemBlockPointer(&m_valueData.at(0));
+			}
 		}
 	}
 

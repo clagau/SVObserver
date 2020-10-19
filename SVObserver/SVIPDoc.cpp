@@ -2102,7 +2102,7 @@ void SVIPDoc::RunRegressionTest()
 
 			// check to see if the list of files are the same...
 			m_bRegressionTestRunning = true;
-			static_cast<SVMainFrame*>(AfxGetApp()->m_pMainWnd)->m_pregTestDlg = new SVRegressionRunDlg(m_pRegressionTestPlayEquationController);
+			static_cast<SVMainFrame*>(AfxGetApp()->m_pMainWnd)->m_pregTestDlg = new SVRegressionRunDlg(m_pRegressionTestPlayEquationController, m_InspectionID);
 			static_cast<SVMainFrame*>(AfxGetApp()->m_pMainWnd)->m_pregTestDlg->SetUsePlayCondition(m_bRegressionTestUsePlayCondition);
 			static_cast<SVMainFrame*>(AfxGetApp()->m_pMainWnd)->m_pregTestDlg->SetIPDocParent(this);
 			static_cast<SVMainFrame*>(AfxGetApp()->m_pMainWnd)->m_pregTestDlg->Create(IDD_DIALOG_REGRESSIONTEST_RUN);
@@ -3354,6 +3354,106 @@ void SVIPDoc::SetRegressionTestPlayMode(RegressionPlayModeEnum newPlayMode)
 	m_regtestRunPlayMode = newPlayMode;
 }
 
+RegressionRunFileStruct SVIPDoc::RegressionTestSetFiles(RegressionTestStruct& rRegTestStruct, SVIPDoc::RegressionRuningState& runState)
+{
+	RegressionRunFileStruct runFileStruct {};
+	runFileStruct.ObjectName = rRegTestStruct.Name;
+
+	switch (m_regtestRunMode)
+	{
+	case RegModePlay:
+	{
+		runState.bRunFlag = true;
+		if (!runState.bFirst)
+		{
+			++rRegTestStruct.stdIteratorCurrent;
+		}
+		if (rRegTestStruct.stdIteratorCurrent == rRegTestStruct.stdVectorFile.end())
+		{
+			rRegTestStruct.stdIteratorCurrent = rRegTestStruct.stdVectorFile.begin();
+		}
+
+		if (rRegTestStruct.iFileMethod != RegSingleFile)
+		{
+			if (m_regtestRunPlayMode != Continue && !runState.bFirst)
+			{
+				if (rRegTestStruct.stdIteratorCurrent == rRegTestStruct.stdIteratorStart)
+				{
+					runState.bListDone = true;
+					runState.bRunFlag = false;
+				}
+			}
+		}
+
+		runFileStruct.FileName = *rRegTestStruct.stdIteratorCurrent;
+		break;
+	}
+	case RegModeSingleStepForward:
+	{
+		if (!runState.bFirst)
+		{
+			++rRegTestStruct.stdIteratorCurrent;
+		}
+
+		if (rRegTestStruct.stdIteratorCurrent == rRegTestStruct.stdVectorFile.end())
+		{
+			rRegTestStruct.stdIteratorCurrent = rRegTestStruct.stdVectorFile.begin();
+		}
+		runFileStruct.FileName = *rRegTestStruct.stdIteratorCurrent;
+		runState.bRunFlag = true;
+		break;
+	}
+	case RegModeSingleStepBack:
+	{
+		if (!runState.bFirst)
+		{
+			if (rRegTestStruct.stdIteratorCurrent == rRegTestStruct.stdVectorFile.begin())
+			{
+				rRegTestStruct.stdIteratorCurrent = rRegTestStruct.stdVectorFile.end() - 1;
+			}
+			else
+			{
+				--rRegTestStruct.stdIteratorCurrent;
+			}
+		}
+
+		if (rRegTestStruct.stdIteratorCurrent == rRegTestStruct.stdVectorFile.end())
+		{
+			rRegTestStruct.stdIteratorCurrent = rRegTestStruct.stdVectorFile.end() - 1;
+		}
+
+		runFileStruct.FileName = *rRegTestStruct.stdIteratorCurrent;
+		runState.bRunFlag = true;
+		break;
+	}
+	case RegModeBackToBeginningPlay:
+	{
+		rRegTestStruct.stdIteratorCurrent = rRegTestStruct.stdIteratorStart;
+		runFileStruct.FileName = *rRegTestStruct.stdIteratorCurrent;
+		runState.bRunFlag = true;
+		break;
+	}
+	case RegModeBackToBeginningStop:
+	{
+		rRegTestStruct.stdIteratorCurrent = rRegTestStruct.stdIteratorStart;
+		runFileStruct.FileName = *rRegTestStruct.stdIteratorCurrent;
+		runState.bRunFlag = true;
+		break;
+	}
+	case RegModeResetSettings:
+	{
+		rRegTestStruct.stdIteratorCurrent = rRegTestStruct.stdIteratorStart;
+		break;
+	}
+	default:
+	{
+		break;
+	}
+	}//end switch
+
+	return runFileStruct;
+}
+
 DWORD WINAPI SVIPDoc::SVRegressionTestRunThread(LPVOID lpParam)
 {
 	SVIPDoc* pIPDoc = reinterpret_cast<SVIPDoc*> (lpParam);
@@ -3369,19 +3469,16 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread(LPVOID lpParam)
 		return static_cast<DWORD> (E_FAIL);
 	}
 
-	bool l_bFirst = true;
 	pIPDoc->m_bRegressionTestRunning = true;
-
 	pIPDoc->m_regtestRunMode = RegModePause;
 	pIPDoc->m_bRegressionTestStopping = false;
 
-	bool l_bUsingSingleFile = false;
-	bool bRunFlag = false;
+	RegressionRuningState runState;
 
 	while (pIPDoc->m_regtestRunMode != RegModeStopExit)
 	{
 		//while in Pause mode, sleep
-		bool bModeReset = false;
+		runState.bModeReset = false;
 		if (pIPDoc->m_regtestRunMode == RegModePause)
 		{
 			::Sleep(50);
@@ -3389,189 +3486,81 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread(LPVOID lpParam)
 		}
 
 		size_t regCameraSize = pIPDoc->m_regCameras.size();
-		bool l_bDone = false;
-		bool l_bListDone = false;
-		int l_iNumSingleFile = 0;
+		size_t regImageSize = pIPDoc->m_regImages.size();
+		
+		runState.bListDone = false;
 		std::vector<RegressionRunFileStruct> fileNameVec;
-		fileNameVec.reserve(regCameraSize);
+		fileNameVec.reserve(regCameraSize + regImageSize);
 
-		for (size_t i = 0; i < regCameraSize; ++i)
+		if (pIPDoc->m_regtestRunMode == RegModeResetSettings)
 		{
-			l_bDone = false;
-			RegressionTestStruct& rRegTestStruct = pIPDoc->m_regCameras[i];
+			runState.bFirst = true;
+			runState.bRunFlag = false;
+			runState.bModeReset = true;
+		}
 
+		bool allSingleImage = true;
 
-			if (rRegTestStruct.iFileMethod == RegSingleFile)
-			{
-				l_bUsingSingleFile = true;
-				l_iNumSingleFile++;
-			}
+		for (auto& regData : pIPDoc->m_regCameras)
+		{
+			allSingleImage &= (regData.iFileMethod == RegSingleFile);
+			RegressionRunFileStruct runFileStruct = pIPDoc->RegressionTestSetFiles(regData, runState);
 
-			RegressionRunFileStruct runFileStruct {};
-			runFileStruct.CameraName = rRegTestStruct.Camera;
-
-			switch (pIPDoc->m_regtestRunMode)
-			{
-				case RegModePlay:
-				{
-					bRunFlag = true;
-					if (!l_bFirst)
-					{
-						++rRegTestStruct.stdIteratorCurrent;
-					}
-					if (rRegTestStruct.stdIteratorCurrent == rRegTestStruct.stdVectorFile.end())
-					{
-						rRegTestStruct.stdIteratorCurrent = rRegTestStruct.stdVectorFile.begin();
-					}
-
-					if (rRegTestStruct.iFileMethod != RegSingleFile)
-					{
-						if (pIPDoc->m_regtestRunPlayMode != Continue && !l_bFirst)
-						{
-							if (rRegTestStruct.stdIteratorCurrent == rRegTestStruct.stdIteratorStart)
-							{
-								l_bListDone = true;
-								bRunFlag = false;
-							}
-						}
-					}
-
-					if (pIPDoc->m_regtestRunPlayMode != Continue)
-					{
-						if (l_bUsingSingleFile)
-						{
-							if (regCameraSize == l_iNumSingleFile) //all using single file
-							{
-								pIPDoc->m_regtestRunMode = RegModePause;
-								SendMessage(hRegressionWnd, WM_REGRESSION_TEST_SET_PLAYPAUSE, reinterpret_cast<LPARAM> (&pIPDoc->m_regtestRunMode), 0);
-								bModeReset = true;
-								l_bFirst = true;
-							}
-							else
-							{
-								//not all using single file...
-								//check to see if at end of list.  if so stop...
-								if (l_bListDone && ((regCameraSize - 1) == i))
-								{
-									pIPDoc->m_regtestRunMode = RegModePause;
-									SendMessage(hRegressionWnd, WM_REGRESSION_TEST_SET_PLAYPAUSE, reinterpret_cast<LPARAM> (&pIPDoc->m_regtestRunMode), 0);
-									bModeReset = true;
-									l_bFirst = true;
-									bRunFlag = false;
-								}
-							}
-						}
-						else
-						{  //not using single files.
-							if (l_bListDone && ((regCameraSize - 1) == i))
-							{
-								pIPDoc->m_regtestRunMode = RegModePause;
-								SendMessage(hRegressionWnd, WM_REGRESSION_TEST_SET_PLAYPAUSE, reinterpret_cast<LPARAM> (&pIPDoc->m_regtestRunMode), 0);
-								bModeReset = true;
-								l_bFirst = true;
-								bRunFlag = false;
-							}
-						}
-					}
-
-					runFileStruct.FileName = *rRegTestStruct.stdIteratorCurrent;
-					break;
-				}
-				case RegModeSingleStepForward:
-				{
-					if (!l_bFirst)
-					{
-						++rRegTestStruct.stdIteratorCurrent;
-					}
-
-					if (rRegTestStruct.stdIteratorCurrent == rRegTestStruct.stdVectorFile.end())
-					{
-						rRegTestStruct.stdIteratorCurrent = rRegTestStruct.stdVectorFile.begin();
-					}
-					runFileStruct.FileName = *rRegTestStruct.stdIteratorCurrent;
-					bRunFlag = true;
-					break;
-				}
-				case RegModeSingleStepBack:
-				{
-					if (!l_bFirst)
-					{
-						if (rRegTestStruct.stdIteratorCurrent == rRegTestStruct.stdVectorFile.begin())
-						{
-							rRegTestStruct.stdIteratorCurrent = rRegTestStruct.stdVectorFile.end() - 1;
-						}
-						else
-						{
-							--rRegTestStruct.stdIteratorCurrent;
-						}
-					}
-
-					if (rRegTestStruct.stdIteratorCurrent == rRegTestStruct.stdVectorFile.end())
-					{
-						rRegTestStruct.stdIteratorCurrent = rRegTestStruct.stdVectorFile.end() - 1;
-					}
-
-					runFileStruct.FileName = *rRegTestStruct.stdIteratorCurrent;
-					bRunFlag = true;
-
-					break;
-				}
-				case RegModeBackToBeginningPlay:
-				{
-					rRegTestStruct.stdIteratorCurrent = rRegTestStruct.stdIteratorStart;
-					runFileStruct.FileName = *rRegTestStruct.stdIteratorCurrent;
-					bRunFlag = true;
-					break;
-				}
-				case RegModeBackToBeginningStop:
-				{
-					rRegTestStruct.stdIteratorCurrent = rRegTestStruct.stdIteratorStart;
-					runFileStruct.FileName = *rRegTestStruct.stdIteratorCurrent;
-					bRunFlag = true;
-					break;
-				}
-				case RegModeResetSettings:
-				{
-					l_bFirst = true;
-					rRegTestStruct.stdIteratorCurrent = rRegTestStruct.stdIteratorStart;
-
-					if (i == (regCameraSize - 1)) //last item in list
-					{
-						//set back to pause
-						pIPDoc->m_regtestRunMode = RegModePause;
-					}
-					l_bUsingSingleFile = false; //reset this value
-					l_iNumSingleFile = 0;
-					bRunFlag = false;
-					bModeReset = true;
-					break;
-				}
-				default:
-				{
-					break;
-				}
-			}//end switch
-
-			if (bRunFlag)
+			if (runState.bRunFlag)
 			{
 				fileNameVec.push_back(runFileStruct);
 
-				if (nullptr != pIPDoc->GetInspectionProcess())
+				const auto& rCameraList = pIPDoc->GetCameras();
+				auto cameraIter = std::find_if(rCameraList.begin(), rCameraList.end(), [runFileStruct](auto pCamera)
 				{
-					const auto& rCameraList = pIPDoc->GetCameras();
-					auto cameraIter = std::find_if(rCameraList.begin(), rCameraList.end(), [runFileStruct](auto pCamera)
-					{
-						return pCamera != nullptr && runFileStruct.CameraName == pCamera->GetName();
-					});
-					(*cameraIter)->setRegFileName(runFileStruct.FileName);
-					pIPDoc->GetInspectionProcess()->AddInputImageRequestByCameraName(runFileStruct.CameraName, runFileStruct.FileName);
-				}
-				else
-				{
-					break;
-				}
+					return pCamera != nullptr && runFileStruct.ObjectName == pCamera->GetName();
+				});
+				(*cameraIter)->setRegFileName(runFileStruct.FileName);
+				pIPDoc->GetInspectionProcess()->AddInputImageRequestByCameraName(runFileStruct.ObjectName, runFileStruct.FileName);
+			}			
+		}//end for i to num cameras...
+
+		for (auto& regData : pIPDoc->m_regImages)
+		{
+			allSingleImage &= (regData.iFileMethod == RegSingleFile);
+			RegressionRunFileStruct runFileStruct = pIPDoc->RegressionTestSetFiles(regData, runState);
+
+			if (runState.bRunFlag)
+			{
+				fileNameVec.push_back(runFileStruct);
+				//add inspection name and Toolset to the objectName
+				pIPDoc->GetInspectionProcess()->AddInputImageRequestToTool(runFileStruct.ObjectName, regData.objectId, runFileStruct.FileName);
 			}
 		}//end for i to num cameras...
+
+		if (pIPDoc->m_regtestRunMode == RegModePlay && pIPDoc->m_regtestRunPlayMode != Continue)
+		{
+			if (allSingleImage) //all using single file
+			{
+				pIPDoc->m_regtestRunMode = RegModePause;
+				SendMessage(hRegressionWnd, WM_REGRESSION_TEST_SET_PLAYPAUSE, reinterpret_cast<LPARAM> (&pIPDoc->m_regtestRunMode), 0);
+				runState.bModeReset = true;
+				runState.bFirst = true;
+			}
+			else
+			{  //not using single files.
+				if (runState.bListDone)
+				{
+					pIPDoc->m_regtestRunMode = RegModePause;
+					SendMessage(hRegressionWnd, WM_REGRESSION_TEST_SET_PLAYPAUSE, reinterpret_cast<LPARAM> (&pIPDoc->m_regtestRunMode), 0);
+					runState.bModeReset = true;
+					runState.bFirst = true;
+					runState.bRunFlag = false;
+				}
+			}
+		}
+
+		if (pIPDoc->m_regtestRunMode == RegModeResetSettings)
+		{
+			//set back to pause
+			pIPDoc->m_regtestRunMode = RegModePause;
+		}
+
 		if (pIPDoc->m_regtestRunMode == RegModeBackToBeginningPlay)
 		{
 			pIPDoc->m_regtestRunMode = RegModePlay;
@@ -3582,16 +3571,13 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread(LPVOID lpParam)
 			pIPDoc->m_regtestRunMode = RegModePause;
 			SendMessage(hRegressionWnd, WM_REGRESSION_TEST_SET_PLAYPAUSE, reinterpret_cast<LPARAM> (&pIPDoc->m_regtestRunMode), 0);
 		}
-		l_bDone = false;
+
 		//send image info to the dialog...
-		if (bRunFlag)
+		if (runState.bRunFlag)
 		{
-			bRunFlag = false;
-
+			runState.bRunFlag = false;
 			SendMessage(hRegressionWnd, WM_REGRESSION_TEST_SET_FILENAMES, reinterpret_cast<LPARAM> (&fileNameVec), 0);
-
 			pIPDoc->RunOnce();
-
 			fileNameVec.clear();
 		}
 
@@ -3612,16 +3598,16 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread(LPVOID lpParam)
 			}
 		}
 
-		if (!bModeReset)
+		if (!runState.bModeReset)
 		{
-			l_bFirst = false;
+			runState.bFirst = false;
 		}
 
 		if (pIPDoc->shouldPauseRegressionTestByCondition())
 		{
 			pIPDoc->m_regtestRunMode = RegModePause;
 			SendMessage(hRegressionWnd, WM_REGRESSION_TEST_SET_PLAYPAUSE, reinterpret_cast<LPARAM> (&pIPDoc->m_regtestRunMode), 0);
-			bRunFlag = false;
+			runState.bRunFlag = false;
 			if (pIPDoc->m_regtestRunPlayMode != Continue)
 			{
 				//Check if end of list reached and if then set it to begin.
@@ -3638,7 +3624,7 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread(LPVOID lpParam)
 				}
 				if (bEndOfList)
 				{
-					l_bFirst = true;
+					runState.bFirst = true;
 					for (auto& rRegTestStruct : pIPDoc->m_regCameras)
 					{
 						rRegTestStruct.stdIteratorCurrent = rRegTestStruct.stdVectorFile.begin();

@@ -23,7 +23,7 @@ class SVRegressionRunDlg : public CDialog
 {
 #pragma region Constructor
 public:
-	explicit SVRegressionRunDlg(SvOi::IFormulaControllerPtr pFormulaController, CWnd* pParent = nullptr);   // standard constructor
+	explicit SVRegressionRunDlg(SvOi::IFormulaControllerPtr pFormulaController, uint32_t inspectionID, CWnd* pParent = nullptr);   // standard constructor
 	virtual ~SVRegressionRunDlg();
 #pragma endregion Constructor
 
@@ -125,6 +125,7 @@ private:
 	BOOL m_bFirst;
 	BOOL m_bPlayByEquation;
 	int	m_timeDelayInMS;
+	uint32_t m_InspectionID;
 
 	SvOi::IFormulaControllerPtr m_pFormulaController;
 #pragma endregion Member variables

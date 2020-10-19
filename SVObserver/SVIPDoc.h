@@ -134,7 +134,9 @@ public:
 
 	void updateToolsetView(uint32_t toolID, uint32_t postID, uint32_t ownerID, LPCSTR pSelctedName = NULL);
 
-	std::vector<RegressionTestStruct> m_regCameras; // @WARNING:  bad practice making members public
+	std::vector<RegressionTestStruct>& getRegCameras() { return m_regCameras; };
+	std::vector<RegressionTestStruct>& getRegImages() { return m_regImages; };
+	
 
 	HANDLE m_hDisplayChangedEvent; // Set if the display settings have been changed since the Doc was opened. // @WARNING:  bad practice making members public
 
@@ -369,6 +371,16 @@ private:
 	//!if not all tools from the toolset are in toolGrouping, tool grouping is cleared. 
 	//! Initialize the tool Groupings (for older saved configurations)
 	void correctToolGrouping();
+
+	struct RegressionRuningState
+	{
+		bool bFirst = true;
+		bool bRunFlag = false;
+		bool bListDone = false;
+		bool bModeReset = false;
+		bool isLastImage = false;
+	};
+	RegressionRunFileStruct RegressionTestSetFiles(RegressionTestStruct& rRegTestStruct, RegressionRuningState& runState);
 #pragma endregion Private Methods
 
 	RegressionRunModeEnum m_regtestRunMode;
@@ -381,6 +393,8 @@ private:
 	SvOi::IFormulaControllerPtr m_pRegressionTestPlayEquationController;
 	std::string m_RegressionTestLoadEquationText;
 	bool m_bRegressionTestInitEquationText;
+	std::vector<RegressionTestStruct> m_regCameras;
+	std::vector<RegressionTestStruct> m_regImages;
 
 	uint32_t m_InspectionID;
 	SVDisplayObject m_oDisplay;

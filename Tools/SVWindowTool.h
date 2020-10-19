@@ -39,6 +39,8 @@ public:
 	virtual bool DoesObjectHaveExtents() const override;
 
 	virtual SvOi::ParametersForML getParameterForMonitorList(SvStl::MessageContainerVector& rMessages) const override;
+	virtual void overwriteInputSource(SvOi::SVImageBufferHandlePtr imageHandlePtr) override;
+	virtual void getToolsWithReplaceableSourceImage(SvPb::GetToolsWithReplaceableSourceImageResponse&) const override;
 
 protected:
 

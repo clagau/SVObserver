@@ -98,6 +98,7 @@ public:
 	virtual SvUl::NameClassIdList GetCreatableObjects(const SvDef::SVObjectTypeInfoStruct& pObjectTypeInfo) const override;
 	virtual void moveTaskObject(uint32_t objectToMoveId, uint32_t preObjectId = SvDef::InvalidObjectId) override;
 	virtual void GetTaskObjectListInfo(SvPb::TaskObjectListResponse &rResponse) const override;
+	virtual void getToolsWithReplaceableSourceImage(SvPb::GetToolsWithReplaceableSourceImageResponse& rRequest) const override;
 #pragma endregion virtual methods (ITaskObjectListClass)
 
 #pragma region Methods to replace processMessage

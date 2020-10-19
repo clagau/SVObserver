@@ -582,6 +582,14 @@ void   SVTaskObjectListClass::GetTaskObjectListInfo(SvPb::TaskObjectListResponse
 	}
 }
 
+void SVTaskObjectListClass::getToolsWithReplaceableSourceImage(SvPb::GetToolsWithReplaceableSourceImageResponse& rRequest) const
+{
+	for (auto* pTaskObj : m_TaskObjectVector)
+	{
+		pTaskObj->getToolsWithReplaceableSourceImage(rRequest);
+	}
+}
+
 void SVTaskObjectListClass::Delete(uint32_t objectID)
 {
 	SVTaskObjectClass* pTaskObject = dynamic_cast<SVTaskObjectClass*>(SVObjectManagerClass::Instance().GetObject(objectID));

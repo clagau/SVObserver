@@ -63,6 +63,8 @@ public:
 	SvVol::SVDoubleValueObjectClass* GetTranslationYInput(bool bRunMode = false) const;
 
 	virtual void addOverlays(const SvIe::SVImageClass* pImage, SvPb::OverlayDesc& rOverlay) const override;
+	virtual void overwriteInputSource(SvOi::SVImageBufferHandlePtr imageHandlePtr) override;
+	virtual void getToolsWithReplaceableSourceImage(SvPb::GetToolsWithReplaceableSourceImageResponse&) const override;
 
 #pragma endregion Public Methods
 
@@ -88,6 +90,7 @@ protected:
 	SvVol::SVDoubleValueObjectClass m_TopResult;
 	SvIe::SVImageClass m_OutputImage;
 	SvVol::SVBoolValueObjectClass m_EnableSourceImageExtents; // this value object is obsolete (perhaps it can be removed at some future date)
+	SvOi::SVImageBufferHandlePtr m_replaceSourceImage; ///< This image handle is set if regressionTest will replace the source image. Than use this.
 
 public:
 	SvVol::SVEnumerateValueObjectClass m_evoShiftMode; // @WARNING:  bad practice making members public

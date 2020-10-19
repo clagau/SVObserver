@@ -29,7 +29,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 #pragma region Constructor
-SVRegressionRunDlg::SVRegressionRunDlg(SvOi::IFormulaControllerPtr pFormulaController, CWnd* pParent /*=nullptr*/)
+SVRegressionRunDlg::SVRegressionRunDlg(SvOi::IFormulaControllerPtr pFormulaController, uint32_t inspectionID, CWnd* pParent /*=nullptr*/)
 	: CDialog(SVRegressionRunDlg::IDD, pParent)
 	, m_pFormulaController(pFormulaController)
 	, m_iconPlay(nullptr)
@@ -48,6 +48,7 @@ SVRegressionRunDlg::SVRegressionRunDlg(SvOi::IFormulaControllerPtr pFormulaContr
 	, m_iconBeginning(nullptr)
 	, m_pIPDocParent(nullptr)
 	, m_timeDelayInMS(0)
+	, m_InspectionID(inspectionID)
 {
 	m_sliderDelayTime.SetInvertVerticalArrowKeys(true);
 	//{{AFX_DATA_INIT(SVRegressionRunDlg)
@@ -179,7 +180,7 @@ BOOL SVRegressionRunDlg::OnInitDialog()
 		}
 		delete[] lwp;
 
-		EnableButtons(m_pIPDocParent->m_regCameras.size() > 0);
+		EnableButtons(m_pIPDocParent->getRegCameras().size() > 0);
 
 		UpdateData(FALSE);
 
@@ -372,16 +373,16 @@ void SVRegressionRunDlg::OnBtnSettings()
 	//set regression to pause 
 	m_pIPDocParent->SetRegressionTestRunMode(RegModePause);
 
-	SVRegressionFileSelectSheet dlgRegFileSelect("Regression Test");
+	SVRegressionFileSelectSheet dlgRegFileSelect("Regression Test", m_InspectionID);
 
 	dlgRegFileSelect.m_psh.dwFlags |= PSH_NOAPPLYNOW;
 
 	SvIe::SVVirtualCameraPtrVector cameraVector = m_pIPDocParent->GetCameras();
 
-	dlgRegFileSelect.CreatePages(&m_pIPDocParent->m_regCameras, cameraVector);
+	dlgRegFileSelect.CreatePages(&m_pIPDocParent->getRegCameras(), &m_pIPDocParent->getRegImages(), cameraVector);
 	if ( IDOK == dlgRegFileSelect.DoModal() )
 	{
-		if ( m_pIPDocParent->m_regCameras.size() > 0 )
+		if ( m_pIPDocParent->getRegCameras().size() > 0 )
 		{
 			EnableButtons(TRUE);
 		}
@@ -397,7 +398,7 @@ void SVRegressionRunDlg::OnBtnSettings()
 	}
 	else
 	{
-		if ( 0 == m_pIPDocParent->m_regCameras.size() )
+		if ( 0 == m_pIPDocParent->getRegCameras().size() )
 		{
 			EnableButtons(FALSE);
 		}
@@ -430,7 +431,7 @@ LRESULT  SVRegressionRunDlg::SetNextFiles(WPARAM wParam, LPARAM )
 
 	for( const auto& rRegFile : *pRegressionFileVec )
 	{
-		std::string Name = rRegFile.CameraName + " : "+ rRegFile.FileName;
+		std::string Name = rRegFile.ObjectName + " : "+ rRegFile.FileName;
 
 		if ( MaxStringSize == 0 )
 		{

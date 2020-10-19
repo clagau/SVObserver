@@ -140,8 +140,17 @@ bool SVStdImageOperatorListClass::Run(RunStatus& rRunStatus, SvStl::MessageConta
 
 	if (bRetVal)
 	{
-		SvTrc::IImagePtr pInputImageBuffer = m_LogicalROIImage.getImageReadOnly(rRunStatus.m_triggerRecord.get());
-		bRetVal = RunLocal(rRunStatus, pInputImageBuffer, m_OutputImage);
+		SvOi::SVImageBufferHandlePtr input;
+		if (nullptr == m_replaceSourceImage)
+		{
+			SvTrc::IImagePtr pInputImageBuffer = m_LogicalROIImage.getImageReadOnly(rRunStatus.m_triggerRecord.get());
+			input = (nullptr != pInputImageBuffer) ? pInputImageBuffer->getHandle() : nullptr;
+		}
+		else
+		{
+			input = createTmpSourceImage();
+		}
+		bRetVal = RunLocal(rRunStatus, input, m_OutputImage);
 	}
 
 	if (!bRetVal)
@@ -184,13 +193,12 @@ HRESULT SVStdImageOperatorListClass::CollectInputImageNames()
 	return hr;
 }
 
-bool SVStdImageOperatorListClass::RunLocal(RunStatus &rRunStatus, SvTrc::IImagePtr pInputImageBuffer, SvIe::SVImageClass&)
+bool SVStdImageOperatorListClass::RunLocal(RunStatus &rRunStatus, SvOi::SVImageBufferHandlePtr input, SvIe::SVImageClass&)
 {
 	bool bRetVal = true;
 	SvTrc::IImagePtr pOutputImageBuffer = m_OutputImage.getImageToWrite(rRunStatus.m_triggerRecord);
 	if (nullptr != pOutputImageBuffer && !pOutputImageBuffer->isEmpty())
 	{
-		SvOi::SVImageBufferHandlePtr input = (nullptr != pInputImageBuffer) ? pInputImageBuffer->getHandle() : nullptr;
 		SvOi::SVImageBufferHandlePtr output = pOutputImageBuffer->getHandle();
 
 		if (nullptr == input || nullptr == output)
@@ -299,6 +307,39 @@ bool SVStdImageOperatorListClass::RunLocal(RunStatus &rRunStatus, SvTrc::IImageP
 	return bRetVal;
 }
 
+SvOi::SVImageBufferHandlePtr SVStdImageOperatorListClass::createTmpSourceImage()
+{
+	SvOi::SVImageBufferHandlePtr input;
+	auto* pParentImage = m_LogicalROIImage.GetParentImage();
+	assert(nullptr != pParentImage);
+	if (nullptr != pParentImage)
+	{
+		SVImageInfoClass tmpInfo = m_LogicalROIImage.GetImageInfo();
+		RECT ChildRect;
+		tmpInfo.GetExtents().GetRectangle(ChildRect);
+		auto bitmapInfo = m_replaceSourceImage->GetBitmapInfo();
+		SvOi::SVImageBufferHandlePtr inputParent;
+		if (abs(bitmapInfo.GetWidth()) < ChildRect.right || abs(bitmapInfo.GetHeight()) < ChildRect.top)
+		{
+			SvIe::SVImageProcessingClass::CreateImageBuffer(pParentImage->GetImageInfo(), inputParent);
+			assert(inputParent);
+			if (inputParent)
+			{
+				SVMatroxBufferInterface::ClearBuffer(inputParent->GetBuffer(), 0.0);
+				SVMatroxBufferInterface::CopyBuffer(inputParent->GetBuffer(), m_replaceSourceImage->GetBuffer());
+			}
+		}
+		else
+		{
+			inputParent = m_replaceSourceImage;
+		}
+		SvIe::SVImageProcessingClass::CreateImageChildBuffer(pParentImage->GetImageInfo(), inputParent, tmpInfo, input);
+	}
+
+	m_replaceSourceImage = nullptr;
+	return input;
+}
+
 bool SVStdImageOperatorListClass::copyBuffer(const SvOi::SVImageBufferHandlePtr input, SvOi::SVImageBufferHandlePtr output)
 {
 	bool bRetVal = true;
@@ -314,5 +355,4 @@ bool SVStdImageOperatorListClass::copyBuffer(const SvOi::SVImageBufferHandlePtr 
 
 	return bRetVal;
 }
-
 } //namespace SvOp

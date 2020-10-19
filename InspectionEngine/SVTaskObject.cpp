@@ -440,49 +440,7 @@ void SVTaskObjectClass::fillSelectorList(std::back_insert_iterator<std::vector<S
 }
 
 #pragma region virtual method (ITaskObject)
-void SVTaskObjectClass::GetInputImages(SvUl::InputNameObjectIdPairList& rList, int maxEntries)
-{
-	SvOl::SVInObjectInfoStruct* psvImageInfo(nullptr);
-	SvOl::SVInObjectInfoStruct* psvLastImageInfo(nullptr);
-
-	while (!psvImageInfo && S_OK == FindNextInputImageInfo(psvImageInfo, psvLastImageInfo))
-	{
-		// cppcheck-suppress oppositeInnerCondition
-		if (psvImageInfo)
-		{
-			SvOi::ISVImage* pImage = nullptr;
-			uint32_t imageId = SvDef::InvalidObjectId;
-			if (psvImageInfo->IsConnected())
-			{
-				SvOi::IObjectClass* pObject = psvImageInfo->GetInputObjectInfo().getObject();
-				if (nullptr != pObject)
-				{
-					pImage = dynamic_cast <SvOi::ISVImage*>(pObject);
-					imageId = pObject->getObjectId();
-				}
-			}
-
-			if (nullptr != pImage)
-			{
-				std::string name = pImage->getDisplayedName();
-				rList.insert(std::make_pair(psvImageInfo->GetInputName(), std::make_pair(name, imageId)));
-			}
-			else
-			{
-				rList.insert(std::make_pair(psvImageInfo->GetInputName(), std::make_pair(std::string(), SvDef::InvalidObjectId)));
-			}
-
-			//0 == maxEntries means all input images
-			if (0 == maxEntries || static_cast<int>(rList.size()) < maxEntries)
-			{
-				psvLastImageInfo = psvImageInfo;
-				psvImageInfo = nullptr;
-			}
-		}
-	}
-}
-
-void SVTaskObjectClass::GetInputs(SvUl::InputNameObjectIdPairList& rList, const SvDef::SVObjectTypeInfoStruct& typeInfo, SvPb::SVObjectTypeEnum objectTypeToInclude, bool shouldExcludeFirstObjectName)
+void SVTaskObjectClass::GetInputs(SvUl::InputNameObjectIdPairList& rList, const SvDef::SVObjectTypeInfoStruct& typeInfo, SvPb::SVObjectTypeEnum objectTypeToInclude, bool shouldExcludeFirstObjectName, int maxNumbers)
 {
 	SvOl::SVInputInfoListClass toolInputList;
 	// Try to get input interface...
@@ -495,7 +453,8 @@ void SVTaskObjectClass::GetInputs(SvUl::InputNameObjectIdPairList& rList, const 
 
 		if (nullptr != pInputInfo && (SvPb::SVNotSetObjectType == typeInfo.m_ObjectType ||
 			(typeInfo.m_ObjectType == pInputInfo->GetInputObjectInfo().m_ObjectTypeInfo.m_ObjectType &&
-			(SvPb::SVNotSetSubObjectType == typeInfo.m_SubType || typeInfo.m_SubType == pInputInfo->GetInputObjectInfo().m_ObjectTypeInfo.m_SubType))))
+			(SvPb::SVNotSetSubObjectType == typeInfo.m_SubType || typeInfo.m_SubType == pInputInfo->GetInputObjectInfo().m_ObjectTypeInfo.m_SubType)))
+			&& S_FALSE == pInputInfo->isAuxInputImage())
 		{
 			SvOi::IObjectClass* pObject = dynamic_cast<SvOi::IObjectClass*> (pInputInfo->GetInputObjectInfo().getObject());
 			std::string name = "";
@@ -528,6 +487,10 @@ void SVTaskObjectClass::GetInputs(SvUl::InputNameObjectIdPairList& rList, const 
 				objectID = pObject->getObjectId();
 			}
 			rList.insert(std::make_pair(pInputInfo->GetInputName(), std::make_pair(name, objectID)));
+			if (0 < maxNumbers && rList.size() >= maxNumbers)
+			{
+				return;
+			}
 		}
 	}
 }
@@ -982,7 +945,6 @@ void SVTaskObjectClass::ResetPrivateInputInterface()
 			}
 
 			pInInfo->SetObject(l_rsvInfo);
-
 			info = pInInfo->GetInputObjectInfo().m_ObjectTypeInfo;
 
 			if (SvDef::InvalidObjectId == pInInfo->GetInputObjectInfo().getObjectId() &&
@@ -1175,14 +1137,8 @@ HRESULT SVTaskObjectClass::ConnectToObject(SvOl::SVInObjectInfoStruct* p_psvInpu
 			{
 				// Unable to connect to new input object....
 				SvDef::StringVector msgList;
-				if (pNewObject)
-				{
-					msgList.push_back(pNewObject->GetName());
-				}
-				else
-				{
-					msgList.push_back(SvStl::MessageData::convertId2AdditionalText(SvStl::Tid_UnknownString));
-				}
+				msgList.push_back(pNewObject->GetName());
+
 				// Should we really be doing this here?
 				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 				Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_CriticalUnableToConnectTo, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10203);
@@ -1465,7 +1421,7 @@ bool SVTaskObjectClass::RegisterInputObject(SvOl::SVInObjectInfoStruct* PInObjec
 		if (m_inputInterfaceList.push_back(PInObjectInfo) >= 0)
 		{
 			PInObjectInfo->SetInputName(p_rInputName);
-
+			PInObjectInfo->setAuxInputImageFlag(IsAuxInputImage(PInObjectInfo));
 			return true;
 		}
 

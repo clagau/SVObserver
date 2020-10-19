@@ -282,6 +282,23 @@ SvOi::ParametersForML SVWindowToolClass::getParameterForMonitorList(SvStl::Messa
 	return retList;
 }
 
+void SVWindowToolClass::overwriteInputSource(SvOi::SVImageBufferHandlePtr imageHandlePtr)
+{
+	SvDef::SVObjectTypeInfoStruct info{ SvPb::SVUnaryImageOperatorListObjectType, SvPb::SVStdImageOperatorListObjectType };
+	SvOp::SVStdImageOperatorListClass* pObject = dynamic_cast<SvOp::SVStdImageOperatorListClass*>(getFirstObject(info));
+	if (nullptr != pObject)
+	{
+		pObject->setTempSourceImageHandle(imageHandlePtr);
+	}
+}
+
+void SVWindowToolClass::getToolsWithReplaceableSourceImage(SvPb::GetToolsWithReplaceableSourceImageResponse& rResponse) const
+{
+	auto* rData = rResponse.add_list();
+	rData->set_objectname(GetName());
+	rData->set_objectid(getObjectId());
+}
+
 SvVol::SVStringValueObjectClass* SVWindowToolClass::GetInputImageNames()
 {
 	return &m_SourceImageNames;

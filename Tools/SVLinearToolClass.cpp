@@ -313,6 +313,23 @@ void SVLinearToolClass::addOverlays(const SvIe::SVImageClass* pImage, SvPb::Over
 	}
 	collectOverlays(pImage, *pOverlay);
 }
+
+void SVLinearToolClass::overwriteInputSource(SvOi::SVImageBufferHandlePtr imageHandlePtr)
+{
+	SvDef::SVObjectTypeInfoStruct info{ SvPb::SVUnaryImageOperatorListObjectType, SvPb::SVLinearImageOperatorListObjectType };
+	SvOp::SVStdImageOperatorListClass* pObject = dynamic_cast<SvOp::SVStdImageOperatorListClass*>(getFirstObject(info));
+	if (nullptr != pObject)
+	{
+		pObject->setTempSourceImageHandle(imageHandlePtr);
+	}
+}
+
+void SVLinearToolClass::getToolsWithReplaceableSourceImage(SvPb::GetToolsWithReplaceableSourceImageResponse& rResponse) const
+{
+	auto* rData = rResponse.add_list();
+	rData->set_objectname(GetName());
+	rData->set_objectid(getObjectId());
+}
 #pragma endregion Public Methods
 
 #pragma region Protected Methods

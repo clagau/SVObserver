@@ -143,14 +143,32 @@ bool SVLinearImageOperatorList::Run(RunStatus& rRunStatus, SvStl::MessageContain
 	{
 		if (UseRotation) 
 		{
-			SvTrc::IImagePtr pInputBuffer = (nullptr != pInputImage) ? pInputImage->getImageReadOnly(rRunStatus.m_triggerRecord.get()) : nullptr;
+			SvOi::SVImageBufferHandlePtr input;
+			if (nullptr == m_replaceSourceImage)
+			{
+				SvTrc::IImagePtr pInputBuffer = (nullptr != pInputImage) ? pInputImage->getImageReadOnly(rRunStatus.m_triggerRecord.get()) : nullptr;
+				input = (nullptr != pInputBuffer) ? pInputBuffer->getHandle() : nullptr;
+			}
+			else
+			{
+				input = createTmpSourceImage();
+			}
 			pOutputBuffer = m_OutputImage.getImageToWrite(rRunStatus.m_triggerRecord);
-			result = RunLocalRotation(rRunStatus, pInputBuffer, pOutputBuffer, rImageExtent);
+			result = RunLocalRotation(rRunStatus, input, pOutputBuffer, rImageExtent);
 		}
 		else
 		{
-			SvTrc::IImagePtr pInputImageBuffer = m_LogicalROIImage.getImageReadOnly(rRunStatus.m_triggerRecord.get());
-			result = RunLocal(rRunStatus, pInputImageBuffer, m_OutputImage);
+			SvOi::SVImageBufferHandlePtr input;
+			if (nullptr == m_replaceSourceImage)
+			{
+				SvTrc::IImagePtr pInputImageBuffer = m_LogicalROIImage.getImageReadOnly(rRunStatus.m_triggerRecord.get());
+				input = (nullptr != pInputImageBuffer) ? pInputImageBuffer->getHandle() : nullptr;
+			}
+			else
+			{
+				input = createTmpSourceImage();
+			}
+			result = RunLocal(rRunStatus, input, m_OutputImage);
 			pOutputBuffer = m_OutputImage.getImageReadOnly(rRunStatus.m_triggerRecord.get());
 		}
 	}
@@ -382,7 +400,7 @@ void SVLinearImageOperatorList::ResetLogicalROIImage()
 	}
 }
 
-bool SVLinearImageOperatorList::RunLocalRotation(RunStatus &rRunStatus, SvTrc::IImagePtr pInputBuffer, SvTrc::IImagePtr pOutputBuffer, const SVImageExtentClass& rImageExtent)
+bool SVLinearImageOperatorList::RunLocalRotation(RunStatus &rRunStatus, SvOi::SVImageBufferHandlePtr input, SvTrc::IImagePtr pOutputBuffer, const SVImageExtentClass& rImageExtent)
 {
 	bool childUpdateCounters = rRunStatus.m_UpdateCounters;
 
@@ -391,7 +409,7 @@ bool SVLinearImageOperatorList::RunLocalRotation(RunStatus &rRunStatus, SvTrc::I
 
 	if (bRetVal)
 	{
-		if (nullptr != pInputBuffer && !pInputBuffer->isEmpty() && nullptr != pOutputBuffer && !pOutputBuffer->isEmpty())
+		if (nullptr != input && !input->empty() && nullptr != pOutputBuffer && !pOutputBuffer->isEmpty())
 		{
 			POINT l_oInPoint;
 			POINT l_oOutPoint;
@@ -401,7 +419,7 @@ bool SVLinearImageOperatorList::RunLocalRotation(RunStatus &rRunStatus, SvTrc::I
 			rImageExtent.GetExtentProperty(SvPb::SVExtentPropertyPositionPoint, l_oInPoint);
 			rImageExtent.GetExtentProperty(SvPb::SVExtentPropertyOutputPositionPoint, l_oOutPoint);
 
-			SVMatroxImageRotateStruct l_Rotate(pInputBuffer->getHandle()->GetBuffer());
+			SVMatroxImageRotateStruct l_Rotate(input->GetBuffer());
 			l_Rotate.m_dAngle = dRotationAngle;
 			l_Rotate.m_dSrcCenX = l_oInPoint.x;
 			l_Rotate.m_dSrcCenY = l_oInPoint.y;

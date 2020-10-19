@@ -12,6 +12,8 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVAcquisitionTool.h"
+#include "SVStatusLibrary/RunStatus.h"
+#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #pragma endregion Includes
 
 namespace SvTo
@@ -110,6 +112,32 @@ bool SVAcquisitionToolClass::DoesObjectHaveExtents() const
 SvVol::SVStringValueObjectClass* SVAcquisitionToolClass::GetInputImageNames()
 {
 	return &m_SourceImageNames;
+}
+
+void SVAcquisitionToolClass::overwriteInputSource(SvOi::SVImageBufferHandlePtr imageHandlePtr)
+{
+	m_replaceSourceImage = imageHandlePtr;
+}
+
+void SVAcquisitionToolClass::getToolsWithReplaceableSourceImage(SvPb::GetToolsWithReplaceableSourceImageResponse& rResponse) const
+{
+	auto* rData = rResponse.add_list();
+	rData->set_objectname(GetName());
+	rData->set_objectid(getObjectId());
+}
+
+bool SVAcquisitionToolClass::Run(RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages)
+{
+	if (nullptr != m_replaceSourceImage)
+	{
+		auto pImage = mainImageObject.getImageToWrite(rRunStatus.m_triggerRecord);
+		if (nullptr != pImage)
+		{
+			SVMatroxBufferInterface::CopyBuffer(pImage->getHandle()->GetBuffer(), m_replaceSourceImage->GetBuffer());
+		}
+	}
+
+	return __super::Run(rRunStatus, pErrorMessages);
 }
 
 } //namespace SvTo
