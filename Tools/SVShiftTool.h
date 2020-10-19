@@ -89,7 +89,6 @@ protected:
 	SvVol::SVDoubleValueObjectClass m_LeftResult;
 	SvVol::SVDoubleValueObjectClass m_TopResult;
 	SvIe::SVImageClass m_OutputImage;
-	SvVol::SVBoolValueObjectClass m_EnableSourceImageExtents; // this value object is obsolete (perhaps it can be removed at some future date)
 	SvOi::SVImageBufferHandlePtr m_replaceSourceImage; ///< This image handle is set if regressionTest will replace the source image. Than use this.
 
 public:

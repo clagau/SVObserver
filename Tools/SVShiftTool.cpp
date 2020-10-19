@@ -73,9 +73,6 @@ bool SVShiftTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStructur
 	m_LearnedTranslationX.SetObjectAttributesAllowed( SvPb::extentObject, SvOi::SetAttributeType::RemoveAttribute );
 	m_LearnedTranslationY.SetObjectAttributesAllowed( SvPb::extentObject, SvOi::SetAttributeType::RemoveAttribute );
 
-	// This value object is obsolete, hide it.
-	m_EnableSourceImageExtents.SetObjectAttributesAllowed( SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute );
-
 	m_isCreated = l_Status;
 
 	SetAttributeData();
@@ -467,7 +464,6 @@ void SVShiftTool::LocalInitialize()
 	RegisterEmbeddedObject( &m_LeftResult, SvPb::LeftResultEId, IDS_OBJECTNAME_LEFT_RESULT, false, SvOi::SVResetItemNone );
 	RegisterEmbeddedObject( &m_TopResult, SvPb::TopResultEId, IDS_OBJECTNAME_TOP_RESULT, false, SvOi::SVResetItemNone );
 	RegisterEmbeddedObject( &m_OutputImage, SvPb::OutputImageEId, IDS_OBJECTNAME_IMAGE1 );
-	RegisterEmbeddedObject( &m_EnableSourceImageExtents, SvPb::ShiftToolEnableSourceImageExtentsEId, IDS_OBJECTNAME_SHIFTTOOL_ENABLE_SOURCE_IMAGE_EXTENTS, false, SvOi::SVResetItemTool);
 
 	m_LearnedTranslationX.SetObjectAttributesAllowed( SvPb::extentObject, SvOi::SetAttributeType::RemoveAttribute );
 	m_LearnedTranslationY.SetObjectAttributesAllowed( SvPb::extentObject, SvOi::SetAttributeType::RemoveAttribute );
@@ -499,8 +495,6 @@ void SVShiftTool::LocalInitialize()
 	m_LeftResult.setSaveValueFlag(false);
 	m_TopResult.SetDefaultValue( 10, true );
 	m_TopResult.setSaveValueFlag(false);
-
-	m_EnableSourceImageExtents.SetDefaultValue(true, true); // this embedded value object is not used anymore
 
 	m_OutputImage.InitializeImage( SvPb::SVImageTypeEnum::SVImageTypePhysical );
 

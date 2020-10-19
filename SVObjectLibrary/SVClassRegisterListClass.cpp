@@ -1133,7 +1133,6 @@ std::unordered_map<GUID, SvPb::EmbeddedIdEnum> g_ExchangeEmbeddedID = {
 	{ SVShiftToolModeGuid, SvPb::ShiftToolModeEId },
 	{ SVShiftToolReferenceXObjectGuid, SvPb::ShiftToolReferenceXEId },
 	{ SVShiftToolReferenceYObjectGuid, SvPb::ShiftToolReferenceYEId },
-	{ SVShiftToolEnableSourceImageExtentsGuid, SvPb::ShiftToolEnableSourceImageExtentsEId },
 	{ SVImageTransformDisplacementXGuid, SvPb::ImageTransformDisplacementXEId },
 	{ SVImageTransformDisplacementYGuid, SvPb::ImageTransformDisplacementYEId },
 	{ SVTopResultObjectGuid, SvPb::TopResultEId },

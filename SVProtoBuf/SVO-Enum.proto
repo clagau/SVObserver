@@ -924,7 +924,7 @@ enum EmbeddedIdEnum
 	ShiftToolModeEId = 285;
 	ShiftToolReferenceXEId = 286;
 	ShiftToolReferenceYEId = 287;
-	ShiftToolEnableSourceImageExtentsEId = 288;
+	//ShiftToolEnableSourceImageExtentsEId = 288;
 	ImageTransformDisplacementXEId = 289;
 	ImageTransformDisplacementYEId = 290;
 	TopResultEId = 291;
