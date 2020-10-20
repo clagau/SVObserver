@@ -10,7 +10,6 @@
 #include "SVNavigateTree.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "TriggerInformation/SVHardwareManifest.h"
 #pragma endregion Includes
 
 namespace SvXml
