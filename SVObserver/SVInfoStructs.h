@@ -122,9 +122,9 @@ struct SVProductInfoStruct
 {
 	SVProductInfoStruct();
 	SVProductInfoStruct( const SVProductInfoStruct &rRhs );
-	virtual ~SVProductInfoStruct();
+	virtual ~SVProductInfoStruct() = default;
 
-	const SVProductInfoStruct &operator=( const SVProductInfoStruct &rRhs );
+	SVProductInfoStruct &operator=( const SVProductInfoStruct &rRhs );
 
 	/// Assigned the data from the other instance to this.
 	/// \param p_rsvData [in] Source data.

@@ -22,15 +22,6 @@ constexpr char* UnknownboardTag = _T("Unknown board");
 
 namespace SvLib
 {
-#pragma region Constructor
-
-	InitialInformation::InitialInformation() : m_gigePacketSize(0)
-		, m_NAKMode(SvDef::NakGeneration::Bursts)
-		, m_NAKParameter(SvDef::DefaultNakParameter)
-	, m_forcedImageUpdateTimeInSeconds(0) // zero means no forced image update
-	{}
-#pragma endregion Constructor
-
 #pragma region Public Methods
 	void InitialInformation::ResetBoardNames()
 	{

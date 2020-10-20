@@ -37,7 +37,7 @@ namespace SvLib
 
 	public:
 #pragma region Constructor
-		InitialInformation();
+		InitialInformation() = default;
 #pragma endregion Constructor
 
 #pragma region Public Methods
@@ -82,16 +82,19 @@ namespace SvLib
 		std::string m_IOBoard;
 		std::string m_Options;
 		std::string m_ProductName;
-		long m_gigePacketSize;
+		long m_gigePacketSize{0L};
 
-		SvDef::NakGeneration m_NAKMode;
-		int m_NAKParameter;
+		SvDef::NakGeneration m_NAKMode{SvDef::NakGeneration::Bursts};
+		int m_NAKParameter{ SvDef::DefaultNakParameter };
+
+		///This value is the time window in ms for cases when the camera start frame arrives before the trigger in discrete IO mode
+		double m_preTriggerTimeWindow{0.0};
 
 		// The ForcedImageUpdateTimeInSeconds comes from the SVIM.ini file
 		// It is to be placed in the [Display] section and has the following syntax:
 		// ForcedImageUpdateTimeInSeconds=N
-		// Where N is zero to 255, zero means no forced update.
-		unsigned char m_forcedImageUpdateTimeInSeconds;
+		// Where N is 0 to 255, 0 means no forced update.
+		unsigned char m_forcedImageUpdateTimeInSeconds{0};
 #pragma endregion Member variables
 	};
 } //namespace SvLib

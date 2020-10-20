@@ -61,7 +61,6 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 constexpr double TwentyPercent = .20;
-
 const long MinReducedPPQPosition = 2;
 #pragma endregion Declarations
 
@@ -139,7 +138,6 @@ HRESULT SVPPQObject::ProcessDelayOutputs( bool& rProcessed )
 		case SvDef::SVPPQExtendedTimeDelayMode:
 		{
 			l_Status = ProcessOutputs(*l_pProduct);
-
 			break;
 		}
 		case SvDef::SVPPQTimeDelayAndDataCompleteMode:
@@ -158,8 +156,7 @@ HRESULT SVPPQObject::ProcessDelayOutputs( bool& rProcessed )
 		}
 	}
 
-	::InterlockedExchange(&(m_ProcessingOutputDelay), 0);
-
+	m_NextOutputDelayTimestamp = 0.0;
 	return l_Status;
 }
 
@@ -195,6 +192,7 @@ HRESULT SVPPQObject::ProcessTimeDelayAndDataCompleteOutputs( SVProductInfoStruct
 	if (p_rProduct.m_dataComplete)
 	{
 		l_Status = ProcessOutputs(p_rProduct);
+		m_NextOutputDelayTimestamp = 0.0;
 	}
 	else
 	{
@@ -276,10 +274,8 @@ void SVPPQObject::init()
 	m_resetDelay = 0;
 	m_DataValidDelay = TheSVObserverApp.getDataValidDelay();
 
-	m_ProcessingOutputDelay = 0;
-	m_NextOutputDelayTimestamp = 0;
-	m_ProcessingOutputReset = 0;
-	m_NextOutputResetTimestamp = 0;
+	m_NextOutputDelayTimestamp = 0.0;
+	m_NextOutputResetTimestamp = 0.0;
 
 	m_uOutputTimer = 0;
 
@@ -351,15 +347,15 @@ bool SVPPQObject::Create()
 	// Return if already created
 	if (m_isCreated) { return false; }
 
-	for (int i = 0; i < static_cast<long>(m_ppPPQPositions.size()); ++i)
+	for (int i = 0; i < static_cast<long>(m_PPQPositions.size()); ++i)
 	{
-		RecycleProductInfo(m_ppPPQPositions.GetProductAt(i));
+		RecycleProductInfo(m_PPQPositions.GetProductAt(i));
 
-		m_ppPPQPositions.SetProductAt(i, nullptr);
+		m_PPQPositions.SetProductAt(i, nullptr);
 	}
 
 	// Create buckets for the PPQ positions
-	m_ppPPQPositions.resize(getPPQLength());
+	m_PPQPositions.resize(getPPQLength());
 
 	// Create a set of ProductInfoStructs to use
 	if (!m_qAvailableProductInfos.Create()) { return false; }
@@ -401,7 +397,7 @@ bool SVPPQObject::Rebuild()
 	if (!m_isCreated) { return false; }
 
 	// Delete buckets for the PPQ positions
-	m_ppPPQPositions.clear();
+	m_PPQPositions.clear();
 
 	m_qAvailableProductInfos.RemoveAll();
 
@@ -410,7 +406,7 @@ bool SVPPQObject::Rebuild()
 	m_pMasterProductInfos = nullptr;
 
 	// Create buckets for the PPQ positions
-	m_ppPPQPositions.resize(getPPQLength());
+	m_PPQPositions.resize(getPPQLength());
 
 	bool result = SetupProductInfoStructs();
 
@@ -468,7 +464,7 @@ void SVPPQObject::Destroy()
 	m_CameraResponseQueue.Destroy();
 
 	// Delete buckets for the PPQ positions
-	m_ppPPQPositions.clear();
+	m_PPQPositions.clear();
 
 	m_qAvailableProductInfos.RemoveAll();
 
@@ -536,7 +532,7 @@ void SVPPQObject::SetPPQLength(long lPPQLength)
 
 	m_PpqValues.setValueObject(SvDef::FqnPpqLength, lPPQLength);
 
-	if (getPPQLength() != m_ppPPQPositions.size())
+	if (getPPQLength() != m_PPQPositions.size())
 	{
 		Rebuild();
 	}
@@ -769,7 +765,7 @@ bool SVPPQObject::SetCameraPPQPosition(long lPosition, SvIe::SVVirtualCamera* pC
 	//Only do an assert check so that in release mode no check is made
 	assert(nullptr != pCamera);
 
-	if (m_isCreated && -1 <= lPosition && lPosition < static_cast<long>(m_ppPPQPositions.size()) - 1)
+	if (m_isCreated && -1 <= lPosition && lPosition < static_cast<long>(m_PPQPositions.size()) - 1)
 	{
 		l_Status = AttachCamera(pCamera, lPosition, true);
 	}
@@ -847,9 +843,9 @@ void SVPPQObject::PrepareGoOnline()
 	}
 
 	// Reset the PPQ
-	for (size_t i = 0; i < m_ppPPQPositions.size(); ++i)
+	for (size_t i = 0; i < m_PPQPositions.size(); ++i)
 	{
-		SVProductInfoStruct* l_pProduct = m_ppPPQPositions.GetProductAt(i);
+		SVProductInfoStruct* l_pProduct = m_PPQPositions.GetProductAt(i);
 		if (nullptr != l_pProduct)
 		{
 			if (!RecycleProductInfo(l_pProduct))
@@ -858,12 +854,12 @@ void SVPPQObject::PrepareGoOnline()
 				throw Msg;
 			}
 
-			m_ppPPQPositions.SetProductAt(i, nullptr);
+			m_PPQPositions.SetProductAt(i, nullptr);
 		}
 
 		if (m_qAvailableProductInfos.RemoveHead(&l_pProduct) && nullptr != l_pProduct)
 		{
-			HRESULT hRTemp = m_ppPPQPositions.SetProductAt(i, l_pProduct);
+			HRESULT hRTemp = m_PPQPositions.SetProductAt(i, l_pProduct);
 			if (S_OK != hRTemp)
 			{
 				SvDef::StringVector msgList;
@@ -925,7 +921,7 @@ void SVPPQObject::GoOnline()
 	m_lastPPQPosition = 0L;
 #ifdef EnableTracking
 	m_PPQTracking.clear();
-	m_PPQTracking.m_QueueLength = m_ppPPQPositions.size();
+	m_PPQTracking.m_QueueLength = m_PPQPositions.size();
 	m_PPQTracking.m_TimeLength = m_outputDelay + 50;
 #endif
 	RebuildOutputList();
@@ -1078,7 +1074,7 @@ void SVPPQObject::GoOnline()
 
 	if (SvDef::SVPPQNextTriggerMode == m_outputMode)
 	{
-		m_NAKCount = -static_cast<long>(m_ppPPQPositions.size());
+		m_NAKCount = -static_cast<long>(m_PPQPositions.size());
 	}
 	else
 	{
@@ -1090,12 +1086,12 @@ void SVPPQObject::GoOnline()
 	const int HundredPercent = 100;
 	if ((SvDef::FixedMaximum == m_NAKMode || SvDef::RepairedLegacy == m_NAKMode) && m_NAKParameter > 0 && m_NAKParameter <= HundredPercent)
 	{
-		m_ReducedPPQPosition = (long(m_ppPPQPositions.size()) * m_NAKParameter) / HundredPercent;
+		m_ReducedPPQPosition = (long(m_PPQPositions.size()) * m_NAKParameter) / HundredPercent;
 		if (m_ReducedPPQPosition < MinReducedPPQPosition)
 		{
 			m_ReducedPPQPosition = MinReducedPPQPosition;
 		}
-		m_ReducedPPQPosition = std::min< long >(m_ReducedPPQPosition, static_cast<long>(m_ppPPQPositions.size()));
+		m_ReducedPPQPosition = std::min< long >(m_ReducedPPQPosition, static_cast<long>(m_PPQPositions.size()));
 	}
 }// end GoOnline
 
@@ -1117,11 +1113,11 @@ bool SVPPQObject::GoOffline()
 
 		if (l_Stream.is_open())
 		{
-			for (size_t i = 0; i < m_ppPPQPositions.size(); ++i)
+			for (size_t i = 0; i < m_PPQPositions.size(); ++i)
 			{
 				std::string l_Info;
 
-				SVProductInfoStruct* l_pProduct = m_ppPPQPositions.GetProductAt(i);
+				SVProductInfoStruct* l_pProduct = m_PPQPositions.GetProductAt(i);
 
 				if (nullptr != l_pProduct)
 				{
@@ -1159,7 +1155,7 @@ bool SVPPQObject::GoOffline()
 
 			l_TrackingStream << _T("Name");
 
-			for (size_t i = 0; i < m_ppPPQPositions.size(); ++i)
+			for (size_t i = 0; i < m_PPQPositions.size(); ++i)
 			{
 				l_TrackingStream << _T(",") << i;
 			}
@@ -1253,9 +1249,9 @@ bool SVPPQObject::GoOffline()
 
 	m_bOnline = false;
 
-	for (long i = static_cast<long>(m_ppPPQPositions.size()) - 1; /*l_ClearCount < 5 && */0 < i; --i)
+	for (long i = static_cast<long>(m_PPQPositions.size()) - 1; /*l_ClearCount < 5 && */0 < i; --i)
 	{
-		SVProductInfoStruct* l_pProduct = m_ppPPQPositions.GetProductAt(i);
+		SVProductInfoStruct* l_pProduct = m_PPQPositions.GetProductAt(i);
 
 		if (nullptr != l_pProduct)
 		{
@@ -2025,8 +2021,8 @@ SVProductInfoStruct* SVPPQObject::IndexPPQ(SvTi::SVTriggerInfoStruct&& rTriggerI
 {
 	SVProductInfoStruct* pProduct{nullptr};
 	SVProductInfoStruct* pNewProduct{nullptr};
-	SVProductInfoStruct* pPrevProduct = m_ppPPQPositions.GetProductAt(0);
-	SVProductInfoStruct* pLastProduct = m_ppPPQPositions.IndexRegister();
+	SVProductInfoStruct* pPrevProduct = m_PPQPositions.GetProductAt(0);
+	SVProductInfoStruct* pLastProduct = m_PPQPositions.IndexRegister();
 
 	if (m_qAvailableProductInfos.RemoveHead(&pNewProduct) && nullptr != pNewProduct)
 	{
@@ -2046,19 +2042,19 @@ SVProductInfoStruct* SVPPQObject::IndexPPQ(SvTi::SVTriggerInfoStruct&& rTriggerI
 
 		pNewProduct->SetProductActive();
 
-		m_ppPPQPositions.SetProductAt(0, pNewProduct);
+		m_PPQPositions.SetProductAt(0, pNewProduct);
 	}
 
 	switch (m_outputMode)
 	{
 	case SvDef::SVPPQNextTriggerMode:
 	{
-		pProduct = m_ppPPQPositions.GetProductAt(m_ppPPQPositions.size() - 1);
+		pProduct = m_PPQPositions.GetProductAt(m_PPQPositions.size() - 1);
 		break;
 	}
 	case SvDef::SVPPQExtendedTimeDelayAndDataCompleteMode:
 	{
-		pProduct = m_ppPPQPositions.GetProductAt(m_ppPPQPositions.size() - 1);
+		pProduct = m_PPQPositions.GetProductAt(m_PPQPositions.size() - 1);
 		bool isProductIncomplete = nullptr != pProduct && 0 == m_outputDelay && true == pProduct->m_triggered && false == pProduct->m_dataComplete;
 		if (isProductIncomplete)
 		{
@@ -2094,7 +2090,7 @@ SVProductInfoStruct* SVPPQObject::IndexPPQ(SvTi::SVTriggerInfoStruct&& rTriggerI
 		l_ProductStates += GetName();
 		l_ProductStates += _T("|SVPPQObject::IndexPPQ\n");
 
-		m_ppPPQPositions.GetProductStates(l_ProductStates);
+		m_PPQPositions.GetProductStates(l_ProductStates);
 
 		::OutputDebugString(l_ProductStates.c_str());
 #endif
@@ -2125,9 +2121,9 @@ void SVPPQObject::InitializeProduct(SVProductInfoStruct* pNewProduct)
 			{
 				pNewProduct->m_triggerInfo.m_Inputs[i] = inputValues[i];
 			}
-			else if (0 < rpInputEntry->m_PPQIndex && rpInputEntry->m_PPQIndex < static_cast<long> (m_ppPPQPositions.size()))
+			else if (0 < rpInputEntry->m_PPQIndex && rpInputEntry->m_PPQIndex < static_cast<long> (m_PPQPositions.size()))
 			{
-				SVProductInfoStruct* pProduct = m_ppPPQPositions.GetProductAt(rpInputEntry->m_PPQIndex);
+				SVProductInfoStruct* pProduct = m_PPQPositions.GetProductAt(rpInputEntry->m_PPQIndex);
 				if(nullptr != pProduct && pProduct->m_triggered && i < pProduct->m_triggerInfo.m_Inputs.size())
 				{
 					pProduct->m_triggerInfo.m_Inputs[i] = inputValues[i];
@@ -2153,9 +2149,9 @@ HRESULT SVPPQObject::NotifyInspections(long offset)
 	// the first position. Only check the products at positions that have a input set
 
 	// Begin checking inspections to start processing
-	if (0 <= offset && static_cast<size_t>(offset) < m_ppPPQPositions.size())
+	if (0 <= offset && static_cast<size_t>(offset) < m_PPQPositions.size())
 	{
-		SVProductInfoStruct* pTempProduct = m_ppPPQPositions.GetProductAt(offset);
+		SVProductInfoStruct* pTempProduct = m_PPQPositions.GetProductAt(offset);
 
 		// See if the Inspection Processes can inspect this product
 		int iSize = static_cast<int> (m_arInspections.size());
@@ -2229,7 +2225,7 @@ HRESULT SVPPQObject::StartInspection(uint32_t inspectionID)
 	HRESULT l_Status = S_OK;
 
 	SVProductInfoStruct* l_pProduct = nullptr;
-	size_t l_Count = m_ppPPQPositions.size();
+	size_t l_Count = m_PPQPositions.size();
 
 	switch (m_NAKMode)
 	{
@@ -2243,7 +2239,7 @@ HRESULT SVPPQObject::StartInspection(uint32_t inspectionID)
 			}
 			else
 			{
-				l_Count = std::min< size_t >(2, m_ppPPQPositions.size());
+				l_Count = std::min< size_t >(2, m_PPQPositions.size());
 			}
 		}
 		break;
@@ -2264,7 +2260,7 @@ HRESULT SVPPQObject::StartInspection(uint32_t inspectionID)
 			}
 			else
 			{
-				l_Count = std::min< size_t >(m_ReducedPPQPosition, m_ppPPQPositions.size());
+				l_Count = std::min< size_t >(m_ReducedPPQPosition, m_PPQPositions.size());
 			}
 		}
 		break;
@@ -2277,12 +2273,12 @@ HRESULT SVPPQObject::StartInspection(uint32_t inspectionID)
 	}
 
 #ifdef EnableTracking
-	size_t l_ProductIndex = m_ppPPQPositions.size();
+	size_t l_ProductIndex = m_PPQPositions.size();
 #endif
 	// Begin checking inspections to start processing
 	for (size_t i = 0; i < l_Count; ++i)
 	{
-		SVProductInfoStruct* pTempProduct = m_ppPPQPositions.GetProductAt(i);
+		SVProductInfoStruct* pTempProduct = m_PPQPositions.GetProductAt(i);
 
 		if (nullptr != pTempProduct)
 		{
@@ -2296,7 +2292,7 @@ HRESULT SVPPQObject::StartInspection(uint32_t inspectionID)
 				{
 					l_pProduct = pTempProduct; // product info
 #ifdef EnableTracking
-					l_ProductIndex = m_ppPPQPositions.GetIndexByTriggerCount(l_pProduct->ProcessCount());
+					l_ProductIndex = m_PPQPositions.GetIndexByTriggerCount(l_pProduct->ProcessCount());
 #endif
 					if (SvDef::Bursts == m_NAKMode)
 					{
@@ -2338,7 +2334,7 @@ HRESULT SVPPQObject::StartInspection(uint32_t inspectionID)
 			l_ProductStates += GetName();
 			l_ProductStates += _T("|SVPPQObject::StartInspection\n");
 
-			m_ppPPQPositions.GetProductStates(l_ProductStates);
+			m_PPQPositions.GetProductStates(l_ProductStates);
 
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
@@ -2570,7 +2566,7 @@ bool SVPPQObject::SetInspectionComplete(SVProductInfoStruct& rProduct, uint32_t 
 
 bool SVPPQObject::SetProductComplete(long p_PPQIndex)
 {
-	SVProductInfoStruct* pProduct = m_ppPPQPositions.GetProductAt(p_PPQIndex);
+	SVProductInfoStruct* pProduct = m_PPQPositions.GetProductAt(p_PPQIndex);
 
 	bool l_Status = false;
 
@@ -2594,7 +2590,7 @@ bool SVPPQObject::SetProductComplete(SVProductInfoStruct& p_rProduct)
 	///@TODO[mec, 26.07.2016]  Normaly this is a bug and SVPPQObject::IsProductAlive  should  be used this code exist only to 
 	/// have the possibility to switch with nakmode M_Old to the old behavior and should be corrected or removed 
 	// if this is not longer necessary 
-	if (m_ppPPQPositions.IsProductAlive(p_rProduct.ProcessCount()))
+	if (m_PPQPositions.IsProductAlive(p_rProduct.ProcessCount()))
 	{
 		::InterlockedExchange(&m_NAKCount, 0);
 	}
@@ -2616,7 +2612,7 @@ bool SVPPQObject::SetProductComplete(SVProductInfoStruct& p_rProduct)
 	p_rProduct.SetProductComplete();
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
-		long ppqPos = m_ppPPQPositions.GetIndexByTriggerCount(p_rProduct.ProcessCount());
+		long ppqPos = m_PPQPositions.GetIndexByTriggerCount(p_rProduct.ProcessCount());
 		::OutputDebugString(SvUl::Format(_T("%s Product complete TRI=%d, PPQPos=%d\n"), GetName(), p_rProduct.ProcessCount(), ppqPos).c_str());
 #endif
 	}
@@ -2628,7 +2624,7 @@ bool SVPPQObject::SetProductComplete(SVProductInfoStruct& p_rProduct)
 
 bool SVPPQObject::SetProductIncomplete(long p_PPQIndex)
 {
-	SVProductInfoStruct* pProduct = m_ppPPQPositions.GetProductAt(p_PPQIndex);
+	SVProductInfoStruct* pProduct = m_PPQPositions.GetProductAt(p_PPQIndex);
 	bool l_Status = (nullptr != pProduct);
 
 	if (l_Status)
@@ -2659,7 +2655,7 @@ bool SVPPQObject::SetProductIncomplete(SVProductInfoStruct& p_rProduct)
 	p_rProduct.SetProductComplete();
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
-		long ppqPos = m_ppPPQPositions.GetIndexByTriggerCount(p_rProduct.ProcessCount());
+		long ppqPos = m_PPQPositions.GetIndexByTriggerCount(p_rProduct.ProcessCount());
 		::OutputDebugString(SvUl::Format(_T("%s Product incomplete TRI=%d, PPQPos=%d\n"), GetName(), p_rProduct.ProcessCount(), ppqPos).c_str());
 #endif
 	}
@@ -2693,22 +2689,22 @@ HRESULT SVPPQObject::ProcessCameraResponse(const SVCameraQueueElement& rElement)
 
 	if ((nullptr != rElement.m_pCamera) && (nullptr != rElement.m_Data.m_pImage))
 	{
-		long l_CameraPositionOnPPQ = 0;
+		long cameraPpqPos = 0;
 		size_t l_ProductIndex = static_cast<size_t> (-1);
 		SVProductInfoStruct* pProduct = nullptr;
 		SVCameraInfoMap::iterator l_svIter;
-		long	ppqSize = static_cast<long> (m_ppPPQPositions.size());
+		long	ppqSize = static_cast<long> (m_PPQPositions.size());
 
 		l_svIter = m_Cameras.find(rElement.m_pCamera);
 
 		if (l_svIter != m_Cameras.end())
 		{
-			l_CameraPositionOnPPQ = l_svIter->second.m_CameraPPQIndex;
+			cameraPpqPos = l_svIter->second.m_CameraPPQIndex;
 		}
 
 		double startTime = rElement.m_Data.m_startFrameTime;
 
-		if (l_CameraPositionOnPPQ < ppqSize)
+		if (cameraPpqPos < ppqSize)
 		{
 			// Attempts for find the trigger (which may not have happened 
 			// yet) that correlates to this image, based on image time stamp.
@@ -2716,15 +2712,15 @@ HRESULT SVPPQObject::ProcessCameraResponse(const SVCameraQueueElement& rElement)
 
 			bool notPending = (getPPQLength() <= 2);
 
-			long position = m_ppPPQPositions.GetIndexByTriggerTimeStamp(startTime, cameraID);
+			long position = m_PPQPositions.GetIndexByTriggerTimeStamp(startTime, cameraID);
 
 			// If trigger has not occurred yet, l_Position will equal -1.
 			if (0 <= position && position < ppqSize)
 			{
-				l_ProductIndex = position + l_CameraPositionOnPPQ;
+				l_ProductIndex = static_cast<size_t> (position + cameraPpqPos);
 				if (l_ProductIndex < ppqSize)
 				{
-					pProduct = m_ppPPQPositions.GetProductAt(l_ProductIndex);
+					pProduct = m_PPQPositions.GetProductAt(l_ProductIndex);
 					if(nullptr != pProduct && pProduct->IsProductActive() && !pProduct->m_dataComplete)
 					{
 						if (cameraID >= 0 && cameraID < SvDef::cMaximumCameras)
@@ -2811,9 +2807,9 @@ HRESULT SVPPQObject::ProcessCameraResponse(const SVCameraQueueElement& rElement)
 #endif
 					}
 
-					for (size_t i = (l_ProductIndex + 1); i < m_ppPPQPositions.size(); ++i)
+					for (size_t i = (l_ProductIndex + 1); i < m_PPQPositions.size(); ++i)
 					{
-						SVProductInfoStruct* l_pAcqProduct = m_ppPPQPositions.GetProductAt(i);
+						SVProductInfoStruct* l_pAcqProduct = m_PPQPositions.GetProductAt(i);
 
 						if (nullptr != l_pAcqProduct)
 						{
@@ -2959,14 +2955,14 @@ void __stdcall SVPPQObject::triggerCallback(SvTi::SVTriggerInfoStruct&& triggerI
 
 bool SVPPQObject::IsProductAlive(long p_ProductCount) const
 {
-	bool l_Status = (S_OK == m_ppPPQPositions.IsProductAlive(p_ProductCount));
+	bool l_Status = (S_OK == m_PPQPositions.IsProductAlive(p_ProductCount));
 
 	return l_Status;
 }
 
 SVProductInfoStruct* SVPPQObject::GetProductInfoStruct(long processCount) const
 {
-	return m_ppPPQPositions.GetProductByTriggerCount(processCount);
+	return m_PPQPositions.GetProductByTriggerCount(processCount);
 }
 
 SVProductInfoStruct SVPPQObject::getProductReadyForRunOnce(uint32_t ipId)
@@ -3132,51 +3128,34 @@ HRESULT SVPPQObject::NotifyProcessTimerOutputs()
 {
 	HRESULT l_Status = S_OK;
 
-	bool l_Process = false;
+	bool signalThread = false;
 
-	if (0 < m_outputDelay && ::InterlockedCompareExchange(&(m_ProcessingOutputDelay), 1, 0) == 0)
+	double currentTime = SvTl::GetTimeStamp();
+	if (0 < m_outputDelay)
 	{
-		double l_CurrentTime = SvTl::GetTimeStamp();
-
-		if (0 < m_oOutputsDelayQueue.GetCount() || (0 < m_NextOutputDelayTimestamp && m_NextOutputDelayTimestamp <= l_CurrentTime))
+		if (0.0 < m_NextOutputDelayTimestamp && m_NextOutputDelayTimestamp <= currentTime)
 		{
-			l_Process = true;
-		}
-		else
-		{
-			::InterlockedExchange(&(m_ProcessingOutputDelay), 0);
+			signalThread = true;
 		}
 	}
 
-	if (0 < m_resetDelay && ::InterlockedCompareExchange(&(m_ProcessingOutputReset), 1, 0) == 0)
+	if (false == signalThread && 0 < m_resetDelay)
 	{
-		double l_CurrentTime = SvTl::GetTimeStamp();
-
-		if (0 < m_oOutputsResetQueue.GetCount() || (0 < m_NextOutputResetTimestamp && m_NextOutputResetTimestamp <= l_CurrentTime))
+		if (0.0 < m_NextOutputResetTimestamp && m_NextOutputResetTimestamp <= currentTime)
 		{
-			l_Process = true;
-		}
-		else
-		{
-			::InterlockedExchange(&(m_ProcessingOutputReset), 0);
+			signalThread = true;
 		}
 	}
 
-	if (0 < m_DataValidDelay && ::InterlockedCompareExchange(&(m_ProcessingDataValidDelay), 1, 0) == 0)
+	if (false == signalThread && 0 < m_DataValidDelay)
 	{
-		double l_CurrentTime = SvTl::GetTimeStamp();
-
-		if (0 < m_DataValidDelayQueue.GetCount() || (0 < m_NextDataValidDelayTimestamp && m_NextDataValidDelayTimestamp <= l_CurrentTime))
+		if (0.0 < m_NextDataValidDelayTimestamp && m_NextDataValidDelayTimestamp <= currentTime)
 		{
-			l_Process = true;
-		}
-		else
-		{
-			::InterlockedExchange(&(m_ProcessingDataValidDelay), 0);
+			signalThread = true;
 		}
 	}
 
-	if (l_Process)
+	if (signalThread)
 	{
 		m_AsyncProcedure.Signal(nullptr);
 	}
@@ -3298,9 +3277,9 @@ HRESULT SVPPQObject::ProcessNotifyInspections( bool& rProcessed )
 			{
 				long l_ProcessCount = *l_Iter;
 
-				long l_Offset = m_ppPPQPositions.GetIndexByTriggerCount(l_ProcessCount);
+				long l_Offset = m_PPQPositions.GetIndexByTriggerCount(l_ProcessCount);
 
-				rProcessed = ( 0 <= l_Offset && l_Offset < static_cast<long> (m_ppPPQPositions.size()) );
+				rProcessed = ( 0 <= l_Offset && l_Offset < static_cast<long> (m_PPQPositions.size()) );
 
 				if (true == rProcessed) // if offset for element is within PPQ.
 				{
@@ -3439,8 +3418,7 @@ HRESULT SVPPQObject::ProcessResetOutputs( bool& rProcessed )
 			{
 				l_Status = E_FAIL;
 			}
-
-			::InterlockedExchange(&(m_ProcessingOutputReset), 0);
+			m_NextOutputResetTimestamp = 0.0;
 		}
 	}
 
@@ -3495,7 +3473,7 @@ HRESULT SVPPQObject::ProcessDataValidDelay(bool& rProcessed)
 				{
 					if (CurrentTime < pProduct->m_outputsInfo.m_EndDataValidDelay)
 					{
-						m_NextOutputDelayTimestamp = pProduct->m_outputsInfo.m_EndDataValidDelay;
+						m_NextDataValidDelayTimestamp = pProduct->m_outputsInfo.m_EndDataValidDelay;
 
 						m_DataValidDelayQueue.AddHead(pProduct->ProcessCount());
 
@@ -3509,6 +3487,7 @@ HRESULT SVPPQObject::ProcessDataValidDelay(bool& rProcessed)
 
 			if (rProcessed)
 			{
+				m_NextDataValidDelayTimestamp = 0.0;
 				if (nullptr != m_pDataValid)
 				{
 					m_pOutputList->WriteOutputValue(m_pDataValid, pProduct->m_outputsInfo.m_DataValidResult);
@@ -3522,8 +3501,6 @@ HRESULT SVPPQObject::ProcessDataValidDelay(bool& rProcessed)
 			{
 				Status = E_FAIL;
 			}
-
-			::InterlockedExchange(&(m_ProcessingDataValidDelay), 0);
 		}
 	}
 
@@ -3621,7 +3598,7 @@ HRESULT SVPPQObject::ProcessCompleteInspections( bool& rProcessed )
 		{
 			SVInspectionInfoPair l_Info;
 			SVProductInfoStruct* l_pPPQProduct = nullptr;
-			long l_PPQIndex = static_cast<long>(m_ppPPQPositions.size());
+			long l_PPQIndex = static_cast<long>(m_PPQPositions.size());
 
 			for (int i = 0; i < m_oInspectionQueue.GetCount(); ++i)
 			{
@@ -3643,11 +3620,11 @@ HRESULT SVPPQObject::ProcessCompleteInspections( bool& rProcessed )
 			{
 				if (m_oInspectionQueue.RemoveHead(&l_Info))
 				{
-					l_PPQIndex = m_ppPPQPositions.GetIndexByTriggerCount(l_Info.first);
+					l_PPQIndex = m_PPQPositions.GetIndexByTriggerCount(l_Info.first);
 
-					if (0 <= l_PPQIndex && l_PPQIndex < static_cast<long>(m_ppPPQPositions.size()))
+					if (0 <= l_PPQIndex && l_PPQIndex < static_cast<long>(m_PPQPositions.size()))
 					{
-						l_pPPQProduct = m_ppPPQPositions.GetProductAt(l_PPQIndex);
+						l_pPPQProduct = m_PPQPositions.GetProductAt(l_PPQIndex);
 					}
 				}
 				else
@@ -3694,9 +3671,9 @@ HRESULT SVPPQObject::ProcessCompleteInspections( bool& rProcessed )
 				{
 					SetProductComplete(l_PPQIndex);
 
-					for (size_t i = l_PPQIndex + 1; i < m_ppPPQPositions.size(); ++i)
+					for (size_t i = l_PPQIndex + 1; i < m_PPQPositions.size(); ++i)
 					{
-						l_pPPQProduct = m_ppPPQPositions.GetProductAt(l_PPQIndex);
+						l_pPPQProduct = m_PPQPositions.GetProductAt(l_PPQIndex);
 
 						if (nullptr != l_pPPQProduct && l_pPPQProduct->IsProductActive())
 						{

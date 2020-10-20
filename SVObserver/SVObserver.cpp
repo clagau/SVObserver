@@ -4965,6 +4965,11 @@ void SVObserverApp::Start()
 
 		SvSml::SharedMemWriter::Instance().CreateManagment();
 
+		double preTriggerTimeWidow{0.0};
+		if (SvTi::SVHardwareManifest::isDiscreteIOSystem(pConfig->GetProductType()))
+		{
+			preTriggerTimeWidow = (0.0 == m_rInitialInfo.m_preTriggerTimeWindow) ? SvDef::cDefaultPreTriggerTimeWindow : m_rInitialInfo.m_preTriggerTimeWindow;
+		}
 		///In this loop the ImageStores are created 
 		for (long l = 0; S_OK == Result && l < lSize; l++)
 		{
@@ -4972,6 +4977,7 @@ void SVObserverApp::Start()
 			//Returns true when pointer valid
 			if (nullptr != pPPQ)
 			{
+				pPPQ->setPreTriggerTimeWindow(preTriggerTimeWidow);
 				///Set NAK Behavior
 				pPPQ->SetNAKMode(m_rInitialInfo.m_NAKMode, m_rInitialInfo.m_NAKParameter);
 

@@ -19,8 +19,8 @@ struct SVProductInfoStruct;
 class SVPPQShiftRegister
 {
 public:
-	SVPPQShiftRegister();
-	virtual ~SVPPQShiftRegister();
+	SVPPQShiftRegister() = default;
+	virtual ~SVPPQShiftRegister() = default;
 
 	size_t size() const;
 	void resize( size_t p_Size );
@@ -41,14 +41,17 @@ public:
 
 	HRESULT GetProductStates( std::string& p_rProductStates ) const;
 
-private:
-	bool findTimeMatch(double checkTime, double triggerTime, double nextTriggerTime, bool isPPQ1) const;
+	void setPreTriggerTimeWindow(double preTriggerTimeWindow) { m_preTriggerTimeWindow = preTriggerTimeWindow; }
 
-	typedef std::vector< SVProductInfoStruct* > SVProductVector;
+private:
+	bool findTimeMatch(double checkTime, double triggerTime, double nextTriggerTime, bool isStartPos) const;
+
+	typedef std::vector<SVProductInfoStruct*> SVProductVector;
 
 	SVProductVector m_Products;
 
-	long m_HeadTriggerCount;
-	long m_TailTriggerCount;
+	long m_HeadTriggerCount{ 0L };
+	long m_TailTriggerCount{ 0L };
+	double m_preTriggerTimeWindow{ 0.0 };	//This is to compensate that the trigger may be recorded after the start frame (in milliseconds)
 };
 

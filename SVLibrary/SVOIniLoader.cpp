@@ -31,6 +31,7 @@ constexpr char* SerialNoTag = _T("SerialNo");
 constexpr char* SingleCameraTag = _T("SingleCamera");
 
 constexpr char* SVIMInfoSectionTag = _T("SVIM Information");
+constexpr char* SettingsTag = _T("Settings");
 constexpr char* LegacyEquationParsingTag = _T("LegacyEquationParsing");
 constexpr char* TriggerEdgeCameraTag = _T("Trigger Edge Camera_%d");
 constexpr char* StrobeEdgeCameraTag = _T("Strobe Edge Camera_%d");
@@ -38,6 +39,7 @@ constexpr char* UseStrobeasStartFrameCameraTag = _T("Use Strobe as Start Frame C
 constexpr char* ShowUpdateFirmwareTag = _T("ShowUpdateFirmware");
 constexpr char* DisplaySectionTag = _T("Display");
 constexpr char* ForcedImageUpdateTimeInSecondsTag = _T("ForcedImageUpdateTimeInSeconds");
+constexpr char* PreTriggerTimeWindowTag = _T("PreTriggerTimeWindow");
 
 constexpr char* NAKSectionTag = _T("NAK_SETTINGS");
 constexpr char*  NAKMode = _T("NAKMode");
@@ -158,6 +160,7 @@ void  SVOIniLoader::LoadSVIMIni(LPCTSTR svimIniFile)
 	m_rInitialInfo.m_forcedImageUpdateTimeInSeconds = static_cast<unsigned char> (forcedImageUpdateTime);
 	m_rInitialInfo.m_NAKMode = static_cast<SvDef::NakGeneration>(SvimIni.GetValueInt(NAKSectionTag, NAKMode, SvDef::NakGeneration::Bursts));
 	m_rInitialInfo.m_NAKParameter = SvimIni.GetValueInt(NAKSectionTag, NAKParameter, SvDef::DefaultNakParameter);
+	m_rInitialInfo.m_preTriggerTimeWindow = SvimIni.GetValueDouble(SettingsTag, PreTriggerTimeWindowTag, 0.0);
 }
 
 HRESULT SVOIniLoader::LoadHardwareIni(LPCTSTR hardwareIniFile)

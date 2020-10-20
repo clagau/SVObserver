@@ -18,15 +18,6 @@
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
-SVPPQShiftRegister::SVPPQShiftRegister()
-: m_Products(), m_HeadTriggerCount( 0 ), m_TailTriggerCount( 0 )
-{
-}
-
-SVPPQShiftRegister::~SVPPQShiftRegister()
-{
-}
-
 size_t SVPPQShiftRegister::size() const
 {
 	return m_Products.size();
@@ -183,7 +174,7 @@ long SVPPQShiftRegister::GetIndexByTriggerTimeStamp(double checkTime, int camera
 
 	if (0.0 < checkTime)
 	{
-		auto ppqStart = m_Products.crend() - 1;
+		auto startPos = m_Products.crend() - 1;
 		for (auto iter = m_Products.crbegin(); m_Products.crend() != iter; ++iter)
 		{
 			if (nullptr != *iter)
@@ -193,15 +184,15 @@ long SVPPQShiftRegister::GetIndexByTriggerTimeStamp(double checkTime, int camera
 				if (!hasCameraImage && (*iter)->m_triggered && (*iter)->IsProductActive() && !(*iter)->m_dataComplete)
 				{
 					double triggerTime {(*iter)->TimeStamp()};
-					double nextTriggerTime = (ppqStart == iter) ? 0.0 : (*(iter+1))->TimeStamp();
-					if(findTimeMatch(checkTime, triggerTime, nextTriggerTime, ppqStart == iter))
+					double nextTriggerTime = (startPos == iter) ? 0.0 : (*(iter+1))->TimeStamp();
+					if(findTimeMatch(checkTime, triggerTime, nextTriggerTime, startPos == iter))
 					{
-						result = static_cast<long>(m_Products.size() - std::distance(m_Products.crbegin(), iter) - 1);
+						result = static_cast<long>(std::distance(iter, startPos));
 					}
 				}
-				//When we have reached the first position of the PPQ and have no match is it still possible to obtain a match ?
-				//When the newest trigger is older then the acquisition time stamp then acquisition can no longer be correlated
-				if(-1 == result && ppqStart == iter &&  (*ppqStart)->TimeStamp() > checkTime)
+				//When we have reached the start position of the PPQ and have no match is it still possible to obtain a match ?
+				//When the newest trigger is newer then the acquisition time stamp then acquisition can no longer be correlated
+				if(-1 == result && startPos == iter && (*startPos)->TimeStamp() > checkTime)
 				{
 					result = static_cast<long>(m_Products.size());
 					break;
@@ -239,12 +230,10 @@ HRESULT SVPPQShiftRegister::GetProductStates( std::string& p_rProductStates ) co
 	return l_Status;
 }
 
-bool SVPPQShiftRegister::findTimeMatch(double checkTime, double triggerTime, double nextTriggerTime, bool isPPQ1)  const
+bool SVPPQShiftRegister::findTimeMatch(double checkTime, double triggerTime, double nextTriggerTime, bool isStartPos)  const
 {
-	constexpr double cPreTriggerTimeWindow = 0.5;	//This is a to compensate that the trigger may be recorded after the start frame (in milli seconds)
-
-	//If this is the first PPQ position then use the pre-trigger time!
-	double PreTriggerTime = isPPQ1 ? cPreTriggerTimeWindow : 0.0;
+	//If this is the start PPQ position then use the pre-trigger time!
+	double PreTriggerTime = isStartPos ? m_preTriggerTimeWindow : 0.0;
 
 	bool result = 0.0 < triggerTime && (triggerTime - PreTriggerTime) < checkTime;
 	if(result && nextTriggerTime > 0.0)

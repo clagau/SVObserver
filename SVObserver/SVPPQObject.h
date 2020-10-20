@@ -206,6 +206,7 @@ public:
 
 	bool setRejectDepth(long depth, SvStl::MessageContainerVector *pErrorMessages =nullptr);
 
+	void setPreTriggerTimeWindow(double preTriggerTimeWindow) { m_PPQPositions.setPreTriggerTimeWindow(preTriggerTimeWindow); }
 protected:
 
 	struct SVCameraQueueElement
@@ -361,14 +362,11 @@ protected:
 
 	mutable SVAsyncProcedure m_AsyncProcedure;
 
-	long m_ProcessingOutputDelay;
-	double m_NextOutputDelayTimestamp;
+	std::atomic<double> m_NextOutputDelayTimestamp;
 
-	long m_ProcessingOutputReset;
-	double m_NextOutputResetTimestamp;
+	std::atomic<double> m_NextOutputResetTimestamp;
 
-	long m_ProcessingDataValidDelay;
-	double m_NextDataValidDelayTimestamp;
+	std::atomic<double> m_NextDataValidDelayTimestamp;
 
 	// Queues for the PPQ's threads to store incoming objects to be processed
 	SVTriggerInfoQueue m_oTriggerQueue; ///< A ring buffer containing SVTriggerQueueElement s, i.e. SvTi::SVTriggerInfoStruct s and SVVariantBoolVector s
@@ -399,7 +397,7 @@ protected:
 	SVInspectionProcessVector    m_arInspections;
 
 	// Pointer to the PPQ's buckets
-	SVPPQShiftRegister m_ppPPQPositions;
+	SVPPQShiftRegister m_PPQPositions;
 
 	SVProductInfoStruct*  m_pMasterProductInfos;
 	SVProductPointerQueue m_qAvailableProductInfos;

@@ -124,13 +124,7 @@ SVProductInfoStruct::SVProductInfoStruct( const SVProductInfoStruct &rRhs )
 	}
 }
 
-SVProductInfoStruct::~SVProductInfoStruct()
-{
-	SetProductComplete();
-	Reset();
-}
-
-const SVProductInfoStruct &SVProductInfoStruct::operator=( const SVProductInfoStruct &rRhs )
+SVProductInfoStruct &SVProductInfoStruct::operator=( const SVProductInfoStruct &rRhs )
 {
 	if( this != &rRhs )
 	{

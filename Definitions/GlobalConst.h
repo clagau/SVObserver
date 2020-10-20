@@ -29,6 +29,9 @@ constexpr bool			cDefaultToolThresholdActivate = true;
 constexpr bool			cDefaultToolUpperThresholdActivate = true;
 constexpr bool			cDefaultToolLowerThresholdActivate = true;
 
+// Default PreTriggerTimeWindow is in milliseconds (750µs)
+constexpr double		cDefaultPreTriggerTimeWindow = 0.75;
+
 // Default view color settings...
 constexpr COLORREF		cDefaultImageViewBackgroundColor = Ivory;
 
