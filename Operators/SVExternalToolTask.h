@@ -15,6 +15,9 @@
 #pragma warning (disable : 4290)
 
 #pragma region Includes
+#include "ObjectInterfaces/IExternalToolTask.h"
+#include "ObjectInterfaces/IExternalToolTaskDataAdmin.h"
+#include "ObjectInterfaces/IInputValueDefinition.h"
 #include "SVHBitmapUtilitiesLibrary/SVHBitmapUtilities.h"
 #include "InspectionEngine/SVImageClass.h"
 #include "InspectionEngine/SVTaskObject.h"
@@ -90,7 +93,7 @@ struct SVExternalToolTaskData
 	SVRPropTreeState m_PropTreeState;
 };	// end struct SVExternalToolTaskData
 
-class SVExternalToolTask : public SvIe::SVTaskObjectListClass
+class SVExternalToolTask : public SvIe::SVTaskObjectListClass, public SvOi::IExternalToolTask, public SvOi::IExternalToolTaskDataAdmin
 {
 	SV_DECLARE_CLASS( SVExternalToolTask )
 
@@ -103,8 +106,32 @@ public:
 	void CreateArrayInTable();
 	void SetResultArraySize();
 	virtual bool CloseObject() override;
-	
-	HRESULT Initialize(SVDllLoadLibraryCallback fnNotify = [](LPCTSTR) {}, bool inCreationProcess = false, bool initializeAll = false);
+	HRESULT Initialize(SVDllLoadLibraryCallback fnNotify = [](LPCTSTR) {}, std::vector<std::string>& response = DummyStatusResponse, bool inCreationProcess = false, bool initializeAll = false);
+
+#pragma region IExternalToolTask methods
+	virtual SvOi::IExternalToolTaskDataAdmin& getExternalToolDataAdmin() override;
+	virtual HRESULT triggerInitialize(bool inCreationProcess = false, bool initializeAll = false) override;
+	virtual HRESULT triggerInitialize(std::vector<std::string>& status, bool inCreationProcess = false, bool initializeAll = false) override;
+	virtual void SetAllAttributes() override;
+	virtual HRESULT ClearData() override;
+	virtual HRESULT validateValueParameter(uint32_t laskObjectId, long index, _variant_t newVal) override;
+	virtual std::string getDllMessageString(long hResultError) const override;
+	virtual SvOi::IObjectClass* getResultRangeObjectAtIndex(int index) override;
+	virtual SvPb::GetImageInfoExternalToolResponse getImageInfoList() const override;
+#pragma endregion
+
+#pragma region IExternalToolTaskDataAdmin methods
+	virtual std::vector<std::shared_ptr<SvOi::IInputValueDefinition>> getInputValuesDefinition() const override;
+
+	virtual long getNumInputValues() const override;
+	virtual std::map<std::string, bool> getPropTreeState() const override;
+	virtual void setPropTreeState(const std::map<std::string, bool>&)  override;
+
+	virtual long getNumResultValues() const override;
+	virtual std::vector<std::shared_ptr<SvOi::IResultValueDefinition>> getResultValuesDefinition() const override;
+	virtual SvPb::GetTableResultsExternalToolResponse getTableResults() const override;
+
+#pragma endregion
 
 	virtual HRESULT DisconnectInputsOutputs(SVObjectPtrVector& rListOfObjects) override;
 	virtual HRESULT HideInputsOutputs(SVObjectPtrVector& rListOfObjects) override;
@@ -119,7 +146,6 @@ public:
 	HRESULT GetImageInfo(const SVImageDefinitionStruct* pDefinitionStruct, SVImageInfoClass& rInfo);
 	HRESULT GetImageDefinitionStruct( SVImageDefinitionStruct& rImageDef, const SVImageInfoClass& rInfo);
 
-	void SetAllAttributes();
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 	virtual bool resetAllObjects(SvStl::MessageContainerVector *pErrorMessages = nullptr) override;
 	enum FindEnum
@@ -143,10 +169,11 @@ public:
 
 	const std::vector<InputImageInformationStruct>& InputImageInformationStructs() { return m_aInputImageInformationStructs; }
 
+	
+
 protected:
 	HRESULT Uninitialize();
-	HRESULT ClearData();
-	HRESULT SetDefaultValues();
+	
 	virtual bool onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 	void SetIndirectValueSaveFlag();
 
@@ -199,14 +226,11 @@ private:
 	SvOi::SVImageBufferHandlePtr             m_aInputImagesCopy[SVExternalToolTaskData::NUM_INPUT_IMAGES];
 	bool                     m_bUseImageCopies;
 	
+	static std::vector<std::string> DummyStatusResponse;
 private:
 	HRESULT collectInputImageNames( );
 	
-	
 public:
-	friend class SVTADlgExternalSelectDllPage;
-	friend class SVTADlgExternalInputSelectPage;
-	friend class SVTADlgExternalResultPage;
 };
 
 } //namespace SvOp

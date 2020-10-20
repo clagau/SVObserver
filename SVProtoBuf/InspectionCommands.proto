@@ -1,3 +1,4 @@
+
 //*****************************************************************************
 /// \copyright (c) 2018,2018 by Seidenader Maschinenbau GmbH
 /// \file InspectionCommands.proto
@@ -728,6 +729,188 @@ message GetToolsWithReplaceableSourceImageResponse
 	repeated ObjectNameIdPair list = 1;
 }
 
+/////////////////////
+//ExternalTool Commands
+
+message InputValueDefinition
+{
+	sint32 vt = 1;
+	sint32 linkedValueIndex = 2;
+	ExDllInterfaceType type = 3;
+	string groupName = 4;
+	string displayName = 5;
+	string helpText = 6;
+	Variant defaultValue = 7;
+}
+
+message PropTreeState
+{
+	string name = 1;
+	bool state = 2;
+}
+
+message ResultValueDefinition
+{
+	sint32 vt = 1;
+	ExDllInterfaceType type = 2;
+	string groupName = 3;
+	string displayName = 4;
+	string helpText = 5;
+	bool useDisplayNames = 6;
+}
+
+message TableResultDefinition
+{
+	string groupName = 1;
+	string displayName = 2;
+	string helpText = 3;
+	bool useDisplayNames = 4;
+}
+// Currently only one field. To add more information if needed.
+message TableObject
+{
+	string name = 1;
+}
+
+message ImageInfo
+{
+	bool mayBeColor = 1;
+	bool mayBeBlackAndWhite = 2;
+	string displayName = 3;
+}
+
+message InitializeExternalToolTaskRequest
+{
+	uint32 objectId = 1;
+	bool inCreationProcess = 2;
+	bool initializeAll = 3;
+}
+
+message InitializeExternalToolTaskResponse
+{
+	repeated string statusMessages = 1;
+}
+
+//ToDo: Extend this command for all tools (currently used for ExternalTool)
+message ResetAllObjectsRequest
+{
+	uint32 objectId = 1;
+}
+
+message ClearDataExternalToolRequest
+{
+	uint32 objectId = 1;
+}
+
+message SetAllAttributesExternalToolRequest
+{
+	uint32 objectId = 1;
+}
+
+
+message GetInputValuesDefinitionExternalToolRequest
+{
+	uint32 objectId = 1;
+}
+
+message GetInputValuesDefinitionExternalToolResponse
+{
+	sint32 numInputValues = 1;
+	repeated InputValueDefinition inputValuesDefinition = 2;
+}
+
+message GetPropTreeStateExternalToolRequest
+{
+	uint32 objectId = 1;
+}
+
+message GetPropTreeStateExternalToolResponse
+{
+	repeated PropTreeState propTreeState = 1;
+}
+
+message GetDllMessageStringResponse
+{
+	string errorMessage = 1;
+}
+
+message SetPropTreeStateExternalToolRequest
+{
+	uint32 objectId = 1;
+	repeated PropTreeState propTreeState = 2;
+}
+
+message ValidateValueParameterExternalToolRequest
+{
+	uint32 objectId = 1;
+	uint32 taskObjectId = 2;
+	sint32 index = 3;
+	Variant newValue = 4;
+}
+
+message GetDllMessageStringRequest
+{
+	uint32 objectId = 1;
+	sfixed32 hResultError = 2;
+}
+
+message GetResultValuesDefinitionExternalToolRequest
+{
+	uint32 objectId = 1;
+}
+
+message GetResultValuesDefinitionExternalToolResponse
+{
+	sint32 numResultValues = 1;
+	repeated ResultValueDefinition resultValuesDefinition = 2;
+}
+
+
+message GetTableResultsExternalToolRequest
+{
+	uint32 objectId = 1;
+}
+
+message GetTableResultsExternalToolResponse
+{
+	repeated TableResultDefinition tableResultsDefinition = 1;
+	repeated TableObject tableObjects = 2;
+}
+
+message GetResultRangeObjectRequest
+{
+	uint32 objectId = 1;
+	sint32 index = 2;
+}
+
+message GetResultRangeObjectResponse
+{
+	ClassIdEnum classId = 1;
+	uint32 objectId = 2;
+}
+
+message GetImageInfoExternalToolRequest
+{
+	uint32 objectId = 1;
+}
+
+message GetImageInfoExternalToolResponse
+{
+	repeated ImageInfo imageInfoList = 1;
+}
+
+message ValidateValueObjectRequest
+{
+	string dottedName = 1;
+	InputValueDefinition valueDefinition = 2;
+}
+
+message ValidateValueObjectResponse
+{
+	bool objectExists = 1;
+	bool isvalid = 2;
+}
+
 message InspectionCmdRequest
 {
 	uint32 inspectionID = 1;			//The inspection ID to perform the command on
@@ -786,6 +969,20 @@ message InspectionCmdRequest
 		SetFeaturesRequest setFeaturesRequest = 51;
 		GetAvailableFeaturesRequest getAvailableFeaturesRequest = 52;
 		GetToolsWithReplaceableSourceImageRequest getToolsWithReplaceableSourceImageRequest = 53;
+		InitializeExternalToolTaskRequest initializeExternalToolTaskRequest = 54;
+		ResetAllObjectsRequest resetAllObjectsRequest = 55;
+		ClearDataExternalToolRequest clearDataExternalToolRequest = 56;
+		SetAllAttributesExternalToolRequest setAllAttributesExternalToolRequest = 57;
+		GetInputValuesDefinitionExternalToolRequest getInputValuesDefinitionExternalToolRequest = 58;
+		GetPropTreeStateExternalToolRequest getPropTreeStateExternalToolRequest = 59;
+		SetPropTreeStateExternalToolRequest setPropTreeStateExternalToolRequest = 60;
+		ValidateValueParameterExternalToolRequest validateValueParameterExternalToolRequest = 61;
+		GetDllMessageStringRequest getDllMessageStringRequest = 62;
+		GetResultValuesDefinitionExternalToolRequest getResultValuesDefinitionExternalToolRequest = 63;
+		GetTableResultsExternalToolRequest getTableResultsExternalToolRequest = 64;
+		GetResultRangeObjectRequest getResultRangeObjectRequest = 65;
+		GetImageInfoExternalToolRequest getImageInfoExternalToolRequest = 66;
+		ValidateValueObjectRequest validateValueObjectRequest = 67;
 	}
 }
 
@@ -832,5 +1029,14 @@ message InspectionCmdResponse
 		SetFeaturesResponse setFeaturesResponse = 36;
 		GetAvailableFeaturesResponse getAvailableFeaturesResponse = 37;
 		GetToolsWithReplaceableSourceImageResponse getToolsWithReplaceableSourceImageResponse = 38;
+		GetInputValuesDefinitionExternalToolResponse getInputValuesDefinitionExternalToolResponse = 39;
+		GetPropTreeStateExternalToolResponse getPropTreeStateExternalToolResponse = 40;
+		GetDllMessageStringResponse getDllMessageStringResponse = 41;
+		GetResultValuesDefinitionExternalToolResponse getResultValuesDefinitionExternalToolResponse = 42;
+		GetTableResultsExternalToolResponse getTableResultsExternalToolResponse = 43;
+		GetResultRangeObjectResponse getResultRangeObjectResponse = 44;
+		InitializeExternalToolTaskResponse initializeExternalToolTaskResponse = 45;
+		GetImageInfoExternalToolResponse getImageInfoExternalToolResponse = 46;
+		ValidateValueObjectResponse validateValueObjectResponse = 47;
 	}
 }

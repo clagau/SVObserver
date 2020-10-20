@@ -505,13 +505,125 @@ namespace SvCmd
 		)
 		},
 
+		{ SvPb::InspectionCmdRequest::kInitializeExternalToolTaskRequest,
+		std::make_tuple(
+		[] {return ThreadPref::inspection; },
+		[] {return std::chrono::seconds{ 120 }; },
+		[](const SvPb::InspectionCmdRequest& rRequest) {return  initializeExternalToolTask(rRequest.initializeexternaltooltaskrequest()); }
+		)
+		},
+
+		{ SvPb::InspectionCmdRequest::kResetAllObjectsRequest,
+		std::make_tuple(
+		[] {return ThreadPref::inspection; },
+		[] {return std::chrono::seconds{ 120 }; },
+		[](const SvPb::InspectionCmdRequest& rRequest) {return  resetAllObjects(rRequest.resetallobjectsrequest()); }
+		)
+		},
+
+		{ SvPb::InspectionCmdRequest::kClearDataExternalToolRequest,
+		std::make_tuple(
+		[] {return ThreadPref::inspection; },
+		[] {return std::chrono::seconds{ 120 }; },
+		[](const SvPb::InspectionCmdRequest& rRequest) {return  clearDataExternalTool(rRequest.cleardataexternaltoolrequest()); }
+		)
+		},
+
+		{ SvPb::InspectionCmdRequest::kSetAllAttributesExternalToolRequest,
+		std::make_tuple(
+		[] {return ThreadPref::inspection; },
+		[] {return std::chrono::seconds{ 120 }; },
+		[](const SvPb::InspectionCmdRequest& rRequest) {return  setAllAttributesExternalTool(rRequest.setallattributesexternaltoolrequest()); }
+		)
+		},
+
+		{ SvPb::InspectionCmdRequest::kGetInputValuesDefinitionExternalToolRequest,
+		std::make_tuple(
+		[] {return ThreadPref::inspection; },
+		[] {return std::chrono::seconds{ 120 }; },
+		[](const SvPb::InspectionCmdRequest& rRequest) {return  getInputValuesDefinitionExternalTool(rRequest.getinputvaluesdefinitionexternaltoolrequest()); }
+		)
+		},
+
+		{ SvPb::InspectionCmdRequest::kGetPropTreeStateExternalToolRequest,
+		std::make_tuple(
+		[] {return ThreadPref::inspection; },
+		[] {return std::chrono::seconds{ 120 }; },
+		[](const SvPb::InspectionCmdRequest& rRequest) {return  getPropTreeStateExternalTool(rRequest.getproptreestateexternaltoolrequest()); }
+		)
+		},
+		
+		{ SvPb::InspectionCmdRequest::kSetPropTreeStateExternalToolRequest,
+		std::make_tuple(
+		[] {return ThreadPref::inspection; },
+		[] {return std::chrono::seconds{ 120 }; },
+		[](const SvPb::InspectionCmdRequest& rRequest) {return  setPropTreeStateExternalTool(rRequest.setproptreestateexternaltoolrequest()); }
+		)
+		},
+
+		{ SvPb::InspectionCmdRequest::kValidateValueParameterExternalToolRequest,
+		std::make_tuple(
+		[] {return ThreadPref::inspection; },
+		[] {return std::chrono::seconds{ 120 }; },
+		[](const SvPb::InspectionCmdRequest& rRequest) {return  validateValueParameterExternalTool(rRequest.validatevalueparameterexternaltoolrequest()); }
+		)
+		},
+
+		{ SvPb::InspectionCmdRequest::kGetDllMessageStringRequest,
+		std::make_tuple(
+		[] {return ThreadPref::inspection; },
+		[] {return std::chrono::seconds{ 120 }; },
+		[](const SvPb::InspectionCmdRequest& rRequest) {return  getDllMessageString(rRequest.getdllmessagestringrequest()); }
+		)
+		},
+
+		{ SvPb::InspectionCmdRequest::kGetResultValuesDefinitionExternalToolRequest,
+		std::make_tuple(
+		[] {return ThreadPref::inspection; },
+		[] {return std::chrono::seconds{ 120 }; },
+		[](const SvPb::InspectionCmdRequest& rRequest) {return  getResultValuesDefinitionExternalTool(rRequest.getresultvaluesdefinitionexternaltoolrequest()); }
+		)
+		},
+
+		{ SvPb::InspectionCmdRequest::kGetTableResultsExternalToolRequest,
+		std::make_tuple(
+		[] {return ThreadPref::inspection; },
+		[] {return std::chrono::seconds{ 120 }; },
+		[](const SvPb::InspectionCmdRequest& rRequest) {return  getTableResultsExternalTool(rRequest.gettableresultsexternaltoolrequest()); }
+		)
+		},
+
+		{ SvPb::InspectionCmdRequest::kGetResultRangeObjectRequest,
+		std::make_tuple(
+		[] {return ThreadPref::inspection; },
+		[] {return std::chrono::seconds{ 120 }; },
+		[](const SvPb::InspectionCmdRequest& rRequest) {return  getResultRangeObject(rRequest.getresultrangeobjectrequest()); }
+		)
+		},
+
+		{ SvPb::InspectionCmdRequest::kGetImageInfoExternalToolRequest,
+		std::make_tuple(
+		[] {return ThreadPref::inspection; },
+		[] {return std::chrono::seconds{ 120 }; },
+		[](const SvPb::InspectionCmdRequest& rRequest) {return  getImageInfoExternalTool(rRequest.getimageinfoexternaltoolrequest()); }
+		)
+		},
+
+		{ SvPb::InspectionCmdRequest::kValidateValueObjectRequest,
+		std::make_tuple(
+		[] {return ThreadPref::inspection; },
+		[] {return std::chrono::seconds{ 120 }; },
+		[](const SvPb::InspectionCmdRequest& rRequest) {return  validateValueObject(rRequest.validatevalueobjectrequest()); }
+		)
+		},
+
 		{ SvPb::InspectionCmdRequest::kGetToolsWithReplaceableSourceImageRequest,
 		std::make_tuple(
 		[] {return ThreadPref::inspection; },
 		[] {return std::chrono::seconds{120}; } ,
 		[](const SvPb::InspectionCmdRequest& rRequest) {return  getToolsWithReplaceableSourceImage(rRequest.gettoolswithreplaceablesourceimagerequest()); }
 		)
-		},
+		}
 
 	};
 

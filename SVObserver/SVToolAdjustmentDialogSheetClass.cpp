@@ -34,7 +34,6 @@
 #include "Definitions/StringTypeDef.h"
 #include "Definitions/SVUserMessage.h"
 #include "ObjectInterfaces/IDependencyManager.h"
-#include "Operators\SVExternalToolTask.h"
 #include "SVOGui\SVExternalToolImageSelectPage.h"
 #include "SVOGui/SVToolAdjustmentDialogCommentPage.h"
 #include "SVOGui/SVToolAdjustmentDialogSizePage.h"
@@ -91,6 +90,7 @@ SVToolAdjustmentDialogSheetClass::SVToolAdjustmentDialogSheetClass(SVIPDoc* p_pI
 	, m_pIPDoc(p_pIPDoc)
 	, m_InspectionID(inspectionID)
 	, m_TaskObjectID(taskObjectID)
+	, m_externalToolTaskController(inspectionID, taskObjectID)
 {
 	init();
 }
@@ -100,6 +100,7 @@ SVToolAdjustmentDialogSheetClass::SVToolAdjustmentDialogSheetClass(SVIPDoc* p_pI
 	, m_pIPDoc(p_pIPDoc)
 	, m_InspectionID(inspectionID)
 	, m_TaskObjectID(taskObjectID)
+	, m_externalToolTaskController(inspectionID, taskObjectID)
 {
 	init();
 }
@@ -576,12 +577,9 @@ void SVToolAdjustmentDialogSheetClass::OnSysCommand(UINT nID, LPARAM lParam)
 
 LRESULT SVToolAdjustmentDialogSheetClass::AddPagesForTestedExternalTool(WPARAM, LPARAM)
 {
-	auto taskinfo = getExternalToolTaskInfo(m_InspectionID, m_TaskObjectID);
-
-	AddPage(new SvOg::SVExternalToolImageSelectPage(m_InspectionID, m_TaskObjectID, taskinfo.first->InputImageInformationStructs()));
-	AddPage(new SVTADlgExternalInputSelectPage(_T("Input Values"), m_InspectionID, m_TaskObjectID, taskinfo.second));
-
-	AddPage(new SVTADlgExternalResultPage(_T("Result Values"), m_InspectionID, taskinfo.second));
+	AddPage(new SvOg::SVExternalToolImageSelectPage(m_InspectionID, m_TaskObjectID));
+	AddPage(new SVTADlgExternalInputSelectPage(_T("Input Values"), m_InspectionID, m_TaskObjectID));
+	AddPage(new SVTADlgExternalResultPage(_T("Result Values"), m_InspectionID, m_externalToolTaskController.getExternalToolTaskObjectId()));
 
 	AddAdditionalPagesForExternalTool(true);
 	return S_OK;

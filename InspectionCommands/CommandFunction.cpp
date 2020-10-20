@@ -29,6 +29,10 @@
 #include "ObjectInterfaces\IObjectManager.h"
 #include "ObjectInterfaces\IPatternAnalyzer.h"
 #include "ObjectInterfaces\IBlobAnalyzer.h"
+#include "ObjectInterfaces\IExternalToolTask.h"
+#include "ObjectInterfaces\IExternalToolTaskDataAdmin.h"
+#include "ObjectInterfaces\IInputValueDefinition.h"
+#include "ObjectInterfaces\IResultValueDefinition.h"
 #include "Definitions\ObjectDefines.h"
 #include "Definitions\TextDefineSvDef.h"
 #include "SVStatusLibrary\ErrorNumbers.h"
@@ -48,7 +52,8 @@
 #include "CommandInternalHelper.h"
 #include "ObjectSelectorFilter.h"
 #include "ObjectInterfaces\ISVLinearAnalyzer.h"
-
+#include "ObjectInterfaces\ITableObject.h"
+#include "SVValueObjectLibrary/SVVariantValueObjectClass.h"
 #include <atltypes.h>
 
 #pragma endregion Includes
@@ -1636,6 +1641,392 @@ SvPb::InspectionCmdResponse getToolsWithReplaceableSourceImage(SvPb::GetToolsWit
 		SvPb::GetToolsWithReplaceableSourceImageResponse* pResponse = cmdResponse.mutable_gettoolswithreplaceablesourceimageresponse();
 		pTaskObject->getToolsWithReplaceableSourceImage(*pResponse);
 	}
+	return cmdResponse;
+}
+
+
+/// ExternalToolTask commands
+
+SvPb::InspectionCmdResponse initializeExternalToolTask(SvPb::InitializeExternalToolTaskRequest request)
+{
+	SvPb::InspectionCmdResponse cmdResponse;
+
+	SvOi::IObjectClass* pObject = SvOi::getObject(request.objectid());
+	auto* pExternalToolTask = dynamic_cast<SvOi::IExternalToolTask*> (pObject);
+
+	if (nullptr != pExternalToolTask)
+	{
+		auto* pResponse = cmdResponse.mutable_initializeexternaltooltaskresponse();
+
+		assert(pResponse != nullptr);
+		std::vector<std::string> statusMessages;
+		cmdResponse.set_hresult(pExternalToolTask->triggerInitialize(statusMessages, request.increationprocess(), request.initializeall()));
+
+		for (const auto& message : statusMessages)
+		{
+			pResponse->add_statusmessages(message);
+		}
+	}
+	else
+	{
+		cmdResponse.set_hresult(E_POINTER);
+	}
+	return cmdResponse;
+}
+
+SvPb::InspectionCmdResponse resetAllObjects(SvPb::ResetAllObjectsRequest request)
+{
+	SvPb::InspectionCmdResponse cmdResponse;
+
+	SvOi::IObjectClass* pObject = SvOi::getObject(request.objectid());
+
+	if (nullptr != pObject)
+	{
+		if (false == pObject->resetAllObjects())
+		{
+			cmdResponse.set_hresult(S_FALSE);
+		}
+
+	}
+	else
+	{
+		cmdResponse.set_hresult(E_POINTER);
+	}
+	return cmdResponse;
+
+}
+
+SvPb::InspectionCmdResponse clearDataExternalTool(SvPb::ClearDataExternalToolRequest request)
+{
+	SvPb::InspectionCmdResponse cmdResponse;
+
+	SvOi::IObjectClass* pObject = SvOi::getObject(request.objectid());
+	auto* pExternalToolTask = dynamic_cast<SvOi::IExternalToolTask*> (pObject);
+
+	if (nullptr != pExternalToolTask)
+	{
+		cmdResponse.set_hresult(pExternalToolTask->ClearData());
+	}
+	else
+	{
+		cmdResponse.set_hresult(E_POINTER);
+	}
+	return cmdResponse;
+}
+SvPb::InspectionCmdResponse setAllAttributesExternalTool(SvPb::SetAllAttributesExternalToolRequest request)
+{
+	SvPb::InspectionCmdResponse cmdResponse;
+
+	SvOi::IObjectClass* pObject = SvOi::getObject(request.objectid());
+	auto* pExternalToolTask = dynamic_cast<SvOi::IExternalToolTask*> (pObject);
+
+	if (nullptr != pExternalToolTask)
+	{
+		pExternalToolTask->SetAllAttributes();
+	}
+	else
+	{
+		cmdResponse.set_hresult(E_POINTER);
+	}
+	return cmdResponse;
+}
+
+SvPb::InspectionCmdResponse getInputValuesDefinitionExternalTool(SvPb::GetInputValuesDefinitionExternalToolRequest request)
+{
+	SvPb::InspectionCmdResponse cmdResponse;
+
+	SvOi::IObjectClass* pObject = SvOi::getObject(request.objectid());
+	auto* pExternalToolTask = dynamic_cast<SvOi::IExternalToolTask*> (pObject);
+
+	if (nullptr != pExternalToolTask )
+	{
+		SvPb::GetInputValuesDefinitionExternalToolResponse* pResponse = cmdResponse.mutable_getinputvaluesdefinitionexternaltoolresponse();
+		assert(pResponse != nullptr);
+
+		pResponse->set_numinputvalues(pExternalToolTask->getExternalToolDataAdmin().getNumInputValues());
+		
+		auto inputDefinitions = pExternalToolTask->getExternalToolDataAdmin().getInputValuesDefinition();
+		for (auto& item : inputDefinitions)
+		{
+			auto* inputEntry = pResponse->add_inputvaluesdefinition();
+			inputEntry->set_vt(item->getVt());
+			inputEntry->set_linkedvalueindex(item->getLinkedValueIndex());
+			inputEntry->set_type(item->getType());
+			inputEntry->set_groupname(item->getGroup());
+			inputEntry->set_displayname(item->getDisplayName());
+			inputEntry->set_helptext(item->getHelpText());
+			ConvertVariantToProtobuf(item->getDefaultValue(), inputEntry->mutable_defaultvalue());
+		}
+	}
+	else
+	{
+		cmdResponse.set_hresult(E_POINTER);
+	}
+	return cmdResponse;
+}
+
+SvPb::InspectionCmdResponse getPropTreeStateExternalTool(SvPb::GetPropTreeStateExternalToolRequest request)
+{
+	SvPb::InspectionCmdResponse cmdResponse;
+
+	SvOi::IObjectClass* pObject = SvOi::getObject(request.objectid());
+	auto* pExternalToolTask = dynamic_cast<SvOi::IExternalToolTask*> (pObject);
+
+	if (nullptr != pExternalToolTask)
+	{
+		auto* pResponse = cmdResponse.mutable_getproptreestateexternaltoolresponse();
+		assert(pResponse != nullptr);
+
+		auto propTreeState = pExternalToolTask->getExternalToolDataAdmin().getPropTreeState();
+
+		for (auto prop : propTreeState)
+		{
+			auto* pEntry = pResponse->add_proptreestate();
+			pEntry->set_name(prop.first);
+			pEntry->set_state(prop.second);
+		}
+	}
+	else
+	{
+		cmdResponse.set_hresult(E_POINTER);
+	}
+
+	return cmdResponse;
+}
+
+SvPb::InspectionCmdResponse setPropTreeStateExternalTool(SvPb::SetPropTreeStateExternalToolRequest request)
+{
+	SvPb::InspectionCmdResponse cmdResponse;
+
+	SvOi::IObjectClass* pObject = SvOi::getObject(request.objectid());
+	auto* pExternalToolTask = dynamic_cast<SvOi::IExternalToolTask*> (pObject);
+
+	if (nullptr != pExternalToolTask)
+	{
+		std::map<std::string, bool> propTreeState;
+		for (const auto& item : request.proptreestate())
+		{
+			propTreeState.emplace(item.name(), item.state());
+		}
+
+		pExternalToolTask->getExternalToolDataAdmin().setPropTreeState(propTreeState);
+	}
+	else
+	{
+		cmdResponse.set_hresult(E_POINTER);
+	}
+	return cmdResponse;
+}
+
+SvPb::InspectionCmdResponse validateValueParameterExternalTool(SvPb::ValidateValueParameterExternalToolRequest request)
+{
+	SvPb::InspectionCmdResponse cmdResponse;
+
+	SvOi::IObjectClass* pObject = SvOi::getObject(request.objectid());
+	auto* pExternalToolTask = dynamic_cast<SvOi::IExternalToolTask*> (pObject);
+
+	if (nullptr != pExternalToolTask)
+	{
+		_variant_t value;
+		ConvertProtobufToVariant(request.newvalue(), value);
+		pExternalToolTask->validateValueParameter(request.taskobjectid(), request.index(), value);
+	}
+	else
+	{
+		cmdResponse.set_hresult(E_POINTER);
+	}
+	return cmdResponse;
+}
+
+SvPb::InspectionCmdResponse getDllMessageString(SvPb::GetDllMessageStringRequest request)
+{
+	SvPb::InspectionCmdResponse cmdResponse;
+
+	SvOi::IObjectClass* pObject = SvOi::getObject(request.objectid());
+	auto* pExternalToolTask = dynamic_cast<SvOi::IExternalToolTask*> (pObject);
+
+	if (nullptr != pExternalToolTask)
+	{
+		auto* pResponse = cmdResponse.mutable_getdllmessagestringresponse();
+		assert(pResponse != nullptr);
+		pResponse->set_errormessage(pExternalToolTask->getDllMessageString(request.hresulterror()));
+	}
+	else
+	{
+		cmdResponse.set_hresult(E_POINTER);
+	}
+	return cmdResponse;
+}
+
+SvPb::InspectionCmdResponse getResultValuesDefinitionExternalTool(SvPb::GetResultValuesDefinitionExternalToolRequest request)
+{
+	SvPb::InspectionCmdResponse cmdResponse;
+
+	SvOi::IObjectClass* pObject = SvOi::getObject(request.objectid());
+	auto* pExternalToolTask = dynamic_cast<SvOi::IExternalToolTask*> (pObject);
+
+	if (nullptr != pExternalToolTask)
+	{
+		auto* pResponse = cmdResponse.mutable_getresultvaluesdefinitionexternaltoolresponse();
+		assert(pResponse != nullptr);
+
+		pResponse->set_numresultvalues(pExternalToolTask->getExternalToolDataAdmin().getNumResultValues());
+
+		auto resultDefinitions = pExternalToolTask->getExternalToolDataAdmin().getResultValuesDefinition();
+		for (auto& item : resultDefinitions)
+		{
+			auto* resultEntry = pResponse->add_resultvaluesdefinition();
+			resultEntry->set_vt(item->getVT());
+			resultEntry->set_groupname(item->getGroup());
+			resultEntry->set_displayname(item->getDisplayName());
+			resultEntry->set_helptext(item->getHelpText());
+			resultEntry->set_usedisplaynames(item->UseDisplayNames());
+		}
+	}
+	else
+	{
+		cmdResponse.set_hresult(E_POINTER);
+	}
+	return cmdResponse;
+}
+
+
+SvPb::InspectionCmdResponse getTableResultsExternalTool(SvPb::GetTableResultsExternalToolRequest request)
+{
+	SvPb::InspectionCmdResponse cmdResponse;
+
+	SvOi::IObjectClass* pObject = SvOi::getObject(request.objectid());
+	auto* pExternalToolTask = dynamic_cast<SvOi::IExternalToolTask*> (pObject);
+
+	if (nullptr != pExternalToolTask)
+	{
+		auto* pResponse = cmdResponse.mutable_gettableresultsexternaltoolresponse();
+		assert(pResponse != nullptr);
+
+		*pResponse = pExternalToolTask->getExternalToolDataAdmin().getTableResults();
+	}
+	else
+	{
+		cmdResponse.set_hresult(E_POINTER);
+	}
+	return cmdResponse;
+}
+
+SvPb::InspectionCmdResponse getResultRangeObject(SvPb::GetResultRangeObjectRequest request)
+{
+	SvPb::InspectionCmdResponse cmdResponse;
+
+	SvOi::IObjectClass* pObject = SvOi::getObject(request.objectid());
+	auto* pExternalToolTask = dynamic_cast<SvOi::IExternalToolTask*> (pObject);
+
+	if (nullptr != pExternalToolTask)
+	{
+		auto* pResponse = cmdResponse.mutable_getresultrangeobjectresponse();
+		assert(pResponse != nullptr);
+
+		auto* iObjectClass = pExternalToolTask->getResultRangeObjectAtIndex(request.index());
+		if (nullptr != iObjectClass)
+		{
+			pResponse->set_classid(iObjectClass->GetClassID());
+			pResponse->set_objectid(iObjectClass->getObjectId());
+		}
+		else
+		{ 
+			pResponse->set_classid(SvPb::ClassIdEnum::NoObjectClassId);
+			pResponse->set_objectid(0);
+		}
+	}
+	else
+	{
+		cmdResponse.set_hresult(E_POINTER);
+	}
+	return cmdResponse;
+}
+
+SvPb::InspectionCmdResponse getImageInfoExternalTool(SvPb::GetImageInfoExternalToolRequest request)
+{
+	SvPb::InspectionCmdResponse cmdResponse;
+
+	SvOi::IObjectClass* pObject = SvOi::getObject(request.objectid());
+	auto* pExternalToolTask = dynamic_cast<SvOi::IExternalToolTask*> (pObject);
+
+	if (nullptr != pExternalToolTask)
+	{
+		auto* pResponse = cmdResponse.mutable_getimageinfoexternaltoolresponse();
+		assert(pResponse != nullptr);
+
+		*pResponse = pExternalToolTask->getImageInfoList();
+	}
+	else
+	{
+		cmdResponse.set_hresult(E_POINTER);
+	}
+	return cmdResponse;
+}
+
+SvPb::InspectionCmdResponse validateValueObject(SvPb::ValidateValueObjectRequest request)
+{
+	SvPb::InspectionCmdResponse cmdResponse;
+
+	SvOi::IObjectClass* pObject = nullptr;
+	SVObjectManagerClass::Instance().GetObjectByDottedName(request.dottedname(), pObject);
+
+	bool objectExists{ false };
+	bool isValid{ false };
+
+	if (pObject != nullptr)
+	{
+		objectExists = true;
+		auto rInputedef = request.valuedefinition();
+				
+		if (rInputedef.type() == SvPb::ExDllInterfaceType::TableArray)
+		{
+			SvOi::ITableObject* pTableObject = dynamic_cast<SvOi::ITableObject*>(pObject);
+			isValid = (pTableObject != nullptr);
+		}
+		else
+		{
+			SvOi::IValueObject* pValueObject = dynamic_cast<SvOi::IValueObject*>(pObject);
+			isValid = (pValueObject != nullptr);
+			if (isValid)
+			{
+				DWORD type = pValueObject->GetType();
+
+				SvVol::SVVariantValueObjectClass* pVariant = dynamic_cast<SvVol::SVVariantValueObjectClass*>(pObject);
+				if (pVariant)
+				{
+					type |= pVariant->GetValueType();
+					type |= pVariant->GetDefaultType();
+				}
+
+				switch (rInputedef.vt())
+				{
+				case VT_ARRAY | VT_R8:
+					if (type != VT_R8) //allow not array objects
+					{
+						isValid = false;
+					}
+					break;
+				case VT_ARRAY | VT_I4:
+					if (type != VT_I4)
+					{
+						isValid = false;
+					}
+					break;
+				}
+			}
+		}
+	}
+	else
+	{
+		objectExists = false;
+		isValid = false;
+	}
+	auto* pResponse = cmdResponse.mutable_validatevalueobjectresponse();
+	assert(pResponse != nullptr);
+	pResponse->set_objectexists(objectExists);
+	pResponse->set_isvalid(isValid);
+
 	return cmdResponse;
 }
 

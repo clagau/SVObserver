@@ -12,12 +12,10 @@
 
 #pragma region Includes
 #include "SVOGui\ISVPropertyPageDialog.h"
+#include "SVOGui/ExternalToolTaskController.h"
+#include "Definitions/ObjectDefines.h"
+#include "SVOGui/DataController.h"
 #pragma endregion Includes
-
-namespace SvOp
-{
-class SVExternalToolTask;
-}
 
 class SVToolAdjustmentDialogSheetClass;
 struct SVCancelData;
@@ -57,11 +55,10 @@ public:
 protected:
 	void InitializeDll(bool jumpToInputPage, bool setDefaultValues = false);
 	void SetDependencies();
-	void NotifyProgress(LPCTSTR Message);
 	void testExternalDll(bool setDefaultValues = false);
+	void setDefaultValuesForInputs();
 
 	SVToolAdjustmentDialogSheetClass* m_pSheet;
-	SvOp::SVExternalToolTask* m_pTask;
 	CString m_strLastDllPath;
 	CToolTipCtrl m_ToolTip;
 	const uint32_t m_ToolObjectID;
@@ -84,6 +81,10 @@ protected:
 
 	BOOL m_ResetInput{true};
 	bool m_preserveStatus{ false };
+
+private:
+	ExternalToolTaskController m_externalToolTaskController;
+	SvOg::ValueController m_valueController;
+
 };
 
-std::pair<SvOp::SVExternalToolTask*, uint32_t> getExternalToolTaskInfo(uint32_t inspectionID, uint32_t toolObjectID);

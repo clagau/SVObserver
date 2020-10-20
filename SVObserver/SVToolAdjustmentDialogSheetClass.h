@@ -13,6 +13,7 @@
 
 #pragma region Includes
 #include "SvOGui/FormulaController.h"
+#include "SVOGui/ExternalToolTaskController.h"
 #pragma endregion Includes
 
 namespace SvOi
@@ -81,6 +82,7 @@ private:
 
 	typedef std::shared_ptr<SvOg::FormulaController> ControllerPtr;
 	ControllerPtr m_conditionalController;
+	ExternalToolTaskController m_externalToolTaskController;
 
 	LRESULT AddPagesForTestedExternalTool(WPARAM, LPARAM);
 	LRESULT RemovePagesForTestedExternalTool(WPARAM, LPARAM);

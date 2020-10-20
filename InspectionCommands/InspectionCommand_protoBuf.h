@@ -192,6 +192,15 @@ public:
 			case SvPb::InspectionCmdRequest::kGetAvailableFeaturesRequest:
 				m_response = getAvailableFeatures(m_rRequest.getavailablefeaturesrequest());
 				break;
+			//case SvPb::InspectionCmdRequest::kGetExternalToolTaskDllPathRequest:
+			//	m_response = getExternalToolTaskDllPath(m_rRequest.getexternaltooltaskdllpathrequest());
+			//	break;
+			//case SvPb::InspectionCmdRequest::kSetExternalToolTaskDllPathRequest:
+			//	m_response = setExternalToolTaskDllPath(m_rRequest.setexternaltooltaskdllpathrequest());
+			//	break;
+			//case SvPb::InspectionCmdRequest::kSetExternalToolTaskDllPathDefaultRequest:
+			//	m_response = setExternalToolTaskDllPathDefault(m_rRequest.setexternaltooltaskdllpathdefaultrequest());
+			//	break;
 			default:;
 		}
 

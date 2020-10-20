@@ -12,14 +12,11 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVTADlgExternalResultPage.h"
-#include "Operators/SVExternalToolTask.h"
-#include "SVInspectionProcess.h"
-#include "SVSetupDialogManager.h"
-#include "Operators/SVDLLToolDefinitionStructs.h"
+#include "SVObserver/SVSetupDialogManager.h"
 #include "SVRPropertyTree/SVRPropTreeItemEdit.h"
-#include "Operators/TableObject.h"
-#include "Operators/SVVariantResultClass.h"
 #include "InspectionCommands/CommandExternalHelper.h"
+#include "SVUtilityLibrary/StringHelper.h"
+#include "SVUtilityLibrary/SafeArrayHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -32,10 +29,10 @@ SVTADlgExternalResultPage::SVTADlgExternalResultPage(LPCTSTR Title, uint32_t ins
 	: CPropertyPage(SVTADlgExternalResultPage::IDD)
 	, m_InspectionID(inspectionId)
 	, m_TaskObjectID(taskObjectId)
+	, m_sTitle(Title)
+	, m_externalToolTaskController(inspectionId, taskObjectId)
+	, m_ValueController{ SvOg::BoundValues{ inspectionId, m_TaskObjectID } }
 {
-	m_pTask = dynamic_cast<SvOp::SVExternalToolTask*>(SVObjectManagerClass::Instance().GetObject(m_TaskObjectID));
-
-	m_sTitle = Title;
 	m_psp.pszTitle = m_sTitle.c_str();
 	m_psp.dwFlags |= PSP_USETITLE;
 
@@ -70,14 +67,15 @@ END_MESSAGE_MAP()
 BOOL SVTADlgExternalResultPage::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
-	if (m_pTask && m_pTask->GetInspection())
+
+	if (m_InspectionID > 0)
 	{
-		auto objectId = m_pTask->GetInspection()->getObjectId();
-		SvCmd::RunOnceSynchronous(objectId);
+		SvCmd::RunOnceSynchronous(m_InspectionID);
 	}
 
+	m_ValueController.Init();
 
-	if (m_pTask->m_Data.m_lNumResultValues > 0)
+	if (m_externalToolTaskController.getNumResultValues() > 0)
 	{
 		GetDlgItem(IDC_NO_RESULT_TXT)->ShowWindow(SW_HIDE);
 		GetDlgItem(IDC_RESULT_LIST)->ShowWindow(SW_SHOW);
@@ -106,16 +104,15 @@ BOOL SVTADlgExternalResultPage::OnInitDialog()
 		std::map<std::string, SVRPropertyItem*>::iterator iterGroup;
 
 		SVRPropertyItem* pGroupItem = nullptr;
-
-		int NumResults = m_pTask->m_Data.getNumResults();
+		
+		auto resultDefinitions = m_externalToolTaskController.getResultValuesDefinition().resultvaluesdefinition();
+		int NumResults = static_cast<int>(resultDefinitions.size());
 		for (int i = 0; i < NumResults; i++)
 		{
-			SvVol::SVVariantValueObjectClass& rValue = m_pTask->m_Data.m_aResultObjects[i];
-			SvOp::ResultValueDefinition& rDefinition = m_pTask->m_Data.m_ResultDefinitions[i];
-			if (rDefinition.UseDisplayNames())
+			auto rDefinition = resultDefinitions[i];
+			if (rDefinition.usedisplaynames())
 			{
-				std::string GroupName = rDefinition.getGroup();
-
+				std::string GroupName = rDefinition.groupname();
 				if ((iterGroup = mapGroupItems.find(GroupName)) == mapGroupItems.end())
 				{	
 					bool bTreeStyle = true;	// false = list-style
@@ -144,19 +141,18 @@ BOOL SVTADlgExternalResultPage::OnInitDialog()
 			int iID = ID_BASE + i;
 			pEdit->SetCtrlID(iID);
 
-			std::string  ObjectName = rValue.GetName();
+			
 			std::string sLabel = SvUl::LoadStdString(IDS_OBJECTNAME_RESULT_01 + static_cast<int>(i));
 			///use the same displayname as in 8.20
 			sLabel += " (";
-			sLabel += rDefinition.getDisplayName();
+			sLabel += rDefinition.displayname();
 			sLabel += ")";
 			
-
 
 			pEdit->SetLabelText(sLabel.c_str());
 
 			std::string Type;
-			switch (rDefinition.getVT())
+			switch (rDefinition.vt())
 			{
 				case VT_BOOL: Type = _T("Bool");   break;
 				case VT_I4:   Type = _T("Long");   break;
@@ -168,32 +164,33 @@ BOOL SVTADlgExternalResultPage::OnInitDialog()
 				default:      Type = _T("???");    break;
 			}
 
-			std::string sDescription = SvUl::Format(_T(" (Type : %s)  %s"), Type.c_str(), rDefinition.getHelpText().c_str());
+			std::string sDescription = SvUl::Format(_T(" (Type : %s)  %s"), Type.c_str(), rDefinition.helptext().c_str());
 			pEdit->SetInfoText(sDescription.c_str());
 			pEdit->SetButtonText(_T("Range"));
 
-			std::string sValue;
-			rValue.getValue(sValue);
+			_variant_t temp = m_ValueController.Get<_variant_t>(SvPb::ExternalResultEId + i);
+			std::string sValue = SvUl::VariantToString(temp);
+
 			pEdit->SetItemValue(sValue.c_str());
-			if (rDefinition.getVT() == VT_BSTR || (rDefinition.getVT()& VT_ARRAY))
+			if (rDefinition.vt() == VT_BSTR || (rDefinition.vt() & VT_ARRAY))
 			{
 				pEdit->ReadOnly();
 			}
 			pEdit->OnRefresh();
 		}
 
-		int NumTableResults = m_pTask->m_Data.getNumTableResults();
+		auto tableResultsResponse = m_externalToolTaskController.getTableResults();
+
+		int NumTableResults = tableResultsResponse.tableresultsdefinition_size();
 		for (int i = 0; i < NumTableResults; i++)
 		{
 
-			SvOp::ResultTableDefinition& rDefinition = m_pTask->m_Data.m_TableResultDefinitions[i];
-			SvOp::TableObject* pTable = m_pTask->m_Data.m_ResultTableObjects[i];
-			if (!pTable)
-				break;
+			auto rDefinition = tableResultsResponse.tableresultsdefinition()[i];
+			auto table = tableResultsResponse.tableobjects()[i];
 
-			if (rDefinition.UseDisplayNames())
+			if (rDefinition.usedisplaynames())
 			{
-				std::string GroupName = rDefinition.getGroup();
+				std::string GroupName = rDefinition.groupname();
 
 				if ((iterGroup = mapGroupItems.find(GroupName)) == mapGroupItems.end())
 				{	
@@ -220,7 +217,7 @@ BOOL SVTADlgExternalResultPage::OnInitDialog()
 			}
 			int iID = ID_BASE + NumResults + i;
 			pEdit->SetCtrlID(iID);
-			std::string objectname = pTable->GetName();
+			std::string objectname = table.name();
 			///use the same displayname as in 8.20
 			std::string  sLabel = "Table Object";
 			if (i > 0)
@@ -230,13 +227,13 @@ BOOL SVTADlgExternalResultPage::OnInitDialog()
 
 			{
 				sLabel += " (";
-				sLabel += rDefinition.getDisplayName();
+				sLabel += rDefinition.displayname();
 				sLabel += ")";
 			}
 			pEdit->SetLabelText(sLabel.c_str());
 			pEdit->ReadOnly();
 
-			std::string sDescription = SvUl::Format(_T(" (Type: Tableobject)  %s"), rDefinition.getHelpText().c_str());
+			std::string sDescription = SvUl::Format(_T(" (Type: Tableobject)  %s"), rDefinition.helptext().c_str());
 			pEdit->SetInfoText(sDescription.c_str());
 
 			pEdit->OnRefresh();
@@ -275,12 +272,13 @@ void SVTADlgExternalResultPage::OnItemQueryShowButton(NMHDR* pNotifyStruct, LRES
 		SVRPropertyItem* pItem = pNMPropTree->pItem;
 		int iIndex = GetItemIndex(pItem);
 
+		auto resultDefinitions = m_externalToolTaskController.getResultValuesDefinition().resultvaluesdefinition();
 		*plResult = FALSE;
 
-		if (m_pTask != nullptr &&  m_pTask->m_Data.m_ResultDefinitions.size() > iIndex)
+		if (resultDefinitions.size() > iIndex)
 		{
-			if (m_pTask->m_Data.m_ResultDefinitions[iIndex].getVT() != VT_BSTR &&
-				(0 == (m_pTask->m_Data.m_ResultDefinitions[iIndex].getVT() & VT_ARRAY)))
+			if (resultDefinitions[iIndex].vt() != VT_BSTR &&
+				(0 == (resultDefinitions[iIndex].vt() & VT_ARRAY)))
 			{
 				*plResult = TRUE;	// Show button no string no array
 			}
@@ -313,12 +311,11 @@ void SVTADlgExternalResultPage::OnItemButtonClick(NMHDR* pNotifyStruct, LRESULT*
 // display VO picker dialog and return selection
 int SVTADlgExternalResultPage::SelectObject(int iIndex)
 {
+	auto response = m_externalToolTaskController.getResultRangeObjectAtIndex(iIndex);
 
-	SvOp::SVVariantResultClass* pResult = dynamic_cast<SvOp::SVVariantResultClass*> (m_pTask->GetResultRangeObject(iIndex));
-
-	if (pResult)
+	if (response.classid() != SvPb::ClassIdEnum::NoObjectClassId && response.objectid() > 0)
 	{
-		SVSetupDialogManager::Instance().SetupDialog(pResult->GetClassID(), pResult->getObjectId(), this);
+		SVSetupDialogManager::Instance().SetupDialog(response.classid(), response.objectid(), this);
 	}
 
 	return 0;

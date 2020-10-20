@@ -17,7 +17,7 @@
 #include "ImageController.h"
 #include "PictureDisplay.h"
 #include "SVRPropertyTree/SVRPropTree.h"
-#include "Operators/SVDLLToolDefinitionStructs.h"
+#include "ExternalToolTaskController.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -28,7 +28,7 @@ namespace SvOg
 
 	#pragma region Constructor
 	public:
-		SVExternalToolImageSelectPage( uint32_t inspectionId, uint32_t taskObjectId, const std::vector<SvOp::InputImageInformationStruct>& rInfostructVector, int id = IDD );
+		SVExternalToolImageSelectPage(uint32_t inspectionId, uint32_t taskObjectId, int id = IDD);
 		virtual ~SVExternalToolImageSelectPage() {}
 	#pragma endregion Constructor
 
@@ -75,13 +75,13 @@ namespace SvOg
 		PictureDisplay m_ImageDisplay;
 		//}}AFX_DATA
 
-		std::vector<SvOp::InputImageInformationStruct> m_Infostructs;
-
 		SVRPropTree	m_Tree;
 		const uint32_t m_InspectionID;
 		const uint32_t m_TaskObjectID;
+		ExternalToolTaskController m_externalToolTaskController;
 		size_t m_numImages;
 		ImageInputList m_imageInputList;
+		
 	#pragma endregion Member variables
 	};
 } //namespace SvOg

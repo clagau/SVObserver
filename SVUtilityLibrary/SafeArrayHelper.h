@@ -6,6 +6,11 @@
 //Helper function for SAFEARRAY
 //******************************************************************************
 #pragma once
+
+#include <boost/algorithm/algorithm.hpp>
+#include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string/classification.hpp>
+
 namespace SvUl
 {
 

@@ -172,7 +172,7 @@ const _variant_t& InputValueDefinition::getDefaultValue() const
 void InputValueDefinition::setDefinition(const InputValueDefinitionStruct&  InputValueDefStruct, long* pNLValue)
 {
 	m_Dim = 0;
-	m_Type = SvOp::ExDllInterfaceType::Invalid;
+	m_Type = SvPb::ExDllInterfaceType::Invalid;
 	m_LinkedValueIndex = -1;
 	m_VT = InputValueDefStruct.m_VT;
 	m_DisplayName = static_cast<LPSTR>(_bstr_t(InputValueDefStruct.m_bDisplayName));
@@ -184,7 +184,7 @@ void InputValueDefinition::setDefinition(const InputValueDefinitionStruct&  Inpu
 
 	if (!(m_DefaultValue.vt & VT_ARRAY))
 	{
-		m_Type = SvOp::ExDllInterfaceType::Scalar;
+		m_Type = SvPb::ExDllInterfaceType::Scalar;
 		m_LinkedValueIndex = (*pNLValue)++;
 	}
 	else
@@ -197,13 +197,13 @@ void InputValueDefinition::setDefinition(const InputValueDefinitionStruct&  Inpu
 			{
 				//until now BSTR Arrays are only used for TablRowNames
 				/// therefore the same index like the table before
-				m_Type = SvOp::ExDllInterfaceType::TableNames;
+				m_Type = SvPb::ExDllInterfaceType::TableNames;
 				m_LinkedValueIndex = (*pNLValue) - 1;
 			}
 			else if ((m_DefaultValue.vt &  VT_R8)
 				|| (m_DefaultValue.vt &  VT_I4))
 			{
-				m_Type = SvOp::ExDllInterfaceType::Array;
+				m_Type = SvPb::ExDllInterfaceType::Array;
 				m_LinkedValueIndex = (*pNLValue)++;
 			}
 			else
@@ -214,7 +214,7 @@ void InputValueDefinition::setDefinition(const InputValueDefinitionStruct&  Inpu
 		}
 		else if (m_Dim == 2 && (m_DefaultValue.vt == (VT_ARRAY | VT_R8)))
 		{
-			m_Type = SvOp::ExDllInterfaceType::TableArray;
+			m_Type = SvPb::ExDllInterfaceType::TableArray;
 			m_LinkedValueIndex = (*pNLValue)++;
 		}
 		else
@@ -228,7 +228,7 @@ void InputValueDefinition::setDefinition(const InputValueDefinitionStruct&  Inpu
 void InputValueDefinition::setDefinition(const InputValueDefinitionStructEx&  InputValueDefStruct, long* pNLValue)
 {
 	m_Dim = 0;
-	m_Type = SvOp::ExDllInterfaceType::Invalid;
+	m_Type = SvPb::ExDllInterfaceType::Invalid;
 	m_LinkedValueIndex = -1;
 	m_VT = InputValueDefStruct.vt;
 	m_DisplayName = static_cast<LPSTR>(_bstr_t(InputValueDefStruct.Name.copy()));
@@ -240,7 +240,7 @@ void InputValueDefinition::setDefinition(const InputValueDefinitionStructEx&  In
 
 	if (!(m_DefaultValue.vt & VT_ARRAY))
 	{
-		m_Type = SvOp::ExDllInterfaceType::Scalar;
+		m_Type = SvPb::ExDllInterfaceType::Scalar;
 		m_LinkedValueIndex = (*pNLValue)++;
 	}
 	else
@@ -253,13 +253,13 @@ void InputValueDefinition::setDefinition(const InputValueDefinitionStructEx&  In
 			{
 				//until now BSTR Arrays are only used for TablRowNames
 				/// therefore the same index like the table before
-				m_Type = SvOp::ExDllInterfaceType::TableNames;
+				m_Type = SvPb::ExDllInterfaceType::TableNames;
 				m_LinkedValueIndex = (*pNLValue) - 1;
 			}
 			else if ((m_DefaultValue.vt &  VT_R8)
 				|| (m_DefaultValue.vt &  VT_I4))
 			{
-				m_Type = SvOp::ExDllInterfaceType::Array;
+				m_Type = SvPb::ExDllInterfaceType::Array;
 				m_LinkedValueIndex = (*pNLValue)++;
 			}
 			else
@@ -270,7 +270,7 @@ void InputValueDefinition::setDefinition(const InputValueDefinitionStructEx&  In
 		}
 		else if (m_Dim == 2 && (m_DefaultValue.vt == (VT_ARRAY | VT_R8)))
 		{
-			m_Type = SvOp::ExDllInterfaceType::TableArray;
+			m_Type = SvPb::ExDllInterfaceType::TableArray;
 			m_LinkedValueIndex = (*pNLValue)++;
 		}
 		else

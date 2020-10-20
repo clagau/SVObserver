@@ -28,6 +28,7 @@ namespace SvOp
 #endif
 #pragma endregion Declarations
 
+	std::vector<std::string> SVDLLToolLoadLibraryClass::DummyVector;
 	SVDLLToolLoadLibraryClass::SVDLLToolLoadLibraryClass()
 	{
 	}
@@ -132,7 +133,7 @@ namespace SvOp
 		return Result;
 	}
 
-	HRESULT SVDLLToolLoadLibraryClass::Open(LPCTSTR p_szLibrary, SVDllLoadLibraryCallback fnNotifyProgress)
+	HRESULT SVDLLToolLoadLibraryClass::Open(LPCTSTR p_szLibrary, SVDllLoadLibraryCallback fnNotifyProgress, std::vector<std::string>& status)
 	{
 		HRESULT Result(S_OK);
 		SvStl::MessageContainer e;
@@ -141,16 +142,26 @@ namespace SvOp
 			return Result;
 		}
 
+		auto collectStatus = [&status, &fnNotifyProgress](LPCTSTR message)
+		{
+			if (fnNotifyProgress)
+			{
+				fnNotifyProgress(message);
+			}
+			status.push_back(message);
+		};
+
+
 		if (_access(p_szLibrary, 0) == 0)
 		{
 			// Check bitness
 			if (CheckBitness(p_szLibrary) != ImageFileMachineAMD64)
 			{
 				std::string Message = SvUl::Format(_T("%s is not 64 Bit!"), p_szLibrary);
-				fnNotifyProgress(Message.c_str());
+				collectStatus(Message.c_str());
 			}
 		}
-		fnNotifyProgress(_T("Attempting LoadLibrary"));
+		collectStatus(_T("Attempting LoadLibrary"));
 		m_hmHandle = ::LoadLibrary(p_szLibrary);
 		Sleep(0);
 		if (nullptr == m_hmHandle)	// can't load library
@@ -277,7 +288,7 @@ namespace SvOp
 
 				if (S_OK == Result)
 				{
-					fnNotifyProgress(_T("Attempting SimpleTest"));
+					collectStatus(_T("Attempting SimpleTest"));
 
 					try
 					{
@@ -300,7 +311,7 @@ namespace SvOp
 				}
 				if (S_OK == Result)
 				{
-					fnNotifyProgress(_T("Attempting Startup"));
+					collectStatus(_T("Attempting Startup"));
 					try
 					{
 						Result = m_pfnStartup();
@@ -318,7 +329,7 @@ namespace SvOp
 				// Get Tool Name
 				if (S_OK == Result)
 				{
-					fnNotifyProgress(_T("Attempting GetToolName"));
+					collectStatus(_T("Attempting GetToolName"));
 					BSTR bstName = nullptr;
 					try
 					{
@@ -329,7 +340,7 @@ namespace SvOp
 						}
 						else
 						{
-							fnNotifyProgress(SvUl::createStdString(_bstr_t(bstName)).c_str());
+							collectStatus(SvUl::createStdString(_bstr_t(bstName)).c_str());
 						}
 					}
 					catch (...)
@@ -342,7 +353,7 @@ namespace SvOp
 				// Get Tool Version
 				if (S_OK == Result)
 				{
-					fnNotifyProgress(_T("Attempting GetToolVersion"));
+					collectStatus(_T("Attempting GetToolVersion"));
 					long lTmp = 0;
 					try
 					{
@@ -354,7 +365,7 @@ namespace SvOp
 						else
 						{
 							std::string Version = SvUl::Format(_T("Version %d"), lTmp);
-							fnNotifyProgress(Version.c_str());
+							collectStatus(Version.c_str());
 						}
 					}
 					catch (...)

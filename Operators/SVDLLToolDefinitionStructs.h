@@ -14,6 +14,9 @@
 #pragma region Includes
 //Moved to precompiled header: #include <comdef.h>
 //Moved to precompiled header: #include <vector>
+#include "ObjectInterfaces/IInputValueDefinition.h"
+#include "ObjectInterfaces/IResultValueDefinition.h"
+#include "SVProtoBuf/SVO-Enum.h"
 #pragma endregion Includes
 
 
@@ -83,22 +86,22 @@ private:
 
 //!class describing the inputvalue definitions for External dll
 /// contents the structure from the dll with some additional calculated information 
-class  InputValueDefinition
+class  InputValueDefinition : public SvOi::IInputValueDefinition
 {
 public:
 	InputValueDefinition() = default;
-	~InputValueDefinition() = default;
+	virtual ~InputValueDefinition() = default;
 
-	long getVt() const;
-	std::string getDisplayName() const;
-	std::string getHelpText() const;
-	std::string getGroup() const;
-	const _variant_t& getDefaultValue() const;
+	virtual long getVt() const override;
+	virtual std::string getDisplayName() const override;
+	virtual std::string getHelpText() const override;
+	virtual std::string getGroup() const override;
+	virtual const _variant_t& getDefaultValue() const override;
 	//Throw exception if InputValueDefinitionStruct is not allowed
 	void setDefinition(const InputValueDefinitionStruct&  InputValueDefStruct, long* NofLinkedValue);
 	void setDefinition(const InputValueDefinitionStructEx&  InputValueDefStruct, long* pNLValue);
-	int getDim()const { return m_Dim; };
-	SvOp::ExDllInterfaceType getType() const { return m_Type; };
+	virtual int getDim() const override { return m_Dim; };
+	virtual SvPb::ExDllInterfaceType getType() const override { return m_Type; };
 	int  getLinkedValueIndex() const { return m_LinkedValueIndex; };
 	bool UseDisplayNames() const { return m_UseDisplaynames; };
 private:
@@ -111,7 +114,7 @@ private:
 	_variant_t m_DefaultValue;
 	bool m_UseDisplaynames;
 	int							m_Dim {0}; //dimension of Arrays
-	SvOp::ExDllInterfaceType             m_Type {SvOp::ExDllInterfaceType::Scalar};
+	SvPb::ExDllInterfaceType             m_Type{ SvPb::ExDllInterfaceType::Scalar };
 };
 
 
@@ -156,7 +159,7 @@ struct ResultTableDefinitionStruct
 
 //!class describing the resultvalue definitions for External dll
 /// contents the structure from the dll with some additional calculated information 
-class ResultValueDefinition
+class ResultValueDefinition : public SvOi::IResultValueDefinition
 {
 public:
 	ResultValueDefinition() = default;
@@ -165,14 +168,13 @@ public:
 	void setDefinition(const ResultValueDefinitionStruct&  resultValueDefinitionStruct, long ValueIndex);
 	void setDefinition(const ResultValueDefinitionStructEx&  resultValueDefinitionStruct, long ValueIndex);
 	int getIndex() const;
-	std::string getDisplayName() const;
-	SvOp::ExDllInterfaceType getType() const;
-	long getVT() const;
+	virtual std::string getDisplayName() const override;
+	virtual long getVT() const override;
 	long getMaxArraysize() const;
 	void setMaxArraysize(long);
-	bool UseDisplayNames() const { return m_UseDisplayNames; };
-	std::string getGroup() const { return m_Group; }
-	std::string  getHelpText() const { return m_HelpText; }
+	virtual bool UseDisplayNames() const override { return m_UseDisplayNames; };
+	virtual std::string getGroup() const override { return m_Group; }
+	virtual std::string  getHelpText() const override { return m_HelpText; }
 	
 private:
 	int m_ValueIndex {-1};
@@ -186,7 +188,7 @@ private:
 
 //!class describing the resulttable definitions for External dll
 /// contents the structure from the dll with some additional calculated information 
-class ResultTableDefinition
+class ResultTableDefinition 
 {
 public:
 	ResultTableDefinition() = default;

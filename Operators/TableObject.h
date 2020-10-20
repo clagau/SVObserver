@@ -12,12 +12,13 @@
 #include "InspectionEngine/SVTaskObject.h"
 #include "SVValueObjectLibrary/DoubleSortValueObject.h"
 #include "SVValueObjectLibrary/SVLongValueObjectClass.h"
+#include "ObjectInterfaces/ITableObject.h"
 #pragma endregion Includes
 
 namespace SvOp //< Operators
 {
 
-class TableObject : public SvIe::SVTaskObjectClass
+class TableObject : public SvIe::SVTaskObjectClass, public SvOi::ITableObject
 {
 #pragma region Constructor
 	SV_DECLARE_CLASS( TableObject );
@@ -35,46 +36,46 @@ public:
 
 	SVObjectClass* getNumberOfRowObject() const;
 
-	const std::vector<SvVol::DoubleSortValuePtr>& getValueList() const { return m_ValueList; };
-	SvVol::ValueObjectSortContainer& getSortContainer() ;
+	virtual const std::vector<SvVol::DoubleSortValuePtr>& getValueList() const override { return m_ValueList; };
+	virtual SvVol::ValueObjectSortContainer& getSortContainer() override;
 	/// Set a new sort Container to this object and its column values.
 	/// \param sortMap [in] the new container
-	void setSortContainer(const SvVol::ValueObjectSortContainer& sortMap, RunStatus& rRunStatus);
+	virtual void setSortContainer(const SvVol::ValueObjectSortContainer& sortMap, RunStatus& rRunStatus) override;
 
-	void  setSortContainerDummy(const SvVol::DummySortContainer& rDummy);
+	virtual void  setSortContainerDummy(const SvVol::DummySortContainer& rDummy) override;
 	
-	void UpdateNumberOfRows();
+	virtual void UpdateNumberOfRows() override;
 
 	/// Update (Name and array size) column if column (with embeddedID) exist, if not exist create column.
 	/// \param embeddedID [in] emdedded Id.
 	/// \param nameId [in] ID of the new name
 	/// \param arraysize [in] New array size.
 	/// \returns DoubleSortValueObject Pointer to the valueObject or nullptr if creation failed.
-	SvVol::DoubleSortValuePtr updateOrCreateColumn(SvPb::EmbeddedIdEnum embeddedId, int nameId, int arraysize);
+	virtual SvVol::DoubleSortValuePtr updateOrCreateColumn(SvPb::EmbeddedIdEnum embeddedId, int nameId, int arraysize) override;
 	/// Update (Name and array size) column if column (with embeddedID) exist, if not exist create column.
 	/// \param embeddedID [in] emdedded Id.
 	/// \param newname [in]  the new name
 	/// \param arraysize [in] New array size.
 	/// \returns DoubleSortValueObject Pointer to the valueObject or nullptr if creation failed.
-	SvVol::DoubleSortValuePtr updateOrCreateColumn(SvPb::EmbeddedIdEnum embeddedId, const std::string& newName, int arraysize);
+	virtual SvVol::DoubleSortValuePtr updateOrCreateColumn(SvPb::EmbeddedIdEnum embeddedId, const std::string& newName, int arraysize) override;
 
 	/// Remove a column.
 	/// \param embeddedId [in] emdedded Id of the value object.
-	void removeColumn(SvPb::EmbeddedIdEnum embeddedId);
+	virtual void removeColumn(SvPb::EmbeddedIdEnum embeddedId) override;
 
 	/// Clear the table
-	void clearTable();
+	virtual void clearTable() override;
 
 	virtual SVObjectClass* OverwriteEmbeddedObject(uint32_t uniqueID, SvPb::EmbeddedIdEnum embeddedID) override;
 
 	/// for rValue  a 2 dim SafeArray of double  is expected, otherwise false is returned
-	bool setTableValues(const _variant_t& rValue);
+	virtual bool setTableValues(const _variant_t& rValue) override;
 	/// rValue contents a 2 dim SafeArray of double  
-	void  getTableValues(_variant_t& rValue,long* pRowCount, long* pColoumnCount)const;
+	virtual void  getTableValues(_variant_t& rValue,long* pRowCount, long* pColoumnCount) const override;
 	/// rValue contents a 1 dim Safe array of BSTR with the columnames returnvalue is size
-	unsigned  getColumNames(_variant_t& rValue) const;
+	virtual unsigned  getColumNames(_variant_t& rValue) const override;
 	/// hide table in ResultPicker
-	void Hide(bool hide);
+	virtual void Hide(bool hide) override;
 #pragma endregion Public Methods
 
 #pragma region Protected Methods

@@ -13,12 +13,10 @@
 
 #pragma region Includes
 #include "SVRPropertyTree/SVRPropTree.h"
+#include "SVOGui/ExternalToolTaskController.h"
+#include "SVOGui/DataController.h"
 #pragma endregion Includes
 
-namespace SvOp
-{
-class SVExternalToolTask;
-}
 
 class SVTADlgExternalResultPage : public CPropertyPage
 {
@@ -44,11 +42,12 @@ protected:
 	int SelectObject(int iIndex);
 	int GetItemIndex(SVRPropertyItem* pItem);
 
-	SvOp::SVExternalToolTask* m_pTask;
 	const uint32_t m_InspectionID;
 	const uint32_t m_TaskObjectID;
 	std::string						m_sTitle;
-	
+	ExternalToolTaskController m_externalToolTaskController;
+	SvOg::ValueController m_ValueController;
+
 	enum
 	{
 		ID_BASE = 100,
@@ -65,5 +64,6 @@ protected:
 	virtual BOOL OnInitDialog() override;
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
+	
 };
 

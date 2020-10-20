@@ -161,4 +161,23 @@ SvPb::InspectionCmdResponse getBlobAnalyzerInfo(SvPb::GetBlobAnalyzerInfoRequest
 
 SvPb::InspectionCmdResponse computeOverscanRect(SvPb::ComputeOverscanRectRequest request);
 
+/// ExternalToolTask commands
+SvPb::InspectionCmdResponse initializeExternalToolTask(SvPb::InitializeExternalToolTaskRequest request);
+
+SvPb::InspectionCmdResponse resetAllObjects(SvPb::ResetAllObjectsRequest request);
+
+SvPb::InspectionCmdResponse clearDataExternalTool(SvPb::ClearDataExternalToolRequest request);
+
+SvPb::InspectionCmdResponse setAllAttributesExternalTool(SvPb::SetAllAttributesExternalToolRequest request);
+SvPb::InspectionCmdResponse getInputValuesDefinitionExternalTool(SvPb::GetInputValuesDefinitionExternalToolRequest request);
+SvPb::InspectionCmdResponse getPropTreeStateExternalTool(SvPb::GetPropTreeStateExternalToolRequest request);
+SvPb::InspectionCmdResponse setPropTreeStateExternalTool(SvPb::SetPropTreeStateExternalToolRequest request);
+SvPb::InspectionCmdResponse validateValueParameterExternalTool(SvPb::ValidateValueParameterExternalToolRequest request);
+SvPb::InspectionCmdResponse getDllMessageString(SvPb::GetDllMessageStringRequest request);
+SvPb::InspectionCmdResponse getResultValuesDefinitionExternalTool(SvPb::GetResultValuesDefinitionExternalToolRequest request);
+SvPb::InspectionCmdResponse getTableResultsExternalTool(SvPb::GetTableResultsExternalToolRequest request);
+SvPb::InspectionCmdResponse getResultRangeObject(SvPb::GetResultRangeObjectRequest request);
+SvPb::InspectionCmdResponse getImageInfoExternalTool(SvPb::GetImageInfoExternalToolRequest request);
+SvPb::InspectionCmdResponse validateValueObject(SvPb::ValidateValueObjectRequest request);
+
 } //namespace SvCmd

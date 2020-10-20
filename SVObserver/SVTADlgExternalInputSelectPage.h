@@ -13,14 +13,9 @@
 #pragma region Includes
 #include "SVRPropertyTree/SVRPropTree.h"
 #include "SVOGui/DataController.h"
+#include "SVOGui/ExternalToolTaskController.h"
 #pragma endregion Includes
 
-namespace SvOp
-{
-class SVExternalToolTask;
-class InputValueDefinition;
-}
-class SVObjectClass;
 
 class SVTADlgExternalInputSelectPage : public CPropertyPage
 {
@@ -28,8 +23,8 @@ class SVTADlgExternalInputSelectPage : public CPropertyPage
 
 // Construction
 public:
-	SVTADlgExternalInputSelectPage(LPCTSTR Title, uint32_t inspectionID, uint32_t toolObjectID, uint32_t taskObjectID, int id = IDD);
-	virtual ~SVTADlgExternalInputSelectPage();
+	SVTADlgExternalInputSelectPage(LPCTSTR Title, uint32_t inspectionID, uint32_t toolObjectID, int id = IDD);
+	virtual ~SVTADlgExternalInputSelectPage() = default;
 
 	// Dialog Data
 	//{{AFX_DATA(SVTADlgExternalInputSelectPage)
@@ -49,12 +44,12 @@ public:
 // Implementation
 protected:
 	int SelectObject( std::string& rSelectedName, SVRPropertyItem* pItem );
-	SVObjectClass* FindObject(SVRPropertyItem* pItem);
 	HRESULT ValidateItem(SVRPropertyItem* pItem);
 
-	bool ValidateValueObject(SVObjectClass* pObject, const SvOp::InputValueDefinition& rInputedef);
+	std::string getCompleteName(SVRPropertyItem* pItem) const;
+
 	int GetItemIndex(SVRPropertyItem* pItem);
-	const SvOp::InputValueDefinition*  GetInputValueDefinitionPtr(SVRPropertyItem* pItem);
+	const std::unique_ptr<SvPb::InputValueDefinition> GetInputDefinitionPtr(SVRPropertyItem* pItem);
 
 	enum
 	{
@@ -75,18 +70,18 @@ protected:
 
 private:
 	std::string GetName(uint32_t id) const;
-	SVRPropertyItem *AddGroupToTree(const SvOp::InputValueDefinition& rDefinition, std::map<std::string, SVRPropertyItem*>& rMapGroupItems, SVRPropertyItem* pRoot);
-	void AddItemToTree(const SvOp::InputValueDefinition& rDefinition, SVRPropertyItem* pGroupItem, int iID);
+
+	SVRPropertyItem* AddGroupToTree(const std::string& groupName, std::map<std::string, SVRPropertyItem*>& rMapGroupItems, SVRPropertyItem* pRoot);
+	void AddItemToTree(const SvPb::InputValueDefinition& rDefinition, SVRPropertyItem* pGroupItem, int iID);
 private:
-	SvOp::SVExternalToolTask* m_pTask;
 	SVRPropTree	m_Tree;
 	int m_inputValueCount;
 
 	const uint32_t m_InspectionID;
 	const uint32_t m_ToolObjectID;
-	const uint32_t m_TaskObjectID;
 
+	ExternalToolTaskController m_externalToolTaskController;
+	const uint32_t m_TaskObjectID;
 	SvOg::ValueController m_InputValues;
 };
-
 

@@ -105,7 +105,7 @@ public:
 	SVDLLToolLoadLibraryClass();
 	~SVDLLToolLoadLibraryClass();
 
-	HRESULT Open( LPCTSTR p_szLibrary, SVDllLoadLibraryCallback fnNotifyProgress = [](LPCTSTR) {});
+	HRESULT Open(LPCTSTR p_szLibrary, SVDllLoadLibraryCallback fnNotifyProgress = [](LPCTSTR) {}, std::vector<std::string>& status = DummyVector);
 	HRESULT Close();
 
 	HRESULT GetToolName (BSTR* pbstrToolName);
@@ -207,6 +207,8 @@ private:
 	GetResultTablesPtr  m_pfnGetResultTables {nullptr};
 	GetResultTablesMaxRowSizePtr m_pfnGetResultTablesMaxRowSize {nullptr};
 	GetResultValuesMaxArraySizePtr m_pfnGetResultValuesMaxArraySize {nullptr};
+
+	static std::vector<std::string> DummyVector;
 };
 
 } //namespace SvOp

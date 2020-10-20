@@ -184,7 +184,11 @@ public:
 	LRESULT SendNotify(PropTreeNotification nNotifyCode, SVRPropertyItem* pItem = nullptr);
 
 	bool SaveState(SVRPropTreeState& rState);
+	// Overload to to provide an interface without dependency to SVRPropTreeState
+	bool SaveState(std::map<std::string, bool>& rState);
 	bool RestoreState(const SVRPropTreeState& rState);
+	// Overload to to provide an interface without dependency to SVRPropTreeState
+	bool RestoreState(const std::map<std::string, bool>& rState);
 
 	void SetExpandColumnSize(int iSize=16);
 
@@ -201,7 +205,11 @@ public:
 protected:
 
 	bool SaveState(LPCTSTR ItemName, SVRPropertyItem* pItem, SVRPropTreeState& rState);
+	// Overload to to provide an interface without dependency to SVRPropTreeState
+	bool SaveState(LPCTSTR ItemName, SVRPropertyItem* pItem, std::map<std::string, bool>& rState);
 	bool RestoreState(LPCTSTR  ItemName, SVRPropertyItem* pItem, const SVRPropTreeState& rState);
+	// Overload to to provide an interface without dependency to SVRPropTreeState
+	bool RestoreState(LPCTSTR  ItemName, SVRPropertyItem* pItem, const std::map<std::string, bool>& rState);
 
 	// Resize the child windows to fit the exact dimensions the SVRPropTree control
 	void ResizeChildWindows(int cx, int cy);

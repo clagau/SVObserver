@@ -108,5 +108,20 @@
     <ClInclude Include="IBlobAnalyzer2.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="IExternalToolTask.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="IExternalToolTaskDataAdmin.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="IInputValueDefinition.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="IResultValueDefinition.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="ITableObject.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

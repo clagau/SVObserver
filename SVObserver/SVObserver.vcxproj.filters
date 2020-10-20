@@ -489,16 +489,16 @@
     <ClCompile Include="PlcOutputsView.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVTADlgExternalResultPage.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVTADlgExternalSelectDllPage.cpp">
+    <ClCompile Include="SVIPSplitterFrame.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVTADlgExternalInputSelectPage.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVIPSplitterFrame.cpp">
+    <ClCompile Include="SVTADlgExternalResultPage.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVTADlgExternalSelectDllPage.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1039,19 +1039,19 @@
     <ClInclude Include="PlcOutputsView.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVTADlgExternalResultPage.h">
+    <ClInclude Include="MonitorListAttributeStruct.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVTADlgExternalSelectDllPage.h">
+    <ClInclude Include="SVIPSplitterFrame.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVTADlgExternalInputSelectPage.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="MonitorListAttributeStruct.h">
+    <ClInclude Include="SVTADlgExternalResultPage.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVIPSplitterFrame.h">
+    <ClInclude Include="SVTADlgExternalSelectDllPage.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

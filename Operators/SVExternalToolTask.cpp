@@ -32,6 +32,7 @@
 #include "Tools/SVTool.h"
 #include "TableObject.h"
 #include "ObjectInterfaces/ISVOApp_Helper.h"
+#include "ObjectInterfaces/IObjectClass.h"
 
 
 #pragma endregion Includes
@@ -48,6 +49,7 @@ static char THIS_FILE[] = __FILE__;
 #pragma endregion Declarations
 
 SV_IMPLEMENT_CLASS(SVExternalToolTask, SvPb::ExternalToolTaskClassId)
+
 
 SVExternalToolTaskData::SVExternalToolTaskData() : m_ResultTableObjects(NUM_RESULT_TABLE_OBJECTS, nullptr)
 {
@@ -116,6 +118,7 @@ SVExternalToolTaskData& SVExternalToolTaskData::operator = (const SVExternalTool
 
 
 
+std::vector<std::string> SVExternalToolTask::DummyStatusResponse;
 
 SVExternalToolTask::SVExternalToolTask(SVObjectClass* POwner, int StringResourceID)
 	:SVTaskObjectListClass(POwner, StringResourceID)
@@ -258,7 +261,7 @@ void SVExternalToolTask::SetAllAttributes()
 	{
 		InputValueDefinition& rInputDef = m_Data.m_InputDefinitions[i];
 	
-		if (rInputDef.getType() == SvOp::ExDllInterfaceType::TableArray || rInputDef.getType() == SvOp::ExDllInterfaceType::TableNames)
+		if (rInputDef.getType() == SvPb::ExDllInterfaceType::TableArray || rInputDef.getType() == SvPb::ExDllInterfaceType::TableNames)
 		{
 			int LinkValueIndex = rInputDef.getLinkedValueIndex();
 
@@ -420,7 +423,8 @@ bool SVExternalToolTask::CreateObject(const SVObjectLevelCreateStruct& rCreateSt
 			try
 			{
 				CreateTableObjects();
-				Initialize([](LPCTSTR) {}, true);
+				std::vector<std::string> statusMessages;
+				Initialize([](LPCTSTR) {}, statusMessages, true);
 			}
 			catch (const SvStl::MessageContainer& /*e*/)
 			{
@@ -671,11 +675,57 @@ HRESULT SVExternalToolTask::InitializeResultObjects()
 	return hr;
 }
 
-HRESULT SVExternalToolTask::Initialize(SVDllLoadLibraryCallback fnNotify, bool inCreationProces, bool initializeAll)
+HRESULT SVExternalToolTask::triggerInitialize(bool inCreationProcess, bool initializeAll)
+{
+	std::vector<std::string> statusMessages;
+	return Initialize([](LPCTSTR) {}, statusMessages, inCreationProcess, initializeAll);
+}
+
+HRESULT SVExternalToolTask::triggerInitialize(std::vector<std::string>& statusMessages, bool, bool)
+{
+	return Initialize([](LPCTSTR) {}, statusMessages);
+}
+
+
+HRESULT SVExternalToolTask::validateValueParameter(uint32_t taskObjectId, long index, _variant_t newVal)
+{
+	return m_dll.ValidateValueParameter(taskObjectId, index, newVal);
+}
+
+std::string SVExternalToolTask::getDllMessageString(long hResultError) const
+{
+	_bstr_t bMessage;
+	GetDLLMessageString(hResultError, bMessage.GetAddress());
+	return SvUl::createStdString(bMessage);
+}
+
+SvOi::IObjectClass* SVExternalToolTask::getResultRangeObjectAtIndex(int iIndex) 
+{
+	return dynamic_cast<IObjectClass*>(GetResultRangeObject(iIndex));
+}
+
+long SVExternalToolTask::getNumInputValues() const
+{
+	return m_Data.m_lNumInputValues;
+}
+
+std::map<std::string, bool> SVExternalToolTask::getPropTreeState() const
+{
+	return m_Data.m_PropTreeState.m_State;
+}
+
+void SVExternalToolTask::setPropTreeState(const std::map<std::string, bool>& propTreeState) 
+{
+	m_Data.m_PropTreeState.m_State = propTreeState;
+}
+
+
+HRESULT SVExternalToolTask::Initialize(SVDllLoadLibraryCallback fnNotify, std::vector<std::string>& statusMessages, bool inCreationProces, bool initializeAll)
 {
 
 	HRESULT hr = S_FALSE;
 	BSTR bstrName = nullptr;
+
 	m_dll.UninitializeRun(getObjectId());
 	m_dll.Close();
 	Uninitialize();
@@ -695,7 +745,8 @@ HRESULT SVExternalToolTask::Initialize(SVDllLoadLibraryCallback fnNotify, bool i
 
 	try
 	{
-		hr = m_dll.Open(DllPath.c_str(), fnNotify);
+		statusMessages.clear();
+		hr = m_dll.Open(DllPath.c_str(), fnNotify, statusMessages);
 	}
 	catch (const SvStl::MessageContainer& e)
 	{
@@ -1050,6 +1101,69 @@ HRESULT SVExternalToolTask::Initialize(SVDllLoadLibraryCallback fnNotify, bool i
 
 	return hr;
 }
+
+
+SvOi::IExternalToolTaskDataAdmin& SVExternalToolTask::getExternalToolDataAdmin()
+{
+	return *this;
+}
+
+std::vector<std::shared_ptr<SvOi::IInputValueDefinition>> SVExternalToolTask::getInputValuesDefinition() const
+{
+	std::vector<std::shared_ptr<SvOi::IInputValueDefinition>> inputDefinitions;
+	std::transform(m_Data.m_InputDefinitions.begin(), m_Data.m_InputDefinitions.end(), std::back_inserter(inputDefinitions),
+		[](const SvOp::InputValueDefinition& inputDef) {return std::make_shared< SvOp::InputValueDefinition>(inputDef); });
+
+	return inputDefinitions;
+}
+
+long SVExternalToolTask::getNumResultValues() const
+{
+	return m_Data.m_lNumResultValues;
+}
+std::vector<std::shared_ptr<SvOi::IResultValueDefinition>> SVExternalToolTask::getResultValuesDefinition() const
+{
+	std::vector<std::shared_ptr<SvOi::IResultValueDefinition>> resultDefinitions;
+	std::transform(m_Data.m_ResultDefinitions.begin(), m_Data.m_ResultDefinitions.end(), 
+		std::back_inserter(resultDefinitions), 
+		[](const SvOp::ResultValueDefinition& resultDef) {return std::make_shared< SvOp::ResultValueDefinition>(resultDef); });
+	
+	return resultDefinitions;
+}
+
+SvPb::GetTableResultsExternalToolResponse SVExternalToolTask::getTableResults() const
+{
+	SvPb::GetTableResultsExternalToolResponse response;
+	for (const auto& def : m_Data.m_TableResultDefinitions)
+	{
+		auto* defEntry = response.add_tableresultsdefinition();
+		defEntry->set_displayname(def.getDisplayName());
+		defEntry->set_helptext(def.getHelpText());
+		defEntry->set_groupname(def.getGroup());
+		defEntry->set_usedisplaynames(def.UseDisplayNames());
+	}
+	for (const auto& table : m_Data.m_ResultTableObjects)
+	{
+		auto* tabEntry = response.add_tableobjects();
+		tabEntry->set_name(table->GetName());
+	}
+	return response;
+}
+
+SvPb::GetImageInfoExternalToolResponse SVExternalToolTask::getImageInfoList() const
+{
+	SvPb::GetImageInfoExternalToolResponse response;
+	
+	for (const auto& info : m_aInputImageInformationStructs)
+	{
+		auto* entry = response.add_imageinfolist();
+		entry->set_maybeblackandwhite(info.mayBeBlackAndWhite());
+		entry->set_maybeblackandwhite(info.mayBeColor());
+		entry->set_displayname(info.DisplayName);
+	}
+	return response;
+}
+
 
 HRESULT SVExternalToolTask::Uninitialize()
 {
@@ -1525,30 +1639,6 @@ HRESULT SVExternalToolTask::ClearData()
 	return hr;
 }
 
-HRESULT SVExternalToolTask::SetDefaultValues()
-{
-	HRESULT hr = S_OK;
-
-	int size = m_Data.getNumInputs();
-	for (int i = 0; i < size; i++)
-	{
-		InputValueDefinition& rInputDef = m_Data.m_InputDefinitions[i];
-		if (rInputDef.getType() == SvOp::ExDllInterfaceType::Scalar || rInputDef.getType() == SvOp::ExDllInterfaceType::Array)
-		{
-			int LinkValueIndex = rInputDef.getLinkedValueIndex();
-
-			m_Data.m_aInputObjects[LinkValueIndex].SetDefaultValue(rInputDef.getDefaultValue(), true);
-		}
-		else if (rInputDef.getType() == SvOp::ExDllInterfaceType::TableArray || rInputDef.getType() == SvOp::ExDllInterfaceType::TableNames)
-		{
-			int LinkValueIndex = rInputDef.getLinkedValueIndex();
-			m_Data.m_aInputObjects[LinkValueIndex].SetDefaultValue(_variant_t(), true);
-		}
-
-	}
-
-	return hr;
-}
 
 bool SVExternalToolTask::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
@@ -1731,8 +1821,8 @@ void SVExternalToolTaskData::InitializeInputs(SVExternalToolTask*  pExternalTool
 		int LinkValueIndex = rInputDef.getLinkedValueIndex();
 		SvVol::LinkedValue& rInputValue = m_aInputObjects[LinkValueIndex];
 
-		bool bTypeIsArrayOrScalar = rInputDef.getType() == SvOp::ExDllInterfaceType::Scalar || rInputDef.getType() == SvOp::ExDllInterfaceType::Array;
-		bool bTypeIsTable = rInputDef.getType() == SvOp::ExDllInterfaceType::TableArray || rInputDef.getType() == SvOp::ExDllInterfaceType::TableNames;
+		bool bTypeIsArrayOrScalar = rInputDef.getType() == SvPb::ExDllInterfaceType::Scalar || rInputDef.getType() == SvPb::ExDllInterfaceType::Array;
+		bool bTypeIsTable = rInputDef.getType() == SvPb::ExDllInterfaceType::TableArray || rInputDef.getType() == SvPb::ExDllInterfaceType::TableNames;
 
 		if (initializeAll || rInputValue.GetDefaultType() == VT_EMPTY)
 		{
@@ -1900,7 +1990,7 @@ void SVExternalToolTask::collectInputValues()
 	for (int i = 0; i < m_Data.m_InputDefinitions.size(); i++)
 	{
 		int LVIndex = m_Data.m_InputDefinitions[i].getLinkedValueIndex();
-		if (m_Data.m_InputDefinitions[i].getType() == SvOp::ExDllInterfaceType::Scalar)
+		if (m_Data.m_InputDefinitions[i].getType() == SvPb::ExDllInterfaceType::Scalar)
 		{
 			m_Data.m_aInputObjects[LVIndex].GetValue(m_InspectionInputValues[i]);
 			HRESULT hrChangeType = ::VariantChangeTypeEx(&m_InspectionInputValues[i], &m_InspectionInputValues[i], SvDef::LCID_USA, 0, static_cast<VARTYPE>(m_Data.m_InputDefinitions[i].getVt()));
@@ -1910,13 +2000,13 @@ void SVExternalToolTask::collectInputValues()
 				m_InspectionInputValues[i].ChangeType(static_cast<VARTYPE>(m_Data.m_InputDefinitions[i].getVt()));
 			}
 		}
-		else if (m_Data.m_InputDefinitions[i].getType() == SvOp::ExDllInterfaceType::Array)
+		else if (m_Data.m_InputDefinitions[i].getType() == SvPb::ExDllInterfaceType::Array)
 		{
 			/// if we have an array the typ must be correct
 
 			m_Data.m_aInputObjects[LVIndex].GetArrayValue(m_InspectionInputValues[i]);
 		}
-		else if (m_Data.m_InputDefinitions[i].getType() == SvOp::ExDllInterfaceType::TableArray)
+		else if (m_Data.m_InputDefinitions[i].getType() == SvPb::ExDllInterfaceType::TableArray)
 		{
 			const TableObject* pTableObject = dynamic_cast<const TableObject*>(m_Data.m_aInputObjects[LVIndex].GetLinkedObject());
 			if (pTableObject)
@@ -1930,7 +2020,7 @@ void SVExternalToolTask::collectInputValues()
 			}
 
 		}
-		else if (m_Data.m_InputDefinitions[i].getType() == SvOp::ExDllInterfaceType::TableNames)
+		else if (m_Data.m_InputDefinitions[i].getType() == SvPb::ExDllInterfaceType::TableNames)
 		{
 			const TableObject* pTableObject = dynamic_cast<const TableObject*>(m_Data.m_aInputObjects[LVIndex].GetLinkedObject());
 			if (pTableObject)

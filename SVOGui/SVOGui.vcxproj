@@ -127,6 +127,7 @@
     <ClCompile Include="CDSVPictureDisplay.cpp" />
     <ClCompile Include="Custom2FilterDlg.cpp" />
     <ClCompile Include="Displayhelper.cpp" />
+    <ClCompile Include="ExternalToolTaskController.cpp" />
     <ClCompile Include="FormulaController.cpp" />
     <ClCompile Include="GlobalConstantConflictDlg.cpp" />
     <ClCompile Include="GlobalConstantDlg.cpp" />
@@ -210,6 +211,7 @@
     <ClInclude Include="Custom2FilterDlg.h" />
     <ClInclude Include="DataController.h" />
     <ClInclude Include="DisplayHelper.h" />
+    <ClInclude Include="ExternalToolTaskController.h" />
     <ClInclude Include="FormulaController.h" />
     <ClInclude Include="GlobalConstantConflictDlg.h" />
     <ClInclude Include="GlobalConstantDlg.h" />

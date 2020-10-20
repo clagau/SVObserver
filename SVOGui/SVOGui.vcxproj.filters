@@ -243,6 +243,9 @@
     <ClCompile Include="SelectToolForNewSourceImageDialog.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="ExternalToolTaskController.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AuxiliaryExtentsController.h">
@@ -497,7 +500,12 @@
     <ClInclude Include="BlobAnalyzer2Draw.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+
+
     <ClInclude Include="SelectToolForNewSourceImageDialog.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="ExternalToolTaskController.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

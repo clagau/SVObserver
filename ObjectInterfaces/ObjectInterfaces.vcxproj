@@ -94,7 +94,10 @@
     <ClInclude Include="IDependencyManager.h" />
     <ClInclude Include="IEnumerateValueObject.h" />
     <ClInclude Include="IEquation.h" />
+    <ClInclude Include="IExternalToolTask.h" />
+    <ClInclude Include="IExternalToolTaskDataAdmin.h" />
     <ClInclude Include="IFormulaController.h" />
+    <ClInclude Include="IInputValueDefinition.h" />
     <ClInclude Include="IInspectionProcess.h" />
     <ClInclude Include="IMask.h" />
     <ClInclude Include="IObjectAppClass.h" />
@@ -102,11 +105,13 @@
     <ClInclude Include="IObjectManager.h" />
     <ClInclude Include="IObjectWriter.h" />
     <ClInclude Include="IPatternAnalyzer.h" />
+    <ClInclude Include="IResultValueDefinition.h" />
     <ClInclude Include="IRootObject.h" />
     <ClInclude Include="ISVFilter.h" />
     <ClInclude Include="ISVImage.h" />
     <ClInclude Include="ISVLinearAnalyzer.h" />
     <ClInclude Include="ISVOApp_Helper.h" />
+    <ClInclude Include="ITableObject.h" />
     <ClInclude Include="ITaskObject.h" />
     <ClInclude Include="ITaskObjectListClass.h" />
     <ClInclude Include="ITool.h" />

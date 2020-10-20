@@ -1025,61 +1025,80 @@ bool SVRPropTree::IsSingleSelection()
 
 bool SVRPropTree::SaveState(SVRPropTreeState& rState)
 {
+	return SaveState(rState.m_State);
+}
+
+bool SVRPropTree::SaveState(std::map<std::string, bool>& rState)
+{
 	bool bOK = true;
 	SVRPropertyItem* pItem = GetRootItem();
 
-	bOK = SaveState( _T(""), pItem, rState);
+	bOK = SaveState(_T(""), pItem, rState);
 	return bOK;
 }
 
 bool SVRPropTree::SaveState(LPCTSTR ItemName, SVRPropertyItem* pItem, SVRPropTreeState& rState)
 {
+	return SaveState(ItemName, pItem, rState.m_State);
+}
+
+bool SVRPropTree::SaveState(LPCTSTR ItemName, SVRPropertyItem* pItem, std::map<std::string, bool>& rState)
+{
 	bool bOK = true;
-	if( pItem )
+	if (pItem)
 	{
-		std::string Value( ItemName );
+		std::string Value(ItemName);
 		Value += pItem->GetLabelText();
 		Value += _T("¬");
-		rState.m_State[Value.c_str()] = pItem->IsExpanded();
+		rState[Value] = pItem->IsExpanded();
 
 		SVRPropertyItem* pChild = pItem->GetChild();
-		while( pChild )
+		while (pChild)
 		{
-			bOK = SaveState( Value.c_str(), pChild, rState ) && bOK;
+			bOK = SaveState(Value.c_str(), pChild, rState) && bOK;
 			pChild = pChild->GetSibling();
 		}
 	}
 	return bOK;
-
 }
 
 bool SVRPropTree::RestoreState(const SVRPropTreeState& rState)
 {
+	return RestoreState(rState.m_State);
+}
+
+bool SVRPropTree::RestoreState(const std::map<std::string, bool>& rState)
+{
 	bool bOK = true;
 	SVRPropertyItem* pItem = GetRootItem();
 
-	bOK = RestoreState( _T(""), pItem, rState);
+	bOK = RestoreState(_T(""), pItem, rState);
 	return bOK;
 }
 
 bool SVRPropTree::RestoreState(LPCTSTR ItemName, SVRPropertyItem* pItem, const SVRPropTreeState& rState)
 {
+	return RestoreState(ItemName, pItem, rState.m_State);
+}
+
+bool SVRPropTree::RestoreState(LPCTSTR ItemName, SVRPropertyItem* pItem, const std::map<std::string, bool>& rState)
+{
 	bool bOK = true;
-	if( nullptr != pItem )
+	if (nullptr != pItem)
 	{
-		std::string Value( ItemName );
+		std::string Value(ItemName);
 		Value += pItem->GetLabelText();
 		Value += _T("¬");
 
-		SVRPropTreeState::MapStringTreeState::const_iterator iter =  rState.m_State.find( Value.c_str() );
-		if( iter!= rState.m_State.end() )
+		SVRPropTreeState::MapStringTreeState::const_iterator iter = rState.find(Value.c_str());
+		if (iter != rState.end())
 		{
-			pItem->Expand( iter->second );
+			pItem->Expand(iter->second);
 
 			SVRPropertyItem* pChild = pItem->GetChild();
-			while( pChild )
+			while (pChild)
 			{
-				bOK = RestoreState( Value.c_str(), pChild, rState ) && bOK;
+				bOK = RestoreState(Value.c_str(), pChild, rState) && bOK;
 				pChild = pChild->GetSibling();
 			}
 		}
@@ -1090,5 +1109,4 @@ bool SVRPropTree::RestoreState(LPCTSTR ItemName, SVRPropertyItem* pItem, const S
 
 	}
 	return bOK;
-
 }

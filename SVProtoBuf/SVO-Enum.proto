@@ -1288,3 +1288,12 @@ enum SVBlobFeatureEnum
 	SV_CENTER_Y_SOURCE = 48;
 	SV_NUMBER_OF_BLOB_FEATURES = 49;
 }
+
+enum ExDllInterfaceType
+{
+	Scalar = 0;
+	Array = 1;
+	TableArray = 2;
+	TableNames = 3;
+	Invalid = 4;
+}
