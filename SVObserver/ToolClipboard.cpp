@@ -306,7 +306,10 @@ void ToolClipboard::writeSourceIds(SvOi::IObjectWriter& rWriter, SvTo::SVToolCla
 	if(nullptr != m_pInspection)
 	{
 		Value = convertObjectIdToVariant(m_pInspection->getObjectId());
-		rWriter.WriteAttribute(m_pInspection->GetObjectName(), Value);
+		rWriter.WriteAttribute(SvXml::CTAG_INSPECTION_PROCESS, Value);
+		Value.Clear();
+		Value.SetString(m_pInspection->GetName());
+		rWriter.WriteAttribute(SvXml::InspectionNameTag, Value);
 	}
 
 	Value.Clear();
@@ -524,16 +527,23 @@ HRESULT ToolClipboard::readTool(std::string& rXmlData, SVTreeType& rTree, uint32
 
 	if (SvXml::SVNavigateTree::GetItemBranch(rTree, SvXml::ToolsTag, nullptr, ToolsItem))
 	{
-		_variant_t Inspection;
-		_variant_t ToolType;
-		_variant_t inputImage;
+		_variant_t Value;
 		std::set<uint32_t> InputImages;
+
+		SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_INSPECTION_PROCESS, ToolsItem, Value);
+		uint32_t orgInspectionID = calcObjectId(Value);
+		SvXml::SVNavigateTree::GetItem(rTree, SvXml::InspectionNameTag, ToolsItem, Value);
+		std::string orgInspectionName = SvUl::createStdString(Value) + '.';
+		SvXml::SVNavigateTree::GetItem(rTree, SvXml::ToolTypeTag, ToolsItem, Value);
+		SvPb::ClassIdEnum classId = calcClassId(Value);
+
+		//Rename all dotted names starting with the inspection name
 		if (nullptr != m_pInspection)
 		{
-			SvXml::SVNavigateTree::GetItem(rTree, m_pInspection->GetObjectName(), ToolsItem, Inspection);
+			std::string inspectionName{ m_pInspection->GetName() };
+			inspectionName += '.';
+			SvUl::searchAndReplace(rXmlData, orgInspectionName.c_str(), inspectionName.c_str());
 		}
-		SvXml::SVNavigateTree::GetItem(rTree, SvXml::ToolTypeTag, ToolsItem, ToolType);
-		SvPb::ClassIdEnum classId = calcClassId(ToolType);
 
 		int imageIndex{ 0 };
 		std::string inputImageName{ SvUl::Format(SvXml::InputImageTag, imageIndex) };
@@ -541,13 +551,14 @@ HRESULT ToolClipboard::readTool(std::string& rXmlData, SVTreeType& rTree, uint32
 		SvXml::SVNavigateTree::GetItemLeaf(rTree, inputImageName.c_str(), ToolsItem, inputImageHandle);
 		while (rTree.isValidLeaf(ToolsItem, inputImageHandle))
 		{
-			rTree.getLeafData(inputImageHandle, inputImage);
-			InputImages.insert(calcObjectId(inputImage));
+			Value.Clear();
+			rTree.getLeafData(inputImageHandle, Value);
+			InputImages.insert(calcObjectId(Value));
 			imageIndex++;
 			inputImageName = SvUl::Format(SvXml::InputImageTag, imageIndex);
 			SvXml::SVNavigateTree::GetItemLeaf(rTree, inputImageName.c_str(), ToolsItem, inputImageHandle);
 		}
-		Result = validateIds(rXmlData, postId, ownerId, calcObjectId(Inspection), classId, InputImages);
+		Result = validateIds(rXmlData, postId, ownerId, orgInspectionID, classId, InputImages);
 	}
 	else
 	{

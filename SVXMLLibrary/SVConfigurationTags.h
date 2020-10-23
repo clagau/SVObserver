@@ -202,6 +202,7 @@ namespace  SvXml
 	constexpr char* ToolTypeTag = _T( "ToolType" );
 	constexpr char* InputImageTag = _T("InputImage%d");
 	constexpr char* FullToolNameTag = _T("FullToolName");
+	constexpr char* InspectionNameTag = _T("InspectionName");
 	constexpr char* BaseTag = _T( "Base" );
 	constexpr char* TypeTag = _T( "Type" );
 	constexpr char* DataTag = _T( "</DATA>" );
