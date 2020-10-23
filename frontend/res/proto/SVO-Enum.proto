@@ -56,6 +56,8 @@ enum SVObjectTypeEnum
 	SVValueObjectType						= 0x00000200;
 
 	SVOperatorObjectType					= 0x00001000;
+	BlobFeatureObjectType					= 0x00001100;
+	BlobFeatureListObjectType				= 0x00001101;
 	SVUnaryOperatorObjectType				= 0x00003000;
 	SVUnaryImageOperatorObjectType			= 0x00004000;
 	SVFilterObjectType						= 0x00005000;
@@ -121,6 +123,7 @@ enum SVObjectSubTypeEnum
 	SVLuminanceAnalyzerObjectType				= 0x00000102;
 	SVOCVAnalyzerObjectType						= 0x00000105;
 	SVHistogramAnalyzerObjectType				= 0x00000106;
+	BlobAnalyzer2ObjectType						= 0x00000107;
 	SVPixelAnalyzerResultObjectType		        = 0x00000200;
 	SVPixelCountObjectType						= 0x00000201;
 
@@ -159,7 +162,7 @@ enum SVObjectSubTypeEnum
 	EQSizePositionYType							= 0x00000409;
 
 	TableColumnEquationObjectType				= 0x0000040a;
-	TableAddColumnEquationObjectType			= 0x0000040b;
+	IndexEquationObjectType						= 0x0000040b;
 
 	// Math Container Subtypes:
 	SVEvaluateXObjectType						= 0x00000480;
@@ -184,6 +187,7 @@ enum SVObjectSubTypeEnum
 	SVRemoteInputObjectType						= 0x00000502;
 	SVRemoteOutputObjectType					= 0x00000503;
 	SVCameraDataInputObjectType					= 0x00000504;
+	PlcOutputObjectType							= 0x00000505;
 
 	// Transform Subtypes:
 	SVImageTransformObjectType					= 0x00000600;
@@ -297,8 +301,8 @@ enum ObjectAttributes
 	selectableForStatistics		= 0x00000020;	//Object is displayed in the object selector when used for statistics tool
 	archivableImage				= 0x00000040;	//Object image is displayed in the object selector when used for archiving
 	printable					= 0x00000080;	//Object is printed in the configuration report
-	remotelySetable				= 0x00000100;	//Object can be set remotely
-	setableOnline				= 0x00000200;	//Object can be set when SVObserver is Online
+	remotelySetable				= 0x00000100;	//Object can be set remotely  //@TODO[Arvid]: this is a typo. 'remotelySettable' would be correct
+	setableOnline				= 0x00000200;	//Object can be set when SVObserver is Online //@TODO[Arvid]: this is a typo. 'settableOnline' would be correct
 	extentObject				= 0x00000400;	//Object is an extent value object
 	taskObject					= 0x00000800;	//Object is a task object
 	publishResultImage			= 0x00001000;	//Object result image can be published
@@ -307,22 +311,31 @@ enum ObjectAttributes
 }
 
 ///Object selector types
-enum ObjectSelectorType
+enum SearchArea
 {
 	toolsetItems = 0;				//Inspection toolset items
 	globalConstantItems = 1;		//Global constant items
 	ppqItems = 2;					//PPQ variable items
-	tableObjects = 3;				//Inspection  table Objects 
-	cameraObject = 4;				//camera variable items
+	cameraObject = 3;				//camera variable items
+}
+
+enum ObjectSelectorType
+{
+	allValueObjects = 0;			//All valueObjects
+	allNumberValueObjects = 1;		//All ValueObjects which can be converted to a integer or double
+	realNumberValueOjects = 2;		//All number valueObjects, but not e.g. timer or enums
+	stringValueObjects = 3;
+	tableObjects = 4;				//Inspection  table Objects 
+	allImageObjects = 5;
+	grayImageObjects = 6;
+	colorImageObjects = 7;
 }
 
 enum SelectorFilter
 {
 	attributesAllowed = 0;			//Object selector filter for attributes allowed
 	attributesSet = 1;				//Object selector filter for attributes set
-	rangeValue = 2;					//Object selector filter for range values
-	monitorListRejectValue = 3;		//Object selector filter for monitor list reject values
-	ppqValue = 4;					//Object selector filter for ppq value
+	excludeSameLineage = 2;			//Object selector filter exclude all object from the same lineage
 }
 
 enum SVExtentPropertyEnum
@@ -535,6 +548,9 @@ enum ClassIdEnum
 	TableAnaylzerExcludeClassId = 115;
 	TableAnaylzerLimitClassId = 116;
 	TableAnaylzerAddColumnClassId = 117;
+	BlobAnalyzer2ClassId = 118;
+	BlobFeatureTaskClassId = 119;
+	BlobFeatureListClassId = 120;
 
 	//Result Class Ids
 	PointXResultClassId = 200;
@@ -614,7 +630,7 @@ enum ClassIdEnum
 	ColorThresholdClassId = 432;
 	ToolSizeAdjustTaskId = 433;
 	TableColumnEquationId = 434;
-	TableAddColumnEquationId = 435;
+	IndexEquationId = 435;
 	TableFillObjectId = 436;
 	TableCopyObjectId = 437;
 	RemoteOutputObjectId = 438;
@@ -747,12 +763,12 @@ enum EmbeddedIdEnum
 	OCVExtentHeightEId = 120;
 	OCVMatchScoreEId = 121;
 	ArchiveFilePathEId = 122;
-	ArchiveImageGuidsEId = 123;
-	ArchiveImageFileRootPathEId = 124;
-	ArchiveResultGuidsEId = 125;
+	ArchiveImageGuids_OBSOLETE_EId = 123;
+	ArchiveImageFileRootPart1EId = 124;
+	ArchiveResultGuids_OBSOLETE_EId = 125;
 	ArchiveAppendArchiveFileEId = 126;
 	ArchiveStopAtMaxImagesEId = 127;
-	ArchiveUseTriggerCountForImagesEId = 128;
+	ArchiveUseTriggerCountForImages_obsolete_EId = 128;
 	ArchiveMaxImagesCountEId = 129;
 	ArchiveMethodEId = 130;
 	ArchiveUseHeadersEId = 131;
@@ -1004,7 +1020,6 @@ enum EmbeddedIdEnum
 	PatAdditionalCandidatesEId = 381;
 	PatCandidateSpacingXMinEId = 382;
 	PatCandidateSpacingYMinEId = 383;
-
 	PatResultMatchScoreEId = 384;
 	PatResultXEId = 385;
 	PatResultYEId = 386;
@@ -1109,9 +1124,29 @@ enum EmbeddedIdEnum
     SubfolderLocationEId = 488;
     SubfolderLocationLinkEId = 489;
 	InspectionNameEId = 490;
+	FormatArchiveToolResultsEId = 491;
+	ArchiveResultsMinimumNumberOfCharactersEId = 492;
+	ArchiveResultsNumberOfDecimalsEId = 493;
+	ArchiveImageFileRootPart2EId = 494;
+	ArchiveImageFileRootPart3EId = 495;
+	ArchiveImageFileRootPart1LinkEId = 496;
+	ArchiveImageFileRootPart2LinkEId = 497;
+	ArchiveImageFileRootPart3LinkEId = 498;
+
 	TriggerPerObjectIDEId = 500;
-
-
+	FeatureTypeEId = 501;
+	SortEnumEId = 502;
+	IsExcludeEId = 503;
+	IsInnerExcludeEId = 504;
+	ExcludeLowerBoundEId = 505;
+	ExcludeLowerBoundIndirectEId = 506;
+	ExcludeUpperBoundEId = 507;
+	ExcludeUpperBoundIndirectEId = 508;
+	ConnectivityBlobEId = 509;
+	IsGrayImageEId = 510;
+	IsRangeEId = 511;
+	IsCustomFeatureEId = 512;
+	
 	//The following Ids are the first of an array and must have 100 reserved Ids 
 	OutputImageEId = 1000; //Output Images, e.g. External needs 4
 	RingBufferIndexEId = 1100; //For ringBuffer index of output images (by now 2 indexes)
@@ -1123,4 +1158,133 @@ enum EmbeddedIdEnum
 	DllDependencyFileNameEId = 1600; //External Dll (50)
 	TableColumnValueEId = 1700; //Table Object Column (50)
 	BlobFeatureEId = 1800; //Blob Feature (SvOi::SV_NUMBER_OF_BLOB_FEATURES)
+}
+
+
+/// Enum moved from Definitions, original comments kept.
+enum SVImageTypeEnum // Used by SVImageClass
+{
+//--------- SVImageTypeUnknown - only for initialization at construction. 
+//---------   Should be set to a different value by first 
+//---------	  SVImageClass::Initialize() call.
+//---------	  This image type does not create an image buffer pool?
+	SVImageTypeUnknown     = 0;
+
+//--------- SVImageTypeFixed - deprecated
+//---------   Physical (Parent) buffer.
+//---------   Does not set Tool Image within UpdateFromToolInformation().
+//		SVImageTypeFixed       = 1;
+
+//--------- SVImageTypeIndependent
+//---------   Physical (Parent) buffer.
+//---------   Does not set Tool Image within UpdateFromToolInformation().
+	SVImageTypeIndependent = 2;
+
+//--------- SVImageTypeDependent - Only used to define the 3 banded images of 
+//---------   a Color Tool.
+//---------
+//---------   Logical buffer (similar to SVImageTypeLogical)
+//---------   SVImageTypeLogicalAndPhysical, SVImageTypeLogical and SVImageTypeDependent are the 
+//---------   image types that result in a Matrox "child" buffer
+//---------   (as opposed to an SVO "child" buffer).
+//---------   Dependent image types maintain a child->parent 
+//---------   relationship at the SVImageClass level (nullptr != m_ParentImagePtr)
+//---------
+//---------	  Different between to SVImageTypeLogical is that this type have the same size as the parent and SVImageTypeLogical can be a part of the parent.
+//---------   Also this type does not set Tool Image within UpdateFromToolInformation(), but SVImageTypeLogical do.
+	SVImageTypeDependent   = 3;
+
+//--------- SVImageTypePhysical - Normal buffer type for most output images. 
+//---------   Originally Logical images were also allowed as output images; 
+//---------   but problems forced us to simplify the use case logic and make 
+//---------   them all physical.  This could be re-visited in the future.
+	SVImageTypePhysical    = 4;
+
+//--------- SVImageTypeLogicalAndPhysical (previously SVImageTypeLogical) -
+//---------   SHOULD NOT BE USED FOR NEW IMPLEMENTATIONS.
+//---------   SVImageTypeLogicalAndPhysical, SVImageTypeLogical and SVImageTypeDependent are the 
+//---------   image types that result in a Matrox "child" buffer
+//---------   (as opposed to an SVO "child" buffer).
+//---------   SVImageTypeLogicalAndPhysical also results in allocation of 
+//---------   physical buffers.  In general I would consider this a mistake or
+//---------   bad design; but they are used (the physical buffers) by the 
+//---------   SVLinearImageOperatorListClass and the 
+//---------   SVStdImageOperatorListClass. 
+//---------   @TODO someday the logical buffer 
+//---------   portions should be replaced with the new SVImageTypeLogical
+//---------   buffer, and the physical portions should be replaced with the 
+//---------   SVImageTypePhysical buffer.  This type should be obsoleted and
+//---------   removed.
+//		SVImageTypeLogicalAndPhysical = 5, deprecated
+
+//		SVImageTypeVirtual     = 6, - Not used.
+
+//--------- SVImageTypeMain - only used for the MainImage.  Set by 
+//---------   SVMainImageClass constructor. 
+	SVImageTypeMain        = 7;
+
+//--------- SVImageTypeRGBMain - deprecated
+//		SVImageTypeRGBMain     = 8,
+
+//--------- SVImageTypeLogical -
+//---------   SVImageTypeLogicalAndPhysical, SVImageTypeLogical and SVImageTypeDependent are the 
+//---------   image types that result in a Matrox "child" buffer
+//---------   (as opposed to an SVO "child" buffer).
+	SVImageTypeLogical = 9;
+}
+
+//This is a duplicate of SvOi::SVBlobFeatureEnum. It is duplicated here in order to remove the GUI dependencies to SvOi.
+//In the next step, this could replace the SvOi::SVBlobFeatureEnum enum.
+enum SVBlobFeatureEnum
+{
+	SV_AREA = 0;            
+	SV_BOXX_MAX = 1;        
+	SV_BOXX_MIN = 2;        
+	SV_BOXY_MAX = 3;        
+	SV_BOXY_MIN = 4;        
+	SV_BREADTH = 5;         
+	SV_CENTEROFGRAVITY_X = 6;   
+	SV_CENTEROFGRAVITY_Y = 7;   
+	SV_CONVEX_PERIMETER = 8;    
+	SV_FERET_ELONGATION = 9;    
+	SV_FERETMAX_ANGLE = 10;     
+	SV_FERETMAX_DIAMETER = 11;  
+	SV_FERETMEAN_DIAMETER = 12; 
+	SV_FERETMIN_ANGLE = 13;     
+	SV_FERETMIN_DIAMETER = 14;  
+	SV_FERET_X = 15;            
+	SV_FERET_Y = 16;            
+	SV_FIRSTPOINT_X = 17;       
+	SV_FIRSTPOINT_Y = 18;       
+	SV_LABEL = 19;              
+	SV_LENGTH = 20;             
+	SV_NBROF_HOLES = 21;        
+	SV_PERIMETER = 22;          
+	SV_ROUGHNESS = 23;          
+	SV_SUM_PIXEL = 24;          // Will not work with thresholded images i.e.
+	SV_COMPACTNESS = 25;        
+	SV_NBR_RUNS = 26;           
+	SV_XMINAT_YMIN = 27;        
+	SV_XMAXAT_YMAX = 28;
+	SV_YMINAT_XMAX = 29;
+	SV_YMAXAT_XMIN = 30;
+	SV_ELONGATION = 31;
+	SV_INTERCEPT_0 = 32;
+	SV_INTERCEPT_45 = 33;
+	SV_INTERCEPT_90 = 34;
+	SV_INTERCEPT_135 = 35;
+	SV_MOMENT_X0Y1 = 36;
+	SV_MOMENT_X1Y0 = 37;
+	SV_MOMENT_X1Y1 = 38;
+	SV_MOMENT_X0Y2 = 39;
+	SV_MOMENT_X2Y0 = 40;
+	SV_CENTRAL_X0Y2 = 41;
+	SV_CENTRAL_X2Y0 = 42;
+	SV_CENTRAL_X1Y1 = 43;
+	SV_AXISPRINCIPAL_ANGLE = 44;
+	SV_AXISSECONDARY_ANGLE = 45;
+	SV_EULER_NBR = 46;
+	SV_CENTER_X_SOURCE = 47;
+	SV_CENTER_Y_SOURCE = 48;
+	SV_NUMBER_OF_BLOB_FEATURES = 49;
 }

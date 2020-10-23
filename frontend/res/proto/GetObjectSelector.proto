@@ -26,12 +26,13 @@ message TreeItem
 ///Get the required objects to be displayed for selection
 message GetObjectSelectorItemsRequest
 {
-	repeated ObjectSelectorType types = 1;	//The list of item types required
-	uint32 inspectionID = 2;				//The inspection ID to query for the items
-	uint32 instanceID = 3;				//The object instance ID to query if required can be SvDef::InvalidObjectId
-	ObjectAttributes attribute = 4;		//The object attribute to filter the toolset items
-	bool wholeArray = 5;				//True to display whole array values (All values in the Array eg. Blob Analyzer.Box X Max[]) 
-	SelectorFilter filter = 6;			//The selector filter to remove certain tool set items, see enum for description
+	repeated SearchArea areas = 1;	//The list of the search areas
+	uint32 inspectionID = 2;		//The inspection ID to query for the items
+	uint32 instanceID = 3;			//The object instance ID to query if required can be SvDef::InvalidObjectId
+	ObjectAttributes attribute = 4;	//The object attribute to filter the toolset items
+	bool wholeArray = 5;			//True to display whole array values (All values in the Array eg. Blob Analyzer.Box X Max[]) 
+	ObjectSelectorType type = 6;	//item types required
+	SelectorFilter filter = 7;		//The selector filter to remove certain tool set items, see enum for description
 }
 
 message GetObjectSelectorItemsResponse

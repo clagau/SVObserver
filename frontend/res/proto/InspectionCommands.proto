@@ -14,7 +14,7 @@ import "BasicStructure.proto";
 import "SVO-Enum.proto";
 import "GetObjectSelector.proto";
 import "Overlay.proto";
-
+import "PatternUtils.proto";
 //***************************************************************************
 // Help Structs
 //***************************************************************************
@@ -111,6 +111,7 @@ message SetExtentList
 {
 	repeated ExtentParameter extentList = 1;
 }
+
 //***************************************************************************
 // InspectionCommands - can be send with method InspectionCommands
 //***************************************************************************
@@ -401,6 +402,7 @@ message CreateObjectRequest
 	{
 		FriendTask friend = 3;	//Add the new object to the friend list.
 		uint32 taskObjectInsertBeforeId = 4; //Add the new object to the taskObject-list before the object with this ID. if SvDef::InvalidObjectId, add at the end.
+		int32 taskObjectPos = 5; //Add the new object to the taskObject list at the pos. int32 taskObjectPos = 4; //Add the new object to the taskObject list at the pos. 
 	}
 }
 
@@ -568,6 +570,153 @@ message SetDefaultInputsRequest
 	uint32 objectId = 1; //ID of the inspection object.
 }
 
+message BarCodeTypeParameter
+{
+	int32 type = 1;
+	bytes name = 2;
+	repeated int32 PossibleECCTypes = 3;
+	int32 DefaultEccType = 4;
+	repeated int32 PossibleENCTypes = 5;
+	int32 DefaultEncType = 6;
+}
+message GetNormalizerValuesRequest
+{
+	uint32 linearAnalyzerId = 1; //ID of the analyzer object (SVLinearAnalyzerClass)
+}
+message GetNormalizerValuesResponse
+{
+	double normalRangeMax = 1;
+	double normalRangeMin = 2;
+	double normalRangeStepWidth = 3;
+	double normalRangeBaseSize = 4;
+	double realRangeMax = 5;
+	double realRangeMin = 6;
+	double realRangeStepWidth = 7;
+	double realRangeBaseSize = 8;	
+}
+message SetNormalizerRangesRequest
+{
+	uint32 linearAnalyzerId = 1; //ID of the analyzer object (SVLinearAnalyzerClass)
+	double normalMax = 2;
+	double normalMin = 3;
+	double normalStepWidth = 4;
+	double realMax = 5;
+	double realMin = 6;
+	double realStepWidth = 7;
+}
+
+message GetBarCodeTypeInfosRequest
+{
+}
+
+message GetBarCodeTypeInfosResponse
+{
+	repeated NameValuePair ECCNames = 1;
+	repeated NameValuePair ENCNames = 2;
+	repeated BarCodeTypeParameter typeParameters = 3;
+}
+
+//Request Information from an ISVImage based on image id
+message GetImageInfoRequest
+{
+	uint32 imageId = 1; //id of the image
+}
+//Contains Information from an ISVImage 
+//Currently, only SVImageType, other info can be added here!
+message GetImageInfoResponse
+{
+	SVImageTypeEnum imageType = 1; 
+}
+
+//request information from a IBlobAnalyzer object
+message GetBlobAnalyzerInfoRequest
+{
+	uint32 taskObjectId = 1;
+	uint32 feature = 2;
+	bool featureEnabled = 3;
+}
+
+//Contains information from an IBlobAnalyzer
+message GetBlobAnalyzerInfoResponse
+{
+	uint32 resultObjectId = 1;
+	ClassIdEnum resultObjectClassId = 2;
+	uint32 resultBlobId = 3;
+	ClassIdEnum resultBlobClassId = 4;
+	repeated NameValuePair list = 5;
+}
+
+message FeatureData
+{
+	uint32 type = 1;
+	bytes name = 2;
+	bool is_custom = 3;
+	bool is_gray = 4;
+	bool is_sort = 5;
+	bool is_Ascent = 6;
+	bool is_Exclude = 7;
+	bool is_Exclude_Inner = 8;
+	double lower_bound = 9;
+	bytes lower_bound_indirect = 10;
+	double upper_bound = 11;
+	bytes upper_bound_indirect = 12;
+	bool is_range = 13;
+	double range_fail_high = 14;
+	bytes range_fail_high_indirect = 15;
+	double range_warn_high = 16;
+	bytes range_warn_high_indirect = 17;
+	double range_warn_low = 18;
+	bytes range_warn_low_indirect = 19;
+	double range_fail_low = 20;
+	bytes range_fail_low_indirect = 21;	
+	uint32 equationId = 22;
+}
+
+//List of Feature-Data for Blob Analyzer 2
+message GetFeaturesRequest
+{
+	uint32 objectId = 1;
+}
+
+message GetFeaturesResponse
+{
+	repeated FeatureData list = 1;
+}
+
+message SetFeaturesRequest
+{
+	uint32 objectId = 1;
+	repeated FeatureData list = 2;
+}
+
+message FeatureSetError
+{
+	int32 row = 1;
+	int32 fieldId = 2; //this is the id of the FeatureData message
+}
+
+message SetFeaturesResponse
+{
+	repeated FeatureSetError error_list = 1;
+	MessageContainerVector Messages = 2;
+}
+
+message GetAvailableFeaturesRequest
+{
+}
+
+message AvailableFeature
+{
+	uint32 id = 1;
+	bytes name = 2;
+	bool isNecessary = 3;
+	bool isGray = 4;
+}
+
+message GetAvailableFeaturesResponse
+{
+	repeated AvailableFeature list = 1;
+}
 
 message InspectionCmdRequest
 {
@@ -617,6 +766,15 @@ message InspectionCmdRequest
 		UsePropagateSizeAndPositionRequest usePropagateSizeAndPositionRequest = 41;
 		GetOverlayStructRequest getOverlayStructRequest = 42;
 		SetDefaultInputsRequest  setDefaultInputsRequest = 43;
+		GetBarCodeTypeInfosRequest getBarCodeTypeInfosRequest = 44;
+		GetNormalizerValuesRequest getNormalizerValuesRequest = 45;
+		SetNormalizerRangesRequest setNormalizerRangesRequest = 46;
+		GetImageInfoRequest getImageInfoRequest = 47;
+		GetBlobAnalyzerInfoRequest getBlobAnalyzerInfoRequest = 48;
+		ComputeOverscanRectRequest computeOverscanRectRequest = 49;
+		GetFeaturesRequest getFeaturesRequest = 50;
+		SetFeaturesRequest setFeaturesRequest = 51;
+		GetAvailableFeaturesRequest getAvailableFeaturesRequest = 52;
 	}
 }
 
@@ -654,5 +812,13 @@ message InspectionCmdResponse
 		IsAllowedLocationResponse isAllowedLocationResponse = 27;
 		UsePropagateSizeAndPositionResponse usePropagateSizeAndPositionResponse = 28;
 		GetOverlayStructResponse getOverlayStructResponse = 29;
+		GetBarCodeTypeInfosResponse getBarCodeTypeInfosResponse = 30;
+		GetNormalizerValuesResponse getNormalizerValuesResponse = 31;
+		GetImageInfoResponse getImageInfoResponse = 32;
+		GetBlobAnalyzerInfoResponse getBlobAnalyzerInfoResponse = 33;
+		ComputeOverscanRectResponse computeOverscanRectResponse = 34;
+		GetFeaturesResponse getFeaturesResponse = 35;
+		SetFeaturesResponse setFeaturesResponse = 36;
+		GetAvailableFeaturesResponse getAvailableFeaturesResponse = 37;
 	}
 }

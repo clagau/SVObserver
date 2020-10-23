@@ -70,6 +70,20 @@ message Product
 	State status = 6;				//The status of the product (error number)
 }
 
+message InspectionResult
+{
+	string id = 1;
+	uint32 trigger = 2;
+	string name = 3;
+	bool isReject = 4;
+	repeated Variant values = 5;
+	repeated uint32 valueIds = 6;
+	repeated string valueNames = 7;
+	repeated uint32 imageIds = 8;
+	repeated string imageNames = 9;
+	repeated Image images = 10;
+}
+
 //Retrieves the inspection details of the currently loaded configuration on the SVIM
 message GetInspectionsRequest
 {
