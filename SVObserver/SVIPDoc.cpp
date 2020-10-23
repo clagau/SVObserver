@@ -104,6 +104,7 @@ BEGIN_MESSAGE_MAP(SVIPDoc, CDocument)
 	ON_COMMAND(ID_EDIT_EDITTOOL, OnEditTool)
 	ON_COMMAND(ID_EDIT_EDITTOOLTAB1, OnEditToolTab1)
 	ON_COMMAND(ID_EDIT_CUT, OnEditCut)
+	ON_UPDATE_COMMAND_UI(ID_EDIT_CUT, OnUpdateEditCutCopy)
 	ON_COMMAND(ID_EDIT_COPY, OnEditCopy)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_COPY, OnUpdateEditCutCopy)
 	ON_COMMAND(ID_EDIT_PASTE, OnEditPaste)
@@ -1325,7 +1326,7 @@ void SVIPDoc::OnUpdateEditPaste(CCmdUI* pCmdUI)
 {
 	ToolSetView* pToolSetView = GetToolSetView();
 	SVToolSet* pToolSet = GetToolSet();
-	bool enabled = !TheSVObserverApp.OkToEdit() || nullptr != pToolSet || nullptr != pToolSetView || pToolSetView->IsLabelEditing();
+	bool enabled = TheSVObserverApp.OkToEdit() && nullptr != pToolSet && nullptr != pToolSetView && false == pToolSetView->IsLabelEditing();
 
 	if (enabled)
 	{

@@ -216,10 +216,9 @@ namespace SvXml
 		//! Method to get a list of leaf values
 		//! \param pParent [in] handle to the parent branch
 		//! \param rSearchName [in] reference to the name to search 
-		//! \param rLeafValues [out] reference to the list of values
-		//! \returns S_OK on success
+		//! \returns the list of values found
 		//************************************
-		HRESULT	getLeafValues( const SVBranchHandle pParent, const std::string& rSearchName, SvDef::StringSet& rLeafValues );
+		SvDef::StringVector getLeafValues( const SVBranchHandle pParent, const std::string& rSearchName);
 
 		//************************************
 		//! Method to get the root tree

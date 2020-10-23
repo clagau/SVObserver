@@ -747,18 +747,22 @@ HRESULT ToolClipboard::replaceUniqueIds( std::string& rXmlData, SVTreeType& rTre
 
 	if( SvXml::SVNavigateTree::GetItemBranch( rTree, SvXml::ToolsTag, nullptr, ToolsItem ) )
 	{
-		SvDef::StringSet UniqueIDList;
+		constexpr LPCTSTR cXmlSearch = _T("Type=\"VT_BSTR\">");
+		/// This replacement is required to insure rXmlData does not have multiple unique ID values
+		std::string searchString{ cXmlSearch };
+		searchString += _T("{#");
+		std::string replaceString{ cXmlSearch };
+		replaceString += _T("($");
+		SvUl::searchAndReplace(rXmlData, searchString.c_str(), replaceString.c_str());
 
-		rTree.getLeafValues( ToolsItem, std::string( scUniqueReferenceIDTag ), UniqueIDList);
-
-		SvDef::StringSet::iterator Iter( UniqueIDList.begin() );
 		//Replace each uniqueID with a new ID
-		while( UniqueIDList.end() != Iter )
+		SvDef::StringVector UniqueIDVector = rTree.getLeafValues(ToolsItem, std::string(scUniqueReferenceIDTag));
+		for(auto rUniqueID : UniqueIDVector)
 		{
 			uint32_t newId = SVObjectManagerClass::Instance().getNextObjectId();
 			std::string newIdString = convertObjectIdToString(newId);
-			SvUl::searchAndReplace( rXmlData, Iter->c_str(), newIdString.c_str() );
-			++Iter;
+			SvUl::searchAndReplace(rUniqueID, _T("{#"), _T("($"));
+			SvUl::searchAndReplace( rXmlData, rUniqueID.c_str(), newIdString.c_str() );
 		}
 
 		Result = S_OK;

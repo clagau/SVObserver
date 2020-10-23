@@ -504,23 +504,22 @@ HRESULT SVInspectionImporter::loadAndReplaceData(const std::string& inFileName, 
 		FileStream.close();
 	}
 
-	//SVTreeType::SVBranchHandle BaseItem = nullptr;
-	SvDef::StringSet UniqueIDList;
-	XmlTree.getLeafValues(XmlTree.getRoot(), std::string(scUniqueReferenceIDTag), UniqueIDList);
+	constexpr LPCTSTR cXmlSearch = _T("Type=\"VT_BSTR\">");
+	/// This replacement is required to insure rXmlData does not have multiple unique ID values
+	std::string searchString{ cXmlSearch };
+	searchString += _T("{#");
+	std::string replaceString{ cXmlSearch };
+	replaceString += _T("($");
+	SvUl::searchAndReplace(xmlString, searchString.c_str(), replaceString.c_str());
 
 	//Replace each uniqueID with a new ID
-	while (0 < UniqueIDList.size())
+	SvDef::StringVector UniqueIDVector = XmlTree.getLeafValues(XmlTree.getRoot(), std::string(scUniqueReferenceIDTag));
+	for (auto rUniqueID : UniqueIDVector)
 	{
 		uint32_t newId = SVObjectManagerClass::Instance().getNextObjectId();
 		std::string newIdString = convertObjectIdToString(newId);
-		auto iter = UniqueIDList.find(newIdString);
-		//if the newId in the UniqueIDList, leave this id in the file at it is.
-		if (UniqueIDList.end() == iter)
-		{
-			iter = UniqueIDList.begin();
-			SvUl::searchAndReplace(xmlString, iter->c_str(), newIdString.c_str());
-		}
-		UniqueIDList.erase(iter);
+		SvUl::searchAndReplace(rUniqueID, _T("{#"), _T("($"));
+		SvUl::searchAndReplace(xmlString, rUniqueID.c_str(), newIdString.c_str());
 	}
 
 	SvXml::SVXMLMaterialsTree::SVBranchHandle hItem;
@@ -530,10 +529,10 @@ HRESULT SVInspectionImporter::loadAndReplaceData(const std::string& inFileName, 
 		SvXml::SVNavigateTree::GetItem(XmlTree, scObjectNameTag, hItem, oldInspectionNameVariant);
 		std::string oldInspectionName = SvUl::createStdString(oldInspectionNameVariant);
 		std::string replaceStrings[] = { "<DATA Name=\"ObjectName\" Type=\"VT_BSTR\">%s</DATA>", "<DATA Name=\"Element\" Type=\"VT_BSTR\">%s</DATA>", "%s.Tool Set" };
-		for (auto replaceString : replaceStrings)
+		for (const auto& rString : replaceStrings)
 		{
-			std::string oldString = SvUl::Format(replaceString.c_str(), oldInspectionName.c_str());
-			std::string newString = SvUl::Format(replaceString.c_str(), rNewInspectionName.c_str());
+			std::string oldString = SvUl::Format(rString.c_str(), oldInspectionName.c_str());
+			std::string newString = SvUl::Format(rString.c_str(), rNewInspectionName.c_str());
 			SvUl::searchAndReplace(xmlString, oldString.c_str(), newString.c_str());
 		}
 	}

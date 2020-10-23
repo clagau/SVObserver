@@ -553,9 +553,9 @@ namespace SvXml
 		return Result;
 	}
 
-	HRESULT SVXMLMaterialsTree::getLeafValues( const SVBranchHandle pParent, const std::string& rSearchName, SvDef::StringSet& rLeafValues )
+	SvDef::StringVector SVXMLMaterialsTree::getLeafValues( const SVBranchHandle pParent, const std::string& rSearchName)
 	{
-		HRESULT Result( S_OK );
+		SvDef::StringVector result;
 
 		SVLeafHandle pLeaf( getFirstLeaf( pParent ) );
 		while( isValidLeaf( pParent, pLeaf ) )
@@ -563,22 +563,34 @@ namespace SvXml
 			std::string LeafName = getLeafName( pLeaf );
 			if( rSearchName == LeafName )
 			{
-				_variant_t Value;
-				getLeafData( pLeaf, Value );
-				rLeafValues.insert( SvUl::createStdString( Value.GetVARIANT() ) );
+				_variant_t variantValue;
+				getLeafData( pLeaf, variantValue);
+				std::string value{ SvUl::createStdString(variantValue.GetVARIANT()) };
+				//Only insert in vector if it does not exist
+				if (result.cend() == std::find(result.cbegin(), result.cend(), value))
+				{
+					result.push_back(value);
+				}
 			}
-
 			pLeaf = getNextLeaf( pParent, pLeaf);
 		}
 
 		SVBranchHandle pBranch( getFirstBranch( pParent ) );
 		while( isValidBranch( pBranch ) )
 		{
-			getLeafValues( pBranch, rSearchName, rLeafValues );
-			pBranch = getNextBranch( pParent, pBranch );
+			SvDef::StringVector branchResult = getLeafValues( pBranch, rSearchName);
+			for (const auto& rBranchValue : branchResult)
+			{
+				//Only insert in vector if it does not exist
+				if (result.cend() == std::find(result.cbegin(), result.cend(), rBranchValue))
+				{
+					result.push_back(rBranchValue);
+				}
+			}
+			pBranch = getNextBranch(pParent, pBranch);
 		}
 
-		return Result;
+		return result;
 	}
 	#pragma endregion Public Methods
 
