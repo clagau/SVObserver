@@ -1077,8 +1077,8 @@ enum EmbeddedIdEnum
 	BCStringFormatEId = 439;
 	BCThresholdTypeEId = 440;
 	ToolCommentTypeEId = 441;
-	CameraTriggerTimestampEId = 442;
-	CameraTriggerLineInStateEId = 443;
+	NotUsed1 = 442;
+	NotUsed2 = 443;
 	ToolSizeAdjustSizeWidthModeEId = 445;
 	ToolSizeAdjustSizeHeightModeEId = 446;
 	ToolSizeAdjustSizePositionXModeEId = 447;

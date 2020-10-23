@@ -13,6 +13,8 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <memory>
+#include "SVTriggerConstants.h"
+#include "Definitions/TriggerType.h"
 #pragma endregion Includes
 
 
@@ -21,28 +23,37 @@ namespace SvTi
 	class SVOTriggerObj  
 	{
 	public:
-		SVOTriggerObj(const std::string& sTriggerName, int iDig);
-		virtual ~SVOTriggerObj();
+		SVOTriggerObj(const std::string& name, int iDig) : m_sTriggerDisplayName(name)
+			, m_iDigNumber(iDig)
+			, m_timerPeriod(SvTi::TimerPeriod)
+			, m_triggerType(SvDef::TriggerType::HardwareTrigger){}
 
-		LPCTSTR GetTriggerDisplayName() const;
-		int GetTriggerDigNumber() const;
+		virtual ~SVOTriggerObj() = default;
 
-		void SetTimerPeriod(long lPeriod);
-		long GetTimerPeriod() const;
+		LPCTSTR GetTriggerDisplayName() const { return m_sTriggerDisplayName.c_str(); }
+		int GetTriggerDigNumber() const { return m_iDigNumber; }
 
-		bool IsSoftwareTrigger() const;
-		void SetSoftwareTrigger(bool bSoftwareTrigger);
+		long GetTimerPeriod() const { return m_timerPeriod; }
+		void SetTimerPeriod(long period) { m_timerPeriod = period; }
 
-		bool IsAcquisitionTrigger() const;
+		long getStartObjectID() const { return m_startObjectID; }
+		void setStartObjectID(long startObjectID) { m_startObjectID = startObjectID; }
+
+		long getTriggerPerObjectID() const { return m_triggerPerObjectID; }
+		void setTriggerPerObjectID(long triggerPerObjectID) { m_triggerPerObjectID = triggerPerObjectID; }
+
+		SvDef::TriggerType getTriggerType() const { return m_triggerType; }
+		void setTriggerType(SvDef::TriggerType triggerType) { m_triggerType = triggerType; }
 
 	private:  //data members
 		std::string m_sTriggerDisplayName;
-		int m_iDigNumber;
+		SvDef::TriggerType m_triggerType;
 
-		bool m_bSoftwareTrigger;
-		long m_timerPeriod;
+		int m_iDigNumber{ 0 };
+		long m_timerPeriod{ 0L };
+		long m_startObjectID{ 1L };
+		long m_triggerPerObjectID{ 1L };
 	};
 
-	typedef std::shared_ptr< SVOTriggerObj > SVOTriggerObjPtr;
-
+	typedef std::shared_ptr<SVOTriggerObj> SVOTriggerObjPtr;
 } //namespace SvTi

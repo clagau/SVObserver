@@ -15,7 +15,6 @@
 #include "SVOTriggerDeviceDlg.h"
 #include "SVOConfigAssistantDlg.h"
 #include "SVOPropertyPageDlg.h"
-#include "SVTriggerSelectionDlg.h"
 #include "SVOResource/ConstGlobalSvOr.h"
 #include "TriggerInformation/SVOTriggerObj.h"
 #pragma endregion Includes
@@ -25,8 +24,6 @@
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
-
-constexpr char* cCameraTriggerTag = _T("CameraTrigger_");
 
 SVOTriggerDeviceDlg::SVOTriggerDeviceDlg(CWnd* /*=nullptr*/)
 : CPropertyPage(SVOTriggerDeviceDlg::IDD), m_pParent(nullptr)
@@ -120,70 +117,32 @@ void SVOTriggerDeviceDlg::SetupList()
 	}
 }
 
-// need to get a list of next trigger types based on:
-// 1. must be a digital system
-// 2. must have a corresponding camera
-void SVOTriggerDeviceDlg::GetNextAvailableTriggerList(SVTriggerNameIdList& rList) const
-{
-	std::string name;
-	int id = m_pParent->GetNextTriggerID();
-	bool bNonIOSVIM = m_pParent->IsNonIOSVIM(m_pParent->GetProductType());
-	
-	if (!bNonIOSVIM)
-	{
-		name = m_pParent->GetNextTriggerName(SvDef::cTriggerFixedName);
-		rList.insert(std::make_pair(name, id));
-	}
-	if (m_pParent->IsValidCamera(id) && m_pParent->IsDigitalSystem())
-	{
-		name = m_pParent->GetNextTriggerName(cCameraTriggerTag);
-		rList.insert(std::make_pair(name, id));
-	}
-}
-
 void SVOTriggerDeviceDlg::OnBtnNewTrig() 
 {
-	SVTriggerNameIdList list;
-	GetNextAvailableTriggerList(list);
-	std::string TriggerName;
-	int iDig = -1;
-	if (list.size() > 1)
+	std::string triggername = m_pParent->GetNextTriggerName(SvDef::cTriggerFixedName);
+	if (!triggername.empty())
 	{
-		SVTriggerSelectionDlg dlg(list, this);
-
-		if ( dlg.DoModal() == IDOK )
-		{
-			dlg.GetSelectedTrigger(TriggerName, iDig);
-		}
-	}
-	else if (list.size())
-	{
-		SVTriggerNameIdList::const_iterator it = list.begin();
-		TriggerName = it->first;
-		iDig = it->second;
-	}
-	if (!TriggerName.empty())
-	{
+		int id = m_pParent->GetNextTriggerID();
 		// find higher iDig
 		int pos = -1;
 		for (int i = 0;i < m_ctlTriggerList.GetCount() && pos < 0;i++)
 		{
 			int digitizerNum = static_cast<int>(m_ctlTriggerList.GetItemData(i));
-			if (digitizerNum > iDig)
+			if (digitizerNum > id)
 			{
 				pos = i;
 			}
 		}
 		
 		// Insert @
-		int iPos = m_ctlTriggerList.InsertString(pos, TriggerName.c_str());
+		int iPos = m_ctlTriggerList.InsertString(pos, triggername.c_str());
 
-		m_pParent->AddToTriggerList(TriggerName.c_str(), iDig);
+		m_pParent->AddToTriggerList(triggername.c_str(), id);
 		m_ctlTriggerList.SetCurSel(iPos); //select new Trigger
-		m_ctlTriggerList.SetItemData(iPos, iDig);
+		m_ctlTriggerList.SetItemData(iPos, id);
 
 		m_pParent->SetModified(true);
-		m_pParent->ItemChanged(TRIGGER_DLG, TriggerName.c_str(), ITEM_ACTION_NEW);
+		m_pParent->ItemChanged(TRIGGER_DLG, triggername.c_str(), ITEM_ACTION_NEW);
 	}
 	if ( m_ctlTriggerList.GetCount() >= m_pParent->GetAllowedNumberOfDigs(true) )
 	{
@@ -309,14 +268,13 @@ void SVOTriggerDeviceDlg::EnablePropertyEdit(int iSelection)
 	CString TriggerName;
 	m_ctlTriggerList.GetText(iSelection, TriggerName);
     SvTi::SVOTriggerObjPtr pTriggerObj = m_pParent->GetTriggerObjectByName(TriggerName);
-	if( nullptr != pTriggerObj && pTriggerObj->IsSoftwareTrigger())
+	bool buttonEnabled{ false };
+	if( nullptr != pTriggerObj)
 	{
-		EnableAdvancedPropertyButton(true);
+		buttonEnabled = SvDef::TriggerType::SoftwareTrigger == pTriggerObj->getTriggerType();
+		buttonEnabled |= SvDef::TriggerType::CameraTrigger == pTriggerObj->getTriggerType();
 	}
-	 else
-	{
-		EnableAdvancedPropertyButton(false);
-	}
+	EnableAdvancedPropertyButton(buttonEnabled);
 }
 
 void SVOTriggerDeviceDlg::DisablePropertyEdit()

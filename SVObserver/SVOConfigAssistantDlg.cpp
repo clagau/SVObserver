@@ -26,7 +26,6 @@
 #include "SVObserver.h"
 #include "SVOPPQObj.h"
 #include "SVOInspectionObj.h"
-#include "TriggerInformation/SVTriggerConstants.h"
 #include "TriggerInformation/SVOTriggerObj.h"
 #include "TriggerInformation/SVTriggerObject.h"
 #include "SVOCameraObj.h"
@@ -110,8 +109,6 @@ const SVOConfigAssistantDlg::SVProductStringVector SVOConfigAssistantDlg::m_Prod
 	{SVIM_PRODUCT_X2_GD4A_COLOR, std::string(SvDef::SVO_PRODUCT_SVIM_X2_GD4A) + std::string(c_Color)},
 	{SVIM_PRODUCT_X2_GD8A, std::string(SvDef::SVO_PRODUCT_SVIM_X2_GD8A)},
 	{SVIM_PRODUCT_X2_GD8A_COLOR, std::string(SvDef::SVO_PRODUCT_SVIM_X2_GD8A) + std::string(c_Color)},
-	//{SVIM_PRODUCT_X2_GD8A_NONIO, std::string(SvDef::SVO_PRODUCT_SVIM_X2_GD8A_NONIO)},
-	//{SVIM_PRODUCT_X2_GD8A_NONIO_COLOR, std::string(SvDef::SVO_PRODUCT_SVIM_X2_GD8A_NONIO) + std::string(c_Color)};
 	{SVIM_PRODUCT_NEO1, std::string(SvDef::SVO_PRODUCT_SVIM_NEO1)}
 };
 
@@ -308,19 +305,6 @@ void SVOConfigAssistantDlg::OnSelchangeComboAvalSys()
 		else
 		{
 			bool configTypeConvereted {false};
-			// Check if I/O digital to Non I/O digital or vice versa
-			if (SvTi::SVHardwareManifest::IsNonIOSVIM(newConfigType) != SvTi::SVHardwareManifest::IsNonIOSVIM(currentConfigType))
-			{
-				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
-				INT_PTR result = Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_Config_SwitchResetQuestion, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10138, SvDef::InvalidObjectId, MB_YESNO);
-				if ( IDYES == result )
-				{
-					m_lConfigurationType = newConfigType;
-					m_bModified = true;
-					UpdateAvailableSystems( currentConfigType, m_lConfigurationType );
-					configTypeConvereted = true;
-				}
-			}
 			///When changing from discrete IO to PLC or vice versa then we need to reset the inputs and outputs
 			if ((SvTi::SVHardwareManifest::isPlcSystem(newConfigType) != SvTi::SVHardwareManifest::isPlcSystem(currentConfigType)) ||
 				(SvTi::SVHardwareManifest::isDiscreteIOSystem(newConfigType) != SvTi::SVHardwareManifest::isDiscreteIOSystem(currentConfigType)))
@@ -413,12 +397,6 @@ void SVOConfigAssistantDlg::ReloadForCurrentSystem()
 			case SVIM_PRODUCT_NEO1:
 			{
 				CreateDefaultForSVIMDigital(2, SvDef::cTriggerFixedName);
-				break;
-			}
-			case SVIM_PRODUCT_X2_GD8A_NONIO:
-			case SVIM_PRODUCT_X2_GD8A_NONIO_COLOR:
-			{
-				CreateDefaultForSVIMDigital(2, SvTi::CameraTriggerName);
 				break;
 			}
 			default:
@@ -706,42 +684,46 @@ std::string SVOConfigAssistantDlg::BuildTrgDig( const SvTi::SVOTriggerObj& rTrig
 
 	int iDig = rTriggerObj.GetTriggerDigNumber();
 
-	///First check if software trigger as camera trigger can be set to software trigger
-	if (rTriggerObj.IsSoftwareTrigger())
+	switch (rTriggerObj.getTriggerType())
 	{
-		Result = SvTi::SVHardwareManifest::BuildSoftwareTriggerDeviceName(iDig);
-	}
-	else if (rTriggerObj.IsAcquisitionTrigger())
-	{
-		Result = SvTi::SVHardwareManifest::BuildAcquisitionTriggerDeviceName(iDig);
-	}
-	else
-	{
-		switch( m_lConfigurationType )
+		case SvDef::TriggerType::HardwareTrigger:
 		{
-			case SVIM_PRODUCT_X2_GD1A:
-			case SVIM_PRODUCT_X2_GD1A_COLOR:
-			case SVIM_PRODUCT_X2_GD2A:
-			case SVIM_PRODUCT_X2_GD2A_COLOR:
-			case SVIM_PRODUCT_X2_GD4A:
-			case SVIM_PRODUCT_X2_GD4A_COLOR:
-			case SVIM_PRODUCT_X2_GD8A:
-			case SVIM_PRODUCT_X2_GD8A_COLOR:
+			switch (m_lConfigurationType)
 			{
-				Result = SvTi::SVHardwareManifest::BuildIOBoardTriggerDeviceName(iDig);
-				break;
+				case SVIM_PRODUCT_X2_GD1A:
+				case SVIM_PRODUCT_X2_GD1A_COLOR:
+				case SVIM_PRODUCT_X2_GD2A:
+				case SVIM_PRODUCT_X2_GD2A_COLOR:
+				case SVIM_PRODUCT_X2_GD4A:
+				case SVIM_PRODUCT_X2_GD4A_COLOR:
+				case SVIM_PRODUCT_X2_GD8A:
+				case SVIM_PRODUCT_X2_GD8A_COLOR:
+				{
+					Result = SvTi::SVHardwareManifest::BuildIOBoardTriggerDeviceName(iDig);
+					break;
+				}
+				case SVIM_PRODUCT_NEO1:
+				{
+					Result = SvTi::SVHardwareManifest::BuildHardwareTriggerDeviceName(iDig);
+					break;
+				}
+
+				default:
+				{
+					break;
+				}
 			}
-			case SVIM_PRODUCT_NEO1:
-			{
-				Result = SvTi::SVHardwareManifest::BuildHardwareTriggerDeviceName(iDig);
-				break;
-			}
-			case SVIM_PRODUCT_X2_GD8A_NONIO:
-			case SVIM_PRODUCT_X2_GD8A_NONIO_COLOR:
-			{
-				Result = SvTi::SVHardwareManifest::BuildAcquisitionTriggerDeviceName(iDig);
-				break;
-			}
+			break;
+		}
+		case SvDef::TriggerType::SoftwareTrigger:
+		{
+			Result = SvTi::SVHardwareManifest::BuildSoftwareTriggerDeviceName(iDig);
+			break;
+		}
+		case SvDef::TriggerType::CameraTrigger:
+		{
+			Result = SvTi::SVHardwareManifest::BuildAcquisitionTriggerDeviceName(iDig);
+			break;
 		}
 	}
 	return Result;
@@ -760,13 +742,11 @@ std::string SVOConfigAssistantDlg::BuildDigName(const SVOCameraObj& rCameraObj) 
 			case SVIM_PRODUCT_X2_GD2A:
 			case SVIM_PRODUCT_X2_GD4A:
 			case SVIM_PRODUCT_X2_GD8A:
-			case SVIM_PRODUCT_X2_GD8A_NONIO:
 			case SVIM_PRODUCT_NEO1:
 			case SVIM_PRODUCT_X2_GD1A_COLOR:
 			case SVIM_PRODUCT_X2_GD2A_COLOR:
 			case SVIM_PRODUCT_X2_GD4A_COLOR:
 			case SVIM_PRODUCT_X2_GD8A_COLOR:
-			case SVIM_PRODUCT_X2_GD8A_NONIO_COLOR:
 			{
 				Result = SvUl::Format(_T("%s%s%d"), SVIM_BOARD_FILEACQUISITION_STRING, cSvimDigName, iDigNumber);
 				break;
@@ -784,13 +764,11 @@ std::string SVOConfigAssistantDlg::BuildDigName(const SVOCameraObj& rCameraObj) 
 			case SVIM_PRODUCT_X2_GD2A:
 			case SVIM_PRODUCT_X2_GD4A:
 			case SVIM_PRODUCT_X2_GD8A:
-			case SVIM_PRODUCT_X2_GD8A_NONIO:
 			case SVIM_PRODUCT_NEO1:
 			case SVIM_PRODUCT_X2_GD1A_COLOR:
 			case SVIM_PRODUCT_X2_GD2A_COLOR:
 			case SVIM_PRODUCT_X2_GD4A_COLOR:
 			case SVIM_PRODUCT_X2_GD8A_COLOR:
-			case SVIM_PRODUCT_X2_GD8A_NONIO_COLOR:
 			{
 				Result = SvUl::Format(_T("%s%s%d"), SVIM_BOARD_MATROX_GIGE, cSvimDigName, iDigNumber);
 				break;
@@ -1620,7 +1598,7 @@ bool SVOConfigAssistantDlg::SendCameraDataToConfiguration()
 		}
 		else
 		{
-			bRet = FALSE;
+			bRet = false;
 		}
 	}
 	//go thru and add camera's
@@ -1651,18 +1629,17 @@ bool SVOConfigAssistantDlg::SendCameraDataToConfiguration()
 					}
 					else
 					{
-						bRet = FALSE;
+						bRet = false;
 					}
 				}
 
-				bool bAddCamera = FALSE;
+				bool bAddCamera = false;
 
 				if ( nullptr == pCamera )
 				{
 					pCamera = new SvIe::SVVirtualCamera;
 					pCamera->SetName( CameraDisplayName.c_str() );
-					bRet = nullptr != pCamera && bRet;
-					bAddCamera = TRUE;
+					bAddCamera = true;
 				}
 
 				if ( nullptr != pCamera )
@@ -1761,34 +1738,31 @@ bool SVOConfigAssistantDlg::SendTriggerDataToConfiguration()
 					}
 					else
 					{
-						bRet = FALSE;
+						bRet = false;
 					}
 				}
 
-				bool bAddTrigger = FALSE;
+				bool bAddTrigger{ false };
 
 				if ( nullptr == pTrigger )
 				{
 					pTrigger = new SvTi::SVTriggerObject;
 					pTrigger->SetName( TriggerDisplayName.c_str() );
-				
-					bRet = nullptr != pTrigger && bRet;
-					bAddTrigger = TRUE;
+					bAddTrigger = true;
 				}
 
 				if ( nullptr != pTrigger )
 				{
-					if (pTriggerObj->IsSoftwareTrigger())
-					{
-						pTrigger->SetSoftwareTriggerPeriod(pTriggerObj->GetTimerPeriod());
-					}
-
 					SvTh::SVTriggerClass* psvDevice = SvTi::SVTriggerProcessingClass::Instance().GetTrigger( DeviceName.c_str() );
-
 					if ( nullptr != psvDevice )
 					{
 						bRet = pTrigger->Create(psvDevice) && bRet;
 					}
+					if (SvDef::TriggerType::SoftwareTrigger == pTriggerObj->getTriggerType())
+					{
+						pTrigger->SetSoftwareTriggerPeriod(pTriggerObj->GetTimerPeriod());
+					}
+					pTrigger->setObjectIDParameters(pTriggerObj->getStartObjectID(), pTriggerObj->getTriggerPerObjectID());
 
 					if ( bAddTrigger )
 					{
@@ -2495,12 +2469,13 @@ bool SVOConfigAssistantDlg::GetConfigurationForExisting()
 			}
 			m_TriggerList.AddTriggerToList(std::string(TriggerName), iDigNumber);
 
-			// Add Software trigger flag and interval here
 			const SvTi::SVOTriggerObjPtr pTriggerObj( m_TriggerList.GetTriggerObjectByName(std::string(TriggerName)) );
 			if( nullptr != pTriggerObj )
 			{
-				pTriggerObj->SetSoftwareTrigger(pcfgTrigger->getType() == SvDef::TriggerType::SoftwareTrigger);
+				pTriggerObj->setTriggerType(pcfgTrigger->getType());
 				pTriggerObj->SetTimerPeriod(pcfgTrigger->GetSoftwareTriggerPeriod());
+				pTriggerObj->setStartObjectID(pcfgTrigger->getStartObjectID());
+				pTriggerObj->setTriggerPerObjectID(pcfgTrigger->getTriggerPerObjectID());
 			}
 		}
 	}
@@ -2617,22 +2592,7 @@ bool SVOConfigAssistantDlg::GetConfigurationForExisting()
 				{
 					if (IO_DIGITAL_INPUT == rEntry->m_ObjectType)
 					{
-						if (!IsNonIOSVIM(GetProductType()))
-						{
-							availableInputs.push_back(std::make_pair(rEntry->getObject()->GetName(), rEntry->m_IOId));
-						}
-					}
-					else if (IO_CAMERA_DATA_INPUT == rEntry->m_ObjectType)
-					{
-						// check for Camera Input Line State...
-						if (nullptr != rEntry->getObject())
-						{
-							if (rEntry->getObject()->GetEmbeddedID() == SvPb::CameraTriggerLineInStateEId)
-							{
-								// Only if the camera supports it ?
-								availableInputs.push_back(std::make_pair(rEntry->getObject()->GetName(), rEntry->m_IOId));
-							}
-						}
+						availableInputs.push_back(std::make_pair(rEntry->getObject()->GetName(), rEntry->m_IOId));
 					}
 				}
 				// make list of Name/objectId pairs
@@ -3682,7 +3642,7 @@ bool SVOConfigAssistantDlg::CheckTrigger( const SvTi::SVOTriggerObj& rTriggerObj
 	std::string TriggerName = rTriggerObj.GetTriggerDisplayName();
 	std::string MessageNoSoftwareTriggerAllowed = BuildDisplayMessage(MESSAGE_TYPE_ERROR, TriggerName.c_str(), MESSAGE_SOFTWARE_TRIGGER_NOT_ALLOWED);
 
-	if ( rTriggerObj.IsSoftwareTrigger() )
+	if (SvDef::TriggerType::SoftwareTrigger == rTriggerObj.getTriggerType())
 	{
 		// check if Software Trigger is allowed
 		bRet = IsSoftwareTriggerAllowed( TriggerName.c_str() );
@@ -3805,40 +3765,9 @@ SVIMProductEnum SVOConfigAssistantDlg::GetProductIDFromName( const std::string& 
 	return result;
 }
 
-bool SVOConfigAssistantDlg::IsNonIOSVIM(SVIMProductEnum productType) const
-{
-	return SvTi::SVHardwareManifest::IsNonIOSVIM(productType);
-}
-
 bool SVOConfigAssistantDlg::IsGigeSystem() const
 {
 	return SvTi::SVHardwareManifest::IsMatroxGige(GetProductType());
-}
-
-bool SVOConfigAssistantDlg::IsDigitalSystem() const
-{
-	return SvTi::SVHardwareManifest::IsDigitalSVIM(GetProductType());
-}
-
-bool SVOConfigAssistantDlg::IsValidCamera(int iDig) const
-{
-	bool bRetVal = false;
-	int iNum = GetCameraListCount();
-	if (iDig < iNum)
-	{
-		for (int i = 0;i < iNum && !bRetVal; i++)
-		{
-			const SVOCameraObjPtr pCameraObj = m_CameraList.GetCameraObjectByPosition(i);
-			if( nullptr != pCameraObj )
-			{
-				if( pCameraObj->GetDigNumber() == iDig )
-				{
-					bRetVal = true;
-				}
-			}
-		}
-	}
-	return bRetVal;
 }
 
 bool SVOConfigAssistantDlg::IsFileAcquisition(int iDig) const

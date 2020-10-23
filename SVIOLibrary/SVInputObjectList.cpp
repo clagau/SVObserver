@@ -12,7 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVInputObjectList.h"
-#include "SVCameraDataInputObject.h"
 #include "SVDigitalInputObject.h"
 #include "SVRemoteInputObject.h"
 #include "SVIOConfigurationInterfaceClass.h"
@@ -72,9 +71,10 @@ SVInputObjectPtr SVInputObjectList::GetInputFlyweight(const std::string& rInputN
 			pResult->updateObjectId(index);
 			break;
 		}
-		case SvPb::SVCameraDataInputObjectType:
-			pResult = std::make_shared<SVCameraDataInputObject>();
+		default:
+		{
 			break;
+		}
 		}
 
 		if (nullptr != pResult)
@@ -193,9 +193,6 @@ SVIOEntryHostStructPtrVector SVInputObjectList::getInputList() const
 			break;
 		case SvPb::SVRemoteInputObjectType:
 			pIOEntry->m_ObjectType = IO_REMOTE_INPUT;
-			break;
-		case SvPb::SVCameraDataInputObjectType:
-			pIOEntry->m_ObjectType = IO_CAMERA_DATA_INPUT;
 			break;
 		default:
 			break;

@@ -120,7 +120,7 @@ void TriggerDevice::Process(bool&)
 				triggerInfo.m_triggerTimeStamp = SvTl::GetTimeStamp();
 			}
 
-			processAcquisitionTriggers(triggerInfo);
+			processTriggers(triggerInfo);
 			m_pPpqTriggerCallback(std::move(triggerInfo));
 		}
 		done = (1 > m_triggerQueue.size());

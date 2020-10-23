@@ -96,11 +96,6 @@ void SVIOBoardCapabilities::SetStrobeInverters( int p_iStrobeInverters )
 	m_iStrobeInverters = p_iStrobeInverters;
 }
 
-bool SVIOBoardCapabilities::IsNonIOSVIM() const
-{
-	return (m_iNumInputs == 0 && m_iNumOutputs == 0);
-}
-
 void SVIOBoardCapabilities::SetNonIOSVIM(int numTriggers)
 {
 	m_iTriggerInverters = 0;

@@ -354,7 +354,6 @@ echo %time%
     <ClCompile Include="SVToolGrouping.cpp" />
     <ClCompile Include="SVToolSet.cpp" />
     <ClCompile Include="SVToolSetListCtrl.cpp" />
-    <ClCompile Include="SVTriggerSelectionDlg.cpp" />
     <ClCompile Include="SVUtilities.cpp" />
     <ClCompile Include="SVUtilitiesCustomizeDialog.cpp" />
     <ClCompile Include="SVVisionProcessorHelper.cpp" />
@@ -546,7 +545,6 @@ echo %time%
     <ClInclude Include="SVToolGrouping.h" />
     <ClInclude Include="SVToolSet.h" />
     <ClInclude Include="SVToolSetListCtrl.h" />
-    <ClInclude Include="SVTriggerSelectionDlg.h" />
     <ClInclude Include="SVUtilities.h" />
     <ClInclude Include="SVUtilitiesCustomizeDialog.h" />
     <ClInclude Include="SVVisionProcessorConstants.h" />

@@ -155,14 +155,10 @@ public:
 	void LastInspectionLabelDeleted(LPCTSTR InspectionLabel);
 	void SetIOBoardCapabilities(const SVIOBoardCapabilities& rCapable);
 
-	bool IsNonIOSVIM(SVIMProductEnum productType) const;
-
 	SVImportedInspectionInfoList& GetImportedInspectionInfoList();
 	void ClearImportedInspectionInfoList();
 
-	bool IsDigitalSystem() const;
 	bool IsGigeSystem() const;
-	bool IsValidCamera(int iDig) const;
 	bool IsFileAcquisition(int iDig) const;
 
 	// Dialog Data

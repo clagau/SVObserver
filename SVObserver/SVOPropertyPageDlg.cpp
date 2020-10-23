@@ -59,6 +59,7 @@ constexpr std::array<char*, 5> cTriggerMode
 	_T("Extended Time Delay"),
 	_T("Extended Time Delay Data Completion")
 };
+
 constexpr std::array<char*, 5> cPpqLengthInfo
 {
 	_T("Next Trigger Mode - in this mode the PPQ length must be 2 or greater."),
@@ -75,6 +76,13 @@ constexpr std::array<char*, 5> cTriggerModeInfo
 	_T("Time Delay && Data Completion Mode - in this mode outputs are written after completion of the Inspection or after the specified Output Delay Time."),
 	_T("Extended Time Delay Mode - in this mode outputs are written after the specified Output Delay Time. This Output Delay Time can exceed the time distance between triggers."),
 	_T("Extended Time Delay && Data Completion Mode - in this mode outputs are written after completion of the Inspection or after the specified Output Delay Time. This Output Delay Time can exceed the time between triggers.")
+};
+
+constexpr std::array<char*, 3> cTriggerType
+{
+	_T("Hardware"),
+	_T("Software"),
+	_T("Camera"),
 };
 
 constexpr char* cGigeCameraFileFilter = _T("Camera Files (*.ogc)|*.ogc||");
@@ -830,16 +838,16 @@ void SVOPropertyPageDlg::SetupTrigger()
 			pCombo->SetCtrlID(PROP_TRG_TYPE);
 			pCombo->SetLabelText(_T("Trigger Type"));
 			pCombo->SetInfoText(_T("This item indicates the type of trigger."
-				" Hardware, Software."));
+				" Hardware, Software or Camera."));
 			pCombo->CreateComboBox();
 
-			int iPos = pCombo->AddString(_T("Hardware"));
-			pCombo->SetItemData(iPos, 0);
-
-			iPos = pCombo->AddString(_T("Software"));
-			pCombo->SetItemData(iPos, 1);
+			for(int i=0; i < cTriggerType.size(); ++i)
+			{
+				int iPos = pCombo->AddString(cTriggerType[i]);
+				pCombo->SetItemData(iPos, i);
+			}
 			
-			pCombo->SetItemValue(m_TriggerObj.IsSoftwareTrigger() ? 1 : 0);
+			pCombo->SetItemValue(static_cast<int> (m_TriggerObj.getTriggerType()));
 		}
 		pRoot->Select(true);
 		pRoot->Expand();
@@ -856,16 +864,36 @@ void SVOPropertyPageDlg::SetupAdvancedTrigger()
 		pRoot->SetLabelText(_T("Trigger - Advanced"));
 		pRoot->SetInfoText(_T("Advanced Properties for a Trigger"));
 
-		SVRPropertyItemEdit* pEdit = (SVRPropertyItemEdit*)m_Tree.InsertItem(new SVRPropertyItemEdit(), pRoot);
+		if(SvDef::TriggerType::SoftwareTrigger == m_TriggerObj.getTriggerType())
+		{
+			SVRPropertyItemEdit* pEdit = (SVRPropertyItemEdit*)m_Tree.InsertItem(new SVRPropertyItemEdit(), pRoot);
+			if (pEdit)
+			{
+				pEdit->SetCtrlID(PROP_ADV_TRIGGER_PERIOD);
+				pEdit->SetLabelText(_T("Timer Period"));
+				std::string Text = SvUl::Format(_T("Enter the period for the Software Trigger, in milliseconds (minimum %d milliseconds)."), SvTi::MinTimerPeriod_ms);
+				pEdit->SetInfoText(Text.c_str());
+
+				pEdit->SetItemValue(m_TriggerObj.GetTimerPeriod());
+			}
+		}
+		SVRPropertyItemEdit* pEdit = dynamic_cast<SVRPropertyItemEdit*> (m_Tree.InsertItem(new SVRPropertyItemEdit(), pRoot));
 		if (pEdit)
 		{
-			pEdit->SetCtrlID(PROP_ADV_TRIGGER_PERIOD);
-			pEdit->SetLabelText(_T("Timer Period"));
-			std::string Text = SvUl::Format( _T("Enter the period for the Software Trigger, in milliseconds (minimum %d milliseconds)."), SvTi::MinTimerPeriod_ms);
-			pEdit->SetInfoText( Text.c_str() );
-			
-			pEdit->SetItemValue(m_TriggerObj.GetTimerPeriod());
+			pEdit->SetCtrlID(PROP_ADV_TRIGGER_START_OBJECT_ID);
+			pEdit->SetLabelText(_T("Start Object ID"));
+			pEdit->SetInfoText(_T("Enter the Object ID with which the trigger should start with. It shall automatically increment"));
+			pEdit->SetItemValue(m_TriggerObj.getStartObjectID());
 		}
+		pEdit = dynamic_cast<SVRPropertyItemEdit*> (m_Tree.InsertItem(new SVRPropertyItemEdit(), pRoot));
+		if (pEdit)
+		{
+			pEdit->SetCtrlID(PROP_ADV_TRIGGER_PER_OBJECT_ID);
+			pEdit->SetLabelText(_T("Trigger per Object ID"));
+			pEdit->SetInfoText(_T("Enter the number of trigger for each ObjectID"));
+			pEdit->SetItemValue(m_TriggerObj.getTriggerPerObjectID());
+		}
+
 		pRoot->Select(true);
 		pRoot->Expand();
 	}
@@ -1446,7 +1474,7 @@ void SVOPropertyPageDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 					UINT lType = 0;
 					SVRPropertyItem* l_Item = m_Tree.FindItem( ctrlID );
 					l_Item->GetItemValue( lType );
-					m_TriggerObj.SetSoftwareTrigger( lType ? true : false );
+					m_TriggerObj.setTriggerType( static_cast<SvDef::TriggerType> (lType));
 					break;
 				}
 
@@ -1465,6 +1493,22 @@ void SVOPropertyPageDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 					{
 						m_TriggerObj.SetTimerPeriod(lType);
 					}
+					break;
+				}
+
+				case PROP_ADV_TRIGGER_START_OBJECT_ID:
+				{
+					long startObjectID;
+					m_Tree.FindItem(ctrlID)->GetItemValue(startObjectID);
+					m_TriggerObj.setStartObjectID(startObjectID);
+					break;
+				}
+
+				case PROP_ADV_TRIGGER_PER_OBJECT_ID:
+				{
+					long triggerPerObjectID;
+					m_Tree.FindItem(ctrlID)->GetItemValue(triggerPerObjectID);
+					m_TriggerObj.setTriggerPerObjectID(triggerPerObjectID);
 					break;
 				}
 

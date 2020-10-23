@@ -33,19 +33,17 @@ namespace SvTi
 	const SVHardwareManifest::SVIMTypeMap SVHardwareManifest::m_SVIMTypeMap
 	{
 		// SVIMProductEnum,                             SUPPORTED, DIGITIZERS, TRIGGERS
-		{SVIM_PRODUCT_X2_GD1A,       SVIMTypeInfoStruct( true,      1,			1 )},
-		{SVIM_PRODUCT_X2_GD1A_COLOR, SVIMTypeInfoStruct( false,     1,			1 )},
-		{SVIM_PRODUCT_X2_GD2A,       SVIMTypeInfoStruct( false,     2,			2 )},
-		{SVIM_PRODUCT_X2_GD2A_COLOR, SVIMTypeInfoStruct( false,     2,			2 )},
-		{SVIM_PRODUCT_X2_GD4A,       SVIMTypeInfoStruct( false,     4,			3 )},
-		{SVIM_PRODUCT_X2_GD4A_COLOR, SVIMTypeInfoStruct( false,     4,			3 )},
-		{SVIM_PRODUCT_X2_GD8A,       SVIMTypeInfoStruct( true,      8,			3 )},
-		{SVIM_PRODUCT_X2_GD8A_COLOR, SVIMTypeInfoStruct( false,     8,			3 )},
-		//{SVIM_PRODUCT_X2_GD8A_NONIO, SVIMTypeInfoStruct( true,      8,			3 ) )
-		//{SVIM_PRODUCT_X2_GD8A_NONIO_COLOR, SVIMTypeInfoStruct( true, 8,			3 ) )
-		{ SVIM_PRODUCT_NEO1,  SVIMTypeInfoStruct( true,      8,			4) }
+		{SVIM_PRODUCT_X2_GD1A,       SVIMTypeInfoStruct(true,      1,			1)},
+		{SVIM_PRODUCT_X2_GD1A_COLOR, SVIMTypeInfoStruct(false,     1,			1)},
+		{SVIM_PRODUCT_X2_GD2A,       SVIMTypeInfoStruct(false,     2,			2)},
+		{SVIM_PRODUCT_X2_GD2A_COLOR, SVIMTypeInfoStruct(false,     2,			2)},
+		{SVIM_PRODUCT_X2_GD4A,       SVIMTypeInfoStruct(false,     4,			3)},
+		{SVIM_PRODUCT_X2_GD4A_COLOR, SVIMTypeInfoStruct(false,     4,			3)},
+		{SVIM_PRODUCT_X2_GD8A,       SVIMTypeInfoStruct(true,      8,			3)},
+		{SVIM_PRODUCT_X2_GD8A_COLOR, SVIMTypeInfoStruct(false,     8,			3)},
+		{ SVIM_PRODUCT_NEO1,  SVIMTypeInfoStruct(true,      8,			4) }
 	};
-	
+
 	SVHardwareManifest& SVHardwareManifest::Instance()
 	{
 		static SVHardwareManifest l_Object;
@@ -115,12 +113,12 @@ namespace SvTi
 
 	void SVHardwareManifest::Shutdown()
 	{
-		if( !( m_TriggerDeviceParams.empty() ) )
+		if (!(m_TriggerDeviceParams.empty()))
 		{
 			m_TriggerDeviceParams.clear();
 		}
 
-		if( !( m_AcquisitionDeviceParams.empty() ) )
+		if (!(m_AcquisitionDeviceParams.empty()))
 		{
 			m_AcquisitionDeviceParams.clear();
 		}
@@ -136,7 +134,7 @@ namespace SvTi
 		return m_AcquisitionDeviceParams;
 	}
 
-	SVIMTypeInfoStruct SVHardwareManifest::GetSVIMTypeInfo( SVIMProductEnum p_ID )
+	SVIMTypeInfoStruct SVHardwareManifest::GetSVIMTypeInfo(SVIMProductEnum p_ID)
 	{
 		SVIMTypeMap::const_iterator it = m_SVIMTypeMap.find(p_ID);
 		if (it != m_SVIMTypeMap.end())
@@ -166,11 +164,11 @@ namespace SvTi
 		return SvUl::Format("%s%s%d", cSvimHardwareTriggerSource, cSvimDigName, iDig);
 	}
 
-	bool SVHardwareManifest::IsValidProductType(SVIMProductEnum productType )
+	bool SVHardwareManifest::IsValidProductType(SVIMProductEnum productType)
 	{
 		static const SVIMProductEnumSet list
 		{
- 			SVIM_PRODUCT_X2_GD1A_COLOR,
+			SVIM_PRODUCT_X2_GD1A_COLOR,
 			SVIM_PRODUCT_X2_GD2A_COLOR,
 			SVIM_PRODUCT_X2_GD4A_COLOR,
 			SVIM_PRODUCT_X2_GD8A_COLOR,
@@ -185,7 +183,7 @@ namespace SvTi
 		return (it != list.end());
 	}
 
-	bool SVHardwareManifest::IsCompatible( SVIMProductEnum ConfigType, SVIMProductEnum ProductType )
+	bool SVHardwareManifest::IsCompatible(SVIMProductEnum ConfigType, SVIMProductEnum ProductType)
 	{
 		static const SVIMProductCompatibilityList CompatibleList
 		{
@@ -203,7 +201,7 @@ namespace SvTi
 
 		bool l_bRet = false;
 
-		if ( ProductType == ConfigType )
+		if (ProductType == ConfigType)
 		{
 			l_bRet = true;
 		}
@@ -228,7 +226,6 @@ namespace SvTi
 			SVIM_PRODUCT_X2_GD2A_COLOR,
 			SVIM_PRODUCT_X2_GD4A_COLOR,
 			SVIM_PRODUCT_X2_GD8A_COLOR,
-			SVIM_PRODUCT_X2_GD8A_NONIO_COLOR
 		};
 
 		SVIMProductEnumSet::const_iterator it = ColorList.find(p_ProductType);
@@ -272,8 +269,6 @@ namespace SvTi
 			SVIM_PRODUCT_X2_GD4A_COLOR,
 			SVIM_PRODUCT_X2_GD8A,
 			SVIM_PRODUCT_X2_GD8A_COLOR,
-			SVIM_PRODUCT_X2_GD8A_NONIO,
-			SVIM_PRODUCT_X2_GD8A_NONIO_COLOR,
 			SVIM_PRODUCT_NEO1
 		};
 
@@ -293,8 +288,6 @@ namespace SvTi
 			SVIM_PRODUCT_X2_GD4A_COLOR,
 			SVIM_PRODUCT_X2_GD8A,
 			SVIM_PRODUCT_X2_GD8A_COLOR,
-			SVIM_PRODUCT_X2_GD8A_NONIO,
-			SVIM_PRODUCT_X2_GD8A_NONIO_COLOR,
 			SVIM_PRODUCT_NEO1
 		};
 
@@ -312,24 +305,10 @@ namespace SvTi
 			SVIM_PRODUCT_X2_GD2A_COLOR,
 			SVIM_PRODUCT_X2_GD8A,
 			SVIM_PRODUCT_X2_GD8A_COLOR,
-			SVIM_PRODUCT_X2_GD8A_NONIO,
-			SVIM_PRODUCT_X2_GD8A_NONIO_COLOR,
 		};
 
 		SVIMProductEnumSet::const_iterator it = RaidList.find(p_ProductType);
 		return (it != RaidList.end());
 	}
 
-	bool SVHardwareManifest::IsNonIOSVIM(SVIMProductEnum p_ProductType)
-	{
-		static const SVIMProductEnumSet NonIOList = SVIMProductEnumSet
-		{
-			SVIM_PRODUCT_X2_GD8A_NONIO_COLOR,
-			SVIM_PRODUCT_X2_GD8A_NONIO
-		};
-
-		SVIMProductEnumSet::const_iterator it = NonIOList.find(p_ProductType);
-		return (it != NonIOList.end());
-	}
-} //namespace SvTi
-
+}

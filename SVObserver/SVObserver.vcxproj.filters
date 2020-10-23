@@ -456,9 +456,6 @@
     <ClCompile Include="SVToolSetListCtrl.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVTriggerSelectionDlg.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVUtilities.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -992,9 +989,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVToolSetListCtrl.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVTriggerSelectionDlg.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVUtilities.h">

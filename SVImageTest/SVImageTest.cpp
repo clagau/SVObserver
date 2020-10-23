@@ -37,8 +37,7 @@ bool IsGigeDigitizer(LPCTSTR ProductName)
 	bool l_bOk = ( 0 == SvUl::CompareNoCase( Name, std::string(SvDef::SVO_PRODUCT_SVIM_X2_GD1A ) ) ||
 					0 == SvUl::CompareNoCase( Name, std::string(SvDef::SVO_PRODUCT_SVIM_X2_GD2A ) ) ||
 					0 == SvUl::CompareNoCase( Name, std::string(SvDef::SVO_PRODUCT_SVIM_X2_GD4A ) ) ||
-					0 == SvUl::CompareNoCase( Name, std::string(SvDef::SVO_PRODUCT_SVIM_X2_GD8A ) ) ||
-					0 == SvUl::CompareNoCase( Name, std::string(SvDef::SVO_PRODUCT_SVIM_X2_GD8A_NONIO ) ) ) ? true : false;
+					0 == SvUl::CompareNoCase( Name, std::string(SvDef::SVO_PRODUCT_SVIM_X2_GD8A ) ) ) ? true : false;
 
 	return l_bOk;
 }

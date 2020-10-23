@@ -16,8 +16,6 @@ typedef std::function<void(const IntVariantMap&)> TriggerCallBack;
 enum TriggerDataEnum : int
 {
 	TimeStamp = 1,
-	LineState,
-	StartFrameTime,
 	ObjectID,
 	TriggerIndex,
 	TriggerPerObjectID,

@@ -27,7 +27,6 @@
 #include "SVSystemLibrary/SVAsyncProcedure.h"
 #include "SVValueObjectLibrary/BasicValueObjects.h"
 #include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
-#include "TriggerInformation/SVCameraTriggerData.h"
 #include "TriggerRecordController/ITriggerRecordControllerRW.h"
 #pragma endregion Includes
 
@@ -158,15 +157,12 @@ public:
 	void AddInput( SVIOEntryHostStructPtr pInput );
 	bool RemoveInput( SVIOEntryHostStructPtr pInput );
 	HRESULT GetInputIOValues(std::vector<_variant_t>& rInputValues) const;
-	bool RebuildInputList(bool bHasCameraTrigger);
+	bool RebuildInputList();
 	const SVIOEntryHostStructPtrVector& GetUsedInputs() const {return m_UsedInputs;}
 	const SVIOEntryHostStructPtrVector& GetAllInputs() const {return m_AllInputs;}
 	void AddDefaultInputs();
 	bool AddToAvailableInputs(SVIOObjectType eType, const std::string& rName );
 	SVIOEntryHostStructPtr GetInput( const std::string& rName ) const;
-
-	void AddCameraDataInputs(SVIOEntryHostStructPtrVector& list);
-	void RemoveCameraDataInputs(SVIOEntryHostStructPtrVector& list);
 
 	void AddOutput( SVIOEntryHostStructPtr pOutput );
 	bool RemoveOutput( SVIOEntryHostStructPtr pOutput );
@@ -187,8 +183,6 @@ public:
 
 	SvVol::BasicValueObjectPtr getPpqVaraible(LPCTSTR Name) { return m_PpqValues.getValueObject(Name); }
 	void PersistInputs(SvOi::IObjectWriter& rWriter);
-
-	SvTi::SVCameraTriggerData& GetCameraInputData();
 
 	/// Set or unset Monitor list and activated the shared memory for it.
 	/// \param rActiveList [in] The new monitor list.
@@ -405,8 +399,6 @@ protected:
 	// Value Objects used by the PPQ
 	SvVol::SVBoolValueObjectClass  m_PpqOutputs[PpqOutputEnums::OutputNr];
 
-	SvTi::SVCameraTriggerData m_CameraInputData;
-
 	bool m_TriggerToggle;
 	bool m_OutputToggle;
 
@@ -455,7 +447,6 @@ private:
 
 		void IncrementCount( const std::string& p_rName );
 		void IncrementCount( const std::string& p_rName, size_t p_Index );
-		void IncrementTimeCount( const std::string& p_rName, size_t p_Index );
 
 		size_t m_QueueLength = 0;
 		size_t m_TimeLength = 0;

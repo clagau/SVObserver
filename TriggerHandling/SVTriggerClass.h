@@ -62,11 +62,12 @@ public:
 	SvDef::TriggerType getType() const { return m_type; }
 
 protected:
-	virtual void processAcquisitionTriggers(const SvTi::SVTriggerInfoStruct& rTriggerInfo) const override;
+	virtual void processTriggers(SvTi::SVTriggerInfoStruct& rTriggerInfo) override;
 
 private:
-	int m_digitizerNumber {-1};
-
+	int m_digitizerNumber{ -1 };
+	long m_currentObjectID{ 0L };
+	long m_triggerIndex{ 0L };
 	SVIOTriggerLoadLibraryClass* m_pDLLTrigger{nullptr};
 	unsigned long m_triggerChannel {0UL};
 	SvDef::TriggerType m_type{SvDef::TriggerType::HardwareTrigger};

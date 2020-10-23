@@ -132,13 +132,6 @@ namespace SvTi
 		//************************************
 		static bool IsProductTypeRAID(SVIMProductEnum ProductType);
 
-		//************************************
-		//! This is a static method to check if the product type is non IO 
-		//! \param ProductType <in> the SVIM product type
-		//! \returns true if it is a non IO type
-		//************************************
-		static bool IsNonIOSVIM(SVIMProductEnum ProductType);
-
 		// These two (2) methods, Startup, Shutdown are only meant to be called by the main application class and no other
 		// They used to be protected and a friend class declaration was used, but that was a bad design as the friend was declared in another project
 		// So for now the restriction is made manually, just don't call these methods anywhere else, as described via this comment

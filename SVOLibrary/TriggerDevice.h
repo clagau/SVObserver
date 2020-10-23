@@ -30,6 +30,11 @@ public:
 	long getTriggerCount() { return m_triggerCount; }
 	void resetTriggerCount() { m_triggerCount = 0L; }
 
+	long getStartObjectID() const { return m_startObjectID; }
+	long getTriggerPerObjectID() const { return m_triggerPerObjectID; }
+	void setObjectIDParameters(long startObjectID, long triggerPerObjectID) { m_startObjectID = startObjectID; m_triggerPerObjectID = triggerPerObjectID; }
+
+
 	virtual bool IsStarted() const { return m_isStarted;  }
 
 	virtual void ClearDevice();
@@ -52,7 +57,7 @@ protected:
 
 	void Process(bool& rWaitForEvents);
 
-	virtual void processAcquisitionTriggers(const SvTi::SVTriggerInfoStruct& ) const {}
+	virtual void processTriggers(SvTi::SVTriggerInfoStruct& ) {}
 
 private:
 	TriggerDevice() = default;
@@ -60,6 +65,8 @@ private:
 	std::string m_DeviceName;
 	bool m_isStarted {false};
 	long m_triggerCount{0L};
+	long m_startObjectID{ 1L };
+	long m_triggerPerObjectID{ 1L };
 
 	SVAsyncProcedure m_Thread;
 

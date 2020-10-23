@@ -1339,7 +1339,7 @@ HRESULT SVPPQObject::GetInputIOValues(std::vector<_variant_t>& rInputValues) con
 	return l_Status;
 }
 
-bool SVPPQObject::RebuildInputList(bool bHasCameraTrigger)
+bool SVPPQObject::RebuildInputList()
 {
 	SVIOEntryHostStructPtr pOldInput;
 	SVIOEntryHostStructPtr pNewInput;
@@ -1350,11 +1350,6 @@ bool SVPPQObject::RebuildInputList(bool bHasCameraTrigger)
 	if (nullptr != m_pInputList)
 	{
 		SVIOEntryHostStructPtrVector inputEntryVector = m_pInputList->getInputList();
-		RemoveCameraDataInputs(inputEntryVector);
-		if (bHasCameraTrigger)
-		{
-			AddCameraDataInputs(inputEntryVector);
-		}
 		size_t lNewSize = inputEntryVector.size();
 
 		for (size_t iOld = 0; iOld < m_AllInputs.size(); iOld++)
@@ -1391,17 +1386,6 @@ bool SVPPQObject::RebuildInputList(bool bHasCameraTrigger)
 	return false;
 }// end RebuildInputList
 
-typedef boost::function<bool(SVIOEntryHostStructPtr ioEntry, const SVIOObjectType& type)> CompareIOEntryTypeFunc;
-static bool CompareTypeWithIOEntry(SVIOEntryHostStructPtr ioEntry, const SVIOObjectType& type)
-{
-	bool bRetVal = false;
-	if (ioEntry)
-	{
-		bRetVal = (ioEntry->m_ObjectType == type);
-	}
-	return bRetVal;
-}
-
 typedef boost::function<bool(SVIOEntryHostStructPtr ioEntry, const std::string& name)> CompareIOEntryNameFunc;
 static bool CompareNameWithIOEntry(SVIOEntryHostStructPtr pIoEntry, const std::string& name)
 {
@@ -1430,40 +1414,6 @@ private:
 	CompareTo m_data;
 	CompareFunc m_compareFunc;
 };
-
-void SVPPQObject::AddCameraDataInputs(SVIOEntryHostStructPtrVector& list)
-{
-	// Added the new Camera inputs...
-	SVIOEntryHostStructPtrVector::iterator it = std::find_if(list.begin(), list.end(), FindIOEntry<std::string, CompareIOEntryNameFunc>(m_CameraInputData.GetTimestampName(), CompareNameWithIOEntry));
-	if (it == list.end())
-	{
-		// Get the Input from the All list
-		SVIOEntryHostStructPtrVector::const_iterator refIt = std::find_if(m_AllInputs.begin(), m_AllInputs.end(), FindIOEntry<std::string, CompareIOEntryNameFunc>(m_CameraInputData.GetTimestampName(), CompareNameWithIOEntry));
-		if (refIt != m_AllInputs.end())
-		{
-			list.push_back(*refIt);
-		}
-	}
-	it = std::find_if(list.begin(), list.end(), FindIOEntry<std::string, CompareIOEntryNameFunc>(m_CameraInputData.GetLineStateName(), CompareNameWithIOEntry));
-	if (it == list.end())
-	{
-		// Get the Input from the All list
-		SVIOEntryHostStructPtrVector::const_iterator refIt = std::find_if(m_AllInputs.begin(), m_AllInputs.end(), FindIOEntry<std::string, CompareIOEntryNameFunc>(m_CameraInputData.GetLineStateName(), CompareNameWithIOEntry));
-		if (refIt != m_AllInputs.end())
-		{
-			list.push_back(*refIt);
-		}
-	}
-}
-
-void SVPPQObject::RemoveCameraDataInputs(SVIOEntryHostStructPtrVector& list)
-{
-	SVIOEntryHostStructPtrVector::iterator it = std::remove_if(list.begin(), list.end(), FindIOEntry<SVIOObjectType, CompareIOEntryTypeFunc>(IO_CAMERA_DATA_INPUT, CompareTypeWithIOEntry));
-	if (it != list.end())
-	{
-		list.erase(it, list.end());
-	}
-}
 
 // AddToAvailableInputs searches the m_AllInputs by name. If it does not exist,
 // then the new input is added. Two types are supported: 
@@ -3200,10 +3150,6 @@ HRESULT SVPPQObject::ProcessTrigger( bool& rProcessed )
 
 					m_oNotifyInspectionsSet.insert(pProduct->ProcessCount());
 
-					if (!pProduct->m_triggerInfo.m_Data.empty())
-					{
-						m_CameraInputData.Set(pProduct->m_triggerInfo.m_Data);
-					}
 					// Get Shared Memory Slot
 					if (HasActiveMonitorList() && GetSlotmanager().get())
 					{
@@ -3802,7 +3748,7 @@ void SVPPQObject::PersistInputs(SvOi::IObjectWriter& rWriter)
 	long lInputNr{0};
 	for(const auto& pEntry : GetAllInputs())
 	{
-		if (nullptr != pEntry	&& pEntry->m_ObjectType != IO_CAMERA_DATA_INPUT)
+		if (nullptr != pEntry)
 		{
 			l_svName = SvUl::Format(SvXml::CTAGF_INPUT_X, lInputNr);
 			rWriter.StartElement(l_svName.c_str());
@@ -3874,11 +3820,6 @@ void SVPPQObject::PersistInputs(SvOi::IObjectWriter& rWriter)
 		lInputNr++;
 	}
 	rWriter.EndElement();
-}
-
-SvTi::SVCameraTriggerData& SVPPQObject::GetCameraInputData()
-{
-	return m_CameraInputData;
 }
 
 void SVPPQObject::SetMonitorList(const MonitorListAttributeStruct& rActiveList)
@@ -3993,10 +3934,6 @@ void SVPPQObject::SVPPQTracking::IncrementCount(const std::string& p_rName, size
 	m_QueueCounts[p_rName].IncrementCount(p_Index, m_QueueLength);
 }
 
-void SVPPQObject::SVPPQTracking::IncrementTimeCount(const std::string& p_rName, size_t p_Index)
-{
-	m_QueueWriteTimeCounts[p_rName].IncrementCount(p_Index, m_TimeLength);
-}
 #endif //EnableTracking
 
 void SVPPQObject::ResetOutputValueObjects()

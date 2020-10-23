@@ -92,10 +92,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="SVAcquisitionConstructParams.cpp" />
-    <ClCompile Include="SVCameraTriggerData.cpp" />
     <ClCompile Include="SVHardwareManifest.cpp" />
     <ClCompile Include="SVOTriggerList.cpp" />
-    <ClCompile Include="SVOTriggerObj.cpp" />
     <ClCompile Include="SVTriggerDeviceParams.cpp" />
     <ClCompile Include="SVTriggerObject.cpp" />
     <ClCompile Include="SVTriggerProcessingClass.cpp" />
@@ -104,14 +102,12 @@
     <ClInclude Include="IODeviceBase.h" />
     <ClInclude Include="Stdafx.h" />
     <ClInclude Include="SVAcquisitionConstructParams.h" />
-    <ClInclude Include="SVCameraTriggerData.h" />
     <ClInclude Include="SVHardwareManifest.h" />
     <ClInclude Include="SVIMTypeInfoStruct.h" />
     <ClInclude Include="SVOTriggerList.h" />
     <ClInclude Include="SVOTriggerObj.h" />
     <ClInclude Include="SVTriggerConstants.h" />
     <ClInclude Include="SVTriggerDeviceParams.h" />
-    <ClInclude Include="SVTriggerEnums.h" />
     <ClInclude Include="SVTriggerInfoStruct.h" />
     <ClInclude Include="SVTriggerObject.h" />
     <ClInclude Include="SVTriggerProcessingClass.h" />

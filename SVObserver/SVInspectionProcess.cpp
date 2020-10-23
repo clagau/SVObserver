@@ -186,7 +186,6 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed, SVProductInfoSt
 				{
 					case IO_DIGITAL_INPUT:
 					case IO_REMOTE_INPUT:
-					case IO_CAMERA_DATA_INPUT:
 					{
 						if (nullptr != rInputEntry->getValueObject())
 						{
@@ -1307,7 +1306,7 @@ HRESULT SVInspectionProcess::RebuildInspection(bool shouldCreateAllObject)
 					}
 				}
 
-				if (pParam && pParam->options.find(pParam->strValue)->second.m_bColor)
+				if (pParam->options.find(pParam->strValue)->second.m_bColor)
 				{
 					bColorSourceImage = true;
 					break;
@@ -2002,7 +2001,7 @@ bool SVInspectionProcess::ProcessInputImageRequests(SVInspectionInfoStruct& rIpI
 		{
 			SvIe::SVCameraImagePtrSet l_MainImages;
 
-			GetMainImages(l_pInRequest->m_ObjectName.c_str(), l_MainImages);
+			GetMainImages(l_pInRequest->m_ObjectName, l_MainImages);
 
 			SvIe::SVCameraImagePtrSet::iterator l_Iter = l_MainImages.begin();
 

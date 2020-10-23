@@ -320,7 +320,6 @@ namespace SvStl
 		{Tid_FunctionNotImplemented, _T("Implementation of function '%s' for %s is missing")},
 
 		{Tid_Camera_UseQuestion, _T("Would you like to use this camera file for all camera choices?")},
-		{Tid_Config_SwitchResetQuestion, _T("By switching the system (product) the camera, trigger, inspection and ppq data will be reset, do you wish to continue?")},
 		{Tid_Config_SwitchIOQuestion, _T("By switching the system (product) the input and outputs need to be reset, do you wish to continue?")},
 		{Tid_Config_InspectionImportFailed, _T("Inspection Import failed. Error = %s")},
 		{Tid_Config_CameraFileNameInvalid, _T("Camera file name is invalid %s")},

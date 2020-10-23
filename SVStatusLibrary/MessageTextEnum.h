@@ -284,7 +284,6 @@ enum MessageTextEnum
 	Tid_FunctionNotImplemented,
 
 	Tid_Camera_UseQuestion,
-	Tid_Config_SwitchResetQuestion,
 	Tid_Config_SwitchIOQuestion,
 	Tid_Config_InspectionImportFailed,
 	Tid_Config_CameraFileNameInvalid,

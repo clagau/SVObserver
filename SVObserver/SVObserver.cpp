@@ -3042,9 +3042,7 @@ bool SVObserverApp::IsMatroxGige() const
 	bool result = (0 == SvUl::CompareNoCase(m_rInitialInfo.m_ProductName, SvDef::SVO_PRODUCT_SVIM_X2_GD2A)
 		|| 0 == SvUl::CompareNoCase(m_rInitialInfo.m_ProductName, SvDef::SVO_PRODUCT_SVIM_X2_GD4A)
 		|| 0 == SvUl::CompareNoCase(m_rInitialInfo.m_ProductName, SvDef::SVO_PRODUCT_SVIM_X2_GD8A)
-		|| 0 == SvUl::CompareNoCase(m_rInitialInfo.m_ProductName, SvDef::SVO_PRODUCT_SVIM_NEO1)
-		|| 0 == SvUl::CompareNoCase(m_rInitialInfo.m_ProductName, SvDef::SVO_PRODUCT_SVIM_X2_GD8A_NONIO));
-
+		|| 0 == SvUl::CompareNoCase(m_rInitialInfo.m_ProductName, SvDef::SVO_PRODUCT_SVIM_NEO1));
 	return result;
 }
 
@@ -3074,26 +3072,22 @@ bool SVObserverApp::CheckSVIMType() const
 			case SVIM_PRODUCT_X2_GD2A_COLOR:
 			case SVIM_PRODUCT_X2_GD4A_COLOR:
 			case SVIM_PRODUCT_X2_GD8A_COLOR:
-			case SVIM_PRODUCT_X2_GD8A_NONIO_COLOR:
 			{
 				Result |= ProductType == SVIM_PRODUCT_X2_GD1A_COLOR;
 				Result |= ProductType == SVIM_PRODUCT_X2_GD2A_COLOR;
 				Result |= ProductType == SVIM_PRODUCT_X2_GD4A_COLOR;
 				Result |= ProductType == SVIM_PRODUCT_X2_GD8A_COLOR;
-				Result |= ProductType == SVIM_PRODUCT_X2_GD8A_NONIO_COLOR;
 				break;
 			}
 			case SVIM_PRODUCT_X2_GD1A:
 			case SVIM_PRODUCT_X2_GD2A:
 			case SVIM_PRODUCT_X2_GD4A:
 			case SVIM_PRODUCT_X2_GD8A:
-			case SVIM_PRODUCT_X2_GD8A_NONIO:
 			{
 				Result |= ProductType == SVIM_PRODUCT_X2_GD1A;
 				Result |= ProductType == SVIM_PRODUCT_X2_GD2A;
 				Result |= ProductType == SVIM_PRODUCT_X2_GD4A;
 				Result |= ProductType == SVIM_PRODUCT_X2_GD8A;
-				Result |= ProductType == SVIM_PRODUCT_X2_GD8A_NONIO;
 				break;
 			}
 
@@ -3126,10 +3120,6 @@ SVIMProductEnum SVObserverApp::GetSVIMType() const
 	else if (0 == SvUl::CompareNoCase(m_rInitialInfo.m_ProductName, SvDef::SVO_PRODUCT_SVIM_X2_GD8A))
 	{
 		eType = SVIM_PRODUCT_X2_GD8A;
-	}
-	else if (0 == SvUl::CompareNoCase(m_rInitialInfo.m_ProductName, SvDef::SVO_PRODUCT_SVIM_X2_GD8A_NONIO))
-	{
-		eType = SVIM_PRODUCT_X2_GD8A_NONIO;
 	}
 	else if (0 == SvUl::CompareNoCase(m_rInitialInfo.m_ProductName, SvDef::SVO_PRODUCT_SVIM_NEO1))
 	{
@@ -3440,15 +3430,13 @@ bool SVObserverApp::RemoveMenu(
 	{
 		// See whether the popup menu exists
 		int itemCount = ::GetMenuItemCount(hTargetMenu);
-		bool bFoundSubMenu = false;
 		MENUITEMINFO menuItemInfo;
 
 		memset(&menuItemInfo, 0, sizeof(MENUITEMINFO));
 		menuItemInfo.cbSize = sizeof(MENUITEMINFO);
 		menuItemInfo.fMask =
 			MIIM_TYPE | MIIM_STATE | MIIM_ID | MIIM_SUBMENU;
-		for (int itemIndex = 0;
-			itemIndex < itemCount && !bFoundSubMenu; itemIndex++)
+		for (int itemIndex = 0; itemIndex < itemCount; itemIndex++)
 		{
 			::GetMenuItemInfo(
 				hTargetMenu,
@@ -3987,7 +3975,7 @@ bool SVObserverApp::ShowConfigurationAssistant(int /*= 3*/,
 				{
 					SVPPQObject* pPPQ = pConfig->GetPPQ(lPPQ);
 					assert(nullptr != pPPQ);
-					pPPQ->RebuildInputList(pConfig->HasCameraTrigger(pPPQ));
+					pPPQ->RebuildInputList();
 					pPPQ->RebuildOutputList();
 				}// end for
 			}

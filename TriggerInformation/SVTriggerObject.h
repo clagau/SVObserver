@@ -46,6 +46,10 @@ namespace SvTi
 		bool RegisterCallback(PpqTriggerCallBack pPpqTriggerCallback);
 		bool UnregisterCallback();
 
+		long getStartObjectID() const;
+		long getTriggerPerObjectID() const;
+		void setObjectIDParameters(long startObjectID, long triggerPerObjectID);
+
 		///Fires a trigger with given time stamp
 		void Fire(double timeStamp);
 

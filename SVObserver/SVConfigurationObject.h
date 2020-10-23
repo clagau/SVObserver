@@ -289,7 +289,6 @@ public:
 	HRESULT AddImportedDigitalInput(SVPPQObject* p_pPPQ, const std::string& name, long ppqPosition);
 	HRESULT AddRemoteInput(SVPPQObject* p_pPPQ, const std::string& name, long ppqPosition, long index, const _variant_t& p_Value);
 	HRESULT AddDigitalInput(SVPPQObject* p_pPPQ, const std::string& name, long ppqPosition);
-	HRESULT AddCameraDataInput(SVPPQObject* pPPQ, SVIOEntryHostStructPtr pIOEntry);
 
 	bool SetupRemoteMonitorList();
 	RemoteMonitorListMap GetRemoteMonitorList() const;
@@ -345,8 +344,6 @@ public:
 	//! \returns S_OK, if loading successful
 	//************************************
 	HRESULT LoadAdditionalFiles(SVTreeType& rTree);
-
-	bool HasCameraTrigger(SVPPQObject* p_pPPQ) const;
 
 	SvPb::InspectionList GetInspectionList4TRC() const { return m_inspList4TRC; };
 	void UpdateInspectionList4TRC();
@@ -461,7 +458,6 @@ private:
 	HRESULT LoadDeviceParamSpecial( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent, SVDeviceParam* pParam );
 
 	void SetupSoftwareTrigger(SvTh::SVTriggerClass* pTriggerDevice, int iDigNum, long triggerPeriod, SVPPQObject* pPPQ);
-	void SetupCameraTrigger(SvTh::SVTriggerClass* pTriggerDevice, int iDigNum, SVPPQObject* pPPQ, bool bSoftwareTrigger, long triggerPeriod);
 
 	void GetRemoteInputInspections( const std::string& p_rRemoteInputName, SVInspectionSet& p_rInspections ) const;
 

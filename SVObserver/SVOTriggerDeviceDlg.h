@@ -11,7 +11,6 @@
 #pragma once
 
 #pragma region Includes
-#include "SVTriggerSelectionDlg.h"
 #pragma endregion Includes
 
 class SVOConfigAssistantDlg;
@@ -63,6 +62,5 @@ private:
 	void EnablePropertyButton(bool bEnable);
 	void EnableAdvancedPropertyButton(bool bEnable);
 	void DisablePropertyEdit();
-	void GetNextAvailableTriggerList(SVTriggerNameIdList& rList) const;
 };
 

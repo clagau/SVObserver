@@ -31,7 +31,6 @@ public:
 	void SetTriggerInverters( int p_iTrigInverters );
 	void SetStrobeInverters( int p_iStrobeInverters );
 
-	bool IsNonIOSVIM() const;
 	void SetNonIOSVIM(int numTriggers);
 
 private:

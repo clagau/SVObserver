@@ -18,9 +18,6 @@
     <ClCompile Include="StdAfx.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVCameraDataInputObject.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVDigitalInputObject.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -57,9 +54,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StdAfx.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVCameraDataInputObject.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVDigitalInputObject.h">

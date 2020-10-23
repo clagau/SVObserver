@@ -24,16 +24,10 @@
     <ClCompile Include="SVAcquisitionConstructParams.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVCameraTriggerData.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVHardwareManifest.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVOTriggerList.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVOTriggerObj.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVTriggerDeviceParams.cpp">
@@ -56,9 +50,6 @@
     <ClInclude Include="SVAcquisitionConstructParams.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVCameraTriggerData.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVHardwareManifest.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -72,9 +63,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVTriggerDeviceParams.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVTriggerEnums.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVTriggerInfoStruct.h">

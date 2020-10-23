@@ -115,11 +115,38 @@ namespace SvTi
 		return false;
 	}
 
+	long SVTriggerObject::getStartObjectID() const
+	{
+		if (nullptr != m_pTriggerDevice)
+		{
+			return m_pTriggerDevice->getStartObjectID();
+		}
+		return -1;
+	}
+
+	long SVTriggerObject::getTriggerPerObjectID() const
+	{
+		if (nullptr != m_pTriggerDevice)
+		{
+			return m_pTriggerDevice->getTriggerPerObjectID();
+		}
+		return -1;
+	}
+
+	void SVTriggerObject::setObjectIDParameters(long startObjectID, long triggerPerObjectID)
+	{
+		if (nullptr != m_pTriggerDevice)
+		{
+			m_pTriggerDevice->setObjectIDParameters(startObjectID, triggerPerObjectID);
+		}
+	}
+
 	void SVTriggerObject::Fire(double timeStamp)
 	{
 		if (nullptr != m_pTriggerDevice)
 		{
 			SvTi::SVTriggerInfoStruct triggerInfo;
+			triggerInfo.bValid = true;
 			triggerInfo.m_Data[SvTi::TriggerDataEnum::TimeStamp] = _variant_t(timeStamp);
 			///Trigger channel 0 based
 			triggerInfo.m_Data[SvTi::TriggerDataEnum::TriggerChannel] = _variant_t(m_pTriggerDevice->getTriggerChannel());
@@ -162,6 +189,7 @@ namespace SvTi
 		
 		return result;
 	}
+	
 	long SVTriggerObject::getTriggerCount() const
 	{ 
 		return (nullptr != m_pTriggerDevice) ? m_pTriggerDevice->getTriggerCount() : -1; 

@@ -30,7 +30,6 @@ constexpr char* SVO_PRODUCT_SVIM_X2_GD1A = _T("SVIM X2-GD1A");
 constexpr char* SVO_PRODUCT_SVIM_X2_GD2A = _T("SVIM X2-GD2A");
 constexpr char* SVO_PRODUCT_SVIM_X2_GD4A = _T("SVIM X2-GD4A");
 constexpr char* SVO_PRODUCT_SVIM_X2_GD8A = _T("SVIM X2-GD8A");
-constexpr char* SVO_PRODUCT_SVIM_X2_GD8A_NONIO = _T("SVIM Non I/O");
 constexpr char* SVO_PRODUCT_SVIM_NEO1 = _T("SVIM NEO1");
 
 constexpr char* cBucketTag = _T("Array");			// for backwards compatibility

@@ -119,6 +119,8 @@ HRESULT SVTriggerClass::Start()
 	if ( nullptr != m_pDLLTrigger )
 	{
 		l_hrOk = m_pDLLTrigger->Start( m_triggerChannel );
+		m_currentObjectID = getStartObjectID();
+		m_triggerIndex = 1L;
 	}
 	else
 	{
@@ -150,8 +152,22 @@ HRESULT SVTriggerClass::Stop()
 	return l_hrOk;
 }
 
-void SVTriggerClass::processAcquisitionTriggers(const SvTi::SVTriggerInfoStruct&) const
+void SVTriggerClass::processTriggers(SvTi::SVTriggerInfoStruct& rTriggerInfo)
 {
+	if (SvDef::TriggerType::SoftwareTrigger == m_type || SvDef::TriggerType::CameraTrigger == m_type)
+	{
+		++m_triggerIndex;
+		if (getTriggerPerObjectID() < m_triggerIndex)
+		{
+			++m_currentObjectID;
+			m_triggerIndex = 1L;
+		}
+		rTriggerInfo.m_Data[SvTi::TriggerDataEnum::ObjectID] = _variant_t(m_currentObjectID);
+		rTriggerInfo.m_Data[SvTi::TriggerDataEnum::TriggerIndex] = _variant_t(m_triggerIndex);
+		rTriggerInfo.m_Data[SvTi::TriggerDataEnum::TriggerPerObjectID] = _variant_t(getTriggerPerObjectID());
+
+	}
+
 	for(const auto& rAcquisitionParameter : m_acqTriggerParameters)
 	{
 		if(nullptr != rAcquisitionParameter.m_pDllDigitizer)

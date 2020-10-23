@@ -116,7 +116,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="SVCameraDataInputObject.cpp" />
     <ClCompile Include="SVDigitalInputObject.cpp" />
     <ClCompile Include="SVDigitalOutputObject.cpp" />
     <ClCompile Include="SVInputObjectList.cpp" />
@@ -131,7 +130,6 @@
   <ItemGroup>
     <ClInclude Include="PlcOutputObject.h" />
     <ClInclude Include="StdAfx.h" />
-    <ClInclude Include="SVCameraDataInputObject.h" />
     <ClInclude Include="SVDigitalInputObject.h" />
     <ClInclude Include="SVDigitalOutputObject.h" />
     <ClInclude Include="SVInputObject.h" />
