@@ -792,7 +792,7 @@ void SVTADlgArchiveImagePage::AlternativeImagePathController::SelectFilenameInde
 	m_EditFilenameIndex1.GetWindowText(Temp);
 	std::string Value = Temp;
 	std::string Title = SvUl::LoadStdString(IDS_OBJECTNAME_FILENAME_INDEX1);
-	if (m_ObjectSelectorController.Show(Value, Title, pParent))
+	if (m_ObjectSelectorController.Show(Value, Title, pParent, SvPb::attributesAllowed, SvPb::allNumberValueObjects))
 	{
 		m_EditFilenameIndex1.SetWindowText(Value.c_str());
 	}
@@ -805,7 +805,7 @@ void SVTADlgArchiveImagePage::AlternativeImagePathController::SelectFilenameInde
 	m_EditFilenameIndex2.GetWindowText(Temp);
 	std::string Value = Temp;
 	std::string Title = SvUl::LoadStdString(IDS_OBJECTNAME_FILENAME_INDEX2);
-	if (m_ObjectSelectorController.Show(Value, Title, pParent))
+	if (m_ObjectSelectorController.Show(Value, Title, pParent, SvPb::attributesAllowed, SvPb::allNumberValueObjects))
 	{
 		m_EditFilenameIndex2.SetWindowText(Value.c_str());
 	}
@@ -818,7 +818,7 @@ void SVTADlgArchiveImagePage::AlternativeImagePathController::SelectDirectorynam
 	m_EditDirectorynameIndex.GetWindowText(Temp);
 	std::string Value = Temp;
 	std::string Title = SvUl::LoadStdString(IDS_OBJECTNAME_DIRECTORYNAME_INDEX);
-	if (m_ObjectSelectorController.Show(Value, Title, pParent))
+	if (m_ObjectSelectorController.Show(Value, Title, pParent, SvPb::attributesAllowed, SvPb::allNumberValueObjects))
 	{
 		m_EditDirectorynameIndex.SetWindowText(Value.c_str());
 	}
