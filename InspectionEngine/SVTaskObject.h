@@ -229,10 +229,10 @@ protected:
 	// NEVER call base class Run()! 
 	virtual bool Run(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages = nullptr);
 
-	virtual HRESULT GetDrawInfo(SVExtentMultiLineStruct& p_rMultiLine);
-	virtual HRESULT UpdateOverlayIDs(SVExtentMultiLineStruct& p_rMultiLine);
-	HRESULT UpdateOverlayColor(SVExtentMultiLineStruct& p_rMultiLine);
-	HRESULT UpdateOverlayName(SVExtentMultiLineStruct& p_rMultiLine, const SVImageExtentClass& p_pImageExtents);
+	virtual void GetDrawInfo(SVExtentMultiLineStruct&) {};
+	virtual void UpdateOverlayIDs(SVExtentMultiLineStruct& p_rMultiLine);
+	virtual void UpdateOverlayColor(SVExtentMultiLineStruct& p_rMultiLine) const;
+	void UpdateOverlayName(SVExtentMultiLineStruct& p_rMultiLine, const SVImageExtentClass& p_pImageExtents);
 	virtual HRESULT onCollectOverlays(SVImageClass* p_Image, SVExtentMultiLineStructVector& p_MultiLineArray);
 	/// Add a overlay group if available to the protoBuf-message.
 	/// \param pImage [in] Image for with the overlay should be collected.

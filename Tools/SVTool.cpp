@@ -198,6 +198,7 @@ void SVToolClass::init()
 
 	m_overlayColorToolObjectInfo.SetInputObjectType(SvPb::SVToolObjectType);
 	RegisterInputObject(&m_overlayColorToolObjectInfo, _T("OverlayColor_Tool"));
+	m_overlayColorToolObjectInfo.SetInputObject(this);
 
 	// 
 	addDefaultInputObjects();
@@ -343,10 +344,8 @@ bool SVToolClass::WasEnabled() const
 	return bEnabled;
 }
 
-HRESULT SVToolClass::GetDrawInfo(SVExtentMultiLineStruct& rMultiLine)
+void SVToolClass::GetDrawInfo(SVExtentMultiLineStruct& rMultiLine)
 {
-	HRESULT l_Status = S_OK;
-
 	if (m_pCurrentToolSet)
 	{
 		SVObjectClass* pObject = dynamic_cast<SVObjectClass*> (m_pCurrentToolSet->GetDrawFlagObject());
@@ -372,8 +371,6 @@ HRESULT SVToolClass::GetDrawInfo(SVExtentMultiLineStruct& rMultiLine)
 	rMultiLine.m_Passed = (FALSE != bPassed);
 	rMultiLine.m_Failed = (FALSE != bFailed);
 	rMultiLine.m_Warned = (FALSE != bWarned);
-
-	return l_Status;
 }
 
 void SVToolClass::UpdateAuxiliaryExtents()
@@ -896,19 +893,14 @@ HRESULT SVToolClass::SetExtentPropertyInfo(SvPb::SVExtentPropertyEnum p_ePropert
 	return m_toolExtent.SetExtentPropertyInfo(p_eProperty, p_rInfo);
 }
 
-HRESULT SVToolClass::UpdateOverlayIDs(SVExtentMultiLineStruct& p_rMultiLine)
+void SVToolClass::UpdateOverlayIDs(SVExtentMultiLineStruct& p_rMultiLine)
 {
-	HRESULT l_Status = SVTaskObjectListClass::UpdateOverlayIDs(p_rMultiLine);
+	SVTaskObjectListClass::UpdateOverlayIDs(p_rMultiLine);
 
-	if (S_OK == l_Status)
+	if (SvDef::InvalidObjectId == p_rMultiLine.m_ToolID)
 	{
-		if (SvDef::InvalidObjectId == p_rMultiLine.m_ToolID)
-		{
-			p_rMultiLine.m_ToolID = getObjectId();
-		}
+		p_rMultiLine.m_ToolID = getObjectId();
 	}
-
-	return l_Status;
 }
 
 HRESULT SVToolClass::CollectOverlays(SvIe::SVImageClass *pImage, SVExtentMultiLineStructVector& rMultiLineArray)
@@ -921,6 +913,13 @@ HRESULT SVToolClass::CollectOverlays(SvIe::SVImageClass *pImage, SVExtentMultiLi
 	}
 
 	return l_Status;
+}
+
+void SVToolClass::UpdateOverlayColor(SVExtentMultiLineStruct& p_rMultiLine) const
+{
+	SVToolClass* pTool = dynamic_cast<SVToolClass*>(m_overlayColorToolObjectInfo.GetInputObjectInfo().getObject());
+	COLORREF color = (nullptr != pTool) ? pTool->GetObjectColor() : GetObjectColor();
+	p_rMultiLine.m_Color = color;
 }
 
 void SVToolClass::addOverlays(const SvIe::SVImageClass* pImage, SvPb::OverlayDesc& rOverlay) const

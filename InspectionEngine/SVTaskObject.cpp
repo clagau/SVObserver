@@ -2042,17 +2042,8 @@ HRESULT SVTaskObjectClass::HideInputsOutputs(SVObjectPtrVector& rListOfObjects)
 	return S_OK;
 }
 
-HRESULT SVTaskObjectClass::GetDrawInfo(SVExtentMultiLineStruct&)
+void SVTaskObjectClass::UpdateOverlayIDs(SVExtentMultiLineStruct& p_rMultiLine)
 {
-	HRESULT l_Status = S_OK;
-
-	return l_Status;
-}
-
-HRESULT SVTaskObjectClass::UpdateOverlayIDs(SVExtentMultiLineStruct& p_rMultiLine)
-{
-	HRESULT l_Status = S_OK;
-
 	p_rMultiLine.m_ObjectID = getObjectId();
 
 	if (nullptr != GetAnalyzer())
@@ -2081,25 +2072,15 @@ HRESULT SVTaskObjectClass::UpdateOverlayIDs(SVExtentMultiLineStruct& p_rMultiLin
 	{
 		p_rMultiLine.m_InspectionID = SvDef::InvalidObjectId;
 	}
-
-	return l_Status;
 }
 
-HRESULT SVTaskObjectClass::UpdateOverlayColor(SVExtentMultiLineStruct& p_rMultiLine)
+void SVTaskObjectClass::UpdateOverlayColor(SVExtentMultiLineStruct& p_rMultiLine) const
 {
-	HRESULT l_Status = S_OK;
-
-	COLORREF color = GetObjectColor();
-
-	p_rMultiLine.m_Color = color;
-
-	return l_Status;
+	p_rMultiLine.m_Color = GetObjectColor();
 }
 
-HRESULT SVTaskObjectClass::UpdateOverlayName(SVExtentMultiLineStruct& p_rMultiLine, const SVImageExtentClass& p_pImageExtents)
+void SVTaskObjectClass::UpdateOverlayName(SVExtentMultiLineStruct& p_rMultiLine, const SVImageExtentClass& p_pImageExtents)
 {
-	HRESULT l_Status = S_OK;
-
 	SVPoint<double> point;
 
 	if (S_OK == p_pImageExtents.GetTitlePoint(point))
@@ -2107,8 +2088,6 @@ HRESULT SVTaskObjectClass::UpdateOverlayName(SVExtentMultiLineStruct& p_rMultiLi
 		p_rMultiLine.m_StringPoint = point;
 		p_rMultiLine.m_csString = GetName();
 	}
-
-	return l_Status;
 }
 
 HRESULT SVTaskObjectClass::CollectOverlays(SVImageClass* p_Image, SVExtentMultiLineStructVector &p_MultiLineArray)
@@ -2156,7 +2135,7 @@ void SVTaskObjectClass::collectOverlays(const SVImageClass* pImage, SvPb::Overla
 
 HRESULT SVTaskObjectClass::onCollectOverlays(SVImageClass* p_Image, SVExtentMultiLineStructVector &p_MultiLineArray)
 {
-	HRESULT l_Status = S_OK;
+	HRESULT l_Status = E_FAIL;
 
 	if (nullptr != p_Image)
 	{
@@ -2164,43 +2143,27 @@ HRESULT SVTaskObjectClass::onCollectOverlays(SVImageClass* p_Image, SVExtentMult
 		{
 			SVExtentMultiLineStruct l_MultiLine;
 
-			l_Status = UpdateOverlayIDs(l_MultiLine);
+			UpdateOverlayIDs(l_MultiLine);
 
-			if (S_OK == l_Status)
+			UpdateOverlayName(l_MultiLine, GetImageExtent());
+
+			SVTaskObjectClass* pTaskObject = dynamic_cast<SVTaskObjectClass*> (GetTool());
+
+			if (nullptr != pTaskObject)
 			{
-				l_Status = UpdateOverlayName(l_MultiLine, GetImageExtent());
+				pTaskObject->UpdateOverlayColor(l_MultiLine);
+				pTaskObject->GetDrawInfo(l_MultiLine);
+			}
+			else
+			{
+				UpdateOverlayColor(l_MultiLine);
+				GetDrawInfo(l_MultiLine);
 			}
 
-			if (S_OK == l_Status)
-			{
-				SVTaskObjectClass* pTaskObject = dynamic_cast<SVTaskObjectClass*> (GetTool());
+			l_MultiLine.AssignExtentFigure(GetImageExtent().GetFigure(), l_MultiLine.m_Color);
 
-				if (nullptr != pTaskObject)
-				{
-					l_Status = pTaskObject->UpdateOverlayColor(l_MultiLine);
-
-					if (S_OK == l_Status)
-					{
-						l_Status = pTaskObject->GetDrawInfo(l_MultiLine);
-					}
-				}
-				else
-				{
-					l_Status = UpdateOverlayColor(l_MultiLine);
-
-					if (S_OK == l_Status)
-					{
-						l_Status = GetDrawInfo(l_MultiLine);
-					}
-				}
-			}
-
-			if (S_OK == l_Status)
-			{
-				l_MultiLine.AssignExtentFigure(GetImageExtent().GetFigure(), l_MultiLine.m_Color);
-
-				p_MultiLineArray.push_back(l_MultiLine);
-			}
+			p_MultiLineArray.push_back(l_MultiLine);
+			l_Status = S_OK;
 		}
 	}
 

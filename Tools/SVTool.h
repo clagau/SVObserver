@@ -55,7 +55,7 @@ public:
 	virtual bool CloseObject() override;
 	virtual bool DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pInObjectInfo) override;
 
-	virtual HRESULT GetDrawInfo(SVExtentMultiLineStruct& p_rMultiLine) override;
+	virtual void GetDrawInfo(SVExtentMultiLineStruct& p_rMultiLine) override;
 
 	bool IsEnabled() const;
 
@@ -90,6 +90,7 @@ public:
 	bool getConditionalResult(bool bRunMode = false) const;
 
 	virtual HRESULT CollectOverlays(SvIe::SVImageClass *pImage, SVExtentMultiLineStructVector& rMultiLineArray) override;
+	virtual void UpdateOverlayColor(SVExtentMultiLineStruct& p_rMultiLine) const override;
 	virtual void addOverlays(const SvIe::SVImageClass* p_Image, SvPb::OverlayDesc& rOverlay) const;
 
 	// Auxiliary Source Image functions
@@ -184,7 +185,7 @@ protected:
 
 	virtual bool onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages = nullptr) override;
 
-	virtual HRESULT UpdateOverlayIDs(SVExtentMultiLineStruct& p_rMultiLine) override;
+	virtual void UpdateOverlayIDs(SVExtentMultiLineStruct& p_rMultiLine) override;
 
 	virtual bool createAllObjectsFromChild(SVObjectClass& rChildObject) override;
 
