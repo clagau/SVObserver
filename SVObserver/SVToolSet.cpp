@@ -110,37 +110,37 @@ void SVToolSet::init()
 	m_ExplicitFailed.SetDefaultValue(BOOL(false));	// Default for Explicit Failed is FALSE !!!
 	m_ExplicitFailed.setSaveValueFlag(false);
 
-	m_PassedCount.SetDefaultValue(0);
+	m_PassedCount.SetDefaultValue(0L);
 	m_PassedCount.setSaveValueFlag(false);
-	m_FailedCount.SetDefaultValue(0);
+	m_FailedCount.SetDefaultValue(0L);
 	m_FailedCount.setSaveValueFlag(false);
-	m_WarnedCount.SetDefaultValue(0);
+	m_WarnedCount.SetDefaultValue(0L);
 	m_WarnedCount.setSaveValueFlag(false);
 
-	m_EnabledCount.SetDefaultValue(0);
+	m_EnabledCount.SetDefaultValue(0L);
 	m_EnabledCount.setSaveValueFlag(false);
-	m_ProcessedCount.SetDefaultValue(0);
+	m_ProcessedCount.SetDefaultValue(0L);
 	m_ProcessedCount.setSaveValueFlag(false);
 
-	m_ToolTime.SetDefaultValue(0);
+	m_ToolTime.SetDefaultValue(0L);
 	m_ToolTime.setSaveValueFlag(false);
 	m_ToolTime.SetName("Tool Set Time");
 
 	m_bResetMinMaxToolsetTime = true;
 
-	m_MinToolsetTime.SetDefaultValue(0);
+	m_MinToolsetTime.SetDefaultValue(0LL);
 	m_MinToolsetTime.setSaveValueFlag(false);
-	m_MaxToolsetTime.SetDefaultValue(0);
+	m_MaxToolsetTime.SetDefaultValue(0LL);
 	m_MaxToolsetTime.setSaveValueFlag(false);
 
 	m_RegressionTestMode.SetDefaultValue(BOOL(false));
 	m_RegressionTestMode.setSaveValueFlag(false);
 
 	m_DrawFlag.SetEnumTypes(IDS_TOOLSETDRAW_ENUMOBJECT_LIST);
-	m_DrawFlag.SetDefaultValue(0l); // 0 Should be show 'All Tools'
-	m_TriggerCount.SetDefaultValue(0);
+	m_DrawFlag.SetDefaultValue(0L); // 0 Should be show 'All Tools'
+	m_TriggerCount.SetDefaultValue(0L);
 	m_TriggerCount.setSaveValueFlag(false);
-	m_PPQIndexAtCompletion.SetDefaultValue(0);
+	m_PPQIndexAtCompletion.SetDefaultValue(0L);
 	m_PPQIndexAtCompletion.setSaveValueFlag(false);
 	for (int i = 0; i < ToolSetTimes::MaxCount; ++i)
 	{
@@ -153,8 +153,12 @@ void SVToolSet::init()
 	m_EnableAuxiliaryExtents.SetDefaultValue(BOOL(false));
 
 	m_ObjectID.setDefaultValue(0.0);
+	m_ObjectID.setSaveValueFlag(false);
 	m_TriggerIndex.setDefaultValue(0);
-	m_InspectedObjectID.setDefaultValue(0.0);
+	m_TriggerIndex.setSaveValueFlag(false);
+	m_TriggerPerObjectID.setDefaultValue(0);
+	m_TriggerPerObjectID.setSaveValueFlag(false);
+	
 
 	// Set local defaults
 	m_StartTime = 0.0;
@@ -224,6 +228,7 @@ bool SVToolSet::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 	m_Height.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
 	m_ObjectID.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
 	m_TriggerIndex.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
+	m_TriggerPerObjectID.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
 	m_InspectedObjectID.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
 
 	m_EnableAuxiliaryExtents.SetObjectAttributesAllowed(SvPb::printable | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
