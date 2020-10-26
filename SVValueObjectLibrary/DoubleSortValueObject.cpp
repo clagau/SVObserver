@@ -121,6 +121,13 @@ HRESULT DoubleSortValueObject::GetValue( double& rValue, int Index) const
 			Index = m_spSortContainer->at(Index);
 			return SVValueObjectClass<double>::GetValue(rValue, Index);
 		}
+		// work-around: if the object is reset or not initialized,
+		// return a "default" value in rValue and "index out of range code". 
+		else if (IsResetOrNotInitialized())
+		{
+			rValue = 0.0;
+			return SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE;
+		}
 		else
 		{
 			return E_BOUNDS;
@@ -331,6 +338,15 @@ void DoubleSortValueObject::LocalInitialize()
 	//If a parameter should be printed, it has to be set after creating.
 	SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
 }
+bool DoubleSortValueObject::IsResetOrNotInitialized() const
+{
+	bool bResetOrNotInitialized = (m_DummySortContainer.bIsActive && m_DummySortContainer.SimpleSize == 0);
+	bResetOrNotInitialized |= (m_spSortContainer.get() && m_spSortContainer->size() == 0);
+	// neither m_spSortContainer nor m_DummySortContainer is active yet
+	bResetOrNotInitialized |= (false == m_spSortContainer.get() && false == m_DummySortContainer.bIsActive);
+	return bResetOrNotInitialized;
+}
+
 #pragma endregion Private Methods
 
 
