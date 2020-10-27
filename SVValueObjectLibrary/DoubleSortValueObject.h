@@ -79,9 +79,6 @@ protected:
 #pragma region Private Methods
 private:
 	void LocalInitialize();
-	// Check whether the tool is either reset (sort container has the size 0), or not initialized at all (no sort container has been set yet ever) 
-	// \Returns true if both conditions are fulfilled, false otherwise
-	bool IsResetOrNotInitialized() const;
 #pragma endregion Private Methods
 
 #pragma region Member Variables
