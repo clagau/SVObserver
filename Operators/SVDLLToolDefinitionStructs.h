@@ -23,7 +23,7 @@
 ///Operators
 namespace SvOp
 {
-	const static DWORD ERROR_USER_EXCEPTION{ 0xFF00000F };
+	const static DWORD ERROR_USER_EXCEPTION{S_FALSE | 0xFF00};
 
 /// The structure definition must be the same as the one in the External dll
 /// Use shared files?
