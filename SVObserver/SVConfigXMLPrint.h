@@ -81,7 +81,8 @@ namespace sv_xml
 		void WriteValueObject(Writer writer, const std::wstring&  rTag, const std::wstring&  rName, const std::wstring&  rValue) const;
 		void WriteIOEntryObject(Writer writer, SVIOEntryHostStructPtr IOEntry) const;
 		void WriteGlobalConstants(Writer writer) const;
-
+		
+		void WriteExternalFiles(Writer writer) const;
 		mutable SVConfigurationObject* m_cfo;
 		mutable int nToolNumber;
 	};

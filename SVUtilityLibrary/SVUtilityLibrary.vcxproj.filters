@@ -69,6 +69,12 @@
     <ClCompile Include="SafeArrayHelper.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="AudidFiles.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SHA256.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="7zTypes.h">
@@ -177,6 +183,12 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="NameObjectIdList.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="AudidFiles.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SHA256.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

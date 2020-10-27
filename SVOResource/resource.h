@@ -33,6 +33,9 @@
 #define IDR_TREE_ALL_TREE_MENU          1023
 #define IDR_TREE_ALL_VALUES_MENU        1024
 #define IDR_TABLE_DEFINE_MOUSE_MENU     1025
+#define IDR_MENU_REPORT                 1026
+#define IDR_MENU_REPORT_WHITE                1027
+
 #define IDI_IOITEM_ICON                 1500
 #define IDI_INPUT_ICON                  1501
 #define IDI_OUTPUT_ICON                 1502
@@ -154,6 +157,7 @@
 #define IDD_GLOBAL_CONSTANT_CONFLICT    5126
 #define IDD_RANKING2_FILTER             5127
 #define IDD_CONDITIONAL_TOOLSET_PAGE    5128
+#define IDD_DLG_REPORT_FILE             5129
 #define IDS_OF_STRING                   10000
 #define IDS_PAGE_STRING                 10001
 #define IDS_RESULT_STRING               10002
@@ -2312,6 +2316,8 @@
 #define IDC_FEATURE_NUMBER              16168
 #define IDC_BUTTON_SELECTOR             16169
 #define IDC_TOOL_COMBOBOX				16170
+#define IDC_LIST_REPORT_FILE            16171
+#define IDC_BUTTON_CALC                 16172
 #define ID_UNDO_CHANGES                 20000
 #define ID_BROWSE_BUTTON                20001
 #define ID_PLUSBUTTON                   20002
@@ -2488,6 +2494,18 @@
 #define ID_MONITORLIST_ADD_EDIT_IMAGE_ITEMS 20356
 #define ID_TOOL_DEPENDENCIES            20357
 #define ID_ADD_LOOPTOOL                 20358
+#define ID_CONFIGREPORT_DEFAULTFILES    20359
+#define ID_CONFIGREPORT_ADDITIONALFILES 20360
+#define ID_TOGGLECALC_TOGGLEIGNORE      20361
+#define ID_TOGGLECALC_T                 20362
+#define ID_DEFAULT_CALCHASH             20363
+#define ID_DEFAULT_CALCTRUE             20364
+#define ID_DEFAULT_CALCFALSE            20365
+#define ID_DEFAULT_CALCHASH40006        20366
+#define ID_DEFAULT_IGNORETRUE           20367
+#define ID_DEFAULT_IGNOREFALSE          20368
+#define ID_DEFAULT_ADDFILE              20369
+#define ID_DEFAULT_DELETEFILE           20370
 #define ID_VIEW_TOOLSETDRAW             32999
 #define ID_VIEW_TOOLSETDRAW_POP_BASE    33000
 #define ID_VIEW_TOOLSETDRAW_POP_MAX     33049
@@ -2537,8 +2555,8 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        11150
-#define _APS_NEXT_COMMAND_VALUE         20359
-#define _APS_NEXT_CONTROL_VALUE         16171
+#define _APS_NEXT_COMMAND_VALUE         20371
+#define _APS_NEXT_CONTROL_VALUE         16173
 #define _APS_NEXT_SYMED_VALUE           3002
 #endif
 #endif

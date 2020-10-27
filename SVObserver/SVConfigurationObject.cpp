@@ -69,6 +69,7 @@
 #include "TriggerInformation/SVHardwareManifest.h"
 #include "Tools/SVColorTool.h"
 #include "ObjectInterfaces/ICommand.h"
+#include "SVUtilityLibrary/AudidFiles.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -2299,6 +2300,7 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 		LoadInspection(rTree);
 		LoadPPQ(rTree);
 		LoadAdditionalFiles(rTree);
+		LoadAudidList(rTree);
 		// EB 20031203
 		// a temp solution
 		// the better solution is to have the acqs subscribe and the triggers provide
@@ -3634,6 +3636,8 @@ void SVConfigurationObject::ConvertColorToStandardProductType(bool& rConfigColor
 	}
 }
 
+
+
 void SVConfigurationObject::SaveConfiguration(SvXml::SVObjectXMLWriter& rWriter) const
 {
 	std::string RootName(SvDef::FqnRoot);
@@ -3657,7 +3661,7 @@ void SVConfigurationObject::SaveConfiguration(SvXml::SVObjectXMLWriter& rWriter)
 	SaveGlobalConstants(rWriter);
 	SaveObjectAttributesSet(rWriter, AttributeSetPairVector);
 	SaveAdditionalFiles(rWriter);
-
+	SaveAudidList(rWriter);
 	rWriter.EndElement(); // end of BaseNode
 	rWriter.EndElement(); // end of Root Element
 }
@@ -3868,7 +3872,7 @@ SVIMProductEnum SVConfigurationObject::GetProductType() const
 
 void SVConfigurationObject::SetProductType(SVIMProductEnum eProductType, bool newConfig /*= false*/)
 {
-	SVIMProductEnum prevType{ SVIM_PRODUCT_TYPE_UNKNOWN == m_eProductType ? eProductType : m_eProductType};
+	SVIMProductEnum prevType{ SVIM_PRODUCT_TYPE_UNKNOWN == m_eProductType ? eProductType : m_eProductType };
 	m_eProductType = eProductType;
 	///When the product type is changed the IO controller needs to initialize outputs
 	m_pIOController->initializeOutputs();
@@ -4299,7 +4303,7 @@ HRESULT SVConfigurationObject::GetInspectionItems(const SvDef::StringSet& rNames
 			}
 		}
 
-		
+
 		taskResultFutureDeqeu AsyncCommandsResults;
 
 
@@ -4311,7 +4315,7 @@ HRESULT SVConfigurationObject::GetInspectionItems(const SvDef::StringSet& rNames
 			{
 
 				HRESULT l_CommandStatus{ E_FAIL };
-		
+
 				SVInspectionProcess* pInspection = (l_ProcessIter->second);
 				CommandInspectionGetItems commandInspectionGetItemsHandler(*l_ProcessIter->second, l_InspectionIter->second);
 
@@ -4373,7 +4377,7 @@ HRESULT SVConfigurationObject::GetInspectionItems(const SvDef::StringSet& rNames
 					{
 					case std::future_status::ready:
 					{
-						auto TaskResult  = l_AsyncIter->get();
+						auto TaskResult = l_AsyncIter->get();
 
 						rItems.insert(TaskResult.second->begin(), TaskResult.second->end());
 
@@ -5794,4 +5798,97 @@ void SVConfigurationObject::changeSystemResetIO(SVIMProductEnum newConfigType)
 	}
 }
 
+void SVConfigurationObject::UpdateAudidFiles(bool calculateHash)
+{
+	m_AudidDefaultList.SyncDefaultList(SVFileNameManagerClass::Instance().GetFileNameList());
+	m_AudidDefaultList.UpdateList();
+	m_AudidWhiteList.UpdateList();
+	if (calculateHash)
+	{
+		m_AudidDefaultList.CalculateSHA256();
+		m_AudidWhiteList.CalculateSHA256();
+	}
+}
 
+const std::vector< SvUl::AudidFile>& SVConfigurationObject::GetAudidDefaultList()   const
+{
+	return m_AudidDefaultList.GetFiles();
+};
+
+const std::vector< SvUl::AudidFile>& SVConfigurationObject::GetAudidWhiteList()   const
+{
+	return m_AudidWhiteList.GetFiles();
+};
+
+void SVConfigurationObject::SaveAudidList(SvOi::IObjectWriter& rWriter, SvUl::AudidListType type) const
+{
+	auto& AudidFileVec = (type == SvUl::AudidListType::default) ? GetAudidDefaultList() : GetAudidWhiteList();
+	LPCTSTR lpStartElementName = (type == SvUl::AudidListType::default) ? SvXml::CTAG_AUDDID_DEFAULT_LIST : SvXml::CTAG_AUDDID_WHITE_LIST;
+	if (AudidFileVec.size() > 0)
+	{
+		rWriter.StartElement(lpStartElementName);
+		for (const auto& AudidFile : AudidFileVec)
+		{
+			_variant_t Value{ AudidFile.Fullname.c_str() };
+			rWriter.WriteAttribute(SvXml::CTAG_FILENAME, Value);
+			Value = AudidFile.bhash;
+			rWriter.WriteAttribute(SvXml::CTAG_CALCULATE_HASH, Value);
+			Value = AudidFile.bignore;
+			rWriter.WriteAttribute(SvXml::CTAG_IGNORE_FILE, Value);
+		}
+		rWriter.EndElement(); //SvXml::CTAG_ADDITIONAL_CONFIG_FILES
+	}
+}
+
+HRESULT SVConfigurationObject::LoadAudidList(SVTreeType& rTree, SvUl::AudidListType type)
+{
+	HRESULT Result = S_OK;
+	SVTreeType::SVBranchHandle hBranch(nullptr);
+	LPCTSTR lpStartElementName = (type == SvUl::AudidListType::default) ? SvXml::CTAG_AUDDID_DEFAULT_LIST : SvXml::CTAG_AUDDID_WHITE_LIST;
+	if (SvXml::SVNavigateTree::GetItemBranch(rTree, lpStartElementName, nullptr, hBranch))
+	{
+		SVTreeType::SVLeafHandle hLeaf(rTree.getFirstLeaf(hBranch));
+		auto& AudidFiles = (type == SvUl::AudidListType::default) ? m_AudidDefaultList.GetFiles() : m_AudidWhiteList.GetFiles();
+		while (S_OK == Result && rTree.isValidLeaf(hBranch, hLeaf))
+		{
+			_variant_t Value;
+			bool ignore{ false };
+			bool hash{ true };
+			if (SvXml::CTAG_CALCULATE_HASH == rTree.getLeafName(hLeaf))
+			{
+				if (S_OK == rTree.getLeafData(hLeaf, Value))
+				{
+					hash = (bool)Value;
+				}
+			}
+			if (SvXml::CTAG_IGNORE_FILE == rTree.getLeafName(hLeaf))
+			{
+				if (S_OK == rTree.getLeafData(hLeaf, Value))
+				{
+					ignore = (bool)Value;
+				}
+			}
+			if (SvXml::CTAG_FILENAME == rTree.getLeafName(hLeaf))
+			{
+				if (S_OK == rTree.getLeafData(hLeaf, Value) && VT_BSTR == Value.vt)
+				{
+					std::string FilePath{ SvUl::createStdString(Value.bstrVal) };
+					AudidFiles.emplace_back(FilePath.c_str(), hash, ignore);
+				}
+			}
+			hLeaf = rTree.getNextLeaf(hBranch, hLeaf);
+		}
+	}
+	return Result;
+}
+
+void  SVConfigurationObject::SaveAudidList(SvOi::IObjectWriter& rWriter) const
+{
+	SaveAudidList(rWriter, SvUl::AudidListType::default);
+	SaveAudidList(rWriter, SvUl::AudidListType::white);
+};
+
+HRESULT  SVConfigurationObject::LoadAudidList(SVTreeType& rTree)
+{
+	return (LoadAudidList(rTree, SvUl::AudidListType::default) | LoadAudidList(rTree, SvUl::AudidListType::white));
+}

@@ -44,26 +44,26 @@ typedef sv_xml::SVConfigXMLPrint SVConfigXMLPrint;
 
 typedef sv_xml::SVDeviceParamConfigXMLHelper SVDeviceParamConfigXMLHelper;
 
-const wchar_t * invalid = L"** I N V A L I D ! **";
+const wchar_t* invalid = L"** I N V A L I D ! **";
 
 const int cp_dflt = 1252;
 
-const static wchar_t*   XML_MonitorLists = L"RemoteMonitorLists";
-const static wchar_t*   XML_MonitorList = L"RemoteMonitorList";
-const static wchar_t*   XML_Name = L"Name";
-const static wchar_t*   XML_PPQName = L"PPQName";
-const static wchar_t*   XML_RejectQuueDepth = L"RejectQueueDepth";
-const static wchar_t*   XML_IsActive = L"IsActive";
-const static wchar_t*   XML_TRUE = L"TRUE";
-const static wchar_t*   XML_FALSE = L"FALSE";
-const static wchar_t*   XML_ProductValueItem = L"ProductValueItem";
-const static wchar_t*   XML_Item = L"Item";
-const static wchar_t*   XML_ProductImageList = L"ProductImageList";
-const static wchar_t*   XML_ProductImageItem = L"ProductImageItem";
-const static wchar_t*   XML_Image = L"Image";
-const static wchar_t*   XML_RejectConditionItem = L"RejectConditionItem";
-const static wchar_t*   XML_FailStatusList = L"FailStatusList";
-const static wchar_t*   XML_FailStatusItem = L"FailStatusItem";
+const static wchar_t* XML_MonitorLists = L"RemoteMonitorLists";
+const static wchar_t* XML_MonitorList = L"RemoteMonitorList";
+const static wchar_t* XML_Name = L"Name";
+const static wchar_t* XML_PPQName = L"PPQName";
+const static wchar_t* XML_RejectQuueDepth = L"RejectQueueDepth";
+const static wchar_t* XML_IsActive = L"IsActive";
+const static wchar_t* XML_TRUE = L"TRUE";
+const static wchar_t* XML_FALSE = L"FALSE";
+const static wchar_t* XML_ProductValueItem = L"ProductValueItem";
+const static wchar_t* XML_Item = L"Item";
+const static wchar_t* XML_ProductImageList = L"ProductImageList";
+const static wchar_t* XML_ProductImageItem = L"ProductImageItem";
+const static wchar_t* XML_Image = L"Image";
+const static wchar_t* XML_RejectConditionItem = L"RejectConditionItem";
+const static wchar_t* XML_FailStatusList = L"FailStatusList";
+const static wchar_t* XML_FailStatusItem = L"FailStatusItem";
 
 
 
@@ -114,7 +114,7 @@ inline const std::string SVConfigXMLPrint::Print() const
 inline void SVConfigXMLPrint::PrintXMLDoc(Writer writer) const
 {
 	writer->WriteStartDocument(XmlStandalone::XmlStandalone_Yes);
-	SVObserverApp*         pApp = dynamic_cast <SVObserverApp*> (AfxGetApp());
+	SVObserverApp* pApp = dynamic_cast <SVObserverApp*> (AfxGetApp());
 	wchar_t head[] = L"<?xml version=\"1.0\"?>";
 	writer->WriteRaw(head);
 	writer->WriteStartElement(nullptr, L"Configuration", nullptr);
@@ -126,13 +126,14 @@ inline void SVConfigXMLPrint::PrintXMLDoc(Writer writer) const
 	WriteCameras(writer);
 	WriteInspections(writer);
 	WritePPQs(writer);
-	writer->WriteEndElement();
+	writer->WriteEndElement(); //Settings 
 	writer->WriteStartElement(nullptr, L"Details", nullptr);
 	WriteToolSets(writer);
 	WriteIOSection(writer);
 	WritePPQBar(writer);
-	writer->WriteEndElement();
-	writer->WriteEndElement();
+	WriteExternalFiles(writer);
+	writer->WriteEndElement(); //details
+	writer->WriteEndElement(); //configuratin
 	writer->WriteEndDocument();
 	writer->Flush();
 }
@@ -211,7 +212,7 @@ inline void SVConfigXMLPrint::WriteCameras(Writer writer) const
 	writer->WriteEndElement();
 }
 
-inline const wchar_t * LoadingModeText(long mode)
+inline const wchar_t* LoadingModeText(long mode)
 {
 	if (ContinuousMode == mode) return L"Continuous Load";
 	if (SingleIterationMode == mode) return L"Single Iteration";
@@ -309,26 +310,26 @@ inline void SVConfigXMLPrint::WriteFileAcq(Writer writer, SvIe::SVVirtualCamera*
 	writer->WriteEndElement();
 }
 
-inline const wchar_t * PPQModeText(SvDef::SVPPQOutputModeEnum mode)
+inline const wchar_t* PPQModeText(SvDef::SVPPQOutputModeEnum mode)
 {
 	switch (mode)
 	{
-		case SvDef::SVPPQNextTriggerMode:	// Resets outputs on trigger. Writes outputs immediately.
-			return L"NextTrigger";
-		case SvDef::SVPPQTimeDelayMode:	// Resets outputs on trigger. Writes outputs after delay time is over, even if data isn't complete.
-			// Aborts waiting if new trigger occurs.
-			return L"TimeDelay";
-		case SvDef::SVPPQTimeDelayAndDataCompleteMode:	// Resets outputs on trigger. Writes outputs after delay time is over and data is complete.
-			// Aborts waiting if new trigger occurs.
-			return L"TimeDelayDataCompletion";
-		case SvDef::SVPPQExtendedTimeDelayMode:		// Doesn't reset outputs on trigger. Writes outputs after delay time is over, even if data isn't complete.
-															// Aborts waiting if product leaves PPQ.
-			return L"ExtendedTimeDelayMode";
-		case SvDef::SVPPQExtendedTimeDelayAndDataCompleteMode: // Doesn't reset outputs on trigger. Writes outputs after delay time is over and data is complete.
-			// Aborts waiting if product leaves PPQ.
-			return L"ExtendedTimeDelayDataCompletion";
-		default:
-			return invalid;
+	case SvDef::SVPPQNextTriggerMode:	// Resets outputs on trigger. Writes outputs immediately.
+		return L"NextTrigger";
+	case SvDef::SVPPQTimeDelayMode:	// Resets outputs on trigger. Writes outputs after delay time is over, even if data isn't complete.
+		// Aborts waiting if new trigger occurs.
+		return L"TimeDelay";
+	case SvDef::SVPPQTimeDelayAndDataCompleteMode:	// Resets outputs on trigger. Writes outputs after delay time is over and data is complete.
+		// Aborts waiting if new trigger occurs.
+		return L"TimeDelayDataCompletion";
+	case SvDef::SVPPQExtendedTimeDelayMode:		// Doesn't reset outputs on trigger. Writes outputs after delay time is over, even if data isn't complete.
+														// Aborts waiting if product leaves PPQ.
+		return L"ExtendedTimeDelayMode";
+	case SvDef::SVPPQExtendedTimeDelayAndDataCompleteMode: // Doesn't reset outputs on trigger. Writes outputs after delay time is over and data is complete.
+		// Aborts waiting if product leaves PPQ.
+		return L"ExtendedTimeDelayDataCompletion";
+	default:
+		return invalid;
 	}
 }
 
@@ -360,10 +361,10 @@ inline void SVConfigXMLPrint::WritePPQs(Writer writer) const
 		writer->WriteStartElement(nullptr, L"PPQ", nullptr);
 		writer->WriteAttributeString(nullptr, XML_Name, nullptr, SvUl::to_utf16(pPPQ->GetName(), cp_dflt).c_str());
 
-		SvDef::SVPPQOutputModeEnum	enumPPQOutputMode{pPPQ->getPPQOutputMode()};
-		long	lPPQLength{pPPQ->getPPQLength()};	// PPQLength
-		long	lResetDelay{pPPQ->getResetDelay()};	// PPQOutputResetDelay
-		long	lDelayTime{pPPQ->getOutputDelay()};	// PPQOutputDelayTime
+		SvDef::SVPPQOutputModeEnum	enumPPQOutputMode{ pPPQ->getPPQOutputMode() };
+		long	lPPQLength{ pPPQ->getPPQLength() };	// PPQLength
+		long	lResetDelay{ pPPQ->getResetDelay() };	// PPQOutputResetDelay
+		long	lDelayTime{ pPPQ->getOutputDelay() };	// PPQOutputDelayTime
 
 		writer->WriteAttributeString(nullptr, L"Mode", nullptr, PPQModeText(enumPPQOutputMode));
 		writer->WriteAttributeString(nullptr, L"Length", nullptr, _itow(lPPQLength, buff, 10));
@@ -585,7 +586,7 @@ inline void SVConfigXMLPrint::WriteModuleIO(Writer writer) const
 
 	SVConfigurationObject* pConfig(nullptr);
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-	SVObserverApp*         pApp = dynamic_cast <SVObserverApp*> (AfxGetApp());
+	SVObserverApp* pApp = dynamic_cast <SVObserverApp*> (AfxGetApp());
 
 	// Print IODoc contents
 	if (pApp->GetIODoc())
@@ -842,7 +843,7 @@ inline void SVConfigXMLPrint::WritePPQBar(Writer writer) const
 					writer->WriteComment(L"No IO Entries");
 				}
 
-				for(const auto& pEntry : pPPQ->GetAllInputs())
+				for (const auto& pEntry : pPPQ->GetAllInputs())
 				{
 					if (pEntry->m_PPQIndex == intPPQPos)
 					{
@@ -882,7 +883,7 @@ inline void SVConfigXMLPrint::WritePPQBar(Writer writer) const
 	writer->WriteEndElement();
 }
 
-inline std::wstring utf16(const std::string & str) { return SvUl::to_utf16(str.c_str(), cp_dflt); }
+inline std::wstring utf16(const std::string& str) { return SvUl::to_utf16(str.c_str(), cp_dflt); }
 
 inline void SVConfigXMLPrint::WriteValueObject(Writer writer, SVObjectClass* pObj) const
 {
@@ -914,12 +915,12 @@ inline void SVConfigXMLPrint::WriteValueObject(Writer writer, SVObjectClass* pOb
 	}
 }
 
-inline void SVConfigXMLPrint::WriteTool(Writer writer, SvTo::SVToolClass * ts) const
+inline void SVConfigXMLPrint::WriteTool(Writer writer, SvTo::SVToolClass* ts) const
 {
 	if (ts)
 	{
-		SvIe::SVImageClass*           pCurrentSourceImage = nullptr;
-		SvTo::SVToolClass*            pTool = ts;
+		SvIe::SVImageClass* pCurrentSourceImage = nullptr;
+		SvTo::SVToolClass* pTool = ts;
 		SvOl::SVInObjectInfoStruct* l_psvImageInfo = nullptr;
 		SvOl::SVInObjectInfoStruct* l_psvLastImageInfo = nullptr;
 
@@ -943,7 +944,7 @@ inline void SVConfigXMLPrint::WriteTool(Writer writer, SvTo::SVToolClass * ts) c
 	}
 }
 
-inline void SVConfigXMLPrint::WriteArchiveTool(Writer writer, SvTo::SVArchiveTool * ar) const
+inline void SVConfigXMLPrint::WriteArchiveTool(Writer writer, SvTo::SVArchiveTool* ar) const
 {
 	if (ar)
 	{
@@ -951,7 +952,7 @@ inline void SVConfigXMLPrint::WriteArchiveTool(Writer writer, SvTo::SVArchiveToo
 
 		writer->WriteStartElement(nullptr, L"Results", nullptr);
 		const auto& rRecVec = ar->m_ResultCollection.getRecordVec();
-		for (int i=0; i< rRecVec.size(); ++i)
+		for (int i = 0; i < rRecVec.size(); ++i)
 		{
 			if (nullptr != rRecVec[i].GetObjectReference().getObject())
 			{
@@ -961,12 +962,12 @@ inline void SVConfigXMLPrint::WriteArchiveTool(Writer writer, SvTo::SVArchiveToo
 				writer->WriteEndElement();
 			}
 		}
-		
+
 		writer->WriteEndElement();
 		writer->WriteStartElement(nullptr, L"Images", nullptr);
 
 		const auto& rRecImageVec = ar->m_ImageCollection.getRecordVec();
-		for (int i = 0; i< rRecImageVec.size(); ++i)
+		for (int i = 0; i < rRecImageVec.size(); ++i)
 		{
 			writer->WriteStartElement(nullptr, L"Result", nullptr);
 			writer->WriteAttributeString(nullptr, L"Number", nullptr, _itow(i + 1, buff, 10));
@@ -1003,7 +1004,7 @@ inline void SVConfigXMLPrint::WriteObject(Writer writer, SVObjectClass* pObject)
 		{
 			return;
 		}
-	}	
+	}
 
 	// If object is a value object, print name and value.
 	if (nullptr != dynamic_cast<SvOi::IValueObject*> (pObject))
@@ -1145,7 +1146,7 @@ void SVConfigXMLPrint::WriteChildren(Writer writer, SVObjectClass* pObj) const
 	if (SvIe::SVTaskObjectListClass* pTaskObj = dynamic_cast <SvIe::SVTaskObjectListClass*> (pObj))
 	{
 		writer->WriteStartElement(nullptr, L"Children", nullptr);
-		if (SVToolSet* pToolSet = dynamic_cast <SVToolSet *>(pObj))
+		if (SVToolSet* pToolSet = dynamic_cast <SVToolSet*>(pObj))
 		{
 			SVToolGrouping toolGroupings = GetToolGroupings(pToolSet->GetInspection()->getObjectId());
 			if (toolGroupings.size())
@@ -1155,39 +1156,39 @@ void SVConfigXMLPrint::WriteChildren(Writer writer, SVObjectClass* pObj) const
 				{
 					switch (it->second.m_type)
 					{
-						case ToolGroupData::StartOfGroup:
+					case ToolGroupData::StartOfGroup:
+					{
+						if (bToolGroupActive)
 						{
-							if (bToolGroupActive)
-							{
-								writer->WriteEndElement();
-							}
-							bToolGroupActive = true;
-							writer->WriteStartElement(nullptr, L"ToolGrouping", nullptr);
-							std::wstring name = SvUl::to_utf16(it->first.c_str(), cp_dflt);
-							writer->WriteAttributeString(nullptr, XML_Name, nullptr, name.c_str());
-						}
-						break;
-
-						case ToolGroupData::EndOfGroup:
-						{
-							writer->WriteStartElement(nullptr, L"EndToolGrouping", nullptr);
-							std::wstring name = SvUl::to_utf16(it->first.c_str(), cp_dflt);
-							writer->WriteAttributeString(nullptr, XML_Name, nullptr, name.c_str());
 							writer->WriteEndElement();
-							writer->WriteEndElement(); // end of start group
-							bToolGroupActive = false;
 						}
-						break;
+						bToolGroupActive = true;
+						writer->WriteStartElement(nullptr, L"ToolGrouping", nullptr);
+						std::wstring name = SvUl::to_utf16(it->first.c_str(), cp_dflt);
+						writer->WriteAttributeString(nullptr, XML_Name, nullptr, name.c_str());
+					}
+					break;
 
-						case ToolGroupData::Tool:
+					case ToolGroupData::EndOfGroup:
+					{
+						writer->WriteStartElement(nullptr, L"EndToolGrouping", nullptr);
+						std::wstring name = SvUl::to_utf16(it->first.c_str(), cp_dflt);
+						writer->WriteAttributeString(nullptr, XML_Name, nullptr, name.c_str());
+						writer->WriteEndElement();
+						writer->WriteEndElement(); // end of start group
+						bToolGroupActive = false;
+					}
+					break;
+
+					case ToolGroupData::Tool:
+					{
+						SVObjectClass* pTool = GetTool(it->first.c_str(), *pTaskObj);
+						if (pTool)
 						{
-							SVObjectClass* pTool = GetTool(it->first.c_str(), *pTaskObj);
-							if (pTool)
-							{
-								WriteObject(writer, pTool);
-							}
+							WriteObject(writer, pTool);
 						}
-						break;
+					}
+					break;
 					}
 				}
 				if (bToolGroupActive)
@@ -1264,44 +1265,44 @@ void SVConfigXMLPrint::WriteIOEntryObject(Writer writer, SVIOEntryHostStructPtr 
 
 	switch (IOEntry->m_ObjectType)
 	{
-		case IO_DIGITAL_INPUT:
-		{
-			SVDigitalInputObject* pDigInput = dynamic_cast<SVDigitalInputObject*>(l_pObject);
-			if (pDigInput->IsForced())
-				sValue = pDigInput->GetForcedValue() ? L"1" : L"0";
-			else
-				sValue = L" ";
-			WriteValueObject(writer, L"Property", L"Forced", sValue.c_str());
+	case IO_DIGITAL_INPUT:
+	{
+		SVDigitalInputObject* pDigInput = dynamic_cast<SVDigitalInputObject*>(l_pObject);
+		if (pDigInput->IsForced())
+			sValue = pDigInput->GetForcedValue() ? L"1" : L"0";
+		else
+			sValue = L" ";
+		WriteValueObject(writer, L"Property", L"Forced", sValue.c_str());
 
-			WriteValueObject(writer, L"Property", L"Inverted", pDigInput->IsInverted() ? L"1" : L" ");
-			break;
-		}
+		WriteValueObject(writer, L"Property", L"Inverted", pDigInput->IsInverted() ? L"1" : L" ");
+		break;
+	}
 
-		case IO_DIGITAL_OUTPUT:
-		{
-			SVDigitalOutputObject* pDigOutput = dynamic_cast<SVDigitalOutputObject*>(l_pObject);
-			if (pDigOutput->IsForced())
-				sValue = pDigOutput->GetForcedValue() ? L"1" : L"0";
-			else
-				sValue = L" ";
-			WriteValueObject(writer, L"Property", L"Forced", sValue.c_str());
+	case IO_DIGITAL_OUTPUT:
+	{
+		SVDigitalOutputObject* pDigOutput = dynamic_cast<SVDigitalOutputObject*>(l_pObject);
+		if (pDigOutput->IsForced())
+			sValue = pDigOutput->GetForcedValue() ? L"1" : L"0";
+		else
+			sValue = L" ";
+		WriteValueObject(writer, L"Property", L"Forced", sValue.c_str());
 
-			sValue = pDigOutput->IsInverted() ? L"1" : L" ";
-			WriteValueObject(writer, L"Property", L"Inverted", sValue.c_str());
+		sValue = pDigOutput->IsInverted() ? L"1" : L" ";
+		WriteValueObject(writer, L"Property", L"Inverted", sValue.c_str());
 
-			sValue = pDigOutput->isCombined() ? L"1" : L" ";
-			WriteValueObject(writer, L"Property", L"Combined", sValue.c_str());
+		sValue = pDigOutput->isCombined() ? L"1" : L" ";
+		WriteValueObject(writer, L"Property", L"Combined", sValue.c_str());
 
-			sValue = pDigOutput->isAndACK() ? L"AND w ACK" : L"OR w NAK";
-			WriteValueObject(writer, L"Property", L"Combined using", sValue.c_str());
-			break;
-		}
+		sValue = pDigOutput->isAndACK() ? L"AND w ACK" : L"OR w NAK";
+		WriteValueObject(writer, L"Property", L"Combined using", sValue.c_str());
+		break;
+	}
 
-		case IO_REMOTE_INPUT:
-			break;
+	case IO_REMOTE_INPUT:
+		break;
 
-		case IO_REMOTE_OUTPUT:
-			break;
+	case IO_REMOTE_OUTPUT:
+		break;
 	}
 }
 
@@ -1351,7 +1352,7 @@ inline SVDeviceParamConfigXMLHelper::SVDeviceParamConfigXMLHelper(
 {
 }
 
-inline HRESULT SVDeviceParamConfigXMLHelper::Visit(SVDeviceParam& )
+inline HRESULT SVDeviceParamConfigXMLHelper::Visit(SVDeviceParam&)
 {
 	return S_OK;
 }
@@ -1437,12 +1438,12 @@ inline HRESULT SVDeviceParamConfigXMLHelper::Visit(SVStringValueDeviceParam& par
 	return S_OK;
 }
 
-inline HRESULT SVDeviceParamConfigXMLHelper::Visit(SVParamListDeviceParam& )
+inline HRESULT SVDeviceParamConfigXMLHelper::Visit(SVParamListDeviceParam&)
 {
 	return S_OK;
 }
 
-inline HRESULT SVDeviceParamConfigXMLHelper::Visit(SVLutDeviceParam& )
+inline HRESULT SVDeviceParamConfigXMLHelper::Visit(SVLutDeviceParam&)
 {
 	return S_OK;
 }
@@ -1503,3 +1504,64 @@ inline HRESULT SVDeviceParamConfigXMLHelper::Visit(SVCustomDeviceParam& param)
 	return S_OK;
 }
 
+
+inline void SVConfigXMLPrint::WriteExternalFiles(Writer writer) const
+{
+	SVConfigurationObject* pConfig(nullptr);
+	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
+	if (nullptr == pConfig)
+	{
+		return;
+	}
+	pConfig->UpdateAudidFiles(true);
+	writer->WriteStartElement(nullptr, L"External_Files", nullptr);
+	auto DefaultList = pConfig->GetAudidDefaultList();
+	for (auto& Element : DefaultList)
+	{
+		if (Element.bignore == false)
+		{
+			writer->WriteStartElement(nullptr, L"File", nullptr);
+			writer->WriteAttributeString(nullptr, L"Name", nullptr, SvUl::to_utf16(Element.GetFilename().c_str(), cp_dflt).c_str());
+			writer->WriteStartElement(nullptr, L"FullName", nullptr);
+			writer->WriteString(SvUl::to_utf16(Element.GetFullname().c_str(), cp_dflt).c_str());
+			writer->WriteEndElement();
+			writer->WriteStartElement(nullptr, L"WriteDate", nullptr);
+			writer->WriteString(SvUl::to_utf16(Element.GetFormatedWriteDate().c_str(), cp_dflt).c_str());
+			writer->WriteEndElement();
+			writer->WriteStartElement(nullptr, L"Size", nullptr);
+			writer->WriteString(SvUl::to_utf16(Element.GetFormatedSize().c_str(), cp_dflt).c_str());
+			writer->WriteEndElement();
+			writer->WriteStartElement(nullptr, L"hash", nullptr);
+			writer->WriteString(SvUl::to_utf16(Element.GetHashvalue().c_str(), cp_dflt).c_str());
+			writer->WriteEndElement();
+			writer->WriteEndElement();
+		}
+
+	}
+
+	writer->WriteEndElement();
+	writer->WriteStartElement(nullptr, L"Aditional_External_Files", nullptr);
+	auto WhiteList = pConfig->GetAudidWhiteList();
+	for (auto& Element : WhiteList)
+	{
+		if (Element.bignore == false)
+		{
+			writer->WriteStartElement(nullptr, L"File", nullptr);
+			writer->WriteAttributeString(nullptr, L"Name", nullptr, SvUl::to_utf16(Element.GetFilename().c_str(), cp_dflt).c_str());
+			writer->WriteStartElement(nullptr, L"FullName", nullptr);
+			writer->WriteString(SvUl::to_utf16(Element.GetFullname().c_str(), cp_dflt).c_str());
+			writer->WriteEndElement();
+			writer->WriteStartElement(nullptr, L"WriteDate", nullptr);
+			writer->WriteString(SvUl::to_utf16(Element.GetFormatedWriteDate().c_str(), cp_dflt).c_str());
+			writer->WriteEndElement();
+			writer->WriteStartElement(nullptr, L"Size", nullptr);
+			writer->WriteString(SvUl::to_utf16(Element.GetFormatedSize().c_str(), cp_dflt).c_str());
+			writer->WriteEndElement();
+			writer->WriteStartElement(nullptr, L"hash", nullptr);
+			writer->WriteString(SvUl::to_utf16(Element.GetHashvalue().c_str(), cp_dflt).c_str());
+			writer->WriteEndElement();
+			writer->WriteEndElement();
+		}
+	}
+	writer->WriteEndElement();
+}

@@ -157,12 +157,14 @@
   <ItemGroup>
     <ClCompile Include="ArchiveExtractCallback.cpp" />
     <ClCompile Include="ArchiveUpdateCallback.cpp" />
+    <ClCompile Include="AudidFiles.cpp" />
     <ClCompile Include="BitmapHelper.cpp" />
     <ClCompile Include="InStreamWrapper.cpp" />
     <ClCompile Include="LoadDll.cpp" />
     <ClCompile Include="OutStreamWrapper.cpp" />
     <ClCompile Include="PropVariant.cpp" />
     <ClCompile Include="SafeArrayHelper.cpp" />
+    <ClCompile Include="SHA256.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -181,6 +183,7 @@
     <ClInclude Include="7zTypes.h" />
     <ClInclude Include="ArchiveExtractCallback.h" />
     <ClInclude Include="ArchiveUpdateCallback.h" />
+    <ClInclude Include="AudidFiles.h" />
     <ClInclude Include="BitmapHelper.h" />
     <ClInclude Include="IArchive.h" />
     <ClInclude Include="ICoder.h" />
@@ -198,6 +201,7 @@
     <ClInclude Include="PropVariant.h" />
     <ClInclude Include="SafeArrayHelper.h" />
     <ClInclude Include="SetBits.h" />
+    <ClInclude Include="SHA256.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="StringHelper.h" />
     <ClInclude Include="StringToEnum.h" />

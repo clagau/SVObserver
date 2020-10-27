@@ -66,6 +66,8 @@ public:
 	afx_msg void OnStopTestMode();
 	afx_msg void OnThreadAffinitySetup();
 	afx_msg void OnUpdateThreadAffinitySetup(CCmdUI* PCmdUI);
+	afx_msg void  OnUpdateExtrasConfigReportDefaultFiles(CCmdUI* PCmdUI);
+	afx_msg void  OnUpdateExtrasConfigReportAdditionalFiles(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateModeRun(CCmdUI* PCmdUI);
 	afx_msg void OnFileCloseConfig();
 	afx_msg void OnFileSaveAll();
@@ -140,6 +142,8 @@ public:
 	afx_msg void OnRCCloseAndCleanUpDownloadDirectory();
 	afx_msg void OnUpdateAllIOViews();
 	afx_msg void OnExtrasSecuritySetup();
+	afx_msg void  OnExtrasConfigReportDefaultFiles();
+	afx_msg void  OnExtrasConfigReportAdditionalFiles();
 	afx_msg void OnModeEdit();
 	afx_msg void OnUpdateModeEdit(CCmdUI* pCmdUI);
 	afx_msg void OnTriggerSettings();

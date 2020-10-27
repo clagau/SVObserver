@@ -196,6 +196,9 @@ namespace  SvXml
 
 	constexpr char* CTAG_ADDITIONAL_CONFIG_FILES = _T("AdditionalConfigFiles");
 
+	constexpr char* CTAG_AUDDID_DEFAULT_LIST = _T("AudidDefaultList");
+	constexpr char* CTAG_AUDDID_WHITE_LIST = _T("AudidWhiteList");
+
 	/// These are tool copy / paste tags
 	constexpr char* ToolCopyTag = _T( "Tool-Copy" );
 	constexpr char* ToolsTag = _T( "Tools" );
@@ -206,4 +209,8 @@ namespace  SvXml
 	constexpr char* BaseTag = _T( "Base" );
 	constexpr char* TypeTag = _T( "Type" );
 	constexpr char* DataTag = _T( "</DATA>" );
+
+
+	constexpr char* CTAG_CALCULATE_HASH = _T("CalculateHash");
+	constexpr char* CTAG_IGNORE_FILE = _T("IgnoreFile");
 } //namespace SvXml
