@@ -89,8 +89,8 @@ bool LinearPixelCountingAnalyzer::CreateObject( const SVObjectLevelCreateStruct&
 	bool bOk = SVLinearAnalyzerClass::CreateObject(rCreateStructure);
 
 	// Set / Reset Printable Flag
-	blackPixelCount.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
-	whitePixelCount.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
+	blackPixelCount.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
+	whitePixelCount.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
 
 	m_isCreated = bOk;
 

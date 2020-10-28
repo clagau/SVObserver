@@ -246,15 +246,15 @@ bool SVOCVAnalyzeResult::CreateObject(	const SVObjectLevelCreateStruct& rCreateS
 	}
 
 	// Set / Reset Printable Flag
-	UINT cAttibutes = SvPb::printable | SvPb::setableOnline | SvPb::remotelySetable;
+	UINT cAttibutes = SvPb::audittrail | SvPb::setableOnline | SvPb::remotelySetable;
 	m_svoMatchString.SetObjectAttributesAllowed( cAttibutes, SvOi::SetAttributeType::AddAttribute );
-	m_svoFoundString.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
-	m_lvoMatchLineNumber.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
+	m_svoFoundString.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
+	m_lvoMatchLineNumber.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
 	m_bvoPerformOCR.SetObjectAttributesAllowed( cAttibutes, SvOi::SetAttributeType::OverwriteAttribute );
 
-	m_dvoHighestMatchScore.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
-	m_dvoLowestMatchScore.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
-	m_dvoAverageMatchScore.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
+	m_dvoHighestMatchScore.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
+	m_dvoLowestMatchScore.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
+	m_dvoAverageMatchScore.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
 
 	m_fnvoFontFileName.SetObjectAttributesAllowed( cAttibutes, SvOi::SetAttributeType::AddAttribute );
 	m_fnvoConstraintsFileName.SetObjectAttributesAllowed( cAttibutes, SvOi::SetAttributeType::AddAttribute );

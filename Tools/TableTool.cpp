@@ -84,7 +84,7 @@ bool TableTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure 
 	}
 
 	// These values will not be exposed for the this Tool.
-	constexpr UINT cAttribute {SvDef::selectableAttributes | SvPb::printable};
+	constexpr UINT cAttribute {SvDef::selectableAttributes | SvPb::audittrail};
 	m_drawToolFlag.SetObjectAttributesAllowed(cAttribute, SvOi::SetAttributeType::RemoveAttribute);
 
 	m_isCreated = bOk;

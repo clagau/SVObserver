@@ -1210,9 +1210,9 @@ bool SVTaskObjectClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStr
 		}
 	}
 
-	constexpr UINT cAttribute {SvDef::selectableAttributes | SvPb::printable};
-	m_statusTag.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
-	m_statusColor.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
+	constexpr UINT cAttribute {SvDef::selectableAttributes | SvPb::audittrail};
+	m_statusTag.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
+	m_statusColor.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
 
 	m_isCreated = Result;
 

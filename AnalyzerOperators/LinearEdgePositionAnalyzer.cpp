@@ -80,8 +80,8 @@ bool LinearEdgePositionAnalyzer::CreateObject( const SVObjectLevelCreateStruct& 
 {
 	bool bOk = SVLinearAnalyzerClass::CreateObject(rCreateStructure);
 
-	dpEdge.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
-	m_svLinearDistance.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
+	dpEdge.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
+	m_svLinearDistance.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
 
 	m_isCreated = bOk;
 

@@ -1,33 +1,33 @@
 //*****************************************************************************
 // \copyright COPYRIGHT (c) 2020/10/05,2020/10/05 by Seidenader Maschinenbau GmbH. All Rights Reserved 
-/// \file AudidFiles.h
-///  CAudidfiles is a container for the external files used in Audidtrail. In the Audidtrail 
+/// \file AuditFiles.h
+///  CAuditfiles is a container for the external files used in Audittrail. In the Audittrail 
 /// some properties and  ahash code of external files will be included  
 //******************************************************************************
 
 #pragma once
 namespace SvUl
 {
-	enum class  AudidFileType
+	enum class  AuditFileType
 	{
 		unknown
 	};
-	enum class AudidListType
+	enum class AuditListType
 	{
 		default, white
 	};
 
-	struct AudidFile
+	struct AuditFile
 	{
-		explicit AudidFile(LPCSTR fullname) :Fullname(fullname)
+		explicit AuditFile(LPCSTR fullname) :Fullname(fullname)
 		{};
-		explicit AudidFile(LPCSTR fullname, bool bh, bool bi) :Fullname(fullname),
+		explicit AuditFile(LPCSTR fullname, bool bh, bool bi) :Fullname(fullname),
 			bhash(bh),
 			bignore(bi)
 		{};
 
-		AudidFile() = default;
-		~AudidFile() = default;
+		AuditFile() = default;
+		~AuditFile() = default;
 
 		void Trace() const;
 		std::string GetFormatedWriteDate() const;
@@ -42,7 +42,7 @@ namespace SvUl
 
 		static std::string Flag2String(bool flag);
 		static bool   String2Flag(const std::string& flags);
-		friend bool operator<(const AudidFile& l, const AudidFile& r)
+		friend bool operator<(const AuditFile& l, const AuditFile& r)
 		{
 			return l.Fullname < r.Fullname;
 		};
@@ -50,7 +50,7 @@ namespace SvUl
 
 	public:
 		std::string Fullname;
-		AudidFileType type{ AudidFileType::unknown };
+		AuditFileType type{ AuditFileType::unknown };
 		bool bhash{ true };
 		bool bignore{ false };
 
@@ -65,14 +65,14 @@ namespace SvUl
 
 
 
-	class CAudidFiles
+	class CAuditFiles
 	{
 	public:
 
 		//Fills the m_Files;
-		size_t  SetValues(const std::vector< AudidFile>& Files, bool bOnlyFlags);
-		size_t  SetValues(std::vector< AudidFile>&& Files);
-		size_t  SetValues(const std::vector< AudidFile>& Files);
+		size_t  SetValues(const std::vector< AuditFile>& Files, bool bOnlyFlags);
+		size_t  SetValues(std::vector< AuditFile>&& Files);
+		size_t  SetValues(const std::vector< AuditFile>& Files);
 
 
 		//Ensure DefaultList contains the same files as RunfileList
@@ -84,10 +84,10 @@ namespace SvUl
 		//calculate Hashcode
 		void CalculateSHA256();
 
-		std::vector< AudidFile>& GetFiles() { return m_Files; };
+		std::vector< AuditFile>& GetFiles() { return m_Files; };
 
 	private:
-		std::vector<AudidFile> m_Files;
+		std::vector<AuditFile> m_Files;
 
 
 	};

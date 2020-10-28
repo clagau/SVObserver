@@ -683,7 +683,7 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObject, CPoin
 	if( nullptr != pValueObject )
 	{
 		sLabel = pObject->GetName();
-		if ( pObject->ObjectAttributesAllowed() & SvPb::printable )
+		if ( pObject->ObjectAttributesAllowed() & SvPb::audittrail )
 		{
 			bool bGotValue = false;
 
@@ -714,7 +714,7 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObject, CPoin
 		{
 			if ( nullptr != dynamic_cast <SvOp::SVShapeMaskHelperClass*> (pObject) )
 			{
-				if ( !( pObject->ObjectAttributesAllowed() & SvPb::printable) )	// EB 20050818 - hack this instead of doing it right
+				if ( !( pObject->ObjectAttributesAllowed() & SvPb::audittrail) )	// EB 20050818 - hack this instead of doing it right
 				{
 					break;
 				}

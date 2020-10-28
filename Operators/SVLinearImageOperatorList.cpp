@@ -57,11 +57,11 @@ bool SVLinearImageOperatorList::CreateObject(const SVObjectLevelCreateStruct& rC
 	ResetLogicalROIImage();
 
 	l_bOk &= S_OK == UpdateLineExtentData();
-	m_svLinearData.SetObjectAttributesAllowed(SvPb::viewable | SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
+	m_svLinearData.SetObjectAttributesAllowed(SvPb::viewable | SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
 
-	m_MaxProfile.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
-	m_MinProfile.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
-	m_ProfileDelta.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
+	m_MaxProfile.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
+	m_MinProfile.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
+	m_ProfileDelta.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
 	
 
 

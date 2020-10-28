@@ -94,7 +94,7 @@ bool SVDPointXResult::CreateObject( const SVObjectLevelCreateStruct& rCreateStru
 	bOk &= nullptr != getInputPoint();
 
 	// Set / Reset Printable Flag
-	x.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
+	x.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
 	
 	m_isCreated = bOk;
 

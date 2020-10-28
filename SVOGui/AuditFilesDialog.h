@@ -1,25 +1,25 @@
 //*****************************************************************************
 // \copyright COPYRIGHT (c) 2020/10/27,2020/10/27 by Seidenader Maschinenbau GmbH. All Rights Reserved 
-/// \file AudidFilesDialog.h
+/// \file AuditFilesDialog.h
 /// Dialog for config external files in audidtrail 
 //******************************************************************************
 
 #pragma once
-#include "SVUtilityLibrary/AudidFiles.h"
-#include <afxdialogex.h>
+#include "SVUtilityLibrary/AuditFiles.h"
+
 
 namespace SvOg
 {
 
-	class AudidFilesDialog : public CDialogEx
+	class AuditFilesDialog : public CDialog
 	{
-		DECLARE_DYNAMIC(AudidFilesDialog)
+		DECLARE_DYNAMIC(AuditFilesDialog)
 
 	public:
 		enum columnType { Ename = 0, Esize, Edate, EIgnore, ECalcHash, EHashValue, EColumncount };
 		enum DialogType { EDefault, WhiteList };
-		AudidFilesDialog(const std::vector< SvUl::AudidFile>& rList, DialogType t, CWnd* pParent = nullptr);   // standard constructor
-		virtual ~AudidFilesDialog();
+		AuditFilesDialog(const std::vector< SvUl::AuditFile>& rList, DialogType t, CWnd* pParent = nullptr);   // standard constructor
+		virtual ~AuditFilesDialog();
 
 		// Dialog Data
 #ifdef AFX_DESIGN_TIME
@@ -28,7 +28,7 @@ namespace SvOg
 
 	public: 
 
-		std::vector< SvUl::AudidFile>& GetFiles() { return m_AudidFiles.GetFiles(); };
+		std::vector< SvUl::AuditFile>& GetFiles() { return m_AuditFiles.GetFiles(); };
 	protected:
 		virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 		void UpdateListctrl(bool rebuild);
@@ -58,7 +58,7 @@ namespace SvOg
 
 		CMenu m_ContextMenu;
 		DialogType m_DialogType;
-		SvUl::CAudidFiles                 m_AudidFiles;
+		SvUl::CAuditFiles                 m_AuditFiles;
 		CListCtrl m_ListCtrl;
 
 	};

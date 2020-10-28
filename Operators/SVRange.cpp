@@ -98,11 +98,11 @@ bool SVRange::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 	m_isCreated = SVTaskObjectClass::CreateObject(rCreateStructure);
 
 	// Set / Reset Printable Flags
-	const UINT cAttributes = SvPb::printable | SvPb::setableOnline | SvPb::remotelySetable;
+	const UINT cAttributes = SvPb::audittrail | SvPb::setableOnline | SvPb::remotelySetable;
 	for (int i = 0; i < RangeEnum::ER_COUNT; i++)
 	{
 		m_LinkedValues[i].SetObjectAttributesAllowed(cAttributes, SvOi::SetAttributeType::AddAttribute);
-		m_LinkedValues[i].getLinkedName().SetObjectAttributesAllowed(SvPb::printable | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
+		m_LinkedValues[i].getLinkedName().SetObjectAttributesAllowed(SvPb::audittrail | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
 	}
 
 	return m_isCreated;

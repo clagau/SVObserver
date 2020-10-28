@@ -125,16 +125,16 @@ bool SVThresholdClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStr
 	bool bOk = SVUnaryImageOperatorClass::CreateObject(rCreateStructure);
 
 	// Set / Reset Printable Flag
-	m_threshActivate.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
-	m_blackBackground.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
+	m_threshActivate.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
+	m_blackBackground.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
 
-	m_upperThreshActivate.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
-	m_lowerThreshActivate.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
-	m_useExternalLT.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
-	m_useExternalUT.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
+	m_upperThreshActivate.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
+	m_lowerThreshActivate.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
+	m_useExternalLT.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
+	m_useExternalUT.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
 	
-	m_autoThreshold.SetObjectAttributesAllowed( SvPb::printable | SvPb::setableOnline | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
-	m_useExternalATM.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
+	m_autoThreshold.SetObjectAttributesAllowed( SvPb::audittrail | SvPb::setableOnline | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
+	m_useExternalATM.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
 
 	m_upperThresh.SetObjectAttributesAllowed( SvPb::setableOnline | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
 	m_lowerThresh.SetObjectAttributesAllowed( SvPb::setableOnline | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
@@ -543,13 +543,13 @@ bool SVThresholdClass::Rebuild()
 	m_useExternalUT.GetValue( l_bUTValue );
 
 	SvOi::SetAttributeType AddRemoveType = l_bATMValue ? SvOi::SetAttributeType::RemoveAttribute : SvOi::SetAttributeType::AddAttribute;
-	m_dAutoThresholdMultiplier.SetObjectAttributesAllowed( SvPb::printable, AddRemoveType );
+	m_dAutoThresholdMultiplier.SetObjectAttributesAllowed( SvPb::audittrail, AddRemoveType );
 
 	AddRemoveType = (l_bAutoValue || l_bLTValue) ? SvOi::SetAttributeType::RemoveAttribute : SvOi::SetAttributeType::AddAttribute;
-	m_lowerThresh.SetObjectAttributesAllowed( SvPb::printable, AddRemoveType );
+	m_lowerThresh.SetObjectAttributesAllowed( SvPb::audittrail, AddRemoveType );
 
 	AddRemoveType = (l_bAutoValue || l_bUTValue) ? SvOi::SetAttributeType::RemoveAttribute : SvOi::SetAttributeType::AddAttribute;
-	m_upperThresh.SetObjectAttributesAllowed( SvPb::printable, AddRemoveType );
+	m_upperThresh.SetObjectAttributesAllowed( SvPb::audittrail, AddRemoveType );
 
 	return Result;
 }

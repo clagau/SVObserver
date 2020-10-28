@@ -97,7 +97,7 @@ void SVCylindricalWarpToolClass::LocalInitialize()
 	                                   CYLINDRICAL_WARP_TYPE_VERTICAL, WarpTypeVertical);
 	m_svWarpType.SetEnumTypes( EnumTypes.c_str() );
 	m_svWarpType.SetDefaultValue( CYLINDRICAL_WARP_TYPE_HORIZONTAL, true);
-	m_svWarpType.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
+	m_svWarpType.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
 
 	// Set Default Interpolation Mode to use Nearest Neighbor
 	std::string Mode;
@@ -131,7 +131,7 @@ void SVCylindricalWarpToolClass::LocalInitialize()
 	// the work is done in SVImageExtentClass.
 	RegisterEmbeddedObject( &m_svWarpAngle, SvPb::WarpAngleEId, IDS_OBJECTNAME_WARPANGLE, false, SvOi::SVResetItemTool );
 	m_svWarpAngle.SetDefaultValue( 180.0, true);
-	m_svWarpAngle.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
+	m_svWarpAngle.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
 	m_toolExtent.SetExtentObject( SvPb::SVExtentPropertyStartAngle, &m_svWarpAngle );
 
 	// Add Default Inputs and Outputs

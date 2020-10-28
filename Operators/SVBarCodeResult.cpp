@@ -121,14 +121,14 @@ bool SVBarCodeResult::CreateObject(const SVObjectLevelCreateStruct& rCreateStruc
 
 	if (Result)
 	{
-		pRegExpression->SetObjectAttributesAllowed(SvPb::printable | SvPb::setableOnline | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
+		pRegExpression->SetObjectAttributesAllowed(SvPb::audittrail | SvPb::setableOnline | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
 	}
 
-	msv_bUseSingleMatchString.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::AddAttribute);
-	msv_szMatchStringFileName.SetObjectAttributesAllowed(SvPb::printable | SvPb::setableOnline | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
-	msv_lMatchStringLine.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
-	msv_bUseMatchStringFile.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::AddAttribute);
-	m_dReadScore.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
+	msv_bUseSingleMatchString.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::AddAttribute);
+	msv_szMatchStringFileName.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::setableOnline | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
+	msv_lMatchStringLine.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
+	msv_bUseMatchStringFile.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::AddAttribute);
+	m_dReadScore.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
 	m_isCreated = Result;
 
 	return Result;

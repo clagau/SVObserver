@@ -74,7 +74,7 @@ bool LinearEdgeCountingAnalyzer::CreateObject( const SVObjectLevelCreateStruct& 
 	bool bOk = SVLinearAnalyzerClass::CreateObject(rCreateStructure);
 
 	// Set / Reset Printable Flag
-	m_svEdgeCount.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
+	m_svEdgeCount.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
 
 	m_isCreated = bOk;
 

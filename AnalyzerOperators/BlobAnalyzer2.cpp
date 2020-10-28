@@ -211,7 +211,7 @@ namespace SvAo
 
 		try
 		{
-			m_Index.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
+			m_Index.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
 
 			if (!SVImageAnalyzerClass::CreateObject(rCreateStructure))
 			{

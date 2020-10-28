@@ -93,7 +93,7 @@ void SVPolarTransformationToolClass::init()
 	m_svAngularMethod.SetEnumTypes( _T("Angular Method1=0,Angular Method2=1") );
 
 	m_svAngularMethod.SetDefaultValue( _T("Angular Method2"), true );
-	m_svAngularMethod.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
+	m_svAngularMethod.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
 
 	// Add the Image Transformation Class
 	SvOp::SVImagePolarTransform* pTransform = new SvOp::SVImagePolarTransform;

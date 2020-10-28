@@ -77,7 +77,7 @@ bool RingBufferTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStruc
 	m_SourceImageNames.SetObjectAttributesAllowed( SvPb::remotelySetable | SvPb::setableOnline, SvOi::SetAttributeType::RemoveAttribute );
 
 	// These values will not be exposed for the this Tool.
-	constexpr UINT cAttribute {SvDef::selectableAttributes | SvPb::printable};
+	constexpr UINT cAttribute {SvDef::selectableAttributes | SvPb::audittrail};
 	m_drawToolFlag.SetObjectAttributesAllowed(cAttribute, SvOi::SetAttributeType::RemoveAttribute);
 
 	m_isCreated = bOk;
@@ -321,7 +321,7 @@ void RingBufferTool::BuildEmbeddedObjectList ()
 	m_BufferDepth.getLinkedName().SetDefaultValue(_T(""), false);
 
 	RegisterEmbeddedObject( &m_FlagOfOutputImage, SvPb::RingBuffer_FlagOfOutputImagesEId, IDS_OBJECTNAME_RINGBUFFER_FLAG, false, SvOi::SVResetItemNone );
-	m_FlagOfOutputImage.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
+	m_FlagOfOutputImage.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
 	m_FlagOfOutputImage.SetDefaultValue( 0, true );
 	m_FlagOfOutputImage.setSaveValueFlag(false);
 

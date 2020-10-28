@@ -89,7 +89,7 @@ bool SVPointYResult::CreateObject( const SVObjectLevelCreateStruct& rCreateStruc
 {
 	bool bOk = SVResult::CreateObject(rCreateStructure) && nullptr != SvOl::getInput<SvVol::SVPointValueObjectClass>(m_inputObjectInfo);
 
-	m_Y.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
+	m_Y.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
 
 	m_isCreated = bOk;
 

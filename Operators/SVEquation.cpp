@@ -299,7 +299,7 @@ bool SVEquation::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 	bool bOk = SVTaskObjectClass::CreateObject(rCreateStructure) && nullptr != GetInspection();
 
 	// Set / Reset Printable Flag
-	enabled.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::AddAttribute);
+	enabled.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::AddAttribute);
 
 	SVObjectClass *owner = enabled.GetParent();
 	if (nullptr != owner)

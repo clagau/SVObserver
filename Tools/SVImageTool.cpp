@@ -144,11 +144,11 @@ bool SVImageToolClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStr
 	bool bOk = SVToolClass::CreateObject(rCreateStructure);
 
 	// Set / Reset Printable Flags
-	m_outputEnableOffsetA.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
-	m_outputOffsetAPoint.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
-	m_outputEnableOffsetB.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
-	m_outputOffsetBPoint.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
-	m_outputOperator.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
+	m_outputEnableOffsetA.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
+	m_outputOffsetAPoint.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
+	m_outputEnableOffsetB.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
+	m_outputOffsetBPoint.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
+	m_outputOperator.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
 
 	m_SourceImageNames.setSaveValueFlag(false);
 	m_SourceImageNames.SetObjectAttributesAllowed( SvPb::remotelySetable | SvPb::setableOnline, SvOi::SetAttributeType::RemoveAttribute );

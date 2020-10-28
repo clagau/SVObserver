@@ -64,7 +64,7 @@
 #include "InspectionCommands/CommandExternalHelper.h"
 #include "InspectionEngine/SVDigitizerProcessingClass.h"
 #include "SVFileSystemLibrary/SVFileNameManagerClass.h"
-#include "SVOGui/AudidFilesDialog.h"
+#include "SVOGui/AuditFilesDialog.h"
 #include "SVIOLibrary/SVInputObjectList.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVLibrary/SVPackedFile.h"
@@ -1592,16 +1592,16 @@ void SVObserverApp::OnExtrasConfigReportDefaultFiles()
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 	if ((nullptr != pConfig))
 	{
-		pConfig->UpdateAudidFiles(false);
+		pConfig->UpdateAuditFiles(false);
 	}
 	else
 	{
 		return;
 	}
-	SvOg::AudidFilesDialog Dlg(pConfig->GetAudidDefaultList(), SvOg::AudidFilesDialog::EDefault);
+	SvOg::AuditFilesDialog Dlg(pConfig->GetAuditDefaultList(), SvOg::AuditFilesDialog::EDefault);
 	if (Dlg.DoModal() == IDOK)
 	{
-		pConfig->SetAudidDefaultList(std::move(Dlg.GetFiles()));
+		pConfig->SetAuditDefaultList(std::move(Dlg.GetFiles()));
 	}
 }
 
@@ -1611,16 +1611,16 @@ void SVObserverApp::OnExtrasConfigReportAdditionalFiles()
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 	if ((nullptr != pConfig))
 	{
-		pConfig->UpdateAudidFiles(false);
+		pConfig->UpdateAuditFiles(false);
 	}
 	else
 	{
 		return;
 	}
-	SvOg::AudidFilesDialog Dlg(pConfig->GetAudidWhiteList(), SvOg::AudidFilesDialog::WhiteList);
+	SvOg::AuditFilesDialog Dlg(pConfig->GetAuditWhiteList(), SvOg::AuditFilesDialog::WhiteList);
 	if (Dlg.DoModal() == IDOK)
 	{
-		pConfig->SetAudidWhiteList(std::move(Dlg.GetFiles()));
+		pConfig->SetAuditWhiteList(std::move(Dlg.GetFiles()));
 	}
 }
 

@@ -284,7 +284,7 @@ void SVExternalToolTask::SetAllAttributes()
 		{
 			pResultObject->SetObjectAttributesAllowed(attribute, SvOi::OverwriteAttribute);
 		}
-		attribute &= ~SvPb::printable;
+		attribute &= ~SvPb::audittrail;
 		m_Data.m_aResultObjects[i].SetObjectAttributesAllowed(attribute, SvOi::OverwriteAttribute);
 	}
 
@@ -310,11 +310,11 @@ void SVExternalToolTask::SetAllAttributes()
 		std::string Temp;
 		m_Data.m_aDllDependencies[i].GetValue(Temp);
 		SvOi::SetAttributeType AddRemoveType = !Temp.empty() ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
-		m_Data.m_aDllDependencies[i].SetObjectAttributesAllowed(SvPb::printable, AddRemoveType);
+		m_Data.m_aDllDependencies[i].SetObjectAttributesAllowed(SvPb::audittrail, AddRemoveType);
 	}
-	m_Data.m_voToolVersion.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::AddAttribute);
-	m_Data.m_voToolName.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::AddAttribute);
-	m_Data.m_voDllPath.SetObjectAttributesAllowed(SvPb::printable | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
+	m_Data.m_voToolVersion.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::AddAttribute);
+	m_Data.m_voToolName.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::AddAttribute);
+	m_Data.m_voDllPath.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
 }
 
 SVExternalToolTask::~SVExternalToolTask()
@@ -1515,7 +1515,7 @@ HRESULT SVExternalToolTask::AllocateResult(int iIndex)
 			throw - 12347;
 		}
 
-		constexpr UINT cAttribute {SvDef::selectableAttributes | SvPb::printable};
+		constexpr UINT cAttribute {SvDef::selectableAttributes | SvPb::audittrail};
 		pValue->SetObjectAttributesAllowed(cAttribute, SvOi::SetAttributeType::RemoveAttribute);
 
 		// Ensure this Object's inputs get connected

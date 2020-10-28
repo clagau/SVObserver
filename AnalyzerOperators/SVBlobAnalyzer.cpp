@@ -771,17 +771,17 @@ bool SVBlobAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCreateS
 		if ( SvPb::noAttributes != m_Value[i].ObjectAttributesAllowed() )
 		{
 			//! Required for older configurations
-			m_Value[i].SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
+			m_Value[i].SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
 		}
 	}
 
 	//! Required for older configurations
-	m_PersistantFeaturesEnabled.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
-	m_lvoBlobSampleSize.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
-	m_SortFeature.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
-	m_SortAscending.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
-	m_bExcludeFailed.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
-	m_lvoNumberOfBlobsFound.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
+	m_PersistantFeaturesEnabled.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
+	m_lvoBlobSampleSize.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
+	m_SortFeature.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
+	m_SortAscending.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
+	m_bExcludeFailed.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
+	m_lvoNumberOfBlobsFound.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
 
 	return m_isCreated;
 }

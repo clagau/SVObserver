@@ -1,12 +1,12 @@
 //*****************************************************************************
 // \copyright COPYRIGHT (c) 2020/10/06,2020/10/06 by Seidenader Maschinenbau GmbH. All Rights Reserved 
-/// \file AudidFiles.cpp
+/// \file AuditFiles.cpp
 /// DESCRIPTION
 //******************************************************************************
 
 #pragma region Includes 
 #include "stdafx.h"
-#include "AudidFiles.h"
+#include "AuditFiles.h"
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem.hpp>
 #include "sha256.h"
@@ -24,7 +24,7 @@ namespace bfs = boost::filesystem;
 namespace SvUl
 {
 
-	std::string AudidFile::GetFormatedWriteDate() const
+	std::string AuditFile::GetFormatedWriteDate() const
 	{
 		char mbstr[100];
 		mbstr[0] = '\0';
@@ -33,17 +33,17 @@ namespace SvUl
 		return ret;
 	}
 
-	std::string AudidFile::GetFormatedSize() const
+	std::string AuditFile::GetFormatedSize() const
 	{
 		return std::to_string(size);
 	}
 
 
-	std::string   AudidFile::GetFormatedIgnoreFlag() const
+	std::string   AuditFile::GetFormatedIgnoreFlag() const
 	{
 		return Flag2String(bignore);
 	}
-	std::string  AudidFile::GetFormatedHashFlag() const
+	std::string  AuditFile::GetFormatedHashFlag() const
 	{
 		return Flag2String(bhash);
 	}
@@ -51,7 +51,7 @@ namespace SvUl
 
 
 
-	void AudidFile::Trace() const
+	void AuditFile::Trace() const
 	{
 		
 		char mbstr[100];
@@ -65,7 +65,7 @@ namespace SvUl
 
 	}
 
-	std::string  AudidFile::Flag2String(bool flag)
+	std::string  AuditFile::Flag2String(bool flag)
 	{
 		std::string ret;
 		ret = flag ? "true" : "false";
@@ -73,7 +73,7 @@ namespace SvUl
 	}
 
 
-	bool    AudidFile::String2Flag(const std::string& flags)
+	bool    AuditFile::String2Flag(const std::string& flags)
 	{
 		if (flags.compare("true") == 0 || flags.compare("TRUE") == 0)
 			return true;
@@ -83,28 +83,28 @@ namespace SvUl
 
 
 
-	std::string AudidFile::GetExtension() const
+	std::string AuditFile::GetExtension() const
 	{
 		return extension;
 	}
-	std::string AudidFile::GetFilename() const
+	std::string AuditFile::GetFilename() const
 	{
 		return filename;
 	}
-	std::string AudidFile::GetHashvalue() const
+	std::string AuditFile::GetHashvalue() const
 	{
 		return hashvalue;
 	}
 
-	std::string AudidFile::GetFullname() const
+	std::string AuditFile::GetFullname() const
 	{
 		return Fullname;
 	}
 
 
-	void CAudidFiles::SyncDefaultList(const std::vector<std::string>& rCrunfileList)
+	void CAuditFiles::SyncDefaultList(const std::vector<std::string>& rCrunfileList)
 	{
-		std::map < std::string, AudidFile> temp;
+		std::map < std::string, AuditFile> temp;
 		for (auto& it : m_Files)
 		{
 			temp[it.Fullname] = std::move(it);
@@ -124,7 +124,7 @@ namespace SvUl
 		}
 	}
 
-	void  CAudidFiles::UpdateList()
+	void  CAuditFiles::UpdateList()
 	{
 		for (auto& F : m_Files)
 		{
@@ -147,7 +147,7 @@ namespace SvUl
 
 		}
 	}
-	void  CAudidFiles::CalculateSHA256()
+	void  CAuditFiles::CalculateSHA256()
 	{
 
 		std::string hash;
@@ -173,7 +173,7 @@ namespace SvUl
 	}
 
 
-	size_t   CAudidFiles::SetValues(const std::vector< AudidFile>& Files, bool bOnlyFlags)
+	size_t   CAuditFiles::SetValues(const std::vector< AuditFile>& Files, bool bOnlyFlags)
 	{
 
 		if (bOnlyFlags && Files.size() == m_Files.size())
@@ -192,13 +192,13 @@ namespace SvUl
 		}
 
 	}
-	size_t   CAudidFiles::SetValues(const std::vector< AudidFile>& Files)
+	size_t   CAuditFiles::SetValues(const std::vector< AuditFile>& Files)
 	{
 
 		m_Files = Files;
 		return m_Files.size();
 	}
-	size_t   CAudidFiles::SetValues(std::vector< AudidFile>&& Files)
+	size_t   CAuditFiles::SetValues(std::vector< AuditFile>&& Files)
 	{
 
 		m_Files = std::move(Files);

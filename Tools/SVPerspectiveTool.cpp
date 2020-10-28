@@ -366,7 +366,7 @@ void SVPerspectiveToolClass::LocalInitialize()
 	                                   PERSPECTIVE_WARP_TYPE_VERTICAL, WarpTypeVertical);
 	m_svWarpType.SetEnumTypes( EnumTypes.c_str() );
 	m_svWarpType.SetDefaultValue( PERSPECTIVE_WARP_TYPE_VERTICAL );
-	m_svWarpType.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
+	m_svWarpType.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
 
 	// Set Default Interpolation Mode to use Nearest Neighbor
 	std::string Mode;

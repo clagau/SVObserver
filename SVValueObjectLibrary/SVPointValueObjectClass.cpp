@@ -150,7 +150,7 @@ void SVPointValueObjectClass::WriteDefaultValues(SvOi::IObjectWriter& rWriter)
 void SVPointValueObjectClass::LocalInitialize()
 {
 	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVPointValueObjectType;
-	SetObjectAttributesAllowed( SvPb::viewable | SvPb::archivable | SvPb::embedable | SvPb::printable | SvPb::dataDefinitionValue, SvOi::SetAttributeType::OverwriteAttribute );
+	SetObjectAttributesAllowed( SvPb::viewable | SvPb::archivable | SvPb::embedable | SvPb::audittrail | SvPb::dataDefinitionValue, SvOi::SetAttributeType::OverwriteAttribute );
 
 	SetTypeName( _T("Point") );
 	init();

@@ -34,7 +34,7 @@ namespace SvDef
 		SvPb::selectableForEquation |
 		SvPb::embedable |
 		SvPb::selectableForStatistics |
-		SvPb::printable |
+		SvPb::audittrail |
 		SvPb::dataDefinitionValue
 	};
 

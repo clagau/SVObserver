@@ -329,7 +329,7 @@ void DoubleSortValueObject::LocalInitialize()
 
 	//normally the DoubleSortValueObject is a result value and should not be print. 
 	//If a parameter should be printed, it has to be set after creating.
-	SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
+	SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
 }
 
 #pragma endregion Private Methods

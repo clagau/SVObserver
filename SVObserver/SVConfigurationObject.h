@@ -27,7 +27,7 @@
 #include "SVSystemLibrary/SVObserverEnums.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "SVUtilityLibrary/AudidFiles.h"
+#include "SVUtilityLibrary/AuditFiles.h"
 #pragma endregion Includes
 
 
@@ -382,18 +382,18 @@ public:
 #pragma endregion Methods to replace processMessage
 
 	
-	size_t SetAudidWhiteList(std::vector<SvUl::AudidFile>&& Files)
+	size_t SetAuditWhiteList(std::vector<SvUl::AuditFile>&& Files)
 	{
-		return m_AudidWhiteList.SetValues(std::move(Files));
+		return m_AuditWhiteList.SetValues(std::move(Files));
 	}
 	
-	size_t SetAudidDefaultList(std::vector< SvUl::AudidFile>&& Files)
+	size_t SetAuditDefaultList(std::vector< SvUl::AuditFile>&& Files)
 	{
-		return m_AudidDefaultList.SetValues(std::move(Files));
+		return m_AuditDefaultList.SetValues(std::move(Files));
 	}
-	void UpdateAudidFiles(bool calculatehash);
-	const std::vector< SvUl::AudidFile>& GetAudidDefaultList()   const;
-	const std::vector< SvUl::AudidFile>& GetAudidWhiteList()    const ;
+	void UpdateAuditFiles(bool calculatehash);
+	const std::vector< SvUl::AuditFile>& GetAuditDefaultList()   const;
+	const std::vector< SvUl::AuditFile>& GetAuditWhiteList()    const ;
 private:
 	typedef std::set<SVInspectionProcess*> SVInspectionSet;
 	typedef std::map<UINT, SVObjectReferenceVector> AttributesSetMap;
@@ -491,12 +491,12 @@ private:
 	void changeSystemResetIO(SVIMProductEnum newConfigType);
 
 
-	void SaveAudidList(SvOi::IObjectWriter& rWriter, SvUl::AudidListType type) const;
-	HRESULT LoadAudidList(SVTreeType& rTree, SvUl::AudidListType type)  ;
+	void SaveAuditList(SvOi::IObjectWriter& rWriter, SvUl::AuditListType type) const;
+	HRESULT LoadAuditList(SVTreeType& rTree, SvUl::AuditListType type)  ;
 
-	void SaveAudidList(SvOi::IObjectWriter& rWriter) const;
+	void SaveAuditList(SvOi::IObjectWriter& rWriter) const;
 
-	HRESULT LoadAudidList(SVTreeType& rTree);
+	HRESULT LoadAuditList(SVTreeType& rTree);
 
 	std::list<SVFileNameClass>    m_AdditionalFiles;  //We need a list as the file manager has pointers to these objects!
 	std::unique_ptr<SVIOController> m_pIOController;
@@ -514,9 +514,9 @@ private:
 
 	///list with additional files for audidtrail  
 	
-	mutable SvUl::CAudidFiles m_AudidWhiteList;
+	mutable SvUl::CAuditFiles m_AuditWhiteList;
 	/// list with default files for audidtrail  
-	mutable SvUl::CAudidFiles m_AudidDefaultList;
+	mutable SvUl::CAuditFiles m_AuditDefaultList;
 
 };
 

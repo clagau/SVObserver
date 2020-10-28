@@ -298,27 +298,27 @@ bool SVBarCodeAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCrea
 	}
 
 	// *** Set/Reset Printable Attributes ***
-	msv_szBarCodeValue.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
-	msv_szRegExpressionValue.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
-	msv_lBarCodeType.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
-	msv_dOrientation.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
-	msv_dSkewNegative.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
-	msv_dSkewPositive.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
-	msv_dCellMinSize.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
-	msv_dCellMaxSize.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
-	msv_dCellNumberX.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
-	msv_dCellNumberY.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
-	msv_dSpeed.SetObjectAttributesAllowed( SvPb::printable | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
-	msv_dThreshold.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
-	msv_dStringSize.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
-	msv_dErrorCorrection.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
-	msv_dEncoding.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
-	msv_dForegroundColor.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
-	msv_bSaveStringInFile.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
-	msv_szStringFileName.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
-	m_bWarnOnFailedRead.SetObjectAttributesAllowed( SvPb::printable | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
-	msv_lBarcodeTimeout.SetObjectAttributesAllowed( SvPb::printable | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
-	msv_RawData.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
+	msv_szBarCodeValue.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
+	msv_szRegExpressionValue.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
+	msv_lBarCodeType.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
+	msv_dOrientation.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
+	msv_dSkewNegative.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
+	msv_dSkewPositive.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
+	msv_dCellMinSize.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
+	msv_dCellMaxSize.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
+	msv_dCellNumberX.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
+	msv_dCellNumberY.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
+	msv_dSpeed.SetObjectAttributesAllowed( SvPb::audittrail | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
+	msv_dThreshold.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
+	msv_dStringSize.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
+	msv_dErrorCorrection.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
+	msv_dEncoding.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
+	msv_dForegroundColor.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
+	msv_bSaveStringInFile.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
+	msv_szStringFileName.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
+	m_bWarnOnFailedRead.SetObjectAttributesAllowed( SvPb::audittrail | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
+	msv_lBarcodeTimeout.SetObjectAttributesAllowed( SvPb::audittrail | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
+	msv_RawData.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
 	m_isCreated = true;
 
 	if ( m_bHasLicenseError )

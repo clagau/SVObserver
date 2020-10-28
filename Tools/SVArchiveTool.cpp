@@ -294,29 +294,29 @@ bool SVArchiveTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStruct
 	m_SubfolderSelection.SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
 	m_SubfolderLocation.SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
 
-	m_stringFileArchivePath.SetObjectAttributesAllowed(SvPb::printable | SvPb::remotelySetable & ~SvPb::setableOnline, SvOi::SetAttributeType::AddAttribute);
+	m_stringFileArchivePath.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::remotelySetable & ~SvPb::setableOnline, SvOi::SetAttributeType::AddAttribute);
 	m_stringFileArchivePath.SetObjectAttributesAllowed(SvPb::setableOnline, SvOi::SetAttributeType::RemoveAttribute);
 	m_svoArchiveImageNames.SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
 	m_svoArchiveImageNames.SetObjectAttributesAllowed(SvPb::setableOnline, SvOi::SetAttributeType::RemoveAttribute);
 	m_svoArchiveResultNames.SetObjectAttributesAllowed(SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
 	m_svoArchiveResultNames.SetObjectAttributesAllowed(SvPb::setableOnline, SvOi::SetAttributeType::RemoveAttribute);
-	m_imageFileRootPath1.SetObjectAttributesAllowed(SvPb::printable | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
-	m_imageFileRootPath2.SetObjectAttributesAllowed(SvPb::printable | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
-	m_imageFileRootPath3.SetObjectAttributesAllowed(SvPb::printable | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
-	m_dwAppendArchiveFile.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::AddAttribute);
-	m_bvoFormatResults.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::AddAttribute);
-	m_dwArchiveResultsMinimumNumberOfCharacters.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::AddAttribute);
-	m_dwArchiveResultsNumberOfDecimals.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::AddAttribute);
+	m_imageFileRootPath1.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
+	m_imageFileRootPath2.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
+	m_imageFileRootPath3.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
+	m_dwAppendArchiveFile.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::AddAttribute);
+	m_bvoFormatResults.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::AddAttribute);
+	m_dwArchiveResultsMinimumNumberOfCharacters.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::AddAttribute);
+	m_dwArchiveResultsNumberOfDecimals.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::AddAttribute);
 
-	m_dwArchiveStopAtMaxImages.SetObjectAttributesAllowed(SvPb::printable | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
-	m_dwArchiveMaxImagesCount.SetObjectAttributesAllowed(SvPb::printable | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
-	m_evoArchiveMethod.SetObjectAttributesAllowed(SvPb::printable | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
-	m_HeaderLabelNames.SetObjectAttributesAllowed(SvPb::printable | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
-	m_HeaderObjectIDs.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
-	m_bvoUseHeaders.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::AddAttribute);
+	m_dwArchiveStopAtMaxImages.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
+	m_dwArchiveMaxImagesCount.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
+	m_evoArchiveMethod.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
+	m_HeaderLabelNames.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
+	m_HeaderObjectIDs.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
+	m_bvoUseHeaders.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::AddAttribute);
 
 	// These values will not be exposed for this tool.
-	constexpr UINT cAttribute {SvDef::selectableAttributes | SvPb::printable};
+	constexpr UINT cAttribute {SvDef::selectableAttributes | SvPb::audittrail};
 	m_drawToolFlag.SetObjectAttributesAllowed(cAttribute, SvOi::SetAttributeType::RemoveAttribute);
 
 	m_isCreated = bOk;

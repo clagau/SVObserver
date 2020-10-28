@@ -162,15 +162,15 @@ bool SVImagePolarTransform::CreateObject( const SVObjectLevelCreateStruct& rCrea
 	result &= S_OK == ( m_outputImage.InitializeImage(SvOl::getInput<SvIe::SVImageClass>(m_inputImageObjectInfo)));
 
 	// Set / Reset Printable Flag
-	const UINT cAttributes = SvPb::printable | SvPb::remotelySetable | SvPb::extentObject | SvPb::setableOnline;
+	const UINT cAttributes = SvPb::audittrail | SvPb::remotelySetable | SvPb::extentObject | SvPb::setableOnline;
 	m_centerX.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 	m_centerY.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 	m_startRadius.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 	m_endRadius.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 	m_startAngle.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 	m_endAngle.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
-	m_interpolationMode.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
-	m_useFormulaInput.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
+	m_interpolationMode.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
+	m_useFormulaInput.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
 
 	SetCalculatedPrintableFlags();
 
@@ -732,7 +732,7 @@ bool SVImagePolarTransform::onRun( RunStatus& rRunStatus, SvStl::MessageContaine
 
 void SVImagePolarTransform::SetCalculatedPrintableFlags()
 {
-	const UINT cAttributes = SvPb::printable | SvPb::remotelySetable | SvPb::setableOnline;
+	const UINT cAttributes = SvPb::audittrail | SvPb::remotelySetable | SvPb::setableOnline;
 	BOOL bSetValue( false );
 	m_useFormulaInput.GetValue(bSetValue);
 

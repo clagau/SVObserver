@@ -139,9 +139,9 @@ bool SVUserMaskOperatorClass::CreateObject( const SVObjectLevelCreateStruct& rCr
 {
 	bool bOk = SVUnaryImageOperatorClass::CreateObject(rCreateStructure);
 
-	const UINT cAttributes = SvPb::printable | SvPb::remotelySetable | SvPb::setableOnline;
+	const UINT cAttributes = SvPb::audittrail | SvPb::remotelySetable | SvPb::setableOnline;
 	// Set / Reset Printable Flag
-	m_Data.bvoActivated.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
+	m_Data.bvoActivated.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
 	m_Data.evoDrawCriteria.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 	m_Data.dwvoMaskType.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 	m_Data.evoCurrentMaskOperator.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
@@ -171,11 +171,11 @@ bool SVUserMaskOperatorClass::ResetObject(SvStl::MessageContainerVector *pErrorM
 		Result = pShapeHelper->ResetObject(pErrorMessages) && Result;
 
 		SvOi::SetAttributeType AddRemoveType = (dwMaskType == MASK_TYPE_SHAPE) ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
-		pShapeHelper->SetObjectAttributesAllowed( SvPb::printable | SvPb::viewable, AddRemoveType );
+		pShapeHelper->SetObjectAttributesAllowed( SvPb::audittrail | SvPb::viewable, AddRemoveType );
 		pShapeHelper->SetObjectAttributesAllowed( SvPb::setableOnline | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
 		AddRemoveType = (dwMaskType == MASK_TYPE_SHAPE) && bActive ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
-		m_Data.evoFillArea.SetObjectAttributesAllowed( SvPb::printable | SvPb::viewable, AddRemoveType  );
-		m_Data.lvoFillColor.SetObjectAttributesAllowed( SvPb::printable | SvPb::viewable, AddRemoveType  );
+		m_Data.evoFillArea.SetObjectAttributesAllowed( SvPb::audittrail | SvPb::viewable, AddRemoveType  );
+		m_Data.lvoFillColor.SetObjectAttributesAllowed( SvPb::audittrail | SvPb::viewable, AddRemoveType  );
 	}
 	else
 	{

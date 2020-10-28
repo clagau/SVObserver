@@ -108,7 +108,7 @@ bool SVShapeMaskHelperClass::CreateObject( const SVObjectLevelCreateStruct& rCre
 {
 	bool bOk = SVTaskObjectClass::CreateObject(rCreateStructure);
 
-	const UINT cAttributes = SvPb::viewable | SvPb::publishable | SvPb::archivable | SvPb::remotelySetable | SvPb::setableOnline | SvPb::printable;
+	const UINT cAttributes = SvPb::viewable | SvPb::publishable | SvPb::archivable | SvPb::remotelySetable | SvPb::setableOnline | SvPb::audittrail;
 	m_Data.bvoAutoResize.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::OverwriteAttribute );
 	m_Data.evoShapeType.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::OverwriteAttribute );
 	m_Data.evoMaskArea.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::OverwriteAttribute );
@@ -170,21 +170,21 @@ bool SVShapeMaskHelperClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 		const bool bIsTrapezoid = eShapeType == SVMaskShapeTypeSymmetricTrapezoid;
 
 		SvOi::SetAttributeType AddRemoveType = bIsShape ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
-		m_Data.bvoAutoResize.SetObjectAttributesAllowed( SvPb::printable, AddRemoveType );
-		m_Data.evoShapeType.SetObjectAttributesAllowed( SvPb::printable, AddRemoveType );
-		m_Data.evoMaskArea.SetObjectAttributesAllowed( SvPb::printable, AddRemoveType );
-		m_Data.lvoCenterX.SetObjectAttributesAllowed( SvPb::printable, AddRemoveType );
-		m_Data.lvoCenterY.SetObjectAttributesAllowed( SvPb::printable, AddRemoveType );
-		m_Data.lvoWidth.SetObjectAttributesAllowed( SvPb::printable, AddRemoveType );
-		m_Data.lvoHeight.SetObjectAttributesAllowed( SvPb::printable, AddRemoveType );
+		m_Data.bvoAutoResize.SetObjectAttributesAllowed( SvPb::audittrail, AddRemoveType );
+		m_Data.evoShapeType.SetObjectAttributesAllowed( SvPb::audittrail, AddRemoveType );
+		m_Data.evoMaskArea.SetObjectAttributesAllowed( SvPb::audittrail, AddRemoveType );
+		m_Data.lvoCenterX.SetObjectAttributesAllowed( SvPb::audittrail, AddRemoveType );
+		m_Data.lvoCenterY.SetObjectAttributesAllowed( SvPb::audittrail, AddRemoveType );
+		m_Data.lvoWidth.SetObjectAttributesAllowed( SvPb::audittrail, AddRemoveType );
+		m_Data.lvoHeight.SetObjectAttributesAllowed( SvPb::audittrail, AddRemoveType );
 
 		AddRemoveType = bIsShape && bIsDoughnut ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
-		m_Data.lvoSideThickness.SetObjectAttributesAllowed( SvPb::printable, AddRemoveType );
-		m_Data.lvoTopBottomThickness.SetObjectAttributesAllowed( SvPb::printable, AddRemoveType );
+		m_Data.lvoSideThickness.SetObjectAttributesAllowed( SvPb::audittrail, AddRemoveType );
+		m_Data.lvoTopBottomThickness.SetObjectAttributesAllowed( SvPb::audittrail, AddRemoveType );
 
 		AddRemoveType = bIsShape && bIsTrapezoid ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
-		m_Data.lvoOffset.SetObjectAttributesAllowed( SvPb::printable, AddRemoveType );
-		m_Data.evoXYSymmetry.SetObjectAttributesAllowed( SvPb::printable, AddRemoveType );
+		m_Data.lvoOffset.SetObjectAttributesAllowed( SvPb::audittrail, AddRemoveType );
+		m_Data.evoXYSymmetry.SetObjectAttributesAllowed( SvPb::audittrail, AddRemoveType );
 	}
 	else
 	{

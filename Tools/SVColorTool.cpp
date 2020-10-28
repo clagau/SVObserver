@@ -114,8 +114,8 @@ bool SVColorToolClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStr
 	SvOp::ToolSizeAdjustTask::EnsureInFriendList(this, true, true, true);
 
 	// Set / Reset Printable Flag
-	m_convertToHSI.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
-	constexpr UINT cAttribute {SvDef::selectableAttributes | SvPb::printable};
+	m_convertToHSI.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
+	constexpr UINT cAttribute {SvDef::selectableAttributes | SvPb::audittrail};
 	m_hasROI.SetObjectAttributesAllowed(cAttribute, SvOi::SetAttributeType::RemoveAttribute);
 
 	m_SourceImageNames.setSaveValueFlag(false);

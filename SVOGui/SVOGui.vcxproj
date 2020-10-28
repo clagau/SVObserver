@@ -116,7 +116,7 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AudidFilesDialog.cpp" />
+    <ClCompile Include="AuditFilesDialog.cpp" />
     <ClCompile Include="AuxiliaryExtentsController.cpp" />
     <ClCompile Include="BlobAnalyzer2Draw.cpp" />
     <ClCompile Include="BlobAnalyzer2Feature.cpp" />
@@ -199,7 +199,7 @@
     <ClCompile Include="ZoomHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AudidFilesDialog.h" />
+    <ClInclude Include="AuditFilesDialog.h" />
     <ClInclude Include="AuxiliaryExtentsController.h" />
     <ClInclude Include="BlobAnalyzer2Draw.h" />
     <ClInclude Include="BlobAnalyzer2Feature.h" />

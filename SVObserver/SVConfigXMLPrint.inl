@@ -887,7 +887,7 @@ inline std::wstring utf16(const std::string& str) { return SvUl::to_utf16(str.c_
 
 inline void SVConfigXMLPrint::WriteValueObject(Writer writer, SVObjectClass* pObj) const
 {
-	if (pObj->ObjectAttributesAllowed() & SvPb::printable)
+	if (pObj->ObjectAttributesAllowed() & SvPb::audittrail)
 	{
 		writer->WriteStartElement(nullptr, SvUl::to_utf16(pObj->GetClassName(), cp_dflt).c_str(), nullptr);
 		writer->WriteAttributeString(nullptr, XML_Name, nullptr, SvUl::to_utf16(pObj->GetName(), cp_dflt).c_str());
@@ -1022,7 +1022,7 @@ inline void SVConfigXMLPrint::WriteObject(Writer writer, SVObjectClass* pObject)
 		{
 			if (dynamic_cast <SvOp::SVShapeMaskHelperClass*> (pObject))
 			{
-				if (!(pObject->ObjectAttributesAllowed() & SvPb::printable))	// EB 20050818 - hack this instead of doing it right
+				if (!(pObject->ObjectAttributesAllowed() & SvPb::audittrail))	// EB 20050818 - hack this instead of doing it right
 				{
 					break;
 				}
@@ -1513,9 +1513,9 @@ inline void SVConfigXMLPrint::WriteExternalFiles(Writer writer) const
 	{
 		return;
 	}
-	pConfig->UpdateAudidFiles(true);
+	pConfig->UpdateAuditFiles(true);
 	writer->WriteStartElement(nullptr, L"External_Files", nullptr);
-	auto DefaultList = pConfig->GetAudidDefaultList();
+	auto DefaultList = pConfig->GetAuditDefaultList();
 	for (auto& Element : DefaultList)
 	{
 		if (Element.bignore == false)
@@ -1541,7 +1541,7 @@ inline void SVConfigXMLPrint::WriteExternalFiles(Writer writer) const
 
 	writer->WriteEndElement();
 	writer->WriteStartElement(nullptr, L"Aditional_External_Files", nullptr);
-	auto WhiteList = pConfig->GetAudidWhiteList();
+	auto WhiteList = pConfig->GetAuditWhiteList();
 	for (auto& Element : WhiteList)
 	{
 		if (Element.bignore == false)

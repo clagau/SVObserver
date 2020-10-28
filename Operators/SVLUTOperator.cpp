@@ -130,18 +130,18 @@ bool SVLUTOperator::CreateObject( const SVObjectLevelCreateStruct& rCreateStruct
 	bool bOk = SVUnaryImageOperatorClass::CreateObject(rCreateStructure);
 
 	// Set / Reset Printable Flag
-	m_lutVector.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
+	m_lutVector.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
 	m_lutVector.SetObjectAttributesAllowed( SvPb::viewable, SvOi::SetAttributeType::RemoveAttribute );
 	
-	m_useLUT.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
-	m_continuousRecalcLUT.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
-	m_lutMode.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
-	m_upperClip.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
-	m_lowerClip.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::AddAttribute );
-	m_minInput.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::AddAttribute);
-	m_maxInput.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::AddAttribute);
-	m_minOutput.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::AddAttribute);
-	m_maxOutput.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::AddAttribute);
+	m_useLUT.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
+	m_continuousRecalcLUT.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
+	m_lutMode.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
+	m_upperClip.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
+	m_lowerClip.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
+	m_minInput.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::AddAttribute);
+	m_maxInput.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::AddAttribute);
+	m_minOutput.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::AddAttribute);
+	m_maxOutput.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::AddAttribute);
 
 	m_isCreated = bOk;
 
@@ -160,7 +160,7 @@ bool SVLUTOperator::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	if (S_OK == m_lutMode.GetValue(lLutMode))
 	{
 		bool isVectorPrint = (4 /*Formula*/ != lLutMode);
-		m_lutVector.SetObjectAttributesAllowed(SvPb::printable, isVectorPrint ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute);
+		m_lutVector.SetObjectAttributesAllowed(SvPb::audittrail, isVectorPrint ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute);
 	}
 
 	return Result;

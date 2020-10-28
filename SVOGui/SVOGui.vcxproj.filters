@@ -246,7 +246,7 @@
     <ClCompile Include="ExternalToolTaskController.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="AudidFilesDialog.cpp">
+    <ClCompile Include="AuditFilesDialog.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
@@ -509,7 +509,7 @@
     <ClInclude Include="ExternalToolTaskController.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="AudidFilesDialog.h">
+    <ClInclude Include="AuditFilesDialog.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

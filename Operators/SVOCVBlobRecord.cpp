@@ -86,7 +86,7 @@ void SVOCVCharacterResult::HideResults()
 
 void SVOCVCharacterResult::UnhideResults()
 {
-	const UINT cAttributes = SvDef::defaultValueObjectAttributes & ~SvPb::printable;
+	const UINT cAttributes = SvDef::defaultValueObjectAttributes & ~SvPb::audittrail;
 	m_statusColor.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::OverwriteAttribute );
 	m_statusTag.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::OverwriteAttribute );
 
@@ -104,14 +104,14 @@ bool SVOCVCharacterResult::CreateObject( const SVObjectLevelCreateStruct& rCreat
 {
 	bool bOk = SVTaskObjectClass::CreateObject(rCreateStructure);
 
-	m_cvoLabelValue.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
+	m_cvoLabelValue.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
 
-	m_dvoOverlayLeft.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
-	m_dvoOverlayTop.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
-	m_dvoOverlayWidth.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
-	m_dvoOverlayHeight.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
+	m_dvoOverlayLeft.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
+	m_dvoOverlayTop.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
+	m_dvoOverlayWidth.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
+	m_dvoOverlayHeight.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
 
-	m_dvoMatchScore.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
+	m_dvoMatchScore.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
 
 	m_isCreated = bOk;
 

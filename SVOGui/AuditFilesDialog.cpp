@@ -2,24 +2,24 @@
 //
 
 #include "stdafx.h"
-#include "afxdialogex.h"
-#include "AudidFilesDialog.h"
-#include "SVUtilityLibrary/AudidFiles.h"
+//#include "afxdialogex.h"
+#include "AuditFilesDialog.h"
+#include "SVUtilityLibrary/AuditFiles.h"
 #include "SVUtilityLibrary/SHA256.h"
 #include <atlwin.h>
 
 
 namespace SvOg
 {
-	const LPCSTR AudidFilesDialog::HeaderNames[EColumncount] = { "Name", "Size","Date","Ignore","CalcHash", "HashValue" };
-	const DWORD  AudidFilesDialog::HeaderWith[EColumncount] = { 120,60,120,40,40,200 };
-	IMPLEMENT_DYNAMIC(AudidFilesDialog, CDialogEx)
+	const LPCSTR AuditFilesDialog::HeaderNames[EColumncount] = { "Name", "Size","Date","Ignore","CalcHash", "HashValue" };
+	const DWORD  AuditFilesDialog::HeaderWith[EColumncount] = { 120,60,120,40,40,200 };
+	IMPLEMENT_DYNAMIC(AuditFilesDialog, CDialog)
 
-		AudidFilesDialog::AudidFilesDialog(const std::vector< SvUl::AudidFile>& rList, DialogType t, CWnd* pParent /*=nullptr*/)
-		: CDialogEx(IDD_DLG_REPORT_FILE, pParent),
+		AuditFilesDialog::AuditFilesDialog(const std::vector< SvUl::AuditFile>& rList, DialogType t, CWnd* pParent /*=nullptr*/)
+		: CDialog(IDD_DLG_REPORT_FILE, pParent),
 		m_DialogType(t)
 	{
-		m_AudidFiles.SetValues(rList);
+		m_AuditFiles.SetValues(rList);
 		if (m_DialogType == WhiteList)
 		{
 			m_ContextMenu.LoadMenu(IDR_MENU_REPORT_WHITE);
@@ -30,43 +30,43 @@ namespace SvOg
 		}
 	}
 
-	AudidFilesDialog::~AudidFilesDialog()
+	AuditFilesDialog::~AuditFilesDialog()
 	{
 		m_ContextMenu.DestroyMenu();
 	}
 
-	void AudidFilesDialog::DoDataExchange(CDataExchange* pDX)
+	void AuditFilesDialog::DoDataExchange(CDataExchange* pDX)
 	{
-		CDialogEx::DoDataExchange(pDX);
+		CDialog::DoDataExchange(pDX);
 
 		DDX_Control(pDX, IDC_LIST_REPORT_FILE, m_ListCtrl);
 	}
 
 
-	BEGIN_MESSAGE_MAP(AudidFilesDialog, CDialogEx)
+	BEGIN_MESSAGE_MAP(AuditFilesDialog, CDialog)
 		ON_WM_SIZE()
 		ON_WM_CONTEXTMENU()
-		ON_COMMAND(ID_DEFAULT_CALCTRUE, &AudidFilesDialog::OnDefaultCalctrue)
-		ON_COMMAND(ID_DEFAULT_CALCFALSE, &AudidFilesDialog::OnDefaultCalcfalse)
-		ON_COMMAND(ID_DEFAULT_IGNORETRUE, &AudidFilesDialog::OnDefaultIgnoretrue)
-		ON_COMMAND(ID_DEFAULT_IGNOREFALSE, &AudidFilesDialog::OnDefaultIgnorefalse)
-		ON_COMMAND(ID_DEFAULT_CALCHASH, &AudidFilesDialog::OnDefaultCalchash)
-		ON_BN_CLICKED(IDC_BUTTON_CALC, &AudidFilesDialog::OnBnClickedButtonCalc)
-		ON_COMMAND(ID_DEFAULT_ADDFILE, &AudidFilesDialog::OnDefaultAddfile)
-		ON_COMMAND(ID_DEFAULT_DELETEFILE, &AudidFilesDialog::OnDefaultDeletefile)
+		ON_COMMAND(ID_DEFAULT_CALCTRUE, &AuditFilesDialog::OnDefaultCalctrue)
+		ON_COMMAND(ID_DEFAULT_CALCFALSE, &AuditFilesDialog::OnDefaultCalcfalse)
+		ON_COMMAND(ID_DEFAULT_IGNORETRUE, &AuditFilesDialog::OnDefaultIgnoretrue)
+		ON_COMMAND(ID_DEFAULT_IGNOREFALSE, &AuditFilesDialog::OnDefaultIgnorefalse)
+		ON_COMMAND(ID_DEFAULT_CALCHASH, &AuditFilesDialog::OnDefaultCalchash)
+		ON_BN_CLICKED(IDC_BUTTON_CALC, &AuditFilesDialog::OnBnClickedButtonCalc)
+		ON_COMMAND(ID_DEFAULT_ADDFILE, &AuditFilesDialog::OnDefaultAddfile)
+		ON_COMMAND(ID_DEFAULT_DELETEFILE, &AuditFilesDialog::OnDefaultDeletefile)
 	END_MESSAGE_MAP()
 
 
 	// DlgReportDefaultFile message handlers
 
 
-	BOOL AudidFilesDialog::OnInitDialog()
+	BOOL AuditFilesDialog::OnInitDialog()
 	{
-		CDialogEx::OnInitDialog();
+		CDialog::OnInitDialog();
 
 		if (m_DialogType == WhiteList)
 		{
-			SetWindowText("SvUl::AudidFile WhiteList");
+			SetWindowText("SvUl::AuditFile WhiteList");
 		}
 
 		for (int i = 0; i < EColumncount; i++)
@@ -85,17 +85,17 @@ namespace SvOg
 					  // EXCEPTION: OCX Property Pages should return FALSE
 	}
 
-	void AudidFilesDialog::UpdateListctrl(bool rebuild)
+	void AuditFilesDialog::UpdateListctrl(bool rebuild)
 	{
 
 		if (rebuild)
 		{
 			m_ListCtrl.DeleteAllItems();
 		}
-		auto& rlist = m_AudidFiles.GetFiles();
+		auto& rlist = m_AuditFiles.GetFiles();
 		for (int i = 0; i < rlist.size(); i++)
 		{
-			SvUl::AudidFile& rAF = rlist[i];
+			SvUl::AuditFile& rAF = rlist[i];
 			if (rebuild)
 			{
 				if (m_DialogType == WhiteList)
@@ -126,20 +126,20 @@ namespace SvOg
 			m_ListCtrl.SetItemText(i, EHashValue, rAF.GetHashvalue().c_str());
 		}
 	}
-	void AudidFilesDialog::LstCtrl2Data()
+	void AuditFilesDialog::LstCtrl2Data()
 	{
 		int Itemcount = m_ListCtrl.GetItemCount();
-		auto& rlist = m_AudidFiles.GetFiles();
+		auto& rlist = m_AuditFiles.GetFiles();
 		for (int item = 0; item < Itemcount; item++)
 		{
 
 			char textbuffer[512];
 			m_ListCtrl.GetItemText(item, EIgnore, textbuffer, 512);
-			rlist[item].bignore = SvUl::AudidFile::String2Flag(textbuffer);
+			rlist[item].bignore = SvUl::AuditFile::String2Flag(textbuffer);
 
 
 			m_ListCtrl.GetItemText(item, ECalcHash, textbuffer, 512);
-			rlist[item].bhash = SvUl::AudidFile::String2Flag(textbuffer);
+			rlist[item].bhash = SvUl::AuditFile::String2Flag(textbuffer);
 
 			m_ListCtrl.GetItemText(item, EHashValue, textbuffer, 512);
 			rlist[item].hashvalue = textbuffer;
@@ -148,24 +148,24 @@ namespace SvOg
 		}
 	}
 
-	void AudidFilesDialog::OnOK()
+	void AuditFilesDialog::OnOK()
 	{
 		LstCtrl2Data();
-		CDialogEx::OnOK();
+		CDialog::OnOK();
 	}
 
 
-	void AudidFilesDialog::OnCancel()
+	void AuditFilesDialog::OnCancel()
 	{
 		// TODO: Add your specialized code here and/or call the base class
 
-		CDialogEx::OnCancel();
+		CDialog::OnCancel();
 	}
 
 
-	void AudidFilesDialog::OnSize(UINT nType, int cx, int cy)
+	void AuditFilesDialog::OnSize(UINT nType, int cx, int cy)
 	{
-		CDialogEx::OnSize(nType, cx, cy);
+		CDialog::OnSize(nType, cx, cy);
 
 
 		int fs = 10;
@@ -208,7 +208,7 @@ namespace SvOg
 	}
 
 
-	void AudidFilesDialog::OnContextMenu(CWnd*, CPoint point)
+	void AuditFilesDialog::OnContextMenu(CWnd*, CPoint point)
 	{
 		{
 			CMenu* pPopupMenu = m_ContextMenu.GetSubMenu(0);
@@ -223,36 +223,36 @@ namespace SvOg
 	}
 
 
-	void AudidFilesDialog::OnDefaultCalctrue()
+	void AuditFilesDialog::OnDefaultCalctrue()
 	{
 		IterateForSelected(ECalcHash, true);
 	}
 
 
-	void AudidFilesDialog::OnDefaultCalcfalse()
+	void AuditFilesDialog::OnDefaultCalcfalse()
 	{
 		IterateForSelected(ECalcHash, false);
 	}
 
 
-	void AudidFilesDialog::OnDefaultIgnoretrue()
+	void AuditFilesDialog::OnDefaultIgnoretrue()
 	{
 		IterateForSelected(EIgnore, true);
 	}
 
 
-	void AudidFilesDialog::OnDefaultIgnorefalse()
+	void AuditFilesDialog::OnDefaultIgnorefalse()
 	{
 		IterateForSelected(EIgnore, false);
 	}
 
 
-	void AudidFilesDialog::OnDefaultCalchash()
+	void AuditFilesDialog::OnDefaultCalchash()
 	{
 		IterateForSelected(EHashValue, false);
 	}
 
-	void AudidFilesDialog::IterateForSelected(columnType col, bool par)
+	void AuditFilesDialog::IterateForSelected(columnType col, bool par)
 	{
 		int uSelectedCount = m_ListCtrl.GetSelectedCount();
 
@@ -270,14 +270,14 @@ namespace SvOg
 				{
 
 				case EIgnore:
-					m_ListCtrl.SetItemText(nItem, EIgnore, SvUl::AudidFile::Flag2String(par).c_str());
+					m_ListCtrl.SetItemText(nItem, EIgnore, SvUl::AuditFile::Flag2String(par).c_str());
 					break;
 				case ECalcHash:
-					m_ListCtrl.SetItemText(nItem, ECalcHash, SvUl::AudidFile::Flag2String(par).c_str());
+					m_ListCtrl.SetItemText(nItem, ECalcHash, SvUl::AuditFile::Flag2String(par).c_str());
 					break;
 				case 	EHashValue:
 				{
-					SvUl::AudidFile& rAF = m_AudidFiles.GetFiles()[i];
+					SvUl::AuditFile& rAF = m_AuditFiles.GetFiles()[i];
 					std::string hash;
 					try
 					{
@@ -298,16 +298,16 @@ namespace SvOg
 
 
 
-	void AudidFilesDialog::OnBnClickedButtonCalc()
+	void AuditFilesDialog::OnBnClickedButtonCalc()
 	{
 		LstCtrl2Data();
-		m_AudidFiles.CalculateSHA256();
+		m_AuditFiles.CalculateSHA256();
 		UpdateListctrl(false);
 
 	}
 
 
-	void AudidFilesDialog::OnDefaultAddfile()
+	void AuditFilesDialog::OnDefaultAddfile()
 	{
 
 		if (m_DialogType != WhiteList)
@@ -321,15 +321,15 @@ namespace SvOg
 		if (fileDlg.DoModal() == IDOK)
 		{
 			CString pathName = fileDlg.GetPathName();
-			auto& files = m_AudidFiles.GetFiles();
+			auto& files = m_AuditFiles.GetFiles();
 			files.emplace_back(pathName.GetString());
-			m_AudidFiles.UpdateList();
+			m_AuditFiles.UpdateList();
 			UpdateListctrl(true);
 		}
 	}
 
 
-	void AudidFilesDialog::OnDefaultDeletefile()
+	void AuditFilesDialog::OnDefaultDeletefile()
 	{
 		if (m_DialogType != WhiteList)
 		{
@@ -352,12 +352,12 @@ namespace SvOg
 			for (int i = (int)IndexToDelete.size() - 1; i >= 0; i--)
 			{
 				int  index = IndexToDelete[i];
-				if (index < (int)m_AudidFiles.GetFiles().size())
+				if (index < (int)m_AuditFiles.GetFiles().size())
 				{
-					m_AudidFiles.GetFiles().erase(m_AudidFiles.GetFiles().begin() + index);
+					m_AuditFiles.GetFiles().erase(m_AuditFiles.GetFiles().begin() + index);
 				}
 			}
-			m_AudidFiles.UpdateList();
+			m_AuditFiles.UpdateList();
 			UpdateListctrl(true);
 		}
 	}

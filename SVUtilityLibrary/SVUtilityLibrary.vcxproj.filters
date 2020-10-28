@@ -69,10 +69,10 @@
     <ClCompile Include="SafeArrayHelper.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="AudidFiles.cpp">
+    <ClCompile Include="SHA256.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SHA256.cpp">
+    <ClCompile Include="AuditFiles.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
@@ -185,10 +185,10 @@
     <ClInclude Include="NameObjectIdList.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="AudidFiles.h">
+    <ClInclude Include="SHA256.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SHA256.h">
+    <ClInclude Include="AuditFiles.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

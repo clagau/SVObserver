@@ -57,7 +57,7 @@ bool TableObject::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure
 {
 	bool l_bOk = SVTaskObjectClass::CreateObject(rCreateStructure);
 
-	m_NumberOfRows.SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
+	m_NumberOfRows.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
 	m_NumberOfRows.setSaveValueFlag(false);
 
 	return l_bOk;
@@ -66,7 +66,7 @@ bool TableObject::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure
 void TableObject::Hide(bool hide)
 {
 	UINT attributeTaskObject = SvPb::taskObject;
-	UINT attribute = SvDef::defaultValueObjectAttributes & ~SvPb::printable;
+	UINT attribute = SvDef::defaultValueObjectAttributes & ~SvPb::audittrail;
 	if (hide)
 	{
 		attributeTaskObject = SvPb::noAttributes;

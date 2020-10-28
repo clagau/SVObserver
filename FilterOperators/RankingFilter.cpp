@@ -161,7 +161,7 @@ void RankingFilter::init()
 	m_lvoRankingHeight.SetDefaultValue( 3L );
 	m_lvoRankingRank.SetDefaultValue( SVValueMedian );
 
-	const UINT cAttributes = SvPb::printable | SvPb::setableOnline | SvPb::remotelySetable;
+	const UINT cAttributes = SvPb::audittrail | SvPb::setableOnline | SvPb::remotelySetable;
 	for( l = 0; l < 49; l++ )
 	{
 		m_plvoRankingCells[l]->SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
@@ -283,7 +283,7 @@ void RankingFilter::RebuildRanking()
 	delete [] pRankingData;	
 	for( l = 0; l < lWidth * lHeight; l++ )
 	{
-		m_plvoRankingCells[l]->SetObjectAttributesAllowed( SvDef::defaultValueObjectAttributes | SvPb::printable | SvPb::setableOnline | SvPb::remotelySetable, SvOi::SetAttributeType::OverwriteAttribute );
+		m_plvoRankingCells[l]->SetObjectAttributesAllowed( SvDef::defaultValueObjectAttributes | SvPb::audittrail | SvPb::setableOnline | SvPb::remotelySetable, SvOi::SetAttributeType::OverwriteAttribute );
 	}// end for
 
 	for( l = lWidth * lHeight; l < 49; l++ )

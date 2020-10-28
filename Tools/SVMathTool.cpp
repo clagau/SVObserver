@@ -87,7 +87,7 @@ bool SVMathToolClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStruc
 	m_isCreated = SVToolClass::CreateObject(rCreateStructure);
 
 	// These values will not be exposed for this Tool.
-	constexpr UINT cAttribute {SvDef::selectableAttributes | SvPb::printable};
+	constexpr UINT cAttribute {SvDef::selectableAttributes | SvPb::audittrail};
 	m_drawToolFlag.SetObjectAttributesAllowed(cAttribute, SvOi::SetAttributeType::RemoveAttribute);
 
 	return m_isCreated;

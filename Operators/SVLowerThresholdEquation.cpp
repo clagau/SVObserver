@@ -67,7 +67,7 @@ bool SVLowerThresholdEquation::CreateObject( const SVObjectLevelCreateStruct& rC
 	m_isCreated = SVEquation::CreateObject(rCreateStructure);
 
 	// Set / Reset Printable Flag
-	result.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
+	result.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
 
 	return m_isCreated;
 }

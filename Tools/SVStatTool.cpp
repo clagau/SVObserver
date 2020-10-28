@@ -117,7 +117,7 @@ void SVStatTool::init(void)
 			false, SvOi::SVResetItemTool );
 
 	// Save default attributes
-	m_Value[SV_STATS_MIN_VALUE].SetObjectAttributesAllowed(SvPb::printable, SvOi::SetAttributeType::RemoveAttribute);
+	m_Value[SV_STATS_MIN_VALUE].SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
 	m_DefaultAttributes = m_Value [ SV_STATS_MIN_VALUE ].ObjectAttributesAllowed();
 
 	TCHAR szFeaturesEnabled[SV_NUMBER_OF_STAT_FEATURES + 1];
@@ -155,12 +155,12 @@ bool SVStatTool::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure 
 {
 	m_isCreated = SVToolClass::CreateObject(rCreateStructure);
 
-	m_OccurenceValue.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
-	m_PersistantFeaturesEnabled.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
-	m_VariableName.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
+	m_OccurenceValue.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
+	m_PersistantFeaturesEnabled.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
+	m_VariableName.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
 
 	// These values will not be exposed for the this Tool.
-	constexpr UINT cAttribute {SvDef::selectableAttributes | SvPb::printable};
+	constexpr UINT cAttribute {SvDef::selectableAttributes | SvPb::audittrail};
 	m_drawToolFlag.SetObjectAttributesAllowed(cAttribute, SvOi::SetAttributeType::RemoveAttribute);
 
 	std::string Name;

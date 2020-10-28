@@ -69,7 +69,7 @@
 #include "TriggerInformation/SVHardwareManifest.h"
 #include "Tools/SVColorTool.h"
 #include "ObjectInterfaces/ICommand.h"
-#include "SVUtilityLibrary/AudidFiles.h"
+#include "SVUtilityLibrary/AuditFiles.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -2300,7 +2300,7 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 		LoadInspection(rTree);
 		LoadPPQ(rTree);
 		LoadAdditionalFiles(rTree);
-		LoadAudidList(rTree);
+		LoadAuditList(rTree);
 		// EB 20031203
 		// a temp solution
 		// the better solution is to have the acqs subscribe and the triggers provide
@@ -3661,7 +3661,7 @@ void SVConfigurationObject::SaveConfiguration(SvXml::SVObjectXMLWriter& rWriter)
 	SaveGlobalConstants(rWriter);
 	SaveObjectAttributesSet(rWriter, AttributeSetPairVector);
 	SaveAdditionalFiles(rWriter);
-	SaveAudidList(rWriter);
+	SaveAuditList(rWriter);
 	rWriter.EndElement(); // end of BaseNode
 	rWriter.EndElement(); // end of Root Element
 }
@@ -5798,57 +5798,57 @@ void SVConfigurationObject::changeSystemResetIO(SVIMProductEnum newConfigType)
 	}
 }
 
-void SVConfigurationObject::UpdateAudidFiles(bool calculateHash)
+void SVConfigurationObject::UpdateAuditFiles(bool calculateHash)
 {
-	m_AudidDefaultList.SyncDefaultList(SVFileNameManagerClass::Instance().GetFileNameList());
-	m_AudidDefaultList.UpdateList();
-	m_AudidWhiteList.UpdateList();
+	m_AuditDefaultList.SyncDefaultList(SVFileNameManagerClass::Instance().GetFileNameList());
+	m_AuditDefaultList.UpdateList();
+	m_AuditWhiteList.UpdateList();
 	if (calculateHash)
 	{
-		m_AudidDefaultList.CalculateSHA256();
-		m_AudidWhiteList.CalculateSHA256();
+		m_AuditDefaultList.CalculateSHA256();
+		m_AuditWhiteList.CalculateSHA256();
 	}
 }
 
-const std::vector< SvUl::AudidFile>& SVConfigurationObject::GetAudidDefaultList()   const
+const std::vector< SvUl::AuditFile>& SVConfigurationObject::GetAuditDefaultList()   const
 {
-	return m_AudidDefaultList.GetFiles();
+	return m_AuditDefaultList.GetFiles();
 };
 
-const std::vector< SvUl::AudidFile>& SVConfigurationObject::GetAudidWhiteList()   const
+const std::vector< SvUl::AuditFile>& SVConfigurationObject::GetAuditWhiteList()   const
 {
-	return m_AudidWhiteList.GetFiles();
+	return m_AuditWhiteList.GetFiles();
 };
 
-void SVConfigurationObject::SaveAudidList(SvOi::IObjectWriter& rWriter, SvUl::AudidListType type) const
+void SVConfigurationObject::SaveAuditList(SvOi::IObjectWriter& rWriter, SvUl::AuditListType type) const
 {
-	auto& AudidFileVec = (type == SvUl::AudidListType::default) ? GetAudidDefaultList() : GetAudidWhiteList();
-	LPCTSTR lpStartElementName = (type == SvUl::AudidListType::default) ? SvXml::CTAG_AUDDID_DEFAULT_LIST : SvXml::CTAG_AUDDID_WHITE_LIST;
-	if (AudidFileVec.size() > 0)
+	auto& AuditFileVec = (type == SvUl::AuditListType::default) ? GetAuditDefaultList() : GetAuditWhiteList();
+	LPCTSTR lpStartElementName = (type == SvUl::AuditListType::default) ? SvXml::CTAG_AUDDID_DEFAULT_LIST : SvXml::CTAG_AUDDID_WHITE_LIST;
+	if (AuditFileVec.size() > 0)
 	{
 		rWriter.StartElement(lpStartElementName);
-		for (const auto& AudidFile : AudidFileVec)
+		for (const auto& AuditFile : AuditFileVec)
 		{
-			_variant_t Value{ AudidFile.Fullname.c_str() };
+			_variant_t Value{ AuditFile.Fullname.c_str() };
 			rWriter.WriteAttribute(SvXml::CTAG_FILENAME, Value);
-			Value = AudidFile.bhash;
+			Value = AuditFile.bhash;
 			rWriter.WriteAttribute(SvXml::CTAG_CALCULATE_HASH, Value);
-			Value = AudidFile.bignore;
+			Value = AuditFile.bignore;
 			rWriter.WriteAttribute(SvXml::CTAG_IGNORE_FILE, Value);
 		}
 		rWriter.EndElement(); //SvXml::CTAG_ADDITIONAL_CONFIG_FILES
 	}
 }
 
-HRESULT SVConfigurationObject::LoadAudidList(SVTreeType& rTree, SvUl::AudidListType type)
+HRESULT SVConfigurationObject::LoadAuditList(SVTreeType& rTree, SvUl::AuditListType type)
 {
 	HRESULT Result = S_OK;
 	SVTreeType::SVBranchHandle hBranch(nullptr);
-	LPCTSTR lpStartElementName = (type == SvUl::AudidListType::default) ? SvXml::CTAG_AUDDID_DEFAULT_LIST : SvXml::CTAG_AUDDID_WHITE_LIST;
+	LPCTSTR lpStartElementName = (type == SvUl::AuditListType::default) ? SvXml::CTAG_AUDDID_DEFAULT_LIST : SvXml::CTAG_AUDDID_WHITE_LIST;
 	if (SvXml::SVNavigateTree::GetItemBranch(rTree, lpStartElementName, nullptr, hBranch))
 	{
 		SVTreeType::SVLeafHandle hLeaf(rTree.getFirstLeaf(hBranch));
-		auto& AudidFiles = (type == SvUl::AudidListType::default) ? m_AudidDefaultList.GetFiles() : m_AudidWhiteList.GetFiles();
+		auto& AuditFiles = (type == SvUl::AuditListType::default) ? m_AuditDefaultList.GetFiles() : m_AuditWhiteList.GetFiles();
 		while (S_OK == Result && rTree.isValidLeaf(hBranch, hLeaf))
 		{
 			_variant_t Value;
@@ -5873,7 +5873,7 @@ HRESULT SVConfigurationObject::LoadAudidList(SVTreeType& rTree, SvUl::AudidListT
 				if (S_OK == rTree.getLeafData(hLeaf, Value) && VT_BSTR == Value.vt)
 				{
 					std::string FilePath{ SvUl::createStdString(Value.bstrVal) };
-					AudidFiles.emplace_back(FilePath.c_str(), hash, ignore);
+					AuditFiles.emplace_back(FilePath.c_str(), hash, ignore);
 				}
 			}
 			hLeaf = rTree.getNextLeaf(hBranch, hLeaf);
@@ -5882,13 +5882,13 @@ HRESULT SVConfigurationObject::LoadAudidList(SVTreeType& rTree, SvUl::AudidListT
 	return Result;
 }
 
-void  SVConfigurationObject::SaveAudidList(SvOi::IObjectWriter& rWriter) const
+void  SVConfigurationObject::SaveAuditList(SvOi::IObjectWriter& rWriter) const
 {
-	SaveAudidList(rWriter, SvUl::AudidListType::default);
-	SaveAudidList(rWriter, SvUl::AudidListType::white);
+	SaveAuditList(rWriter, SvUl::AuditListType::default);
+	SaveAuditList(rWriter, SvUl::AuditListType::white);
 };
 
-HRESULT  SVConfigurationObject::LoadAudidList(SVTreeType& rTree)
+HRESULT  SVConfigurationObject::LoadAuditList(SVTreeType& rTree)
 {
-	return (LoadAudidList(rTree, SvUl::AudidListType::default) | LoadAudidList(rTree, SvUl::AudidListType::white));
+	return (LoadAuditList(rTree, SvUl::AuditListType::default) | LoadAuditList(rTree, SvUl::AuditListType::white));
 }

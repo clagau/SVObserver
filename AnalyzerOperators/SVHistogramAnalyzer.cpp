@@ -562,20 +562,20 @@ bool SVHistogramAnalyzer::CreateObject( const SVObjectLevelCreateStruct& rCreate
         m_isCreated = true;
 	}
 
-	const UINT cAttributes = SvPb::printable | SvPb::remotelySetable | SvPb::setableOnline;
-	msvHistogramValue.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
-	msvStdDevValue.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
-	msvMeanValue.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
+	const UINT cAttributes = SvPb::audittrail | SvPb::remotelySetable | SvPb::setableOnline;
+	msvHistogramValue.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
+	msvStdDevValue.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
+	msvMeanValue.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
 	msvRangeStartValue.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 	msvRangeEndValue.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
-	msvMaxPixelValue.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
-	msvMinPixelValue.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
-	msvPixelCountValue.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
-	msvRangeSizeValue.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
+	msvMaxPixelValue.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
+	msvMinPixelValue.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
+	msvPixelCountValue.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
+	msvRangeSizeValue.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
 	msvScaleValue.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
-	msvHighPeak.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
-	msvLowPeak.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
-	msvValley.SetObjectAttributesAllowed( SvPb::printable, SvOi::SetAttributeType::RemoveAttribute );
+	msvHighPeak.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
+	msvLowPeak.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
+	msvValley.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
 	msvPeakThreshold.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 	msvDefaultPeak.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 	msvAccumulateCounts.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );

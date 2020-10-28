@@ -157,7 +157,7 @@
   <ItemGroup>
     <ClCompile Include="ArchiveExtractCallback.cpp" />
     <ClCompile Include="ArchiveUpdateCallback.cpp" />
-    <ClCompile Include="AudidFiles.cpp" />
+    <ClCompile Include="AuditFiles.cpp" />
     <ClCompile Include="BitmapHelper.cpp" />
     <ClCompile Include="InStreamWrapper.cpp" />
     <ClCompile Include="LoadDll.cpp" />
@@ -183,7 +183,7 @@
     <ClInclude Include="7zTypes.h" />
     <ClInclude Include="ArchiveExtractCallback.h" />
     <ClInclude Include="ArchiveUpdateCallback.h" />
-    <ClInclude Include="AudidFiles.h" />
+    <ClInclude Include="AuditFiles.h" />
     <ClInclude Include="BitmapHelper.h" />
     <ClInclude Include="IArchive.h" />
     <ClInclude Include="ICoder.h" />

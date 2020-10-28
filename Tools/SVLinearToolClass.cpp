@@ -67,7 +67,7 @@ bool SVLinearToolClass::CreateObject( const SVObjectLevelCreateStruct& rCreateSt
 			m_toolExtent.SetTranslation(SvPb::SVExtentTranslationProfileShift);
 		}
 	}
-	UINT Attributes = SvPb::remotelySetable | SvPb::setableOnline | SvPb::printable;
+	UINT Attributes = SvPb::remotelySetable | SvPb::setableOnline | SvPb::audittrail;
 	m_svRotationAngle.SetObjectAttributesAllowed( Attributes, SvOi::SetAttributeType::AddAttribute );
 	m_svRotationPointX.SetObjectAttributesAllowed( Attributes, SvOi::SetAttributeType::AddAttribute );
 	m_svRotationPointY.SetObjectAttributesAllowed( Attributes, SvOi::SetAttributeType::AddAttribute );
