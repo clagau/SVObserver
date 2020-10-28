@@ -73,13 +73,12 @@ bool SVMatroxGigeAcquisitionClass::IsValidBoard() const
 
 	if( bOk && m_DeviceParams.ParameterExists( DeviceParamVendorId ) )
 	{
-		_variant_t l_oValue;
-
 		SvTh::SVDigitizerLoadLibraryClass* l_psvLibrary = m_rDigitizerProc.GetDigitizerSubsystem(m_DigName.c_str());
-
-		if( nullptr != l_psvLibrary && S_OK == l_psvLibrary->ParameterGetValue( m_hDigitizer, 100, 0, &l_oValue ) )
+		VARIANT value;
+		::VariantInit(&value);
+		if( nullptr != l_psvLibrary && S_OK == l_psvLibrary->ParameterGetValue( m_hDigitizer, 100, 0, &value ) )
 		{
-			std::string l_csVenderId = SvUl::createStdString( l_oValue.bstrVal );
+			std::string l_csVenderId = SvUl::createStdString(_variant_t(value));
 
 			bOk = l_csVenderId == StringValue( m_DeviceParams.Parameter( DeviceParamVendorId ) );
 		}

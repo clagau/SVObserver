@@ -83,7 +83,7 @@ namespace SvXml
 
 	const  WCHAR* VariantHelper::pWhitespace = L"\a\b\f\n\r\t\v ";
 
-	void  VariantHelper::ToVariant(VARTYPE vartype, const wchar_t  *pVal, _variant_t* pVar)
+	void  VariantHelper::ToVariant(VARTYPE vartype, const wchar_t* pVal, _variant_t* pVar)
 	{
 		bool bInvalidArgument(false);
 
@@ -107,7 +107,7 @@ namespace SvXml
 			pVar->lVal =0 ;
 			break;
 		case VT_BSTR:
-			*pVar = _bstr_t(SysAllocStringLen(pVal, (UINT)wcslen(pVal))); 
+			pVar->SetString(SvUl::createStdString(pVal).c_str());
 			break;
 		case VT_BOOL:
 			{

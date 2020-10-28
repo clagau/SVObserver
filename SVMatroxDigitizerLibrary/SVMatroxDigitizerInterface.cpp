@@ -898,7 +898,7 @@ HRESULT SVMatroxDigitizerInterface::GetFeature(const SVMatroxDigitizer& Digitize
 					l_Code = SVMatroxApplicationInterface::GetLastStatus();
 					if (l_Code == S_OK)
 					{
-						FeatureValue.bstrVal = _bstr_t(value);
+						FeatureValue.SetString(value);
 					}
 				}
 				break;

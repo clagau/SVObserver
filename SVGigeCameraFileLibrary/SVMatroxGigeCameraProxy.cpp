@@ -216,8 +216,6 @@ HRESULT SVMatroxGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParam
 
 	if ( nullptr != pDigitizer && 0 != hDigitizer )
 	{
-		_variant_t varValue;
-
 		SVDeviceParamEnum l_eType = rw->Type();
 
 		switch ( l_eType )
@@ -262,13 +260,15 @@ HRESULT SVMatroxGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParam
 				const SVStringValueDeviceParam* pParam = rw.DerivedValue( pParam );
 				if ( pParam )
 				{
+					VARIANT value;
+					::VariantInit(&value);
 					//! First check to see if already set as this setting takes a long time
-					if( S_OK == pDigitizer->ParameterGetValue( hDigitizer, SvDef::SVGigeParameterCameraDefaultSettings, 0, &varValue ) )
+					if( S_OK == pDigitizer->ParameterGetValue( hDigitizer, SvDef::SVGigeParameterCameraDefaultSettings, 0, &value ) )
 					{
-						_bstr_t StringValue( varValue.bstrVal );
-						if( pParam->strValue != static_cast<LPCTSTR> (StringValue) )
+						if(pParam->strValue !=  SvUl::createStdString(_variant_t(value)))
 						{
-							varValue = pParam->strValue.c_str();
+							_variant_t varValue;
+							varValue.SetString(pParam->strValue.c_str());
 							hr = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterCameraDefaultSettings, 0, &varValue );
 						}
 					}
@@ -283,8 +283,7 @@ HRESULT SVMatroxGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParam
 				const SVLongValueDeviceParam* pParam = rw.DerivedValue( pParam );
 				if ( pParam )
 				{
-					varValue = pParam->lValue;
-
+					_variant_t varValue = pParam->lValue;
 					hr = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterFeatureShutter, 0, &varValue );
 				}
 				break;
@@ -299,7 +298,7 @@ HRESULT SVMatroxGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParam
 				const SVLongValueDeviceParam* pParam = rw.DerivedValue( pParam );
 				if ( pParam )
 				{
-					varValue = pParam->GetNormalizedValue();
+					_variant_t varValue = pParam->GetNormalizedValue();
 					hr = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterFeatureGamma, 0, &varValue );
 				}
 				break;
@@ -312,7 +311,7 @@ HRESULT SVMatroxGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParam
 				const SVLongValueDeviceParam* pParam = rw.DerivedValue( pParam );
 				if ( pParam )
 				{
-					varValue = pParam->GetNormalizedValue();
+					_variant_t varValue = pParam->GetNormalizedValue();
 					hr = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterFeatureBrightness, 0, &varValue );
 				}
 				break;
@@ -325,7 +324,7 @@ HRESULT SVMatroxGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParam
 				const SVLongValueDeviceParam* pParam = rw.DerivedValue( pParam );
 				if ( pParam )
 				{
-					varValue = pParam->GetNormalizedValue();
+					_variant_t varValue = pParam->GetNormalizedValue();
 					hr = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterFeatureGain, 0, &varValue );
 				}
 				break;
@@ -338,7 +337,7 @@ HRESULT SVMatroxGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParam
 				const SVLongValueDeviceParam* pParam = rw.DerivedValue( pParam );
 				if ( pParam )
 				{
-					varValue = pParam->GetNormalizedValue();
+					_variant_t varValue = pParam->GetNormalizedValue();
 					hr = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterFeatureWhiteBalanceU, 0, &varValue );
 				}
 				break;
@@ -351,7 +350,7 @@ HRESULT SVMatroxGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParam
 				const SVLongValueDeviceParam* pParam = rw.DerivedValue( pParam );
 				if ( pParam )
 				{
-					varValue = pParam->GetNormalizedValue();
+					_variant_t varValue = pParam->GetNormalizedValue();
 					hr = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterFeatureWhiteBalanceV, 0, &varValue );
 				}
 				break;
@@ -364,7 +363,7 @@ HRESULT SVMatroxGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParam
 				const SVLongValueDeviceParam* pParam = rw.DerivedValue( pParam );
 				if ( pParam )
 				{
-					varValue = pParam->GetNormalizedValue();
+					_variant_t varValue = pParam->GetNormalizedValue();
 					hr = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterFeatureSharpness, 0, &varValue );
 				}
 				break;
@@ -377,7 +376,7 @@ HRESULT SVMatroxGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParam
 				const SVLongValueDeviceParam* pParam = rw.DerivedValue( pParam );
 				if ( pParam )
 				{
-					varValue = pParam->GetNormalizedValue();
+					_variant_t varValue = pParam->GetNormalizedValue();
 					hr = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterFeatureHue, 0, &varValue );
 				}
 				break;
@@ -390,7 +389,7 @@ HRESULT SVMatroxGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParam
 				const SVLongValueDeviceParam* pParam = rw.DerivedValue( pParam );
 				if ( pParam )
 				{
-					varValue = pParam->GetNormalizedValue();
+					_variant_t varValue = pParam->GetNormalizedValue();
 					hr = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterFeatureSaturation, 0, &varValue );
 				}
 				break;
@@ -419,8 +418,8 @@ HRESULT SVMatroxGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParam
 				const SVStringValueDeviceParam* pParam = rw.DerivedValue( pParam );
 				if ( pParam )
 				{
-					_bstr_t value = pParam->strValue.c_str();
-					varValue = value.Detach();
+					_variant_t varValue;
+					varValue.SetString(pParam->strValue.c_str());
 					hr = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterTriggerSource, 0, &varValue );
 				}
 				break;
@@ -442,8 +441,8 @@ HRESULT SVMatroxGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParam
 				const SVStringValueDeviceParam* pParam = rw.DerivedValue( pParam );
 				if ( pParam )
 				{
-					_bstr_t value = pParam->strValue.c_str();
-					varValue = value.Detach();
+					_variant_t varValue;
+					varValue.SetString(pParam->strValue.c_str());
 					hr = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterTriggerEdge, 0, &varValue );
 				}
 				break;
@@ -456,8 +455,8 @@ HRESULT SVMatroxGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParam
 				const SVStringValueDeviceParam* pParam = rw.DerivedValue( pParam );
 				if ( pParam )
 				{
-					_bstr_t value = pParam->strValue.c_str();
-					varValue = value.Detach();
+					_variant_t varValue;
+					varValue.SetString(pParam->strValue.c_str());
 					hr = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterTriggerEnable, 0, &varValue );
 				}
 				break;
@@ -470,7 +469,7 @@ HRESULT SVMatroxGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParam
 				const SVLongValueDeviceParam* pParam = rw.DerivedValue( pParam );
 				if ( pParam )
 				{
-					varValue = pParam->lValue;
+					_variant_t varValue = pParam->lValue;
 					hr = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterTriggerDelay, 0, &varValue );
 				}
 				break;
@@ -492,9 +491,8 @@ HRESULT SVMatroxGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParam
 				const SVStringValueDeviceParam* pParam = rw.DerivedValue( pParam );
 				if ( pParam )
 				{
-					_bstr_t value = pParam->strValue.c_str();
-					varValue = value.Detach();
-
+					_variant_t varValue;
+					varValue.SetString(pParam->strValue.c_str());
 					hr = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterTriggerLine, 0, &varValue );
 				}
 				break;
@@ -507,9 +505,8 @@ HRESULT SVMatroxGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParam
 				const SVStringValueDeviceParam* pParam = rw.DerivedValue( pParam );
 				if ( pParam )
 				{
-					_bstr_t value = pParam->strValue.c_str();
-					varValue = value.Detach();
-
+					_variant_t varValue;
+					varValue.SetString(pParam->strValue.c_str());
 					hr = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterStrobeSource, 0, &varValue );
 				}
 				break;
@@ -531,8 +528,8 @@ HRESULT SVMatroxGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParam
 				const SVStringValueDeviceParam* pParam = rw.DerivedValue( pParam );
 				if ( pParam )
 				{
-					_bstr_t value = pParam->strValue.c_str();
-					varValue = value.Detach();
+					_variant_t varValue;
+					varValue.SetString(pParam->strValue.c_str());
 					hr = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterStrobeEdge, 0, &varValue );
 				}
 				break;
@@ -545,8 +542,8 @@ HRESULT SVMatroxGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParam
 				const SVStringValueDeviceParam* pParam = rw.DerivedValue( pParam );
 				if ( pParam )
 				{
-					_bstr_t value = pParam->strValue.c_str();
-					varValue = value.Detach();
+					_variant_t varValue;
+					varValue.SetString(pParam->strValue.c_str());
 					hr = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterStrobeEnable, 0, &varValue );
 				}
 				break;
@@ -568,7 +565,7 @@ HRESULT SVMatroxGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParam
 				const SVLongValueDeviceParam* pParam = rw.DerivedValue( pParam );
 				if ( pParam )
 				{
-					varValue = pParam->lValue;
+					_variant_t varValue = pParam->lValue;
 					hr = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterStrobeDelay, 0, &varValue );
 				}
 				break;
@@ -581,7 +578,7 @@ HRESULT SVMatroxGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParam
 				const SVLongValueDeviceParam* pParam = rw.DerivedValue( pParam );
 				if ( pParam )
 				{
-					varValue = pParam->lValue;
+					_variant_t varValue = pParam->lValue;
 					hr = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterStrobeDuration, 0, &varValue );
 				}
 				break;
@@ -594,8 +591,8 @@ HRESULT SVMatroxGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParam
 				const SVStringValueDeviceParam* pParam = rw.DerivedValue( pParam );
 				if ( pParam )
 				{
-					_bstr_t value = pParam->strValue.c_str();
-					varValue = value.Detach();
+					_variant_t varValue;
+					varValue.SetString(pParam->strValue.c_str());
 					hr = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterStrobeLine, 0, &varValue );
 				}
 				break;
@@ -608,7 +605,7 @@ HRESULT SVMatroxGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParam
 				const SVLongValueDeviceParam* pParam = rw.DerivedValue( pParam );
 				if ( pParam )
 				{
-					varValue = pParam->lValue;
+					_variant_t varValue = pParam->lValue;
 					hr = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterPacketSize, 0, &varValue );
 				}
 				break;
@@ -621,6 +618,7 @@ HRESULT SVMatroxGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParam
 				const SVLutDeviceParam* pLutParam = rw.DerivedValue( pLutParam );
 				assert( pLutParam );
 
+				_variant_t varValue;
 				// convert to safearray
 				hr = SVLUTToSafeArray(pLutParam->lut, varValue);
 				if (S_OK == hr)
@@ -649,6 +647,7 @@ HRESULT SVMatroxGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParam
 				const SVStringValueDeviceParam* pParam = rw.DerivedValue( pParam );
 				if ( pParam )
 				{
+					_variant_t varValue;
 					varValue.SetString(pParam->strValue.c_str());
 					hr = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterLineInput, 0, &varValue );
 				}
@@ -662,7 +661,7 @@ HRESULT SVMatroxGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParam
 				const SVLongValueDeviceParam* pParam = rw.DerivedValue( pParam );
 				if ( pParam )
 				{
-					varValue = pParam->lValue;
+					_variant_t varValue = pParam->lValue;
 					hr = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterVerticalBinning, 0, &varValue );
 				}
 				break;
@@ -675,7 +674,7 @@ HRESULT SVMatroxGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParam
 				const SVLongValueDeviceParam* pParam = rw.DerivedValue( pParam );
 				if ( pParam )
 				{
-					varValue = pParam->lValue;
+					_variant_t varValue = pParam->lValue;
 
 					hr = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterHorizontalBinning, 0, &varValue );
 				}
@@ -722,6 +721,7 @@ HRESULT SVMatroxGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParam
 					const SVDeviceParam* pHeldParam = rDeviceParamWrapper.DerivedValue(pHeldParam); 
 					if (pHeldParam)
 					{
+						_variant_t varValue;
 						switch (pHeldParam->DataType())
 						{
 							case DeviceDataTypeLong:
@@ -1029,12 +1029,13 @@ bool SVMatroxGigeCameraProxy::CameraMatchesCameraFile(const SVDeviceParamCollect
 	if( 0 != hDigitizer && nullptr != pDigitizer &&
 		rCameraFileDeviceParams.ParameterExists( DeviceParamVendorName ) )
 	{
-		_variant_t l_oValue;
 
+		VARIANT value;
+		::VariantInit(&value);
 		// Check Vendor Name
-		if( S_OK == pDigitizer->ParameterGetValue( hDigitizer, SvDef::SVGigeParameterVendorName, 0, &l_oValue ) )
+		if( S_OK == pDigitizer->ParameterGetValue( hDigitizer, SvDef::SVGigeParameterVendorName, 0, &value ) )
 		{
-			std::string l_csVenderName = SvUl::createStdString(l_oValue.bstrVal);
+			std::string l_csVenderName = SvUl::createStdString(_variant_t(value));
 
 			const SVDeviceParamWrapper param = rCameraFileDeviceParams.Parameter( DeviceParamVendorName );
 			l_bOk = l_csVenderName == StringValue( param );
@@ -1042,10 +1043,11 @@ bool SVMatroxGigeCameraProxy::CameraMatchesCameraFile(const SVDeviceParamCollect
 		// if Vendor Name matched, check Model Name
 		if ( l_bOk )
 		{
+			::VariantInit(&value);
 			// Check Model Name
-			if( S_OK == pDigitizer->ParameterGetValue( hDigitizer, SvDef::SVGigeParameterModelName, 0, &l_oValue ) )
+			if( S_OK == pDigitizer->ParameterGetValue( hDigitizer, SvDef::SVGigeParameterModelName, 0, &value ) )
 			{
-				std::string l_csModelName = SvUl::createStdString(l_oValue.bstrVal);
+				std::string l_csModelName = SvUl::createStdString(_variant_t(value));
 
 				const SVDeviceParamWrapper param = rCameraFileDeviceParams.Parameter( DeviceParamModelName );
 				l_bOk = l_csModelName == StringValue( param );

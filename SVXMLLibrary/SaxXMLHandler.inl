@@ -518,26 +518,37 @@ namespace SvXml
 	template<typename TreeType>
 	_variant_t  SaxXMLHandler<TreeType>::GetVariantArray()
 	{
-		COleSafeArray saRet;
+		_variant_t result;
+
 		if(m_spIntVector.get())
 		{
-			saRet.CreateOneDim(VT_I4,static_cast<DWORD>(m_spIntVector->size()));
-
+			SAFEARRAY* pSafeArray = ::SafeArrayCreateVector(VT_I4, 0, static_cast<ULONG> (m_spIntVector->size()));
 			for(long i =0 ; i < static_cast<long>(m_spIntVector->size());i++ )
 			{
-				saRet.PutElement(&i,&(m_spIntVector->at(i)));
+				if (S_OK != ::SafeArrayPutElement(pSafeArray, &i, static_cast<void*> (&m_spIntVector->at(i))))
+				{
+					::SafeArrayDestroy(pSafeArray);
+					return result;
+				}
 			}
+			result.vt = VT_I4 | VT_ARRAY;
+			result.parray = pSafeArray;
 		}
 		else if(m_spUINTVector.get())
 		{
-			saRet.CreateOneDim(VT_I4,static_cast<DWORD>(m_spUINTVector->size()));
-
-			for(long i =0 ; i < static_cast<long>(m_spUINTVector->size());i++ )
+			SAFEARRAY* pSafeArray = ::SafeArrayCreateVector(VT_I4, 0, static_cast<ULONG> (m_spUINTVector->size()));
+			for (long i = 0; i < static_cast<long>(m_spIntVector->size()); i++)
 			{
-				saRet.PutElement(&i,&(m_spUINTVector->at(i)));
+				if (S_OK != ::SafeArrayPutElement(pSafeArray, &i, static_cast<void*> (&m_spUINTVector->at(i))))
+				{
+					::SafeArrayDestroy(pSafeArray);
+					return result;
+				}
 			}
+			result.vt = VT_I4 | VT_ARRAY;
+			result.parray = pSafeArray;
 		} 
-		return saRet.Detach();
+		return result;
 	}
 
 
