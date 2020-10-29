@@ -1,13 +1,15 @@
-// DlgReportDefaultFile.cpp : implementation file
-//
+//*****************************************************************************
+// \copyright COPYRIGHT (c) 2020/10/29,2020/10/29 by Seidenader Maschinenbau GmbH. All Rights Reserved 
+/// \file AuditFilesDialog.cpp
+///  Dialog for config external files in audidtrail 
+//******************************************************************************
 
+#pragma region Includes 
 #include "stdafx.h"
-//#include "afxdialogex.h"
 #include "AuditFilesDialog.h"
 #include "SVUtilityLibrary/AuditFiles.h"
 #include "SVUtilityLibrary/SHA256.h"
-#include <atlwin.h>
-
+#pragma endregion Includes
 
 namespace SvOg
 {
@@ -277,10 +279,10 @@ namespace SvOg
 					break;
 				case 	EHashValue:
 				{
-					SvUl::AuditFile& rAF = m_AuditFiles.GetFiles()[i];
 					std::string hash;
 					try
 					{
+						SvUl::AuditFile& rAF = m_AuditFiles.GetFiles()[i];
 						hash = SvUl::SHA256(rAF.GetFullname().c_str());
 					}
 					catch (const std::exception& e)

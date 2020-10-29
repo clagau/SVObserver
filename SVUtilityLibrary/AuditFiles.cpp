@@ -1,7 +1,8 @@
 //*****************************************************************************
 // \copyright COPYRIGHT (c) 2020/10/06,2020/10/06 by Seidenader Maschinenbau GmbH. All Rights Reserved 
 /// \file AuditFiles.cpp
-/// DESCRIPTION
+///  CAuditfiles is a container for the external files used in Audittrail. In the Audittrail 
+/// some properties and  a hash code of external files will be included  
 //******************************************************************************
 
 #pragma region Includes 
@@ -11,15 +12,9 @@
 #include <boost/filesystem.hpp>
 #include "sha256.h"
 
-
 #pragma endregion Includes
 
-
-
-
 namespace bfs = boost::filesystem;
-
-
 
 namespace SvUl
 {
@@ -48,21 +43,17 @@ namespace SvUl
 		return Flag2String(bhash);
 	}
 
-
-
-
 	void AuditFile::Trace() const
 	{
 		
-		char mbstr[100];
-		mbstr[0] = '\0';
-		std::strftime(mbstr, sizeof(mbstr), "%d %m %Y %H:%M:%S ", std::localtime(&lastWriteDate));
-		std::string ret = mbstr;
+		char cbuf[100];
+		cbuf[0] = '\0';
+		std::strftime(cbuf, sizeof(cbuf), "%d %m %Y %H:%M:%S ", std::localtime(&lastWriteDate));
+		std::string strDate = cbuf;
 
 		std::stringstream ss;
-		ss << Fullname << " " << size << " " << mbstr << " " << filename << "  " << extension << std::endl;
+		ss << Fullname << " " << size << " " << strDate << " " << filename << "  " << extension << std::endl;
 		::OutputDebugString(ss.str().c_str());
-
 	}
 
 	std::string  AuditFile::Flag2String(bool flag)
@@ -194,13 +185,12 @@ namespace SvUl
 	}
 	size_t   CAuditFiles::SetValues(const std::vector< AuditFile>& Files)
 	{
-
 		m_Files = Files;
 		return m_Files.size();
 	}
+
 	size_t   CAuditFiles::SetValues(std::vector< AuditFile>&& Files)
 	{
-
 		m_Files = std::move(Files);
 		return m_Files.size();
 	}
