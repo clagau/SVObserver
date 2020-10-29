@@ -813,6 +813,11 @@ bool SVOConfigAssistantDlg::IsInspectionInList(LPCTSTR InspectionName) const
 	return m_InspectList.IsInspectionInList(InspectionName);
 }
 
+bool SVOConfigAssistantDlg::IsOriginalInspectionInList(LPCTSTR InspectionName) const
+{
+	return m_InspectList.IsOriginalInspectionInList(InspectionName);
+}
+
 bool SVOConfigAssistantDlg::IsTriggerInList(LPCTSTR TriggerName) const
 {
 	return m_TriggerList.IsTriggerInList(std::string(TriggerName));

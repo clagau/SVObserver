@@ -377,7 +377,22 @@ void SVOInspectionSourceDlg::OnSelchangeLstIpdList()
 
 		CString sNewTxt;
 		m_ctlIPDlist.GetText(iCurSel, sNewTxt);
-		if (m_pParent->IsInspectionInList(sNewTxt))
+
+		bool invalidName = m_pParent->IsOriginalInspectionInList(sNewTxt);
+		if (invalidName)
+		{
+			SVOInspectionObjPtr pInspectionObj = m_pParent->GetInspectionObjectByName(sCurrentTxt.GetString());
+			if (nullptr != pInspectionObj)
+			{
+				//The new name can be the original name
+				if (sNewTxt == pInspectionObj->GetOriginalName().c_str())
+				{
+					invalidName = false;
+				}
+			}
+		}
+		invalidName |= m_pParent->IsInspectionInList(sNewTxt) || sNewTxt.IsEmpty();
+		if (invalidName)
 		{
 			//Place MessageBox with error...
 			m_ctlIPDlist.InsertString(m_iCursel, sCurrentTxt);

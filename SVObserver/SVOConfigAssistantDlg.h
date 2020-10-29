@@ -98,6 +98,7 @@ public:
 	bool IsCameraInList(LPCTSTR CameraName) const;
 	bool IsTriggerInList(LPCTSTR TriggerName) const;
 	bool IsInspectionInList(LPCTSTR InspectionName) const;
+	bool IsOriginalInspectionInList(LPCTSTR InspectionName) const;
 	bool IsPPQInList(LPCTSTR PPQName) const;
 
 	std::string BuildDigName( const SVOCameraObj& rCameraObj ) const;
