@@ -361,17 +361,14 @@ void ToolSetView::OnRightClickToolSetList(NMHDR* , LRESULT* pResult)
 	{
 
 		case NavElementType::StartGrouping:
-			break;
 		case NavElementType::EndGrouping:
-			break;
 		case NavElementType::LoopTool:
-			break;
 		case NavElementType::Tool:
-			break;
+		case NavElementType::GroupTool:
 		case NavElementType::SubTool:
 			break;
 		case NavElementType::EndDelimiterToolSet:
-		case NavElementType::EndDelimiterLoopTool:
+		case NavElementType::EndDelimiterTool:
 		case NavElementType::Empty:
 			Selection.clear();
 			hasComment = false;
@@ -556,6 +553,7 @@ void ToolSetView::RenameItem()
 				
 			}
 			break;
+		case NavElementType::GroupTool:
 		case NavElementType::LoopTool:
 		case NavElementType::Tool:
 			if (SvDef::InvalidObjectId != toolId) // it's a Tool
@@ -629,7 +627,7 @@ bool ToolSetView::EditToolGroupingComment(const std::string& groupingName)
 	return bRetVal;
 }
 
-bool ToolSetView::IsLoopToolSelected() const
+bool ToolSetView::IsSubToolSelected() const
 {
 	int selectedItem(-1);
 	auto NavElement = GetSelectedNavigatorElement(&selectedItem);
@@ -642,7 +640,7 @@ bool ToolSetView::IsLoopToolSelected() const
 	{
 		case NavElementType::SubTool:
 		case NavElementType::SubLoopTool:
-		case NavElementType::EndDelimiterLoopTool:
+		case NavElementType::EndDelimiterTool:
 			return true;
 	}
 	return false;
@@ -664,11 +662,12 @@ void ToolSetView::OnSelectComment()
 	{
 		case NavElementType::SubLoopTool:
 		case NavElementType::SubTool:
+		case NavElementType::GroupTool:
 		case NavElementType::LoopTool:
 		case NavElementType::Tool:
 			EditToolComment(toolId);
 			break;
-		case  NavElementType::EndGrouping:
+		case NavElementType::EndGrouping:
 		case NavElementType::StartGrouping:
 			EditToolGroupingComment(NavElement->m_DisplayName);
 			break;
@@ -715,7 +714,6 @@ void ToolSetView::OnSelectToolSetReference()
 	if (nullptr != pTool)
 	{
 		SvTo::SVShiftTool* pShiftTool = dynamic_cast<SvTo::SVShiftTool *>(pTool);
-
 		if (nullptr != pShiftTool)
 		{
 			SVShiftToolUtility::SetToolSetReference(pShiftTool);
@@ -732,7 +730,6 @@ void ToolSetView::OnSelectToolNormalize()
 		if (nullptr != pTool)
 		{
 			SvTo::SVShiftTool* pShiftTool = dynamic_cast<SvTo::SVShiftTool *>(pTool);
-
 			if (nullptr != pShiftTool)
 			{
 				SVShiftToolUtility::SetToolNormalize(pShiftTool);
@@ -828,7 +825,9 @@ void ToolSetView::OnEndLabelEditToolSetList(NMHDR*, LRESULT* pResult)
 			case NavElementType::SubLoopTool:
 				IsSubTool = true;
 				pLoopTool = dynamic_cast<SvTo::LoopTool*> (SVObjectManagerClass::Instance().GetObject(NavElement->m_OwnerId));
+				[[fallthrough]];
 			case NavElementType::LoopTool:
+			case NavElementType::GroupTool:
 			case NavElementType::Tool:
 				pTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject(NavElement->m_objectId));
 				if (nullptr == pTool)
@@ -924,19 +923,12 @@ bool ToolSetView::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle ht
 	if (bOk)
 	{
 		l_Size.cy = svVariant;
-	}
-
-	if (bOk)
-	{
 		bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_CELL_WIDTH, htiParent, svVariant);
-		if (bOk)
-		{
-			l_Size.cx = svVariant;
-		}
 	}
 
 	if (bOk)
 	{
+		l_Size.cx = svVariant;
 		SetViewSize(l_Size);
 	}
 	return bOk;
@@ -953,10 +945,6 @@ bool ToolSetView::CheckParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle 
 	if (bOk)
 	{
 		l_Size.cy = svVariant;
-	}
-
-	if (bOk)
-	{
 		bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_CELL_WIDTH, htiParent, svVariant);
 		if (bOk)
 		{
@@ -1080,7 +1068,7 @@ bool ToolSetView::IsEndToolGroupAllowed() const
 	{
 		case NavElementType::SubTool:
 		case NavElementType::SubLoopTool:
-		case NavElementType::EndDelimiterLoopTool:
+		case NavElementType::EndDelimiterTool:
 			return false;
 			break;
 		case NavElementType::EndDelimiterToolSet:
@@ -1126,6 +1114,7 @@ bool ToolSetView::enterSelectedEntry()
 
 		case NavElementType::SubLoopTool:
 		case NavElementType::SubTool:
+		case NavElementType::GroupTool:
 		case NavElementType::LoopTool:
 		case NavElementType::Tool:
 			if (SvDef::InvalidObjectId != toolId)

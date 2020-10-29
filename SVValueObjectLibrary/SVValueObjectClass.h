@@ -92,7 +92,7 @@ public:
 	virtual HRESULT setValue(const std::string& rValueString, int Index = -1) override;
 	virtual HRESULT getValue(std::string& rValueString, int Index = -1, const std::string& rFormatString = _T("")) const;
 	virtual void setResetOptions(bool p_bResetAlways, SvOi::SVResetItemEnum p_eResetItem) override;
-	virtual void validateValue(const _variant_t& rValue) const override;
+	virtual void validateValue(const _variant_t& rValue, const _variant_t& rDefaultValue) const override;
 	virtual std::string getTypeName() const override { return m_TypeName; };
 	virtual bool isArray() const override { return 1 < m_ArraySize; };
 	virtual int32_t getArraySize() const override { return m_ArraySize; };
@@ -146,6 +146,10 @@ protected:
 	//! \param rValue [in] String to convert
 	/// \returns the Value converted!
 	virtual T ConvertString2Type( const std::string& rValue ) const = 0;
+	virtual T ConvertString2Type(const std::string& rValue, const _variant_t&) const
+	{
+		return ConvertString2Type(rValue);
+	};
 
 	//! Convert template type to String
 	//! \param rValue [in] Type to convert
@@ -172,9 +176,10 @@ protected:
 	virtual void WriteDefaultValues(SvOi::IObjectWriter& rWriter) = 0;
 
 	/// !!can throw Exception!!
-	T convertVariantValue(const _variant_t& ) const;
+	T convertVariantValue(const _variant_t&, const _variant_t& rDefaultValue) const;
 	/// !!can throw Exception!!
-	ValueVector variant2VectorType(const _variant_t& rValue) const;
+	ValueVector variant2VectorType(const _variant_t& rValue, const _variant_t& rDefaultValue) const;
+	ValueVector variant2VectorType(const _variant_t& rValue) const { return variant2VectorType(rValue, ValueType2Variant(&m_DefaultValue));	};
 
 	_variant_t vectorType2SafeArray(long arraySize) const;
 

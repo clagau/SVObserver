@@ -328,7 +328,7 @@ void ToolClipboard::writeSourceIds(SvOi::IObjectWriter& rWriter, SvTo::SVToolCla
 	{
 		if( nullptr != pImageInfo )
 		{
-			SVObjectClass* pImage = pImageInfo->GetInputObjectInfo().getObject();
+			SVObjectClass* pImage = pImageInfo->GetInputObjectInfo().getFinalObject();
 			if( pImageInfo->IsConnected() && nullptr !=  pImage)
 			{
 				SVObjectClass* pTool = pImage->GetAncestor(SvPb::SVObjectTypeEnum::SVToolObjectType, true);
@@ -581,7 +581,7 @@ HRESULT ToolClipboard::validateIds(std::string& rXmlData, uint32_t postId, uint3
 	}
 
 	SVObjectClass* pOwner = SVObjectManagerClass::Instance().GetObject(ownerId);
-	if (nullptr != pOwner && SvPb::LoopToolObjectType == pOwner->GetObjectSubType() && SvPb::LoopToolClassId == toolClassId)
+	if (nullptr != pOwner && (SvPb::LoopToolObjectType == pOwner->GetObjectSubType() || SvPb::GroupToolObjectType == pOwner->GetObjectSubType()) && (SvPb::LoopToolClassId == toolClassId || SvPb::GroupToolClassId == toolClassId))
 	{
 		result = E_FAIL;
 		SvStl::MessageManager e(SvStl::MsgType::Data);
@@ -698,7 +698,7 @@ HRESULT ToolClipboard::replaceToolName( std::string& rXmlData, SVTreeType& rTree
 			std::string NewName;
 
 			//@Todo[mec] kann ein Colortool owner eines tools sein?
-			if (nullptr != pOwner &&( SvPb::SVColorToolObjectType == pOwner->GetObjectSubType() || SvPb::LoopToolObjectType == pOwner->GetObjectSubType()) )
+			if (nullptr != pOwner &&( SvPb::SVColorToolObjectType == pOwner->GetObjectSubType() || SvPb::LoopToolObjectType == pOwner->GetObjectSubType() || SvPb::GroupToolObjectType == pOwner->GetObjectSubType()) )
 			{
 				NewName = static_cast<const SvIe::SVTaskObjectListClass*>(pOwner)->MakeUniqueToolName(ToolName.c_str());
 			}

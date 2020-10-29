@@ -66,9 +66,9 @@ void ValidateInputList(const SVInObjectInfoStructPtrVector& rInputObjectList);
 template <typename T>
 T* getInput(const SVInObjectInfoStruct& rInputObject, bool bRunMode=false)
 {
-	if (rInputObject.IsConnected() && nullptr != rInputObject.GetInputObjectInfo().getObject())
+	if (rInputObject.IsConnected() && nullptr != rInputObject.GetInputObjectInfo().getFinalObject())
 	{
-		SVObjectClass* pObject = rInputObject.GetInputObjectInfo().getObject();
+		SVObjectClass* pObject = rInputObject.GetInputObjectInfo().getFinalObject();
 		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
 		//! We are sure that when getObject() is not nullptr that it is the correct type
 		return bRunMode ? static_cast<T*> (pObject) : dynamic_cast<T*> (pObject);

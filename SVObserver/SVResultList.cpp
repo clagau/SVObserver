@@ -15,7 +15,6 @@
 
 #include "InspectionEngine/SVIPResultData.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVObjectLibrary\SVGetObjectDequeByTypeVisitor.h"
 #include "Operators/SVResult.h"
 #include "SVInspectionProcess.h"
 #include "SVToolSet.h"
@@ -65,15 +64,12 @@ void SVResultList::Refresh(SvIe::SVTaskObjectClass* pRootObject)
 	SvDef::SVObjectTypeInfoStruct info;
 	info.m_ObjectType = SvPb::SVResultObjectType;
 
-	SVGetObjectDequeByTypeVisitor l_Visitor( info );
+	std::vector<SvOi::IObjectClass*> list;
+	fillObjectList(std::back_inserter(list), info, pRootObject->getObjectId());
 
-	SVObjectManagerClass::Instance().VisitElements( l_Visitor, pRootObject->getObjectId() );
-
-	SVGetObjectDequeByTypeVisitor::SVObjectPtrDeque::const_iterator l_Iter;
-
-	for( l_Iter = l_Visitor.GetObjects().begin(); l_Iter != l_Visitor.GetObjects().end(); ++l_Iter )
+	for (const auto pObject : list)
 	{
-		SvOp::SVResult* pResult = dynamic_cast<SvOp::SVResult*> (const_cast<SVObjectClass*> (*l_Iter));
+		SvOp::SVResult* pResult = dynamic_cast<SvOp::SVResult*> (pObject);
 
 		m_results.push_back( pResult );
 	}

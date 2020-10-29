@@ -113,8 +113,7 @@ public:
 
 	std::string GetCompleteObjectName(uint32_t objectId);
 
-	template< typename ObjectVisitor >
-	HRESULT VisitElements( ObjectVisitor& rVisitor, uint32_t startingObjectID=InvalidObjectId );
+	void fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo, uint32_t startingObjectID);
 
 	HRESULT GetObserverDataNames(uint32_t observerID, SVSubjectDataNameDeque& rSubjectDataNames ) const;
 

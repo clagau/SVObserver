@@ -91,6 +91,7 @@
     <ClCompile Include="EQAdjustSizePositionX.cpp" />
     <ClCompile Include="EQAdjustSizePositionY.cpp" />
     <ClCompile Include="EQAdjustSizeWidth.cpp" />
+    <ClCompile Include="ParameterTask.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -164,6 +165,7 @@
     <ClInclude Include="EQAdjustSizePositionX.h" />
     <ClInclude Include="EQAdjustSizePositionY.h" />
     <ClInclude Include="EQAdjustSizeWidth.h" />
+    <ClInclude Include="ParameterTask.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SVAutoThresholdEquation.h" />
     <ClInclude Include="SVBarCodeResult.h" />

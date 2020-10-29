@@ -13,7 +13,6 @@
 #include "SVDisplayImageSelect.h"
 
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVObjectLibrary\SVGetObjectDequeByTypeVisitor.h"
 #include "InspectionEngine/SVImageClass.h"
 #include "SVIPDoc.h"
 #include "SVInspectionProcess.h"
@@ -34,7 +33,6 @@ SVDisplayImageSelect::SVDisplayImageSelect(CWnd* pParent /*=nullptr*/)
 {
 	//{{AFX_DATA_INIT(SVDisplayImageSelect)
 	//}}AFX_DATA_INIT
-	m_pDoc = nullptr;
 }
 
 SVDisplayImageSelect::~SVDisplayImageSelect()
@@ -92,12 +90,6 @@ BOOL SVDisplayImageSelect::OnInitDialog()
 		info.m_ObjectType = SvPb::SVImageObjectType;
 		info.m_SubType = SvPb::SVNotSetSubObjectType;
 
-		SVGetObjectDequeByTypeVisitor l_Visitor( info );
-
-		SVObjectManagerClass::Instance().VisitElements( l_Visitor, m_pDoc->GetInspectionID() );
-
-		SVGetObjectDequeByTypeVisitor::SVObjectPtrDeque::const_iterator l_Iter;
-
 		// Differenciate between image owned by ToolSet and image owned by a tool
 		auto getImageName = [](SvIe::SVImageClass* pImage) {
 			std::string imageName;
@@ -116,14 +108,23 @@ BOOL SVDisplayImageSelect::OnInitDialog()
 			return imageName;
 		};
 
-		for( l_Iter = l_Visitor.GetObjects().begin(); l_Iter != l_Visitor.GetObjects().end(); ++l_Iter )
-		{
-			SvIe::SVImageClass* pImage = dynamic_cast<SvIe::SVImageClass*> (const_cast< SVObjectClass* >( *l_Iter ));
+		std::vector<SvOi::IObjectClass*> list;
+		fillObjectList(std::back_inserter(list), info, m_pDoc->GetInspectionID());
 
-			if (nullptr != pImage && SvPb::noAttributes != pImage->ObjectAttributesAllowed())
+		for (const auto pObject : list)
+		{
+			if (nullptr != pObject && SvPb::noAttributes != pObject->ObjectAttributesAllowed())
 			{
-				index = m_ImageSelectList.AddString(getImageName(pImage).c_str());
-				m_ImageSelectList.SetItemData(index, reinterpret_cast<DWORD_PTR>(pImage));				
+				SvIe::SVImageClass* pImage = dynamic_cast<SvIe::SVImageClass*> (pObject);
+				if (nullptr != pImage)
+				{
+					index = m_ImageSelectList.AddString(getImageName(pImage).c_str());
+				}
+				else
+				{
+					index = m_ImageSelectList.AddString(pObject->GetObjectNameBeforeObjectType(SvPb::SVObjectTypeEnum::SVToolSetObjectType).c_str());
+				}
+				m_ImageSelectList.SetItemData(index, reinterpret_cast<DWORD_PTR>(pObject));
 			}
 		}// end while
 

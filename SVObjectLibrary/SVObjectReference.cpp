@@ -14,6 +14,7 @@
 #include "SVObjectClass.h"
 #include "SVObjectReference.h"
 #include "SVObjectManagerClass.h"
+#include "ObjectInterfaces/ILinkedObject.h"
 #include "ObjectInterfaces/IValueObject.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/SVGUID.h"
@@ -21,18 +22,16 @@
 
 SVObjectReference::SVObjectReference( SVObjectClass* pObject ):
 	m_ArrayIndex(-1)
-, m_pValueObject(nullptr)
+	,m_pObject(pObject)
 {
-	m_pObject = pObject;
 	m_objectId = (nullptr != m_pObject) ? m_pObject->getObjectId() : SvDef::InvalidObjectId;
 	(nullptr != m_pObject) ? m_NameInfo.ParseObjectName(m_pObject->GetCompleteName().c_str()) : m_NameInfo.clear();
 }
 
 SVObjectReference::SVObjectReference( SVObjectClass* pObject, long lArrayIndex, std::string strDefaultValue ):
 	m_ArrayIndex(lArrayIndex) 
-, m_pValueObject(nullptr)
+	, m_pObject(pObject)
 {
-	m_pObject = pObject;
 	m_objectId = m_pObject ? m_pObject->getObjectId() : SvDef::InvalidObjectId;
 	if( nullptr != m_pObject )
 	{
@@ -45,16 +44,14 @@ SVObjectReference::SVObjectReference( SVObjectClass* pObject, long lArrayIndex, 
 }
 
 SVObjectReference::SVObjectReference( SVObjectClass* pObject, const SVObjectNameInfo& p_rNameInfo )
-	: m_pValueObject (nullptr)
+	: m_pObject(pObject)
 {
-	m_pObject = pObject;
 	m_objectId = m_pObject ? m_pObject->getObjectId() : SvDef::InvalidObjectId;
 	m_NameInfo = p_rNameInfo;
 	m_ArrayIndex = p_rNameInfo.GetIndexValue();
 }
 
 SVObjectReference::SVObjectReference(const std::string& objectIdAndIndexString)
-	: m_pValueObject(nullptr)
 {
 	std::string::size_type Pos = objectIdAndIndexString.find_first_of(_T("["));
 	std::string objectIdString = objectIdAndIndexString.substr(0, Pos);
@@ -82,6 +79,8 @@ const SVObjectReference& SVObjectReference::operator = ( const SVObjectReference
 {
 	m_pObject = rhs.m_pObject;
 	m_pValueObject = nullptr;
+	m_pFinalObject = nullptr;
+	m_pLinkedObject = nullptr;
 	m_objectId = rhs.m_objectId != SvDef::InvalidObjectId ? rhs.m_objectId : (nullptr != m_pObject ? m_pObject->getObjectId() : SvDef::InvalidObjectId);
 	m_NameInfo = rhs.m_NameInfo;
 	m_ArrayIndex = rhs.m_ArrayIndex;
@@ -90,7 +89,13 @@ const SVObjectReference& SVObjectReference::operator = ( const SVObjectReference
 
 void  SVObjectReference::clear()
 {
-	init();
+	m_pObject = nullptr;
+	m_pValueObject = nullptr;
+	m_pFinalObject = nullptr;
+	m_pLinkedObject = nullptr;
+	m_objectId = SvDef::InvalidObjectId;
+	m_NameInfo.clear();
+	m_ArrayIndex = -1;
 }
 
 
@@ -101,6 +106,35 @@ SvOi::IValueObject* SVObjectReference::getValueObject(bool forceCast) const
 		m_pValueObject = dynamic_cast<SvOi::IValueObject*> (m_pObject);
 	}
 	return m_pValueObject;
+}
+
+SVObjectClass* SVObjectReference::getFinalObject() const
+{
+	if (nullptr == m_pFinalObject)
+	{
+		m_pLinkedObject = dynamic_cast<SvOi::ILinkedObject*> (m_pObject);
+		if (nullptr == m_pLinkedObject)
+		{
+			m_pFinalObject = m_pObject;
+		}
+	}
+
+	if (nullptr != m_pLinkedObject)
+	{
+		try
+		{
+			m_pFinalObject = static_cast<SVObjectClass*>(const_cast<SvOi::IObjectClass*>(m_pLinkedObject->getLinkedObject()));
+		}
+		catch (...)
+		{
+			m_pFinalObject = nullptr;
+		}
+		if (nullptr == m_pFinalObject)
+		{
+			m_pFinalObject = m_pObject;
+		}
+	}
+	return m_pFinalObject;
 }
 
 std::string SVObjectReference::objectIdToString() const

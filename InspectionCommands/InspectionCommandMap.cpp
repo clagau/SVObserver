@@ -623,6 +623,14 @@ namespace SvCmd
 		[] {return std::chrono::seconds{120}; } ,
 		[](const SvPb::InspectionCmdRequest& rRequest) {return  getToolsWithReplaceableSourceImage(rRequest.gettoolswithreplaceablesourceimagerequest()); }
 		)
+		},
+
+		{ SvPb::InspectionCmdRequest::kSetAndSortEmbeddedValueRequest,
+		std::make_tuple(
+		[] {return ThreadPref::inspection; },
+		[] {return std::chrono::seconds{120}; } ,
+		[](const SvPb::InspectionCmdRequest& rRequest) {return  setandSortEmbeddedValues(rRequest.setandsortembeddedvaluerequest()); }
+		)
 		}
 
 	};

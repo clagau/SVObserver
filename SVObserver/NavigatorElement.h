@@ -13,11 +13,12 @@ enum class NavElementType
 	StartGrouping,
 	EndGrouping,
 	LoopTool,
+	GroupTool,
 	Tool,
 	SubTool,
 	SubLoopTool,
 	EndDelimiterToolSet,
-	EndDelimiterLoopTool,
+	EndDelimiterTool,
 	Empty
 };
 struct NavigatorElement

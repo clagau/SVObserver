@@ -110,6 +110,11 @@ namespace SvStl
 		setMessage( MessageCode, AdditionalTextId, rAdditionalTextList, SourceFile, ProgramCode, objectId );
 	}
 
+	MessageContainer::MessageContainer(const MessageData& rMessage, uint32_t objectId /*= 0*/, bool clearData /*= true*/)
+	{
+		setMessage(rMessage, objectId, clearData );
+	}
+
 	const MessageContainer& MessageContainer::operator=(const MessageContainer& rRhs)
 	{
 		if( &rRhs != this )

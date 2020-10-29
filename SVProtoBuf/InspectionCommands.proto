@@ -1,4 +1,3 @@
-
 //*****************************************************************************
 /// \copyright (c) 2018,2018 by Seidenader Maschinenbau GmbH
 /// \file InspectionCommands.proto
@@ -911,6 +910,27 @@ message ValidateValueObjectResponse
 	bool isvalid = 2;
 }
 
+message EmbeddedValueStruct
+{
+	bytes name = 1;
+	EmbeddedIdEnum oldEmbeddedId = 2; 	
+	InputTypeEnum type = 3;
+	bytes defaultValue = 4;
+	bytes value = 5;
+}
+
+message SetAndSortEmbeddedValueRequest
+{
+	uint32 ownerId = 1;
+	repeated EmbeddedValueStruct embeddedList = 2;
+}
+
+message SetAndSortEmbeddedValueResponse
+{
+	int32 errorRow = 1;
+	MessageContainerVector errormessages = 2;
+}
+
 message InspectionCmdRequest
 {
 	uint32 inspectionID = 1;			//The inspection ID to perform the command on
@@ -983,6 +1003,7 @@ message InspectionCmdRequest
 		GetResultRangeObjectRequest getResultRangeObjectRequest = 65;
 		GetImageInfoExternalToolRequest getImageInfoExternalToolRequest = 66;
 		ValidateValueObjectRequest validateValueObjectRequest = 67;
+		SetAndSortEmbeddedValueRequest setAndSortEmbeddedValueRequest = 68;
 	}
 }
 
@@ -1038,5 +1059,6 @@ message InspectionCmdResponse
 		InitializeExternalToolTaskResponse initializeExternalToolTaskResponse = 45;
 		GetImageInfoExternalToolResponse getImageInfoExternalToolResponse = 46;
 		ValidateValueObjectResponse validateValueObjectResponse = 47;
+		SetAndSortEmbeddedValueResponse setAndSortEmbeddedValueResponse = 48;
 	}
 }

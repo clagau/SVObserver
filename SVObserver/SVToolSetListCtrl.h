@@ -104,10 +104,8 @@ protected:
 	int m_fullParameterinML;
 	int m_collapseState;
 	int m_iTopIndex;
-	int m_expandStateLoopToolValid = 0;
-	int m_collapseStateLoopToolValid = 0;
-	int m_expandStateLoopToolInvalid = 0;
-	int m_collapseStateLoopToolInvalid = 0;
+	int m_expandStateInvalid = 0;
+	int m_collapseStateInvalid = 0;
 
 	uint32_t m_ToolSetId{ SvDef::InvalidObjectId };
 	uint32_t m_InspectionId{ SvDef::InvalidObjectId };

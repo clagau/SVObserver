@@ -170,6 +170,7 @@ BEGIN_MESSAGE_MAP(SVIPDoc, CDocument)
 	ON_COMMAND(ID_ADD_ENDTOOLGROUPING, OnAddEndToolGrouping)
 	ON_COMMAND(ID_TOOL_DEPENDENCIES, OnToolDependencies)
 	ON_COMMAND(ID_ADD_LOOPTOOL, OnAddLoopTool)
+	ON_COMMAND(ID_ADD_GROUPTOOL, OnAddGroupTool)
 	ON_UPDATE_COMMAND_UI(ID_ADD_LOADIMAGETOOL, OnUpdateAddGeneralTool)
 	ON_UPDATE_COMMAND_UI(ID_ADD_IMAGETOOL, OnUpdateAddGeneralTool)
 	ON_UPDATE_COMMAND_UI(ID_ADD_ARCHIVETOOL, OnUpdateAddGeneralTool)
@@ -190,6 +191,7 @@ BEGIN_MESSAGE_MAP(SVIPDoc, CDocument)
 	ON_UPDATE_COMMAND_UI(ID_ADD_TRANSFORMATIONTOOL, OnUpdateAddTransformationTool)
 	ON_UPDATE_COMMAND_UI(ID_ADD_COLORTOOL, OnUpdateAddColorTool)
 	ON_UPDATE_COMMAND_UI(ID_ADD_LOOPTOOL, OnUpdateAddLoopTool)
+	ON_UPDATE_COMMAND_UI(ID_ADD_GROUPTOOL, OnUpdateAddGroupTool)
 
 
 
@@ -449,14 +451,14 @@ bool SVIPDoc::AddTool(SvPb::ClassIdEnum classId)
 		return false;
 	}
 	std::string Selection(spNavElement->m_DisplayName);
-	bool bAddToLoopTool(false);
+	bool bAddToLoopGroupTool(false);
 	bool bAddToToolSet(false);
 	switch (spNavElement->m_Type)
 	{
 		case NavElementType::SubTool:
-		case NavElementType::EndDelimiterLoopTool:
+		case NavElementType::EndDelimiterTool:
 		case NavElementType::SubLoopTool:
-			bAddToLoopTool = true;
+			bAddToLoopGroupTool = true;
 			break;
 		case NavElementType::EndDelimiterToolSet:
 		case NavElementType::Empty:
@@ -467,6 +469,7 @@ bool SVIPDoc::AddTool(SvPb::ClassIdEnum classId)
 		case NavElementType::EndGrouping:
 		case NavElementType::Tool:
 		case NavElementType::LoopTool:
+		case NavElementType::GroupTool:
 			bAddToToolSet = true;
 			break;
 	}
@@ -484,7 +487,7 @@ bool SVIPDoc::AddTool(SvPb::ClassIdEnum classId)
 
 		TaskObjectInsertBeforeID = GetObjectIdFromToolToInsertBefore(Selection);
 	}
-	else if (bAddToLoopTool)
+	else if (bAddToLoopGroupTool)
 	{
 		OwnerID = spNavElement->m_OwnerId;
 		TaskObjectInsertBeforeID = spNavElement->m_objectId;
@@ -563,7 +566,7 @@ bool SVIPDoc::AddToolGrouping(bool bStartGroup)
 	switch (NavElement->m_Type)
 	{
 		case NavElementType::SubTool:
-		case NavElementType::EndDelimiterLoopTool:
+		case NavElementType::EndDelimiterTool:
 			//NO Grouping in LoopTool
 			return false;
 			break;
@@ -575,6 +578,7 @@ bool SVIPDoc::AddToolGrouping(bool bStartGroup)
 		case NavElementType::EndGrouping:
 		case NavElementType::Tool:
 		case NavElementType::LoopTool:
+		case NavElementType::GroupTool:
 			break;
 	}
 
@@ -1084,6 +1088,10 @@ void SVIPDoc::OnAddLoopTool()
 {
 	AddTool(SvPb::LoopToolClassId);
 }
+void SVIPDoc::OnAddGroupTool()
+{
+	AddTool(SvPb::GroupToolClassId);
+}
 
 void SVIPDoc::OnUpdateAddStartToolGrouping(CCmdUI* pCmdUI)
 {
@@ -1092,7 +1100,7 @@ void SVIPDoc::OnUpdateAddStartToolGrouping(CCmdUI* pCmdUI)
 	{
 
 		ToolSetView* pView = GetToolSetView();
-		if (!pView || pView->IsLoopToolSelected())
+		if (!pView || pView->IsSubToolSelected())
 		{
 			bEnable = false;
 		}
@@ -1107,7 +1115,7 @@ void SVIPDoc::OnUpdateAddEndToolGrouping(CCmdUI* pCmdUI)
 	{
 		// check insertion position and ensure there is an unmatched start group before.
 		ToolSetView* pView = GetToolSetView();
-		if (!pView || pView->IsLoopToolSelected() || !pView->IsEndToolGroupAllowed())
+		if (!pView || pView->IsSubToolSelected() || !pView->IsEndToolGroupAllowed())
 		{
 			bEnable = false;
 		}
@@ -1165,6 +1173,7 @@ void SVIPDoc::OnEditDelete()
 			break;
 
 		case NavElementType::LoopTool:
+		case NavElementType::GroupTool:
 		case NavElementType::Tool:
 		{
 			if (deleteTool(pNavElement.get()))
@@ -1242,11 +1251,12 @@ void SVIPDoc::OnUpdateEditCutCopy(CCmdUI* pCmdUI)
 			{
 				switch (NavElement->m_Type)
 				{
-					case NavElementType::EndDelimiterLoopTool:
+					case NavElementType::EndDelimiterTool:
 						break;
 					case NavElementType::SubTool:
 					case NavElementType::Tool:
 					case NavElementType::LoopTool:
+					case NavElementType::GroupTool:
 						if (-1 != SelectedListIndex)
 						{
 							Enabled = true;
@@ -1284,7 +1294,7 @@ void SVIPDoc::OnEditPaste()
 	switch (pNavElement->m_Type)
 	{
 		case NavElementType::SubTool:
-		case NavElementType::EndDelimiterLoopTool:
+		case NavElementType::EndDelimiterTool:
 		case NavElementType::SubLoopTool:
 			ownerId = pNavElement->m_OwnerId;
 			postToolId = pNavElement->m_objectId;
@@ -1306,6 +1316,7 @@ void SVIPDoc::OnEditPaste()
 		break;
 		case NavElementType::Tool:
 		case NavElementType::LoopTool:
+		case NavElementType::GroupTool:
 			postToolId = pNavElement->m_objectId;
 			break;
 		case NavElementType::EndDelimiterToolSet:
@@ -1362,7 +1373,7 @@ void SVIPDoc::updateToolsetView(uint32_t toolID, uint32_t postID, uint32_t owner
 		assert(S_OK == hr); UNREFERENCED_PARAMETER(hr);
 
 		SVObjectClass*  pOwnerObject(SVObjectManagerClass::Instance().GetObject(ownerID));
-		if (pOwnerObject && SvPb::LoopToolObjectType != pOwnerObject->GetObjectSubType())
+		if (pOwnerObject && SvPb::LoopToolObjectType != pOwnerObject->GetObjectSubType() && SvPb::GroupToolObjectType != pOwnerObject->GetObjectSubType())
 		{
 			std::string name(pSelectedName);
 			
@@ -2548,13 +2559,15 @@ void SVIPDoc::SaveViewPlacements(SvOi::IObjectWriter& rWriter)
 			assert(pWndSplitter2 && pWndSplitter2->GetSafeHwnd());
 
 			SVIPSplitterFrame* pFrame = dynamic_cast<SVIPSplitterFrame*>(pWndSplitter2->GetParent());
-
-			CRuntimeClass* pClass = pFrame->GetRuntimeClass();
-			assert(_T("SVIPSplitterFrame") == std::string(pClass->m_lpszClassName));	UNREFERENCED_PARAMETER(pClass);
-
-			if (pFrame &&pFrame->GetSafeHwnd())
+			if (nullptr != pFrame)
 			{
-				pFrame->GetWindowPlacement(&wndpl);
+				CRuntimeClass* pClass = pFrame->GetRuntimeClass();
+				assert(_T("SVIPSplitterFrame") == std::string(pClass->m_lpszClassName));	UNREFERENCED_PARAMETER(pClass);
+
+				if (pFrame->GetSafeHwnd())
+				{
+					pFrame->GetWindowPlacement(&wndpl);
+				}
 			}
 		}
 	}
@@ -2786,16 +2799,19 @@ bool SVIPDoc::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle htiPar
 
 					SVIPSplitterFrame* pFrame = dynamic_cast<SVIPSplitterFrame*>(pWndSplitter2->GetParent());
 
-					CRuntimeClass* pClass = pFrame->GetRuntimeClass();
-					assert(_T("SVIPSplitterFrame") == std::string(pClass->m_lpszClassName)); UNREFERENCED_PARAMETER(pClass);
-
-					if (pFrame && pFrame->GetSafeHwnd())
+					if (nullptr != pFrame)
 					{
-						bOk = pFrame->SetWindowPlacement(&wndpl) ? true : false; // WINDOWPLACEMENT* lpwndpl
-					}// end if
-				} // if(pFrame && pFrame->GetSafeHwnd())
-			} // if(pWndSplitter && pWndSplitter->GetSafeHwnd())
-		} // if( View.pToolSetView && View.pToolSetView->GetSafeHwnd() )
+						CRuntimeClass* pClass = pFrame->GetRuntimeClass();
+						assert(_T("SVIPSplitterFrame") == std::string(pClass->m_lpszClassName)); UNREFERENCED_PARAMETER(pClass);
+
+						if (pFrame->GetSafeHwnd())
+						{
+							bOk = pFrame->SetWindowPlacement(&wndpl) ? true : false; // WINDOWPLACEMENT* lpwndpl
+						}// end if
+					}
+				} // if(pWndSplitter && pWndSplitter->GetSafeHwnd())
+			} // if( View.pToolSetView && View.pToolSetView->GetSafeHwnd() )
+		} 
 	}
 
 	if (bOk)
@@ -3087,7 +3103,7 @@ bool SVIPDoc::deleteTool(NavigatorElement* pNaviElement)
 		if (S_OK == hr && responseCmd.has_getobjectparametersresponse())
 		{
 			if (SvPb::SVToolObjectType != responseCmd.getobjectparametersresponse().typeinfo().objecttype() ||
-				SvPb::LoopToolObjectType != responseCmd.getobjectparametersresponse().typeinfo().subtype())
+				(SvPb::LoopToolObjectType != responseCmd.getobjectparametersresponse().typeinfo().subtype() && SvPb::GroupToolObjectType != responseCmd.getobjectparametersresponse().typeinfo().subtype()))
 			{
 				return false;
 			}
@@ -3205,6 +3221,7 @@ void SVIPDoc::OnUpdateEditAdjustToolPosition(CCmdUI* pCmdUI)
 		case NavElementType::SubTool:
 		case NavElementType::Tool:
 		case NavElementType::LoopTool:
+		case NavElementType::GroupTool:
 			enabled = true;
 			break;
 	}
@@ -3309,7 +3326,22 @@ afx_msg void SVIPDoc::OnUpdateAddLoopTool(CCmdUI* PCmdUI)
 	// Check current user access...
 	Enabled = Enabled && TheSVObserverApp.OkToEdit() && isImageAvailable(SvPb::SVImageMonoType);;
 	ToolSetView* pView = GetToolSetView();
-	if (!pView || pView->IsLoopToolSelected())
+	if (!pView || pView->IsSubToolSelected())
+	{
+		//no LOOPTOOL in LOOPTOOL!
+		Enabled = false;
+	}
+
+	PCmdUI->Enable(Enabled);
+}
+
+afx_msg void SVIPDoc::OnUpdateAddGroupTool(CCmdUI* PCmdUI)
+{
+	bool Enabled = !SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST);
+	// Check current user access...
+	Enabled = Enabled && TheSVObserverApp.OkToEdit() && isImageAvailable(SvPb::SVImageMonoType);;
+	ToolSetView* pView = GetToolSetView();
+	if (!pView || pView->IsSubToolSelected())
 	{
 		//no LOOPTOOL in LOOPTOOL!
 		Enabled = false;

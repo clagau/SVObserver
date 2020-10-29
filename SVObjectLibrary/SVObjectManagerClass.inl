@@ -89,71 +89,6 @@ HRESULT SVObjectManagerClass::GetConfigurationObject( SVObjectTypeName*& rpObjec
 	return GetRootChildObject( rpObject, SvDef::FqnConfiguration );
 }
 
-template< typename ObjectVisitor>
-HRESULT SVObjectManagerClass::VisitElements( ObjectVisitor& rVisitor, uint32_t startingObjectID )
-{
-	HRESULT Result = S_OK;
-
-	if( SvDef::InvalidObjectId == startingObjectID )
-	{
-		//Set to configuration as this used to be the start.
-		startingObjectID = GetChildRootObjectID( SvDef::FqnConfiguration );
-	}
-	SVObjectClass* pObject = GetObject( startingObjectID );
-
-	if( nullptr != pObject )
-	{
-		HRESULT Temp = S_OK;
-
-		SVObjectClass::SVObjectPtrDeque PreObjects = pObject->GetPreProcessObjects();
-
-		SVObjectClass::SVObjectPtrDeque::iterator PreIter;
-
-		for( PreIter = PreObjects.begin(); PreObjects.end() != PreIter; ++PreIter )
-		{
-			SVObjectClass* pPreObject = *PreIter;
-
-			if( nullptr != pPreObject )
-			{
-				Temp = VisitElements( rVisitor, pPreObject->getObjectId() );
-
-				if( S_OK == Result )
-				{
-					Result = Temp;
-				}
-			}
-		}
-
-		Temp = pObject->Accept( rVisitor );
-
-		if( S_OK == Result )
-		{
-			Result = Temp;
-		}
-
-		SVObjectClass::SVObjectPtrDeque PostObjects = pObject->GetPostProcessObjects();
-
-		SVObjectClass::SVObjectPtrDeque::iterator PostIter;
-
-		for( PostIter = PostObjects.begin(); PostObjects.end() != PostIter; ++PostIter )
-		{
-			SVObjectClass* pPostObject = *PostIter;
-
-			if( nullptr != pPostObject )
-			{
-				Temp = VisitElements( rVisitor, pPostObject->getObjectId() );
-
-				if( S_OK == Result )
-				{
-					Result = Temp;
-				}
-			}
-		}
-	}
-
-	return Result;
-}
-
 template< typename SVDataType >
 HRESULT SVObjectManagerClass::UpdateObserver( uint32_t observerID, const SVDataType& rData )
 {
@@ -201,10 +136,3 @@ HRESULT SVObjectManagerClass::UpdateObservers( const std::string& rSubjectDataNa
 
 	return Result;
 }
-
-template<typename ObjectVisitor>
-HRESULT SvOi::visitElements( ObjectVisitor& rVisitor, uint32_t startingObjectID )
-{
-	return SVObjectManagerClass::Instance().VisitElements(rVisitor, startingObjectID );
-}
-

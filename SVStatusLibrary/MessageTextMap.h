@@ -74,7 +74,7 @@ namespace SvStl
 		{Tid_RunTool_Exception, _T("Exception in SVRunTool of some External Dll %s")},
 		{Tid_SVInitializeRun_Exception, _T("Exception in SVInitializeRun in some External Dll %s")},
 		{Tid_CouldNotCopyDll, _T("Could not copy DLL because a different version is used by another tool")},
-		
+
 		//Defines for SVConfigurationObjects
 		{Tid_CreateSFailed, _T("Create %s failed")},
 		{Tid_NumberOfIosMissing, _T("the Number of Ios Entries is missing.")},
@@ -93,10 +93,10 @@ namespace SvStl
 		{Tid_CouldNotExecuteFormatString, _T("could not execute '%s'")},
 
 		//RangeValue
-		{Tid_RangeValue_EmptyString, _T( "Empty String in %s." )},
-		{Tid_RangeValue_WrongRange, _T( "%s must between %s and %s." )},
+		{Tid_RangeValue_EmptyString, _T("Empty String in %s.")},
+		{Tid_RangeValue_WrongRange, _T("%s must between %s and %s.")},
 		{Tid_Init_RangeControlFailed, _T("Initialisation of range control failed.")},
-		{Tid_ErrorUnknownEnum, _T( "Unknown enum" )},
+		{Tid_ErrorUnknownEnum, _T("Unknown enum")},
 		{Tid_FailHigh, _T("Fail High")},
 		{Tid_FailLow, _T("Fail Low")},
 		{Tid_WarnHigh, _T("Warn High")},
@@ -104,10 +104,10 @@ namespace SvStl
 		{Tid_IsLessThan, _T("ERROR:\n%s\nis less than\n%s")},
 		{Tid_IsInvalidRef, _T("ERROR:\n%s: %s\nis an invalid reference.")},
 
-		{Tid_RingBuffer_Depth_Invalid_Value, _T( "RingBuffer Depth has to be between %s and %s, current %s" )},
+		{Tid_RingBuffer_Depth_Invalid_Value, _T("RingBuffer Depth has to be between %s and %s, current %s")},
 		{Tid_Error_NoFontFileSpec, _T("No Font File Specified")},
-		{Tid_Error_FontFileNotExist, _T( "Font File Does Not Exist: %s" )},
-		{Tid_Error_FontFileEmpty, _T( "Font File Empty: %s" )},
+		{Tid_Error_FontFileNotExist, _T("Font File Does Not Exist: %s")},
+		{Tid_Error_FontFileEmpty, _T("Font File Empty: %s")},
 		{Tid_ArchiveTool_PathEmpty, _T("Archive Path is empty")},
 		{Tid_ArchiveTool_CreateFileFailed, _T("Create Archive File \"%s\" Failed")},
 		{Tid_ArchiveTool_CreatePathFailed, _T("Create Archive Path \"%s\" Failed")},
@@ -122,9 +122,9 @@ namespace SvStl
 		{Tid_Command_StartSvimConfig, _T("Informational - Starting PutSVIMConfig")},
 		{Tid_Command_EndSvimConfig, _T("Informational - Ending PutSVIMConfig")},
 		{Tid_ErrorMIL, _T("%s - An error has occurred, MIL error code = %s, MIL error Text = %s")},
-		{Tid_ErrorGettingPPQ, _T( "Error getting PPQ." )},
-		{Tid_ErrorGettingInputObjectList, _T( "Error getting input object list." )},
-		{Tid_ErrorGettingPPQCount, _T( "Error getting PPQ count." )},
+		{Tid_ErrorGettingPPQ, _T("Error getting PPQ.")},
+		{Tid_ErrorGettingInputObjectList, _T("Error getting input object list.")},
+		{Tid_ErrorGettingPPQCount, _T("Error getting PPQ count.")},
 		{Tid_Acquisition_SourceInformationFailed, _T("Failed to get acquisition source information!")},
 		{Tid_TooManyVariables, _T("%s\nToo many variables.")},
 		{Tid_EquationParserError, _T("%s\nSyntax Error at position %s")},
@@ -137,12 +137,12 @@ namespace SvStl
 		{Tid_ErrorProcessNotifyLastInspected, _T("ProcessNotifyWithLastInspected - %s")},
 		{Tid_RejectTRBeforeInterestDecision, _T("Reject TriggerRecord data for one inspection before final PPQ-decision is finished.")},
 		{Tid_Unknown, _T("Unknown")},
-		{Tid_ErrorLockingInputRequests, _T( "Error locking input requests." )},
-		{Tid_ErrorRemovingAllInputRequests, _T( "Error removing all input requests." )},
-		{Tid_ErrorRemovingAllInputImageRequests, _T( "Error removing all input image requests." )},
-		{Tid_ErrorUnlockingInputRequests, _T( "Error unlocking input requests." )},
+		{Tid_ErrorLockingInputRequests, _T("Error locking input requests.")},
+		{Tid_ErrorRemovingAllInputRequests, _T("Error removing all input requests.")},
+		{Tid_ErrorRemovingAllInputImageRequests, _T("Error removing all input image requests.")},
+		{Tid_ErrorUnlockingInputRequests, _T("Error unlocking input requests.")},
 		{Tid_IPDoc_NoCameraColorAttached, _T("Color camera not attached to this IPDoc")},
-		{Tid_ErrorGettingTimeStamp, _T( "Error getting time stamp." )},
+		{Tid_ErrorGettingTimeStamp, _T("Error getting time stamp.")},
 		{Tid_ProcessTrigger, _T("ProcessTrigger - %s")},
 		{Tid_ErrorNotAllRejectConditionItemsFound, _T("Not All Reject Condition List items found")},
 		{Tid_ReleaseProduct, _T("Release Product - %s")},
@@ -152,8 +152,8 @@ namespace SvStl
 		{Tid_SVIODoc_ClosingImpossible, _T("Invalid Operation!\nThe IO Dialog can not be closed without\nclosing the whole configuration.")},
 		{Tid_SVIPDoc_ClosingImpossible, _T("Invalid Operation!\nIf You wish to remove this inspection\nGo to the Edit menu and Select Edit Configuration.")},
 		{Tid_SVIPDoc_GoIntoRegTestFailed, _T("Inspection is unable to go into Regression Test Mode.  There is an unknown error with the inspection.")},
-		{Tid_ErrorDetachingInput, _T( "Error detaching input." )},
-		{Tid_ColorToolMustBeFirstMessage, _T( "A Color Tool must ALWAYS be\n the first tool on a color system." )},
+		{Tid_ErrorDetachingInput, _T("Error detaching input.")},
+		{Tid_ColorToolMustBeFirstMessage, _T("A Color Tool must ALWAYS be\n the first tool on a color system.")},
 		{Tid_LightReference_NotAvailable, _T("Light Reference not available for %s")},
 		{Tid_LUT_NotAvailable, _T("LUT not available for camera(s)")},
 		{Tid_LUT_ShouldOverwriteAllBands, _T("Selecting this option will overwrite all bands with the currently displayed LUT information. Continue?")},
@@ -174,7 +174,7 @@ namespace SvStl
 			"and/or resized to fit in the bounds.\nThis configuration "
 			"should be saved to prevent this message from appearing "
 			"again.")},
-		{Tid_MatroxImage_UnableToFindFile, _T( "Unable to locate image file:\n%s\n\nBrowse..." )},
+		{Tid_MatroxImage_UnableToFindFile, _T("Unable to locate image file:\n%s\n\nBrowse...")},
 		{Tid_UnKnownFileFormat, _T("Unknown File Format!")},
 		{Tid_FailedToLoadImage, _T("Failed to load an image!")},
 		{Tid_FailedToSaveImage, _T("Unable to Save Image")},
@@ -200,12 +200,12 @@ namespace SvStl
 		{Tid_Error_CreationFilterFailed, _T("Creation of Filter Failed")},
 		{Tid_Error_ToolPositionError, _T("Changing image source has placed the tool outside of the selected source image.  Please either: "
 			"select a new image source, resize the image source to contain this tool, or resize/position this tool to fit on the source image.")},
-		{Tid_RingBuffer_Depth_Invalid_ValueString, _T( "RingBuffer Depth has to be between %s and %s, current %s" )},
-		{Tid_RingBuffer_ImageIndex_Invalid_ValueString, _T( "RingBuffer Image Index %s value invalid." )},
+		{Tid_RingBuffer_Depth_Invalid_ValueString, _T("RingBuffer Depth has to be between %s and %s, current %s")},
+		{Tid_RingBuffer_ImageIndex_Invalid_ValueString, _T("RingBuffer Image Index %s value invalid.")},
 		{Tid_Error_NoDeviceContext, _T("No device context available!")},
 		{Tid_Lpt_WrongState, _T("Select Line In wrong State")},
 		{Tid_Sax_ConInitializeExFailed, _T("CoInitializeEx Failed")},
-		{Tid_UnknowThread, _T( "Unknown Thread" )},
+		{Tid_UnknowThread, _T("Unknown Thread")},
 		{Tid_SeedImageDifferentSize, _T("Seed image and Source image are of different sizes but they must have the same size.")},
 
 		//MatroxGigE
@@ -259,55 +259,55 @@ namespace SvStl
 		{Tid_ParseError_NoValidObject, _T("Parser Error:\nNo valid object given!")},
 		{Tid_ParseError_SetObjectMemberFailed, _T("Parser Error:\nSet Object Member Value failed!")},
 		{Tid_Error_ScriptParseFailed, _T("%s parse was not successful")},
-		
+
 		//SVObserver
 		{Tid_Error_ConfigWarnFileError, _T("Loading of the configuration warning file (%s) failed. Either the file is missing or it has a syntax error.") },
 		{Tid_Error_ConfigWarnSyntaxError, _T("Loading of the configuration warning file failed. It has a syntax error.") },
-		{Tid_SVObserver_CannotRun_WrongModelNumber, _T( "Configuration cannot enter Run.  The current configuration hardware does not match system hardware. "
+		{Tid_SVObserver_CannotRun_WrongModelNumber, _T("Configuration cannot enter Run.  The current configuration hardware does not match system hardware. "
 			"The system's Model Number is ( Model # %s %s %s %s ). Please verify that the shown model number is correct and contact your system administrator.")},
 		{Tid_SVObserver_InitializationFailure, _T("Initialization failure (Model Number %s):\n%s")},
 		{Tid_SVObserver_ModelNumberInvalid, _T("The model number specified in OEMINFO.INI is invalid.")},
-		{Tid_SVObserver_AuthorizationFailed_Modification, _T( "Authorization Failed.\n\nUtility Modification requires 'User Manager' privilege." )},
+		{Tid_SVObserver_AuthorizationFailed_Modification, _T("Authorization Failed.\n\nUtility Modification requires 'User Manager' privilege.")},
 		{Tid_SVObserver_AuthorizationFailed_Execution, _T("Authorization Failed.\n\nUtility Execution requires 'User Manager' privilege.")},
 		{Tid_SVObserver_MatroxGigELicenseNotFound, _T("Matrox GigE License not found")},
 		{Tid_SVObserver_MatroxLicenseNotFound, _T("Matrox License not found")},
-		{Tid_SVObserver_WrongVersionNumber, _T( "This configuration was created by SVObserver %s.\nYou are currently running SVObserver %s.\n"
-			"This configuration version may be incompatible with\nthe version of SVObserver that you are running.\nAre you sure you wish to continue ?" )},
-		{Tid_SVObserver_ConfigurationLoadFailed, _T( "The configuration could not successfully load.\nhr = %s.\n")},
+		{Tid_SVObserver_WrongVersionNumber, _T("This configuration was created by SVObserver %s.\nYou are currently running SVObserver %s.\n"
+			"This configuration version may be incompatible with\nthe version of SVObserver that you are running.\nAre you sure you wish to continue ?")},
+		{Tid_SVObserver_ConfigurationLoadFailed, _T("The configuration could not successfully load.\nhr = %s.\n")},
 		{Tid_SVObserver_SecurityFileLoadFailed, _T("Security File Failed to Load\n Using Default Security")},
 		{Tid_SVObserver_WrongPathnameEntered, _T("Invalid path or file name found\n\nCheck your inputs and try it again!")},
-		{Tid_SVObserver_RegisterClassObjectsFailed, _T( "(hr=0x%s), Unable to register class objects. COM interface ISVCommand unavailable.")},
-		{Tid_SVObserver_RegisterClassObjectsFailed_Question, _T( "(hr=0x%s), Unable to register class objects. COM interface ISVCommand unavailable.\nDo you want to exit?")},
-		{Tid_SVObserver_OleInitFailed, _T( "OLE initialization failed.  Make sure that the OLE libraries are the correct version.")},
-		{Tid_CanGoOnlineFailure_Trigger, _T( "Configuration cannot enter Run.  There is an "
-				"unknown error with Trigger %s when the system attempted to enter Run." )},
-		{Tid_CanGoOnlineFailure_Acquisition, _T( "Configuration cannot enter Run.  Cannot connect to camera %s when the system attempted to enter Run." )},
+		{Tid_SVObserver_RegisterClassObjectsFailed, _T("(hr=0x%s), Unable to register class objects. COM interface ISVCommand unavailable.")},
+		{Tid_SVObserver_RegisterClassObjectsFailed_Question, _T("(hr=0x%s), Unable to register class objects. COM interface ISVCommand unavailable.\nDo you want to exit?")},
+		{Tid_SVObserver_OleInitFailed, _T("OLE initialization failed.  Make sure that the OLE libraries are the correct version.")},
+		{Tid_CanGoOnlineFailure_Trigger, _T("Configuration cannot enter Run.  There is an "
+				"unknown error with Trigger %s when the system attempted to enter Run.")},
+		{Tid_CanGoOnlineFailure_Acquisition, _T("Configuration cannot enter Run.  Cannot connect to camera %s when the system attempted to enter Run.")},
 		{Tid_CanGoOnlineFailure_InspectionTool, _T("Configuration cannot enter Run.\n Error with \"%s\" : %s")},
-		{Tid_CanGoOnlineFailure_Inspection, _T( "Configuration cannot enter Run.  There is an "
-								"unknown error with an inspection %s when the system attempted to enter Run." )},
-		{Tid_CanGoOnlineFailure_ConditionalOutput, _T( "Configuration cannot enter Run.  There is an "
-								"unknown error by resolving the coditionalOutputs when the system attempted to enter Run." )},
-		{Tid_GoOnlineFailure_RecycleProduct, _T( "Configuration cannot enter Run.  There is an "
-							"unknown error with a PPQ when it attempted to recycle a product when the system was going online." )},
-		{Tid_GoOnlineFailure_RecycleProductId, _T( "Configuration cannot enter Run.  There is the "
-							"error %s with a PPQ when it attempted to recycle a product when the system was going online." )},
-		{Tid_GoOnlineFailure_Inspection, _T( "Configuration cannot enter Run.  There is an "
-							"unknown error with Inspection %s when the system was going online." )},
-		{Tid_GoOnlineFailure_Acquisition, _T("Configuration cannot enter Run.  Cannot reach camera %s when the system was going online." )},
-		{Tid_GoOnlineFailure_Trigger, _T( "Configuration cannot enter Run.  There is an "
-							"unknown error with Trigger %s when the system was going online." )},
-		{Tid_GoOnlineFailure_InternalTrigger, _T( "Configuration cannot enter Run.  There is the "
-							"error %s with enable internal Trigger when the system was going online." )},
-		{Tid_GoOnlineFailure_CreatePPQThread, _T( "Configuration cannot enter Run.  There is the "
-							"error %s by creating the PPQ Thread." )},
-		{Tid_GoOnlineFailure_CreateTimerThread, _T( "Configuration cannot enter Run.  There is the "
-							"error %s by creating the timer Thread." )},
-		{Tid_GoOnlineFailure_InvalidPointerConfig, _T( "Configuration cannot enter Run.  Invalid pointer of configuration or mainWnd." )},
-		{Tid_GoOnlineFailure_RaidBits, _T( "Configuration cannot enter Run.  Error by setting of raid bits." )},
-		{Tid_GoOnlineFailure_ModuleReadyOutput, _T( "Configuration cannot enter Run.  Cannot write to module ready output." )},
+		{Tid_CanGoOnlineFailure_Inspection, _T("Configuration cannot enter Run.  There is an "
+								"unknown error with an inspection %s when the system attempted to enter Run.")},
+		{Tid_CanGoOnlineFailure_ConditionalOutput, _T("Configuration cannot enter Run.  There is an "
+								"unknown error by resolving the coditionalOutputs when the system attempted to enter Run.")},
+		{Tid_GoOnlineFailure_RecycleProduct, _T("Configuration cannot enter Run.  There is an "
+							"unknown error with a PPQ when it attempted to recycle a product when the system was going online.")},
+		{Tid_GoOnlineFailure_RecycleProductId, _T("Configuration cannot enter Run.  There is the "
+							"error %s with a PPQ when it attempted to recycle a product when the system was going online.")},
+		{Tid_GoOnlineFailure_Inspection, _T("Configuration cannot enter Run.  There is an "
+							"unknown error with Inspection %s when the system was going online.")},
+		{Tid_GoOnlineFailure_Acquisition, _T("Configuration cannot enter Run.  Cannot reach camera %s when the system was going online.")},
+		{Tid_GoOnlineFailure_Trigger, _T("Configuration cannot enter Run.  There is an "
+							"unknown error with Trigger %s when the system was going online.")},
+		{Tid_GoOnlineFailure_InternalTrigger, _T("Configuration cannot enter Run.  There is the "
+							"error %s with enable internal Trigger when the system was going online.")},
+		{Tid_GoOnlineFailure_CreatePPQThread, _T("Configuration cannot enter Run.  There is the "
+							"error %s by creating the PPQ Thread.")},
+		{Tid_GoOnlineFailure_CreateTimerThread, _T("Configuration cannot enter Run.  There is the "
+							"error %s by creating the timer Thread.")},
+		{Tid_GoOnlineFailure_InvalidPointerConfig, _T("Configuration cannot enter Run.  Invalid pointer of configuration or mainWnd.")},
+		{Tid_GoOnlineFailure_RaidBits, _T("Configuration cannot enter Run.  Error by setting of raid bits.")},
+		{Tid_GoOnlineFailure_ModuleReadyOutput, _T("Configuration cannot enter Run.  Cannot write to module ready output.")},
 		{Tid_ErrorNotEnoughDiskSpace, _T("Unable to set monitor list for %s - Not enough Disk Space Available")},
-		{Tid_GoOnlineFailure_SendCameraParam, _T( "Configuration cannot enter Run.  There is an "
-							"unknown error by sending camera parameter when the system was going online." )},
+		{Tid_GoOnlineFailure_SendCameraParam, _T("Configuration cannot enter Run.  There is an "
+							"unknown error by sending camera parameter when the system was going online.")},
 		{Tid_AmountOfSystemMemoryText, _T("Amount of physical memory = %s")},
 		{Tid_Version, _T("\nVersion %s")},
 		{Tid_ConfigLoadTime, _T("%s\nload time %s ms")},
@@ -327,22 +327,22 @@ namespace SvStl
 		{Tid_Error_NoMilHostBuffer, _T("No Mil Host Buffer Pointer")},
 		{Tid_Error_MilDestroy, _T("Mil destroy error")},
 		{Tid_Error_MilImageTypeInvalid, _T("MIL Image Type Not 8 Bit Unsigned: %s")},
-		{Tid_Error_FontNotMfoExt, _T( "Font File Requires '.mfo' Extension: %s" )},
+		{Tid_Error_FontNotMfoExt, _T("Font File Requires '.mfo' Extension: %s")},
 		{Tid_Error_NoFontConstraintsFileSpec, _T("No Font Constraints File Specified")},
-		{Tid_Error_FontConstraintsRequiredMfoExt, _T( "Font Constraints File Requires '.mfo' Extension: %s" )},
-		{Tid_Error_FontConstraintsFileNotExist, _T( "Font Constraints File Does Not Exist: %s" )},
-		{Tid_Error_FontConstraintsFileEmpty, _T( "Font Constraints File Empty: %s" )},
+		{Tid_Error_FontConstraintsRequiredMfoExt, _T("Font Constraints File Requires '.mfo' Extension: %s")},
+		{Tid_Error_FontConstraintsFileNotExist, _T("Font Constraints File Does Not Exist: %s")},
+		{Tid_Error_FontConstraintsFileEmpty, _T("Font Constraints File Empty: %s")},
 		{Tid_Error_NoFontControlsFileSpec, _T("No Font Controls File Specified")},
-		{Tid_Error_FontControlsRequiredMfoExt, _T( "Font Controls File Requires '.mfo' Extension: %s" )},
-		{Tid_Error_FontControlsFileNotExist, _T( "Font Controls File Does Not Exist: %s" )},
-		{Tid_Error_FontControlsFileEmpty, _T( "Font Controls File Empty: %s" )},
+		{Tid_Error_FontControlsRequiredMfoExt, _T("Font Controls File Requires '.mfo' Extension: %s")},
+		{Tid_Error_FontControlsFileNotExist, _T("Font Controls File Does Not Exist: %s")},
+		{Tid_Error_FontControlsFileEmpty, _T("Font Controls File Empty: %s")},
 		{Tid_ImportInspectionError, _T("Inspection was exported using SVObserver %s. \tThis is incompatible with SVObserver %s.")},
 		{Tid_Error_InvalidThresholdValue, _T("Invalid Threshold Value")},
 		{Tid_Pattern_Model2Large, _T("Model is larger than the ROI of the Window Tool.")},
 		{Tid_Pattern_DontCare2Small, _T("The don't care image is to small. It must have at least the size of the model.")},
 		{Tid_Pattern_Invalid_ShouldLeave, _T("Pattern Model is invalid. Do you want to change Model (Yes) or leave dialog (No)?")},
-		{Tid_ErrorGettingInputs, _T( "Error getting inputs." )},
-		{Tid_ErrorFindingPPQEntries, _T( "Error finding PPQ entries." )},
+		{Tid_ErrorGettingInputs, _T("Error getting inputs.")},
+		{Tid_ErrorFindingPPQEntries, _T("Error finding PPQ entries.")},
 		{Tid_InvalidReference, _T("%s: Invalid reference")},
 
 		{Tid_RegressionTest_NoBmpFileSelected, _T("Selection Error:  A .bmp file must be selected.")},
@@ -363,7 +363,7 @@ namespace SvStl
 		{Tid_InvalidPath, _T("Invalid Path '%s'!") },
 		{Tid_InvalidDrive, _T("Path '%s' has invalid drive '%s'!")},
 		{Tid_InvalidKeywordsInPath, _T("Invalid keywords in path '%s'!") },
-			
+
 		{Tid_FileName_Exists, _T("%s already exists.\nDo you want to replace it?")},
 		{Tid_Error_you_have_Selected_X_Must_less_then_Y, _T("Error: You have selected %s for the Max Images count. The image count must be less then %s")},
 		{Tid_ArchiveTool_WarningMaxImages, _T("WARNING: You have selected %s for the Max Images count")},
@@ -375,7 +375,6 @@ namespace SvStl
 		{Tid_AP_NotEnoughMemoryPleaseDeselect, _T("Not enough Available Archive Image Memory. Please deselect some\nimages, decrease \"Max Images\" or change \"When to archive\" mode.")},
 		{Tid_Threshold_OutOfRange, _T("Out of Range!\n(0 ... 255)")},
 		{Tid_CriticalUnableToConnectTo, _T("Unable to connect to %s")},
-		{Tid_UnknownString, _T("<Unknown>")},
 		{Tid_Error_DuplicateEmbeddedId, _T("Error - Duplicate Embedded ID found")},
 		{Tid_Error_CannotAddInputRequest, _T("Cannot Add Input Request.\nPlease contact technical support specialist.")},
 		{Tid_Error_CannotAddInputRequestMarker, _T("Cannot Add Input Request Marker.\nPlease contact technical support specialist.")},
@@ -390,18 +389,18 @@ namespace SvStl
 		{Tid_Error_CannotOpenFile, _T("Cannot open file %s !")},
 		{Tid_Error_CannotOpenTADlg, _T("Unable to open Tool Adjustment Dialog!")},
 		{Tid_UnableStart_Utility, _T("Unable to start %s\n(%s).\n\nCheck Utility Properties.")},
-		{Tid_SetClipboardDataFailed, _T( "Setting the data into the clipboard failed." )},
-		{Tid_ClipboardDataConverionFailed, _T( "The clipboard data conversion failed." )},
-		{Tid_ClipboardMemoryFailed, _T( "Clipboard memory allocation failed." )},
-		{Tid_GetClipboardDataFailed, _T( "Failed to retrieve the clipboard data." )},
+		{Tid_SetClipboardDataFailed, _T("Setting the data into the clipboard failed.")},
+		{Tid_ClipboardDataConverionFailed, _T("The clipboard data conversion failed.")},
+		{Tid_ClipboardMemoryFailed, _T("Clipboard memory allocation failed.")},
+		{Tid_GetClipboardDataFailed, _T("Failed to retrieve the clipboard data.")},
 		{Tid_ClipboardZipFailed, _T("Failed to zip clipboard data.")},
 		{Tid_ClipboardUnzipFailed, _T("Failed to unzip clipboard data.")},
 		{Tid_ClipboardInvalid, _T("Clipboard data is invalid")},
-		{Tid_ToolInvalid, _T( "The tool is invalid." )},
-		{Tid_Clipboard_VersionMismatch, _T( "The current SVObserver Version does not match the version coming from the clipboard." )},
-		{Tid_ColorToolInsertFailed, _T( "A color tool cannot be inserted into a non-color system." )},
+		{Tid_ToolInvalid, _T("The tool is invalid.")},
+		{Tid_Clipboard_VersionMismatch, _T("The current SVObserver Version does not match the version coming from the clipboard.")},
+		{Tid_ColorToolInsertFailed, _T("A color tool cannot be inserted into a non-color system.")},
 		{Tid_LoopToolInsertLoopToolFailed, _T("A loop tool cannot be insert into a loop tool.")},
-		{Tid_NonColorToolInsertFailed, _T( "A color tool must always be the first tool in a color system." )},
+		{Tid_NonColorToolInsertFailed, _T("A color tool must always be the first tool in a color system.")},
 		{Tid_RenameError_DuplicateName, _T("A duplicate name was found for the item being renamed\n%s")},
 		{Tid_ErrorInReset, _T("Error in Reset")},
 		{Tid_InValidNewExtents, _T("The new extents for the %s are not valid")},
@@ -424,9 +423,10 @@ namespace SvStl
 		{Tid_Security_Access_Denied, _T(" User: %s\n Attempt to Access - %s")},
 		{Tid_Security_Disabled, _T("Security Disabled")},
 		{Tid_OS_Error_Message, _T("OS Error Number: %s [%s]\nMessage: %s")},
+		{Tid_ConvertTextToVariantFailed, _T("Convert text \"%s\" to variant failed.")},
 
 		{Tid_Drive_Full, _T(" %s - drive is full.")},
-		{Tid_ConditionalValue_Invalid, _T("The conditional value of tool \"%s\" is invalid.")}, 
+		{Tid_ConditionalValue_Invalid, _T("The conditional value of tool \"%s\" is invalid.")},
 
 		{Tid_TableColumnName_NotUnique, _T("The name \"%s\" is used already by another column.\nThe name must be unique.")},
 		{Tid_TableColumnName_Empty, _T("The column name must not be empty and is not allowed to contain only invalid characters.")},
@@ -614,7 +614,7 @@ namespace SvStl
 		{Tid_InvalidMemoryPointer, _T("Invalid Memory Pointer")},
 		{Tid_InvalidMatroxType, _T("Invalid Matrox Type")},
 		{Tid_InvalidMatroxAttribute, _T("Invalid Matrox Attribute")},
-		
+
 		{Tid_ErrorPpqTriggerCount, _T("The current configuration uses the variable 'PPQ_x.Trigger Count' in equations which is no longer allowed (respective tools will become invalid) as it is not synchronous to the inspection\nPlease replace all occurrences with the variable 'Tool Set.Trigger Count'")},
 		{Tid_CircularReference, _T("A circular reference has been generated")},
 
@@ -623,7 +623,18 @@ namespace SvStl
 		{Tid_ErrorInRebuildTrcPosCache, _T("Exception in rebuild_trc_pos_cache")},
 		{Tid_ErrorInGetProductData, _T("Exception in  get_product_data")},
 
-		{ Tid_CreateThread, _T("ThreadID %s created") },
-		{ Tid_DestroyThread, _T("ThreadID %s destroyed")},
+		{Tid_CreateThread, _T("ThreadID %s created") },
+		{Tid_DestroyThread, _T("ThreadID %s destroyed")},
+		{Tid_InvalidInputType, _T("The input (%s) type is invalid.") },
+		{Tid_InvalidInputValue, _T("The input (%s) value is invalid.") },
+		{Tid_InvalidInputTable, _T("The input (%s) value is not a table.") },
+		{Tid_InvalidInputImage, _T("The input (%s) value is not an image.") },
+		{Tid_InvalidInputGrayImage, _T("The input (%s) value is not a gray image.") },
+		{Tid_InvalidInputColorImage, _T("The input (%s) value is not a color image.") },
+
+		{Tid_DuplicateParameterName, _T("It is not allowed to have duplicated parameter names:\n %s") },
+		{Tid_DuplicateParameterNameWithLinked, _T("It is not allowed to have a parameter name which is already used\nby a linked parameter name: %s") },
+		{Tid_DuplicateParameterNameWithType, _T("It is not allowed to have a parameter name which is already used\nby a type parameter name: %s.") },
+		{Tid_SetParameterValuesFailed, _T("Setting of the parameter '%s' failed.") },
 };
 } //namespace SvStl

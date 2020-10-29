@@ -258,7 +258,7 @@ SvOi::ParametersForML SVLinearToolClass::getParameterForMonitorList(SvStl::Messa
 	{
 		if (nullptr != pImageInfo && pImageInfo->IsConnected())
 		{
-			const SvIe::SVImageClass* pSourceImage = dynamic_cast<SvIe::SVImageClass*> (pImageInfo->GetInputObjectInfo().getObject());
+			const SvIe::SVImageClass* pSourceImage = dynamic_cast<SvIe::SVImageClass*> (pImageInfo->GetInputObjectInfo().getFinalObject());
 			if (nullptr != pSourceImage)
 			{
 				auto* pSourceTool = dynamic_cast<SVToolClass*>(pSourceImage->GetAncestor(SvPb::SVToolObjectType));

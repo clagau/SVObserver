@@ -15,7 +15,6 @@
 #include "Definitions/StringTypeDef.h"
 #include "ObjectInterfaces/IObjectManager.h"
 #include "Operators/SVResultDouble.h"
-#include "SVObjectLibrary/SVGetObjectDequeByTypeVisitor.h"
 #include "SVObjectLibrary/SVOutputInfoListClass.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
@@ -374,41 +373,24 @@ DWORD SVStatTool::FreeResult (SVStatisticsFeatureEnum aFeatureIndex)
 
 SvOp::SVResult* SVStatTool::GetResult(SVStatisticsFeatureEnum aFeatureIndex)
 {
-	SvOl::SVInputInfoListClass	resultInputList;
-	SVOutputInfoListClass	resultOutputList;
-	
-	SvOl::SVInObjectInfoStruct*	pResultInputInfo;
-	
-	SvDef::SVObjectTypeInfoStruct  info;
 	SvOp::SVDoubleResult* pResult{nullptr};
-	SVObjectClass*          pSVObject;
-	
-	bool                    bDone = false;
-	
-	info.m_ObjectType = SvPb::SVResultObjectType;
-	info.m_SubType = SvPb::SVResultDoubleObjectType;
-	
-	SVGetObjectDequeByTypeVisitor l_Visitor( info );
 
-	SVObjectManagerClass::Instance().VisitElements( l_Visitor, getObjectId() );
-
-	SVGetObjectDequeByTypeVisitor::SVObjectPtrDeque::const_iterator l_Iter;
-
-	for( l_Iter = l_Visitor.GetObjects().begin(); l_Iter != l_Visitor.GetObjects().end() && !bDone; ++l_Iter )
+	std::vector<SvOi::IObjectClass*> list;
+	fillObjectList(std::back_inserter(list), { SvPb::SVResultObjectType, SvPb::SVResultDoubleObjectType });
+	for (const auto pObject : list)
 	{
-		pResult = dynamic_cast<SvOp::SVDoubleResult*>(const_cast< SVObjectClass* > (*l_Iter));
+		pResult = dynamic_cast<SvOp::SVDoubleResult*>(pObject);
 
 		if( nullptr != pResult )
 		{
+			SvOl::SVInputInfoListClass	resultInputList;
 			pResult->GetPrivateInputList( resultInputList );
-			
-			pResultInputInfo = resultInputList[0];
-			
-			pSVObject = pResultInputInfo->GetInputObjectInfo().getObject();
+
+			SVObjectClass* pSVObject = resultInputList[0]->GetInputObjectInfo().getObject();
 			
 			if (&m_Value [aFeatureIndex] == pSVObject)
 			{
-				bDone = true;
+				break;
 			}
 		}
 	}

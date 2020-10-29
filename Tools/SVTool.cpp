@@ -289,12 +289,12 @@ bool SVToolClass::DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pInObjectInf
 
 	if (nullptr != pInObjectInfo)
 	{
-		if (pInObjectInfo->GetInputObjectInfo().getObject() == m_toolExtent.GetToolImage())
+		if (pInObjectInfo->GetInputObjectInfo().getFinalObject() == m_toolExtent.GetToolImage())
 		{
 			m_toolExtent.SetToolImage(nullptr);
 		}
 
-		if (pInObjectInfo->GetInputObjectInfo().getObject() == m_toolExtent.GetSelectedImage())
+		if (pInObjectInfo->GetInputObjectInfo().getFinalObject() == m_toolExtent.GetSelectedImage())
 		{
 			m_toolExtent.SetSelectedImage(nullptr);
 		}

@@ -1231,6 +1231,22 @@ void SVImageClass::fillSelectorList(std::back_insert_iterator<std::vector<SvPb::
 	}
 }
 
+void SVImageClass::fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo)
+{
+	if (0 != ObjectAttributesAllowed())
+	{
+		__super::fillObjectList(inserter, rObjectInfo);
+
+		for (auto* pObject : m_embeddedList)
+		{
+			if (nullptr != pObject)
+			{
+				pObject->fillObjectList(inserter, rObjectInfo);
+			}
+		}
+	}
+}
+
 HRESULT SVImageClass::TranslateFromOutputSpaceToImage(SVImageClass* pImage, SVPoint<double> inPoint, SVPoint<double>& rOutPoint) const
 {
 	HRESULT l_hr = E_FAIL;

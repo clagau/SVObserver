@@ -90,6 +90,7 @@ public:
 	bool DestroyChildObject( SVTaskObjectClass* pTaskObject, DWORD context = 0 );
 	
 	virtual void fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, SvOi::IsObjectAllowedFunc pFunctor, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum nameToType, SvPb::ObjectSelectorType requiredType) const override;
+	virtual void fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo) override;
 #pragma region virtual methods (ITaskObjectListClass)
 	virtual void Delete(uint32_t objectID) override;
 	virtual void InsertBefore(uint32_t objectBeforeID, ITaskObject& rObject) override;
@@ -128,9 +129,6 @@ protected:
 	// Override this only if you have to reroute the call!
 	// NEVER call base class Run()! 
 	virtual bool Run( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
-
-	virtual SVObjectPtrDeque GetPreProcessObjects() const override;
-	virtual SVObjectPtrDeque GetPostProcessObjects() const override;
 
 	virtual bool resetAllOutputListObjects( SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 

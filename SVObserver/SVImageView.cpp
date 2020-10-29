@@ -25,6 +25,7 @@
 #include "SVOResource/ConstGlobalSvOr.h"
 #include "AnalyzerOperators/SVAnalyzer.h"
 #include "Definitions/GlobalConst.h"
+#include "ObjectInterfaces/ILinkedObject.h"
 #include "ObjectInterfaces/IObjectWriter.h"
 #include "SVImageLibrary/SVDrawContext.h"
 #include "SVImageLibrary/ImageFileUtilities.h"
@@ -238,7 +239,24 @@ void SVImageView::AttachToImage(uint32_t imageId)
 {
 	if( SvDef::InvalidObjectId != imageId )
 	{
-		SvIe::SVImageClass* pImage = dynamic_cast<SvIe::SVImageClass*> (SVObjectManagerClass::Instance().GetObject(imageId));
+		SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(imageId);
+		SvIe::SVImageClass* pImage;
+		auto* pLinked = dynamic_cast<SvOi::ILinkedObject*>(pObject);
+		if (nullptr != pLinked)
+		{
+			try
+			{
+				pImage = dynamic_cast<SvIe::SVImageClass*> (const_cast<SvOi::IObjectClass*>(pLinked->getLinkedObject()));
+			}
+			catch (...)
+			{
+				pImage = nullptr;
+			}			
+		}
+		else
+		{
+			pImage = dynamic_cast<SvIe::SVImageClass*> (pObject);
+		}
 
 		if( nullptr != pImage )
 		{

@@ -123,8 +123,8 @@ bool TableAnalyzerTool::ResetObject(SvStl::MessageContainerVector *pErrorMessage
 
 	SvOl::ValidateInput(m_sourceTableObjectInfo);
 
-	SVObjectClass* pObject = m_sourceTableObjectInfo.GetInputObjectInfo().getObject();
-	if (!m_sourceTableObjectInfo.IsConnected() || nullptr == dynamic_cast<SvOp::TableObject*> (pObject))
+	auto* pTableObject = dynamic_cast<SvOp::TableObject*> (m_sourceTableObjectInfo.GetInputObjectInfo().getFinalObject());
+	if (!m_sourceTableObjectInfo.IsConnected() || nullptr == pTableObject)
 	{
 		Result = false;
 		if (nullptr != pErrorMessages)
@@ -134,9 +134,9 @@ bool TableAnalyzerTool::ResetObject(SvStl::MessageContainerVector *pErrorMessage
 			pErrorMessages->push_back(message);
 		}
 	}
-	else if (pObject->GetAncestorInterface(SvPb::SVInspectionObjectType) != GetAncestorInterface(SvPb::SVInspectionObjectType))
+	else if (pTableObject->GetAncestorInterface(SvPb::SVInspectionObjectType) != GetAncestorInterface(SvPb::SVInspectionObjectType))
 	{
-		pObject->DisconnectObjectInput(&m_sourceTableObjectInfo);
+		pTableObject->DisconnectObjectInput(&m_sourceTableObjectInfo);
 		m_sourceTableObjectInfo.SetInputObject(nullptr);
 		Result = false;
 		if (nullptr != pErrorMessages)
@@ -149,7 +149,7 @@ bool TableAnalyzerTool::ResetObject(SvStl::MessageContainerVector *pErrorMessage
 
 	if (Result)
 	{
-		m_pResultTable->setSourecTable(dynamic_cast<SvOp::TableObject*> (m_sourceTableObjectInfo.GetInputObjectInfo().getObject()));
+		m_pResultTable->setSourecTable(pTableObject);
 		Result = m_pResultTable->ResetObject(pErrorMessages);
 	}
 	else
@@ -192,7 +192,7 @@ void TableAnalyzerTool::removeNewColumn(const SvVol::DoubleSortValuePtr pColumn)
 
 void TableAnalyzerTool::OnEmbeddedIDChanged(const SVObjectClass* pOwnerObject, SvPb::EmbeddedIdEnum oldEmbeddedID, SvPb::EmbeddedIdEnum newEmbeddedID)
 {
-	SvOp::TableCopyObject* pSourceTableOwn = dynamic_cast<SvOp::TableCopyObject*>(m_sourceTableObjectInfo.GetInputObjectInfo().getObject());
+	SvOp::TableCopyObject* pSourceTableOwn = dynamic_cast<SvOp::TableCopyObject*>(m_sourceTableObjectInfo.GetInputObjectInfo().getFinalObject());
 	if (pOwnerObject == pSourceTableOwn && nullptr != m_pResultTable)
 	{
 		m_pResultTable->changeEmbeddedId(oldEmbeddedID, newEmbeddedID);

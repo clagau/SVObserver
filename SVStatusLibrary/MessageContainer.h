@@ -53,6 +53,8 @@ namespace SvStl
 		//************************************
 		MessageContainer( long MessageCode, MessageTextEnum AdditionalTextId, const SvDef::StringVector& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode = 0, uint32_t objectId = 0 );
 
+		explicit MessageContainer(const MessageData& rMessage, uint32_t objectId = 0, bool clearData = true);
+
 		//************************************
 		//! This is the assignment operator
 		//! \param rRhs <in> reference to a message handler with which to set the data

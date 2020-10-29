@@ -405,11 +405,16 @@ double SVVariantValueObjectClass::ValueType2Double(const _variant_t& rValue) con
 
 _variant_t SVVariantValueObjectClass::ConvertString2Type( const std::string& rValue ) const
 {
+	return ConvertString2Type(rValue, GetDefaultValue());
+}
+
+_variant_t SVVariantValueObjectClass::ConvertString2Type(const std::string& rValue, const _variant_t& rDefaultValue) const
+{
 	_variant_t Result(rValue.c_str());
 
-	if (VT_EMPTY != GetDefaultType())
+	if (VT_EMPTY != rDefaultValue.vt)
 	{
-		if (S_OK != ::VariantChangeTypeEx(&Result, &Result, SvDef::LCID_USA, 0, GetDefaultType()))
+		if (S_OK != ::VariantChangeTypeEx(&Result, &Result, SvDef::LCID_USA, 0, rDefaultValue.vt))
 		{
 			SvDef::StringVector msgList;
 			msgList.push_back(GetName());

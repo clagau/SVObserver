@@ -24,7 +24,6 @@
 #include "SVUtilityLibrary\NaturalStringCompare.h"
 #include "SVUtilityLibrary/SVSafeArray.h"
 #include "SVObserver.h"
-#include "SVObjectLibrary\SVGetObjectDequeByTypeVisitor.h"
 #include "SVToolSet.h"
 #include "SVPPQObject.h"
 #include "SVGlobal.h"
@@ -2920,33 +2919,6 @@ SVPublishList& SVInspectionProcess::GetPublishList()
 	return m_publishList;
 }
 
-SVInspectionProcess::SVObjectPtrDeque SVInspectionProcess::GetPreProcessObjects() const
-{
-	SVObjectPtrDeque l_Objects = SVObjectClass::GetPreProcessObjects();
-
-	return l_Objects;
-}
-
-SVInspectionProcess::SVObjectPtrDeque SVInspectionProcess::GetPostProcessObjects() const
-{
-	SVObjectPtrDeque l_Objects = SVObjectClass::GetPostProcessObjects();
-
-	for (auto& rpIOEntry : m_PPQInputs)
-	{
-		if (nullptr != rpIOEntry && nullptr != rpIOEntry->getObject())
-		{
-			l_Objects.push_back(rpIOEntry->getObject());
-		}
-	}
-
-	if (nullptr != GetToolSet())
-	{
-		l_Objects.push_back(GetToolSet());
-	}
-
-	return l_Objects;
-}
-
 SVObjectClass *SVInspectionProcess::UpdateObject(uint32_t, SVObjectClass *p_psvObject, SVObjectClass *p_psvNewOwner)
 {
 	p_psvObject->SetObjectOwner(p_psvNewOwner);
@@ -3086,16 +3058,6 @@ HRESULT SVInspectionProcess::GetInspectionImage(LPCTSTR Name, SvIe::SVImageClass
 	// Set to Defaults in case of failure
 	p_rRefObject = nullptr;
 
-	// Specify that we are looking only for images
-	SvDef::SVObjectTypeInfoStruct imageObjectInfo;
-	imageObjectInfo.m_ObjectType = SvPb::SVImageObjectType;
-
-	SVGetObjectDequeByTypeVisitor l_Visitor(imageObjectInfo);
-
-	SVObjectManagerClass::Instance().VisitElements(l_Visitor, getObjectId());
-
-	SVGetObjectDequeByTypeVisitor::SVObjectPtrDeque::const_iterator l_Iter;
-
 	std::string ImageName {Name};
 	std::string Inspections {SvDef::FqnInspections};
 	Inspections += '.';
@@ -3105,9 +3067,12 @@ HRESULT SVInspectionProcess::GetInspectionImage(LPCTSTR Name, SvIe::SVImageClass
 		ImageName = ImageName.substr(Inspections.size(), ImageName.size() - Inspections.size());
 	}
 
-	for (l_Iter = l_Visitor.GetObjects().begin(); l_Iter != l_Visitor.GetObjects().end(); ++l_Iter)
+	std::vector<SvOi::IObjectClass*> list;
+	fillObjectList(std::back_inserter(list), { SvPb::SVImageObjectType });
+
+	for (const auto pObject : list)
 	{
-		SvIe::SVImageClass* pImage = dynamic_cast<SvIe::SVImageClass*>(const_cast<SVObjectClass*>(*l_Iter));
+		SvIe::SVImageClass* pImage = dynamic_cast<SvIe::SVImageClass*>(pObject);
 
 		if (pImage->GetCompleteName() == ImageName)
 		{
@@ -3863,6 +3828,16 @@ SvSml::RingBufferPointer SVInspectionProcess::GetSlotmanager()
 {
 	return m_SlotManager;
 }
+
+void SVInspectionProcess::fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo)
+{
+	__super::fillObjectList(inserter, rObjectInfo);
+	if (nullptr != m_pCurrentToolset)
+	{
+		m_pCurrentToolset->fillObjectList(inserter, rObjectInfo);
+	}
+}
+
 
 HRESULT SVInspectionProcess::LastProductUpdate(SVProductInfoStruct *p_psvProduct)
 {

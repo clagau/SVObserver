@@ -48,6 +48,11 @@ namespace SvOg
 			return static_cast<DataType>(m_Data.GetValue(embeddedID));
 		}
 
+		uint32_t GetAllowedAttributeFlags(SvPb::EmbeddedIdEnum embeddedID) const
+		{
+			return GetAllowedAttribute(m_Data.GetInspectionID(), m_Data.GetObjectID(embeddedID));
+		}
+
 		template<typename DataType>
 		bool SetDefault(SvPb::EmbeddedIdEnum embeddedID, const DataType& rValue)
 		{
@@ -70,6 +75,11 @@ namespace SvOg
 		std::string GetName(SvPb::EmbeddedIdEnum embeddedID) const
 		{
 			return GetObjectName(m_Data.GetInspectionID(), m_Data.GetObjectID(embeddedID));
+		}
+
+		HRESULT SetName(SvPb::EmbeddedIdEnum embeddedID, const std::string& name)
+		{
+			return setObjectName(m_Data.GetInspectionID(), m_Data.GetObjectID(embeddedID), name);
 		}
 
 		HRESULT Commit(PostAction doAction = PostAction::doRunOnce, bool shouldDisplayErrors = false)

@@ -50,6 +50,7 @@
 #include "SVOGui/SVToolAdjustmentDialogLinearSpecialPage.h"
 #include "SVOGui/SVToolAdjustmentDialogTwoImagePage.h"
 #include "SVOGui/SVToolAdjustmentLUTPage.h"
+#include "SVOGui/TADialogGroupToolInputPage.h"
 #include "SVOGui/TADialogLoopToolParameterPage.h"
 #include "SVOGui/TADialogRingBufferParameterPage.h"
 #include "SVOGui/TADialogTableParameterPage.h"
@@ -61,6 +62,7 @@
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "Tools/SVTool.h"
+#include "SVOGui/TADialogGroupToolResultPage.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -395,6 +397,25 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 			AddPage(new SvOg::TADialogLoopToolParameterPage(m_InspectionID, m_TaskObjectID));
 			addConditionalDialog();
 			break;
+
+		case SvPb::SVObjectSubTypeEnum::GroupToolObjectType:
+		{
+			ObjectInfo.m_ObjectType = SvPb::ParameterTaskObjectType;
+			ObjectInfo.m_SubType = SvPb::ParameterInputObjectType;
+			SvOi::IObjectClass* pObject = GetTaskObject()->getFirstObject(ObjectInfo);
+			if (nullptr != pObject)
+			{
+				AddPage(new SvOg::TADialogGroupToolInputPage(m_InspectionID, m_TaskObjectID, pObject->getObjectId()));
+			}
+			ObjectInfo.m_SubType = SvPb::ParameterResultObjectType;
+			pObject = GetTaskObject()->getFirstObject(ObjectInfo);
+			if (nullptr != pObject)
+			{
+				AddPage(new SvOg::TADialogGroupToolResultPage(m_InspectionID, m_TaskObjectID, pObject->getObjectId()));
+			}
+			addConditionalDialog();
+			break;
+		}
 
 		case SvPb::SVObjectSubTypeEnum::SVNotSetSubObjectType:
 			//Special case for the Tool Set parameters

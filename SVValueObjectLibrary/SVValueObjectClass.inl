@@ -597,10 +597,10 @@ void SVValueObjectClass<T>::setResetOptions(bool bResetAlways, SvOi::SVResetItem
 }
 
 template <typename T>
-void SVValueObjectClass<T>::validateValue(const _variant_t& rValue) const
+void SVValueObjectClass<T>::validateValue(const _variant_t& rValue, const _variant_t& rDefaultValue) const
 {
 	//This function throws an exception if not valid
-	std::vector<T> valueVector =  variant2VectorType(rValue);
+	std::vector<T> valueVector =  variant2VectorType(rValue, rDefaultValue);
 	if(valueVector.size() == 0)
 	{
 		SvStl::MessageManager Exception(SvStl::MsgType::Log);
@@ -792,18 +792,18 @@ std::string SVValueObjectClass<T>::FormatOutput(const T& rValue, const std::stri
 }
 
 template <typename T>
-T SVValueObjectClass<T>::convertVariantValue(const _variant_t& rValue) const
+T SVValueObjectClass<T>::convertVariantValue(const _variant_t& rValue, const _variant_t& rDefaultValue) const
 {
 	T result;
 	 
 	//From GUI values are set using VT_BSTR
 	if (VT_BSTR == rValue.vt)
 	{
-		result = ConvertString2Type(SvUl::createStdString(rValue));
+		result = ConvertString2Type(SvUl::createStdString(rValue), rDefaultValue);
 	}
 	///@TODO[mec] for enable array size 1 (~VT_ARRAY & rValue.vt)
 	//!For type safety check that the VT type is either the default value main value or when not set yet (VT_EMPTY)
-	else if (ValueType2Variant(&m_DefaultValue).vt == rValue.vt || ValueType2Variant(m_pValue).vt == rValue.vt || ValueType2Variant(m_pValue).vt == VT_EMPTY)
+	else if (rDefaultValue.vt == rValue.vt || ValueType2Variant(m_pValue).vt == rValue.vt || ValueType2Variant(m_pValue).vt == VT_EMPTY)
 	{
 		result = Variant2ValueType(rValue);
 	}
@@ -819,21 +819,21 @@ T SVValueObjectClass<T>::convertVariantValue(const _variant_t& rValue) const
 }
 
 template <typename T>
-std::vector<T> SVValueObjectClass<T>::variant2VectorType(const _variant_t& rValue) const
+std::vector<T> SVValueObjectClass<T>::variant2VectorType(const _variant_t& rValue, const _variant_t& rDefaultValue) const
 {
 	ValueVector result;
 
 	//@TODO[mec] avoid isArray for enabling array size 1
 	if (!isArray() ||  0 == (VT_ARRAY & rValue.vt) || nullptr == rValue.parray)
 	{
-		T value = convertVariantValue(rValue);
+		T value = convertVariantValue(rValue, rDefaultValue);
 		result.emplace_back(value);
 	}
 	else
 	{
 		VARTYPE varType = rValue.vt & ~VT_ARRAY;
 		//!For type safety check that the VT type is either the default value main value or when not set yet (VT_EMPTY)
-		if (ValueType2Variant(&m_DefaultValue).vt != varType && ValueType2Variant(m_pValue).vt != varType && ValueType2Variant(m_pValue).vt != VT_EMPTY)
+		if (rDefaultValue.vt != varType && ValueType2Variant(m_pValue).vt != varType && ValueType2Variant(m_pValue).vt != VT_EMPTY)
 		{
 			//This happens if the variant to convert is of a different type then this value object!
 			assert(false);

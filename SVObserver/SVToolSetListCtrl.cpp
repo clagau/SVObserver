@@ -122,7 +122,7 @@ int SVToolSetListCtrl::InsertSubTools(int itemNo, int indent, uint32_t toolId)
 			//if loopTool would be allowed in a LoopTool this has to be insert here.
 		}
 	}
-	itemNo = InsertDelimiter(itemNo, indent, NavElementType::EndDelimiterLoopTool, toolId);
+	itemNo = InsertDelimiter(itemNo, indent, NavElementType::EndDelimiterTool, toolId);
 	return itemNo;
 }
 void SVToolSetListCtrl::Rebuild()
@@ -198,20 +198,24 @@ void SVToolSetListCtrl::Rebuild()
 						continue;
 					}
 
-					if (ToolSetIt->ObjectSubType == SvPb::LoopToolObjectType)
+					switch (ToolSetIt->ObjectSubType)
 					{
+					case SvPb::LoopToolObjectType:
 						pNavElement->m_Type = NavElementType::LoopTool;
-					}
-					else
-					{
+						break;
+					case SvPb::GroupToolObjectType:
+						pNavElement->m_Type = NavElementType::GroupTool;
+						break;					
+					default:
 						pNavElement->m_Type = NavElementType::Tool;
 						pNavElement->m_OwnerId = m_ToolSetId;
+						break;
 					}
 					pNavElement->m_Collapsed = GroupingIt->second.m_bCollapsed;
 					pNavElement->m_Valid = ToolSetIt->isValid;
 					pNavElement->m_objectId = ToolSetIt->m_objectId;
 					itemNo = InsertElement(itemNo, indent, pNavElement);
-					if (pNavElement->m_Type == NavElementType::LoopTool&& pNavElement->m_Collapsed == false)
+					if ((pNavElement->m_Type == NavElementType::LoopTool || pNavElement->m_Type == NavElementType::GroupTool) && pNavElement->m_Collapsed == false)
 					{
 						indent++;
 						itemNo = InsertSubTools(itemNo, indent, pNavElement->m_objectId);
@@ -249,14 +253,15 @@ int SVToolSetListCtrl::InsertElement(int itemNo, int Indend, PtrNavigatorElement
 				return itemNo;////don t show empty end group 
 			}
 			break;
+		case NavElementType::GroupTool:
 		case NavElementType::LoopTool:
 			if (rpNaviElement->m_Valid)
 			{
-				img = (rpNaviElement->m_Collapsed) ? m_expandStateLoopToolValid : m_collapseStateLoopToolValid;
+				img = (rpNaviElement->m_Collapsed) ? m_expandState : m_collapseState;
 			}
 			else
 			{
-				img = (rpNaviElement->m_Collapsed) ? m_expandStateLoopToolInvalid : m_collapseStateLoopToolInvalid;
+				img = (rpNaviElement->m_Collapsed) ? m_expandStateInvalid : m_collapseStateInvalid;
 			}
 
 			break;
@@ -298,9 +303,9 @@ int  SVToolSetListCtrl::InsertDelimiter(int itemNo, int Indend, NavElementType t
 			pNavElement->m_OwnerId = ownerId;
 			Indend = 0;
 			break;
-		case NavElementType::EndDelimiterLoopTool:
+		case NavElementType::EndDelimiterTool:
 			pNavElement = std::make_shared<NavigatorElement>(LoopToolDelimiter.c_str());
-			pNavElement->m_Type = NavElementType::EndDelimiterLoopTool;
+			pNavElement->m_Type = NavElementType::EndDelimiterTool;
 			pNavElement->m_OwnerId = ownerId;
 			break;
 		case NavElementType::EndDelimiterToolSet:
@@ -408,13 +413,14 @@ void SVToolSetListCtrl::RebuildImages()
 		{
 			break;
 		}
-		bool isLoopTool(false);
+		bool isLoopGroupTool(false);
 		switch (NavElement->m_Type)
 		{
+			case NavElementType::GroupTool:
 			case NavElementType::LoopTool:
 			case NavElementType::SubLoopTool:
-				isLoopTool = true;
-				//fall thru;
+				isLoopGroupTool = true;
+				[[fallthrough]];
 			case NavElementType::SubTool:
 			case NavElementType::Tool:
 			{
@@ -422,15 +428,15 @@ void SVToolSetListCtrl::RebuildImages()
 				if (SvDef::InvalidObjectId != id)
 				{
 					NavElement->m_Valid = isToolValid(id);
-					if (isLoopTool)
+					if (isLoopGroupTool)
 					{
 						if (NavElement->m_Collapsed)
 						{
-							img = NavElement->m_Valid ? m_expandStateLoopToolValid : m_expandStateLoopToolInvalid;
+							img = NavElement->m_Valid ? m_expandState : m_expandStateInvalid;
 						}
 						else
 						{
-							img = NavElement->m_Valid ? m_collapseStateLoopToolValid : m_collapseStateLoopToolInvalid;
+							img = NavElement->m_Valid ? m_collapseState : m_collapseStateInvalid;
 						}
 					}
 					else
@@ -600,10 +606,10 @@ bool SVToolSetListCtrl::AllowedToEdit() const
 		case NavElementType::StartGrouping:
 		case NavElementType::EndGrouping:
 		case NavElementType::SubTool:
+		case NavElementType::GroupTool:
 		case NavElementType::Tool:
 		case NavElementType::LoopTool:
 			return true;
-			break;
 		default:
 			return false;
 	}
@@ -739,10 +745,8 @@ void SVToolSetListCtrl::CreateImageLists()
 		m_fullParameterinML = m_ImageList.Add(pApp->LoadIcon(IDI_HMI_ICON));
 		m_collapseState = m_ImageList.Add(pApp->LoadIcon(IDI_COLLAPSE));
 		m_expandState = m_ImageList.Add(pApp->LoadIcon(IDI_EXPAND));
-		m_expandStateLoopToolValid = m_expandState;
-		m_collapseStateLoopToolValid = m_collapseState;
-		m_expandStateLoopToolInvalid = m_ImageList.Add(pApp->LoadIcon(IDI_EXPAND_LOOPTOOL_INVALID));
-		m_collapseStateLoopToolInvalid = m_ImageList.Add(pApp->LoadIcon(IDI_COLLAPSE_LOOPTOOL_INVALID));
+		m_expandStateInvalid = m_ImageList.Add(pApp->LoadIcon(IDI_EXPAND_INVALID));
+		m_collapseStateInvalid = m_ImageList.Add(pApp->LoadIcon(IDI_COLLAPSE_INVALID));
 	}
 	SetImageList(&m_ImageList, LVSIL_SMALL);
 }

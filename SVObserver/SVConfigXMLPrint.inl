@@ -919,7 +919,6 @@ inline void SVConfigXMLPrint::WriteTool(Writer writer, SvTo::SVToolClass* ts) co
 {
 	if (ts)
 	{
-		SvIe::SVImageClass* pCurrentSourceImage = nullptr;
 		SvTo::SVToolClass* pTool = ts;
 		SvOl::SVInObjectInfoStruct* l_psvImageInfo = nullptr;
 		SvOl::SVInObjectInfoStruct* l_psvLastImageInfo = nullptr;
@@ -930,9 +929,7 @@ inline void SVConfigXMLPrint::WriteTool(Writer writer, SvTo::SVToolClass* ts) co
 			{
 				if (l_psvImageInfo->IsConnected())
 				{
-					pCurrentSourceImage = dynamic_cast <SvIe::SVImageClass*> (l_psvImageInfo->GetInputObjectInfo().getObject());
-
-					WriteValueObject(writer, L"Property", utf16(SvUl::LoadStdString(IDS_IMAGE_SOURCE_STRING)), SvUl::to_utf16(pCurrentSourceImage->GetObjectNameToObjectType().c_str(), cp_dflt).c_str());
+					WriteValueObject(writer, L"Property", utf16(SvUl::LoadStdString(IDS_IMAGE_SOURCE_STRING)), SvUl::to_utf16(l_psvImageInfo->GetInputObjectInfo().getObject()->GetObjectNameToObjectType().c_str(), cp_dflt).c_str());
 				}
 			}
 			else
@@ -1073,13 +1070,10 @@ inline void SVConfigXMLPrint::WriteObject(Writer writer, SVObjectClass* pObject)
 
 			if (SvOp::SVUserMaskOperatorClass* maskObj = dynamic_cast <SvOp::SVUserMaskOperatorClass*>(pObject))
 			{
-				if (nullptr != maskObj)
+				SvIe::SVImageClass* pImage = maskObj->getMaskInputImage();
+				if (nullptr != pImage)
 				{
-					SvIe::SVImageClass* pImage = maskObj->getMaskInputImage();
-					if (nullptr != pImage)
-					{
-						WriteValueObject(writer, L"Property", utf16(SvUl::LoadStdString(IDS_IMAGE_SOURCE_STRING)), SvUl::to_utf16(pImage->GetCompleteName().c_str(), cp_dflt).c_str());
-					}
+					WriteValueObject(writer, L"Property", utf16(SvUl::LoadStdString(IDS_IMAGE_SOURCE_STRING)), SvUl::to_utf16(pImage->GetCompleteName().c_str(), cp_dflt).c_str());
 				}
 			}
 

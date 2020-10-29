@@ -732,6 +732,21 @@ std::string SVObjectManagerClass::GetCompleteObjectName(uint32_t objectId)
 	return Result;
 }
 
+void SVObjectManagerClass::fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo, uint32_t startingObjectID)
+{
+	if (SvDef::InvalidObjectId == startingObjectID)
+	{
+		//Set to configuration as this used to be the start.
+		startingObjectID = GetChildRootObjectID(SvDef::FqnConfiguration);
+	}
+	SVObjectClass* pObject = GetObject(startingObjectID);
+
+	if (nullptr != pObject)
+	{
+		pObject->fillObjectList(inserter, rObjectInfo);
+	}
+}
+
 uint32_t SVObjectManagerClass::getObserverSubject(const std::string& rSubjectDataName, uint32_t observerID) const
 {
 	return GetSubjectID(rSubjectDataName, getUniqueObjectEntry(observerID));
@@ -1429,6 +1444,11 @@ SvOi::IObjectClass* SvOi::getObject(uint32_t objectID)
 SvOi::IObjectClass* SvOi::FindObject(uint32_t parentID, const SvDef::SVObjectTypeInfoStruct& rInfo)
 {
 	return SVObjectManagerClass::Instance().getFirstObject(parentID, rInfo);
+}
+
+void SvOi::fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo, uint32_t startingObjectID)
+{
+	return SVObjectManagerClass::Instance().fillObjectList(inserter, rObjectInfo, startingObjectID);
 }
 #pragma endregion IObjectManager-function
 

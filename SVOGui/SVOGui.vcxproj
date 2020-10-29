@@ -188,10 +188,12 @@
     <ClCompile Include="SVToolAdjustmentDialogTwoImagePage.cpp" />
     <ClCompile Include="SVToolAdjustmentLUTPage.cpp" />
     <ClCompile Include="SVWaterShedFilterDlg.cpp" />
+    <ClCompile Include="TADialogGroupToolResultPage.cpp" />
     <ClCompile Include="TADialogLoopToolParameterPage.cpp" />
     <ClCompile Include="TADialogRingBufferParameterPage.cpp" />
     <ClCompile Include="TADialogTableDefinesPage.cpp" />
     <ClCompile Include="TADialogTableParameterPage.cpp" />
+    <ClCompile Include="TADialogGroupToolInputPage.cpp" />
     <ClCompile Include="TATableAnalyzerPage.cpp" />
     <ClCompile Include="TATableSourcePage.cpp" />
     <ClCompile Include="ToolAdjustToolSetPage.cpp" />
@@ -275,10 +277,12 @@
     <ClInclude Include="SVToolAdjustmentDialogTwoImagePage.h" />
     <ClInclude Include="SVToolAdjustmentLUTPage.h" />
     <ClInclude Include="SVWaterShedFilterDlg.h" />
+    <ClInclude Include="TADialogGroupToolResultPage.h" />
     <ClInclude Include="TADialogLoopToolParameterPage.h" />
     <ClInclude Include="TADialogRingBufferParameterPage.h" />
     <ClInclude Include="TADialogTableDefinesPage.h" />
     <ClInclude Include="TADialogTableParameterPage.h" />
+    <ClInclude Include="TADialogGroupToolInputPage.h" />
     <ClInclude Include="TATableAnalyzerPage.h" />
     <ClInclude Include="TATableSourcePage.h" />
     <ClInclude Include="ToolAdjustToolSetPage.h" />

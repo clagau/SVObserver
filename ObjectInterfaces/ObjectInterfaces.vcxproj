@@ -99,6 +99,7 @@
     <ClInclude Include="IFormulaController.h" />
     <ClInclude Include="IInputValueDefinition.h" />
     <ClInclude Include="IInspectionProcess.h" />
+    <ClInclude Include="ILinkedObject.h" />
     <ClInclude Include="IMask.h" />
     <ClInclude Include="IObjectAppClass.h" />
     <ClInclude Include="IObjectClass.h" />

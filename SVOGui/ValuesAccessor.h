@@ -129,6 +129,21 @@ public:
 		}
 	}
 
+	uint32_t GetAllowedAttribute(uint32_t inspectionID, uint32_t objectID) const
+	{
+		SvPb::InspectionCmdRequest requestCmd;
+		SvPb::InspectionCmdResponse responseCmd;
+		auto* pRequest = requestCmd.mutable_getobjectparametersrequest();
+		pRequest->set_objectid(objectID);
+
+		HRESULT hr = SvCmd::InspectionCommands(inspectionID, requestCmd, &responseCmd);
+		if (S_OK == hr && responseCmd.has_getobjectparametersresponse())
+		{
+			return responseCmd.getobjectparametersresponse().allowedattributes();
+		}
+		return 0;
+	}
+
 	SvOi::NameValueVector GetEnums(uint32_t inspectionID, uint32_t objectID) const
 	{
 		SvPb::InspectionCmdRequest requestCmd;
@@ -163,6 +178,17 @@ public:
 			return responseCmd.getobjectparametersresponse().name();
 		}
 		return std::string();
+	}
+
+	HRESULT setObjectName(uint32_t inspectionID, uint32_t objectID, const std::string& name)
+	{
+		SvPb::InspectionCmdRequest requestCmd;
+		SvPb::InspectionCmdResponse responseCmd;
+		auto* pRequest = requestCmd.mutable_setobjectnamerequest();
+		pRequest->set_objectid(objectID);
+		pRequest->set_objectname(name);
+		
+		return SvCmd::InspectionCommands(inspectionID, requestCmd, &responseCmd);
 	}
 
 	void ResetObject(uint32_t inspectionID, uint32_t objectID)

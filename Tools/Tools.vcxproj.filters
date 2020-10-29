@@ -99,6 +99,9 @@
     <ClCompile Include="TableTool.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="GroupTool.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ArchiveMethodEnum.h">
@@ -186,6 +189,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="TableTool.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="GroupTool.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

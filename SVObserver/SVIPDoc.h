@@ -200,6 +200,7 @@ public:
 	afx_msg void OnUpdateEditAdjustToolPosition(CCmdUI* pCmdUI);
 	afx_msg void OnAddPerspectiveTool();
 	afx_msg void OnAddLoopTool();
+	afx_msg void OnAddGroupTool();
 	afx_msg void OnViewResetAllCounts();
 	afx_msg void OnViewResetCountsCurrentIP();
 	afx_msg void OnUpdateViewResetCountsAllIPs(CCmdUI* pCmdUI);
@@ -224,6 +225,7 @@ public:
 	afx_msg void OnUpdateAddTransformationTool(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateAddColorTool(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateAddLoopTool(CCmdUI* PCmdUI);
+	afx_msg void OnUpdateAddGroupTool(CCmdUI* PCmdUI);
 	
 	//}}AFX_MSG
 

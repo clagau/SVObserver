@@ -751,7 +751,6 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObject, CPoin
 			{
 				bPrintToolExtents = false;
 				
-				SvIe::SVImageClass*  pCurrentSourceImage = nullptr;
 				SvOl::SVInObjectInfoStruct* l_psvImageInfo = nullptr;
 				SvOl::SVInObjectInfoStruct* l_psvLastImageInfo = nullptr;
 
@@ -761,9 +760,7 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObject, CPoin
 					{
 						if( l_psvImageInfo->IsConnected() )
 						{
-							pCurrentSourceImage = dynamic_cast<SvIe::SVImageClass*> (l_psvImageInfo->GetInputObjectInfo().getObject());
-
-							PrintValueObject( pDC, ptCurPos, SvUl::LoadStdString(IDS_IMAGE_SOURCE_STRING).c_str(), pCurrentSourceImage->GetObjectNameToObjectType().c_str() );
+							PrintValueObject( pDC, ptCurPos, SvUl::LoadStdString(IDS_IMAGE_SOURCE_STRING).c_str(), l_psvImageInfo->GetInputObjectInfo().getObject()->GetObjectNameToObjectType().c_str() );
 						}
 					}
 					else

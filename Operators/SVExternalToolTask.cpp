@@ -19,7 +19,6 @@
 #include "ObjectInterfaces/IInspectionProcess.h"
 #include "SVImageLibrary\SVImageBufferHandleImage.h"
 #include "SVLibrary\SVOINIClass.h"
-#include "SVObjectLibrary\SVGetObjectDequeByTypeVisitor.h"
 #include "SVObjectLibrary\SVObjectLevelCreateStruct.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
@@ -816,7 +815,7 @@ HRESULT SVExternalToolTask::Initialize(SVDllLoadLibraryCallback fnNotify, std::v
 			m_aPreviousInputImageRect.clear();
 			for (int i = 0; i < m_Data.m_lNumInputImages; i++)
 			{
-				SvIe::SVImageClass* pImage = dynamic_cast <SvIe::SVImageClass*> (m_Data.m_aInputImageInfo[i].GetInputObjectInfo().getObject());
+				SvIe::SVImageClass* pImage = dynamic_cast <SvIe::SVImageClass*> (m_Data.m_aInputImageInfo[i].GetInputObjectInfo().getFinalObject());
 				if (pImage)
 				{
 					SVImageInfoClass imageInfo = pImage->GetImageInfo();
@@ -1561,32 +1560,30 @@ HRESULT SVExternalToolTask::AllocateResult(int iIndex)
 
 SVResult* SVExternalToolTask::GetResultRangeObject(int iIndex)
 {
-	SVVariantResultClass*   pResult = nullptr;
+	SVVariantResultClass* pResult = nullptr;
 	if (iIndex < 0 || iIndex >= m_Data.m_aResultObjects.size())
 	{
 		return nullptr;
 	}
 
-	SvDef::SVObjectTypeInfoStruct  info(SvPb::SVResultObjectType, SvPb::SVResultVariantObjectType);
-	SVGetObjectDequeByTypeVisitor l_Visitor(info);
-	SVObjectManagerClass::Instance().VisitElements(l_Visitor, getObjectId());
-
-	SVGetObjectDequeByTypeVisitor::SVObjectPtrDeque::const_iterator l_Iter;
-	bool objectFound = false;
-	for (l_Iter = l_Visitor.GetObjects().begin(); l_Iter != l_Visitor.GetObjects().end() && !objectFound; ++l_Iter)
+	std::vector<SvOi::IObjectClass*> list;
+	fillObjectList(std::back_inserter(list), {SvPb::SVResultObjectType, SvPb::SVResultVariantObjectType});
+	for (const auto pObject : list)
 	{
-		pResult = dynamic_cast<SVVariantResultClass*>(const_cast<SVObjectClass*>(*l_Iter));
-		SvOl::SVInputInfoListClass	resultInputList;
-		pResult->GetPrivateInputList(resultInputList);
+		pResult = dynamic_cast<SVVariantResultClass*>(pObject);
+		if (pResult)
+		{
+			SvOl::SVInputInfoListClass	resultInputList;
+			pResult->GetPrivateInputList(resultInputList);
 
-		SVObjectClass* pSVObject = resultInputList[0]->GetInputObjectInfo().getObject();
-		if (&m_Data.m_aResultObjects[iIndex] == pSVObject)
-		{
-			objectFound = true;
-		}
-		else
-		{
-			pResult = nullptr;
+			if (0 < resultInputList.size() && &m_Data.m_aResultObjects[iIndex] == resultInputList[0]->GetInputObjectInfo().getObject())
+			{
+				break;
+			}
+			else
+			{
+				pResult = nullptr;
+			}
 		}
 	}
 
@@ -1598,14 +1595,12 @@ std::vector<SVResult*> SVExternalToolTask::GetResultRangeObjects()
 	std::vector<SVResult*> aObjects;
 
 	SvDef::SVObjectTypeInfoStruct  info(SvPb::SVResultObjectType, SvPb::SVResultVariantObjectType);
-	SVGetObjectDequeByTypeVisitor l_Visitor(info);
-	SVObjectManagerClass::Instance().VisitElements(l_Visitor, getObjectId());
+	std::vector<SvOi::IObjectClass*> list;
+	fillObjectList(std::back_inserter(list), info);
 
-	SVGetObjectDequeByTypeVisitor::SVObjectPtrDeque::const_iterator l_Iter;
-	for (l_Iter = l_Visitor.GetObjects().begin(); l_Iter != l_Visitor.GetObjects().end(); ++l_Iter)
+	for (const auto pObject : list)
 	{
-		SVVariantResultClass* pResult = dynamic_cast<SVVariantResultClass*>(const_cast<SVObjectClass*>(*l_Iter));
-
+		SVVariantResultClass* pResult = dynamic_cast<SVVariantResultClass*>(pObject);
 		aObjects.push_back(pResult);
 	}
 
@@ -1726,13 +1721,13 @@ bool SVExternalToolTask::DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObje
 	bool Result(false);
 	if (nullptr != pObjectInInfo)
 	{
-		if (SvIe::SVImageClass* pImage = dynamic_cast <SvIe::SVImageClass*> (pObjectInInfo->GetInputObjectInfo().getObject()))
+		if (SvIe::SVImageClass* pImage = dynamic_cast <SvIe::SVImageClass*> (pObjectInInfo->GetInputObjectInfo().getFinalObject()))
 		{
 			// find object
 			for (int i = 0; i < SVExternalToolTaskData::NUM_INPUT_IMAGES; i++)
 			{
 				SvOl::SVInObjectInfoStruct& rInfo = m_Data.m_aInputImageInfo[i];
-				SVObjectClass* pObject = rInfo.GetInputObjectInfo().getObject();
+				SVObjectClass* pObject = rInfo.GetInputObjectInfo().getFinalObject();
 				if (pObject == pImage)
 				{
 					// replace with tool set image
@@ -2008,7 +2003,15 @@ void SVExternalToolTask::collectInputValues()
 		}
 		else if (m_Data.m_InputDefinitions[i].getType() == SvPb::ExDllInterfaceType::TableArray)
 		{
-			const TableObject* pTableObject = dynamic_cast<const TableObject*>(m_Data.m_aInputObjects[LVIndex].GetLinkedObject());
+			const TableObject* pTableObject;
+			try
+			{
+				pTableObject = dynamic_cast<const TableObject*>(m_Data.m_aInputObjects[LVIndex].getLinkedObject());
+			}
+			catch (...) 
+			{
+				pTableObject = nullptr;
+			}
 			if (pTableObject)
 			{
 				long SX {0}, SY {0};
@@ -2022,7 +2025,15 @@ void SVExternalToolTask::collectInputValues()
 		}
 		else if (m_Data.m_InputDefinitions[i].getType() == SvPb::ExDllInterfaceType::TableNames)
 		{
-			const TableObject* pTableObject = dynamic_cast<const TableObject*>(m_Data.m_aInputObjects[LVIndex].GetLinkedObject());
+			const TableObject* pTableObject;
+			try
+			{
+				pTableObject = dynamic_cast<const TableObject*>(m_Data.m_aInputObjects[LVIndex].getLinkedObject());
+			}
+			catch (...)
+			{
+				pTableObject = nullptr;
+			}
 			if (pTableObject)
 			{
 				pTableObject->getColumNames(m_InspectionInputValues[i]);
@@ -2268,7 +2279,7 @@ void SVExternalToolTask::updateImageInputInfo()
 		{
 			if (SvPb::SVImageMonoType != m_Data.m_aInputImageInfo[i].GetInputObjectInfo().m_ObjectTypeInfo.m_SubType)
 			{
-				auto* pObject = m_Data.m_aInputImageInfo[i].GetInputObjectInfo().getObject();
+				auto* pObject = m_Data.m_aInputImageInfo[i].GetInputObjectInfo().getFinalObject();
 				if (nullptr != pObject && SvPb::SVImageMonoType != pObject->GetObjectSubType())
 				{
 					m_Data.m_aInputImageInfo[i].SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
@@ -2281,7 +2292,7 @@ void SVExternalToolTask::updateImageInputInfo()
 		{
 			if (SvPb::SVImageColorType != m_Data.m_aInputImageInfo[i].GetInputObjectInfo().m_ObjectTypeInfo.m_SubType)
 			{
-				auto* pObject = m_Data.m_aInputImageInfo[i].GetInputObjectInfo().getObject();
+				auto* pObject = m_Data.m_aInputImageInfo[i].GetInputObjectInfo().getFinalObject();
 				if (nullptr != pObject && SvPb::SVImageColorType != pObject->GetObjectSubType())
 				{
 					m_Data.m_aInputImageInfo[i].SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageColorType);

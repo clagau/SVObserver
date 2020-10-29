@@ -219,6 +219,9 @@
     <ClCompile Include="IndexEquation.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="ParameterTask.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EQAdjustSize.h">
@@ -423,6 +426,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="IndexEquation.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="ParameterTask.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

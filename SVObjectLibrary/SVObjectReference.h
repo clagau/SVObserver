@@ -23,6 +23,7 @@
 namespace SvOi
 {
 class IValueObject;
+class ILinkedObject;
 }
 
 class SVObjectClass;
@@ -56,7 +57,7 @@ public:
 	void clear();
 
 	SVObjectClass* getObject() const;
-
+	SVObjectClass* getFinalObject() const;
 	SvOi::IValueObject* getValueObject(bool forceCast=false) const;
 	
 	//************************************
@@ -125,8 +126,9 @@ public:
 protected:	
 	const std::string& GetIndex() const;
 	
-	void init();
 	SVObjectClass* m_pObject = nullptr;
+	mutable SVObjectClass* m_pFinalObject = nullptr; /// Similar to m_pObject, but if m_pObject is a LinkedValue to a object, m_pFinalObject will be set to the aim object.
+	mutable SvOi::ILinkedObject* m_pLinkedObject = nullptr;
 	mutable SvOi::IValueObject* m_pValueObject = nullptr;
 	uint32_t m_objectId = SvDef::InvalidObjectId;
 	SVObjectNameInfo m_NameInfo;

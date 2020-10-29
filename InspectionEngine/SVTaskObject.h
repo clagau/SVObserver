@@ -140,6 +140,7 @@ public:
 	const SVObjectInfoArrayClass& GetFriendList() const { return m_friendList;	};
 
 	virtual void fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, SvOi::IsObjectAllowedFunc pFunctor, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum nameToType, SvPb::ObjectSelectorType requiredType) const override;
+	virtual void fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo) override;
 	
 #pragma region virtual method (ITaskObject)
 	virtual void GetInputs(SvUl::InputNameObjectIdPairList& rList, const SvDef::SVObjectTypeInfoStruct& typeInfo = SvDef::SVObjectTypeInfoStruct(SvPb::SVNotSetObjectType), SvPb::SVObjectTypeEnum objectTypeToInclude = SvPb::SVNotSetObjectType, bool shouldExcludeFirstObjectName = false, int maxNumbers = 0) override;
@@ -148,7 +149,6 @@ public:
 	virtual const SvStl::MessageContainerVector& getRunErrorMessages() const override { return m_RunErrorMessages; };
 	virtual SvStl::MessageContainerVector getErrorMessages() const override;
 	virtual SvStl::MessageContainerVector validateAndSetEmbeddedValues(const SvOi::SetValueStructVector& rValueVector, bool shouldSet) override;
-	virtual SvStl::MessageContainerVector setEmbeddedDefaultValues(const SvOi::SetValueStructVector& rValueVector) override;
 	virtual void ResolveDesiredInputs(const SvDef::SVObjectTypeInfoVector& rDesiredInputs) override;
 	//************************************
 	//! Get the first task message
@@ -162,6 +162,7 @@ public:
 	virtual bool AddFriend(uint32_t friendId, uint32_t addPreId = SvDef::InvalidObjectId) override;
 	virtual void moveFriendObject(uint32_t objectToMoveId, uint32_t preObjectId = SvDef::InvalidObjectId) override;
 	virtual void getToolsWithReplaceableSourceImage(SvPb::GetToolsWithReplaceableSourceImageResponse&) const override {};
+	virtual SvPb::InspectionCmdResponse setAndSortEmbeddedValues(SvPb::SetAndSortEmbeddedValueRequest request) override { assert(false); return {}; };
 #pragma endregion virtual method (ITaskObject)
 
 #pragma region Methods to replace processMessage
@@ -238,9 +239,6 @@ protected:
 	/// \param pImage [in] Image for with the overlay should be collected.
 	/// \param rOverlay [in,out] Protobuf Message.
 	virtual void addOverlayGroups(const SVImageClass* , SvPb::Overlay& ) const {};
-
-	virtual SVObjectPtrDeque GetPreProcessObjects() const override;
-	virtual SVObjectPtrDeque GetPostProcessObjects() const override;
 
 	virtual void addDefaultInputObjects(SvOl::SVInputInfoListClass* PInputListToFill = nullptr);
 

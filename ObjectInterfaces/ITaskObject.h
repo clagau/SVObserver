@@ -64,16 +64,11 @@ namespace SvOi
 		/// \return a const reference to the message list
 		virtual SvStl::MessageContainerVector getErrorMessages() const = 0;
 
-		/// Validate values and set them if required.
+		/// Validate values (and defaultValues) and set them if required.
 		/// \param rValueVector [in] A vector of parameter-value pairs.
 		/// \param shouldSet [in] If true, value will be set if validation was successfully.
 		/// \returns SvStl::MessageContainerVector A list of error messages. This list is empty if all validations and set was successfully.
 		virtual SvStl::MessageContainerVector validateAndSetEmbeddedValues(const SetValueStructVector& rValueVector, bool shouldSet) = 0;
-
-		/// Set default embedded values
-		/// \param rValueVector [in] A vector of parameter-value pairs.
-		/// \returns SvStl::MessageContainerVector A list of error messages. This list is empty if all validations and set was successful
-		virtual SvStl::MessageContainerVector setEmbeddedDefaultValues(const SetValueStructVector& rValueVector) = 0;
 
 		// Resolve desired inputs, called on Construction from Class Factory
 		/// \param rDesiredInputs [in] List of desired inputs.
@@ -117,5 +112,7 @@ namespace SvOi
 		/// Fill the list with tools with have a replaceable source image. Will check itself and his children.
 		/// \param rRequest [in,out] The list
 		virtual void getToolsWithReplaceableSourceImage(SvPb::GetToolsWithReplaceableSourceImageResponse& rRequest) const = 0;
+
+		virtual SvPb::InspectionCmdResponse setAndSortEmbeddedValues(SvPb::SetAndSortEmbeddedValueRequest request) = 0;
 	};
 } //namespace SvOi

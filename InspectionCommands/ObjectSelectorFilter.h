@@ -113,8 +113,7 @@ public:
 	bool ExcludeSameLineageSelectorFilter::operator()(const SvOi::IObjectClass* pObject, unsigned int attributeMask, int ) const
 	{
 		bool bRetVal = false;
-		auto pValueObject = dynamic_cast<const SvOi::IValueObject*>(pObject);
-		if (nullptr != pValueObject)
+		if (nullptr != pObject)
 		{
 			const UINT attributesAllowed = pObject->ObjectAttributesAllowed();
 			const std::string& name = pObject->GetCompleteName();

@@ -27,9 +27,6 @@
     <ClCompile Include="SVClassRegisterListClass.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVGetObjectDequeByTypeVisitor.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVInObjectInfoStruct.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -92,12 +89,6 @@
     <ClInclude Include="SVClsids.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVGetObjectDequeByTypeVisitor.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVGetObjectListVisitor.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVInObjectInfoStruct.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -154,12 +145,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="SVGetObjectListVisitor.inl">
-      <Filter>Headerdateien</Filter>
-    </None>
-    <None Include="SVObjectClass.inl">
-      <Filter>Headerdateien</Filter>
-    </None>
     <None Include="SVObjectManagerClass.inl">
       <Filter>Headerdateien</Filter>
     </None>

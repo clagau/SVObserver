@@ -87,17 +87,6 @@ void SVTaskObjectListClass::fillSelectorList(std::back_insert_iterator<std::vect
 	nameToType = (SvPb::SVNotSetObjectType == nameToType) ? GetObjectType() : nameToType;
 	__super::fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType);
 	
-
-	for (size_t i = 0; i < m_friendList.size(); ++i)
-	{
-		// Check if Friend is alive...
-		auto* pObject = SVObjectManagerClass::Instance().GetObject(m_friendList[i].getObjectId());
-		if (nullptr != pObject)
-		{
-			pObject->fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType);
-		}
-	}
-
 	for (const auto* pObject : m_TaskObjectVector)
 	{
 		if (nullptr != pObject)
@@ -106,6 +95,20 @@ void SVTaskObjectListClass::fillSelectorList(std::back_insert_iterator<std::vect
 		}
 	}
 }
+
+void SVTaskObjectListClass::fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo)
+{
+	__super::fillObjectList(inserter, rObjectInfo);
+
+	for (auto* pObject : m_TaskObjectVector)
+	{
+		if (nullptr != pObject)
+		{
+			pObject->fillObjectList(inserter, rObjectInfo);
+		}
+	}
+}
+
 
 void SVTaskObjectListClass::AppendInputObjects()
 {
@@ -1079,32 +1082,6 @@ bool SVTaskObjectListClass::Run(RunStatus& rRunStatus, SvStl::MessageContainerVe
 	}
 
 	return bRetVal;
-}
-
-SVTaskObjectListClass::SVObjectPtrDeque SVTaskObjectListClass::GetPreProcessObjects() const
-{
-	SVObjectPtrDeque Objects = __super::GetPreProcessObjects();
-
-	return Objects;
-}
-
-SVTaskObjectListClass::SVObjectPtrDeque SVTaskObjectListClass::GetPostProcessObjects() const
-{
-	SVObjectPtrDeque Objects = __super::GetPostProcessObjects();
-
-	SVTaskObjectPtrVector::const_iterator l_Iter;
-
-	for( l_Iter = m_TaskObjectVector.begin(); l_Iter != m_TaskObjectVector.end(); ++l_Iter )
-	{
-		SVTaskObjectClass* l_pTask = *l_Iter;
-
-		if( nullptr != l_pTask )
-		{
-			Objects.push_back( l_pTask );
-		}
-	}
-
-	return Objects;
 }
 
 bool SVTaskObjectListClass::resetAllObjects( SvStl::MessageContainerVector *pErrorMessages/*=nullptr */ )

@@ -17,6 +17,7 @@
 #include "SVObjectAttributeClass.h"
 #include "SVObjectLevelCreateStruct.h"
 #include "SVObjectManagerClass.h"
+#include "SVOResource/resource.h"
 #include "SVToolsetScriptTags.h"
 #include "Definitions/Color.h"
 #include "Definitions/StringTypeDef.h"
@@ -118,13 +119,6 @@ bool SVObjectClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 		return false;
 	}
 	return true;
-}
-
-SVObjectClass::SVObjectPtrDeque SVObjectClass::GetPostProcessObjects() const
-{
-	SVObjectPtrDeque l_Objects;
-
-	return l_Objects;
 }
 
 HRESULT SVObjectClass::ResetObjectInputs()
@@ -393,6 +387,18 @@ void SVObjectClass::fillSelectorList(std::back_insert_iterator<std::vector<SvPb:
 		}
 	}
 }
+
+void SVObjectClass::fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo)
+{
+	if ((SvPb::NoEmbeddedId == rObjectInfo.m_EmbeddedID || rObjectInfo.m_EmbeddedID == GetEmbeddedID()) &&
+		(SvPb::SVNotSetObjectType == rObjectInfo.m_ObjectType || rObjectInfo.m_ObjectType == GetObjectType()) &&
+		(SvPb::SVNotSetSubObjectType == rObjectInfo.m_SubType || rObjectInfo.m_SubType == GetObjectSubType())
+		)
+	{
+		// cppcheck-suppress unreadVariable symbolName=inserter ; cppCheck doesn't know back_insert_iterator
+		inserter = this;
+	}
+}
 #pragma endregion virtual method (IObjectClass)
 
 /*
@@ -519,15 +525,16 @@ SVObjectClass* SVObjectClass::UpdateObject(uint32_t , SVObjectClass* , SVObjectC
 	return nullptr;
 }
 
-bool SVObjectClass::isCorrectType(SvPb::ObjectSelectorType requiredType) const
+bool SVObjectClass::isCorrectType(SvPb::ObjectSelectorType requiredType, const SVObjectClass* pTestObject) const
 {
+	const SVObjectClass* pObject = (nullptr != pTestObject) ? pTestObject : this;
 	switch (requiredType)
 	{
 	case SvPb::allValueObjects:
-		return (SvPb::SVValueObjectType == GetObjectType());
+		return (SvPb::SVValueObjectType == pObject->GetObjectType());
 	case SvPb::allNumberValueObjects:
 	{
-		auto pValueObject = dynamic_cast<const SvOi::IValueObject*>(this);
+		auto pValueObject = dynamic_cast<const SvOi::IValueObject*>(pObject);
 		if (nullptr != pValueObject)
 		{
 			DWORD type = pValueObject->GetType();
@@ -539,18 +546,18 @@ bool SVObjectClass::isCorrectType(SvPb::ObjectSelectorType requiredType) const
 	case SvPb::realNumberValueOjects:
 	{
 		constexpr std::array<SvPb::SVObjectSubTypeEnum, 11> filter{ SvPb::SVDWordValueObjectType, SvPb::SVLongValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::SVBoolValueObjectType, SvPb::SVByteValueObjectType, SvPb::SVInt64ValueObjectType, SvPb::DoubleSortValueObjectType };
-		return (SvPb::SVValueObjectType == GetObjectType() && filter.end() != std::find(filter.begin(), filter.end(), GetObjectSubType()));
+		return (SvPb::SVValueObjectType == pObject->GetObjectType() && filter.end() != std::find(filter.begin(), filter.end(), pObject->GetObjectSubType()));
 	}
 	case SvPb::stringValueObjects:
-		return (SvPb::SVValueObjectType == GetObjectType() && SvPb::SVStringValueObjectType == GetObjectSubType());
+		return (SvPb::SVValueObjectType == pObject->GetObjectType() && SvPb::SVStringValueObjectType == pObject->GetObjectSubType());
 	case SvPb::tableObjects:
-		return (SvPb::TableObjectType == GetObjectType());
+		return (SvPb::TableObjectType == pObject->GetObjectType());
 	case SvPb::allImageObjects:
-		return (SvPb::SVImageObjectType == GetObjectType());
+		return (SvPb::SVImageObjectType == pObject->GetObjectType());
 	case SvPb::grayImageObjects:
-		return (SvPb::SVImageObjectType == GetObjectType() && SvPb::SVImageMonoType == GetObjectSubType());
+		return (SvPb::SVImageObjectType == pObject->GetObjectType() && SvPb::SVImageMonoType == pObject->GetObjectSubType());
 	case SvPb::colorImageObjects:
-		return (SvPb::SVImageObjectType == GetObjectType() && SvPb::SVImageColorType == GetObjectSubType());
+		return (SvPb::SVImageObjectType == pObject->GetObjectType() && SvPb::SVImageColorType == pObject->GetObjectSubType());
 	default:
 		return false;
 	}
@@ -667,6 +674,32 @@ SVObjectClass* SVObjectClass::OverwriteEmbeddedObject(uint32_t uniqueID, SvPb::E
 		return this;
 	}
 	return nullptr;
+}
+
+SVObjectReference SVObjectClass::ConvertStringInObject(const std::string& rValue) const
+{
+	const std::string ToolSetName = SvUl::LoadStdString(IDS_CLASSNAME_SVTOOLSET);
+	std::string ObjectName;
+
+	//If the tool set name is at the start then add the inspection name at the beginning
+	if (0 == rValue.find(ToolSetName.c_str()))
+	{
+		const SvOi::IObjectClass* pInspection = GetAncestorInterface(SvPb::SVInspectionObjectType);
+		if (nullptr != pInspection)
+		{
+			ObjectName = pInspection->GetName();
+			ObjectName += _T(".");
+			ObjectName += rValue;
+		}
+	}
+	else
+	{
+		ObjectName = rValue;
+	}
+
+	SVObjectReference objectRef;
+	SVObjectManagerClass::Instance().GetObjectByDottedName(ObjectName, objectRef);
+	return objectRef;
 }
 
 HRESULT SVObjectClass::RemoveObjectConnection(uint32_t )

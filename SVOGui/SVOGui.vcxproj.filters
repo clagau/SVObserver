@@ -249,6 +249,12 @@
     <ClCompile Include="AuditFilesDialog.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="TADialogGroupToolInputPage.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="TADialogGroupToolResultPage.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AuxiliaryExtentsController.h">
@@ -510,6 +516,12 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="AuditFilesDialog.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="TADialogGroupToolInputPage.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="TADialogGroupToolResultPage.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

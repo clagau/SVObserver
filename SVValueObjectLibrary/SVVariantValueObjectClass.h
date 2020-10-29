@@ -60,6 +60,7 @@ protected:
 	//! \param rValue [in] The input string
 	//! \returns the converted value.
 	virtual _variant_t ConvertString2Type( const std::string& rValue ) const override;
+	virtual _variant_t ConvertString2Type(const std::string& rValue, const _variant_t& rDefaultValue) const override;
 
 	virtual std::string ConvertType2String( const _variant_t& rValue ) const override;
 

@@ -47,14 +47,7 @@ IObjectClass* ConstructObject(SvPb::ClassIdEnum classID);
 //************************************
 IObjectClass* getObject(uint32_t objectID);
 
-//************************************
-//! Traverses the Object DataStore, starting at a certain Object.
-//! \param ObjectVisitor [in] The visitor.
-//! \param startingObjectID [in] starting Object.
-//! \returns HRESULT
-//************************************
-template<typename ObjectVisitor>
-HRESULT visitElements(ObjectVisitor& rVisitor, uint32_t startingObjectID = SvDef::InvalidObjectId);
+void fillObjectList(std::back_insert_iterator<std::vector<IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo, uint32_t startingObjectID);
 
 IObjectClass* FindObject(uint32_t parentID, const SvDef::SVObjectTypeInfoStruct& rInfo);
 } //namespace SvOi

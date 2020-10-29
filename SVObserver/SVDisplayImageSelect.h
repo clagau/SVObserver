@@ -23,8 +23,8 @@ class SVIPDoc;
 class SVDisplayImageSelect : public CDialog
 {
 public:
-	SvIe::SVImageClass *m_pCurrentImage;
-	SVIPDoc			 *m_pDoc;
+	SvIe::SVImageClass *m_pCurrentImage = nullptr;
+	SVIPDoc			 *m_pDoc = nullptr;
 	SVDisplayImageSelect(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~SVDisplayImageSelect();
 

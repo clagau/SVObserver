@@ -203,6 +203,18 @@ void ResultViewReferences::RebuildReferenceVector( SVInspectionProcess* pIProces
 	}
 
 	m_resultTable = dynamic_cast<SvOp::TableObject*>(SVObjectManagerClass::Instance().GetObject(m_resultTableId));
+	if (nullptr == m_resultTable)
+	{
+		auto* pLinked = dynamic_cast<SvVol::LinkedValue*>(SVObjectManagerClass::Instance().GetObject(m_resultTableId));
+		if (nullptr != pLinked)
+		{
+			try
+			{
+				m_resultTable = dynamic_cast<SvOp::TableObject*>(const_cast<SvOi::IObjectClass*>(pLinked->getLinkedObject()));
+			}
+			catch (...) {}
+		}
+	}
 
 	m_LastUpdateTimeStamp = SvTl::GetTimeStamp();
 }

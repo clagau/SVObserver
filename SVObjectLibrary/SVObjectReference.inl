@@ -21,15 +21,6 @@ inline SVObjectReference::SVObjectReference( int32_t objectId )
 {
 }
 
-inline void SVObjectReference::init()
-{
-	m_pObject = nullptr;
-	m_pValueObject = nullptr;
-	m_objectId = SvDef::InvalidObjectId;
-	m_NameInfo.clear();
-	m_ArrayIndex = -1;
-}
-
 inline SVObjectReference::SVObjectReference( const SVObjectReference& rhs )
 {
 	*this = rhs;

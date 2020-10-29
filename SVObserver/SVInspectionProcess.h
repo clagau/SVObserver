@@ -91,6 +91,8 @@ public:
 	///gets the shared Pointer in m_SlotManager
 	SvSml::RingBufferPointer GetSlotmanager();
 
+	virtual void fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo) override;
+
 #pragma region virtual method (IInspectionProcess)
 	virtual SvOi::IObjectClass* GetPPQInterface() const override;
 	virtual void SetDefaultInputs() override;
@@ -314,9 +316,6 @@ protected:
 	typedef SVTQueueObject<SVInputImageRequestInfoStructPtr> SVInputImageRequestQueue;
 	typedef SVTQueueObject<SVProductInfoStruct> SVProductQueue;
 	
-	virtual SVObjectPtrDeque GetPreProcessObjects() const override;
-	virtual SVObjectPtrDeque GetPostProcessObjects() const override;
-
 	virtual SVObjectClass* UpdateObject(uint32_t friendId, SVObjectClass *p_psvObject, SVObjectClass *p_psvNewOwner ) override;
 
 	bool RunInspection(SVInspectionInfoStruct& rIPInfo, SvIe::SVObjectIdSVCameraInfoStructMap& rCameraInfos, long triggerCount, bool p_UpdateCounts = true );

@@ -87,7 +87,7 @@ namespace SvOi
 
 		//! Validate the value. If value invalid an exception message will be thrown.
 		//! \param rValue [in] The value to validate
-		virtual void validateValue(const _variant_t& rValue) const = 0;
+		virtual void validateValue(const _variant_t& rValue, const _variant_t& rDefaultValue) const = 0;
 
 		//! Gets the type name for the Value object
 		//! \returns the type name
@@ -161,11 +161,12 @@ namespace SvOi
 
 	struct SetValueStruct 
 	{
-		SetValueStruct(IValueObject* pValueObject, _variant_t Value, int Index) :
-			m_pValueObject{ pValueObject }, m_Value{ Value }, m_ArrayIndex{ Index } {}
+		SetValueStruct(IValueObject* pValueObject, _variant_t Value, _variant_t defaultValue, int Index) :
+			m_pValueObject{ pValueObject }, m_Value{ Value }, m_DefaultValue{ defaultValue }, m_ArrayIndex{ Index } {}
 
 		IValueObject* m_pValueObject{ nullptr };
 		_variant_t m_Value;
+		_variant_t m_DefaultValue;
 		int m_ArrayIndex{ -1 };
 	};
 

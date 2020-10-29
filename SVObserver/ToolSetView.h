@@ -90,7 +90,7 @@ public:
 	void removeParameter2MonitorList(LPCTSTR ppqName);
 
 	///return true if a subtool or subtoolDeleimiter is selected
-	bool IsLoopToolSelected() const;
+	bool IsSubToolSelected() const;
 	void RefreshTimestamp();
 	double GetTimeStamp() const { return m_timestamp; } ;
 

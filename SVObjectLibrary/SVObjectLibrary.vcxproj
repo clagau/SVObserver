@@ -121,7 +121,6 @@
     </ClCompile>
     <ClCompile Include="SVClassRegisterClass.cpp" />
     <ClCompile Include="SVClassRegisterListClass.cpp" />
-    <ClCompile Include="SVGetObjectDequeByTypeVisitor.cpp" />
     <ClCompile Include="SVInObjectInfoStruct.cpp" />
     <ClCompile Include="SVInputInfoListClass.cpp" />
     <ClCompile Include="SVObjectAttributeClass.cpp" />
@@ -144,8 +143,6 @@
     <ClInclude Include="SVClassRegisterClass.h" />
     <ClInclude Include="SVClassRegisterListClass.h" />
     <ClInclude Include="SVClsids.h" />
-    <ClInclude Include="SVGetObjectDequeByTypeVisitor.h" />
-    <ClInclude Include="SVGetObjectListVisitor.h" />
     <ClInclude Include="SVInObjectInfoStruct.h" />
     <ClInclude Include="SVInputInfoListClass.h" />
     <ClInclude Include="SVObjectAttributeClass.h" />
@@ -166,8 +163,6 @@
     <ClInclude Include="TextDefinesSvOl.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="SVGetObjectListVisitor.inl" />
-    <None Include="SVObjectClass.inl" />
     <None Include="SVObjectManagerClass.inl" />
     <None Include="SVObjectReference.inl" />
   </ItemGroup>

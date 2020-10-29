@@ -189,13 +189,12 @@ namespace SvVol
 			//! When getting the value from an indirect value make sure it is not referencing this object
 			if (nullptr != m_LinkedObjectRef.getValueObject())
 			{
-			m_CircularReference = true;
-			Result = m_LinkedObjectRef.getValue(rValue);
-			m_CircularReference = false;
+				m_CircularReference = true;
+				Result = m_LinkedObjectRef.getValue(rValue);
+				m_CircularReference = false;
 			}
 			else
 			{
-
 				Result = __super::GetValue(rValue, Index);
 			}
 
@@ -287,10 +286,65 @@ namespace SvVol
 		return result;
 	}
 
+	bool LinkedValue::isCorrectType(SvPb::ObjectSelectorType requiredType, const SVObjectClass* pTestObject) const
+	{
+		try
+		{
+			return __super::isCorrectType(requiredType, (nullptr != pTestObject) ? pTestObject : dynamic_cast<const SVObjectClass*>(getLinkedObject()));
+		}
+		catch (...)
+		{
+			return false;
+		}
+	}
+
+	void LinkedValue::fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo)
+	{
+		if (SvPb::NoEmbeddedId == rObjectInfo.m_EmbeddedID)
+		{
+			try
+			{
+				const auto* pObject = getLinkedObject();
+				if (nullptr != pObject &&
+					(SvPb::SVNotSetObjectType == rObjectInfo.m_ObjectType || rObjectInfo.m_ObjectType == pObject->GetObjectType()) &&
+					(SvPb::SVNotSetSubObjectType == rObjectInfo.m_SubType || rObjectInfo.m_SubType == pObject->GetObjectSubType()))
+				{
+					inserter = this;
+					return;
+				}
+			}
+			catch (...)
+			{
+				return;
+			}
+		}
+		
+		__super::fillObjectList(inserter, rObjectInfo);
+	}
+
+	void LinkedValue::OnObjectRenamed(const SVObjectClass&, const std::string&)
+	{ 
+		if (0 < ObjectAttributesAllowed())
+		{
+			UpdateLinkedName();
+		}
+	};
+
+	bool LinkedValue::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
+	{
+		bool ret = __super::CreateObject(rCreateStructure);
+		UpdateConnection();
+		return ret;
+	}
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
 	_variant_t LinkedValue::ConvertString2Type(const std::string& rValue) const
+	{
+		return ConvertString2Type(rValue, GetDefaultValue());
+	}
+
+	_variant_t LinkedValue::ConvertString2Type(const std::string& rValue, const _variant_t& rDefaultValue) const
 	{
 		_variant_t Result;
 
@@ -304,18 +358,26 @@ namespace SvVol
 
 		if (nullptr != LinkedObjectRef.getObject())
 		{
-			if (CheckLinkedObject(LinkedObjectRef.getObject()))
+			SvStl::MessageContainerVector errorMessages;
+			if (CheckLinkedObject(LinkedObjectRef.getObject(), rDefaultValue, &errorMessages))
 			{
 				//Change the value directly as the default value may have a different variant type
 				Result = _variant_t(LinkedObjectRef.GetObjectIdAndIndexOneBased().c_str());
 			}
 			else
 			{
-				//! This means the linked object is invalid
-				SvDef::StringVector msgList;
-				msgList.push_back(GetName());
 				SvStl::MessageManager Exception(SvStl::MsgType::Log);
-				Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_LinkedValue_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				if (0 < errorMessages.size())
+				{
+					Exception.setMessage(errorMessages[0].getMessage(), getObjectId());
+				}
+				else
+				{
+					//! This means the linked object is invalid
+					SvDef::StringVector msgList;
+					msgList.push_back(GetName());
+					Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_LinkedValue_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				}
 				Exception.Throw();
 			}
 		}
@@ -324,9 +386,9 @@ namespace SvVol
 			_variant_t vtTemp;
 			vtTemp.SetString(rValue.c_str());
 
-			if (GetDefaultValue().vt != VT_EMPTY)
+			if (rDefaultValue.vt != VT_EMPTY)
 			{
-				if (S_OK != ::VariantChangeTypeEx(&vtTemp, &vtTemp, SvDef::LCID_USA, 0, GetDefaultValue().vt))
+				if (S_OK != ::VariantChangeTypeEx(&vtTemp, &vtTemp, SvDef::LCID_USA, 0, rDefaultValue.vt))
 				{
 					SvDef::StringVector msgList;
 					msgList.push_back(GetName());
@@ -338,7 +400,7 @@ namespace SvVol
 			}
 			else
 			{
-				Result = SVVariantValueObjectClass::ConvertString2Type(rValue);
+				Result = SVVariantValueObjectClass::ConvertString2Type(rValue, rDefaultValue);
 			}
 		}
 		return Result;
@@ -371,7 +433,7 @@ namespace SvVol
 		//If valid objectId then should be able to get the linked value from the object manager
 		if (nullptr != LinkedObjectRef.getObject())
 		{
-			Result = CheckLinkedObject(LinkedObjectRef.getObject(), pErrorMessages);
+			Result = CheckLinkedObject(LinkedObjectRef.getObject(), GetDefaultValue(), pErrorMessages);
 			if (!Result)
 			{
 				LinkedObjectRef = SVObjectReference();
@@ -411,10 +473,8 @@ namespace SvVol
 			else
 			{
 				//this part is only for backward compatibility, because in older version the name was saved and not the ID.
-				std::string ToolSetName;
+				const std::string ToolSetName = SvUl::LoadStdString(IDS_CLASSNAME_SVTOOLSET);
 				std::string ObjectName = objectIdAndIndexString;
-
-				ToolSetName = SvUl::LoadStdString(IDS_CLASSNAME_SVTOOLSET);
 
 				//Default name
 
@@ -445,11 +505,6 @@ namespace SvVol
 				DisconnectInput();
 				m_LinkedObjectRef = LinkedObjectRef;
 
-				//Convert old dotted name format to Unique ID
-				if (convertOldName)
-				{
-					SVVariantValueObjectClass::setValue(m_LinkedObjectRef.GetCompleteName(true));
-				}
 				bool messageReturn = ConnectInput();
 				assert(messageReturn);
 				if (!messageReturn)
@@ -465,6 +520,11 @@ namespace SvVol
 			else
 			{
 				m_LinkedObjectRef = LinkedObjectRef;
+			}
+			//Convert old dotted name format to Unique ID
+			if (convertOldName)
+			{
+				SVVariantValueObjectClass::setValue(m_LinkedObjectRef.GetCompleteName(true));
 			}
 		}
 		else	// plain data
@@ -536,72 +596,70 @@ namespace SvVol
 		return Result;
 	}
 
-	SVObjectReference LinkedValue::ConvertStringInObject(const std::string& rValue) const
+	bool LinkedValue::CheckLinkedObject(const SVObjectClass* const pLinkedObject, const variant_t& rDefault, SvStl::MessageContainerVector *pErrorMessages) const
 	{
-		std::string ToolSetName;
-		std::string ObjectName;
-
-		ToolSetName = SvUl::LoadStdString(IDS_CLASSNAME_SVTOOLSET);
-
-		//If the tool set name is at the start then add the inspection name at the beginning
-		if (0 == rValue.find(ToolSetName.c_str()))
-		{
-			const SvOi::IObjectClass* pInspection = GetAncestorInterface(SvPb::SVInspectionObjectType);
-			if (nullptr != pInspection)
-			{
-				ObjectName = pInspection->GetName();
-				ObjectName += _T(".");
-				ObjectName += rValue;
-			}
-		}
-		else
-		{
-			ObjectName = rValue;
-		}
-
-		SVObjectReference objectRef;
-		SVObjectManagerClass::Instance().GetObjectByDottedName(ObjectName, objectRef);
-		return objectRef;
-	}
-
-	bool LinkedValue::CheckLinkedObject(const SVObjectClass* const pLinkedObject, SvStl::MessageContainerVector *pErrorMessages) const
-	{
-		bool Result(true);
-
 		//! Check if a valid object and make sure it does not link to itself
 		if (nullptr == pLinkedObject || this == pLinkedObject)
 		{
-			Result = false;
 			if (nullptr != pErrorMessages)
 			{
 				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidOrRecursiveLinkedObject, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 				pErrorMessages->push_back(Msg);
 			}
+			return false;
 		}
-		else
+		
+		//! This is important when copying tools that the value of another inspection is not used due to the object ID being valid
+		//! That is why check that the linked value of an object is in the same inspection
+		const IObjectClass* pLinkedObjectInspection = pLinkedObject->GetAncestorInterface(SvPb::SVInspectionObjectType);
+		bool isSameInpection = GetAncestorInterface(SvPb::SVInspectionObjectType) == pLinkedObjectInspection;
+		//! If linked object has no inspection (e.g. Global Constants) then we don't need to check that the inspections are the same
+		if (nullptr != pLinkedObjectInspection && !isSameInpection)
 		{
-			//! This is important when copying tools that the value of another inspection is not used due to the object ID being valid
-			//! That is why check that the linked value of an object is in the same inspection
-			const IObjectClass* pLinkedObjectInspection = pLinkedObject->GetAncestorInterface(SvPb::SVInspectionObjectType);
-			bool isSameInpection = GetAncestorInterface(SvPb::SVInspectionObjectType) == pLinkedObjectInspection;
-			//! If linked object has no inspection (e.g. Global Constants) then we don't need to check that the inspections are the same
-			if (nullptr != pLinkedObjectInspection && !isSameInpection)
+			if (nullptr != pErrorMessages)
 			{
-				Result = false;
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WrongInspection, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				pErrorMessages->push_back(Msg);
+			}
+			return false;
+		}
+
+		if (VT_EMPTY != rDefault.vt)
+		{
+			if (SvPb::SVValueObjectType != pLinkedObject->GetObjectType() && SvPb::SVBasicValueObjectType != pLinkedObject->GetObjectType())
+			{
 				if (nullptr != pErrorMessages)
 				{
-					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WrongInspection, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+					SvDef::StringVector msgList;
+					msgList.push_back(GetName());
+					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_LinkedValue_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 					pErrorMessages->push_back(Msg);
 				}
+				return false;
 			}
 		}
-
-		return Result;
+		return true;
 	}
 
-	const SVObjectClass* LinkedValue::GetLinkedObject() const
+	const SvOi::IObjectClass* LinkedValue::getLinkedObject() const
 	{
-		return m_LinkedObjectRef.getObject();
+		if (m_CircularReference)
+		{
+			SvStl::MessageManager Exception(SvStl::MsgType::Log);
+			Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_CircularReference, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+			Exception.Throw();			
+		}
+		const SvOi::IObjectClass* pObject = m_LinkedObjectRef.getObject();
+		const LinkedValue* pRefObject = dynamic_cast<const LinkedValue*>(pObject);
+		if (nullptr == pRefObject)
+		{
+			return pObject;
+		}
+		
+		m_CircularReference = true;
+		const SvOi::IObjectClass* pLastObject = pRefObject->getLinkedObject();
+		m_CircularReference = false;
+		return nullptr != pLastObject ? pLastObject : pObject;
 	}
 #pragma endregion Private Methods
 

@@ -47,16 +47,6 @@ void LoopTool::Initialize()
 	BuildEmbeddedObjectList();
 }
 
-bool LoopTool::AddTool(SVToolClass*)
-{
-	return false;
-}
-
-bool LoopTool::RemoveTool(SVToolClass*)
-{
-	return false;
-}
-
 void LoopTool::BuildEmbeddedObjectList()
 {
 	RegisterEmbeddedObject(&m_MaxLoops, SvPb::MaxLoopsEId, IDS_OBJECTNAME_LOOPTOOL_MAXLOOPS, false, SvOi::SVResetItemNone);

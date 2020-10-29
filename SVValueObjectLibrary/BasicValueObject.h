@@ -64,7 +64,7 @@ public:
 	virtual HRESULT setValue(const std::string& rValueString, int Index = -1) override;
 	virtual HRESULT getValue(std::string& rValueString, int Index = -1, const std::string& rFormatString = _T("")/*currently always ignored*/) const override;
 	virtual void setResetOptions( bool , SvOi::SVResetItemEnum  ) override {};
-	virtual void validateValue( const _variant_t&  ) const override {};
+	virtual void validateValue( const _variant_t&, const _variant_t&) const override {};
 	virtual bool isArray() const override { return false; };
 	virtual int32_t getArraySize() const override { return 1; };
 	virtual int32_t getResultSize() const override { return 1; };

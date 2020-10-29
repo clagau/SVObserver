@@ -44,13 +44,13 @@
 #include "SVMatroxLibrary\SVMatroxPatternInterface.h"
 #include "SVMessage\SVMessage.h"
 #include "SVUtilityLibrary\StringHelper.h"
-#include "SVObjectLibrary\SVGetObjectDequeByTypeVisitor.h"
 #include "SVObjectLibrary\SVObjectBuilder.h"
 #include "SVObjectLibrary\SVObjectClass.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVProtoBuf\ConverterHelper.h"
 #include "CommandInternalHelper.h"
 #include "ObjectSelectorFilter.h"
+#include "ObjectInterfaces\ILinkedObject.h"
 #include "ObjectInterfaces\ISVLinearAnalyzer.h"
 #include "ObjectInterfaces\ITableObject.h"
 #include "SVValueObjectLibrary/SVVariantValueObjectClass.h"
@@ -471,7 +471,32 @@ SvPb::InspectionCmdResponse getImage(SvPb::GetImageRequest request)
 	SvPb::GetImageResponse* pResponse = cmdResponse.mutable_getimageresponse();
 	if (SvDef::InvalidObjectId != request.imageid())
 	{
-		SvOi::ISVImage* pImage = dynamic_cast<SvOi::ISVImage*>(SvOi::getObject(request.imageid()));
+		SvOi::ISVImage* pImage;
+		auto* pObject = SvOi::getObject(request.imageid());
+		SvOi::ILinkedObject* pLinked = dynamic_cast<SvOi::ILinkedObject*>(pObject);
+		if (nullptr != pLinked)
+		{
+			try
+			{
+				pImage = dynamic_cast<SvOi::ISVImage*>(const_cast<SvOi::IObjectClass*>(pLinked->getLinkedObject()));
+			}
+			catch (const SvStl::MessageContainer& rExp)
+			{
+				SvPb::setMessageToMessagePB(rExp, pResponse->mutable_messages()->add_messages());
+				cmdResponse.set_hresult(E_FAIL);
+				return cmdResponse;
+			}
+			catch (...)
+			{
+				cmdResponse.set_hresult(E_FAIL);
+				return cmdResponse;
+			}
+		}
+		else
+		{
+			pImage = dynamic_cast<SvOi::ISVImage*>(pObject);
+		}
+
 		if (pImage)
 		{
 			data = pImage->getLastImage();
@@ -673,14 +698,14 @@ SvPb::InspectionCmdResponse getAvailableObjects(SvPb::GetAvailableObjectsRequest
 
 	SvDef::SVObjectTypeInfoStruct typeInfo {request.typeinfo().objecttype(), request.typeinfo().subtype(), request.typeinfo().embeddedid()};
 	SvPb::SVObjectTypeEnum objectTypeToInclude = request.objecttypetoinclude();
-	SVGetObjectDequeByTypeVisitor visitor(typeInfo);
-	SvOi::visitElements(visitor, request.objectid());
+	std::vector<SvOi::IObjectClass*> list;
+	SvOi::fillObjectList(std::back_inserter(list), typeInfo, request.objectid());
 
 	IsAllowedFunc isAllowed = getAllowedFunc(request);
 	if (isAllowed)// required, even if it does nothing...
 	{
 		bool bStop = false;
-		for(const auto* pObject: visitor.GetObjects())
+		for(const auto* pObject: list)
 		{
 			if (nullptr != pObject)
 			{
@@ -696,6 +721,10 @@ SvPb::InspectionCmdResponse getAvailableObjects(SvPb::GetAvailableObjectsRequest
 							if (pImage)
 							{
 								name = pImage->getDisplayedName();
+							}
+							else
+							{
+								name = pObject->GetObjectNameBeforeObjectType(SvPb::SVToolSetObjectType);
 							}
 						}
 						break;
@@ -1064,18 +1093,14 @@ SvPb::InspectionCmdResponse setEmbeddedValues(SvPb::SetEmbeddedValuesRequest req
 		SvOi::IValueObject* pValueObject = dynamic_cast<SvOi::IValueObject*> (pObject);
 		if (nullptr != pValueObject)
 		{
-			if (rItem.ismodified())
+			if (rItem.ismodified() || rItem.isdefaultmodified())
 			{
 				_variant_t value;
 				ConvertProtobufToVariant(rItem.values().value(), value);
-				ChangedValues.push_back(SvOi::SetValueStruct {pValueObject, value, rItem.arrayindex()});
-			}
-			if (rItem.isdefaultmodified())
-			{
 				// Default value has no array index
-				_variant_t value;
-				ConvertProtobufToVariant(rItem.values().defaultvalue(), value);
-				ChangedDefaultValues.push_back(SvOi::SetValueStruct {pValueObject, value, -1});
+				_variant_t defaultValue;
+				ConvertProtobufToVariant(rItem.values().defaultvalue(), defaultValue);
+				ChangedValues.push_back(SvOi::SetValueStruct{ pValueObject, value, defaultValue, rItem.arrayindex() });
 			}
 		}
 		else
@@ -1088,11 +1113,6 @@ SvPb::InspectionCmdResponse setEmbeddedValues(SvPb::SetEmbeddedValuesRequest req
 	if (nullptr != pTaskObject)
 	{
 		SvStl::MessageContainerVector messages = pTaskObject->validateAndSetEmbeddedValues(ChangedValues, true);
-		if (0 == messages.size())
-		{
-			messages = pTaskObject->setEmbeddedDefaultValues(ChangedDefaultValues);
-		}
-
 		SvPb::StandardResponse* pResponse = cmdResponse.mutable_standardresponse();
 		if (0 != messages.size())
 		{
@@ -1562,11 +1582,11 @@ SvPb::InspectionCmdResponse setDefaultInputsRequest(SvPb::SetDefaultInputsReques
 	if (nullptr != pInspection)
 	{
 		pInspection->SetDefaultInputs();
-		}
-		else
-		{
-			cmdResponse.set_hresult(E_POINTER);
-		}
+	}
+	else
+	{
+		cmdResponse.set_hresult(E_POINTER);
+	}
 	return cmdResponse;
 }
 
@@ -2027,6 +2047,19 @@ SvPb::InspectionCmdResponse validateValueObject(SvPb::ValidateValueObjectRequest
 	pResponse->set_objectexists(objectExists);
 	pResponse->set_isvalid(isValid);
 
+	return cmdResponse;
+}
+
+SvPb::InspectionCmdResponse setandSortEmbeddedValues(SvPb::SetAndSortEmbeddedValueRequest request)
+{
+	SvOi::ITaskObject* pObject = dynamic_cast<SvOi::ITaskObject*>(SvOi::getObject(request.ownerid()));
+	if (nullptr != pObject)
+	{
+		return pObject->setAndSortEmbeddedValues(request);
+	}
+
+	SvPb::InspectionCmdResponse cmdResponse;
+	cmdResponse.set_hresult(E_POINTER);
 	return cmdResponse;
 }
 

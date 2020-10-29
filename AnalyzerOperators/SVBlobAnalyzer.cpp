@@ -13,7 +13,6 @@
 #include "stdafx.h"
 #include "SVBlobAnalyzer.h"
 #include "SVMatroxLibrary/SVMatroxBlobInterface.h"
-#include "SVObjectLibrary/SVGetObjectDequeByTypeVisitor.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary/SVOutputInfoListClass.h"
 #include "Definitions/Color.h"
@@ -320,14 +319,14 @@ DWORD SVBlobAnalyzerClass::AllocateResult(int FeatureIndex)
 
 	// Construct the result class
 	SvOp::SVDoubleResult* pResult = dynamic_cast<SvOp::SVDoubleResult*> (resultClassInfo.Construct());
-	m_ResultIds[FeatureIndex] = pResult->getObjectId();
-
 	if(!pResult)
 	{	
 		SvStl::MessageManager MesMan(SvStl::MsgType::Log );
 		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16111, getObjectId());
 		return static_cast<DWORD> (-SvStl::Err_16111);
 	}
+
+	m_ResultIds[FeatureIndex] = pResult->getObjectId();
 
 	Add(pResult);
 
@@ -502,15 +501,12 @@ void SVBlobAnalyzerClass::RebuildResultObjectArray()
 	info.m_ObjectType = SvPb::SVResultObjectType;
 	info.m_SubType = SvPb::SVResultDoubleObjectType;
 
-	SVGetObjectDequeByTypeVisitor l_Visitor( info );
+	std::vector<SvOi::IObjectClass*> list;
+	fillObjectList(std::back_inserter(list), info);
 
-	SVObjectManagerClass::Instance().VisitElements( l_Visitor, getObjectId() );
-
-	SVGetObjectDequeByTypeVisitor::SVObjectPtrDeque::const_iterator l_Iter;
-
-	for( l_Iter = l_Visitor.GetObjects().begin(); l_Iter != l_Visitor.GetObjects().end(); ++l_Iter )
+	for (const auto pObject : list)
 	{
-		SvOp::SVDoubleResult* pResult = dynamic_cast<SvOp::SVDoubleResult*> (const_cast<SVObjectClass*> (*l_Iter));
+		SvOp::SVDoubleResult* pResult = dynamic_cast<SvOp::SVDoubleResult*> (pObject);
 
 		pResult->GetPrivateInputList( resultInputList );
 
@@ -545,23 +541,22 @@ SvOp::SVLongResult* SVBlobAnalyzerClass::GetBlobResultObject()
 	SvOl::SVInputInfoListClass	resultInputList;
 	SvOp::SVLongResult*    pResult = nullptr;
 	SvDef::SVObjectTypeInfoStruct info {SvPb::SVResultObjectType, SvPb::SVResultLongObjectType};
-	SVGetObjectDequeByTypeVisitor l_Visitor( info );
+	std::vector<SvOi::IObjectClass*> list;
+	fillObjectList(std::back_inserter(list), info);
 
-	SVObjectManagerClass::Instance().VisitElements( l_Visitor, getObjectId() );
-
-	SVGetObjectDequeByTypeVisitor::SVObjectPtrDeque::const_iterator l_Iter;
-
-	for( l_Iter = l_Visitor.GetObjects().begin(); l_Iter != l_Visitor.GetObjects().end(); ++l_Iter )
+	for (const auto pObject : list)
 	{
-		pResult = dynamic_cast<SvOp::SVLongResult* >( const_cast< SVObjectClass* >( *l_Iter ) );
-
-		pResult->GetPrivateInputList( resultInputList );
-
-		SvOl::SVInObjectInfoStruct* pResultInputInfo = resultInputList[0];
-
-		if (&m_lvoNumberOfBlobsFound == pResultInputInfo->GetInputObjectInfo().getObject())
+		pResult = dynamic_cast<SvOp::SVLongResult*>(pObject);
+		if (nullptr != pResult)
 		{
-			break;
+			pResult->GetPrivateInputList(resultInputList);
+
+			SvOl::SVInObjectInfoStruct* pResultInputInfo = resultInputList[0];
+
+			if (&m_lvoNumberOfBlobsFound == pResultInputInfo->GetInputObjectInfo().getObject())
+			{
+				break;
+			}
 		}
 	}
 

@@ -337,7 +337,6 @@ enum MessageTextEnum
 	Tid_AP_NotEnoughMemoryPleaseDeselect,
 	Tid_Threshold_OutOfRange,
 	Tid_CriticalUnableToConnectTo,
-	Tid_UnknownString,
 	Tid_Error_DuplicateEmbeddedId,
 	Tid_Error_CannotAddInputRequest,
 	Tid_Error_CannotAddInputRequestMarker,
@@ -387,6 +386,7 @@ enum MessageTextEnum
 	Tid_Security_Access_Denied,
 	Tid_Security_Disabled,
 	Tid_OS_Error_Message,
+	Tid_ConvertTextToVariantFailed,
 
 	Tid_Drive_Full,
 	Tid_ConditionalValue_Invalid,
@@ -591,5 +591,16 @@ enum MessageTextEnum
 	Tid_CreateThread,
 	Tid_DestroyThread,
 
+	Tid_InvalidInputType,
+	Tid_InvalidInputValue,
+	Tid_InvalidInputTable,
+	Tid_InvalidInputImage,
+	Tid_InvalidInputGrayImage,
+	Tid_InvalidInputColorImage,
+
+	Tid_DuplicateParameterName,
+	Tid_DuplicateParameterNameWithLinked,
+	Tid_DuplicateParameterNameWithType,
+	Tid_SetParameterValuesFailed,
 };
 } //namespace SvStl

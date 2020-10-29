@@ -23,16 +23,6 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SVObjectInfoStruct::SVObjectInfoStruct()
-{
-}
-
-SVObjectInfoStruct::SVObjectInfoStruct( const SVObjectInfoStruct& rObjectInfo )
-: m_ObjectRef( rObjectInfo.m_ObjectRef )
-, m_ObjectTypeInfo( rObjectInfo.m_ObjectTypeInfo )
-{
-}
-
 SVObjectInfoStruct::SVObjectInfoStruct( const SVObjectReference& rObjectRef )
 : m_ObjectRef(rObjectRef)
 , m_ObjectTypeInfo()
@@ -41,16 +31,6 @@ SVObjectInfoStruct::SVObjectInfoStruct( const SVObjectReference& rObjectRef )
 
 SVObjectInfoStruct::~SVObjectInfoStruct()
 {
-}
-
-const SVObjectInfoStruct& SVObjectInfoStruct::operator = ( const SVObjectInfoStruct& rObjectInfo )
-{
-	if( this != &rObjectInfo )
-	{
-		m_ObjectRef = rObjectInfo.m_ObjectRef;
-		m_ObjectTypeInfo = rObjectInfo.m_ObjectTypeInfo;
-	}
-	return *this;
 }
 
 void SVObjectInfoStruct::clear()
@@ -85,7 +65,11 @@ HRESULT SVObjectInfoStruct::SetObject( SVObjectClass* pObject )
 	if( nullptr != pObject )
 	{
 		m_ObjectRef = SVObjectReference{ pObject };
-		m_ObjectTypeInfo = pObject->GetObjectInfo().m_ObjectTypeInfo;
+		if (SvPb::NoEmbeddedId == m_ObjectTypeInfo.m_EmbeddedID && SvPb::SVNotSetObjectType == m_ObjectTypeInfo.m_ObjectType &&
+			SvPb::SVNotSetSubObjectType == m_ObjectTypeInfo.m_SubType && nullptr != m_ObjectRef.getFinalObject())
+		{
+			m_ObjectTypeInfo = m_ObjectRef.getFinalObject()->GetObjectInfo().m_ObjectTypeInfo;
+		}
 	}
 	else
 	{
@@ -133,6 +117,5 @@ bool SVObjectInfoStruct::CheckExistence() const
 		Result = (pObject == m_ObjectRef.getObject());
 	}
 
-	return Result;
+	return Result && nullptr != m_ObjectRef.getFinalObject();
 }
-

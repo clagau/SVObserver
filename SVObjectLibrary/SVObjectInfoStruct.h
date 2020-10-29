@@ -20,13 +20,13 @@ class SVObjectClass;
 
 struct SVObjectInfoStruct
 {
-	SVObjectInfoStruct();
-	SVObjectInfoStruct( const SVObjectInfoStruct& rObjectInfo );
+	SVObjectInfoStruct() = default;
+	SVObjectInfoStruct( const SVObjectInfoStruct& rObjectInfo ) = default;
 	explicit SVObjectInfoStruct(const SVObjectReference& rObjectRef);
 
 	virtual ~SVObjectInfoStruct();
 
-	const SVObjectInfoStruct& operator = ( const SVObjectInfoStruct& O2 );
+	SVObjectInfoStruct& operator = ( const SVObjectInfoStruct& ) = default;
 
 	void clear();
 
@@ -42,13 +42,16 @@ struct SVObjectInfoStruct
 	SVObjectClass* getObject() { return m_ObjectRef.getObject(); };
 	//The method is const however the returned pointer not, because of other const methods returning a non const pointer!
 	SVObjectClass* getObject() const { return m_ObjectRef.getObject(); };
+	/// Similar to getObject returns a pointer to the object, but if it is a LinkedValue to an another object, it returns the final object to use.
+	/// \returns SVObjectClass*
+	SVObjectClass* getFinalObject() const { return m_ObjectRef.getFinalObject(); };
 	uint32_t  getObjectId() const { return m_ObjectRef.getObjectId(); };
 
 	SVObjectReference& GetObjectReference() { return m_ObjectRef; };
 	const SVObjectReference& GetObjectReference() const { return m_ObjectRef; };
 	bool CheckExistence() const;
 
-
+public:
 	SvDef::SVObjectTypeInfoStruct m_ObjectTypeInfo;  // What I am
 	
 	SVObjectReference m_ObjectRef;

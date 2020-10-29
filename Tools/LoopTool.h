@@ -19,12 +19,10 @@ namespace SvTo
 /// Implements the LoopTool
 class LoopTool :public SVToolClass
 {
-	SV_DECLARE_CLASS(SVToolClass);
+	SV_DECLARE_CLASS(LoopTool);
 public:
 	LoopTool(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_LOOPTOOL);
 	virtual ~LoopTool();
-	bool AddTool(SVToolClass *pTool);
-	bool RemoveTool(SVToolClass *pTool);
 	virtual bool CreateObject(const SVObjectLevelCreateStruct& rCreateStructure) override;
 	virtual long  setToolPosition(long ToolPosition) override;
 	virtual bool Run(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages) override;

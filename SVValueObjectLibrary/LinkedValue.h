@@ -10,6 +10,7 @@
 #pragma region Includes
 #include "SVStringValueObjectClass.h"
 #include "SVVariantValueObjectClass.h"
+#include "ObjectInterfaces\ILinkedObject.h"
 #include "SVObjectLibrary\SVObjectReference.h"
 #pragma endregion Includes
 
@@ -21,7 +22,7 @@ struct SVInObjectInfoStruct;
 namespace SvVol
 {
 
-class LinkedValue : public SVVariantValueObjectClass
+class LinkedValue : public SVVariantValueObjectClass, public SvOi::ILinkedObject
 {
 #pragma region Constructor
 public:
@@ -69,11 +70,17 @@ public:
 
 	bool isCircularReference() const;
 
-#pragma region Methods to replace processMessage
-	virtual void OnObjectRenamed(const SVObjectClass& , const std::string& ) override { UpdateLinkedName(); };
-#pragma endregion Methods to replace processMessage
+	virtual void fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo) override;
 
-	const SVObjectClass* GetLinkedObject()  const;
+	virtual void OnObjectRenamed(const SVObjectClass& , const std::string& ) override;
+
+	virtual bool CreateObject(const SVObjectLevelCreateStruct& rCreateStructure) override;
+
+	virtual bool isCorrectType(SvPb::ObjectSelectorType requiredType, const SVObjectClass* pTestObject = nullptr) const;
+	virtual const SvOi::IObjectClass* getLinkedObject() const override;
+
+	/// Disconnected the input connection and set it to nullptr.
+	void DisconnectInput();
 
 #pragma endregion Public Methods
 
@@ -83,6 +90,7 @@ protected:
 	//! \param rValue [in] The input string
 	//! \returns the converted value.
 	virtual _variant_t ConvertString2Type( const std::string& rValue ) const override;
+	virtual _variant_t ConvertString2Type(const std::string& rValue, const _variant_t& rDefaultValue) const override;
 #pragma endregion Protected Methods
 
 #pragma region Private Methods
@@ -92,25 +100,17 @@ private:
 	/// \returns bool
 	bool UpdateConnection(SvStl::MessageContainerVector *pErrorMessages=nullptr);
 
-	/// Disconnected the input connection and set it to nullptr.
-	void DisconnectInput();
-
 	/// Connect the input connection with a new object
 	/// \returns bool
 	bool ConnectInput();
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
-	/// Convert a string (dotted name) to an object.
-	/// \param rValue [in] Input string
-	/// \returns SVObjectReference A reference to the found object. 
-	SVObjectReference ConvertStringInObject( const std::string& rValue ) const;
-
 	/// Checks if the linked object is valid.
 	/// \param pLinkedObject [in]  Pointer to the indirect object
 	/// \param pErrorMessages [in,out] Pointer to a error list, if pointer != nullptr an error message will be added if an error is happend.
 	/// \returns bool true if linked object is valid
-	bool CheckLinkedObject( const SVObjectClass* const pLinkedObject, SvStl::MessageContainerVector *pErrorMessages=nullptr ) const;
+	bool CheckLinkedObject( const SVObjectClass* const pLinkedObject, const variant_t& rDefault, SvStl::MessageContainerVector *pErrorMessages=nullptr ) const;
 
 	
 #pragma endregion Private Methods

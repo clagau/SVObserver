@@ -56,8 +56,6 @@ class SVObjectClass : public SvOi::IObjectClass
 	};
 
 public:
-	typedef std::deque< SVObjectClass* > SVObjectPtrDeque;
-
 	friend class SVObjectManagerClass;	// @TODO - This needs to go - For access to m_outObjectInfo to assignUnique id on loading
 	friend class SVConfigurationObject; // @TODO - This needs to go - For access to m_outObjectInfo to assignUnique id on loading
 
@@ -66,9 +64,6 @@ public:
 	SVObjectClass( SVObjectClass* pOwner, int StringResourceID );
 
 	virtual ~SVObjectClass();
-
-	template< typename SVObjectVisitor >
-	HRESULT Accept( SVObjectVisitor& rVisitor );
 
 	/*
 	This method is a placeholder for the object reset functionality.  This method will be overridden by derived classes.
@@ -121,10 +116,10 @@ public:
 	SVObjectClass* GetAncestor( SvPb::SVObjectTypeEnum AncestorObjectType, bool topLevel=false ) const;
 	LPCTSTR GetObjectName() const;
 
-	SVObjectClass* GetParent() const;
-	SVOutObjectInfoStruct& GetObjectOutputInfo();
+	SVObjectClass* GetParent() const { return m_ownerObjectInfo.getObject(); };
+	SVOutObjectInfoStruct& GetObjectOutputInfo() { return m_outObjectInfo; };
 	
-	bool IsCreated() const;
+	bool IsCreated() const { return m_isCreated; };
 
 	virtual HRESULT RegisterSubObject( SVObjectClass* pObject );
 	virtual HRESULT UnregisterSubObject( SVObjectClass* pObject );
@@ -141,17 +136,17 @@ public:
 	virtual std::string GetObjectNameToObjectType(SvPb::SVObjectTypeEnum objectTypeToInclude = SvPb::SVToolSetObjectType, bool withOwnName = true) const override;
 	//Get the complete object name before selected SvPb::SVObjectTypeEnum value.
 	virtual std::string GetObjectNameBeforeObjectType(SvPb::SVObjectTypeEnum objectTypeToInclude) const override;
-	virtual const SvPb::SVObjectTypeEnum& GetObjectType() const override;
+	virtual const SvPb::SVObjectTypeEnum& GetObjectType() const override { return m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType; };
 	virtual SvPb::SVObjectSubTypeEnum GetObjectSubType() const override;
-	virtual uint32_t GetParentID() const override;
+	virtual uint32_t GetParentID() const override { return m_ownerObjectInfo.getObjectId(); };
 	virtual SvOi::IObjectClass* GetAncestorInterface(SvPb::SVObjectTypeEnum ancestorObjectType, bool topLevel = false) override;
 	virtual const SvOi::IObjectClass* GetAncestorInterface(SvPb::SVObjectTypeEnum ancestorObjectType, bool topLevel = false) const override;
 	virtual UINT ObjectAttributesAllowed() const override;
 	virtual UINT SetObjectAttributesAllowed( UINT Attributes, SvOi::SetAttributeType Type ) override;
 	virtual UINT ObjectAttributesSet(int iIndex=0) const override;
 	virtual UINT SetObjectAttributesSet( UINT Attributes, SvOi::SetAttributeType Type, int iIndex=0 ) override;
-	virtual uint32_t getObjectId() const override;
-	virtual SvPb::EmbeddedIdEnum GetEmbeddedID() const override;
+	virtual uint32_t getObjectId() const override {	return m_outObjectInfo.getObjectId(); };
+	virtual SvPb::EmbeddedIdEnum GetEmbeddedID() const override { return m_embeddedID; };
 	virtual bool is_Created() const override;
 	virtual SvUl::NameClassIdList GetCreatableObjects(const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo) const override;
 	virtual void SetName( LPCTSTR Name ) override;
@@ -161,10 +156,11 @@ public:
 	virtual HRESULT getValues(std::vector<double>& ) const override { return E_NOTIMPL; };
 
 	virtual void fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, SvOi::IsObjectAllowedFunc pFunctor, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum nameToType, SvPb::ObjectSelectorType requiredType) const override;
+	virtual void fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo) override;
 #pragma endregion virtual method (IObjectClass)
 
-	const SVObjectInfoStruct& GetOwnerInfo() const;
-	const SVObjectInfoStruct& GetObjectInfo() const;
+	const SVObjectInfoStruct& GetOwnerInfo() const { return m_ownerObjectInfo; };
+	const SVObjectInfoStruct& GetObjectInfo() const { return m_outObjectInfo; };
 
 #pragma region Methods to replace processMessage
 	/// Call the method createObject for all children and itself.
@@ -202,13 +198,13 @@ public:
 #pragma endregion Methods to replace processMessage
 
 	virtual SVObjectClass* UpdateObject(uint32_t friendId, SVObjectClass* pObject, SVObjectClass* pNewOwner);
-	bool isCorrectType(SvPb::ObjectSelectorType requiredType) const;
+	virtual bool isCorrectType(SvPb::ObjectSelectorType requiredType, const SVObjectClass* pTestObject = nullptr) const;
 
 protected:
-	//@TODO[MZA][10.10][06.08.2020] SVTaskObjectClass has only friends. Other object has to do nothing. Maybe the method can be moved from here to SVTaskObjectClass later.
-	virtual SVObjectPtrDeque GetPreProcessObjects() const { return {}; };
-
-	virtual SVObjectPtrDeque GetPostProcessObjects() const;
+	/// Convert a string (dotted name) to an object.
+	/// \param rValue [in] Input string
+	/// \returns SVObjectReference A reference to the found object. 
+	SVObjectReference ConvertStringInObject(const std::string& rValue) const;
 
 	virtual HRESULT RemoveObjectConnection(uint32_t objectID );
 
@@ -248,6 +244,3 @@ typedef std::vector<SVObjectClass*> SVObjectPtrVector;
 typedef std::back_insert_iterator<SVObjectPtrVector> SVObjectPtrVectorInserter;
 typedef std::set<SVObjectClass*> SVObjectPtrSet;
 #pragma region Declarations
-
-#include "SVObjectClass.inl"
-
