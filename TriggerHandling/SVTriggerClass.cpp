@@ -120,7 +120,7 @@ HRESULT SVTriggerClass::Start()
 	{
 		l_hrOk = m_pDLLTrigger->Start( m_triggerChannel );
 		m_currentObjectID = getStartObjectID();
-		m_triggerIndex = 1L;
+		m_triggerIndex = 0L;
 	}
 	else
 	{
@@ -161,6 +161,10 @@ void SVTriggerClass::processTriggers(SvTi::SVTriggerInfoStruct& rTriggerInfo)
 		{
 			++m_currentObjectID;
 			m_triggerIndex = 1L;
+		}
+		else
+		{
+			m_currentObjectID = (0 == m_currentObjectID) ? 1 : m_currentObjectID;
 		}
 		rTriggerInfo.m_Data[SvTi::TriggerDataEnum::ObjectID] = _variant_t(m_currentObjectID);
 		rTriggerInfo.m_Data[SvTi::TriggerDataEnum::TriggerIndex] = _variant_t(m_triggerIndex);

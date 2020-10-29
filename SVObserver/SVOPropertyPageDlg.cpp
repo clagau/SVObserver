@@ -838,7 +838,7 @@ void SVOPropertyPageDlg::SetupTrigger()
 			pCombo->SetCtrlID(PROP_TRG_TYPE);
 			pCombo->SetLabelText(_T("Trigger Type"));
 			pCombo->SetInfoText(_T("This item indicates the type of trigger."
-				" Hardware, Software or Camera."));
+				" Hardware, Software or Camera (PPQ Length >2)."));
 			pCombo->CreateComboBox();
 
 			for(int i=0; i < cTriggerType.size(); ++i)

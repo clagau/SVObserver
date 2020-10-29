@@ -51,7 +51,7 @@ namespace SvTi
 
 		int m_iDigNumber{ 0 };
 		long m_timerPeriod{ 0L };
-		long m_startObjectID{ 1L };
+		long m_startObjectID{ 0L };
 		long m_triggerPerObjectID{ 1L };
 	};
 

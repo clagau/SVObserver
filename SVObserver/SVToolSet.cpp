@@ -158,6 +158,8 @@ void SVToolSet::init()
 	m_TriggerIndex.setSaveValueFlag(false);
 	m_TriggerPerObjectID.setDefaultValue(0);
 	m_TriggerPerObjectID.setSaveValueFlag(false);
+	/// Set the default value so that the linked variant type is set to double!
+	m_InspectedObjectID.setDefaultValue(0.0);
 	
 
 	// Set local defaults
