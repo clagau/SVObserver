@@ -88,25 +88,27 @@ public:
 	ExcludeSameLineageSelectorFilter& operator=(const ExcludeSameLineageSelectorFilter&) = delete;
 
 	ExcludeSameLineageSelectorFilter() {};
-	explicit ExcludeSameLineageSelectorFilter(const std::string& rExcludePath)
+	explicit ExcludeSameLineageSelectorFilter(std::vector<std::string>&& rExcludePath)
 		: m_excludePath(rExcludePath)
 	{
 	}
 
 	virtual ~ExcludeSameLineageSelectorFilter() {};
 private:
-	std::string m_excludePath;
+	std::vector<std::string> m_excludePath;
 
-	static bool IsSameLineage(const std::string& name, const std::string& excludedPath)
+	static bool IsSameLineage(const std::string& name, const std::vector <std::string>& excludedList)
 	{
-		bool bSame = false;
-		size_t len = excludedPath.size();
-		//After the exclude path name must have a '.' for it to match
-		if (len > 0 && name.size() > len && '.' == name[len])
-		{
-			bSame = (0 == name.substr(0, len).compare(excludedPath));
-		}
-		return bSame;
+		return std::any_of(excludedList.cbegin(), excludedList.cend(), [name](const auto& excludedPath)
+			{
+				size_t len = excludedPath.size();
+				//After the exclude path name must have a '.' for it to match
+				if (len > 0 && name.size() > len && '.' == name[len])
+				{
+					return (0 == name.substr(0, len).compare(excludedPath));
+				}
+				return false;
+			});
 	}
 
 public:

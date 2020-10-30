@@ -78,11 +78,12 @@ namespace SvOg
 	END_MESSAGE_MAP()
 
 #pragma region Constructor
-	BlobAnalyzer2Feature::BlobAnalyzer2Feature(uint32_t inspectionId, uint32_t taskObjectId)
+	BlobAnalyzer2Feature::BlobAnalyzer2Feature(uint32_t inspectionId, uint32_t toolId, uint32_t taskObjectId)
 		: CPropertyPage(BlobAnalyzer2Feature::IDD)
 		, m_InspectionID(inspectionId)
+		, m_toolID(toolId)
 		, m_TaskObjectID(taskObjectId)
-		, m_objectSelector(inspectionId, taskObjectId)
+		, m_objectSelector(inspectionId)
 		, m_Values{ SvOg::BoundValues{ inspectionId, taskObjectId } }
 	{
 	}
@@ -725,7 +726,7 @@ namespace SvOg
 
 	bool BlobAnalyzer2Feature::ShowObjectSelector(std::string& rName, const std::string& title)
 	{
-		return m_objectSelector.Show(rName, title, this, SvPb::SelectorFilter::excludeSameLineage, SvPb::allNumberValueObjects);
+		return m_objectSelector.Show(rName, title, this, SvPb::allNumberValueObjects, { m_toolID });
 	}
 
 	void BlobAnalyzer2Feature::sortFeatures(int pos)

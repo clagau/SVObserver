@@ -196,7 +196,7 @@ void TADialogLoopToolParameterPage::OnBnClickedButtonBreakCondition()
 	CString Temp;
 	m_EditBreakCondition.GetWindowText(Temp);
 	std::string Value = Temp;
-	if (m_objectSelector.Show(Value, "Loop break condition", this, SvPb::attributesAllowed, SvPb::allNumberValueObjects))
+	if (m_objectSelector.Show(Value, "Loop break condition", this, SvPb::allNumberValueObjects))
 	{
 		m_EditBreakCondition.SetWindowText(Value.c_str());
 	}
@@ -211,7 +211,7 @@ void TADialogLoopToolParameterPage::OnBnClickedButtonLastLoopCount()
 	m_EditLoopsValue.GetWindowText(Temp);
 	std::string Value = Temp;
 
-	if (m_objectSelector.Show(Value, "Loops Count", this, SvPb::attributesAllowed, SvPb::allNumberValueObjects))
+	if (m_objectSelector.Show(Value, "Loops Count", this, SvPb::allNumberValueObjects))
 	{
 		m_EditLoopsValue.SetWindowText(Value.c_str());
 	}

@@ -124,7 +124,7 @@ bool TADialogRingBufferParameterPage::QueryAllowExit()
 		m_EditRingDepth.GetWindowText(Temp);
 		std::string Value = Temp;
 		std::string Title = SvUl::LoadStdString(IDS_OBJECTNAME_RINGBUFFER_DEPTH);
-		if (m_objectSelector.Show(Value, Title, this, SvPb::attributesAllowed, SvPb::allNumberValueObjects))
+		if (m_objectSelector.Show(Value, Title, this, SvPb::allNumberValueObjects))
 		{
 			m_EditRingDepth.SetWindowText(Value.c_str());
 		}
@@ -138,7 +138,7 @@ bool TADialogRingBufferParameterPage::QueryAllowExit()
 		m_EditImageIndex[ButtonIndex].GetWindowText( Temp );
 		std::string Value = Temp;
 		std::string Title = SvUl::LoadStdString( IDS_OBJECTNAME_RINGBUFFER_INDEX1 + ButtonIndex	 );
-		if (m_objectSelector.Show( Value, Title, this, SvPb::attributesAllowed, SvPb::allNumberValueObjects))
+		if (m_objectSelector.Show( Value, Title, this, SvPb::allNumberValueObjects))
 		{
 			m_EditImageIndex[ButtonIndex].SetWindowText( Value.c_str() );
 		}

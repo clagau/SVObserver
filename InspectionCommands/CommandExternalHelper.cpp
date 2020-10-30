@@ -132,7 +132,7 @@ namespace SvCmd
 		sourceInfo.set_embeddedid(destInfo.m_EmbeddedID);
 	}
 
-	SvPb::GetObjectSelectorItemsRequest createObjectSelectorRequest(const std::vector<SvPb::SearchArea>& rSearchAreas, uint32_t inspectionID, SvPb::ObjectAttributes attribute, uint32_t instanceID /*= 0*/, bool wholeArray /*= false*/, SvPb::SelectorFilter filter /*= SvPb::SelectorFilter::attributesAllowed*/, SvPb::ObjectSelectorType type /*= SvPb::allValueObjects*/)
+	SvPb::GetObjectSelectorItemsRequest createObjectSelectorRequest(const std::vector<SvPb::SearchArea>& rSearchAreas, uint32_t inspectionID, SvPb::ObjectAttributes attribute, uint32_t instanceID /*= 0*/, bool wholeArray /*= false*/, SvPb::ObjectSelectorType type /*= SvPb::allValueObjects*/, SvPb::GetObjectSelectorItemsRequest::FilterCase filter /*= SvPb::GetObjectSelectorItemsRequest::FilterCase::kAttributesAllowed*/)
 	{
 		SvPb::GetObjectSelectorItemsRequest result;
 
@@ -144,9 +144,33 @@ namespace SvCmd
 		result.set_instanceid(instanceID);
 		result.set_attribute(attribute);
 		result.set_wholearray(wholeArray);
-		result.set_filter(filter);
 		result.set_type(type);
+		switch (filter)
+		{
+		case SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed:
+			result.set_attributesallowed(0);
+			break;
+		case SvPb::GetObjectSelectorItemsRequest::kAttributesSet:
+			result.set_attributesset(0);
+			break;
+		case SvPb::GetObjectSelectorItemsRequest::kExcludeSameLineage:
+			assert(false);
+			break;
+		default: //nothing to do, empty oneof
+			break;
+		}
 
+		return result;
+	}
+
+	SvPb::GetObjectSelectorItemsRequest createObjectSelectorRequest(const std::vector<SvPb::SearchArea>& rSearchAreas, uint32_t inspectionID, SvPb::ObjectAttributes attribute, uint32_t instanceID, bool wholeArray, SvPb::ObjectSelectorType type, const std::vector<uint32_t>& excludeSameLineageVector)
+	{
+		SvPb::GetObjectSelectorItemsRequest result = createObjectSelectorRequest(rSearchAreas, inspectionID, attribute, instanceID, wholeArray, type, SvPb::GetObjectSelectorItemsRequest::FilterCase::FILTER_NOT_SET);
+		auto* pExcludeData = result.mutable_excludesamelineage();
+		for (auto id : excludeSameLineageVector)
+		{
+			pExcludeData->add_excludeids(id);
+		}
 		return result;
 	}
 

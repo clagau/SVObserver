@@ -23,6 +23,11 @@ message TreeItem
 	repeated TreeItem children = 6;	//The children of this node
 }
 
+message ExludeSameLineageData
+{
+	repeated uint32 excludeIds = 1;
+}
+
 ///Get the required objects to be displayed for selection
 message GetObjectSelectorItemsRequest
 {
@@ -32,7 +37,13 @@ message GetObjectSelectorItemsRequest
 	ObjectAttributes attribute = 4;	//The object attribute to filter the toolset items
 	bool wholeArray = 5;			//True to display whole array values (All values in the Array eg. Blob Analyzer.Box X Max[]) 
 	ObjectSelectorType type = 6;	//item types required
-	SelectorFilter filter = 7;		//The selector filter to remove certain tool set items, see enum for description
+
+	oneof filter
+	{
+		uint32 attributesAllowed = 7;		//Object selector filter for attributes allowed (value not used)
+		uint32 attributesSet = 8;			//Object selector filter for attributes set (value not used)
+		ExludeSameLineageData excludeSameLineage = 9;			//Object selector filter exclude all object from the same lineage (list of object which exclude)
+	}
 }
 
 message GetObjectSelectorItemsResponse

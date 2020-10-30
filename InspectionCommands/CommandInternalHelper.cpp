@@ -106,21 +106,32 @@ IsAllowedFunc getAllowedFunc(const SvPb::GetAvailableObjectsRequest& rMessage)
 	}
 }
 
-IsObjectInfoAllowed getObjectSelectorFilterFunc(const SvPb::GetObjectSelectorItemsRequest& rRequest, const std::string& rObjectName)
+IsObjectInfoAllowed getObjectSelectorFilterFunc(const SvPb::GetObjectSelectorItemsRequest& rRequest)
 {
-	switch (rRequest.filter())
+	switch (rRequest.filter_case())
 	{
-		case SvPb::SelectorFilter::excludeSameLineage:
-			return ExcludeSameLineageSelectorFilter(rObjectName);
+		case SvPb::GetObjectSelectorItemsRequest::kExcludeSameLineage:
+		{
+			std::vector<std::string> excludeVector;
+			for (auto id : rRequest.excludesamelineage().excludeids())
+			{
+				SvOi::IObjectClass* pObject = SvOi::getObject(id);
+				if (nullptr != pObject)
+				{
+					excludeVector.emplace_back(std::move(pObject->GetCompleteName()));
+				}
+			}
+			return ExcludeSameLineageSelectorFilter(std::move(excludeVector));
+		}
 
-		case SvPb::SelectorFilter::attributesAllowed:
+		case SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed:
 			return AttributesAllowedFilter();
 
-		case SvPb::SelectorFilter::attributesSet:
+		case SvPb::GetObjectSelectorItemsRequest::kAttributesSet:
 			return AttributesSetFilter();
 
 		default:
-			return nullptr;
+			return [](const SvOi::IObjectClass*, unsigned int, int) { return true; };
 	}	
 }
 

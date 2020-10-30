@@ -33,5 +33,5 @@ typedef std::function<bool(const SvOi::IObjectClass* pObject, unsigned int Attri
 
 IsAllowedFunc getAllowedFunc(const SvPb::GetAvailableObjectsRequest&);
 
-IsObjectInfoAllowed getObjectSelectorFilterFunc(const SvPb::GetObjectSelectorItemsRequest& rRequest, const std::string& rObjectName);
+IsObjectInfoAllowed getObjectSelectorFilterFunc(const SvPb::GetObjectSelectorItemsRequest& rRequest);
 } //namespace SvCmd

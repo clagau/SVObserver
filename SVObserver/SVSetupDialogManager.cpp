@@ -675,7 +675,7 @@ HRESULT SVSetupDialogManager::SVResultClassSetupDialog(uint32_t objectId, CWnd* 
 		SvOp::SVRange* pRange = l_pResult->GetResultRange();
 		if (pRange)
 		{
-			RangeXDialogClass dlg(pRange->GetInspection()->getObjectId(), pRange->GetParent()->getObjectId(), pRange->getObjectId(), pParentWnd);
+			RangeXDialogClass dlg(pRange->GetInspection()->getObjectId(), pRange->GetTool()->getObjectId(), pRange->GetParent()->getObjectId(), pRange->getObjectId(), pParentWnd);
 			if (IDOK != dlg.DoModal())
 			{
 				l_Status = S_FALSE;

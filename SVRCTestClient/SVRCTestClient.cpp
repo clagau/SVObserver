@@ -213,7 +213,7 @@ int main(int argc, char* argv[])
 				request.set_inspectionid(responseCmd.getobjectidresponse().objectid());
 				request.set_attribute(SvPb::ObjectAttributes::viewable);
 				request.set_wholearray(true);
-				request.set_filter(SvPb::SelectorFilter::attributesAllowed);
+				request.set_attributesallowed(0);
 				request.add_areas(SvPb::SearchArea::globalConstantItems);
 				request.add_areas(SvPb::SearchArea::ppqItems);
 				request.add_areas(SvPb::SearchArea::toolsetItems);

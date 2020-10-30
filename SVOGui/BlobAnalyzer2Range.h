@@ -31,7 +31,7 @@ namespace SvOg
 #pragma region Constructor
 	public:
 		// Standard constructor
-		BlobAnalyzer2Range(uint32_t inspectionId, uint32_t taskObjectId);
+		BlobAnalyzer2Range(uint32_t inspectionId, uint32_t toolId, uint32_t taskObjectId);
 
 		// Standard destructor
 		virtual ~BlobAnalyzer2Range();
@@ -89,6 +89,7 @@ namespace SvOg
 #pragma region Member Variables
 	private:
 		const uint32_t m_InspectionID;
+		const uint32_t m_toolID;
 		const uint32_t m_TaskObjectID;
 
 		RangeController m_NumberRangeController;

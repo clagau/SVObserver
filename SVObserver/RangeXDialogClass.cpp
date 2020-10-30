@@ -26,10 +26,11 @@ static char THIS_FILE[] = __FILE__;
 
 IMPLEMENT_DYNAMIC(RangeXDialogClass, CDialog)
 
-RangeXDialogClass::RangeXDialogClass(uint32_t inspectionID, uint32_t taskID, uint32_t rangeID, CWnd* parent /*=nullptr*/)
+RangeXDialogClass::RangeXDialogClass(uint32_t inspectionID, uint32_t toolId, uint32_t taskID, uint32_t rangeID, CWnd* parent /*=nullptr*/)
 : CDialog(RangeXDialogClass::IDD, parent)
 , m_rangeController(inspectionID, taskID, rangeID)
-, m_objectSelector(inspectionID, taskID)
+, m_objectSelector(inspectionID)
+, m_toolId (toolId)
 {
 	m_rangeController.Init();
 }
@@ -145,7 +146,7 @@ bool RangeXDialogClass::ShowObjectSelector( std::string& rName, RangeEnum::ERang
 	Title += _T(": ");
 	Title += RangeEnum::ERange2String(fieldEnum).c_str();
 
-	return m_objectSelector.Show(rName, Title, this, SvPb::SelectorFilter::excludeSameLineage, SvPb::allNumberValueObjects);
+	return m_objectSelector.Show(rName, Title, this, SvPb::allNumberValueObjects, { m_toolId });
 }
 
 // @TODO:  The next 4 methods are very similar.  Consider refactoring to call a common method.  Otherwise, clean up the camelcase and result checking in all the methods.

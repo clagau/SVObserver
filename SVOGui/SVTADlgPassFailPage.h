@@ -84,6 +84,7 @@ namespace SvOg
 
 		CBitmap m_downArrowBitmap;
 		ObjectSelectorController m_objectSelector;
+		uint32_t m_toolId;
 #pragma endregion Member Variables
 	};
 } //namespace SvOg

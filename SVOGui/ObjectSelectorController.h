@@ -10,6 +10,7 @@
 #pragma region Includes
 #include "Definitions/ObjectDefines.h"
 #include "SVProtoBuf/SVO-Enum.h"
+#include "SVProtoBuf/InspectionCommands.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -30,11 +31,13 @@ namespace SvOg
 		/// \param Title [in] The title of the object selector.
 		/// \param pParent [in] The parent control
 		/// \returns bool True if selector was closed by OK-button.
-		bool Show(std::string& rName, const std::string& rTitle, CWnd* pParent, SvPb::SelectorFilter FilterType = SvPb::SelectorFilter::attributesAllowed, SvPb::ObjectSelectorType type = SvPb::ObjectSelectorType::allValueObjects);
+		bool Show(std::string& rName, const std::string& rTitle, CWnd* pParent, SvPb::ObjectSelectorType type = SvPb::ObjectSelectorType::allValueObjects, SvPb::GetObjectSelectorItemsRequest::FilterCase filter = SvPb::GetObjectSelectorItemsRequest::FilterCase::kAttributesAllowed);
+		bool Show(std::string& rName, const std::string& rTitle, CWnd* pParent, SvPb::ObjectSelectorType type, const std::vector<uint32_t>& excludeSameLineageVector);
 		void setSearchAreas(const std::vector<SvPb::SearchArea>& rSearchAreas) { m_searchAreas = rSearchAreas; }
 #pragma endregion Public Methods
 
 #pragma endregion Private Methods
+		bool Show(std::string& rName, const std::string& rTitle, CWnd* pParent, const SvPb::InspectionCmdRequest& rRequestCmd);
 #pragma endregion Private Methods
 
 #pragma region Member Variables

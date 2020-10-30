@@ -170,37 +170,37 @@ namespace SvOg
 			case 0: //decimal
 			{
 				ObjectSelectorController objectSelector(m_InspectionID);
-				isChanged = objectSelector.Show(cellText, m_Grid.GetCell(pItem->iRow, NameColumn)->GetText(), this, SvPb::SelectorFilter::attributesAllowed, SvPb::allNumberValueObjects);
+				isChanged = objectSelector.Show(cellText, m_Grid.GetCell(pItem->iRow, NameColumn)->GetText(), this, SvPb::allNumberValueObjects, { m_TaskObjectID });
 				break;
 			}
 			case 1: //text
 			{
 				ObjectSelectorController objectSelector(m_InspectionID, SvDef::InvalidObjectId, SvPb::ObjectAttributes::viewable);
-				isChanged = objectSelector.Show(cellText, m_Grid.GetCell(pItem->iRow, NameColumn)->GetText(), this, SvPb::SelectorFilter::attributesAllowed);
+				isChanged = objectSelector.Show(cellText, m_Grid.GetCell(pItem->iRow, NameColumn)->GetText(), this, SvPb::allValueObjects, { m_TaskObjectID });
 				break;
 			}
 			case 2: //table
 			{
 				ObjectSelectorController objectSelector(m_InspectionID, SvDef::InvalidObjectId, SvPb::ObjectAttributes::taskObject);
-				isChanged = objectSelector.Show(cellText, m_Grid.GetCell(pItem->iRow, NameColumn)->GetText(), this, SvPb::SelectorFilter::attributesAllowed, SvPb::tableObjects);
+				isChanged = objectSelector.Show(cellText, m_Grid.GetCell(pItem->iRow, NameColumn)->GetText(), this, SvPb::tableObjects, { m_TaskObjectID });
 				break;
 			}
 			case 3: //gray image
 			{
 				ObjectSelectorController objectSelector(m_InspectionID, SvDef::InvalidObjectId, SvPb::ObjectAttributes::archivableImage);
-				isChanged = objectSelector.Show(cellText, m_Grid.GetCell(pItem->iRow, NameColumn)->GetText(), this, SvPb::SelectorFilter::attributesAllowed, SvPb::grayImageObjects);
+				isChanged = objectSelector.Show(cellText, m_Grid.GetCell(pItem->iRow, NameColumn)->GetText(), this, SvPb::grayImageObjects, { m_TaskObjectID });
 				break;
 			}
 			case 4: //color image
 			{
 				ObjectSelectorController objectSelector(m_InspectionID, SvDef::InvalidObjectId, SvPb::ObjectAttributes::archivableImage);
-				isChanged = objectSelector.Show(cellText, m_Grid.GetCell(pItem->iRow, NameColumn)->GetText(), this, SvPb::SelectorFilter::attributesAllowed, SvPb::colorImageObjects);
+				isChanged = objectSelector.Show(cellText, m_Grid.GetCell(pItem->iRow, NameColumn)->GetText(), this, SvPb::colorImageObjects, { m_TaskObjectID });
 				break;
 			}
 			case 5: //image
 			{
 				ObjectSelectorController objectSelector(m_InspectionID, SvDef::InvalidObjectId, SvPb::ObjectAttributes::archivableImage);
-				isChanged = objectSelector.Show(cellText, m_Grid.GetCell(pItem->iRow, NameColumn)->GetText(), this, SvPb::SelectorFilter::attributesAllowed, SvPb::allImageObjects);
+				isChanged = objectSelector.Show(cellText, m_Grid.GetCell(pItem->iRow, NameColumn)->GetText(), this, SvPb::allImageObjects, { m_TaskObjectID });
 				break;
 			}
 			default:

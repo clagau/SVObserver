@@ -1972,7 +1972,7 @@ void SVIPDoc::OnPublishedResultImagesPicker()
 		SvPb::InspectionCmdRequest requestCmd;
 		SvPb::InspectionCmdResponse responseCmd;
 		*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
-		{SvPb::SearchArea::toolsetItems}, GetInspectionID(), SvPb::publishResultImage, SvDef::InvalidObjectId, false, SvPb::attributesAllowed, SvPb::allImageObjects);
+		{SvPb::SearchArea::toolsetItems}, GetInspectionID(), SvPb::publishResultImage, SvDef::InvalidObjectId, false, SvPb::allImageObjects);
 		SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 
 		SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject, ID_PUBLISHED_RESULT_IMAGES_PICKER + SvOr::HELPFILE_ID_OFFSET);

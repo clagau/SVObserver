@@ -77,8 +77,8 @@ namespace SvOg
 	void BlobAnalyzer2Sheet::addPages()
 	{
 		AddPage(new BlobAnalyzer2General(m_InspectionID, m_toolId, m_TaskObjectID));
-		AddPage(new BlobAnalyzer2Feature(m_InspectionID, m_TaskObjectID));
-		AddPage(new BlobAnalyzer2Range(m_InspectionID, m_TaskObjectID));
+		AddPage(new BlobAnalyzer2Feature(m_InspectionID, m_toolId, m_TaskObjectID));
+		AddPage(new BlobAnalyzer2Range(m_InspectionID, m_toolId, m_TaskObjectID));
 		AddPage(new BlobAnalyzer2Draw(m_InspectionID, m_TaskObjectID));
 	}
 

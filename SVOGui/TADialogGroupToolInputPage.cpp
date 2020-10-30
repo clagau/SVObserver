@@ -210,38 +210,38 @@ namespace SvOg
 			{
 			case 0: //decimal
 			{
-				ObjectSelectorController objectSelector(m_InspectionID, m_toolId);
-				isChanged = objectSelector.Show(cellText, m_Grid.GetCell(pItem->iRow, NameColumn)->GetText(), this, SvPb::SelectorFilter::excludeSameLineage, SvPb::allNumberValueObjects);
+				ObjectSelectorController objectSelector(m_InspectionID);
+				isChanged = objectSelector.Show(cellText, m_Grid.GetCell(pItem->iRow, NameColumn)->GetText(), this, SvPb::allNumberValueObjects, { m_toolId });
 				break;
 			}
 			case 1: //text
 			{
-				ObjectSelectorController objectSelector(m_InspectionID, m_toolId, SvPb::ObjectAttributes::viewable);
-				isChanged = objectSelector.Show(cellText, m_Grid.GetCell(pItem->iRow, NameColumn)->GetText(), this, SvPb::SelectorFilter::excludeSameLineage);
+				ObjectSelectorController objectSelector(m_InspectionID, SvDef::InvalidObjectId, SvPb::ObjectAttributes::viewable);
+				isChanged = objectSelector.Show(cellText, m_Grid.GetCell(pItem->iRow, NameColumn)->GetText(), this, SvPb::allValueObjects, { m_toolId });
 				break;
 			}
 			case 2: //table
 			{
-				ObjectSelectorController objectSelector(m_InspectionID, m_toolId, SvPb::ObjectAttributes::taskObject);
-				isChanged = objectSelector.Show(cellText, m_Grid.GetCell(pItem->iRow, NameColumn)->GetText(), this, SvPb::SelectorFilter::excludeSameLineage, SvPb::tableObjects);
+				ObjectSelectorController objectSelector(m_InspectionID, SvDef::InvalidObjectId, SvPb::ObjectAttributes::taskObject);
+				isChanged = objectSelector.Show(cellText, m_Grid.GetCell(pItem->iRow, NameColumn)->GetText(), this, SvPb::tableObjects, { m_toolId });
 				break;
 			}
 			case 3: //gray image
 			{
-				ObjectSelectorController objectSelector(m_InspectionID, m_toolId, SvPb::ObjectAttributes::archivableImage);
-				isChanged = objectSelector.Show(cellText, m_Grid.GetCell(pItem->iRow, NameColumn)->GetText(), this, SvPb::SelectorFilter::excludeSameLineage, SvPb::grayImageObjects);
+				ObjectSelectorController objectSelector(m_InspectionID, SvDef::InvalidObjectId, SvPb::ObjectAttributes::archivableImage);
+				isChanged = objectSelector.Show(cellText, m_Grid.GetCell(pItem->iRow, NameColumn)->GetText(), this, SvPb::grayImageObjects, { m_toolId });
 				break;
 			}
 			case 4: //color image
 			{
-				ObjectSelectorController objectSelector(m_InspectionID, m_toolId, SvPb::ObjectAttributes::archivableImage);
-				isChanged = objectSelector.Show(cellText, m_Grid.GetCell(pItem->iRow, NameColumn)->GetText(), this, SvPb::SelectorFilter::excludeSameLineage, SvPb::colorImageObjects);
+				ObjectSelectorController objectSelector(m_InspectionID, SvDef::InvalidObjectId, SvPb::ObjectAttributes::archivableImage);
+				isChanged = objectSelector.Show(cellText, m_Grid.GetCell(pItem->iRow, NameColumn)->GetText(), this, SvPb::colorImageObjects, { m_toolId });
 				break;
 			}
 			case 5: //image
 			{
-				ObjectSelectorController objectSelector(m_InspectionID, m_toolId, SvPb::ObjectAttributes::archivableImage);
-				isChanged = objectSelector.Show(cellText, m_Grid.GetCell(pItem->iRow, NameColumn)->GetText(), this, SvPb::SelectorFilter::excludeSameLineage, SvPb::allImageObjects);
+				ObjectSelectorController objectSelector(m_InspectionID, SvDef::InvalidObjectId, SvPb::ObjectAttributes::archivableImage);
+				isChanged = objectSelector.Show(cellText, m_Grid.GetCell(pItem->iRow, NameColumn)->GetText(), this, SvPb::allImageObjects, { m_toolId });
 				break;
 			}
 			default:

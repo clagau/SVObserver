@@ -41,7 +41,8 @@ namespace SvOg
 	SVTADlgPassFailPage::SVTADlgPassFailPage(uint32_t inspectionID, uint32_t taskID, UINT captionID)
 	: CPropertyPage( SVTADlgPassFailPage::IDD, captionID )
 	, RangeController(inspectionID, taskID)
-	, m_objectSelector (inspectionID, taskID)
+	, m_objectSelector (inspectionID)
+	, m_toolId(taskID)
 	{
 		Init();
 	}
@@ -217,7 +218,7 @@ namespace SvOg
 		Title += _T(": ");
 		Title += RangeEnum::ERange2String(fieldEnum);
 
-		return m_objectSelector.Show(rName, Title, this, SvPb::SelectorFilter::excludeSameLineage, SvPb::allNumberValueObjects);
+		return m_objectSelector.Show(rName, Title, this, SvPb::allNumberValueObjects, {m_toolId});
 	}
 
 	#pragma endregion Private Methods

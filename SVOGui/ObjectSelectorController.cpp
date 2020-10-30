@@ -38,15 +38,29 @@ ObjectSelectorController::~ObjectSelectorController()
 }
 #pragma endregion Constructor
 
-bool ObjectSelectorController::Show(std::string& rName, const std::string& rTitle, CWnd* pParent, SvPb::SelectorFilter FilterType, SvPb::ObjectSelectorType type)
+bool ObjectSelectorController::Show(std::string& rName, const std::string& rTitle, CWnd* pParent, SvPb::ObjectSelectorType type, SvPb::GetObjectSelectorItemsRequest::FilterCase filter)
+{
+	SvPb::InspectionCmdRequest requestCmd;
+	*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
+		m_searchAreas, m_InspectionID, m_objectAttributes, m_InstanceID, false, type, filter);
+	return Show(rName, rTitle, pParent, requestCmd);
+}
+
+bool ObjectSelectorController::Show(std::string& rName, const std::string& rTitle, CWnd* pParent, SvPb::ObjectSelectorType type, const std::vector<uint32_t>& excludeSameLineageVector)
+{
+	SvPb::InspectionCmdRequest requestCmd;
+	*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
+		m_searchAreas, m_InspectionID, m_objectAttributes, m_InstanceID, false, type, excludeSameLineageVector);
+	return Show(rName, rTitle, pParent, requestCmd);
+}
+
+#pragma region Private Methods
+bool ObjectSelectorController::Show(std::string& rName, const std::string& rTitle, CWnd* pParent, const SvPb::InspectionCmdRequest& rRequestCmd)
 {
 	bool result = false;
 
-	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
-	*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
-		m_searchAreas, m_InspectionID, m_objectAttributes, m_InstanceID, false, FilterType, type);
-	SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
+	SvCmd::InspectionCommands(m_InspectionID, rRequestCmd, &responseCmd);
 
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::TypeSingleObject);
 	if (responseCmd.has_getobjectselectoritemsresponse())
@@ -68,7 +82,7 @@ bool ObjectSelectorController::Show(std::string& rName, const std::string& rTitl
 
 	if (IDOK == Result)
 	{
-		SVObjectReference objectRef{SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult()};
+		SVObjectReference objectRef{ SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult() };
 
 		rName = objectRef.GetObjectNameBeforeObjectType(SvPb::SVInspectionObjectType, true);
 		result = true;
@@ -76,7 +90,5 @@ bool ObjectSelectorController::Show(std::string& rName, const std::string& rTitl
 
 	return result;
 }
-
-#pragma endregion Private Methods
 #pragma endregion Private Methods
 } //namespace SvOg

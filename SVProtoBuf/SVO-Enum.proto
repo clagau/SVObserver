@@ -336,13 +336,6 @@ enum ObjectSelectorType
 	colorImageObjects = 7;
 }
 
-enum SelectorFilter
-{
-	attributesAllowed = 0;			//Object selector filter for attributes allowed
-	attributesSet = 1;				//Object selector filter for attributes set
-	excludeSameLineage = 2;			//Object selector filter exclude all object from the same lineage
-}
-
 enum SVExtentPropertyEnum
 {
 	SVExtentPropertyNone					= 0;

@@ -200,7 +200,7 @@ void SelectedObjectsPage::ShowObjectSelector()
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
-		{SvPb::SearchArea::toolsetItems}, m_InspectionID, static_cast<SvPb::ObjectAttributes> (AttributeFilters), SvDef::InvalidObjectId, false, SvPb::attributesAllowed, m_type);
+		{SvPb::SearchArea::toolsetItems}, m_InspectionID, static_cast<SvPb::ObjectAttributes> (AttributeFilters), SvDef::InvalidObjectId, false, m_type);
 	SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject, m_helpID);

@@ -9,7 +9,6 @@
 #pragma region Includes
 #include "StdAfx.h"
 #include "CommandFunction.h"
-#include "CommandExternalHelper.h"
 #include "ObjectInterfaces\IBarCode.h"
 #include "ObjectInterfaces\IBlobAnalyzer2.h"
 #include "ObjectInterfaces\IEnumerateValueObject.h"
@@ -1396,16 +1395,6 @@ void fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> tre
 	SvOi::IObjectClass* pObject = SvOi::getObject(id);
 	if (nullptr != pObject)
 	{
-		std::string name;
-		pObject->GetCompleteNameToType(SvPb::SVToolObjectType, name);
-
-		// When using the RangeSelectorFilter, the InstanceId is for the Range or Tool owning the Range
-		// which is needed to get the name for exclusion in filtering, so get the Toolset as well 
-		if (SvPb::SelectorFilter::excludeSameLineage == request.filter())
-		{
-			pObject = pObject->GetAncestorInterface(SvPb::SVToolSetObjectType);
-		}
-
 		SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*> (pObject);
 		if (nullptr != pInspection)
 		{
@@ -1421,7 +1410,7 @@ void fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> tre
 
 		if (nullptr != pObject)
 		{
-			IsObjectInfoAllowed pFunc = getObjectSelectorFilterFunc(request, name);
+			IsObjectInfoAllowed pFunc = getObjectSelectorFilterFunc(request);
 			if(nullptr != pFunc)
 			{
 				pObject->fillSelectorList(treeInserter, pFunc, request.attribute(), request.wholearray(), objectTypeToName, request.type());

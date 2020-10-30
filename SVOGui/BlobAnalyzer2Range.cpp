@@ -72,12 +72,13 @@ namespace SvOg
 	END_MESSAGE_MAP()
 
 #pragma region Constructor
-	BlobAnalyzer2Range::BlobAnalyzer2Range(uint32_t inspectionId, uint32_t taskObjectId)
+	BlobAnalyzer2Range::BlobAnalyzer2Range(uint32_t inspectionId, uint32_t toolId, uint32_t taskObjectId)
 		: CPropertyPage(BlobAnalyzer2Range::IDD)
 		, m_InspectionID(inspectionId)
+		, m_toolID(toolId)
 		, m_TaskObjectID(taskObjectId)
 		, m_NumberRangeController(inspectionId, m_TaskObjectID)
-		, m_objectSelector(inspectionId, taskObjectId)
+		, m_objectSelector(inspectionId)
 	{
 		m_NumberRangeController.Init();
 	}
@@ -558,7 +559,7 @@ namespace SvOg
 		Title += _T(": ");
 		Title += RangeEnum::ERange2String(fieldEnum).c_str();
 
-		return m_objectSelector.Show(rName, Title, this, SvPb::SelectorFilter::excludeSameLineage, SvPb::allNumberValueObjects);
+		return m_objectSelector.Show(rName, Title, this, SvPb::allNumberValueObjects, { m_toolID });
 	}
 #pragma endregion Private Mehods
 } //namespace SvOg
