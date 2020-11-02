@@ -49,6 +49,7 @@ protected:
 
 public:
 	void CreatePages(std::vector<RegressionTestStruct>* rRegessionList, std::vector<RegressionTestStruct>* pRegessionImageList, const SvIe::SVVirtualCameraPtrVector&  rCameraVector);
+	void removeFilePage(CPropertyPage* pPage);
 
 private: //methods
 	std::string MakeFileNameMask( const std::string& rFileName );
@@ -74,6 +75,10 @@ private: //methods
 	/// \param rCurrentPath [in] The current path of this recursive call.
 	/// \returns int Number of images
 	int FillFileListFromDirectory(RegressionTestStruct& rStruct, const std::string& rCurrentPath);
+
+	SvPb::GetToolsWithReplaceableSourceImageResponse createToolNameList() const;
+
+	void updateActiveButton();
 
 private: //data members
 	CList<CString, CString&> m_listMasks;

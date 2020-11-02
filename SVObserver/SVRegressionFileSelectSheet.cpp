@@ -103,6 +103,11 @@ void SVRegressionFileSelectSheet::CreatePages(std::vector<RegressionTestStruct>*
 	
 }
 
+void SVRegressionFileSelectSheet::removeFilePage(CPropertyPage* pPage)
+{
+	RemovePage(pPage);
+	updateActiveButton();
+}
 
 void SVRegressionFileSelectSheet::OnOK()
 {
@@ -191,9 +196,11 @@ void SVRegressionFileSelectSheet::OnOK()
 
 void SVRegressionFileSelectSheet::OnAddImage()
 {
-	if (0 < SvOg::getToolsWithReplaceableSourceImage(m_InspectionID).list_size())
+	auto listResponse = createToolNameList();
+	
+	if (0 < listResponse.list_size())
 	{
-		SvOg::SelectToolForNewSourceImageDialog dialog(m_InspectionID);
+		SvOg::SelectToolForNewSourceImageDialog dialog(m_InspectionID, std::move(listResponse));
 		if (IDOK == dialog.DoModal())
 		{
 			auto objectPair = dialog.getSelectedTool();
@@ -205,6 +212,7 @@ void SVRegressionFileSelectSheet::OnAddImage()
 			SVRegressionFileSelectDlg* pPage = new SVRegressionFileSelectDlg(objectPair.first.c_str(), false, objectPair.second);
 			AddPage(pPage);
 			m_pRegressionImageList->push_back(std::move(data));
+			updateActiveButton();
 		}
 	}
 }
@@ -532,3 +540,28 @@ BOOL SVRegressionFileSelectSheet::OnInitDialog()
 	return bResult;
 }
 
+SvPb::GetToolsWithReplaceableSourceImageResponse SVRegressionFileSelectSheet::createToolNameList() const
+{
+	SvPb::GetToolsWithReplaceableSourceImageResponse listResponse = SvOg::getToolsWithReplaceableSourceImage(m_InspectionID);
+	auto* pList = listResponse.mutable_list();
+	int iNumPages = GetPageCount();
+	for (int i = 0; i < iNumPages; i++)
+	{
+		SVRegressionFileSelectDlg* pPage = dynamic_cast<SVRegressionFileSelectDlg*>(GetPage(i));
+		if (nullptr != pPage && false == pPage->isCamera())
+		{
+			std::string name{ pPage->GetPageName() };
+			auto iter = std::find_if(pList->begin(), pList->end(), [name](const auto& rNamePair) { return rNamePair.objectname() == name; });
+			if (pList->end() != iter)
+			{
+				pList->erase(iter);
+			}
+		}
+	}
+	return listResponse;
+}
+
+void SVRegressionFileSelectSheet::updateActiveButton()
+{
+	GetDlgItem(IDC_ADD_BTN)->EnableWindow(0 < createToolNameList().list_size());
+}

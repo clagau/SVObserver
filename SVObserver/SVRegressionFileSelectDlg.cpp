@@ -173,7 +173,7 @@ void SVRegressionFileSelectDlg::OnRadioRegUpdate()
 
 void SVRegressionFileSelectDlg::OnRemovePage()
 {
-	m_pParent->RemovePage(this);
+	m_pParent->removeFilePage(this);
 }
 
 void SVRegressionFileSelectDlg::SetRegressionData(RegressionTestStruct *pDataStruct)

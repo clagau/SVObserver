@@ -110,6 +110,13 @@ public:
 	static void SetAutoSaveRequired(bool required) { m_AutoSaveRequired = required; }
 
 	static bool isSvrcBlocked();
+
+//************************************
+// Method:    GetMode
+// Description:  Get the value of the mode
+// Returns:   svModeEnum Enum of the mode
+//************************************
+	static SvPb::DeviceModeType GetMode();
 private:
 	//************************************
 	// Method: CheckModeNotify
@@ -117,13 +124,6 @@ private:
 	// Returns: void
 	//************************************
 	static void CheckModeNotify();
-
-	//************************************
-	// Method:    GetMode
-	// Description:  Get the value of the mode
-	// Returns:   svModeEnum Enum of the mode
-	//************************************
-	static SvPb::DeviceModeType GetMode();
 
 	static void setLastModifiedTime();
 

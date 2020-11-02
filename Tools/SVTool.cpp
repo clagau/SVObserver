@@ -482,7 +482,8 @@ bool SVToolClass::Run(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErr
 	m_editFreezeFlag.GetValue(freezeFlag);
 	if (TRUE == freezeFlag && isEnabled)
 	{
-		if (SVSVIMStateClass::CheckState(SV_STATE_EDIT))
+		SvPb::DeviceModeType mode = SVSVIMStateClass::GetMode();
+		if (SvPb::editMode == mode || SvPb::modeChanging == mode)
 		{
 			assert(rRunStatus.m_triggerRecord);
 			if (nullptr != rRunStatus.m_triggerRecord)

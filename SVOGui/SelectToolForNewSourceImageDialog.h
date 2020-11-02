@@ -20,7 +20,7 @@ namespace SvOg
 	{
 		// Construction
 	public:
-		explicit SelectToolForNewSourceImageDialog(uint32_t inspectionId, CWnd* pParent = nullptr);   // standard constructor
+		explicit SelectToolForNewSourceImageDialog(uint32_t inspectionId, SvPb::GetToolsWithReplaceableSourceImageResponse list, CWnd* pParent = nullptr);   // standard constructor
 		virtual ~SelectToolForNewSourceImageDialog();
 
 		SvUl::NameObjectIdPair getSelectedTool() const { return m_selectedTool;	};

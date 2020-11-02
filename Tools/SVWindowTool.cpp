@@ -295,7 +295,7 @@ void SVWindowToolClass::overwriteInputSource(SvOi::SVImageBufferHandlePtr imageH
 void SVWindowToolClass::getToolsWithReplaceableSourceImage(SvPb::GetToolsWithReplaceableSourceImageResponse& rResponse) const
 {
 	auto* rData = rResponse.add_list();
-	rData->set_objectname(GetName());
+	rData->set_objectname(GetObjectNameBeforeObjectType(SvPb::SVToolSetObjectType));
 	rData->set_objectid(getObjectId());
 }
 

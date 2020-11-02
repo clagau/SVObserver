@@ -20,8 +20,9 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvOg
 {
-	SelectToolForNewSourceImageDialog::SelectToolForNewSourceImageDialog(uint32_t inspectionId, CWnd* pParent) : CDialog(SelectToolForNewSourceImageDialog::IDD, pParent)
+	SelectToolForNewSourceImageDialog::SelectToolForNewSourceImageDialog(uint32_t inspectionId, SvPb::GetToolsWithReplaceableSourceImageResponse list, CWnd* pParent) : CDialog(SelectToolForNewSourceImageDialog::IDD, pParent)
 		, m_InspectionID(inspectionId)
+		, m_list(list)
 	{
 
 	}// end ctor
@@ -47,8 +48,6 @@ namespace SvOg
 	BOOL SelectToolForNewSourceImageDialog::OnInitDialog()
 	{
 		CDialog::OnInitDialog();
-
-		m_list = getToolsWithReplaceableSourceImage(m_InspectionID);
 
 		if (0 >= m_list.list_size())
 		{
