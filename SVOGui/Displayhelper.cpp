@@ -139,6 +139,20 @@ namespace SvOg
 		}
 		return hr;
 	}
+
+	void DisplayHelper::setIconListToGrid(CImageList& rImageList, CBitmap& rDownArrowBitmap, SvGcl::GridCtrl& rGrid)
+	{
+		// Put the Down Arrow on the Button
+		rDownArrowBitmap.LoadOEMBitmap(OBM_DNARROW);
+
+		rImageList.Create(16, 16, ILC_COLOR8, 0, 1);
+		rImageList.Add(&rDownArrowBitmap, nullptr);
+		rGrid.SetImageList(&rImageList);
+
+		//The cell must at least 16 (Icon-Size) + 2 * margin, that the arrow-icon is 
+		int minHeight = 16 + (rGrid.GetDefCellMargin() * 2);
+		rGrid.SetDefCellHeight(std::max(minHeight, rGrid.GetDefCellHeight()));
+	}
 	#pragma endregion Public Methods
 
 } //namespace SvOg

@@ -16,6 +16,7 @@
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <comutil.h>
 #include "SVLibrary/DrawObject.h"
+#include "GridCtrlLibrary/GridCtrl.h"
 #pragma endregion Includes
 
 namespace SvPb
@@ -68,6 +69,12 @@ public:
 	/// \param idisp [out] The image in an IPictureDisp.
 	/// \returns HRESULT S_OK if convert was successful.
 	static HRESULT convertPBImageToIPictureDisp(const SvPb::Image& rImage, long &rWidth, long &rHeight, IPictureDisp** idisp);
+
+	/// Load the arrow Icon to the imageList and set it to the Grid
+	/// \param rImageList [in,out]
+	/// \param rDownArrowBitmap [in,out]
+	/// \param rGrid [in,out]
+	static void setIconListToGrid(CImageList& rImageList, CBitmap& rDownArrowBitmap, SvGcl::GridCtrl& rGrid);
 #pragma endregion Public Methods
 };
 } //namespace SvOg

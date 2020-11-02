@@ -12,6 +12,7 @@
 #include "SVStatusLibrary/MessageManager.h"
 #include "GridCtrlLibrary/GridCellCombo.h"
 #include "SVUtilityLibrary/SafeArrayHelper.h"
+#include "DisplayHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -101,13 +102,7 @@ namespace SvOg
 	{
 		CPropertyPage::OnInitDialog();
 
-		// Put the Down Arrow on the Button
-		m_downArrowBitmap.LoadOEMBitmap(OBM_DNARROW);
-
-		//(HBITMAP) is a call to the overloaded function operator HBITMAP and no c style cast
-		m_ImageList.Create(16, 16, ILC_COLOR8, 0, 1);
-		m_ImageList.Add(&m_downArrowBitmap, nullptr);
-		m_Grid.SetImageList(&m_ImageList);
+		DisplayHelper::setIconListToGrid(m_ImageList, m_downArrowBitmap, m_Grid);
 
 		loadDataList();
 		initGridControl();

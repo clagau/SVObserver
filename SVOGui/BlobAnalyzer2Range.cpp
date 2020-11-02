@@ -11,6 +11,7 @@
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "GridCtrlLibrary/GridCellCheck.h"
+#include "DisplayHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -116,18 +117,13 @@ namespace SvOg
 	{
 		CPropertyPage::OnInitDialog();
 
-		// Put the Down Arrow on the Button
-		m_downArrowBitmap.LoadOEMBitmap(OBM_DNARROW);
-
 		//(HBITMAP) is a call to the overloaded function operator HBITMAP and no c style cast
 		m_ButtonFailHigh.SetBitmap((HBITMAP)m_downArrowBitmap);
 		m_ButtonWarnHigh.SetBitmap((HBITMAP)m_downArrowBitmap);
 		m_ButtonWarnLow.SetBitmap((HBITMAP)m_downArrowBitmap);
 		m_ButtonFailLow.SetBitmap((HBITMAP)m_downArrowBitmap);
 
-		m_ImageList.Create(16, 16, ILC_COLOR8, 0, 1);
-		m_ImageList.Add(&m_downArrowBitmap, nullptr);
-		m_Grid.SetImageList(&m_ImageList);
+		DisplayHelper::setIconListToGrid(m_ImageList, m_downArrowBitmap, m_Grid);
 
 		setDlgData();
 

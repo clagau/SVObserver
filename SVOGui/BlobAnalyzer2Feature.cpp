@@ -15,6 +15,7 @@
 #include "SVProtoBuf/ConverterHelper.h"
 #include "BoundValue.h"
 #include "SVFormulaEditorSheet.h"
+#include "DisplayHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -113,6 +114,8 @@ namespace SvOg
 	{
 		CPropertyPage::OnInitDialog();
 
+		DisplayHelper::setIconListToGrid(m_ImageList, m_downArrowBitmap, m_Grid);
+
 		HRESULT result = loadFeatureData();
 		if (S_OK != result)
 		{
@@ -121,11 +124,6 @@ namespace SvOg
 
 		initGridControl();
 		FillGridControl();
-
-		m_downArrowBitmap.LoadOEMBitmap(OBM_DNARROW);
-		m_ImageList.Create(16, 16, ILC_COLOR8, 0, 1);
-		m_ImageList.Add(&m_downArrowBitmap, nullptr);
-		m_Grid.SetImageList(&m_ImageList);
 
 		UpdateData(FALSE);
 
