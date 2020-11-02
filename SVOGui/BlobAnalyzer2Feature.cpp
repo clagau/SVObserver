@@ -668,7 +668,21 @@ namespace SvOg
 		GetDlgItem(IDC_BUTTON_MOVEDOWN)->EnableWindow(bMoveDownEnable);
 
 		bool bAddFeature = (m_featureData.size() < SvDef::c_maxTableColumn);
-		bool bDeleteFeature = (Selection.GetMinRow() > 0 && m_featureData.size() >= Selection.GetMinRow());
+		bool bDeleteFeature = false;
+		for (int i = Selection.GetMaxRow(); i >= Selection.GetMinRow() && false == bDeleteFeature; --i)
+		{
+			if (m_featureData.size() >= i && 0 < i && (m_featureData[i - 1].is_custom() || !isFeatureNecessary(m_featureData[i - 1].type())))
+			{
+				for (int j = Selection.GetMinCol(); j <= Selection.GetMaxCol(); ++j)
+				{
+					if (m_Grid.IsCellSelected(i, j))
+					{
+						bDeleteFeature = true;
+						break;
+					}
+				}
+			}
+		}
 
 		GetDlgItem(IDC_BUTTON_ADD)->EnableWindow(bAddFeature);
 		GetDlgItem(IDC_BUTTON_REMOVE)->EnableWindow(bDeleteFeature);
