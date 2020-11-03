@@ -38,65 +38,34 @@ HRESULT WINAPI SVDestroy()
 	return result;
 }
 
-HRESULT WINAPI SVInputGetCount(unsigned long* pCount)
+unsigned long WINAPI SVInputGetCount()
 {
-	HRESULT result {E_FAIL};
-
-	if (nullptr != pCount)
-	{
-		*pCount = gLpt.GetInputCount();
-		result = S_OK;
-	}
-	return result;
+	return gLpt.GetInputCount();
 }
 
-HRESULT WINAPI SVInputGetValue( unsigned long channel, bool* pValue )
+bool WINAPI SVInputGetValue( unsigned long channel)
 { 
-	HRESULT result {E_FAIL};
+	bool result{false};
 
-	if (nullptr != pValue)
+	if (channel < gLpt.GetInputCount())
 	{
-		if (channel < gLpt.GetInputCount())
-		{
-			bool bState;
-			result = gLpt.GetInputBit(channel, bState);
-
-			if (S_OK == result)
-			{
-				*pValue = bState;
-			}
-		}
+		result = gLpt.GetInputBit(channel);
 	}
 	return result;
 }
 
 // ulPort represents the physical port number (LPT 1/2/3/4)
-HRESULT WINAPI SVInputGetValues( unsigned long* pValue)
+unsigned long WINAPI SVInputGetValues()
 {
-	HRESULT result {E_FAIL};
+	unsigned long result{0UL};
 
-	if (nullptr != pValue)
-	{
-		unsigned long lState = 0;
-		result = gLpt.GetInputValue(&lState);
-		if (S_OK == result)
-		{
-			*pValue = lState;
-		}
-	}
+	result = gLpt.GetInputValue();
 	return result;
 }
 
-HRESULT WINAPI SVOutputGetCount(unsigned long* pCount)
+unsigned long WINAPI SVOutputGetCount()
 {
-	HRESULT result {E_FAIL};
-
-	if (nullptr != pCount)
-	{
-		*pCount = gLpt.GetOutputCount();
-		result = S_OK;
-	}
-	return result;
+	return gLpt.GetOutputCount();
 }
 
 HRESULT WINAPI SVOutputSetValue(unsigned long channel, bool Value)
@@ -110,16 +79,9 @@ HRESULT WINAPI SVOutputSetValue(unsigned long channel, bool Value)
 	return result;
 }
 
-HRESULT WINAPI SVOutputGetPortCount(unsigned long* pCount)
+unsigned long WINAPI SVOutputGetPortCount()
 {
-	HRESULT result {E_FAIL};
-
-	if (nullptr != pCount)
-	{
-		*pCount = gLpt.GetPortCount();
-		result = S_OK;
-	}
-	return result;
+	return gLpt.GetPortCount();
 }
 
 HRESULT WINAPI SVOutputSetPortValue(unsigned long port, unsigned long Value)
@@ -133,48 +95,23 @@ HRESULT WINAPI SVOutputSetPortValue(unsigned long port, unsigned long Value)
 	return result;
 }
 
-HRESULT WINAPI SVTriggerGetCount(unsigned long* pCount)
+unsigned long WINAPI SVTriggerGetCount()
 {
-	HRESULT result {E_FAIL};
-
-	if (nullptr != pCount)
-	{
-		*pCount = gLpt.GetTriggerCount();
-		result = S_OK;
-	}
-	return result;
+	return gLpt.GetTriggerCount();
 }
 
-HRESULT WINAPI SVTriggerGetHandle(unsigned long* pTriggerIndex, unsigned long Index)
+unsigned long WINAPI SVTriggerGetHandle(unsigned long Index)
 {
-	HRESULT result {E_FAIL};
-
-	if (nullptr != pTriggerIndex)
-	{
-		*pTriggerIndex = gLpt.GetTriggerHandle(Index);
-		result = S_OK;
-	}
-	return result;
+	return gLpt.GetTriggerHandle(Index);
 }
 
-HRESULT WINAPI SVTriggerGetName(unsigned long triggerIndex, BSTR* pName)
+_variant_t WINAPI SVTriggerGetName(unsigned long triggerIndex)
 {
-	HRESULT result {E_FAIL};
+	_variant_t result;
 
-	if (nullptr != pName && 0 < triggerIndex && cMaxLptTriggers >= triggerIndex)
+	if (0 < triggerIndex && cMaxLptTriggers >= triggerIndex)
 	{
-		// free any data on input...
-		if (nullptr != *pName)
-		{
-			::SysFreeString(*pName);
-		}
-
-		*pName = gLpt.GetTriggerName(triggerIndex);
-		
-		if (nullptr != *pName)
-		{
-			result = S_OK;
-		}
+		result = gLpt.GetTriggerName(triggerIndex);
 	} 
 	return result;
 }
@@ -219,67 +156,67 @@ HRESULT WINAPI SVTriggerStop(unsigned long triggerIndex)
 	return result;
 }
 
-HRESULT WINAPI SVTriggerGetParameterCount(unsigned long triggerIndex, unsigned long *pCount)
+unsigned long WINAPI SVTriggerGetParameterCount(unsigned long triggerIndex)
+{
+	unsigned long result {0UL};
+
+	if (0 < triggerIndex && cMaxLptTriggers >= triggerIndex)
+	{
+		result = gLpt.TriggerGetParameterCount(triggerIndex);
+	}
+	return result;
+}
+
+_variant_t WINAPI SVTriggerGetParameterName(unsigned long triggerIndex, unsigned long index)
+{
+	_variant_t result;
+
+	if (0 < triggerIndex && cMaxLptTriggers >= triggerIndex)
+	{
+		result = gLpt.TriggerGetParameterName(triggerIndex, index);
+	}
+	return result;
+}
+
+_variant_t WINAPI SVTriggerGetParameterValue(unsigned long triggerIndex, unsigned long index)
+{
+	_variant_t result;
+
+	if (0 < triggerIndex && cMaxLptTriggers >= triggerIndex)
+	{
+		result = gLpt.TriggerGetParameterValue(triggerIndex, index);
+	}
+	return result;
+}
+
+HRESULT WINAPI SVTriggerSetParameterValue(unsigned long triggerIndex, unsigned long index, const _variant_t& rValue)
 {
 	HRESULT result {E_FAIL};
 
 	if (0 < triggerIndex && cMaxLptTriggers >= triggerIndex)
 	{
-		result = gLpt.TriggerGetParameterCount(triggerIndex, pCount);
+		result = gLpt.TriggerSetParameterValue(triggerIndex, index, rValue);
 	}
 	return result;
 }
 
-HRESULT WINAPI SVTriggerGetParameterName(unsigned long triggerIndex, unsigned long Index, BSTR* pName)
+unsigned long WINAPI SVGetParameterCount()
 {
-	HRESULT result {E_FAIL};
-
-	if (0 < triggerIndex && cMaxLptTriggers >= triggerIndex)
-	{
-		result = gLpt.TriggerGetParameterName(triggerIndex, Index, pName);
-	}
-	return result;
+	return gLpt.GetParameterCount();
 }
 
-HRESULT WINAPI SVTriggerGetParameterValue(unsigned long triggerIndex, unsigned long Index, VARIANT* pValue)
+_variant_t WINAPI SVGetParameterName(unsigned long index)
 {
-	HRESULT result {E_FAIL};
-
-	if (0 < triggerIndex && cMaxLptTriggers >= triggerIndex)
-	{
-		result = gLpt.TriggerGetParameterValue(triggerIndex, Index, pValue);
-	}
-	return result;
+	return gLpt.GetParameterName(index);
 }
 
-HRESULT WINAPI SVTriggerSetParameterValue(unsigned long triggerIndex, unsigned long Index, VARIANT* pValue)
+_variant_t WINAPI SVGetParameterValue(unsigned long index)
 {
-	HRESULT result {E_FAIL};
-
-	if (0 < triggerIndex && cMaxLptTriggers >= triggerIndex)
-	{
-		result = gLpt.TriggerSetParameterValue(triggerIndex, Index, pValue);
-	}
-	return result;
+	return gLpt.GetParameterValue(index);
 }
 
-HRESULT WINAPI SVGetParameterCount(unsigned long* pCount)
+HRESULT WINAPI SVSetParameterValue(unsigned long index, const _variant_t& rValue)
 {
-	return gLpt.GetParameterCount(pCount);
-}
-
-HRESULT WINAPI SVGetParameterName(unsigned long Index, BSTR* pName)
-{
-	return gLpt.GetParameterName(Index, pName);
-}
-
-HRESULT WINAPI SVGetParameterValue(unsigned long Index, VARIANT* pValue)
-{
-	return gLpt.GetParameterValue(Index, pValue);
-}
-
-HRESULT WINAPI SVSetParameterValue(unsigned long Index, VARIANT* pValue)
-{
-	return gLpt.SetParameterValue(Index, pValue);
+	return gLpt.SetParameterValue(index, rValue);
 }
 

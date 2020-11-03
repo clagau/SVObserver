@@ -40,48 +40,23 @@ HRESULT WINAPI SVDestroy()
 	return result;
 }
 
-HRESULT WINAPI SVTriggerGetCount( unsigned long *pCount )
+unsigned long WINAPI SVTriggerGetCount()
 {
-	HRESULT result {E_FAIL};
-
-	if ( nullptr != pCount )
-	{
-		*pCount = gSoftwareTrigger.GetTriggerCount();
-
-		result = S_OK;
-	}
-
-	return result;
+	return gSoftwareTrigger.GetTriggerCount();
 }
 
-HRESULT WINAPI SVTriggerGetHandle( unsigned long* pTriggerIndex, unsigned long Index )
+unsigned long WINAPI SVTriggerGetHandle(unsigned long index)
 {
-	HRESULT result {E_FAIL};
-
-	if (nullptr != pTriggerIndex)
-	{
-		*pTriggerIndex = gSoftwareTrigger.GetTriggerHandle(Index);
-		result = S_OK;
-	}
-	return result;
+	return gSoftwareTrigger.GetTriggerHandle(index);
 }
 
-HRESULT WINAPI SVTriggerGetName( unsigned long triggerIndex, BSTR *pName )
+_variant_t WINAPI SVTriggerGetName( unsigned long triggerIndex)
 {
-	HRESULT result {E_FAIL};
+	_variant_t result;
 
-	if ( nullptr != pName && 0 < triggerIndex && cMaxSoftwareTriggers >= triggerIndex)
+	if (0 < triggerIndex && cMaxSoftwareTriggers >= triggerIndex)
 	{
-		if (nullptr != *pName)
-		{
-			::SysFreeString(*pName);
-		}
-		*pName = gSoftwareTrigger.GetTriggerName(triggerIndex);
-		
-		if (nullptr != *pName)
-		{
-			result = S_OK;
-		}
+		result = gSoftwareTrigger.GetTriggerName(triggerIndex);
 	} 
 	return result;
 }
@@ -126,46 +101,46 @@ HRESULT WINAPI SVTriggerStop( unsigned long triggerIndex )
 	return result;
 }
 
-HRESULT WINAPI SVTriggerGetParameterCount( unsigned long triggerIndex, unsigned long *pCount )
+unsigned long WINAPI SVTriggerGetParameterCount(unsigned long triggerIndex)
 {
-	HRESULT result {E_FAIL};
+	unsigned long result {0UL};
 
 	if (0 < triggerIndex && cMaxSoftwareTriggers >= triggerIndex)
 	{
-		result = gSoftwareTrigger.TriggerGetParameterCount(triggerIndex, pCount);
+		result = gSoftwareTrigger.TriggerGetParameterCount(triggerIndex);
 	}
 	return result;
 }
 
-HRESULT WINAPI SVTriggerGetParameterName( unsigned long triggerIndex, unsigned long p_ulIndex, BSTR *pName )
+_variant_t WINAPI SVTriggerGetParameterName( unsigned long triggerIndex, unsigned long index)
 {
-	HRESULT result {E_FAIL};
+	_variant_t result;
 
 	if (0 < triggerIndex && cMaxSoftwareTriggers >= triggerIndex)
 	{
-		result = gSoftwareTrigger.TriggerGetParameterName(triggerIndex, p_ulIndex, pName);
+		result = gSoftwareTrigger.TriggerGetParameterName(triggerIndex, index);
 	}
 	return result;
 }
 
-HRESULT WINAPI SVTriggerGetParameterValue( unsigned long triggerIndex, unsigned long p_ulIndex, VARIANT *pValue )
+_variant_t WINAPI SVTriggerGetParameterValue( unsigned long triggerIndex, unsigned long index)
 {
-	HRESULT result {E_FAIL};
+	_variant_t result;
 
 	if (0 < triggerIndex && cMaxSoftwareTriggers >= triggerIndex)
 	{
-		result = gSoftwareTrigger.TriggerGetParameterValue(triggerIndex, p_ulIndex, pValue);
+		result = gSoftwareTrigger.TriggerGetParameterValue(triggerIndex, index);
 	}
 	return result;
 }
 
-HRESULT WINAPI SVTriggerSetParameterValue( unsigned long triggerIndex, unsigned long p_ulIndex, VARIANT *pValue )
+HRESULT WINAPI SVTriggerSetParameterValue( unsigned long triggerIndex, unsigned long p_ulIndex, const _variant_t& rValue)
 {
 	HRESULT result {E_FAIL};
 
 	if (0 < triggerIndex && cMaxSoftwareTriggers >= triggerIndex)
 	{
-		result = gSoftwareTrigger.TriggerSetParameterValue(triggerIndex, p_ulIndex, pValue);
+		result = gSoftwareTrigger.TriggerSetParameterValue(triggerIndex, p_ulIndex, rValue);
 	}
 	return result;
 }

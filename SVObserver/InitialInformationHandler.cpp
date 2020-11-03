@@ -108,12 +108,6 @@ HRESULT InitialInformationHandler::LoadTriggerDLL()
 
 	if (!m_InitialInfo.m_TriggerDLL.empty())
 	{
-		VARIANT l_varValue;
-
-		::VariantInit(&l_varValue);
-
-		l_varValue.vt = VT_I4;
-
 		if (S_OK != m_svDLLTriggers.Open(m_InitialInfo.m_TriggerDLL.c_str()))
 		{
 			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_TRIGGER;
@@ -126,26 +120,20 @@ HRESULT InitialInformationHandler::LoadTriggerDLL()
 
 		for (int i = 0; i < 4; i++)
 		{
-			unsigned long l_ulHandle;
+			unsigned long triggerHandle = m_svDLLTriggers.GetHandle(i);
 
-			if (S_OK == m_svDLLTriggers.GetHandle(&l_ulHandle, i))
+			if (0 < triggerHandle)
 			{
-				bool l_bRising;
+				bool rising;
 
-				SVIOConfigurationInterfaceClass::Instance().GetIOTriggerValue(i, l_bRising);
+				SVIOConfigurationInterfaceClass::Instance().GetIOTriggerValue(i, rising);
 
-				if (l_bRising)
-				{
-					l_varValue.lVal = 1;
-				}
-				else
-				{
-					l_varValue.lVal = -1;
-				}
+				_variant_t value = rising ? 1L : -1L;
+
 				// SVSignalEdge enum is used here to make the code more clear.
 				// however at some time in the future the Dll parameters may be implemented
 				// as an array and therefore this enum may not apply.
-				m_svDLLTriggers.SetParameterValue(l_ulHandle, SVSignalEdge, &l_varValue);
+				m_svDLLTriggers.SetParameterValue(triggerHandle, SVSignalEdge, value);
 			}
 		}
 	}
@@ -206,7 +194,7 @@ HRESULT InitialInformationHandler::LoadCameraTriggerDLL()
 		{
 			_variant_t value;
 			value.SetString(SvTi::CameraTriggerName);
-			m_svDLLCameraTriggers.SetParameterValue(1, SVIOParameterEnum::SVBoardName, &value.GetVARIANT());
+			m_svDLLCameraTriggers.SetParameterValue(1, SVIOParameterEnum::SVBoardName, value);
 			if (S_OK != SvTi::SVTriggerProcessingClass::Instance().UpdateTriggerSubsystem(&m_svDLLCameraTriggers))
 			{
 				l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_CAMERATRIGGER;

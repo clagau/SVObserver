@@ -93,57 +93,44 @@ namespace SvTi
 
 	HRESULT SVTriggerProcessingClass::UpdateTriggerSubsystem( SVIOTriggerLoadLibraryClass* p_pDLLTrigger )
 	{
-		HRESULT l_hrOk = S_OK;
+		HRESULT result{ S_OK };
 
 		if (nullptr != p_pDLLTrigger )
 		{
-			unsigned long l_ulSize = 0;
+			unsigned long count = p_pDLLTrigger->GetCount();
 
-			l_hrOk = p_pDLLTrigger->GetCount( &l_ulSize );
-
-			for ( unsigned long i = 0; S_OK == l_hrOk && i < l_ulSize; i++ )
+			for ( unsigned long i = 0; S_OK == result && i < count; i++ )
 			{
-				std::string l_Name;
+				std::string triggerName;
 
-				unsigned long triggerchannel = 0;
+				unsigned long triggerchannel = p_pDLLTrigger->GetHandle(i);
 
-				l_hrOk = p_pDLLTrigger->GetHandle( &triggerchannel, i );
-
-				if ( S_OK == l_hrOk )
+				if (0 < triggerchannel)
 				{
-					BSTR l_bstrName = nullptr;
+					_variant_t value = p_pDLLTrigger->GetName(triggerchannel);
 
-					l_hrOk = p_pDLLTrigger->GetName( triggerchannel, &l_bstrName );
-
-					if( S_OK == l_hrOk )
+					if(VT_BSTR == value.vt)
 					{
-						l_Name = SvUl::createStdString(l_bstrName);
-
-						if ( nullptr != l_bstrName )
-						{
-							::SysFreeString( l_bstrName );
-
-							l_bstrName = nullptr;
-						}
+						triggerName = SvUl::createStdString(value);
 					}
 				}
 				else
 				{
-					l_hrOk = S_FALSE;
+					result = E_FAIL;
 				}
 
-				if( S_OK == l_hrOk )
+				if( S_OK == result )
 				{
-					l_hrOk = AddTrigger( l_Name.c_str(), p_pDLLTrigger, triggerchannel );
+					result = AddTrigger(triggerName.c_str(), p_pDLLTrigger, triggerchannel);
 				}
 			}
 		}
 		else
 		{
-			l_hrOk = S_FALSE;
+			result = E_FAIL;
 		}
 
-		return l_hrOk;
+		return result;
 	}
 
 	SvTh::SVTriggerClass* SVTriggerProcessingClass::GetTrigger( LPCTSTR szName ) const

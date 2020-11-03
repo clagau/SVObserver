@@ -22,125 +22,107 @@ const SVGigeDeviceParameterMap& SVMatroxGigeDeviceParameterManager::GetParameter
 	return SVGigeStandardCameraFeatures::GetStandardFeatures();
 }
 
-HRESULT SVMatroxGigeDeviceParameterManager::GetParameterName(const SVMatroxGigeDigitizer& p_rCamera, int p_iParameterID, BSTR* p_pBstrName)
+_variant_t SVMatroxGigeDeviceParameterManager::GetParameterName(const SVMatroxGigeDigitizer& rCamera, int parameterID)
 {
-	HRESULT l_hr = S_FALSE;
+	_variant_t result;
+
 	const SVGigeDeviceParameterMap& gigeParameters = SVMatroxGigeDeviceParameterManager::GetParameterMap();
-	SVGigeDeviceParameterMap::const_iterator it = gigeParameters.find(static_cast<SvDef::SVGigeParameterEnum>(p_iParameterID));
+	SVGigeDeviceParameterMap::const_iterator it = gigeParameters.find(static_cast<SvDef::SVGigeParameterEnum>(parameterID));
 	if (it != gigeParameters.end())
 	{
-		*p_pBstrName = _bstr_t(it->second.name.c_str()).Detach();
-		l_hr = S_OK;
+		result.SetString(it->second.name.c_str());
 	}
 	else // could be custom - look in overrides
 	{
-		const SVGigeDeviceParameterStruct& gigeParam = p_rCamera.GetFeature(static_cast<SvDef::SVGigeParameterEnum>(p_iParameterID));
+		const SVGigeDeviceParameterStruct& gigeParam = rCamera.GetFeature(static_cast<SvDef::SVGigeParameterEnum>(parameterID));
 		if (!gigeParam.name.empty())
 		{
-			*p_pBstrName = _bstr_t(gigeParam.name.c_str()).Detach();
-			l_hr = S_OK;
+			result.SetString(gigeParam.name.c_str());
 		}
 	}
-	return l_hr;
+	
+	return result;
 }
 
-HRESULT SVMatroxGigeDeviceParameterManager::GetParameter(const SVMatroxGigeDigitizer& p_rCamera, int p_iParameterID, int *, VARIANT *p_pvarValue)
+_variant_t SVMatroxGigeDeviceParameterManager::GetParameter(const SVMatroxGigeDigitizer& rCamera, int parameterID)
 {
-	HRESULT l_hr = S_FALSE;
+	_variant_t result;
+	
 	const SVGigeDeviceParameterMap& gigeParameters = SVMatroxGigeDeviceParameterManager::GetParameterMap();
-	SVGigeDeviceParameterMap::const_iterator it = gigeParameters.find(static_cast<SvDef::SVGigeParameterEnum>(p_iParameterID));
+	SVGigeDeviceParameterMap::const_iterator it = gigeParameters.find(static_cast<SvDef::SVGigeParameterEnum>(parameterID));
 	if (it != gigeParameters.end())
 	{
-		// what should go in p_piParameterTypeID ???
-		//*p_piParameterTypeID = it->second.dataType;
-
-		_variant_t value(0);
-		
 		// Look for any exception in the Gige Feature Overrides
-		const SVGigeDeviceParameterStruct& gigeParam = p_rCamera.GetFeature(static_cast<SvDef::SVGigeParameterEnum>(p_iParameterID));
+		const SVGigeDeviceParameterStruct& gigeParam = rCamera.GetFeature(static_cast<SvDef::SVGigeParameterEnum>(parameterID));
 		const std::string& featureName = gigeParam.accessor.feature.GetName();
 		if (!featureName.empty())
 		{
-			// do the type conversion
-			value.ChangeType(gigeParam.dataType);
-
-			l_hr = gigeParam.accessor.GetParam(p_rCamera.m_Digitizer, gigeParam.accessor.feature, value);
+			result.ChangeType(gigeParam.dataType);
+			gigeParam.accessor.GetParam(rCamera.m_Digitizer, gigeParam.accessor.feature, result);
 		}
 		else
 		{
-			// do the type conversion
-			value.ChangeType(it->second.dataType);
-
-			l_hr = it->second.accessor.GetParam(p_rCamera.m_Digitizer, it->second.accessor.feature, value);
-		}
-		//if (S_OK == l_hr)
-		{
-			*p_pvarValue = value.Detach();
+			result.ChangeType(it->second.dataType);
+			it->second.accessor.GetParam(rCamera.m_Digitizer, it->second.accessor.feature, result);
 		}
 	}
 	else // could be custom - look in overrides
 	{
-		_variant_t value(0);
-		
 		// Look for any exception in the Gige Feature Overrides
-		const SVGigeDeviceParameterStruct& gigeParam = p_rCamera.GetFeature(static_cast<SvDef::SVGigeParameterEnum>(p_iParameterID));
+		const SVGigeDeviceParameterStruct& gigeParam = rCamera.GetFeature(static_cast<SvDef::SVGigeParameterEnum>(parameterID));
 		const std::string& featureName = gigeParam.accessor.feature.GetName();
 		if (!featureName.empty())
 		{
-			// do the type conversion
-			value.ChangeType(gigeParam.dataType);
+			result.ChangeType(gigeParam.dataType);
 
-			l_hr = gigeParam.accessor.GetParam(p_rCamera.m_Digitizer, gigeParam.accessor.feature, value);
-
-			*p_pvarValue = value.Detach();
+			gigeParam.accessor.GetParam(rCamera.m_Digitizer, gigeParam.accessor.feature, result);
 		}
 	}
-	return l_hr;
+	return result;
 }
 
-HRESULT SVMatroxGigeDeviceParameterManager::SetParameter(const SVMatroxGigeDigitizer& p_rCamera, int p_iParameterID, int, VARIANT *p_pvarValue)
+HRESULT SVMatroxGigeDeviceParameterManager::SetParameter(const SVMatroxGigeDigitizer& rCamera, int parameterID, const _variant_t& rValue)
 {
 	HRESULT l_hr = S_FALSE;
 
-	_variant_t value = *p_pvarValue;
-
+	_variant_t setValue{ rValue };
 	// what types are in p_iParameterTypeID ???
 	const SVGigeDeviceParameterMap& gigeParameters = SVMatroxGigeDeviceParameterManager::GetParameterMap();
-	SVGigeDeviceParameterMap::const_iterator it = gigeParameters.find(static_cast<SvDef::SVGigeParameterEnum>(p_iParameterID));
+	SVGigeDeviceParameterMap::const_iterator it = gigeParameters.find(static_cast<SvDef::SVGigeParameterEnum>(parameterID));
 	if (it != gigeParameters.end())
 	{
 		// Look for any exception in the Gige Feature Overrides
-		const SVGigeDeviceParameterStruct& gigeParam = p_rCamera.GetFeature(static_cast<SvDef::SVGigeParameterEnum>(p_iParameterID));
+		const SVGigeDeviceParameterStruct& gigeParam = rCamera.GetFeature(static_cast<SvDef::SVGigeParameterEnum>(parameterID));
 		const std::string& featureName = gigeParam.accessor.feature.GetName();
 		if (!featureName.empty())
 		{
 			// do the type conversion
-			value.ChangeType(gigeParam.dataType);
+			setValue.ChangeType(gigeParam.dataType);
 
 			// Set the Feature value
-			l_hr = gigeParam.accessor.SetParam(p_rCamera.m_Digitizer, gigeParam.accessor.feature, value);
+			l_hr = gigeParam.accessor.SetParam(rCamera.m_Digitizer, gigeParam.accessor.feature, setValue);
 		}
 		else
 		{
 			// do the type conversion
-			value.ChangeType(it->second.dataType);
+			setValue.ChangeType(it->second.dataType);
 
 			// Set the Feature value
-			l_hr = it->second.accessor.SetParam(p_rCamera.m_Digitizer, it->second.accessor.feature, value);
+			l_hr = it->second.accessor.SetParam(rCamera.m_Digitizer, it->second.accessor.feature, setValue);
 		}
 	}
 	else // could be custom - look in overrides
 	{
 		// Look for any exception in the Gige Feature Overrides
-		const SVGigeDeviceParameterStruct& gigeParam = p_rCamera.GetFeature(static_cast<SvDef::SVGigeParameterEnum>(p_iParameterID));
+		const SVGigeDeviceParameterStruct& gigeParam = rCamera.GetFeature(static_cast<SvDef::SVGigeParameterEnum>(parameterID));
 		const std::string& featureName = gigeParam.accessor.feature.GetName();
 		if (!featureName.empty())
 		{
 			// do the type conversion
-			value.ChangeType(gigeParam.dataType);
+			setValue.ChangeType(gigeParam.dataType);
 
 			// Set the Feature value
-			l_hr = gigeParam.accessor.SetParam(p_rCamera.m_Digitizer, gigeParam.accessor.feature, value);
+			l_hr = gigeParam.accessor.SetParam(rCamera.m_Digitizer, gigeParam.accessor.feature, setValue);
 		}
 	}
 	return l_hr;

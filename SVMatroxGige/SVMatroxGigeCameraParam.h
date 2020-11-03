@@ -18,10 +18,9 @@
 struct SVMatroxGigeCameraParam
 {
 	int m_ParameterID;
-	int m_ParameterTypeID;
 	_variant_t m_value;
 	
-	SVMatroxGigeCameraParam(int p_ParameterID, int p_ParameterTypeID, _variant_t& p_rValue);
+	SVMatroxGigeCameraParam(int p_ParameterID, _variant_t& p_rValue);
 	SVMatroxGigeCameraParam(const SVMatroxGigeCameraParam& rParam);
 	~SVMatroxGigeCameraParam();
 	

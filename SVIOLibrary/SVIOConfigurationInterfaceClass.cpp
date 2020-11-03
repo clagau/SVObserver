@@ -42,15 +42,8 @@ void SVIOConfigurationInterfaceClass::Init()
 	///Standard IO size is determined depending on the IO dll loaded 
 	m_DigitalInputs.clear();
 	m_DigitalOutputs.clear();
-	unsigned long size {0UL};
-	if (S_OK == m_DigitalBoard.GetInputCount(&size))
-	{
-		m_DigitalInputs.resize(size);
-	}
-	if (S_OK == m_DigitalBoard.GetOutputCount(&size))
-	{
-		m_DigitalOutputs.resize(size);
-	}
+	m_DigitalInputs.resize(m_DigitalBoard.GetInputCount());
+	m_DigitalOutputs.resize(m_DigitalBoard.GetOutputCount());
 }
 
 void SVIOConfigurationInterfaceClass::initializeIO(int inputSize, int outputSize)
@@ -69,24 +62,8 @@ HRESULT SVIOConfigurationInterfaceClass::OpenDigital( LPCTSTR pName )
 
 	if ( S_OK == Result )
 	{
-		unsigned long size{0UL};
-		if ( S_OK == ( Result = m_DigitalBoard.GetInputCount( &size ) ) )
-		{
-			m_DigitalInputs.resize(size);
-		}
-	}
-
-	if ( S_OK == Result )
-	{
-		unsigned long size {0UL};
-		if ( S_OK == ( Result = m_DigitalBoard.GetOutputCount( &size ) ) )
-		{
-			m_DigitalOutputs.resize(size);
-		}
-	}
-
-	if ( S_OK == Result )
-	{
+		m_DigitalInputs.resize(m_DigitalBoard.GetInputCount());
+		m_DigitalOutputs.resize(m_DigitalBoard.GetOutputCount());
 		Result = ClearDigitalOutputs();
 	}
 
@@ -226,7 +203,8 @@ HRESULT SVIOConfigurationInterfaceClass::GetDigitalInputValue( unsigned long cha
 		}
 		else
 		{
-			Result = m_DigitalBoard.GetInputValue(channel, &l_bValue);
+			l_bValue = m_DigitalBoard.GetInputValue(channel);
+			Result = S_OK;
 		}
 
 		if ( S_OK == Result )
@@ -252,7 +230,7 @@ HRESULT SVIOConfigurationInterfaceClass::GetDigitalInputValue( unsigned long cha
 
 void SVIOConfigurationInterfaceClass::readDigitalInputBatch()
 {
-	m_DigitalBoard.GetInputValues(&m_batchDigitalInputValue);
+	m_batchDigitalInputValue = m_DigitalBoard.GetInputValues();
 	m_isBatchInputRead = true;
 }
 
@@ -603,22 +581,22 @@ HRESULT SVIOConfigurationInterfaceClass::SetCameraStrobeValue( unsigned long cha
 }
 
 // Parameter related functions. Not implemented in all dlls.
-HRESULT SVIOConfigurationInterfaceClass::GetParameterCount( unsigned long* pCount )
+unsigned long SVIOConfigurationInterfaceClass::GetParameterCount() const
 {
-	return m_DigitalBoard.GetParameterCount( pCount );
+	return m_DigitalBoard.GetParameterCount();
 }
 
-HRESULT SVIOConfigurationInterfaceClass::GetParameterName( unsigned long index, BSTR* pName )
+_variant_t SVIOConfigurationInterfaceClass::GetParameterName(unsigned long index) const
 {
-	return m_DigitalBoard.GetParameterName( index, pName );
+	return m_DigitalBoard.GetParameterName(index);
 }
 
-HRESULT SVIOConfigurationInterfaceClass::GetParameterValue( unsigned long index, VARIANT* pValue )
+_variant_t SVIOConfigurationInterfaceClass::GetParameterValue(unsigned long index) const
 {
-	return m_DigitalBoard.GetParameterValue(index, pValue );
+	return m_DigitalBoard.GetParameterValue(index);
 }
 
-HRESULT SVIOConfigurationInterfaceClass::SetParameterValue( unsigned long index, VARIANT* pValue )
+HRESULT SVIOConfigurationInterfaceClass::SetParameterValue(unsigned long index, const _variant_t& rValue)
 {
-	return m_DigitalBoard.SetParameterValue(index, pValue );
+	return m_DigitalBoard.SetParameterValue(index, rValue);
 }

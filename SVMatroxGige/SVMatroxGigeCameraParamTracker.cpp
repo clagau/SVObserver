@@ -96,16 +96,14 @@ HRESULT SVMatroxGigeCameraParamTracker::ReloadCameraParams(const std::string& ca
 	return hr;
 }
 	
-HRESULT SVMatroxGigeCameraParamTracker::ReloadCameraParamList(const SVMatroxGigeCameraParamDeque& list, const SVMatroxGigeDigitizer& p_rCamera)
+HRESULT SVMatroxGigeCameraParamTracker::ReloadCameraParamList(const SVMatroxGigeCameraParamDeque& rList, const SVMatroxGigeDigitizer& rCamera)
 {
-	HRESULT hr = S_OK;
+	HRESULT result = S_OK;
 
-	for (size_t i = 0;i < list.size();i++)
+	for (const auto& rParam : rList)
 	{
-		const SVMatroxGigeCameraParam& param = list[i];
-		_variant_t value( param.m_value );
-		hr = SVMatroxGigeDeviceParameterManager::SetParameter(p_rCamera, param.m_ParameterID, param.m_ParameterTypeID, &(value.GetVARIANT()));
+		result = SVMatroxGigeDeviceParameterManager::SetParameter(rCamera, rParam.m_ParameterID, rParam.m_value);
 	}
-	return hr;
+	return result;
 }
 

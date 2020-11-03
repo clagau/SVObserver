@@ -22,42 +22,41 @@ constexpr long MaxFileCameras = 12;
 
 class SVFileAcquisitionDevice
 {
-private:
-	long m_lRefCount;
-
-	std::array<SVFileCamera, MaxFileCameras> m_cameras;
-	
 public:
-	SVFileAcquisitionDevice();
+	SVFileAcquisitionDevice() = default;
 	~SVFileAcquisitionDevice();
 
 	HRESULT Create();
-	HRESULT Destroy( bool p_bClose = false );
+	HRESULT Destroy(bool close = false);
 
-	HRESULT CameraGetCount( unsigned long &p_rulCount );
-	HRESULT CameraGetName( unsigned long p_ulIndex, BSTR &p_rbstrName );
-	HRESULT CameraGetHeight( unsigned long p_ulIndex, unsigned long &p_rulHeight );
-	HRESULT CameraGetWidth( unsigned long p_ulIndex, unsigned long &p_rulWidth );
-	HRESULT CameraGetFormat( unsigned long p_ulIndex, int &p_riFormat );
-	HRESULT CameraGetParameterList( unsigned long p_ulIndex, VARIANT *p_pvarValue );
-	HRESULT CameraGetParameterName( unsigned long p_ulIndex, int p_iParameterID, BSTR &p_rbstrName );
-	HRESULT CameraGetParameter( unsigned long p_ulIndex, int p_iParameterID, int *p_piParameterIDType, VARIANT *p_pvarValue );
-	HRESULT CameraSetParameter( unsigned long p_ulIndex, int p_iParameterID, int p_iParameterIDType, VARIANT *p_pvarValue );
-	
-	HRESULT CameraBufferCreateAll( unsigned long p_ulIndex );
-	HRESULT CameraBufferDestroyAll( unsigned long p_ulIndex );
-	HRESULT CameraRegisterBufferInterface( unsigned long p_ulIndex, SVAcquisitionBufferInterface* p_pInterface );
-	HRESULT CameraUnregisterBufferInterface( unsigned long p_ulIndex );
-	HRESULT CameraStart( unsigned long p_ulIndex );
-	HRESULT CameraStop( unsigned long p_ulIndex );
+	unsigned long CameraGetCount() const;
+	_variant_t CameraGetName(unsigned long cameraIndex) const;
+	unsigned long CameraGetWidth(unsigned long cameraIndex) const;
+	unsigned long CameraGetHeight(unsigned long cameraIndex) const;
+	int CameraGetFormat(unsigned long cameraIndex) const;
+	HRESULT CameraBufferCreateAll(unsigned long cameraIndex);
+	HRESULT CameraBufferDestroyAll(unsigned long cameraIndex);
+	HRESULT CameraRegisterBufferInterface(unsigned long cameraIndex, SVAcquisitionBufferInterface* pInterface);
+	HRESULT CameraUnregisterBufferInterface(unsigned long cameraIndex);
+	HRESULT CameraStart(unsigned long cameraIndex);
+	HRESULT CameraStop(unsigned long cameraIndex);
+	_variant_t CameraGetParameterName(unsigned long cameraIndex, int parameterID) const;
+	_variant_t CameraGetParameter(unsigned long cameraIndex, int parameterID) const;
+	HRESULT CameraSetParameter(unsigned long cameraIndex, int parameterID, const _variant_t& rValue);
+	_variant_t CameraGetParameterList(unsigned long cameraIndex) const;
 
-	HRESULT InternalTriggerEnable( unsigned long p_ulIndex );
-	HRESULT InternalTrigger( unsigned long p_ulIndex );
+	HRESULT InternalTriggerEnable(unsigned long cameraIndex);
+	HRESULT InternalTrigger(unsigned long cameraIndex);
 
 private:
 	HRESULT CameraProcessStartFrame( unsigned long p_ulIndex );
 	HRESULT CameraProcessEndFrame( unsigned long p_ulIndex );
 
 	HRESULT FireOneShot( unsigned long p_ulIndex );
+
+private:
+	long m_lRefCount{ 0L };
+
+	std::array<SVFileCamera, MaxFileCameras> m_cameras;
 };
 

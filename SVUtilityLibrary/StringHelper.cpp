@@ -40,29 +40,33 @@ namespace SvUl
 		return retVal;
 	}
 
-	std::string createStdString( const _bstr_t& rString )
+	std::string createStdString(const _bstr_t& rString)
 	{
-		std::string retVal(_T(""));
+		std::string result;
 
-		if( rString.length() )
+		if(0 < rString.length())
 		{
-			retVal.assign( rString );
+			result.assign(rString);
 		}
 
-		return retVal;
+		return result;
 	}
 
-	std::string createStdString( const _variant_t& rVariant )
+	std::string createStdString(const _variant_t& rVariant)
 	{
-		std::string Result(_T(""));
-		_bstr_t Value( rVariant );
-
-		if( 0 < Value.length() )
+		std::string result;
+		if (VT_BSTR == rVariant.vt && nullptr != rVariant.bstrVal)
 		{
-			Result.assign( Value );
+			_bstr_t value;
+			//Only attach and detach BSTR for conversion
+			value.Attach(rVariant.bstrVal);
+			if (0 < value.length())
+			{
+				result.assign(value);
+			}
+			value.Detach();
 		}
-
-		return Result;
+		return result;
 	}
 
 	int CompareNoCase(const std::string& rLhs, const std::string& rRhs)

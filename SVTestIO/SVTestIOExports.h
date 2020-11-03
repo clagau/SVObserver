@@ -19,14 +19,14 @@ class SVAcquisitionBufferInterface;
 HRESULT WINAPI SVCreate();
 HRESULT WINAPI SVDestroy();
 
-HRESULT WINAPI SVInputGetCount( unsigned long *p_pulCount );
-HRESULT WINAPI SVInputGetValue( unsigned long p_ulChannel, bool *p_pbValue );
-HRESULT WINAPI SVInputGetValues(unsigned long *p_pulValue );
+unsigned long WINAPI SVInputGetCount();
+bool WINAPI SVInputGetValue(unsigned long channel);
+unsigned long WINAPI SVInputGetValues();
 
-HRESULT WINAPI SVOutputGetCount( unsigned long *p_pulCount );
-HRESULT WINAPI SVOutputSetValue( unsigned long p_ulChannel, bool p_bValue );
-HRESULT WINAPI SVOutputGetPortCount( unsigned long *p_pulCount );
-HRESULT WINAPI SVOutputSetPortValue( unsigned long p_ulPort, unsigned long p_ulValue );
+unsigned long WINAPI SVOutputGetCount();
+HRESULT WINAPI SVOutputSetValue(unsigned long channel, bool value);
+unsigned long WINAPI SVOutputGetPortCount();
+HRESULT WINAPI SVOutputSetPortValue(unsigned long port, unsigned long value);
 
 HRESULT WINAPI SVTriggerGetCount( unsigned long *p_pulCount );
 HRESULT WINAPI SVTriggerGetHandle( unsigned long *pTriggerchannel, unsigned long p_ulIndex );

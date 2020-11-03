@@ -115,55 +115,51 @@ HRESULT SVIODigitalLoadLibraryClass::Close()
 	return result;
 }
 
-HRESULT SVIODigitalLoadLibraryClass::GetInputCount( unsigned long* pCount )
+unsigned long SVIODigitalLoadLibraryClass::GetInputCount() const
 {
-	HRESULT result {E_FAIL};
+	unsigned long result{ 0UL };
 
 	if ( nullptr != m_pGetInputCount )
 	{
-		result = m_pGetInputCount( pCount );
+		result = m_pGetInputCount();
 	}
-
 	return result;
 }
 
-HRESULT SVIODigitalLoadLibraryClass::GetInputValue( unsigned long channel, bool* pValue )
+bool SVIODigitalLoadLibraryClass::GetInputValue( unsigned long channel) const
 {
-	HRESULT result {E_FAIL};
+	bool result{ false };
 
 	if ( nullptr != m_pGetInputValue )
 	{
-		result = m_pGetInputValue( channel, pValue );
+		result = m_pGetInputValue(channel);
 	}
-
 	return result;
 }
 
-HRESULT SVIODigitalLoadLibraryClass::GetInputValues( unsigned long* pValue )
+unsigned long SVIODigitalLoadLibraryClass::GetInputValues() const
 {
-	HRESULT result {E_FAIL};
+	unsigned long result {0UL};
 
 	if ( nullptr != m_pGetInputValues )
 	{
-		result = m_pGetInputValues( pValue );
+		result = m_pGetInputValues();
 	}
-
 	return result;
 }
 
-HRESULT SVIODigitalLoadLibraryClass::GetOutputCount( unsigned long* pCount )
+unsigned long SVIODigitalLoadLibraryClass::GetOutputCount() const
 {
-	HRESULT result {E_FAIL};
+	unsigned long result{ 0UL };
 
 	if ( nullptr != m_pGetOutputCount )
 	{
-		result = m_pGetOutputCount( pCount );
+		result = m_pGetOutputCount();
 	}
-
 	return result;
 }
 
-HRESULT SVIODigitalLoadLibraryClass::SetOutputValue( unsigned long channel, bool value )
+HRESULT SVIODigitalLoadLibraryClass::SetOutputValue(unsigned long channel, bool value)
 {
 	HRESULT result {E_FAIL};
 
@@ -176,19 +172,18 @@ HRESULT SVIODigitalLoadLibraryClass::SetOutputValue( unsigned long channel, bool
 }
 
 // cppcheck-suppress unusedFunction
-HRESULT SVIODigitalLoadLibraryClass::GetOutputPortCount( unsigned long* pCount )
+unsigned long SVIODigitalLoadLibraryClass::GetOutputPortCount() const
 {
-	HRESULT result {E_FAIL};
+	unsigned long result{ 0UL };
 
 	if ( nullptr != m_pGetOutputPortCount )
 	{
-		result = m_pGetOutputPortCount( pCount );
+		result = m_pGetOutputPortCount();
 	}
-
 	return result;
 }
 
-HRESULT SVIODigitalLoadLibraryClass::SetOutputPortValue( unsigned long port, unsigned long value )
+HRESULT SVIODigitalLoadLibraryClass::SetOutputPortValue(unsigned long port, unsigned long value)
 {
 	HRESULT result {E_FAIL};
 
@@ -196,7 +191,6 @@ HRESULT SVIODigitalLoadLibraryClass::SetOutputPortValue( unsigned long port, uns
 	{
 		result = m_pSetOutputPortValue( port, value );
 	}
-
 	return result;
 }
 
@@ -208,55 +202,49 @@ HRESULT SVIODigitalLoadLibraryClass::SetOutputData(unsigned long channel, const 
 	{
 		result = m_pSetOutputData(channel, rData);
 	}
-
 	return result;
 }
 
-// Parameter Functions Follow.
-HRESULT SVIODigitalLoadLibraryClass::GetParameterCount( unsigned long* pCount )
+unsigned long SVIODigitalLoadLibraryClass::GetParameterCount() const
 {
-	HRESULT result {E_FAIL};
+	unsigned long result{ 0UL };
 
 	if ( nullptr != m_pGetParameterCount )
 	{
-		result = m_pGetParameterCount( pCount );
+		result = m_pGetParameterCount();
 	}
-
 	return result;
 }
 
-HRESULT SVIODigitalLoadLibraryClass::GetParameterName( unsigned long index, BSTR* pName )
+_variant_t SVIODigitalLoadLibraryClass::GetParameterName(unsigned long index) const
 {
-	HRESULT result {E_FAIL};
+	_variant_t result;
 
 	if ( nullptr != m_pGetParameterName )
 	{
-		result = m_pGetParameterName( index, pName );
+		result = m_pGetParameterName(index);
 	}
-
 	return result;
 }
 
-HRESULT SVIODigitalLoadLibraryClass::GetParameterValue( unsigned long index, VARIANT* pValue )
+_variant_t SVIODigitalLoadLibraryClass::GetParameterValue( unsigned long index) const
 {
-	HRESULT result {E_FAIL};
+	_variant_t result;
 
 	if ( nullptr != m_pGetParameterValue )
 	{
-		result = m_pGetParameterValue( index, pValue );
+		result = m_pGetParameterValue( index);
 	}
-
 	return result;
 }
 
-HRESULT SVIODigitalLoadLibraryClass::SetParameterValue( unsigned long index, VARIANT* pValue )
+HRESULT SVIODigitalLoadLibraryClass::SetParameterValue(unsigned long index, const _variant_t& rValue)
 {
 	HRESULT result {E_FAIL};
 
 	if ( nullptr != m_pSetParameterValue )
 	{
-		result = m_pSetParameterValue( index, pValue );
+		result = m_pSetParameterValue(index, rValue);
 	}
-
 	return result;
 }

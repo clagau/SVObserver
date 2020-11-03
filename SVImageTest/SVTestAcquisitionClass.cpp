@@ -13,7 +13,6 @@
 #include "stdafx.h"
 #include "SVTestAcquisitionClass.h"
 #include "SVTestAcquisitionSubsystem.h"
-#include "Definitions/SVImageFormatEnum.h"
 #include "SVCameraPage.h"
 #pragma endregion Includes
 
@@ -28,29 +27,17 @@ SVTestAcquisitionClass::~SVTestAcquisitionClass()
 
 unsigned long SVTestAcquisitionClass::GetBufferWidth() const
 {
-	unsigned long l_Width = 0;
-
-	m_rSubsystem.m_svDigitizers.GetBufferWidth( m_hDigitizer, &l_Width );
-
-	return l_Width;
+	return m_rSubsystem.m_svDigitizers.GetBufferWidth( m_hDigitizer);
 }
 
 unsigned long SVTestAcquisitionClass::GetBufferHeight() const
 {
-	unsigned long l_Height = 0;
-
-	m_rSubsystem.m_svDigitizers.GetBufferHeight( m_hDigitizer, &l_Height );
-
-	return l_Height;
+	return m_rSubsystem.m_svDigitizers.GetBufferHeight( m_hDigitizer);
 }
 
 int SVTestAcquisitionClass::GetBufferFormat() const
 {
-	int l_Format = SvDef::SVImageFormatUnknown;
-
-	m_rSubsystem.m_svDigitizers.GetBufferFormat( m_hDigitizer, &l_Format );
-
-	return l_Format;
+	return m_rSubsystem.m_svDigitizers.GetBufferFormat( m_hDigitizer);
 }
 
 SvTrc::IImagePtr SVTestAcquisitionClass::GetNextBuffer()

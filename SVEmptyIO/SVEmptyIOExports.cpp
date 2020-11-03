@@ -19,9 +19,11 @@
 
 constexpr char* c_ioBoardName = "IO_Board_1";
 constexpr char* c_digitizer = ".Dig_";
+constexpr unsigned long cTriggerMaxCount = 4UL;
+constexpr unsigned long cInputMaxCount = 8UL;
+constexpr unsigned long cOutputMaxCount = 16UL;
 
 static std::string g_boardName{c_ioBoardName};
-
 
 HRESULT WINAPI SVCreate()
 {
@@ -33,140 +35,69 @@ HRESULT WINAPI SVDestroy()
 	return S_OK;
 }
 
-HRESULT WINAPI SVInputGetCount( unsigned long *p_pulCount )
+unsigned long WINAPI SVInputGetCount( )
 {
-	HRESULT l_hrOk = S_FALSE;
-
-	if ( nullptr != p_pulCount )
-	{
-		*p_pulCount = 8;
-
-		l_hrOk = S_OK;
-	}
-
-	return l_hrOk;
+	return cInputMaxCount;
 }
 
-HRESULT WINAPI SVInputGetValue( unsigned long , bool* p_pbValue )
+bool WINAPI SVInputGetValue( unsigned long)
 {
-	HRESULT l_hrOk = S_FALSE;
-
-	if ( nullptr != p_pbValue )
-	{
-		*p_pbValue = false;
-	}
-
-	return l_hrOk;
+	return false;
 }
 
-HRESULT WINAPI SVInputGetValues( unsigned long *p_pulValue )
+unsigned long WINAPI SVInputGetValues()
 {
-	HRESULT l_hrOk = S_FALSE;
-
-	if ( nullptr != p_pulValue )
-	{
-		*p_pulValue = 0;
-
-		l_hrOk = S_OK;
-	}
-
-	return l_hrOk;
+	return 0UL;
 }
 
-HRESULT WINAPI SVOutputGetCount( unsigned long *p_pulCount )
+unsigned long WINAPI SVOutputGetCount()
 {
-	HRESULT l_hrOk = S_FALSE;
-
-	if ( nullptr != p_pulCount )
-	{
-		*p_pulCount = 16;
-
-		l_hrOk = S_OK;
-	}
-
-	return l_hrOk;
+	return cOutputMaxCount;
 }
 
-HRESULT WINAPI SVOutputSetValue( unsigned long , bool  )
+HRESULT WINAPI SVOutputSetValue(unsigned long, bool)
 {
 	return S_OK;
 }
 
-HRESULT WINAPI SVOutputGetPortCount( unsigned long *p_pulCount )
+unsigned long WINAPI SVOutputGetPortCount()
 {
-	HRESULT l_hrOk = S_FALSE;
-
-	if ( nullptr != p_pulCount )
-	{
-		*p_pulCount = 0;
-
-		l_hrOk = S_OK;
-	}
-
-	return l_hrOk;
+	return 0UL;
 }
 
-HRESULT WINAPI SVOutputSetPortValue( unsigned long , unsigned long  )
+HRESULT WINAPI SVOutputSetPortValue(unsigned long , unsigned long)
 {
 	return S_OK;
 }
 
-HRESULT WINAPI SVTriggerGetCount( unsigned long *p_pulCount )
+unsigned long WINAPI SVTriggerGetCount()
 {
-	HRESULT l_hrOk = S_FALSE;
-
-	if ( nullptr != p_pulCount )
-	{
-		*p_pulCount = 4;
-
-		l_hrOk = S_OK;
-	}
-
-	return l_hrOk;
+	return cTriggerMaxCount;
 }
 
-HRESULT WINAPI SVTriggerGetHandle( unsigned long *pTriggerchannel, unsigned long p_ulIndex )
+unsigned long WINAPI SVTriggerGetHandle(unsigned long index)
 {
-	HRESULT l_hrOk = S_FALSE;
-
-	if ( nullptr != pTriggerchannel )
-	{
-		*pTriggerchannel = p_ulIndex + 1;
-
-		l_hrOk = S_OK;
-	}
-
-	return l_hrOk;
+	return index + 1;
 }
 
-HRESULT WINAPI SVTriggerGetName( unsigned long triggerchannel, BSTR *p_pbstrName )
+_variant_t WINAPI SVTriggerGetName(unsigned long triggerchannel)
 {
-	HRESULT l_hrOk = S_FALSE;
+	_variant_t result;
 
-	if ( nullptr != p_pbstrName && 0 < triggerchannel && triggerchannel <= 4 )
+	if (0 < triggerchannel && triggerchannel <= cTriggerMaxCount)
 	{
-		l_hrOk = S_OK;
-
-		if ( nullptr != *p_pbstrName )
-		{
-			::SysFreeString( *p_pbstrName );
-
-			*p_pbstrName = nullptr;
-		}
-
 		std::string triggerName{g_boardName};
 		triggerName += c_digitizer;
 		triggerName += std::to_string(triggerchannel - 1);
-		_bstr_t name{triggerName.c_str()};
-		*p_pbstrName = name.Detach();
+		result.SetString(triggerName.c_str());
 	} 
 
-	return l_hrOk;
+	return result;
 }
 
 HRESULT WINAPI SVTriggerRegister( unsigned long triggerchannel, SvTi::TriggerCallBack pTriggerCallback)
 {
-	if (0 < triggerchannel && triggerchannel <= 4 )
+	if (0 < triggerchannel && triggerchannel <= cTriggerMaxCount)
 	{
 		return S_OK;
 	} 
@@ -176,7 +107,7 @@ HRESULT WINAPI SVTriggerRegister( unsigned long triggerchannel, SvTi::TriggerCal
 
 HRESULT WINAPI SVTriggerUnregister( unsigned long triggerchannel)
 {
-	if (0 < triggerchannel && triggerchannel <= 4 )
+	if (0 < triggerchannel && triggerchannel <= cTriggerMaxCount)
 	{
 		return S_OK;
 	} 
@@ -186,9 +117,9 @@ HRESULT WINAPI SVTriggerUnregister( unsigned long triggerchannel)
 
 HRESULT WINAPI SVTriggerStart( unsigned long triggerchannel )
 {
-	HRESULT l_hrOk = S_FALSE;
+	HRESULT l_hrOk = E_FAIL;
 
-	if ( 0 < triggerchannel && triggerchannel <= 4 )
+	if(0 < triggerchannel && triggerchannel <= cTriggerMaxCount)
 	{
 		l_hrOk = S_OK;
 	} 
@@ -198,9 +129,9 @@ HRESULT WINAPI SVTriggerStart( unsigned long triggerchannel )
 
 HRESULT WINAPI SVTriggerStop( unsigned long triggerchannel )
 {
-	HRESULT l_hrOk = S_FALSE;
+	HRESULT l_hrOk = E_FAIL;
 
-	if ( 0 < triggerchannel && triggerchannel <= 4 )
+	if(0 < triggerchannel && triggerchannel <= cTriggerMaxCount)
 	{
 		l_hrOk = S_OK;
 	} 
@@ -208,85 +139,57 @@ HRESULT WINAPI SVTriggerStop( unsigned long triggerchannel )
 	return l_hrOk;
 }
 
-HRESULT WINAPI SVTriggerGetParameterCount( unsigned long triggerchannel, unsigned long *p_pulCount )
+unsigned long WINAPI SVTriggerGetParameterCount( unsigned long )
 {
-	HRESULT l_hrOk = S_FALSE;
+	return 0UL;
+}
 
-	if ( nullptr != p_pulCount )
+_variant_t WINAPI SVTriggerGetParameterName( unsigned long triggerchannel, unsigned long index)
+{
+	_variant_t result;
+
+	if (0 < triggerchannel && triggerchannel <= cTriggerMaxCount)
 	{
-		if ( 0 < triggerchannel && triggerchannel <= 4 )
+		if (SVIOParameterEnum::SVBoardName == index)
 		{
-			*p_pulCount = 0;
+			result.SetString(_T("Board name"));
+		}
+	}
+	return result;
+}
 
-			l_hrOk = S_OK;
+_variant_t WINAPI SVTriggerGetParameterValue( unsigned long triggerchannel, unsigned long index)
+{
+	_variant_t result;
+
+	if (0 < triggerchannel && triggerchannel <= cTriggerMaxCount)
+	{
+		if (SVIOParameterEnum::SVBoardName == index)
+		{
+			result.SetString(g_boardName.c_str());
+		}
+	}
+
+	return result;
+}
+
+HRESULT WINAPI SVTriggerSetParameterValue( unsigned long triggerchannel, unsigned long index, const _variant_t& rValue)
+{
+	HRESULT result{E_FAIL};
+
+	if (0 < triggerchannel && triggerchannel <= cTriggerMaxCount)
+	{
+		if (SVIOParameterEnum::SVBoardName == index)
+		{
+			if (VT_BSTR == rValue.vt)
+			{
+				g_boardName.assign(_bstr_t{rValue.bstrVal});
+				result = S_OK;
+			}
 		}
 		else
 		{
-			*p_pulCount = 0;
-		}
-	}
-
-	return l_hrOk;
-}
-
-HRESULT WINAPI SVTriggerGetParameterName( unsigned long , unsigned long , BSTR *p_pbstrName )
-{
-	HRESULT l_hrOk = S_FALSE;
-
-	if ( nullptr != p_pbstrName )
-	{
-		if ( nullptr != *p_pbstrName )
-		{
-			::SysFreeString( *p_pbstrName );
-
-			*p_pbstrName = nullptr;
-		}
-
-		l_hrOk = S_OK;
-	}
-
-	return l_hrOk;
-}
-
-HRESULT WINAPI SVTriggerGetParameterValue( unsigned long triggerchannel, unsigned long , VARIANT *p_pvarValue )
-{
-	HRESULT l_hrOk = S_FALSE;
-
-	if ( nullptr != p_pvarValue )
-	{
-		if ( S_OK == ::VariantClear( p_pvarValue ) )
-		{
-			if ( 0 < triggerchannel && triggerchannel <= 4 )
-			{
-				l_hrOk = S_OK;
-			}
-		}
-	}
-
-	return l_hrOk;
-}
-
-HRESULT WINAPI SVTriggerSetParameterValue( unsigned long triggerchannel, unsigned long ulIndex, VARIANT *pvarValue )
-{
-	HRESULT result{S_FALSE};
-
-	if ( 0 < triggerchannel && triggerchannel <= 4 )
-	{
-		if ( nullptr != pvarValue )
-		{
-
-			if (SVIOParameterEnum::SVBoardName == ulIndex)
-			{
-				if (VT_BSTR == pvarValue->vt)
-				{
-					g_boardName.assign(_bstr_t{pvarValue->bstrVal});
-					result = S_OK;
-				}
-			}
-			else
-			{
-				result = S_OK;
-			}
+			result = S_OK;
 		}
 	}
 
@@ -294,138 +197,72 @@ HRESULT WINAPI SVTriggerSetParameterValue( unsigned long triggerchannel, unsigne
 }
 
 // Digitizer Export Functions
-HRESULT WINAPI SVDigitizerGetCount( unsigned long *p_pulCount )
+unsigned long WINAPI SVDigitizerGetCount()
 {
-	HRESULT l_hrOk = S_FALSE;
-
-	if ( nullptr != p_pulCount )
-	{
-		*p_pulCount = 0;
-
-		l_hrOk = S_OK;
-	}
-
-	return l_hrOk;
+	return 0UL;
 }
 
-HRESULT WINAPI SVDigitizerGetHandle( unsigned long *pTriggerchannel, unsigned long  )
+unsigned long WINAPI SVDigitizerGetHandle(unsigned long)
 {
-	HRESULT l_hrOk = S_FALSE;
-
-	if ( nullptr != pTriggerchannel )
-	{
-		*pTriggerchannel = 0;
-	} 
-
-	return l_hrOk;
+	return 0UL;
 }
 
-HRESULT WINAPI SVDigitizerGetName( unsigned long , BSTR *p_pbstrName )
+_variant_t WINAPI SVDigitizerGetName(unsigned long)
 {
-	HRESULT l_hrOk = S_FALSE;
-
-	if ( nullptr != p_pbstrName )
-	{
-		l_hrOk = S_OK;
-
-		if ( nullptr != *p_pbstrName )
-		{
-			::SysFreeString( *p_pbstrName );
-
-			*p_pbstrName = nullptr;
-		}
-	} 
-
-	return l_hrOk;
+	return _variant_t{};
 }
 
-HRESULT WINAPI SVDigitizerGetBufferWidth( unsigned long , unsigned long *p_pulWidth )
+unsigned long WINAPI SVDigitizerGetBufferWidth(unsigned long)
 {
-	HRESULT l_hrOk = S_FALSE;
-
-	if ( nullptr != p_pulWidth )
-	{
-		*p_pulWidth = 0;
-	}
-
-	return l_hrOk;
+	return 0UL;
 }
 
-HRESULT WINAPI SVDigitizerGetBufferHeight( unsigned long , unsigned long *p_pulHeight )
+unsigned long WINAPI SVDigitizerGetBufferHeight(unsigned long)
 {
-	HRESULT l_hrOk = S_FALSE;
-
-	if ( nullptr != p_pulHeight )
-	{
-		*p_pulHeight = 0;
-	}
-
-	return l_hrOk;
+	return 0UL;
 }
 
-HRESULT WINAPI SVDigitizerGetBufferFormat( unsigned long , int *p_piFormat )
+int WINAPI SVDigitizerGetBufferFormat(unsigned long)
 {
-	HRESULT l_hrOk = S_FALSE;
-
-	if ( nullptr != p_piFormat )
-	{
-		*p_piFormat = SvDef::SVImageFormatUnknown;
-	}
-
-	return l_hrOk;
+	return SvDef::SVImageFormatUnknown;
 }
 
-HRESULT WINAPI SVDigitizerCreateBuffers( unsigned long  )
+HRESULT WINAPI SVDigitizerCreateBuffers(unsigned long)
 {
-	return S_FALSE;
+	return E_FAIL;
 }
 
-HRESULT WINAPI SVDigitizerRegisterBufferInterface( unsigned long , SVAcquisitionBufferInterface*  )
+HRESULT WINAPI SVDigitizerRegisterBufferInterface(unsigned long , SVAcquisitionBufferInterface*)
 {
-	return S_FALSE;
+	return E_FAIL;
 }
 
-HRESULT WINAPI SVDigitizerStart( unsigned long  )
+HRESULT WINAPI SVDigitizerStart(unsigned long)
 {
-	return S_FALSE;
+	return E_FAIL;
 }
 
-HRESULT WINAPI SVDigitizerStop( unsigned long  )
+HRESULT WINAPI SVDigitizerStop(unsigned long)
 {
 	return S_OK;
 }
 
-HRESULT WINAPI SVDigitizerUnregisterBufferInterface( unsigned long  )
+HRESULT WINAPI SVDigitizerUnregisterBufferInterface(unsigned long)
 {
-	return S_FALSE;
+	return E_FAIL;
 }
 
-HRESULT WINAPI SVDigitizerInternalTriggerEnable( unsigned long  )
-{
-	return S_OK;
-}
-
-HRESULT WINAPI SVDigitizerInternalTrigger( unsigned long  )
-{
-	return S_FALSE;
-}
-
-HRESULT WINAPI SVDigitizerDestroyBuffers( unsigned long  )
+HRESULT WINAPI SVDigitizerInternalTriggerEnable(unsigned long)
 {
 	return S_OK;
 }
 
-HRESULT WINAPI SVDigitizerSetParameters( unsigned long , const SVDeviceParamCollection*  )
+HRESULT WINAPI SVDigitizerInternalTrigger(unsigned long)
 {
-	return S_OK;
+	return E_FAIL;
 }
 
-HRESULT WINAPI SVDigitizerSetParameter( unsigned long , const SVDeviceParamWrapper*  )
-{
-	return S_OK;
-}
-
-HRESULT WINAPI SVDigitizerGetParameter( unsigned long , SVDeviceParamEnum , SVDeviceParamWrapper**  )
+HRESULT WINAPI SVDigitizerDestroyBuffers(unsigned long)
 {
 	return S_OK;
 }

@@ -9,11 +9,12 @@
 //* .Check In Date   : $Date:   22 Apr 2013 09:43:36  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVGigeCameraProxy.h"
+#include "CameraLibrary/SVDeviceParamCollection.h"
 #include "TriggerHandling/SVDigitizerLoadLibraryClass.h"
-#include "CameraLibrary/SVDeviceParam.h"
-
+#pragma endregion Includes
 
 SVGigeCameraProxy::SVGigeCameraProxy()
 { 

@@ -22,47 +22,41 @@ class SVDeviceParamCollection;
 HRESULT WINAPI SVCreate();
 HRESULT WINAPI SVDestroy();
 
-HRESULT WINAPI SVInputGetCount( unsigned long *p_pulCount );
-HRESULT WINAPI SVInputGetValue( unsigned long p_ulChannel, bool *p_pbValue );
-HRESULT WINAPI SVInputGetValues( unsigned long *p_pulValue );
+unsigned long WINAPI SVInputGetCount();
+bool WINAPI SVInputGetValue(unsigned long channel);
+unsigned long WINAPI SVInputGetValues();
 
-HRESULT WINAPI SVOutputGetCount( unsigned long *p_pulCount );
-HRESULT WINAPI SVOutputSetValue( unsigned long p_ulChannel, bool p_bValue );
-HRESULT WINAPI SVOutputGetPortCount( unsigned long *p_pulCount );
-HRESULT WINAPI SVOutputSetPortValue( unsigned long p_ulPort, unsigned long p_ulValue );
+unsigned long WINAPI SVOutputGetCount();
+HRESULT WINAPI SVOutputSetValue(unsigned long channel, bool value);
+unsigned long WINAPI SVOutputGetPortCount();
+HRESULT WINAPI SVOutputSetPortValue(unsigned long port, unsigned long value);
 
-HRESULT WINAPI SVTriggerGetCount( unsigned long *p_pulCount );
-HRESULT WINAPI SVTriggerGetHandle( unsigned long *pTriggerchannel, unsigned long p_ulIndex );
-HRESULT WINAPI SVTriggerGetName( unsigned long triggerchannel, BSTR *p_pbstrName );
-HRESULT WINAPI SVTriggerRegister( unsigned long triggerchannel, SvTi::TriggerCallBack pTriggerCallback);
-HRESULT WINAPI SVTriggerUnregister( unsigned long triggerchannel);
-HRESULT WINAPI SVTriggerStart( unsigned long triggerchannel );
-HRESULT WINAPI SVTriggerStop( unsigned long triggerchannel );
-HRESULT WINAPI SVTriggerGetParameterCount( unsigned long triggerchannel, unsigned long *p_pulCount );
-HRESULT WINAPI SVTriggerGetParameterName( unsigned long triggerchannel, unsigned long p_ulIndex, BSTR *p_pbstrName );
-HRESULT WINAPI SVTriggerGetParameterValue( unsigned long triggerchannel, unsigned long p_ulIndex, VARIANT *p_pvarValue );
-HRESULT WINAPI SVTriggerSetParameterValue( unsigned long triggerchannel, unsigned long p_ulIndex, VARIANT *p_pvarValue );
+unsigned long WINAPI SVTriggerGetCount();
+unsigned long WINAPI SVTriggerGetHandle(unsigned long index);
+_variant_t WINAPI SVTriggerGetName(unsigned long triggerchannel);
+HRESULT WINAPI SVTriggerRegister(unsigned long triggerchannel, SvTi::TriggerCallBack pTriggerCallback);
+HRESULT WINAPI SVTriggerUnregister(unsigned long triggerchannel);
+HRESULT WINAPI SVTriggerStart(unsigned long triggerchannel );
+HRESULT WINAPI SVTriggerStop(unsigned long triggerchannel );
+unsigned long WINAPI SVTriggerGetParameterCount(unsigned long triggerchannel);
+_variant_t WINAPI SVTriggerGetParameterName(unsigned long triggerchannel, unsigned long index);
+_variant_t WINAPI SVTriggerGetParameterValue(unsigned long triggerchannel, unsigned long index);
+HRESULT WINAPI SVTriggerSetParameterValue(unsigned long triggerchannel, unsigned long index, const _variant_t rValue);
 
 // Digitizer Exports
 
-HRESULT WINAPI SVDigitizerGetCount( unsigned long *p_pulCount );
-HRESULT WINAPI SVDigitizerGetHandle( unsigned long *pTriggerchannel, unsigned long p_ulIndex );
-HRESULT WINAPI SVDigitizerGetName( unsigned long triggerchannel, BSTR *p_pbstrName );
-HRESULT WINAPI SVDigitizerGetBufferWidth( unsigned long triggerchannel, unsigned long *p_pulWidth );
-HRESULT WINAPI SVDigitizerGetBufferHeight( unsigned long triggerchannel, unsigned long *p_pulHeight );
-HRESULT WINAPI SVDigitizerGetBufferFormat( unsigned long triggerchannel, int *p_piFormat );
-HRESULT WINAPI SVDigitizerCreateBuffers( unsigned long triggerchannel);
-HRESULT WINAPI SVDigitizerRegisterBufferInterface( unsigned long triggerchannel, SVAcquisitionBufferInterface* p_pInterface );
-HRESULT WINAPI SVDigitizerStart( unsigned long triggerchannel );
-HRESULT WINAPI SVDigitizerStop( unsigned long triggerchannel );
-HRESULT WINAPI SVDigitizerUnregisterBufferInterface( unsigned long triggerchannel );
+unsigned long WINAPI SVDigitizerGetCount();
+unsigned long WINAPI SVDigitizerGetHandle(unsigned long index);
+_variant_t WINAPI SVDigitizerGetName(unsigned long digitizerHandle);
+unsigned long WINAPI SVDigitizerGetBufferWidth(unsigned long digitizerHandle);
+unsigned long WINAPI SVDigitizerGetBufferHeight(unsigned long digitizerHandle);
+int WINAPI SVDigitizerGetBufferFormat(unsigned long digitizerHandle);
+HRESULT WINAPI SVDigitizerCreateBuffers(unsigned long digitizerHandle);
+HRESULT WINAPI SVDigitizerDestroyBuffers(unsigned long digitizerHandle);
+HRESULT WINAPI SVDigitizerRegisterBufferInterface(unsigned long digitizerHandle, SVAcquisitionBufferInterface* pInterface);
+HRESULT WINAPI SVDigitizerUnregisterBufferInterface(unsigned long digitizerHandle);
+HRESULT WINAPI SVDigitizerStart(unsigned long digitizerHandle);
+HRESULT WINAPI SVDigitizerStop(unsigned long digitizerHandle);
 
-HRESULT WINAPI SVDigitizerInternalTriggerEnable( unsigned long triggerchannel );
-HRESULT WINAPI SVDigitizerInternalTrigger( unsigned long triggerchannel );
-
-HRESULT WINAPI SVDigitizerDestroyBuffers( unsigned long triggerchannel );
-
-HRESULT WINAPI SVDigitizerSetParameters( unsigned long triggerchannel, const SVDeviceParamCollection* p_pParameters );
-HRESULT WINAPI SVDigitizerSetParameter( unsigned long triggerchannel, const SVDeviceParamWrapper* p_pParameter );
-HRESULT WINAPI SVDigitizerGetParameter( unsigned long triggerchannel, SVDeviceParamEnum p_eParameter, SVDeviceParamWrapper** p_ppParameter );
-
+HRESULT WINAPI SVDigitizerInternalTriggerEnable(unsigned long digitizerHandle);
+HRESULT WINAPI SVDigitizerInternalTrigger(unsigned long digitizerHandle);

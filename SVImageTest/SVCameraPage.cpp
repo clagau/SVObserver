@@ -173,12 +173,10 @@ void SVCameraPage::OnProperitiesButtonClick()
 
 	if (m_pAcquisition)
 	{
-		unsigned long triggerchannel = 0;
-
-		m_pAcquisition->m_rSubsystem.m_svDigitizers.GetHandle( &triggerchannel, m_lSelectedCamera );
+		unsigned long digitizerHandle = m_pAcquisition->m_rSubsystem.m_svDigitizers.GetHandle(m_lSelectedCamera);
 
 		l_svDialog.m_psvDigitizers = &m_pAcquisition->m_rSubsystem.m_svDigitizers;
-		l_svDialog.m_triggerchannel = triggerchannel;
+		l_svDialog.m_digitizerHandle = digitizerHandle;
 
 		l_svDialog.DoModal();
 
@@ -260,17 +258,14 @@ void SVCameraPage::CreateCameraImage()
 {
 	if( 0 <= m_lSelectedCamera && nullptr != m_pAcquisition )
 	{
-		unsigned long triggerchannel( 0L );
+		unsigned long digitizerHandle = m_pAcquisition->m_rSubsystem.m_svDigitizers.GetHandle(m_lSelectedCamera);
 
-		m_pAcquisition->m_rSubsystem.m_svDigitizers.GetHandle( &triggerchannel, m_lSelectedCamera );
+		unsigned long bufWidth = m_pAcquisition->m_rSubsystem.m_svDigitizers.GetBufferHeight(digitizerHandle);
+		unsigned long bufHeight = m_pAcquisition->m_rSubsystem.m_svDigitizers.GetBufferWidth(digitizerHandle);
+		int iFormat = m_pAcquisition->m_rSubsystem.m_svDigitizers.GetBufferFormat(digitizerHandle);
 
-		unsigned long bufWidth = 640;
-		unsigned long bufHeight = 480;
-		int iFormat = SvDef::SVImageFormatUnknown;
-
-		m_pAcquisition->m_rSubsystem.m_svDigitizers.GetBufferHeight( triggerchannel, &bufHeight );
-		m_pAcquisition->m_rSubsystem.m_svDigitizers.GetBufferWidth( triggerchannel, &bufWidth );
-		m_pAcquisition->m_rSubsystem.m_svDigitizers.GetBufferFormat( triggerchannel, &iFormat );
+		bufWidth = (0 == bufWidth) ? 640 : bufWidth;
+		bufHeight = (0 == bufHeight) ? 480 : bufHeight;
 
 		m_CameraImage.Invalidate();
 	}
@@ -347,10 +342,9 @@ void SVCameraPage::StartAcquire()
 {
 	if (m_bUseSoftwareTrigger)
 	{
-		unsigned long triggerchannel = 0;
-		m_pAcquisition->m_rSubsystem.m_svDigitizers.GetHandle( &triggerchannel, m_lSelectedCamera );
+		unsigned long digitizerHandle = m_pAcquisition->m_rSubsystem.m_svDigitizers.GetHandle(m_lSelectedCamera);
 
-		m_pAcquisition->m_rSubsystem.m_svDigitizers.InternalTriggerEnable(triggerchannel);
+		m_pAcquisition->m_rSubsystem.m_svDigitizers.InternalTriggerEnable(digitizerHandle);
 
 		if (m_timerID == 0)
 		{

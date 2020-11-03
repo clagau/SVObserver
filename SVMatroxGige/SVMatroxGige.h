@@ -20,43 +20,39 @@ class SVAcquisitionBufferInterface;
 class SVMatroxGige
 {
 public:
-	SVMatroxGige();
+	SVMatroxGige() = default;
 	~SVMatroxGige();
 
-
 	HRESULT Create();
-	HRESULT Destroy( bool p_bClose = false );
+	HRESULT Destroy( bool close = false );
 	
-	HRESULT CameraGetCount( unsigned long& p_rulCount );
-	HRESULT CameraGetName( unsigned long p_Handle, BSTR& p_rbstrName );
-	HRESULT CameraGetHeight( unsigned long p_Handle, unsigned long& p_rulHeight );
-	HRESULT CameraGetWidth( unsigned long p_Handle, unsigned long& p_rulWidth );
-	HRESULT CameraGetFormat( unsigned long p_Handle, int& p_riFormat );
-	HRESULT CameraGetParameterList( unsigned long p_Handle, VARIANT* p_pvarValue );
-	HRESULT CameraGetParameterName( unsigned long p_Handle, int p_iParameterID, BSTR* p_pBstrName );
-	HRESULT CameraGetParameter( unsigned long p_Handle, int p_iParameterID, int* p_piParameterIDType, VARIANT* p_pvarValue );
-	HRESULT CameraSetParameter( unsigned long p_Handle, int p_iParameterID, int p_iParameterIDType, VARIANT* p_pvarValue );
-	HRESULT CameraBufferCreateAll( unsigned long p_Handle );
-	HRESULT CameraBufferUnlockAll( unsigned long p_Handle );
-	HRESULT CameraBufferDestroyAll( unsigned long p_Handle );
-	HRESULT CameraRegisterBufferInterface( unsigned long p_Handle, SVAcquisitionBufferInterface* p_pInterface );
-	HRESULT CameraUnregisterBufferInterface( unsigned long p_Handle );
-	HRESULT CameraStart( unsigned long p_Handle );
-	HRESULT CameraStop( unsigned long p_Handle );
+	unsigned long GetDigitizerHandle(long index) const;
+	unsigned long CameraGetCount() const;
+	_variant_t CameraGetName(unsigned long digitizerHandle) const;
+	unsigned long CameraGetWidth(unsigned long digitizerHandle) const;
+	unsigned long CameraGetHeight(unsigned long digitizerHandle) const;
+	int CameraGetFormat(unsigned long digitizerHandle) const;
+	HRESULT CameraBufferCreateAll(unsigned long digitizerHandle);
+	HRESULT CameraBufferDestroyAll(unsigned long digitizerHandle);
+	HRESULT CameraRegisterBufferInterface(unsigned long digitizerHandle, SVAcquisitionBufferInterface* pInterface);
+	HRESULT CameraUnregisterBufferInterface(unsigned long digitizerHandle);
+	HRESULT CameraStart(unsigned long digitizerHandle);
+	HRESULT CameraStop(unsigned long digitizerHandle);
+	_variant_t CameraGetParameterName(unsigned long digitizerHandle, int parameterID) const;
+	_variant_t CameraGetParameter(unsigned long digitizerHandle, int parameterID) const;
+	HRESULT CameraSetParameter(unsigned long digitizerHandle, int parameterID, const _variant_t& rValue);
+	_variant_t CameraGetParameterList(unsigned long digitizerHandle) const;
 
-	HRESULT InternalTriggerEnable(unsigned long p_Handle);
-	HRESULT InternalTrigger(unsigned long p_Handle);
+	HRESULT InternalTriggerEnable(unsigned long digitizerHandle);
+	HRESULT InternalTrigger(unsigned long digitizerHandle);
 
 	void ScanForCameras();
-
-	// convert ordinal to handle
-	unsigned long GetDigitizerHandle(unsigned long index) const;
 
 	void ProcessStartFrame(SVMatroxGigeDigitizer* pCamera);
 	void ProcessEndFrame(SVMatroxGigeDigitizer* pCamera, __int64 HookID);
 
 private:
-	long m_lRefCount = 0;
+	long m_lRefCount{ 0L };
 
 	SVMatroxGigeSystemList m_Systems;
 
@@ -69,24 +65,22 @@ private:
 
 	HRESULT CreateDigitizers(SVMatroxGigeSystem& rSystem);
 	HRESULT CreateDigitizer(SVMatroxGigeSystem& rSystem, long digitizerIndex);
-	HRESULT AllocDigitizer(SVMatroxGigeSystem& system, long digitizerIndex, SVMatroxGigeDigitizer& p_rCamera);
+	HRESULT AllocDigitizer(SVMatroxGigeSystem& system, long digitizerIndex, SVMatroxGigeDigitizer& rCamera);
 
 	HRESULT DestroyDigitizers(SVMatroxGigeSystem& rSystem);
 	HRESULT DestroyDigitizer(SVMatroxGigeDigitizer& digitizer);
 
-	HRESULT DestroyBuffers();
-	
-	HRESULT StartDigitizer(unsigned long p_Handle, SVMatroxGigeDigitizer& p_rCamera);
-	HRESULT StopDigitizer(SVMatroxGigeDigitizer& p_rCamera);
+	HRESULT StartDigitizer(SVMatroxGigeDigitizer& rCamera);
+	HRESULT StopDigitizer(SVMatroxGigeDigitizer& rCamera);
 
-	bool IsValidDigitizerHandle(unsigned long p_Handle) const;
-	bool IsValidDigitizer(unsigned long p_Handle) const;
+	bool IsValidDigitizerHandle(unsigned long digitizerHandle) const;
+	bool IsValidDigitizer(unsigned long digitizerHandle) const;
 
-	HRESULT ReadCameraSerialNumber(SVMatroxGigeDigitizer& p_rCamera);
-	HRESULT ReadCameraFormat(SVMatroxGigeDigitizer& p_rCamera);
-	HRESULT ReadCameraIPAddress(SVMatroxGigeDigitizer& p_rCamera);
+	HRESULT ReadCameraSerialNumber(SVMatroxGigeDigitizer& rCamera);
+	HRESULT ReadCameraIPAddress(SVMatroxGigeDigitizer& rCamera);
+	HRESULT ReadCameraFormat(SVMatroxGigeDigitizer& rCamera);
 
-	bool IsCameraActive(unsigned long p_Handle);
+	bool IsCameraActive(unsigned long digitizerHandle);
 
 	HRESULT RegisterMatroxDigitizerHooks(const SVMatroxGigeDigitizer& p_rCamera);
 	HRESULT UnRegisterMatroxDigitizerHooks(const SVMatroxGigeDigitizer& p_rCamera);
@@ -94,15 +88,15 @@ private:
 	HRESULT SetGrabMode(const SVMatroxGigeDigitizer& p_rCamera);
 	HRESULT EnableTriggering(const SVMatroxGigeDigitizer& p_rCamera);
 
-	const SVMatroxGigeDigitizer& GetDigitizer(unsigned long p_Handle) const;
-	SVMatroxGigeDigitizer& GetDigitizer(unsigned long p_Handle);
+	const SVMatroxGigeDigitizer& GetDigitizer(unsigned long digitizerHandle) const;
+	SVMatroxGigeDigitizer& GetDigitizer(unsigned long digitizerHandle);
 
 	void HandleConnect(SVMatroxGigeSystem& p_rSystem, long deviceNumber);
 	void HandleDisconnect(SVMatroxGigeSystem& p_rSystem, long deviceNumber);
 
 	void TrackCameraParams(const SVMatroxGigeDigitizer& digitizer);
 	void LockMainCameraParamList(const SVMatroxGigeDigitizer& digitizer, bool bLock=true);
-	void SetCameraParam(const SVMatroxGigeDigitizer& digitizer, int p_iParameterID, int p_iParameterTypeID, VARIANT* p_pvarValue);
+	void SetCameraParam(const SVMatroxGigeDigitizer& digitizer, int parameterID, _variant_t rValue);
 
 	HRESULT FindCamera(const SVMatroxGigeSystem& rSystem, long deviceNumber, unsigned long& rHandle);
 

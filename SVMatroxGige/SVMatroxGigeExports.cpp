@@ -12,8 +12,6 @@
 #include "StdAfx.h"
 #include "SVMatroxGigeExports.h"
 #include "SVMatroxGige.h"
-
-#include "SVImageLibrary/SVImagingDeviceParams.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -23,294 +21,115 @@ static char THIS_FILE[] = __FILE__;
 
 HRESULT WINAPI SVCreate()
 {
-	HRESULT l_hr = g_matroxAcqDevice.Create();
-	return l_hr;
+	return g_matroxAcqDevice.Create();
 }
 
 HRESULT WINAPI SVDestroy()
 {
-	HRESULT l_hr = g_matroxAcqDevice.Destroy();
-	return l_hr;
+	return g_matroxAcqDevice.Destroy();
 }
 
-HRESULT WINAPI SVDigitizerGetCount( unsigned long *p_pulCount )
+unsigned long WINAPI SVDigitizerGetCount()
 {
-	HRESULT l_hr = S_FALSE;
+	return g_matroxAcqDevice.CameraGetCount();
+}
 
-	if ( nullptr != p_pulCount )
+unsigned long WINAPI SVDigitizerGetHandle(unsigned long index )
+{
+	unsigned long result{0UL};
+
+	unsigned long count = g_matroxAcqDevice.CameraGetCount();
+	if ( index < count)
 	{
-		l_hr = g_matroxAcqDevice.CameraGetCount( *p_pulCount );
+		result = g_matroxAcqDevice.GetDigitizerHandle(index);
 	}
 
-	return l_hr;
+	return result;
 }
 
-HRESULT WINAPI SVDigitizerGetHandle( unsigned long *pTriggerchannel, unsigned long p_ulIndex )
+_variant_t SVDigitizerGetName(unsigned long digitizerHandle)
 {
-	HRESULT l_hr = S_FALSE;
-
-	if ( nullptr != pTriggerchannel )
-	{
-		unsigned long l_ulCount = 0;
-
-		l_hr = g_matroxAcqDevice.CameraGetCount( l_ulCount );
-
-		if ( S_OK == l_hr )
-		{
-			if ( p_ulIndex < l_ulCount )
-			{
-				l_hr = S_OK;
-
-				*pTriggerchannel = g_matroxAcqDevice.GetDigitizerHandle(p_ulIndex);
-			}
-			else
-			{
-				*pTriggerchannel = 0;
-			}
-		}
-	} 
-
-	return l_hr;
+	return g_matroxAcqDevice.CameraGetName(digitizerHandle);
 }
 
-HRESULT WINAPI SVDigitizerGetName( unsigned long triggerchannel, BSTR *p_pbstrName )
+unsigned long WINAPI SVDigitizerGetBufferWidth(unsigned long digitizerHandle)
 {
-	HRESULT l_hr = S_FALSE;
-
-	if ( nullptr != p_pbstrName )
-	{
-		if ( nullptr != *p_pbstrName )
-		{
-			::SysFreeString( *p_pbstrName );
-
-			*p_pbstrName = nullptr;
-		}
-
-		l_hr = g_matroxAcqDevice.CameraGetName( triggerchannel, *p_pbstrName );
-	} 
-
-	return l_hr;
+	return g_matroxAcqDevice.CameraGetWidth(digitizerHandle);
 }
 
-HRESULT WINAPI SVDigitizerGetBufferWidth( unsigned long triggerchannel, unsigned long *p_pulWidth )
+unsigned long WINAPI SVDigitizerGetBufferHeight(unsigned long digitizerHandle)
 {
-	HRESULT l_hr = S_FALSE;
-
-	if ( nullptr != p_pulWidth )
-	{
-		*p_pulWidth = 0;
-
-		l_hr = g_matroxAcqDevice.CameraGetWidth( triggerchannel, *p_pulWidth );
-	}
-
-	return l_hr;
+	return  g_matroxAcqDevice.CameraGetHeight(digitizerHandle);
 }
 
-HRESULT WINAPI SVDigitizerGetBufferHeight( unsigned long triggerchannel, unsigned long *p_pulHeight )
+int WINAPI SVDigitizerGetBufferFormat(unsigned long digitizerHandle)
 {
-	HRESULT l_hr = S_FALSE;
-
-	if ( nullptr != p_pulHeight )
-	{
-		*p_pulHeight = 0;
-
-		l_hr = g_matroxAcqDevice.CameraGetHeight( triggerchannel, *p_pulHeight );
-	}
-
-	return l_hr;
+	return g_matroxAcqDevice.CameraGetFormat(digitizerHandle);
 }
 
-HRESULT WINAPI SVDigitizerGetBufferFormat( unsigned long triggerchannel, int *p_piFormat )
+HRESULT WINAPI SVDigitizerCreateBuffers(unsigned long digitizerHandle)
 {
-	HRESULT l_hr = S_FALSE;
-
-	if ( nullptr != p_piFormat )
-	{
-		*p_piFormat = SvDef::SVImageFormatUnknown;
-
-		l_hr = g_matroxAcqDevice.CameraGetFormat( triggerchannel, *p_piFormat );
-	}
-
-	return l_hr;
+	return g_matroxAcqDevice.CameraBufferCreateAll(digitizerHandle);
 }
 
-HRESULT WINAPI SVDigitizerCreateBuffers( unsigned long triggerchannel )
+HRESULT WINAPI SVDigitizerDestroyBuffers(unsigned long digitizerHandle)
 {
-	HRESULT l_hr = g_matroxAcqDevice.CameraBufferCreateAll( triggerchannel );
-
-	return l_hr;
+	return g_matroxAcqDevice.CameraBufferDestroyAll(digitizerHandle);
 }
 
-HRESULT WINAPI SVDigitizerRegisterBufferInterface( unsigned long triggerchannel, SVAcquisitionBufferInterface* p_pInterface )
+
+HRESULT WINAPI SVDigitizerRegisterBufferInterface(unsigned long digitizerHandle, SVAcquisitionBufferInterface* pInterface)
 {
-	HRESULT l_hr = g_matroxAcqDevice.CameraRegisterBufferInterface( triggerchannel, p_pInterface );
-
-	return l_hr;
+	return g_matroxAcqDevice.CameraRegisterBufferInterface(digitizerHandle, pInterface);
 }
 
-HRESULT WINAPI SVDigitizerStart( unsigned long triggerchannel )
+HRESULT WINAPI SVDigitizerUnregisterBufferInterface(unsigned long digitizerHandle)
 {
-	HRESULT l_hr = g_matroxAcqDevice.CameraStart( triggerchannel );
-
-	return l_hr;
+	return g_matroxAcqDevice.CameraUnregisterBufferInterface(digitizerHandle);
 }
 
-HRESULT WINAPI SVDigitizerStop( unsigned long triggerchannel )
+HRESULT WINAPI SVDigitizerStart(unsigned long digitizerHandle)
 {
-	HRESULT l_hr = g_matroxAcqDevice.CameraStop( triggerchannel );
-
-	return l_hr;
+	return g_matroxAcqDevice.CameraStart(digitizerHandle);
 }
 
-HRESULT WINAPI SVDigitizerUnregisterBufferInterface( unsigned long triggerchannel )
+HRESULT WINAPI SVDigitizerStop(unsigned long digitizerHandle)
 {
-	HRESULT l_hr = g_matroxAcqDevice.CameraUnregisterBufferInterface( triggerchannel );
-
-	return l_hr;
+	return g_matroxAcqDevice.CameraStop(digitizerHandle);
 }
 
-HRESULT WINAPI SVDigitizerInternalTriggerEnable( unsigned long triggerchannel )
+HRESULT WINAPI SVDigitizerInternalTriggerEnable(unsigned long digitizerHandle )
 {
-	HRESULT l_hr = g_matroxAcqDevice.InternalTriggerEnable( triggerchannel );
-	
-	return l_hr;
+	return g_matroxAcqDevice.InternalTriggerEnable(digitizerHandle);
 }
 
-HRESULT WINAPI SVDigitizerInternalTrigger( unsigned long triggerchannel)
+HRESULT WINAPI SVDigitizerInternalTrigger(unsigned long digitizerHandle)
 {
-	HRESULT l_hr = g_matroxAcqDevice.InternalTrigger( triggerchannel);
-	
-	return l_hr;
+	return g_matroxAcqDevice.InternalTrigger(digitizerHandle);
 }
 
-HRESULT WINAPI SVDigitizerDestroyBuffers( unsigned long triggerchannel )
+_variant_t WINAPI SVDigitizerParameterGetName(unsigned long digitizerHandle, int parameterID)
 {
-	HRESULT l_hr = g_matroxAcqDevice.CameraBufferDestroyAll( triggerchannel );
-
-	return l_hr;
+	return g_matroxAcqDevice.CameraGetParameterName(digitizerHandle, parameterID);
 }
 
-HRESULT WINAPI SVDigitizerParameterGetList( unsigned long triggerchannel, VARIANT *p_pvarValue )
+_variant_t WINAPI SVDigitizerParameterGetValue(unsigned long digitizerHandle, int parameterID)
 {
-	HRESULT l_hr = g_matroxAcqDevice.CameraGetParameterList( triggerchannel, p_pvarValue );
-
-	return l_hr;
+	return g_matroxAcqDevice.CameraGetParameter(digitizerHandle, parameterID);
 }
 
-HRESULT WINAPI SVDigitizerParameterGetName( unsigned long triggerchannel, int p_iParameterID, BSTR *p_pbstrName )
+HRESULT WINAPI SVDigitizerParameterSetValue(unsigned long digitizerHandle, int parameter, const _variant_t& rValue)
 {
-	HRESULT l_hr = g_matroxAcqDevice.CameraGetParameterName( triggerchannel, p_iParameterID, p_pbstrName );
-
-	return l_hr;
+	return g_matroxAcqDevice.CameraSetParameter(digitizerHandle, parameter, rValue);
 }
 
-HRESULT WINAPI SVDigitizerParameterGetValue( unsigned long triggerchannel, int p_iParameter, int *p_piParameterType, VARIANT *p_pvarValue )
+_variant_t WINAPI SVDigitizerParameterGetList(unsigned long digitizerHandle)
 {
-	HRESULT l_hr = g_matroxAcqDevice.CameraGetParameter( triggerchannel, p_iParameter, p_piParameterType, p_pvarValue );
-
-	return l_hr;
+	return g_matroxAcqDevice.CameraGetParameterList(digitizerHandle);
 }
 
-HRESULT WINAPI SVDigitizerParameterSetValue( unsigned long triggerchannel, int p_iParameter, int p_iParameterType, VARIANT *p_pvarValue )
-{
-	HRESULT l_hr = g_matroxAcqDevice.CameraSetParameter( triggerchannel, p_iParameter, p_iParameterType, p_pvarValue );
-
-	return l_hr;
-}
-
-HRESULT WINAPI SVDigitizerSetParameters( unsigned long triggerchannel, const SVDeviceParamCollection* p_pParameters )
-{
-	HRESULT l_hr = S_OK;
-	
-	SVDeviceParamMap::const_iterator iter;
-	for (iter = p_pParameters->mapParameters.begin(); iter != p_pParameters->mapParameters.end(); ++iter)
-	{
-		const SVDeviceParamWrapper& w = iter->second;
-		if ( nullptr != ((const SVDeviceParam*) w) )
-		{
-			SVDigitizerSetParameter( triggerchannel, &w );
-		}
-	}
-
-	return l_hr;
-}
-
-HRESULT WINAPI SVDigitizerSetParameter( unsigned long , const SVDeviceParamWrapper* p_pParameter )
-{
-	HRESULT l_hr = S_OK;
-
-	if ( nullptr != p_pParameter )
-	{
-		const SVDeviceParamWrapper& rw = *p_pParameter;
-		if ( nullptr != ((const SVDeviceParam*) rw) )
-		{
-			switch ( rw->Type() )
-			{
-				case DeviceParamLightReference:
-				{
-					const SVLightReferenceDeviceParam* pLR = rw.DerivedValue( pLR );
-					l_hr = S_FALSE;
-					break;
-				}
-
-				case DeviceParamLut:
-				{
-					const SVLutDeviceParam* pLut = rw.DerivedValue( pLut );
-					l_hr = S_FALSE;
-					break;
-				}
-
-				default:
-				{
-					l_hr = S_FALSE;
-					break;
-				}
-			}
-		}
-	}
-	return l_hr;
-}
-
-HRESULT WINAPI SVDigitizerGetParameter( unsigned long , SVDeviceParamEnum p_eParameter, SVDeviceParamWrapper** p_ppParameter )
-{
-	HRESULT l_hr = S_OK;
-	
-	if ( nullptr != p_ppParameter )
-	{
-		*p_ppParameter = new SVDeviceParamWrapper;
-		SVDeviceParamWrapper& rw = **p_ppParameter;
-		switch ( p_eParameter )
-		{
-			case DeviceParamLightReference:
-			{
-				rw = SVLightReferenceDeviceParam();
-				SVLightReferenceDeviceParam* pLR = rw.DerivedValue( pLR );
-				l_hr = S_FALSE;
-				break;
-			}
-
-			case DeviceParamLut:
-			{
-				rw = SVLutDeviceParam();
-				SVLutDeviceParam* pParam = rw.DerivedValue( pParam );
-				l_hr = S_FALSE;
-				break;
-			}
-
-			default:
-			{
-				l_hr = S_FALSE;
-				break;
-			}
-		}
-	}
-	return l_hr;
-}
-
-HRESULT WINAPI SVDigitizerScanForCameras()
+void WINAPI SVDigitizerScanForCameras()
 {
 	g_matroxAcqDevice.ScanForCameras();
-
-	return S_OK;
 }
 

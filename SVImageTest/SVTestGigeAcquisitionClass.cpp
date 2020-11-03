@@ -59,7 +59,7 @@ HRESULT SVTestGigeAcquisitionClass::SetDeviceParameters( const SVDeviceParamColl
 {
 	// Send notification to start tracking main camera parameters
 	_variant_t dummy;
-	HRESULT hr = m_rSubsystem.m_svDigitizers.ParameterSetValue(m_hDigitizer, SvDef::SVGigeBeginTrackParameters, 0, &dummy);
+	HRESULT hr = m_rSubsystem.m_svDigitizers.ParameterSetValue(m_hDigitizer, SvDef::SVGigeBeginTrackParameters, dummy);
 
 	if ( S_OK == hr )
 	{
@@ -90,7 +90,7 @@ bool SVTestGigeAcquisitionClass::StartAcquire(SVCameraPage& p_rDisplay)
 
 	// Send notification to end tracking main camera parameters
 	_variant_t dummy;
-	HRESULT hr = m_rSubsystem.m_svDigitizers.ParameterSetValue(m_hDigitizer, SvDef::SVGigeEndTrackParameters, 0, &dummy);
+	HRESULT hr = m_rSubsystem.m_svDigitizers.ParameterSetValue(m_hDigitizer, SvDef::SVGigeEndTrackParameters, dummy);
 	if (S_OK == hr)
 	{
 		// Send Strobe & trigger

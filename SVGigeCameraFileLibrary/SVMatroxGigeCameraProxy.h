@@ -12,6 +12,7 @@
 
 #pragma region Includes
 #include "SVGigeCameraProxy.h"
+#include "CameraLibrary/SVDeviceParam.h"
 #pragma endregion Includes
 
 namespace SvTh

@@ -35,31 +35,24 @@ public:
 	// Digital I/O
 	unsigned long GetInputCount();
 	unsigned long GetOutputCount();
-	unsigned long GetPortCount();
 
-	HRESULT GetInputValue(unsigned long* pValue);
-	HRESULT SetOutputValue(unsigned long value);
 	HRESULT SetOutputData(unsigned long triggerIndex, const SvTi::IntVariantMap& rData);
-	HRESULT GetInputBit(unsigned long bitNum, bool& bitVal);
-	HRESULT SetOutputBit(unsigned long bitNum, bool bitVal);
-	
-	HRESULT GetBoardVersion(long& p_rlVer);
 
 	// Triggers
-	unsigned long GetTriggerCount();
-	unsigned long GetTriggerHandle(unsigned long triggerIndex);
-	BSTR GetTriggerName(unsigned long triggerIndex);
+	unsigned long GetTriggerCount() const;
+	unsigned long GetTriggerHandle(unsigned long triggerIndex) const;
+	_variant_t GetTriggerName(unsigned long triggerIndex) const;
 
-	HRESULT TriggerGetParameterCount(unsigned long triggerIndex, unsigned long *pCount);
-	HRESULT TriggerGetParameterName(unsigned long triggerIndex, unsigned long ulIndex, BSTR *pName);
-	HRESULT TriggerGetParameterValue(unsigned long triggerIndex, unsigned long ulIndex, VARIANT *pValue);
-	HRESULT TriggerSetParameterValue(unsigned long triggerIndex, unsigned long ulIndex, VARIANT *pValue);
+	unsigned long TriggerGetParameterCount(unsigned long triggerIndex) const;
+	_variant_t TriggerGetParameterName(unsigned long triggerIndex, unsigned long ulIndex) const;
+	_variant_t TriggerGetParameterValue(unsigned long triggerIndex, unsigned long ulIndex) const;
+	HRESULT TriggerSetParameterValue(unsigned long triggerIndex, unsigned long ulIndex, const _variant_t& rValue);
 
 	// Non-Trigger Parameter Functions
-	HRESULT GetParameterCount(unsigned long *pulCount);
-	HRESULT GetParameterName(unsigned long ulIndex, BSTR *pName);
-	HRESULT GetParameterValue(unsigned long ulIndex, VARIANT *pValue);
-	HRESULT SetParameterValue(unsigned long ulIndex, VARIANT *pValue);
+	unsigned long GetParameterCount() const;
+	_variant_t GetParameterName(unsigned long ulIndex) const;
+	_variant_t GetParameterValue(unsigned long ulIndex) const;
+	HRESULT SetParameterValue(unsigned long ulIndex, const _variant_t& rValue);
 #pragma endregion Public Methods
 
 #pragma region Private Methods

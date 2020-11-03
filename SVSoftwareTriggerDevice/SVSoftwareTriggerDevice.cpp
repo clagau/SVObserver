@@ -52,124 +52,94 @@ HRESULT SVSoftwareTriggerDevice::Initialize(bool init)
 	return hr;
 }
 
-unsigned long SVSoftwareTriggerDevice::GetTriggerCount()
+unsigned long SVSoftwareTriggerDevice::GetTriggerCount() const
 {
 	return cMaxSoftwareTriggers;
 }
 
-unsigned long SVSoftwareTriggerDevice::GetTriggerHandle(unsigned long index)
+unsigned long SVSoftwareTriggerDevice::GetTriggerHandle(unsigned long index) const
 {
 	return index + 1;
 }
 
-BSTR SVSoftwareTriggerDevice::GetTriggerName(unsigned long triggerIndex)
+_variant_t SVSoftwareTriggerDevice::GetTriggerName(unsigned long triggerIndex) const
 {
+	_variant_t result;
 	std::string triggerName {cTriggerName};
-
 	triggerName += std::to_string(triggerIndex - 1);
-	BSTR name = _bstr_t(triggerName.c_str()).Detach();
-	return name;
+	result.SetString(triggerName.c_str());
+	return result;
 }
 
-HRESULT SVSoftwareTriggerDevice::TriggerGetParameterCount(unsigned long , unsigned long* pCount)
+unsigned long SVSoftwareTriggerDevice::TriggerGetParameterCount(unsigned long) const
 {
-	HRESULT l_hrOk = S_FALSE;
-
-	if ( nullptr != pCount )
-	{
-		*pCount = 2;
-		l_hrOk = S_OK;
-	}
-	return l_hrOk;
+	return 2UL;
 }
 
-HRESULT SVSoftwareTriggerDevice::TriggerGetParameterName( unsigned long, unsigned long index, BSTR* pName )
+_variant_t SVSoftwareTriggerDevice::TriggerGetParameterName( unsigned long, unsigned long index) const
 {
-	HRESULT l_hrOk = S_FALSE;
+	_variant_t result;
 
-	if ( nullptr != pName)
+	// SVTriggerPeriod and SVBoardVersion enums are used here to make the code more clear.
+	// however at some time in the future the Dll parameters may be implemented
+	// as an array and therefore this enum may not apply.
+	switch (index)
 	{
-		if ( nullptr != *pName)
-		{
-			::SysFreeString(*pName);
-			*pName = nullptr;
-		}
-
-		// SVTriggerPeriod and SVBoardVersion enums are used here to make the code more clear.
-		// however at some time in the future the Dll parameters may be implemented
-		// as an array and therefore this enum may not apply.
-		switch ( index )
-		{
-			case SVTriggerPeriod:
-			*pName = ::SysAllocString( L"Trigger Timer Period" );
+		case SVTriggerPeriod:
+			result.SetString(_T("Trigger Timer Period"));
 			break;
 			
-			case SVBoardVersion:
-			*pName = ::SysAllocString( L"Board Version");
+		case SVBoardVersion:
+			result.SetString(_T("Board Version"));
+			break;
+	}
+	return result;
+}
+
+_variant_t SVSoftwareTriggerDevice::TriggerGetParameterValue( unsigned long triggerIndex, unsigned long Index) const
+{
+	_variant_t result;
+
+	// SVTriggerPeriod and SVBoardVersion enums are used here to make the code more clear.
+	// however at some time in the future the Dll parameters may be implemented
+	// as an array and therefore this enum may not apply.
+	switch ( Index)
+	{
+		case SVTriggerPeriod:
+		{
+			result = GetTriggerPeriod(triggerIndex);
 			break;
 		}
-		if ( nullptr != *pName)
-		{
-			l_hrOk = S_OK;
-		}
-	}
-	return l_hrOk;
-}
-
-HRESULT SVSoftwareTriggerDevice::TriggerGetParameterValue( unsigned long triggerIndex, unsigned long Index, VARIANT* pValue )
-{
-	HRESULT l_hrOk = S_FALSE;
-
-	if ( nullptr != pValue && S_OK == ::VariantClear( pValue ))
-	{
-		// SVTriggerPeriod and SVBoardVersion enums are used here to make the code more clear.
-		// however at some time in the future the Dll parameters may be implemented
-		// as an array and therefore this enum may not apply.
-		switch ( Index)
-		{
-			case SVTriggerPeriod:
-			{
-				pValue->vt = VT_I4;
-				pValue->lVal = GetTriggerPeriod(triggerIndex);
-				l_hrOk = S_OK;
-				break;
-			}
 				
-			case SVBoardVersion:
-			{
-				pValue->vt = VT_BSTR;
-				pValue->bstrVal = ::SysAllocString(L"Software Trigger Module 1.0 firmware 0x0500");;
-				l_hrOk = S_OK;
-				break;
-			}
-
-			default:
-				break;
+		case SVBoardVersion:
+		{
+			result.SetString(_T("Software Trigger Module 1.0 firmware 0x0500"));
+			break;
 		}
+
+		default:
+			break;
 	}
-	return l_hrOk;
+	return result;
 }
 
-HRESULT SVSoftwareTriggerDevice::TriggerSetParameterValue( unsigned long triggerIndex, unsigned long Index, VARIANT* pValue )
+HRESULT SVSoftwareTriggerDevice::TriggerSetParameterValue( unsigned long triggerIndex, unsigned long Index, const _variant_t& rValue )
 {
-	HRESULT l_hrOk = S_FALSE;
+	HRESULT result{ E_FAIL };
 
-	if ( nullptr != pValue )
+	switch (Index)
 	{
-		switch (Index)
+		case SVTriggerPeriod:
 		{
-			case SVTriggerPeriod:
+			if(VT_I4 == rValue.vt)
 			{
-				if( pValue->vt == VT_I4 )
-				{
-					l_hrOk = SetTriggerPeriod( triggerIndex, pValue->lVal );
-				}
-				break;
+				result = SetTriggerPeriod(triggerIndex, rValue.lVal);
 			}
+			break;
 		}
 	}
 
-	return l_hrOk;
+	return result;
 }
 
 void SVSoftwareTriggerDevice::dispatchTrigger(unsigned long triggerIndex)

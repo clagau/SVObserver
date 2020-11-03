@@ -13,12 +13,12 @@
 #include "SVMatroxGigeCameraParam.h"
 #pragma endregion Includes
 
-SVMatroxGigeCameraParam::SVMatroxGigeCameraParam(int p_ParameterID, int p_ParameterTypeID, _variant_t& p_rValue)
-: m_ParameterID(p_ParameterID), m_ParameterTypeID(p_ParameterTypeID), m_value(p_rValue)
+SVMatroxGigeCameraParam::SVMatroxGigeCameraParam(int p_ParameterID, _variant_t& p_rValue)
+: m_ParameterID(p_ParameterID), m_value(p_rValue)
 {
 }
 SVMatroxGigeCameraParam::SVMatroxGigeCameraParam(const SVMatroxGigeCameraParam& rParam)
-: m_ParameterID(rParam.m_ParameterID), m_ParameterTypeID(rParam.m_ParameterTypeID), m_value(rParam.m_value)
+: m_ParameterID(rParam.m_ParameterID), m_value(rParam.m_value)
 { 
 }
 
@@ -35,7 +35,6 @@ SVMatroxGigeCameraParam& SVMatroxGigeCameraParam::operator=(const SVMatroxGigeCa
 void SVMatroxGigeCameraParam::Copy(const SVMatroxGigeCameraParam& rParam)
 {
 	m_ParameterID = rParam.m_ParameterID;
-	m_ParameterTypeID = rParam.m_ParameterTypeID;
 	m_value = rParam.m_value;
 }
 

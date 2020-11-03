@@ -30,7 +30,7 @@ SVCameraPropDlgClass::SVCameraPropDlgClass(CWnd* pParent /*=nullptr*/)
 	//}}AFX_DATA_INIT
 
 	m_psvDigitizers = nullptr;
-	m_triggerchannel = 0;
+	m_digitizerHandle = 0;
 }
 
 SVCameraPropDlgClass::~SVCameraPropDlgClass()
@@ -69,88 +69,70 @@ BOOL SVCameraPropDlgClass::OnInitDialog()
 
 	if( nullptr != m_psvDigitizers )
 	{
-		VARIANT l_varList;
+		_variant_t varList = m_psvDigitizers->ParameterGetList( m_digitizerHandle);
 
-		::VariantInit( &l_varList );
-
-		m_psvDigitizers->ParameterGetList( m_triggerchannel, &l_varList );
-
-		if( ( l_varList.vt & VT_ARRAY ) == VT_ARRAY )
+		if( (varList.vt & VT_ARRAY ) == VT_ARRAY )
 		{
-			long lLBound, lUBound;
-			SafeArrayGetLBound(l_varList.parray, 1, &lLBound);
-			SafeArrayGetUBound(l_varList.parray, 1, &lUBound);
-
-			int l_iIndex = -1;
+			long index{ -1L };
+			long lLBound{ 0L }; 
+			long lUBound{ 0L };
+			SafeArrayGetLBound(varList.parray, 1, &lLBound);
+			SafeArrayGetUBound(varList.parray, 1, &lUBound);
 
 			// iterate safearray
 			for ( long i=lLBound; i <= lUBound; i++)
 			{
-				int l_iParameterID = 0;
-				int l_iParameterTypeID = 0;
+				int parameterID = 0;
 
-				BSTR l_bstrName = nullptr;
-				VARIANT l_varValue;
-
-				::VariantInit( &l_varValue );
-
-				::SafeArrayGetElement(l_varList.parray, &i, &l_iParameterID);
-
-				if( S_OK == m_psvDigitizers->ParameterGetName( m_triggerchannel, l_iParameterID, &l_bstrName ) )
+				::SafeArrayGetElement(varList.parray, &i, &parameterID);
+				_variant_t name = m_psvDigitizers->ParameterGetName(m_digitizerHandle, parameterID);
+				if(VT_EMPTY != name.vt)
 				{
-					m_psvDigitizers->ParameterGetValue( m_triggerchannel, l_iParameterID, &l_iParameterTypeID, &l_varValue );
+					_variant_t varValue = m_psvDigitizers->ParameterGetValue( m_digitizerHandle, parameterID);
 
-					std::string Name;
+					std::string parameterName{ SvUl::createStdString(name)};
 
-					Name = SvUl::createStdString( _bstr_t(l_bstrName) );
-
-					l_iIndex = m_svListCtrl.InsertItem( l_iIndex + 1, Name.c_str() );
+					index = m_svListCtrl.InsertItem(index + 1, parameterName.c_str() );
 					
-					if ( l_iIndex > -1 )
+					if ( index > -1 )
 					{
 						std::string Data;
 
-						switch( l_varValue.vt )
+						switch(varValue.vt)
 						{
 							case VT_I4:
 							{
-								Data = SvUl::Format( _T("%d"), l_varValue.lVal );
+								Data = SvUl::Format( _T("%d"), varValue.lVal );
 								break;
 							}
 							case VT_UI4:
 							{
-								Data = SvUl::Format( _T("0x%04X"), l_varValue.ulVal );
+								Data = SvUl::Format( _T("0x%04X"), varValue.ulVal );
 								break;
 							}
 							case VT_R4:
 							{
-								Data = SvUl::Format( _T("%f"), l_varValue.fltVal );
+								Data = SvUl::Format( _T("%f"), varValue.fltVal );
 								break;
 							}
 							case VT_R8:
 							{
-								Data = SvUl::Format( _T("%lf"), l_varValue.dblVal );
+								Data = SvUl::Format( _T("%lf"), varValue.dblVal );
 								break;
 							}
 							case VT_BSTR:
 							{
-								Data = SvUl::createStdString( _bstr_t( l_varValue.bstrVal) );
+								Data = SvUl::createStdString(varValue);
 								break;
 							}
 						}
 
-						m_svListCtrl.SetItemText( l_iIndex, 1, Data.c_str() );
-						m_svListCtrl.SetItemData( l_iIndex, l_iParameterID );
+						m_svListCtrl.SetItemText(index, 1, Data.c_str());
+						m_svListCtrl.SetItemData(index, parameterID );
 					}
-
-					::VariantClear( &l_varValue );
 				}
-
-				::SysFreeString( l_bstrName );
 			}
 		}
-
-		::VariantClear( &l_varList );
 	}
 	// End - Add Camera Parameters
 
@@ -174,17 +156,10 @@ void SVCameraPropDlgClass::OnOK()
 	for( int i = 0; i < l_iCount; i++ )
 	{
 		std::string Data = m_svListCtrl.GetItemText( i, 1 );
-		long l_lParameterID = static_cast<long>(m_svListCtrl.GetItemData( i ));
-		long l_lParameterTypeID = 0;
+		long parameterID = static_cast<long>(m_svListCtrl.GetItemData( i ));
+		_variant_t value = atol(Data.c_str());
 
-		VARIANT l_varValue;
-
-		::VariantInit( &l_varValue );
-
-		l_varValue.vt = VT_UI4;
-		l_varValue.lVal = atol( Data.c_str() );
-
-		m_psvDigitizers->ParameterSetValue( m_triggerchannel, l_lParameterID, l_lParameterTypeID, &l_varValue );
+		m_psvDigitizers->ParameterSetValue( m_digitizerHandle, parameterID, value);
 	}
 	
 	CDialog::OnOK();

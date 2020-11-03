@@ -208,9 +208,7 @@ void CSVImageTestDlg::OnRefresh()
 
 	if ( nullptr != m_pSubsystem )
 	{
-		unsigned long l_ulSize = 0;
-
-		m_pSubsystem->m_svDigitizers.GetCount( &l_ulSize );
+		unsigned long count = m_pSubsystem->m_svDigitizers.GetCount();
 
 		for ( unsigned long i = 0; i < 4; i++ )
 		{
@@ -222,25 +220,17 @@ void CSVImageTestDlg::OnRefresh()
 				m_Camera[ i ].m_lSelectedCamera = -1;
 			}
 
-			if( i < l_ulSize )
+			if( i < count )
 			{
 				m_Camera[ i ].m_pAcquisition = m_pSubsystem->GetAcquisitionDevice( i );
 
 				if( nullptr != m_Camera[ i ].m_pAcquisition )
 				{
-					unsigned long triggerchannel = 0;
+					unsigned long digitizerHandle = m_Camera[i].m_pAcquisition->m_rSubsystem.m_svDigitizers.GetHandle(i);
+					_variant_t name = m_Camera[ i ].m_pAcquisition->m_rSubsystem.m_svDigitizers.GetName(digitizerHandle);
 
-					BSTR l_bstrName = nullptr;
-					CString l_csName;
-
-					m_Camera[ i ].m_pAcquisition->m_rSubsystem.m_svDigitizers.GetHandle( &triggerchannel, i );
-					m_Camera[ i ].m_pAcquisition->m_rSubsystem.m_svDigitizers.GetName( triggerchannel, &l_bstrName );
-
-					l_csName = l_bstrName;
-
-					::SysFreeString( l_bstrName );
-
-					m_clbCameras.AddString( l_csName );
+					CString cameraName = name.bstrVal;
+					m_clbCameras.AddString(cameraName);
 
 					m_Camera[ i ].SelectCamera( i );
 					m_Camera[ i ].EnableWindow( true );

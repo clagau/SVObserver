@@ -38,10 +38,8 @@ void SVTestAcquisitionSubsystem::Destroy()
 
 SVTestAcquisitionClass* SVTestAcquisitionSubsystem::GetAcquisitionDevice( long selectedCamera )
 {
-	unsigned long triggerchannel = 0;
-
-	m_svDigitizers.GetHandle( &triggerchannel, selectedCamera );
+	unsigned long digitizerHandle = m_svDigitizers.GetHandle(selectedCamera);
 		
-	return new SVTestAcquisitionClass( *this, triggerchannel );
+	return new SVTestAcquisitionClass(*this, digitizerHandle);
 }
 

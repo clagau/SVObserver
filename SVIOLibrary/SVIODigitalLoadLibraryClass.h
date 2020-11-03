@@ -19,19 +19,19 @@ typedef  std::map<int, _variant_t> IntVariantMap;
 
 typedef HRESULT (WINAPI *SVCreatePtr)( void );
 typedef HRESULT (WINAPI *SVDestroyPtr)( void );
-typedef HRESULT (WINAPI *SVInputGetCountPtr)( unsigned long* );
-typedef HRESULT (WINAPI *SVInputGetValuePtr)( unsigned long, bool* );
-typedef HRESULT (WINAPI *SVInputGetValuesPtr)( unsigned long* );
-typedef HRESULT (WINAPI *SVOutputGetCountPtr)( unsigned long* );
-typedef HRESULT (WINAPI *SVOutputSetValuePtr)( unsigned long, bool );
-typedef HRESULT (WINAPI *SVOutputGetPortCountPtr)( unsigned long * );
-typedef HRESULT(WINAPI *SVOutputSetPortValuePtr)(unsigned long, unsigned long);
-typedef HRESULT(WINAPI *SVOutputSetDataPtr)(unsigned long, const IntVariantMap&);
+typedef unsigned long (WINAPI *SVInputGetCountPtr)();
+typedef bool (WINAPI *SVInputGetValuePtr)(unsigned long);
+typedef unsigned long (WINAPI *SVInputGetValuesPtr)();
+typedef unsigned long (WINAPI *SVOutputGetCountPtr)();
+typedef HRESULT (WINAPI *SVOutputSetValuePtr)(unsigned long, bool);
+typedef unsigned long (WINAPI *SVOutputGetPortCountPtr)();
+typedef HRESULT (WINAPI *SVOutputSetPortValuePtr)(unsigned long, unsigned long);
+typedef HRESULT (WINAPI *SVOutputSetDataPtr)(unsigned long, const IntVariantMap&);
 
-typedef HRESULT (WINAPI *SVGetParameterCountPtr)( unsigned long* );
-typedef HRESULT (WINAPI *SVGetParameterNamePtr)( unsigned long, BSTR* );
-typedef HRESULT (WINAPI *SVGetParameterValuePtr)( unsigned long, VARIANT* );
-typedef HRESULT (WINAPI *SVSetParameterValuePtr)( unsigned long , VARIANT* );
+typedef unsigned long (WINAPI *SVGetParameterCountPtr)();
+typedef _variant_t (WINAPI *SVGetParameterNamePtr)( unsigned long);
+typedef _variant_t(WINAPI *SVGetParameterValuePtr)(unsigned long);
+typedef HRESULT (WINAPI *SVSetParameterValuePtr)( unsigned long , const _variant_t&);
 
 class SVIODigitalLoadLibraryClass  
 {
@@ -42,23 +42,23 @@ public:
 	HRESULT Open(LPCTSTR library);
 	HRESULT Close();
 	
-	HRESULT GetInputCount( unsigned long* pCount );
-	HRESULT GetInputValue( unsigned long channel, bool* pValue );
-	HRESULT GetInputValues( unsigned long* pValue );
+	unsigned long GetInputCount() const;
+	bool GetInputValue(unsigned long channel) const;
+	unsigned long GetInputValues() const;
 
-	HRESULT GetOutputCount( unsigned long* pCount );
-	HRESULT SetOutputValue( unsigned long channel, bool value );
+	unsigned long GetOutputCount() const;
+	HRESULT SetOutputValue(unsigned long channel, bool value);
 
-	HRESULT GetOutputPortCount( unsigned long* pCount );
-	HRESULT SetOutputPortValue( unsigned long port, unsigned long value );
+	unsigned long GetOutputPortCount() const;
+	HRESULT SetOutputPortValue(unsigned long port, unsigned long value);
 
 	HRESULT SetOutputData(unsigned long channel, const IntVariantMap& rData);
 
 	// Parameter related functions. Not implemented in all dlls.
-	HRESULT GetParameterCount( unsigned long* pCount );
-	HRESULT GetParameterName( unsigned long index, BSTR* pName );
-	HRESULT GetParameterValue( unsigned long index, VARIANT* pValue );
-	HRESULT SetParameterValue( unsigned long index, VARIANT* pValue );
+	unsigned long GetParameterCount() const;
+	_variant_t GetParameterName( unsigned long index) const;
+	_variant_t GetParameterValue( unsigned long index) const;
+	HRESULT SetParameterValue( unsigned long index, const _variant_t& rValue );
 private:
 	HMODULE m_Handle {nullptr};
 

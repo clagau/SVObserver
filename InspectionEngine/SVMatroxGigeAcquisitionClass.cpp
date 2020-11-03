@@ -73,14 +73,13 @@ bool SVMatroxGigeAcquisitionClass::IsValidBoard() const
 
 	if( bOk && m_DeviceParams.ParameterExists( DeviceParamVendorId ) )
 	{
-		SvTh::SVDigitizerLoadLibraryClass* l_psvLibrary = m_rDigitizerProc.GetDigitizerSubsystem(m_DigName.c_str());
-		VARIANT value;
-		::VariantInit(&value);
-		if( nullptr != l_psvLibrary && S_OK == l_psvLibrary->ParameterGetValue( m_hDigitizer, 100, 0, &value ) )
+		SvTh::SVDigitizerLoadLibraryClass* pLibrary = m_rDigitizerProc.GetDigitizerSubsystem(m_DigName.c_str());
+		if( nullptr != pLibrary)
 		{
-			std::string l_csVenderId = SvUl::createStdString(_variant_t(value));
+			_variant_t value = pLibrary->ParameterGetValue(m_hDigitizer, SvDef::SVGigeParameterEnum::SVGigeParameterVendorName);
+			std::string vendorId = SvUl::createStdString(value);
 
-			bOk = l_csVenderId == StringValue( m_DeviceParams.Parameter( DeviceParamVendorId ) );
+			bOk = vendorId == StringValue( m_DeviceParams.Parameter(DeviceParamVendorId));
 		}
 	}
 	
@@ -661,7 +660,7 @@ HRESULT SVMatroxGigeAcquisitionClass::SetDeviceParameters( const SVDeviceParamCo
 	if ( IsDigitizerSubsystemValid() && CameraMatchesCameraFile())
 	{
 		_variant_t dummy;
-		hr = m_rDigitizerProc.GetDigitizerSubsystem(m_DigName.c_str())->ParameterSetValue(m_hDigitizer, SvDef::SVGigeBeginTrackParameters, 0, &dummy);
+		hr = m_rDigitizerProc.GetDigitizerSubsystem(m_DigName.c_str())->ParameterSetValue(m_hDigitizer, SvDef::SVGigeBeginTrackParameters, dummy);
 	}
 	if ( S_OK == hr )
 	{
@@ -772,14 +771,13 @@ HRESULT SVMatroxGigeAcquisitionClass::SetGigeFeatureOverrides(const std::string&
 HRESULT SVMatroxGigeAcquisitionClass::StartDigitizer()
 {
 	HRESULT hr = S_OK;
-	
-	// Send notification to end tracking main camera parameters
-	_variant_t dummy;
 
 	SvTh::SVDigitizerLoadLibraryClass* pDigitizer = m_rDigitizerProc.GetDigitizerSubsystem(m_DigName.c_str());
 	if (pDigitizer)
 	{
-		hr = m_rDigitizerProc.GetDigitizerSubsystem(m_DigName.c_str())->ParameterSetValue(m_hDigitizer, SvDef::SVGigeEndTrackParameters, 0, &dummy);
+		// Send notification to end tracking main camera parameters
+		_variant_t dummy;
+		hr = m_rDigitizerProc.GetDigitizerSubsystem(m_DigName.c_str())->ParameterSetValue(m_hDigitizer, SvDef::SVGigeEndTrackParameters, dummy);
 
 		if( S_OK == hr )
 		{

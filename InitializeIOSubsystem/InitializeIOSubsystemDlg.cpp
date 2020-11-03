@@ -194,29 +194,33 @@ void CInitializeIOSubsystemDlg::OnTimer(UINT_PTR nIDEvent)
 	if( m_bLptIOInitialized )
 	{
 		CDialog::OnTimer(nIDEvent);
-		VARIANT l_vVal;
-		::VariantInit( &l_vVal );
-		HRESULT Result = m_IOSystem.GetParameterValue( SVBoardVersion, &l_vVal );
-		if( S_OK == Result )
+		_variant_t value = m_IOSystem.GetParameterValue(SVBoardVersion);
+		bool rabbitBoardPresent{ false };
+		if(VT_EMPTY != value.vt)
 		{
-			m_strVer = l_vVal.bstrVal;
-			::VariantClear( &l_vVal );
+			rabbitBoardPresent = true;
+			m_strVer = value.bstrVal;
 			//! Note Version with 255.255 means the Rabbit board has not been found
 			if( -1 != m_strVer.Find(_T("255.255")) )
 			{
-				Result = E_FAIL;
+				rabbitBoardPresent = false;
 			}
 			else if( m_FanSpeed.IsEmpty() )
 			{
-				::VariantInit( &l_vVal );
-				Result = m_IOSystem.GetParameterValue( SVFanFreq, &l_vVal );
-				long FanSpeed( l_vVal.lVal );
-				::VariantClear( &l_vVal );
-				m_FanSpeed.Format(_T("Fan1: %ld, Fan2: %ld, Fan3: %ld, Fan4: %ld"), FanSpeed & 0xff, (FanSpeed >> 8) & 0xff, (FanSpeed >> 16) & 0xff, (FanSpeed >> 24) & 0xff  );
-				m_strLog.push_back( m_FanSpeed );
+				value = m_IOSystem.GetParameterValue(SVFanFreq);
+				if (VT_EMPTY != value.vt)
+				{
+					long FanSpeed{ value.lVal };
+					m_FanSpeed.Format(_T("Fan1: %ld, Fan2: %ld, Fan3: %ld, Fan4: %ld"), FanSpeed & 0xff, (FanSpeed >> 8) & 0xff, (FanSpeed >> 16) & 0xff, (FanSpeed >> 24) & 0xff);
+					m_strLog.push_back(m_FanSpeed);
+				}
+				else
+				{
+					rabbitBoardPresent = false;
+				}
 			}
 		}
-		if( S_OK == Result )
+		if(rabbitBoardPresent)
 		{
 			m_lGoodCounter++;
 			if( m_bToggle )

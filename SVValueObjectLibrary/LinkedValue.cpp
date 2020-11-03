@@ -418,15 +418,7 @@ namespace SvVol
 		__super::GetValue(Value);
 
 
-		std::string objectIdAndIndexString;
-		try
-		{
-			objectIdAndIndexString = SvUl::createStdString(Value);
-		}
-		catch (...)
-		{
-			objectIdAndIndexString.clear();
-		}
+		std::string objectIdAndIndexString = SvUl::createStdString(Value);
 
 		SVObjectReference LinkedObjectRef(objectIdAndIndexString);
 

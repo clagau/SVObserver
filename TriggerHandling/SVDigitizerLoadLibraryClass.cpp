@@ -12,6 +12,8 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVDigitizerLoadLibraryClass.h"
+#include "CameraLibrary/SVDeviceParamCollection.h"
+#include "SVImageLibrary/SVAcquisitionBufferInterface.h"
 #pragma endregion Includes
 
 
@@ -50,21 +52,19 @@ namespace SvTh
 				m_pGetBufferHeight = (SVDigitizerGetBufferHeightPtr) ::GetProcAddress(m_handle, "SVDigitizerGetBufferHeight");
 				m_pGetBufferFormat = (SVDigitizerGetBufferFormatPtr) ::GetProcAddress(m_handle, "SVDigitizerGetBufferFormat");
 				m_pCreateBuffers = (SVDigitizerCreateBuffersPtr) ::GetProcAddress(m_handle, "SVDigitizerCreateBuffers");
+				m_pDestroyBuffers = (SVDigitizerDestroyBuffersPtr) ::GetProcAddress(m_handle, "SVDigitizerDestroyBuffers");
 				m_pRegisterBufferInterface = (SVDigitizerRegisterBufferInterfacePtr) ::GetProcAddress(m_handle, "SVDigitizerRegisterBufferInterface");
+				m_pUnregisterBufferInterface = (SVDigitizerUnregisterBufferInterfacePtr) ::GetProcAddress(m_handle, "SVDigitizerUnregisterBufferInterface");
 				m_pStart = (SVDigitizerStartPtr) ::GetProcAddress(m_handle, "SVDigitizerStart");
 				m_pStop = (SVDigitizerStopPtr) ::GetProcAddress(m_handle, "SVDigitizerStop");
-				m_pUnregisterBufferInterface = (SVDigitizerUnregisterBufferInterfacePtr) ::GetProcAddress(m_handle, "SVDigitizerUnregisterBufferInterface");
 				m_pInternalTriggerEnable = (SVDigitizerInternalTriggerEnablePtr) ::GetProcAddress(m_handle, "SVDigitizerInternalTriggerEnable");
 				m_pInternalTrigger = (SVDigitizerInternalTriggerPtr) ::GetProcAddress(m_handle, "SVDigitizerInternalTrigger");
-				m_pDestroyBuffers = (SVDigitizerDestroyBuffersPtr) ::GetProcAddress(m_handle, "SVDigitizerDestroyBuffers");
-				m_pSetParameters = (SVDigitizerSetParametersPtr) ::GetProcAddress(m_handle, "SVDigitizerSetParameters");
-				m_pSetParameter = (SVDigitizerSetParameterPtr) ::GetProcAddress(m_handle, "SVDigitizerSetParameter");
-				m_pGetParameter = (SVDigitizerGetParameterPtr) ::GetProcAddress(m_handle, "SVDigitizerGetParameter");
 
 				m_pParameterGetList = (SVDigitizerParameterGetListPtr) ::GetProcAddress(m_handle, "SVDigitizerParameterGetList");
 				m_pParameterGetName = (SVDigitizerParameterGetNamePtr) ::GetProcAddress(m_handle, "SVDigitizerParameterGetName");
 				m_pParameterGetValue = (SVDigitizerParameterGetValuePtr) ::GetProcAddress(m_handle, "SVDigitizerParameterGetValue");
 				m_pParameterSetValue = (SVDigitizerParameterSetValuePtr) ::GetProcAddress(m_handle, "SVDigitizerParameterSetValue");
+				m_pSetParameters = (SVDigitizerSetParametersPtr) ::GetProcAddress(m_handle, "SVDigitizerSetParameters");
 
 				m_pScanForCameras = (SVDigitizerScanForCamerasPtr) ::GetProcAddress(m_handle, "SVDigitizerScanForCameras");
 
@@ -83,10 +83,7 @@ namespace SvTh
 					nullptr != m_pUnregisterBufferInterface &&
 					nullptr != m_pInternalTriggerEnable &&
 					nullptr != m_pInternalTrigger &&
-					nullptr != m_pDestroyBuffers &&
-					nullptr != m_pSetParameters &&
-					nullptr != m_pSetParameter &&
-					nullptr != m_pGetParameter
+					nullptr != m_pDestroyBuffers
 					)
 				{
 					l_hrOk = m_pCreate();
@@ -149,8 +146,6 @@ namespace SvTh
 		m_pInternalTrigger = nullptr;
 		m_pDestroyBuffers = nullptr;
 		m_pSetParameters = nullptr;
-		m_pSetParameter = nullptr;
-		m_pGetParameter = nullptr;
 		m_pParameterGetList = nullptr;
 		m_pParameterGetName = nullptr;
 		m_pParameterGetValue = nullptr;
@@ -168,9 +163,9 @@ namespace SvTh
 	}
 
 	// cppcheck-suppress unusedFunction
-	HRESULT SVDigitizerLoadLibraryClass::GetLibraryName(BSTR *p_pbstrName)
+	_variant_t SVDigitizerLoadLibraryClass::GetLibraryName() const
 	{
-		HRESULT l_hrOk = S_FALSE;
+		_variant_t result;
 
 		if (nullptr != m_handle)
 		{
@@ -178,339 +173,229 @@ namespace SvTh
 
 			if (::GetModuleFileNameW(m_handle, szPath, MAX_PATH))
 			{
-				l_hrOk = S_OK;
 				WCHAR szFname[_MAX_FNAME];
 
 				_wsplitpath(szPath, nullptr, nullptr, szFname, nullptr);
 
-				_bstr_t fName(szFname);
-
-				if (nullptr != *p_pbstrName)
-				{
-					::SysFreeString(*p_pbstrName);
-
-					*p_pbstrName = nullptr;
-				}
-
-				// detach and assign it the the caller's variable
-				*p_pbstrName = fName.Detach();
+				result = szFname;
 			}
 		}
-
-		return l_hrOk;
+		return result;
 	}
 
-	/*
-	This method uses the p_psvGetCount attribute to call the DLL SVDigitizerGetCount function.  If the pointer to the method is invalid, an error code will be returned.  Otherwise, the status of the DLL function will be returned.
-	*/
-	HRESULT SVDigitizerLoadLibraryClass::GetCount(unsigned long *p_pulCount)
+	unsigned long SVDigitizerLoadLibraryClass::GetHandle(long index) const
 	{
-		HRESULT l_hrOk = S_FALSE;
-
-		if (nullptr != m_pGetCount)
-		{
-			l_hrOk = m_pGetCount(p_pulCount);
-		}
-
-		return l_hrOk;
-	}
-
-	/*
-	This method uses the p_psvGetHandle attribute to call the DLL SVDigitizerGetHandle function.  If the pointer to the method is invalid, an error code will be returned.  Otherwise, the status of the DLL function will be returned.
-	*/
-	HRESULT SVDigitizerLoadLibraryClass::GetHandle(SVHANDLE *p_phHandle, unsigned long p_ulIndex)
-	{
-		HRESULT l_hrOk = S_FALSE;
+		unsigned long result{ 0UL };
 
 		if (nullptr != m_pGetHandle)
 		{
-			l_hrOk = m_pGetHandle(p_phHandle, p_ulIndex);
+			result = m_pGetHandle(index);
 		}
-
-		return l_hrOk;
+		return result;
 	}
 
-	/*
-	This method uses the p_psvGetName attribute to call the DLL SVDigitizerGetName function.  If the pointer to the method is invalid, an error code will be returned.  Otherwise, the status of the DLL function will be returned.
-	*/
-	HRESULT SVDigitizerLoadLibraryClass::GetName(SVHANDLE p_hHandle, BSTR *p_pbstrName)
+	unsigned long SVDigitizerLoadLibraryClass::GetCount() const
 	{
-		HRESULT l_hrOk = S_FALSE;
+		unsigned long result{ 0UL };
 
+		if (nullptr != m_pGetCount)
+		{
+			result = m_pGetCount();
+		}
+		return result;
+	}
+
+	_variant_t SVDigitizerLoadLibraryClass::GetName(unsigned long digitizerHandle) const
+	{
+		_variant_t result;
 		if (nullptr != m_pGetName)
 		{
-			l_hrOk = m_pGetName(p_hHandle, p_pbstrName);
+			result = m_pGetName(digitizerHandle);
 		}
-
-		return l_hrOk;
+		return result;
 	}
 
-	/*
-	This method uses the p_psvGetBufferWidth attribute to call the DLL SVDigitizerGetBufferWidth function.  If the pointer to the method is invalid, an error code will be returned.  Otherwise, the status of the DLL function will be returned.
-	*/
-	HRESULT SVDigitizerLoadLibraryClass::GetBufferWidth(SVHANDLE p_hHandle, unsigned long *p_pulWidth)
+	unsigned long SVDigitizerLoadLibraryClass::GetBufferWidth(unsigned long digitizerHandle) const
 	{
-		HRESULT l_hrOk = S_FALSE;
+		unsigned long result{ 0UL };
 
 		if (nullptr != m_pGetBufferWidth)
 		{
-			l_hrOk = m_pGetBufferWidth(p_hHandle, p_pulWidth);
+			result = m_pGetBufferWidth(digitizerHandle);
 		}
-
-		return l_hrOk;
+		return result;
 	}
 
-	/*
-	This method uses the p_psvGetBufferHeight attribute to call the DLL SVDigitizerGetBufferHeight function.  If the pointer to the method is invalid, an error code will be returned.  Otherwise, the status of the DLL function will be returned.
-	*/
-	HRESULT SVDigitizerLoadLibraryClass::GetBufferHeight(SVHANDLE p_hHandle, unsigned long *p_pulHeight)
+	unsigned long SVDigitizerLoadLibraryClass::GetBufferHeight(unsigned long digitizerHandle) const
 	{
-		HRESULT l_hrOk = S_FALSE;
+		unsigned long result{ 0UL };
 
 		if (nullptr != m_pGetBufferHeight)
 		{
-			l_hrOk = m_pGetBufferHeight(p_hHandle, p_pulHeight);
+			result = m_pGetBufferHeight(digitizerHandle);
 		}
-
-		return l_hrOk;
+		return result;
 	}
 
-	/*
-	This method uses the p_psvGetBufferFormat attribute to call the DLL SVDigitizerGetBufferFormat function.  If the pointer to the method is invalid, an error code will be returned.  Otherwise, the status of the DLL function will be returned.
-	*/
-	HRESULT SVDigitizerLoadLibraryClass::GetBufferFormat(SVHANDLE p_hHandle, int *p_piFormat)
+	int SVDigitizerLoadLibraryClass::GetBufferFormat(unsigned long digitizerHandle) const
 	{
-		HRESULT l_hrOk = S_FALSE;
+		int result{0};
 
 		if (nullptr != m_pGetBufferFormat)
 		{
-			l_hrOk = m_pGetBufferFormat(p_hHandle, p_piFormat);
+			result = m_pGetBufferFormat(digitizerHandle);
 		}
-
-		return l_hrOk;
+		return result;
 	}
 
-	/*
-	This method uses the p_psvCreateBuffers attribute to call the DLL SVDigitizerCreateBuffers function.  If the pointer to the method is invalid, an error code will be returned.  Otherwise, the status of the DLL function will be returned.
-	*/
-	HRESULT SVDigitizerLoadLibraryClass::CreateBuffers(SVHANDLE p_hHandle)
+	HRESULT SVDigitizerLoadLibraryClass::CreateBuffers(unsigned long digitizerHandle)
 	{
-		HRESULT l_hrOk = S_FALSE;
+		HRESULT result{ E_FAIL };
 
 		if (nullptr != m_pCreateBuffers)
 		{
-			l_hrOk = m_pCreateBuffers(p_hHandle);
+			result = m_pCreateBuffers(digitizerHandle);
 		}
-
-		return l_hrOk;
+		return result;
 	}
 
-	/*
-	This method uses the m_pRegisterBufferInterface attribute to call the DLL SVDigitizerRegisterBufferInterface function.  If the pointer to the method is invalid, an error code will be returned.  Otherwise, the status of the DLL function will be returned.
-	*/
-	HRESULT SVDigitizerLoadLibraryClass::RegisterBufferInterface(SVHANDLE p_hHandle, SVAcquisitionBufferInterface* pInterface)
+	HRESULT SVDigitizerLoadLibraryClass::DestroyBuffers(unsigned long digitizerHandle)
 	{
-		HRESULT l_hrOk = S_FALSE;
-
-		if (nullptr != m_pRegisterBufferInterface)
-		{
-			l_hrOk = m_pRegisterBufferInterface(p_hHandle, pInterface);
-		}
-
-		return l_hrOk;
-	}
-
-	/*
-	This method uses the p_psvStart attribute to call the DLL SVDigitizerStart function.  If the pointer to the method is invalid, an error code will be returned.  Otherwise, the status of the DLL function will be returned.
-	*/
-	HRESULT SVDigitizerLoadLibraryClass::Start(SVHANDLE p_hHandle)
-	{
-		HRESULT l_hrOk = S_FALSE;
-
-		if (nullptr != m_pStart)
-		{
-			l_hrOk = m_pStart(p_hHandle);
-		}
-
-		return l_hrOk;
-	}
-
-	/*
-	This method uses the p_psvStop attribute to call the DLL SVDigitizerStop function.  If the pointer to the method is invalid, an error code will be returned.  Otherwise, the status of the DLL function will be returned.
-	*/
-	HRESULT SVDigitizerLoadLibraryClass::Stop(SVHANDLE p_hHandle)
-	{
-		HRESULT l_hrOk = S_FALSE;
-
-		if (nullptr != m_pStop)
-		{
-			l_hrOk = m_pStop(p_hHandle);
-		}
-
-		return l_hrOk;
-	}
-
-	/*
-	This method uses the m_pUnregisterBufferInterface attribute to call the DLL SVDigitizerUnregisterBufferInterface function.  If the pointer to the method is invalid, an error code will be returned.  Otherwise, the status of the DLL function will be returned.
-	*/
-	HRESULT SVDigitizerLoadLibraryClass::UnregisterBufferInterface(SVHANDLE p_hHandle)
-	{
-		HRESULT l_hrOk = S_FALSE;
-
-		if (nullptr != m_pUnregisterBufferInterface)
-		{
-			l_hrOk = m_pUnregisterBufferInterface(p_hHandle);
-		}
-
-		return l_hrOk;
-	}
-
-	/*
-	This method uses the m_pInternalTriggerEnable attribute to call the DLL SVDigitizerInternalTriggerEnable function.  If the pointer to the method is invalid, an error code will be returned.  Otherwise, the status of the DLL function will be returned.
-	*/
-	HRESULT SVDigitizerLoadLibraryClass::InternalTriggerEnable(SVHANDLE p_hHandle)
-	{
-		HRESULT l_hrOk = S_FALSE;
-
-		if (nullptr != m_pInternalTriggerEnable)
-		{
-			l_hrOk = m_pInternalTriggerEnable(p_hHandle);
-		}
-
-		return l_hrOk;
-	}
-
-	/*
-	This method uses the m_pInternalTrigger attribute to call the DLL SVDigitizerInternalTrigger function.  If the pointer to the method is invalid, an error code will be returned.  Otherwise, the status of the DLL function will be returned.
-	*/
-	HRESULT SVDigitizerLoadLibraryClass::InternalTrigger(SVHANDLE p_hHandle) const
-	{
-		HRESULT l_hrOk = S_FALSE;
-
-		if (nullptr != m_pInternalTrigger)
-		{
-			l_hrOk = m_pInternalTrigger(p_hHandle);
-		}
-
-		return l_hrOk;
-	}
-
-	/*
-	This method uses the p_psvDestroyBuffers attribute to call the DLL SVDigitizerDestroyBuffers function.  If the pointer to the method is invalid, an error code will be returned.  Otherwise, the status of the DLL function will be returned.
-	*/
-	HRESULT SVDigitizerLoadLibraryClass::DestroyBuffers(SVHANDLE p_hHandle)
-	{
-		HRESULT l_hrOk = S_FALSE;
+		HRESULT result{ E_FAIL };
 
 		if (nullptr != m_pDestroyBuffers)
 		{
-			l_hrOk = m_pDestroyBuffers(p_hHandle);
+			result = m_pDestroyBuffers(digitizerHandle);
 		}
-
-		return l_hrOk;
+		return result;
 	}
 
-	/*
-	This method uses the p_psvSetParameters attribute to call the DLL SVDigitizerSetParameters function.  If the pointer to the method is invalid, an error code will be returned.  Otherwise, the status of the DLL function will be returned.
-	*/
-	HRESULT SVDigitizerLoadLibraryClass::SetParameters(SVHANDLE p_hHandle, const SVDeviceParamCollection* p_pParameters)
+	HRESULT SVDigitizerLoadLibraryClass::RegisterBufferInterface(unsigned long digitizerHandle, SVAcquisitionBufferInterface* pInterface)
 	{
-		HRESULT l_hrOk = S_FALSE;
-		if (nullptr != m_pSetParameters)
+		HRESULT result{ E_FAIL };
+
+		if (nullptr != m_pRegisterBufferInterface)
 		{
-			l_hrOk = m_pSetParameters(p_hHandle, p_pParameters);
+			result = m_pRegisterBufferInterface(digitizerHandle, pInterface);
 		}
-		return l_hrOk;
+		return result;
 	}
 
-	/*
-	This method uses the p_psvSetParameter attribute to call the DLL SVDigitizerSetParameter function.  If the pointer to the method is invalid, an error code will be returned.  Otherwise, the status of the DLL function will be returned.
-	*/
-	HRESULT SVDigitizerLoadLibraryClass::SetParameter(SVHANDLE p_hHandle, const SVDeviceParamWrapper* p_pParameter)
+	HRESULT SVDigitizerLoadLibraryClass::UnregisterBufferInterface(unsigned long digitizerHandle)
 	{
-		HRESULT l_hrOk = S_FALSE;
-		if (nullptr != m_pSetParameter)
+		HRESULT result{ E_FAIL };
+
+		if (nullptr != m_pUnregisterBufferInterface)
 		{
-			l_hrOk = m_pSetParameter(p_hHandle, p_pParameter);
+			result = m_pUnregisterBufferInterface(digitizerHandle);
 		}
-		return l_hrOk;
+		return result;
 	}
 
-	/*
-	This method uses the p_psvGetParameter attribute to call the DLL SVDigitizerGetParameter function.  If the pointer to the method is invalid, an error code will be returned.  Otherwise, the status of the DLL function will be returned.
-	*/
-	HRESULT SVDigitizerLoadLibraryClass::GetParameter(SVHANDLE p_hHandle, SVDeviceParamEnum p_eParameter, SVDeviceParamWrapper** p_ppParameter)
+	HRESULT SVDigitizerLoadLibraryClass::Start(unsigned long digitizerHandle)
 	{
-		HRESULT l_hrOk = S_FALSE;
-		if (nullptr != m_pGetParameter)
+		HRESULT result{ E_FAIL };
+
+		if (nullptr != m_pStart)
 		{
-			l_hrOk = m_pGetParameter(p_hHandle, p_eParameter, p_ppParameter);
+			result = m_pStart(digitizerHandle);
 		}
-		return l_hrOk;
+		return result;
 	}
 
-	/*
-	This method uses the p_psvParameterGetList attribute to call the DLL SVDigitizerParameterGetList function.  If the pointer to the method is invalid, an error code will be returned.  Otherwise, the status of the DLL function will be returned.
-	*/
-	HRESULT SVDigitizerLoadLibraryClass::ParameterGetList(SVHANDLE p_hHandle, VARIANT *p_pvarName)
+	HRESULT SVDigitizerLoadLibraryClass::Stop(unsigned long digitizerHandle)
 	{
-		HRESULT l_hrOk = S_FALSE;
-		if (nullptr != m_pParameterGetList)
+		HRESULT result{ E_FAIL };
+
+		if (nullptr != m_pStop)
 		{
-			l_hrOk = m_pParameterGetList(p_hHandle, p_pvarName);
+			result = m_pStop(digitizerHandle);
 		}
-		return l_hrOk;
+		return result;
 	}
 
-	/*
-	This method uses the p_psvParameterGetName attribute to call the DLL SVDigitizerParameterGetName function.  If the pointer to the method is invalid, an error code will be returned.  Otherwise, the status of the DLL function will be returned.
-	*/
-	HRESULT SVDigitizerLoadLibraryClass::ParameterGetName(SVHANDLE p_hHandle, int p_iParameterID, BSTR *p_pbstrName)
+	HRESULT SVDigitizerLoadLibraryClass::InternalTriggerEnable(unsigned long digitizerHandle)
 	{
-		HRESULT l_hrOk = S_FALSE;
+		HRESULT result{ E_FAIL };
+
+		if (nullptr != m_pInternalTriggerEnable)
+		{
+			result = m_pInternalTriggerEnable(digitizerHandle);
+		}
+		return result;
+	}
+
+	HRESULT SVDigitizerLoadLibraryClass::InternalTrigger(unsigned long digitizerHandle) const
+	{
+		HRESULT result{ E_FAIL };
+
+		if (nullptr != m_pInternalTrigger)
+		{
+			result = m_pInternalTrigger(digitizerHandle);
+		}
+		return result;
+	}
+
+	_variant_t SVDigitizerLoadLibraryClass::ParameterGetName(unsigned long digitizerHandle, int parameterID) const
+	{
+		_variant_t result;
+
 		if (nullptr != m_pParameterGetName)
 		{
-			l_hrOk = m_pParameterGetName(p_hHandle, p_iParameterID, p_pbstrName);
+			result = m_pParameterGetName(digitizerHandle, parameterID);
 		}
-		return l_hrOk;
+		return result;
 	}
 
-	/*
-	This method uses the p_psvParameterGetValue attribute to call the DLL SVDigitizerParameterGetValue function.  If the pointer to the method is invalid, an error code will be returned.  Otherwise, the status of the DLL function will be returned.
-	*/
-	HRESULT SVDigitizerLoadLibraryClass::ParameterGetValue(SVHANDLE p_hHandle, int p_iParameterID, int *p_piParameterTypeID, VARIANT *p_pvarName)
+	_variant_t SVDigitizerLoadLibraryClass::ParameterGetValue(unsigned long digitizerHandle, int parameterID) const
 	{
-		HRESULT l_hrOk = S_FALSE;
+		_variant_t result;
 		if (nullptr != m_pParameterGetValue)
 		{
-			l_hrOk = m_pParameterGetValue(p_hHandle, p_iParameterID, p_piParameterTypeID, p_pvarName);
+			result = m_pParameterGetValue(digitizerHandle, parameterID);
 		}
-		return l_hrOk;
+		return result;
 	}
 
-	/*
-	This method uses the p_psvParameterSetList attribute to call the DLL SVDigitizerParameterSetList function.  If the pointer to the method is invalid, an error code will be returned.  Otherwise, the status of the DLL function will be returned.
-	*/
-	HRESULT SVDigitizerLoadLibraryClass::ParameterSetValue(SVHANDLE p_hHandle, int p_iParameterID, int p_iParameterTypeID, VARIANT *p_pvarName)
+	HRESULT SVDigitizerLoadLibraryClass::ParameterSetValue(unsigned long digitizerHandle, int parameterID, const _variant_t& rValue)
 	{
-		HRESULT l_hrOk = S_FALSE;
+		HRESULT result{ E_FAIL };
+
 		if (nullptr != m_pParameterSetValue)
 		{
-			l_hrOk = m_pParameterSetValue(p_hHandle, p_iParameterID, p_iParameterTypeID, p_pvarName);
+			result = m_pParameterSetValue(digitizerHandle, parameterID, rValue);
 		}
-		return l_hrOk;
+		return result;
 	}
 
-	// Optional Interface to Scan for existance of cameras
-	HRESULT SVDigitizerLoadLibraryClass::ScanForCameras()
+	_variant_t SVDigitizerLoadLibraryClass::ParameterGetList(unsigned long digitizerHandle) const
 	{
-		HRESULT l_hrOk = E_NOTIMPL;
+		variant_t result;
+		
+		if (nullptr != m_pParameterGetList)
+		{
+			result = m_pParameterGetList(digitizerHandle);
+		}
+		return result;
+	}
 
+	HRESULT SVDigitizerLoadLibraryClass::SetParameters(unsigned long digitizerHandle, const SVDeviceParamCollection& rParameters)
+	{
+		HRESULT result{ E_FAIL };
+		
+		if (nullptr != m_pSetParameters)
+		{
+			result = m_pSetParameters(digitizerHandle, rParameters);
+		}
+		return result;
+	}
+
+	void SVDigitizerLoadLibraryClass::ScanForCameras()
+	{
 		if (nullptr != m_pScanForCameras)
 		{
-			l_hrOk = m_pScanForCameras();
+			m_pScanForCameras();
 		}
-		return l_hrOk;
 	}
 
 } //namespace SvTh

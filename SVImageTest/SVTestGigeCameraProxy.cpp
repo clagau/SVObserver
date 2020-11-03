@@ -153,8 +153,9 @@ HRESULT SVTestGigeCameraProxy::SetGigeFeatureOverrides(const std::string& rXmlDa
 
 	if (nullptr != pDigitizer && 0 < hDigitizer)
 	{
-		_variant_t l_oValue = rXmlData.c_str(); // does this convert from ansi to wide ?
-		hr = pDigitizer->ParameterSetValue(hDigitizer, SvDef::SVGigeParameterFeatureOverrides, 0, &l_oValue);
+		_variant_t value;
+		value.SetString(rXmlData.c_str());
+		hr = pDigitizer->ParameterSetValue(hDigitizer, SvDef::SVGigeParameterFeatureOverrides, value);
 	}
 	return hr;
 }
@@ -214,182 +215,139 @@ HRESULT SVTestGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParamWr
 
 	if ( nullptr != pDigitizer && 0 < hDigitizer )
 	{
-		_variant_t l_oValue;
+		_variant_t value;
 
 		SVDeviceParamEnum l_eType = rw->Type();
 
 		switch ( l_eType )
 		{
-			#pragma region DeviceParamVendorName
 			case DeviceParamVendorName:
-			{
-			}
-			break;
-			#pragma endregion
-
-			#pragma region DeviceParamModelName
 			case DeviceParamModelName:
-			{
-			}
-			break;
-			#pragma endregion
-
-			#pragma region DeviceParamFirmware
 			case DeviceParamFirmware:
-			{
-			}
-			break;
-			#pragma endregion
-
-			#pragma region DeviceParamSerialNumberString
-			// Read-Only parameters
-			// Wouldn't it be nice if the SVDeviceParams had a read/write attribute!
 			case DeviceParamSerialNumberString:
 				break;
-			#pragma endregion
 
-			#pragma region DeviceParamCameraDefaultSettings
 			case DeviceParamCameraDefaultSettings:
 			{
 				const SVStringValueDeviceParam* pParam = rw.DerivedValue( pParam );
-				if ( pParam )
+				if (nullptr != pParam)
 				{
+					value = pDigitizer->ParameterGetValue(hDigitizer, SvDef::SVGigeParameterCameraDefaultSettings);
 					//! First check to see if already set as this setting takes a long time
-					if( S_OK == pDigitizer->ParameterGetValue( hDigitizer, SvDef::SVGigeParameterCameraDefaultSettings, 0, &l_oValue ) )
+					if(VT_EMPTY != value.vt)
 					{
-						_bstr_t StringValue( l_oValue.bstrVal );
-						if( pParam->strValue != static_cast<LPCTSTR> (StringValue) )
+						std::string StringValue(SvUl::createStdString(value));
+						if(pParam->strValue != StringValue)
 						{
-							l_oValue = pParam->strValue.c_str();
-							hr = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterCameraDefaultSettings, 0, &l_oValue );
+							value.SetString(pParam->strValue.c_str());
+							hr = pDigitizer->ParameterSetValue(hDigitizer, SvDef::SVGigeParameterCameraDefaultSettings, value);
 						}
 					}
 				}
 				break;
 			}
-			#pragma endregion
 
-			#pragma region DeviceParamShutter
 			case DeviceParamShutter:
 			{
 				const SVLongValueDeviceParam* pParam = rw.DerivedValue( pParam );
-				if ( pParam )
+				if (nullptr != pParam)
 				{
-					l_oValue = pParam->lValue;
-
-					hr = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterFeatureShutter, 0, &l_oValue );
+					value = pParam->lValue;
+					hr = pDigitizer->ParameterSetValue(hDigitizer, SvDef::SVGigeParameterFeatureShutter, value);
 				}
 				break;
 			}
-			#pragma endregion
 
-			#pragma region DeviceParamGamma
 			case DeviceParamGamma:
 			{
 				// should check if parameter exists
 				// need to put in camera file if the camera supports it.
 				const SVLongValueDeviceParam* pParam = rw.DerivedValue( pParam );
-				if ( pParam )
+				if (nullptr !=  pParam )
 				{
-					l_oValue = pParam->GetNormalizedValue();
-					hr = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterFeatureGamma, 0, &l_oValue );
+					value = pParam->GetNormalizedValue();
+					hr = pDigitizer->ParameterSetValue(hDigitizer, SvDef::SVGigeParameterFeatureGamma, value);
 				}
 				break;
 			}
-			#pragma endregion
 
-			#pragma region DeviceParamBrightness
 			case DeviceParamBrightness:
 			{
 				const SVLongValueDeviceParam* pParam = rw.DerivedValue( pParam );
-				if ( pParam )
+				if (nullptr != pParam)
 				{
-					l_oValue = pParam->GetNormalizedValue();
-					hr = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterFeatureBrightness, 0, &l_oValue );
+					value = pParam->GetNormalizedValue();
+					hr = pDigitizer->ParameterSetValue(hDigitizer, SvDef::SVGigeParameterFeatureBrightness, value);
 				}
 				break;
 			}
-			#pragma endregion
 
-			#pragma region DeviceParamGain
 			case DeviceParamGain:
 			{
 				const SVLongValueDeviceParam* pParam = rw.DerivedValue( pParam );
-				if ( pParam )
+				if (nullptr != pParam)
 				{
-					l_oValue = pParam->GetNormalizedValue();
-					hr = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterFeatureGain, 0, &l_oValue );
+					value = pParam->GetNormalizedValue();
+					hr = pDigitizer->ParameterSetValue(hDigitizer, SvDef::SVGigeParameterFeatureGain, value);
 				}
 				break;
 			}
-			#pragma endregion 
 
-			#pragma region DeviceParamWhiteBalanceUB
 			case DeviceParamWhiteBalanceUB:
 			{
 				const SVLongValueDeviceParam* pParam = rw.DerivedValue( pParam );
-				if ( pParam )
+				if (nullptr != pParam)
 				{
-					l_oValue = pParam->GetNormalizedValue();
-					hr = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterFeatureWhiteBalanceU, 0, &l_oValue );
+					value = pParam->GetNormalizedValue();
+					hr = pDigitizer->ParameterSetValue(hDigitizer, SvDef::SVGigeParameterFeatureWhiteBalanceU, value);
 				}
 				break;
 			}
-			#pragma endregion
 
-			#pragma region DeviceParamWhiteBalanceVR
 			case DeviceParamWhiteBalanceVR:
 			{
 				const SVLongValueDeviceParam* pParam = rw.DerivedValue( pParam );
-				if ( pParam )
+				if (nullptr != pParam)
 				{
-					l_oValue = pParam->GetNormalizedValue();
-					hr = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterFeatureWhiteBalanceV, 0, &l_oValue );
+					value = pParam->GetNormalizedValue();
+					hr = pDigitizer->ParameterSetValue(hDigitizer, SvDef::SVGigeParameterFeatureWhiteBalanceV, value);
 				}
 				break;
 			}
-			#pragma endregion
 
-			#pragma region DeviceParamSharpness
 			case DeviceParamSharpness:
 			{
 				const SVLongValueDeviceParam* pParam = rw.DerivedValue( pParam );
-				if ( pParam )
+				if (nullptr != pParam)
 				{
-					l_oValue = pParam->GetNormalizedValue();
-					hr = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterFeatureSharpness, 0, &l_oValue );
+					value = pParam->GetNormalizedValue();
+					hr = pDigitizer->ParameterSetValue(hDigitizer, SvDef::SVGigeParameterFeatureSharpness, value);
 				}
 				break;
 			}
-			#pragma endregion
 
-			#pragma region DeviceParamHue
 			case DeviceParamHue:
 			{
-				const SVLongValueDeviceParam* pParam = rw.DerivedValue( pParam );
-				if ( pParam )
+				const SVLongValueDeviceParam* pParam = rw.DerivedValue(pParam);
+				if (nullptr != pParam)
 				{
-					l_oValue = pParam->GetNormalizedValue();
-					hr = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterFeatureHue, 0, &l_oValue );
+					value = pParam->GetNormalizedValue();
+					hr = pDigitizer->ParameterSetValue(hDigitizer, SvDef::SVGigeParameterFeatureHue, value);
 				}
 				break;
 			}
-			#pragma endregion
 
-			#pragma region DeviceParamSaturation
 			case DeviceParamSaturation:
 			{
 				const SVLongValueDeviceParam* pParam = rw.DerivedValue( pParam );
 				if ( pParam )
 				{
-					l_oValue = pParam->GetNormalizedValue();
-					hr = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterFeatureSaturation, 0, &l_oValue );
+					value = pParam->GetNormalizedValue();
+					hr = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterFeatureSaturation, value);
 				}
 				break;
 			}
-			#pragma endregion
 
-			#pragma region DeviceParamCameraFormats
 			case DeviceParamCameraFormats:
 			{
 				if ( !IsOnline() )
@@ -403,263 +361,146 @@ HRESULT SVTestGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParamWr
 				}
 				break;
 			}
-			#pragma endregion
 
-			#pragma region DeviceParamGigeTriggerSource
 			case DeviceParamGigeTriggerSource:
 			{
 				const SVStringValueDeviceParam* pParam = rw.DerivedValue( pParam );
-				if ( pParam )
+				if (nullptr != pParam)
 				{
-					_bstr_t value = pParam->strValue.c_str();
-					l_oValue = value.Detach();
-
-					hr = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterTriggerSource, 0, &l_oValue );
+					value.SetString(pParam->strValue.c_str());
+					hr = pDigitizer->ParameterSetValue(hDigitizer, SvDef::SVGigeParameterTriggerSource, value);
 				}
 				break;
 			}
-			#pragma endregion
 
-			#pragma region DeviceParamAcquisitionTriggerEdge
-			// This parameter doesn't get sent over to the DLL
+			// These parameters are nor sent via the DLL
 			case DeviceParamAcquisitionTriggerEdge:
+			case DeviceParamShutterDelay:
+			case DeviceParamIOTriggerInvert:
+			case DeviceParamAcquisitionStrobeEdge:
+			case DeviceParamIOStrobeInvert:
 			{
-				/*
-				const SVBoolValueDeviceParam* pParam = rw.DerivedValue( pParam );
-				if ( pParam )
-				{
-					l_oValue = pParam->bValue;
-					hr = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterTriggerEdge, 0, &l_oValue );
-				}
-				*/
 				hr = S_OK;
 				break;
 			}
-			#pragma endregion
 
-			#pragma region DeviceParamGigeTriggerEdge
 			case DeviceParamGigeTriggerEdge:
 			{
 				const SVStringValueDeviceParam* pParam = rw.DerivedValue( pParam );
-				if ( pParam )
+				if (nullptr != pParam)
 				{
-					_bstr_t value = pParam->strValue.c_str();
-					l_oValue = value.Detach();
-
-					hr = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterTriggerEdge, 0, &l_oValue );
+					value.SetString(pParam->strValue.c_str());
+					hr = pDigitizer->ParameterSetValue(hDigitizer, SvDef::SVGigeParameterTriggerEdge, value);
 				}
 				break;
 			}
-			#pragma endregion
 
-			#pragma region DeviceParamGigeTriggerEnable
 			case DeviceParamGigeTriggerEnable:
 			{
 				const SVStringValueDeviceParam* pParam = rw.DerivedValue( pParam );
-				if ( pParam )
+				if (nullptr != pParam)
 				{
-					_bstr_t value = pParam->strValue.c_str();
-					l_oValue = value.Detach();
-
-					hr = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterTriggerEnable, 0, &l_oValue );
+					value.SetString(pParam->strValue.c_str());
+					hr = pDigitizer->ParameterSetValue(hDigitizer, SvDef::SVGigeParameterTriggerEnable, value);
 				}
 				break;
 			}
-			#pragma endregion
 
-			#pragma region DeviceParamShutterDelay
-			case DeviceParamShutterDelay:
-			{
-				/*
-				const SVLongValueDeviceParam* pParam = rw.DerivedValue( pParam );
-				if ( pParam )
-				{
-					l_oValue = pParam->lValue;
-
-					hr = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterTriggerDelay, 0, &l_oValue );
-				}
-				*/
-				hr = S_OK;
-				break;
-			}
-			#pragma endregion
-
-			#pragma region DeviceParamIOTriggerInvert
-			// This parameter doesn't get sent over to the DLL
-			case DeviceParamIOTriggerInvert:
-			{
-				/*
-				const SVBoolValueDeviceParam* pParam = rw.DerivedValue( pParam );
-				if ( pParam )
-				{
-					l_oValue = pParam->bValue;
-					hr = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterTriggerInvert, 0, &l_oValue );
-				}
-				*/
-				hr = S_OK;
-				break;
-			}
-			#pragma endregion
-
-			#pragma region DeviceParamGigeTriggerLine
 			case DeviceParamGigeTriggerLine:
 			{
 				const SVStringValueDeviceParam* pParam = rw.DerivedValue( pParam );
-				if ( pParam )
+				if (nullptr != pParam)
 				{
-					_bstr_t value = pParam->strValue.c_str();
-					l_oValue = value.Detach();
-
-					hr = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterTriggerLine, 0, &l_oValue );
+					value.SetString(pParam->strValue.c_str());
+					hr = pDigitizer->ParameterSetValue(hDigitizer, SvDef::SVGigeParameterTriggerLine, value);
 				}
 				break;
 			}
-			#pragma endregion
 
-			#pragma region DeviceParamGigeStrobeSource
 			case DeviceParamGigeStrobeSource:
 			{
 				const SVStringValueDeviceParam* pParam = rw.DerivedValue( pParam );
-				if ( pParam )
+				if (nullptr != pParam)
 				{
-					_bstr_t value = pParam->strValue.c_str();
-					l_oValue = value.Detach();
-
-					hr = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterStrobeSource, 0, &l_oValue );
+					value.SetString(pParam->strValue.c_str());
+					hr = pDigitizer->ParameterSetValue(hDigitizer, SvDef::SVGigeParameterStrobeSource, value);
 				}
 				break;
 			}
-			#pragma endregion
 
-			#pragma region DeviceParamAcquisitionStrobeEdge
-			// This parameter doesn't get sent over to the DLL
-			case DeviceParamAcquisitionStrobeEdge:
-			{
-				/*
-				const SVBoolValueDeviceParam* pParam = rw.DerivedValue( pParam );
-				if ( pParam )
-				{
-					l_oValue = pParam->bValue;
-					hr = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterStrobeEdge, 0, &l_oValue );
-				}
-				*/
-				hr = S_OK;
-				break;
-			}
-			#pragma endregion
-
-			#pragma region DeviceParamGigeStrobeEdge
 			case DeviceParamGigeStrobeEdge:
 			{
 				const SVStringValueDeviceParam* pParam = rw.DerivedValue( pParam );
-				if ( pParam )
+				if (nullptr != pParam)
 				{
-					_bstr_t value = pParam->strValue.c_str();
-					l_oValue = value.Detach();
-
-					hr = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterStrobeEdge, 0, &l_oValue );
+					value.SetString(pParam->strValue.c_str());
+					hr = pDigitizer->ParameterSetValue(hDigitizer, SvDef::SVGigeParameterStrobeEdge, value);
 				}
 				break;
 			}
-			#pragma endregion
 
-			#pragma region DeviceParamGigeStrobeEnable
 			case DeviceParamGigeStrobeEnable:
 			{
 				const SVStringValueDeviceParam* pParam = rw.DerivedValue( pParam );
-				if ( pParam )
+				if (nullptr != pParam)
 				{
-					_bstr_t value = pParam->strValue.c_str();
-					l_oValue = value.Detach();
-
-					hr = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterStrobeEnable, 0, &l_oValue );
+					value.SetString(pParam->strValue.c_str());
+					hr = pDigitizer->ParameterSetValue(hDigitizer, SvDef::SVGigeParameterStrobeEnable, value);
 				}
 				break;
 			}
-			#pragma endregion
 
-			#pragma region DeviceParamIOStrobeInvert
-			// This parameter doesn't get sent over to the DLL
-			case DeviceParamIOStrobeInvert:
-			{
-				/*
-				const SVBoolValueDeviceParam* pParam = rw.DerivedValue( pParam );
-				if ( pParam )
-				{
-					l_oValue = pParam->bValue;
-					hr = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterStrobeInvert, 0, &l_oValue );
-				}
-				*/
-				hr = S_OK;
-				break;
-			}
-			#pragma endregion
-
-			#pragma region DeviceParamStrobePulseDelay
 			case DeviceParamStrobePulseDelay:
 			{
 				const SVLongValueDeviceParam* pParam = rw.DerivedValue( pParam );
-				if ( pParam )
+				if (nullptr != pParam)
 				{
-					l_oValue = pParam->lValue;
-
-					hr = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterStrobeDelay, 0, &l_oValue );
+					value = pParam->lValue;
+					hr = pDigitizer->ParameterSetValue(hDigitizer, SvDef::SVGigeParameterStrobeDelay, value);
 				}
 				break;
 			}
-			#pragma endregion
 
-			#pragma region DeviceParamStrobePulseDuration
 			case DeviceParamStrobePulseDuration:
 			{
 				const SVLongValueDeviceParam* pParam = rw.DerivedValue( pParam );
-				if ( pParam )
+				if (nullptr != pParam)
 				{
-					l_oValue = pParam->lValue;
-
-					hr = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterStrobeDuration, 0, &l_oValue );
+					value = pParam->lValue;
+					hr = pDigitizer->ParameterSetValue(hDigitizer, SvDef::SVGigeParameterStrobeDuration, value);
 				}
 				break;
 			}
-			#pragma endregion
 
-			#pragma region DeviceParamGigeStrobeLine
 			case DeviceParamGigeStrobeLine:
 			{
 				const SVStringValueDeviceParam* pParam = rw.DerivedValue( pParam );
-				if ( pParam )
+				if (nullptr != pParam)
 				{
-					_bstr_t value = pParam->strValue.c_str();
-					l_oValue = value.Detach();
-
-					hr = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterStrobeLine, 0, &l_oValue );
+					value.SetString(pParam->strValue.c_str());
+					hr = pDigitizer->ParameterSetValue(hDigitizer, SvDef::SVGigeParameterStrobeLine, value);
 				}
 				break;
 			}
-			#pragma endregion
 
-			#pragma region DeviceParamGigePacketSize
 			case DeviceParamGigePacketSize:
 			{
 				const SVLongValueDeviceParam* pParam = rw.DerivedValue( pParam );
-				if ( pParam )
+				if (nullptr != pParam)
 				{
-					l_oValue = pParam->lValue;
-
-					hr = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterPacketSize, 0, &l_oValue );
+					value = pParam->lValue;
+					hr = pDigitizer->ParameterSetValue(hDigitizer, SvDef::SVGigeParameterPacketSize, value);
 				}
 				break;
 			}
-			#pragma endregion
 
-			#pragma region DeviceParamLut
 			case DeviceParamLut:
 			{
 				const SVLutDeviceParam* pLutParam = rw.DerivedValue( pLutParam );
 				assert( pLutParam );
 
 				// convert to safearray
-				hr = SVLUTToSafeArray(pLutParam->lut, l_oValue);
+				hr = SVLUTToSafeArray(pLutParam->lut, value);
 				if (S_OK == hr)
 				{
 					// LUT is only enabled when the transform operation type is not "Normal"
@@ -669,59 +510,49 @@ HRESULT SVTestGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParamWr
 					bool EnableLUT = LutTransformTypeNormal != TransformOperationEnum;
 
 					_variant_t EnableLUTVariant( EnableLUT );
-					hr = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterLutEnable, 0, &EnableLUTVariant );
+					hr = pDigitizer->ParameterSetValue(hDigitizer, SvDef::SVGigeParameterLutEnable, EnableLUTVariant);
 					if (S_OK == hr)
 					{
 						// Set LUT values
-						hr = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterLutArray, 0, &l_oValue );
+						hr = pDigitizer->ParameterSetValue(hDigitizer, SvDef::SVGigeParameterLutArray, value);
 					}
 				}
 			}
 			break;
-			#pragma endregion
 
-			#pragma region DeviceParamCameraInput
 			case DeviceParamCameraInput:
 			{
 				const SVStringValueDeviceParam* pParam = rw.DerivedValue( pParam );
-				if ( pParam )
+				if (nullptr != pParam)
 				{
-					l_oValue.SetString(pParam->strValue.c_str());
-
-					hr = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterLineInput, 0, &l_oValue );
+					value.SetString(pParam->strValue.c_str());
+					hr = pDigitizer->ParameterSetValue(hDigitizer, SvDef::SVGigeParameterLineInput, value);
 				}
 				break;
 			}
-			#pragma endregion
 
-			#pragma region DeviceParamVerticalBinning
 			case DeviceParamVerticalBinning:
 			{
 				const SVLongValueDeviceParam* pParam = rw.DerivedValue( pParam );
-				if ( pParam )
+				if (nullptr != pParam)
 				{
-					l_oValue = pParam->lValue;
-					hr = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterVerticalBinning, 0, &l_oValue );
+					value = pParam->lValue;
+					hr = pDigitizer->ParameterSetValue(hDigitizer, SvDef::SVGigeParameterVerticalBinning, value);
 				}
 				break;
 			}
-			#pragma endregion
 
-			#pragma region DeviceParamHorizontalBinning
 			case DeviceParamHorizontalBinning:
 			{
 				const SVLongValueDeviceParam* pParam = rw.DerivedValue( pParam );
-				if ( pParam )
+				if (nullptr != pParam)
 				{
-					l_oValue = pParam->lValue;
-
-					hr = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterHorizontalBinning, 0, &l_oValue );
+					value = pParam->lValue;
+					hr = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterHorizontalBinning, value);
 				}
 				break;
 			}
-			#pragma endregion
 
-			#pragma region DeviceParamGigeCustomNNN
 			case DeviceParamGigeCustom1:
 			case DeviceParamGigeCustom2:
 			case DeviceParamGigeCustom3:
@@ -754,7 +585,7 @@ HRESULT SVTestGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParamWr
 			case DeviceParamGigeCustom30:
 			{
 				const SVCustomDeviceParam* pParam = rw.DerivedValue(pParam);
-				if (pParam)
+				if (nullptr != pParam)
 				{
 					const SVDeviceParamWrapper& rDeviceParamWrapper = pParam->GetHeldParam();
 					const SVDeviceParam* pHeldParam = rDeviceParamWrapper.DerivedValue(pHeldParam); 
@@ -763,32 +594,32 @@ HRESULT SVTestGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParamWr
 						switch (pHeldParam->DataType())
 						{
 							case DeviceDataTypeLong:
-								hr = pHeldParam->GetValue(l_oValue);
+								hr = pHeldParam->GetValue(value);
 								if (S_OK == hr)
 								{
 									const SVLongValueDeviceParam* pLongParam = rDeviceParamWrapper.DerivedValue(pLongParam);
 									if (pLongParam)
 									{
-										l_oValue = pLongParam->GetNormalizedValue();
+										value = pLongParam->GetNormalizedValue();
 									}
 								}
 								break;
 
 							case DeviceDataTypei64:
-								hr = pHeldParam->GetValue(l_oValue);
+								hr = pHeldParam->GetValue(value);
 								break;
 
 							case DeviceDataTypeBool:
-								hr = pHeldParam->GetValue(l_oValue);
+								hr = pHeldParam->GetValue(value);
 								break;
 
 							case DeviceDataTypeString:
-								hr = pHeldParam->GetValue(l_oValue);
+								hr = pHeldParam->GetValue(value);
 								break;
 						}
 						if (S_OK == hr)
 						{
-							hr = pDigitizer->ParameterSetValue(hDigitizer, cDeviceParamEnumToGigeParamEnum.at(l_eType), 0, &l_oValue);
+							hr = pDigitizer->ParameterSetValue(hDigitizer, cDeviceParamEnumToGigeParamEnum.at(l_eType), value);
 						}
 					}
 				}
@@ -799,7 +630,7 @@ HRESULT SVTestGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParamWr
 			#pragma region default
 			default:
 			{
-				hr = S_FALSE;
+				hr = E_FAIL;
 				break;
 			}
 			#pragma endregion
@@ -808,13 +639,17 @@ HRESULT SVTestGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParamWr
 
 	if( S_OK == hr )
 	{
-		rDeviceParams.SetParameter( rw );
+		rDeviceParams.SetParameter(rw);
 	}
 	return hr;
 }
 
 HRESULT SVTestGigeCameraProxy::SetCameraFormatParameters(unsigned long hDigitizer, SvTh::SVDigitizerLoadLibraryClass* pDigitizer, const SVCameraFormatsDeviceParam* pParam)
 {
+	if (nullptr == pDigitizer || nullptr == pParam)
+	{
+		return E_POINTER;
+	}
 	HRESULT hr = S_OK;
 	long horizontalBinning = 1;
 	long verticalBinning = 1;
@@ -822,25 +657,18 @@ HRESULT SVTestGigeCameraProxy::SetCameraFormatParameters(unsigned long hDigitize
 	long l_Width = rcf.m_lWidth;
 	long l_Height = rcf.m_lHeight;
 
-	_variant_t l_oValue;
-	int l_ParType;
+	_variant_t value;
 
+	value = pDigitizer->ParameterGetValue(hDigitizer, SvDef::SVGigeParameterHorizontalBinning);
 	// Get Binning parameters
-	HRESULT l_Temp = pDigitizer->ParameterGetValue( hDigitizer, SvDef::SVGigeParameterHorizontalBinning, &l_ParType, &l_oValue);
-	if( S_OK == l_Temp )
+	if(VT_EMPTY != value.vt && value.lVal > 0)
 	{
-		if (l_oValue.lVal > 0)
-		{
-			horizontalBinning = l_oValue.lVal;
-		}
+		horizontalBinning = value.lVal;
 	}
-	l_Temp = pDigitizer->ParameterGetValue( hDigitizer, SvDef::SVGigeParameterVerticalBinning, &l_ParType, &l_oValue);
-	if( S_OK == l_Temp )
+	value = pDigitizer->ParameterGetValue(hDigitizer, SvDef::SVGigeParameterVerticalBinning);
+	if (VT_EMPTY != value.vt && value.lVal > 0)
 	{
-		if (l_oValue.lVal > 0)
-		{
-			verticalBinning = l_oValue.lVal;
-		}
+		verticalBinning = value.lVal;
 	}
 	// Check if width/height exceeds binned width/height and adjust
 	// Must be a multiple of step size
@@ -870,46 +698,39 @@ HRESULT SVTestGigeCameraProxy::SetCameraFormatParameters(unsigned long hDigitize
 	long l_YPrevOffset = 0;
 
 	// Read previous parameters so we can make an intelligent decision on which parameters to set first.
-	l_Temp = pDigitizer->ParameterGetValue( hDigitizer, SvDef::SVGigeParameterXSize, &l_ParType, &l_oValue);
-	if( S_OK == l_Temp )
+	value = pDigitizer->ParameterGetValue(hDigitizer, SvDef::SVGigeParameterXSize);
+	if(VT_EMPTY != value.vt)
 	{ 
-		l_XPrevSize = l_oValue.lVal;
-		l_oValue.Clear();
+		l_XPrevSize = value.lVal;
 	}
-	l_Temp = pDigitizer->ParameterGetValue( hDigitizer, SvDef::SVGigeParameterYSize, &l_ParType, &l_oValue);
-	if( S_OK == l_Temp )
-	{ 
-		l_YPrevSize = l_oValue.lVal;
-		l_oValue.Clear();
+	value = pDigitizer->ParameterGetValue(hDigitizer, SvDef::SVGigeParameterYSize);
+	if (VT_EMPTY != value.vt)
+	{
+		l_YPrevSize = value.lVal;
 	}
-	l_Temp = pDigitizer->ParameterGetValue( hDigitizer, SvDef::SVGigeParameterXOffset, &l_ParType, &l_oValue);
-	if( S_OK == l_Temp )
-	{ 
-		l_XPrevOffset = l_oValue.lVal;
-		l_oValue.Clear();
+	value = pDigitizer->ParameterGetValue(hDigitizer, SvDef::SVGigeParameterXOffset);
+	if (VT_EMPTY != value.vt)
+	{
+		l_XPrevOffset = value.lVal;
 	}
-	l_Temp = pDigitizer->ParameterGetValue( hDigitizer, SvDef::SVGigeParameterYOffset, &l_ParType, &l_oValue);
-	if( S_OK == l_Temp )
-	{ 
-		l_YPrevOffset = l_oValue.lVal;
-		l_oValue.Clear();
+	value = pDigitizer->ParameterGetValue(hDigitizer, SvDef::SVGigeParameterYOffset);
+	if (VT_EMPTY != value.vt)
+	{
+		l_YPrevOffset = value.lVal;
 	}
 
+	HRESULT l_Temp{ S_OK };
 	// Decide if we should adjust Width or X offset first to prevent errors.
 	if( l_XPrevSize - l_Width > l_XPrevOffset - rcf.m_lHPos)
 	{
-		l_oValue = l_Width;
-		l_Temp = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterXSize, 0, &l_oValue );
-		l_oValue.Clear();
-
+		value = l_Width;
+		l_Temp = pDigitizer->ParameterSetValue(hDigitizer, SvDef::SVGigeParameterXSize, value);
 		if( S_OK == hr && S_OK != l_Temp )
 		{
 			hr = l_Temp;
 		}
-		l_oValue = rcf.m_lHPos;
-		l_Temp = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterXOffset, 0, &l_oValue );
-		l_oValue.Clear();
-
+		value = rcf.m_lHPos;
+		l_Temp = pDigitizer->ParameterSetValue(hDigitizer, SvDef::SVGigeParameterXOffset, value);
 		if( S_OK == hr && S_OK != l_Temp )
 		{
 			hr = l_Temp;
@@ -917,18 +738,14 @@ HRESULT SVTestGigeCameraProxy::SetCameraFormatParameters(unsigned long hDigitize
 	}
 	else
 	{
-		l_oValue = rcf.m_lHPos;
-		l_Temp = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterXOffset, 0, &l_oValue );
-		l_oValue.Clear();
-
+		value = rcf.m_lHPos;
+		l_Temp = pDigitizer->ParameterSetValue(hDigitizer, SvDef::SVGigeParameterXOffset, value);
 		if( S_OK == hr && S_OK != l_Temp )
 		{
 			hr = l_Temp;
 		}
-		l_oValue = l_Width;
-		l_Temp = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterXSize, 0, &l_oValue );
-		l_oValue.Clear();
-
+		value = l_Width;
+		l_Temp = pDigitizer->ParameterSetValue(hDigitizer, SvDef::SVGigeParameterXSize, value);
 		if( S_OK == hr && S_OK != l_Temp )
 		{
 			hr = l_Temp;
@@ -938,19 +755,14 @@ HRESULT SVTestGigeCameraProxy::SetCameraFormatParameters(unsigned long hDigitize
 	// Decide if we should adjust Height or Y offset first to prevent errors.
 	if( l_YPrevSize - l_Height > l_YPrevOffset - rcf.m_lVPos)
 	{
-		l_oValue = l_Height;
-		l_Temp = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterYSize, 0, &l_oValue );
-		l_oValue.Clear();
-
+		value = l_Height;
+		l_Temp = pDigitizer->ParameterSetValue(hDigitizer, SvDef::SVGigeParameterYSize, value);
 		if( S_OK == hr && S_OK != l_Temp )
 		{
 			hr = l_Temp;
 		}
-
-		l_oValue = rcf.m_lVPos;
-		l_Temp = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterYOffset, 0, &l_oValue );
-		l_oValue.Clear();
-
+		value = rcf.m_lVPos;
+		l_Temp = pDigitizer->ParameterSetValue(hDigitizer, SvDef::SVGigeParameterYOffset, value);
 		if( S_OK == hr && S_OK != l_Temp )
 		{
 			hr = l_Temp;
@@ -958,19 +770,14 @@ HRESULT SVTestGigeCameraProxy::SetCameraFormatParameters(unsigned long hDigitize
 	}
 	else
 	{
-		l_oValue = rcf.m_lVPos;
-		l_Temp = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterYOffset, 0, &l_oValue );
-		l_oValue.Clear();
-
+		value = rcf.m_lVPos;
+		l_Temp = pDigitizer->ParameterSetValue(hDigitizer, SvDef::SVGigeParameterYOffset, value);
 		if( S_OK == hr && S_OK != l_Temp )
 		{
 			hr = l_Temp;
 		}
-
-		l_oValue = l_Height;
-		l_Temp = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterYSize, 0, &l_oValue );
-		l_oValue.Clear();
-
+		value = l_Height;
+		l_Temp = pDigitizer->ParameterSetValue(hDigitizer, SvDef::SVGigeParameterYSize, value);
 		if( S_OK == hr && S_OK != l_Temp )
 		{
 			hr = l_Temp;
@@ -982,13 +789,8 @@ HRESULT SVTestGigeCameraProxy::SetCameraFormatParameters(unsigned long hDigitize
 	boost::algorithm::split(splitContainer, rcf.m_strName, boost::algorithm::is_any_of( _T("_X") ), boost::algorithm::token_compress_on);
 	if (splitContainer.size() > 3)
 	{
-		l_oValue = splitContainer[3].c_str();
-		l_Temp = pDigitizer->ParameterSetValue( hDigitizer, SvDef::SVGigeParameterColorFormat, 0, &l_oValue );
-		l_oValue.Clear();
-	}
-	if( S_OK == hr && FAILED( l_Temp ) ) // This is allowed to be S_FALSE
-	{
-		hr = l_Temp;
+		value.SetString(splitContainer[3].c_str());
+		pDigitizer->ParameterSetValue(hDigitizer, SvDef::SVGigeParameterColorFormat, value);
 	}
 	return hr;
 }
@@ -1000,7 +802,7 @@ HRESULT SVTestGigeCameraProxy::SetDeviceParameters( const SVDeviceParamCollectio
 	if ( nullptr != pDigitizer )
 	{
 		_variant_t dummy;
-		hr = pDigitizer->ParameterSetValue(hDigitizer, SvDef::SVGigeBeginTrackParameters, 0, &dummy);
+		hr = pDigitizer->ParameterSetValue(hDigitizer, SvDef::SVGigeBeginTrackParameters, dummy);
 	}
 	if ( S_OK == hr )
 	{
@@ -1017,33 +819,32 @@ HRESULT SVTestGigeCameraProxy::IsValidCameraFileParameters( SVDeviceParamCollect
 {
 	HRESULT l_hrOk = S_OK;
 
-	if( 0 < hDigitizer && nullptr != pDigitizer &&
-		rDeviceParams.ParameterExists( DeviceParamVendorName ) )
+	if( 0 < hDigitizer && nullptr != pDigitizer && rDeviceParams.ParameterExists( DeviceParamVendorName ) )
 	{
-		_variant_t l_oValue;
+		_variant_t value = pDigitizer->ParameterGetValue(hDigitizer, SvDef::SVGigeParameterVendorName);
 
-		if( nullptr != pDigitizer && S_OK == pDigitizer->ParameterGetValue( hDigitizer, SvDef::SVGigeParameterVendorName, 0, &l_oValue ) )
+		if(VT_EMPTY != value.vt)
 		{
-			std::string l_csVenderName  = SvUl::createStdString(l_oValue.bstrVal);
+			std::string l_csVenderName  = SvUl::createStdString(value);
 
 			if( l_csVenderName == StringValue( rDeviceParams.Parameter( DeviceParamVendorName ) ) )
 			{
-				if( rDeviceParams.ParameterExists( DeviceParamModelName ) &&
-					S_OK == pDigitizer->ParameterGetValue( hDigitizer, SvDef::SVGigeParameterModelName, 0, &l_oValue ) )
+				value = pDigitizer->ParameterGetValue(hDigitizer, SvDef::SVGigeParameterModelName);
+				if( rDeviceParams.ParameterExists( DeviceParamModelName ) && VT_EMPTY != value.vt)
 				{
-					std::string HardwareModel = SvUl::createStdString( _bstr_t( l_oValue.bstrVal ) );
+					std::string HardwareModel = SvUl::createStdString(value);
 
 					const std::string& rModel = StringValue( rDeviceParams.Parameter( DeviceParamModelName ) );
 
 					if ( !HardwareModel.empty() && !rModel.empty() && SvUl::CompareNoCase( HardwareModel, rModel) != 0 )
 					{
-						l_hrOk = S_FALSE;
+						l_hrOk = E_FAIL;
 					}
 				}
 			}
 			else
 			{
-				l_hrOk = S_FALSE;
+				l_hrOk = E_FAIL;
 			}
 		}
 	}
@@ -1054,29 +855,27 @@ bool SVTestGigeCameraProxy::CameraMatchesCameraFile(const SVDeviceParamCollectio
 {
 	bool l_bOk = true;
 	
-	if( 0 < hDigitizer && nullptr != pDigitizer &&
-		rCameraFileDeviceParams.ParameterExists( DeviceParamVendorName ) )
+	if( 0 < hDigitizer && nullptr != pDigitizer && rCameraFileDeviceParams.ParameterExists( DeviceParamVendorName ) )
 	{
-		_variant_t l_oValue;
-
 		// Check Vendor Name
-		if( S_OK == pDigitizer->ParameterGetValue( hDigitizer, SvDef::SVGigeParameterVendorName, 0, &l_oValue ) )
+		_variant_t value = pDigitizer->ParameterGetValue( hDigitizer, SvDef::SVGigeParameterVendorName);
+		if(VT_EMPTY != value.vt)
 		{
-			std::string l_csVenderName = SvUl::createStdString(l_oValue.bstrVal);
-
+			std::string vendorName = SvUl::createStdString(value);
 			const SVDeviceParamWrapper param = rCameraFileDeviceParams.Parameter( DeviceParamVendorName );
-			l_bOk = l_csVenderName == StringValue( param );
+			l_bOk = vendorName == StringValue(param);
 		}
 		// if Vendor Name matched, check Model Name
 		if ( l_bOk )
 		{
 			// Check Model Name
-			if( S_OK == pDigitizer->ParameterGetValue( hDigitizer, SvDef::SVGigeParameterModelName, 0, &l_oValue ) )
+			value = pDigitizer->ParameterGetValue(hDigitizer, SvDef::SVGigeParameterModelName);
+			if(VT_EMPTY != value.vt)
 			{
-				std::string l_csModelName = SvUl::createStdString(l_oValue.bstrVal);
+				std::string modelName = SvUl::createStdString(value);
 
 				const SVDeviceParamWrapper param = rCameraFileDeviceParams.Parameter( DeviceParamModelName );
-				l_bOk = l_csModelName == StringValue( param );
+				l_bOk = modelName == StringValue( param );
 			}
 		}
 	}

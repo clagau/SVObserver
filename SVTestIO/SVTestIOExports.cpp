@@ -17,6 +17,8 @@
 #pragma endregion Includes
 
 extern CSVTestIOApp theApp;
+constexpr unsigned long cInputMaxCount = 8;
+constexpr unsigned long cOutputMaxCount = 16;
 
 HRESULT WINAPI SVCreate()
 {
@@ -36,66 +38,36 @@ HRESULT WINAPI SVDestroy()
 	return l_hrOk;
 }
 
-HRESULT WINAPI SVInputGetCount( unsigned long *p_pulCount )
+unsigned long WINAPI SVInputGetCount()
 {
 	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
 
-	HRESULT l_hrOk = S_FALSE;
-
-	if ( nullptr != p_pulCount )
-	{
-		*p_pulCount = 8;
-
-		l_hrOk = S_OK;
-	}
-
-	return l_hrOk;
+	return cInputMaxCount;
 }
 
-HRESULT WINAPI SVInputGetValue( unsigned long p_ulChannel, bool *p_pbValue )
+bool WINAPI SVInputGetValue(unsigned long channel)
 {
 	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
 
-	HRESULT l_hrOk = S_OK;
+	bool result{false};
 
-	if ( nullptr != p_pbValue )
-	{
-		*p_pbValue = (theApp.m_pTestIODlg->m_lInputs & (1 << p_ulChannel))== 0;
-	}
+	result = (theApp.m_pTestIODlg->m_lInputs & (1 << channel))== 0;
 
-	return l_hrOk;
+	return result;
 }
 
-HRESULT WINAPI SVInputGetValues( unsigned long *p_pulValue )
+unsigned long WINAPI SVInputGetValues()
 {
 	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
 
-	HRESULT l_hrOk = S_FALSE;
-
-	if ( nullptr != p_pulValue )
-	{
-		*p_pulValue = theApp.m_pTestIODlg->m_lInputs;
-
-		l_hrOk = S_OK;
-	}
-
-	return l_hrOk;
+	return theApp.m_pTestIODlg->m_lInputs;
 }
 
-HRESULT WINAPI SVOutputGetCount( unsigned long *p_pulCount )
+unsigned long WINAPI SVOutputGetCount()
 {
 	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
 
-	HRESULT l_hrOk = S_FALSE;
-
-	if ( nullptr != p_pulCount )
-	{
-		*p_pulCount = 16;
-
-		l_hrOk = S_OK;
-	}
-
-	return l_hrOk;
+	return cOutputMaxCount;
 }
 
 HRESULT WINAPI SVOutputSetValue( unsigned long p_ulChannel, bool p_bValue )
@@ -103,34 +75,22 @@ HRESULT WINAPI SVOutputSetValue( unsigned long p_ulChannel, bool p_bValue )
 	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
 
 	theApp.m_pTestIODlg->SetOutput( p_ulChannel, p_bValue );
-	HRESULT l_hrOk = S_OK;;
 
-	return l_hrOk;
+	return S_OK;
 }
 
-HRESULT WINAPI SVOutputGetPortCount( unsigned long *p_pulCount )
+unsigned long WINAPI SVOutputGetPortCount()
 {
 	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
 
-	HRESULT l_hrOk = S_FALSE;
-
-	if ( nullptr != p_pulCount )
-	{
-		*p_pulCount = 0;
-
-		l_hrOk = S_OK;
-	}
-
-	return l_hrOk;
+	return 0UL;
 }
 
 HRESULT WINAPI SVOutputSetPortValue( unsigned long , unsigned long  )
 {
 	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
 
-	HRESULT l_hrOk = S_OK;
-
-	return l_hrOk;
+	return S_OK;
 }
 
 HRESULT WINAPI SVTriggerGetCount( unsigned long *p_pulCount )

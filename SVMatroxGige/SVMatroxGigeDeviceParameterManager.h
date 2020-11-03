@@ -23,9 +23,9 @@ private:
 	static const SVGigeDeviceParameterMap& GetParameterMap();
 
 public:
-	static HRESULT GetParameterName(const SVMatroxGigeDigitizer& p_rCamera, int p_iParameterID, BSTR* p_pBstrName);
-	static HRESULT GetParameter(const SVMatroxGigeDigitizer& p_rCamera, int p_iParameterID, int *p_piParameterTypeID, VARIANT *p_pvarValue);
-	static HRESULT SetParameter(const SVMatroxGigeDigitizer& p_rCamera, int p_iParameterID, int p_piParameterTypeID, VARIANT *p_pvarValue);
-	static HRESULT IsParameterSupported(const SVMatroxGigeDigitizer& p_rCamera, int p_iParameterID);
+	static _variant_t GetParameterName(const SVMatroxGigeDigitizer& rCamera, int parameterID);
+	static _variant_t GetParameter(const SVMatroxGigeDigitizer& rCamera, int parameterID);
+	static HRESULT SetParameter(const SVMatroxGigeDigitizer& rCamera, int parameterID, const _variant_t& rValue);
+	static HRESULT IsParameterSupported(const SVMatroxGigeDigitizer& rCamera, int parameterID);
 };
 

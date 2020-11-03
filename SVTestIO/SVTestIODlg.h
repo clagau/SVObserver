@@ -56,7 +56,7 @@ public:
 	virtual BOOL OnInitDialog() override;
 
 	CStatic m_input[c_upperBoundForInputChannel];
-	long m_lInputs;
+	unsigned long m_lInputs{ 0UL };
 	CStatic m_Output[c_upperBoundForOutputChannel];
 	CListBox m_LogList;
 
@@ -65,7 +65,7 @@ public:
 	afx_msg void  OnBnClickedLogging();
 	CButton m_LogBtn;
 	bool m_isLogButtonChecked {false};
-	bool m_bResetStart;
+	bool m_bResetStart{ true };
 	void OnTriggerButtonClicked( UINT nID );
 
 protected:

@@ -44,7 +44,7 @@ protected:
 
 #pragma region member variables
 protected:
-	std::mutex m_protectIO;		///Note do not call any IO device calls when this is set, can cause deadlock due to callback function!
+	mutable std::mutex m_protectIO;		///Note do not call any IO device calls when this is set, can cause deadlock due to callback function!
 	std::map<unsigned long, TriggerCallBack> m_triggerCallbackMap;
 	std::atomic_bool m_moduleReady {false};
 #pragma endregion member variables

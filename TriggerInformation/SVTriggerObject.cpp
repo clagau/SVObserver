@@ -169,12 +169,9 @@ namespace SvTi
 
 			if( nullptr != pDllTrigger )
 			{
-				unsigned long triggerHandle = 0;
-				pDllTrigger->GetHandle(&triggerHandle, m_pTriggerDevice->getDigitizerNumber());
-				_variant_t var;
-				var.vt = VT_I4;
-				var.intVal = period;
-				pDllTrigger->SetParameterValue(triggerHandle, 0, &var);
+				unsigned long triggerHandle = pDllTrigger->GetHandle(m_pTriggerDevice->getDigitizerNumber());
+				_variant_t value = period;
+				pDllTrigger->SetParameterValue(triggerHandle, 0, value);
 			}
 		}
 	}

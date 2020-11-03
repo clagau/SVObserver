@@ -39,14 +39,14 @@ public:
 
 	HRESULT Initialize(bool bInit);
 
-	unsigned long GetTriggerCount();
-	unsigned long GetTriggerHandle(unsigned long index);
-	BSTR GetTriggerName(unsigned long handle);
+	unsigned long GetTriggerCount() const;
+	unsigned long GetTriggerHandle(unsigned long index) const;
+	_variant_t GetTriggerName(unsigned long handle) const;
 
-	HRESULT TriggerGetParameterCount( unsigned long triggerIndex, unsigned long *pCount );
-	HRESULT TriggerGetParameterName( unsigned long triggerIndex, unsigned long Index, BSTR *pName );
-	HRESULT TriggerGetParameterValue( unsigned long triggerIndex, unsigned long Index, VARIANT *pValue );
-	HRESULT TriggerSetParameterValue( unsigned long triggerIndex, unsigned long Index, VARIANT *pValue );
+	unsigned long TriggerGetParameterCount( unsigned long triggerIndex) const;
+	_variant_t TriggerGetParameterName( unsigned long triggerIndex, unsigned long index) const;
+	_variant_t TriggerGetParameterValue( unsigned long triggerIndex, unsigned long index) const;
+	HRESULT TriggerSetParameterValue( unsigned long triggerIndex, unsigned long index, const _variant_t& rValue);
 	
 	void dispatchTrigger(unsigned long triggerIndex);
 

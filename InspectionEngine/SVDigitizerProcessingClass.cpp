@@ -153,41 +153,30 @@ void SVDigitizerProcessingClass::ClearDevices()
 
 HRESULT SVDigitizerProcessingClass::UpdateDigitizerSubsystem( SvTh::SVDigitizerLoadLibraryClass* pDigitizerSubsystem )
 {
-	HRESULT Result = S_FALSE;
+	HRESULT Result{ E_FAIL };
 
 	if ( nullptr != pDigitizerSubsystem )
 	{
-		unsigned long l_ulSize = 0;
-
 		m_Subsystems.insert( pDigitizerSubsystem );
 		
-		Result = pDigitizerSubsystem->GetCount( &l_ulSize );
+		Result = S_OK;
+		unsigned long count = pDigitizerSubsystem->GetCount();
 
-		for ( unsigned long i = 0; S_OK == Result && i < l_ulSize; i++ )
+		for ( unsigned long i = 0; S_OK == Result && i < count; i++ )
 		{
 			std::string AcquisitionName;
 			std::string IPAddress;
 
-			unsigned long Handle = 0;
+			unsigned long Handle = pDigitizerSubsystem->GetHandle(i);
 
-			Result = pDigitizerSubsystem->GetHandle( &Handle, i );
+			_variant_t value = pDigitizerSubsystem->GetName(Handle);
+			AcquisitionName = SvUl::createStdString(value);
 
-			if ( S_OK == Result )
+			value = pDigitizerSubsystem->ParameterGetValue(Handle, SvDef::SVGigeParameterIPAddress);
+			//Not all DLL's support IP address so do not place in Result value
+			if(VT_EMPTY != value.vt)
 			{
-				BSTR bString{ nullptr };
-				Result = pDigitizerSubsystem->GetName( Handle, &bString);
-				if( S_OK == Result )
-				{
-					AcquisitionName = SvUl::createStdString(_bstr_t(bString));
-				}
-
-				VARIANT value;
-				::VariantInit(&value);
-				//Not all DLL's support IP address so do not place in Result value
-				if( S_OK == pDigitizerSubsystem->ParameterGetValue( Handle, SvDef::SVGigeParameterIPAddress, 0, &value) )
-				{
-					IPAddress = SvUl::createStdString(_variant_t(value));
-				}
+				IPAddress = SvUl::createStdString(value);
 			}
 
 			if ( S_OK == Result )
@@ -196,7 +185,7 @@ HRESULT SVDigitizerProcessingClass::UpdateDigitizerSubsystem( SvTh::SVDigitizerL
 				constexpr LPCTSTR cMGige = _T("Matrox_GIGE");
 				if( 0 == AcquisitionName.compare(0,  strlen(cMGige), cMGige) )
 				{
-					CameraName =  SVGigeCameraManager::Instance().getCameraName( IPAddress );
+					CameraName =  SVGigeCameraManager::Instance().getCameraName(IPAddress);
 				}
 				else
 				{
@@ -398,7 +387,7 @@ HRESULT SVDigitizerProcessingClass::ScanForCameras()
 
 		if( nullptr != *l_Iter )
 		{
-			l_Temp = ( *l_Iter )->ScanForCameras();
+			(*l_Iter)->ScanForCameras();
 		}
 		else
 		{
@@ -540,43 +529,40 @@ HRESULT SVDigitizerProcessingClass::UpdateMatroxDevices()
 	{
 		SvTh::SVDigitizerLoadLibraryClass* pLibrary = GetDigitizerSubsystem( deviceName.c_str() );
 
-		unsigned long Count = 0;
-
-		if( S_OK == pLibrary->GetCount( &Count ) )
+		if(nullptr != pLibrary)
 		{
-			for( unsigned long i = 0; i < Count; i++ )
+			unsigned long count = pLibrary->GetCount();
+			for( unsigned long i = 0; i < count; i++ )
 			{
 				SVGigeCameraStruct Camera;
 
-				unsigned long Handle = 0;
-
-				if( S_OK == pLibrary->GetHandle( &Handle, i ) )
+				unsigned long Handle = pLibrary->GetHandle(i);
+				if(0 != Handle)
 				{
 					Camera.m_AcquisitionHandle = Handle;
-
-					VARIANT Value;
-					::VariantInit(&Value);
-					if( S_OK == pLibrary->ParameterGetValue( Handle, SvDef::SVGigeParameterVendorName, 0, &Value) )
+					_variant_t value;
+					value = pLibrary->ParameterGetValue(Handle, SvDef::SVGigeParameterVendorName);
+					if(VT_EMPTY != value.vt)
 					{
-						Camera.m_VendorName = SvUl::createStdString(_variant_t(Value)).c_str();
+						Camera.m_VendorName = SvUl::createStdString(value).c_str();
+					}
+					
+					value = pLibrary->ParameterGetValue(Handle, SvDef::SVGigeParameterModelName);
+					if(VT_EMPTY != value.vt)
+					{
+						Camera.m_ModelName = SvUl::createStdString(value).c_str();
 					}
 
-					::VariantInit(&Value);
-					if( S_OK == pLibrary->ParameterGetValue( Handle, SvDef::SVGigeParameterModelName, 0, &Value) )
+					value = pLibrary->ParameterGetValue(Handle, SvDef::SVGigeParameterSerialNumber);
+					if(VT_EMPTY != value.vt)
 					{
-						Camera.m_ModelName = SvUl::createStdString(_variant_t(Value)).c_str();
+						Camera.m_SerialNum = SvUl::createStdString(value).c_str();
 					}
 
-					::VariantInit(&Value);
-					if( S_OK == pLibrary->ParameterGetValue( Handle, SvDef::SVGigeParameterSerialNumber, 0, &Value) )
+					value = pLibrary->ParameterGetValue(Handle, SvDef::SVGigeParameterIPAddress);
+					if(VT_EMPTY != value.vt)
 					{
-						Camera.m_SerialNum = SvUl::createStdString(_variant_t(Value)).c_str();
-					}
-
-					::VariantInit(&Value);
-					if( S_OK == pLibrary->ParameterGetValue( Handle, SvDef::SVGigeParameterIPAddress, 0, &Value) )
-					{
-						Camera.m_IPAddress = SvUl::createStdString(_variant_t(Value)).c_str();
+						Camera.m_IPAddress = SvUl::createStdString(value).c_str();
 					}
 				}
 

@@ -20,10 +20,7 @@
 
 IMPLEMENT_DYNAMIC(SVTestIODlg, CDialog)
 
-SVTestIODlg::SVTestIODlg(CWnd* pParent /*=nullptr*/)
-	: CDialog(SVTestIODlg::IDD, pParent)
-	, m_lInputs(0)
-	, m_bResetStart(true)
+SVTestIODlg::SVTestIODlg(CWnd* pParent /*=nullptr*/) : CDialog(SVTestIODlg::IDD, pParent)
 {
 	
 }
@@ -88,7 +85,7 @@ void SVTestIODlg::ToggleInput(unsigned int inputchannel)
 		return; //invalid inputchannel: do nothing!
 	}
 
-	long mask = 1 << (inputchannel-1);
+	unsigned long mask = 1 << (inputchannel-1);
 	if( m_lInputs & mask )
 	{
 		m_lInputs &= ~mask ;

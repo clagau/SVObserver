@@ -78,60 +78,60 @@ public:
 	HRESULT Initialize(bool bInit);
 	
 	// Digital I/O
-	unsigned long GetInputCount();
-	unsigned long GetOutputCount();
-	unsigned long GetPortCount();
+	unsigned long GetInputCount() const;
+	unsigned long GetOutputCount() const;
+	unsigned long GetPortCount() const;
 
-	HRESULT GetInputValue(unsigned long* pVal);
+	unsigned long GetInputValue() const;
 	HRESULT SetOutputValue(unsigned long val);
-	HRESULT GetInputBit(unsigned long bitNum, bool& bitVal);
+	bool GetInputBit(unsigned long bitNum) const;
 	HRESULT SetOutputBit(unsigned long bitNum, bool bitVal);
 	
 	HRESULT SetPortOutputValue(unsigned portNo, unsigned long val);
-	HRESULT GetBoardVersion(long& p_rlVer);
+	long GetBoardVersion() const;
 
 	HRESULT SetBoardType(unsigned long lBoardType);
-	HRESULT GetBoardType(unsigned long& rlBoardType);
+	HRESULT GetBoardType(unsigned long& rlBoardType) const;
 	HRESULT SetTriggerEdge(unsigned long lTriggerEdge);
-	HRESULT GetFanState(unsigned long& rlFanState);
-	HRESULT GetFanFreq(long* plFanFreq);
-	HRESULT GetLog(unsigned long* pulTS, unsigned long* pucLog, long& lSize);
-	HRESULT GetRTC(unsigned long& rlValue);
+	HRESULT GetFanState(unsigned long& rlFanState) const;
+	HRESULT GetFanFreq(long* plFanFreq) const;
+	HRESULT GetLog(unsigned long* pulTS, unsigned long* pucLog, long& lSize) const;
+	HRESULT GetRTC(unsigned long& rlValue) const;
 	HRESULT SetRTC(unsigned long lValue);
 	HRESULT SetLogValue(unsigned long lValue);
 
 	// Triggers
-	unsigned long GetTriggerCount();
-	unsigned long GetTriggerHandle(unsigned long index);
-	BSTR GetTriggerName(unsigned long triggerIndex);
+	unsigned long GetTriggerCount() const;
+	unsigned long GetTriggerHandle(unsigned long index) const;
+	_variant_t GetTriggerName(unsigned long triggerIndex) const;
 
 	void beforeStartTrigger(unsigned long) override;
 	HRESULT afterStartTrigger() override;
 	HRESULT afterStopTrigger() override;
 
-	HRESULT TriggerGetParameterCount(unsigned long triggerIndex, unsigned long* pCount);
-	HRESULT TriggerGetParameterName(unsigned long triggerIndex, unsigned long Index, BSTR* pName);
-	HRESULT TriggerGetParameterValue(unsigned long triggerIndex, unsigned long Index, VARIANT* pValue);
-	HRESULT TriggerSetParameterValue(unsigned long triggerIndex, unsigned long Index, VARIANT* pValue);
+	unsigned long TriggerGetParameterCount(unsigned long triggerIndex) const;
+	_variant_t TriggerGetParameterName(unsigned long triggerIndex, unsigned long index) const;
+	_variant_t TriggerGetParameterValue(unsigned long triggerIndex, unsigned long index) const;
+	HRESULT TriggerSetParameterValue(unsigned long triggerIndex, unsigned long index, const _variant_t& rValue);
 
 	// Non-Trigger Parameter Functions
-	HRESULT GetParameterCount(unsigned long* pCount);
-	HRESULT GetParameterName(unsigned long Index, BSTR* pName);
-	HRESULT GetParameterValue(unsigned long Index, VARIANT* pValue);
-	HRESULT SetParameterValue(unsigned long Index, VARIANT* pValue);
+	unsigned long GetParameterCount() const;
+	_variant_t GetParameterName(unsigned long index) const;
+	_variant_t GetParameterValue(unsigned long index) const;
+	HRESULT SetParameterValue(unsigned long index, const _variant_t& rValue);
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
 protected:
 
-	short GetPreviousOutputs(long lControl);
-	void SetPreviousOutputs(long lControl, short sValue);
+	short GetPreviousOutputs(long lControl) const;
+	void SetPreviousOutputs(long lControl, short sValue) const;
 
 	HRESULT GetLockState(bool& bLocked);
 	HRESULT WriteUnlockString();
 	HRESULT WriteLockString();
 	HRESULT TranslateBoardType(long& ulBoardType);
-	HRESULT SVReadWriteLpt(unsigned long& rlValue, long lControl, long lBit = -1);
+	HRESULT SVReadWriteLpt(unsigned long& rlValue, long lControl, long lBit = -1) const;
 
 #pragma endregion Protected Methods
 
@@ -150,12 +150,12 @@ private:
 	long m_lIOBrdTriggerEdge{0L};
 
 	bool m_bUseSingleTrigger{ false };
-	short m_nPreviousOutputs[SVNumOutputPorts + 1]{0, 0, 0, 0};
+	mutable short m_nPreviousOutputs[SVNumOutputPorts + 1]{0, 0, 0, 0};
 
 	long m_lBoardVersion{ 0L };
 	ParallelBoardInterfaceType m_lParallelBoardInterfaceBehavior{ ParallelBoardInterfaceType::Function00ForWrite1 };
 
-	bool m_isFirstTimeToReadOrWrite = true; //this variable introduced in SVO-1692 to suppress spurious "invalid line state" warning
+	mutable bool m_isFirstTimeToReadOrWrite = true; //this variable introduced in SVO-1692 to suppress spurious "invalid line state" warning
 #pragma endregion Member Variables
 };
 

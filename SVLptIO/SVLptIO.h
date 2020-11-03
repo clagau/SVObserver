@@ -21,12 +21,12 @@ public:
 	virtual ~SVLptIO();
 
 	 HRESULT GetDataPort(UCHAR& value) const;
-	 HRESULT SetDataPort(UCHAR value);
+	 HRESULT SetDataPort(UCHAR value) const;		//This needs to be const for other const functions to call it
 
 	 HRESULT GetStatusPort(UCHAR& value) const;
 
 	 HRESULT GetControlPort(UCHAR& value) const;
-	 HRESULT SetControlPort(UCHAR value);
+	 HRESULT SetControlPort(UCHAR value) const;		//This needs to be const for other const functions to call it
 
 	 HRESULT IsBidirectionalSupported(bool& biDirectional) const;
 

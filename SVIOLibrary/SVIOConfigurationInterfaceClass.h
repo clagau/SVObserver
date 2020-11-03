@@ -72,10 +72,10 @@ public:
 	HRESULT SetCameraStrobeValue( unsigned long channel, bool bRising );
 
 	// Parameter related functions. Not implemented in all dlls.
-	HRESULT GetParameterCount( unsigned long* pCount );
-	HRESULT GetParameterName( unsigned long index, BSTR* pName );
-	HRESULT GetParameterValue( unsigned long index, VARIANT* pValue );
-	HRESULT SetParameterValue( unsigned long index, VARIANT* pValue );
+	unsigned long GetParameterCount() const;
+	_variant_t GetParameterName( unsigned long index) const;
+	_variant_t GetParameterValue( unsigned long index) const;
+	HRESULT SetParameterValue( unsigned long index, const _variant_t& rValue);
 
 private:
 	SVIOConfigurationInterfaceClass();

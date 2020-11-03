@@ -34,7 +34,7 @@ public:
 	//}}AFX_DATA
 
 	SvTh::SVDigitizerLoadLibraryClass *m_psvDigitizers;
-	unsigned long m_triggerchannel;
+	unsigned long m_digitizerHandle;
 
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(SVCameraPropDlgClass)

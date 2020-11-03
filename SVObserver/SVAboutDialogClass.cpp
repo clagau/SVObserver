@@ -231,33 +231,26 @@ void SVAboutDialogClass::SetOEMText( LPCTSTR text )
 
 void SVAboutDialogClass::LoadVersionList()
 {
-	BSTR l_bstName = nullptr;
-
 	// IO Board Version.....
 
 	// SVBoardVersion enum is used here to make the code more clear.
 	// however at some time in the future the Dll parameters may be implemented
 	// as an array and therefore this enum may not apply.
-	HRESULT l_hr = SVIOConfigurationInterfaceClass::Instance().GetParameterName(SVBoardVersion, &l_bstName );
+	_variant_t value = SVIOConfigurationInterfaceClass::Instance().GetParameterName(SVBoardVersion);
 
-	if( S_OK == l_hr )
+	if(VT_BSTR == value.vt)
 	{
-		CString l_strName( l_bstName, ::SysStringLen( l_bstName ) );
-		CString l_strValue;
+		CString boardName;
+		CString strValue;
 		CString l_strTmp;
-		_variant_t l_vVersion;
 
-		::SysFreeString( l_bstName );
+		boardName = value.bstrVal;
 
-		l_hr = SVIOConfigurationInterfaceClass::Instance().GetParameterValue( SVBoardVersion, &l_vVersion );
-
+		value = SVIOConfigurationInterfaceClass::Instance().GetParameterValue(SVBoardVersion);
 		// Display Information about the Board.
-		l_strValue = l_vVersion.bstrVal;
-		::VariantClear( &l_vVersion );
+		strValue = value.bstrVal;
 
-		l_strTmp.Format("I/O %s - %s",
-			l_strName.GetString(), 
-			l_strValue.GetString() );
+		l_strTmp.Format("I/O %s - %s", boardName.GetString(), strValue.GetString());
 
 		CDC* dc = GetDC();
 		// Get the length of the strings to insert

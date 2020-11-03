@@ -21,8 +21,6 @@ EXPORTS
 	SVDigitizerInternalTrigger @133
 	
 	SVDigitizerSetParameters @150
-	SVDigitizerSetParameter @151
-	SVDigitizerGetParameter @155
 
 	SVDigitizerParameterGetList @160
 	SVDigitizerParameterGetName @161

@@ -231,17 +231,7 @@ BOOL CSVIOTESTDlg::OnInitDialog()
 	nSpeed = 0; //slow
 	m_cbtSlow.SetCheck(~nSpeed);
 	m_bInterruptEnabled = false;
-
-	// Try to Get the board version if it exists..
-	unsigned long l_lHandle;
-	COleVariant l_vVersion;
-	BSTR l_bstName = nullptr;
-	CString l_strName;
-	CString l_strWindowName;
-	CString l_strNewName;
-	CString l_strValue;
-	m_psvTriggers->GetHandle( &l_lHandle, 0 );
-
+	
 	// Strobe and Trigger invert signals are write only.
 	// therefore we need to remember how we set them.
 	m_lStrobeInverts = 0;
@@ -249,19 +239,19 @@ BOOL CSVIOTESTDlg::OnInitDialog()
 
 	// Read Information from hardware.ini about the board options...
 	SvLib::SVOINIClass HardwareIni( SvStl::GlobalPath::Inst().GetHardwareIniPath() );
-	std::string Value;
+	std::string boardName;
 
-	Value = HardwareIni.GetValueString( _T("IO Board"), _T("10"), _T("Entech X1") );
-	Value = _T("10 - ") + Value;
-	m_BoardModelCombo.AddString( Value.c_str() );
+	boardName = HardwareIni.GetValueString( _T("IO Board"), _T("10"), _T("Entech X1") );
+	boardName = _T("10 - ") + boardName;
+	m_BoardModelCombo.AddString( boardName.c_str() );
 
-	Value = HardwareIni.GetValueString( _T("IO Board"), _T("20"), _T("Entech X2") );
-	Value = _T("20 - ") + Value;
-	m_BoardModelCombo.AddString( Value.c_str() );
+	boardName = HardwareIni.GetValueString( _T("IO Board"), _T("20"), _T("Entech X2") );
+	boardName = _T("20 - ") + boardName;
+	m_BoardModelCombo.AddString( boardName.c_str() );
 
-	Value = HardwareIni.GetValueString( _T("IO Board"), _T("12"), _T("Entech X3") );
-	Value = _T("12 - ") + Value;
-	m_BoardModelCombo.AddString( Value.c_str() );
+	boardName = HardwareIni.GetValueString( _T("IO Board"), _T("12"), _T("Entech X3") );
+	boardName = _T("12 - ") + boardName;
+	m_BoardModelCombo.AddString( boardName.c_str() );
 
 	// Default board is an IO board model 10
 	m_BoardModel = 0;
@@ -306,27 +296,30 @@ BOOL CSVIOTESTDlg::OnInitDialog()
 			GetDlgItem(IDC_TRIGGER_PARAM)->ShowWindow( SW_HIDE );
 		}
 	}
+	// Try to Get the board version if it exists..
+	unsigned long handle = m_psvTriggers->GetHandle(0);
+
 	// SVBoardVersion enum is used here to make the code more clear.
 	// however at some time in the future the Dll parameters may be implemented
 	// as an array and therefore this enum may not apply.
-	HRESULT l_hr = m_psvTriggers->GetParameterName( l_lHandle, SVBoardVersion, &l_bstName );
+	_variant_t value = m_psvTriggers->GetParameterName( handle, SVBoardVersion);
 
-	if( S_OK == l_hr )
+	if(VT_BSTR == value.vt)
 	{
-		l_strName = l_bstName;
-		GetWindowText( l_strWindowName );
-		::SysFreeString( l_bstName );
-		l_hr = m_psvTriggers->GetParameterValue( l_lHandle, SVBoardVersion, &l_vVersion );
+		CString name;
+		CString windowName;
+		CString newName;
+		CString version;
+		name = value.bstrVal;
+		GetWindowText(windowName);
+		value = m_psvTriggers->GetParameterValue( handle, SVBoardVersion);
 		// Display Information about the Board.
-		l_strValue = l_vVersion.bstrVal;
-		::VariantClear( &l_vVersion );
-		l_strNewName.Format("%s - %s (%s - %s)",
-			l_strWindowName.GetString(),
-			m_csDigital.GetString(),
-			l_strName.GetString(), 
-			l_strValue.GetString() );
-			
-		SetWindowText( l_strNewName );
+		if (VT_BSTR == value.vt)
+		{
+			version = value.bstrVal;
+		}
+		newName.Format("%s - %s (%s - %s)", windowName.GetString(), m_csDigital.GetString(), name.GetString(), version.GetString());
+		SetWindowText(newName);
 	}
 	m_bThreadRunning = false;
 	m_bTestRand = false;
@@ -470,20 +463,20 @@ void CSVIOTESTDlg::OnTimer( UINT_PTR nIDEvent )
 	// Read Fans
 	if(0 == m_csDigital.CompareNoCase(SVLPTIODLL))
 	{
-		VARIANT l_vValue;
-		::VariantInit( &l_vValue);
-		if( S_OK == SVIOConfigurationInterfaceClass::Instance().GetParameterValue(SVFanState, &l_vValue) )
+		_variant_t value = SVIOConfigurationInterfaceClass::Instance().GetParameterValue(SVFanState);
+		if(VT_EMPTY != value.vt)
 		{
 			for (unsigned int triggerchannel = 0; triggerchannel < c_upperBoundForTriggerChannel; ++triggerchannel)
 			{
-				m_Fan[triggerchannel].SetIcon( AfxGetApp()->LoadIcon( ( l_vValue.lVal & (1 << triggerchannel)) ? IDI_ICON4 : IDI_ICON3 ));
+				m_Fan[triggerchannel].SetIcon( AfxGetApp()->LoadIcon( ( value.lVal & (1 << triggerchannel)) ? IDI_ICON4 : IDI_ICON3 ));
 			}
 		}
-		if( S_OK == SVIOConfigurationInterfaceClass::Instance().GetParameterValue(SVFanFreq, &l_vValue) )
+		value = SVIOConfigurationInterfaceClass::Instance().GetParameterValue(SVFanFreq);
+		if (VT_EMPTY != value.vt)
 		{
 			for (unsigned int triggerchannel = 0; triggerchannel < c_upperBoundForTriggerChannel; ++triggerchannel)
 			{
-				m_FanFreq[triggerchannel] = l_vValue.lVal >> (8 * triggerchannel) & 0xff;
+				m_FanFreq[triggerchannel] = value.lVal >> (8 * triggerchannel) & 0xff;
 			}
 			UpdateData(FALSE);
 		}
@@ -530,10 +523,7 @@ void CSVIOTESTDlg::OnTimer( UINT_PTR nIDEvent )
 		nCounter++;
 	}
 
-	unsigned long numTriggers = 0;
-	m_psvTriggers->GetCount(&numTriggers);
-
-	for(unsigned long i = 0; i < numTriggers; ++i)
+	for(unsigned long i = 0; i < m_psvTriggers->GetCount(); ++i)
 	{
 		updateValues(i);
 	}
@@ -668,10 +658,7 @@ void __stdcall CSVIOTESTDlg::triggerCallback(const SvTi::IntVariantMap& rTrigger
 
 void CSVIOTESTDlg::OnStartTriggers()
 {
-	CString csText("0");
-
-	unsigned long numTriggers = 0;
-	m_psvTriggers->GetCount(&numTriggers);
+	unsigned long numTriggers = m_psvTriggers->GetCount();
 
 	for(unsigned int triggerchannel = 1; triggerchannel < 5; triggerchannel++)
 	{
@@ -702,8 +689,7 @@ void CSVIOTESTDlg::OnStartTriggers()
 
 void CSVIOTESTDlg::OnStopTriggers() 
 {
-	unsigned long numTriggers = 0;
-	m_psvTriggers->GetCount(&numTriggers);
+	unsigned long numTriggers = m_psvTriggers->GetCount();
 
 	if (numTriggers > 3)
 	{
@@ -842,136 +828,128 @@ void CSVIOTESTDlg::OnTriggerParam()
 	if (IsSoftwareTrigger())
 	{
 		SVSoftwareTriggerSetupDlg l_dlg;
-		unsigned long triggerchannel;
-		unsigned long l_ulCount;
-		VARIANT l_vValue;
-		::VariantInit( &l_vValue);
-		l_vValue.vt = VT_I4;
-
-		m_psvTriggers->GetCount(&l_ulCount );
-		for( unsigned long x = 0 ; x < l_ulCount ; x++ )
+		
+		unsigned long count = m_psvTriggers->GetCount();
+		for( unsigned long x = 0 ; x < count ; x++ )
 		{
-			m_psvTriggers->GetHandle(&triggerchannel, x );
-			m_psvTriggers->GetParameterValue( triggerchannel, 0, &l_vValue);
+			unsigned long triggerchannel = m_psvTriggers->GetHandle(x);
+			_variant_t value = m_psvTriggers->GetParameterValue(triggerchannel, 0);
 
 			switch (x)
 			{
 				case 0:
-				l_dlg.m_period1 = l_vValue.lVal;
+				l_dlg.m_period1 = value.lVal;
 				break;
 
 				case 1:
-				l_dlg.m_period2 = l_vValue.lVal;
+				l_dlg.m_period2 = value.lVal;
 				break;
 
 				case 2:
-				l_dlg.m_period3 = l_vValue.lVal;
+				l_dlg.m_period3 = value.lVal;
 				break;
 
 				case 3:
-				l_dlg.m_period4 = l_vValue.lVal;
+				l_dlg.m_period4 = value.lVal;
 				break;
 			}
 		}
 		if( IDOK == l_dlg.DoModal() )
 		{
-			for( unsigned long x = 0 ; x < l_ulCount ; x++ )
+			for( unsigned long x = 0 ; x < count ; x++ )
 			{
-				m_psvTriggers->GetHandle(&triggerchannel, x );
-			
+				unsigned long triggerchannel = m_psvTriggers->GetHandle(x);
+				_variant_t value;
 				switch (x)
 				{
 					case 0:
-					l_vValue.lVal = l_dlg.m_period1;
+					value = l_dlg.m_period1;
 					break;
 
 					case 1:
-					l_vValue.lVal = l_dlg.m_period2;
+					value = l_dlg.m_period2;
 					break;
 
 					case 2:
-					l_vValue.lVal = l_dlg.m_period3;
+					value = l_dlg.m_period3;
 					break;
 
 					case 3:
-					l_vValue.lVal = l_dlg.m_period4;
+					value = l_dlg.m_period4;
 					break;
 				}
-				m_psvTriggers->SetParameterValue( triggerchannel, 0, &l_vValue);
+				m_psvTriggers->SetParameterValue( triggerchannel, 0, value);
 			}
 		}
 	}
 	else
 	{
 		SVTriggerSetupDlgClass l_dlg;
-		unsigned long triggerchannel;
-		unsigned long l_ulCount;
-		VARIANT l_vValue;
-		::VariantInit( &l_vValue);
 		l_dlg.m_psvTriggers = m_psvTriggers;
 
 		l_dlg.m_lStrobeInverts = m_lStrobeInverts;
 		l_dlg.m_lTrigInverts = m_lTrigInverts;
 		l_dlg.m_lSystemType = m_lSystemType;
 
-		m_psvTriggers->GetCount(&l_ulCount );
-		for( unsigned long x = 0 ; x < l_ulCount ; x++ )
+		unsigned long count = m_psvTriggers->GetCount();
+		for(unsigned long x=0 ; x < count ; ++x)
 		{
-			m_psvTriggers->GetHandle(&triggerchannel, x );
-			m_psvTriggers->GetParameterValue( triggerchannel, SVSignalEdge, &l_vValue);
+			unsigned long triggerchannel = m_psvTriggers->GetHandle(x);
+			_variant_t value = m_psvTriggers->GetParameterValue( triggerchannel, SVSignalEdge);
 			switch( x )
 			{
 				case 0:
 				{
-					l_dlg.m_bTrig1Rising = l_vValue.lVal > 0 ? TRUE : FALSE;
+					l_dlg.m_bTrig1Rising = value.lVal > 0 ? true : false;
 					break;
 				}
 				case 1:
 				{
-					l_dlg.m_bTrig2Rising = l_vValue.lVal > 0 ? TRUE : FALSE;
+					l_dlg.m_bTrig2Rising = value.lVal > 0 ? true : false;
 					break;
 				}
 				case 2:
 				{
-					l_dlg.m_bTrig3Rising = l_vValue.lVal > 0 ? TRUE : FALSE;
+					l_dlg.m_bTrig3Rising = value.lVal > 0 ? true : false;
 					break;
 				}
 				case 3:
 				{
-					l_dlg.m_bTrig4Rising = l_vValue.lVal > 0 ? TRUE : FALSE;
+					l_dlg.m_bTrig4Rising = value.lVal > 0 ? true : false;
 					break;
 				}
 			}
 		}
 		if( IDOK == l_dlg.DoModal() )
 		{
-			for( unsigned long x = 0 ; x < l_ulCount ; x++ )
+			for(unsigned long x = 0 ; x < count ; ++x)
 			{
-				m_psvTriggers->GetHandle(&triggerchannel, x );
+				unsigned long triggerchannel = m_psvTriggers->GetHandle(x);
+				_variant_t value;
 				switch( x )
 				{
 					case 0:
 					{
-						l_vValue.lVal = l_dlg.m_bTrig1Rising ? 1 : -1;
+						value = l_dlg.m_bTrig1Rising ? 1L : -1L;
 						break;
 					}
 					case 1:
 					{
-						l_vValue.lVal = l_dlg.m_bTrig2Rising ? 1 : -1;
+						value = l_dlg.m_bTrig2Rising ? 1L : -1L;
 						break;
 					}
 					case 2:
 					{
-						l_vValue.lVal = l_dlg.m_bTrig3Rising ? 1 : -1;
+						value = l_dlg.m_bTrig3Rising ? 1L : -1L;
 						break;
 					}
 					case 3:
 					{
-						l_vValue.lVal = l_dlg.m_bTrig4Rising ? 1 : -1;
+						value = l_dlg.m_bTrig4Rising ? 1L : -1L;
 						break;
 					}
 				}
-				m_psvTriggers->SetParameterValue( triggerchannel, SVSignalEdge, &l_vValue);
+				m_psvTriggers->SetParameterValue( triggerchannel, SVSignalEdge, value);
 			}
 		}
 		m_lStrobeInverts = l_dlg.m_lStrobeInverts;

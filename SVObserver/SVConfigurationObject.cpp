@@ -3904,15 +3904,11 @@ void SVConfigurationObject::SetupSoftwareTrigger(SvTh::SVTriggerClass* pTrigger,
 		return;
 	}
 
-	unsigned long triggerHandle;
-	pTrigger->getDLLTrigger()->GetHandle(&triggerHandle, iDigNum);
-	VARIANT l_vValue;
-	::VariantInit(&l_vValue);
-	l_vValue.vt = VT_I4;
-	l_vValue.lVal = triggerPeriod;
+	unsigned long triggerHandle = pTrigger->getDLLTrigger()->GetHandle(iDigNum);
+	_variant_t value = triggerPeriod;
 
 	// Setup the Triggering device
-	pTrigger->getDLLTrigger()->SetParameterValue(triggerHandle, 0, &l_vValue);
+	pTrigger->getDLLTrigger()->SetParameterValue(triggerHandle, 0, value);
 
 	// get Handles for all cameras associated with this trigger
 	SvIe::SVVirtualCameraPtrVector cameraVector = pPPQ->GetVirtualCameras();

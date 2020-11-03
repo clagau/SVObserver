@@ -76,7 +76,7 @@ HRESULT SVFileAcquisitionClass::SetDeviceParameters( const SVDeviceParamCollecti
 	// Send these to the FileAcquisition device
 	if ( IsDigitizerSubsystemValid() )
 	{
-		hr = m_rDigitizerProc.GetDigitizerSubsystem(m_DigName.c_str())->SetParameters( m_hDigitizer, &rDeviceParams );
+		hr = m_rDigitizerProc.GetDigitizerSubsystem(m_DigName.c_str())->SetParameters( m_hDigitizer, rDeviceParams );
 	}
 	return hr;
 }
@@ -208,9 +208,13 @@ HRESULT SVFileAcquisitionClass::GetCameraImageInfo(SVImageInfoClass *pImageInfo)
 
 	if ( IsValidBoard() && IsDigitizerSubsystemValid() )
 	{
-		m_rDigitizerProc.GetDigitizerSubsystem(m_DigName.c_str())->GetBufferHeight( m_hDigitizer, &bufHeight );
-		m_rDigitizerProc.GetDigitizerSubsystem(m_DigName.c_str())->GetBufferWidth( m_hDigitizer, &bufWidth );
-		m_rDigitizerProc.GetDigitizerSubsystem(m_DigName.c_str())->GetBufferFormat( m_hDigitizer, &iFormat );
+		SvTh::SVDigitizerLoadLibraryClass* pLibrary = m_rDigitizerProc.GetDigitizerSubsystem(m_DigName.c_str());
+		if (nullptr != pLibrary)
+		{
+			bufHeight = pLibrary->GetBufferHeight(m_hDigitizer);
+			bufWidth = pLibrary->GetBufferWidth(m_hDigitizer);
+			iFormat = pLibrary->GetBufferFormat(m_hDigitizer);
+		}
 	}// end if subsystem available
 	else
 	{

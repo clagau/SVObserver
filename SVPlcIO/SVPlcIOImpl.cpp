@@ -104,30 +104,6 @@ unsigned long SVPlcIOImpl::GetOutputCount()
 	return cOutputCount;
 }
 
-unsigned long SVPlcIOImpl::GetPortCount()
-{
-	return 0L;
-}
-
-HRESULT SVPlcIOImpl::GetInputValue(unsigned long* pValue)
-{
-	HRESULT result {E_FAIL};
-
-	if(nullptr != pValue)
-	{
-		//Note we are inverting the signal because discrete IO uses inverted IOs
-		*pValue = 0L;
-		result = S_OK;
-	}
-
-	return result;
-}
-
-HRESULT SVPlcIOImpl::SetOutputValue(unsigned long )
-{
-	return S_OK;
-}
-
 HRESULT SVPlcIOImpl::SetOutputData(unsigned long triggerIndex, const SvTi::IntVariantMap& rData)
 {
 	ResultReport reportResult;
@@ -166,38 +142,24 @@ HRESULT SVPlcIOImpl::SetOutputData(unsigned long triggerIndex, const SvTi::IntVa
 	return S_OK;
 }
 
-HRESULT SVPlcIOImpl::GetBoardVersion(long& )
-{
-	return S_OK;
-}
-
-HRESULT SVPlcIOImpl::GetInputBit(unsigned long , bool& )
-{
-	return S_OK;
-}
-
-HRESULT SVPlcIOImpl::SetOutputBit(unsigned long , bool )
-{
-	return S_OK;
-}
-
-unsigned long SVPlcIOImpl::GetTriggerCount()
+unsigned long SVPlcIOImpl::GetTriggerCount() const
 {
 	return cMaxPlcTriggers;
 }
 
-unsigned long SVPlcIOImpl::GetTriggerHandle(unsigned long triggerIndex)
+unsigned long SVPlcIOImpl::GetTriggerHandle(unsigned long triggerIndex) const
 {
 	return (cMaxPlcTriggers > triggerIndex) ? (triggerIndex + 1) : 0;
 }
 
-BSTR SVPlcIOImpl::GetTriggerName(unsigned long triggerIndex)
+_variant_t SVPlcIOImpl::GetTriggerName(unsigned long triggerIndex) const
 {
-	std::string triggerName{cTriggerName};
+	_variant_t result;
 
+	std::string triggerName{cTriggerName};
 	triggerName += std::to_string(triggerIndex - 1);
-	BSTR name = _bstr_t(triggerName.c_str()).Detach();
-	return name;
+	result.SetString(triggerName.c_str());
+	return result;
 }
 
 void SVPlcIOImpl::beforeStartTrigger(unsigned long triggerIndex)
@@ -308,75 +270,41 @@ void SVPlcIOImpl::beforeStopTrigger(unsigned long triggerIndex)
 	}
 }
 
-HRESULT SVPlcIOImpl::TriggerGetParameterCount(unsigned long , unsigned long* pCount)
+unsigned long SVPlcIOImpl::TriggerGetParameterCount(unsigned long) const
 {
-	HRESULT result {E_FAIL};
+	return 1UL;
+}
 
-	if (nullptr != pCount)
+_variant_t SVPlcIOImpl::TriggerGetParameterName(unsigned long , unsigned long index) const
+{
+	_variant_t result;
+
+	switch (index)
 	{
-		*pCount = 1UL;
-		result = S_OK;
+		case SVBoardVersion:
+		{
+			result.SetString(_T("Board Version"));
+			break;
+		}
+
+		default:
+			break;
 	}
 	return result;
 }
 
-HRESULT SVPlcIOImpl::TriggerGetParameterName(unsigned long , unsigned long index, BSTR* pName)
+_variant_t SVPlcIOImpl::TriggerGetParameterValue(unsigned long , unsigned long index) const
 {
-	HRESULT result{E_FAIL};
+	_variant_t result;
 
-	if (nullptr != pName)
+	if (index == SVBoardVersion)
 	{
-		if (nullptr != *pName)
-		{
-			::SysFreeString(*pName);
-			*pName = nullptr;
-		}
-
-		switch (index)
-		{
-			case SVBoardVersion:
-			{
-				*pName = ::SysAllocString(L"Board Version");
-				result = S_OK;
-				break;
-			}
-
-			default:
-				break;
-		}
+		result.SetString(SvUl::Format("PLC Version %.2f ", 1.0).c_str());
 	}
 	return result;
 }
 
-HRESULT SVPlcIOImpl::TriggerGetParameterValue(unsigned long , unsigned long index, VARIANT* pValue)
-{
-	HRESULT result{E_FAIL};
-
-	if (nullptr != pValue)
-	{
-		if (S_OK == ::VariantClear(pValue))
-		{
-			switch(index)
-			{
-				case SVBoardVersion:
-				{
-					WCHAR wbuf[256];
-					pValue->vt = VT_BSTR;
-					swprintf(wbuf, L"PLC Version %.2f ", 1.0);
-					pValue->bstrVal = ::SysAllocString(wbuf);
-					result = S_OK;
-					break;
-				}
-
-				default:
-					break;
-			}
-		}
-	}
-	return result;
-}
-
-HRESULT SVPlcIOImpl::TriggerSetParameterValue(unsigned long, unsigned long , VARIANT*)
+HRESULT SVPlcIOImpl::TriggerSetParameterValue(unsigned long, unsigned long , const _variant_t&)
 {
 	return E_FAIL;
 }
@@ -385,73 +313,42 @@ HRESULT SVPlcIOImpl::TriggerSetParameterValue(unsigned long, unsigned long , VAR
 
 // GetParameterCount
 // This function returns the number of available parameters.
-HRESULT SVPlcIOImpl::GetParameterCount(unsigned long* pCount)
+unsigned long SVPlcIOImpl::GetParameterCount() const
 {
-	HRESULT hr = E_FAIL;
-
-	if (nullptr != pCount)
-	{
-		*pCount = 3;
-		hr = S_OK;
-	}
-	return hr;
+	return 1UL;
 }
 
-HRESULT SVPlcIOImpl::GetParameterName(unsigned long index, BSTR* pName)
+_variant_t SVPlcIOImpl::GetParameterName(unsigned long index) const
 {
-	HRESULT hr = E_FAIL;
+	_variant_t result;
 
-	if (nullptr != pName)
+	if (SVBoardVersion == index)
 	{
-		if (nullptr != *pName)
-		{
-			::SysFreeString(*pName);
-			*pName = nullptr;
-		}
-
-		if (SVBoardVersion == index)
-		{
-			*pName = ::SysAllocString(L"Board Version(R)");
-		}
-			
-		if (nullptr != *pName)
-		{
-			hr = S_OK;
-		}
+		result.SetString(_T("Board Version(R)"));
 	}
-	return hr;
+	return result;
 }
 
 // GetParameterValue
 // This function Gets the parameter value specified by ulIndex.
-HRESULT SVPlcIOImpl::GetParameterValue(unsigned long index, VARIANT* pValue)
+_variant_t SVPlcIOImpl::GetParameterValue(unsigned long index) const
 {
-	HRESULT hr = E_FAIL;
+	_variant_t result;
 
-	if (nullptr != pValue)
+	if (index == SVBoardVersion)
 	{
-		if (S_OK == ::VariantClear(pValue))
-		{
-			// Board Version
-			if (SVBoardVersion == index)
-			{
-				WCHAR wbuf[256];
-				pValue->vt = VT_BSTR;
-				swprintf(wbuf, L"PLC Version %.2f ", 1.0);
-				pValue->bstrVal = ::SysAllocString(wbuf);
-			}
-		}
+		result.SetString(SvUl::Format("PLC Version %.2f ", 1.0).c_str());
 	}
-	return hr;
+	return result;
 }
 
-HRESULT SVPlcIOImpl::SetParameterValue(unsigned long index, VARIANT* pValue)
+HRESULT SVPlcIOImpl::SetParameterValue(unsigned long index, const _variant_t& rValue)
 {
 	HRESULT result{E_FAIL};
 
-	if(SVModuleReady == index && nullptr != pValue && VT_BOOL == pValue->vt)
+	if(SVModuleReady == index && VT_BOOL == rValue.vt)
 	{
-		m_moduleReady = pValue->boolVal ? true : false;
+		m_moduleReady = rValue.boolVal ? true : false;
 		Tec::setReady(m_moduleReady);
 		::OutputDebugString(SvUl::Format("Module ready = %s\n", m_moduleReady ? "True" : "False").c_str());
 	}

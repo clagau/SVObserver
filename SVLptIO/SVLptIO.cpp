@@ -30,7 +30,7 @@ HRESULT SVLptIO::GetDataPort(UCHAR& val) const
 	return ReadDataPort(val);
 }
 
-HRESULT SVLptIO::SetDataPort(UCHAR value) 
+HRESULT SVLptIO::SetDataPort(UCHAR value) const
 {
 	return WriteDataPort(value);
 }
@@ -47,7 +47,7 @@ HRESULT SVLptIO::GetControlPort(UCHAR& val)  const
 	return ReadControlPort(val);
 }
 
-HRESULT SVLptIO::SetControlPort(UCHAR value) 
+HRESULT SVLptIO::SetControlPort(UCHAR value) const
 {
 	return WriteControlPort(value);
 }

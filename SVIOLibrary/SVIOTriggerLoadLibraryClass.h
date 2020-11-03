@@ -13,19 +13,19 @@
 
 #include "TriggerInformation/SVTriggerInfoStruct.h"
 
-typedef HRESULT (WINAPI *SVCreatePtr)( void );
-typedef HRESULT (WINAPI *SVDestroyPtr)( void );
-typedef HRESULT (WINAPI *SVTriggerGetCountPtr)( unsigned long* );
-typedef HRESULT (WINAPI *SVTriggerGetHandlePtr)( unsigned long*, unsigned long );
-typedef HRESULT (WINAPI *SVTriggerGetNamePtr)( unsigned long, BSTR* );
-typedef HRESULT (WINAPI *SVTriggerRegisterPtr)( unsigned long, SvTi::TriggerCallBack pTriggerCallback);
-typedef HRESULT (WINAPI *SVTriggerUnregisterPtr)( unsigned long);
-typedef HRESULT (WINAPI *SVTriggerStartPtr)( unsigned long );
-typedef HRESULT (WINAPI *SVTriggerStopPtr)( unsigned long );
-typedef HRESULT (WINAPI *SVTriggerGetParameterCountPtr)( unsigned long, unsigned long* );
-typedef HRESULT (WINAPI *SVTriggerGetParameterNamePtr)( unsigned long, unsigned long, BSTR* );
-typedef HRESULT (WINAPI *SVTriggerGetParameterValuePtr)( unsigned long, unsigned long, VARIANT* );
-typedef HRESULT (WINAPI *SVTriggerSetParameterValuePtr)( unsigned long, unsigned long, VARIANT* );
+typedef HRESULT (WINAPI *SVCreatePtr)();
+typedef HRESULT (WINAPI *SVDestroyPtr)();
+typedef unsigned long (WINAPI *SVTriggerGetCountPtr)();
+typedef unsigned long (WINAPI *SVTriggerGetHandlePtr)(unsigned long);
+typedef _variant_t (WINAPI *SVTriggerGetNamePtr)(unsigned long);
+typedef HRESULT (WINAPI *SVTriggerRegisterPtr)(unsigned long, SvTi::TriggerCallBack pTriggerCallback);
+typedef HRESULT (WINAPI *SVTriggerUnregisterPtr)(unsigned long);
+typedef HRESULT (WINAPI *SVTriggerStartPtr)(unsigned long);
+typedef HRESULT (WINAPI *SVTriggerStopPtr)(unsigned long);
+typedef unsigned long (WINAPI *SVTriggerGetParameterCountPtr)(unsigned long);
+typedef _variant_t(WINAPI *SVTriggerGetParameterNamePtr)(unsigned long, unsigned long);
+typedef _variant_t (WINAPI *SVTriggerGetParameterValuePtr)(unsigned long, unsigned long);
+typedef HRESULT (WINAPI *SVTriggerSetParameterValuePtr)(unsigned long, unsigned long, const _variant_t&);
 
 class SVIOTriggerLoadLibraryClass  
 {
@@ -36,17 +36,17 @@ public:
 	HRESULT Open( LPCTSTR libraryPath );
 	HRESULT Close();
 	
-	HRESULT GetCount( unsigned long* pCount );
-	HRESULT GetHandle( unsigned long* pTriggerChannel, unsigned long index );
-	HRESULT GetName( unsigned long triggerChannel, BSTR* pName );
-	HRESULT Register( unsigned long triggerChannel, SvTi::TriggerCallBack pTriggerCallback);
-	HRESULT Unregister( unsigned long triggerChannel);
-	HRESULT Start( unsigned long triggerChannel );
-	HRESULT Stop( unsigned long triggerChannel );
-	HRESULT GetParameterCount( unsigned long triggerChannel, unsigned long* pCount );
-	HRESULT GetParameterName( unsigned long triggerChannel, unsigned long index, BSTR* pName );
-	HRESULT GetParameterValue( unsigned long triggerChannel, unsigned long index, VARIANT* pValue );
-	HRESULT SetParameterValue( unsigned long triggerChannel, unsigned long index, VARIANT* pValue );
+	unsigned long GetCount() const;
+	unsigned long GetHandle(unsigned long index) const;
+	_variant_t GetName(unsigned long triggerChannel) const;
+	HRESULT Register(unsigned long triggerChannel, SvTi::TriggerCallBack pTriggerCallback);
+	HRESULT Unregister(unsigned long triggerChannel);
+	HRESULT Start(unsigned long triggerChannel);
+	HRESULT Stop(unsigned long triggerChannel);
+	unsigned long GetParameterCount(unsigned long triggerChannel) const;
+	_variant_t GetParameterName(unsigned long triggerChannel, unsigned long index) const;
+	_variant_t GetParameterValue(unsigned long triggerChannel, unsigned long index) const;
+	HRESULT SetParameterValue(unsigned long triggerChannel, unsigned long index, const _variant_t& rValue);
 
 private:
 	HMODULE m_Handle {nullptr};
