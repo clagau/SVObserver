@@ -37,6 +37,7 @@ SV_IMPLEMENT_CLASS( SVStatTool, SvPb::StatisticsToolClassId );
 
 SVStatTool::SVStatTool( SVObjectClass* POwner, int StringResourceID )
 				:SVToolClass( POwner, StringResourceID )
+				, m_NumberOfValidSamples(0)
 {
 	init();
 }
@@ -96,6 +97,12 @@ void SVStatTool::init(void)
 			SvPb::StatPercentOfOccurancesEId,
 			IDS_OBJECTNAME_STATPERCENTOFOCCURANCES,
 			false, SvOi::SVResetItemNone );
+		
+		RegisterEmbeddedObject(
+			&m_Value[SV_STATS_NUMBEROF_VALIDSAMPLES],
+			SvPb::StatNumberOfValidSamplesEId,
+			IDS_OBJECTNAME_STAT_NUMBEROF_VALID_SAMPLES,
+			false, SvOi::SVResetItemNone);
 		
 		RegisterEmbeddedObject(
 			&m_OccurenceValue, 
@@ -447,8 +454,11 @@ void SVStatTool::SetVariableSelected( const std::string& rName )
 			m_inputObjectInfo.SetObject( GetObjectInfo() );
 
 			m_inputObjectInfo.SetInputObject( refObject );
-			
-			refObject.getObject()->ConnectObjectInput(&m_inputObjectInfo);
+			SvOl::SVInObjectInfoStruct InObjectInfo{ m_inputObjectInfo };
+			// The ConnectObjectInput will reset the index for the SVInObjectInforStruct object passed as parameter,
+			// so use a copy to carry the information for connection. Keep m_inputObjectInfo unchanged.
+			// this would solve also SVO-3028
+			refObject.getObject()->ConnectObjectInput(&InObjectInfo);
 		}// end if( refObject.Object() )
 		m_VariableName.SetValue(rName);
 	}
@@ -478,15 +488,28 @@ bool SVStatTool::DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo
 	return __super::DisconnectObjectInput(pObjectInInfo);
 }
 
-double SVStatTool::getInputValue()
+bool SVStatTool::getInputValue(double& aValue)
 {
-	double Result( 0.0 );
-	if(m_inputObjectInfo.IsConnected() && nullptr != m_inputObjectInfo.GetInputObjectInfo().getObject())
+	bool Ret{ false };
+	aValue = 0.0;
+	if (m_inputObjectInfo.IsConnected() && nullptr != m_inputObjectInfo.GetInputObjectInfo().getObject())
 	{
 		const SVObjectReference& rObjectRef = m_inputObjectInfo.GetInputObjectInfo().GetObjectReference();
-		m_inputObjectInfo.GetInputObjectInfo().getObject()->getValue( Result, rObjectRef.getValidArrayIndex() );
+		if (S_OK == m_inputObjectInfo.GetInputObjectInfo().getObject()->getValue(aValue, rObjectRef.getValidArrayIndex()))
+		{
+			Ret = true;
+		}
+		else
+		{
+			Ret = false;
+		}
 	}
-	return Result;
+	else
+	{
+		Ret = false;
+	}
+
+	return Ret;
 }
 
 double SVStatTool::getNumberOfSamples()
@@ -507,6 +530,8 @@ void SVStatTool::resetValues()
 	m_Value[SV_STATS_VARIANCEIN_VALUES].SetValue(0.0);
 	m_Value[SV_STATS_NUMBEROF_OCCURANCES].SetValue(0.0);
 	m_Value[SV_STATS_PERCENTOF_OCCURANCES].SetValue(0.0);
+	m_Value[SV_STATS_NUMBEROF_VALIDSAMPLES].SetValue(0.0);
+	m_NumberOfValidSamples = 0;
 	m_AccumulatedSquares = 0.0;
 	m_AccumulatedTotal = 0.0;
 }
@@ -555,20 +580,31 @@ bool SVStatTool::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pEr
 		double averageValue;
 		double value, count, numberOfSamples;
 
-		double dInputValue = getInputValue();
-
 		numberOfSamples = getNumberOfSamples();
 		if (numberOfSamples <= 1)
 		{
 			resetValues();
 		}
-	
+
+		double dInputValue{ 0.0 };
+		if (false == getInputValue(dInputValue))
+		{
+			// just skip the value if there is an error - e.g. invalid value
+			rRunStatus.SetPassed();
+			return Result;
+		}
+		
+		m_NumberOfValidSamples += 1;
+		m_Value[SV_STATS_NUMBEROF_VALIDSAMPLES].SetValue(static_cast<double>(m_NumberOfValidSamples));
+
+		//Compute all statistics based of m_NumberOfValidValues, since numberOfSamples may contain invalid values
+
 		// Calculate Average (Mean)
 		value = dInputValue;
 		m_AccumulatedTotal += value;
-		if (0 < numberOfSamples)
+		if (0 < m_NumberOfValidSamples)
 		{
-			averageValue = m_AccumulatedTotal / numberOfSamples;
+			averageValue = m_AccumulatedTotal / m_NumberOfValidSamples;
 		}
 		else
 		{
@@ -605,7 +641,7 @@ bool SVStatTool::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pEr
 				case SV_STATS_MIN_VALUE:
 					m_Value[SV_STATS_MIN_VALUE].GetValue(value);
 
-					if (numberOfSamples > 1)
+					if (m_NumberOfValidSamples > 1)
 					{
 						value = std::min(value, dInputValue);
 					}
@@ -620,7 +656,7 @@ bool SVStatTool::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pEr
 				case SV_STATS_MAX_VALUE:
 					m_Value[SV_STATS_MAX_VALUE].GetValue(value);
 
-					if (numberOfSamples > 1)
+					if (m_NumberOfValidSamples > 1)
 					{
 						value = std::max(value, dInputValue);
 					}
@@ -637,9 +673,9 @@ bool SVStatTool::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pEr
 					// Squares of the difference of all the data values
 					// from the Mean
 					// using Sample Variance not Population Variance
-					if (numberOfSamples > 1)
+					if (m_NumberOfValidSamples > 1)
 					{
-						value = calculateVariance(numberOfSamples, averageValue);
+						value = calculateVariance(m_NumberOfValidSamples, averageValue);
 
 						m_Value[SV_STATS_VARIANCEIN_VALUES].SetValue(value);
 					}
@@ -647,7 +683,7 @@ bool SVStatTool::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pEr
 
 				case SV_STATS_STANDARD_DEVIATION:
 					// if variance is already calculated
-					if (numberOfSamples > 1)
+					if (m_NumberOfValidSamples > 1)
 					{
 						if (FeatureString[SV_STATS_VARIANCEIN_VALUES] == '1')
 						{
@@ -655,7 +691,7 @@ bool SVStatTool::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pEr
 						}
 						else
 						{
-							value = calculateVariance(numberOfSamples, averageValue);
+							value = calculateVariance(m_NumberOfValidSamples, averageValue);
 						}
 						// Standard Deviation is the positive square root of the Variance
 						if (value)
@@ -666,12 +702,12 @@ bool SVStatTool::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pEr
 					break;
 
 				case SV_STATS_PERCENTOF_OCCURANCES:
-					if (!occurenceValueStr.empty() && numberOfSamples)
+					if (!occurenceValueStr.empty() && m_NumberOfValidSamples)
 					{
 						m_Value[SV_STATS_NUMBEROF_OCCURANCES].GetValue(count);
 
 						// Calculate percentile
-						value = (count / numberOfSamples) * 100.0;
+						value = (count / m_NumberOfValidSamples) * 100.0;
 
 						m_Value[SV_STATS_PERCENTOF_OCCURANCES].SetValue(value);
 					}
@@ -707,7 +743,8 @@ bool SVStatTool::Test(SvStl::MessageContainerVector *pErrorMessages)
 		{
 			double Value;
 			HRESULT hr = ObjectRef.getObject()->getValue( Value, ObjectRef.getValidArrayIndex() );
-			if ( S_OK == hr || SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == hr )
+			//Ignore the failures at this point (reset), do not set the tool as invalid
+			if ( S_OK == hr || SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == hr || E_BOUNDS == hr)
 			{
 				return true;
 			}

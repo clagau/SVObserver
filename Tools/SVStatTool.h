@@ -31,7 +31,8 @@ enum SVStatisticsFeatureEnum
     SV_STATS_STANDARD_DEVIATION,      // 4
     SV_STATS_NUMBEROF_OCCURANCES,     // 5
     SV_STATS_PERCENTOF_OCCURANCES,    // 6
-    SV_STATS_TOPOF_LIST               // 7
+	SV_STATS_NUMBEROF_VALIDSAMPLES,   // 7
+    SV_STATS_TOPOF_LIST               // 8
 };
 enum { SV_NUMBER_OF_STAT_FEATURES = SV_STATS_TOPOF_LIST };
 
@@ -78,7 +79,12 @@ public:
 	virtual bool DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo ) override;
 
 protected:
-	double getInputValue();
+	/// Get the current input value and consider also the return value, i.e. whether the valus is valid.
+	/// This function does not curretly distinguish between the error types, since it is not needed! This shall be implemented if really needed.
+	/// \param aValue [in/out] The current value to be returned. It is valid only if the function is successfull, i.e. returns true. 
+	/// If the function fails, this value is set to 0.0 for convenience.
+	/// \returns true if the value is successfully retrieved. 
+	bool getInputValue(double& aValue);
 	double getNumberOfSamples();
 	double calculateVariance( double aNumberOfSamples, double aAverageValue );
 
@@ -103,7 +109,7 @@ protected:
 
 	double                      m_AccumulatedTotal;
 	double                      m_AccumulatedSquares;
-
+	long						m_NumberOfValidSamples;
 	// Input: 
 	SvOl::SVInObjectInfoStruct m_inputObjectInfo;
 };

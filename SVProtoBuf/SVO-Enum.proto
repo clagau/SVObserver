@@ -1148,8 +1148,13 @@ enum EmbeddedIdEnum
 	IsGrayImageEId = 510;
 	IsRangeEId = 511;
 	IsCustomFeatureEId = 512;
+	
+
+	
+
 	NumberOfObjectsEId = 513;
-		
+	StatNumberOfValidSamplesEId = 560; //Statis Tool: number of valid values considered in statistic
+
 	//The following Ids are the first of an array and must have 100 reserved Ids 
 	OutputImageEId = 1000; //Output Images, e.g. External needs 4
 	RingBufferIndexEId = 1100; //For ringBuffer index of output images (by now 2 indexes)
