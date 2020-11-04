@@ -103,6 +103,10 @@ HRESULT SVMatroxGigeCameraParamTracker::ReloadCameraParamList(const SVMatroxGige
 	for (const auto& rParam : rList)
 	{
 		result = SVMatroxGigeDeviceParameterManager::SetParameter(rCamera, rParam.m_ParameterID, rParam.m_value);
+		if (S_OK != result)
+		{
+			break;
+		}
 	}
 	return result;
 }

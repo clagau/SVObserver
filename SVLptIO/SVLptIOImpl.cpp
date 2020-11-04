@@ -260,12 +260,7 @@ long SVLptIOImpl::GetBoardVersion() const
 		for (int i = 0;i < 4;i++)
 		{
 			unsigned long lValue;
-			HRESULT tmphr = SVReadWriteLpt(lValue, SVControlReadCommand);
-			if (S_OK != tmphr)
-			{
-				hr = tmphr;
-			}
-			else
+			if (S_OK == SVReadWriteLpt(lValue, SVControlReadCommand))
 			{
 				result = (result << 8) | lValue;
 			}

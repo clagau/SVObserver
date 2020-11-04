@@ -206,21 +206,21 @@ HRESULT SVFileAcquisitionDevice::CameraStop(unsigned long cameraIndex)
 _variant_t SVFileAcquisitionDevice::CameraGetParameterName(unsigned long cameraIndex, int parameterID) const
 {
 	_variant_t result;
-	//Not order must be the same as the enum SVFileAcquisitionDeviceParamEnum
-	constexpr char* cParameterNames[] =
-	{
-		_T("Filename"),
-		_T("Directory"),
-		_T("File Loading Mode"),
-		_T("Image Width"),
-		_T("Image Height"),
-		_T("Image Format")
-	};
 
 	if (cameraIndex < MaxFileCameras)
 	{
 		if (0 <= parameterID && parameterID < SVFileAcquisitionDeviceParamEnum::SVFileAcquisitionParameterSize)
 		{
+			//Note order must be the same as the enum SVFileAcquisitionDeviceParamEnum
+			constexpr char* cParameterNames[] =
+			{
+				_T("Filename"),
+				_T("Directory"),
+				_T("File Loading Mode"),
+				_T("Image Width"),
+				_T("Image Height"),
+				_T("Image Format")
+			};
 			result.SetString(cParameterNames[parameterID]);
 		}
 	}

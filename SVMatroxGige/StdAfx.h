@@ -60,6 +60,7 @@
 #include <list>				//Used by static library
 #include <map>
 #include <memory>
+#include <numeric>
 #include <set>				//Used by static library
 #include <stack>
 #include <string>			//Used by static library

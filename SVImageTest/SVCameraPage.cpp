@@ -258,15 +258,6 @@ void SVCameraPage::CreateCameraImage()
 {
 	if( 0 <= m_lSelectedCamera && nullptr != m_pAcquisition )
 	{
-		unsigned long digitizerHandle = m_pAcquisition->m_rSubsystem.m_svDigitizers.GetHandle(m_lSelectedCamera);
-
-		unsigned long bufWidth = m_pAcquisition->m_rSubsystem.m_svDigitizers.GetBufferHeight(digitizerHandle);
-		unsigned long bufHeight = m_pAcquisition->m_rSubsystem.m_svDigitizers.GetBufferWidth(digitizerHandle);
-		int iFormat = m_pAcquisition->m_rSubsystem.m_svDigitizers.GetBufferFormat(digitizerHandle);
-
-		bufWidth = (0 == bufWidth) ? 640 : bufWidth;
-		bufHeight = (0 == bufHeight) ? 480 : bufHeight;
-
 		m_CameraImage.Invalidate();
 	}
 }

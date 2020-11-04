@@ -101,13 +101,8 @@ unsigned long SVMatroxGige::GetDigitizerHandle(long index) const
 
 unsigned long SVMatroxGige::CameraGetCount() const
 {
-	unsigned long result{ 0UL };
-
-	for(const auto& rSystem : m_Systems)
-	{
-		result += static_cast<unsigned long> ( rSystem.second.GetDigitizerList().size() );
-	}
-	return result;
+	return std::accumulate(m_Systems.begin(), m_Systems.end(), 0, 
+		[](long sum, const auto& rEntry) { return std::plus<long>()(sum, static_cast<unsigned long> (rEntry.second.GetDigitizerList().size())); });
 }
 
 _variant_t SVMatroxGige::CameraGetName(unsigned long digitizerHandle) const
