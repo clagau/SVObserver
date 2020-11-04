@@ -1231,17 +1231,17 @@ void SVImageClass::fillSelectorList(std::back_insert_iterator<std::vector<SvPb::
 	}
 }
 
-void SVImageClass::fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo)
+void SVImageClass::fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo, bool addHidden /*= false*/)
 {
-	if (0 != ObjectAttributesAllowed())
+	if (0 != ObjectAttributesAllowed() || addHidden)
 	{
-		__super::fillObjectList(inserter, rObjectInfo);
+		__super::fillObjectList(inserter, rObjectInfo, addHidden);
 
 		for (auto* pObject : m_embeddedList)
 		{
 			if (nullptr != pObject)
 			{
-				pObject->fillObjectList(inserter, rObjectInfo);
+				pObject->fillObjectList(inserter, rObjectInfo, addHidden);
 			}
 		}
 	}

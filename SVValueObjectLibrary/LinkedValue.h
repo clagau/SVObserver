@@ -70,7 +70,7 @@ public:
 
 	bool isCircularReference() const;
 
-	virtual void fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo) override;
+	virtual void fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo, bool addHidden = false) override;
 
 	virtual void OnObjectRenamed(const SVObjectClass& , const std::string& ) override;
 

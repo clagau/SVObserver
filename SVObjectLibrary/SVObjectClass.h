@@ -156,7 +156,7 @@ public:
 	virtual HRESULT getValues(std::vector<double>& ) const override { return E_NOTIMPL; };
 
 	virtual void fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, SvOi::IsObjectAllowedFunc pFunctor, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum nameToType, SvPb::ObjectSelectorType requiredType) const override;
-	virtual void fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo) override;
+	virtual void fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo, bool addHidden = false) override;
 #pragma endregion virtual method (IObjectClass)
 
 	const SVObjectInfoStruct& GetOwnerInfo() const { return m_ownerObjectInfo; };

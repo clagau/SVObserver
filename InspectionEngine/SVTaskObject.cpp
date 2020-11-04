@@ -438,9 +438,9 @@ void SVTaskObjectClass::fillSelectorList(std::back_insert_iterator<std::vector<S
 	}
 }
 
-void SVTaskObjectClass::fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo)
+void SVTaskObjectClass::fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo, bool addHidden /*= false*/)
 {
-	__super::fillObjectList(inserter, rObjectInfo);
+	__super::fillObjectList(inserter, rObjectInfo, addHidden);
 
 	for (size_t i = 0; i < m_friendList.size(); ++i)
 	{
@@ -448,7 +448,7 @@ void SVTaskObjectClass::fillObjectList(std::back_insert_iterator<std::vector<SvO
 		auto* pObject = SVObjectManagerClass::Instance().GetObject(m_friendList[i].getObjectId());
 		if (nullptr != pObject)
 		{
-			pObject->fillObjectList(inserter, rObjectInfo);
+			pObject->fillObjectList(inserter, rObjectInfo, addHidden);
 		}
 	}
 
@@ -456,7 +456,7 @@ void SVTaskObjectClass::fillObjectList(std::back_insert_iterator<std::vector<SvO
 	{
 		if (nullptr != pObject)
 		{
-			pObject->fillObjectList(inserter, rObjectInfo);
+			pObject->fillObjectList(inserter, rObjectInfo, addHidden);
 		}
 	}
 }

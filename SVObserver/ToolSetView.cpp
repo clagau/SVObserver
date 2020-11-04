@@ -804,7 +804,7 @@ void ToolSetView::OnEndLabelEditToolSetList(NMHDR*, LRESULT* pResult)
 	ValidateLabelText(NewText);
 	if (m_LabelSaved != NewText) // In case it was renamed to the same name as before renaming
 	{
-		SvTo::LoopTool* pLoopTool(nullptr);
+		SvTo::SVToolClass* pLoopGroupTool(nullptr);
 		SvTo::SVToolClass* pTool(nullptr);
 		bool IsNameOk(false);
 		bool IsSubTool(false);
@@ -824,7 +824,11 @@ void ToolSetView::OnEndLabelEditToolSetList(NMHDR*, LRESULT* pResult)
 			case NavElementType::SubTool:
 			case NavElementType::SubLoopTool:
 				IsSubTool = true;
-				pLoopTool = dynamic_cast<SvTo::LoopTool*> (SVObjectManagerClass::Instance().GetObject(NavElement->m_OwnerId));
+				pLoopGroupTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject(NavElement->m_OwnerId));
+				if (nullptr == pLoopGroupTool || (SvPb::GroupToolObjectType != pLoopGroupTool->GetObjectSubType() && SvPb::LoopToolObjectType != pLoopGroupTool->GetObjectSubType()))
+				{
+					pLoopGroupTool = nullptr;
+				}
 				[[fallthrough]];
 			case NavElementType::LoopTool:
 			case NavElementType::GroupTool:
@@ -835,9 +839,9 @@ void ToolSetView::OnEndLabelEditToolSetList(NMHDR*, LRESULT* pResult)
 					return;
 				}
 
-				if (IsSubTool && pLoopTool)
+				if (IsSubTool && pLoopGroupTool)
 				{
-					IsNameOk = pLoopTool->IsNameUnique(NewText.c_str(), m_LabelSaved.c_str());
+					IsNameOk = pLoopGroupTool->IsNameUnique(NewText.c_str(), m_LabelSaved.c_str());
 				}
 				else if (!IsSubTool)
 				{

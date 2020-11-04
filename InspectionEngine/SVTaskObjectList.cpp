@@ -96,15 +96,15 @@ void SVTaskObjectListClass::fillSelectorList(std::back_insert_iterator<std::vect
 	}
 }
 
-void SVTaskObjectListClass::fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo)
+void SVTaskObjectListClass::fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo, bool addHidden /*= false*/)
 {
-	__super::fillObjectList(inserter, rObjectInfo);
+	__super::fillObjectList(inserter, rObjectInfo, addHidden);
 
 	for (auto* pObject : m_TaskObjectVector)
 	{
 		if (nullptr != pObject)
 		{
-			pObject->fillObjectList(inserter, rObjectInfo);
+			pObject->fillObjectList(inserter, rObjectInfo, addHidden);
 		}
 	}
 }

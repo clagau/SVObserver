@@ -162,6 +162,6 @@ namespace SvOi
 		virtual HRESULT getValues(std::vector<double>& rValues) const = 0;
 
 		virtual void fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, IsObjectAllowedFunc pFunctor, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum nameToType, SvPb::ObjectSelectorType requiredType) const = 0;
-		virtual void fillObjectList(std::back_insert_iterator<std::vector<IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo) = 0;
+		virtual void fillObjectList(std::back_insert_iterator<std::vector<IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo, bool addHidden = false) = 0;
 	};
 } //namespace SvOi

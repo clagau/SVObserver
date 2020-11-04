@@ -47,7 +47,7 @@ IObjectClass* ConstructObject(SvPb::ClassIdEnum classID);
 //************************************
 IObjectClass* getObject(uint32_t objectID);
 
-void fillObjectList(std::back_insert_iterator<std::vector<IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo, uint32_t startingObjectID);
+void fillObjectList(std::back_insert_iterator<std::vector<IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo, uint32_t startingObjectID, bool addHidden = false);
 
 IObjectClass* FindObject(uint32_t parentID, const SvDef::SVObjectTypeInfoStruct& rInfo);
 } //namespace SvOi

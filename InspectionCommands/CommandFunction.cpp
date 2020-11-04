@@ -698,7 +698,7 @@ SvPb::InspectionCmdResponse getAvailableObjects(SvPb::GetAvailableObjectsRequest
 	SvDef::SVObjectTypeInfoStruct typeInfo {request.typeinfo().objecttype(), request.typeinfo().subtype(), request.typeinfo().embeddedid()};
 	SvPb::SVObjectTypeEnum objectTypeToInclude = request.objecttypetoinclude();
 	std::vector<SvOi::IObjectClass*> list;
-	SvOi::fillObjectList(std::back_inserter(list), typeInfo, request.objectid());
+	SvOi::fillObjectList(std::back_inserter(list), typeInfo, request.objectid(), request.has_defaultplushidden());
 
 	IsAllowedFunc isAllowed = getAllowedFunc(request);
 	if (isAllowed)// required, even if it does nothing...

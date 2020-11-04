@@ -3829,12 +3829,12 @@ SvSml::RingBufferPointer SVInspectionProcess::GetSlotmanager()
 	return m_SlotManager;
 }
 
-void SVInspectionProcess::fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo)
+void SVInspectionProcess::fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo, bool addHidden /*= false*/)
 {
-	__super::fillObjectList(inserter, rObjectInfo);
+	__super::fillObjectList(inserter, rObjectInfo, addHidden);
 	if (nullptr != m_pCurrentToolset)
 	{
-		m_pCurrentToolset->fillObjectList(inserter, rObjectInfo);
+		m_pCurrentToolset->fillObjectList(inserter, rObjectInfo, addHidden);
 	}
 }
 
