@@ -19,6 +19,8 @@
 extern CSVTestIOApp theApp;
 constexpr unsigned long cInputMaxCount = 8;
 constexpr unsigned long cOutputMaxCount = 16;
+constexpr unsigned long cMaxTriggers = 4;
+constexpr LPCTSTR cTriggerName = "IO_Board_1.Dig_";			///This name must match the name in the SVHardwareManifest
 
 HRESULT WINAPI SVCreate()
 {
@@ -93,196 +95,116 @@ HRESULT WINAPI SVOutputSetPortValue( unsigned long , unsigned long  )
 	return S_OK;
 }
 
-HRESULT WINAPI SVTriggerGetCount( unsigned long *p_pulCount )
+unsigned long WINAPI SVTriggerGetCount()
 {
 	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
 
-	HRESULT l_hrOk = S_FALSE;
-
-	if ( nullptr != p_pulCount )
-	{
-		*p_pulCount = 4;
-
-		l_hrOk = S_OK;
-	}
-
-	return l_hrOk;
+	return cMaxTriggers;
 }
 
-HRESULT WINAPI SVTriggerGetHandle( unsigned long *pTriggerchannel, unsigned long p_ulIndex )
+unsigned long WINAPI SVTriggerGetHandle(unsigned long index)
 {
 	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
 
-	HRESULT l_hrOk = S_FALSE;
-
-	if ( nullptr != pTriggerchannel )
-	{
-		*pTriggerchannel = p_ulIndex + 1;
-
-		l_hrOk = S_OK;
-	}
-
-	return l_hrOk;
+	return index + 1;
 }
 
-HRESULT WINAPI SVTriggerGetName( unsigned long triggerchannel, BSTR *p_pbstrName )
+_variant_t WINAPI SVTriggerGetName( unsigned long triggerIndex)
 {
 	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
 
-	HRESULT l_hrOk = S_FALSE;
+	_variant_t result;
 
-	if ( nullptr != p_pbstrName && 0 < triggerchannel && triggerchannel <= 4 )
+	if (0 < triggerIndex && triggerIndex <= cMaxTriggers)
 	{
-		l_hrOk = S_OK;
-
-		if ( nullptr != *p_pbstrName )
-		{
-			::SysFreeString( *p_pbstrName );
-
-			*p_pbstrName = nullptr;
-		}
-
-		CString l_csName;
-		
-		l_csName.Format( "IO_Board_1.Dig_%d", triggerchannel - 1 );
-
-		*p_pbstrName = l_csName.AllocSysString();
+		std::string triggerName{ cTriggerName };
+		triggerName += std::to_string(triggerIndex - 1);
+		result.SetString(triggerName.c_str());
 	} 
 
-	return l_hrOk;
+	return result;
 }
 
-HRESULT WINAPI SVTriggerRegister( unsigned long triggerchannel, SvTi::TriggerCallBack pTriggerCallback)
+HRESULT WINAPI SVTriggerRegister(unsigned long triggerIndex, SvTi::TriggerCallBack pTriggerCallback)
 {
 	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
 
-	if (0 < triggerchannel && triggerchannel <= 4 )
+	if (0 < triggerIndex && triggerIndex <= cMaxTriggers)
 	{
-		return theApp.m_pTestIODlg->RegisterCallback(triggerchannel, pTriggerCallback);
+		return theApp.m_pTestIODlg->RegisterCallback(triggerIndex, pTriggerCallback);
 	} 
 
 	return E_FAIL;
 }
 
-HRESULT WINAPI SVTriggerUnregister( unsigned long triggerchannel)
+HRESULT WINAPI SVTriggerUnregister(unsigned long triggerIndex)
 {
 	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
 
-	if (0 < triggerchannel && triggerchannel <= 4 )
+	if (0 < triggerIndex && triggerIndex <= cMaxTriggers)
 	{
-		return theApp.m_pTestIODlg->UnRegisterCallback(triggerchannel);
+		return theApp.m_pTestIODlg->UnRegisterCallback(triggerIndex);
 	} 
 
 	return E_FAIL;
 }
 
-HRESULT WINAPI SVTriggerStart( unsigned long triggerchannel )
+HRESULT WINAPI SVTriggerStart(unsigned long triggerIndex)
 {
 	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
 
-	HRESULT l_hrOk = S_FALSE;
-
-	if ( 0 < triggerchannel && triggerchannel <= 4 )
+	if (0 < triggerIndex && triggerIndex <= cMaxTriggers)
 	{
-		l_hrOk = theApp.m_pTestIODlg->StartTrigger( triggerchannel );
+		return theApp.m_pTestIODlg->StartTrigger(triggerIndex);
 	} 
 
-	return l_hrOk;
+	return E_FAIL;
 }
 
-HRESULT WINAPI SVTriggerStop( unsigned long triggerchannel )
+HRESULT WINAPI SVTriggerStop(unsigned long triggerIndex)
 {
 	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
 
-	HRESULT l_hrOk = S_FALSE;
-
-	if ( 0 < triggerchannel && triggerchannel <= 4 )
+	if (0 < triggerIndex && triggerIndex <= cMaxTriggers)
 	{
-		l_hrOk = theApp.m_pTestIODlg->StopTrigger( triggerchannel );
+		return theApp.m_pTestIODlg->StopTrigger(triggerIndex);
 	} 
 
-	return l_hrOk;
+	return E_FAIL;
 }
 
-HRESULT WINAPI SVTriggerGetParameterCount( unsigned long triggerchannel, unsigned long *p_pulCount )
+unsigned long WINAPI SVTriggerGetParameterCount(unsigned long )
 {
 	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
 
-	HRESULT l_hrOk = S_FALSE;
-
-	if ( nullptr != p_pulCount )
-	{
-		if ( 0 < triggerchannel && triggerchannel <= 4 )
-		{
-			*p_pulCount = 0;
-
-			l_hrOk = S_OK;
-		}
-		else
-		{
-			*p_pulCount = 4;
-		}
-	}
-
-	return l_hrOk;
+	return 0UL;
 }
 
-HRESULT WINAPI SVTriggerGetParameterName( unsigned long , unsigned long , BSTR *p_pbstrName )
+_variant_t WINAPI SVTriggerGetParameterName( unsigned long , unsigned long)
 {
 	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
 
-	HRESULT l_hrOk = S_FALSE;
-
-	if ( nullptr != p_pbstrName )
-	{
-		if ( nullptr != *p_pbstrName )
-		{
-			::SysFreeString( *p_pbstrName );
-			*p_pbstrName = nullptr;
-		}
-
-		l_hrOk = S_OK;
-	}
-
-	return l_hrOk;
+	return _variant_t{};
 }
 
-HRESULT WINAPI SVTriggerGetParameterValue( unsigned long triggerchannel, unsigned long , VARIANT *p_pvarValue )
+_variant_t WINAPI SVTriggerGetParameterValue( unsigned long , unsigned long)
 {
 	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
 
-	HRESULT l_hrOk = S_FALSE;
-
-	if ( nullptr != p_pvarValue )
-	{
-		if ( S_OK == ::VariantClear( p_pvarValue ) )
-		{
-			if ( 0 < triggerchannel && triggerchannel <= 4 )
-			{
-				l_hrOk = S_OK;
-			}
-		}
-	}
-
-	return l_hrOk;
+	return _variant_t{};
 }
 
 
-HRESULT WINAPI SVTriggerSetParameterValue( unsigned long triggerchannel, unsigned long, VARIANT *p_pvarValue )
+HRESULT WINAPI SVTriggerSetParameterValue( unsigned long triggerIndex, unsigned long, const _variant_t& )
 {
 	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
 
-	HRESULT l_hrOk = S_FALSE;
-
-	if ( 0 < triggerchannel && triggerchannel <= 4 )
+	if (0 < triggerIndex && triggerIndex <= cMaxTriggers)
 	{
-		if ( nullptr != p_pvarValue )
-		{
-			l_hrOk = S_OK;
-		}
+		return S_OK;
 	}
 
-	return l_hrOk;
+	return E_FAIL;
 }
 
 

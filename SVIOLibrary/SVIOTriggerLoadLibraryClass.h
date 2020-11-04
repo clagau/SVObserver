@@ -38,15 +38,15 @@ public:
 	
 	unsigned long GetCount() const;
 	unsigned long GetHandle(unsigned long index) const;
-	_variant_t GetName(unsigned long triggerChannel) const;
-	HRESULT Register(unsigned long triggerChannel, SvTi::TriggerCallBack pTriggerCallback);
-	HRESULT Unregister(unsigned long triggerChannel);
-	HRESULT Start(unsigned long triggerChannel);
-	HRESULT Stop(unsigned long triggerChannel);
-	unsigned long GetParameterCount(unsigned long triggerChannel) const;
-	_variant_t GetParameterName(unsigned long triggerChannel, unsigned long index) const;
-	_variant_t GetParameterValue(unsigned long triggerChannel, unsigned long index) const;
-	HRESULT SetParameterValue(unsigned long triggerChannel, unsigned long index, const _variant_t& rValue);
+	_variant_t GetName(unsigned long triggerIndex) const;
+	HRESULT Register(unsigned long triggerIndex, SvTi::TriggerCallBack pTriggerCallback);
+	HRESULT Unregister(unsigned long triggerIndex);
+	HRESULT Start(unsigned long triggerIndex);
+	HRESULT Stop(unsigned long triggerIndex);
+	unsigned long GetParameterCount(unsigned long triggerIndex) const;
+	_variant_t GetParameterName(unsigned long triggerIndex, unsigned long index) const;
+	_variant_t GetParameterValue(unsigned long triggerIndex, unsigned long index) const;
+	HRESULT SetParameterValue(unsigned long triggerIndex, unsigned long index, const _variant_t& rValue);
 
 private:
 	HMODULE m_Handle {nullptr};

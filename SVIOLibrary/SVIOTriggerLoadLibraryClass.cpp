@@ -135,101 +135,101 @@ unsigned long SVIOTriggerLoadLibraryClass::GetHandle(unsigned long index) const
 	return result;
 }
 
-_variant_t SVIOTriggerLoadLibraryClass::GetName( unsigned long triggerChannel) const
+_variant_t SVIOTriggerLoadLibraryClass::GetName( unsigned long triggerIndex) const
 {
 	_variant_t result;
 
 	if ( nullptr != m_pGetName )
 	{
-		result = m_pGetName( triggerChannel);
+		result = m_pGetName( triggerIndex);
 	}
 	return result;
 }
 
-HRESULT SVIOTriggerLoadLibraryClass::Register(unsigned long triggerChannel, SvTi::TriggerCallBack pTriggerCallback)
+HRESULT SVIOTriggerLoadLibraryClass::Register(unsigned long triggerIndex, SvTi::TriggerCallBack pTriggerCallback)
 {
 	HRESULT result {E_FAIL};
 
 	if ( nullptr != m_pRegister )
 	{
-		result = m_pRegister( triggerChannel, pTriggerCallback);
+		result = m_pRegister( triggerIndex, pTriggerCallback);
 	}
 	return result;
 }
 
-HRESULT SVIOTriggerLoadLibraryClass::Unregister(unsigned long triggerChannel)
+HRESULT SVIOTriggerLoadLibraryClass::Unregister(unsigned long triggerIndex)
 {
 	HRESULT result {E_FAIL};
 
 	if ( nullptr != m_pUnregister )
 	{
-		result = m_pUnregister( triggerChannel);
+		result = m_pUnregister( triggerIndex);
 	}
 	return result;
 }
 	
-HRESULT SVIOTriggerLoadLibraryClass::Start( unsigned long triggerChannel )
+HRESULT SVIOTriggerLoadLibraryClass::Start(unsigned long triggerIndex)
 {
 	HRESULT result {E_FAIL};
 
 	if ( nullptr != m_pStart )
 	{
-		result = m_pStart(triggerChannel);
+		result = m_pStart(triggerIndex);
 	}
 	return result;
 }
 	
-HRESULT SVIOTriggerLoadLibraryClass::Stop(unsigned long triggerChannel)
+HRESULT SVIOTriggerLoadLibraryClass::Stop(unsigned long triggerIndex)
 {
 	HRESULT result {E_FAIL};
 
 	if ( nullptr != m_pStop )
 	{
-		result = m_pStop(triggerChannel);
+		result = m_pStop(triggerIndex);
 	}
 	return result;
 }
 	
-unsigned long SVIOTriggerLoadLibraryClass::GetParameterCount(unsigned long triggerChannel) const
+unsigned long SVIOTriggerLoadLibraryClass::GetParameterCount(unsigned long triggerIndex) const
 {
 	unsigned long result {0UL};
 
 	if (nullptr != m_pGetParameterCount)
 	{
-		result = m_pGetParameterCount(triggerChannel);
+		result = m_pGetParameterCount(triggerIndex);
 	}
 	return result;
 }
 
-_variant_t SVIOTriggerLoadLibraryClass::GetParameterName(unsigned long triggerChannel, unsigned long index) const
+_variant_t SVIOTriggerLoadLibraryClass::GetParameterName(unsigned long triggerIndex, unsigned long index) const
 {
 	_variant_t result;
 
 	if ( nullptr != m_pGetParameterName )
 	{
-		result = m_pGetParameterName(triggerChannel, index);
+		result = m_pGetParameterName(triggerIndex, index);
 	}
 	return result;
 }
 
-_variant_t SVIOTriggerLoadLibraryClass::GetParameterValue( unsigned long triggerChannel, unsigned long index) const
+_variant_t SVIOTriggerLoadLibraryClass::GetParameterValue( unsigned long triggerIndex, unsigned long index) const
 {
 	_variant_t result;
 
 	if ( nullptr != m_pGetParameterValue )
 	{
-		result = m_pGetParameterValue( triggerChannel, index);
+		result = m_pGetParameterValue( triggerIndex, index);
 	}
 	return result;
 }
 
-HRESULT SVIOTriggerLoadLibraryClass::SetParameterValue( unsigned long triggerChannel, unsigned long index, const _variant_t& rValue)
+HRESULT SVIOTriggerLoadLibraryClass::SetParameterValue( unsigned long triggerIndex, unsigned long index, const _variant_t& rValue)
 {
 	HRESULT result {E_FAIL};
 
 	if ( nullptr != m_pSetParameterValue )
 	{
-		result = m_pSetParameterValue( triggerChannel, index, rValue);
+		result = m_pSetParameterValue( triggerIndex, index, rValue);
 	}
 
 	return result;

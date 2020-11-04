@@ -13,9 +13,6 @@
 #include "TriggerInformation/SVTriggerInfoStruct.h"
 
 
-class SVAcquisitionBufferInterface;
-
-
 HRESULT WINAPI SVCreate();
 HRESULT WINAPI SVDestroy();
 
@@ -28,16 +25,14 @@ HRESULT WINAPI SVOutputSetValue(unsigned long channel, bool value);
 unsigned long WINAPI SVOutputGetPortCount();
 HRESULT WINAPI SVOutputSetPortValue(unsigned long port, unsigned long value);
 
-HRESULT WINAPI SVTriggerGetCount( unsigned long *p_pulCount );
-HRESULT WINAPI SVTriggerGetHandle( unsigned long *pTriggerchannel, unsigned long p_ulIndex );
-HRESULT WINAPI SVTriggerGetName( unsigned long triggerchannel, BSTR *p_pbstrName );
-HRESULT WINAPI SVTriggerRegister( unsigned long triggerchannel, SvTi::TriggerCallBack pTriggerCallback);
-HRESULT WINAPI SVTriggerUnregister( unsigned long triggerchannel);
-HRESULT WINAPI SVTriggerStart( unsigned long triggerchannel );
-HRESULT WINAPI SVTriggerStop( unsigned long triggerchannel );
-HRESULT WINAPI SVTriggerGetParameterCount( unsigned long triggerchannel, unsigned long *p_pulCount );
-HRESULT WINAPI SVTriggerGetParameterName( unsigned long triggerchannel, unsigned long p_ulIndex, BSTR *p_pbstrName );
-HRESULT WINAPI SVTriggerGetParameterValue( unsigned long triggerchannel, unsigned long p_ulIndex, VARIANT *p_pvarValue );
-HRESULT WINAPI SVTriggerSetParameterValue( unsigned long triggerchannel, unsigned long p_ulIndex, VARIANT *p_pvarValue );
-
-
+unsigned long WINAPI SVTriggerGetCount();
+unsigned long WINAPI SVTriggerGetHandle(unsigned long index);
+_variant_t WINAPI SVTriggerGetName(unsigned long triggerIndex);
+HRESULT WINAPI SVTriggerRegister(unsigned long triggerIndex, SvTi::TriggerCallBack pTriggerCallback);
+HRESULT WINAPI SVTriggerUnregister(unsigned long triggerIndex);
+HRESULT WINAPI SVTriggerStart(unsigned long triggerIndex);
+HRESULT WINAPI SVTriggerStop(unsigned long triggerIndex);
+unsigned long WINAPI SVTriggerGetParameterCount( unsigned long triggerIndex);
+_variant_t WINAPI SVTriggerGetParameterName( unsigned long triggerIndex, unsigned long index);
+_variant_t WINAPI SVTriggerGetParameterValue( unsigned long triggerIndex, unsigned long index);
+HRESULT WINAPI SVTriggerSetParameterValue( unsigned long triggerIndex, unsigned long index, const _variant_t rValue);
