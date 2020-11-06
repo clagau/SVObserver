@@ -95,8 +95,8 @@ struct SVInspectionInfoStruct
 	SVInspectionProcess* m_pInspection {nullptr};
 	SVProductInspectedState m_InspectedState {PRODUCT_NOT_INSPECTED};
 
-	bool m_CanProcess {false};
-	bool m_InProcess {false};
+	mutable bool m_CanProcess {false};
+	mutable bool m_InProcess {false};
 	bool m_HasBeenQueued {false};
 	
 	double m_BeginInspection {0.0};
@@ -149,7 +149,7 @@ struct SVProductInfoStruct
 
 	bool IsProductActive() const;
 	void SetProductActive();
-	void SetProductComplete();
+	void SetProductComplete() const;
 	
 	/// Set the TriggerRecord from write to readOnly for the required IP.
 	/// \param iPId [in] id of the IP. If SvDef::InvalidObjectId then for inspection will done the action.
@@ -170,14 +170,8 @@ struct SVProductInfoStruct
 	long m_monitorListSMSlot; // Shared Memory
 
 protected:
-	long m_ProductActive;
+	mutable std::atomic_bool m_ProductActive;
 };
-
-/// This function copy a productInfo to another except from the IP-Info. It will only one IPInfo copied and the triggerRecordWriter will be moved.
-/// \param sourceProduct [in] Source data.
-/// \param iPId [in] ID of the inspection 
-/// \returns SVProductInfoStruct
-SVProductInfoStruct moveInspectionToNewProduct(SVProductInfoStruct& sourceProduct, uint32_t iPId);
 
 struct SVInspectionNameUpdate
 {
@@ -226,19 +220,15 @@ struct SVInputRequestInfoStruct
 {
 	SVInputRequestInfoStruct();
 	SVInputRequestInfoStruct( const SVObjectReference& rValueObject, const _variant_t& rValue );
-	virtual ~SVInputRequestInfoStruct();
+	SVInputRequestInfoStruct(const SVInputRequestInfoStruct& rObject) = delete;
+	SVInputRequestInfoStruct& operator=(const SVInputRequestInfoStruct& rObject) = delete;
+	~SVInputRequestInfoStruct() = default;
 
 	void Reset();
 	void Init();
 
 	SVObjectReference m_ValueObjectRef;
 	_variant_t m_Value;
-
-private:
-	SVInputRequestInfoStruct( const SVInputRequestInfoStruct& rObject );
-
-	const SVInputRequestInfoStruct& operator=( const SVInputRequestInfoStruct& rObject );
-
 };
 
 typedef std::shared_ptr< SVInputRequestInfoStruct > SVInputRequestInfoStructPtr;

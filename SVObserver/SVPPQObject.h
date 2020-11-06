@@ -57,7 +57,7 @@ constexpr long getMaxPpqLength()
 
 class SVPPQObject : 
 	public SVObjectClass,
-	public SVObserverTemplate< std::pair<SVInspectionInfoStruct, long> >
+	public SVObserverTemplate<std::pair<long, SVInspectionInfoStruct>>
 {
 	enum PpqOutputEnums
 	{
@@ -81,10 +81,16 @@ public:
 	virtual ~SVPPQObject();
 
 public:
+	typedef std::pair< long, SVInspectionInfoStruct > SVInspectionInfoPair;
+	typedef std::pair< long, SVProductInfoRequestStruct > SVProductRequestPair;
+	typedef std::vector< SVProductInfoStruct* > SVProductPositionQueue;
+	typedef std::deque< long > SVProcessCountDeque;
+	typedef std::set< long > SVProcessCountSet;
+
 	void SetNAKMode(SvDef::NakGeneration  NAKMode, int NAKPar);
 	virtual HRESULT GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index = 0 ) const override;
 	
-	virtual HRESULT ObserverUpdate( const std::pair<SVInspectionInfoStruct, long>& p_rData ) override;
+	virtual HRESULT ObserverUpdate( const SVInspectionInfoPair& rData) override;
 
 	bool Create();
 	bool Rebuild();
@@ -235,13 +241,6 @@ protected:
 	long m_rejectCount = 0;
 	SvSml::RingBufferPointer m_SlotManager;
 	
-
-
-	typedef std::pair< long, SVInspectionInfoStruct > SVInspectionInfoPair;
-	typedef std::pair< long, SVProductInfoRequestStruct > SVProductRequestPair;
-	typedef std::vector< SVProductInfoStruct* > SVProductPositionQueue;
-	typedef std::deque< long > SVProcessCountDeque;
-	typedef std::set< long > SVProcessCountSet;
 	typedef SVTQueueObject< SVCameraQueueElement > SVCameraResponseQueue;
 	typedef SVTQueueObject< SVProductInfoStruct* > SVProductPointerQueue;
 	typedef SVRingBuffer<SvTi::SVTriggerInfoStruct> SVTriggerInfoQueue;
@@ -489,8 +488,8 @@ private:
 	long m_FirstNAKProcessCount;		///only trigger >= m_FirstNAKProcessCount will be inspected 
 	long m_NewNAKCount;					//!Nak count will be set to 0 if no NAK occurs 
 	long m_ReducedPPQPosition;			/// min number of inspection that will be checked for startInspection  for nakMode =2
-	long m_lastPPQPosition {0L};		/// This is the PPQ position of the last SetInspectionComplete call
-	int m_maxProcessingOffset4Interest {0};  
+	long m_lastPPQPosition{ 0L };		/// This is the PPQ position of the last SetInspectionComplete call
+	int m_maxProcessingOffset4Interest {0};
 	bool m_useProcessingOffset4Interest {false};	///Flag if processing offset will used. It should only used if m_maxProcessingOffset4Interest >2 and <PPQLength, RejectCondition set and at least two Inspections in this PPQ.
 
 	using IpInfoDeque = std::deque<SVInspectionInfoStruct>;

@@ -332,25 +332,21 @@ void SVProductInfoStruct::DumpIndexInfo( std::string& rData )
 
 bool SVProductInfoStruct::IsProductActive() const
 {
-	return ( 0 < m_ProductActive );
+	return m_ProductActive;
 }
 
 void SVProductInfoStruct::SetProductActive()
 {
-	::InterlockedIncrement( &m_ProductActive );
-
+	m_ProductActive = true;
 	SVObjectManagerClass::Instance().IncrementProductIndicator();
 }
 
-void SVProductInfoStruct::SetProductComplete()
+void SVProductInfoStruct::SetProductComplete() const
 {
-	if( 0 < m_ProductActive )
+	if(m_ProductActive)
 	{
-		// Set ObjectManager product active to 0, then set local 
-		// SVProductInfoStruct product active to 0.
-		SVObjectManagerClass::Instance().AdjustProductIndicator( -m_ProductActive );
-
-		::InterlockedExchange( &m_ProductActive, 0 );
+		SVObjectManagerClass::Instance().DecrementProductIndicator();
+		m_ProductActive = false;
 	}
 
 	for(auto& rIpInfoPair: m_svInspectionInfos)
@@ -377,19 +373,6 @@ void SVProductInfoStruct::setInspectionTriggerRecordComplete(uint32_t iPId)
 			rIPInfoPair.second.setTriggerRecordIncompleted();
 		}
 	}
-}
-
-SVProductInfoStruct moveInspectionToNewProduct(SVProductInfoStruct& sourceProduct, uint32_t iPId)
-{
-	SVProductInfoStruct newProduct;
-	newProduct.Assign(sourceProduct, true);
-	auto ipIter = sourceProduct.m_svInspectionInfos.find(iPId);
-	if (sourceProduct.m_svInspectionInfos.end() != ipIter)
-	{
-		newProduct.m_svInspectionInfos[ipIter->first] = ipIter->second;
-		ipIter->second.m_triggerRecordWrite = nullptr;
-	}
-	return newProduct;
 }
 
 SVInspectionNameUpdate::SVInspectionNameUpdate()
@@ -466,11 +449,6 @@ SVInputRequestInfoStruct::SVInputRequestInfoStruct()
 SVInputRequestInfoStruct::SVInputRequestInfoStruct( const SVObjectReference& rValueObject, const _variant_t& rValue )
 : m_ValueObjectRef( rValueObject ), m_Value( rValue )
 {
-}
-
-SVInputRequestInfoStruct::~SVInputRequestInfoStruct()
-{
-	Reset();
 }
 
 void SVInputRequestInfoStruct::Reset()

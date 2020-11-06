@@ -984,11 +984,6 @@ void SVObjectManagerClass::DecrementProductIndicator()
 	::InterlockedDecrement(&m_ProductIndicator);
 }
 
-void SVObjectManagerClass::AdjustProductIndicator(long Amount)
-{
-	::InterlockedExchangeAdd(&m_ProductIndicator, Amount);
-}
-
 long SVObjectManagerClass::GetPendingImageIndicator() const
 {
 	return m_PendingImageIndicator;
@@ -1032,11 +1027,6 @@ void SVObjectManagerClass::IncrementInspectionIndicator()
 void SVObjectManagerClass::DecrementInspectionIndicator()
 {
 	::InterlockedDecrement(&m_InspectionIndicator);
-}
-
-void SVObjectManagerClass::AdjustInspectionIndicator(long Amount)
-{
-	::InterlockedExchangeAdd(&m_InspectionIndicator, Amount);
 }
 
 long SVObjectManagerClass::GetNextFrameRate(long LastFrameRate)

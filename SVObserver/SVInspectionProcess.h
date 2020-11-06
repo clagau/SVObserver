@@ -184,7 +184,7 @@ public:
 
 	/// Update the main image of this product.
 	/// ATTENTION: In error case the method throw an exception of the type SvStl::MessageContainer.
-	void UpdateMainImagesByProduct(SVInspectionInfoStruct& rIpInfoStruct, SvIe::SVObjectIdSVCameraInfoStructMap& rCameraInfos);
+	void UpdateMainImagesByProduct(SVInspectionInfoStruct& rIpInfoStruct, const SvIe::SVObjectIdSVCameraInfoStructMap& rCameraInfos);
 	virtual bool IsColorCamera() const override;
 
 	LPCTSTR GetToolsetImage();
@@ -318,7 +318,7 @@ protected:
 	
 	virtual SVObjectClass* UpdateObject(uint32_t friendId, SVObjectClass *p_psvObject, SVObjectClass *p_psvNewOwner ) override;
 
-	bool RunInspection(SVInspectionInfoStruct& rIPInfo, SvIe::SVObjectIdSVCameraInfoStructMap& rCameraInfos, long triggerCount, bool p_UpdateCounts = true );
+	bool RunInspection(SVInspectionInfoStruct& rIPInfo, const SvIe::SVObjectIdSVCameraInfoStructMap& rCameraInfos, long triggerCount, bool p_UpdateCounts = true );
 
 	void DestroyInspection();
 
@@ -330,7 +330,7 @@ protected:
 
 	bool ProcessInputRequests( bool &rForceOffsetUpdate );
 	bool ProcessInputRequests( SvOi::SVResetItemEnum& rResetItem );
-	bool ProcessInputImageRequests(SVInspectionInfoStruct& rIpInfoStruct, SvIe::SVObjectIdSVCameraInfoStructMap& rCameraInfos);
+	bool ProcessInputImageRequests(SVInspectionInfoStruct& rIpInfoStruct, const SvIe::SVObjectIdSVCameraInfoStructMap& rCameraInfos);
 
 	HRESULT LastProductCopySourceImagesTo( SVProductInfoStruct *p_psvProduct );
 
@@ -345,8 +345,8 @@ protected:
 
 	void ThreadProcess( bool& p_WaitForEvents );
 
-	HRESULT ProcessInspection( bool& p_rProcessed, SVProductInfoStruct& p_rProduct );
-	HRESULT ProcessNotifyWithLastInspected(bool& p_rProcessed, SVProductInfoStruct& p_rProduct);
+	HRESULT ProcessInspection( bool& p_rProcessed);
+	HRESULT ProcessNotifyWithLastInspected(bool& p_rProcessed);
 	HRESULT ProcessCommandQueue( bool& p_rProcessed );
 	
 	///True if product is a reject
@@ -359,7 +359,7 @@ private:
 
 	HRESULT FindPPQInputObjectByName(SVObjectClass*& p_rpObject, LPCTSTR p_FullName) const;
 
-	HRESULT LastProductUpdate(SVProductInfoStruct *p_psvProduct);
+	HRESULT LastProductUpdate(const SVProductInfoStruct* pProduct);
 	SVProductInfoStruct LastProductGet() const;
 
 	SVIOEntryHostStructPtrVector m_PPQInputs;
@@ -369,7 +369,7 @@ private:
 	uint32_t m_PPQId{SvDef::InvalidObjectId};
 
 	mutable SVAsyncProcedure m_AsyncProcedure;
-	long m_NotifyWithLastInspected;
+	std::atomic_bool m_NotifyWithLastInspected;
 
 	volatile long m_lInputRequestMarkerCount{0L};
 	SVInputRequestQueue m_InputRequests;
@@ -386,10 +386,7 @@ private:
 	// Inspection pointers
 	SVToolSet* m_pCurrentToolset{nullptr};
 
-	volatile bool m_bInspecting{false};
-
-	// Inspection Queue
-	SVProductQueue       m_qInspectionsQueue;
+	volatile bool m_isInspecting{false};
 
 	// Map of All Value Objects
 	SVValueObjectMap m_mapValueObjects;
@@ -434,6 +431,9 @@ private:
 	SvOi::IValueObjectPtrSet m_updateValueObjectSet; //The value objects which need updating
 	std::vector<uint8_t> m_valueData;		///The memory block used to store all value objects of the inspection
 	std::atomic_bool m_resetting{false};
+
+	std::atomic<const SVProductInfoStruct*> m_pProduct{ nullptr };
+	SVInspectionInfoStruct m_inspectionInfo;
 };
 
 typedef std::vector<SVInspectionProcess*> SVInspectionProcessVector;

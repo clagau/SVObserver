@@ -74,11 +74,9 @@ SVDisplayObject::~SVDisplayObject()
 	m_hDisplayThread = nullptr;
 }
 
-HRESULT SVDisplayObject::ObserverUpdate( const std::pair<SVInspectionInfoStruct, long>& p_rData )
+HRESULT SVDisplayObject::ObserverUpdate( const std::pair<long, SVInspectionInfoStruct>& rData )
 {
-	HRESULT l_Status = FinishInspection( p_rData );
-
-	return l_Status;
+	return FinishInspection(rData);
 }
 
 HRESULT SVDisplayObject::ObserverUpdate( const SVInspectionNameUpdate& p_rData )
@@ -427,7 +425,7 @@ HRESULT SVDisplayObject::ProcessNotifyIPDoc( bool& p_rProcessed )
 	return l_Status;
 }
 
-HRESULT SVDisplayObject::FinishInspection( const std::pair<SVInspectionInfoStruct, long>& inspectionData )
+HRESULT SVDisplayObject::FinishInspection( const std::pair<long, SVInspectionInfoStruct>& rData )
 {	
 	HRESULT l_Status = S_OK;
 	bool ImageUpdate = true;
@@ -457,15 +455,15 @@ HRESULT SVDisplayObject::FinishInspection( const std::pair<SVInspectionInfoStruc
 		{
 			bool l_State = !(SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST));
 
-			l_State = l_State || (inspectionData.first.m_InspectedState == PRODUCT_INSPECTION_WARNING);
-			l_State = l_State || (inspectionData.first.m_InspectedState == PRODUCT_INSPECTION_FAILED);
-			l_State = l_State || (inspectionData.first.m_InspectedState == PRODUCT_INSPECTION_PASSED);
+			l_State = l_State || (rData.second.m_InspectedState == PRODUCT_INSPECTION_WARNING);
+			l_State = l_State || (rData.second.m_InspectedState == PRODUCT_INSPECTION_FAILED);
+			l_State = l_State || (rData.second.m_InspectedState == PRODUCT_INSPECTION_PASSED);
 
 			if (l_State)
 			{
 				::EnterCriticalSection(&(m_CriticalSection));
 
-				m_PendingTrigger = inspectionData.second;
+				m_PendingTrigger = rData.first;
 
 				::SetEvent(m_hStartEvent);
 

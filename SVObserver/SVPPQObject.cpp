@@ -331,12 +331,13 @@ HRESULT SVPPQObject::GetChildObject(SVObjectClass*& rpObject, const SVObjectName
 	return l_Status;
 }
 
-HRESULT SVPPQObject::ObserverUpdate(const std::pair<SVInspectionInfoStruct, long>& rData)
+HRESULT SVPPQObject::ObserverUpdate(const SVInspectionInfoPair& rData)
 {
-	SVInspectionInfoPair infoPair(rData.second, rData.first);
-	infoPair.second.ClearIndexes();
-	m_oInspectionQueue.AddTail(infoPair);
+#if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
+	::OutputDebugString(SvUl::Format(_T("%s Inspection %s completed TRI=%d State=%x\n"), GetName(), rData.second.m_pInspection->GetName(), rData.first, rData.second.m_InspectedState).c_str());
+#endif
 
+	m_oInspectionQueue.AddTail(rData);
 	m_AsyncProcedure.Signal(nullptr);
 
 	return S_OK;
@@ -2053,7 +2054,6 @@ SVProductInfoStruct* SVPPQObject::IndexPPQ(SvTi::SVTriggerInfoStruct&& rTriggerI
 void SVPPQObject::InitializeProduct(SVProductInfoStruct* pNewProduct)
 {
 	pNewProduct->m_lastPPQPosition = m_lastPPQPosition;
-
 	///The inputs need to be sorted to their PPQ position
 	std::vector<_variant_t> inputValues;
 	inputValues.resize(pNewProduct->m_triggerInfo.m_Inputs.size());
@@ -2116,7 +2116,7 @@ HRESULT SVPPQObject::NotifyInspections(long offset)
 			// if product has not been previously determined that it "can 
 			// process".  That would generally mean that it's been here 
 			// before, and should not be able to happen.
-			if (!(rInfo.m_CanProcess) && !(rInfo.m_InProcess) && pTempProduct->IsProductActive())
+			if (false == rInfo.m_CanProcess && false == rInfo.m_InProcess && false == rInfo.m_HasBeenQueued && pTempProduct->IsProductActive())
 			{
 				// Tests if we have all required inputs.  Includes assigned 
 				// discrete inputs and camera images.
@@ -2172,10 +2172,10 @@ HRESULT SVPPQObject::NotifyInspections(long offset)
 
 HRESULT SVPPQObject::StartInspection(uint32_t inspectionID)
 {
-	HRESULT l_Status = S_OK;
+	HRESULT result{ S_OK };
 
-	SVProductInfoStruct* l_pProduct = nullptr;
-	size_t l_Count = m_PPQPositions.size();
+	SVProductInfoStruct* pProduct{ nullptr };
+	size_t count = m_PPQPositions.size();
 
 	switch (m_NAKMode)
 	{
@@ -2183,13 +2183,13 @@ HRESULT SVPPQObject::StartInspection(uint32_t inspectionID)
 		if (0 < m_NAKCount)
 		{
 			long l_NAKCount = m_NAKCount;
-			if ((l_NAKCount + 2) < static_cast<long>(l_Count))
+			if ((l_NAKCount + MinReducedPPQPosition) < static_cast<long>(count))
 			{
-				l_Count -= l_NAKCount;
+				count -= l_NAKCount;
 			}
 			else
 			{
-				l_Count = std::min< size_t >(2, m_PPQPositions.size());
+				count = MinReducedPPQPosition;
 			}
 		}
 		break;
@@ -2204,74 +2204,70 @@ HRESULT SVPPQObject::StartInspection(uint32_t inspectionID)
 		if (0 < m_NewNAKCount)
 		{
 			long l_NAKCount = m_NewNAKCount;
-			if ((l_NAKCount + m_ReducedPPQPosition) < static_cast<long>(l_Count))
+			if ((l_NAKCount + m_ReducedPPQPosition) < static_cast<long>(count))
 			{
-				l_Count -= l_NAKCount;
+				count -= l_NAKCount;
 			}
 			else
 			{
-				l_Count = std::min< size_t >(m_ReducedPPQPosition, m_PPQPositions.size());
+				count = std::min< size_t >(m_ReducedPPQPosition, m_PPQPositions.size());
 			}
 		}
 		break;
 
 	case SvDef::FixedMaximum:
-		l_Count = m_ReducedPPQPosition;
+		count = m_ReducedPPQPosition;
 		break;
-
-
 	}
 
 #ifdef EnableTracking
 	size_t l_ProductIndex = m_PPQPositions.size();
 #endif
 	// Begin checking inspections to start processing
-	for (size_t i = 0; i < l_Count; ++i)
+	for (size_t i = 0; i < count; ++i)
 	{
 		SVProductInfoStruct* pTempProduct = m_PPQPositions.GetProductAt(i);
 
-		if (nullptr != pTempProduct)
+		if (nullptr != pTempProduct && pTempProduct->IsProductActive())
 		{
-			if (pTempProduct->IsProductActive())
-			{
-				SVInspectionInfoStruct& l_rInfo = pTempProduct->m_svInspectionInfos[inspectionID];
+			const SVInspectionInfoStruct& rInfo = pTempProduct->m_svInspectionInfos[inspectionID];
 
-				if (l_rInfo.m_CanProcess &&				// all inputs are available and inspection can start
-					!(l_rInfo.m_InProcess) &&			// inspection is not currently running
-					!(l_rInfo.m_HasBeenQueued))		// This flag prevents the inspection from getting queued more than once
-				{
-					l_pProduct = pTempProduct; // product info
+			/// All inputs are available and inspection can start
+			/// Inspection is currently not running
+			/// Inspection has not already been queued
+			if (true == rInfo.m_CanProcess && false == rInfo.m_InProcess && false == rInfo.m_HasBeenQueued)
+			{
+				pProduct = pTempProduct; // product info
 #ifdef EnableTracking
-					l_ProductIndex = m_PPQPositions.GetIndexByTriggerCount(l_pProduct->ProcessCount());
+				l_ProductIndex = m_PPQPositions.GetIndexByTriggerCount(pProduct->ProcessCount());
 #endif
-					if (SvDef::Bursts == m_NAKMode)
+				if (SvDef::Bursts == m_NAKMode)
+				{
+					if (m_NewNAKCount > 2 && 0L == m_FirstNAKProcessCount)
 					{
-						if ((m_NewNAKCount > 2 && m_FirstNAKProcessCount == 0))
-						{
-							m_FirstNAKProcessCount = pTempProduct->ProcessCount();
-							break;
-						}
-						else if ((m_FirstNAKProcessCount > pTempProduct->ProcessCount()))
-						{
-							break;
-						}
+						m_FirstNAKProcessCount = pTempProduct->ProcessCount();
+						continue;
 					}
 				}
 			}
-			else
+			if (m_FirstNAKProcessCount > pTempProduct->ProcessCount())
 			{
-				break;
+				SetProductIncomplete(*pTempProduct);
+				pTempProduct = nullptr;
 			}
 		}
 	}
 
-	if (nullptr != l_pProduct && nullptr != l_pProduct->m_svInspectionInfos[inspectionID].m_pInspection)
+	if (nullptr != pProduct && nullptr != pProduct->m_svInspectionInfos[inspectionID].m_pInspection)
 	{
-
-		l_Status = l_pProduct->m_svInspectionInfos[inspectionID].m_pInspection->StartProcess(l_pProduct);
+#if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
+		long ppqPos = m_PPQPositions.GetIndexByTriggerCount(pProduct->ProcessCount());
+		::OutputDebugString(SvUl::Format(_T("%s Start Inspection TRI=%d, PPQPos=%d\n"), GetName(), pProduct->ProcessCount(), ppqPos).c_str());
+#endif
+		result = pProduct->m_svInspectionInfos[inspectionID].m_pInspection->StartProcess(pProduct);
 
 #ifdef EnableTracking
-		std::string l_Title = l_pProduct->m_svInspectionInfos[inspectionID].m_pInspection->GetName();
+		std::string l_Title = pProduct->m_svInspectionInfos[inspectionID].m_pInspection->GetName();
 		l_Title += _T(" Start");
 		m_PPQTracking.IncrementCount(l_Title, l_ProductIndex);
 #endif
@@ -2294,7 +2290,7 @@ HRESULT SVPPQObject::StartInspection(uint32_t inspectionID)
 #endif
 	}
 
-	return l_Status;
+	return result;
 }
 
 void SVPPQObject::StartOutputs(SVProductInfoStruct* pProduct)
@@ -2533,14 +2529,14 @@ bool SVPPQObject::SetProductComplete(long p_PPQIndex)
 	return l_Status;
 }
 
-bool SVPPQObject::SetProductComplete(SVProductInfoStruct& p_rProduct)
+bool SVPPQObject::SetProductComplete(SVProductInfoStruct& rProduct)
 {
 	bool l_Status = true;
 
 	///@TODO[mec, 26.07.2016]  Normaly this is a bug and SVPPQObject::IsProductAlive  should  be used this code exist only to 
 	/// have the possibility to switch with nakmode M_Old to the old behavior and should be corrected or removed 
 	// if this is not longer necessary 
-	if (m_PPQPositions.IsProductAlive(p_rProduct.ProcessCount()))
+	if (m_PPQPositions.IsProductAlive(rProduct.ProcessCount()))
 	{
 		::InterlockedExchange(&m_NAKCount, 0);
 	}
@@ -2551,23 +2547,22 @@ bool SVPPQObject::SetProductComplete(SVProductInfoStruct& p_rProduct)
 
 	if (false == getMaintainSourceImages())
 	{
-		for (auto& rValue : p_rProduct.m_svCameraInfos)
+		for (auto& rValue : rProduct.m_svCameraInfos)
 		{
 			rValue.second.ClearCameraInfo();
 		}
 	}
-	p_rProduct.setInspectionTriggerRecordComplete(SvDef::InvalidObjectId);
-	if(p_rProduct.IsProductActive())
+	rProduct.setInspectionTriggerRecordComplete(SvDef::InvalidObjectId);
+	if(rProduct.IsProductActive())
 	{
-	p_rProduct.SetProductComplete();
-
+		rProduct.SetProductComplete();
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
-		long ppqPos = m_PPQPositions.GetIndexByTriggerCount(p_rProduct.ProcessCount());
-		::OutputDebugString(SvUl::Format(_T("%s Product complete TRI=%d, PPQPos=%d\n"), GetName(), p_rProduct.ProcessCount(), ppqPos).c_str());
+		long ppqPos = m_PPQPositions.GetIndexByTriggerCount(rProduct.ProcessCount());
+		::OutputDebugString(SvUl::Format(_T("%s Product complete TRI=%d, PPQPos=%d\n"), GetName(), rProduct.ProcessCount(), ppqPos).c_str());
 #endif
 	}
 
-	p_rProduct.m_ProductState += _T("|COMPLETE");
+	rProduct.m_ProductState += _T("|COMPLETE");
 
 	return l_Status;
 }
@@ -2678,7 +2673,7 @@ HRESULT SVPPQObject::ProcessCameraResponse(const SVCameraQueueElement& rElement)
 							pProduct->m_hasCameraImage[cameraID] = true;
 						}
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
-						::OutputDebugString(SvUl::Format(_T("%s Camera %s | TRI=%d\n"), GetName(), rElement.m_pCamera->GetName(), pProduct->ProcessCount()).c_str());
+						::OutputDebugString(SvUl::Format(_T("%s Camera %s | TRI=%d, PPQPos=%d\n"), GetName(), rElement.m_pCamera->GetName(), pProduct->ProcessCount(), l_ProductIndex).c_str());
 #endif
 					}
 					else
@@ -2861,7 +2856,7 @@ void SVPPQObject::cameraCallback(ULONG_PTR pCaller, CameraInfo&& cameraInfo)
 	{
 		m_CameraResponseQueue.AddTail(SVCameraQueueElement(pCamera, cameraInfo));
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
-		::OutputDebugString(SvUl::Format(_T("GetName() Finished Camera Acquisition %s\n"), GetName(), pCamera->GetName()).c_str());
+		::OutputDebugString(SvUl::Format(_T("%s Finished Camera Acquisition %s\n"), GetName(), pCamera->GetName()).c_str());
 #endif
 		m_AsyncProcedure.Signal(nullptr);
 	}

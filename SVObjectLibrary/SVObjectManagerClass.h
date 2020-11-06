@@ -146,7 +146,6 @@ public:
 	void ClearProductIndicator();
 	void IncrementProductIndicator();
 	void DecrementProductIndicator();
-	void AdjustProductIndicator( long Amount );
 
 	long GetPendingImageIndicator() const;
 	void ClearPendingImageIndicator();
@@ -158,7 +157,6 @@ public:
 	void ClearInspectionIndicator();
 	void IncrementInspectionIndicator();
 	void DecrementInspectionIndicator();
-	void AdjustInspectionIndicator( long Amount );
 
 	long GetNextFrameRate( long LastFrameRate );
 
