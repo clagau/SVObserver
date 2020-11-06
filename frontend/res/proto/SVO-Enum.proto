@@ -72,6 +72,8 @@ enum SVObjectTypeEnum
 	SVResultObjectType						= 0x00100000;
 	SVRangeObjectType						= 0x00200000;
 	SVToolSizeAdjustTaskType				= 0x00300000;
+
+	ParameterTaskObjectType					= 0x00400000;
 }
 
 // place all sub types here
@@ -112,6 +114,7 @@ enum SVObjectSubTypeEnum
 	SVTableToolObjectType						= 0x0000002b;
 	SVTableAnalyzerToolObjectType				= 0x0000002c;
 	LoopToolObjectType							= 0x0000002d;
+	GroupToolObjectType							= 0x0000002e;
 
 	SVEnvironmentObjectType						= 0x00000062;
 	SVCameraObjectType							= 0x00000063;
@@ -251,6 +254,8 @@ enum SVObjectSubTypeEnum
 
 	// Operator SubTypes
 	SVColorThresholdObjectType					= 0x00003000;
+	ParameterInputObjectType					= 0x00003001;
+	ParameterResultObjectType					= 0x00003002;
 
 	//TableObject SubTypes
 	TableFillObjectType						= 0x00004000;
@@ -300,7 +305,7 @@ enum ObjectAttributes
 	embedable					= 0x00000010;	//Object is an embedded value
 	selectableForStatistics		= 0x00000020;	//Object is displayed in the object selector when used for statistics tool
 	archivableImage				= 0x00000040;	//Object image is displayed in the object selector when used for archiving
-	printable					= 0x00000080;	//Object is printed in the configuration report
+	audittrail					= 0x00000080;	//Object is printed in the configuration report
 	remotelySetable				= 0x00000100;	//Object can be set remotely  //@TODO[Arvid]: this is a typo. 'remotelySettable' would be correct
 	setableOnline				= 0x00000200;	//Object can be set when SVObserver is Online //@TODO[Arvid]: this is a typo. 'settableOnline' would be correct
 	extentObject				= 0x00000400;	//Object is an extent value object
@@ -329,13 +334,6 @@ enum ObjectSelectorType
 	allImageObjects = 5;
 	grayImageObjects = 6;
 	colorImageObjects = 7;
-}
-
-enum SelectorFilter
-{
-	attributesAllowed = 0;			//Object selector filter for attributes allowed
-	attributesSet = 1;				//Object selector filter for attributes set
-	excludeSameLineage = 2;			//Object selector filter exclude all object from the same lineage
 }
 
 enum SVExtentPropertyEnum
@@ -528,6 +526,8 @@ enum ClassIdEnum
 	PolarTransformationToolClassId = 40;
 	LoopToolClassId = 41;
 	ExternalToolClassId = 42;
+	GroupToolClassId = 43;
+
 
 	//Analyzer Class Ids
 	BlobAnalyzerClassId = 100;
@@ -642,6 +642,8 @@ enum ClassIdEnum
 	TableClassId = 444;
 	RemoteOutputGroupClassId = 445;
 	RemoteOutputDataControllerClassId = 446;
+	InputParameterTaskClassId = 448;
+	ResultParameterTaskClassId = 449;
 }
 
 enum EmbeddedIdEnum
@@ -924,7 +926,7 @@ enum EmbeddedIdEnum
 	ShiftToolModeEId = 285;
 	ShiftToolReferenceXEId = 286;
 	ShiftToolReferenceYEId = 287;
-	ShiftToolEnableSourceImageExtentsEId = 288;
+	//ShiftToolEnableSourceImageExtentsEId = 288;
 	ImageTransformDisplacementXEId = 289;
 	ImageTransformDisplacementYEId = 290;
 	TopResultEId = 291;
@@ -1077,8 +1079,8 @@ enum EmbeddedIdEnum
 	BCStringFormatEId = 439;
 	BCThresholdTypeEId = 440;
 	ToolCommentTypeEId = 441;
-	CameraTriggerTimestampEId = 442;
-	CameraTriggerLineInStateEId = 443;
+	NotUsed1 = 442;
+	NotUsed2 = 443;
 	ToolSizeAdjustSizeWidthModeEId = 445;
 	ToolSizeAdjustSizeHeightModeEId = 446;
 	ToolSizeAdjustSizePositionXModeEId = 447;
@@ -1147,6 +1149,12 @@ enum EmbeddedIdEnum
 	IsRangeEId = 511;
 	IsCustomFeatureEId = 512;
 	
+
+	
+
+	NumberOfObjectsEId = 513;
+	StatNumberOfValidSamplesEId = 560; //Statis Tool: number of valid values considered in statistic
+
 	//The following Ids are the first of an array and must have 100 reserved Ids 
 	OutputImageEId = 1000; //Output Images, e.g. External needs 4
 	RingBufferIndexEId = 1100; //For ringBuffer index of output images (by now 2 indexes)
@@ -1158,6 +1166,10 @@ enum EmbeddedIdEnum
 	DllDependencyFileNameEId = 1600; //External Dll (50)
 	TableColumnValueEId = 1700; //Table Object Column (50)
 	BlobFeatureEId = 1800; //Blob Feature (SvOi::SV_NUMBER_OF_BLOB_FEATURES)
+	InputObjectTypeEId = 1900; //Type for Input Object
+	ResultObjectValueEId = 2000; //Result value object (for e.g. Result in Group Tool)
+	ResultObjectLinkedEId = 2100; //Result value object linked (for e.g. Result in Group Tool)
+	ResultObjectTypeEId = 2200; //Type for Result Object (for e.g. Result in Group Tool)
 }
 
 
@@ -1288,3 +1300,22 @@ enum SVBlobFeatureEnum
 	SV_CENTER_Y_SOURCE = 48;
 	SV_NUMBER_OF_BLOB_FEATURES = 49;
 }
+
+enum ExDllInterfaceType
+{
+	Scalar = 0;
+	Array = 1;
+	TableArray = 2;
+	TableNames = 3;
+	Invalid = 4;
+}
+
+enum InputTypeEnum
+{
+	TypeDecimal = 0;
+	TypeText = 1;
+	TypeTable = 2;
+	TypeGrayImage = 3;
+	TypeColorImage = 4;
+	TypeImage = 5;
+};
