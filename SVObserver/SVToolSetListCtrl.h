@@ -42,13 +42,13 @@ public:
 
 	virtual BOOL PreTranslateMessage(MSG* pMsg) override;
 
-	void Rebuild();
+	void Rebuild(bool correctgrouping  );
 	///Updates Images for valid invalid Tools. Valid and Invalid LoopTools have the same 
 	///images because the valid status of looptool is not always actual.
 	void RebuildImages();
 
 	void SetSingleSelect();
-	void setObjectIds(uint32_t toolsetId, uint32_t inspectionId);
+	void setObjectIds(uint32_t toolsetId, uint32_t inspectionId, bool CorrectGrouping);
 
 	///Get Navigator Element Pointer for the Selected Element in the ListCtrl
 	//pSelectedIndex gets the selected Index

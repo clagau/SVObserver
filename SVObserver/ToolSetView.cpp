@@ -228,7 +228,7 @@ void ToolSetView::OnUpdate(CView* , LPARAM lHint, CObject* )
 			{
 				int index = getListCtrl().GetNextItem(-1, LVNI_SELECTED);
 				index--;
-				getListCtrl().Rebuild();
+				getListCtrl().Rebuild(true);
 				// Select previous..
 				if (index >= 0 && index < getListCtrl().GetItemCount())
 				{
@@ -239,7 +239,7 @@ void ToolSetView::OnUpdate(CView* , LPARAM lHint, CObject* )
 			}
 			else if (ExpandCollapseHint == lHint)
 			{
-				m_toolSetListCtrl.Rebuild();
+				m_toolSetListCtrl.Rebuild(false);
 			}
 			else if ((SVIPDoc::RefreshView == lHint) || ToolSetListHasChanged()) 
 			{
@@ -251,7 +251,7 @@ void ToolSetView::OnUpdate(CView* , LPARAM lHint, CObject* )
 				{
 					return;
 				}
-				m_toolSetListCtrl.setObjectIds(pCurrentDocument->GetToolSet()->getObjectId(), pCurrentDocument->GetToolSet()->GetInspection()->getObjectId());
+				m_toolSetListCtrl.setObjectIds(pCurrentDocument->GetToolSet()->getObjectId(), pCurrentDocument->GetToolSet()->GetInspection()->getObjectId(), SVIPDoc::RefreshView == lHint);
 				SetSelectedTool(selectedToolID);
 				if (selectedToolID == 0 && m_toolSetListCtrl.GetItemCount() > selectedPos)
 				{

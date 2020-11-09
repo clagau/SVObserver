@@ -602,5 +602,7 @@ enum MessageTextEnum
 	Tid_DuplicateParameterNameWithLinked,
 	Tid_DuplicateParameterNameWithType,
 	Tid_SetParameterValuesFailed,
+	
+	Tid_Correct_Grouping_Add_S_Items,
 };
 } //namespace SvStl

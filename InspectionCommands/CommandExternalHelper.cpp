@@ -24,7 +24,8 @@ namespace SvCmd
 {
 
 
-	HRESULT InspectionCommands(uint32_t inspectionID, const SvPb::InspectionCmdRequest& rRequest, SvPb::InspectionCmdResponse* pResp)
+	HRESULT InspectionCommands(uint32_t inspectionID, const SvPb::InspectionCmdRequest& rRequest, SvPb::InspectionCmdResponse* pResp
+		,ThreadPref t /*= ThreadPref::default */ )
 	{
 		using InspectionTask = std::packaged_task<SvPb::InspectionCmdResponse()>;
 		SvPb::InspectionCmdResponse response;
@@ -44,7 +45,14 @@ namespace SvCmd
 			CurrentThread = (std::get<ThFkt>(it->second))();
 			CurrentTimout = (std::get<TiFkt>(it->second))();
 
-
+			if (t != ThreadPref::default)
+			{
+				CurrentThread = t;
+			}
+			if (CurrentThread == ThreadPref::default)
+			{
+				CurrentThread = ThreadPref::inspection;
+			}
 			std::future< SvPb::InspectionCmdResponse> futureResp = CurrentTask.get_future();
 
 			if ((inspectionID > 0) && (CurrentThread == ThreadPref::inspection))

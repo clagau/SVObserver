@@ -70,6 +70,8 @@
 #include "SVXMLLibrary/SVObjectXMLWriter.h"
 #include "Tools/LoopTool.h"
 #include "Tools/SVTool.h"
+#include "ObjectInterfaces/ObjectInfo.h"
+#include "SVStatusLibrary/MessageTextEnum.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -693,6 +695,36 @@ SVToolSet* SVIPDoc::GetToolSet() const
 
 	return l_pObject;
 }
+
+SvOi::ObjectInfoVector SVIPDoc::GetToolSetInfo() const
+{
+	SVToolSet* pObject(nullptr);
+	SVInspectionProcess* pInspection(GetInspectionProcess());
+	int InspectionId{ 0 }, ToolsetId{0};
+	
+	if (nullptr != pInspection)
+	{
+		InspectionId = pInspection->getObjectId();
+
+		pObject = pInspection->GetToolSet();
+		if (pObject)
+		{
+			ToolsetId = pObject->getObjectId();
+		}
+	}
+	
+	SvPb::InspectionCmdRequest requestCmd;
+	SvPb::InspectionCmdResponse responseCmd;
+	SvPb::TaskObjectListRequest* pTaskObjectListRequest = requestCmd.mutable_taskobjectlistrequest();
+	pTaskObjectListRequest->set_taskobjectid(ToolsetId);
+
+	SvCmd::InspectionCommands(InspectionId, requestCmd, &responseCmd,SvCmd::ThreadPref::cur);
+	
+	SvOi::ObjectInfoVector  ToolSetInfos;
+	SvCmd::ResponseToObjectInfo(responseCmd, ToolSetInfos);
+	return ToolSetInfos;
+}
+
 
 bool SVIPDoc::shouldPauseRegressionTestByCondition()
 {
@@ -2637,39 +2669,6 @@ void SVIPDoc::SaveToolGroupings(SvOi::IObjectWriter& rWriter)
 }
 
 
-void SVIPDoc::correctToolGrouping()
-{
-	SVToolSet* pToolSet = GetToolSet();
-	if (!pToolSet)
-	{
-		return;
-	}
-	__int64 position(-1);
-	for (int i = 0; i < pToolSet->GetSize(); i++)
-	{
-		std::string name = pToolSet->GetAt(i)->GetName();
-		auto it = m_toolGroupings.find(name);
-		__int64 newPosition = std::distance(m_toolGroupings.begin(), it);
-		if (it == m_toolGroupings.end()|| newPosition < position)
-		{
-			m_toolGroupings.clear();
-			break;
-		}
-		position = newPosition;
-	}
-
-	if (m_toolGroupings.empty())
-	{
-		std::string insertAtEnd;
-		for (int i = 0; i < pToolSet->GetSize(); i++)
-		{
-			std::string name = pToolSet->GetAt(i)->GetName();
-			m_toolGroupings.AddTool(name.c_str(), insertAtEnd.c_str());
-		}
-	}
-
-}
-
 bool SVIPDoc::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent)
 {
 	bool bOk = false;
@@ -2962,7 +2961,17 @@ bool SVIPDoc::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle htiPar
 			{
 				//correct corrupt configuration with missing tools in toolgrouping
 				// Initialize the tool Groupings (for older saved configurations)
-				correctToolGrouping();
+				
+				SvOi::ObjectInfoVector toolsetinfo = GetToolSetInfo();
+				int nchanged(0);
+				if (m_toolGroupings.Correct(toolsetinfo, nchanged))
+				{
+					std::vector<std::string>  ssv;
+					ssv.push_back(std::to_string(nchanged));
+					TRACE1("Correct groupings add : %i  Items", nchanged);
+					SvStl::MessageManager Msg(SvStl::MsgType::Log);
+					Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Correct_Grouping_Add_S_Items, ssv, SvStl::SourceFileParams(StdMessageParams));
+				}
 			}
 		}
 
@@ -3167,6 +3176,8 @@ bool SVIPDoc::deleteTool(NavigatorElement* pNaviElement)
 			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 			Msg.setMessage(errorMsgContainer.at(0).getMessage());
 		}
+	
+		return false;
 	}
 
 

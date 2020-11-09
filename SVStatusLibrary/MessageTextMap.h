@@ -636,5 +636,7 @@ namespace SvStl
 		{Tid_DuplicateParameterNameWithLinked, _T("It is not allowed to have a parameter name which is already used\nby a linked parameter name: %s") },
 		{Tid_DuplicateParameterNameWithType, _T("It is not allowed to have a parameter name which is already used\nby a type parameter name: %s.") },
 		{Tid_SetParameterValuesFailed, _T("Setting of the parameter '%s' failed.") },
+		
+		{ Tid_Correct_Grouping_Add_S_Items, _T("Correct grouping add  '%s' Items.") },
 };
 } //namespace SvStl

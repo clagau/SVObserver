@@ -23,6 +23,8 @@
 #include "NavigatorElement.h"
 #include "ObjectInterfaces/ObjectInfo.h"
 #include "SVProtoBuf/ConverterHelper.h"
+#include "SVMessage\SVMessage.h"
+#include "SVStatusLibrary\MessageTextEnum.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -59,7 +61,7 @@ void SVToolSetListCtrl::SetSingleSelect()
 	SetWindowLong(m_hWnd, GWL_STYLE, style);
 }
 
-void SVToolSetListCtrl::setObjectIds(uint32_t toolsetId, uint32_t inspectionId)
+void SVToolSetListCtrl::setObjectIds(uint32_t toolsetId, uint32_t inspectionId, bool correctGrouping)
 {
 	m_ToolSetId = toolsetId;
 	m_InspectionId = inspectionId;
@@ -84,7 +86,7 @@ void SVToolSetListCtrl::setObjectIds(uint32_t toolsetId, uint32_t inspectionId)
 	GetClientRect(&rect);
 	SetColumnWidth(0, rect.Width());
 
-	Rebuild();
+	Rebuild(correctGrouping);
 }
 
 ToolSetView* SVToolSetListCtrl::GetView()
@@ -125,7 +127,7 @@ int SVToolSetListCtrl::InsertSubTools(int itemNo, int indent, uint32_t toolId)
 	itemNo = InsertDelimiter(itemNo, indent, NavElementType::EndDelimiterTool, toolId);
 	return itemNo;
 }
-void SVToolSetListCtrl::Rebuild()
+void SVToolSetListCtrl::Rebuild( bool checkGrouping)
 {
 	ToolSetView* pView = GetView();
 
@@ -147,6 +149,16 @@ void SVToolSetListCtrl::Rebuild()
 		SvCmd::InspectionCommands(m_InspectionId, requestCmd, &responseCmd);
 		SvOi::ObjectInfoVector  ToolSetInfos;
 		SvCmd::ResponseToObjectInfo(responseCmd, ToolSetInfos);
+
+		int nchanged(0);
+		if (checkGrouping && groupings.Correct(ToolSetInfos, nchanged))
+		{
+			std::vector<std::string>  ssv;
+			ssv.push_back(std::to_string(nchanged));
+			TRACE1("Correct groupings add : %i  Items",nchanged );
+			SvStl::MessageManager Msg(SvStl::MsgType::Log);
+			Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Correct_Grouping_Add_S_Items, ssv, SvStl::SourceFileParams(StdMessageParams));
+		}
 
 		int itemNo {0};
 		bool bGroupingCollapsed {false};

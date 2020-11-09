@@ -11,14 +11,107 @@
 //Moved to precompiled header: #include <sstream>
 #include "SVToolGrouping.h"
 #include "ObjectInterfaces/IObjectWriter.h"
+#include "ObjectInterfaces/ObjectInfo.h"
 #include "SVMessage/SVMessage.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
+#include "SVToolSet.h"
 #pragma endregion Includes
 
 constexpr char* c_DefaultToolGroupName = _T("Group");
 constexpr char* c_EndPrefix = _T("End ");
+
+bool SVToolGrouping::Correct(const SvOi::ObjectInfoVector& toolsetinfo, int& rNchanged)
+{
+	bool res{ false };
+	rNchanged = 0;
+	int toolsetindex{ 0 };
+	const int toolsetSize = static_cast<int>( toolsetinfo.size());
+	int ToolsCountInGrouping = static_cast<int>(std::count_if(m_list.begin(), m_list.end(),
+		[](ToolGroup& p) {return (p.second.m_type == ToolGroupData::Tool); }));
+
+
+	for (auto it = m_list.begin(); it != m_list.end(); )
+	{
+		if (it->second.m_type != ToolGroupData::Tool)
+		{
+			//no tool 
+			it++;
+		}
+		else
+		{
+			
+			if (toolsetindex < toolsetSize)
+			{
+				std::string name = toolsetinfo.at(toolsetindex).DisplayName;
+				if (name == it->first.c_str())
+				{
+					//ok  
+					it++;
+					toolsetindex++;
+				}
+				else
+				{
+					if (ToolsCountInGrouping == toolsetSize)
+					{
+						//rename tool in toolgrouping 
+						TRACE2("SVToolGrouping Rename %s to %s ", it->first.c_str(), name.c_str());
+						it->first = name;
+						it->second.m_name = name;
+						res = true;
+						it++;
+						toolsetindex++;
+
+					}
+					else if (ToolsCountInGrouping > toolsetSize)
+					{
+						//delete  tool from  toolgrouping
+						TRACE1("SVToolGrouping Delete %s", it->first.c_str());
+						it = m_list.erase(it);
+						ToolsCountInGrouping--;
+						rNchanged--;
+						res = true;
+					}
+					else
+					{
+						///insert tool to toolgrouping
+						TRACE1("SVToolGrouping Insert %s ", name.c_str());
+						m_list.emplace(it, std::make_pair(name, ToolGroupData(ToolGroupData::Tool, name)));
+						ToolsCountInGrouping++;
+						rNchanged++;
+						res = true;
+						toolsetindex++;
+					}
+				}
+			}
+			else //  (toolsetindex >= toolsetSize)
+			{
+				//tool in grouping but no more tools in toolset
+				//delete all following tools in   grouping 
+				TRACE1("SVToolGrouping Delete %s", it->first.c_str());
+				it = m_list.erase(it);
+				ToolsCountInGrouping--;
+				rNchanged--;
+				res = true;
+			}
+		}
+	}
+	
+	//tools toolset add to grouping 
+	for (int i = toolsetindex; i < toolsetSize; i++)
+	{
+		std::string name = toolsetinfo.at(i).DisplayName;
+		TRACE1("SVToolGrouping Insert %s ", name.c_str());
+		m_list.emplace_back(std::make_pair(name, ToolGroupData(ToolGroupData::Tool, name)));
+		ToolsCountInGrouping++;
+		rNchanged++;
+		res = true;
+	}
+	return res;
+}
+
+
 
 std::string SVToolGrouping::GetDefaultName() const
 {
@@ -489,7 +582,8 @@ HRESULT SVToolGrouping::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHan
 	{
 		_variant_t svValue;
 		SVTreeType::SVBranchHandle htiSubChild(rTree.getFirstBranch(htiChild));
-		;
+		
+		
 		while (S_OK == hr && nullptr != htiSubChild)
 		{
 			// Will be either Tools or Group

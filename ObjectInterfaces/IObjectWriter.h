@@ -10,7 +10,7 @@
 #pragma region Includes
 #pragma endregion Includes
 
-namespace SvOi
+namespace SvOi //< ObjectInterfaces
 {
 	class IObjectWriter
 	{

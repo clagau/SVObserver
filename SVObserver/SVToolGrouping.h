@@ -16,6 +16,8 @@
 namespace SvOi
 {
 class IObjectWriter;
+struct ObjectInfo;
+typedef std::vector<ObjectInfo> ObjectInfoVector;
 }
 
 class ToolGroupData
@@ -44,6 +46,9 @@ class SVToolGrouping
 	ToolGroupList m_list;
 
 public:
+	
+	bool Correct(const SvOi::ObjectInfoVector&  toolsetinfo, int& rNchanged);
+
 	std::string GetDefaultName() const;
 	//************************************
 	//! Searches the name in the list of all tool and group names case insensitive

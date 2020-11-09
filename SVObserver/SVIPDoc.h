@@ -124,6 +124,9 @@ public:
 	std::string GetCompleteToolSetName() const;
 	std::string CheckName( const std::string& rToolName ) const;
 
+	//getToolsSetinfo using current thread
+	SvOi::ObjectInfoVector GetToolSetInfo() const;
+
 	const SVToolGrouping& GetToolGroupings() const;
 	SVToolGrouping& GetToolGroupings();
 	
@@ -370,9 +373,6 @@ private:
 	//! \returns the selected string set of object names
 	SvDef::StringSet TranslateSelectedObjects(const SVObjectReferenceVector& rSelectedObjects, const std::string& rInspectionName) const;
 
-	//!if not all tools from the toolset are in toolGrouping, tool grouping is cleared. 
-	//! Initialize the tool Groupings (for older saved configurations)
-	void correctToolGrouping();
 
 	struct RegressionRuningState
 	{
