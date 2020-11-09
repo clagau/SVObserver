@@ -79,7 +79,29 @@ namespace SvOg
 		AddPage(new BlobAnalyzer2General(m_InspectionID, m_toolId, m_TaskObjectID));
 		AddPage(new BlobAnalyzer2Feature(m_InspectionID, m_toolId, m_TaskObjectID));
 		AddPage(new BlobAnalyzer2Range(m_InspectionID, m_toolId, m_TaskObjectID));
-		AddPage(new BlobAnalyzer2Draw(m_InspectionID, m_TaskObjectID));
+		SvPb::InspectionCmdRequest requestCmd;
+		SvPb::InspectionCmdResponse responseCmd;
+		auto* pRequest = requestCmd.mutable_getavailableobjectsrequest();
+		pRequest->set_objectid(m_TaskObjectID);
+		pRequest->mutable_typeinfo()->set_objecttype(SvPb::BlobDrawObjectType);
+
+		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
+		if (S_OK == hr && responseCmd.has_getavailableobjectsresponse())
+		{
+			auto availableList = SvCmd::convertNameObjectIdList(responseCmd.getavailableobjectsresponse().list());
+			if (0 < availableList.size())
+			{
+				AddPage(new BlobAnalyzer2Draw(m_InspectionID, m_TaskObjectID, availableList[0].second));
+			}
+			else
+			{
+				assert(false);
+			}
+		}
+		else
+		{
+			assert(false);
+		}
 	}
 
 

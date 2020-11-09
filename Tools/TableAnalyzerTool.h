@@ -36,7 +36,6 @@ public:
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
-	void setSortContainer(const SvVol::ValueObjectSortContainer& sortMap, RunStatus& rRunStatus) {m_pResultTable->setSortContainer(sortMap, rRunStatus);};
 	SvVol::ValueObjectSortContainer&  getSortContainer() { return m_pResultTable->getSortContainer();};
 	void UpdateNumberOfRows() { return m_pResultTable->UpdateNumberOfRows(); };
 

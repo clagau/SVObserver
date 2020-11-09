@@ -32,10 +32,10 @@ public:
 /*- SVImageAnalyzerClass input image.  If unsuccessful an error condition   */
 /*- will be returned. ------------------------------------------------------*/
     unsigned long       GetInputPixelDepth ();
+	SvIe::SVImageClass* getInputImage(bool bRunMode = false);
 
 
 protected:
-	SvIe::SVImageClass* getInputImage(bool bRunMode = false);
 	SvOl::SVInObjectInfoStruct m_inputImageObjectInfo;
 
 private:

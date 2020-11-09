@@ -13,7 +13,6 @@
 #include "ObjectInterfaces/IBlobAnalyzer2.h"
 #include "SVValueObjectLibrary/DoubleSortValueObject.h"
 #include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
-#include "SVValueObjectLibrary/SVByteValueObjectClass.h"
 #include "SVValueObjectLibrary/SVEnumerateValueObjectClass.h"
 #include "SVValueObjectLibrary/SVLongValueObjectClass.h"
 #pragma endregion Includes
@@ -27,16 +26,6 @@ class TableObject;
 namespace SvAo
 {
 class BlobFeatureList;
-
-enum SV_BLOB_FILL_TYPE_ENUM
-{
-	SV_BLOB_FILL_ALL       = 0x8000,
-	SV_BLOB_FILL_INCLUDED  = 0x2000,
-	SV_BLOB_FILL_EXCLUDED  = 0x1000
-};
-
-// Add String for SVEnumerateValueObjectClass
-const LPCSTR g_strBlobFillTypeEnums = _T( "All=32768,Included=8192,Excluded=4096" );
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -92,11 +81,6 @@ private:
 	SvOl::SVInObjectInfoStruct m_grayImageInfo;
 	SvVol::SVEnumerateValueObjectClass  m_colorBlobEnumValue;
 	SvVol::SVEnumerateValueObjectClass  m_connectivityEnumValue;
-
-	//value objects for Fill Blob option
-	SvVol::SVBoolValueObjectClass       m_isFillBlobs;
-	SvVol::SVByteValueObjectClass  m_blobFillColor;
-	SvVol::SVEnumerateValueObjectClass  m_evoBlobType;
 
 	SvOp::TableObject* m_pResultTable;
 	std::array<SvVol::DoubleSortValuePtr, 4> m_ResultColumnForOverlayArray{ nullptr };

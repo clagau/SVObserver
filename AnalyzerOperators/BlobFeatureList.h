@@ -49,6 +49,7 @@ namespace SvAo
 		void setResultBufferId(MIL_ID resultBufferID) { m_ResultBufferID = resultBufferID; };
 
 	protected:
+		virtual bool Run(RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages = nullptr) override;
 
 	private:
 		void init();
@@ -63,6 +64,7 @@ namespace SvAo
 
 		SvOp::TableObject* m_pResultTable = nullptr;
 		std::vector<BlobFeatureTask*> m_featureTaskVec;
+		std::vector<BlobFeatureTask*> m_customFeatureTaskExcludeVec;
 	};
 
 } //namespace SvAo

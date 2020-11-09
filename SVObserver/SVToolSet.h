@@ -133,8 +133,6 @@ protected:
 private:
 	void init();
 
-	void UpdateRunStatus(RunStatus& rRunStatus, const RunStatus& rToolRunStatus) const;
-
 	bool ValidateLocal(SvStl::MessageContainerVector *pErrorMessages=nullptr) const;
 
 	void setPostRunStatus(double l_Timer, RunStatus &rRunStatus);

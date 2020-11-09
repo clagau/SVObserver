@@ -1050,19 +1050,7 @@ bool SVTaskObjectListClass::Run(RunStatus& rRunStatus, SvStl::MessageContainerVe
 				ChildRunStatus.ResetRunStateAndToolSetTimes();
 
 				bRetVal = pTaskObject->Run(ChildRunStatus, &m_RunErrorMessages) & bRetVal;
-
-				// Update our Run Status
-				if ( ChildRunStatus.IsDisabled() ) { rRunStatus.SetDisabled(); }
-
-				if ( ChildRunStatus.IsDisabledByCondition() ) { rRunStatus.SetDisabledByCondition(); }
-
-				if ( ChildRunStatus.IsWarned() ) { rRunStatus.SetWarned(); }
-
-				if ( ChildRunStatus.IsFailed() ) { rRunStatus.SetFailed(); }
-
-				if ( ChildRunStatus.IsPassed() ) { rRunStatus.SetPassed(); }
-
-				if ( ChildRunStatus.IsCriticalFailure() ) { rRunStatus.SetCriticalFailure(); }
+				rRunStatus.updateState(ChildRunStatus);
 			}
 		}
 		rRunStatus.m_triggerRecord = std::move(ChildRunStatus.m_triggerRecord);

@@ -21,15 +21,18 @@ namespace SvOg
 	BEGIN_MESSAGE_MAP(BlobAnalyzer2Draw, CPropertyPage)
 		//{{AFX_MSG_MAP(BlobAnalyzer2Draw)
 		ON_BN_CLICKED(IDC_FILL_BLOBS, OnCheckFillBlob)
+		ON_CBN_SELCHANGE(IDC_COMBO_BLOB_TYPE, OnChangeData)
+		ON_EN_CHANGE(IDC_BLOB_COLOR, OnChangeData)
 		//}}AFX_MSG_MAP
 	END_MESSAGE_MAP()
 
 #pragma region Constructor
-	BlobAnalyzer2Draw::BlobAnalyzer2Draw(uint32_t inspectionId, uint32_t taskObjectId)
+	BlobAnalyzer2Draw::BlobAnalyzer2Draw(uint32_t inspectionId, uint32_t analyzerId, uint32_t drawTaskId)
 		: CPropertyPage(BlobAnalyzer2Draw::IDD)
 		, m_InspectionID(inspectionId)
-		, m_TaskObjectID(taskObjectId)
-		, m_Values{ SvOg::BoundValues{ inspectionId, taskObjectId } }
+		, m_analyzerID(analyzerId)
+		, m_drawTaskId(drawTaskId)
+		, m_Values{ SvOg::BoundValues{ inspectionId, drawTaskId } }
 	{
 	}
 
@@ -82,6 +85,13 @@ namespace SvOg
 	{
 		UpdateData();
 		enableControls();
+		setInspectionData();
+	}
+
+	void BlobAnalyzer2Draw::OnChangeData()
+	{
+		UpdateData();
+		setInspectionData();
 	}
 #pragma endregion Protected Methods
 

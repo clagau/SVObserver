@@ -13,6 +13,7 @@
 #include "SVUtilityLibrary/StringHelper.h"
 #include "Operators/SVResultLong.h"
 #include "SVProtoBuf/ConverterHelper.h"
+#include <iterator>
 #pragma endregion Includes
 
 namespace SvAo
@@ -342,6 +343,7 @@ namespace SvAo
 
 	bool BlobFeatureList::CloseObject()
 	{
+		m_customFeatureTaskExcludeVec.clear();
 		for (auto* pTask : m_featureTaskVec)
 		{
 			pTask->setValueObject(nullptr);
@@ -470,6 +472,7 @@ namespace SvAo
 	bool BlobFeatureList::updateBlobFeatures(SvStl::MessageContainerVector* pErrorMessages, std::back_insert_iterator<std::vector<BlobExcludeData>> excludeDataVecInserter)
 	{
 		bool result = true;
+		m_customFeatureTaskExcludeVec.clear();
 		fillFeatureTaskVec();
 		addedMissingNeededFeatureTask();
 
@@ -504,6 +507,10 @@ namespace SvAo
 				if (!pFeatureTask->isCustomFeature())
 				{
 					excludeDataVecInserter = excludeData;
+				}
+				else
+				{
+					m_customFeatureTaskExcludeVec.emplace_back(pFeatureTask);
 				}
 			}
 		}
@@ -550,6 +557,44 @@ namespace SvAo
 				break;
 			}
 		}
+	}
+
+	bool BlobFeatureList::Run(RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages)
+	{
+		bool retVal = __super::Run(rRunStatus, pErrorMessages);
+
+		//exclude check only for custom features (for mil-feature is already done by mil)
+		std::set<int> removeSet;
+		for (auto* pFeatureTask : m_customFeatureTaskExcludeVec)
+		{
+			pFeatureTask->addExcludeBlobs(removeSet);
+		}
+		if (0 < removeSet.size())
+		{
+			auto container = m_pResultTable->getSortContainer();
+			std::vector<double> valueArray;
+			valueArray.resize(container.size(), 0);
+			MblobGetResult(m_ResultBufferID, M_INCLUDED_BLOBS, M_LABEL_VALUE, valueArray);
+			for (auto it = removeSet.crbegin(); it != removeSet.crend(); ++it)
+			{
+				MblobSelect(m_ResultBufferID, M_EXCLUDE, M_LABEL_VALUE, M_EQUAL, valueArray[*it], M_NULL);
+				container.erase(container.begin() + *it);
+			}
+			m_pResultTable->setSortContainer(container);
+		}
+
+		//do range
+		for (auto* pFeatureTask : m_featureTaskVec)
+		{
+			RunStatus ChildRunStatus;
+			pFeatureTask->evalRange(ChildRunStatus);
+			rRunStatus.updateState(ChildRunStatus, false);
+		}
+
+		m_statusColor.SetValue(rRunStatus.GetStatusColor());
+		m_statusTag.SetValue(rRunStatus.GetState());
+
+		return retVal;
 	}
 
 	void BlobFeatureList::moveFeatureTasks(size_t posFrom, size_t posTo)

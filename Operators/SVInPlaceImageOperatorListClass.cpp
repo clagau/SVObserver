@@ -154,24 +154,7 @@ bool SVInPlaceImageOperatorListClass::Run( RunStatus& rRunStatus, SvStl::Message
 				m_RunErrorMessages.push_back(Msg);
 			}
 
-			// Update our Run Status
-			if( ChildRunStatus.IsDisabled() )
-				rRunStatus.SetDisabled();
-
-			if( ChildRunStatus.IsDisabledByCondition() )
-				rRunStatus.SetDisabledByCondition();
-			
-			if( ChildRunStatus.IsWarned() )
-				rRunStatus.SetWarned();
-
-			if( ChildRunStatus.IsFailed() )
-				rRunStatus.SetFailed();
-
-			if( ChildRunStatus.IsPassed() )
-				rRunStatus.SetPassed();
-
-			if( ChildRunStatus.IsCriticalFailure() )
-				rRunStatus.SetCriticalFailure();
+			rRunStatus.updateState(ChildRunStatus);
 		}
 		rRunStatus.m_triggerRecord = std::move(ChildRunStatus.m_triggerRecord);
 	}

@@ -40,7 +40,7 @@ public:
 	virtual SvVol::ValueObjectSortContainer& getSortContainer() override;
 	/// Set a new sort Container to this object and its column values.
 	/// \param sortMap [in] the new container
-	virtual void setSortContainer(const SvVol::ValueObjectSortContainer& sortMap, RunStatus& rRunStatus) override;
+	virtual void setSortContainer(const SvVol::ValueObjectSortContainer& sortMap) override;
 
 	virtual void  setSortContainerDummy(const SvVol::DummySortContainer& rDummy) override;
 	

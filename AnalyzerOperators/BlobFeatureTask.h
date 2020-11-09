@@ -78,7 +78,13 @@ namespace SvAo
 #pragma region Public Methods
 	public:
 		virtual bool CreateObject(const SVObjectLevelCreateStruct& rCreateStructure) override;
-		virtual bool onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages = nullptr) override;
+
+		void evalRange(RunStatus& rRunStatus);
+
+		/// Add the position of the blobs which should be excluded. Check only for custom feature because Mil-feature is done already by MIL.
+		/// \param rSortContainer [in,out]
+		/// \returns void
+		void addExcludeBlobs(std::set<int>& rExcludeSet);
 
 		long getFeatureType() const;
 		bool isCustomFeature() const;

@@ -293,13 +293,7 @@ bool LoopTool::RunAllChildren(RunStatus& rRunStatus, SvStl::MessageContainerVect
 				bool bRet = pTaskObject->Run(ChildRunStatus, &m_RunErrorMessages);
 				bRetVal = (bRet || ChildRunStatus.IsDisabled())&& bRetVal;
 
-				if (ChildRunStatus.IsWarned()) { rRunStatus.SetWarned(); }
-
-				if (ChildRunStatus.IsFailed()) { rRunStatus.SetFailed(); }
-
-				if (ChildRunStatus.IsPassed()) { rRunStatus.SetPassed(); }
-
-				if (ChildRunStatus.IsCriticalFailure()) { rRunStatus.SetCriticalFailure(); }
+				rRunStatus.updateState(ChildRunStatus, false);
 			}
 		}
 		rRunStatus.m_triggerRecord = std::move(ChildRunStatus.m_triggerRecord);

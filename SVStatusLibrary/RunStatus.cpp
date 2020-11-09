@@ -27,6 +27,24 @@ void RunStatus::ResetRunStateAndToolSetTimes()
 	m_ToolSetAvgTime = 0.0;
 }
 
+void RunStatus::updateState(const RunStatus& childStatus, bool updateConditionState /*= true*/)
+{
+	// Update our Run Status
+	if (updateConditionState)
+	{
+		if (childStatus.IsDisabled()) { SetDisabled(); }
+
+		if (childStatus.IsDisabledByCondition()) { SetDisabledByCondition(); }
+	}
+
+	if (childStatus.IsWarned()) { SetWarned(); }
+
+	if (childStatus.IsFailed()) { SetFailed(); }
+
+	if (childStatus.IsPassed()) { SetPassed(); }
+
+	if (childStatus.IsCriticalFailure()) { SetCriticalFailure(); }
+}
 
 DWORD RunStatus::GetStatusColor() const
 {

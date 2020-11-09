@@ -97,7 +97,7 @@ SVObjectClass* TableObject::getNumberOfRowObject() const
 	return pObject;
 }
 
-void TableObject::setSortContainer(const SvVol::ValueObjectSortContainer& sortMap, RunStatus&)
+void TableObject::setSortContainer(const SvVol::ValueObjectSortContainer& sortMap)
 {
 	*m_spSortContainer.get() = sortMap;
 	for (int i = 0; i < m_ValueList.size(); ++i)

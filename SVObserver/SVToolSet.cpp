@@ -527,7 +527,7 @@ bool SVToolSet::Run(RunStatus& rRunStatus, SvStl::MessageContainerVector *pError
 					bRetVal = GetAt(i)->Run(toolRunStatus, &m_RunErrorMessages) && bRetVal;
 
 					// Update the Run Status
-					UpdateRunStatus(rRunStatus, toolRunStatus);
+					rRunStatus.updateState(toolRunStatus, false);
 				}
 			}
 			rRunStatus.m_triggerRecord = std::move(toolRunStatus.m_triggerRecord);
@@ -706,26 +706,6 @@ void SVToolSet::connectChildObject(SVTaskObjectClass& rChildObject)
 	createStruct.m_pInspection = GetInspection();
 
 	rChildObject.ConnectObject(createStruct);
-}
-
-void SVToolSet::UpdateRunStatus(RunStatus& rRunStatus, const RunStatus& rToolRunStatus) const
-{
-	if (rToolRunStatus.IsWarned())
-	{
-		rRunStatus.SetWarned();
-	}
-	if (rToolRunStatus.IsFailed())
-	{
-		rRunStatus.SetFailed();
-	}
-	if (rToolRunStatus.IsPassed())
-	{
-		rRunStatus.SetPassed();
-	}
-	if (rToolRunStatus.IsCriticalFailure())
-	{
-		rRunStatus.SetCriticalFailure();
-	}
 }
 
 bool SVToolSet::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const

@@ -252,36 +252,7 @@ bool SVStdImageOperatorListClass::RunLocal(RunStatus &rRunStatus, SvOi::SVImageB
 				m_RunErrorMessages.push_back(Msg);
 			}
 
-			// Update our Run Status
-			if (ChildRunStatus.IsDisabled())
-			{
-				rRunStatus.SetDisabled();
-			}
-
-			if (ChildRunStatus.IsDisabledByCondition())
-			{
-				rRunStatus.SetDisabledByCondition();
-			}
-
-			if (ChildRunStatus.IsWarned())
-			{
-				rRunStatus.SetWarned();
-			}
-
-			if (ChildRunStatus.IsFailed())
-			{
-				rRunStatus.SetFailed();
-			}
-
-			if (ChildRunStatus.IsPassed())
-			{
-				rRunStatus.SetPassed();
-			}
-
-			if (ChildRunStatus.IsCriticalFailure())
-			{
-				rRunStatus.SetCriticalFailure();
-			}
+			rRunStatus.updateState(ChildRunStatus);
 		}// for( int i = 0; i < GetSize(); i++ )
 		rRunStatus.m_triggerRecord = std::move(ChildRunStatus.m_triggerRecord);
 

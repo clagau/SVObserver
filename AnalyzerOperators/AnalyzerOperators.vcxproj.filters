@@ -90,6 +90,9 @@
     <ClCompile Include="BlobFeatureList.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="BlobDrawTask.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -162,6 +165,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="BlobFeatureList.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="BlobDrawTask.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

@@ -29,7 +29,7 @@ namespace SvOg
 #pragma region Constructor
 	public:
 		// Standard constructor
-		BlobAnalyzer2Draw(uint32_t inspectionId, uint32_t taskObjectId);
+		BlobAnalyzer2Draw(uint32_t inspectionId, uint32_t analyzerId, uint32_t drawTaskId);
 
 		// Standard destructor
 		virtual ~BlobAnalyzer2Draw();
@@ -51,6 +51,7 @@ namespace SvOg
 		//{{AFX_MSG(BlobAnalyzer2Draw)
 		virtual BOOL OnInitDialog() override;
 		void OnCheckFillBlob();
+		void OnChangeData();
 		//}}AFX_MSG
 
 #pragma endregion Protected Methods
@@ -66,7 +67,8 @@ namespace SvOg
 #pragma region Member Variables
 	private:
 		const uint32_t m_InspectionID;
-		const uint32_t m_TaskObjectID;
+		const uint32_t m_analyzerID;
+		const uint32_t m_drawTaskId;
 
 		ValueController m_Values;
 

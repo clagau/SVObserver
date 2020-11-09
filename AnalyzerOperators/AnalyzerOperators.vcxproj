@@ -87,6 +87,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BlobAnalyzer2.cpp" />
+    <ClCompile Include="BlobDrawTask.cpp" />
     <ClCompile Include="BlobFeatureList.cpp" />
     <ClCompile Include="BlobFeatureTask.cpp" />
     <ClCompile Include="LinearEdgeCountingAnalyzer.cpp" />
@@ -117,6 +118,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BlobAnalyzer2.h" />
+    <ClInclude Include="BlobDrawTask.h" />
     <ClInclude Include="BlobFeatureList.h" />
     <ClInclude Include="BlobFeatureTask.h" />
     <ClInclude Include="LinearEdgeCountingAnalyzer.h" />

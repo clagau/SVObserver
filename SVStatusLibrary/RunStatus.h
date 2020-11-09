@@ -63,6 +63,7 @@ public:
 	bool IsDisabledByCondition() const;
 	bool IsCriticalFailure() const;
 	bool HasInspectionStarted() const;
+	void updateState(const RunStatus& childStatus, bool updateConditionState = true);
 
 	DWORD GetState() const;
 	DWORD GetStatusColor() const;

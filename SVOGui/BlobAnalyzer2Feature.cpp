@@ -566,25 +566,17 @@ namespace SvOg
 			}
 			m_Grid.SetItemState(row, SortDirectionColumn, state);
 
-			if (!m_featureData[i].is_custom())
+			m_Grid.SetCellType(row, ExcludeEnabledColumn, RUNTIME_CLASS(GridCellCheck));
+			auto* pCell = dynamic_cast<SvGcl::GridCellCheck*>(m_Grid.GetCell(row, ExcludeEnabledColumn));
+			if (nullptr != pCell)
 			{
-				m_Grid.SetCellType(row, ExcludeEnabledColumn, RUNTIME_CLASS(GridCellCheck));
-				auto* pCell = dynamic_cast<SvGcl::GridCellCheck*>(m_Grid.GetCell(row, ExcludeEnabledColumn));
-				if (nullptr != pCell)
-				{
-					pCell->SetCheck(m_featureData[i].is_exclude());
-				}
-			}
-			else
-			{
-				m_Grid.SetCellType(row, ExcludeEnabledColumn, RUNTIME_CLASS(GridCell));
-				m_Grid.SetItemState(row, ExcludeEnabledColumn, m_Grid.GetItemState(row, ExcludeEnabledColumn) | GVIS_READONLY);
+				pCell->SetCheck(m_featureData[i].is_exclude());
 			}
 			
 			if (m_featureData[i].is_exclude())
 			{
 				m_Grid.SetCellType(row, ExcludeInnerColumn, RUNTIME_CLASS(GridCellCheck));
-				auto* pCell = dynamic_cast<SvGcl::GridCellCheck*>(m_Grid.GetCell(row, ExcludeInnerColumn));
+				pCell = dynamic_cast<SvGcl::GridCellCheck*>(m_Grid.GetCell(row, ExcludeInnerColumn));
 				if (nullptr != pCell)
 				{
 					pCell->SetCheck(m_featureData[i].is_exclude_inner());

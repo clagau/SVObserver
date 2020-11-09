@@ -20,6 +20,7 @@
 #include "Tools/SVTool.h"
 #include "BlobAnalyzer2.h"
 #include "BlobFeatureList.h"
+#include "BlobDrawTask.h"
 #pragma endregion Includes
 
 namespace SvAo
@@ -64,14 +65,9 @@ namespace SvAo
 		RegisterEmbeddedObject(&m_numberOfBlobsFound, SvPb::NbrOfBlobsFoundEId, IDS_OBJECTNAME_NBROFBLOBSFOUND, false, SvOi::SVResetItemNone);
 		m_numberOfBlobsFound.setSaveValueFlag(false);
 
-		RegisterEmbeddedObject(	&m_isFillBlobs,	SvPb::BlobUseFillEId, IDS_BLOB_USE_FILL, false, SvOi::SVResetItemOwner );
-
 		RegisterEmbeddedObject(&m_isGrayImageValue, SvPb::IsGrayImageEId, IDS_BLOB_IS_GRAY_IMAGE, false, SvOi::SVResetItemOwner);
 		RegisterEmbeddedObject(&m_colorBlobEnumValue, SvPb::BlobColorEId, IDS_BLACK_BLOBS, false, SvOi::SVResetItemOwner);
 		RegisterEmbeddedObject(&m_connectivityEnumValue, SvPb::ConnectivityBlobEId, IDS_BLOB_CONNECTIVITY, false, SvOi::SVResetItemOwner);
-
-		RegisterEmbeddedObject(&m_blobFillColor, SvPb::BlobFillColorEId, IDS_BLOB_FILL_COLOR, false, SvOi::SVResetItemNone );
-		RegisterEmbeddedObject(&m_evoBlobType, SvPb::BlobFillTypeEId, IDS_BLOB_FILL_TYPE, false, SvOi::SVResetItemNone );
 
 		m_grayImageInfo.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
 		m_grayImageInfo.SetObject(GetObjectInfo());
@@ -86,11 +82,6 @@ namespace SvAo
 		m_colorBlobEnumValue.SetDefaultValue(static_cast<long>(BlobColorEnum::SV_BLOB_WHITE), true);
 		m_connectivityEnumValue.SetEnumTypes(g_strBlobConnectivityEnums);
 		m_connectivityEnumValue.SetDefaultValue(static_cast<long>(BlobConnectivityEnum::NEIGHBORS_8), true);
-		//set default values for the BlobFill value objects
-		m_isFillBlobs.SetDefaultValue(BOOL(false), true);
-		m_blobFillColor.SetDefaultValue(0, true);
-		m_evoBlobType.SetEnumTypes(g_strBlobFillTypeEnums);
-		m_evoBlobType.SetDefaultValue(SV_BLOB_FILL_EXCLUDED, true);
 
 		BlobFeatureList* pBlobFeatureList = new BlobFeatureList;
 		Add(pBlobFeatureList);
@@ -248,15 +239,14 @@ namespace SvAo
 				throw;
 			}
 
-			SvDef::SVObjectTypeInfoStruct info(SvPb::BlobFeatureListObjectType);
-			m_pBlobFeatureList = dynamic_cast<BlobFeatureList*>(getFirstObject(info));
-			if (M_NULL == m_pBlobFeatureList)
+			m_pBlobFeatureList = dynamic_cast<BlobFeatureList*>(getFirstObject({ SvPb::BlobFeatureListObjectType }));
+			if (nullptr == m_pBlobFeatureList)
 			{
 				m_pBlobFeatureList = new BlobFeatureList;
 				Add(m_pBlobFeatureList);
 			}
 
-			if (M_NULL == m_pBlobFeatureList)
+			if (nullptr == m_pBlobFeatureList)
 			{
 				SvStl::MessageManager MesMan(SvStl::MsgType::Log);
 				MesMan.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16148);
@@ -264,6 +254,21 @@ namespace SvAo
 			}
 			m_pBlobFeatureList->setResultBufferId(m_ResultBufferID);
 			m_pBlobFeatureList->setResultTable(m_pResultTable);
+
+			auto* pBlobDrawTask = dynamic_cast<BlobDrawTask*>(getFirstObject({ SvPb::BlobDrawObjectType }));
+			if (nullptr == pBlobDrawTask)
+			{
+				pBlobDrawTask = new BlobDrawTask;
+				Add(pBlobDrawTask);
+			}
+
+			if (nullptr == pBlobDrawTask)
+			{
+				SvStl::MessageManager MesMan(SvStl::MsgType::Log);
+				MesMan.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16148);
+				throw;
+			}
+			pBlobDrawTask->setResultBufferId(m_ResultBufferID);
 
 			updateBlobFeatures();
 			allocateBlobNumberResult();
@@ -358,6 +363,7 @@ namespace SvAo
 				msg.Throw();
 			}
 
+			//set exclude data to mil for mil feature
 			for (auto data : m_excludeDataVec)
 			{
 				double lowerBound = 0;
@@ -382,7 +388,6 @@ namespace SvAo
 			//
 			long numberOfBlobs = 0;
 			MatroxCode = SVMatroxBlobInterface::GetNumber(m_ResultBufferID, numberOfBlobs);
-
 			if (S_OK != MatroxCode)
 			{
 				SvStl::MessageManager msg(SvStl::MsgType::Data);
@@ -405,45 +410,6 @@ namespace SvAo
 
 			m_numberOfBlobsFound.SetValue(numberOfBlobs);
 			m_pResultTable->setSortContainerDummy(SvVol::DummySortContainer(numberOfBlobs));
-			
-			// Now fill the blobs
-			BOOL isFillBlob;
-			m_isFillBlobs.GetValue( isFillBlob );
-
-			//MatroxCode = SVMatroxBlobInterface::GetNumber( m_ResultBufferID, numberOfBlobs);
-			if ( isFillBlob )
-			{
-				byte color;
-				long type;
-				m_blobFillColor.GetValue(color);
-				m_evoBlobType.GetValue(type);
-				SVBlobControlEnum eCriterion = SVEBlobAll;
-				switch( type )
-				{
-					case SV_BLOB_FILL_ALL: 
-					{
-						eCriterion = SVEBlobAll;
-						break;
-					}
-					case SV_BLOB_FILL_EXCLUDED :
-					{
-						eCriterion = SVEBlobExcludeBlobs;
-						break;
-					}
-					case SV_BLOB_FILL_INCLUDED:
-					{
-						eCriterion = SVEBlobIncludeBlobs;
-						break;
-					}
-					default:
-					{
-						// Do nothing.
-						break;
-					}
-				}// end switch()
-
-				MatroxCode = SVMatroxBlobInterface::BlobFill( m_ResultBufferID, pImageBuffer->getHandle()->GetBuffer(), eCriterion, color);
-			}// end if
 		}
 		catch (const SvStl::MessageContainer& e)
 		{

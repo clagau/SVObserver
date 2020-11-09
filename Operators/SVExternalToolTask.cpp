@@ -361,8 +361,7 @@ void SVExternalToolTask::CreateArrayInTable()
 		{
 			resultTableSortContainer[i] = i;
 		}
-		RunStatus runStatus;
-		pTab->setSortContainer(resultTableSortContainer, runStatus);
+		pTab->setSortContainer(resultTableSortContainer);
 	}
 }
 bool SVExternalToolTask::CreateTableObjects()

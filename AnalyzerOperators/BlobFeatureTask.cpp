@@ -134,65 +134,77 @@ namespace SvAo
 		return l_bOk;
 	}
 
-	bool BlobFeatureTask::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages)
+	void BlobFeatureTask::evalRange(RunStatus& rRunStatus)
 	{
-		try
+		//range check
+		BOOL isRange = false;
+		m_isRangeValue.GetValue(isRange);
+		if (isRange)
 		{
-			if (!__super::onRun(rRunStatus, pErrorMessages))
+			double failHigh, warnHigh, warnLow, failLow;
+			bool isWarn = false, isFail = false;
+			m_RangeValues[RangeEnum::ER_FailHigh].getValue(failHigh);
+			m_RangeValues[RangeEnum::ER_WarnHigh].getValue(warnHigh);
+			m_RangeValues[RangeEnum::ER_WarnLow].getValue(warnLow);
+			m_RangeValues[RangeEnum::ER_FailLow].getValue(failLow);
+			std::vector<double> values;
+			m_pValue->GetArrayValues(values);
+			for (auto value : values)
 			{
-				return false;
+				if (failHigh < value || failLow > value)
+				{
+					isFail = true;
+					break;
+				}
+				if (!isWarn && (warnHigh < value || warnLow > value))
+				{
+					isWarn = true;
+				}
 			}
-
-			//range check
-			BOOL isRange = false;
-			m_isRangeValue.GetValue(isRange);
-			if (isRange)
+			if (isFail)
 			{
-				double failHigh, warnHigh, warnLow, failLow;
-				bool isWarn = false, isFail = false;
-				m_RangeValues[RangeEnum::ER_FailHigh].getValue(failHigh);
-				m_RangeValues[RangeEnum::ER_WarnHigh].getValue(warnHigh);
-				m_RangeValues[RangeEnum::ER_WarnLow].getValue(warnLow);
-				m_RangeValues[RangeEnum::ER_FailLow].getValue(failLow);
-				std::vector<double> values;
-				m_pValue->GetArrayValues(values);
-				for (auto value : values)
+				rRunStatus.SetFailed();
+			}
+			else if (isWarn)
+			{
+				rRunStatus.SetWarned();
+			}
+			else
+			{
+				rRunStatus.SetPassed();
+			}
+		}
+		m_statusColor.SetValue(rRunStatus.GetStatusColor());
+		m_statusTag.SetValue(rRunStatus.GetState());
+	}
+
+	void BlobFeatureTask::addExcludeBlobs(std::set<int>& rExcludeSet)
+	{
+		assert(isCustomFeature());
+
+		BOOL isExclude = false;
+		m_isExcludeValue.GetValue(isExclude);
+		if (isExclude)
+		{
+			std::vector<double> values;
+			m_pValue->GetArrayValues(values);
+			if (0 < values.size())
+			{
+				BOOL isInner = false;
+				m_isInnerExcludeValue.GetValue(isInner);
+				double upperBound, lowerBound;
+				m_ExcludeLowerBoundValue.getValue(lowerBound);
+				m_ExcludeUpperBoundValue.getValue(upperBound);
+
+				for (int i = static_cast<int>(values.size()) - 1; i >= 0; --i)
 				{
-					if (failHigh < value || failLow > value)
+					if ((upperBound < values[i] || lowerBound > values[i]) ^ isInner)
 					{
-						isFail = true;
-						break;
+						rExcludeSet.insert(i);
 					}
-					if (!isWarn && (warnHigh < value || warnLow > value))
-					{
-						isWarn = true;
-					}
-				}
-				if (isFail)
-				{
-					rRunStatus.SetFailed();
-				}
-				else if (isWarn)
-				{
-					rRunStatus.SetWarned();
-				}
-				else
-				{
-					rRunStatus.SetPassed();
 				}
 			}
 		}
-		catch (const SvStl::MessageContainer& e)
-		{
-			rRunStatus.SetInvalid();
-			if (nullptr != pErrorMessages)
-			{
-				pErrorMessages->push_back(e);
-			}
-			return false;
-		}
-
-		return true;
 	}
 
 	long BlobFeatureTask::getFeatureType() const
@@ -336,7 +348,7 @@ namespace SvAo
 		}
 	}
 
-	void BlobFeatureTask::setValueObject(SvVol::DoubleSortValuePtr pValue) 
+	void BlobFeatureTask::setValueObject(SvVol::DoubleSortValuePtr pValue)
 	{ 
 		m_pValue = pValue; 
 		if (nullptr != m_pEquation)

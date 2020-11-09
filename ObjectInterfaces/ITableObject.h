@@ -12,7 +12,6 @@
 #include "SVValueObjectLibrary/DoubleSortValueObject.h"
 #pragma endregion Includes
 
-class RunStatus;
 
 namespace SvOi
 {
@@ -24,7 +23,7 @@ namespace SvOi
 	public:
 		virtual const std::vector<SvVol::DoubleSortValuePtr>& getValueList() const = 0;
 		virtual SvVol::ValueObjectSortContainer& getSortContainer() = 0;
-		virtual void setSortContainer(const SvVol::ValueObjectSortContainer& sortMap, RunStatus& rRunStatus) = 0;
+		virtual void setSortContainer(const SvVol::ValueObjectSortContainer& sortMap) = 0;
 
 		virtual void  setSortContainerDummy(const SvVol::DummySortContainer& rDummy) = 0;
 
