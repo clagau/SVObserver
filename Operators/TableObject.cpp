@@ -85,9 +85,7 @@ bool TableObject::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	//Avoid time consuming not necessary function calls 
 	if (ObjectAttributesAllowed() & SvPb::taskObject)
 	{
-		clearTable();
-
-	
+		clearTable();	
 	}
 
 	return Result;

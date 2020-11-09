@@ -250,8 +250,6 @@ void SVExternalToolTask::SetAllAttributes()
 		UINT attribute = (i < m_Data.m_NumLinkedValue) ? SvPb::remotelySetable | SvPb::setableOnline | SvPb::viewable | SvPb::selectableForEquation : SvPb::noAttributes;
 		SvOi::SetAttributeType addOverwriteType = (i < m_Data.m_NumLinkedValue) ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::OverwriteAttribute;
 		m_Data.m_aInputObjects[i].SetObjectAttributesAllowed(attribute, addOverwriteType);
-
-
 	}
 	
 	//Hide direct table value 
@@ -264,16 +262,11 @@ void SVExternalToolTask::SetAllAttributes()
 		{
 			int LinkValueIndex = rInputDef.getLinkedValueIndex();
 
-			UINT attribute =SvPb::noAttributes;
+			UINT attribute =SvPb::taskObject;
 			SvOi::SetAttributeType addOverwriteType = SvOi::SetAttributeType::OverwriteAttribute;
-			m_Data.m_aInputObjects[LinkValueIndex].SetObjectAttributesAllowed(attribute, addOverwriteType);
-
-	
+			m_Data.m_aInputObjects[LinkValueIndex].SetObjectAttributesAllowed(attribute, addOverwriteType);	
 		}
-
 	}
-
-
 
 	for (int i = 0; i < SVExternalToolTaskData::NUM_RESULT_OBJECTS; i++)
 	{
