@@ -336,6 +336,7 @@ HRESULT SVPPQObject::ObserverUpdate(const SVInspectionInfoPair& rData)
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
 	::OutputDebugString(SvUl::Format(_T("%s Inspection %s completed TRI=%d State=%x\n"), GetName(), rData.second.m_pInspection->GetName(), rData.first, rData.second.m_InspectedState).c_str());
 #endif
+	m_lastPPQPosition = m_PPQPositions.GetIndexByTriggerCount(rData.first);
 
 	m_oInspectionQueue.AddTail(rData);
 	m_AsyncProcedure.Signal(nullptr);
@@ -2053,7 +2054,6 @@ SVProductInfoStruct* SVPPQObject::IndexPPQ(SvTi::SVTriggerInfoStruct&& rTriggerI
 
 void SVPPQObject::InitializeProduct(SVProductInfoStruct* pNewProduct)
 {
-	pNewProduct->m_lastPPQPosition = m_lastPPQPosition;
 	///The inputs need to be sorted to their PPQ position
 	std::vector<_variant_t> inputValues;
 	inputValues.resize(pNewProduct->m_triggerInfo.m_Inputs.size());
@@ -2260,6 +2260,7 @@ HRESULT SVPPQObject::StartInspection(uint32_t inspectionID)
 
 	if (nullptr != pProduct && nullptr != pProduct->m_svInspectionInfos[inspectionID].m_pInspection)
 	{
+		pProduct->m_lastPPQPosition = m_lastPPQPosition;
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
 		long ppqPos = m_PPQPositions.GetIndexByTriggerCount(pProduct->ProcessCount());
 		::OutputDebugString(SvUl::Format(_T("%s Start Inspection TRI=%d, PPQPos=%d\n"), GetName(), pProduct->ProcessCount(), ppqPos).c_str());
@@ -3600,7 +3601,6 @@ HRESULT SVPPQObject::ProcessCompleteInspections( bool& rProcessed )
 					m_PPQTracking.IncrementCount(l_Title, l_PPQIndex);
 #endif
 
-					m_lastPPQPosition = l_PPQIndex;
 					// Inspection Process is done, let everyone know.
 					if (!SetInspectionComplete(*l_pPPQProduct, l_rInspectInfo.m_pInspection->getObjectId()))
 					{

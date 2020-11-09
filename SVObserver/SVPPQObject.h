@@ -488,8 +488,8 @@ private:
 	long m_FirstNAKProcessCount;		///only trigger >= m_FirstNAKProcessCount will be inspected 
 	long m_NewNAKCount;					//!Nak count will be set to 0 if no NAK occurs 
 	long m_ReducedPPQPosition;			/// min number of inspection that will be checked for startInspection  for nakMode =2
-	long m_lastPPQPosition{ 0L };		/// This is the PPQ position of the last SetInspectionComplete call
-	int m_maxProcessingOffset4Interest {0};
+	std::atomic_long m_lastPPQPosition {0L};		/// This is the PPQ position of the last SetInspectionComplete call
+	int m_maxProcessingOffset4Interest {0};  
 	bool m_useProcessingOffset4Interest {false};	///Flag if processing offset will used. It should only used if m_maxProcessingOffset4Interest >2 and <PPQLength, RejectCondition set and at least two Inspections in this PPQ.
 
 	using IpInfoDeque = std::deque<SVInspectionInfoStruct>;
