@@ -137,5 +137,7 @@ constexpr DWORD svErrorCondition = 0xc0000000;
 constexpr unsigned long VT_POINT = 80;
 constexpr unsigned long VT_DPOINT = 81;
 
+constexpr char* cIndexKeyword = _T("IDX");
+
 #pragma endregion Declarations
 } //namespace SvDef

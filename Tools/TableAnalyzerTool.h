@@ -83,11 +83,6 @@ private:
 private:
 	SvOp::TableCopyObject* m_pResultTable;
 	SvOl::SVInObjectInfoStruct m_sourceTableObjectInfo;
-	// Index Counter...
-	// Can be used in Equation for e.g. Add-Column-Analyzer.
-	// NOTE:
-	// If Equation supports vector calculations also in future time it can be replaced.
-	SvVol::SVLongValueObjectClass	m_Index;
 #pragma endregion Member Variables
 };
 

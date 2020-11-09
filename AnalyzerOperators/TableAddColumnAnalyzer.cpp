@@ -59,9 +59,13 @@ bool TableAddColumnAnalyzer::CreateObject(const SVObjectLevelCreateStruct& rCrea
 	auto* pColumnEquation = dynamic_cast<SvOp::IndexEquation*>(getFirstObject({SvPb::SVEquationObjectType, SvPb::IndexEquationObjectType}));
 	if (nullptr != pTool && nullptr != pColumnEquation)
 	{
-		SvDef::SVObjectTypeInfoStruct info(SvPb::SVNotSetObjectType, SvPb::SVNotSetSubObjectType, SvPb::TableAnalyzerIndexEId);
-		IObjectClass* pIndex = pTool->getFirstObject(info);
-		pColumnEquation->setIndexObject(dynamic_cast<SvVol::SVLongValueObjectClass*>(pIndex));
+		//Replace in old configurations removed index-value with index-keyword.
+		std::string Name = "\"" + pTool->GetObjectNameToObjectType() + "." + SvUl::LoadStdString(IDS_OBJECTNAME_INDEXVARIABLE) + "\"";
+		auto text = pColumnEquation->GetEquationText();
+		if (pColumnEquation->GetEquationText() != SvUl::searchAndReplace(text, Name.c_str(), SvDef::cIndexKeyword))
+		{
+			pColumnEquation->SetEquationText(text);
+		}
 
 		SvVol::DoubleSortValueObject* pNewColumn = dynamic_cast<SvVol::DoubleSortValueObject*>(m_newColumnObjectInfo.GetInputObjectInfo().getObject());
 		if (!m_newColumnObjectInfo.IsConnected() || nullptr == pNewColumn)
@@ -115,6 +119,7 @@ void TableAddColumnAnalyzer::Initialize()
 	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::TableAnalyzerAddColumnType;
 
 	auto* pColumnEquation = new SvOp::IndexEquation(this);
+	pColumnEquation->SetEquationText(SvDef::cIndexKeyword);
 	AddFriend(pColumnEquation->getObjectId());
 
 	// New Column Input.

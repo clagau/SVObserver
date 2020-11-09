@@ -26,7 +26,7 @@ static char THIS_FILE[] = __FILE__;
 SV_IMPLEMENT_CLASS(IndexEquation, SvPb::IndexEquationId);
 
 IndexEquation::IndexEquation(SVObjectClass* pOwner, int StringResourceID)
-	: SVEquation(pOwner, StringResourceID)
+	: EquationArray(pOwner, StringResourceID)
 {
 	init();
 }
@@ -39,7 +39,7 @@ bool IndexEquation::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 
-	if (nullptr == m_pResultColumn || nullptr == m_pIndex)
+	if (nullptr == m_pResultColumn)
 	{
 		Result = false;
 		if (nullptr != pErrorMessages)
@@ -71,27 +71,22 @@ void IndexEquation::SetName(LPCTSTR Name)
 bool IndexEquation::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool   bRetVal = true;
-	if (nullptr != m_pResultColumn && nullptr != m_pIndex)
+	if (nullptr != m_pResultColumn)
 	{
 		size_t arrayIndex = m_pResultColumn->getSortContainerSize();
-
-		for (int i = 1; i <= arrayIndex; i++)
+		if (0 < arrayIndex)
 		{
-			double result = 0.0;
-			// Set current index (is one-based)...
-			m_pIndex->SetValue(i);
+			bRetVal = setRunValues(1, static_cast<int>(arrayIndex));
 
 			// Run equation.. 
 			bRetVal &= __super::onRun(rRunStatus, pErrorMessages);
 
-			if (bRetVal && HasCondition() && IsEnabled())
+			if (bRetVal)
 			{
 				// Get equation result...
-				result = getResult();
+				auto values = getValueArray();
+				m_pResultColumn->SetArrayValues(values);
 			}
-
-			// Put result into column at right position...
-			m_pResultColumn->SetValue(result, i - 1);
 		}
 	}
 	else

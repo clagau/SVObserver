@@ -77,9 +77,6 @@ namespace SvAo
 		m_grayImageInfo.SetObject(GetObjectInfo());
 		RegisterInputObject(&m_grayImageInfo, SvDef::GrayImageConnectionName);
 
-		RegisterEmbeddedObject(&m_Index, SvPb::TableAnalyzerIndexEId, IDS_OBJECTNAME_INDEXVARIABLE, false, SvOi::SVResetItemNone);
-		m_Index.setSaveValueFlag(false);
-
 		// Set default inputs and outputs
 		addDefaultInputObjects();
 
@@ -211,8 +208,6 @@ namespace SvAo
 
 		try
 		{
-			m_Index.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
-
 			if (!SVImageAnalyzerClass::CreateObject(rCreateStructure))
 			{
 				SvStl::MessageManager MesMan(SvStl::MsgType::Log);

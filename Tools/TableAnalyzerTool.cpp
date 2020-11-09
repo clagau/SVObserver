@@ -103,8 +103,6 @@ bool TableAnalyzerTool::CreateObject(const SVObjectLevelCreateStruct& rCreateStr
 	constexpr UINT cAttribute {SvDef::selectableAttributes | SvPb::audittrail};
 	m_drawToolFlag.SetObjectAttributesAllowed(cAttribute, SvOi::SetAttributeType::RemoveAttribute);
 
-	m_Index.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
-
 	m_isCreated = bOk;
 
 	return bOk;
@@ -225,8 +223,6 @@ bool TableAnalyzerTool::ValidateLocal(SvStl::MessageContainerVector * pErrorMess
 void TableAnalyzerTool::LocalInitialize()
 {
 	BuildInputObjectList();
-	RegisterEmbeddedObject(&m_Index, SvPb::TableAnalyzerIndexEId, IDS_OBJECTNAME_INDEXVARIABLE, false, SvOi::SVResetItemNone);
-	m_Index.setSaveValueFlag(false);
 
 	// Set up your type
 	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;

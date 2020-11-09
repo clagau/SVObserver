@@ -8,7 +8,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVEquation.h"
+#include "EquationArray.h"
 #include "SVValueObjectLibrary\DoubleSortValueObject.h"
 #pragma endregion Includes
 
@@ -20,7 +20,7 @@ class SVLongValueObjectClass;
 namespace SvOp
 {
 
-class IndexEquation : public SVEquation
+class IndexEquation : public EquationArray
 {
 	SV_DECLARE_CLASS(IndexEquation);
 

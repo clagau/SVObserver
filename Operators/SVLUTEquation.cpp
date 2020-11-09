@@ -29,7 +29,7 @@ static char THIS_FILE[] = __FILE__;
 SV_IMPLEMENT_CLASS( SVLUTEquation, SvPb::LUTEquationClassId);
 
 SVLUTEquation::SVLUTEquation( SVObjectClass* POwner, int StringResourceID )
-				   :SVEquation( POwner, StringResourceID )
+				   :EquationArray( POwner, StringResourceID )
 {
 	init();
 }
@@ -51,14 +51,12 @@ void SVLUTEquation::init()
 	
 	// Register Embedded Objects
 	m_byteVectorResult.SetLegacyVectorObjectCompatibility();
-	RegisterEmbeddedObject( &m_lutIndex, SvPb::LUTIndexVariableEId, IDS_OBJECTNAME_LUTINDEXVARIABLE, false, SvOi::SVResetItemNone  );
 	RegisterEmbeddedObject( &m_byteVectorResult, SvPb::LUTEquationResultEId, IDS_OBJECTNAME_LUTRESULT, false, SvOi::SVResetItemNone  );
 	RegisterEmbeddedObject( &m_isLUTFormulaClipped, SvPb::LUTEquationClipFlagEId, IDS_OBJECTNAME_LUT_EQUATION_CLIP, false, SvOi::SVResetItemTool  );
 
 	// Set Embedded defaults
 	m_byteVectorResult.SetDefaultValue( 0 );
 	m_byteVectorResult.setSaveValueFlag(false);
-	m_lutIndex.setSaveValueFlag(false);
 	m_isLUTFormulaClipped.SetDefaultValue( BOOL(true) );
 
 	// NOTE: Vector Size Setting...
@@ -86,8 +84,15 @@ bool SVLUTEquation::CreateObject( const SVObjectLevelCreateStruct& rCreateStruct
 	bool bOk = SVEquation::CreateObject(rCreateStructure);
 
 	// Set / Reset Printable Flag
-	m_lutIndex.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
 	m_byteVectorResult.SetObjectAttributesAllowed( SvPb::audittrail | SvPb::viewable, SvOi::SetAttributeType::RemoveAttribute );
+
+	//For old configuration replace old lutIndex-parameter with IDX-keyword.
+	std::string Name = "\"" + GetObjectNameToObjectType() + "." + SvUl::LoadStdString(IDS_OBJECTNAME_LUTINDEXVARIABLE) + "\"";
+	auto text = GetEquationText();
+	if (GetEquationText() != SvUl::searchAndReplace(text, Name.c_str(), SvDef::cIndexKeyword))
+	{
+		SetEquationText(text);
+	}
 
 	m_isCreated = bOk;
 
@@ -97,6 +102,8 @@ bool SVLUTEquation::CreateObject( const SVObjectLevelCreateStruct& rCreateStruct
 bool SVLUTEquation::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::ResetObject(pErrorMessages);
+
+	Result = setRunValues(0, 255) && Result;
 
 	// Resize to 256 entries...
 	if( Result && 256 != m_byteVectorResult.getArraySize()  )
@@ -126,93 +133,66 @@ bool SVLUTEquation::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 ////////////////////////////////////////////////////////////////////////////////
 bool SVLUTEquation::SetDefaultFormula(SvStl::MessageContainerVector *pErrorMessages)
 {
-	// Get current complete name of LUT Index...
-	std::string Name = m_lutIndex.GetObjectNameToObjectType();
+	// Set equation...
+	SetEquationText(SvDef::cIndexKeyword);
 
-	if( ! Name.empty() )
+	// Update symbol table and test...
+	if( Test(pErrorMessages).bPassed )
 	{
-		// Set equation in quotes...
-		std::string strEquation = SvUl::Format( _T( "\"%s\"" ), Name.c_str() );
-
-		// Set equation...
-		SetEquationText( strEquation );
-
-		// Update symbol table and test...
-		if( Test(pErrorMessages).bPassed )
-		{
-			return true;
-		}
-		
-		// something is wrong, flush equation...
-		SetEquationText( std::string() );
+		return true;
 	}
+		
+	// something is wrong, flush equation...
+	SetEquationText( std::string() );
 
 	return false;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : onRun
-// -----------------------------------------------------------------------------
-// .Description : Runs this object.
-//				: ( No routing! Call Run(...) to run and route! )
-//				:
-//              : Runs 256 times the equation and calculates the new LUT values,
-//				: which are placed into the byte result vector.
-//				: Use the m_lutIndex as variable in the equation, if you want to
-//				: index the values. ( m_lutIndex is running from 0 to 255 )
-////////////////////////////////////////////////////////////////////////////////
 bool SVLUTEquation::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	bool   bRetVal   = true;
-	double dResult   = 0.0;
-	long   lLUTIndex = 0;
-
 	// Resize to 256 entries...
 	if( m_byteVectorResult.getArraySize() != 256 )
 	{
 		m_byteVectorResult.SetArraySize( 256 );
 	}
 
-	do
+	// Run equation.. 
+	bRetVal = __super::onRun(rRunStatus, pErrorMessages);
+
+	if (bRetVal && HasCondition() && IsEnabled())
 	{
-		// Set current m_lutIndex...
-		m_lutIndex.SetValue(lLUTIndex);
-
-		// Run equation.. 
-		bRetVal = __super::onRun( rRunStatus, pErrorMessages );
-
-		if( bRetVal && HasCondition() && IsEnabled() )
-		{
-			// Get equation result...
-			dResult = getResult();
-		}
-		else
-		{
-			dResult = 0.0;
-		}
-
+		// Get equation result...
+		auto values = getValueArray();
 		//Clip result if required
-		BOOL isClipped( false );
+		BOOL isClipped(false);
 		m_isLUTFormulaClipped.GetValue(isClipped);
-		if(isClipped)
+		if (isClipped)
 		{
-			if (UCHAR_MAX < dResult)
+			for (auto& rValue : values)
 			{
-				dResult = (double)UCHAR_MAX;
-			}
-			else if (0.0 > dResult)
-			{
-				dResult = 0.0;
+				if (UCHAR_MAX < rValue)
+				{
+					rValue = (double)UCHAR_MAX;
+				}
+				else if (0.0 > rValue)
+				{
+					rValue = 0.0;
+				}
 			}
 		}
-
-		// Put result into LUT vector at m_lutIndex position...
-		m_byteVectorResult.SetValue( static_cast<BYTE> (dResult), lLUTIndex );
-
-		// next index...
-		++lLUTIndex;
-
-	} while( bRetVal && lLUTIndex < 256 );
+#pragma warning(push)
+#pragma warning( disable : 4244 ) //disable warning because possible overlay by convert from double to byte it is known and wanted.
+		std::vector<byte> byteVec(values.begin(), values.end());
+#pragma warning(pop)
+		m_byteVectorResult.SetArrayValues(byteVec);
+	}
+	else
+	{
+		std::vector<byte> byteVec;
+		byteVec.resize(256, 0);
+		m_byteVectorResult.SetArrayValues(byteVec);
+	}
 		 
 	if( ! bRetVal )
 	{

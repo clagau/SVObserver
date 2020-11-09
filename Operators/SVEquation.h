@@ -199,8 +199,6 @@ public:
 	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName) override;
 #pragma endregion Methods to replace processMessage
 
-	SvVol::SVBoolValueObjectClass enabled;			// enabled flag TRUE=Enabled
-
 protected:
 	void init();
 
@@ -208,18 +206,22 @@ protected:
 
 	double getResult() const { return m_Yacc.equationResult; };
 
-private:
-	SvOi::EquationTestResult lexicalScan( LPCTSTR inBuffer );		// perform lexical scan
-
 	/// Parse the equation (calculated the result)
 	void ParseYacc();
 
-	SVEquationLexClass m_Lex;					// scanner class
+private:
+	SvOi::EquationTestResult lexicalScan( LPCTSTR inBuffer );		// perform lexical scan
+
+
+protected:
+	SvVol::SVBoolValueObjectClass m_enabled;			// enabled flag TRUE=Enabled
+	bool m_isDataValid;						// the variable(s) returned Valid Data
+
 	SVEquationYaccClass m_Yacc;				// parser class
 
-	SvStl::MessageContainer errContainer;							// for errorEvent
-
-	bool m_isDataValid;						// the variable(s) returned Valid Data
+private:
+	SVEquationLexClass m_Lex;					// scanner class
+	SvStl::MessageContainer m_errContainer;							// for errorEvent	
 	
 	SVEquationStruct m_equationStruct;		// the Equation Structure
 	

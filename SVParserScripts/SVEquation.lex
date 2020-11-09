@@ -328,6 +328,13 @@ identifier      {delimiter}{name}("."{name})*{delimiter}
 					return(SV_STDDEV);
 				}
 
+"IDX"	|
+"idx"			{
+					position = currentPos;
+					currentPos += 3;
+					return(SV_IDX);
+				}
+
 "("				{	
 					position = currentPos;
 					currentPos++;

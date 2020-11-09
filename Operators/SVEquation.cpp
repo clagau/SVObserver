@@ -272,10 +272,10 @@ void SVEquation::init()
 	// So the input will be identified when the script is created.
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject(&enabled, SvPb::EquationEnabledEId, IDS_OBJECTNAME_ENABLED, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_enabled, SvPb::EquationEnabledEId, IDS_OBJECTNAME_ENABLED, false, SvOi::SVResetItemNone);
 
 	// Set Embedded defaults
-	enabled.SetDefaultValue(BOOL(true), true);
+	m_enabled.SetDefaultValue(BOOL(true), true);
 
 	// Set default inputs and outputs
 	addDefaultInputObjects();
@@ -299,9 +299,9 @@ bool SVEquation::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 	bool bOk = SVTaskObjectClass::CreateObject(rCreateStructure) && nullptr != GetInspection();
 
 	// Set / Reset Printable Flag
-	enabled.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::AddAttribute);
+	m_enabled.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::AddAttribute);
 
-	SVObjectClass *owner = enabled.GetParent();
+	SVObjectClass *owner = m_enabled.GetParent();
 	if (nullptr != owner)
 	{
 		std::string conditionalString = SvUl::LoadStdString(IDS_CLASSNAME_SVCONDITIONAL);
@@ -309,7 +309,7 @@ bool SVEquation::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 		if (owner->GetName() == conditionalString)
 		{
 			// Set / Reset Remotely Setable Flag, if owner is conditional class.
-			enabled.SetObjectAttributesAllowed(SvPb::remotelySetable | SvPb::setableOnline, SvOi::SetAttributeType::AddAttribute);
+			m_enabled.SetObjectAttributesAllowed(SvPb::remotelySetable | SvPb::setableOnline, SvOi::SetAttributeType::AddAttribute);
 		}
 	}
 
@@ -393,7 +393,7 @@ HRESULT SVEquation::SetObjectValue(SVObjectAttributeClass* pDataObject)
 bool SVEquation::IsEnabled()
 {
 	BOOL bEnabled;
-	enabled.GetValue(bEnabled);
+	m_enabled.GetValue(bEnabled);
 
 	return bEnabled ? true : false;
 }
@@ -405,7 +405,7 @@ SvOi::EquationTestResult SVEquation::Test(SvStl::MessageContainerVector *pErrorM
 {
 	SvOi::EquationTestResult ret;
 	m_isDataValid = true;
-	errContainer.clearMessage();
+	m_errContainer.clearMessage();
 
 	if (HasCondition() && IsEnabled())
 	{
@@ -436,13 +436,13 @@ SvOi::EquationTestResult SVEquation::Test(SvStl::MessageContainerVector *pErrorM
 				msgList.push_back(fullObjectName);
 				if (S_OK != m_Yacc.m_StatusCode)
 				{
-					errContainer.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_TooManyVariables, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10046, getObjectId());
+					m_errContainer.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_TooManyVariables, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10046, getObjectId());
 				}
 				else
 				{
 					ret.iPositionFailed = m_Yacc.lex_stack[m_Yacc.sIndex - 1].position + 1;
 					msgList.push_back(SvUl::Format(_T("%d"), ret.iPositionFailed));
-					errContainer.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_EquationParserError, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10047, getObjectId());
+					m_errContainer.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_EquationParserError, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10047, getObjectId());
 				}
 				m_isDataValid = false;
 			}
@@ -466,7 +466,7 @@ SvOi::EquationTestResult SVEquation::Test(SvStl::MessageContainerVector *pErrorM
 	{
 		if (nullptr != pErrorMessages)
 		{
-			pErrorMessages->push_back(errContainer);
+			pErrorMessages->push_back(m_errContainer);
 		}
 	}
 
@@ -528,7 +528,7 @@ SvOi::EquationTestResult SVEquation::lexicalScan(LPCTSTR inBuffer)
 		SvDef::StringVector msgList;
 		msgList.push_back(fullObjectName);
 		msgList.push_back(SvUl::Format(_T("%d"), ret.iPositionFailed));
-		errContainer.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_EquationParserError, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10198, getObjectId());
+		m_errContainer.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_EquationParserError, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10198, getObjectId());
 
 		m_isDataValid = false;
 	}

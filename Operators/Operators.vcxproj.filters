@@ -222,6 +222,9 @@
     <ClCompile Include="ParameterTask.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="EquationArray.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EQAdjustSize.h">
@@ -429,6 +432,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="ParameterTask.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="EquationArray.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

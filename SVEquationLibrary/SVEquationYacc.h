@@ -74,6 +74,7 @@ protected:
 	double GetPropertyValue(int symbolIndex);
 	double GetAt(int symbolIndex, int index, double dDefault=0.0);
 	int PushValues(int index);
+	int indexValue() const;
 
 	double CalcMin();
 	double CalcMax();

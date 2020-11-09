@@ -11,16 +11,15 @@
 #pragma once
 
 #pragma region Includes
-#include "SVEquation.h"
+#include "EquationArray.h"
 #include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
 #include "SVValueObjectLibrary/SVByteValueObjectClass.h"
-#include "SVValueObjectLibrary/SVLongValueObjectClass.h"
 #pragma endregion Includes
 
 namespace SvOp
 {
 
-class SVLUTEquation : public SVEquation
+class SVLUTEquation : public EquationArray
 {
 	SV_DECLARE_CLASS( SVLUTEquation );
 
@@ -48,13 +47,6 @@ protected:
 	// Contains the new LUT values after running.
 	// Provides a LUT table size of 256!
 	SvVol::SVByteValueObjectClass m_byteVectorResult;
-
-	// LUT Table Index Counter...
-	// Can be used in Equation as an index variable running from 0 to 256.
-	// NOTE:
-	// If Equation supports vector calculations also in future time,
-	// can be replaced with a vector with 256 elements [0...255].
-	SvVol::SVLongValueObjectClass	m_lutIndex;
 };
 
 } //namespace SvOp

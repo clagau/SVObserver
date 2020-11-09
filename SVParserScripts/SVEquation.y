@@ -41,7 +41,7 @@ double* listPtr;
 %token	SV_MODULUS SV_POW SV_ABSOLUTE SV_SQUARE SV_SQUAREROOT SV_TRUNCATE
 %token	SV_MINIMUM SV_MAXIMUM SV_AVERAGE SV_MEDIAN
 %token	SV_IF SV_THEN SV_ELSE
-%token	SV_SUM SV_STDDEV
+%token	SV_SUM SV_STDDEV SV_IDX
 %token  SV_STARTSUBSCRIPT SV_ENDSUBSCRIPT
 %token  SV_STARTCURLYBRACE SV_ENDCURLYBRACE
 %token  SV_END
@@ -75,6 +75,7 @@ Line:
 Expression:
           SV_NUMBER							{ $$=$1; }
 		| SV_IDENTIFIER						{ $$=GetPropertyValue($1); }
+		| SV_IDX							{ $$=indexValue(); }
 		| ArrayIndexIdentifier				{ $$=$1; }
 		| Expression SV_AND Expression		{ $$=($1 && $3); }
 		| Expression SV_OR Expression		{ $$=($1 || $3); }

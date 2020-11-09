@@ -102,12 +102,6 @@ private:
 	std::array<SvVol::DoubleSortValuePtr, 4> m_ResultColumnForOverlayArray{ nullptr };
 	std::vector<BlobExcludeData> m_excludeDataVec;
 	BlobFeatureList* m_pBlobFeatureList = nullptr;
-
-	// Index Counter...
-	// Can be used in Equation for e.g. Custom Feature.
-	// NOTE:
-	// If Equation supports vector calculations also in future time it can be replaced.
-	SvVol::SVLongValueObjectClass	m_Index;
 };
 
 } //namespace SvAo

@@ -389,16 +389,9 @@ namespace SvAo
 					}					
 				}
 			}
-			auto* pTool = GetTool();
 			if (nullptr != m_pEquation)
 			{
 				m_pEquation->setResultColumn(getValueObject());
-				if (nullptr != pTool)
-				{
-					SvDef::SVObjectTypeInfoStruct info(SvPb::SVNotSetObjectType, SvPb::SVNotSetSubObjectType, SvPb::TableAnalyzerIndexEId);
-					IObjectClass* pIndex = pTool->getFirstObject(info);
-					m_pEquation->setIndexObject(dynamic_cast<SvVol::SVLongValueObjectClass*>(pIndex));
-				}
 			}
 		}
 		else

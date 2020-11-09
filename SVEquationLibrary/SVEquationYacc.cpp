@@ -92,6 +92,11 @@ int SVEquationYaccClass::PushValues(int iSymbolIndex)
 	return iNum;
 }
 
+int SVEquationYaccClass::indexValue() const
+{
+	return m_pEquation->GetIndexValue();
+}
+
 void SVEquationYaccClass::InitCurrentList()
 {
 	iNumListEntries[current_recursive_depth] = 0;

@@ -979,7 +979,7 @@ enum EmbeddedIdEnum
 	AuxiliarySourceAngleEId = 338;
 	AuxiliarySourceImageNameEId = 339;
 	AuxiliaryDrawTypeEId = 340;
-	LUTIndexVariableEId = 341;
+	//LUTIndexVariableEId = 341;
 	LUTEquationResultEId = 342;
 	LUTEquationClipFlagEId = 343;
 	OutputLUTVectorEId = 344;
@@ -1108,7 +1108,6 @@ enum EmbeddedIdEnum
 	EnvironmentAutoSaveUidEId = 470;
 	EnvironmentDiskProtectionUidEId = 471;
 	EnvironmentStartLastConfiEIdEId = 472;
-	TableAnalyzerIndexEId = 473;
 	TableAnaylzerSortIsASCEId = 474;
 	TableAnaylzerExcludeHighEId = 475;
 	TableAnaylzerExcludeHigh_LinkEId = 476;
