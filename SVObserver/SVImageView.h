@@ -40,6 +40,12 @@ class SVIPDoc;
 class SVDrawContext;
 class SVImageExtentClass;
 
+struct ImageIdPair
+{
+	uint32_t m_objectId = SvDef::InvalidObjectId;
+	uint32_t m_imageId = SvDef::InvalidObjectId;
+};
+
 class SVImageView : public CView
 {
 	DECLARE_DYNCREATE( SVImageView )
@@ -54,7 +60,7 @@ public:
 	void AttachToImage( LPCTSTR p_imageName );
 	void DetachFromImage();
 
-	uint32_t GetImageID() const;
+	ImageIdPair GetImageID() const;
 
 	SvIe::SVImageClass* GetImage();
 	void GetImageRect( CRect &p_rect );
@@ -166,8 +172,6 @@ protected:
 	bool SetScaleIndex( unsigned long p_scaleIndex );
 	bool SetImageRect( CRect& p_rect );
 
-	SvIe::SVImageClass* GetImageByName( LPCTSTR ImageName ) const;
-
 	HRESULT ShouldDraw( const SVExtentMultiLineStruct& p_rMultiLine );
 	void DrawOverlay( SVDrawContext* PDrawContext, const SVExtentMultiLineStruct& p_rMultiLine );
 	void UpdateOverlays( HDC p_hDC, long p_X, long p_Y );
@@ -219,7 +223,7 @@ private:
 
 	ZoomHelper m_ZoomHelper;
 
-	uint32_t m_ImageId = SvDef::InvalidObjectId;
+	ImageIdPair m_ImageIdPair;
 	std::string m_imageName;
 
 	IDirectDrawSurface7* m_pDDImageSurface;

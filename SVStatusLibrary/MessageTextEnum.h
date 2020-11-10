@@ -363,6 +363,8 @@ enum MessageTextEnum
 	Tid_Clipboard_VersionMismatch,
 	Tid_ColorToolInsertFailed,
 	Tid_LoopToolInsertLoopToolFailed,
+	Tid_LoopTool,
+	Tid_GroupTool,
 	Tid_NonColorToolInsertFailed,
 	Tid_RenameError_DuplicateName,
 	Tid_ErrorInReset,

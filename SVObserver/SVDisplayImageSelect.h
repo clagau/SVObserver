@@ -12,20 +12,13 @@
 #pragma once
 
 #pragma region Includes
+#include "Definitions/ObjectDefines.h"
 #pragma endregion Includes
-
-namespace SvIe
-{
-class SVImageClass;
-}
-class SVIPDoc;
 
 class SVDisplayImageSelect : public CDialog
 {
 public:
-	SvIe::SVImageClass *m_pCurrentImage = nullptr;
-	SVIPDoc			 *m_pDoc = nullptr;
-	SVDisplayImageSelect(CWnd* pParent = nullptr);   // standard constructor
+	SVDisplayImageSelect(uint32_t inspectionId, uint32_t imageId, CWnd* pParent = nullptr );   // standard constructor
 	virtual ~SVDisplayImageSelect();
 
 
@@ -34,11 +27,14 @@ public:
 	CListBox	m_ImageSelectList;
 	//}}AFX_DATA
 
+	uint32_t getImageId() const { return m_imageId; };
+
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(SVDisplayImageSelect)
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
+
 
 protected:
 
@@ -54,5 +50,8 @@ private:
 	/// Title format: "Select Display Image - [Inspection name]"
 	/// \returns void
 	void SetTitle();
+
+	uint32_t m_inspectionId;
+	uint32_t m_imageId;
 };
 

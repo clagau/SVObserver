@@ -258,26 +258,32 @@ void SVImageView::AttachToImage(uint32_t imageId)
 			pImage = dynamic_cast<SvIe::SVImageClass*> (pObject);
 		}
 
+		m_ImageIdPair.m_objectId = imageId;
 		if( nullptr != pImage )
 		{
-			m_ImageId = pImage->getObjectId();
-			m_imageName = pImage->GetCompleteName();
-
-			GetIPDoc()->RegisterImage( m_ImageId, this );
+			m_ImageIdPair.m_imageId = pImage->getObjectId();
+			m_imageName = pObject->GetCompleteName();
+			//@TODO[MZA][10.10][09.11.2020] if we want have different overlays depending of direct or over group tool input, this here have to be changed.
+			GetIPDoc()->RegisterImage( m_ImageIdPair.m_imageId, this );
 
 			CRect l_rect;
 
 			GetImageRect( l_rect );
 			SetImageRect( l_rect );
 		}
+		else
+		{
+			m_ImageIdPair.m_imageId = SvDef::InvalidObjectId;
+		}
 	}
 	else
 	{
-		m_ImageId = imageId;
+		m_ImageIdPair.m_objectId = SvDef::InvalidObjectId;
+		m_ImageIdPair.m_imageId = SvDef::InvalidObjectId;
 	}
 
 
-	if(SvDef::InvalidObjectId == m_ImageId)
+	if(ImageIsEmpty())
 	{
 		GetIPDoc()->UnregisterImageView( this );
 
@@ -299,15 +305,14 @@ void SVImageView::AttachToImage( LPCTSTR p_imageName )
 
 	if( ! l_imageName.empty() )
 	{
-		SvIe::SVImageClass* pImage = GetImageByName( l_imageName.c_str() );
+		SVObjectClass* pObject = nullptr;
+		SVObjectManagerClass::Instance().GetObjectByDottedName(l_imageName, pObject);
 
-		if( nullptr != pImage )
+		if( nullptr != pObject)
 		{
-			l_ImageId = pImage->getObjectId();
+			l_ImageId = pObject->getObjectId();
 			Attach = true;
 		}
-
-		m_imageName = l_imageName;
 	}
 
 	if( Attach )
@@ -332,7 +337,8 @@ void SVImageView::DetachFromImage()
 	SetImageRect(rect);
 
 	m_imageName.clear();
-	m_ImageId = SvDef::InvalidObjectId;
+	m_ImageIdPair.m_objectId = SvDef::InvalidObjectId;
+	m_ImageIdPair.m_imageId = SvDef::InvalidObjectId;
 	m_ImageDIB.clear();
 	m_OverlayData.clear();
 }
@@ -415,7 +421,7 @@ BOOL SVImageView::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 		case ID_ADJUST_POSITION:
 		{
 			long l_err = 0;
-			if(SvDef::InvalidObjectId == m_ImageId ||
+			if(ImageIsEmpty() ||
 				!TheSVObserverApp.OkToEdit() )
 			{
 				l_err = -1269;
@@ -633,20 +639,15 @@ void SVImageView::TransformFromViewSpace( CPoint& p_point )
 
 void SVImageView::SelectDisplayImage()
 {
-	SVDisplayImageSelect l_svDlg;
-	
-	l_svDlg.m_pDoc = GetIPDoc();
-
-	if( nullptr != l_svDlg.m_pDoc )
+	if (nullptr != GetIPDoc())
 	{
-		SvIe::SVImageClass* pImage = dynamic_cast<SvIe::SVImageClass*> (SVObjectManagerClass::Instance().GetObject(m_ImageId));
-		l_svDlg.m_pCurrentImage = pImage;
+		SVDisplayImageSelect l_svDlg(GetIPDoc()->GetInspectionID(), m_ImageIdPair.m_objectId);
 
 		if( IDOK == l_svDlg.DoModal() )
 		{
-			if( l_svDlg.m_pCurrentImage )
+			if( SvDef::InvalidObjectId !=  l_svDlg.getImageId())
 			{
-				AttachToImage( l_svDlg.m_pCurrentImage->getObjectId() );
+				AttachToImage( l_svDlg.getImageId() );
 			}
 			else
 			{
@@ -656,26 +657,14 @@ void SVImageView::SelectDisplayImage()
 	}
 }
 
-uint32_t SVImageView::GetImageID() const
+ImageIdPair SVImageView::GetImageID() const
 {
-	return m_ImageId;
+	return m_ImageIdPair;
 }
 
 SvIe::SVImageClass* SVImageView::GetImage()
 {
-	return dynamic_cast<SvIe::SVImageClass*> (SVObjectManagerClass::Instance().GetObject(m_ImageId));
-}
-
-SvIe::SVImageClass* SVImageView::GetImageByName( LPCTSTR ImageName ) const
-{
-	SvIe::SVImageClass* pImage = nullptr;
-	SVIPDoc* l_pDocument = GetIPDoc();
-
-	if( nullptr != l_pDocument )
-	{
-		pImage = l_pDocument->GetImageByName(ImageName);
-	}
-	return pImage;
+	return dynamic_cast<SvIe::SVImageClass*> (SVObjectManagerClass::Instance().GetObject(m_ImageIdPair.m_imageId));
 }
 
 HRESULT SVImageView::RecreateImageSurface()
@@ -733,7 +722,7 @@ void SVImageView::ShowExtremeLUT( bool p_show /* = true */ )
 
 void SVImageView::OnDraw( CDC*  )
 {
-	if (SvDef::InvalidObjectId == m_ImageId || SVSVIMStateClass::CheckState(SV_STATE_CLOSING))
+	if (ImageIsEmpty() || SVSVIMStateClass::CheckState(SV_STATE_CLOSING))
 	{
 		ReleaseImageSurface();
 	}
@@ -838,7 +827,7 @@ void SVImageView::OnLButtonDblClk( UINT p_nFlags, CPoint p_point )
 		std::string Text = SvUl::Format( _T(" X: %d, Y: %d "), l_point.x, l_point.y );
 		TheSVObserverApp.SetStatusText( Text.c_str() );
 
-		if (SvDef::InvalidObjectId != m_ImageId && nullptr != l_psvIPDoc)
+		if (false == ImageIsEmpty() && nullptr != l_psvIPDoc)
 		{
 			SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject( l_psvIPDoc->GetSelectedToolID()));
 
@@ -868,7 +857,7 @@ void SVImageView::OnRButtonDblClk( UINT p_nFlags, CPoint p_point )
 		std::string Text = SvUl::Format( _T(" X: %d, Y: %d "), l_point.x, l_point.y );
 		TheSVObserverApp.SetStatusText( Text.c_str() );
 		
-		if( nullptr != l_psvIPDoc && SvDef::InvalidObjectId != m_ImageId )
+		if( nullptr != l_psvIPDoc && false == ImageIsEmpty())
 		{
 			SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject(l_psvIPDoc->GetSelectedToolID()));
 			if(nullptr !=  pTool)
@@ -896,7 +885,7 @@ void SVImageView::OnLButtonDown( UINT p_nFlags, CPoint p_point )
 	if( !SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&
 		TheSVObserverApp.OkToEdit() )
 	{
-		if(SvDef::InvalidObjectId != m_ImageId)
+		if(false == ImageIsEmpty())
 		{
 			std::string Text;
 			CPoint l_point = p_point;
@@ -1173,7 +1162,7 @@ bool SVImageView::SetScrollPosition( CPoint& p_point )
 
 bool SVImageView::ImageIsEmpty() const
 {
-	return SvDef::InvalidObjectId == m_ImageId;
+	return SvDef::InvalidObjectId == m_ImageIdPair.m_imageId;
 }
 
 bool SVImageView::CalculateZoomFit(ZoomEnum ZoomType)
@@ -1688,7 +1677,7 @@ BOOL SVImageView::GetObjectAtPoint( POINT p_point )
 		pTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject( GetIPDoc()->GetSelectedToolID()));
 	}
 
-	if( nullptr != pTool && pTool->isInputImage( m_ImageId ) )
+	if( nullptr != pTool && pTool->isInputImage( m_ImageIdPair.m_imageId ) )
 	{
 		SVImageExtentClass l_svExtents;
 		SVPoint<double> point(p_point);
@@ -1715,7 +1704,7 @@ void SVImageView::GetParameters(SvOi::IObjectWriter& rWriter)
 {
 	_variant_t l_svVariant;
 
-	SvIe::SVImageClass* pImage = dynamic_cast<SvIe::SVImageClass*> (SVObjectManagerClass::Instance().GetObject(m_ImageId));
+	auto* pImage = SVObjectManagerClass::Instance().GetObject(m_ImageIdPair.m_objectId);
 
 	l_svVariant = ( nullptr != pImage );
 	rWriter.WriteAttribute(SvXml::CTAG_VIEW_INITIALIZED, l_svVariant);
@@ -1904,13 +1893,13 @@ SVBitmapInfo SVImageView::GetBitmapInfo() const
 			l_Info.Assign( *l_pBitmapInfo );
 		}
 	}
-	else if(SvDef::InvalidObjectId != m_ImageId)
+	else if(false == ImageIsEmpty())
 	{
 		SVIPDoc* l_pIPDoc = GetIPDoc();
 
 		if( nullptr != l_pIPDoc )
 		{
-			l_pIPDoc->GetBitmapInfo( m_ImageId, l_Info );
+			l_pIPDoc->GetBitmapInfo( m_ImageIdPair.m_imageId, l_Info );
 		}
 	}
 
@@ -2271,13 +2260,14 @@ HRESULT SVImageView::UpdateBufferFromIPDoc()
 
 	if( nullptr != l_pIPDoc )
 	{
-		if( S_FALSE == l_pIPDoc->IsImageDataUpdated( m_ImageId, this ) )
+		if( S_FALSE == l_pIPDoc->IsImageDataUpdated( m_ImageIdPair.m_imageId, this ) )
 		{
-			status = l_pIPDoc->GetImageData( m_ImageId, m_ImageDIB, m_OverlayData );
+			//@TODO[MZA][10.10][09.11.2020] if we want have different overlays depending of direct or over group tool input, this here have to be changed.
+			status = l_pIPDoc->GetImageData(m_ImageIdPair.m_imageId, m_ImageDIB, m_OverlayData );
 
 			if( S_OK == status )
 			{
-				status = l_pIPDoc->MarkImageDataUpdated( m_ImageId, this );
+				status = l_pIPDoc->MarkImageDataUpdated(m_ImageIdPair.m_imageId, this );
 			}
 		}
 	}
@@ -2396,7 +2386,7 @@ HRESULT SVImageView::NotifyIPDocDisplayComplete()
 
 	if( nullptr != l_pIPDoc )
 	{
-		status = l_pIPDoc->MarkImageDataDisplayed( m_ImageId, this );
+		status = l_pIPDoc->MarkImageDataDisplayed( m_ImageIdPair.m_imageId, this );
 	}
 	else
 	{

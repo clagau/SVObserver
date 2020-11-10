@@ -112,6 +112,8 @@ namespace SvOg
 		pRequest->set_objectid(objectID);
 		pRequest->mutable_typeinfo()->set_objecttype(SvPb::SVImageObjectType);
 		pRequest->set_maxrequested(static_cast<int32_t>(maxImages));
+		pRequest->set_shouldexcludefirstobjectname(true); //used only for LinkedValue-names
+		pRequest->set_objecttypetoinclude(SvPb::SVToolSetObjectType); //used only for LinkedValue-names
 
 		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 		if (S_OK == hr && responseCmd.has_getinputsresponse())

@@ -14,7 +14,6 @@
 
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "InspectionEngine/SVImageClass.h"
-#include "SVIPDoc.h"
 #include "SVInspectionProcess.h"
 #pragma endregion Includes
 
@@ -28,8 +27,10 @@ static char THIS_FILE[] = __FILE__;
 // SVDisplayImageSelect dialog
 
 
-SVDisplayImageSelect::SVDisplayImageSelect(CWnd* pParent /*=nullptr*/)
+SVDisplayImageSelect::SVDisplayImageSelect(uint32_t inspectionId, uint32_t imageId, CWnd* pParent /*=nullptr*/)
 	: CDialog(SVDisplayImageSelect::IDD, pParent)
+	, m_inspectionId(inspectionId)
+	, m_imageId(imageId)
 {
 	//{{AFX_DATA_INIT(SVDisplayImageSelect)
 	//}}AFX_DATA_INIT
@@ -61,7 +62,7 @@ void SVDisplayImageSelect::OnOK()
 	
 	if (LB_ERR != index)
 	{
-		m_pCurrentImage = reinterpret_cast<SvIe::SVImageClass*> (m_ImageSelectList.GetItemData( index ));
+		m_imageId = static_cast<uint32_t> (m_ImageSelectList.GetItemData( index ));
 	}
 	CDialog::OnOK();
 }
@@ -74,89 +75,82 @@ void SVDisplayImageSelect::OnCancel()
 BOOL SVDisplayImageSelect::OnInitDialog() 
 {
 	CDialog::OnInitDialog();
-	
-	
-    if( m_pDoc )
-	{
-		constexpr TCHAR* c_NoImage = _T("[None]");
-
-		SetTitle();
 		
-		int index = m_ImageSelectList.AddString( c_NoImage );
-		m_ImageSelectList.SetItemData( index, static_cast<DWORD_PTR>(0) );
+	constexpr TCHAR* c_NoImage = _T("[None]");
 
-		SvDef::SVObjectTypeInfoStruct info;
+	SetTitle();
 
-		info.m_ObjectType = SvPb::SVImageObjectType;
-		info.m_SubType = SvPb::SVNotSetSubObjectType;
+	int index = m_ImageSelectList.AddString(c_NoImage);
+	m_ImageSelectList.SetItemData(index, static_cast<DWORD_PTR>(0));
 
-		// Differenciate between image owned by ToolSet and image owned by a tool
-		auto getImageName = [](SvIe::SVImageClass* pImage) {
-			std::string imageName;
+	SvDef::SVObjectTypeInfoStruct info;
 
-			if (pImage->GetOwnerInfo().CheckExistence() &&
-				(pImage->GetOwnerInfo().getObject() != nullptr) &&
-				(SvPb::SVObjectTypeEnum::SVToolSetObjectType == pImage->GetOwnerInfo().getObject()->GetObjectType())
-				)
-			{
-				imageName = pImage->GetName();
-			}
-			else
-			{
-				imageName = pImage->GetObjectNameBeforeObjectType(SvPb::SVObjectTypeEnum::SVToolSetObjectType);
-			}
-			return imageName;
-		};
+	info.m_ObjectType = SvPb::SVImageObjectType;
+	info.m_SubType = SvPb::SVNotSetSubObjectType;
 
-		std::vector<SvOi::IObjectClass*> list;
-		fillObjectList(std::back_inserter(list), info, m_pDoc->GetInspectionID());
+	// Differentiate between image owned by ToolSet and image owned by a tool
+	auto getImageName = [](SvIe::SVImageClass* pImage) {
+		std::string imageName;
 
-		for (const auto pObject : list)
+		if (pImage->GetOwnerInfo().CheckExistence() &&
+			(pImage->GetOwnerInfo().getObject() != nullptr) &&
+			(SvPb::SVObjectTypeEnum::SVToolSetObjectType == pImage->GetOwnerInfo().getObject()->GetObjectType())
+			)
 		{
-			if (nullptr != pObject && SvPb::noAttributes != pObject->ObjectAttributesAllowed())
-			{
-				SvIe::SVImageClass* pImage = dynamic_cast<SvIe::SVImageClass*> (pObject);
-				if (nullptr != pImage)
-				{
-					index = m_ImageSelectList.AddString(getImageName(pImage).c_str());
-				}
-				else
-				{
-					index = m_ImageSelectList.AddString(pObject->GetObjectNameBeforeObjectType(SvPb::SVObjectTypeEnum::SVToolSetObjectType).c_str());
-				}
-				m_ImageSelectList.SetItemData(index, reinterpret_cast<DWORD_PTR>(pObject));
-			}
-		}// end while
-
-		if( nullptr != m_pCurrentImage )
-		{
-			m_ImageSelectList.SelectString( -1, getImageName(m_pCurrentImage).c_str() );
+			imageName = pImage->GetName();
 		}
 		else
 		{
-            m_ImageSelectList.SelectString( -1, c_NoImage);
+			imageName = pImage->GetObjectNameBeforeObjectType(SvPb::SVObjectTypeEnum::SVToolSetObjectType);
 		}
+		return imageName;
+	};
 
-		UpdateData( FALSE );
+	std::vector<SvOi::IObjectClass*> list;
+	fillObjectList(std::back_inserter(list), info, m_inspectionId);
+	std::string selectedName;
+	for (const auto pObject : list)
+	{
+		if (nullptr != pObject && SvPb::noAttributes != pObject->ObjectAttributesAllowed())
+		{
+			std::string name;
+			SvIe::SVImageClass* pImage = dynamic_cast<SvIe::SVImageClass*> (pObject);
+			if (nullptr != pImage)
+			{
+				name = getImageName(pImage);
+			}
+			else
+			{
+				name = pObject->GetObjectNameBeforeObjectType(SvPb::SVObjectTypeEnum::SVToolSetObjectType);
+			}
+			index = m_ImageSelectList.AddString(name.c_str());
+			m_ImageSelectList.SetItemData(index, pObject->getObjectId());
+			if (pObject->getObjectId() == m_imageId)
+			{
+				selectedName = std::move(name);
+			}
+		}
+	}// end while
 
-		return TRUE;
-	}// end if
+	if (false == selectedName.empty())
+	{
+		m_ImageSelectList.SelectString(-1, selectedName.c_str());
+	}
+	else
+	{
+		m_ImageSelectList.SelectString(-1, c_NoImage);
+	}
 
-	return FALSE;
+	UpdateData(FALSE);
+
+	return TRUE;
 }// end OnInitDialog
 
 
 
 void SVDisplayImageSelect::SetTitle()
 {
-	if (nullptr == m_pDoc)
-	{
-		return;
-	}
-		
-
-	SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(m_pDoc->GetInspectionID());
-	SVInspectionProcess* pInspection(dynamic_cast<SVInspectionProcess*>(pObject));
+	SVInspectionProcess* pInspection(dynamic_cast<SVInspectionProcess*>(SVObjectManagerClass::Instance().GetObject(m_inspectionId)));
 	if (nullptr != pInspection)
 	{
 		CString title;

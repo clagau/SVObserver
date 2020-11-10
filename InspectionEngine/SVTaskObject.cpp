@@ -2072,7 +2072,7 @@ void SVTaskObjectClass::UpdateOverlayName(SVExtentMultiLineStruct& p_rMultiLine,
 	if (S_OK == p_pImageExtents.GetTitlePoint(point))
 	{
 		p_rMultiLine.m_StringPoint = point;
-		p_rMultiLine.m_csString = GetName();
+		p_rMultiLine.m_csString = GetObjectNameBeforeObjectType(SvPb::SVToolSetObjectType);
 	}
 }
 

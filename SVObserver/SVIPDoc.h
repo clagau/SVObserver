@@ -331,7 +331,6 @@ protected:
 
 	HRESULT UpdateExtents(SvIe::SVTaskObjectClass* pTask, const SVImageExtentClass& rExtents);
 	HRESULT UpdateExtentsToFit(SvIe::SVTaskObjectClass* pTask, const SVImageExtentClass& rExtents);
-	SvIe::SVImageClass* GetImageByName( LPCTSTR ImageName ) const;
 
 	bool checkOkToDelete(SvIe::SVTaskObjectClass* pTaskObject );
 

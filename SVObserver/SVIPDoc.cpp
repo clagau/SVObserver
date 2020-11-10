@@ -2318,8 +2318,8 @@ void SVIPDoc::RefreshDocument()
 
 		if (nullptr != l_pImageView)
 		{
-			uint32_t imageId = l_pImageView->GetImageID();
-
+			//@TODO[MZA][10.10][09.11.2020] if we want have different overlays depending of direct or over group tool input, this here have to be changed.
+			uint32_t imageId = l_pImageView->GetImageID().m_imageId;
 			if (SvDef::InvalidObjectId != imageId)
 			{
 				imageIdSet.insert(imageId);
@@ -3064,7 +3064,7 @@ HRESULT SVIPDoc::RemoveImage(uint32_t imageId)
 	{
 		SVImageView *l_pView = GetImageView(i);
 
-		if (l_pView->GetImageID() == imageId)
+		if (l_pView->GetImageID().m_imageId == imageId)
 		{
 			l_pView->DetachFromImage();
 
@@ -4202,19 +4202,6 @@ HRESULT SVIPDoc::UpdateExtentsToFit(SvIe::SVTaskObjectClass* pTask, const SVImag
 	HRESULT l_Status = SVGuiExtentUpdater::SetImageExtentToFit(pTask, rExtents);
 	if (S_OK == l_Status) { SetModifiedFlag(); }
 	return l_Status;
-}
-
-SvIe::SVImageClass* SVIPDoc::GetImageByName(LPCTSTR ImageName) const
-{
-	SvIe::SVImageClass* pImage = nullptr;
-	SVInspectionProcess* pInspection = GetInspectionProcess();
-
-	if (nullptr != pInspection)
-	{
-		SVObjectManagerClass::Instance().GetObjectByDottedName(ImageName, pImage);
-	}
-
-	return pImage;
 }
 
 HRESULT SVIPDoc::UpdateWithLastProduct()

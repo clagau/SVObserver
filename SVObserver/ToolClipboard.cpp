@@ -581,11 +581,16 @@ HRESULT ToolClipboard::validateIds(std::string& rXmlData, uint32_t postId, uint3
 	}
 
 	SVObjectClass* pOwner = SVObjectManagerClass::Instance().GetObject(ownerId);
-	if (nullptr != pOwner && (SvPb::LoopToolObjectType == pOwner->GetObjectSubType() || SvPb::GroupToolObjectType == pOwner->GetObjectSubType()) && (SvPb::LoopToolClassId == toolClassId || SvPb::GroupToolClassId == toolClassId))
+	SvStl::MessageTextEnum firstTId = (SvPb::LoopToolClassId == toolClassId) ? SvStl::Tid_LoopTool : (SvPb::GroupToolClassId == toolClassId) ? SvStl::Tid_GroupTool : SvStl::Tid_Empty;
+	SvStl::MessageTextEnum secondTId = (SvPb::LoopToolObjectType == pOwner->GetObjectSubType()) ? SvStl::Tid_LoopTool : (SvPb::GroupToolObjectType == pOwner->GetObjectSubType()) ? SvStl::Tid_GroupTool : SvStl::Tid_Empty;
+	if (nullptr != pOwner && SvStl::Tid_Empty != firstTId && SvStl::Tid_Empty != secondTId)
 	{
 		result = E_FAIL;
+		SvDef::StringVector messageList;
+		messageList.push_back(SvStl::MessageData::convertId2AdditionalText(firstTId));
+		messageList.push_back(SvStl::MessageData::convertId2AdditionalText(secondTId));
 		SvStl::MessageManager e(SvStl::MsgType::Data);
-		e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_LoopToolInsertLoopToolFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25006_ColorToolInsert);
+		e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_LoopToolInsertLoopToolFailed, messageList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25006_ColorToolInsert);
 		e.Throw();
 	}
 
