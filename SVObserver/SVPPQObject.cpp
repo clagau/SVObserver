@@ -2237,20 +2237,27 @@ HRESULT SVPPQObject::StartInspection(uint32_t inspectionID)
 			/// Inspection has not already been queued
 			if (true == rInfo.m_CanProcess && false == rInfo.m_InProcess && false == rInfo.m_HasBeenQueued)
 			{
-				pProduct = pTempProduct; // product info
 #ifdef EnableTracking
 				l_ProductIndex = m_PPQPositions.GetIndexByTriggerCount(pProduct->ProcessCount());
 #endif
 				if (SvDef::Bursts == m_NAKMode)
 				{
+					if (0 == m_FirstNAKProcessCount || m_FirstNAKProcessCount < pTempProduct->ProcessCount())
+					{
+						pProduct = pTempProduct;
+					}
 					if (m_NewNAKCount > 2 && 0L == m_FirstNAKProcessCount)
 					{
 						m_FirstNAKProcessCount = pTempProduct->ProcessCount();
 						continue;
 					}
 				}
+				else
+				{
+					pProduct = pTempProduct;
+				}
 			}
-			if (m_FirstNAKProcessCount > pTempProduct->ProcessCount())
+			if (SvDef::Bursts == m_NAKMode && m_FirstNAKProcessCount > pTempProduct->ProcessCount())
 			{
 				SetProductIncomplete(*pTempProduct);
 				pTempProduct = nullptr;
@@ -2265,6 +2272,7 @@ HRESULT SVPPQObject::StartInspection(uint32_t inspectionID)
 		long ppqPos = m_PPQPositions.GetIndexByTriggerCount(pProduct->ProcessCount());
 		::OutputDebugString(SvUl::Format(_T("%s Start Inspection TRI=%d, PPQPos=%d\n"), GetName(), pProduct->ProcessCount(), ppqPos).c_str());
 #endif
+		assert(pProduct->m_triggered);
 		result = pProduct->m_svInspectionInfos[inspectionID].m_pInspection->StartProcess(pProduct);
 
 #ifdef EnableTracking

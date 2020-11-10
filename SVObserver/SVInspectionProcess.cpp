@@ -109,9 +109,12 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed)
 #ifdef EnableTracking
 		m_InspectionTracking.EventStart(_T("Process Inspections"));
 #endif
+		assert((*m_pProduct).m_triggered);
 		// Get the info struct for this inspection
 		const auto iter = (*m_pProduct).m_svInspectionInfos.find(getObjectId());
-		if ((*m_pProduct).m_svInspectionInfos.end() == iter)
+		bool validProduct = (*m_pProduct).m_svInspectionInfos.end() != iter || false == (*m_pProduct).m_triggered;
+		validProduct = (false == validProduct) ? false : iter->second.m_InProcess && iter->second.m_HasBeenQueued;
+		if (false == validProduct)
 		{
 			return E_FAIL;
 		}
