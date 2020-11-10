@@ -16,7 +16,6 @@
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
-#include "SVToolSet.h"
 #pragma endregion Includes
 
 constexpr char* c_DefaultToolGroupName = _T("Group");
@@ -29,7 +28,7 @@ bool SVToolGrouping::Correct(const SvOi::ObjectInfoVector& toolsetinfo, int& rNc
 	int toolsetindex{ 0 };
 	const int toolsetSize = static_cast<int>( toolsetinfo.size());
 	int ToolsCountInGrouping = static_cast<int>(std::count_if(m_list.begin(), m_list.end(),
-		[](ToolGroup& p) {return (p.second.m_type == ToolGroupData::Tool); }));
+		[](const ToolGroup& p) {return (p.second.m_type == ToolGroupData::Tool); }));
 
 
 	for (auto it = m_list.begin(); it != m_list.end(); )

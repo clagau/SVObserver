@@ -46,8 +46,7 @@ enum class ThreadPref { cur, inspection, async,default };
 /// \param pResponse [in, out] The response message (must fit to the request message). If request message has no response message, it should be nullptr.
 ///\param ThreadPref t  [in] default means use setting from InspectionCommandMap  
 /// /// \returns HRESULT ErrorCode.
-HRESULT InspectionCommands(uint32_t inspectionID, const SvPb::InspectionCmdRequest& rRequest, SvPb::InspectionCmdResponse* pResponse,
-	ThreadPref t = ThreadPref::default);
+HRESULT InspectionCommands(uint32_t inspectionID, const SvPb::InspectionCmdRequest& rReq, SvPb::InspectionCmdResponse* pRes,ThreadPref t = ThreadPref::default);
 
 HRESULT RunOnceSynchronous(uint32_t inspectionID);
 

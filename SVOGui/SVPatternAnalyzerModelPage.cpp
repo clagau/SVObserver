@@ -26,7 +26,6 @@
 #include "Definitions/GlobalConst.h"
 #include "SVFileSystemLibrary/SVFileNameClass.h"
 #include "SVRPropertyTree/SVRPropTreeItemEdit.h"
-#include "InspectionCommands/CommandExternalHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations

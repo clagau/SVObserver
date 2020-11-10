@@ -7,7 +7,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "BlobAnalyzer2Range.h"
-#include "InspectionCommands/CommandExternalHelper.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "GridCtrlLibrary/GridCellCheck.h"
