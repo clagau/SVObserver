@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "Definitions/ObjectDefines.h"
+
 #pragma endregion Includes
 
 class SVDisplayImageSelect : public CDialog
