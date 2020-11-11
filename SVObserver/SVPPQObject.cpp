@@ -125,6 +125,10 @@ HRESULT SVPPQObject::ProcessDelayOutputs( bool& rProcessed )
 
 				break;
 			}
+			else
+			{
+				m_NextOutputDelayTimestamp = 0.0;
+			}
 		}
 	}
 
@@ -156,7 +160,6 @@ HRESULT SVPPQObject::ProcessDelayOutputs( bool& rProcessed )
 		}
 	}
 
-	m_NextOutputDelayTimestamp = 0.0;
 	return l_Status;
 }
 
@@ -3347,6 +3350,7 @@ HRESULT SVPPQObject::ProcessResetOutputs( bool& rProcessed )
 					{
 						m_oOutputsResetQueue.RemoveHead(&processCount);
 						rProcessed = true;
+						m_NextOutputResetTimestamp = 0.0;
 					}
 					else
 					{
@@ -3368,7 +3372,6 @@ HRESULT SVPPQObject::ProcessResetOutputs( bool& rProcessed )
 			{
 				l_Status = E_FAIL;
 			}
-			m_NextOutputResetTimestamp = 0.0;
 		}
 	}
 
