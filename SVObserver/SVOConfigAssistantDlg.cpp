@@ -493,7 +493,7 @@ int SVOConfigAssistantDlg::GetNextCameraNumber() const
 std::string SVOConfigAssistantDlg::GetNextInspectionName() const
 {
 	int iRet = 0;
-	bool bFound = TRUE;
+	bool bFound = true;
 	std::string Result;
 
 	if ( m_bInspectionDeleted )
@@ -506,6 +506,7 @@ std::string SVOConfigAssistantDlg::GetNextInspectionName() const
 		iRet++;
 		Result = SvUl::Format( _T("%s%d"), SvDef::cInspectionFixedName, iRet );
 		bFound = m_InspectList.IsInspectionInList(Result.c_str());
+		bFound |= m_InspectList.IsOriginalInspectionInList(Result.c_str());
 	}
 	return Result;
 }
@@ -1802,6 +1803,8 @@ bool SVOConfigAssistantDlg::RenameInspectionObjects(LPCTSTR InspectionName, LPCT
 					{
 						bRet &= pPPQObject->DetachInspectionFromPPQ( InspectionName );
 						bRet &= pPPQObject->AttachInspectionToPPQ( NewInspectionName );
+						RemoveUsedInspect(InspectionName);
+						AddUsedInspect(NewInspectionName);
 					}
 				}
 			}

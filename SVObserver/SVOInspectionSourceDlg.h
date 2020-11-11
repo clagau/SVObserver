@@ -76,7 +76,6 @@ protected:
 
 private:
 	void ClearList();
-    std::string GetNextInspectionDisplayName( const std::string& rLabeName );
 
 	void EnableDisableExport();
 

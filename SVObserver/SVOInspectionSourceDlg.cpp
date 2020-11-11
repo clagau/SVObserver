@@ -90,11 +90,10 @@ END_MESSAGE_MAP()
 void SVOInspectionSourceDlg::OnBtnAddIpd() 
 {
 	std::string NewInspection = m_pParent->GetNextInspectionName();
-	std::string NewDisplayName = GetNextInspectionDisplayName(NewInspection);
 
-	m_pParent->AddToInspectionList( NewDisplayName.c_str(), true);
+	m_pParent->AddToInspectionList( NewInspection.c_str(), true);
 	
-	int iPos = m_ctlIPDlist.AddString( NewDisplayName.c_str() );
+	int iPos = m_ctlIPDlist.AddString( NewInspection.c_str() );
 	m_ctlIPDlist.SetCurSel(iPos); 
 	m_pParent->SetModified(true);
 	m_pParent->ItemChanged(INSPECT_DLG, NewInspection.c_str(), ITEM_ACTION_NEW);
@@ -427,28 +426,6 @@ void SVOInspectionSourceDlg::OnDblclkLstIpdList()
 void SVOInspectionSourceDlg::OnDestroy() 
 {
 	CPropertyPage::OnDestroy();
-}
-
-std::string SVOInspectionSourceDlg::GetNextInspectionDisplayName( const std::string& rLabeName )
-{
-	BOOL bFound = false;
-	std::string Result;
-	int iNum = atoi( SvUl::Mid( rLabeName, 11).c_str() );
-
-	while ( !bFound )
-	{
-		Result = SvUl::Format( _T("%s%d"), _T("Inspection_"), iNum );
-		if( LB_ERR != m_ctlIPDlist.FindStringExact( -1, Result.c_str() ) )
-		{
-			iNum++;
-		}
-		else
-		{
-			bFound = true;
-		}
-	}
-
-	return Result;
 }
 
 BOOL SVOInspectionSourceDlg::OnHelpInfo(HELPINFO* pHelpInfo) 
