@@ -391,7 +391,9 @@ void SVOInspectionSourceDlg::OnSelchangeLstIpdList()
 				}
 			}
 		}
-		invalidName |= m_pParent->IsInspectionInList(sNewTxt) || sNewTxt.IsEmpty();
+		CString spacesRemoved = sNewTxt;
+		spacesRemoved.Remove(' ');
+		invalidName |= m_pParent->IsInspectionInList(sNewTxt) || sNewTxt.IsEmpty() || spacesRemoved.IsEmpty();
 		if (invalidName)
 		{
 			//Place MessageBox with error...
