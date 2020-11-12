@@ -11,7 +11,7 @@
 #pragma  once
 
 #pragma region Includes
-#include "TriggerRecordController/IImage.h"
+#include "ObjectInterfaces/ITRCImage.h"
 #pragma endregion Includes
 
 class CDisplayPicture : public CStatic
@@ -31,11 +31,11 @@ protected:
 public:
 	CDisplayPicture();
 
-	SvTrc::IImagePtr GetNextBuffer();
+	SvOi::ITRCImagePtr GetNextBuffer();
 
 	bool UpdateDisplayBufferInfo( long bufWidth, long bufHeight, int iFormat );
 
-	SvTrc::IImagePtr m_pImage;
+	SvOi::ITRCImagePtr m_pImage;
 
 	int m_ScrollY;
 	int m_ScrollX;

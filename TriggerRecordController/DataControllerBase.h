@@ -14,9 +14,8 @@
 
 
 #pragma region Declarations
-namespace SvTrc
+namespace SvOi
 {
-struct TriggerRecordData;
 class ITriggerRecordR;
 class ITriggerRecordRW;
 struct TrEventData;
@@ -30,6 +29,8 @@ constexpr long long c_MBInBytes = 1048576LL;//1024 * 1024
 
 namespace SvTrc
 {
+struct TriggerRecordData;
+
 class Locker
 {
 public:
@@ -166,7 +167,7 @@ public:
 	virtual volatile long* getResetLockCounterRef() = 0;
 	virtual const SvPb::InspectionList& getInspections() const = 0;
 
-	void setLastFinishedTr(const TrEventData& data);
+	void setLastFinishedTr(const SvOi::TrEventData& data);
 	int getLastTrId(int inspectionPos) const;
 
 	/// Get ImageDefList. ATTENTION: Throw exception if get imageDef failed.
@@ -192,8 +193,8 @@ public:
 	const std::unordered_map<uint32_t, int>& getDataDefMap(int inspectionPos) const;
 	virtual void changeDataDef(SvPb::DataDefinitionList&& , long , int ) { assert(false); throw E_NOTIMPL; };
 
-	virtual ITriggerRecordRPtr createTriggerRecordObject(int inspectionPos, std::function<bool(TriggerRecordData&)> validFunc) = 0;
-	virtual ITriggerRecordRWPtr createTriggerRecordObjectToWrite(int ) { assert(false); throw E_NOTIMPL; };
+	virtual SvOi::ITriggerRecordRPtr createTriggerRecordObject(int inspectionPos, std::function<bool(TriggerRecordData&)> validFunc) = 0;
+	virtual SvOi::ITriggerRecordRWPtr createTriggerRecordObjectToWrite(int ) { assert(false); throw E_NOTIMPL; };
 
 	virtual std::vector<std::pair<int, int>> ResetTriggerRecordStructure(int , int , SvPb::ImageList&& , SvPb::ImageStructList&& ) { assert(false); throw E_NOTIMPL; };
 
@@ -212,8 +213,8 @@ public:
 
 	void setResetCallback(std::function<void()>&& reloadCallback) { m_reloadCallback = reloadCallback; };
 	void setReadyCallback(std::function<void()>&& readyCallback) { m_readyCallback = readyCallback; };
-	void setNewTrIdCallback(std::function<void(TrEventData)>&& newTrIdCallback) { m_newTrIdCallback = newTrIdCallback; };
-	void setNewInterestTrIdsCallback(std::function<void(std::vector<TrInterestEventData>&&)>&& newTrIdCallback) { m_newInterestTrIdsCallback = newTrIdCallback; };
+	void setNewTrIdCallback(std::function<void(SvOi::TrEventData)>&& newTrIdCallback) { m_newTrIdCallback = newTrIdCallback; };
+	void setNewInterestTrIdsCallback(std::function<void(std::vector<SvOi::TrInterestEventData>&&)>&& newTrIdCallback) { m_newInterestTrIdsCallback = newTrIdCallback; };
 
 	/// Set the InspectionList
 	/// \param rInspectionList [in]
@@ -233,7 +234,7 @@ public:
 
 	virtual void setPauseTrsOfInterest(bool flag, int inspectionPos) = 0;
 	virtual bool getPauseTrsOfInterest(int inspectionPos) const = 0;
-	virtual std::vector<ITriggerRecordRPtr> getTRsOfInterest(int inspectionPos, int n) = 0;
+	virtual std::vector<SvOi::ITriggerRecordRPtr> getTRsOfInterest(int inspectionPos, int n) = 0;
 
 	void increaseNumberOfFreeTr(int inspectionPos);
 
@@ -268,8 +269,8 @@ protected:
 	long long m_maxBufferSizeInBytes = 8'000 * c_MBInBytes;
 	std::function<void()> m_reloadCallback;
 	std::function<void()> m_readyCallback;
-	std::function<void(TrEventData)> m_newTrIdCallback;
-	std::function<void(std::vector<TrInterestEventData>&&)> m_newInterestTrIdsCallback;
+	std::function<void(SvOi::TrEventData)> m_newTrIdCallback;
+	std::function<void(std::vector<SvOi::TrInterestEventData>&&)> m_newInterestTrIdsCallback;
 	HANDLE m_hResetEvent {nullptr};
 	HANDLE m_hReadyEvent {nullptr};
 #pragma endregion Member variables

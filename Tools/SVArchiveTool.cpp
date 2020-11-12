@@ -32,7 +32,7 @@
 #include "SVSystemLibrary/SVThreadManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
-#include "TriggerRecordController/ITriggerRecordControllerRW.h"
+#include "ObjectInterfaces/ITriggerRecordControllerRW.h"
 #pragma endregion Includes
 
 namespace SvTo
@@ -688,7 +688,7 @@ bool SVArchiveTool::AllocateImageBuffers(SvStl::MessageContainerVector *pErrorMe
 			{
 				try
 				{
-					SvTrc::ITriggerRecordControllerRW& rTRController = SvTrc::getTriggerRecordControllerRWInstance();
+					SvOi::ITriggerRecordControllerRW& rTRController = SvOi::getTriggerRecordControllerRWInstance();
 					bool mustResetStarted = !rTRController.isResetStarted();
 					if (mustResetStarted)
 					{

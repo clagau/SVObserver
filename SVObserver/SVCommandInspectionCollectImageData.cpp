@@ -116,7 +116,7 @@ HRESULT CommandInspectionCollectImageData::UpdateResults(SVInspectionProcess* pI
 	return hRet;
 }
 
-HRESULT CommandInspectionCollectImageData::UpdateBuffer(uint32_t imageId, const SvTrc::ITriggerRecordRPtr& pTriggerRecord, std::string& rImageDIB, SVExtentMultiLineStructVector& rMultiLineArray)
+HRESULT CommandInspectionCollectImageData::UpdateBuffer(uint32_t imageId, const SvOi::ITriggerRecordRPtr& pTriggerRecord, std::string& rImageDIB, SVExtentMultiLineStructVector& rMultiLineArray)
 {
 	HRESULT l_Status = S_OK;
 
@@ -124,7 +124,7 @@ HRESULT CommandInspectionCollectImageData::UpdateBuffer(uint32_t imageId, const 
 
 	if (nullptr != pImage && nullptr != pTriggerRecord)
 	{
-		SvTrc::IImagePtr pImageBuffer = pImage->getImageReadOnly(pTriggerRecord.get());
+		SvOi::ITRCImagePtr pImageBuffer = pImage->getImageReadOnly(pTriggerRecord.get());
 
 		if (nullptr != pImageBuffer && !pImageBuffer->isEmpty())
 		{

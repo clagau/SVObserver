@@ -543,7 +543,7 @@ void SVMatroxGige::ProcessEndFrame(SVMatroxGigeDigitizer* pCamera, __int64 HookI
 
 						if (nullptr != pCamera->m_pBufferInterface)
 						{
-							SvTrc::IImagePtr pImage = pCamera->m_pBufferInterface->GetNextBuffer();
+							SvOi::ITRCImagePtr pImage = pCamera->m_pBufferInterface->GetNextBuffer();
 							if (nullptr != pImage)
 							{
 								auto pImageHandle = pImage->getHandle();

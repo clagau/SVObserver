@@ -17,14 +17,14 @@
 #include "SVProtobuf/SVRC.h"
 #include "SVSharedMemoryLibrary/ShareControl.h"
 #include "SVRPCLibrary/Task.h"
-#include "TriggerRecordController/ITriggerRecordControllerR.h"
+#include "ObjectInterfaces/ITriggerRecordControllerR.h"
 #pragma endregion Includes
 
 namespace SvSml
 {
 struct ShareControlSettings;
 }
-namespace SvTrc
+namespace SvOi
 {
 class ITriggerRecordR;
 class ITriggerRecordControllerR;
@@ -68,8 +68,8 @@ private:
 		product_stream_t(const SvPb::GetProductStreamRequest&, SvRpc::Observer<SvPb::GetProductStreamResponse>, SvRpc::ServerStreamContext::Ptr);
 		SvPb::GetProductStreamRequest req;
 		SvRpc::Observer<SvPb::GetProductStreamResponse> observer;
-		std::vector<SvTrc::TrInterestEventData> historicalTriggerQueue;
-		std::vector<SvTrc::TrInterestEventData> newTriggerQueue;
+		std::vector<SvOi::TrInterestEventData> historicalTriggerQueue;
+		std::vector<SvOi::TrInterestEventData> newTriggerQueue;
 		SvRpc::ServerStreamContext::Ptr ctx;
 		std::vector<int> valuePositions;
 		std::vector<int> rejectValuePositions;
@@ -78,20 +78,20 @@ private:
 		bool interestedInAllProducts;
 		bool interestedInRejects;
 	};
-	void on_new_trigger_record(const SvTrc::TrInterestEventData&);
-	void add_new_trigger_to_queue(const SvTrc::TrInterestEventData&);
-	void pop_new_trigger_from_queue(std::vector<SvTrc::TrInterestEventData>&);
+	void on_new_trigger_record(const SvOi::TrInterestEventData&);
+	void add_new_trigger_to_queue(const SvOi::TrInterestEventData&);
+	void pop_new_trigger_from_queue(std::vector<SvOi::TrInterestEventData>&);
 	void check_queue_for_new_trigger_record();
-	void add_new_triggers_to_product_stream(product_stream_t&, const std::vector<SvTrc::TrInterestEventData>&);
+	void add_new_triggers_to_product_stream(product_stream_t&, const std::vector<SvOi::TrInterestEventData>&);
 	void update_product_stream_queue(product_stream_t&);
 	void flush_product_stream_queue(std::shared_ptr<product_stream_t>);
 	void clear_cancelled_product_streams();
 	void clear_duplicate_images(const product_stream_t& stream, SvPb::GetProductStreamResponse& res);
 	void clear_duplicate_values(const product_stream_t& stream, SvPb::GetProductStreamResponse& res);
-	SvSyl::SVFuture<void> handle_new_trigger_record(std::shared_ptr<product_stream_t>, SvTrc::ITriggerRecordRPtr, int inspectionPos, uint32_t inspectionId, int trId, bool is_reject);
+	SvSyl::SVFuture<void> handle_new_trigger_record(std::shared_ptr<product_stream_t>, SvOi::ITriggerRecordRPtr, int inspectionPos, uint32_t inspectionId, int trId, bool is_reject);
 	SvSyl::SVFuture<void> get_product_data(SvPb::GetProductDataResponse&, const SvPb::GetProductDataRequest& rRequest);
-	SvSyl::SVFuture<void> collect_images(::google::protobuf::RepeatedPtrField<SvPb::Image>&, ::google::protobuf::RepeatedPtrField<SvPb::OverlayDesc>&, SvTrc::ITriggerRecordRPtr, const ::google::protobuf::RepeatedField<uint32_t>& imageIds, const std::vector<std::pair<bool, int>>& imagePositions, int inspectionPos, uint32_t inspectionId, bool includeOverlays);
-	void collect_values(::google::protobuf::RepeatedPtrField<SvPb::Variant>&, SvTrc::ITriggerRecordR&, const ::google::protobuf::RepeatedField<uint32_t>& valueIds, const std::vector<int>& valuePositions);
+	SvSyl::SVFuture<void> collect_images(::google::protobuf::RepeatedPtrField<SvPb::Image>&, ::google::protobuf::RepeatedPtrField<SvPb::OverlayDesc>&, SvOi::ITriggerRecordRPtr, const ::google::protobuf::RepeatedField<uint32_t>& imageIds, const std::vector<std::pair<bool, int>>& imagePositions, int inspectionPos, uint32_t inspectionId, bool includeOverlays);
+	void collect_values(::google::protobuf::RepeatedPtrField<SvPb::Variant>&, SvOi::ITriggerRecordR&, const ::google::protobuf::RepeatedField<uint32_t>& valueIds, const std::vector<int>& valuePositions);
 	void rebuild_trc_pos_caches();
 	void rebuild_trc_pos_cache(product_stream_t&);
 	void collect_historical_triggers(product_stream_t&);
@@ -116,7 +116,7 @@ private:
 private:
 	void subscribe_to_trc();
 	void unsubscribe_from_trc();
-	int get_inspection_pos_for_id(SvTrc::ITriggerRecordControllerR&, uint32_t id);
+	int get_inspection_pos_for_id(SvOi::ITriggerRecordControllerR&, uint32_t id);
 
 private:
 	boost::asio::io_service& m_io_service;
@@ -128,7 +128,7 @@ private:
 	int m_TrcNewInterestTrSubscriptionId;
 
 	std::mutex m_NewTriggerMutex;
-	std::vector<SvTrc::TrInterestEventData> m_NewTriggerQueue;
+	std::vector<SvOi::TrInterestEventData> m_NewTriggerQueue;
 
 	std::vector<std::shared_ptr<product_stream_t>> m_ProductStreams;
 	boost::asio::deadline_timer m_pause_timer;

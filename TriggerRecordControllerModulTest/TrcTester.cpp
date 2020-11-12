@@ -19,8 +19,8 @@
 #include "SVStatusLibrary\RegistryAccess.h"
 #include "SVTimerLibrary\SVClock.h"
 #include "SVUtilityLibrary\StringHelper.h"
-#include "TriggerRecordController\ITriggerRecordControllerRW.h"
-#include "TriggerRecordController\ITriggerRecordRW.h"
+#include "ObjectInterfaces/ITriggerRecordControllerRW.h"
+#include "ObjectInterfaces/ITriggerRecordRW.h"
 
 constexpr int triggerIdOffset = 100'000;
 static int g_maxSizeFactor = 32;
@@ -50,7 +50,7 @@ bool finishedReaderApp(ReaderProcessData data, int timeoutinMs, LogClass& rLogCl
 TrcTester::TrcTester(TrcTesterConfiguration& rConfig, LogClass& rLogClass) :
 	m_config(rConfig),
 	m_rLogClass(rLogClass),
-	m_TRController(SvTrc::getTriggerRecordControllerRWInstance())
+	m_TRController(SvOi::getTriggerRecordControllerRWInstance())
 {
 	g_maxSizeFactor = m_config.getMaxSpecifyBufferFactor();
 }
@@ -214,7 +214,7 @@ bool TrcTester::checkBufferMaximum()
 bool TrcTester::createTR2WriteAndRead()
 {
 	std::random_device rd;
-	std::uniform_int_distribution<int> dist(1, SvTrc::ITriggerRecordControllerRW::ITriggerRecordControllerRW::cMaxTriggerRecords);
+	std::uniform_int_distribution<int> dist(1, SvOi::ITriggerRecordControllerRW::ITriggerRecordControllerRW::cMaxTriggerRecords);
 	constexpr int numberOfInspection = 2;
 	std::vector<std::pair<int, int>> numbersOfRecords = {{dist(rd),0}, {dist(rd),0}};
 	bool retValue = setInspections(numbersOfRecords, m_TRController, m_rLogClass, strTestCreateTR2WriteAndRead);
@@ -261,7 +261,7 @@ bool TrcTester::createTR2WriteAndRead()
 	}
 
 	{
-		SvTrc::ITriggerRecordRWPtr tr2W = m_TRController.createTriggerRecordObjectToWrite(0);
+		SvOi::ITriggerRecordRWPtr tr2W = m_TRController.createTriggerRecordObjectToWrite(0);
 		if (nullptr != tr2W)
 		{
 			auto tr2R = m_TRController.createTriggerRecordObject(0, tr2W->getId());
@@ -273,7 +273,7 @@ bool TrcTester::createTR2WriteAndRead()
 	}
 
 	int numberOfFails = 0;
-	std::array<std::vector<SvTrc::ITriggerRecordRPtr>, numberOfInspection> readTRVector;
+	std::array<std::vector<SvOi::ITriggerRecordRPtr>, numberOfInspection> readTRVector;
 	for (int i = 0; i < maxRecords+10; i++)
 	{
 		for (int j = 0; j < numberOfInspection; j++)

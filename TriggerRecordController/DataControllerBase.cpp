@@ -15,7 +15,8 @@
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/RegistryAccess.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "ITriggerRecordControllerR.h"
+#include "ObjectInterfaces/ITriggerRecordControllerR.h"
+#include "TriggerRecordData.h"
 #pragma endregion Includes
 
 namespace SvTrc
@@ -109,7 +110,7 @@ TriggerRecordData& DataControllerBase::getTRData(int inspectionPos, int pos) con
 	return pData->getTRData(pos);
 }
 
-void DataControllerBase::setLastFinishedTr(const TrEventData& data)
+void DataControllerBase::setLastFinishedTr(const SvOi::TrEventData& data)
 {
 	auto* pData = getTRControllerData(data.m_inspectionPos);
 	if (nullptr != pData)

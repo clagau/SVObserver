@@ -1669,7 +1669,7 @@ HRESULT SVCommand::ImageToBSTR(const SVImageInfoClass& rImageInfo, SvOi::SVImage
 	return hr;
 }
 
-HRESULT SVCommand::SafeImageToBSTR(SvIe::SVImageClass* pImage, const SvTrc::ITriggerRecordRPtr pTriggerRecord, BSTR* pbstr)
+HRESULT SVCommand::SafeImageToBSTR(SvIe::SVImageClass* pImage, const SvOi::ITriggerRecordRPtr pTriggerRecord, BSTR* pbstr)
 {
 	HRESULT hr = S_OK;
 

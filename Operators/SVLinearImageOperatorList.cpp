@@ -137,7 +137,7 @@ bool SVLinearImageOperatorList::Run(RunStatus& rRunStatus, SvStl::MessageContain
 		m_RunErrorMessages.push_back(Msg);
 	}
 
-	SvTrc::IImagePtr pOutputBuffer = nullptr;
+	SvOi::ITRCImagePtr pOutputBuffer = nullptr;
 
 	if (result)
 	{
@@ -146,7 +146,7 @@ bool SVLinearImageOperatorList::Run(RunStatus& rRunStatus, SvStl::MessageContain
 			SvOi::SVImageBufferHandlePtr input;
 			if (nullptr == m_replaceSourceImage)
 			{
-				SvTrc::IImagePtr pInputBuffer = (nullptr != pInputImage) ? pInputImage->getImageReadOnly(rRunStatus.m_triggerRecord.get()) : nullptr;
+				SvOi::ITRCImagePtr pInputBuffer = (nullptr != pInputImage) ? pInputImage->getImageReadOnly(rRunStatus.m_triggerRecord.get()) : nullptr;
 				input = (nullptr != pInputBuffer) ? pInputBuffer->getHandle() : nullptr;
 			}
 			else
@@ -161,7 +161,7 @@ bool SVLinearImageOperatorList::Run(RunStatus& rRunStatus, SvStl::MessageContain
 			SvOi::SVImageBufferHandlePtr input;
 			if (nullptr == m_replaceSourceImage)
 			{
-				SvTrc::IImagePtr pInputImageBuffer = m_LogicalROIImage.getImageReadOnly(rRunStatus.m_triggerRecord.get());
+				SvOi::ITRCImagePtr pInputImageBuffer = m_LogicalROIImage.getImageReadOnly(rRunStatus.m_triggerRecord.get());
 				input = (nullptr != pInputImageBuffer) ? pInputImageBuffer->getHandle() : nullptr;
 			}
 			else
@@ -400,7 +400,7 @@ void SVLinearImageOperatorList::ResetLogicalROIImage()
 	}
 }
 
-bool SVLinearImageOperatorList::RunLocalRotation(RunStatus &rRunStatus, SvOi::SVImageBufferHandlePtr input, SvTrc::IImagePtr pOutputBuffer, const SVImageExtentClass& rImageExtent)
+bool SVLinearImageOperatorList::RunLocalRotation(RunStatus &rRunStatus, SvOi::SVImageBufferHandlePtr input, SvOi::ITRCImagePtr pOutputBuffer, const SVImageExtentClass& rImageExtent)
 {
 	bool childUpdateCounters = rRunStatus.m_UpdateCounters;
 

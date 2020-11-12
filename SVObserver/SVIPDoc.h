@@ -264,7 +264,7 @@ public:
 	bool shouldPauseRegressionTestByCondition();
 
 	bool isImageAvailable(SvPb::SVObjectSubTypeEnum ImageType) const;
-	SvTrc::ITriggerRecordRPtr getLastTriggerRecord() const { return m_triggerRecord; };
+	SvOi::ITriggerRecordRPtr getLastTriggerRecord() const { return m_triggerRecord; };
 
 protected:
 	virtual BOOL SaveModified() override;
@@ -342,7 +342,7 @@ protected:
 	SVMasterImageRegisterMap m_RegisteredImages;
 	SVImageIdImageDataStructMap m_Images;
 	SvIe::SVIPResultData m_Results;
-	SvTrc::ITriggerRecordRPtr m_triggerRecord = nullptr;
+	SvOi::ITriggerRecordRPtr m_triggerRecord = nullptr;
 	long m_AllViewsUpdated;
 
 	//

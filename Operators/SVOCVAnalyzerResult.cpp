@@ -658,7 +658,7 @@ bool SVOCVAnalyzeResult::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVe
 		}
 		else
 		{
-			SvTrc::IImagePtr pInputBuffer = pInputImage->getImageReadOnly(rRunStatus.m_triggerRecord.get());
+			SvOi::ITRCImagePtr pInputBuffer = pInputImage->getImageReadOnly(rRunStatus.m_triggerRecord.get());
 
 			if( nullptr != pInputBuffer && ! pInputBuffer->isEmpty())
 			{

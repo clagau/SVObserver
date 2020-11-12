@@ -165,7 +165,7 @@ bool SVPixelAnalyzer::onRun(RunStatus &rRunStatus, SvStl::MessageContainerVector
 			break;
 		}
 
-		SvTrc::IImagePtr pImageBuffer = pInputImage->getImageReadOnly(rRunStatus.m_triggerRecord.get());
+		SvOi::ITRCImagePtr pImageBuffer = pInputImage->getImageReadOnly(rRunStatus.m_triggerRecord.get());
 		if ( nullptr == pImageBuffer || pImageBuffer->isEmpty())
 		{
 			Result = false;

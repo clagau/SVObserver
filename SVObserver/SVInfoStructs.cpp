@@ -67,9 +67,9 @@ bool SVInspectionInfoStruct::setNextAvailableTR( )
 	return true;
 }
 
-void SVInspectionInfoStruct::setNextTriggerRecord(SvTrc::TriggerData triggerData)
+void SVInspectionInfoStruct::setNextTriggerRecord(SvOi::TriggerData triggerData)
 {
-	m_triggerRecordWrite = SvTrc::getTriggerRecordControllerRWInstance().createTriggerRecordObjectToWrite(m_inspectionPosInTrc);
+	m_triggerRecordWrite = SvOi::getTriggerRecordControllerRWInstance().createTriggerRecordObjectToWrite(m_inspectionPosInTrc);
 	if (nullptr != m_triggerRecordWrite)
 	{
 		m_triggerRecordWrite->setTriggerData(triggerData);
@@ -81,7 +81,7 @@ void SVInspectionInfoStruct::setTriggerRecordCompleted()
 {
 	if (nullptr != m_triggerRecordWrite)
 	{
-		m_triggerRecordComplete = SvTrc::getTriggerRecordControllerRWInstance().closeWriteAndOpenReadTriggerRecordObject(m_triggerRecordWrite);
+		m_triggerRecordComplete = SvOi::getTriggerRecordControllerRWInstance().closeWriteAndOpenReadTriggerRecordObject(m_triggerRecordWrite);
 	}
 }
 
@@ -89,7 +89,7 @@ void SVInspectionInfoStruct::setTriggerRecordIncompleted()
 {
 	if (nullptr != m_triggerRecordWrite)
 	{
-		SvTrc::getTriggerRecordControllerRWInstance().closeWriteObjectWithoutUpdateLastTrId(m_triggerRecordWrite);
+		SvOi::getTriggerRecordControllerRWInstance().closeWriteObjectWithoutUpdateLastTrId(m_triggerRecordWrite);
 	}
 }
 
@@ -289,7 +289,7 @@ bool SVProductInfoStruct::setNextAvailableCameraImage( )
 {
 	for( auto& rCameraData : m_svCameraInfos )
 	{
-		SvTrc::IImagePtr pImage = rCameraData.second.GetNextImage();
+		SvOi::ITRCImagePtr pImage = rCameraData.second.GetNextImage();
 		if( nullptr == pImage )
 		{
 			return false;
@@ -315,7 +315,7 @@ void SVProductInfoStruct::DumpIndexInfo( std::string& rData )
 				CameraName = pCamera->GetName();
 			}
 
-			SvTrc::IImagePtr pImage = rCamera.second.getImage();
+			SvOi::ITRCImagePtr pImage = rCamera.second.getImage();
 			rData += SvUl::Format( _T( " : %s-Index=%ld" ), CameraName.c_str(), (nullptr != pImage) ? pImage->getBufferPos() : -1);
 		}
 	}

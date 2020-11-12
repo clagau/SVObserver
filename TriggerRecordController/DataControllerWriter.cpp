@@ -475,7 +475,7 @@ bool DataControllerWriter::setInspections(SvPb::InspectionList&& rInspectionList
 {
 	auto isRecordNumberInvalid = [](const auto& rEntry)
 	{
-		return ITriggerRecordControllerRW::cMaxTriggerRecords < rEntry.numberofrecords() || ITriggerRecordControllerRW::cMaxTriggerRecordsOfInterest < rEntry.numberrecordsofinterest();
+		return SvOi::ITriggerRecordControllerRW::cMaxTriggerRecords < rEntry.numberofrecords() || SvOi::ITriggerRecordControllerRW::cMaxTriggerRecordsOfInterest < rEntry.numberrecordsofinterest();
 	};
 	if (std::any_of(rInspectionList.list().begin(), rInspectionList.list().end(), isRecordNumberInvalid))
 	{
@@ -608,7 +608,7 @@ void DataControllerWriter::changeDataDef(SvPb::DataDefinitionList&& dataDefList,
 	m_dataVector[inspectionPos]->setDataDefList(std::move(dataDefList));
 }
 
-ITriggerRecordRPtr DataControllerWriter::createTriggerRecordObject(int inspectionPos, std::function<bool(TriggerRecordData&)> validFunc)
+SvOi::ITriggerRecordRPtr DataControllerWriter::createTriggerRecordObject(int inspectionPos, std::function<bool(TriggerRecordData&)> validFunc)
 {
 	if (0 <= inspectionPos && m_dataVector.size() > inspectionPos && m_dataVector[inspectionPos]->getBasicData().m_bInit)
 	{
@@ -648,7 +648,7 @@ ITriggerRecordRPtr DataControllerWriter::createTriggerRecordObject(int inspectio
 	return nullptr;
 }
 
-ITriggerRecordRWPtr DataControllerWriter::createTriggerRecordObjectToWrite(int inspectionPos)
+SvOi::ITriggerRecordRWPtr DataControllerWriter::createTriggerRecordObjectToWrite(int inspectionPos)
 {
 	if (0 <= inspectionPos && m_dataVector.size() > inspectionPos && nullptr != m_dataVector[inspectionPos] && m_dataVector[inspectionPos]->getBasicData().m_bInit)
 	{
@@ -925,10 +925,10 @@ bool DataControllerWriter::getPauseTrsOfInterest(int inspectionPos) const
 	return (1 & m_pCommonData->m_pauseTRofInterest[0]) > 0;
 }
 
-std::vector<ITriggerRecordRPtr> DataControllerWriter::getTRsOfInterest(int inspectionPos, int n)
+std::vector<SvOi::ITriggerRecordRPtr> DataControllerWriter::getTRsOfInterest(int inspectionPos, int n)
 {
 	auto pIPData = m_dataVector[inspectionPos];
-	std::vector<ITriggerRecordRPtr> retVec;
+	std::vector<SvOi::ITriggerRecordRPtr> retVec;
 	if (nullptr != pIPData)
 	{
 		auto posVec = pIPData->getTRofInterestPos(n);

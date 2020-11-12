@@ -14,7 +14,7 @@
 #include "SVFileSystemLibrary/SVFileNameClass.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "TriggerRecordController/ITriggerRecordR.h"
+#include "ObjectInterfaces/ITriggerRecordR.h"
 #pragma endregion Includes
 
 namespace SvTo
@@ -198,7 +198,7 @@ void SVArchiveRecord::DisconnectInputObject()
 	}
 }
 
-HRESULT SVArchiveRecord::QueueImage(SvTrc::IImagePtr& rImage, const std::string& rFileName)
+HRESULT SVArchiveRecord::QueueImage(SvOi::ITRCImagePtr& rImage, const std::string& rFileName)
 {
 	assert(nullptr != rImage && !rImage->isEmpty());
 	HRESULT Result = S_OK;
@@ -290,7 +290,7 @@ HRESULT SVArchiveRecord::WriteImageQueue()
 	return hr;
 }
 
-HRESULT SVArchiveRecord::WriteImage(const SvTrc::ITriggerRecordR* pTriggerRecord)
+HRESULT SVArchiveRecord::WriteImage(const SvOi::ITriggerRecordR* pTriggerRecord)
 {
 	SvIe::SVImageClass* pImage = dynamic_cast <SvIe::SVImageClass*> (m_svObjectReference.getObject());
 	
@@ -306,7 +306,7 @@ HRESULT SVArchiveRecord::WriteImage(const SvTrc::ITriggerRecordR* pTriggerRecord
 	// Create a file and convert the image to a .bmp type 
 	// file.
 	//
-	SvTrc::IImagePtr pImageBuffer = pImage->getImageReadOnly(pTriggerRecord, true);
+	SvOi::ITRCImagePtr pImageBuffer = pImage->getImageReadOnly(pTriggerRecord, true);
 	if (nullptr == pImageBuffer || pImageBuffer->isEmpty())
 	{
 		return S_OK; //nothing to do

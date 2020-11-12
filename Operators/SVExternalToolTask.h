@@ -190,14 +190,14 @@ protected:
 private:
 	HRESULT InitializeResultObjects();
 
-	bool prepareInput(SvTrc::IImagePtr pResultImageBuffers[], RunStatus& rRunStatus);
-	void getResults(SvTrc::IImagePtr pResultImageBuffers[]);
+	bool prepareInput(SvOi::ITRCImagePtr pResultImageBuffers[], RunStatus& rRunStatus);
+	void getResults(SvOi::ITRCImagePtr pResultImageBuffers[]);
 	bool anyImagesResized();
 	void collectInputValues();
 	bool collectInputImages(RunStatus& rRunStatus);
-	bool collectMilResultBuffers(SvTrc::IImagePtr pResultImageBuffers[]);
+	bool collectMilResultBuffers(SvOi::ITRCImagePtr pResultImageBuffers[]);
 	void collectResultValues();
-	void collectResultImages(SvTrc::IImagePtr pResultImageBuffers[]);
+	void collectResultImages(SvOi::ITRCImagePtr pResultImageBuffers[]);
 
 	void updateImageInputInfo();
 

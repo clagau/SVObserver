@@ -156,7 +156,7 @@ void SVArchiveRecordsArray::SetArchiveTool( SVArchiveTool* pArchiveTool)
 	}
 }
 
-bool SVArchiveRecordsArray::WriteArchiveImageFiles(const SvTrc::ITriggerRecordRPtr& pTriggerRecord )
+bool SVArchiveRecordsArray::WriteArchiveImageFiles(const SvOi::ITriggerRecordRPtr& pTriggerRecord )
 {
 	assert( nullptr != m_pArchiveTool );
 	bool bOk = true;

@@ -554,7 +554,7 @@ bool ResizeTool::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pEr
 		}
 	}
 
-	SvTrc::IImagePtr pRoiImageBuffer = m_LogicalROIImage.getImageReadOnly(rRunStatus.m_triggerRecord.get());
+	SvOi::ITRCImagePtr pRoiImageBuffer = m_LogicalROIImage.getImageReadOnly(rRunStatus.m_triggerRecord.get());
 	if (nullptr == pRoiImageBuffer || pRoiImageBuffer->isEmpty())
 	{
 		Result = false;
@@ -565,7 +565,7 @@ bool ResizeTool::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pEr
 		}
 	}
 
-	SvTrc::IImagePtr pOutputImageBuffer = m_OutputImage.getImageToWrite(rRunStatus.m_triggerRecord);
+	SvOi::ITRCImagePtr pOutputImageBuffer = m_OutputImage.getImageToWrite(rRunStatus.m_triggerRecord);
 	if (nullptr == pOutputImageBuffer || pOutputImageBuffer->isEmpty())
 	{
 		Result = false;

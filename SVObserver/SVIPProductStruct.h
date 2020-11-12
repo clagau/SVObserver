@@ -13,7 +13,7 @@
 #pragma region Includes
 #include "SVIPImageDataElement.h"
 #include "InspectionEngine/SVIPResultData.h"
-#include "TriggerRecordController/ITriggerRecordControllerR.h"
+#include "ObjectInterfaces/ITriggerRecordControllerR.h"
 #pragma endregion Includes
 
 struct SVIPProductStruct
@@ -21,7 +21,7 @@ struct SVIPProductStruct
 	unsigned long m_TriggerCount;
 	SVIPImageDataElementMap m_ImageData;
 	SvIe::SVIPResultData m_ResultData;
-	SvTrc::ITriggerRecordRPtr m_triggerRecord = nullptr;
+	SvOi::ITriggerRecordRPtr m_triggerRecord = nullptr;
 
 	SVIPProductStruct() : m_TriggerCount( 0 ), m_ImageData(), m_ResultData() {}
 

@@ -10,8 +10,8 @@
 #pragma region Includes
 #include "Definitions\ObjectDefines.h"
 #include "SVMatroxLibrary\SVMatroxBufferCreateStruct.h"
-#include "TriggerRecordController\ITriggerRecordRW.h"
-#include "TriggerRecordController\ITriggerRecordControllerRW.h"
+#include "ObjectInterfaces/ITriggerRecordRW.h"
+#include "ObjectInterfaces/ITriggerRecordControllerRW.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -32,7 +32,7 @@ namespace SvTrcT
 		/// This method reset the tool to the new condition. It set the position and the input buffer struct and reset the output buffer struct.
 		/// \param pos [in] Position of the tool in the tool set.
 		/// \param bufferStructIn [in] Input buffer struct.
-		virtual void reset(uint32_t , int sourcePos, const SVMatroxBufferCreateStruct& bufferStructIn, SvTrc::ITriggerRecordControllerRW& ) { m_sourcePos = sourcePos; m_bufferStructIn = bufferStructIn; };
+		virtual void reset(uint32_t , int sourcePos, const SVMatroxBufferCreateStruct& bufferStructIn, SvOi::ITriggerRecordControllerRW& ) { m_sourcePos = sourcePos; m_bufferStructIn = bufferStructIn; };
 		uint32_t getObjectId() const { return m_objectId; };
 		int getImagePos() const { return m_trPos; };
 		const SVMatroxBufferCreateStruct& getBufferIn() const { return m_bufferStructIn; };
@@ -42,7 +42,7 @@ namespace SvTrcT
 		/// After an trigger, this method will run the operation of the tool.
 		/// \param pTriggerRecord [in] The current record.
 		/// \returns bool
-		virtual bool run(const SvTrc::ITriggerRecordRWPtr& pTriggerRecord) = 0;
+		virtual bool run(const SvOi::ITriggerRecordRWPtr& pTriggerRecord) = 0;
 #pragma endregion Public Methods
 
 #pragma region Protected Methods

@@ -63,7 +63,7 @@ private:
 	/// If Rotation used, remove ROIImage, if not add ROIImage to the embeddedList.
 	void ResetLogicalROIImage();
 
-	bool RunLocalRotation(RunStatus &rRunStatus, SvOi::SVImageBufferHandlePtr input, SvTrc::IImagePtr pOutputBuffer, const SVImageExtentClass& rImageExtent);
+	bool RunLocalRotation(RunStatus &rRunStatus, SvOi::SVImageBufferHandlePtr input, SvOi::ITRCImagePtr pOutputBuffer, const SVImageExtentClass& rImageExtent);
 };
 
 } //namespace SvOp

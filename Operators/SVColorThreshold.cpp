@@ -164,9 +164,9 @@ bool SVColorThreshold::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVecto
 			ThresholdEnabledVector.push_back(Band);
 		}
 	}
-	SvTrc::IImagePtr pBandImageArray[SvDef::BandEnum::BandNumber];
-	SvTrc::IImagePtr pOutputImageBuffer = m_OutputImage.getImageToWrite(rRunStatus.m_triggerRecord);
-	SvTrc::IImagePtr pInputImageBufferArray[SvDef::BandEnum::BandNumber];
+	SvOi::ITRCImagePtr pBandImageArray[SvDef::BandEnum::BandNumber];
+	SvOi::ITRCImagePtr pOutputImageBuffer = m_OutputImage.getImageToWrite(rRunStatus.m_triggerRecord);
+	SvOi::ITRCImagePtr pInputImageBufferArray[SvDef::BandEnum::BandNumber];
 
 	for (SvDef::BandEnum Band : SvDef::BandList)
 	{
@@ -382,7 +382,7 @@ bool SVColorThreshold::createOutputImage(SvIe::SVImageClass* pInputImage, SvIe::
 	return Result;
 }
 
-bool SVColorThreshold::Binarize(long lower, long upper, BOOL bExclude, SvTrc::IImagePtr pInputImage, SvTrc::IImagePtr pOutputImage)
+bool SVColorThreshold::Binarize(long lower, long upper, BOOL bExclude, SvOi::ITRCImagePtr pInputImage, SvOi::ITRCImagePtr pOutputImage)
 {
 	bool Result(false);
 

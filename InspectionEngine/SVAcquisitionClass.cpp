@@ -26,7 +26,7 @@
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
-#include "TriggerRecordController/ITriggerRecordControllerRW.h"
+#include "ObjectInterfaces/ITriggerRecordControllerRW.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #pragma endregion Includes
 
@@ -43,7 +43,7 @@ static char THIS_FILE[] = __FILE__;
 SVAcquisitionClass::SVAcquisitionClass(const SvTi::SVAcquisitionConstructParams& p_rParams)
 	: AcquisitionDevice(p_rParams.m_DigitizerName.c_str())
 	, m_LUTAndLRSet(p_rParams.m_LUTAndLRSet)
-	, m_rTRController{SvTrc::getTriggerRecordControllerRWInstance()}
+	, m_rTRController{SvOi::getTriggerRecordControllerRWInstance()}
 	, m_rDigitizerProc(SVDigitizerProcessingClass::Instance())
 {
 	m_objectId = getNextAcquisitionId();
@@ -734,12 +734,12 @@ int SVAcquisitionClass::GetBufferFormat() const
 	return l_Format;
 }
 
-SvTrc::IImagePtr SVAcquisitionClass::GetNextBuffer()
+SvOi::ITRCImagePtr SVAcquisitionClass::GetNextBuffer()
 {
 	return m_rTRController.getImageBuffer(m_bufferStruct);
 }
 
-HRESULT SVAcquisitionClass::UpdateWithCompletedBuffer(const SvTrc::IImagePtr& rpImage, const double StartTick, const double StopTick)
+HRESULT SVAcquisitionClass::UpdateWithCompletedBuffer(const SvOi::ITRCImagePtr& rpImage, const double StartTick, const double StopTick)
 {
 	if (nullptr != m_SingleGrabHandle)
 	{

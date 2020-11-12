@@ -6,6 +6,7 @@
 /// The TriggerRecordData: class to handle the triggerRecord data.
 //******************************************************************************
 #pragma once
+#include "ObjectInterfaces/ITriggerRecordR.h"
 
 
 namespace SvTrc
@@ -24,7 +25,7 @@ struct TriggerRecordData
 		m_referenceCount = cInvalidData;
 		m_isInterest = false;
 		m_ImageCount = imageCount;
-		m_triggerData = TriggerData();
+		m_triggerData = SvOi::TriggerData();
 	}
 
 	int* const getImagePos()
@@ -48,7 +49,7 @@ struct TriggerRecordData
 	long m_referenceCount = cInvalidData; //The ReferenceCount for this TriggerRecord. m_InvalidData = invalid; m_WriteBlocked = write blocked; 0 = readable, but can be "deleted"; >0 = readable and blocked 
 	int m_ImageCount {0};
 	bool m_isInterest{ false };
-	TriggerData m_triggerData;
+	SvOi::TriggerData m_triggerData;
 
 	static const int cInvalidTrId = -1;
 	static const int cInvalidData = -1;

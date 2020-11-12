@@ -40,12 +40,12 @@ int SVTestAcquisitionClass::GetBufferFormat() const
 	return m_rSubsystem.m_svDigitizers.GetBufferFormat( m_hDigitizer);
 }
 
-SvTrc::IImagePtr SVTestAcquisitionClass::GetNextBuffer()
+SvOi::ITRCImagePtr SVTestAcquisitionClass::GetNextBuffer()
 {
-	return (nullptr != m_pDisplay) ?  m_pDisplay->m_CameraImage.GetNextBuffer() :  SvTrc::IImagePtr();
+	return (nullptr != m_pDisplay) ?  m_pDisplay->m_CameraImage.GetNextBuffer() :  SvOi::ITRCImagePtr();
 }
 
-HRESULT SVTestAcquisitionClass::UpdateWithCompletedBuffer(const SvTrc::IImagePtr& rImage, const double , const double )
+HRESULT SVTestAcquisitionClass::UpdateWithCompletedBuffer(const SvOi::ITRCImagePtr& rImage, const double , const double )
 {
 	HRESULT l_Status = S_OK;
 

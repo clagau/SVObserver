@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "TriggerRecordController/IImage.h"
+#include "ObjectInterfaces/ITRCImage.h"
 
 class SVAcquisitionBufferInterface  
 {
@@ -22,8 +22,8 @@ public:
 	virtual unsigned long GetBufferHeight() const = 0;
 	virtual int GetBufferFormat() const = 0;
 
-	virtual SvTrc::IImagePtr GetNextBuffer() = 0;
-	virtual HRESULT UpdateWithCompletedBuffer(const SvTrc::IImagePtr& rImage, const double StartTick, const double StopTick) = 0;
+	virtual SvOi::ITRCImagePtr GetNextBuffer() = 0;
+	virtual HRESULT UpdateWithCompletedBuffer(const SvOi::ITRCImagePtr& rImage, const double StartTick, const double StopTick) = 0;
 	virtual void setNeededBuffers(int neededBuffers) = 0;
 };
 

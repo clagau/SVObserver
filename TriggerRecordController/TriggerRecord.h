@@ -8,8 +8,8 @@
 #pragma once
 
 #pragma region Includes
-#include "ITriggerRecordR.h"
-#include "ITriggerRecordRW.h"
+#include "ObjectInterfaces/ITriggerRecordR.h"
+#include "ObjectInterfaces/ITriggerRecordRW.h"
 #pragma endregion Includes
 
 namespace SvPb
@@ -22,7 +22,7 @@ namespace SvTrc
 {
 struct TriggerRecordData;
 
-class TriggerRecord final : public ITriggerRecordRW
+class TriggerRecord final : public SvOi::ITriggerRecordRW
 {
 #pragma region Constructor
 public:
@@ -37,10 +37,10 @@ public:
 	virtual int getId() const override;
 	virtual int getInspectionPos() const override { return m_inspectionPos; };
 
-	virtual const TriggerData& getTriggerData() const override;
+	virtual const SvOi::TriggerData& getTriggerData() const override;
 
-	virtual IImagePtr getImage(int pos, bool lockImage = false) const override;
-	virtual IImagePtr getChildImage(int childPos, bool lockImage = false) const override;
+	virtual SvOi::ITRCImagePtr getImage(int pos, bool lockImage = false) const override;
+	virtual SvOi::ITRCImagePtr getChildImage(int childPos, bool lockImage = false) const override;
 
 	virtual _variant_t getDataValue(int pos) const override;
 
@@ -51,15 +51,15 @@ public:
 #pragma endregion ITriggerRecordR Methods
 
 #pragma region ITriggerRecordRW Methods
-	virtual void setTriggerData(const TriggerData& data) override;
+	virtual void setTriggerData(const SvOi::TriggerData& data) override;
 
 	virtual void initImages() override;
 	virtual void setImages(const ITriggerRecordR& rDestTr) override;
 
-	virtual void setImage(int pos, const IImagePtr& pImage) override;
+	virtual void setImage(int pos, const SvOi::ITRCImagePtr& pImage) override;
 	virtual void setImage(int pos, int bufferPos) override;
 
-	virtual IImagePtr createNewImageHandle(int pos) override;
+	virtual SvOi::ITRCImagePtr createNewImageHandle(int pos) override;
 
 	virtual void initValueData() override;
 	virtual void writeValueData(const uint8_t* pMemSource, int32_t memBytes) override;

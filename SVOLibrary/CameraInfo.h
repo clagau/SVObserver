@@ -8,7 +8,7 @@
 #pragma once
 
 #pragma region Includes
-#include "TriggerRecordController/IImage.h"
+#include "ObjectInterfaces/ITRCImage.h"
 #pragma endregion Includes
 
 struct CameraInfo
@@ -35,6 +35,6 @@ struct CameraInfo
 	double m_startFrameTime{ 0.0 };
 	double m_endFrameTime{ 0.0 };
 
-	SvTrc::IImagePtr m_pImage{nullptr};
+	SvOi::ITRCImagePtr m_pImage{nullptr};
 };
 

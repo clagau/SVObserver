@@ -32,7 +32,7 @@ namespace SvIe
 {
 struct SVIPResultData;
 }
-namespace SvTrc
+namespace SvOi
 {
 class ITriggerRecordR;
 }
@@ -103,7 +103,7 @@ public:
 	//************************************
 	void GetResultData(SvIe::SVIPResultData& rResultData) const; 
 
-	std::vector <SvIe::IPResultTableData> getResultTableData(const SvTrc::ITriggerRecordR& rTriggerRecord);
+	std::vector <SvIe::IPResultTableData> getResultTableData(const SvOi::ITriggerRecordR& rTriggerRecord);
 
 	//************************************
 	// Description:  Clears the lists.

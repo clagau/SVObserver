@@ -663,7 +663,7 @@ bool SVUserMaskOperatorClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rI
 				{
 					SVPoint<double> point;
 
-					SvTrc::IImagePtr pMaskBuffer = pMaskInputImage->getImageReadOnly(rRunStatus.m_triggerRecord.get());
+					SvOi::ITRCImagePtr pMaskBuffer = pMaskInputImage->getImageReadOnly(rRunStatus.m_triggerRecord.get());
 
 					const SVImageExtentClass& rExtents = pRefImage->GetImageExtents();
 

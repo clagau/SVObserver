@@ -20,7 +20,7 @@
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVMessage/SVMessage.h"
-#include "TriggerRecordController/IImage.h"
+#include "ObjectInterfaces/ITRCImage.h"
 #pragma endregion Includes
 
 const std::string& SVFileCamera::GetName() const
@@ -146,7 +146,7 @@ HRESULT SVFileCamera::DoOneShot()
 	return m_thread.Signal((void *)this);
 }
 
-HRESULT SVFileCamera::CopyImage(SvTrc::IImage* pImage)
+HRESULT SVFileCamera::CopyImage(SvOi::ITRCImage* pImage)
 {
 	HRESULT hr = SVMatroxBufferInterface::CopyBuffer(pImage->getHandle()->GetBuffer(), m_image);
 	return hr;

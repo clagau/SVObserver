@@ -305,8 +305,8 @@ bool SVPerspectiveToolClass::onRun( RunStatus &p_rRunStatus, SvStl::MessageConta
 		{
 			long Interpolation;
 			m_svInterpolationMode.GetValue(Interpolation);
-			SvTrc::IImagePtr pOutputImageBuffer = m_OutputImage.getImageToWrite(p_rRunStatus.m_triggerRecord);
-			SvTrc::IImagePtr pInputImageBuffer = pInputImage->getImageReadOnly(p_rRunStatus.m_triggerRecord.get());
+			SvOi::ITRCImagePtr pOutputImageBuffer = m_OutputImage.getImageToWrite(p_rRunStatus.m_triggerRecord);
+			SvOi::ITRCImagePtr pInputImageBuffer = pInputImage->getImageReadOnly(p_rRunStatus.m_triggerRecord.get());
 			if (nullptr != pOutputImageBuffer && !pOutputImageBuffer->isEmpty() &&
 				nullptr != pInputImageBuffer && !pInputImageBuffer->isEmpty())
 			{

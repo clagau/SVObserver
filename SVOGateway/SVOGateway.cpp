@@ -34,7 +34,7 @@
 #include "SVRPCLibrary/RPCServer.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVSystemLibrary/SVVersionInfo.h"
-#include "TriggerRecordController/ITriggerRecordControllerR.h"
+#include "ObjectInterfaces/ITriggerRecordControllerR.h"
 
 constexpr char* cLocalHost(_T("127.0.0.1"));
 
@@ -169,7 +169,7 @@ void StartWebServer(DWORD argc, LPTSTR  *argv)
 
 		sharedMemoryAccess.reset();
 
-		SvTrc::destroyTriggerRecordController();
+		SvOi::destroyTriggerRecordController();
 	}
 	catch (std::exception& e)
 	{
@@ -189,7 +189,7 @@ int main(int argc, _TCHAR* argv[])
 	// Startup Matrox App
 	SVMatroxApplicationInterface::Startup();
 
-	SvTrc::createTriggerRecordControllerInstance(SvTrc::TRC_DataType::Reader);
+	SvOi::createTriggerRecordControllerInstance(SvOi::TRC_DataType::Reader);
 
 	if (CheckCommandLineArgs(argc, argv, _T("/cmd")))
 	{

@@ -77,7 +77,7 @@ public:
 
 	const std::string  SVTaskObjectListClass::MakeUniqueToolName(LPCTSTR ToolName) const;
 	virtual void setEditModeFreezeFlag(bool flag) override;
-	virtual void copiedSavedImage(SvTrc::ITriggerRecordRWPtr pTr) override;
+	virtual void copiedSavedImage(SvOi::ITriggerRecordRWPtr pTr) override;
 	virtual void goingOffline() override;
 
 	virtual HRESULT CollectOverlays( SVImageClass* p_Image, SVExtentMultiLineStructVector &p_MultiLineArray ) override;

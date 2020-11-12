@@ -96,7 +96,7 @@ std::pair<HRESULT, std::shared_ptr<SVNameStorageResultMap>> CommandInspectionGet
 
 
 
-HRESULT CommandInspectionGetItems::UpdateResultsWithImageData(const std::string& rItemName, const SVObjectReference& rImageRef, unsigned long TriggerCnt, const SvTrc::ITriggerRecordRPtr pTriggerRecord)
+HRESULT CommandInspectionGetItems::UpdateResultsWithImageData(const std::string& rItemName, const SVObjectReference& rImageRef, unsigned long TriggerCnt, const SvOi::ITriggerRecordRPtr pTriggerRecord)
 {
 	HRESULT Status = S_OK;
 
@@ -108,7 +108,7 @@ HRESULT CommandInspectionGetItems::UpdateResultsWithImageData(const std::string&
 
 		SVStorage Storage;
 		unsigned long TriggerCount = TriggerCnt;
-		SvTrc::IImagePtr pImageBuffer = pImage->getImageReadOnly(pTriggerRecord.get());
+		SvOi::ITRCImagePtr pImageBuffer = pImage->getImageReadOnly(pTriggerRecord.get());
 
 		if (nullptr != pImageBuffer && !pImageBuffer->isEmpty())
 		{

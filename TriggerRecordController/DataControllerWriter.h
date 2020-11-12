@@ -117,8 +117,8 @@ public:
 
 	virtual void changeDataDef(SvPb::DataDefinitionList&& rDataDefList, long valueObjectMemSize, int inspectionPos) override;
 
-	virtual ITriggerRecordRPtr createTriggerRecordObject(int inspectionPos, std::function<bool(TriggerRecordData&)> validFunc) override;
-	virtual ITriggerRecordRWPtr createTriggerRecordObjectToWrite(int inspectionPos) override;
+	virtual SvOi::ITriggerRecordRPtr createTriggerRecordObject(int inspectionPos, std::function<bool(TriggerRecordData&)> validFunc) override;
+	virtual SvOi::ITriggerRecordRWPtr createTriggerRecordObjectToWrite(int inspectionPos) override;
 
 	virtual std::vector<std::pair<int, int>> ResetTriggerRecordStructure(int inspectionId, int triggerRecordNumber, SvPb::ImageList&& rImageList, SvPb::ImageStructList&& rImageStructList) override;
 
@@ -136,7 +136,7 @@ public:
 	
 	virtual void setPauseTrsOfInterest(bool flag, int inspectionPos) override;
 	virtual bool getPauseTrsOfInterest(int inspectionPos) const override;
-	virtual std::vector<ITriggerRecordRPtr> getTRsOfInterest(int inspectionPos, int n) override;
+	virtual std::vector<SvOi::ITriggerRecordRPtr> getTRsOfInterest(int inspectionPos, int n) override;
 #pragma endregion Public Methods
 
 #pragma region Protected Methods

@@ -33,7 +33,7 @@ WindowTool::WindowTool(uint32_t id)
 #pragma endregion Constructor
 
 #pragma region Public Methods
-void WindowTool::reset(uint32_t sourceId, int sourcePos, const SVMatroxBufferCreateStruct& bufferStructIn, SvTrc::ITriggerRecordControllerRW& recordController)
+void WindowTool::reset(uint32_t sourceId, int sourcePos, const SVMatroxBufferCreateStruct& bufferStructIn, SvOi::ITriggerRecordControllerRW& recordController)
 {
 	ToolObject::reset(sourceId, sourcePos, bufferStructIn, recordController);
 	m_bufferStructOut = m_bufferStructIn;
@@ -52,7 +52,7 @@ void WindowTool::reset(uint32_t sourceId, int sourcePos, const SVMatroxBufferCre
 	m_trPos = recordController.addOrChangeImage(getObjectId(), m_bufferStructOut);
 };
 
-bool WindowTool::run(const SvTrc::ITriggerRecordRWPtr& pTriggerRecord)
+bool WindowTool::run(const SvOi::ITriggerRecordRWPtr& pTriggerRecord)
 {
 	bool retValue = false;
 	const auto pSourceImage = pTriggerRecord->getImage(m_sourcePos);

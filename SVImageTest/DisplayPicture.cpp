@@ -39,7 +39,7 @@ BEGIN_MESSAGE_MAP(CDisplayPicture, CStatic)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-SvTrc::IImagePtr CDisplayPicture::GetNextBuffer()
+SvOi::ITRCImagePtr CDisplayPicture::GetNextBuffer()
 {
 	return m_pImage;
 }

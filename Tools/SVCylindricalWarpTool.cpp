@@ -349,8 +349,8 @@ bool SVCylindricalWarpToolClass::onRun( RunStatus& p_rRunStatus, SvStl::MessageC
 
 		if ( nullptr != pInputImage )
 		{
-			SvTrc::IImagePtr pInputImageBuffer = pInputImage->getImageReadOnly(p_rRunStatus.m_triggerRecord.get());
-			SvTrc::IImagePtr pOutputImageBuffer = m_OutputImage.getImageToWrite(p_rRunStatus.m_triggerRecord);
+			SvOi::ITRCImagePtr pInputImageBuffer = pInputImage->getImageReadOnly(p_rRunStatus.m_triggerRecord.get());
+			SvOi::ITRCImagePtr pOutputImageBuffer = m_OutputImage.getImageToWrite(p_rRunStatus.m_triggerRecord);
 
 			if ( nullptr != pInputImageBuffer && !pInputImageBuffer->isEmpty() &&
 				nullptr != pOutputImageBuffer && !pOutputImageBuffer->isEmpty())

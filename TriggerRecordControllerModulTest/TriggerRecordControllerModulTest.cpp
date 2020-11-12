@@ -8,7 +8,7 @@
 #include "TrcTesterConfiguration.h"
 #include "SVLibrary\SVOINIClass.h"
 #include "SVUtilityLibrary\StringHelper.h"
-#include "TriggerRecordController\ITriggerRecordControllerR.h"
+#include "ObjectInterfaces/ITriggerRecordControllerR.h"
 
 
 LogClass g_logClass;
@@ -29,7 +29,7 @@ int main(int argc, char* argv[])
 
 	bool isLocal = (testIni.GetValueInt(_T("General"), _T("IsLocal"), 1) != 0);
 
-	SvTrc::createTriggerRecordControllerInstance(isLocal ? SvTrc::TRC_DataType::Local : SvTrc::TRC_DataType::Writer);
+	SvOi::createTriggerRecordControllerInstance(isLocal ? SvOi::TRC_DataType::Local : SvOi::TRC_DataType::Writer);
 	//if (g_logClass.Open(_T("log.txt"), false))
 	if (g_logClass.Open())
 	{

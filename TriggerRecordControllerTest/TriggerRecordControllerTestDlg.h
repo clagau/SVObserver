@@ -5,7 +5,7 @@
 #pragma once
 #include "resource.h"
 #include "ToolObject.h"
-#include "TriggerRecordController\ITriggerRecordControllerRW.h"
+#include "ObjectInterfaces/ITriggerRecordControllerRW.h"
 #include "SVMFCControls\ObjectsListBox.h"
 #include "SVOGui\PictureDisplay.h"
 
@@ -50,10 +50,10 @@ namespace SvTrcT
 		void OnToolTypeChanged();
 		void OnResetUpdate();
 		void OnReadyUpdate();
-		void OnNewTrId(SvTrc::TrEventData data);
+		void OnNewTrId(SvOi::TrEventData data);
 		LRESULT OnGetCallback(WPARAM wParam, LPARAM lParam);
 
-		SvTrc::IImagePtr LoadMainImage(const CString& Path);
+		SvOi::ITRCImagePtr LoadMainImage(const CString& Path);
 
 		void updateControls();
 
@@ -66,7 +66,7 @@ namespace SvTrcT
 		void OnResetTRCData();
 
 	private:
-		SvTrc::ITriggerRecordControllerR& m_recordController = SvTrc::getTriggerRecordControllerRInstance();
+		SvOi::ITriggerRecordControllerR& m_recordController = SvOi::getTriggerRecordControllerRInstance();
 		bool m_bResetStart = false;
 		bool m_isEdit = false;
 		int m_trNumbers = 10;

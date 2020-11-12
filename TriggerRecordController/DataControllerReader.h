@@ -39,7 +39,7 @@ public:
 	virtual void setLastFinishedTRID(int) override { assert(false); throw E_NOTIMPL; };
 	void setLastSetOfInterestFlagPos(int pos) override;
 	int getTrId2Send();
-	TrInterestEventData getInterestTrId2Send();
+	SvOi::TrInterestEventData getInterestTrId2Send();
 	virtual void resetFreeTrNumber() override {	throw E_NOTIMPL; };
 	virtual void increaseFreeTrNumber() override;
 	virtual void decreaseFreeTrNumber() override;
@@ -85,13 +85,13 @@ public:
 
 	virtual const SvPb::ImageStructList& getImageStructList() const override;
 
-	virtual ITriggerRecordRPtr createTriggerRecordObject(int inspectionPos, std::function<bool(TriggerRecordData&)> validFunc) override;
+	virtual SvOi::ITriggerRecordRPtr createTriggerRecordObject(int inspectionPos, std::function<bool(TriggerRecordData&)> validFunc) override;
 
 	virtual bool isWritable() const override { return false; };
 
 	virtual void setPauseTrsOfInterest(bool flag, int inspectionPos) override;
 	virtual bool getPauseTrsOfInterest(int inspectionPos) const override;
-	virtual std::vector<ITriggerRecordRPtr> getTRsOfInterest(int inspectionPos, int n) override;
+	virtual std::vector<SvOi::ITriggerRecordRPtr> getTRsOfInterest(int inspectionPos, int n) override;
 #pragma endregion Public Methods
 
 #pragma region Protected Methods

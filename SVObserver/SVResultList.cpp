@@ -146,7 +146,7 @@ void  SVResultList::GetResultData(SvIe::SVIPResultData& rResultData) const
 	m_ResultViewReferences.GetResultData( rResultData);
 }
 
-std::vector <SvIe::IPResultTableData> SVResultList::getResultTableData(const SvTrc::ITriggerRecordR& rTriggerRecord)
+std::vector <SvIe::IPResultTableData> SVResultList::getResultTableData(const SvOi::ITriggerRecordR& rTriggerRecord)
 {
 	Concurrency::critical_section::scoped_lock  AutoLock(m_Lock);
 	return m_ResultViewReferences.getResultTableData(rTriggerRecord);

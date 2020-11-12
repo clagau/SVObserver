@@ -12,7 +12,7 @@
 #include "stdafx.h"
 #include <math.h>
 #include "SVUtilityLibrary/SVSafeArray.h"
-#include "TriggerRecordController/ITriggerRecordR.h"
+#include "ObjectInterfaces/ITriggerRecordR.h"
 #include "FillHelper.h"
 #pragma endregion Includes
 
@@ -23,7 +23,7 @@ namespace SvOv
 {
 	const double g_pi = std::acos(-1);
 
-	bool fillValue(const SvTrc::ITriggerRecordR& rTr, long trPos, SvPb::ValueObject* pValue)
+	bool fillValue(const SvOi::ITriggerRecordR& rTr, long trPos, SvPb::ValueObject* pValue)
 	{
 		bool isSet = false;
 		if (0 < trPos)
@@ -39,7 +39,7 @@ namespace SvOv
 		return isSet;
 	}
 
-	void fillRect(const SvTrc::ITriggerRecordR& rTr, SvPb::OverlayShapeRect& rRect)
+	void fillRect(const SvOi::ITriggerRecordR& rTr, SvPb::OverlayShapeRect& rRect)
 	{
 		fillValue(rTr, rRect.x().trpos(), rRect.mutable_x());
 		fillValue(rTr, rRect.y().trpos(), rRect.mutable_y());
@@ -47,7 +47,7 @@ namespace SvOv
 		fillValue(rTr, rRect.h().trpos(), rRect.mutable_h());
 	}
 
-	std::vector<double> getDataArray(const SvTrc::ITriggerRecordR& rTr, int pos)
+	std::vector<double> getDataArray(const SvOi::ITriggerRecordR& rTr, int pos)
 	{
 		if (0 < pos)
 		{
@@ -64,7 +64,7 @@ namespace SvOv
 		return {};
 	}
 
-	bool fillRectArray(const SvTrc::ITriggerRecordR& rTr, const SvPb::SVORectArray12Data& rRectArrayData, SvPb::OverlayShapeRectArray& rRectArray)
+	bool fillRectArray(const SvOi::ITriggerRecordR& rTr, const SvPb::SVORectArray12Data& rRectArrayData, SvPb::OverlayShapeRectArray& rRectArray)
 	{
 		auto x1Array = getDataArray(rTr, rRectArrayData.x1trpos());
 		auto y1Array = getDataArray(rTr, rRectArrayData.y1trpos());
@@ -87,7 +87,7 @@ namespace SvOv
 		return retValue;
 	}
 
-	bool fillRectArray(const SvTrc::ITriggerRecordR& rTr, const SvPb::SVORectArrayPatternData& rRectArrayData, SvPb::OverlayShapeRectArray& rRectArray)
+	bool fillRectArray(const SvOi::ITriggerRecordR& rTr, const SvPb::SVORectArrayPatternData& rRectArrayData, SvPb::OverlayShapeRectArray& rRectArray)
 	{
 		int numberOfPattern = 0;
 		if (0 < rRectArrayData.numberpos())
@@ -147,7 +147,7 @@ namespace SvOv
 		return retValue;
 	}
 
-	void fillOverlay(SvPb::OverlayDesc& overlayDesc, const SvTrc::ITriggerRecordR& rTr)
+	void fillOverlay(SvPb::OverlayDesc& overlayDesc, const SvOi::ITriggerRecordR& rTr)
 	{
 		for (int i = 0; i < overlayDesc.overlays_size(); i++)
 		{
@@ -358,7 +358,7 @@ namespace SvOv
 		}
 	}
 
-	void fillSelectedMarker(const SvPb::SVOSelectedMarker& rSelectedData, const SvTrc::ITriggerRecordR& rTr, double startPos, double stopPos, SvPb::ValueObject* pValue)
+	void fillSelectedMarker(const SvPb::SVOSelectedMarker& rSelectedData, const SvOi::ITriggerRecordR& rTr, double startPos, double stopPos, SvPb::ValueObject* pValue)
 	{
 		auto x1Array = getDataArray(rTr, rSelectedData.trpos_edgedata());
 		if (0 < x1Array.size())

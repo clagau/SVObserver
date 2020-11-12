@@ -297,7 +297,7 @@ bool SVImageTransform::onRun( RunStatus& runStatus, SvStl::MessageContainerVecto
 
 	if( bRetVal )
 	{
-		SvTrc::IImagePtr pInputImageBuffer = pInputImage->getImageReadOnly(runStatus.m_triggerRecord.get());
+		SvOi::ITRCImagePtr pInputImageBuffer = pInputImage->getImageReadOnly(runStatus.m_triggerRecord.get());
 		if ( nullptr == pInputImageBuffer || pInputImageBuffer->isEmpty())
 		{
 			bRetVal = false;
@@ -329,7 +329,7 @@ bool SVImageTransform::onRun( RunStatus& runStatus, SvStl::MessageContainerVecto
 			}
 		}
 
-		SvTrc::IImagePtr pOutputImageBuffer = m_outputImage.getImageToWrite(runStatus.m_triggerRecord);
+		SvOi::ITRCImagePtr pOutputImageBuffer = m_outputImage.getImageToWrite(runStatus.m_triggerRecord);
 		if (bRetVal && (nullptr == pOutputImageBuffer || pOutputImageBuffer->isEmpty()))
 		{
 			bRetVal = false;

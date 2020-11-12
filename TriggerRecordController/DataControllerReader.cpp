@@ -115,7 +115,7 @@ int TRControllerReaderDataPerIP::getTrId2Send()
 	return -1;
 }
 
-TrInterestEventData TRControllerReaderDataPerIP::getInterestTrId2Send()
+SvOi::TrInterestEventData TRControllerReaderDataPerIP::getInterestTrId2Send()
 {
 	if (nullptr != m_pBasicData && 0 <= m_pBasicData->m_lastSetOfInterestFlagPos && m_pBasicData->m_lastSetOfInterestFlagPos != m_lastSendInterestPos)
 	{
@@ -280,7 +280,7 @@ const SvPb::ImageStructList& DataControllerReader::getImageStructList() const
 	return m_imageStructList; 
 }
 
-ITriggerRecordRPtr DataControllerReader::createTriggerRecordObject(int inspectionPos, std::function<bool(TriggerRecordData&)> validFunc)
+SvOi::ITriggerRecordRPtr DataControllerReader::createTriggerRecordObject(int inspectionPos, std::function<bool(TriggerRecordData&)> validFunc)
 {
 	std::shared_lock<std::shared_mutex> lock(m_dataVectorMutex);
 	if (isUpToDate() && 0 <= inspectionPos && m_dataVector.size() > inspectionPos && m_dataVector[inspectionPos]->getBasicData().m_bInit)
@@ -366,10 +366,10 @@ bool DataControllerReader::getPauseTrsOfInterest(int inspectionPos) const
 	return (1 & m_pCommonData->m_pauseTRofInterest[0]) > 0;
 }
 
-std::vector<ITriggerRecordRPtr> DataControllerReader::getTRsOfInterest(int inspectionPos, int n)
+std::vector<SvOi::ITriggerRecordRPtr> DataControllerReader::getTRsOfInterest(int inspectionPos, int n)
 {
 	auto pIPData = m_dataVector[inspectionPos];
-	std::vector<ITriggerRecordRPtr> retVec;
+	std::vector<SvOi::ITriggerRecordRPtr> retVec;
 	if (nullptr != pIPData)
 	{
 		auto posVec = pIPData->getTRofInterestPos(n);
@@ -630,8 +630,8 @@ void DataControllerReader::addBuffer(const SvPb::ImageStructData &imageStruct)
 
 void DataControllerReader::sendNewTrId()
 {
-	std::vector<TrEventData> newTrIdList;
-	std::vector<TrInterestEventData> newInterestTrIdList;
+	std::vector<SvOi::TrEventData> newTrIdList;
+	std::vector<SvOi::TrInterestEventData> newInterestTrIdList;
 	{
 		auto pLock = ResetLocker::lockReset(m_pCommonData->m_resetId);
 		if (nullptr != m_newTrIdCallback && nullptr != pLock && 0 < m_pCommonData->m_resetId)

@@ -5,7 +5,7 @@
 #include <filesystem>
 #include <fstream>
 
-#include "TriggerRecordController\ITriggerRecordControllerR.h"
+#include "ObjectInterfaces/ITriggerRecordControllerR.h"
 #include "TriggerRecordControllerModulTest\LogClass.h"
 #include "TriggerRecordControllerModulTest\TesterFunction.h"
 
@@ -52,7 +52,7 @@ int main(int argc, char* argv[])
 		MIL_ID appId = MappAlloc(M_DEFAULT, M_NULL);
 		if (M_NULL != appId)
 		{
-			SvTrc::createTriggerRecordControllerInstance(SvTrc::TRC_DataType::Reader);
+			SvOi::createTriggerRecordControllerInstance(SvOi::TRC_DataType::Reader);
 			// Disable MIL error message to be displayed by MIL
 			MappControl(M_ERROR, M_PRINT_DISABLE);
 

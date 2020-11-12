@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SMView.h"
 #include "SMViewDlg.h"
-#include "TriggerRecordController\ITriggerRecordControllerR.h"
+#include "ObjectInterfaces/ITriggerRecordControllerR.h"
 
 #include <mil.h>
 
@@ -65,7 +65,7 @@ BOOL CSMViewApp::InitInstance()
 		return FALSE;
 	}
 
-	SvTrc::createTriggerRecordControllerInstance(SvTrc::TRC_DataType::Reader);
+	SvOi::createTriggerRecordControllerInstance(SvOi::TRC_DataType::Reader);
 
 	CWinApp::InitInstance();
 

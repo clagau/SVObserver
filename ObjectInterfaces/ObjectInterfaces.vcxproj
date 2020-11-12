@@ -118,6 +118,11 @@
     <ClInclude Include="ITool.h" />
     <ClInclude Include="IToolSet.h" />
     <ClInclude Include="IToolSizeAdjustTask.h" />
+    <ClInclude Include="ITRCImage.h" />
+    <ClInclude Include="ITriggerRecordControllerR.h" />
+    <ClInclude Include="ITriggerRecordControllerRW.h" />
+    <ClInclude Include="ITriggerRecordR.h" />
+    <ClInclude Include="ITriggerRecordRW.h" />
     <ClInclude Include="IValueObject.h" />
     <ClInclude Include="NameValueVector.h" />
     <ClInclude Include="ObjectInfo.h" />

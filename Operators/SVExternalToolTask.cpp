@@ -1229,7 +1229,7 @@ bool SVExternalToolTask::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVec
 			//   Inputs
 			/////////////////////////////////////////////////////
 
-			SvTrc::IImagePtr pResultImageBuffers[SVExternalToolTaskData::NUM_RESULT_IMAGES];
+			SvOi::ITRCImagePtr pResultImageBuffers[SVExternalToolTaskData::NUM_RESULT_IMAGES];
 			HRESULT hr = S_OK;
 
 			bool okToRun = prepareInput(pResultImageBuffers, rRunStatus);
@@ -1859,7 +1859,7 @@ void SVExternalToolTaskData::InitializeInputs(SVExternalToolTask*  pExternalTool
 
 }
 
-bool SVExternalToolTask::prepareInput(SvTrc::IImagePtr pResultImageBuffers[], RunStatus& rRunStatus)
+bool SVExternalToolTask::prepareInput(SvOi::ITRCImagePtr pResultImageBuffers[], RunStatus& rRunStatus)
 {
 	collectInputValues();
 
@@ -1920,7 +1920,7 @@ bool SVExternalToolTask::prepareInput(SvTrc::IImagePtr pResultImageBuffers[], Ru
 }
 
 
-void SVExternalToolTask::getResults(SvTrc::IImagePtr pResultImageBuffers[])
+void SVExternalToolTask::getResults(SvOi::ITRCImagePtr pResultImageBuffers[])
 {
 	collectResultValues();
 
@@ -2050,7 +2050,7 @@ bool SVExternalToolTask::collectInputImages(RunStatus& rRunStatus)
 		SvIe::SVImageClass* pInputImage = GetInputImage(i, true);
 		if (pInputImage)
 		{
-			SvTrc::IImagePtr pImageBuffer = pInputImage->getImageReadOnly(rRunStatus.m_triggerRecord.get());
+			SvOi::ITRCImagePtr pImageBuffer = pInputImage->getImageReadOnly(rRunStatus.m_triggerRecord.get());
 			if (nullptr != pImageBuffer && !pImageBuffer->isEmpty())
 			{
 				if (m_dll.UseMil())
@@ -2106,7 +2106,7 @@ bool SVExternalToolTask::collectInputImages(RunStatus& rRunStatus)
 	return okToRun;
 }
 
-bool SVExternalToolTask::collectMilResultBuffers(SvTrc::IImagePtr pResultImageBuffers[])
+bool SVExternalToolTask::collectMilResultBuffers(SvOi::ITRCImagePtr pResultImageBuffers[])
 {
 	bool allMilResultsAreOk = true;
 	if (!m_bUseImageCopies)
@@ -2214,7 +2214,7 @@ void SVExternalToolTask::collectResultValues()
 	}
 }
 
-void SVExternalToolTask::collectResultImages(SvTrc::IImagePtr pResultImageBuffers[])
+void SVExternalToolTask::collectResultImages(SvOi::ITRCImagePtr pResultImageBuffers[])
 {
 	if (m_Data.m_lNumResultImages > 0)
 	{

@@ -2634,8 +2634,8 @@ bool SVConfigurationObject::DestroyConfiguration()
 
 	SVThreadManager::Instance().Clear();
 
-	SvTrc::getTriggerRecordControllerRWInstance().unlockReset();
-	SvTrc::getTriggerRecordControllerRWInstance().clearAll();
+	SvOi::getTriggerRecordControllerRWInstance().unlockReset();
+	SvOi::getTriggerRecordControllerRWInstance().clearAll();
 
 	for (const auto& rFile : m_AdditionalFiles)
 	{
@@ -3831,7 +3831,7 @@ bool SVConfigurationObject::RebuildInputOutputLists(bool isLoad)
 	try
 	{
 		//avoid that TRC-memory will be recreated for every inspection, but do it once at the end.
-		SvTrc::getTriggerRecordControllerRWInstance().setGlobalInit();
+		SvOi::getTriggerRecordControllerRWInstance().setGlobalInit();
 		for (auto pInspection : m_arInspectionArray)
 		{
 			if (nullptr != pInspection)
@@ -3839,7 +3839,7 @@ bool SVConfigurationObject::RebuildInputOutputLists(bool isLoad)
 				bOk = FinishIPDoc(pInspection, isLoad) && bOk;
 			}
 		}
-		SvTrc::getTriggerRecordControllerRWInstance().finishGlobalInit();
+		SvOi::getTriggerRecordControllerRWInstance().finishGlobalInit();
 	}
 	catch (const SvStl::MessageContainer& rSvE)
 	{
@@ -4952,7 +4952,7 @@ void SVConfigurationObject::GetRemoteInputInspections(const std::string& p_rRemo
 
 void SVConfigurationObject::UpdateInspectionList4TRC()
 {
-	m_inspList4TRC = SvTrc::getTriggerRecordControllerRInstance().getInspections();
+	m_inspList4TRC = SvOi::getTriggerRecordControllerRInstance().getInspections();
 }
 
 void SVConfigurationObject::updateConfTreeToNewestVersion(SVTreeType& rTree, SVTreeType::SVBranchHandle& rToolset)

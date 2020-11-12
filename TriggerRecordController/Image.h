@@ -8,7 +8,7 @@
 #pragma once
 
 #pragma region Includes
-#include "IImage.h"
+#include "ObjectInterfaces/ITRCImage.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -20,7 +20,7 @@ typedef std::shared_ptr< SVImageBufferHandleInterface > SVImageBufferHandlePtr;
 #pragma endregion Declarations
 namespace SvTrc
 {
-class Image : public IImage
+class Image : public SvOi::ITRCImage
 {
 #pragma region Constructor
 public:

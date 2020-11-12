@@ -12,7 +12,7 @@
 #include "ITriggerRecordR.h"
 #pragma endregion Includes
 
-namespace SvTrc
+namespace SvOi
 {
 	class ITriggerRecordRW : public ITriggerRecordR
 	{
@@ -35,7 +35,7 @@ namespace SvTrc
 		/// ATTENTION: In error case the method throw an exception of the type SvStl::MessageContainer.
 		/// \param pos [in] Image position in trigger record.
 		/// \param pImage [in] Handle to the buffer which should set.
-		virtual void setImage(int pos, const IImagePtr& pImage) = 0;
+		virtual void setImage(int pos, const ITRCImagePtr& pImage) = 0;
 
 		/// Set a buffer to a image.
 		/// ATTENTION: In error case the method throw an exception of the type SvStl::MessageContainer.
@@ -45,8 +45,8 @@ namespace SvTrc
 
 		/// Return an pointer to a image instance in write modus. Content of the Buffer is random. Clear or Set the buffer by your own. ATTENTION: Use this instance only as long as this TriggerRecord-instance existing.
 		/// \param pos [in] Position in this triggerRecord.
-		/// \returns SvTrc::IImagePtr
-		virtual IImagePtr createNewImageHandle(int pos) = 0;
+		/// \returns SvOi::ITRCImagePtr
+		virtual ITRCImagePtr createNewImageHandle(int pos) = 0;
 
 		/// Initialize value data
 		virtual void initValueData() = 0;
@@ -58,4 +58,4 @@ namespace SvTrc
 	};
 
 	typedef std::shared_ptr< ITriggerRecordRW > ITriggerRecordRWPtr;
-} //namespace SvTrc
+} //namespace SvOi

@@ -77,7 +77,7 @@ public:
 
 	HRESULT createHistogramImage();
 
-	HRESULT paintHistogramImage(const SvTrc::ITriggerRecordRWPtr& pTriggerRecord);
+	HRESULT paintHistogramImage(const SvOi::ITriggerRecordRWPtr& pTriggerRecord);
 
 	const std::vector<long>& GetHistogram() const
 	{

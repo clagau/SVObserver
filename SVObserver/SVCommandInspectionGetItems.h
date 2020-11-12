@@ -15,7 +15,7 @@
 //Moved to precompiled header: #include <memory>
 //Moved to precompiled header: #include <set>
 #include "SVStorageResult.h"
-#include "TriggerRecordController/ITriggerRecordR.h"
+#include "ObjectInterfaces/ITriggerRecordR.h"
 #pragma endregion Includes
 
 class SVInspectionProcess;
@@ -37,7 +37,7 @@ public:
 	
 
 private:
-	HRESULT UpdateResultsWithImageData(const std::string& rItemName, const SVObjectReference& rImageRef, unsigned long TriggerCount, const SvTrc::ITriggerRecordRPtr pTriggerRecord);
+	HRESULT UpdateResultsWithImageData(const std::string& rItemName, const SVObjectReference& rImageRef, unsigned long TriggerCount, const SvOi::ITriggerRecordRPtr pTriggerRecord);
 	HRESULT UpdateResultsWithValueData(const std::string& rItemName, const SVObjectReference& rValueRef, unsigned long TriggerCount);
 	HRESULT UpdateResultsWithErrorData(const std::string& rItemName, HRESULT errorStatus, unsigned long TriggerCount);
 

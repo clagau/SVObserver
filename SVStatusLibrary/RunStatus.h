@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "TriggerRecordController/ITriggerRecordRW.h"
+#include "ObjectInterfaces/ITriggerRecordRW.h"
 #pragma endregion Includes
 
 class RunStatus
@@ -74,7 +74,7 @@ public:
 	double m_ToolSetEndTime {0.0};
 	double m_ToolSetAvgTime {0.0};
 
-	SvTrc::ITriggerRecordRWPtr m_triggerRecord = nullptr;
+	SvOi::ITriggerRecordRWPtr m_triggerRecord = nullptr;
 };
 
 inline void RunStatus::SetPassed()

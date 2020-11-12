@@ -26,9 +26,9 @@
 #pragma endregion Includes
 
 class SVAcquisitionBufferInterface;
-namespace SvTrc
+namespace SvOi
 {
-class IImage;
+class ITRCImage;
 }
 
 class SVFileCamera
@@ -94,7 +94,7 @@ public:
 
 	HRESULT DoOneShot();
 
-	HRESULT CopyImage(SvTrc::IImage* pImagePtr);
+	HRESULT CopyImage(SvOi::ITRCImage* pImagePtr);
 
 	HRESULT loadImage(std::string fileName);
 

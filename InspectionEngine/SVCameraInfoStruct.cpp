@@ -25,7 +25,7 @@ static char THIS_FILE[] = __FILE__;
 #pragma endregion Declarations
 
 #pragma region Public Methods
-HRESULT SVCameraInfoStruct::Assign( double p_StartFrameTS, double p_EndFrameTS, const SvTrc::IImagePtr pImage)
+HRESULT SVCameraInfoStruct::Assign( double p_StartFrameTS, double p_EndFrameTS, const SvOi::ITRCImagePtr pImage)
 {
 	HRESULT l_Status = S_OK;
 
@@ -57,7 +57,7 @@ void SVCameraInfoStruct::ClearCameraInfo()
 	ClearIndexes();
 }
 
-const SvTrc::IImagePtr SVCameraInfoStruct::GetNextImage()
+const SvOi::ITRCImagePtr SVCameraInfoStruct::GetNextImage()
 {
 	if (!m_NextImageFunctor.empty())
 	{
@@ -76,7 +76,7 @@ const void SVCameraInfoStruct::setCamera(uint32_t cameraId, NextImageHandleFunct
 	m_NextImageFunctor = NextImageHandleFunctor;
 }
 
-bool SVCameraInfoStruct::setImage(SvTrc::IImagePtr pImage) 
+bool SVCameraInfoStruct::setImage(SvOi::ITRCImagePtr pImage) 
 {
 	if (nullptr == pImage || pImage->isValid())
 	{

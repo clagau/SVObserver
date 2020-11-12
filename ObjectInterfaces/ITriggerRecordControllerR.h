@@ -17,13 +17,13 @@ namespace SvPb
 	class InspectionList;
 }
 
-namespace SvTrc
+namespace SvOi
 {
 class ITriggerRecordR;
 typedef std::shared_ptr< ITriggerRecordR > ITriggerRecordRPtr;
 }
 
-namespace SvTrc
+namespace SvOi
 {
 	typedef void(CALLBACK *StartResetCallbackPtr)(void* pOwner);
 
@@ -102,13 +102,13 @@ namespace SvTrc
 		/// Create a trigger record instance from trigger record with trigger record ID, if it exist.
 		/// \param inspectionPos [in] ID of the inspection.
 		/// \param trId [in] Trigger record ID
-		/// \returns SvTrc::ITriggerRecordRPtr 
+		/// \returns SvOi::ITriggerRecordRPtr 
 		virtual ITriggerRecordRPtr createTriggerRecordObject(int inspectionPos, int trId) = 0;
 
 		/// Create a trigger record instance from trigger record with trigger count, if it exist.
 		/// \param inspectionPos [in] ID of the inspection.
 		/// \param triggerCount [in] Trigger count
-		/// \returns SvTrc::ITriggerRecordRPtr 
+		/// \returns SvOi::ITriggerRecordRPtr 
 		virtual ITriggerRecordRPtr createTriggerRecordObjectPerTriggerCount(int inspectionPos, int triggerCount) = 0;
 
 		/// Register a Callback function to call if TRC reset. (After this event the TRC is not longer valid. It is possible to get this event even it TRC already invalid)
@@ -187,4 +187,4 @@ namespace SvTrc
 	/// \param inspectionId [in] Id of the inspection.
 	/// \returns int
 	int getInspectionPos(uint32_t inspectionId);
-} // namespace SvTrc
+} // namespace SvOi

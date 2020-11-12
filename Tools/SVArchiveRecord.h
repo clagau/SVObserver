@@ -10,14 +10,14 @@
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "SVMatroxLibrary/SVMatroxBufferCreateStruct.h"
 #include "SVObjectLibrary/SVObjectReference.h"
-#include "TriggerRecordController/IImage.h"
+#include "ObjectInterfaces/ITRCImage.h"
 #pragma endregion Includes
 
 namespace SvIe
 {
 class SVImageClass;
 }
-namespace SvTrc
+namespace SvOi
 {
 class ITriggerRecordR;
 }
@@ -48,9 +48,9 @@ public:
 	void DisconnectInputObject();
 
 	HRESULT AllocateBuffers(long lBufferNumber, BufferStructCountMap& rBufferMap, int toolPos);
-	HRESULT QueueImage(SvTrc::IImagePtr& rImage, const std::string& rFileName );
+	HRESULT QueueImage(SvOi::ITRCImagePtr& rImage, const std::string& rFileName );
 	HRESULT WriteImageQueue();
-	HRESULT WriteImage(const SvTrc::ITriggerRecordR* pTriggerRecord);
+	HRESULT WriteImage(const SvOi::ITriggerRecordR* pTriggerRecord);
 	static HRESULT WriteImage( const SVMatroxBuffer& buf, const std::string& rFileName );
 
 	void SetArchiveTool( SVArchiveTool* pArchiveTool );
@@ -69,7 +69,7 @@ private:
 	std::string         m_ImageFileName;				// images only
 	long                m_lCountImages {0L};			// images only
 	std::vector<std::string> m_FileNames;
-	std::vector<SvTrc::IImagePtr>	m_ImageStoreVector;
+	std::vector<SvOi::ITRCImagePtr>	m_ImageStoreVector;
 	SVImageInfoClass    m_ImageInfo;					// images only
 	long                m_lLastIndex {0L};
 	long                m_lMaxIndex {0L};

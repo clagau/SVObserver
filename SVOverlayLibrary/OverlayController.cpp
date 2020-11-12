@@ -11,7 +11,7 @@
 #include "SVProtoBuf/SVRC.h"
 #include "SVRPCLibrary/ErrorUtil.h"
 #include "SVRPCLibrary/SimpleClient.h"
-#include "TriggerRecordController/ITriggerRecordR.h"
+#include "ObjectInterfaces/ITriggerRecordR.h"
 #include "FillHelper.h"
 #pragma endregion Includes
 
@@ -25,7 +25,7 @@ OverlayController::OverlayController(boost::asio::io_context& io_context, SvRpc:
 {
 }
 
-SvSyl::SVFuture<SvPb::OverlayDesc> OverlayController::getOverlays(std::shared_ptr<SvTrc::ITriggerRecordR> pTr, uint32_t inspectionId, uint32_t imageId)
+SvSyl::SVFuture<SvPb::OverlayDesc> OverlayController::getOverlays(std::shared_ptr<SvOi::ITriggerRecordR> pTr, uint32_t inspectionId, uint32_t imageId)
 {
 	if (nullptr != pTr && pTr->isObjectUpToTime())
 	{
@@ -91,7 +91,7 @@ SvSyl::SVFuture<SvPb::OverlayDesc> OverlayController::restructOverlayDesc(uint32
 	return promise->get_future();
 }
 
-SvSyl::SVFuture<SvPb::OverlayDesc> OverlayController::getOverlayStruct(std::shared_ptr<SvTrc::ITriggerRecordR> pTr, uint32_t inspectionId, uint32_t imageId)
+SvSyl::SVFuture<SvPb::OverlayDesc> OverlayController::getOverlayStruct(std::shared_ptr<SvOi::ITriggerRecordR> pTr, uint32_t inspectionId, uint32_t imageId)
 {
 	{	//lock map
 		std::lock_guard<std::mutex> lockMap(m_overlayMapMutex);

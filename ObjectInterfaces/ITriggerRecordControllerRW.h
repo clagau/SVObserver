@@ -18,18 +18,18 @@ struct MatroxBufferChildDataStruct;
 struct SVMatroxBufferCreateChildStruct;
 struct SVMatroxBufferCreateStruct;
 
-namespace SvTrc
+namespace SvOi
 {
 class ITriggerRecordR;
 class ITriggerRecordRW;
-class IImage;
+class ITRCImage;
 typedef std::shared_ptr< ITriggerRecordR > ITriggerRecordRPtr;
 typedef std::shared_ptr< ITriggerRecordRW > ITriggerRecordRWPtr;
-typedef std::shared_ptr<IImage> IImagePtr;
+typedef std::shared_ptr<ITRCImage> ITRCImagePtr;
 }
 #pragma endregion Declarations
 
-namespace SvTrc
+namespace SvOi
 {
 	class ITriggerRecordControllerRW : public ITriggerRecordControllerR
 	{
@@ -53,12 +53,12 @@ namespace SvTrc
 
 		/// Create a new trigger record in a free slot and block this slot for this instance in write-modus.
 		/// \param inspectionPos [in] Position (in the inspection list) of the inspection.
-		/// \returns SvTrc::ITriggerRecordRWPtr
+		/// \returns SvOi::ITriggerRecordRWPtr
 		virtual ITriggerRecordRWPtr createTriggerRecordObjectToWrite(int inspectionPos) = 0;
 
 		/// Close a triggerRecord instance (it mus be the last one) and open a reader version.
 		/// \param pTriggerRecord [in] The writer instance
-		/// \returns SvTrc::ITriggerRecordRPtr The reader instance
+		/// \returns SvOi::ITriggerRecordRPtr The reader instance
 		virtual ITriggerRecordRPtr closeWriteAndOpenReadTriggerRecordObject(ITriggerRecordRWPtr& pTriggerRecord) = 0;
 
 
@@ -69,8 +69,8 @@ namespace SvTrc
 		/// Return a handle-instance to a new locked buffer. It will be automatically unlocked if the handle-instance will be deleted.
 		/// \param bufferStruct [in] Structure of the required buffer.
 		/// \param createBufferExternIfNecessary [in] If can not get a buffer from ImageController (e.g. because resetting is running) then if this parameter true it will create a buffer. ATTENTION: This buffer can not be used e.g. with setImage)
-		/// \returns SvTRC::IImagePtr
-		virtual IImagePtr getImageBuffer(const SVMatroxBufferCreateStruct& bufferStruct, bool createBufferExternIfNecessary = false) const = 0;
+		/// \returns SvTRC::ITRCImagePtr
+		virtual ITRCImagePtr getImageBuffer(const SVMatroxBufferCreateStruct& bufferStruct, bool createBufferExternIfNecessary = false) const = 0;
 
 		/// Delete intern the memory and start the process to create the new memory structure. ATTENTION: All old TR-instances of all IPs have to be deleted before.
 		/// ATTENTION: In error case the method throw an exception of the type SvStl::MessageContainer.
@@ -162,4 +162,4 @@ namespace SvTrc
 	/// Get an instance of the TR controller in read/write modus.
 	/// \returns ITriggerRecordControllerRW&
 	ITriggerRecordControllerRW& getTriggerRecordControllerRWInstance();
-} //namespace SvTrc
+} //namespace SvOi

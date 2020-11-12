@@ -81,7 +81,7 @@ public:
 
 	virtual HRESULT GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index = 0 ) const override;
 
-	SvTrc::IImagePtr ReserveNextImageHandle( ) const;
+	SvOi::ITRCImagePtr ReserveNextImageHandle( ) const;
 
     HRESULT GetBand(int& riBand) const;
     HRESULT GetBandSize(int& riBandSize) const;

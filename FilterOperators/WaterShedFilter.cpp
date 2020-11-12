@@ -103,7 +103,7 @@ bool WatershedFilter::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputImag
 			SvIe::SVImageClass* pInputImage = SvOl::getInput<SvIe::SVImageClass>(m_MarkerImageInfo, true);
 			if( pInputImage )
 			{
-				SvTrc::IImagePtr pMarkerBuffer = pInputImage->getImageReadOnly(rRunStatus.m_triggerRecord.get());
+				SvOi::ITRCImagePtr pMarkerBuffer = pInputImage->getImageReadOnly(rRunStatus.m_triggerRecord.get());
 				
 				SVMatroxBuffer milBuffer;
 				if( nullptr != pMarkerBuffer && !pMarkerBuffer->isEmpty())

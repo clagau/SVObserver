@@ -463,7 +463,7 @@ void SVTaskObjectListClass::setEditModeFreezeFlag(bool flag)
 	}
 }
 
-void SVTaskObjectListClass::copiedSavedImage(SvTrc::ITriggerRecordRWPtr pTr)
+void SVTaskObjectListClass::copiedSavedImage(SvOi::ITriggerRecordRWPtr pTr)
 {
 	__super::copiedSavedImage(pTr);
 	for (auto* pTasks : m_TaskObjectVector)

@@ -27,9 +27,6 @@
     <ClInclude Include="DataControllerWriter.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="IImage.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="Image.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -40,18 +37,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="ImageBufferSMHelper.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="ITriggerRecordControllerR.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="ITriggerRecordControllerRW.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="ITriggerRecordR.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="ITriggerRecordRW.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="LocalConst.h">

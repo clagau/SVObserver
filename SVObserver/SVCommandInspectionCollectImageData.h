@@ -16,7 +16,7 @@
 //Moved to precompiled header: #include <set>
 #include "SVImageLibrary/SVExtentMultiLineStruct.h"
 #include "SVIPProductStruct.h"
-#include "TriggerRecordController/ITriggerRecordR.h"
+#include "ObjectInterfaces/ITriggerRecordR.h"
 #pragma endregion Includes
 
 class SVInspectionProcess;
@@ -34,7 +34,7 @@ private:
 
 	HRESULT UpdateResults(SVInspectionProcess* pInspection, SvIe::SVIPResultData& rResultData);
 
-	HRESULT UpdateBuffer(uint32_t imageId, const SvTrc::ITriggerRecordRPtr& pTriggerRecord, std::string& rImageDIB, SVExtentMultiLineStructVector& rMultiLineArray);
+	HRESULT UpdateBuffer(uint32_t imageId, const SvOi::ITriggerRecordRPtr& pTriggerRecord, std::string& rImageDIB, SVExtentMultiLineStructVector& rMultiLineArray);
 
 
 	uint32_t m_InspectionId;

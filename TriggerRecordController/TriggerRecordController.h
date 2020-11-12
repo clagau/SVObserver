@@ -8,15 +8,15 @@
 #pragma once
 
 #pragma region Includes
-#include "ITriggerRecordControllerRW.h"
-#include "ITriggerRecordRW.h"
+#include "ObjectInterfaces/ITriggerRecordControllerRW.h"
+#include "ObjectInterfaces/ITriggerRecordRW.h"
 #include "ImageBufferController.h"
 #include "SVProtoBuf/TriggerRecordController.h"
 #pragma endregion Includes
 
 namespace SvTrc
 {
-class TriggerRecordController final : public ITriggerRecordControllerRW
+class TriggerRecordController final : public SvOi::ITriggerRecordControllerRW
 {
 #pragma region Constructor
 public:
@@ -29,7 +29,7 @@ public:
 
 #pragma region Public Methods
 public:
-	void setLastFinishedTr(TrEventData data);
+	void setLastFinishedTr(SvOi::TrEventData data);
 	void increaseNumberOfFreeTr(int inspectionPos) { return m_pDataController->increaseNumberOfFreeTr(inspectionPos); };
 	ImageBufferController& getImageBufferControllerInstance() { return m_imageBufferController; };
 
@@ -47,20 +47,20 @@ public:
 	virtual const SvPb::DataDefinitionList& getDataDefList(int inspectionPos) override;
 	virtual const std::unordered_map<uint32_t, int>& getDataDefMap(int inspectionPos) override;
 
-	virtual ITriggerRecordRPtr createTriggerRecordObject(int inspectionPos, int trId) override;
-	virtual ITriggerRecordRPtr createTriggerRecordObjectPerTriggerCount(int inspectionPos, int triggerCount) override;
+	virtual SvOi::ITriggerRecordRPtr createTriggerRecordObject(int inspectionPos, int trId) override;
+	virtual SvOi::ITriggerRecordRPtr createTriggerRecordObjectPerTriggerCount(int inspectionPos, int triggerCount) override;
 
 	virtual int registerResetCallback(std::function<void()> pCallback) override;
 	virtual void unregisterResetCallback(int handleId) override;
 	virtual int registerReadyCallback(std::function<void()> pCallback) override;
 	virtual void unregisterReadyCallback(int handleId) override;
-	virtual int registerNewTrCallback(std::function<void(TrEventData)> pCallback) override;
+	virtual int registerNewTrCallback(std::function<void(SvOi::TrEventData)> pCallback) override;
 	virtual void unregisterNewTrCallback(int handleId) override;
-	virtual int registerNewInterestTrCallback(std::function<void(const std::vector<TrInterestEventData>&)> pCallback) override;
+	virtual int registerNewInterestTrCallback(std::function<void(const std::vector<SvOi::TrInterestEventData>&)> pCallback) override;
 	virtual void unregisterNewInterestTrCallback(int handleId) override;
 
-	virtual bool setTrsOfInterest(const std::vector<ITriggerRecordRPtr>& trVector, bool isInterest) override;
-	virtual std::vector<ITriggerRecordRPtr> getTrsOfInterest(int inspectionPos, int n) override;
+	virtual bool setTrsOfInterest(const std::vector<SvOi::ITriggerRecordRPtr>& trVector, bool isInterest) override;
+	virtual std::vector<SvOi::ITriggerRecordRPtr> getTrsOfInterest(int inspectionPos, int n) override;
 	virtual void pauseTrsOfInterest(bool pauseFlag, int inspectionPos = -1) override;
 	virtual bool isPauseTrsOfInterest(int inspectionPos = 0) const override { return m_pDataController->getPauseTrsOfInterest(inspectionPos); };
 #pragma endregion ITriggerRecordControllerR Methods
@@ -72,13 +72,13 @@ public:
 
 	virtual void resizeIPNumberOfRecords(const std::vector<int>& inspectionPosVec, long newSizeTr, long newSizeTrOfIntereset) override;
 
-	virtual ITriggerRecordRWPtr createTriggerRecordObjectToWrite(int inspectionPos) override;
+	virtual SvOi::ITriggerRecordRWPtr createTriggerRecordObjectToWrite(int inspectionPos) override;
 
-	virtual ITriggerRecordRPtr closeWriteAndOpenReadTriggerRecordObject(ITriggerRecordRWPtr& pTriggerRecord) override;
+	virtual SvOi::ITriggerRecordRPtr closeWriteAndOpenReadTriggerRecordObject(SvOi::ITriggerRecordRWPtr& pTriggerRecord) override;
 
-	virtual void closeWriteObjectWithoutUpdateLastTrId(ITriggerRecordRWPtr& pTriggerRecord) override;
+	virtual void closeWriteObjectWithoutUpdateLastTrId(SvOi::ITriggerRecordRWPtr& pTriggerRecord) override;
 
-	virtual IImagePtr getImageBuffer(const SVMatroxBufferCreateStruct& bufferStruct, bool createBufferExternIfNecessary = false) const override;
+	virtual SvOi::ITRCImagePtr getImageBuffer(const SVMatroxBufferCreateStruct& bufferStruct, bool createBufferExternIfNecessary = false) const override;
 
 	virtual void startResetTriggerRecordStructure(int inspectionPos = m_cResetStartedAddBuffer) override;
 	virtual void finishResetTriggerRecordStructure() override;
@@ -136,8 +136,8 @@ private:
 
 	void sendResetCall();
 	void sendReadyCall();
-	void sendTrIdCall(TrEventData data);
-	void sendInterestTrIdCall(std::vector<TrInterestEventData>&& data);
+	void sendTrIdCall(SvOi::TrEventData data);
+	void sendInterestTrIdCall(std::vector<SvOi::TrInterestEventData>&& data);
 
 	void reduceRequiredImageBuffer(const std::map<int, int>& bufferMap);
 #pragma endregion Private Methods
@@ -156,8 +156,8 @@ private:
 
 	std::vector<std::pair<int, std::function<void()>>> m_resetCallbacks;
 	std::vector<std::pair<int, std::function<void()>>> m_readyCallbacks;
-	std::vector<std::pair<int, std::function<void(TrEventData)>>> m_newTrCallbacks;
-	std::vector<std::pair<int, std::function<void(std::vector<TrInterestEventData>)>>> m_newInterestTrCallbacks;
+	std::vector<std::pair<int, std::function<void(SvOi::TrEventData)>>> m_newTrCallbacks;
+	std::vector<std::pair<int, std::function<void(std::vector<SvOi::TrInterestEventData>)>>> m_newInterestTrCallbacks;
 	bool m_isResetLocked = false;
 
 	bool m_isGlobalInit = false;

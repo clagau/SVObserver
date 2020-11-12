@@ -25,7 +25,7 @@
 #include "SVValueObjectLibrary/BasicValueObject.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
-#include "TriggerRecordController/ITriggerRecordR.h"
+#include "ObjectInterfaces/ITriggerRecordR.h"
 #pragma endregion Includes
 
 #pragma region Constructor
@@ -282,7 +282,7 @@ void  ResultViewReferences::GetResultData(SvIe::SVIPResultData& rResultData) con
 	}
 }
 
-std::vector <SvIe::IPResultTableData> ResultViewReferences::getResultTableData(const SvTrc::ITriggerRecordR& rTriggerRecord)
+std::vector <SvIe::IPResultTableData> ResultViewReferences::getResultTableData(const SvOi::ITriggerRecordR& rTriggerRecord)
 {
 	std::vector <SvIe::IPResultTableData> returnData;
 	if (nullptr != m_resultTable)

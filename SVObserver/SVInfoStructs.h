@@ -27,7 +27,7 @@
 #include "SVIOLibrary/SVIOEntryHostStruct.h"
 #include "SVObjectLibrary/SVObjectReference.h"
 #include "TriggerInformation/SVTriggerInfoStruct.h"
-#include "TriggerRecordController/ITriggerRecordRW.h"
+#include "ObjectInterfaces/ITriggerRecordRW.h"
 #pragma endregion Includes
 
 enum SVProductInspectedState
@@ -87,7 +87,7 @@ struct SVInspectionInfoStruct
 	
 	bool setNextAvailableTR();
 
-	void setNextTriggerRecord(SvTrc::TriggerData triggerData = SvTrc::TriggerData());
+	void setNextTriggerRecord(SvOi::TriggerData triggerData = SvOi::TriggerData());
 
 	void setTriggerRecordCompleted();
 	void setTriggerRecordIncompleted();
@@ -105,8 +105,8 @@ struct SVInspectionInfoStruct
 	double m_EndToolset {0.0};
 	
 	int m_inspectionPosInTrc = -1; //position of the inspection in triggerRecordController
-	SvTrc::ITriggerRecordRWPtr m_triggerRecordWrite = nullptr;
-	SvTrc::ITriggerRecordRPtr  m_triggerRecordComplete = nullptr;
+	SvOi::ITriggerRecordRWPtr m_triggerRecordWrite = nullptr;
+	SvOi::ITriggerRecordRPtr  m_triggerRecordComplete = nullptr;
 
 	double m_ToolSetEndTime {0.0};
 	double m_ToolSetAvgTime {0.0};

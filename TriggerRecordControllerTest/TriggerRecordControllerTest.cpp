@@ -87,7 +87,7 @@ namespace SvTrcT
 		SetRegistryKey(_T("Vom lokalen Anwendungs-Assistenten generierte Anwendungen"));
 		auto bRet =  MessageBox(nullptr, _T("Should test in LocalMode (Yes), WriterMode(No) or ReaderMode (Cancel)?"), _T("Start"), MB_YESNOCANCEL);
 		bool readerMode = (IDCANCEL == bRet);
-		SvTrc::createTriggerRecordControllerInstance(readerMode ? SvTrc::TRC_DataType::Reader : (IDYES == bRet ? SvTrc::TRC_DataType::Local: SvTrc::TRC_DataType::Writer));
+		SvOi::createTriggerRecordControllerInstance(readerMode ? SvOi::TRC_DataType::Reader : (IDYES == bRet ? SvOi::TRC_DataType::Local: SvOi::TRC_DataType::Writer));
 
 		CTriggerRecordControllerTestDlg dlg(readerMode);
 		m_pMainWnd = &dlg;

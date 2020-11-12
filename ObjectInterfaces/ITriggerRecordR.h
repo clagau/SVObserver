@@ -7,9 +7,9 @@
 //******************************************************************************
 #pragma once
 //Moved to precompiled header: #include <memory>
-#include "IImage.h"
+#include "ITRCImage.h"
 
-namespace SvTrc
+namespace SvOi
 {
 	struct TriggerData
 	{
@@ -36,15 +36,15 @@ namespace SvTrc
 
 		/// Return an pointer to an image instance (only in read only modus).
 		/// \param pos [in] Position in this triggerRecord.
-		/// \param lockImage (default:false) [in] If true image will locked by is own and unlock if IImagePtr freed. If false image will not separated lock, but by the TriggerRecord (ATTENTION: In this case, use this instance only as long as this TriggerRecord-instance existing.)
-		/// \returns SvTrc::IImagePtr
-		virtual IImagePtr getImage(int pos, bool lockImage = false) const = 0;
+		/// \param lockImage (default:false) [in] If true image will locked by is own and unlock if ITRCImagePtr freed. If false image will not separated lock, but by the TriggerRecord (ATTENTION: In this case, use this instance only as long as this TriggerRecord-instance existing.)
+		/// \returns SvOi::ITRCImagePtr
+		virtual ITRCImagePtr getImage(int pos, bool lockImage = false) const = 0;
 
 		/// Return an pointer to a child image instance (only in read only modus).
 		/// \param childPos [in] Position in this triggerRecord childList.
-		/// \param lockImage (default:false) [in] If true the (physical) buffer of this child image will locked by is own and unlock if IImagePtr freed. If false image will not separated lock, but by the TriggerRecord (ATTENTION: In this case, use this instance only as long as this TriggerRecord-instance existing.)
-		/// \returns SvTrc::IImagePtr
-		virtual IImagePtr getChildImage(int childPos, bool lockImage = false) const = 0;
+		/// \param lockImage (default:false) [in] If true the (physical) buffer of this child image will locked by is own and unlock if ITRCImagePtr freed. If false image will not separated lock, but by the TriggerRecord (ATTENTION: In this case, use this instance only as long as this TriggerRecord-instance existing.)
+		/// \returns SvOi::ITRCImagePtr
+		virtual ITRCImagePtr getChildImage(int childPos, bool lockImage = false) const = 0;
 
 		/// Return the data corresponding to the ID
 		/// \param pos [in] Position of the value object in definition list.
@@ -81,4 +81,4 @@ namespace SvTrc
 
 		return pos;
 	}
-} //namespace SvTrc
+} //namespace SvOi

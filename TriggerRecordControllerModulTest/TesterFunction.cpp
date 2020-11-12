@@ -16,10 +16,10 @@
 #include "SVMatroxLibrary\SVMatroxBuffer.h"
 #include "SVStatusLibrary\MessageContainer.h"
 #include "SVUtilityLibrary\StringHelper.h"
-#include "TriggerRecordController\ITriggerRecordControllerR.h"
-#include "TriggerRecordController\ITriggerRecordControllerRW.h"
-#include "TriggerRecordController\ITriggerRecordR.h"
-#include "TriggerRecordController\ITriggerRecordRW.h"
+#include "ObjectInterfaces/ITriggerRecordControllerR.h"
+#include "ObjectInterfaces/ITriggerRecordControllerRW.h"
+#include "ObjectInterfaces/ITriggerRecordR.h"
+#include "ObjectInterfaces/ITriggerRecordRW.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -52,7 +52,7 @@ HANDLE createEvent(LPCTSTR eventName)
 	return ::CreateEvent(&sa, false, false, eventName);
 }
 
-bool checkImages(const TrcTesterConfiguration::InspectionsDef& rIPData, SvTrc::ITriggerRecordRPtr tr2R, LogClass& rLogClass, int writerRunId, int testDataId, int ipId, int runId, int triggerCount)
+bool checkImages(const TrcTesterConfiguration::InspectionsDef& rIPData, SvOi::ITriggerRecordRPtr tr2R, LogClass& rLogClass, int writerRunId, int testDataId, int ipId, int runId, int triggerCount)
 {
 	bool retValue = true;
 	for (int imagePos = 0; imagePos < rIPData.m_imageFilesList.size(); imagePos++)
@@ -155,9 +155,9 @@ void OnReadyTRC()
 	::SetEvent(g_readyEvent);
 }
 
-std::vector<SvTrc::TrEventData> g_newTrInfoVec;
+std::vector<SvOi::TrEventData> g_newTrInfoVec;
 std::mutex g_newTrInfoVecMutex;
-void OnNewTr(SvTrc::TrEventData data)
+void OnNewTr(SvOi::TrEventData data)
 {
 	std::lock_guard<std::mutex> lock(g_newTrInfoVecMutex);
 	g_newTrInfoVec.emplace_back(data);
@@ -166,7 +166,7 @@ void OnNewTr(SvTrc::TrEventData data)
 
 std::mutex g_newInterestTrMapMutex;
 std::map<int,std::vector<int>> g_newInterestTrMap;
-void OnNewInterestTr(const std::vector<SvTrc::TrInterestEventData>& rDataVec)
+void OnNewInterestTr(const std::vector<SvOi::TrInterestEventData>& rDataVec)
 {
 	std::lock_guard<std::mutex> lock(g_newInterestTrMapMutex);
 	for (const auto& rData : rDataVec)
@@ -207,7 +207,7 @@ SVMatroxBufferCreateStruct specifyBufferFromImage(MIL_ID imageId)
 	return bufferStruct;
 }
 
-bool setInspections(std::vector < std::pair <int, int> > numbersOfRecords, SvTrc::ITriggerRecordControllerRW& rTrController, LogClass& rLogClass, LPCSTR testAreaStr)
+bool setInspections(std::vector < std::pair <int, int> > numbersOfRecords, SvOi::ITriggerRecordControllerRW& rTrController, LogClass& rLogClass, LPCSTR testAreaStr)
 {
 	SvPb::InspectionList inspList;
 	for (std::pair<int, int> numberOfRecords : numbersOfRecords)
@@ -227,7 +227,7 @@ bool setInspections(std::vector < std::pair <int, int> > numbersOfRecords, SvTrc
 bool writerTest(LogClass& rLogClass, const int numberOfRuns, const TrcTesterConfiguration::TestDataList& rTestData, int sleepBetweenTrigger)
 {
 	bool retValue = true;
-	auto& rTrController = SvTrc::getTriggerRecordControllerRWInstance();
+	auto& rTrController = SvOi::getTriggerRecordControllerRWInstance();
 
 	for (int testDataId = 0; testDataId < rTestData.size(); testDataId++)
 	{
@@ -311,7 +311,7 @@ bool writerTest(LogClass& rLogClass, const int numberOfRuns, const TrcTesterConf
 
 		//the run
 		rTrController.pauseTrsOfInterest(0);
-		std::vector<SvTrc::ITriggerRecordRPtr> lastTRList(rInspectionsData.size());
+		std::vector<SvOi::ITriggerRecordRPtr> lastTRList(rInspectionsData.size());
 		for (int runId = 0; runId < numberOfRuns; runId++)
 		{
 			if (isInterestTest && (runId == startInterestPause || runId == stopInterestPause))
@@ -339,7 +339,7 @@ bool writerTest(LogClass& rLogClass, const int numberOfRuns, const TrcTesterConf
 					tr2W->setImages(*lastTRList[ipId].get());
 				}
 
-				SvTrc::TriggerData trData;
+				SvOi::TriggerData trData;
 				trData.m_TriggerCount = triggerIdOffset*testDataId + runId;
 				tr2W->setTriggerData(trData);
 				//write image to buffer
@@ -453,7 +453,7 @@ bool readerTest(LPCTSTR testName, LogClass& rLogClass, const int numberOfRuns, c
 	g_newTrEvent = createEvent(strNewTrEvent.c_str());
 	if (nullptr != g_resetEvent && nullptr != g_readyEvent && nullptr != g_newTrEvent)
 	{
-		auto& rTrController = SvTrc::getTriggerRecordControllerRInstance();
+		auto& rTrController = SvOi::getTriggerRecordControllerRInstance();
 		int resetCallbackHandle = rTrController.registerResetCallback(OnResetTRC);
 		int readyCallbackHandle = rTrController.registerReadyCallback(OnReadyTRC);
 		int newTrCallBackHandle = rTrController.registerNewTrCallback(OnNewTr);
@@ -520,7 +520,7 @@ bool readerTest(LPCTSTR testName, LogClass& rLogClass, const int numberOfRuns, c
 					break;
 				}
 
-				std::vector<SvTrc::TrEventData> newTrInfoVec;
+				std::vector<SvOi::TrEventData> newTrInfoVec;
 				{
 					std::lock_guard<std::mutex> lock(g_newTrInfoVecMutex);
 					if (0 == g_newTrInfoVec.size())

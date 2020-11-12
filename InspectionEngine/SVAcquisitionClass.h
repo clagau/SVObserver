@@ -27,7 +27,7 @@ namespace SvTi
 {
 struct SVAcquisitionConstructParams;
 }
-namespace SvTrc
+namespace SvOi
 {
 class ITriggerRecordControllerRW;
 }
@@ -133,8 +133,8 @@ public:
 	virtual unsigned long GetBufferHeight() const override;
 	virtual int GetBufferFormat() const override;
 
-	virtual SvTrc::IImagePtr GetNextBuffer() override;
-	virtual HRESULT UpdateWithCompletedBuffer( const SvTrc::IImagePtr& rImage, const double StartTick, const double StopTick) override;
+	virtual SvOi::ITRCImagePtr GetNextBuffer() override;
+	virtual HRESULT UpdateWithCompletedBuffer( const SvOi::ITRCImagePtr& rImage, const double StartTick, const double StopTick) override;
 	virtual void setNeededBuffers(int neededBuffers) override;
 
 	SVHANDLE m_hDigitizer;
@@ -183,7 +183,7 @@ private:
 	SVAcquisitionClass();
 
 	bool m_LUTAndLRSet;
-	SvTrc::ITriggerRecordControllerRW& m_rTRController;
+	SvOi::ITriggerRecordControllerRW& m_rTRController;
 	SVMatroxBufferCreateStruct m_bufferStruct;
 	uint32_t m_objectId = SvDef::InvalidObjectId;
 	int m_neededBuffer = 10;

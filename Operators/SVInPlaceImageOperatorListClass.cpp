@@ -103,7 +103,7 @@ bool SVInPlaceImageOperatorListClass::Run( RunStatus& rRunStatus, SvStl::Message
 	if( bRetVal )
 	{
 		//The input image will be needed but will be overridden, because in SVImageArithmetic it was already called the write-method and this image will be used for both task as output.
-		SvTrc::IImagePtr pImageBuffer = getInputImage(true)->getImageReadOnly(rRunStatus.m_triggerRecord.get());
+		SvOi::ITRCImagePtr pImageBuffer = getInputImage(true)->getImageReadOnly(rRunStatus.m_triggerRecord.get());
 		SvOi::SVImageBufferHandlePtr imageHandle;
 		if (nullptr != pImageBuffer && !pImageBuffer->isEmpty())
 		{

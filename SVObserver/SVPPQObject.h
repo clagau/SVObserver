@@ -27,7 +27,7 @@
 #include "SVSystemLibrary/SVAsyncProcedure.h"
 #include "SVValueObjectLibrary/BasicValueObjects.h"
 #include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
-#include "TriggerRecordController/ITriggerRecordControllerRW.h"
+#include "ObjectInterfaces/ITriggerRecordControllerRW.h"
 #pragma endregion Includes
 
 
@@ -52,7 +52,7 @@ struct MonitorListAttributeStruct;
 
 constexpr long getMaxPpqLength()
 {
-	return std::min<long>(g_maxPpqLength, SvTrc::ITriggerRecordControllerRW::cMaxTriggerRecords);
+	return std::min<long>(g_maxPpqLength, SvOi::ITriggerRecordControllerRW::cMaxTriggerRecords);
 };
 
 class SVPPQObject : 

@@ -237,13 +237,13 @@ bool SVColorToolClass::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVecto
 
 	m_convertToHSI.GetValue(convertToHSI);
 
-	SvTrc::IImagePtr pOutputImageBuffer = m_OutputImage.getImageToWrite(rRunStatus.m_triggerRecord);
+	SvOi::ITRCImagePtr pOutputImageBuffer = m_OutputImage.getImageToWrite(rRunStatus.m_triggerRecord);
 	if (nullptr != pOutputImageBuffer && !pOutputImageBuffer->isEmpty())
 	{
 		SvIe::SVImageClass* pInputImage = SvOl::getInput<SvIe::SVImageClass>(m_InputImageObjectInfo, true);
 		if (nullptr != pInputImage)
 		{
-			SvTrc::IImagePtr pInputImageBuffer = m_LogicalROIImage.getImageReadOnly(rRunStatus.m_triggerRecord.get());
+			SvOi::ITRCImagePtr pInputImageBuffer = m_LogicalROIImage.getImageReadOnly(rRunStatus.m_triggerRecord.get());
 			if (nullptr != pInputImageBuffer && !pInputImageBuffer->isEmpty())
 			{
 				HRESULT MatroxCode(S_OK);

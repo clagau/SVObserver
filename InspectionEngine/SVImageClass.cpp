@@ -30,7 +30,7 @@
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVTimerLibrary/SVClock.h"
-#include "TriggerRecordController/ITriggerRecordControllerRW.h"
+#include "ObjectInterfaces/ITriggerRecordControllerRW.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
@@ -705,7 +705,7 @@ const SVImageInfoClass& SVImageClass::GetImageInfo() const
 	return m_ImageInfo;
 }
 
-bool SVImageClass::SafeImageCopyToHandle(SvOi::SVImageBufferHandlePtr& p_rHandle, const SvTrc::ITriggerRecordRPtr pTriggerRecord)
+bool SVImageClass::SafeImageCopyToHandle(SvOi::SVImageBufferHandlePtr& p_rHandle, const SvOi::ITriggerRecordRPtr pTriggerRecord)
 {
 	bool l_bOk = (nullptr != p_rHandle);
 
@@ -715,7 +715,7 @@ bool SVImageClass::SafeImageCopyToHandle(SvOi::SVImageBufferHandlePtr& p_rHandle
 		{
 			HRESULT l_Code;
 
-			SvTrc::IImagePtr pImageBuffer = getImageReadOnly(pTriggerRecord.get());
+			SvOi::ITRCImagePtr pImageBuffer = getImageReadOnly(pTriggerRecord.get());
 			l_bOk = nullptr != pImageBuffer && !pImageBuffer->isEmpty();
 
 			if (l_bOk)
@@ -733,11 +733,11 @@ bool SVImageClass::SafeImageCopyToHandle(SvOi::SVImageBufferHandlePtr& p_rHandle
 	return l_bOk;
 }
 
-HRESULT SVImageClass::LoadImage(LPCTSTR fileName, const SvTrc::ITriggerRecordRWPtr& pTriggerRecord)
+HRESULT SVImageClass::LoadImage(LPCTSTR fileName, const SvOi::ITriggerRecordRWPtr& pTriggerRecord)
 {
 	HRESULT l_hrOk = E_FAIL;
 
-	SvTrc::IImagePtr pBuffer = getImageToWrite(pTriggerRecord);
+	SvOi::ITRCImagePtr pBuffer = getImageToWrite(pTriggerRecord);
 	if (nullptr != pBuffer && !pBuffer->isEmpty())
 	{
 		HRESULT l_Code = SVMatroxBufferInterface::ClearBuffer(pBuffer->getHandle()->GetBuffer(), 0);
@@ -1029,7 +1029,7 @@ void SVImageClass::SetTranslationOffset(double offsetX, double offsetY)
 	m_ImageInfo.SetExtentProperty(SvPb::SVExtentPropertyTranslationOffsetY, offsetY);
 }
 
-void SVImageClass::setImage(SvTrc::IImagePtr pImage, const SvTrc::ITriggerRecordRWPtr& pTriggerRecord)
+void SVImageClass::setImage(SvOi::ITRCImagePtr pImage, const SvOi::ITriggerRecordRWPtr& pTriggerRecord)
 {
 	assert(nullptr != pTriggerRecord);
 	if (nullptr != pTriggerRecord)
@@ -1039,7 +1039,7 @@ void SVImageClass::setImage(SvTrc::IImagePtr pImage, const SvTrc::ITriggerRecord
 	}
 }
 
-void SVImageClass::resetImage(const SvTrc::ITriggerRecordRWPtr& pTriggerRecord)
+void SVImageClass::resetImage(const SvOi::ITriggerRecordRWPtr& pTriggerRecord)
 {
 	assert(nullptr != pTriggerRecord);
 	if (nullptr != pTriggerRecord)
@@ -1051,14 +1051,14 @@ void SVImageClass::resetImage(const SvTrc::ITriggerRecordRWPtr& pTriggerRecord)
 
 SvOi::SVImageBufferHandlePtr SVImageClass::getLastImage(bool newIfNotAvailable) const
 {
-	SvTrc::ITriggerRecordRPtr lastTriggerRecord = nullptr;
-	auto& rRecordController = SvTrc::getTriggerRecordControllerRWInstance();
+	SvOi::ITriggerRecordRPtr lastTriggerRecord = nullptr;
+	auto& rRecordController = SvOi::getTriggerRecordControllerRWInstance();
 	if (0 <= m_inspectionPosInTRC && !rRecordController.isResetStarted())
 	{
 		int lastTRid = rRecordController.getLastTrId(m_inspectionPosInTRC);
 		lastTriggerRecord = rRecordController.createTriggerRecordObject(m_inspectionPosInTRC, lastTRid);
 	}
-	SvTrc::IImagePtr pImage;
+	SvOi::ITRCImagePtr pImage;
 	if (nullptr == lastTriggerRecord && newIfNotAvailable)
 	{
 		pImage = getTempImageBuffer();
@@ -1071,21 +1071,21 @@ SvOi::SVImageBufferHandlePtr SVImageClass::getLastImage(bool newIfNotAvailable) 
 	return nullptr != pImage ? pImage->getHandle() : nullptr;
 }
 
-SvTrc::IImagePtr SVImageClass::getTempImageBuffer(bool createBufferExternIfNecessary) const
+SvOi::ITRCImagePtr SVImageClass::getTempImageBuffer(bool createBufferExternIfNecessary) const
 {
-	SvTrc::IImagePtr pImage = nullptr;
+	SvOi::ITRCImagePtr pImage = nullptr;
 	SVMatroxBufferCreateStruct bufferStruct;
 	HRESULT Result = SVImageProcessingClass::FillBufferStructFromInfo(m_ImageInfo, bufferStruct);
 	if (S_OK == Result)
 	{
-		pImage = SvTrc::getTriggerRecordControllerRWInstance().getImageBuffer(bufferStruct, createBufferExternIfNecessary);
+		pImage = SvOi::getTriggerRecordControllerRWInstance().getImageBuffer(bufferStruct, createBufferExternIfNecessary);
 	}
 	return pImage;
 }
 
-SvTrc::IImagePtr SVImageClass::getImageReadOnly(const SvTrc::ITriggerRecordR* pTriggerRecord, bool lockImage) const
+SvOi::ITRCImagePtr SVImageClass::getImageReadOnly(const SvOi::ITriggerRecordR* pTriggerRecord, bool lockImage) const
 {
-	SvTrc::IImagePtr pImage = nullptr;
+	SvOi::ITRCImagePtr pImage = nullptr;
 	assert(nullptr != pTriggerRecord);
 	if (nullptr != pTriggerRecord)
 	{
@@ -1107,9 +1107,9 @@ SvTrc::IImagePtr SVImageClass::getImageReadOnly(const SvTrc::ITriggerRecordR* pT
 	return pImage;
 }
 
-SvTrc::IImagePtr SVImageClass::getImageToWrite(const SvTrc::ITriggerRecordRWPtr& pTriggerRecord)
+SvOi::ITRCImagePtr SVImageClass::getImageToWrite(const SvOi::ITriggerRecordRWPtr& pTriggerRecord)
 {
-	SvTrc::IImagePtr pImage = nullptr;
+	SvOi::ITRCImagePtr pImage = nullptr;
 	assert(nullptr != pTriggerRecord);
 	if (nullptr != pTriggerRecord)
 	{
@@ -1191,7 +1191,7 @@ void SVImageClass::goingOffline()
 	}
 }
 
-void SVImageClass::copiedSavedImage(SvTrc::ITriggerRecordRWPtr pTr)
+void SVImageClass::copiedSavedImage(SvOi::ITriggerRecordRWPtr pTr)
 {
 	if (m_editModeFreezeFlag && !m_isChildImageInTRC)
 	{
@@ -1394,7 +1394,7 @@ void SVImageClass::setInspectionPosForTrc()
 	auto* pInsp = GetInspection();
 	if (nullptr != pInsp)
 	{
-		m_inspectionPosInTRC = SvTrc::getInspectionPos(pInsp->getObjectId());
+		m_inspectionPosInTRC = SvOi::getInspectionPos(pInsp->getObjectId());
 	}
 	else
 	{
@@ -1426,7 +1426,7 @@ bool SVImageClass::UpdateTRCBuffers(SvStl::MessageContainerVector *pErrorMessage
 					try
 					{
 						m_isChildImageInTRC = true;
-						m_imagePosInTRC = SvTrc::getTriggerRecordControllerRWInstance().addOrChangeChildImage(getObjectId(), m_ParentImageInfo.first, bufferStruct, m_inspectionPosInTRC);
+						m_imagePosInTRC = SvOi::getTriggerRecordControllerRWInstance().addOrChangeChildImage(getObjectId(), m_ParentImageInfo.first, bufferStruct, m_inspectionPosInTRC);
 					}
 					catch (const SvStl::MessageContainer& rExp)
 					{
@@ -1474,7 +1474,7 @@ bool SVImageClass::UpdateTRCBuffers(SvStl::MessageContainerVector *pErrorMessage
 				try
 				{
 					m_isChildImageInTRC = false;
-					m_imagePosInTRC = SvTrc::getTriggerRecordControllerRWInstance().addOrChangeImage(getObjectId(), bufferStruct, m_inspectionPosInTRC);
+					m_imagePosInTRC = SvOi::getTriggerRecordControllerRWInstance().addOrChangeImage(getObjectId(), bufferStruct, m_inspectionPosInTRC);
 				}
 				catch (const SvStl::MessageContainer& rExp)
 				{

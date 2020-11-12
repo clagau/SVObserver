@@ -1924,7 +1924,7 @@ void SVTaskObjectClass::setEditModeFreezeFlag(bool flag)
 	}
 }
 
-void SVTaskObjectClass::copiedSavedImage(SvTrc::ITriggerRecordRWPtr pTr)
+void SVTaskObjectClass::copiedSavedImage(SvOi::ITriggerRecordRWPtr pTr)
 {
 	__super::copiedSavedImage(pTr);
 	for (size_t i = 0; i < m_friendList.size(); ++i)

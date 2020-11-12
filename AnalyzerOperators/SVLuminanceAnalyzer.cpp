@@ -296,7 +296,7 @@ bool SVLuminanceAnalyzer::onRun( RunStatus& rRunStatus, SvStl::MessageContainerV
 			break;
 		}
 
-		SvTrc::IImagePtr pImageBuffer = pInputImage->getImageReadOnly(rRunStatus.m_triggerRecord.get());
+		SvOi::ITRCImagePtr pImageBuffer = pInputImage->getImageReadOnly(rRunStatus.m_triggerRecord.get());
 		if( nullptr == pImageBuffer || pImageBuffer->isEmpty())
 		{
 			LastError = true;

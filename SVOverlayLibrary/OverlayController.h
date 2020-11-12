@@ -16,7 +16,7 @@ namespace SvRpc
 class RPCClient;
 }
 
-namespace SvTrc
+namespace SvOi
 {
 class ITriggerRecordR;
 };
@@ -33,7 +33,7 @@ public:
 	/// \param inspectionId [in] Id of the inspection.
 	/// \param imageId [in] Id of the image.
 	/// \returns SvSyl::SVFuture<SvPb::OverlayDesc>
-	SvSyl::SVFuture<SvPb::OverlayDesc> getOverlays(std::shared_ptr<SvTrc::ITriggerRecordR> pTr, uint32_t inspectionId, uint32_t imageId);
+	SvSyl::SVFuture<SvPb::OverlayDesc> getOverlays(std::shared_ptr<SvOi::ITriggerRecordR> pTr, uint32_t inspectionId, uint32_t imageId);
 
 public:
 	boost::asio::io_context& m_io_context;
@@ -53,7 +53,7 @@ private:
 	/// \param inspectionId [in] id of the inspection.
 	/// \param imageId [in] id of the image.
 	/// \returns SvSyl::SVFuture<SvPb::OverlayDesc>
-	SvSyl::SVFuture<SvPb::OverlayDesc> getOverlayStruct(std::shared_ptr<SvTrc::ITriggerRecordR> pTr, uint32_t inspectionId, uint32_t imageId);
+	SvSyl::SVFuture<SvPb::OverlayDesc> getOverlayStruct(std::shared_ptr<SvOi::ITriggerRecordR> pTr, uint32_t inspectionId, uint32_t imageId);
 
 	struct OverlayDefStruct 
 	{

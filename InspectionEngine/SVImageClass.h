@@ -18,8 +18,8 @@
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "SVObjectAppClass.h"
-#include "TriggerRecordController/IImage.h"
-#include "TriggerRecordController/ITriggerRecordRW.h"
+#include "ObjectInterfaces/ITRCImage.h"
+#include "ObjectInterfaces/ITriggerRecordRW.h"
 #include "SVValueObjectLibrary/SVDoubleValueObjectClass.h"
 #include "SVUtilityLibrary/SVPoint.h"
 #pragma endregion Includes
@@ -71,9 +71,9 @@ public:
 	HRESULT ValidateAgainstParentExtents( const SVImageExtentClass& rExtent );
 	HRESULT ValidateAgainstOutputExtents( const SVImageExtentClass& rExtent );
 
-	bool SafeImageCopyToHandle     ( SvOi::SVImageBufferHandlePtr& p_rHandle, const SvTrc::ITriggerRecordRPtr pTriggerRecord);
+	bool SafeImageCopyToHandle     ( SvOi::SVImageBufferHandlePtr& p_rHandle, const SvOi::ITriggerRecordRPtr pTriggerRecord);
 
-	HRESULT LoadImage( LPCTSTR p_szFileName, const SvTrc::ITriggerRecordRWPtr& pTriggerRecord);
+	HRESULT LoadImage( LPCTSTR p_szFileName, const SvOi::ITriggerRecordRWPtr& pTriggerRecord);
 
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* PDataObject ) override;
 
@@ -89,23 +89,23 @@ public:
 	/// ATTENTION: In error case the method throw an exception of the type SvStl::MessageContainer.
 	/// \param pImage [in] The buffer.
 	/// \param pTriggerRecord [in] The triggerRecord.
-	void setImage(SvTrc::IImagePtr pImage, const SvTrc::ITriggerRecordRWPtr& pTriggerRecord);
+	void setImage(SvOi::ITRCImagePtr pImage, const SvOi::ITriggerRecordRWPtr& pTriggerRecord);
 
 	/// Set the buffer to this image of the triggerRecord to invalid.
 	/// ATTENTION: In error case the method throw an exception of the type SvStl::MessageContainer.
 	/// \param pTriggerRecord [in] The triggerRecord.
-	void resetImage(const SvTrc::ITriggerRecordRWPtr& pTriggerRecord);
+	void resetImage(const SvOi::ITriggerRecordRWPtr& pTriggerRecord);
 
 	/// Get a new image buffer which is not connected to this object. The buffer is blocked as long as the caller hold the handle.
-	/// \returns SvTrc::IImagePtr
-	SvTrc::IImagePtr getTempImageBuffer(bool createBufferExternIfNecessary = true) const;
+	/// \returns SvOi::ITRCImagePtr
+	SvOi::ITRCImagePtr getTempImageBuffer(bool createBufferExternIfNecessary = true) const;
 
 	/// Return an pointer to a image instance (only in read only modus).
 	/// \param pTriggerRecord [in] Pointer to the TriggerRecord from where the image is set.
-	/// \param lockImage (default:false) [int] If true image will locked by is own and unlock if IImagePtr freed. If false image will not separated lock, but by the TriggerRecord (ATTENTION: In this case, use this instance only as long as this TriggerRecord-instance existing.)
-	/// \returns SvTrc::IImagePtr
-	SvTrc::IImagePtr getImageReadOnly(const SvTrc::ITriggerRecordR* pTriggerRecord, bool lockImage = false) const;
-	SvTrc::IImagePtr getImageToWrite(const SvTrc::ITriggerRecordRWPtr& pTriggerRecord);
+	/// \param lockImage (default:false) [int] If true image will locked by is own and unlock if ITRCImagePtr freed. If false image will not separated lock, but by the TriggerRecord (ATTENTION: In this case, use this instance only as long as this TriggerRecord-instance existing.)
+	/// \returns SvOi::ITRCImagePtr
+	SvOi::ITRCImagePtr getImageReadOnly(const SvOi::ITriggerRecordR* pTriggerRecord, bool lockImage = false) const;
+	SvOi::ITRCImagePtr getImageToWrite(const SvOi::ITriggerRecordRWPtr& pTriggerRecord);
 
 	void GetOutputList(SVOutputInfoListClass& p_rOutputInfoList);
 
@@ -113,7 +113,7 @@ public:
 	virtual void setEditModeFreezeFlag(bool flag) override;
 	virtual void goingOffline() override;
 
-	virtual void copiedSavedImage(SvTrc::ITriggerRecordRWPtr pTr) override;
+	virtual void copiedSavedImage(SvOi::ITriggerRecordRWPtr pTr) override;
 
 	bool isChildImageInTRC() const { return m_isChildImageInTRC; };
 

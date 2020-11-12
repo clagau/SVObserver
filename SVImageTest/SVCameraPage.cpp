@@ -76,7 +76,7 @@ BEGIN_MESSAGE_MAP(SVCameraPage, CPropertyPage)
 	ON_WM_DESTROY()
 END_MESSAGE_MAP()
 
-HRESULT SVCameraPage::UpdateWithCompletedBuffer( const SvTrc::IImagePtr& )
+HRESULT SVCameraPage::UpdateWithCompletedBuffer( const SvOi::ITRCImagePtr& )
 {
 	std::string Count;
 

@@ -254,9 +254,9 @@ bool SVImageArithmetic::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVec
 			return false;
 		}
 
-		SvTrc::IImagePtr pImageBufferA = pImageA->getImageReadOnly(rRunStatus.m_triggerRecord.get());
-		SvTrc::IImagePtr pImageBufferB = pImageB->getImageReadOnly(rRunStatus.m_triggerRecord.get());
-		SvTrc::IImagePtr pOutputImageBuffer = pOutputImage->getImageToWrite(rRunStatus.m_triggerRecord);
+		SvOi::ITRCImagePtr pImageBufferA = pImageA->getImageReadOnly(rRunStatus.m_triggerRecord.get());
+		SvOi::ITRCImagePtr pImageBufferB = pImageB->getImageReadOnly(rRunStatus.m_triggerRecord.get());
+		SvOi::ITRCImagePtr pOutputImageBuffer = pOutputImage->getImageToWrite(rRunStatus.m_triggerRecord);
 
 		if ( nullptr != pImageBufferA && !pImageBufferA->isEmpty() &&
 			nullptr != pImageBufferB && !pImageBufferB->isEmpty() &&
@@ -332,7 +332,7 @@ bool SVImageArithmetic::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVec
 	return false;
 }
 
-void SVImageArithmetic::ScaleWithAveraging(SvTrc::IImagePtr pInputImageBuffer, const RECT& rInputRect, SvTrc::IImagePtr pOutputImageBuffer, const RECT& rOutputRect)
+void SVImageArithmetic::ScaleWithAveraging(SvOi::ITRCImagePtr pInputImageBuffer, const RECT& rInputRect, SvOi::ITRCImagePtr pOutputImageBuffer, const RECT& rOutputRect)
 {
 	if(nullptr != pInputImageBuffer && !pInputImageBuffer->isEmpty() && nullptr != pOutputImageBuffer && !pOutputImageBuffer->isEmpty())
 	{

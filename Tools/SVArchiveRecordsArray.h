@@ -8,7 +8,7 @@
 #pragma region Includes
 #include "SVArchiveRecord.h"
 #include "Definitions/StringTypeDef.h"
-#include "TriggerRecordController/ITriggerRecordR.h"
+#include "ObjectInterfaces/ITriggerRecordR.h"
 #pragma endregion Includes
 
 namespace SvVol
@@ -43,7 +43,7 @@ public:
 
 	HRESULT AllocateBuffers(long bufferNumber, BufferStructCountMap& rBufferMap, int toolPos);
 
-	bool WriteArchiveImageFiles(const SvTrc::ITriggerRecordRPtr& pTriggerRecord);
+	bool WriteArchiveImageFiles(const SvOi::ITriggerRecordRPtr& pTriggerRecord);
 	HRESULT WriteImageQueue();
 
 	int ValidateResultsObjects();

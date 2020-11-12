@@ -319,7 +319,7 @@ HRESULT SVVirtualCamera::GetLut( SVLut& lut ) const
 	return hr;
 }
 
-SvTrc::IImagePtr SVVirtualCamera::ReserveNextImageHandle(  ) const
+SvOi::ITRCImagePtr SVVirtualCamera::ReserveNextImageHandle(  ) const
 {
 	if(nullptr != m_pDevice)
 	{

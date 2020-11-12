@@ -313,7 +313,7 @@ namespace SvAo
 				msg.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 				msg.Throw();
 			}
-			SvTrc::IImagePtr pImageBuffer = pInputImage->getImageReadOnly(rRunStatus.m_triggerRecord.get());
+			SvOi::ITRCImagePtr pImageBuffer = pInputImage->getImageReadOnly(rRunStatus.m_triggerRecord.get());
 			if (nullptr == pImageBuffer)
 			{
 				assert(false);
@@ -338,7 +338,7 @@ namespace SvAo
 				SvIe::SVImageClass* pGrayImage = SvOl::getInput<SvIe::SVImageClass>(m_grayImageInfo, true);
 				if (pGrayImage)
 				{
-					SvTrc::IImagePtr pGrayImageBuffer = pGrayImage->getImageReadOnly(rRunStatus.m_triggerRecord.get());
+					SvOi::ITRCImagePtr pGrayImageBuffer = pGrayImage->getImageReadOnly(rRunStatus.m_triggerRecord.get());
 					if (nullptr != pGrayImageBuffer && !pGrayImageBuffer->isEmpty())
 					{
 						grayImageId = pGrayImageBuffer->getHandle()->GetBuffer().GetIdentifier();

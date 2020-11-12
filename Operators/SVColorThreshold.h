@@ -72,7 +72,7 @@ private:
 	bool createImages();
 	bool createOutputImage(SvIe::SVImageClass* pInputImage, SvIe::SVImageClass* pOutputImage);
 
-	bool Binarize(long Lower, long Upper, BOOL Exclude, SvTrc::IImagePtr pInputImage, SvTrc::IImagePtr pOutputImage);
+	bool Binarize(long Lower, long Upper, BOOL Exclude, SvOi::ITRCImagePtr pInputImage, SvOi::ITRCImagePtr pOutputImage);
 	bool ValidateLocal() const;
 
 	//! The Band should only use the values Band0 to Band2 never BandNumber as this is private this should never be a problem

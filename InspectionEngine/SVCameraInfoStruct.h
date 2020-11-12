@@ -13,7 +13,7 @@
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <vector>
 //Moved to precompiled header: #include <boost/function.hpp>
-#include "TriggerRecordController/IImage.h"
+#include "ObjectInterfaces/ITRCImage.h"
 #include "Definitions/ObjectDefines.h"
 #pragma endregion Includes
 
@@ -21,7 +21,7 @@ namespace SvIe
 {
 
 #pragma region Declarations
-typedef boost::function<SvTrc::IImagePtr ()> NextImageHandleFunctor;
+typedef boost::function<SvOi::ITRCImagePtr ()> NextImageHandleFunctor;
 #pragma endregion Declarations
 
 struct SVCameraInfoStruct 
@@ -38,16 +38,16 @@ public:
 
 #pragma region Public Methods
 public:
-	HRESULT Assign( double p_StartFrameTS, double p_EndFrameTS, const SvTrc::IImagePtr pImage );
+	HRESULT Assign( double p_StartFrameTS, double p_EndFrameTS, const SvOi::ITRCImagePtr pImage );
 
 	void ClearInfo();
 	void ClearCameraInfo();
 
-	const SvTrc::IImagePtr GetNextImage();
+	const SvOi::ITRCImagePtr GetNextImage();
 	const void setCamera(uint32_t cameraId, NextImageHandleFunctor NextImageHandleFunctor);
 	uint32_t getCameraId() const { return m_CameraId; };
-	const SvTrc::IImagePtr getImage() const { return m_pImage; };
-	bool setImage(SvTrc::IImagePtr pImage);
+	const SvOi::ITRCImagePtr getImage() const { return m_pImage; };
+	bool setImage(SvOi::ITRCImagePtr pImage);
 
 	double m_StartFrameTimeStamp {0.0};
 	double m_EndFrameTimeStamp {0.0};
@@ -64,7 +64,7 @@ private:
 private:
 	NextImageHandleFunctor m_NextImageFunctor;
 	uint32_t m_CameraId{ SvDef::InvalidObjectId };
-	SvTrc::IImagePtr m_pImage {nullptr};
+	SvOi::ITRCImagePtr m_pImage {nullptr};
 #pragma endregion Member Variables
 };
 

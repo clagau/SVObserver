@@ -39,7 +39,7 @@ protected:
 	virtual bool onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 private:
-	void ScaleWithAveraging(SvTrc::IImagePtr pInputImageBuffer, const RECT& rInputRect, SvTrc::IImagePtr pOutputImageBuffer, const RECT& rOutputRect);
+	void ScaleWithAveraging(SvOi::ITRCImagePtr pInputImageBuffer, const RECT& rInputRect, SvOi::ITRCImagePtr pOutputImageBuffer, const RECT& rOutputRect);
 	
 	HRESULT CollectInputImageNames( );
 

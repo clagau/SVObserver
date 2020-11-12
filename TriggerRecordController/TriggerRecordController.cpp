@@ -24,8 +24,8 @@
 #include "DataControllerReader.h"
 #include "ImageBufferController.h"
 #include "Image.h"
-#include "ITriggerRecordControllerRW.h"
-#include "ITriggerRecordRW.h"
+#include "ObjectInterfaces/ITriggerRecordControllerRW.h"
+#include "ObjectInterfaces/ITriggerRecordRW.h"
 #include "TriggerRecordController.h"
 #include "TriggerRecordData.h"
 #include "TriggerRecord.h"
@@ -64,7 +64,7 @@ TriggerRecordController::~TriggerRecordController()
 #pragma endregion Constructor
 
 #pragma region Public Methods
-void TriggerRecordController::setLastFinishedTr(TrEventData data) 
+void TriggerRecordController::setLastFinishedTr(SvOi::TrEventData data)
 { 
 	m_pDataController->setLastFinishedTr(data); 
 	sendTrIdCall(data);
@@ -136,22 +136,22 @@ const std::unordered_map<uint32_t, int>& TriggerRecordController::getDataDefMap(
 	Exception.Throw();
 }
 
-ITriggerRecordRPtr TriggerRecordController::createTriggerRecordObject(int inspectionPos, int trId)
+SvOi::ITriggerRecordRPtr TriggerRecordController::createTriggerRecordObject(int inspectionPos, int trId)
 {
 	assert(-1 == m_resetStarted4IP);
 	if (-1 == m_resetStarted4IP && 0 <= trId)
 	{
-		return m_pDataController->createTriggerRecordObject(inspectionPos, [trId](SvTrc::TriggerRecordData& rData) -> bool { return rData.m_trId == trId; });
+		return m_pDataController->createTriggerRecordObject(inspectionPos, [trId](TriggerRecordData& rData) -> bool { return rData.m_trId == trId; });
 	}
 	return nullptr;
 }
 
-ITriggerRecordRPtr TriggerRecordController::createTriggerRecordObjectPerTriggerCount(int inspectionPos, int triggerCount)
+SvOi::ITriggerRecordRPtr TriggerRecordController::createTriggerRecordObjectPerTriggerCount(int inspectionPos, int triggerCount)
 {
 	assert(-1 == m_resetStarted4IP);
 	if (-1 == m_resetStarted4IP && 0 <= triggerCount)
 	{
-		return m_pDataController->createTriggerRecordObject(inspectionPos, [triggerCount](SvTrc::TriggerRecordData& rData) -> bool { return rData.m_triggerData.m_TriggerCount == triggerCount; });
+		return m_pDataController->createTriggerRecordObject(inspectionPos, [triggerCount](TriggerRecordData& rData) -> bool { return rData.m_triggerData.m_TriggerCount == triggerCount; });
 	}
 	return nullptr;
 }
@@ -202,7 +202,7 @@ void TriggerRecordController::unregisterReadyCallback(int handleId)
 	}
 }
 
-int TriggerRecordController::registerNewTrCallback(std::function<void(TrEventData)> pCallback)
+int TriggerRecordController::registerNewTrCallback(std::function<void(SvOi::TrEventData)> pCallback)
 {
 	assert(pCallback);
 	if (nullptr != pCallback)
@@ -210,7 +210,7 @@ int TriggerRecordController::registerNewTrCallback(std::function<void(TrEventDat
 		static int handleCounter = 0;
 		std::lock_guard<std::mutex> guard(m_callbackMutex);
 		int handle = handleCounter++;
-		 m_newTrCallbacks.push_back(std::pair<int, std::function<void(TrEventData)>>(handle, pCallback));
+		 m_newTrCallbacks.push_back(std::pair<int, std::function<void(SvOi::TrEventData)>>(handle, pCallback));
 		return handle;
 	}
 	return -1;
@@ -226,7 +226,7 @@ void TriggerRecordController::unregisterNewTrCallback(int handleId)
 	}
 }
 
-int TriggerRecordController::registerNewInterestTrCallback(std::function<void(const std::vector<TrInterestEventData>&)> pCallback)
+int TriggerRecordController::registerNewInterestTrCallback(std::function<void(const std::vector<SvOi::TrInterestEventData>&)> pCallback)
 {
 	assert(pCallback);
 	if (nullptr != pCallback)
@@ -234,7 +234,7 @@ int TriggerRecordController::registerNewInterestTrCallback(std::function<void(co
 		static int handleCounter = 0;
 		std::lock_guard<std::mutex> guard(m_callbackMutex);
 		int handle = handleCounter++;
-		m_newInterestTrCallbacks.push_back(std::pair<int, std::function<void(const std::vector<TrInterestEventData>&)>>(handle, pCallback));
+		m_newInterestTrCallbacks.push_back(std::pair<int, std::function<void(const std::vector<SvOi::TrInterestEventData>&)>>(handle, pCallback));
 		return handle;
 	}
 	return -1;
@@ -250,14 +250,14 @@ void TriggerRecordController::unregisterNewInterestTrCallback(int handleId)
 	}
 }
 
-bool TriggerRecordController::setTrsOfInterest(const std::vector<ITriggerRecordRPtr>& trVector, bool isInterest)
+bool TriggerRecordController::setTrsOfInterest(const std::vector<SvOi::ITriggerRecordRPtr>& trVector, bool isInterest)
 {
 	bool retValue = false;
 	auto pLock = ResetLocker::lockReset(m_pDataController->getResetId());
 	if (nullptr != pLock)
 	{
 		std::vector<DataControllerBase::InterestStruct> trValueVec;
-		std::vector<TrInterestEventData> trEventVec;
+		std::vector<SvOi::TrInterestEventData> trEventVec;
 		for (auto tr : trVector)
 		{
 			auto* pTr = dynamic_cast<TriggerRecord*>(tr.get());
@@ -282,7 +282,7 @@ bool TriggerRecordController::setTrsOfInterest(const std::vector<ITriggerRecordR
 	return retValue;
 }
 
-std::vector<ITriggerRecordRPtr> TriggerRecordController::getTrsOfInterest(int inspectionPos, int n)
+std::vector<SvOi::ITriggerRecordRPtr> TriggerRecordController::getTrsOfInterest(int inspectionPos, int n)
 {
 	auto pLock = ResetLocker::lockReset(m_pDataController->getResetId());
 	if (nullptr != pLock)
@@ -434,13 +434,13 @@ void TriggerRecordController::resizeIPNumberOfRecords(const std::vector<int>& in
 	}
 }
 
-ITriggerRecordRWPtr TriggerRecordController::createTriggerRecordObjectToWrite(int inspectionPos)
+SvOi::ITriggerRecordRWPtr TriggerRecordController::createTriggerRecordObjectToWrite(int inspectionPos)
 {
 	assert(-1 == m_resetStarted4IP);
 
 	if (-1 == m_resetStarted4IP)
 	{
-		ITriggerRecordRWPtr pTriggerRecord = m_pDataController->createTriggerRecordObjectToWrite(inspectionPos);
+		SvOi::ITriggerRecordRWPtr pTriggerRecord = m_pDataController->createTriggerRecordObjectToWrite(inspectionPos);
 		if(nullptr != pTriggerRecord)
 		{
 			pTriggerRecord->initValueData();
@@ -453,7 +453,7 @@ ITriggerRecordRWPtr TriggerRecordController::createTriggerRecordObjectToWrite(in
 	}
 };
 
-ITriggerRecordRPtr TriggerRecordController::closeWriteAndOpenReadTriggerRecordObject(ITriggerRecordRWPtr& pTriggerRecord)
+SvOi::ITriggerRecordRPtr TriggerRecordController::closeWriteAndOpenReadTriggerRecordObject(SvOi::ITriggerRecordRWPtr& pTriggerRecord)
 {
 	if (nullptr != pTriggerRecord)
 	{
@@ -476,7 +476,7 @@ ITriggerRecordRPtr TriggerRecordController::closeWriteAndOpenReadTriggerRecordOb
 	return nullptr;
 }
 
-void TriggerRecordController::closeWriteObjectWithoutUpdateLastTrId(ITriggerRecordRWPtr& pTriggerRecord)
+void TriggerRecordController::closeWriteObjectWithoutUpdateLastTrId(SvOi::ITriggerRecordRWPtr& pTriggerRecord)
 {
 	TriggerRecord* pTR = dynamic_cast<TriggerRecord*>(pTriggerRecord.get());
 	if (nullptr != pTR)
@@ -491,9 +491,9 @@ void TriggerRecordController::closeWriteObjectWithoutUpdateLastTrId(ITriggerReco
 	pTriggerRecord = nullptr;
 }
 
-IImagePtr TriggerRecordController::getImageBuffer(const SVMatroxBufferCreateStruct& rBufferStruct, bool createBufferExternIfNecessary) const
+SvOi::ITRCImagePtr TriggerRecordController::getImageBuffer(const SVMatroxBufferCreateStruct& rBufferStruct, bool createBufferExternIfNecessary) const
 {
-	IImagePtr retImage;
+	SvOi::ITRCImagePtr retImage;
 	{
 		auto pLock = ResetLocker::lockReset(m_pDataController->getResetId());
 		if (-1 == m_resetStarted4IP && nullptr != pLock)
@@ -1258,7 +1258,7 @@ void TriggerRecordController::sendReadyCall()
 	}
 }
 
-void TriggerRecordController::sendTrIdCall(TrEventData data)
+void TriggerRecordController::sendTrIdCall(SvOi::TrEventData data)
 {
 	std::lock_guard<std::mutex> guard(m_callbackMutex);
 	for (auto& newTrIdCallback : m_newTrCallbacks)
@@ -1270,7 +1270,7 @@ void TriggerRecordController::sendTrIdCall(TrEventData data)
 	}
 }
 
-void TriggerRecordController::sendInterestTrIdCall(std::vector<TrInterestEventData>&& data)
+void TriggerRecordController::sendInterestTrIdCall(std::vector<SvOi::TrInterestEventData>&& data)
 {
 	std::lock_guard<std::mutex> guard(m_callbackMutex);
 	for (auto& newTrIdCallback : m_newInterestTrCallbacks)
@@ -1301,77 +1301,7 @@ void TriggerRecordController::reduceRequiredImageBuffer(const std::map<int, int>
 
 #pragma endregion Private Methods
 
-ITriggerRecordControllerRW& getTriggerRecordControllerRWInstance()
-{
-	auto& rTRC = getTriggerRecordControllerInstance();
-	if (rTRC.isWritable())
-	{
-		return getTriggerRecordControllerInstance();
-	}
-	assert(false);
-	SvStl::MessageManager Exception(SvStl::MsgType::Data);
-	Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_NotWriteVersion, SvStl::SourceFileParams(StdMessageParams));
-	Exception.Throw();
-}
-
-ITriggerRecordControllerR& getTriggerRecordControllerRInstance()
-{
-	return getTriggerRecordControllerInstance();
-}
-
-int getInspectionPos(uint32_t inspectionId)
-{
-	int Return = -1;
-	const auto& rInspectionList = getTriggerRecordControllerInstance().getInspections();
-	const auto& Iter = std::find_if(rInspectionList.list().begin(), rInspectionList.list().end(), [inspectionId](const auto& rItem)-> bool
-	{
-		return rItem.id() == inspectionId;
-	});
-	if (rInspectionList.list().end() != Iter)
-	{
-		Return = static_cast<int>(std::distance(rInspectionList.list().begin(), Iter));
-	}
-
-	return Return;
-}
-
-
 std::shared_ptr<TriggerRecordController> g_pTriggerRecordController = nullptr;
-void createTriggerRecordControllerInstance(TRC_DataType dataType)
-{
-	if (nullptr == g_pTriggerRecordController)
-	{
-		switch (dataType)
-		{
-			case SvTrc::TRC_DataType::Local:
-				g_pTriggerRecordController = std::make_shared<TriggerRecordController>(std::make_unique<DataControllerLocal>());
-				break;
-			case SvTrc::TRC_DataType::Writer:
-				g_pTriggerRecordController = std::make_shared<TriggerRecordController>(std::make_unique<DataControllerWriter>());
-				break;
-			case SvTrc::TRC_DataType::Reader:
-				g_pTriggerRecordController = std::make_shared<TriggerRecordController>(std::make_unique<DataControllerReader>());
-				break;
-			default:
-				assert(false);
-				break;
-		}
-	}
-	else
-	{
-		assert(false);
-	}
-}
-
-void destroyTriggerRecordController()
-{
-	if (nullptr != g_pTriggerRecordController)
-	{
-		g_pTriggerRecordController->clearAll();
-		g_pTriggerRecordController = nullptr;
-	}
-}
-
 TriggerRecordController& getTriggerRecordControllerInstance()
 {
 	if (nullptr != g_pTriggerRecordController)
@@ -1392,3 +1322,75 @@ ImageBufferController& getImageBufferControllerInstance()
 	return getTriggerRecordControllerInstance().getImageBufferControllerInstance();
 }
 } //namespace SvTrc
+
+namespace SvOi
+{
+	int getInspectionPos(uint32_t inspectionId)
+	{
+		int Return = -1;
+		const auto& rInspectionList = SvTrc::getTriggerRecordControllerInstance().getInspections();
+		const auto& Iter = std::find_if(rInspectionList.list().begin(), rInspectionList.list().end(), [inspectionId](const auto& rItem)-> bool
+			{
+				return rItem.id() == inspectionId;
+			});
+		if (rInspectionList.list().end() != Iter)
+		{
+			Return = static_cast<int>(std::distance(rInspectionList.list().begin(), Iter));
+		}
+
+		return Return;
+	}
+
+	ITriggerRecordControllerRW& getTriggerRecordControllerRWInstance()
+	{
+		auto& rTRC = SvTrc::getTriggerRecordControllerInstance();
+		if (rTRC.isWritable())
+		{
+			return SvTrc::getTriggerRecordControllerInstance();
+		}
+		assert(false);
+		SvStl::MessageManager Exception(SvStl::MsgType::Data);
+		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_NotWriteVersion, SvStl::SourceFileParams(StdMessageParams));
+		Exception.Throw();
+	}
+
+	ITriggerRecordControllerR& getTriggerRecordControllerRInstance()
+	{
+		return SvTrc::getTriggerRecordControllerInstance();
+	}
+
+	void createTriggerRecordControllerInstance(SvOi::TRC_DataType dataType)
+	{
+		if (nullptr == SvTrc::g_pTriggerRecordController)
+		{
+			switch (dataType)
+			{
+			case SvOi::TRC_DataType::Local:
+				SvTrc::g_pTriggerRecordController = std::make_shared<SvTrc::TriggerRecordController>(std::make_unique<SvTrc::DataControllerLocal>());
+				break;
+			case SvOi::TRC_DataType::Writer:
+				SvTrc::g_pTriggerRecordController = std::make_shared<SvTrc::TriggerRecordController>(std::make_unique<SvTrc::DataControllerWriter>());
+				break;
+			case SvOi::TRC_DataType::Reader:
+				SvTrc::g_pTriggerRecordController = std::make_shared<SvTrc::TriggerRecordController>(std::make_unique<SvTrc::DataControllerReader>());
+				break;
+			default:
+				assert(false);
+				break;
+			}
+		}
+		else
+		{
+			assert(false);
+		}
+	}
+
+	void destroyTriggerRecordController()
+	{
+		if (nullptr != SvTrc::g_pTriggerRecordController)
+		{
+			SvTrc::g_pTriggerRecordController->clearAll();
+			SvTrc::g_pTriggerRecordController = nullptr;
+		}
+	}
+} //namespace SvOi

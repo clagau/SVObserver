@@ -16,7 +16,7 @@
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "SVStatusLibrary/RunStatus.h"
-#include "TriggerRecordController/ITriggerRecordControllerRW.h"
+#include "ObjectInterfaces/ITriggerRecordControllerRW.h"
 #pragma endregion Includes
 
 namespace SvOp
@@ -143,7 +143,7 @@ bool SVStdImageOperatorListClass::Run(RunStatus& rRunStatus, SvStl::MessageConta
 		SvOi::SVImageBufferHandlePtr input;
 		if (nullptr == m_replaceSourceImage)
 		{
-			SvTrc::IImagePtr pInputImageBuffer = m_LogicalROIImage.getImageReadOnly(rRunStatus.m_triggerRecord.get());
+			SvOi::ITRCImagePtr pInputImageBuffer = m_LogicalROIImage.getImageReadOnly(rRunStatus.m_triggerRecord.get());
 			input = (nullptr != pInputImageBuffer) ? pInputImageBuffer->getHandle() : nullptr;
 		}
 		else
@@ -196,7 +196,7 @@ HRESULT SVStdImageOperatorListClass::CollectInputImageNames()
 bool SVStdImageOperatorListClass::RunLocal(RunStatus &rRunStatus, SvOi::SVImageBufferHandlePtr input, SvIe::SVImageClass&)
 {
 	bool bRetVal = true;
-	SvTrc::IImagePtr pOutputImageBuffer = m_OutputImage.getImageToWrite(rRunStatus.m_triggerRecord);
+	SvOi::ITRCImagePtr pOutputImageBuffer = m_OutputImage.getImageToWrite(rRunStatus.m_triggerRecord);
 	if (nullptr != pOutputImageBuffer && !pOutputImageBuffer->isEmpty())
 	{
 		SvOi::SVImageBufferHandlePtr output = pOutputImageBuffer->getHandle();

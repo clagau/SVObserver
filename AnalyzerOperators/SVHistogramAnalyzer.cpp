@@ -652,7 +652,7 @@ bool SVHistogramAnalyzer::onRun( RunStatus& rRunStatus, SvStl::MessageContainerV
 			break;
 		}
 
-		SvTrc::IImagePtr pImageBuffer = pInputImage->getImageReadOnly(rRunStatus.m_triggerRecord.get());
+		SvOi::ITRCImagePtr pImageBuffer = pInputImage->getImageReadOnly(rRunStatus.m_triggerRecord.get());
 
 		if( nullptr == pImageBuffer)
 		{
@@ -1079,10 +1079,10 @@ HRESULT SVHistogramAnalyzer::createHistogramImage()
 	return hr;
 }
 
-HRESULT SVHistogramAnalyzer::paintHistogramImage(const SvTrc::ITriggerRecordRWPtr& pTriggerRecord)
+HRESULT SVHistogramAnalyzer::paintHistogramImage(const SvOi::ITriggerRecordRWPtr& pTriggerRecord)
 {
 	HRESULT hr = S_OK;
-	SvTrc::IImagePtr pImageBuffer = m_histogramImage.getImageToWrite(pTriggerRecord);
+	SvOi::ITRCImagePtr pImageBuffer = m_histogramImage.getImageToWrite(pTriggerRecord);
 	if (nullptr == pImageBuffer || pImageBuffer->isEmpty())
 	{
 		return Err_GetImageHandle;

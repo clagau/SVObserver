@@ -414,7 +414,7 @@ HRESULT SVFileAcquisitionDevice::CameraProcessEndFrame(unsigned long cameraIndex
 		SVFileCamera& rCamera = m_cameras[cameraIndex];
 		if (rCamera.m_lIsStarted && nullptr != rCamera.m_pBufferInterface)
 		{
-			SvTrc::IImagePtr pImage = rCamera.m_pBufferInterface->GetNextBuffer();
+			SvOi::ITRCImagePtr pImage = rCamera.m_pBufferInterface->GetNextBuffer();
 
 			if (nullptr != pImage && nullptr != pImage->getHandle())
 			{

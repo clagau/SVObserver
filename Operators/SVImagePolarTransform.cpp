@@ -587,12 +587,12 @@ bool SVImagePolarTransform::onRun( RunStatus& rRunStatus, SvStl::MessageContaine
 		//added "true" to the call of UpdateImage - if the tool only changes position the output image does not need to be re-created
 		result = result && S_OK == m_outputImage.UpdateImage(rImageToolExtents, true);
 
-		SvTrc::IImagePtr pOutputImageBuffer = m_outputImage.getImageToWrite(rRunStatus.m_triggerRecord);
+		SvOi::ITRCImagePtr pOutputImageBuffer = m_outputImage.getImageToWrite(rRunStatus.m_triggerRecord);
 		result = result && nullptr != pOutputImageBuffer && !pOutputImageBuffer->isEmpty();
 
 		const SVImageExtentClass& rExtents = m_outputImage.GetImageExtents();
 
-		SvTrc::IImagePtr pInputImageBuffer = SvOl::getInput<SvIe::SVImageClass>(m_inputImageObjectInfo, true)->getImageReadOnly(rRunStatus.m_triggerRecord.get());
+		SvOi::ITRCImagePtr pInputImageBuffer = SvOl::getInput<SvIe::SVImageClass>(m_inputImageObjectInfo, true)->getImageReadOnly(rRunStatus.m_triggerRecord.get());
 		result = result && nullptr != pInputImageBuffer && !pInputImageBuffer->isEmpty();
 
 		if (!result && nullptr != pErrorMessages)

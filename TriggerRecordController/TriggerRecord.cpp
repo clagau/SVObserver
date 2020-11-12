@@ -45,7 +45,7 @@ TriggerRecord::~TriggerRecord()
 		removeTrReferenceCount(m_inspectionPos, m_rData.m_referenceCount);
 		if (finishedTr && !m_blockUpdateLastId)
 		{
-			getTriggerRecordControllerInstance().setLastFinishedTr(TrEventData(m_inspectionPos, m_rData.m_trId));
+			getTriggerRecordControllerInstance().setLastFinishedTr(SvOi::TrEventData(m_inspectionPos, m_rData.m_trId));
 		}
 	}
 }
@@ -60,20 +60,20 @@ int TriggerRecord::getId() const
 	return -1;
 }
 
-const TriggerData& TriggerRecord::getTriggerData() const 
+const SvOi::TriggerData& TriggerRecord::getTriggerData() const
 { 
 	auto pLock = ResetLocker::lockReset(m_ResetId);
 	if (nullptr != pLock)
 	{
 		return m_rData.m_triggerData;
 	}
-	static TriggerData emptyData;
+	static SvOi::TriggerData emptyData;
 	return emptyData;
 }
 
-IImagePtr TriggerRecord::getImage(int pos, bool lockImage) const
+SvOi::ITRCImagePtr TriggerRecord::getImage(int pos, bool lockImage) const
 {
-	IImagePtr pImage;
+	SvOi::ITRCImagePtr pImage;
 	auto pLock = ResetLocker::lockReset(m_ResetId);
 	if (nullptr != pLock)
 	{
@@ -116,15 +116,15 @@ IImagePtr TriggerRecord::getImage(int pos, bool lockImage) const
 	return pImage;
 }
 
-IImagePtr TriggerRecord::getChildImage(int childPos, bool lockImage) const
+SvOi::ITRCImagePtr TriggerRecord::getChildImage(int childPos, bool lockImage) const
 {
-	IImagePtr pImage;
+	SvOi::ITRCImagePtr pImage;
 	auto pLock = ResetLocker::lockReset(m_ResetId);
 	if (nullptr != pLock && 0 <= childPos && m_rImageList.childlist_size() > childPos)
 	{
 		auto& rImageController = getImageBufferControllerInstance();
 		const auto& rChildDef = m_rImageList.childlist(childPos);
-		int pos = findObjectIdPos(m_rImageList.list(), rChildDef.parentimageid());
+		int pos = SvOi::findObjectIdPos(m_rImageList.list(), rChildDef.parentimageid());
 
 		MatroxBufferChildDataStruct bufferDataStruct;
 		memcpy(&bufferDataStruct, rChildDef.type().c_str(), sizeof(MatroxBufferChildDataStruct));
@@ -139,8 +139,8 @@ IImagePtr TriggerRecord::getChildImage(int childPos, bool lockImage) const
 		}
 		else
 		{
-			int childPos2 = findObjectIdPos(m_rImageList.childlist(), rChildDef.parentimageid());
-			IImagePtr pChildImage = getChildImage(childPos2, lockImage);
+			int childPos2 = SvOi::findObjectIdPos(m_rImageList.childlist(), rChildDef.parentimageid());
+			SvOi::ITRCImagePtr pChildImage = getChildImage(childPos2, lockImage);
 			if (nullptr != pChildImage && !pChildImage->isEmpty())
 			{
 				SVMatroxBufferCreateChildStruct bufferStruct(pChildImage->getHandle()->GetBuffer());
@@ -239,7 +239,7 @@ bool TriggerRecord::isObjectUpToTime() const
 	return (nullptr != pLock);
 }
 
-void TriggerRecord::setTriggerData(const TriggerData& data) 
+void TriggerRecord::setTriggerData(const SvOi::TriggerData& data)
 { 
 	auto pLock = ResetLocker::lockReset(m_ResetId);
 	if (nullptr != pLock)
@@ -260,7 +260,7 @@ void TriggerRecord::initImages()
 		{
 			if (-1 == pImagePos[i])
 			{
-				IImagePtr pImage = rImageController.createNewImageHandle(rImageList[i].structid(), pImagePos[i], m_ResetId, false);
+				SvOi::ITRCImagePtr pImage = rImageController.createNewImageHandle(rImageList[i].structid(), pImagePos[i], m_ResetId, false);
 				if (nullptr == pImage)
 				{
 					SvDef::StringVector msgList;
@@ -304,7 +304,7 @@ void TriggerRecord::setImages(const ITriggerRecordR& rDestTr)
 			{
 				if (-1 == pImagePos[i])
 				{
-					IImagePtr pImage = rImageController.createNewImageHandle(rImageList[i].structid(), pImagePos[i], m_ResetId, false);
+					SvOi::ITRCImagePtr pImage = rImageController.createNewImageHandle(rImageList[i].structid(), pImagePos[i], m_ResetId, false);
 					if (nullptr == pImage)
 					{
 						SvDef::StringVector msgList;
@@ -324,7 +324,7 @@ void TriggerRecord::setImages(const ITriggerRecordR& rDestTr)
 	}
 }
 
-void TriggerRecord::setImage(int pos, const IImagePtr& pImage)
+void TriggerRecord::setImage(int pos, const SvOi::ITRCImagePtr& pImage)
 {
 	setImage(pos, pImage->getBufferPos());
 }
@@ -381,9 +381,9 @@ void TriggerRecord::setImage(int pos, int bufferPos)
 	}
 }
 
-IImagePtr TriggerRecord::createNewImageHandle(int pos)
+SvOi::ITRCImagePtr TriggerRecord::createNewImageHandle(int pos)
 {
-	IImagePtr pImage;
+	SvOi::ITRCImagePtr pImage;
 	auto& rImageController = getImageBufferControllerInstance();
 	auto pLock = ResetLocker::lockReset(m_ResetId);
 	if (nullptr != pLock)

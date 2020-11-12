@@ -15,7 +15,7 @@
 //Moved to precompiled header: #include <vector>
 #include "resource.h"
 #include "ObjectInterfaces\SVImageBufferHandleInterface.h"
-#include "TriggerRecordController\DataControllerBase.h"
+#include "ObjectInterfaces\ITriggerRecordControllerR.h"
 #pragma endregion Includes
 
 class SVInspectionProcess;
@@ -492,7 +492,7 @@ public:
 
 public:
 	static HRESULT ImageToBSTR(const SVImageInfoClass &rImageInfo, SvOi::SVImageBufferHandlePtr ImageHandle, BSTR *pbstr);
-	static HRESULT SafeImageToBSTR(SvIe::SVImageClass *pImage, const SvTrc::ITriggerRecordRPtr pTriggerRecord, BSTR *pbstr);
+	static HRESULT SafeImageToBSTR(SvIe::SVImageClass *pImage, const SvOi::ITriggerRecordRPtr pTriggerRecord, BSTR *pbstr);
 
     static HRESULT SafeArrayPutElementNoCopy(SAFEARRAY* psa, long* rgIndices, void* pv);
     static HRESULT SafeArrayGetElementNoCopy(SAFEARRAY* psa, long* rgIndices, void* pv);

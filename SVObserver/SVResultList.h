@@ -55,7 +55,7 @@ public:
 	// Parameter:  getColor <in>:  true (default) if the color for the item in the result view should be fetched.
 	//************************************
 	void  GetResultData(SvIe::SVIPResultData& rResultData) const;
-	std::vector <SvIe::IPResultTableData> getResultTableData(const SvTrc::ITriggerRecordR& rTriggerRecord);
+	std::vector <SvIe::IPResultTableData> getResultTableData(const SvOi::ITriggerRecordR& rTriggerRecord);
 
 	uint32_t getTableId() const { return m_ResultViewReferences.getTableId(); }
 	void setTableId(uint32_t id) { m_ResultViewReferences.setTableId(id); }

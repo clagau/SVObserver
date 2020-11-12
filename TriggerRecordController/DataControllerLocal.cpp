@@ -184,7 +184,7 @@ bool DataControllerLocal::setInspections(SvPb::InspectionList&& rInspectionList)
 {
 	for (auto& rInspection : rInspectionList.list())
 	{
-		if (ITriggerRecordControllerRW::cMaxTriggerRecords < rInspection.numberofrecords() || ITriggerRecordControllerRW::cMaxTriggerRecordsOfInterest < rInspection.numberrecordsofinterest())
+		if (SvOi::ITriggerRecordControllerRW::cMaxTriggerRecords < rInspection.numberofrecords() || SvOi::ITriggerRecordControllerRW::cMaxTriggerRecordsOfInterest < rInspection.numberrecordsofinterest())
 		{
 			assert(false);
 			return false;
@@ -269,7 +269,7 @@ void DataControllerLocal::changeDataDef(SvPb::DataDefinitionList&& dataDefList, 
 	m_dataVector[inspectionPos].setDataDefList(std::move(dataDefList));
 }
 
-ITriggerRecordRPtr DataControllerLocal::createTriggerRecordObject(int inspectionPos, std::function<bool(TriggerRecordData&)> validFunc)
+SvOi::ITriggerRecordRPtr DataControllerLocal::createTriggerRecordObject(int inspectionPos, std::function<bool(TriggerRecordData&)> validFunc)
 {
 	if (0 <= inspectionPos && m_dataVector.size() > inspectionPos && m_dataVector[inspectionPos].getBasicData().m_bInit)
 	{
@@ -297,7 +297,7 @@ ITriggerRecordRPtr DataControllerLocal::createTriggerRecordObject(int inspection
 	return nullptr;
 }
 
-ITriggerRecordRWPtr DataControllerLocal::createTriggerRecordObjectToWrite(int inspectionPos)
+SvOi::ITriggerRecordRWPtr DataControllerLocal::createTriggerRecordObjectToWrite(int inspectionPos)
 {
 	assert(0 <= inspectionPos && m_dataVector.size() > inspectionPos && m_dataVector[inspectionPos].getBasicData().m_bInit);
 
@@ -465,10 +465,10 @@ bool DataControllerLocal::getPauseTrsOfInterest(int inspectionPos) const
 	return (1 & m_pauseTrOfInterestFlag[0]) > 0;
 }
 
-std::vector<ITriggerRecordRPtr> DataControllerLocal::getTRsOfInterest(int inspectionPos, int n)
+std::vector<SvOi::ITriggerRecordRPtr> DataControllerLocal::getTRsOfInterest(int inspectionPos, int n)
 {
 	TRControllerLocalDataPerIP& rIPData = m_dataVector[inspectionPos];
-	std::vector<ITriggerRecordRPtr> retVec;
+	std::vector<SvOi::ITriggerRecordRPtr> retVec;
 	auto posVec = rIPData.getTRofInterestPos(n);
 
 	for (int pos : posVec)

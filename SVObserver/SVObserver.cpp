@@ -738,7 +738,7 @@ void SVObserverApp::OnStop()
 	}
 
 	SVSVIMStateClass::changeState(SV_STATE_UNAVAILABLE | SV_STATE_STOPING, SV_STATE_READY | SV_STATE_RUNNING | SV_STATE_STOP_PENDING);
-	SvTrc::getTriggerRecordControllerRWInstance().unlockReset();
+	SvOi::getTriggerRecordControllerRWInstance().unlockReset();
 
 	SVObjectManagerClass::Instance().SetState(SVObjectManagerClass::ReadWrite);
 
@@ -1861,7 +1861,7 @@ BOOL SVObserverApp::InitInstance()
 	SVMatroxApplicationInterface::Startup();
 
 	//must be called before SVDigitizerProcessingClass-Startup
-	SvTrc::createTriggerRecordControllerInstance(SvTrc::TRC_DataType::Writer);
+	SvOi::createTriggerRecordControllerInstance(SvOi::TRC_DataType::Writer);
 
 	SvTi::SVHardwareManifest::Instance().Startup();
 	SvTi::SVTriggerProcessingClass::Instance().Startup();
@@ -2185,7 +2185,7 @@ int SVObserverApp::ExitInstance()
 
 	SVIOConfigurationInterfaceClass::Instance().Shutdown();
 
-	SvTrc::destroyTriggerRecordController();
+	SvOi::destroyTriggerRecordController();
 	// Shutdown MIL
 	SVMatroxApplicationInterface::Shutdown();
 
@@ -2406,7 +2406,7 @@ HRESULT SVObserverApp::OpenSVXFile()
 			try
 			{
 				//avoid that TRC-memory will be recreated for every loading step, but do it once at the end.
-				SvTrc::getTriggerRecordControllerRWInstance().setGlobalInit();
+				SvOi::getTriggerRecordControllerRWInstance().setGlobalInit();
 			}
 			catch (const SvStl::MessageContainer& rExp)
 			{
@@ -2535,7 +2535,7 @@ HRESULT SVObserverApp::OpenSVXFile()
 						try
 						{
 							//the globalInit have to be finished before RebuildInputOutputLists called, because it will do a reset and this need the images and memory.
-							SvTrc::getTriggerRecordControllerRWInstance().finishGlobalInit();
+							SvOi::getTriggerRecordControllerRWInstance().finishGlobalInit();
 						}
 						catch (const SvStl::MessageContainer& rExp)
 						{
@@ -5117,7 +5117,7 @@ void SVObserverApp::Start()
 		SVSVIMStateClass::changeState(SV_STATE_UNAVAILABLE | SV_STATE_STARTING, SV_STATE_READY | SV_STATE_START_PENDING);
 
 		SetPriorityClass(GetCurrentProcess(), REALTIME_PRIORITY_CLASS);
-		SvTrc::getTriggerRecordControllerRWInstance().lockReset();
+		SvOi::getTriggerRecordControllerRWInstance().lockReset();
 
 		if (IsProductTypeRAID())
 		{
@@ -5866,7 +5866,7 @@ void SVObserverApp::OnStopAll()
 			}
 		}
 
-		SvTrc::getTriggerRecordControllerRWInstance().unlockReset();
+		SvOi::getTriggerRecordControllerRWInstance().unlockReset();
 		SVSVIMStateClass::RemoveState(SV_STATE_RUNNING | SV_STATE_TEST);
 
 		SetPriorityClass(GetCurrentProcess(), NORMAL_PRIORITY_CLASS);

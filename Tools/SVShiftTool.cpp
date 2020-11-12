@@ -182,7 +182,7 @@ bool SVShiftTool::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *p
 			}
 		}
 
-		SvTrc::IImagePtr pOutputImageBuffer = m_OutputImage.getImageToWrite(rRunStatus.m_triggerRecord);
+		SvOi::ITRCImagePtr pOutputImageBuffer = m_OutputImage.getImageToWrite(rRunStatus.m_triggerRecord);
 		if (nullptr != pOutputImageBuffer && !pOutputImageBuffer->isEmpty())
 		{
 			SVMatroxBufferInterface::ClearBuffer(pOutputImageBuffer->getHandle()->GetBuffer(), 0);
@@ -307,7 +307,7 @@ bool SVShiftTool::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *p
 			if (nullptr == m_replaceSourceImage)
 			{
 				SvIe::SVImageClass* pImageInput = SvOl::getInput<SvIe::SVImageClass>(m_ImageInput, true);
-				SvTrc::IImagePtr pInputImageBuffer = pImageInput->getImageReadOnly(rRunStatus.m_triggerRecord.get());
+				SvOi::ITRCImagePtr pInputImageBuffer = pImageInput->getImageReadOnly(rRunStatus.m_triggerRecord.get());
 				inputImage = (nullptr != pInputImageBuffer && !(pInputImageBuffer->isEmpty())) ? pInputImageBuffer->getHandle() : nullptr;
 
 			}

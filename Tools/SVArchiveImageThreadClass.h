@@ -10,7 +10,7 @@
 //Moved to precompiled header: #include <vector>
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "SVLibrary/SVTemplate.h"
-#include "TriggerRecordController/IImage.h"
+#include "ObjectInterfaces/ITRCImage.h"
 #pragma endregion Includes
 
 namespace SvTo
@@ -25,7 +25,7 @@ public:
 	struct BufferInfo
 	{
 		// passed into the thread class
-		SvTrc::IImagePtr m_pImageBuffer = nullptr;
+		SvOi::ITRCImagePtr m_pImageBuffer = nullptr;
 		std::string m_FileName;
 		SVImageInfoClass info;
 		int m_toolPos= -1;
@@ -37,7 +37,7 @@ public:
 
 		BufferInfo(const BufferInfo& rhs) = default;
 
-		BufferInfo(SvTrc::IImagePtr pImageBuffer, const std::string& rFileName, SVImageInfoClass p_info, int pos)
+		BufferInfo(SvOi::ITRCImagePtr pImageBuffer, const std::string& rFileName, SVImageInfoClass p_info, int pos)
 			: m_pImageBuffer(pImageBuffer), m_FileName(rFileName), info(p_info), m_toolPos(pos) {}
 
 		BufferInfo& operator = (const BufferInfo& rhs) = default;

@@ -92,7 +92,7 @@ namespace SvAo
 					msg.Throw();
 				}
 				//use readOnly even if it overwritten the image, because it is already changed by the Analyzer.
-				SvTrc::IImagePtr pImageBuffer = pInputImage->getImageReadOnly(rRunStatus.m_triggerRecord.get());
+				SvOi::ITRCImagePtr pImageBuffer = pInputImage->getImageReadOnly(rRunStatus.m_triggerRecord.get());
 				if (nullptr == pImageBuffer)
 				{
 					assert(false);

@@ -9,7 +9,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "ImageBufferController.h"
-#include "IImage.h"
+#include "ObjectInterfaces/ITRCImage.h"
 #include "Image.h"
 #include "SVImageLibrary\SVImageBufferHandleImage.h"
 #include "SVMatroxLibrary\SVMatroxBufferCreateStruct.h"
@@ -181,9 +181,9 @@ bool ImageBufferController::decreaseImageRefCounter(int pos)
 	return false;
 }
 
-IImagePtr ImageBufferController::getImage(int pos, long resetId, bool shouldUnlockAutomatically) const
+SvOi::ITRCImagePtr ImageBufferController::getImage(int pos, long resetId, bool shouldUnlockAutomatically) const
 {
-	IImagePtr pImage;
+	SvOi::ITRCImagePtr pImage;
 	if (0 <= pos &&  m_rDataController.getBufferVectorRef().size() > pos)
 	{
 		SvOi::SVImageBufferHandlePtr pImagePtr = std::make_shared<SVImageBufferHandleImage>(m_rDataController.getBufferVectorRef()[pos]);
@@ -192,9 +192,9 @@ IImagePtr ImageBufferController::getImage(int pos, long resetId, bool shouldUnlo
 	return pImage;
 }
 
-IImagePtr ImageBufferController::getChildImage(int parentPos, const MatroxBufferChildDataStruct& rBufferDataStruct, long resetId, bool shouldUnlockAutomatically) const
+SvOi::ITRCImagePtr ImageBufferController::getChildImage(int parentPos, const MatroxBufferChildDataStruct& rBufferDataStruct, long resetId, bool shouldUnlockAutomatically) const
 {
-	IImagePtr pImage;
+	SvOi::ITRCImagePtr pImage;
 	if (0 <= parentPos &&  m_rDataController.getBufferVectorRef().size() > parentPos)
 	{
 		SVMatroxBufferCreateChildStruct bufferStruct(m_rDataController.getBufferVectorRef()[parentPos]);
@@ -205,9 +205,9 @@ IImagePtr ImageBufferController::getChildImage(int parentPos, const MatroxBuffer
 	return pImage;
 }
 
-SvTrc::IImagePtr ImageBufferController::getChildImage(const SVMatroxBufferCreateChildStruct& rBufferStruct, long resetId, int bufferPos, bool shouldUnlockAutomatically) const
+SvOi::ITRCImagePtr ImageBufferController::getChildImage(const SVMatroxBufferCreateChildStruct& rBufferStruct, long resetId, int bufferPos, bool shouldUnlockAutomatically) const
 {
-	IImagePtr pImage;
+	SvOi::ITRCImagePtr pImage;
 	SVMatroxBuffer buffer;
 	SVMatroxBufferInterface::Create(buffer, rBufferStruct);
 	if (!buffer.empty())
@@ -218,7 +218,7 @@ SvTrc::IImagePtr ImageBufferController::getChildImage(const SVMatroxBufferCreate
 	return pImage;
 }
 
-IImagePtr ImageBufferController::createNewImageHandle(const SVMatroxBufferCreateStruct& bufferStruct, long resetId) const
+SvOi::ITRCImagePtr ImageBufferController::createNewImageHandle(const SVMatroxBufferCreateStruct& bufferStruct, long resetId) const
 {
 	const auto& rImageStructList = m_rDataController.getImageStructList();
 	auto imageSizeIter = std::find_if(rImageStructList.list().begin(), rImageStructList.list().end(), [bufferStruct](const auto& rData)->bool
@@ -235,7 +235,7 @@ IImagePtr ImageBufferController::createNewImageHandle(const SVMatroxBufferCreate
 	return nullptr;
 }
 
-IImagePtr ImageBufferController::createNewImageHandle(int structId, int& rImagePos, long resetId, bool shouldUnlockAutomatically) const
+SvOi::ITRCImagePtr ImageBufferController::createNewImageHandle(int structId, int& rImagePos, long resetId, bool shouldUnlockAutomatically) const
 {
 	const auto& rList = m_rDataController.getImageStructList().list();
 	if (0 <= structId &&  rList.size() > structId)

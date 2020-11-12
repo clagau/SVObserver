@@ -22,7 +22,7 @@
 #include "SVOutObjectInfoStruct.h"
 #include "SVUtilityLibrary/NameObjectIdList.h"
 #include "SVStatusLibrary/MessageContainer.h"
-#include "TriggerRecordController/ITriggerRecordRW.h"
+#include "ObjectInterfaces/ITriggerRecordRW.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -127,7 +127,7 @@ public:
 	virtual void setEditModeFreezeFlag(bool flag) { m_editModeFreezeFlag = flag; };
 	/// Preparing to go offline. Is used e.g. by the Archive Tool and to save images if they are not done in edit mode.
 	virtual void goingOffline() {};
-	virtual void copiedSavedImage(SvTrc::ITriggerRecordRWPtr pTr) {};
+	virtual void copiedSavedImage(SvOi::ITriggerRecordRWPtr pTr) {};
 
 #pragma region virtual method (IObjectClass)
 	virtual LPCTSTR GetName() const override;

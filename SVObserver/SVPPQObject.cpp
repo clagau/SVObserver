@@ -50,7 +50,7 @@
 #include "TriggerInformation/SVHardwareManifest.h"
 #include "TriggerInformation/SVTriggerObject.h"
 #include "TriggerHandling/SVTriggerClass.h"
-#include "TriggerRecordController/ITriggerRecordControllerRW.h"
+#include "ObjectInterfaces/ITriggerRecordControllerRW.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -4037,7 +4037,7 @@ bool SVPPQObject::setRejectDepth(long depth, SvStl::MessageContainerVector *pErr
 		}
 		try
 		{
-			SvTrc::getTriggerRecordControllerRWInstance().resizeIPNumberOfRecords(inspectionPosVec, getNeededRecords(), m_rejectCount);
+			SvOi::getTriggerRecordControllerRWInstance().resizeIPNumberOfRecords(inspectionPosVec, getNeededRecords(), m_rejectCount);
 		}
 		catch (const SvStl::MessageContainer& rSvE)
 		{
@@ -4113,7 +4113,7 @@ bool SVPPQObject::setInspections2TRC()
 			pInspection->setTrcPos(-1);
 		}
 	}
-	bool result = SvTrc::getTriggerRecordControllerRWInstance().setInspections(std::move(inspListMessage));
+	bool result = SvOi::getTriggerRecordControllerRWInstance().setInspections(std::move(inspListMessage));
 	if (result)
 	{
 		pConfig->UpdateInspectionList4TRC();
@@ -4123,7 +4123,7 @@ bool SVPPQObject::setInspections2TRC()
 
 void SVPPQObject::setTRofInterest(const SVProductInfoStruct& rProduct, bool isInterest)
 {
-	std::vector<SvTrc::ITriggerRecordRPtr> trVec;
+	std::vector<SvOi::ITriggerRecordRPtr> trVec;
 	for (const auto& rIpInfo : rProduct.m_svInspectionInfos)
 	{
 		if (!m_useProcessingOffset4Interest)
@@ -4161,7 +4161,7 @@ void SVPPQObject::setTRofInterest(const SVProductInfoStruct& rProduct, bool isIn
 
 	try
 	{
-		bool isReject = SvTrc::getTriggerRecordControllerRInstance().setTrsOfInterest(trVec, isInterest);
+		bool isReject = SvOi::getTriggerRecordControllerRInstance().setTrsOfInterest(trVec, isInterest);
 		if (HasActiveMonitorList())
 		{
 			long slotindex = rProduct.m_monitorListSMSlot;
@@ -4215,7 +4215,7 @@ void SVPPQObject::setTR2StoreForInterestMap(uint32_t ipId, SVProductInfoStruct &
 		{
 			try
 			{
-				SvTrc::getTriggerRecordControllerRInstance().setTrsOfInterest({trHandle}, rIter.m_bReject);
+				SvOi::getTriggerRecordControllerRInstance().setTrsOfInterest({trHandle}, rIter.m_bReject);
 			}
 			catch (...)
 			{

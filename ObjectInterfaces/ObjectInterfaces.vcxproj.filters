@@ -123,7 +123,22 @@
     <ClInclude Include="ITableObject.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-        <ClInclude Include="ILinkedObject.h">
+    <ClInclude Include="ILinkedObject.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="ITRCImage.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="ITriggerRecordControllerR.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="ITriggerRecordControllerRW.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="ITriggerRecordR.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="ITriggerRecordRW.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

@@ -623,12 +623,12 @@ bool SVInspectionProcess::CanGoOnline()
 	{
 		if (0 > m_trcPos)
 		{
-			m_trcPos = SvTrc::getInspectionPos(getObjectId());
+			m_trcPos = SvOi::getInspectionPos(getObjectId());
 		}
 		SvSml::SharedMemWriter::Instance().addInspectionIdEntry(GetPPQ()->GetName(), m_StoreIndex, m_trcPos);
-		const auto& rDataDefMap = SvTrc::getTriggerRecordControllerRInstance().getDataDefMap(m_trcPos);
-		const auto& rImageMap = SvTrc::getTriggerRecordControllerRInstance().getImageDefMap(m_trcPos);
-		const auto& rChildImageMap = SvTrc::getTriggerRecordControllerRInstance().getChildImageDefMap(m_trcPos);
+		const auto& rDataDefMap = SvOi::getTriggerRecordControllerRInstance().getDataDefMap(m_trcPos);
+		const auto& rImageMap = SvOi::getTriggerRecordControllerRInstance().getImageDefMap(m_trcPos);
+		const auto& rChildImageMap = SvOi::getTriggerRecordControllerRInstance().getChildImageDefMap(m_trcPos);
 		SvSml::SharedMemWriter::Instance().setDataTrcPos(GetPPQ()->GetName(), m_StoreIndex, m_trcPos, rDataDefMap, rImageMap, rChildImageMap);
 	}
 
@@ -1407,11 +1407,11 @@ bool SVInspectionProcess::resetAllObjects(SvStl::MessageContainerVector *pErrorM
 	bool Result = true;
 	try
 	{
-		bool shouldResetTRC = !SvTrc::getTriggerRecordControllerRWInstance().isResetLocked();
+		bool shouldResetTRC = !SvOi::getTriggerRecordControllerRWInstance().isResetLocked();
 
 		if (shouldResetTRC)
 		{
-			SvTrc::getTriggerRecordControllerRWInstance().startResetTriggerRecordStructure(m_trcPos);
+			SvOi::getTriggerRecordControllerRWInstance().startResetTriggerRecordStructure(m_trcPos);
 		}
 
 		if (nullptr != m_pCurrentToolset)
@@ -1434,7 +1434,7 @@ bool SVInspectionProcess::resetAllObjects(SvStl::MessageContainerVector *pErrorM
 
 		if (shouldResetTRC)
 		{
-			SvTrc::getTriggerRecordControllerRWInstance().finishResetTriggerRecordStructure();
+			SvOi::getTriggerRecordControllerRWInstance().finishResetTriggerRecordStructure();
 		}
 	}
 	catch (const SvStl::MessageContainer& rExp)
@@ -2020,7 +2020,7 @@ bool SVInspectionProcess::ProcessInputImageRequests(SVInspectionInfoStruct& rIpI
 
 		if (nullptr != pImage)
 		{
-			SvTrc::IImagePtr pImageBuffer;
+			SvOi::ITRCImagePtr pImageBuffer;
 			SvIe::SVVirtualCamera* pVirtualCamera = nullptr;
 			if (SvIe::SVMainImageClass* l_psvMainImage = dynamic_cast<SvIe::SVMainImageClass*> (pImage))
 			{
@@ -2755,7 +2755,7 @@ bool SVInspectionProcess::RunInspection(SVInspectionInfoStruct& rIPInfo, const S
 			m_runStatus.SetInvalid();  //sets run.status.valid = false, and since no bits are set = SV_INVALID
 		}
 
-		rIPInfo.setNextTriggerRecord(SvTrc::TriggerData {triggerCount});
+		rIPInfo.setNextTriggerRecord(SvOi::TriggerData {triggerCount});
 		if (!ProcessInputImageRequests(rIPInfo, rCameraInfos))
 		{
 			Exception.setMessage(SVMSG_SVO_39_IMAGE_REQUEST_FAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
@@ -3805,7 +3805,7 @@ void SVInspectionProcess::buildValueObjectData()
 		}
 	}
 
-	SvTrc::getTriggerRecordControllerRWInstance().changeDataDef(std::move(dataDefList), m_memValueDataOffset, m_trcPos);
+	SvOi::getTriggerRecordControllerRWInstance().changeDataDef(std::move(dataDefList), m_memValueDataOffset, m_trcPos);
 }
 
 SvSml::RingBufferPointer SVInspectionProcess::GetSlotmanager()

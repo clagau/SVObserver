@@ -9,7 +9,7 @@
 #pragma region Includes
 #include "StdAfx.h"
 #include "SharedMemReader.h"
-#include "TriggerRecordController\ITriggerRecordControllerR.h"
+#include "ObjectInterfaces/ITriggerRecordControllerR.h"
 #include "SVMatroxLibrary\SVMatroxBuffer.h"
 #pragma endregion Includes
 
@@ -142,7 +142,7 @@ SharedMemReader::retvalues  SharedMemReader::_GetProduct(const GetProdPar& par, 
 	pProduct->m_trigger = rBp->GetTriggerNumber(slot);
 	for (auto ipPair : pML->m_InspectionIdsVector)
 	{
-		pProduct->m_triggerRecordMap[ipPair.first] = SvTrc::getTriggerRecordControllerRInstance().createTriggerRecordObjectPerTriggerCount(ipPair.second, pProduct->m_trigger);
+		pProduct->m_triggerRecordMap[ipPair.first] = SvOi::getTriggerRecordControllerRInstance().createTriggerRecordObjectPerTriggerCount(ipPair.second, pProduct->m_trigger);
 #if defined (TRACE_THEM_ALL) || defined (TRACE_TRC)
 		if (nullptr == pProduct->m_triggerRecordMap[ipPair.first])
 		{
@@ -203,10 +203,10 @@ bool SharedMemReader::GetFailStatusData(LPCTSTR Monitorlist, int  TriggerNumber,
 
 SVMatroxBuffer SharedMemReader::GetImageBuffer(int triggerRecordId, int inspectionId, int imageIndex)
 {
-	auto pTr = SvTrc::getTriggerRecordControllerRInstance().createTriggerRecordObject(inspectionId, triggerRecordId);
+	auto pTr = SvOi::getTriggerRecordControllerRInstance().createTriggerRecordObject(inspectionId, triggerRecordId);
 	if (nullptr != pTr)
 	{
-		SvTrc::IImagePtr pImage = nullptr;
+		SvOi::ITRCImagePtr pImage = nullptr;
 		if (imageIndex < MonitorEntryData::c_childFlagForTrPos)
 		{
 			pImage = pTr->getImage(imageIndex);

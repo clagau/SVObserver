@@ -16,7 +16,7 @@
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/RunStatus.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "TriggerRecordController/ITriggerRecordControllerRW.h"
+#include "ObjectInterfaces/ITriggerRecordControllerRW.h"
 #include "SVMatroxLibrary/SVMatroxBufferCreateStruct.h"
 #pragma endregion Includes
 
@@ -145,7 +145,7 @@ bool RingBufferTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 			{
 				try
 				{
-					SvTrc::getTriggerRecordControllerRWInstance().addImageBuffer(getObjectId(), bufferStruct, m_ringBufferDepth);
+					SvOi::getTriggerRecordControllerRWInstance().addImageBuffer(getObjectId(), bufferStruct, m_ringBufferDepth);
 				}
 				catch (const SvStl::MessageContainer& rExp)
 				{
@@ -241,7 +241,7 @@ bool RingBufferTool::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector
 		SvIe::SVImageClass* pInputImage = SvOl::getInput<SvIe::SVImageClass>(m_InputImageObjectInfo, true);
 		if (nullptr != pInputImage && static_cast<int>(m_ringBuffer.size()) > m_nextBufferPos)
 		{
-			SvTrc::IImagePtr pImageBuffer = nullptr;
+			SvOi::ITRCImagePtr pImageBuffer = nullptr;
 			if (!pInputImage->isChildImageInTRC())
 			{
 				pImageBuffer = pInputImage->getImageReadOnly(rRunStatus.m_triggerRecord.get(), true);
@@ -344,7 +344,7 @@ void RingBufferTool::BuildEmbeddedObjectList ()
 	}
 }
 
-int RingBufferTool::SetOutputImage( int outputIndex, int imageIndex, int maxIndexPos, long ringBufferDepth, const SvTrc::ITriggerRecordRWPtr& pTriggerRecord, SvStl::MessageContainerVector *pErrorMessages)
+int RingBufferTool::SetOutputImage( int outputIndex, int imageIndex, int maxIndexPos, long ringBufferDepth, const SvOi::ITriggerRecordRWPtr& pTriggerRecord, SvStl::MessageContainerVector *pErrorMessages)
 {
 	int retValue = 0;
 	int pos = (m_nextBufferPos + imageIndex - 1)%ringBufferDepth;
