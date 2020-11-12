@@ -23,6 +23,9 @@ class ResizeTool;
 class SVToolAdjustmentDialogSheetClass;
 class SVRPropertyItem;
 
+
+struct AbXxx;
+
 class SVTADlgTranslationResizePage : 
 	public CPropertyPage, 
 	public SvOg::ISVPropertyPageDialog
@@ -36,9 +39,6 @@ public:
 	bool	QueryAllowExit() override;
 
 protected:
-	HRESULT AddScaleFactors(SVRPropertyItem* pRoot);
-	HRESULT AddInputImageInfo(SVRPropertyItem* pRoot);
-	HRESULT AddOutputImageInfo(SVRPropertyItem* pRoot);
 	HRESULT AddOtherInfo(SVRPropertyItem* pRoot);
 	HRESULT AddInterpolationMode(SVRPropertyItem* pGroupItem);
 	HRESULT AddOverScan(SVRPropertyItem* pGroupItem);
@@ -49,7 +49,12 @@ protected:
 	HRESULT ValidateCurrentTreeData (SVRPropertyItem* item);
 	// DisplayRunError () is intended to deal with scenarios where an error 
 	// may have already been displayed earlier in the tracking. 
-	void	DisplayRunError (const SvStl::MessageData& displayMessage, unsigned long programCode);
+	void DisplayRunError (const SvStl::MessageData& displayMessage, unsigned long programCode);
+
+	bool ValidateNewScaleValues(AbXxx& rAbx, SvStl::MessageContainerVector* pErrorMessages); //ABXX neu!
+	bool ValidateNewValuesTreeAbxx(AbXxx& rAbx, SvStl::MessageContainerVector* pErrorMessages); //ABXX neu!
+	bool ValidateNewValuesComboBoxesABxx(AbXxx& rAbx, SvStl::MessageContainerVector* pErrorMessages); //ABXX neu!
+	bool CommitNewValuesAbXxx(AbXxx& rAbx); //ABXX neu!
 
 
 // Note:
@@ -64,8 +69,6 @@ protected:
 	HRESULT RestorePropertyTreeItemFromBackup (SVRPropertyItem* pItem);
 
 	void UpdateScaleFactors(double widthScaleFactor, double heightScaleFactor);
-	void UpdateInputImageInfo(long width, long height);
-	void UpdateOutputImageInfo(long width, long height);
 	void UpdateOtherInfo();
 
 	SVToolAdjustmentDialogSheetClass* m_ParentDialog;
@@ -75,6 +78,8 @@ protected:
 
 	double m_HeightScaleFactor;
 	double m_WidthScaleFactor;
+	double m_HeightScaleFactor_New;
+	double m_WidthScaleFactor_New;
 	long m_SourceHeight;
 	long m_SourceWidth;
 	long m_OutputHeight;
@@ -91,6 +96,13 @@ protected:
 
 	const uint32_t m_inspectionID;
 	const uint32_t m_toolID;
+
+	CEdit	m_widthEdit;
+	CEdit	m_heightEdit;
+	CComboBox	m_InterpolationModeCombo;
+	CComboBox	m_OverscanCombo;
+	CComboBox	m_PerformanceCombo;
+
 
 	//{{AFX_DATA(SVTADlgTranslationResizePage)
 	enum { IDD = IDD_TA_RESIZE_DIALOG };
@@ -112,6 +124,7 @@ protected:
 	// Generated message map functions
 	//{{AFX_MSG(SVTADlgTranslationResizePage)
 	afx_msg void OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult);
+	afx_msg void OnItemChanged_CEditAbxx();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 #pragma endregion AFX MSG

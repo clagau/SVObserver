@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
-// Microsoft Visual C++ generated include file.
-// Used by SVOResource.rc
+// Von Microsoft Visual C++ generierte Includedatei.
+// Verwendet durch SVOResource.rc
 //
 #define IDD_PROPPAGE_REGRESSION_FILESELECT 102
 #define IDS_FILTER                      102
@@ -377,7 +377,7 @@
 #define IDS_OBJECTNAME_TABLEOBJECT_NUMBEROFROWS 10366
 #define IDS_CLASSNAME_TABLEANALYZER_TOOL 10367
 #define IDS_OBJECTNAME_TABLEANALYZER_ISASC 10368
-#define IDS_CLASSNAME_INDEX_EQUATION 10369
+#define IDS_CLASSNAME_INDEX_EQUATION    10369
 #define IDS_OBJECTNAME_BAND0_IMAGE      10370
 #define IDS_OBJECTNAME_BAND1_IMAGE      10371
 #define IDS_OBJECTNAME_BAND2_IMAGE      10372
@@ -1667,6 +1667,9 @@
 #define IDC_USE_FORMULA_CHECK           15359
 #define IDC_INTERPOLATION_MODE_COMBO    15360
 #define IDC_CENTER_X_EDIT               15361
+#define IDC_OVERSCAN_COMBO              15361
+#define IDC_INTERPOLATION_MODE_COMBO3   15362
+#define IDC_PERFORMANCE_COMBO           15362
 #define IDC_CENTER_Y_EDIT               15363
 #define IDC_UP_BUTTON                   15368
 #define IDC_DOWN_BUTTON                 15369
@@ -2053,8 +2056,8 @@
 #define IDC_VERSION_LIST                15878
 #define IDC_CHECK_AUTO_RESIZE           15879
 #define IDC_NO_IMAGES_TXT               15880
-#define IDC_TOOL_OVERLAYCOLOR_TEXT		15881
-#define IDC_TOOL_OVERLAYCOLOR_COMBO	    15882
+#define IDC_TOOL_OVERLAYCOLOR_TEXT      15881
+#define IDC_TOOL_OVERLAYCOLOR_COMBO     15882
 #define IDC_NO_INPUT_TXT                15883
 #define IDC_NO_RESULT_TXT               15884
 #define IDC_COMBO_ZOOM                  15885
@@ -2326,6 +2329,8 @@
 #define IDC_TOOL_COMBOBOX				16170
 #define IDC_LIST_REPORT_FILE            16171
 #define IDC_BUTTON_CALC                 16172
+#define IDC_BUTTON_WIDTH                16173
+#define IDC_BUTTON_HEIGHT               16174
 #define ID_UNDO_CHANGES                 20000
 #define ID_BROWSE_BUTTON                20001
 #define ID_PLUSBUTTON                   20002
@@ -2563,9 +2568,9 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        11150
+#define _APS_NEXT_RESOURCE_VALUE        11151
 #define _APS_NEXT_COMMAND_VALUE         20372
-#define _APS_NEXT_CONTROL_VALUE         16173
+#define _APS_NEXT_CONTROL_VALUE         16175
 #define _APS_NEXT_SYMED_VALUE           3002
 #endif
 #endif
