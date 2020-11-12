@@ -31,7 +31,6 @@
 #include "SVOResource\ConstGlobalSvOr.h"
 #include "SVInspectionProcess.h"
 #include "Definitions/StringTypeDef.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
