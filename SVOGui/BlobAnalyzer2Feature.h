@@ -63,8 +63,8 @@ namespace SvOg
 		void OnBnClickedDelete();
 
 		void OnGridClick(NMHDR*, LRESULT*);
+		void OnGridBeginEdit(NMHDR* pNotifyStruct, LRESULT* pResult);
 		void OnGridEndEdit(NMHDR *pNotifyStruct, LRESULT* pResult);
-		void OnGridDblClick(NMHDR* pNotifyStruct, LRESULT* /*pResult*/);
 		void OnSelectionChanged(NMHDR *, LRESULT*);
 		//}}AFX_MSG
 

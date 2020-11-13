@@ -42,7 +42,8 @@ namespace SvOg
 
 	enum ColumnPos
 	{
-		NameColumn = 0,
+		CustomFeatureButtonColumn = 0,
+		NameColumn,
 		SortEnableColumn,
 		SortDirectionColumn,
 		ExcludeEnabledColumn,
@@ -53,7 +54,8 @@ namespace SvOg
 		UpperBoundButtonColumn,
 	};
 
-	std::map<int, ColumnDef> g_columnFeatureDefArray = { { NameColumn, ColumnDef{"Name", cTextColumnSize}},
+	std::map<int, ColumnDef> g_columnFeatureDefArray = { { CustomFeatureButtonColumn, ColumnDef{"", cBoxColumnSize}},
+		{NameColumn, ColumnDef{"Name", cTextColumnSize}},
 		{SortEnableColumn, {"Sort", cBoxColumnSize, SvPb::FeatureData::kIsSortFieldNumber}},
 		{SortDirectionColumn, {"Direction", cBoxColumnSize, SvPb::FeatureData::kIsAscentFieldNumber }},
 		{ExcludeEnabledColumn, {"Exclude", cBoxColumnSize, SvPb::FeatureData::kIsExcludeFieldNumber}},
@@ -71,8 +73,8 @@ namespace SvOg
 		ON_BN_CLICKED(IDC_BUTTON_MOVEDOWN, OnBnClickedMoveDown)
 		ON_BN_CLICKED(IDC_BUTTON_ADD, OnBnClickedAddCustom)
 		ON_BN_CLICKED(IDC_BUTTON_REMOVE, OnBnClickedDelete)
-		ON_NOTIFY(NM_DBLCLK, IDC_GRID, OnGridDblClick)
 		ON_NOTIFY(NM_CLICK, IDC_GRID, OnGridClick)
+		ON_NOTIFY(GVN_BEGINLABELEDIT, IDC_GRID, OnGridBeginEdit)
 		ON_NOTIFY(GVN_ENDLABELEDIT, IDC_GRID, OnGridEndEdit)
 		ON_NOTIFY(GVN_SELCHANGED, IDC_GRID, OnSelectionChanged)
 		//}}AFX_MSG_MAP
@@ -287,6 +289,17 @@ namespace SvOg
 
 		switch (pItem->iColumn)
 		{
+		case CustomFeatureButtonColumn:
+		{
+			if (nullptr != pItem && 0 < pItem->iRow && m_featureData.size() >= pItem->iRow && m_featureData[pItem->iRow - 1].is_custom())
+			{
+				std::string strCaption = SvUl::Format(_T("%s %s"), m_featureData[pItem->iRow - 1].name().c_str(), _T("Formula"));
+
+				SvOg::SVFormulaEditorSheetClass dlg(m_InspectionID, m_TaskObjectID, m_featureData[pItem->iRow - 1].equationid(), strCaption.c_str());
+				dlg.DoModal();
+			}
+			break;
+		}
 		case SortEnableColumn:
 		{
 			auto* pCell = dynamic_cast<SvGcl::GridCellCheck*>(m_Grid.GetCell(pItem->iRow, SortEnableColumn));
@@ -369,6 +382,12 @@ namespace SvOg
 		UpdateEnableButtons();
 	}
 
+	void BlobAnalyzer2Feature::OnGridBeginEdit(NMHDR* pNotifyStruct, LRESULT* pResult)
+	{
+		SvGcl::NM_GRIDVIEW* pItem = (SvGcl::NM_GRIDVIEW*) pNotifyStruct;
+		*pResult = (NameColumn == pItem->iColumn || UpperBoundColumn == pItem->iColumn || LowerBoundColumn == pItem->iColumn) ? 0 : -1;
+	}
+
 	void BlobAnalyzer2Feature::OnGridEndEdit(NMHDR *pNotifyStruct, LRESULT* pResult)
 	{
 		SvGcl::NM_GRIDVIEW* pItem = (SvGcl::NM_GRIDVIEW*) pNotifyStruct;
@@ -409,19 +428,6 @@ namespace SvOg
 				return;
 			}
 			}
-		}
-	}
-
-	void BlobAnalyzer2Feature::OnGridDblClick(NMHDR* pNotifyStruct, LRESULT* /*pResult*/)
-	{
-		SvGcl::NM_GRIDVIEW* pItem = (SvGcl::NM_GRIDVIEW*) pNotifyStruct;
-
-		if (nullptr != pItem && NameColumn == pItem->iColumn && 0 < pItem->iRow && m_featureData.size() >= pItem->iRow && m_featureData[pItem->iRow-1].is_custom())
-		{
-			std::string strCaption = SvUl::Format(_T("%s %s"), m_featureData[pItem->iRow - 1].name().c_str(), _T("Formula"));
-
-			SvOg::SVFormulaEditorSheetClass dlg(m_InspectionID, m_TaskObjectID, m_featureData[pItem->iRow - 1].equationid(), strCaption.c_str());
-			dlg.DoModal();
 		}
 	}
 
@@ -516,13 +522,14 @@ namespace SvOg
 		for (int i = 0; m_featureData.size() > i; ++i)
 		{
 			auto row = i + 1;
-			m_Grid.SetItemText(row, NameColumn, m_featureData[i].name().c_str());
 			SvGcl::GV_ITEM buttonItem;
 			buttonItem.mask = GVIF_IMAGE;
 			buttonItem.iImage = m_featureData[i].is_custom() ? 0 : -1;
 			buttonItem.row = row;
-			buttonItem.col = NameColumn;
+			buttonItem.col = CustomFeatureButtonColumn;
+			m_Grid.SetItemState(row, CustomFeatureButtonColumn, m_Grid.GetItemState(row, CustomFeatureButtonColumn) | GVIS_READONLY);
 			m_Grid.SetItem(&buttonItem);
+			m_Grid.SetItemText(row, NameColumn, m_featureData[i].name().c_str());
 			if (m_featureData[i].is_custom())
 			{
 				m_Grid.SetItemState(row, NameColumn, m_Grid.GetItemState(row, NameColumn) & ~GVIS_READONLY);
@@ -607,13 +614,13 @@ namespace SvOg
 				buttonItem.row = row;
 				buttonItem.col = LowerBoundButtonColumn;
 				m_Grid.SetItem(&buttonItem);
-				m_Grid.SetItemState(row, LowerBoundButtonColumn, m_Grid.GetItemState(row, UpperBoundColumn) | GVIS_READONLY);
 				m_Grid.SetItemText(row, UpperBoundColumn, "");
 				m_Grid.SetItemState(row, UpperBoundColumn, m_Grid.GetItemState(row, UpperBoundColumn) | GVIS_READONLY);
 				buttonItem.col = UpperBoundButtonColumn;
 				m_Grid.SetItem(&buttonItem);
-				m_Grid.SetItemState(row, UpperBoundButtonColumn, m_Grid.GetItemState(row, UpperBoundColumn) | GVIS_READONLY);
 			}
+			m_Grid.SetItemState(row, LowerBoundButtonColumn, m_Grid.GetItemState(row, LowerBoundButtonColumn) | GVIS_READONLY);
+			m_Grid.SetItemState(row, UpperBoundButtonColumn, m_Grid.GetItemState(row, UpperBoundButtonColumn) | GVIS_READONLY);
 		}
 		
 		m_Grid.Refresh();

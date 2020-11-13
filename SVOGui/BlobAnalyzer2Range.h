@@ -60,6 +60,7 @@ namespace SvOg
 		afx_msg void OnBnClickedFailedLowIndirect();
 
 		void OnGridClick(NMHDR*, LRESULT*);
+		void OnGridBeginEdit(NMHDR* pNotifyStruct, LRESULT* pResult);
 		void OnGridEndEdit(NMHDR* pNotifyStruct, LRESULT* pResult);
 		//}}AFX_MSG
 

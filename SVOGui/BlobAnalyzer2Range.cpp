@@ -23,6 +23,7 @@ namespace SvOg
 {
 	constexpr int cHeaderSize = 1;
 	constexpr int cNameColumnSize = 150;
+	constexpr int cRangeColumnSize = 95;
 	constexpr int cBoxColumnSize = 25;
 
 	struct ColumnDef
@@ -50,13 +51,13 @@ namespace SvOg
 
 	std::map<int, ColumnDef> g_columnRangeDefArray = { { NameColumn, ColumnDef{"Name", cNameColumnSize}},
 		{RangeEnableColumn, {"", cBoxColumnSize, SvPb::FeatureData::kIsRangeFieldNumber}},
-		{FailHighColumn, {"Fail High", cNameColumnSize, SvPb::FeatureData::kRangeFailHighIndirectFieldNumber }},
+		{FailHighColumn, {"Fail High", cRangeColumnSize, SvPb::FeatureData::kRangeFailHighIndirectFieldNumber }},
 		{FailHighButtonColumn, {"", cBoxColumnSize}},
-		{WarnHighColumn, {"Warn High", cNameColumnSize, SvPb::FeatureData::kRangeWarnHighIndirectFieldNumber }},
+		{WarnHighColumn, {"Warn High", cRangeColumnSize, SvPb::FeatureData::kRangeWarnHighIndirectFieldNumber }},
 		{WarnHighButtonColumn, {"", cBoxColumnSize}},
-		{WarnLowColumn, {"Warn Low", cNameColumnSize, SvPb::FeatureData::kRangeWarnLowIndirectFieldNumber }},
+		{WarnLowColumn, {"Warn Low", cRangeColumnSize, SvPb::FeatureData::kRangeWarnLowIndirectFieldNumber }},
 		{WarnLowButtonColumn, {"", cBoxColumnSize}},
-		{FailLowColumn, {"Fail Low", cNameColumnSize, SvPb::FeatureData::kRangeFailLowIndirectFieldNumber }},
+		{FailLowColumn, {"Fail Low", cRangeColumnSize, SvPb::FeatureData::kRangeFailLowIndirectFieldNumber }},
 		{FailLowButtonColumn, {"", cBoxColumnSize}},
 	};
 
@@ -67,6 +68,7 @@ namespace SvOg
 		ON_BN_CLICKED(IDC_BUTTON_WARNLOW, &OnBnClickedWarnLowIndirect)
 		ON_BN_CLICKED(IDC_BUTTON_FAILLOW, &OnBnClickedFailedLowIndirect)
 		ON_NOTIFY(NM_CLICK, IDC_GRID, OnGridClick)
+		ON_NOTIFY(GVN_BEGINLABELEDIT, IDC_GRID, OnGridBeginEdit)
 		ON_NOTIFY(GVN_ENDLABELEDIT, IDC_GRID, OnGridEndEdit)
 		//}}AFX_MSG_MAP
 	END_MESSAGE_MAP()
@@ -248,6 +250,12 @@ namespace SvOg
 			//nothing to do
 			return;
 		}
+	}
+
+	void BlobAnalyzer2Range::OnGridBeginEdit(NMHDR* pNotifyStruct, LRESULT* pResult)
+	{
+		SvGcl::NM_GRIDVIEW* pItem = (SvGcl::NM_GRIDVIEW*) pNotifyStruct;
+		*pResult = (FailHighColumn == pItem->iColumn || WarnHighColumn == pItem->iColumn || WarnLowColumn == pItem->iColumn || FailLowColumn == pItem->iColumn) ? 0 : -1;
 	}
 
 	void BlobAnalyzer2Range::OnGridEndEdit(NMHDR* pNotifyStruct, LRESULT* pResult)
