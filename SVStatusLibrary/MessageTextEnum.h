@@ -324,7 +324,6 @@ enum MessageTextEnum
 
 	Tid_ArchiveQueueFull,
 	Tid_ArchiveImageNotFound,
-	Tid_InvalidDrive,
 	Tid_InvalidPath,
 	Tid_InvalidKeywordsInPath,
 	Tid_FileName_Exists,

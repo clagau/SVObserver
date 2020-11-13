@@ -46,20 +46,21 @@ class SVTADlgArchiveImagePage : public CPropertyPage, public SvOg::ISVPropertyPa
 	{
 		enum TupleContent : size_t { ValueEdit = 0, EmbeddedId, DottedNameSelectButton, EmbeddedLinkId }; //values must start with 0 and be consecutive
 	public:
-		explicit AlternativeImagePathController(SvOg::ValueController &rValueController, uint32_t inspectionId) :
+		explicit AlternativeImagePathController(SvOg::ValueController& rValueController, uint32_t inspectionId) :
 			m_rValueController(rValueController),
 			m_ObjectSelectorController(inspectionId, SvDef::InvalidObjectId, SvPb::viewable),
 			m_vecValueAndGuiInfo
-		    {
-				{ m_EditBaseDirectoryname, SvPb::BaseDirectorynameEId, nullptr, SvPb::NoEmbeddedId, rValueController},
-				{ m_EditDirectorynameIndex, SvPb::DirectorynameIndexEId, &m_ButtonDirectorynameIndex, SvPb::DirectorynameIndexLinkEId, rValueController},
-				{ m_EditBaseFilename, SvPb::BaseFilenameEId, nullptr, SvPb::NoEmbeddedId, rValueController},
-				{ m_EditFilenameIndex1, SvPb::FilenameIndex1EId, &m_ButtonFilenameIndex1, SvPb::FilenameIndex1LinkEId, rValueController},
-				{ m_EditCenterFilename, SvPb::CenterFilenameEId, nullptr, SvPb::NoEmbeddedId, rValueController},
-				{ m_EditFilenameIndex2, SvPb::FilenameIndex2EId, &m_ButtonFilenameIndex2, SvPb::FilenameIndex2LinkEId, rValueController},
-				{ m_EditSubfolderSelection, SvPb::SubfolderSelectionEId, &m_ButtonSubfolderSelection, SvPb::SubfolderSelectionLinkEId, rValueController},
-				{ m_EditSubfolderLocation, SvPb::SubfolderLocationEId, &m_ButtonSubfolderLocation, SvPb::SubfolderLocationLinkEId, rValueController} 
-			}{}
+		{
+			{ m_EditBaseDirectoryname, SvPb::BaseDirectorynameEId, nullptr, SvPb::NoEmbeddedId, rValueController},
+			{ m_EditDirectorynameIndex, SvPb::DirectorynameIndexEId, &m_ButtonDirectorynameIndex, SvPb::DirectorynameIndexLinkEId, rValueController},
+			{ m_EditBaseFilename, SvPb::BaseFilenameEId, nullptr, SvPb::NoEmbeddedId, rValueController},
+			{ m_EditFilenameIndex1, SvPb::FilenameIndex1EId, &m_ButtonFilenameIndex1, SvPb::FilenameIndex1LinkEId, rValueController},
+			{ m_EditCenterFilename, SvPb::CenterFilenameEId, nullptr, SvPb::NoEmbeddedId, rValueController},
+			{ m_EditFilenameIndex2, SvPb::FilenameIndex2EId, &m_ButtonFilenameIndex2, SvPb::FilenameIndex2LinkEId, rValueController},
+			{ m_EditSubfolderSelection, SvPb::SubfolderSelectionEId, &m_ButtonSubfolderSelection, SvPb::SubfolderSelectionLinkEId, rValueController},
+			{ m_EditSubfolderLocation, SvPb::SubfolderLocationEId, &m_ButtonSubfolderLocation, SvPb::SubfolderLocationLinkEId, rValueController}
+		}
+		{}
 
 		void EditboxesToTextValues();
 		void TextValuesToEditboxes();

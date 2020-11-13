@@ -2021,7 +2021,7 @@ BOOL SVObserverApp::InitInstance()
 
 	TheSVMemoryManager().InitializeMemoryManager(SvDef::ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME,
 		SvDef::ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME,
-		SvimIni); //ABXX
+		SvimIni);
 
 	// Das Hauptfenster ist initialisiert und kann jetzt angezeigt und aktualisiert werden.
 #ifdef _DEBUG

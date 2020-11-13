@@ -30,7 +30,7 @@ template <typename OWNERTYPE>
 class SVMemoryManager
 {
 public:
-	void InitializeMemoryManager(LPCTSTR strPoolName1, LPCTSTR strPoolName2, const SvLib::SVOINIClass& rSvimIni); //ABXX
+	void InitializeMemoryManager(LPCTSTR strPoolName1, LPCTSTR strPoolName2, const SvLib::SVOINIClass& rSvimIni);
 	HRESULT CreatePool( LPCTSTR strPoolName, __int64 lPoolSizeKBytes );
 	HRESULT ReservePoolMemory( LPCTSTR strPoolName, OWNERTYPE owner, __int64 lSizeInBytes );
 	bool    CanReservePoolMemory( LPCTSTR strPoolName, __int64 lSizeInBytes );

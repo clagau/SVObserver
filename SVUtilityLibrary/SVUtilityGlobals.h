@@ -27,12 +27,11 @@ HRESULT SafeArrayGetElementPointer(SAFEARRAY* psa, long* rgIndices, void** ppv);
 
 void KeepPrevError( HRESULT& p_rhrPrev, HRESULT p_hrNew );
 
-//@TODO[Arvid][10.00][20.07.2020] Die folgenden Funktionen wären besser in der SVVFileSystemLibrary aufgehoben:
+//@TODO[Arvid][10.00][20.07.2020] Die folgenden Funktionen wären besser in der SVFileSystemLibrary aufgehoben:
 bool SVCheckPathDir( LPCTSTR PathName, bool CreateIfDoesNotExist );
 bool SVDeleteFiles( LPCTSTR PathName, bool IncludeSubDirectories );
 
-//************************************
 /// this function checks the existence of a 'proper' drive letter in rFilePath
 /// \returns bool – true if valid
-//************************************
-bool ValidateDrive(const std::string& rFilePath);
+bool ValidateArchivePath(const std::string& rFilePath);
+

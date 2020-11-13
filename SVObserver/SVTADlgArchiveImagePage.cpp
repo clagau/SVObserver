@@ -254,7 +254,8 @@ bool SVTADlgArchiveImagePage::validateImageFilepathRoot()
 
 	//since it is very hard to reliably determine whether a directory path can be created:
 	//we just check for a drive letter here:
-	return ValidateDrive(imagepathroot);
+
+	return ValidateArchivePath(imagepathroot);
 }
 
 BOOL SVTADlgArchiveImagePage::OnInitDialog() 
@@ -853,7 +854,7 @@ void SVTADlgArchiveImagePage::AlternativeImagePathController::SelectSubfolderLoc
 
 afx_msg void SVTADlgArchiveImagePage::AlternativeImagePathController::OnButtonUseAlternativeImagePaths(BOOL enable) 
 {
-	for (auto & uiInfo : m_vecValueAndGuiInfo)
+	for (SvOg::ValueEditWidgetHelper& uiInfo : m_vecValueAndGuiInfo)
 	{
 		uiInfo.EnableGuiElements(enable);
 	}
@@ -861,7 +862,7 @@ afx_msg void SVTADlgArchiveImagePage::AlternativeImagePathController::OnButtonUs
 
 void SVTADlgArchiveImagePage::AlternativeImagePathController::EditboxesToTextValues()
 {
-	for (auto & uiInfo : m_vecValueAndGuiInfo)
+	for (SvOg::ValueEditWidgetHelper& uiInfo : m_vecValueAndGuiInfo)
 	{
 		uiInfo.EditboxToTextValue();
 	}
@@ -869,7 +870,7 @@ void SVTADlgArchiveImagePage::AlternativeImagePathController::EditboxesToTextVal
 
 void SVTADlgArchiveImagePage::AlternativeImagePathController::TextValuesToEditboxes()
 {
-	for (auto & uiInfo : m_vecValueAndGuiInfo)
+	for (SvOg::ValueEditWidgetHelper& uiInfo : m_vecValueAndGuiInfo)
 	{
 		uiInfo.TextValueToEditbox();
 	}

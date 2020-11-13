@@ -149,25 +149,34 @@ bool SVCheckPathDir( LPCTSTR PathName, bool CreateIfDoesNotExist )
 	return false;
 }
 
-bool ValidateDrive(const std::string& rFilePath)
+bool ValidateArchivePath(const std::string& rFilePath)
 {
-	TCHAR szDrive[_MAX_DRIVE], szDir[_MAX_DIR], szFName[_MAX_FNAME], szExt[_MAX_EXT];
+	size_t pos = 0;
+	std::string delimiter = ":";
 
-	//Get the drive text
-	_tsplitpath(rFilePath.c_str(), szDrive, szDir, szFName, szExt);
+	pos = rFilePath.find(delimiter);
 
-	if (!_access(szDrive, 0))
+	if (std::string::npos != pos) // if we find one colon (we do not want network paths here)...
 	{
-		return true;
+		if (std::string::npos == rFilePath.find(delimiter, pos + 1)) // ... but, of course, not more than one ...
+		{
+			auto Drive = rFilePath.substr(0, pos + 1);
+
+			if (!_access(Drive.c_str(), 0)) // ... and the drive we have found actually exists ...
+			{
+				return true; // ... we consider this a valid path!
+			}
+		}
 	}
 
-	//@TODO[Arvid][10.00][20.07.2020] a function here should not require GUI access!
+	// But otherwise, we do not:
+
 	SvDef::StringVector msgList;
 	msgList.push_back(rFilePath);
-	msgList.push_back(szDrive);
 	SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
-	Exception.setMessage(SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_InvalidDrive, msgList, SvStl::SourceFileParams(StdMessageParams)); 
+	Exception.setMessage(SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_InvalidPath, msgList, SvStl::SourceFileParams(StdMessageParams));
 	return false;
+	//@TODO[Arvid][10.00][20.07.2020] a function here should not require GUI access! ABX
 
 }
 

@@ -61,8 +61,4 @@ namespace SvOg
 		}
 	}
 
-
-
-
-
 }  //namespace SvOg

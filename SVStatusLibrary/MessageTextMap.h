@@ -361,7 +361,6 @@ namespace SvStl
 		{Tid_ArchiveQueueFull, _T("Archive Queue is full, file %s is skipped.")},
 		{Tid_ArchiveImageNotFound, _T("Image to Archive is not valid or found.")},
 		{Tid_InvalidPath, _T("Invalid Path '%s'!") },
-		{Tid_InvalidDrive, _T("Path '%s' has invalid drive '%s'!")},
 		{Tid_InvalidKeywordsInPath, _T("Invalid keywords in path '%s'!") },
 
 		{Tid_FileName_Exists, _T("%s already exists.\nDo you want to replace it?")},

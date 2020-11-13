@@ -51,6 +51,7 @@ constexpr int IconNumber = 1;
 constexpr int IconGrowBy = 2;
 #pragma endregion Declarations
 
+
 #pragma region Constructor
 SVTADlgArchiveResultsPage::SVTADlgArchiveResultsPage(uint32_t inspectionId, uint32_t /*taskObjectId*/, SVToolAdjustmentDialogSheetClass* Parent)
 : CPropertyPage(SVTADlgArchiveResultsPage::IDD)
@@ -128,7 +129,7 @@ bool SVTADlgArchiveResultsPage::QueryAllowExit()
 		return false;
 	}
 
-	if(!ValidateDrive(ArchiveFilepath) || ArchiveFilepath.empty())
+	if(!ValidateArchivePath(ArchiveFilepath))
 	{
 		return false; 
 	}
@@ -450,4 +451,5 @@ void SVTADlgArchiveResultsPage::OnBnClickedHeaderCheck()
 	m_pTool->m_bvoUseHeaders.SetValue(m_ColumnHeaders);
 }
 #pragma endregion Private Methods
+
 

@@ -1063,6 +1063,8 @@ std::string SVArchiveTool::getNextImageFileName()
 
 	return SvUl::Format(_T("%s%08ld%s%04ld.bmp"), baseFilename.c_str(), Index1, centerFilename.c_str(), Index2);
 }
+
+
 long SVArchiveTool::CalculateImageMemory(SvIe::SVImageClass* pImage)
 {
 	assert(nullptr != pImage);
