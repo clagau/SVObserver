@@ -190,6 +190,7 @@ namespace SvOp
 			m_pfnUninitializeRun = (UninitializeRunPtr)::GetProcAddress(m_hmHandle, "SVUninitializeRun");
 			m_pfnSetInputValues = (SetInputValuesPtr)::GetProcAddress(m_hmHandle, "SVSetInputValues");
 			m_pfnGetInputImageInformation = (GetInputImageInformationPtr)::GetProcAddress(m_hmHandle, "SVGetInputImageInformation");
+			m_pfnDestroyInputImageInformationPtr = (DestroyInputImageInformationPtr)::GetProcAddress(m_hmHandle, "SVDestroyInputImageInformation");
 			m_pfnGetResultValues = (GetResultValuesPtr)::GetProcAddress(m_hmHandle, "SVGetResultValues");
 			m_pfnGetMessageString = (GetMessageStringPtr)::GetProcAddress(m_hmHandle, "SVGetErrorMessageString");
 			m_pfnValidateValueParameter = (ValidateValueParameterPtr)::GetProcAddress(m_hmHandle, "SVValidateValueParameter");
@@ -501,6 +502,7 @@ namespace SvOp
 		m_pfnDestroyResultValueDefinitionStructuresEx = nullptr;
 		m_pfnSetInputValues = nullptr;
 		m_pfnGetInputImageInformation = nullptr;
+		m_pfnDestroyInputImageInformationPtr = nullptr;
 		m_pfnGetResultValues = nullptr;
 		m_pfnGetMessageString = nullptr;
 		m_pfnValidateValueParameter = nullptr;
@@ -839,11 +841,20 @@ namespace SvOp
 				InputImageInformationStruct* ppIIISs;
 				long ArraySize;
 				l_hrOk = m_pfnGetInputImageInformation(&ArraySize, &ppIIISs);
-
-				for (auto& rIiis : *pVector)
+				if (ArraySize != static_cast<long>(pVector->size()))
 				{
-					rIiis = *ppIIISs;
-					ppIIISs++;
+					return E_FAIL;
+				}
+
+				for(int i =0; i < ArraySize; i++)
+				{
+					pVector->at(i).AllowedImageTypes = ppIIISs[i].AllowedImageTypes;
+					pVector->at(i).DisplayName = ppIIISs[i].DisplayName.copy(true);
+					pVector->at(i).HelpText = ppIIISs[i].HelpText.copy(true);
+				}
+				if (m_pfnDestroyInputImageInformationPtr)
+				{
+					m_pfnDestroyInputImageInformationPtr(ppIIISs);
 				}
 			}
 			catch (...)

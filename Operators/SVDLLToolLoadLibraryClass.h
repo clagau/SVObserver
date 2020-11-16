@@ -78,6 +78,7 @@ typedef HRESULT (__stdcall *GetResultValueDefinitionsPtr) (long* plArraySize, Re
 typedef HRESULT(__stdcall *GetResultValueDefinitionsPtrEx) (long* plArraySize, ResultValueDefinitionStructEx** ppaResultValues);
 typedef HRESULT (__stdcall *DestroyResultValueDefinitionStructuresPtr) (ResultValueDefinitionStruct* paStructs);
 typedef HRESULT(__stdcall *DestroyResultValueDefinitionStructuresPtrEx) (ResultValueDefinitionStructEx* paStructs);
+typedef HRESULT(__stdcall* DestroyInputImageInformationPtr) (InputImageInformationStruct* paStructs);
 
 typedef HRESULT (__stdcall *GetNumberOfInputImagesPtr) (long* plNumberOfInputImages);
 typedef HRESULT (__stdcall *SetMILInputImagesPtr) (GUID tool, long lArraySize, long* paMILhandles);
@@ -186,6 +187,7 @@ private:
 	DestroyInputValueDefinitionStructuresPtrEx m_pfnDestroyInputValueDefinitionStructuresEx {nullptr};
 	SetInputValuesPtr m_pfnSetInputValues {nullptr};
 	GetInputImageInformationPtr m_pfnGetInputImageInformation {nullptr};
+	DestroyInputImageInformationPtr m_pfnDestroyInputImageInformationPtr{ nullptr };
 	GetResultValuesPtr m_pfnGetResultValues {nullptr};
 	GetMessageStringPtr m_pfnGetMessageString {nullptr};
 	ValidateValueParameterPtr m_pfnValidateValueParameter {nullptr};

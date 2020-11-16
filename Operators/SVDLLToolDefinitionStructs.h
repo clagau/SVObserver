@@ -221,7 +221,7 @@ private:
 	std::string m_DisplayName;
 };
 
-
+#pragma pack (push, 1)
 struct InputImageInformationStruct
 {
 	_bstr_t DisplayName="";
@@ -239,5 +239,5 @@ struct InputImageInformationStruct
 	bool mayBeBlackAndWhite() const;
 	bool mayBeColor() const;
 };
-
+#pragma pack (pop)
 } //namespace SvOp
