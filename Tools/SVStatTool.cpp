@@ -246,15 +246,23 @@ void SVStatTool::RestoreFeatureAttributes()
 {
 	std::string FeatureString;
 	m_PersistantFeaturesEnabled.GetValue( FeatureString );
+	// Ensure that old configurations saved originally with less features are "upgraded" to the number of features known by this program.
+	// If this tool version known less features than contained in the configuration (saved with newer SVO), the string remains unchanged, but only known features are used.
+	if (FeatureString.size() < SV_STATS_TOPOF_LIST)
+	{
+		FeatureString.resize(SV_STATS_TOPOF_LIST, '0');
+	}
+	m_PersistantFeaturesEnabled.SetValue(FeatureString);
+
 	for( int iFeature = SV_STATS_MIN_VALUE ; iFeature < SV_STATS_TOPOF_LIST ; iFeature++ )
 	{
-		if( '1' == FeatureString[iFeature] )
+		if ('1' == FeatureString[iFeature])
 		{
-			m_Value[iFeature].SetObjectAttributesAllowed( m_DefaultAttributes, SvOi::SetAttributeType::OverwriteAttribute );
+			m_Value[iFeature].SetObjectAttributesAllowed(m_DefaultAttributes, SvOi::SetAttributeType::OverwriteAttribute);
 		}
 		else
 		{
-			m_Value[iFeature].SetObjectAttributesAllowed( SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::RemoveAttribute );
+			m_Value[iFeature].SetObjectAttributesAllowed(SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::RemoveAttribute);
 		}
 	}
 }
