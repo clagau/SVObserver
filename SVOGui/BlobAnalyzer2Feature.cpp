@@ -16,6 +16,7 @@
 #include "BoundValue.h"
 #include "SVFormulaEditorSheet.h"
 #include "DisplayHelper.h"
+#include "Definitions/GlobalConst.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -282,7 +283,7 @@ namespace SvOg
 	void BlobAnalyzer2Feature::OnGridClick(NMHDR* pNotifyStruct, LRESULT*)
 	{
 		auto* pItem = reinterpret_cast<SvGcl::NM_GRIDVIEW*>(pNotifyStruct);
-		if (1 > pItem->iRow || m_featureData.size() < pItem->iRow)
+		if (nullptr == pItem || 1 > pItem->iRow || m_featureData.size() < pItem->iRow)
 		{
 			return;
 		}
@@ -291,7 +292,7 @@ namespace SvOg
 		{
 		case CustomFeatureButtonColumn:
 		{
-			if (nullptr != pItem && 0 < pItem->iRow && m_featureData.size() >= pItem->iRow && m_featureData[pItem->iRow - 1].is_custom())
+			if (0 < pItem->iRow && m_featureData.size() >= pItem->iRow && m_featureData[pItem->iRow - 1].is_custom())
 			{
 				std::string strCaption = SvUl::Format(_T("%s %s"), m_featureData[pItem->iRow - 1].name().c_str(), _T("Formula"));
 
@@ -415,9 +416,18 @@ namespace SvOg
 			case NameColumn:
 			{
 				std::string cellText = m_Grid.GetCell(pItem->iRow, pItem->iColumn)->GetText();
-				if (isNameNotUsed(cellText))
+				std::string newName = cellText;
+				SvUl::RemoveCharacters(newName, SvDef::cGeneralExcludeChars);
+				if (newName != cellText)
 				{
-					m_featureData[pItem->iRow - 1].set_name(cellText);
+					m_Grid.SetItemText(pItem->iRow, pItem->iColumn, newName.c_str());
+				}
+
+				std::string CheckOnlySpaces{ newName };
+				SvUl::RemoveCharacters(CheckOnlySpaces, _T(" "));
+				if (!newName.empty() && !CheckOnlySpaces.empty() && isNameNotUsed(newName))
+				{
+					m_featureData[pItem->iRow - 1].set_name(newName);
 				}
 				else
 				{

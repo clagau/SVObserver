@@ -76,6 +76,17 @@ public:
 	virtual unsigned  getColumNames(_variant_t& rValue) const override;
 	/// hide table in ResultPicker
 	virtual void Hide(bool hide) override;
+
+	void addColumnAtPos(int pos, const std::string& name, SvPb::EmbeddedIdEnum eId);
+
+	/// Change the embeddedIds of the value columns. First columns with startEId and then increase one per column.
+	/// \param startEId [in]
+	void changeEIdinOrder(SvPb::EmbeddedIdEnum startEId);
+
+	/// Moved an columnValueObject in the m_ValueList and also in the embedded-list (this is necessary to keep the order after reloading)
+	/// \param oldPos [in] The old position in the m_ValueList.
+	/// \param newPos [in] The new position in the m_ValueList.
+	void MoveValueColumn(int oldPos, int newPos);
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
@@ -91,11 +102,6 @@ protected:
 	/// \param objectName [in] The new name.
 	/// \param maxArray [in] The new maximum numbers of the array.
 	void UpdateColumnValueObject(int pos, std::string objectName, int maxArray);
-
-	/// Moved an columnValueObject in the m_ValueList and also in the embedded-list (this is necessary to keep the order after reloading)
-	/// \param oldPos [in] The old position in the m_ValueList.
-	/// \param newPos [in] The new position in the m_ValueList.
-	void MoveValueColumn(int oldPos, int newPos);
 
 	/// Return the next unused embedded Id for the columns
 	/// \returns SvPb::EmbeddedIdEnum

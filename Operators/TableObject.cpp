@@ -78,6 +78,29 @@ void TableObject::Hide(bool hide)
 	m_statusColor.SetObjectAttributesAllowed(attribute, SvOi::OverwriteAttribute);
 }
 
+void TableObject::addColumnAtPos(int pos, const std::string& name, SvPb::EmbeddedIdEnum eId)
+{
+	createColumnObject(eId, name.c_str(), 1);
+	if (0 <= pos && pos < m_ValueList.size())
+	{
+		std::rotate(m_ValueList.rbegin(), m_ValueList.rbegin() + 1, m_ValueList.rbegin() + m_ValueList.size() - pos);
+		std::rotate(m_embeddedList.rbegin(), m_embeddedList.rbegin() + 1, m_embeddedList.rbegin() + m_ValueList.size() - pos);
+	}
+}
+
+void TableObject::changeEIdinOrder(SvPb::EmbeddedIdEnum startEId)
+{
+	SvPb::EmbeddedIdEnum currentEId = startEId;
+	for (auto pValue : m_ValueList)
+	{
+		if (nullptr != pValue && currentEId != pValue->GetEmbeddedID())
+		{
+			pValue->SetObjectEmbedded(currentEId, pValue->GetOwnerInfo().getObject(), pValue->GetName());
+		}
+		currentEId = currentEId + 1;
+	}
+}
+
 bool TableObject::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::ResetObject(pErrorMessages);

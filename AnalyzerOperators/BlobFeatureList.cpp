@@ -272,7 +272,9 @@ namespace SvAo
 				auto iter = std::find_if(m_featureTaskVec.begin(), m_featureTaskVec.end(), [list, i](const auto* pTask) { return static_cast<long>(list[i].type()) == pTask->getFeatureType() && list[i].is_custom() == pTask->isCustomFeature(); });
 				if (m_featureTaskVec.end() != iter)
 				{	// move to correct position
-					moveFeatureTasks(std::distance(m_featureTaskVec.begin(), iter), i);
+					auto pos = std::distance(m_featureTaskVec.begin(), iter);
+					moveFeatureTasks(pos, i);
+					m_pResultTable->MoveValueColumn(static_cast<int>(pos), i);
 				}
 				else
 				{	//insert new feature at correct position
@@ -284,6 +286,7 @@ namespace SvAo
 					{
 						CreateChildObject(*pNewTask, SvDef::SVMFResetObject);
 					}
+					m_pResultTable->addColumnAtPos(i, list[i].name(), SvPb::TableColumnValueEId + m_pResultTable->getValueList().size());
 				}
 			}
 
@@ -294,6 +297,7 @@ namespace SvAo
 				if (lastMilFeaturePos != i)
 				{
 					moveFeatureTasks(i, lastMilFeaturePos);
+					m_pResultTable->MoveValueColumn(i, lastMilFeaturePos);
 					newPos = lastMilFeaturePos;
 				}
 				++lastMilFeaturePos;
@@ -437,6 +441,7 @@ namespace SvAo
 
 	void BlobFeatureList::updateTableDefinition(long maxArraySize, std::array<SvVol::DoubleSortValuePtr, 4>& resultColumnForOverlayArray, std::set<MIL_ID>& rRequiredFeatureGroup)
 	{
+		m_pResultTable->changeEIdinOrder(SvPb::TableColumnValueEId);
 		auto currentCount = m_pResultTable->getValueList().size();
 		for (auto i = m_featureTaskVec.size(); currentCount > i; ++i)
 		{
@@ -581,6 +586,11 @@ namespace SvAo
 				container.erase(container.begin() + *it);
 			}
 			m_pResultTable->setSortContainer(container);
+			//set number of blobs new
+			if (nullptr != m_pNumberOfBlobsObject)
+			{
+				m_pNumberOfBlobsObject->SetValue(static_cast<long>(container.size()));
+			}
 		}
 
 		//do range

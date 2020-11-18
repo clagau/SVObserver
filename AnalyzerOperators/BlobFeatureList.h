@@ -45,6 +45,7 @@ namespace SvAo
 
 		void BlobFeatureList::setSortControls(MIL_ID blobContextId) const;
 
+		void setNumberOfBlobsObject(SvVol::SVLongValueObjectClass* pNumberOfBlobsObject) { m_pNumberOfBlobsObject = pNumberOfBlobsObject; };
 		void setResultTable(SvOp::TableObject* pResultTable) { m_pResultTable = pResultTable; };
 		void setResultBufferId(MIL_ID resultBufferID) { m_ResultBufferID = resultBufferID; };
 
@@ -62,6 +63,7 @@ namespace SvAo
 
 		MIL_ID			m_ResultBufferID = M_NULL;
 
+		SvVol::SVLongValueObjectClass* m_pNumberOfBlobsObject = nullptr;
 		SvOp::TableObject* m_pResultTable = nullptr;
 		std::vector<BlobFeatureTask*> m_featureTaskVec;
 		std::vector<BlobFeatureTask*> m_customFeatureTaskExcludeVec;
