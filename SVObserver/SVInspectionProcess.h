@@ -386,8 +386,6 @@ private:
 	// Inspection pointers
 	SVToolSet* m_pCurrentToolset{nullptr};
 
-	volatile bool m_isInspecting{false};
-
 	// Map of All Value Objects
 	SVValueObjectMap m_mapValueObjects;
 
@@ -432,6 +430,7 @@ private:
 	std::vector<uint8_t> m_valueData;		///The memory block used to store all value objects of the inspection
 	std::atomic_bool m_resetting{false};
 
+	std::atomic_bool m_offlineRequest{ false };
 	std::atomic<const SVProductInfoStruct*> m_pProduct{ nullptr };
 	SVInspectionInfoStruct m_inspectionInfo;
 };

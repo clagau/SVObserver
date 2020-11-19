@@ -123,7 +123,6 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed)
 		m_inspectionInfo.m_BeginInspection = SvTl::GetTimeStamp();
 		
 		size_t l_InputXferCount = 0;
-		m_isInspecting = true;
 
 		/// Note this is the PPQ position of the previous trigger
 		m_pCurrentToolset->setPpqPosition((*m_pProduct).m_lastPPQPosition);
@@ -244,12 +243,11 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed)
 
 					// Mark last run product
 				LastProductUpdate(m_pProduct);
-				m_pProduct = nullptr;
 				SVInspectionInfoStruct empty;
 				std::swap(m_inspectionInfo, empty);
 			}
 		}
-
+		m_pProduct = nullptr;
 		SVObjectManagerClass::Instance().DecrementInspectionIndicator();
 
 		if (l_Process)
@@ -258,8 +256,6 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed)
 
 			m_inspectionInfo.ClearIndexes();
 		}
-
-		m_isInspecting = false;
 
 #ifdef EnableTracking
 		m_InspectionTracking.EventEnd(_T("Process Inspections"));
@@ -660,6 +656,7 @@ bool SVInspectionProcess::GoOnline()
 #endif
 
 	resetLastProcduct();
+	m_offlineRequest = false;
 
 	m_AsyncProcedure.SetPriority(THREAD_PRIORITY_NORMAL);
 
@@ -781,12 +778,27 @@ bool SVInspectionProcess::GoOffline()
 	}
 #endif
 
-	while (m_isInspecting)
+	m_offlineRequest = true;
+	//Wait a while to make sure that m_pProduct and m_offlineRequest not set simultaneously
+	::Sleep(10);
+	///Wait a maximum of 10 seconds that inspection is done to avoid infinite loop
+	constexpr int cMaxWaitLoop = 1000;
+	for (int i = 0; i < cMaxWaitLoop; ++i)
 	{
-		::Sleep(10);
+		if (nullptr == m_pProduct)
+		{
+			break;
+		}
+		else
+		{
+			::Sleep(10);
+		}
 	}
-	m_pProduct = nullptr;
-
+	//This should usually be nullptr if inspection has run last time however if the max wait loop has been reached then we should set m_pProduct to nullptr
+	if (nullptr != m_pProduct)
+	{
+		m_pProduct = nullptr;
+	}
 	m_AsyncProcedure.SetPriority(THREAD_PRIORITY_NORMAL);
 
 	//save the last image to have it in the edit-mode
@@ -906,10 +918,12 @@ HRESULT SVInspectionProcess::StartProcess(SVProductInfoStruct* pProduct)
 	rIPInfo.m_InProcess = true;
 	rIPInfo.m_HasBeenQueued = true;
 
-	m_pProduct = pProduct;
-	SVObjectManagerClass::Instance().IncrementInspectionIndicator();
-	result = m_AsyncProcedure.Signal(nullptr);
-
+	if (false == m_offlineRequest)
+	{
+		m_pProduct = pProduct;
+		SVObjectManagerClass::Instance().IncrementInspectionIndicator();
+		result = m_AsyncProcedure.Signal(nullptr);
+	}
 	return result;
 }
 
