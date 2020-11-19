@@ -520,7 +520,6 @@ HRESULT SVTADlgExternalInputSelectPage::ValidateItem(SVRPropertyItem* pItem)
 	_variant_t  vtItem(Value.c_str());
 	_variant_t  vtNew;
 
-	//const SvOp::InputValueDefinition* pDef = GetInputValueDefinitionPtr(pItem);
 	auto pDef = this->GetInputDefinitionPtr(pItem);
 	if (!pDef)
 		return E_FAIL;
@@ -630,4 +629,14 @@ std::string SVTADlgExternalInputSelectPage::GetName(uint32_t id) const
 		inspectionName = responseCmd.getobjectparametersresponse().name();
 	}
 	return inspectionName;
+}
+
+
+BOOL SVTADlgExternalInputSelectPage::OnKillActive()
+{
+	// Since the ValueController used here share the same data with the one used on another page (see SVTADlgExternalInputSelectPage),
+	// we need to avoid unwanted interactions between the two. Therefore ensure a Commit() w/o call for each controller by page leave.
+	m_InputValues.Commit(SvOg::PostAction::doNothing);
+
+	return CPropertyPage::OnKillActive();
 }

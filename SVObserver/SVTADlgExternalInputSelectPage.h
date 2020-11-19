@@ -59,6 +59,7 @@ protected:
 	// Generated message map functions
 	//{{AFX_MSG(SVTADlgExternalInputSelectPage)
 	virtual BOOL OnInitDialog() override;
+	virtual BOOL OnKillActive() override;
 	//}}AFX_MSG
 
 	afx_msg void OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult);

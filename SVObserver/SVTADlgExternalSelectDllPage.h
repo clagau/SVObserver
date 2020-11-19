@@ -58,6 +58,7 @@ protected:
 	void testExternalDll(bool setDefaultValues = false);
 	void setDefaultValuesForInputs();
 
+	std::string getStdStringFromValueController(SvPb::EmbeddedIdEnum objectId, int index = 0);
 	SVToolAdjustmentDialogSheetClass* m_pSheet;
 	CString m_strLastDllPath;
 	CToolTipCtrl m_ToolTip;
@@ -68,6 +69,7 @@ protected:
 	// Generated message map functions
 	//{{AFX_MSG(SVTADlgExternalSelectDllPage)
 	virtual BOOL OnInitDialog() override;
+	virtual BOOL OnKillActive() override;
 	virtual void OnOK() override;
 	afx_msg void OnDeleteAll();
 	afx_msg void OnDelete();
@@ -85,6 +87,5 @@ protected:
 private:
 	ExternalToolTaskController m_externalToolTaskController;
 	SvOg::ValueController m_valueController;
-
 };
 

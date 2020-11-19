@@ -26,7 +26,6 @@
 #include "SVStatusLibrary/MessageTextGenerator.h"
 #include "SVUtilityLibrary/SafeArrayHelper.h"
 
-
 //#include <Psapi.h>
 #pragma endregion Includes
 #include <tlhelp32.h> 
@@ -115,9 +114,10 @@ BOOL SVTADlgExternalSelectDllPage::OnInitDialog()
 
 	m_valueController.Init();
 
-	auto temp = m_valueController.Get<_variant_t>(SvPb::EmbeddedIdEnum::DllFileNameEId);
-	auto strDllPath = SvUl::VariantToString(temp);
+	auto strDllPath = getStdStringFromValueController(SvPb::EmbeddedIdEnum::DllFileNameEId);
+	// cppcheck-suppress danglingLifetime //m_strDLLPath is a CString and will not merely hold a copy of a pointer
 	m_strDLLPath = strDllPath.c_str();
+	
 
 	CPropertyPage::OnInitDialog();	// create button and list box windows
 
@@ -155,7 +155,7 @@ void SVTADlgExternalSelectDllPage::OnOK()
 
 	// set dll path
 	m_valueController.Set<CString>(SvPb::EmbeddedIdEnum::DllFileNameEId, m_strDLLPath);
-
+	
 	// Copy DLL Dependents from listbox to Task Class FileNameValueObject List...
 	SetDependencies();
 
@@ -168,14 +168,14 @@ void SVTADlgExternalSelectDllPage::OnOK()
 	{
 	}
 
+	m_valueController.Commit(SvOg::PostAction::doNothing);
+
 	SVIPDoc* l_pIPDoc = GetIPDoc();
 
 	if (nullptr != l_pIPDoc)
 	{
 		l_pIPDoc->UpdateAllViews(nullptr);
 	}
-
-	m_valueController.Commit();
 
 	CPropertyPage::OnOK();
 }
@@ -184,7 +184,6 @@ void SVTADlgExternalSelectDllPage::OnDeleteAll()
 {
 	// Clear List Box
 	m_lbDependentList.ResetContent();
-	m_valueController.Commit();
 	testExternalDll();
 }
 
@@ -194,7 +193,6 @@ void SVTADlgExternalSelectDllPage::OnDelete()
 	if (iCurrentPos > -1 && iCurrentPos < m_lbDependentList.GetCount())
 	{
 		m_lbDependentList.DeleteString(iCurrentPos);
-		m_valueController.Commit();
 		testExternalDll();
 	}
 
@@ -229,7 +227,6 @@ void SVTADlgExternalSelectDllPage::OnAdd()
 			m_lbDependentList.AddString(cfd.GetPathName());
 		}
 
-		m_valueController.Commit();
 		testExternalDll();
 	}
 }
@@ -261,12 +258,14 @@ void SVTADlgExternalSelectDllPage::OnBrowse()
 		std::string DLLname = cfd.GetFileName();
 		UpdateData(FALSE);
 
-		
+		//The dll path has to be completely processed by the underlying object,
+		//thus a commit is necessary after set and an init is necessary before get in order to fetch the processed value.
 		std::string dllPath(m_strDLLPath.GetString());
 		m_valueController.Set<CString>(SvPb::EmbeddedIdEnum::DllFileNameEId, m_strDLLPath);
+		m_valueController.Commit(SvOg::PostAction::doNothing);
 
-		auto tmp = m_valueController.Get<CString>(SvPb::EmbeddedIdEnum::DllFileNameEId);
-		auto runpath{ std::string{tmp} };
+		m_valueController.Init();
+		auto runpath{ getStdStringFromValueController(SvPb::EmbeddedIdEnum::DllFileNameEId) };
 
 		m_preserveStatus = false;
 		if (runpath != dllPath)
@@ -278,10 +277,11 @@ void SVTADlgExternalSelectDllPage::OnBrowse()
 				//check if previous Version is still used 
 				//Unload current dll  
 				m_valueController.Set<CString>(SvPb::EmbeddedIdEnum::DllFileNameEId, CString());
+				m_valueController.Commit(SvOg::PostAction::doNothing);
 
 				InitializeDll(false, false);
 				m_valueController.Set<CString>(SvPb::EmbeddedIdEnum::DllFileNameEId, m_strDLLPath);
-
+				
 				bool isUsed =  SvSyl::ModuleInfo::isProcessModuleName(GetCurrentProcessId(), DLLname);
 
 				if (isUsed)
@@ -306,7 +306,6 @@ void SVTADlgExternalSelectDllPage::OnBrowse()
 			pParent->SendMessage(SV_REMOVE_PAGES_FOR_TESTED_DLL);
 		}
 		testExternalDll(m_ResetInput == TRUE);
-		m_valueController.Commit();
 	}
 }// end void SVTADlgExternalSelectDllPage::OnBrowse() 
 
@@ -318,7 +317,8 @@ void SVTADlgExternalSelectDllPage::testExternalDll(bool setDefaultValues)
 
 	// DLL Path
 	m_valueController.SetDefault<CString>(SvPb::EmbeddedIdEnum::DllFileNameEId, m_strDLLPath);
-
+	// ensure that all data are available for initialize dll
+	m_valueController.Commit(SvOg::PostAction::doNothing);
 	InitializeDll(false, setDefaultValues);
 }
 
@@ -348,6 +348,18 @@ void SVTADlgExternalSelectDllPage::setDefaultValuesForInputs()
 	
 }
 
+std::string SVTADlgExternalSelectDllPage::getStdStringFromValueController(SvPb::EmbeddedIdEnum objectId, int index)
+{
+	std::string Value(m_valueController.Get<CString>(objectId + index));
+	if (Value.empty())
+	{
+		_variant_t temp = m_valueController.Get<_variant_t>(objectId + index);
+
+		Value = SvUl::VariantToString(temp);
+	}
+	return Value;
+}
+
 void SVTADlgExternalSelectDllPage::SetDependencies()
 {
 	int i(0);
@@ -357,7 +369,7 @@ void SVTADlgExternalSelectDllPage::SetDependencies()
 		//GetDefault() could be called only once if the condition "all dependencies have the same defaut value" holds TRUE always. 
 		//Assumption: the existing default value is correct, so use it to "reset" the actual value with the existing default value
 		m_valueController.Set<CString>(SvPb::EmbeddedIdEnum::DllDependencyFileNameEId + idxDep, 
-			m_valueController.GetDefault<CString>(SvPb::EmbeddedIdEnum::DllDependencyFileNameEId + idxDep));
+		m_valueController.GetDefault<CString>(SvPb::EmbeddedIdEnum::DllDependencyFileNameEId + idxDep));
 	}
 
 	// Set all File Paths from listbox
@@ -370,7 +382,6 @@ void SVTADlgExternalSelectDllPage::SetDependencies()
 	}
 
 	m_externalToolTaskController.setAllAttributes();	// update dependency attributes
-	m_valueController.Commit();
 }
 
 void SVTADlgExternalSelectDllPage::InitializeDll(bool jumpToInputPage, bool setDefaultValues)
@@ -483,3 +494,14 @@ SVIPDoc* SVTADlgExternalSelectDllPage::GetIPDoc() const
 	return l_pIPDoc;
 }
 
+
+
+BOOL SVTADlgExternalSelectDllPage::OnKillActive()
+{
+	// Since the ValueController used here share the same data with the one used on another page (see SVTADlgExternalInputSelectPage),
+	// we need to avoid unwanted interactions between the two (e.g. during navigation between tabs). 
+	// Therefore, ensure a Commit() w/o call for each controller by page leave.
+	m_valueController.Commit(SvOg::PostAction::doNothing);
+
+	return __super::OnKillActive();
+}
