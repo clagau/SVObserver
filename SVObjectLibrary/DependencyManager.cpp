@@ -67,8 +67,7 @@ namespace SvOl
 		//! This filters dependencies which are dependent on the same tool
 		std::copy_if(ObjectDependencies.begin(), ObjectDependencies.end(), std::back_inserter(DependencyVector), [&rSourceSet](const Dependency &rDependency)
 		{
-			bool CopyItem( false );
-			//! Check if same Tool
+			//copies dependency when true is returned
 			SvOi::IObjectClass* pSupplier = SvOi::getObject( rDependency.first );
 			SvOi::IObjectClass* pClient = SvOi::getObject( rDependency.second );
 			if (nullptr != pSupplier && nullptr != pClient)
@@ -81,16 +80,35 @@ namespace SvOl
 				SvPb::SVObjectTypeEnum supplierAncestorType = isParentToolset ? SvPb::SVToolSetObjectType	: SvPb::SVToolObjectType;
 				SvOi::IObjectClass* pToolSupplier = isSupplier ? pSupplier : pSupplier->GetAncestorInterface(supplierAncestorType);
 				SvOi::IObjectClass* pToolClient = isClient ? pClient : pClient->GetAncestorInterface(SvPb::SVToolObjectType);
+				if (nullptr != pToolSupplier && nullptr != pToolClient)
+				{
+					//If same Tool filter out directly
+					if (pToolSupplier == pToolClient)
+					{
+						return false;
+					}
+					else
+					{
+						//One of the dependency tools must be in the source set
+						if (rSourceSet.end() != rSourceSet.find(pToolSupplier->getObjectId()) || rSourceSet.end() != rSourceSet.find(pToolClient->getObjectId()))
+						{
+							return true;
+						}
+					}
+				}
+				//This adds the dependency when a loop or group tool is the parent
+				pToolSupplier = isSupplier ? pSupplier : pSupplier->GetAncestorInterface(supplierAncestorType, true);
+				pToolClient = isClient ? pClient : pClient->GetAncestorInterface(SvPb::SVToolObjectType, true);
 				if (nullptr != pToolSupplier && nullptr != pToolClient && pToolSupplier != pToolClient)
 				{
 					//One of the dependency tools must be in the source set
 					if (rSourceSet.end() != rSourceSet.find(pToolSupplier->getObjectId()) || rSourceSet.end() != rSourceSet.find(pToolClient->getObjectId()))
 					{
-					CopyItem = true;
+						return true;
+					}
 				}
 			}
-			}
-			return CopyItem;
+			return false;
 		});
 
 		//! First sort the supplier then the clients
