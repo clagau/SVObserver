@@ -169,7 +169,14 @@ bool RingBufferTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 			m_ringBuffer.clear();
 			m_ringBuffer.resize(m_ringBufferDepth);
 			m_isBufferFull = false;
-			m_nextBufferPos = -1;
+			if (false == SVSVIMStateClass::CheckState(SV_STATE_REGRESSION))
+			{
+				m_nextBufferPos = -1;
+			}
+			else
+			{
+				m_nextBufferPos = 0;
+			}
 		}
 		else
 		{
