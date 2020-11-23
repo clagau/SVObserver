@@ -531,7 +531,7 @@ bool SVObjectClass::isCorrectType(SvPb::ObjectSelectorType requiredType, const S
 	switch (requiredType)
 	{
 	case SvPb::allValueObjects:
-		return (SvPb::SVValueObjectType == pObject->GetObjectType());
+		return (SvPb::SVValueObjectType == pObject->GetObjectType() || SvPb::SVBasicValueObjectType == pObject->GetObjectType());
 	case SvPb::allNumberValueObjects:
 	{
 		auto pValueObject = dynamic_cast<const SvOi::IValueObject*>(pObject);
@@ -545,11 +545,32 @@ bool SVObjectClass::isCorrectType(SvPb::ObjectSelectorType requiredType, const S
 	}
 	case SvPb::realNumberValueOjects:
 	{
-		constexpr std::array<SvPb::SVObjectSubTypeEnum, 11> filter{ SvPb::SVDWordValueObjectType, SvPb::SVLongValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::SVBoolValueObjectType, SvPb::SVByteValueObjectType, SvPb::SVInt64ValueObjectType, SvPb::DoubleSortValueObjectType };
-		return (SvPb::SVValueObjectType == pObject->GetObjectType() && filter.end() != std::find(filter.begin(), filter.end(), pObject->GetObjectSubType()));
+		if (SvPb::SVValueObjectType == pObject->GetObjectType())
+		{
+			constexpr std::array<SvPb::SVObjectSubTypeEnum, 11> filter{ SvPb::SVDWordValueObjectType, SvPb::SVLongValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::SVBoolValueObjectType, SvPb::SVByteValueObjectType, SvPb::SVInt64ValueObjectType, SvPb::DoubleSortValueObjectType };
+			return (filter.end() != std::find(filter.begin(), filter.end(), pObject->GetObjectSubType()));
+		}
+		else if (SvPb::SVBasicValueObjectType == pObject->GetObjectType())
+		{
+			auto pValueObject = dynamic_cast<const SvOi::IValueObject*>(pObject);
+			if (nullptr != pValueObject)
+			{
+				DWORD type = pValueObject->GetType();
+				constexpr std::array<DWORD, 11> filter{ VT_I2, VT_I4, VT_I8, VT_R4, VT_R8, VT_UI2, VT_UI4, VT_UI8, VT_INT, VT_UINT, VT_BOOL };
+				return (filter.end() != std::find(filter.begin(), filter.end(), type));
+			}
+		}
+		return false;
 	}
 	case SvPb::stringValueObjects:
-		return (SvPb::SVValueObjectType == pObject->GetObjectType() && SvPb::SVStringValueObjectType == pObject->GetObjectSubType());
+	{
+		auto pValueObject = dynamic_cast<const SvOi::IValueObject*>(pObject);
+		if (nullptr != pValueObject)
+		{
+			return (VT_BSTR == pValueObject->GetType());
+		}
+		return false;
+	}
 	case SvPb::tableObjects:
 		return (SvPb::TableObjectType == pObject->GetObjectType());
 	case SvPb::allImageObjects:
