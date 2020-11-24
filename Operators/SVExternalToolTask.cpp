@@ -1149,7 +1149,7 @@ SvPb::GetImageInfoExternalToolResponse SVExternalToolTask::getImageInfoList() co
 	{
 		auto* entry = response.add_imageinfolist();
 		entry->set_maybeblackandwhite(info.mayBeBlackAndWhite());
-		entry->set_maybeblackandwhite(info.mayBeColor());
+		entry->set_maybecolor(info.mayBeColor());
 		entry->set_displayname(info.DisplayName);
 	}
 	return response;
