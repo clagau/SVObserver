@@ -84,8 +84,8 @@ bool ResultViewReferences::LoadResultViewItemDef( SVTreeType& rTree, SVTreeType:
 		{
 			SVObjectReference objRef;
 			std::string dottedName = SvUl::createStdString(Value);
-			bOK = (S_OK == SVObjectManagerClass::Instance().GetObjectByDottedName(dottedName, objRef));
-			if (bOK && objRef.getObject())
+			bool bValid = (S_OK == SVObjectManagerClass::Instance().GetObjectByDottedName(dottedName, objRef));
+			if (bValid && objRef.getObject())
 			{
 				if (IsViewable(objRef))
 				{

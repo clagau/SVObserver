@@ -528,7 +528,12 @@ HRESULT SVInspectionImporter::loadAndReplaceData(const std::string& inFileName, 
 		_variant_t oldInspectionNameVariant;
 		SvXml::SVNavigateTree::GetItem(XmlTree, scObjectNameTag, hItem, oldInspectionNameVariant);
 		std::string oldInspectionName = SvUl::createStdString(oldInspectionNameVariant);
-		std::string replaceStrings[] = { "<DATA Name=\"ObjectName\" Type=\"VT_BSTR\">%s</DATA>", "<DATA Name=\"Element\" Type=\"VT_BSTR\">%s</DATA>", "%s.Tool Set" };
+		std::string replaceStrings[] = 
+		{ 
+			"<DATA Name=\"ObjectName\" Type=\"VT_BSTR\">%s</DATA>", 
+			"<DATA Name=\"Element\" Type=\"VT_BSTR\">%s</DATA>", 
+			"Type = \"VT_BSTR\">%s.Tool Set."
+			};
 		for (const auto& rString : replaceStrings)
 		{
 			std::string oldString = SvUl::Format(rString.c_str(), oldInspectionName.c_str());

@@ -88,10 +88,12 @@ public:
 	void SaveToolGroupings(SvOi::IObjectWriter& rWriter);
 	void SaveViewedVariables(SvOi::IObjectWriter& rWriter);
 	
+	//!Save the SVIPDoc settings  
 	bool GetParameters(SvOi::IObjectWriter& rWriter);
 
 	typedef SvXml::SVXMLMaterialsTree SVTreeType;
 
+	//!Load the SVIPDoc settings  
 	bool SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent );
 
 	bool GoOnline();

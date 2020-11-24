@@ -222,16 +222,7 @@ static void PersistDocument(uint32_t inspectionId, SvOi::IObjectWriter& rWriter)
 	if (pDoc)
 	{
 		rWriter.StartElement(SvXml::CTAG_SVIPDOC);
-
-		// Save the View Info
-		pDoc->SaveViews(rWriter);
-
-		// Save the View Placements
-		pDoc->SaveViewPlacements(rWriter);
-
-		// Save Tool Groupings
-		pDoc->SaveToolGroupings(rWriter);
-
+		pDoc->GetParameters(rWriter);
 		rWriter.EndElement();
 	}
 }
