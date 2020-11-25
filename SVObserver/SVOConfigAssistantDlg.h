@@ -135,6 +135,7 @@ public:
 	void RemoveUsedTrigger(LPCTSTR TriggerName);
 
 	bool IsSoftwareTriggerAllowed(LPCTSTR sTriggerName) const;
+	bool IsCameraTriggerAllowed(LPCTSTR sTriggerName) const;
 	bool IsCameraLineInputAllowed(LPCTSTR triggerName) const;
 
 	bool IsInspectUsed(LPCTSTR Inspect);

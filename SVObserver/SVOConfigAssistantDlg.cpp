@@ -89,6 +89,7 @@ constexpr char* MESSAGE_NOT_COLOR_CAM        ( _T("The physical camera is not a 
 constexpr char* MESSAGE_NOT_MONO_CAM_FILE    (_T("The selected camera file is not a mono camera file."));
 constexpr char* MESSAGE_ONE_INVERT_CONTROL   ( _T("There is only one Invert control on a SVIM X-Series for all triggers and strobes.") );
 constexpr char* MESSAGE_SOFTWARE_TRIGGER_NOT_ALLOWED ( _T("The camera does not support Software Triggering.") );
+constexpr char* MESSAGE_CAMERA_TRIGGER_NOT_ALLOWED (_T("Camera trigger is not allowed PPQ Length <= 2."));
 constexpr char* MESSAGE_FILE_ACQUISITION_NOT_ALLOWED ( _T("File Acquisition is not allowed.") );
 constexpr char* MESSAGE_FILE_ACQUISITION_INVALID_FILE ( _T("The Image Filename specified is Invalid.") );
 constexpr char* MESSAGE_FILE_ACQUISITION_INVALID_DIRECTORY ( _T("The Image Directory specified is Invalid.") );
@@ -934,6 +935,32 @@ bool SVOConfigAssistantDlg::IsSoftwareTriggerAllowed(LPCTSTR TriggerName) const
 		}
 	}
 	return bRetVal;
+}
+
+bool SVOConfigAssistantDlg::IsCameraTriggerAllowed(LPCTSTR TriggerName) const
+{
+	bool result{ true };
+
+	// Get cameras attached to this trigger
+	// this is done by getting the ppq for this trigger and iterating the cameras attached to the same ppq
+	int iPpq = GetPPQListCount();
+	for (int i = 0;i < iPpq;i++)
+	{
+		const SVOPPQObjPtr pPPQObj = m_PPQList.GetPPQObjectByPosition(i);
+		if( nullptr != pPPQObj )
+		{
+			std::string attachedTriggerName = pPPQObj->GetAttachedTriggerName();
+			if( 0 == SvUl::CompareNoCase( attachedTriggerName, std::string(TriggerName) ) )
+			{
+				///Camera Trigger needs PPQ > 2
+				if (2 >= pPPQObj->GetPPQLength())
+				{
+					result = false;
+				}
+			}
+		}
+	}
+	return result;
 }
 
 bool SVOConfigAssistantDlg::IsCameraLineInputAllowed(LPCTSTR TriggerName) const
@@ -2987,6 +3014,7 @@ bool SVOConfigAssistantDlg::ItemChanged(int iItemDlg, LPCTSTR LabelName, int iAc
 					pPPQObj = GetPPQObjectByName(LabelName);
 					if ( pPPQObj )
 					{
+						CheckTriggers();
 						long l_lPpqLength = pPPQObj->GetPPQLength();
 						long l_lImageDepth = TheSVObserverApp.GetMaxPPQLength();
 						if ( pPPQObj->GetMaintainSourceImageProperty() )
@@ -3649,6 +3677,7 @@ bool SVOConfigAssistantDlg::CheckTrigger( const SvTi::SVOTriggerObj& rTriggerObj
 	bool bRet = true;
 	std::string TriggerName = rTriggerObj.GetTriggerDisplayName();
 	std::string MessageNoSoftwareTriggerAllowed = BuildDisplayMessage(MESSAGE_TYPE_ERROR, TriggerName.c_str(), MESSAGE_SOFTWARE_TRIGGER_NOT_ALLOWED);
+	std::string MessageNoCameraTriggerAllowed = BuildDisplayMessage(MESSAGE_TYPE_ERROR, TriggerName.c_str(), MESSAGE_CAMERA_TRIGGER_NOT_ALLOWED);
 
 	if (SvDef::TriggerType::SoftwareTrigger == rTriggerObj.getTriggerType())
 	{
@@ -3667,6 +3696,24 @@ bool SVOConfigAssistantDlg::CheckTrigger( const SvTi::SVOTriggerObj& rTriggerObj
 	else
 	{
 		RemoveMessageFromList( MessageNoSoftwareTriggerAllowed.c_str() );
+	}
+	if (SvDef::TriggerType::CameraTrigger == rTriggerObj.getTriggerType())
+	{
+		// check if Software Trigger is allowed
+		bRet = IsCameraTriggerAllowed(TriggerName.c_str());
+		if (!bRet)
+		{
+			// add message
+			AddMessageToList(TRIGGER_DLG, MessageNoCameraTriggerAllowed.c_str());
+		}
+		else
+		{
+			RemoveMessageFromList(MessageNoCameraTriggerAllowed.c_str());
+		}
+	}
+	else
+	{
+		RemoveMessageFromList(MessageNoCameraTriggerAllowed.c_str());
 	}
 	return  bRet;
 }
