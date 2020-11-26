@@ -521,6 +521,7 @@ HRESULT SVInspectionImporter::loadAndReplaceData(const std::string& inFileName, 
 		SvUl::searchAndReplace(rUniqueID, _T("{#"), _T("($"));
 		SvUl::searchAndReplace(xmlString, rUniqueID.c_str(), newIdString.c_str());
 	}
+	SvUl::searchAndReplace(xmlString, replaceString.c_str(), searchString.c_str());
 
 	SvXml::SVXMLMaterialsTree::SVBranchHandle hItem;
 	if (SvXml::SVNavigateTree::GetItemBranch(XmlTree, SvXml::CTAG_INSPECTION_PROCESS, nullptr, hItem))

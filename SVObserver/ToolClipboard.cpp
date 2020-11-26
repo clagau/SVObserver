@@ -783,7 +783,7 @@ HRESULT ToolClipboard::replaceUniqueIds( std::string& rXmlData, SVTreeType& rTre
 			SvUl::searchAndReplace(rUniqueID, _T("{#"), _T("($"));
 			SvUl::searchAndReplace( rXmlData, rUniqueID.c_str(), newIdString.c_str() );
 		}
-
+		SvUl::searchAndReplace(rXmlData, replaceString.c_str(), searchString.c_str());
 		Result = S_OK;
 	}
 	else
