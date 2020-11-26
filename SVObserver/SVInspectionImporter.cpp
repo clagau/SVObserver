@@ -532,13 +532,18 @@ HRESULT SVInspectionImporter::loadAndReplaceData(const std::string& inFileName, 
 		{ 
 			"<DATA Name=\"ObjectName\" Type=\"VT_BSTR\">%s</DATA>", 
 			"<DATA Name=\"Element\" Type=\"VT_BSTR\">%s</DATA>", 
-			"Type = \"VT_BSTR\">%s.Tool Set."
-			};
+			"Type=\"VT_BSTR\">%s.Tool Set.",
+			"Type=\"VT_BSTR\">%s.DIO.",
+			"Type=\"VT_BSTR\">%s.Remote Input"
+		};
+
 		for (const auto& rString : replaceStrings)
 		{
 			std::string oldString = SvUl::Format(rString.c_str(), oldInspectionName.c_str());
 			std::string newString = SvUl::Format(rString.c_str(), rNewInspectionName.c_str());
-			SvUl::searchAndReplace(xmlString, oldString.c_str(), newString.c_str());
+			boost::algorithm::replace_all(xmlString, oldString, newString);
+			//alternative without boost:
+			//SvUl::searchAndReplace(xmlString, oldString.c_str(), newString.c_str());
 		}
 	}
 
