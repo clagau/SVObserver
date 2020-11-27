@@ -69,8 +69,7 @@ bool TableAnalyzerTool::CreateObject(const SVObjectLevelCreateStruct& rCreateStr
 	SvOp::SVLongResult* pResult = dynamic_cast<SvOp::SVLongResult*>(SvOi::FindObject(getObjectId(), SvDef::SVObjectTypeInfoStruct(SvPb::SVResultObjectType, SvPb::SVResultLongObjectType)));
 	if (nullptr != pResult)
 	{
-		SvOl::SVInputInfoListClass inputInterface;
-		pResult->GetPrivateInputList(inputInterface);
+		const SvOl::SVInputInfoListClass& inputInterface = pResult->GetPrivateInputList();
 		//find right input
 		SvOl::SVInputInfoListClass::const_iterator iter = std::find_if(inputInterface.begin(), inputInterface.end(), [](const SvOl::SVInObjectInfoStruct* rInfo)->bool
 		{

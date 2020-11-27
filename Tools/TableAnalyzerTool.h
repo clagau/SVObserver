@@ -56,10 +56,12 @@ public:
 	void removeNewColumn(const SvVol::DoubleSortValuePtr pColumn);
 
 	virtual void OnEmbeddedIDChanged(const SVObjectClass* pOwnerObject, SvPb::EmbeddedIdEnum oldEmbeddedID, SvPb::EmbeddedIdEnum newEmbeddedID) override;
+	virtual bool areAuxExtentsAvailable() const override { return false; };
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
 protected:
+	virtual bool useOverlayColorTool() const override { return false; };
 #pragma endregion Protected Methods
 
 #pragma region Private Methods

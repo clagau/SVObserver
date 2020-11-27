@@ -444,10 +444,12 @@ void SVShiftTool::LocalInitialize()
 	m_TranslationXInput.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::OutputEvaluateTranslationXResultEId);
 	m_TranslationXInput.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_TranslationXInput, _T( "ShiftToolTranslationX" ) );
+	m_TranslationXInput.setReportAndCopyFlag(false);
 
 	m_TranslationYInput.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::OutputEvaluateTranslationYResultEId);
 	m_TranslationYInput.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_TranslationYInput, _T( "ShiftToolTranslationY" ) );
+	m_TranslationYInput.setReportAndCopyFlag(false);
 
 	//Special type names for extents
 	m_LeftResult.SetTypeName( _T("Extent X") );

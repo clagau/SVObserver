@@ -73,7 +73,17 @@ bool WatershedFilter::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 
-	SvOl::ValidateInput(m_MarkerImageInfo);
+	BOOL bUseMarker;
+	m_bvoUseMarker.GetValue(bUseMarker);
+	if (bUseMarker)
+	{
+		RegisterInputObject(&m_MarkerImageInfo, SvDef::WatershedMarkerImageConnectionName);
+		SvOl::ValidateInput(m_MarkerImageInfo);
+	}
+	else
+	{
+		UnregisterInputObject(&m_MarkerImageInfo);
+	}
 
 	Result = ValidateLocal(pErrorMessages) && Result;
 

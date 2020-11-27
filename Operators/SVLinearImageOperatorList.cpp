@@ -307,10 +307,12 @@ void SVLinearImageOperatorList::init()
 	inputProfileOrientation.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVEnumValueObjectType, SvPb::ProfileOrientationEId);
 	inputProfileOrientation.SetObject(GetObjectInfo());
 	RegisterInputObject(&inputProfileOrientation, _T("LinearImageOperatorListProfileOrientation"));
+	inputProfileOrientation.setReportAndCopyFlag(false);
 
 	inputUseRotationAngle.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVBoolValueObjectType, SvPb::LinearToolUseRotationEId);
 	inputUseRotationAngle.SetObject(GetObjectInfo());
 	RegisterInputObject(&inputUseRotationAngle, _T("LinearImageOperatorListUseRotationAngle"));
+	inputUseRotationAngle.setReportAndCopyFlag(false);
 
 	m_svLinearData.SetLegacyVectorObjectCompatibility();
 

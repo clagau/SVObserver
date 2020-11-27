@@ -47,18 +47,22 @@ SVLinearEdgeProcessingClass::SVLinearEdgeProcessingClass( SVObjectClass* POwner,
 	m_InputMinThreshold.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::LinearThresholdMinEId);
 	m_InputMinThreshold.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_InputMinThreshold, _T( "LinearEdgeProcessingMinThreshold" ) );
+	m_InputMinThreshold.setReportAndCopyFlag(false);
 
 	m_InputMaxThreshold.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::LinearThresholdMaxEId);
 	m_InputMaxThreshold.SetObject(GetObjectInfo());
 	RegisterInputObject(&m_InputMaxThreshold, _T("LinearEdgeProcessingMaxThreshold"));
+	m_InputMaxThreshold.setReportAndCopyFlag(false);
 
 	m_InputDelta.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::LinearThresholdDeltaEId);
 	m_InputDelta.SetObject(GetObjectInfo());
 	RegisterInputObject(&m_InputDelta, _T("LinearEdgeProcessingDeltaThreshold"));
+	m_InputDelta.setReportAndCopyFlag(false);
 
 	m_InputLinearData.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::LinearDataClassEId);
 	m_InputLinearData.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_InputLinearData, _T( "LinearEdgeProcessingInputLinearData" ) );
+	m_InputLinearData.setReportAndCopyFlag(false);
 
 	m_lPixelDepth = 0;
 	m_dwMinThreshold = 0;

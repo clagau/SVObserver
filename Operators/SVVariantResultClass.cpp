@@ -42,6 +42,7 @@ SVVariantResultClass::SVVariantResultClass(BOOL , SVObjectClass*, int)
 	m_inputObjectInfo.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVVariantValueObjectType);
 	m_inputObjectInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputObjectInfo, _T( "VariantResultValue" ) );
+	m_inputObjectInfo.setReportAndCopyFlag(false);
 
 
 	// Register Embedded Objects

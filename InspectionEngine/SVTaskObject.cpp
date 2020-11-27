@@ -600,8 +600,7 @@ SvStl::MessageContainerVector SVTaskObjectClass::validateAndSetEmbeddedValues(co
 void SVTaskObjectClass::ResolveDesiredInputs(const SvDef::SVObjectTypeInfoVector& rDesiredInputs)
 {
 	// Get Input Interface...
-	SvOl::SVInputInfoListClass inputInterface;
-	GetPrivateInputList(inputInterface);
+	SvOl::SVInputInfoListClass inputInterface = GetPrivateInputList();
 
 	// Apply desired input interface...
 	for (int i = 0; i < rDesiredInputs.size() && i < inputInterface.size(); ++i)
@@ -767,9 +766,8 @@ void SVTaskObjectClass::GetInputInterface(SvOl::SVInputInfoListClass& rInputList
 	}
 
 	// Local input list...
-	SvOl::SVInputInfoListClass localInputList;
-	GetPrivateInputList(localInputList);
-	std::copy(localInputList.begin(), localInputList.end(), std::back_inserter(rInputList));
+	const SvOl::SVInputInfoListClass& rLocalInputList =	GetPrivateInputList();
+	std::copy(rLocalInputList.begin(), rLocalInputList.end(), std::back_inserter(rInputList));
 }
 
 void SVTaskObjectClass::DestroyFriend(SVObjectClass* pObject)
@@ -1419,9 +1417,14 @@ bool SVTaskObjectClass::RegisterInputObject(SvOl::SVInObjectInfoStruct* PInObjec
 	return false;
 }
 
-void SVTaskObjectClass::GetPrivateInputList(SvOl::SVInputInfoListClass& rInputInterface) const
+void SVTaskObjectClass::UnregisterInputObject(SvOl::SVInObjectInfoStruct* pInObjectInfo)
 {
-	rInputInterface = m_inputInterfaceList;
+	m_inputInterfaceList.remove(pInObjectInfo);
+}
+
+const SvOl::SVInputInfoListClass& SVTaskObjectClass::GetPrivateInputList() const
+{
+	return m_inputInterfaceList;
 }
 
 // Override this function to implement object behavior...

@@ -109,6 +109,7 @@ void SVLUTOperator::init()
 	m_inputLUTVectorResult.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVByteValueObjectType, SvPb::LUTEquationResultEId);
 	m_inputLUTVectorResult.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputLUTVectorResult, _T( "LUTOperator" ) );
+	m_inputLUTVectorResult.setReportAndCopyFlag(false);
 
 	addDefaultInputObjects();
 

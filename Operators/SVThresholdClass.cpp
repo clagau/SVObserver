@@ -103,14 +103,17 @@ void SVThresholdClass::init()
 	m_inputUT.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::UpperThresholdEquationResultEId);
 	m_inputUT.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputUT, _T( "UpperThreshold" ) );
+	m_inputUT.setReportAndCopyFlag(false);
 
 	m_inputLT.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::LowerThresholdEquationResultEId);
 	m_inputLT.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputLT, _T( "LowerThreshold" ) );
+	m_inputLT.setReportAndCopyFlag(false);
 
 	m_inputATM.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::AutoThresholdEquationResultEId);
 	m_inputATM.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputATM, _T( "AutoThreshold" ) );
+	m_inputATM.setReportAndCopyFlag(false);
 
 	addDefaultInputObjects();
 }

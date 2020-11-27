@@ -36,9 +36,11 @@ public:
 	virtual SvVol::SVStringValueObjectClass* GetInputImageNames( ) override;
 	virtual void overwriteInputSource(SvOi::SVImageBufferHandlePtr imageHandlePtr) override;
 	virtual void getToolsWithReplaceableSourceImage(SvPb::GetToolsWithReplaceableSourceImageResponse&) const override;
+	virtual bool areAuxExtentsAvailable() const override { return false; };
 
 protected:
 	virtual bool Run(RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages = nullptr) override;
+	virtual bool useOverlayColorTool() const override { return false; };
 	void init();
 
 	// Embedded Objects:

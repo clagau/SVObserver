@@ -39,31 +39,37 @@ SVPolarTransform::SVPolarTransform( SVObjectClass* POwner, int StringResourceID 
 	m_inputCenterXResult.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::OutputEvaluateCenterXResultEId);
 	m_inputCenterXResult.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputCenterXResult, _T( "PolarTransformCenterXResult" ) );
+	m_inputCenterXResult.setReportAndCopyFlag(false);
 
 	// Center Y
 	m_inputCenterYResult.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::OutputEvaluateCenterYResultEId);
 	m_inputCenterYResult.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputCenterYResult, _T( "PolarTransformCenterYResult" ) );
+	m_inputCenterYResult.setReportAndCopyFlag(false);
 
 	// Start Radius
 	m_inputStartRadiusResult.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::OutputEvaluateStartRadiusResultEId);
 	m_inputStartRadiusResult.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputStartRadiusResult, _T( "PolarTransformStartRadiusResult" ) );
+	m_inputStartRadiusResult.setReportAndCopyFlag(false);
 
 	// End Radius
 	m_inputEndRadiusResult.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::OutputEvaluateEndRadiusResultEId);
 	m_inputEndRadiusResult.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputEndRadiusResult, _T( "PolarTransformEndRadiusResult" ) );
+	m_inputEndRadiusResult.setReportAndCopyFlag(false);
 	
 	// Start Angle
 	m_inputStartAngleResult.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::OutputEvaluateStartAngleResultEId);
 	m_inputStartAngleResult.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputStartAngleResult, _T( "PolarTransformStartAngleResult" ) );
+	m_inputStartAngleResult.setReportAndCopyFlag(false);
 
 	// End Angle
 	m_inputEndAngleResult.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::OutputEvaluateEndAngleResultEId);
 	m_inputEndAngleResult.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputEndAngleResult, _T( "PolarTransformEndAngleResult" ) );
+	m_inputEndAngleResult.setReportAndCopyFlag(false);
 
 	// Add Default Inputs and Outputs
 	addDefaultInputObjects();

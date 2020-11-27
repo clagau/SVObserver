@@ -77,6 +77,7 @@ public:
 	SvOp::SVResult* GetResult( SVStatisticsFeatureEnum aFeatureIndex );
 
 	virtual bool DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo ) override;
+	virtual bool areAuxExtentsAvailable() const override { return false; };
 
 protected:
 	/// Get the current input value and consider also the return value, i.e. whether the valus is valid.
@@ -91,6 +92,7 @@ protected:
 	void init( void );
 	void resetValues();
 	virtual bool onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool useOverlayColorTool() const override { return false; };
 
 	void RestoreFeatureAttributes();
 

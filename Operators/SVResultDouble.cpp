@@ -40,6 +40,7 @@ SVDoubleResult::SVDoubleResult( SVObjectClass* POwner, int StringResourceID )
 	m_inputObjectInfo.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType );
 	m_inputObjectInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputObjectInfo, _T( "DoubleResultValue" ) );
+	m_inputObjectInfo.setReportAndCopyFlag(false);
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( &m_Value, SvPb::ValueEId, IDS_OBJECTNAME_VALUE, false, SvOi::SVResetItemNone );

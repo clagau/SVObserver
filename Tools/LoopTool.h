@@ -30,6 +30,10 @@ public:
 	virtual bool propagateSizeAndPosition() override;
 	virtual bool usePropagateSizeAndPosition() const override;
 	virtual void addOverlays(const SvIe::SVImageClass* p_Image, SvPb::OverlayDesc& rOverlay) const override;
+	virtual bool areAuxExtentsAvailable() const override { return false; };
+
+protected:
+	virtual bool useOverlayColorTool() const override { return false; };
 
 private:
 	void BuildEmbeddedObjectList();

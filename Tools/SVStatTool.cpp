@@ -15,7 +15,6 @@
 #include "Definitions/StringTypeDef.h"
 #include "ObjectInterfaces/IObjectManager.h"
 #include "Operators/SVResultDouble.h"
-#include "SVObjectLibrary/SVOutputInfoListClass.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/RunStatus.h"
@@ -398,8 +397,7 @@ SvOp::SVResult* SVStatTool::GetResult(SVStatisticsFeatureEnum aFeatureIndex)
 
 		if( nullptr != pResult )
 		{
-			SvOl::SVInputInfoListClass	resultInputList;
-			pResult->GetPrivateInputList( resultInputList );
+			const SvOl::SVInputInfoListClass& resultInputList = pResult->GetPrivateInputList( );
 
 			SVObjectClass* pSVObject = resultInputList[0]->GetInputObjectInfo().getObject();
 			

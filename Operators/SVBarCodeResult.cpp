@@ -90,11 +90,13 @@ SVBarCodeResult::SVBarCodeResult(SVObjectClass* POwner, int StringResourceID)
 	m_dReadScore.setSaveValueFlag(false);
 	// Specify which string SVResultString should require
 	m_inputObjectInfo.SetInputObjectType(SvPb::SVNotSetObjectType, SvPb::SVNotSetSubObjectType, SvPb::BarCodeEId);
+	m_inputObjectInfo.setReportAndCopyFlag(false);
 
 	// Identify our input type needs
 	m_SVRegExpressionObjectInfo.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVStringValueObjectType, SvPb::RegExpressionEId);
 	m_SVRegExpressionObjectInfo.SetObject(GetObjectInfo());
 	RegisterInputObject(&m_SVRegExpressionObjectInfo, _T("BarCodeResultString"));
+	m_SVRegExpressionObjectInfo.setReportAndCopyFlag(false);
 }
 
 SVBarCodeResult::~SVBarCodeResult()

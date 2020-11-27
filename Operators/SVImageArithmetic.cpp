@@ -54,10 +54,12 @@ SVImageArithmetic::SVImageArithmetic( SVObjectClass* POwner, int StringResourceI
 	m_InputEnableOffsetAInfo.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVBoolValueObjectType, SvPb::EnableOffsetAEId);
 	m_InputEnableOffsetAInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_InputEnableOffsetAInfo, _T( "ImageArithmeticAEnableOffset" ) );
+	m_InputEnableOffsetAInfo.setReportAndCopyFlag(false);
 	// Offset Point
 	m_InputOffsetAPointInfo.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVPointValueObjectType, SvPb::OffsetAPointEId);
 	m_InputOffsetAPointInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_InputOffsetAPointInfo, _T( "ImageArithmeticAOffsetPoint" ) );
+	m_InputOffsetAPointInfo.setReportAndCopyFlag(false);
 
 	// Input B...
 	// Image
@@ -68,15 +70,18 @@ SVImageArithmetic::SVImageArithmetic( SVObjectClass* POwner, int StringResourceI
 	m_InputEnableOffsetBInfo.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVBoolValueObjectType, SvPb::EnableOffsetBEId);
 	m_InputEnableOffsetBInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_InputEnableOffsetBInfo, _T( "ImageArithmeticBEnableOffset" ) );
+	m_InputEnableOffsetBInfo.setReportAndCopyFlag(false);
 	// Offset Point
 	m_InputOffsetBPointInfo.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVPointValueObjectType, SvPb::OffsetBPointEId);
 	m_InputOffsetBPointInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_InputOffsetBPointInfo, _T( "ImageArithmeticBOffsetPoint" ) );
+	m_InputOffsetBPointInfo.setReportAndCopyFlag(false);
 
 	// Operator Input...
 	m_InputArithmaticOperatorInfo.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVLongValueObjectType, SvPb::ArithmeticOperatorEId);
 	m_InputArithmaticOperatorInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_InputArithmaticOperatorInfo, _T( "ImageArithmeticOperator" ) );
+	m_InputArithmaticOperatorInfo.setReportAndCopyFlag(false);
 
 
 	// Register Embedded Objects

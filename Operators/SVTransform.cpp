@@ -37,26 +37,31 @@ SVTransform::SVTransform( SVObjectClass* POwner, int StringResourceID )
 	m_inputTranslationXResult.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::OutputEvaluateTranslationXResultEId);
 	m_inputTranslationXResult.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputTranslationXResult, _T( "TransformTranslationXResult" ) );
+	m_inputTranslationXResult.setReportAndCopyFlag(false);
 
 	// Translation Y
 	m_inputTranslationYResult.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::OutputEvaluateTranslationYResultEId);
 	m_inputTranslationYResult.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputTranslationYResult, _T( "TransformTranslationYResult" ) );
+	m_inputTranslationYResult.setReportAndCopyFlag(false);
 
 	// Rotation X
 	m_inputRotationXResult.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::OutputEvaluateRotationXResultEId);
 	m_inputRotationXResult.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputRotationXResult, _T( "TransformRotationXResult" ) );
+	m_inputRotationXResult.setReportAndCopyFlag(false);
 
 	// Rotation Y
 	m_inputRotationYResult.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::OutputEvaluateRotationYResultEId);
 	m_inputRotationYResult.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputRotationYResult, _T( "TransformRotationYResult" ) );
+	m_inputRotationYResult.setReportAndCopyFlag(false);
 
 	// Rotation Angle
 	m_inputRotationAngleResult.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::OutputEvaluateRotationAngleResultEId);
 	m_inputRotationAngleResult.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputRotationAngleResult, _T( "TransformRotationAngleResult" ) );
+	m_inputRotationAngleResult.setReportAndCopyFlag(false);
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( &m_performTranslation, SvPb::PerformTranslationEId, IDS_OBJECTNAME_PERFORM_TRANSLATION, false, SvOi::SVResetItemTool );

@@ -42,7 +42,6 @@
 #include "Tools/SVArchiveTool.h"
 #include "Tools/SVArchiveRecord.h"
 #include "Tools/SVArchiveRecordsArray.h"
-#include "Tools/SVStatTool.h"
 #include "Tools/SVTool.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVFileSystemLibrary/SVFileNameArrayClass.h"
@@ -50,7 +49,6 @@
 #include "SVIPDoc.h"
 #include "Operators/SVShapeMaskHelperClass.h"
 #include "SVIOController.h"
-#include "Operators/SVUserMaskOperatorClass.h"
 #include "AnalyzerOperators/SVBlobAnalyzer.h"
 #include "Operators/SVResultDouble.h"
 #include "RemoteMonitorList.h"
@@ -709,7 +707,6 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObject, CPoin
 	{
 		std::string strType = pObject->GetObjectName();
 		std::string strName = pObject->GetName();
-		bool	bPrintToolExtents = false;
 		do
 		{
 			if ( nullptr != dynamic_cast <SvOp::SVShapeMaskHelperClass*> (pObject) )
@@ -733,8 +730,6 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObject, CPoin
 				CPoint ptTemp      = ptCurPos;
 				ptCurPos.y += PrintString(pDC, ptTemp, sLabel.c_str());
 				ptCurPos.x  = ++nIndentLevel * m_shortTabPixels;
-				
-				bPrintToolExtents = true;		// Sri 2/17/00
 			}
 			
 			ptCurPos.x   = nIndentLevel * m_shortTabPixels;
@@ -746,30 +741,6 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObject, CPoin
 				PrintValueObject(pDC, ptCurPos, _T("Type:"), strType.c_str());
 			}
 			
-			// Print the tool length, width, extends, etc here.
-			if (bPrintToolExtents && nullptr != pTool)
-			{
-				bPrintToolExtents = false;
-				
-				SvOl::SVInObjectInfoStruct* l_psvImageInfo = nullptr;
-				SvOl::SVInObjectInfoStruct* l_psvLastImageInfo = nullptr;
-
-				while( nullptr == l_psvImageInfo && S_OK == pTool->FindNextInputImageInfo( l_psvImageInfo, l_psvLastImageInfo ) )
-				{
-					if( nullptr != l_psvImageInfo )
-					{
-						if( l_psvImageInfo->IsConnected() )
-						{
-							PrintValueObject( pDC, ptCurPos, SvUl::LoadStdString(IDS_IMAGE_SOURCE_STRING).c_str(), l_psvImageInfo->GetInputObjectInfo().getObject()->GetObjectNameToObjectType().c_str() );
-						}
-					}
-					else
-					{
-						l_psvLastImageInfo = l_psvImageInfo;
-						l_psvImageInfo = nullptr;
-					}
-				}
-			} // End, if(bPrintToolExtents && ( nullptr != pTool ))
 			SvTo::SVArchiveTool* pArchiveTool = dynamic_cast <SvTo::SVArchiveTool*> (pObject);
 			if( nullptr != pArchiveTool )
 			{
@@ -806,30 +777,6 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObject, CPoin
 				ptCurPos.x   = nIndentLevel * m_shortTabPixels;
 			}// end if ( SVArchiveTool* pArchiveTool = dynamic_cast <SVArchiveTool*> (pObj) )
 			
-			SvTo::SVStatTool* pStatisticsTool = dynamic_cast<SvTo::SVStatTool*> (pObject);
-			if( nullptr != pStatisticsTool )
-			{
-				SVObjectReference refObject = pStatisticsTool->GetVariableSelected();
-				if (refObject.getObject())
-				{
-					ptCurPos.x   = nIndentLevel * m_shortTabPixels;
-					PrintValueObject(pDC, ptCurPos, _T("Variable"), refObject.GetName().c_str());
-				}
-			}  
-			
-			SvOp::SVUserMaskOperatorClass* pMaskOperator = dynamic_cast<SvOp::SVUserMaskOperatorClass*> (pObject);
-			if( nullptr != pMaskOperator )
-			{
-				SvIe::SVImageClass* pImage = pMaskOperator->getMaskInputImage();
-				if (nullptr != pImage)
-				{
-					sLabel = SvUl::LoadStdString(IDS_IMAGE_SOURCE_STRING) + _T(":");
-					sValue = pImage->GetCompleteName();
-					ptCurPos.x   = (nIndentLevel + 1) * m_shortTabPixels;
-					PrintValueObject(pDC, ptCurPos, sLabel.c_str(), sValue.c_str());
-				}
-			}
-
 			SvOp::SVDoubleResult* pBlobResult = dynamic_cast<SvOp::SVDoubleResult*> (pObject);
 			if( nullptr != pBlobResult )
 			{
@@ -1032,6 +979,19 @@ void SVConfigurationPrint::PrintFriends( CDC* pDC, SvIe::SVTaskObjectClass* pObj
 void SVConfigurationPrint::PrintInputOutputList( CDC* pDC, SVObjectClass* pObj, CPoint& ptCurPos, int nIndentLevel )
 {
 	SvIe::SVTaskObjectClass* pTaskObj = dynamic_cast<SvIe::SVTaskObjectClass*> (pObj);
+	const auto& rInputList = pTaskObj->GetPrivateInputList();
+	if (0 < rInputList.size())
+	{
+		
+		for (auto* pInput : rInputList)
+		{
+			if (nullptr != pInput && pInput->IsConnected() && pInput->reportAndCopyFlag())
+			{
+				ptCurPos.x = nIndentLevel * m_shortTabPixels;
+				PrintValueObject(pDC, ptCurPos, pInput->GetInputName().c_str(), pInput->GetInputObjectInfo().getObject()->GetObjectNameToObjectType().c_str());
+			}
+		}
+	}
 
 	SVOutputInfoListClass l_OutputList;
 	pTaskObj->GetOutputList( l_OutputList );

@@ -35,6 +35,7 @@ public:
 	virtual SvVol::SVStringValueObjectClass* GetInputImageNames() override;
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
+	virtual bool areAuxExtentsAvailable() const override { return false; };
 
 	SvIe::SVImageClass* getOutputImage(int index);
 #pragma endregion Public Methods
@@ -44,6 +45,7 @@ protected:
 	virtual bool isInputImage(uint32_t imageId) const override;
 
 	virtual bool onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool useOverlayColorTool() const override { return false; };
 #pragma endregion Protected Methods
 
 #pragma region Private Methods

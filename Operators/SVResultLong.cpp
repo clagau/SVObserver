@@ -41,6 +41,7 @@ SVLongResult::SVLongResult( SVObjectClass* POwner, int StringResourceID )
 	m_inputObjectInfo.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVLongValueObjectType );
 	m_inputObjectInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputObjectInfo, SvDef::cInputTag_LongResultValue );
+	m_inputObjectInfo.setReportAndCopyFlag(false);
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( &m_Value, SvPb::ValueEId, IDS_OBJECTNAME_VALUE, false, SvOi::SVResetItemNone );

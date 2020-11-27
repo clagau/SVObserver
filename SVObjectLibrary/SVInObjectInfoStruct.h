@@ -43,6 +43,8 @@ struct SVInObjectInfoStruct : public SVObjectInfoStruct
 	void SetInputName( const std::string& p_rInputName );
 	bool isAuxInputImage() const { return m_isAuxInputImage; };
 	void setAuxInputImageFlag(bool isAuxInputImage) { m_isAuxInputImage = isAuxInputImage; };
+	bool reportAndCopyFlag() const { return m_reportAndCopyFlag; };
+	void setReportAndCopyFlag(bool bFlag) { m_reportAndCopyFlag = bFlag; };
 
 protected:
 	// Who is my input object...
@@ -52,9 +54,9 @@ protected:
 	SVObjectInfoStruct m_InputObjectInfo;	// this is the Object, this Object is using
 	bool m_isAuxInputImage = false;
 	bool m_IsConnected;
+	bool m_reportAndCopyFlag = true; //This input will only print, written to deviceConfigReport and copied if this flag true.
 
 	std::string m_InputName;
-
 };
 
 typedef std::vector<SVInObjectInfoStruct> SVInObjectInfoStructVector;

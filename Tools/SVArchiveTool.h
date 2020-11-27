@@ -41,6 +41,7 @@ public:
 	void refreshResultArchiveList(const SVObjectReferenceVector& rObjectRefVector);
 	SVObjectReferenceVector getImageArchiveList();
 	void setImageArchiveList(const SVObjectReferenceVector& rObjectRefVector);
+	virtual bool areAuxExtentsAvailable() const override { return false; };
 
 	bool GetArchiveResultFilepath( std::string& rName );
 	const std::string GetImageArchivePathPart1() const;
@@ -97,6 +98,7 @@ protected:
 	SV_DECLARE_CLASS( SVArchiveTool )
 
 	virtual bool onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool useOverlayColorTool() const override { return false; };
 
 	HRESULT QueueArchiveString( const std::string& rArchiveString );
 

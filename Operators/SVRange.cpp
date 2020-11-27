@@ -88,6 +88,7 @@ void SVRange::init()
 	// Setup up the input
 	m_inputObjectInfo.SetObject(GetObjectInfo());
 	RegisterInputObject(&m_inputObjectInfo, _T("RangeValue"));
+	m_inputObjectInfo.setReportAndCopyFlag(false);
 
 	// Add Default Inputs and Outputs
 	addDefaultInputObjects();

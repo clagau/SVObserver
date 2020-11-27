@@ -89,6 +89,12 @@ int SVInputInfoListClass::push_back( SVInObjectInfoStruct* pInObjectInfo )
 	return static_cast<int> (m_InObjectInfoVector.size());
 }
 
+int SVInputInfoListClass::remove(SVInObjectInfoStruct* pInObjectInfo)
+{
+	m_InObjectInfoVector.erase(std::remove(m_InObjectInfoVector.begin(), m_InObjectInfoVector.end(), pInObjectInfo), m_InObjectInfoVector.end());
+	return static_cast<int> (m_InObjectInfoVector.size());
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // check for duplicates
 ////////////////////////////////////////////////////////////////////////////////

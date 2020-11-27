@@ -14,7 +14,6 @@
 #include "SVBlobAnalyzer.h"
 #include "SVMatroxLibrary/SVMatroxBlobInterface.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVObjectLibrary/SVOutputInfoListClass.h"
 #include "Definitions/Color.h"
 #include "Definitions/GlobalConst.h"
 #include "Definitions/TextDefineSVDef.h"
@@ -491,13 +490,7 @@ SvOi::IObjectClass* SVBlobAnalyzerClass::getResultObject(int Feature)
 
 void SVBlobAnalyzerClass::RebuildResultObjectArray()
 {
-	SvOl::SVInputInfoListClass	resultInputList;
-	SVOutputInfoListClass	resultOutputList;
-
-	SvOl::SVInObjectInfoStruct*	pResultInputInfo;
-
 	SvDef::SVObjectTypeInfoStruct info;
-
 	info.m_ObjectType = SvPb::SVResultObjectType;
 	info.m_SubType = SvPb::SVResultDoubleObjectType;
 
@@ -508,11 +501,9 @@ void SVBlobAnalyzerClass::RebuildResultObjectArray()
 	{
 		SvOp::SVDoubleResult* pResult = dynamic_cast<SvOp::SVDoubleResult*> (pObject);
 
-		pResult->GetPrivateInputList( resultInputList );
+		const SvOl::SVInputInfoListClass& resultInputList = pResult->GetPrivateInputList();
 
-		pResultInputInfo = resultInputList[0];
-
-		SVObjectClass* pSVObject = pResultInputInfo->GetInputObjectInfo().getObject();
+		SVObjectClass* pSVObject = resultInputList[0]->GetInputObjectInfo().getObject();
 
 		for (int i = 0; i < SvOi::SV_NUMBER_OF_BLOB_FEATURES; i++)
 		{
@@ -538,7 +529,6 @@ void SVBlobAnalyzerClass::RebuildResultObjectArray()
 ////////////////////////////////////////////////////////////////////////////////
 SvOp::SVLongResult* SVBlobAnalyzerClass::GetBlobResultObject()
 {
-	SvOl::SVInputInfoListClass	resultInputList;
 	SvOp::SVLongResult*    pResult = nullptr;
 	SvDef::SVObjectTypeInfoStruct info {SvPb::SVResultObjectType, SvPb::SVResultLongObjectType};
 	std::vector<SvOi::IObjectClass*> list;
@@ -549,11 +539,9 @@ SvOp::SVLongResult* SVBlobAnalyzerClass::GetBlobResultObject()
 		pResult = dynamic_cast<SvOp::SVLongResult*>(pObject);
 		if (nullptr != pResult)
 		{
-			pResult->GetPrivateInputList(resultInputList);
+			const SvOl::SVInputInfoListClass& resultInputList = pResult->GetPrivateInputList();
 
-			SvOl::SVInObjectInfoStruct* pResultInputInfo = resultInputList[0];
-
-			if (&m_lvoNumberOfBlobsFound == pResultInputInfo->GetInputObjectInfo().getObject())
+			if (&m_lvoNumberOfBlobsFound == resultInputList[0]->GetInputObjectInfo().getObject())
 			{
 				break;
 			}

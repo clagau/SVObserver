@@ -50,6 +50,7 @@ public:
 	bool CheckExistence( int Index = -1 );
 
 	int push_back( SVInObjectInfoStruct* );
+	int remove(SVInObjectInfoStruct*);
 
 protected:
 	const SVInObjectInfoStructPtrVector& getInObjectInfoVector() const { return m_InObjectInfoVector; };

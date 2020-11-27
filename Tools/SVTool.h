@@ -186,10 +186,9 @@ protected:
 	virtual bool onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages = nullptr) override;
 
 	virtual void UpdateOverlayIDs(SVExtentMultiLineStruct& p_rMultiLine) override;
-
 	virtual bool createAllObjectsFromChild(SVObjectClass& rChildObject) override;
-
 	virtual void connectChildObject(SVTaskObjectClass& rChildObject) override;
+	virtual bool useOverlayColorTool() const { return true; };
 
 	void setStateValueToOverlay(SvPb::Overlay& rOverlay) const;
 

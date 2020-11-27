@@ -42,6 +42,7 @@ SVPointYResult::SVPointYResult( SVObjectClass* POwner, int StringResourceID )
 	m_inputObjectInfo.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVPointValueObjectType );
 	m_inputObjectInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputObjectInfo, _T( "PointYResultValue" ) );
+	m_inputObjectInfo.setReportAndCopyFlag(false);
 
 
 	// Register Embedded Objects

@@ -65,7 +65,6 @@ namespace sv_xml
 		void WriteInspections(Writer  writer) const;
 		void WriteToolSets(Writer writer) const;
 		void WriteToolSet(Writer writer, SVInspectionProcess* pInspection) const;
-		void WriteTool(Writer writer, SvTo::SVToolClass* pTool) const;
 		void WriteArchiveTool(Writer writer, SvTo::SVArchiveTool* pArchiveTool) const;
 		void WriteModuleIO(Writer writer) const;
 		void WriteResultIO(Writer writer) const;
@@ -77,7 +76,7 @@ namespace sv_xml
 		void WriteAllChildren( Writer writer, SvIe::SVTaskObjectListClass* pObj ) const;
 		void WriteChildren( Writer writer, SVObjectClass* pObj ) const;
 		void WriteFriends( Writer writer, SvIe::SVTaskObjectClass* pObj ) const;
-		void WriteInputOutputList( Writer writer, SVObjectClass* pObj ) const;
+		void WriteInputOutputList( Writer writer, SvIe::SVTaskObjectClass* pTaskObj) const;
 		void WriteValueObject(Writer writer, const std::wstring&  rTag, const std::wstring&  rName, const std::wstring&  rValue) const;
 		void WriteIOEntryObject(Writer writer, SVIOEntryHostStructPtr IOEntry) const;
 		void WriteGlobalConstants(Writer writer) const;

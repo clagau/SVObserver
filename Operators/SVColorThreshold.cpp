@@ -328,14 +328,17 @@ void SVColorThreshold::LocalInitialize()
 	m_BandThreshold[SvDef::BandEnum::Band0].m_InputImage.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType, SvPb::Band0ImageEId);
 	m_BandThreshold[SvDef::BandEnum::Band0].m_InputImage.SetObject(GetObjectInfo());
 	RegisterInputObject(&m_BandThreshold[SvDef::BandEnum::Band0].m_InputImage, _T("ColorThresholdBand0Image"));
+	m_BandThreshold[SvDef::BandEnum::Band0].m_InputImage.setReportAndCopyFlag(false);
 
 	m_BandThreshold[SvDef::BandEnum::Band1].m_InputImage.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType, SvPb::Band1ImageEId);
 	m_BandThreshold[SvDef::BandEnum::Band1].m_InputImage.SetObject(GetObjectInfo());
 	RegisterInputObject(&m_BandThreshold[SvDef::BandEnum::Band1].m_InputImage, _T("ColorThresholdBand1Image"));
+	m_BandThreshold[SvDef::BandEnum::Band1].m_InputImage.setReportAndCopyFlag(false);
 
 	m_BandThreshold[SvDef::BandEnum::Band2].m_InputImage.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType, SvPb::Band2ImageEId);
 	m_BandThreshold[SvDef::BandEnum::Band2].m_InputImage.SetObject(GetObjectInfo());
 	RegisterInputObject(&m_BandThreshold[SvDef::BandEnum::Band2].m_InputImage, _T("ColorThresholdBand2Image"));
+	m_BandThreshold[SvDef::BandEnum::Band2].m_InputImage.setReportAndCopyFlag(false);
 
 	addDefaultInputObjects();
 }

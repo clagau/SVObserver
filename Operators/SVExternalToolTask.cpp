@@ -807,6 +807,7 @@ HRESULT SVExternalToolTask::Initialize(SVDllLoadLibraryCallback fnNotify, std::v
 			m_aPreviousInputImageRect.clear();
 			for (int i = 0; i < m_Data.m_lNumInputImages; i++)
 			{
+				m_Data.m_aInputImageInfo[i].setReportAndCopyFlag(true);
 				SvIe::SVImageClass* pImage = dynamic_cast <SvIe::SVImageClass*> (m_Data.m_aInputImageInfo[i].GetInputObjectInfo().getFinalObject());
 				if (pImage)
 				{
@@ -880,6 +881,10 @@ HRESULT SVExternalToolTask::Initialize(SVDllLoadLibraryCallback fnNotify, std::v
 				}
 			}// end for( int i = 0 ; i < m_Data.m_lNumInputImages ; i++ )
 
+			for (int i = m_Data.m_lNumInputImages; i < SVExternalToolTaskData::NUM_INPUT_IMAGES; ++i)
+			{
+				m_Data.m_aInputImageInfo[i].setReportAndCopyFlag(false);
+			}
 
 			///////////////////////////////////////
 			// Initialize Input Objects
@@ -1565,8 +1570,7 @@ SVResult* SVExternalToolTask::GetResultRangeObject(int iIndex)
 		pResult = dynamic_cast<SVVariantResultClass*>(pObject);
 		if (pResult)
 		{
-			SvOl::SVInputInfoListClass	resultInputList;
-			pResult->GetPrivateInputList(resultInputList);
+			const SvOl::SVInputInfoListClass& resultInputList = pResult->GetPrivateInputList();
 
 			if (0 < resultInputList.size() && &m_Data.m_aResultObjects[iIndex] == resultInputList[0]->GetInputObjectInfo().getObject())
 			{

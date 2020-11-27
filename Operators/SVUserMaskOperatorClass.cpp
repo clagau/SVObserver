@@ -157,10 +157,18 @@ bool SVUserMaskOperatorClass::ResetObject(SvStl::MessageContainerVector *pErrorM
 {
 	bool Result = SVUnaryImageOperatorClass::ResetObject(pErrorMessages);
 
-	SvOl::ValidateInput(m_inObjectInfo);
+	DWORD dwMaskType = MASK_TYPE_STATIC;
+	m_Data.dwvoMaskType.GetValue(dwMaskType);
+	if (dwMaskType == MASK_TYPE_IMAGE)
+	{
+		SvOl::ValidateInput(m_inObjectInfo);
+		m_inObjectInfo.setReportAndCopyFlag(true);
+	}
+	else
+	{
+		m_inObjectInfo.setReportAndCopyFlag(false);
+	}
 
-	DWORD dwMaskType;
-	m_Data.dwvoMaskType.GetValue( dwMaskType );
 	BOOL bActive = false;
 	m_Data.bvoActivated.GetValue(bActive);
 

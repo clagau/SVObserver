@@ -38,6 +38,7 @@ SVStringResult::SVStringResult( SVObjectClass* POwner, int StringResourceID )
 	m_inputObjectInfo.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVStringValueObjectType );
 	m_inputObjectInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputObjectInfo, _T( "StringResultValue" ) );
+	m_inputObjectInfo.setReportAndCopyFlag(false);
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( &m_Value, SvPb::StringValueEId, IDS_OBJECTNAME_VALUE, false, SvOi::SVResetItemNone );

@@ -42,11 +42,13 @@ public:
 	virtual bool DoesObjectHaveExtents() const override;
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
+	virtual bool areAuxExtentsAvailable() const override { return false; };
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
 protected:
 	virtual bool onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool useOverlayColorTool() const override { return false; };
 #pragma endregion Protected Methods
 
 #pragma region Private Methods

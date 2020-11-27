@@ -177,6 +177,7 @@ void SVToolSet::init()
 	m_inputConditionBoolObjectInfo.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVBoolValueObjectType, SvPb::ConditionalResultEId);
 	m_inputConditionBoolObjectInfo.SetObject(GetObjectInfo());
 	RegisterInputObject(&m_inputConditionBoolObjectInfo, _T("ToolSetConditionalValue"));
+	m_inputConditionBoolObjectInfo.setReportAndCopyFlag(false);
 
 	// Set default inputs and outputs
 	// Note:: Call the Derived Class (this) here

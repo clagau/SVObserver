@@ -34,6 +34,10 @@ public:
 	virtual bool CreateObject(const SVObjectLevelCreateStruct& rCreateStructure ) override;
 
 	virtual SvOi::ParametersForML getParameterForMonitorList(SvStl::MessageContainerVector& rMessages) const override;
+	virtual bool areAuxExtentsAvailable() const override { return false; };
+
+protected:
+	virtual bool useOverlayColorTool() const override { return false; };
 
 private:
 	void init(void);

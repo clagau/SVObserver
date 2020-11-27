@@ -195,6 +195,7 @@ void SVToolClass::init()
 	m_inputConditionBoolObjectInfo.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVBoolValueObjectType, SvPb::ConditionalResultEId);
 	m_inputConditionBoolObjectInfo.SetObject(GetObjectInfo());
 	RegisterInputObject(&m_inputConditionBoolObjectInfo, _T("ToolConditionalValue"));
+	m_inputConditionBoolObjectInfo.setReportAndCopyFlag(false);
 
 	m_overlayColorToolObjectInfo.SetInputObjectType(SvPb::SVToolObjectType);
 	RegisterInputObject(&m_overlayColorToolObjectInfo, _T("OverlayColor_Tool"));
@@ -269,6 +270,21 @@ bool SVToolClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure
 	// Tool Comment attributes...
 	m_ToolComment.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::AddAttribute);
 	m_ToolComment.SetObjectAttributesAllowed(SvPb::viewable, SvOi::SetAttributeType::RemoveAttribute);	// We do not want this to show up in the results picker.
+
+	if (areAuxExtentsAvailable())
+	{
+		RegisterInputObject(&m_AuxSourceImageObjectInfo, _T("ToolAuxSourceImage"));
+	}
+	else
+	{
+		UnregisterInputObject(&m_AuxSourceImageObjectInfo);
+	}
+
+	if (false == useOverlayColorTool())
+	{
+		m_overlayColorToolObjectInfo.SetInputObject(nullptr);
+		UnregisterInputObject(&m_overlayColorToolObjectInfo);
+	}
 
 	m_isCreated = bOk;
 
@@ -672,10 +688,29 @@ bool SVToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 
 	setAuxiliaryExtents();
 
-	SvOl::ValidateInput(m_AuxSourceImageObjectInfo);
-	SvOl::ValidateInput(m_inputConditionBoolObjectInfo);
-	SvOl::ValidateInput(m_overlayColorToolObjectInfo);
+	if (areAuxExtentsAvailable())
+	{
+		RegisterInputObject(&m_AuxSourceImageObjectInfo, _T("ToolAuxSourceImage"));
+		BOOL bEnabled{ false };
+		m_svUpdateAuxiliaryExtents.GetValue(bEnabled);
+		if (bEnabled)
+		{
+			SvOl::ValidateInput(m_AuxSourceImageObjectInfo);
+		}
+		m_AuxSourceImageObjectInfo.setReportAndCopyFlag(bEnabled);
+	}
+	else
+	{
+		UnregisterInputObject(&m_AuxSourceImageObjectInfo);
+	}
 
+	SvOl::ValidateInput(m_inputConditionBoolObjectInfo);
+
+	if (useOverlayColorTool())
+	{
+		SvOl::ValidateInput(m_overlayColorToolObjectInfo);
+	}
+	
 	return Result;
 }
 

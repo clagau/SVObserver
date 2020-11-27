@@ -13,7 +13,6 @@
 #include "Operators/TableObject.h"
 #include "SVMatroxLibrary/SVMatroxBlobInterface.h"
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
-#include "SVObjectLibrary/SVOutputInfoListClass.h"
 #include "SVProtoBuf/ConverterHelper.h"
 #include "SVStatusLibrary/RunStatus.h"
 #include "SVUtilityLibrary/StringHelper.h"
@@ -252,6 +251,7 @@ namespace SvAo
 				MesMan.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16148);
 				throw;
 			}
+			m_numberOfBlobsFound.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
 			m_pBlobFeatureList->setNumberOfBlobsObject(&m_numberOfBlobsFound);
 			m_pBlobFeatureList->setResultBufferId(m_ResultBufferID);
 			m_pBlobFeatureList->setResultTable(m_pResultTable);

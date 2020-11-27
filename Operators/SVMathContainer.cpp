@@ -41,6 +41,7 @@ SVMathContainer::SVMathContainer( SVObjectClass* POwner, int StringResourceID )
 	m_inputMathResult.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::MathEquationResultEId);
 	m_inputMathResult.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputMathResult, _T( "MathResult" ) );
+	m_inputMathResult.setReportAndCopyFlag(false);
 
 	// Register Embedded Objects
 

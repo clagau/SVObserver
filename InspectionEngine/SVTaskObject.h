@@ -101,6 +101,7 @@ public:
 	/// \param pPosObject [in] The other object will be moved before this object.
 	void MovedEmbeddedObject(SVObjectClass* pToMoveObject, SVObjectClass* pPosObject);
 	bool RegisterInputObject(SvOl::SVInObjectInfoStruct* PInObjectInfo, const std::string& p_rInputName);
+	void UnregisterInputObject(SvOl::SVInObjectInfoStruct* pInObjectInfo);
 
 	HRESULT GetOutputListFiltered(SVObjectReferenceVector& rvecObjects, UINT uiAttributes = SvPb::noAttributes, bool bAND = true); /* true means AND, false means OR */
 
@@ -194,7 +195,7 @@ public:
 	void PersistInputs(SvOi::IObjectWriter& rWriter);
 	void PersistEmbeddeds(SvOi::IObjectWriter& rWriter);
 
-	void GetPrivateInputList(SvOl::SVInputInfoListClass& RInputInterface) const;
+	const SvOl::SVInputInfoListClass& GetPrivateInputList() const;
 
 	HRESULT GetImageList(SVImageClassPtrVector& p_rImageList, UINT uiAttributes = SvPb::noAttributes, bool bAND = true);
 
