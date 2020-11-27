@@ -116,6 +116,8 @@ public:
 
 	void getExtentProperties(::google::protobuf::RepeatedPtrField< ::SvPb::ExtentParameter >& rExtentProperties) const;
 
+	void OutputDebugInformationOnExtent(const char* pDescription, const SVImageExtentClass *pExtent=nullptr) const ;
+
 private:
 	HRESULT UpdateLine( SvPb::SVExtentLocationPropertyEnum eLocation, const SVPoint<double>& rStart, const SVPoint<double>& rEnd );
 	HRESULT UpdatePolar( SvPb::SVExtentLocationPropertyEnum eLocation, const SVPoint<double>& rStart, const SVPoint<double>& rEnd );

@@ -639,5 +639,8 @@ namespace SvStl
 		{Tid_SetParameterValuesFailed, _T("Setting of the parameter '%s' failed.") },
 		
 		{ Tid_Correct_Grouping_Add_S_Items, _T("Correct grouping add  '%s' Items.") },
+
+		{ Tid_InvalidScaleFactor, _T("Invalid Scale Factor.") },
+			
 };
 } //namespace SvStl

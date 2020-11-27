@@ -11,14 +11,14 @@
 
 #pragma region Includes
 #include "SVTool.h"
-#include "SVMatroxLibrary/SVMatroxEnums.h"
 #include "SVValueObjectLibrary/SVStringValueObjectClass.h"
+#include "SVValueObjectLibrary/LinkedValue.h"
 #pragma endregion
 
 namespace SvTo
 {
 
-class ResizeTool :	public SVToolClass
+class ResizeTool: public SVToolClass
 {
 	SV_DECLARE_CLASS (ResizeTool);
 
@@ -33,6 +33,7 @@ public:
 
 	virtual HRESULT SetImageExtentToParent() override;
 	virtual HRESULT SetImageExtent( const SVImageExtentClass& rImageExtent ) override;
+	HRESULT SetImageExtentWithoutScaleFactors(const SVImageExtentClass& rImageExtent);
 	
 	/// GetObjectAtPoint
 	///  Tests to see if the passed in point (usually from a mouse location)
@@ -47,30 +48,18 @@ public:
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
-	bool ValidateParameters (SvStl::MessageContainerVector *pErrorMessages=nullptr);
-	bool ValidateOfflineParameters (SvStl::MessageContainerVector *pErrorMessages=nullptr);
-	bool ValidateScaleFactor(const double value, SvStl::MessageContainerVector *pErrorMessages=nullptr);
-	bool ValidateInterpolation(const SVInterpolationModeOptions::SVInterpolationModeOptionsEnum interpolationMode, SvStl::MessageContainerVector *pErrorMessages=nullptr);
-	bool ValidateOverscan(const SVOverscanOptions::SVOverscanOptionsEnum overscan, SvStl::MessageContainerVector *pErrorMessages=nullptr);
-	bool ValidatePerformance(const SVPerformanceOptions::SVPerformanceOptionsEnum performance, SvStl::MessageContainerVector *pErrorMessages=nullptr);
+	bool AreAllAllScaleFactorValuesValid();
+	bool isInterpolationModeValueOK ();
 
-
-	void BackupInspectionParameters();
-	HRESULT	GetBackupInspectionParameters (	double*	oldHeightScaleFactor,
-		double*	oldWidthScaleFactor,
-		long*	oldInterpolationMode,
-		long*	oldOverscan,
-		long*	oldPerformance);
-		
 	SvIe::SVImageClass* getInputImage(bool bRunMode = false) const;
 
-	SvVol::SVEnumerateValueObjectClass& getInterpolationMode() { return m_ResizeInterpolationMode; };
-	SvVol::SVEnumerateValueObjectClass& getOverscan() { return m_ResizeOverscan; };
-	SvVol::SVEnumerateValueObjectClass& getPerformance() { return m_ResizePerformance; };
 #pragma endregion Public Methods
 
-#pragma region Protected Methods
-protected:
+#pragma region Private Methods
+private:
+
+	// Source Image - input
+	SvOl::SVInObjectInfoStruct m_InputImageObjectInfo;
 	void LocalInitialize();
 
 	void BuildInputObjectList();
@@ -80,18 +69,12 @@ protected:
 
 	virtual bool onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
-	// Interpolation Mode - embedded
-	HRESULT InitializeInterpolationModeMember();
+	bool allScalefactorsHaveDefaultValues();
+	bool ModifyImageExtentByScaleFactors();
 
-	// Overscan - embedded
-	HRESULT	InitializeOverscanMember();
+#pragma endregion Private Methods
 
-	// Performance - embedded
-	HRESULT InitializePerformanceMember();
-
-#pragma endregion Protected Methods
-
-#pragma region Protected Members
+#pragma region Private Members
 	SvVol::SVStringValueObjectClass m_SourceImageNames;
 
 	// Output Image - embedded
@@ -99,24 +82,14 @@ protected:
 	SvIe::SVImageClass m_LogicalROIImage;
 
 	SvVol::SVEnumerateValueObjectClass	m_ResizeInterpolationMode;
-	SvVol::SVEnumerateValueObjectClass	m_ResizeOverscan;
-	SvVol::SVEnumerateValueObjectClass	m_ResizePerformance;
 
-	long		m_ResizeInterpolationMode_Backup;
-	long		m_ResizeOverscan_Backup;
-	long		m_ResizePerformance_Backup;
-	double		m_ResizeWidthSF_Backup;
-	double		m_ResizeHeightSF_Backup;
+	SvVol::LinkedValue m_contentWidthScaleFactor;
+	SvVol::LinkedValue m_contentHeightScaleFactor;
+	SvVol::LinkedValue m_formatWidthScaleFactor;
+	SvVol::LinkedValue m_formatHeightScaleFactor;
 
-	const static long MinScaleFactorThreshold; // Scale Factor may not 
-											   // be less than or equal 
-											   // to 0.
-	const static long MaxScaleFactor;		   // Maximum allowed Scale Factor. 
-
-	// Source Image - input
-	SvOl::SVInObjectInfoStruct m_InputImageObjectInfo;
-
-#pragma endregion Protected Members
+#pragma endregion Private Members
 };
 
 } //namespace SvTo
+ 

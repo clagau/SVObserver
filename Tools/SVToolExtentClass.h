@@ -59,6 +59,8 @@ public:
 	bool GetAlwaysUpdate() const { return m_bAlwaysUpdate; }
 	void SetAlwaysUpdate( bool bAlwaysUpdate ) { m_bAlwaysUpdate = bAlwaysUpdate; }
 
+	SVImageExtentClass& getImageExtent() {return m_rImageExtent;}
+
 	HRESULT ValidExtentAgainstParentImage( const SVImageExtentClass& p_rImageExtent ) const;
 	HRESULT UpdateExtentToParentExtents( SVImageExtentClass& p_rNewExtent  );
 	HRESULT UpdateExtentAgainstParentImage( const SVImageExtentClass& p_rImageExtent );
@@ -88,7 +90,7 @@ public:
 //- structure into the SVImageExtentClass based structure. -------------------
 	HRESULT updateImageExtent();
 
-	HRESULT SetImageExtent( const SVImageExtentClass& rImageExtent );
+	HRESULT SetImageExtent( const SVImageExtentClass& rImageExtent, bool setScaleFactors=true);
 
 	// ******* Begin Source Extent Data
 	// *

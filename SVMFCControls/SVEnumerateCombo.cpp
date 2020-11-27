@@ -41,11 +41,10 @@ namespace SvMc
 	{
 		bool Result{ true };
 	
-		m_EnumList = rEnumList;
 		// Flush combo...
 		ResetContent();
 		// Populate Combo box...
-		for (auto const&rEntry : m_EnumList)
+		for (auto const&rEntry : rEnumList)
 		{
 			// Add enumerator to combo list...
 			int index = AddString( rEntry.first.c_str() );

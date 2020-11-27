@@ -26,24 +26,6 @@ HRESULT ConvertEnumToMatroxType(const std::vector<std::pair<SVEnumType, long lon
 }
 
 template<typename SVEnumType>
-HRESULT ConvertBitSetToMatroxType(const std::vector<std::pair<SVEnumType, long long>>& rEnumPairList, SVEnumType Type, long long& rMatroxType)
-{
-	HRESULT Result {SVMEE_INTERNAL_CONVERSION_ERROR};
-
-	rMatroxType = 0;
-	// Loop over set of enums as bit set and apply conversion
-	for (const auto& rEntry : rEnumPairList)
-	{
-		if (rEntry.first == (Type & rEntry.first))
-		{
-			rMatroxType |= rEntry.second;
-			Result = S_OK;
-		}
-	}
-	return Result;
-}
-
-template<typename SVEnumType>
 HRESULT ConvertEnumFromMatroxType(const std::vector<std::pair<SVEnumType, long long>>& rEnumPairList, long long MatroxType, SVEnumType& rType)
 {
 	for (const auto& rEntry : rEnumPairList)

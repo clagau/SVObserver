@@ -40,10 +40,11 @@ constexpr char* cRaidErrorIndicator = _T("Raid Error Indicator");
 
 constexpr char* cLinkName = _T(" Link");
 
-constexpr char* Auto = _T("Auto");
+constexpr char* Interpolate = _T("Interpolate");
 constexpr char* Bicubic = _T("Bicubic");
 constexpr char* Bilinear = _T("Bilinear");
 constexpr char* NearestNeighbor = _T("Nearest Neighbor");
+constexpr char* Clear = _T("Clear");
 constexpr char* Enabled = _T("Enabled");
 constexpr char* Disabled = _T("Disabled");
 constexpr char* Fast = _T("Fast");
@@ -66,4 +67,12 @@ constexpr char* ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME = _T("ArchiveToolGoOffl
 constexpr char* SizeAdjustTextNone = _T("Manual");
 constexpr char* SizeAdjustTextFormula = _T("Formula");
 constexpr char* SizeAdjustTextFullSize = _T("Auto Fit");
+
+static std::initializer_list<const char*> c_allInterpolationModeNames
+{
+	SvDef::Interpolate,
+	SvDef::Bicubic,
+	SvDef::Bilinear,
+	SvDef::NearestNeighbor
+};
 } //namespace SvDef

@@ -267,7 +267,7 @@ bool SVEnumerateValueObjectClass::GetEnumeratorName( long lValue, std::string& r
 	if (!Result)
 	{
 		// Return undefined value as string...
-		rEnumerator = SvUl::Format(_T("%d"), lValue);
+		rEnumerator = SvUl::Format(_T("<id=%d>"), lValue);
 	}
 	return Result;
 }

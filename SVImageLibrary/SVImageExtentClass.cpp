@@ -67,6 +67,29 @@ static const SVExtentPropertyStringMap cExtentPropertyNames =
 	{SvPb::SVExtentPropertyOutputHeight, std::string("Height")},
 };
 
+static const SVExtentPropertyStringMap cShortExtentPropertyNames =
+{
+	{SvPb::SVExtentPropertyPositionPointX, std::string("X")},
+	{SvPb::SVExtentPropertyPositionPointY, std::string("Y")},
+	{SvPb::SVExtentPropertyPositionPointEndOfLineX, std::string("eolX")},
+	{SvPb::SVExtentPropertyPositionPointEndOfLineY, std::string("eolY")},
+	{SvPb::SVExtentPropertyTranslationOffsetX, std::string("dX")},
+	{SvPb::SVExtentPropertyTranslationOffsetY, std::string("dY")},
+	{SvPb::SVExtentPropertyRotationAngle, std::string("rot")},
+	{SvPb::SVExtentPropertyOutputPositionPointX, std::string("xOut")},
+	{SvPb::SVExtentPropertyOutputPositionPointY, std::string("yOut")},
+	{SvPb::SVExtentPropertyWidth, std::string("w")},
+	{SvPb::SVExtentPropertyHeight, std::string("h")},
+	{SvPb::SVExtentPropertyStartAngle, std::string("start")},
+	{SvPb::SVExtentPropertyEndAngle, std::string("end")},
+	{SvPb::SVExtentPropertyInnerRadius, std::string("inner")},
+	{SvPb::SVExtentPropertyOuterRadius, std::string("outer")},
+	{SvPb::SVExtentPropertyOutputWidth, std::string("wOut")},
+	{SvPb::SVExtentPropertyOutputHeight, std::string("hOut")},
+	{SvPb::SVExtentPropertyWidthScaleFactor, std::string("sclW")},
+	{SvPb::SVExtentPropertyHeightScaleFactor, std::string("sclH")},
+};
+
 static const SVExtentPropertyPointMap cExtentPropertyPointMap =
 {
 	{SvPb::SVExtentPropertyPositionPoint, {SvPb::SVExtentPropertyPositionPointX, SvPb::SVExtentPropertyPositionPointY}},
@@ -4952,3 +4975,72 @@ bool SVImageExtentClass::isEnabled(SvPb::SVExtentPropertyEnum eProperty) const
 {
 	return ((m_properties & eProperty) == eProperty) && (eProperty != SvPb::SVExtentPropertyNone);
 }
+
+//Arvid: useful for debugging extents 
+void SVImageExtentClass::OutputDebugInformationOnExtent(const char* pDescription, const SVImageExtentClass* pExtent) const
+{
+	std::stringstream info;
+
+	info.flags(std::ios::fixed);
+	info.precision(2);
+
+	info << pDescription << ": ";
+
+	if (nullptr == pExtent)
+	{
+		for (auto& propertyAndValue : m_extentValues)
+		{
+			auto enumAndName = cShortExtentPropertyNames.find(propertyAndValue.first);
+
+			if (enumAndName != cShortExtentPropertyNames.end())
+			{
+				info << enumAndName->second;
+			}
+			else
+			{
+				info << "?(" << propertyAndValue.first << ")" << ":" << propertyAndValue.second << " ";
+			}
+
+			info << ":" << propertyAndValue.second << " ";
+		}
+	}
+	else
+	{
+		for (auto& propertyAndValue : m_extentValues)
+		{
+			auto matchingPropertyAndValue = pExtent->m_extentValues.find(propertyAndValue.first);
+			if (matchingPropertyAndValue != pExtent->m_extentValues.end())
+			{
+				if (matchingPropertyAndValue->second != propertyAndValue.second)
+				{
+					auto enumAndName = cShortExtentPropertyNames.find(propertyAndValue.first);
+
+					if (enumAndName != cShortExtentPropertyNames.end())
+					{
+						enumAndName = cShortExtentPropertyNames.find(propertyAndValue.first);
+
+						if (enumAndName != cShortExtentPropertyNames.end())
+						{
+							info << enumAndName->second;
+						}
+						else
+						{
+							info << "?(" << propertyAndValue.first << ")" << ":" << propertyAndValue.second << " ";
+						}
+					}
+					else
+					{
+						info << "?(" << propertyAndValue.first << ")" << ":" << propertyAndValue.second << " ";
+					}
+
+					info << ":" << matchingPropertyAndValue->second << "->" << propertyAndValue.second << " ";
+				}
+			}
+		}
+	}
+
+	info << "\n";
+
+	OutputDebugString(info.str().c_str());
+}
+

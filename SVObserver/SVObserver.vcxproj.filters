@@ -429,9 +429,6 @@
     <ClCompile Include="SVTADlgTranslationPage.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVTADlgTranslationResizePage.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVTADlgTranslationShiftPage.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -496,6 +493,9 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVTADlgExternalSelectDllPage.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVTADlgResizePage.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
@@ -964,9 +964,6 @@
     <ClInclude Include="SVTADlgTranslationPage.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVTADlgTranslationResizePage.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVTADlgTranslationShiftPage.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -1046,6 +1043,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVTADlgExternalSelectDllPage.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVTADlgResizePage.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

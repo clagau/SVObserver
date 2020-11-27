@@ -440,6 +440,7 @@ HRESULT SVImageClass::UpdateFromParentInformation(SvStl::MessageContainerVector 
 		if (nullptr != l_pParentImage && (m_LastReset < l_pParentImage->GetLastResetTimeStamp() || m_LastReset < m_LastUpdate))
 		{
 			SVImageExtentClass imageExtent = GetImageExtents();
+
 			SVImagePropertiesClass l_ImageProperties = m_ImageInfo.GetImageProperties();
 			SVImageInfoClass l_ImageInfo = l_pParentImage->GetImageInfo();
 
@@ -467,6 +468,7 @@ HRESULT SVImageClass::UpdateFromParentInformation(SvStl::MessageContainerVector 
 
 				Result = UpdateFromToolInformation();
 			}
+
 		}
 		else
 		{

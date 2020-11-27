@@ -176,7 +176,7 @@ bool ValidateArchivePath(const std::string& rFilePath)
 	SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
 	Exception.setMessage(SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_InvalidPath, msgList, SvStl::SourceFileParams(StdMessageParams));
 	return false;
-	//@TODO[Arvid][10.00][20.07.2020] a function here should not require GUI access! ABX
+	//@TODO[Arvid][10.00][20.07.2020] a function here should not require GUI access!
 
 }
 

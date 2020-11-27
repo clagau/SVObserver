@@ -193,9 +193,9 @@ void SVTADlgArchiveImagePage::updateImageFilePathRootElements()
 		return; //this avoids this function from having undefined effects if it is called from SVTADlgArchiveResultsPage::QueryAllowExit() 
 				//before the SVTADlgArchiveImagePage window is created
 	}
-	m_ImageFilepathroot1WidgetHelper.EditboxToTextValue();
-	m_ImageFilepathroot2WidgetHelper.EditboxToTextValue();
-	m_ImageFilepathroot3WidgetHelper.EditboxToTextValue();
+	m_ImageFilepathroot1WidgetHelper.EditboxToValue();
+	m_ImageFilepathroot2WidgetHelper.EditboxToValue();
+	m_ImageFilepathroot3WidgetHelper.EditboxToValue();
 
 	m_ValueController.Commit(SvOg::PostAction::doReset); //changes need to be committed before validateImageFilepathRoot() is called
 }
@@ -328,9 +328,9 @@ BOOL SVTADlgArchiveImagePage::OnInitDialog()
 
 	m_alternativeImagePaths.TextValuesToEditboxes();
 
-	m_ImageFilepathroot1WidgetHelper.TextValueToEditbox();
-	m_ImageFilepathroot2WidgetHelper.TextValueToEditbox();
-	m_ImageFilepathroot3WidgetHelper.TextValueToEditbox();
+	m_ImageFilepathroot1WidgetHelper.ValueToEditbox();
+	m_ImageFilepathroot2WidgetHelper.ValueToEditbox();
+	m_ImageFilepathroot3WidgetHelper.ValueToEditbox();
 
 	ReadSelectedObjects();
 
@@ -864,7 +864,7 @@ void SVTADlgArchiveImagePage::AlternativeImagePathController::EditboxesToTextVal
 {
 	for (SvOg::ValueEditWidgetHelper& uiInfo : m_vecValueAndGuiInfo)
 	{
-		uiInfo.EditboxToTextValue();
+		uiInfo.EditboxToValue();
 	}
 }
 
@@ -872,6 +872,6 @@ void SVTADlgArchiveImagePage::AlternativeImagePathController::TextValuesToEditbo
 {
 	for (SvOg::ValueEditWidgetHelper& uiInfo : m_vecValueAndGuiInfo)
 	{
-		uiInfo.TextValueToEditbox();
+		uiInfo.ValueToEditbox();
 	}
 }

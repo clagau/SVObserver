@@ -26,7 +26,7 @@
 #include "SVTADlgThresholdPage.h"
 #include "SVTADlgTransformationLearnPage.h"
 #include "SVTADlgTranslationPage.h"
-#include "SVTADlgTranslationResizePage.h"
+#include "SVTADlgResizePage.h"
 #include "SVTADlgTranslationShiftPage.h"
 #include "SVTADlgExternalResultPage.h"
 #include "SVToolAdjustmentDialogAnalyzerPageClass.h"
@@ -320,7 +320,7 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 			{
 				AddPage(new SvOg::SVToolAdjustmentDialogSizePage(m_InspectionID, m_TaskObjectID));
 			}
-			AddPage(new SVTADlgTranslationResizePage(m_InspectionID, m_TaskObjectID, this));
+			AddPage(new SVTADlgResizePage(m_InspectionID, m_TaskObjectID, this));
 			addConditionalDialog();
 			AddPage(new SvOg::SVTADlgGeneralPage(m_InspectionID, m_TaskObjectID));
 			break;

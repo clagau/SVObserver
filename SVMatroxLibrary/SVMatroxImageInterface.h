@@ -14,7 +14,6 @@
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
 #include "SVMatroxSimpleEnums.h"
-#include "SVMatroxEnums.h"
 #pragma endregion Includes
 
 class SVCommandDataHolder;
@@ -109,13 +108,11 @@ public:
 	static HRESULT Watershed( const SVMatroxBuffer& p_rDest, const SVMatroxBuffer& p_rSource, const SVMatroxBuffer& p_rMarker, long p_lMinVariation, SVImageWaterShedEnum p_lControlFlag);
 	// This function replaces MimResize
 	// It is assumed that parameters are verified before entering Resize.  They are not checked again inside Resize.
-	static HRESULT Resize( const SVMatroxBuffer& p_rDest, 
+	static HRESULT Resize(const SVMatroxBuffer& p_rDest, 
 								const SVMatroxBuffer& p_rSource, 
 								const double p_dScaleFactorX, 
 								const double p_dScaleFactorY, 
-								const SVInterpolationModeOptions::SVInterpolationModeOptionsEnum interpolationMode,
-								const SVOverscanOptions::SVOverscanOptionsEnum overscan,
-								const SVPerformanceOptions::SVPerformanceOptionsEnum performance);
+								long interpolationMode);
 		
 	static SVMatroxFileTypeEnum getFileType( LPCTSTR FileExt );
 

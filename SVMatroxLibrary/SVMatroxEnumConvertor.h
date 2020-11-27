@@ -24,8 +24,6 @@ The ConvertBitSetFromMatroxType method converts a complex Matrox Type (BitSet) t
 
 template<typename SVEnumType>
 HRESULT ConvertEnumToMatroxType(const std::vector<std::pair<SVEnumType, long long>>& rEnumPairList, SVEnumType type, long long& rMatroxType);
-template<typename SVEnumType>
-HRESULT ConvertBitSetToMatroxType(const std::vector<std::pair<SVEnumType, long long>>& rEnumPairList, SVEnumType type, long long& rMatroxType);
 
 template<typename SVEnumType>
 HRESULT ConvertEnumFromMatroxType(const std::vector<std::pair<SVEnumType, long long>>& rEnumPairList, long long MatroxType, SVEnumType& type);

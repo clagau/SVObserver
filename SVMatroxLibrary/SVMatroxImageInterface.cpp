@@ -14,11 +14,11 @@
 //Moved to precompiled header: #include <assert.h>
 //Moved to precompiled header: #include <boost/config.hpp>
 #include "SVMatroxImageInterface.h"
+#include "SVMatroxEnums.h"
 
 #include "SVMatroxApplicationInterface.h"
 #include "SVMatroxBuffer.h"
 #include "SVMatroxBufferInterface.h"
-#include "SVMatroxEnumConvertor.h"
 #include "SVMatroxErrorEnum.h"
 #include "SVMatroxImageRotateStruct.h"
 #include "SVMatroxPolarTransformStruct.h"
@@ -27,28 +27,6 @@
 #include "SVMessage/SVMessage.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
-
-
-SVInterpolationModeOptions::SVInterpolationModeOptionsEnumPair SVInterpolationModeOptions::m_Convertor
-{
-	{SVInterpolationModeOptions::InterpolationModeAuto, M_INTERPOLATE},
-	{SVInterpolationModeOptions::InterpolationModeBilinear, M_BILINEAR},
-	{SVInterpolationModeOptions::InterpolationModeBicubic, M_BICUBIC},
-	{SVInterpolationModeOptions::InterpolationModeAverage, M_AVERAGE},
-	{SVInterpolationModeOptions::InterpolationModeNearestNeighbor, M_NEAREST_NEIGHBOR}
-};
-
-SVOverscanOptions::SVOverscanOptionsEnumPair SVOverscanOptions::m_Convertor
-{
-	{SVOverscanOptions::OverscanEnable, M_OVERSCAN_ENABLE},
-	{SVOverscanOptions::OverscanDisable, M_OVERSCAN_DISABLE}
-};
-
-SVPerformanceOptions::SVPerformanceOptionsEnumPair SVPerformanceOptions::m_Convertor
-{
-	{SVPerformanceOptions::PerformanceFast, M_FAST},
-	{SVPerformanceOptions::PerformancePresice, M_REGULAR}
-};
 
 /**
 @SVOperationName Default Constructor
@@ -76,6 +54,7 @@ SVMatroxImageInterface::~SVMatroxImageInterface()
 @SVOperationDescription This function converts a SVImageOperationTypeEnum to a Matrox constant.
 
 */
+
 long SVMatroxImageInterface::Convert2MatroxType(SVImageOperationTypeEnum p_eType)
 {
 	long l_lMatroxType = 0;
@@ -1638,15 +1617,17 @@ HRESULT SVMatroxImageInterface::Watershed(const SVMatroxBuffer& p_rDest,
 @SVOperationDescription This function performs a scaling transformation on the specified source buffer.
 
 */
-HRESULT SVMatroxImageInterface::Resize(const SVMatroxBuffer&		p_rDest,
+HRESULT SVMatroxImageInterface::Resize(
+	const SVMatroxBuffer&		p_rDest,
 	const SVMatroxBuffer&		p_rSource,
 	const double				p_dScaleFactorX,
 	const double				p_dScaleFactorY,
-	const SVInterpolationModeOptions::SVInterpolationModeOptionsEnum interpolationMode,
-	const SVOverscanOptions::SVOverscanOptionsEnum	overscan,
-	const SVPerformanceOptions::SVPerformanceOptionsEnum	performance)
+	long						interpolationMode)
 {
 	HRESULT l_Code(S_OK);
+
+	const InterpolationMode interpolationModeOption =
+		static_cast <InterpolationMode>(interpolationMode);
 
 #ifdef USE_TRY_BLOCKS
 	try
@@ -1666,51 +1647,11 @@ HRESULT SVMatroxImageInterface::Resize(const SVMatroxBuffer&		p_rDest,
 				break;
 			}
 
-			long long matroxInterpolationMode {0LL};
-			long long matroxOverscan {0LL};
-			long long matroxPerformance {0LL};
-
-			l_Code = ConvertBitSetToMatroxType(SVInterpolationModeOptions::m_Convertor, interpolationMode, matroxInterpolationMode);
-
-			if (S_OK != l_Code)
-			{
-				break;
-			}
-
-			l_Code = ConvertBitSetToMatroxType(SVOverscanOptions::m_Convertor, overscan, matroxOverscan);
-
-			if (S_OK != l_Code)
-			{
-				break;
-			}
-
-			switch (performance)
-			{
-				case	SVPerformanceOptions::PerformanceFast:
-				case	SVPerformanceOptions::PerformancePresice:
-				{
-					// valid parameter
-					l_Code = ConvertBitSetToMatroxType(SVPerformanceOptions::m_Convertor, performance, matroxPerformance);
-					break;
-				}
-				default:
-				{
-					// invalid parameter
-					l_Code = SVMSG_SVO_5046_INVALIDPERFORMANCE;
-					break;
-				}
-			}
-
-			if (S_OK != l_Code)
-			{
-				break;
-			}
-
 			MimResize(p_rSource.GetIdentifier(),
 				p_rDest.GetIdentifier(),
 				p_dScaleFactorX,
 				p_dScaleFactorY,
-				matroxInterpolationMode | matroxOverscan | matroxPerformance);
+				interpolationModeOption | M_OVERSCAN_ENABLE);
 
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 

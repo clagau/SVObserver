@@ -340,12 +340,12 @@ echo %time%
     <ClCompile Include="SVTADlgExternalResultPage.cpp" />
     <ClCompile Include="SVTADlgExternalSelectDllPage.cpp" />
     <ClCompile Include="SVTADlgPolarTransformPage.cpp" />
+    <ClCompile Include="SVTADlgResizePage.cpp" />
     <ClCompile Include="SVTADlgRotationPage.cpp" />
     <ClCompile Include="SVTADlgStatisticsPage.cpp" />
     <ClCompile Include="SVTADlgThresholdPage.cpp" />
     <ClCompile Include="SVTADlgTransformationLearnPage.cpp" />
     <ClCompile Include="SVTADlgTranslationPage.cpp" />
-    <ClCompile Include="SVTADlgTranslationResizePage.cpp" />
     <ClCompile Include="SVTADlgTranslationShiftPage.cpp" />
     <ClCompile Include="SVThreadInfoDlg.cpp" />
     <ClCompile Include="SVToolAdjustmentDialogAnalyzerPageClass.cpp" />
@@ -531,12 +531,12 @@ echo %time%
     <ClInclude Include="SVTADlgExternalResultPage.h" />
     <ClInclude Include="SVTADlgExternalSelectDllPage.h" />
     <ClInclude Include="SVTADlgPolarTransformPage.h" />
+    <ClInclude Include="SVTADlgResizePage.h" />
     <ClInclude Include="SVTADlgRotationpage.h" />
     <ClInclude Include="SVTADlgStatisticsPage.h" />
     <ClInclude Include="SVTADlgThresholdPage.h" />
     <ClInclude Include="SVTADlgTransformationLearnPage.h" />
     <ClInclude Include="SVTADlgTranslationPage.h" />
-    <ClInclude Include="SVTADlgTranslationResizePage.h" />
     <ClInclude Include="SVTADlgTranslationShiftPage.h" />
     <ClInclude Include="SVThreadInfoDlg.h" />
     <ClInclude Include="SVToolAdjustmentDialogAnalyzerPageClass.h" />

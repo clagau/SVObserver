@@ -139,7 +139,7 @@
 #define IDD_OCV_GENERAL_DIALOG          5106
 #define IDD_RANKING_FILTER              5107
 #define IDD_DLG_FILL_BLOBS              5109
-#define IDD_DLG_SELECT_TOOL				5110
+#define IDD_DLG_SELECT_TOOL             5110
 #define IDD_TA_EXTERNAL_DLL_SELECT      5111
 #define IDD_ADJUST_TOOL_SIZE_POSITION_DIALOG 5112
 #define IDD_CHOOSEGRAYCOLOR             5114
@@ -1825,10 +1825,14 @@
 #define IDC_EDIT_HEIGHT                 15629
 #define IDC_EDIT_WIDTH                  15630
 #define IDC_EDIT_LEFT                   15631
+#define IDC_EDIT_FORMAT_WIDTH_FACTOR    15631
 #define IDC_EDIT_TOP                    15632
+#define IDC_EDIT_FORMAT_HEIGHT_FACTOR	15632
 #define IDC_TAKE_PICTURE                15633
+#define IDC_EDIT_CONTENT_WIDTH_FACTOR   15633
 #define IDC_CONTROLSFILENAME            15634
 #define IDC_EDIT_VERT                   15634
+#define IDC_EDIT_CONTENT_HEIGHT_FACTOR  15634
 #define IDC_CONTROLS_BROWSE_CMD         15635
 #define IDC_SPIN_VERT                   15635
 #define IDC_CONSTRAINTSFILENAME         15636
@@ -2326,11 +2330,20 @@
 #define IDC_RESET_INPUT                 16167
 #define IDC_FEATURE_NUMBER              16168
 #define IDC_BUTTON_SELECTOR             16169
-#define IDC_TOOL_COMBOBOX				16170
+#define IDC_TOOL_COMBOBOX               16170
+#define IDC_BUTTON_FORMAT_WIDTH_FACTOR  16171
+#define IDC_BUTTON_CONTENT_HEIGHT_FACTOR 16172
+#define IDC_BUTTON_CONTENT_WIDTH_FACTOR 16173
+#define IDC_BUTTON_FORMAT_HEIGHT_FACTOR 16174
 #define IDC_LIST_REPORT_FILE            16171
 #define IDC_BUTTON_CALC                 16172
 #define IDC_BUTTON_WIDTH                16173
 #define IDC_BUTTON_HEIGHT               16174
+#define IDS_OBJECTNAME_FORMAT_WIDTH_SCALE 16175
+#define IDS_OBJECTNAME_FORMAT_HEIGHT_SCALE 16176
+#define IDS_OBJECTNAME_CONTENT_WIDTH_SCALE 16177
+#define IDS_OBJECTNAME_CONTENT_HEIGHT_SCALE 16178
+
 #define ID_UNDO_CHANGES                 20000
 #define ID_BROWSE_BUTTON                20001
 #define ID_PLUSBUTTON                   20002
@@ -2570,7 +2583,7 @@
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        11151
 #define _APS_NEXT_COMMAND_VALUE         20372
-#define _APS_NEXT_CONTROL_VALUE         16175
+#define _APS_NEXT_CONTROL_VALUE         16179
 #define _APS_NEXT_SYMED_VALUE           3002
 #endif
 #endif

@@ -605,5 +605,7 @@ enum MessageTextEnum
 	Tid_SetParameterValuesFailed,
 	
 	Tid_Correct_Grouping_Add_S_Items,
+
+	Tid_InvalidScaleFactor,
 };
 } //namespace SvStl

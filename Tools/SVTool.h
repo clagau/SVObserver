@@ -72,6 +72,7 @@ public:
 	void SetImageExtentProperty(SvPb::SVExtentPropertyEnum p_eProperty, SvOi::IValueObject* pValueObject);
 
 	virtual HRESULT SetImageExtent(const SVImageExtentClass& rImageExtent) override;
+	HRESULT SetImageExtentWithoutScaleFactors(const SVImageExtentClass& rImageExtent);
 
 	const SvIe::SVImageClass* GetToolImage() const;
 

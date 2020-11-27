@@ -95,8 +95,8 @@ void SVToolClass::init()
 	RegisterEmbeddedObject(&m_ExtentBottom, SvPb::ExtentRelativeBottomPositionEId, IDS_OBJECTNAME_EXTENT_BOTTOM, false, SvOi::SVResetItemNone);
 	RegisterEmbeddedObject(&m_ExtentWidth, SvPb::ExtentWidthEId, IDS_OBJECTNAME_EXTENT_WIDTH, false, SvOi::SVResetItemTool);
 	RegisterEmbeddedObject(&m_ExtentHeight, SvPb::ExtentHeightEId, IDS_OBJECTNAME_EXTENT_HEIGHT, false, SvOi::SVResetItemTool);
-	RegisterEmbeddedObject(&m_ExtentHeightScaleFactor, SvPb::ExtentHeightScaleFactorEId, IDS_OBJECTNAME_EXTENT_HEIGHTSF, false, SvOi::SVResetItemTool);
-	RegisterEmbeddedObject(&m_ExtentWidthScaleFactor, SvPb::ExtentWidthScaleFactorEId, IDS_OBJECTNAME_EXTENT_WIDTHSF, false, SvOi::SVResetItemTool);
+	RegisterEmbeddedObject(&m_ExtentHeightScaleFactor, SvPb::ExtentContentHeightFactorEId, IDS_OBJECTNAME_EXTENT_HEIGHTSF, false, SvOi::SVResetItemTool);
+	RegisterEmbeddedObject(&m_ExtentWidthScaleFactor, SvPb::ExtentContentWidthFactorEId, IDS_OBJECTNAME_EXTENT_WIDTHSF, false, SvOi::SVResetItemTool);
 	RegisterEmbeddedObject(&ToolSelectedForOperatorMove, SvPb::ToolSelectedForOperatorMoveEId, IDS_OBJECTNAME_TOOL_SELECTED_FOR_OPERATOR_MOVE, false, SvOi::SVResetItemNone);
 	RegisterEmbeddedObject(&m_drawToolFlag, SvPb::ConditionalToolDrawFlagEId, IDS_OBJECTNAME_DRAWTOOL_FLAG, false, SvOi::SVResetItemNone);
 	RegisterEmbeddedObject(&m_svUpdateAuxiliaryExtents, SvPb::UpdateAuxiliaryExtentsEId, IDS_OBJECTNAME_UPDATE_AUXILIARY_EXTENTS_OBJECT, false, SvOi::SVResetItemTool);
@@ -880,6 +880,15 @@ bool SVToolClass::SetDefaultFormulas(SvStl::MessageContainerVector*)
 HRESULT SVToolClass::SetImageExtent(const SVImageExtentClass& rImageExtent)
 {
 	return m_toolExtent.SetImageExtent(rImageExtent);
+}
+
+HRESULT SVToolClass::SetImageExtentWithoutScaleFactors(const SVImageExtentClass& rImageExtent)
+{
+	//@TODO [Arvid][10.10][27.11.2020] this should become the standard
+	// and SetImageExtent() should either be renamed to SetImageExtentWithScaleFactors() or get an extra parameter
+	// once the changes to SetImageExtent() suggested there are done
+
+	return m_toolExtent.SetImageExtent(rImageExtent, false);
 }
 
 void SVToolClass::removeEmbeddedExtents()

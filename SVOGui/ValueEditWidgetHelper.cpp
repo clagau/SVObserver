@@ -23,11 +23,12 @@ namespace SvOg
 		}
 	}
 
-	void ValueEditWidgetHelper::EditboxToTextValue()
+	void ValueEditWidgetHelper::EditboxToValue()
 	{
 		CString Temp;
 		m_rValueEdit.GetWindowText(Temp);
 		m_rValueController.Set<CString>(m_embeddedId, Temp);
+		m_rValueController.Set<CString>(m_embeddedLinkId, Temp);
 	}
 
 	void ValueEditWidgetHelper::EnableGuiElements(BOOL enable)
@@ -39,7 +40,7 @@ namespace SvOg
 		}
 	}
 
-	void ValueEditWidgetHelper::TextValueToEditbox()
+	void ValueEditWidgetHelper::ValueToEditbox()
 	{
 		std::string temp;
 
@@ -62,3 +63,4 @@ namespace SvOg
 	}
 
 }  //namespace SvOg
+ 

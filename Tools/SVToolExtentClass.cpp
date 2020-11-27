@@ -394,7 +394,7 @@ HRESULT SVToolExtentClass::updateImageExtent()
 	return result;
 }
 
-HRESULT SVToolExtentClass::SetImageExtent(const SVImageExtentClass& rImageExtent)
+HRESULT SVToolExtentClass::SetImageExtent(const SVImageExtentClass& rImageExtent, bool setScaleFactors) 
 {
 	HRESULT l_hrOk = S_OK;
 
@@ -474,14 +474,21 @@ HRESULT SVToolExtentClass::SetImageExtent(const SVImageExtentClass& rImageExtent
 		l_hrOk &= SetExtentValue(SvPb::SVExtentPropertyOuterRadius, dValue);
 	}
 
-	if (S_OK == rImageExtent.GetExtentProperty(SvPb::SVExtentPropertyHeightScaleFactor, dValue))
+	if (setScaleFactors)
 	{
-		l_hrOk &= SetExtentValue(SvPb::SVExtentPropertyHeightScaleFactor, dValue);
-	}
+		//@TODO [Arvid][10.10][27.11.2020] this is almost never used (for scale factors that are different from 1)
+		// and unnecessary for scale factors of 1
+		// Hence the default value for setScaleFactors should be false, not true!
 
-	if (S_OK == rImageExtent.GetExtentProperty(SvPb::SVExtentPropertyWidthScaleFactor, dValue))
-	{
-		l_hrOk &= SetExtentValue(SvPb::SVExtentPropertyWidthScaleFactor, dValue);
+		if (S_OK == rImageExtent.GetExtentProperty(SvPb::SVExtentPropertyHeightScaleFactor, dValue))
+		{
+			l_hrOk &= SetExtentValue(SvPb::SVExtentPropertyHeightScaleFactor, dValue);
+		}
+
+		if (S_OK == rImageExtent.GetExtentProperty(SvPb::SVExtentPropertyWidthScaleFactor, dValue))
+		{
+			l_hrOk &= SetExtentValue(SvPb::SVExtentPropertyWidthScaleFactor, dValue);
+		}
 	}
 	return l_hrOk;
 }

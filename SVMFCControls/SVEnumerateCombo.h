@@ -30,9 +30,6 @@ namespace SvMc
 
 	protected:
 		DECLARE_MESSAGE_MAP()
-
-	protected:
-		SvOi::NameValueVector m_EnumList;
 	};
 } //namespace SvMc
 

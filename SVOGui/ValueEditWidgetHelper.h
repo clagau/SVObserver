@@ -4,15 +4,15 @@
 /// contains the class ValueEditWidgetHelper
 //*****************************************************************************
 
-#pragma region Includes
+#pragma once
+
 #include "StdAfx.h"
 #include "DataController.h"
-#pragma endregion Includes
 
 namespace SvOg
 {
-	// holds GUI elements and IDs required for (possibly linked) Values that are to be modified using an MFC dialog 
-	class ValueEditWidgetHelper 
+	// holds GUI elements and IDs required for (possibly linked) Values that are to be modified using an MFC dialog
+	class ValueEditWidgetHelper
 	{
 	public:
 		ValueEditWidgetHelper(CEdit& valueEdit, SvPb::EmbeddedIdEnum embeddedId, CButton* pDottedNameSelectButton, SvPb::EmbeddedIdEnum embeddedLinkId, SvOg::ValueController& rValueController) :
@@ -24,8 +24,8 @@ namespace SvOg
 
 		static void EnsureDownArrowBitmapIsLoaded();
 
-		void EditboxToTextValue();
-		void TextValueToEditbox();
+		void EditboxToValue();
+		void ValueToEditbox();
 		void EnableGuiElements(BOOL enable);
 
 	private:

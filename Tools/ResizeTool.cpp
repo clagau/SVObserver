@@ -8,15 +8,29 @@
 #include "StdAfx.h"
 #include "ResizeTool.h"
 #include "Operators/ToolSizeAdjustTask.h"
-#include "Definitions/StringTypeDef.h"
 #include "Definitions/TextDefineSvDef.h"
+#include "SVMatroxLibrary/SVMatroxEnums.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "SVStatusLibrary/RunStatus.h"
-#include "SVUtilityLibrary/StringHelper.h"
+#include "SVStatusLibrary/MessageContainer.h"
+
 #pragma endregion Includes
+
 
 namespace SvTo
 {
+	static bool isValidScaleFactor(double value);
+	static bool isValidScaleFactorLV(SvVol::LinkedValue& scaleFactorValue);
+	static bool isValidInterpolationMode(InterpolationMode interpolationMode);
+	static void reportGeneralError(SvStl::MessageTextEnum AdditionalTextId, SvStl::MessageContainerVector* pErrorMessages, bool displayIfNotAddedToErrorList);
+
+
+	constexpr long MinScaleFactorThreshold = 0; // Scale Factor may not 
+												// be less than or equal 
+												// to 0.
+	constexpr long MaxScaleFactor = 1000;		// Maximum allowed Scale Factor. 
+												// Arbitrary limit of 1000.
+
 
 #pragma region Declarations
 #ifdef _DEBUG
@@ -24,13 +38,11 @@ namespace SvTo
 static char THIS_FILE[] = __FILE__;
 #endif
 
-const long ResizeTool::MinScaleFactorThreshold = 0; // Scale Factor may not be less than or equal to 0.
-const long ResizeTool::MaxScaleFactor = 1000;       // Maximum allowed Scale Factor. 
 #pragma endregion Declarations
 
 SV_IMPLEMENT_CLASS(ResizeTool, SvPb::ResizeToolId);
 
-
+constexpr double defaultScalefactor = 1.0;
 
 ResizeTool::ResizeTool(SVObjectClass* pOwner, int stringResourceID)
 	: SVToolClass(pOwner, stringResourceID)
@@ -38,14 +50,11 @@ ResizeTool::ResizeTool(SVObjectClass* pOwner, int stringResourceID)
 	LocalInitialize();
 }
 
+SvVol::LinkedValue m_FilenameIndex1;
+
 void ResizeTool::LocalInitialize()
 {
 	m_canResizeToParent = true;
-	//  Start of initialize class members.
-	InitializeInterpolationModeMember();
-	InitializeOverscanMember();
-	InitializePerformanceMember();
-	//  End of initialize class members.
 
 	BuildInputObjectList();
 
@@ -57,6 +66,24 @@ void ResizeTool::LocalInitialize()
 
 	BuildEmbeddedObjectList();
 
+	SvOi::NameValueVector enumVector;
+
+	for (const auto pair : c_allInterpolationModesNameValuePairs)
+	{
+		// the following is in my eyes not particularly clear and beautiful:  
+		// std::copy(c_allInterpolationModesNameValuePairs.begin(), c_allInterpolationModesNameValuePairs.end(), enumVector.begin());
+		// it also requires the size of enumVector to be set beforehand. Hence: cppcheck-suppress
+		// cppcheck-suppress useStlAlgorithm; the following is in my eyes not particularly clear and beautiful:  std::copy(c_allInterpolationModesNameValuePairs.begin(), c_allInterpolationModesNameValuePairs.end(), enumVector.begin()); and it also requires the size of enumVector to be set beforehand
+		enumVector.emplace_back(pair);
+	}
+
+	m_ResizeInterpolationMode.SetEnumTypes(enumVector);
+	m_ResizeInterpolationMode.SetDefaultValue(InterpolationMode::Default, true);
+	m_formatWidthScaleFactor.SetDefaultValue(defaultScalefactor);
+	m_formatHeightScaleFactor.SetDefaultValue(defaultScalefactor);
+	m_contentWidthScaleFactor.SetDefaultValue(defaultScalefactor);
+	m_contentHeightScaleFactor.SetDefaultValue(defaultScalefactor);
+
 	SvOp::ToolSizeAdjustTask::AddToFriendlist(this, true, true, true);
 
 	// Set up your type... in this case this will reference that this tool is a 
@@ -65,53 +92,6 @@ void ResizeTool::LocalInitialize()
 	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVResizeToolObjectType;
 }
 
-HRESULT	ResizeTool::InitializeInterpolationModeMember()
-{
-	HRESULT	hr = S_OK;
-
-	SvOi::NameValueVector interpolationModeOptions
-	{
-		{SvDef::Auto, SVInterpolationModeOptions::InterpolationModeAuto},
-		{SvDef::Bicubic, SVInterpolationModeOptions::InterpolationModeBicubic},
-		{SvDef::Bilinear, SVInterpolationModeOptions::InterpolationModeBilinear},
-		{SvDef::NearestNeighbor, SVInterpolationModeOptions::InterpolationModeNearestNeighbor}
-	};
-
-	m_ResizeInterpolationMode.SetEnumTypes(interpolationModeOptions);
-	m_ResizeInterpolationMode.SetDefaultValue(SVInterpolationModeOptions::InterpolationModeAuto, true);
-
-	return hr;
-}
-
-HRESULT	ResizeTool::InitializeOverscanMember()
-{
-	HRESULT	hr = S_OK;
-
-	SvOi::NameValueVector EnumVector
-	{
-		{SvDef::Enabled, SVOverscanOptions::OverscanEnable},
-		{SvDef::Disabled, SVOverscanOptions::OverscanDisable},
-	};
-
-	m_ResizeOverscan.SetEnumTypes(EnumVector);
-	m_ResizeOverscan.SetDefaultValue(SVOverscanOptions::OverscanEnable, true);
-
-	return hr;
-}
-
-HRESULT	ResizeTool::InitializePerformanceMember()
-{
-	HRESULT	hr = S_OK;
-
-	SvOi::NameValueVector performanceOptions;
-	performanceOptions.push_back(SvOi::NameValuePair {SvDef::Fast, SVPerformanceOptions::PerformanceFast});
-	performanceOptions.push_back(SvOi::NameValuePair {SvDef::Precise, SVPerformanceOptions::PerformancePresice});
-
-	m_ResizePerformance.SetEnumTypes(performanceOptions);
-	m_ResizePerformance.SetDefaultValue(SVPerformanceOptions::PerformancePresice, TRUE);
-
-	return hr;
-}
 
 void ResizeTool::BuildInputObjectList()
 {
@@ -125,13 +105,55 @@ void ResizeTool::BuildInputObjectList()
 
 void ResizeTool::BuildEmbeddedObjectList()
 {
-	RegisterEmbeddedObject(&m_SourceImageNames, SvPb::SourceImageNamesEId, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemTool);
-	RegisterEmbeddedObject(&m_ResizeInterpolationMode, SvPb::ResizeInterpolationModeEId, IDS_OBJECTNAME_RESIZE_INTERPOLATIONMODE, false, SvOi::SVResetItemTool);
-	RegisterEmbeddedObject(&m_ResizeOverscan, SvPb::ResizeOverscanEId, IDS_OBJECTNAME_RESIZE_OVERSCAN, false, SvOi::SVResetItemTool);
-	RegisterEmbeddedObject(&m_ResizePerformance, SvPb::ResizePerformanceEId, IDS_OBJECTNAME_RESIZE_PERFORMANCE, false, SvOi::SVResetItemTool);
+	RegisterEmbeddedObject(
+		&m_SourceImageNames, 
+		SvPb::SourceImageNamesEId, 
+		IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, 
+		false, 
+		SvOi::SVResetItemTool);
 
-	RegisterEmbeddedObject(&m_OutputImage, SvPb::OutputImageEId, IDS_OBJECTNAME_IMAGE1);
-	RegisterEmbeddedObject(&m_LogicalROIImage, SvPb::LogicalROIImageEId, IDS_OBJECTNAME_ROIIMAGE);
+	RegisterEmbeddedObject(
+		&m_ResizeInterpolationMode, 
+		SvPb::ResizeInterpolationModeEId, 
+		IDS_OBJECTNAME_RESIZE_INTERPOLATIONMODE, 
+		false, 
+		SvOi::SVResetItemTool);
+
+	RegisterEmbeddedObject(
+		&m_OutputImage,
+		SvPb::OutputImageEId,
+		IDS_OBJECTNAME_IMAGE1);
+
+	RegisterEmbeddedObject(
+		&m_LogicalROIImage,
+		SvPb::LogicalROIImageEId,
+		IDS_OBJECTNAME_ROIIMAGE);
+
+	registerEmbeddedLinkedValue(
+		&m_formatWidthScaleFactor,
+		SvPb::FormatWidthFactorEId,
+		SvPb::FormatWidthFactorLinkEId,
+		IDS_OBJECTNAME_FORMAT_WIDTH_SCALE, _variant_t(0.0));
+
+	registerEmbeddedLinkedValue(
+		&m_formatHeightScaleFactor,
+		SvPb::FormatHeightFactorEId,
+		SvPb::FormatHeightFactorLinkEId,
+		IDS_OBJECTNAME_FORMAT_HEIGHT_SCALE, _variant_t(0.0));
+
+	registerEmbeddedLinkedValue(
+		&m_contentWidthScaleFactor,
+		SvPb::ContentWidthFactorEId,
+		SvPb::ContentWidthFactorLinkEId,
+		IDS_OBJECTNAME_CONTENT_WIDTH_SCALE, _variant_t(0.0));
+
+	registerEmbeddedLinkedValue(
+		&m_contentHeightScaleFactor,
+		SvPb::ContentHeightFactorEId,
+		SvPb::ContentHeightFactorLinkEId,
+		IDS_OBJECTNAME_CONTENT_HEIGHT_SCALE, _variant_t(0.0));
+
+
 }
 
 
@@ -168,15 +190,13 @@ bool ResizeTool::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 {
 	bool bOk = SVToolClass::CreateObject(rCreateStructure);
 
-	// Override base class hiding of Scale Factors.  These values will be 
-	// exposed for the Resize Tool.
-	// Since this value object is already 
-	// exposed as an extent, we do not want 
-	// it to be embeddable.
-	const UINT cAttributes = (SvDef::defaultValueObjectAttributes | SvPb::remotelySetable | SvPb::extentObject | SvPb::setableOnline) & ~SvPb::embedable;
+	const UINT cAttributes = (SvDef::defaultValueObjectAttributes | SvPb::remotelySetable | SvPb::extentObject | SvPb::setableOnline);
 
-	m_ExtentWidthScaleFactor.SetObjectAttributesAllowed(cAttributes, SvOi::SetAttributeType::OverwriteAttribute);
-	m_ExtentHeightScaleFactor.SetObjectAttributesAllowed(cAttributes, SvOi::SetAttributeType::OverwriteAttribute);
+	m_formatWidthScaleFactor.SetObjectAttributesAllowed(cAttributes, SvOi::SetAttributeType::OverwriteAttribute);
+	m_formatHeightScaleFactor.SetObjectAttributesAllowed(cAttributes, SvOi::SetAttributeType::OverwriteAttribute);
+	m_contentWidthScaleFactor.SetObjectAttributesAllowed(cAttributes, SvOi::SetAttributeType::OverwriteAttribute);
+	m_contentHeightScaleFactor.SetObjectAttributesAllowed(cAttributes, SvOi::SetAttributeType::OverwriteAttribute);
+
 
 	SvIe::SVImageClass* pInputImage = getInputImage();
 	bOk &= (nullptr != pInputImage);
@@ -201,8 +221,50 @@ bool ResizeTool::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 
 	m_isCreated = bOk;
 
+	if (allScalefactorsHaveDefaultValues())
+	{// adaptation for old (SVO 10.00 and earlier) configurations that did not record scalefactors outside of extents
+		double extentWidthScaleFactor = 0.0;
+		m_ExtentWidthScaleFactor.getValue(extentWidthScaleFactor);
+		m_contentWidthScaleFactor.setValue(extentWidthScaleFactor);
+		m_formatWidthScaleFactor.setValue(extentWidthScaleFactor);
+
+		double extentHeightScaleFactor = 0.0;
+		m_ExtentHeightScaleFactor.getValue(extentHeightScaleFactor);
+		m_contentHeightScaleFactor.setValue(extentHeightScaleFactor);
+		m_formatHeightScaleFactor.setValue(extentHeightScaleFactor);
+	}
+
 	return bOk;
 }
+
+
+bool ResizeTool::allScalefactorsHaveDefaultValues()
+{
+	double currentScalefactor = 0.0;
+	m_contentWidthScaleFactor.getValue(currentScalefactor);
+	if (currentScalefactor != defaultScalefactor)
+	{
+		return false;
+	}
+	m_contentHeightScaleFactor.getValue(currentScalefactor);
+	if (currentScalefactor != defaultScalefactor)
+	{
+		return false;
+	}
+	m_formatWidthScaleFactor.getValue(currentScalefactor);
+	if (currentScalefactor != defaultScalefactor)
+	{
+		return false;
+	}
+	m_formatHeightScaleFactor.getValue(currentScalefactor);
+	if (currentScalefactor != defaultScalefactor)
+	{
+		return false;
+	}
+
+	return true;
+}
+
 
 SvIe::SVImageClass* ResizeTool::getInputImage(bool bRunMode /*= false*/) const
 {
@@ -211,29 +273,39 @@ SvIe::SVImageClass* ResizeTool::getInputImage(bool bRunMode /*= false*/) const
 
 HRESULT ResizeTool::SetImageExtentToParent()
 {
-	SVImageExtentClass l_NewExtent;
-	HRESULT Result = m_toolExtent.UpdateExtentToParentExtents(l_NewExtent);
+	SVImageExtentClass NewExtent;
+	HRESULT Result = m_toolExtent.UpdateExtentToParentExtents(NewExtent);
 
 	if (S_OK == Result)
 	{
-		//@WARNING [Jim][8 July 2015] - Research this.  All tools are calling 
-		// base class which does not validate.  Should probably call the 
-		// derived tool classes explicit version.
-		Result = SVToolClass::SetImageExtent(l_NewExtent);
+		Result = SetImageExtentWithoutScaleFactors(NewExtent);
 	}
+
 	return Result;
+}
+
+HRESULT ResizeTool::SetImageExtentWithoutScaleFactors(const SVImageExtentClass& rImageExtent)
+{
+	HRESULT hrOk = m_toolExtent.ValidExtentAgainstParentImage(rImageExtent);
+
+	if (S_OK == hrOk)
+	{
+		hrOk = SVToolClass::SetImageExtentWithoutScaleFactors(rImageExtent);
+	}
+
+	return hrOk;
 }
 
 HRESULT ResizeTool::SetImageExtent(const SVImageExtentClass& rImageExtent)
 {
-	HRESULT l_hrOk = m_toolExtent.ValidExtentAgainstParentImage(rImageExtent);
+	HRESULT hrOk = m_toolExtent.ValidExtentAgainstParentImage(rImageExtent);
 
-	if (S_OK == l_hrOk)
+	if (S_OK == hrOk)
 	{
-		l_hrOk = SVToolClass::SetImageExtent(rImageExtent);
+		hrOk = SVToolClass::SetImageExtent(rImageExtent);
 	}
 
-	return l_hrOk;
+	return hrOk;
 }
 
 SVToolClass* ResizeTool::GetObjectAtPoint(const SVPoint<double>& rPoint)
@@ -258,228 +330,137 @@ SvVol::SVStringValueObjectClass* ResizeTool::GetInputImageNames()
 
 bool ResizeTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	bool Result = ValidateParameters(pErrorMessages) && ValidateOfflineParameters(pErrorMessages);
+	if (!AreAllAllScaleFactorValuesValid())
+	{
+		reportGeneralError(SvStl::Tid_InvalidScaleFactor, pErrorMessages, true);
+
+		return false;
+	}
+
+	if (!isInterpolationModeValueOK())
+	{
+		SvStl::MessageContainer Msg(SVMSG_SVO_5044_INVALIDINTERPOLATIONMODE, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
+
+		if (nullptr != pErrorMessages)
+		{
+			pErrorMessages->push_back(Msg);
+		}
+		else
+		{
+			SvStl::MessageManager Exception(SvStl::MsgType::Display);
+			Exception.setMessage(Msg.getMessage());
+		}
+	}
+
+	if (!ModifyImageExtentByScaleFactors())
+	{
+		reportGeneralError(SvStl::Tid_UpdateOutputImageExtentsFailed, pErrorMessages, true);
+
+		return false;
+	}
+
+	m_OutputImage.ResetObject(); // this ensures that the output image (that has already 
+								 // been reset earlier) will have the right size as determined by the 
+								 // extent as modified by ModifyImageExtentByScaleFactors() above.
 
 	SvOl::ValidateInput(m_InputImageObjectInfo);
 
 	SvIe::SVImageClass* pInputImage = getInputImage();
-	if (Result)
+	if (nullptr != pInputImage)
 	{
-		if (nullptr != pInputImage)
+		//Set input name to source image name to display it in result picker
+		m_SourceImageNames.SetValue(pInputImage->GetCompleteName());
+	}
+	else
+	{
+		if (nullptr != pErrorMessages)
 		{
-			//Set input name to source image name to display it in result picker
-			m_SourceImageNames.SetValue(pInputImage->GetCompleteName());
+			SvStl::MessageContainer Msg(SVMSG_SVO_5047_GETINPUTIMAGEFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+			pErrorMessages->push_back(Msg);
 		}
-		else
-		{
-			Result = false;
-			if (nullptr != pErrorMessages)
-			{
-				SvStl::MessageContainer Msg(SVMSG_SVO_5047_GETINPUTIMAGEFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
-				pErrorMessages->push_back(Msg);
-			}
-		}
+		return false;
 	}
 
-	if (Result)
+	// required within ResetObject in order to correctly reallocate
+	// buffers when source image is changed within GUI.
+	if (E_FAIL == m_LogicalROIImage.InitializeImage(pInputImage))
 	{
-		// required within ResetObject in order to correctly reallocate
-		// buffers when source image is changed within GUI.
-		if (E_FAIL == m_LogicalROIImage.InitializeImage(pInputImage))
+		if (nullptr != pErrorMessages)
 		{
-			Result = false;
-			if (nullptr != pErrorMessages)
-			{
-				SvStl::MessageContainer Msg(SVMSG_SVO_5048_INITIALIZEROIIMAGEFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
-				pErrorMessages->push_back(Msg);
-			}
+			SvStl::MessageContainer Msg(SVMSG_SVO_5048_INITIALIZEROIIMAGEFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+			pErrorMessages->push_back(Msg);
 		}
+		return false;
 	}
 
-	if (Result)
+	// required within ResetObject in order to correctly reallocate
+	// buffers when source image is changed within GUI.
+	if (E_FAIL == m_OutputImage.InitializeImage(pInputImage))
 	{
-		// required within ResetObject in order to correctly reallocate
-		// buffers when source image is changed within GUI.
-		if (E_FAIL == m_OutputImage.InitializeImage(pInputImage))
+		if (nullptr != pErrorMessages)
 		{
-			Result = false;
-			if (nullptr != pErrorMessages)
-			{
-				SvStl::MessageContainer Msg(SVMSG_SVO_5049_INITIALIZEOUTPUTIMAGEFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
-				pErrorMessages->push_back(Msg);
-			}
+			SvStl::MessageContainer Msg(SVMSG_SVO_5049_INITIALIZEOUTPUTIMAGEFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+			pErrorMessages->push_back(Msg);
 		}
+		return false;
 	}
 
-	Result = Result && SVToolClass::ResetObject(pErrorMessages);
-
-	return Result;
+	return SVToolClass::ResetObject(pErrorMessages);
 }
 
-bool ResizeTool::ValidateParameters(SvStl::MessageContainerVector *pErrorMessages)
+
+bool ResizeTool::ModifyImageExtentByScaleFactors()
 {
-	double newWidthScaleFactor = 0.0;
-	GetImageExtent().GetExtentProperty(SvPb::SVExtentPropertyWidthScaleFactor, newWidthScaleFactor);
-	bool Result = ValidateScaleFactor(newWidthScaleFactor, pErrorMessages);
+#if defined (TRACE_THEM_ALL) || defined (TRACE_RESIZE)
+	m_toolExtent.getImageExtent().OutputDebugInformationOnExtent("before");
+#endif
 
-	double newHeightScaleFactor = 0.0;
-	GetImageExtent().GetExtentProperty(SvPb::SVExtentPropertyHeightScaleFactor, newHeightScaleFactor);
-	Result = ValidateScaleFactor(newHeightScaleFactor, pErrorMessages) && Result;
+	double contentWidthScaleFactor = 0.0;
+	HRESULT hr = m_contentWidthScaleFactor.getValue(contentWidthScaleFactor); //this scale factor influences only image's content, not its size.
+	bool ok = (S_OK == hr);
+	double contentHeightScaleFactor = 0.0;
+	ok =  ok &&(S_OK == m_contentHeightScaleFactor.getValue(contentHeightScaleFactor)); //this scale factor influences only image's content, not its size.
 
-	return Result;
+	ok =  ok &&(S_OK == m_toolExtent.getImageExtent().SetExtentProperty(SvPb::SVExtentPropertyWidthScaleFactor, contentWidthScaleFactor));
+	ok =  ok &&(S_OK == m_toolExtent.getImageExtent().SetExtentProperty(SvPb::SVExtentPropertyHeightScaleFactor, contentHeightScaleFactor));
+
+	double imageWidthFactor = 0.0;
+	ok =  ok &&(S_OK == m_formatWidthScaleFactor.getValue(imageWidthFactor)); //this scale factor influences only image size, not enlargement
+	double imageHeightFactor = 0.0;
+	ok =  ok &&(S_OK == m_formatHeightScaleFactor.getValue(imageHeightFactor)); //this scale factor influences only image size, not enlargement
+
+	double currentImageWidth = 0.0;
+	ok =  ok &&(S_OK == m_toolExtent.getImageExtent().GetExtentProperty(SvPb::SVExtentPropertyWidth, currentImageWidth));
+
+	double currentImageHeight = 0.0;
+	ok =  ok &&(S_OK == m_toolExtent.getImageExtent().GetExtentProperty(SvPb::SVExtentPropertyHeight, currentImageHeight));
+
+	double outputImageWidth = currentImageWidth * imageWidthFactor;
+	double outputImageHeight = currentImageHeight * imageHeightFactor;
+
+	ok =  ok &&(S_OK == m_toolExtent.getImageExtent().SetExtentProperty(SvPb::SVExtentPropertyOutputWidth, outputImageWidth));
+	ok =  ok &&(S_OK == m_toolExtent.getImageExtent().SetExtentProperty(SvPb::SVExtentPropertyOutputHeight, outputImageHeight));
+
+#if defined (TRACE_THEM_ALL) || defined (TRACE_RESIZE)
+	m_toolExtent.getImageExtent().OutputDebugInformationOnExtent(" after");
+#endif
+
+	return ok;
 }
 
-bool ResizeTool::ValidateOfflineParameters(SvStl::MessageContainerVector *pErrorMessages)
+bool ResizeTool::AreAllAllScaleFactorValuesValid()
+{
+	return  isValidScaleFactorLV(m_contentWidthScaleFactor)
+		&& isValidScaleFactorLV(m_contentHeightScaleFactor)
+		&& isValidScaleFactorLV(m_formatWidthScaleFactor)
+		&& isValidScaleFactorLV(m_formatHeightScaleFactor);
+}
+
+bool ResizeTool::isInterpolationModeValueOK()
 {
 	long Value(0L);
 	m_ResizeInterpolationMode.GetValue(Value);
-	SVInterpolationModeOptions::SVInterpolationModeOptionsEnum interpolationValue;
-	interpolationValue = static_cast<SVInterpolationModeOptions::SVInterpolationModeOptionsEnum> (Value);
-	bool Result = ValidateInterpolation(interpolationValue, pErrorMessages);
-
-	m_ResizeOverscan.GetValue(Value);
-	SVOverscanOptions::SVOverscanOptionsEnum overscanValue;
-	overscanValue = static_cast<SVOverscanOptions::SVOverscanOptionsEnum> (Value);
-	Result = ValidateOverscan(overscanValue) && Result;
-
-	m_ResizePerformance.GetValue(Value);
-	SVPerformanceOptions::SVPerformanceOptionsEnum performanceValue;
-	performanceValue = static_cast<SVPerformanceOptions::SVPerformanceOptionsEnum> (Value);
-	Result = ValidatePerformance(performanceValue) && Result;
-
-	return Result;
-}
-
-bool	ResizeTool::ValidateInterpolation(SVInterpolationModeOptions::SVInterpolationModeOptionsEnum interpolationMode, SvStl::MessageContainerVector *pErrorMessages)
-{
-	bool Result = true;
-
-	switch (interpolationMode)
-	{
-		case	SVInterpolationModeOptions::InterpolationModeAuto:
-		case	SVInterpolationModeOptions::InterpolationModeBilinear:
-		case	SVInterpolationModeOptions::InterpolationModeBicubic:
-			// Average will only work with values less than 1.  Auto will 
-			// already use Average for values less than 1.
-		case	SVInterpolationModeOptions::InterpolationModeNearestNeighbor:
-		{
-			break;
-		}
-		default:
-		{
-			// invalid parameter
-			Result = false;
-			if (nullptr != pErrorMessages)
-			{
-				SvStl::MessageContainer Msg(SVMSG_SVO_5044_INVALIDINTERPOLATIONMODE, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
-				pErrorMessages->push_back(Msg);
-			}
-			break;
-		}
-	}
-
-	return Result;
-}
-
-bool	ResizeTool::ValidateOverscan(const SVOverscanOptions::SVOverscanOptionsEnum overscan, SvStl::MessageContainerVector *pErrorMessages)
-{
-	bool Result = true;
-
-	switch (overscan)
-	{
-		case	SVOverscanOptions::OverscanEnable:
-		case	SVOverscanOptions::OverscanDisable:
-		{
-			break;
-		}
-		default:
-		{
-			// invalid parameter
-			Result = false;
-			if (nullptr != pErrorMessages)
-			{
-				SvStl::MessageContainer Msg(SVMSG_SVO_5045_INVALIDOVERSCAN, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
-				pErrorMessages->push_back(Msg);
-			}
-			break;
-		}
-	}
-
-	return Result;
-}
-
-bool	ResizeTool::ValidatePerformance(const SVPerformanceOptions::SVPerformanceOptionsEnum performance, SvStl::MessageContainerVector *pErrorMessages)
-{
-	bool Result = true;
-
-	switch (performance)
-	{
-		case	SVPerformanceOptions::PerformanceFast:
-		case	SVPerformanceOptions::PerformancePresice:
-		{
-			break;
-		}
-		default:
-		{
-			// invalid parameter
-			Result = false;
-			if (nullptr != pErrorMessages)
-			{
-				SvStl::MessageContainer Msg(SVMSG_SVO_5046_INVALIDPERFORMANCE, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
-				pErrorMessages->push_back(Msg);
-			}
-			break;
-		}
-	}
-
-	return Result;
-}
-
-bool ResizeTool::ValidateScaleFactor(const double value, SvStl::MessageContainerVector *pErrorMessages)
-{
-	bool Result = true;
-
-	// Arbitrary high end scale factor limit of 1000.
-	if ((value <= MinScaleFactorThreshold) ||
-		(value > MaxScaleFactor))
-	{
-		Result = false;
-		if (nullptr != pErrorMessages)
-		{
-			SvDef::StringVector msgList;
-			msgList.push_back(SvUl::Format(_T("%d"), value));
-			SvStl::MessageContainer Msg(SVMSG_SVO_5061_SFOUTSIDERANGE, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
-			pErrorMessages->push_back(Msg);
-		}
-	}
-
-	return Result;
-}
-
-void ResizeTool::BackupInspectionParameters()
-{
-	GetImageExtent().GetExtentProperty(SvPb::SVExtentPropertyHeightScaleFactor, m_ResizeHeightSF_Backup);
-	GetImageExtent().GetExtentProperty(SvPb::SVExtentPropertyWidthScaleFactor, m_ResizeWidthSF_Backup);
-	m_ResizeInterpolationMode.GetValue(m_ResizeInterpolationMode_Backup);
-	m_ResizeOverscan.GetValue(m_ResizeOverscan_Backup);
-	m_ResizePerformance.GetValue(m_ResizePerformance_Backup);
-}
-
-HRESULT	ResizeTool::GetBackupInspectionParameters(double*	oldHeightScaleFactor,
-	double*	oldWidthScaleFactor,
-	long*	oldInterpolationMode,
-	long*	oldOverscan,
-	long*	oldPerformance)
-{
-	HRESULT hr = S_OK;
-
-	*oldHeightScaleFactor = m_ResizeHeightSF_Backup;
-	*oldWidthScaleFactor = m_ResizeWidthSF_Backup;
-	*oldInterpolationMode = m_ResizeInterpolationMode_Backup;
-	*oldOverscan = m_ResizeOverscan_Backup;
-	*oldPerformance = m_ResizePerformance_Backup;
-
-	return hr;
+	return isValidInterpolationMode(static_cast<InterpolationMode> (Value));
 }
 
 bool ResizeTool::isInputImage(uint32_t imageId) const
@@ -497,29 +478,29 @@ bool ResizeTool::isInputImage(uint32_t imageId) const
 
 bool ResizeTool::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
+	//@TODO [Arvid][10.10][27.11.2020] the message management in this tool in general 
+	//and in this function in particular is somewhat strange and should be redone!
+
 	bool Result = __super::onRun(rRunStatus, pErrorMessages);
 
-	double heightScaleFactor = 0.0;
-	if (!SUCCEEDED(GetImageExtent().GetExtentProperty(SvPb::SVExtentPropertyHeightScaleFactor, heightScaleFactor)))
+	double contentHeightScaleFactor = 0.0;
+	m_contentHeightScaleFactor.getValue(contentHeightScaleFactor); //this scale factor influences only enlargement, not image size.
+	if (false == isValidScaleFactor(contentHeightScaleFactor))
 	{
 		Result = false;
-		if (nullptr != pErrorMessages)
-		{
-			SvStl::MessageContainer Msg(SVMSG_SVO_5030_GETHEIGHTSFFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
-			pErrorMessages->push_back(Msg);
-		}
+		reportGeneralError(SvStl::Tid_InvalidScaleFactor, pErrorMessages, false);
 	}
 
-	double widthScaleFactor = 0.0;
-	if (!SUCCEEDED(GetImageExtent().GetExtentProperty(SvPb::SVExtentPropertyWidthScaleFactor, widthScaleFactor)))
+	double contentWidthScaleFactor = 0.0;
+	m_contentWidthScaleFactor.getValue(contentWidthScaleFactor); //this scale factor influences only enlargement, not image size.
+
+	if (false == isValidScaleFactor(contentWidthScaleFactor))
 	{
 		Result = false;
-		if (nullptr != pErrorMessages)
-		{
-			SvStl::MessageContainer Msg(SVMSG_SVO_5031_GETWIDTHSFFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
-			pErrorMessages->push_back(Msg);
-		}
+		reportGeneralError(SvStl::Tid_InvalidScaleFactor, pErrorMessages, false);
 	}
+
+	// m_formatWidthScaleFactor and m_formatWidthScaleFactor need not (and must not) be checked or used here
 
 	long interpolationMode = 0;
 	if (!SUCCEEDED(m_ResizeInterpolationMode.GetValue(interpolationMode)))
@@ -528,28 +509,6 @@ bool ResizeTool::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pEr
 		if (nullptr != pErrorMessages)
 		{
 			SvStl::MessageContainer Msg(SVMSG_SVO_5032_GETINTERPOLATIONMODEFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
-			pErrorMessages->push_back(Msg);
-		}
-	}
-
-	long overscan = 0;
-	if (!SUCCEEDED(m_ResizeOverscan.GetValue(overscan)))
-	{
-		Result = false;
-		if (nullptr != pErrorMessages)
-		{
-			SvStl::MessageContainer Msg(SVMSG_SVO_5033_GETOVERSCANFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
-			pErrorMessages->push_back(Msg);
-		}
-	}
-
-	long performance = 0;
-	if (!SUCCEEDED(m_ResizePerformance.GetValue(performance)))
-	{
-		Result = false;
-		if (nullptr != pErrorMessages)
-		{
-			SvStl::MessageContainer Msg(SVMSG_SVO_5034_GETPERFORMANCEFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -576,16 +535,18 @@ bool ResizeTool::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pEr
 		}
 	}
 
+#if defined (TRACE_THEM_ALL) || defined (TRACE_RESIZE)
+	m_toolExtent.getImageExtent().OutputDebugInformationOnExtent("on run");
+#endif
 
 	if (Result)
 	{
 		HRESULT hr = SVMatroxImageInterface::Resize(pOutputImageBuffer->getHandle()->GetBuffer(),
 			pRoiImageBuffer->getHandle()->GetBuffer(),
-			widthScaleFactor,
-			heightScaleFactor,
-			static_cast <SVInterpolationModeOptions::SVInterpolationModeOptionsEnum>(interpolationMode),
-			static_cast <SVOverscanOptions::SVOverscanOptionsEnum> (overscan),
-			static_cast <SVPerformanceOptions::SVPerformanceOptionsEnum> (performance));
+			contentWidthScaleFactor,
+			contentHeightScaleFactor,
+			interpolationMode);
+
 		if (!SUCCEEDED(hr))
 		{
 			Result = false;
@@ -605,4 +566,54 @@ bool ResizeTool::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pEr
 	return Result;
 }
 
+
+void reportGeneralError(SvStl::MessageTextEnum AdditionalTextId, SvStl::MessageContainerVector* pErrorMessages, bool displayIfNotAddedToErrorList ) //@TODO [Arvid][10.10][25.11.2020] könnte allgemeiner verwendet werden!
+{
+	SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, AdditionalTextId, SvStl::SourceFileParams(StdMessageParams));
+	if (nullptr != pErrorMessages)
+	{
+		pErrorMessages->push_back(Msg);
+		return;
+	}
+
+	if (displayIfNotAddedToErrorList)
+	{
+		SvStl::MessageManager Exception(SvStl::MsgType::Display);
+		Exception.setMessage(Msg.getMessage());
+	}
+}
+
+
+bool isValidInterpolationMode(InterpolationMode interpolationMode)
+{
+	if (std::find(c_allInterpolationModes.begin(), c_allInterpolationModes.end(), interpolationMode) != c_allInterpolationModes.end())
+	{
+		return true;
+	}
+
+	return false;
+}
+
+
+bool isValidScaleFactorLV(SvVol::LinkedValue& scaleFactorValue)
+{
+	double scaleFactor = 0.0;
+	scaleFactorValue.getValue(scaleFactor);
+	return isValidScaleFactor(scaleFactor);
+}
+
+
+bool isValidScaleFactor(double value)
+{
+	if ((value <= MinScaleFactorThreshold) || (value > MaxScaleFactor))
+	{
+		return false;
+	}
+
+	return true;
+}
+
 } //namespace SvTo
+
+
+
