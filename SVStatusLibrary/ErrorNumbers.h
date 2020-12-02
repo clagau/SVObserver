@@ -573,7 +573,13 @@ namespace SvStl
 	constexpr int Err_45000 = Rpy_ErrorBase + 0;
 	constexpr int Memory_Log_45001 = Rpy_ErrorBase + 1;
 
-
+	//Catalin Crimu error base
+	constexpr int Cri_ErrorBase = 50000;
+	constexpr int Err_50000_InvalidObject = Cri_ErrorBase + 0;
+	constexpr int Err_50001_CreateResultObjectFailed = Cri_ErrorBase + 1;
+	constexpr int Err_50002_ErrorConnectingInputs = Cri_ErrorBase + 2;
+	constexpr int Err_50003_GetResultRangeFailed = Cri_ErrorBase + 3;
+	constexpr int Err_50004_CannotOpenRangesDialog = Cri_ErrorBase + 4;
 
 	//Customer HRESULTs
 	constexpr DWORD cSuccessSVObserver = (1 << 29)/*customer flag*/ + (FAC_SVOBSERVER << 16)/*facility*/;

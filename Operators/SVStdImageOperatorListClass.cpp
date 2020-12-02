@@ -17,6 +17,7 @@
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "SVStatusLibrary/RunStatus.h"
 #include "ObjectInterfaces/ITriggerRecordControllerRW.h"
+#include "Operators/SVResult.h"
 #pragma endregion Includes
 
 namespace SvOp
@@ -244,6 +245,11 @@ bool SVStdImageOperatorListClass::RunLocal(RunStatus &rRunStatus, SvOi::SVImageB
 				// WARNING:
 				// Do not set bRetVal automatically to FALSE, if operator was not running !!!
 				// ChildRunStatus keeps information about, if an error occurred while running !!!
+			}
+			else if (nullptr != dynamic_cast<SvOp::SVResult*>(GetAt(i)))
+			{
+				// Ignore the SVResult children
+				continue;
 			}
 			else
 			{

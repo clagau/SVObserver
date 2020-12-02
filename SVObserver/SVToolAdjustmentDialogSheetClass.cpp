@@ -63,6 +63,8 @@
 #include "SVStatusLibrary/MessageManager.h"
 #include "Tools/SVTool.h"
 #include "SVOGui/TADialogGroupToolResultPage.h"
+#include "SVOGui/TADialogLinearResultRangesPage.h"
+
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -259,6 +261,7 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 			AddPage(new SVToolAdjustmentDialogAnalyzerPageClass(m_InspectionID, m_TaskObjectID, this));
 			//add the new page.
 			AddPage(new SvOg::SVToolAdjustmentDialogLinearSpecialPage(m_InspectionID, m_TaskObjectID));
+			AddPage(new SvOg::TADialogLinearResultRangesPage(m_InspectionID, m_TaskObjectID));
 			addConditionalDialog();
 			AddPage(new SvOg::SVTADlgGeneralPage(m_InspectionID, m_TaskObjectID));
 			break;

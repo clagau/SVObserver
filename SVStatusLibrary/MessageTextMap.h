@@ -642,5 +642,8 @@ namespace SvStl
 
 		{ Tid_InvalidScaleFactor, _T("Invalid Scale Factor.") },
 			
+
+		{ Tid_LinearImageOperatorList_ResultCreateFailed, _T("Create of Results for LinearImageOperatorList failed.") },
+		{ Tid_LinearImageOperatorList_GetResultRangeFailed, _T("Get Range for the Result failed in LinearImageOperatorList.") },
 };
 } //namespace SvStl

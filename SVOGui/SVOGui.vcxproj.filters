@@ -255,6 +255,9 @@
     <ClCompile Include="TADialogGroupToolResultPage.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="TADialogLinearResultRangesPage.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AuxiliaryExtentsController.h">
@@ -522,6 +525,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="TADialogGroupToolResultPage.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="TADialogLinearResultRangesPage.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

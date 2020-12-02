@@ -607,5 +607,8 @@ enum MessageTextEnum
 	Tid_Correct_Grouping_Add_S_Items,
 
 	Tid_InvalidScaleFactor,
+
+	Tid_LinearImageOperatorList_ResultCreateFailed,
+	Tid_LinearImageOperatorList_GetResultRangeFailed,
 };
 } //namespace SvStl

@@ -21,6 +21,8 @@
 #include "SVStatusLibrary/RunStatus.h"
 #include "Tools/SVLinearToolClass.h"
 #include "Tools/SVTool.h"
+#include "Operators/SVResultDouble.h"
+#include "Operators/SVRange.h"
 #pragma endregion Includes
 
 namespace SvOp
@@ -63,7 +65,19 @@ bool SVLinearImageOperatorList::CreateObject(const SVObjectLevelCreateStruct& rC
 	m_MinProfile.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
 	m_ProfileDelta.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
 	
-
+	if (false == areResultsAllocated())
+	{
+		if (allocateResults() & SvDef::svErrorCondition)
+		{
+			l_bOk = false; // Some error has occurred.
+		}
+		else
+		{
+			setDefaultRange(m_Results[ResultIndex::MinProfileIdx]);
+			setDefaultRange(m_Results[ResultIndex::MaxProfileIdx]);
+			setDefaultRange(m_Results[ResultIndex::ProfileDeltaIdx]);
+		}
+	}
 
 	return l_bOk;
 }
@@ -239,12 +253,29 @@ bool SVLinearImageOperatorList::Run(RunStatus& rRunStatus, SvStl::MessageContain
 			result = (S_OK == m_ProfileDelta.SetValue(dMax-dMin)) && result;
 			
 			result = (S_OK == m_svLinearData.SetArrayValues(m_svArray)) && result;
+
 			assert(result);
+
 			if (!result)
 			{
 				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetValueFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 				m_RunErrorMessages.push_back(Msg);
 			}
+
+			//update Result objects explicitely
+			RunStatus ResultRunStatus;
+			ResultRunStatus.m_UpdateCounters = rRunStatus.m_UpdateCounters;
+			ResultRunStatus.m_triggerRecord = std::move(rRunStatus.m_triggerRecord);
+			for (SvOp::SVDoubleResult* pResult : m_Results)
+			{
+				if (nullptr != pResult)
+				{
+					ResultRunStatus.ResetRunStateAndToolSetTimes();
+					pResult->Run(ResultRunStatus);
+					rRunStatus.updateState(ResultRunStatus);
+				}
+			}
+			rRunStatus.m_triggerRecord = std::move(ResultRunStatus.m_triggerRecord);
 		}
 	}
 
@@ -444,6 +475,11 @@ bool SVLinearImageOperatorList::RunLocalRotation(RunStatus &rRunStatus, SvOi::SV
 			{
 				pOperator->Run(false, pOutputBuffer->getHandle(), pOutputBuffer->getHandle(), ChildRunStatus);
 			}
+			else if (nullptr != dynamic_cast<SvOp::SVResult*>(GetAt(i)))
+			{
+				//There also SVResult objects at this level, they have to be ignored for now!
+				continue;
+			}
 			else
 			{
 				bRetVal = false;
@@ -456,6 +492,207 @@ bool SVLinearImageOperatorList::RunLocalRotation(RunStatus &rRunStatus, SvOi::SV
 		rRunStatus.m_triggerRecord = std::move(ChildRunStatus.m_triggerRecord);
 	}
 	return bRetVal;
+}
+
+DWORD SVLinearImageOperatorList::allocateResults()
+{
+	DWORD LastError(0);
+
+	for (std::size_t i = 0; i < m_Results.size(); ++i)
+	{
+		auto* pSrcObject = getObjectByResultIndex(static_cast<int>(i));
+		if (nullptr != pSrcObject)
+		{
+			m_Results[i] = constructDoubleResultFromObject(*pSrcObject);
+		}
+		else
+		{
+			SvStl::MessageManager  Ex(SvStl::MsgType::Log | SvStl::MsgType::Display);
+			Ex.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_50000_InvalidObject, getObjectId());
+			LastError = static_cast<DWORD> (-SvStl::Err_50000_InvalidObject);
+			break;
+		}
+		Add(m_Results[i]);
+
+		// Ensure this Object's inputs get connected
+		if (false == m_Results[i]->ConnectAllInputs())
+		{
+			SvStl::MessageManager MesMan(SvStl::MsgType::Log);
+			MesMan.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams),
+				SvStl::Err_50001_CreateResultObjectFailed, getObjectId());
+			LastError = static_cast<DWORD> (-SvStl::Err_50001_CreateResultObjectFailed);
+			break;
+		}
+
+		// And last - Create (initialize) it
+		if (!initializeResult(m_Results[i]))
+		{
+			SvStl::MessageManager MesMan(SvStl::MsgType::Log);
+			MesMan.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), 
+				SvStl::Err_50002_ErrorConnectingInputs, getObjectId());
+			LastError = static_cast<DWORD> (-SvStl::Err_50002_ErrorConnectingInputs);
+			break;
+		}
+
+	}
+	
+	return LastError;
+}
+
+bool SVLinearImageOperatorList::initializeResult(SvOp::SVDoubleResult* pResult)
+{
+	bool bRet = false;
+	if (!pResult->IsCreated())
+	{
+		// And finally try to create the child object...
+		if (!CreateChildObject(pResult))
+		{
+			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+			Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_LinearImageOperatorList_ResultCreateFailed, SvStl::SourceFileParams(StdMessageParams), 
+				SvStl::Err_50001_CreateResultObjectFailed, getObjectId());
+
+			// Remove it from the TaskObjectList ( Destruct it )
+			uint32_t objectID = pResult->getObjectId();
+			if (SvDef::InvalidObjectId != objectID)
+			{
+				Delete(objectID);
+			}
+			else
+			{
+				delete pResult;
+			}
+			bRet = false;
+		}
+		else
+		{
+			bRet = true;
+		}
+	}
+	else
+	{
+		bRet = true;
+	}
+
+	return bRet;
+}
+
+bool SVLinearImageOperatorList::setDefaultRange(SvOp::SVDoubleResult* pResult)
+{
+	bool bRet = false;
+	SvOp::SVRange* pRange = pResult->GetResultRange();
+	if (nullptr == pRange)
+	{
+
+		SvStl::MessageManager MesMan(SvStl::MsgType::Log);
+		MesMan.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_LinearImageOperatorList_GetResultRangeFailed, SvStl::SourceFileParams(StdMessageParams), 
+			SvStl::Err_50003_GetResultRangeFailed, getObjectId());
+	}
+	else
+	{
+		pRange->setLowValues(m_defaultDoubleResultLowFail, m_defaultDoubleResultLowWarn);
+		pRange->setHighValues(m_defaultDoubleResultHighFail, m_defaultDoubleResultHighWarn);
+		bRet = true;
+	}
+
+	return bRet;
+}
+
+
+SvOp::SVDoubleResult* SVLinearImageOperatorList::constructDoubleResultFromObject(const SvVol::SVDoubleValueObjectClass& dValueObject)
+{
+	SvIe::SVClassInfoStruct       resultClassInfo;
+	SvDef::SVObjectTypeInfoStruct  interfaceInfo;
+
+	interfaceInfo.m_EmbeddedID = dValueObject.GetEmbeddedID();
+	resultClassInfo.m_DesiredInputVector.push_back(interfaceInfo);
+
+	resultClassInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVResultObjectType;
+	resultClassInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVResultDoubleObjectType;
+	resultClassInfo.m_ClassId = SvPb::DoubleResultClassId;
+	resultClassInfo.m_ClassName = SvUl::LoadStdString(IDS_OBJECTNAME_RESULT);
+	std::string Title = dValueObject.GetName();
+	resultClassInfo.m_ClassName += " " + Title;
+	
+	// Construct the result class
+	return dynamic_cast<SvOp::SVDoubleResult*>(resultClassInfo.Construct());
+}
+
+SvVol::SVDoubleValueObjectClass* SVLinearImageOperatorList::getObjectByResultIndex(int i)
+{
+	SvVol::SVDoubleValueObjectClass* pObject = nullptr;
+	switch (i)
+	{
+	case ResultIndex::MinProfileIdx:
+		pObject = &m_MinProfile;
+		break;
+	case ResultIndex::MaxProfileIdx:
+		pObject = &m_MaxProfile;
+		break;
+	case ResultIndex::ProfileDeltaIdx:
+		pObject = &m_ProfileDelta;
+		break;
+	default:
+		pObject = nullptr;
+		break;
+	}
+	return pObject;
+}
+
+bool SVLinearImageOperatorList::areResultsAllocated()
+{
+	if (nullptr == m_Results[ResultIndex::MinProfileIdx])
+	{
+		m_Results[ResultIndex::MinProfileIdx] = getResultObject(&m_MinProfile);
+	}
+	if (nullptr == m_Results[ResultIndex::MaxProfileIdx])
+	{
+		m_Results[ResultIndex::MaxProfileIdx] = getResultObject(&m_MaxProfile);
+	}
+	if (nullptr == m_Results[ResultIndex::ProfileDeltaIdx])
+	{
+		m_Results[ResultIndex::ProfileDeltaIdx] = getResultObject(&m_ProfileDelta);
+	}
+
+	if (nullptr != m_Results[ResultIndex::MinProfileIdx] && 
+		nullptr != m_Results[ResultIndex::MaxProfileIdx] &&
+		nullptr != m_Results[ResultIndex::ProfileDeltaIdx])
+	{
+		return true;
+	}
+
+	return false;
+}
+
+SvOp::SVDoubleResult* SVLinearImageOperatorList::getResultObject(SvVol::SVDoubleValueObjectClass* pSrcObject)
+{
+	SvOl::SVInputInfoListClass	resultInputList;
+	SvOp::SVDoubleResult* pResult = nullptr;
+	SvDef::SVObjectTypeInfoStruct info{ SvPb::SVResultObjectType, SvPb::SVResultDoubleObjectType };
+	std::vector<SvOi::IObjectClass*> list;
+	fillObjectList(std::back_inserter(list), info);
+
+	for (const auto pObject : list)
+	{
+		pResult = dynamic_cast<SvOp::SVDoubleResult*>(pObject);
+		if (nullptr != pResult)
+		{
+			resultInputList.clear();
+			resultInputList = pResult->GetPrivateInputList();
+
+			SvOl::SVInObjectInfoStruct* pResultInputInfo = resultInputList[0];
+
+			if (pSrcObject == pResultInputInfo->GetInputObjectInfo().getObject())
+			{
+				break;
+			}
+			else
+			{
+				pResult = nullptr;
+			}
+		}
+	}
+
+	return pResult;
 }
 
 } //namespace SvOp
