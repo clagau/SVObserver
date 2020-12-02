@@ -46,7 +46,8 @@ void SetValue(const ValuePtr& pValuePtr, SvPb::Value* pItemValue)
 		}
 	}
 	VARTYPE Type = VT_BSTR;
-	Type |= (Count > 1) ? VT_EMPTY : VT_ARRAY;
+
+	Type |= (Count > 1) ? VT_ARRAY : VT_EMPTY ;
 	pItemValue->mutable_item()->set_type(Type);
 	pItemValue->mutable_item()->set_strval(ValueData);
 	pItemValue->mutable_item()->set_count(Count);

@@ -224,8 +224,9 @@ HRESULT ConvertProtobufToVariant(const SvPb::Variant& rPbVariant, _variant_t& rV
 				LONG Index {0L};
 				for (const auto& rEntry : Items)
 				{
-					_bstr_t Text {rEntry.c_str()};
-					Result = ::SafeArrayPutElement(pSafeArray, &Index, static_cast<void*> (Text.Detach()));
+					_bstr_t Text{ rEntry.c_str() };
+					Result = ::SafeArrayPutElement(pSafeArray, &Index, static_cast<void*>(Text.GetBSTR()));
+					
 					if (S_OK != Result)
 					{
 						break;
