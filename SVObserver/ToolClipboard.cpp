@@ -634,7 +634,7 @@ HRESULT ToolClipboard::validateIds(std::string& rXmlData, uint32_t postId, uint3
 						{
 							int toolPositionOfImage = pTool->getToolPosition();
 
-							if ((nullptr == pPostTool || toolPositionOfImage < pPostTool->getToolPosition()) && inspectionId == m_pInspection->getObjectId())
+							if ((nullptr == pPostTool || toolPositionOfImage < pPostTool->getToolPosition() || SvPb::ImageToolClassId == toolClassId) && inspectionId == m_pInspection->getObjectId())
 							{
 								useStandardImage = false;
 							}
