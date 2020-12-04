@@ -31,8 +31,10 @@ constexpr SvPb::SVExtentPropertyEnum cStoredExtentValues[]
 	SvPb::SVExtentPropertyEndAngle,
 	SvPb::SVExtentPropertyInnerRadius,
 	SvPb::SVExtentPropertyOuterRadius,
-	SvPb::SVExtentPropertyWidthScaleFactor,
-	SvPb::SVExtentPropertyHeightScaleFactor,
+	SvPb::SVExtentPropertyWidthScaleFactorContent,
+	SvPb::SVExtentPropertyWidthScaleFactorSize,
+	SvPb::SVExtentPropertyHeightScaleFactorContent,
+	SvPb::SVExtentPropertyHeightScaleFactorSize,
 	SvPb::SVExtentPropertyOutputWidth,
 	SvPb::SVExtentPropertyOutputHeight,
 	SvPb::SVExtentPropertyRotationAngle,
@@ -67,7 +69,8 @@ static const SVExtentPropertyStringMap cExtentPropertyNames =
 	{SvPb::SVExtentPropertyOutputHeight, std::string("Height")},
 };
 
-static const SVExtentPropertyStringMap cShortExtentPropertyNames =
+///  useful for debugging
+static const SVExtentPropertyStringMap cExtentPropertyShortNames =
 {
 	{SvPb::SVExtentPropertyPositionPointX, std::string("X")},
 	{SvPb::SVExtentPropertyPositionPointY, std::string("Y")},
@@ -86,8 +89,23 @@ static const SVExtentPropertyStringMap cShortExtentPropertyNames =
 	{SvPb::SVExtentPropertyOuterRadius, std::string("outer")},
 	{SvPb::SVExtentPropertyOutputWidth, std::string("wOut")},
 	{SvPb::SVExtentPropertyOutputHeight, std::string("hOut")},
-	{SvPb::SVExtentPropertyWidthScaleFactor, std::string("sclW")},
-	{SvPb::SVExtentPropertyHeightScaleFactor, std::string("sclH")},
+	{SvPb::SVExtentPropertyWidthScaleFactorContent, std::string("w*")},
+	{SvPb::SVExtentPropertyHeightScaleFactorContent, std::string("h*")},
+	{SvPb::SVExtentPropertyWidthScaleFactorSize, std::string("wS*")},
+	{SvPb::SVExtentPropertyHeightScaleFactorSize, std::string("hS*")},
+};
+
+///contains properties of a subset of cExtentPropertyShortNames. Useful if only some extent properties are of interest and to be logged
+static const SVExtentPropertyStringMap cExtentPropertyShortNamesAbridged= 
+{
+	{SvPb::SVExtentPropertyWidth, std::string("w")},
+	{SvPb::SVExtentPropertyHeight, std::string("h")},
+	{SvPb::SVExtentPropertyOutputWidth, std::string("wOut")},
+	{SvPb::SVExtentPropertyOutputHeight, std::string("hOut")},
+	{SvPb::SVExtentPropertyWidthScaleFactorContent, std::string("w*")},
+	{SvPb::SVExtentPropertyHeightScaleFactorContent, std::string("h*")},
+	{SvPb::SVExtentPropertyWidthScaleFactorSize, std::string("wS*")},
+	{SvPb::SVExtentPropertyHeightScaleFactorSize, std::string("hS*")},
 };
 
 static const SVExtentPropertyPointMap cExtentPropertyPointMap =
@@ -1918,12 +1936,12 @@ HRESULT SVImageExtentClass::TranslateToOutputSpace(SVPoint<double> value, SVPoin
 			l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyPositionPoint, position);
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyHeightScaleFactor, heightScaleFactor);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyHeightScaleFactorContent, heightScaleFactor); 
 			}
 
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyWidthScaleFactor, widthScaleFactor);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyWidthScaleFactorContent, widthScaleFactor);
 			}
 
 			if (S_OK == l_hrOk)
@@ -2497,12 +2515,12 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVPoint<double> value, SVPo
 			l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyPositionPoint, position);
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyHeightScaleFactor, heightScaleFactor);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyHeightScaleFactorContent, heightScaleFactor);
 			}
 
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyWidthScaleFactor, widthScaleFactor);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyWidthScaleFactorContent, widthScaleFactor);
 			}
 
 			if (S_OK == l_hrOk)
@@ -4040,7 +4058,7 @@ HRESULT SVImageExtentClass::BuildOutputDimensions()
 
 			if (S_OK == result)
 			{
-				result = GetExtentProperty(SvPb::SVExtentPropertyWidthScaleFactor, widthScaleFactor);
+				result = GetExtentProperty(SvPb::SVExtentPropertyWidthScaleFactorSize, widthScaleFactor);
 			}
 
 			if (S_OK == result)
@@ -4056,7 +4074,7 @@ HRESULT SVImageExtentClass::BuildOutputDimensions()
 
 			if (S_OK == result)
 			{
-				result = GetExtentProperty(SvPb::SVExtentPropertyHeightScaleFactor, heightScaleFactor);
+				result = GetExtentProperty(SvPb::SVExtentPropertyHeightScaleFactorSize, heightScaleFactor);
 			}
 
 			if (S_OK == result)
@@ -4976,8 +4994,9 @@ bool SVImageExtentClass::isEnabled(SvPb::SVExtentPropertyEnum eProperty) const
 	return ((m_properties & eProperty) == eProperty) && (eProperty != SvPb::SVExtentPropertyNone);
 }
 
+
 //Arvid: useful for debugging extents 
-void SVImageExtentClass::OutputDebugInformationOnExtent(const char* pDescription, const SVImageExtentClass* pExtent) const
+void SVImageExtentClass::OutputDebugInformationOnExtent(const char* pDescription, const SVImageExtentClass* pReference) const
 {
 	std::stringstream info;
 
@@ -4985,58 +5004,41 @@ void SVImageExtentClass::OutputDebugInformationOnExtent(const char* pDescription
 	info.precision(2);
 
 	info << pDescription << ": ";
-
-	if (nullptr == pExtent)
+	if (nullptr != pReference)
 	{
-		for (auto& propertyAndValue : m_extentValues)
-		{
-			auto enumAndName = cShortExtentPropertyNames.find(propertyAndValue.first);
+		info << "(delta) ";
+	}
 
-			if (enumAndName != cShortExtentPropertyNames.end())
+	auto& mapOfNames = cExtentPropertyShortNamesAbridged; //this defines which properties are to be logged here
+
+	for (auto& propertyAndValue : m_extentValues)
+	{
+		auto enumAndName = mapOfNames.find(propertyAndValue.first);
+
+		if (enumAndName != mapOfNames.end())
+		{
+			if (nullptr != pReference)
 			{
-				info << enumAndName->second;
+				auto referencePropertyAndValue = pReference->m_extentValues.find(propertyAndValue.first);
+				if (referencePropertyAndValue != pReference->m_extentValues.end())
+				{
+
+					if (referencePropertyAndValue->second != propertyAndValue.second)
+					{
+						info << enumAndName->second << ":" << referencePropertyAndValue->second << "->" << propertyAndValue.second;
+					}
+				}
+				else
+				{
+					info << enumAndName->second << ":" << "???->" << propertyAndValue.second;
+				}
 			}
 			else
 			{
-				info << "?(" << propertyAndValue.first << ")" << ":" << propertyAndValue.second << " ";
-			}
-
-			info << ":" << propertyAndValue.second << " ";
-		}
-	}
-	else
-	{
-		for (auto& propertyAndValue : m_extentValues)
-		{
-			auto matchingPropertyAndValue = pExtent->m_extentValues.find(propertyAndValue.first);
-			if (matchingPropertyAndValue != pExtent->m_extentValues.end())
-			{
-				if (matchingPropertyAndValue->second != propertyAndValue.second)
-				{
-					auto enumAndName = cShortExtentPropertyNames.find(propertyAndValue.first);
-
-					if (enumAndName != cShortExtentPropertyNames.end())
-					{
-						enumAndName = cShortExtentPropertyNames.find(propertyAndValue.first);
-
-						if (enumAndName != cShortExtentPropertyNames.end())
-						{
-							info << enumAndName->second;
-						}
-						else
-						{
-							info << "?(" << propertyAndValue.first << ")" << ":" << propertyAndValue.second << " ";
-						}
-					}
-					else
-					{
-						info << "?(" << propertyAndValue.first << ")" << ":" << propertyAndValue.second << " ";
-					}
-
-					info << ":" << matchingPropertyAndValue->second << "->" << propertyAndValue.second << " ";
-				}
+				info << enumAndName->second << ":" << propertyAndValue.second;
 			}
 		}
+		info << " ";
 	}
 
 	info << "\n";

@@ -244,6 +244,8 @@ protected:
 	SvVol::SVDoubleValueObjectClass m_ExtentHeight;
 	SvVol::SVDoubleValueObjectClass m_ExtentWidthScaleFactor;
 	SvVol::SVDoubleValueObjectClass m_ExtentHeightScaleFactor;
+	SvVol::SVDoubleValueObjectClass m_ExtentWidthScaleFactorImageSize;
+	SvVol::SVDoubleValueObjectClass m_ExtentHeightScaleFactorImageSize;
 
 	//***** New source image extent value objects
 	SvVol::SVBoolValueObjectClass m_svUpdateAuxiliaryExtents;

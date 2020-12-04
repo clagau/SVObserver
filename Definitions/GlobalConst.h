@@ -51,8 +51,7 @@ constexpr double		cDefaultWindowToolLeft = 10.0;
 constexpr double		cDefaultWindowToolTop = 10.0;
 constexpr double		cDefaultWindowToolWidth = 100.0;
 constexpr double		cDefaultWindowToolHeight = 100.0;
-constexpr double		cDefaultWindowToolWidthScaleFactor = 1.0;
-constexpr double		cDefaultWindowToolHeightScaleFactor = 1.0;
+constexpr double		cDefaultScaleFactor = 1.0;
 
 constexpr long			cDefaultPolarTransformCenterX = 200L;
 constexpr long			cDefaultPolarTransformCenterY = 50L;

@@ -359,9 +359,21 @@ bool ResizeTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 		return false;
 	}
 
+#if defined (TRACE_THEM_ALL) || defined (TRACE_RESIZE)
+	auto extent = m_OutputImage.GetImageExtents();
+#endif
+
 	m_OutputImage.ResetObject(); // this ensures that the output image (that has already 
 								 // been reset earlier) will have the right size as determined by the 
 								 // extent as modified by ModifyImageExtentByScaleFactors() above.
+
+#if defined (TRACE_THEM_ALL) || defined (TRACE_RESIZE)
+	m_OutputImage.GetImageExtents().OutputDebugInformationOnExtent(" reset", &extent);
+	m_OutputImage.GetImageExtents().OutputDebugInformationOnExtent(" reset");
+	auto toolimageextent = m_toolExtent.getImageExtent();
+	toolimageextent.OutputDebugInformationOnExtent("reset2");
+#endif
+
 
 	SvOl::ValidateInput(m_InputImageObjectInfo);
 
@@ -412,17 +424,25 @@ bool ResizeTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 bool ResizeTool::ModifyImageExtentByScaleFactors()
 {
 #if defined (TRACE_THEM_ALL) || defined (TRACE_RESIZE)
-	m_toolExtent.getImageExtent().OutputDebugInformationOnExtent("before");
+	auto before = m_toolExtent.getImageExtent();
 #endif
 
 	double contentWidthScaleFactor = 0.0;
-	HRESULT hr = m_contentWidthScaleFactor.getValue(contentWidthScaleFactor); //this scale factor influences only image's content, not its size.
+	HRESULT hr = m_contentWidthScaleFactor.getValue(contentWidthScaleFactor); //this scale factor influences only the image's content, not its size.
 	bool ok = (S_OK == hr);
 	double contentHeightScaleFactor = 0.0;
-	ok =  ok &&(S_OK == m_contentHeightScaleFactor.getValue(contentHeightScaleFactor)); //this scale factor influences only image's content, not its size.
+	ok = ok && (S_OK == m_contentHeightScaleFactor.getValue(contentHeightScaleFactor)); //this scale factor influences only the image's content, not its size.
 
-	ok =  ok &&(S_OK == m_toolExtent.getImageExtent().SetExtentProperty(SvPb::SVExtentPropertyWidthScaleFactor, contentWidthScaleFactor));
-	ok =  ok &&(S_OK == m_toolExtent.getImageExtent().SetExtentProperty(SvPb::SVExtentPropertyHeightScaleFactor, contentHeightScaleFactor));
+	double formatWidthScaleFactor = 0.0;
+	ok = ok && (S_OK == m_formatWidthScaleFactor.getValue(formatWidthScaleFactor)); //this scale factor influences only the image's size, not its content.
+	double formatHeightScaleFactor = 0.0;
+	ok = ok && (S_OK == m_formatHeightScaleFactor.getValue(formatHeightScaleFactor)); //this scale factor influences only the image's size, not its content.
+
+	ok = ok && (S_OK == m_toolExtent.getImageExtent().SetExtentProperty(SvPb::SVExtentPropertyWidthScaleFactorContent, contentWidthScaleFactor));
+	ok = ok && (S_OK == m_toolExtent.getImageExtent().SetExtentProperty(SvPb::SVExtentPropertyHeightScaleFactorContent, contentHeightScaleFactor));
+
+	ok = ok && (S_OK == m_toolExtent.getImageExtent().SetExtentProperty(SvPb::SVExtentPropertyWidthScaleFactorSize, formatWidthScaleFactor));
+	ok = ok && (S_OK == m_toolExtent.getImageExtent().SetExtentProperty(SvPb::SVExtentPropertyHeightScaleFactorSize, formatHeightScaleFactor));
 
 	double imageWidthFactor = 0.0;
 	ok =  ok &&(S_OK == m_formatWidthScaleFactor.getValue(imageWidthFactor)); //this scale factor influences only image size, not enlargement
@@ -442,7 +462,7 @@ bool ResizeTool::ModifyImageExtentByScaleFactors()
 	ok =  ok &&(S_OK == m_toolExtent.getImageExtent().SetExtentProperty(SvPb::SVExtentPropertyOutputHeight, outputImageHeight));
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_RESIZE)
-	m_toolExtent.getImageExtent().OutputDebugInformationOnExtent(" after");
+	m_toolExtent.getImageExtent().OutputDebugInformationOnExtent(" modify", &before);
 #endif
 
 	return ok;
@@ -483,6 +503,12 @@ bool ResizeTool::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pEr
 
 	bool Result = __super::onRun(rRunStatus, pErrorMessages);
 
+#if defined (TRACE_THEM_ALL) || defined (TRACE_RESIZE)
+	m_OutputImage.GetImageExtents().OutputDebugInformationOnExtent("on run");
+	auto toolimageextent = m_toolExtent.getImageExtent();
+	m_OutputImage.GetImageExtents().OutputDebugInformationOnExtent("on run", &toolimageextent);
+#endif
+
 	double contentHeightScaleFactor = 0.0;
 	m_contentHeightScaleFactor.getValue(contentHeightScaleFactor); //this scale factor influences only enlargement, not image size.
 	if (false == isValidScaleFactor(contentHeightScaleFactor))
@@ -505,7 +531,7 @@ bool ResizeTool::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pEr
 	long interpolationMode = 0;
 	if (!SUCCEEDED(m_ResizeInterpolationMode.GetValue(interpolationMode)))
 	{
-		Result = false;
+		Result = false;	
 		if (nullptr != pErrorMessages)
 		{
 			SvStl::MessageContainer Msg(SVMSG_SVO_5032_GETINTERPOLATIONMODEFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
@@ -534,10 +560,6 @@ bool ResizeTool::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pEr
 			pErrorMessages->push_back(Msg);
 		}
 	}
-
-#if defined (TRACE_THEM_ALL) || defined (TRACE_RESIZE)
-	m_toolExtent.getImageExtent().OutputDebugInformationOnExtent("on run");
-#endif
 
 	if (Result)
 	{

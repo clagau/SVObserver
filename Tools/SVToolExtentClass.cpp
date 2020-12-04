@@ -480,15 +480,26 @@ HRESULT SVToolExtentClass::SetImageExtent(const SVImageExtentClass& rImageExtent
 		// and unnecessary for scale factors of 1
 		// Hence the default value for setScaleFactors should be false, not true!
 
-		if (S_OK == rImageExtent.GetExtentProperty(SvPb::SVExtentPropertyHeightScaleFactor, dValue))
+		if (S_OK == rImageExtent.GetExtentProperty(SvPb::SVExtentPropertyHeightScaleFactorContent, dValue))
 		{
-			l_hrOk &= SetExtentValue(SvPb::SVExtentPropertyHeightScaleFactor, dValue);
+			l_hrOk &= SetExtentValue(SvPb::SVExtentPropertyHeightScaleFactorContent, dValue);
 		}
 
-		if (S_OK == rImageExtent.GetExtentProperty(SvPb::SVExtentPropertyWidthScaleFactor, dValue))
+		if (S_OK == rImageExtent.GetExtentProperty(SvPb::SVExtentPropertyWidthScaleFactorContent, dValue))
 		{
-			l_hrOk &= SetExtentValue(SvPb::SVExtentPropertyWidthScaleFactor, dValue);
+			l_hrOk &= SetExtentValue(SvPb::SVExtentPropertyWidthScaleFactorContent, dValue);
 		}
+
+		if (S_OK == rImageExtent.GetExtentProperty(SvPb::SVExtentPropertyHeightScaleFactorSize, dValue))
+		{
+			l_hrOk &= SetExtentValue(SvPb::SVExtentPropertyHeightScaleFactorSize, dValue);
+		}
+
+		if (S_OK == rImageExtent.GetExtentProperty(SvPb::SVExtentPropertyWidthScaleFactorSize, dValue))
+		{
+			l_hrOk &= SetExtentValue(SvPb::SVExtentPropertyWidthScaleFactorSize, dValue);
+		}
+
 	}
 	return l_hrOk;
 }

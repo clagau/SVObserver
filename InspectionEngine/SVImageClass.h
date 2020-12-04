@@ -62,7 +62,7 @@ public:
 	virtual const double& GetLastResetTimeStamp() const;
 	
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
-	
+
 	HRESULT RebuildStorage( SvStl::MessageContainerVector *pErrorMessages=nullptr );
 
 	const SVImageExtentClass& GetImageExtents() const;

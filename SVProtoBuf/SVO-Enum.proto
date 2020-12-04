@@ -339,39 +339,41 @@ enum ObjectSelectorType
 
 enum SVExtentPropertyEnum
 {
-	SVExtentPropertyNone					= 0;
-	SVExtentPropertyPositionPointX          = 0x00000001;
-	SVExtentPropertyPositionPointY          = 0x00000002;
-	SVExtentPropertyPositionPoint           = 0x00000003;
-	SVExtentPropertyPositionPointEndOfLineX = 0x00000004;
-	SVExtentPropertyPositionPointEndOfLineY = 0x00000008;
-	SVExtentPropertyPositionPointEndOfLine  = 0x0000000C;
-	SVExtentPropertyRotationAngle           = 0x00000010;
-	SVExtentPropertyTranslationOffsetX      = 0x00000040;
-	SVExtentPropertyTranslationOffsetY      = 0x00000080;
-	SVExtentPropertyTranslationOffset       = 0x000000C0;
-	SVExtentPropertyOutputPositionPointX    = 0x00000100;
-	SVExtentPropertyOutputPositionPointY    = 0x00000200;
-	SVExtentPropertyOutputPositionPoint     = 0x00000300;
+	SVExtentPropertyNone						= 0;
+	SVExtentPropertyPositionPointX				= 0x00000001;
+	SVExtentPropertyPositionPointY				= 0x00000002;
+	SVExtentPropertyPositionPoint				= 0x00000003;
+	SVExtentPropertyPositionPointEndOfLineX		= 0x00000004;
+	SVExtentPropertyPositionPointEndOfLineY		= 0x00000008;
+	SVExtentPropertyPositionPointEndOfLine		= 0x0000000C;
+	SVExtentPropertyRotationAngle				= 0x00000010;
+	SVExtentPropertyTranslationOffsetX			= 0x00000040;
+	SVExtentPropertyTranslationOffsetY			= 0x00000080;
+	SVExtentPropertyTranslationOffset			= 0x000000C0;
+	SVExtentPropertyOutputPositionPointX		= 0x00000100;
+	SVExtentPropertyOutputPositionPointY		= 0x00000200;
+	SVExtentPropertyOutputPositionPoint			= 0x00000300;
 
-	SVExtentPropertyHeightScaleFactor		= 0x00040000; ///< Used by Resize Tool and the Image Tool Height Doubling operation
-	SVExtentPropertyWidthScaleFactor		= 0x00080000; ///< Used by Resize Tool
+	SVExtentPropertyWidthScaleFactorSize		= 0x00010000; ///< Used by Resize Tool
+	SVExtentPropertyHeightScaleFactorSize		= 0x00020000; ///< Used by Resize Tool and the Image Tool Height Doubling operation
+	SVExtentPropertyWidthScaleFactorContent		= 0x00080000; ///< Used by Resize Tool
+	SVExtentPropertyHeightScaleFactorContent	= 0x00040000; ///< Used by Resize Tool and the Image Tool Height Doubling operation
 
-	SVExtentPropertyStartAngle              = 0x00100000;
-	SVExtentPropertyEndAngle                = 0x00200000;
-	SVExtentPropertyInnerRadius             = 0x00400000;
-	SVExtentPropertyOuterRadius             = 0x00800000;
-	SVExtentPropertyWidth                   = 0x01000000;
-	SVExtentPropertyHeight                  = 0x02000000;
-	SVExtentPropertyOutputWidth             = 0x04000000;
-	SVExtentPropertyOutputHeight            = 0x08000000;
+	SVExtentPropertyStartAngle					= 0x00100000;
+	SVExtentPropertyEndAngle					= 0x00200000;
+	SVExtentPropertyInnerRadius					= 0x00400000;
+	SVExtentPropertyOuterRadius					= 0x00800000;
+	SVExtentPropertyWidth						= 0x01000000;
+	SVExtentPropertyHeight						= 0x02000000;
+	SVExtentPropertyOutputWidth					= 0x04000000;
+	SVExtentPropertyOutputHeight				= 0x08000000;
 
 	//SVExtentPropertyPositionsInput = SVExtentPropertyPositionPointX | SVExtentPropertyPositionPointY | SVExtentPropertyPositionPointEndOfLineX | 
 	//								SVExtentPropertyPositionPointEndOfLineY | SVExtentPropertyTranslationOffsetX | SVExtentPropertyTranslationOffsetY | SVExtentPropertyRotationAngle,
 	SVExtentPropertyPositionsInput = 0x000000DF;
 
 	//SVExtentPropertyDimensionsInput = SVExtentPropertyWidth | SVExtentPropertyHeight | SVExtentPropertyStartAngle | SVExtentPropertyEndAngle | SVExtentPropertyInnerRadius
-	//                        | SVExtentPropertyOuterRadius | SVExtentPropertyHeightScaleFactor | SVExtentPropertyWidthScaleFactor,
+	//                        | SVExtentPropertyOuterRadius | SVExtentPropertyHeightScaleFactorContent | SVExtentPropertyWidthScaleFactorContent,
 	SVExtentPropertyDimensionsInput = 0x03FC0000;
 
 	//SVExtentPropertyDimentionsOutput = SVExtentPropertyOutputWidth | SVExtentPropertyOutputHeight,
@@ -379,9 +381,6 @@ enum SVExtentPropertyEnum
 
 	//SVExtentPropertyRectangle = SVExtentPropertyWidth | SVExtentPropertyHeight | SVExtentPropertyDimentionsOutput,
 	SVExtentPropertyRectangle = 0x0F000000;
-
-	//SVExtentPropertyScaleFactor = SVExtentPropertyWidthScaleFactor | SVExtentPropertyHeightScaleFactor,
-	SVExtentPropertyScaleFactor = 0x000C0000;
 
 	//SVExtentPropertyPie = SVExtentPropertyStartAngle | SVExtentPropertyEndAngle	| SVExtentPropertyInnerRadius | SVExtentPropertyOuterRadius	| SVExtentPropertyDimentionsOutput,
 	SVExtentPropertyPie = 0x0CF00000;
@@ -1161,9 +1160,11 @@ enum EmbeddedIdEnum
 	ContentWidthFactorLinkEId=519;
 	ContentHeightFactorEId=520;
 	ContentHeightFactorLinkEId=521;	
+	ExtentContentWidthFactorSizeEId = 522;
+	ExtentContentHeightFactorSizeEId = 533;
 
 	StatNumberOfValidSamplesEId = 560; //Statistics Tool: number of valid values considered in statistic
-	
+
 	
 	//The following Ids are the first of an array and must have 100 reserved Ids 
 
