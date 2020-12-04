@@ -1138,6 +1138,7 @@ HRESULT SVRCCommand::ConvertStorageImageToProtobuf(const std::string& rName, con
 
 				pValue->mutable_item()->set_type(VT_UI1 | VT_ARRAY);
 				pValue->mutable_item()->set_bytesval(&FileData[0], FileData.size());
+				pValue->mutable_item()->set_count(static_cast<uint32_t> (FileData.size()));
 			}
 		}
 

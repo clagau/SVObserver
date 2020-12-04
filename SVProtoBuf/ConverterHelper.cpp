@@ -206,6 +206,52 @@ HRESULT ConvertProtobufToVariant(const SvPb::Variant& rPbVariant, _variant_t& rV
 	if (VT_ARRAY == (rPbVariant.type() & VT_ARRAY))
 	{
 		VARTYPE Type = rPbVariant.type() & ~VT_ARRAY;
+		size_t memorySize{ 0ULL };
+		switch (Type)
+		{
+		case VT_BOOL:
+			memorySize = sizeof(VARIANT::boolVal);
+			break;
+		case VT_I1:
+			memorySize = sizeof(VARIANT::cVal);
+			break;
+		case VT_UI1:
+			memorySize = sizeof(VARIANT::bVal);
+			break;
+		case VT_I2:
+			memorySize = sizeof(VARIANT::iVal);
+			break;
+		case VT_UI2:
+			memorySize = sizeof(VARIANT::uiVal);
+			break;
+		case VT_I4:
+			memorySize = sizeof(VARIANT::lVal);
+			break;
+		case VT_UI4:
+			memorySize = sizeof(VARIANT::ulVal);
+			break;
+		case VT_I8:
+			memorySize = sizeof(VARIANT::llVal);
+			break;
+		case VT_UI8:
+			memorySize = sizeof(VARIANT::ullVal);
+			break;
+		case VT_INT:
+			memorySize = sizeof(VARIANT::intVal);
+			break;
+		case VT_UINT:
+			memorySize = sizeof(VARIANT::uintVal);
+			break;
+		case VT_R4:
+			memorySize = sizeof(VARIANT::fltVal);
+			break;
+		case VT_R8:
+			memorySize = sizeof(VARIANT::dblVal);
+			break;
+		default:
+			break;
+		}
+
 		SAFEARRAY* pSafeArray = ::SafeArrayCreateVector(Type, 0, rPbVariant.count());
 		if (nullptr != pSafeArray)
 		{
@@ -236,12 +282,19 @@ HRESULT ConvertProtobufToVariant(const SvPb::Variant& rPbVariant, _variant_t& rV
 			}
 			else
 			{
-				void* pData {nullptr};
-				Result = ::SafeArrayAccessData(pSafeArray, &pData);
-				if (S_OK == Result)
+				if(rPbVariant.bytesval().length() == rPbVariant.count() * memorySize)
 				{
-					memcpy(pData, rPbVariant.bytesval().c_str(), rPbVariant.bytesval().length());
-					::SafeArrayUnaccessData(pSafeArray);
+					void* pData{ nullptr };
+					Result = ::SafeArrayAccessData(pSafeArray, &pData);
+					if (S_OK == Result)
+					{
+						memcpy(pData, rPbVariant.bytesval().c_str(), rPbVariant.bytesval().length());
+						::SafeArrayUnaccessData(pSafeArray);
+					}
+				}
+				else
+				{
+					Result = E_INVALIDARG;
 				}
 			}
 			rVariant.parray = pSafeArray;
