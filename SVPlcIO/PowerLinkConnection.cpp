@@ -89,6 +89,7 @@ void PowerlinkConnection::StartEventSignalThread()
 		m_eventSignalThread = std::thread(&PowerlinkConnection::EventSignalThread, this,
 											std::bind(&PowerlinkConnection::EventHandler, this));
 		
+		::SetThreadPriority(m_eventSignalThread.native_handle(), THREAD_PRIORITY_TIME_CRITICAL);
 		::OutputDebugString("Event signal thread started\n");
 	}
 }

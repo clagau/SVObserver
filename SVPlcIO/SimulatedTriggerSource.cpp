@@ -188,14 +188,12 @@ bool SimulatedTriggerSource::setTriggerChannel(uint8_t channel, bool active)
 	return result;
 }
 
-bool SimulatedTriggerSource::analyzeTelegramData()
+void SimulatedTriggerSource::analyzeTelegramData()
 {
 	if(std::any_of(gNewTrigger.cbegin(), gNewTrigger.cend(), [](const auto& rNew) { return rNew.load(); }))
 	{
-		return checkForNewTriggers();
+		checkForNewTriggers();
 	}
-
-	return false;
 }
 
 void SimulatedTriggerSource::queueResult(uint8_t channel, ChannelOut&& channelOut)

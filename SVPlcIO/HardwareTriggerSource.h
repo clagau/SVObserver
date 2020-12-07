@@ -24,7 +24,7 @@ public:
 
 	virtual bool isReady() override	{ return m_cifXCard.isProtocolInitialized(); }
 	virtual HRESULT initialize() override;
-	virtual bool analyzeTelegramData() override;
+	virtual void analyzeTelegramData() override;
 	virtual void queueResult(uint8_t channel, ChannelOut&& channelOut) override;
 	virtual void setReady(bool ready) override { m_cifXCard.setReady(ready); }
 

@@ -67,11 +67,11 @@ void HardwareTriggerSource::queueResult(uint8_t channel, ChannelOut&& channelOut
 	std::swap(m_inspectionStateQueue.back().m_channels[channel], channelOut);
 }
 
-bool HardwareTriggerSource::analyzeTelegramData()
+void HardwareTriggerSource::analyzeTelegramData()
 {
-	bool result{false};
-
-	switch (m_cifXCard.getInputTelegram().m_content)
+	m_cifXCard.popInputDataQueue();
+	const InputData& rInputData = m_cifXCard.getCurrentInputData();
+	switch (rInputData.m_telegram.m_content)
 	{
 		case TelegramContent::VersionData:
 		{
@@ -80,7 +80,6 @@ bool HardwareTriggerSource::analyzeTelegramData()
 		}
 		case TelegramContent::TimeSyncData:
 		{
-			m_cifXCard.setPlcLoopSyncTime();
 			break;
 		}
 		case TelegramContent::ConfigurationData:
@@ -100,13 +99,12 @@ bool HardwareTriggerSource::analyzeTelegramData()
 				}
 			}
 			m_cifXCard.sendOperationData(sendInpectionState);
-			const InspectionCommand& rInsCmd = m_cifXCard.getInspectionCmd();
-			m_triggerDataChanged = m_previousTriggerData.hasTriggerDataChanged(rInsCmd);
+			m_triggerDataChanged = m_previousTriggerData.hasTriggerDataChanged(rInputData.m_inspectionCmd);
 
 			if (m_triggerDataChanged)
 			{
-				m_previousTriggerData = rInsCmd;
-				result = checkForNewTriggers();
+				m_previousTriggerData = rInputData.m_inspectionCmd;
+				checkForNewTriggers();
 			}
 			break;
 		}
@@ -115,16 +113,14 @@ bool HardwareTriggerSource::analyzeTelegramData()
 			break;
 		}
 	}
-
-	return result;
 }
 
 double HardwareTriggerSource::getExecutionTime(uint8_t channel)
 {
-	const InspectionCommand& rInsCmd = m_cifXCard.getInspectionCmd();
-	const int16_t& rTimeStamp1 = rInsCmd.m_channels[channel].m_timeStamp1;
-	int32_t triggerTimeOffset = getPlcTriggerTime(rInsCmd.m_socRelative, rTimeStamp1) - m_cifXCard.getSyncSocRel();
-	return m_cifXCard.getSyncTime() + static_cast<double> (triggerTimeOffset - m_plcTransferTime) / cMicrosecondsPerMillisecond;
+	const InputData& rInputData = m_cifXCard.getCurrentInputData();
+	const int16_t& rTimeStamp1 = rInputData.m_inspectionCmd.m_channels[channel].m_timeStamp1;
+	int32_t triggerTimeOffset = getPlcTriggerTime(rInputData.m_inspectionCmd.m_socRelative, rTimeStamp1) - rInputData.m_inspectionCmd.m_socRelative;
+	return rInputData.m_interruptTime + static_cast<double> (triggerTimeOffset - m_plcTransferTime) / cMicrosecondsPerMillisecond;
 }
 
 int32_t HardwareTriggerSource::getPlcTriggerTime(int32_t socRelative, int16_t timeStamp)
@@ -146,7 +142,7 @@ int32_t HardwareTriggerSource::getPlcTriggerTime(int32_t socRelative, int16_t ti
 
 void HardwareTriggerSource::createTriggerReport(uint8_t channel)
 {
-	const ChannelIn& rChannel = m_cifXCard.getInspectionCmd().m_channels[channel];
+	const ChannelIn& rChannel = m_cifXCard.getCurrentInputData().m_inspectionCmd.m_channels[channel];
 
 	double triggerTimeStamp = getExecutionTime(channel);
 
@@ -160,8 +156,7 @@ void HardwareTriggerSource::createTriggerReport(uint8_t channel)
 		report.m_triggerIndex = static_cast<uint32_t> (rChannel.m_triggerIndex);
 		report.m_triggerPerObjectID = rChannel.m_triggerCount;
 		report.m_triggerTimestamp = triggerTimeStamp;
-		const InspectionCommand& rInsCmd = m_cifXCard.getInspectionCmd();
-		report.m_isValid = (0 != rInsCmd.m_socRelative);
+		report.m_isValid = (0 != m_cifXCard.getCurrentInputData().m_inspectionCmd.m_socRelative);
 		
 		sendTriggerReport(report);
 	}

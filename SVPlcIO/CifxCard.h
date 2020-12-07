@@ -19,6 +19,15 @@ namespace SvPlc
 {
 struct InspectionState;
 
+struct InputData
+{
+	double m_interruptTime {0.0};
+	int32_t m_syncSocRelative {0L};
+	Telegram m_telegram;
+	TimeSync m_timeSync;
+	InspectionCommand m_inspectionCmd;
+};
+
 ///controls access to process memory (input and output buffers) of the CifX card 
 class CifXCard
 {
@@ -35,24 +44,15 @@ public:
 
 	void readProcessData();
 
-	uint32_t currentResult() { return m_currentResult; }
-
-	bool canProcessDataBeRead() { return m_processDataCanBeRead; }
-	uint64_t getProcessDataReadCount() { return m_processDataReadCount; };
-	double telegramReceiveTime() { return m_TelegramReceiveTime; }
-
-	double getSyncTime() { return m_syncTime;  }
-	uint32_t getSyncSocRel() { return m_syncSocRelative;  }
+	const InputData& getCurrentInputData() { return m_currentInputData; }
+	void popInputDataQueue();
 
 	void setHandleForTelegramReceptionEvent(HANDLE h) { m_hTelegramReadEvent = h; }
 
 	void sendVersion();
-	void setPlcLoopSyncTime();
 	void sendConfigList();
 	void sendOperationData(const InspectionState& rState);
 
-	const Telegram& getInputTelegram() { return m_inputTelegram; }
-	const InspectionCommand& getInspectionCmd() { return m_inspectionCmd; }
 	bool isProtocolInitialized() { return m_protocolInitialized; }
 	void setReady(bool ready);
 
@@ -64,8 +64,6 @@ private:
 	std::vector<ConfigDataSet> createConfigList(TelegramLayout layout);
 	void writeResponseData(const uint8_t* pSdoDynamic, size_t sdoDynamicSize);
 
-	uint32_t m_currentResult {0UL};
-
 	const uint16_t m_CifXNodeId {0};			//< The powerlink node ID used for the Hilscher CifX card
 	const uint16_t m_maxPlcDataSize {0UL};		// the size of the PLC data in bytes
 
@@ -74,26 +72,16 @@ private:
 	std::unique_ptr<uint8_t[]> m_pReadBuffer;	///Receive buffer
 	std::unique_ptr<uint8_t[]> m_pWriteBuffer;	///Send buffer
 
-	bool m_processDataCanBeRead {false};
-	uint64_t m_processDataReadCount {0ULL}; ///< running count of process data reads. This is also the number of interrupts 
-	std::atomic<double> m_TelegramReceiveTime {0.0};
-
-	double m_syncTime {0.0};
-	int32_t m_syncSocRelative {INT_MAX};
 	bool m_protocolInitialized {false};
 	bool m_ready {false};
 	uint16_t m_contentID {0};
 
-	uint32_t m_plcSendTime {0UL};
-
 	HANDLE m_hTelegramReadEvent {nullptr};
 
 	std::mutex m_cifxMutex;
-
 	CifxLoadLibrary m_cifxLoadLib;
-	Telegram m_inputTelegram;
-	TimeSync m_timeSync;
-	InspectionCommand m_inspectionCmd;
+	std::queue<InputData> m_inputDataQueue;
+	InputData m_currentInputData;
 
 	std::map<TelegramLayout, std::vector<ConfigDataSet>> m_configDataSetsMap;
 };

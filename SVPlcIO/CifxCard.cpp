@@ -56,7 +56,8 @@ void APIENTRY interruptHandler(uint32_t notification, uint32_t, void* , void* pv
 }
 
 CifXCard::CifXCard(uint16_t CifXNodeId, uint16_t MaxPlcDataSize):
-	m_CifXNodeId(CifXNodeId), m_maxPlcDataSize(MaxPlcDataSize), m_currentResult(CIFX_NO_ERROR)
+ m_CifXNodeId(CifXNodeId)
+,m_maxPlcDataSize(MaxPlcDataSize)
 {
 }
 
@@ -98,6 +99,11 @@ int32_t CifXCard::OpenCifX()
 	outputStream << "Firmware " << channelInfo.usFWMajor << '.' << channelInfo.usFWMinor << '\n';
 	printOutput(outputStream.str().c_str());
 
+	result = m_cifxLoadLib.m_pChannelReset(m_hChannel, CIFX_CHANNELINIT, cResetTimeout);
+	if (CIFX_NO_ERROR != result)
+	{
+		return result;
+	}
 	printOutput("Processing system restart...\n");
 	result = m_cifxLoadLib.m_pChannelReset(m_hChannel, CIFX_SYSTEMSTART, cResetTimeout);
 	if (CIFX_NO_ERROR == result)
@@ -246,56 +252,59 @@ void CifXCard::readProcessData()
 		return;
 	}
 
-	m_TelegramReceiveTime = SvTl::GetTimeStamp();
-	m_processDataReadCount++;
+	double telegramReceiveTime = SvTl::GetTimeStamp();
 
-	m_currentResult = m_cifxLoadLib.m_pChannelIORead(m_hChannel, 0, 0, m_maxPlcDataSize, m_pReadBuffer.get(), 2);
+	int32_t result = m_cifxLoadLib.m_pChannelIORead(m_hChannel, 0, 0, m_maxPlcDataSize, m_pReadBuffer.get(), 2);
 
-	if (m_currentResult != CIFX_NO_ERROR)
+	if (CIFX_NO_ERROR != result)
 	{
-		if (CIFX_DEV_NO_COM_FLAG != m_currentResult) // "COM-flag not set" occurs often: do not report
+		if (CIFX_DEV_NO_COM_FLAG != result) // "COM-flag not set" occurs often: do not report
 		{
 			printOutput("ReadProcessData() failed\n");
 		}
 		return;
 	}
 	
+	InputData inputData;
+	uint8_t* pData = m_pReadBuffer.get();
+	memcpy(&inputData.m_telegram, pData, sizeof(Telegram));
+	pData += sizeof(Telegram);
+
+	switch(inputData.m_telegram.m_content)
+	{
+		case TelegramContent::TimeSyncData:
+		{
+			memcpy(&inputData.m_timeSync, pData, sizeof(TimeSync));
+			break;
+		}
+		case TelegramContent::OperationData:
+		{
+			memcpy(&inputData.m_inspectionCmd, pData, sizeof(InspectionCommand));
+			inputData.m_interruptTime = telegramReceiveTime;
+			break;
+		}
+		default:
+		{
+			break;
+		}
+	}
 	//Reduce lock guard scope
 	{
 		std::lock_guard<std::mutex> guard {m_cifxMutex};
-		uint8_t* pData = m_pReadBuffer.get();
-		memcpy(&m_inputTelegram, pData, sizeof(Telegram));
-		pData += sizeof(Telegram);
-
-		switch(m_inputTelegram.m_content)
-		{
-			case TelegramContent::TimeSyncData:
-			{
-				memcpy(&m_timeSync, pData, sizeof(TimeSync));
-				m_inspectionCmd = InspectionCommand {};
-				break;
-			}
-			case TelegramContent::OperationData:
-			{
-				memcpy(&m_inspectionCmd, pData, sizeof(InspectionCommand));
-				m_syncSocRelative = m_inspectionCmd.m_socRelative;
-				m_syncTime = m_TelegramReceiveTime;
-				break;
-			}
-			default:
-			{
-				break;
-			}
-		}
+		m_inputDataQueue.emplace(std::move(inputData));
 	}
 
 	if (m_hTelegramReadEvent != nullptr)
 	{
 		::SetEvent(m_hTelegramReadEvent);
 	}
+}
 
-	m_processDataCanBeRead = (m_currentResult == CIFX_NO_ERROR);
-
+void CifXCard::popInputDataQueue()
+{
+	std::lock_guard<std::mutex> guard {m_cifxMutex};
+	m_currentInputData = m_inputDataQueue.front();
+	m_inputDataQueue.pop();
 }
 
 void CifXCard::closeCifX()
@@ -343,17 +352,10 @@ void CifXCard::sendVersion()
 	printOutput("Send Version\n");
 }
 
-void CifXCard::setPlcLoopSyncTime()
-{
-	m_protocolInitialized = false;
-	m_plcSendTime = m_timeSync.m_plcBusCycles;
-	writeResponseData(nullptr, 0);
-}
-
 void CifXCard::sendConfigList()
 {
 	m_protocolInitialized = false;
-	uint8_t layoutIndex = m_inputTelegram.m_layout;
+	uint8_t layoutIndex = m_currentInputData.m_telegram.m_layout;
 	if(0 < layoutIndex )
 	{
 		///Layout index is always either 1 or 2
@@ -664,10 +666,10 @@ void CifXCard::writeResponseData(const uint8_t* pSdoDynamic, size_t sdoDynamicSi
 		m_contentID++;
 	}
 	outputTelegram.m_contentID = m_contentID;
-	outputTelegram.m_referenceID = m_inputTelegram.m_contentID;
+	outputTelegram.m_referenceID = m_currentInputData.m_telegram.m_contentID;
 	outputTelegram.m_type = TelegramType::Response;
-	outputTelegram.m_content = m_inputTelegram.m_content;
-	outputTelegram.m_layout = m_inputTelegram.m_layout;
+	outputTelegram.m_content = m_currentInputData.m_telegram.m_content;
+	outputTelegram.m_layout = m_currentInputData.m_telegram.m_layout;
 	outputTelegram.m_systemStatus = m_ready ? SystemStatus::AppReady : SystemStatus::ComReady;
 
 	{
@@ -686,9 +688,8 @@ void CifXCard::writeResponseData(const uint8_t* pSdoDynamic, size_t sdoDynamicSi
 			memcpy(pData, pSdoDynamic, sdoDynamicSize);
 		}
 	}
-	m_currentResult = m_cifxLoadLib.m_pChannelIOWrite(m_hChannel, 0, 0, m_maxPlcDataSize, m_pWriteBuffer.get(), cTimeout);
 
-	if (CIFX_NO_ERROR != m_currentResult)
+	if (CIFX_NO_ERROR != m_cifxLoadLib.m_pChannelIOWrite(m_hChannel, 0, 0, m_maxPlcDataSize, m_pWriteBuffer.get(), cTimeout))
 	{
 		printOutput("Write Response Data Failed\n");
 	}

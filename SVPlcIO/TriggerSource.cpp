@@ -41,7 +41,7 @@ void TriggerSource::sendTriggerReport(const TriggerReport& rTriggerReport)
 	}
 }
 
-bool TriggerSource::checkForNewTriggers()
+void TriggerSource::checkForNewTriggers()
 {
 	for (uint8_t channel = 0; channel < cNumberOfChannels; channel++)
 	{
@@ -50,7 +50,6 @@ bool TriggerSource::checkForNewTriggers()
 			createTriggerReport(channel);
 		}	
 	}
-	return true;
 }
 
 } //namespace SvPlc

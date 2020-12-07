@@ -20,13 +20,12 @@ public:
 	explicit TriggerSource(std::function<void(const TriggerReport&)> pReportTrigger);
 	virtual ~TriggerSource() = default;
 
-	///Returns if any trigger channels active
-	bool checkForNewTriggers();
+	void checkForNewTriggers();
 
 	virtual HRESULT initialize() = 0;
 	virtual bool setTriggerChannel(uint8_t channel, bool active);
 	virtual bool isReady() { return true; }
-	virtual bool analyzeTelegramData() = 0;
+	virtual void analyzeTelegramData() = 0;
 	virtual void queueResult(uint8_t , ChannelOut&& ) {}
 	virtual void setReady(bool ) {}
 
