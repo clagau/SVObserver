@@ -41,7 +41,7 @@ SVRCCommand::~SVRCCommand()
 {
 }
 
-void SVRCCommand::GetVersion(const SvPb::GetSVObserverVersionRequest& , SvRpc::Task<SvPb::GetVersionResponse> task)
+void SVRCCommand::GetVersion(const SvPb::GetSVObserverVersionRequest&, SvRpc::Task<SvPb::GetVersionResponse> task)
 {
 	SvPb::GetVersionResponse Response;
 
@@ -52,7 +52,7 @@ void SVRCCommand::GetVersion(const SvPb::GetSVObserverVersionRequest& , SvRpc::T
 	task.finish(std::move(Response));
 }
 
-void SVRCCommand::GetDeviceMode(const SvPb::GetDeviceModeRequest& , SvRpc::Task<SvPb::GetDeviceModeResponse> task)
+void SVRCCommand::GetDeviceMode(const SvPb::GetDeviceModeRequest&, SvRpc::Task<SvPb::GetDeviceModeResponse> task)
 {
 	SvPb::GetDeviceModeResponse Response;
 	SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
@@ -65,7 +65,7 @@ void SVRCCommand::SetDeviceMode(const SvPb::SetDeviceModeRequest& rRequest, SvRp
 {
 	SvPb::DeviceModeType DesiredMode = rRequest.mode();
 
-	HRESULT Status {E_INVALIDARG};
+	HRESULT Status{ E_INVALIDARG };
 
 	if (SvPb::DeviceModeType::unknownMode != DesiredMode)
 	{
@@ -90,10 +90,10 @@ void SVRCCommand::SetDeviceMode(const SvPb::SetDeviceModeRequest& rRequest, SvRp
 	task.finish(std::move(Response));
 }
 
-void SVRCCommand::GetState(const SvPb::GetStateRequest& , SvRpc::Task<SvPb::GetStateResponse> task)
+void SVRCCommand::GetState(const SvPb::GetStateRequest&, SvRpc::Task<SvPb::GetStateResponse> task)
 {
 	SvPb::GetStateResponse Response;
-	unsigned long State {0L};
+	unsigned long State{ 0L };
 
 	State |= SVSVIMStateClass::CheckState(SV_STATE_READY) ? SvDef::SVIM_CONFIG_LOADED : 0;
 	State |= SVSVIMStateClass::CheckState(SV_STATE_SAVING) ? SvDef::SVIM_SAVING_CONFIG : 0;
@@ -125,7 +125,7 @@ void SVRCCommand::GetState(const SvPb::GetStateRequest& , SvRpc::Task<SvPb::GetS
 
 void SVRCCommand::GetConfig(const SvPb::GetConfigRequest& rRequest, SvRpc::Task<SvPb::GetConfigResponse> task)
 {
-	HRESULT Result {S_OK};
+	HRESULT Result{ S_OK };
 	SvPb::GetConfigResponse Response;
 
 	DWORD notAllowedStates = SV_STATE_START_PENDING | SV_STATE_STARTING | SV_STATE_STOP_PENDING | SV_STATE_STOPING |
@@ -201,7 +201,7 @@ void SVRCCommand::GetConfig(const SvPb::GetConfigRequest& rRequest, SvRpc::Task<
 
 void SVRCCommand::PutConfig(const SvPb::PutConfigRequest& rRequest, SvRpc::Task<SvPb::StandardResponse> task)
 {
-	HRESULT Result {S_OK};
+	HRESULT Result{ S_OK };
 	SvPb::StandardResponse Response;
 
 	DWORD notAllowedStates = SV_STATE_START_PENDING | SV_STATE_STARTING | SV_STATE_STOP_PENDING | SV_STATE_STOPING |
@@ -222,7 +222,7 @@ void SVRCCommand::PutConfig(const SvPb::PutConfigRequest& rRequest, SvRpc::Task<
 	if (S_OK == Result)
 	{
 		std::string RemoteFilePath = SvUl::to_ansi(rRequest.filename());
-		ConfigFileType fileType {ConfigFileType::SvzFormatPutConfig};
+		ConfigFileType fileType{ ConfigFileType::SvzFormatPutConfig };
 
 		if (RemoteFilePath.empty())
 		{
@@ -260,7 +260,7 @@ void SVRCCommand::PutConfig(const SvPb::PutConfigRequest& rRequest, SvRpc::Task<
 	task.finish(std::move(Response));
 }
 
-void SVRCCommand::GetOfflineCount(const SvPb::GetOfflineCountRequest& , SvRpc::Task<SvPb::GetOfflineCountResponse> task)
+void SVRCCommand::GetOfflineCount(const SvPb::GetOfflineCountRequest&, SvRpc::Task<SvPb::GetOfflineCountResponse> task)
 {
 	SvPb::GetOfflineCountResponse Response;
 
@@ -273,7 +273,7 @@ void SVRCCommand::GetOfflineCount(const SvPb::GetOfflineCountRequest& , SvRpc::T
 
 void SVRCCommand::ActivateMonitorList(const SvPb::ActivateMonitorListRequest& rRequest, SvRpc::Task<SvPb::StandardResponse> task)
 {
-	HRESULT Result {S_OK};
+	HRESULT Result{ S_OK };
 	SvPb::StandardResponse Response;
 
 	DWORD notAllowedStates = SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION |
@@ -310,7 +310,7 @@ void SVRCCommand::ActivateMonitorList(const SvPb::ActivateMonitorListRequest& rR
 
 void SVRCCommand::GetProductFilter(const SvPb::GetProductFilterRequest& rRequest, SvRpc::Task<SvPb::GetProductFilterResponse> task)
 {
-	HRESULT Result {S_OK};
+	HRESULT Result{ S_OK };
 	SvPb::GetProductFilterResponse Response;
 
 	SVConfigurationObject* pConfig = nullptr;
@@ -326,15 +326,15 @@ void SVRCCommand::GetProductFilter(const SvPb::GetProductFilterRequest& rRequest
 
 		switch (ProductFilter)
 		{
-			case SvSml::SVProductFilterEnum::LastInspectedFilter:
-				Response.set_filter(SvPb::ProductFilterEnum::lastInspectedFilter);
-				break;
-			case SvSml::SVProductFilterEnum::LastRejectFilter:
-				Response.set_filter(SvPb::ProductFilterEnum::lastRejectFilter);
-				break;
-			default:
-				Response.set_filter(SvPb::ProductFilterEnum::noFilter);
-				break;
+		case SvSml::SVProductFilterEnum::LastInspectedFilter:
+			Response.set_filter(SvPb::ProductFilterEnum::lastInspectedFilter);
+			break;
+		case SvSml::SVProductFilterEnum::LastRejectFilter:
+			Response.set_filter(SvPb::ProductFilterEnum::lastRejectFilter);
+			break;
+		default:
+			Response.set_filter(SvPb::ProductFilterEnum::noFilter);
+			break;
 		}
 	}
 	else
@@ -348,7 +348,7 @@ void SVRCCommand::GetProductFilter(const SvPb::GetProductFilterRequest& rRequest
 
 void SVRCCommand::SetProductFilter(const SvPb::SetProductFilterRequest& rRequest, SvRpc::Task<SvPb::StandardResponse> task)
 {
-	HRESULT Result {S_OK};
+	HRESULT Result{ S_OK };
 	SvPb::StandardResponse Response;
 
 	DWORD notAllowedStates = SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION |
@@ -361,18 +361,18 @@ void SVRCCommand::SetProductFilter(const SvPb::SetProductFilterRequest& rRequest
 		SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 		if (nullptr != pConfig)
 		{
-			SvSml::SVProductFilterEnum ProductFilter {SvSml::SVProductFilterEnum::NoFilter};
+			SvSml::SVProductFilterEnum ProductFilter{ SvSml::SVProductFilterEnum::NoFilter };
 			switch (rRequest.filter())
 			{
-				case SvPb::ProductFilterEnum::lastInspectedFilter:
-					ProductFilter = SvSml::SVProductFilterEnum::LastInspectedFilter;
-					break;
-				case SvPb::ProductFilterEnum::lastRejectFilter:
-					ProductFilter = SvSml::SVProductFilterEnum::LastRejectFilter;
-					break;
-				default:
-					ProductFilter = SvSml::SVProductFilterEnum::NoFilter;
-					break;
+			case SvPb::ProductFilterEnum::lastInspectedFilter:
+				ProductFilter = SvSml::SVProductFilterEnum::LastInspectedFilter;
+				break;
+			case SvPb::ProductFilterEnum::lastRejectFilter:
+				ProductFilter = SvSml::SVProductFilterEnum::LastRejectFilter;
+				break;
+			default:
+				ProductFilter = SvSml::SVProductFilterEnum::NoFilter;
+				break;
 			}
 			std::string listName = SvUl::to_ansi(rRequest.listname());
 			SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
@@ -395,7 +395,7 @@ void SVRCCommand::SetProductFilter(const SvPb::SetProductFilterRequest& rRequest
 
 void SVRCCommand::GetItems(const SvPb::GetItemsRequest& rRequest, SvRpc::Task<SvPb::GetItemsResponse> task)
 {
-	HRESULT Result {S_OK};
+	HRESULT Result{ S_OK };
 	SvPb::GetItemsResponse Response;
 
 	SvDef::StringSet ItemNameSet;
@@ -414,76 +414,53 @@ void SVRCCommand::GetItems(const SvPb::GetItemsRequest& rRequest, SvRpc::Task<Sv
 
 		for (const auto& rEntry : ResultItems)
 		{
-			HRESULT LoopStatus {S_OK};
+			HRESULT LoopStatus{ S_OK };
 
 			switch (rEntry.second.m_Storage.m_StorageType)
 			{
-				case SVVisionProcessor::SVStorageValue:
+			case SVVisionProcessor::SVStorageValue:
+			{
+				LoopStatus = rEntry.second.m_Status;
+
+				if (S_OK == LoopStatus)
 				{
-					LoopStatus = rEntry.second.m_Status;
-
-					if (S_OK == LoopStatus)
-					{
-						SvPb::Value* pValue = Response.add_valuelist();
-						ConvertStorageValueToProtobuf(rEntry.first, rEntry.second, pValue);
-					}
-
-					if (S_OK != LoopStatus)
-					{
-						SvPb::Value* pValue = Response.add_errorlist();
-						if (nullptr != pValue)
-						{
-							pValue->set_name(SvUl::to_utf8(rEntry.first));
-							pValue->set_status(LoopStatus);
-							if (S_OK == Result)
-							{
-								Result = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
-							}
-						}
-					}
-
-					break;
+					SvPb::Value* pValue = Response.add_valuelist();
+					ConvertStorageValueToProtobuf(rEntry.first, rEntry.second, pValue);
 				}
-				case SVVisionProcessor::SVStorageImageFileName:
+
+				if (S_OK != LoopStatus)
 				{
-					LoopStatus = rEntry.second.m_Status;
-
-					if (S_OK == LoopStatus)
+					SvPb::Value* pValue = Response.add_errorlist();
+					if (nullptr != pValue)
 					{
-						SvPb::Value* pValue = Response.add_imagelist();
-						LoopStatus = ConvertStorageImageToProtobuf(rEntry.first, rEntry.second, pValue);
-					}
-
-					if (S_OK != LoopStatus)
-					{
-						std::string FileName = SvUl::createStdString(rEntry.second.m_Storage.m_Variant);
-
-						if (!FileName.empty())
+						pValue->set_name(SvUl::to_utf8(rEntry.first));
+						pValue->set_status(LoopStatus);
+						if (S_OK == Result)
 						{
-							::remove(FileName.c_str());
-						}
-
-						SvPb::Value* pValue = Response.add_errorlist();
-						if (nullptr != pValue)
-						{
-							pValue->set_name(SvUl::to_utf8(rEntry.first));
-							pValue->set_status(LoopStatus);
-							if (S_OK == Result)
-							{
-								Result = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
-							}
+							Result = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
 						}
 					}
-
-					break;
 				}
-				default:
-				{
-					LoopStatus = rEntry.second.m_Status;
 
-					if (S_OK == LoopStatus)
+				break;
+			}
+			case SVVisionProcessor::SVStorageImageFileName:
+			{
+				LoopStatus = rEntry.second.m_Status;
+
+				if (S_OK == LoopStatus)
+				{
+					SvPb::Value* pValue = Response.add_imagelist();
+					LoopStatus = ConvertStorageImageToProtobuf(rEntry.first, rEntry.second, pValue);
+				}
+
+				if (S_OK != LoopStatus)
+				{
+					std::string FileName = SvUl::createStdString(rEntry.second.m_Storage.m_Variant);
+
+					if (!FileName.empty())
 					{
-						LoopStatus = E_INVALIDARG;
+						::remove(FileName.c_str());
 					}
 
 					SvPb::Value* pValue = Response.add_errorlist();
@@ -496,9 +473,32 @@ void SVRCCommand::GetItems(const SvPb::GetItemsRequest& rRequest, SvRpc::Task<Sv
 							Result = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
 						}
 					}
-
-					break;
 				}
+
+				break;
+			}
+			default:
+			{
+				LoopStatus = rEntry.second.m_Status;
+
+				if (S_OK == LoopStatus)
+				{
+					LoopStatus = E_INVALIDARG;
+				}
+
+				SvPb::Value* pValue = Response.add_errorlist();
+				if (nullptr != pValue)
+				{
+					pValue->set_name(SvUl::to_utf8(rEntry.first));
+					pValue->set_status(LoopStatus);
+					if (S_OK == Result)
+					{
+						Result = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
+					}
+				}
+
+				break;
+			}
 			}
 		}
 	}
@@ -513,7 +513,7 @@ void SVRCCommand::GetItems(const SvPb::GetItemsRequest& rRequest, SvRpc::Task<Sv
 
 void SVRCCommand::SetItems(const SvPb::SetItemsRequest& rRequest, SvRpc::Task<SvPb::SetItemsResponse> task)
 {
-	HRESULT Result {S_OK};
+	HRESULT Result{ S_OK };
 	SvPb::SetItemsResponse Response;
 
 	SVNameStorageMap Items;
@@ -543,7 +543,7 @@ void SVRCCommand::SetItems(const SvPb::SetItemsRequest& rRequest, SvRpc::Task<Sv
 	for (const auto& rEntry : Items)
 	{
 		SVNameStatusMap::const_iterator StatusIter = ItemResults.find(rEntry.first);
-		HRESULT Status {S_OK};
+		HRESULT Status{ S_OK };
 
 		if (ItemResults.end() == StatusIter)
 		{
@@ -573,7 +573,7 @@ void SVRCCommand::SetItems(const SvPb::SetItemsRequest& rRequest, SvRpc::Task<Sv
 
 void SVRCCommand::GetFile(const SvPb::GetFileRequest& rRequest, SvRpc::Task<SvPb::GetFileResponse> task)
 {
-	HRESULT Result {S_OK};
+	HRESULT Result{ S_OK };
 	SvPb::GetFileResponse Response;
 
 	std::string SourcePath = SvUl::to_ansi(rRequest.sourcepath());
@@ -604,7 +604,7 @@ void SVRCCommand::GetFile(const SvPb::GetFileRequest& rRequest, SvRpc::Task<SvPb
 
 void SVRCCommand::PutFile(const SvPb::PutFileRequest& rRequest, SvRpc::Task<SvPb::StandardResponse> task)
 {
-	HRESULT Result {S_OK};
+	HRESULT Result{ S_OK };
 	SvPb::StandardResponse Response;
 
 	std::string destinationPath = SvUl::to_ansi(rRequest.destinationpath());
@@ -612,13 +612,13 @@ void SVRCCommand::PutFile(const SvPb::PutFileRequest& rRequest, SvRpc::Task<SvPb
 	if (!destinationPath.empty())
 	{
 		//If only file name then add default path which is Run path
-		if(std::string::npos == destinationPath.find('\\'))
+		if (std::string::npos == destinationPath.find('\\'))
 		{
 			destinationPath = SvStl::GlobalPath::Inst().GetRunPath(destinationPath.c_str());
 		}
 		std::string runPath = SvUl::MakeLower(SvStl::GlobalPath::Inst().GetRunPath().c_str());
 		std::string comparePath = SvUl::MakeLower(destinationPath.c_str());
-		if(rRequest.saveinconfig() && 0 != comparePath.find(runPath))
+		if (rRequest.saveinconfig() && 0 != comparePath.find(runPath))
 		{
 			Result = E_INVALIDARG;
 		}
@@ -626,8 +626,8 @@ void SVRCCommand::PutFile(const SvPb::PutFileRequest& rRequest, SvRpc::Task<SvPb
 		{
 			Result = SVEncodeDecodeUtilities::StringContentToFile(destinationPath, rRequest.filedata());
 		}
-		
-		if(S_OK == Result && rRequest.saveinconfig())
+
+		if (S_OK == Result && rRequest.saveinconfig())
 		{
 			//Note this needs to be done using SendMessage due to this being a worker thread
 			Result = GlobalRCAddFileToConfig(destinationPath.c_str());
@@ -645,7 +645,7 @@ void SVRCCommand::PutFile(const SvPb::PutFileRequest& rRequest, SvRpc::Task<SvPb
 
 void SVRCCommand::RegisterMonitorList(const SvPb::RegisterMonitorListRequest& rRequest, SvRpc::Task<SvPb::RegisterMonitorListResponse> task)
 {
-	HRESULT Result {S_OK};
+	HRESULT Result{ S_OK };
 	SvPb::RegisterMonitorListResponse Response;
 
 	SvDef::StringSet prodList;
@@ -691,7 +691,7 @@ void SVRCCommand::RegisterMonitorList(const SvPb::RegisterMonitorListRequest& rR
 	task.finish(std::move(Response));
 }
 
-void SVRCCommand::GetInspectionNames(const SvPb::GetInspectionNamesRequest& , SvRpc::Task<SvPb::NamesResponse> task)
+void SVRCCommand::GetInspectionNames(const SvPb::GetInspectionNamesRequest&, SvRpc::Task<SvPb::NamesResponse> task)
 {
 	SvPb::NamesResponse Response;
 
@@ -714,7 +714,7 @@ void SVRCCommand::Shutdown(const SvPb::ShutdownRequest& rRequest, SvRpc::Task<Sv
 {
 	SvPb::StandardResponse Response;
 
-	HRESULT Result {S_OK};
+	HRESULT Result{ S_OK };
 
 	long shutdownOption = rRequest.option();
 
@@ -732,7 +732,7 @@ void SVRCCommand::Shutdown(const SvPb::ShutdownRequest& rRequest, SvRpc::Task<Sv
 			PostMessage(pWnd->m_hWnd, SV_SHUTDOWN, shutdownOption, 0);
 		}
 	}
-	catch (ATL::CAtlException & ex)
+	catch (ATL::CAtlException& ex)
 	{
 		Result = ex;
 	}
@@ -743,7 +743,7 @@ void SVRCCommand::Shutdown(const SvPb::ShutdownRequest& rRequest, SvRpc::Task<Sv
 
 void SVRCCommand::GetMonitorListProperties(const SvPb::GetMonitorListPropertiesRequest& rRequest, SvRpc::Task<SvPb::GetMonitorListPropertiesResponse> task)
 {
-	HRESULT Result {S_OK};
+	HRESULT Result{ S_OK };
 
 	SvPb::GetMonitorListPropertiesResponse Response;
 
@@ -759,7 +759,7 @@ void SVRCCommand::GetMonitorListProperties(const SvPb::GetMonitorListPropertiesR
 	task.finish(std::move(Response));
 }
 
-void SVRCCommand::GetMaxRejectDepth(const SvPb::GetMaxRejectDepthRequest& , SvRpc::Task<SvPb::GetMaxRejectDepthResponse> task)
+void SVRCCommand::GetMaxRejectDepth(const SvPb::GetMaxRejectDepthRequest&, SvRpc::Task<SvPb::GetMaxRejectDepthResponse> task)
 {
 	SvPb::GetMaxRejectDepthResponse Response;
 
@@ -767,9 +767,9 @@ void SVRCCommand::GetMaxRejectDepth(const SvPb::GetMaxRejectDepthRequest& , SvRp
 	task.finish(std::move(Response));
 }
 
-void SVRCCommand::GetConfigReport(const SvPb::GetConfigReportRequest& , SvRpc::Task<SvPb::GetConfigReportResponse> task)
+void SVRCCommand::GetConfigReport(const SvPb::GetConfigReportRequest&, SvRpc::Task<SvPb::GetConfigReportResponse> task)
 {
-	HRESULT Result {S_OK};
+	HRESULT Result{ S_OK };
 	SvPb::GetConfigReportResponse Response;
 	std::string Report;
 
@@ -785,7 +785,7 @@ void SVRCCommand::GetConfigReport(const SvPb::GetConfigReportRequest& , SvRpc::T
 
 void SVRCCommand::GetDataDefinitionList(const SvPb::GetDataDefinitionListRequest& rRequest, SvRpc::Task<SvPb::GetDataDefinitionListResponse> task)
 {
-	HRESULT Result {S_OK};
+	HRESULT Result{ S_OK };
 
 	SvPb::GetDataDefinitionListResponse Response;
 
@@ -824,7 +824,7 @@ void SVRCCommand::GetDataDefinitionList(const SvPb::GetDataDefinitionListRequest
 
 void SVRCCommand::QueryMonitorList(const SvPb::QueryMonitorListRequest& rRequest, SvRpc::Task<SvPb::NamesResponse> task)
 {
-	HRESULT Result {S_OK};
+	HRESULT Result{ S_OK };
 
 	SvPb::NamesResponse Response;
 
@@ -833,25 +833,25 @@ void SVRCCommand::QueryMonitorList(const SvPb::QueryMonitorListRequest& rRequest
 	std::string listName = SvUl::to_ansi(rRequest.listname());
 	switch (rRequest.type())
 	{
-		case SvPb::ListType::productItem:
-		{
-			Result = SVVisionProcessorHelper::Instance().QueryProductList(listName, Items);
-			break;
-		}
-		case SvPb::ListType::rejectCondition:
-		{
-			Result = SVVisionProcessorHelper::Instance().QueryRejectCondList(listName, Items);
-			break;
-		}
-		case SvPb::ListType::failStatus:
-		{
-			Result = SVVisionProcessorHelper::Instance().QueryFailStatusList(listName, Items);
-			break;
-		}
-		default:
-		{
-			break;
-		}
+	case SvPb::ListType::productItem:
+	{
+		Result = SVVisionProcessorHelper::Instance().QueryProductList(listName, Items);
+		break;
+	}
+	case SvPb::ListType::rejectCondition:
+	{
+		Result = SVVisionProcessorHelper::Instance().QueryRejectCondList(listName, Items);
+		break;
+	}
+	case SvPb::ListType::failStatus:
+	{
+		Result = SVVisionProcessorHelper::Instance().QueryFailStatusList(listName, Items);
+		break;
+	}
+	default:
+	{
+		break;
+	}
 	}
 	SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
 	SvPb::Value* pValue = Response.mutable_names();
@@ -864,9 +864,9 @@ void SVRCCommand::QueryMonitorList(const SvPb::QueryMonitorListRequest& rRequest
 	task.finish(std::move(Response));
 }
 
-void SVRCCommand::QueryMonitorListNames(const SvPb::QueryMonitorListNamesRequest& , SvRpc::Task<SvPb::NamesResponse> task)
+void SVRCCommand::QueryMonitorListNames(const SvPb::QueryMonitorListNamesRequest&, SvRpc::Task<SvPb::NamesResponse> task)
 {
-	HRESULT Result {S_OK};
+	HRESULT Result{ S_OK };
 
 	SvPb::NamesResponse Response;
 
@@ -886,19 +886,19 @@ void SVRCCommand::QueryMonitorListNames(const SvPb::QueryMonitorListNamesRequest
 
 void SVRCCommand::RunOnce(const SvPb::RunOnceRequest& rRequest, SvRpc::Task<SvPb::StandardResponse> task)
 {
-	HRESULT Result {S_OK};
+	HRESULT Result{ S_OK };
 	SvPb::StandardResponse Response;
 
-	if(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
+	if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
 	{
 
-		SVConfigurationObject* pConfig{nullptr};
+		SVConfigurationObject* pConfig{ nullptr };
 		SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-		if(nullptr != pConfig)
+		if (nullptr != pConfig)
 		{
-			SVInspectionProcess* pInspection{nullptr};
+			SVInspectionProcess* pInspection{ nullptr };
 			pConfig->GetInspection(SvUl::to_ansi(rRequest.inspectionname()).c_str(), pInspection);
-			if(nullptr != pInspection)
+			if (nullptr != pInspection)
 			{
 				SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
 				SvCmd::RunOnceSynchronous(pInspection->getObjectId());
@@ -925,7 +925,7 @@ void SVRCCommand::RunOnce(const SvPb::RunOnceRequest& rRequest, SvRpc::Task<SvPb
 
 void SVRCCommand::LoadConfig(const SvPb::LoadConfigRequest& rRequest, SvRpc::Task<SvPb::StandardResponse> task)
 {
-	HRESULT Result {S_OK};
+	HRESULT Result{ S_OK };
 	SvPb::StandardResponse Response;
 	std::string ConfigFile = SvUl::to_ansi(rRequest.filename());
 
@@ -944,10 +944,10 @@ void SVRCCommand::GetObjectSelectorItems(const SvPb::GetObjectSelectorItemsReque
 	*requestCmd.mutable_getobjectselectoritemsrequest() = rRequest;
 	SvCmd::InspectionCommands(rRequest.inspectionid(), requestCmd, &responseCmd);
 
-	SvPb::GetObjectSelectorItemsResponse selectorResponse {responseCmd.getobjectselectoritemsresponse()};
+	SvPb::GetObjectSelectorItemsResponse selectorResponse{ responseCmd.getobjectselectoritemsresponse() };
 	ConvertTreeNames(selectorResponse.mutable_tree());
 	int childrenSize = selectorResponse.mutable_tree()->children_size();
-	if(0 < childrenSize)
+	if (0 < childrenSize)
 	{
 		std::vector<SvPb::TreeItem> itemVector;
 		itemVector.insert(itemVector.begin(), selectorResponse.mutable_tree()->children().begin(), selectorResponse.mutable_tree()->children().end());
@@ -965,37 +965,37 @@ void SVRCCommand::ExecuteInspectionCmd(const SvPb::InspectionCmdRequest& rReques
 	SvCmd::InspectionCommands(inspectionID, rRequest, &response);
 
 	///@WARNING [gra][10.00][23.03.2020] This next section to update SVIPDoc should be done in the inspection commands but only after the Group Tool has been done
-	if(S_OK == response.hresult())
+	if (S_OK == response.hresult())
 	{
-		bool isCreate{true};
+		bool isCreate{ true };
 		switch (rRequest.message_case())
 		{
-			case SvPb::InspectionCmdRequest::kDeleteObjectRequest:
-				isCreate = false;
-				///Fall through
-			case SvPb::InspectionCmdRequest::kCreateObjectRequest:
+		case SvPb::InspectionCmdRequest::kDeleteObjectRequest:
+			isCreate = false;
+			///Fall through
+		case SvPb::InspectionCmdRequest::kCreateObjectRequest:
+		{
+			SVIPDoc* pDoc = TheSVObserverApp.GetIPDoc(inspectionID);
+			if (nullptr != pDoc)
 			{
-				SVIPDoc* pDoc = TheSVObserverApp.GetIPDoc(inspectionID);
-				if (nullptr != pDoc)
+				pDoc->RunOnce();
+				pDoc->SetModifiedFlag();
+				if (true == isCreate)
 				{
-					pDoc->RunOnce();
-					pDoc->SetModifiedFlag();
-					if (true == isCreate)
+					SvOi::IObjectClass* pObject = SvOi::getObject(rRequest.createobjectrequest().taskobjectinsertbeforeid());
+					if (nullptr != pObject)
 					{
-						SvOi::IObjectClass* pObject = SvOi::getObject(rRequest.createobjectrequest().taskobjectinsertbeforeid());
-						if(nullptr != pObject)
-						{
-							pDoc->GetToolGroupings().AddTool(response.createobjectresponse().name(), pObject->GetName());
-						}
-						pDoc->SetSelectedToolID(response.createobjectresponse().objectid());
+						pDoc->GetToolGroupings().AddTool(response.createobjectresponse().name(), pObject->GetName());
 					}
+					pDoc->SetSelectedToolID(response.createobjectresponse().objectid());
 				}
-				break;
 			}
-			default: 
-			{
-				break;
-			}
+			break;
+		}
+		default:
+		{
+			break;
+		}
 		}
 	}
 
@@ -1006,26 +1006,26 @@ void SVRCCommand::GetConfigurationTree(const SvPb::GetConfigurationTreeRequest&,
 {
 	SvPb::GetConfigurationTreeResponse response;
 
-	SVConfigurationObject* pConfig {nullptr};
+	SVConfigurationObject* pConfig{ nullptr };
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 	if (nullptr != pConfig)
 	{
 		std::vector<SvPb::ConfigTreeItem> configVector;
 		const SVInspectionProcessVector& rInspectionVector = pConfig->GetInspections();
-		for(const auto* pInspection : rInspectionVector)
+		for (const auto* pInspection : rInspectionVector)
 		{
-			if(nullptr != pInspection)
+			if (nullptr != pInspection)
 			{
-				uint32_t inspectionID{pInspection->getObjectId()};
+				uint32_t inspectionID{ pInspection->getObjectId() };
 				std::vector<uint32_t> objectVector;
 				objectVector.emplace_back(inspectionID);
 				SVToolSet* pToolSet = pInspection->GetToolSet();
-				if(nullptr != pToolSet)
+				if (nullptr != pToolSet)
 				{
-					uint32_t toolsetID{pToolSet->getObjectId()};
+					uint32_t toolsetID{ pToolSet->getObjectId() };
 					addObjectChildren(inspectionID, toolsetID, std::back_inserter(objectVector));
 
-					for(const auto& rObjectID : objectVector)
+					for (const auto& rObjectID : objectVector)
 					{
 						addConfigItem(inspectionID, rObjectID, std::back_inserter(configVector));
 					}
@@ -1042,35 +1042,35 @@ void SVRCCommand::ConfigCommand(const SvPb::ConfigCommandRequest& rRequest, SvRp
 {
 	SvPb::ConfigCommandResponse response;
 
-	switch(rRequest.message_case())
+	switch (rRequest.message_case())
 	{
-		case SvPb::ConfigCommandRequest::kClipboardRequest:
+	case SvPb::ConfigCommandRequest::kClipboardRequest:
+	{
+		clipboardAction(rRequest.clipboardrequest(), response.mutable_standardresponse());
+		break;
+	}
+	case SvPb::ConfigCommandRequest::kConfigDataRequest:
+	{
+		SvPb::ConfigDataResponse* pConfigDataResponse = response.mutable_configdataresponse();
+		if (nullptr != pConfigDataResponse)
 		{
-			clipboardAction(rRequest.clipboardrequest(), response.mutable_standardresponse());
-			break;
+			pConfigDataResponse->set_configfileloaded(GlobalRCGetConfigurationName(false));
+			pConfigDataResponse->set_lastmodified(SVSVIMStateClass::getLastModifiedTime());
 		}
-		case SvPb::ConfigCommandRequest::kConfigDataRequest:
-		{
-			SvPb::ConfigDataResponse* pConfigDataResponse = response.mutable_configdataresponse();
-			if(nullptr != pConfigDataResponse)
-			{
-				pConfigDataResponse->set_configfileloaded(GlobalRCGetConfigurationName(false));
-				pConfigDataResponse->set_lastmodified(SVSVIMStateClass::getLastModifiedTime());
-			}
-			break;
-		}
-		default:
-		{
-			break;
-		}
+		break;
+	}
+	default:
+	{
+		break;
+	}
 	}
 
 	task.finish(std::move(response));
 }
 
 void SVRCCommand::RegisterNotificationStream(const SvPb::GetNotificationStreamRequest& rRequest,
-											 SvRpc::Observer<SvPb::GetNotificationStreamResponse>& rObserver,
-											 SvRpc::ServerStreamContext::Ptr ctx)
+	SvRpc::Observer<SvPb::GetNotificationStreamResponse>& rObserver,
+	SvRpc::ServerStreamContext::Ptr ctx)
 {
 	SVVisionProcessorHelper::Instance().RegisterNotificationStream(rRequest, rObserver, ctx);
 }
@@ -1095,7 +1095,7 @@ std::string SVRCCommand::GetFileNameFromFilePath(const std::string& rFilePath, c
 
 HRESULT SVRCCommand::ConvertStorageValueToProtobuf(const std::string& rName, const SVStorageResult& rStorage, SvPb::Value* pValue) const
 {
-	HRESULT Result {S_OK};
+	HRESULT Result{ S_OK };
 
 	if (nullptr != pValue && SVVisionProcessor::SVStorageValue == rStorage.m_Storage.m_StorageType)
 	{
@@ -1118,9 +1118,9 @@ HRESULT SVRCCommand::ConvertStorageValueToProtobuf(const std::string& rName, con
 
 HRESULT SVRCCommand::ConvertStorageImageToProtobuf(const std::string& rName, const SVStorageResult& rStorage, SvPb::Value* pValue) const
 {
-	HRESULT Result {S_OK};
+	HRESULT Result{ S_OK };
 
-	if (nullptr != pValue && SVVisionProcessor::SVStorageImageFileName == rStorage.m_Storage.m_StorageType  && VT_BSTR == rStorage.m_Storage.m_Variant.vt)
+	if (nullptr != pValue && SVVisionProcessor::SVStorageImageFileName == rStorage.m_Storage.m_StorageType && VT_BSTR == rStorage.m_Storage.m_Variant.vt)
 	{
 		HRESULT ItemStatus = rStorage.m_Status;
 		pValue->set_name(SvUl::to_utf8(rName));
@@ -1159,21 +1159,23 @@ HRESULT SVRCCommand::ConvertStorageImageToProtobuf(const std::string& rName, con
 
 HRESULT SVRCCommand::AddValuesToStorageItems(const SvPb::SetItemsRequest& rRequest, SVNameStorageMap& rItems) const
 {
-	HRESULT Result {S_OK};
+	HRESULT Result{ S_OK };
 
 	for (int i = 0; i < rRequest.valuelist_size(); i++)
 	{
 		const SvPb::Value& rValue = rRequest.valuelist(i);
 
 		std::string name = SvUl::to_ansi(rValue.name());
-		SVStorage Storage;
-		Storage.m_StorageType = SVVisionProcessor::SVStorageValue;
 
-		Result = SvPb::ConvertProtobufToVariant(rValue.item(), Storage.m_Variant);
-
-		if (S_OK == Result)
+		if (rItems.end() == rItems.find(name))
 		{
-			rItems[name] = Storage;
+			SVStorage Storage;
+			Storage.m_StorageType = SVVisionProcessor::SVStorageValue;
+			Result = SvPb::ConvertProtobufToVariant(rValue.item(), Storage.m_Variant);
+			if (S_OK == Result)
+			{
+				rItems.insert(std::pair(name, SVStorage(Storage.m_StorageType, Storage.m_Variant)));
+			}
 		}
 	}
 
@@ -1182,7 +1184,7 @@ HRESULT SVRCCommand::AddValuesToStorageItems(const SvPb::SetItemsRequest& rReque
 
 HRESULT SVRCCommand::AddImagesToStorageItems(const SvPb::SetItemsRequest& rRequest, SVNameStorageMap& rItems) const
 {
-	HRESULT Result {S_OK};
+	HRESULT Result{ S_OK };
 
 	for (int i = 0; i < rRequest.imagelist_size(); i++)
 	{
@@ -1193,7 +1195,7 @@ HRESULT SVRCCommand::AddImagesToStorageItems(const SvPb::SetItemsRequest& rReque
 		if (rImage.item().type() == (VT_ARRAY | VT_UI1))
 		{
 			const std::string& rContent = rImage.item().bytesval();
-			std::string FileName {name};
+			std::string FileName{ name };
 			FileName += _T(".bmp");
 			FilePath = SvStl::GlobalPath::Inst().GetPathOnRamDrive(GetFileNameFromFilePath(FileName).c_str());
 			if (!FilePath.empty())
@@ -1208,10 +1210,15 @@ HRESULT SVRCCommand::AddImagesToStorageItems(const SvPb::SetItemsRequest& rReque
 
 		if (S_OK == Result)
 		{
-			SVStorage Storage;
-			Storage.m_StorageType = SVVisionProcessor::SVStorageImageFileName;
-			Storage.m_Variant.SetString(FilePath.c_str());
-			rItems[name] = Storage;
+
+			if (rItems.end() == rItems.find(name))
+			{
+				SVStorage Storage;
+				Storage.m_StorageType = SVVisionProcessor::SVStorageImageFileName;
+				Storage.m_Variant.SetString(FilePath.c_str());
+				rItems.insert(std::pair(name, SVStorage(Storage.m_StorageType, Storage.m_Variant)));
+			}
+
 		}
 	}
 
@@ -1220,10 +1227,10 @@ HRESULT SVRCCommand::AddImagesToStorageItems(const SvPb::SetItemsRequest& rReque
 
 void SVRCCommand::ConvertTreeNames(SvPb::TreeItem* pTreeItem) const
 {
-	if(nullptr != pTreeItem)
+	if (nullptr != pTreeItem)
 	{
 		pTreeItem->set_name(SvUl::to_utf8(pTreeItem->name()));
-		for(int i=0; i < pTreeItem->children_size(); i++)
+		for (int i = 0; i < pTreeItem->children_size(); i++)
 		{
 			ConvertTreeNames(pTreeItem->mutable_children(i));
 		}
@@ -1232,8 +1239,8 @@ void SVRCCommand::ConvertTreeNames(SvPb::TreeItem* pTreeItem) const
 
 void SVRCCommand::addObjectChildren(uint32_t inspectionID, uint32_t parentID, std::back_insert_iterator<std::vector<uint32_t>> inserter) const
 {
-	constexpr std::array<std::pair<SvPb::SVObjectTypeEnum, SvPb::SVObjectSubTypeEnum>, 21> compatibleTypes = 
-	{{
+	constexpr std::array<std::pair<SvPb::SVObjectTypeEnum, SvPb::SVObjectSubTypeEnum>, 21> compatibleTypes =
+	{ {
 		{SvPb::SVInspectionObjectType, SvPb::SVNotSetSubObjectType},
 		{SvPb::SVToolObjectType, SvPb::SVWindowToolObjectType},
 		{SvPb::SVToolObjectType, SvPb::SVMathToolObjectType},
@@ -1255,11 +1262,11 @@ void SVRCCommand::addObjectChildren(uint32_t inspectionID, uint32_t parentID, st
 		{SvPb::SVToolObjectType, SvPb::SVTableToolObjectType},
 		{SvPb::SVToolObjectType, SvPb::SVTableAnalyzerToolObjectType},
 		{SvPb::SVToolObjectType, SvPb::LoopToolObjectType},
-	}};
+	} };
 
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
-	auto*  pRequest = requestCmd.mutable_taskobjectlistrequest();
+	auto* pRequest = requestCmd.mutable_taskobjectlistrequest();
 	pRequest->set_taskobjectid(parentID);
 
 	SvCmd::InspectionCommands(inspectionID, requestCmd, &responseCmd);
@@ -1269,7 +1276,7 @@ void SVRCCommand::addObjectChildren(uint32_t inspectionID, uint32_t parentID, st
 		{
 			auto rTaskObj = responseCmd.taskobjectlistresponse().taskobjectinfos(i);
 			auto iter = std::find(compatibleTypes.begin(), compatibleTypes.end(), std::pair<SvPb::SVObjectTypeEnum, SvPb::SVObjectSubTypeEnum>{rTaskObj.objecttype(), rTaskObj.objectsubtype()});
-			if(compatibleTypes.end() != iter)
+			if (compatibleTypes.end() != iter)
 			{
 				inserter = rTaskObj.taskobjectid();
 				addObjectChildren(inspectionID, rTaskObj.taskobjectid(), inserter);
@@ -1281,18 +1288,18 @@ void SVRCCommand::addObjectChildren(uint32_t inspectionID, uint32_t parentID, st
 void SVRCCommand::addConfigItem(uint32_t inspectionID, uint32_t objectID, std::back_insert_iterator<std::vector<SvPb::ConfigTreeItem>> inserter) const
 {
 	SvPb::ConfigTreeItem item;
-	
+
 	SvOi::IObjectClass* pObject = SvOi::getObject(objectID);
 
-	if(nullptr != pObject)
+	if (nullptr != pObject)
 	{
 		std::string text(pObject->GetName());
-		bool isValid{true};
-		long toolPos{-1};
-		if(SvPb::SVToolObjectType ==  pObject->GetObjectType())
+		bool isValid{ true };
+		long toolPos{ -1 };
+		if (SvPb::SVToolObjectType == pObject->GetObjectType())
 		{
 			SvOi::ITool* pTool = dynamic_cast<SvOi::ITool*> (pObject);
-			if(nullptr != pTool)
+			if (nullptr != pTool)
 			{
 				toolPos = pTool->getToolPosition();
 			}
@@ -1326,7 +1333,7 @@ void SVRCCommand::addConfigItem(uint32_t inspectionID, uint32_t objectID, std::b
 
 void SVRCCommand::clipboardAction(const SvPb::ClipboardRequest rRequest, SvPb::StandardResponse* pResponse) const
 {
-	if(nullptr == pResponse)
+	if (nullptr == pResponse)
 	{
 		return;
 	}
@@ -1340,64 +1347,64 @@ void SVRCCommand::clipboardAction(const SvPb::ClipboardRequest rRequest, SvPb::S
 		return;
 	}
 
-	switch(rRequest.action())
+	switch (rRequest.action())
 	{
-		case SvPb::ClipboardActionEnum::Copy:
+	case SvPb::ClipboardActionEnum::Copy:
+	{
+		ToolClipboard clipboard;
+		SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
+		HRESULT result = clipboard.writeToClipboard(rRequest.objectid());
+		SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
+		pResponse->set_hresult(result);
+		if (S_OK != result)
+		{
+			const auto& rMessage = clipboard.getLastErrorMessage().getMessageContainer();
+			setMessageToMessagePB(rMessage, pResponse->mutable_errormessages()->add_messages());
+		}
+		break;
+	}
+	case SvPb::ClipboardActionEnum::Paste:
+	{
+		if (ToolClipboard::isClipboardDataValid())
 		{
 			ToolClipboard clipboard;
-			SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
-			HRESULT result = clipboard.writeToClipboard(rRequest.objectid());
-			SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
-			pResponse->set_hresult(result);
-			if(S_OK != result)
+			uint32_t postID{ rRequest.objectid() };
+			SvOi::IObjectClass* pObject = SvOi::getObject(postID);
+			if (nullptr != pObject)
 			{
-				const auto& rMessage = clipboard.getLastErrorMessage().getMessageContainer();
-				setMessageToMessagePB(rMessage, pResponse->mutable_errormessages()->add_messages());
-			}
-			break;
-		}
-		case SvPb::ClipboardActionEnum::Paste:
-		{
-			if(ToolClipboard::isClipboardDataValid())
-			{
-				ToolClipboard clipboard;
-				uint32_t postID{ rRequest.objectid() };
-				SvOi::IObjectClass* pObject = SvOi::getObject(postID);
-				if(nullptr != pObject)
+				uint32_t ownerID = pObject->GetParentID();
+				uint32_t toolID;
+				SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
+				HRESULT result = clipboard.readFromClipboard(postID, ownerID, toolID);
+				SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
+				pResponse->set_hresult(result);
+				if (S_OK == result)
 				{
-					uint32_t ownerID = pObject->GetParentID();
-					uint32_t toolID;
-					SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
-					HRESULT result = clipboard.readFromClipboard(postID, ownerID, toolID);
-					SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
-					pResponse->set_hresult(result);
-					if (S_OK == result)
+					SvOi::IObjectClass* pInspection = pObject->GetAncestorInterface(SvPb::SVInspectionObjectType);
+					SVIPDoc* pDoc = (nullptr != pInspection) ? TheSVObserverApp.GetIPDoc(pInspection->getObjectId()) : nullptr;
+					if (nullptr != pDoc)
 					{
-						SvOi::IObjectClass* pInspection = pObject->GetAncestorInterface(SvPb::SVInspectionObjectType);
-						SVIPDoc* pDoc = (nullptr != pInspection) ? TheSVObserverApp.GetIPDoc(pInspection->getObjectId()) : nullptr;
-						if (nullptr != pDoc)
-						{
-							pDoc->updateToolsetView(toolID, postID, ownerID);
-						}
-					}
-					else
-					{
-						const auto& rMessage = clipboard.getLastErrorMessage().getMessageContainer();
-						setMessageToMessagePB(rMessage, pResponse->mutable_errormessages()->add_messages());
+						pDoc->updateToolsetView(toolID, postID, ownerID);
 					}
 				}
+				else
+				{
+					const auto& rMessage = clipboard.getLastErrorMessage().getMessageContainer();
+					setMessageToMessagePB(rMessage, pResponse->mutable_errormessages()->add_messages());
+				}
 			}
-			else
-			{
-				SvStl::MessageManager message(SvStl::MsgType::Log);
-				message.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ClipboardUnzipFailed, SvStl::SourceFileParams(StdMessageParams));
-				setMessageToMessagePB(message.getMessageContainer(), pResponse->mutable_errormessages()->add_messages());
-			}
-			break;
 		}
-		default:
+		else
 		{
-			break;
+			SvStl::MessageManager message(SvStl::MsgType::Log);
+			message.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ClipboardUnzipFailed, SvStl::SourceFileParams(StdMessageParams));
+			setMessageToMessagePB(message.getMessageContainer(), pResponse->mutable_errormessages()->add_messages());
 		}
+		break;
+	}
+	default:
+	{
+		break;
+	}
 	}
 }

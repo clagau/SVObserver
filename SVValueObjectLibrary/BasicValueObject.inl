@@ -33,6 +33,7 @@ HRESULT BasicValueObject::getValue( ELEMENT_TYPE& rValue ) const
 
 	RefreshOwner( SVObjectClass::PreRefresh );
 
+	boost::shared_lock<boost::shared_mutex> guard(m_valueMutex);
 	rValue = 0;
 	switch(m_Value.vt)
 	{

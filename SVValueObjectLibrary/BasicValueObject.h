@@ -18,8 +18,9 @@
 //Moved to precompiled header: #include <vector>
 #include "ObjectInterfaces/IValueObject.h"
 #include "SVObjectLibrary/SVObjectClass.h"
+#include <boost/thread/pthread/shared_mutex.hpp>
+#include <boost/thread/lock_types.hpp>
 #pragma endregion Includes
-
 class SVDeviceParam;
 
 namespace SvVol
@@ -71,7 +72,12 @@ public:
 	virtual SvOi::SVResetItemEnum getResetItem() const override { return SvOi::SVResetItemNone; };
 	virtual bool ResetAlways() const override { return false; };
 	virtual int32_t getByteSize(bool useResultSize, bool memBlockData) const override;
-	virtual DWORD GetType() const override { return m_Value.vt; };
+	virtual DWORD GetType() const override 
+	{ 
+		boost::shared_lock<boost::shared_mutex> guard( m_valueMutex );
+		DWORD res= m_Value.vt;
+		return res; 
+	};
 	virtual void setSaveValueFlag(bool ) override { };
 	virtual void setTrData(int32_t memOffset, int32_t memSize, int32_t pos) override;
 	virtual int32_t getTrPos() const override { return m_trPos; }
@@ -189,7 +195,7 @@ private:
 private:
 #pragma region Member Variables
 	_variant_t			m_Value;			//The value object container
-	std::mutex			m_valueMutex;		//Mutex to protect the value
+	mutable  boost::shared_mutex			m_valueMutex;		//Mutex to protect the value
 	std::string			m_Description;		//The description text for the object
 	uint8_t*			m_pMemBlock {nullptr}; //The memory block pointer to copy the data too
 	bool				m_Created {false};	//Object is created

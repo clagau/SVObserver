@@ -16,7 +16,7 @@
 
 #include "SVVisionProcessorConstants.h"
 #pragma endregion Includes
-
+//#define TRACE_SVSTORAGE TRUE
 struct SVStorage
 {
 	SVStorage();
@@ -31,7 +31,7 @@ struct SVStorage
 	SVStorage(const SVStorage&& rhs) : m_StorageType(std::move(rhs.m_StorageType)),
 		m_Variant(std::move(rhs.m_Variant))
 	{
-		TRACE0("++++++SVstorage move Constructor++++");
+		TRACE0("++++++SVstorage move Constructor++++\n");
 	}
 
 
