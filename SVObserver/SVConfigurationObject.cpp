@@ -70,6 +70,7 @@
 #include "Tools/SVColorTool.h"
 #include "ObjectInterfaces/ICommand.h"
 #include "SVUtilityLibrary/AuditFiles.h"
+#include "SVStatusLibrary/GlobalPath.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -5796,7 +5797,29 @@ void SVConfigurationObject::changeSystemResetIO(SVIMProductEnum newConfigType)
 
 void SVConfigurationObject::UpdateAuditFiles(bool calculateHash)
 {
-	m_AuditDefaultList.SyncDefaultList(SVFileNameManagerClass::Instance().GetFileNameList());
+	std::vector<std::string> Filenames = SVFileNameManagerClass::Instance().GetFileNameList();
+	///remove current config file 
+	std::string ConfigFilename, webAppIdsFilename;
+	SVObserverApp* pApp = dynamic_cast <SVObserverApp*> (AfxGetApp());
+	if (pApp)
+	{
+		ConfigFilename = pApp->getSvxFullFilename();
+		
+	}
+	webAppIdsFilename = SvStl::GlobalPath::Inst().GetRunPath(SvDef::cWebAppIds);
+	auto it = Filenames.begin();
+	while (it != Filenames.end())
+	{
+		if (*it == webAppIdsFilename || *it == ConfigFilename)
+		{
+			it = Filenames.erase(it);
+		}
+		else
+		{
+			it++;
+		}
+	}
+	m_AuditDefaultList.SyncDefaultList(std::move(Filenames));
 	m_AuditDefaultList.UpdateList();
 	m_AuditWhiteList.UpdateList();
 	if (calculateHash)

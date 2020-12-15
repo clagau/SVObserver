@@ -217,6 +217,8 @@ public:
 	const std::string getConfigFullFileName() const;
 	bool setConfigFullFileName(LPCTSTR csFullFileName, bool bLoadFile);
 
+	std::string  getSvxFullFilename() const { return m_SvxFileName.GetFullFileName(); } 
+
 	SVIPDoc* GetIPDoc(uint32_t inspectionID) const;
 	SVIPDoc* GetIPDoc( LPCTSTR StrIPDocPathName ) const;
 	bool AlreadyExistsIPDocTitle( LPCTSTR StrIPDocTitle );
