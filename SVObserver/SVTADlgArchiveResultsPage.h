@@ -61,14 +61,14 @@ protected:
 
 	void ReadSelectedObjects();
 	void ShowObjectSelector();
-	void GetSelectedHeaderNamePairs(SvDef::StringPairVector& HeaderPairs );
+	SvDef::StringPairVector GetSelectedHeaderNamePairs();
 	void StoreHeaderValuesToTool(SvDef::StringPairVector& HeaderPairs );
 #pragma endregion Protected Methods
 
 #pragma region Private Members
 private:
 	SVToolAdjustmentDialogSheetClass* m_pParent;		//Pointer to the Tool Adjust sheet
-	CListCtrl   m_ItemsSelected;						//The selected list control
+	CListCtrl   m_selectedResultsWidget;			    //The list control containing the selected results
 	SVObjectReferenceVector m_ResultsToBeArchived;      //contains references to objects that are to be archived
 	SvTo::SVArchiveTool* m_pTool = nullptr;				//Pointer to Archive Tool
 	CImageList m_StateImageList;						//The state image list

@@ -148,9 +148,8 @@ bool SVTADlgArchiveResultsPage::QueryAllowExit()
 	HRESULT hr = m_pTool->m_bvoUseHeaders.GetValue( bUseHeaders );
 	if( S_OK == hr && bUseHeaders )
 	{
-		SvDef::StringPairVector l_HeaderPairs;
-		GetSelectedHeaderNamePairs(l_HeaderPairs); // filters by what is selected.
-		StoreHeaderValuesToTool( l_HeaderPairs );
+		auto selectedHeaderNamePairs = GetSelectedHeaderNamePairs();
+		StoreHeaderValuesToTool(selectedHeaderNamePairs);
 	}
 
 	if (nullptr != m_pParent)
@@ -166,7 +165,7 @@ bool SVTADlgArchiveResultsPage::QueryAllowExit()
 void SVTADlgArchiveResultsPage::DoDataExchange(CDataExchange* pDX)
 {
 	CPropertyPage::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_LIST_SELECTED, m_ItemsSelected);
+	DDX_Control(pDX, IDC_LIST_SELECTED, m_selectedResultsWidget);
 	DDX_Control(pDX, IDC_SELECT_BUTTON, m_Select);
 	DDX_Control(pDX, IDC_ARCHIVE_FILENAME, m_ArchiveFileName);
 	DDX_Check(pDX, IDC_CHECK_APPEND, m_AppendArchive);
@@ -190,10 +189,10 @@ BOOL SVTADlgArchiveResultsPage::OnInitDialog()
 
 	GetWindowText( m_strCaption );
 
-	m_ItemsSelected.InsertColumn( ItemSelectedCol, _T(""), 0, ItemsSelectedWidth );
+	m_selectedResultsWidget.InsertColumn( ItemSelectedCol, _T(""), 0, ItemsSelectedWidth );
 	m_StateImageList.Create( SvOr::IconSize, SvOr::IconSize, ILC_COLOR24 | ILC_MASK, IconNumber, IconGrowBy );
 	m_StateImageList.Add( AfxGetApp()->LoadIcon( IDI_CHECKED_ENABLED ) );
-	m_ItemsSelected.SetImageList( &m_StateImageList, LVSIL_STATE );
+	m_selectedResultsWidget.SetImageList( &m_StateImageList, LVSIL_STATE );
 
 	ReadSelectedObjects();//@TODO [Arvid][10.00][17.6.2020] is this call really necessary? ReadSelectedObjects() will be called again later anyway.
 
@@ -247,12 +246,12 @@ void SVTADlgArchiveResultsPage::OnRemoveAllItems()
 
 void SVTADlgArchiveResultsPage::OnRemoveItem()
 {
-	POSITION Pos = m_ItemsSelected.GetFirstSelectedItemPosition();
+	POSITION Pos = m_selectedResultsWidget.GetFirstSelectedItemPosition();
 	std::vector<int> SelectedVector;
 
 	while( nullptr != Pos )
 	{
-		int ItemIndex = m_ItemsSelected.GetNextSelectedItem( Pos );
+		int ItemIndex = m_selectedResultsWidget.GetNextSelectedItem( Pos );
 		SelectedVector.push_back( ItemIndex );
 	}
 
@@ -269,18 +268,18 @@ void SVTADlgArchiveResultsPage::OnRemoveItem()
 
 void SVTADlgArchiveResultsPage::ReadSelectedObjects()
 {
-	m_ItemsSelected.DeleteAllItems();
+	m_selectedResultsWidget.DeleteAllItems();
 
-	std::string Prefix = m_pTool->GetInspection()->GetName();
-	Prefix += _T(".Tool Set.");
+	std::string toolsetPrefix = m_pTool->GetInspection()->GetName();
+	toolsetPrefix += _T(".Tool Set.");
 
 	int Index = 0;
 	for (auto const& rEntry : m_ResultsToBeArchived)
 	{
 		std::string Name{ rEntry.GetCompleteName(true) };
-		SvUl::searchAndReplace( Name, Prefix.c_str(), _T("") );
+		SvUl::searchAndReplace( Name, toolsetPrefix.c_str(), _T("") );
 
-		m_ItemsSelected.InsertItem(LVIF_STATE | LVIF_TEXT,
+		m_selectedResultsWidget.InsertItem(LVIF_STATE | LVIF_TEXT,
 			Index,
 			Name.c_str(),
 			INDEXTOSTATEIMAGEMASK(1),
@@ -354,7 +353,7 @@ void SVTADlgArchiveResultsPage::OnFormatResults()
 	UpdateData(TRUE);
 }
 
-void SVTADlgArchiveResultsPage::GetSelectedHeaderNamePairs(SvDef::StringPairVector& HeaderPairs)
+SvDef::StringPairVector SVTADlgArchiveResultsPage::GetSelectedHeaderNamePairs()
 {
 	// Inputs:
 	// Collect and build string pair vector from header id and Header Label from the archive tool.
@@ -362,82 +361,73 @@ void SVTADlgArchiveResultsPage::GetSelectedHeaderNamePairs(SvDef::StringPairVect
 	// output a vector of Object Name / Label pairs filtered by the selected objects..
 
 	// Get Lists....
-	SvDef::StringVector HeaderLabelNames;
-	SvDef::StringVector HeaderObjectIDs;
-	m_pTool->m_HeaderLabelNames.GetArrayValues( HeaderLabelNames );
-	m_pTool->m_HeaderObjectIDs.GetArrayValues( HeaderObjectIDs );
+	SvDef::StringVector headerLabels;
+	SvDef::StringVector objectrefIdentifiers;
+	m_pTool->m_HeaderLabelNames.GetArrayValues( headerLabels );
+	m_pTool->m_HeaderObjectIDs.GetArrayValues( objectrefIdentifiers );
 
-	// Collect Object and Label into pairs.
-	for( SvDef::StringVector::const_iterator it = HeaderObjectIDs.begin(),it1 = HeaderLabelNames.begin() ; it != HeaderObjectIDs.end() ;++it1, ++it)
+	std::map<std::string, std::string> headerLabelByObjectRefIdentifier;
+
+	// Create an associative array for finding header labels by objectRefIdentifier
+	for( SvDef::StringVector::const_iterator it = objectrefIdentifiers.begin(),it1 = headerLabels.begin() ; it != objectrefIdentifiers.end() ;++it1, ++it)
 	{
-		SvDef::StringPair l_Pair(*it, *it1 );
-		HeaderPairs.push_back(l_Pair);
+		headerLabelByObjectRefIdentifier[*it] = *it1;
 	}
 
-	// ... Create List from selected...
-	SvDef::StringPairVector SelectedHeaderPairs;
+	std::string toolsetPrefix = m_pTool->GetInspection()->GetName();
+	toolsetPrefix += _T(".Tool Set.");
+
+	SvDef::StringPairVector selectedHeaderPairs;
 	for(auto const& rEntry : m_ResultsToBeArchived)
 	{
-		uint32_t objectId{ rEntry.getObjectId() };
+		// we want to be able to refer to individual object elements (for arrays)
+		// for scalar objects we obtain the same identification string as before
+		auto objectRefIdentifier = convertObjectIdToString(rEntry.getObjectId()) + rEntry.GetIndexString(true); 
+		auto completeName = rEntry.GetCompleteName(true);
+		
+		// and we want our header labels not too verbose.
+		SvUl::searchAndReplace(completeName, toolsetPrefix.c_str(), _T(""));
 
-		SvDef::StringPair NewPair(convertObjectIdToString(objectId),
-		SVObjectManagerClass::Instance().GetObject(objectId)->GetCompleteName() );
-		SelectedHeaderPairs.push_back(NewPair);
+		if (headerLabelByObjectRefIdentifier.find(objectRefIdentifier) != headerLabelByObjectRefIdentifier.end())
+		{
+			// i.e., ID and index (if any) match: a header for this object reference has already been defined
+			completeName = headerLabelByObjectRefIdentifier[objectRefIdentifier];
+		}
+		selectedHeaderPairs.push_back(SvDef::StringPair(objectRefIdentifier, completeName));
 	}
 
-	// copy labels to the selected List...
-	for(SvDef::StringPairVector::iterator it = SelectedHeaderPairs.begin() ; it != SelectedHeaderPairs.end(); ++it)
-	{
-		bool bFound = false;
-		SvDef::StringPairVector::const_iterator it2 = HeaderPairs.begin();
-		for( ; it2 != HeaderPairs.end() ; ++it2)
-		{
-			if( it->first == it2->first ) // IDs match
-			{
-				// Found Stop looking...
-				bFound = true;
-				break;
-			}
-		}
-		if( bFound )
-		{
-			// copy label to new list.
-			it->second = it2->second;
-		}
-	}
-
-	HeaderPairs = SelectedHeaderPairs;
+	return selectedHeaderPairs;
 }
 
 void SVTADlgArchiveResultsPage::StoreHeaderValuesToTool(SvDef::StringPairVector& HeaderPairs)
 {
-	SvDef::StringVector HeaderLabelNames;
-	SvDef::StringVector HeaderObjectIDs;
+	SvDef::StringVector headerLabels;
+	SvDef::StringVector objectrefIdentifiers;
 	for(SvDef::StringPairVector::iterator it = HeaderPairs.begin(); it != HeaderPairs.end() ;++it)
 	{
-		HeaderObjectIDs.push_back( it->first );
-		HeaderLabelNames.push_back( it->second );
+		objectrefIdentifiers.push_back( it->first );
+		headerLabels.push_back( it->second );
 	}
 	m_pTool->m_HeaderLabelNames.SetArraySize( static_cast<int>(HeaderPairs.size()) );
 	m_pTool->m_HeaderObjectIDs.SetArraySize( static_cast<int>(HeaderPairs.size()) );
-	m_pTool->m_HeaderLabelNames.SetArrayValues(HeaderLabelNames);
-	m_pTool->m_HeaderObjectIDs.SetArrayValues( HeaderObjectIDs);
+	m_pTool->m_HeaderLabelNames.SetArrayValues(headerLabels);
+	m_pTool->m_HeaderObjectIDs.SetArrayValues( objectrefIdentifiers);
 }
 
 void SVTADlgArchiveResultsPage::OnBnClickedHeaderBtn()
 {
 	// Get a collection of header name/Label pairs from this class and the tool.
-	SvDef::StringPairVector l_HeaderPairs;
-	GetSelectedHeaderNamePairs(l_HeaderPairs); // filters by what is selected.
+	
+	SvDef::StringPairVector HeaderPairs = GetSelectedHeaderNamePairs(); // filters by what is selected.
 
-	SVArchiveHeaderEditDlg l_dlg;
-	l_dlg.SetValues( l_HeaderPairs );
+	SVArchiveHeaderEditDlg dlg;
+	dlg.SetValues( HeaderPairs );
 
-	INT_PTR iRet = l_dlg.DoModal();
+	INT_PTR iRet = dlg.DoModal();
 	if( iRet == IDOK)
 	{
-		l_dlg.GetValues( l_HeaderPairs );
-		StoreHeaderValuesToTool( l_HeaderPairs );
+		dlg.GetValues( HeaderPairs );
+		StoreHeaderValuesToTool( HeaderPairs );
 	}
 }
 
