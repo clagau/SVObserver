@@ -271,8 +271,6 @@ namespace SvOp
 		// Identify our output type
 		m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::ParameterTaskObjectType;
 
-		// Set default inputs and outputs
-		addDefaultInputObjects();
 		BuildEmbeddedObjectList();
 	}
 

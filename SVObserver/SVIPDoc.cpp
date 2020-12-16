@@ -1435,7 +1435,7 @@ void SVIPDoc::updateToolsetView(uint32_t toolID, uint32_t postID, uint32_t owner
 		createStruct.m_pInspection = pInspection;
 
 		pInspection->ConnectObject(createStruct);
-		pInspection->ConnectAllInputs();
+		pInspection->connectAllInputs();
 
 		SVObjectLevelCreateStruct createObjStruct;
 

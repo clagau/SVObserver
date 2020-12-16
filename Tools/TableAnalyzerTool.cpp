@@ -69,18 +69,7 @@ bool TableAnalyzerTool::CreateObject(const SVObjectLevelCreateStruct& rCreateStr
 	SvOp::SVLongResult* pResult = dynamic_cast<SvOp::SVLongResult*>(SvOi::FindObject(getObjectId(), SvDef::SVObjectTypeInfoStruct(SvPb::SVResultObjectType, SvPb::SVResultLongObjectType)));
 	if (nullptr != pResult)
 	{
-		const SvOl::SVInputInfoListClass& inputInterface = pResult->GetPrivateInputList();
-		//find right input
-		SvOl::SVInputInfoListClass::const_iterator iter = std::find_if(inputInterface.begin(), inputInterface.end(), [](const SvOl::SVInObjectInfoStruct* rInfo)->bool
-		{
-			return rInfo->GetInputName() == SvDef::cInputTag_LongResultValue;
-		});
-		if (inputInterface.end() != iter)
-		{
-			//connect to input
-			ConnectToObject(*iter, m_pResultTable->getNumberOfRowObject());
-		}
-		else
+		if (S_OK != pResult->ConnectToObject(SvDef::cInputTag_LongResultValue, m_pResultTable->getNumberOfRowObject()->getObjectId()))
 		{
 			bOk = false;
 			SvStl::MessageContainer message;
@@ -118,10 +107,10 @@ bool TableAnalyzerTool::ResetObject(SvStl::MessageContainerVector *pErrorMessage
 
 	Result = ValidateLocal(pErrorMessages) && Result;
 
-	SvOl::ValidateInput(m_sourceTableObjectInfo);
+	m_sourceTableInput.validateInput();
 
-	auto* pTableObject = dynamic_cast<SvOp::TableObject*> (m_sourceTableObjectInfo.GetInputObjectInfo().getFinalObject());
-	if (!m_sourceTableObjectInfo.IsConnected() || nullptr == pTableObject)
+	auto* pTableObject = dynamic_cast<SvOp::TableObject*> (m_sourceTableInput.GetInputObjectInfo().getFinalObject());
+	if (!m_sourceTableInput.IsConnected() || nullptr == pTableObject)
 	{
 		Result = false;
 		if (nullptr != pErrorMessages)
@@ -133,8 +122,7 @@ bool TableAnalyzerTool::ResetObject(SvStl::MessageContainerVector *pErrorMessage
 	}
 	else if (pTableObject->GetAncestorInterface(SvPb::SVInspectionObjectType) != GetAncestorInterface(SvPb::SVInspectionObjectType))
 	{
-		pTableObject->DisconnectObjectInput(&m_sourceTableObjectInfo);
-		m_sourceTableObjectInfo.SetInputObject(nullptr);
+		m_sourceTableInput.SetInputObject(nullptr);
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
@@ -189,7 +177,7 @@ void TableAnalyzerTool::removeNewColumn(const SvVol::DoubleSortValuePtr pColumn)
 
 void TableAnalyzerTool::OnEmbeddedIDChanged(const SVObjectClass* pOwnerObject, SvPb::EmbeddedIdEnum oldEmbeddedID, SvPb::EmbeddedIdEnum newEmbeddedID)
 {
-	SvOp::TableCopyObject* pSourceTableOwn = dynamic_cast<SvOp::TableCopyObject*>(m_sourceTableObjectInfo.GetInputObjectInfo().getFinalObject());
+	SvOp::TableCopyObject* pSourceTableOwn = m_sourceTableInput.getInput<SvOp::TableCopyObject>();
 	if (pOwnerObject == pSourceTableOwn && nullptr != m_pResultTable)
 	{
 		m_pResultTable->changeEmbeddedId(oldEmbeddedID, newEmbeddedID);
@@ -280,11 +268,8 @@ void TableAnalyzerTool::LocalInitialize()
 void TableAnalyzerTool::BuildInputObjectList()
 {
 	// Source Table.
-	m_sourceTableObjectInfo.SetInputObjectType(SvPb::TableObjectType);
-	m_sourceTableObjectInfo.SetObject(GetObjectInfo());
-	RegisterInputObject(&m_sourceTableObjectInfo, SvDef::cInputTag_SourceTable);
-	
-	addDefaultInputObjects();
+	m_sourceTableInput.SetInputObjectType(SvPb::TableObjectType);
+	registerInputObject(&m_sourceTableInput, SvDef::cInputTag_SourceTable, SvPb::SourceTableInputEId);
 }
 
 int TableAnalyzerTool::calcNewColumnPosition(const SVTaskObjectClass* pAnalyzer)

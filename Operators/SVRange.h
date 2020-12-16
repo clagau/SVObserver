@@ -16,6 +16,7 @@
 #include "InspectionEngine/SVTaskObject.h"
 #include "ObjectInterfaces/ITool.h"
 #include "SVLibrary/ISVCancel.h"
+#include "SVObjectLibrary/InputObject.h"
 #include "SVValueObjectLibrary/LinkedValue.h"
 #pragma endregion Includes
 
@@ -80,7 +81,7 @@ protected:
 protected:
 	
 	SvVol::LinkedValue m_LinkedValues[RangeEnum::ER_COUNT];
-	SvOl::SVInObjectInfoStruct m_inputObjectInfo;
+	SvOl::InputObject m_rangeValueInput;
 };
 
 } //namespace SvOp

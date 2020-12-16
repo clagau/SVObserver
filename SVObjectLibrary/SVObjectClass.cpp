@@ -13,7 +13,6 @@
 #include "stdafx.h"
 #include "SVObjectClass.h"
 #include "JoinType.h"
-#include "SVInputInfoListClass.h"
 #include "SVObjectAttributeClass.h"
 #include "SVObjectLevelCreateStruct.h"
 #include "SVObjectManagerClass.h"
@@ -102,7 +101,7 @@ This destructor unregisters itself from the object manager and frees all of the 
 */
 SVObjectClass::~SVObjectClass()
 {
-	m_outObjectInfo.DisconnectAllInputs();
+	disconnectAllInputs();
 
 	SVObjectManagerClass::Instance().CloseUniqueObjectID(this);
 }
@@ -121,13 +120,6 @@ bool SVObjectClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	return true;
 }
 
-HRESULT SVObjectClass::ResetObjectInputs()
-{
-	HRESULT l_hrOk = S_OK;
-
-	return l_hrOk;
-}
-
 HRESULT SVObjectClass::RefreshObject(const SVObjectClass* const , RefreshObjectType )
 {
 	HRESULT Result = S_OK;
@@ -135,36 +127,61 @@ HRESULT SVObjectClass::RefreshObject(const SVObjectClass* const , RefreshObjectT
 	return Result;
 }
 
-// Connect Input from somebody else to my Output...( to me )
-bool SVObjectClass::ConnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo)
+void SVObjectClass::connectObject(uint32_t objectId)
 {
-	if (pObjectInInfo)
+	if (SvDef::InvalidObjectId != objectId)
 	{
-		std::lock_guard<SVOutObjectInfoStruct> Autolock(m_outObjectInfo);
-		SVObjectManagerClass::Instance().connectDependency(getObjectId(), pObjectInInfo->getObjectId(), SvOl::JoinType::Dependent);
-		m_outObjectInfo.AddInput(*pObjectInInfo);
-
-		return true;
+		std::lock_guard<std::mutex> Autolock(m_inputMutex);
+		SVObjectManagerClass::Instance().connectDependency(getObjectId(), objectId, SvOl::JoinType::Dependent);
+		m_connectedSet.emplace(objectId);
 	}
-	return false;
 }
 
-// Disconnect Input from somebody else from my Output...( from me )
-bool SVObjectClass::DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo)
+void SVObjectClass::disconnectObject(uint32_t objectId)
 {
-	if (nullptr != pObjectInInfo)
+	if (SvDef::InvalidObjectId != objectId)
 	{
-
-		std::lock_guard<SVOutObjectInfoStruct> Autolock(m_outObjectInfo);
-		SVObjectManagerClass::Instance().disconnectDependency(getObjectId(), pObjectInInfo->getObjectId(), SvOl::JoinType::Dependent);
-		m_outObjectInfo.RemoveInput(*pObjectInInfo);
-
-		return true;
-
+		SVObjectClass* pObject{ nullptr };
+		{
+			std::lock_guard<std::mutex> Autolock(m_inputMutex);
+			auto iter = m_connectedSet.find(objectId);
+			if (m_connectedSet.end() != iter)
+			{
+				SVObjectManagerClass::Instance().disconnectDependency(getObjectId(), objectId, SvOl::JoinType::Dependent);
+				m_connectedSet.erase(iter);
+				pObject = SVObjectManagerClass::Instance().GetObject(objectId);
+			}
+		}
+				 
+		if (nullptr != pObject)
+		{
+			pObject->disconnectObjectInput(getObjectId());
+		}		
 	}
-	return false;
 }
 
+void SVObjectClass::disconnectObjectInput(uint32_t objectId)
+{
+	auto* pObject = SVObjectManagerClass::Instance().GetObject(objectId);
+	if (pObject)
+	{
+		pObject->disconnectObject(getObjectId());
+	}
+}
+
+void SVObjectClass::disconnectAllInputs()
+{
+	auto tmpSet = m_connectedSet;
+	m_connectedSet.clear();
+	for (auto id : tmpSet)
+	{
+		auto* pObject = SVObjectManagerClass::Instance().GetObject(id);
+		if (pObject)
+		{
+			pObject->disconnectObjectInput(getObjectId());
+		}
+	}
+}
 
 /*
 After the object construction, the object must be created using this function with an object level depending create structure.
@@ -204,13 +221,6 @@ bool SVObjectClass::CloseObject()
 	m_isCreated = false;
 
 	return true;
-}
-
-/*
-This method is a placeholder for derived functionality.  This method performs not operation.
-*/
-void SVObjectClass::ResetPrivateInputInterface()
-{
 }
 
 /*

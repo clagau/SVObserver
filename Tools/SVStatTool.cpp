@@ -47,8 +47,7 @@ void SVStatTool::init(void)
 	m_outObjectInfo.m_ObjectTypeInfo.m_SubType    = SvPb::SVStatisticsToolObjectType;
 	
 	// Register an empty input object
-	m_inputObjectInfo.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_inputObjectInfo, _T( "StatisticsToolValue" ) );
+	registerInputObject( &m_inputValue, _T( "StatisticsToolValue" ), SvPb::ResultInputEId);
 
 	// Remove Embedded Extents
 	removeEmbeddedExtents();
@@ -146,10 +145,6 @@ void SVStatTool::init(void)
 
 	m_AccumulatedSquares = 0.0;
 	m_AccumulatedTotal = 0.0;
-
-	// Set default inputs and outputs
-	addDefaultInputObjects();
-
 }
 
 SVStatTool::~SVStatTool()
@@ -182,7 +177,7 @@ bool SVStatTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 	
-	SvOl::ValidateInput(m_inputObjectInfo);
+	m_inputValue.validateInput();
 
 	if (Result)
 	{
@@ -286,10 +281,7 @@ DWORD SVStatTool::DisableFeature (SVStatisticsFeatureEnum aIndex)
 
 	FreeResult (aIndex);
 
-	// Get this object's outputInfo
-	SVOutObjectInfoStruct& valueOutObjectInfo = m_Value [aIndex].GetObjectOutputInfo();
-
-	valueOutObjectInfo.DisconnectAllInputs();
+	m_Value[aIndex].disconnectAllInputs();
 
 	return 0;
 }
@@ -338,7 +330,7 @@ void SVStatTool::AllocateResult (SVStatisticsFeatureEnum aFeatureIndex)
 		pValue->SetObjectAttributesAllowed( SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::RemoveAttribute );
 
 		// Ensure this Object's inputs get connected
-		pResult->ConnectAllInputs();
+		pResult->connectAllInputs();
 
 		// And last - Create (initialize) it
 
@@ -397,7 +389,7 @@ SvOp::SVResult* SVStatTool::GetResult(SVStatisticsFeatureEnum aFeatureIndex)
 
 		if( nullptr != pResult )
 		{
-			const SvOl::SVInputInfoListClass& resultInputList = pResult->GetPrivateInputList( );
+			const auto& resultInputList = pResult->GetPrivateInputList( );
 
 			SVObjectClass* pSVObject = resultInputList[0]->GetInputObjectInfo().getObject();
 			
@@ -441,31 +433,13 @@ SVObjectReference SVStatTool::GetVariableSelected() const
 
 void SVStatTool::SetVariableSelected( const std::string& rName )
 {
-	if( HasVariable() )
-	{
-		if( m_inputObjectInfo.IsConnected() && m_inputObjectInfo.GetInputObjectInfo().getObject() )
-		{
-			m_inputObjectInfo.GetInputObjectInfo().getObject()->DisconnectObjectInput(&m_inputObjectInfo);
-		}
-	}
-
 	if( !rName.empty() )
 	{
 		// Get the Object
 		SVObjectReference refObject;
 		/*HRESULT hrGet = */SVObjectManagerClass::Instance().GetObjectByDottedName( rName.c_str(), refObject );
-		if( refObject.getObject() )
-		{
-			// Connect to the input
-			m_inputObjectInfo.SetObject( GetObjectInfo() );
-
-			m_inputObjectInfo.SetInputObject( refObject );
-			SvOl::SVInObjectInfoStruct InObjectInfo{ m_inputObjectInfo };
-			// The ConnectObjectInput will reset the index for the SVInObjectInforStruct object passed as parameter,
-			// so use a copy to carry the information for connection. Keep m_inputObjectInfo unchanged.
-			// this would solve also SVO-3028
-			refObject.getObject()->ConnectObjectInput(&InObjectInfo);
-		}// end if( refObject.Object() )
+		// Connect to the input
+		m_inputValue.SetInputObject( refObject );
 		m_VariableName.SetValue(rName);
 	}
 	else
@@ -473,35 +447,18 @@ void SVStatTool::SetVariableSelected( const std::string& rName )
 		m_VariableName.SetValue(std::string());
 
 		// Clear the Object Info
-		m_inputObjectInfo.SetInputObject( nullptr );
+		m_inputValue.SetInputObject( nullptr );
 	}
-}
-
-bool SVStatTool::DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo )
-{
-	if( pObjectInInfo && pObjectInInfo->GetInputObjectInfo().getObjectId() == m_inputObjectInfo.GetInputObjectInfo().getObjectId() )
-	{
-		m_inputObjectInfo.SetInputObject( nullptr );
-
-		// Check if variable still exists and is selectable for stats
-		if( !HasVariable() )
-		{
-			// Clear it since the object is gone
-			m_inputObjectInfo.SetInputObject( nullptr );
-			SetVariableSelected( _T("") );	// will this result in a recursive call to this message???
-		}
-	}
-	return __super::DisconnectObjectInput(pObjectInInfo);
 }
 
 bool SVStatTool::getInputValue(double& aValue)
 {
 	bool Ret{ false };
 	aValue = 0.0;
-	if (m_inputObjectInfo.IsConnected() && nullptr != m_inputObjectInfo.GetInputObjectInfo().getObject())
+	if (m_inputValue.IsConnected() && nullptr != m_inputValue.GetInputObjectInfo().getObject())
 	{
-		const SVObjectReference& rObjectRef = m_inputObjectInfo.GetInputObjectInfo().GetObjectReference();
-		if (S_OK == m_inputObjectInfo.GetInputObjectInfo().getObject()->getValue(aValue, rObjectRef.getValidArrayIndex()))
+		const SVObjectReference& rObjectRef = m_inputValue.GetInputObjectInfo().GetObjectReference();
+		if (S_OK == m_inputValue.GetInputObjectInfo().getObject()->getValue(aValue, rObjectRef.getValidArrayIndex()))
 		{
 			Ret = true;
 		}
@@ -741,10 +698,10 @@ bool SVStatTool::Test(SvStl::MessageContainerVector *pErrorMessages)
 	}
 
 	// verify that the object is really valid
-	SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject( m_inputObjectInfo.GetInputObjectInfo().getObjectId() );
+	SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(m_inputValue.GetInputObjectInfo().getObjectId() );
 	if ( nullptr != pObject )
 	{
-		SVObjectReference ObjectRef = m_inputObjectInfo.GetInputObjectInfo().GetObjectReference();
+		SVObjectReference ObjectRef = m_inputValue.GetInputObjectInfo().GetObjectReference();
 		if( nullptr != ObjectRef.getObject() )
 		{
 			double Value;
@@ -784,7 +741,7 @@ bool SVStatTool::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) co
 {
 	if( HasVariable() )
 	{
-		if ( !m_inputObjectInfo.IsConnected() || nullptr == m_inputObjectInfo.GetInputObjectInfo().getObject() )
+		if ( !m_inputValue.IsConnected() || nullptr == m_inputValue.GetInputObjectInfo().getObject() )
 		{
 			if (nullptr != pErrorMessages)
 			{

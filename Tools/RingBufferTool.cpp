@@ -54,7 +54,7 @@ bool RingBufferTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStruc
 {
 	bool bOk = SVToolClass::CreateObject( rCreateStructure );
 
-	SvIe::SVImageClass* pInputImage = SvOl::getInput<SvIe::SVImageClass>(m_InputImageObjectInfo);
+	SvIe::SVImageClass* pInputImage = m_InputImage.getInput<SvIe::SVImageClass>();
 	bOk &= (nullptr != pInputImage);
 
 	m_toolExtent.SetTranslation(SvPb::SVExtentTranslationNone);
@@ -99,7 +99,7 @@ bool RingBufferTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = SVToolClass::ResetObject(pErrorMessages);
 
-	SvOl::ValidateInput(m_InputImageObjectInfo);
+	m_InputImage.validateInput();
 
 	SetToolROIExtentToFullInputImage ();
 
@@ -125,7 +125,7 @@ bool RingBufferTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 
 	if (Result)
 	{
-		SvIe::SVImageClass* pInputImage = SvOl::getInput<SvIe::SVImageClass>(m_InputImageObjectInfo);
+		SvIe::SVImageClass* pInputImage = m_InputImage.getInput<SvIe::SVImageClass>();
 		if (nullptr != pInputImage)
 		{
 			SVImageInfoClass ImageInfo = pInputImage->GetImageInfo();
@@ -245,7 +245,7 @@ bool RingBufferTool::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector
 		}
 
 		//copy input image to ring buffer
-		SvIe::SVImageClass* pInputImage = SvOl::getInput<SvIe::SVImageClass>(m_InputImageObjectInfo, true);
+		SvIe::SVImageClass* pInputImage = m_InputImage.getInput<SvIe::SVImageClass>(true);
 		if (nullptr != pInputImage && static_cast<int>(m_ringBuffer.size()) > m_nextBufferPos)
 		{
 			SvOi::ITRCImagePtr pImageBuffer = nullptr;
@@ -304,11 +304,8 @@ void RingBufferTool::LocalInitialize ()
 void RingBufferTool::BuildInputObjectList ()
 {
 	// Source Image
-	m_InputImageObjectInfo.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
-	m_InputImageObjectInfo.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_InputImageObjectInfo, _T( "InputImage" ) );
-
-	addDefaultInputObjects();
+	m_InputImage.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
+	registerInputObject( &m_InputImage, SvDef::SourceImageInputName, SvPb::ImageInputEId);
 }
 
 
@@ -381,7 +378,7 @@ int RingBufferTool::SetOutputImage( int outputIndex, int imageIndex, int maxInde
 
 void RingBufferTool::SetToolROIExtentToFullInputImage ()
 {
-	SvIe::SVImageClass* pInputImage = SvOl::getInput<SvIe::SVImageClass>(m_InputImageObjectInfo);
+	SvIe::SVImageClass* pInputImage = m_InputImage.getInput<SvIe::SVImageClass>();
 
 	if (nullptr != pInputImage)
 	{

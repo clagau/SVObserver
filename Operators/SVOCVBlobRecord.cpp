@@ -37,9 +37,6 @@ SVOCVCharacterResult::SVOCVCharacterResult(SVObjectClass* POwner, int StringReso
 						: SVTaskObjectClass( POwner, StringResourceID )
 {
 	init();
-
-	// Add Default Inputs and Outputs
-	addDefaultInputObjects();
 }
 
 SVOCVCharacterResult::~SVOCVCharacterResult()

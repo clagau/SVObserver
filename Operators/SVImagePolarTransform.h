@@ -13,6 +13,7 @@
 #pragma region Includes
 #include "SVPolarTransform.h"
 #include "InspectionEngine/SVImageClass.h"
+#include "SVObjectLibrary/InputObject.h"
 #include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
 #include "SVValueObjectLibrary/SVDoubleValueObjectClass.h"
 #include "SVValueObjectLibrary/SVEnumerateValueObjectClass.h"
@@ -78,7 +79,7 @@ protected:
 	SvVol::SVEnumerateValueObjectClass m_interpolationMode;
 
 	// Inputs
-	SvOl::SVInObjectInfoStruct		m_inputImageObjectInfo;
+	SvOl::InputObject		m_inputImage;
 
 private:
 	void SetCalculatedPrintableFlags();

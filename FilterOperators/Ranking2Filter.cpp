@@ -164,9 +164,6 @@ void Ranking2Filter::init()
 	m_KernelHeight.SetObjectAttributesAllowed(cAttributes, SvOi::SetAttributeType::AddAttribute);
 	m_RankingRank.SetObjectAttributesAllowed(cAttributes, SvOi::SetAttributeType::AddAttribute);
 
-	// Set default inputs and outputs
-	addDefaultInputObjects();
-
 	RebuildKernel();
 }
 

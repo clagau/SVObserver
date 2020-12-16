@@ -68,12 +68,8 @@ namespace SvAo
 		RegisterEmbeddedObject(&m_colorBlobEnumValue, SvPb::BlobColorEId, IDS_BLACK_BLOBS, false, SvOi::SVResetItemOwner);
 		RegisterEmbeddedObject(&m_connectivityEnumValue, SvPb::ConnectivityBlobEId, IDS_BLOB_CONNECTIVITY, false, SvOi::SVResetItemOwner);
 
-		m_grayImageInfo.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
-		m_grayImageInfo.SetObject(GetObjectInfo());
-		RegisterInputObject(&m_grayImageInfo, SvDef::GrayImageConnectionName);
-
-		// Set default inputs and outputs
-		addDefaultInputObjects();
+		m_grayImageInput.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
+		registerInputObject(&m_grayImageInput, SvDef::GrayImageConnectionName, SvPb::GrayImageInputEId);
 
 		m_maxBlobDataArraySize.SetDefaultValue(100, true);
 		m_isGrayImageValue.SetDefaultValue(BOOL(false), true);
@@ -334,9 +330,9 @@ namespace SvAo
 			MIL_ID grayImageId = M_NULL;
 			BOOL isGrayValueUsed{ false };
 			m_isGrayImageValue.GetValue(isGrayValueUsed);
-			if (isGrayValueUsed && m_grayImageInfo.IsConnected())
+			if (isGrayValueUsed)
 			{
-				SvIe::SVImageClass* pGrayImage = SvOl::getInput<SvIe::SVImageClass>(m_grayImageInfo, true);
+				SvIe::SVImageClass* pGrayImage = m_grayImageInput.getInput<SvIe::SVImageClass>(true);
 				if (pGrayImage)
 				{
 					SvOi::ITRCImagePtr pGrayImageBuffer = pGrayImage->getImageReadOnly(rRunStatus.m_triggerRecord.get());
@@ -348,10 +344,6 @@ namespace SvAo
 					{
 						assert(false);
 					}
-				}
-				else
-				{
-					assert(false);
 				}
 			}
 
@@ -489,12 +481,12 @@ namespace SvAo
 
 		m_pBlobFeatureList->setSortControls(m_BlobContextID);
 
-		SvOl::ValidateInput(m_grayImageInfo);
+		m_grayImageInput.validateInput();
 		BOOL isGrayValueUsed{ false };
 		m_isGrayImageValue.GetValue(isGrayValueUsed);
 		if (isGrayValueUsed)
 		{
-			if (nullptr == SvOl::getInput<SvIe::SVImageClass>(m_grayImageInfo))
+			if (nullptr == m_grayImageInput.getInput<SvIe::SVImageClass>())
 			{
 				result = false;
 				if (nullptr != pErrorMessages)
@@ -643,7 +635,7 @@ namespace SvAo
 
 			Add(m_pResultBlob);
 
-			m_pResultBlob->ConnectAllInputs();
+			m_pResultBlob->connectAllInputs();
 
 			// And last - Create (initialize) it
 

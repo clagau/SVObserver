@@ -57,9 +57,6 @@ void SVLowerThresholdEquation::init()
 	// Set Embedded defaults
 	result.SetDefaultValue( 0.0 );
 	result.setSaveValueFlag(false);
-
-	// Set default inputs and outputs
-	addDefaultInputObjects();
 }
 
 bool SVLowerThresholdEquation::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )

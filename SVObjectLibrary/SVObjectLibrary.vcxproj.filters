@@ -27,12 +27,6 @@
     <ClCompile Include="SVClassRegisterListClass.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVInObjectInfoStruct.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVInputInfoListClass.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVObjectAttributeClass.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -63,6 +57,9 @@
     <ClCompile Include="SVOutputInfoListClass.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="InputObject.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DependencyManager.h">
@@ -87,12 +84,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVClsids.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVInObjectInfoStruct.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVInputInfoListClass.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVObjectAttributeClass.h">
@@ -141,6 +132,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="TextDefinesSvOl.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="InputObject.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

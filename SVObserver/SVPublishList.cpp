@@ -107,13 +107,7 @@ void SVPublishList::Refresh(SvIe::SVTaskObjectClass * pRootObject)
 				continue;
 			}// end if
 
-			SvOl::SVInObjectInfoStruct InObjectInfo;
-
-			InObjectInfo.SetObject( m_pInspection );
-			InObjectInfo.SetInputObject( pPublishedOutObjectInfo->getObjectId() );
-
-			// Disconnect
-			SVObjectManagerClass::Instance().DisconnectObjectInput(pPublishedOutObjectInfo->getObjectId(), &InObjectInfo);
+			m_pInspection->disconnectObjectInput(pPublishedOutObjectInfo->getObjectId());
 
 			// remove from the list
 			RemoveAt(i);
@@ -167,62 +161,53 @@ void SVPublishList::Refresh(SvIe::SVTaskObjectClass * pRootObject)
 
 		if( !found ) // not in original list - have to add it
 		{
-			SvOl::SVInObjectInfoStruct InObjectInfo;
-
-			InObjectInfo.SetObject( m_pInspection );
-			InObjectInfo.SetInputObject( pOutObjectInfo->getObjectId() );
-
-			// connect to the object
-			if( pOutObjectInfo->getObject()->ConnectObjectInput(&InObjectInfo) )
+			SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(pOutObjectInfo->getObjectId());
+			if (nullptr != dynamic_cast<SvOi::IValueObject*> (pObject))
 			{
-				SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject( pOutObjectInfo->getObjectId() );
-				if( nullptr != dynamic_cast<SvOi::IValueObject*> (pObject) )
+				pObject->connectObject(m_pInspection->getObjectId());
+				SVOutputObjectPtr pOutput;
+
+				if (nullptr != pConfig) { pOutputList = pConfig->GetOutputObjectList(); }
+
+				if (nullptr != pOutputList)
 				{
-					SVOutputObjectPtr pOutput;
+					pOutput = pOutputList->GetOutput(pObject->GetCompleteName().c_str());
+				}
 
-					if( nullptr != pConfig ){ pOutputList = pConfig->GetOutputObjectList( ); }
+				// Add Outputs to the PPQ
+				pPPQ = m_pInspection->GetPPQ();
 
-					if( nullptr != pOutputList )
-					{ 
-						pOutput = pOutputList->GetOutput( pObject->GetCompleteName().c_str()); 
-					}
+				if (SvPb::SVBoolValueObjectType == pObject->GetObjectSubType())
+				{
+					pIOEntry = std::make_shared<SVIOEntryHostStruct>();
+					pIOEntry->setLinkedObject(pObject);
+					pIOEntry->getObject()->SetObjectOwner(pObject->GetParent());
+					pIOEntry->m_ObjectType = SvTi::SVHardwareManifest::isPlcSystem(pConfig->GetProductType()) ? IO_PLC_OUTPUT : IO_DIGITAL_OUTPUT;
+					pIOEntry->m_PPQIndex = -1;
+					pIOEntry->m_Enabled = (nullptr != pOutput);
 
-					// Add Outputs to the PPQ
-					pPPQ = m_pInspection->GetPPQ();
-
-					if(SvPb::SVBoolValueObjectType == pObject->GetObjectSubType())
+					if (pIOEntry->m_Enabled)
 					{
-						pIOEntry = std::make_shared<SVIOEntryHostStruct>();
-						pIOEntry->setLinkedObject(pObject);
-						pIOEntry->getObject()->SetObjectOwner(pObject->GetParent());
-						pIOEntry->m_ObjectType		= SvTi::SVHardwareManifest::isPlcSystem(pConfig->GetProductType()) ? IO_PLC_OUTPUT : IO_DIGITAL_OUTPUT;
-						pIOEntry->m_PPQIndex		= -1;
-						pIOEntry->m_Enabled			= ( nullptr != pOutput);
-
-						if( pIOEntry->m_Enabled )
-						{
-							pIOEntry->m_IOId = pOutput->getObjectId();
-						}
-
-						if( nullptr != pPPQ ){ pPPQ->AddOutput( pIOEntry ); }
+						pIOEntry->m_IOId = pOutput->getObjectId();
 					}
-					else
-					{
-						pIOEntry = std::make_shared<SVIOEntryHostStruct>();
-						pIOEntry->setLinkedObject(pObject);
-						pIOEntry->getObject()->SetObjectOwner(pObject->GetParent());
-						pIOEntry->m_ObjectType		= IO_REMOTE_OUTPUT;
-						pIOEntry->m_PPQIndex		= -1;
-						pIOEntry->m_Enabled			= true;
 
-						pIOEntry->m_IOId = pObject->getObjectId();
+					if (nullptr != pPPQ) { pPPQ->AddOutput(pIOEntry); }
+				}
+				else
+				{
+					pIOEntry = std::make_shared<SVIOEntryHostStruct>();
+					pIOEntry->setLinkedObject(pObject);
+					pIOEntry->getObject()->SetObjectOwner(pObject->GetParent());
+					pIOEntry->m_ObjectType = IO_REMOTE_OUTPUT;
+					pIOEntry->m_PPQIndex = -1;
+					pIOEntry->m_Enabled = true;
 
-						if( nullptr != pPPQ ){ pPPQ->AddOutput( pIOEntry ); }
-					}
-				}// end if
+					pIOEntry->m_IOId = pObject->getObjectId();
 
+					if (nullptr != pPPQ) { pPPQ->AddOutput(pIOEntry); }
+				}
 				// add to the list
-				Add( pOutObjectInfo );
+				Add(pOutObjectInfo);
 			}// end if
 		}// end if
 	}// end for
@@ -234,47 +219,31 @@ void SVPublishList::Release(SvIe::SVTaskObjectClass*)
 	// all outputs marked as selected for publishing
 	// Note:: both Lists must be from the same root object
 	// which at this point is SVToolSet
-
-	SVPPQObject* pPPQ( nullptr );
-	SVIOEntryHostStructPtrVector ppPPQEntries;
-	SVIOEntryHostStructPtr pIOEntry;
-	bool found;
-	long lPPQSize;
-	long lPPQ;
-
 	// check for removed items
 	for( long i = GetSize() - 1; i >= 0; i-- )
 	{
 		SVOutObjectInfoStruct* pPublishedOutObjectInfo = GetAt( i );
-
-		SvOl::SVInObjectInfoStruct InObjectInfo;
-
-		InObjectInfo.SetObject( m_pInspection );
-		InObjectInfo.SetInputObject( pPublishedOutObjectInfo->getObjectId() );
-
-		// Disconnect
-		SVObjectManagerClass::Instance().DisconnectObjectInput(pPublishedOutObjectInfo->getObjectId(), &InObjectInfo);
+		m_pInspection->disconnectObjectInput(pPublishedOutObjectInfo->getObjectId());
 		
 		// remove from the list
 		RemoveAt(i);
 
 		// Now remove it from all of the PPQs
         assert( m_pInspection );
-		pPPQ = m_pInspection->GetPPQ();
+		SVPPQObject* pPPQ = m_pInspection->GetPPQ();
 		if ( nullptr != pPPQ )
 		{
+			SVIOEntryHostStructPtrVector ppPPQEntries;
 			pPPQ->GetAllOutputs( ppPPQEntries );
 
-			lPPQSize = static_cast<long>(ppPPQEntries.size());
-
-			for( lPPQ = 0, found = false; lPPQ < lPPQSize; lPPQ++ )
+			long lPPQSize = static_cast<long>(ppPPQEntries.size());
+			for(long lPPQ = 0; lPPQ < lPPQSize; lPPQ++ )
 			{
-				pIOEntry = ppPPQEntries[lPPQ];
+				SVIOEntryHostStructPtr pIOEntry = ppPPQEntries[lPPQ];
 				//@WARNING [gra][7.50][09.08.2017] Not this does not work for objects with index!
 				if( pIOEntry->getObject()->getObjectId() == pPublishedOutObjectInfo->getObjectId() )
 				{
 					pPPQ->RemoveOutput( pIOEntry );
-					found = true;
 				}// end if
 
 			}// end for
@@ -286,12 +255,6 @@ void SVPublishList::Release(SvIe::SVTaskObjectClass*)
 
 bool SVPublishList::RemovePublishedEntry(uint32_t id )
 {
-	SVPPQObject* pPPQ( nullptr );
-	SVIOEntryHostStructPtrVector ppPPQEntries;
-	SVIOEntryHostStructPtr pIOEntry;
-	long lPPQSize = 0;
-	long lPPQ = 0;
-
 	for( int i = GetSize() - 1; i >= 0; i-- )
 	{
 		SVOutObjectInfoStruct* pPublishedOutObjectInfo = GetAt( i );
@@ -299,25 +262,25 @@ bool SVPublishList::RemovePublishedEntry(uint32_t id )
 		{
 			// remove from the list
 			RemoveAt(i);
-			bool found = false;
 
 			// Now remove it from all of the PPQs
-			pPPQ = m_pInspection->GetPPQ();
+			SVPPQObject* pPPQ = m_pInspection->GetPPQ();
 
+			SVIOEntryHostStructPtrVector ppPPQEntries;
+			long lPPQSize = 0;			
 			if( nullptr != pPPQ )
 			{
 				pPPQ->GetAllOutputs( ppPPQEntries );
 				lPPQSize = static_cast<long>(ppPPQEntries.size());
 			}
 
-			for( lPPQ = 0, found = false; lPPQ < lPPQSize; lPPQ++ )
+			for( long lPPQ = 0; lPPQ < lPPQSize; lPPQ++ )
 			{
-				pIOEntry = ppPPQEntries[lPPQ];
+				SVIOEntryHostStructPtr pIOEntry = ppPPQEntries[lPPQ];
 				//@WARNING [gra][7.50][09.08.2017] Not this does not work for objects with index!
 				if( pIOEntry->getObject()->getObjectId() == pPublishedOutObjectInfo->getObjectId() )
 				{
 					pPPQ->RemoveOutput( pIOEntry );
-					found = true;
 				}// end if
 
 			}// end for

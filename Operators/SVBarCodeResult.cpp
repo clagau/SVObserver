@@ -89,14 +89,13 @@ SVBarCodeResult::SVBarCodeResult(SVObjectClass* POwner, int StringResourceID)
 	m_dReadScore.SetDefaultValue(-1.0, true);
 	m_dReadScore.setSaveValueFlag(false);
 	// Specify which string SVResultString should require
-	m_inputObjectInfo.SetInputObjectType(SvPb::SVNotSetObjectType, SvPb::SVNotSetSubObjectType, SvPb::BarCodeEId);
-	m_inputObjectInfo.setReportAndCopyFlag(false);
+	m_inputObject.SetInputObjectType(SvPb::SVNotSetObjectType, SvPb::SVNotSetSubObjectType, SvPb::BarCodeEId);
+	m_inputObject.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
 
 	// Identify our input type needs
-	m_SVRegExpressionObjectInfo.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVStringValueObjectType, SvPb::RegExpressionEId);
-	m_SVRegExpressionObjectInfo.SetObject(GetObjectInfo());
-	RegisterInputObject(&m_SVRegExpressionObjectInfo, _T("BarCodeResultString"));
-	m_SVRegExpressionObjectInfo.setReportAndCopyFlag(false);
+	m_SVRegExpressionInput.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVStringValueObjectType, SvPb::RegExpressionEId);
+	registerInputObject(&m_SVRegExpressionInput, _T("BarCodeResultString"), SvPb::BarCodeResultEId);
+	m_SVRegExpressionInput.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
 }
 
 SVBarCodeResult::~SVBarCodeResult()
@@ -117,8 +116,8 @@ SVBarCodeResult::~SVBarCodeResult()
 bool SVBarCodeResult::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 {
 	bool Result = SVStringResult::CreateObject(rCreateStructure);
-	Result = Result && nullptr != SvOl::getInput<SvVol::SVStringValueObjectClass>(m_inputObjectInfo);
-	SvVol::SVStringValueObjectClass* pRegExpression = SvOl::getInput<SvVol::SVStringValueObjectClass>(m_SVRegExpressionObjectInfo);
+	Result = Result && nullptr != m_inputObject.getInput<SvVol::SVStringValueObjectClass>();
+	SvVol::SVStringValueObjectClass* pRegExpression = m_SVRegExpressionInput.getInput<SvVol::SVStringValueObjectClass>();
 	Result = Result && nullptr != pRegExpression;
 
 	if (Result)
@@ -147,7 +146,7 @@ bool SVBarCodeResult::onRun(RunStatus &rRunStatus, SvStl::MessageContainerVector
 			return true;
 		}
 
-		SvVol::SVStringValueObjectClass* pValue = SvOl::getInput<SvVol::SVStringValueObjectClass>(m_inputObjectInfo, true);
+		SvVol::SVStringValueObjectClass* pValue = m_inputObject.getInput<SvVol::SVStringValueObjectClass>(true);
 
 		if (nullptr != pValue && pValue->IsCreated())
 		{
@@ -173,7 +172,7 @@ bool SVBarCodeResult::onRun(RunStatus &rRunStatus, SvStl::MessageContainerVector
 			else
 			{
 				std::string RegExpression;
-				SvVol::SVStringValueObjectClass* pRegExp = SvOl::getInput<SvVol::SVStringValueObjectClass>(m_SVRegExpressionObjectInfo, true);
+				SvVol::SVStringValueObjectClass* pRegExp = m_SVRegExpressionInput.getInput<SvVol::SVStringValueObjectClass>(true);
 				pRegExp->GetValue(RegExpression);
 
 				if (RegExpression.empty() || !InputString.compare(RegExpression.c_str()))
@@ -200,7 +199,7 @@ bool SVBarCodeResult::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = SVStringResult::ResetObject(pErrorMessages);
 
-	SvOl::ValidateInput(m_SVRegExpressionObjectInfo);
+	m_SVRegExpressionInput.validateInput();
 
 	if (S_OK != LoadMatchStringFile())
 	{
@@ -470,7 +469,7 @@ int SVBarCodeResult::CheckStringInTable(const std::string& rMatchString)
 
 bool SVBarCodeResult::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const
 {
-	if (!m_SVRegExpressionObjectInfo.IsConnected() || nullptr == m_SVRegExpressionObjectInfo.GetInputObjectInfo().getObject())
+	if (nullptr == m_SVRegExpressionInput.getInput<SvVol::SVStringValueObjectClass>())
 	{
 		if (nullptr != pErrorMessages)
 		{

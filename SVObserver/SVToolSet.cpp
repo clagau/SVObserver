@@ -174,14 +174,10 @@ void SVToolSet::init()
 	AddFriend(pConditional->getObjectId());
 
 	// Identify our input type needs
-	m_inputConditionBoolObjectInfo.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVBoolValueObjectType, SvPb::ConditionalResultEId);
-	m_inputConditionBoolObjectInfo.SetObject(GetObjectInfo());
-	RegisterInputObject(&m_inputConditionBoolObjectInfo, _T("ToolSetConditionalValue"));
-	m_inputConditionBoolObjectInfo.setReportAndCopyFlag(false);
+	m_inputConditionBool.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVBoolValueObjectType, SvPb::ConditionalResultEId);
+	registerInputObject(&m_inputConditionBool, _T("ToolSetConditionalValue"), SvPb::ToolSetConditionalInputEId);
+	m_inputConditionBool.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
 
-	// Set default inputs and outputs
-	// Note:: Call the Derived Class (this) here
-	addDefaultInputObjects();
 	m_ResultList.SetToolSet(this);
 }
 
@@ -327,8 +323,7 @@ void SVToolSet::SetDefaultInputs()
 	// Connects all not valid ( Invalid ) input objects to default...
 
 	// Try to get all inputs and outputs...
-	GetAllInputObjects();
-	ConnectAllInputs();
+	connectAllInputs();
 	m_ResultList.Refresh(this);
 }
 
@@ -363,7 +358,7 @@ bool SVToolSet::getConditionalResult(bool bRunMode /*= false*/) const
 {
 	BOOL Value(false);
 
-	SvVol::SVBoolValueObjectClass* pBoolObject = SvOl::getInput<SvVol::SVBoolValueObjectClass>(m_inputConditionBoolObjectInfo, bRunMode);
+	SvVol::SVBoolValueObjectClass* pBoolObject = m_inputConditionBool.getInput<SvVol::SVBoolValueObjectClass>(bRunMode);
 	if (nullptr != pBoolObject)
 	{
 		pBoolObject->GetValue(Value);
@@ -610,7 +605,7 @@ bool SVToolSet::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::ResetObject(pErrorMessages) && ValidateLocal(pErrorMessages);
 
-	SvOl::ValidateInput(m_inputConditionBoolObjectInfo);
+	m_inputConditionBool.validateInput();
 
 	BOOL bResetCounter(false);
 	if (S_OK == m_ResetCounts.GetValue(bResetCounter) && bResetCounter)
@@ -711,7 +706,7 @@ void SVToolSet::connectChildObject(SVTaskObjectClass& rChildObject)
 
 bool SVToolSet::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const
 {
-	if (m_inputConditionBoolObjectInfo.IsConnected() && m_inputConditionBoolObjectInfo.GetInputObjectInfo().getObject())
+	if (m_inputConditionBool.IsConnected() && m_inputConditionBool.GetInputObjectInfo().getObject())
 	{
 		return true;
 	}

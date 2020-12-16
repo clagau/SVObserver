@@ -14,7 +14,6 @@
 #include "Definitions/ObjectDefines.h"
 #include "Definitions/StringTypeDef.h"
 #include "ObjectInterfaces/IObjectClass.h"
-#include "SVObjectLibrary/SVInObjectInfoStruct.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
@@ -216,16 +215,13 @@ namespace SvVol
 		return Result;
 	}
 
-
-
-
-	bool LinkedValue::DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo)
+	void LinkedValue::disconnectObjectInput(uint32_t objectId)
 	{
-		if (nullptr != pObjectInInfo && pObjectInInfo->GetInputObjectInfo().getObject() == m_LinkedObjectRef.getObject())
+		if (m_LinkedObjectRef.getObjectId() == objectId)
 		{
 			DisconnectInput();
+			__super::disconnectObjectInput(objectId);
 		}
-		return __super::DisconnectObjectInput(pObjectInInfo);
 	}
 
 	void LinkedValue::UpdateLinkedName()
@@ -405,6 +401,12 @@ namespace SvVol
 		}
 		return Result;
 	}
+
+	void LinkedValue::disconnectAllInputs()
+	{ 
+		DisconnectInput(); 
+		__super::disconnectAllInputs();
+	}
 #pragma endregion Protected Methods
 
 #pragma region Private Methods
@@ -551,25 +553,19 @@ namespace SvVol
 	{
 		if (nullptr != m_LinkedObjectRef.getObject())
 		{
-			SvOl::SVInObjectInfoStruct InputConnectionInfo;
-			InputConnectionInfo.SetInputObject(m_LinkedObjectRef.getObject());
-			InputConnectionInfo.SetObject(this);
-			m_LinkedObjectRef.getObject()->DisconnectObjectInput(&InputConnectionInfo);
+			m_LinkedObjectRef.getObject()->disconnectObject(getObjectId());
 			m_LinkedObjectRef = SVObjectReference();
 		}
 	}
 
 	bool LinkedValue::ConnectInput()
 	{
-		bool Result = false;
-		SvOl::SVInObjectInfoStruct InputConnectionInfo;
-		InputConnectionInfo.SetInputObject(m_LinkedObjectRef.getObject());
-		InputConnectionInfo.SetObject(this);
 		if (nullptr != m_LinkedObjectRef.getObject())
 		{
-			Result = m_LinkedObjectRef.getObject()->ConnectObjectInput(&InputConnectionInfo);
+			m_LinkedObjectRef.getObject()->connectObject(getObjectId());
+			return true;
 		}
-		return Result;
+		return false;
 	}
 
 	bool LinkedValue::ResetObject(SvStl::MessageContainerVector *pErrorMessages)

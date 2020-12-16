@@ -58,9 +58,6 @@ private:
 	/// Initialized the class.
 	void	LocalInitialize();
 
-	/// Build the input object list for this tool.
-	void	BuildInputObjectList();
-
 	/// Build the embedded object list for this tool.
 	void	BuildEmbeddedObjectList();
 #pragma endregion Private Methods

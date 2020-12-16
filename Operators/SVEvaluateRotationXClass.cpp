@@ -27,9 +27,6 @@ SVEvaluateRotationXClass::SVEvaluateRotationXClass( SVObjectClass* POwner, int S
 
 	// Set Embedded defaults
 	m_outputMathResult.SetDefaultValue( 0.0, true );
-
-	// Add Default Inputs and Outputs
-	addDefaultInputObjects();
 }
 
 SVEvaluateRotationXClass::~SVEvaluateRotationXClass()

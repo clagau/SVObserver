@@ -34,9 +34,6 @@ SVEvaluateStartRadiusClass::SVEvaluateStartRadiusClass( SVObjectClass* POwner, i
 
 	// Set Embedded defaults
 	m_outputMathResult.SetDefaultValue( 0.0, true );
-
-	// Add Default Inputs and Outputs
-	addDefaultInputObjects();
 }
 
 SVEvaluateStartRadiusClass::~SVEvaluateStartRadiusClass()

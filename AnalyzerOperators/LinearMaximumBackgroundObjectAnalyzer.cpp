@@ -100,9 +100,6 @@ void LinearMaximumBackgroundObjectAnalyzer::init()
 	mdWidth.SetDefaultValue( 0.0, true );
 	mdWidth.setSaveValueFlag(false);
 
-	// Set default inputs and outputs
-	addDefaultInputObjects();
-	
 	// Add the Sub-pixel EdgeA X and Y Results...
 	addDPointResultToAvailableChildren(SvPb::DPEdgeAEId, IDS_OBJECTNAME_DPEDGE_A);
 

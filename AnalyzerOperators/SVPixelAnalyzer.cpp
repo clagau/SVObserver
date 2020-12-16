@@ -60,9 +60,6 @@ void SVPixelAnalyzer::init()
 	m_pixelCount. SetDefaultValue( 0, true );
 	m_pixelCount.setSaveValueFlag(false);
 
-	// Set default inputs and outputs
-	addDefaultInputObjects();
-
 	// Instantiate Children
 	SvOp::SVLongResult* pAnalyzerResult = new SvOp::SVLongResult(this, IDS_CLASSNAME_SVPIXELANALYZERESULT);
 

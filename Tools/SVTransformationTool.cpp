@@ -76,10 +76,6 @@ void SVTransformationToolClass::init()
 	if( pTransform ) Add( pTransform );
 
 	removeEmbeddedExtents();
-
-	// Set default inputs and outputs
-	addDefaultInputObjects();
-	
 }
 
 //******************************************************************************

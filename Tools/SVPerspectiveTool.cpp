@@ -53,7 +53,7 @@ bool SVPerspectiveToolClass::CreateObject( const SVObjectLevelCreateStruct& rCre
 {
 	bool l_bOk = SVToolClass::CreateObject(rCreateStructure);
 
-	l_bOk &= ( S_OK == m_OutputImage.InitializeImage(SvOl::getInput<SvIe::SVImageClass>(m_InputImageObjectInfo)));
+	l_bOk &= ( S_OK == m_OutputImage.InitializeImage(m_InputImage.getInput<SvIe::SVImageClass>()));
 
 	m_SourceImageNames.setSaveValueFlag(false);
 	m_SourceImageNames.SetObjectAttributesAllowed( SvPb::remotelySetable | SvPb::setableOnline, SvOi::SetAttributeType::RemoveAttribute );
@@ -72,7 +72,7 @@ bool SVPerspectiveToolClass::CloseObject()
 
 HRESULT SVPerspectiveToolClass::UpdateOutputImageExtents()
 {
-	SvIe::SVImageClass* pInputImage = SvOl::getInput<SvIe::SVImageClass>(m_InputImageObjectInfo);
+	SvIe::SVImageClass* pInputImage = m_InputImage.getInput<SvIe::SVImageClass>();
 	// Get Input Width and Height put in output Image Extent.
 	const SVImageExtentClass& rInputExtents = (nullptr != pInputImage) ? pInputImage->GetImageExtents() : SVImageExtentClass();
 	SVImageExtentClass OutputExtents = m_OutputImage.GetImageExtents();
@@ -222,7 +222,7 @@ bool SVPerspectiveToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 
 	bool Result = SVToolClass::ResetObject(pErrorMessages);
 	
-	SvOl::ValidateInput(m_InputImageObjectInfo);
+	m_InputImage.validateInput();
 
 	// Now the input image is valid!
 	if( m_OutputImage.ResetObject(pErrorMessages) )
@@ -242,7 +242,7 @@ bool SVPerspectiveToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 		Result = false;
 	}
 
-	SvIe::SVImageClass *pInputImage = SvOl::getInput<SvIe::SVImageClass>(m_InputImageObjectInfo);
+	SvIe::SVImageClass *pInputImage = m_InputImage.getInput<SvIe::SVImageClass>();
 
 	if (nullptr != pInputImage)
 	{
@@ -283,7 +283,7 @@ bool SVPerspectiveToolClass::isInputImage(uint32_t imageId) const
 {
 	bool Result(false);
 
-	SvIe::SVImageClass *pInputImage = SvOl::getInput<SvIe::SVImageClass>(m_InputImageObjectInfo);
+	SvIe::SVImageClass *pInputImage = m_InputImage.getInput<SvIe::SVImageClass>();
 	if ( nullptr != pInputImage && imageId == pInputImage->getObjectId() )
 	{
 		Result = true;
@@ -299,7 +299,7 @@ bool SVPerspectiveToolClass::onRun( RunStatus &p_rRunStatus, SvStl::MessageConta
 
 	if ( l_bOk )
 	{
-		SvIe::SVImageClass *pInputImage = SvOl::getInput<SvIe::SVImageClass>(m_InputImageObjectInfo, true);
+		SvIe::SVImageClass *pInputImage = m_InputImage.getInput<SvIe::SVImageClass>(true);
 
 		if ( nullptr != pInputImage )
 		{
@@ -342,9 +342,8 @@ void SVPerspectiveToolClass::LocalInitialize()
 	m_outObjectInfo.m_ObjectTypeInfo.m_SubType    = SvPb::SVPerspectiveToolObjectType;
 
 	// Identify our input image...
-	m_InputImageObjectInfo.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
-	m_InputImageObjectInfo.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_InputImageObjectInfo, _T( "PerspectiveToolImage" ) );
+	m_InputImage.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
+	registerInputObject( &m_InputImage, SvDef::SourceImageInputName, SvPb::ImageInputEId);
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( &m_OutputImage, SvPb::OutputImageEId, IDS_OBJECTNAME_IMAGE1 );
@@ -390,13 +389,6 @@ void SVPerspectiveToolClass::LocalInitialize()
 	m_svInterpolationMode.SetEnumTypes( EnumTypes.c_str() );
 	m_svInterpolationMode.SetDefaultValue( SVNearestNeighbor );	// Refer to MIL...
 	RegisterEmbeddedObject( &m_svInterpolationMode, SvPb::OutputInterpolationModeEId, IDS_OBJECTNAME_INTERPOLATION_MODE, false, SvOi::SVResetItemNone );
-
-	// Initialize MIL Look up tables.
-
-	// Add Default Inputs and Outputs
-	addDefaultInputObjects();
-
-
 }
 
 HRESULT SVPerspectiveToolClass::CreateLUT()
@@ -407,7 +399,7 @@ HRESULT SVPerspectiveToolClass::CreateLUT()
 	
 	long l_lWidth = 100;
 	long l_lHeight = 100;
-	if ( nullptr != SvOl::getInput<SvIe::SVImageClass>(m_InputImageObjectInfo))
+	if (nullptr != m_InputImage.getInput<SvIe::SVImageClass>())
 	{
 		GetImageExtent().GetExtentProperty( SvPb::SVExtentPropertyOutputWidth , l_lWidth );
 		GetImageExtent().GetExtentProperty( SvPb::SVExtentPropertyOutputHeight, l_lHeight );

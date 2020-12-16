@@ -103,10 +103,6 @@ void SVLuminanceAnalyzer::init()
 	msvStdDevValue.SetDefaultValue (0, TRUE);
 	msvStdDevValue.setSaveValueFlag(false);
 
-	// Set default inputs and outputs
-	addDefaultInputObjects();
-
-
 	// Set Local
 
 	SvOp::SVLongResult* pAnalyzerResult = new SvOp::SVLongResult(this, IDS_CLASSNAME_SVLUMINANCEANALYZERESULT);

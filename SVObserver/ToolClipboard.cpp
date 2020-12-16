@@ -322,25 +322,24 @@ void ToolClipboard::writeSourceIds(SvOi::IObjectWriter& rWriter, SvTo::SVToolCla
 	rWriter.WriteAttribute(SvXml::FullToolNameTag, Value);
 
 	std::set<uint32_t> imageIdVector;
-	SvOl::SVInObjectInfoStruct* pImageInfo = nullptr;
-	SvOl::SVInObjectInfoStruct* pLastImageInfo = nullptr;
-	while( nullptr == pImageInfo && S_OK ==  rTool.FindNextInputImageInfo( pImageInfo, pLastImageInfo ) )
+
+	std::vector<SvOl::InputObject*> inputList;
+	rTool.getInputs(std::back_inserter(inputList));
+	for (const auto* pInput : inputList)
 	{
-		if( nullptr != pImageInfo )
+		if (nullptr != pInput && SvPb::SVImageObjectType == pInput->GetInputObjectInfo().m_ObjectTypeInfo.m_ObjectType && SvPb::noAttributes != pInput->ObjectAttributesAllowed()) 
 		{
-			SVObjectClass* pImage = pImageInfo->GetInputObjectInfo().getFinalObject();
-			if( pImageInfo->IsConnected() && nullptr !=  pImage)
+			SVObjectClass* pImage = pInput->GetInputObjectInfo().getFinalObject();
+			if(pInput->IsConnected() && nullptr !=  pImage)
 			{
 				SVObjectClass* pTool = pImage->GetAncestor(SvPb::SVObjectTypeEnum::SVToolObjectType, true);
 				//Add input image only if not from the tool being copied
 				if(nullptr == pTool || pTool->getObjectId() != rTool.getObjectId())
 				{
-					imageIdVector.insert(pImageInfo->GetInputObjectInfo().getObjectId());
+					imageIdVector.insert(pInput->GetInputObjectInfo().getObjectId());
 				}
 			}
 		}
-		pLastImageInfo = pImageInfo;
-		pImageInfo = nullptr;
 	}
 
 	int imageIndex {0};
@@ -612,7 +611,7 @@ HRESULT ToolClipboard::validateIds(std::string& rXmlData, uint32_t postId, uint3
 			e.Throw();
 		}
 		//Only color tools are allowed to be the first tool in a color system
-		else if (SvPb::ColorToolClassId != toolClassId && isColorCamera && ((nullptr != pPostTool && pPostTool->getToolPosition() == 1) || (nullptr != pToolSet && 0 == pToolSet->GetSize())))
+		else if (SvPb::ColorToolClassId != toolClassId && isColorCamera && ((nullptr != pPostTool && pPostTool->getToolPosition() == 1) || (0 == pToolSet->GetSize())))
 		{
 			result = E_FAIL;
 			SvStl::MessageManager e(SvStl::MsgType::Data);

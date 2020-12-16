@@ -58,9 +58,6 @@ void SVAutoThresholdEquation::init()
 	// Set Embedded defaults
 	result.SetDefaultValue( 0.0 );
 	result.setSaveValueFlag(false);
-
-	// Set default inputs and outputs
-	addDefaultInputObjects();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

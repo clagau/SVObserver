@@ -9,6 +9,7 @@
 
 #pragma region Includes
 #include "BlobReconstructBasicFilter.h"
+#include "SVObjectLibrary/InputObject.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -30,5 +31,5 @@ protected:
 private:
 	void init();
 
-	SvOl::SVInObjectInfoStruct m_SeedImageInfo;
+	SvOl::InputObject m_SeedImageInput;
 };

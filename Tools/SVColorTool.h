@@ -13,9 +13,11 @@
 #pragma region Includes
 #include "InspectionEngine/SVImageClass.h"
 #include "SVTool.h"
+#include "SVObjectLibrary/InputObject.h"
 #include "SVValueObjectLibrary/SVStringValueObjectClass.h"
 #include "Definitions/BandEnums.h"
 #pragma endregion Includes
+
 
 namespace SvTo
 {
@@ -85,7 +87,7 @@ private:
 	// String value object for Source Image Names
 	SvVol::SVStringValueObjectClass m_SourceImageNames;
 
-	SvOl::SVInObjectInfoStruct m_InputImageObjectInfo;
+	SvOl::InputObject m_InputImage;
 
 	bool m_ConvertTool;
 #pragma endregion Member Variables

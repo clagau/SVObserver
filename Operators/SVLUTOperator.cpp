@@ -107,11 +107,8 @@ void SVLUTOperator::init()
 
 	// input of lut equation...
 	m_inputLUTVectorResult.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVByteValueObjectType, SvPb::LUTEquationResultEId);
-	m_inputLUTVectorResult.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_inputLUTVectorResult, _T( "LUTOperator" ) );
-	m_inputLUTVectorResult.setReportAndCopyFlag(false);
-
-	addDefaultInputObjects();
+	registerInputObject( &m_inputLUTVectorResult, _T( "LUTOperator" ), SvPb::LUTOperatorInputEId);
+	m_inputLUTVectorResult.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
 
 	m_bForceLUTRecalc = true;
 }
@@ -153,7 +150,7 @@ bool SVLUTOperator::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = SVUnaryImageOperatorClass::ResetObject(pErrorMessages);
 
-	SvOl::ValidateInput(m_inputLUTVectorResult);
+	m_inputLUTVectorResult.validateInput();
 
 	m_bForceLUTRecalc = m_bForceLUTRecalc || Result;
 
@@ -324,7 +321,7 @@ bool SVLUTOperator::RecalcLUT( RunStatus& rRunStatus )
 
 				// Get LUT Vector from equation and stick it inside m_lutVector...
 				std::vector<BYTE> byteVector;
-				SvVol::SVByteValueObjectClass* pLUTResult = SvOl::getInput<SvVol::SVByteValueObjectClass>(m_inputLUTVectorResult, true);
+				SvVol::SVByteValueObjectClass* pLUTResult = m_inputLUTVectorResult.getInput<SvVol::SVByteValueObjectClass>(true);
 
 				l_bOk = l_bOk && nullptr != pLUTResult;
 				l_bOk = l_bOk && S_OK == pLUTResult->GetArrayValues(byteVector);

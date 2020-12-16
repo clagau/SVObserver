@@ -42,9 +42,6 @@ private:
 
 	/// Build the embedded object list for this task.
 	void	BuildEmbeddedObjectList();
-
-	/// Build the input object list for this task.
-	void BuildInputObjectList ();
 #pragma endregion Private Methods
 
 #pragma region Member Variables

@@ -62,8 +62,6 @@ void SVLoadImageToolClass::init()
 	// Set Translation
 	m_toolExtent.SetTranslation(SvPb::SVExtentTranslationFigureShift);
 	SvOp::ToolSizeAdjustTask::AddToFriendlist(this, true, true, false);
-	// Set default inputs and outputs
-	addDefaultInputObjects();
 }
 
 SVLoadImageToolClass::~SVLoadImageToolClass()

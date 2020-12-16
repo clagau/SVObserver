@@ -238,7 +238,7 @@ bool SVChildrenSetupDialog::CreateSelectedResults(SvIe::SVClassInfoStruct& rChil
 		m_pParentObject->Add(pObject);
 
 		// Ensure this object's inputs get connected
-		pObject->ConnectAllInputs();
+		pObject->connectAllInputs();
 
 		// And finally try to create the child object...
 		if (!m_pParentObject->CreateChildObject(pObject, SvDef::SVMFSetDefaultInputs | SvDef::SVMFResetInspection))

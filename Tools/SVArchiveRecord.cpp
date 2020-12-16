@@ -135,69 +135,6 @@ HRESULT SVArchiveRecord::GetNextImageFilePath(std::string& rImageFile, bool useA
 	return S_OK;
 }
 
-void SVArchiveRecord::ConnectInputObject()
-{
-	if (SvDef::InvalidObjectId != m_svObjectReference.getObjectId())
-	{
-		//
-		// Get a pointer to the object based on the id.
-		//
-		SVObjectClass* pObject = nullptr;
-
-		try
-		{
-			pObject = SVObjectManagerClass::Instance().GetObject(m_svObjectReference.getObjectId());
-
-			if (nullptr != pObject)
-			{
-				if (nullptr == dynamic_cast<SvOi::IValueObject*> (pObject) &&
-					nullptr == dynamic_cast<SvIe::SVImageClass*>(pObject))
-				{
-					pObject = nullptr;
-				}
-			}
-		}
-		catch (...)
-		{
-			pObject = nullptr;
-		}
-
-		if (pObject != m_svObjectReference.getObject())
-		{
-			long lArrayIndex = m_svObjectReference.ArrayIndex();
-			m_svObjectReference = SVObjectReference{ pObject };
-			m_svObjectReference.SetArrayIndex(lArrayIndex);
-		}
-	}
-
-	if (SvDef::InvalidObjectId != m_svObjectReference.getObjectId())
-	{
-		assert(m_pArchiveTool);
-
-		SvOl::SVInObjectInfoStruct InObjectInfo;
-
-		InObjectInfo.SetObject(m_pArchiveTool);
-		InObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
-
-		bool rc = SVObjectManagerClass::Instance().ConnectObjectInput(m_svObjectReference.getObjectId(), &InObjectInfo);
-		assert(rc);
-		UNREFERENCED_PARAMETER(rc);
-	}
-}
-
-void SVArchiveRecord::DisconnectInputObject()
-{
-	if (SvDef::InvalidObjectId != m_svObjectReference.getObjectId())
-	{
-		SvOl::SVInObjectInfoStruct InObjectInfo;
-
-		InObjectInfo.SetObject(m_pArchiveTool);
-		InObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
-
-		SVObjectManagerClass::Instance().DisconnectObjectInput(m_svObjectReference.getObjectId(), &InObjectInfo);
-	}
-}
-
 HRESULT SVArchiveRecord::QueueImage(SvOi::ITRCImagePtr& rImage, const std::string& rFileName)
 {
 	assert(nullptr != rImage && !rImage->isEmpty());
@@ -369,7 +306,10 @@ HRESULT SVArchiveRecord::WriteImage(const SvOi::ITriggerRecordR* pTriggerRecord)
 void SVArchiveRecord::SetArchiveTool(SVArchiveTool* pTool)
 {
 	m_pArchiveTool = pTool;
-	m_eArchiveMethod = pTool->m_eArchiveMethod;
+	if (pTool)
+	{
+		m_eArchiveMethod = pTool->m_eArchiveMethod;
+	}
 }
 
 SvIe::SVImageClass* SVArchiveRecord::GetImage()

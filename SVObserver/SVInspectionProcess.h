@@ -224,8 +224,6 @@ public:
 	//************************************
 	void getToolMessages( SvStl::MessageContainerInserter& rInserter ) const;
 
-	virtual bool DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo) override;
-
 	/// sets the flag that forces the global extent data to update
 	void ForceOffsetUpdate() override { m_bForceOffsetUpdate = true; }
 	/// will global extent data be forced to update?
@@ -242,7 +240,9 @@ public:
 	bool DestroyChildObject(SVObjectClass* pChildcontext);
 	virtual SvOi::IObjectClass* getFirstObject(const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends = true, const SvOi::IObjectClass* pRequestor = nullptr) const override;
 	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName) override;
-	virtual bool ConnectAllInputs() override;
+	virtual void disconnectObjectInput(uint32_t objectId) override;
+	virtual bool connectAllInputs() override;
+	virtual void disconnectAllInputs() override;
 	virtual bool replaceObject(SVObjectClass* pObject, uint32_t newId) override;
 #pragma endregion Methods to replace processMessage
 

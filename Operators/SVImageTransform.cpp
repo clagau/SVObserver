@@ -45,9 +45,8 @@ SVImageTransform::SVImageTransform( SVObjectClass* POwner, int StringResourceID 
 
 	// Identify our input type needs...
 	// Image
-	m_inputImageObjectInfo.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
-	m_inputImageObjectInfo.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_inputImageObjectInfo, _T("ImageTransformImage") );
+	m_inputImage.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
+	registerInputObject( &m_inputImage, SvDef::SourceImageInputName, SvPb::ImageInputEId);
 
 	//Special type names for extents
 	m_extentWidth.SetTypeName( _T("Extent Width") );
@@ -99,9 +98,6 @@ SVImageTransform::SVImageTransform( SVObjectClass* POwner, int StringResourceID 
 	m_extentHeight.SetDefaultValue( SvDef::cDefaultWindowToolHeight );
 
 	m_outputImage.InitializeImage( SvPb::SVImageTypeEnum::SVImageTypePhysical );
-
-	// Add Default Inputs and Outputs
-	addDefaultInputObjects();
 }
 
 SVImageTransform::~SVImageTransform()
@@ -150,10 +146,10 @@ bool SVImageTransform::ResetObject( SvStl::MessageContainerVector *pErrorMessage
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 	
-	SvOl::ValidateInput(m_inputImageObjectInfo);
+	m_inputImage.validateInput();
 
 	//check if input image is from priory tool or tool set
-	SvIe::SVImageClass* pImage = SvOl::getInput<SvIe::SVImageClass>(m_inputImageObjectInfo);
+	SvIe::SVImageClass* pImage = m_inputImage.getInput<SvIe::SVImageClass>();
 	if (nullptr != pImage)
 	{
 		const SvOi::ITool* pSourceImageTool = dynamic_cast<const SvOi::ITool*>(pImage->GetTool());
@@ -163,7 +159,7 @@ bool SVImageTransform::ResetObject( SvStl::MessageContainerVector *pErrorMessage
 		{
 			if (pTool->getToolPosition() <= pSourceImageTool->getToolPosition())
 			{
-				m_inputImageObjectInfo.SetInputObject(nullptr);
+				m_inputImage.SetInputObject(nullptr);
 				pImage = nullptr;
 			}
 		}
@@ -210,7 +206,7 @@ bool SVImageTransform::isInputImage(uint32_t imageId) const
 {
 	bool Result(false);
 
-	SvIe::SVImageClass* pImage = SvOl::getInput<SvIe::SVImageClass>(m_inputImageObjectInfo);
+	SvIe::SVImageClass* pImage = m_inputImage.getInput<SvIe::SVImageClass>();
 	if (nullptr != pImage && imageId == pImage->getObjectId())
 	{
 		Result = true;
@@ -235,7 +231,7 @@ bool SVImageTransform::onRun( RunStatus& runStatus, SvStl::MessageContainerVecto
 	double dstX = 0.0;
 	double dstY = 0.0;
 
-	SvIe::SVImageClass* pInputImage = SvOl::getInput<SvIe::SVImageClass>(m_inputImageObjectInfo, true);
+	SvIe::SVImageClass* pInputImage = m_inputImage.getInput<SvIe::SVImageClass>(true);
 
 	if ( nullptr == pInputImage )
 	{
@@ -388,18 +384,18 @@ HRESULT SVImageTransform::UpdateTransformData( )
 {
 	HRESULT l_hrOk = S_OK;
 
-	SvIe::SVImageClass* pInputImage = SvOl::getInput<SvIe::SVImageClass>(m_inputImageObjectInfo, true);
+	SvIe::SVImageClass* pInputImage = m_inputImage.getInput<SvIe::SVImageClass>(true);
 	SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*>(GetTool());
 
 	if( nullptr != pInputImage && nullptr != pTool )
 	{
 		POINT UseExtentsOnlyPoint{0L, 0L};
 
-		SvVol::SVDoubleValueObjectClass* pTranslationXResult = SvOl::getInput<SvVol::SVDoubleValueObjectClass>(m_inputTranslationXResult, true);
-		SvVol::SVDoubleValueObjectClass* pTranslationYResult = SvOl::getInput<SvVol::SVDoubleValueObjectClass>(m_inputTranslationYResult, true);
-		SvVol::SVDoubleValueObjectClass* pRotationXResult = SvOl::getInput<SvVol::SVDoubleValueObjectClass>(m_inputRotationXResult, true);
-		SvVol::SVDoubleValueObjectClass* pRotationYResult = SvOl::getInput<SvVol::SVDoubleValueObjectClass>(m_inputRotationYResult, true);
-		SvVol::SVDoubleValueObjectClass* pRotationAngleResult = SvOl::getInput<SvVol::SVDoubleValueObjectClass>(m_inputRotationAngleResult, true);
+		SvVol::SVDoubleValueObjectClass* pTranslationXResult = m_inputTranslationXResult.getInput<SvVol::SVDoubleValueObjectClass>(true);
+		SvVol::SVDoubleValueObjectClass* pTranslationYResult = m_inputTranslationYResult.getInput<SvVol::SVDoubleValueObjectClass>(true);
+		SvVol::SVDoubleValueObjectClass* pRotationXResult = m_inputRotationXResult.getInput<SvVol::SVDoubleValueObjectClass>(true);
+		SvVol::SVDoubleValueObjectClass* pRotationYResult = m_inputRotationYResult.getInput<SvVol::SVDoubleValueObjectClass>(true);
+		SvVol::SVDoubleValueObjectClass* pRotationAngleResult = m_inputRotationAngleResult.getInput<SvVol::SVDoubleValueObjectClass>(true);
 
 		BOOL bTranslationEnabled( false );
 		BOOL bRotationEnabled( false );
@@ -528,7 +524,7 @@ HRESULT SVImageTransform::UpdateTransformData( )
 HRESULT SVImageTransform::CollectInputImageNames()
 {
 	HRESULT l_hr = S_FALSE;
-	SvIe::SVImageClass* pInputImage = SvOl::getInput<SvIe::SVImageClass>(m_inputImageObjectInfo);
+	SvIe::SVImageClass* pInputImage = m_inputImage.getInput<SvIe::SVImageClass>();
 	SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (GetTool());
 	if( nullptr != pInputImage && nullptr != pTool && nullptr != pTool->GetInputImageNames())
 	{

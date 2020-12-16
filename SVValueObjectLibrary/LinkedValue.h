@@ -14,11 +14,6 @@
 #include "SVObjectLibrary\SVObjectReference.h"
 #pragma endregion Includes
 
-namespace SvOl
-{
-struct SVInObjectInfoStruct;
-}
-
 namespace SvVol
 {
 
@@ -53,9 +48,6 @@ public:
 	virtual HRESULT setValue(const std::string& rValueString, int Index = -1) override;
 
 	virtual void updateMemBlockData() override;
-
-	virtual bool DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo ) override;
-
 	
 	void UpdateLinkedName();
 
@@ -79,6 +71,8 @@ public:
 	virtual bool isCorrectType(SvPb::ObjectSelectorType requiredType, const SVObjectClass* pTestObject = nullptr) const;
 	virtual const SvOi::IObjectClass* getLinkedObject() const override;
 
+	virtual void disconnectObjectInput(uint32_t objectId) override;
+	virtual void disconnectAllInputs() override;
 	/// Disconnected the input connection and set it to nullptr.
 	void DisconnectInput();
 

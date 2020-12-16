@@ -257,7 +257,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnSelchangeCurrentAnalyzer()
 
 				// Ensure this Object's inputs get connected
 				// Fix to ensure Friends get connections as well
-				m_pTool->ConnectAllInputs();
+				m_pTool->connectAllInputs();
 
 				// And last - Create (initialize) it
 

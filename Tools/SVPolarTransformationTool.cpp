@@ -101,9 +101,6 @@ void SVPolarTransformationToolClass::init()
 	{
 		Add( pTransform );
 	}
-
-	// Set default inputs and outputs
-	addDefaultInputObjects();
 }
 
 //******************************************************************************

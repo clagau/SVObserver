@@ -391,8 +391,6 @@ void SVHistogramAnalyzer::init()
 		msvAccumulateCounts.SetDefaultValue( BOOL(false), true);
 
 		m_histogramImage.InitializeImage(SvPb::SVImageTypeEnum::SVImageTypeIndependent);
-		// Set default inputs and outputs
-		addDefaultInputObjects();
 
 		m_rangeStart = 0;
 		m_rangeEnd = 255;

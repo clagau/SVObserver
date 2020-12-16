@@ -13,6 +13,7 @@
 
 #pragma region Includes
 #include "InspectionEngine/SVTaskObject.h"
+#include "SVObjectLibrary/InputObject.h"
 #pragma endregion Includes
 
 namespace SvOp
@@ -31,7 +32,7 @@ public:
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 protected:
-	SvOl::SVInObjectInfoStruct		m_inputMathResult;
+	SvOl::InputObject		m_inputMathResult;
 };
 
 } //namespace SvOp

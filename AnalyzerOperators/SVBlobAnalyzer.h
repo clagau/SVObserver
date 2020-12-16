@@ -188,9 +188,6 @@ protected:
 
 	void MapQuickSort (double* aSortArray, long* alSortMap, long alBeginning, long alEnd, bool abAscending);
 
-
-	virtual void addDefaultInputObjects( SvOl::SVInputInfoListClass* PInputListToFill = nullptr ) override;
-
 private:
 	void init();
 	void CreateArray();

@@ -104,7 +104,6 @@ void TableLimitAnalyzer::Initialize()
 	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::TableAnalyzerType;
 	m_outObjectInfo.m_ObjectTypeInfo.m_SubType    = SvPb::TableAnalyzerLimitType;
 
-	BuildInputObjectList();
 	BuildEmbeddedObjectList();
 }
 
@@ -122,11 +121,6 @@ void TableLimitAnalyzer::BuildEmbeddedObjectList()
 	ObjectName +=  SvDef::cLinkName;
 	RegisterEmbeddedObject( &m_LimitValue.getLinkedName(), SvPb::TableAnaylzerLimitValue_LinkEId, ObjectName.c_str(), false, SvOi::SVResetItemNone );
 	m_LimitValue.getLinkedName().SetDefaultValue( _T(""), false );
-}
-
-void TableLimitAnalyzer::BuildInputObjectList()
-{
-	addDefaultInputObjects();
 }
 #pragma endregion Private Methods
 

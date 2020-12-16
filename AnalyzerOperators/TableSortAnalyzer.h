@@ -9,6 +9,7 @@
 
 #pragma region Includes
 #include "InspectionEngine/SVTaskObject.h"
+#include "SVObjectLibrary/InputObject.h"
 #include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
 #pragma endregion Includes
 
@@ -54,7 +55,7 @@ private:
 
 #pragma region Member Variables
 protected:
-	SvOl::SVInObjectInfoStruct m_sortColumnObjectInfo;
+	SvOl::InputObject m_sortColumnInput;
 	SvVol::SVBoolValueObjectClass m_isASC;
 	std::shared_ptr<double> m_tmpValues;
 	size_t m_tmpArraySize;

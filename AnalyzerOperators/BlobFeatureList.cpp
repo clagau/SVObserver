@@ -176,9 +176,6 @@ namespace SvAo
 	{
 		//Indentify our output type.
 		m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::BlobFeatureListObjectType;
-
-		// Set default inputs and outputs
-		addDefaultInputObjects();
 	}
 
 	/////////////////////////////////////////////////////////////////////////////

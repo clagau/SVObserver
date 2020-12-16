@@ -146,9 +146,6 @@ SVPatternAnalyzerClass::SVPatternAnalyzerClass(SVObjectClass* POwner, int String
 	msv_lpatNumFoundOccurances.setSaveValueFlag(false);
 
 	CreateResult();
-	
-	// Set default inputs and outputs
-	addDefaultInputObjects();
 }
 
 SVPatternAnalyzerClass::~SVPatternAnalyzerClass()
@@ -707,7 +704,7 @@ bool SVPatternAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCrea
 		// Ensure this Object's inputs get connected
 		if (nullptr != pResult)
 		{
-			pResult->ConnectAllInputs();
+			pResult->connectAllInputs();
 		}
 
 		CreateChildObject(pResult);
@@ -932,7 +929,9 @@ void SVPatternAnalyzerClass::addParameterForMonitorList(SvStl::MessageContainerV
 	inserter = SvOi::ParameterPairForML(msv_dpatResultX.GetCompleteName(), msv_dpatResultX.getObjectId());
 	// cppcheck-suppress redundantAssignment symbolName=inserter ; cppCheck doesn't know back_insert_iterator
 	inserter = SvOi::ParameterPairForML(msv_dpatResultY.GetCompleteName(), msv_dpatResultY.getObjectId());
+	// cppcheck-suppress redundantAssignment symbolName=inserter ; cppCheck doesn't know back_insert_iterator
 	inserter = SvOi::ParameterPairForML(msv_dpatResultAngle.GetCompleteName(), msv_dpatResultAngle.getObjectId());
+	// cppcheck-suppress redundantAssignment symbolName=inserter ; cppCheck doesn't know back_insert_iterator
 	inserter = SvOi::ParameterPairForML(msv_dpatResultMatchScore.GetCompleteName(), msv_dpatResultMatchScore.getObjectId());
 	// cppcheck-suppress unreadVariable symbolName=inserter ; cppCheck doesn't know back_insert_iterator
 	// cppcheck-suppress redundantAssignment symbolName=inserter ; cppCheck doesn't know back_insert_iterator

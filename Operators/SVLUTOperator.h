@@ -14,6 +14,7 @@
 #include "SVUnaryImageOperatorClass.h"
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
+#include "SVObjectLibrary/InputObject.h"
 #include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
 #include "SVValueObjectLibrary/SVByteValueObjectClass.h"
 #include "SVValueObjectLibrary/SVEnumerateValueObjectClass.h"
@@ -82,7 +83,7 @@ protected:
 
 	// LUT Vector Input, calculated by LUTEquation.
 	//	( SVByteVectorObjectClass )
-	SvOl::SVInObjectInfoStruct	 m_inputLUTVectorResult;
+	SvOl::InputObject	 m_inputLUTVectorResult;
 
 	bool m_bForceLUTRecalc;
 };

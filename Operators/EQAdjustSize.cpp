@@ -56,8 +56,6 @@ void EQAdjustSize::Init()
 	constexpr double DefaultValue = 100.0;
 	m_result.SetDefaultValue( DefaultValue );
 	m_result.setSaveValueFlag(false);
-	// Set default inputs and outputs
-	addDefaultInputObjects();
 }
 
 

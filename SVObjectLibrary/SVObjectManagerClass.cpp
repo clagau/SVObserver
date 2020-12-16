@@ -591,12 +591,7 @@ bool SVObjectManagerClass::ChangeUniqueObjectID(SVObjectClass* pObject, uint32_t
 	if (SvDef::InvalidObjectId != newId && CloseUniqueObjectID(pObject))
 	{
 		pObject->m_outObjectInfo.GetObjectReference().setObjectId(newId);
-		bool bRetVal = OpenUniqueObjectID(pObject);
-
-		// Change ObjectID setting in private input interface...
-		pObject->ResetPrivateInputInterface();
-
-		return bRetVal;
+		return OpenUniqueObjectID(pObject);
 	}
 	return false;
 }
@@ -702,6 +697,7 @@ void SVObjectManagerClass::getObjectsOfType(SVObjectPtrVectorInserter Inserter, 
 			{
 				if (pObject->GetObjectType() == ObjectType && pObject->GetObjectSubType() == ObjectSubType)
 				{
+					// cppcheck-suppress unreadVariable symbolName=Inserter ; cppCheck doesn't know inserter
 					Inserter = pObject;
 				}
 			}
@@ -709,6 +705,7 @@ void SVObjectManagerClass::getObjectsOfType(SVObjectPtrVectorInserter Inserter, 
 			{
 				if (pObject->GetObjectType() == ObjectType)
 				{
+					// cppcheck-suppress unreadVariable symbolName=Inserter ; cppCheck doesn't know inserter
 					Inserter = pObject;
 				}
 			}
@@ -1360,28 +1357,6 @@ SvOi::IObjectClass* SVObjectManagerClass::getFirstObject(uint32_t sourceId, cons
 		pRetObject = pSource->getFirstObject(rObjectTypeInfo);
 	}
 	return pRetObject;
-}
-
-bool SVObjectManagerClass::ConnectObjectInput(uint32_t sourceId, SvOl::SVInObjectInfoStruct* pObjectInInfo)
-{
-	bool Result = false;
-	SVObjectClass* pSource =GetObject(sourceId);
-	if (nullptr != pSource)
-	{
-		Result = pSource->ConnectObjectInput(pObjectInInfo);
-	}
-	return Result;
-}
-
-bool SVObjectManagerClass::DisconnectObjectInput(uint32_t sourceId, SvOl::SVInObjectInfoStruct* pObjectInInfo)
-{
-	bool Result = false;
-	SVObjectClass* pSource = GetObject(sourceId);
-	if (nullptr != pSource)
-	{
-		Result = pSource->DisconnectObjectInput(pObjectInInfo);
-	}
-	return Result;
 }
 
 void SVObjectManagerClass::listAllObjects()

@@ -63,10 +63,10 @@ bool TableExcludeAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMess
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 
-	SvOl::ValidateInput(m_excludeColumnObjectInfo);
+	m_excludeColumnInput.validateInput();
 
-	SVObjectClass* pObject = m_excludeColumnObjectInfo.GetInputObjectInfo().getObject();
-	if (!m_excludeColumnObjectInfo.IsConnected() || nullptr == dynamic_cast<SvVol::DoubleSortValueObject*> (pObject)
+	SvVol::DoubleSortValueObject* pObject = m_excludeColumnInput.getInput<SvVol::DoubleSortValueObject>();
+	if (nullptr == pObject
 		//check if column part of the right table object (The object must be from same tool as this analyzer.)
 		|| nullptr == pObject->GetParent() || pObject->GetParent()->GetParent() != m_ownerObjectInfo.getObject())
 	{
@@ -118,7 +118,7 @@ bool TableExcludeAnalyzer::onRun( RunStatus& rRunStatus, SvStl::MessageContainer
 		double excludeLow= static_cast<double> (TempValue);
 
 		SvTo::TableAnalyzerTool* pTool = dynamic_cast<SvTo::TableAnalyzerTool*>(m_ownerObjectInfo.getObject());
-		SvVol::DoubleSortValueObject* pColumnValues = dynamic_cast<SvVol::DoubleSortValueObject*>(m_excludeColumnObjectInfo.GetInputObjectInfo().getObject());
+		SvVol::DoubleSortValueObject* pColumnValues = m_excludeColumnInput.getInput<SvVol::DoubleSortValueObject>(true);
 		if (nullptr != pTool && nullptr != pColumnValues)
 		{
 			
@@ -196,11 +196,8 @@ void TableExcludeAnalyzer::BuildEmbeddedObjectList()
 void TableExcludeAnalyzer::BuildInputObjectList()
 {
 	// Source Table.
-	m_excludeColumnObjectInfo.SetInputObjectType(SvPb::SVValueObjectType, SvPb::DoubleSortValueObjectType);
-	m_excludeColumnObjectInfo.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_excludeColumnObjectInfo, SvDef::cInputTag_ExcludeColumn );
-
-	addDefaultInputObjects();
+	m_excludeColumnInput.SetInputObjectType(SvPb::SVValueObjectType, SvPb::DoubleSortValueObjectType);
+	registerInputObject( &m_excludeColumnInput, SvDef::cInputTag_ExcludeColumn, SvPb::ExcludeColumnInputEId);
 }
 #pragma endregion Private Methods
 

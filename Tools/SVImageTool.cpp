@@ -120,13 +120,10 @@ void SVImageToolClass::init()
 
 		// Ensure input image gets connected to preceeding image output 
 		// ( SVImageArithmetic image output !!! )
-		pOperatorList->ConnectAllInputs();
+		pOperatorList->connectAllInputs();
 	}
 
 	SvOp::ToolSizeAdjustTask::AddToFriendlist(this, true,true,false);
-
-	// Add Default Inputs and Outputs
-	addDefaultInputObjects();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

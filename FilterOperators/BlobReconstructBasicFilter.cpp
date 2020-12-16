@@ -54,10 +54,6 @@ void BlobReconstructBasicFilter::init()
 	const UINT cAttributes = SvPb::audittrail | SvPb::setableOnline | SvPb::remotelySetable;
 	m_blobColor.SetObjectAttributesAllowed(cAttributes, SvOi::SetAttributeType::AddAttribute);
 	m_isGrayOn.SetObjectAttributesAllowed(cAttributes, SvOi::SetAttributeType::AddAttribute);
-
-	// Set default inputs and outputs
-	addDefaultInputObjects();
-
 }
 
 bool BlobReconstructBasicFilter::onRun(bool, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)

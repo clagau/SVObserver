@@ -48,13 +48,6 @@ void SVOperator::init()
 
 	// Identify our output type
 	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVOperatorObjectType;
-
-	// Register Embedded Object(s)
-
-	// Set Embedded defaults
-
-	// Set default inputs and outputs
-	addDefaultInputObjects();
 }
 
 } //namespace SvOp

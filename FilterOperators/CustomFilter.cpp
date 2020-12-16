@@ -187,9 +187,6 @@ void CustomFilter::init()
 	m_bvoAbsoluteValue.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 	m_lvoTransformationFactor.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 
-	// Set default inputs and outputs
-	addDefaultInputObjects();
-
 	RebuildKernel();
 }
 ////////////////////////////////////////////////////////////////////////////////

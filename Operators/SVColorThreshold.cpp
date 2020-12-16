@@ -84,7 +84,7 @@ bool SVColorThreshold::ResetObject(SvStl::MessageContainerVector *pErrorMessages
 {
 	for (auto& rEntry : m_BandThreshold)
 	{
-		SvOl::ValidateInput(rEntry.m_InputImage);
+		rEntry.m_InputImage.validateInput();
 	}
 
 
@@ -326,21 +326,16 @@ void SVColorThreshold::LocalInitialize()
 
 	// Identify our input type needs...
 	m_BandThreshold[SvDef::BandEnum::Band0].m_InputImage.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType, SvPb::Band0ImageEId);
-	m_BandThreshold[SvDef::BandEnum::Band0].m_InputImage.SetObject(GetObjectInfo());
-	RegisterInputObject(&m_BandThreshold[SvDef::BandEnum::Band0].m_InputImage, _T("ColorThresholdBand0Image"));
-	m_BandThreshold[SvDef::BandEnum::Band0].m_InputImage.setReportAndCopyFlag(false);
+	registerInputObject(&m_BandThreshold[SvDef::BandEnum::Band0].m_InputImage, _T("ColorThresholdBand0Image"), SvPb::Band0ImageInputEId);
+	m_BandThreshold[SvDef::BandEnum::Band0].m_InputImage.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
 
 	m_BandThreshold[SvDef::BandEnum::Band1].m_InputImage.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType, SvPb::Band1ImageEId);
-	m_BandThreshold[SvDef::BandEnum::Band1].m_InputImage.SetObject(GetObjectInfo());
-	RegisterInputObject(&m_BandThreshold[SvDef::BandEnum::Band1].m_InputImage, _T("ColorThresholdBand1Image"));
-	m_BandThreshold[SvDef::BandEnum::Band1].m_InputImage.setReportAndCopyFlag(false);
+	registerInputObject(&m_BandThreshold[SvDef::BandEnum::Band1].m_InputImage, _T("ColorThresholdBand1Image"), SvPb::Band1ImageInputEId);
+	m_BandThreshold[SvDef::BandEnum::Band1].m_InputImage.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
 
 	m_BandThreshold[SvDef::BandEnum::Band2].m_InputImage.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType, SvPb::Band2ImageEId);
-	m_BandThreshold[SvDef::BandEnum::Band2].m_InputImage.SetObject(GetObjectInfo());
-	RegisterInputObject(&m_BandThreshold[SvDef::BandEnum::Band2].m_InputImage, _T("ColorThresholdBand2Image"));
-	m_BandThreshold[SvDef::BandEnum::Band2].m_InputImage.setReportAndCopyFlag(false);
-
-	addDefaultInputObjects();
+	registerInputObject(&m_BandThreshold[SvDef::BandEnum::Band2].m_InputImage, _T("ColorThresholdBand2Image"), SvPb::Band2ImageInputEId);
+	m_BandThreshold[SvDef::BandEnum::Band2].m_InputImage.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
 }
 
 bool SVColorThreshold::createImages()
@@ -441,7 +436,7 @@ bool SVColorThreshold::ValidateLocal() const
 
 SvIe::SVImageClass* SVColorThreshold::GetBandInputImage(SvDef::BandEnum Band, bool bRunMode /*= false*/)
 {
-	return SvOl::getInput<SvIe::SVImageClass>(m_BandThreshold[Band].m_InputImage, bRunMode);
+	return m_BandThreshold[Band].m_InputImage.getInput<SvIe::SVImageClass>(bRunMode);
 }
 #pragma endregion Private Methods
 

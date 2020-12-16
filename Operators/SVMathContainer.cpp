@@ -39,9 +39,8 @@ SVMathContainer::SVMathContainer( SVObjectClass* POwner, int StringResourceID )
 
 	// Input Math Result...
 	m_inputMathResult.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::MathEquationResultEId);
-	m_inputMathResult.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_inputMathResult, _T( "MathResult" ) );
-	m_inputMathResult.setReportAndCopyFlag(false);
+	registerInputObject( &m_inputMathResult, _T( "MathResult" ), SvPb::ResultInputEId);
+	m_inputMathResult.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
 
 	// Register Embedded Objects
 
@@ -50,9 +49,6 @@ SVMathContainer::SVMathContainer( SVObjectClass* POwner, int StringResourceID )
 	// Make a friend
 	SVMathEquation* pMathEquation = new SVMathEquation( this );
 	AddFriend( pMathEquation->getObjectId() );
-
-	// Add Default Inputs and Outputs
-	addDefaultInputObjects();
 }
 
 SVMathContainer::~SVMathContainer()
@@ -63,7 +59,7 @@ SVMathContainer::~SVMathContainer()
 bool SVMathContainer::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
 	m_isCreated = SVTaskObjectClass::CreateObject(rCreateStructure ) && nullptr != GetInspection() && 
-		nullptr != GetTool() && nullptr != SvOl::getInput<SvVol::SVDoubleValueObjectClass>(m_inputMathResult);
+		nullptr != GetTool() && nullptr != m_inputMathResult.getInput<SvVol::SVDoubleValueObjectClass>();
 	return m_isCreated;
 }
 
@@ -71,9 +67,9 @@ bool SVMathContainer::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 
-	SvOl::ValidateInput(m_inputMathResult);
+	m_inputMathResult.validateInput();
 
-	if( nullptr == SvOl::getInput<SvVol::SVDoubleValueObjectClass>(m_inputMathResult) )
+	if( nullptr == m_inputMathResult.getInput<SvVol::SVDoubleValueObjectClass>() )
 	{
 		if (nullptr != pErrorMessages)
 		{

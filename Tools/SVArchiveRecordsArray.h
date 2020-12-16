@@ -38,7 +38,7 @@ public:
 
 	HRESULT InitializeObjects(SvVol::SVStringValueObjectClass& svoObjects );	// use array capability of string vo
 
-	SvDef::StringVector RemoveDisconnectedObject(const SVObjectInfoStruct& p_rInfoObject);
+	SvDef::StringVector RemoveDisconnectedObject(uint32_t objectId);
 	void ValidateImageObjects();
 
 	HRESULT AllocateBuffers(long bufferNumber, BufferStructCountMap& rBufferMap, int toolPos);
@@ -48,7 +48,6 @@ public:
 
 	int ValidateResultsObjects();
 	std::string BuildResultsArchiveString();
-	void DisconnectAllResultObjects();
 
 	const std::vector <SVArchiveRecord>& getRecordVec() const;
 	int GetSize();

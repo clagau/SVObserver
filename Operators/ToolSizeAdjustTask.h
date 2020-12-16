@@ -10,6 +10,7 @@
 #include "Definitions/SVExtentEnums.h"
 #include "InspectionEngine/SVTaskObject.h"
 #include "ObjectInterfaces/IToolSizeAdjustTask.h"
+#include "SVObjectLibrary/InputObject.h"
 #include "SVValueObjectLibrary\SVEnumerateValueObjectClass.h"
 #pragma endregion Includes
 
@@ -113,12 +114,12 @@ public:
 protected:
 	//************************************
 	//! Add SVEquationObject to the Friendlist 
-	//! \param pInfo [in,out] inObjectinfostruct 
+	//! \param pInput [in,out] input object 
 	//! \param classId [in] ClassId of the SVEquationObject  
 	//! \param Name [in] InputObjectname
 	//! \returns bool true if sucessfull 
 	//************************************
-	bool AddEvaluationObject(SvOl::SVInObjectInfoStruct* pInfo, SvPb::ClassIdEnum classId, LPCTSTR Name);
+	bool AddEvaluationObject(SvOl::InputObject* pInput, SvPb::ClassIdEnum classId, LPCTSTR Name, SvPb::EmbeddedIdEnum embeddedId);
 	
 	//************************************
 	//! DoNothing in Run
@@ -149,7 +150,7 @@ public:
 
 protected:
 	SvVol::SVEnumerateValueObjectClass m_InputModes[static_cast<int>(SvDef::ToolSizeAdjustEnum::TSValuesCount)]; //< the four input modes None=0,Full Size,Formula
-	SvOl::SVInObjectInfoStruct m_InObjectInfoDResult[static_cast<int>(SvDef::ToolSizeAdjustEnum::TSValuesCount)]; //<The four inputs from the Equations 
+	SvOl::InputObject m_resultInput[static_cast<int>(SvDef::ToolSizeAdjustEnum::TSValuesCount)]; //<The four inputs from the Equations 
 	
 	bool m_AllowFullSize;
 	bool m_AllowAdjustSize;

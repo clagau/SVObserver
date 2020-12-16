@@ -13,6 +13,7 @@
 
 #pragma region Includes
 #include "SVFilterClass.h"
+#include "SVObjectLibrary/InputObject.h"
 #include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
 #include "SVValueObjectLibrary/SVLongValueObjectClass.h"
 #pragma endregion Includes
@@ -40,7 +41,7 @@ private:
 
 
 private:
-	SvOl::SVInObjectInfoStruct m_MarkerImageInfo;
+	SvOl::InputObject m_MarkerImageInput;
 	SvVol::SVBoolValueObjectClass m_bvoUseMarker;
 	SvVol::SVLongValueObjectClass m_lvoMinVariation;
 	SvVol::SVLongValueObjectClass m_lvoControlFlag;

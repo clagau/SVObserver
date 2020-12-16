@@ -85,8 +85,6 @@ SVLinearEdgeAProcessingClass::SVLinearEdgeAProcessingClass(SVObjectClass* POwner
 		SvPb::UpperThresholdMaxMinusPercentDiffEId, SvPb::UpperThresholdMaxMinusOffsetEId, SvPb::UpperThresholdMinPlusOffsetEId,
 		SvPb::LinearEdgesEId
 	};
-	// Set default inputs and outputs
-	addDefaultInputObjects();
 }
 
 SVLinearEdgeAProcessingClass::~SVLinearEdgeAProcessingClass()

@@ -192,18 +192,6 @@ public:
 	/// \returns IObjectClass* Pointer to the object, if not found nullptr.
 	SvOi::IObjectClass* getFirstObject(uint32_t sourceId, const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo) const;
 
-	/// Connect inputs to a object
-	/// \param rSourceId [in] reference to the source object ID
-	/// \param pObjectInInfo [in] object input info
-	/// \returns bool
-	bool ConnectObjectInput( uint32_t sourceId, SvOl::SVInObjectInfoStruct* pObjectInInfo );
-
-	/// Disconnect input from a object
-	/// \param rSourceId [in] reference to the source object ID
-	/// \param pObjectInInfo [in] object input info
-	/// \returns bool
-	bool DisconnectObjectInput( uint32_t sourceId, SvOl::SVInObjectInfoStruct* pObjectInInfo );
-
 	/// Used to output all objects listed in the object manager
 	void listAllObjects();
 

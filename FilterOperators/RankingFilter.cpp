@@ -171,9 +171,6 @@ void RankingFilter::init()
 	m_lvoRankingHeight.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 	m_lvoRankingRank.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 
-	// Set default inputs and outputs
-	addDefaultInputObjects();
-
 	RebuildRanking();
 }
 ////////////////////////////////////////////////////////////////////////////////

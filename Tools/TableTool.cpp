@@ -223,7 +223,6 @@ bool TableTool::ValidateLocal( SvStl::MessageContainerVector * pErrorMessages ) 
 
 void TableTool::LocalInitialize ()
 {
-	BuildInputObjectList ();
 	BuildEmbeddedObjectList ();
 
 	//Clear Condition Equation
@@ -242,12 +241,6 @@ void TableTool::LocalInitialize ()
 	// Hide and Remove Embedded Extents
 	removeEmbeddedExtents();
 }
-
-void TableTool::BuildInputObjectList ()
-{
-	addDefaultInputObjects();
-}
-
 
 void TableTool::BuildEmbeddedObjectList ()
 {

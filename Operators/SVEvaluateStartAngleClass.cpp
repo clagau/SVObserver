@@ -34,9 +34,6 @@ SVEvaluateStartAngleClass::SVEvaluateStartAngleClass( SVObjectClass* pOwner, int
 
 	// Set Embedded defaults
 	m_outputMathResult.SetDefaultValue( 0.0, true );
-
-	// Add Default Inputs and Outputs
-	addDefaultInputObjects();
 }
 
 SVEvaluateStartAngleClass::~SVEvaluateStartAngleClass()

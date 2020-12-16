@@ -66,7 +66,7 @@ public:
 
 	
 #pragma region Methods to replace processMessage
-	virtual bool DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo ) override;
+	virtual void disconnectObjectInput(uint32_t objectId) override;
 	virtual void goingOffline() override;
 	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName) override;
 #pragma endregion Methods to replace processMessage
@@ -164,6 +164,8 @@ private:
 	SvVol::SVStringValueObjectClass m_baseDirectoryname;
 	SvVol::SVStringValueObjectClass m_baseFilename;
 	SvVol::SVStringValueObjectClass m_centerFilename;
+
+	bool m_removeEntriesIfDisconnected = true;
 };
 
 } //namespace SvTo

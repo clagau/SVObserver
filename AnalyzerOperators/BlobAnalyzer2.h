@@ -78,7 +78,7 @@ private:
 	MIL_ID			m_ResultBufferID = M_NULL;
 
 	SvVol::SVBoolValueObjectClass       m_isGrayImageValue;
-	SvOl::SVInObjectInfoStruct m_grayImageInfo;
+	SvOl::InputObject m_grayImageInput;
 	SvVol::SVEnumerateValueObjectClass  m_colorBlobEnumValue;
 	SvVol::SVEnumerateValueObjectClass  m_connectivityEnumValue;
 

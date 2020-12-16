@@ -982,13 +982,12 @@ void SVConfigurationPrint::PrintInputOutputList( CDC* pDC, SVObjectClass* pObj, 
 	const auto& rInputList = pTaskObj->GetPrivateInputList();
 	if (0 < rInputList.size())
 	{
-		
 		for (auto* pInput : rInputList)
 		{
-			if (nullptr != pInput && pInput->IsConnected() && pInput->reportAndCopyFlag())
+			if (nullptr != pInput && pInput->IsConnected() && SvPb::noAttributes != pInput->ObjectAttributesAllowed())
 			{
 				ptCurPos.x = nIndentLevel * m_shortTabPixels;
-				PrintValueObject(pDC, ptCurPos, pInput->GetInputName().c_str(), pInput->GetInputObjectInfo().getObject()->GetObjectNameToObjectType().c_str());
+				PrintValueObject(pDC, ptCurPos, pInput->GetName(), pInput->GetInputObjectInfo().getObject()->GetObjectNameToObjectType().c_str());
 			}
 		}
 	}

@@ -70,24 +70,22 @@ ToolSizeAdjustTask::ToolSizeAdjustTask(bool AllowFullsize , bool AllowAdjustSize
 
 	//Add Evaluation Objects 
 	bool ok(false);
-	ok = AddEvaluationObject(&m_InObjectInfoDResult[SvDef::ToolSizeAdjustEnum::TSWidth], SvPb::EQAdjustSizeWidthClassId, _T("ToolSizeAdjustWidth"));
+	ok = AddEvaluationObject(&m_resultInput[SvDef::ToolSizeAdjustEnum::TSWidth], SvPb::EQAdjustSizeWidthClassId, _T("ToolSizeAdjustWidth"), SvPb::WidthInputEId);
 	assert(ok);
-	ok = AddEvaluationObject(&m_InObjectInfoDResult[SvDef::ToolSizeAdjustEnum::TSHeight], SvPb::EQAdjustSizeHeightClassId, _T("ToolSizeAdjustHeight"));
-	assert(ok);
-
-	ok = AddEvaluationObject(&m_InObjectInfoDResult[SvDef::ToolSizeAdjustEnum::TSPositionX], SvPb::EQAdjustSizePositionXClassId, _T("ToolSizeAdjustPositionX"));
-	assert(ok);
-	ok = AddEvaluationObject(&m_InObjectInfoDResult[SvDef::ToolSizeAdjustEnum::TSPositionY], SvPb::EQAdjustSizePositionYClassId,  _T("ToolSizeAdjustPositionY"));
+	ok = AddEvaluationObject(&m_resultInput[SvDef::ToolSizeAdjustEnum::TSHeight], SvPb::EQAdjustSizeHeightClassId, _T("ToolSizeAdjustHeight"), SvPb::HeightInputEId);
 	assert(ok);
 
-	addDefaultInputObjects();
+	ok = AddEvaluationObject(&m_resultInput[SvDef::ToolSizeAdjustEnum::TSPositionX], SvPb::EQAdjustSizePositionXClassId, _T("ToolSizeAdjustPositionX"), SvPb::PositionXInputEId);
+	assert(ok);
+	ok = AddEvaluationObject(&m_resultInput[SvDef::ToolSizeAdjustEnum::TSPositionY], SvPb::EQAdjustSizePositionYClassId,  _T("ToolSizeAdjustPositionY"), SvPb::PositionYInputEId);
+	assert(ok);
 }
 
 ToolSizeAdjustTask::~ToolSizeAdjustTask()
 {
 }
 
-bool ToolSizeAdjustTask::AddEvaluationObject(SvOl::SVInObjectInfoStruct* pInfo, SvPb::ClassIdEnum classId, LPCTSTR Name)
+bool ToolSizeAdjustTask::AddEvaluationObject(SvOl::InputObject* pInput, SvPb::ClassIdEnum classId, LPCTSTR Name, SvPb::EmbeddedIdEnum embeddedId)
 {
 	SVObjectClass* pObject(nullptr);
 	SVObjectManagerClass::Instance().ConstructObject( classId, pObject );
@@ -106,10 +104,9 @@ bool ToolSizeAdjustTask::AddEvaluationObject(SvOl::SVInObjectInfoStruct* pInfo, 
 		return false;
 	}
 
-	pInfo->SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, pAdjustSize->GetResultId());
-	pInfo->SetObject( GetObjectInfo() );
-	pInfo->setReportAndCopyFlag(false);
-	return RegisterInputObject( pInfo, Name );
+	pInput->SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, pAdjustSize->GetResultId());
+	pInput->SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
+	return registerInputObject(pInput, Name, embeddedId);
 }
 
 bool ToolSizeAdjustTask::onRun(RunStatus& , SvStl::MessageContainerVector*)
@@ -223,9 +220,9 @@ bool ToolSizeAdjustTask::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 
 	bool Result = SVTaskObjectClass::ResetObject(pErrorMessages);
 
-	for (auto rEntry : m_InObjectInfoDResult)
+	for (auto& rEntry : m_resultInput)
 	{
-		SvOl::ValidateInput(rEntry);
+		rEntry.validateInput();
 	}
 
 
@@ -431,13 +428,7 @@ SvOi::ITool* ToolSizeAdjustTask::getTool() const
 
 SvVol::SVDoubleValueObjectClass* ToolSizeAdjustTask::GetDResultObjects(SvDef::ToolSizeAdjustEnum val) const
 {
-	SvVol::SVDoubleValueObjectClass* pValue = nullptr;
-
-	if( m_InObjectInfoDResult[val].IsConnected() )
-	{
-		pValue = dynamic_cast<SvVol::SVDoubleValueObjectClass*> (m_InObjectInfoDResult[val].GetInputObjectInfo().getObject());
-	}
-	return pValue;
+	return m_resultInput[val].getInput<SvVol::SVDoubleValueObjectClass>();
 }
 
 HRESULT ToolSizeAdjustTask::SetExtendPropertyAutoReset()
@@ -551,7 +542,7 @@ HRESULT ToolSizeAdjustTask::EnsureInFriendList(SvTo::SVToolClass* pTool, bool Al
 		pToolSizeAdjustTask = AddToFriendlist(pTool, AllowFullsize, AllowAdjustSize, AllowAdjustPosition );
 		if (nullptr != pToolSizeAdjustTask)
 		{
-			pTool->ConnectAllInputs();
+			pTool->connectAllInputs();
 			pTool->CreateChildObject(pToolSizeAdjustTask);
 		}
 	}

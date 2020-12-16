@@ -66,9 +66,6 @@ void LinearEdgePositionAnalyzer::init()
 
 	// Add the Linear Distance (EdgeA) Result...
 	addScalarResultToAvailableChildren(SvPb::LinearDistanceEdgeAEId, SvPb::SVResultDoubleObjectType, IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_A, IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_A_RESULT);
-
-	// Set default inputs and outputs
-	addDefaultInputObjects();
 }
 
 LinearEdgePositionAnalyzer::~LinearEdgePositionAnalyzer()

@@ -25,15 +25,11 @@
 #include "ObjectInterfaces/ITriggerRecordRW.h"
 #pragma endregion Includes
 
+
 #pragma region Declarations
 namespace SvOi
 {
 class IObjectWriter;
-}
-namespace SvOl
-{
-struct SVInObjectInfoStruct;
-class SVInputInfoListClass;
 }
 struct SVObjectLevelCreateStruct;
 struct SVObjectNameInfo;
@@ -70,8 +66,6 @@ public:
 	*/
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr);
 
-	virtual void ResetPrivateInputInterface();
-
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure );
 	virtual void ConnectObject( const SVObjectLevelCreateStruct& rCreateStructure );
 	virtual bool CloseObject();
@@ -88,13 +82,13 @@ public:
 
 	virtual HRESULT GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index = 0 ) const;
 
-	virtual HRESULT ResetObjectInputs();
-
 	virtual HRESULT RefreshObject( const SVObjectClass* const pSender, RefreshObjectType Type );
 
-	virtual bool ConnectAllInputs() { return false; };
-	bool ConnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo );
-	virtual bool DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo );
+	virtual bool connectAllInputs() { return false; };
+	void connectObject(uint32_t objectId);
+	void disconnectObject(uint32_t objectId);
+	virtual void disconnectObjectInput(uint32_t objectId);
+	virtual void disconnectAllInputs();
 
 	virtual bool isInputImage(uint32_t ) const { return false; };
 
@@ -180,10 +174,7 @@ public:
 	/// \returns SVObjectClass* Pointer to the overwritten object, nullptr if not found.
 	virtual SVObjectClass* OverwriteEmbeddedObject(uint32_t uniqueID, SvPb::EmbeddedIdEnum embeddedID);
 
-	/// Get the input list combined also from children and if required from friends.
-	/// \param inputList [in,out] Add the new input object to the end of the list.
-	/// \param bAlsoFriends [in] If true, it adds also the inputs of the friend.
-	virtual void GetInputInterface(SvOl::SVInputInfoListClass& , bool ) const {};
+	virtual SVObjectClass* overwriteInputObject(uint32_t, SvPb::EmbeddedIdEnum) { return nullptr; };
 
 	/// Will be called, if an object was renamed.
 	/// \param rRenamedObject [in] Reference to the renamed object.
@@ -232,11 +223,13 @@ protected:
 
 private:
 	void init();
-
+	
 	//ATTENTION: order of the parameter (especially m_ObjectName before m_Name) is important, because it is needed for the constructors.
 	int m_resourceID;		//String resource ID, of NOT user changeable name.
 	std::string m_ObjectName;	//NOT user changeable name
 	std::string m_Name;			//user given name
+	std::set <uint32_t> m_connectedSet;
+	std::mutex m_inputMutex;
 };
 
 #pragma region Declarations

@@ -113,9 +113,6 @@ void IndexEquation::init()
 	// Identify our output type
 	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVEquationObjectType;
 	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::IndexEquationObjectType;
-
-	// Set default inputs and outputs
-	addDefaultInputObjects();
 }
 
 } //namespace SvOp

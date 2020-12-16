@@ -38,10 +38,9 @@ SVPointXResult::SVPointXResult( SVObjectClass* POwner, int StringResourceID )
 	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVResultPointXObjectType;
 
 	// Identify our input type needs
-	m_inputObjectInfo.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVPointValueObjectType );
-	m_inputObjectInfo.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_inputObjectInfo, _T( "PointXResultValue" ) );
-	m_inputObjectInfo.setReportAndCopyFlag(false);
+	m_inputObject.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVPointValueObjectType );
+	registerInputObject( &m_inputObject, _T( "PointXResultValue" ), SvPb::ResultInputEId);
+	m_inputObject.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
 
 
 	// Register Embedded Objects
@@ -75,9 +74,6 @@ SVPointXResult::SVPointXResult( SVObjectClass* POwner, int StringResourceID )
 	{
 		Add(pRange);
 	}
-
-	// Add Default Inputs and Outputs
-	addDefaultInputObjects();
 }
 
 SVPointXResult::~SVPointXResult()
@@ -87,7 +83,7 @@ SVPointXResult::~SVPointXResult()
 
 bool SVPointXResult::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	m_isCreated = SVResult::CreateObject(rCreateStructure) && nullptr != SvOl::getInput<SvVol::SVPointValueObjectClass>(m_inputObjectInfo);
+	m_isCreated = SVResult::CreateObject(rCreateStructure) && nullptr != m_inputObject.getInput<SvVol::SVPointValueObjectClass>();
 	
 	m_X.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
 
@@ -99,7 +95,7 @@ bool SVPointXResult::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector
 	// All inputs and outputs must be validated first
 	if( __super::onRun( rRunStatus, pErrorMessages ) )
 	{
-		const SvVol::SVPointValueObjectClass* pValueObject = SvOl::getInput<SvVol::SVPointValueObjectClass>(m_inputObjectInfo, true);
+		const SvVol::SVPointValueObjectClass* pValueObject = m_inputObject.getInput<SvVol::SVPointValueObjectClass>(true);
 		assert( pValueObject );
 
 		if( nullptr != pValueObject )

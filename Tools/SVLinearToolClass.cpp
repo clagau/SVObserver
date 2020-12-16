@@ -253,20 +253,21 @@ SvOi::ParametersForML SVLinearToolClass::getParameterForMonitorList(SvStl::Messa
 	isAuxNoError = addEntryToMonitorList(retList, SvPb::AuxiliarySourceXEId);
 	isAuxNoError = addEntryToMonitorList(retList, SvPb::AuxiliarySourceYEId) && isAuxNoError;
 
-	SvOl::SVInObjectInfoStruct* pImageInfo = nullptr;
-	if (S_OK == FindNextInputImageInfo(pImageInfo))
+	std::vector<SvOl::InputObject*> inputList;
+	getInputs(std::back_inserter(inputList));
+	auto iter = std::find_if(inputList.begin(), inputList.end(), [](const auto* pInput) {
+		return (nullptr != pInput && SvPb::SVImageObjectType == pInput->GetInputObjectInfo().m_ObjectTypeInfo.m_ObjectType && SvPb::AuxImageInputEId != pInput->GetEmbeddedID());
+		});
+	if (inputList.end() != iter && (*iter)->IsConnected())
 	{
-		if (nullptr != pImageInfo && pImageInfo->IsConnected())
+		const SvIe::SVImageClass* pSourceImage = dynamic_cast<SvIe::SVImageClass*>((*iter)->GetInputObjectInfo().getFinalObject());
+		if (nullptr != pSourceImage)
 		{
-			const SvIe::SVImageClass* pSourceImage = dynamic_cast<SvIe::SVImageClass*> (pImageInfo->GetInputObjectInfo().getFinalObject());
-			if (nullptr != pSourceImage)
+			auto* pSourceTool = dynamic_cast<SVToolClass*>(pSourceImage->GetAncestor(SvPb::SVToolObjectType));
+			if (nullptr != pSourceTool)
 			{
-				auto* pSourceTool = dynamic_cast<SVToolClass*>(pSourceImage->GetAncestor(SvPb::SVToolObjectType));
-				if (nullptr != pSourceTool)
-				{
-					isAuxNoError = pSourceTool->addEntryToMonitorList(retList, SvPb::AuxiliarySourceXEId) && isAuxNoError;
-					isAuxNoError = pSourceTool->addEntryToMonitorList(retList, SvPb::AuxiliarySourceYEId) && isAuxNoError;
-				}
+				isAuxNoError = pSourceTool->addEntryToMonitorList(retList, SvPb::AuxiliarySourceXEId) && isAuxNoError;
+				isAuxNoError = pSourceTool->addEntryToMonitorList(retList, SvPb::AuxiliarySourceYEId) && isAuxNoError;
 			}
 		}
 	}
@@ -439,8 +440,6 @@ void SVLinearToolClass::init()
 		Add( pOperatorList );
 	}
 	SvOp::ToolSizeAdjustTask::AddToFriendlist(this, true, true, true);
-
-	addDefaultInputObjects();
 }
 #pragma endregion Private Methods
 

@@ -21,6 +21,7 @@
 #include "SVClsids.h"
 #include "SVObjectManagerClass.h"
 #include "SVStatusLibrary/GlobalPath.h"
+#include "Definitions/TextDefineSvDef.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -1393,6 +1394,100 @@ SvPb::EmbeddedIdEnum calcEmbeddedId(const _variant_t& rEmbeddedIdVariant, const 
 	return embeddedId;
 }
 
+std::unordered_map<std::string, SvPb::EmbeddedIdEnum> g_ExchangeInputEmbeddedID =
+{
+	{"LUTOperator", SvPb::LUTOperatorInputEId },
+	{SvDef::ImageAnalyzerImageName, SvPb::ImageInputEId},
+	{"ExternalToolTaskImage0", SvPb::ImageInputEId},
+	{"ExternalToolTaskImage1", SvPb::ImageInputEId + 1},
+	{"ExternalToolTaskImage2", SvPb::ImageInputEId + 2},
+	{"ExternalToolTaskImage3", SvPb::ImageInputEId + 3},
+	{"LinearEdgeProcessingImage", SvPb::ImageInputEId},
+	{"LinearAnalyzerImage", SvPb::ImageInputEId},
+	{"ImagePolarTransformImage", SvPb::ImageInputEId},
+	{"UnaryImageOperatorListImage", SvPb::ImageInputEId},
+	{"ImageTransformImage", SvPb::ImageInputEId},
+	{"PerspectiveToolImage", SvPb::ImageInputEId},
+	{"InputImage", SvPb::ImageInputEId},
+	{"ShiftToolImage", SvPb::ImageInputEId},
+	{SvDef::cColorToolInputImage, SvPb::ImageInputEId},
+	{"CylindricalWarpImage", SvPb::ImageInputEId},
+	{"ResizeImage", SvPb::ImageInputEId},
+	{SvDef::GrayImageConnectionName, SvPb::GrayImageInputEId},
+	{SvDef::cInputTag_NewColumn, SvPb::NewColumnInputEId},
+	{"LinearAnalyzerOrientation", SvPb::ProfileOrientationInputEId},
+	{"LinearImageOperatorListProfileOrientation", SvPb::ProfileOrientationInputEId},
+	{"LinearAnalyzerUseRotationAngle", SvPb::UseRoationAngleInputEId},
+	{"LinearImageOperatorListUseRotationAngle", SvPb::UseRoationAngleInputEId},
+	{SvDef::cInputTag_ExcludeColumn, SvPb::ExcludeColumnInputEId},
+	{SvDef::cInputTag_SortColumn, SvPb::SortColumnInputEId},
+	{SvDef::WatershedMarkerImageConnectionName, SvPb::MarkerImageInputEId},
+	{SvDef::SeedImageConnectionName, SvPb::SeedImageInputEId},
+	{"LinearEdgeProcessingMinThreshold", SvPb::MinThresholdInputEId},
+	{"LinearEdgeProcessingMaxThreshold", SvPb::MaxThresholdInputEId},
+	{"LinearEdgeProcessingDeltaThreshold", SvPb::DeltaThresholdInputEId},
+	{"LinearEdgeProcessingInputLinearData", SvPb::LinearDataInputEId},
+	{"StringResultValue", SvPb::ResultInputEId},
+	{"BarCodeResultString", SvPb::BarCodeResultEId},
+	{"DPointXResult", SvPb::ResultInputEId},
+	{"MathResult", SvPb::ResultInputEId},
+	{"DPointYResult", SvPb::ResultInputEId},
+	{"VariantResultValue", SvPb::ResultInputEId},
+	{"OCVAnalyzerResultImage", SvPb::ResultInputEId},
+	{"DoubleResultValue", SvPb::ResultInputEId},
+	{SvDef::cInputTag_LongResultValue, SvPb::ResultInputEId},
+	{"PointXResultValue", SvPb::ResultInputEId},
+	{"PointYResultValue", SvPb::ResultInputEId},
+	{"StatisticsToolValue", SvPb::ResultInputEId},
+	{"UpperThreshold", SvPb::UpperThresholdInputEId},
+	{"LowerThreshold", SvPb::LowerThresholdInputEId},
+	{"AutoThreshold", SvPb::AutoThresholdInputEId},
+	{"TransformTranslationXResult",  SvPb::TranslationXResultInputEId},
+	{"TransformTranslationYResult",  SvPb::TranslationYResultInputEId},
+	{"TransformRotationXResult",  SvPb::RotationXResultInputEId},
+	{"TransformRotationYResult",  SvPb::RotationYResultInputEId},
+	{"TransformRotationAngleResult",  SvPb::RotationAngleResultInputEId},
+	{"PolarTransformCenterXResult",  SvPb::CenterXResultInputEId},
+	{"PolarTransformCenterYResult",  SvPb::CenterYResultInputEId},
+	{"PolarTransformStartRadiusResult",  SvPb::StartRadiusResultInputEId},
+	{"PolarTransformEndRadiusResult",  SvPb::EndRadiusResultInputEId},
+	{"PolarTransformStartAngleResult",  SvPb::StartAngleResultInputEId},
+	{"PolarTransformEndAngleResult",  SvPb::EndAngleResultInputEId},
+	{"ImageArithmeticAImage",  SvPb::ImageArithmeticAImageInputEId},
+	{"ImageArithmeticAEnableOffset",  SvPb::ImageArithmeticAEnableOffsetInputEId},
+	{"ImageArithmeticAOffsetPoint",  SvPb::ImageArithmeticAOffsetPointInputEId},
+	{"ImageArithmeticBImage",  SvPb::ImageArithmeticBImageInputEId},
+	{"ImageArithmeticBEnableOffset",  SvPb::ImageArithmeticBEnableOffsetInputEId},
+	{"ImageArithmeticBOffsetPoint",  SvPb::ImageArithmeticBOffsetPointInputEId},
+	{"ImageArithmeticOperator",  SvPb::ImageArithmeticOperatorInputEId},
+	{"ToolSizeAdjustWidth",  SvPb::WidthInputEId},
+	{"ToolSizeAdjustHeight",  SvPb::HeightInputEId},
+	{"ToolSizeAdjustPositionX",  SvPb::PositionXInputEId},
+	{"ToolSizeAdjustPositionY",  SvPb::PositionYInputEId},
+	{"RangeValue",  SvPb::RangeValueInputEId},
+	{"ColorThresholdBand0Image",  SvPb::Band0ImageInputEId},
+	{"ColorThresholdBand1Image",  SvPb::Band1ImageInputEId},
+	{"ColorThresholdBand2Image",  SvPb::Band2ImageInputEId},
+	{"UserMaskImage",  SvPb::UserMaskImageInputEId},
+	{"ToolSetConditionalValue",  SvPb::ToolSetConditionalInputEId},
+	{"UserMaskImage",  SvPb::UserMaskImageInputEId},
+	{SvDef::cInputTag_SourceTable, SvPb::SourceTableInputEId},
+	{"ShiftToolTranslationX",  SvPb::TranslationXInputEId},
+	{"ShiftToolTranslationY",  SvPb::TranslationYInputEId},
+	{"ToolAuxSourceImage", SvPb::AuxImageInputEId},
+	{"ToolConditionalValue", SvPb::ToolConditionalInputEId},
+	{"OverlayColor_Tool", SvPb::OverlayColorInputEId},
+};
+
+SvPb::EmbeddedIdEnum calcInputEmbeddedId(const _variant_t& rObjectName)
+{
+	auto iter = g_ExchangeInputEmbeddedID.find(SvUl::createStdString(rObjectName));
+	if (g_ExchangeInputEmbeddedID.end() != iter)
+	{
+		return iter->second;
+	}
+	return SvPb::NoEmbeddedId;
+}
 #pragma region ObjectIdGuids
 const GUID RootUidGuid = { 0xa5c94500, 0xf204, 0x469d,{ 0x8f, 0xff, 0x48, 0x26, 0xef, 0x33, 0x18, 0x51 } };
 const GUID GlobalUidGuid = { 0xa5c94501, 0xf204, 0x469d,{ 0x8f, 0xff, 0x48, 0x26, 0xef, 0x33, 0x18, 0x51 } };

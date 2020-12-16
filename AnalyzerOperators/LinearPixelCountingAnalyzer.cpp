@@ -66,9 +66,6 @@ void LinearPixelCountingAnalyzer::init()
 	blackPixelCount.setSaveValueFlag(false);
 	whitePixelCount.SetDefaultValue( 0, true );
 	whitePixelCount.setSaveValueFlag(false);
-
-	// Set default inputs and outputs
-	addDefaultInputObjects();
 	
 	// Add the White Pixel Count Result...
 	addScalarResultToAvailableChildren(SvPb::BlackPixelEId, SvPb::SVResultLongObjectType, IDS_OBJECTNAME_BLACKPIXELCOUNT, IDS_RESULT_STRING);

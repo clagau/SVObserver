@@ -64,6 +64,8 @@ SVArchiveTool::~SVArchiveTool()
 	TheSVArchiveImageThreadClass().GoOffline();
 	TheSVMemoryManager().ReleasePoolMemory(SvDef::ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME, this);
 	TheSVMemoryManager().ReleasePoolMemory(SvDef::ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME, this);
+	m_ResultCollection.SetArchiveTool(nullptr);
+	m_ImageCollection.SetArchiveTool(nullptr);
 }
 
 void SVArchiveTool::initializeArchiveTool()
@@ -334,12 +336,15 @@ bool SVArchiveTool::InitializeAndValidate()
 		}
 	}
 
+	m_removeEntriesIfDisconnected = false;
 	m_ImageCollection.InitializeObjects(m_svoArchiveImageNames);
 	m_ImageCollection.ValidateImageObjects();	// makes sure the images are connected as inputs
 
 	m_ResultCollection.InitializeObjects(m_svoArchiveResultNames);
 	//the next line is needed to reset the names if objects have changed (e.g. because an array has become a single value).
+
 	refreshResultArchiveList(assembleResultReferenceVector());
+	m_removeEntriesIfDisconnected = true;
 	m_ResultCollection.ValidateResultsObjects();	// makes sure the results are connected as inputs
 
 	return true;
@@ -868,7 +873,6 @@ SVObjectReferenceVector SVArchiveTool::assembleResultReferenceVector()
 //
 void SVArchiveTool::refreshResultArchiveList(const SVObjectReferenceVector& rObjectRefVector)
 {
-	m_ResultCollection.DisconnectAllResultObjects();
 	m_ResultCollection.ClearArray();
 
 	auto size = static_cast<int> (rObjectRefVector.size());
@@ -1099,19 +1103,16 @@ const std::string SVArchiveTool::getCurrentImagePathRoot() const
 	return m_currentImagePathRoot;
 }
 
-bool SVArchiveTool::DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo)
+void SVArchiveTool::disconnectObjectInput(uint32_t objectId)
 {
-	if (nullptr != pObjectInInfo)
+	SvDef::StringVector vecRemovedImage = m_ImageCollection.RemoveDisconnectedObject(objectId);
+	SvDef::StringVector vecRemovedResult = m_ResultCollection.RemoveDisconnectedObject(objectId);
+
+	if (m_removeEntriesIfDisconnected)
 	{
-		SvDef::StringVector vecRemovedImage  = m_ImageCollection. RemoveDisconnectedObject( pObjectInInfo->GetInputObjectInfo() );
-		SvDef::StringVector vecRemovedResult = m_ResultCollection.RemoveDisconnectedObject( pObjectInInfo->GetInputObjectInfo() );
-
-		local_remove_items ( vecRemovedImage, m_svoArchiveImageNames );
-		local_remove_items ( vecRemovedResult, m_svoArchiveResultNames );
-
-		return true;
+		local_remove_items(vecRemovedImage, m_svoArchiveImageNames);
+		local_remove_items(vecRemovedResult, m_svoArchiveResultNames);
 	}
-	return false;
 }
 
 void SVArchiveTool::goingOffline()

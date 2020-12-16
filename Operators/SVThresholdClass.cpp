@@ -101,21 +101,16 @@ void SVThresholdClass::init()
 	// Identify our input type needs...
 
 	m_inputUT.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::UpperThresholdEquationResultEId);
-	m_inputUT.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_inputUT, _T( "UpperThreshold" ) );
-	m_inputUT.setReportAndCopyFlag(false);
+	registerInputObject( &m_inputUT, _T( "UpperThreshold" ), SvPb::UpperThresholdInputEId);
+	m_inputUT.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
 
 	m_inputLT.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::LowerThresholdEquationResultEId);
-	m_inputLT.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_inputLT, _T( "LowerThreshold" ) );
-	m_inputLT.setReportAndCopyFlag(false);
+	registerInputObject( &m_inputLT, _T( "LowerThreshold" ), SvPb::LowerThresholdInputEId);
+	m_inputLT.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
 
 	m_inputATM.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::AutoThresholdEquationResultEId);
-	m_inputATM.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_inputATM, _T( "AutoThreshold" ) );
-	m_inputATM.setReportAndCopyFlag(false);
-
-	addDefaultInputObjects();
+	registerInputObject( &m_inputATM, _T( "AutoThreshold" ), SvPb::AutoThresholdInputEId);
+	m_inputATM.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
 }
 
 SVThresholdClass::~SVThresholdClass()
@@ -164,19 +159,18 @@ bool SVThresholdClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 
-	SvOl::SVInObjectInfoStructPtrVector InputList
+	std::initializer_list<SvOl::InputObject*> inputList
 	{
 		&m_inputATM,
 		&m_inputUT,
 		&m_inputLT
 	};
 	
-	SvOl::ValidateInputList(InputList);
-
-	for (auto pEntry : InputList)
+	for (auto* pEntry : inputList)
 	{
+		pEntry->validateInput();
 		// pEntry cannot be nullptr as the InputList are member variable addresses
-		if (nullptr == SvOl::getInput<SvVol::SVDoubleValueObjectClass>(*pEntry))
+		if (nullptr == pEntry->getInput<SvVol::SVDoubleValueObjectClass>())
 		{
 			Result = false;
 			if (nullptr != pErrorMessages)
@@ -326,7 +320,7 @@ bool SVThresholdClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputIma
 				m_dAutoThresholdMultiplier.GetValue( dTemp );
 				if( bUseExternalATM )
 				{
-					SvVol::SVDoubleValueObjectClass* pExtATMValue = SvOl::getInput<SvVol::SVDoubleValueObjectClass>(m_inputATM, true);
+					SvVol::SVDoubleValueObjectClass* pExtATMValue = m_inputATM.getInput<SvVol::SVDoubleValueObjectClass>(true);
 					if(nullptr != pExtATMValue)
 					{
 						pExtATMValue->GetValue( dTemp );
@@ -369,7 +363,7 @@ bool SVThresholdClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputIma
 			{
 				if( bUseExternalUT )
 				{
-					SvVol::SVDoubleValueObjectClass* pExtUTValue = SvOl::getInput<SvVol::SVDoubleValueObjectClass>(m_inputUT, true);
+					SvVol::SVDoubleValueObjectClass* pExtUTValue = m_inputUT.getInput<SvVol::SVDoubleValueObjectClass>(true);
 					if(nullptr != pExtUTValue)
 					{
 						double dUpper = 0.0;
@@ -391,7 +385,7 @@ bool SVThresholdClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputIma
 			{
 				if( bUseExternalLT )
 				{
-					SvVol::SVDoubleValueObjectClass* pExtLTValue = SvOl::getInput<SvVol::SVDoubleValueObjectClass>(m_inputLT, true);
+					SvVol::SVDoubleValueObjectClass* pExtLTValue = m_inputLT.getInput<SvVol::SVDoubleValueObjectClass>(true);
 					if(nullptr != pExtLTValue)
 					{
 						double dLower = 0.0;

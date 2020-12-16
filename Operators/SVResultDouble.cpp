@@ -37,10 +37,9 @@ SVDoubleResult::SVDoubleResult( SVObjectClass* POwner, int StringResourceID )
 	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVResultDoubleObjectType;
 
 	// Identify our input type needs
-	m_inputObjectInfo.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType );
-	m_inputObjectInfo.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_inputObjectInfo, _T( "DoubleResultValue" ) );
-	m_inputObjectInfo.setReportAndCopyFlag(false);
+	m_inputObject.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType );
+	registerInputObject( &m_inputObject, _T( "DoubleResultValue" ), SvPb::ResultInputEId );
+	m_inputObject.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( &m_Value, SvPb::ValueEId, IDS_OBJECTNAME_VALUE, false, SvOi::SVResetItemNone );
@@ -72,9 +71,6 @@ SVDoubleResult::SVDoubleResult( SVObjectClass* POwner, int StringResourceID )
 	{
 		Add(pRange);
 	}
-
-	// Add Default Inputs and Outputs
-	addDefaultInputObjects();
 }
 
 SVDoubleResult::~SVDoubleResult()

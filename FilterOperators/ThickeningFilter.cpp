@@ -49,10 +49,6 @@ void ThickeningFilter::init()
 	const UINT cAttributes = SvPb::audittrail | SvPb::setableOnline | SvPb::remotelySetable;
 	m_lvoItterations.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 	m_bvoGrayOn.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
-
-	// Set default inputs and outputs
-	addDefaultInputObjects();
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////

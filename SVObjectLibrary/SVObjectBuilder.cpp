@@ -21,13 +21,13 @@
 #include "SVObjectManagerClass.h"
 #include "SVObjectClass.h"
 #include "SVObjectAttributeClass.h"
-#include "SVInputInfoListClass.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "ObjectInterfaces/ITaskObject.h"
+#include "InputObject.h"
 #pragma warning (pop)
 #pragma endregion Includes
 
@@ -270,7 +270,44 @@ HRESULT SVObjectBuilder::OverwriteEmbeddedObject(SvPb::EmbeddedIdEnum embeddedID
 			hr = S_FALSE;
 			assert(false);
 		}
+	}
+	return hr;
 }
+
+HRESULT SVObjectBuilder::OverwriteInputObject(SvPb::EmbeddedIdEnum embeddedID, uint32_t uniqueID, const std::string& objectName, uint32_t connectID, uint32_t ownerUniqueID)
+{
+	HRESULT hr = S_OK;
+
+	if (ownerUniqueID != SvDef::InvalidObjectId)
+	{
+		SVObjectClass* pOwnerObject = nullptr;
+		SVObjectManagerClass::Instance().GetObjectByIdentifier(ownerUniqueID, pOwnerObject);
+
+		// Send to Owner of Embedded Object, Try to overwrite object...
+		SVObjectClass* pObject = nullptr;
+
+		if (nullptr != pOwnerObject)
+		{
+			pObject = pOwnerObject->overwriteInputObject(uniqueID, embeddedID);
+			if (nullptr != pObject)
+			{
+				if (false == objectName.empty())
+				{
+					pObject->SetName(objectName.c_str());
+				}
+				auto* pInput = dynamic_cast<SvOl::InputObject*>(pObject);
+				if (pInput)
+				{
+					pInput->SetInputObject(connectID);
+				}
+			}
+		}
+		else
+		{
+			hr = S_FALSE;
+			assert(false);
+		}
+	}
 	return hr;
 }
 
@@ -386,40 +423,14 @@ HRESULT SVObjectBuilder::SetInputs(uint32_t objectID, const SvDef::StringPairVec
 {
 	HRESULT hr = S_OK;
 
-	SVObjectClass* pObject = nullptr;
-	SVObjectManagerClass::Instance().GetObjectByIdentifier(objectID, pObject);
-	
-	if (pObject)
+	SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(objectID);
+	auto* pTask = dynamic_cast<SvOi::ITaskObject*>(pObject);
+	if (pTask)
 	{
-		SvOl::SVInputInfoListClass inputInfoList;
-		pObject->GetInputInterface(inputInfoList, false );
-		
-		// reattach inputs
-		for( int i = 0; S_OK == hr && i < static_cast<int> (inputInfoList.size()); i++ )
+		for (const auto& rPair : rInputPairVector)
 		{
-			SvOl::SVInObjectInfoStruct* pInInfo = inputInfoList[i];
-			if (pInInfo)
-			{
-				auto Iter = std::find_if(rInputPairVector.begin(), rInputPairVector.end(), 
-					[&pInInfo](const SvDef::StringPair& rEntry) 
-				{ 
-					return rEntry.first == pInInfo->GetInputName(); 
-				});
-				if (Iter != rInputPairVector.end())
-				{
-					SVObjectReference ObjectRef{ Iter->second };
-					pInInfo->SetInputObject(ObjectRef);
-					//Connect the dependency
-					SVObjectManagerClass::Instance().ConnectObjectInput(pInInfo->GetInputObjectInfo().getObjectId(), pInInfo);
-				}
-			}
-			else
-			{
-#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
-				::OutputDebugString( _T("SVObjectBuilder::SetInputs - Input Info pointer is not valid\n") );
-#endif
-				hr = S_FALSE;
-			}
+			SVObjectReference ObjectRef{ rPair.second };
+			pTask->ConnectToObject(rPair.first, ObjectRef.getObjectId());
 		}
 	}
 	else

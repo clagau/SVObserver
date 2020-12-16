@@ -113,7 +113,6 @@ namespace SvOp
 			if (m_startValue > m_stopValue)
 			{
 				Result = false;
-				//@TODO[MZA][10.10][02.11.2020] add errormessage
 				if (nullptr != pErrorMessages)
 				{
 					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidData, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());

@@ -54,7 +54,7 @@ bool SVShiftTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStructur
 {
 	bool l_Status = SVToolClass::CreateObject(rCreateStructure);
 
-	l_Status &= (S_OK == m_OutputImage.InitializeImage(SvOl::getInput<SvIe::SVImageClass>(m_ImageInput)) );
+	l_Status &= (S_OK == m_OutputImage.InitializeImage(m_ImageInput.getInput<SvIe::SVImageClass>()) );
 
 	constexpr UINT cAttributes = SvPb::remotelySetable | SvPb::setableOnline | SvPb::audittrail;
 	m_SourceImageName.SetObjectAttributesAllowed( SvPb::remotelySetable | SvPb::setableOnline, SvOi::SetAttributeType::RemoveAttribute );
@@ -86,18 +86,13 @@ bool SVShiftTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStructur
 
 bool SVShiftTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	SvOl::SVInObjectInfoStructPtrVector InputList
-	{
-		&m_ImageInput,
-		&m_TranslationYInput,
-		&m_TranslationXInput
-	};
-
-	SvOl::ValidateInputList(InputList);
+	m_ImageInput.validateInput();
+	m_TranslationYInput.validateInput();
+	m_TranslationXInput.validateInput();
 
 	SetAttributeData();
 
-	SvIe::SVImageClass* pInputImage = SvOl::getInput<SvIe::SVImageClass>(m_ImageInput);
+	SvIe::SVImageClass* pInputImage = m_ImageInput.getInput<SvIe::SVImageClass>();
 
 	bool inputImageAvailable = (nullptr != pInputImage);
 
@@ -158,7 +153,7 @@ bool SVShiftTool::isInputImage(uint32_t imageId) const
 {
 	bool Result(false);
 
-	SvIe::SVImageClass* pImage = SvOl::getInput<SvIe::SVImageClass>(m_ImageInput);
+	SvIe::SVImageClass* pImage = m_ImageInput.getInput<SvIe::SVImageClass>();
 	if (nullptr != pImage && imageId == pImage->getObjectId())
 	{
 		Result = true;
@@ -306,7 +301,7 @@ bool SVShiftTool::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *p
 			SvOi::SVImageBufferHandlePtr inputImage;
 			if (nullptr == m_replaceSourceImage)
 			{
-				SvIe::SVImageClass* pImageInput = SvOl::getInput<SvIe::SVImageClass>(m_ImageInput, true);
+				SvIe::SVImageClass* pImageInput = m_ImageInput.getInput<SvIe::SVImageClass>(true);
 				SvOi::ITRCImagePtr pInputImageBuffer = pImageInput->getImageReadOnly(rRunStatus.m_triggerRecord.get());
 				inputImage = (nullptr != pInputImageBuffer && !(pInputImageBuffer->isEmpty())) ? pInputImageBuffer->getHandle() : nullptr;
 
@@ -370,12 +365,12 @@ bool SVShiftTool::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *p
 
 SvVol::SVDoubleValueObjectClass* SVShiftTool::GetTranslationXInput(bool bRunMode /*= false*/) const
 {
-	return SvOl::getInput<SvVol::SVDoubleValueObjectClass>(m_TranslationXInput, bRunMode);
+	return m_TranslationXInput.getInput<SvVol::SVDoubleValueObjectClass>(bRunMode);
 }
 
 SvVol::SVDoubleValueObjectClass* SVShiftTool::GetTranslationYInput(bool bRunMode /*= false*/) const
 {
-	return SvOl::getInput<SvVol::SVDoubleValueObjectClass>(m_TranslationYInput, bRunMode);
+	return m_TranslationYInput.getInput<SvVol::SVDoubleValueObjectClass>(bRunMode);
 }
 
 void SVShiftTool::addOverlays(const SvIe::SVImageClass* pImage, SvPb::OverlayDesc& rOverlay) const
@@ -438,18 +433,15 @@ void SVShiftTool::LocalInitialize()
 
 	// Identify our input type needs...
 	m_ImageInput.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType); //this is not a problem even if color images will be used since m_ImageInput will be updated in ResetObject() anyway
-	m_ImageInput.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_ImageInput, _T( "ShiftToolImage" ) );
+	registerInputObject( &m_ImageInput, SvDef::SourceImageInputName, SvPb::ImageInputEId);
 
 	m_TranslationXInput.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::OutputEvaluateTranslationXResultEId);
-	m_TranslationXInput.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_TranslationXInput, _T( "ShiftToolTranslationX" ) );
-	m_TranslationXInput.setReportAndCopyFlag(false);
+	registerInputObject( &m_TranslationXInput, _T( "ShiftToolTranslationX" ), SvPb::TranslationXInputEId);
+	m_TranslationXInput.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
 
 	m_TranslationYInput.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::OutputEvaluateTranslationYResultEId);
-	m_TranslationYInput.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_TranslationYInput, _T( "ShiftToolTranslationY" ) );
-	m_TranslationYInput.setReportAndCopyFlag(false);
+	registerInputObject( &m_TranslationYInput, _T( "ShiftToolTranslationY" ), SvPb::TranslationYInputEId);
+	m_TranslationYInput.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
 
 	//Special type names for extents
 	m_LeftResult.SetTypeName( _T("Extent X") );
@@ -502,9 +494,6 @@ void SVShiftTool::LocalInitialize()
 
 	m_evoShiftMode.SetEnumTypes(g_strShiftToolEnum);
 	m_evoShiftMode.SetDefaultValue(SV_SHIFT_NONE, true);
-
-	// Set default inputs and outputs
-	addDefaultInputObjects();
 }
 
 void SVShiftTool::LocalDestroy()
@@ -602,7 +591,7 @@ bool SVShiftTool::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) c
 	long mode = SV_SHIFT_NONE;
 	m_evoShiftMode.GetValue(mode);
 
-	if ( nullptr == SvOl::getInput<SvIe::SVImageClass>(m_ImageInput))
+	if ( nullptr == m_ImageInput.getInput<SvIe::SVImageClass>())
 	{
 		Result = false;
 		if (nullptr != pErrorMessages)

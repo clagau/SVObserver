@@ -39,10 +39,9 @@ SVVariantResultClass::SVVariantResultClass(BOOL , SVObjectClass*, int)
 	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVResultVariantObjectType;
 
 	// Identify our input type needs
-	m_inputObjectInfo.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVVariantValueObjectType);
-	m_inputObjectInfo.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_inputObjectInfo, _T( "VariantResultValue" ) );
-	m_inputObjectInfo.setReportAndCopyFlag(false);
+	m_inputObject.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVVariantValueObjectType);
+	registerInputObject( &m_inputObject, _T( "VariantResultValue" ), SvPb::ResultInputEId);
+	m_inputObject.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
 
 
 	// Register Embedded Objects
@@ -76,10 +75,6 @@ SVVariantResultClass::SVVariantResultClass(BOOL , SVObjectClass*, int)
 	SVRange* pRange = dynamic_cast<SVRange*> (rangeClassInfo.Construct()); 
 	if( pRange )
 		Add( pRange );
-
-	// Add Default Inputs and Outputs
-	addDefaultInputObjects();
-
 }
 
 SVVariantResultClass::~SVVariantResultClass()
@@ -101,9 +96,9 @@ bool SVVariantResultClass::CreateObject( const SVObjectLevelCreateStruct& rCreat
 
 SVObjectClass* SVVariantResultClass::GetInputValue()
 {
-	if( m_inputObjectInfo.IsConnected() && nullptr != m_inputObjectInfo.GetInputObjectInfo().getObject())
+	if(m_inputObject.IsConnected() && nullptr != m_inputObject.GetInputObjectInfo().getObject())
 	{
-		return m_inputObjectInfo.GetInputObjectInfo().getObject();
+		return m_inputObject.GetInputObjectInfo().getObject();
 	}
 
 	return nullptr;

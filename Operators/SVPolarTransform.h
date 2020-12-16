@@ -13,6 +13,7 @@
 
 #pragma region Includes
 #include "InspectionEngine/SVTaskObject.h"
+#include "SVObjectLibrary/InputObject.h"
 #pragma endregion Includes
 
 namespace SvOp
@@ -30,14 +31,14 @@ public:
 
 protected:
 	// Inputs
-	SvOl::SVInObjectInfoStruct m_inputCenterXResult;
-	SvOl::SVInObjectInfoStruct m_inputCenterYResult;
+	SvOl::InputObject m_inputCenterXResult;
+	SvOl::InputObject m_inputCenterYResult;
 	
-	SvOl::SVInObjectInfoStruct m_inputStartRadiusResult;
-	SvOl::SVInObjectInfoStruct m_inputEndRadiusResult;
+	SvOl::InputObject m_inputStartRadiusResult;
+	SvOl::InputObject m_inputEndRadiusResult;
 
-	SvOl::SVInObjectInfoStruct m_inputStartAngleResult;
-	SvOl::SVInObjectInfoStruct m_inputEndAngleResult;
+	SvOl::InputObject m_inputStartAngleResult;
+	SvOl::InputObject m_inputEndAngleResult;
 };
 
 } //namespace SvOp

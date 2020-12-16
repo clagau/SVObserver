@@ -68,9 +68,6 @@ void SVResult::init()
 	m_Failed.setSaveValueFlag(false);
 	m_Warned.SetDefaultValue(BOOL(true), true);			// Default for Warned is TRUE !!!
 	m_Warned.setSaveValueFlag(false);
-
-	// Set up the Default Inputs/Outputs
-	addDefaultInputObjects();
 }
 
 SVResult::~SVResult()
@@ -95,7 +92,7 @@ bool SVResult::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 
-	SvOl::ValidateInput(m_inputObjectInfo);
+	m_inputObject.validateInput();
 
 	return Result && ValidateLocal(pErrorMessages);
 }
@@ -183,9 +180,9 @@ bool SVResult::Run( RunStatus& rRunStatus, SvStl::MessageContainerVector *pError
 
 const SVObjectClass* SVResult::getInput() const
 {
-	if( m_inputObjectInfo.IsConnected() )
+	if(m_inputObject.IsConnected() )
 	{
-		return m_inputObjectInfo.GetInputObjectInfo().getObject();
+		return m_inputObject.GetInputObjectInfo().getObject();
 	}
 
 	return nullptr;
@@ -239,7 +236,7 @@ HRESULT SVResult::SetCancelData(SVCancelData* pCancelData)
 
 bool SVResult::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const
 {
-	if( !m_inputObjectInfo.IsConnected() || nullptr == m_inputObjectInfo.GetInputObjectInfo().getObject() ) 
+	if( !m_inputObject.IsConnected() || nullptr == m_inputObject.GetInputObjectInfo().getObject() )
 	{
 		if (nullptr != pErrorMessages)
 		{

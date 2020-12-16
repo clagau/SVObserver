@@ -40,29 +40,24 @@ SVLinearEdgeProcessingClass::SVLinearEdgeProcessingClass( SVObjectClass* POwner,
 {
 	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVLinearEdgeProcessingObjectType;
 
-	m_InputImageObjectInfo.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
-	m_InputImageObjectInfo.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_InputImageObjectInfo, _T( "LinearEdgeProcessingImage" ) );
+	m_InputImage.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
+	registerInputObject( &m_InputImage, _T( "LinearEdgeProcessingImage" ), SvPb::ImageInputEId);
 
 	m_InputMinThreshold.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::LinearThresholdMinEId);
-	m_InputMinThreshold.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_InputMinThreshold, _T( "LinearEdgeProcessingMinThreshold" ) );
-	m_InputMinThreshold.setReportAndCopyFlag(false);
+	registerInputObject( &m_InputMinThreshold, _T( "LinearEdgeProcessingMinThreshold" ), SvPb::MinThresholdInputEId);
+	m_InputMinThreshold.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
 
 	m_InputMaxThreshold.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::LinearThresholdMaxEId);
-	m_InputMaxThreshold.SetObject(GetObjectInfo());
-	RegisterInputObject(&m_InputMaxThreshold, _T("LinearEdgeProcessingMaxThreshold"));
-	m_InputMaxThreshold.setReportAndCopyFlag(false);
+	registerInputObject(&m_InputMaxThreshold, _T("LinearEdgeProcessingMaxThreshold"), SvPb::MaxThresholdInputEId);
+	m_InputMaxThreshold.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
 
 	m_InputDelta.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::LinearThresholdDeltaEId);
-	m_InputDelta.SetObject(GetObjectInfo());
-	RegisterInputObject(&m_InputDelta, _T("LinearEdgeProcessingDeltaThreshold"));
-	m_InputDelta.setReportAndCopyFlag(false);
+	registerInputObject(&m_InputDelta, _T("LinearEdgeProcessingDeltaThreshold"), SvPb::DeltaThresholdInputEId);
+	m_InputDelta.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
 
 	m_InputLinearData.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::LinearDataClassEId);
-	m_InputLinearData.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_InputLinearData, _T( "LinearEdgeProcessingInputLinearData" ) );
-	m_InputLinearData.setReportAndCopyFlag(false);
+	registerInputObject( &m_InputLinearData, _T( "LinearEdgeProcessingInputLinearData" ), SvPb::LinearDataInputEId);
+	m_InputLinearData.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
 
 	m_lPixelDepth = 0;
 	m_dwMinThreshold = 0;
@@ -107,9 +102,6 @@ SVLinearEdgeProcessingClass::SVLinearEdgeProcessingClass( SVObjectClass* POwner,
 
 	m_svLinearEdges.SetLegacyVectorObjectCompatibility();
 	m_svLinearEdges.setSaveValueFlag(false);
-
-	// Set default inputs and outputs
-	addDefaultInputObjects();
 }
 
 SVLinearEdgeProcessingClass::~SVLinearEdgeProcessingClass()
@@ -153,7 +145,7 @@ bool SVLinearEdgeProcessingClass::CreateObject( const SVObjectLevelCreateStruct&
 	AddRemoveType = bUpper ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
 	m_svUpperThresholdValue.SetObjectAttributesAllowed( SvPb::audittrail, AddRemoveType );
 
-	SvVol::SVDoubleValueObjectClass* pLinearData = SvOl::getInput<SvVol::SVDoubleValueObjectClass>(m_InputLinearData);
+	SvVol::SVDoubleValueObjectClass* pLinearData = m_InputLinearData.getInput<SvVol::SVDoubleValueObjectClass>();
 	if (nullptr != pLinearData)
 	{
 		m_svLinearEdges.SetArraySize( pLinearData->getArraySize() );
@@ -166,20 +158,14 @@ bool SVLinearEdgeProcessingClass::ResetObject(SvStl::MessageContainerVector *pEr
 {
 	bool Result = SVTaskObjectClass::ResetObject(pErrorMessages);
 
-	SvOl::SVInObjectInfoStructPtrVector InputList
-	{
-		&m_InputImageObjectInfo,
-		&m_InputMinThreshold,
-		&m_InputMaxThreshold,
-		&m_InputDelta,
-		&m_InputLinearData
-	};
-
-	SvOl::ValidateInputList(InputList);
+	m_InputImage.validateInput();
+	m_InputMinThreshold.validateInput();
+	m_InputMaxThreshold.validateInput();
+	m_InputDelta.validateInput();
+	m_InputLinearData.validateInput();
 
 	BOOL bUpper{false};
 	BOOL bLower{false};
-
 	m_svUseLowerThresholdSelectable.GetValue(bLower);
 	m_svLowerThresholdValue.setSaveValueFlag(TRUE == bLower);
 	m_svUseUpperThresholdSelectable.GetValue(bUpper);
@@ -201,7 +187,7 @@ bool SVLinearEdgeProcessingClass::ResetObject(SvStl::MessageContainerVector *pEr
 		}
 	}
 
-	SvVol::SVDoubleValueObjectClass* pLinearData = SvOl::getInput<SvVol::SVDoubleValueObjectClass>(m_InputLinearData);
+	SvVol::SVDoubleValueObjectClass* pLinearData = m_InputLinearData.getInput<SvVol::SVDoubleValueObjectClass>();
 	if (nullptr != pLinearData)
 	{
 		m_svLinearEdges.SetArraySize( pLinearData->getArraySize() );
@@ -278,7 +264,7 @@ HRESULT SVLinearEdgeProcessingClass::GetPixelDepth()
 {
 	HRESULT l_hrOk = S_FALSE;
 	
-	SvIe::SVImageClass* pInputImage = SvOl::getInput<SvIe::SVImageClass>(m_InputImageObjectInfo);
+	SvIe::SVImageClass* pInputImage = m_InputImage.getInput<SvIe::SVImageClass>();
 	if (nullptr != pInputImage)
 	{
 	  SVImageInfoClass ImageInfo = pInputImage->GetImageInfo();
@@ -964,7 +950,7 @@ void SVLinearEdgeProcessingClass::addOverlayResultDetails(SvPb::Overlay& rOverla
 
 		RECT rect{};
 		SvAo::SVAnalyzerClass* pAnalyzer = dynamic_cast<SvAo::SVAnalyzerClass*>(GetAnalyzer());
-		if (nullptr != pAnalyzer ||	S_OK == pAnalyzer->GetImageExtent().GetOutputRectangle(rect))
+		if (nullptr != pAnalyzer &&	S_OK == pAnalyzer->GetImageExtent().GetOutputRectangle(rect))
 		{
 			pResultMarker->set_minvalue(rect.left);
 			pResultMarker->set_maxvalue(rect.right);

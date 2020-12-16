@@ -54,9 +54,6 @@ void SVStdImageOperatorListClass::init()
 	m_LogicalROIImage.InitializeImage(SvPb::SVImageTypeEnum::SVImageTypeLogical);
 	// Set Embedded defaults
 	m_OutputImage.InitializeImage(SvPb::SVImageTypeEnum::SVImageTypePhysical);
-
-	// Set default inputs and outputs
-	addDefaultInputObjects();
 }
 
 SVStdImageOperatorListClass::~SVStdImageOperatorListClass()

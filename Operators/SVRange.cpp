@@ -86,12 +86,8 @@ void SVRange::init()
 	}
 
 	// Setup up the input
-	m_inputObjectInfo.SetObject(GetObjectInfo());
-	RegisterInputObject(&m_inputObjectInfo, _T("RangeValue"));
-	m_inputObjectInfo.setReportAndCopyFlag(false);
-
-	// Add Default Inputs and Outputs
-	addDefaultInputObjects();
+	registerInputObject(&m_rangeValueInput, _T("RangeValue"), SvPb::RangeValueInputEId);
+	m_rangeValueInput.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
 }
 
 bool SVRange::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
@@ -113,10 +109,10 @@ bool SVRange::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = true;
 
-	SvOl::ValidateInput(m_inputObjectInfo);
+	m_rangeValueInput.validateInput();
 
 	// check if input is valid
-	if (!m_inputObjectInfo.IsConnected() || nullptr == m_inputObjectInfo.GetInputObjectInfo().getObject())
+	if (!m_rangeValueInput.IsConnected() || nullptr == m_rangeValueInput.GetInputObjectInfo().getObject())
 	{
 		Result = false;
 		if (nullptr != pErrorMessages)
@@ -142,6 +138,7 @@ void SVRange::addEntriesToMonitorList(std::back_insert_iterator<SvOi::Parameters
 	inserter = SvOi::ParameterPairForML(m_LinkedValues[RangeEnum::ER_FailLow].GetCompleteName(), m_LinkedValues[RangeEnum::ER_FailLow].getObjectId());
 	// cppcheck-suppress redundantAssignment symbolName=inserter ; cppCheck doesn't know back_insert_iterator
 	inserter = SvOi::ParameterPairForML(m_LinkedValues[RangeEnum::ER_FailHigh].GetCompleteName(), m_LinkedValues[RangeEnum::ER_FailHigh].getObjectId());
+	// cppcheck-suppress redundantAssignment symbolName=inserter ; cppCheck doesn't know back_insert_iterator
 	inserter = SvOi::ParameterPairForML(m_LinkedValues[RangeEnum::ER_WarnLow].GetCompleteName(), m_LinkedValues[RangeEnum::ER_WarnLow].getObjectId());
 	// cppcheck-suppress unreadVariable symbolName=inserter ; cppCheck doesn't know back_insert_iterator
 	// cppcheck-suppress redundantAssignment symbolName=inserter ; cppCheck doesn't know back_insert_iterator
@@ -288,9 +285,9 @@ void SVRange::setDefaultLowValues(double failLow, double warnLow)
 
 bool SVRange::getInputValue(double& rValue)
 {
-	if (m_inputObjectInfo.IsConnected() && nullptr != m_inputObjectInfo.GetInputObjectInfo().getObject())
+	if (m_rangeValueInput.IsConnected() && nullptr != m_rangeValueInput.GetInputObjectInfo().getObject())
 	{
-		return S_OK == m_inputObjectInfo.GetInputObjectInfo().getObject()->getValue(rValue);
+		return S_OK == m_rangeValueInput.GetInputObjectInfo().getObject()->getValue(rValue);
 	}
 	return false;
 }

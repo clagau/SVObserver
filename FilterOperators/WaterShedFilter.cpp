@@ -59,14 +59,8 @@ void WatershedFilter::init()
 	m_lvoMinVariation.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 	m_lvoControlFlag.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 
-	m_MarkerImageInfo.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
-	m_MarkerImageInfo.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_MarkerImageInfo, SvDef::WatershedMarkerImageConnectionName );
-
-	
-	// Set default inputs and outputs
-	addDefaultInputObjects();
-
+	m_MarkerImageInput.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
+	registerInputObject( &m_MarkerImageInput, SvDef::WatershedMarkerImageConnectionName, SvPb::MarkerImageInputEId);
 }
 
 bool WatershedFilter::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
@@ -77,12 +71,12 @@ bool WatershedFilter::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	m_bvoUseMarker.GetValue(bUseMarker);
 	if (bUseMarker)
 	{
-		RegisterInputObject(&m_MarkerImageInfo, SvDef::WatershedMarkerImageConnectionName);
-		SvOl::ValidateInput(m_MarkerImageInfo);
+		m_MarkerImageInput.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::embedable, SvOi::SetAttributeType::OverwriteAttribute);
+		m_MarkerImageInput.validateInput();
 	}
 	else
 	{
-		UnregisterInputObject(&m_MarkerImageInfo);
+		m_MarkerImageInput.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
 	}
 
 	Result = ValidateLocal(pErrorMessages) && Result;
@@ -108,9 +102,9 @@ bool WatershedFilter::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputImag
 	if( m_pCurrentUIOPL && nullptr != rInputImageHandle && nullptr != rOutputImageHandle)
 	{
 		HRESULT l_Code = E_FAIL;
-		if( bUseMarker && m_MarkerImageInfo.IsConnected() )
+		if( bUseMarker )
 		{
-			SvIe::SVImageClass* pInputImage = SvOl::getInput<SvIe::SVImageClass>(m_MarkerImageInfo, true);
+			SvIe::SVImageClass* pInputImage = m_MarkerImageInput.getInput<SvIe::SVImageClass>(true);
 			if( pInputImage )
 			{
 				SvOi::ITRCImagePtr pMarkerBuffer = pInputImage->getImageReadOnly(rRunStatus.m_triggerRecord.get());
@@ -175,7 +169,7 @@ bool WatershedFilter::ValidateLocal( SvStl::MessageContainerVector * pErrorMessa
 	{
 		if( bUseMarker )
 		{
-			if (nullptr == SvOl::getInput<SvIe::SVImageClass>(m_MarkerImageInfo))
+			if (nullptr == m_MarkerImageInput.getInput<SvIe::SVImageClass>())
 			{
 				Result = false;
 				if (nullptr != pErrorMessages)

@@ -43,7 +43,7 @@ HRESULT SVObjectInfoStruct::SetObject(uint32_t objectID)
 {
 	HRESULT l_hrOk = S_OK;
 
-	if( objectID != m_ObjectRef.getObjectId() )
+	if( objectID != m_ObjectRef.getObjectId() || nullptr == m_ObjectRef.getObject() )
 	{
 		m_ObjectRef = SVObjectReference(objectID);
 	}

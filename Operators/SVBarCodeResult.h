@@ -13,6 +13,7 @@
 
 #pragma region Includes
 #include "SVResultString.h"
+#include "SVObjectLibrary/InputObject.h"
 #include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
 #include "SVValueObjectLibrary/SVDoubleValueObjectClass.h"
 #include "SVValueObjectLibrary/SVFileNameValueObjectClass.h"
@@ -52,7 +53,7 @@ private:
 	bool ValidateLocal(SvStl::MessageContainerVector *pErrorMessages=nullptr) const;
 
 private:
-	SvOl::SVInObjectInfoStruct m_SVRegExpressionObjectInfo;
+	SvOl::InputObject m_SVRegExpressionInput;
 
 	long     m_lTotalBytes;
 	int      m_nTotalCount;

@@ -49,20 +49,20 @@ bool SVUnaryImageOperatorList::CreateObject( const SVObjectLevelCreateStruct& rC
 
 SvIe::SVImageClass* SVUnaryImageOperatorList::getInputImage(bool bRunMode /*=false*/) const
 {
-	return SvOl::getInput<SvIe::SVImageClass>(m_inputImageObjectInfo, bRunMode);
+	return m_inputImage.getInput<SvIe::SVImageClass>(bRunMode);
 }
 
 bool SVUnaryImageOperatorList::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 
-	SvOl::ValidateInput(m_inputImageObjectInfo);
+	m_inputImage.validateInput();
 
 	SvIe::SVImageClass* pInputImage = getInputImage();
 	if (nullptr != pInputImage)
 	{
 		//! Check that the image color type is correct
-		if (pInputImage->GetObjectSubType() != m_inputImageObjectInfo.GetInputObjectInfo().m_ObjectTypeInfo.m_SubType)
+		if (pInputImage->GetObjectSubType() != m_inputImage.GetInputObjectInfo().m_ObjectTypeInfo.m_SubType)
 		{
 			Result = false;
 			if (nullptr != pErrorMessages)
@@ -108,16 +108,8 @@ void SVUnaryImageOperatorList::init()
 	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVUnaryImageOperatorListObjectType;
 
 	// Identify our input type needs
-	m_inputImageObjectInfo.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
-	m_inputImageObjectInfo.SetObject(GetObjectInfo());
-	RegisterInputObject(&m_inputImageObjectInfo, _T("UnaryImageOperatorListImage"));
-
-	// Register Embedded Objects
-
-	// Set Embedded defaults
-
-	// Set default inputs and outputs
-	addDefaultInputObjects();
+	m_inputImage.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
+	registerInputObject(&m_inputImage, SvDef::SourceImageInputName, SvPb::ImageInputEId);
 
 	// Set available Filters
 	// Populate the available filter list

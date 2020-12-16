@@ -57,7 +57,7 @@ bool SVColorToolClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStr
 		SvOi::IInspectionProcess* pInspection = GetInspectionInterface();
 		if (nullptr != pInspection && nullptr != pInspection->GetToolSetInterface())
 		{
-			SvIe::SVImageClass* pInputImage = SvOl::getInput<SvIe::SVImageClass>(m_InputImageObjectInfo);
+			SvIe::SVImageClass* pInputImage = m_InputImage.getInput<SvIe::SVImageClass>();
 			if (nullptr != pInputImage)
 			{
 				//! We do not want the Logical ROI image showing up as an output image.
@@ -130,7 +130,7 @@ bool SVColorToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages
 {
 	bool Result{ true };
 
-	SvOl::ValidateInput(m_InputImageObjectInfo);
+	m_InputImage.validateInput();
 
 	for (SvDef::BandEnum Band : SvDef::BandList)
 	{
@@ -138,7 +138,7 @@ bool SVColorToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages
 		createBandChildLayer(Band);
 	}
 	
-	SvIe::SVImageClass* pInputImage = SvOl::getInput<SvIe::SVImageClass>(m_InputImageObjectInfo);
+	SvIe::SVImageClass* pInputImage = m_InputImage.getInput<SvIe::SVImageClass>();
 	if (m_LogicalROIImage.InitializeImage(pInputImage))
 	{
 		Result = false;
@@ -222,7 +222,7 @@ bool SVColorToolClass::isInputImage(uint32_t imageId) const
 {
 	bool Result(false);
 
-	SvIe::SVImageClass* pImage = SvOl::getInput<SvIe::SVImageClass>(m_InputImageObjectInfo);
+	SvIe::SVImageClass* pImage = m_InputImage.getInput<SvIe::SVImageClass>();
 	if (nullptr != pImage && imageId == pImage->getObjectId())
 	{
 		Result = true;
@@ -240,7 +240,7 @@ bool SVColorToolClass::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVecto
 	SvOi::ITRCImagePtr pOutputImageBuffer = m_OutputImage.getImageToWrite(rRunStatus.m_triggerRecord);
 	if (nullptr != pOutputImageBuffer && !pOutputImageBuffer->isEmpty())
 	{
-		SvIe::SVImageClass* pInputImage = SvOl::getInput<SvIe::SVImageClass>(m_InputImageObjectInfo, true);
+		SvIe::SVImageClass* pInputImage = m_InputImage.getInput<SvIe::SVImageClass>(true);
 		if (nullptr != pInputImage)
 		{
 			SvOi::ITRCImagePtr pInputImageBuffer = m_LogicalROIImage.getImageReadOnly(rRunStatus.m_triggerRecord.get());
@@ -292,9 +292,8 @@ void SVColorToolClass::LocalInitialize()
 	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
 	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVColorToolObjectType;
 
-	m_InputImageObjectInfo.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageColorType);
-	m_InputImageObjectInfo.SetObject(GetObjectInfo());
-	RegisterInputObject(&m_InputImageObjectInfo, SvDef::cColorToolInputImage);
+	m_InputImage.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageColorType);
+	registerInputObject(&m_InputImage, SvDef::cColorToolInputImage, SvPb::ImageInputEId);
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject(&m_OutputImage, SvPb::OutputImageEId, IDS_OBJECTNAME_IMAGE1);
@@ -356,7 +355,7 @@ bool SVColorToolClass::createBandChildLayer(SvDef::BandEnum Band)
 
 HRESULT SVColorToolClass::CollectInputImageNames()
 {
-	SvIe::SVImageClass* pInputImage = SvOl::getInput<SvIe::SVImageClass>(m_InputImageObjectInfo);
+	SvIe::SVImageClass* pInputImage = m_InputImage.getInput<SvIe::SVImageClass>();
 	if (nullptr != pInputImage)
 	{
 		std::string Name = pInputImage->GetCompleteName();

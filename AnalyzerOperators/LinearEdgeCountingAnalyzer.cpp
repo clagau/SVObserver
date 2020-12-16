@@ -56,9 +56,6 @@ void LinearEdgeCountingAnalyzer::init()
 	// Set Embedded defaults
 	m_svEdgeCount.SetDefaultValue( 0 );
 	m_svEdgeCount.setSaveValueFlag(false);
-	
-	// Set default inputs and outputs
-	addDefaultInputObjects();
 
 	// Add the Edge Count Result...
 	addScalarResultToAvailableChildren(SvPb::EdgeCountEId, SvPb::SVResultLongObjectType, IDS_OBJECTNAME_EDGE_COUNT, IDS_RESULT_STRING);

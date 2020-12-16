@@ -137,9 +137,6 @@ void SVBarCodeAnalyzerClass::init()
 
 	msv_lBarcodeTimeout.SetDefaultValue(l_mTimeout,TRUE);
 
-	// Set default inputs and outputs
-	addDefaultInputObjects();
-	
 	// Instantiate Children
 	SvOp::SVBarCodeResult* pAnalyzerResult = new SvOp::SVBarCodeResult (this, IDS_CLASSNAME_SVBARCODEANALYZERESULT);
 	

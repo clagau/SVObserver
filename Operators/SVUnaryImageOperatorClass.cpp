@@ -51,9 +51,6 @@ void SVUnaryImageOperatorClass::init()
 
 	// Set Embedded defaults
 	m_pCurrentUIOPL = nullptr;
-
-	// Set default inputs and outputs
-	addDefaultInputObjects();
 }
 
 bool SVUnaryImageOperatorClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )

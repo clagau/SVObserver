@@ -16,7 +16,6 @@
 #include "Definitions/TextDefineSVDef.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "InspectionEngine/SVTaskObject.h"
-#include "ObjectInterfaces/IInspectionProcess.h"
 #include "SVImageLibrary\SVImageBufferHandleImage.h"
 #include "SVLibrary\SVOINIClass.h"
 #include "SVObjectLibrary\SVObjectLevelCreateStruct.h"
@@ -54,69 +53,11 @@ SVExternalToolTaskData::SVExternalToolTaskData() : m_ResultTableObjects(NUM_RESU
 {
 }
 
-SVExternalToolTaskData::SVExternalToolTaskData(const SVExternalToolTaskData& src)
-{
-	*this = src;
-}
-
 SVExternalToolTaskData::~SVExternalToolTaskData()
 {
 }
 
 	
-SVExternalToolTaskData& SVExternalToolTaskData::operator = (const SVExternalToolTaskData& rhs)
-{
-	if (this != &rhs)
-	{
-		// EB 20040825 added these... why weren't they here before???
-		m_voDllPath = rhs.m_voDllPath;
-		m_aDllDependencies = rhs.m_aDllDependencies;
-
-		m_voToolName = rhs.m_voToolName;
-		m_voToolVersion = rhs.m_voToolVersion;
-
-		m_aInputImageInfo = rhs.m_aInputImageInfo;
-
-		//////////////////////////////////////////////////////
-		// !! EB 20040820
-		// These vectors contain registered objects which cannot be deallocated!
-		// use std::copy which simply performs element assignment
-		// instead of vector::operator =
-		// note: operator = will work in VC6, but this is nonportable
-
-		if (m_aInputObjects.size() != rhs.m_aInputObjects.size())	// if this is only a copy of the original, size will be 0
-		{
-			m_aInputObjects.resize(rhs.m_aInputObjects.size());
-		}
-		std::copy(rhs.m_aInputObjects.begin(), rhs.m_aInputObjects.end(), m_aInputObjects.begin());
-
-
-		if (m_aResultObjects.size() != rhs.m_aResultObjects.size())	// if this is only a copy of the original, size will be 0
-		{
-			m_aResultObjects.resize(rhs.m_aResultObjects.size());
-		}
-		std::copy(rhs.m_aResultObjects.begin(), rhs.m_aResultObjects.end(), m_aResultObjects.begin());
-
-		m_aResultImageDefinitions = rhs.m_aResultImageDefinitions;
-		m_ResultDefinitions = rhs.m_ResultDefinitions;
-		m_InputDefinitions = rhs.m_InputDefinitions;
-
-		m_lNumInputImages = rhs.m_lNumInputImages;
-		m_lNumInputValues = rhs.m_lNumInputValues;
-		m_lNumResultImages = rhs.m_lNumResultImages;
-		m_lNumResultValues = rhs.m_lNumResultValues;
-		m_NumResultTables = rhs.m_NumResultTables;
-		m_NumLinkedValue = rhs.m_NumLinkedValue;
-
-		m_PropTreeState = rhs.m_PropTreeState;
-	}
-
-	return *this;
-}
-
-
-
-
 std::vector<std::string> SVExternalToolTask::DummyStatusResponse;
 
 SVExternalToolTask::SVExternalToolTask(SVObjectClass* POwner, int StringResourceID)
@@ -131,7 +72,6 @@ SVExternalToolTask::SVExternalToolTask(SVObjectClass* POwner, int StringResource
 	m_bUseImageCopies = m_SvimIni.GetValueInt(_T("External Tool"), _T("UseImageCopy"), TRUE) != FALSE;
 
 	// Initialize input images array.
-	m_Data.m_aInputImageInfo.resize(SVExternalToolTaskData::NUM_INPUT_IMAGES);
 	for (i = 0; i < m_Data.m_aInputImageInfo.size(); i++)
 	{
 		std::string l_Name = SvUl::Format(_T("ExternalToolTaskImage%d"), i);
@@ -139,8 +79,7 @@ SVExternalToolTask::SVExternalToolTask(SVObjectClass* POwner, int StringResource
 		// this object will be filled in SVTaskObject::ConnectAllInputs
 		// we supply the base object type (Image) and ConnectAllInputs finds the nearest match (Toolset main image)
 		m_Data.m_aInputImageInfo[i].SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
-		m_Data.m_aInputImageInfo[i].SetObject(GetObjectInfo());
-		RegisterInputObject(&m_Data.m_aInputImageInfo[i], l_Name);
+		registerInputObject(&m_Data.m_aInputImageInfo[i], l_Name, SvPb::ImageInputEId + i);
 	}
 
 	RegisterEmbeddedObject(&m_Data.m_voDllPath, SvPb::DllFileNameEId, IDS_OBJECTNAME_DLL_PATH, false, SvOi::SVResetItemTool);
@@ -223,8 +162,6 @@ SVExternalToolTask::SVExternalToolTask(SVObjectClass* POwner, int StringResource
 		m_Data.m_aResultObjects[i].SetDefaultValue(vtTemp, true);
 		m_Data.m_aResultObjects[i].setSaveValueFlag(false);
 	}
-
-	addDefaultInputObjects();
 
 	// default tool counts
 	m_Data.m_lNumInputImages = 0;
@@ -807,7 +744,7 @@ HRESULT SVExternalToolTask::Initialize(SVDllLoadLibraryCallback fnNotify, std::v
 			m_aPreviousInputImageRect.clear();
 			for (int i = 0; i < m_Data.m_lNumInputImages; i++)
 			{
-				m_Data.m_aInputImageInfo[i].setReportAndCopyFlag(true);
+				m_Data.m_aInputImageInfo[i].SetObjectAttributesAllowed(SvPb::audittrail | SvPb::embedable, SvOi::SetAttributeType::OverwriteAttribute);
 				SvIe::SVImageClass* pImage = dynamic_cast <SvIe::SVImageClass*> (m_Data.m_aInputImageInfo[i].GetInputObjectInfo().getFinalObject());
 				if (pImage)
 				{
@@ -883,7 +820,7 @@ HRESULT SVExternalToolTask::Initialize(SVDllLoadLibraryCallback fnNotify, std::v
 
 			for (int i = m_Data.m_lNumInputImages; i < SVExternalToolTaskData::NUM_INPUT_IMAGES; ++i)
 			{
-				m_Data.m_aInputImageInfo[i].setReportAndCopyFlag(false);
+				m_Data.m_aInputImageInfo[i].SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
 			}
 
 			///////////////////////////////////////
@@ -1381,8 +1318,7 @@ SvIe::SVImageClass* SVExternalToolTask::GetInputImage(int iIndex, bool bRunMode 
 {
 	if (iIndex >= 0 && iIndex < m_Data.m_lNumInputImages)
 	{
-		const SvOl::SVInObjectInfoStruct& rInfo = m_Data.m_aInputImageInfo[iIndex];
-		return SvOl::getInput<SvIe::SVImageClass>(rInfo, bRunMode);
+		return m_Data.m_aInputImageInfo[iIndex].getInput<SvIe::SVImageClass>(bRunMode);
 	}
 	return nullptr;
 }
@@ -1515,7 +1451,7 @@ HRESULT SVExternalToolTask::AllocateResult(int iIndex)
 		pValue->SetObjectAttributesAllowed(cAttribute, SvOi::SetAttributeType::RemoveAttribute);
 
 		// Ensure this Object's inputs get connected
-		pResult->ConnectAllInputs();
+		pResult->connectAllInputs();
 
 		// And last - Create (initialize) it
 
@@ -1570,7 +1506,7 @@ SVResult* SVExternalToolTask::GetResultRangeObject(int iIndex)
 		pResult = dynamic_cast<SVVariantResultClass*>(pObject);
 		if (pResult)
 		{
-			const SvOl::SVInputInfoListClass& resultInputList = pResult->GetPrivateInputList();
+			const auto& resultInputList = pResult->GetPrivateInputList();
 
 			if (0 < resultInputList.size() && &m_Data.m_aResultObjects[iIndex] == resultInputList[0]->GetInputObjectInfo().getObject())
 			{
@@ -1637,8 +1573,7 @@ bool SVExternalToolTask::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 
 	for (int i = 0; i < m_Data.m_lNumInputImages; i++)
 	{
-		SvOl::SVInObjectInfoStruct& rInfo = m_Data.m_aInputImageInfo[i];
-		SvOl::ValidateInput(rInfo);
+		m_Data.m_aInputImageInfo[i].validateInput();
 	}
 
 	SetIndirectValueSaveFlag();
@@ -1710,51 +1645,6 @@ bool SVExternalToolTask::resetAllObjects(SvStl::MessageContainerVector *pErrorMe
 HRESULT SVExternalToolTask::GetDLLMessageString(HRESULT hr, BSTR* bstrMessage) const
 {
 	return m_dll.GetMessageString(hr, bstrMessage);
-}
-
-bool SVExternalToolTask::DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo)
-{
-	bool Result(false);
-	if (nullptr != pObjectInInfo)
-	{
-		if (SvIe::SVImageClass* pImage = dynamic_cast <SvIe::SVImageClass*> (pObjectInInfo->GetInputObjectInfo().getFinalObject()))
-		{
-			// find object
-			for (int i = 0; i < SVExternalToolTaskData::NUM_INPUT_IMAGES; i++)
-			{
-				SvOl::SVInObjectInfoStruct& rInfo = m_Data.m_aInputImageInfo[i];
-				SVObjectClass* pObject = rInfo.GetInputObjectInfo().getFinalObject();
-				if (pObject == pImage)
-				{
-					// replace with tool set image
-					SvOi::IInspectionProcess* pInspectionInterface = GetInspectionInterface();
-					SvOi::IObjectClass* pInspection = dynamic_cast<SvOi::IObjectClass*> (pInspectionInterface);
-					SvDef::SVObjectTypeInfoStruct imageObjectInfo;
-					imageObjectInfo.m_ObjectType = SvPb::SVImageObjectType;
-					SvIe::SVImageClass* pToolSetImage = (nullptr != pInspection) ? dynamic_cast <SvIe::SVImageClass*> (pInspection->getFirstObject(imageObjectInfo)) : nullptr;
-
-					rInfo.SetInputObject(pToolSetImage);
-					//@Todo[MEC][8.20] [17.07.2019] EXTERNAL TOOL Check for null pointer!
-					//See svb 290
-					pObject->ConnectObjectInput(&rInfo);
-					break;
-				}
-			}
-
-			Result = true;
-		}
-	}
-	return __super::DisconnectObjectInput(pObjectInInfo) && Result;
-}
-
-HRESULT SVExternalToolTask::DisconnectInputsOutputs(SVObjectPtrVector& rListOfObjects)
-{
-	return __super::DisconnectInputsOutputs(rListOfObjects);
-}
-
-HRESULT SVExternalToolTask::HideInputsOutputs(SVObjectPtrVector& rListOfObjects)
-{
-	return __super::HideInputsOutputs(rListOfObjects);
 }
 
 HRESULT SVExternalToolTask::collectInputImageNames()
@@ -2279,7 +2169,6 @@ void SVExternalToolTask::updateImageInputInfo()
 				if (nullptr != pObject && SvPb::SVImageMonoType != pObject->GetObjectSubType())
 				{
 					m_Data.m_aInputImageInfo[i].SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
-					m_Data.m_aInputImageInfo[i].SetObject(GetObjectInfo());
 					resetConnects = true;
 				}
 			}
@@ -2292,7 +2181,6 @@ void SVExternalToolTask::updateImageInputInfo()
 				if (nullptr != pObject && SvPb::SVImageColorType != pObject->GetObjectSubType())
 				{
 					m_Data.m_aInputImageInfo[i].SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageColorType);
-					m_Data.m_aInputImageInfo[i].SetObject(GetObjectInfo());
 					resetConnects = true;
 				}				
 			}
@@ -2300,7 +2188,7 @@ void SVExternalToolTask::updateImageInputInfo()
 	}
 	if (resetConnects)
 	{
-		ConnectAllInputs();
+		connectAllInputs();
 	}
 }
 

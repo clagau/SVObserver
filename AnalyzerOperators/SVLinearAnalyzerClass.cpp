@@ -34,19 +34,16 @@ SVLinearAnalyzerClass::SVLinearAnalyzerClass( SVObjectClass* POwner, int StringR
 	// Identify yourself
 	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVAnalyzerObjectType;
 
-	m_InputImageObjectInfo.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
-	m_InputImageObjectInfo.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_InputImageObjectInfo, _T( "LinearAnalyzerImage" ) );
+	m_InputImage.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
+	registerInputObject( &m_InputImage, _T( "LinearAnalyzerImage" ), SvPb::ImageInputEId);
 
 	m_InputProfileOrientation.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVEnumValueObjectType, SvPb::ProfileOrientationEId);
-	m_InputProfileOrientation.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_InputProfileOrientation, _T( "LinearAnalyzerOrientation" ) );
-	m_InputProfileOrientation.setReportAndCopyFlag(false);
+	registerInputObject( &m_InputProfileOrientation, _T( "LinearAnalyzerOrientation" ), SvPb::ProfileOrientationInputEId);
+	m_InputProfileOrientation.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
 
 	m_InputUseRotationAngle.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVBoolValueObjectType, SvPb::LinearToolUseRotationEId);
-	m_InputUseRotationAngle.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_InputUseRotationAngle, _T( "LinearAnalyzerUseRotationAngle" ) );
-	m_InputUseRotationAngle.setReportAndCopyFlag(false);
+	registerInputObject( &m_InputUseRotationAngle, _T( "LinearAnalyzerUseRotationAngle" ), SvPb::UseRoationAngleInputEId);
+	m_InputUseRotationAngle.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
 
 	m_lPixelDepth = 0;
 	m_dwMinThreshold = 0;
@@ -61,8 +58,6 @@ SVLinearAnalyzerClass::SVLinearAnalyzerClass( SVObjectClass* POwner, int StringR
 
 	m_svShowAllEdgeAOverlays.SetDefaultValue( BOOL(false), true );
 	m_svShowAllEdgeBOverlays.SetDefaultValue( BOOL(false), true);
-
-	addDefaultInputObjects();
 }
 
 SVLinearAnalyzerClass::~SVLinearAnalyzerClass()
@@ -103,34 +98,29 @@ bool SVLinearAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMes
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 
-	SvOl::SVInObjectInfoStructPtrVector InputList
-	{
-		&m_InputImageObjectInfo,
-		&m_InputProfileOrientation,
-		&m_InputUseRotationAngle
-	};
+	m_InputImage.validateInput();
+	m_InputProfileOrientation.validateInput();
+	m_InputUseRotationAngle.validateInput();
 
-	SvOl::ValidateInputList(InputList);
-
-	if( S_OK != GetPixelDepth() )
+	if (S_OK != GetPixelDepth())
 	{
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_GetPixelDepthFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_GetPixelDepthFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 			pErrorMessages->push_back(Msg);
 		}
 	}
 
-  if ( Result )
-  {
+	if (Result)
+	{
 		// Set range...
-		m_dwMinThreshold = 0;	
+		m_dwMinThreshold = 0;
 		m_dwMaxThreshold = (1 << m_lPixelDepth) - 1;
 		m_dwColorNumber = 1 << m_lPixelDepth;
 
-		m_svNormalizer.SetNormalRange( m_dwMinThreshold, m_dwMaxThreshold );
-		m_svNormalizer.SetRealRange( m_dwMinThreshold, m_dwMaxThreshold );
+		m_svNormalizer.SetNormalRange(m_dwMinThreshold, m_dwMaxThreshold);
+		m_svNormalizer.SetRealRange(m_dwMinThreshold, m_dwMaxThreshold);
 	}
 
 	return Result;
@@ -259,7 +249,7 @@ HRESULT SVLinearAnalyzerClass::GetPixelDepth()
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	SvIe::SVImageClass* pInputImage = SvOl::getInput<SvIe::SVImageClass>(m_InputImageObjectInfo);
+	SvIe::SVImageClass* pInputImage = m_InputImage.getInput<SvIe::SVImageClass>();
 	if(nullptr != pInputImage)
 	{
 		SVImageInfoClass ImageInfo = pInputImage->GetImageInfo();

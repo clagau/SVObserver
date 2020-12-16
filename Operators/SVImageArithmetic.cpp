@@ -47,41 +47,34 @@ SVImageArithmetic::SVImageArithmetic( SVObjectClass* POwner, int StringResourceI
 
 	// Input A...
 	// Image
-	m_InputImageAInfo.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
-	m_InputImageAInfo.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_InputImageAInfo, _T( "ImageArithmeticAImage" ) );
+	m_InputImageA.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
+	registerInputObject( &m_InputImageA, _T( "ImageArithmeticAImage" ), SvPb::ImageArithmeticAImageInputEId);
 	// Enable Offset
-	m_InputEnableOffsetAInfo.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVBoolValueObjectType, SvPb::EnableOffsetAEId);
-	m_InputEnableOffsetAInfo.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_InputEnableOffsetAInfo, _T( "ImageArithmeticAEnableOffset" ) );
-	m_InputEnableOffsetAInfo.setReportAndCopyFlag(false);
+	m_InputEnableOffsetA.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVBoolValueObjectType, SvPb::EnableOffsetAEId);
+	registerInputObject( &m_InputEnableOffsetA, _T( "ImageArithmeticAEnableOffset" ), SvPb::ImageArithmeticAEnableOffsetInputEId);
+	m_InputEnableOffsetA.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
 	// Offset Point
-	m_InputOffsetAPointInfo.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVPointValueObjectType, SvPb::OffsetAPointEId);
-	m_InputOffsetAPointInfo.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_InputOffsetAPointInfo, _T( "ImageArithmeticAOffsetPoint" ) );
-	m_InputOffsetAPointInfo.setReportAndCopyFlag(false);
+	m_InputOffsetAPoint.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVPointValueObjectType, SvPb::OffsetAPointEId);
+	registerInputObject( &m_InputOffsetAPoint, _T( "ImageArithmeticAOffsetPoint" ), SvPb::ImageArithmeticAOffsetPointInputEId);
+	m_InputOffsetAPoint.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
 
 	// Input B...
 	// Image
-	m_InputImageBInfo.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
-	m_InputImageBInfo.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_InputImageBInfo, _T( "ImageArithmeticBImage" ) );
+	m_InputImageB.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
+	registerInputObject( &m_InputImageB, _T( "ImageArithmeticBImage" ), SvPb::ImageArithmeticBImageInputEId);
 	// Enable Offset
-	m_InputEnableOffsetBInfo.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVBoolValueObjectType, SvPb::EnableOffsetBEId);
-	m_InputEnableOffsetBInfo.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_InputEnableOffsetBInfo, _T( "ImageArithmeticBEnableOffset" ) );
-	m_InputEnableOffsetBInfo.setReportAndCopyFlag(false);
+	m_InputEnableOffsetB.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVBoolValueObjectType, SvPb::EnableOffsetBEId);
+	registerInputObject( &m_InputEnableOffsetB, _T( "ImageArithmeticBEnableOffset" ), SvPb::ImageArithmeticBEnableOffsetInputEId);
+	m_InputEnableOffsetB.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
 	// Offset Point
-	m_InputOffsetBPointInfo.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVPointValueObjectType, SvPb::OffsetBPointEId);
-	m_InputOffsetBPointInfo.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_InputOffsetBPointInfo, _T( "ImageArithmeticBOffsetPoint" ) );
-	m_InputOffsetBPointInfo.setReportAndCopyFlag(false);
+	m_InputOffsetBPoint.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVPointValueObjectType, SvPb::OffsetBPointEId);
+	registerInputObject( &m_InputOffsetBPoint, _T( "ImageArithmeticBOffsetPoint" ), SvPb::ImageArithmeticBOffsetPointInputEId);
+	m_InputOffsetBPoint.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
 
 	// Operator Input...
-	m_InputArithmaticOperatorInfo.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVLongValueObjectType, SvPb::ArithmeticOperatorEId);
-	m_InputArithmaticOperatorInfo.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_InputArithmaticOperatorInfo, _T( "ImageArithmeticOperator" ) );
-	m_InputArithmaticOperatorInfo.setReportAndCopyFlag(false);
+	m_InputArithmaticOperator.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVLongValueObjectType, SvPb::ArithmeticOperatorEId);
+	registerInputObject( &m_InputArithmaticOperator, _T( "ImageArithmeticOperator" ), SvPb::ImageArithmeticOperatorInputEId);
+	m_InputArithmaticOperator.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
 
 
 	// Register Embedded Objects
@@ -93,9 +86,6 @@ SVImageArithmetic::SVImageArithmetic( SVObjectClass* POwner, int StringResourceI
 
 	// Set up draw objects...
 //	graphFigure.SetDrawPen( TRUE, PS_SOLID, 1, SvDef::DefaultSubFunctionColor1 );
-
-	// Add Default Inputs and Outputs
-	addDefaultInputObjects();
 }
 
 SVImageArithmetic::~SVImageArithmetic()
@@ -107,7 +97,7 @@ bool SVImageArithmetic::CreateObject( const SVObjectLevelCreateStruct& rCreateSt
 {
 	bool bOk = SVTaskObjectClass::CreateObject(rCreateStructure);
 
-	bOk &= ( S_OK == m_OutputImage.InitializeImage(SvOl::getInput<SvIe::SVImageClass>(m_InputImageAInfo)));
+	bOk &= ( S_OK == m_OutputImage.InitializeImage(m_InputImageA.getInput<SvIe::SVImageClass>()));
 
 	// Reset Printable flag
 	m_OutputImage.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
@@ -130,20 +120,15 @@ bool SVImageArithmetic::ResetObject(SvStl::MessageContainerVector *pErrorMessage
 {
 	bool Result{true};
 
-	SvOl::SVInObjectInfoStructPtrVector InputList
-	{
-		&m_InputImageAInfo,
-		&m_InputEnableOffsetAInfo,
-		&m_InputOffsetAPointInfo,
-		&m_InputImageBInfo,
-		&m_InputEnableOffsetBInfo,
-		&m_InputOffsetBPointInfo,
-		&m_InputArithmaticOperatorInfo
-	};
-
-	SvOl::ValidateInputList(InputList);
-
-	HRESULT l_hrOk = m_OutputImage.InitializeImage(SvOl::getInput<SvIe::SVImageClass>(m_InputImageAInfo));
+	m_InputImageA.validateInput();
+	m_InputEnableOffsetA.validateInput();
+	m_InputOffsetAPoint.validateInput();
+	m_InputImageB.validateInput();
+	m_InputEnableOffsetB.validateInput();
+	m_InputOffsetBPoint.validateInput();
+	m_InputArithmaticOperator.validateInput();
+	
+	HRESULT l_hrOk = m_OutputImage.InitializeImage(m_InputImageA.getInput<SvIe::SVImageClass>());
 	if (S_OK != l_hrOk)
 	{
 		Result = false;
@@ -164,8 +149,8 @@ bool SVImageArithmetic::isInputImage(uint32_t imageId) const
 {
 	bool Result(false);
 
-	const SvIe::SVImageClass* pImageA = SvOl::getInput<SvIe::SVImageClass>(m_InputImageAInfo);
-	const SvIe::SVImageClass* pImageB = SvOl::getInput<SvIe::SVImageClass>(m_InputImageBInfo);
+	const SvIe::SVImageClass* pImageA = m_InputImageA.getInput<SvIe::SVImageClass>();
+	const SvIe::SVImageClass* pImageB = m_InputImageB.getInput<SvIe::SVImageClass>();
 	if ((nullptr != pImageA && imageId == pImageA->getObjectId()) || (nullptr != pImageB && imageId == pImageB->getObjectId()))
 	{
 		Result = true;
@@ -181,13 +166,13 @@ bool SVImageArithmetic::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVec
 	bool Return = SVTaskObjectClass::onRun(rRunStatus) && ValidateLocal(pErrorMessages);
 	if (Return)
 	{
-		SvIe::SVImageClass* pImageA = SvOl::getInput<SvIe::SVImageClass>(m_InputImageAInfo, true);
-		SvVol::SVBoolValueObjectClass*  pEnableOffsetA = SvOl::getInput<SvVol::SVBoolValueObjectClass>(m_InputEnableOffsetAInfo, true);
-		SvVol::SVPointValueObjectClass* pOffsetAPoint  = SvOl::getInput<SvVol::SVPointValueObjectClass>(m_InputOffsetAPointInfo, true);
-		SvIe::SVImageClass* pImageB = SvOl::getInput<SvIe::SVImageClass>(m_InputImageBInfo, true);
-		SvVol::SVBoolValueObjectClass*  pEnableOffsetB = SvOl::getInput<SvVol::SVBoolValueObjectClass>(m_InputEnableOffsetBInfo, true);
-		SvVol::SVPointValueObjectClass* pOffsetBPoint = SvOl::getInput<SvVol::SVPointValueObjectClass>(m_InputOffsetBPointInfo, true);
-		SvVol::SVLongValueObjectClass* pArithOperator = SvOl::getInput<SvVol::SVLongValueObjectClass>(m_InputArithmaticOperatorInfo, true);
+		SvIe::SVImageClass* pImageA = m_InputImageA.getInput<SvIe::SVImageClass>(true);
+		SvVol::SVBoolValueObjectClass*  pEnableOffsetA = m_InputEnableOffsetA.getInput<SvVol::SVBoolValueObjectClass>(true);
+		SvVol::SVPointValueObjectClass* pOffsetAPoint  = m_InputOffsetAPoint.getInput<SvVol::SVPointValueObjectClass>(true);
+		SvIe::SVImageClass* pImageB = m_InputImageB.getInput<SvIe::SVImageClass>(true);
+		SvVol::SVBoolValueObjectClass*  pEnableOffsetB = m_InputEnableOffsetB.getInput<SvVol::SVBoolValueObjectClass>(true);
+		SvVol::SVPointValueObjectClass* pOffsetBPoint = m_InputOffsetBPoint.getInput<SvVol::SVPointValueObjectClass>(true);
+		SvVol::SVLongValueObjectClass* pArithOperator = m_InputArithmaticOperator.getInput<SvVol::SVLongValueObjectClass>(true);
 		SvIe::SVImageClass* pOutputImage   = getOutputImage();
 
 		assert(pImageA);
@@ -430,7 +415,7 @@ HRESULT SVImageArithmetic::CollectInputImageNames( )
 	SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*>(GetTool());
 	if (nullptr != pTool)
 	{
-		SvIe::SVImageClass* pInputImage = SvOl::getInput<SvIe::SVImageClass>(m_InputImageAInfo);
+		SvIe::SVImageClass* pInputImage = m_InputImageA.getInput<SvIe::SVImageClass>();
 		SvVol::SVStringValueObjectClass* pImageNames = pTool->GetInputImageNames();
 		if( nullptr != pInputImage && nullptr != pImageNames )
 		{
@@ -438,7 +423,7 @@ HRESULT SVImageArithmetic::CollectInputImageNames( )
 			l_hr = S_OK;
 		}
 
-		pInputImage = SvOl::getInput<SvIe::SVImageClass>(m_InputImageBInfo);
+		pInputImage = m_InputImageB.getInput<SvIe::SVImageClass>();
 		if( nullptr != pInputImage && nullptr != pImageNames)
 		{
 			pImageNames->SetValue( pInputImage->GetCompleteName(), 1 );
@@ -452,13 +437,13 @@ bool SVImageArithmetic::ValidateLocal(SvStl::MessageContainerVector *pErrorMessa
 {
 	bool Result = true;
 
-	SvIe::SVImageClass* pImageA = SvOl::getInput<SvIe::SVImageClass>(m_InputImageAInfo);
-	SvVol::SVBoolValueObjectClass*  pEnableOffsetA = SvOl::getInput<SvVol::SVBoolValueObjectClass>(m_InputEnableOffsetAInfo);
-	SvVol::SVPointValueObjectClass* pOffsetAPoint = SvOl::getInput<SvVol::SVPointValueObjectClass>(m_InputOffsetAPointInfo);
-	SvIe::SVImageClass* pImageB = SvOl::getInput<SvIe::SVImageClass>(m_InputImageBInfo);
-	SvVol::SVBoolValueObjectClass*  pEnableOffsetB = SvOl::getInput<SvVol::SVBoolValueObjectClass>(m_InputEnableOffsetBInfo);
-	SvVol::SVPointValueObjectClass* pOffsetBPoint = SvOl::getInput<SvVol::SVPointValueObjectClass>(m_InputOffsetBPointInfo);
-	SvVol::SVLongValueObjectClass* pArithOperator = SvOl::getInput<SvVol::SVLongValueObjectClass>(m_InputArithmaticOperatorInfo);
+	SvIe::SVImageClass* pImageA = m_InputImageA.getInput<SvIe::SVImageClass>();
+	SvVol::SVBoolValueObjectClass*  pEnableOffsetA = m_InputEnableOffsetA.getInput<SvVol::SVBoolValueObjectClass>();
+	SvVol::SVPointValueObjectClass* pOffsetAPoint = m_InputOffsetAPoint.getInput<SvVol::SVPointValueObjectClass>();
+	SvIe::SVImageClass* pImageB = m_InputImageB.getInput<SvIe::SVImageClass>();
+	SvVol::SVBoolValueObjectClass*  pEnableOffsetB = m_InputEnableOffsetB.getInput<SvVol::SVBoolValueObjectClass>();
+	SvVol::SVPointValueObjectClass* pOffsetBPoint = m_InputOffsetBPoint.getInput<SvVol::SVPointValueObjectClass>();
+	SvVol::SVLongValueObjectClass* pArithOperator = m_InputArithmaticOperator.getInput<SvVol::SVLongValueObjectClass>();
 
 	if( nullptr == pImageA || nullptr == pEnableOffsetA || nullptr == pOffsetAPoint ||
 		nullptr == pImageB || nullptr == pEnableOffsetB || nullptr == pOffsetBPoint || nullptr == pArithOperator)

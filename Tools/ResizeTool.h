@@ -11,6 +11,7 @@
 
 #pragma region Includes
 #include "SVTool.h"
+#include "SVObjectLibrary/InputObject.h"
 #include "SVValueObjectLibrary/SVStringValueObjectClass.h"
 #include "SVValueObjectLibrary/LinkedValue.h"
 #pragma endregion
@@ -59,7 +60,7 @@ public:
 private:
 
 	// Source Image - input
-	SvOl::SVInObjectInfoStruct m_InputImageObjectInfo;
+	SvOl::InputObject m_InputImage;
 	void LocalInitialize();
 
 	void BuildInputObjectList();

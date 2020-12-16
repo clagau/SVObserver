@@ -14,6 +14,7 @@
 #pragma region Includes
 #include "InspectionEngine/SVTaskObject.h"
 #include "InspectionEngine/SVImageClass.h"
+#include "SVObjectLibrary/InputObject.h"
 #pragma endregion Includes
 
 namespace SvOp
@@ -45,15 +46,15 @@ private:
 
 	bool ValidateLocal(SvStl::MessageContainerVector *pErrorMessages=nullptr) const;
 
-	SvOl::SVInObjectInfoStruct	m_InputImageAInfo;
-	SvOl::SVInObjectInfoStruct	m_InputEnableOffsetAInfo;
-	SvOl::SVInObjectInfoStruct	m_InputOffsetAPointInfo;
+	SvOl::InputObject	m_InputImageA;
+	SvOl::InputObject	m_InputEnableOffsetA;
+	SvOl::InputObject	m_InputOffsetAPoint;
 
-	SvOl::SVInObjectInfoStruct	m_InputImageBInfo;
-	SvOl::SVInObjectInfoStruct	m_InputEnableOffsetBInfo;
-	SvOl::SVInObjectInfoStruct	m_InputOffsetBPointInfo;
+	SvOl::InputObject	m_InputImageB;
+	SvOl::InputObject	m_InputEnableOffsetB;
+	SvOl::InputObject	m_InputOffsetBPoint;
 
-	SvOl::SVInObjectInfoStruct	m_InputArithmaticOperatorInfo;
+	SvOl::InputObject	m_InputArithmaticOperator;
 
 	// Embedded Object:
 	SvIe::SVImageClass	m_OutputImage;

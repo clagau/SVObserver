@@ -546,35 +546,61 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessMaskData(uint32_t ownerID, 
 }
 
 template< typename SVTreeType >
-HRESULT SVInspectionTreeParser< SVTreeType >::ProcessInputs(typename SVTreeType::SVBranchHandle hInputs, uint32_t objectID)
+HRESULT SVInspectionTreeParser< SVTreeType >::ProcessInputs(typename SVTreeType::SVBranchHandle hInputs, uint32_t ownerID)
 {
 	HRESULT hr = S_OK;
 	SvDef::StringPairVector InputPairVector;
-	SVTreeType::SVBranchHandle hInput( nullptr );
-	hInput = m_rTree.getFirstBranch(hInputs);
+	SVTreeType::SVBranchHandle hInput{ m_rTree.getFirstBranch(hInputs) };
 	do
 	{
 		if (hInput)
 		{
 			UpdateProgress(++m_count, m_totalSize);
 
-			_variant_t name;
-			_variant_t value;
-			GetItemValue(scNameTag, hInput, name);
-			GetItemValue(scValueTag, hInput, value);
+			std::string branchName = m_rTree.getBranchName(hInput);
+			if (branchName == scInputTag)
+			{ //old version
+				_variant_t name;
+				_variant_t value;
+				GetItemValue(scNameTag, hInput, name);
+				GetItemValue(scValueTag, hInput, value);
 
-			if (name.vt == VT_BSTR && value.vt == VT_BSTR)
-			{
-				SvDef::StringPair InputPair{ SvUl::createStdString(name), SvUl::createStdString(value) };
-				InputPairVector.push_back(InputPair);
+				if (name.vt == VT_BSTR && value.vt == VT_BSTR)
+				{
+					SvPb::EmbeddedIdEnum embeddedId{ calcInputEmbeddedId(name) };
+					uint32_t connectId{ calcObjectId(value) };
+					if (SvPb::NoEmbeddedId == embeddedId || SvDef::InvalidObjectId == connectId)
+					{
+						SvDef::StringPair InputPair{ SvUl::createStdString(name), SvUl::createStdString(value) };
+						InputPairVector.push_back(InputPair);
+					}
+					else
+					{
+						hr = SVObjectBuilder::OverwriteInputObject(embeddedId, SvDef::InvalidObjectId, {}, connectId, ownerID); //not use old name, keep the initialized name
+					}
+				}
 			}
+			else
+			{
+				_variant_t objectName;
+				_variant_t value;
+				GetItemValue(scObjectNameTag, hInput, objectName);
+				GetItemValue(scEmbeddedIDTag, hInput, value);
+				SvPb::EmbeddedIdEnum embeddedId = calcEmbeddedId(value, objectName);
+				GetItemValue(scUniqueReferenceIDTag, hInput, value);
+				uint32_t objectID{ calcObjectId(value) };
+				GetItemValue(scConntectedIDTag, hInput, value);
+				uint32_t connectId = calcObjectId(value);
+				hr = SVObjectBuilder::OverwriteInputObject(embeddedId, objectID, SvUl::createStdString(objectName), connectId, ownerID);
+			}
+			
 			hInput = m_rTree.getNextBranch(hInputs, hInput);
 		}
 	} while (hInput);
 
 	if (InputPairVector.size())
 	{
-		hr = SVObjectBuilder::SetInputs(objectID, InputPairVector);
+		hr = SVObjectBuilder::SetInputs(ownerID, InputPairVector);
 	}
 	return hr;
 }

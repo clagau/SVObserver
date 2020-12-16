@@ -52,14 +52,17 @@ SVEquationSymbolTableClass::~SVEquationSymbolTableClass()
 /////////////////////////////////////////////////////////////////
 void SVEquationSymbolTableClass::ClearAll()
 {
-	// Disconnect the dynmaic Inputs
-	for (int i = static_cast<int> (m_toolsetSymbolTable.size() - 1); i >= 0; i--)
-	{
-		SvOl::SVInObjectInfoStruct* pInObjectInfo = m_toolsetSymbolTable[i];
-		SVObjectManagerClass::Instance().DisconnectObjectInput(pInObjectInfo->GetInputObjectInfo().getObjectId(), pInObjectInfo);
-	}
-	// Empty the ToolSet Symbol table 
+	// Disconnect the dynamic Inputs
+	auto symbolTable = m_toolsetSymbolTable;
 	m_toolsetSymbolTable.clear();
+	for (const auto& rRef : symbolTable)
+	{
+		auto* pObject = SVObjectManagerClass::Instance().GetObject(rRef.getObjectId());
+		if (pObject)
+		{
+			pObject->disconnectObject(rRef.getObjectId());
+		}
+	}
 
 	// Empty the Combined Symbol table
 	for (auto& pItem : m_SVEquationSymbolPtrVector)
@@ -153,22 +156,15 @@ int SVEquationSymbolTableClass::AddSymbol(LPCTSTR name, SVObjectClass* pRequesto
 	SVEquationSymbolStruct* pSymbolStruct = new SVEquationSymbolStruct();
 	pSymbolStruct->Type = Type;
 	pSymbolStruct->Name = name;
-	// Set who wants to use the variable
-	pSymbolStruct->InObjectInfo.SetObject(pRequestor->GetObjectInfo());
 	// Set the variable to be used
-	pSymbolStruct->InObjectInfo.SetInputObjectType(ObjectReference.getObject()->GetObjectOutputInfo().m_ObjectTypeInfo);
-	pSymbolStruct->InObjectInfo.SetInputObject(ObjectReference.getObject()->GetObjectOutputInfo().getObjectId());
+	pSymbolStruct->m_ref = ObjectReference;
 	// Try to Connect at this point
-	bool rc = SVObjectManagerClass::Instance().ConnectObjectInput(ObjectReference.getObject()->GetObjectOutputInfo().getObjectId(), &pSymbolStruct->InObjectInfo);
-	assert(rc);
-	if (rc)
-	{
-		pSymbolStruct->IsValid = true;
-	}
+	ObjectReference.getObject()->connectObject(pRequestor->getObjectId());
+	pSymbolStruct->IsValid = true;
 	m_SVEquationSymbolPtrVector.push_back(pSymbolStruct);
 	symbolIndex = static_cast<int> (m_SVEquationSymbolPtrVector.size() - 1);
 	// add it to the top
-	m_toolsetSymbolTable.push_back(&pSymbolStruct->InObjectInfo);
+	m_toolsetSymbolTable.push_back(ObjectReference);
 	return symbolIndex;
 }
 
@@ -176,7 +172,7 @@ int SVEquationSymbolTableClass::AddSymbol(LPCTSTR name, SVObjectClass* pRequesto
 /////////////////////////////////////////////////////////////////
 // Get the ToolSet Symbol table
 /////////////////////////////////////////////////////////////////
-SvOl::SVInputInfoListClass& SVEquationSymbolTableClass::GetToolSetSymbolTable()
+std::vector<SVObjectReference>& SVEquationSymbolTableClass::GetToolSetSymbolTable()
 {
 	return m_toolsetSymbolTable;
 }
@@ -193,13 +189,13 @@ HRESULT SVEquationSymbolTableClass::GetData(int SymbolIndex, double& rValue, int
 
 		if (SV_TOOLSET_SYMBOL_TYPE == pSymbolStruct->Type)
 		{
-			isValidObject = pSymbolStruct->InObjectInfo.IsConnected() && nullptr != pSymbolStruct->InObjectInfo.GetInputObjectInfo().getObject();
+			isValidObject = nullptr != pSymbolStruct->m_ref.getObject();
 		}
 		else
 		{
-			if (nullptr != pSymbolStruct->InObjectInfo.GetInputObjectInfo().getObject())
+			if (nullptr != pSymbolStruct->m_ref.getObject())
 			{
-				isValidObject = (nullptr != pSymbolStruct->InObjectInfo.GetInputObjectInfo().getObject());
+				isValidObject = (nullptr != pSymbolStruct->m_ref.getObject());
 			}
 			else
 			{
@@ -208,7 +204,7 @@ HRESULT SVEquationSymbolTableClass::GetData(int SymbolIndex, double& rValue, int
 		}
 		if (isValidObject)
 		{
-			HRESULT hr = pSymbolStruct->InObjectInfo.GetInputObjectInfo().getObject()->getValue(rValue, Index);
+			HRESULT hr = pSymbolStruct->m_ref.getObject()->getValue(rValue, Index);
 			return hr;
 		}
 	}
@@ -226,16 +222,16 @@ HRESULT SVEquationSymbolTableClass::GetData(int SymbolIndex, std::vector<double>
 
 		if (SV_TOOLSET_SYMBOL_TYPE == pSymbolStruct->Type)
 		{
-			isValidObject = pSymbolStruct->InObjectInfo.IsConnected() && nullptr != pSymbolStruct->InObjectInfo.GetInputObjectInfo().getObject();
+			isValidObject = nullptr != pSymbolStruct->m_ref.getObject();
 		}
 		else if (SV_INPUT_SYMBOL_TYPE == pSymbolStruct->Type)
 		{
-			isValidObject = (nullptr != pSymbolStruct->InObjectInfo.GetInputObjectInfo().getObject());
+			isValidObject = (nullptr != pSymbolStruct->m_ref.getObject());
 		}
 
 		if (isValidObject)
 		{
-			Result = pSymbolStruct->InObjectInfo.GetInputObjectInfo().getObject()->getValues(rValues);
+			Result = pSymbolStruct->m_ref.getObject()->getValues(rValues);
 		}
 	}
 
@@ -277,9 +273,6 @@ void SVEquation::init()
 	// Set Embedded defaults
 	m_enabled.SetDefaultValue(BOOL(true), true);
 
-	// Set default inputs and outputs
-	addDefaultInputObjects();
-
 	// Set local defaults
 	m_isDataValid = true;
 }
@@ -289,6 +282,7 @@ void SVEquation::init()
 ////////////////////////////////////////////////////////////////////////////////
 SVEquation::~SVEquation()
 {
+	m_Symbols.ClearAll();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -364,8 +358,6 @@ void SVEquation::Persist(SvOi::IObjectWriter& rWriter)
 ////////////////////////////////////////////////////////////////////////////////
 HRESULT SVEquation::SetObjectValue(SVObjectAttributeClass* pDataObject)
 {
-	HRESULT hr = S_FALSE;
-
 	SvCl::SVObjectStdStringArrayClass AttributeList;
 	bool bOk{pDataObject->GetAttributeData(_T("EquationBuffer"), AttributeList)};
 	if(bOk)
@@ -376,15 +368,12 @@ HRESULT SVEquation::SetObjectValue(SVObjectAttributeClass* pDataObject)
 
 			SvUl::RemoveEscapedSpecialCharacters(m_equationStruct.EquationBuffer, true);
 		}
+		return S_OK;
 	}
 	else
 	{
-		hr = SVTaskObjectClass::SetObjectValue(pDataObject);
-		return hr;
+		return SVTaskObjectClass::SetObjectValue(pDataObject);
 	}
-
-	hr = bOk ? S_OK : S_FALSE;
-	return hr;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -566,28 +555,22 @@ int SVEquation::AddSymbol(LPCTSTR name)
 	return index;
 }
 
-bool SVEquation::DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pInObjectInfo)
+void SVEquation::disconnectObjectInput(uint32_t objectId)
 {
-	// Update ToolSet Symbol table - Gets called when one of our inputs goes away
-	if (pInObjectInfo)
+	if (SvDef::InvalidObjectId != objectId)
 	{
-		SvOl::SVInputInfoListClass& toolSetSymbols = m_Symbols.GetToolSetSymbolTable();
-
-		for (int i = 0; i < static_cast<int> (toolSetSymbols.size()); i++)
+		// Update ToolSet Symbol table - Gets called when one of our inputs goes away
+		auto& toolSetSymbols = m_Symbols.GetToolSetSymbolTable();
+		for (auto& rRef : toolSetSymbols)
 		{
-			SvOl::SVInObjectInfoStruct* pSymbolInputObjectInfo = toolSetSymbols[i];
-
-			if (pSymbolInputObjectInfo)
+			if (objectId == rRef.getObjectId())
 			{
-				if (pInObjectInfo->GetInputObjectInfo().getObjectId() == pSymbolInputObjectInfo->GetInputObjectInfo().getObjectId())
-				{
-					pSymbolInputObjectInfo->SetInputObject(nullptr);
-					break;
-				}
+				rRef = {};
+				__super::disconnectObjectInput(objectId);
+				return;
 			}
 		}
 	}
-	return __super::DisconnectObjectInput(pInObjectInfo);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

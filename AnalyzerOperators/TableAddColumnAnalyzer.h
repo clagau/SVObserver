@@ -9,8 +9,10 @@
 
 #pragma region Includes
 #include "InspectionEngine/SVTaskObject.h"
+#include "SVObjectLibrary/InputObject.h"
 #include "SVValueObjectLibrary/DoubleSortValueObject.h"
 #pragma endregion Includes
+
 
 
 namespace SvAo
@@ -40,7 +42,7 @@ private:
 
 #pragma region Member Variables
 protected:
-	SvOl::SVInObjectInfoStruct m_newColumnObjectInfo;
+	SvOl::InputObject m_newColumnInput;
 	SvVol::DoubleSortValuePtr m_pNewColumn;
 #pragma endregion Member Variables
 };

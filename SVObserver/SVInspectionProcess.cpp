@@ -2893,12 +2893,7 @@ bool SVInspectionProcess::RunInspection(SVInspectionInfoStruct& rIPInfo, const S
 void SVInspectionProcess::SetDefaultInputs()
 {
 	// Setup Connections
-	if (m_pCurrentToolset)
-	{
-		m_pCurrentToolset->GetAllInputObjects();
-	}// end if
-
-	ConnectAllInputs();
+	connectAllInputs();
 
 	// Setup Connections
 	if (m_pCurrentToolset)
@@ -3492,17 +3487,6 @@ void SVInspectionProcess::getToolMessages(SvStl::MessageContainerInserter& rInse
 	}
 }
 
-bool SVInspectionProcess::DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo)
-{
-	bool Result = m_publishList.RemovePublishedEntry(pObjectInInfo->GetInputObjectInfo().getObjectId());
-
-	if (nullptr != GetToolSet())
-	{
-		return GetToolSet()->DisconnectObjectInput(pObjectInInfo);
-	}
-	return Result;
-}
-
 bool SVInspectionProcess::createAllObjects(const SVObjectLevelCreateStruct& rCreateStructure)
 {
 	bool Result = __super::createAllObjects(rCreateStructure);
@@ -3571,7 +3555,7 @@ bool SVInspectionProcess::DestroyChildObject(SVObjectClass* pChild)
 		if (nullptr != pTaskObject)
 		{
 			// Notify the Owner of our inputs that they are not needed anymore
-			pTaskObject->Disconnect();
+			pTaskObject->disconnectAllInputs();
 		}
 
 		// Close the Object
@@ -3609,13 +3593,27 @@ void SVInspectionProcess::OnObjectRenamed(const SVObjectClass& rRenamedObject, c
 	}
 }
 
-bool SVInspectionProcess::ConnectAllInputs()
+void SVInspectionProcess::disconnectObjectInput(uint32_t objectId)
+{
+	m_publishList.RemovePublishedEntry(objectId);
+}
+
+bool SVInspectionProcess::connectAllInputs()
 {
 	if (GetToolSet())
 	{
-		return GetToolSet()->ConnectAllInputs();
+		return GetToolSet()->connectAllInputs();
 	}
 	return false;
+}
+
+void SVInspectionProcess::disconnectAllInputs()
+{
+	__super::disconnectAllInputs();
+	if (GetToolSet())
+	{
+		GetToolSet()->disconnectAllInputs();
+	}
 }
 
 bool SVInspectionProcess::replaceObject(SVObjectClass* pObject, uint32_t newId)

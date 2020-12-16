@@ -9,6 +9,7 @@
 
 #pragma region Includes
 #include "SVTool.h"
+#include "SVObjectLibrary/InputObject.h"
 #include "Operators/TableCopyObject.h"
 #pragma endregion Includes
 
@@ -83,7 +84,7 @@ private:
 #pragma region Member Variables
 private:
 	SvOp::TableCopyObject* m_pResultTable;
-	SvOl::SVInObjectInfoStruct m_sourceTableObjectInfo;
+	SvOl::InputObject m_sourceTableInput;
 #pragma endregion Member Variables
 };
 

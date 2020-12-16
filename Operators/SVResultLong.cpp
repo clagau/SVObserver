@@ -38,10 +38,9 @@ SVLongResult::SVLongResult( SVObjectClass* POwner, int StringResourceID )
 	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVResultLongObjectType;
 
 	// Identify our input type needs
-	m_inputObjectInfo.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVLongValueObjectType );
-	m_inputObjectInfo.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_inputObjectInfo, SvDef::cInputTag_LongResultValue );
-	m_inputObjectInfo.setReportAndCopyFlag(false);
+	m_inputObject.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVLongValueObjectType );
+	registerInputObject( &m_inputObject, SvDef::cInputTag_LongResultValue, SvPb::ResultInputEId);
+	m_inputObject.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( &m_Value, SvPb::ValueEId, IDS_OBJECTNAME_VALUE, false, SvOi::SVResetItemNone );
@@ -74,9 +73,6 @@ SVLongResult::SVLongResult( SVObjectClass* POwner, int StringResourceID )
 	{
 		Add(pRange);
 	}
-
-	// Add Default Inputs and Outputs
-	addDefaultInputObjects();
 }
 
 SVLongResult::~SVLongResult()

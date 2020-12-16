@@ -15,6 +15,7 @@
 #pragma warning (disable : 4290)
 
 #pragma region Includes
+#include <array>
 #include "ObjectInterfaces/IExternalToolTask.h"
 #include "ObjectInterfaces/IExternalToolTaskDataAdmin.h"
 #include "ObjectInterfaces/IInputValueDefinition.h"
@@ -23,6 +24,7 @@
 #include "InspectionEngine/SVTaskObject.h"
 #include "InspectionEngine/SVTaskObjectList.h"
 #include "SVDllToolLoadLibraryClass.h"
+#include "SVObjectLibrary/InputObject.h"
 #include "SVRPropertyTree/SVRPropTreeState.h"
 #include "SVValueObjectLibrary/LinkedValue.h"
 #include "SVValueObjectLibrary/SVLongValueObjectClass.h"
@@ -50,10 +52,10 @@ struct SVExternalToolTaskData
 	};
 
 	SVExternalToolTaskData();
-	SVExternalToolTaskData(const SVExternalToolTaskData& src);
+	SVExternalToolTaskData(const SVExternalToolTaskData& src) = delete;
 	virtual ~SVExternalToolTaskData();
 
-	SVExternalToolTaskData& operator = (const SVExternalToolTaskData& rhs);
+	SVExternalToolTaskData& operator = (const SVExternalToolTaskData& rhs) = delete;
 
 	void SetInputValueDefinitions(long ArraySize, InputValueDefinitionStruct  InputValueDefs[]);
 	void SetInputValueDefinitions(long ArraySize, InputValueDefinitionStructEx  InputValueDefs[]);
@@ -69,7 +71,7 @@ struct SVExternalToolTaskData
 	SvVol::SVLongValueObjectClass  m_voToolVersion;
 
 	// Inputs
-	std::vector<SvOl::SVInObjectInfoStruct> m_aInputImageInfo; //[NUM_INPUT_IMAGES]; // used to connect to other images
+	std::array<SvOl::InputObject, NUM_INPUT_IMAGES> m_aInputImageInfo; 
 	std::vector<SvVol::LinkedValue> m_aInputObjects; //[NUM_INPUT_OBJECTS]; // our own value objects
 
 
@@ -133,9 +135,6 @@ public:
 
 #pragma endregion
 
-	virtual HRESULT DisconnectInputsOutputs(SVObjectPtrVector& rListOfObjects) override;
-	virtual HRESULT HideInputsOutputs(SVObjectPtrVector& rListOfObjects) override;
-
 	void SetPathName( const std::string& rPath );
 	HRESULT SetDependencies( const SvDef::StringVector& rDependencies );
 	HRESULT GetResultImageDefinitions( SVImageDefinitionStructArray& raResultImageDefinitions );
@@ -158,10 +157,6 @@ public:
 		FIND_ALL_OBJECTS = FIND_IMAGES | FIND_VALUES
 	};
 	HRESULT GetDLLMessageString(HRESULT hr, BSTR* bstrMessage) const;
-
-#pragma region Methods to replace processMessage
-	virtual bool DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo) override;
-#pragma endregion Methods to replace processMessage
 
 	/// Returns true if the External dll Ex functions are not supported in the Version of the loaded config.
 	// i.e. loaded version is older than  10.0  

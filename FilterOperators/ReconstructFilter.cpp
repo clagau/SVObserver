@@ -37,9 +37,9 @@ bool ReconstructFilter::ResetObject(SvStl::MessageContainerVector *pErrorMessage
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 
-	SvOl::ValidateInput(m_SeedImageInfo);
+	m_SeedImageInput.validateInput();
 
-	auto* pSeedImage = SvOl::getInput<SvIe::SVImageClass>(m_SeedImageInfo);
+	auto* pSeedImage = m_SeedImageInput.getInput<SvIe::SVImageClass>();
 	auto* pOwner = m_ownerObjectInfo.getObject();
 	SvIe::SVImageClass* pSourceImage = nullptr;
 	if (nullptr != pOwner)
@@ -83,7 +83,7 @@ bool ReconstructFilter::ResetObject(SvStl::MessageContainerVector *pErrorMessage
 
 bool ReconstructFilter::onRun(bool, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
-	auto* pSeedImage = SvOl::getInput<SvIe::SVImageClass>(m_SeedImageInfo);
+	auto* pSeedImage = m_SeedImageInput.getInput<SvIe::SVImageClass>(true);
 	if (nullptr != rInputImageHandle && !rInputImageHandle->empty() && nullptr != rOutputImageHandle && !rOutputImageHandle->empty() && nullptr != pSeedImage )
 	{
 		SvOi::ITRCImagePtr pSeedImageBuffer = pSeedImage->getImageReadOnly(rRunStatus.m_triggerRecord.get());
@@ -128,8 +128,6 @@ void ReconstructFilter::init()
 {
 	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::ReconstructFilterObjectType;
 
-	m_SeedImageInfo.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
-	m_SeedImageInfo.SetObject(GetObjectInfo());
-	RegisterInputObject(&m_SeedImageInfo, SvDef::SeedImageConnectionName);
-
+	m_SeedImageInput.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
+	registerInputObject(&m_SeedImageInput, SvDef::SeedImageConnectionName, SvPb::SeedImageInputEId);
 }

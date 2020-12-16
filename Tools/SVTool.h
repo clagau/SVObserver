@@ -25,6 +25,7 @@
 #include "SVValueObjectLibrary/SVStringValueObjectClass.h"
 #include "SVValueObjectLibrary/SVTimerValueObjectClass.h"
 #pragma endregion Includes
+#include "SVObjectLibrary/InputObject.h"
 
 namespace SvIe
 {
@@ -53,7 +54,6 @@ public:
 
 	virtual bool CreateObject(const SVObjectLevelCreateStruct& rCreateStructure) override;
 	virtual bool CloseObject() override;
-	virtual bool DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pInObjectInfo) override;
 
 	virtual void GetDrawInfo(SVExtentMultiLineStruct& p_rMultiLine) override;
 
@@ -97,10 +97,6 @@ public:
 	// Auxiliary Source Image functions
 	HRESULT GetSourceImages(SvIe::SVImageClassPtrVector* p_psvImageList) const;
 	HRESULT SetAuxSourceImage(SvIe::SVImageClass* p_psvImage);
-
-	virtual HRESULT IsAuxInputImage(const SvOl::SVInObjectInfoStruct* p_psvInfo) const override;
-
-	const SvOl::SVInObjectInfoStruct* GetAuxInputImageInfo() const { return &m_AuxSourceImageObjectInfo;}
 
 	// Set String value object for Source Image Names
 	virtual SvVol::SVStringValueObjectClass* GetInputImageNames();
@@ -206,9 +202,9 @@ protected:
 
 	SvOi::IToolSet* m_pCurrentToolSet;
 
-	SvOl::SVInObjectInfoStruct m_inputConditionBoolObjectInfo;
-	SvOl::SVInObjectInfoStruct m_AuxSourceImageObjectInfo;
-	SvOl::SVInObjectInfoStruct m_overlayColorToolObjectInfo;
+	SvOl::InputObject m_conditionBoolInput;
+	SvOl::InputObject m_AuxSourceImageInput;
+	SvOl::InputObject m_overlayColorToolInput;
 
 	SvVol::SVBoolValueObjectClass  m_isObjectValid;	//	Embedded
 

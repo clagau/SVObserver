@@ -45,9 +45,6 @@ void SVAnalyzerClass::init()
 {
 	// Indentify our type in the Output List
 	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVAnalyzerObjectType;
-
-	// Set up the Defualt Inputs/Outputs
-	addDefaultInputObjects();
 }
 
 SVAnalyzerClass::~SVAnalyzerClass()

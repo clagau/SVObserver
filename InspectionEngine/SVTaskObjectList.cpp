@@ -43,13 +43,11 @@ static char THIS_FILE[] = __FILE__;
 SVTaskObjectListClass::SVTaskObjectListClass(LPCSTR ObjectName)
 				      :SVTaskObjectClass(ObjectName), m_LastListUpdateTimestamp( 0 ) 
 {
-	addDefaultInputObjects();
 }
 
 SVTaskObjectListClass::SVTaskObjectListClass(SVObjectClass* POwner, int StringResourceID)
 					  :SVTaskObjectClass(POwner, StringResourceID), m_LastListUpdateTimestamp( 0 ) 
 {
-	addDefaultInputObjects();
 }
 
 SVTaskObjectListClass::~SVTaskObjectListClass()
@@ -109,54 +107,27 @@ void SVTaskObjectListClass::fillObjectList(std::back_insert_iterator<std::vector
 	}
 }
 
-
-void SVTaskObjectListClass::AppendInputObjects()
+HRESULT SVTaskObjectListClass::ConnectToObject(const std::string& rInputName, uint32_t newID, SvPb::SVObjectTypeEnum objectType)
 {
-	// First Friends...
-	SVTaskObjectClass::GetInputObjects(m_InputObjectList);
-	
-	// Then get your default inputs and outputs ...
-	addDefaultInputObjects();
-	
-	// Append input output objects of all list members...
-	for (int i = 0; i < static_cast<int> (m_TaskObjectVector.size()); ++ i)
+	HRESULT result = __super::ConnectToObject(rInputName, newID, objectType);
+	if (S_OK == result)
+	{
+		return S_OK;
+	}
+
+	for (int i = 0; i < static_cast<int> (m_TaskObjectVector.size()); i++)
 	{
 		if (m_TaskObjectVector[i])
 		{
-			m_TaskObjectVector[i]->GetInputObjects(m_InputObjectList);
+			result = m_TaskObjectVector[i]->ConnectToObject(rInputName, newID, objectType);
+			if (S_OK == result)
+			{
+				return S_OK;
+			}
 		}
 	}
-}
 
-void SVTaskObjectListClass::RemoveOutputObject( SVOutObjectInfoStruct* p_pOutObject )
-{
-	if ( SVTaskObjectListClass* pTaskObjectList = dynamic_cast <SVTaskObjectListClass*> (GetParent()) )
-	{
-		pTaskObjectList->RemoveOutputObject( p_pOutObject );
-	}
-}
-
-void SVTaskObjectListClass::GetAllInputObjects()
-{
-	// Try to get all inputs and outputs...
-	
-	// First clean up current lists...
-	m_InputObjectList.clear();
-	
-	// Call Base Class to inform friends...
-	SVTaskObjectClass::GetAllInputObjects();
-	
-	// Force all list members to rebuild their input output objects lists...
-	for (int i = 0; i < static_cast<int> (m_TaskObjectVector.size()); ++i)
-	{
-		if (m_TaskObjectVector[i])
-		{
-			m_TaskObjectVector[i]->GetAllInputObjects();
-		}
-	}
-	
-	// Finally append all objects to my lists...
-	AppendInputObjects();
+	return result;
 }
 
 void SVTaskObjectListClass::Persist(SvOi::IObjectWriter& rWriter)
@@ -532,7 +503,7 @@ bool SVTaskObjectListClass::DestroyChildObject( SVTaskObjectClass* pTaskObject, 
 		if (RemoveFromTaskObjectVector(objectID) || RemoveFriend(objectID))
 		{
 			// Notify the Owner of our inputs that they are not needed anymore
-			pTaskObject->Disconnect();
+			pTaskObject->disconnectAllInputs();
 
 			// Close the Object
 			pTaskObject->CloseObject();
@@ -744,19 +715,6 @@ void SVTaskObjectListClass::ConnectObject( const SVObjectLevelCreateStruct& rCre
 	}
 }
 
-void SVTaskObjectListClass::GetInputInterface(SvOl::SVInputInfoListClass& rInputList, bool bAlsoFriends) const
-{
-	SVTaskObjectClass::GetInputInterface(rInputList, bAlsoFriends);
-
-	for (int i = 0; i < static_cast<int> (m_TaskObjectVector.size()); i++)
-	{
-		if (m_TaskObjectVector[i])
-		{
-			m_TaskObjectVector[i]->GetInputInterface(rInputList, bAlsoFriends);
-		}
-	}
-}
-
 SvOi::IObjectClass* SVTaskObjectListClass::getFirstObject(const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends, const SvOi::IObjectClass* pRequestor) const
 {
 	SvOi::IObjectClass* retObject = SVTaskObjectClass::getFirstObject(rObjectTypeInfo, useFriends, pRequestor);
@@ -793,19 +751,46 @@ void SVTaskObjectListClass::OnObjectRenamed(const SVObjectClass& rRenamedObject,
 	}
 }
 
-bool SVTaskObjectListClass::ConnectAllInputs()
+bool SVTaskObjectListClass::connectAllInputs()
 {
-	bool Result = SVTaskObjectClass::ConnectAllInputs();
+	bool Result = SVTaskObjectClass::connectAllInputs();
 
 	for (int i = 0; i < static_cast<int> (m_TaskObjectVector.size()); i++)
 	{
 		if (m_TaskObjectVector[i])
 		{
-			Result &= m_TaskObjectVector[i]->ConnectAllInputs();
+			Result &= m_TaskObjectVector[i]->connectAllInputs();
 		}
 	}
 	return Result;
 }
+
+void SVTaskObjectListClass::disconnectAllInputs()
+{
+	__super::disconnectAllInputs();
+
+	for (auto* pTask : m_TaskObjectVector)
+	{
+		if (nullptr != pTask)
+		{
+			pTask->disconnectAllInputs();
+		}
+	}
+}
+
+void SVTaskObjectListClass::getInputs(std::back_insert_iterator<std::vector<SvOl::InputObject*>> inserter) const
+{
+	SVTaskObjectClass::getInputs(inserter);
+
+	for (int i = 0; i < static_cast<int> (m_TaskObjectVector.size()); i++)
+	{
+		if (m_TaskObjectVector[i])
+		{
+			m_TaskObjectVector[i]->getInputs(inserter);
+		}
+	}
+}
+
 
 bool SVTaskObjectListClass::replaceObject(SVObjectClass* pObject, uint32_t newId)
 {

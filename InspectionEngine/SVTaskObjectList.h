@@ -43,10 +43,6 @@ public:
 	
 	virtual HRESULT GetOutputList( SVOutputInfoListClass& p_rOutputInfoList ) const override;
 
-	void AppendInputObjects();
-	void RemoveOutputObject( SVOutObjectInfoStruct* pOutObject );
-
-	virtual void GetAllInputObjects() override;
 	virtual void Persist(SvOi::IObjectWriter& rWriter) override;
 
 	virtual bool isInputImage(uint32_t imageId) const override;
@@ -91,6 +87,7 @@ public:
 	
 	virtual void fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, SvOi::IsObjectAllowedFunc pFunctor, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum nameToType, SvPb::ObjectSelectorType requiredType) const override;
 	virtual void fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo, bool addHidden = false) override;
+	virtual HRESULT ConnectToObject(const std::string& rInputName, uint32_t newID, SvPb::SVObjectTypeEnum objectType = SvPb::SVNotSetObjectType) override;
 #pragma region virtual methods (ITaskObjectListClass)
 	virtual void Delete(uint32_t objectID) override;
 	virtual void InsertBefore(uint32_t objectBeforeID, ITaskObject& rObject) override;
@@ -105,10 +102,11 @@ public:
 #pragma region Methods to replace processMessage
 	virtual bool createAllObjects( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 	virtual void ConnectObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
-	virtual void GetInputInterface(SvOl::SVInputInfoListClass& rInputList, bool bAlsoFriends) const override;
 	virtual SvOi::IObjectClass* getFirstObject(const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends = true, const SvOi::IObjectClass* pRequestor = nullptr) const override;
 	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName) override;
-	virtual bool ConnectAllInputs() override;
+	virtual bool connectAllInputs() override;
+	virtual void disconnectAllInputs() override;
+	virtual void getInputs(std::back_insert_iterator<std::vector<SvOl::InputObject*>> inserter) const override;
 	virtual bool replaceObject(SVObjectClass* pObject, uint32_t newId) override;
 
 	bool getAvailableObjects(SVClassInfoStructVector* pList, const SvDef::SVObjectTypeInfoStruct* pObjectTypeInfo ) const;

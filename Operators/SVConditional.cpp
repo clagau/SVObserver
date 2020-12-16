@@ -57,9 +57,6 @@ void SVConditional::init()
 	// Set Embedded defaults
 	result.SetDefaultValue( BOOL(false), true );
 	result.setSaveValueFlag(false);
-
-	// Set default inputs and outputs
-	addDefaultInputObjects();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

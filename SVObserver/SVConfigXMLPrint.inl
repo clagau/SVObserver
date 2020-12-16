@@ -1177,14 +1177,14 @@ void SVConfigXMLPrint::WriteInputOutputList(Writer writer, SvIe::SVTaskObjectCla
 			bool firstFlag = true;
 			for (auto* pInput : rInputList)
 			{
-				if (nullptr != pInput && pInput->IsConnected() && pInput->reportAndCopyFlag())
+				if (nullptr != pInput && pInput->IsConnected() && SvPb::noAttributes != pInput->ObjectAttributesAllowed())
 				{
 					if (firstFlag)
 					{
 						writer->WriteStartElement(nullptr, L"Inputs", nullptr);
 						firstFlag = false;
 					}
-					WriteValueObject(writer, L"Input", SvUl::to_utf16(pInput->GetInputName()), SvUl::to_utf16(pInput->GetInputObjectInfo().getObject()->GetObjectNameToObjectType().c_str(), cp_dflt).c_str());
+					WriteValueObject(writer, L"Input", SvUl::to_utf16(pInput->GetName()), SvUl::to_utf16(pInput->GetInputObjectInfo().getObject()->GetObjectNameToObjectType().c_str(), cp_dflt).c_str());
 				}
 			}
 			if (false == firstFlag)

@@ -204,9 +204,6 @@ void Custom2Filter::init()
 	m_AbsoluteValue.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 	m_NormalizationFactor.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 
-	// Set default inputs and outputs
-	addDefaultInputObjects();
-
 	RebuildKernel();
 }
 

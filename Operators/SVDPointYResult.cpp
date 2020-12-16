@@ -42,10 +42,9 @@ SVDPointYResult::SVDPointYResult( SVObjectClass* POwner, int StringResourceID )
 	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVResultDPointYObjectType;
 
 	// Identify our input type needs
-	m_inputObjectInfo.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDPointValueObjectType );
-	m_inputObjectInfo.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_inputObjectInfo, _T( "DPointYResult" ) );
-	m_inputObjectInfo.setReportAndCopyFlag(false);
+	m_inputObject.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDPointValueObjectType );
+	registerInputObject( &m_inputObject, _T( "DPointYResult" ), SvPb::ResultInputEId);
+	m_inputObject.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( &y, SvPb::DYEId, IDS_OBJECTNAME_DY, false, SvOi::SVResetItemNone );
@@ -78,9 +77,6 @@ SVDPointYResult::SVDPointYResult( SVObjectClass* POwner, int StringResourceID )
 	{
 		Add(pRange);
 	}
-
-	// Add Default Inputs and Outputs
-	addDefaultInputObjects();
 }
 
 SVDPointYResult::~SVDPointYResult()
@@ -103,12 +99,7 @@ bool SVDPointYResult::CreateObject( const SVObjectLevelCreateStruct& rCreateStru
 
 SvVol::SVDPointValueObjectClass* SVDPointYResult::getInputPoint()
 {
-	if( m_inputObjectInfo.IsConnected() )
-	{
-		return dynamic_cast<SvVol::SVDPointValueObjectClass*> (m_inputObjectInfo.GetInputObjectInfo().getObject());
-	}
-	
-	return nullptr;
+	return m_inputObject.getInput<SvVol::SVDPointValueObjectClass>();
 }
 
 bool SVDPointYResult::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )

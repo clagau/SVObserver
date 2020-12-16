@@ -57,9 +57,8 @@ void SVUserMaskOperatorClass::init()
 	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVUnaryImageOperatorObjectType;
 	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVUserMaskOperatorObjectType;
 
-	m_inObjectInfo.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
-	m_inObjectInfo.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_inObjectInfo, _T( "UserMaskImage" ) );
+	m_userMaskImageInput.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
+	registerInputObject( &m_userMaskImageInput, _T( "UserMaskImage" ), SvPb::UserMaskImageInputEId);
 
 
 	// RRRRGGGGHHHHHH who created this stupid object structure????
@@ -116,9 +115,6 @@ void SVUserMaskOperatorClass::init()
 
 	m_MaskBufferInfo.SetOwnerImage(SvDef::InvalidObjectId);
 	m_MaskBufferInfo.SetOwner(SvDef::InvalidObjectId);
-
-	// Set default inputs and outputs
-	addDefaultInputObjects();
 }
 
 bool SVUserMaskOperatorClass::CloseObject()
@@ -161,12 +157,12 @@ bool SVUserMaskOperatorClass::ResetObject(SvStl::MessageContainerVector *pErrorM
 	m_Data.dwvoMaskType.GetValue(dwMaskType);
 	if (dwMaskType == MASK_TYPE_IMAGE)
 	{
-		SvOl::ValidateInput(m_inObjectInfo);
-		m_inObjectInfo.setReportAndCopyFlag(true);
+		m_userMaskImageInput.validateInput();
+		m_userMaskImageInput.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::embedable, SvOi::SetAttributeType::OverwriteAttribute);
 	}
 	else
 	{
-		m_inObjectInfo.setReportAndCopyFlag(false);
+		m_userMaskImageInput.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
 	}
 
 	BOOL bActive = false;
@@ -821,18 +817,7 @@ bool SVUserMaskOperatorClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rI
 
 SvIe::SVImageClass* SVUserMaskOperatorClass::getMaskInputImage(bool bRunMode /*= false*/) const
 {
-	return SvOl::getInput<SvIe::SVImageClass>(m_inObjectInfo, bRunMode);
-}
-
-bool SVUserMaskOperatorClass::hasToAskFriendForConnection( const SvDef::SVObjectTypeInfoStruct& rInfo, SVObjectClass*& rPOwner ) const
-{
-	bool Result(true);
-	if (SvPb::SVImageObjectType == rInfo.m_ObjectType )
-	{
-		rPOwner = GetInspection();
-		Result = false;
-	}
-	return Result;
+	return m_userMaskImageInput.getInput<SvIe::SVImageClass>(bRunMode);
 }
 
 #pragma region IMask

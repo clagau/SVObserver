@@ -44,8 +44,6 @@ public:
 	void BuildImageFilePaths();
 	HRESULT	GetNextImageFilePath(std::string& rImageFile, bool useAlternativeImagePaths);
 	void BuildImageFileName();            // For images only
-	void ConnectInputObject();
-	void DisconnectInputObject();
 
 	HRESULT AllocateBuffers(long lBufferNumber, BufferStructCountMap& rBufferMap, int toolPos);
 	HRESULT QueueImage(SvOi::ITRCImagePtr& rImage, const std::string& rFileName );

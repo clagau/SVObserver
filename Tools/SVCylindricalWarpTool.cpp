@@ -79,9 +79,8 @@ void SVCylindricalWarpToolClass::LocalInitialize()
 	m_outObjectInfo.m_ObjectTypeInfo.m_SubType    = SvPb::SVToolCylindricalObjectType;
 
 	// Identify our input image...
-	m_InputImageObjectInfo.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
-	m_InputImageObjectInfo.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_InputImageObjectInfo, _T( "CylindricalWarpImage" ) );
+	m_InputImage.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
+	registerInputObject( &m_InputImage, SvDef::SourceImageInputName, SvPb::ImageInputEId);
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( &m_OutputImage, SvPb::OutputImageEId, IDS_OBJECTNAME_IMAGE1 );
@@ -133,9 +132,6 @@ void SVCylindricalWarpToolClass::LocalInitialize()
 	m_svWarpAngle.SetDefaultValue( 180.0, true);
 	m_svWarpAngle.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
 	m_toolExtent.SetExtentObject( SvPb::SVExtentPropertyStartAngle, &m_svWarpAngle );
-
-	// Add Default Inputs and Outputs
-	addDefaultInputObjects();
 }
 
 HRESULT SVCylindricalWarpToolClass::LocalCreate()
@@ -145,7 +141,7 @@ HRESULT SVCylindricalWarpToolClass::LocalCreate()
 	HRESULT l_hrOk = S_OK;
 	if ( S_OK == LocalDestroy() )
 	{
-		SvIe::SVImageClass* pInputImage = SvOl::getInput<SvIe::SVImageClass>(m_InputImageObjectInfo);
+		SvIe::SVImageClass* pInputImage = m_InputImage.getInput<SvIe::SVImageClass>();
 		uint32_t inputID = nullptr != pInputImage ? pInputImage->getObjectId() : m_OutputImage.getObjectId();
 		SVImageInfoClass l_ImageInfo = nullptr != pInputImage ? pInputImage->GetImageInfo() : m_OutputImage.GetImageInfo();
 		SVImageExtentClass imageExtents = nullptr != pInputImage ? pInputImage->GetImageExtents() : m_OutputImage.GetImageExtents();
@@ -210,14 +206,14 @@ HRESULT SVCylindricalWarpToolClass::LocalDestroy()
 
 HRESULT SVCylindricalWarpToolClass::UpdateOutputImageExtents()
 {
-	SvIe::SVImageClass* pInputImage = SvOl::getInput<SvIe::SVImageClass>(m_InputImageObjectInfo);
+	SvIe::SVImageClass* pInputImage = m_InputImage.getInput<SvIe::SVImageClass>();
 	// Get Input Width and Height put in output Image Extent.
 	const SVImageExtentClass rInputExtents = (nullptr != pInputImage) ? pInputImage->GetImageExtents() : SVImageExtentClass();
 	SVImageExtentClass OutputExtents = m_OutputImage.GetImageExtents();
 	
 	// Set Translation
 	long lWarpType = SvPb::SVExtentTranslationCylindricalWarpH;	// default
-	HRESULT l_hrOk = m_svWarpType.GetValue( lWarpType );
+	/*HRESULT l_hrOk =*/ m_svWarpType.GetValue( lWarpType );
 	SvPb::SVExtentTranslationEnum eTranslation = lWarpType == WarpTypeVertical ? SvPb::SVExtentTranslationCylindricalWarpV : SvPb::SVExtentTranslationCylindricalWarpH;
 	OutputExtents.SetTranslation( eTranslation );
 
@@ -249,16 +245,14 @@ HRESULT SVCylindricalWarpToolClass::UpdateOutputImageExtents()
 
 	l_ImageInfo.SetExtents( OutputExtents );
 
-	l_hrOk = m_OutputImage.UpdateImage(inputID, l_ImageInfo );
-
-	return l_hrOk;
+	return m_OutputImage.UpdateImage(inputID, l_ImageInfo );
 }
 
 bool SVCylindricalWarpToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = SVToolClass::ResetObject(pErrorMessages);
 
-	SvOl::ValidateInput(m_InputImageObjectInfo);
+	m_InputImage.validateInput();
 
 	HRESULT l_hrOk = UpdateOutputImageExtents();
 	if (S_OK != l_hrOk)
@@ -287,7 +281,7 @@ bool SVCylindricalWarpToolClass::ResetObject(SvStl::MessageContainerVector *pErr
 		}
 	}
 
-	SvIe::SVImageClass* pInputImage = SvOl::getInput<SvIe::SVImageClass>(m_InputImageObjectInfo);
+	SvIe::SVImageClass* pInputImage = m_InputImage.getInput<SvIe::SVImageClass>();
 	if (nullptr != pInputImage)
 	{
 		//Set input name to source image name to display it in result picker
@@ -319,7 +313,7 @@ bool SVCylindricalWarpToolClass::onRun( RunStatus& p_rRunStatus, SvStl::MessageC
 
 	if (l_bOk)
 	{
-		SvIe::SVImageClass* pInputImage = SvOl::getInput<SvIe::SVImageClass>(m_InputImageObjectInfo, true);
+		SvIe::SVImageClass* pInputImage = m_InputImage.getInput<SvIe::SVImageClass>(true);
 
 		const SVImageExtentClass& rToolExtents = GetImageExtent();
 		

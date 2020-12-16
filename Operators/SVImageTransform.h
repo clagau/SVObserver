@@ -13,6 +13,7 @@
 #pragma region Includes
 #include "SVTransform.h"
 #include "InspectionEngine/SVImageClass.h"
+#include "SVObjectLibrary/InputObject.h"
 #include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
 #include "SVValueObjectLibrary/SVDoubleValueObjectClass.h"
 #include "SVValueObjectLibrary/SVEnumerateValueObjectClass.h"
@@ -62,7 +63,7 @@ protected:
 	SvVol::SVBoolValueObjectClass		m_useExtentsOnly;
 
 	// Inputs
-	SvOl::SVInObjectInfoStruct	m_inputImageObjectInfo;
+	SvOl::InputObject	m_inputImage;
 
 	SvVol::SVDoubleValueObjectClass	m_extentWidth;
 	SvVol::SVDoubleValueObjectClass	m_extentHeight;

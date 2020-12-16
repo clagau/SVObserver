@@ -115,14 +115,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="DependencyManager.cpp" />
+    <ClCompile Include="InputObject.cpp" />
     <ClCompile Include="StdAfx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="SVClassRegisterClass.cpp" />
     <ClCompile Include="SVClassRegisterListClass.cpp" />
-    <ClCompile Include="SVInObjectInfoStruct.cpp" />
-    <ClCompile Include="SVInputInfoListClass.cpp" />
     <ClCompile Include="SVObjectAttributeClass.cpp" />
     <ClCompile Include="SVObjectBuilder.cpp" />
     <ClCompile Include="SVObjectClass.cpp" />
@@ -137,14 +136,13 @@
   <ItemGroup>
     <ClInclude Include="DependencyManager.h" />
     <ClInclude Include="DottedNameLookup.h" />
+    <ClInclude Include="InputObject.h" />
     <ClInclude Include="JoinType.h" />
     <ClInclude Include="ObjectNameLookup.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="SVClassRegisterClass.h" />
     <ClInclude Include="SVClassRegisterListClass.h" />
     <ClInclude Include="SVClsids.h" />
-    <ClInclude Include="SVInObjectInfoStruct.h" />
-    <ClInclude Include="SVInputInfoListClass.h" />
     <ClInclude Include="SVObjectAttributeClass.h" />
     <ClInclude Include="SVObjectBuilder.h" />
     <ClInclude Include="SVObjectClass.h" />

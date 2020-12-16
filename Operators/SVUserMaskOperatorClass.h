@@ -17,6 +17,7 @@
 #include "ObjectInterfaces/IMask.h"
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
+#include "SVObjectLibrary/InputObject.h"
 #include "SVValueObjectLibrary\SVBoolValueObjectClass.h"
 #include "SVValueObjectLibrary\SVDWordValueObjectClass.h"
 #include "SVValueObjectLibrary\SVEnumerateValueObjectClass.h"
@@ -93,7 +94,6 @@ public:
 protected:
 	virtual bool isInputImage(uint32_t imageId) const override;
 	virtual bool onRun(bool First, SvOi::SVImageBufferHandlePtr RInputImageHandle, SvOi::SVImageBufferHandlePtr ROutputImageHandle, RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages = nullptr) override;
-	virtual bool hasToAskFriendForConnection( const SvDef::SVObjectTypeInfoStruct& rInfo, SVObjectClass*& rPOwner ) const override;
 	
 	SVImageInfoClass      m_MaskBufferInfo;
 	SvOi::SVImageBufferHandlePtr  m_MaskBufferHandlePtr;
@@ -102,7 +102,7 @@ protected:
 
 	SVMaskOperatorCancelData   m_Data;
 
-	SvOl::SVInObjectInfoStruct m_inObjectInfo;
+	SvOl::InputObject m_userMaskImageInput;
 	SVExtentMultiLineStruct	   m_MultiLine;
 	uint32_t                   m_idShapeHelper;
 

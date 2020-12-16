@@ -12,7 +12,9 @@
 
 #pragma region Includes
 #include "SVTool.h" 
+#include "SVObjectLibrary/InputObject.h"
 #pragma endregion Includes
+
 
 namespace SvOp
 {
@@ -76,7 +78,6 @@ public:
 	DWORD FreeResult( SVStatisticsFeatureEnum aFeatureIndex );
 	SvOp::SVResult* GetResult( SVStatisticsFeatureEnum aFeatureIndex );
 
-	virtual bool DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pObjectInInfo ) override;
 	virtual bool areAuxExtentsAvailable() const override { return false; };
 
 protected:
@@ -113,7 +114,7 @@ protected:
 	double                      m_AccumulatedSquares;
 	long						m_NumberOfValidSamples;
 	// Input: 
-	SvOl::SVInObjectInfoStruct m_inputObjectInfo;
+	SvOl::InputObject m_inputValue;
 };
 
 } //namespace SvTo

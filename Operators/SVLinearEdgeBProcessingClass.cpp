@@ -91,9 +91,6 @@ SVLinearEdgeBProcessingClass::SVLinearEdgeBProcessingClass( SVObjectClass* POwne
 		SvPb::UpperThresholdMaxMinusPercentDiffBEId, SvPb::UpperThresholdMaxMinusOffsetBEId, SvPb::UpperThresholdMinPlusOffsetBEId,
 		SvPb::LinearEdgesEId
 	};
-
-	// Set default inputs and outputs
-	addDefaultInputObjects();
 }
 
 SVLinearEdgeBProcessingClass::~SVLinearEdgeBProcessingClass()

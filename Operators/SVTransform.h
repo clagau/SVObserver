@@ -12,6 +12,7 @@
 
 #pragma region Includes
 #include "InspectionEngine/SVTaskObject.h"
+#include "SVObjectLibrary/InputObject.h"
 #include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
 #include "SVValueObjectLibrary/SVDoubleValueObjectClass.h"
 #pragma endregion Includes
@@ -38,12 +39,12 @@ public:
 //******************************************************************************
 protected:
 	// Inputs
-	SvOl::SVInObjectInfoStruct m_inputTranslationXResult;
-	SvOl::SVInObjectInfoStruct m_inputTranslationYResult;
+	SvOl::InputObject m_inputTranslationXResult;
+	SvOl::InputObject m_inputTranslationYResult;
 	
-	SvOl::SVInObjectInfoStruct m_inputRotationXResult;
-	SvOl::SVInObjectInfoStruct m_inputRotationYResult;
-	SvOl::SVInObjectInfoStruct m_inputRotationAngleResult;
+	SvOl::InputObject m_inputRotationXResult;
+	SvOl::InputObject m_inputRotationYResult;
+	SvOl::InputObject m_inputRotationAngleResult;
 
 	// Embedded Objects (outputs)
 	SvVol::SVBoolValueObjectClass m_performTranslation;

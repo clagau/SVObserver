@@ -8,6 +8,7 @@
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
 #include "SVTool.h"
+#include "SVObjectLibrary/InputObject.h"
 #include "SVValueObjectLibrary/SVStringValueObjectClass.h"
 #include "SVValueObjectLibrary/LinkedValue.h"
 #include "Definitions/GlobalConst.h"
@@ -88,7 +89,7 @@ private:
 	SvIe::SVImageClass m_OutputImages[SvDef::cRingBufferNumberOutputImages];
 
 	// Source Image - input
-	SvOl::SVInObjectInfoStruct m_InputImageObjectInfo;
+	SvOl::InputObject m_InputImage;
 
 	//embedded parameter
 	SvVol::LinkedValue m_BufferDepth;

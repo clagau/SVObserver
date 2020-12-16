@@ -12,6 +12,7 @@
 
 #pragma region Includes
 #include "InspectionEngine/SVTaskObject.h"
+#include "SVObjectLibrary/InputObject.h"
 #include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
 #include "SVValueObjectLibrary/SVDoubleValueObjectClass.h"
 #include "SVValueObjectLibrary/SVEnumerateValueObjectClass.h"
@@ -105,11 +106,11 @@ protected:
 	HRESULT GetBlackWhiteEdgeValue( double p_dCurrent, DWORD p_dwUpper, DWORD p_dwLower, double &l_rdValue );
 	HRESULT CalculateSubPixelEdge( double p_dStart, double p_dEnd, DWORD p_dwUpper, DWORD p_dwLower, DWORD p_dwPolarisation, double &p_rdDistance );
 
-	SvOl::SVInObjectInfoStruct m_InputImageObjectInfo;
-	SvOl::SVInObjectInfoStruct m_InputMinThreshold;
-	SvOl::SVInObjectInfoStruct m_InputMaxThreshold;
-	SvOl::SVInObjectInfoStruct m_InputDelta;
-	SvOl::SVInObjectInfoStruct m_InputLinearData;
+	SvOl::InputObject m_InputImage;
+	SvOl::InputObject m_InputMinThreshold;
+	SvOl::InputObject m_InputMaxThreshold;
+	SvOl::InputObject m_InputDelta;
+	SvOl::InputObject m_InputLinearData;
 
 	long m_lPixelDepth;
 

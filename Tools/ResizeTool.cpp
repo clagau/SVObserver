@@ -96,11 +96,8 @@ void ResizeTool::LocalInitialize()
 void ResizeTool::BuildInputObjectList()
 {
 	// Source Image
-	m_InputImageObjectInfo.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
-	m_InputImageObjectInfo.SetObject(GetObjectInfo());
-	RegisterInputObject(&m_InputImageObjectInfo, SvDef::ResizeImage);
-
-	addDefaultInputObjects();
+	m_InputImage.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
+	registerInputObject(&m_InputImage, SvDef::SourceImageInputName, SvPb::ImageInputEId);
 }
 
 void ResizeTool::BuildEmbeddedObjectList()
@@ -268,7 +265,7 @@ bool ResizeTool::allScalefactorsHaveDefaultValues()
 
 SvIe::SVImageClass* ResizeTool::getInputImage(bool bRunMode /*= false*/) const
 {
-	return SvOl::getInput<SvIe::SVImageClass>(m_InputImageObjectInfo, bRunMode);
+	return m_InputImage.getInput<SvIe::SVImageClass>(bRunMode);
 }
 
 HRESULT ResizeTool::SetImageExtentToParent()
@@ -374,8 +371,7 @@ bool ResizeTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	toolimageextent.OutputDebugInformationOnExtent("reset2");
 #endif
 
-
-	SvOl::ValidateInput(m_InputImageObjectInfo);
+	m_InputImage.validateInput();
 
 	SvIe::SVImageClass* pInputImage = getInputImage();
 	if (nullptr != pInputImage)
@@ -531,7 +527,7 @@ bool ResizeTool::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pEr
 	long interpolationMode = 0;
 	if (!SUCCEEDED(m_ResizeInterpolationMode.GetValue(interpolationMode)))
 	{
-		Result = false;	
+		Result = false;
 		if (nullptr != pErrorMessages)
 		{
 			SvStl::MessageContainer Msg(SVMSG_SVO_5032_GETINTERPOLATIONMODEFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());

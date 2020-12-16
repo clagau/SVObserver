@@ -10,6 +10,7 @@
 
 namespace SvDef
 {
+constexpr char* SourceImageInputName = _T("SourceImage");
 constexpr char* WatershedMarkerImageConnectionName = _T("WatershedFilterMarkerImage");
 constexpr char* SeedImageConnectionName = _T("SeedImage");
 constexpr char* ImageAnalyzerImageName = _T("ImageAnalyzerImage");
@@ -49,7 +50,6 @@ constexpr char* Enabled = _T("Enabled");
 constexpr char* Disabled = _T("Disabled");
 constexpr char* Fast = _T("Fast");
 constexpr char* Precise = _T("Precise");
-constexpr char* ResizeImage = _T("ResizeImage");
 
 constexpr char* cPpqFixedName = _T("PPQ_");
 constexpr char* cTriggerFixedName = _T("Trigger_");

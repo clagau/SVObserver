@@ -65,9 +65,6 @@ void SVLUTEquation::init()
 	// Place another check/set vector size at the position you want to use the vector
 	// i.e. in onRun(...) : 
 	//	if( vector.GetSize() != targetSize  ) { vector.SetSize( targetSize ); }
-
-	// Set default inputs and outputs
-	addDefaultInputObjects();
 }
 
 SVLUTEquation::~SVLUTEquation()

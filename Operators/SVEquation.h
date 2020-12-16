@@ -53,7 +53,7 @@ enum SVEquationSymbolTypeEnum
 struct SVEquationSymbolStruct
 {
 	SVEquationSymbolTypeEnum Type;
-	SvOl::SVInObjectInfoStruct	InObjectInfo;
+	SVObjectReference	m_ref;
 	std::string Name;
 	bool IsValid;
 
@@ -89,7 +89,7 @@ public:
 	//************************************
 	int AddSymbol(LPCTSTR name, SVObjectClass* pRequestor );
 	
-	SvOl::SVInputInfoListClass& GetToolSetSymbolTable();	// Get the ToolSet Symbol table
+	std::vector<SVObjectReference>& GetToolSetSymbolTable();	// Get the ToolSet Symbol table
 
 	HRESULT GetData(int SymbolIndex, double& rValue, int Index = -1 );
 	HRESULT GetData(int SymbolIndex, std::vector<double>& rValues );
@@ -104,7 +104,7 @@ public:
 
 private:
 	SVEquationSymbolPtrVector m_SVEquationSymbolPtrVector;
-	SvOl::SVInputInfoListClass m_toolsetSymbolTable;		// The symbol table for the ToolSet Variables in the equation
+	std::vector<SVObjectReference> m_toolsetSymbolTable;		// The symbol table for the ToolSet Variables in the equation
 	std::string m_InspectionName;
 
 	std::string  m_ToolSetName = SvUl::LoadStdString(IDS_CLASSNAME_SVTOOLSET) + ".";
@@ -182,7 +182,7 @@ public:
 
 	virtual int AddSymbol( LPCTSTR name ) override;
 
-	virtual bool DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pInObjectInfo ) override;
+	virtual void disconnectObjectInput(uint32_t objectId) override;
 
 	virtual double GetPropertyValue( int iSymbolIndex ) override;
 	virtual double GetSubscriptedPropertyValue( int SymbolIndex, int Index, double Default = 0.0 ) override;

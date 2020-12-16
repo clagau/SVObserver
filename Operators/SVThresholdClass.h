@@ -14,6 +14,7 @@
 #pragma region Incudes
 #include <mil.h>
 #include "SVUnaryImageOperatorClass.h"
+#include "SVObjectLibrary/InputObject.h"
 #include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
 #include "SVValueObjectLibrary/SVDoubleValueObjectClass.h"
 #include "SVValueObjectLibrary/SVLongValueObjectClass.h"
@@ -55,16 +56,16 @@ protected:
 
 	SvVol::SVDoubleValueObjectClass m_dAutoThresholdMultiplier;
 	SvVol::SVBoolValueObjectClass   m_useExternalATM;	// use external auto threshold multiplier
-	SvOl::SVInObjectInfoStruct	 m_inputATM;
+	SvOl::InputObject	 m_inputATM;
 
 
 	SvVol::SVLongValueObjectClass	 m_upperThresh;
 	SvVol::SVBoolValueObjectClass   m_useExternalUT;		// use external Upper Threshold Value
-	SvOl::SVInObjectInfoStruct	 m_inputUT;
+	SvOl::InputObject	 m_inputUT;
 
 	SvVol::SVLongValueObjectClass	 m_lowerThresh;
 	SvVol::SVBoolValueObjectClass   m_useExternalLT;		// use external Lower Threshold Value
-	SvOl::SVInObjectInfoStruct	 m_inputLT;
+	SvOl::InputObject	 m_inputLT;
 
 	
 	SvVol::SVBoolValueObjectClass	 m_threshActivate;

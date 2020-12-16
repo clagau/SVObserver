@@ -34,15 +34,6 @@ SVEvaluate::SVEvaluate( SVObjectClass* POwner, int StringResourceID )
 {
 	// Identify yourself
 	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVEvaluateObjectType;
-
-	// Identify our input type needs...
-
-	// Register Embedded Objects
-
-	// Set Embedded defaults
-
-	// Add Default Inputs and Outputs
-	addDefaultInputObjects();
 	m_outputMathResult.setSaveValueFlag(false);
 }
 
@@ -73,7 +64,7 @@ bool SVEvaluate::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pE
 	// All inputs and outputs must be validated first
 	if( __super::onRun( rRunStatus, pErrorMessages ) )
 	{
-		SvVol::SVDoubleValueObjectClass* pInputResult = SvOl::getInput<SvVol::SVDoubleValueObjectClass>(m_inputMathResult, true);
+		SvVol::SVDoubleValueObjectClass* pInputResult = m_inputMathResult.getInput<SvVol::SVDoubleValueObjectClass>(true);
 
 		double Value( 0.0 );
 		if( S_OK != pInputResult->GetValue(Value) || S_OK != pResult->SetValue(Value))

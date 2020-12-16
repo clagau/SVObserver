@@ -72,9 +72,8 @@ void SVOCVAnalyzeResult::clearAll()
 	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVResultOCVObjectType;
 
 	// Identify our input type needs
-	m_inputObjectInfo.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
-	m_inputObjectInfo.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_inputObjectInfo, _T( "OCVAnalyzerResultImage" ) );
+	m_inputObject.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
+	registerInputObject( &m_inputObject, _T( "OCVAnalyzerResultImage" ), SvPb::ResultInputEId );
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject(
@@ -188,9 +187,6 @@ void SVOCVAnalyzeResult::clearAll()
 	m_fnvoMatchStringFileName.SetDefaultValue( _T(""), true);
 	m_bvoUseMatchFile.SetDefaultValue( BOOL(false), true);
 
-	// Add Default Inputs and Outputs
-	addDefaultInputObjects();
-
 	//
 	// Initialize OCV objects
 	//
@@ -233,7 +229,7 @@ bool SVOCVAnalyzeResult::CreateObject(	const SVObjectLevelCreateStruct& rCreateS
 
 	if ( bOk )
 	{
-		bOk = nullptr != SvOl::getInput<SvIe::SVImageClass>(m_inputObjectInfo);
+		bOk = nullptr != m_inputObject.getInput<SvIe::SVImageClass>();
 	}
 	
 	if ( bOk && !m_bHasLicenseError )
@@ -646,7 +642,7 @@ bool SVOCVAnalyzeResult::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVe
 	if( bOk && !rRunStatus.IsDisabled() && !rRunStatus.IsDisabledByCondition() )
 	{
 		SVMatroxBuffer l_milImageID;
-		SvIe::SVImageClass* pInputImage = SvOl::getInput<SvIe::SVImageClass>(m_inputObjectInfo, true);
+		SvIe::SVImageClass* pInputImage = m_inputObject.getInput<SvIe::SVImageClass>(true);
 		if(nullptr == pInputImage)
 		{
 			bOk = false;

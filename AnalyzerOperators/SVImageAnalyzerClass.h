@@ -5,7 +5,9 @@
 #pragma once
 #pragma region Includes
 #include "SVAnalyzer.h"
+#include "SVObjectLibrary/InputObject.h"
 #pragma endregion Includes
+
 
 namespace SvIe
 {
@@ -36,11 +38,11 @@ public:
 
 
 protected:
-	SvOl::SVInObjectInfoStruct m_inputImageObjectInfo;
+	SvOl::InputObject m_inputImage;
 
 private:
 	void init();
-	bool ValidateLocal(SvStl::MessageContainerVector *pErrorMessages=nullptr) const;
+	bool ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const;
 };
 
 } //namespace SvAo

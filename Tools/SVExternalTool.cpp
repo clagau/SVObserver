@@ -74,7 +74,6 @@ void SVExternalTool::Initialize()
 	}
 
 	removeEmbeddedExtents();
-	addDefaultInputObjects();
 }
 
 

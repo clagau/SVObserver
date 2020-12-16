@@ -48,6 +48,7 @@ public:
 	/// \param ownerUniqueID [in] id of the owner
 	/// \returns HRESULT
 	static HRESULT OverwriteEmbeddedObject(SvPb::EmbeddedIdEnum embeddedID, uint32_t uniqueID, const std::string& objectName, uint32_t ownerUniqueID);
+	static HRESULT OverwriteInputObject(SvPb::EmbeddedIdEnum embeddedID, uint32_t uniqueID, const std::string& objectName, uint32_t connectID, uint32_t ownerUniqueID);
 	static HRESULT SetObjectValue(uint32_t ownerID, uint32_t objectID, const std::string& itemName, const _variant_t& value, SVObjectScriptDataObjectTypeEnum dstDataType);
 	static HRESULT SetObjectValue(uint32_t ownerID, uint32_t objectID, const std::string& itemName, const std::vector<_variant_t>& values, SVObjectScriptDataObjectTypeEnum dstDataType);
 	static HRESULT SetInputs(uint32_t objectID, const SvDef::StringPairVector& rInputPairVector);

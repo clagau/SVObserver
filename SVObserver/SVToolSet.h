@@ -17,6 +17,7 @@
 #include "Tools/SVTool.h"
 #include "SVResultList.h"
 #include "InspectionEngine/SVTaskObjectList.h"
+#include "SVObjectLibrary/InputObject.h"
 #include "SVValueObjectLibrary/LinkedValue.h"
 #pragma region Includes
 
@@ -89,6 +90,7 @@ public:
 
 			if (nullptr != pTask)
 			{
+				// cppcheck-suppress redundantAssignment symbolName=Inserter ; cppCheck doesn't know insert_iterator
 				Inserter = pTask->getObjectId();
 			}
 		}
@@ -178,7 +180,7 @@ protected:
 	SvVol::SVLongValueObjectClass m_ProcessedCount;
 
 	// Conditional input
-	SvOl::SVInObjectInfoStruct m_inputConditionBoolObjectInfo;
+	SvOl::InputObject m_inputConditionBool;
 
 	// Conditional tool set drawing flag.
 	SvVol::SVEnumerateValueObjectClass m_DrawFlag;

@@ -191,26 +191,21 @@ void SVToolClass::init()
 	m_pCurrentToolSet = nullptr;
 
 	// Auxiliary Source Image.
-	m_AuxSourceImageObjectInfo.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
-	m_AuxSourceImageObjectInfo.SetObject(GetObjectInfo());
-	RegisterInputObject(&m_AuxSourceImageObjectInfo, _T("ToolAuxSourceImage"));
+	m_AuxSourceImageInput.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
+	registerInputObject(&m_AuxSourceImageInput, _T("ToolAuxSourceImage"), SvPb::AuxImageInputEId);
 
 	// instantiate the Conditional class
 	SvOp::SVConditional* pCondition = new SvOp::SVConditional(this);
 	AddFriend(pCondition->getObjectId());
 
 	// Identify our input type needs
-	m_inputConditionBoolObjectInfo.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVBoolValueObjectType, SvPb::ConditionalResultEId);
-	m_inputConditionBoolObjectInfo.SetObject(GetObjectInfo());
-	RegisterInputObject(&m_inputConditionBoolObjectInfo, _T("ToolConditionalValue"));
-	m_inputConditionBoolObjectInfo.setReportAndCopyFlag(false);
+	m_conditionBoolInput.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVBoolValueObjectType, SvPb::ConditionalResultEId);
+	registerInputObject(&m_conditionBoolInput, _T("ToolConditionalValue"), SvPb::ToolConditionalInputEId);
+	m_conditionBoolInput.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
 
-	m_overlayColorToolObjectInfo.SetInputObjectType(SvPb::SVToolObjectType);
-	RegisterInputObject(&m_overlayColorToolObjectInfo, _T("OverlayColor_Tool"));
-	m_overlayColorToolObjectInfo.SetInputObject(this);
-
-	// 
-	addDefaultInputObjects();
+	m_overlayColorToolInput.SetInputObjectType(SvPb::SVToolObjectType);
+	registerInputObject(&m_overlayColorToolInput, _T("OverlayColor_Tool"), SvPb::OverlayColorInputEId);
+	m_overlayColorToolInput.SetInputObject(this);
 }
 
 SVToolClass::~SVToolClass()
@@ -283,17 +278,17 @@ bool SVToolClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure
 
 	if (areAuxExtentsAvailable())
 	{
-		RegisterInputObject(&m_AuxSourceImageObjectInfo, _T("ToolAuxSourceImage"));
+		m_AuxSourceImageInput.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::embedable, SvOi::SetAttributeType::OverwriteAttribute);
 	}
 	else
 	{
-		UnregisterInputObject(&m_AuxSourceImageObjectInfo);
+		m_AuxSourceImageInput.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
 	}
 
 	if (false == useOverlayColorTool())
 	{
-		m_overlayColorToolObjectInfo.SetInputObject(nullptr);
-		UnregisterInputObject(&m_overlayColorToolObjectInfo);
+		m_overlayColorToolInput.SetInputObject(nullptr);
+		m_overlayColorToolInput.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
 	}
 
 	m_isCreated = bOk;
@@ -307,26 +302,6 @@ bool SVToolClass::CloseObject()
 	m_toolExtent.SetSelectedImage(nullptr);
 
 	return SVTaskObjectListClass::CloseObject();
-}
-
-bool SVToolClass::DisconnectObjectInput(SvOl::SVInObjectInfoStruct* pInObjectInfo)
-{
-	bool Result(SVTaskObjectListClass::DisconnectObjectInput(pInObjectInfo) && nullptr != pInObjectInfo);
-
-	if (nullptr != pInObjectInfo)
-	{
-		if (pInObjectInfo->GetInputObjectInfo().getFinalObject() == m_toolExtent.GetToolImage())
-		{
-			m_toolExtent.SetToolImage(nullptr);
-		}
-
-		if (pInObjectInfo->GetInputObjectInfo().getFinalObject() == m_toolExtent.GetSelectedImage())
-		{
-			m_toolExtent.SetSelectedImage(nullptr);
-		}
-	}
-
-	return Result;
 }
 
 bool SVToolClass::resetAllObjects(SvStl::MessageContainerVector *pErrorMessages)
@@ -413,7 +388,7 @@ void SVToolClass::UpdateAuxiliaryExtents()
 		if (S_OK == hr && l_bUpdateSourceExtents)
 		{
 			SVExtentOffsetStruct l_svOffsetData;
-			SvIe::SVImageClass* pAuxSourceImage = SvOl::getInput<SvIe::SVImageClass>(m_AuxSourceImageObjectInfo, true);
+			SvIe::SVImageClass* pAuxSourceImage = m_AuxSourceImageInput.getInput<SvIe::SVImageClass>(true);
 			
 			m_toolExtent.SetSelectedImage(pAuxSourceImage);
 
@@ -608,7 +583,7 @@ bool SVToolClass::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pE
 bool SVToolClass::getConditionalResult(bool /*= false*/) const
 {
 	BOOL Value(false);
-	SvVol::SVBoolValueObjectClass* pBoolObject = SvOl::getInput<SvVol::SVBoolValueObjectClass>(m_inputConditionBoolObjectInfo);
+	SvVol::SVBoolValueObjectClass* pBoolObject = m_conditionBoolInput.getInput<SvVol::SVBoolValueObjectClass>();
 	if (nullptr != pBoolObject)
 	{
 		pBoolObject->GetValue(Value);
@@ -700,25 +675,25 @@ bool SVToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 
 	if (areAuxExtentsAvailable())
 	{
-		RegisterInputObject(&m_AuxSourceImageObjectInfo, _T("ToolAuxSourceImage"));
+		m_AuxSourceImageInput.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::embedable, SvOi::SetAttributeType::OverwriteAttribute);
 		BOOL bEnabled{ false };
 		m_svUpdateAuxiliaryExtents.GetValue(bEnabled);
 		if (bEnabled)
 		{
-			SvOl::ValidateInput(m_AuxSourceImageObjectInfo);
+			m_AuxSourceImageInput.validateInput();
 		}
-		m_AuxSourceImageObjectInfo.setReportAndCopyFlag(bEnabled);
+		m_AuxSourceImageInput.SetObjectAttributesAllowed(bEnabled? SvPb::audittrail | SvPb::embedable : SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
 	}
 	else
 	{
-		UnregisterInputObject(&m_AuxSourceImageObjectInfo);
+		m_AuxSourceImageInput.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
 	}
 
-	SvOl::ValidateInput(m_inputConditionBoolObjectInfo);
+	m_conditionBoolInput.validateInput();
 
 	if (useOverlayColorTool())
 	{
-		SvOl::ValidateInput(m_overlayColorToolObjectInfo);
+		m_overlayColorToolInput.validateInput();
 	}
 	
 	return Result;
@@ -974,7 +949,7 @@ HRESULT SVToolClass::CollectOverlays(SvIe::SVImageClass *pImage, SVExtentMultiLi
 
 void SVToolClass::UpdateOverlayColor(SVExtentMultiLineStruct& p_rMultiLine) const
 {
-	SVToolClass* pTool = dynamic_cast<SVToolClass*>(m_overlayColorToolObjectInfo.GetInputObjectInfo().getObject());
+	SVToolClass* pTool = m_overlayColorToolInput.getInput<SVToolClass>();
 	COLORREF color = (nullptr != pTool) ? pTool->GetObjectColor() : GetObjectColor();
 	p_rMultiLine.m_Color = color;
 }
@@ -1044,19 +1019,20 @@ HRESULT SVToolClass::SetAuxSourceImage(SvIe::SVImageClass* pImage)
 			auto iter = std::find_if(imageList.begin(), imageList.end(), [&pImage](const auto& rEntry) { return rEntry == pImage; });
 			if (imageList.end() != iter)
 			{
-				l_hr = ConnectToObject(&m_AuxSourceImageObjectInfo, *iter);
+				m_AuxSourceImageInput.SetInputObject(*iter); 
+				l_hr = S_OK;
 			}
 			else
 			{
-				ConnectToObject(&m_AuxSourceImageObjectInfo, imageList[0]);
+				m_AuxSourceImageInput.SetInputObject(imageList[0]);
 			}
 		}
 		else
 		{
-			ConnectToObject(&m_AuxSourceImageObjectInfo, nullptr);
+			m_AuxSourceImageInput.SetInputObject(nullptr);
 		}
 		
-		m_toolExtent.SetSelectedImage(SvOl::getInput<SvIe::SVImageClass>(m_AuxSourceImageObjectInfo));
+		m_toolExtent.SetSelectedImage(m_AuxSourceImageInput.getInput<SvIe::SVImageClass>());
 
 		SvOi::IInspectionProcess* pInspection = GetInspectionInterface();
 		if (nullptr != pInspection)
@@ -1068,18 +1044,6 @@ HRESULT SVToolClass::SetAuxSourceImage(SvIe::SVImageClass* pImage)
 	}
 
 	return l_hr;
-}
-
-HRESULT SVToolClass::IsAuxInputImage(const SvOl::SVInObjectInfoStruct* p_psvInfo) const
-{
-	HRESULT l_hrOk = S_FALSE;
-
-	if (p_psvInfo == &m_AuxSourceImageObjectInfo)
-	{
-		l_hrOk = S_OK;
-	}
-
-	return l_hrOk;
 }
 
 const SVImageInfoClass* SVToolClass::getFirstImageInfo() const
@@ -1131,7 +1095,7 @@ SvUl::NameObjectIdList SVToolClass::getAvailableAuxSourceImages() const
 SvUl::NameObjectIdPair SVToolClass::getAuxSourceImage() const
 {
 	SvUl::NameObjectIdPair result;
-	SvIe::SVImageClass* pImage = SvOl::getInput<SvIe::SVImageClass>(m_AuxSourceImageObjectInfo);
+	SvIe::SVImageClass* pImage = m_AuxSourceImageInput.getInput<SvIe::SVImageClass>();
 	if (pImage)
 	{
 		result = std::make_pair(pImage->getDisplayedName(), pImage->getObjectId());
@@ -1233,7 +1197,7 @@ void SVToolClass::connectChildObject(SVTaskObjectClass& rChildObject)
 
 void SVToolClass::setStateValueToOverlay(SvPb::Overlay& rOverlay) const
 {
-	SVToolClass* pTool = dynamic_cast<SVToolClass*>(m_overlayColorToolObjectInfo.GetInputObjectInfo().getObject());
+	SVToolClass* pTool = m_overlayColorToolInput.getInput<SVToolClass>();
 	if (nullptr != pTool)
 	{
 		rOverlay.mutable_color()->set_trpos(pTool->getColorObject().getTrPos() + 1);
@@ -1345,7 +1309,7 @@ bool SVToolClass::isAllowedLocation(const SvPb::SVExtentLocationPropertyEnum Loc
 
 bool SVToolClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const
 {
-	if (m_inputConditionBoolObjectInfo.IsConnected() && m_inputConditionBoolObjectInfo.GetInputObjectInfo().getObject())
+	if (m_conditionBoolInput.IsConnected() && m_conditionBoolInput.GetInputObjectInfo().getObject())
 	{
 		return true;
 	}

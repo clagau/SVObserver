@@ -14,6 +14,7 @@
 #pragma region Includes
 #include "SVAnalyzer.h"
 #include "SVLibrary/SVValueBaseNormalizerClass.h"
+#include "SVObjectLibrary/InputObject.h"
 #include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
 #include "ObjectInterfaces/ISVLinearAnalyzer.h"
 #pragma endregion Includes
@@ -82,9 +83,9 @@ protected:
 
 	virtual std::vector<std::string> getParameterNamesForML() const;
 
-	SvOl::SVInObjectInfoStruct m_InputImageObjectInfo;
-	SvOl::SVInObjectInfoStruct m_InputProfileOrientation;
-	SvOl::SVInObjectInfoStruct m_InputUseRotationAngle;
+	SvOl::InputObject m_InputImage;
+	SvOl::InputObject m_InputProfileOrientation;
+	SvOl::InputObject m_InputUseRotationAngle;
 
 	long m_lPixelDepth;
 

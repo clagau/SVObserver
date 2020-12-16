@@ -13,7 +13,9 @@
 
 #pragma region Includes
 #include "InspectionEngine/SVTaskObjectList.h"
+#include "SVObjectLibrary/InputObject.h"
 #pragma endregion Includes
+
 
 namespace SvIe
 {
@@ -65,7 +67,7 @@ private:
 	void init();
 
 protected:
-	SvOl::SVInObjectInfoStruct m_inputImageObjectInfo;
+	SvOl::InputObject m_inputImage;
 };
 
 } //namespace SvOp

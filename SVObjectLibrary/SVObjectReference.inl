@@ -16,11 +16,6 @@ inline SVObjectReference::SVObjectReference()
 {
 }
 
-inline SVObjectReference::SVObjectReference( int32_t objectId )
-	: m_objectId(objectId)
-{
-}
-
 inline SVObjectReference::SVObjectReference( const SVObjectReference& rhs )
 {
 	*this = rhs;

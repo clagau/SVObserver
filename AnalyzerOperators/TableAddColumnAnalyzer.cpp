@@ -67,11 +67,11 @@ bool TableAddColumnAnalyzer::CreateObject(const SVObjectLevelCreateStruct& rCrea
 			pColumnEquation->SetEquationText(text);
 		}
 
-		SvVol::DoubleSortValueObject* pNewColumn = dynamic_cast<SvVol::DoubleSortValueObject*>(m_newColumnObjectInfo.GetInputObjectInfo().getObject());
-		if (!m_newColumnObjectInfo.IsConnected() || nullptr == pNewColumn)
+		SvVol::DoubleSortValueObject* pNewColumn = m_newColumnInput.getInput<SvVol::DoubleSortValueObject>();;
+		if (!m_newColumnInput.IsConnected() || nullptr == pNewColumn)
 		{
 			m_pNewColumn = pTool->addNewColumn("NewColumn", this);
-			m_newColumnObjectInfo.SetInputObject(m_pNewColumn.get());
+			m_newColumnInput.SetInputObject(m_pNewColumn.get());
 		}
 		else
 		{
@@ -93,7 +93,7 @@ bool TableAddColumnAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMe
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 
-	SvOl::ValidateInput(m_newColumnObjectInfo);
+	m_newColumnInput.validateInput();
 
 	SvTo::TableAnalyzerTool* pTool = dynamic_cast<SvTo::TableAnalyzerTool*> (m_ownerObjectInfo.getObject());
 	if (nullptr == pTool || nullptr == m_pNewColumn)
@@ -123,11 +123,8 @@ void TableAddColumnAnalyzer::Initialize()
 	AddFriend(pColumnEquation->getObjectId());
 
 	// New Column Input.
-	m_newColumnObjectInfo.SetInputObjectType(SvPb::SVValueObjectType, SvPb::DoubleSortValueObjectType);
-	m_newColumnObjectInfo.SetObject(GetObjectInfo());
-	RegisterInputObject(&m_newColumnObjectInfo, SvDef::cInputTag_NewColumn);
-
-	addDefaultInputObjects();
+	m_newColumnInput.SetInputObjectType(SvPb::SVValueObjectType, SvPb::DoubleSortValueObjectType);
+	registerInputObject(&m_newColumnInput, SvDef::cInputTag_NewColumn, SvPb::NewColumnInputEId);
 }
 #pragma endregion Private Methods
 

@@ -16,7 +16,6 @@
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "SVMatroxLibrary/SVMatroxImageRotateStruct.h"
-#include "SVObjectLibrary/SVInObjectInfoStruct.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "SVStatusLibrary/RunStatus.h"
 #include "Tools/SVLinearToolClass.h"
@@ -96,13 +95,8 @@ bool SVLinearImageOperatorList::ResetObject(SvStl::MessageContainerVector *pErro
 	bool Result = __super::ResetObject(pErrorMessages);
 	ResetLogicalROIImage();
 
-	SvOl::SVInObjectInfoStructPtrVector InputList
-	{
-		&inputUseRotationAngle,
-		&inputProfileOrientation
-	};
-
-	SvOl::ValidateInputList(InputList);
+	m_inputUseRotationAngle.validateInput();
+	m_inputProfileOrientation.validateInput();
 
 	CollectInputImageNames();
 
@@ -305,10 +299,10 @@ HRESULT SVLinearImageOperatorList::getUseRotationAngle(BOOL& rUseRotationAngle)
 {
 	HRESULT Result(E_FAIL);
 
-	if (inputUseRotationAngle.IsConnected() && nullptr != inputUseRotationAngle.GetInputObjectInfo().getObject())
+	if (m_inputUseRotationAngle.IsConnected() && nullptr != m_inputUseRotationAngle.GetInputObjectInfo().getObject())
 	{
 		double Value(0.0);
-		Result = inputUseRotationAngle.GetInputObjectInfo().getObject()->getValue(Value);
+		Result = m_inputUseRotationAngle.GetInputObjectInfo().getObject()->getValue(Value);
 		rUseRotationAngle = 0.0 < Value ? true : false;
 	}
 
@@ -319,10 +313,10 @@ HRESULT SVLinearImageOperatorList::getInputProfileOrientation(long& rProfileOrie
 {
 	HRESULT Result(E_FAIL);
 
-	if (inputProfileOrientation.IsConnected() && nullptr != inputProfileOrientation.GetInputObjectInfo().getObject())
+	if (m_inputProfileOrientation.IsConnected() && nullptr != m_inputProfileOrientation.GetInputObjectInfo().getObject())
 	{
 		double Value(0.0);
-		Result = inputProfileOrientation.GetInputObjectInfo().getObject()->getValue(Value);
+		Result = m_inputProfileOrientation.GetInputObjectInfo().getObject()->getValue(Value);
 		rProfileOrientation = static_cast<long> (Value);
 	}
 
@@ -335,15 +329,13 @@ void SVLinearImageOperatorList::init()
 	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVUnaryImageOperatorListObjectType;
 	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVLinearImageOperatorListObjectType;
 
-	inputProfileOrientation.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVEnumValueObjectType, SvPb::ProfileOrientationEId);
-	inputProfileOrientation.SetObject(GetObjectInfo());
-	RegisterInputObject(&inputProfileOrientation, _T("LinearImageOperatorListProfileOrientation"));
-	inputProfileOrientation.setReportAndCopyFlag(false);
+	m_inputProfileOrientation.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVEnumValueObjectType, SvPb::ProfileOrientationEId);
+	registerInputObject(&m_inputProfileOrientation, _T("LinearImageOperatorListProfileOrientation"), SvPb::ProfileOrientationInputEId);
+	m_inputProfileOrientation.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
 
-	inputUseRotationAngle.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVBoolValueObjectType, SvPb::LinearToolUseRotationEId);
-	inputUseRotationAngle.SetObject(GetObjectInfo());
-	RegisterInputObject(&inputUseRotationAngle, _T("LinearImageOperatorListUseRotationAngle"));
-	inputUseRotationAngle.setReportAndCopyFlag(false);
+	m_inputUseRotationAngle.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVBoolValueObjectType, SvPb::LinearToolUseRotationEId);
+	registerInputObject(&m_inputUseRotationAngle, _T("LinearImageOperatorListUseRotationAngle"), SvPb::UseRoationAngleInputEId);
+	m_inputUseRotationAngle.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
 
 	m_svLinearData.SetLegacyVectorObjectCompatibility();
 
@@ -362,9 +354,6 @@ void SVLinearImageOperatorList::init()
 	m_ProfileDelta.setSaveValueFlag(false);
 
 	m_ulLineLength = 0;
-
-	// Set default inputs and outputs
-	addDefaultInputObjects();
 }
 
 HRESULT SVLinearImageOperatorList::UpdateLineExtentData()
@@ -515,7 +504,7 @@ DWORD SVLinearImageOperatorList::allocateResults()
 		Add(m_Results[i]);
 
 		// Ensure this Object's inputs get connected
-		if (false == m_Results[i]->ConnectAllInputs())
+		if (false == m_Results[i]->connectAllInputs())
 		{
 			SvStl::MessageManager MesMan(SvStl::MsgType::Log);
 			MesMan.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams),
@@ -665,7 +654,6 @@ bool SVLinearImageOperatorList::areResultsAllocated()
 
 SvOp::SVDoubleResult* SVLinearImageOperatorList::getResultObject(SvVol::SVDoubleValueObjectClass* pSrcObject)
 {
-	SvOl::SVInputInfoListClass	resultInputList;
 	SvOp::SVDoubleResult* pResult = nullptr;
 	SvDef::SVObjectTypeInfoStruct info{ SvPb::SVResultObjectType, SvPb::SVResultDoubleObjectType };
 	std::vector<SvOi::IObjectClass*> list;
@@ -676,12 +664,8 @@ SvOp::SVDoubleResult* SVLinearImageOperatorList::getResultObject(SvVol::SVDouble
 		pResult = dynamic_cast<SvOp::SVDoubleResult*>(pObject);
 		if (nullptr != pResult)
 		{
-			resultInputList.clear();
-			resultInputList = pResult->GetPrivateInputList();
-
-			SvOl::SVInObjectInfoStruct* pResultInputInfo = resultInputList[0];
-
-			if (pSrcObject == pResultInputInfo->GetInputObjectInfo().getObject())
+			const auto& resultInputList = pResult->GetPrivateInputList();
+			if (pSrcObject == resultInputList[0]->GetInputObjectInfo().getObject())
 			{
 				break;
 			}

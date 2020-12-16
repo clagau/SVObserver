@@ -90,12 +90,6 @@ void SVShapeMaskHelperClass::init()
 	m_Data.lvoSideThickness.SetDefaultValue( 20 );
 	m_Data.lvoTopBottomThickness.SetDefaultValue( 20 );
 	m_Data.lvoOffset.SetDefaultValue( 20 );
-
-
-
-	// Set default inputs and outputs
-	addDefaultInputObjects();
-
 }
 
 SVShapeMaskHelperClass::~SVShapeMaskHelperClass()

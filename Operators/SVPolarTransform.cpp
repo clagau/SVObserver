@@ -37,42 +37,33 @@ SVPolarTransform::SVPolarTransform( SVObjectClass* POwner, int StringResourceID 
 
 	// Center X
 	m_inputCenterXResult.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::OutputEvaluateCenterXResultEId);
-	m_inputCenterXResult.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_inputCenterXResult, _T( "PolarTransformCenterXResult" ) );
-	m_inputCenterXResult.setReportAndCopyFlag(false);
+	registerInputObject( &m_inputCenterXResult, _T( "PolarTransformCenterXResult" ), SvPb::CenterXResultInputEId);
+	m_inputCenterXResult.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
 
 	// Center Y
 	m_inputCenterYResult.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::OutputEvaluateCenterYResultEId);
-	m_inputCenterYResult.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_inputCenterYResult, _T( "PolarTransformCenterYResult" ) );
-	m_inputCenterYResult.setReportAndCopyFlag(false);
+	registerInputObject( &m_inputCenterYResult, _T( "PolarTransformCenterYResult" ), SvPb::CenterYResultInputEId);
+	m_inputCenterYResult.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
 
 	// Start Radius
 	m_inputStartRadiusResult.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::OutputEvaluateStartRadiusResultEId);
-	m_inputStartRadiusResult.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_inputStartRadiusResult, _T( "PolarTransformStartRadiusResult" ) );
-	m_inputStartRadiusResult.setReportAndCopyFlag(false);
+	registerInputObject( &m_inputStartRadiusResult, _T( "PolarTransformStartRadiusResult" ), SvPb::StartRadiusResultInputEId);
+	m_inputStartRadiusResult.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
 
 	// End Radius
 	m_inputEndRadiusResult.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::OutputEvaluateEndRadiusResultEId);
-	m_inputEndRadiusResult.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_inputEndRadiusResult, _T( "PolarTransformEndRadiusResult" ) );
-	m_inputEndRadiusResult.setReportAndCopyFlag(false);
+	registerInputObject( &m_inputEndRadiusResult, _T( "PolarTransformEndRadiusResult" ), SvPb::EndRadiusResultInputEId);
+	m_inputEndRadiusResult.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
 	
 	// Start Angle
 	m_inputStartAngleResult.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::OutputEvaluateStartAngleResultEId);
-	m_inputStartAngleResult.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_inputStartAngleResult, _T( "PolarTransformStartAngleResult" ) );
-	m_inputStartAngleResult.setReportAndCopyFlag(false);
+	registerInputObject( &m_inputStartAngleResult, _T( "PolarTransformStartAngleResult" ), SvPb::StartAngleResultInputEId);
+	m_inputStartAngleResult.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
 
 	// End Angle
 	m_inputEndAngleResult.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::OutputEvaluateEndAngleResultEId);
-	m_inputEndAngleResult.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_inputEndAngleResult, _T( "PolarTransformEndAngleResult" ) );
-	m_inputEndAngleResult.setReportAndCopyFlag(false);
-
-	// Add Default Inputs and Outputs
-	addDefaultInputObjects();
+	registerInputObject( &m_inputEndAngleResult, _T( "PolarTransformEndAngleResult" ), SvPb::EndAngleResultInputEId);
+	m_inputEndAngleResult.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
 }
 
 SVPolarTransform::~SVPolarTransform()
@@ -84,7 +75,7 @@ bool SVPolarTransform::ResetObject(SvStl::MessageContainerVector *pErrorMessages
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 
-	SvOl::SVInObjectInfoStructPtrVector InputList
+	std::initializer_list<SvOl::InputObject*> inputList
 	{
 		&m_inputCenterXResult,
 		&m_inputCenterYResult,
@@ -94,12 +85,11 @@ bool SVPolarTransform::ResetObject(SvStl::MessageContainerVector *pErrorMessages
 		&m_inputStartRadiusResult
 	};
 
-	SvOl::ValidateInputList(InputList);
-
-	for(auto pEntry : InputList)
+	for(auto* pEntry : inputList)
 	{
+		pEntry->validateInput();
 		// pEntry cannot be nullptr as the InputList are member variable addresses
-		if(nullptr == SvOl::getInput<SvVol::SVDoubleValueObjectClass>(*pEntry))
+		if(nullptr == pEntry->getInput<SvVol::SVDoubleValueObjectClass>())
 		{
 			Result = false;
 			if (nullptr != pErrorMessages)

@@ -14,6 +14,7 @@
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
 #include "InspectionEngine/SVImageClass.h"
 #include "SVTool.h"
+#include "SVObjectLibrary/InputObject.h"
 #include "SVValueObjectLibrary/SVStringValueObjectClass.h"
 #pragma endregion Includes
 
@@ -61,7 +62,7 @@ private:
 	HRESULT CreateLUT();
 	void DestroyLUT();
 	
-	SvOl::SVInObjectInfoStruct m_InputImageObjectInfo;
+	SvOl::InputObject m_InputImage;
 
 	SvIe::SVImageClass m_OutputImage;
 	SvVol::SVEnumerateValueObjectClass m_svWarpType;

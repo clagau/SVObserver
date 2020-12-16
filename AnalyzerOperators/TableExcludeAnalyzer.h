@@ -9,6 +9,7 @@
 
 #pragma region Includes
 #include "InspectionEngine/SVTaskObject.h"
+#include "SVObjectLibrary/InputObject.h"
 #include "SVValueObjectLibrary\LinkedValue.h"
 #pragma endregion Includes
 
@@ -49,7 +50,7 @@ private:
 
 #pragma region Member Variables
 protected:
-	SvOl::SVInObjectInfoStruct m_excludeColumnObjectInfo;
+	SvOl::InputObject m_excludeColumnInput;
 	SvVol::LinkedValue m_excludeHigh;
 	SvVol::LinkedValue m_excludeLow;
 #pragma endregion Member Variables

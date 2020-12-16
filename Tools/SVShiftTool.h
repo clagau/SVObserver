@@ -12,6 +12,7 @@
 #pragma once
 
 #pragma region Includes
+#include "SVObjectLibrary/InputObject.h"
 #include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
 #include "SVValueObjectLibrary/SVDoubleValueObjectClass.h"
 #include "SVValueObjectLibrary/SVEnumerateValueObjectClass.h"
@@ -75,9 +76,9 @@ protected:
 #pragma endregion Protected Methods
 
 #pragma region Member Variables
-	SvOl::SVInObjectInfoStruct m_ImageInput;
-	SvOl::SVInObjectInfoStruct m_TranslationYInput;
-	SvOl::SVInObjectInfoStruct m_TranslationXInput;
+	SvOl::InputObject m_ImageInput;
+	SvOl::InputObject m_TranslationYInput;
+	SvOl::InputObject m_TranslationXInput;
 
 	SvVol::SVStringValueObjectClass m_SourceImageName;
 	SvVol::SVLongValueObjectClass m_TranslationX;

@@ -35,10 +35,9 @@ SVStringResult::SVStringResult( SVObjectClass* POwner, int StringResourceID )
 	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVResultStringObjectType;
 
 	// Identify our input type needs
-	m_inputObjectInfo.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVStringValueObjectType );
-	m_inputObjectInfo.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_inputObjectInfo, _T( "StringResultValue" ) );
-	m_inputObjectInfo.setReportAndCopyFlag(false);
+	m_inputObject.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVStringValueObjectType );
+	registerInputObject( &m_inputObject, _T( "StringResultValue" ), SvPb::ResultInputEId);
+	m_inputObject.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( &m_Value, SvPb::StringValueEId, IDS_OBJECTNAME_VALUE, false, SvOi::SVResetItemNone );
@@ -47,9 +46,6 @@ SVStringResult::SVStringResult( SVObjectClass* POwner, int StringResourceID )
 	m_Value.SetDefaultValue (_T(""));
 	m_Value.setSaveValueFlag(false);
 	m_Value.SetMaxByteSize();
-
-	// Add Default Inputs and Outputs
-	addDefaultInputObjects();
 }
 
 SVStringResult::~SVStringResult()
@@ -59,7 +55,7 @@ SVStringResult::~SVStringResult()
 
 bool SVStringResult::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool bOk = SVResult::CreateObject(rCreateStructure) && nullptr != SvOl::getInput<SvVol::SVStringValueObjectClass>(m_inputObjectInfo);
+	bool bOk = SVResult::CreateObject(rCreateStructure) && nullptr != m_inputObject.getInput<SvVol::SVStringValueObjectClass>();
 
 	m_Value.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
 
@@ -74,7 +70,7 @@ bool SVStringResult::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector
 	// All inputs and outputs must be validated first
 	if( __super::onRun( rRunStatus, pErrorMessages ) )
 	{
-		SvVol::SVStringValueObjectClass* pValueObject = SvOl::getInput<SvVol::SVStringValueObjectClass>(m_inputObjectInfo, true);
+		SvVol::SVStringValueObjectClass* pValueObject = m_inputObject.getInput<SvVol::SVStringValueObjectClass>(true);
 		assert( pValueObject );
 
 		if( nullptr != pValueObject )

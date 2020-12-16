@@ -35,33 +35,28 @@ SVTransform::SVTransform( SVObjectClass* POwner, int StringResourceID )
 	// Identify our input type needs...
 	// Translation X
 	m_inputTranslationXResult.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::OutputEvaluateTranslationXResultEId);
-	m_inputTranslationXResult.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_inputTranslationXResult, _T( "TransformTranslationXResult" ) );
-	m_inputTranslationXResult.setReportAndCopyFlag(false);
+	registerInputObject( &m_inputTranslationXResult, _T( "TransformTranslationXResult" ), SvPb::TranslationXResultInputEId);
+	m_inputTranslationXResult.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
 
 	// Translation Y
 	m_inputTranslationYResult.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::OutputEvaluateTranslationYResultEId);
-	m_inputTranslationYResult.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_inputTranslationYResult, _T( "TransformTranslationYResult" ) );
-	m_inputTranslationYResult.setReportAndCopyFlag(false);
+	registerInputObject( &m_inputTranslationYResult, _T( "TransformTranslationYResult" ), SvPb::TranslationYResultInputEId);
+	m_inputTranslationYResult.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
 
 	// Rotation X
 	m_inputRotationXResult.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::OutputEvaluateRotationXResultEId);
-	m_inputRotationXResult.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_inputRotationXResult, _T( "TransformRotationXResult" ) );
-	m_inputRotationXResult.setReportAndCopyFlag(false);
+	registerInputObject( &m_inputRotationXResult, _T( "TransformRotationXResult" ), SvPb::RotationXResultInputEId);
+	m_inputRotationXResult.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
 
 	// Rotation Y
 	m_inputRotationYResult.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::OutputEvaluateRotationYResultEId);
-	m_inputRotationYResult.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_inputRotationYResult, _T( "TransformRotationYResult" ) );
-	m_inputRotationYResult.setReportAndCopyFlag(false);
+	registerInputObject( &m_inputRotationYResult, _T( "TransformRotationYResult" ), SvPb::RotationYResultInputEId);
+	m_inputRotationYResult.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
 
 	// Rotation Angle
 	m_inputRotationAngleResult.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::OutputEvaluateRotationAngleResultEId);
-	m_inputRotationAngleResult.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_inputRotationAngleResult, _T( "TransformRotationAngleResult" ) );
-	m_inputRotationAngleResult.setReportAndCopyFlag(false);
+	registerInputObject( &m_inputRotationAngleResult, _T( "TransformRotationAngleResult" ), SvPb::RotationAngleResultInputEId);
+	m_inputRotationAngleResult.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( &m_performTranslation, SvPb::PerformTranslationEId, IDS_OBJECTNAME_PERFORM_TRANSLATION, false, SvOi::SVResetItemTool );
@@ -82,9 +77,6 @@ SVTransform::SVTransform( SVObjectClass* POwner, int StringResourceID )
 	m_learnedRotationX.SetDefaultValue( 0.0 );
 	m_learnedRotationY.SetDefaultValue( 0.0 );
 	m_learnedRotationAngle.SetDefaultValue( 0.0 );
-
-	// Add Default Inputs and Outputs
-	addDefaultInputObjects();
 }
 
 SVTransform::~SVTransform()
@@ -114,7 +106,7 @@ bool SVTransform::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 
-	SvOl::SVInObjectInfoStructPtrVector InputList
+	std::initializer_list<SvOl::InputObject*> inputList
 	{
 		&m_inputTranslationXResult,
 		&m_inputTranslationYResult,
@@ -123,12 +115,11 @@ bool SVTransform::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 		&m_inputRotationAngleResult
 	};
 
-	SvOl::ValidateInputList(InputList);
-
-	for (auto pEntry : InputList)
+	for (auto pEntry : inputList)
 	{
+		pEntry->validateInput();
 		// pEntry cannot be nullptr as the InputList are member variable addresses
-		if (nullptr == SvOl::getInput<SvVol::SVDoubleValueObjectClass>(*pEntry))
+		if (nullptr == pEntry->getInput<SvVol::SVDoubleValueObjectClass>())
 		{
 			Result = false;
 			if (nullptr != pErrorMessages)

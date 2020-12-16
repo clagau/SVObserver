@@ -75,6 +75,8 @@ enum SVObjectTypeEnum
 	SVToolSizeAdjustTaskType				= 0x00300000;
 
 	ParameterTaskObjectType					= 0x00400000;
+
+	InputConnectedType						= 0x00500000;
 }
 
 // place all sub types here
@@ -645,6 +647,7 @@ enum ClassIdEnum
 	RemoteOutputDataControllerClassId = 446;
 	InputParameterTaskClassId = 448;
 	ResultParameterTaskClassId = 449;
+	InputConnectedClassId = 450;
 }
 
 enum EmbeddedIdEnum
@@ -1165,9 +1168,7 @@ enum EmbeddedIdEnum
 
 	StatNumberOfValidSamplesEId = 560; //Statistics Tool: number of valid values considered in statistic
 
-	
 	//The following Ids are the first of an array and must have 100 reserved Ids 
-
 	OutputImageEId = 1000; //Output Images, e.g. External needs 4
 	RingBufferIndexEId = 1100; //For ringBuffer index of output images (by now 2 indexes)
 	RingBufferIndexLinkEId = 1150; //For link of ringBuffer index of output images (by now 2 indexes)
@@ -1182,6 +1183,65 @@ enum EmbeddedIdEnum
 	ResultObjectValueEId = 2000; //Result value object (for e.g. Result in Group Tool)
 	ResultObjectLinkedEId = 2100; //Result value object linked (for e.g. Result in Group Tool)
 	ResultObjectTypeEId = 2200; //Type for Result Object (for e.g. Result in Group Tool)
+
+
+
+	//IDs for Inputs
+	LUTOperatorInputEId = 100000;
+	GrayImageInputEId = 100001;
+	NewColumnInputEId = 100002;
+	ExcludeColumnInputEId = 100003;
+	SortColumnInputEId = 100004;
+	ProfileOrientationInputEId = 100005;
+	UseRoationAngleInputEId = 100006;
+	MarkerImageInputEId = 100007;
+	SeedImageInputEId = 100008;
+	MinThresholdInputEId = 100009;
+	MaxThresholdInputEId = 100010;
+	DeltaThresholdInputEId = 100011;
+	LinearDataInputEId = 100012;
+	ResultInputEId = 100013;
+	UpperThresholdInputEId = 100014;
+	LowerThresholdInputEId = 100015;
+	AutoThresholdInputEId = 100016;
+	TranslationXResultInputEId = 100017;
+	TranslationYResultInputEId  = 100018;
+	RotationXResultInputEId = 100019;
+	RotationYResultInputEId = 100020;
+	RotationAngleResultInputEId = 100021;
+	CenterXResultInputEId = 100022;
+	CenterYResultInputEId = 100023;
+	StartRadiusResultInputEId = 100024;
+	EndRadiusResultInputEId = 100025;
+	StartAngleResultInputEId = 100026;
+	EndAngleResultInputEId = 100027;
+	ImageArithmeticAImageInputEId = 100028;
+	ImageArithmeticAEnableOffsetInputEId = 100029;
+	ImageArithmeticAOffsetPointInputEId = 100030;
+	ImageArithmeticBImageInputEId = 100031;
+	ImageArithmeticBEnableOffsetInputEId = 100032;
+	ImageArithmeticBOffsetPointInputEId = 100033;
+	ImageArithmeticOperatorInputEId = 100034;
+	WidthInputEId = 100035;
+	HeightInputEId = 100036;
+	PositionXInputEId = 100037;
+	PositionYInputEId = 100038;
+	RangeValueInputEId = 100039;
+	Band0ImageInputEId = 100040;
+	Band1ImageInputEId = 100041;
+	Band2ImageInputEId = 100042;
+	UserMaskImageInputEId = 100043;
+	ToolSetConditionalInputEId = 100044;
+	SourceTableInputEId = 100045;
+	TranslationXInputEId = 100046;
+	TranslationYInputEId = 100047;
+	AuxImageInputEId = 100048;
+	ToolConditionalInputEId = 100049;
+	OverlayColorInputEId = 100050;
+	BarCodeResultEId = 100051;
+
+	//The following Ids are the first of an array and must have 100 reserved Ids 
+	ImageInputEId = 150000;
 }
 
 

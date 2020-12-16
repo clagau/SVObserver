@@ -336,7 +336,7 @@ HRESULT LoadInspectionXml(SvXml::SVXMLMaterialsTree& rXmlTree, const std::string
 						// Show the Dialog
 						l_ParserProgressDialog.DoModal();
 
-						pInspection->ConnectAllInputs();
+						pInspection->connectAllInputs();
 
 						rProgress.UpdateText(_T("Parsing Complete."));
 						rProgress.UpdateProgress(++currentOp, numOperations);

@@ -59,12 +59,12 @@ bool TableSortAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMessage
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 
-	SvOl::ValidateInput(m_sortColumnObjectInfo);
+	m_sortColumnInput.validateInput();
 
-	SVObjectClass* pObject = m_sortColumnObjectInfo.GetInputObjectInfo().getObject();
-	if (!m_sortColumnObjectInfo.IsConnected() || nullptr == dynamic_cast<SvVol::DoubleSortValueObject*> (pObject)
+	SvVol::DoubleSortValueObject* pColumnValues = m_sortColumnInput.getInput<SvVol::DoubleSortValueObject>();
+	if (nullptr == pColumnValues
 		//check if column part of the right table object (The object must be from same tool as this analyzer.)
-		|| nullptr == pObject->GetParent() || pObject->GetParent()->GetParent() != m_ownerObjectInfo.getObject())
+		|| nullptr == pColumnValues->GetParent() || pColumnValues->GetParent()->GetParent() != m_ownerObjectInfo.getObject())
 	{
 		Result = false;
 		if (nullptr != pErrorMessages)
@@ -78,13 +78,8 @@ bool TableSortAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMessage
 	if (Result)
 	{
 		//allocate m_tmpValues
-		SvVol::DoubleSortValueObject* pColumnValues = dynamic_cast<SvVol::DoubleSortValueObject*> (m_sortColumnObjectInfo.GetInputObjectInfo().getObject());
-		if (nullptr != pColumnValues)
-		{
-		
-			size_t sizeTmp = pColumnValues->getSortContainerCapacity();
-			CheckAndResizeTmpArray(sizeTmp);
-		}
+		size_t sizeTmp = pColumnValues->getSortContainerCapacity();
+		CheckAndResizeTmpArray(sizeTmp);
 	}
 
 	return Result;
@@ -101,7 +96,7 @@ bool TableSortAnalyzer::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVec
 		BOOL isASC( true );
 		m_isASC.GetValue( isASC );
 		SvTo::TableAnalyzerTool* pTool = dynamic_cast<SvTo::TableAnalyzerTool*> (m_ownerObjectInfo.getObject());
-		SvVol::DoubleSortValueObject* pColumnValues = dynamic_cast<SvVol::DoubleSortValueObject*> (m_sortColumnObjectInfo.GetInputObjectInfo().getObject());
+		SvVol::DoubleSortValueObject* pColumnValues = m_sortColumnInput.getInput<SvVol::DoubleSortValueObject>(true);
 		if (nullptr != pTool && nullptr != pColumnValues)
 		{
 			SvVol::ValueObjectSortContainer& rSortContainer = pTool->getSortContainer();
@@ -170,11 +165,8 @@ void TableSortAnalyzer::BuildEmbeddedObjectList()
 void TableSortAnalyzer::BuildInputObjectList()
 {
 	// Source Table.
-	m_sortColumnObjectInfo.SetInputObjectType(SvPb::SVValueObjectType, SvPb::DoubleSortValueObjectType );
-	m_sortColumnObjectInfo.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_sortColumnObjectInfo, SvDef::cInputTag_SortColumn );
-
-	addDefaultInputObjects();
+	m_sortColumnInput.SetInputObjectType(SvPb::SVValueObjectType, SvPb::DoubleSortValueObjectType );
+	registerInputObject( &m_sortColumnInput, SvDef::cInputTag_SortColumn, SvPb::SortColumnInputEId);
 }
 
 void TableSortAnalyzer::CheckAndResizeTmpArray( size_t sizeTmp )

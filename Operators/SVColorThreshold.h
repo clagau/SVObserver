@@ -14,15 +14,16 @@
 #include "Definitions/BandEnums.h"
 #include "InspectionEngine/SVImageClass.h"
 #include "SVOperator.h"
+#include "SVObjectLibrary/InputObject.h"
 #include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
 #include "SVValueObjectLibrary/SVDoubleValueObjectClass.h"
 #include "SVValueObjectLibrary/SVLongValueObjectClass.h"
 #pragma endregion Includes
 
+
 namespace SvOp
 {
-
-//! This structure holds the values and images required for each of the bands
+	//! This structure holds the values and images required for each of the bands
 struct BandThreshold
 {
 	SvVol::SVLongValueObjectClass	m_UpperThreshold;		//! The upper threshold limit for the band
@@ -30,7 +31,7 @@ struct BandThreshold
 	SvVol::SVBoolValueObjectClass	m_ThresholdExclude;		//! When this is set then the color is excluded
 	SvVol::SVBoolValueObjectClass	m_ThresholdEnabled;		//! Enables or disables the threshold band
 
-	SvOl::SVInObjectInfoStruct m_InputImage;		//! The structure to the input image (band image of the color tool)
+	SvOl::InputObject m_InputImage;		//! The structure to the input image (band image of the color tool)
 	SvIe::SVImageClass	m_OutputImage;				//! The result image of the threshold
 };
 

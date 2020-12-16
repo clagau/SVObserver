@@ -208,9 +208,6 @@ void SVBlobAnalyzerClass::init()
 	m_PersistantFeaturesEnabled.SetDefaultValue (FeaturesEnabled, true);
 	/*--- End of FEATURE LIST. -------------------------------------------------*/
 
-	// Set default inputs and outputs
-	addDefaultInputObjects();
-
 	m_lvoBlobSampleSize.SetDefaultValue (SvOi::SV_MAX_NUMBER_OF_BLOBS, true);
 	m_lvoMaxBlobDataArraySize.SetDefaultValue(1, true);
 
@@ -346,7 +343,7 @@ DWORD SVBlobAnalyzerClass::AllocateResult(int FeatureIndex)
 	pValue->SetObjectAttributesAllowed( SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::RemoveAttribute );
 
 	// Ensure this Object's inputs get connected
-	pResult->ConnectAllInputs();
+	pResult->connectAllInputs();
 
 	// And last - Create (initialize) it
 
@@ -437,7 +434,7 @@ DWORD SVBlobAnalyzerClass::AllocateBlobResult ()
 		pValue->SetObjectAttributesAllowed( SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::RemoveAttribute );
 		
 		// Ensure this Object's inputs get connected
-		m_pResultBlob->ConnectAllInputs();
+		m_pResultBlob->connectAllInputs();
 		
 		// And last - Create (initialize) it
 		
@@ -501,7 +498,7 @@ void SVBlobAnalyzerClass::RebuildResultObjectArray()
 	{
 		SvOp::SVDoubleResult* pResult = dynamic_cast<SvOp::SVDoubleResult*> (pObject);
 
-		const SvOl::SVInputInfoListClass& resultInputList = pResult->GetPrivateInputList();
+		const auto& resultInputList = pResult->GetPrivateInputList();
 
 		SVObjectClass* pSVObject = resultInputList[0]->GetInputObjectInfo().getObject();
 
@@ -539,7 +536,7 @@ SvOp::SVLongResult* SVBlobAnalyzerClass::GetBlobResultObject()
 		pResult = dynamic_cast<SvOp::SVLongResult*>(pObject);
 		if (nullptr != pResult)
 		{
-			const SvOl::SVInputInfoListClass& resultInputList = pResult->GetPrivateInputList();
+			const auto& resultInputList = pResult->GetPrivateInputList();
 
 			if (&m_lvoNumberOfBlobsFound == resultInputList[0]->GetInputObjectInfo().getObject())
 			{
@@ -1674,29 +1671,6 @@ void SVBlobAnalyzerClass::addOverlayGroups(const SvIe::SVImageClass*, SvPb::Over
 	pRectArray->set_y1trpos(m_Value[SvOi::SV_BOXY_MIN].getTrPos() + 1);
 	pRectArray->set_x2trpos(m_Value[SvOi::SV_BOXX_MAX].getTrPos() + 1);
 	pRectArray->set_y2trpos(m_Value[SvOi::SV_BOXY_MAX].getTrPos() + 1);
-}
-
-void SVBlobAnalyzerClass::addDefaultInputObjects( SvOl::SVInputInfoListClass* PInputListToFill )
-{
-	__super::addDefaultInputObjects( PInputListToFill );
-
-#ifdef _DEBUG
-	std::string FeaturesEnabled;
-	m_PersistantFeaturesEnabled.getValue(FeaturesEnabled);
-	assert(SvOi::SV_NUMBER_OF_BLOB_FEATURES == FeaturesEnabled.size());
-
-	for (int i = 0; i < SvOi::SV_NUMBER_OF_BLOB_FEATURES; i++)
-	{
-		UINT uiAttributes = m_Value[i].ObjectAttributesAllowed();
-		bool l_bOk = ( _T('1') == FeaturesEnabled[i] &&
-			( uiAttributes & SvDef::defaultValueObjectAttributes) != SvPb::noAttributes ) ||
-			( _T('0') == FeaturesEnabled[i] &&
-			(uiAttributes & SvDef::defaultValueObjectAttributes) == SvPb::noAttributes );
-
-		// if this ASSERT fires, verify that the attributes are being set correctly!!!!!!! jms & eb 2006 01 20
-		assert( !IsCreated() || l_bOk || (i == SvOi::SV_CENTER_X_SOURCE || i == SvOi::SV_CENTER_Y_SOURCE) );
-	}
-#endif
 }
 
 SvDef::StringVector SVBlobAnalyzerClass::getAnalyzerResult()

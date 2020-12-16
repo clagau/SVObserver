@@ -39,10 +39,9 @@ SVPointYResult::SVPointYResult( SVObjectClass* POwner, int StringResourceID )
 
 	// Identify our input type needs
 	
-	m_inputObjectInfo.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVPointValueObjectType );
-	m_inputObjectInfo.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_inputObjectInfo, _T( "PointYResultValue" ) );
-	m_inputObjectInfo.setReportAndCopyFlag(false);
+	m_inputObject.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVPointValueObjectType );
+	registerInputObject( &m_inputObject, _T( "PointYResultValue" ), SvPb::ResultInputEId);
+	m_inputObject.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
 
 
 	// Register Embedded Objects
@@ -76,9 +75,6 @@ SVPointYResult::SVPointYResult( SVObjectClass* POwner, int StringResourceID )
 	{
 		Add(pRange);
 	}
-
-	// Add Default Inputs and Outputs
-	addDefaultInputObjects();
 }
 
 SVPointYResult::~SVPointYResult()
@@ -88,7 +84,7 @@ SVPointYResult::~SVPointYResult()
 
 bool SVPointYResult::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool bOk = SVResult::CreateObject(rCreateStructure) && nullptr != SvOl::getInput<SvVol::SVPointValueObjectClass>(m_inputObjectInfo);
+	bool bOk = SVResult::CreateObject(rCreateStructure) && nullptr != m_inputObject.getInput<SvVol::SVPointValueObjectClass>();
 
 	m_Y.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
 
@@ -102,7 +98,7 @@ bool SVPointYResult::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector
 	// All inputs and outputs must be validated first
 	if( __super::onRun( rRunStatus, pErrorMessages ) )
 	{
-		const SvVol::SVPointValueObjectClass* pValueObject = SvOl::getInput<SvVol::SVPointValueObjectClass>(m_inputObjectInfo, true);
+		const SvVol::SVPointValueObjectClass* pValueObject = m_inputObject.getInput<SvVol::SVPointValueObjectClass>(true);
 		assert( pValueObject );
 
 		if( nullptr != pValueObject )

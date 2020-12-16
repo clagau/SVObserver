@@ -54,12 +54,6 @@ public:
 	***********/
 	virtual bool DestroyChild(ITaskObject& rObject, DWORD context) = 0;
 
-	/**********
-		This method removes he connection to the output object.
-		/param pOutObject <in> object to disconnect.
-	***********/
-	virtual void RemoveOutputObject(SVOutObjectInfoStruct* pOutObject) = 0;
-
 	/// Move an object in the taskObject-list to a position in front of another object.
 	/// \param objectToMoveId [in] ID of the object to move.
 	/// \param preObjectId [in] ID of the object in front of the other object should moved. If this ID is SvDef::InvalidObjectId, the other object will be moved to the end of the list.
