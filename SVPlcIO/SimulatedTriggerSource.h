@@ -49,6 +49,10 @@ public:
 private:
 	std::array<ChannelData, cNumberOfChannels> m_channel;
 	std::string m_plcSimulateFile;
+
+	std::atomic_ulong m_ObjectsGood{ 0UL };
+	std::atomic_ulong m_ObjectsBad{ 0UL };
+	std::atomic_ulong m_ObjectsInvalid{ 0UL };
 };
 
 } //namespace SvPlc

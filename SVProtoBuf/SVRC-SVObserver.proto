@@ -380,3 +380,9 @@ message GetConfigurationTreeResponse
 {
 	ConfigTreeItem tree = 1;				//The configuration tree as recursive structure
 }
+
+message SetTriggerConfigRequest
+{
+	string plcSimulateFile = 1;				//The name of the PLC simulate file to use
+}
+

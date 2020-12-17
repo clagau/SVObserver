@@ -164,6 +164,11 @@ HRESULT RemoteControl::SetProductFilter(LPCTSTR listName, unsigned long filter) 
 	return RemoteControlImpl::Instance().SetProductFilter(listName, filter);
 }
 
+HRESULT RemoteControl::SetTriggerConfig(LPCTSTR plcSimulatedFile) const
+{
+	return RemoteControlImpl::Instance().SetTriggerConfig(plcSimulatedFile);
+}
+
 // cppcheck-suppress unusedFunction
 void RemoteControl::SetNotifyCallback(NotifyFunctor pNotifier) const
 {

@@ -25,6 +25,7 @@ enum SVIOParameterEnum
 	SVLogDump=104,
 	SVRabbitRTC=105,
 	SVRabbitWriteLog=106,
+	PlcSimulatedTrigger=200
 };
 
 // Sub Commands for Parallel Board.

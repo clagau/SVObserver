@@ -204,7 +204,7 @@ HRESULT WINAPI SVTriggerSetParameterValue( unsigned long triggerIndex, unsigned 
 		return S_OK;
 	}
 
-	return E_FAIL;
+	return E_INVALIDARG;
 }
 
 

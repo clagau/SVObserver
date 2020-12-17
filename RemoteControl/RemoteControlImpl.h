@@ -71,6 +71,7 @@ public:
 	HRESULT GetFailStatus(LPCTSTR listName, std::vector<SvRc::Product>& rProductVector) const;
 	HRESULT GetProductFilter(LPCTSTR listName, unsigned long& rFilter) const;
 	HRESULT SetProductFilter(LPCTSTR listName, unsigned long filter) const;
+	HRESULT SetTriggerConfig(LPCTSTR plcSimulatedFile) const;
 
 	NotifyFunctor GetNotifyFunctor() const { return m_pNotifier; }
 	void SetNotifyFunctor(NotifyFunctor pNotifier) { m_pNotifier = pNotifier; }

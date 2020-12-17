@@ -66,6 +66,7 @@ public:
 	void QueryMonitorListNames(SvPb::QueryMonitorListNamesRequest&&, SvRpc::Task<SvPb::NamesResponse> task);
 	void RunOnce(SvPb::RunOnceRequest&&, SvRpc::Task<SvPb::StandardResponse> task);
 	void LoadConfig(SvPb::LoadConfigRequest&&, SvRpc::Task<SvPb::StandardResponse> task);
+	void SetTriggerConfig(SvPb::SetTriggerConfigRequest&&, SvRpc::Task<SvPb::StandardResponse> task);
 
 private:
 	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::GetGatewayVersionRequest, SvPb::GetVersionResponse> m_GetGatewayVersionClient;
@@ -103,6 +104,7 @@ private:
 	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::QueryMonitorListNamesRequest, SvPb::NamesResponse> m_QueryMonitorListNamesClient;
 	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::RunOnceRequest, SvPb::StandardResponse> m_RunOnceClient;
 	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::LoadConfigRequest, SvPb::StandardResponse> m_LoadConfigClient;
+	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::SetTriggerConfigRequest, SvPb::StandardResponse> m_SetTriggerConfigClient;
 	SVRCClientServiceSetting&  m_rSVRCSettings;
 
 };

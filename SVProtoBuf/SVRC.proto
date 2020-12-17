@@ -107,6 +107,7 @@ message SVRCMessages
 		GetConfigurationTreeResponse getConfigurationTreeResponse = 2046;
 		ConfigCommandRequest configCommandRequest = 2047;
 		ConfigCommandResponse configCommandResponse = 2048;
+		SetTriggerConfigRequest setTriggerConfigRequest = 2049;
 	}
 }
 

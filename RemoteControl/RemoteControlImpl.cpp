@@ -1002,8 +1002,34 @@ HRESULT RemoteControlImpl::SetProductFilter(LPCTSTR listName, unsigned long filt
 	}
 	HANDLE_EXCEPTION(result)
 
-		return result;
+	return result;
 }
+
+HRESULT RemoteControlImpl::SetTriggerConfig(LPCTSTR plcSimulatedFile) const
+{
+	HRESULT result{ S_OK };
+	try
+	{
+		if (nullptr == m_pRpcClient || nullptr == m_pSvrcClientService || false == m_pRpcClient->isConnected())
+		{
+			throw std::invalid_argument("Not connected to neither SVOGateway nor SVObserver");
+		}
+
+		SvPb::SetTriggerConfigRequest Request;
+		Request.set_plcsimulatefile(SvUl::to_utf8(std::string(plcSimulatedFile)));
+		SvPb::StandardResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
+			&SvWsl::SVRCClientService::SetTriggerConfig,
+			std::move(Request)).get();
+
+		result = Response.hresult();
+
+		SVLog(result, __FILE__, __LINE__);
+	}
+	HANDLE_EXCEPTION(result)
+
+	return result;
+}
+
 
 HRESULT RemoteControlImpl::ShutDown(long option) const
 {

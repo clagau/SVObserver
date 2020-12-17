@@ -14,21 +14,25 @@
 #include "SVInspectionProcess.h"
 #include "SVIPDoc.h"
 #include "SVObserver.h"
+#include "SVPPQObject.h"
 #include "SVVisionProcessorHelper.h"
 #include "SVRemoteControlConstants.h"
+#include "SVStorageResult.h"
 #include "SVToolSet.h"
+#include "ToolClipboard.h"
 #include "Definitions/GlobalConst.h"
 #include "Definitions/StringTypeDef.h"
 #include "Definitions/SVIMCommand.h"
 #include "Definitions/SVUserMessage.h"
+#include "SVIOLibrary/SVIOParameterEnum.h"
+#include "InspectionCommands/CommandExternalHelper.h"
+#include "SVProtoBuf/ConverterHelper.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVSystemLibrary/SVEncodeDecodeUtilities.h"
 #include "SVSystemLibrary/SVVersionInfo.h"
-#include "SVStorageResult.h"
-#include "ToolClipboard.h"
-#include "SVProtoBuf/ConverterHelper.h"
-#include "InspectionCommands/CommandExternalHelper.h"
+#include "TriggerHandling/SVTriggerClass.h"
+#include "TriggerInformation/SVTriggerObject.h"
 #pragma endregion Includes
 
 constexpr char* c_DefaultConfigurationName = _T("Configuration");
@@ -1065,6 +1069,49 @@ void SVRCCommand::ConfigCommand(const SvPb::ConfigCommandRequest& rRequest, SvRp
 	}
 	}
 
+	task.finish(std::move(response));
+}
+
+void SVRCCommand::SetTriggerConfig(const SvPb::SetTriggerConfigRequest& rRequest, SvRpc::Task<SvPb::StandardResponse> task)
+{
+	HRESULT result{ S_OK };
+	DWORD notAllowedStates = SV_STATE_EDITING | SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION |
+		SV_STATE_START_PENDING | SV_STATE_STARTING | SV_STATE_STOP_PENDING | SV_STATE_STOPING |
+		SV_STATE_CREATING | SV_STATE_LOADING | SV_STATE_SAVING | SV_STATE_CLOSING;
+
+	if ( false == SVSVIMStateClass::CheckState(notAllowedStates))
+	{
+		SVConfigurationObject* pConfig{ nullptr };
+		SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
+		if (nullptr != pConfig)
+		{
+			result = E_INVALIDARG;
+			std::string fileName = SvUl::to_ansi(rRequest.plcsimulatefile());
+
+			int ppqCount = pConfig->GetPPQCount();
+			for (int i = 0; i < ppqCount; ++i)
+			{
+				SVPPQObject* pPPQ = pConfig->GetPPQ(i);
+				if (nullptr != pPPQ && nullptr != pPPQ->GetTrigger())
+				{
+					SvTh::SVTriggerClass* pTrigger = pPPQ->GetTrigger()->getDevice();
+					if (nullptr != pTrigger && nullptr != pTrigger->getDLLTrigger())
+					{
+						_variant_t plcSimulatedFile;
+						plcSimulatedFile.SetString(fileName.c_str());
+						result = pTrigger->getDLLTrigger()->SetParameterValue(pTrigger->getTriggerChannel() + 1, SVIOParameterEnum::PlcSimulatedTrigger, plcSimulatedFile);
+						break;
+					}
+				}
+			}
+		}
+	}
+	else
+	{
+		result = SVMSG_SVO_ACCESS_DENIED;
+	}
+	SvPb::StandardResponse response;
+	response.set_hresult(result);
 	task.finish(std::move(response));
 }
 

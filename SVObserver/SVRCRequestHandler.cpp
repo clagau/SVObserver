@@ -345,6 +345,17 @@ SVRCRequestHandler::SVRCRequestHandler(SVRCCommand* pCommand) :
 
 	});
 
+	registerRequestHandler<
+		SvPb::SVRCMessages,
+		SvPb::SVRCMessages::kSetTriggerConfigRequest,
+		SvPb::SetTriggerConfigRequest,
+		SvPb::StandardResponse>(
+			[this, pCommand](SvPb::SetTriggerConfigRequest&& req, SvRpc::Task<SvPb::StandardResponse> task)
+	{
+		m_IoRunService.post([req, task, pCommand]() { pCommand->SetTriggerConfig(req, task); });
+
+	});
+
 	registerStreamHandler<
 		SvPb::SVRCMessages,
 		SvPb::SVRCMessages::kGetNotificationStreamRequest,

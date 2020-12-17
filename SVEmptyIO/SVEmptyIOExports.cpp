@@ -175,7 +175,7 @@ _variant_t WINAPI SVTriggerGetParameterValue( unsigned long triggerchannel, unsi
 
 HRESULT WINAPI SVTriggerSetParameterValue( unsigned long triggerchannel, unsigned long index, const _variant_t& rValue)
 {
-	HRESULT result{E_FAIL};
+	HRESULT result{E_NOTIMPL};
 
 	if (0 < triggerchannel && triggerchannel <= cTriggerMaxCount)
 	{

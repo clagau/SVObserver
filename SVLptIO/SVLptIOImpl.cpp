@@ -929,7 +929,7 @@ _variant_t SVLptIOImpl::GetParameterValue(unsigned long index) const
 
 HRESULT SVLptIOImpl::SetParameterValue(unsigned long Index, const _variant_t& rValue)
 {
-	HRESULT result{ E_FAIL };
+	HRESULT result{ E_NOTIMPL };
 
 	switch(Index)
 	{

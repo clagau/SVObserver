@@ -304,15 +304,19 @@ _variant_t SVPlcIOImpl::TriggerGetParameterValue(unsigned long , unsigned long i
 	return result;
 }
 
-HRESULT SVPlcIOImpl::TriggerSetParameterValue(unsigned long, unsigned long , const _variant_t&)
+HRESULT SVPlcIOImpl::TriggerSetParameterValue(unsigned long, unsigned long index, const _variant_t& rValue)
 {
-	return E_FAIL;
+	HRESULT result{ E_NOTIMPL };
+
+	if (SVIOParameterEnum::PlcSimulatedTrigger == index && VT_BSTR == rValue.vt)
+	{
+		m_plcSimulateFile = _bstr_t(rValue.bstrVal);
+		result = S_OK;
+	}
+
+	return result;
 }
 
-// Non-Trigger Parameter Functions
-
-// GetParameterCount
-// This function returns the number of available parameters.
 unsigned long SVPlcIOImpl::GetParameterCount() const
 {
 	return 1UL;
@@ -329,8 +333,6 @@ _variant_t SVPlcIOImpl::GetParameterName(unsigned long index) const
 	return result;
 }
 
-// GetParameterValue
-// This function Gets the parameter value specified by ulIndex.
 _variant_t SVPlcIOImpl::GetParameterValue(unsigned long index) const
 {
 	_variant_t result;

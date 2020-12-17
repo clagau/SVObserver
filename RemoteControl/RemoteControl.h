@@ -52,6 +52,7 @@ public:
 	HRESULT GetFailStatus(LPCTSTR listName, std::vector<SvRc::Product>& rProductVector) const;
 	HRESULT GetProductFilter(LPCTSTR listName, unsigned long& rFilter) const;
 	HRESULT SetProductFilter(LPCTSTR listName, unsigned long filter) const;
+	HRESULT SetTriggerConfig(LPCTSTR plcSimulatedFile) const;
 
 	void SetNotifyCallback(NotifyFunctor pNotifier) const;
 	HRESULT ShutDown(long option) const;
