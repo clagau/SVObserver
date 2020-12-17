@@ -204,6 +204,8 @@ protected:
 	/// \returns bool
 	virtual bool createAllObjectsFromChild( SVObjectClass& ) { return false; };
 
+	bool isUsed() const { return 0 < m_connectedSet.size(); };
+
 protected:
 	//This attribute holds the enumerated bits of allowed object attributes.
 	UINT m_ObjectAttributesAllowed;

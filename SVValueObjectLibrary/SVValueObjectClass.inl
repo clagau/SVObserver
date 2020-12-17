@@ -369,7 +369,7 @@ HRESULT SVValueObjectClass<T>::getValues(std::vector<double>&  rValues) const
 template <typename T>
 void SVValueObjectClass<T>::Persist(SvOi::IObjectWriter& rWriter)
 {
-	if (SvPb::noAttributes == ObjectAttributesAllowed())
+	if (SvPb::noAttributes == ObjectAttributesAllowed() && false == isUsed())
 	{
 		return;
 	}
