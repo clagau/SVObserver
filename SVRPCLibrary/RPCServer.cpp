@@ -236,7 +236,7 @@ SvSyl::SVFuture<void> RPCServer::send_envelope(int id, const SvPenv::Envelope& r
 	auto it = m_Connections.find(id);
 	if (it == m_Connections.end())
 	{
-		SV_LOG_GLOBAL(warning) << "Can not send envelope to connection " << id << ". not found. PayloadType: " << rEnvelope.payloadtype();
+		SV_LOG_GLOBAL(debug) << "Can not send envelope to connection " << id << ". not found. PayloadType: " << rEnvelope.payloadtype();
 		return SvSyl::SVFuture<void>::make_ready();
 	}
 

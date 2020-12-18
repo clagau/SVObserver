@@ -262,19 +262,21 @@ void HttpServerConnection::http_on_error(const boost::system::error_code& error)
 		error.default_error_condition() == boost::system::errc::connection_reset ||
 		error.value() == WSAEBADF) // bad file descriptor, when connection already closed
 	{
-		if (!m_IsDisconnectErrorHandled)
-		{
-			SV_LOG_GLOBAL(info) << "[http] Client disconnected";
-			if (m_rSettings.pEventHandler)
-			{
-				m_rSettings.pEventHandler->onDisconnect(m_ConnectionId);
-			}
-		}
-		m_IsDisconnectErrorHandled = true;
-		return;
+		SV_LOG_GLOBAL(info) << "[http] Client disconnected";
+	}
+	else
+	{
+		SV_LOG_GLOBAL(warning) << "client connection error: " << error;
 	}
 
-	SV_LOG_GLOBAL(warning) << "client connection error: " << error;
+	if (!m_IsDisconnectErrorHandled)
+	{
+		if (m_rSettings.pEventHandler)
+		{
+			m_IsDisconnectErrorHandled = true;
+			m_rSettings.pEventHandler->onDisconnect(m_ConnectionId);
+		}
+	}
 }
 
 void HttpServerConnection::http_do_close()
@@ -741,12 +743,16 @@ void HttpServerConnection::ws_on_error(const boost::system::error_code& error, c
 	}
 
 	// Do not print one of the known/common errors that are emitted when connection is closed
-	if (error != boost::asio::error::eof &&
-		error != boost::asio::error::connection_reset &&
-		error != boost::asio::error::connection_aborted &&
-		error != boost::asio::error::operation_aborted &&
-		error != boost::beast::websocket::error::closed &&
-		error.value() != WSAEBADF) // bad file descriptor, when connection already closed
+	if (error == boost::asio::error::eof ||
+		error == boost::asio::error::connection_reset ||
+		error == boost::asio::error::connection_aborted ||
+		error == boost::asio::error::operation_aborted ||
+		error == boost::beast::websocket::error::closed ||
+		error.value() == WSAEBADF) // bad file descriptor, when connection already closed
+	{
+		SV_LOG_GLOBAL(info) << "[ws] Client disconnected";
+	}
+	else
 	{
 		SV_LOG_GLOBAL(warning) << "client connection error in "
 			<< source << ": "
@@ -754,17 +760,18 @@ void HttpServerConnection::ws_on_error(const boost::system::error_code& error, c
 			<< error.message();
 	}
 
+	// When error happens during handshake, we did not even call the onConnect yet.
+	// So only trigger onDisconnect when already connected.
 	if (m_IsWebsocketHandshakeDone)
 	{
 		if (!m_IsDisconnectErrorHandled)
 		{
-			SV_LOG_GLOBAL(info) << "[ws] Client disconnected";
 			if (m_rSettings.pEventHandler)
 			{
+				m_IsDisconnectErrorHandled = true;
 				m_rSettings.pEventHandler->onDisconnect(m_ConnectionId);
 			}
 		}
-		m_IsDisconnectErrorHandled = true;
 	}
 }
 
