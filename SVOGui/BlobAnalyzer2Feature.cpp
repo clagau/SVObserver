@@ -553,6 +553,7 @@ namespace SvOg
 			if (SvDef::c_numberOfSortFeature > sortNumber  && !m_featureData[i].is_custom())
 			{
 				m_Grid.SetCellType(row, SortEnableColumn, RUNTIME_CLASS(GridCellCheck));
+				m_Grid.SetItemState(row, SortEnableColumn, m_Grid.GetItemState(row, SortEnableColumn) & ~GVIS_READONLY);
 				auto* pCell = dynamic_cast<SvGcl::GridCellCheck*>(m_Grid.GetCell(row, SortEnableColumn));
 				if (nullptr != pCell)
 				{
