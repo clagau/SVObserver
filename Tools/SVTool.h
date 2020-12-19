@@ -18,6 +18,7 @@
 #include "ObjectInterfaces/IToolSet.h"
 #include "InspectionEngine/SVTaskObjectList.h"
 #include "InspectionEngine/SVImageClass.h"
+#include "SVObjectLibrary/InputObject.h"
 #include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
 #include "SVValueObjectLibrary/SVDoubleValueObjectClass.h"
 #include "SVValueObjectLibrary/SVEnumerateValueObjectClass.h"
@@ -25,7 +26,6 @@
 #include "SVValueObjectLibrary/SVStringValueObjectClass.h"
 #include "SVValueObjectLibrary/SVTimerValueObjectClass.h"
 #pragma endregion Includes
-#include "SVObjectLibrary/InputObject.h"
 
 namespace SvIe
 {
@@ -97,6 +97,8 @@ public:
 	// Auxiliary Source Image functions
 	HRESULT GetSourceImages(SvIe::SVImageClassPtrVector* p_psvImageList) const;
 	HRESULT SetAuxSourceImage(SvIe::SVImageClass* p_psvImage);
+
+	virtual SVObjectClass* overwriteInputObject(uint32_t uniqueId, SvPb::EmbeddedIdEnum embeddedId) override;
 
 	// Set String value object for Source Image Names
 	virtual SvVol::SVStringValueObjectClass* GetInputImageNames();
@@ -204,6 +206,7 @@ protected:
 
 	SvOl::InputObject m_conditionBoolInput;
 	SvOl::InputObject m_AuxSourceImageInput;
+	bool m_OverlayColorToolInputIsSet = false;
 	SvOl::InputObject m_overlayColorToolInput;
 
 	SvVol::SVBoolValueObjectClass  m_isObjectValid;	//	Embedded

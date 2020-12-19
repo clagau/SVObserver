@@ -205,7 +205,6 @@ void SVToolClass::init()
 
 	m_overlayColorToolInput.SetInputObjectType(SvPb::SVToolObjectType);
 	registerInputObject(&m_overlayColorToolInput, _T("OverlayColor_Tool"), SvPb::OverlayColorInputEId);
-	m_overlayColorToolInput.SetInputObject(this);
 }
 
 SVToolClass::~SVToolClass()
@@ -289,6 +288,10 @@ bool SVToolClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure
 	{
 		m_overlayColorToolInput.SetInputObject(nullptr);
 		m_overlayColorToolInput.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
+	}
+	else if (false == m_OverlayColorToolInputIsSet)
+	{
+		m_overlayColorToolInput.SetInputObject(this);
 	}
 
 	m_isCreated = bOk;
@@ -1044,6 +1047,12 @@ HRESULT SVToolClass::SetAuxSourceImage(SvIe::SVImageClass* pImage)
 	}
 
 	return l_hr;
+}
+
+SVObjectClass* SVToolClass::overwriteInputObject(uint32_t uniqueId, SvPb::EmbeddedIdEnum embeddedId)
+{
+	m_OverlayColorToolInputIsSet = m_OverlayColorToolInputIsSet || (SvPb::OverlayColorInputEId == embeddedId);
+	return __super::overwriteInputObject(uniqueId, embeddedId);
 }
 
 const SVImageInfoClass* SVToolClass::getFirstImageInfo() const
