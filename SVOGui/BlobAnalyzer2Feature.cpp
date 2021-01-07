@@ -58,7 +58,7 @@ namespace SvOg
 	std::map<int, ColumnDef> g_columnFeatureDefArray = { { CustomFeatureButtonColumn, ColumnDef{"", cBoxColumnSize}},
 		{NameColumn, ColumnDef{"Name", cTextColumnSize}},
 		{SortEnableColumn, {"Sort", cBoxColumnSize, SvPb::FeatureData::kIsSortFieldNumber}},
-		{SortDirectionColumn, {"Direction", cBoxColumnSize, SvPb::FeatureData::kIsAscentFieldNumber }},
+		{SortDirectionColumn, {"Up", cBoxColumnSize, SvPb::FeatureData::kIsAscentFieldNumber }},
 		{ExcludeEnabledColumn, {"Exclude", cBoxColumnSize, SvPb::FeatureData::kIsExcludeFieldNumber}},
 		{ExcludeInnerColumn, {"Inner", cBoxColumnSize, SvPb::FeatureData::kIsExcludeInnerFieldNumber }},
 		{LowerBoundColumn, {"Lower Bound", cTextColumnSize, SvPb::FeatureData::kLowerBoundIndirectFieldNumber}},

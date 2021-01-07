@@ -119,12 +119,11 @@ namespace SvOg
 		CPropertyPage::OnInitDialog();
 
 		//(HBITMAP) is a call to the overloaded function operator HBITMAP and no c style cast
+		DisplayHelper::setIconListToGrid(m_ImageList, m_downArrowBitmap, m_Grid);
 		m_ButtonFailHigh.SetBitmap((HBITMAP)m_downArrowBitmap);
 		m_ButtonWarnHigh.SetBitmap((HBITMAP)m_downArrowBitmap);
 		m_ButtonWarnLow.SetBitmap((HBITMAP)m_downArrowBitmap);
 		m_ButtonFailLow.SetBitmap((HBITMAP)m_downArrowBitmap);
-
-		DisplayHelper::setIconListToGrid(m_ImageList, m_downArrowBitmap, m_Grid);
 
 		setDlgData();
 
