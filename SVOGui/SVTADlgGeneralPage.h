@@ -24,7 +24,7 @@ namespace SvOg
 	class SVTADlgGeneralPage : public CPropertyPage
 	{
 	public:
-		SVTADlgGeneralPage(uint32_t inspectionId, uint32_t taskObjectId);
+		SVTADlgGeneralPage(uint32_t inspectionId, uint32_t taskObjectId, SvPb::SVObjectSubTypeEnum subType);
 		virtual ~SVTADlgGeneralPage();
 
 	protected:
@@ -33,6 +33,7 @@ namespace SvOg
 
 		afx_msg void OnSelchangeDrawToolCombo();
 		afx_msg void OnUpdateAuxiliaryExtents();
+		afx_msg void OnUpdateCloseTool();
 		afx_msg void OnSelchangeSourceImageCombo();
 		afx_msg void OnSelchangeToolForOverlayColorCombo();
 		afx_msg void OnShowRelations();
@@ -61,15 +62,16 @@ namespace SvOg
 	protected:
 		SvMc::AvailableObjectListComboBox<uint32_t> m_AvailableSourceImageCombo;
 		SvMc::SVEnumerateCombo m_drawToolCombo;
-		BOOL m_bUpdateAuxiliaryExtents;
+		BOOL m_bUpdateAuxiliaryExtents = false;
+		BOOL m_bCloseTool = false;
 		SvMc::AvailableObjectListComboBox<uint32_t> m_AvailableToolForColorOverlayCombo;
 		SvUl::NameObjectIdList m_availableToolList;
 		std::string m_inputName_toolForColorOverlay{};
 
-		bool m_bAuxExtentsAvailable;
-		bool m_bIsImageTool;
+		bool m_bAuxExtentsAvailable = false;
 		const uint32_t m_InspectionID;
 		const uint32_t m_TaskObjectID;
+		const SvPb::SVObjectSubTypeEnum m_subType;
 
 		SvOg::AuxiliaryExtentsController m_AuxExtentsController;
 		ValueController m_values;

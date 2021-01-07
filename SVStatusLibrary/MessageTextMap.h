@@ -638,7 +638,8 @@ namespace SvStl
 		{Tid_DuplicateParameterNameWithType, _T("It is not allowed to have a parameter name which is already used\nby a type parameter name: %s.") },
 		{Tid_SetParameterValuesFailed, _T("Setting of the parameter '%s' failed.") },
 		
-		{ Tid_Correct_Grouping_Add_S_Items, _T("Correct grouping add  '%s' Items.") },
+		{Tid_Correct_Grouping_Add_S_Items, _T("Correct grouping add  '%s' Items.") },
+		{Tid_GroupDependencies_Wrong, _T("Group Dependencies wrong, if tool closed it is not allowed to have dependencies inside out.") },
 
 		{ Tid_InvalidScaleFactor, _T("Invalid Scale Factor.") },
 			

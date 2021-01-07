@@ -113,7 +113,7 @@ public:
 
 	std::string GetCompleteObjectName(uint32_t objectId);
 
-	void fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo, uint32_t startingObjectID, bool addHidden = false);
+	void fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo, uint32_t startingObjectID, bool addHidden = false, bool stopIfClosed = false);
 
 	HRESULT GetObserverDataNames(uint32_t observerID, SVSubjectDataNameDeque& rSubjectDataNames ) const;
 

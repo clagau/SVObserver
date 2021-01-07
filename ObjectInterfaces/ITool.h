@@ -52,5 +52,6 @@ typedef std::vector<ParameterPairForML> ParametersForML;
 		virtual HRESULT setExtentList(const ::google::protobuf::RepeatedPtrField<::SvPb::ExtentParameter> param ) = 0;
 		virtual HRESULT setExtentToParent() = 0;
 		virtual bool isAllowedLocation(const SvPb::SVExtentLocationPropertyEnum Location, SvPb::SVExtentDirectionsEnum Direction = SvPb::SVExtentDirectionBoth) const = 0;
+		virtual SvPb::InspectionCmdResponse getInvalidDependencies() const = 0;
 	};
 } //namespace SvOi

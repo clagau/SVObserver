@@ -31,8 +31,8 @@ namespace SvOg
 		/// \param Title [in] The title of the object selector.
 		/// \param pParent [in] The parent control
 		/// \returns bool True if selector was closed by OK-button.
-		bool Show(std::string& rName, const std::string& rTitle, CWnd* pParent, SvPb::ObjectSelectorType type = SvPb::ObjectSelectorType::allValueObjects, SvPb::GetObjectSelectorItemsRequest::FilterCase filter = SvPb::GetObjectSelectorItemsRequest::FilterCase::kAttributesAllowed);
-		bool Show(std::string& rName, const std::string& rTitle, CWnd* pParent, SvPb::ObjectSelectorType type, const std::vector<uint32_t>& excludeSameLineageVector);
+		bool Show(std::string& rName, const std::string& rTitle, CWnd* pParent, SvPb::ObjectSelectorType type = SvPb::ObjectSelectorType::allValueObjects, SvPb::GetObjectSelectorItemsRequest::FilterCase filter = SvPb::GetObjectSelectorItemsRequest::FilterCase::kAttributesAllowed, uint32_t importantObjectForStopAtClosed = SvDef::InvalidObjectId);
+		bool Show(std::string& rName, const std::string& rTitle, CWnd* pParent, SvPb::ObjectSelectorType type, const std::vector<uint32_t>& excludeSameLineageVector, uint32_t importantObjectForStopAtClosed = SvDef::InvalidObjectId);
 		void setSearchAreas(const std::vector<SvPb::SearchArea>& rSearchAreas) { m_searchAreas = rSearchAreas; }
 #pragma endregion Public Methods
 

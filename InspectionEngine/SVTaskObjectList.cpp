@@ -80,29 +80,29 @@ HRESULT SVTaskObjectListClass::GetOutputList( SVOutputInfoListClass& p_rOutputIn
 }
 
 
-void SVTaskObjectListClass::fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, SvOi::IsObjectAllowedFunc pFunctor, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum nameToType, SvPb::ObjectSelectorType requiredType) const
+void SVTaskObjectListClass::fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, SvOi::IsObjectAllowedFunc pFunctor, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum nameToType, SvPb::ObjectSelectorType requiredType, bool stopIfClosed /*= false*/, bool /*firstObject = false*/) const
 {
 	nameToType = (SvPb::SVNotSetObjectType == nameToType) ? GetObjectType() : nameToType;
-	__super::fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType);
+	__super::fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType, stopIfClosed);
 	
 	for (const auto* pObject : m_TaskObjectVector)
 	{
 		if (nullptr != pObject)
 		{
-			pObject->fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType);
+			pObject->fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType, stopIfClosed);
 		}
 	}
 }
 
-void SVTaskObjectListClass::fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo, bool addHidden /*= false*/)
+void SVTaskObjectListClass::fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo, bool addHidden /*= false*/, bool stopIfClosed /*= false*/, bool /*firstObject = false*/)
 {
-	__super::fillObjectList(inserter, rObjectInfo, addHidden);
+	__super::fillObjectList(inserter, rObjectInfo, addHidden, stopIfClosed);
 
 	for (auto* pObject : m_TaskObjectVector)
 	{
 		if (nullptr != pObject)
 		{
-			pObject->fillObjectList(inserter, rObjectInfo, addHidden);
+			pObject->fillObjectList(inserter, rObjectInfo, addHidden, stopIfClosed);
 		}
 	}
 }

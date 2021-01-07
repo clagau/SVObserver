@@ -218,7 +218,7 @@ namespace SvOg
 		Title += _T(": ");
 		Title += RangeEnum::ERange2String(fieldEnum);
 
-		return m_objectSelector.Show(rName, Title, this, SvPb::allNumberValueObjects, {m_toolId});
+		return m_objectSelector.Show(rName, Title, this, SvPb::allNumberValueObjects, {m_toolId}, m_toolId);
 	}
 
 	#pragma endregion Private Methods

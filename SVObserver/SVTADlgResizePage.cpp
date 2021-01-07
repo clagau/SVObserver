@@ -185,7 +185,7 @@ void SVTADlgResizePage::PickValue(CButton& rButton, CEdit& rEdit, UINT ResourceI
 	rButton.GetWindowText(Temp);
 	std::string Value = Temp;
 	std::string Title = SvUl::LoadStdString(ResourceID);
-	if (m_resizeValueSelector.Show(Value, Title, this))
+	if (m_resizeValueSelector.Show(Value, Title, this, SvPb::allValueObjects, SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed, m_toolID))
 	{
 		rEdit.SetWindowText(Value.c_str());
 	}

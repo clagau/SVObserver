@@ -82,7 +82,7 @@ void ToolAdjustToolSetPage::OnBtnObjectPicker()
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
-		{ SvPb::SearchArea::toolsetItems }, m_InspectionID, SvPb::viewable, m_TaskObjectID);
+		{ SvPb::SearchArea::toolsetItems }, m_InspectionID, SvPb::viewable, m_TaskObjectID, false, SvPb::allValueObjects, SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed, m_TaskObjectID);
 	SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject);

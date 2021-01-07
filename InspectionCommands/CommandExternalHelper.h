@@ -57,8 +57,8 @@ SvUl::NameObjectIdList convertNameObjectIdList(const ::google::protobuf::Repeate
 
 void setTypeInfos(const SvDef::SVObjectTypeInfoStruct& destInfo, SvPb::SVObjectTypeInfoStruct& sourceInfo);
 
-SvPb::GetObjectSelectorItemsRequest createObjectSelectorRequest(const std::vector<SvPb::SearchArea>& rSearchAreas, uint32_t inspectionID, SvPb::ObjectAttributes attribute, uint32_t instanceID = SvDef::InvalidObjectId, bool wholeArray = false, SvPb::ObjectSelectorType type = SvPb::allValueObjects, SvPb::GetObjectSelectorItemsRequest::FilterCase filter = SvPb::GetObjectSelectorItemsRequest::FilterCase::kAttributesAllowed);
-SvPb::GetObjectSelectorItemsRequest createObjectSelectorRequest(const std::vector<SvPb::SearchArea>& rSearchAreas, uint32_t inspectionID, SvPb::ObjectAttributes attribute, uint32_t instanceID, bool wholeArray, SvPb::ObjectSelectorType type, const std::vector<uint32_t>& excludeSameLineageVector);
+SvPb::GetObjectSelectorItemsRequest createObjectSelectorRequest(const std::vector<SvPb::SearchArea>& rSearchAreas, uint32_t inspectionID, SvPb::ObjectAttributes attribute, uint32_t instanceID = SvDef::InvalidObjectId, bool wholeArray = false, SvPb::ObjectSelectorType type = SvPb::allValueObjects, SvPb::GetObjectSelectorItemsRequest::FilterCase filter = SvPb::GetObjectSelectorItemsRequest::FilterCase::kAttributesAllowed, uint32_t importantObjectForStopAtClosed = SvDef::InvalidObjectId);
+SvPb::GetObjectSelectorItemsRequest createObjectSelectorRequest(const std::vector<SvPb::SearchArea>& rSearchAreas, uint32_t inspectionID, SvPb::ObjectAttributes attribute, uint32_t instanceID, bool wholeArray, SvPb::ObjectSelectorType type, const std::vector<uint32_t>& excludeSameLineageVector, uint32_t importantObjectForStopAtClosed = SvDef::InvalidObjectId);
 
 template<class T>
 T getValueForProperties(const ::google::protobuf::RepeatedPtrField< ::SvPb::ExtentParameter >& extents, SvPb::SVExtentPropertyEnum type)

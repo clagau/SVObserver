@@ -60,6 +60,13 @@ message NameValuePair
 	int32 value = 2;
 } 
 
+message NameNamePair
+{
+	bytes nameFrom = 1;
+	bytes nameTo = 2;
+} 
+
+
 message ValueObjectValues
 {
 	uint32 objectId = 1;
@@ -337,6 +344,8 @@ message GetAvailableObjectsRequest
 		IsBeforeToolMethod isBeforeToolMethod=5; //same then default, but stop searching if required tool reached.
 		DefaultPlusHidden defaultPlusHidden=6;
 	}	
+
+	uint32 importantObjectForStopAtBorder = 7; //If this value set (!= SvDef::InvalidObjectId), than it look from this up to parent if any Border (e.g. Closed GroupTool) is available and set this than as starting position and also stop at a closed GroupTool.
 }
 
 message GetAvailableObjectsResponse
@@ -931,6 +940,16 @@ message SetAndSortEmbeddedValueResponse
 	MessageContainerVector errormessages = 2;
 }
 
+message GetInvalidDependenciesRequest
+{
+	uint32 objectId = 1;
+}
+
+message GetInvalidDependenciesResponse
+{
+	repeated NameNamePair invalidDependencies = 1;
+}
+
 message InspectionCmdRequest
 {
 	uint32 inspectionID = 1;			//The inspection ID to perform the command on
@@ -1004,6 +1023,7 @@ message InspectionCmdRequest
 		GetImageInfoExternalToolRequest getImageInfoExternalToolRequest = 66;
 		ValidateValueObjectRequest validateValueObjectRequest = 67;
 		SetAndSortEmbeddedValueRequest setAndSortEmbeddedValueRequest = 68;
+		GetInvalidDependenciesRequest getInvalidDependenciesRequest = 69;
 	}
 }
 
@@ -1060,5 +1080,6 @@ message InspectionCmdResponse
 		GetImageInfoExternalToolResponse getImageInfoExternalToolResponse = 46;
 		ValidateValueObjectResponse validateValueObjectResponse = 47;
 		SetAndSortEmbeddedValueResponse setAndSortEmbeddedValueResponse = 48;
+		GetInvalidDependenciesResponse getInvalidDependenciesResponse = 49;
 	}
 }

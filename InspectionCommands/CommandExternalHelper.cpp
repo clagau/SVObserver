@@ -140,7 +140,7 @@ namespace SvCmd
 		sourceInfo.set_embeddedid(destInfo.m_EmbeddedID);
 	}
 
-	SvPb::GetObjectSelectorItemsRequest createObjectSelectorRequest(const std::vector<SvPb::SearchArea>& rSearchAreas, uint32_t inspectionID, SvPb::ObjectAttributes attribute, uint32_t instanceID /*= 0*/, bool wholeArray /*= false*/, SvPb::ObjectSelectorType type /*= SvPb::allValueObjects*/, SvPb::GetObjectSelectorItemsRequest::FilterCase filter /*= SvPb::GetObjectSelectorItemsRequest::FilterCase::kAttributesAllowed*/)
+	SvPb::GetObjectSelectorItemsRequest createObjectSelectorRequest(const std::vector<SvPb::SearchArea>& rSearchAreas, uint32_t inspectionID, SvPb::ObjectAttributes attribute, uint32_t instanceID /*= 0*/, bool wholeArray /*= false*/, SvPb::ObjectSelectorType type /*= SvPb::allValueObjects*/, SvPb::GetObjectSelectorItemsRequest::FilterCase filter /*= SvPb::GetObjectSelectorItemsRequest::FilterCase::kAttributesAllowed*/, uint32_t importantObjectForStopAtClosed /*= SvDef::InvalidObjectId*/)
 	{
 		SvPb::GetObjectSelectorItemsRequest result;
 
@@ -153,6 +153,7 @@ namespace SvCmd
 		result.set_attribute(attribute);
 		result.set_wholearray(wholeArray);
 		result.set_type(type);
+		result.set_importantobjectforstopatborder(importantObjectForStopAtClosed);
 		switch (filter)
 		{
 		case SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed:
@@ -171,9 +172,9 @@ namespace SvCmd
 		return result;
 	}
 
-	SvPb::GetObjectSelectorItemsRequest createObjectSelectorRequest(const std::vector<SvPb::SearchArea>& rSearchAreas, uint32_t inspectionID, SvPb::ObjectAttributes attribute, uint32_t instanceID, bool wholeArray, SvPb::ObjectSelectorType type, const std::vector<uint32_t>& excludeSameLineageVector)
+	SvPb::GetObjectSelectorItemsRequest createObjectSelectorRequest(const std::vector<SvPb::SearchArea>& rSearchAreas, uint32_t inspectionID, SvPb::ObjectAttributes attribute, uint32_t instanceID, bool wholeArray, SvPb::ObjectSelectorType type, const std::vector<uint32_t>& excludeSameLineageVector, uint32_t importantObjectForStopAtClosed)
 	{
-		SvPb::GetObjectSelectorItemsRequest result = createObjectSelectorRequest(rSearchAreas, inspectionID, attribute, instanceID, wholeArray, type, SvPb::GetObjectSelectorItemsRequest::FilterCase::FILTER_NOT_SET);
+		SvPb::GetObjectSelectorItemsRequest result = createObjectSelectorRequest(rSearchAreas, inspectionID, attribute, instanceID, wholeArray, type, SvPb::GetObjectSelectorItemsRequest::FilterCase::FILTER_NOT_SET, importantObjectForStopAtClosed);
 		auto* pExcludeData = result.mutable_excludesamelineage();
 		for (auto id : excludeSameLineageVector)
 		{

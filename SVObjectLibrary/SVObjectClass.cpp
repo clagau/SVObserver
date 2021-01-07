@@ -342,7 +342,7 @@ SvOi::IObjectClass* SVObjectClass::getFirstObject(const SvDef::SVObjectTypeInfoS
 	return nullptr;
 }
 
-void SVObjectClass::fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, SvOi::IsObjectAllowedFunc pFunctor, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum nameToType, SvPb::ObjectSelectorType requiredType) const
+void SVObjectClass::fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, SvOi::IsObjectAllowedFunc pFunctor, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum nameToType, SvPb::ObjectSelectorType requiredType, bool /*stopIfClosed = false*/, bool /*firstObject = false*/) const
 {
 	SVObjectReference ObjectRef = GetObjectInfo().GetObjectReference();
 	if (isCorrectType(requiredType))
@@ -398,7 +398,7 @@ void SVObjectClass::fillSelectorList(std::back_insert_iterator<std::vector<SvPb:
 	}
 }
 
-void SVObjectClass::fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo, bool /*addHidden = false*/)
+void SVObjectClass::fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo, bool /*addHidden = false*/, bool /*stopIfClosed = false*/, bool /*firstObject = false*/)
 {
 	if ((SvPb::NoEmbeddedId == rObjectInfo.m_EmbeddedID || rObjectInfo.m_EmbeddedID == GetEmbeddedID()) &&
 		(SvPb::SVNotSetObjectType == rObjectInfo.m_ObjectType || rObjectInfo.m_ObjectType == GetObjectType()) &&
@@ -408,6 +408,17 @@ void SVObjectClass::fillObjectList(std::back_insert_iterator<std::vector<SvOi::I
 		// cppcheck-suppress unreadVariable symbolName=inserter ; cppCheck doesn't know back_insert_iterator
 		inserter = this;
 	}
+}
+
+uint32_t SVObjectClass::getFirstClosedParent(uint32_t stopSearchAtObjectId) const
+{
+	auto* pOwner = GetOwnerInfo().getObject();
+	if (getObjectId() == stopSearchAtObjectId || nullptr == pOwner)
+	{
+		return SvDef::InvalidObjectId;
+	}
+	
+	return pOwner->getFirstClosedParent(stopSearchAtObjectId);
 }
 #pragma endregion virtual method (IObjectClass)
 

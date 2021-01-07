@@ -146,7 +146,7 @@ bool RangeXDialogClass::ShowObjectSelector( std::string& rName, RangeEnum::ERang
 	Title += _T(": ");
 	Title += RangeEnum::ERange2String(fieldEnum).c_str();
 
-	return m_objectSelector.Show(rName, Title, this, SvPb::allNumberValueObjects, { m_toolId });
+	return m_objectSelector.Show(rName, Title, this, SvPb::allNumberValueObjects, { m_toolId }, m_toolId);
 }
 
 // @TODO:  The next 4 methods are very similar.  Consider refactoring to call a common method.  Otherwise, clean up the camelcase and result checking in all the methods.

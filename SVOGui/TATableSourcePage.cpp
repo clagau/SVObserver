@@ -125,6 +125,7 @@ HRESULT TATableSourcePage::RetrieveAvailableList()
 	pRequest->set_objecttypetoinclude(SvPb::SVToolSetObjectType);
 	pRequest->set_shouldexcludefirstobjectname(true);
 	pRequest->mutable_isbeforetoolmethod()->set_toolid(m_TaskObjectID);
+	pRequest->set_importantobjectforstopatborder(m_TaskObjectID);
 
 	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 	SvUl::NameObjectIdList availableList;

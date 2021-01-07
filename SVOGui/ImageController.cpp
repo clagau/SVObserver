@@ -39,6 +39,7 @@ namespace SvOg
 		pRequest->set_objectid(m_InspectionID);
 		pRequest->mutable_typeinfo()->set_objecttype(SvPb::SVImageObjectType);
 		pRequest->mutable_typeinfo()->set_subtype(m_ImageSubType);
+		pRequest->set_importantobjectforstopatborder(m_TaskObjectID);
 		if (m_OnlyAboveImages)
 		{
 			pRequest->mutable_isbeforetoolmethod()->set_toolid(m_TaskObjectID);
@@ -89,6 +90,7 @@ namespace SvOg
 		pRequest->set_objectid(m_TaskObjectID);
 		pRequest->mutable_typeinfo()->set_objecttype(SvPb::SVImageObjectType);
 		pRequest->mutable_defaultplushidden();
+		pRequest->set_importantobjectforstopatborder(m_TaskObjectID);
 
 		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 		if (S_OK == hr && responseCmd.has_getavailableobjectsresponse())

@@ -309,7 +309,7 @@ void SVTADlgStatisticsPage::OnBtnObjectPicker()
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
-		{SvPb::SearchArea::toolsetItems}, pInspection->getObjectId(), SvPb::selectableForStatistics, SvDef::InvalidObjectId, false, SvPb::allNumberValueObjects);
+		{SvPb::SearchArea::toolsetItems}, pInspection->getObjectId(), SvPb::selectableForStatistics, SvDef::InvalidObjectId, false, SvPb::allNumberValueObjects, SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed, m_pTool->getObjectId());
 
 	SvCmd::InspectionCommands(pInspection->getObjectId(), requestCmd, &responseCmd);
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject);

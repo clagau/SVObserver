@@ -38,19 +38,19 @@ ObjectSelectorController::~ObjectSelectorController()
 }
 #pragma endregion Constructor
 
-bool ObjectSelectorController::Show(std::string& rName, const std::string& rTitle, CWnd* pParent, SvPb::ObjectSelectorType type, SvPb::GetObjectSelectorItemsRequest::FilterCase filter)
+bool ObjectSelectorController::Show(std::string& rName, const std::string& rTitle, CWnd* pParent, SvPb::ObjectSelectorType type, SvPb::GetObjectSelectorItemsRequest::FilterCase filter, uint32_t importantObjectForStopAtClosed /*= SvDef::InvalidObjectId*/)
 {
 	SvPb::InspectionCmdRequest requestCmd;
 	*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
-		m_searchAreas, m_InspectionID, m_objectAttributes, m_InstanceID, false, type, filter);
+		m_searchAreas, m_InspectionID, m_objectAttributes, m_InstanceID, false, type, filter, importantObjectForStopAtClosed);
 	return Show(rName, rTitle, pParent, requestCmd);
 }
 
-bool ObjectSelectorController::Show(std::string& rName, const std::string& rTitle, CWnd* pParent, SvPb::ObjectSelectorType type, const std::vector<uint32_t>& excludeSameLineageVector)
+bool ObjectSelectorController::Show(std::string& rName, const std::string& rTitle, CWnd* pParent, SvPb::ObjectSelectorType type, const std::vector<uint32_t>& excludeSameLineageVector, uint32_t importantObjectForStopAtClosed /*= SvDef::InvalidObjectId*/)
 {
 	SvPb::InspectionCmdRequest requestCmd;
 	*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
-		m_searchAreas, m_InspectionID, m_objectAttributes, m_InstanceID, false, type, excludeSameLineageVector);
+		m_searchAreas, m_InspectionID, m_objectAttributes, m_InstanceID, false, type, excludeSameLineageVector, importantObjectForStopAtClosed);
 	return Show(rName, rTitle, pParent, requestCmd);
 }
 

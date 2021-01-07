@@ -161,7 +161,29 @@ namespace SvOi
 		//! \returns S_OK if succeeded
 		virtual HRESULT getValues(std::vector<double>& rValues) const = 0;
 
-		virtual void fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, IsObjectAllowedFunc pFunctor, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum nameToType, SvPb::ObjectSelectorType requiredType) const = 0;
-		virtual void fillObjectList(std::back_insert_iterator<std::vector<IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo, bool addHidden = false) = 0;
+		/// Fill a list with object for selector, which fit requirements.
+		/// \param treeInserter [in,out] Back_inserter where the object will be added.
+		/// \param pFunctor [in]
+		/// \param attribute [in]
+		/// \param wholeArray [in]
+		/// \param nameToType [in] Define to which type the dotted name should be added.
+		/// \param requiredType [in]
+		/// \param stopIfClosed [in,out] If true, the search for objects will be stop if the object is closed (by now only possible be GroupTool). Default is false, this means it will be searched to the end of the children.
+		/// \param firstObject [in,out] Only used if stopIfClosed is true: If startObject is e.g. GroupTool is should go to there children.
+		virtual void fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, IsObjectAllowedFunc pFunctor, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum nameToType, SvPb::ObjectSelectorType requiredType, bool stopIfClosed = false, bool firstObject = false) const = 0;
+
+		/// Fill a list with object, which fit requirements.
+		/// \param inserter [in,out] Back_inserter where the object will be added.
+		/// \param rObjectInfo [in] If the parameter set, only objects will be added the fit to this parameters.
+		/// \param addHidden [in] If true, also hidden objects will be added. Default is false, the means hidden objects will not be added.
+		/// \param stopIfClosed [in] If true, the search for objects will be stop if the object is closed (by now only possible be GroupTool). Default is false, this means it will be searched to the end of the children.
+		/// \param firstObject [in] Only used if stopIfClosed is true: If startObject is e.g. GroupTool is should go to there children.
+		virtual void fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo, bool addHidden = false, bool stopIfClosed = false, bool firstObject = false) = 0;
+
+		/// Get the parent up and return the object id if it closed (e.g. a groupTool). It stop searching if parent have stopSearchAtObjectId.
+		/// If no closing object found the return value is nullptr.
+		/// \param stopSearchAtObjectId [in]
+		/// \returns uint32_t
+		virtual uint32_t getFirstClosedParent(uint32_t stopSearchAtObjectId) const = 0;
 	};
 } //namespace SvOi

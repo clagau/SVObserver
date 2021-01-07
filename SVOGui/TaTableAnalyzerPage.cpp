@@ -262,7 +262,7 @@ void TaTableAnalyzerPage::OnButtonClickExcludeHigh()
 	m_EditExcludeHigh.GetWindowText(Temp);
 	std::string Value = Temp;
 	std::string Title = SvUl::LoadStdString(IDS_OBJECTNAME_TABLEANALYZEREXCLUDE_HIGHVALUE);
-	if (m_objectSelector.Show(Value, Title, this, SvPb::allNumberValueObjects))
+	if (m_objectSelector.Show(Value, Title, this, SvPb::allNumberValueObjects, SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed, m_TaskObjectID))
 	{
 		m_EditExcludeHigh.SetWindowText(Value.c_str());
 	}
@@ -275,7 +275,7 @@ void TaTableAnalyzerPage::OnButtonClickExcludeLow()
 	m_EditExcludeLow.GetWindowText(Temp);
 	std::string Value = Temp;
 	std::string Title = SvUl::LoadStdString(IDS_OBJECTNAME_TABLEANALYZEREXCLUDE_LOWVALUE);
-	if (m_objectSelector.Show(Value, Title, this, SvPb::allNumberValueObjects))
+	if (m_objectSelector.Show(Value, Title, this, SvPb::allNumberValueObjects, SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed, m_TaskObjectID))
 	{
 		m_EditExcludeLow.SetWindowText(Value.c_str());
 	}
@@ -288,7 +288,7 @@ void TaTableAnalyzerPage::OnButtonClickLimitValue()
 	m_EditLimitValue.GetWindowText(Temp);
 	std::string Value = Temp;
 	std::string Title = SvUl::LoadStdString(IDS_OBJECTNAME_TABLEANALYZERLIMIT_VALUE);
-	if (m_objectSelector.Show(Value, Title, this, SvPb::allNumberValueObjects))
+	if (m_objectSelector.Show(Value, Title, this, SvPb::allNumberValueObjects, SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed, m_TaskObjectID))
 	{
 		m_EditLimitValue.SetWindowText(Value.c_str());
 	}

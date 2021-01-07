@@ -729,7 +729,7 @@ std::string SVObjectManagerClass::GetCompleteObjectName(uint32_t objectId)
 	return Result;
 }
 
-void SVObjectManagerClass::fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo, uint32_t startingObjectID, bool addHidden)
+void SVObjectManagerClass::fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo, uint32_t startingObjectID, bool addHidden, bool stopIfClosed)
 {
 	if (SvDef::InvalidObjectId == startingObjectID)
 	{
@@ -740,7 +740,7 @@ void SVObjectManagerClass::fillObjectList(std::back_insert_iterator<std::vector<
 
 	if (nullptr != pObject)
 	{
-		pObject->fillObjectList(inserter, rObjectInfo, addHidden);
+		pObject->fillObjectList(inserter, rObjectInfo, addHidden, stopIfClosed, true);
 	}
 }
 
@@ -1411,9 +1411,9 @@ SvOi::IObjectClass* SvOi::FindObject(uint32_t parentID, const SvDef::SVObjectTyp
 	return SVObjectManagerClass::Instance().getFirstObject(parentID, rInfo);
 }
 
-void SvOi::fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo, uint32_t startingObjectID, bool addHidden /*= false*/)
+void SvOi::fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo, uint32_t startingObjectID, bool addHidden /*= false*/, bool stopIfClosed /*= false*/)
 {
-	return SVObjectManagerClass::Instance().fillObjectList(inserter, rObjectInfo, startingObjectID, addHidden);
+	return SVObjectManagerClass::Instance().fillObjectList(inserter, rObjectInfo, startingObjectID, addHidden, stopIfClosed);
 }
 #pragma endregion IObjectManager-function
 

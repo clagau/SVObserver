@@ -46,7 +46,8 @@ class SVTADlgArchiveImagePage : public CPropertyPage, public SvOg::ISVPropertyPa
 	{
 		enum TupleContent : size_t { ValueEdit = 0, EmbeddedId, DottedNameSelectButton, EmbeddedLinkId }; //values must start with 0 and be consecutive
 	public:
-		explicit AlternativeImagePathController(SvOg::ValueController& rValueController, uint32_t inspectionId) :
+		explicit AlternativeImagePathController(SvOg::ValueController& rValueController, uint32_t inspectionId, uint32_t taskId) :
+			m_taskId{taskId},
 			m_rValueController(rValueController),
 			m_ObjectSelectorController(inspectionId, SvDef::InvalidObjectId, SvPb::viewable),
 			m_vecValueAndGuiInfo
@@ -80,6 +81,7 @@ class SVTADlgArchiveImagePage : public CPropertyPage, public SvOg::ISVPropertyPa
 
 		SvOg::ValueController& m_rValueController;
 		SvOg::ObjectSelectorController m_ObjectSelectorController;
+		uint32_t m_taskId;
 
 		CEdit	m_EditBaseDirectoryname;
 		CEdit	m_EditDirectorynameIndex;

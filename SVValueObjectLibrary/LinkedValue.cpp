@@ -294,7 +294,7 @@ namespace SvVol
 		}
 	}
 
-	void LinkedValue::fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo, bool addHidden /*= false*/)
+	void LinkedValue::fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo, bool addHidden /*= false*/, bool stopIfClosed /*= false*/, bool /*firstObject = false*/)
 	{
 		if (SvPb::NoEmbeddedId == rObjectInfo.m_EmbeddedID)
 		{
@@ -315,7 +315,7 @@ namespace SvVol
 			}
 		}
 		
-		__super::fillObjectList(inserter, rObjectInfo, addHidden);
+		__super::fillObjectList(inserter, rObjectInfo, addHidden, stopIfClosed);
 	}
 
 	void LinkedValue::OnObjectRenamed(const SVObjectClass&, const std::string&)

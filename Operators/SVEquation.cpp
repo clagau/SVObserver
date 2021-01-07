@@ -310,6 +310,9 @@ bool SVEquation::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 
 	m_isCreated = bOk;
 
+	//Test must be called early, because it make the dependencies of the equation to the other object. And this is e.g. need by the first resetObject from GroupTool to check if invalid dependencies available
+	ResetObject();
+
 	return bOk;
 }
 

@@ -605,8 +605,8 @@ enum MessageTextEnum
 	Tid_SetParameterValuesFailed,
 	
 	Tid_Correct_Grouping_Add_S_Items,
-
-	Tid_InvalidScaleFactor,
+	Tid_GroupDependencies_Wrong,
+		Tid_InvalidScaleFactor,
 
 	Tid_LinearImageOperatorList_ResultCreateFailed,
 	Tid_LinearImageOperatorList_GetResultRangeFailed,

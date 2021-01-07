@@ -1219,34 +1219,34 @@ void SVImageClass::setErrorMessageToTool(SvStl::MessageContainer& rErrorMessage)
 	}
 }
 
-void SVImageClass::fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, SvOi::IsObjectAllowedFunc pFunctor, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum nameToType, SvPb::ObjectSelectorType requiredType) const
+void SVImageClass::fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, SvOi::IsObjectAllowedFunc pFunctor, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum nameToType, SvPb::ObjectSelectorType requiredType, bool stopIfClosed /*= false*/, bool /*firstObject = false*/) const
 {
 	if (0 != ObjectAttributesAllowed())
 	{
 		nameToType = (SvPb::SVNotSetObjectType == nameToType) ? GetObjectType() : nameToType;
-		__super::fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType);
+		__super::fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType, stopIfClosed);
 
 		for (auto* pObject : m_embeddedList)
 		{
 			if (nullptr != pObject)
 			{
-				pObject->fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType);
+				pObject->fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType, stopIfClosed);
 			}
 		}
 	}
 }
 
-void SVImageClass::fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo, bool addHidden /*= false*/)
+void SVImageClass::fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo, bool addHidden /*= false*/, bool stopIfClosed /*= false*/, bool /*firstObject = false*/)
 {
 	if (0 != ObjectAttributesAllowed() || addHidden)
 	{
-		__super::fillObjectList(inserter, rObjectInfo, addHidden);
+		__super::fillObjectList(inserter, rObjectInfo, addHidden, stopIfClosed);
 
 		for (auto* pObject : m_embeddedList)
 		{
 			if (nullptr != pObject)
 			{
-				pObject->fillObjectList(inserter, rObjectInfo, addHidden);
+				pObject->fillObjectList(inserter, rObjectInfo, addHidden, stopIfClosed);
 			}
 		}
 	}

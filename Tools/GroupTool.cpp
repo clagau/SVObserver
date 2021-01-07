@@ -8,6 +8,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "GroupTool.h"
+#include "ObjectInterfaces/IDependencyManager.h"
 #include "ObjectInterfaces/IInspectionProcess.h"
 #include "Operators/SVConditional.h"
 #include "Operators/ParameterTask.h"
@@ -54,21 +55,22 @@ namespace SvTo
 		m_PassedCount.SetObjectAttributesAllowed(cAttribute, SvOi::SetAttributeType::RemoveAttribute);
 		m_FailedCount.SetObjectAttributesAllowed(cAttribute, SvOi::SetAttributeType::RemoveAttribute);
 		m_WarnedCount.SetObjectAttributesAllowed(cAttribute, SvOi::SetAttributeType::RemoveAttribute);
+		m_drawToolFlag.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
 
 		SvDef::SVObjectTypeInfoStruct info(SvPb::ParameterTaskObjectType, SvPb::ParameterInputObjectType);
-		auto* pInputs = dynamic_cast<SvOp::ParameterTask*>(getFirstObject(info));
-		if (nullptr == pInputs)
+		m_pInputTask = dynamic_cast<SvOp::ParameterTask*>(getFirstObject(info));
+		if (nullptr == m_pInputTask)
 		{
-			pInputs = new SvOp::InputParameterTask;
-			Add(pInputs);
+			m_pInputTask = new SvOp::InputParameterTask;
+			Add(m_pInputTask);
 		}
 
 		info.m_SubType = SvPb::ParameterResultObjectType;
-		auto* pResults = dynamic_cast<SvOp::ParameterTask*>(getFirstObject(info));
-		if (nullptr == pResults)
+		m_pResultTask = dynamic_cast<SvOp::ParameterTask*>(getFirstObject(info));
+		if (nullptr == m_pResultTask)
 		{
-			pResults = new SvOp::ResultParameterTask;
-			Add(pResults);
+			m_pResultTask = new SvOp::ResultParameterTask;
+			Add(m_pResultTask);
 		}
 
 		return m_isCreated;
@@ -143,13 +145,140 @@ namespace SvTo
 		return pos;
 	}
 
+	bool GroupTool::ResetObject(SvStl::MessageContainerVector* pErrorMessages)
+	{
+		bool result = __super::ResetObject(pErrorMessages);
+		BOOL isClosed = false;
+		m_isClosed.GetValue(isClosed);
+		if (isClosed)
+		{
+			auto dependencyList = getInvalidDependenciesList();
+			if (0 < dependencyList.size())
+			{
+				result = false;
+				if (nullptr != pErrorMessages)
+				{
+					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_GroupDependencies_Wrong, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+					pErrorMessages->push_back(Msg);
+				}
+			}
+		}
+		return result;
+	}
+
+	SvPb::InspectionCmdResponse GroupTool::getInvalidDependencies() const
+	{
+		SvPb::InspectionCmdResponse cmdResponse;
+		auto* pResponse = cmdResponse.mutable_getinvaliddependenciesresponse();
+		auto dependencyList = getInvalidDependenciesList();
+		for (const auto& rPair : dependencyList)
+		{
+			auto* pPair = pResponse->add_invaliddependencies();
+			pPair->set_namefrom(rPair.first);
+			pPair->set_nameto(rPair.second);
+		}
+		return cmdResponse;
+	}
+
+	void GroupTool::fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, SvOi::IsObjectAllowedFunc pFunctor, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum nameToType, SvPb::ObjectSelectorType requiredType, bool stopIfClosed/* = false*/, bool firstObject/* = false*/) const
+	{
+		BOOL isClosed = false;
+		m_isClosed.GetValue(isClosed);
+		if (isClosed && stopIfClosed && false == firstObject)
+		{
+			SVObjectClass::fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType, stopIfClosed);
+			if (m_pInputTask)
+			{
+				m_pInputTask->fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType, stopIfClosed);
+			}
+			if (m_pResultTask)
+			{
+				m_pResultTask->fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType, stopIfClosed);
+			}
+			for (auto* pObject : m_embeddedList)
+			{
+				if (nullptr != pObject)
+				{
+					pObject->fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType, stopIfClosed);
+				}
+			}
+		}
+		else
+		{
+			__super::fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType, stopIfClosed);
+		}
+	}
+
+	void GroupTool::fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo, bool addHidden /*= false*/, bool stopIfClosed /*= false*/, bool firstObject /*= false*/)
+	{
+		BOOL isClosed = false;
+		m_isClosed.GetValue(isClosed);
+		if (isClosed && stopIfClosed && false == firstObject)
+		{
+			SVObjectClass::fillObjectList(inserter, rObjectInfo, addHidden, stopIfClosed);
+			if (m_pInputTask)
+			{
+				m_pInputTask->fillObjectList(inserter, rObjectInfo, addHidden, stopIfClosed);
+			}
+			if (m_pResultTask)
+			{
+				m_pResultTask->fillObjectList(inserter, rObjectInfo, addHidden, stopIfClosed);
+			}
+			for (auto* pObject : m_embeddedList)
+			{
+				if (nullptr != pObject)
+				{
+					pObject->fillObjectList(inserter, rObjectInfo, addHidden, stopIfClosed);
+				}
+			}
+		}
+		else
+		{
+			__super::fillObjectList(inserter, rObjectInfo, addHidden, stopIfClosed);
+		}
+	}
+
+	uint32_t GroupTool::getFirstClosedParent(uint32_t stopSearchAtObjectId) const
+	{
+		BOOL isClosed = false;
+		m_isClosed.GetValue(isClosed);
+		if (isClosed)
+		{
+			return getObjectId();
+		}
+		else
+		{
+			return __super::getFirstClosedParent(stopSearchAtObjectId);
+		}
+	}
 
 
 	void GroupTool::Initialize()
 	{
+		RegisterEmbeddedObject(&m_isClosed, SvPb::IsClosedEId, IDS_OBJECTNAME_ISCLOSED, false, SvOi::SVResetItemTool);
+		m_isClosed.SetDefaultValue(BOOL(true), true);			// Default for Failed is TRUE !!!
+
 		m_canResizeToParent = false;
 		m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
 		m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::GroupToolObjectType;
 		removeEmbeddedExtents();
+	}
+
+	SvDef::StringPairVector GroupTool::getInvalidDependenciesList() const
+	{
+		SvDef::StringPairVector dependencyList;
+		SvOi::ToolDependencyEnum ToolDependency = /*SvOi::ToolDependencyEnum::Client :*/ SvOi::ToolDependencyEnum::ClientAndSupplier;
+		SvOi::getToolDependency(std::back_inserter(dependencyList), { getObjectId() }, SvPb::SVToolObjectType, ToolDependency);
+		std::string groupStr = GetObjectNameBeforeObjectType(SvPb::SVToolSetObjectType);
+		std::string inputStr = groupStr + "." + SvUl::LoadStdString(IDS_CLASSNAME_INPUT_PARAMETER_TASK);
+		std::string resultStr = groupStr + "." + SvUl::LoadStdString(IDS_CLASSNAME_RESULT_PARAMETER_TASK);
+		//remove input and result connections
+		auto isPartOf = [](const SvDef::StringPair& rPairValue, const std::string& rString) -> bool { return std::string::npos != rPairValue.first.find(rString) || std::string::npos != rPairValue.second.find(rString); };
+		dependencyList.erase(std::remove_if(dependencyList.begin(), dependencyList.end(),
+			[inputStr, resultStr, isPartOf](const SvDef::StringPair& rEntry) -> bool { return isPartOf(rEntry, inputStr) || isPartOf(rEntry, resultStr); }), dependencyList.end());
+		//remove connection direct with groupTool
+		dependencyList.erase(std::remove_if(dependencyList.begin(), dependencyList.end(),
+			[groupStr](const SvDef::StringPair& rEntry) -> bool { return rEntry.first == groupStr || rEntry.second == groupStr; }), dependencyList.end());
+		return dependencyList;
 	}
 } //namespace SvTo

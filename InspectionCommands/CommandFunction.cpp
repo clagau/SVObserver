@@ -695,10 +695,22 @@ SvPb::InspectionCmdResponse getAvailableObjects(SvPb::GetAvailableObjectsRequest
 {
 	SvPb::InspectionCmdResponse cmdResponse;
 
+	SvOi::IObjectClass* pImportantObject = SvOi::getObject(request.importantobjectforstopatborder());
+	uint32_t startingObjectId{ request.objectid() };
+	bool isStopAtBorder{ nullptr != pImportantObject };
+	if (isStopAtBorder)
+	{
+		auto tmpId = pImportantObject->getFirstClosedParent(startingObjectId);
+		if (SvDef::InvalidObjectId != tmpId)
+		{
+			startingObjectId = tmpId;
+		}
+	}
+
 	SvDef::SVObjectTypeInfoStruct typeInfo {request.typeinfo().objecttype(), request.typeinfo().subtype(), request.typeinfo().embeddedid()};
 	SvPb::SVObjectTypeEnum objectTypeToInclude = request.objecttypetoinclude();
 	std::vector<SvOi::IObjectClass*> list;
-	SvOi::fillObjectList(std::back_inserter(list), typeInfo, request.objectid(), request.has_defaultplushidden());
+	SvOi::fillObjectList(std::back_inserter(list), typeInfo, startingObjectId, request.has_defaultplushidden(), isStopAtBorder);
 
 	IsAllowedFunc isAllowed = getAllowedFunc(request);
 	if (isAllowed)// required, even if it does nothing...
@@ -1399,6 +1411,10 @@ void fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> tre
 		if (nullptr != pInspection)
 		{
 			pObject = dynamic_cast<SvOi::IObjectClass*>(pInspection->GetToolSetInterface());
+			if (nullptr == pObject)
+			{
+				return;
+			}
 		}
 
 		//If instance ID is set to the inspection ID then we need the name including the inspection name
@@ -1408,12 +1424,24 @@ void fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> tre
 			objectTypeToName = SvPb::SVInspectionObjectType;
 		}
 
+		SvOi::IObjectClass* pImportantObject = SvOi::getObject(request.importantobjectforstopatborder());
+		bool isStopAtBorder{ nullptr != pImportantObject };
+		if (isStopAtBorder)
+		{
+			auto* pTmpObject = SvOi::getObject(pImportantObject->getFirstClosedParent(pObject->getObjectId()));
+			if (nullptr != pTmpObject)
+			{
+				objectTypeToName = (SvPb::SVNotSetObjectType == objectTypeToName) ? pObject->GetObjectType() : objectTypeToName;
+				pObject = pTmpObject;
+			}
+		}
+
 		if (nullptr != pObject)
 		{
 			IsObjectInfoAllowed pFunc = getObjectSelectorFilterFunc(request);
 			if(nullptr != pFunc)
 			{
-				pObject->fillSelectorList(treeInserter, pFunc, request.attribute(), request.wholearray(), objectTypeToName, request.type());
+				pObject->fillSelectorList(treeInserter, pFunc, request.attribute(), request.wholearray(), objectTypeToName, request.type(), isStopAtBorder, true);
 			}
 		}
 	}
@@ -2045,6 +2073,19 @@ SvPb::InspectionCmdResponse setandSortEmbeddedValues(SvPb::SetAndSortEmbeddedVal
 	if (nullptr != pObject)
 	{
 		return pObject->setAndSortEmbeddedValues(request);
+	}
+
+	SvPb::InspectionCmdResponse cmdResponse;
+	cmdResponse.set_hresult(E_POINTER);
+	return cmdResponse;
+}
+
+SvPb::InspectionCmdResponse getInvalidDependencies(SvPb::GetInvalidDependenciesRequest request)
+{
+	auto* pTool = dynamic_cast<SvOi::ITool*>(SvOi::getObject(request.objectid()));
+	if (nullptr != pTool)
+	{
+		return pTool->getInvalidDependencies();
 	}
 
 	SvPb::InspectionCmdResponse cmdResponse;

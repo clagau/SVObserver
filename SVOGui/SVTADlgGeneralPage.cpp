@@ -14,6 +14,7 @@
 #include "SVTADlgGeneralPage.h"
 #include "ObjectInterfaces\NameValueVector.h"
 #include "SVShowDependentsDialog.h"
+#include <numeric>
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -24,17 +25,15 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvOg
 {
-	SVTADlgGeneralPage::SVTADlgGeneralPage(uint32_t inspectionId, uint32_t taskObjectId) 
+	SVTADlgGeneralPage::SVTADlgGeneralPage(uint32_t inspectionId, uint32_t taskObjectId, SvPb::SVObjectSubTypeEnum subType)
 	: CPropertyPage(SVTADlgGeneralPage::IDD)
-	, m_bIsImageTool(false)
-	, m_bAuxExtentsAvailable(false)
 	, m_InspectionID(inspectionId)
 	, m_TaskObjectID(taskObjectId)
+	, m_subType(subType)
 	, m_values(SvOg::BoundValues(inspectionId, taskObjectId))
 	, m_AuxExtentsController(inspectionId, taskObjectId)
 	{
 		//{{AFX_DATA_INIT(SVTADlgGeneralPage)
-		m_bUpdateAuxiliaryExtents = false;
 		//}}AFX_DATA_INIT
 	}
 
@@ -55,6 +54,11 @@ namespace SvOg
 			m_values.Set<long>(SvPb::ConditionalToolDrawFlagEId, Value);
 		}			
 		m_AuxExtentsController.EnableAuxExtents(m_bUpdateAuxiliaryExtents ? true : false);
+
+		if (SvPb::GroupToolObjectType == m_subType)
+		{
+			m_values.Set<bool>(SvPb::IsClosedEId, m_bCloseTool);
+		}
 			
 		hr = m_values.Commit();
 		if (S_OK == hr)
@@ -79,7 +83,7 @@ namespace SvOg
 		{
 			pWnd->EnableWindow(true);
 		}
-		if (m_bIsImageTool)
+		if (m_bAuxExtentsAvailable)
 		{
 			GetDlgItem(IDC_SOURCE_IMAGE_COMBO)->EnableWindow(m_bUpdateAuxiliaryExtents);
 		}
@@ -110,10 +114,10 @@ namespace SvOg
 			{
 				m_AvailableSourceImageCombo.AddString(it->first.c_str());
 			}
-			CString name = m_AuxExtentsController.GetAuxSourceImageName().c_str();
-			if (!name.IsEmpty())
+			auto name = m_AuxExtentsController.GetAuxSourceImageName();
+			if (!name.empty())
 			{
-				m_AvailableSourceImageCombo.SelectString(-1, name);
+				m_AvailableSourceImageCombo.SelectString(-1, name.c_str());
 			}
 		}
 	}
@@ -132,6 +136,7 @@ namespace SvOg
 		DDX_Control(pDX, IDC_DRAW_TOOL_COMBO, m_drawToolCombo);
 		DDX_Check(pDX, IDC_ENABLE_AUXILIARY_EXTENTS, m_bUpdateAuxiliaryExtents);
 		DDX_Control(pDX, IDC_TOOL_OVERLAYCOLOR_COMBO, m_AvailableToolForColorOverlayCombo);
+		DDX_Check(pDX, IDC_CLOSE_TOOL_CBOX, m_bCloseTool);
 		//}}AFX_DATA_MAP
 	}
 
@@ -139,6 +144,7 @@ namespace SvOg
 		//{{AFX_MSG_MAP(SVTADlgGeneralPage)
 		ON_CBN_SELCHANGE(IDC_DRAW_TOOL_COMBO, OnSelchangeDrawToolCombo)
 		ON_BN_CLICKED(IDC_ENABLE_AUXILIARY_EXTENTS, OnUpdateAuxiliaryExtents)
+		ON_BN_CLICKED(IDC_CLOSE_TOOL_CBOX, OnUpdateCloseTool)
 		ON_CBN_SELCHANGE(IDC_SOURCE_IMAGE_COMBO, OnSelchangeSourceImageCombo)
 		ON_CBN_SELCHANGE(IDC_TOOL_OVERLAYCOLOR_COMBO, OnSelchangeToolForOverlayColorCombo)
 		ON_BN_CLICKED(ID_SHOW_RELATIONS, OnShowRelations)
@@ -167,7 +173,6 @@ namespace SvOg
 			GetDlgItem(IDC_AUXILIARY_GROUP)->ShowWindow(SW_HIDE);
 			GetDlgItem(IDC_SOURCE_IMAGE_TEXT)->ShowWindow(SW_HIDE);
 			GetDlgItem(IDC_SOURCE_IMAGE_COMBO)->ShowWindow(SW_HIDE);
-			m_bIsImageTool = false;
 		}
 		else
 		{
@@ -176,7 +181,6 @@ namespace SvOg
 			GetDlgItem(IDC_AUXILIARY_GROUP)->ShowWindow(SW_SHOW);
 			GetDlgItem(IDC_SOURCE_IMAGE_TEXT)->ShowWindow(SW_SHOW);
 			GetDlgItem(IDC_SOURCE_IMAGE_COMBO)->ShowWindow(SW_SHOW);
-			m_bIsImageTool = true;
 		
 			SetupAuxExtents();
 
@@ -185,8 +189,19 @@ namespace SvOg
 			SetImages();
 		}
 
-		initToolForOverlayColor();
-
+		if (SvPb::GroupToolObjectType != m_subType)
+		{
+			initToolForOverlayColor();
+		}
+		else
+		{
+			m_bCloseTool = m_values.Get<bool>(SvPb::IsClosedEId);
+			GetDlgItem(IDC_TOOL_OVERLAYCOLOR_TEXT)->ShowWindow(SW_HIDE);
+			GetDlgItem(IDC_TOOL_OVERLAYCOLOR_COMBO)->ShowWindow(SW_HIDE);
+			GetDlgItem(IDC_DRAW_TOOL_LABEL)->ShowWindow(SW_HIDE);
+			GetDlgItem(IDC_DRAW_TOOL_COMBO)->ShowWindow(SW_HIDE);
+			GetDlgItem(IDC_CLOSE_TOOL_CBOX)->ShowWindow(SW_SHOW);
+		}
 
 		UpdateData(false);
 		refresh();
@@ -213,6 +228,40 @@ namespace SvOg
 
 		GetDlgItem(IDC_SOURCE_IMAGE_COMBO)->EnableWindow(m_bUpdateAuxiliaryExtents);
 		refresh();
+	}
+
+	void SVTADlgGeneralPage::OnUpdateCloseTool()
+	{
+		if (SvPb::GroupToolObjectType == m_subType)
+		{
+			UpdateData(true); // get data from dialog
+			if (m_bCloseTool)
+			{
+				SvPb::InspectionCmdRequest requestCmd;
+				SvPb::InspectionCmdResponse responseCmd;
+				auto* pRequest = requestCmd.mutable_getinvaliddependenciesrequest();
+				pRequest->set_objectid(m_TaskObjectID);
+				HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
+				if (S_OK == hr && responseCmd.has_getinvaliddependenciesresponse())
+				{
+					const auto& rList = responseCmd.getinvaliddependenciesresponse().invaliddependencies();
+					if (0 < rList.size())
+					{
+						std::string messageText = std::accumulate(rList.rbegin(), rList.rend(),
+							std::string{ "There are invalid dependencies. Tool will become invalid, should continue?\n\nInvalid dependencies:" },
+							[](std::string a, const auto& b) { return std::move(a) + "\n" + b.namefrom() + "  ->  " + b.nameto(); });
+						int retCode = MessageBox(messageText.c_str(), "Invalid Dependencies", MB_YESNO);
+						if (IDNO == retCode)
+						{
+							m_bCloseTool = false;
+							UpdateData(false);
+							return;
+						}
+					}
+				}
+			}
+			SetInspectionData();
+		}
 	}
 
 	void SVTADlgGeneralPage::OnSelchangeSourceImageCombo() 
@@ -299,6 +348,7 @@ namespace SvOg
 		pAvailableRequest->set_objectid(m_InspectionID);
 		pAvailableRequest->mutable_typeinfo()->set_objecttype(SvPb::SVToolObjectType);
 		pAvailableRequest->set_objecttypetoinclude(SvPb::SVToolSetObjectType);
+		pAvailableRequest->set_importantobjectforstopatborder(m_TaskObjectID);
 
 		hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 		if (S_OK == hr && responseCmd.has_getavailableobjectsresponse())

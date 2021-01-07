@@ -170,6 +170,7 @@ public:
 	//! \param Direction 
 	//! \returns bool
 	virtual bool isAllowedLocation(const SvPb::SVExtentLocationPropertyEnum Location, SvPb::SVExtentDirectionsEnum Direction = SvPb::SVExtentDirectionBoth) const override;
+	virtual SvPb::InspectionCmdResponse getInvalidDependencies() const override { return {}; };
 #pragma endregion ITool methods
 
 protected:
