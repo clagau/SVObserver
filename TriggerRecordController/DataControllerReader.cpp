@@ -648,14 +648,11 @@ void DataControllerReader::sendNewTrId()
 						newTrIdList.emplace_back(i, trId);
 					}
 
-					if (0 < pIpData->getBasicData().m_TrOfInterestNumber)
+					auto data = pIpData->getInterestTrId2Send();
+					if (0 < data.m_trId)
 					{
-						auto data = pIpData->getInterestTrId2Send();
-						if (0 < data.m_trId)
-						{
-							data.m_inspectionPos = i;
-							newInterestTrIdList.emplace_back(data);
-						}
+						data.m_inspectionPos = i;
+						newInterestTrIdList.emplace_back(data);
 					}
 				}
 			}
