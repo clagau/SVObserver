@@ -44,64 +44,80 @@ void PrintVariant(const SvPb::Variant& var)
 {
 	switch (var.data_case())
 	{
-		case SvPb::Variant::kBVal:
-			SV_LOG_GLOBAL(info) << "value: " << var.bval();
-			break;
+	case SvPb::Variant::kBVal:
+		SV_LOG_GLOBAL(info) << "value: " << var.bval();
+		break;
 
-		case SvPb::Variant::kLVal:
-			SV_LOG_GLOBAL(info) << "value: " << var.lval();
-			break;
+	case SvPb::Variant::kLVal:
+		SV_LOG_GLOBAL(info) << "value: " << var.lval();
+		break;
 
-		case SvPb::Variant::kLlVal:
-			SV_LOG_GLOBAL(info) << "value: " << var.llval();
-			break;
+	case SvPb::Variant::kLlVal:
+		SV_LOG_GLOBAL(info) << "value: " << var.llval();
+		break;
 
-		case SvPb::Variant::kUlVal:
-			SV_LOG_GLOBAL(info) << "value: " << var.ulval();
-			break;
+	case SvPb::Variant::kUlVal:
+		SV_LOG_GLOBAL(info) << "value: " << var.ulval();
+		break;
 
-		case SvPb::Variant::kUllVal:
-			SV_LOG_GLOBAL(info) << "value: " << var.ullval();
-			break;
+	case SvPb::Variant::kUllVal:
+		SV_LOG_GLOBAL(info) << "value: " << var.ullval();
+		break;
 
-		case SvPb::Variant::kDblVal:
-			SV_LOG_GLOBAL(info) << "value: " << var.dblval();
-			break;
+	case SvPb::Variant::kDblVal:
+		SV_LOG_GLOBAL(info) << "value: " << var.dblval();
+		break;
 
-		case SvPb::Variant::kFltVal:
-			SV_LOG_GLOBAL(info) << "value: " << var.fltval();
-			break;
+	case SvPb::Variant::kFltVal:
+		SV_LOG_GLOBAL(info) << "value: " << var.fltval();
+		break;
 
-		case SvPb::Variant::kStrVal:
-			SV_LOG_GLOBAL(info) << "value: " << var.strval();
-			break;
+	case SvPb::Variant::kStrVal:
+		SV_LOG_GLOBAL(info) << "value: " << var.strval();
+		break;
 
-		default:
-			SV_LOG_GLOBAL(warning) << "Unknown variant value";
-			break;
+	default:
+		SV_LOG_GLOBAL(warning) << "Unknown variant value";
+		break;
 	}
 }
 
-static void GetNotifications(SvWsl::SVRCClientService& client)
+static void GetNotifications(SvWsl::SVRCClientService& client, int wait )
 {
+	
 	SvPb::GetNotificationStreamRequest req;
 	auto ctx = client.GetNotificationStream(std::move(req), SvRpc::Observer<SvPb::GetNotificationStreamResponse>(
 		[](SvPb::GetNotificationStreamResponse&& res) -> SvSyl::SVFuture<void>
-	{
-		//SV_LOG_GLOBAL(info) << "Received notification " << res.id() << " " << res.type() << " " << res.message();
-		
-		SV_LOG_GLOBAL(info) << "Received notification Debug string " << res.DebugString() << std::endl;
-		return SvSyl::SVFuture<void>::make_ready();
-	},
+		{
+			//SV_LOG_GLOBAL(info) << "Received notification " << res.id() << " " << res.type() << " " << res.message();
+			std::string temp = res.DebugString();
+			if (res.has_event())
+			{
+				std::string typeName = EventType_Name(res.event().type());
+				SV_LOG_GLOBAL(info) << "An event arrives: " << typeName << std::endl;
+				if (res.event().eventparameters_size() > 0)
+				{
+					auto var = res.event().eventparameters().Get(0);
+					SV_LOG_GLOBAL(info) << "with parameter: ";
+					PrintVariant(var);
+					SV_LOG_GLOBAL(info) << std::endl;
+				}
+			}			
+			else
+			{
+				SV_LOG_GLOBAL(info) << "Received notification Debug string " << res.DebugString() << std::endl;
+			}
+			return SvSyl::SVFuture<void>::make_ready();
+		},
 		[]()
-	{
-		SV_LOG_GLOBAL(info) << "Finished receiving notifications";
-	},
-		[](const SvPenv::Error& err)
-	{
-		SV_LOG_GLOBAL(info) << "Error while receiving notifications: " << err.message();
-	}));
-	std::this_thread::sleep_for(std::chrono::seconds(2));
+		{
+			SV_LOG_GLOBAL(info) << "Finished receiving notifications";
+		},
+			[](const SvPenv::Error& err)
+		{
+			SV_LOG_GLOBAL(info) << "Error while receiving notifications: " << err.message();
+		}));
+	std::this_thread::sleep_for(std::chrono::seconds(wait));
 	ctx.cancel();
 }
 
@@ -178,7 +194,7 @@ void PrintProductResponse(const SvPb::Product& rProduct)
 class Benchmark1
 {
 public:
-	Benchmark1(SvWsl::SVRCClientService& rClient) : m_rClient(rClient) {}
+	explicit Benchmark1(SvWsl::SVRCClientService& rClient) : m_rClient(rClient) {}
 
 	enum BenchmarkType
 	{
@@ -191,12 +207,12 @@ public:
 		auto start = std::chrono::steady_clock::now();
 		switch (benchmark_type)
 		{
-			case StringBenchmark:
-				doStringBenchmark(m_rClient, num_iterations);
-				break;
-			case ImageBenchmark:
-				doImageBenchmark(m_rClient, num_iterations);
-				break;
+		case StringBenchmark:
+			doStringBenchmark(m_rClient, num_iterations);
+			break;
+		case ImageBenchmark:
+			doImageBenchmark(m_rClient, num_iterations);
+			break;
 		}
 		auto finish = std::chrono::steady_clock::now();
 		auto duration = std::chrono::duration_cast<std::chrono::duration<double>>(finish - start).count();
@@ -218,9 +234,9 @@ private:
 		for (auto i = 0; i < num_iterations; ++i)
 		{
 			SvPb::GetImageFromIdRequest request;
-			request.mutable_id()->set_trid(0); 
+			request.mutable_id()->set_trid(0);
 			request.mutable_id()->set_imageindex(0);
-			request.mutable_id()->set_inspectionid(0); 
+			request.mutable_id()->set_inspectionid(0);
 			auto response = runRequest(rClient, &SvWsl::SVRCClientService::GetImageFromId, std::move(request)).get();
 		}
 	}
@@ -241,7 +257,7 @@ int main(int argc, char* argv[])
 
 	SvHttp::WebsocketClientSettings clientSettings;
 	clientSettings.Host = "127.0.0.1";
-//	clientSettings.Host = "192.168.10.111";
+	//	clientSettings.Host = "192.168.10.111";
 	clientSettings.Port = SvHttp::Default_Port;
 	if (argc > 1)
 	{
@@ -251,7 +267,7 @@ int main(int argc, char* argv[])
 	{
 		clientSettings.Port = static_cast<uint16_t> (atoi(argv[2]));
 	}
-	
+
 	auto pRpcClient = std::make_unique<SvRpc::RPCClient>(clientSettings);
 	pRpcClient->waitForConnect(boost::posix_time::seconds(6));
 	SvWsl::SVRCClientServiceSetting settings;
@@ -308,10 +324,10 @@ int main(int argc, char* argv[])
 					<< "  b1 [iterations=1000] [repeats=1] (Benchmark 1)" << std::endl
 					<< "  b2 [image_width=200] [iterations=1000] [repeats=1] (Benchmark 2)" << std::endl;
 				std::cout << "dis disconnect" << std::endl;
-				std::cout << "con  connect [ip adress] [portnr  = " << SvHttp::Default_Port   <<  "]\n";
+				std::cout << "con  connect [ip adress] [portnr  = " << SvHttp::Default_Port << "]\n";
 				std::cout << "qli [monitorlistname] [p,r,f,a] [Image=1]  [val=1]" << std::endl;
 			}
-			else if (!pRpcClient ||  !pRpcClient->isConnected() )
+			else if (!pRpcClient || !pRpcClient->isConnected())
 			{
 				SV_LOG_GLOBAL(info) << "Nicht verbunde!!!" << std::endl;
 			}
@@ -329,23 +345,33 @@ int main(int argc, char* argv[])
 				{
 					SV_LOG_GLOBAL(error) << "Unable to get version: " << e.what();
 				}
-				catch( ... )
+				catch (...)
 				{
 					SV_LOG_GLOBAL(error) << "Unable to get version" << std::endl;
 				}
 			}
 			else if (words[0] == "n")
 			{
+				int wait{ 10 };
+				if (wordsize > 1)
+				{
+					int t = atoi(words[1].c_str());
+					if (t > -1)
+					{
+						wait = t;
+					}
+				}
+
 				try
 				{
-					GetNotifications(*pService);
+					GetNotifications(*pService,wait);
 				}
 				catch (const std::exception& e)
 				{
 					SV_LOG_GLOBAL(error) << "Unable to get notifications: " << e.what();
 				}
 			}
-			else if (pRpcClient && pRpcClient->isConnected() && words[0] == "m" )
+			else if (pRpcClient && pRpcClient->isConnected() && words[0] == "m")
 			{
 
 				auto Listnames = runRequest(*pService, &SvWsl::SVRCClientService::QueryListName, SvPb::QueryListNameRequest()).get();
@@ -401,7 +427,7 @@ int main(int argc, char* argv[])
 
 				bool bReject = words[0] == "r";
 
-				if(bReject)
+				if (bReject)
 				{
 					SvPb::GetRejectRequest Request;
 					Request.set_listname(name);
@@ -512,7 +538,7 @@ int main(int argc, char* argv[])
 					RunBenchmark2(*pService, iterations, imgWidth, true);
 				}
 			}
-			else  if (words[0] == "dis") 
+			else  if (words[0] == "dis")
 			{
 				if (pService)
 				{
@@ -523,11 +549,11 @@ int main(int argc, char* argv[])
 					pRpcClient.reset();
 				}
 			}
-			
+
 			else if (words[0] == "qli")
 			{
 				std::string monitorlistname;
-				SvPb::ListType  t{SvPb::ListType::all };
+				SvPb::ListType  t{ SvPb::ListType::all };
 				bool bImage{ true };
 				bool bValues{ true };
 				if (wordsize >= 2)
@@ -564,7 +590,7 @@ int main(int argc, char* argv[])
 				request.set_listname(monitorlistname.c_str());
 				request.set_type(t);
 				request.set_queryimages(bImage);
-				request.set_queryvalues(bValues) ;
+				request.set_queryvalues(bValues);
 
 				auto resp = runRequest(*pService, &SvWsl::SVRCClientService::QueryListItem, std::move(request)).get();
 
@@ -574,7 +600,7 @@ int main(int argc, char* argv[])
 
 
 			}
-			
+
 		}
 
 		catch (std::exception& e)

@@ -2919,6 +2919,7 @@ HRESULT SVObserverApp::DestroyConfig(bool AskForSavingOrClosing /* = true */,
 
 		if (bClose)
 		{
+			SVVisionProcessorHelper::Instance().FireEventNotification(SvPb::EventType::unloadConfig, getConfigFullFileName());
 			SVOLicenseManager::Instance().ClearLicenseErrors();
 
 			SVSVIMStateClass::changeState(SV_STATE_UNAVAILABLE | SV_STATE_CLOSING, SV_STATE_READY | SV_STATE_MODIFIED | SV_STATE_EDIT | SV_STATE_STOP);

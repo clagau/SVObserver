@@ -1163,30 +1163,56 @@ HRESULT SVVisionProcessorHelper::FireNotification(long notifyType, long value, l
 		::PostMessage(AfxGetMainWnd()->m_hWnd, SV_REFRESH_STATUS_BAR, 0, 0);
 	}
 
-	ProcessNotifications(fireNotifyType, value, msgNr, msg);
-
+	SvPb::GetNotificationStreamResponse response;
+	if (BuildNotificationStreamResponse(response, fireNotifyType, value, msgNr, msg))
+	{
+		ProcessNotifications(response);
+	}
 	return Result;
 }
+bool  SVVisionProcessorHelper::FireEventNotification(SvPb::EventType etype, std::variant<std::string, int, double> par)
+{
+	SvPb::GetNotificationStreamResponse response;
+	auto eventresp = response.mutable_event();
+	bool ret = false;
+	if (true == SvPb::EventType_IsValid(etype))
+	{
+		eventresp->set_type(etype);
+		if (std::holds_alternative<std::string>(par))
+		{
+			auto pvar = eventresp->add_eventparameters();
+			pvar->set_strval(std::get<std::string>(par));
+		} 
+		else if (std::holds_alternative<int>(par))
+		{
+			auto pvar = eventresp->add_eventparameters();
+			pvar->set_lval(std::get<int>(par));
+		}
+		else if (std::holds_alternative<double>(par))
+		{
+			auto pvar = eventresp->add_eventparameters();
+			pvar->set_dblval(std::get<double>(par));
+		}
+		ProcessNotifications(response);
+		ret = true;
+	}
+	return ret;
+}
 
-
-void SVVisionProcessorHelper::ProcessNotifications(SvStl::NotificationType notifyType, long value, long msgNr, LPCTSTR msg)
+void SVVisionProcessorHelper::ProcessNotifications(const SvPb::GetNotificationStreamResponse& response)
 {
 	std::lock_guard<std::mutex> lk(m_SubscriptionsMutex);
 	for (auto it = m_Subscriptions.begin(); it != m_Subscriptions.end(); )
 	{
+		
+		SvPb::GetNotificationStreamResponse copyResponse = response;
 		// client either unsubscribed or disconnected. remove from list.
 		if (it->Context->isCancelled())
 		{
 			it = m_Subscriptions.erase(it);
 			continue;
 		}
-
-		SvPb::GetNotificationStreamResponse response;
-		if (BuildNotificationStreamResponse(response, notifyType, value, msgNr, msg))
-		{
-			it->Observer.onNext(std::move(response));
-		}
-
+		it->Observer.onNext(std::move(copyResponse));
 		++it;
 	}
 }

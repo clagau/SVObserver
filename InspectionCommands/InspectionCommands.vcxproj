@@ -16,7 +16,6 @@
     <ClInclude Include="CommandInternalHelper.h" />
     <ClInclude Include="GetMaskData.h" />
     <ClInclude Include="InspectionCommandMap.h" />
-    <ClInclude Include="InspectionCommand_protoBuf.h" />
     <ClInclude Include="ObjectSelectorFilter.h" />
     <ClInclude Include="SetMaskData.h" />
     <ClInclude Include="stdafx.h" />

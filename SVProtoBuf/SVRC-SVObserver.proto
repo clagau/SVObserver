@@ -342,6 +342,18 @@ message MsgNotification
 	int32 errorNumber = 3;			//The error number being displayed
 }
 
+enum EventType
+{
+	unloadConfig	= 0;				
+	
+}
+
+message EventNotification
+{
+	EventType type=1;
+	repeated Variant eventParameters=2;
+}
+
 //This registers which notifications are streamed by SVObserver
 message GetNotificationStreamRequest
 {
@@ -356,6 +368,7 @@ message GetNotificationStreamResponse
 		uint32 lastModified = 2;				//The last modified time stamp
 		MsgNotification msgNotification = 3;	//The message notification structure
 		string configFileLoaded = 4;			//The path to the loaded configuration file
+		EventNotification event = 5;
 	}
 }
 

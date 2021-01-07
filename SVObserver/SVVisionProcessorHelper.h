@@ -97,6 +97,7 @@ public:
 	//! \returns HRESULT
 	//************************************
 	HRESULT FireNotification(long notifyType, long value, long msgNr, LPCTSTR msg);
+	bool FireEventNotification(SvPb::EventType etype,  std::variant<std::string, int,double> par);
 	HRESULT QueryProductList(const std::string& rListName, SvDef::StringSet& rNames) const;
 	HRESULT QueryRejectCondList(const std::string& rListName, SvDef::StringSet& rNames) const;
 	HRESULT QueryFailStatusList(const std::string& rListName, SvDef::StringSet& rNames) const;
@@ -141,7 +142,7 @@ private:
 	HRESULT GetObjectDefinition(const SVObjectClass& rObj, const long p_Filter, SVDataDefinitionStruct& rDataDef) const;
 
 
-	void ProcessNotifications(SvStl::NotificationType notifyType, long value, long msgNr, LPCTSTR msg);
+	void ProcessNotifications(const SvPb::GetNotificationStreamResponse& response);
 	bool BuildNotificationStreamResponse(SvPb::GetNotificationStreamResponse& response, SvStl::NotificationType notifyType, long value, long msgNr, LPCTSTR msg);
 
 	SVGetItemsFunctorMap m_GetItemsFunctors;

@@ -27,9 +27,6 @@
     <ClInclude Include="GetMaskData.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="InspectionCommand_protoBuf.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SetMaskData.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
