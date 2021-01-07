@@ -60,7 +60,7 @@ void SVEquationSymbolTableClass::ClearAll()
 		auto* pObject = SVObjectManagerClass::Instance().GetObject(rRef.getObjectId());
 		if (pObject)
 		{
-			pObject->disconnectObject(rRef.getObjectId());
+			pObject->disconnectObject(m_ownerId);
 		}
 	}
 
@@ -96,6 +96,7 @@ void SVEquationSymbolTableClass::Init(SVObjectClass* pRequestor)
 	SvIe::SVObjectAppClass* pAppClass = dynamic_cast<SvIe::SVObjectAppClass*>(pRequestor);
 	if (nullptr != pAppClass)
 	{
+		m_ownerId = pAppClass->getObjectId();
 		pInspection = pAppClass->GetInspection();
 	}
 	if (nullptr != pInspection)
@@ -105,7 +106,7 @@ void SVEquationSymbolTableClass::Init(SVObjectClass* pRequestor)
 	}
 }
 
-int SVEquationSymbolTableClass::AddSymbol(LPCTSTR name, SVObjectClass* pRequestor)
+int SVEquationSymbolTableClass::AddSymbol(LPCTSTR name)
 {
 	// Strip off Double Quotes
 	std::string SymbolName = SvUl::Trim(name, _T("\""));
@@ -159,7 +160,7 @@ int SVEquationSymbolTableClass::AddSymbol(LPCTSTR name, SVObjectClass* pRequesto
 	// Set the variable to be used
 	pSymbolStruct->m_ref = ObjectReference;
 	// Try to Connect at this point
-	ObjectReference.getObject()->connectObject(pRequestor->getObjectId());
+	ObjectReference.getObject()->connectObject(m_ownerId);
 	pSymbolStruct->IsValid = true;
 	m_SVEquationSymbolPtrVector.push_back(pSymbolStruct);
 	symbolIndex = static_cast<int> (m_SVEquationSymbolPtrVector.size() - 1);
@@ -545,7 +546,7 @@ double SVEquation::RunAndGetResult()
 ////////////////////////////////////////////////////////////////////////////////
 int SVEquation::AddSymbol(LPCTSTR name)
 {
-	int index = m_Symbols.AddSymbol(name, this);
+	int index = m_Symbols.AddSymbol(name);
 
 	if (-1 == index)
 	{

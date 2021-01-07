@@ -84,10 +84,9 @@ public:
 	//************************************
 	//! This adds a symbol into the list of used symbol
 	//! \param name [in] name 
-	//! \param pRequestor [in]  who wants to use the variable
 	//! \returns int the index of the used symbols list
 	//************************************
-	int AddSymbol(LPCTSTR name, SVObjectClass* pRequestor );
+	int AddSymbol(LPCTSTR name);
 	
 	std::vector<SVObjectReference>& GetToolSetSymbolTable();	// Get the ToolSet Symbol table
 
@@ -110,6 +109,8 @@ private:
 	std::string  m_ToolSetName = SvUl::LoadStdString(IDS_CLASSNAME_SVTOOLSET) + ".";
 	std::string m_DIOInputName {_T("DIO.Input")};
 	std::string  m_RemoteInputName {_T("Remote Input")};
+
+	uint32_t m_ownerId = SvDef::InvalidObjectId;
 };
 
 /**
