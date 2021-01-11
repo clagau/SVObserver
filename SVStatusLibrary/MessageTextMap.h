@@ -646,5 +646,6 @@ namespace SvStl
 
 		{ Tid_LinearImageOperatorList_ResultCreateFailed, _T("Create of Results for LinearImageOperatorList failed.") },
 		{ Tid_LinearImageOperatorList_GetResultRangeFailed, _T("Get Range for the Result failed in LinearImageOperatorList.") },
+		{ Tid_BatchfileExecutionTimeout , _T("Execution of batchfile %s timed out.")},
 };
 } //namespace SvStl

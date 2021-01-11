@@ -106,6 +106,7 @@ namespace Gdiplus
 #include <ddraw.h>
 #include <deque>
 #include <direct.h>
+#include <filesystem>
 #include <float.h>
 #include <fstream>
 #include <functional>

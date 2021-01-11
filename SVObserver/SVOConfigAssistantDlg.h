@@ -27,6 +27,7 @@
 #include "SVImportedInspectionInfo.h" 
 #include "Definitions/GlobalConstantData.h"
 #include "Definitions/StringTypeDef.h"
+#include "SVOGeneralConfigDlg.h"
 #pragma endregion Includes
 
 // Moved SVIM_FULL_BOARD, etc. to SVObserverEnums.h
@@ -55,6 +56,7 @@ enum ConfigTypeEnum
     CAMERA_DLG          = 1,
     INSPECT_DLG         = 2,
     PPQ_DLG             = 3,
+	GENERAL_DLG			= 4,
 };
 
 enum ConfigMsgTypeEnum
@@ -187,10 +189,11 @@ public:
 // Implementation
 protected:
 	CPropertySheet m_dlgPropSheet;
-	SVOTriggerDeviceDlg    m_Page1;
-	SVOCameraDlg           m_Page2;
-	SVOInspectionSourceDlg m_Page3;
-	SVOProPosQueDlg        m_Page4;
+	SVOTriggerDeviceDlg    m_TriggerPage;
+	SVOCameraDlg           m_CameraPage;
+	SVOInspectionSourceDlg m_InspectionPage;
+	SVOProPosQueDlg        m_PPQPage;
+	SVOGeneralConfigDlg	   m_GeneralPage;
 
 	// Generated message map functions
 	//{{AFX_MSG(SVOConfigAssistantDlg)

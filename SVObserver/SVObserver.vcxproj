@@ -212,6 +212,7 @@ echo %time%
     <ClCompile Include="RootObject.cpp" />
     <ClCompile Include="SelectedObjectsPage.cpp" />
     <ClCompile Include="SoftwareTriggerDlg.cpp" />
+    <ClCompile Include="SVOGenralConfigDlg.cpp" />
     <ClCompile Include="StdAfx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">stdafx.h</PrecompiledHeaderFile>
@@ -469,6 +470,7 @@ echo %time%
     <ClInclude Include="SVOCameraList.h" />
     <ClInclude Include="SVOCameraObj.h" />
     <ClInclude Include="SVOConfigAssistantDlg.h" />
+    <ClInclude Include="SVOGeneralConfigDlg.h" />
     <ClInclude Include="SVOInspectionList.h" />
     <ClInclude Include="SVOInspectionObj.h" />
     <ClInclude Include="SVOInspectionSourceDlg.h" />

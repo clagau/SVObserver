@@ -610,5 +610,6 @@ enum MessageTextEnum
 
 	Tid_LinearImageOperatorList_ResultCreateFailed,
 	Tid_LinearImageOperatorList_GetResultRangeFailed,
+	Tid_BatchfileExecutionTimeout,
 };
 } //namespace SvStl

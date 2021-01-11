@@ -154,6 +154,8 @@ public:
 constexpr CLSID clsid =
 { 0xf4c4d491, 0xd660, 0x11d0, { 0x9b, 0x52, 0x0, 0x80, 0x5f, 0x71, 0x7d, 0xce } };
 
+constexpr int batExecutionTimeout = 2 * 60000;
+
 IMPLEMENT_SERIAL(SVObserverApp, CWinApp, 0);
 
 //******************************************************************************
@@ -793,6 +795,32 @@ void SVObserverApp::OnStop()
 	//add message to event viewer - gone off-line
 	SvStl::MessageManager Exception(SvStl::MsgType::Log);
 	Exception.setMessage(SVMSG_SVO_28_SVOBSERVER_GO_OFFLINE, TriggerCounts.c_str(), SvStl::SourceFileParams(StdMessageParams));
+
+	if (std::filesystem::exists(SvStl::GlobalPath::Inst().GetRunPath() + "\\postBatch.bat"))
+	{
+		SHELLEXECUTEINFO ShExecInfo = { 0 };
+		ShExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
+		ShExecInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
+		ShExecInfo.hwnd = NULL;
+		ShExecInfo.lpVerb = NULL;
+		ShExecInfo.lpFile = "postBatch.bat";
+		ShExecInfo.lpParameters = "";
+		ShExecInfo.lpDirectory = SvStl::GlobalPath::Inst().GetRunPath().c_str();
+		ShExecInfo.nShow = SW_HIDE;
+		ShExecInfo.hInstApp = NULL;
+		
+		ShellExecuteEx(&ShExecInfo);
+		DWORD returnValue = WaitForSingleObject(ShExecInfo.hProcess, batExecutionTimeout);
+		
+
+		if (returnValue == WAIT_TIMEOUT)
+		{
+			SvDef::StringVector msgList;
+			msgList.push_back("postBatch.bat");
+			SvStl::MessageManager Msg(SvStl::MsgType::Log);			
+			Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_BatchfileExecutionTimeout, msgList, SvStl::SourceFileParams(StdMessageParams));
+		}
+	}
 
 	SVSVIMStateClass::changeState(SV_STATE_READY | SV_STATE_STOP, SV_STATE_UNAVAILABLE | SV_STATE_STOPING | SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT);
 
@@ -2241,7 +2269,7 @@ int SVObserverApp::Run()
 
 
 #pragma region virtual
-void SVObserverApp::AddAdditionalFile(LPCTSTR FilePath)
+void SVObserverApp::AddFileToConfig(LPCTSTR FilePath)
 {
 	SVConfigurationObject* pConfig(nullptr);
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
@@ -2257,6 +2285,25 @@ void SVObserverApp::AddAdditionalFile(LPCTSTR FilePath)
 		pConfig->getAdditionalFiles().emplace_back(SVFileNameClass{ FilePath });
 		SVFileNameManagerClass::Instance().AddItem(&pConfig->getAdditionalFiles().back());
 		SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
+	}
+}
+
+void SVObserverApp::RemoveFileFromConfig(LPCTSTR FilePath)
+{
+	SVConfigurationObject* pConfig(nullptr);
+	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
+
+	if (nullptr != pConfig)
+	{
+		const auto& rAdditionalFiles = pConfig->getAdditionalFiles();
+		for (const auto& rFile : rAdditionalFiles)
+		{
+			if (FilePath == rFile.GetFullFileName())
+			{
+				SVFileNameManagerClass::Instance().RemoveItem(&rFile);
+				SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
+			}
+		}
 	}
 }
 
@@ -2597,7 +2644,7 @@ HRESULT SVObserverApp::OpenSVXFile()
 			auto fileName = saveObjectIdMapping();
 			if (!fileName.empty())
 			{
-				AddAdditionalFile(fileName.c_str());
+				AddFileToConfig(fileName.c_str());
 			}
 
 			//Finished loading notify load
@@ -4939,6 +4986,31 @@ void SVObserverApp::Start()
 	{
 		SVSVIMStateClass::AddState(SV_STATE_START_PENDING);
 		return;
+	}
+
+	if (std::filesystem::exists(SvStl::GlobalPath::Inst().GetRunPath() + "\\preBatch.bat"))
+	{
+		SHELLEXECUTEINFO ShExecInfo = { 0 };
+		ShExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
+		ShExecInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
+		ShExecInfo.hwnd = NULL;
+		ShExecInfo.lpVerb = NULL;
+		ShExecInfo.lpFile = "preBatch.bat";
+		ShExecInfo.lpParameters = "";
+		ShExecInfo.lpDirectory = SvStl::GlobalPath::Inst().GetRunPath().c_str();
+		ShExecInfo.nShow = SW_HIDE;
+		ShExecInfo.hInstApp = NULL;
+
+		ShellExecuteEx(&ShExecInfo);
+		DWORD returnValue = WaitForSingleObject(ShExecInfo.hProcess, batExecutionTimeout);
+
+		if (returnValue == WAIT_TIMEOUT)
+		{
+			SvDef::StringVector msgList;
+			msgList.push_back("postBatch.bat");
+			SvStl::MessageManager Msg(SvStl::MsgType::Log);
+			Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_BatchfileExecutionTimeout, msgList, SvStl::SourceFileParams(StdMessageParams));
+		}
 	}
 
 	SVSVIMStateClass::RemoveState(SV_STATE_EDIT | SV_STATE_STOP);

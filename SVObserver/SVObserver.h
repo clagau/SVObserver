@@ -174,7 +174,8 @@ public:
 	//}}AFX_DATA
 
 public:
-	void AddAdditionalFile(LPCTSTR FilePath);
+	void AddFileToConfig(LPCTSTR FilePath);
+	void RemoveFileFromConfig(LPCTSTR FilePath);
 	HRESULT OpenFile(LPCTSTR PathName, bool editMode = false, ConfigFileType fileType = ConfigFileType::SvzStandard);
 	HRESULT OpenSVXFile();
 	SVIODoc* NewSVIODoc( LPCTSTR DocName, SVIOController& Controller );

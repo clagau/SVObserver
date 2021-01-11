@@ -741,7 +741,7 @@ LRESULT SVMainFrame::RemoteRegisterMonitorList( WPARAM , LPARAM  )
 LRESULT SVMainFrame::onAddFileToConfig(WPARAM , LPARAM lParam)
 {
 	LPCTSTR pFileName = reinterpret_cast<LPCTSTR> (lParam);
-	TheSVObserverApp.AddAdditionalFile(pFileName);
+	TheSVObserverApp.AddFileToConfig(pFileName);
 	return 0;
 }
 

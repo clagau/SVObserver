@@ -156,10 +156,11 @@ BOOL SVOConfigAssistantDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	m_dlgPropSheet.AddPage(&m_Page1);
-	m_dlgPropSheet.AddPage(&m_Page2);
-	m_dlgPropSheet.AddPage(&m_Page3);
-	m_dlgPropSheet.AddPage(&m_Page4);
+	m_dlgPropSheet.AddPage(&m_TriggerPage);
+	m_dlgPropSheet.AddPage(&m_CameraPage);
+	m_dlgPropSheet.AddPage(&m_InspectionPage);
+	m_dlgPropSheet.AddPage(&m_PPQPage);
+	m_dlgPropSheet.AddPage(&m_GeneralPage);
 
 	m_dlgPropSheet.Create(this, WS_CHILD | WS_VISIBLE, 0);
 	m_dlgPropSheet.ModifyStyleEx (0, WS_EX_CONTROLPARENT);
@@ -411,10 +412,11 @@ void SVOConfigAssistantDlg::ReloadForCurrentSystem()
 				break;
 			}
 		}
-		m_Page1.SetupList();
-		m_Page2.SetupList();
-		m_Page3.SetupList();
-		m_Page4.SetupList();
+		m_TriggerPage.SetupList();
+		m_CameraPage.SetupList();
+		m_InspectionPage.SetupList();
+		m_PPQPage.SetupList();
+		m_GeneralPage.SetupList();
 		m_ctlMsgList.ResetContent();
 		SetupMessages();
 		OnChangeEditConfigurationName();
@@ -2640,10 +2642,11 @@ bool SVOConfigAssistantDlg::GetConfigurationForExisting()
 		}
 	}
 	//end of load PPQ section...
-	m_Page1.SetupList();
-	m_Page2.SetupList();
-	m_Page3.SetupList();
-	m_Page4.SetupList();
+	m_TriggerPage.SetupList();
+	m_CameraPage.SetupList();
+	m_InspectionPage.SetupList();
+	m_PPQPage.SetupList();
+	m_GeneralPage.SetupList();
 
 	m_bCameraGood = TRUE;
 	m_bTriggerGood = TRUE;
@@ -3346,8 +3349,8 @@ void SVOConfigAssistantDlg::CheckAgainstCurrentList()
 			}
 		}
 	}
-	m_Page1.SetupList();
-	m_Page2.SetupList();
+	m_TriggerPage.SetupList();
+	m_CameraPage.SetupList();
 }
 
 bool SVOConfigAssistantDlg::IsInspectionOnPPQ(LPCTSTR PPQName, LPCTSTR InspectionLabel)

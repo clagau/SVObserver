@@ -498,6 +498,9 @@
     <ClCompile Include="SVTADlgResizePage.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="SVOGenralConfigDlg.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="SVObserver.odl">
@@ -1046,6 +1049,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVTADlgResizePage.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVOGeneralConfigDlg.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
