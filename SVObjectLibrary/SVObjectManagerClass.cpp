@@ -432,7 +432,7 @@ bool SVObjectManagerClass::CreateObjectID(SVObjectClass* pObject)
 				pUniqueObject->m_ObjectID = getNextObjectId();
 
 				pUniqueObject->m_pObject = pObject;
-				pObject->m_outObjectInfo.GetObjectReference().setObjectId(pUniqueObject->m_ObjectID);
+				pObject->setObjectId(pUniqueObject->m_ObjectID);
 				m_UniqueObjectEntries[pUniqueObject->m_ObjectID] = pUniqueObject;
 
 				SvOl::DependencyManager::Instance().Add(pUniqueObject->m_ObjectID);
@@ -528,7 +528,7 @@ bool SVObjectManagerClass::OpenUniqueObjectID(SVObjectClass* pObject)
 
 		if (Result)
 		{
-			SVUniqueObjectEntryStructPtr pUniqueObject = getUniqueObjectEntry(pObject->m_outObjectInfo.getObjectId());
+			SVUniqueObjectEntryStructPtr pUniqueObject = getUniqueObjectEntry(pObject->getObjectId());
 			assert(nullptr == pUniqueObject);
 			Result = (nullptr == pUniqueObject);
 
@@ -541,7 +541,7 @@ bool SVObjectManagerClass::OpenUniqueObjectID(SVObjectClass* pObject)
 				if (Result)
 				{
 					pUniqueObject->m_pObject = pObject;
-					pUniqueObject->m_ObjectID = pObject->m_outObjectInfo.getObjectId();
+					pUniqueObject->m_ObjectID = pObject->getObjectId();
 					m_UniqueObjectEntries[pUniqueObject->m_ObjectID] = pUniqueObject;
 
 					SvOl::DependencyManager::Instance().Add(pUniqueObject->m_ObjectID);
@@ -590,7 +590,7 @@ bool SVObjectManagerClass::ChangeUniqueObjectID(SVObjectClass* pObject, uint32_t
 {
 	if (SvDef::InvalidObjectId != newId && CloseUniqueObjectID(pObject))
 	{
-		pObject->m_outObjectInfo.GetObjectReference().setObjectId(newId);
+		pObject->setObjectId(newId);
 		return OpenUniqueObjectID(pObject);
 	}
 	return false;

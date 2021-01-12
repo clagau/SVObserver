@@ -97,10 +97,10 @@ BOOL SVToolAdjustmentDialogAnalyzerPageClass::OnInitDialog()
 		m_ImageController.Init();
 		m_resultImageID = getFirstResultImageId(m_ImageController);
 		
-		const SvDef::SVObjectTypeInfoStruct& rToolType = m_pTool->GetObjectInfo().m_ObjectTypeInfo;
+		const auto subType = m_pTool->GetObjectSubType();
 		CWnd* pWnd;
 		// Set Result/Publish button...
-		switch (rToolType.m_SubType)
+		switch (subType)
 		{
 			case SvPb::SVLinearToolObjectType:
 				if (nullptr != (pWnd = GetDlgItem(IDC_PUBLISH_BUTTON)))

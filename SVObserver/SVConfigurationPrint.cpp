@@ -992,16 +992,14 @@ void SVConfigurationPrint::PrintInputOutputList( CDC* pDC, SVObjectClass* pObj, 
 		}
 	}
 
-	SVOutputInfoListClass l_OutputList;
-	pTaskObj->GetOutputList( l_OutputList );
-
-	for (int nCnt = 0; nCnt < l_OutputList.GetSize(); nCnt++)
+	std::vector<SvOi::IObjectClass*> outputList;
+	pTaskObj->getOutputList(std::back_inserter(outputList));
+	for (auto* pIObject : outputList)
 	{
-		SVOutObjectInfoStruct* pOutput = l_OutputList.GetAt(nCnt);
-		
-		if (pOutput->getObject()->GetParent() == pObj)
+		auto* pObject = dynamic_cast<SVObjectClass*> (pIObject);
+		if (nullptr != pObject && pObject->GetParent() == pObj)
 		{
-			PrintDetails(pDC, pOutput->getObject(), ptCurPos, nIndentLevel);
+			PrintDetails(pDC, pObject, ptCurPos, nIndentLevel);
 		}  // end if( pOutput->PObject->GetOwner () == pObj )
 	}  // end for( int nCnt = 0; nCnt < pOutputInfoList->GetSize(); nCnt++ )
 }  // end function void SVConfigurationPrint:::PrintInputOutputList( ... )

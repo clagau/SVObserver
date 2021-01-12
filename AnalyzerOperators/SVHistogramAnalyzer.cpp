@@ -213,7 +213,7 @@ void SVHistogramAnalyzer::init()
 
 	
 		// Identify our output type
-		m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVHistogramAnalyzerObjectType;
+		m_ObjectTypeInfo.m_SubType = SvPb::SVHistogramAnalyzerObjectType;
 
 		// Register Embedded Objects
 		RegisterEmbeddedObject( 

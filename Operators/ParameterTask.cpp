@@ -269,7 +269,7 @@ namespace SvOp
 	void ParameterTask::init()
 	{
 		// Identify our output type
-		m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::ParameterTaskObjectType;
+		m_ObjectTypeInfo.m_ObjectType = SvPb::ParameterTaskObjectType;
 
 		BuildEmbeddedObjectList();
 	}
@@ -498,8 +498,8 @@ namespace SvOp
 	InputParameterTask::InputParameterTask(SVObjectClass* pOwner, int StringResourceID)
 		: ParameterTask(SvPb::ExternalInputEId, SvPb::ExternalInputLinkedEId, SvPb::InputObjectTypeEId, pOwner, StringResourceID)
 	{
-		m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::ParameterTaskObjectType;
-		m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::ParameterInputObjectType;
+		m_ObjectTypeInfo.m_ObjectType = SvPb::ParameterTaskObjectType;
+		m_ObjectTypeInfo.m_SubType = SvPb::ParameterInputObjectType;
 	}
 
 	InputParameterTask::~InputParameterTask()
@@ -510,8 +510,8 @@ namespace SvOp
 	ResultParameterTask::ResultParameterTask(SVObjectClass* pOwner, int StringResourceID)
 		: ParameterTask(SvPb::ResultObjectValueEId, SvPb::ResultObjectLinkedEId, SvPb::ResultObjectTypeEId, pOwner, StringResourceID)
 	{
-		m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::ParameterTaskObjectType;
-		m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::ParameterResultObjectType;
+		m_ObjectTypeInfo.m_ObjectType = SvPb::ParameterTaskObjectType;
+		m_ObjectTypeInfo.m_SubType = SvPb::ParameterResultObjectType;
 	}
 
 	ResultParameterTask::~ResultParameterTask()

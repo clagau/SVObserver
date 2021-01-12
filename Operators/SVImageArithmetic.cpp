@@ -41,7 +41,7 @@ SVImageArithmetic::SVImageArithmetic( SVObjectClass* POwner, int StringResourceI
 {
 
 	// Identify yourself
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVImageArithmeticObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVImageArithmeticObjectType;
 
 	// Identify our input type needs...
 

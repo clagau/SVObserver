@@ -22,7 +22,7 @@ SV_IMPLEMENT_CLASS(SVHorizEdgeFilterClass, SvPb::HorizEdgeFilterClassId)
 SVHorizEdgeFilterClass::SVHorizEdgeFilterClass( SVObjectClass* POwner, int StringResourceID )
 					   :SVFilterClass( POwner, StringResourceID ) 
 {
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVHorzEdgeFilterObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::SVHorzEdgeFilterObjectType;
 }
 
 SVHorizEdgeFilterClass::~SVHorizEdgeFilterClass()

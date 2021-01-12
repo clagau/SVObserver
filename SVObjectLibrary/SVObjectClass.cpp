@@ -89,8 +89,6 @@ void SVObjectClass::init()
 	// Set object Info...
 	SVObjectManagerClass::Instance().CreateObjectID(this);
 
-	m_outObjectInfo.SetObject(this);
-
 	m_ObjectAttributesAllowed = SvPb::noAttributes;
 	m_ObjectAttributesSet.resize(1);
 	m_ObjectAttributesSet[0] = SvPb::noAttributes;
@@ -296,7 +294,7 @@ const SvOi::IObjectClass* SVObjectClass::GetAncestorInterface(SvPb::SVObjectType
 
 SvPb::SVObjectSubTypeEnum SVObjectClass::GetObjectSubType() const
 {
-	return static_cast<SvPb::SVObjectSubTypeEnum>(m_outObjectInfo.m_ObjectTypeInfo.m_SubType);
+	return static_cast<SvPb::SVObjectSubTypeEnum>(m_ObjectTypeInfo.m_SubType);
 }
 
 bool SVObjectClass::is_Created() const
@@ -344,7 +342,7 @@ SvOi::IObjectClass* SVObjectClass::getFirstObject(const SvDef::SVObjectTypeInfoS
 
 void SVObjectClass::fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, SvOi::IsObjectAllowedFunc pFunctor, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum nameToType, SvPb::ObjectSelectorType requiredType, bool /*stopIfClosed = false*/, bool /*firstObject = false*/) const
 {
-	SVObjectReference ObjectRef = GetObjectInfo().GetObjectReference();
+	SVObjectReference ObjectRef { getObjectId() };
 	if (isCorrectType(requiredType))
 	{
 		SvPb::TreeItem insertItem;
@@ -480,7 +478,7 @@ Set embedded object info.  Use this only for real embedded objects.
 void SVObjectClass::SetObjectEmbedded(SvPb::EmbeddedIdEnum embeddedID, SVObjectClass* pOwner, LPCTSTR NewObjectName)
 {
 	m_embeddedID = embeddedID;
-	m_outObjectInfo.m_ObjectTypeInfo.m_EmbeddedID = embeddedID;
+	m_ObjectTypeInfo.m_EmbeddedID = embeddedID;
 	SetObjectName(NewObjectName);
 	SetObjectOwner(pOwner);
 }
@@ -760,7 +758,7 @@ void SVObjectClass::Persist(SvOi::IObjectWriter& rWriter)
 	rWriter.WriteAttribute(scClassIDTag, value);
 	value.Clear();
 
-	value = convertObjectIdToVariant(m_outObjectInfo.getObjectId());
+	value = convertObjectIdToVariant(m_objectId);
 	rWriter.WriteAttribute(scUniqueReferenceIDTag, value);
 	value.Clear();
 

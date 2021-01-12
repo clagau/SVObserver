@@ -46,8 +46,8 @@ SVPolarTransformationToolClass::SVPolarTransformationToolClass( SVObjectClass* P
 void SVPolarTransformationToolClass::init()
 {
 	// Set up your type...
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType    = SvPb::SVPolarTransformationToolObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
+	m_ObjectTypeInfo.m_SubType    = SvPb::SVPolarTransformationToolObjectType;
 
 	// Identify our input type needs
 

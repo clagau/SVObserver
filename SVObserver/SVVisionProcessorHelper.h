@@ -139,7 +139,7 @@ private:
 	HRESULT SetRemoteInputItems(const SVNameStorageMap& rItems, SVNameStatusMap& rStatus, bool RunOnce);
 	HRESULT SetCameraItems(const SVNameStorageMap& rItems, SVNameStatusMap& rStatus, bool RunOnce);
 
-	HRESULT GetObjectDefinition(const SVObjectClass& rObj, const long p_Filter, SVDataDefinitionStruct& rDataDef) const;
+	HRESULT GetObjectDefinition(const SvOi::IObjectClass& rObj, const long p_Filter, SVDataDefinitionStruct& rDataDef) const;
 
 
 	void ProcessNotifications(const SvPb::GetNotificationStreamResponse& response);

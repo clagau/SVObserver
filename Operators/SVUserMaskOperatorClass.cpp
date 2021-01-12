@@ -54,8 +54,8 @@ SVUserMaskOperatorClass::~SVUserMaskOperatorClass()
 void SVUserMaskOperatorClass::init()
 {
 	// Identify our output type
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVUnaryImageOperatorObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVUserMaskOperatorObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVUnaryImageOperatorObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::SVUserMaskOperatorObjectType;
 
 	m_userMaskImageInput.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
 	registerInputObject( &m_userMaskImageInput, _T( "UserMaskImage" ), SvPb::UserMaskImageInputEId);

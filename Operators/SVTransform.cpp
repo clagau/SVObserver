@@ -30,7 +30,7 @@ SVTransform::SVTransform( SVObjectClass* POwner, int StringResourceID )
 				 :SVTaskObjectClass( POwner, StringResourceID ) 
 {
 	// Identify yourself
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVTransformObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVTransformObjectType;
 
 	// Identify our input type needs...
 	// Translation X

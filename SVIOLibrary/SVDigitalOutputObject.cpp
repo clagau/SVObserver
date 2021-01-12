@@ -92,8 +92,8 @@ bool SVDigitalOutputObject::GetValue() const
 
 void SVDigitalOutputObject::LocalInitialize()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVIoObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVDigitalOutputObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVIoObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::SVDigitalOutputObjectType;
 	m_startID = ObjectIdEnum::DigitalOutputId;
 }
 

@@ -20,7 +20,7 @@ SVEvaluateRotationXClass::SVEvaluateRotationXClass( SVObjectClass* POwner, int S
 : SVEvaluate( POwner, StringResourceID ) 
 {
 	// Identify yourself
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVEvaluateRotationXObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::SVEvaluateRotationXObjectType;
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( &m_outputMathResult, SvPb::OutputEvaluateRotationXResultEId, IDS_OBJECTNAME_RESULT, false, SvOi::SVResetItemNone );

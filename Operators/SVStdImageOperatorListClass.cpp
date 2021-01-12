@@ -42,8 +42,8 @@ void SVStdImageOperatorListClass::init()
 	m_bUseOverlays = false;
 
 	// Identify our output type
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVUnaryImageOperatorListObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVStdImageOperatorListObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVUnaryImageOperatorListObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::SVStdImageOperatorListObjectType;
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject(&m_OutputImage, SvPb::OutputImageEId, IDS_OBJECTNAME_IMAGE1);

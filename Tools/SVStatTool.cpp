@@ -43,8 +43,8 @@ SVStatTool::SVStatTool( SVObjectClass* POwner, int StringResourceID )
 
 void SVStatTool::init(void)
 {
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType    = SvPb::SVStatisticsToolObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
+	m_ObjectTypeInfo.m_SubType    = SvPb::SVStatisticsToolObjectType;
 	
 	// Register an empty input object
 	registerInputObject( &m_inputValue, _T( "StatisticsToolValue" ), SvPb::ResultInputEId);

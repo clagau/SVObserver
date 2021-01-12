@@ -131,7 +131,7 @@ void SVCharValueObjectClass::setStandardFormatString()
 
 void SVCharValueObjectClass::LocalInitialize()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVCharValueObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::SVCharValueObjectType;
 	DefaultValue() = 0;
 	SetTypeName( _T("Char") );
 	setStandardFormatString();

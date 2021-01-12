@@ -22,7 +22,7 @@ SV_IMPLEMENT_CLASS(SVClosingFilterClass, SvPb::ClosingFilterClassId)
 SVClosingFilterClass::SVClosingFilterClass( SVObjectClass* POwner, int StringResourceID )
 					 :SVFilterClass( POwner, StringResourceID ) 
 {
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVClosingFilterObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::SVClosingFilterObjectType;
 }
 
 SVClosingFilterClass::~SVClosingFilterClass() 

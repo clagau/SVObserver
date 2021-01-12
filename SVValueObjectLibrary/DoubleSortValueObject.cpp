@@ -324,7 +324,7 @@ HRESULT DoubleSortValueObject::ValidateIndex(int ArrayIndex) const
 #pragma region Private Methods
 void DoubleSortValueObject::LocalInitialize()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::DoubleSortValueObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::DoubleSortValueObjectType;
 	SetTypeName( _T("Decimal") );
 
 	//normally the DoubleSortValueObject is a result value and should not be print. 

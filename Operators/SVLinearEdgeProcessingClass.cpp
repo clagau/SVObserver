@@ -38,7 +38,7 @@ static char THIS_FILE[] = __FILE__;
 SVLinearEdgeProcessingClass::SVLinearEdgeProcessingClass( SVObjectClass* POwner, int StringResourceID )
 					                  :SVTaskObjectClass( POwner, StringResourceID )
 {
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVLinearEdgeProcessingObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVLinearEdgeProcessingObjectType;
 
 	m_InputImage.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
 	registerInputObject( &m_InputImage, _T( "LinearEdgeProcessingImage" ), SvPb::ImageInputEId);

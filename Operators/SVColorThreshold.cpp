@@ -256,8 +256,8 @@ bool SVColorThreshold::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVecto
 void SVColorThreshold::LocalInitialize()
 {
 	// Identify our output type
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVOperatorObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVColorThresholdObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVOperatorObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::SVColorThresholdObjectType;
 
 	// Register Embedded Object(s)
 	RegisterEmbeddedObject(&m_OutputThresholdEnabled, SvPb::ColorThresholdEnabledEId, IDS_OBJECTNAME_OUTPUT_THRESHOLDENABLED, false, SvOi::SVResetItemNone);

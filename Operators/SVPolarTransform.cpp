@@ -31,7 +31,7 @@ SVPolarTransform::SVPolarTransform( SVObjectClass* POwner, int StringResourceID 
 				 :SVTaskObjectClass( POwner, StringResourceID ) 
 {
 	// Identify yourself
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVPolarTransformObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVPolarTransformObjectType;
 
 	// Identify our input type needs...
 

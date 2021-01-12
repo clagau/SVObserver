@@ -44,7 +44,6 @@ namespace SvOl
 }
 
 
-class SVOutputInfoListClass;
 class RunStatus;
 class SVToolSet;
 
@@ -86,7 +85,9 @@ public:
 	virtual void disconnectAllInputs() override;
 	virtual void getInputs(std::back_insert_iterator<std::vector<SvOl::InputObject*>> inserter) const;
 
-	virtual HRESULT GetOutputList(SVOutputInfoListClass& p_rOutputInfoList) const override;
+	virtual void getOutputList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter) const override;
+	std::vector<SvOi::IObjectClass*> getOutputListFiltered(UINT uiAttributes = SvPb::noAttributes, bool bAND = true) const; /* true means AND, false means OR */
+	void GetOutputListFiltered(SVObjectReferenceVector& rvecObjects, UINT uiAttributes = SvPb::noAttributes, bool bAND = true) const; /* true means AND, false means OR */
 
 	virtual void SetDisabled() override;
 
@@ -101,8 +102,6 @@ public:
 	/// \param pPosObject [in] The other object will be moved before this object.
 	void MovedEmbeddedObject(SVObjectClass* pToMoveObject, SVObjectClass* pPosObject);
 	bool registerInputObject(SvOl::InputObject* pInputObject, const std::string& p_rInputName, SvPb::EmbeddedIdEnum embeddedId);
-
-	HRESULT GetOutputListFiltered(SVObjectReferenceVector& rvecObjects, UINT uiAttributes = SvPb::noAttributes, bool bAND = true); /* true means AND, false means OR */
 
 	virtual HRESULT GetChildObject(SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index = 0) const override;
 

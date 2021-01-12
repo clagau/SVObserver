@@ -30,8 +30,8 @@ void PlcOutputObject::Combine( bool bCombine, bool bCombineACK )
 
 void PlcOutputObject::LocalInitialize()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVIoObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::PlcOutputObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVIoObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::PlcOutputObjectType;
 	m_startID = ObjectIdEnum::PlcOutputId;
 }
 

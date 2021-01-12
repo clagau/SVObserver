@@ -33,7 +33,7 @@ SVEvaluate::SVEvaluate( SVObjectClass* POwner, int StringResourceID )
 : SVMathContainer( POwner, StringResourceID ) 
 {
 	// Identify yourself
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVEvaluateObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::SVEvaluateObjectType;
 	m_outputMathResult.setSaveValueFlag(false);
 }
 

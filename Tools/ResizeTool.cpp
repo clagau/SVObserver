@@ -88,8 +88,8 @@ void ResizeTool::LocalInitialize()
 
 	// Set up your type... in this case this will reference that this tool is a 
 	// Resize Tool.
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVResizeToolObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::SVResizeToolObjectType;
 }
 
 

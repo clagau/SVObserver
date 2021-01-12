@@ -573,7 +573,7 @@ void SVIOController::LocalIntialize()
 	SVObjectManagerClass::Instance().ChangeUniqueObjectID(this, ObjectIdEnum::IOControllerId);
 
 	// Set up your type...
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVIOControllerType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVIOControllerType;
 
 	initializeOutputs();
 }

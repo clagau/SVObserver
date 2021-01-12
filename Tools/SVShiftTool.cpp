@@ -406,8 +406,8 @@ void SVShiftTool::getToolsWithReplaceableSourceImage(SvPb::GetToolsWithReplaceab
 void SVShiftTool::LocalInitialize()
 {
 	m_canResizeToParent = true;
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVShiftToolObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::SVShiftToolObjectType;
 
 	SVObjectClass* l_pObject = nullptr;
 

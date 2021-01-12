@@ -37,8 +37,8 @@ SVAcquisitionToolClass::SVAcquisitionToolClass( SVObjectClass* POwner, int Strin
 void SVAcquisitionToolClass::init()
 {
 	// Indentify our type in the Output List
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVToolAcquisitionObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::SVToolAcquisitionObjectType;
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( &mainImageObject, SvPb::OutputImageEId, IDS_OBJECTNAME_IMAGE1 );

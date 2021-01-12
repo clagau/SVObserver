@@ -83,7 +83,7 @@ HRESULT SVFileNameValueObjectClass::SetDefaultValue( const std::string& rValue, 
 
 void SVFileNameValueObjectClass::LocalInitialize()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVStringValueObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::SVStringValueObjectType;
 	
 	SetObjectAttributesAllowed( SvPb::viewable | SvPb::publishable | SvPb::archivable | SvPb::embedable | SvPb::audittrail | SvPb::dataDefinitionValue, SvOi::SetAttributeType::OverwriteAttribute );
 

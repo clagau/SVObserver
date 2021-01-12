@@ -16,7 +16,6 @@
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVObjectLibrary/SVOutputInfoListClass.h"
 #include "SVObjectLibrary/SVToolsetScriptTags.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/RunStatus.h"
@@ -262,7 +261,7 @@ void SVEquation::init()
 	m_bUseOverlays = false;
 
 	// Identify our output type
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVEquationObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVEquationObjectType;
 
 	// Identify our input type needs - this is a bit different here
 	// Since out inputs are dynamic via the script specified
@@ -402,12 +401,6 @@ SvOi::EquationTestResult SVEquation::Test(SvStl::MessageContainerVector *pErrorM
 
 	if (HasCondition() && IsEnabled())
 	{
-
-		SVOutputInfoListClass arInputAvailList;
-
-		SVOutputInfoListClass toolSetPickList;
-
-
 		// Clear the symbol Tables
 		m_Symbols.ClearAll();
 		m_Symbols.Init(this);

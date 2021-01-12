@@ -52,7 +52,7 @@ SVImagePolarTransform::SVImagePolarTransform( SVObjectClass* POwner, int StringR
 						   :SVPolarTransform( POwner, StringResourceID ) 
 {
 	// Identify yourself
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVImagePolarTransformObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::SVImagePolarTransformObjectType;
 
 	// Identify our input type needs...
 	// Image

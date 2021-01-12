@@ -20,14 +20,14 @@
 SVInputObjectList::SVInputObjectList( LPCSTR ObjectName ) : SVObjectClass( ObjectName )
 {
 	m_isCreated = true;
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVInputObjectListType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVInputObjectListType;
 	SVObjectManagerClass::Instance().ChangeUniqueObjectID(this, ObjectIdEnum::InputObjectListId);
 }
 
 SVInputObjectList::SVInputObjectList( SVObjectClass* POwner, int StringResourceID ) : SVObjectClass( POwner, StringResourceID )
 {
 	m_isCreated = true;
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVInputObjectListType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVInputObjectListType;
 	SVObjectManagerClass::Instance().ChangeUniqueObjectID(this, ObjectIdEnum::InputObjectListId);
 }
 

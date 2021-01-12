@@ -326,8 +326,8 @@ HRESULT SVLinearImageOperatorList::getInputProfileOrientation(long& rProfileOrie
 void SVLinearImageOperatorList::init()
 {
 	// Identify our output type
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVUnaryImageOperatorListObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVLinearImageOperatorListObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVUnaryImageOperatorListObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::SVLinearImageOperatorListObjectType;
 
 	m_inputProfileOrientation.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVEnumValueObjectType, SvPb::ProfileOrientationEId);
 	registerInputObject(&m_inputProfileOrientation, _T("LinearImageOperatorListProfileOrientation"), SvPb::ProfileOrientationInputEId);

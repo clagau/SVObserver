@@ -61,8 +61,8 @@ HRESULT SVExternalTool::UpdateImageWithExtent()
 
 void SVExternalTool::Initialize()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType    = SvPb::SVExternalToolObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
+	m_ObjectTypeInfo.m_SubType    = SvPb::SVExternalToolObjectType;
 
 	// Register SourceImageNames Value Object
 	RegisterEmbeddedObject( &m_SourceImageNames, SvPb::SourceImageNamesEId, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemTool );

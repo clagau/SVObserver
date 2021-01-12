@@ -47,7 +47,7 @@ std::string SVRemoteOutputObject::GetGroupID( ) const
 // Parameters >> Tree
 bool SVRemoteOutputObject::GetParameters(SvOi::IObjectWriter& rWriter ) const
 {
-	_variant_t svVariant = convertObjectIdToVariant(m_outObjectInfo.getObjectId());
+	_variant_t svVariant = convertObjectIdToVariant(getObjectId());
 	rWriter.WriteAttribute( SvXml::CTAG_UNIQUE_REFERENCE_ID, svVariant );
 	svVariant.Clear();
 
@@ -77,7 +77,7 @@ bool SVRemoteOutputObject::SetParameters( SVTreeType& rTree, SVTreeType::SVBranc
 
 		if( bOk )
 		{
-			m_outObjectInfo.GetObjectReference().setObjectId(calcObjectId(svVariant));
+			setObjectId(calcObjectId(svVariant));
 			bOk = SVObjectManagerClass::Instance().OpenUniqueObjectID( this );
 		}
 		else
@@ -152,6 +152,6 @@ HRESULT SVRemoteOutputObject::SetGroupID( const std::string& p_strGroupID )
 
 void SVRemoteOutputObject::LocalInitialize()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVIoObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVRemoteOutputObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVIoObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::SVRemoteOutputObjectType;
 }

@@ -199,36 +199,15 @@ HRESULT SVVisionProcessorHelper::GetDataDefinitionList(const std::string& rInspe
 		if (l_ValueFilter != -1)
 		{
 			//Add value definition list
-			SVOutputInfoListClass l_OutputList;
+			std::vector<SvOi::IObjectClass*> outputList;
+			pTaskObjectList->getOutputList(std::back_inserter(outputList));
 
-			pTaskObjectList->GetOutputList(l_OutputList);
-
-			int nCount = l_OutputList.GetSize();
-
-			for (int i = 0; i < nCount; i++)
+			for (auto* pObject : outputList)
 			{
-				// Get OutObjectInfoStruct...
-				SVOutObjectInfoStruct* pInfoItem = nullptr;
-
-				pInfoItem = l_OutputList.GetAt(i);
-
-				SVObjectReference l_ObjRef;
-				if (nullptr != pInfoItem)
-				{
-					l_ObjRef = pInfoItem->GetObjectReference();
-				}
-				else
-				{
-					assert(0);
-					break;
-				}
-
-				SVObjectClass* l_pObject = l_ObjRef.getObject();
-
-				if (l_pObject)
+				if (pObject)
 				{
 					SVDataDefinitionStruct l_DataDefinition;
-					if (S_OK == GetObjectDefinition(*l_pObject, l_ValueFilter, l_DataDefinition))
+					if (S_OK == GetObjectDefinition(*pObject, l_ValueFilter, l_DataDefinition))
 					{
 						rDataDefinitionArray.push_back(l_DataDefinition);
 					}
@@ -745,7 +724,7 @@ HRESULT SVVisionProcessorHelper::SetCameraItems(const SVNameStorageMap& rItems, 
 	return l_Status;
 }
 
-HRESULT SVVisionProcessorHelper::GetObjectDefinition(const SVObjectClass& rObject, const long Filter, SVDataDefinitionStruct& rDataDef) const
+HRESULT SVVisionProcessorHelper::GetObjectDefinition(const SvOi::IObjectClass& rObject, const long Filter, SVDataDefinitionStruct& rDataDef) const
 {
 	DWORD notAllowedStates = SV_STATE_START_PENDING | SV_STATE_STARTING | SV_STATE_STOP_PENDING | SV_STATE_STOPING |
 		SV_STATE_CREATING | SV_STATE_LOADING | SV_STATE_SAVING | SV_STATE_CLOSING;
@@ -812,7 +791,7 @@ HRESULT SVVisionProcessorHelper::GetObjectDefinition(const SVObjectClass& rObjec
 				SvDef::StringVector Types;
 				SvDef::StringVector::iterator Iter;
 				l_pBoolVO->GetValidTypes(Types);
-				for (Iter = Types.begin(); Iter != Types.end(); Iter++)
+				for (Iter = Types.begin(); Iter != Types.end(); ++Iter)
 				{
 					rDataDef.m_AdditionalInfo.push_back(*Iter);
 				}
@@ -986,7 +965,7 @@ HRESULT SVVisionProcessorHelper::ActivateMonitorList(const std::string& rListNam
 		SVConfigurationObject* pConfig = nullptr;
 
 		hr = SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-		if (nullptr != pConfig)
+		if (S_OK == hr && nullptr != pConfig)
 		{
 			hr = pConfig->ActivateRemoteMonitorList(rListName, bActivate);
 		}
@@ -1059,7 +1038,7 @@ HRESULT SVVisionProcessorHelper::SetProductFilter(const std::string& rListName, 
 
 	SVConfigurationObject* pConfig = nullptr;
 	HRESULT hr = SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-	if (nullptr != pConfig)
+	if (S_OK == hr && nullptr != pConfig)
 	{
 		hr = pConfig->SetRemoteMonitorListProductFilter(rListName, filter);
 	}
@@ -1075,7 +1054,7 @@ HRESULT SVVisionProcessorHelper::GetProductFilter(const std::string& rListName, 
 	SVConfigurationObject* pConfig = nullptr;
 
 	HRESULT hr = SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-	if (nullptr != pConfig)
+	if (S_OK == hr && nullptr != pConfig)
 	{
 		hr = pConfig->GetRemoteMonitorListProductFilter(rListName, rFilter);
 	}

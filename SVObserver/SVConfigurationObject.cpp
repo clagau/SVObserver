@@ -1663,7 +1663,7 @@ bool  SVConfigurationObject::LoadCameras(SVTreeType& rTree, long& lNumCameras, b
 			if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_UNIQUE_REFERENCE_ID, hSubChild, Value))
 			{
 				SVObjectManagerClass::Instance().CloseUniqueObjectID(pCamera);
-				pCamera->m_outObjectInfo.GetObjectReference().setObjectId(calcObjectId(Value));
+				pCamera->setObjectId(calcObjectId(Value));
 				SVObjectManagerClass::Instance().OpenUniqueObjectID(pCamera);
 			}
 
@@ -1902,7 +1902,7 @@ bool SVConfigurationObject::LoadInspection(SVTreeType& rTree)
 			if (bOk)
 			{
 				SVObjectManagerClass::Instance().CloseUniqueObjectID(pInspection);
-				pInspection->m_outObjectInfo.GetObjectReference().setObjectId(calcObjectId(Value));
+				pInspection->setObjectId(calcObjectId(Value));
 				SVObjectManagerClass::Instance().OpenUniqueObjectID(pInspection);
 			}
 		}
@@ -1984,7 +1984,7 @@ bool SVConfigurationObject::LoadPPQ(SVTreeType& rTree)
 		if (bOk)
 		{
 			SVObjectManagerClass::Instance().CloseUniqueObjectID(pPPQ);
-			pPPQ->m_outObjectInfo.GetObjectReference().setObjectId(calcObjectId(Value));
+			pPPQ->setObjectId(calcObjectId(Value));
 			SVObjectManagerClass::Instance().OpenUniqueObjectID(pPPQ);
 		}// end if
 
@@ -3610,13 +3610,10 @@ void SVConfigurationObject::getInspectionObjectAttributesSet(const SVInspectionP
 		SVToolSet* pToolSet = pInspection->GetToolSet();
 		if (nullptr != pToolSet)
 		{
-			SVOutputInfoListClass ToolSetOutputList;
-			pToolSet->GetOutputList(ToolSetOutputList);
-
-			ToolSetOutputList.GetSetAttributesList(SvPb::publishable, rAttributesSetMap[SvPb::publishable]);
-			ToolSetOutputList.GetSetAttributesList(SvPb::publishResultImage, rAttributesSetMap[SvPb::publishResultImage]);
-			ToolSetOutputList.GetSetAttributesList(SvPb::dataDefinitionValue, rAttributesSetMap[SvPb::dataDefinitionValue]);
-			ToolSetOutputList.GetSetAttributesList(SvPb::dataDefinitionImage, rAttributesSetMap[SvPb::dataDefinitionImage]);
+			pToolSet->GetOutputListFiltered(rAttributesSetMap[SvPb::publishable], SvPb::publishable);
+			pToolSet->GetOutputListFiltered(rAttributesSetMap[SvPb::publishResultImage], SvPb::publishResultImage);
+			pToolSet->GetOutputListFiltered(rAttributesSetMap[SvPb::dataDefinitionValue], SvPb::dataDefinitionValue);
+			pToolSet->GetOutputListFiltered(rAttributesSetMap[SvPb::dataDefinitionImage], SvPb::dataDefinitionImage);
 		}
 	}
 }

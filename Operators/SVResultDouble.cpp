@@ -33,8 +33,8 @@ SVDoubleResult::SVDoubleResult( SVObjectClass* POwner, int StringResourceID )
 				  :SVResult( POwner, StringResourceID )
 {
 	// Identify yourself
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVResultObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVResultDoubleObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVResultObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::SVResultDoubleObjectType;
 
 	// Identify our input type needs
 	m_inputObject.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType );

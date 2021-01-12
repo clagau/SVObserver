@@ -54,7 +54,7 @@ void SVResult::init()
 	m_bUseOverlays = false;
 
 	// Identify our type in the Output List
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVResultObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVResultObjectType;
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( &m_Failed, SvPb::FailedEId, IDS_OBJECTNAME_FAILED, false, SvOi::SVResetItemNone );

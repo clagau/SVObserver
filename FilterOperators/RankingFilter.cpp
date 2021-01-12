@@ -46,7 +46,7 @@ void RankingFilter::init()
 {
 	long l( 0 );
 
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVRankingFilterObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::SVRankingFilterObjectType;
 
 	RegisterEmbeddedObject( &m_lvoCell01, SvPb::FilterCellEId, IDS_OBJECTNAME_RANKINGFILTER_CELL01, false, SvOi::SVResetItemOwner );
 	RegisterEmbeddedObject( &m_lvoCell02, SvPb::FilterCellEId + 1, IDS_OBJECTNAME_RANKINGFILTER_CELL02, false, SvOi::SVResetItemOwner );

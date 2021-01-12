@@ -34,7 +34,7 @@ SVCameraImageTemplate::SVCameraImageTemplate(LPCSTR ObjectName)
 	, m_pCamera(nullptr)
 	, m_digitizerObjectID()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVImageObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVImageObjectType;
 
 	// SVMainImageClass is not a result image.
 	// We need to remove the PUBLISH attribute.
@@ -46,7 +46,7 @@ SVCameraImageTemplate::SVCameraImageTemplate(SVObjectClass* POwner, int StringRe
 	, m_pCamera(nullptr)
 	, m_digitizerObjectID()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVImageObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVImageObjectType;
 
 	// SVMainImageClass is not a result image.
 	// We need to remove the PUBLISH attribute.

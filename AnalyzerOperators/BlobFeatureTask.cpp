@@ -72,7 +72,7 @@ namespace SvAo
 	BlobFeatureTask::BlobFeatureTask(SVObjectClass* POwner, int StringResourceID)
 		:SVTaskObjectListClass(POwner, StringResourceID)
 	{
-		m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::BlobFeatureObjectType;
+		m_ObjectTypeInfo.m_ObjectType = SvPb::BlobFeatureObjectType;
 
 		RegisterEmbeddedObject(&m_featureTypeValue, SvPb::FeatureTypeEId, IDS_BLOBFEATURE_TYPE, false, SvOi::SVResetItemOwner);
 		RegisterEmbeddedObject(&m_isCustomFeature, SvPb::IsCustomFeatureEId, IDS_BLOBFEATURE_ISCUSTOMFEATURE, false, SvOi::SVResetItemOwner);

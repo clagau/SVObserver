@@ -28,7 +28,7 @@ SVObjectReference::SVObjectReference( SVObjectClass* pObject ):
 	(nullptr != m_pObject) ? m_NameInfo.ParseObjectName(m_pObject->GetCompleteName().c_str()) : m_NameInfo.clear();
 }
 
-SVObjectReference::SVObjectReference(int32_t objectId)
+SVObjectReference::SVObjectReference(uint32_t objectId)
 	: m_objectId(objectId)
 {
 	m_pObject = SVObjectManagerClass::Instance().GetObject(m_objectId);

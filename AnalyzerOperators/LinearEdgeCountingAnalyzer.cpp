@@ -43,7 +43,7 @@ LinearEdgeCountingAnalyzer::LinearEdgeCountingAnalyzer( SVObjectClass* POwner, i
 void LinearEdgeCountingAnalyzer::init()
 {
 	// Identify our type
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVLinearEdgeCountingAnalyzerObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::SVLinearEdgeCountingAnalyzerObjectType;
 
 	SvOp::SVLinearEdgeProcessingClass *pEdge = new SvOp::SVLinearEdgeAProcessingClass( this );
 

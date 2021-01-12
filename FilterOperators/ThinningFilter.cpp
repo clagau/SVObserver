@@ -37,7 +37,7 @@ ThinningFilter::~ThinningFilter()
 
 void ThinningFilter::init()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVThinningFilterObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::SVThinningFilterObjectType;
 
 	RegisterEmbeddedObject( &m_lvoItterations, SvPb::ThinningFilterItterationsEId, IDS_OBJECTNAME_THINNINGFILTER_ITTERATIONS, false, SvOi::SVResetItemNone );
 	RegisterEmbeddedObject( &m_bvoGrayOn, SvPb::GrayOnEId, IDS_OBJECTNAME_GRAYON, false, SvOi::SVResetItemNone );

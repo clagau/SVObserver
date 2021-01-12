@@ -30,14 +30,14 @@ namespace SvOl
 	InputObject::InputObject(LPCSTR objectName)
 		: SVObjectClass(objectName)
 	{
-		m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::InputConnectedType;
+		m_ObjectTypeInfo.m_ObjectType = SvPb::InputConnectedType;
 		SetObjectAttributesAllowed(SvPb::audittrail | SvPb::embedable, SvOi::SetAttributeType::OverwriteAttribute);
 	}
 
 	InputObject::InputObject(SVObjectClass* pOwner, int stringResourceID)
 		: SVObjectClass(pOwner, stringResourceID)
 	{
-		m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::InputConnectedType;
+		m_ObjectTypeInfo.m_ObjectType = SvPb::InputConnectedType;
 		SetObjectAttributesAllowed(SvPb::audittrail | SvPb::embedable, SvOi::SetAttributeType::OverwriteAttribute);
 	}
 

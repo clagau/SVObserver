@@ -289,8 +289,8 @@ void SVColorToolClass::LocalInitialize()
 	m_canResizeToParent = true;
 	m_ConvertTool = false;
 	// Set up your type...
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVColorToolObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::SVColorToolObjectType;
 
 	m_InputImage.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageColorType);
 	registerInputObject(&m_InputImage, SvDef::cColorToolInputImage, SvPb::ImageInputEId);

@@ -33,7 +33,7 @@ SVMathContainer::SVMathContainer( SVObjectClass* POwner, int StringResourceID )
 					 :SVTaskObjectClass( POwner, StringResourceID ) 
 {
 	// Identify yourself
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVMathContainerObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVMathContainerObjectType;
 
 	// Identify our input type needs...
 

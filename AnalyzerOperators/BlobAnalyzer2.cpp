@@ -58,7 +58,7 @@ namespace SvAo
 	void BlobAnalyzer2::init()
 	{
 		//Indentify our output type.
-		m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::BlobAnalyzer2ObjectType;
+		m_ObjectTypeInfo.m_SubType = SvPb::BlobAnalyzer2ObjectType;
 
 		RegisterEmbeddedObject(&m_maxBlobDataArraySize, SvPb::MaxBlobDataArraySizeEId, IDS_OBJECTNAME_MAX_BLOB_DATA_ARRAY_SIZE, false, SvOi::SVResetItemOwner);
 		RegisterEmbeddedObject(&m_numberOfBlobsFound, SvPb::NbrOfBlobsFoundEId, IDS_OBJECTNAME_NBROFBLOBSFOUND, false, SvOi::SVResetItemNone);

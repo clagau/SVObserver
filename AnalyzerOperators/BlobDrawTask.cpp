@@ -36,7 +36,7 @@ namespace SvAo
 	void BlobDrawTask::init()
 	{
 		//Indentify our output type.
-		m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::BlobDrawObjectType;
+		m_ObjectTypeInfo.m_ObjectType = SvPb::BlobDrawObjectType;
 
 		RegisterEmbeddedObject(&m_isFillBlobs, SvPb::BlobUseFillEId, IDS_BLOB_USE_FILL, false, SvOi::SVResetItemOwner);
 		RegisterEmbeddedObject(&m_blobFillColor, SvPb::BlobFillColorEId, IDS_BLOB_FILL_COLOR, false, SvOi::SVResetItemNone);

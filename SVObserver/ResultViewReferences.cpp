@@ -351,10 +351,7 @@ void ResultViewReferences::InsertFromOutputList(SVInspectionProcess* pInspection
 	SVObjectReferenceVector RefVector;
 
 	// Find all outputs marked as selected for viewing
-	SVOutputInfoListClass OutputList;
-	pToolSet->GetOutputList( OutputList );
-	OutputList.GetSetAttributesList( SvPb::viewable, RefVector );
-
+	pToolSet->GetOutputListFiltered(RefVector, SvPb::viewable);
 	for(SVObjectReferenceVector::const_iterator iter = RefVector.begin(); iter != RefVector.end(); ++iter)
 	{
 		if( nullptr != iter->getObject() && iter->ObjectAttributesSet() & SvPb::viewable )

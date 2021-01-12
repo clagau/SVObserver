@@ -68,7 +68,7 @@ HRESULT SVObjectInfoStruct::SetObject( SVObjectClass* pObject )
 		if (SvPb::NoEmbeddedId == m_ObjectTypeInfo.m_EmbeddedID && SvPb::SVNotSetObjectType == m_ObjectTypeInfo.m_ObjectType &&
 			SvPb::SVNotSetSubObjectType == m_ObjectTypeInfo.m_SubType && nullptr != m_ObjectRef.getFinalObject())
 		{
-			m_ObjectTypeInfo = m_ObjectRef.getFinalObject()->GetObjectInfo().m_ObjectTypeInfo;
+			m_ObjectTypeInfo = m_ObjectRef.getFinalObject()->getObjectTypeInfo();
 		}
 	}
 	else

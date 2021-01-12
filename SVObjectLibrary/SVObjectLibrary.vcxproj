@@ -130,8 +130,6 @@
     <ClCompile Include="SVObjectManagerClass.cpp" />
     <ClCompile Include="SVObjectNameInfo.cpp" />
     <ClCompile Include="SVObjectReference.cpp" />
-    <ClCompile Include="SVOutObjectInfoStruct.cpp" />
-    <ClCompile Include="SVOutputInfoListClass.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DependencyManager.h" />
@@ -155,8 +153,6 @@
     <ClInclude Include="SVObjectReference.h" />
     <ClInclude Include="SVObjectScriptEnums.h" />
     <ClInclude Include="SVObserverTemplate.h" />
-    <ClInclude Include="SVOutObjectInfoStruct.h" />
-    <ClInclude Include="SVOutputInfoListClass.h" />
     <ClInclude Include="SVToolsetScriptTags.h" />
     <ClInclude Include="TextDefinesSvOl.h" />
   </ItemGroup>

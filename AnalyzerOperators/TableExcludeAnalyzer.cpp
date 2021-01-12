@@ -159,8 +159,8 @@ bool TableExcludeAnalyzer::onRun( RunStatus& rRunStatus, SvStl::MessageContainer
 void TableExcludeAnalyzer::Initialize()
 {
 	// Set up your type
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::TableAnalyzerType;
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType    = SvPb::TableAnalyzerExcludeType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::TableAnalyzerType;
+	m_ObjectTypeInfo.m_SubType    = SvPb::TableAnalyzerExcludeType;
 
 	BuildInputObjectList();
 	BuildEmbeddedObjectList();

@@ -41,8 +41,8 @@ namespace SvVol
 		, m_Node(Node)
 
 	{
-		m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVBasicValueObjectType;
-		m_outObjectInfo.m_ObjectTypeInfo.m_SubType = ObjectSubType;
+		m_ObjectTypeInfo.m_ObjectType = SvPb::SVBasicValueObjectType;
+		m_ObjectTypeInfo.m_SubType = ObjectSubType;
 		Create(pOwner);
 	}
 

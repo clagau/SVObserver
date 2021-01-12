@@ -88,7 +88,7 @@ bool SVDigitalInputObject::IsInverted() const
 
 void SVDigitalInputObject::LocalInitialize()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVIoObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVDigitalInputObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVIoObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::SVDigitalInputObjectType;
 	m_startID = ObjectIdEnum::DigitalInputId;
 }

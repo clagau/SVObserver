@@ -32,7 +32,7 @@ SVLinearAnalyzerClass::SVLinearAnalyzerClass( SVObjectClass* POwner, int StringR
 					            :SVAnalyzerClass( POwner, StringResourceID )
 {
 	// Identify yourself
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVAnalyzerObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVAnalyzerObjectType;
 
 	m_InputImage.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
 	registerInputObject( &m_InputImage, _T( "LinearAnalyzerImage" ), SvPb::ImageInputEId);

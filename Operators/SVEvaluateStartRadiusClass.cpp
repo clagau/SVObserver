@@ -27,7 +27,7 @@ SVEvaluateStartRadiusClass::SVEvaluateStartRadiusClass( SVObjectClass* POwner, i
 					       :SVEvaluate( POwner, StringResourceID ) 
 {
 	// Identify yourself
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVEvaluateStartRadiusObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::SVEvaluateStartRadiusObjectType;
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( &m_outputMathResult, SvPb::OutputEvaluateStartRadiusResultEId, IDS_OBJECTNAME_RESULT, false, SvOi::SVResetItemNone );

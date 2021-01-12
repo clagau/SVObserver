@@ -48,8 +48,8 @@ SVBarCodeResult::SVBarCodeResult(SVObjectClass* POwner, int StringResourceID)
 {
 
 	// Identify yourself
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVResultObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVResultBarCodeObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVResultObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::SVResultBarCodeObjectType;
 
 	RegisterEmbeddedObject(
 		&msv_bUseSingleMatchString,

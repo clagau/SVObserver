@@ -45,8 +45,8 @@ ToolSizeAdjustTask::ToolSizeAdjustTask(bool AllowFullsize , bool AllowAdjustSize
 , m_AllowAdjustPosition(AllowAdjustPosition)
 {
 	// Identify our output type
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolSizeAdjustTaskType;
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVNotSetSubObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolSizeAdjustTaskType;
+	m_ObjectTypeInfo.m_SubType = SvPb::SVNotSetSubObjectType;
 
 	RegisterEmbeddedObject( &m_InputModes[SvDef::ToolSizeAdjustEnum::TSWidth], SvPb::ToolSizeAdjustSizeWidthModeEId, IDS_OBJECTNAME_TOOLSIZEADJUSTSIZEWIDTH, false, SvOi::SVResetItemNone );
 	RegisterEmbeddedObject( &m_InputModes[SvDef::ToolSizeAdjustEnum::TSHeight], SvPb::ToolSizeAdjustSizeHeightModeEId, IDS_OBJECTNAME_TOOLSIZEADJUSTSIZEHEIGHT, false, SvOi::SVResetItemNone );

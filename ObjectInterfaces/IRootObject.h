@@ -18,7 +18,6 @@ namespace SvPb
 class GetObjectSelectorItemsResponse;
 }
 
-class SVOutputInfoListClass;
 #pragma endregion Declarations
 
 namespace SvOi

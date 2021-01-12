@@ -30,7 +30,7 @@ SVEvaluateRotationAngleClass::SVEvaluateRotationAngleClass( SVObjectClass* pOwne
 : SVEvaluate( pOwner, StringResourceID ) 
 {
 	// Identify yourself
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVEvaluateRotationAngleObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::SVEvaluateRotationAngleObjectType;
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( &m_outputMathResult, SvPb::OutputEvaluateRotationAngleResultEId, IDS_OBJECTNAME_RESULT, false, SvOi::SVResetItemNone );

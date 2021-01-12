@@ -25,7 +25,6 @@
 #pragma endregion Includes
 
 class SVObjectClass;
-class SVOutputInfoListClass;
 
 namespace SvIe
 {
@@ -107,7 +106,7 @@ public:
 	SvOi::ITRCImagePtr getImageReadOnly(const SvOi::ITriggerRecordR* pTriggerRecord, bool lockImage = false) const;
 	SvOi::ITRCImagePtr getImageToWrite(const SvOi::ITriggerRecordRWPtr& pTriggerRecord);
 
-	void GetOutputList(SVOutputInfoListClass& p_rOutputInfoList);
+	void getOutputList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter) const;
 
 	virtual HRESULT GetChildObject(SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index = 0) const override;
 	virtual void setEditModeFreezeFlag(bool flag) override;

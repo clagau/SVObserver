@@ -46,7 +46,7 @@ LinearMaximumObjectAnalyzer::LinearMaximumObjectAnalyzer( SVObjectClass* POwner,
 void LinearMaximumObjectAnalyzer::init()
 {
 	// Identify our type
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVLinearMaximumObjectAnalyzerObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::SVLinearMaximumObjectAnalyzerObjectType;
 
 	// Register Embedded Objects
 

@@ -101,8 +101,8 @@ bool TableLimitAnalyzer::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVe
 void TableLimitAnalyzer::Initialize()
 {
 	// Set up your type
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::TableAnalyzerType;
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType    = SvPb::TableAnalyzerLimitType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::TableAnalyzerType;
+	m_ObjectTypeInfo.m_SubType    = SvPb::TableAnalyzerLimitType;
 
 	BuildEmbeddedObjectList();
 }

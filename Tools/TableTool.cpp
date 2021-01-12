@@ -9,7 +9,6 @@
 #include "stdafx.h"
 #include "TableTool.h"
 #include "ObjectInterfaces/IObjectManager.h"
-#include "SVObjectLibrary/SVOutputInfoListClass.h"
 #include "Operators/SVEquation.h"
 #include "Operators/TableColumnEquation.h"
 #include "Definitions/GlobalConst.h"
@@ -92,20 +91,14 @@ bool TableTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure 
 	return bOk;
 }
 
-HRESULT TableTool::GetOutputList( SVOutputInfoListClass& p_rOutputInfoList ) const
+void TableTool::getOutputList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter) const
 {
-	HRESULT Status( SVTaskObjectListClass::GetOutputList( p_rOutputInfoList ) );
+	__super::getOutputList(inserter);
 
 	if (nullptr != m_pTable)
 	{
-		p_rOutputInfoList.Add( &(m_pTable->GetObjectOutputInfo()) );
+		inserter = m_pTable;
 	}
-	else
-	{
-		Status = E_FAIL;
-	}
-
-	return Status;
 }
 
 bool TableTool::DoesObjectHaveExtents() const
@@ -235,8 +228,8 @@ void TableTool::LocalInitialize ()
 	}
 
 	// Set up your type
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType    = SvPb::SVTableToolObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
+	m_ObjectTypeInfo.m_SubType    = SvPb::SVTableToolObjectType;
 
 	// Hide and Remove Embedded Extents
 	removeEmbeddedExtents();

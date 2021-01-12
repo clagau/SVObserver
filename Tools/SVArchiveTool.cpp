@@ -76,8 +76,8 @@ void SVArchiveTool::initializeArchiveTool()
 	m_ImageCollection.SetArchiveTool( this );
 
 	// Set up your type...
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVToolArchiveObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::SVToolArchiveObjectType;
 
 	// Hide and Remove Embedded Extents
 	removeEmbeddedExtents();
@@ -915,7 +915,7 @@ SVObjectReferenceVector SVArchiveTool::getImageArchiveList()
 		{
 			if (SvPb::archivableImage == (pImage->ObjectAttributesAllowed() & SvPb::archivableImage))
 			{
-				Result.push_back(pImage->GetObjectInfo().GetObjectReference());
+				Result.emplace_back( pImage );
 			}
 		}
 	}

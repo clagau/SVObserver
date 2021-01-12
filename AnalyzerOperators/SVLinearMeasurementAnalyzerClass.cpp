@@ -47,7 +47,7 @@ SVLinearMeasurementAnalyzerClass::SVLinearMeasurementAnalyzerClass( SVObjectClas
 void SVLinearMeasurementAnalyzerClass::init()
 {
 	// Identify our type
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVLinearMeasurementAnalyzerObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::SVLinearMeasurementAnalyzerObjectType;
 
 	// Register Embedded Objects
 

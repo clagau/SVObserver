@@ -30,6 +30,6 @@ EraseBorderBlobsFilter::~EraseBorderBlobsFilter()
 
 void EraseBorderBlobsFilter::init()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::EraseBorderBlobsFilterObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::EraseBorderBlobsFilterObjectType;
 
 }

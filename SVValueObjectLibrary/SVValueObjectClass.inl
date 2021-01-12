@@ -620,7 +620,7 @@ void SVValueObjectClass<T>::Initialize()
 	m_ResetAlways = false;
 	m_eResetItem = SvOi::SVResetItemIP;
 	m_ResultSize = 1;
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVValueObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVValueObjectType;
 	SetObjectAttributesAllowed(SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::OverwriteAttribute);
 }
 

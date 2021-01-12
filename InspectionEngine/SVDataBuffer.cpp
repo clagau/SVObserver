@@ -35,7 +35,7 @@ SVDataBufferClass::SVDataBufferClass( SVObjectClass* pOwner, int StringResourceI
 
 void SVDataBufferClass::init()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVDataBufferClassObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVDataBufferClassObjectType;
 }
 
 SVDataBufferClass::~SVDataBufferClass()

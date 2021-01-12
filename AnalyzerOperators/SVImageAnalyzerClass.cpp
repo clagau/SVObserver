@@ -39,7 +39,7 @@ SVImageAnalyzerClass::SVImageAnalyzerClass( SVObjectClass* pOwner, int StringRes
 void SVImageAnalyzerClass::init()
 {
 	// Set object type info...
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVAnalyzerObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVAnalyzerObjectType;
 	// Set sub type only in derived classes!
 
 	// Set Input requirement

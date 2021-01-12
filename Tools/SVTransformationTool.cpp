@@ -42,8 +42,8 @@ SVTransformationToolClass::SVTransformationToolClass( SVObjectClass* POwner, int
 void SVTransformationToolClass::init()
 {
 	// Set up your type...
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType    = SvPb::SVTransformationToolObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
+	m_ObjectTypeInfo.m_SubType    = SvPb::SVTransformationToolObjectType;
 
 	// Identify our input type needs
 

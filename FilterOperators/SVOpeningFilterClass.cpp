@@ -22,7 +22,7 @@ SV_IMPLEMENT_CLASS(SVOpeningFilterClass, SvPb::OpeningFilterClassId)
 SVOpeningFilterClass::SVOpeningFilterClass( SVObjectClass* POwner, int StringResourceID )
 					 :SVFilterClass( POwner, StringResourceID ) 
 {
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVOpeningFilterObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::SVOpeningFilterObjectType;
 }
 
 SVOpeningFilterClass::~SVOpeningFilterClass()

@@ -19,7 +19,6 @@
 
 #include "SVObjectInfoStruct.h"
 #include "SVObjectLibrary.h"
-#include "SVOutObjectInfoStruct.h"
 #include "SVUtilityLibrary/NameObjectIdList.h"
 #include "SVStatusLibrary/MessageContainer.h"
 #include "ObjectInterfaces/ITriggerRecordRW.h"
@@ -52,8 +51,7 @@ class SVObjectClass : public SvOi::IObjectClass
 	};
 
 public:
-	friend class SVObjectManagerClass;	// @TODO - This needs to go - For access to m_outObjectInfo to assignUnique id on loading
-	friend class SVConfigurationObject; // @TODO - This needs to go - For access to m_outObjectInfo to assignUnique id on loading
+	friend class SVObjectManagerClass;	// For access to RemoveObjectConnection
 
 	SVObjectClass();
 	explicit SVObjectClass( LPCTSTR ObjectName );
@@ -111,7 +109,6 @@ public:
 	LPCTSTR GetObjectName() const;
 
 	SVObjectClass* GetParent() const { return m_ownerObjectInfo.getObject(); };
-	SVOutObjectInfoStruct& GetObjectOutputInfo() { return m_outObjectInfo; };
 	
 	bool IsCreated() const { return m_isCreated; };
 
@@ -130,7 +127,7 @@ public:
 	virtual std::string GetObjectNameToObjectType(SvPb::SVObjectTypeEnum objectTypeToInclude = SvPb::SVToolSetObjectType, bool withOwnName = true) const override;
 	//Get the complete object name before selected SvPb::SVObjectTypeEnum value.
 	virtual std::string GetObjectNameBeforeObjectType(SvPb::SVObjectTypeEnum objectTypeToInclude) const override;
-	virtual const SvPb::SVObjectTypeEnum& GetObjectType() const override { return m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType; };
+	virtual const SvPb::SVObjectTypeEnum& GetObjectType() const override { return m_ObjectTypeInfo.m_ObjectType; };
 	virtual SvPb::SVObjectSubTypeEnum GetObjectSubType() const override;
 	virtual uint32_t GetParentID() const override { return m_ownerObjectInfo.getObjectId(); };
 	virtual SvOi::IObjectClass* GetAncestorInterface(SvPb::SVObjectTypeEnum ancestorObjectType, bool topLevel = false) override;
@@ -139,7 +136,8 @@ public:
 	virtual UINT SetObjectAttributesAllowed( UINT Attributes, SvOi::SetAttributeType Type ) override;
 	virtual UINT ObjectAttributesSet(int iIndex=0) const override;
 	virtual UINT SetObjectAttributesSet( UINT Attributes, SvOi::SetAttributeType Type, int iIndex=0 ) override;
-	virtual uint32_t getObjectId() const override {	return m_outObjectInfo.getObjectId(); };
+	virtual uint32_t getObjectId() const override {	return m_objectId; };
+	void setObjectId(uint32_t objectId) { m_objectId = objectId; };
 	virtual SvPb::EmbeddedIdEnum GetEmbeddedID() const override { return m_embeddedID; };
 	virtual bool is_Created() const override;
 	virtual SvUl::NameClassIdList GetCreatableObjects(const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo) const override;
@@ -156,7 +154,7 @@ public:
 #pragma endregion virtual method (IObjectClass)
 
 	const SVObjectInfoStruct& GetOwnerInfo() const { return m_ownerObjectInfo; };
-	const SVObjectInfoStruct& GetObjectInfo() const { return m_outObjectInfo; };
+	const SvDef::SVObjectTypeInfoStruct getObjectTypeInfo() const { return m_ObjectTypeInfo; };
 
 #pragma region Methods to replace processMessage
 	/// Call the method createObject for all children and itself.
@@ -220,8 +218,8 @@ protected:
 	SvPb::EmbeddedIdEnum m_embeddedID;
 	//Owner Info
 	SVObjectInfoStruct m_ownerObjectInfo;
-	//Contains the object info and could also be used as task out info.
-	SVOutObjectInfoStruct m_outObjectInfo;
+	SvDef::SVObjectTypeInfoStruct m_ObjectTypeInfo;
+	uint32_t m_objectId = SvDef::InvalidObjectId;
 
 	bool m_editModeFreezeFlag = false;
 

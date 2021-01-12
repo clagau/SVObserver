@@ -11,7 +11,6 @@
 #pragma once
 
 #pragma region Includes
-#include "SVObjectLibrary/SVOutputInfoListClass.h"
 #pragma endregion Includes
 
 namespace SvIe
@@ -20,28 +19,18 @@ class SVTaskObjectClass;
 }
 class SVInspectionProcess;
 
-class SVPublishList : public SVOutputInfoListClass
+class SVPublishList
 {
 public:
-	SVPublishList();
-
-	virtual ~SVPublishList();
-
-public:
-	void Destroy();
-
 	void Refresh(SvIe::SVTaskObjectClass* pRootObject);
 	void Release(SvIe::SVTaskObjectClass* pRootObject);
 	bool RemovePublishedEntry(uint32_t id);
-
-	SVInspectionProcess* m_pInspection;
+	void setInspection(SVInspectionProcess* pInspection) { m_pInspection = pInspection; };
 
 protected:
-	// To handle public results ( outputs which are send to PPQ )
-	// This list doesn't own the entries! They are owned by
-	// the output owners !
-	HANDLE								hProtectionMutex;
-	DWORD								dwWaitTime;
+	SVInspectionProcess* m_pInspection{ nullptr };
+	DWORD								dwWaitTime{ 2000 };
+	std::vector<uint32_t>				m_objectIdList;
 };
 
 

@@ -52,8 +52,8 @@ void SVImageToolClass::init()
 {
 	m_canResizeToParent = true;
 	// Set up your type...
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType    = SvPb::SVToolImageObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
+	m_ObjectTypeInfo.m_SubType    = SvPb::SVToolImageObjectType;
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( &m_outputEnableOffsetA, SvPb::EnableOffsetAEId, IDS_OBJECTNAME_ENABLEOFFSETA, false, SvOi::SVResetItemNone );

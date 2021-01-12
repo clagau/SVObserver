@@ -37,7 +37,7 @@ public:
 public:
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 
-	virtual HRESULT GetOutputList( SVOutputInfoListClass& p_rOutputInfoList ) const override;
+	virtual void getOutputList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter) const override;
 
 	virtual bool DoesObjectHaveExtents() const override;
 

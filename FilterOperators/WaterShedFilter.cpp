@@ -41,7 +41,7 @@ WatershedFilter::~WatershedFilter()
 
 void WatershedFilter::init()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVWatershedFilterObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::SVWatershedFilterObjectType;
 
 	RegisterEmbeddedObject( &m_lvoMinVariation, SvPb::WatershedFilterMinVariationEId, IDS_OBJECTNAME_WATERSHEDFILTER_MINVARIATION, false, SvOi::SVResetItemNone );
 	RegisterEmbeddedObject( &m_lvoControlFlag, SvPb::WatershedFilterControlFlagEId, IDS_OBJECTNAME_WATERSHEDFILTER_CONTROLFLAG, false, SvOi::SVResetItemNone );

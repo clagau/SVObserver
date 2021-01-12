@@ -45,7 +45,7 @@ LinearPixelCountingAnalyzer::LinearPixelCountingAnalyzer( SVObjectClass* POwner,
 void LinearPixelCountingAnalyzer::init()
 {
 	// Identify our type
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVLinearPixelCountingAnalyzerObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::SVLinearPixelCountingAnalyzerObjectType;
 
 	SvOp::SVLinearEdgeProcessingClass *pEdge = new SvOp::SVLinearEdgeAProcessingClass( this );
 

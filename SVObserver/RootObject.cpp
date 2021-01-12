@@ -96,7 +96,7 @@ HRESULT RootObject::RefreshObject(const SVObjectClass* const pSender, RefreshObj
 	if (!m_Initialize && PostRefresh == Type)
 	{
 		//When it is of type Global Constant we need to update the IO view
-		if (SvPb::SVGlobalConstantObjectType == pSender->GetObjectInfo().m_ObjectTypeInfo.m_SubType)
+		if (SvPb::SVGlobalConstantObjectType == pSender->GetObjectSubType())
 		{
 			SVIODoc* pIODoc = TheSVObserverApp.GetIODoc();
 			if (nullptr != pIODoc)
@@ -261,7 +261,7 @@ void RootObject::destroyConfigurationObject(std::recursive_mutex *pMutex)
 		SVObjectManagerClass::Instance().GetRootChildObject(pRootChild, Name);
 		if (nullptr != pRootChild)
 		{
-			SvPb::SVObjectSubTypeEnum ObjectSubType = pRootChild->GetObjectInfo().m_ObjectTypeInfo.m_SubType;
+			SvPb::SVObjectSubTypeEnum ObjectSubType = pRootChild->GetObjectSubType();
 			Result = pRoot->m_RootChildren.deleteValue(Name);
 			if (S_OK == Result)
 			{
@@ -282,7 +282,7 @@ bool RootObject::Initialize()
 	bool Result(true);
 
 	m_Initialize = true;
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVRootObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVRootObjectType;
 	SVObjectManagerClass::Instance().ChangeUniqueObjectID(this, ObjectIdEnum::RootId);
 	//The Root object should have an empty name
 	SetName(_T(""));

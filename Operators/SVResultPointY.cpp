@@ -34,8 +34,8 @@ SVPointYResult::SVPointYResult( SVObjectClass* POwner, int StringResourceID )
 					:SVResult( POwner, StringResourceID )
 {
 	// Identify yourself
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVResultObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVResultPointYObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVResultObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::SVResultPointYObjectType;
 
 	// Identify our input type needs
 	

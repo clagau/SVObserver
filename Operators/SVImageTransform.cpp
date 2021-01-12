@@ -41,7 +41,7 @@ SVImageTransform::SVImageTransform( SVObjectClass* POwner, int StringResourceID 
 {
 
 	// Identify yourself
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVImageTransformObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::SVImageTransformObjectType;
 
 	// Identify our input type needs...
 	// Image

@@ -15,7 +15,6 @@
 #include "Definitions/SVObjectTypeInfoStruct.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVObjectLibrary/SVOutputInfoListClass.h"
 #include "SVStatusLibrary/RunStatus.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
@@ -57,26 +56,19 @@ SVTaskObjectListClass::~SVTaskObjectListClass()
 #pragma endregion
 
 #pragma region public methods
-HRESULT SVTaskObjectListClass::GetOutputList( SVOutputInfoListClass& p_rOutputInfoList ) const
+void SVTaskObjectListClass::getOutputList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter) const
 {
-	HRESULT l_Status( SVTaskObjectClass::GetOutputList( p_rOutputInfoList ) );
-
-	for( int i = 0; i < static_cast<int> (m_TaskObjectVector.size()); ++ i )
+	__super::getOutputList(inserter);
+	
+	for (int i = 0; i < static_cast<int> (m_TaskObjectVector.size()); ++i)
 	{
-		SVTaskObjectClass* l_pObject( m_TaskObjectVector[i] );
+		SVTaskObjectClass* l_pObject(m_TaskObjectVector[i]);
 
-		if( nullptr != l_pObject )
+		if (nullptr != l_pObject)
 		{
-			HRESULT l_Temp = l_pObject->GetOutputList( p_rOutputInfoList );
-
-			if( S_OK == l_Status )
-			{
-				l_Status = l_Temp;
-			}
+			l_pObject->getOutputList(inserter);
 		}
 	}
-
-	return l_Status;
 }
 
 
@@ -1105,46 +1097,32 @@ SvOi::IObjectClass* SVTaskObjectListClass::getFirstObjectWithRequestor( const Sv
 	{
 		return nullptr;
 	}
-	SVObjectClass* pObject = nullptr;
 
 	// look at outputs first
-	SVOutputInfoListClass l_OutputInfoList;
-
-	GetOutputList( l_OutputInfoList );
-
-	for (int oIndex = 0; oIndex < l_OutputInfoList.GetSize(); oIndex++)
+	std::vector<SvOi::IObjectClass*> outputList;
+	getOutputList(std::back_inserter(outputList));
+	for (auto* pIObject : outputList)
 	{
-		SVOutObjectInfoStruct* pOutputInfo = l_OutputInfoList.GetAt(oIndex);
-
-		if (pOutputInfo)
+		auto* pObject = dynamic_cast<SVObjectClass*> (pIObject);
+		if (nullptr != pObject && pObject->GetParent() != pRequestor && pObject != pRequestor)
 		{
-			pObject = pOutputInfo->getObject();
-
-			if (nullptr == pObject)
+			// Don't send to requester owned outputs
+			retObject = pObject->getFirstObject(rObjectTypeInfo, useFriends, pRequestor);
+			if (nullptr != retObject)
 			{
-				pObject = SVObjectManagerClass::Instance().GetObject(pOutputInfo->getObjectId());
+				return retObject;
 			}
-
-			if (nullptr != pObject && pObject->GetParent() != pRequestor && pObject != pRequestor)
-			{
-				// Don't send to requester owned outputs
-				retObject = pObject->getFirstObject(rObjectTypeInfo, useFriends, pRequestor);
-				if (nullptr != retObject)
-				{
-					return retObject;
-				}
-			}
-			else
-			{
-				break; // stop looking at outputs
-			}
+		}
+		else
+		{
+			break; // stop looking at outputs
 		}
 	}
 	// look at children
 	// Try to send message to list members, if not already processed...
 	for (int i = 0; nullptr == retObject && i < static_cast<int> (m_TaskObjectVector.size()); i++)
 	{
-		pObject = m_TaskObjectVector[i];
+		SVObjectClass* pObject = m_TaskObjectVector[i];
 		if (nullptr != pObject && pObject != pRequestor)
 		{
 			retObject = pObject->getFirstObject(rObjectTypeInfo, useFriends, pRequestor);

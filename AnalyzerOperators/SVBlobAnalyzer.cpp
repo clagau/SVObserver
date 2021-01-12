@@ -113,7 +113,7 @@ void SVBlobAnalyzerClass::init()
 	m_pResultBlob = nullptr;
 
 	//Indentify our output type.
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVBlobAnalyzerObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::SVBlobAnalyzerObjectType;
 
 	//Register embedded objects.
 	RegisterEmbeddedObject(

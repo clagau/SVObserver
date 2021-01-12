@@ -46,7 +46,7 @@ LinearMaximumForegroundObjectAnalyzer::LinearMaximumForegroundObjectAnalyzer( SV
 void LinearMaximumForegroundObjectAnalyzer::init()
 {
 	// Identify our type
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVLinearMaximumForegroundObjectAnalyzerObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::SVLinearMaximumForegroundObjectAnalyzerObjectType;
 
 	// Register Embedded Objects
 

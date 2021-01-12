@@ -3135,25 +3135,20 @@ bool SVIPDoc::deleteTool(NavigatorElement* pNaviElement)
 	CWaitCursor l_cwcMouse;
 
 	// remove image from affected displays
-	SVOutputInfoListClass l_OutputList;
-
-	pTool->GetOutputList(l_OutputList);
+	std::vector<SvOi::IObjectClass*> outputList;
+	pTool->getOutputList(std::back_inserter(outputList));
 
 	for (int i = 0; i < MaxImageViews; i++)
 	{
 		SVImageView* pImageView = GetImageView(i);
 		if (pImageView->GetImage())
 		{
-			uint32_t ViewImageUniqueId = pImageView->GetImage()->getObjectId();
-
-			for (int j = 0; j < l_OutputList.GetSize(); j++)
+			uint32_t viewImageUniqueId = pImageView->GetImage()->getObjectId();
+			if (std::any_of(outputList.begin(), outputList.end(), [viewImageUniqueId](const auto* pObject)
+				{ return nullptr != pObject && viewImageUniqueId == pObject->getObjectId(); }))
 			{
-				if (ViewImageUniqueId == l_OutputList.GetAt(j)->getObjectId())
-				{
-					// Close Display resources...
-					pImageView->DetachFromImage();
-					break;
-				}
+				// Close Display resources...
+				pImageView->DetachFromImage();
 			}
 		}
 	}

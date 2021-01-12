@@ -49,8 +49,8 @@ void EQAdjustSize::Init()
 	m_enabled.SetDefaultValue( BOOL(false) );
 	m_bUseOverlays = false;
 	// Identify our output type
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVEquationObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = m_SubType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVEquationObjectType;
+	m_ObjectTypeInfo.m_SubType = m_SubType;
 	RegisterEmbeddedObject( &m_result, m_ResultId, IDS_OBJECTNAME_RESULT, false, SvOi::SVResetItemNone );
 	// Set Embedded defaults
 	constexpr double DefaultValue = 100.0;

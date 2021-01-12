@@ -149,8 +149,8 @@ bool TableSortAnalyzer::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVec
 void TableSortAnalyzer::Initialize()
 {
 	// Set up your type
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::TableAnalyzerType;
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType    = SvPb::TableAnalyzerSortType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::TableAnalyzerType;
+	m_ObjectTypeInfo.m_SubType    = SvPb::TableAnalyzerSortType;
 
 	BuildInputObjectList();
 	BuildEmbeddedObjectList();

@@ -46,8 +46,8 @@ void SVMathEquation::init()
 	m_bUseOverlays = false;
 
 	// Identify our output type
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVEquationObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVMathEquationObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVEquationObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::SVMathEquationObjectType;
 
 	// Identify our input type needs - this is a bit different here
 	// Since out inputs are dynamic via the script specified

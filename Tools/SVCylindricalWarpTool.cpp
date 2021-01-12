@@ -75,8 +75,8 @@ bool SVCylindricalWarpToolClass::CloseObject()
 void SVCylindricalWarpToolClass::LocalInitialize()
 {
 	// Set up your type...
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType    = SvPb::SVToolCylindricalObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
+	m_ObjectTypeInfo.m_SubType    = SvPb::SVToolCylindricalObjectType;
 
 	// Identify our input image...
 	m_InputImage.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);

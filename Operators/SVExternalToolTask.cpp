@@ -63,7 +63,7 @@ std::vector<std::string> SVExternalToolTask::DummyStatusResponse;
 SVExternalToolTask::SVExternalToolTask(SVObjectClass* POwner, int StringResourceID)
 	:SVTaskObjectListClass(POwner, StringResourceID)
 {
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVExternalToolTaskObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVExternalToolTaskObjectType;
 
 	size_t i;
 

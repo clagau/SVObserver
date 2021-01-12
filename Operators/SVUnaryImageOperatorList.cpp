@@ -105,7 +105,7 @@ bool SVUnaryImageOperatorList::isInputImage(uint32_t imageId) const
 void SVUnaryImageOperatorList::init()
 {
 	// Identify our output type
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVUnaryImageOperatorListObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVUnaryImageOperatorListObjectType;
 
 	// Identify our input type needs
 	m_inputImage.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);

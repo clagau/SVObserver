@@ -75,7 +75,7 @@ _variant_t SVRemoteInputObject::getCache() const
 
 void SVRemoteInputObject::LocalInitialize()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVIoObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVRemoteInputObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVIoObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::SVRemoteInputObjectType;
 	m_startID = ObjectIdEnum::RemoteInputId;
 }

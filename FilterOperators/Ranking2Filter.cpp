@@ -142,7 +142,7 @@ bool Ranking2Filter::onRun(bool First, SvOi::SVImageBufferHandlePtr rInputImageH
 #pragma region Private Methods
 void Ranking2Filter::init()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::Ranking2FilterObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::Ranking2FilterObjectType;
 
 	RegisterEmbeddedObject(&m_KernelArray, SvPb::FilterKernelEId, IDS_OBJECTNAME_CUSTOMFILTER_KERNELCELL, false, SvOi::SVResetItemOwner);
 

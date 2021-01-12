@@ -111,8 +111,8 @@ bool IndexEquation::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *
 void IndexEquation::init()
 {
 	// Identify our output type
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVEquationObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::IndexEquationObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVEquationObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::IndexEquationObjectType;
 }
 
 } //namespace SvOp

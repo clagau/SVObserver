@@ -50,7 +50,7 @@ SVToolClass::SVToolClass(SVObjectClass* POwner, int StringResourceID /*= IDS_CLA
 void SVToolClass::init()
 {
 	// Indentify our type in the Output List
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject(&m_isObjectValid, SvPb::TaskObjectClassIsObjectValidEId, IDS_OBJECTNAME_ISVALID, false, SvOi::SVResetItemNone);

@@ -48,8 +48,8 @@ SVOCVAnalyzer::SVOCVAnalyzer( SVObjectClass* POwner, int StringResourceID )
 ////////////////////////////////////////////////////////////////////////////////
 void SVOCVAnalyzer::init()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVAnalyzerObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVOCVAnalyzerObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVAnalyzerObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::SVOCVAnalyzerObjectType;
 
 	SvOp::SVOCVAnalyzeResult* pAnalyzerResult = new SvOp::SVOCVAnalyzeResult(this);
 

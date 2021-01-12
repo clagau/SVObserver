@@ -32,14 +32,14 @@ constexpr uint8_t cPlcGood = 6;
 SVOutputObjectList::SVOutputObjectList(LPCSTR ObjectName) : SVObjectClass( ObjectName )
 {
 	m_isCreated = true;
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVOutputObjectListType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVOutputObjectListType;
 	SVObjectManagerClass::Instance().ChangeUniqueObjectID(this, ObjectIdEnum::OutputObjectListId);
 }
 
 SVOutputObjectList::SVOutputObjectList(SVObjectClass* POwner, int StringResourceID) : SVObjectClass( POwner, StringResourceID )
 {
 	m_isCreated = true;
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVOutputObjectListType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVOutputObjectListType;
 	SVObjectManagerClass::Instance().ChangeUniqueObjectID(this, ObjectIdEnum::OutputObjectListId);
 }
 

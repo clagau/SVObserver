@@ -175,7 +175,7 @@ namespace SvAo
 	void BlobFeatureList::init()
 	{
 		//Indentify our output type.
-		m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::BlobFeatureListObjectType;
+		m_ObjectTypeInfo.m_ObjectType = SvPb::BlobFeatureListObjectType;
 	}
 
 	/////////////////////////////////////////////////////////////////////////////

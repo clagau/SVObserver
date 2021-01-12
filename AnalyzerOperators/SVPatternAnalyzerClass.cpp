@@ -83,7 +83,7 @@ SVPatternAnalyzerClass::SVPatternAnalyzerClass(SVObjectClass* POwner, int String
   : SVImageAnalyzerClass(POwner, StringResourceID)
   , m_bReloadModelFromFile(false)
 {
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVPatternAnalyzerObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::SVPatternAnalyzerObjectType;
 	m_nPatternIndex = -1;
 
 	// Register Embedded Objects

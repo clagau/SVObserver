@@ -49,8 +49,8 @@ void SVThresholdClass::init()
 	m_bUseOverlays = false;
 
 	// Identify our output type
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVUnaryImageOperatorObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVThresholdObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVUnaryImageOperatorObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::SVThresholdObjectType;
 
 	// Register Embedded Object(s)
 	RegisterEmbeddedObject( &m_upperThresh, SvPb::UpperThresholdEId, IDS_OBJECTNAME_UPPERTHRESHOLD, false, SvOi::SVResetItemNone );

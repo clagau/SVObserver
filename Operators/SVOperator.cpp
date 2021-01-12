@@ -47,7 +47,7 @@ void SVOperator::init()
 	m_bUseOverlays = false;	// in general, operators don't have overlays
 
 	// Identify our output type
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVOperatorObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVOperatorObjectType;
 }
 
 } //namespace SvOp

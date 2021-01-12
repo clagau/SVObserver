@@ -262,8 +262,8 @@ bool TableCopyObject::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector
 void TableCopyObject::Initialize()
 {
 	// Set up your type
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::TableObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::TableCopyObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::TableObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::TableCopyObjectType;
 }
 
 void TableCopyObject::RemoveUnusedColumn()

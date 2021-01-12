@@ -35,8 +35,8 @@ SV_IMPLEMENT_CLASS( SVVariantResultClass, SvPb::VariantResultClassId);
 SVVariantResultClass::SVVariantResultClass(BOOL , SVObjectClass*, int)
 {
 	// Identify yourself
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVResultObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVResultVariantObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVResultObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::SVResultVariantObjectType;
 
 	// Identify our input type needs
 	m_inputObject.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVVariantValueObjectType);

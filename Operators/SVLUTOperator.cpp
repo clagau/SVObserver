@@ -47,8 +47,8 @@ SVLUTOperator::SVLUTOperator( SVObjectClass* POwner, int StringResourceID )
 void SVLUTOperator::init()
 {
 	// Identify our output type
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVUnaryImageOperatorObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVLUTOperatorObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVUnaryImageOperatorObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::SVLUTOperatorObjectType;
 
 	// Register Embedded Object(s)
 	RegisterEmbeddedObject( &m_lutVector, SvPb::OutputLUTVectorEId, IDS_OBJECTNAME_LUTVECTOR, false, SvOi::SVResetItemNone );

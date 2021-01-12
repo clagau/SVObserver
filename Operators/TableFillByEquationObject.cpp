@@ -146,8 +146,8 @@ bool TableFillByEquationObject::onRun( RunStatus& rRunStatus, SvStl::MessageCont
 void TableFillByEquationObject::Initialize()
 {
 	// Set up your type
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::TableObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType    = SvPb::TableFillObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::TableObjectType;
+	m_ObjectTypeInfo.m_SubType    = SvPb::TableFillObjectType;
 }
 #pragma endregion Private Methods
 

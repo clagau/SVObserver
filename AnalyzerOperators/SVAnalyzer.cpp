@@ -44,7 +44,7 @@ SVAnalyzerClass::SVAnalyzerClass( SVObjectClass* POwner, int StringResourceID )
 void SVAnalyzerClass::init()
 {
 	// Indentify our type in the Output List
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVAnalyzerObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVAnalyzerObjectType;
 }
 
 SVAnalyzerClass::~SVAnalyzerClass()

@@ -1193,15 +1193,14 @@ void SVConfigXMLPrint::WriteInputOutputList(Writer writer, SvIe::SVTaskObjectCla
 			}
 		}
 
-		SVOutputInfoListClass l_OutputList;
-		pTaskObj->GetOutputList(l_OutputList);
-		for (int nCnt = 0; nCnt < l_OutputList.GetSize(); nCnt++)
+		std::vector<SvOi::IObjectClass*> outputList;
+		pTaskObj->getOutputList(std::back_inserter(outputList));
+		for (auto* pIObject : outputList)
 		{
-			SVOutObjectInfoStruct* pOutput = l_OutputList.GetAt(nCnt);
-
-			if (pOutput->getObject()->GetParent() == pTaskObj)
+			auto* pObject = dynamic_cast<SVObjectClass*> (pIObject);
+			if (nullptr != pObject && pObject->GetParent() == pTaskObj)
 			{
-				WriteObject(writer, pOutput->getObject());
+				WriteObject(writer, pObject);
 			}  
 		} 
 	}

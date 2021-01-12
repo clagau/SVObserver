@@ -37,7 +37,7 @@ SVToolSet::SVToolSet(SVObjectClass* POwner, int StringResourceID)
 void SVToolSet::init()
 {
 	// Identify our output type
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolSetObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolSetObjectType;
 
 	// Identify our input type needs
 

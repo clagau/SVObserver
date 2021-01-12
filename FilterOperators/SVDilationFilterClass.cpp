@@ -22,7 +22,7 @@ SV_IMPLEMENT_CLASS(SVDilationFilterClass, SvPb::DilationFilterClassId)
 SVDilationFilterClass::SVDilationFilterClass( SVObjectClass* POwner, int StringResourceID )
 					  :SVFilterClass( POwner, StringResourceID ) 
 {
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVDilationFilterObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::SVDilationFilterObjectType;
 }
 
 SVDilationFilterClass::~SVDilationFilterClass() 

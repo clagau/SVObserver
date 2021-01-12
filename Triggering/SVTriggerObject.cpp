@@ -46,7 +46,7 @@ namespace SvTi
 		{
 			m_pTriggerDevice = pTrigger;
 			m_pTriggerDevice->resetTriggerCount();
-			m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVTriggerObjectType;
+			m_ObjectTypeInfo.m_ObjectType = SvPb::SVTriggerObjectType;
 		}
 		else 
 		{

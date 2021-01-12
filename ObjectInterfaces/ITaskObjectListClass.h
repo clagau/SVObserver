@@ -12,8 +12,6 @@
 #pragma endregion Includes
 
 #pragma region Declarations
-//! Declaration is in #include SVObjectLibrary/SVOutObjectInfoStruct.h
-struct SVOutObjectInfoStruct;
 namespace SvPb
 {
 class  TaskObjectListResponse;

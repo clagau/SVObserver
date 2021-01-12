@@ -346,7 +346,7 @@ void SVEnumerateValueObjectClass::WriteDefaultValues(SvOi::IObjectWriter& rWrite
 
 void SVEnumerateValueObjectClass::LocalInitialize()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVEnumValueObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::SVEnumValueObjectType;
 
 	SetTypeName( _T("Enumeration") );
 

@@ -31,142 +31,56 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-SVPublishList::SVPublishList()
-{
-	hProtectionMutex   = hProtectionMutex = CreateMutex( nullptr, false, nullptr );
-	dwWaitTime		   = 2000;
-	m_pInspection	   = nullptr;
-}
-
-SVPublishList::~SVPublishList()
-{
-	Destroy();
-}
-
-void SVPublishList::Destroy()
-{
-	if( hProtectionMutex )
-	{
-		if( WaitForSingleObject( hProtectionMutex, dwWaitTime ) != WAIT_OBJECT_0 )
-			return;
-
-		CloseHandle( hProtectionMutex );
-		hProtectionMutex = nullptr;
-	}
-
-	RemoveAll();
-}
-
 void SVPublishList::Refresh(SvIe::SVTaskObjectClass * pRootObject)
 {
-	SVOutputInfoListClass newList;
-
 	// Find all outputs marked as selected for publishing
 	// Note:: both Lists must be from the same root object
 	// which at this point is SVToolSet
-	SVOutputInfoListClass l_OutputList;
-
-	pRootObject->GetOutputList( l_OutputList );
-
-	l_OutputList.GetSetAttributesList( SvPb::publishable, &newList );
-
-	SVPPQObject* pPPQ( nullptr );
-	SVOutputObjectList* pOutputList ( nullptr );
-	SVIOEntryHostStructPtrVector ppPPQEntries;
-	SVIOEntryHostStructPtr pIOEntry;
-	BOOL bOk;
-	long lPPQSize = 0;
-	long lPPQ = 0;
+	auto outputList = pRootObject->getOutputListFiltered(SvPb::publishable);
 
 	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 	// check for removed items
-	for( long i = GetSize() - 1; i >= 0; i-- )
+	auto iter_removeStart = std::remove_if(m_objectIdList.begin(), m_objectIdList.end(), [outputList](const auto objectId) 
+		{return std::none_of(outputList.begin(), outputList.end(), [objectId](auto* pObject) { return objectId == pObject->getObjectId(); }); });
+	auto iter = iter_removeStart;
+	// Now remove it from all of the PPQs
+	SVPPQObject* pPPQ = m_pInspection->GetPPQ();
+	if (nullptr != pPPQ)
 	{
-		SVOutObjectInfoStruct* pPublishedOutObjectInfo = GetAt( i );
-		bool found = false;
-
-		// try to find item in new list
-		for( int j = 0; j < newList.GetSize(); j++ )
+		while (m_objectIdList.end() != iter)
 		{
-			SVOutObjectInfoStruct* pOutObjectInfo = newList.GetAt( j );
-			if( pOutObjectInfo == pPublishedOutObjectInfo )
+			SVIOEntryHostStructPtrVector ppPPQEntries;
+			pPPQ->GetAllOutputs(ppPPQEntries);
+			auto iterPPQ = std::find_if(ppPPQEntries.begin(), ppPPQEntries.end(), [iter](const auto pEntry) { return *iter == pEntry->getObject()->getObjectId(); });
+			if (ppPPQEntries.end() != iterPPQ)
 			{
-				found = true;
-				break;
+				pPPQ->RemoveOutput(*iterPPQ);
 			}
-		}
-
-		if( !found ) // not found - have to remove it
-		{
-			bOk = ( nullptr != SVObjectManagerClass::Instance().GetObject( pPublishedOutObjectInfo->getObjectId() ) );
-			if( !bOk )
+			else
 			{
-				RemoveAt( i );
-				continue;
-			}// end if
-
-			m_pInspection->disconnectObjectInput(pPublishedOutObjectInfo->getObjectId());
-
-			// remove from the list
-			RemoveAt(i);
-
-			// Now remove it from all of the PPQs
-			pPPQ = m_pInspection->GetPPQ();
-
-			if( nullptr != pPPQ )
-			{
-				pPPQ->GetAllOutputs( ppPPQEntries );
-
-				lPPQSize = static_cast<long>(ppPPQEntries.size());
-
-				for( lPPQ = 0, found = false; lPPQ < lPPQSize; lPPQ++ )
-				{
-					pIOEntry = ppPPQEntries[lPPQ];
-					//@WARNING [gra][7.50][09.08.2017] Not this does not work for objects with index!
-					if( pIOEntry->getObject()->getObjectId() == pPublishedOutObjectInfo->getObjectId() )
-					{
-						pPPQ->RemoveOutput( pIOEntry );
-						found = true;
-					}// end if
-				}// end for
-			}
-			if( !found )
-			{
-				SvStl::MessageManager e(SvStl::MsgType::Log );
-				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorFindingPPQEntries, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17043_ErrorFindingPPQEntries );
+				SvStl::MessageManager e(SvStl::MsgType::Log);
+				e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorFindingPPQEntries, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17043_ErrorFindingPPQEntries);
 				DebugBreak();
 			}
-		}// end if
-	}// end for
+		}
+	}
+	m_objectIdList.erase(iter_removeStart, m_objectIdList.end());
 
 	// check for new items
-	for( int n = 0; n < newList.GetSize(); n++ )
+	for( auto* pIObject : outputList )
 	{
-		SVOutObjectInfoStruct* pOutObjectInfo = newList.GetAt( n );
-
-		bool found = false;
-
-		// check for new items
-		for( int j = 0; j < GetSize(); j++ )
-		{
-			SVOutObjectInfoStruct* pPublishedOutObjectInfo = GetAt( j );
-			if( pOutObjectInfo == pPublishedOutObjectInfo )
-			{
-				found = true;
-				break;
-			}
-		}
+		bool found = std::any_of(m_objectIdList.begin(), m_objectIdList.end(), [pIObject](auto objectId) { return objectId == pIObject->getObjectId(); });
 
 		if( !found ) // not in original list - have to add it
 		{
-			SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(pOutObjectInfo->getObjectId());
+			auto* pObject = dynamic_cast<SVObjectClass*>(pIObject);
 			if (nullptr != dynamic_cast<SvOi::IValueObject*> (pObject))
 			{
 				pObject->connectObject(m_pInspection->getObjectId());
 				SVOutputObjectPtr pOutput;
-
+				SVOutputObjectList* pOutputList(nullptr);
 				if (nullptr != pConfig) { pOutputList = pConfig->GetOutputObjectList(); }
 
 				if (nullptr != pOutputList)
@@ -174,12 +88,9 @@ void SVPublishList::Refresh(SvIe::SVTaskObjectClass * pRootObject)
 					pOutput = pOutputList->GetOutput(pObject->GetCompleteName().c_str());
 				}
 
-				// Add Outputs to the PPQ
-				pPPQ = m_pInspection->GetPPQ();
-
 				if (SvPb::SVBoolValueObjectType == pObject->GetObjectSubType())
 				{
-					pIOEntry = std::make_shared<SVIOEntryHostStruct>();
+					SVIOEntryHostStructPtr pIOEntry = std::make_shared<SVIOEntryHostStruct>();
 					pIOEntry->setLinkedObject(pObject);
 					pIOEntry->getObject()->SetObjectOwner(pObject->GetParent());
 					pIOEntry->m_ObjectType = SVHardwareManifest::isPlcSystem(pConfig->GetProductType()) ? IO_PLC_OUTPUT : IO_DIGITAL_OUTPUT;
@@ -195,7 +106,7 @@ void SVPublishList::Refresh(SvIe::SVTaskObjectClass * pRootObject)
 				}
 				else
 				{
-					pIOEntry = std::make_shared<SVIOEntryHostStruct>();
+					SVIOEntryHostStructPtr pIOEntry = std::make_shared<SVIOEntryHostStruct>();
 					pIOEntry->setLinkedObject(pObject);
 					pIOEntry->getObject()->SetObjectOwner(pObject->GetParent());
 					pIOEntry->m_ObjectType = IO_REMOTE_OUTPUT;
@@ -207,7 +118,7 @@ void SVPublishList::Refresh(SvIe::SVTaskObjectClass * pRootObject)
 					if (nullptr != pPPQ) { pPPQ->AddOutput(pIOEntry); }
 				}
 				// add to the list
-				Add(pOutObjectInfo);
+				m_objectIdList.push_back(pObject->getObjectId());
 			}// end if
 		}// end if
 	}// end for
@@ -220,75 +131,51 @@ void SVPublishList::Release(SvIe::SVTaskObjectClass*)
 	// Note:: both Lists must be from the same root object
 	// which at this point is SVToolSet
 	// check for removed items
-	for( long i = GetSize() - 1; i >= 0; i-- )
+	assert(m_pInspection);
+	SVPPQObject* pPPQ = m_pInspection->GetPPQ();
+	if (nullptr != pPPQ)
 	{
-		SVOutObjectInfoStruct* pPublishedOutObjectInfo = GetAt( i );
-		m_pInspection->disconnectObjectInput(pPublishedOutObjectInfo->getObjectId());
-		
-		// remove from the list
-		RemoveAt(i);
-
-		// Now remove it from all of the PPQs
-        assert( m_pInspection );
-		SVPPQObject* pPPQ = m_pInspection->GetPPQ();
-		if ( nullptr != pPPQ )
+		for (auto objectId : m_objectIdList)
 		{
+			// Now remove it from all of the PPQs
 			SVIOEntryHostStructPtrVector ppPPQEntries;
-			pPPQ->GetAllOutputs( ppPPQEntries );
-
-			long lPPQSize = static_cast<long>(ppPPQEntries.size());
-			for(long lPPQ = 0; lPPQ < lPPQSize; lPPQ++ )
+			pPPQ->GetAllOutputs(ppPPQEntries);
+			auto iterPPQ = std::find_if(ppPPQEntries.begin(), ppPPQEntries.end(), [objectId](const auto pEntry) { return objectId == pEntry->getObject()->getObjectId(); });
+			if (ppPPQEntries.end() != iterPPQ)
 			{
-				SVIOEntryHostStructPtr pIOEntry = ppPPQEntries[lPPQ];
-				//@WARNING [gra][7.50][09.08.2017] Not this does not work for objects with index!
-				if( pIOEntry->getObject()->getObjectId() == pPublishedOutObjectInfo->getObjectId() )
-				{
-					pPPQ->RemoveOutput( pIOEntry );
-				}// end if
-
-			}// end for
-		}
-
-	}// end for
+				pPPQ->RemoveOutput(*iterPPQ);
+			}
+		}// end for
+	}
+	// remove from the list
+	m_objectIdList.clear();
 
 }// end Release
 
 bool SVPublishList::RemovePublishedEntry(uint32_t id )
 {
-	for( int i = GetSize() - 1; i >= 0; i-- )
+	auto iter = std::find_if(m_objectIdList.begin(), m_objectIdList.end(), [id](auto entryId) { return id == entryId; });
+
+	if (m_objectIdList.end() != iter)// && pPublishedOutObjectInfo->getObjectId() == id )
 	{
-		SVOutObjectInfoStruct* pPublishedOutObjectInfo = GetAt( i );
-		if( pPublishedOutObjectInfo && pPublishedOutObjectInfo->getObjectId() == id )
+		// remove from the list
+		m_objectIdList.erase(iter);
+
+		// Now remove it from all of the PPQs
+		SVPPQObject* pPPQ = m_pInspection->GetPPQ();
+		if (nullptr != pPPQ)
 		{
-			// remove from the list
-			RemoveAt(i);
-
-			// Now remove it from all of the PPQs
-			SVPPQObject* pPPQ = m_pInspection->GetPPQ();
-
 			SVIOEntryHostStructPtrVector ppPPQEntries;
-			long lPPQSize = 0;			
-			if( nullptr != pPPQ )
+			pPPQ->GetAllOutputs(ppPPQEntries);
+			auto iterPPQ = std::find_if(ppPPQEntries.begin(), ppPPQEntries.end(), [id](const auto pEntry) { return id == pEntry->getObject()->getObjectId(); });
+			if (ppPPQEntries.end() != iterPPQ)
 			{
-				pPPQ->GetAllOutputs( ppPPQEntries );
-				lPPQSize = static_cast<long>(ppPPQEntries.size());
+				pPPQ->RemoveOutput(*iterPPQ);
 			}
+		}
 
-			for( long lPPQ = 0; lPPQ < lPPQSize; lPPQ++ )
-			{
-				SVIOEntryHostStructPtr pIOEntry = ppPPQEntries[lPPQ];
-				//@WARNING [gra][7.50][09.08.2017] Not this does not work for objects with index!
-				if( pIOEntry->getObject()->getObjectId() == pPublishedOutObjectInfo->getObjectId() )
-				{
-					pPPQ->RemoveOutput( pIOEntry );
-				}// end if
-
-			}// end for
-
-			return true;
-		}// end if
-
-	}// end for
+		return true;
+	}// end if
 
 	return false;
 }// end RemovePublishedEntry

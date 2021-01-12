@@ -355,7 +355,7 @@ SvPb::EmbeddedIdEnum TableObject::getNextFreeEmbeddedColumID()
 void TableObject::Initialize()
 {
 	// Set up your type
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::TableObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::TableObjectType;
 
 	BuildEmbeddedObjectList();
 	m_spSortContainer = std::make_shared<SvVol::ValueObjectSortContainer>();

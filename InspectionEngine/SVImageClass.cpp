@@ -25,7 +25,6 @@
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVObjectLibrary/SVOutputInfoListClass.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
@@ -153,8 +152,8 @@ void SVImageClass::init()
 
 	m_ImageType = SvPb::SVImageTypeEnum::SVImageTypeUnknown;
 
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVImageObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVImageMonoType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVImageObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::SVImageMonoType;
 
 	// derived classes that are not result images (i.e. SVMainImageClass)
 	// need to remove the PUBLISH attribute.
@@ -1129,7 +1128,7 @@ SvOi::ITRCImagePtr SVImageClass::getImageToWrite(const SvOi::ITriggerRecordRWPtr
 	return pImage;
 }
 
-void SVImageClass::GetOutputList(SVOutputInfoListClass& p_rOutputInfoList)
+void SVImageClass::getOutputList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter) const
 {
 	if (0 != ObjectAttributesAllowed())
 	{
@@ -1137,7 +1136,9 @@ void SVImageClass::GetOutputList(SVOutputInfoListClass& p_rOutputInfoList)
 		{
 			if (nullptr != pObject)
 			{
-				p_rOutputInfoList.Add(&(pObject->GetObjectOutputInfo()));
+				// cppcheck-suppress unreadVariable symbolName=inserter ; cppCheck doesn't know back_insert_iterator
+				// cppcheck-suppress useStlAlgorithm ; std::accumulate will not used because in the current way it is more clear
+				inserter = pObject;
 			}
 		}
 	}
@@ -1386,11 +1387,11 @@ void SVImageClass::setImageSubType()
 	m_ImageInfo.GetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, bandNumber);
 	if (1 == bandNumber)
 	{
-		m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVImageMonoType;
+		m_ObjectTypeInfo.m_SubType = SvPb::SVImageMonoType;
 	}
 	else if (3 == bandNumber)
 	{
-		m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVImageColorType;
+		m_ObjectTypeInfo.m_SubType = SvPb::SVImageColorType;
 	}
 }
 

@@ -2353,40 +2353,11 @@ STDMETHODIMP SVCommand::SVGetTransferValueDefinitionList(BSTR bstrInspectionName
 		SVToolSet* pToolSet = pInspection->GetToolSet();
 		SvIe::SVTaskObjectListClass* pTaskObjectList = static_cast <SvIe::SVTaskObjectListClass*> (pToolSet);
 
-		SVObjectPtrVector SelectedObjects;
+		std::vector<SvOi::IObjectClass*> selectedObjects;
+		pTaskObjectList->getOutputList(std::back_inserter(selectedObjects));
 
-		SVOutputInfoListClass l_OutputList;
-
-		pTaskObjectList->GetOutputList(l_OutputList);
-
-		size_t nCount = l_OutputList.GetSize();
-
-		for (int i = 0; i < static_cast<int>(nCount); i++)
-		{
-			// Get OutObjectInfoStruct...
-			SVOutObjectInfoStruct* pInfoItem = l_OutputList.GetAt(i);
-
-			SVObjectReference ObjectRef;
-			if (pInfoItem)
-			{
-				ObjectRef = pInfoItem->GetObjectReference();
-			}
-			else
-			{
-				assert(0);
-				break;
-			}
-
-			SVObjectClass* pObject = ObjectRef.getObject();
-
-			if (nullptr != dynamic_cast<SvOi::IValueObject*> (pObject))
-			{
-				if (pObject->ObjectAttributesSet() & SvPb::dataDefinitionValue) // if Data Definition List set.
-				{
-					SelectedObjects.push_back(pObject);
-				}
-			}
-		}
+		selectedObjects.erase(std::remove_if(selectedObjects.begin(), selectedObjects.end(), [](auto* pObject) 
+			{return nullptr == dynamic_cast<SvOi::IValueObject*> (pObject) || 0 == (pObject->ObjectAttributesSet() & SvPb::dataDefinitionValue); }), selectedObjects.end());
 
 		// Copy list to Safearray
 
@@ -2396,7 +2367,7 @@ STDMETHODIMP SVCommand::SVGetTransferValueDefinitionList(BSTR bstrInspectionName
 		SAFEARRAYBOUND l_saBounds[2];
 
 		// First Dimension number of objects in list..
-		l_saBounds[0].cElements = static_cast<ULONG>(SelectedObjects.size());
+		l_saBounds[0].cElements = static_cast<ULONG>(selectedObjects.size());
 		l_saBounds[0].lLbound = 0;
 
 		// Second Dimension is the parts fo the Transfer Definition
@@ -2407,18 +2378,18 @@ STDMETHODIMP SVCommand::SVGetTransferValueDefinitionList(BSTR bstrInspectionName
 		SAFEARRAY* l_psaData;	//( VT_VARIANT, l_saBounds);
 		l_psaData = ::SafeArrayCreate(VT_VARIANT, 2, &l_saBounds[0]);
 		long  l_Index[2];
-		for (size_t i = 0; i < SelectedObjects.size(); ++i)
+		for (size_t i = 0; i < selectedObjects.size(); ++i)
 		{
 			l_Index[0] = static_cast<long>(i);
 			// Name
 			l_Index[1] = 0;
 			_variant_t Value;
-			Value.SetString(SelectedObjects[i]->GetCompleteName().c_str());
+			Value.SetString(selectedObjects[i]->GetCompleteName().c_str());
 			/*hr = */::SafeArrayPutElement(l_psaData, l_Index, &Value);
 
 			// Writable
 			l_Index[1] = 1;
-			bool l_bWritable = (SelectedObjects[i]->ObjectAttributesAllowed() & SvPb::remotelySetable) == SvPb::remotelySetable;
+			bool l_bWritable = (selectedObjects[i]->ObjectAttributesAllowed() & SvPb::remotelySetable) == SvPb::remotelySetable;
 			Value.Clear();
 			Value.ChangeType(VT_BOOL);
 			Value = l_bWritable;
@@ -2427,7 +2398,7 @@ STDMETHODIMP SVCommand::SVGetTransferValueDefinitionList(BSTR bstrInspectionName
 			// Data Type
 			l_Index[1] = 2;
 			Value.Clear();
-			SvOi::IValueObject* pValueObject = dynamic_cast<SvOi::IValueObject*> (SelectedObjects[i]);
+			SvOi::IValueObject* pValueObject = dynamic_cast<SvOi::IValueObject*> (selectedObjects[i]);
 			if (nullptr != pValueObject)
 			{
 				Value.SetString(pValueObject->getTypeName().c_str());
@@ -2437,10 +2408,10 @@ STDMETHODIMP SVCommand::SVGetTransferValueDefinitionList(BSTR bstrInspectionName
 			// Enumeration List.
 			l_Index[1] = 3;
 			Value.Clear();
-			if (SelectedObjects[i]->GetObjectSubType() == SvPb::SVEnumValueObjectType)
+			if (selectedObjects[i]->GetObjectSubType() == SvPb::SVEnumValueObjectType)
 			{
 				// Get the strings from the enumeration value object class.
-				SvVol::SVEnumerateValueObjectClass* pEnumVO = dynamic_cast<SvVol::SVEnumerateValueObjectClass*>(SelectedObjects[i]);
+				SvVol::SVEnumerateValueObjectClass* pEnumVO = dynamic_cast<SvVol::SVEnumerateValueObjectClass*>(selectedObjects[i]);
 				if (nullptr != pEnumVO)
 				{
 					SAFEARRAYBOUND l_rgsabound[1];
@@ -2457,10 +2428,10 @@ STDMETHODIMP SVCommand::SVGetTransferValueDefinitionList(BSTR bstrInspectionName
 					Value.parray = l_psaTemp;
 				}
 			}
-			else if (SelectedObjects[i]->GetObjectSubType() == SvPb::SVBoolValueObjectType)
+			else if (selectedObjects[i]->GetObjectSubType() == SvPb::SVBoolValueObjectType)
 			{
 				// Get the strings from the enumeration value object class.
-				SvVol::SVBoolValueObjectClass* l_pBoolVO = dynamic_cast<SvVol::SVBoolValueObjectClass*>(SelectedObjects[i]);
+				SvVol::SVBoolValueObjectClass* l_pBoolVO = dynamic_cast<SvVol::SVBoolValueObjectClass*>(selectedObjects[i]);
 				if (nullptr != l_pBoolVO)
 				{
 					SvDef::StringVector ValidTypes;

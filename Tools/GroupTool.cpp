@@ -259,8 +259,8 @@ namespace SvTo
 		m_isClosed.SetDefaultValue(BOOL(true), true);			// Default for Failed is TRUE !!!
 
 		m_canResizeToParent = false;
-		m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
-		m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::GroupToolObjectType;
+		m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
+		m_ObjectTypeInfo.m_SubType = SvPb::GroupToolObjectType;
 		removeEmbeddedExtents();
 	}
 

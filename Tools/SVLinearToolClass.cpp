@@ -341,8 +341,8 @@ void SVLinearToolClass::init()
 {
 	m_canResizeToParent = true;
 	// Set up your type...
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType    = SvPb::SVLinearToolObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
+	m_ObjectTypeInfo.m_SubType    = SvPb::SVLinearToolObjectType;
 
 	//Special type names for extents
 	m_svRotationPointX.SetTypeName( _T("Extent X") );

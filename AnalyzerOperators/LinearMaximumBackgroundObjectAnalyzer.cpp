@@ -47,7 +47,7 @@ LinearMaximumBackgroundObjectAnalyzer::LinearMaximumBackgroundObjectAnalyzer( SV
 void LinearMaximumBackgroundObjectAnalyzer::init()
 {
 	// Identify our type
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVLineMaximumBackgroundObjectAnalyzerObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::SVLineMaximumBackgroundObjectAnalyzerObjectType;
 
 	SvOp::SVLinearEdgeProcessingClass *pEdgeA = new SvOp::SVLinearEdgeAProcessingClass(this);
 	SvOp::SVLinearEdgeProcessingClass *pEdgeB = new SvOp::SVLinearEdgeBProcessingClass(this);

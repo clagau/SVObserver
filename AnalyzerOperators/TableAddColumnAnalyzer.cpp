@@ -115,8 +115,8 @@ bool TableAddColumnAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMe
 void TableAddColumnAnalyzer::Initialize()
 {
 	// Set up your type
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::TableAnalyzerType;
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::TableAnalyzerAddColumnType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::TableAnalyzerType;
+	m_ObjectTypeInfo.m_SubType = SvPb::TableAnalyzerAddColumnType;
 
 	auto* pColumnEquation = new SvOp::IndexEquation(this);
 	pColumnEquation->SetEquationText(SvDef::cIndexKeyword);

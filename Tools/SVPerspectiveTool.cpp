@@ -338,8 +338,8 @@ bool SVPerspectiveToolClass::onRun( RunStatus &p_rRunStatus, SvStl::MessageConta
 void SVPerspectiveToolClass::LocalInitialize()
 {
 	// Set up your type...
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType    = SvPb::SVPerspectiveToolObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
+	m_ObjectTypeInfo.m_SubType    = SvPb::SVPerspectiveToolObjectType;
 
 	// Identify our input image...
 	m_InputImage.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);

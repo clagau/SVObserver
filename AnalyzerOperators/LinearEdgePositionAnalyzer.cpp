@@ -39,7 +39,7 @@ LinearEdgePositionAnalyzer::LinearEdgePositionAnalyzer( SVObjectClass* POwner, i
 void LinearEdgePositionAnalyzer::init()
 {
 	// Identify our type
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVLinearEdgePositionAnalyzerObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::SVLinearEdgePositionAnalyzerObjectType;
 
 	SvOp::SVLinearEdgeProcessingClass *pEdge = new SvOp::SVLinearEdgeAProcessingClass( this );
 

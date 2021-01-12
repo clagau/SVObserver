@@ -22,7 +22,7 @@ SV_IMPLEMENT_CLASS(SVEdgeDetect2FilterClass, SvPb::EdgeDetect2FilterClassId)
 SVEdgeDetect2FilterClass::SVEdgeDetect2FilterClass( SVObjectClass* POwner, int StringResourceID )
 						 :SVFilterClass( POwner, StringResourceID ) 
 {
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVEdgeDetect2FilterObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::SVEdgeDetect2FilterObjectType;
 }
 
 SVEdgeDetect2FilterClass::~SVEdgeDetect2FilterClass() 

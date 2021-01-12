@@ -48,8 +48,8 @@ void SVWindowToolClass::init()
 	m_canResizeToParent = true;
 	// Set up your type... in this case this will reference that this tool is a 
 	// Window Tool.
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVWindowToolObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::SVWindowToolObjectType;
 
 	BuildEmbeddedObjectList ();
 

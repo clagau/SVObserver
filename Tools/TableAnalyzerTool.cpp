@@ -212,8 +212,8 @@ void TableAnalyzerTool::LocalInitialize()
 	BuildInputObjectList();
 
 	// Set up your type
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVTableAnalyzerToolObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::SVTableAnalyzerToolObjectType;
 
 	// Hide and Remove Embedded Extents
 	removeEmbeddedExtents();

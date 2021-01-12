@@ -40,8 +40,8 @@ SVMathToolClass::SVMathToolClass( SVObjectClass* POwner, int StringResourceID )
 void SVMathToolClass::init(void)
 {
 	// Set up your type...
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.m_SubType    = SvPb::SVMathToolObjectType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
+	m_ObjectTypeInfo.m_SubType    = SvPb::SVMathToolObjectType;
 
 	// Hide and Remove Embedded Extents
 	removeEmbeddedExtents();

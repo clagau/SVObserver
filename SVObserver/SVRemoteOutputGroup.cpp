@@ -62,7 +62,7 @@ BOOL SVRemoteOutputGroup::Clear()
 
 BOOL SVRemoteOutputGroup::Create()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVRemoteOutputGroupType;
+	m_ObjectTypeInfo.m_ObjectType = SvPb::SVRemoteOutputGroupType;
 
 	m_bCreated = true;
 
@@ -82,7 +82,7 @@ BOOL SVRemoteOutputGroup::Destroy()
 bool SVRemoteOutputGroup::GetParameters(SvOi::IObjectWriter& rWriter) const
 {
 	// Unique Id
-	_variant_t svVariant = convertObjectIdToVariant(m_outObjectInfo.getObjectId());
+	_variant_t svVariant = convertObjectIdToVariant(getObjectId());
 	rWriter.WriteAttribute(SvXml::CTAG_UNIQUE_REFERENCE_ID, svVariant);
 	svVariant.Clear();
 
@@ -114,7 +114,7 @@ bool SVRemoteOutputGroup::SetParameters(SVTreeType& p_rTree, SVTreeType::SVBranc
 		result = SVObjectManagerClass::Instance().CloseUniqueObjectID(this);
 		if (result)
 		{
-			m_outObjectInfo.GetObjectReference().setObjectId(calcObjectId(svVariant));
+			setObjectId(calcObjectId(svVariant));
 			result = SVObjectManagerClass::Instance().OpenUniqueObjectID(this);
 		}
 		else
