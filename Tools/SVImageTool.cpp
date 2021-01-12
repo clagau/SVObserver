@@ -226,6 +226,16 @@ bool SVImageToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages
 {
 	bool Result = true;
 
+	SvIe::SVExtentPropertyInfoStruct info;
+	getToolExtent().GetExtentPropertyInfo(SvPb::SVExtentPropertyPositionPointX, info);
+	info.bSetByReset = true;
+	getToolExtent().SetExtentPropertyInfo(SvPb::SVExtentPropertyPositionPointX, info);
+	getToolExtent().getImageExtent().SetExtentProperty(SvPb::SVExtentPropertyPositionPointX, 0.);
+	getToolExtent().GetExtentPropertyInfo(SvPb::SVExtentPropertyPositionPointY, info);
+	info.bSetByReset = true;
+	getToolExtent().SetExtentPropertyInfo(SvPb::SVExtentPropertyPositionPointY, info);
+	getToolExtent().getImageExtent().SetExtentProperty(SvPb::SVExtentPropertyPositionPointY, 0.);
+
 	if( S_OK != UpdateTranslation() )
 	{
 		Result = false;
