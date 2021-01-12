@@ -13,7 +13,7 @@
 #pragma region Includes
 #include "SVIOLibrary/SVIOTriggerLoadLibraryClass.h"
 #include "SVLibrary/InitialInformation.h"
-#include "TriggerHandling/SVDigitizerLoadLibraryClass.h"
+#include "Triggering/SVDigitizerLoadLibraryClass.h"
 #pragma endregion Includes
 
 class InitialInformationHandler

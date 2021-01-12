@@ -24,9 +24,6 @@
     <ClInclude Include="GlobalConst.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="GlobalConstantData.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="ImageOperatorEnums.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -78,10 +75,5 @@
     <ClInclude Include="TriggerType.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="GlobalConstantData.inl">
-      <Filter>Headerdateien</Filter>
-    </None>
   </ItemGroup>
 </Project>

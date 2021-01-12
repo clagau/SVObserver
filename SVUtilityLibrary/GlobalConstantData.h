@@ -10,11 +10,11 @@
 //Moved to precompiled header: #include <set>
 //Moved to precompiled header: #include <vector>
 //Moved to precompiled header: #include <tuple>
-#include "ObjectDefines.h"
+#include "Definitions/ObjectDefines.h"
 #pragma endregion Includes
 
 
-namespace SvDef
+namespace SvUl
 {
 	struct GlobalConstantData
 	{
@@ -44,7 +44,7 @@ namespace SvDef
 
 #pragma region Member variables
 	public:
-		uint32_t		m_objectId{ SvDef::InvalidObjectId };			//The object unique ID or SvDef::InvalidObjectId
+		uint32_t	m_objectId{ SvDef::InvalidObjectId };		//The object unique ID or SvDef::InvalidObjectId
 		std::string	m_DottedName;				//The dotted name of the constant
 		_variant_t	m_Value;					//The value of the constant
 		std::string	m_Description;				//The description of the constant
@@ -56,7 +56,7 @@ namespace SvDef
 	typedef std::pair< GlobalConstantData, GlobalConstantData > GlobalConflictPair;
 	typedef std::vector< GlobalConflictPair > GlobalConflictPairVector;
 
-} //namespace SvDef
+} //namespace SvUl
 
 #pragma region Inline
 #include "GlobalConstantData.inl"

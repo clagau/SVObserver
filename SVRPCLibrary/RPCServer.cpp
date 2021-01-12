@@ -14,7 +14,7 @@
 
 #include "SVHttpLibrary/HttpServerConnection.h"
 #include "SVLogLibrary/Logging.h"
-#include "ErrorUtil.h"
+#include "SVStatusLibrary/ErrorUtil.h"
 
 namespace SvRpc
 {
@@ -106,8 +106,8 @@ void RPCServer::on_stream(int id, SvPenv::Envelope&& Request)
 			if (!std::get<0>(t))
 			{
 				// TODO better status code needed
-				auto err = build_error(SvPenv::internalError, "Client overloaded");
-				return SvSyl::SVFuture<void>::make_exceptional(errorToExceptionPtr(err));
+				auto err = SvUl::build_error(SvPenv::internalError, "Client overloaded");
+				return SvSyl::SVFuture<void>::make_exceptional(SvUl::errorToExceptionPtr(err));
 			}
 			auto seqNr = std::get<1>(t);
 			send_stream_response(id, txId, seqNr, std::move(Response));

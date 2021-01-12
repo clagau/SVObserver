@@ -9,7 +9,7 @@
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
-namespace SvDef
+namespace SvUl
 {
 #pragma region Public Methods
 	bool GlobalConstantData::operator<( const GlobalConstantData& Rhs ) const
@@ -70,4 +70,4 @@ namespace SvDef
 		return Result;
 	}
 #pragma endregion Public Methods
-} //namespace SvDef
+} //namespace SvUl

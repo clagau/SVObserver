@@ -11,7 +11,7 @@
 #include "SVValueObjectLibrary/BasicValueObject.h"
 #pragma endregion Includes
 
-namespace SvDef
+namespace SvUl
 {
 struct GlobalConstantData;
 }
@@ -97,13 +97,13 @@ private:
 	//! The method inserts a new Global Constant
 	//! \param rGlobalData <in> reference to the global data structure to insert
 	//************************************
-	void insertGlobalConstant( const SvDef::GlobalConstantData& rGlobalData ) const;
+	void insertGlobalConstant( const SvUl::GlobalConstantData& rGlobalData ) const;
 
 	//************************************
 	//! The method edits an existing Global Constant
 	//! \param rGlobalData <in> reference to the global data structure to edit
 	//************************************
-	void editGlobalConstant( const SvDef::GlobalConstantData& rGlobalData ) const;
+	void editGlobalConstant( const SvUl::GlobalConstantData& rGlobalData ) const;
  
 	//************************************
 	//! The method is called to update all the inspection documents

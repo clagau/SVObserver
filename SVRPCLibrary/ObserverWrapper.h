@@ -22,7 +22,7 @@
 //Moved to precompiled header: #include <functional>
 //Moved to precompiled header: #include <memory>
 
-#include "ErrorUtil.h"
+#include "SVStatusLibrary/ErrorUtil.h"
 #include "Observer.h"
 #include "OneOfUtil.h"
 #include "ServerStreamContext.h"
@@ -52,7 +52,7 @@ public:
 		if (!m_ReqUnwrapper.unwrap(req, std::move(envelope)))
 		{
 			SV_LOG_GLOBAL(warning) << "Envelope with unknown payload!";
-			observer.error(build_error(SvPenv::ErrorCode::internalError, "Unknown payload"));
+			observer.error(SvUl::build_error(SvPenv::ErrorCode::internalError, "Unknown payload"));
 			return;
 		}
 

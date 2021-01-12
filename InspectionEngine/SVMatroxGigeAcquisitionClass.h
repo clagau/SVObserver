@@ -25,7 +25,7 @@ namespace SvIe
 class SVMatroxGigeAcquisitionClass : public SVAcquisitionClass
 {
 public:
-	explicit SVMatroxGigeAcquisitionClass( const SvTi::SVAcquisitionConstructParams& p_rParams );
+	explicit SVMatroxGigeAcquisitionClass( const SVAcquisitionConstructParams& p_rParams );
 	virtual ~SVMatroxGigeAcquisitionClass();
 
 	virtual bool IsValid() const override;

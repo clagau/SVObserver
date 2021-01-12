@@ -68,7 +68,6 @@
 #include "SVIOLibrary/SVInputObjectList.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVLibrary/SVPackedFile.h"
-#include "SVLibrary/DisplayMessageBox.h"
 #include "SVLibrary/SVOINIClass.h"
 #include "SVLibrary/SVWinUtility.h"
 #include "SVLogLibrary/Logging.h"
@@ -77,6 +76,7 @@
 #include "SVMatroxLibrary/SVMatroxSystemInterface.h"
 #include "SVMatroxLibrary/SVOLicenseManager.h"
 #include "SVMessage/SVMessage.h"
+#include "SVMFCControls/DisplayMessageBox.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVOLibrary/SVMemoryManager.h"
 #include "SVSharedMemoryLibrary/ShareEvents.h"
@@ -96,8 +96,8 @@
 #include "SVXMLLibrary/ObsoleteItemChecker.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVXMLLibrary/SVObjectXMLWriter.h"
-#include "TriggerInformation/SVHardwareManifest.h"
-#include "TriggerInformation/SVTriggerProcessingClass.h"
+#include "SVOLibrary/SVHardwareManifest.h"
+#include "Triggering/SVTriggerProcessingClass.h"
 
 
 
@@ -1816,7 +1816,7 @@ BOOL SVObserverApp::InitInstance()
 		exit(-SvStl::Err_10009_LoadOfResourceDllFailed);
 	}
 
-	SvStl::MessageManager::setShowDisplayFunction(boost::bind(&SvLib::DisplayMessageBox::showDialog, _1, _2, _3, _4));
+	SvStl::MessageManager::setShowDisplayFunction(boost::bind(&SvMc::DisplayMessageBox::showDialog, _1, _2, _3, _4));
 
 	// load File based write filter DLL. SVObserver will function normally (except for FBWF functionally, of course) if "fbwflib.dll" is not found
 	SvUl::LoadDll::Instance().getDll(SvO::FbwfDllName, ExtrasEngine::ms_FbwfDllInstance);
@@ -1891,7 +1891,7 @@ BOOL SVObserverApp::InitInstance()
 	//must be called before SVDigitizerProcessingClass-Startup
 	SvOi::createTriggerRecordControllerInstance(SvOi::TRC_DataType::Writer);
 
-	SvTi::SVHardwareManifest::Instance().Startup();
+	SVHardwareManifest::Instance().Startup();
 	SvTi::SVTriggerProcessingClass::Instance().Startup();
 	SvIe::SVDigitizerProcessingClass::Instance().Startup();
 
@@ -2206,7 +2206,7 @@ int SVObserverApp::ExitInstance()
 
 	SvTi::SVTriggerProcessingClass::Instance().Shutdown();
 	SvIe::SVDigitizerProcessingClass::Instance().Shutdown();
-	SvTi::SVHardwareManifest::Instance().Shutdown();
+	SVHardwareManifest::Instance().Shutdown();
 
 	SVObjectManagerClass::Instance().Shutdown();
 	SVClassRegisterListClass::Instance().Shutdown();
@@ -2735,11 +2735,11 @@ SVIODoc* SVObserverApp::NewSVIODoc(LPCTSTR DocName, SVIOController& IOController
 					if (nullptr != pConfig)
 					{
 						//Now that IO constructed check which tabs to hide
-						if (false == SvTi::SVHardwareManifest::isPlcSystem(pConfig->GetProductType()))
+						if (false == SVHardwareManifest::isPlcSystem(pConfig->GetProductType()))
 						{
 							HideIOTab(SVIOPlcOutputsViewID);
 						}
-						if (false == SvTi::SVHardwareManifest::isDiscreteIOSystem(pConfig->GetProductType()))
+						if (false == SVHardwareManifest::isDiscreteIOSystem(pConfig->GetProductType()))
 						{
 							HideIOTab(SVIODiscreteInputsViewID);
 							HideIOTab(SVIODiscreteOutputsViewID);
@@ -4019,13 +4019,13 @@ bool SVObserverApp::ShowConfigurationAssistant(int /*= 3*/,
 	else if (_T("00") == m_rInitialInfo.m_IOBoard)
 	{
 		// Get Trigger count from the TriggerDLL (in this case the DigitizerDLL)
-		const SvTi::SVIMTypeInfoStruct& info = SvTi::SVHardwareManifest::GetSVIMTypeInfo(eSVIMType);
+		const SVIMTypeInfoStruct& info = SVHardwareManifest::GetSVIMTypeInfo(eSVIMType);
 		l_svCapable.SetNonIOSVIM(info.m_MaxTriggers);
 	}
 	else if (_T("30") == m_rInitialInfo.m_IOBoard)
 	{
 		// Get Trigger count from the SVPlcIO.dll
-		const SvTi::SVIMTypeInfoStruct& info = SvTi::SVHardwareManifest::GetSVIMTypeInfo(eSVIMType);
+		const SVIMTypeInfoStruct& info = SVHardwareManifest::GetSVIMTypeInfo(eSVIMType);
 		l_svCapable.SetStrobeInverters(info.m_MaxTriggers);
 		l_svCapable.SetTriggerInverters(info.m_MaxTriggers);
 		l_svCapable.SetTriggerCount(info.m_MaxTriggers);
@@ -4277,7 +4277,7 @@ HRESULT SVObserverApp::DisplayCameraManager(SVIMProductEnum eProductType)
 
 		if (S_OK == hr)
 		{
-			if (SvTi::SVHardwareManifest::IsMatroxGige(eProductType))
+			if (SVHardwareManifest::IsMatroxGige(eProductType))
 			{
 				SVGigeCameraManagerDlg dlg;
 				dlg.DoModal();
@@ -5090,7 +5090,7 @@ void SVObserverApp::Start()
 		SvSml::SharedMemWriter::Instance().CreateManagment();
 
 		double preTriggerTimeWidow{ 0.0 };
-		if (SvTi::SVHardwareManifest::isDiscreteIOSystem(pConfig->GetProductType()))
+		if (SVHardwareManifest::isDiscreteIOSystem(pConfig->GetProductType()))
 		{
 			preTriggerTimeWidow = (0.0 == m_rInitialInfo.m_preTriggerTimeWindow) ? SvDef::cDefaultPreTriggerTimeWindow : m_rInitialInfo.m_preTriggerTimeWindow;
 		}

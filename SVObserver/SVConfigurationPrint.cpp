@@ -53,13 +53,13 @@
 #include "Operators/SVResultDouble.h"
 #include "RemoteMonitorList.h"
 #include "RemoteMonitorListHelper.h"
-#include "SVSystemLibrary\SVThreadManager.h"
+#include "SVSystemLibrary/SVThreadManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
 #include "RootObject.h"
-#include "TriggerHandling/SVTriggerClass.h"
-#include "TriggerInformation/SVTriggerObject.h"
+#include "Triggering/SVTriggerClass.h"
+#include "Triggering/SVTriggerObject.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG

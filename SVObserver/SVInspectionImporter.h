@@ -12,7 +12,7 @@
 
 #pragma region Includes
 #include "SVImportedInspectionInfo.h"
-#include "Definitions/GlobalConstantData.h"
+#include "SVUtilityLibrary/GlobalConstantData.h"
 #pragma endregion Includes
 
 class SVIProgress;
@@ -24,7 +24,7 @@ private:
 	~SVInspectionImporter();
 
 public:
-	static HRESULT Import(const std::string& filename, const std::string& inspectionName, const std::string& cameraName, SVImportedInspectionInfo& inspectionInfo, SvDef::GlobalConflictPairVector& rGlobalConflicts, SVIProgress& rProgress);
+	static HRESULT Import(const std::string& filename, const std::string& inspectionName, const std::string& cameraName, SVImportedInspectionInfo& inspectionInfo, SvUl::GlobalConflictPairVector& rGlobalConflicts, SVIProgress& rProgress);
 	static HRESULT GetProperties(const std::string& filename, long& rNewDisbaleMethod, long& rEnableAuxExtents, unsigned long& rVersionNumber);
 private:
 	static HRESULT loadAndReplaceData(const std::string& inFileName, const std::string& rNewInspectionName, SvXml::SVXMLMaterialsTree& rTree);
@@ -36,7 +36,7 @@ struct SVInspectionImportHelper
 	std::string inspectionName;
 	std::string cameraName;
 	SVImportedInspectionInfo info;
-	SvDef::GlobalConflictPairVector GlobalConflicts;
+	SvUl::GlobalConflictPairVector GlobalConflicts;
 
 	SVInspectionImportHelper(const std::string& p_filename, const std::string& p_inspectionName, const std::string& p_cameraName)
 	: filename(p_filename)

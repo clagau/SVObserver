@@ -15,7 +15,7 @@
 #include "SVDigitizerLoadLibraryClass.h"
 #include "SVTriggerClass.h"
 #include "SVIOLibrary/SVIOTriggerLoadLibraryClass.h"
-#include "TriggerInformation/SVTriggerConstants.h"
+#include "Triggering/SVTriggerConstants.h"
 #pragma endregion Includes
 
 namespace SvTh

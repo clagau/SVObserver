@@ -18,7 +18,7 @@
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
-namespace  SvSyl
+namespace  SvUl
 {
 	
 	bool ModuleInfo::listProcessModules(DWORD dwPID, std::vector<std::string>& modulnames)
@@ -82,4 +82,4 @@ namespace  SvSyl
 	
 	}
 
-}
+}//namespace  SvUl

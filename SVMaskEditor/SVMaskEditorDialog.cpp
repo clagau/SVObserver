@@ -14,7 +14,7 @@
 
 #include "SVMaskEditor.h"
 #include "SVMaskEditorDialog.h"
-#include "SVLibrary\SVGraphix.h"
+#include "SVLibrary/SVGraphix.h"
 #include "SVMatroxLibrary\SVMatroxBufferInterface.h"
 #include "SVMatroxLibrary\SVMatroxDisplayInterface.h"
 #include "SVMatroxLibrary\SVMatroxImageInterface.h"

@@ -46,7 +46,7 @@
 #include "SVObjectLibrary\SVObjectBuilder.h"
 #include "SVObjectLibrary\SVObjectClass.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
-#include "SVProtoBuf\ConverterHelper.h"
+#include "SVProtoBuf/ConverterHelper.h"
 #include "CommandInternalHelper.h"
 #include "ObjectSelectorFilter.h"
 #include "ObjectInterfaces\ILinkedObject.h"
@@ -1107,10 +1107,10 @@ SvPb::InspectionCmdResponse setEmbeddedValues(SvPb::SetEmbeddedValuesRequest req
 			if (rItem.ismodified() || rItem.isdefaultmodified())
 			{
 				_variant_t value;
-				ConvertProtobufToVariant(rItem.values().value(), value);
+				SvPb::ConvertProtobufToVariant(rItem.values().value(), value);
 				// Default value has no array index
 				_variant_t defaultValue;
-				ConvertProtobufToVariant(rItem.values().defaultvalue(), defaultValue);
+				SvPb::ConvertProtobufToVariant(rItem.values().defaultvalue(), defaultValue);
 				ChangedValues.push_back(SvOi::SetValueStruct{ pValueObject, value, defaultValue, rItem.arrayindex() });
 			}
 		}
@@ -1865,7 +1865,7 @@ SvPb::InspectionCmdResponse validateValueParameterExternalTool(SvPb::ValidateVal
 	if (nullptr != pExternalToolTask)
 	{
 		_variant_t value;
-		ConvertProtobufToVariant(request.newvalue(), value);
+		SvPb::ConvertProtobufToVariant(request.newvalue(), value);
 		pExternalToolTask->validateValueParameter(request.taskobjectid(), request.index(), value);
 	}
 	else

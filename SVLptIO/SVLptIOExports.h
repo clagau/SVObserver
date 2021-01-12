@@ -9,7 +9,7 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <comdef.h>
-#include "TriggerInformation/SVTriggerInfoStruct.h"
+#include "Triggering/SVTriggerInfoStruct.h"
 #pragma endregion Includes
 
 #pragma region exports

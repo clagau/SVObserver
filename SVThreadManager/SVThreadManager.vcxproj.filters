@@ -33,6 +33,15 @@
     <ClCompile Include="SVThreadManagerExports.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="SVAsyncProcedure.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVThread.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVThreadManager.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\AutoBuild\AutoBuild.h">
@@ -51,6 +60,15 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVThreadManagerExports.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVAsyncProcedure.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVThread.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVThreadManager.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

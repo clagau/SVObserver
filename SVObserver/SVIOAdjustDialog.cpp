@@ -20,7 +20,7 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "TriggerInformation/SVHardwareManifest.h"
+#include "SVOLibrary/SVHardwareManifest.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -185,7 +185,7 @@ BOOL SVIOAdjustDialog::OnInitDialog()
 			m_Items[name] = pIOModuleReady;
 		}// end if
 
-		if ( SvTi::SVHardwareManifest::IsProductTypeRAID( pConfig->GetProductType() ) )
+		if ( SVHardwareManifest::IsProductTypeRAID( pConfig->GetProductType() ) )
 		{
 			SVIOEntryHostStructPtr pIORaid = pConfig->GetRaidErrorBit();
 			if(nullptr != pIORaid && SvDef::InvalidObjectId == pIORaid->m_IOId && SV_IS_KIND_OF(pIORaid->getObject(), SvVol::SVBoolValueObjectClass ) )

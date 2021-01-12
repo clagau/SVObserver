@@ -14,7 +14,7 @@
 #pragma region Includes
 #include "resource.h"
 #include "SVMaskEditorWnd.h"
-#include "SVLibrary\SVGraphix.h"
+#include "SVLibrary/SVGraphix.h"
 #include "SVMatroxLibrary\SVMatroxBuffer.h"
 #pragma endregion Includes
 

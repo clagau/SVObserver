@@ -9,7 +9,7 @@
 #pragma region Includes
 //Moved to precompiled header: #include <boost\function.hpp>
 #include "IValueObject.h"
-#include "SVProtobuf/SVRC.h"
+#include "SVProtoBuf/SVRC.h"
 #include "Definitions/SVObjectTypeInfoStruct.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/NameObjectIdList.h"

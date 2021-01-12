@@ -12,7 +12,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{12178FE8-6FBA-45F2-A311-0B1659D6C1BE}</ProjectGuid>
-    <RootNamespace>TriggerHandling</RootNamespace>
+    <RootNamespace>Triggering</RootNamespace>
     <Keyword>Win64Proj</Keyword>
     <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
@@ -86,17 +86,29 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="IODeviceBase.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="SVDigitizerLoadLibraryClass.cpp" />
+    <ClCompile Include="SVOTriggerList.cpp" />
     <ClCompile Include="SVTriggerClass.cpp" />
+    <ClCompile Include="SVTriggerObject.cpp" />
+    <ClCompile Include="SVTriggerProcessingClass.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="IODeviceBase.h" />
     <ClInclude Include="Stdafx.h" />
     <ClInclude Include="SVDigitizerLoadLibraryClass.h" />
+    <ClInclude Include="SVInternalTrigger.h" />
+    <ClInclude Include="SVOTriggerList.h" />
+    <ClInclude Include="SVOTriggerObj.h" />
     <ClInclude Include="SVTriggerClass.h" />
+    <ClInclude Include="SVTriggerConstants.h" />
+    <ClInclude Include="SVTriggerInfoStruct.h" />
+    <ClInclude Include="SVTriggerObject.h" />
+    <ClInclude Include="SVTriggerProcessingClass.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -16,7 +16,7 @@
 //Moved to precompiled header: #include <boost/config.hpp>
 //Moved to precompiled header: #include <boost/function.hpp>
 
-#include "SVProtobuf/SVO-Enum.h"
+#include "SVProtoBuf/SVO-Enum.h"
 #pragma endregion Includes
 
 namespace SvPb

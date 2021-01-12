@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVGigeCameraProxy.h"
 #include "CameraLibrary/SVDeviceParamCollection.h"
-#include "TriggerHandling/SVDigitizerLoadLibraryClass.h"
+#include "Triggering/SVDigitizerLoadLibraryClass.h"
 #pragma endregion Includes
 
 SVGigeCameraProxy::SVGigeCameraProxy()

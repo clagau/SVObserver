@@ -16,11 +16,11 @@
 #include "SVAcquisitionClass.h"
 #include "SVImageProcessingClass.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
-#include "TriggerHandling/SVDigitizerLoadLibraryClass.h"
+#include "Triggering/SVDigitizerLoadLibraryClass.h"
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
 #include "SVMessage/SVMessage.h"
-#include "TriggerInformation/SVAcquisitionConstructParams.h"
+#include "SVOLibrary/SVAcquisitionConstructParams.h"
 #include "SVDigitizerProcessingClass.h"
 #include "SVFileSystemLibrary/SVFileNameManagerClass.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
@@ -40,7 +40,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SVAcquisitionClass::SVAcquisitionClass(const SvTi::SVAcquisitionConstructParams& p_rParams)
+SVAcquisitionClass::SVAcquisitionClass(const SVAcquisitionConstructParams& p_rParams)
 	: AcquisitionDevice(p_rParams.m_DigitizerName.c_str())
 	, m_LUTAndLRSet(p_rParams.m_LUTAndLRSet)
 	, m_rTRController{SvOi::getTriggerRecordControllerRWInstance()}

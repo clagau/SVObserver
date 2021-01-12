@@ -14,7 +14,7 @@
 #pragma region Includes
 #include "SVFileSystemLibrary/SVFileNameArrayClass.h"
 #include "SVImageLibrary/SVLightReference.h"
-#include "SVImageLibrary/SVLut.h"
+#include "SVOLibrary/SVLut.h"
 #include "CameraLibrary/SVDeviceParamCollection.h"
 #pragma endregion Includes
 

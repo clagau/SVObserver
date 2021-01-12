@@ -29,7 +29,7 @@
 //#include <Psapi.h>
 #pragma endregion Includes
 #include <tlhelp32.h> 
-#include "SVSystemLibrary/ModuleInfo.h"
+#include "SVUtilityLibrary/ModuleInfo.h"
 
 
 #ifdef _DEBUG
@@ -282,7 +282,7 @@ void SVTADlgExternalSelectDllPage::OnBrowse()
 				InitializeDll(false, false);
 				m_valueController.Set<CString>(SvPb::EmbeddedIdEnum::DllFileNameEId, m_strDLLPath);
 				
-				bool isUsed =  SvSyl::ModuleInfo::isProcessModuleName(GetCurrentProcessId(), DLLname);
+				bool isUsed =  SvUl::ModuleInfo::isProcessModuleName(GetCurrentProcessId(), DLLname);
 
 				if (isUsed)
 				{

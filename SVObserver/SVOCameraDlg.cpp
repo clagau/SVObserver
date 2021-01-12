@@ -20,7 +20,7 @@
 #include "SVOInspectionObj.h"
 #include "InspectionEngine/SVAcquisitionClass.h"
 #include "InspectionEngine/SVDigitizerProcessingClass.h"
-#include "TriggerInformation/SVHardwareManifest.h"
+#include "SVOLibrary/SVHardwareManifest.h"
 #include "SVOResource\ConstGlobalSvOr.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "Definitions/StringTypeDef.h"
@@ -72,8 +72,8 @@ BOOL SVOCameraDlg::OnInitDialog()
     m_pParent = (SVOConfigAssistantDlg*)GetParent()->GetParent();
     m_bNewConfig = m_pParent->GetNewConfigFlag();
 	
-	if( SvTi::SVHardwareManifest::IsDigitalSVIM( m_pParent->GetProductType() )
-		&& SvTi::SVHardwareManifest::IsDigitalSVIM( TheSVObserverApp.GetSVIMType() ))
+	if( SVHardwareManifest::IsDigitalSVIM( m_pParent->GetProductType() )
+		&& SVHardwareManifest::IsDigitalSVIM( TheSVObserverApp.GetSVIMType() ))
 	{
 		m_btnCameraManager.ShowWindow(SW_SHOW);
 	}
@@ -104,7 +104,7 @@ void SVOCameraDlg::OnUpdateAdvancedBtn( CCmdUI* pCmdUI )
 		{
 			if ( !pCameraObj->IsFileAcquisition() )
 			{
-				if ( SvTi::SVHardwareManifest::IsDigitalSVIM( m_pParent->GetProductType() ) )
+				if ( SVHardwareManifest::IsDigitalSVIM( m_pParent->GetProductType() ) )
 				{
 					if( pCameraObj->GetCameraFile().empty() )
 					{
@@ -267,7 +267,7 @@ void SVOCameraDlg::OnBtnPropVc()
 						}
 					}
 
-					if ( SvTi::SVHardwareManifest::IsDigitalSVIM( m_pParent->GetProductType() ) )
+					if ( SVHardwareManifest::IsDigitalSVIM( m_pParent->GetProductType() ) )
 					{
 						// when the camera file changes, load the camera file parameters into the device (so it's in sync with the Virtual Camera)
 						int Digitizer = SvIe::SVDigitizerProcessingClass::Instance().getDigitizerID( pCameraObj->GetCameraID() );

@@ -10,7 +10,7 @@
 //Moved to precompiled header: #include <vector>
 #include "SVOResource/resource.h"
 #include "GridCtrlLibrary\GridCtrl.h"
-#include "Definitions/GlobalConstantData.h"
+#include "SVUtilityLibrary/GlobalConstantData.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -26,7 +26,7 @@ namespace SvOg
 
 	#pragma region Constructor
 	public:
-		explicit GlobalConstantConflictDlg(SvDef::GlobalConflictPairVector& rGlobalPairs, CWnd* pParent = nullptr);
+		explicit GlobalConstantConflictDlg(SvUl::GlobalConflictPairVector& rGlobalPairs, CWnd* pParent = nullptr);
 		virtual ~GlobalConstantConflictDlg();
 	#pragma endregion Constructor
 
@@ -39,14 +39,14 @@ namespace SvOg
 		virtual BOOL OnInitDialog() override;
 
 		void LoadGlobalData();
-		void setGridGlobalData(const SvDef::GlobalConstantData& rGlobalData, int RowIndex, int& rColumnIndex );
+		void setGridGlobalData(const SvUl::GlobalConstantData& rGlobalData, int RowIndex, int& rColumnIndex );
 		void convertValueToString( const _variant_t& rValue, std::string& rText,  std::string& rType );
 	#pragma endregion Protected Methods
 
 	#pragma region Member variables
 	private:
 		SvGcl::GridCtrl m_Grid;						//The grid displaying the conflicting values
-		SvDef::GlobalConflictPairVector& m_rGlobalPairs;  //This is the conflict Global Data as data pair
+		SvUl::GlobalConflictPairVector& m_rGlobalPairs;  //This is the conflict Global Data as data pair
 	#pragma endregion Member variables
 	};
 } //namespace SvOg

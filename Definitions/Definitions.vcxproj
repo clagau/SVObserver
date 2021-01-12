@@ -88,7 +88,6 @@
     <ClInclude Include="BandEnums.h" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="GlobalConst.h" />
-    <ClInclude Include="GlobalConstantData.h" />
     <ClInclude Include="ImageOperatorEnums.h" />
     <ClInclude Include="LinearEdgeEnums.h" />
     <ClInclude Include="ObjectDefines.h" />
@@ -106,9 +105,6 @@
     <ClInclude Include="SVUserMessage.h" />
     <ClInclude Include="TextDefineSvDef.h" />
     <ClInclude Include="TriggerType.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="GlobalConstantData.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

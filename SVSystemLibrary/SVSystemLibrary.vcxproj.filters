@@ -24,13 +24,7 @@
     <ClCompile Include="SVImageConvertorGDI.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVLockableClass.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVSAXContentHandlerImpl.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVThreadManager.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVVersionInfo.cpp">
@@ -39,21 +33,21 @@
     <ClCompile Include="FileVersion.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="ModuleInfo.cpp">
+    <ClCompile Include="SVAsyncProcedure.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVThread.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVAsyncProcedure.cpp">
+    <ClCompile Include="SVThreadManager.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVLockableClass.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVAsyncProcedure.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVEncodeDecodeUtilities.h">
@@ -65,12 +59,6 @@
     <ClInclude Include="SVImageConvertorGDI.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVLockableClass.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVObserverEnums.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVSAXContentHandlerImpl.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -80,19 +68,22 @@
     <ClInclude Include="SVSequencer.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVThread.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVThreadManager.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVVersionInfo.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="FileVersion.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="ModuleInfo.h">
+    <ClInclude Include="SVAsyncProcedure.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVThread.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVThreadManager.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVLockableClass.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

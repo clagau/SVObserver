@@ -48,7 +48,6 @@
 #include "RangeXDialogClass.h"
 #include "Operators/SVRange.h"
 #include "SVToolSet.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "InspectionCommands/CommandExternalHelper.h"
 #include "InspectionCommands/CommandFunction.h"
 #include "SVOGui/BlobAnalyzer2Sheet.h"

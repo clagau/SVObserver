@@ -14,7 +14,7 @@
 
 #include "SharedMemoryAccessInterface.h"
 #include "SVOverlayLibrary/OverlayController.h"
-#include "SVProtobuf/SVRC.h"
+#include "SVProtoBuf/SVRC.h"
 #include "SVSharedMemoryLibrary/ShareControl.h"
 #include "SVRPCLibrary/Task.h"
 #include "ObjectInterfaces/ITriggerRecordControllerR.h"

@@ -173,7 +173,6 @@
   <ItemGroup>
     <ClInclude Include="ClientStreamContext.h" />
     <ClInclude Include="EnvelopeUtil.h" />
-    <ClInclude Include="ErrorUtil.h" />
     <ClInclude Include="Observer.h" />
     <ClInclude Include="ObserverWrapper.h" />
     <ClInclude Include="OneOfUtil.h" />

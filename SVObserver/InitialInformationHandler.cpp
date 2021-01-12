@@ -20,8 +20,8 @@
 #include "SVLibrary/SVOINILoader.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "TriggerInformation/SVTriggerProcessingClass.h"
-#include "TriggerInformation/SVTriggerConstants.h"
+#include "Triggering/SVTriggerProcessingClass.h"
+#include "Triggering/SVTriggerConstants.h"
 #pragma endregion Includes
 
 

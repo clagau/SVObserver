@@ -16,7 +16,7 @@
 #include "SVOConfigAssistantDlg.h"
 #include "SVOPropertyPageDlg.h"
 #include "SVOResource/ConstGlobalSvOr.h"
-#include "TriggerInformation/SVOTriggerObj.h"
+#include "Triggering/SVOTriggerObj.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG

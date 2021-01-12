@@ -35,8 +35,8 @@
 #include "SVGigeCameraFileLibrary/SVGigeCameraParamValidateClass.h"
 #include "SVPPQObject.h"
 #include "SVPPQConstants.h"
-#include "TriggerInformation/SVHardwareManifest.h"
-#include "TriggerInformation/SVTriggerConstants.h"
+#include "SVOLibrary/SVHardwareManifest.h"
+#include "Triggering/SVTriggerConstants.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
@@ -374,7 +374,7 @@ void SVOPropertyPageDlg::SetupAdvancedCamera()
 			pRoot->SetInfoText(_T("Advanced camera properties"));
 			
 			assert( m_eProduct != SVIM_PRODUCT_TYPE_UNKNOWN );
-			if ( SvTi::SVHardwareManifest::IsDigitalSVIM( m_eProduct ) )
+			if ( SVHardwareManifest::IsDigitalSVIM( m_eProduct ) )
 			{
 				// load options based on camera file
 				const SVDeviceParamCollection& rCameraFileParams = m_CameraObj.GetCameraFileParams();
@@ -1318,7 +1318,7 @@ void SVOPropertyPageDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 						break;
 				}// end switch ( w->DataType() )
 			}
-			if (SvTi::SVHardwareManifest::IsMatroxGige(m_eProduct))
+			if (SVHardwareManifest::IsMatroxGige(m_eProduct))
 			{
 				SVGigeCameraParamValidateClass l_svValidate;
 
@@ -1967,7 +1967,7 @@ HRESULT SVOPropertyPageDlg::AdjustCameraImageFormat( LPCTSTR sSelectedFormat, SV
 		// Get image info for single grab buffer
 		pDevice->GetImageInfo(&l_ImageInfo);	//&&& this won't necessarily work with cameras that support color
 
-		if (SvTi::SVHardwareManifest::IsMatroxGige(m_eProduct))
+		if (SVHardwareManifest::IsMatroxGige(m_eProduct))
 		{
 			// Adjust for Binning
 			long verticalBinning = 1;
@@ -2002,7 +2002,7 @@ HRESULT SVOPropertyPageDlg::AdjustCameraImageFormat( LPCTSTR sSelectedFormat, SV
 		}
 	}
 
-	if (SvTi::SVHardwareManifest::IsMatroxGige(m_eProduct))
+	if (SVHardwareManifest::IsMatroxGige(m_eProduct))
 	{
 		SVCameraDeviceImageFormatUpdater imageFormatUpdater(rw, format.m_strName, l_WidthMax, l_HeightMax);
 		if (S_OK == ShowGigeROIDlg(imageFormatUpdater, format, l_ImageInfo, pDevice, rCameraDeviceFormat, l_CurrentParams))

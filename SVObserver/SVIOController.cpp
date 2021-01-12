@@ -22,7 +22,7 @@
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
-#include "TriggerInformation/SVHardwareManifest.h"
+#include "SVOLibrary/SVHardwareManifest.h"
 #pragma endregion Includes
 
 ///For this class it is not necessary to call SV_IMPLEMENT_CLASS as it is a base class and only derived classes are instantiated.
@@ -63,7 +63,7 @@ void SVIOController::initializeOutputs()
 {
 	SVConfigurationObject* pConfig = dynamic_cast<SVConfigurationObject*> (GetParent());
 
-	if (nullptr != pConfig && SvTi::SVHardwareManifest::isDiscreteIOSystem(pConfig->GetProductType()))
+	if (nullptr != pConfig && SVHardwareManifest::isDiscreteIOSystem(pConfig->GetProductType()))
 	{
 		m_discreteIO = true;
 		if(nullptr == m_pModuleReady)

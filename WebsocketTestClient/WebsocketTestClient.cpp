@@ -28,7 +28,7 @@
 #include "SvHttpLibrary/DefaultSettings.h"
 #include "SVLogLibrary/Logging.h"
 #include "SVProtoBuf\SVRC.h"
-#include "SVRPCLibrary/ErrorUtil.h"
+#include "SVStatusLibrary/ErrorUtil.h"
 #include "SVRPCLibrary/RPCClient.h"
 #include "WebsocketLibrary/RunRequest.inl"
 #include "WebsocketLibrary/SVRCClientService.h"

@@ -23,7 +23,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-namespace SvLib
+namespace SvMc
 {
 	constexpr int Button1 = 0;
 	constexpr int Button2 = 1;

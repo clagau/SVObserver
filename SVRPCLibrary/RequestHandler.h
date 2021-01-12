@@ -18,7 +18,7 @@
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <memory>
 
-#include "ErrorUtil.h"
+#include "SVStatusLibrary/ErrorUtil.h"
 #include "Observer.h"
 #include "ObserverWrapper.h"
 #include "RequestHandlerBase.h"
@@ -94,7 +94,7 @@ protected:
 		}
 
 		SV_LOG_GLOBAL(warning) << "No request handler for payload type " << payloadType;
-		Task.error(build_error(SvPenv::ErrorCode::notImplemented, "No handler for given payload type."));
+		Task.error(SvUl::build_error(SvPenv::ErrorCode::notImplemented, "No handler for given payload type."));
 	}
 
 	void onStream(SvPenv::Envelope&& Envelope, Observer<SvPenv::Envelope> Observer, ServerStreamContext::Ptr Context) override
@@ -114,7 +114,7 @@ protected:
 		}
 
 		SV_LOG_GLOBAL(warning) << "No request handler for payload type " << payloadType;
-		Observer.error(build_error(SvPenv::ErrorCode::notImplemented, "No handler for given payload type."));
+		Observer.error(SvUl::build_error(SvPenv::ErrorCode::notImplemented, "No handler for given payload type."));
 	}
 
 private:

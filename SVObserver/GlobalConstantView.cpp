@@ -17,7 +17,7 @@
 #include "SVObserver.h"
 #include "TextDefinesSvO.h"
 #include "Definitions/GlobalConst.h"
-#include "Definitions/GlobalConstantData.h"
+#include "SVUtilityLibrary/GlobalConstantData.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVOGui/TextDefinesSvOg.h"
@@ -156,7 +156,7 @@ bool GlobalConstantView::editItem( int Item )
 {
 	bool Result( false );
 
-	SvDef::GlobalConstantData GlobalData;
+	SvUl::GlobalConstantData GlobalData;
 	SvOg::GlobalConstantDlg GlobalDlg( GlobalData, this );
 
 	SvDef::StringVector GlobalConstantList;
@@ -271,13 +271,13 @@ int GlobalConstantView::insertItem(const SvVol::BasicValueObjectPtr& rpObject, i
 	{
 	case VT_R8:
 		{
-			Type = SvOg::GlobalConstantTypes[SvDef::GlobalConstantData::DecimalType];
+			Type = SvOg::GlobalConstantTypes[SvUl::GlobalConstantData::DecimalType];
 			ValueText = SvUl::Format( _T("%.06f"), Value.dblVal );
 		}
 		break;
 	case VT_BSTR:
 		{
-			Type = SvOg::GlobalConstantTypes[SvDef::GlobalConstantData::TextType];
+			Type = SvOg::GlobalConstantTypes[SvUl::GlobalConstantData::TextType];
 			ValueText = SvUl::createStdString( Value );
 		}
 		break;
@@ -300,7 +300,7 @@ int GlobalConstantView::insertItem(const SvVol::BasicValueObjectPtr& rpObject, i
 	return InsertPos;
 }
 
-void GlobalConstantView::insertGlobalConstant( const SvDef::GlobalConstantData& rGlobalData ) const
+void GlobalConstantView::insertGlobalConstant( const SvUl::GlobalConstantData& rGlobalData ) const
 {
 	SvVol::BasicValueObjectPtr pGlobalObject = RootObject::setRootChildValue( rGlobalData.m_DottedName.c_str(),  rGlobalData.m_Value );
 
@@ -317,7 +317,7 @@ void GlobalConstantView::insertGlobalConstant( const SvDef::GlobalConstantData& 
 	}
 }
 
-void GlobalConstantView::editGlobalConstant( const SvDef::GlobalConstantData& rGlobalData ) const
+void GlobalConstantView::editGlobalConstant( const SvUl::GlobalConstantData& rGlobalData ) const
 {
 	SvVol::BasicValueObject* pGlobalObject = dynamic_cast<SvVol::BasicValueObject*> ( SVObjectManagerClass::Instance().GetObject( rGlobalData.m_objectId ) );
 

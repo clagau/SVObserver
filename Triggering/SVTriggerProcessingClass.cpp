@@ -12,8 +12,8 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVTriggerProcessingClass.h"
-#include "SVHardwareManifest.h"
-#include "TriggerHandling/SVTriggerClass.h"
+#include "SVOLibrary/SVHardwareManifest.h"
+#include "Triggering/SVTriggerClass.h"
 #include "SVIOLibrary/SVIOTriggerLoadLibraryClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes

@@ -18,7 +18,7 @@
 #include "SVExtentLineStruct.h"
 #include "SVExtentMultiLineStruct.h"
 #include "SVUtilityLibrary/SVPoint.h"
-#include "SVProtobuf/SVO-Enum.h"
+#include "SVProtoBuf/SVO-Enum.h"
 #include "SVProtoBuf/InspectionCommands.h"
 #pragma endregion Includes
 

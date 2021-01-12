@@ -16,7 +16,7 @@
 //Moved to precompiled header: #include <boost/function.hpp>
 //Moved to precompiled header: #include <boost/bind.hpp>
 #include "SVMFCControls/SVKnobControl.h"
-#include "TriggerInformation/SVTriggerObject.h"
+#include "Triggering/SVTriggerObject.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 

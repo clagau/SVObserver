@@ -13,7 +13,7 @@
 #pragma region Includes
 //Moved to precompiled header: #include <atomic>
 //Moved to precompiled header: #include <functional>
-#include "SVProtobuf/SVRC-Enum.h"
+#include "SVProtoBuf/SVRC-Enum.h"
 #pragma endregion Includes
 
 #define SV_STATE_UNKNOWN		0x00000000

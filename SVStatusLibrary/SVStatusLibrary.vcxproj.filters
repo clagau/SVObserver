@@ -110,5 +110,8 @@
     <ClInclude Include="RunStatus.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="ErrorUtil.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

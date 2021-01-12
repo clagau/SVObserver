@@ -37,9 +37,14 @@
 #pragma region Precompiled Headers
 #include <windows.h>
 
+#include < boost\function.hpp >
 #include <comdef.h>
+#include <ctime>
+#include <functional>
 #include <list>
 #include <map>
+#include <mutex>
+#include <set>
 #include <sstream>
 #include <string>
 #include <tchar.h>

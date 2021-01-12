@@ -13,7 +13,7 @@
 #pragma region Includes
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <set>
-#include "TriggerHandling/SVTriggerClass.h"
+#include "Triggering/SVTriggerClass.h"
 #pragma endregion Includes
 
 class SVIOTriggerLoadLibraryClass;

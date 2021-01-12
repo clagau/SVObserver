@@ -14,7 +14,7 @@
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
 #include "SVImageClass.h"
-#include "SVProtobuf/SVO-Enum.h"
+#include "SVProtoBuf/SVO-Enum.h"
 #include "ObjectInterfaces/ITaskObject.h"
 #include "ObjectInterfaces/IValueObject.h"
 #include "SVObjectLibrary/SVObjectInfoArrayClass.h"

@@ -41,7 +41,7 @@ public:
 		SVLutTransformOperation* m_pType;
 		std::string m_Type;
 		SVLutTransformTypeInfo() {m_eType = LutTransformTypeUnknown; m_pType = nullptr;}
-		SVLutTransformTypeInfo(SVLutTransformOperationEnum eType, SVLutTransformOperation* pType, const std::string& rType) {m_eType = eType; m_pType = pType; m_Type = rType;}
+		SVLutTransformTypeInfo(SVLutTransformOperationEnum eType, SVLutTransformOperation* pType, const std::string& rType):m_Type(rType){m_eType = eType; m_pType = pType;}
 	};
 	typedef std::map<SVLutTransformOperationEnum, SVLutTransformTypeInfo> SVLutTransformTypeInfoMap;
 public:

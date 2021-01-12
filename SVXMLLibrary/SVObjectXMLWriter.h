@@ -16,7 +16,7 @@
 //Moved to precompiled header: #include <ostream>
 //Moved to precompiled header: #include <boost/function.hpp>
 
-#include "SVUtilityLibrary/XMLwriter.h"
+#include "SVXMLLibrary/XMLwriter.h"
 #include "ObjectInterfaces/IObjectWriter.h"
 #pragma endregion Includes
 

@@ -26,7 +26,7 @@
 #include "InspectionEngine/SVCameraInfoStruct.h"
 #include "SVIOLibrary/SVIOEntryHostStruct.h"
 #include "SVObjectLibrary/SVObjectReference.h"
-#include "TriggerInformation/SVTriggerInfoStruct.h"
+#include "Triggering/SVTriggerInfoStruct.h"
 #include "ObjectInterfaces/ITriggerRecordRW.h"
 #pragma endregion Includes
 

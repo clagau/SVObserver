@@ -33,7 +33,6 @@ namespace SvSyl
 		}
 	}
 
-
 	bool SVLockableClass::Lock( DWORD DWWaitTime /* = INFINITE */ ) const
 	{
 		bool l_Status = ( nullptr != hProtectionMutex );

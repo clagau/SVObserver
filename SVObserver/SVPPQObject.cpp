@@ -47,9 +47,9 @@
 #include "SVValueObjectLibrary/SVVariantValueObjectClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
-#include "TriggerInformation/SVHardwareManifest.h"
-#include "TriggerInformation/SVTriggerObject.h"
-#include "TriggerHandling/SVTriggerClass.h"
+#include "SVOLibrary/SVHardwareManifest.h"
+#include "Triggering/SVTriggerObject.h"
+#include "Triggering/SVTriggerClass.h"
 #include "ObjectInterfaces/ITriggerRecordControllerRW.h"
 #pragma endregion Includes
 
@@ -1939,7 +1939,7 @@ void SVPPQObject::AddDefaultOutputs()
 		{
 			SVIOEntryHostStructPtr pIOEntry = std::make_shared<SVIOEntryHostStruct>();
 			pIOEntry->setLinkedObject(dynamic_cast<SVObjectClass*> (&rOutput));
-			pIOEntry->m_ObjectType = SvTi::SVHardwareManifest::isPlcSystem(pConfig->GetProductType()) ? IO_PLC_OUTPUT : IO_DIGITAL_OUTPUT;
+			pIOEntry->m_ObjectType = SVHardwareManifest::isPlcSystem(pConfig->GetProductType()) ? IO_PLC_OUTPUT : IO_DIGITAL_OUTPUT;
 			pIOEntry->m_Enabled = true;
 
 			AddOutput(pIOEntry);

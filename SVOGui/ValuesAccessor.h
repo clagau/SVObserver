@@ -51,8 +51,8 @@ public:
 			for (auto& rItem : responseCmd.getembeddedvaluesresponse().list())
 			{
 				_variant_t value, defaultValue;
-				ConvertProtobufToVariant(rItem.value(), value);
-				ConvertProtobufToVariant(rItem.defaultvalue(), defaultValue);
+				SvPb::ConvertProtobufToVariant(rItem.value(), value);
+				SvPb::ConvertProtobufToVariant(rItem.defaultvalue(), defaultValue);
 				rValues[rItem.embeddedid()] = {rItem.objectid(), value, defaultValue};
 			}
 		}
@@ -78,8 +78,8 @@ public:
 			pEntry->set_arrayindex(rValue.second.GetArrayIndex());
 			pEntry->mutable_values()->set_objectid(rValue.second.GetObjectID());
 			pEntry->mutable_values()->set_embeddedid(rValue.first);
-			ConvertVariantToProtobuf(rValue.second.GetValue(), pEntry->mutable_values()->mutable_value());
-			ConvertVariantToProtobuf(rValue.second.GetDefaultValue(), pEntry->mutable_values()->mutable_defaultvalue());
+			SvPb::ConvertVariantToProtobuf(rValue.second.GetValue(), pEntry->mutable_values()->mutable_value());
+			SvPb::ConvertVariantToProtobuf(rValue.second.GetDefaultValue(), pEntry->mutable_values()->mutable_defaultvalue());
 		}
 
 		HRESULT hr = SvCmd::InspectionCommands(inspectionID, requestCmd, &responseCmd);

@@ -8,7 +8,6 @@
 // * .Current Version : $Revision:   1.0  $
 // * .Check In Date   : $Date:   18 Apr 2013 18:10:12  $
 // ******************************************************************************
-//DirectoryUtilities.h moved from SVCmnLib to SVLibrary 
 
 #pragma region Includes
 #include "stdafx.h"
@@ -18,6 +17,7 @@
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
+// cppcheck-suppress unusedFunction
 bool CreateDirPath( LPCTSTR Path)
 {
 	int nBackCount = 0;

@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "TriggerInformation/IODeviceBase.h"
+#include "Triggering/IODeviceBase.h"
 #pragma endregion Includes
 
 constexpr unsigned long cMaxSoftwareTriggers = 4;

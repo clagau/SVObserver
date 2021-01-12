@@ -133,8 +133,6 @@
     <ClCompile Include="SVImagePropertiesClass.cpp" />
     <ClCompile Include="SVImagingDeviceParams.cpp" />
     <ClCompile Include="SVLightReference.CPP" />
-    <ClCompile Include="SVLut.cpp" />
-    <ClCompile Include="SVLutTransform.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImageFileUtilities.h" />
@@ -153,8 +151,6 @@
     <ClInclude Include="SVImagePropertiesClass.h" />
     <ClInclude Include="SVImagingDeviceParams.h" />
     <ClInclude Include="SVLightReference.H" />
-    <ClInclude Include="SVLut.h" />
-    <ClInclude Include="SVLutTransform.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SVImageInfoClass.inl" />

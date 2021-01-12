@@ -12,7 +12,7 @@
 
 #pragma region Includes
 #include "resource.h"
-#include "TriggerInformation/SVTriggerInfoStruct.h"
+#include "Triggering/SVTriggerInfoStruct.h"
 #pragma endregion Includes
 
 class SVIOConfigurationInterfaceClass;

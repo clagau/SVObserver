@@ -7,7 +7,7 @@
 /// for displaying the object in the navigator
 //******************************************************************************
 #pragma once
-#include "SVProtobuf/SVO-Enum.h"
+#include "SVProtoBuf/SVO-Enum.h"
 #include "Definitions/ObjectDefines.h"
 namespace SvOi
 {

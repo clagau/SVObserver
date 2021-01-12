@@ -31,8 +31,8 @@
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "Tools/SVArchiveTool.h"
 #include "Tools/SVTool.h"
-#include "TriggerHandling/SVTriggerClass.h"
-#include "TriggerInformation/SVTriggerObject.h"
+#include "Triggering/SVTriggerClass.h"
+#include "Triggering/SVTriggerObject.h"
 #pragma endregion Includes
 
 const std::vector<SvPb::EmbeddedIdEnum>& NonPrintEmbeddeds();

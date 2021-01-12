@@ -8,7 +8,7 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <iterator>
-#include "SVProtobuf/SVO-Enum.h"
+#include "SVProtoBuf/SVO-Enum.h"
 #include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 

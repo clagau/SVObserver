@@ -10,7 +10,7 @@
 #include "stdafx.h"
 #include "ExternalToolTaskController.h"
 #include "InspectionCommands/CommandExternalHelper.h"
-#include "SVProtoBuf\ConverterHelper.h"
+#include "SVProtoBuf/ConverterHelper.h"
 #pragma endregion Includes
 
 

@@ -9,7 +9,7 @@
 
 //Moved to precompiled header: #include <comdef.h>
 //Moved to precompiled header: #include <vector>
-#include "TriggerInformation/IODeviceBase.h"
+#include "Triggering/IODeviceBase.h"
 
 namespace SvPlc
 {

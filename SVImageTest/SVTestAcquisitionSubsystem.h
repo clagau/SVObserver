@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "TriggerHandling/SVDigitizerLoadLibraryClass.h"
+#include "Triggering/SVDigitizerLoadLibraryClass.h"
 #pragma endregion Includes
 
 class SVTestAcquisitionClass;

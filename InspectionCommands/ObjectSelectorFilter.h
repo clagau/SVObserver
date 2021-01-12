@@ -7,7 +7,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVProtobuf/SVO-Enum.h"
+#include "SVProtoBuf/SVO-Enum.h"
 #include "ObjectInterfaces/IObjectClass.h"
 #include "ObjectInterfaces/IValueObject.h"
 #pragma endregion Includes

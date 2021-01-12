@@ -12,7 +12,7 @@
 #include <sstream>
 #include <string>
 
-#include "SVProtobuf/Envelope.h"
+#include "SVProtoBuf/Envelope.h"
 
 namespace std
 {
@@ -29,7 +29,7 @@ static std::string to_string(const SvPenv::Error& err)
 
 } // namespace std
 
-namespace SvRpc
+namespace SvUl
 {
 inline std::runtime_error errorToException(const SvPenv::Error& err)
 {

@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "TriggerHandling/SVDigitizerLoadLibraryClass.h"
+#include "Triggering/SVDigitizerLoadLibraryClass.h"
 #include "SVIOLibrary/SVIOTriggerLoadLibraryClass.h"
 #include "InitialInformationHandler.h"
 #include "SVSecurity/SVSecurityManager.h"
@@ -21,7 +21,7 @@
 #include "SVGlobal.h"
 #include "SVStatusLibrary/SVOIntelRAIDStatusClass.h"
 #include "SVLibrary/SVUtilityIniClass.h"
-#include "SVSystemLibrary/SVObserverEnums.h"
+#include "SVOLibrary/SVObserverEnums.h"
 #pragma endregion Includes
 
 #pragma region Declarations

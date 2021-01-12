@@ -18,7 +18,7 @@
 #include "SVOCameraObj.h"
 #include "SVOPPQObj.h"
 #include "SVOInspectionObj.h"
-#include "TriggerInformation/SVOTriggerObj.h"
+#include "Triggering/SVOTriggerObj.h"
 #include "SVOResource\ConstGlobalSvOr.h"
 
 #pragma endregion Includes

@@ -164,7 +164,7 @@ static bool ImportPPQInputs(SVTreeType& rTree, Insertor insertor)
 }
 
 template<typename SVTreeType>
-static bool importGlobalConstants( SVTreeType& rTree, SvDef::GlobalConstantDataSet& rImportedGlobals )
+static bool importGlobalConstants( SVTreeType& rTree, SvUl::GlobalConstantDataSet& rImportedGlobals )
 {
 	bool Result( true );
 
@@ -177,7 +177,7 @@ static bool importGlobalConstants( SVTreeType& rTree, SvDef::GlobalConstantDataS
 
 		while( Result && nullptr != hItemChild )
 		{
-			SvDef::GlobalConstantData GlobalData;
+			SvUl::GlobalConstantData GlobalData;
 			_variant_t Value;
 
 			GlobalData.m_DottedName = rTree.getBranchName( hItemChild );
@@ -205,9 +205,9 @@ static bool importGlobalConstants( SVTreeType& rTree, SvDef::GlobalConstantDataS
 	return Result;
 }
 
-static void checkGlobalConstants( const SvDef::GlobalConstantDataSet& rImportedGlobals, SvDef::GlobalConflictPairVector& rGlobalConflicts )
+static void checkGlobalConstants( const SvUl::GlobalConstantDataSet& rImportedGlobals, SvUl::GlobalConflictPairVector& rGlobalConflicts )
 {
-	SvDef::GlobalConstantDataSet CurrentGlobals;
+	SvUl::GlobalConstantDataSet CurrentGlobals;
 
 	SvVol::BasicValueObjects::ValueVector GlobalObjects;
 
@@ -215,7 +215,7 @@ static void checkGlobalConstants( const SvDef::GlobalConstantDataSet& rImportedG
 	SvVol::BasicValueObjects::ValueVector::const_iterator Iter( GlobalObjects.begin() );
 	while( GlobalObjects.end() != Iter && nullptr != *Iter )
 	{
-		SvDef::GlobalConstantData GlobalData;
+		SvUl::GlobalConstantData GlobalData;
 		//Important here we intensionally do not fill the m_objectId value
 		GlobalData.m_DottedName = (*Iter)->GetCompleteName();
 		(*Iter)->getValue( GlobalData.m_Value );
@@ -225,11 +225,11 @@ static void checkGlobalConstants( const SvDef::GlobalConstantDataSet& rImportedG
 		++Iter;
 	}
 
-	SvDef::GlobalConstantDataSet GlobalDiffs;
+	SvUl::GlobalConstantDataSet GlobalDiffs;
 
 	std::set_difference( rImportedGlobals.begin(), rImportedGlobals.end(), CurrentGlobals.begin(), CurrentGlobals.end(), std::inserter( GlobalDiffs, GlobalDiffs.begin() ) );
 
-	SvDef::GlobalConstantDataSet::const_iterator DiffIter( GlobalDiffs.cbegin() );
+	SvUl::GlobalConstantDataSet::const_iterator DiffIter( GlobalDiffs.cbegin() );
 	while( GlobalDiffs.cend() != DiffIter  )
 	{
 		SvVol::BasicValueObjectPtr pGlobalConstant;
@@ -250,7 +250,7 @@ static void checkGlobalConstants( const SvDef::GlobalConstantDataSet& rImportedG
 		}
 		else
 		{
-			SvDef::GlobalConstantData GlobalData;
+			SvUl::GlobalConstantData GlobalData;
 
 			GlobalData.m_objectId = pGlobalConstant->getObjectId();
 			GlobalData.m_DottedName = pGlobalConstant->GetCompleteName();
@@ -266,12 +266,12 @@ static void checkGlobalConstants( const SvDef::GlobalConstantDataSet& rImportedG
 
 typedef std::insert_iterator<SVImportedInputList> InputListInsertor;
 
-HRESULT LoadInspectionXml(SvXml::SVXMLMaterialsTree& rXmlTree, const std::string& zipFilename, const std::string& inspectionName, const std::string& cameraName, SVImportedInspectionInfo& inspectionInfo, SvDef::GlobalConflictPairVector& rGlobalConflicts, SVIProgress& rProgress, int& currentOp, int numOperations)
+HRESULT LoadInspectionXml(SvXml::SVXMLMaterialsTree& rXmlTree, const std::string& zipFilename, const std::string& inspectionName, const std::string& cameraName, SVImportedInspectionInfo& inspectionInfo, SvUl::GlobalConflictPairVector& rGlobalConflicts, SVIProgress& rProgress, int& currentOp, int numOperations)
 {
 	HRESULT hr = S_OK;
 	_bstr_t bstrRevisionHistory;
 	_bstr_t bstrChangedNode;
-	SvDef::GlobalConstantDataSet ImportedGlobals;
+	SvUl::GlobalConstantDataSet ImportedGlobals;
 
 	rProgress.UpdateText(_T("Importing Dependent Files..."));
 	rProgress.UpdateProgress(++currentOp, numOperations);
@@ -384,7 +384,7 @@ HRESULT LoadInspectionXml(SvXml::SVXMLMaterialsTree& rXmlTree, const std::string
 	return hr;
 }
 
-HRESULT SVInspectionImporter::Import(const std::string& filename, const std::string& inspectionName, const std::string& cameraName, SVImportedInspectionInfo& inspectionInfo, SvDef::GlobalConflictPairVector& rGlobalConflicts, SVIProgress& rProgress)
+HRESULT SVInspectionImporter::Import(const std::string& filename, const std::string& inspectionName, const std::string& cameraName, SVImportedInspectionInfo& inspectionInfo, SvUl::GlobalConflictPairVector& rGlobalConflicts, SVIProgress& rProgress)
 {
 	HRESULT result = S_OK;
 	::CoInitialize(nullptr);

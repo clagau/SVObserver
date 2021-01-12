@@ -12,20 +12,17 @@
 #include "stdafx.h"
 #include "SVTriggerDeviceParams.h"
 
-namespace SvTi
+SVTriggerDeviceParams::SVTriggerDeviceParams()
+: m_Name( _T( "" ) ), m_Channel( -1 )
 {
-	SVTriggerDeviceParams::SVTriggerDeviceParams()
-	: m_Name( _T( "" ) ), m_Channel( -1 )
-	{
-	}
+}
 
-	SVTriggerDeviceParams::SVTriggerDeviceParams( const SVTriggerDeviceParams& p_rObject )
-	: m_Name( p_rObject.m_Name ), m_Channel( p_rObject.m_Channel )
-	{
-	}
+SVTriggerDeviceParams::SVTriggerDeviceParams( const SVTriggerDeviceParams& p_rObject )
+: m_Name( p_rObject.m_Name ), m_Channel( p_rObject.m_Channel )
+{
+}
 
-	SVTriggerDeviceParams::SVTriggerDeviceParams( LPCTSTR p_szName, int p_Channel )
-		: m_Name( (nullptr != p_szName) ? p_szName : std::string() ), m_Channel( p_Channel )
-	{
-	}
-} //namespace SvTi
+SVTriggerDeviceParams::SVTriggerDeviceParams( LPCTSTR p_szName, int p_Channel )
+	: m_Name( (nullptr != p_szName) ? p_szName : std::string() ), m_Channel( p_Channel )
+{
+}

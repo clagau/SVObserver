@@ -14,6 +14,7 @@
 #include "SVLut.h"
 #pragma endregion Includes
 
+
 SVLutInfo::SVLutInfo() : mHandle(0), muiFormat(SVLUT_FORMAT_NEUTRAL), muiBands(0), muiBandSize(0), muiMaxValue(0), mpTransform(nullptr)
 {
 }
@@ -47,7 +48,7 @@ void SVLutInfo::Cleanup()
 	mpTransform = nullptr;
 }
 
-const SVLutInfo& SVLutInfo::operator = (const SVLutInfo& rhs)
+SVLutInfo& SVLutInfo::operator = (const SVLutInfo& rhs)
 {
 	if (this != &rhs)
 	{
@@ -213,7 +214,7 @@ SVLutBand::~SVLutBand()
 	// nothing necessary because all members self-cleanup
 }
 
-const SVLutBand& SVLutBand::operator = ( const SVLutBand& rhs )
+SVLutBand& SVLutBand::operator = ( const SVLutBand& rhs )
 {
 	assert( this != &rhs );
 	if ( this != &rhs )
@@ -433,7 +434,7 @@ SVLut::~SVLut()
 	// nothing necessary because all members self-cleanup
 }
 
-const SVLut& SVLut::operator = ( const SVLut& rhs )
+SVLut& SVLut::operator = ( const SVLut& rhs )
 {
 	if ( this != &rhs )
 	{
@@ -464,8 +465,8 @@ void SVLut::CopyNoTransform( const SVLut& rhs )
 
 bool SVLut::CopyBandData(const SVLutBand& lutband)
 {
-	assert( lutband.Band() >= 0 && lutband.Band() < mInfo.Bands() );
-	if ( lutband.Band() >= 0 && lutband.Band() < mInfo.Bands() )
+	assert( lutband.Band() < mInfo.Bands() );
+	if ( lutband.Band() < mInfo.Bands() )
 	{
 		m_Bands[ lutband.Band() ].CopyBandData(lutband);
 		return true;
@@ -707,11 +708,13 @@ SVLutTestCases::SVLutTestCases()
 	TRACE("-----Begin LUT Test Cases-----\n");
 #endif
 
+#if 0  //commented out to avoid Cppcheck warnings. Uncomment for full testing
 	SVLutEntry entry;
 	entry = 5;
 	SVLutValueType val = 3;
 	val = entry;
 	entry = val;
+#endif
 
 	SVLut lut;
 	SVLutInfo info;
@@ -747,9 +750,6 @@ SVLutTestCases::SVLutTestCases()
 	info.SetTransform(*pTransform);
 
 	info.SetTransformOperation(*pOperation);
-
-	int a=0;
-	a++;
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_LUT)
 	TRACE("-----Done LUT Test Cases-----\n");

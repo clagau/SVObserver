@@ -38,7 +38,7 @@ namespace SvOg
 #pragma endregion Declarations
 
 #pragma region Constructor
-	GlobalConstantConflictDlg::GlobalConstantConflictDlg(SvDef::GlobalConflictPairVector& rGlobalPairs, CWnd* pParent /*nullptr*/)
+	GlobalConstantConflictDlg::GlobalConstantConflictDlg(SvUl::GlobalConflictPairVector& rGlobalPairs, CWnd* pParent /*nullptr*/)
 		: CDialog(GlobalConstantConflictDlg::IDD, pParent)
 		, m_rGlobalPairs( rGlobalPairs )
 	{
@@ -88,7 +88,7 @@ namespace SvOg
 
 	void GlobalConstantConflictDlg::LoadGlobalData()
 	{
-		SvDef::GlobalConflictPairVector::const_iterator Iter( m_rGlobalPairs.cbegin() );
+		SvUl::GlobalConflictPairVector::const_iterator Iter( m_rGlobalPairs.cbegin() );
 		int RowIndex( 0 );
 		
 		for( int i=0; i < DataSets*GridColumnNumber; i++ )
@@ -99,8 +99,8 @@ namespace SvOg
 		RowIndex++;
 		while( m_rGlobalPairs.cend() != Iter )
 		{
-			const SvDef::GlobalConstantData& rCurrentGlobalData = Iter->first;
-			const SvDef::GlobalConstantData& rImportGlobalData = Iter->second;
+			const SvUl::GlobalConstantData& rCurrentGlobalData = Iter->first;
+			const SvUl::GlobalConstantData& rImportGlobalData = Iter->second;
 
 			int ColumnIndex( 0 );
 			setGridGlobalData( rCurrentGlobalData, RowIndex, ColumnIndex );
@@ -110,7 +110,7 @@ namespace SvOg
 		}
 	}
 
-	void GlobalConstantConflictDlg::setGridGlobalData(const SvDef::GlobalConstantData& rGlobalData, int RowIndex, int& rColumnIndex )
+	void GlobalConstantConflictDlg::setGridGlobalData(const SvUl::GlobalConstantData& rGlobalData, int RowIndex, int& rColumnIndex )
 	{
 		//The using is needed due to the RUNTIME_CLASS which does not accept namespaces
 		using namespace SvGcl;
@@ -143,13 +143,13 @@ namespace SvOg
 		case VT_R8:
 			{
 				rText = SvUl::Format( _T("%.06f"), rValue.dblVal );
-				rType = GlobalConstantTypes[ SvDef::GlobalConstantData::DecimalType ];
+				rType = GlobalConstantTypes[ SvUl::GlobalConstantData::DecimalType ];
 			}
 			break;
 		case VT_BSTR:
 			{
 				rText = SvUl::createStdString(rValue);
-				rType = GlobalConstantTypes[ SvDef::GlobalConstantData::TextType ];
+				rType = GlobalConstantTypes[ SvUl::GlobalConstantData::TextType ];
 			}
 			break;
 		default:
@@ -175,7 +175,7 @@ namespace SvOg
 				pCell->SetCheck( State );
 			}
 			//Swap the selection in the list
-			SvDef::GlobalConflictPairVector::iterator Iter( m_rGlobalPairs.begin() );
+			SvUl::GlobalConflictPairVector::iterator Iter( m_rGlobalPairs.begin() );
 			std::advance( Iter, pItem->iRow - 1);
 			if( m_rGlobalPairs.end() != Iter )
 			{

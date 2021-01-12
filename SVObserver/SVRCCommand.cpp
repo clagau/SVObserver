@@ -31,8 +31,8 @@
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVSystemLibrary/SVEncodeDecodeUtilities.h"
 #include "SVSystemLibrary/SVVersionInfo.h"
-#include "TriggerHandling/SVTriggerClass.h"
-#include "TriggerInformation/SVTriggerObject.h"
+#include "Triggering/SVTriggerClass.h"
+#include "Triggering/SVTriggerObject.h"
 #pragma endregion Includes
 
 constexpr char* c_DefaultConfigurationName = _T("Configuration");

@@ -15,7 +15,7 @@
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <vector>
 #include "resource.h"
-#include "TriggerInformation/IODeviceBase.h"
+#include "Triggering/IODeviceBase.h"
 #pragma endregion Includes
 
 

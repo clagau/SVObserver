@@ -165,7 +165,7 @@ namespace SvXml
 			if (SVNavigateTree::GetItem(rTree, CTAG_CONFIGURATION_TYPE, hChild, svValue))
 			{
 				int iType = svValue;
-				if (!SvTi::SVHardwareManifest::IsValidProductType(static_cast<SVIMProductEnum>(iType)))
+				if (!SVHardwareManifest::IsValidProductType(static_cast<SVIMProductEnum>(iType)))
 				{
 					bInvalid = true;
 					rErrorCode = SvStl::Err_15043_UnknownProductType;

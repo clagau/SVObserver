@@ -12,12 +12,12 @@
 #pragma once
 
 #pragma region Includes
-#include "SVSystemLibrary/SVObserverEnums.h"
+#include "SVOLibrary/SVObserverEnums.h"
 #include "SVRPropertyTree/SVRPropTree.h"
 #include "SVOCameraObj.h"
 #include "SVOInspectionObj.h"
 #include "SVOPPQObj.h"
-#include "TriggerInformation/SVOTriggerObj.h"
+#include "Triggering/SVOTriggerObj.h"
 #pragma endregion Includes
 
 // defines for the dlgs

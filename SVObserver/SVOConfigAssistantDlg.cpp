@@ -26,20 +26,20 @@
 #include "SVObserver.h"
 #include "SVOPPQObj.h"
 #include "SVOInspectionObj.h"
-#include "TriggerInformation/SVOTriggerObj.h"
-#include "TriggerInformation/SVTriggerObject.h"
+#include "Triggering/SVOTriggerObj.h"
+#include "Triggering/SVTriggerObject.h"
 #include "SVOCameraObj.h"
 #include "InspectionEngine/SVVirtualCamera.h"
 #include "InspectionEngine/SVAcquisitionClass.h"
 #include "InspectionEngine/SVDigitizerProcessingClass.h"
 #include "SVIPDoc.h"
-#include "TriggerHandling/SVTriggerClass.h"
+#include "Triggering/SVTriggerClass.h"
 #include "SVMessage/SVMessage.h"
-#include "TriggerInformation/SVIMTypeInfoStruct.h"
-#include "TriggerInformation/SVTriggerProcessingClass.h"
+#include "Triggering/SVTriggerProcessingClass.h"
 #include "SVInspectionImporter.h"
 #include "SVImportProgress.h"
-#include "TriggerInformation/SVHardwareManifest.h"
+#include "SVOLibrary/SVHardwareManifest.h"
+#include "SVOLibrary/SVIMTypeInfoStruct.h"
 #include "TextDefinesSvO.h"
 #include "SVOGui\GlobalConstantConflictDlg.h"
 #include "SVStatusLibrary\MessageManager.h"
@@ -230,7 +230,7 @@ void SVOConfigAssistantDlg::SetupSystemComboBox()
 	SVIMProductEnumList list; 
 	typedef std::insert_iterator<SVIMProductEnumList> Insertor;
 	Insertor insertor(list, list.begin());
-	SvTi::SVHardwareManifest::GetSupportedSVIMList( insertor );
+	SVHardwareManifest::GetSupportedSVIMList( insertor );
 
 	for (SVIMProductEnumList::iterator l_Iter = list.begin();l_Iter != list.end(); ++l_Iter)
 	{
@@ -239,7 +239,7 @@ void SVOConfigAssistantDlg::SetupSystemComboBox()
 
 	if ( !m_bNewConfiguration )
 	{
-		const SvTi::SVIMTypeInfoStruct& l_SVIMInfo = SvTi::SVHardwareManifest::GetSVIMTypeInfo( m_lConfigurationType );
+		const SVIMTypeInfoStruct& l_SVIMInfo = SVHardwareManifest::GetSVIMTypeInfo( m_lConfigurationType );
 		if ( !l_SVIMInfo.m_Supported )
 		{
 			m_ctlAvailableSys.AddString( GetNameFromProductID( m_lConfigurationType ).c_str() );
@@ -297,7 +297,7 @@ void SVOConfigAssistantDlg::OnSelchangeComboAvalSys()
 
 	if ( false == m_bNewConfiguration || m_bModified )
 	{
-		if ( SvTi::SVHardwareManifest::IsCompatible(newConfigType, currentConfigType) )
+		if ( SVHardwareManifest::IsCompatible(newConfigType, currentConfigType) )
 		{
 			m_bModified = true;
 
@@ -308,8 +308,8 @@ void SVOConfigAssistantDlg::OnSelchangeComboAvalSys()
 		{
 			bool configTypeConvereted {false};
 			///When changing from discrete IO to PLC or vice versa then we need to reset the inputs and outputs
-			if ((SvTi::SVHardwareManifest::isPlcSystem(newConfigType) != SvTi::SVHardwareManifest::isPlcSystem(currentConfigType)) ||
-				(SvTi::SVHardwareManifest::isDiscreteIOSystem(newConfigType) != SvTi::SVHardwareManifest::isDiscreteIOSystem(currentConfigType)))
+			if ((SVHardwareManifest::isPlcSystem(newConfigType) != SVHardwareManifest::isPlcSystem(currentConfigType)) ||
+				(SVHardwareManifest::isDiscreteIOSystem(newConfigType) != SVHardwareManifest::isDiscreteIOSystem(currentConfigType)))
 			{
 				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 				INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_Config_SwitchIOQuestion, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10139, SvDef::InvalidObjectId, MB_YESNO);
@@ -361,7 +361,7 @@ void SVOConfigAssistantDlg::OnSelchangeComboAvalSys()
 // configuration type, this method will do nothing.
 void SVOConfigAssistantDlg::UpdateAvailableSystems( SVIMProductEnum p_CurrentConfigurationType, SVIMProductEnum p_SelectedConfigurationType )
 {
-	const SvTi::SVIMTypeInfoStruct& l_SVIMInfo = SvTi::SVHardwareManifest::GetSVIMTypeInfo(p_CurrentConfigurationType);
+	const SVIMTypeInfoStruct& l_SVIMInfo = SVHardwareManifest::GetSVIMTypeInfo(p_CurrentConfigurationType);
 
 	if ( !l_SVIMInfo.m_Supported && p_CurrentConfigurationType != p_SelectedConfigurationType )
 	{
@@ -703,12 +703,12 @@ std::string SVOConfigAssistantDlg::BuildTrgDig( const SvTi::SVOTriggerObj& rTrig
 				case SVIM_PRODUCT_X2_GD8A:
 				case SVIM_PRODUCT_X2_GD8A_COLOR:
 				{
-					Result = SvTi::SVHardwareManifest::BuildIOBoardTriggerDeviceName(iDig);
+					Result = SVHardwareManifest::BuildIOBoardTriggerDeviceName(iDig);
 					break;
 				}
 				case SVIM_PRODUCT_NEO1:
 				{
-					Result = SvTi::SVHardwareManifest::BuildHardwareTriggerDeviceName(iDig);
+					Result = SVHardwareManifest::BuildHardwareTriggerDeviceName(iDig);
 					break;
 				}
 
@@ -721,12 +721,12 @@ std::string SVOConfigAssistantDlg::BuildTrgDig( const SvTi::SVOTriggerObj& rTrig
 		}
 		case SvDef::TriggerType::SoftwareTrigger:
 		{
-			Result = SvTi::SVHardwareManifest::BuildSoftwareTriggerDeviceName(iDig);
+			Result = SVHardwareManifest::BuildSoftwareTriggerDeviceName(iDig);
 			break;
 		}
 		case SvDef::TriggerType::CameraTrigger:
 		{
-			Result = SvTi::SVHardwareManifest::BuildAcquisitionTriggerDeviceName(iDig);
+			Result = SVHardwareManifest::BuildAcquisitionTriggerDeviceName(iDig);
 			break;
 		}
 	}
@@ -901,7 +901,7 @@ bool SVOConfigAssistantDlg::IsSoftwareTriggerAllowed(LPCTSTR TriggerName) const
 	// - check if Trigger_Source_Option_N (Software Oneshot) is available
 
 	// check if Digital acquisition system
-	if ( SvTi::SVHardwareManifest::IsDigitalSVIM( GetProductType() ) )
+	if ( SVHardwareManifest::IsDigitalSVIM( GetProductType() ) )
 	{
 		// Get cameras attached to this trigger
 		// this is done by getting the ppq for this trigger and iterating the cameras attached to the same ppq
@@ -975,7 +975,7 @@ bool SVOConfigAssistantDlg::IsCameraLineInputAllowed(LPCTSTR TriggerName) const
 	// - check if Line Input Device parameter is available
 
 	// check if Digital acquisition system
-	if ( SvTi::SVHardwareManifest::IsDigitalSVIM( GetProductType() ) )
+	if ( SVHardwareManifest::IsDigitalSVIM( GetProductType() ) )
 	{
 		// Get cameras attached to this trigger
 		// this is done by getting the ppq for this trigger and iterating the cameras attached to the same ppq
@@ -2733,7 +2733,7 @@ bool SVOConfigAssistantDlg::ItemChanged(int iItemDlg, LPCTSTR LabelName, int iAc
 							}
 							else
 							{
-								if ( SvTi::SVHardwareManifest::IsDigitalSVIM( m_lConfigurationType ) )
+								if ( SVHardwareManifest::IsDigitalSVIM( m_lConfigurationType ) )
 								{
 									CheckCamera( *pCameraObj, true );
 									CheckTriggers();
@@ -3300,7 +3300,7 @@ int SVOConfigAssistantDlg::GetAllowedNumberOfDigs(bool bTrigger/* = FALSE*/)
 {
 	int iNumberAllowed = 0;
 
-	const SvTi::SVIMTypeInfoStruct& info = SvTi::SVHardwareManifest::GetSVIMTypeInfo(m_lConfigurationType);
+	const SVIMTypeInfoStruct& info = SVHardwareManifest::GetSVIMTypeInfo(m_lConfigurationType);
 
 	if (bTrigger)
 	{
@@ -3315,7 +3315,7 @@ int SVOConfigAssistantDlg::GetAllowedNumberOfDigs(bool bTrigger/* = FALSE*/)
 
 void SVOConfigAssistantDlg::CheckAgainstCurrentList()
 {
-	const SvTi::SVIMTypeInfoStruct& info = SvTi::SVHardwareManifest::GetSVIMTypeInfo(m_lConfigurationType);
+	const SVIMTypeInfoStruct& info = SVHardwareManifest::GetSVIMTypeInfo(m_lConfigurationType);
 
 	int iNumberDigitizersAllowed = info.m_MaxDigitizers;
 	int iNumberTriggersAllowed = info.m_MaxTriggers;
@@ -3755,7 +3755,7 @@ void SVOConfigAssistantDlg::SetupTriggerStrobeMessage()
 {
 	// Check the ioboard capabilities.  If it has less inverters than triggers 
 	// then display a warning message.
-	if ( SvTi::SVHardwareManifest::IsDigitalSVIM( m_lConfigurationType ) )
+	if ( SVHardwareManifest::IsDigitalSVIM( m_lConfigurationType ) )
 	{
 		if( m_svCapabilities.GetStrobeInverterCount() < m_TriggerList.GetTriggerListCount() )
 		{
@@ -3825,7 +3825,7 @@ SVIMProductEnum SVOConfigAssistantDlg::GetProductIDFromName( const std::string& 
 
 bool SVOConfigAssistantDlg::IsGigeSystem() const
 {
-	return SvTi::SVHardwareManifest::IsMatroxGige(GetProductType());
+	return SVHardwareManifest::IsMatroxGige(GetProductType());
 }
 
 bool SVOConfigAssistantDlg::IsFileAcquisition(int iDig) const
@@ -3852,7 +3852,7 @@ bool SVOConfigAssistantDlg::IsFileAcquisition(int iDig) const
 void SVOConfigAssistantDlg::OnBnClickedCancel()
 {
 	// use m_TmpCameraList to get back the orginial camera information
-	if ( SvTi::SVHardwareManifest::IsDigitalSVIM( GetProductType() ) )
+	if ( SVHardwareManifest::IsDigitalSVIM( GetProductType() ) )
 	{
 		int iSize = m_TmpCameraList.GetCameraListCount();
 
@@ -3881,14 +3881,14 @@ void SVOConfigAssistantDlg::OnBnClickedCancel()
 	CDialog::OnCancel();
 }
 
-void SVOConfigAssistantDlg::resolveGlobalConflicts( SvDef::GlobalConflictPairVector& rGlobalConflicts )
+void SVOConfigAssistantDlg::resolveGlobalConflicts( SvUl::GlobalConflictPairVector& rGlobalConflicts )
 {
 	if( 0 < rGlobalConflicts.size() )
 	{
 		SvOg::GlobalConstantConflictDlg ConflictDlg( rGlobalConflicts, AfxGetMainWnd() );
 		if( IDOK == ConflictDlg.DoModal() )
 		{
-			SvDef::GlobalConflictPairVector::const_iterator Iter( rGlobalConflicts.cbegin() );
+			SvUl::GlobalConflictPairVector::const_iterator Iter( rGlobalConflicts.cbegin() );
 
 			while( rGlobalConflicts.cend() != Iter )
 			{

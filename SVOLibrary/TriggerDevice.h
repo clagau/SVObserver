@@ -13,7 +13,7 @@
 
 #pragma region Includes
 #include "SVSystemLibrary/SVAsyncProcedure.h"
-#include "TriggerInformation/SVTriggerInfoStruct.h"
+#include "Triggering/SVTriggerInfoStruct.h"
 #include "SVContainerLibrary/SVRingBuffer.h"
 #pragma endregion Includes
 

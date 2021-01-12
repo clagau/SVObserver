@@ -108,8 +108,6 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="DirectoryUtilities.cpp" />
-    <ClCompile Include="DisplayMessageBox.cpp" />
     <ClCompile Include="DrawObject.cpp" />
     <ClCompile Include="InitialInformation.cpp" />
     <ClCompile Include="Intersect.cpp" />
@@ -124,8 +122,6 @@
     <ClCompile Include="SVWinUtility.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DirectoryUtilities.h" />
-    <ClInclude Include="DisplayMessageBox.h" />
     <ClInclude Include="DrawObject.h" />
     <ClInclude Include="InitialInformation.h" />
     <ClInclude Include="Intersect.h" />

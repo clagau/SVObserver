@@ -16,7 +16,7 @@
 #include "SVOResource\resource.h"
 #pragma endregion Includes
 
-namespace SvLib
+namespace SvMc
 {
 #pragma region Declarations
 	const int MaxButtons = 3;

@@ -14,7 +14,7 @@
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
 #include "Definitions/SVObjectTypeInfoStruct.h"
-#include "SVProtobuf/SVO-Enum.h"
+#include "SVProtoBuf/SVO-Enum.h"
 #pragma endregion Includes
 
 class SVObjectClass;

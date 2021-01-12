@@ -15,12 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DirectoryUtilities.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="DisplayMessageBox.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="DrawObject.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -31,9 +25,6 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="StdAfx.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVGraphix.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVOIniLoader.cpp">
@@ -48,14 +39,11 @@
     <ClCompile Include="SVWinUtility.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="SVGraphix.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DirectoryUtilities.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="DisplayMessageBox.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="DrawObject.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -69,9 +57,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="StdAfx.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVGraphix.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVOINIClass.h">
@@ -93,6 +78,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVWinUtility.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVGraphix.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

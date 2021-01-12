@@ -25,7 +25,7 @@
 #include "CameraLibrary/SVStringValueDeviceParam.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "TriggerHandling/SVDigitizerLoadLibraryClass.h"
+#include "Triggering/SVDigitizerLoadLibraryClass.h"
 #include "SVTestAcquisitionClass.h"
 #pragma warning (pop)
 #pragma endregion Includes

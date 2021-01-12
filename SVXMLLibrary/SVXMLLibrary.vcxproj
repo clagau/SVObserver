@@ -129,6 +129,7 @@
     <ClInclude Include="SVXMLTree.h" />
     <ClInclude Include="TreeToXml.h" />
     <ClInclude Include="VariantHelper.h" />
+    <ClInclude Include="XMLWriter.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="LoadConfiguration.inl" />

@@ -16,7 +16,7 @@
 //Moved to precompiled header: #include <future>
 //Moved to precompiled header: #include <memory>
 
-#include "ErrorUtil.h"
+#include "SVStatusLibrary/ErrorUtil.h"
 #include "OneOfUtil.h"
 #include "RPCClient.h"
 #include "SVProtoBuf/Envelope.h"
@@ -31,7 +31,7 @@ class SimpleClient
 public:
 	explicit SimpleClient(RPCClient& rClient)
 		: m_rClient(rClient)
-		, m_UnwrapError(build_error(SvPenv::ErrorCode::internalError, "Error while unwrapping envelope!"))
+		, m_UnwrapError(SvUl::build_error(SvPenv::ErrorCode::internalError, "Error while unwrapping envelope!"))
 	{
 	}
 
@@ -73,13 +73,13 @@ public:
 			TRes res;
 			if (!m_ResUnwrapper.unwrap(res, std::move(resEnv)))
 			{
-				promise->set_exception(errorToExceptionPtr(m_UnwrapError));
+				promise->set_exception(SvUl::errorToExceptionPtr(m_UnwrapError));
 				return;
 			}
 
 			promise->set_value(std::move(res));
 		},
-			[promise](const SvPenv::Error& err) { promise->set_exception(errorToExceptionPtr(err)); }),
+			[promise](const SvPenv::Error& err) { promise->set_exception(SvUl::errorToExceptionPtr(err)); }),
 			timeout
 		);
 

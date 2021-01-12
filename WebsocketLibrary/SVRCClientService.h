@@ -9,7 +9,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVProtobuf/SVRC.h"
+#include "SVProtoBuf/SVRC.h"
 #include "SVRPCLibrary/Observer.h"
 #include "SVRPCLibrary/SimpleClient.h"
 #include "SVRPCLibrary/Task.h"

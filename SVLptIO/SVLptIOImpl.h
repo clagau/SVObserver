@@ -14,7 +14,7 @@
 //Moved to precompiled header: #include <vector>
 #pragma region Includes
 #include "SVLptIO.h"
-#include "TriggerInformation/IODeviceBase.h"
+#include "Triggering/IODeviceBase.h"
 #pragma endregion Includes
 
 constexpr unsigned long cMaxLptTriggers = 3;

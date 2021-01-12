@@ -117,6 +117,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CLabel.cpp" />
+    <ClCompile Include="DisplayMessageBox.cpp" />
     <ClCompile Include="DlgItemResizer.cpp" />
     <ClCompile Include="EditNumbers.cpp" />
     <ClCompile Include="ModelessMessageBox.cpp" />
@@ -158,6 +159,7 @@
   <ItemGroup>
     <ClInclude Include="AvailableObjectListComboBox.h" />
     <ClInclude Include="CLabel.h" />
+    <ClInclude Include="DisplayMessageBox.h" />
     <ClInclude Include="DlgItemResizer.h" />
     <ClInclude Include="EditNumbers.h" />
     <ClInclude Include="ModelessMessageBox.h" />

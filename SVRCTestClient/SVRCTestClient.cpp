@@ -11,7 +11,7 @@
 
 #include "SvHttpLibrary/WebsocketClientSettings.h"
 #include "SVLogLibrary/Logging.h"
-#include "SVProtobuf/SVRC.h"
+#include "SVProtoBuf/SVRC.h"
 #include "SVRPCLibrary/RPCClient.h"
 #include "SVRPCLibrary/SimpleClient.h"
 #include "SVUtilityLibrary/StringHelper.h"

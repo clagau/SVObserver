@@ -15,18 +15,14 @@
 
 #pragma endregion Includes
 
-namespace SvTi
+struct SVTriggerDeviceParams
 {
-	struct SVTriggerDeviceParams
-	{
-		SVTriggerDeviceParams();
-		SVTriggerDeviceParams( const SVTriggerDeviceParams& p_rObject );
-		SVTriggerDeviceParams( LPCTSTR p_szName, int p_Channel );
+	SVTriggerDeviceParams();
+	SVTriggerDeviceParams( const SVTriggerDeviceParams& p_rObject );
+	SVTriggerDeviceParams( LPCTSTR p_szName, int p_Channel );
 
-		std::string m_Name;
-		int m_Channel;
-	};
+	std::string m_Name;
+	int m_Channel;
+};
 
-	typedef std::vector< SVTriggerDeviceParams > SVTriggerDeviceParamsVector;
-
-} //namespace SvTi
+typedef std::vector< SVTriggerDeviceParams > SVTriggerDeviceParamsVector;

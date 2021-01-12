@@ -13,7 +13,7 @@
 #pragma region Includes
 #include "Definitions/TriggerType.h"
 #include "SVOLibrary/TriggerDevice.h"
-#include "TriggerInformation/SVTriggerInfoStruct.h"
+#include "SVTriggerInfoStruct.h"
 #pragma endregion Includes
 
 class SVIOTriggerLoadLibraryClass;

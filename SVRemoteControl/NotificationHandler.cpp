@@ -69,6 +69,6 @@ void NotificationHandler::OnFinish()
 }
 void NotificationHandler::OnError(const SvPenv::Error& er)
 {
-	SvRpc::errorToException(er);
+	SvUl::errorToException(er);
 	return;
 }

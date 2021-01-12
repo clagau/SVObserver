@@ -91,19 +91,31 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="SVAcquisitionConstructParams.cpp" />
     <ClCompile Include="SVContainableCriticalSection.cpp" />
+    <ClCompile Include="SVHardwareManifest.cpp" />
+    <ClCompile Include="SVLut.cpp" />
+    <ClCompile Include="SVLutTransform.cpp" />
     <ClCompile Include="SVQueueObject.cpp" />
+    <ClCompile Include="SVTriggerDeviceParams.cpp" />
     <ClCompile Include="TriggerDevice.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AcquisitionDevice.h" />
     <ClInclude Include="CameraInfo.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="SVAcquisitionConstructParams.h" />
     <ClInclude Include="SVContainableCriticalSection.h" />
+    <ClInclude Include="SVHardwareManifest.h" />
+    <ClInclude Include="SVIMTypeInfoStruct.h" />
+    <ClInclude Include="SVLut.h" />
+    <ClInclude Include="SVLutTransform.h" />
     <ClInclude Include="SVMemoryManager.h" />
     <ClInclude Include="SVMultithread.h" />
+    <ClInclude Include="SVObserverEnums.h" />
     <ClInclude Include="SVOLibrary.h" />
     <ClInclude Include="SVQueueObject.h" />
+    <ClInclude Include="SVTriggerDeviceParams.h" />
     <ClInclude Include="TriggerDevice.h" />
   </ItemGroup>
   <ItemGroup>

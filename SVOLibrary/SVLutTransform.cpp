@@ -16,6 +16,7 @@
 #include "SVLut.h"
 #pragma endregion Includes
 
+
 SVLutTransformOperationMap SVLutTransform::mMapTypes;
 
 SVLutTransformOperationMap::SVLutTransformOperationMap()
@@ -306,7 +307,7 @@ HRESULT SVDefaultLutTransform::Transform(SVLutTransformOperationTwoKnee&, SVLutB
 		unsigned long y2 = param[3];
 		unsigned long lMaxY = param[4];
 
-		if ( x1 >= 0 && x2 >= 0 && x1 < data.Size() && x2 < data.Size() && x2 >= x1 )
+		if ( x1 < data.Size() && x2 < data.Size() && x2 >= x1 )
 		{
 			if (x1 > 0)
 			{

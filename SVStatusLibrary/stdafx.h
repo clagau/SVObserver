@@ -58,6 +58,7 @@
 #include <direct.h>
 #include <exception>
 #include <functional>
+#include <io.h>
 #include <iterator>
 #include <limits.h>
 #include <list>
@@ -65,6 +66,7 @@
 #include <map>
 #include <mutex>
 #include <set>					//Used by static library
+#include <stdio.h>
 #include <string>				//Used by static library
 #include <tchar.h>
 #include <vector>

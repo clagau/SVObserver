@@ -6,7 +6,7 @@
 
 #pragma once
 
-namespace SvSyl
+namespace SvUl
 {
 	class ModuleInfo
 	{

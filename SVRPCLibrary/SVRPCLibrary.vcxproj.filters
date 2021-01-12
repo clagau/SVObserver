@@ -21,9 +21,6 @@
     <ClInclude Include="EnvelopeUtil.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="ErrorUtil.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="Observer.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>

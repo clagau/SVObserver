@@ -122,6 +122,9 @@
     <ClInclude Include="VariantHelper.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="XMLWriter.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SVXMLTree.inl">

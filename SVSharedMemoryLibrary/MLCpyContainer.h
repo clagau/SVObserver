@@ -13,7 +13,7 @@
 #include "MLInspectionInfo.h"
 #include "MonitorListCpy.h"
 #include "Definitions\StringTypeDef.h"
-#include "SVProtobuf/SVRC.h"
+#include "SVProtoBuf/SVRC.h"
 #include "SVProtoBuf/TriggerRecordController.h"
 #pragma endregion Includes
 

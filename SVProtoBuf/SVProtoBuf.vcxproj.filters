@@ -18,9 +18,6 @@
     <ClCompile Include="BasicStructure.pb.cc">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="ConverterHelper.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="Envelope.pb.cc">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -67,6 +64,9 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="PatternUtils.pb.cc">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="ConverterHelper.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
@@ -125,9 +125,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="BasicStructure.pb.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="ConverterHelper.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="Envelope.h">
@@ -212,6 +209,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="PatternUtils.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="ConverterHelper.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

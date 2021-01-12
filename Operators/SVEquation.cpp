@@ -22,7 +22,7 @@
 #include "SVStatusLibrary/RunStatus.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "SVProtobuf/SVO-Enum.h"
+#include "SVProtoBuf/SVO-Enum.h"
 #include <regex>
 #pragma endregion Includes
 

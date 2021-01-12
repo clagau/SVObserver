@@ -8,9 +8,8 @@
 #pragma once
 
 #pragma region Includes
-#include "Definitions/StringTypeDef.h"
-#include "Variant.h"
-#include "SVRC.h"
+#include "SVProtoBuf/Variant.h"
+#include "SVProtoBuf/SVRC.h"
 #pragma endregion Includes
 
 namespace SvStl
@@ -26,7 +25,7 @@ HRESULT ConvertVariantToProtobuf(const _variant_t& rVariant, SvPb::Variant* pPbV
 HRESULT ConvertProtobufToVariant(const SvPb::Variant& rPbVariant, _variant_t& rVariant, bool simpleType = false);
 
 // Converts a list into a protobuf Variant by generating a semicolon separated string (The list should not contain any ;)
-void ConvertStringListToProtobuf(const SvDef::StringSet& rList, SvPb::Variant* pVariant);
+void ConvertStringListToProtobuf(const std::set<std::string>& rList, SvPb::Variant* pVariant);
 
 /// Set messages from SVObserver to a protobuf-structure.
 /// \param messageVec [in] Messages

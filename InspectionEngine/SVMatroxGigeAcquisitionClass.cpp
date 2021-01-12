@@ -24,7 +24,7 @@
 #include "SVGigeCameraFileLibrary/SVGigeCameraStruct.h"
 #include "SVGigeCameraFileLibrary/SVGigeCameraManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "TriggerHandling/SVDigitizerLoadLibraryClass.h"
+#include "Triggering/SVDigitizerLoadLibraryClass.h"
 #pragma endregion Includes
 
 namespace SvIe
@@ -38,7 +38,7 @@ static char THIS_FILE[] = __FILE__;
 #pragma endregion Declarations
 
 #pragma region Constructor
-SVMatroxGigeAcquisitionClass::SVMatroxGigeAcquisitionClass( const SvTi::SVAcquisitionConstructParams& p_rParams )
+SVMatroxGigeAcquisitionClass::SVMatroxGigeAcquisitionClass( const SVAcquisitionConstructParams& p_rParams )
 : SVAcquisitionClass( p_rParams )
 {
 	mbIsCamFilesLoaded = false;

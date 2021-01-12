@@ -14,7 +14,7 @@ std::future<TRes> runRequest(TClientService& client, void (TClientService::*gett
 	auto promise = std::make_shared<std::promise<TRes>>();
 	auto task = SvRpc::Task<TRes>(
 		[promise](TRes&& res) { promise->set_value(res); },
-		[promise](const SvPenv::Error& err) { promise->set_exception(SvRpc::errorToExceptionPtr(err)); });
+		[promise](const SvPenv::Error& err) { promise->set_exception(SvUl::errorToExceptionPtr(err)); });
 	(client.*getter)(std::move(req), task);
 	return promise->get_future();
 }
@@ -35,7 +35,7 @@ std::future<TRes> runStream(TClientService& client,
 		return SvSyl::SVFuture<void>::make_ready();
 	},
 		[promise]() { promise->set_value({}); },
-		[promise](const SvPenv::Error& err) { promise->set_exception(SvRpc::errorToExceptionPtr(err)); });
+		[promise](const SvPenv::Error& err) { promise->set_exception(SvUl::errorToExceptionPtr(err)); });
 	(client.*getter)(std::move(req), observer);
 	return promise->get_future();
 }

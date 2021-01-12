@@ -13,7 +13,6 @@
 
 //Moved to precompiled header: #include <boost/config.hpp>
 //Moved to precompiled header: #include <boost/function.hpp>
-#include "TriggerHandling/SVTriggerHandler.h"
 #include "SVSystemLibrary/SVThread.h"
 
 namespace SvTi

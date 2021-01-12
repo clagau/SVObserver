@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVFileAcquisitionClass.h"
 
-#include "TriggerHandling/SVDigitizerLoadLibraryClass.h"
+#include "Triggering/SVDigitizerLoadLibraryClass.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
 #include "SVDigitizerProcessingClass.h"
 #include "SVStatusLibrary/MessageManager.h"
@@ -30,7 +30,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SVFileAcquisitionClass::SVFileAcquisitionClass( const SvTi::SVAcquisitionConstructParams& p_rParams )
+SVFileAcquisitionClass::SVFileAcquisitionClass( const SVAcquisitionConstructParams& p_rParams )
 : SVAcquisitionClass( p_rParams )
 {
 	mbIsFilesLoaded = false;

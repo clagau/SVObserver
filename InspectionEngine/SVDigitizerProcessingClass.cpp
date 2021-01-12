@@ -15,12 +15,12 @@
 #include "SVDigitizerProcessingClass.h"
 #include "Definitions/SVGigeEnums.h"
 #include "ObjectInterfaces/ISVOApp_Helper.h"
-#include "TriggerHandling/SVDigitizerLoadLibraryClass.h"
-#include "SVImageLibrary/SVLut.h"
+#include "Triggering/SVDigitizerLoadLibraryClass.h"
+#include "SVOLibrary/SVLut.h"
 #include "CameraLibrary/SVLongValueDeviceParam.h"
 #include "CameraLibrary/SVStringValueDeviceParam.h"
 #include "SVFileAcquisitionClass.h"
-#include "TriggerInformation/SVHardwareManifest.h"
+#include "SVOLibrary/SVHardwareManifest.h"
 #include "SVMatroxGigeAcquisitionClass.h"
 #include "SVGigeCameraFileLibrary/SVGigeCameraStruct.h"
 #include "SVGigeCameraFileLibrary/SVGigeCameraManager.h"
@@ -61,9 +61,9 @@ SVDigitizerProcessingClass::~SVDigitizerProcessingClass()
 
 void SVDigitizerProcessingClass::Startup()
 {
-	const SvTi::SVAcquisitionConstructParamsVector& l_rAcqParams = SvTi::SVHardwareManifest::Instance().GetAcquisitionDeviceParams();
+	const SVAcquisitionConstructParamsVector& l_rAcqParams = SVHardwareManifest::Instance().GetAcquisitionDeviceParams();
 
-	SvTi::SVAcquisitionConstructParamsVector::const_iterator l_Iter = l_rAcqParams.begin();
+	SVAcquisitionConstructParamsVector::const_iterator l_Iter = l_rAcqParams.begin();
 
 	while( l_Iter != l_rAcqParams.end() )
 	{

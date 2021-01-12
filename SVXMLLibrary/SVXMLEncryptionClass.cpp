@@ -13,7 +13,7 @@
 #include <msxml6.h>
 #include "SVXMLEncryptionClass.h"
 #include "SVMessage\SVMessage.h"
-#include "SVUtilityLibrary\SVUtilityGlobals.h"
+#include "SVUtilityLibrary/SVUtilityGlobals.h"
 
 namespace  SvXml
 {

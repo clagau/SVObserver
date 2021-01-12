@@ -332,7 +332,7 @@ HRESULT ConvertProtobufToVariant(const SvPb::Variant& rPbVariant, _variant_t& rV
 }
 
 
-void ConvertStringListToProtobuf(const SvDef::StringSet& rList, SvPb::Variant* pVariant)
+void ConvertStringListToProtobuf(const std::set<std::string>& rList, SvPb::Variant* pVariant)
 {
 	if (nullptr != pVariant)
 	{

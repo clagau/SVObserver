@@ -11,20 +11,17 @@
 
 #pragma once
 
-namespace SvTi
+struct SVIMTypeInfoStruct
 {
+	bool m_Supported;
+	short m_MaxDigitizers;
+	short m_MaxTriggers;
 
-	struct SVIMTypeInfoStruct
+	SVIMTypeInfoStruct( bool p_Supported, short p_MaxDigitizers, short p_MaxTriggers ) :
+		m_Supported( p_Supported )
+	, m_MaxDigitizers( p_MaxDigitizers )
+	, m_MaxTriggers( p_MaxTriggers)
 	{
-		bool m_Supported;
-		short m_MaxDigitizers;
-		short m_MaxTriggers;
+	}
+};
 
-		SVIMTypeInfoStruct( bool p_Supported, short p_MaxDigitizers, short p_MaxTriggers ) :
-		  m_Supported( p_Supported )
-		, m_MaxDigitizers( p_MaxDigitizers )
-		, m_MaxTriggers( p_MaxTriggers)
-		{
-		}
-	};
-} //namespace SvTi

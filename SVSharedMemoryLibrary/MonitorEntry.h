@@ -12,8 +12,8 @@
 //Moved to precompiled header: #include <map>
 #include "Definitions/ObjectDefines.h"
 #include "SVMatroxLibrary/MatroxImageProps.h"
-#include "SVProtobuf/MonitorListStore.h"
-#include "SVProtobuf/SVRC.h"
+#include "SVProtoBuf/MonitorListStore.h"
+#include "SVProtoBuf/SVRC.h"
 #include "SVUtilityLibrary/SVSafeArray.h"
 #pragma endregion Includes
 

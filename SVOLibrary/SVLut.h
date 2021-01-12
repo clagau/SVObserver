@@ -26,7 +26,7 @@ public:
 	SVLutInfo();
 	SVLutInfo( UINT p_Bands, UINT p_BandSize, UINT p_BandMaxValue, const SVLutTransform& p_rTransform );
 	SVLutInfo(const SVLutInfo& rhs);
-	const SVLutInfo& operator = (const SVLutInfo& rhs);
+	SVLutInfo& operator = (const SVLutInfo& rhs);
 	~SVLutInfo();
 	void CopyNoTransform(const SVLutInfo& rhs);
 	UINT Bands() const;
@@ -66,7 +66,7 @@ public:
 	SVLutValue();
 	SVLutValue(const T& val);
 	operator T() const;
-	const T& operator = (const T& rhs);
+	T& operator = (const T& rhs);
 
 	T value;
 	typedef T ValueType;
@@ -81,7 +81,7 @@ public:
 	SVLutBand();
 	SVLutBand( const SVLutBand& rhs );
 	~SVLutBand();
-	const SVLutBand& operator = ( const SVLutBand& rhs );
+	SVLutBand& operator = ( const SVLutBand& rhs );
 	void CopyNoTransform( const SVLutBand& rhs );
 
 	bool operator == ( const SVLutBand& rhs ) const;
@@ -106,7 +106,7 @@ public:
 
 private:
 	std::vector < SVLutEntry > maTable;
-	ULONG mulBand;
+	ULONG mulBand = 0;
 	SVLutInfo mInfo;
 
 friend class SVLut;
@@ -120,7 +120,7 @@ public:
 	SVLut();
 	SVLut( const SVLut& rhs );
 	~SVLut();
-	const SVLut& operator = ( const SVLut& rhs );
+	SVLut& operator = ( const SVLut& rhs );
 	void CopyNoTransform( const SVLut& rhs );
 
 	bool IsCreated() const;
@@ -174,7 +174,7 @@ inline SVLutValue<T>::operator T() const
 }
 
 template <typename T>
-inline const T& SVLutValue<T>::operator = (const T& rhs)
+inline T& SVLutValue<T>::operator = (const T& rhs)
 {
 	value = rhs;
 	return value;

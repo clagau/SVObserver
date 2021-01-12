@@ -10,7 +10,7 @@
 #pragma region Includes
 //Moved to precompiled header: #include <comdef.h>
 //Moved to precompiled header: #include <vector>
-#include "SVProtobuf/SVO-Enum.h"
+#include "SVProtoBuf/SVO-Enum.h"
 #include "SVUtilityLibrary/NameObjectIdList.h"
 #pragma endregion Includes
 

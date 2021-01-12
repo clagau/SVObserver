@@ -13,7 +13,7 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <map>
-#include "SVLut.h"
+#include "SVOLibrary/SVLut.h"
 #include "SVLightReference.h"
 #include "SVCameraFormat.h"
 #include "CameraLibrary/SVDeviceParams.h"

@@ -15,7 +15,7 @@
 #include "SVShared.h"
 #include "MLInspectionInfo.h"
 #include "MLPPQInfo.h"
-#include "SVProtobuf/SVRC.h"
+#include "SVProtoBuf/SVRC.h"
 #pragma endregion Includes
 
 namespace SvSml

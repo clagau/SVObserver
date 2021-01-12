@@ -177,6 +177,7 @@
   <ItemGroup>
     <ClInclude Include="CommandLineArgs.h" />
     <ClInclude Include="ErrorNumbers.h" />
+    <ClInclude Include="ErrorUtil.h" />
     <ClInclude Include="GlobalPath.h" />
     <ClInclude Include="MessageContainer.h" />
     <ClInclude Include="MessageData.h" />

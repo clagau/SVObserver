@@ -15,7 +15,7 @@
 //Moved to precompiled header: #include <memory>
 #include "SVImageLibrary/SVAcquisitionBufferInterface.h"
 #include "SVImageLibrary/SVLightReference.h"
-#include "SVImageLibrary/SVLut.h"
+#include "SVOLibrary/SVLut.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "SVMatroxLibrary/SVMatroxBufferCreateStruct.h"
 #include "SVOLibrary/AcquisitionDevice.h"
@@ -23,10 +23,8 @@
 #include "SVFileSystemLibrary/SVFileNameArrayClass.h"
 #pragma endregion Includes
 
-namespace SvTi
-{
 struct SVAcquisitionConstructParams;
-}
+
 namespace SvOi
 {
 class ITriggerRecordControllerRW;
@@ -51,7 +49,7 @@ class SVAcquisitionClass :
 	public SVAcquisitionBufferInterface
 {
 public:
-	explicit SVAcquisitionClass( const SvTi::SVAcquisitionConstructParams& p_rParams );
+	explicit SVAcquisitionClass( const SVAcquisitionConstructParams& p_rParams );
 	virtual ~SVAcquisitionClass();
 
 	virtual bool IsValid() const override;

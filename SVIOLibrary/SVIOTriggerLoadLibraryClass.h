@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "TriggerInformation/SVTriggerInfoStruct.h"
+#include "Triggering/SVTriggerInfoStruct.h"
 
 typedef HRESULT (WINAPI *SVCreatePtr)();
 typedef HRESULT (WINAPI *SVDestroyPtr)();

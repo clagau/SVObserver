@@ -18,14 +18,14 @@
 #include "SVOProPosQueDlg.h"
 #include "SVOCameraList.h"
 #include "SVOInspectionList.h"
-#include "TriggerInformation/SVOTriggerList.h"
+#include "Triggering/SVOTriggerList.h"
 #include "SVOPPQList.h"
 #include "SVConfigurationObject.h"
 #include "SVMFCControls\SVOConfigNameEdit.h"
-#include "SVSystemLibrary/SVObserverEnums.h"
+#include "SVOLibrary/SVObserverEnums.h"
 #include "SVIOBoardCapabilities.h"
 #include "SVImportedInspectionInfo.h" 
-#include "Definitions/GlobalConstantData.h"
+#include "SVUtilityLibrary/GlobalConstantData.h"
 #include "Definitions/StringTypeDef.h"
 #include "SVOGeneralConfigDlg.h"
 #pragma endregion Includes
@@ -216,7 +216,7 @@ private:
 	void RemoveFileAcquisitionMessages( LPCTSTR CameraName );
 
 	HRESULT ConnectToolsetBuffers();
-	void resolveGlobalConflicts( SvDef::GlobalConflictPairVector& rGlobalConflicts );
+	void resolveGlobalConflicts( SvUl::GlobalConflictPairVector& rGlobalConflicts );
 
 	static std::string GetNameFromProductID(SVIMProductEnum ProductID);
 	static SVIMProductEnum GetProductIDFromName(const std::string& rName);

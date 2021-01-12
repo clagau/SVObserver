@@ -17,11 +17,11 @@
 #include "CameraLibrary/SVLongValueDeviceParam.h"
 #include "Definitions/GlobalConst.h"
 #include "SVImageLibrary/SVLightReference.h"
-#include "SVImageLibrary/SVLut.h"
+#include "SVOLibrary/SVLut.h"
 #include "SVObjectLibrary/SVClsids.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
-#include "TriggerHandling/SVTriggerClass.h"
+#include "Triggering/SVTriggerClass.h"
 #pragma endregion Includes
 
 namespace SvIe

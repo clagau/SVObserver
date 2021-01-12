@@ -55,7 +55,7 @@
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
-#include "SVSystemLibrary\SVThreadManager.h"
+#include "SVSystemLibrary/SVThreadManager.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "SVUtilityLibrary/SVSafeArray.h"
 #include "SVUtilityLibrary/StringHelper.h"
@@ -63,10 +63,10 @@
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVXMLLibrary/SVObjectXMLWriter.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
-#include "TriggerHandling/SVTriggerClass.h"
-#include "TriggerInformation/SVTriggerObject.h"
-#include "TriggerInformation/SVTriggerProcessingClass.h"
-#include "TriggerInformation/SVHardwareManifest.h"
+#include "Triggering/SVTriggerClass.h"
+#include "Triggering/SVTriggerObject.h"
+#include "Triggering/SVTriggerProcessingClass.h"
+#include "SVOLibrary/SVHardwareManifest.h"
 #include "Tools/SVColorTool.h"
 #include "ObjectInterfaces/ICommand.h"
 #include "SVUtilityLibrary/AuditFiles.h"
@@ -986,7 +986,7 @@ bool SVConfigurationObject::LoadIO(SVTreeType& rTree)
 		throw MsgCont;
 	}
 
-	bool isDiscreteIO = SvTi::SVHardwareManifest::isDiscreteIOSystem(GetProductType());
+	bool isDiscreteIO = SVHardwareManifest::isDiscreteIOSystem(GetProductType());
 
 	_variant_t Value;
 
@@ -3628,7 +3628,7 @@ void SVConfigurationObject::ConvertColorToStandardProductType(bool& rConfigColor
 	SVIMProductEnum ConfigType(GetProductType());
 
 	//Need to change the product type from color to standard product type
-	bool isColor = SvTi::SVHardwareManifest::IsColorSystem(ConfigType);
+	bool isColor = SVHardwareManifest::IsColorSystem(ConfigType);
 	if (isColor)
 	{
 		rConfigColor = isColor;
@@ -3879,8 +3879,8 @@ void SVConfigurationObject::SetProductType(SVIMProductEnum eProductType, bool ne
 	m_pIOController->initializeOutputs();
 
 	///When changing from discrete IO to PLC or vice versa then we need to reset the inputs and outputs
-	if ((SvTi::SVHardwareManifest::isPlcSystem(m_eProductType) != SvTi::SVHardwareManifest::isPlcSystem(prevType)) ||
-		(SvTi::SVHardwareManifest::isDiscreteIOSystem(m_eProductType) != SvTi::SVHardwareManifest::isDiscreteIOSystem(prevType)) ||
+	if ((SVHardwareManifest::isPlcSystem(m_eProductType) != SVHardwareManifest::isPlcSystem(prevType)) ||
+		(SVHardwareManifest::isDiscreteIOSystem(m_eProductType) != SVHardwareManifest::isDiscreteIOSystem(prevType)) ||
 		newConfig)
 	{
 		changeSystemResetIO(m_eProductType);
@@ -5667,8 +5667,8 @@ bool SVConfigurationObject::getObjectsForMonitorList(uint32_t toolId, SvPb::Insp
 void SVConfigurationObject::initializeIO(SVIMProductEnum newConfigType)
 {
 
-	bool isDiscrete = SvTi::SVHardwareManifest::isDiscreteIOSystem(newConfigType);
-	bool isPlc = SvTi::SVHardwareManifest::isPlcSystem(newConfigType);
+	bool isDiscrete = SVHardwareManifest::isDiscreteIOSystem(newConfigType);
+	bool isPlc = SVHardwareManifest::isPlcSystem(newConfigType);
 	int inputCount = isPlc ? cPlcInputCount : isDiscrete ? cDiscreteInputCount : 0;
 	int outputCount = isPlc ? cPlcOutputCount : isDiscrete ? cDiscreteOutputCount : 0;
 	SVIOConfigurationInterfaceClass::Instance().initializeIO(inputCount, outputCount);
@@ -5722,7 +5722,7 @@ void SVConfigurationObject::initializeIO(SVIMProductEnum newConfigType)
 
 		for (auto& pIoEntry : IOEntriesVector)
 		{
-			pIoEntry->m_ObjectType = SvTi::SVHardwareManifest::isPlcSystem(newConfigType) ? IO_PLC_OUTPUT : IO_DIGITAL_OUTPUT;
+			pIoEntry->m_ObjectType = SVHardwareManifest::isPlcSystem(newConfigType) ? IO_PLC_OUTPUT : IO_DIGITAL_OUTPUT;
 		}
 	}
 }
@@ -5775,7 +5775,7 @@ void SVConfigurationObject::changeSystemResetIO(SVIMProductEnum newConfigType)
 
 	initializeIO(newConfigType);
 
-	if (SvTi::SVHardwareManifest::isPlcSystem(newConfigType))
+	if (SVHardwareManifest::isPlcSystem(newConfigType))
 	{
 		TheSVObserverApp.ShowIOTab(SVIOPlcOutputsViewID);
 	}
@@ -5783,7 +5783,7 @@ void SVConfigurationObject::changeSystemResetIO(SVIMProductEnum newConfigType)
 	{
 		TheSVObserverApp.HideIOTab(SVIOPlcOutputsViewID);
 	}
-	if (SvTi::SVHardwareManifest::isDiscreteIOSystem(newConfigType))
+	if (SVHardwareManifest::isDiscreteIOSystem(newConfigType))
 	{
 		TheSVObserverApp.ShowIOTab(SVIODiscreteInputsViewID);
 		TheSVObserverApp.ShowIOTab(SVIODiscreteOutputsViewID);

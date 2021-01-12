@@ -12,7 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SoftwareTriggerDlg.h"
-#include "TriggerInformation\SVTriggerConstants.h"
+#include "Triggering\SVTriggerConstants.h"
 #pragma endregion Includes
 
 #define COLOR_WARN RGB(255,240,64)

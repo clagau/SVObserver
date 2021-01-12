@@ -60,9 +60,6 @@
     <ClCompile Include="SVSafeArray.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVUtilityGlobals.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="ZipHelper.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -73,6 +70,15 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="AuditFiles.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectoryUtilities.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleInfo.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVUtilityGlobals.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
@@ -167,13 +173,7 @@
     <ClInclude Include="SVSafeArray.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVUtilityGlobals.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVWinHandle.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="XMLWriter.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="ZipHelper.h">
@@ -191,12 +191,27 @@
     <ClInclude Include="AuditFiles.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="DirectoryUtilities.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleInfo.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="GlobalConstantData.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVUtilityGlobals.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SVHandleManager.inl">
       <Filter>Headerdateien</Filter>
     </None>
     <None Include="SVSafeArray.inl">
+      <Filter>Headerdateien</Filter>
+    </None>
+    <None Include="GlobalConstantData.inl">
       <Filter>Headerdateien</Filter>
     </None>
   </ItemGroup>

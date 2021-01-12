@@ -20,7 +20,7 @@ namespace SvIe
 class SVFileAcquisitionClass : public SVAcquisitionClass
 {
 public:
-	explicit SVFileAcquisitionClass( const SvTi::SVAcquisitionConstructParams& p_rParams );
+	explicit SVFileAcquisitionClass( const SVAcquisitionConstructParams& p_rParams );
 	virtual ~SVFileAcquisitionClass();
 
 	virtual bool IsValid() const override;

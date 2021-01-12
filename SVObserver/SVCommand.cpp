@@ -19,7 +19,7 @@
 #include "SVObserver_i.h"
 #include "SVCommand.h"
 
-#include "SVLibrary/DirectoryUtilities.h"
+#include "SVUtilityLibrary/DirectoryUtilities.h"
 #include "SVMatroxLibrary/SVMatroxApplicationInterface.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVMessage/SVMessage.h"

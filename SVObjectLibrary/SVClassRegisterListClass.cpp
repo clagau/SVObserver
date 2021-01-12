@@ -15,7 +15,7 @@
 #include "SVClassRegisterClass.h"
 #include "SVObjectClass.h"
 #include "SVOResource/resource.h"
-#include "SVProtobuf/SVO-Enum.h"
+#include "SVProtoBuf/SVO-Enum.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVClsids.h"

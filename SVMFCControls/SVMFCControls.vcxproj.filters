@@ -120,6 +120,9 @@
     <ClCompile Include="EditNumbers.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="DisplayMessageBox.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AvailableObjectListComboBox.h">
@@ -231,6 +234,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="EditNumbers.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="DisplayMessageBox.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
