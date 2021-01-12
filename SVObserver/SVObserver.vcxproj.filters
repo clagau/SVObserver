@@ -498,7 +498,7 @@
     <ClCompile Include="SVTADlgResizePage.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVOGenralConfigDlg.cpp">
+    <ClCompile Include="SVOGeneralConfigDlg.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>

@@ -212,7 +212,7 @@ echo %time%
     <ClCompile Include="RootObject.cpp" />
     <ClCompile Include="SelectedObjectsPage.cpp" />
     <ClCompile Include="SoftwareTriggerDlg.cpp" />
-    <ClCompile Include="SVOGenralConfigDlg.cpp" />
+    <ClCompile Include="SVOGeneralConfigDlg.cpp" />
     <ClCompile Include="StdAfx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">stdafx.h</PrecompiledHeaderFile>
