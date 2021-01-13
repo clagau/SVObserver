@@ -107,6 +107,8 @@ namespace SvXml
 			pVar->lVal =0 ;
 			break;
 		case VT_BSTR:
+			///Set vt to VT_EMPTY otherwise ::VariantClear in SetString causes a crash!
+			pVar->vt = VT_EMPTY;
 			pVar->SetString(SvUl::createStdString(pVal).c_str());
 			break;
 		case VT_BOOL:
