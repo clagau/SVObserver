@@ -108,12 +108,11 @@ public:
 	void CreateArrayInTable();
 	void SetResultArraySize();
 	virtual bool CloseObject() override;
-	HRESULT Initialize(SVDllLoadLibraryCallback fnNotify = [](LPCTSTR) {}, std::vector<std::string>& response = DummyStatusResponse, bool inCreationProcess = false, bool initializeAll = false);
+	HRESULT Initialize(std::vector<std::string>& rStatusMsgs, bool inCreationProcess = false, bool initializeAll = false);
 
 #pragma region IExternalToolTask methods
 	virtual SvOi::IExternalToolTaskDataAdmin& getExternalToolDataAdmin() override;
-	virtual HRESULT triggerInitialize(bool inCreationProcess = false, bool initializeAll = false) override;
-	virtual HRESULT triggerInitialize(std::vector<std::string>& status, bool inCreationProcess = false, bool initializeAll = false) override;
+	virtual HRESULT triggerInitialize(std::vector<std::string>& rStatusMsgs, bool inCreationProcess = false, bool initializeAll = false) override;
 	virtual void SetAllAttributes() override;
 	virtual HRESULT ClearData() override;
 	virtual HRESULT validateValueParameter(uint32_t laskObjectId, long index, _variant_t newVal) override;
@@ -221,7 +220,6 @@ private:
 	SvOi::SVImageBufferHandlePtr             m_aInputImagesCopy[SVExternalToolTaskData::NUM_INPUT_IMAGES];
 	bool                     m_bUseImageCopies;
 	
-	static std::vector<std::string> DummyStatusResponse;
 private:
 	HRESULT collectInputImageNames( );
 	

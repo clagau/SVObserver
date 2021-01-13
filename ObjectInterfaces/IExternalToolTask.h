@@ -32,7 +32,6 @@ namespace SvOi
 		virtual IExternalToolTaskDataAdmin& getExternalToolDataAdmin() = 0;
 
 		virtual HRESULT triggerInitialize(std::vector<std::string>& status, bool inCreationProcess = false, bool initializeAll = false) = 0;
-		virtual HRESULT triggerInitialize(bool inCreationProcess = false, bool initializeAll = false) = 0;
 		
 		virtual void SetAllAttributes() = 0;
 		virtual HRESULT ClearData() = 0;

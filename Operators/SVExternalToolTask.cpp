@@ -57,9 +57,6 @@ SVExternalToolTaskData::~SVExternalToolTaskData()
 {
 }
 
-	
-std::vector<std::string> SVExternalToolTask::DummyStatusResponse;
-
 SVExternalToolTask::SVExternalToolTask(SVObjectClass* POwner, int StringResourceID)
 	:SVTaskObjectListClass(POwner, StringResourceID)
 {
@@ -352,7 +349,7 @@ bool SVExternalToolTask::CreateObject(const SVObjectLevelCreateStruct& rCreateSt
 			{
 				CreateTableObjects();
 				std::vector<std::string> statusMessages;
-				Initialize([](LPCTSTR) {}, statusMessages, true);
+				Initialize(statusMessages, true);
 			}
 			catch (const SvStl::MessageContainer& /*e*/)
 			{
@@ -603,17 +600,10 @@ HRESULT SVExternalToolTask::InitializeResultObjects()
 	return hr;
 }
 
-HRESULT SVExternalToolTask::triggerInitialize(bool inCreationProcess, bool initializeAll)
+HRESULT SVExternalToolTask::triggerInitialize(std::vector<std::string>& rStatusMsgs, bool inCreationProcess, bool initializeAll)
 {
-	std::vector<std::string> statusMessages;
-	return Initialize([](LPCTSTR) {}, statusMessages, inCreationProcess, initializeAll);
+	return Initialize(rStatusMsgs, inCreationProcess, initializeAll);
 }
-
-HRESULT SVExternalToolTask::triggerInitialize(std::vector<std::string>& statusMessages, bool, bool)
-{
-	return Initialize([](LPCTSTR) {}, statusMessages);
-}
-
 
 HRESULT SVExternalToolTask::validateValueParameter(uint32_t taskObjectId, long index, _variant_t newVal)
 {
@@ -648,7 +638,7 @@ void SVExternalToolTask::setPropTreeState(const std::map<std::string, bool>& pro
 }
 
 
-HRESULT SVExternalToolTask::Initialize(SVDllLoadLibraryCallback fnNotify, std::vector<std::string>& statusMessages, bool inCreationProces, bool initializeAll)
+HRESULT SVExternalToolTask::Initialize(std::vector<std::string>& rStatusMsgs, bool inCreationProces, bool initializeAll)
 {
 
 	HRESULT hr = S_FALSE;
@@ -673,8 +663,8 @@ HRESULT SVExternalToolTask::Initialize(SVDllLoadLibraryCallback fnNotify, std::v
 
 	try
 	{
-		statusMessages.clear();
-		hr = m_dll.Open(DllPath.c_str(), fnNotify, statusMessages);
+		rStatusMsgs.clear();
+		hr = m_dll.Open(DllPath.c_str(), rStatusMsgs);
 	}
 	catch (const SvStl::MessageContainer& e)
 	{
@@ -1584,7 +1574,8 @@ bool SVExternalToolTask::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 
 	try
 	{
-		HRESULT hr = Initialize();
+		std::vector<std::string> statusMsgs;
+		HRESULT hr = Initialize(statusMsgs);
 		if (S_OK != hr)
 		{
 			Result = false;

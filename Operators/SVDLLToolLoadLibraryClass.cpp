@@ -28,7 +28,6 @@ namespace SvOp
 #endif
 #pragma endregion Declarations
 
-	std::vector<std::string> SVDLLToolLoadLibraryClass::DummyVector;
 	SVDLLToolLoadLibraryClass::SVDLLToolLoadLibraryClass()
 	{
 	}
@@ -133,7 +132,7 @@ namespace SvOp
 		return Result;
 	}
 
-	HRESULT SVDLLToolLoadLibraryClass::Open(LPCTSTR p_szLibrary, SVDllLoadLibraryCallback fnNotifyProgress, std::vector<std::string>& status)
+	HRESULT SVDLLToolLoadLibraryClass::Open(LPCTSTR libraryName, std::vector<std::string>& rStatusMsgs)
 	{
 		HRESULT Result(S_OK);
 		SvStl::MessageContainer e;
@@ -142,27 +141,18 @@ namespace SvOp
 			return Result;
 		}
 
-		auto collectStatus = [&status, &fnNotifyProgress](LPCTSTR message)
-		{
-			if (fnNotifyProgress)
-			{
-				fnNotifyProgress(message);
-			}
-			status.push_back(message);
-		};
-
-
-		if (_access(p_szLibrary, 0) == 0)
+		rStatusMsgs.reserve(25);
+		if (_access(libraryName, 0) == 0)
 		{
 			// Check bitness
-			if (CheckBitness(p_szLibrary) != ImageFileMachineAMD64)
+			if (CheckBitness(libraryName) != ImageFileMachineAMD64)
 			{
-				std::string Message = SvUl::Format(_T("%s is not 64 Bit!"), p_szLibrary);
-				collectStatus(Message.c_str());
+				std::string Message = SvUl::Format(_T("%s is not 64 Bit!"), libraryName);
+				rStatusMsgs.emplace_back(Message);
 			}
 		}
-		collectStatus(_T("Attempting LoadLibrary"));
-		m_hmHandle = ::LoadLibrary(p_szLibrary);
+		rStatusMsgs.emplace_back(_T("Attempting LoadLibrary"));
+		m_hmHandle = ::LoadLibrary(libraryName);
 		Sleep(0);
 		if (nullptr == m_hmHandle)	// can't load library
 		{
@@ -208,7 +198,7 @@ namespace SvOp
 			m_pfnGetResultTablesMaxRowSize = (GetResultTablesMaxRowSizePtr)::GetProcAddress(m_hmHandle, "GetResultTablesMaxRowSize");
 			m_pfnGetResultValuesMaxArraySize = (GetResultValuesMaxArraySizePtr)::GetProcAddress(m_hmHandle, "GetResultValuesMaxArraySize");
 
-			// Backwards compatability
+			// Backwards compatibility
 			if (nullptr == m_pfnSimpleTest) m_pfnSimpleTest = (SimpleTestPtr)::GetProcAddress(m_hmHandle, "SimpleTest");
 			if (nullptr == m_pfnGetToolName) m_pfnGetToolName = (GetToolNamePtr)::GetProcAddress(m_hmHandle, "GetToolName");
 			if (nullptr == m_pfnGetToolVersion) m_pfnGetToolVersion = (GetToolVersionPtr)::GetProcAddress(m_hmHandle, "GetToolVersion");
@@ -289,7 +279,8 @@ namespace SvOp
 
 				if (S_OK == Result)
 				{
-					collectStatus(_T("Attempting SimpleTest"));
+
+					rStatusMsgs.emplace_back(_T("Attempting SimpleTest"));
 
 					try
 					{
@@ -312,7 +303,7 @@ namespace SvOp
 				}
 				if (S_OK == Result)
 				{
-					collectStatus(_T("Attempting Startup"));
+					rStatusMsgs.emplace_back(_T("Attempting Startup"));
 					try
 					{
 						Result = m_pfnStartup();
@@ -330,7 +321,7 @@ namespace SvOp
 				// Get Tool Name
 				if (S_OK == Result)
 				{
-					collectStatus(_T("Attempting GetToolName"));
+					rStatusMsgs.emplace_back(_T("Attempting GetToolName"));
 					BSTR bstName = nullptr;
 					try
 					{
@@ -341,7 +332,7 @@ namespace SvOp
 						}
 						else
 						{
-							collectStatus(SvUl::createStdString(_bstr_t(bstName)).c_str());
+							rStatusMsgs.emplace_back(SvUl::createStdString(_bstr_t(bstName)));
 						}
 					}
 					catch (...)
@@ -354,7 +345,7 @@ namespace SvOp
 				// Get Tool Version
 				if (S_OK == Result)
 				{
-					collectStatus(_T("Attempting GetToolVersion"));
+					rStatusMsgs.emplace_back(_T("Attempting GetToolVersion"));
 					long lTmp = 0;
 					try
 					{
@@ -366,7 +357,7 @@ namespace SvOp
 						else
 						{
 							std::string Version = SvUl::Format(_T("Version %d"), lTmp);
-							collectStatus(Version.c_str());
+							rStatusMsgs.emplace_back(Version);
 						}
 					}
 					catch (...)
