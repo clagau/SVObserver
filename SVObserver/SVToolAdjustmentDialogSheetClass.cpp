@@ -550,7 +550,7 @@ void SVToolAdjustmentDialogSheetClass::OnOK()
 
 	if (resetResult)
 	{
-		markDocumentAsDirty();
+		markDocumentAsDirty(true);
 		EndDialog(IDOK);
 	}
 
@@ -578,12 +578,16 @@ void SVToolAdjustmentDialogSheetClass::OnOK()
 }
 
 
-void SVToolAdjustmentDialogSheetClass::markDocumentAsDirty()
+void SVToolAdjustmentDialogSheetClass::markDocumentAsDirty(bool runOnce)
 {
 	SVIPDoc* pDocument = GetIPDoc();
 	if (nullptr != pDocument)
 	{
 		pDocument->SetModifiedFlag();
+		if (runOnce)
+		{
+			pDocument->RunOnce();
+		}
 	}
 }
 
