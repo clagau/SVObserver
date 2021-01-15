@@ -566,19 +566,20 @@ namespace SvVol
 		{
 			boost::shared_lock<boost::shared_mutex> guard(m_valueMutex);
 			Status = SafeArray.GetElement(0, rValue);
-			//From SVRC only of type BSTR should be received
+
 			if (VT_BSTR == rValue.vt)
 			{
 				std::string StringValue;
 				StringValue = SvUl::createStdString(rValue.bstrVal);
 				rValue.Clear();
-				rValue.vt = m_Value.vt;
+
 				switch (m_Value.vt)
 				{
 				case VT_BSTR:
-					rValue.bstrVal = bstr_t(StringValue.c_str());
+					rValue = bstr_t(StringValue.c_str());
 					break;
 				case VT_BOOL:
+					rValue.vt = VT_BOOL;
 					if (0 == SvUl::CompareNoCase(StringValue, _T("True")))
 					{
 						rValue.boolVal = TRUE;
@@ -601,12 +602,15 @@ namespace SvVol
 					}
 					break;
 				case VT_I4:
+					rValue.vt = VT_I4;;
 					rValue.lVal = atol(StringValue.c_str());
 					break;
 				case VT_I8:
+					rValue.vt = VT_I8;;
 					rValue.llVal = atol(StringValue.c_str());
 					break;
 				case VT_R8:
+					rValue.vt = VT_R8;;
 					rValue.dblVal = atof(StringValue.c_str());
 					break;
 				default:
