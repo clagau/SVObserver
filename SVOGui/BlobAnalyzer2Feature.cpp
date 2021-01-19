@@ -55,6 +55,8 @@ namespace SvOg
 		UpperBoundButtonColumn,
 	};
 
+	constexpr long g_FirstExcludeColumnToHide = ExcludeInnerColumn;
+
 	std::map<int, ColumnDef> g_columnFeatureDefArray = { { CustomFeatureButtonColumn, ColumnDef{"", cBoxColumnSize}},
 		{NameColumn, ColumnDef{"Name", cTextColumnSize}},
 		{SortEnableColumn, {"Sort", cBoxColumnSize, SvPb::FeatureData::kIsSortFieldNumber}},
@@ -330,10 +332,10 @@ namespace SvOg
 			auto* pCell = dynamic_cast<SvGcl::GridCellCheck*>(m_Grid.GetCell(pItem->iRow, ExcludeEnabledColumn));
 			if (nullptr != pCell)
 			{
-				bool isExclude = (TRUE == pCell->GetCheck());
-				if (m_featureData[pItem->iRow - 1].is_exclude() != isExclude)
+				bool isExcluded = (TRUE == pCell->GetCheck());
+				if (m_featureData[pItem->iRow - 1].is_exclude() != isExcluded)
 				{
-					m_featureData[pItem->iRow - 1].set_is_exclude(isExclude);
+					m_featureData[pItem->iRow - 1].set_is_exclude(isExcluded);
 					FillGridControl();
 				}
 			}
@@ -527,8 +529,30 @@ namespace SvOg
 
 	void BlobAnalyzer2Feature::FillGridControl()
 	{
+		bool isSetExcludeColumns = std::any_of(m_featureData.begin(), m_featureData.end(), [](const auto& rEntry) {return rEntry.is_exclude(); });
 		int sortNumber = 0;
 		m_Grid.SetRowCount(m_featureData.size() + 1);
+		if (isSetExcludeColumns)
+		{
+			m_Grid.SetColumnCount(static_cast<int>(g_columnFeatureDefArray.size()));
+			SvGcl::GV_ITEM Item;
+			Item.mask = GVIF_TEXT | GVIF_FORMAT | GVIF_BKCLR;
+			Item.row = 0;
+			Item.crBkClr = CLR_DEFAULT;
+			Item.nFormat = DT_LEFT | DT_VCENTER | DT_WORDBREAK;
+			for (const auto& rData : g_columnFeatureDefArray)
+			{
+				m_Grid.SetColumnWidth(rData.first, rData.second.m_columnSize);
+				Item.col = rData.first;
+				Item.strText = rData.second.m_name.c_str();
+				m_Grid.SetItem(&Item);
+			}
+		}
+		else
+		{
+			m_Grid.SetColumnCount(g_FirstExcludeColumnToHide);
+		}
+
 		for (int i = 0; m_featureData.size() > i; ++i)
 		{
 			auto row = i + 1;
@@ -591,47 +615,50 @@ namespace SvOg
 				pCell->SetCheck(m_featureData[i].is_exclude());
 			}
 			
-			if (m_featureData[i].is_exclude())
+			if (isSetExcludeColumns)
 			{
-				m_Grid.SetCellType(row, ExcludeInnerColumn, RUNTIME_CLASS(GridCellCheck));
-				pCell = dynamic_cast<SvGcl::GridCellCheck*>(m_Grid.GetCell(row, ExcludeInnerColumn));
-				if (nullptr != pCell)
+				if (m_featureData[i].is_exclude())
 				{
-					pCell->SetCheck(m_featureData[i].is_exclude_inner());
+					m_Grid.SetCellType(row, ExcludeInnerColumn, RUNTIME_CLASS(GridCellCheck));
+					pCell = dynamic_cast<SvGcl::GridCellCheck*>(m_Grid.GetCell(row, ExcludeInnerColumn));
+					if (nullptr != pCell)
+					{
+						pCell->SetCheck(m_featureData[i].is_exclude_inner());
+					}
+					m_Grid.SetItemState(row, ExcludeInnerColumn, m_Grid.GetItemState(row, ExcludeInnerColumn) & (~GVIS_READONLY));
+					std::string tmp = m_featureData[i].lower_bound_indirect().empty() ? std::to_string(m_featureData[i].lower_bound()) : m_featureData[i].lower_bound_indirect();
+					m_Grid.SetItemText(row, LowerBoundColumn, tmp.c_str());
+					m_Grid.SetItemState(row, LowerBoundColumn, m_Grid.GetItemState(row, LowerBoundColumn) & (~GVIS_READONLY));
+					buttonItem.mask = GVIF_IMAGE;
+					buttonItem.iImage = 0;
+					buttonItem.row = row;
+					buttonItem.col = LowerBoundButtonColumn;
+					m_Grid.SetItem(&buttonItem);
+					tmp = m_featureData[i].upper_bound_indirect().empty() ? std::to_string(m_featureData[i].upper_bound()) : m_featureData[i].upper_bound_indirect();
+					m_Grid.SetItemText(row, UpperBoundColumn, tmp.c_str());
+					m_Grid.SetItemState(row, UpperBoundColumn, m_Grid.GetItemState(row, UpperBoundColumn) & (~GVIS_READONLY));
+					buttonItem.col = UpperBoundButtonColumn;
+					m_Grid.SetItem(&buttonItem);
 				}
-				m_Grid.SetItemState(row, ExcludeInnerColumn, m_Grid.GetItemState(row, ExcludeInnerColumn) & (~GVIS_READONLY));
-				std::string tmp = m_featureData[i].lower_bound_indirect().empty() ? std::to_string(m_featureData[i].lower_bound()) : m_featureData[i].lower_bound_indirect();
-				m_Grid.SetItemText(row, LowerBoundColumn, tmp.c_str());
-				m_Grid.SetItemState(row, LowerBoundColumn, m_Grid.GetItemState(row, LowerBoundColumn) & (~GVIS_READONLY));
-				buttonItem.mask = GVIF_IMAGE;
-				buttonItem.iImage = 0;
-				buttonItem.row = row;
-				buttonItem.col = LowerBoundButtonColumn;
-				m_Grid.SetItem(&buttonItem);
-				tmp = m_featureData[i].upper_bound_indirect().empty() ? std::to_string(m_featureData[i].upper_bound()) : m_featureData[i].upper_bound_indirect();
-				m_Grid.SetItemText(row, UpperBoundColumn, tmp.c_str());
-				m_Grid.SetItemState(row, UpperBoundColumn, m_Grid.GetItemState(row, UpperBoundColumn) & (~GVIS_READONLY));
-				buttonItem.col = UpperBoundButtonColumn;
-				m_Grid.SetItem(&buttonItem);
+				else
+				{
+					m_Grid.SetCellType(row, ExcludeInnerColumn, RUNTIME_CLASS(GridCell));
+					m_Grid.SetItemState(row, ExcludeInnerColumn, m_Grid.GetItemState(row, ExcludeInnerColumn) | GVIS_READONLY);
+					m_Grid.SetItemText(row, LowerBoundColumn, "");
+					m_Grid.SetItemState(row, LowerBoundColumn, m_Grid.GetItemState(row, LowerBoundColumn) | GVIS_READONLY);
+					buttonItem.mask = GVIF_IMAGE;
+					buttonItem.iImage = -1;
+					buttonItem.row = row;
+					buttonItem.col = LowerBoundButtonColumn;
+					m_Grid.SetItem(&buttonItem);
+					m_Grid.SetItemText(row, UpperBoundColumn, "");
+					m_Grid.SetItemState(row, UpperBoundColumn, m_Grid.GetItemState(row, UpperBoundColumn) | GVIS_READONLY);
+					buttonItem.col = UpperBoundButtonColumn;
+					m_Grid.SetItem(&buttonItem);
+				}
+				m_Grid.SetItemState(row, LowerBoundButtonColumn, m_Grid.GetItemState(row, LowerBoundButtonColumn) | GVIS_READONLY);
+				m_Grid.SetItemState(row, UpperBoundButtonColumn, m_Grid.GetItemState(row, UpperBoundButtonColumn) | GVIS_READONLY);
 			}
-			else
-			{
-				m_Grid.SetCellType(row, ExcludeInnerColumn, RUNTIME_CLASS(GridCell));
-				m_Grid.SetItemState(row, ExcludeInnerColumn, m_Grid.GetItemState(row, ExcludeInnerColumn) | GVIS_READONLY);
-				m_Grid.SetItemText(row, LowerBoundColumn, "");
-				m_Grid.SetItemState(row, LowerBoundColumn, m_Grid.GetItemState(row, LowerBoundColumn) | GVIS_READONLY);
-				buttonItem.mask = GVIF_IMAGE;
-				buttonItem.iImage = -1;
-				buttonItem.row = row;
-				buttonItem.col = LowerBoundButtonColumn;
-				m_Grid.SetItem(&buttonItem);
-				m_Grid.SetItemText(row, UpperBoundColumn, "");
-				m_Grid.SetItemState(row, UpperBoundColumn, m_Grid.GetItemState(row, UpperBoundColumn) | GVIS_READONLY);
-				buttonItem.col = UpperBoundButtonColumn;
-				m_Grid.SetItem(&buttonItem);
-			}
-			m_Grid.SetItemState(row, LowerBoundButtonColumn, m_Grid.GetItemState(row, LowerBoundButtonColumn) | GVIS_READONLY);
-			m_Grid.SetItemState(row, UpperBoundButtonColumn, m_Grid.GetItemState(row, UpperBoundButtonColumn) | GVIS_READONLY);
 		}
 		
 		m_Grid.Refresh();
