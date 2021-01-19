@@ -584,9 +584,11 @@ std::string HttpServerConnection::ws_get_access_token(std::string& protocol)
 void HttpServerConnection::ws_do_upgrade(std::string protocol)
 {
 	m_IsUpgraded = true;
-	m_WsSocket.async_accept_ex(
+	m_WsSocket.set_option(boost::beast::websocket::stream_base::decorator(
+		std::bind(&HttpServerConnection::ws_on_decorate, shared_from_this(), std::placeholders::_1, protocol))
+	);
+	m_WsSocket.async_accept(
 		m_Request,
-		std::bind(&HttpServerConnection::ws_on_decorate, shared_from_this(), std::placeholders::_1, protocol),
 		std::bind(&HttpServerConnection::ws_on_handshake, shared_from_this(), std::placeholders::_1)
 	);
 }
