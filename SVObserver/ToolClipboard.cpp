@@ -672,7 +672,14 @@ HRESULT ToolClipboard::validateIds(std::string& rXmlData, uint32_t postId, uint3
 						{
 							DefaultImageId = m_pInspection->GetToolSetMainImage()->getObjectId();
 						}
-						SvUl::searchAndReplace(rXmlData, convertObjectIdToString(inputImageId).c_str(), convertObjectIdToString(DefaultImageId).c_str());
+						//Replace only ID's which start with ConnectedID which means it is a source image
+						constexpr LPCTSTR cSourceImage = R"(Name="ConnectedID" Type="VT_BSTR">)";
+						std::string inputImage{ cSourceImage };
+						inputImage += convertObjectIdToString(inputImageId);
+						std::string defaultImage{ cSourceImage };
+						defaultImage += convertObjectIdToString(DefaultImageId);
+
+						SvUl::searchAndReplace(rXmlData, inputImage.c_str(), defaultImage.c_str());
 					}
 				}
 			}
