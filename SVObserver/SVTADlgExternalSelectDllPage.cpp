@@ -417,13 +417,8 @@ void SVTADlgExternalSelectDllPage::InitializeDll(bool jumpToInputPage, bool setD
 		{
 			setDefaultValuesForInputs();
 		}
-		bool ResetResult =  m_externalToolTaskController.resetAllObjects();
-		if(false == ResetResult )
-		{ 
-			SvStl::MessageManager e(SvStl::MsgType::Data);
-			e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InitExternalTaskFailed, SvStl::SourceFileParams(StdMessageParams), 0, 0);
-			e.Throw();
-		}
+		m_externalToolTaskController.resetAllObjects();
+		//@TODO[MEC][10.10][18.01.2021]	 fix svb 529
 
 		m_strStatus += _T("DLL passes the tests.");
 		m_strStatus += cCRLF;
