@@ -16,7 +16,7 @@
 #include "EplCn_If_Public.h"
 #include "InspectionState.h"
 #include "PlcDataVersion.h"
-#include "SVTimerLibrary/SVClock.h"
+#include "SVUtilityLibrary/SVClock.h"
 #pragma endregion Includes
 
 namespace SvPlc
@@ -252,7 +252,7 @@ void CifXCard::readProcessData()
 		return;
 	}
 
-	double telegramReceiveTime = SvTl::GetTimeStamp();
+	double telegramReceiveTime = SvUl::GetTimeStamp();
 
 	int32_t result = m_cifxLoadLib.m_pChannelIORead(m_hChannel, 0, 0, m_maxPlcDataSize, m_pReadBuffer.get(), 2);
 

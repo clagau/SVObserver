@@ -57,8 +57,8 @@ private:
 
 	std::string m_IOBoardOption;			// TRB - Added to have a parameter to send to Rabbit Board. (original name: m_DigitalOption)
 
-	SvTh::SVDigitizerLoadLibraryClass m_dllDigitizers;
-	SvTh::SVDigitizerLoadLibraryClass m_dllFileAcquisition;
+	SvTrig::SVDigitizerLoadLibraryClass m_dllDigitizers;
+	SvTrig::SVDigitizerLoadLibraryClass m_dllFileAcquisition;
 
 	SVIOTriggerLoadLibraryClass m_svDLLTriggers;
 	SVIOTriggerLoadLibraryClass m_svDLLSoftwareTriggers;

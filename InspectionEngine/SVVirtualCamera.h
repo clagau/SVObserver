@@ -27,7 +27,7 @@ class SVLightReference;
 class SVLongValueDeviceParam;
 class SVLut;
 
-namespace SvTh
+namespace SvTrig
 {
 class SVTriggerClass;
 }
@@ -113,7 +113,7 @@ public:
 	long GetFileImageHeight() const;
 	void SetFileImageHeight(long height);
 
-	void RegisterTrigger(SvTh::SVTriggerClass* pTrigger);
+	void RegisterTrigger(SvTrig::SVTriggerClass* pTrigger);
 
 	void	createCameraParameters();
 	HRESULT updateCameraParameters();
@@ -155,7 +155,7 @@ private:
 	bool m_bImageSizeEditModeFileBased;
 	long m_imageLoadingMode;
 	SIZE m_imageSize;
-	SvTh::SVTriggerClass* m_pTrigger{nullptr};
+	SvTrig::SVTriggerClass* m_pTrigger{nullptr};
 	long m_CameraID;
 
 	std::mutex m_tmpImage_mutex;

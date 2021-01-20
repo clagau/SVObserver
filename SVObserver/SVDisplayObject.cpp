@@ -20,7 +20,7 @@
 #include "SVObjectLibrary/SVClsids.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
-#include "SVTimerLibrary/SVClock.h"
+#include "SVUtilityLibrary/SVClock.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -265,7 +265,7 @@ void SVDisplayObject::SetIPDocDisplayComplete()
 	::InterlockedExchange( &m_IPDocDisplayComplete, 1 );
 
 	::SetEvent( m_hStartEvent );
-	m_LastUpdateTime = SvTl::GetTimeStamp();
+	m_LastUpdateTime = SvUl::GetTimeStamp();
 }
 
 DWORD WINAPI SVDisplayObject::SVDisplayThreadFunc( LPVOID lpParam )
@@ -356,7 +356,7 @@ HRESULT SVDisplayObject::ProcessNotifyIPDoc( bool& p_rProcessed )
 		{
 			::Sleep( 0 );
 
-			l_Process = ( m_NextDisplayEvent < SvTl::GetTimeStamp() );
+			l_Process = ( m_NextDisplayEvent < SvUl::GetTimeStamp() );
 
 			if( l_Process )
 			{
@@ -384,8 +384,8 @@ HRESULT SVDisplayObject::ProcessNotifyIPDoc( bool& p_rProcessed )
 			// check if forcedUpdate is active
 			if (!l_Process && TheSVObserverApp.IsForcedImageUpdateActive())
 			{
-				double elapsed = SvTl::GetTimeStamp() - m_LastUpdateTime;
-				double interval = SvTl::ConvertFrom(SvTl::Seconds, TheSVObserverApp.GetForcedImageUpdateTimeInSeconds());
+				double elapsed = SvUl::GetTimeStamp() - m_LastUpdateTime;
+				double interval = SvUl::ConvertFrom(SvUl::Seconds, TheSVObserverApp.GetForcedImageUpdateTimeInSeconds());
 				// check last update time and if current time is greater than last update time + ForcedImageUpdateTime then Update
 				l_Process = (elapsed >= interval);
 #if defined (TRACE_THEM_ALL) || defined (TRACE_OTHER)
@@ -483,7 +483,7 @@ void SVDisplayObject::UpdateNextDisplayEvent()
 {
 	double l_OffsetInSeconds = 1.0 / static_cast< double >( m_FrameRate );
 
-	m_NextDisplayEvent = SvTl::GetTimeStamp() + SvTl::ConvertFrom( SvTl::Seconds, l_OffsetInSeconds );
+	m_NextDisplayEvent = SvUl::GetTimeStamp() + SvUl::ConvertFrom( SvUl::Seconds, l_OffsetInSeconds );
 
 	m_FrameRate = SVObjectManagerClass::Instance().GetNextFrameRate( m_FrameRate );
 }

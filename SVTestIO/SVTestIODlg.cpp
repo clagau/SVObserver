@@ -135,7 +135,7 @@ void SVTestIODlg::OnTriggerButtonClicked( UINT nID )
 	auto iter = m_triggerCallbackMap.find(triggerIndex);
 	if (m_triggerCallbackMap.end() != iter)
 	{
-		SvTi::IntVariantMap triggerData;
+		SvTrig::IntVariantMap triggerData;
 		iter->second(std::move(triggerData));
 	}
 

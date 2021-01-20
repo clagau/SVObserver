@@ -16,7 +16,7 @@
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVStatusLibrary/RunStatus.h"
-#include "SVTimerLibrary/SVClock.h"
+#include "SVUtilityLibrary/SVClock.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "ObjectInterfaces/IInspectionProcess.h"
 #include "SVUtilityLibrary/StringHelper.h"
@@ -234,7 +234,7 @@ int  SVTaskObjectListClass::InsertBefore(uint32_t objectBeforeID, SVTaskObjectCl
 		auto it2 = m_TaskObjectVector.insert(it, pTaskObject);
 		Result =  static_cast<int>(std::distance(m_TaskObjectVector.begin(), it2));
 	}
-	m_LastListUpdateTimestamp = SvTl::GetTimeStamp();
+	m_LastListUpdateTimestamp = SvUl::GetTimeStamp();
 	return Result;
 }
 
@@ -247,7 +247,7 @@ void SVTaskObjectListClass::RemoveAt(int Index)
 {
 	m_TaskObjectVector.erase(m_TaskObjectVector.begin() + Index);
 
-	m_LastListUpdateTimestamp = SvTl::GetTimeStamp();
+	m_LastListUpdateTimestamp = SvUl::GetTimeStamp();
 }
 
 int SVTaskObjectListClass::Add(SVTaskObjectClass* pTaskObject, bool atBegin)
@@ -265,7 +265,7 @@ int SVTaskObjectListClass::Add(SVTaskObjectClass* pTaskObject, bool atBegin)
 	}
 	pTaskObject->SetObjectOwner(this);
 
-	m_LastListUpdateTimestamp = SvTl::GetTimeStamp();
+	m_LastListUpdateTimestamp = SvUl::GetTimeStamp();
 
 	if (!atBegin)
 	{
@@ -664,7 +664,7 @@ void SVTaskObjectListClass::moveTaskObject(uint32_t objectToMoveId, uint32_t pre
 			m_TaskObjectVector.push_back(pObject);
 		}
 	}
-	m_LastListUpdateTimestamp = SvTl::GetTimeStamp();
+	m_LastListUpdateTimestamp = SvUl::GetTimeStamp();
 }
 #pragma endregion virtual method (ITaskObjectListClass)
 
@@ -813,7 +813,7 @@ bool SVTaskObjectListClass::replaceObject(SVObjectClass* pObject, uint32_t newId
 
 				m_TaskObjectVector[i] = pTaskObject;
 
-				m_LastListUpdateTimestamp = SvTl::GetTimeStamp();
+				m_LastListUpdateTimestamp = SvUl::GetTimeStamp();
 
 				// Set unique object ID...
 				if (SVObjectManagerClass::Instance().ChangeUniqueObjectID(pTaskObject, newId))
@@ -847,7 +847,7 @@ bool SVTaskObjectListClass::replaceObject(SVObjectClass* pObject, uint32_t newId
 
 		// If this object not already exists, add it to the task list...
 		Add(pTaskObject);
-		m_LastListUpdateTimestamp = SvTl::GetTimeStamp();
+		m_LastListUpdateTimestamp = SvUl::GetTimeStamp();
 		//@Todo[nec] should be propagate to the owner?  
 
 		// Special code for Objects that allocate Friends on SetOwner()
@@ -915,7 +915,7 @@ void SVTaskObjectListClass::DeleteAll()
 {
 	DeleteAt(0, static_cast<int> (m_TaskObjectVector.size()));
 
-	m_LastListUpdateTimestamp = SvTl::GetTimeStamp();
+	m_LastListUpdateTimestamp = SvUl::GetTimeStamp();
 }
 
 SVObjectClass* SVTaskObjectListClass::UpdateObject(uint32_t friendId, SVObjectClass* p_psvObject, SVObjectClass* p_psvNewOwner )
@@ -933,7 +933,7 @@ SVObjectClass* SVTaskObjectListClass::UpdateObject(uint32_t friendId, SVObjectCl
 		{
 			m_TaskObjectVector.erase(m_TaskObjectVector.begin() + i);
 
-			m_LastListUpdateTimestamp = SvTl::GetTimeStamp();
+			m_LastListUpdateTimestamp = SvUl::GetTimeStamp();
 		}
 		else
 		{
@@ -1170,7 +1170,7 @@ bool SVTaskObjectListClass::RemoveFromTaskObjectVector(uint32_t objectID)
 
 		if (pTaskObject && pTaskObject->getObjectId() == objectID)
 		{
-			m_LastListUpdateTimestamp = SvTl::GetTimeStamp();
+			m_LastListUpdateTimestamp = SvUl::GetTimeStamp();
 
 			m_TaskObjectVector.erase(m_TaskObjectVector.begin() + i);
 			// Delete object not till it is removed from list!!!

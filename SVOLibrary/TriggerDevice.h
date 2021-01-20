@@ -17,7 +17,7 @@
 #include "SVContainerLibrary/SVRingBuffer.h"
 #pragma endregion Includes
 
-typedef std::function<void(SvTi::SVTriggerInfoStruct&&)> PpqTriggerCallBack;
+typedef std::function<void(SvTrig::SVTriggerInfoStruct&&)> PpqTriggerCallBack;
 
 class TriggerDevice  
 {
@@ -50,14 +50,14 @@ public:
 	LPCTSTR GetDeviceName() const {	return m_DeviceName.c_str(); }
 	void SetDeviceName(LPCTSTR pName) { m_DeviceName = pName; }
 
-	virtual void Notify(const SvTi::SVTriggerInfoStruct& rTriggerInfo);
+	virtual void Notify(const SvTrig::SVTriggerInfoStruct& rTriggerInfo);
 
 protected:
-	typedef SVRingBuffer<SvTi::SVTriggerInfoStruct> TriggerQueue;
+	typedef SVRingBuffer<SvTrig::SVTriggerInfoStruct> TriggerQueue;
 
 	void Process(bool& rWaitForEvents);
 
-	virtual void processTriggers(SvTi::SVTriggerInfoStruct& ) {}
+	virtual void processTriggers(SvTrig::SVTriggerInfoStruct& ) {}
 
 private:
 	TriggerDevice() = default;

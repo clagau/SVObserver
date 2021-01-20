@@ -619,12 +619,12 @@ SVOCameraObjPtr SVOConfigAssistantDlg::GetCameraObjectByName(LPCTSTR CameraName)
 	return m_CameraList.GetCameraObjectByName(CameraName);
 }
 
-SvTi::SVOTriggerObjPtr SVOConfigAssistantDlg::GetTriggerObject(int iPos)
+SvTrig::SVOTriggerObjPtr SVOConfigAssistantDlg::GetTriggerObject(int iPos)
 {
 	return m_TriggerList.GetTriggerObjectByPosition(iPos);
 }
 
-SvTi::SVOTriggerObjPtr SVOConfigAssistantDlg::GetTriggerObjectByName(LPCTSTR TriggerName)
+SvTrig::SVOTriggerObjPtr SVOConfigAssistantDlg::GetTriggerObjectByName(LPCTSTR TriggerName)
 {
 	return m_TriggerList.GetTriggerObjectByName(std::string(TriggerName));
 }
@@ -682,7 +682,7 @@ bool SVOConfigAssistantDlg::RemovePPQFromList(LPCTSTR PPQ)
 	return m_PPQList.RemovePPQFromList(PPQ);
 }
 
-std::string SVOConfigAssistantDlg::BuildTrgDig( const SvTi::SVOTriggerObj& rTriggerObj) const
+std::string SVOConfigAssistantDlg::BuildTrgDig( const SvTrig::SVOTriggerObj& rTriggerObj) const
 {
 	std::string Result;
 
@@ -1330,7 +1330,7 @@ bool SVOConfigAssistantDlg::SendPPQDataToConfiguration(SVPPQObjectPtrVector& rPP
 				}
 
 				//check trigger...
-				SvTi::SVTriggerObject* pTrigger{pPPQ->GetTrigger()};
+				SvTrig::SVTriggerObject* pTrigger{pPPQ->GetTrigger()};
 				if ( nullptr != pTrigger )
 				{
 					if (!IsTriggerOnPPQ(pPPQ->GetName(), pTrigger->GetName()))
@@ -1727,7 +1727,7 @@ bool SVOConfigAssistantDlg::SendTriggerDataToConfiguration()
 	long lCfgTrgCnt = pConfig->GetTriggerCount();
 
 	// Check for Triggers removed
-	SvTi::SVTriggerObject* pTrigger( nullptr );
+	SvTrig::SVTriggerObject* pTrigger( nullptr );
 	for ( long lT = lCfgTrgCnt - 1; -1 < lT; lT-- )
 	{
 		pTrigger = pConfig->GetTrigger(lT);
@@ -1749,7 +1749,7 @@ bool SVOConfigAssistantDlg::SendTriggerDataToConfiguration()
 		// Check for Triggers changed
 		for (int i = 0; i < iTrgCnt; i++)
 		{
-			const SvTi::SVOTriggerObjPtr pTriggerObj( GetTriggerObject(i) );
+			const SvTrig::SVOTriggerObjPtr pTriggerObj( GetTriggerObject(i) );
 			if( nullptr != pTriggerObj )
 			{
 				TriggerDisplayName = pTriggerObj->GetTriggerDisplayName();
@@ -1781,14 +1781,14 @@ bool SVOConfigAssistantDlg::SendTriggerDataToConfiguration()
 
 				if ( nullptr == pTrigger )
 				{
-					pTrigger = new SvTi::SVTriggerObject;
+					pTrigger = new SvTrig::SVTriggerObject;
 					pTrigger->SetName( TriggerDisplayName.c_str() );
 					bAddTrigger = true;
 				}
 
 				if ( nullptr != pTrigger )
 				{
-					SvTh::SVTriggerClass* psvDevice = SvTi::SVTriggerProcessingClass::Instance().GetTrigger( DeviceName.c_str() );
+					SvTrig::SVTriggerClass* psvDevice = SvTrig::SVTriggerProcessingClass::Instance().GetTrigger( DeviceName.c_str() );
 					if ( nullptr != psvDevice )
 					{
 						bRet = pTrigger->Create(psvDevice) && bRet;
@@ -2191,7 +2191,7 @@ bool SVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectPtrVect
 					long lSize = pConfig->GetTriggerCount();
 					for (long l = 0; l < lSize; ++l)
 					{
-						SvTi::SVTriggerObject* pTrigger = pConfig->GetTrigger(l);
+						SvTrig::SVTriggerObject* pTrigger = pConfig->GetTrigger(l);
 						if ( nullptr != pTrigger )
 						{
 							if ( PPQTrigger ==pTrigger->GetName() )
@@ -2407,7 +2407,7 @@ bool SVOConfigAssistantDlg::GetConfigurationForExisting()
 	int iChannel;
 	std::string CameraFileName;
 
-	SvTi::SVTriggerObject* pcfgTrigger( nullptr );
+	SvTrig::SVTriggerObject* pcfgTrigger( nullptr );
 	SVInspectionProcess* pcfgInspection( nullptr );
 	SVPPQObject* pcfgPPQ( nullptr );
 
@@ -2506,7 +2506,7 @@ bool SVOConfigAssistantDlg::GetConfigurationForExisting()
 			}
 			m_TriggerList.AddTriggerToList(std::string(TriggerName), iDigNumber);
 
-			const SvTi::SVOTriggerObjPtr pTriggerObj( m_TriggerList.GetTriggerObjectByName(std::string(TriggerName)) );
+			const SvTrig::SVOTriggerObjPtr pTriggerObj( m_TriggerList.GetTriggerObjectByName(std::string(TriggerName)) );
 			if( nullptr != pTriggerObj )
 			{
 				pTriggerObj->setTriggerType(pcfgTrigger->getType());
@@ -3342,7 +3342,7 @@ void SVOConfigAssistantDlg::CheckAgainstCurrentList()
 	{
 		for (int i = 0; i <  m_TriggerList.GetTriggerListCount(); i++)
 		{
-			const SvTi::SVOTriggerObjPtr pTriggerObj( m_TriggerList.GetTriggerObjectByPosition(i) );
+			const SvTrig::SVOTriggerObjPtr pTriggerObj( m_TriggerList.GetTriggerObjectByPosition(i) );
 			if ( nullptr != pTriggerObj && pTriggerObj->GetTriggerDigNumber() > iNumberTriggersAllowed-1 )
 			{
 				AddMessageToList(TRIGGER_DLG, BuildDisplayMessage(MESSAGE_TYPE_ERROR, pTriggerObj->GetTriggerDisplayName(), INVALID_TRIGGER).c_str() );
@@ -3666,7 +3666,7 @@ void SVOConfigAssistantDlg::CheckTriggers()
 	int iTrg = GetTriggerListCount();
 	for (int i = 0;i < iTrg;i++)
 	{
-		const SvTi::SVOTriggerObjPtr pTriggerObj( GetTriggerObject(i) );
+		const SvTrig::SVOTriggerObjPtr pTriggerObj( GetTriggerObject(i) );
 		if( nullptr != pTriggerObj )
 		{
 			CheckTrigger( *pTriggerObj );
@@ -3675,7 +3675,7 @@ void SVOConfigAssistantDlg::CheckTriggers()
 	IsGood();
 }
 
-bool SVOConfigAssistantDlg::CheckTrigger( const SvTi::SVOTriggerObj& rTriggerObj)
+bool SVOConfigAssistantDlg::CheckTrigger( const SvTrig::SVOTriggerObj& rTriggerObj)
 {
 	bool bRet = true;
 	std::string TriggerName = rTriggerObj.GetTriggerDisplayName();

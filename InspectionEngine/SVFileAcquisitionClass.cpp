@@ -208,7 +208,7 @@ HRESULT SVFileAcquisitionClass::GetCameraImageInfo(SVImageInfoClass *pImageInfo)
 
 	if ( IsValidBoard() && IsDigitizerSubsystemValid() )
 	{
-		SvTh::SVDigitizerLoadLibraryClass* pLibrary = m_rDigitizerProc.GetDigitizerSubsystem(m_DigName.c_str());
+		SvTrig::SVDigitizerLoadLibraryClass* pLibrary = m_rDigitizerProc.GetDigitizerSubsystem(m_DigName.c_str());
 		if (nullptr != pLibrary)
 		{
 			bufHeight = pLibrary->GetBufferHeight(m_hDigitizer);

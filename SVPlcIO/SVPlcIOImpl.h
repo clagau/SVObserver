@@ -20,7 +20,7 @@ constexpr unsigned long cMaxPlcTriggers = 4;
 struct TriggerReport;
 #pragma endregion Declarations
 
-class SVPlcIOImpl : public SvTi::IODeviceBase
+class SVPlcIOImpl : public SvTrig::IODeviceBase
 {
 #pragma region Constructor
 public:
@@ -36,7 +36,7 @@ public:
 	unsigned long GetInputCount();
 	unsigned long GetOutputCount();
 
-	HRESULT SetOutputData(unsigned long triggerIndex, const SvTi::IntVariantMap& rData);
+	HRESULT SetOutputData(unsigned long triggerIndex, const SvTrig::IntVariantMap& rData);
 
 	// Triggers
 	unsigned long GetTriggerCount() const;

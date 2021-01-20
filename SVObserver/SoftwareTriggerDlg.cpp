@@ -23,7 +23,7 @@ IMPLEMENT_DYNAMIC(SoftwareTriggerDlg, CDialog)
 
 SoftwareTriggerDlg::SoftwareTriggerDlg(CWnd* pParent /*=nullptr*/): 
 	CDialog(SoftwareTriggerDlg::IDD, pParent),
-	m_knobCtrl(SvTi::MinTimerPeriod_ms, SvTi::MaxTimerPeriod_ms),
+	m_knobCtrl(SvTrig::MinTimerPeriod_ms, SvTrig::MaxTimerPeriod_ms),
 	m_pBrush(nullptr)
 {
 }
@@ -138,7 +138,7 @@ bool SoftwareTriggerDlg::EditOK()
 	CString Text;
 	m_intervalEdit.GetWindowText(Text);
 	int Value = _ttoi(Text);
-	return (SvTi::MinTimerPeriod_ms <= Value && Value <= SvTi::MaxTimerPeriod_ms);
+	return (SvTrig::MinTimerPeriod_ms <= Value && Value <= SvTrig::MaxTimerPeriod_ms);
 }
 
 void SoftwareTriggerDlg::OnEnChangeUsecEdit()
@@ -242,7 +242,7 @@ void SoftwareTriggerDlg::ClearTriggers()
 	m_triggerTabs.DeleteAllItems();
 }
 
-bool SoftwareTriggerDlg::AddTrigger(SvTi::SVTriggerObject* pTrigger)
+bool SoftwareTriggerDlg::AddTrigger(SvTrig::SVTriggerObject* pTrigger)
 {
 	assert( nullptr != pTrigger );
 	if( nullptr == pTrigger ){ return false; }

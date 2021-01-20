@@ -104,7 +104,7 @@ public:
 	bool IsPPQInList(LPCTSTR PPQName) const;
 
 	std::string BuildDigName( const SVOCameraObj& rCameraObj ) const;
-	std::string BuildTrgDig(const SvTi::SVOTriggerObj& rTriggerObj) const;
+	std::string BuildTrgDig(const SvTrig::SVOTriggerObj& rTriggerObj) const;
 
 	bool RenameInspection(LPCTSTR InspectionName, LPCTSTR NewName);
 
@@ -115,8 +115,8 @@ public:
 
 	SVOCameraObjPtr GetCameraObject(int iPos);
 	SVOCameraObjPtr GetCameraObjectByName(LPCTSTR CameraName);
-	SvTi::SVOTriggerObjPtr GetTriggerObject(int iPos);
-	SvTi::SVOTriggerObjPtr GetTriggerObjectByName(LPCTSTR TriggerName);
+	SvTrig::SVOTriggerObjPtr GetTriggerObject(int iPos);
+	SvTrig::SVOTriggerObjPtr GetTriggerObjectByName(LPCTSTR TriggerName);
 	SVOInspectionObjPtr GetInspectionObject(int iPos);
 	SVOInspectionObjPtr GetInspectionObjectByName(LPCTSTR Name);
 	SVOPPQObjPtr GetPPQObject(int iPos);
@@ -212,7 +212,7 @@ private:
 	HRESULT CheckCamera( SVOCameraObj& rCameraObj, bool SetFileParameters = false );
 	void CheckColor( const SVOCameraObj& rCameraObj );
 	void CheckTriggers();
-	bool CheckTrigger( const SvTi::SVOTriggerObj& rTriggerObj);
+	bool CheckTrigger( const SvTrig::SVOTriggerObj& rTriggerObj);
 	void RemoveFileAcquisitionMessages( LPCTSTR CameraName );
 
 	HRESULT ConnectToolsetBuffers();
@@ -250,7 +250,7 @@ private:
 
 	SVOCameraList m_CameraList;
 	SVOInspectionList m_InspectList;
-	SvTi::SVOTriggerList m_TriggerList;
+	SvTrig::SVOTriggerList m_TriggerList;
 	SVOPPQList m_PPQList;
 
 	SVOCameraList m_TmpCameraList; //used for cancel

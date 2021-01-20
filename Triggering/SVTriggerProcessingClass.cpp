@@ -18,7 +18,7 @@
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
-namespace SvTi
+namespace SvTrig
 {
 	SVTriggerProcessingClass& SVTriggerProcessingClass::Instance()
 	{
@@ -44,7 +44,7 @@ namespace SvTi
 
 		while( l_Iter != l_rTriggerParams.end() )
 		{
-			std::unique_ptr<SvTh::SVTriggerClass> pTriggerDevice = std::make_unique<SvTh::SVTriggerClass>(l_Iter->m_Name.c_str());
+			std::unique_ptr<SvTrig::SVTriggerClass> pTriggerDevice = std::make_unique<SvTrig::SVTriggerClass>(l_Iter->m_Name.c_str());
 
 			if( nullptr != pTriggerDevice)
 			{
@@ -133,9 +133,9 @@ namespace SvTi
 		return result;
 	}
 
-	SvTh::SVTriggerClass* SVTriggerProcessingClass::GetTrigger( LPCTSTR szName ) const
+	SvTrig::SVTriggerClass* SVTriggerProcessingClass::GetTrigger( LPCTSTR szName ) const
 	{
-		SvTh::SVTriggerClass* pTrigger{nullptr};
+		SvTrig::SVTriggerClass* pTrigger{nullptr};
 
 		SVNameTriggerMap::const_iterator l_Iter = m_Triggers.find( szName );
 
@@ -179,4 +179,4 @@ namespace SvTi
 
 		return l_Status;
 	}
-} //namespace SvTi
+} //namespace SvTrig

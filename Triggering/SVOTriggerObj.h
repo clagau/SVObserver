@@ -18,14 +18,14 @@
 #pragma endregion Includes
 
 
-namespace SvTi
+namespace SvTrig
 {
 	class SVOTriggerObj  
 	{
 	public:
 		SVOTriggerObj(const std::string& name, int iDig) : m_sTriggerDisplayName(name)
 			, m_iDigNumber(iDig)
-			, m_timerPeriod(SvTi::TimerPeriod)
+			, m_timerPeriod(SvTrig::TimerPeriod)
 			, m_triggerType(SvDef::TriggerType::HardwareTrigger){}
 
 		virtual ~SVOTriggerObj() = default;
@@ -56,4 +56,4 @@ namespace SvTi
 	};
 
 	typedef std::shared_ptr<SVOTriggerObj> SVOTriggerObjPtr;
-} //namespace SvTi
+} //namespace SvTrig

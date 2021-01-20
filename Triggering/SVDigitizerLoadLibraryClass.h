@@ -18,7 +18,7 @@
 class SVAcquisitionBufferInterface;
 class SVDeviceParamCollection;
 
-namespace SvTh
+namespace SvTrig
 {
 	typedef HRESULT (WINAPI *SVCreatePtr)(void);
 	typedef HRESULT (WINAPI *SVDestroyPtr)(void);
@@ -132,5 +132,5 @@ namespace SvTh
 		SVDigitizerScanForCamerasPtr m_pScanForCameras{ nullptr };
 	};
 
-} //namespace SvTh
+} //namespace SvTrig
 

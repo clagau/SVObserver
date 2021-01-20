@@ -18,7 +18,7 @@
 
 class SVIOTriggerLoadLibraryClass;
 
-namespace SvTh
+namespace SvTrig
 {
 class SVDigitizerLoadLibraryClass;
 
@@ -39,7 +39,7 @@ public:
 	explicit SVTriggerClass(LPCTSTR deviceName);
 	virtual ~SVTriggerClass() = default;
 
-	void __stdcall triggerCallback(const SvTi::IntVariantMap& rTriggerData);
+	void __stdcall triggerCallback(const SvTrig::IntVariantMap& rTriggerData);
 
 	void addAcquisitionTrigger(SVDigitizerLoadLibraryClass* pDllDigitizer, unsigned long triggerChannel);
 	void clearAcquisitionTriggers();
@@ -62,7 +62,7 @@ public:
 	SvDef::TriggerType getType() const { return m_type; }
 
 protected:
-	virtual void processTriggers(SvTi::SVTriggerInfoStruct& rTriggerInfo) override;
+	virtual void processTriggers(SvTrig::SVTriggerInfoStruct& rTriggerInfo) override;
 
 private:
 	int m_digitizerNumber{ -1 };
@@ -74,4 +74,4 @@ private:
 
 	std::vector<AcquisitionParameter> m_acqTriggerParameters;
 };
-} //namespace SvTh
+} //namespace SvTrig

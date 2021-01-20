@@ -11,7 +11,7 @@
 #include "PlcDataTypes.h"
 #include "SVIOLibrary/SVIOParameterEnum.h"
 #include "TriggerEngineConnection.h"
-#include "SVTimerLibrary/SVClock.h"
+#include "SVUtilityLibrary/SVClock.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
@@ -104,19 +104,19 @@ unsigned long SVPlcIOImpl::GetOutputCount()
 	return cOutputCount;
 }
 
-HRESULT SVPlcIOImpl::SetOutputData(unsigned long triggerIndex, const SvTi::IntVariantMap& rData)
+HRESULT SVPlcIOImpl::SetOutputData(unsigned long triggerIndex, const SvTrig::IntVariantMap& rData)
 {
 	ResultReport reportResult;
 
 	//PLC channel is zero based while SVObserver trigger index is one based!
 	reportResult.m_channel = static_cast<uint8_t> (triggerIndex - 1);
-	reportResult.m_timestamp = SvTl::GetTimeStamp();
-	auto iterData = rData.find(SvTi::TriggerDataEnum::ObjectID);
+	reportResult.m_timestamp = SvUl::GetTimeStamp();
+	auto iterData = rData.find(SvTrig::TriggerDataEnum::ObjectID);
 	if (rData.end() != iterData)
 	{
 		reportResult.m_currentObjectID = iterData->second;
 	}
-	iterData = rData.find(SvTi::TriggerDataEnum::OutputData);
+	iterData = rData.find(SvTrig::TriggerDataEnum::OutputData);
 	if (rData.end() != iterData)
 	{
 		const _variant_t& rResult{iterData->second};
@@ -377,12 +377,12 @@ void SVPlcIOImpl::reportTrigger(const TriggerReport& rTriggerReport)
 		//PLC channel is zero based while SVObserver trigger index is one based!
 		unsigned long triggerIndex = rTriggerReport.m_channel + 1;
 
-		SvTi::IntVariantMap triggerData;
-		triggerData[SvTi::TriggerDataEnum::TimeStamp] = _variant_t(rTriggerReport.m_triggerTimestamp);
-		triggerData[SvTi::TriggerDataEnum::TriggerChannel] = _variant_t(rTriggerReport.m_channel);
-		triggerData[SvTi::TriggerDataEnum::ObjectID] = _variant_t(rTriggerReport.m_currentObjectID);
-		triggerData[SvTi::TriggerDataEnum::TriggerIndex] = _variant_t(rTriggerReport.m_triggerIndex);
-		triggerData[SvTi::TriggerDataEnum::TriggerPerObjectID] = _variant_t(rTriggerReport.m_triggerPerObjectID);
+		SvTrig::IntVariantMap triggerData;
+		triggerData[SvTrig::TriggerDataEnum::TimeStamp] = _variant_t(rTriggerReport.m_triggerTimestamp);
+		triggerData[SvTrig::TriggerDataEnum::TriggerChannel] = _variant_t(rTriggerReport.m_channel);
+		triggerData[SvTrig::TriggerDataEnum::ObjectID] = _variant_t(rTriggerReport.m_currentObjectID);
+		triggerData[SvTrig::TriggerDataEnum::TriggerIndex] = _variant_t(rTriggerReport.m_triggerIndex);
+		triggerData[SvTrig::TriggerDataEnum::TriggerPerObjectID] = _variant_t(rTriggerReport.m_triggerPerObjectID);
 
 		auto iter = m_triggerCallbackMap.find(triggerIndex);
 		if (m_triggerCallbackMap.end() != iter)
@@ -395,7 +395,7 @@ void SVPlcIOImpl::reportTrigger(const TriggerReport& rTriggerReport)
 			const TriggerReport& rData = rTriggerReport;
 			///This is required as m_inputCount[rData.m_channel] is atomic
 			uint32_t inputCount = m_inputCount[rData.m_channel];
-			std::string fileData = SvUl::Format(_T("%d; %d; %f; %d; %d; %d; %f\r\n"), triggerIndex, inputCount, rData.m_triggerTimestamp, rData.m_currentObjectID, rData.m_triggerIndex, rData.m_triggerPerObjectID, SvTl::GetTimeStamp());
+			std::string fileData = SvUl::Format(_T("%d; %d; %f; %d; %d; %d; %f\r\n"), triggerIndex, inputCount, rData.m_triggerTimestamp, rData.m_currentObjectID, rData.m_triggerIndex, rData.m_triggerPerObjectID, SvUl::GetTimeStamp());
 			m_logInFile.write(fileData.c_str(), fileData.size());
 		}
 	}

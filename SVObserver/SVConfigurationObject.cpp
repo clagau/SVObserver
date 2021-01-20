@@ -56,7 +56,7 @@
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVSystemLibrary/SVThreadManager.h"
-#include "SVTimerLibrary/SVClock.h"
+#include "SVUtilityLibrary/SVClock.h"
 #include "SVUtilityLibrary/SVSafeArray.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVValueObjectLibrary/SVVariantValueObjectClass.h"
@@ -162,7 +162,7 @@ HRESULT SVConfigurationObject::RebuildOutputObjectList()
 	return l_Status;
 }
 
-bool SVConfigurationObject::AddTrigger(SvTi::SVTriggerObject* pTrigger)
+bool SVConfigurationObject::AddTrigger(SvTrig::SVTriggerObject* pTrigger)
 {
 	bool Result(false);
 
@@ -175,7 +175,7 @@ bool SVConfigurationObject::AddTrigger(SvTi::SVTriggerObject* pTrigger)
 	return Result;
 }
 
-bool SVConfigurationObject::RemoveTrigger(SvTi::SVTriggerObject* pTrigger)
+bool SVConfigurationObject::RemoveTrigger(SvTrig::SVTriggerObject* pTrigger)
 {
 	if (nullptr == pTrigger) { return false; }
 
@@ -197,7 +197,7 @@ long SVConfigurationObject::GetTriggerCount() const
 	return static_cast<long> (m_arTriggerArray.size());
 }// end GetTriggerCount
 
-bool SVConfigurationObject::GetChildObjectByName(LPCTSTR tszName, SvTi::SVTriggerObject** ppTrigger) const
+bool SVConfigurationObject::GetChildObjectByName(LPCTSTR tszName, SvTrig::SVTriggerObject** ppTrigger) const
 {
 	bool bReturn = false;
 
@@ -210,7 +210,7 @@ bool SVConfigurationObject::GetChildObjectByName(LPCTSTR tszName, SvTi::SVTrigge
 
 	for (long l = 0; l < lCount; l++)
 	{
-		SvTi::SVTriggerObject* pTrigger = GetTrigger(l);
+		SvTrig::SVTriggerObject* pTrigger = GetTrigger(l);
 		if (nullptr != pTrigger && Name == pTrigger->GetCompleteName())
 		{
 			*ppTrigger = pTrigger;
@@ -222,9 +222,9 @@ bool SVConfigurationObject::GetChildObjectByName(LPCTSTR tszName, SvTi::SVTrigge
 	return bReturn;
 }
 
-SvTi::SVTriggerObject* SVConfigurationObject::GetTrigger(long lIndex) const
+SvTrig::SVTriggerObject* SVConfigurationObject::GetTrigger(long lIndex) const
 {
-	SvTi::SVTriggerObject* retValue = nullptr;
+	SvTrig::SVTriggerObject* retValue = nullptr;
 
 	assert(0 <= lIndex && static_cast<long> (m_arTriggerArray.size()) > lIndex);
 
@@ -1763,7 +1763,7 @@ bool SVConfigurationObject::LoadTrigger(SVTreeType& rTree)
 	{
 		std::string ItemName = rTree.getBranchName(hSubChild);
 
-		SvTi::SVTriggerObject* pTrigger = new SvTi::SVTriggerObject;
+		SvTrig::SVTriggerObject* pTrigger = new SvTrig::SVTriggerObject;
 		bOk = nullptr != pTrigger;
 		if (bOk)
 		{
@@ -1796,7 +1796,7 @@ bool SVConfigurationObject::LoadTrigger(SVTreeType& rTree)
 
 			if (bOk)
 			{
-				SvTh::SVTriggerClass* psvDevice = SvTi::SVTriggerProcessingClass::Instance().GetTrigger(DeviceName.c_str());
+				SvTrig::SVTriggerClass* psvDevice = SvTrig::SVTriggerProcessingClass::Instance().GetTrigger(DeviceName.c_str());
 
 				if (nullptr != psvDevice)
 				{
@@ -2071,7 +2071,7 @@ bool SVConfigurationObject::LoadPPQ(SVTreeType& rTree)
 
 				for (long l = 0; bOk && l < lCount; l++)
 				{
-					SvTi::SVTriggerObject* pTrigger = GetTrigger(l);
+					SvTrig::SVTriggerObject* pTrigger = GetTrigger(l);
 
 					bOk = (nullptr != pTrigger);
 					if (bOk)
@@ -2723,11 +2723,11 @@ HRESULT SVConfigurationObject::GetChildObject(SVObjectClass*& rpObject, const SV
 			}
 			else if (rNameInfo.m_NameArray[0].substr(0, 7) == _T("Trigger"))
 			{
-				SvTi::SVTriggerObjectPtrVector::const_iterator l_TriggerIter;
+				SvTrig::SVTriggerObjectPtrVector::const_iterator l_TriggerIter;
 
 				for (l_TriggerIter = m_arTriggerArray.begin(); nullptr == rpObject && l_TriggerIter != m_arTriggerArray.end(); ++l_TriggerIter)
 				{
-					SvTi::SVTriggerObject* pTrigger = (*l_TriggerIter);
+					SvTrig::SVTriggerObject* pTrigger = (*l_TriggerIter);
 
 					if (nullptr != pTrigger)
 					{
@@ -3204,7 +3204,7 @@ void SVConfigurationObject::SaveTrigger(SvOi::IObjectWriter& rWriter) const
 	long lCount = GetTriggerCount();
 	for (long l = 0; l < lCount; l++)
 	{
-		SvTi::SVTriggerObject* pTrigger = GetTrigger(l);
+		SvTrig::SVTriggerObject* pTrigger = GetTrigger(l);
 
 		if (nullptr != pTrigger)
 		{
@@ -3894,7 +3894,7 @@ void SVConfigurationObject::SetConfigurationLoaded()
 	m_bConfigurationValid = true;
 }
 
-void SVConfigurationObject::SetupSoftwareTrigger(SvTh::SVTriggerClass* pTrigger, int iDigNum, long triggerPeriod, SVPPQObject* pPPQ)
+void SVConfigurationObject::SetupSoftwareTrigger(SvTrig::SVTriggerClass* pTrigger, int iDigNum, long triggerPeriod, SVPPQObject* pPPQ)
 {
 	assert(nullptr != pTrigger && nullptr != pPPQ);
 	if (nullptr == pTrigger || nullptr == pPPQ)
@@ -3919,7 +3919,7 @@ void SVConfigurationObject::SetupSoftwareTrigger(SvTh::SVTriggerClass* pTrigger,
 			if (nullptr != pAcq)
 			{
 				// need the digitizer name here ...
-				SvTh::SVDigitizerLoadLibraryClass* pAcqDLL = SvIe::SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(pAcq->DigName().c_str());
+				SvTrig::SVDigitizerLoadLibraryClass* pAcqDLL = SvIe::SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(pAcq->DigName().c_str());
 				if (pAcqDLL)
 				{
 					pTrigger->addAcquisitionTrigger(pAcqDLL, pAcq->m_hDigitizer);
@@ -3942,11 +3942,11 @@ HRESULT SVConfigurationObject::AttachAcqToTriggers()
 	bool bOk = true;
 	for (long l = 0; bOk && l < lCount; l++)
 	{
-		SvTi::SVTriggerObject* pTrigger = GetTrigger(l);
+		SvTrig::SVTriggerObject* pTrigger = GetTrigger(l);
 		bOk = (nullptr != pTrigger);
 		if (bOk)
 		{
-			SvTh::SVTriggerClass* pTriggerDevice = pTrigger->getDevice();
+			SvTrig::SVTriggerClass* pTriggerDevice = pTrigger->getDevice();
 			SVPPQObject* pPPQ = reinterpret_cast<SVPPQObject*>(pTrigger->GetParent());
 			if (nullptr != pTriggerDevice)
 			{
@@ -4357,9 +4357,9 @@ HRESULT SVConfigurationObject::GetInspectionItems(const SvDef::StringSet& rNames
 
 		if (SUCCEEDED(l_Status))
 		{
-			double l_EndTimeStamp = SvTl::GetTimeStamp() + SvTl::ConvertFrom(SvTl::Minutes, 10.0);
+			double l_EndTimeStamp = SvUl::GetTimeStamp() + SvUl::ConvertFrom(SvUl::Minutes, 10.0);
 
-			while (!(AsyncCommandsResults.empty()) && (SvTl::GetTimeStamp() < l_EndTimeStamp))
+			while (!(AsyncCommandsResults.empty()) && (SvUl::GetTimeStamp() < l_EndTimeStamp))
 			{
 				taskResultFutureDeqeu::iterator l_AsyncIter = AsyncCommandsResults.begin();
 

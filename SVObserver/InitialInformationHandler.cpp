@@ -113,7 +113,7 @@ HRESULT InitialInformationHandler::LoadTriggerDLL()
 			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_TRIGGER;
 		}
 
-		if (S_OK != SvTi::SVTriggerProcessingClass::Instance().UpdateTriggerSubsystem(&m_svDLLTriggers))
+		if (S_OK != SvTrig::SVTriggerProcessingClass::Instance().UpdateTriggerSubsystem(&m_svDLLTriggers))
 		{
 			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_TRIGGER;
 		}
@@ -150,7 +150,7 @@ HRESULT InitialInformationHandler::LoadTriggerDLL()
 
 HRESULT InitialInformationHandler::CloseTriggerDLL()
 {
-	SvTi::SVTriggerProcessingClass::Instance().clear();
+	SvTrig::SVTriggerProcessingClass::Instance().clear();
 
 	m_svDLLTriggers.Close();
 	m_svDLLSoftwareTriggers.Close();
@@ -170,7 +170,7 @@ HRESULT InitialInformationHandler::LoadSoftwareTriggerDLL()
 			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_SOFTWARETRIGGER;
 		}
 
-		if (S_OK != SvTi::SVTriggerProcessingClass::Instance().UpdateTriggerSubsystem(&m_svDLLSoftwareTriggers))
+		if (S_OK != SvTrig::SVTriggerProcessingClass::Instance().UpdateTriggerSubsystem(&m_svDLLSoftwareTriggers))
 		{
 			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_SOFTWARETRIGGER;
 		}
@@ -193,9 +193,9 @@ HRESULT InitialInformationHandler::LoadCameraTriggerDLL()
 		if (S_OK == ResultLoadDLL)
 		{
 			_variant_t value;
-			value.SetString(SvTi::CameraTriggerName);
+			value.SetString(SvTrig::CameraTriggerName);
 			m_svDLLCameraTriggers.SetParameterValue(1, SVIOParameterEnum::SVBoardName, value);
-			if (S_OK != SvTi::SVTriggerProcessingClass::Instance().UpdateTriggerSubsystem(&m_svDLLCameraTriggers))
+			if (S_OK != SvTrig::SVTriggerProcessingClass::Instance().UpdateTriggerSubsystem(&m_svDLLCameraTriggers))
 			{
 				l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_CAMERATRIGGER;
 			}

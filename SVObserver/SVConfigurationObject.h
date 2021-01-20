@@ -44,14 +44,14 @@ namespace SvPb
 {
 	class InspectionCmdMsgs;
 }
-namespace SvTi
+namespace SvTrig
 {
 	class SVTriggerObject;
 	typedef std::vector<SVTriggerObject*> SVTriggerObjectPtrVector;
 }
-namespace SvTh
+namespace SvTrig
 {
-	class SvTh::SVTriggerClass;
+	class SvTrig::SVTriggerClass;
 }
 namespace  SvXml
 {
@@ -223,11 +223,11 @@ public:
 		SVLut*& rpLut,
 		SVDeviceParamCollection*& rpDeviceParams) const;
 
-	bool AddTrigger(SvTi::SVTriggerObject* pTrigger);
-	bool RemoveTrigger(SvTi::SVTriggerObject* pTrigger);
+	bool AddTrigger(SvTrig::SVTriggerObject* pTrigger);
+	bool RemoveTrigger(SvTrig::SVTriggerObject* pTrigger);
 	long GetTriggerCount() const;
-	SvTi::SVTriggerObject* GetTrigger(long lIndex) const;
-	bool GetChildObjectByName(LPCTSTR tszName, SvTi::SVTriggerObject** ppTrigger) const;
+	SvTrig::SVTriggerObject* GetTrigger(long lIndex) const;
+	bool GetChildObjectByName(LPCTSTR tszName, SvTrig::SVTriggerObject** ppTrigger) const;
 
 	bool AddPPQ(SVPPQObject* pPPQ);
 	bool RemovePPQ(const SVPPQObject* const pPPQ);
@@ -470,7 +470,7 @@ private:
 	void SaveDeviceParamSpecial(SvOi::IObjectWriter& rWriter, const SVDeviceParam* pParam) const;
 	HRESULT LoadDeviceParamSpecial(SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent, SVDeviceParam* pParam);
 
-	void SetupSoftwareTrigger(SvTh::SVTriggerClass* pTriggerDevice, int iDigNum, long triggerPeriod, SVPPQObject* pPPQ);
+	void SetupSoftwareTrigger(SvTrig::SVTriggerClass* pTriggerDevice, int iDigNum, long triggerPeriod, SVPPQObject* pPPQ);
 
 	void GetRemoteInputInspections(const std::string& p_rRemoteInputName, SVInspectionSet& p_rInspections) const;
 
@@ -502,7 +502,7 @@ private:
 	std::unique_ptr<SVIOController> m_pIOController;
 	std::unique_ptr<SVInputObjectList> m_pInputObjectList;
 	std::unique_ptr<SVOutputObjectList> m_pOutputObjectList;
-	SvTi::SVTriggerObjectPtrVector  m_arTriggerArray;
+	SvTrig::SVTriggerObjectPtrVector  m_arTriggerArray;
 	SVPPQObjectPtrVector            m_arPPQArray;
 	SvIe::SVVirtualCameraPtrVector  m_arCameraArray;
 	SVInspectionProcessVector   m_arInspectionArray;

@@ -19,7 +19,7 @@
 #include "Triggering/SVTriggerClass.h"
 #pragma endregion Includes
 
-namespace SvTi
+namespace SvTrig
 {
 	SVTriggerObject::SVTriggerObject( LPCSTR ObjectName )
 	: SVObjectClass( ObjectName )
@@ -38,7 +38,7 @@ namespace SvTi
 		Destroy();
 	}
 
-	bool SVTriggerObject::Create( SvTh::SVTriggerClass* pTrigger )
+	bool SVTriggerObject::Create( SvTrig::SVTriggerClass* pTrigger )
 	{
 		bool bOk = true;
 
@@ -145,11 +145,11 @@ namespace SvTi
 	{
 		if (nullptr != m_pTriggerDevice)
 		{
-			SvTi::SVTriggerInfoStruct triggerInfo;
+			SvTrig::SVTriggerInfoStruct triggerInfo;
 			triggerInfo.bValid = true;
-			triggerInfo.m_Data[SvTi::TriggerDataEnum::TimeStamp] = _variant_t(timeStamp);
+			triggerInfo.m_Data[SvTrig::TriggerDataEnum::TimeStamp] = _variant_t(timeStamp);
 			///Trigger channel 0 based
-			triggerInfo.m_Data[SvTi::TriggerDataEnum::TriggerChannel] = _variant_t(m_pTriggerDevice->getTriggerChannel());
+			triggerInfo.m_Data[SvTrig::TriggerDataEnum::TriggerChannel] = _variant_t(m_pTriggerDevice->getTriggerChannel());
 			m_pTriggerDevice->Notify(triggerInfo);
 		}
 	}
@@ -191,4 +191,4 @@ namespace SvTi
 	{ 
 		return (nullptr != m_pTriggerDevice) ? m_pTriggerDevice->getTriggerCount() : -1; 
 	}
-} //namespace SvTi
+} //namespace SvTrig

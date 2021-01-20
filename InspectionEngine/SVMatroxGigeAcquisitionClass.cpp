@@ -73,7 +73,7 @@ bool SVMatroxGigeAcquisitionClass::IsValidBoard() const
 
 	if( bOk && m_DeviceParams.ParameterExists( DeviceParamVendorId ) )
 	{
-		SvTh::SVDigitizerLoadLibraryClass* pLibrary = m_rDigitizerProc.GetDigitizerSubsystem(m_DigName.c_str());
+		SvTrig::SVDigitizerLoadLibraryClass* pLibrary = m_rDigitizerProc.GetDigitizerSubsystem(m_DigName.c_str());
 		if( nullptr != pLibrary)
 		{
 			_variant_t value = pLibrary->ParameterGetValue(m_hDigitizer, SvDef::SVGigeParameterEnum::SVGigeParameterVendorName);
@@ -473,7 +473,7 @@ HRESULT SVMatroxGigeAcquisitionClass::SetStandardCameraParameter( const SVDevice
 	{
 		if ( 0 != m_hDigitizer )
 		{
-			SvTh::SVDigitizerLoadLibraryClass* pDigitizer = m_rDigitizerProc.GetDigitizerSubsystem(m_DigName.c_str());
+			SvTrig::SVDigitizerLoadLibraryClass* pDigitizer = m_rDigitizerProc.GetDigitizerSubsystem(m_DigName.c_str());
 
 			hr = m_cameraProxy.SetStandardCameraParameter(rw, m_DeviceParams, m_hDigitizer, pDigitizer);
 
@@ -686,7 +686,7 @@ HRESULT SVMatroxGigeAcquisitionClass::SingleGrab(SvOi::SVImageBufferHandlePtr p_
 
 	if( S_OK == hr )
 	{
-		SvTh::SVDigitizerLoadLibraryClass* pDigitizer = m_rDigitizerProc.GetDigitizerSubsystem(m_DigName.c_str());
+		SvTrig::SVDigitizerLoadLibraryClass* pDigitizer = m_rDigitizerProc.GetDigitizerSubsystem(m_DigName.c_str());
 		if (nullptr != pDigitizer)
 		{
 			mbTempOnline = true;
@@ -760,7 +760,7 @@ HRESULT SVMatroxGigeAcquisitionClass::SetGigeFeatureOverrides(const std::string&
 	{
 		if (0 != m_hDigitizer)
 		{
-			SvTh::SVDigitizerLoadLibraryClass* pDigitizer = m_rDigitizerProc.GetDigitizerSubsystem(m_DigName.c_str());
+			SvTrig::SVDigitizerLoadLibraryClass* pDigitizer = m_rDigitizerProc.GetDigitizerSubsystem(m_DigName.c_str());
 
 			hr = m_cameraProxy.SetGigeFeatureOverrides(featureOverrides, m_hDigitizer, pDigitizer);
 		}
@@ -772,7 +772,7 @@ HRESULT SVMatroxGigeAcquisitionClass::StartDigitizer()
 {
 	HRESULT hr = S_OK;
 
-	SvTh::SVDigitizerLoadLibraryClass* pDigitizer = m_rDigitizerProc.GetDigitizerSubsystem(m_DigName.c_str());
+	SvTrig::SVDigitizerLoadLibraryClass* pDigitizer = m_rDigitizerProc.GetDigitizerSubsystem(m_DigName.c_str());
 	if (pDigitizer)
 	{
 		// Send notification to end tracking main camera parameters

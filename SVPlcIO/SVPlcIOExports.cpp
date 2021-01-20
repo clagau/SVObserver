@@ -73,7 +73,7 @@ HRESULT WINAPI SVOutputSetPortValue(unsigned long , unsigned long )
 	return S_OK;
 }
 
-HRESULT WINAPI SVOutputSetData(unsigned long triggerIndex, const SvTi::IntVariantMap& rData)
+HRESULT WINAPI SVOutputSetData(unsigned long triggerIndex, const SvTrig::IntVariantMap& rData)
 {
 	HRESULT result {E_FAIL};
 
@@ -105,7 +105,7 @@ _variant_t WINAPI SVTriggerGetName(unsigned long triggerIndex)
 	return result;
 }
 
-HRESULT WINAPI SVTriggerRegister(unsigned long triggerIndex, SvTi::TriggerCallBack pTriggerCallback)
+HRESULT WINAPI SVTriggerRegister(unsigned long triggerIndex, SvTrig::TriggerCallBack pTriggerCallback)
 {
 	if (0 < triggerIndex && SvPlc::cMaxPlcTriggers >= triggerIndex)
 	{

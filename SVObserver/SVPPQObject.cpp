@@ -43,7 +43,7 @@
 #include "SVSharedMemoryLibrary/SharedMemWriter.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVTimerLibrary/SVClock.h"
+#include "SVUtilityLibrary/SVClock.h"
 #include "SVValueObjectLibrary/SVVariantValueObjectClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
@@ -76,7 +76,7 @@ HRESULT SVPPQObject::ProcessDelayOutputs( bool& rProcessed )
 
 	SVProductInfoStruct* l_pProduct = nullptr;
 
-	double l_CurrentTime = SvTl::GetTimeStamp();
+	double l_CurrentTime = SvUl::GetTimeStamp();
 
 	while (0 < m_oOutputsDelayQueue.GetCount() && nullptr == l_pProduct)
 	{
@@ -169,7 +169,7 @@ HRESULT SVPPQObject::ProcessOutputs(SVProductInfoStruct& rProduct)
 
 	if (WriteOutputs(&rProduct))
 	{
-		rProduct.m_outputsInfo.m_EndProcess = SvTl::GetTimeStamp();
+		rProduct.m_outputsInfo.m_EndProcess = SvUl::GetTimeStamp();
 
 		if (0 < m_resetDelay)
 		{
@@ -573,7 +573,7 @@ long SVPPQObject::getPPQLength() const
 	return length;
 }
 
-bool SVPPQObject::AttachTrigger(SvTi::SVTriggerObject* pTrigger)
+bool SVPPQObject::AttachTrigger(SvTrig::SVTriggerObject* pTrigger)
 {
 	if (nullptr == pTrigger) 
 	{ 
@@ -625,7 +625,7 @@ bool SVPPQObject::AttachInspection(SVInspectionProcess* pInspection)
 	return true;
 }
 
-bool SVPPQObject::DetachTrigger(SvTi::SVTriggerObject* pTrigger)
+bool SVPPQObject::DetachTrigger(SvTrig::SVTriggerObject* pTrigger)
 {
 	bool bOk = nullptr != m_pTrigger && m_pTrigger == pTrigger;
 
@@ -1666,7 +1666,7 @@ bool SVPPQObject::WriteOutputs(SVProductInfoStruct *pProduct)
 			//Data index with -1 will return the default output values which is required in this case
 			pProduct->m_outputsInfo.m_Outputs = m_pOutputList->getOutputValues(m_UsedOutputs, true, false, true);
 			//Set the default inspected object ID which would be the input object ID
-			SvTi::IntVariantMap::const_iterator iterData = pProduct->m_triggerInfo.m_Data.find(SvTi::TriggerDataEnum::ObjectID);
+			SvTrig::IntVariantMap::const_iterator iterData = pProduct->m_triggerInfo.m_Data.find(SvTrig::TriggerDataEnum::ObjectID);
 			if (pProduct->m_triggerInfo.m_Data.end() != iterData)
 			{
 				inspectedObjectID = static_cast<DWORD> (iterData->second);
@@ -1675,12 +1675,12 @@ bool SVPPQObject::WriteOutputs(SVProductInfoStruct *pProduct)
 
 		DWORD triggerIndex{0};
 		DWORD triggerPerObjectID{0};
-		SvTi::IntVariantMap::const_iterator  iterData = pProduct->m_triggerInfo.m_Data.find(SvTi::TriggerDataEnum::TriggerIndex);
+		SvTrig::IntVariantMap::const_iterator  iterData = pProduct->m_triggerInfo.m_Data.find(SvTrig::TriggerDataEnum::TriggerIndex);
 		if (pProduct->m_triggerInfo.m_Data.end() != iterData)
 		{
 			triggerIndex = static_cast<DWORD> (iterData->second);
 		}
-		iterData = pProduct->m_triggerInfo.m_Data.find(SvTi::TriggerDataEnum::TriggerPerObjectID);
+		iterData = pProduct->m_triggerInfo.m_Data.find(SvTrig::TriggerDataEnum::TriggerPerObjectID);
 		if (pProduct->m_triggerInfo.m_Data.end() != iterData)
 		{
 			triggerPerObjectID = static_cast<DWORD> (iterData->second);
@@ -1716,9 +1716,9 @@ bool SVPPQObject::WriteOutputs(SVProductInfoStruct *pProduct)
 			
 			if(triggerChannel >= 0 && rOutputValues.size() > 0)
 			{
-				SvTi::IntVariantMap outputData;
-				outputData[SvTi::TriggerDataEnum::ObjectID] = _variant_t(inspectedObjectID);
-				outputData[SvTi::TriggerDataEnum::OutputData] = rOutputValues[0].second;
+				SvTrig::IntVariantMap outputData;
+				outputData[SvTrig::TriggerDataEnum::ObjectID] = _variant_t(inspectedObjectID);
+				outputData[SvTrig::TriggerDataEnum::OutputData] = rOutputValues[0].second;
 				m_pOutputList->WriteOutputData(triggerChannel, outputData);
 			}
 		}
@@ -1737,7 +1737,7 @@ bool SVPPQObject::WriteOutputs(SVProductInfoStruct *pProduct)
 		else if(nullptr != pProduct)
 		{
 			// Set output data valid expire time
-			pProduct->m_outputsInfo.m_EndDataValidDelay = SvTl::GetTimeStamp() + m_DataValidDelay;
+			pProduct->m_outputsInfo.m_EndDataValidDelay = SvUl::GetTimeStamp() + m_DataValidDelay;
 			m_DataValidDelayQueue.AddTail(pProduct->ProcessCount());
 		}
 	}
@@ -1972,7 +1972,7 @@ void SVPPQObject::GetAllOutputs(SVIOEntryHostStructPtrVector& ppIOEntries) const
 	ppIOEntries = m_AllOutputs;
 }
 
-SVProductInfoStruct* SVPPQObject::IndexPPQ(SvTi::SVTriggerInfoStruct&& rTriggerInfo)
+SVProductInfoStruct* SVPPQObject::IndexPPQ(SvTrig::SVTriggerInfoStruct&& rTriggerInfo)
 {
 	SVProductInfoStruct* pProduct{nullptr};
 	SVProductInfoStruct* pNewProduct{nullptr};
@@ -2309,10 +2309,10 @@ void SVPPQObject::StartOutputs(SVProductInfoStruct* pProduct)
 {
 	if (nullptr != pProduct)
 	{
-		pProduct->m_outputsInfo.m_BeginProcess = SvTl::GetTimeStamp();
-		pProduct->m_outputsInfo.m_EndOutputDelay = SvTl::GetMinTimeStamp();
-		pProduct->m_outputsInfo.m_EndResetDelay = SvTl::GetMinTimeStamp();
-		pProduct->m_outputsInfo.m_EndDataValidDelay = SvTl::GetMinTimeStamp();
+		pProduct->m_outputsInfo.m_BeginProcess = SvUl::GetTimeStamp();
+		pProduct->m_outputsInfo.m_EndOutputDelay = SvUl::GetMinTimeStamp();
+		pProduct->m_outputsInfo.m_EndResetDelay = SvUl::GetMinTimeStamp();
+		pProduct->m_outputsInfo.m_EndDataValidDelay = SvUl::GetMinTimeStamp();
 
 		switch (m_outputMode)
 		{
@@ -2778,7 +2778,7 @@ HRESULT SVPPQObject::ProcessCameraResponse(const SVCameraQueueElement& rElement)
 								{
 									break;
 								}
-								IterCamera2->second.m_CallbackTimeStamp = SvTl::GetTimeStamp();
+								IterCamera2->second.m_CallbackTimeStamp = SvUl::GetTimeStamp();
 							}
 #ifdef EnableTracking
 							std::string l_Title = rElement.m_pCamera->GetName();
@@ -2793,7 +2793,7 @@ HRESULT SVPPQObject::ProcessCameraResponse(const SVCameraQueueElement& rElement)
 						}
 					}
 
-					IterCamera->second.m_CallbackTimeStamp = SvTl::GetTimeStamp();
+					IterCamera->second.m_CallbackTimeStamp = SvUl::GetTimeStamp();
 
 					m_oNotifyInspectionsSet.insert(pProduct->ProcessCount());
 						m_AsyncProcedure.Signal(nullptr);
@@ -2874,7 +2874,7 @@ void SVPPQObject::cameraCallback(ULONG_PTR pCaller, CameraInfo&& cameraInfo)
 	}
 }
 
-void __stdcall SVPPQObject::triggerCallback(SvTi::SVTriggerInfoStruct&& triggerInfo)
+void __stdcall SVPPQObject::triggerCallback(SvTrig::SVTriggerInfoStruct&& triggerInfo)
 {
 	if (m_bOnline)
 	{
@@ -2898,7 +2898,7 @@ void __stdcall SVPPQObject::triggerCallback(SvTi::SVTriggerInfoStruct&& triggerI
 		}
 
 		triggerInfo.m_ToggleState = m_TriggerToggle;
-		triggerInfo.m_ToggleTimeStamp = SvTl::GetTimeStamp();
+		triggerInfo.m_ToggleTimeStamp = SvUl::GetTimeStamp();
 
 		m_oTriggerQueue.PushTail(triggerInfo);
 
@@ -3003,7 +3003,7 @@ HRESULT SVPPQObject::MarkProductInspectionsMissingAcquisiton(SVProductInfoStruct
 				l_Info.second.m_InspectedState = PRODUCT_NOT_INSPECTED;
 				l_Info.second.m_CanProcess = false;
 				l_Info.second.m_InProcess = true;
-				l_Info.second.m_EndInspection = SvTl::GetTimeStamp();
+				l_Info.second.m_EndInspection = SvUl::GetTimeStamp();
 
 				rProduct.m_ProductState += _T("|MC=");
 				rProduct.m_ProductState += pInspection->GetName();
@@ -3087,7 +3087,7 @@ HRESULT SVPPQObject::NotifyProcessTimerOutputs()
 
 	bool signalThread = false;
 
-	double currentTime = SvTl::GetTimeStamp();
+	double currentTime = SvUl::GetTimeStamp();
 	if (0 < m_outputDelay)
 	{
 		if (0.0 < m_NextOutputDelayTimestamp && m_NextOutputDelayTimestamp <= currentTime)
@@ -3134,7 +3134,7 @@ HRESULT SVPPQObject::ProcessTrigger( bool& rProcessed )
 
 	if( rProcessed )
 	{
-		SvTi::SVTriggerInfoStruct poppedFromQueue;
+		SvTrig::SVTriggerInfoStruct poppedFromQueue;
 
 		if (S_OK == m_oTriggerQueue.PopHead(poppedFromQueue))
 		{
@@ -3327,7 +3327,7 @@ HRESULT SVPPQObject::ProcessResetOutputs( bool& rProcessed )
 			rProcessed = false;
 			SVProductInfoStruct* pProduct{nullptr};
 
-			double currentTime = SvTl::GetTimeStamp();
+			double currentTime = SvUl::GetTimeStamp();
 
 			while (0 < m_oOutputsResetQueue.GetCount())
 			{
@@ -3392,7 +3392,7 @@ HRESULT SVPPQObject::ProcessDataValidDelay(bool& rProcessed)
 		{
 			SVProductInfoStruct* pProduct(nullptr);
 
-			double CurrentTime = SvTl::GetTimeStamp();
+			double CurrentTime = SvUl::GetTimeStamp();
 
 			while (0 < m_DataValidDelayQueue.GetCount() && nullptr == pProduct)
 			{

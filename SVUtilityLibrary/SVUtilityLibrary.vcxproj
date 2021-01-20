@@ -175,6 +175,7 @@
     </ClCompile>
     <ClCompile Include="StringHelper.cpp" />
     <ClCompile Include="SVBitmapInfo.cpp" />
+    <ClCompile Include="SVClock.cpp" />
     <ClCompile Include="SVGUID.cpp" />
     <ClCompile Include="SVHistogramBase.cpp" />
     <ClCompile Include="SVSafeArray.cpp" />
@@ -211,6 +212,7 @@
     <ClInclude Include="StringHelper.h" />
     <ClInclude Include="StringToEnum.h" />
     <ClInclude Include="SVBitmapInfo.h" />
+    <ClInclude Include="SVClock.h" />
     <ClInclude Include="SVGUID.h" />
     <ClInclude Include="SVHandleManager.h" />
     <ClInclude Include="SVHistogramBase.h" />

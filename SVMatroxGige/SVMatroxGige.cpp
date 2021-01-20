@@ -21,7 +21,7 @@
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVMessage/SVMessage.h"
-#include "SVTimerLibrary/SVClock.h"
+#include "SVUtilityLibrary/SVClock.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -494,11 +494,11 @@ void SVMatroxGige::ProcessStartFrame(SVMatroxGigeDigitizer* pCamera)
 					// log an exception
 					SvDef::StringVector msgList;
 					msgList.emplace_back(pCamera->m_FullName);
-					msgList.emplace_back(SvUl::Format(_T("%.3f"), (SvTl::GetTimeStamp() - pCamera->m_StartFrameTimeStamp) * SvTl::c_MicrosecondsPerMillisecond));
+					msgList.emplace_back(SvUl::Format(_T("%.3f"), (SvUl::GetTimeStamp() - pCamera->m_StartFrameTimeStamp) * SvUl::c_MicrosecondsPerMillisecond));
 					SvStl::MessageManager Exception(SvStl::MsgType::Log);
 					Exception.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_NAK_Error_MissingEndFrame, msgList, SvStl::SourceFileParams(StdMessageParams));
 				}
-				pCamera->m_StartFrameTimeStamp = SvTl::GetTimeStamp();
+				pCamera->m_StartFrameTimeStamp = SvUl::GetTimeStamp();
 			}
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_MATROXGIGE)
@@ -536,7 +536,7 @@ void SVMatroxGige::ProcessEndFrame(SVMatroxGigeDigitizer* pCamera, __int64 HookI
 					if (l_Code == S_OK && ModifiedBufferId)
 					{
 						//Save end frame time stamp before buffer copy
-						double endFrameTimeStamp = SvTl::GetTimeStamp();
+						double endFrameTimeStamp = SvUl::GetTimeStamp();
 						double startFrameTimeStamp = pCamera->m_StartFrameTimeStamp;
 
 						pCamera->m_StartFrameTimeStamp = 0.0;

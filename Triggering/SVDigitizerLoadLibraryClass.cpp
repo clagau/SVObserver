@@ -17,7 +17,7 @@
 #pragma endregion Includes
 
 
-namespace SvTh
+namespace SvTrig
 {
 	SVDigitizerLoadLibraryClass::~SVDigitizerLoadLibraryClass()
 	{
@@ -398,4 +398,4 @@ namespace SvTh
 		}
 	}
 
-} //namespace SvTh
+} //namespace SvTrig

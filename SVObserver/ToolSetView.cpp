@@ -37,7 +37,7 @@
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVOGui/DataController.h"
 #include "SVInspectionProcess.h"
-#include "SVTimerLibrary/SVclock.h"
+#include "SVUtilityLibrary/SVClock.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -1239,6 +1239,6 @@ bool ToolSetView::CheckName(const std::string& rName, LPCTSTR pExclude) const
 
 void ToolSetView::RefreshTimestamp()
 {
-	m_timestamp = SvTl::GetTimeStamp();
+	m_timestamp = SvUl::GetTimeStamp();
 				  
 }

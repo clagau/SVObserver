@@ -20,7 +20,7 @@
 #include "SVInspectionProcess.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "Tools/SVTool.h"
-#include "SVTimerLibrary/SVClock.h"
+#include "SVUtilityLibrary/SVClock.h"
 #include "Tools/SVColorTool.h"
 #include "Definitions/StringTypeDef.h"
 #include "Definitions/ObjectNames.h"
@@ -478,7 +478,7 @@ bool SVToolSet::Run(RunStatus& rRunStatus, SvStl::MessageContainerVector *pError
 	bool bRetVal = true;
 	clearRunErrorMessages();
 
-	double l_Timer = SvTl::GetTimeStamp();
+	double l_Timer = SvUl::GetTimeStamp();
 	m_ToolTime.Start();
 
 	// If Conditional is disabled equation.Run() returns always TRUE.
@@ -725,8 +725,8 @@ bool SVToolSet::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) con
 
 void SVToolSet::setPostRunStatus(double timer, RunStatus &rRunStatus)
 {
-	double l_Elapsed = (SvTl::GetTimeStamp() - timer);
-	m_EndTime = SvTl::ConvertTo(SvTl::Seconds, l_Elapsed);
+	double l_Elapsed = (SvUl::GetTimeStamp() - timer);
+	m_EndTime = SvUl::ConvertTo(SvUl::Seconds, l_Elapsed);
 	m_AverageTime = (m_AverageTime + m_EndTime) / 2.0;
 
 	if (0 < m_SetNumber)

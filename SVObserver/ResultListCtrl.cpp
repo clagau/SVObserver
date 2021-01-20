@@ -17,7 +17,7 @@
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
-#include "SVTimerLibrary/SVClock.h"
+#include "SVUtilityLibrary/SVClock.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
@@ -156,7 +156,7 @@ void ResultListCtrl::updateList()
 		SetItemText( i + 1, 2, Temp.c_str() ); // processes/sec
 	}
 
-	m_UpdateTimeStamp = SvTl::GetTimeStamp();
+	m_UpdateTimeStamp = SvUl::GetTimeStamp();
 	SetRedraw( true );
 	RedrawWindow(nullptr, nullptr, RDW_INVALIDATE | RDW_UPDATENOW | RDW_ERASE | RDW_FRAME);
 

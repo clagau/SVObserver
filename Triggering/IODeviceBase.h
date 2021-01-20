@@ -13,7 +13,7 @@
 #include "SVTriggerInfoStruct.h"
 #pragma endregion Includes
 
-namespace SvTi
+namespace SvTrig
 {
 /// the base class for all trigger-generating DLLs.
 /// not supposed to be instantiated itself
@@ -50,4 +50,4 @@ protected:
 #pragma endregion member variables
 
 };
-} //namespace SvTi
+} //namespace SvTrig

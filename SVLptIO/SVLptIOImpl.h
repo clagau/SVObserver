@@ -30,7 +30,7 @@ enum ParallelBoardInterfaceType
 ///////////////////////////////////////////////////////////////////////
 //
 ///////////////////////////////////////////////////////////////////////
-class SVLptIOImpl : public SVLptIO, public SvTi::IODeviceBase
+class SVLptIOImpl : public SVLptIO, public SvTrig::IODeviceBase
 //@TODO [developer] it might be better to use aggregation instead of multiple inheritance here
 {
 #pragma region Declarations

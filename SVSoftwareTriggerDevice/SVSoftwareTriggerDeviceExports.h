@@ -20,7 +20,7 @@ HRESULT WINAPI SVDestroy();
 unsigned long WINAPI SVTriggerGetCount();
 unsigned long WINAPI SVTriggerGetHandle(unsigned long Index );
 _variant_t WINAPI SVTriggerGetName(unsigned long triggerIndex);
-HRESULT WINAPI SVTriggerRegister(unsigned long triggerIndex, SvTi::TriggerCallBack pTriggerCallback);
+HRESULT WINAPI SVTriggerRegister(unsigned long triggerIndex, SvTrig::TriggerCallBack pTriggerCallback);
 HRESULT WINAPI SVTriggerUnregister(unsigned long triggerIndex);
 HRESULT WINAPI SVTriggerStart(unsigned long triggerIndex);
 HRESULT WINAPI SVTriggerStop(unsigned long triggerIndex);

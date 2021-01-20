@@ -16,7 +16,7 @@
 #include "ObjectInterfaces/IInspectionProcess.h"
 #include "ObjectInterfaces/IObjectManager.h"
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
-#include "SVTimerLibrary/SVClock.h"
+#include "SVUtilityLibrary/SVClock.h"
 #pragma endregion Includes
 
 namespace SvIe
@@ -152,7 +152,7 @@ HRESULT SVCameraImageTemplate::SetObjectValue(SVObjectAttributeClass* pDataObjec
 		return hr;
 	}
 
-	m_LastUpdate = SvTl::GetTimeStamp();
+	m_LastUpdate = SvUl::GetTimeStamp();
 
 	hr = bOk ? S_OK : S_FALSE;
 	return hr;
@@ -187,7 +187,7 @@ HRESULT SVCameraImageTemplate::ReconnectBuffers()
 
 		m_ImageInfo.SetOwnerImage(getObjectId());
 
-		m_LastUpdate = SvTl::GetTimeStamp();
+		m_LastUpdate = SvUl::GetTimeStamp();
 
 		if (!ResetObject())
 		{

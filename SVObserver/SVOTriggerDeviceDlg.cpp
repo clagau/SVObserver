@@ -84,7 +84,7 @@ void SVOTriggerDeviceDlg::SetupList()
 
     m_ctlTriggerList.ResetContent();
     int iTrigCount = m_pParent->GetTriggerListCount();
-    SvTi::SVOTriggerObjPtr pTriggerObj( nullptr );
+    SvTrig::SVOTriggerObjPtr pTriggerObj( nullptr );
 
     for (int i = 0; i < iTrigCount; i++)
     {
@@ -189,11 +189,11 @@ void SVOTriggerDeviceDlg::OnBtnPropTrig()
 	{
 		CString TriggerName;
 		m_ctlTriggerList.GetText(iCurSel,TriggerName);
-		SvTi::SVOTriggerObjPtr pTriggerObj = m_pParent->GetTriggerObjectByName(TriggerName);
+		SvTrig::SVOTriggerObjPtr pTriggerObj = m_pParent->GetTriggerObjectByName(TriggerName);
 		if( nullptr != pTriggerObj )
 		{
 			SVOPropertyPageDlg oDlg;
-			SvTi::SVOTriggerObj& rTmpObj( oDlg.getTriggerObject() );
+			SvTrig::SVOTriggerObj& rTmpObj( oDlg.getTriggerObject() );
 
 			rTmpObj = *pTriggerObj;
 			oDlg.SetDlgPage(VIRTUAL_TRIGGER_DLG);
@@ -217,11 +217,11 @@ void SVOTriggerDeviceDlg::OnBtnAdvanced()
     {
 		CString TriggerName;
         m_ctlTriggerList.GetText(iCurSel,TriggerName);
-		SvTi::SVOTriggerObjPtr pTriggerObj = m_pParent->GetTriggerObjectByName(TriggerName);
+		SvTrig::SVOTriggerObjPtr pTriggerObj = m_pParent->GetTriggerObjectByName(TriggerName);
 		if( nullptr != pTriggerObj )
 		{
 			SVOPropertyPageDlg oDlg;
-			SvTi::SVOTriggerObj& rTmpObj( oDlg.getTriggerObject() );
+			SvTrig::SVOTriggerObj& rTmpObj( oDlg.getTriggerObject() );
 
 			rTmpObj = *pTriggerObj;
 			oDlg.SetDlgPage(VIRTUAL_TRIGGER_ADV);
@@ -267,7 +267,7 @@ void SVOTriggerDeviceDlg::EnablePropertyEdit(int iSelection)
 	// check for advanced properties
 	CString TriggerName;
 	m_ctlTriggerList.GetText(iSelection, TriggerName);
-    SvTi::SVOTriggerObjPtr pTriggerObj = m_pParent->GetTriggerObjectByName(TriggerName);
+    SvTrig::SVOTriggerObjPtr pTriggerObj = m_pParent->GetTriggerObjectByName(TriggerName);
 	bool buttonEnabled{ false };
 	if( nullptr != pTriggerObj)
 	{

@@ -41,7 +41,7 @@ namespace SvOi
 class IObjectWriter;
 }
 
-namespace SvTi
+namespace SvTrig
 {
 	class SVTriggerObject;
 }
@@ -115,11 +115,11 @@ public:
 	long getInspectionTimeout() const { return m_inspectionTimeoutMillisec; }
 	const std::string& GetConditionalOutputName() const;
 
-	bool AttachTrigger( SvTi::SVTriggerObject* pTrigger );
+	bool AttachTrigger( SvTrig::SVTriggerObject* pTrigger );
 	bool AttachCamera(SvIe::SVVirtualCamera* pCamera, long lPosition, bool p_AllowMinusOne = false);
 	bool AttachInspection( SVInspectionProcess* pInspection );
 
-	bool DetachTrigger( SvTi::SVTriggerObject* pTrigger );
+	bool DetachTrigger( SvTrig::SVTriggerObject* pTrigger );
 	bool DetachCamera(SvIe::SVVirtualCamera* pCamera, bool bRemoveDepends = false);
 	bool DetachInspection( SVInspectionProcess* pInspection );
 
@@ -129,7 +129,7 @@ public:
 	size_t GetCameraCount() const;
 	SvIe::SVVirtualCameraPtrVector GetVirtualCameras(bool sortAndMakeUnique = false) const;
 
-	SvTi::SVTriggerObject* GetTrigger() { return m_pTrigger; }
+	SvTrig::SVTriggerObject* GetTrigger() { return m_pTrigger; }
 	bool GetInspection( long lIndex, SVInspectionProcess*& ppInspection ) const;
 
 	//************************************
@@ -180,7 +180,7 @@ public:
 
 	void __stdcall cameraCallback(ULONG_PTR pCaller, CameraInfo&& cameraInfo);
 
-	void __stdcall triggerCallback(SvTi::SVTriggerInfoStruct&& triggerInfo);
+	void __stdcall triggerCallback(SvTrig::SVTriggerInfoStruct&& triggerInfo);
 
 	bool IsProductAlive( long p_ProductCount ) const;
 
@@ -243,7 +243,7 @@ protected:
 	
 	typedef SVTQueueObject< SVCameraQueueElement > SVCameraResponseQueue;
 	typedef SVTQueueObject< SVProductInfoStruct* > SVProductPointerQueue;
-	typedef SVRingBuffer<SvTi::SVTriggerInfoStruct> SVTriggerInfoQueue;
+	typedef SVRingBuffer<SvTrig::SVTriggerInfoStruct> SVTriggerInfoQueue;
 	typedef SVTQueueObject< SVProductInfoStruct > SVProductQueue;
 	typedef SVTQueueObject< SVInspectionInfoPair > SVInspectionInfoQueue;
 	typedef SVTQueueObject< long > SVProcessCountQueue;
@@ -325,7 +325,7 @@ protected:
 
 	SVProductInfoStruct* GetProductInfoStruct(long processCount) const;
 
-	SVProductInfoStruct* IndexPPQ(SvTi::SVTriggerInfoStruct&& rTriggerInfo);
+	SVProductInfoStruct* IndexPPQ(SvTrig::SVTriggerInfoStruct&& rTriggerInfo);
 	void InitializeProduct( SVProductInfoStruct* pNewProduct);
 	void StartOutputs( SVProductInfoStruct* p_pProduct );
 	HRESULT NotifyInspections( long p_Offset );
@@ -362,7 +362,7 @@ protected:
 	std::atomic<double> m_NextDataValidDelayTimestamp;
 
 	// Queues for the PPQ's threads to store incoming objects to be processed
-	SVTriggerInfoQueue m_oTriggerQueue; ///< A ring buffer containing SVTriggerQueueElement s, i.e. SvTi::SVTriggerInfoStruct s and SVVariantBoolVector s
+	SVTriggerInfoQueue m_oTriggerQueue; ///< A ring buffer containing SVTriggerQueueElement s, i.e. SvTrig::SVTriggerInfoStruct s and SVVariantBoolVector s
 	SVInspectionInfoQueue m_oInspectionQueue;
 	SVProcessCountQueue m_oOutputsDelayQueue;
 	SVProcessCountQueue m_oOutputsResetQueue;
@@ -386,7 +386,7 @@ protected:
 	SVIOEntryHostStructPtr m_pDataValid;
 
 	// Pointers to the Subsystem objects used by the PPQ
-	SvTi::SVTriggerObject*       m_pTrigger;
+	SvTrig::SVTriggerObject*       m_pTrigger;
 	SVInspectionProcessVector    m_arInspections;
 
 	// Pointer to the PPQ's buckets

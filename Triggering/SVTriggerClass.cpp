@@ -18,24 +18,24 @@
 #include "Triggering/SVTriggerConstants.h"
 #pragma endregion Includes
 
-namespace SvTh
+namespace SvTrig
 {
 SVTriggerClass::SVTriggerClass(LPCTSTR deviceName) : TriggerDevice(deviceName)
 {
 	std::string name{deviceName};
-	if (0 == name.compare(0, strlen(SvTi::SoftwareTriggerName), SvTi::SoftwareTriggerName))
+	if (0 == name.compare(0, strlen(SvTrig::SoftwareTriggerName), SvTrig::SoftwareTriggerName))
 	{
 		m_type = SvDef::TriggerType::SoftwareTrigger;
 	}
-	else if (0 == name.compare(0, strlen(SvTi::CameraTriggerName), SvTi::CameraTriggerName))
+	else if (0 == name.compare(0, strlen(SvTrig::CameraTriggerName), SvTrig::CameraTriggerName))
 	{
 		m_type = SvDef::TriggerType::CameraTrigger;
 	}
 }
 
-void __stdcall SVTriggerClass::triggerCallback(const SvTi::IntVariantMap& rTriggerData)
+void __stdcall SVTriggerClass::triggerCallback(const SvTrig::IntVariantMap& rTriggerData)
 {
-	SvTi::SVTriggerInfoStruct triggerInfo;
+	SvTrig::SVTriggerInfoStruct triggerInfo;
 
 	triggerInfo.bValid = true;
 	triggerInfo.m_Data = rTriggerData;
@@ -152,7 +152,7 @@ HRESULT SVTriggerClass::Stop()
 	return l_hrOk;
 }
 
-void SVTriggerClass::processTriggers(SvTi::SVTriggerInfoStruct& rTriggerInfo)
+void SVTriggerClass::processTriggers(SvTrig::SVTriggerInfoStruct& rTriggerInfo)
 {
 	if (SvDef::TriggerType::SoftwareTrigger == m_type || SvDef::TriggerType::CameraTrigger == m_type)
 	{
@@ -166,9 +166,9 @@ void SVTriggerClass::processTriggers(SvTi::SVTriggerInfoStruct& rTriggerInfo)
 		{
 			m_currentObjectID = (0 == m_currentObjectID) ? 1 : m_currentObjectID;
 		}
-		rTriggerInfo.m_Data[SvTi::TriggerDataEnum::ObjectID] = _variant_t(m_currentObjectID);
-		rTriggerInfo.m_Data[SvTi::TriggerDataEnum::TriggerIndex] = _variant_t(m_triggerIndex);
-		rTriggerInfo.m_Data[SvTi::TriggerDataEnum::TriggerPerObjectID] = _variant_t(getTriggerPerObjectID());
+		rTriggerInfo.m_Data[SvTrig::TriggerDataEnum::ObjectID] = _variant_t(m_currentObjectID);
+		rTriggerInfo.m_Data[SvTrig::TriggerDataEnum::TriggerIndex] = _variant_t(m_triggerIndex);
+		rTriggerInfo.m_Data[SvTrig::TriggerDataEnum::TriggerPerObjectID] = _variant_t(getTriggerPerObjectID());
 
 	}
 
@@ -180,4 +180,4 @@ void SVTriggerClass::processTriggers(SvTi::SVTriggerInfoStruct& rTriggerInfo)
 		}
 	}
 }
-} //namespace SvTh
+} //namespace SvTrig

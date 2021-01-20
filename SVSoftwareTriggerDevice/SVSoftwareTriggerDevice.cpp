@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVSoftwareTriggerDevice.h"
 #include "SVIOLibrary/SVIOParameterEnum.h"
-#include "SVTimerLibrary/SVClock.h"
+#include "SVUtilityLibrary/SVClock.h"
 #pragma endregion Includes
 
 constexpr unsigned int cTimerResolution = 1;
@@ -148,9 +148,9 @@ void SVSoftwareTriggerDevice::dispatchTrigger(unsigned long triggerIndex)
 	{
 		int triggerChannel = triggerIndex - 1;
 
-		SvTi::IntVariantMap triggerData;
-		triggerData[SvTi::TriggerDataEnum::TimeStamp] = _variant_t(SvTl::GetTimeStamp());
-		triggerData[SvTi::TriggerDataEnum::TriggerChannel] = _variant_t(triggerChannel);
+		SvTrig::IntVariantMap triggerData;
+		triggerData[SvTrig::TriggerDataEnum::TimeStamp] = _variant_t(SvUl::GetTimeStamp());
+		triggerData[SvTrig::TriggerDataEnum::TriggerChannel] = _variant_t(triggerChannel);
 
 		auto iter = m_triggerCallbackMap.find(triggerIndex);
 		if (m_triggerCallbackMap.end() != iter)

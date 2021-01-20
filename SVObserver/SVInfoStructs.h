@@ -161,7 +161,7 @@ struct SVProductInfoStruct
 	bool m_dataComplete;
 	long m_lastPPQPosition;
 
-	SvTi::SVTriggerInfoStruct m_triggerInfo;
+	SvTrig::SVTriggerInfoStruct m_triggerInfo;
 	SVOutputsInfoStruct m_outputsInfo;
 	SVPPQObject* m_pPPQ = nullptr;
 

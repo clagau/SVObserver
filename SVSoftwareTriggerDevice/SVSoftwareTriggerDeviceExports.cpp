@@ -61,7 +61,7 @@ _variant_t WINAPI SVTriggerGetName( unsigned long triggerIndex)
 	return result;
 }
 
-HRESULT WINAPI SVTriggerRegister( unsigned long triggerIndex, SvTi::TriggerCallBack pTriggerCallback)
+HRESULT WINAPI SVTriggerRegister( unsigned long triggerIndex, SvTrig::TriggerCallBack pTriggerCallback)
 {
 	if (0 < triggerIndex && cMaxSoftwareTriggers >= triggerIndex)
 	{

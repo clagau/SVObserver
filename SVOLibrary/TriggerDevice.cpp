@@ -12,7 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "TriggerDevice.h"
-#include "SVTimerLibrary/SVClock.h"
+#include "SVUtilityLibrary/SVClock.h"
 #pragma endregion Includes
 
 void CALLBACK TriggerDevice::APCProc(ULONG_PTR)
@@ -101,15 +101,15 @@ void TriggerDevice::Process(bool&)
 
 	while(false == done)
 	{
-		SvTi::SVTriggerInfoStruct triggerInfo;
+		SvTrig::SVTriggerInfoStruct triggerInfo;
 		m_triggerQueue.PopHead(triggerInfo);
 
 		if (triggerInfo.bValid && nullptr != m_pPpqTriggerCallback)
 		{
 			triggerInfo.lTriggerCount = ++m_triggerCount;
 			//If in the input data it has a valid time stamp value then it is more accurate then use it
-			SvTi::IntVariantMap::const_iterator iterData{ triggerInfo.m_Data.end() };
-			iterData = triggerInfo.m_Data.find(SvTi::TriggerDataEnum::TimeStamp);
+			SvTrig::IntVariantMap::const_iterator iterData{ triggerInfo.m_Data.end() };
+			iterData = triggerInfo.m_Data.find(SvTrig::TriggerDataEnum::TimeStamp);
 			if (triggerInfo.m_Data.end() != iterData && VT_R8 == iterData->second.vt && 0.0 < iterData->second.dblVal)
 			{
 				triggerInfo.m_triggerTimeStamp = iterData->second.dblVal;
@@ -117,7 +117,7 @@ void TriggerDevice::Process(bool&)
 			else
 			{
 				///This is the fallback trigger time stamp
-				triggerInfo.m_triggerTimeStamp = SvTl::GetTimeStamp();
+				triggerInfo.m_triggerTimeStamp = SvUl::GetTimeStamp();
 			}
 
 			processTriggers(triggerInfo);
@@ -130,7 +130,7 @@ void TriggerDevice::Process(bool&)
 /*
 This method adds the new response to the process queue.
 */
-void TriggerDevice::Notify(const SvTi::SVTriggerInfoStruct& rTriggerInfo)
+void TriggerDevice::Notify(const SvTrig::SVTriggerInfoStruct& rTriggerInfo)
 {
 	m_triggerQueue.PushTail(rTriggerInfo);
 	m_Thread.Signal(this);

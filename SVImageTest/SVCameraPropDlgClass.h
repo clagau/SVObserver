@@ -16,10 +16,10 @@
 #include "SVMFCControls\SVListCtrl.h"
 #pragma endregion Includes
 
-namespace SvTh
+namespace SvTrig
 {
 	class SVDigitizerLoadLibraryClass;
-}//namespace SvTh
+}//namespace SvTrig
 
 
 class SVCameraPropDlgClass : public CDialog
@@ -33,7 +33,7 @@ public:
 	SvMc::SVListCtrl	m_svListCtrl;
 	//}}AFX_DATA
 
-	SvTh::SVDigitizerLoadLibraryClass *m_psvDigitizers;
+	SvTrig::SVDigitizerLoadLibraryClass *m_psvDigitizers;
 	unsigned long m_digitizerHandle;
 
 	// ClassWizard generated virtual function overrides

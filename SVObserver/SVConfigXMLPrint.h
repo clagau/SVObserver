@@ -54,7 +54,7 @@ namespace sv_xml
 
 		void PrintXMLDoc(Writer  writer) const;
 		void WriteTriggers(Writer  writer) const;
-		void WriteTrigger(Writer  writer, SvTi::SVTriggerObject* pTrigger) const;
+		void WriteTrigger(Writer  writer, SvTrig::SVTriggerObject* pTrigger) const;
 		void WriteCameras(Writer  writer) const;
 		void WriteCamera(Writer  writer, SvIe::SVVirtualCamera* pCamera) const;
 		void WriteHardwareAcq(Writer  writer, SvIe::SVVirtualCamera* pCamera) const;

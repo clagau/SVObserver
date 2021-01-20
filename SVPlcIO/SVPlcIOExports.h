@@ -25,12 +25,12 @@ unsigned long WINAPI SVOutputGetCount();
 HRESULT WINAPI SVOutputSetValue(unsigned long channel, bool value);
 unsigned long WINAPI SVOutputGetPortCount();
 HRESULT WINAPI SVOutputSetPortValue(unsigned long port, unsigned long value);
-HRESULT WINAPI SVOutputSetData(unsigned long triggerIndex, const SvTi::IntVariantMap& rData);
+HRESULT WINAPI SVOutputSetData(unsigned long triggerIndex, const SvTrig::IntVariantMap& rData);
 
 unsigned long WINAPI SVTriggerGetCount();
 unsigned long WINAPI SVTriggerGetHandle(unsigned long index);
 HRESULT WINAPI SVTriggerGetName(unsigned long triggerIndex, BSTR *pName);
-HRESULT WINAPI SVTriggerRegister(unsigned long triggerIndex, SvTi::TriggerCallBack pTriggerCallback);
+HRESULT WINAPI SVTriggerRegister(unsigned long triggerIndex, SvTrig::TriggerCallBack pTriggerCallback);
 HRESULT WINAPI SVTriggerUnregister(unsigned long triggerIndex);
 HRESULT WINAPI SVTriggerStart(unsigned long triggerIndex);
 HRESULT WINAPI SVTriggerStop(unsigned long triggerIndex);

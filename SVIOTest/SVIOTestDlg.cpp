@@ -20,7 +20,7 @@
 #include "SVIOLibrary/SVIOParameterEnum.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVStatusLibrary/GlobalPath.h"
-#include "SVTimerLibrary/SVClock.h"
+#include "SVUtilityLibrary/SVClock.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -584,8 +584,8 @@ void SVIOTriggerDataStruct::OnTriggerStart()
 	lTriggerCount = 0;
 	m_LastTime = 0;
 	m_TotalTime = 0;
-	m_MaxTime = SvTl::GetMinTimeStamp();
-	m_MinTime = SvTl::GetMaxTimeStamp();
+	m_MaxTime = SvUl::GetMinTimeStamp();
+	m_MinTime = SvUl::GetMaxTimeStamp();
 }
 
 void CSVIOTESTDlg::StartTrigger(int triggerchannel) 
@@ -600,17 +600,17 @@ void CSVIOTESTDlg::StartTrigger(int triggerchannel)
 
 }
 
-void __stdcall CSVIOTESTDlg::triggerCallback(const SvTi::IntVariantMap& rTriggerData)
+void __stdcall CSVIOTESTDlg::triggerCallback(const SvTrig::IntVariantMap& rTriggerData)
 {
 	double timestamp{ 0.0 };
-	SvTi::IntVariantMap::const_iterator Iter(rTriggerData.end());
-	Iter = rTriggerData.find(SvTi::TriggerDataEnum::TimeStamp);
+	SvTrig::IntVariantMap::const_iterator Iter(rTriggerData.end());
+	Iter = rTriggerData.find(SvTrig::TriggerDataEnum::TimeStamp);
 	if (rTriggerData.end() != Iter)
 	{
 		timestamp = Iter->second;
 	}
 
-	Iter = rTriggerData.find(SvTi::TriggerDataEnum::TriggerChannel);
+	Iter = rTriggerData.find(SvTrig::TriggerDataEnum::TriggerChannel);
 	if (rTriggerData.end() != Iter)
 	{
 		unsigned long triggerChannel = Iter->second;

@@ -95,7 +95,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SVCommandLibrary.lib;SVLibrary.lib;SVMatroxLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;Rpcrt4.lib</AdditionalDependencies>
+      <AdditionalDependencies>SVCommandLibrary.lib;SVLibrary.lib;SVMatroxLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVUtilityLibrary.lib;Rpcrt4.lib</AdditionalDependencies>
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -150,7 +150,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SVCommandLibrary.lib;SVLibrary.lib;SVMatroxLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;Rpcrt4.lib</AdditionalDependencies>
+      <AdditionalDependencies>SVCommandLibrary.lib;SVLibrary.lib;SVMatroxLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVUtilityLibrary.lib;Rpcrt4.lib</AdditionalDependencies>
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>

@@ -8,7 +8,7 @@
 
 #pragma once
 
-namespace SvTi
+namespace SvTrig
 {
 typedef  std::map<int, _variant_t> IntVariantMap;
 typedef std::function<void(const IntVariantMap&)> TriggerCallBack;
@@ -45,4 +45,4 @@ struct SVTriggerInfoStruct
 	std::vector<_variant_t> m_Inputs;
 };
 
-} //namespace SvTi
+} //namespace SvTrig

@@ -84,7 +84,7 @@
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>SVIOLibrary.lib;SVLibrary.lib;SVStatusLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;Triggering.lib</AdditionalDependencies>
+      <AdditionalDependencies>SVIOLibrary.lib;SVLibrary.lib;SVStatusLibrary.lib;SVUtilityLibrary.lib;Triggering.lib</AdditionalDependencies>
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -130,7 +130,7 @@
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <AdditionalDependencies>SVIOLibrary.lib;SVLibrary.lib;SVStatusLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;Triggering.lib</AdditionalDependencies>
+      <AdditionalDependencies>SVIOLibrary.lib;SVLibrary.lib;SVStatusLibrary.lib;SVUtilityLibrary.lib;Triggering.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Bscmake>

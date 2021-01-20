@@ -21,7 +21,7 @@ class SVTestAcquisitionSubsystem
 {
 
 public:
-	SvTh::SVDigitizerLoadLibraryClass m_svDigitizers;
+	SvTrig::SVDigitizerLoadLibraryClass m_svDigitizers;
 
 public:
 	SVTestAcquisitionSubsystem();

@@ -151,7 +151,7 @@ void SVDigitizerProcessingClass::ClearDevices()
 	}
 }
 
-HRESULT SVDigitizerProcessingClass::UpdateDigitizerSubsystem( SvTh::SVDigitizerLoadLibraryClass* pDigitizerSubsystem )
+HRESULT SVDigitizerProcessingClass::UpdateDigitizerSubsystem( SvTrig::SVDigitizerLoadLibraryClass* pDigitizerSubsystem )
 {
 	HRESULT Result{ E_FAIL };
 
@@ -228,9 +228,9 @@ bool SVDigitizerProcessingClass::IsValidDigitizerSubsystem( LPCTSTR digitizerNam
 	return ( nullptr != GetDigitizerSubsystem( digitizerName ) );
 }
 
-SvTh::SVDigitizerLoadLibraryClass* SVDigitizerProcessingClass::GetDigitizerSubsystem( LPCTSTR digitizerName ) const
+SvTrig::SVDigitizerLoadLibraryClass* SVDigitizerProcessingClass::GetDigitizerSubsystem( LPCTSTR digitizerName ) const
 {
-	SvTh::SVDigitizerLoadLibraryClass* l_pSubsystem = nullptr;
+	SvTrig::SVDigitizerLoadLibraryClass* l_pSubsystem = nullptr;
 
 	SVNameDigitizerSubsystemMap::const_iterator l_Iter = m_DigitizerSubsystems.find( digitizerName );
 
@@ -405,7 +405,7 @@ HRESULT SVDigitizerProcessingClass::ScanForCameras()
 	return l_Status;
 }
 
-HRESULT SVDigitizerProcessingClass::AddDigitizer( LPCTSTR Name, LPCTSTR AcquisitionName, SvTh::SVDigitizerLoadLibraryClass* pDigitizerSubsystem, unsigned long p_Handle )
+HRESULT SVDigitizerProcessingClass::AddDigitizer( LPCTSTR Name, LPCTSTR AcquisitionName, SvTrig::SVDigitizerLoadLibraryClass* pDigitizerSubsystem, unsigned long p_Handle )
 {
 	HRESULT Result( S_OK );
 	std::string DigitizerName( Name );
@@ -527,7 +527,7 @@ HRESULT SVDigitizerProcessingClass::UpdateMatroxDevices()
 
 	if( IsValidDigitizerSubsystem( deviceName.c_str() ) )
 	{
-		SvTh::SVDigitizerLoadLibraryClass* pLibrary = GetDigitizerSubsystem( deviceName.c_str() );
+		SvTrig::SVDigitizerLoadLibraryClass* pLibrary = GetDigitizerSubsystem( deviceName.c_str() );
 
 		if(nullptr != pLibrary)
 		{

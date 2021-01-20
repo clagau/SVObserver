@@ -39,7 +39,7 @@
 #include "SVOGui\FormulaController.h"
 #include "SVProtoBuf/ConverterHelper.h"
 #include "SVLogLibrary/Logging.h"
-#include "SVTimerLibrary/SVClock.h"
+#include "SVUtilityLibrary/SVClock.h"
 #include "SVValueObjectLibrary/SVFileNameValueObjectClass.h"
 #include "SVValueObjectLibrary/SVVariantValueObjectClass.h"
 #include "InspectionEngine/SVImageClass.h"
@@ -120,7 +120,7 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed)
 		}
 		const SVInspectionInfoStruct& rIPInfo = iter->second;
 		m_inspectionInfo = rIPInfo;
-		m_inspectionInfo.m_BeginInspection = SvTl::GetTimeStamp();
+		m_inspectionInfo.m_BeginInspection = SvUl::GetTimeStamp();
 		
 		size_t l_InputXferCount = 0;
 
@@ -130,11 +130,11 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed)
 		double time {0.0};
 		if ((*m_pProduct).m_triggerInfo.m_PreviousTrigger > 0.0)
 		{
-			time = (triggerTimeStamp - (*m_pProduct).m_triggerInfo.m_PreviousTrigger) * SvTl::c_MicrosecondsPerMillisecond;
+			time = (triggerTimeStamp - (*m_pProduct).m_triggerInfo.m_PreviousTrigger) * SvUl::c_MicrosecondsPerMillisecond;
 		}
 		m_pCurrentToolset->setTime(time, ToolSetTimes::TriggerDelta);
 
-		time = (m_inspectionInfo.m_BeginInspection - triggerTimeStamp) * SvTl::c_MicrosecondsPerMillisecond;
+		time = (m_inspectionInfo.m_BeginInspection - triggerTimeStamp) * SvUl::c_MicrosecondsPerMillisecond;
 		m_pCurrentToolset->setTime(time, ToolSetTimes::TriggerToStart);
 
 		double triggerToAcqTime{ 0.0 };
@@ -145,28 +145,28 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed)
 			SvIe::SVObjectIdSVCameraInfoStructMap::const_iterator iterCamera((*m_pProduct).m_svCameraInfos.find(m_pToolSetCamera->getObjectId()));
 			if ((*m_pProduct).m_svCameraInfos.cend() != iterCamera)
 			{
-				triggerToAcqTime = (iterCamera->second.m_StartFrameTimeStamp - triggerTimeStamp) * SvTl::c_MicrosecondsPerMillisecond;
-				acqTime = (iterCamera->second.m_EndFrameTimeStamp - iterCamera->second.m_StartFrameTimeStamp) * SvTl::c_MicrosecondsPerMillisecond;
+				triggerToAcqTime = (iterCamera->second.m_StartFrameTimeStamp - triggerTimeStamp) * SvUl::c_MicrosecondsPerMillisecond;
+				acqTime = (iterCamera->second.m_EndFrameTimeStamp - iterCamera->second.m_StartFrameTimeStamp) * SvUl::c_MicrosecondsPerMillisecond;
 			}
 		}
 
-		m_pCurrentToolset->setTime(triggerTimeStamp * SvTl::c_MicrosecondsPerMillisecond, ToolSetTimes::TriggerTimeStamp);
+		m_pCurrentToolset->setTime(triggerTimeStamp * SvUl::c_MicrosecondsPerMillisecond, ToolSetTimes::TriggerTimeStamp);
 		//If no tool set camera was found TriggerToAcquisitionStart and AcquisitionTime will be set to 0
 		m_pCurrentToolset->setTime(triggerToAcqTime, ToolSetTimes::TriggerToAcquisitionStart);
 		m_pCurrentToolset->setTime(acqTime, ToolSetTimes::AcquisitionTime);
 		
-		SvTi::IntVariantMap::const_iterator iterData{ (*m_pProduct).m_triggerInfo.m_Data.end()};
-		iterData = (*m_pProduct).m_triggerInfo.m_Data.find(SvTi::TriggerDataEnum::ObjectID);
+		SvTrig::IntVariantMap::const_iterator iterData{ (*m_pProduct).m_triggerInfo.m_Data.end()};
+		iterData = (*m_pProduct).m_triggerInfo.m_Data.find(SvTrig::TriggerDataEnum::ObjectID);
 		if ((*m_pProduct).m_triggerInfo.m_Data.end() != iterData)
 		{
 			m_pCurrentToolset->setObjectID(static_cast<double> (iterData->second));
 		}
-		iterData = (*m_pProduct).m_triggerInfo.m_Data.find(SvTi::TriggerDataEnum::TriggerIndex);
+		iterData = (*m_pProduct).m_triggerInfo.m_Data.find(SvTrig::TriggerDataEnum::TriggerIndex);
 		if ((*m_pProduct).m_triggerInfo.m_Data.end() != iterData)
 		{
 			m_pCurrentToolset->setTriggerIndex(iterData->second);
 		}
-		iterData = (*m_pProduct).m_triggerInfo.m_Data.find(SvTi::TriggerDataEnum::TriggerPerObjectID);
+		iterData = (*m_pProduct).m_triggerInfo.m_Data.find(SvTrig::TriggerDataEnum::TriggerPerObjectID);
 		if ((*m_pProduct).m_triggerInfo.m_Data.end() != iterData)
 		{
 			m_pCurrentToolset->setTriggerPerObjectID(iterData->second);
@@ -228,10 +228,10 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed)
 			{
 				m_inspectionInfo.m_InspectedState = GetToolSet()->GetResultList()->GetInspectionState();
 
-				m_inspectionInfo.m_EndInspection = SvTl::GetTimeStamp();
+				m_inspectionInfo.m_EndInspection = SvUl::GetTimeStamp();
 				m_inspectionInfo.setTriggerRecordCompleted();
 
-				time = (m_inspectionInfo.m_EndInspection - triggerTimeStamp) * SvTl::c_MicrosecondsPerMillisecond;
+				time = (m_inspectionInfo.m_EndInspection - triggerTimeStamp) * SvUl::c_MicrosecondsPerMillisecond;
 				m_pCurrentToolset->setTime(time, ToolSetTimes::TriggerToCompletion);
 
 				m_inspectionInfo.m_ObjectID = m_pCurrentToolset->getInspectedObjectID();
@@ -2255,7 +2255,7 @@ void SVInspectionProcess::AddInputImageRequestToTool(const std::string& rName, u
 	}
 }
 
-std::pair<SvTi::SVTriggerInfoStruct, SVInspectionInfoStruct> SVInspectionProcess::getLastProductData() const
+std::pair<SvTrig::SVTriggerInfoStruct, SVInspectionInfoStruct> SVInspectionProcess::getLastProductData() const
 {
 	if (!m_LastRunProductNULL)
 	{
@@ -2844,7 +2844,7 @@ bool SVInspectionProcess::RunInspection(SVInspectionInfoStruct& rIPInfo, const S
 		rIPInfo.m_InspectedState = PRODUCT_INSPECTION_DISABLED;
 	}// end if
 
-	rIPInfo.m_BeginToolset = SvTl::GetTimeStamp();
+	rIPInfo.m_BeginToolset = SvUl::GetTimeStamp();
 	if (!rIPInfo.m_BeginToolset)
 	{
 		SvStl::MessageManager e(SvStl::MsgType::Log);
@@ -2866,7 +2866,7 @@ bool SVInspectionProcess::RunInspection(SVInspectionInfoStruct& rIPInfo, const S
 
 	m_bForceOffsetUpdate = false;
 
-	rIPInfo.m_EndToolset = SvTl::GetTimeStamp();
+	rIPInfo.m_EndToolset = SvUl::GetTimeStamp();
 	if (!rIPInfo.m_EndToolset)
 	{
 		SvStl::MessageManager e(SvStl::MsgType::Log);
@@ -3139,12 +3139,12 @@ void SVInspectionProcess::SVInspectionTracking::clear()
 
 void SVInspectionProcess::SVInspectionTracking::SetStartTime()
 {
-	m_StartTime = SvTl::GetTimeStamp();
+	m_StartTime = SvUl::GetTimeStamp();
 }
 
 void SVInspectionProcess::SVInspectionTracking::EventStart(const std::string& p_rName)
 {
-	double l_StartTime = SvTl::GetTimeStamp();
+	double l_StartTime = SvUl::GetTimeStamp();
 	__int64 l_EventTime = static_cast<__int64>(l_StartTime - m_StartTime);
 
 	m_EventCounts[p_rName].m_StartTime = l_StartTime;
@@ -3154,7 +3154,7 @@ void SVInspectionProcess::SVInspectionTracking::EventStart(const std::string& p_
 
 void SVInspectionProcess::SVInspectionTracking::EventEnd(const std::string& p_rName)
 {
-	double l_EndTime = SvTl::GetTimeStamp();
+	double l_EndTime = SvUl::GetTimeStamp();
 	__int64 l_Duration = static_cast<__int64>(l_EndTime - m_EventCounts[p_rName].m_StartTime);
 	__int64 l_EventTime = static_cast<__int64>(l_EndTime - m_StartTime);
 

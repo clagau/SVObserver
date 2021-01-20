@@ -20,7 +20,7 @@
 #include "ObjectInterfaces/IObjectWriter.h"
 #include "Operators/TableObject.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVTimerLibrary/SVClock.h"
+#include "SVUtilityLibrary/SVClock.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVValueObjectLibrary/BasicValueObject.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
@@ -67,7 +67,7 @@ bool ResultViewReferences::Load( SVTreeType& rTree, SVTreeType::SVBranchHandle h
 			bContinue = bContinue && rTree.isValidLeaf( hVariables, hVariable );
 		}
 	}
-	m_LastUpdateTimeStamp = SvTl::GetTimeStamp();
+	m_LastUpdateTimeStamp = SvUl::GetTimeStamp();
 	return bOK;
 }
 
@@ -163,7 +163,7 @@ void ResultViewReferences::Clear()
 {
 	m_ReferenceVector.clear();
 	m_ResultViewItemDefList.clear();
-	m_LastUpdateTimeStamp = SvTl::GetTimeStamp();
+	m_LastUpdateTimeStamp = SvUl::GetTimeStamp();
 }
 
 
@@ -216,7 +216,7 @@ void ResultViewReferences::RebuildReferenceVector( SVInspectionProcess* pIProces
 		}
 	}
 
-	m_LastUpdateTimeStamp = SvTl::GetTimeStamp();
+	m_LastUpdateTimeStamp = SvUl::GetTimeStamp();
 }
 
 void  ResultViewReferences::GetResultData(SvIe::SVIPResultData& rResultData) const
@@ -362,7 +362,7 @@ void ResultViewReferences::InsertFromOutputList(SVInspectionProcess* pInspection
 		}
 	}
 
-	m_LastUpdateTimeStamp = SvTl::GetTimeStamp();
+	m_LastUpdateTimeStamp = SvUl::GetTimeStamp();
 }
 
 
@@ -387,5 +387,5 @@ void ResultViewReferences::InsertFromPPQInputs(SVInspectionProcess* pInspection)
 			}
 		}
 	}
-	m_LastUpdateTimeStamp = SvTl::GetTimeStamp();
+	m_LastUpdateTimeStamp = SvUl::GetTimeStamp();
 }

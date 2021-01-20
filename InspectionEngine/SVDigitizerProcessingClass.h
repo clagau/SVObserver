@@ -19,10 +19,10 @@
 #include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
-namespace SvTh
+namespace SvTrig
 {
 	class SVDigitizerLoadLibraryClass;
-}//namespace SvTh
+}//namespace SvTrig
 
 namespace SvIe
 {
@@ -38,12 +38,12 @@ public:
 
 	void ClearDevices();
 
-	HRESULT UpdateDigitizerSubsystem( SvTh::SVDigitizerLoadLibraryClass* pDigitizerSubsystem );
+	HRESULT UpdateDigitizerSubsystem( SvTrig::SVDigitizerLoadLibraryClass* pDigitizerSubsystem );
 
 	HRESULT GetAcquisitionDeviceList( SvDef::StringVector& rList ) const;
 
 	bool IsValidDigitizerSubsystem( LPCTSTR digitizerName ) const;
-	SvTh::SVDigitizerLoadLibraryClass* GetDigitizerSubsystem( LPCTSTR digitizerName ) const;
+	SvTrig::SVDigitizerLoadLibraryClass* GetDigitizerSubsystem( LPCTSTR digitizerName ) const;
 
 	SVAcquisitionClassPtr GetDigitizer( LPCTSTR szName ) const;
 	SVAcquisitionClassPtr GetAcquisitionDevice( LPCTSTR szName ) const;
@@ -92,11 +92,11 @@ public:
 private:
 	SVDigitizerProcessingClass();
 
-	typedef std::set<SvTh::SVDigitizerLoadLibraryClass*> SVDigitizerSubsystemSet;
+	typedef std::set<SvTrig::SVDigitizerLoadLibraryClass*> SVDigitizerSubsystemSet;
 	typedef std::map<std::string, SVAcquisitionClassPtr> SVNameDigitizerMap;
-	typedef std::unordered_map<std::string, SvTh::SVDigitizerLoadLibraryClass*> SVNameDigitizerSubsystemMap;
+	typedef std::unordered_map<std::string, SvTrig::SVDigitizerLoadLibraryClass*> SVNameDigitizerSubsystemMap;
 
-	HRESULT AddDigitizer( LPCTSTR Name, LPCTSTR AcquisitionName, SvTh::SVDigitizerLoadLibraryClass* pDigitizerSubsystem, unsigned long p_Handle );
+	HRESULT AddDigitizer( LPCTSTR Name, LPCTSTR AcquisitionName, SvTrig::SVDigitizerLoadLibraryClass* pDigitizerSubsystem, unsigned long p_Handle );
 
 	HRESULT UpdateMatroxDevices();
 

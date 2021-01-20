@@ -15,7 +15,7 @@
 //Moved to precompiled header: #include <boost/function.hpp>
 #include "SVSystemLibrary/SVThread.h"
 
-namespace SvTi
+namespace SvTrig
 {
 	class SVInternalTrigger
 	{
@@ -28,7 +28,7 @@ namespace SvTi
 		void Create(LPCTSTR p_strOwner, SVThreadAttribute eAttr);
 		void Destroy();
 
-		HRESULT Subscribe(unsigned long p_ulIndex, SvTh::SVTriggerHandler& handler);
+		HRESULT Subscribe(unsigned long p_ulIndex, SvTrig::SVTriggerHandler& handler);
 		HRESULT Unsubscribe(unsigned long p_ulIndex);
 		bool HasSubscribers(unsigned long p_ulIndex) const;
 
@@ -36,10 +36,10 @@ namespace SvTi
 
 	private:
 		SVThread<ThreadSignalHandler> m_thread;
-		SvTh::SVTriggerHandlerList m_triggerHandlerList;
+		SvTrig::SVTriggerHandlerList m_triggerHandlerList;
 
 		void Dispatch(bool& p_WaitForEvents);
 	};
 
-} //namespace SvTi
+} //namespace SvTrig
 

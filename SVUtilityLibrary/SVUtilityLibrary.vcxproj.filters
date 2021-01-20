@@ -81,6 +81,9 @@
     <ClCompile Include="SVUtilityGlobals.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="SVClock.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="7zTypes.h">
@@ -201,6 +204,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVUtilityGlobals.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVClock.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

@@ -19,12 +19,12 @@
 #pragma endregion Includes
 
 //Namespace used only for forward declaration
-namespace SvTh
+namespace SvTrig
 {
 	class SVTriggerClass;
-} //namespace SvTh
+} //namespace SvTrig
 
-namespace SvTi
+namespace SvTrig
 {
 	class SVTriggerObject : public SVObjectClass
 	{
@@ -33,7 +33,7 @@ namespace SvTi
 		SVTriggerObject( SVObjectClass *pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTRIGGEROBJECT );
 		virtual ~SVTriggerObject();
 
-		bool Create( SvTh::SVTriggerClass* pTrigger );
+		bool Create( SvTrig::SVTriggerClass* pTrigger );
 		bool Destroy();
 
 		// Runtime Functions
@@ -56,15 +56,15 @@ namespace SvTi
 		long GetSoftwareTriggerPeriod() const;
 		void SetSoftwareTriggerPeriod(long period, bool setTimer = false);
 
-		SvTh::SVTriggerClass* getDevice() { return m_pTriggerDevice; }
+		SvTrig::SVTriggerClass* getDevice() { return m_pTriggerDevice; }
 
 		SvDef::TriggerType getType() const;
 		long getTriggerCount() const;
 
 	private:
 		long m_timerPeriod{0L};
-		SvTh::SVTriggerClass* m_pTriggerDevice{nullptr};
+		SvTrig::SVTriggerClass* m_pTriggerDevice{nullptr};
 	};
 
 	typedef std::vector<SVTriggerObject*> SVTriggerObjectPtrVector;
-} //namespace SvTi
+} //namespace SvTrig

@@ -69,7 +69,7 @@ public:
 	CSVIOTESTDlg(CWnd* pParent = nullptr);	// standard constructor
 	virtual ~CSVIOTESTDlg();
 
-	void __stdcall triggerCallback(const SvTi::IntVariantMap& rTriggerData);
+	void __stdcall triggerCallback(const SvTrig::IntVariantMap& rTriggerData);
 
 	SVIOTriggerDataStruct* getTriggerData(unsigned long triggerChannel);
 

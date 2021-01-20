@@ -95,7 +95,7 @@ _variant_t WINAPI SVTriggerGetName(unsigned long triggerchannel)
 	return result;
 }
 
-HRESULT WINAPI SVTriggerRegister( unsigned long triggerchannel, SvTi::TriggerCallBack pTriggerCallback)
+HRESULT WINAPI SVTriggerRegister( unsigned long triggerchannel, SvTrig::TriggerCallBack pTriggerCallback)
 {
 	if (0 < triggerchannel && triggerchannel <= cTriggerMaxCount)
 	{

@@ -1094,7 +1094,7 @@ void SVRCCommand::SetTriggerConfig(const SvPb::SetTriggerConfigRequest& rRequest
 				SVPPQObject* pPPQ = pConfig->GetPPQ(i);
 				if (nullptr != pPPQ && nullptr != pPPQ->GetTrigger())
 				{
-					SvTh::SVTriggerClass* pTrigger = pPPQ->GetTrigger()->getDevice();
+					SvTrig::SVTriggerClass* pTrigger = pPPQ->GetTrigger()->getDevice();
 					if (nullptr != pTrigger && nullptr != pTrigger->getDLLTrigger())
 					{
 						_variant_t plcSimulatedFile;

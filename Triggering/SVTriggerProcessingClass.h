@@ -19,12 +19,12 @@
 class SVIOTriggerLoadLibraryClass;
 
 
-namespace SvTh
+namespace SvTrig
 {
 	class SVTriggerClass;
-} //namespace SvTh
+} //namespace SvTrig
 
-namespace SvTi
+namespace SvTrig
 {
 	class SVTriggerProcessingClass
 	{
@@ -37,7 +37,7 @@ namespace SvTi
 
 		HRESULT UpdateTriggerSubsystem( SVIOTriggerLoadLibraryClass* p_pDLLTrigger );
 
-		SvTh::SVTriggerClass* GetTrigger( LPCTSTR p_szName ) const;
+		SvTrig::SVTriggerClass* GetTrigger( LPCTSTR p_szName ) const;
 
 		// These two (2) methods, Startup, Shutdown are only meant to be called by the main application class and no other
 		// They used to be protected and a friend class declaration was used, but that was a bad design as the friend was declares in another project
@@ -47,7 +47,7 @@ namespace SvTi
 	
 	private:
 		typedef std::set< SVIOTriggerLoadLibraryClass* > SVTriggerSubsystemSet;
-		typedef std::map<std::string, std::unique_ptr<SvTh::SVTriggerClass>> SVNameTriggerMap;
+		typedef std::map<std::string, std::unique_ptr<SvTrig::SVTriggerClass>> SVNameTriggerMap;
 		typedef std::map<std::string, SVIOTriggerLoadLibraryClass*> SVNameTriggerSubsystemMap;
 
 		SVTriggerProcessingClass();
@@ -67,4 +67,4 @@ namespace SvTi
 
 		SVNameTriggerSubsystemMap m_TriggerSubsystems;
 	};
-} //namespace SvTi
+} //namespace SvTrig

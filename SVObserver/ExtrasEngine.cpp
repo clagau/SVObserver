@@ -18,7 +18,7 @@
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
-#include "SVTimerLibrary/SVClock.h"
+#include "SVUtilityLibrary/SVClock.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
@@ -42,7 +42,7 @@ const TCHAR* const FbwfDisableBatchName=
 #pragma region Constructor
 
 ExtrasEngine::ExtrasEngine():m_lastAutoSaveTimestamp(0), 
-	m_AutoSaveDeltaTime_s(ms_defaultDeltaTimeInMinutes*SvTl::c_secondsPerMinute),
+	m_AutoSaveDeltaTime_s(ms_defaultDeltaTimeInMinutes*SvUl::c_secondsPerMinute),
 	m_FbwfAvailable(false), m_FbwfActive(false), m_FbwfActiveChanging(false)
 {
 

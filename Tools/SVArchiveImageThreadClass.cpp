@@ -11,7 +11,7 @@
 #include "SVMessage/SVMessage.h"
 #include "SVSystemLibrary/SVThreadManager.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVTimerLibrary/SVClock.h"
+#include "SVUtilityLibrary/SVClock.h"
 #pragma endregion Includes
 
 namespace SvTo
@@ -87,7 +87,7 @@ HRESULT SVArchiveImageThreadClass::QueueImage( BufferInfo p_BufferInfo )
 		if (nullptr != p_BufferInfo.m_pImageBuffer && !p_BufferInfo.m_pImageBuffer->isEmpty())
 		{
 			iter->m_pImageBuffer = p_BufferInfo.m_pImageBuffer;
-			iter->m_Timestamp = SvTl::GetTimeStamp();
+			iter->m_Timestamp = SvUl::GetTimeStamp();
 		}
 	}// end if ( iter != m_Queue.end() )	// found filename
 	else
@@ -95,7 +95,7 @@ HRESULT SVArchiveImageThreadClass::QueueImage( BufferInfo p_BufferInfo )
 		if (m_maxBufferNumber[p_BufferInfo.m_toolPos] > m_currentBufferNumber[p_BufferInfo.m_toolPos])
 		{
 			// ** ADD NEW BUFFER TO QUEUE **
-			p_BufferInfo.m_Timestamp = SvTl::GetTimeStamp();
+			p_BufferInfo.m_Timestamp = SvUl::GetTimeStamp();
 			m_Queue.push_back(p_BufferInfo);
 			++m_currentBufferNumber[p_BufferInfo.m_toolPos];
 		}

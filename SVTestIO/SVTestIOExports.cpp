@@ -125,7 +125,7 @@ _variant_t WINAPI SVTriggerGetName( unsigned long triggerIndex)
 	return result;
 }
 
-HRESULT WINAPI SVTriggerRegister(unsigned long triggerIndex, SvTi::TriggerCallBack pTriggerCallback)
+HRESULT WINAPI SVTriggerRegister(unsigned long triggerIndex, SvTrig::TriggerCallBack pTriggerCallback)
 {
 	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
 

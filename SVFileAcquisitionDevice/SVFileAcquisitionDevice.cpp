@@ -19,7 +19,7 @@
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVMessage/SVMessage.h"
 #include "Definitions/SVImageFormatEnum.h"
-#include "SVTimerLibrary/SVClock.h"
+#include "SVUtilityLibrary/SVClock.h"
 #pragma endregion Includes
 
 SVFileAcquisitionDevice::~SVFileAcquisitionDevice()
@@ -395,7 +395,7 @@ HRESULT SVFileAcquisitionDevice::CameraProcessStartFrame(unsigned long cameraInd
 
 		if (1 == rCamera.m_lIsStarted && nullptr != rCamera.m_pBufferInterface)
 		{
-			rCamera.m_StartTimeStamp = SvTl::GetTimeStamp();
+			rCamera.m_StartTimeStamp = SvUl::GetTimeStamp();
 		}
 		else
 		{
@@ -441,7 +441,7 @@ HRESULT SVFileAcquisitionDevice::CameraProcessEndFrame(unsigned long cameraIndex
 			}
 
 			//Send this command also if buffer failed to trigger the PPQ-Thread to give it a change for cleanup.
-			rCamera.m_pBufferInterface->UpdateWithCompletedBuffer(pImage, rCamera.m_StartTimeStamp, SvTl::GetTimeStamp());
+			rCamera.m_pBufferInterface->UpdateWithCompletedBuffer(pImage, rCamera.m_StartTimeStamp, SvUl::GetTimeStamp());
 		}
 #if defined (TRACE_THEM_ALL) || defined (TRACE_ACQDEVICE)
 		else

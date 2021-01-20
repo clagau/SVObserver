@@ -409,7 +409,7 @@ void SVVirtualCamera::SetFileImageHeight(long height)
 	m_imageSize.cy = height;
 }
 
-void SVVirtualCamera::RegisterTrigger(SvTh::SVTriggerClass* pTrigger)
+void SVVirtualCamera::RegisterTrigger(SvTrig::SVTriggerClass* pTrigger)
 {
 	if (nullptr != pTrigger)
 	{
@@ -417,7 +417,7 @@ void SVVirtualCamera::RegisterTrigger(SvTh::SVTriggerClass* pTrigger)
 		if(nullptr != m_pDevice)
 		{
 			// need the digitizer name here ...
-			SvTh::SVDigitizerLoadLibraryClass* pAcqDLL = SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(m_pDevice->DigName().c_str());
+			SvTrig::SVDigitizerLoadLibraryClass* pAcqDLL = SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(m_pDevice->DigName().c_str());
 
 			if (nullptr != pAcqDLL)
 			{

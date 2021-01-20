@@ -79,10 +79,10 @@ enum PROPERTY_PAGE_PROPERTY
 /////////////////////////////////////////////////////////////////////////////
 // SVOPropertyPageDlg dialog
 
-namespace SvTi
+namespace SvTrig
 {
 	class SVOTriggerObj;
-} //namespace SvTi
+} //namespace SvTrig
 class SVOInspectionObj;
 class SVOPPQObj;
 class SVOConfigAssistantDlg;
@@ -95,7 +95,7 @@ public:
 	virtual ~SVOPropertyPageDlg();
 
 	SVOCameraObj& getCameraObject() { return m_CameraObj; };
-    SvTi::SVOTriggerObj& getTriggerObject() { return m_TriggerObj; };
+    SvTrig::SVOTriggerObj& getTriggerObject() { return m_TriggerObj; };
     SVOInspectionObj& getInspectObject() { return m_InspectionObj; };
     SVOPPQObj& getPPQObject() { return m_PPQObj; };
 
@@ -142,7 +142,7 @@ protected:
 
 private: //data members
     SVOCameraObj m_CameraObj;
-    SvTi::SVOTriggerObj m_TriggerObj;
+    SvTrig::SVOTriggerObj m_TriggerObj;
     SVOInspectionObj m_InspectionObj;
     SVOPPQObj m_PPQObj;
 	SVOConfigAssistantDlg* m_pAssistant;

@@ -12,7 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVTimerValueObjectClass.h"
-#include "SVTimerLibrary/SVClock.h"
+#include "SVUtilityLibrary/SVClock.h"
 #pragma endregion Includes
 
 namespace SvVol
@@ -45,12 +45,12 @@ SVTimerValueObjectClass::~SVTimerValueObjectClass()
 
 void SVTimerValueObjectClass::Start()
 {
-	m_Start = SvTl::GetTimeStamp();
+	m_Start = SvUl::GetTimeStamp();
 }
 
 bool SVTimerValueObjectClass::Stop()
 {
-	double Value = SvTl::ConvertTo( SvTl::Microseconds, ( SvTl::GetTimeStamp() - m_Start ) );
+	double Value = SvUl::ConvertTo( SvUl::Microseconds, ( SvUl::GetTimeStamp() - m_Start ) );
 
 	return S_OK == SetValue(static_cast<__int64> (Value));
 }
@@ -64,7 +64,7 @@ void SVTimerValueObjectClass::setStandardFormatString()
 
 void SVTimerValueObjectClass::LocalInitialize()
 {
-	m_Start = SvTl::GetTimeStamp();
+	m_Start = SvUl::GetTimeStamp();
 	SetTypeName(_T("Timer"));
 	setStandardFormatString();
 }

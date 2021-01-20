@@ -88,7 +88,7 @@
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVSystemLibrary/SVVersionInfo.h"
 #include "SVSystemLibrary/SVThread.h"
-#include "SVTimerLibrary/SVClock.h"
+#include "SVUtilityLibrary/SVClock.h"
 #include "SVUtilityLibrary/LoadDll.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/ZipHelper.h"
@@ -1892,7 +1892,7 @@ BOOL SVObserverApp::InitInstance()
 	SvOi::createTriggerRecordControllerInstance(SvOi::TRC_DataType::Writer);
 
 	SVHardwareManifest::Instance().Startup();
-	SvTi::SVTriggerProcessingClass::Instance().Startup();
+	SvTrig::SVTriggerProcessingClass::Instance().Startup();
 	SvIe::SVDigitizerProcessingClass::Instance().Startup();
 
 	InitializeSecurity();
@@ -2204,7 +2204,7 @@ int SVObserverApp::ExitInstance()
 
 	m_IniInfoHandler.INIClose();
 
-	SvTi::SVTriggerProcessingClass::Instance().Shutdown();
+	SvTrig::SVTriggerProcessingClass::Instance().Shutdown();
 	SvIe::SVDigitizerProcessingClass::Instance().Shutdown();
 	SVHardwareManifest::Instance().Shutdown();
 
@@ -2512,7 +2512,7 @@ HRESULT SVObserverApp::OpenSVXFile()
 					}
 				}
 
-				l_StartLoading = SvTl::GetTimeStamp();
+				l_StartLoading = SvUl::GetTimeStamp();
 
 				SVConfigurationObject* pConfig(nullptr);
 				SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
@@ -2612,7 +2612,7 @@ HRESULT SVObserverApp::OpenSVXFile()
 
 				GetMainFrame()->OnConfigurationFinishedInitializing();
 
-				l_FinishLoad = SvTl::GetTimeStamp();
+				l_FinishLoad = SvUl::GetTimeStamp();
 				long l_lTime = static_cast<long>(l_FinishLoad - l_StartLoading);
 
 				SvDef::StringVector msgList;
@@ -4547,7 +4547,7 @@ void SVObserverApp::SetTestMode(bool p_bNoSecurity)
 						return;
 					}
 
-					SvTi::SVTriggerObject* pTrigger{ pPPQ->GetTrigger() };
+					SvTrig::SVTriggerObject* pTrigger{ pPPQ->GetTrigger() };
 					if (nullptr != pTrigger && SvDef::TriggerType::SoftwareTrigger == pTrigger->getType())
 					{
 						l_trgrDlg.AddTrigger(pTrigger);
@@ -4641,7 +4641,7 @@ HRESULT SVObserverApp::GetTriggersAndCounts(std::string& rTriggerCounts) const
 			//Returns true when pointer valid
 			if (nullptr != pPPQ)
 			{
-				SvTi::SVTriggerObject* pTrigger(pPPQ->GetTrigger());
+				SvTrig::SVTriggerObject* pTrigger(pPPQ->GetTrigger());
 				if (nullptr != pTrigger)
 				{
 					l_hr = S_OK;
@@ -5019,7 +5019,7 @@ void SVObserverApp::Start()
 
 	double l_StartLoading;
 
-	l_StartLoading = SvTl::GetTimeStamp();
+	l_StartLoading = SvUl::GetTimeStamp();
 
 	SVObjectManagerClass::Instance().ClearAllIndicator();
 
@@ -5110,7 +5110,7 @@ void SVObserverApp::Start()
 				pPPQ->SetSlotmanager(SvSml::SharedMemWriter::Instance().GetSlotManager(pPPQ->GetName()));
 				pPPQ->PrepareGoOnline();
 
-				SvTi::SVTriggerObject* pTrigger{ pPPQ->GetTrigger() };
+				SvTrig::SVTriggerObject* pTrigger{ pPPQ->GetTrigger() };
 				if (nullptr != pTrigger && SvDef::TriggerType::SoftwareTrigger == pTrigger->getType())
 				{
 					l_trgrDlg.AddTrigger(pTrigger);
@@ -5238,7 +5238,7 @@ void SVObserverApp::Start()
 
 		std::string TriggerCounts;
 		GetTriggersAndCounts(TriggerCounts);
-		long l_lTime = static_cast<long>(SvTl::GetTimeStamp() - l_StartLoading);
+		long l_lTime = static_cast<long>(SvUl::GetTimeStamp() - l_StartLoading);
 		SvDef::StringVector msgList;
 		msgList.push_back(TriggerCounts);
 		msgList.push_back(SvUl::Format(_T("%d"), l_lTime));
@@ -5518,7 +5518,7 @@ void SVObserverApp::StartTrigger(SVConfigurationObject* pConfig)
 			auto* pPPQ = pConfig->GetPPQ(i);
 			if (nullptr != pPPQ)
 			{
-				SvTi::SVTriggerObject* pTrigger{ pPPQ->GetTrigger() };
+				SvTrig::SVTriggerObject* pTrigger{ pPPQ->GetTrigger() };
 				if (nullptr != pTrigger)
 				{
 					pPPQ->setOnline();

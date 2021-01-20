@@ -146,7 +146,7 @@ _variant_t SVIOTriggerLoadLibraryClass::GetName( unsigned long triggerIndex) con
 	return result;
 }
 
-HRESULT SVIOTriggerLoadLibraryClass::Register(unsigned long triggerIndex, SvTi::TriggerCallBack pTriggerCallback)
+HRESULT SVIOTriggerLoadLibraryClass::Register(unsigned long triggerIndex, SvTrig::TriggerCallBack pTriggerCallback)
 {
 	HRESULT result {E_FAIL};
 

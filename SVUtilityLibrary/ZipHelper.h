@@ -22,7 +22,7 @@ namespace SvUl
 
 enum CompressionFormat
 {
-	Unknown,
+	UnknownCompressionFormat,
 	SevenZip,
 	Zip,
 	GZip,

@@ -161,7 +161,7 @@ public:
 	//new GetOverlay method for use with the ActiveX
 	HRESULT CollectOverlays(SvIe::SVImageClass* pImage, SVExtentMultiLineStructVector& rMultiLineArray);
 
-	std::pair<SvTi::SVTriggerInfoStruct, SVInspectionInfoStruct> getLastProductData() const;
+	std::pair<SvTrig::SVTriggerInfoStruct, SVInspectionInfoStruct> getLastProductData() const;
 	void resetLastProcduct();
 
 	HRESULT LastProductNotify();

@@ -11,7 +11,7 @@
 
 #pragma once
 
-namespace SvTl
+namespace SvUl
 {
 	static const double c_MicrosecondsPerMillisecond = 1000.0; ///< the number of microseconds per millisecond: one thousand
 	static const int c_secondsPerMinute = 60; ///< the number of seconds per minute: sixty
@@ -32,4 +32,4 @@ namespace SvTl
 
 	double ConvertTo(SVConversionEnum p_Units, const double& p_rTimeStamp);
 	double ConvertFrom(SVConversionEnum p_Units, double p_Time);
-} //namespace SvTl
+} //namespace SvUl

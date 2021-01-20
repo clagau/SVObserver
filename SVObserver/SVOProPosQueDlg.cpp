@@ -183,7 +183,7 @@ void SVOProPosQueDlg::OnBtnAddVi()
 void SVOProPosQueDlg::OnBtnAddVt() 
 {
     int iTrigCount = m_pParent->GetTriggerListCount();
-    SvTi::SVOTriggerObjPtr pTriggerObj( nullptr );
+    SvTrig::SVOTriggerObjPtr pTriggerObj( nullptr );
 	SVOPPQObjPtr pPPQObj( nullptr );
     int iPPQ = m_ctlPPQList.GetCurSel();
 

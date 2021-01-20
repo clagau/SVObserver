@@ -11,7 +11,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVCameraInfoStruct.h"
-#include "SVTimerLibrary/SVClock.h"
+#include "SVUtilityLibrary/SVClock.h"
 #pragma endregion Includes
 
 namespace SvIe
@@ -32,7 +32,7 @@ HRESULT SVCameraInfoStruct::Assign( double p_StartFrameTS, double p_EndFrameTS, 
 	m_StartFrameTimeStamp = p_StartFrameTS;
 	m_EndFrameTimeStamp = p_EndFrameTS;
 
-	m_CallbackTimeStamp = SvTl::GetTimeStamp();
+	m_CallbackTimeStamp = SvUl::GetTimeStamp();
 	m_pImage = pImage;
 
 	return l_Status;

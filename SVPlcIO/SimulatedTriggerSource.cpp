@@ -10,7 +10,7 @@
 #include "InspectionState.h"
 #include "PowerLinkConnection.h"
 #include "SimulatedTriggerSource.h"
-#include "SVTimerLibrary/SVClock.h"
+#include "SVUtilityLibrary/SVClock.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
@@ -48,7 +48,7 @@ void ChannelTimer(std::atomic_bool& rRun, SimulatedTriggerData simTriggerData)
 		{
 			std::this_thread::sleep_for(std::chrono::milliseconds(simTriggerData.m_period));
 			TriggerReport triggerReport;
-			triggerReport.m_triggerTimestamp = SvTl::GetTimeStamp();
+			triggerReport.m_triggerTimestamp = SvUl::GetTimeStamp();
 			triggerReport.m_channel = simTriggerData.m_channel;
 			triggerReport.m_triggerPerObjectID = simTriggerData.m_triggerPerObjectID;
 			triggerReport.m_currentObjectID = currentObjectID;
@@ -286,7 +286,7 @@ void SimulatedTriggerSource::queueResult(uint8_t channel, ChannelOut&& channelOu
 	{
 		resultString += std::to_string(rResult) + ' ';
 	}
-	std::string fileData = SvUl::Format(_T("%4lu; %.3f; %.3f; %s\r\n"), channelOut.m_currentObjectID, triggerTimestamp, SvTl::GetTimeStamp(), resultString.c_str());
+	std::string fileData = SvUl::Format(_T("%4lu; %.3f; %.3f; %s\r\n"), channelOut.m_currentObjectID, triggerTimestamp, SvUl::GetTimeStamp(), resultString.c_str());
 	
 	{
 		std::lock_guard<std::mutex> guard{ m_triggerSourceMutex };

@@ -17,7 +17,7 @@
 
 constexpr unsigned long cMaxSoftwareTriggers = 4;
 
-class SVSoftwareTriggerDevice : public SvTi::IODeviceBase
+class SVSoftwareTriggerDevice : public SvTrig::IODeviceBase
 {
 	struct TimerInfo
 	{

@@ -78,7 +78,7 @@
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>SVStatusLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;Triggering.lib;Advapi32.lib;Winmm.lib;Rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SVStatusLibrary.lib;SVUtilityLibrary.lib;Triggering.lib;Advapi32.lib;Winmm.lib;Rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <ModuleDefinitionFile>.\SVPlcIO.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -122,7 +122,7 @@
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>SVStatusLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;Triggering.lib;Advapi32.lib;Winmm.lib;Rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SVStatusLibrary.lib;SVUtilityLibrary.lib;Triggering.lib;Advapi32.lib;Winmm.lib;Rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <ModuleDefinitionFile>.\SVPlcIO.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -190,9 +190,6 @@
   <ItemGroup>
     <ProjectReference Include="..\SVStatusLibrary\SVStatusLibrary.vcxproj">
       <Project>{aa20bdb8-15c0-43eb-83b5-6fc716849f13}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\SVTimerLibrary\SVTimerLibrary.vcxproj">
-      <Project>{722a6c78-28fc-4870-b7f8-30af53c0bb46}</Project>
     </ProjectReference>
     <ProjectReference Include="..\SVUtilityLibrary\SVUtilityLibrary.vcxproj">
       <Project>{b022279a-59cd-41c3-9ea5-f9721fecafdd}</Project>

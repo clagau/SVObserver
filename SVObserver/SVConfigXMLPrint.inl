@@ -138,13 +138,13 @@ inline void SVConfigXMLPrint::PrintXMLDoc(Writer writer) const
 
 inline void SVConfigXMLPrint::WriteTriggers(Writer writer) const
 {
-	typedef std::map<std::string, SvTi::SVTriggerObject*> TriggerMap;
+	typedef std::map<std::string, SvTrig::SVTriggerObject*> TriggerMap;
 	TriggerMap triggers;
 	long sz = 0;
 	if (nullptr != m_cfo) { sz = m_cfo->GetTriggerCount(); }
 	for (long i = 0; i < sz; ++i)
 	{
-		SvTi::SVTriggerObject* pTrigger(nullptr);
+		SvTrig::SVTriggerObject* pTrigger(nullptr);
 		if (nullptr != m_cfo) { pTrigger = m_cfo->GetTrigger(i); }
 		if (nullptr != pTrigger)
 		{
@@ -162,7 +162,7 @@ inline void SVConfigXMLPrint::WriteTriggers(Writer writer) const
 	writer->WriteEndElement();
 }
 
-inline void SVConfigXMLPrint::WriteTrigger(Writer writer, SvTi::SVTriggerObject* pTrigger) const
+inline void SVConfigXMLPrint::WriteTrigger(Writer writer, SvTrig::SVTriggerObject* pTrigger) const
 {
 	ASSERT(nullptr != pTrigger);
 	if (nullptr == pTrigger) { return; }

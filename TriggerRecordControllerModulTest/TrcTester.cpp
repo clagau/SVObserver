@@ -17,7 +17,7 @@
 #include "SVMatroxLibrary\SVMatroxBufferInterface.h"
 #include "SVStatusLibrary\MessageContainer.h"
 #include "SVStatusLibrary\RegistryAccess.h"
-#include "SVTimerLibrary\SVClock.h"
+#include "SVUtilityLibrary/SVClock.h"
 #include "SVUtilityLibrary\StringHelper.h"
 #include "ObjectInterfaces/ITriggerRecordControllerRW.h"
 #include "ObjectInterfaces/ITriggerRecordRW.h"
@@ -106,7 +106,7 @@ bool TrcTester::setBuffers()
 	{
 		setInspections(numbersOfRecords, m_TRController, m_rLogClass, strTestCreateInspections);
 		m_TRController.setGlobalInit();
-		double start = SvTl::GetTimeStamp();
+		double start = SvUl::GetTimeStamp();
 		setBufferOk = setInspectionBuffers(strTestSetBuffers);
 		if (!setBufferOk)
 		{
@@ -123,7 +123,7 @@ bool TrcTester::setBuffers()
 			break;
 		}
 		m_TRController.finishGlobalInit();
-		double end = SvTl::GetTimeStamp();
+		double end = SvUl::GetTimeStamp();
 		double elapsed_ms = end - start;
 		elapsed_ms_sum += elapsed_ms;
 		m_TRController.clearAll();
@@ -156,7 +156,7 @@ bool TrcTester::checkBufferMaximum()
 	//create maximum number of possible image buffers (no exception should happen.
 	try
 	{
-		double start = SvTl::GetTimeStamp();
+		double start = SvUl::GetTimeStamp();
 		m_TRController.startResetTriggerRecordStructure(0);
 		bool independentOk = m_TRController.removeAllImageBuffer();
 		for (int i = 0; i < numberOfImages; i++)
@@ -165,7 +165,7 @@ bool TrcTester::checkBufferMaximum()
 		}
 		m_TRController.addImageBuffer(getNextObjectId(), specifyBuffer(1), numberOfAddBuffer);
 		m_TRController.finishResetTriggerRecordStructure();
-		double end = SvTl::GetTimeStamp();
+		double end = SvUl::GetTimeStamp();
 		double elapsed_ms = end - start;
 		std::string logStr = SvUl::Format(_T("set images (maxBuffer = %d) good case (%f ms/ %f ms)"), maxBuffer, elapsed_ms, m_config.getMaxTimeCheckBufferPerBuffer()*numberOfImages);
 		bool isError = (!independentOk || m_config.getMaxTimeCheckBufferPerBuffer()*numberOfImages < elapsed_ms);
@@ -397,7 +397,7 @@ bool TrcTester::setAndReadImage()
 
 	//constexpr int numberOfRuns = 100;
 	const int numberOfRuns = m_config.getNoOfRepetitionsPerStep();
-	double start = SvTl::GetTimeStamp();
+	double start = SvUl::GetTimeStamp();
 	for (int i = 0; i < numberOfRuns; i++)
 	{
 		//write image to buffer
@@ -462,7 +462,7 @@ bool TrcTester::setAndReadImage()
 			//}
 		}
 	}
-	double end = SvTl::GetTimeStamp();
+	double end = SvUl::GetTimeStamp();
 	double elapsed_ms = end - start;
 
 	std::string logStr = SvUl::Format(_T("(%f ms/ %f ms)"), elapsed_ms, numberOfRuns*m_config.getMaxTimesetAndReadImage());
@@ -511,7 +511,7 @@ bool TrcTester::setAndReadValues()
 	}
 
 	constexpr int numberOfRuns = 22;
-	double start = SvTl::GetTimeStamp();
+	double start = SvUl::GetTimeStamp();
 	for (int i = 0; i < numberOfRuns; i++)
 	{
 		bool retVal = writeAndReadSingleValue(i, dataDefList.list_size(), dataMemVector);
@@ -520,7 +520,7 @@ bool TrcTester::setAndReadValues()
 			return retVal;
 		}		
 	}
-	double end = SvTl::GetTimeStamp();
+	double end = SvUl::GetTimeStamp();
 	double elapsed_ms = end - start;
 
 	std::string logStr = SvUl::Format(_T("(%f ms/ %f ms)"), elapsed_ms, numberOfRuns*m_config.getMaxTimesetAndReadValue());

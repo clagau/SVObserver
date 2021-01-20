@@ -1663,7 +1663,7 @@ void SVConfigurationPrint::PrintTriggerSummary(CDC* pDC, CPoint& ptCurPos, int n
 	if( nullptr != pConfig) { lSize = pConfig->GetTriggerCount(); }
 	for (long l = 0; l < lSize; l++)
 	{
-		SvTi::SVTriggerObject* pTrigger = pConfig->GetTrigger(l);
+		SvTrig::SVTriggerObject* pTrigger = pConfig->GetTrigger(l);
 		if( nullptr != pTrigger )
 		{
 			ptCurPos.x   = (nIndentLevel + 1) * m_shortTabPixels;

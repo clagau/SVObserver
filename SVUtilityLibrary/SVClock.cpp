@@ -18,17 +18,17 @@
 #include "SVClock.h"
 #pragma endregion Includes
 
-namespace SvTl
+namespace SvUl
 {
 	constexpr double c_Frequency = 1000.0;
-	typedef std::map< SvTl::SVConversionEnum, double > SVConversionFactorMap;
+	typedef std::map< SvUl::SVConversionEnum, double > SVConversionFactorMap;
 	static const SVConversionFactorMap cConversions
 	{
-		{SvTl::Hours, ( 1.0 / 3600.0 )},
-		{SvTl::Minutes, ( 1.0 / 60.0 )},
-		{SvTl::Seconds, 1.0},
-		{SvTl::Milliseconds, 1000.0},
-		{SvTl::Microseconds, 1000000.0}
+		{SvUl::Hours, ( 1.0 / 3600.0 )},
+		{SvUl::Minutes, ( 1.0 / 60.0 )},
+		{SvUl::Seconds, 1.0},
+		{SvUl::Milliseconds, 1000.0},
+		{SvUl::Microseconds, 1000000.0}
 	};
 
 
@@ -78,7 +78,7 @@ namespace SvTl
 		return l_Value;
 	}
 
-	double SvTl::ConvertFrom( SVConversionEnum p_Units, double p_Time )
+	double SvUl::ConvertFrom( SVConversionEnum p_Units, double p_Time )
 	{
 		double result{0.0};
 
@@ -93,4 +93,4 @@ namespace SvTl
 
 		return result;
 	}
-} //namespace SvTl
+} //namespace SvUl

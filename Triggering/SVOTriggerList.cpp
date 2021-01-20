@@ -22,7 +22,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-namespace SvTi
+namespace SvTrig
 {
 	SVOTriggerList::SVOTriggerList()
 	{
@@ -154,4 +154,4 @@ namespace SvTi
 	{
 		m_TriggerList.clear();
 	}
-} //namespace SvTi
+} //namespace SvTrig

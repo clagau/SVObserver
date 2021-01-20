@@ -15,7 +15,7 @@
 //Moved to precompiled header: #include <boost/bind.hpp>
 #include "SVLptIOImpl.h"
 #include "SVIOLibrary\SVIOParameterEnum.h"
-#include "SVTimerLibrary\SVClock.h"
+#include "SVUtilityLibrary/SVClock.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVMessage\SVMessage.h"
 #include "SVUtilityLibrary/StringHelper.h"
@@ -136,10 +136,10 @@ HRESULT SVLptIOImpl::Initialize(bool bInit)
 		fprintf(pfh, "Critical Section inits %d", g_lCriticalSecInits);
 		for (int i = 0 ;i < g_CallbackCount; i++)
 		{
-			INT64 Tic = static_cast<INT64>(SvTl::ConvertTo(SvTl::Microseconds, g_TDebugData[i].m_lParTimeStamp));
-			INT64 Start = static_cast<INT64>(SvTl::ConvertTo(SvTl::Microseconds, g_TDebugData[i].m_lTimeStamp1));
-			INT64 Last = static_cast<INT64>(SvTl::ConvertTo(SvTl::Microseconds, (g_TDebugData[i].m_lTimeStamp1 - LastTimeStamp)));
-			INT64 End = static_cast<INT64>(SvTl::ConvertTo(SvTl::Microseconds, g_TDebugData[i].m_lTimeStamp2));
+			INT64 Tic = static_cast<INT64>(SvUl::ConvertTo(SvUl::Microseconds, g_TDebugData[i].m_lParTimeStamp));
+			INT64 Start = static_cast<INT64>(SvUl::ConvertTo(SvUl::Microseconds, g_TDebugData[i].m_lTimeStamp1));
+			INT64 Last = static_cast<INT64>(SvUl::ConvertTo(SvUl::Microseconds, (g_TDebugData[i].m_lTimeStamp1 - LastTimeStamp)));
+			INT64 End = static_cast<INT64>(SvUl::ConvertTo(SvUl::Microseconds, g_TDebugData[i].m_lTimeStamp2));
 
 			fprintf(pfh, "\nTrigger %04d\n", i);
 			fprintf(pfh, "%I64d Tic \n", Tic);
@@ -1192,16 +1192,16 @@ HRESULT SVLptIOImpl::SVReadWriteLpt(unsigned long& rlValue, long prevControl, lo
 				}
 			}
 		}
-		double Start = SvTl::GetTimeStamp();
+		double Start = SvUl::GetTimeStamp();
 
 		// **** Wait for Acknowledge off...
 		unsigned char status;
 		hr = GetStatusPort(status);
 		while (S_OK == hr && 0 == (status & 128))
 		{
-			double Check = SvTl::GetTimeStamp();
+			double Check = SvUl::GetTimeStamp();
 
-			if (SvTl::ConvertTo(SvTl::Microseconds, (Check - Start)) > BOARD_SELECT_ACK_TIMEOUT)
+			if (SvUl::ConvertTo(SvUl::Microseconds, (Check - Start)) > BOARD_SELECT_ACK_TIMEOUT)
 			{
 				hr = GetStatusPort(status);
 				if (0 == (status & 128))
@@ -1254,12 +1254,12 @@ HRESULT SVLptIOImpl::SVReadWriteLpt(unsigned long& rlValue, long prevControl, lo
 						if (S_OK == hr)
 						{
 							// **** Wait for Acknowledge...
-							Start = SvTl::GetTimeStamp();
+							Start = SvUl::GetTimeStamp();
 							hr = GetStatusPort(status);
 							while (S_OK == hr && 0 != (status & 128))
 							{
-								double Check = SvTl::GetTimeStamp();
-								if (SvTl::ConvertTo(SvTl::Microseconds, (Check - Start)) > BOARD_SELECT_ACK_TIMEOUT)
+								double Check = SvUl::GetTimeStamp();
+								if (SvUl::ConvertTo(SvUl::Microseconds, (Check - Start)) > BOARD_SELECT_ACK_TIMEOUT)
 								{
 									hr = GetStatusPort(status);
 									if (S_OK == hr && 0 != (status & 128))
@@ -1286,12 +1286,12 @@ HRESULT SVLptIOImpl::SVReadWriteLpt(unsigned long& rlValue, long prevControl, lo
 					if (S_OK == hr)
 					{
 						// **** Wait for Acknoledge...
-						Start = SvTl::GetTimeStamp();
+						Start = SvUl::GetTimeStamp();
 						hr = GetStatusPort(status);
 						while (S_OK == hr && 0 != (status & 128))
 						{
-							double Check = SvTl::GetTimeStamp();
-							if (SvTl::ConvertTo(SvTl::Microseconds, (Check - Start)) > BOARD_SELECT_ACK_TIMEOUT)
+							double Check = SvUl::GetTimeStamp();
+							if (SvUl::ConvertTo(SvUl::Microseconds, (Check - Start)) > BOARD_SELECT_ACK_TIMEOUT)
 							{
 								hr = GetStatusPort(status);
 								if (S_OK == hr && 0 != (status & 128))
@@ -1401,7 +1401,7 @@ void SVLptIOImpl::HandleIRQ()
 #ifdef LogDebugData
 	g_TDebugData[g_CallbackCount].m_dStatusReg0 = StatusReg;
 	g_TDebugData[g_CallbackCount].m_dStatusReg1 = GetStatusPort();
-	g_TDebugData[g_CallbackCount].m_lTimeStamp1 = SvTl::GetTimeStamp();
+	g_TDebugData[g_CallbackCount].m_lTimeStamp1 = SvUl::GetTimeStamp();
 
 	LARGE_INTEGER Frequency;
 	LARGE_INTEGER Timestamp;
@@ -1413,14 +1413,14 @@ void SVLptIOImpl::HandleIRQ()
 
 	double Seconds = static_cast< double >(Timestamp.QuadPart) / static_cast< double >(Frequency.QuadPart);
 
-	g_TDebugData[g_CallbackCount].m_lParTimeStamp = SvTl::ConvertFrom(SvTl::Seconds, Seconds);
+	g_TDebugData[g_CallbackCount].m_lParTimeStamp = SvUl::ConvertFrom(SvUl::Seconds, Seconds);
 #endif
 
 	unsigned char StatusReg;
 	HRESULT hr = GetStatusPort(StatusReg);
 	if (S_OK == hr)
 	{
-		double timeStamp = SvTl::GetTimeStamp();
+		double timeStamp = SvUl::GetTimeStamp();
 
 		for(unsigned long i = 1; i <= cMaxLptTriggers; ++i)
 		{
@@ -1454,10 +1454,10 @@ void SVLptIOImpl::HandleIRQ()
 				((nTriggerBit & StatusReg) != (nTriggerBit & m_lLastTriggerState)) && 
 				 ((nTriggerBit & StatusReg) == (nTriggerBit & m_lLptTriggerEdge))) || m_bUseSingleTrigger)
 			{
-				SvTi::IntVariantMap triggerData;
-				triggerData[SvTi::TriggerDataEnum::TimeStamp] = _variant_t(timeStamp);
+				SvTrig::IntVariantMap triggerData;
+				triggerData[SvTrig::TriggerDataEnum::TimeStamp] = _variant_t(timeStamp);
 				///Trigger channel 0 based
-				triggerData[SvTi::TriggerDataEnum::TriggerChannel] = _variant_t(i - 1);
+				triggerData[SvTrig::TriggerDataEnum::TriggerChannel] = _variant_t(i - 1);
 
 				auto iter = m_triggerCallbackMap.find(i);
 				if (m_triggerCallbackMap.end() != iter)
@@ -1472,7 +1472,7 @@ void SVLptIOImpl::HandleIRQ()
 #ifdef LogDebugData
 	// **** Debug logging ****
 	g_TDebugData[g_CallbackCount].m_dStatusReg2 = GetStatusPort();
-	g_TDebugData[g_CallbackCount].m_lTimeStamp2 = SvTl::GetTimeStamp();
+	g_TDebugData[g_CallbackCount].m_lTimeStamp2 = SvUl::GetTimeStamp();
 	if (g_CallbackCount < MaxDebugData)
 		g_CallbackCount++; //*/
 #endif

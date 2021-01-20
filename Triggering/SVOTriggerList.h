@@ -16,7 +16,7 @@
 #include "SVOTriggerObj.h"
 #pragma endregion Includes
 
-namespace SvTi
+namespace SvTrig
 {
 	class SVOTriggerList  
 	{
@@ -43,4 +43,4 @@ namespace SvTi
 		SVTriggerList m_TriggerList;
 		iterator FindTriggerPosition(const std::string& sTriggerName);
 	};
-} //namespace SvTi
+} //namespace SvTrig

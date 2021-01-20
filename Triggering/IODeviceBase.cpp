@@ -10,7 +10,7 @@
 #include "stdafx.h"
 #include "IODeviceBase.h"
 
-namespace SvTi
+namespace SvTrig
 {
 HRESULT IODeviceBase::RegisterCallback(unsigned long triggerIndex, TriggerCallBack pTriggerCallback)
 {
@@ -55,4 +55,4 @@ HRESULT IODeviceBase::StopTrigger(unsigned long triggerIndex)
 	return afterStopTrigger();
 }
 
-} //namespace SvTi
+} //namespace SvTrig

@@ -28,7 +28,7 @@
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
-#include "SVTimerLibrary/SVClock.h"
+#include "SVUtilityLibrary/SVClock.h"
 #include "ObjectInterfaces/ITriggerRecordControllerRW.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
@@ -248,7 +248,7 @@ HRESULT SVImageClass::InitializeImage(SvPb::SVImageTypeEnum ImageType)
 	{
 		m_ImageType = ImageType;
 
-		m_LastUpdate = SvTl::GetTimeStamp();
+		m_LastUpdate = SvUl::GetTimeStamp();
 	}
 
 	return S_OK;
@@ -268,7 +268,7 @@ HRESULT SVImageClass::InitializeImage(SVImageClass* pParentImage)
 			m_ParentImageInfo.first = ImageID;
 			m_ParentImageInfo.second = nullptr;
 
-			m_LastUpdate = SvTl::GetTimeStamp();
+			m_LastUpdate = SvUl::GetTimeStamp();
 
 			Result = UpdateFromParentInformation();
 		}
@@ -290,7 +290,7 @@ HRESULT SVImageClass::UpdateImage(const SVImageExtentClass& rExtent, bool doNotR
 			Result = Temp;
 		}
 
-		m_LastUpdate = SvTl::GetTimeStamp();
+		m_LastUpdate = SvUl::GetTimeStamp();
 
 		Temp = UpdateFromParentInformation();
 		if (!doNotRebuildStorage && S_OK == Temp)
@@ -328,7 +328,7 @@ HRESULT SVImageClass::UpdateImage(uint32_t parentID, const SVImageInfoClass& rIm
 			setImageSubType();
 		}
 
-		m_LastUpdate = SvTl::GetTimeStamp();
+		m_LastUpdate = SvUl::GetTimeStamp();
 
 		Result = (ResetObject() ? S_OK : E_FAIL);
 	}
@@ -344,7 +344,7 @@ HRESULT SVImageClass::UpdateImage(SvPb::SVImageTypeEnum ImageType)
 	{
 		m_ImageType = ImageType;
 
-		m_LastUpdate = SvTl::GetTimeStamp();
+		m_LastUpdate = SvUl::GetTimeStamp();
 
 		l_Status = (ResetObject() ? S_OK : E_FAIL);
 	}
@@ -404,7 +404,7 @@ HRESULT SVImageClass::RebuildStorage(SvStl::MessageContainerVector *pErrorMessag
 
 	if (S_OK == hr)
 	{
-		m_LastReset = SvTl::GetTimeStamp();
+		m_LastReset = SvUl::GetTimeStamp();
 	}
 
 	//Update Position returns S_FALSE when ROI for LiniarTool without rotation is moved 
@@ -466,7 +466,7 @@ HRESULT SVImageClass::UpdateFromParentInformation(SvStl::MessageContainerVector 
 			{
 				m_ImageInfo = l_ImageInfo;
 
-				m_LastUpdate = SvTl::GetTimeStamp();
+				m_LastUpdate = SvUl::GetTimeStamp();
 
 				Result = UpdateFromToolInformation();
 			}
@@ -556,7 +556,7 @@ HRESULT SVImageClass::UpdateFromToolInformation()
 		// Set the owning Tool before setting the extents
 		m_ImageInfo.SetOwner(ToolID);
 
-		m_LastUpdate = SvTl::GetTimeStamp();
+		m_LastUpdate = SvUl::GetTimeStamp();
 	}
 
 	if ((SvPb::SVImageTypeEnum::SVImageTypeMain != m_ImageType) && (SvPb::SVImageTypeEnum::SVImageTypeIndependent != m_ImageType))
@@ -565,7 +565,7 @@ HRESULT SVImageClass::UpdateFromToolInformation()
 
 		if (S_OK == l_Status)
 		{
-			m_LastUpdate = SvTl::GetTimeStamp();
+			m_LastUpdate = SvUl::GetTimeStamp();
 		}
 	}
 	return l_Status;
@@ -580,7 +580,7 @@ HRESULT SVImageClass::ClearParentConnection()
 		l_hrOk = SVObjectManagerClass::Instance().DisconnectObjects(m_ParentImageInfo.first, getObjectId());
 	}
 
-	m_LastUpdate = SvTl::GetTimeStamp();
+	m_LastUpdate = SvUl::GetTimeStamp();
 
 	return l_hrOk;
 }
@@ -814,7 +814,7 @@ HRESULT SVImageClass::RemoveObjectConnection(uint32_t objectID)
 		m_ParentImageInfo.first = SvDef::InvalidObjectId;
 		m_ParentImageInfo.second = nullptr;
 
-		m_LastUpdate = SvTl::GetTimeStamp();
+		m_LastUpdate = SvUl::GetTimeStamp();
 	}
 	else
 	{
@@ -906,12 +906,12 @@ HRESULT SVImageClass::SetObjectValue(SVObjectAttributeClass* pDataObject)
 	{
 		hr = SVObjectAppClass::SetObjectValue(pDataObject);
 
-		m_LastUpdate = SvTl::GetTimeStamp();
+		m_LastUpdate = SvUl::GetTimeStamp();
 
 		return hr;
 	}
 
-	m_LastUpdate = SvTl::GetTimeStamp();
+	m_LastUpdate = SvUl::GetTimeStamp();
 
 	// At some point this can go away,because it's not longer being scripted
 	hr = bOk ? S_OK : E_FAIL;

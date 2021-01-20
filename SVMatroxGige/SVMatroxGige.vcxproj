@@ -86,7 +86,7 @@
       <ModuleDefinitionFile>.\SVMatroxGige.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>CameraLibrary.lib;SVGigeCameraParametersLibrary.lib;SVImageLibrary.lib;SVMatroxDigitizerLibrary.lib;SVMatroxLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;SVXMLLibrary.lib;Triggering.lib;Gdi32.lib;Rpcrt4.lib</AdditionalDependencies>
+      <AdditionalDependencies>CameraLibrary.lib;SVGigeCameraParametersLibrary.lib;SVImageLibrary.lib;SVMatroxDigitizerLibrary.lib;SVMatroxLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVUtilityLibrary.lib;SVXMLLibrary.lib;Triggering.lib;Gdi32.lib;Rpcrt4.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Bscmake>
@@ -136,7 +136,7 @@
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <AdditionalDependencies>CameraLibrary.lib;SVGigeCameraParametersLibrary.lib;SVImageLibrary.lib;SVMatroxDigitizerLibrary.lib;SVMatroxLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;SVXMLLibrary.lib;Triggering.lib;Gdi32.lib;Rpcrt4.lib</AdditionalDependencies>
+      <AdditionalDependencies>CameraLibrary.lib;SVGigeCameraParametersLibrary.lib;SVImageLibrary.lib;SVMatroxDigitizerLibrary.lib;SVMatroxLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVUtilityLibrary.lib;SVXMLLibrary.lib;Triggering.lib;Gdi32.lib;Rpcrt4.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Bscmake>

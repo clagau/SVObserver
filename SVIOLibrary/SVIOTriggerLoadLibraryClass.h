@@ -18,7 +18,7 @@ typedef HRESULT (WINAPI *SVDestroyPtr)();
 typedef unsigned long (WINAPI *SVTriggerGetCountPtr)();
 typedef unsigned long (WINAPI *SVTriggerGetHandlePtr)(unsigned long);
 typedef _variant_t (WINAPI *SVTriggerGetNamePtr)(unsigned long);
-typedef HRESULT (WINAPI *SVTriggerRegisterPtr)(unsigned long, SvTi::TriggerCallBack pTriggerCallback);
+typedef HRESULT (WINAPI *SVTriggerRegisterPtr)(unsigned long, SvTrig::TriggerCallBack pTriggerCallback);
 typedef HRESULT (WINAPI *SVTriggerUnregisterPtr)(unsigned long);
 typedef HRESULT (WINAPI *SVTriggerStartPtr)(unsigned long);
 typedef HRESULT (WINAPI *SVTriggerStopPtr)(unsigned long);
@@ -39,7 +39,7 @@ public:
 	unsigned long GetCount() const;
 	unsigned long GetHandle(unsigned long index) const;
 	_variant_t GetName(unsigned long triggerIndex) const;
-	HRESULT Register(unsigned long triggerIndex, SvTi::TriggerCallBack pTriggerCallback);
+	HRESULT Register(unsigned long triggerIndex, SvTrig::TriggerCallBack pTriggerCallback);
 	HRESULT Unregister(unsigned long triggerIndex);
 	HRESULT Start(unsigned long triggerIndex);
 	HRESULT Stop(unsigned long triggerIndex);

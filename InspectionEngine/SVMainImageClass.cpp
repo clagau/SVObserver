@@ -12,7 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVMainImageClass.h"
-#include "SVTimerLibrary/SVClock.h"
+#include "SVUtilityLibrary/SVClock.h"
 #pragma endregion Includes
 
 namespace SvIe
@@ -57,7 +57,7 @@ bool SVMainImageClass::CreateBuffers( const SVImageInfoClass& p_rImageInfo)
 	// Set up necessary main image info...
 	m_ImageInfo.SetOwnerImage( getObjectId() );
 
-	m_LastUpdate = SvTl::GetTimeStamp();
+	m_LastUpdate = SvUl::GetTimeStamp();
      
 	return true;
 }

@@ -34,7 +34,7 @@ HRESULT WINAPI SVOutputSetPortValue(unsigned long port, unsigned long value);
 unsigned long WINAPI SVTriggerGetCount();
 unsigned long WINAPI SVTriggerGetHandle(unsigned long index);
 _variant_t WINAPI SVTriggerGetName(unsigned long triggerchannel);
-HRESULT WINAPI SVTriggerRegister(unsigned long triggerchannel, SvTi::TriggerCallBack pTriggerCallback);
+HRESULT WINAPI SVTriggerRegister(unsigned long triggerchannel, SvTrig::TriggerCallBack pTriggerCallback);
 HRESULT WINAPI SVTriggerUnregister(unsigned long triggerchannel);
 HRESULT WINAPI SVTriggerStart(unsigned long triggerchannel );
 HRESULT WINAPI SVTriggerStop(unsigned long triggerchannel );

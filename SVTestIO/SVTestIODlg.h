@@ -23,7 +23,7 @@ const int c_upperBoundForInputChannel = 9;
 const int c_upperBoundForOutputChannel = 17;
 
 
-class SVTestIODlg : public CDialog, public SvTi::IODeviceBase
+class SVTestIODlg : public CDialog, public SvTrig::IODeviceBase
 {
 	DECLARE_DYNAMIC(SVTestIODlg)
 
