@@ -930,7 +930,7 @@ enum EmbeddedIdEnum
 	ShiftToolModeEId = 285;
 	ShiftToolReferenceXEId = 286;
 	ShiftToolReferenceYEId = 287;
-	//ShiftToolEnableSourceImageExtentsEId = 288;
+	ContRecalcEId = 288;
 	ImageTransformDisplacementXEId = 289;
 	ImageTransformDisplacementYEId = 290;
 	TopResultEId = 291;
@@ -1163,6 +1163,13 @@ enum EmbeddedIdEnum
 	ContentHeightFactorLinkEId=521;	
 	ExtentContentWidthFactorSizeEId = 522;
 	ExtentContentHeightFactorSizeEId = 533;
+	ShapeMaskPropertyCenterXLinkEId = 534;
+	ShapeMaskPropertyCenterYLinkEId = 635;
+	ShapeMaskPropertyWidthLinkEId = 536;
+	ShapeMaskPropertyHeightLinkEId = 537;
+	ShapeMaskPropertySideThicknessLinkEId = 538;
+	ShapeMaskPropertyTopBottomThicknessLinkEId = 539;
+	ShapeMaskPropertyOffsetLinkEId = 540;
 
 	StatNumberOfValidSamplesEId = 560; //Statistics Tool: number of valid values considered in statistic
 

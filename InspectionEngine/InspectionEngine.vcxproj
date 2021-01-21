@@ -113,7 +113,6 @@
     <ClInclude Include="SVMatroxGigeAcquisitionClass.h" />
     <ClInclude Include="SVObjectAppClass.h" />
     <ClInclude Include="SVTaskObject.h" />
-    <ClInclude Include="SVTaskObjectInterfaceInputRequestStruct.h" />
     <ClInclude Include="SVTaskObjectList.h" />
     <ClInclude Include="SVVirtualCamera.h" />
   </ItemGroup>
@@ -142,7 +141,6 @@
     <ClCompile Include="SVMatroxGigeAcquisitionClass.cpp" />
     <ClCompile Include="SVObjectAppClass.cpp" />
     <ClCompile Include="SVTaskObject.cpp" />
-    <ClCompile Include="SVTaskObjectInterfaceInputRequestStruct.cpp" />
     <ClCompile Include="SVTaskObjectList.cpp" />
     <ClCompile Include="SVVirtualCamera.cpp" />
   </ItemGroup>

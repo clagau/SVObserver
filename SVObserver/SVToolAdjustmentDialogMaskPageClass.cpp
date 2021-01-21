@@ -379,9 +379,6 @@ void SVToolAdjustmentDialogMaskPageClass::OnEditShapeMaskButton()
 	m_dialogImage.GetSelectedTab(&selTab);
 	dlg.setSelectedTab(selTab);
 
-	// remember cancel data
-	dlg.CheckPoint();
-
 	if (IDOK == dlg.DoModal())
 	{
 		m_Values.Init();

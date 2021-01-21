@@ -12,7 +12,6 @@
 #pragma once
 
 #pragma region Includes
-#include "InspectionEngine/SVTaskObjectInterfaceInputRequestStruct.h"
 #include "Operators/SVShapeMaskHelperClass.h"
 //TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
 #include "SVOGui/PictureDisplay.h"
@@ -24,7 +23,6 @@
 namespace SvOp
 {
 class SVUserMaskOperatorClass;
-class SVMaskShape;
 }
 
 class SVMaskShapeEditorDlg : public CDialog
@@ -55,15 +53,11 @@ public:
 	//************************************
 	void setSelectedTab(long tabNumber);
 
-	SvOp::SVMaskShape* GetCurrentShape(); // holds the properties and does the rendering
-
 	SvOg::ValueController& GetValues() { return m_Values; }
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
 protected:
-	HRESULT GetCancelData(SvIe::SVInputRequestStructMap& rMap);
-
 #pragma region AFX Methods
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(SVMaskShapeEditorDlg)
@@ -82,7 +76,10 @@ protected:
 	afx_msg void OnSelChangeComboFillOptions();
 	afx_msg void OnChangeEditFillColor();
 	afx_msg void OnCheckAutoResize();
+	afx_msg void OnCheckContRecalc();
 	void OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult);
+	void OnItemQueryShowButton(NMHDR*, LRESULT* plResult);
+	void OnItemButtonClick(NMHDR* pNotifyStruct, LRESULT* plResult);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 #pragma endregion AFX Methods
@@ -109,14 +106,17 @@ protected:
 
 #pragma region Private Methods
 private:
-	int GetPropertyID(SvPb::EmbeddedIdEnum propertyId);
-	SvPb::EmbeddedIdEnum GetPropertyEmbeddedId(int iPropertyID);
+	unsigned int GetPropertyID(const std::pair<SvPb::EmbeddedIdEnum, SvPb::EmbeddedIdEnum>& rPropertyPair);
+	const std::pair<SvPb::EmbeddedIdEnum, SvPb::EmbeddedIdEnum>& GetPropertyEmbeddedId(int iPropertyID);
 	HRESULT BuildPropertyList();
+
+	void setPropertyToList(const std::pair<SvPb::EmbeddedIdEnum, SvPb::EmbeddedIdEnum>& embeddedIdPair, SVRPropertyItem* pRoot);
+
 	HRESULT RefreshProperties();
 
-	HRESULT SetInspectionData(bool bResetObject = false);
-	HRESULT UpdateMask(bool bResetObject = false);
-	void FillComboBox(const SvVol::SVEnumerateValueObjectClass& p_rValueObject, CComboBox* p_pCombo);
+	void SetInspectionData();
+	void UpdateMask();
+	void FillComboBox(const SvOg::ValueController& rValueController, SvPb::EmbeddedIdEnum embeddedId, CComboBox& rCombo);
 
 	//************************************
 	// Method:    setImages
@@ -139,6 +139,10 @@ private:
 	// Access:    public
 	//************************************
 	void resetShapeOverlay();
+
+	RECT getRect() const;
+
+	int SelectObject(std::string& rObjectName, SVRPropertyItem* pItem);
 #pragma endregion Private Methods
 
 #pragma region Member Variables
@@ -152,25 +156,23 @@ private:
 	CComboBox	m_cbFillOptions;
 	CString	m_sFillColor;
 	CString	m_sCoordinates;
+	BOOL	m_bContRecalc;
 	BOOL	m_bAutoResize;
 	SvOg::PictureDisplay m_dialogImage;
 	SVRPropTree          m_Tree;
 	//}}AFX_DATA
 
 	static const long m_numberOfTabs = 3;
-	typedef std::map<SvOp::SVShapeMaskHelperClass::ShapeTypeEnum, SvOp::SVMaskShape*> ShapeMap;
-
-	ShapeMap m_mapShapes;
-	std::map<SvPb::EmbeddedIdEnum, int> m_mapPropertyIds;
+	std::vector<std::pair<SvPb::EmbeddedIdEnum, SvPb::EmbeddedIdEnum>> m_propertyIds;
 	static SVMaskShapeEditorDlg* m_pThis;
 	bool m_isInit;
 	long m_currentTabNumber; //only use until m_isInit is true
 	long m_handleToActiveObjects[m_numberOfTabs];
 	SvOp::SVShapeMaskHelperClass::ShapeTypeEnum m_eShapeType;
 	SvOg::MaskController m_maskController;
-	SvOp::SVUserMaskOperatorClass* m_pMask;
-	SvIe::SVInputRequestStructMap m_cancelData;
-
+	std::vector<std::pair<SvPb::EmbeddedIdEnum, _variant_t>> m_ValuesSaved;
+	std::vector<std::pair<SvPb::EmbeddedIdEnum, _variant_t>> m_ShapeHelperValuesSaved;
+	
 	const uint32_t m_InspectionID;
 	const uint32_t m_TaskObjectID;
 	SvOg::ValueController m_Values;

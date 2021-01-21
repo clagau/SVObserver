@@ -65,11 +65,6 @@ HRESULT SVMaskShape::Draw( HDC hDC ) const
 	return hr;
 }
 
-HRESULT SVMaskShape::DrawOutline(HDC hDC, RECT rectViewport, RECT rectDisplay, COLORREF rgb) const
-{
-	return RenderOutline(hDC, rectViewport, rectDisplay, rgb);
-}
-
 HRESULT SVMaskShape::Draw( SVMatroxBuffer mil )
 {
 	HRESULT hr = S_OK;
@@ -81,7 +76,7 @@ HRESULT SVMaskShape::Draw( SVMatroxBuffer mil )
 	return hr;
 }
 
-HRESULT SVMaskShape::Refresh()
+HRESULT SVMaskShape::Refresh(const SVMaskFillPropertiesStruct& rFillStruct)
 {
 	// take the properties and draw them on the internal bitmap
 	HRESULT hr = S_OK;
@@ -109,7 +104,7 @@ HRESULT SVMaskShape::Refresh()
 		COLORREF rgbShape = SvDef::White;
 		COLORREF rgbBackground = SvDef::Black;
 
-		ComputeColors(rgbShape, rgbBackground);
+		ComputeColors(rgbShape, rgbBackground, rFillStruct);
 
 		HBRUSH hBrush = ::CreateSolidBrush(rgbBackground);
 		RECT rect;
@@ -218,43 +213,31 @@ HRESULT SVMaskShape::GetImageInfo( SVImageInfoClass& rsvImageInfo ) const
 	return S_OK;
 }
 
-HRESULT SVMaskShape::SetFillProperties( SVMaskFillPropertiesStruct svFillStruct )
+void SVMaskShape::ComputeColors(COLORREF& rgbShape, COLORREF& rgbBackground, const SVMaskFillPropertiesStruct& rFillStruct) const
 {
-	m_svFillStruct = svFillStruct;
-	return S_OK;
-}
-
-HRESULT SVMaskShape::GetFillProperties( SVMaskFillPropertiesStruct& rsvFillStruct ) const
-{
-	rsvFillStruct = m_svFillStruct;
-	return S_OK;
-}
-
-void SVMaskShape::ComputeColors(COLORREF& rgbShape, COLORREF& rgbBackground)
-{
-	if ( m_svFillStruct.bMaskInsideShape )
+	if (rFillStruct.bMaskInsideShape )
 	{
-		if ( m_svFillStruct.bFillMaskArea )
+		if (rFillStruct.bFillMaskArea )
 		{
-			rgbShape = m_svFillStruct.rgbFillColor;
+			rgbShape = rFillStruct.rgbFillColor;
 			rgbBackground = SvDef::White;
 		}
 		else
 		{
 			rgbShape = SvDef::Black;
-			rgbBackground = m_svFillStruct.rgbFillColor;
+			rgbBackground = rFillStruct.rgbFillColor;
 		}
 	}
 	else // mask outside shape (default)
 	{
-		if ( m_svFillStruct.bFillMaskArea )
+		if (rFillStruct.bFillMaskArea )
 		{
 			rgbShape = SvDef::White;
-			rgbBackground = m_svFillStruct.rgbFillColor;
+			rgbBackground = rFillStruct.rgbFillColor;
 		}
 		else
 		{
-			rgbShape = m_svFillStruct.rgbFillColor;
+			rgbShape = rFillStruct.rgbFillColor;
 			rgbBackground = SvDef::Black;
 		}
 	}
@@ -309,121 +292,10 @@ SIZE SVMaskShape::GetSize() const
 	}
 }
 
-SVMaskShape::SortedMapViewType SVMaskShape::GetTempSortedPropertyMapView(const MapType& map)
-{
-	SortedMapViewType set;
-	for ( MapTypeConstIterator iter = map.begin(); iter != map.end(); ++iter ) 
-	{
-		set.insert(iter);
-	}
-	return set;
-}
-
-HRESULT SVMaskShape::TranslateToDisplay(const RECT rectViewport, const RECT rectDisplay, std::vector<POINT>& rvecPoints) const
-{
-	HRESULT hr = S_OK;
-	
-	std::vector<SVPoint<double>> vecPoints(rvecPoints.size());
-	std::copy( rvecPoints.begin(), rvecPoints.end(), vecPoints.begin() );	// from POINT to ExtentPoint
-	
-
-	RECT rectImage = GetMaskImageRect();
-	
-	SVExtentFigureStruct figureSource(rectImage);  // mask image is the input
-	SVExtentFigureStruct figureDest(rectViewport); // viewport is the output
-
-	// translate mask image to viewport
-	SVPoint<double> ptOffset = figureDest.m_svTopLeft - figureSource.m_svTopLeft;
-	std::transform( vecPoints.begin(), vecPoints.end(), vecPoints.begin(), 
-		std::bind( std::minus<SVPoint<double>>(), std::placeholders::_1, ptOffset) );	// subtract the offset from each point
-
-	if ( S_OK == hr )
-	{
-		figureSource = figureDest;	// viewport is now the input
-		figureDest = rectDisplay;   // display is the output
-		// translate viewport to display
-		hr = TranslateCoordinates(SVExtentFigureStruct{ rectViewport }, SVExtentFigureStruct{ rectDisplay }, vecPoints);
-	}
-	
-	std::transform( vecPoints.begin(), vecPoints.end(), rvecPoints.begin(), [](SVPoint<double> point) { return static_cast<POINT> (point); });
-
-	return hr;
-}// SVMaskShape::TranslateToDisplay
-
-HRESULT SVMaskShape::TranslateToDisplay(const RECT rectViewport, const RECT rectDisplay, RECT& rShapeRect) const
-{
-	HRESULT hr = S_OK;
-
-	SVExtentFigureStruct figure(rShapeRect);
-
-	RECT rectImage = GetMaskImageRect();
-
-	SVExtentFigureStruct figureSource(rectImage);  // mask image is the input
-	SVExtentFigureStruct figureDest(rectViewport); // viewport is the output
-
-	// translate mask image to viewport
-	figure -= (figureDest.m_svTopLeft - figureSource.m_svTopLeft); // simple offset, no scaling
-
-	if ( S_OK == hr )
-	{
-		figureSource = figureDest;	// viewport is now the input
-		figureDest = rectDisplay;   // display is the output
-		// translate viewport to display
-		hr = TranslateCoordinates(figureSource, figureDest, figure);
-		if ( S_OK == hr )
-		{
-			rShapeRect = figure.Rect();
-		}
-	}
-
-	return hr;
-}// SVMaskShape::TranslateToDisplay
-
-HRESULT SVMaskShape::TranslateCoordinates(const SVExtentFigureStruct& rectSource, const SVExtentFigureStruct& rectDest, SVExtentFigureStruct& rFigure)
-{
-	SVPoint<double> ptTopLeft = rFigure.m_svTopLeft;
-	SVPoint<double> ptBottomRight = rFigure.m_svBottomRight;
-	TranslateCoordinates(rectSource, rectDest, ptTopLeft);
-	TranslateCoordinates(rectSource, rectDest, ptBottomRight);
-	rFigure.SetRect( ptTopLeft.m_y, ptTopLeft.m_x, ptBottomRight.m_y, ptBottomRight.m_x);
-	return S_OK;
-}
-
-HRESULT SVMaskShape::TranslateCoordinates(const SVExtentFigureStruct& rectSource, const SVExtentFigureStruct& rectDest, SVPoint<double>& rPoint)
-{
-	double dScaleX = rectDest.Size().m_dCX / rectSource.Size().m_dCX;
-	double dScaleY = rectDest.Size().m_dCY / rectSource.Size().m_dCY;
-
-	rPoint -= rectDest.m_svTopLeft;
-
-	rPoint.m_x *= dScaleX;
-	rPoint.m_y *= dScaleY;
-	return S_OK;
-}
-
-HRESULT SVMaskShape::TranslateCoordinates(const SVExtentFigureStruct& rectSource, const SVExtentFigureStruct& rectDest, std::vector<SVPoint<double>>& rvecPoints)
-{
-	HRESULT hr = S_OK;
-	for ( size_t i=0; i < rvecPoints.size(); i++ )
-	{
-		HRESULT hrPoint = TranslateCoordinates(rectSource, rectDest, rvecPoints[i]);
-		if ( S_OK == hr )
-		{
-			hr = hrPoint;
-		}
-	}
-	return hr;
-}
-
 HRESULT SVMaskShape::SetAutoResize( bool p_bAutoResize )
 {
 	m_bAutoResize = p_bAutoResize;
 	return S_OK;
-}
-
-bool SVMaskShape::IsAutoResize() const
-{
-	return m_bAutoResize;
 }
 
 HRESULT SVMaskShapeRectangle::Render(HDC hDC, COLORREF rgbShape, COLORREF ) const
@@ -436,37 +308,12 @@ HRESULT SVMaskShapeRectangle::Render(HDC hDC, COLORREF rgbShape, COLORREF ) cons
 	return result;
 }
 
-HRESULT SVMaskShapeRectangle::RenderOutline(HDC hDC, RECT rectViewport, RECT rectDisplay, COLORREF rgb) const
-{
-	RECT rect(GetRect());
-	TranslateToDisplay(rectViewport, rectDisplay, rect);
-
-	HBRUSH hBrush = ::CreateSolidBrush(rgb);
-	HRESULT result = (0 != ::FrameRect(hDC, &rect, hBrush)) ? S_OK : E_FAIL;
-
-	::DeleteObject(hBrush);
-	return result;
-}
-
 HRESULT SVMaskShapeOval::Render(HDC hDC, COLORREF , COLORREF ) const
 {
 	RECT rect(GetRect());
 
 	return ::Ellipse(hDC, rect.left, rect.top, rect.right, rect.bottom) ? S_OK : E_FAIL;
 }
-
-HRESULT SVMaskShapeOval::RenderOutline(HDC hDC, RECT rectViewport, RECT rectDisplay, COLORREF ) const
-{
-	RECT rect(GetRect());
-	TranslateToDisplay( rectViewport, rectDisplay, rect );
-
-	HRESULT result = ::Arc(hDC, rect.left, rect.top, rect.right, rect.bottom, rect.left, rect.top, rect.right, rect.bottom) ? S_OK : E_FAIL;
-	result = ::Arc(hDC, rect.left, rect.top, rect.right, rect.bottom, rect.right, rect.bottom, rect.left, rect.top) ? result : E_FAIL;
-
-	return result;
-}
-
-//////////////////////////////////////////////////////////////////////////////////
 
 SVMaskShapeSymmetricTrapezoid::SVMaskShapeSymmetricTrapezoid()
 {
@@ -485,14 +332,6 @@ HRESULT SVMaskShapeSymmetricTrapezoid::Render(HDC hDC, COLORREF , COLORREF ) con
 	std::vector<POINT> points = GetPoints();
 
 	return ::Polygon(hDC, &(points[0]), static_cast<int>(points.size())) ? S_OK : E_FAIL;
-}
-
-HRESULT SVMaskShapeSymmetricTrapezoid::RenderOutline(HDC hDC, RECT rectViewport, RECT rectDisplay, COLORREF ) const
-{
-	std::vector<POINT> points = GetPoints();
-	TranslateToDisplay(rectViewport, rectDisplay, points);
-
-	 return ::Polyline(hDC, &(points[0]), static_cast<int>(points.size())) ? S_OK : E_FAIL;
 }
 
 std::vector<POINT> SVMaskShapeSymmetricTrapezoid::GetPoints() const
@@ -655,30 +494,6 @@ HRESULT SVMaskShapeDoughnut::Render(HDC hDC, COLORREF , COLORREF rgbBackground) 
 	result = ::Ellipse(hDC, rectDoughnutHole.left, rectDoughnutHole.top, rectDoughnutHole.right, rectDoughnutHole.bottom) ? S_OK : E_FAIL;
 	::SelectObject(hDC, hOldBrush);
 	::DeleteObject(hBrush);
-
-	return result;
-}
-
-HRESULT SVMaskShapeDoughnut::RenderOutline(HDC hDC, RECT rectViewport, RECT rectDisplay, COLORREF) const
-{
-	RECT rect(GetRect());
-	TranslateToDisplay(rectViewport, rectDisplay, rect);
-
-	HRESULT result = ::Arc(hDC, rect.left, rect.top, rect.right, rect.bottom, rect.left, rect.top, rect.right, rect.bottom) ? S_OK : E_FAIL;
-	result = ::Arc(hDC, rect.left, rect.top, rect.right, rect.bottom, rect.right, rect.bottom, rect.left, rect.top) ? result : E_FAIL;
-
-	MapTypeConstIterator iter;
-	SIZE sizeThickness;
-	sizeThickness.cx = m_mapProperties.end() != (iter = m_mapProperties.find(SvPb::ShapeMaskPropertySideThicknessEId)) ? iter->second.value : 0L;
-	sizeThickness.cy = m_mapProperties.end() != (iter = m_mapProperties.find(SvPb::ShapeMaskPropertyTopBottomThicknessEId)) ? iter->second.value : 0L;
-
-	//Now calculate the dough nut hole rectangle
-	::InflateRect(&rect, -sizeThickness.cx, -sizeThickness.cy);
-
-	TranslateToDisplay(rectViewport, rectDisplay, rect);
-
-	result = ::Arc(hDC, rect.left, rect.top, rect.right, rect.bottom, rect.left, rect.top, rect.right, rect.bottom) ? result : E_FAIL;
-	result = ::Arc(hDC, rect.left, rect.top, rect.right, rect.bottom, rect.right, rect.bottom, rect.left, rect.top) ? result : E_FAIL;
 
 	return result;
 }

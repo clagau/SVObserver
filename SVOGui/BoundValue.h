@@ -149,6 +149,14 @@ public:
 		return variant_t();
 	}
 
+	std::vector<std::pair<SvPb::EmbeddedIdEnum, _variant_t>> getCurrentValues() const
+	{
+		std::vector< std::pair<SvPb::EmbeddedIdEnum, _variant_t>> list;
+		std::transform(m_values.begin(), m_values.end(), std::back_inserter(list),
+			[](const auto& rValue) -> std::pair<SvPb::EmbeddedIdEnum, _variant_t> { return { rValue.first, rValue.second.GetValue() }; });
+		return list;
+	}
+
 	bool SetDefaultValue(SvPb::EmbeddedIdEnum embeddedID, const variant_t& rDefaultValue)
 	{
 		if (!m_ReadOnly)

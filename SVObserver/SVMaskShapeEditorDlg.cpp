@@ -14,14 +14,11 @@
 //Moved to precompiled header: #include <colordlg.h>
 #include "SVMaskShapeEditorDlg.h"
 #include "Definitions/Color.h"
-#include "ObjectInterfaces/IObjectManager.h"
-#include "Operators/SVMaskShape.h"
-#include "Operators/SVUserMaskOperatorClass.h"
-#include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVOGui/DisplayHelper.h"
 #include "SVRPropertyTree/SVRPropTreeItemCombo.h"
 #include "SVRPropertyTree/SVRPropTreeItemEdit.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -46,7 +43,10 @@ BEGIN_MESSAGE_MAP(SVMaskShapeEditorDlg, CDialog)
 	ON_WM_ACTIVATE()
 	ON_EN_CHANGE(IDC_EDIT_FILL_COLOR, OnChangeEditFillColor)
 	ON_BN_CLICKED(IDC_CHECK_AUTO_RESIZE, OnCheckAutoResize)
+	ON_BN_CLICKED(IDC_CHECK_CONT_RECALC, OnCheckContRecalc)
 	ON_NOTIFY(PTN_ITEMCHANGED, IDC_PROPERTIES, OnItemChanged)
+	ON_NOTIFY(PTN_QUERY_SHOW_BUTTON, IDC_PROPERTIES, OnItemQueryShowButton)
+	ON_NOTIFY(PTN_ITEMBUTTONCLICK, IDC_PROPERTIES, OnItemButtonClick)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -54,12 +54,6 @@ BEGIN_EVENTSINK_MAP(SVMaskShapeEditorDlg, CDialog)
 	ON_EVENT(SVMaskShapeEditorDlg, IDC_DIALOGIMAGE, 6, SVMaskShapeEditorDlg::MouseMovedImDialogImage, VTS_I4 VTS_I4 VTS_I4)
 	ON_EVENT(SVMaskShapeEditorDlg, IDC_DIALOGIMAGE, 8, SVMaskShapeEditorDlg::ObjectChangedExDialogImage, VTS_I4 VTS_I4 VTS_PVARIANT VTS_PVARIANT)
 END_EVENTSINK_MAP()
-/////////////////////////////////////////////////////////////////////////////
-// SVMaskShapeEditorDlg message handlers
-namespace	// file local
-{
-	static int ID_BASE = 1000;
-}
 #pragma endregion Declarations
 
 #pragma region Constructor
@@ -72,16 +66,13 @@ SVMaskShapeEditorDlg::SVMaskShapeEditorDlg(uint32_t inspectionId, uint32_t taskO
 , m_sFillColor( _T( "" ) )
 , m_sCoordinates( _T( "" ) )
 , m_bAutoResize( FALSE )
-, m_pMask( nullptr )
 , m_isInit( false )
 , m_currentTabNumber( 2 ) // BRW - Why is this 2?
 , m_eShapeType(SvOp::SVShapeMaskHelperClass::SVMaskShapeTypeInvalid )
 , m_maskController {inspectionId, taskObjectId, maskOperatorId}
 {
 	m_pThis = this;
-
-	m_pMask = dynamic_cast<SvOp::SVUserMaskOperatorClass*> (SvOi::getObject(maskOperatorId));
-	
+		
 	for (int i = 0; i < m_numberOfTabs; i++)
 	{
 		m_handleToActiveObjects[i] = -1;
@@ -90,15 +81,6 @@ SVMaskShapeEditorDlg::SVMaskShapeEditorDlg(uint32_t inspectionId, uint32_t taskO
 
 SVMaskShapeEditorDlg::~SVMaskShapeEditorDlg()
 {
-	ShapeMap::iterator itShapeMapIter;
-	for ( itShapeMapIter = m_mapShapes.begin(); itShapeMapIter != m_mapShapes.end(); ++itShapeMapIter )
-	{
-		if (nullptr != itShapeMapIter->second)
-		{
-			delete itShapeMapIter->second;
-			itShapeMapIter->second = nullptr;
-		}
-	} // end for loop
 }
 #pragma endregion Constructor
 
@@ -106,33 +88,15 @@ SVMaskShapeEditorDlg::~SVMaskShapeEditorDlg()
 
 void SVMaskShapeEditorDlg::CheckPoint()
 {
-	GetCancelData(m_cancelData);
+	m_ValuesSaved = m_Values.getCurrentValues();
+	m_ShapeHelperValuesSaved = m_ShapeHelperValues.getCurrentValues();
 }
 
 void SVMaskShapeEditorDlg::Revert()
 {
-	for (auto const& rEntry : m_cancelData)
-	{
-		SVObjectClass* pObject = rEntry.first.m_ObjectRef.getObject();
-		if(nullptr != pObject)
-		{
-			SvPb::EmbeddedIdEnum embeddedID = pObject->GetEmbeddedID();
-			SVObjectClass* pParent = pObject->GetParent();
-			if(nullptr != pParent)
-			{
-				if (m_Values.GetTaskID() == pParent->getObjectId())
-				{
-					m_Values.Set<_variant_t>(embeddedID, rEntry.second);
-				}
-				else if (m_ShapeHelperValues.GetTaskID() == pParent->getObjectId())
-				{
-					m_ShapeHelperValues.Set<_variant_t>(embeddedID, rEntry.second);
-				}
-			}
-		}
-	}
-
+	m_Values.setValues(m_ValuesSaved);
 	m_Values.Commit();
+	m_ShapeHelperValues.setValues(m_ShapeHelperValuesSaved);
 	m_ShapeHelperValues.Commit();
 }
 
@@ -153,44 +117,18 @@ void SVMaskShapeEditorDlg::setSelectedTab(long tabNumber)
 		m_dialogImage.SelectTab(m_currentTabNumber);
 	}
 }
-
-SvOp::SVMaskShape* SVMaskShapeEditorDlg::GetCurrentShape()	// holds the properties and does the rendering // BRW - This method should be const.
-{
-	return m_mapShapes[m_eShapeType];
-}
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
-HRESULT SVMaskShapeEditorDlg::GetCancelData(SvIe::SVInputRequestStructMap& rMap)
+void SVMaskShapeEditorDlg::SetInspectionData()
 {
-	assert( m_pMask );
-	return m_pMask->GetCancelData( rMap );
-}
-
-HRESULT SVMaskShapeEditorDlg::SetInspectionData(bool bResetObject/* = false*/)
-{
-	SvOp::SVMaskShape::MapType mapProperties;
-	GetCurrentShape()->GetProperties(mapProperties);
-
-	for (auto const& rEntry : mapProperties)
-	{
-		SVObjectClass* pObject = m_pMask->GetShapeHelper()->GetEmbeddedValueObject(rEntry.first);
-		if ( nullptr != dynamic_cast<SvOi::IValueObject*> (pObject) )
-		{
-			m_ShapeHelperValues.Set<long>(pObject->GetEmbeddedID(), rEntry.second.value);
-		}
-	}
-
 	m_ShapeHelperValues.Commit();
 
 	//This needs to be called due to SetInspectionData being called by UpdateMask which has values set but not commited
-	SvOg::PostAction commitAction{SvOg::PostAction::doRunOnce};
-	commitAction = commitAction | (bResetObject ? SvOg::PostAction::doReset : SvOg::PostAction::doNothing);
-	m_Values.Commit(commitAction);
+	m_Values.Set<bool>(SvPb::ContRecalcEId, m_bContRecalc ? true : false);
+	m_Values.Commit(SvOg::PostAction::doRunOnce | SvOg::PostAction::doReset);
 
 	m_ShapeHelperValues.Init();
-
-	return S_OK;
 }
 
 #pragma region AFX Methods
@@ -205,6 +143,7 @@ void SVMaskShapeEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_FILL_COLOR, m_sFillColor);
 	DDX_Text(pDX, IDC_COORDINATES_STATIC, m_sCoordinates);
 	DDX_Control(pDX, IDC_DIALOGIMAGE, m_dialogImage);
+	DDX_Check(pDX, IDC_CHECK_CONT_RECALC, m_bContRecalc);
 	DDX_Check(pDX, IDC_CHECK_AUTO_RESIZE, m_bAutoResize);
 	//}}AFX_DATA_MAP
 }
@@ -213,15 +152,14 @@ BOOL SVMaskShapeEditorDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	// must set these before calling DoModal
-	assert( nullptr != m_pMask );
-
 	m_maskController.Init();
 	m_Values.Init();
 	m_ShapeHelperValues.Init();
 
-	bool l_bAutoResize = m_pMask->GetShapeHelper()->IsAutoResize();
-	m_bAutoResize = l_bAutoResize;
+	CheckPoint();
+
+	m_bContRecalc = m_Values.Get<bool>(SvPb::ContRecalcEId);
+	m_bAutoResize = m_ShapeHelperValues.Get<bool>(SvPb::ShapeMaskAutoResizeEId);
 
 
 	///////////////////////////////////////////////////////////////////////
@@ -242,74 +180,28 @@ BOOL SVMaskShapeEditorDlg::OnInitDialog()
 	/////////////////////////////////////////////////////////////////////////
 	// FILL COMBO BOXES
 
-	FillComboBox(m_pMask->getCancelData().evoCurrentMaskOperator, &m_cbMaskOperator);
-	FillComboBox(m_pMask->getCancelData().evoFillArea, &m_cbFillOptions);	// Fill Area
+	FillComboBox(m_Values, SvPb::MaskOperatorEId, m_cbMaskOperator);
+	FillComboBox(m_Values, SvPb::MaskFillAreaEId, m_cbFillOptions);	// Fill Area
 
-	SvOp::SVShapeMaskHelperClass* pShapeMaskHelper = m_pMask->GetShapeHelper();
+	FillComboBox(m_ShapeHelperValues, SvPb::ShapeMaskMaskAreaEId, m_cbMaskArea);
+	FillComboBox(m_ShapeHelperValues, SvPb::ShapeMaskTypeEId, m_cbMaskShape);
 
-	assert( nullptr != pShapeMaskHelper );
-
-	if (nullptr !=  pShapeMaskHelper )
-	{
-		FillComboBox(pShapeMaskHelper->getCancelData().evoMaskArea, &m_cbMaskArea);
-		FillComboBox(pShapeMaskHelper->getCancelData().evoShapeType, &m_cbMaskShape);
-	}
-
-	long lColor=0;
-	m_pMask->getCancelData().lvoFillColor.GetValue(lColor);
-	m_sFillColor = SvUl::AsString(lColor).c_str();
+	m_sFillColor = SvUl::AsString(m_Values.Get<long>(SvPb::MaskFillColorEId)).c_str();
 
 	m_dialogImage.AddTab(_T("Tool Input"));
 	m_dialogImage.AddTab(_T("Mask"));
 	m_dialogImage.AddTab(_T("Tool Result"));
 	m_dialogImage.SelectTab(m_currentTabNumber);
 
- 	m_mapShapes[SvOp::SVShapeMaskHelperClass::SVMaskShapeTypeRectangle] = new SvOp::SVMaskShapeRectangle;
-	m_mapShapes[SvOp::SVShapeMaskHelperClass::SVMaskShapeTypeOval] = new SvOp::SVMaskShapeOval;
-	m_mapShapes[SvOp::SVShapeMaskHelperClass::SVMaskShapeTypeDoughnut] = new SvOp::SVMaskShapeDoughnut;
-	m_mapShapes[SvOp::SVShapeMaskHelperClass::SVMaskShapeTypeSymmetricTrapezoid] = new SvOp::SVMaskShapeSymmetricTrapezoid;
-
-	long lShapeType;
-	pShapeMaskHelper->getCancelData().evoShapeType.GetValue(lShapeType);
-	SvOp::SVShapeMaskHelperClass::ShapeTypeEnum shapeType = static_cast <SvOp::SVShapeMaskHelperClass::ShapeTypeEnum> (lShapeType);
+	SvOp::SVShapeMaskHelperClass::ShapeTypeEnum shapeType = static_cast <SvOp::SVShapeMaskHelperClass::ShapeTypeEnum> (m_ShapeHelperValues.Get<long>(SvPb::ShapeMaskTypeEId));
 	assert( shapeType != SvOp::SVShapeMaskHelperClass::SVMaskShapeTypeInvalid );
 	setShapeType( shapeType );
-
-	// set image info for all shapes
-	ShapeMap::iterator itShapeMapIter;
-	for ( itShapeMapIter = m_mapShapes.begin(); itShapeMapIter != m_mapShapes.end(); ++itShapeMapIter )
-	{
-		itShapeMapIter->second->SetImageInfo(m_pMask->getMaskBufferInfo());
-	} // end for loop
-
-	////////////////////////////////////////////////////////
-	// SET SHAPE PROPERTIES
-	SvOp::SVMaskShape* pShape = m_mapShapes[m_eShapeType];
-	if (nullptr != pShape)
-	{
-		SvOp::SVMaskShape::MapType mapProperties;
-		m_pMask->GetShapeHelper()->GetProperties(mapProperties);
-		pShape->SetProperties(mapProperties);
-
-		SvOp::SVMaskFillPropertiesStruct svFillProperties;
-		m_pMask->GetFillProperties(svFillProperties);
-		pShape->SetFillProperties(svFillProperties);
-
-		pShape->SetAutoResize(l_bAutoResize);
-	}
-
-	////////////////////////////////////////////////////////
-
-	if(nullptr != m_pMask->getImageBuffer())
-	{
-		GetCurrentShape()->Refresh();	// renders based on new properties
-		GetCurrentShape()->Draw(m_pMask->getImageBuffer()->GetBuffer() );
-	}
 
 	setImages();
 	resetShapeOverlay();
 	BuildPropertyList();
 	m_isInit = true;
+	UpdateData(FALSE);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// EXCEPTION: OCX Property Pages should return FALSE
@@ -319,31 +211,30 @@ void SVMaskShapeEditorDlg::OnOK()
 {
 	//!! store combo box values to value objects
 	UpdateData();
-	SvOp::SVShapeMaskHelperClass* pShapeMaskHelper = m_pMask->GetShapeHelper();
 
 	int iSel = m_cbMaskShape.GetCurSel();
 	long lValue = static_cast<long>( m_cbMaskShape.GetItemData( iSel ) );
-	m_ShapeHelperValues.Set<long>(pShapeMaskHelper->getCancelData().evoShapeType.GetEmbeddedID(), lValue);
+	m_ShapeHelperValues.Set<long>(SvPb::ShapeMaskTypeEId, lValue);
 
 	iSel = m_cbMaskArea.GetCurSel();
 	lValue = static_cast<long>( m_cbMaskArea.GetItemData( iSel ) );
-	m_ShapeHelperValues.Set<long>(pShapeMaskHelper->getCancelData().evoMaskArea.GetEmbeddedID(), lValue);
+	m_ShapeHelperValues.Set<long>(SvPb::ShapeMaskMaskAreaEId, lValue);
 
 	lValue = static_cast<long> (m_eShapeType);
-	m_ShapeHelperValues.Set<long>(pShapeMaskHelper->getCancelData().evoShapeType.GetEmbeddedID(), lValue);
+	m_ShapeHelperValues.Set<long>(SvPb::ShapeMaskTypeEId, lValue);
 
 	iSel = m_cbMaskOperator.GetCurSel();
 	lValue = static_cast<long>( m_cbMaskOperator.GetItemData( iSel ) );
-	m_Values.Set<long>(m_pMask->getCancelData().evoCurrentMaskOperator.GetEmbeddedID(), lValue);
+	m_Values.Set<long>(SvPb::MaskOperatorEId, lValue);
 
 	iSel = m_cbFillOptions.GetCurSel();
 	lValue = static_cast<long>( m_cbFillOptions.GetItemData( iSel ) );
-	m_Values.Set<long>(m_pMask->getCancelData().evoFillArea.GetEmbeddedID(), lValue);
+	m_Values.Set<long>(SvPb::MaskFillAreaEId, lValue);
 
 	lValue = atol(m_sFillColor);
-	m_Values.Set<long>(m_pMask->getCancelData().lvoFillColor.GetEmbeddedID(), lValue);
+	m_Values.Set<long>(SvPb::MaskFillColorEId, lValue);
 
-	UpdateMask(true);
+	UpdateMask();
 
 	CDialog::OnOK();
 }
@@ -372,12 +263,12 @@ void SVMaskShapeEditorDlg::OnBtnFillColorMore()
 		m_sFillColor = SvUl::AsString(FillColor).c_str();
 		UpdateData(false);
 
-		m_Values.Set<long>(m_pMask->getCancelData().lvoFillColor.GetEmbeddedID(), FillColor);
+		m_Values.Set<long>(SvPb::MaskFillColorEId, FillColor);
 		UpdateMask();	// need to reset object for shape change
 	}
 	else
 	{
-		m_Values.Set<long>(m_pMask->getCancelData().lvoFillColor.GetEmbeddedID(), lOriginalColor);
+		m_Values.Set<long>(SvPb::MaskFillColorEId, lOriginalColor);
 		UpdateMask();	// need to reset object for shape change
 	}
 }
@@ -396,19 +287,12 @@ void SVMaskShapeEditorDlg::OnSelChangeComboShape()
 	int iSel = m_cbMaskShape.GetCurSel();
 	if ( iSel != CB_ERR )
 	{
-		SvOp::SVMaskShape* pOldShape = GetCurrentShape();
-		SvOp::SVMaskShape::MapType mapOldProperties;
-		pOldShape->GetProperties( mapOldProperties );
-
 		DWORD_PTR dwType = m_cbMaskShape.GetItemData(iSel);
 		setShapeType( static_cast<SvOp::SVShapeMaskHelperClass::ShapeTypeEnum> (dwType) );	// change current shape
 
-		GetCurrentShape()->SetProperties( mapOldProperties ); // reuse common properties; any that don't apply will be ignored
-		GetCurrentShape()->SetAutoResize( TRUE == m_bAutoResize );
+		m_ShapeHelperValues.Set<long>(SvPb::ShapeMaskTypeEId, static_cast<long> (m_eShapeType));
 
-		m_ShapeHelperValues.Set<long>(m_pMask->GetShapeHelper()->getCancelData().evoShapeType.GetEmbeddedID(), static_cast<long> (m_eShapeType));
-
-		UpdateMask(true);	// need to reset object for shape change
+		UpdateMask();	// need to reset object for shape change
 
 		setImages();
 		resetShapeOverlay();
@@ -423,9 +307,9 @@ void SVMaskShapeEditorDlg::OnSelChangeComboMaskOperator()
 	if ( iSel != CB_ERR )
 	{
 		long lValue = static_cast<long>( m_cbMaskOperator.GetItemData( iSel ) );
-		m_Values.Set<long>(m_pMask->getCancelData().evoCurrentMaskOperator.GetEmbeddedID(), lValue);
+		m_Values.Set<long>(SvPb::MaskOperatorEId, lValue);
 
-		UpdateMask(true);
+		UpdateMask();
 	}
 }
 
@@ -435,10 +319,8 @@ void SVMaskShapeEditorDlg::OnSelChangeComboMaskArea()
 	int iSel = m_cbMaskArea.GetCurSel();
 	if ( iSel != CB_ERR )
 	{
-		SvOp::SVShapeMaskHelperClass* pShapeMaskHelper = m_pMask->GetShapeHelper();
-
 		long lValue = (long) m_cbMaskArea.GetItemData( iSel );
-		m_ShapeHelperValues.Set<long>(pShapeMaskHelper->getCancelData().evoMaskArea.GetEmbeddedID(), lValue);
+		m_ShapeHelperValues.Set<long>(SvPb::ShapeMaskMaskAreaEId, lValue);
 
 		UpdateMask();
 	}
@@ -451,7 +333,7 @@ void SVMaskShapeEditorDlg::OnSelChangeComboFillOptions()
 	if ( iSel != CB_ERR )
 	{
 		long lValue = static_cast<long>( m_cbFillOptions.GetItemData( iSel ) );
-		m_Values.Set<long>(m_pMask->getCancelData().evoFillArea.GetEmbeddedID(), lValue);
+		m_Values.Set<long>(SvPb::MaskFillAreaEId, lValue);
 
 		UpdateMask();
 	}
@@ -461,7 +343,7 @@ void SVMaskShapeEditorDlg::OnChangeEditFillColor()
 {
 	UpdateData();
 	// stuff into value object
-	m_Values.Set<long>(m_pMask->getCancelData().lvoFillColor.GetEmbeddedID(), atol(m_sFillColor));
+	m_Values.Set<long>(SvPb::MaskFillColorEId, atol(m_sFillColor));
 	UpdateMask();	// need to reset object for shape change
 }
 
@@ -469,11 +351,15 @@ void SVMaskShapeEditorDlg::OnCheckAutoResize()
 {
 	UpdateData();
 
-	m_ShapeHelperValues.Set<bool>(m_pMask->GetShapeHelper()->getCancelData().bvoAutoResize.GetEmbeddedID(), m_bAutoResize ? true : false);
-	GetCurrentShape()->SetAutoResize( m_bAutoResize ? true : false ); // reuse common properties; any that don't apply will be ignored
+	m_ShapeHelperValues.Set<bool>(SvPb::ShapeMaskAutoResizeEId, m_bAutoResize ? true : false);
 
-	UpdateMask(true);
+	UpdateMask();
 	RefreshProperties();
+}
+
+void SVMaskShapeEditorDlg::OnCheckContRecalc()
+{
+	UpdateData();
 }
 
 void SVMaskShapeEditorDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
@@ -487,55 +373,74 @@ void SVMaskShapeEditorDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult
 
 		// do validation
 		int iPropertyID = pItem->GetCtrlID();
-		SvPb::EmbeddedIdEnum propertyEId = GetPropertyEmbeddedId(iPropertyID);
+		const auto& propertyEId = GetPropertyEmbeddedId(iPropertyID);
 
-		std::string sValue;
-		long lNewValue;
 		SVRPropertyItemCombo* pCombo = dynamic_cast <SVRPropertyItemCombo*> (pItem);
 		if ( pCombo )
 		{
+			long lNewValue;
 			pCombo->GetItemValue( lNewValue );
+			m_ShapeHelperValues.Set<long>(propertyEId.first, lNewValue);
 		}
 		else
 		{
+			std::string sValue;
 			pItem->GetItemValue( sValue );
-			lNewValue = atol( sValue.c_str() );
+			m_ShapeHelperValues.Set<CString>(propertyEId.first, sValue.c_str());
 		}
 
-		SvOp::SVMaskShape::MapType mapProperties;
-		GetCurrentShape()->GetProperties(mapProperties);
-
-		long lOldValue = mapProperties[propertyEId].value;
-
-		if (lOldValue != lNewValue)
+		
+		bool fail = (S_OK != m_ShapeHelperValues.Commit(SvOg::PostAction::doNothing));
+		if (fail)
 		{
-			mapProperties[propertyEId] = static_cast<long>(lNewValue);
-
-			GetCurrentShape()->SetProperties(mapProperties);
-
-			GetCurrentShape()->GetProperties(mapProperties);
-			long lValue = mapProperties[propertyEId].value;
-
-			SVObjectClass* pObject = m_pMask->GetShapeHelper()->GetEmbeddedValueObject(propertyEId);
-			assert(pObject);
-			if (nullptr != dynamic_cast<SvOi::IValueObject*> (pObject))
-			{
-				m_ShapeHelperValues.Set<long>(pObject->GetEmbeddedID(), lValue);
-			}
-
 			if (pCombo)
 			{
+				long lValue = m_ShapeHelperValues.Get<long>(propertyEId.first);
 				pCombo->SetItemValue((unsigned long)lValue);
 			}
 			else
 			{
-				pItem->SetItemValue(SvUl::AsString(lValue).c_str());
+				std::string valueString;
+				if (SvDef::InvalidObjectId != propertyEId.second)
+				{
+					valueString = m_ShapeHelperValues.Get<CString>(propertyEId.second);
+				}
+				if (valueString.empty())
+				{
+					valueString = m_ShapeHelperValues.Get<CString>(propertyEId.first);
+				}
+				pItem->SetItemValue(valueString.c_str());
 			}
+		}
 
+		pItem->OnRefresh();
+
+		// redraw shape
+		UpdateMask();
+	}// end if ( pNMPropTree->pItem )
+}
+
+void SVMaskShapeEditorDlg::OnItemQueryShowButton(NMHDR*, LRESULT* plResult)
+{
+	*plResult = TRUE;	// always show button
+}
+
+void SVMaskShapeEditorDlg::OnItemButtonClick(NMHDR* pNotifyStruct, LRESULT* plResult)
+{
+	*plResult = TRUE;
+
+	LPNMPROPTREE pNMPropTree = (LPNMPROPTREE)pNotifyStruct;
+
+	if (pNMPropTree->pItem)
+	{
+		SVRPropertyItem* pItem = pNMPropTree->pItem;
+
+		// display value object picker
+		std::string ObjectName;
+		if (SelectObject(ObjectName, pItem) == IDOK && !ObjectName.empty())
+		{
+			pItem->SetItemValue(ObjectName.c_str());
 			pItem->OnRefresh();
-
-			// redraw shape
-			UpdateMask();
 		}
 	}// end if ( pNMPropTree->pItem )
 }
@@ -548,10 +453,6 @@ void SVMaskShapeEditorDlg::ObjectChangedExDialogImage(long , long , VARIANT* Par
 	VariantParamMap ParaMap;
 	SvOg::DisplayHelper::FillParameterMap(ParaMap, ParameterList, ParameterValue);
 
-	SvOp::SVMaskShape* pShape = m_mapShapes[ m_eShapeType ];
-	SvOp::SVMaskShape::MapType mapProperties;
-	m_pMask->GetShapeHelper()->GetProperties( mapProperties );
-
 	if( m_eShapeType != SvOp::SVShapeMaskHelperClass::SVMaskShapeTypeInvalid )
 	{
 		long width = ParaMap[ CDSVPictureDisplay::P_X2 ].lVal - ParaMap[ CDSVPictureDisplay::P_X1 ].lVal;
@@ -559,32 +460,32 @@ void SVMaskShapeEditorDlg::ObjectChangedExDialogImage(long , long , VARIANT* Par
 		long CenterX = ParaMap[ CDSVPictureDisplay::P_X1 ].lVal + width / 2;
 		long CenterY = ParaMap[ CDSVPictureDisplay::P_Y1 ].lVal + Height / 2;
 
-		mapProperties[SvPb::ShapeMaskPropertyWidthEId].value = width;
-		mapProperties[SvPb::ShapeMaskPropertyHeightEId].value = Height;
-		mapProperties[SvPb::ShapeMaskPropertyCenterXEId].value = CenterX;
-		mapProperties[SvPb::ShapeMaskPropertyCenterYEId].value = CenterY;
+		m_ShapeHelperValues.Set(SvPb::ShapeMaskPropertyWidthEId, width);
+		m_ShapeHelperValues.Set(SvPb::ShapeMaskPropertyHeightEId, Height);
+		m_ShapeHelperValues.Set(SvPb::ShapeMaskPropertyCenterXEId, CenterX);
+		m_ShapeHelperValues.Set(SvPb::ShapeMaskPropertyCenterYEId, CenterY);
 	}
 
 	if( m_eShapeType == SvOp::SVShapeMaskHelperClass::SVMaskShapeTypeSymmetricTrapezoid )
 	{
-		mapProperties[SvPb::ShapeMaskPropertyOffsetEId].value = ParaMap[ CDSVPictureDisplay::P_Offset ].lVal;
+		m_ShapeHelperValues.Set(SvPb::ShapeMaskPropertyOffsetEId, ParaMap[ CDSVPictureDisplay::P_Offset ].lVal);
 
 		switch( ParaMap[ CDSVPictureDisplay::P_SubType ].lVal )
 		{
 		case CDSVPictureDisplay::VerticalAxisTop:
-			mapProperties[SvPb::ShapeMaskPropertySymmetryOrientationEId].value = SvOp::SVMaskShapeSymmetricTrapezoid::VerticalAxisTop;
+			m_ShapeHelperValues.Set(SvPb::ShapeMaskPropertySymmetryOrientationEId, SvOp::SVMaskShapeSymmetricTrapezoid::VerticalAxisTop);
 			break;
 
 		case CDSVPictureDisplay::VerticalAxisBottom:
-			mapProperties[SvPb::ShapeMaskPropertySymmetryOrientationEId].value = SvOp::SVMaskShapeSymmetricTrapezoid::VerticalAxisBottom;
+			m_ShapeHelperValues.Set(SvPb::ShapeMaskPropertySymmetryOrientationEId, SvOp::SVMaskShapeSymmetricTrapezoid::VerticalAxisBottom);
 			break;
 
 		case CDSVPictureDisplay::HorizontalAxisLeft:
-			mapProperties[SvPb::ShapeMaskPropertySymmetryOrientationEId].value = SvOp::SVMaskShapeSymmetricTrapezoid::HorizontalAxisLeft;
+			m_ShapeHelperValues.Set(SvPb::ShapeMaskPropertySymmetryOrientationEId, SvOp::SVMaskShapeSymmetricTrapezoid::HorizontalAxisLeft);
 			break;
 
 		case CDSVPictureDisplay::HorizontalAxisRight:
-			mapProperties[SvPb::ShapeMaskPropertySymmetryOrientationEId].value = SvOp::SVMaskShapeSymmetricTrapezoid::HorizontalAxisRight;
+			m_ShapeHelperValues.Set(SvPb::ShapeMaskPropertySymmetryOrientationEId, SvOp::SVMaskShapeSymmetricTrapezoid::HorizontalAxisRight);
 			break;
 
 		default:
@@ -594,15 +495,13 @@ void SVMaskShapeEditorDlg::ObjectChangedExDialogImage(long , long , VARIANT* Par
 
 	if( m_eShapeType == SvOp::SVShapeMaskHelperClass::SVMaskShapeTypeDoughnut )
 	{
-		mapProperties[SvPb::ShapeMaskPropertySideThicknessEId].value = ParaMap[ CDSVPictureDisplay::P_SideThickness ].lVal;
-		mapProperties[SvPb::ShapeMaskPropertyTopBottomThicknessEId].value = ParaMap[ CDSVPictureDisplay::P_TopThickness ].lVal;
+		m_ShapeHelperValues.Set(SvPb::ShapeMaskPropertySideThicknessEId, ParaMap[ CDSVPictureDisplay::P_SideThickness ].lVal);
+		m_ShapeHelperValues.Set(SvPb::ShapeMaskPropertyTopBottomThicknessEId, ParaMap[ CDSVPictureDisplay::P_TopThickness ].lVal);
 	}
 
-	m_pMask->GetShapeHelper()->SetProperties( mapProperties );
-	pShape->SetProperties( mapProperties );
-	m_pMask->ResetObject();
+	m_ShapeHelperValues.Commit(SvOg::PostAction::doReset);
 	RefreshProperties();
-	UpdateMask(true);
+	UpdateMask();
 }
 
 void SVMaskShapeEditorDlg::MouseMovedImDialogImage(long , long X, long Y)
@@ -651,7 +550,7 @@ UINT_PTR CALLBACK SVMaskShapeEditorDlg::ColorDlgHookFn( HWND hdlg, UINT uiMsg, W
 			{
 				CString sText;
 				pWndRed->GetWindowText( sText );
-				m_pThis->GetValues().Set<long>(m_pThis->m_pMask->getCancelData().lvoFillColor.GetEmbeddedID(), atol(sText));
+				m_pThis->GetValues().Set<long>(SvPb::MaskFillColorEId, atol(sText));
 				m_pThis->UpdateMask();
 			}
 			break;
@@ -668,32 +567,31 @@ UINT_PTR CALLBACK SVMaskShapeEditorDlg::ColorDlgHookFn( HWND hdlg, UINT uiMsg, W
 #pragma endregion Protected Methods
 
 #pragma region Private Methods
-int SVMaskShapeEditorDlg::GetPropertyID(SvPb::EmbeddedIdEnum propertyId )
+unsigned int SVMaskShapeEditorDlg::GetPropertyID(const std::pair<SvPb::EmbeddedIdEnum, SvPb::EmbeddedIdEnum>& rPropertyPair)
 {
-	int id = m_mapPropertyIds[propertyId];
-	if ( id == 0 )
+	auto iter = std::find_if(m_propertyIds.begin(), m_propertyIds.end(), [rPropertyPair](const auto& rPair) { return rPropertyPair == rPair; });
+	if (m_propertyIds.end() == iter)
 	{
-		do
-		{
-			id = (rand() % 15000) + ID_BASE; //@TODO:  Explain the use of rand() and the 15000.
-		} while ( SvPb::NoEmbeddedId != GetPropertyEmbeddedId(id) );
-
-		m_mapPropertyIds[propertyId] = id;
+		m_propertyIds.push_back(rPropertyPair);
+		//The new id is pos+1 in the list. 
+		return static_cast<unsigned int>(m_propertyIds.size());
 	}
-	return id;
+
+	return static_cast<unsigned int>(std::distance(m_propertyIds.begin(), iter) + 1);
 }
 
-SvPb::EmbeddedIdEnum SVMaskShapeEditorDlg::GetPropertyEmbeddedId(int iPropertyID)
+namespace
 {
-	std::map<SvPb::EmbeddedIdEnum, int>::iterator iter;
-	for ( iter = m_mapPropertyIds.begin(); iter != m_mapPropertyIds.end(); ++iter )
+	constexpr std::pair<SvPb::EmbeddedIdEnum, SvPb::EmbeddedIdEnum> dummyEmptyPair{ SvPb::NoEmbeddedId, SvPb::NoEmbeddedId };
+}
+const std::pair<SvPb::EmbeddedIdEnum, SvPb::EmbeddedIdEnum>& SVMaskShapeEditorDlg::GetPropertyEmbeddedId(int iPropertyID)
+{
+	if (0 < iPropertyID && iPropertyID <= m_propertyIds.size())
 	{
-		if ( iter->second == iPropertyID )
-		{
-			return iter->first;
-		}
+		return m_propertyIds[iPropertyID-1];
 	}
-	return SvPb::NoEmbeddedId;
+
+	return dummyEmptyPair;
 }
 
 HRESULT SVMaskShapeEditorDlg::BuildPropertyList()
@@ -707,59 +605,28 @@ HRESULT SVMaskShapeEditorDlg::BuildPropertyList()
 	pRoot->HideItem();
 	pRoot->SetHeight(2); //@TODO:  Document the reason for the use of the magic number 2.
 
-	SvOp::SVMaskShape::MapType mapProperties;
-	GetCurrentShape()->GetProperties( mapProperties );
-
-	SvOp::SVMaskShape::SortedMapViewType::const_iterator iter;
-	SvOp::SVMaskShape::SortedMapViewType viewOrderedProperties(SvOp::SVMaskShape::GetTempSortedPropertyMapView(mapProperties));
-
-	for( iter = viewOrderedProperties.begin(); iter != viewOrderedProperties.end(); ++iter )
+	std::initializer_list<std::pair<SvPb::EmbeddedIdEnum, SvPb::EmbeddedIdEnum>> baseEmbeddedIdList = {
+	{SvPb::ShapeMaskPropertyCenterXEId, SvPb::ShapeMaskPropertyCenterXLinkEId},
+	{SvPb::ShapeMaskPropertyCenterYEId, SvPb::ShapeMaskPropertyCenterYLinkEId},
+	{SvPb::ShapeMaskPropertyWidthEId, SvPb::ShapeMaskPropertyWidthLinkEId},
+	{SvPb::ShapeMaskPropertyHeightEId, SvPb::ShapeMaskPropertyHeightLinkEId} };
+	for (const auto& embeddedIdPair : baseEmbeddedIdList)//propertiesListMap[m_eShapeType])
 	{
-		const SvOp::SVMaskShape::MapType::key_type& key = (*iter)->first;
-		const SvOp::SVMaskShapeProperty& rData = (*iter)->second;
-
-		SVObjectClass* pValueObject = m_pMask->GetShapeHelper()->GetEmbeddedValueObject( key );
-		assert( pValueObject );
-		if( nullptr != pValueObject )
-		{
-			std::string Name = pValueObject->GetName();
-
-			SVRPropertyItem* pItem = nullptr;
-
-			if (SvVol::SVEnumerateValueObjectClass* pEnum = dynamic_cast <SvVol::SVEnumerateValueObjectClass*> ( pValueObject ) )
-			{
-				SVRPropertyItemCombo* pCombo = dynamic_cast <SVRPropertyItemCombo*> (m_Tree.InsertItem(new SVRPropertyItemCombo, pRoot) );
-				pItem = pCombo;
-
-				pCombo->EnableButton( false );
-				pCombo->CreateComboBox( WS_CHILD | WS_VSCROLL | CBS_DROPDOWNLIST );
-
-				for (auto const& rEntry : pEnum->GetEnumVector())
-				{
-					int iPos = pCombo->AddString( rEntry.first.c_str() );
-					pCombo->SetItemData(iPos, static_cast<DWORD_PTR> (rEntry.second));
-				}
-				pCombo->SetItemValue( rData.value );
-			}
-			else
-			{
-				SVRPropertyItemEdit* pEdit = dynamic_cast <SVRPropertyItemEdit*> ( m_Tree.InsertItem(new SVRPropertyItemEdit(), pRoot) );
-				pItem = pEdit;
-
-				long lValue = rData.value;
-				pEdit->SetItemValue( SvUl::AsString(lValue).c_str() );
-			}
-
-			assert( pItem );
-
-			pItem->SetCtrlID( GetPropertyID(key) );
-			pItem->SetBold( false );
-			pItem->SetHeight(16); //@TODO:  Document the reason for the use of the magic number 16.
-			pItem->SetLabelText( Name.c_str() );
-
-			pItem->OnRefresh();
-		}
-	}//end for( iter = map.begin(); iter != map.end(); iter++ )
+		setPropertyToList(embeddedIdPair, pRoot);
+	}
+	std::map<SvOp::SVShapeMaskHelperClass::ShapeTypeEnum, std::initializer_list<std::pair<SvPb::EmbeddedIdEnum, SvPb::EmbeddedIdEnum>>> propertiesListMap =
+	{
+		{SvOp::SVShapeMaskHelperClass::SVMaskShapeTypeDoughnut, {
+			{SvPb::ShapeMaskPropertySideThicknessEId, SvPb::ShapeMaskPropertySideThicknessLinkEId},
+			{SvPb::ShapeMaskPropertyTopBottomThicknessEId, SvPb::ShapeMaskPropertyTopBottomThicknessLinkEId} }},
+		{SvOp::SVShapeMaskHelperClass::SVMaskShapeTypeSymmetricTrapezoid, {
+			{SvPb::ShapeMaskPropertyOffsetEId, SvPb::ShapeMaskPropertyOffsetLinkEId},
+			{SvPb::ShapeMaskPropertySymmetryOrientationEId, SvPb::NoEmbeddedId} }}
+	};
+	for (const auto& embeddedIdPair : propertiesListMap[m_eShapeType])
+	{
+		setPropertyToList(embeddedIdPair, pRoot);
+	}
 
 	SVRPropertyItem* pChild = pRoot->GetChild();
 	while ( pChild )
@@ -774,29 +641,85 @@ HRESULT SVMaskShapeEditorDlg::BuildPropertyList()
 	return S_OK;
 }
 
+void SVMaskShapeEditorDlg::setPropertyToList(const std::pair<SvPb::EmbeddedIdEnum, SvPb::EmbeddedIdEnum>& embeddedIdPair, SVRPropertyItem* pRoot)
+{
+	std::string Name{ m_ShapeHelperValues.GetName(embeddedIdPair.first) };
+	if (false == Name.empty())
+	{
+		SVRPropertyItem* pItem = nullptr;
+		auto enumList = m_ShapeHelperValues.GetEnumTypes(embeddedIdPair.first);
+		if (0 < enumList.size())
+		{
+			SVRPropertyItemCombo* pCombo = dynamic_cast <SVRPropertyItemCombo*> (m_Tree.InsertItem(new SVRPropertyItemCombo, pRoot));
+			pItem = pCombo;
+
+			pCombo->EnableButton(false);
+			pCombo->CreateComboBox(WS_CHILD | WS_VSCROLL | CBS_DROPDOWNLIST);
+
+			for (auto const& rEntry : enumList)
+			{
+				int iPos = pCombo->AddString(rEntry.first.c_str());
+				pCombo->SetItemData(iPos, static_cast<DWORD_PTR> (rEntry.second));
+			}
+			long value = m_ShapeHelperValues.Get<long>(embeddedIdPair.first);
+			pCombo->SetItemValue(value);
+		}
+		else
+		{
+			std::string valueString;
+			if (SvDef::InvalidObjectId != embeddedIdPair.second)
+			{
+				valueString = m_ShapeHelperValues.Get<CString>(embeddedIdPair.second);
+			}
+			if (valueString.empty())
+			{
+				valueString = m_ShapeHelperValues.Get<CString>(embeddedIdPair.first);
+			}
+			SVRPropertyItemEdit* pEdit = dynamic_cast <SVRPropertyItemEdit*> (m_Tree.InsertItem(new SVRPropertyItemEdit(), pRoot));
+			pItem = pEdit;
+			pEdit->SetItemValue(valueString.c_str());
+		}
+
+		assert(pItem);
+
+		pItem->SetCtrlID(GetPropertyID(embeddedIdPair));
+		pItem->SetBold(false);
+		pItem->SetHeight(16); //@TODO:  Document the reason for the use of the magic number 16.
+		pItem->SetLabelText(Name.c_str());
+
+		pItem->OnRefresh();
+	}
+}
+
 HRESULT SVMaskShapeEditorDlg::RefreshProperties()
 {
-	SvOp::SVMaskShape::MapType mapProperties;
-	GetCurrentShape()->GetProperties( mapProperties );
-
 	SVRPropertyItem* pRoot = m_Tree.GetRootItem()->GetChild();
 	assert( pRoot );
 	SVRPropertyItem* pChild = pRoot->GetChild();
 
 	while ( pChild )
 	{
-		SvPb::EmbeddedIdEnum propertyEId = GetPropertyEmbeddedId(pChild->GetCtrlID());
+		const auto& propertyEId = GetPropertyEmbeddedId(pChild->GetCtrlID());
 		if ( SVRPropertyItemCombo* pCombo = dynamic_cast <SVRPropertyItemCombo*> (pChild) )
 		{
-			unsigned long ulValue = mapProperties[propertyEId].value;
-			pCombo->SetItemValue( ulValue );
+			pCombo->SetItemValue( m_ShapeHelperValues.Get<long>(propertyEId.first));
 		}
 		else
 		{
-			pChild->SetItemValue( SvUl::AsString( mapProperties[propertyEId].value ).c_str() );
+			std::string valueString;
+			if (SvDef::InvalidObjectId != propertyEId.second)
+			{
+				valueString = m_ShapeHelperValues.Get<CString>(propertyEId.second);
+			}
+			if (valueString.empty())
+			{
+				valueString = m_ShapeHelperValues.Get<CString>(propertyEId.first);
+			}
+			pChild->SetItemValue(valueString.c_str());
 		}
 
-		if ( m_bAutoResize && ! mapProperties[propertyEId].bAvailableWithAutoResize )
+		const std::initializer_list<SvPb::EmbeddedIdEnum> availableWithAutoResize { SvPb::ShapeMaskPropertyOffsetEId, SvPb::ShapeMaskPropertySymmetryOrientationEId, SvPb::ShapeMaskPropertySideThicknessEId, SvPb::ShapeMaskPropertyTopBottomThicknessEId };
+		if (m_bAutoResize && std::none_of(availableWithAutoResize.begin(), availableWithAutoResize.end(), [propertyEId](auto value) { return propertyEId.first == value; }))
 		{
 			pChild->SetItemValue( CString(_T("---")) );
 			// grey out property
@@ -820,38 +743,29 @@ HRESULT SVMaskShapeEditorDlg::RefreshProperties()
 	return S_OK;
 }
 
-HRESULT SVMaskShapeEditorDlg::UpdateMask(bool bResetObject)
+void SVMaskShapeEditorDlg::UpdateMask()
 {
-	SetInspectionData(bResetObject);
-	GetCurrentShape()->Refresh();
+	SetInspectionData();
 	setImages();
 
 	resetShapeOverlay();
-	return S_OK;
 }
 
-void SVMaskShapeEditorDlg::FillComboBox(const SvVol::SVEnumerateValueObjectClass& rValueObject, CComboBox* pCombo)
+void SVMaskShapeEditorDlg::FillComboBox(const SvOg::ValueController& rValueController, SvPb::EmbeddedIdEnum embeddedId, CComboBox& rCombo)
 {
-	assert( nullptr != pCombo );
-
-	if (nullptr != pCombo)
+	for (auto const& rEntry : rValueController.GetEnumTypes(embeddedId))
 	{
-		for (auto const& rEntry : rValueObject.GetEnumVector())
-		{
-			pCombo->SetItemData( pCombo->AddString(rEntry.first.c_str()), static_cast<DWORD_PTR> (rEntry.second) );
-		}
+		rCombo.SetItemData(rCombo.AddString(rEntry.first.c_str()), static_cast<DWORD_PTR> (rEntry.second));
+	}
 
-		// Set Current Value...
-		long lCurrent;
-		rValueObject.GetValue(lCurrent);
-
-		for(int i=0; i < pCombo->GetCount(); ++i )
+	// Set Current Value...
+	long lCurrent = rValueController.Get<long>(embeddedId);
+	for (int i = 0; i < rCombo.GetCount(); ++i)
+	{
+		if (lCurrent == static_cast<long> (rCombo.GetItemData(i)))
 		{
-			if( lCurrent == static_cast<long> (pCombo->GetItemData(i)) )
-			{
-				pCombo->SetCurSel(i);
-				break;
-			}
+			rCombo.SetCurSel(i);
+			break;
 		}
 	}
 }
@@ -895,7 +809,7 @@ void SVMaskShapeEditorDlg::setShapeType(SvOp::SVShapeMaskHelperClass::ShapeTypeE
 			m_eShapeType = SvOp::SVShapeMaskHelperClass::SVMaskShapeTypeRectangle;
 		}
 
-		CRect rect = m_mapShapes[ m_eShapeType ]->GetRect();
+		CRect rect = getRect();
 
 		LongParamMap ParMap;
 		ParMap[ CDSVPictureDisplay::P_X1 ] = rect.left; //@TODO:  Consider making a method that takes a rect as a parameter, and moving these lines to that method.
@@ -945,17 +859,7 @@ void SVMaskShapeEditorDlg::setShapeType(SvOp::SVShapeMaskHelperClass::ShapeTypeE
 
 void SVMaskShapeEditorDlg::resetShapeOverlay()
 {
-	////////////////////////////////////////////////////////
-	// SET SHAPE PROPERTIES
-	SvOp::SVMaskShape* pShape = m_mapShapes[ m_eShapeType ];
-	SvOp::SVMaskShape::MapType mapProperties;
-	m_pMask->GetShapeHelper()->GetProperties( mapProperties );
-	pShape->SetProperties( mapProperties );
-	SvOp::SVMaskFillPropertiesStruct svFillProperties;
-	m_pMask->GetFillProperties( svFillProperties );
-	pShape->SetFillProperties( svFillProperties );
-	pShape->SetAutoResize( TRUE == m_bAutoResize );
-	CRect rect = pShape->GetRect();
+	CRect rect = getRect();
 
 	//add new shape types
 	std::map<long,long> ParMap;
@@ -980,7 +884,7 @@ void SVMaskShapeEditorDlg::resetShapeOverlay()
 	case SvOp::SVShapeMaskHelperClass::SVMaskShapeTypeSymmetricTrapezoid:
 		ParMap[ CDSVPictureDisplay::P_Type ] = CDSVPictureDisplay::TrapezoidROI;
 
-		switch( mapProperties[SvPb::ShapeMaskPropertySymmetryOrientationEId].value)
+		switch( m_ShapeHelperValues.Get<long>(SvPb::ShapeMaskPropertySymmetryOrientationEId) )
 		{
 		case SvOp::SVMaskShapeSymmetricTrapezoid::VerticalAxisTop:
 			ParMap[ CDSVPictureDisplay::P_SubType ] = CDSVPictureDisplay::VerticalAxisTop;
@@ -997,12 +901,12 @@ void SVMaskShapeEditorDlg::resetShapeOverlay()
 		default:
 			break; // Do nothing.
 		}
-		ParMap[ CDSVPictureDisplay::P_Offset ] = mapProperties[SvPb::ShapeMaskPropertyOffsetEId].value;
+		ParMap[ CDSVPictureDisplay::P_Offset ] = m_ShapeHelperValues.Get<long>(SvPb::ShapeMaskPropertyOffsetEId);
 		break;
 	case SvOp::SVShapeMaskHelperClass::SVMaskShapeTypeDoughnut:
 		ParMap[ CDSVPictureDisplay::P_Type ] = CDSVPictureDisplay::DoughnutROI;
-		ParMap[ CDSVPictureDisplay::P_SideThickness ] = mapProperties[SvPb::ShapeMaskPropertySideThicknessEId].value;
-		ParMap[ CDSVPictureDisplay::P_TopThickness ] = mapProperties[SvPb::ShapeMaskPropertyTopBottomThicknessEId].value;
+		ParMap[ CDSVPictureDisplay::P_SideThickness ] = m_ShapeHelperValues.Get<long>(SvPb::ShapeMaskPropertySideThicknessEId);
+		ParMap[ CDSVPictureDisplay::P_TopThickness ] = m_ShapeHelperValues.Get<long>(SvPb::ShapeMaskPropertyTopBottomThicknessEId);
 		break;
 	default:
 		break; // Do nothing.
@@ -1016,6 +920,71 @@ void SVMaskShapeEditorDlg::resetShapeOverlay()
 	}
 	saVal.Destroy();
 	saPar.Destroy();
+}
+
+RECT SVMaskShapeEditorDlg::getRect() const
+{
+	if (m_bAutoResize)
+	{
+		return m_maskController.GetResultRect();
+	}
+	else
+	{
+		long lCenterX = m_ShapeHelperValues.Get<long>(SvPb::ShapeMaskPropertyCenterXEId);
+		long lCenterY = m_ShapeHelperValues.Get<long>(SvPb::ShapeMaskPropertyCenterYEId);
+		long lWidth = m_ShapeHelperValues.Get<long>(SvPb::ShapeMaskPropertyWidthEId);
+		long lHeight = m_ShapeHelperValues.Get<long>(SvPb::ShapeMaskPropertyHeightEId);
+		long lHalfWidth = lWidth / 2;
+		long lHalfHeight = lHeight / 2;
+
+		long lTop = lCenterY - lHalfHeight;
+		long lLeft = lCenterX - lHalfWidth;
+		long lRight = lLeft + lWidth;
+		long lBottom = lTop + lHeight;
+
+		RECT rect{ lLeft, lTop, lRight, lBottom };
+		return rect;
+	}
+}
+
+int SVMaskShapeEditorDlg::SelectObject(std::string& rObjectName, SVRPropertyItem* pItem)
+{
+	SvPb::InspectionCmdRequest requestCmd;
+	SvPb::InspectionCmdResponse responseCmd;
+	*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
+		{ SvPb::SearchArea::globalConstantItems, SvPb::SearchArea::cameraObject, SvPb::SearchArea::ppqItems, SvPb::SearchArea::toolsetItems },
+		m_InspectionID, SvPb::archivable, SvDef::InvalidObjectId, true, SvPb::allNumberValueObjects, SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed, m_TaskObjectID);
+	SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
+
+	SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject);
+	if (responseCmd.has_getobjectselectoritemsresponse())
+	{
+		SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(responseCmd.getobjectselectoritemsresponse().tree());
+	}
+
+	std::string value;
+	pItem->GetItemValue(value);
+
+	if (!value.empty())
+	{
+		SvDef::StringSet checkedItems;
+		checkedItems.insert(value);
+		SvOsl::ObjectTreeGenerator::Instance().setCheckItems(checkedItems);
+	}
+
+	std::string Filter = SvUl::LoadStdString(IDS_FILTER);
+	std::string ToolsetOutput = SvUl::LoadStdString(IDS_SELECT_TOOLSET_OUTPUT);
+	std::string Title = _T("Select ValueObject");
+
+	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog(Title.c_str(), ToolsetOutput.c_str(), Filter.c_str(), this);
+
+	if (IDOK == Result)
+	{
+		SVObjectReference objectRef{ SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult() };
+		rObjectName = objectRef.GetObjectNameBeforeObjectType(SvPb::SVInspectionObjectType, true);
+	}
+
+	return static_cast<int>(Result);
 }
 #pragma endregion Private Methods
 

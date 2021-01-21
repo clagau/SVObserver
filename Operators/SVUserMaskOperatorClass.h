@@ -34,16 +34,6 @@ namespace SvOp
 class SVShapeMaskHelperClass;
 struct SVMaskFillPropertiesStruct;
 
-struct SVMaskOperatorCancelData
-{
-	SvVol::SVEnumerateValueObjectClass  evoCurrentMaskOperator;
-	SvVol::SVBoolValueObjectClass bvoActivated;
-	SvVol::SVDWordValueObjectClass dwvoMaskType;
-	SvVol::SVEnumerateValueObjectClass  evoFillArea;
-	SvVol::SVLongValueObjectClass       lvoFillColor;
-	SvVol::SVEnumerateValueObjectClass  evoDrawCriteria;
-};
-
 class SVUserMaskOperatorClass : public SVUnaryImageOperatorClass, public SvOi::IMask
 {
 	SV_DECLARE_CLASS( SVUserMaskOperatorClass );
@@ -58,7 +48,6 @@ public:
 	virtual HRESULT onCollectOverlays(SvIe::SVImageClass *pImage, SVExtentMultiLineStructVector& p_rMultiLineArray ) override;
 
 	bool Refresh();
-	HRESULT GetFillProperties(SVMaskFillPropertiesStruct& rFillStruct);
 
 	SvIe::SVImageClass* getMaskInputImage(bool bRunMode = false) const;
 
@@ -78,9 +67,6 @@ public:
 	virtual bool SetMaskData(HGLOBAL hGlobal) override;
 #pragma endregion IMask
 
-	HRESULT GetCancelData(SvIe::SVInputRequestStructMap& rMap);
-
-	const SVMaskOperatorCancelData& getCancelData() const { return m_Data; }
 	const SVImageInfoClass& getMaskBufferInfo() const { return m_MaskBufferInfo; }
 	SvOi::SVImageBufferHandlePtr getImageBuffer() { return m_MaskBufferHandlePtr; }
 
@@ -100,11 +86,18 @@ protected:
 
 	mutable SVGraphixClass m_graphixObject;
 
-	SVMaskOperatorCancelData   m_Data;
-
 	SvOl::InputObject m_userMaskImageInput;
 	SVExtentMultiLineStruct	   m_MultiLine;
 	uint32_t                   m_idShapeHelper;
+
+	//embeddedValues
+	SvVol::SVEnumerateValueObjectClass  m_evoCurrentMaskOperator;
+	SvVol::SVBoolValueObjectClass m_bvoActivated;
+	SvVol::SVDWordValueObjectClass m_dwvoMaskType;
+	SvVol::SVEnumerateValueObjectClass  m_evoFillArea;
+	SvVol::SVLongValueObjectClass       m_lvoFillColor;
+	SvVol::SVEnumerateValueObjectClass  m_evoDrawCriteria;
+	SvVol::SVBoolValueObjectClass m_bvoContRecalc;
 
 	enum
 	{
@@ -121,7 +114,6 @@ private:
 
 	void init();
 
-	friend class SVMaskShapeEditorDlg;
 	friend class SVShapeMaskHelperClass;
 };
 

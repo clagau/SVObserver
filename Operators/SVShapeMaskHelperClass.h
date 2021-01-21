@@ -17,8 +17,9 @@
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "SVValueObjectLibrary\SVBoolValueObjectClass.h"
 #include "SVValueObjectLibrary\SVEnumerateValueObjectClass.h"
-#include "SVValueObjectLibrary\SVLongValueObjectClass.h"
+#include "SVValueObjectLibrary/LinkedValue.h"
 #pragma endregion Includes
+
 
 namespace SvIe
 {
@@ -27,23 +28,6 @@ struct SVInputRequestStructMap;
 
 namespace SvOp
 {
-
-struct SVMaskShapeCancelData
-{
-	SVMaskShape::MapType   mapProperties;
-
-	SvVol::SVBoolValueObjectClass       bvoAutoResize;
-	SvVol::SVEnumerateValueObjectClass  evoShapeType;
-	SvVol::SVEnumerateValueObjectClass  evoMaskArea;
-	SvVol::SVLongValueObjectClass       lvoCenterX;
-	SvVol::SVLongValueObjectClass       lvoCenterY;
-	SvVol::SVLongValueObjectClass       lvoWidth;
-	SvVol::SVLongValueObjectClass       lvoHeight;
-	SvVol::SVLongValueObjectClass       lvoSideThickness;
-	SvVol::SVLongValueObjectClass       lvoTopBottomThickness;
-	SvVol::SVLongValueObjectClass       lvoOffset;
-	SvVol::SVEnumerateValueObjectClass  evoXYSymmetry;
-};
 
 class SVShapeMaskHelperClass : public SvIe::SVTaskObjectClass
 {
@@ -68,18 +52,19 @@ public:
 	};
 
 	ShapeTypeEnum GetShape();
-	HRESULT SetProperties(const SVMaskShape::MapType& rMapProperties);	// sets value objects based on properties
-	HRESULT GetProperties(SVMaskShape::MapType& rMapProperties);	// gets properties based on value objects
-	HRESULT GetFillProperties(SVMaskFillPropertiesStruct& rFillStruct) const;
-	bool    IsAutoResize() const;
-	HRESULT SetAutoResize( bool bAutoResize );
-
-	HRESULT GetCancelData(SvIe::SVInputRequestStructMap& rData);
-
-	const SVMaskShapeCancelData& getCancelData() const { return m_Data; }
 
 protected:
-	SVMaskShapeCancelData        m_Data;
+	SvVol::SVBoolValueObjectClass       m_bvoAutoResize;
+	SvVol::SVEnumerateValueObjectClass  m_evoShapeType;
+	SvVol::SVEnumerateValueObjectClass  m_evoMaskArea;
+	SvVol::LinkedValue       m_voCenterX;
+	SvVol::LinkedValue       m_voCenterY;
+	SvVol::LinkedValue       m_voWidth;
+	SvVol::LinkedValue       m_voHeight;
+	SvVol::LinkedValue       m_voSideThickness;
+	SvVol::LinkedValue       m_voTopBottomThickness;
+	SvVol::LinkedValue       m_voOffset;
+	SvVol::SVEnumerateValueObjectClass  m_evoXYSymmetry;
 
 	SVMaskShape*           m_pShape;
 

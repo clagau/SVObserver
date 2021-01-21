@@ -78,6 +78,26 @@ namespace SvOg
 		return nullptr;
 	}
 
+	RECT MaskController::GetResultRect() const
+	{
+		const SvUl::NameObjectIdList& rImageList = m_TaskImageController.GetResultImages();
+		SvUl::NameObjectIdList::const_iterator it = rImageList.begin();
+		if (it != rImageList.end())
+		{
+			SvPb::InspectionCmdRequest requestCmd;
+			SvPb::InspectionCmdResponse responseCmd;
+			auto* pRequest = requestCmd.mutable_getoutputrectanglerequest();
+			pRequest->set_imageid(it->second);
+			HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
+			if (S_OK == hr && responseCmd.has_getoutputrectangleresponse())
+			{
+				const auto& values = responseCmd.getoutputrectangleresponse();
+				return { values.left(), values.top(), values.right(), values.bottom() };
+			}
+		}
+		return {};
+	}
+
 	HRESULT MaskController::ImportMask(const std::string& filename)
 	{
 		SvPb::InspectionCmdRequest requestCmd;

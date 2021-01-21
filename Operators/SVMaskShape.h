@@ -80,23 +80,18 @@ public:
 	struct SortedMapCompare {bool operator ()(const MapTypeConstIterator& a, const MapTypeConstIterator& b) const
 	{return a->second < b->second;} };
 	typedef std::multiset<MapTypeConstIterator, SortedMapCompare> SortedMapViewType;
-	static SortedMapViewType GetTempSortedPropertyMapView(const MapType& map);
 
 	virtual ~SVMaskShape();	// this is a base class
 
 	HRESULT Draw(HDC hDC) const;
-	HRESULT DrawOutline(HDC hDC, RECT rectViewport, RECT rectDisplay, COLORREF rgb) const;
 	HRESULT Draw( SVMatroxBuffer mil );
-	HRESULT Refresh();
+	HRESULT Refresh(const SVMaskFillPropertiesStruct& rFillStruct);
 	HRESULT SetProperties(const MapType& mapProperties);
 	HRESULT GetProperties(MapType& rmapProperties) const;
 
 	HRESULT SetAutoResize( bool bAutoResize );
-	bool    IsAutoResize() const;
 	HRESULT SetImageInfo( const SVImageInfoClass& svImageInfo );
 	HRESULT GetImageInfo( SVImageInfoClass& svImageInfo ) const;
-	HRESULT SetFillProperties( SVMaskFillPropertiesStruct svFillStruct );
-	HRESULT GetFillProperties( SVMaskFillPropertiesStruct& rsvFillStruct ) const;
 
 	RECT GetMaskImageRect() const;
 	RECT GetRect() const;
@@ -106,17 +101,12 @@ protected:
 	SVMaskShape();	// don't create instances of base class
 
 	virtual HRESULT Render(HDC hDC, COLORREF rgbShape, COLORREF rgbBackground) const = 0;
-	virtual HRESULT RenderOutline(HDC, RECT, RECT, COLORREF) const {return S_FALSE; }
 	virtual HRESULT ValidateProperties(MapType& rmapProperties) const;
-
-	HRESULT TranslateToDisplay(RECT rectViewport, RECT rectDisplay, RECT& rShapeRect) const;
-	HRESULT TranslateToDisplay(RECT rectViewport, RECT rectDisplay, std::vector<POINT>& rvecPoints) const;
 
 	SVDIBITMAPINFO m_dib;
 	HDC m_RenderDC {nullptr};
 	MapType m_mapProperties;
 
-	SVMaskFillPropertiesStruct m_svFillStruct;
 	SVImageInfoClass m_svImageInfo;
 
 	bool m_bImageInfoChanged {false};
@@ -124,11 +114,7 @@ protected:
 	bool m_bAutoResize {false};
 
 private:
-	void ComputeColors(COLORREF& rgbShape, COLORREF& rgbBackground); //@TODO:  Change method to const?
-
-	static HRESULT TranslateCoordinates(const SVExtentFigureStruct& rectSource, const SVExtentFigureStruct& rectDest, SVExtentFigureStruct& rRect);
-	static HRESULT TranslateCoordinates(const SVExtentFigureStruct& rectSource, const SVExtentFigureStruct& rectDest, SVPoint<double>& rPoint);
-	static HRESULT TranslateCoordinates(const SVExtentFigureStruct& rectSource, const SVExtentFigureStruct& rectDest, std::vector<SVPoint<double>>& rvecPoints);
+	void ComputeColors(COLORREF& rgbShape, COLORREF& rgbBackground, const SVMaskFillPropertiesStruct& rFillStruct) const; 
 };
 
 class SVMaskShapeRectangle : public SVMaskShape
@@ -139,7 +125,6 @@ public:
 
 protected:
 	virtual HRESULT Render(HDC hDC, COLORREF rgbShape, COLORREF rgbBackground) const override;
-	virtual HRESULT RenderOutline(HDC hDC, RECT rectViewport, RECT rectDisplay, COLORREF rgb ) const override;
 };
 
 class SVMaskShapeOval : public SVMaskShape
@@ -150,7 +135,6 @@ public:
 
 protected:
 	virtual HRESULT Render(HDC hDC, COLORREF rgbShape, COLORREF rgbBackground) const override;
-	virtual HRESULT RenderOutline(HDC hDC, RECT rectViewport, RECT rectDisplay, COLORREF rgb) const override;
 };
 
 class SVMaskShapeSymmetricTrapezoid : public SVMaskShape
@@ -169,7 +153,6 @@ public:
 	};
 protected:
 	virtual HRESULT Render(HDC hDC, COLORREF rgbShape, COLORREF rgbBackground) const override;
-	virtual HRESULT RenderOutline(HDC hDC, RECT rectViewport, RECT rectDisplay, COLORREF rgb) const override;
 	virtual HRESULT ValidateProperties(MapType& rmapProperties) const override;
 private:
 	std::vector<POINT> GetPoints() const;
@@ -184,7 +167,6 @@ public:
 	// the doughnut is the only shape so far that cares about the rgbBackground
 protected:
 	virtual HRESULT Render(HDC hDC, COLORREF rgbShape, COLORREF rgbBackground) const override;
-	virtual HRESULT RenderOutline(HDC hDC, RECT rectViewport, RECT rectDisplay, COLORREF rgb) const override;
 	virtual HRESULT ValidateProperties(MapType& rmapProperties) const override;
 };
 

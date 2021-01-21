@@ -30,6 +30,7 @@ namespace SvOg
 		IPictureDisp* GetReferenceImage() const;
 		IPictureDisp* GetMaskImage() const;
 		IPictureDisp* GetResultImage() const;
+		RECT GetResultRect() const;
 		HRESULT ImportMask(const std::string& filename);
 		HRESULT ExportMask(const std::string& filename);
 		HGLOBAL GetMaskData() const;

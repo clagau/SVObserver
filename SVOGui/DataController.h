@@ -36,6 +36,11 @@ namespace SvOg
 			return GetValues(m_Data);
 		}
 
+		std::vector<std::pair<SvPb::EmbeddedIdEnum, _variant_t>> getCurrentValues()
+		{
+			return m_Data.getCurrentValues();
+		}
+
 		template<typename DataType>
 		DataType GetDefault(SvPb::EmbeddedIdEnum embeddedID) const
 		{
@@ -65,6 +70,14 @@ namespace SvOg
 		{
 			_variant_t Value(rValue);
 			return m_Data.SetValue(embeddedID, Value, ArrayIndex);
+		}
+
+		void setValues(const std::vector< std::pair<SvPb::EmbeddedIdEnum, _variant_t>>& values)
+		{
+			for (const auto& value : values)
+			{
+				m_Data.SetValue(value.first, value.second);
+			}
 		}
 
 		SvOi::NameValueVector GetEnumTypes(SvPb::EmbeddedIdEnum embeddedID) const

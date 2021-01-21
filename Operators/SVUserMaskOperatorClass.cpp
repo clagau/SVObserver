@@ -17,7 +17,6 @@
 #include "SVUserMaskOperatorClass.h"
 #include "Definitions/TextDefineSvDef.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
-#include "InspectionEngine/SVTaskObjectInterfaceInputRequestStruct.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
@@ -69,12 +68,13 @@ void SVUserMaskOperatorClass::init()
 	assert( bAddFriend );	UNREFERENCED_PARAMETER(bAddFriend);
 
 
-	RegisterEmbeddedObject( &m_Data.bvoActivated, SvPb::MaskEnabledEId, IDS_OBJECTNAME_ENABLED, false, SvOi::SVResetItemIP );
-	RegisterEmbeddedObject( &m_Data.dwvoMaskType, SvPb::MaskUseImageMaskEId, IDS_MASK_TYPE, false, SvOi::SVResetItemIP );
-	RegisterEmbeddedObject( &m_Data.evoCurrentMaskOperator, SvPb::MaskOperatorEId, IDS_OBJECTNAME_MASK_OPERATOR, false, SvOi::SVResetItemOwner );
-	RegisterEmbeddedObject( &m_Data.evoFillArea, SvPb::MaskFillAreaEId, IDS_OBJECTNAME_MASK_FILL_AREA, false, SvOi::SVResetItemOwner );
-	RegisterEmbeddedObject( &m_Data.lvoFillColor, SvPb::MaskFillColorEId, IDS_OBJECTNAME_MASK_FILL_COLOR, false, SvOi::SVResetItemOwner );
-	RegisterEmbeddedObject( &m_Data.evoDrawCriteria, SvPb::DrawCriteriaEId, IDS_OBJECTNAME_DRAW_CRITERIA, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_bvoActivated, SvPb::MaskEnabledEId, IDS_OBJECTNAME_ENABLED, false, SvOi::SVResetItemIP );
+	RegisterEmbeddedObject( &m_dwvoMaskType, SvPb::MaskUseImageMaskEId, IDS_MASK_TYPE, false, SvOi::SVResetItemIP );
+	RegisterEmbeddedObject( &m_evoCurrentMaskOperator, SvPb::MaskOperatorEId, IDS_OBJECTNAME_MASK_OPERATOR, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_evoFillArea, SvPb::MaskFillAreaEId, IDS_OBJECTNAME_MASK_FILL_AREA, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoFillColor, SvPb::MaskFillColorEId, IDS_OBJECTNAME_MASK_FILL_COLOR, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_evoDrawCriteria, SvPb::DrawCriteriaEId, IDS_OBJECTNAME_DRAW_CRITERIA, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject(&m_bvoContRecalc, SvPb::ContRecalcEId, IDS_OBJECTNAME_CONTINUOUS_RECALC, false, SvOi::SVResetItemOwner);
 
 	SvOi::NameValueVector EnumVector
 	{
@@ -92,26 +92,27 @@ void SVUserMaskOperatorClass::init()
 		{ _T("MAX"), SVImageMax },
 		{ _T("PASS"), SVImagePass }
 	};
-	m_Data.evoCurrentMaskOperator.SetEnumTypes(EnumVector);
-	m_Data.evoCurrentMaskOperator.SetDefaultValue(SVImageAnd, true);
+	m_evoCurrentMaskOperator.SetEnumTypes(EnumVector);
+	m_evoCurrentMaskOperator.SetDefaultValue(SVImageAnd, true);
 
 	EnumVector.clear();
 	EnumVector.push_back(SvOi::NameValuePair{ _T("Mask Area"), 0 });
 	EnumVector.push_back(SvOi::NameValuePair{ _T("Background"), 1 });
-	m_Data.evoFillArea.SetEnumTypes(EnumVector);
-	m_Data.evoFillArea.SetDefaultValue(0l, true);	// mask area is default
+	m_evoFillArea.SetEnumTypes(EnumVector);
+	m_evoFillArea.SetDefaultValue(0l, true);	// mask area is default
 
-	m_Data.lvoFillColor.SetDefaultValue(0, true);	// black default
+	m_lvoFillColor.SetDefaultValue(0, true);	// black default
 
 	EnumVector.clear();
 	EnumVector.push_back(SvOi::NameValuePair{ _T("None"), SVNone });
 	EnumVector.push_back(SvOi::NameValuePair{ _T("Non-Black"), SVNonBlackPixels });
 	EnumVector.push_back(SvOi::NameValuePair{ _T("Non-White"), SVNonWhitePixels });
-	m_Data.evoDrawCriteria.SetEnumTypes(EnumVector);
-	m_Data.evoDrawCriteria.SetDefaultValue( SVNone, true );
+	m_evoDrawCriteria.SetEnumTypes(EnumVector);
+	m_evoDrawCriteria.SetDefaultValue( SVNone, true );
 
-	m_Data.bvoActivated.SetDefaultValue( BOOL(false), true);
-	m_Data.dwvoMaskType.SetDefaultValue(MASK_TYPE_STATIC, true);
+	m_bvoActivated.SetDefaultValue( BOOL(false), true);
+	m_bvoContRecalc.SetDefaultValue(BOOL(false), false);
+	m_dwvoMaskType.SetDefaultValue(MASK_TYPE_STATIC, true);
 
 	m_MaskBufferInfo.SetOwnerImage(SvDef::InvalidObjectId);
 	m_MaskBufferInfo.SetOwner(SvDef::InvalidObjectId);
@@ -137,12 +138,13 @@ bool SVUserMaskOperatorClass::CreateObject( const SVObjectLevelCreateStruct& rCr
 
 	const UINT cAttributes = SvPb::audittrail | SvPb::remotelySetable | SvPb::setableOnline;
 	// Set / Reset Printable Flag
-	m_Data.bvoActivated.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
-	m_Data.evoDrawCriteria.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
-	m_Data.dwvoMaskType.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
-	m_Data.evoCurrentMaskOperator.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
-	m_Data.evoFillArea.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
-	m_Data.lvoFillColor.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
+	m_bvoActivated.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
+	m_evoDrawCriteria.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
+	m_dwvoMaskType.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
+	m_evoCurrentMaskOperator.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
+	m_evoFillArea.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
+	m_lvoFillColor.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
+	m_bvoContRecalc.SetObjectAttributesAllowed(cAttributes, SvOi::SetAttributeType::AddAttribute);
 
 	m_isCreated = bOk;
 
@@ -154,7 +156,7 @@ bool SVUserMaskOperatorClass::ResetObject(SvStl::MessageContainerVector *pErrorM
 	bool Result = SVUnaryImageOperatorClass::ResetObject(pErrorMessages);
 
 	DWORD dwMaskType = MASK_TYPE_STATIC;
-	m_Data.dwvoMaskType.GetValue(dwMaskType);
+	m_dwvoMaskType.GetValue(dwMaskType);
 	if (dwMaskType == MASK_TYPE_IMAGE)
 	{
 		m_userMaskImageInput.validateInput();
@@ -166,7 +168,7 @@ bool SVUserMaskOperatorClass::ResetObject(SvStl::MessageContainerVector *pErrorM
 	}
 
 	BOOL bActive = false;
-	m_Data.bvoActivated.GetValue(bActive);
+	m_bvoActivated.GetValue(bActive);
 
 	SVShapeMaskHelperClass* pShapeHelper = GetShapeHelper();
 	assert( pShapeHelper );
@@ -178,8 +180,8 @@ bool SVUserMaskOperatorClass::ResetObject(SvStl::MessageContainerVector *pErrorM
 		pShapeHelper->SetObjectAttributesAllowed( SvPb::audittrail | SvPb::viewable, AddRemoveType );
 		pShapeHelper->SetObjectAttributesAllowed( SvPb::setableOnline | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute );
 		AddRemoveType = (dwMaskType == MASK_TYPE_SHAPE) && bActive ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
-		m_Data.evoFillArea.SetObjectAttributesAllowed( SvPb::audittrail | SvPb::viewable, AddRemoveType  );
-		m_Data.lvoFillColor.SetObjectAttributesAllowed( SvPb::audittrail | SvPb::viewable, AddRemoveType  );
+		m_evoFillArea.SetObjectAttributesAllowed( SvPb::audittrail | SvPb::viewable, AddRemoveType  );
+		m_lvoFillColor.SetObjectAttributesAllowed( SvPb::audittrail | SvPb::viewable, AddRemoveType  );
 	}
 	else
 	{
@@ -194,7 +196,7 @@ bool SVUserMaskOperatorClass::ResetObject(SvStl::MessageContainerVector *pErrorM
 	// if image mask or overlays are turned on, set to true
 	SVDrawCriteriaEnum l_eCriteria;
 	long l_lValue;
-	m_Data.evoDrawCriteria.GetValue( l_lValue );
+	m_evoDrawCriteria.GetValue( l_lValue );
 	l_eCriteria = ( SVDrawCriteriaEnum ) l_lValue;
 
 	m_bUseOverlays = ( l_eCriteria != SVNone || dwMaskType == MASK_TYPE_IMAGE );
@@ -210,22 +212,6 @@ bool SVUserMaskOperatorClass::ResetObject(SvStl::MessageContainerVector *pErrorM
 	}
 
 	return Result;
-}
-
-HRESULT SVUserMaskOperatorClass::GetFillProperties(SVMaskFillPropertiesStruct& rFillStruct)
-{
-	long lValue=0;
-	m_Data.evoFillArea.GetValue( lValue );
-	rFillStruct.bFillMaskArea = (lValue == 0 ? true : false);
-	m_Data.lvoFillColor.GetValue( lValue );
-	rFillStruct.rgbFillColor = RGB(lValue, lValue, lValue);
-
-	SVShapeMaskHelperClass* pShapeHelper = GetShapeHelper();
-	if ( pShapeHelper )
-	{
-		pShapeHelper->GetFillProperties( rFillStruct );
-	}
-	return S_OK;
 }
 
 SVShapeMaskHelperClass* SVUserMaskOperatorClass::GetShapeHelper()
@@ -293,32 +279,12 @@ bool SVUserMaskOperatorClass::getSpecialImage(const std::string& rName, SvOi::SV
 	return false;
 }
 
-HRESULT SVUserMaskOperatorClass::GetCancelData(SvIe::SVInputRequestStructMap& rMap)
-{
-	HRESULT hr = S_OK;
-
-	rMap.Add( &m_Data.evoCurrentMaskOperator );
-	rMap.Add( &m_Data.bvoActivated );
-	rMap.Add( &m_Data.dwvoMaskType );
-	rMap.Add( &m_Data.evoFillArea );
-	rMap.Add( &m_Data.lvoFillColor );
-	rMap.Add( &m_Data.evoDrawCriteria );
-
-	SVShapeMaskHelperClass* pShapeHelper = GetShapeHelper();
-	if ( pShapeHelper )
-	{
-		pShapeHelper->GetCancelData( rMap );
-	}
-
-	return hr;
-}
-
 bool SVUserMaskOperatorClass::isInputImage(uint32_t imageId) const
 {
 	bool Result(false);
 
 	DWORD dwMaskType = 0;
-	m_Data.dwvoMaskType.GetValue( dwMaskType );
+	m_dwvoMaskType.GetValue( dwMaskType );
 
 	if (MASK_TYPE_IMAGE == dwMaskType)
 	{
@@ -368,15 +334,15 @@ HRESULT SVUserMaskOperatorClass::BuildMaskLines( SVExtentMultiLineStruct& p_Mult
 
 	// Get Value Objects.
 	BOOL Activated;
-	m_Data.bvoActivated.GetValue( Activated );
+	m_bvoActivated.GetValue( Activated );
 
 	SVDrawCriteriaEnum l_eCriteria;
 	long l_lValue;
-	m_Data.evoDrawCriteria.GetValue(l_lValue );
+	m_evoDrawCriteria.GetValue(l_lValue );
 	l_eCriteria = ( SVDrawCriteriaEnum ) l_lValue;
 
 	DWORD dwMaskType;
-	m_Data.dwvoMaskType.GetValue( dwMaskType );
+	m_dwvoMaskType.GetValue( dwMaskType );
 
 	SvIe::SVImageClass* pInputImage = getMaskInputImage();
 	if( l_eCriteria != SVNone && Activated && nullptr != m_MaskBufferHandlePtr &&
@@ -539,7 +505,7 @@ bool SVUserMaskOperatorClass::Refresh()
 	if( nullptr != GetInspectionInterface() )
 	{
 		DWORD dwMaskType;
-		m_Data.dwvoMaskType.GetValue( dwMaskType );
+		m_dwvoMaskType.GetValue( dwMaskType );
 		SVShapeMaskHelperClass* pShape = GetShapeHelper();
 		if ( nullptr != pShape && ( MASK_TYPE_SHAPE == dwMaskType ) )
 		{
@@ -617,7 +583,7 @@ HRESULT SVUserMaskOperatorClass::SetObjectValue( SVObjectAttributeClass* pDataOb
 	{
 		for( int i = 0; i < static_cast<int> (svLongArray.size()); i++ )
 		{
-			m_Data.evoCurrentMaskOperator.SetValue(svLongArray[i]);
+			m_evoCurrentMaskOperator.SetValue(svLongArray[i]);
 		}
 	}
 	else if (true == (bOk = pDataObject->GetAttributeData( _T("MaskData"), StringArray)))
@@ -646,7 +612,7 @@ HRESULT SVUserMaskOperatorClass::SetObjectValue( SVObjectAttributeClass* pDataOb
 bool SVUserMaskOperatorClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 { 
 	BOOL bActive;
-	m_Data.bvoActivated.GetValue( bActive );
+	m_bvoActivated.GetValue( bActive );
 
 	if( bActive && nullptr != rInputImageHandle && nullptr != rOutputImageHandle )
 	{
@@ -655,7 +621,7 @@ bool SVUserMaskOperatorClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rI
 			HRESULT MatroxCode;
 
 			DWORD dwMaskType = MASK_TYPE_STATIC;
-			m_Data.dwvoMaskType.GetValue( dwMaskType );
+			m_dwvoMaskType.GetValue( dwMaskType );
 
 			if ( dwMaskType == MASK_TYPE_IMAGE )
 			{
@@ -722,11 +688,18 @@ bool SVUserMaskOperatorClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rI
 			else if ( dwMaskType == MASK_TYPE_SHAPE )
 			{
 				SVShapeMaskHelperClass* pShapeHelper = GetShapeHelper();
+				BOOL isContRecalc;
+				m_bvoContRecalc.GetValue(isContRecalc);
+				if (isContRecalc)
+				{
+					pShapeHelper->Refresh();
+				}
+
 				pShapeHelper->onRun(First, rInputImageHandle, rOutputImageHandle, rRunStatus);
 			}
 
 			long lMaskOperator = SVImageAnd;
-			m_Data.evoCurrentMaskOperator.GetValue( lMaskOperator );
+			m_evoCurrentMaskOperator.GetValue( lMaskOperator );
 
 			MatroxCode = SVMatroxImageInterface::Arithmetic(rOutputImageHandle->GetBuffer(),
 				First ? rInputImageHandle->GetBuffer() : rOutputImageHandle->GetBuffer(),
