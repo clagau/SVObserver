@@ -852,6 +852,22 @@ void SVImageClass::PersistImageAttributes(SvOi::IObjectWriter& rWriter)
 	m_ImageInfo.GetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, TempValue);
 	Value = TempValue;
 	rWriter.WriteAttribute(scBandLinkTag, Value);
+
+	// Set up embedded object definitions...
+	if (0 < m_embeddedList.size())
+	{
+		rWriter.StartElement(scEmbeddedsTag);
+		// Get embedded object script...
+		for (SVObjectPtrVector::iterator Iter = m_embeddedList.begin(); m_embeddedList.end() != Iter; ++Iter)
+		{
+			SVObjectClass* pObject = *Iter;
+			if (nullptr != pObject)
+			{
+				pObject->Persist(rWriter);
+			}
+		}
+		rWriter.EndElement();
+	}
 }
 
 HRESULT SVImageClass::SetObjectValue(SVObjectAttributeClass* pDataObject)
@@ -1251,6 +1267,45 @@ void SVImageClass::fillObjectList(std::back_insert_iterator<std::vector<SvOi::IO
 			}
 		}
 	}
+}
+
+SVObjectClass* SVImageClass::OverwriteEmbeddedObject(uint32_t uniqueID, SvPb::EmbeddedIdEnum embeddedID)
+{
+	// Check here all embedded members ( embedded objects could be only identified by embeddedID!!!! )... 
+	for (SVObjectPtrVector::iterator Iter = m_embeddedList.begin(); m_embeddedList.end() != Iter; ++Iter)
+	{
+		SVObjectClass* pObject = *Iter;
+		if (nullptr != pObject)
+		{
+			if (pObject->GetEmbeddedID() == embeddedID)
+			{
+				return pObject->OverwriteEmbeddedObject(uniqueID, embeddedID);
+			}
+		}
+	}
+	return __super::OverwriteEmbeddedObject(uniqueID, embeddedID);
+}
+
+HRESULT SVImageClass::SetValuesForAnObject(uint32_t aimObjectID, SVObjectAttributeClass* pDataObject)
+{
+	for (SVObjectPtrVector::iterator Iter = m_embeddedList.begin(); m_embeddedList.end() != Iter; ++Iter)
+	{
+		SVObjectClass* pObject = *Iter;
+		if (nullptr != pObject)
+		{
+			// check if it's this object
+			if (aimObjectID == pObject->getObjectId())
+			{
+				// Set the Object's Data Member Value
+				if (S_OK == pObject->SetObjectValue(pDataObject))
+				{
+					return S_OK;
+				}
+			}
+		}
+	}
+
+	return __super::SetValuesForAnObject(aimObjectID, pDataObject);
 }
 
 HRESULT SVImageClass::TranslateFromOutputSpaceToImage(SVImageClass* pImage, SVPoint<double> inPoint, SVPoint<double>& rOutPoint) const

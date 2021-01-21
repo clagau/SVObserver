@@ -408,26 +408,23 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessBranchObjectValues(typename
 
 		while( S_OK == hr && m_rTree.isValidBranch( hValue ) )
 		{
-			std::vector<_variant_t> values;
-
-			std::string DataName;
-
-			DataName = m_rTree.getBranchName(hValue);
-
-			if( cObjectAttributeFilter.find( DataName.c_str() ) == cObjectAttributeFilter.end() )
+			std::string DataName = m_rTree.getBranchName(hValue);
+			if (DataName == scEmbeddedsTag)
 			{
-				if( SvXml::SVNavigateTree::HasChildren( m_rTree, hValue ) )
+				hr = ProcessEmbeddeds(hValue, objectID);
+			}
+			else if (cObjectAttributeFilter.find(DataName.c_str()) == cObjectAttributeFilter.end())
+			{
+				std::vector<_variant_t> values;
+				if (SvXml::SVNavigateTree::HasChildren(m_rTree, hValue))
 				{
-					SVTreeType::SVLeafHandle hChildValue;
-
-					hChildValue = m_rTree.getFirstLeaf(hValue);
+					SVTreeType::SVLeafHandle hChildValue = m_rTree.getFirstLeaf(hValue);
 
 					do
 					{
 						if (m_rTree.isValidLeaf(hValue, hChildValue))
 						{
 							_variant_t Data;
-
 							m_rTree.getLeafData(hChildValue, Data);
 							values.push_back(Data);
 
@@ -441,11 +438,11 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessBranchObjectValues(typename
 				// The attribute object type table is needed to convert string type to point or double point type.
 				// This functionality is not necessary for the RotationPoint and Translation elements because they are nto being persisted.
 				// It is an example of what could be done to convert to a specific dastionation data type.
-				SVObjectAttributeTypeMap::const_iterator l_Iter = cObjectAttributeType.find( DataName.c_str() );
+				SVObjectAttributeTypeMap::const_iterator l_Iter = cObjectAttributeType.find(DataName.c_str());
 
-				if( l_Iter != cObjectAttributeType.end() )
+				if (l_Iter != cObjectAttributeType.end())
 				{
-					l_Type = l_Iter->second; 
+					l_Type = l_Iter->second;
 				}
 				//End of attribute object type section
 
