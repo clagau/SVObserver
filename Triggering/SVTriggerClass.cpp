@@ -162,7 +162,7 @@ void SVTriggerClass::processTriggers(SvTrig::SVTriggerInfoStruct& rTriggerInfo)
 			++m_currentObjectID;
 			m_triggerIndex = 1L;
 		}
-		else
+		else if(0 == getStartObjectID())
 		{
 			m_currentObjectID = (0 == m_currentObjectID) ? 1 : m_currentObjectID;
 		}
