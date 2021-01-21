@@ -11,9 +11,16 @@ namespace SvPlc
 struct ResultReport;
 struct TriggerReport;
 
+enum class TriggerType
+{
+	None,
+	HardwareTrigger,
+	SimulatedTrigger
+};
+
 namespace Tec
 {
-void startTriggerEngine(std::function<void(const TriggerReport&)> reportTrigger, uint16_t plcNodeID, uint16_t plcTransferTime, std::string plcSimulateFile);
+void startTriggerEngine(std::function<void(const TriggerReport&)> reportTrigger, TriggerType triggerType, uint16_t plcNodeID, uint16_t plcTransferTime, const std::string& rAdditionalData);
 void stopTriggerEngine();
 
 HRESULT initTriggerEngine();

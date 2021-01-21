@@ -44,7 +44,6 @@
 #include <atomic>
 #include <cctype>
 #include <map>
-#include <sstream>
 #include <stdio.h>
 #include <string>
 #pragma endregion Precompiled Headers

@@ -35,14 +35,10 @@ public:
 	CifXCard(uint16_t CifXNodeId, uint16_t MaxRtdSize);
 	~CifXCard() = default;
 
-	HRESULT OpenAndInitializeCifX(); ///< starts the Powerlink connection to the PLC-CPU
-	void closeCifX(); ///< ends the Powerlink connection to the PLC-CPU
+	HRESULT OpenAndInitializeCifX(const std::string& rAdditionalData);
+	void closeCifX();
 
-	int32_t OpenCifX();
-	int32_t SendConfigurationToCifX();
-	int32_t WarmstartAndInitializeCifX();
-
-	void readProcessData();
+	void readProcessData(uint32_t notification);
 
 	const InputData& getCurrentInputData() { return m_currentInputData; }
 	void popInputDataQueue();
@@ -57,23 +53,28 @@ public:
 	void setReady(bool ready);
 
 private:
+	int32_t OpenCifX(const std::string& rAdditionalData);
+	int32_t SendConfigurationToCifX();
+	int32_t WarmstartAndInitializeCifX();
+
 	int32_t SendRecvPkt(CIFX_PACKET* pSendPkt, CIFX_PACKET* pRecvPkt);
-	int32_t SendRecvEmptyPkt(uint32_t ulCmd);
+	int32_t SendRecvCmdPkt(uint32_t ulCmd);
 	void BuildConfigurationReq(CIFX_PACKET* ptPacket, uint16_t NodeId, uint16_t DataLength);
 
 	std::vector<ConfigDataSet> createConfigList(TelegramLayout layout);
 	void writeResponseData(const uint8_t* pSdoDynamic, size_t sdoDynamicSize);
 
-	const uint16_t m_CifXNodeId {0};			//< The powerlink node ID used for the Hilscher CifX card
-	const uint16_t m_maxPlcDataSize {0UL};		// the size of the PLC data in bytes
+	const uint16_t m_CifXNodeId {0};
+	const uint16_t m_maxPlcDataSize {0UL};
 
-	CIFXHANDLE m_hDriver {nullptr};				/// Cifx driver handle
-	CIFXHANDLE m_hChannel {nullptr};			/// Cifx channel handle
-	std::unique_ptr<uint8_t[]> m_pReadBuffer;	///Receive buffer
-	std::unique_ptr<uint8_t[]> m_pWriteBuffer;	///Send buffer
+	CIFXHANDLE m_hDriver {nullptr};
+	CIFXHANDLE m_hChannel {nullptr};
+	std::unique_ptr<uint8_t[]> m_pReadBuffer;
+	std::unique_ptr<uint8_t[]> m_pWriteBuffer;
 
 	bool m_protocolInitialized {false};
 	bool m_ready {false};
+	uint32_t m_notifyType {0UL};
 	uint16_t m_contentID {0};
 
 	HANDLE m_hTelegramReadEvent {nullptr};

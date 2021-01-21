@@ -7,87 +7,80 @@
 
    Copyright (c) Hilscher GmbH. All Rights Reserved.
 
- **************************************************************************************
+***************************************************************************************
 
-   Filename:
-    $Workfile: cifXUser.h $
-   Last Modification:
-    $Author: MichaelT $
-    $Modtime: 2.11.09 17:05 $
-    $Revision: 1303 $
+  $Id: cifXUser.h 12193 2018-07-18 06:37:19Z Robert $:
 
-   Targets:
-     Win32/ANSI   : yes
-     Win32/Unicode: yes (define _UNICODE)
-     WinCE        : no
-
-   Description:
+  Description:
     CIFx driver API definition file
 
-   Changes:
-
-     Version   Date        Author   Description
-     ----------------------------------------------------------------------------------
-     1.026     22.04.10    MT       - Added ulBootError to SYSTEM_CHANNEL_SYSTEM_STATUS_BLOCK
-     1.025     15.04.10    MT       - Added timeout to xChannelSyncState function
-                                    - Added CIFX_SYNC_WAIT_CMD to be able to wait for sync signalling by firmware
-     1.024     01.04.10    RM       Data types update
-     1.023     23.03.10    MT       - Data types changed for 32/64Bit usage
-                                    - Event functions include
-     1.022     29.10.09    RM       DMA state function and states included
-     1.021     01.10.09    RM       CIFX_TO_WAIT_COS_CMD/ACK changed to 20ms
-     1.020     08.06.09    RM       SYSTEM_CHANNEL_SYSTEM_INFO_BLOCK structure extended by bDevIdNumber
-     1.019     28.04.09    RM       New download mode for modules included
-
-     1.018     23.01.09    RM       netX DPM signature included
-
-     1.017     25.11.08    RM       NETX_SYSTEM_STATUS block structure updated
-                                    - removed LEDs
-                                    - added CPU load and system start time values
-     1.016     19.06.08    RM       xDriverRestartDevice() function parameters changed
-     1.015     27.05.08    MT       APIENTRY now set empty, if not defined outside the file
-     1.014     29.04.08    MT       DOWNLOAD_MODE_LICENSECODE added
-     1.013     17.03.08    RM       xDriverRestartDevice() included
-
-     1.012     22.02.08    MT       - Firmware version changed from Major,Minor,Revision,Build to
-                                      Major,Minor,Build,Revision, as decided on 19.11.2007
-     1.011     26.07.07    MT       Added:
-                                    - DOWNLOAD_MODE_BOOTLOADER
-     1.010     17.04.07    RM       Parameters for the following functions changed
-                                    - xSysdeviceDownload/Upload
-                                    - xSysdeviceFindFirstFile/NextFile
-                                    - xChannelDownload/Upload
-                                    - xChannelFindFirstFile/NextFile
-
-     1.009     13.04.07    RM       - CALLBACK state definition included
-     1.008     10.04.07    MT       - PFN_TRANSFER_PACKET moved to toolkit headers
-                           RM       - CIFX_COLDSTART and CIFX_WARMSTART changed to
-                                      CIFX_SYSTEMSTART and CIFX_CHANNELINIT
-     1.007     04.04.07    RM       - xChannelBusState() included
-     1.006     28.03.07    RM       typedef for PFN_TRANSFER_PACKET included
-     1.005     21.03.07    RM       Added:
-                                    - xChannelIOInfo
-                                    - xSysdeviceReset
-                                    - CIFX_WARMSTART/CIFX_COLDSTART
-
-     1.004     20.03.07    MT       Added:
-                                    - xChannelFindFirstFile
-                                    - xChannelFindNextFile
-                                    - xChannelUpload
-                                    - xSysdeviceFindFirstFile
-                                    - xSysdeviceFindNextFile
-                                    - xSysdeviceUpload
-
-     1.003     16.03.07    MT       Removed CIFX_DRIVER define around API functions,
-                                    as it is not needed anymore (since V0.920 of driver)
-     1.002     04.12.06    MT       PACKED_POST moved to closing curly brace after type
-                                    definition
-
-     1.001     18.10.06    MY       Changed HANDLE to CIFXHANDLE which is a void*, to be
-                                    usable on VxWorks without compiler warnings
-
-     1.000     17.03.06    MY       created
-
+  Changes:
+    Date        Description
+    -----------------------------------------------------------------------------------
+    2019-03-26  Added timeout definition for firmware update
+    2018-11-19  - Update definitions and structures concerning xSysdeviceResetEx()
+                - SYSTEM_CHANNEL_SYSTEM_STATUS_BLOCK structure extended by bResetMode
+    2018-11-06  Add new function xSysdeviceResetEx()
+    2018-07-18  Extended the CIFX_TO_FIRMWARE_START to 20 seconds
+    2016-04-07  Lint warnings removed
+    2015-07-23  Added API function pointer definitions usable in a pointer table
+    2015-03-31  Added guard for _MSC_VER to allow compilation using -wundef
+    2014-07-07  Added support for IAR C/C++ Compiler (ARM Cores only)
+    2014-04-28  Added support for armcc compiler
+    2012-01-31  Added COM-State notification structure
+    2011-12-12  SYSTEM_CHANNEL_SYSTEM_STATUS_BLOCK structure extended by ulHWFeatures
+    2011-11-29  Added xSysdeviceExtendedMemory()
+    2011-09-13  - CIFX_MAX_PACKET_SIZE changed from 1600 to 1596 bytes because of mailbox counter
+                - xSysdeviceBoostart() function added
+    2010-04-22  Added ulBootError to SYSTEM_CHANNEL_SYSTEM_STATUS_BLOCK
+    2010-04-15  - Added timeout to xChannelSyncState function
+                - Added CIFX_SYNC_WAIT_CMD to be able to wait for sync signalling by firmware
+    2010-04-01  Data types update
+    2010-03-23  - Data types changed for 32/64Bit usage
+                - Event functions include
+    2009-10-29  DMA state function and states included
+    2009-10-01  CIFX_TO_WAIT_COS_CMD/ACK changed to 20ms
+    2009-06-08  SYSTEM_CHANNEL_SYSTEM_INFO_BLOCK structure extended by bDevIdNumber
+    2009-04-28  New download mode for modules included
+    2009-01-23  netX DPM signature included
+    2008-11-25  NETX_SYSTEM_STATUS block structure updated
+                - removed LEDs
+                - added CPU load and system start time values
+    2008-06-19  xDriverRestartDevice() function parameters changed
+    2008-05-27  APIENTRY now set empty, if not defined outside the file
+    2008-04-29  DOWNLOAD_MODE_LICENSECODE added
+    2008-03-17  xDriverRestartDevice() included
+    2008-02-22  Firmware version changed from Major,Minor,Revision,Build to
+                Major,Minor,Build,Revision, as decided on 19.11.2007
+    2007-07-26  Added DOWNLOAD_MODE_BOOTLOADER
+    2007-04-17  Parameters for the following functions changed
+                - xSysdeviceDownload/Upload
+                - xSysdeviceFindFirstFile/NextFile
+                - xChannelDownload/Upload
+                - xChannelFindFirstFile/NextFile
+    2007-04-13  CALLBACK state definition included
+    2007-04-10  - PFN_TRANSFER_PACKET moved to toolkit headers
+                - CIFX_COLDSTART and CIFX_WARMSTART changed to
+                  CIFX_SYSTEMSTART and CIFX_CHANNELINIT
+    2007-04-04  xChannelBusState() included
+    2007-03-28  typedef for PFN_TRANSFER_PACKET included
+    2007-03-21  Added:
+                - xChannelIOInfo
+                - xSysdeviceReset
+                - CIFX_WARMSTART/CIFX_COLDSTART
+    2007-03-20  Added:
+                - xChannelFindFirstFile
+                - xChannelFindNextFile
+                - xChannelUpload
+                - xSysdeviceFindFirstFile
+                - xSysdeviceFindNextFile
+                - xSysdeviceUpload
+    2007-03-16  Removed CIFX_DRIVER define around API functions,
+                as it is not needed anymore (since V0.920 of driver)
+    2006-12-04  PACKED_POST moved to closing curly brace after type definition
+    2006-10-18  Changed HANDLE to CIFXHANDLE which is a void*, to be
+                usable on VxWorks without compiler warnings
+    2006-03-17  created
 
 **************************************************************************************/
 
@@ -100,15 +93,17 @@
 #ifndef __CIFxUSER_H
 #define __CIFxUSER_H
 
-#if _MSC_VER >= 1000
-  #define __CIFx_PACKED_PRE
-  #define __CIFx_PACKED_POST
-  #pragma once
-  #pragma pack(1)            /* Always align structures to 1Byte boundery */
-  #ifndef STRICT             /* Check Typedefinition */
-    #define STRICT
-  #endif
-#endif /* _MSC_VER >= 1000 */
+#if defined(_MSC_VER)
+  #if _MSC_VER >= 1000
+    #define __CIFx_PACKED_PRE
+    #define __CIFx_PACKED_POST
+    #pragma once
+    #pragma pack(1)            /* Always align structures to 1Byte boundery */
+    #ifndef STRICT             /* Check Typedefinition */
+      #define STRICT
+    #endif
+  #endif /* _MSC_VER >= 1000 */
+#endif /* _MSC_VER */
 
 /* support for GNU compiler */
 #ifdef __GNUC__
@@ -116,11 +111,18 @@
   #define __CIFx_PACKED_POST   __attribute__((packed))
 #endif
 
+/* support for ARMCC and IAR compiler (ARM cores only) */
+#if defined (__ADS__) || defined (__REALVIEW__) || defined (__CC_ARM) || defined (__ICCARM__)
+  /* tight packing of structure members */
+  #define __CIFx_PACKED_PRE  __packed
+  #define __CIFx_PACKED_POST
+#endif  /* __ADS__, __REALVIEW__, __CC_ARM */
+
 #ifdef __cplusplus
   extern "C" {
 #endif  /* _cplusplus */
 
-#include <stdint.h>
+#include <stdint.h> /*lint !e537 !e451 */
 
 #ifndef APIENTRY
   #define APIENTRY
@@ -149,7 +151,8 @@ typedef void* CIFXHANDLE;
 #define CIFX_TO_1ST_PACKET                    1000UL
 #define CIFX_TO_CONT_PACKET                   1000UL
 #define CIFX_TO_LAST_PACKET                   1000UL
-#define CIFX_TO_FIRMWARE_START                10000UL
+#define CIFX_TO_FIRMWARE_START                20000UL
+#define CIFX_TO_FIRMWARE_UPDATE               30000UL
 
 /* Maximum channel number */
 #define CIFX_MAX_NUMBER_OF_CHANNEL_DEFINITION 8
@@ -207,9 +210,18 @@ typedef void* CIFXHANDLE;
 #define CIFX_IO_INPUT_AREA                    1
 #define CIFX_IO_OUTPUT_AREA                   2
 
-/* Reset definitions */
+/* xChannelReset definitions */
 #define CIFX_SYSTEMSTART                      1
 #define CIFX_CHANNELINIT                      2
+#define CIFX_BOOTSTART                        3 /* This definition is not supported by cifXAPI */
+
+/* xSysdeviceResetEx definitions */
+#define CIFX_RESETEX_SYSTEMSTART              0
+#define CIFX_RESETEX_BOOTSTART                2
+#define CIFX_RESETEX_UPDATESTART              3
+
+/* Shift value for variant selection of CIFX_RESETEX_UPDATESTART */
+#define CIFX_RESETEX_UPDATESTART_VARIANT_SRT  4
 
 /* Sync command definitions */
 #define CIFX_SYNC_SIGNAL_CMD                  1
@@ -226,6 +238,11 @@ typedef struct CIFX_NOTIFY_TX_MBX_EMPTY_DATA_Ttag
   uint32_t ulMaxSendCount;
 } CIFX_NOTIFY_TX_MBX_EMPTY_DATA_T;
 
+typedef struct CIFX_NOTIFY_COM_STATE_Ttag
+{
+  uint32_t ulComState;
+} CIFX_NOTIFY_COM_STATE_T;
+
 /* Notifications */
 #define CIFX_NOTIFY_RX_MBX_FULL               1
 #define CIFX_NOTIFY_TX_MBX_EMPTY              2
@@ -234,6 +251,12 @@ typedef struct CIFX_NOTIFY_TX_MBX_EMPTY_DATA_Ttag
 #define CIFX_NOTIFY_PD0_OUT                   5
 #define CIFX_NOTIFY_PD1_OUT                   6
 #define CIFX_NOTIFY_SYNC                      7
+#define CIFX_NOTIFY_COM_STATE                 8
+
+/* Extended memory commands */
+#define CIFX_GET_EXTENDED_MEMORY_INFO         1
+#define CIFX_GET_EXTENDED_MEMORY_POINTER      2
+#define CIFX_FREE_EXTENDED_MEMORY_POINTER     3
 
 /*****************************************************************************/
 /*! Structure definitions                                                    */
@@ -251,12 +274,24 @@ typedef __CIFx_PACKED_PRE struct DRIVER_INFORMATIONtag
 /*****************************************************************************/
 typedef __CIFx_PACKED_PRE struct CIFX_DIRECTORYENTRYtag
 {
-  CIFXHANDLE    hList;                                /*!< Handle from Enumeration function, do not touch */
-  char          szFilename[CIFx_MAX_INFO_NAME_LENTH]; /*!< Returned file name. */
-  uint8_t       bFiletype;                            /*!< Returned file type. */
-  uint32_t      ulFilesize;                           /*!< Returned file size. */
+  CIFXHANDLE    hList;                                     /*!< Handle from Enumeration function, do not touch */
+  char          szFilename[CIFx_MAX_INFO_NAME_LENTH];      /*!< Returned file name. */
+  uint8_t       bFiletype;                                 /*!< Returned file type. */
+  uint32_t      ulFilesize;                                /*!< Returned file size. */
 
 } __CIFx_PACKED_POST CIFX_DIRECTORYENTRY;
+
+/*****************************************************************************/
+/*! Extended memory information structure                                    */
+/*****************************************************************************/
+typedef __CIFx_PACKED_PRE struct CIFX_EXTENDED_MEMORY_INFORMATIONtag
+{
+  void*         pvMemoryID;                                /*!< Identification of the memory area       */
+  void*         pvMemoryPtr;                               /*!< Memory pointer                          */
+  uint32_t      ulMemorySize;                              /*!< Memory size of the Extended memory area */
+  uint32_t      ulMemoryType;                              /*!< Memory type information                 */
+
+} __CIFx_PACKED_POST CIFX_EXTENDED_MEMORY_INFORMATION;
 
 /*****************************************************************************/
 /*! System Channel Information structure                                     */
@@ -304,7 +339,7 @@ typedef __CIFx_PACKED_PRE struct SYSTEM_CHANNEL_CHANNEL_INFO_BLOCKtag
 typedef __CIFx_PACKED_PRE struct SYSTEM_CHANNEL_SYSTEM_CONTROL_BLOCKtag
 {
   uint32_t  ulSystemCommandCOS;                            /*!< 0x00 System channel change of state command */
-  uint32_t  ulReserved;                                    /*!< 0x04 Reserved */
+  uint32_t  ulSystemControl;                               /*!< 0x04 System channel control */
 } __CIFx_PACKED_POST SYSTEM_CHANNEL_SYSTEM_CONTROL_BLOCK;
 
 /* System Channel: System Status Block */
@@ -316,7 +351,9 @@ typedef __CIFx_PACKED_PRE struct SYSTEM_CHANNEL_SYSTEM_STATUS_BLOCKtag
   uint32_t  ulBootError;                                   /*!< 0x0C Bootup error code (only valid if Cookie="BOOT") */
   uint32_t  ulTimeSinceStart;                              /*!< 0x10 time since start in seconds */
   uint16_t  usCpuLoad;                                     /*!< 0x14 cpu load in 0,01% units (10000 => 100%) */
-  uint8_t   abReserved[42];                                /*!< 0x16:3F Reserved */
+  uint16_t  usReserved;                                    /*!< 0x16 Reserved */
+  uint32_t  ulHWFeatures;                                  /*!< 0x18 Hardware features */
+  uint8_t   abReserved[36];                                /*!< 0x1C:3F Reserved */
 } __CIFx_PACKED_POST SYSTEM_CHANNEL_SYSTEM_STATUS_BLOCK;
 
 /*****************************************************************************/
@@ -412,7 +449,7 @@ typedef __CIFx_PACKED_PRE struct PLC_MEMORY_INFORMATIONtag
 /***************************************************************************/
 /* Driver dependent information */
 
-#define CIFX_MAX_PACKET_SIZE               1600                  /*!< Maximum size of the RCX packet in bytes */
+#define CIFX_MAX_PACKET_SIZE               1596                  /*!< Maximum size of the RCX packet in bytes */
 #define CIFX_PACKET_HEADER_SIZE            40                    /*!< Maximum size of the RCX packet header in bytes */
 #define CIFX_MAX_DATA_SIZE   (CIFX_MAX_PACKET_SIZE - CIFX_PACKET_HEADER_SIZE) /*!< Maximum RCX packet data size */
 
@@ -446,9 +483,9 @@ typedef __CIFx_PACKED_PRE struct CIFX_PACKETtag
 
 #define CIFX_CALLBACK_ACTIVE   0
 #define CIFX_CALLBACK_FINISHED 1
-typedef void(APIENTRY* PFN_PROGRESS_CALLBACK)(uint32_t ulStep, uint32_t ulMaxStep, void* pvUser, int8_t bFinished, int32_t lError);
-typedef void(APIENTRY* PFN_RECV_PKT_CALLBACK)(CIFX_PACKET* ptRecvPkt, void* pvUser);
-typedef void(APIENTRY* PFN_NOTIFY_CALLBACK)  (uint32_t ulNotification, uint32_t ulDataLen, void* pvData, void* pvUser);
+typedef void(APIENTRY *PFN_PROGRESS_CALLBACK)(uint32_t ulStep, uint32_t ulMaxStep, void* pvUser, int8_t bFinished, int32_t lError);
+typedef void(APIENTRY *PFN_RECV_PKT_CALLBACK)(CIFX_PACKET* ptRecvPkt, void* pvUser);
+typedef void(APIENTRY *PFN_NOTIFY_CALLBACK)  (uint32_t ulNotification, uint32_t ulDataLen, void* pvData, void* pvUser);
 
 #define DOWNLOAD_MODE_FIRMWARE    1
 #define DOWNLOAD_MODE_CONFIG      2
@@ -466,7 +503,7 @@ typedef void(APIENTRY* PFN_NOTIFY_CALLBACK)  (uint32_t ulNotification, uint32_t 
 int32_t APIENTRY xDriverOpen                 ( CIFXHANDLE* phDriver);
 int32_t APIENTRY xDriverClose                ( CIFXHANDLE  hDriver);
 int32_t APIENTRY xDriverGetInformation       ( CIFXHANDLE  hDriver, uint32_t ulSize, void* pvDriverInfo);
-int32_t APIENTRY xDriverGetErrorDescription  ( int32_t        lError, char* szBuffer, uint32_t ulBufferLen);
+int32_t APIENTRY xDriverGetErrorDescription  ( int32_t     lError,  char* szBuffer, uint32_t ulBufferLen);
 int32_t APIENTRY xDriverEnumBoards           ( CIFXHANDLE  hDriver, uint32_t ulBoard, uint32_t ulSize, void* pvBoardInfo);
 int32_t APIENTRY xDriverEnumChannels         ( CIFXHANDLE  hDriver, uint32_t ulBoard, uint32_t ulChannel, uint32_t ulSize, void* pvChannelInfo);
 int32_t APIENTRY xDriverMemoryPointer        ( CIFXHANDLE  hDriver, uint32_t ulBoard, uint32_t ulCmd,void* pvMemoryInfo);
@@ -483,11 +520,15 @@ int32_t APIENTRY xSysdeviceInfo              ( CIFXHANDLE  hSysdevice, uint32_t 
 int32_t APIENTRY xSysdeviceFindFirstFile     ( CIFXHANDLE  hSysdevice, uint32_t ulChannel, CIFX_DIRECTORYENTRY* ptDirectoryInfo, PFN_RECV_PKT_CALLBACK pfnRecvPktCallback, void* pvUser);
 int32_t APIENTRY xSysdeviceFindNextFile      ( CIFXHANDLE  hSysdevice, uint32_t ulChannel, CIFX_DIRECTORYENTRY* ptDirectoryInfo, PFN_RECV_PKT_CALLBACK pfnRecvPktCallback, void* pvUser);
 int32_t APIENTRY xSysdeviceDownload          ( CIFXHANDLE  hSysdevice, uint32_t ulChannel, uint32_t ulMode, char* pszFileName, uint8_t* pabFileData, uint32_t ulFileSize,
-                                                                    PFN_PROGRESS_CALLBACK pfnCallback, PFN_RECV_PKT_CALLBACK pfnRecvPktCallback, void* pvUser);
+                                               PFN_PROGRESS_CALLBACK pfnCallback, PFN_RECV_PKT_CALLBACK pfnRecvPktCallback, void* pvUser);
 int32_t APIENTRY xSysdeviceUpload            ( CIFXHANDLE  hSysdevice, uint32_t ulChannel, uint32_t ulMode, char* pszFileName, uint8_t* pabFileData, uint32_t* pulFileSize,
-                                                                    PFN_PROGRESS_CALLBACK pfnCallback, PFN_RECV_PKT_CALLBACK pfnRecvPktCallback, void* pvUser);
+                                               PFN_PROGRESS_CALLBACK pfnCallback, PFN_RECV_PKT_CALLBACK pfnRecvPktCallback, void* pvUser);
 
 int32_t APIENTRY xSysdeviceReset             ( CIFXHANDLE  hSysdevice, uint32_t ulTimeout);
+int32_t APIENTRY xSysdeviceResetEx           ( CIFXHANDLE  hSysdevice, uint32_t ulTimeout, uint32_t ulMode);
+int32_t APIENTRY xSysdeviceBootstart         ( CIFXHANDLE  hSysdevice, uint32_t ulTimeout);
+
+int32_t APIENTRY xSysdeviceExtendedMemory    ( CIFXHANDLE  hSysdevice, uint32_t ulCmd, CIFX_EXTENDED_MEMORY_INFORMATION* ptExtMemData);
 
 /* Channel depending functions */
 int32_t APIENTRY xChannelOpen                ( CIFXHANDLE  hDriver,  char* szBoard, uint32_t ulChannel, CIFXHANDLE* phChannel);
@@ -496,9 +537,9 @@ int32_t APIENTRY xChannelFindFirstFile       ( CIFXHANDLE  hChannel, CIFX_DIRECT
 int32_t APIENTRY xChannelFindNextFile        ( CIFXHANDLE  hChannel, CIFX_DIRECTORYENTRY* ptDirectoryInfo, PFN_RECV_PKT_CALLBACK pfnRecvPktCallback, void* pvUser);
 
 int32_t APIENTRY xChannelDownload            ( CIFXHANDLE  hChannel, uint32_t ulMode, char* pszFileName, uint8_t* pabFileData, uint32_t ulFileSize,
-                                                                  PFN_PROGRESS_CALLBACK pfnCallback, PFN_RECV_PKT_CALLBACK pfnRecvPktCallback, void* pvUser);
+                                               PFN_PROGRESS_CALLBACK pfnCallback, PFN_RECV_PKT_CALLBACK pfnRecvPktCallback, void* pvUser);
 int32_t APIENTRY xChannelUpload              ( CIFXHANDLE  hChannel, uint32_t ulMode, char* pszFileName, uint8_t* pabFileData, uint32_t* pulFileSize,
-                                                                  PFN_PROGRESS_CALLBACK pfnCallback, PFN_RECV_PKT_CALLBACK pfnRecvPktCallback, void* pvUser);
+                                               PFN_PROGRESS_CALLBACK pfnCallback, PFN_RECV_PKT_CALLBACK pfnRecvPktCallback, void* pvUser);
 
 int32_t APIENTRY xChannelGetMBXState         ( CIFXHANDLE  hChannel, uint32_t* pulRecvPktCount, uint32_t* pulSendPktCount);
 int32_t APIENTRY xChannelPutPacket           ( CIFXHANDLE  hChannel, CIFX_PACKET*  ptSendPkt, uint32_t ulTimeout);
@@ -534,13 +575,95 @@ int32_t APIENTRY xChannelUnregisterNotification( CIFXHANDLE  hChannel, uint32_t 
 int32_t APIENTRY xChannelSyncState             ( CIFXHANDLE  hChannel, uint32_t ulCmd, uint32_t ulTimeout, uint32_t* pulErrorCount);
 /***************************************************************************/
 
+/***************************************************************************
+* API Functionpointer definitions
+***************************************************************************/
+
+/* Global driver functions */
+typedef int32_t (APIENTRY *PFN_XDRIVEROPEN)                ( CIFXHANDLE* phDriver);
+typedef int32_t (APIENTRY *PFN_XDRIVERCLOSE)               ( CIFXHANDLE  hDriver);
+typedef int32_t (APIENTRY *PFN_XDRIVERGETINFORMATION)      ( CIFXHANDLE  hDriver, uint32_t ulSize,   void*    pvDriverInfo);
+typedef int32_t (APIENTRY *PFN_XDRIVERGETERRORDESCRIPTION) ( int32_t     lError,  char*    szBuffer, uint32_t ulBufferLen);
+typedef int32_t (APIENTRY *PFN_XDRIVERENUMBOARDS)          ( CIFXHANDLE  hDriver, uint32_t ulBoard,  uint32_t ulSize,    void*    pvBoardInfo);
+typedef int32_t (APIENTRY *PFN_XDRIVERENUMCHANNELS)        ( CIFXHANDLE  hDriver, uint32_t ulBoard,  uint32_t ulChannel, uint32_t ulSize, void* pvChannelInfo);
+typedef int32_t (APIENTRY *PFN_XDRIVERMEMORYPOINTER)       ( CIFXHANDLE  hDriver, uint32_t ulBoard,  uint32_t ulCmd,     void*    pvMemoryInfo);
+typedef int32_t (APIENTRY *PFN_XDRIVERRESTARTDEVICE)       ( CIFXHANDLE  hDriver, char* szBoardName, void* pvData);
+
+/* System device depending functions */
+typedef int32_t (APIENTRY *PFN_XSYSDEVICEOPEN)             ( CIFXHANDLE  hDriver, char* szBoard, CIFXHANDLE* phSysdevice);
+typedef int32_t (APIENTRY *PFN_XSYSDEVICECLOSE)            ( CIFXHANDLE  hSysdevice);
+typedef int32_t (APIENTRY *PFN_XSYSDEVICEGETMBXSTATE)      ( CIFXHANDLE  hSysdevice, uint32_t* pulRecvPktCount, uint32_t* pulSendPktCount);
+typedef int32_t (APIENTRY *PFN_XSYSDEVICEPUTPACKET)        ( CIFXHANDLE  hSysdevice, CIFX_PACKET* ptSendPkt, uint32_t ulTimeout);
+typedef int32_t (APIENTRY *PFN_XSYSDEVICEGETPACKET)        ( CIFXHANDLE  hSysdevice, uint32_t ulSize, CIFX_PACKET* ptRecvPkt, uint32_t ulTimeout);
+typedef int32_t (APIENTRY *PFN_XSYSDEVICEINFO)             ( CIFXHANDLE  hSysdevice, uint32_t ulCmd, uint32_t ulSize, void* pvInfo);
+
+typedef int32_t (APIENTRY *PFN_XSYSDEVICEFINDFIRSTFILE)    ( CIFXHANDLE  hSysdevice, uint32_t ulChannel, CIFX_DIRECTORYENTRY* ptDirectoryInfo, PFN_RECV_PKT_CALLBACK pfnRecvPktCallback, void* pvUser);
+typedef int32_t (APIENTRY *PFN_XSYSDEVICEFINDNEXTFILE)     ( CIFXHANDLE  hSysdevice, uint32_t ulChannel, CIFX_DIRECTORYENTRY* ptDirectoryInfo, PFN_RECV_PKT_CALLBACK pfnRecvPktCallback, void* pvUser);
+typedef int32_t (APIENTRY *PFN_XSYSDEVICEDOWNLOAD)         ( CIFXHANDLE  hSysdevice, uint32_t ulChannel, uint32_t ulMode, char* pszFileName, uint8_t* pabFileData, uint32_t ulFileSize,
+                                                             PFN_PROGRESS_CALLBACK pfnCallback, PFN_RECV_PKT_CALLBACK pfnRecvPktCallback, void* pvUser);
+typedef int32_t (APIENTRY *PFN_XSYSDEVICEUPLOAD)           ( CIFXHANDLE  hSysdevice, uint32_t ulChannel, uint32_t ulMode, char* pszFileName, uint8_t* pabFileData, uint32_t* pulFileSize,
+                                                             PFN_PROGRESS_CALLBACK pfnCallback, PFN_RECV_PKT_CALLBACK pfnRecvPktCallback, void* pvUser);
+
+typedef int32_t (APIENTRY *PFN_XSYSDEVICERESET)            ( CIFXHANDLE  hSysdevice, uint32_t ulTimeout);
+typedef int32_t (APIENTRY *PFN_XSYSDEVICERESETEX)          ( CIFXHANDLE  hSysdevice, uint32_t ulTimeout, uint32_t ulMode);
+typedef int32_t (APIENTRY *PFN_XSYSDEVICEBOOTSTART)        ( CIFXHANDLE  hSysdevice, uint32_t ulTimeout);
+
+typedef int32_t (APIENTRY *PFN_XSYSDEVICEEXTENDEDMEMORY)   ( CIFXHANDLE  hSysdevice, uint32_t ulCmd, CIFX_EXTENDED_MEMORY_INFORMATION* ptExtMemData);
+
+/* Channel depending functions */
+typedef int32_t (APIENTRY *PFN_XCHANNELOPEN)               ( CIFXHANDLE  hDriver,  char* szBoard, uint32_t ulChannel, CIFXHANDLE* phChannel);
+typedef int32_t (APIENTRY *PFN_XCHANNELCLOSE)              ( CIFXHANDLE  hChannel);
+typedef int32_t (APIENTRY *PFN_XCHANNELFINDFIRSTFILE)      ( CIFXHANDLE  hChannel, CIFX_DIRECTORYENTRY* ptDirectoryInfo, PFN_RECV_PKT_CALLBACK pfnRecvPktCallback, void* pvUser);
+typedef int32_t (APIENTRY *PFN_XCHANNELFINDNEXTFILE)       ( CIFXHANDLE  hChannel, CIFX_DIRECTORYENTRY* ptDirectoryInfo, PFN_RECV_PKT_CALLBACK pfnRecvPktCallback, void* pvUser);
+
+typedef int32_t (APIENTRY *PFN_XCHANNELDOWNLOAD)           ( CIFXHANDLE  hChannel, uint32_t ulMode, char* pszFileName, uint8_t* pabFileData, uint32_t ulFileSize,
+                                                             PFN_PROGRESS_CALLBACK pfnCallback, PFN_RECV_PKT_CALLBACK pfnRecvPktCallback, void* pvUser);
+typedef int32_t (APIENTRY *PFN_XCHANNELUPLOAD)             ( CIFXHANDLE  hChannel, uint32_t ulMode, char* pszFileName, uint8_t* pabFileData, uint32_t* pulFileSize,
+                                                             PFN_PROGRESS_CALLBACK pfnCallback, PFN_RECV_PKT_CALLBACK pfnRecvPktCallback, void* pvUser);
+
+typedef int32_t (APIENTRY *PFN_XCHANNELGETMBXSTATE)        ( CIFXHANDLE  hChannel, uint32_t* pulRecvPktCount, uint32_t* pulSendPktCount);
+typedef int32_t (APIENTRY *PFN_XCHANNELPUTPACKET)          ( CIFXHANDLE  hChannel, CIFX_PACKET*  ptSendPkt, uint32_t ulTimeout);
+typedef int32_t (APIENTRY *PFN_XCHANNELGETPACKET)          ( CIFXHANDLE  hChannel, uint32_t ulSize, CIFX_PACKET* ptRecvPkt, uint32_t ulTimeout);
+typedef int32_t (APIENTRY *PFN_XCHANNELGETSENDPACKET)      ( CIFXHANDLE  hChannel, uint32_t ulSize, CIFX_PACKET* ptRecvPkt);
+
+typedef int32_t (APIENTRY *PFN_XCHANNELCONFIGLOCK)         ( CIFXHANDLE  hChannel, uint32_t ulCmd, uint32_t* pulState, uint32_t ulTimeout);
+typedef int32_t (APIENTRY *PFN_XCHANNELRESET)              ( CIFXHANDLE  hChannel, uint32_t ulResetMode, uint32_t ulTimeout);
+typedef int32_t (APIENTRY *PFN_XCHANNELINFO)               ( CIFXHANDLE  hChannel, uint32_t ulSize, void* pvChannelInfo);
+typedef int32_t (APIENTRY *PFN_XCHANNELWATCHDOG)           ( CIFXHANDLE  hChannel, uint32_t ulCmd, uint32_t* pulTrigger);
+typedef int32_t (APIENTRY *PFN_XCHANNELHOSTSTATE)          ( CIFXHANDLE  hChannel, uint32_t ulCmd, uint32_t* pulState, uint32_t ulTimeout);
+typedef int32_t (APIENTRY *PFN_XCHANNELBUSSTATE)           ( CIFXHANDLE  hChannel, uint32_t ulCmd, uint32_t* pulState, uint32_t ulTimeout);
+typedef int32_t (APIENTRY *PFN_XCHANNELDMASTATE)           ( CIFXHANDLE  hChannel, uint32_t ulCmd, uint32_t* pulState);
+
+typedef int32_t (APIENTRY *PFN_XCHANNELIOINFO)             ( CIFXHANDLE  hChannel, uint32_t ulCmd,        uint32_t ulAreaNumber, uint32_t ulSize,    void* pvData);
+typedef int32_t (APIENTRY *PFN_XCHANNELIOREAD)             ( CIFXHANDLE  hChannel, uint32_t ulAreaNumber, uint32_t ulOffset,     uint32_t ulDataLen, void* pvData, uint32_t ulTimeout);
+typedef int32_t (APIENTRY *PFN_XCHANNELIOWRITE)            ( CIFXHANDLE  hChannel, uint32_t ulAreaNumber, uint32_t ulOffset,     uint32_t ulDataLen, void* pvData, uint32_t ulTimeout);
+typedef int32_t (APIENTRY *PFN_XCHANNELIOREADSENDDATA)     ( CIFXHANDLE  hChannel, uint32_t ulAreaNumber, uint32_t ulOffset,     uint32_t ulDataLen, void* pvData);
+
+typedef int32_t (APIENTRY *PFN_XCHANNELCONTROLBLOCK)       ( CIFXHANDLE  hChannel, uint32_t ulCmd, uint32_t ulOffset, uint32_t ulDataLen, void* pvData);
+typedef int32_t (APIENTRY *PFN_XCHANNELCOMMONSTATUSBLOCK)  ( CIFXHANDLE  hChannel, uint32_t ulCmd, uint32_t ulOffset, uint32_t ulDataLen, void* pvData);
+typedef int32_t (APIENTRY *PFN_XCHANNELEXTENDEDSTATUSBLOCK)( CIFXHANDLE  hChannel, uint32_t ulCmd, uint32_t ulOffset, uint32_t ulDataLen, void* pvData);
+typedef int32_t (APIENTRY *PFN_XCHANNELUSERBLOCK)          ( CIFXHANDLE  hChannel, uint32_t ulAreaNumber, uint32_t ulCmd, uint32_t ulOffset, uint32_t ulDataLen, void* pvData);
+
+typedef int32_t (APIENTRY *PFN_XCHANNELPLCMEMORYPTR)       ( CIFXHANDLE  hChannel, uint32_t ulCmd,        void* pvMemoryInfo);
+typedef int32_t (APIENTRY *PFN_XCHANNELPLCISREADREADY)     ( CIFXHANDLE  hChannel, uint32_t ulAreaNumber, uint32_t* pulReadState);
+typedef int32_t (APIENTRY *PFN_XCHANNELPLCISWRITEREADY)    ( CIFXHANDLE  hChannel, uint32_t ulAreaNumber, uint32_t* pulWriteState);
+typedef int32_t (APIENTRY *PFN_XCHANNELPLCACTIVATEWRITE)   ( CIFXHANDLE  hChannel, uint32_t ulAreaNumber);
+typedef int32_t (APIENTRY *PFN_XCHANNELPLCACTIVATEREAD)    ( CIFXHANDLE  hChannel, uint32_t ulAreaNumber);
+
+typedef int32_t (APIENTRY *PFN_XCHANNELREGISTERNOTIFICATION)  ( CIFXHANDLE  hChannel, uint32_t ulNotification, PFN_NOTIFY_CALLBACK  pfnCallback, void* pvUser);
+typedef int32_t (APIENTRY *PFN_XCHANNELUNREGISTERNOTIFICATION)( CIFXHANDLE  hChannel, uint32_t ulNotification);
+typedef int32_t (APIENTRY *PFN_XCHANNELSYNCSTATE)             ( CIFXHANDLE  hChannel, uint32_t ulCmd, uint32_t ulTimeout, uint32_t* pulErrorCount);
+/***************************************************************************/
+
 #ifdef __cplusplus
 }
 #endif
 
-#if _MSC_VER >= 1000
-  #pragma pack()            /* Always align structures to default boundery */
-#endif /* _MSC_VER >= 1000 */
+#if defined(_MSC_VER)
+  #if _MSC_VER >= 1000
+    #pragma pack()            /* Always align structures to default boundery */
+  #endif /* _MSC_VER >= 1000 */
+#endif /* _MSC_VER */
 
 #undef __CIFx_PACKED_PRE
 #undef __CIFx_PACKED_POST

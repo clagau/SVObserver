@@ -10,7 +10,6 @@
 #include "SVPlcIOImpl.h"
 #include "PlcDataTypes.h"
 #include "SVIOLibrary/SVIOParameterEnum.h"
-#include "TriggerEngineConnection.h"
 #include "SVUtilityLibrary/SVClock.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVUtilityLibrary/StringHelper.h"
@@ -26,6 +25,7 @@ constexpr LPCTSTR cIniFile = _T("SVPLCIO.ini");
 constexpr LPCTSTR cSettingsGroup = _T("Settings");
 constexpr LPCTSTR cPLCSimulation = _T("PLCSimulation");
 constexpr LPCTSTR cPLCTransferTime = _T("PLC-TransferTime");
+constexpr LPCTSTR cPD0Version = _T("PD0Version");
 constexpr LPCTSTR cPLCNodeID = _T("PLC-NodeID");
 constexpr LPCTSTR cOutputFileName = _T("OutputFileName");
 constexpr LPCTSTR cPlcInputName = _T("_PlcInput.txt");
@@ -66,7 +66,14 @@ HRESULT SVPlcIOImpl::Initialize(bool bInit)
 		m_logFileName = buffer;
 		memset(buffer, 0, cBuffSize);
 		::GetPrivateProfileString(cSettingsGroup, cPLCSimulation, "", buffer, cBuffSize, iniFile.c_str());
-		m_plcSimulateFile = buffer;
+		m_AdditionalData = buffer;
+		m_triggerType = m_AdditionalData.empty() ? TriggerType::HardwareTrigger : TriggerType::SimulatedTrigger;
+		if (TriggerType::HardwareTrigger == m_triggerType)
+		{
+			memset(buffer, 0, cBuffSize);
+			::GetPrivateProfileString(cSettingsGroup, cPD0Version, "", buffer, cBuffSize, iniFile.c_str());
+			m_AdditionalData = buffer;
+		}
 		m_plcTransferTime = static_cast<uint16_t> (::GetPrivateProfileInt(cSettingsGroup, cPLCTransferTime, 0, iniFile.c_str()));
 		m_plcNodeID = static_cast<uint16_t> (::GetPrivateProfileInt(cSettingsGroup, cPLCNodeID, 0, iniFile.c_str()));
 		///If no setting then try to derive the PLC node ID from the SVIM computer name
@@ -187,7 +194,7 @@ void SVPlcIOImpl::beforeStartTrigger(unsigned long triggerIndex)
 				m_logOutFile.write(fileData.c_str(), fileData.size());
 			}
 		}
-		Tec::startTriggerEngine(std::bind(&SVPlcIOImpl::reportTrigger, this, std::placeholders::_1), m_plcNodeID, m_plcTransferTime, m_plcSimulateFile);
+		Tec::startTriggerEngine(std::bind(&SVPlcIOImpl::reportTrigger, this, std::placeholders::_1), m_triggerType, m_plcNodeID, m_plcTransferTime, m_AdditionalData);
 		Tec::setReady(m_moduleReady);
 		m_engineStarted = true;
 		::SetThreadPriority(::GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
@@ -310,7 +317,8 @@ HRESULT SVPlcIOImpl::TriggerSetParameterValue(unsigned long, unsigned long index
 
 	if (SVIOParameterEnum::PlcSimulatedTrigger == index && VT_BSTR == rValue.vt)
 	{
-		m_plcSimulateFile = _bstr_t(rValue.bstrVal);
+		m_AdditionalData = _bstr_t(rValue.bstrVal);
+		m_triggerType = m_AdditionalData.empty() ? TriggerType::HardwareTrigger : TriggerType::SimulatedTrigger;
 		result = S_OK;
 	}
 

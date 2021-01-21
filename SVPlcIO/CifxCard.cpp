@@ -12,12 +12,14 @@
 #include "cifXErrors.h"
 #include "cifXUser.h"
 #include "Epl_Common_Defines.h"
-#include "TLR_Types.h"			///This needs to be before EplCn_If_Public!
 #include "EplCn_If_Public.h"
+#include "Hil_ApplicationCmd.h"
 #include "InspectionState.h"
 #include "PlcDataVersion.h"
 #include "SVUtilityLibrary/SVClock.h"
 #pragma endregion Includes
+
+//This is to avoid CheckInclude false positives EPLCN_IF_QUEUE_NAME
 
 namespace SvPlc
 {
@@ -35,11 +37,8 @@ constexpr uint32_t cProductCode = 1UL;			///CIFX
 constexpr uint32_t cSerialNumber = 0UL;			///Use serial number from SecMem or FDL
 constexpr uint32_t cRevisionNumber = 0UL;
 
-constexpr uint32_t cRegisterAppReq = 0x00002F10;
-constexpr uint32_t cUnRegisterAppReq = 0x00002F12;
 
-
-void APIENTRY interruptHandler(uint32_t notification, uint32_t, void* , void* pvUser)
+void APIENTRY notificationHandler(uint32_t notification, uint32_t, void* , void* pvUser)
 {
 	if (pvUser == nullptr)
 	{
@@ -49,88 +48,13 @@ void APIENTRY interruptHandler(uint32_t notification, uint32_t, void* , void* pv
 
 	CifXCard* pCifX = reinterpret_cast<CifXCard*> (pvUser);
 
-	if(CIFX_NOTIFY_PD0_IN == notification)
-	{
-		pCifX->readProcessData();
-	}
+	pCifX->readProcessData(notification);
 }
 
 CifXCard::CifXCard(uint16_t CifXNodeId, uint16_t MaxPlcDataSize):
  m_CifXNodeId(CifXNodeId)
 ,m_maxPlcDataSize(MaxPlcDataSize)
 {
-}
-
-
-int32_t CifXCard::OpenCifX()
-{
-	int32_t result{CIFX_DEV_NOT_READY};
-
-	result = m_cifxLoadLib.Open();
-	/// Load Dll failed!
-	if(S_OK != result)
-	{
-		printOutput("Could not load cifX32DLL.dll\n");
-		return result;
-	}
-	printOutput("Opening driver...\n");
-	/* Open Driver */
-	result = m_cifxLoadLib.m_pDriverOpen(&m_hDriver);
-	if (CIFX_NO_ERROR != result)
-	{
-		return result;
-	}
-	DRIVER_INFORMATION driverInfo;
-	memset(&driverInfo, 0, sizeof(driverInfo));
-	m_cifxLoadLib.m_pDriverGetInformation(m_hDriver, sizeof(driverInfo), reinterpret_cast<void*> (&driverInfo));
-	std::stringstream outputStream;
-	outputStream << "Driver version " << driverInfo.abDriverVersion << '\n';
-	printOutput(outputStream.str().c_str());
-
-	printOutput("Opening channel ...\n");
-	result = m_cifxLoadLib.m_pChannelOpen(m_hDriver, cBoardName, cCifxChannel, &m_hChannel);
-	if (CIFX_NO_ERROR != result)
-	{
-		return result;
-	}
-	CHANNEL_INFORMATION channelInfo;
-	m_cifxLoadLib.m_pChannelInfo(m_hChannel, sizeof(channelInfo), reinterpret_cast<void*> (&channelInfo));
-	outputStream.clear();
-	outputStream << "Firmware " << channelInfo.usFWMajor << '.' << channelInfo.usFWMinor << '\n';
-	printOutput(outputStream.str().c_str());
-
-	result = m_cifxLoadLib.m_pChannelReset(m_hChannel, CIFX_CHANNELINIT, cResetTimeout);
-	if (CIFX_NO_ERROR != result)
-	{
-		return result;
-	}
-	printOutput("Processing system restart...\n");
-	result = m_cifxLoadLib.m_pChannelReset(m_hChannel, CIFX_SYSTEMSTART, cResetTimeout);
-	if (CIFX_NO_ERROR == result)
-	{
-		int hostTries{1};
-		uint32_t  dummy{0UL};
-		do
-		{
-			result = m_cifxLoadLib.m_pChannelHostState(m_hChannel, CIFX_HOST_STATE_READY, &dummy, cDriverTimeout);
-
-			if (CIFX_DEV_NOT_READY == result)
-			{
-				///Sleep and try again
-				Sleep(cWaitTimeout);
-				++hostTries;
-			}
-		} while (result == CIFX_DEV_NOT_READY && hostTries < cMaxHostTries);
-	}
-
-	if (CIFX_NO_ERROR == result)
-	{
-		printOutput("Create config lists\n");
-		m_configDataSetsMap[TelegramLayout::Layout1] = createConfigList(TelegramLayout::Layout1);
-		m_configDataSetsMap[TelegramLayout::Layout2] = createConfigList(TelegramLayout::Layout2);
-	}
-
-	return result;
 }
 
 int32_t CifXCard::SendConfigurationToCifX()
@@ -208,7 +132,17 @@ int32_t CifXCard::WarmstartAndInitializeCifX()
 		memset(m_pReadBuffer.get(), 0, m_maxPlcDataSize);
 		memset(m_pWriteBuffer.get(), 0, m_maxPlcDataSize);
 
-		result = SendRecvEmptyPkt(cRegisterAppReq);
+		///Only call this when using sync notification
+		if (CIFX_NOTIFY_SYNC == m_notifyType)
+		{
+			result = SendRecvCmdPkt(HIL_SET_TRIGGER_TYPE_REQ);
+			if (CIFX_NO_ERROR != result)
+			{
+				return result;
+			}
+		}
+
+		result = SendRecvCmdPkt(HIL_REGISTER_APP_REQ);
 		if(CIFX_NO_ERROR != result)
 		{
 			return result;
@@ -222,56 +156,37 @@ int32_t CifXCard::WarmstartAndInitializeCifX()
 		}
 		printOutput("DMA is on\n");
 
-		result = m_cifxLoadLib.m_pChannelRegisterNotification(m_hChannel, CIFX_NOTIFY_PD0_IN, interruptHandler, reinterpret_cast<void*> (this));
+		result = m_cifxLoadLib.m_pChannelRegisterNotification(m_hChannel, m_notifyType, notificationHandler, reinterpret_cast<void*> (this));
 		if (CIFX_NO_ERROR != result)
 		{
 			return result;
 		}
-		printOutput("Cifx Interrupt Handler Ready\n");
+		printOutput("Cifx Notification Handler Ready\n");
 
-		/* variable for host state */
-		uint32_t  HostState{0UL};
-		/* bus on */
-		result = m_cifxLoadLib.m_pChannelBusState(m_hChannel, CIFX_BUS_STATE_ON, &HostState, cDriverTimeout);
-		/* bus activity begins here */
-		if (CIFX_BUS_STATE_ON != HostState)
-		{
-			return result;
-		}
-		printOutput("Bus state is on\n");
 		result = CIFX_NO_ERROR;
 	}
 
 	return result;
 }
 
-void CifXCard::readProcessData()
+void CifXCard::readProcessData(uint32_t notification)
 {
-	if (false == m_cifxLoadLib.isInitilized())
+	double timeStamp = SvUl::GetTimeStamp();
+	if (notification != m_notifyType || false == m_cifxLoadLib.isInitilized())
 	{
 		return;
 	}
 
-	double telegramReceiveTime = SvUl::GetTimeStamp();
-
-	int32_t result = m_cifxLoadLib.m_pChannelIORead(m_hChannel, 0, 0, m_maxPlcDataSize, m_pReadBuffer.get(), 2);
-
-	if (CIFX_NO_ERROR != result)
+	int32_t result = m_cifxLoadLib.m_pChannelIORead(m_hChannel, 0, 0, m_maxPlcDataSize, m_pReadBuffer.get(), cTimeout);
+	if (CIFX_NO_ERROR == result)
 	{
-		if (CIFX_DEV_NO_COM_FLAG != result) // "COM-flag not set" occurs often: do not report
+		InputData inputData;
+		uint8_t* pData = m_pReadBuffer.get();
+		memcpy(&inputData.m_telegram, pData, sizeof(Telegram));
+		pData += sizeof(Telegram);
+
+		switch (inputData.m_telegram.m_content)
 		{
-			printOutput("ReadProcessData() failed\n");
-		}
-		return;
-	}
-	
-	InputData inputData;
-	uint8_t* pData = m_pReadBuffer.get();
-	memcpy(&inputData.m_telegram, pData, sizeof(Telegram));
-	pData += sizeof(Telegram);
-
-	switch(inputData.m_telegram.m_content)
-	{
 		case TelegramContent::TimeSyncData:
 		{
 			memcpy(&inputData.m_timeSync, pData, sizeof(TimeSync));
@@ -280,23 +195,29 @@ void CifXCard::readProcessData()
 		case TelegramContent::OperationData:
 		{
 			memcpy(&inputData.m_inspectionCmd, pData, sizeof(InspectionCommand));
-			inputData.m_interruptTime = telegramReceiveTime;
+			inputData.m_interruptTime = timeStamp;
 			break;
 		}
 		default:
 		{
 			break;
 		}
-	}
-	//Reduce lock guard scope
-	{
-		std::lock_guard<std::mutex> guard {m_cifxMutex};
-		m_inputDataQueue.emplace(std::move(inputData));
-	}
+		}
+		//Reduce lock guard scope
+		{
+			std::lock_guard<std::mutex> guard{ m_cifxMutex };
+			m_inputDataQueue.emplace(std::move(inputData));
+		}
 
-	if (m_hTelegramReadEvent != nullptr)
+		if (m_hTelegramReadEvent != nullptr)
+		{
+			::SetEvent(m_hTelegramReadEvent);
+		}
+	}
+	if (CIFX_NOTIFY_SYNC == m_notifyType)
 	{
-		::SetEvent(m_hTelegramReadEvent);
+		uint32_t syncErrorCount{ 0 };
+		m_cifxLoadLib.m_pChannelSyncState(m_hChannel, CIFX_SYNC_SIGNAL_CMD, cDriverTimeout, &syncErrorCount);
 	}
 }
 
@@ -312,10 +233,9 @@ void CifXCard::closeCifX()
 	if(m_cifxLoadLib.isInitilized())
 	{
 		printOutput("Closing application and freeing buffers...\n");
-		m_cifxLoadLib.m_pChannelUnregisterNotification(m_hChannel, CIFX_NOTIFY_PD0_IN);
-		m_cifxLoadLib.m_pChannelUnregisterNotification(m_hChannel, CIFX_NOTIFY_SYNC);
+		m_cifxLoadLib.m_pChannelUnregisterNotification(m_hChannel, m_notifyType);
 		m_cifxLoadLib.m_pChannelBusState(m_hChannel, CIFX_BUS_STATE_OFF, nullptr, cDriverTimeout);
-		SendRecvEmptyPkt(cUnRegisterAppReq);
+		SendRecvCmdPkt(HIL_UNREGISTER_APP_REQ);
 		printOutput("Closing Channel...\n");
 		m_cifxLoadLib.m_pChannelClose(m_hChannel);
 		printOutput("Closing Driver...\n");
@@ -325,9 +245,9 @@ void CifXCard::closeCifX()
 }
 
 
-HRESULT CifXCard::OpenAndInitializeCifX()
+HRESULT CifXCard::OpenAndInitializeCifX(const std::string& rAdditionalData)
 {
-	HRESULT result = OpenCifX();
+	HRESULT result = OpenCifX(rAdditionalData);
 
 	if (CIFX_NO_ERROR == result)
 	{
@@ -383,13 +303,79 @@ void CifXCard::setReady(bool ready)
 	m_ready = ready;
 }
 
-/*************************************************************************************************
-* @brief This function sends a packet and waits for the confirmation.
-* Packets which will come up meanwhile will be passed to the standard packet handler.
-* @param pSendPkt Packet which will be sent.
-* @param pRecvPkt Packet which the function has received.
-* @return uint32_t Returns CIFX_NO_ERROR if no error, otherwise it will return an error code.
-*/
+int32_t CifXCard::OpenCifX(const std::string& rAdditionalData)
+{
+	int32_t result{ CIFX_DEV_NOT_READY };
+
+	result = m_cifxLoadLib.Open();
+	/// Load Dll failed!
+	if (S_OK != result)
+	{
+		printOutput("Could not load cifX32DLL.dll\n");
+		return result;
+	}
+	printOutput("Opening driver...\n");
+	/* Open Driver */
+	result = m_cifxLoadLib.m_pDriverOpen(&m_hDriver);
+	if (CIFX_NO_ERROR != result)
+	{
+		return result;
+	}
+	DRIVER_INFORMATION driverInfo;
+	memset(&driverInfo, 0, sizeof(driverInfo));
+	m_cifxLoadLib.m_pDriverGetInformation(m_hDriver, sizeof(driverInfo), reinterpret_cast<void*> (&driverInfo));
+	std::string outputString{ "Driver version " };
+	outputString += driverInfo.abDriverVersion + '\n';
+	printOutput(outputString.c_str());
+
+	printOutput("Opening channel ...\n");
+	result = m_cifxLoadLib.m_pChannelOpen(m_hDriver, cBoardName, cCifxChannel, &m_hChannel);
+	if (CIFX_NO_ERROR != result)
+	{
+		return result;
+	}
+	CHANNEL_INFORMATION channelInfo;
+	m_cifxLoadLib.m_pChannelInfo(m_hChannel, sizeof(channelInfo), reinterpret_cast<void*> (&channelInfo));
+	outputString = std::to_string(channelInfo.usFWMajor) + '.' + std::to_string(channelInfo.usFWMinor) + '.' + std::to_string(channelInfo.usFWBuild) + '.' + std::to_string(channelInfo.usFWRevision);
+	m_notifyType =  (rAdditionalData == outputString) ? CIFX_NOTIFY_PD0_IN : CIFX_NOTIFY_SYNC;
+	printOutput(reinterpret_cast<char*> (channelInfo.abFWName));
+	outputString =  ' ' + outputString + '\n';
+	printOutput(outputString.c_str());
+
+	result = m_cifxLoadLib.m_pChannelReset(m_hChannel, CIFX_CHANNELINIT, cResetTimeout);
+	if (CIFX_NO_ERROR != result)
+	{
+		return result;
+	}
+	printOutput("Processing system restart...\n");
+	result = m_cifxLoadLib.m_pChannelReset(m_hChannel, CIFX_SYSTEMSTART, cResetTimeout);
+	if (CIFX_NO_ERROR == result)
+	{
+		int hostTries{ 1 };
+		uint32_t  dummy{ 0UL };
+		do
+		{
+			result = m_cifxLoadLib.m_pChannelHostState(m_hChannel, CIFX_HOST_STATE_READY, &dummy, cDriverTimeout);
+
+			if (CIFX_DEV_NOT_READY == result)
+			{
+				///Sleep and try again
+				Sleep(cWaitTimeout);
+				++hostTries;
+			}
+		} while (result == CIFX_DEV_NOT_READY && hostTries < cMaxHostTries);
+	}
+
+	if (CIFX_NO_ERROR == result)
+	{
+		printOutput("Create config lists\n");
+		m_configDataSetsMap[TelegramLayout::Layout1] = createConfigList(TelegramLayout::Layout1);
+		m_configDataSetsMap[TelegramLayout::Layout2] = createConfigList(TelegramLayout::Layout2);
+	}
+
+	return result;
+}
+
 int32_t CifXCard::SendRecvPkt(CIFX_PACKET* pSendPkt, CIFX_PACKET* pRecvPkt)
 {
 	if(nullptr == pSendPkt || nullptr == pRecvPkt)
@@ -428,15 +414,8 @@ int32_t CifXCard::SendRecvPkt(CIFX_PACKET* pSendPkt, CIFX_PACKET* pRecvPkt)
 }
 
 
-/*************************************************************************************************
-* @brief This function sends and receives an empty packet.
-* @param ulCmd Command code which will be inserted into packet header.
-* @return TLR_RESULT Returns CIFX_NO_ERROR if no error, otherwise it will return an error code.
-*
-*/
-int32_t CifXCard::SendRecvEmptyPkt(uint32_t command)
+int32_t CifXCard::SendRecvCmdPkt(uint32_t command)
 {
-
 	CIFX_PACKET sendPkt;
 	CIFX_PACKET recvPkt;
 
@@ -444,27 +423,27 @@ int32_t CifXCard::SendRecvEmptyPkt(uint32_t command)
 	memset(&sendPkt, 0, sizeof(sendPkt));
 	memset(&recvPkt, 0, sizeof(recvPkt));
 
-	TLR_EMPTY_PACKET_T* pEmptyPacket = reinterpret_cast<TLR_EMPTY_PACKET_T*> (&sendPkt);
-
-	/* ulSrc and ulDest are set by GetPacket / SendPacket */
-	pEmptyPacket->tHead.ulCmd = command;
-	pEmptyPacket->tHead.ulDest = 0x20;
-	pEmptyPacket->tHead.ulDestId = 0;
-	pEmptyPacket->tHead.ulExt = 0;
-	pEmptyPacket->tHead.ulId = 0;
-	pEmptyPacket->tHead.ulLen = 0;
-	pEmptyPacket->tHead.ulRout = 0;
-	pEmptyPacket->tHead.ulSrc = 0;
-	pEmptyPacket->tHead.ulSrcId = 0;
-	pEmptyPacket->tHead.ulSta = 0;
+	if (HIL_SET_TRIGGER_TYPE_REQ == command)
+	{
+		HIL_SET_TRIGGER_TYPE_REQ_T* pPacket = reinterpret_cast<HIL_SET_TRIGGER_TYPE_REQ_T*> (&sendPkt);
+		memset(pPacket, 0, sizeof(HIL_SET_TRIGGER_TYPE_REQ_T));
+		pPacket->tHead.ulCmd = command;
+		pPacket->tHead.ulDest = HIL_PACKET_DEST_DEFAULT_CHANNEL;
+		pPacket->tHead.ulLen = sizeof(HIL_SET_TRIGGER_TYPE_REQ_DATA_T);
+		pPacket->tData.usPdInHskTriggerType = HIL_TRIGGER_TYPE_SYNC_NONE;
+		pPacket->tData.usPdOutHskTriggerType = HIL_TRIGGER_TYPE_SYNC_NONE;
+		pPacket->tData.usSyncHskTriggerType = HIL_TRIGGER_TYPE_SYNC_TIMED_ACTIVATION;
+	}
+	else
+	{
+		TLR_EMPTY_PACKET_T* pPacket = reinterpret_cast<TLR_EMPTY_PACKET_T*> (&sendPkt);
+		pPacket->tHead.ulCmd = command;
+		pPacket->tHead.ulDest = HIL_PACKET_DEST_DEFAULT_CHANNEL;
+	}
 
 	return SendRecvPkt(&sendPkt, &recvPkt);
 }
 
-/*************************************************************************************************
-* @brief This method builds a configuration request packet.
-* @param CIFX_PACKET* pPacket pointer to a CIFX_PACKET structure.
-*************************************************************************************************/
 void CifXCard::BuildConfigurationReq(CIFX_PACKET* pPacket, uint16_t NodeId, uint16_t DataLength)
 {
 	EPLCN_IF_SET_CONFIG_REQ_T* pConfigReq = reinterpret_cast<EPLCN_IF_SET_CONFIG_REQ_T*> (pPacket);
@@ -478,13 +457,7 @@ void CifXCard::BuildConfigurationReq(CIFX_PACKET* pPacket, uint16_t NodeId, uint
 
 	pConfigReq->tData.ulSystemFlags = 0;                      //System Flags  
 	pConfigReq->tData.ulWatchdogTime = 1000;					//Watchdog time
-	/* Stack creates default PDO objects */
-	//MSK_EPLCN_IF_CFG_STACK_CFG_FLAGS_NMT_TRIGGERED_BY_APP
-	//Arvid: MSK_EPLCN_IF_CFG_STACK_CFG_FLAGS_DISABLE_HOST_TRIGGERED_PREQ_XCHG: Damit wird die Aktualisierung des DualPort-Memorys von netX angestoßen,
-	//Arvid: Lesevorgänge mit xChannelIORead werden dann immer bei ankommenden Telegrammen abgeschlossen.
-	//Arvid: Synchronisation ist damit möglich, z.B. direkt nach dem abgeschlossenen Lesevorgang, aber auch mit CIFX_NOTIFY_PD0_IN - Callback.*/
-	/* Configuration Flags                      */
-	pConfigReq->tData.ulStackCfgFlags = MSK_EPLCN_IF_CFG_STACK_CFG_FLAGS_DISABLE_HOST_TRIGGERED_PREQ_XCHG;
+	pConfigReq->tData.ulStackCfgFlags = MSK_EPLCN_IF_CFG_STACK_CFG_FLAGS_USE_CUSTOM_PDO_OBJ;
 	pConfigReq->tData.ulVendorId = cVendorId;
 	pConfigReq->tData.ulProductCode = cProductCode;
 	pConfigReq->tData.ulRevisionNumber = cRevisionNumber;

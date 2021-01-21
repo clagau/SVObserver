@@ -60,8 +60,8 @@
 #include <mutex>
 #include <queue>
 #include <set>				//Used by static library
-#include <string>
 #include <sstream>
+#include <string>
 #include <tchar.h>			//Used by static library
 #include <time.h>
 #include <typeindex>

@@ -6,7 +6,7 @@
 /**************************************************************************************
 Copyright c Hilscher Gesellschaft fuer Systemautomation mbH. All Rights Reserved.
 ***************************************************************************************
-$Id: Epl_Common_Defines.h 64460 2016-09-30 09:36:50Z Maher $:
+$Id: Epl_Common_Defines.h 4596 2020-12-01 15:26:38Z MAzarkan $:
 
 Description:
   General defines for Ethernet Powerlink (from EPSG)
@@ -142,7 +142,8 @@ Description:
 #define EPL_FEATURE_FLAGS_DYNAMIC_PDO_MAPPING                     0x00000040
 #define EPL_FEATURE_FLAGS_NMT_SERVICE_VIA_UDP                     0x00000080
 #define EPL_FEATURE_FLAGS_CONFIGURATION_MANAGER                   0x00000100
-#define EPL_FEATURE_FLAGS_NODEID_SETUP_BY_SOFTWARE                0x00000400 /* Not implemented */
+#define EPL_FEATURE_FLAGS_MULTIPLEXED_ACCESS                      0x00000200
+#define EPL_FEATURE_FLAGS_NODEID_SETUP_BY_SOFTWARE                0x00000400
 #define EPL_FEATURE_FLAGS_SDO_READ_WRITE_ALL_BY_INDEX             0x00004000 /* Not implemented */
 #define EPL_FEATURE_FLAGS_MULTIPLE_ASND                           0x00010000
 

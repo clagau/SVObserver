@@ -7,7 +7,7 @@
 #define __CIFXERRORS_H__
 
 /*******************************************************************************
-* CIF Device Driver Errors
+* CIFX Device Driver Errors
 *******************************************************************************/
 /*  */
 /*   Values are 32 bit values laid out as follows: */
@@ -62,7 +62,7 @@
 /*  */
 /*  MessageText: */
 /*  */
-/*  Invalid pointer (NULL) passed to driver */
+/*  Invalid pointer (e.g. NULL) passed to driver */
 /*  */
 #define CIFX_INVALID_POINTER             ((int32_t)0x800A0001L)
 
@@ -242,7 +242,7 @@
 /*  */
 /*  MessageText: */
 /*  */
-/*  Unkown callback handling mode */
+/*  Unknown callback handling mode */
 /*  */
 #define CIFX_CALLBACK_MODE_UNKNOWN       ((int32_t)0x800A0015L)
 
@@ -278,7 +278,7 @@
 /*  */
 /*  MessageText: */
 /*  */
-/*  Callback was not registerd before */
+/*  Callback was not registered before */
 /*  */
 #define CIFX_CALLBACK_NOT_REGISTERED     ((int32_t)0x800A0019L)
 
@@ -428,7 +428,7 @@
 /*  */
 /*  MessageText: */
 /*  */
-/*  Dual port memory not accessable (board not found) */
+/*  Dual port memory not accessible (board not found) */
 /*  */
 #define CIFX_DEV_DPM_ACCESS_ERROR        ((int32_t)0x800C0010L)
 
@@ -795,6 +795,69 @@
 /*  */
 #define CIFX_TRANSPORT_CONNECT           ((int32_t)0x800D0003L)
 
+/*  */
+/* MessageId: CIFX_TRANSPORT_ABORTED */
+/*  */
+/* MessageText: */
+/*  */
+/* Transfer has been aborted due to keep alive timeout or interface detachment */
+/*  */
+#define CIFX_TRANSPORT_ABORTED           ((int32_t)0x800D0004L)
+
+/*  */
+/* MessageId: CIFX_TRANSPORT_INVALID_RESPONSE */
+/*  */
+/* MessageText: */
+/*  */
+/* The packet response was rejected due to invalid packet data */
+/*  */
+#define CIFX_TRANSPORT_INVALID_RESPONSE  ((int32_t)0x800D0005L)
+
+/*  */
+/* MessageId: CIFX_TRANSPORT_UNKNOWN_DATALAYER */
+/*  */
+/* MessageText: */
+/*  */
+/* The data layer provided by the device is not supported */
+/*  */
+#define CIFX_TRANSPORT_UNKNOWN_DATALAYER ((int32_t)0x800D0006L)
+
+/*  */
+/* MessageId: CIFX_CONNECTOR_FUNCTIONS_READ_ERROR */
+/*  */
+/* MessageText: */
+/*  */
+/* Error reading the connector functions from the DLL */
+/*  */
+#define CIFX_CONNECTOR_FUNCTIONS_READ_ERROR ((int32_t)0x800D0010L)
+
+/*  */
+/* MessageId: CIFX_CONNECTOR_IDENTIFIER_TOO_LONG */
+/*  */
+/* MessageText: */
+/*  */
+/* Connector delivers an identifier longer than 6 characters */
+/*  */
+#define CIFX_CONNECTOR_IDENTIFIER_TOO_LONG ((int32_t)0x800D0011L)
+
+/*  */
+/* MessageId: CIFX_CONNECTOR_IDENTIFIER_EMPTY */
+/*  */
+/* MessageText: */
+/*  */
+/* Connector delivers an empty identifier */
+/*  */
+#define CIFX_CONNECTOR_IDENTIFIER_EMPTY  ((int32_t)0x800D0012L)
+
+/*  */
+/* MessageId: CIFX_CONNECTOR_DUPLICATE_IDENTIFIER */
+/*  */
+/* MessageText: */
+/*  */
+/* Connector identifier already used */
+/*  */
+#define CIFX_CONNECTOR_DUPLICATE_IDENTIFIER ((int32_t)0x800D0013L)
+
 /*******************************************************************************
 * CIFX API Transport Header State Errors
 *******************************************************************************/
@@ -821,7 +884,7 @@
 /*  */
 /*  MessageText: */
 /*  */
-/*  Transaction with inclomplete length detected */
+/*  Transaction with incomplete length detected */
 /*  */
 #define CIFX_TRANSPORT_LENGTH_INCOMPLETE ((int32_t)0x800E0003L)
 

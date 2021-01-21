@@ -19,7 +19,8 @@ typedef int32_t (APIENTRY *xChannelOpenPtr)(CIFXHANDLE, char*, uint32_t, CIFXHAN
 typedef int32_t (APIENTRY *xChannelClosePtr)(CIFXHANDLE);
 typedef int32_t (APIENTRY *xChannelInfoPtr)(CIFXHANDLE, uint32_t, void*);
 typedef int32_t (APIENTRY *xChannelResetPtr)(CIFXHANDLE, uint32_t, uint32_t);
-typedef int32_t (APIENTRY *xChannelHostStatePtr)(CIFXHANDLE, uint32_t, uint32_t*, uint32_t);
+typedef int32_t (APIENTRY* xChannelHostStatePtr)(CIFXHANDLE, uint32_t, uint32_t*, uint32_t);
+typedef int32_t (APIENTRY* xChannelSyncStatePtr)(CIFXHANDLE, uint32_t, uint32_t, uint32_t*);
 typedef int32_t (APIENTRY *xChannelPutPacketPtr)(CIFXHANDLE, CIFX_PACKET*, uint32_t);
 typedef int32_t (APIENTRY *xChannelGetPacketPtr)(CIFXHANDLE, uint32_t, CIFX_PACKET*, uint32_t);
 typedef int32_t (APIENTRY *xChannelBusStatePtr)(CIFXHANDLE, uint32_t, uint32_t*, uint32_t);
@@ -46,7 +47,8 @@ public:
 	xChannelClosePtr m_pChannelClose {nullptr};
 	xChannelInfoPtr m_pChannelInfo {nullptr};
 	xChannelResetPtr m_pChannelReset {nullptr};
-	xChannelHostStatePtr m_pChannelHostState {nullptr};
+	xChannelHostStatePtr m_pChannelHostState{ nullptr };
+	xChannelSyncStatePtr m_pChannelSyncState{ nullptr };
 	xChannelPutPacketPtr m_pChannelPutPacket {nullptr};
 	xChannelGetPacketPtr m_pChannelGetPacket {nullptr};
 	xChannelBusStatePtr m_pChannelBusState {nullptr};

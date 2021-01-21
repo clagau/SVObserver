@@ -11,7 +11,10 @@
 #include "SVPlcIO/cifXErrors.h"
 #include "SVPlcIO/Epl_Common_Defines.h"
 #include "SVPlcIO/EplCn_If_Public.h"
+#include "SVPlcIO/Hil_ApplicationCmd.h"
 #pragma endregion Includes
+
+//This is to avoid CheckInclude false positives EPLCN_IF_QUEUE_NAME
 
 constexpr uint32_t cCifxChannel = 0;
 constexpr unsigned long cBuffSize = 255;
@@ -19,21 +22,20 @@ constexpr uint32_t cDriverTimeout = 200;
 constexpr uint32_t cWaitTimeout = 500;
 constexpr uint32_t cResetTimeout = 5000;
 constexpr uint16_t cMaxHostTries = 50;
+constexpr uint32_t cTimeout = 2;
 
 constexpr char* cBoardName = "CIFx0";
 constexpr char* cResult = "Result=%d\n";
 constexpr char* cMissingMessageID = "Message ID %d missing\n";
 constexpr char* cCheckPlcC = "-CHECKPLCCOMS";
-const uint32_t cCifXNodeId = 11; //< The Powerlink Node Id used for the Hilscher CifX card value shall be 11-14 (SVIM1-SVIM4)
-const uint32_t cMaxPLC_DataSize = 456; //< the maximum size of the PLC-data in bytes Telegram = 20 Bytes Dynamic = 436 Bytes
+const uint32_t cCifXNodeId = 11; //The Powerlink Node Id used for the Hilscher CifX card value shall be 11-14 (SVIM1-SVIM4)
+const uint32_t cMaxPLC_DataSize = 456; //The maximum size of the PLC-data in bytes Telegram = 20 Bytes Dynamic = 436 Bytes
 
 /* Identity Information */
 constexpr uint32_t cVendorId = 0x00000044UL;	///Hilscher Vendor ID
 constexpr uint32_t cProductCode = 1UL;			///CIFX
 constexpr uint32_t cSerialNumber = 0UL;			///Use serial number from SecMem or FDL
 constexpr uint32_t cRevisionNumber = 0UL;
-constexpr uint32_t cRegisterAppReq = 0x00002F10;
-constexpr uint32_t cUnRegisterAppReq = 0x00002F12;
 
 ///This is a map which defines the PLC node ID depending on the SVIM computer name
 static const std::map<std::string, uint32_t> cComputerNameNodeID =
@@ -57,7 +59,10 @@ CifxLoadLibrary g_cifxLoadLib;
 CIFXHANDLE g_hDriver {nullptr};
 CIFXHANDLE g_hChannel {nullptr};
 uint32_t g_plcNodeID {cCifXNodeId};
-std::atomic<bool> g_interruptReceived{false};
+uint32_t g_notificationType { 0UL };
+std::atomic<int> g_notificationSync{ 0 };
+uint8_t g_ReadBuffer[cMaxPLC_DataSize];
+std::string g_version;
 
 enum CifxMessage : int
 {
@@ -70,10 +75,11 @@ enum CifxMessage : int
 	CifxResetSuccess,
 	CifxDeviceRunningSuccess,
 	CifxRegisterAppSuccess,
+	CifxSetTriggerTypeSuccess,
 	CifxDMASuccess,
-	CifxRegisterInterruptSuccess,
+	CifxRegisterNotifySyncSuccess,
 	CifxBusStateOnSuccess,
-	CifxInterruptReceivedSuccess,
+	CifxNotificationsReceived,
 	CifxTestSuccess,
 	LoadLibraryError = 1000,
 	OpenDriverError,
@@ -84,10 +90,10 @@ enum CifxMessage : int
 	CifxResetError,
 	CifxDeviceRunningError,
 	CifxRegisterAppError,
+	CifxSetTriggerTypeError,
 	CifxDMAError,
-	CifxRegisterInterruptError,
+	CifxRegisterNotifySyncError,
 	CifxBusStateOnError,
-	CifxInterruptReceivedError,
 };
 
 static const std::map<CifxMessage, LPCTSTR> cErrorMessages
@@ -101,11 +107,12 @@ static const std::map<CifxMessage, LPCTSTR> cErrorMessages
 	{CifxMessage::CifxResetSuccess, "Cifx card successfully reset\n"},
 	{CifxMessage::CifxDeviceRunningSuccess, "Cifx card device running\n"},
 	{CifxMessage::CifxRegisterAppSuccess, "Cifx successfully registered app\n"},
+	{CifxMessage::CifxSetTriggerTypeSuccess, "Cifx set trigger type successfully \n"},
 	{CifxMessage::CifxDMASuccess, "DMA successfully set\n"},
-	{CifxMessage::CifxRegisterInterruptSuccess, "Interrupt successfully registered\n"},
+	{CifxMessage::CifxRegisterNotifySyncSuccess, "Sync notify successfully registered\n"},
 	{CifxMessage::CifxBusStateOnSuccess, "Bus state on successfully set\n"},
-	{CifxMessage::CifxInterruptReceivedSuccess, "Interrupt successfully received\n"},
-	{CifxMessage::CifxTestSuccess, "Cfix test successful\n"},
+	{CifxMessage::CifxNotificationsReceived, "Notifications received %s\n"},
+	{CifxMessage::CifxTestSuccess, "Cfix test successful %s\n"},
 	{CifxMessage::LoadLibraryError, "Could not load cifX32DLL.dll [0x%x]\n"},
 	{CifxMessage::OpenDriverError, "Driver could not be opened [0x%x]\n"},
 	{CifxMessage::OpenChannelError, "Channel could not be opened [0x%x]\n"},
@@ -115,10 +122,10 @@ static const std::map<CifxMessage, LPCTSTR> cErrorMessages
 	{CifxMessage::CifxResetError, "Cifx card could not be reset [0x%x]\n"},
 	{CifxMessage::CifxDeviceRunningError, "Cifx card device not running error [0x%x]\n"},
 	{CifxMessage::CifxRegisterAppError, "Cifx could not register app [0x%x]\n"},
+	{CifxMessage::CifxSetTriggerTypeError, "Cifx could not set trigger type [0x%x]\n"},
 	{CifxMessage::CifxDMAError, "DMA could not be set [0x%x]\n"},
-	{CifxMessage::CifxRegisterInterruptError, "Interrupt could not be registered [0x%x]\n"},
+	{CifxMessage::CifxRegisterNotifySyncError, "Sync Notify could not be registered [0x%x]\n"},
 	{CifxMessage::CifxBusStateOnError, "Bus state on could not be set [0x%x]\n"},
-	{CifxMessage::CifxInterruptReceivedError, "Interrupt has not been received [0x%x]\n"},
 };
 
 void printMessage(CifxMessage messageID, int32_t result = 0, LPCTSTR pText = nullptr)
@@ -149,11 +156,30 @@ void printMessage(CifxMessage messageID, int32_t result = 0, LPCTSTR pText = nul
 	}
 }
 
-void APIENTRY interruptHandler(uint32_t notification, uint32_t , void* , void* )
+void APIENTRY notificationHandler(uint32_t notification, uint32_t , void* , void* )
 {
-	if (CIFX_NOTIFY_PD0_IN == notification)
+	if (g_notificationType == notification)
 	{
-		g_interruptReceived = true;
+		int32_t result = g_cifxLoadLib.m_pChannelIORead(g_hChannel, 0, 0, cMaxPLC_DataSize, g_ReadBuffer, cTimeout);
+
+		if (CIFX_NO_ERROR == result)
+		{
+			//Message type is Request and content is version
+			if (2 == g_ReadBuffer[4] && 1 == g_ReadBuffer[5])
+			{
+				g_version = "with PLC Data Version=" + std::to_string(g_ReadBuffer[20]);
+				g_version += '.';
+				g_version += std::to_string(g_ReadBuffer[21]);
+			}
+			g_cifxLoadLib.m_pChannelIOWrite(g_hChannel, 0, 0, cMaxPLC_DataSize, g_ReadBuffer, cTimeout);
+		}
+
+		g_notificationSync++;
+		if (CIFX_NOTIFY_SYNC == g_notificationType)
+		{
+			uint32_t errorSyncCount{ 0 };
+			g_cifxLoadLib.m_pChannelSyncState(g_hChannel, CIFX_SYNC_SIGNAL_CMD, cDriverTimeout, &errorSyncCount);
+		}
 	}
 }
 
@@ -194,7 +220,7 @@ uint32_t SendRecvPkt(CIFX_PACKET* pSendPkt, CIFX_PACKET* pRecvPkt)
 	return result;
 }
 
-uint32_t SendRecvEmptyPkt(uint32_t command)
+int32_t SendRecvCmdPkt(uint32_t command)
 {
 
 	CIFX_PACKET sendPkt;
@@ -204,19 +230,23 @@ uint32_t SendRecvEmptyPkt(uint32_t command)
 	memset(&sendPkt, 0, sizeof(sendPkt));
 	memset(&recvPkt, 0, sizeof(recvPkt));
 
-	TLR_EMPTY_PACKET_T* pEmptyPacket = reinterpret_cast<TLR_EMPTY_PACKET_T*> (&sendPkt);
-
-	/* ulSrc and ulDest are set by GetPacket / SendPacket */
-	pEmptyPacket->tHead.ulCmd = command;
-	pEmptyPacket->tHead.ulDest = 0x20;
-	pEmptyPacket->tHead.ulDestId = 0;
-	pEmptyPacket->tHead.ulExt = 0;
-	pEmptyPacket->tHead.ulId = 0;
-	pEmptyPacket->tHead.ulLen = 0;
-	pEmptyPacket->tHead.ulRout = 0;
-	pEmptyPacket->tHead.ulSrc = 0;
-	pEmptyPacket->tHead.ulSrcId = 0;
-	pEmptyPacket->tHead.ulSta = 0;
+	if (HIL_SET_TRIGGER_TYPE_REQ == command)
+	{
+		HIL_SET_TRIGGER_TYPE_REQ_T* pPacket = reinterpret_cast<HIL_SET_TRIGGER_TYPE_REQ_T*> (&sendPkt);
+		memset(pPacket, 0, sizeof(HIL_SET_TRIGGER_TYPE_REQ_T));
+		pPacket->tHead.ulCmd = command;
+		pPacket->tHead.ulDest = HIL_PACKET_DEST_DEFAULT_CHANNEL;
+		pPacket->tHead.ulLen = sizeof(HIL_SET_TRIGGER_TYPE_REQ_DATA_T);
+		pPacket->tData.usPdInHskTriggerType = HIL_TRIGGER_TYPE_SYNC_NONE;
+		pPacket->tData.usPdOutHskTriggerType = HIL_TRIGGER_TYPE_SYNC_NONE;
+		pPacket->tData.usSyncHskTriggerType = HIL_TRIGGER_TYPE_SYNC_TIMED_ACTIVATION;
+	}
+	else
+	{
+		TLR_EMPTY_PACKET_T* pPacket = reinterpret_cast<TLR_EMPTY_PACKET_T*> (&sendPkt);
+		pPacket->tHead.ulCmd = command;
+		pPacket->tHead.ulDest = HIL_PACKET_DEST_DEFAULT_CHANNEL;
+	}
 
 	return SendRecvPkt(&sendPkt, &recvPkt);
 }
@@ -226,8 +256,8 @@ void closeCifX()
 	if(nullptr != g_hChannel)
 	{
 		g_cifxLoadLib.m_pChannelBusState(g_hChannel, CIFX_BUS_STATE_OFF, nullptr, cDriverTimeout);
-		g_cifxLoadLib.m_pChannelUnregisterNotification(g_hChannel, CIFX_NOTIFY_PD0_IN);
-		SendRecvEmptyPkt(cUnRegisterAppReq);
+		g_cifxLoadLib.m_pChannelUnregisterNotification(g_hChannel, g_notificationType);
+		SendRecvCmdPkt(HIL_UNREGISTER_APP_REQ);
 		g_cifxLoadLib.m_pChannelClose(g_hChannel);
 		g_hChannel = nullptr;
 	}
@@ -262,13 +292,7 @@ void BuildConfigurationReq(CIFX_PACKET* pPacket, uint8_t NodeId, uint16_t DataLe
 
 	pConfigReq->tData.ulSystemFlags = 0;                      //System Flags  
 	pConfigReq->tData.ulWatchdogTime = 1000;					//Watchdog time
-																/* Stack creates default PDO objects */
-																//MSK_EPLCN_IF_CFG_STACK_CFG_FLAGS_NMT_TRIGGERED_BY_APP
-																//Arvid: MSK_EPLCN_IF_CFG_STACK_CFG_FLAGS_DISABLE_HOST_TRIGGERED_PREQ_XCHG: Damit wird die Aktualisierung des DualPort-Memorys von netX angestoßen,
-																//Arvid: Lesevorgänge mit xChannelIORead werden dann immer bei ankommenden Telegrammen abgeschlossen.
-																//Arvid: Synchronisation ist damit möglich, z.B. direkt nach dem abgeschlossenen Lesevorgang, aber auch mit CIFX_NOTIFY_PD0_IN - Callback.*/
-																/* Configuration Flags                      */
-	pConfigReq->tData.ulStackCfgFlags = MSK_EPLCN_IF_CFG_STACK_CFG_FLAGS_DISABLE_HOST_TRIGGERED_PREQ_XCHG;
+	pConfigReq->tData.ulStackCfgFlags = MSK_EPLCN_IF_CFG_STACK_CFG_FLAGS_USE_CUSTOM_PDO_OBJ;
 	pConfigReq->tData.ulVendorId = cVendorId;
 	pConfigReq->tData.ulProductCode = cProductCode;
 	pConfigReq->tData.ulRevisionNumber = cRevisionNumber;
@@ -360,6 +384,8 @@ int main(int argc, char* args[])
 		}
 	}
 
+	memset(g_ReadBuffer, 0, cMaxPLC_DataSize);
+
 	DWORD size {cBuffSize};
 	TCHAR buffer[cBuffSize];
 	memset(buffer, 0, cBuffSize);
@@ -419,11 +445,15 @@ int main(int argc, char* args[])
 	Sleep(cResetTimeout);
 	if (CIFX_NO_ERROR == result)
 	{
+		constexpr char* cPD0NotificationVersion = "3.4.0.2";
 		CHANNEL_INFORMATION channelInfo;
 		g_cifxLoadLib.m_pChannelInfo(g_hChannel, sizeof(channelInfo), reinterpret_cast<void*> (&channelInfo));
-		std::stringstream outputStream;
-		outputStream << channelInfo.abFWName << ' ' << channelInfo.usFWMajor << '.' << channelInfo.usFWMinor << '.' << channelInfo.usFWBuild << '.' << channelInfo.usFWRevision;
-		printMessage(CifxMessage::CifxSystemStartSuccess, 0, outputStream.str().c_str());
+		std::string outputString((char*) channelInfo.abFWName);
+		std::string firmware;
+		firmware = std::to_string(channelInfo.usFWMajor) + '.' + std::to_string(channelInfo.usFWMinor) + '.' + std::to_string(channelInfo.usFWBuild) + '.' + std::to_string(channelInfo.usFWRevision);
+		g_notificationType = (cPD0NotificationVersion == firmware) ? CIFX_NOTIFY_PD0_IN : CIFX_NOTIFY_SYNC;
+		outputString += ' ' + firmware;
+		printMessage(CifxMessage::CifxSystemStartSuccess, 0, outputString.c_str());
 	}
 	else
 	{
@@ -495,7 +525,7 @@ int main(int argc, char* args[])
 			printMessage(CifxMessage::CifxDeviceRunningSuccess);
 		}
 
-		result = SendRecvEmptyPkt(cRegisterAppReq);
+		result = SendRecvCmdPkt(HIL_REGISTER_APP_REQ);
 		if (CIFX_NO_ERROR == result)
 		{
 			printMessage(CifxMessage::CifxRegisterAppSuccess);
@@ -503,6 +533,19 @@ int main(int argc, char* args[])
 		else
 		{
 			return processError(CifxMessage::CifxRegisterAppError, result);
+		}
+
+		if (CIFX_NOTIFY_SYNC == g_notificationType)
+		{
+			result = SendRecvCmdPkt(HIL_SET_TRIGGER_TYPE_REQ);
+			if (CIFX_NO_ERROR == result)
+			{
+				printMessage(CifxMessage::CifxSetTriggerTypeSuccess);
+			}
+			else
+			{
+				return processError(CifxMessage::CifxSetTriggerTypeError, result);
+			}
 		}
 
 		uint32_t State {0UL};
@@ -516,43 +559,26 @@ int main(int argc, char* args[])
 			return processError(CifxMessage::CifxDMAError, result);
 		}
 
-		result = g_cifxLoadLib.m_pChannelRegisterNotification(g_hChannel, CIFX_NOTIFY_PD0_IN, interruptHandler, nullptr);
+		result = g_cifxLoadLib.m_pChannelRegisterNotification(g_hChannel, g_notificationType, notificationHandler, nullptr);
 		if (CIFX_NO_ERROR == result)
 		{
-			printMessage(CifxMessage::CifxRegisterInterruptSuccess);
+			printMessage(CifxMessage::CifxRegisterNotifySyncSuccess);
 		}
 		else
 		{
-			return processError(CifxMessage::CifxRegisterInterruptSuccess, result);
-		}
-
-		uint32_t  HostState {0UL};
-		/* bus on */
-		result = g_cifxLoadLib.m_pChannelBusState(g_hChannel, CIFX_BUS_STATE_ON, &HostState, cDriverTimeout);
-		if (CIFX_BUS_STATE_ON == HostState)
-		{
-			printMessage(CifxMessage::CifxBusStateOnSuccess);
-		}
-		else
-		{
-			return processError(CifxMessage::CifxBusStateOnError, result);
+			return processError(CifxMessage::CifxRegisterNotifySyncError, result);
 		}
 
 		///Sleep for 10 seconds to check if interrupts are received
-		Sleep(cWaitTimeout);
+		Sleep(cResetTimeout*2);
 
-		if(g_interruptReceived)
-		{
-			printMessage(CifxMessage::CifxInterruptReceivedSuccess);
-		}
-		else
-		{
-			return processError(CifxMessage::CifxInterruptReceivedError, result);
-		}
+		std::string notifications;
+		notifications = "Notifications=" + std::to_string(g_notificationSync);
+		printMessage(CifxMessage::CifxNotificationsReceived, 0, notifications.c_str());
 	}
 
 	closeCifX();
-	printMessage(CifxMessage::CifxTestSuccess);
+	printMessage(CifxMessage::CifxTestSuccess, 0, g_version.c_str());
 	printf(cResult, 0);
 	return 0;
 }

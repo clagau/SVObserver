@@ -9,6 +9,7 @@
 
 //Moved to precompiled header: #include <comdef.h>
 //Moved to precompiled header: #include <vector>
+#include "TriggerEngineConnection.h"
 #include "Triggering/IODeviceBase.h"
 
 namespace SvPlc
@@ -76,10 +77,11 @@ private:
 	std::atomic_uint32_t m_outputCount[cMaxPlcTriggers] {0UL, 0UL, 0UL, 0UL};
 	std::atomic_int8_t m_currentTriggerChannel{-1};
 
-	std::string m_plcSimulateFile;
+	std::string m_AdditionalData;
 	std::string m_logFileName;
 	std::ofstream m_logInFile;
 	std::ofstream m_logOutFile;
+	TriggerType m_triggerType{TriggerType::None};
 #pragma endregion Member Variables
 };
 

@@ -19,7 +19,7 @@ namespace SvPlc
 class HardwareTriggerSource : public TriggerSource
 {
 public:
-	explicit HardwareTriggerSource(std::function<void(const TriggerReport&)> pReportTrigger, uint16_t plcNodeID, uint16_t plcTransferTime);
+	explicit HardwareTriggerSource(std::function<void(const TriggerReport&)> pReportTrigger, uint16_t plcNodeID, uint16_t plcTransferTime, const std::string& rAdditionalData);
 	virtual ~HardwareTriggerSource();
 
 	virtual bool isReady() override	{ return m_cifXCard.isProtocolInitialized(); }
@@ -47,7 +47,7 @@ private:
 	std::queue<InspectionState> m_inspectionStateQueue;
 
 	CifXCard m_cifXCard;
-
+	std::string m_additionalData;
 	bool m_initialized {false};
 };
 

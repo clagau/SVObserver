@@ -19,17 +19,20 @@ namespace SvPlc
 HANDLE g_hSignalEvent {nullptr};
 std::atomic_bool g_runThread{false};
 
-PowerlinkConnection::PowerlinkConnection(std::function<void(const TriggerReport&)> pReportTrigger, uint16_t plcNodeID, uint16_t plcTransferTime, const std::string& rSimulateFile)
+PowerlinkConnection::PowerlinkConnection(std::function<void(const TriggerReport&)> pReportTrigger, TriggerType triggerType, uint16_t plcNodeID, uint16_t plcTransferTime, const std::string& rAdditionalData)
 {
 	g_hSignalEvent = ::CreateEvent(nullptr, false, false, nullptr);
 
-	if (rSimulateFile.empty())
+	switch (triggerType)
 	{
-		m_pTriggersource = std::make_unique<HardwareTriggerSource>(pReportTrigger, plcNodeID, plcTransferTime);
-	}
-	else
-	{
-		m_pTriggersource = std::make_unique<SimulatedTriggerSource>(pReportTrigger, rSimulateFile);
+	case TriggerType::HardwareTrigger:
+		m_pTriggersource = std::make_unique<HardwareTriggerSource>(pReportTrigger, plcNodeID, plcTransferTime, rAdditionalData);
+		break;
+	case TriggerType::SimulatedTrigger:
+		m_pTriggersource = std::make_unique<SimulatedTriggerSource>(pReportTrigger, rAdditionalData);
+		break;
+	default:
+		break;
 	}
 }
 

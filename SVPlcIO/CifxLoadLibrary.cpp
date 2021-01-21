@@ -34,6 +34,7 @@ HRESULT CifxLoadLibrary::Open()
 			m_pChannelInfo = reinterpret_cast<xChannelInfoPtr> (::GetProcAddress(m_dllHandle, "xChannelInfo"));
 			m_pChannelReset = reinterpret_cast<xChannelResetPtr> (::GetProcAddress(m_dllHandle, "xChannelReset"));
 			m_pChannelHostState = reinterpret_cast<xChannelHostStatePtr> (::GetProcAddress(m_dllHandle, "xChannelHostState"));
+			m_pChannelSyncState = reinterpret_cast<xChannelSyncStatePtr> (::GetProcAddress(m_dllHandle, "xChannelSyncState"));
 			m_pChannelPutPacket = reinterpret_cast<xChannelPutPacketPtr> (::GetProcAddress(m_dllHandle, "xChannelPutPacket"));
 			m_pChannelGetPacket = reinterpret_cast<xChannelGetPacketPtr> (::GetProcAddress(m_dllHandle, "xChannelGetPacket"));
 			m_pChannelBusState = reinterpret_cast<xChannelBusStatePtr> (::GetProcAddress(m_dllHandle, "xChannelBusState"));
@@ -51,6 +52,7 @@ HRESULT CifxLoadLibrary::Open()
 			    nullptr == m_pChannelInfo ||
 			    nullptr == m_pChannelReset ||
 				nullptr == m_pChannelHostState ||
+				nullptr == m_pChannelSyncState ||
 				nullptr == m_pChannelPutPacket ||
 				nullptr == m_pChannelGetPacket ||
 				nullptr == m_pChannelBusState ||

@@ -25,8 +25,9 @@ static_assert(sizeof(Telegram) + sizeof(InspectionCommand) <= cmaxPLC_DataSize, 
 static_assert(sizeof(Telegram) + sizeof(InspectionState) <= cmaxPLC_DataSize, "Write buffer size is to small");
 static_assert(sizeof(Telegram) + cConfigListSize * sizeof(ConfigDataSet) <= cmaxPLC_DataSize, "Write buffer size is to small");
 
-HardwareTriggerSource::HardwareTriggerSource(std::function<void(const TriggerReport&)> pReportTrigger, uint16_t plcNodeID, uint16_t plcTransferTime) : TriggerSource(pReportTrigger)
+HardwareTriggerSource::HardwareTriggerSource(std::function<void(const TriggerReport&)> pReportTrigger, uint16_t plcNodeID, uint16_t plcTransferTime, const std::string& rAdditionalData) : TriggerSource(pReportTrigger)
 , m_plcTransferTime {plcTransferTime}
+, m_additionalData {rAdditionalData}
 , m_cifXCard((0 != plcNodeID) ? plcNodeID : cCifXNodeId, cmaxPLC_DataSize)
 {
 	::OutputDebugString("Triggers are received from PLC via CifX card.\n");
@@ -45,7 +46,7 @@ HRESULT HardwareTriggerSource::initialize()
 	if(m_initialized == false)
 	{
 		m_cifXCard.setHandleForTelegramReceptionEvent(g_hSignalEvent);
-		result = m_cifXCard.OpenAndInitializeCifX();
+		result = m_cifXCard.OpenAndInitializeCifX(m_additionalData);
 		if (S_OK != result)
 		{
 			::OutputDebugString("Could not open and initialize PLC connection!\n");
@@ -120,7 +121,7 @@ double HardwareTriggerSource::getExecutionTime(uint8_t channel)
 	const InputData& rInputData = m_cifXCard.getCurrentInputData();
 	const int16_t& rTimeStamp1 = rInputData.m_inspectionCmd.m_channels[channel].m_timeStamp1;
 	int32_t triggerTimeOffset = getPlcTriggerTime(rInputData.m_inspectionCmd.m_socRelative, rTimeStamp1) - rInputData.m_inspectionCmd.m_socRelative;
-	return rInputData.m_interruptTime + static_cast<double> (triggerTimeOffset - m_plcTransferTime) / cMicrosecondsPerMillisecond;
+	return rInputData.m_interruptTime + static_cast<double> ((triggerTimeOffset - static_cast<int32_t> (m_plcTransferTime)) / cMicrosecondsPerMillisecond);
 }
 
 int32_t HardwareTriggerSource::getPlcTriggerTime(int32_t socRelative, int16_t timeStamp)

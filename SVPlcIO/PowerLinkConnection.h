@@ -15,13 +15,14 @@ namespace SvPlc
 {
 struct TriggerReport;
 struct ResultReport;
+enum class TriggerType;
 
 extern HANDLE g_hSignalEvent;
 
 class PowerlinkConnection
 {
 public:
-	PowerlinkConnection(std::function<void(const TriggerReport&)> pReportTrigger, uint16_t plcNodeID, uint16_t plcTransferTime, const std::string& rSimulateFile);
+	PowerlinkConnection(std::function<void(const TriggerReport&)> pReportTrigger, TriggerType triggerType, uint16_t plcNodeID, uint16_t plcTransferTime, const std::string& rAdditionalData);
 	~PowerlinkConnection();
 
 	void setReady(bool ready);
