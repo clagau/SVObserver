@@ -107,7 +107,8 @@ HRESULT ConvertVariantToProtobuf(const _variant_t& rVariant, SvPb::Variant* pPbV
 					}
 					pPbVariant->set_count(count);
 					pPbVariant->set_type(rVariant.vt);
-					pPbVariant->set_bytesval(StringArray);
+					//Note SVRemoteControl.ocx has always used strval and ConvertProtobufToVariant as well so not bytesval!
+					pPbVariant->set_strval(StringArray);
 				}
 				else
 				{
