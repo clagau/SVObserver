@@ -9,6 +9,7 @@
 #include "AuditFilesDialog.h"
 #include "SVUtilityLibrary/AuditFiles.h"
 #include "SVUtilityLibrary/SHA256.h"
+#include "SVOResource/ConstGlobalSvOr.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -65,10 +66,16 @@ namespace SvOg
 	BOOL AuditFilesDialog::OnInitDialog()
 	{
 		CDialog::OnInitDialog();
-
+		
 		if (m_DialogType == WhiteList)
 		{
-			SetWindowText("SvUl::AuditFile WhiteList");
+			SetHelpID(static_cast<UINT> (ID_CONFIGREPORT_ADDITIONALFILES - SvOr::HELPFILE_ID_OFFSET));
+			SetWindowText("Additional Report Files");
+		}
+		else
+		{
+			SetWindowText("Default Report Files");
+			SetHelpID(static_cast<UINT> (ID_CONFIGREPORT_DEFAULTFILES - SvOr::HELPFILE_ID_OFFSET));
 		}
 
 		for (int i = 0; i < EColumncount; i++)

@@ -44,6 +44,32 @@ typedef CComPtr<IXmlWriter> Writer;
 
 namespace sv_xml
 {
+	
+	std::wstring space2underscore(std::wstring text)
+	{
+		std::replace(text.begin(), text.end(), L' ', L'_');
+		return text;
+	}
+	
+	class WriteStartEndElement
+	{
+	public:	
+		WriteStartEndElement(Writer writer,  LPCWSTR pwszPrefix, LPCWSTR pwszLocalName,LPCWSTR pwszNamespaceUri) 
+		{
+			m_Writer = writer;
+			 
+			std::wstring temp = space2underscore(std::wstring(pwszLocalName));
+			m_Writer->WriteStartElement(pwszPrefix, temp.c_str(), pwszNamespaceUri);
+		}
+
+		~WriteStartEndElement()
+		{
+			m_Writer->WriteEndElement();
+		}
+				
+		Writer m_Writer;
+	};
+	
 	class SVConfigXMLPrint
 	{
 	public:

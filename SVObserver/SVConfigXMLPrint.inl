@@ -115,23 +115,30 @@ inline void SVConfigXMLPrint::PrintXMLDoc(Writer writer) const
 	SVObserverApp* pApp = dynamic_cast <SVObserverApp*> (AfxGetApp());
 	wchar_t head[] = L"<?xml version=\"1.0\"?>";
 	writer->WriteRaw(head);
-	writer->WriteStartElement(nullptr, L"Configuration", nullptr);
-	writer->WriteAttributeString(nullptr, XML_Name, nullptr, SvUl::to_utf16(pApp->getConfigFileName(), cp_dflt).c_str());
-	writer->WriteAttributeString(nullptr, L"Path", nullptr, SvUl::to_utf16(pApp->getConfigFullFileName(), cp_dflt).c_str());
-	writer->WriteAttributeString(nullptr, L"Timestamp", nullptr, sv_xml::now().c_str());
-	writer->WriteStartElement(nullptr, L"Settings", nullptr);
-	WriteTriggers(writer);
-	WriteCameras(writer);
-	WriteInspections(writer);
-	WritePPQs(writer);
-	writer->WriteEndElement(); //Settings 
-	writer->WriteStartElement(nullptr, L"Details", nullptr);
-	WriteToolSets(writer);
-	WriteIOSection(writer);
-	WritePPQBar(writer);
-	WriteExternalFiles(writer);
-	writer->WriteEndElement(); //details
-	writer->WriteEndElement(); //configuratin
+
+	{
+		WriteStartEndElement Configuration(writer, nullptr, L"Configuration", nullptr);
+		writer->WriteAttributeString(nullptr, XML_Name, nullptr, SvUl::to_utf16(pApp->getConfigFileName(), cp_dflt).c_str());
+		writer->WriteAttributeString(nullptr, L"Path", nullptr, SvUl::to_utf16(pApp->getConfigFullFileName(), cp_dflt).c_str());
+		writer->WriteAttributeString(nullptr, L"Timestamp", nullptr, sv_xml::now().c_str());
+
+		{
+			WriteStartEndElement Settings(writer, nullptr, L"Settings", nullptr);
+			WriteTriggers(writer);
+			WriteCameras(writer);
+			WriteInspections(writer);
+			WritePPQs(writer);
+		}
+
+		{
+			WriteStartEndElement Details(writer, nullptr, L"Details", nullptr);
+			WriteToolSets(writer);
+			WriteIOSection(writer);
+			WritePPQBar(writer);
+			WriteExternalFiles(writer);
+		}
+
+	}
 	writer->WriteEndDocument();
 	writer->Flush();
 }
@@ -796,7 +803,8 @@ inline void SVConfigXMLPrint::WriteMonitorListSection(Writer writer) const
 
 inline void SVConfigXMLPrint::WritePPQBar(Writer writer) const
 {
-	writer->WriteStartElement(nullptr, L"PPQBar", nullptr);
+
+	WriteStartEndElement writerPPQBar(writer, nullptr, L"PPQBar", nullptr);
 	SVConfigurationObject* pConfig(nullptr);
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 
@@ -809,7 +817,9 @@ inline void SVConfigXMLPrint::WritePPQBar(Writer writer) const
 
 		if (nullptr != pPPQ)
 		{
-			writer->WriteStartElement(nullptr, SvUl::to_utf16(pPPQ->GetName(), cp_dflt).c_str(), nullptr);
+			//std::wstring t = SvUl::to_utf16(pPPQ->GetName(), cp_dflt).c_str();
+			WriteStartEndElement writerPPQName(writer, nullptr, SvUl::to_utf16(pPPQ->GetName(), cp_dflt).c_str(), nullptr);
+
 			for (int intPPQPos = 0; intPPQPos < pPPQ->getPPQLength(); intPPQPos++)
 			{
 				bool	bPosPrint = false;
@@ -825,13 +835,15 @@ inline void SVConfigXMLPrint::WritePPQBar(Writer writer) const
 
 						if (lPos == intPPQPos)
 						{
-							writer->WriteStartElement(nullptr, SvUl::to_utf16(pCamera->GetName(), cp_dflt).c_str(), nullptr);
+							WriteStartEndElement writerCameraName(writer, nullptr, SvUl::to_utf16(pCamera->GetName(), cp_dflt).c_str(), nullptr);
+
 							if (!bPosPrint)
 							{
+								std::wstring temp = _itow(intPPQPos + 1, buff, 10);
 								writer->WriteAttributeString(nullptr, L"Position", nullptr, _itow(intPPQPos + 1, buff, 10));
 								bPosPrint = true;
 							}
-							writer->WriteEndElement();
+
 						}
 					}
 				}
@@ -845,40 +857,44 @@ inline void SVConfigXMLPrint::WritePPQBar(Writer writer) const
 				{
 					if (pEntry->m_PPQIndex == intPPQPos)
 					{
-						bool bValid = false;
+
 						SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject(pEntry->m_IOId);
 						if (nullptr != l_pObject)
 						{
 							if (l_pObject->IsCreated())
 							{
-								writer->WriteStartElement(nullptr, SvUl::to_utf16(l_pObject->GetName(), cp_dflt).c_str(), nullptr);
-								bValid = true;
+								WriteStartEndElement writerObjectName(writer, nullptr, SvUl::to_utf16(l_pObject->GetName(), cp_dflt).c_str(), nullptr);
+								if (!bPosPrint)
+								{
+									std::wstring t = _itow(intPPQPos + 1, buff, 10);
+									writer->WriteAttributeString(nullptr, L"Position", nullptr, _itow(intPPQPos + 1, buff, 10));
+									bPosPrint = true;
+								}
+
 							}//end if
 						}
 						else
 						{
 							if (pEntry->getObject()->IsCreated())
 							{
-								writer->WriteStartElement(nullptr, SvUl::to_utf16(pEntry->getObject()->GetName(), cp_dflt).c_str(), nullptr);
-								bValid = true;
+								//std::wstring t = SvUl::to_utf16(pEntry->getObject()->GetName(), cp_dflt);
+								WriteStartEndElement writerObjectName(writer, nullptr, SvUl::to_utf16(pEntry->getObject()->GetName(), cp_dflt).c_str(), nullptr);
+								if (!bPosPrint)
+								{
+									std::wstring t = _itow(intPPQPos + 1, buff, 10);
+									writer->WriteAttributeString(nullptr, L"Position", nullptr, _itow(intPPQPos + 1, buff, 10));
+									bPosPrint = true;
+								}
+
 							} // end if
 						} //end else
-						if (bValid && !bPosPrint)
-						{
-							writer->WriteAttributeString(nullptr, L"Position", nullptr, _itow(intPPQPos + 1, buff, 10));
-							bPosPrint = true;
-						}
-						if (bValid)
-						{
-							writer->WriteEndElement();
-						}
 					}
 				}
 			}
-			writer->WriteEndElement();
+
 		}
 	}
-	writer->WriteEndElement();
+
 }
 
 inline std::wstring utf16(const std::string& str) { return SvUl::to_utf16(str.c_str(), cp_dflt); }
@@ -1201,8 +1217,8 @@ void SVConfigXMLPrint::WriteInputOutputList(Writer writer, SvIe::SVTaskObjectCla
 			if (nullptr != pObject && pObject->GetParent() == pTaskObj)
 			{
 				WriteObject(writer, pObject);
-			}  
-		} 
+			}
+		}
 	}
 }  // end function void SVConfigXMLPrint:::PrintInputOutputList( ... )
 
@@ -1471,54 +1487,72 @@ inline void SVConfigXMLPrint::WriteExternalFiles(Writer writer) const
 		return;
 	}
 	pConfig->UpdateAuditFiles(true);
-	writer->WriteStartElement(nullptr, L"External_Files", nullptr);
-	auto DefaultList = pConfig->GetAuditDefaultList();
-	for (auto& Element : DefaultList)
 	{
-		if (Element.bignore == false)
+		WriteStartEndElement ExternalFiles(writer, nullptr, L"External_Files", nullptr);
+		auto DefaultList = pConfig->GetAuditDefaultList();
+		for (auto& Element : DefaultList)
 		{
-			writer->WriteStartElement(nullptr, L"File", nullptr);
-			writer->WriteAttributeString(nullptr, L"Name", nullptr, SvUl::to_utf16(Element.GetFilename().c_str(), cp_dflt).c_str());
-			writer->WriteStartElement(nullptr, L"FullName", nullptr);
-			writer->WriteString(SvUl::to_utf16(Element.GetFullname().c_str(), cp_dflt).c_str());
-			writer->WriteEndElement();
-			writer->WriteStartElement(nullptr, L"WriteDate", nullptr);
-			writer->WriteString(SvUl::to_utf16(Element.GetFormatedWriteDate().c_str(), cp_dflt).c_str());
-			writer->WriteEndElement();
-			writer->WriteStartElement(nullptr, L"Size", nullptr);
-			writer->WriteString(SvUl::to_utf16(Element.GetFormatedSize().c_str(), cp_dflt).c_str());
-			writer->WriteEndElement();
-			writer->WriteStartElement(nullptr, L"hash", nullptr);
-			writer->WriteString(SvUl::to_utf16(Element.GetHashvalue().c_str(), cp_dflt).c_str());
-			writer->WriteEndElement();
-			writer->WriteEndElement();
+			if (Element.bignore == false)
+			{
+				WriteStartEndElement FilesElement(writer, nullptr, L"File", nullptr);
+
+				writer->WriteAttributeString(nullptr, L"Name", nullptr, SvUl::to_utf16(Element.GetFilename().c_str(), cp_dflt).c_str());
+				{
+					WriteStartEndElement FullNameElement(writer, nullptr, L"FullName", nullptr);
+					writer->WriteString(SvUl::to_utf16(Element.GetFullname().c_str(), cp_dflt).c_str());
+
+				}
+				{
+					WriteStartEndElement WriteDataElement(writer, nullptr, L"WriteDate", nullptr);
+					writer->WriteString(SvUl::to_utf16(Element.GetFormatedWriteDate().c_str(), cp_dflt).c_str());
+
+				}
+				{
+					WriteStartEndElement SizeElement(writer, nullptr, L"Size", nullptr);
+					writer->WriteString(SvUl::to_utf16(Element.GetFormatedSize().c_str(), cp_dflt).c_str());
+
+				}
+				{
+					WriteStartEndElement HashElement(writer, nullptr, L"hash", nullptr);
+					writer->WriteString(SvUl::to_utf16(Element.GetHashvalue().c_str(), cp_dflt).c_str());
+				}
+
+			}
+
+		}
+	}
+
+	{
+		WriteStartEndElement AdditionalExternalFiles(writer, nullptr, L"Aditional_External_Files", nullptr);
+		auto WhiteList = pConfig->GetAuditWhiteList();
+		for (auto& Element : WhiteList)
+		{
+			if (Element.bignore == false)
+			{
+				WriteStartEndElement FileElement(writer, nullptr, L"File", nullptr);
+				writer->WriteAttributeString(nullptr, L"Name", nullptr, SvUl::to_utf16(Element.GetFilename().c_str(), cp_dflt).c_str());
+
+				{
+					WriteStartEndElement FullNameElement(writer, nullptr, L"FullName", nullptr);
+					writer->WriteString(SvUl::to_utf16(Element.GetFullname().c_str(), cp_dflt).c_str());
+
+				}
+				{
+					WriteStartEndElement WriteDateElement(writer, nullptr, L"WriteDate", nullptr);
+					writer->WriteString(SvUl::to_utf16(Element.GetFormatedWriteDate().c_str(), cp_dflt).c_str());
+
+				}
+				{
+					WriteStartEndElement SizeElement(writer, nullptr, L"Size", nullptr);
+					writer->WriteString(SvUl::to_utf16(Element.GetFormatedSize().c_str(), cp_dflt).c_str());
+
+				}
+				{
+					WriteStartEndElement HashElement(writer, nullptr, L"hash", nullptr);
+					writer->WriteString(SvUl::to_utf16(Element.GetHashvalue().c_str(), cp_dflt).c_str());
+				}
+			}
 		}
 
 	}
-
-	writer->WriteEndElement();
-	writer->WriteStartElement(nullptr, L"Aditional_External_Files", nullptr);
-	auto WhiteList = pConfig->GetAuditWhiteList();
-	for (auto& Element : WhiteList)
-	{
-		if (Element.bignore == false)
-		{
-			writer->WriteStartElement(nullptr, L"File", nullptr);
-			writer->WriteAttributeString(nullptr, L"Name", nullptr, SvUl::to_utf16(Element.GetFilename().c_str(), cp_dflt).c_str());
-			writer->WriteStartElement(nullptr, L"FullName", nullptr);
-			writer->WriteString(SvUl::to_utf16(Element.GetFullname().c_str(), cp_dflt).c_str());
-			writer->WriteEndElement();
-			writer->WriteStartElement(nullptr, L"WriteDate", nullptr);
-			writer->WriteString(SvUl::to_utf16(Element.GetFormatedWriteDate().c_str(), cp_dflt).c_str());
-			writer->WriteEndElement();
-			writer->WriteStartElement(nullptr, L"Size", nullptr);
-			writer->WriteString(SvUl::to_utf16(Element.GetFormatedSize().c_str(), cp_dflt).c_str());
-			writer->WriteEndElement();
-			writer->WriteStartElement(nullptr, L"hash", nullptr);
-			writer->WriteString(SvUl::to_utf16(Element.GetHashvalue().c_str(), cp_dflt).c_str());
-			writer->WriteEndElement();
-			writer->WriteEndElement();
-		}
-	}
-	writer->WriteEndElement();
 }

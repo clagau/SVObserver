@@ -1630,6 +1630,7 @@ void SVObserverApp::OnExtrasConfigReportDefaultFiles()
 	if (Dlg.DoModal() == IDOK)
 	{
 		pConfig->SetAuditDefaultList(std::move(Dlg.GetFiles()));
+		SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
 	}
 }
 
@@ -1649,6 +1650,7 @@ void SVObserverApp::OnExtrasConfigReportAdditionalFiles()
 	if (Dlg.DoModal() == IDOK)
 	{
 		pConfig->SetAuditWhiteList(std::move(Dlg.GetFiles()));
+		SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
 	}
 }
 
