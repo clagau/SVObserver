@@ -22,6 +22,8 @@
 #include "CameraLibrary\SVStringValueDeviceParam.h"
 #include "Definitions/Color.h"
 #include "Definitions/ObjectDefines.h"
+#include "Definitions\GlobalConst.h"
+#include "SVMessage\SVMessage.h"
 #pragma endregion Includes
 
 
@@ -72,32 +74,53 @@ namespace SvVol
 	HRESULT BasicValueObject::setValue(const _variant_t& rValue, int  /*= -1*/, bool)
 	{
 		HRESULT	Result = S_OK;
+		// cppcheck-suppress unreadVariable symbolName=bisArray
+		// cppcheck-suppress variableScope symbolName=bisArray
+		
+		bool bisArray{ false };
 
 		_variant_t	TempValue(rValue);
 
 		//SVRC sends data as array
 		if (VT_ARRAY == (TempValue.vt & VT_ARRAY))
 		{
-			Result = ConvertArrayToVariant(TempValue);
+			Result = ConvertArray(TempValue);
+			bisArray = true;
+
 		}
+		
 
 		//If variant is of type VT_EMPTY then this is only a node
-		if (VT_EMPTY == rValue.vt)
+		if (VT_EMPTY == rValue.vt)	
 		{
 			m_Node = true;
 		}
 		else
 		{
+			if (S_OK == Result )
+			{
+#ifdef  SAFEARRAY_FORMAT_IN_SETITEM				
+				if (VT_EMPTY != m_Value.vt && VT_EMPTY != rValue.vt && !bisArray && m_Value.vt != rValue.vt)
+				{
+					SvStl::MessageManager e(SvStl::MsgType::Log);
+					e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnexpectedConversion, SvStl::SourceFileParams(StdMessageParams));
+				}
+#endif 
+				
+				Result = ConvertVariantToType(TempValue);
+			}
+			
+			
+			
 			if (S_OK == Result)
 			{
 				//If it is VT_BSTR then we need to copy the text otherwise we get just a pointer to the string
 				if (VT_BSTR == TempValue.vt)
 				{
-					std::string Temp = SvUl::createStdString(TempValue);
 					boost::unique_lock<boost::shared_mutex> guard(m_valueMutex);
-					m_Value.Clear();
-					m_Value.vt = VT_BSTR;
-					m_Value.bstrVal = _bstr_t(Temp.c_str()).copy();
+					m_Value = _bstr_t(TempValue);
+
+				
 				}
 				else
 				{
@@ -118,8 +141,8 @@ namespace SvVol
 
 		{
 			boost::unique_lock<boost::shared_mutex> guard(m_valueMutex);
-			m_Value.Clear();
-			m_Value.SetString(rValue.c_str());
+		
+			m_Value = _bstr_t(rValue.c_str());
 			m_hasChanged = true;
 		}
 
@@ -556,78 +579,36 @@ namespace SvVol
 		return Result;
 	}
 
-	HRESULT BasicValueObject::ConvertArrayToVariant(_variant_t& rValue) const
+	HRESULT BasicValueObject::ConvertArray(_variant_t& rValue) const
 	{
 		HRESULT Status = S_OK;
-		SvUl::SVSAFEARRAY SafeArray(rValue);
-
-		//BasicValueObject can only have one value
-		if (1 == SafeArray.size())
+		if (VT_ARRAY == (rValue.vt & VT_ARRAY) && rValue.parray)
 		{
-			boost::shared_lock<boost::shared_mutex> guard(m_valueMutex);
-			Status = SafeArray.GetElement(0, rValue);
+			SvUl::SVSAFEARRAY SafeArray(rValue);
 
-			if (VT_BSTR == rValue.vt)
+			if (0 <  SafeArray.size())
 			{
-				std::string StringValue;
-				StringValue = SvUl::createStdString(rValue.bstrVal);
-				rValue.Clear();
-
-				switch (m_Value.vt)
-				{
-				case VT_BSTR:
-					rValue = bstr_t(StringValue.c_str());
-					break;
-				case VT_BOOL:
-					rValue.vt = VT_BOOL;
-					if (0 == SvUl::CompareNoCase(StringValue, _T("True")))
-					{
-						rValue.boolVal = TRUE;
-					}
-					else if (0 == SvUl::CompareNoCase(StringValue, _T("False")))
-					{
-						rValue.boolVal = FALSE;
-					}
-					else if (0 == StringValue.compare(_T("0")))
-					{
-						rValue.boolVal = FALSE;
-					}
-					else if (0 == StringValue.compare(_T("1")))
-					{
-						rValue.boolVal = TRUE;
-					}
-					else
-					{
-						Status = E_INVALIDARG;
-					}
-					break;
-				case VT_I4:
-					rValue.vt = VT_I4;;
-					rValue.lVal = atol(StringValue.c_str());
-					break;
-				case VT_I8:
-					rValue.vt = VT_I8;;
-					rValue.llVal = atol(StringValue.c_str());
-					break;
-				case VT_R8:
-					rValue.vt = VT_R8;;
-					rValue.dblVal = atof(StringValue.c_str());
-					break;
-				default:
-					Status = E_INVALIDARG;
-					break;
-				}
+				Status = SafeArray.GetElement(0, rValue);
 			}
 			else
 			{
-				Status = E_INVALIDARG;
+				Status = E_FAIL;
 			}
-		}
-		else
-		{
-			Status = E_INVALIDARG;
-		}
 
+
+		}
+		return Status;
+	}
+
+
+	HRESULT BasicValueObject::ConvertVariantToType(_variant_t& rValue) const
+	{
+		HRESULT Status = S_OK;
+		boost::shared_lock<boost::shared_mutex> guard(m_valueMutex);
+		if (VT_EMPTY != m_Value.vt && VT_EMPTY != rValue.vt && m_Value.vt != rValue.vt)
+		{
+			Status = ::VariantChangeTypeEx(&rValue, &rValue, SvDef::LCID_USA, 0, m_Value.vt);
+		}
 		return Status;
 	}
 #pragma endregion Private Methods

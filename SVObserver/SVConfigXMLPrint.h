@@ -54,10 +54,10 @@ namespace sv_xml
 	class WriteStartEndElement
 	{
 	public:	
+		// cppcheck-suppress useInitializationList 
 		WriteStartEndElement(Writer writer,  LPCWSTR pwszPrefix, LPCWSTR pwszLocalName,LPCWSTR pwszNamespaceUri) 
 		{
 			m_Writer = writer;
-			 
 			std::wstring temp = space2underscore(std::wstring(pwszLocalName));
 			m_Writer->WriteStartElement(pwszPrefix, temp.c_str(), pwszNamespaceUri);
 		}

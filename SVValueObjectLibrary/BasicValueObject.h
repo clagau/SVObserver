@@ -189,7 +189,9 @@ private:
 	//! The method converts an array to variant data
 	//! \returns S_OK on success
 	//************************************
-	HRESULT ConvertArrayToVariant( _variant_t& rValue ) const;
+	HRESULT ConvertArray(_variant_t& rValue) const;
+	HRESULT ConvertVariantToType(_variant_t& rValue) const;
+	
 #pragma endregion Private Methods
 
 private:

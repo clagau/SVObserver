@@ -45,10 +45,12 @@ void SetValue(const ValuePtr& pValuePtr, SvPb::Value* pItemValue)
 			ValueData += SvUl::to_utf8(_bstr_t(Value.bstrVal));
 		}
 	}
-	//@TODO[MEC][10.01][10.12.2020] array to be compatible 
-	//VARTYPE Type = VT_BSTR;
-	//Type |= (Count > 1) ? VT_ARRAY : VT_EMPTY ;
+	 
+	VARTYPE Type = VT_BSTR;
+	Type |= (Count > 1) ? VT_ARRAY : VT_EMPTY ;
+#ifdef  SAFEARRAY_FORMAT_IN_SETITEM		
 	VARTYPE Type = VT_BSTR | VT_ARRAY;
+#endif	
 	pItemValue->mutable_item()->set_type(Type);
 	pItemValue->mutable_item()->set_strval(ValueData);
 	pItemValue->mutable_item()->set_count(Count);
