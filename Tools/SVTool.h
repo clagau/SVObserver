@@ -19,6 +19,7 @@
 #include "InspectionEngine/SVTaskObjectList.h"
 #include "InspectionEngine/SVImageClass.h"
 #include "SVObjectLibrary/InputObject.h"
+#include "SVValueObjectLibrary/LinkedValue.h"
 #include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
 #include "SVValueObjectLibrary/SVDoubleValueObjectClass.h"
 #include "SVValueObjectLibrary/SVEnumerateValueObjectClass.h"
@@ -72,7 +73,6 @@ public:
 	void SetImageExtentProperty(SvPb::SVExtentPropertyEnum p_eProperty, SvOi::IValueObject* pValueObject);
 
 	virtual HRESULT SetImageExtent(const SVImageExtentClass& rImageExtent) override;
-	HRESULT SetImageExtentWithoutScaleFactors(const SVImageExtentClass& rImageExtent);
 
 	const SvIe::SVImageClass* GetToolImage() const;
 
@@ -242,10 +242,10 @@ protected:
 	SvVol::SVDoubleValueObjectClass m_ExtentBottom;
 	SvVol::SVDoubleValueObjectClass m_ExtentWidth;
 	SvVol::SVDoubleValueObjectClass m_ExtentHeight;
-	SvVol::SVDoubleValueObjectClass m_ExtentWidthScaleFactor;
-	SvVol::SVDoubleValueObjectClass m_ExtentHeightScaleFactor;
-	SvVol::SVDoubleValueObjectClass m_ExtentWidthScaleFactorImageSize;
-	SvVol::SVDoubleValueObjectClass m_ExtentHeightScaleFactorImageSize;
+	SvVol::LinkedValue m_ExtentWidthFactorContent;
+	SvVol::LinkedValue m_ExtentHeightFactorContent;
+	SvVol::LinkedValue m_ExtentWidthFactorFormat;
+	SvVol::LinkedValue m_ExtentHeightFactorFormat;
 
 	//***** New source image extent value objects
 	SvVol::SVBoolValueObjectClass m_svUpdateAuxiliaryExtents;
@@ -264,4 +264,7 @@ protected:
 
 	bool m_canResizeToParent {false};
 };
+
+bool isValidScaleFactor(double value);
+
 } //namespace SvTo

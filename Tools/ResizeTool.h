@@ -13,7 +13,6 @@
 #include "SVTool.h"
 #include "SVObjectLibrary/InputObject.h"
 #include "SVValueObjectLibrary/SVStringValueObjectClass.h"
-#include "SVValueObjectLibrary/LinkedValue.h"
 #pragma endregion
 
 namespace SvTo
@@ -33,8 +32,7 @@ public:
 	virtual bool CreateObject(const SVObjectLevelCreateStruct& rCreateStructure) override;
 
 	virtual HRESULT SetImageExtentToParent() override;
-	virtual HRESULT SetImageExtent( const SVImageExtentClass& rImageExtent ) override;
-	HRESULT SetImageExtentWithoutScaleFactors(const SVImageExtentClass& rImageExtent);
+	virtual HRESULT SetImageExtent( const SVImageExtentClass& rImageExtent) override;
 	
 	/// GetObjectAtPoint
 	///  Tests to see if the passed in point (usually from a mouse location)
@@ -70,7 +68,6 @@ private:
 
 	virtual bool onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
-	bool allScalefactorsHaveDefaultValues();
 	bool ModifyImageExtentByScaleFactors();
 
 #pragma endregion Private Methods
@@ -83,11 +80,6 @@ private:
 	SvIe::SVImageClass m_LogicalROIImage;
 
 	SvVol::SVEnumerateValueObjectClass	m_ResizeInterpolationMode;
-
-	SvVol::LinkedValue m_contentWidthScaleFactor;
-	SvVol::LinkedValue m_contentHeightScaleFactor;
-	SvVol::LinkedValue m_formatWidthScaleFactor;
-	SvVol::LinkedValue m_formatHeightScaleFactor;
 
 #pragma endregion Private Members
 };

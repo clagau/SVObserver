@@ -37,7 +37,7 @@ public:
 	SVTADlgResizePage(uint32_t inspectionID, uint32_t taskObjectID, SVToolAdjustmentDialogSheetClass* Parent, int id = IDD);
 	virtual ~SVTADlgResizePage();
 
-	bool QueryAllowExit() override;
+	bool QueryAllowExit() override { return true; } //invalid resize parameters would already have been caught in OnAnyItemChanged()
 
 private:
 	void ResetAndFillInterpolationModeComboBox();
@@ -105,7 +105,6 @@ private:
 	virtual BOOL OnInitDialog() override;
 	virtual BOOL OnSetActive() override;
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
-	virtual BOOL OnKillActive() override;
 	//}}AFX_VIRTUAL
 #pragma endregion AFX Virtual Methods
 

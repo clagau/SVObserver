@@ -44,25 +44,25 @@ SVTADlgResizePage::SVTADlgResizePage(uint32_t inspectionID, uint32_t taskObjectI
 	, m_toolID(taskObjectID)
 	, m_resizeValueController{ SvOg::BoundValues{ inspectionID, taskObjectID } }
 	, m_formatWidthHelper(m_formatScaleEdit[ScaleFactorDimension::Width],
-		SvPb::FormatWidthFactorEId,
+		SvPb::ExtentWidthFactorFormatEId,
 		&(m_formatScaleButton[ScaleFactorDimension::Width]),
-		SvPb::FormatWidthFactorLinkEId,
+		SvPb::ExtentWidthFactorFormatLinkEId,
 		m_resizeValueController)
 	, m_formatHeightHelper(m_formatScaleEdit[ScaleFactorDimension::Height],
-		SvPb::FormatHeightFactorEId,
+		SvPb::ExtentHeightFactorFormatEId,
 		&(m_formatScaleButton[ScaleFactorDimension::Height]),
-		SvPb::FormatHeightFactorLinkEId,
+		SvPb::ExtentFormatHeightFactorLinkEId,
 		m_resizeValueController)
 	, m_resizeValueSelector(inspectionID, SvDef::InvalidObjectId, SvPb::viewable)
 	, m_contentWidthHelper(m_contentScaleEdit[ScaleFactorDimension::Width],
-		SvPb::ContentWidthFactorEId,
+		SvPb::ExtentWidthFactorContentEId,
 		&(m_contentScaleButton[ScaleFactorDimension::Width]),
-		SvPb::ContentWidthFactorLinkEId,
+		SvPb::ExtentWidthFactorContentLinkEId,
 		m_resizeValueController)
 	, m_contentHeightHelper(m_contentScaleEdit[ScaleFactorDimension::Height],
-		SvPb::ContentHeightFactorEId,
+		SvPb::ExtentHeightFactorContentEId,
 		&(m_contentScaleButton[ScaleFactorDimension::Height]),
-		SvPb::ContentHeightFactorLinkEId,
+		SvPb::ExtentHeightFactorContentLinkEId,
 		m_resizeValueController)
 {
 	SvOg::ValueEditWidgetHelper::EnsureDownArrowBitmapIsLoaded();
@@ -91,12 +91,6 @@ void SVTADlgResizePage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON_CONTENT_HEIGHT_FACTOR, m_formatScaleButton[ScaleFactorDimension::Height]);
 	
 	//}}AFX_DATA_MAP
-}
-
-
-BOOL SVTADlgResizePage::OnKillActive()
-{
-	return CommitAndCheckNewParameterValues();
 }
 
 
@@ -225,8 +219,6 @@ void SVTADlgResizePage::GetAndDisplayValuesFromTool()
 	m_contentHeightHelper.ValueToEditbox();
 }
 
-
-
 void SVTADlgResizePage::getInterpolationModeFromDialog()
 {
 	CString interpolationModeName;
@@ -244,7 +236,6 @@ void SVTADlgResizePage::getInterpolationModeFromDialog()
 		m_selectedInterpolationMode = m_InterpolationModeByModeName[selectedInterpolation];
 	}
 }
-
 
 bool SVTADlgResizePage::CommitAndCheckNewParameterValues()
 {
@@ -288,12 +279,6 @@ void SVTADlgResizePage::CommitValues()
 	m_resizeValueController.Commit();
 }
 
-bool SVTADlgResizePage::QueryAllowExit()
-{
-	return CommitAndCheckNewParameterValues();
-}
-
-
 HRESULT SVTADlgResizePage::SetupResizeImageControl()
 {
 	HRESULT	hr = S_OK;
@@ -304,7 +289,7 @@ HRESULT SVTADlgResizePage::SetupResizeImageControl()
 	}
 	else
 	{
-		if (S_OK != m_DialogImage.AddTab(_T("Result"), &m_OutputTabHandle))
+		if (S_OK != m_DialogImage.AddTab(_T("Tool Result"), &m_OutputTabHandle))
 		{
 			hr = SVMSG_SVO_5017_COULDNOTADDTAB;
 		}

@@ -130,22 +130,22 @@ HRESULT SVImageInfoClass::Initialize()
 		l_hrOk = S_FALSE;
 	}
 
-	if (S_OK != m_svExtents.SetExtentProperty(SvPb::SVExtentPropertyWidthScaleFactorContent, 1.0))
+	if (S_OK != m_svExtents.SetExtentProperty(SvPb::SVExtentPropertyWidthFactorContent, 1.0))
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if (S_OK != m_svExtents.SetExtentProperty(SvPb::SVExtentPropertyWidthScaleFactorSize, 1.0))
+	if (S_OK != m_svExtents.SetExtentProperty(SvPb::SVExtentPropertyWidthFactorFormat, 1.0))
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if (S_OK != m_svExtents.SetExtentProperty(SvPb::SVExtentPropertyHeightScaleFactorContent, 1.0))
+	if (S_OK != m_svExtents.SetExtentProperty(SvPb::SVExtentPropertyHeightFactorContent, 1.0))
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if (S_OK != m_svExtents.SetExtentProperty(SvPb::SVExtentPropertyHeightScaleFactorSize, 1.0))
+	if (S_OK != m_svExtents.SetExtentProperty(SvPb::SVExtentPropertyHeightFactorFormat, 1.0))
 	{
 		l_hrOk = S_FALSE;
 	}

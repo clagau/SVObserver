@@ -18,7 +18,7 @@
 #include "SVStatusLibrary/ErrorNumbers.h"
 #pragma endregion Includes
 
-HRESULT SVGuiExtentUpdater::SetImageExtent(SvIe::SVTaskObjectClass* pTaskObject, const SVImageExtentClass& rExtents)
+HRESULT SVGuiExtentUpdater::UpdateImageExtent(SvIe::SVTaskObjectClass* pTaskObject, const SVImageExtentClass& rExtents)
 {
 	CWaitCursor wait;
 

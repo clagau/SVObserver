@@ -31,10 +31,10 @@ constexpr SvPb::SVExtentPropertyEnum cStoredExtentValues[]
 	SvPb::SVExtentPropertyEndAngle,
 	SvPb::SVExtentPropertyInnerRadius,
 	SvPb::SVExtentPropertyOuterRadius,
-	SvPb::SVExtentPropertyWidthScaleFactorContent,
-	SvPb::SVExtentPropertyWidthScaleFactorSize,
-	SvPb::SVExtentPropertyHeightScaleFactorContent,
-	SvPb::SVExtentPropertyHeightScaleFactorSize,
+	SvPb::SVExtentPropertyWidthFactorContent,
+	SvPb::SVExtentPropertyWidthFactorFormat,
+	SvPb::SVExtentPropertyHeightFactorContent,
+	SvPb::SVExtentPropertyHeightFactorFormat,
 	SvPb::SVExtentPropertyOutputWidth,
 	SvPb::SVExtentPropertyOutputHeight,
 	SvPb::SVExtentPropertyRotationAngle,
@@ -89,10 +89,10 @@ static const SVExtentPropertyStringMap cExtentPropertyShortNames =
 	{SvPb::SVExtentPropertyOuterRadius, std::string("outer")},
 	{SvPb::SVExtentPropertyOutputWidth, std::string("wOut")},
 	{SvPb::SVExtentPropertyOutputHeight, std::string("hOut")},
-	{SvPb::SVExtentPropertyWidthScaleFactorContent, std::string("w*")},
-	{SvPb::SVExtentPropertyHeightScaleFactorContent, std::string("h*")},
-	{SvPb::SVExtentPropertyWidthScaleFactorSize, std::string("wS*")},
-	{SvPb::SVExtentPropertyHeightScaleFactorSize, std::string("hS*")},
+	{SvPb::SVExtentPropertyWidthFactorContent, std::string("w*")},
+	{SvPb::SVExtentPropertyHeightFactorContent, std::string("h*")},
+	{SvPb::SVExtentPropertyWidthFactorFormat, std::string("wS*")},
+	{SvPb::SVExtentPropertyHeightFactorFormat, std::string("hS*")},
 };
 
 ///contains properties of a subset of cExtentPropertyShortNames. Useful if only some extent properties are of interest and to be logged
@@ -102,10 +102,10 @@ static const SVExtentPropertyStringMap cExtentPropertyShortNamesAbridged=
 	{SvPb::SVExtentPropertyHeight, std::string("h")},
 	{SvPb::SVExtentPropertyOutputWidth, std::string("wOut")},
 	{SvPb::SVExtentPropertyOutputHeight, std::string("hOut")},
-	{SvPb::SVExtentPropertyWidthScaleFactorContent, std::string("w*")},
-	{SvPb::SVExtentPropertyHeightScaleFactorContent, std::string("h*")},
-	{SvPb::SVExtentPropertyWidthScaleFactorSize, std::string("wS*")},
-	{SvPb::SVExtentPropertyHeightScaleFactorSize, std::string("hS*")},
+	{SvPb::SVExtentPropertyWidthFactorContent, std::string("w*")},
+	{SvPb::SVExtentPropertyHeightFactorContent, std::string("h*")},
+	{SvPb::SVExtentPropertyWidthFactorFormat, std::string("wS*")},
+	{SvPb::SVExtentPropertyHeightFactorFormat, std::string("hS*")},
 };
 
 static const SVExtentPropertyPointMap cExtentPropertyPointMap =
@@ -1936,12 +1936,12 @@ HRESULT SVImageExtentClass::TranslateToOutputSpace(SVPoint<double> value, SVPoin
 			l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyPositionPoint, position);
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyHeightScaleFactorContent, heightScaleFactor); 
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyHeightFactorContent, heightScaleFactor); 
 			}
 
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyWidthScaleFactorContent, widthScaleFactor);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyWidthFactorContent, widthScaleFactor);
 			}
 
 			if (S_OK == l_hrOk)
@@ -2515,12 +2515,12 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVPoint<double> value, SVPo
 			l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyPositionPoint, position);
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyHeightScaleFactorContent, heightScaleFactor);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyHeightFactorContent, heightScaleFactor);
 			}
 
 			if (S_OK == l_hrOk)
 			{
-				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyWidthScaleFactorContent, widthScaleFactor);
+				l_hrOk = GetExtentProperty(SvPb::SVExtentPropertyWidthFactorContent, widthScaleFactor);
 			}
 
 			if (S_OK == l_hrOk)
@@ -4058,7 +4058,7 @@ HRESULT SVImageExtentClass::BuildOutputDimensions()
 
 			if (S_OK == result)
 			{
-				result = GetExtentProperty(SvPb::SVExtentPropertyWidthScaleFactorSize, widthScaleFactor);
+				result = GetExtentProperty(SvPb::SVExtentPropertyWidthFactorFormat, widthScaleFactor);
 			}
 
 			if (S_OK == result)
@@ -4074,7 +4074,7 @@ HRESULT SVImageExtentClass::BuildOutputDimensions()
 
 			if (S_OK == result)
 			{
-				result = GetExtentProperty(SvPb::SVExtentPropertyHeightScaleFactorSize, heightScaleFactor);
+				result = GetExtentProperty(SvPb::SVExtentPropertyHeightFactorFormat, heightScaleFactor);
 			}
 
 			if (S_OK == result)

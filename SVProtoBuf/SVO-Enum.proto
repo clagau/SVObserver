@@ -356,10 +356,10 @@ enum SVExtentPropertyEnum
 	SVExtentPropertyOutputPositionPointY    = 0x00000200;
 	SVExtentPropertyOutputPositionPoint     = 0x00000300;
 
-	SVExtentPropertyWidthScaleFactorSize		= 0x00010000; ///< Used by Resize Tool
-	SVExtentPropertyHeightScaleFactorSize		= 0x00020000; ///< Used by Resize Tool and the Image Tool Height Doubling operation
-	SVExtentPropertyWidthScaleFactorContent		= 0x00080000; ///< Used by Resize Tool
-	SVExtentPropertyHeightScaleFactorContent	= 0x00040000; ///< Used by Resize Tool and the Image Tool Height Doubling operation
+	SVExtentPropertyWidthFactorFormat		= 0x00010000; ///< Used by Resize Tool
+	SVExtentPropertyHeightFactorFormat		= 0x00020000; ///< Used by Resize Tool and the Image Tool Height Doubling operation
+	SVExtentPropertyWidthFactorContent		= 0x00080000; ///< Used by Resize Tool
+	SVExtentPropertyHeightFactorContent		= 0x00040000; ///< Used by Resize Tool and the Image Tool Height Doubling operation
 
 	SVExtentPropertyStartAngle              = 0x00100000;
 	SVExtentPropertyEndAngle                = 0x00200000;
@@ -375,7 +375,7 @@ enum SVExtentPropertyEnum
 	SVExtentPropertyPositionsInput = 0x000000DF;
 
 	//SVExtentPropertyDimensionsInput = SVExtentPropertyWidth | SVExtentPropertyHeight | SVExtentPropertyStartAngle | SVExtentPropertyEndAngle | SVExtentPropertyInnerRadius
-	//                        | SVExtentPropertyOuterRadius | SVExtentPropertyHeightScaleFactorContent | SVExtentPropertyWidthScaleFactorContent,
+	//                        | SVExtentPropertyOuterRadius | SVExtentPropertyHeightFactorContent | SVExtentPropertyWidthFactorContent,
 	SVExtentPropertyDimensionsInput = 0x03FC0000;
 
 	//SVExtentPropertyDimentionsOutput = SVExtentPropertyOutputWidth | SVExtentPropertyOutputHeight,
@@ -975,8 +975,8 @@ enum EmbeddedIdEnum
 	ExtentRelativeBottomPositionEId = 330;
 	ExtentWidthEId = 331;
 	ExtentHeightEId = 332;
-	ExtentContentWidthFactorEId = 333;
-	ExtentContentHeightFactorEId = 334;
+	ExtentWidthFactorContentEId = 333;
+	ExtentHeightFactorContentEId = 334;
 	UpdateAuxiliaryExtentsEId = 335;
 	AuxiliarySourceXEId = 336;
 	AuxiliarySourceYEId = 337;
@@ -1153,16 +1153,12 @@ enum EmbeddedIdEnum
 	IsRangeEId = 511;
 	IsCustomFeatureEId = 512;
 	NumberOfObjectsEId = 513;
-	FormatWidthFactorEId=514;
-	FormatWidthFactorLinkEId=515;
-	FormatHeightFactorEId=516;
-	FormatHeightFactorLinkEId=517;
-	ContentWidthFactorEId=518;
-	ContentWidthFactorLinkEId=519;
-	ContentHeightFactorEId=520;
-	ContentHeightFactorLinkEId=521;	
-	ExtentContentWidthFactorSizeEId = 522;
-	ExtentContentHeightFactorSizeEId = 533;
+	ExtentWidthFactorContentLinkEId = 514;
+	ExtentHeightFactorContentLinkEId = 515;
+	ExtentWidthFactorFormatEId = 516;
+	ExtentWidthFactorFormatLinkEId = 517;
+	ExtentHeightFactorFormatEId = 518;
+	ExtentFormatHeightFactorLinkEId = 519;
 	ShapeMaskPropertyCenterXLinkEId = 534;
 	ShapeMaskPropertyCenterYLinkEId = 635;
 	ShapeMaskPropertyWidthLinkEId = 536;

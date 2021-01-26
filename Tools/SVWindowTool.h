@@ -31,7 +31,7 @@ public:
 
 	virtual bool SetDefaultFormulas(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
-	virtual HRESULT SetImageExtent( const SVImageExtentClass& rImageExtent ) override;
+	virtual HRESULT SetImageExtent( const SVImageExtentClass& rImageExtent) override;
 	virtual HRESULT SetImageExtentToParent() override;
 	virtual HRESULT SetImageExtentToFit( const SVImageExtentClass& rImageExtent ) override;
 

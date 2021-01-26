@@ -4187,7 +4187,7 @@ HRESULT SVIPDoc::MarkImageDataDisplayed(uint32_t imageId, SVImageView* p_pImageV
 
 HRESULT SVIPDoc::UpdateExtents(SvIe::SVTaskObjectClass* pTask, const SVImageExtentClass& rExtents)
 {
-	HRESULT l_Status = SVGuiExtentUpdater::SetImageExtent(pTask, rExtents);
+	HRESULT l_Status = SVGuiExtentUpdater::UpdateImageExtent(pTask, rExtents);
 	if (S_OK == l_Status) { SetModifiedFlag(); }
 	return l_Status;
 }

@@ -185,7 +185,7 @@ HRESULT SVImageToolClass::SetImageExtent(const SVImageExtentClass& rImageExtent)
 
 	if ( (rFigure.m_svTopLeft.m_x >= 0) && (rFigure.m_svTopLeft.m_y >= 0) )
 	{
-		l_hrOk = SVToolClass::SetImageExtent( rImageExtent );
+		l_hrOk = SVToolClass::SetImageExtent(rImageExtent);
 	}
 	else
 	{
@@ -271,8 +271,8 @@ HRESULT SVImageToolClass::UpdateTranslation()
 		{
 			toolImageExtents.SetTranslation(SvPb::SVExtentTranslationDoubleHeight);
 			double heightScaleFactor = 2.0;
-			toolImageExtents.SetExtentProperty(SvPb::SVExtentPropertyHeightScaleFactorContent, heightScaleFactor);
-			toolImageExtents.SetExtentProperty(SvPb::SVExtentPropertyHeightScaleFactorSize, heightScaleFactor);
+			toolImageExtents.SetExtentProperty(SvPb::SVExtentPropertyHeightFactorContent, heightScaleFactor);
+			toolImageExtents.SetExtentProperty(SvPb::SVExtentPropertyHeightFactorFormat, heightScaleFactor);
 			extentChanged = true;
 		}
 		else if ( l_lValue == SvDef::SVImageOperatorFlipVertical )

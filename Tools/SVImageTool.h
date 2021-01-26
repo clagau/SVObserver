@@ -33,7 +33,7 @@ public:
 
 	virtual SVToolClass* GetObjectAtPoint(const SVPoint<double>& rPoint) override;
 	virtual bool DoesObjectHaveExtents() const override;
-	virtual HRESULT SetImageExtent( const SVImageExtentClass& rImageExtent ) override;
+	virtual HRESULT SetImageExtent( const SVImageExtentClass& rImageExtent) override;
 	virtual HRESULT SetImageExtentToParent() override;
 
 	virtual bool SetDefaultFormulas(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;

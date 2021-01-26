@@ -167,10 +167,10 @@ void SVImageClass::init()
 	m_ImageInfo.SetExtentProperty(SvPb::SVExtentPropertyPositionPointY, SvDef::cDefaultWindowToolTop);
 	m_ImageInfo.SetExtentProperty(SvPb::SVExtentPropertyWidth, SvDef::cDefaultWindowToolWidth);
 	m_ImageInfo.SetExtentProperty(SvPb::SVExtentPropertyHeight, SvDef::cDefaultWindowToolHeight);
-	m_ImageInfo.SetExtentProperty(SvPb::SVExtentPropertyWidthScaleFactorContent, SvDef::cDefaultScaleFactor);
-	m_ImageInfo.SetExtentProperty(SvPb::SVExtentPropertyHeightScaleFactorContent, SvDef::cDefaultScaleFactor);
-	m_ImageInfo.SetExtentProperty(SvPb::SVExtentPropertyWidthScaleFactorSize, SvDef::cDefaultScaleFactor);
-	m_ImageInfo.SetExtentProperty(SvPb::SVExtentPropertyHeightScaleFactorSize, SvDef::cDefaultScaleFactor);
+	m_ImageInfo.SetExtentProperty(SvPb::SVExtentPropertyWidthFactorContent, SvDef::cDefaultScaleFactor);
+	m_ImageInfo.SetExtentProperty(SvPb::SVExtentPropertyHeightFactorContent, SvDef::cDefaultScaleFactor);
+	m_ImageInfo.SetExtentProperty(SvPb::SVExtentPropertyWidthFactorFormat, SvDef::cDefaultScaleFactor);
+	m_ImageInfo.SetExtentProperty(SvPb::SVExtentPropertyHeightFactorFormat, SvDef::cDefaultScaleFactor);
 
 	m_width.SetTypeName(_T("Image Width"));
 	m_height.SetTypeName(_T("Image Height"));

@@ -211,7 +211,6 @@ namespace SvOg
 		}
 		else
 		{
-			assert(false);
 			SvStl::MessageContainerVector messageList;
 			if (responseCmd.has_getimageresponse())
 			{

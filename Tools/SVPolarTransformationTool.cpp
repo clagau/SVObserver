@@ -162,7 +162,7 @@ bool SVPolarTransformationToolClass::SetDefaultFormulas(SvStl::MessageContainerV
 	return false;
 }
 
-HRESULT SVPolarTransformationToolClass::SetImageExtent( const SVImageExtentClass& rImageExtent )
+HRESULT SVPolarTransformationToolClass::SetImageExtent( const SVImageExtentClass& rImageExtent)
 {
 	HRESULT l_hrOk = S_FALSE;
 	double l_dInnerRadius{0.0};
@@ -175,7 +175,7 @@ HRESULT SVPolarTransformationToolClass::SetImageExtent( const SVImageExtentClass
 	// Validate that at least one radius is greater than or equal to 1.
 	if( S_OK == l_hrOk && (l_dOuterRadius >= 1 || l_dInnerRadius >= 1) )
 	{
-		l_hrOk = SVToolClass::SetImageExtent( rImageExtent );
+		l_hrOk = SVToolClass::SetImageExtent(rImageExtent);
 	}
 
 	return l_hrOk;

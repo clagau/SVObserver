@@ -394,7 +394,7 @@ HRESULT SVToolExtentClass::updateImageExtent()
 	return result;
 }
 
-HRESULT SVToolExtentClass::SetImageExtent(const SVImageExtentClass& rImageExtent, bool setScaleFactors) 
+HRESULT SVToolExtentClass::SetImageExtent(const SVImageExtentClass& rImageExtent) 
 {
 	HRESULT l_hrOk = S_OK;
 
@@ -474,33 +474,42 @@ HRESULT SVToolExtentClass::SetImageExtent(const SVImageExtentClass& rImageExtent
 		l_hrOk &= SetExtentValue(SvPb::SVExtentPropertyOuterRadius, dValue);
 	}
 
-	if (setScaleFactors)
+	if (S_OK == rImageExtent.GetExtentProperty(SvPb::SVExtentPropertyHeightFactorContent, dValue))
 	{
-		//@TODO [Arvid][10.10][27.11.2020] this is almost never used (for scale factors that are different from 1)
-		// and unnecessary for scale factors of 1
-		// Hence the default value for setScaleFactors should be false, not true!
-
-		if (S_OK == rImageExtent.GetExtentProperty(SvPb::SVExtentPropertyHeightScaleFactorContent, dValue))
+		if (!SvTo::isValidScaleFactor(dValue))
 		{
-			l_hrOk &= SetExtentValue(SvPb::SVExtentPropertyHeightScaleFactorContent, dValue);
+			dValue = SvDef::cDefaultScaleFactor;
 		}
-
-		if (S_OK == rImageExtent.GetExtentProperty(SvPb::SVExtentPropertyWidthScaleFactorContent, dValue))
-		{
-			l_hrOk &= SetExtentValue(SvPb::SVExtentPropertyWidthScaleFactorContent, dValue);
-		}
-
-		if (S_OK == rImageExtent.GetExtentProperty(SvPb::SVExtentPropertyHeightScaleFactorSize, dValue))
-		{
-			l_hrOk &= SetExtentValue(SvPb::SVExtentPropertyHeightScaleFactorSize, dValue);
-		}
-
-		if (S_OK == rImageExtent.GetExtentProperty(SvPb::SVExtentPropertyWidthScaleFactorSize, dValue))
-		{
-			l_hrOk &= SetExtentValue(SvPb::SVExtentPropertyWidthScaleFactorSize, dValue);
-		}
-
+		l_hrOk &= SetExtentValue(SvPb::SVExtentPropertyHeightFactorContent, dValue);
 	}
+
+	if (S_OK == rImageExtent.GetExtentProperty(SvPb::SVExtentPropertyWidthFactorContent, dValue))
+	{
+		if (!SvTo::isValidScaleFactor(dValue))
+		{
+			dValue = SvDef::cDefaultScaleFactor;
+		}
+		l_hrOk &= SetExtentValue(SvPb::SVExtentPropertyWidthFactorContent, dValue);
+	}
+
+	if (S_OK == rImageExtent.GetExtentProperty(SvPb::SVExtentPropertyHeightFactorFormat, dValue))
+	{
+		if (!SvTo::isValidScaleFactor(dValue))
+		{
+			dValue = SvDef::cDefaultScaleFactor;
+		}
+		l_hrOk &= SetExtentValue(SvPb::SVExtentPropertyHeightFactorFormat, dValue);
+	}
+
+	if (S_OK == rImageExtent.GetExtentProperty(SvPb::SVExtentPropertyWidthFactorFormat, dValue))
+	{
+		if (!SvTo::isValidScaleFactor(dValue))
+		{
+			dValue = SvDef::cDefaultScaleFactor;
+		}
+		l_hrOk &= SetExtentValue(SvPb::SVExtentPropertyWidthFactorFormat, dValue);
+	}
+
 	return l_hrOk;
 }
 

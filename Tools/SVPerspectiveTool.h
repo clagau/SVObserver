@@ -36,7 +36,7 @@ public:
 
 	virtual SVToolClass* GetObjectAtPoint( const SVPoint<double>& rPoint ) override;
 	virtual bool DoesObjectHaveExtents() const override;
-	virtual HRESULT SetImageExtent( const SVImageExtentClass& rImageExtent ) override;
+	virtual HRESULT SetImageExtent( const SVImageExtentClass& rImageExtent) override;
 
 	virtual void addOverlays(const SvIe::SVImageClass* p_Image, SvPb::OverlayDesc& rOverlay) const override;
 

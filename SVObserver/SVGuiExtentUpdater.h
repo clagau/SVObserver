@@ -22,7 +22,7 @@ class SVTaskObjectClass;
 class SVGuiExtentUpdater
 {
 public:
-	static HRESULT SetImageExtent(SvIe::SVTaskObjectClass* pTaskObject, const SVImageExtentClass& rExtents);
+	static HRESULT UpdateImageExtent(SvIe::SVTaskObjectClass* pTaskObject, const SVImageExtentClass& rExtents);
 	static HRESULT SetImageExtentToFit(SvIe::SVTaskObjectClass* pTaskObject, const SVImageExtentClass& rExtents);
 
 private:

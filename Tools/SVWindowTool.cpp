@@ -203,7 +203,7 @@ HRESULT SVWindowToolClass::SetImageExtent(const SVImageExtentClass& rImageExtent
 
 	if( S_OK == l_hrOk )
 	{
-		l_hrOk = SVToolClass::SetImageExtent( rImageExtent );
+		l_hrOk = SVToolClass::SetImageExtent( rImageExtent);
 	}
 
 	return l_hrOk;

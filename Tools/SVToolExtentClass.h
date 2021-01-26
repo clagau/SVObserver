@@ -90,7 +90,7 @@ public:
 //- structure into the SVImageExtentClass based structure. -------------------
 	HRESULT updateImageExtent();
 
-	HRESULT SetImageExtent( const SVImageExtentClass& rImageExtent, bool setScaleFactors=true);
+	HRESULT SetImageExtent( const SVImageExtentClass& rImageExtent);
 
 	// ******* Begin Source Extent Data
 	// *
