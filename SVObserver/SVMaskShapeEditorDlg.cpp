@@ -390,27 +390,11 @@ void SVMaskShapeEditorDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult
 		}
 
 		
-		bool fail = (S_OK != m_ShapeHelperValues.Commit(SvOg::PostAction::doNothing));
+		bool fail = (S_OK != m_ShapeHelperValues.Commit(SvOg::PostAction::doNothing, true));
 		if (fail)
 		{
-			if (pCombo)
-			{
-				long lValue = m_ShapeHelperValues.Get<long>(propertyEId.first);
-				pCombo->SetItemValue((unsigned long)lValue);
-			}
-			else
-			{
-				std::string valueString;
-				if (SvDef::InvalidObjectId != propertyEId.second)
-				{
-					valueString = m_ShapeHelperValues.Get<CString>(propertyEId.second);
-				}
-				if (valueString.empty())
-				{
-					valueString = m_ShapeHelperValues.Get<CString>(propertyEId.first);
-				}
-				pItem->SetItemValue(valueString.c_str());
-			}
+			*plResult = E_FAIL;
+			m_ShapeHelperValues.Init();
 		}
 
 		pItem->OnRefresh();
