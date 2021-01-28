@@ -52,7 +52,6 @@ namespace SvUl
 #pragma endregion Member variables
 	};
 
-	typedef std::set<GlobalConstantData> GlobalConstantDataSet;
 	typedef std::pair< GlobalConstantData, GlobalConstantData > GlobalConflictPair;
 	typedef std::vector< GlobalConflictPair > GlobalConflictPairVector;
 

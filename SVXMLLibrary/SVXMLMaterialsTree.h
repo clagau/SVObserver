@@ -87,6 +87,7 @@ namespace SvXml
 		//! \returns handle to the next branch
 		//************************************
 		virtual SVBranchHandle getNextBranch( const SVBranchHandle pParent, const SVBranchHandle pChild ) override;
+		virtual SVBranchHandle getPreviousBranch(const SVBranchHandle pParent, const SVBranchHandle pBranch) override;
 
 		//************************************
 		//! Method to find a child branch

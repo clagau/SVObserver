@@ -99,6 +99,7 @@ namespace SvXml
 		//! \returns handle to the next branch
 		//************************************
 		virtual SVBranchHandle getNextBranch( const SVBranchHandle pParent, const SVBranchHandle pBranch ) = 0;
+		virtual SVBranchHandle getPreviousBranch(const SVBranchHandle pParent, const SVBranchHandle pBranch) = 0;
 
 		//************************************
 		//! Method to find a child branch

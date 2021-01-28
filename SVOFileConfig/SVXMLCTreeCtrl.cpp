@@ -63,7 +63,6 @@ bool SVXMLCTreeCtrl::hasBranches( const SVBranchHandle pBranch )
 	return (nullptr != pChild);
 }
 
-// cppcheck-suppress unusedFunction
 SVXMLCTreeCtrl::SVBranchHandle SVXMLCTreeCtrl::getParentBranch( const SVBranchHandle pChild )
 {
 	SVBranchHandle pResult( nullptr );
@@ -101,6 +100,22 @@ SVXMLCTreeCtrl::SVBranchHandle SVXMLCTreeCtrl::getNextBranch( const SVBranchHand
 			pResult = m_rTree.GetNextItem( pResult, TVGN_NEXT );
 		}
 		while( nullptr != pResult && m_rTree.GetItemData( pResult ) );
+
+	}
+
+	return pResult;
+}
+
+SVXMLCTreeCtrl::SVBranchHandle SVXMLCTreeCtrl::getPreviousBranch(const SVBranchHandle, const SVBranchHandle pBranch)
+{
+	SVBranchHandle pResult(pBranch);
+
+	if (nullptr != pResult)
+	{
+		do
+		{
+			pResult = m_rTree.GetNextItem(pResult, TVGN_PREVIOUS);
+		} while (nullptr != pResult && m_rTree.GetItemData(pResult));
 
 	}
 
@@ -409,7 +424,6 @@ HRESULT SVXMLCTreeCtrl::getLeafData( const SVBranchHandle pParent, LPCTSTR Name,
 	return 	getLeafData( findLeaf( pParent, Name ), rData );
 }
 
-// cppcheck-suppress unusedFunction
 HRESULT SVXMLCTreeCtrl::setLeafData( const SVLeafHandle pLeaf, const _variant_t& rData )
 {
 	HRESULT l_Status( S_OK );

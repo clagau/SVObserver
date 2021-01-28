@@ -164,7 +164,7 @@ static bool ImportPPQInputs(SVTreeType& rTree, Insertor insertor)
 }
 
 template<typename SVTreeType>
-static bool importGlobalConstants( SVTreeType& rTree, SvUl::GlobalConstantDataSet& rImportedGlobals )
+static bool importGlobalConstants( SVTreeType& rTree, std::vector<SvUl::GlobalConstantData>& rImportedGlobals )
 {
 	bool Result( true );
 
@@ -177,15 +177,14 @@ static bool importGlobalConstants( SVTreeType& rTree, SvUl::GlobalConstantDataSe
 
 		while( Result && nullptr != hItemChild )
 		{
-			SvUl::GlobalConstantData GlobalData;
+			SvUl::GlobalConstantData& rGlobalData = rImportedGlobals.emplace_back();
+			rGlobalData.m_DottedName = rTree.getBranchName( hItemChild );
+
 			_variant_t Value;
-
-			GlobalData.m_DottedName = rTree.getBranchName( hItemChild );
-
 			Result = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_VALUE, hItemChild, Value );
 			if( Result )
 			{
-				GlobalData.m_Value = Value;
+				rGlobalData.m_Value = Value;
 			}
 			Value.Clear();
 			Result = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_DESCRIPTION, hItemChild, Value );
@@ -194,9 +193,9 @@ static bool importGlobalConstants( SVTreeType& rTree, SvUl::GlobalConstantDataSe
 				std::string Description = SvUl::createStdString( Value.bstrVal );
 				//This is needed to insert any CR LF in the description which were replaced while saving
 				SvUl::RemoveEscapedSpecialCharacters( Description, true );
-				GlobalData.m_Description = Description;
+				rGlobalData.m_Description = Description;
 			}
-			rImportedGlobals.insert( GlobalData );
+			
 			
 			hItemChild = rTree.getNextBranch( hItem, hItemChild );
 		}
@@ -205,62 +204,116 @@ static bool importGlobalConstants( SVTreeType& rTree, SvUl::GlobalConstantDataSe
 	return Result;
 }
 
-static void checkGlobalConstants( const SvUl::GlobalConstantDataSet& rImportedGlobals, SvUl::GlobalConflictPairVector& rGlobalConflicts )
+static void getLinkedValueUsingGlobalConst(SVTreeType& rTree, std::back_insert_iterator<std::vector<std::pair<std::string, SVTreeType::SVBranchHandle>>> listInserter, SVTreeType::SVBranchHandle startBranch = nullptr )
 {
-	SvUl::GlobalConstantDataSet CurrentGlobals;
-
-	SvVol::BasicValueObjects::ValueVector GlobalObjects;
-
-	RootObject::getRootChildObjectList( GlobalObjects, SvDef::FqnGlobal, 0 );
-	SvVol::BasicValueObjects::ValueVector::const_iterator Iter( GlobalObjects.begin() );
-	while( GlobalObjects.end() != Iter && nullptr != *Iter )
+	if (nullptr != startBranch)
 	{
-		SvUl::GlobalConstantData GlobalData;
-		//Important here we intensionally do not fill the m_objectId value
-		GlobalData.m_DottedName = (*Iter)->GetCompleteName();
-		(*Iter)->getValue( GlobalData.m_Value );
-		GlobalData.m_Description = (*Iter)->getDescription();
-		CurrentGlobals.insert( GlobalData );
-
-		++Iter;
-	}
-
-	SvUl::GlobalConstantDataSet GlobalDiffs;
-
-	std::set_difference( rImportedGlobals.begin(), rImportedGlobals.end(), CurrentGlobals.begin(), CurrentGlobals.end(), std::inserter( GlobalDiffs, GlobalDiffs.begin() ) );
-
-	SvUl::GlobalConstantDataSet::const_iterator DiffIter( GlobalDiffs.cbegin() );
-	while( GlobalDiffs.cend() != DiffIter  )
-	{
-		SvVol::BasicValueObjectPtr pGlobalConstant;
-		pGlobalConstant = RootObject::getRootChildObjectValue( DiffIter->m_DottedName.c_str() );
-
-		//If the Global Constant exists then conflict otherwise we can create it
-		if(nullptr == pGlobalConstant )
+		//check current branch is value object
+		SVTreeType::SVBranchHandle hBranch = nullptr;
+		SvXml::SVNavigateTree::GetItemBranch(rTree, scArrayElementsTag, startBranch, hBranch);
+		if (nullptr != hBranch)
 		{
-			pGlobalConstant = RootObject::setRootChildValue( DiffIter->m_DottedName.c_str(), DiffIter->m_Value );
-			if(nullptr != pGlobalConstant )
+			auto leafItem = rTree.findLeaf(hBranch, scElementTag);
+			if (rTree.isValidLeaf(hBranch, leafItem))
 			{
-				pGlobalConstant->setDescription( DiffIter->m_Description.c_str() );
-				if( DiffIter->m_Value.vt == VT_BSTR)
+				_variant_t data;
+				rTree.getLeafData(leafItem, data);
+				if (VT_BSTR == data.vt)
 				{
-					pGlobalConstant->SetObjectAttributesAllowed( SvPb::selectableForEquation, SvOi::SetAttributeType::RemoveAttribute );
+					std::string_view testString{ "Global." };
+					std::string value{ SvUl::createStdString(data.bstrVal) };
+					if (value._Starts_with(testString))
+					{
+						_variant_t classIDVariant;
+						SvXml::SVNavigateTree::GetItem(rTree, scClassIDTag, startBranch, classIDVariant);
+						SvPb::ClassIdEnum classId = calcClassId(classIDVariant);
+						if (SvPb::StringValueClassId == classId)
+						{
+							auto parentBranch = rTree.getParentBranch(startBranch);
+							auto previousBranch = rTree.getPreviousBranch(parentBranch, startBranch);
+							SvXml::SVNavigateTree::GetItem(rTree, scClassIDTag, previousBranch, classIDVariant);
+							classId = calcClassId(classIDVariant);
+							if (SvPb::VariantValueClassId == classId)
+							{
+								listInserter = { value, previousBranch };
+							}
+						}
+					}
 				}
 			}
 		}
+	}
+
+	//check children
+	SVTreeType::SVBranchHandle childBranch(rTree.getFirstBranch(startBranch));
+	while (rTree.isValidBranch(childBranch))
+	{
+		getLinkedValueUsingGlobalConst(rTree, listInserter, childBranch);
+		childBranch = rTree.getNextBranch(startBranch, childBranch);
+	}
+}
+
+static void checkGlobalConstants(SVTreeType& rTree, SvUl::GlobalConflictPairVector& rGlobalConflicts )
+{
+	std::vector<SvUl::GlobalConstantData> importedGlobals;
+	importGlobalConstants(rTree, importedGlobals);
+
+	//search for GlobalConst in LinkedValues in InspectionTree
+	std::vector< std::pair<std::string, SVTreeType::SVBranchHandle>> globalElementList;
+	getLinkedValueUsingGlobalConst(rTree, std::back_inserter(globalElementList));
+
+	for (auto& rGlobalImport : importedGlobals)
+	{
+		SvVol::BasicValueObjectPtr pGlobalConstant = RootObject::getRootChildObjectValue(rGlobalImport.m_DottedName.c_str() );
+		if (nullptr == pGlobalConstant)
+		{
+			//add Global constant
+			pGlobalConstant = RootObject::setRootChildValue(rGlobalImport.m_DottedName.c_str(), rGlobalImport.m_Value);
+			if (nullptr != pGlobalConstant)
+			{
+				pGlobalConstant->setDescription(rGlobalImport.m_Description.c_str());
+				if (rGlobalImport.m_Value.vt == VT_BSTR)
+				{
+					pGlobalConstant->SetObjectAttributesAllowed(SvPb::selectableForEquation, SvOi::SetAttributeType::RemoveAttribute);
+				}
+			}
+			rGlobalImport.m_objectId = pGlobalConstant->getObjectId();
+		}
 		else
 		{
-			SvUl::GlobalConstantData GlobalData;
-
-			GlobalData.m_objectId = pGlobalConstant->getObjectId();
-			GlobalData.m_DottedName = pGlobalConstant->GetCompleteName();
-			pGlobalConstant->getValue( GlobalData.m_Value );
-			//Default is that the current Global Constant is selected
-			GlobalData.m_Selected = true;
-			rGlobalConflicts.push_back( std::make_pair( GlobalData,  *DiffIter ) );
+			_variant_t valueTmp;
+			pGlobalConstant->getValue(valueTmp);
+			if (rGlobalImport.m_Value != valueTmp)
+			{
+				auto& rPair = rGlobalConflicts.emplace_back();
+				rPair.first.m_objectId = pGlobalConstant->getObjectId();
+				rPair.first.m_DottedName = pGlobalConstant->GetCompleteName();
+				rPair.first.m_Value = valueTmp;
+				//Default is that the current Global Constant is selected
+				rPair.first.m_Selected = true;
+				rPair.second = rGlobalImport;
+			}
+			rGlobalImport.m_objectId = pGlobalConstant->getObjectId();
 		}
 
-		++DiffIter;
+		//override objectId for GlobalConst in LinkedValues
+		for (auto& rGlobalElementPair : globalElementList)
+		{
+			if (rGlobalElementPair.first == rGlobalImport.m_DottedName)
+			{
+				SVTreeType::SVBranchHandle hBranch = nullptr;
+				SvXml::SVNavigateTree::GetItemBranch(rTree, scArrayElementsTag, rGlobalElementPair.second, hBranch);
+				if (nullptr != hBranch)
+				{
+					auto leafItem = rTree.findLeaf(hBranch, scElementTag);
+					assert(rTree.getTree().end() != leafItem);
+					if (rTree.getTree().end() != leafItem)
+					{
+						rTree.setLeafData(leafItem, convertObjectIdToVariant(rGlobalImport.m_objectId));
+					}
+				}
+			}
+		}	
 	}
 }
 
@@ -269,9 +322,6 @@ typedef std::insert_iterator<SVImportedInputList> InputListInsertor;
 HRESULT LoadInspectionXml(SvXml::SVXMLMaterialsTree& rXmlTree, const std::string& zipFilename, const std::string& inspectionName, const std::string& cameraName, SVImportedInspectionInfo& inspectionInfo, SvUl::GlobalConflictPairVector& rGlobalConflicts, SVIProgress& rProgress, int& currentOp, int numOperations)
 {
 	HRESULT hr = S_OK;
-	_bstr_t bstrRevisionHistory;
-	_bstr_t bstrChangedNode;
-	SvUl::GlobalConstantDataSet ImportedGlobals;
 
 	rProgress.UpdateText(_T("Importing Dependent Files..."));
 	rProgress.UpdateProgress(++currentOp, numOperations);
@@ -288,7 +338,7 @@ HRESULT LoadInspectionXml(SvXml::SVXMLMaterialsTree& rXmlTree, const std::string
 	rProgress.UpdateText(_T("Importing Global Constants..."));
 	rProgress.UpdateProgress(++currentOp, numOperations);
 
-	importGlobalConstants(rXmlTree, ImportedGlobals);
+	checkGlobalConstants(rXmlTree, rGlobalConflicts);
 
 	rProgress.UpdateText(_T("Creating Inspection object..."));
 	rProgress.UpdateProgress(++currentOp, numOperations);
@@ -365,8 +415,6 @@ HRESULT LoadInspectionXml(SvXml::SVXMLMaterialsTree& rXmlTree, const std::string
 
 	if( SUCCEEDED(hr) )
 	{
-		checkGlobalConstants( ImportedGlobals, rGlobalConflicts);
-
 		SvXml::SVXMLMaterialsTree::SVBranchHandle Root(rXmlTree.getRoot() );
 		SvXml::SVXMLMaterialsTree::SVBranchHandle IPDocItem( nullptr );
 

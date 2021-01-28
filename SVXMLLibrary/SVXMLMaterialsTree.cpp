@@ -157,6 +157,28 @@ namespace SvXml
 		return pResult;
 	}
 
+	SVXMLMaterialsTree::SVBranchHandle SVXMLMaterialsTree::getPreviousBranch(const SVBranchHandle pParent, const SVBranchHandle pChild)
+	{
+		SVBranchHandle pBranch(pParent);
+		if (nullptr == pBranch)
+		{
+			pBranch = getRoot();
+		}
+
+		m_pCurrentLeaf = m_Tree.end();
+		if (setChildren(pBranch))
+		{
+			auto iter = std::find(m_ChildBranches.begin(), m_ChildBranches.end(), pChild);
+			if (m_ChildBranches.end() != iter && m_ChildBranches.begin() != iter)
+			{
+				--iter;
+				return *iter;
+			}
+		}
+
+		return nullptr;
+	}
+
 	SVXMLMaterialsTree::SVBranchHandle SVXMLMaterialsTree::findBranch( const SVBranchHandle pParent, LPCTSTR Name )
 	{
 		SVBranchHandle pResult( nullptr );
