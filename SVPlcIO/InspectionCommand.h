@@ -19,34 +19,41 @@ constexpr uint8_t c_ReservedInsCmd = 7;
 namespace SvPlc
 {
 #pragma pack(push, 1)
-
-struct ChannelIn
+struct ChannelIn1
 {
 public:
-	ChannelIn() = default;
-	~ChannelIn() = default;
-	ChannelIn(const ChannelIn& rRhs) = default;
-	ChannelIn(ChannelIn&& rRhs) = default;
-	ChannelIn& operator=(const ChannelIn& rRhs) = default;
-	ChannelIn& operator=(ChannelIn&& rRhs) = default;
-	bool operator!=(const ChannelIn& rRhs)
-	{
-		///At the moment ignore comparing m_socTriggerTime
-		if(m_unitControl != rRhs.m_unitControl ||
-		   m_sequence != rRhs.m_sequence ||
-		   m_timeStamp1 != rRhs.m_timeStamp1 ||
-		   m_timeStamp2 != rRhs.m_timeStamp2 ||
-		   m_currentObjectType != rRhs.m_currentObjectType ||
-		   m_currentObjectID != rRhs.m_currentObjectID ||
-		   m_previousObjectType != rRhs.m_previousObjectType ||
-		   m_previousObjectID != rRhs.m_previousObjectID ||
-		   m_triggerIndex != rRhs.m_triggerIndex ||
-		   m_triggerCount != rRhs.m_triggerCount)
-		{
-			return true;
-		}
-		return false;
-	}
+	ChannelIn1() = default;
+	~ChannelIn1() = default;
+#pragma region Member Variables
+public:
+	uint8_t m_unitControl{ 0 };				//When true then do inspection
+	int16_t m_timeStamp{ 0 };				//Time stamp
+	uint8_t m_currentObjectType{ 0 };		//Current object type
+	uint32_t m_currentObjectID{ 0 };		//Current object ID
+	uint8_t m_previousObjectType{ 0 };		//Previous object type
+	uint32_t m_previousObjectID{ 0 };		//Previous object ID
+	uint8_t m_triggerIndex{ 0 };			//Trigger index
+	uint8_t m_triggerCount{ 0 };			//Trigger count per object
+#pragma endregion Member Variables
+};
+
+struct InspectionCommand1
+{
+public:
+	InspectionCommand1() = default;
+	~InspectionCommand1() = default;
+#pragma region Member Variables
+public:
+	int32_t m_socRelative{ 0L };				//Relative SOC time
+	std::array<ChannelIn1, cNumberOfChannels> m_channels;	//In data for each of the 4 separate channels
+#pragma endregion Member Variables
+};
+
+struct ChannelIn2
+{
+public:
+	ChannelIn2() = default;
+	~ChannelIn2() = default;
 
 #pragma region Member Variables
 public:
@@ -64,27 +71,11 @@ public:
 #pragma endregion Member Variables
 };
 
-struct InspectionCommand
+struct InspectionCommand2
 {
 public:
-	InspectionCommand() = default;
-	~InspectionCommand() = default;
-	InspectionCommand(const InspectionCommand& rRhs) = default;
-	InspectionCommand(InspectionCommand&& rRhs) = default;
-	InspectionCommand& operator=(const InspectionCommand& rRhs) = default;
-	InspectionCommand& operator=(InspectionCommand&& rRhs) = default;
-
-	bool hasTriggerDataChanged(const InspectionCommand& rRhs)
-	{
-		for(int i=0; i < cNumberOfChannels; ++i)
-		{
-			if(m_channels[i] != rRhs.m_channels[i])
-			{
-				return true;
-			}
-		}
-		return false;
-	}
+	InspectionCommand2() = default;
+	~InspectionCommand2() = default;
 
 #pragma region Member Variables
 public:
@@ -93,7 +84,7 @@ public:
 	uint32_t m_socAbsNanoseconds {0UL};		//SOC time nano seconds
 	int32_t m_socRelative {0L};				//Relative SOC time
 	std::array<uint8_t, c_ReservedInsCmd>  m_reserved {0, 0, 0, 0, 0, 0, 0};	//Reserved data
-	std::array<ChannelIn, cNumberOfChannels> m_channels;	//In data for each of the 4 separate channels
+	std::array<ChannelIn2, cNumberOfChannels> m_channels;	//In data for each of the 4 separate channels
 #pragma endregion Member Variables
 };
 #pragma pack(pop)

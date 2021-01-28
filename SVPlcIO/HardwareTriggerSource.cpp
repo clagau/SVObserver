@@ -21,8 +21,8 @@ constexpr uint32_t cTimeWrap = 65536;		//Constant when time offset negative need
 constexpr uint16_t cCifXNodeId = 11; //< The Powerlink Node Id used for the Hilscher CifX card value shall be 11-14 (SVIM1-SVIM4)
 constexpr uint16_t cmaxPLC_DataSize = 456; //< the maximum size of the PLC-data in bytes Telegram = 20 Bytes Dynamic = 436 Bytes
 //Make sure that the telegram in structure is smaller than the Hilscher card incoming buffer size
-static_assert(sizeof(Telegram) + sizeof(InspectionCommand) <= cmaxPLC_DataSize, "Read buffer size is to small");
-static_assert(sizeof(Telegram) + sizeof(InspectionState) <= cmaxPLC_DataSize, "Write buffer size is to small");
+static_assert(sizeof(Telegram) + cCmdDataSize <= cmaxPLC_DataSize, "Read buffer size is to small");
+static_assert(sizeof(Telegram) + std::max(sizeof(InspectionState1), sizeof(InspectionState2)) <= cmaxPLC_DataSize, "Write buffer size is to small");
 static_assert(sizeof(Telegram) + cConfigListSize * sizeof(ConfigDataSet) <= cmaxPLC_DataSize, "Write buffer size is to small");
 
 HardwareTriggerSource::HardwareTriggerSource(std::function<void(const TriggerReport&)> pReportTrigger, uint16_t plcNodeID, uint16_t plcTransferTime, const std::string& rAdditionalData) : TriggerSource(pReportTrigger)
@@ -30,6 +30,7 @@ HardwareTriggerSource::HardwareTriggerSource(std::function<void(const TriggerRep
 , m_additionalData {rAdditionalData}
 , m_cifXCard((0 != plcNodeID) ? plcNodeID : cCifXNodeId, cmaxPLC_DataSize)
 {
+	memset(&m_previousTriggerData[0], 0, m_previousTriggerData.size());
 	::OutputDebugString("Triggers are received from PLC via CifX card.\n");
 }
 
@@ -63,7 +64,7 @@ void HardwareTriggerSource::queueResult(uint8_t channel, ChannelOut&& channelOut
 	std::lock_guard<std::mutex> guard {m_triggerSourceMutex};
 	if(true == m_inspectionStateQueue.empty() || 0 != m_inspectionStateQueue.front().m_channels[channel].m_currentObjectID)
 	{
-		m_inspectionStateQueue.emplace(InspectionState{});
+		m_inspectionStateQueue.emplace(InspectionState1{});
 	}
 	std::swap(m_inspectionStateQueue.back().m_channels[channel], channelOut);
 }
@@ -90,7 +91,7 @@ void HardwareTriggerSource::analyzeTelegramData()
 		}
 		case TelegramContent::OperationData:
 		{
-			InspectionState sendInpectionState;
+			InspectionState1 sendInpectionState;
 			{
 				std::lock_guard<std::mutex> guard {m_triggerSourceMutex};
 				if(false == m_inspectionStateQueue.empty())
@@ -100,11 +101,12 @@ void HardwareTriggerSource::analyzeTelegramData()
 				}
 			}
 			m_cifXCard.sendOperationData(sendInpectionState);
-			m_triggerDataChanged = m_previousTriggerData.hasTriggerDataChanged(rInputData.m_inspectionCmd);
 
-			if (m_triggerDataChanged)
+			uint32_t triggerOffset = m_cifXCard.getTriggerDataOffset();
+			//If new trigger data check for new triggers
+			if(m_cifXCard.isProtocolInitialized() && 0 != memcmp(&m_previousTriggerData[0] + triggerOffset, &m_cifXCard.getCurrentInputData().m_dynamicData[0] + triggerOffset, cCmdDataSize - triggerOffset))
 			{
-				m_previousTriggerData = rInputData.m_inspectionCmd;
+				memcpy(&m_previousTriggerData[0], &m_cifXCard.getCurrentInputData().m_dynamicData[0], cCmdDataSize);
 				checkForNewTriggers();
 			}
 			break;
@@ -116,12 +118,10 @@ void HardwareTriggerSource::analyzeTelegramData()
 	}
 }
 
-double HardwareTriggerSource::getExecutionTime(uint8_t channel)
+double HardwareTriggerSource::getExecutionTime(int32_t socRelative, int16_t timeStamp, double notificationTime)
 {
-	const InputData& rInputData = m_cifXCard.getCurrentInputData();
-	const int16_t& rTimeStamp1 = rInputData.m_inspectionCmd.m_channels[channel].m_timeStamp1;
-	int32_t triggerTimeOffset = getPlcTriggerTime(rInputData.m_inspectionCmd.m_socRelative, rTimeStamp1) - rInputData.m_inspectionCmd.m_socRelative;
-	return rInputData.m_interruptTime + static_cast<double> ((triggerTimeOffset - static_cast<int32_t> (m_plcTransferTime)) / cMicrosecondsPerMillisecond);
+	int32_t triggerTimeOffset = getPlcTriggerTime(socRelative, timeStamp) - socRelative;
+	return notificationTime + static_cast<double> ((triggerTimeOffset - static_cast<int32_t> (m_plcTransferTime)) / cMicrosecondsPerMillisecond);
 }
 
 int32_t HardwareTriggerSource::getPlcTriggerTime(int32_t socRelative, int16_t timeStamp)
@@ -143,9 +143,11 @@ int32_t HardwareTriggerSource::getPlcTriggerTime(int32_t socRelative, int16_t ti
 
 void HardwareTriggerSource::createTriggerReport(uint8_t channel)
 {
-	const ChannelIn& rChannel = m_cifXCard.getCurrentInputData().m_inspectionCmd.m_channels[channel];
+	InspectionCommand2 inspectionCmd;
+	memcpy(&inspectionCmd, &m_cifXCard.getCurrentInputData().m_dynamicData[0], sizeof(inspectionCmd));
+	const ChannelIn2& rChannel = inspectionCmd.m_channels[channel];
 
-	double triggerTimeStamp = getExecutionTime(channel);
+	double triggerTimeStamp = getExecutionTime(inspectionCmd.m_socRelative, rChannel.m_timeStamp1, m_cifXCard.getCurrentInputData().m_notificationTime);
 
 	//When unit control is 1, trigger index is not 0
 	if (cUnitControlActive == rChannel.m_unitControl && 0 != rChannel.m_triggerIndex)
@@ -157,7 +159,7 @@ void HardwareTriggerSource::createTriggerReport(uint8_t channel)
 		report.m_triggerIndex = static_cast<uint32_t> (rChannel.m_triggerIndex);
 		report.m_triggerPerObjectID = rChannel.m_triggerCount;
 		report.m_triggerTimestamp = triggerTimeStamp;
-		report.m_isValid = (0 != m_cifXCard.getCurrentInputData().m_inspectionCmd.m_socRelative);
+		report.m_isValid = (0 != inspectionCmd.m_socRelative);
 		
 		sendTriggerReport(report);
 	}

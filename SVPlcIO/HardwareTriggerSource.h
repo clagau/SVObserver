@@ -8,7 +8,6 @@
 
 #pragma region Includes
 #include "CifxCard.h"
-#include "InspectionCommand.h"
 #include "InspectionState.h"
 #include "TriggerSource.h"
 #pragma endregion Includes
@@ -33,7 +32,7 @@ private:
 
 	/// Calculates the trigger offset time from the relative SOC and time stamp
 	int32_t getPlcTriggerTime(int32_t socRelative, int16_t timeStamp);
-	double getExecutionTime(uint8_t channel);
+	double getExecutionTime(int32_t socRelative, int16_t timeStamp, double notificationTime);
 
 	uint16_t m_plcTransferTime {0};
 
@@ -42,9 +41,8 @@ private:
 
 	uint32_t m_ProcessDataChanges {0UL};
 
-	bool m_triggerDataChanged {false};
-	InspectionCommand m_previousTriggerData;
-	std::queue<InspectionState> m_inspectionStateQueue;
+	std::array<uint8_t, cCmdDataSize> m_previousTriggerData;
+	std::queue<InspectionState1> m_inspectionStateQueue;
 
 	CifXCard m_cifXCard;
 	std::string m_additionalData;

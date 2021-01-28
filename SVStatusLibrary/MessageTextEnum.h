@@ -606,11 +606,23 @@ enum MessageTextEnum
 	
 	Tid_Correct_Grouping_Add_S_Items,
 	Tid_GroupDependencies_Wrong,
-		Tid_InvalidScaleFactor,
+	Tid_InvalidScaleFactor,
 
 	Tid_LinearImageOperatorList_ResultCreateFailed,
 	Tid_LinearImageOperatorList_GetResultRangeFailed,
 	Tid_BatchfileExecutionTimeout,
 	Tid_UnexpectedConversion,
+
+	Tid_CifxConfigReturnError,
+	Tid_CifxInitializationSuccess,
+	Tid_CifxInitializationError,
+	Tid_CifxClosed,
+	Tid_CifxPlcVersion,
+	Tid_CifxPlcConfigData,
+	Tid_CifxDllLoadError,
+	Tid_CifxVersionInfo,
+	Tid_CifxResponseDataError,
+
+	Tid_ModuleReady,
 };
 } //namespace SvStl

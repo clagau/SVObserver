@@ -24,11 +24,7 @@ namespace SvStl
 
 	#pragma region Constructor
 	public:
-		SourceFileParams() :
-		  m_Line( 0 )
-		{
-
-		};
+		SourceFileParams() = default;
 
 		SourceFileParams(LPCTSTR CompileDate, LPCTSTR CompileTime, LPCTSTR FileName, long Line, LPCTSTR FileDateTime) :
 		  m_CompileDate(CompileDate)
@@ -37,10 +33,9 @@ namespace SvStl
 		, m_Line( Line )
 		, m_FileDateTime( FileDateTime )
 		{
-
 		};
 
-		  virtual ~SourceFileParams() {};
+		virtual ~SourceFileParams() = default;
 	#pragma endregion Constructor
 
 	#pragma endregion Public Methods
@@ -50,7 +45,7 @@ namespace SvStl
 			m_CompileDate.clear();
 			m_CompileTime.clear();
 			m_FileName.clear();
-			m_Line = 0;
+			m_Line = 0L;
 			m_FileDateTime.clear();
 		}
 	#pragma endregion Public Methods
@@ -58,10 +53,10 @@ namespace SvStl
 
 	#pragma region Member Variables
 	public:
-		std::string m_CompileDate;				//Date the file was compiled.
-		std::string m_CompileTime;				//Time the file was compiled.
+		std::string m_CompileDate;			//Date the file was compiled.
+		std::string m_CompileTime;			//Time the file was compiled.
 		std::string m_FileName;				//Name of the file where the message was encountered.
-		long m_Line;						//Line number within the source file where the message was encountered.
+		long m_Line{ 0L };					//Line number within the source file where the message was encountered.
 		std::string m_FileDateTime;			//Last file modification date/time
 	#pragma endregion Member Variables
 	};

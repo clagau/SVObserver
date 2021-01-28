@@ -347,7 +347,7 @@ _variant_t SVPlcIOImpl::GetParameterValue(unsigned long index) const
 
 	if (index == SVBoardVersion)
 	{
-		result.SetString(SvUl::Format("PLC Version %.2f ", 1.0).c_str());
+		result.SetString(SvUl::Format("PLC Version %.2f ", 1.3).c_str());
 	}
 	return result;
 }

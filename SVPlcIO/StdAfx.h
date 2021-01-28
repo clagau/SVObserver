@@ -35,6 +35,8 @@
 #define _CRT_SECURE_NO_DEPRECATE 
 #define _CRT_NON_CONFORMING_SWPRINTFS
 
+#define NOMINMAX			// Exclude min/max macros
+
 #ifndef _DEBUG
 #define _SECURE_SCL 0
 #endif
@@ -72,5 +74,3 @@
 #include <boost/bind.hpp>		//Used by static library
 #include <boost/function.hpp>	//Used by static library
 #pragma endregion Precompiled Headers
-
-inline void printOutput(LPCTSTR text) { ::OutputDebugString(text); }

@@ -12,23 +12,31 @@
 #include "ConfigDataSet.h"
 #include "InspectionCommand.h"
 #include "Telegram.h"
-#include "TimeSync.h"
+#include "SVStatusLibrary/SourceFileParams.h"
 #pragma endregion Includes
 
 namespace SvPlc
 {
-struct InspectionState;
+struct InspectionState1;
+
+constexpr size_t cCmdDataSize = std::max(sizeof(InspectionCommand1), sizeof(InspectionCommand2));
+
+enum class PlcVersion : uint16_t
+{
+	PlcDataNone = 0,
+	PlcData1 = 0x0301,		//1.3 order is reversed to send correctly to the PLC
+	PlcData2 = 0x0201		//1.2 order is reversed to send correctly to the PLC
+};
 
 struct InputData
 {
-	double m_interruptTime {0.0};
+	InputData() { memset(&m_dynamicData[0], 0, m_dynamicData.size()); }
+	double m_notificationTime {0.0};
 	int32_t m_syncSocRelative {0L};
 	Telegram m_telegram;
-	TimeSync m_timeSync;
-	InspectionCommand m_inspectionCmd;
+	std::array<uint8_t, cCmdDataSize> m_dynamicData;
 };
 
-///controls access to process memory (input and output buffers) of the CifX card 
 class CifXCard
 {
 public:
@@ -47,9 +55,10 @@ public:
 
 	void sendVersion();
 	void sendConfigList();
-	void sendOperationData(const InspectionState& rState);
+	void sendOperationData(const InspectionState1& rState);
 
 	bool isProtocolInitialized() { return m_protocolInitialized; }
+	uint32_t getTriggerDataOffset() { return m_triggerDataOffset; }
 	void setReady(bool ready);
 
 private:
@@ -83,8 +92,11 @@ private:
 	CifxLoadLibrary m_cifxLoadLib;
 	std::queue<InputData> m_inputDataQueue;
 	InputData m_currentInputData;
+	PlcVersion m_plcVersion{ PlcVersion::PlcDataNone };
+	uint32_t m_triggerDataOffset{ 0UL };	//The memory offset in bytes to the trigger data starting from the inspection command struct
+	SvStl::SourceFileParams m_sourceFileParam; //The last recorded source file parameter setting
 
-	std::map<TelegramLayout, std::vector<ConfigDataSet>> m_configDataSetsMap;
+	std::vector<std::pair<TelegramLayout, std::vector<ConfigDataSet>>> m_configDataSetVector;
 };
 
 } //namespace SvPlc

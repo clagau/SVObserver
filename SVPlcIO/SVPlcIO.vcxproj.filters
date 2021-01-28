@@ -93,12 +93,6 @@
     <ClInclude Include="InspectionState.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="PlcDataVersion.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="TimeSync.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="ConfigDataSet.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>

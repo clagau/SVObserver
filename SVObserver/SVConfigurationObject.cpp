@@ -3981,13 +3981,17 @@ HRESULT SVConfigurationObject::AttachAcqToTriggers()
 	return hr;
 }
 
-HRESULT SVConfigurationObject::SetModuleReady(bool p_Value)
+HRESULT SVConfigurationObject::SetModuleReady(bool value)
 {
 	HRESULT l_Status(S_OK);
 
 	if (nullptr != m_pIOController)
 	{
-		l_Status = m_pIOController->SetModuleReady(p_Value);
+		l_Status = m_pIOController->SetModuleReady(value);
+		SvStl::MessageManager Exception(SvStl::MsgType::Log);
+		SvDef::StringVector msgList;
+		msgList.push_back(std::to_string(value));
+		Exception.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_ModuleReady, msgList, SvStl::SourceFileParams(StdMessageParams));
 	}
 	else
 	{

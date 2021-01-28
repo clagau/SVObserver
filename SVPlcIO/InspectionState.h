@@ -21,10 +21,6 @@ struct ChannelOut
 public:
 	ChannelOut() = default;
 	~ChannelOut() = default;
-	ChannelOut(const ChannelOut& rRhs) = default;
-	ChannelOut(ChannelOut&& rRhs) = default;
-	ChannelOut& operator=(const ChannelOut& rRhs) = default;
-	ChannelOut& operator=(ChannelOut&& rRhs) = default;
 
 #pragma region Member Variables
 public:
@@ -35,15 +31,23 @@ public:
 #pragma endregion Member Variables
 };
 
-struct InspectionState
+struct InspectionState1
 {
 public:
-	InspectionState() = default;
-	~InspectionState() = default;
-	InspectionState(const InspectionState& rRhs) = default;
-	InspectionState(InspectionState&& rRhs) = default;
-	InspectionState& operator=(const InspectionState& rRhs) = default;
-	InspectionState& operator=(InspectionState&& rRhs) = default;
+	InspectionState1() = default;
+	~InspectionState1() = default;
+
+#pragma region Member Variables
+public:
+	std::array<ChannelOut, cNumberOfChannels> m_channels;	//Out data for each of the 4 separate channels
+#pragma endregion Member Variables
+};
+
+struct InspectionState2
+{
+public:
+	InspectionState2() = default;
+	~InspectionState2() = default;
 
 #pragma region Member Variables
 public:

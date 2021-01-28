@@ -15,7 +15,9 @@
 #include "EplCn_If_Public.h"
 #include "Hil_ApplicationCmd.h"
 #include "InspectionState.h"
-#include "PlcDataVersion.h"
+#include "SVMessage/SVMessage.h"
+#include "SVStatusLibrary/MessageManager.h"
+#include "SVStatusLibrary/MessageTextEnum.h"
 #include "SVUtilityLibrary/SVClock.h"
 #pragma endregion Includes
 
@@ -42,7 +44,8 @@ void APIENTRY notificationHandler(uint32_t notification, uint32_t, void* , void*
 {
 	if (pvUser == nullptr)
 	{
-		printOutput("'cifX' == nullptr\n");
+		SvStl::MessageManager Msg(SvStl::MsgType::Log);
+		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_InvalidMemoryPointer, SvStl::SourceFileParams(StdMessageParams));
 		return;
 	}
 
@@ -55,118 +58,6 @@ CifXCard::CifXCard(uint16_t CifXNodeId, uint16_t MaxPlcDataSize):
  m_CifXNodeId(CifXNodeId)
 ,m_maxPlcDataSize(MaxPlcDataSize)
 {
-}
-
-int32_t CifXCard::SendConfigurationToCifX()
-{
-	/* common variables for packets */
-	CIFX_PACKET sendPkt;
-	CIFX_PACKET recvPkt;
-
-	memset(&sendPkt, 0, sizeof(sendPkt));
-	memset(&recvPkt, 0, sizeof(recvPkt));
-
-	/* build configuration packet */
-	BuildConfigurationReq(&sendPkt, m_CifXNodeId, m_maxPlcDataSize);
-
-	/* send configuration Req packet */
-	printOutput("Sending configuration request...\n");
-	int32_t result = SendRecvPkt(&sendPkt, &recvPkt);
-	/* check if we got an error within configuration packet */
-	if (CIFX_NO_ERROR != result)
-	{
-		printOutput("Configuration confirmation not received.");
-		return result;
-
-	}
-	if (CIFX_NO_ERROR != recvPkt.tHeader.ulState)
-	{
-		std::stringstream outputStream;
-		outputStream << "Configuration packet returned with error code: 0x" << std::hex << recvPkt.tHeader.ulState << '\n';
-		printOutput(outputStream.str().c_str());
-		return result;
-	}
-
-	return result;
-}
-
-
-int32_t CifXCard::WarmstartAndInitializeCifX()
-{
-	if(false == m_cifxLoadLib.isInitilized())
-	{
-		return E_FAIL;
-	}
-	printOutput("Processing channel init...\n");
-
-	uint32_t result = m_cifxLoadLib.m_pChannelReset(m_hChannel, CIFX_CHANNELINIT, cResetTimeout);
-
-	if (CIFX_NO_ERROR != result)
-	{
-		return result;
-	}
-	printOutput("Waiting for Warmstart");
-	uint32_t  dummy{0UL};
-
-	do
-	{
-		result = m_cifxLoadLib.m_pChannelHostState(m_hChannel, CIFX_HOST_STATE_READY, &dummy, cDriverTimeout);
-		printOutput(".");
-	} while (CIFX_DEV_NOT_RUNNING == result);
-	printOutput(" -> complete.\n");
-
-
-	/* check CifX state */
-	if ((CIFX_NO_ERROR == result) || (CIFX_DEV_NO_COM_FLAG == result))
-	{
-		if (CIFX_DEV_NO_COM_FLAG == result)
-		{
-			printOutput("\tNo communication!");
-		}
-
-		printOutput("Initialize read and write buffers\n");
-		m_pReadBuffer = std::make_unique<uint8_t[]>(m_maxPlcDataSize);
-		m_pWriteBuffer = std::make_unique<uint8_t[]>(m_maxPlcDataSize);
-
-		/* initialize the read and write buffer with zero */
-		memset(m_pReadBuffer.get(), 0, m_maxPlcDataSize);
-		memset(m_pWriteBuffer.get(), 0, m_maxPlcDataSize);
-
-		///Only call this when using sync notification
-		if (CIFX_NOTIFY_SYNC == m_notifyType)
-		{
-			result = SendRecvCmdPkt(HIL_SET_TRIGGER_TYPE_REQ);
-			if (CIFX_NO_ERROR != result)
-			{
-				return result;
-			}
-		}
-
-		result = SendRecvCmdPkt(HIL_REGISTER_APP_REQ);
-		if(CIFX_NO_ERROR != result)
-		{
-			return result;
-		}
-
-		uint32_t State {0UL};
-		result = m_cifxLoadLib.m_pChannelDMAState(m_hChannel, CIFX_DMA_STATE_ON, &State);
-		if (CIFX_NO_ERROR != result)
-		{
-			return result;
-		}
-		printOutput("DMA is on\n");
-
-		result = m_cifxLoadLib.m_pChannelRegisterNotification(m_hChannel, m_notifyType, notificationHandler, reinterpret_cast<void*> (this));
-		if (CIFX_NO_ERROR != result)
-		{
-			return result;
-		}
-		printOutput("Cifx Notification Handler Ready\n");
-
-		result = CIFX_NO_ERROR;
-	}
-
-	return result;
 }
 
 void CifXCard::readProcessData(uint32_t notification)
@@ -187,15 +78,16 @@ void CifXCard::readProcessData(uint32_t notification)
 
 		switch (inputData.m_telegram.m_content)
 		{
-		case TelegramContent::TimeSyncData:
+		case TelegramContent::VersionData:
 		{
-			memcpy(&inputData.m_timeSync, pData, sizeof(TimeSync));
+			memcpy(&inputData.m_dynamicData[0], pData, sizeof(PlcVersion));
+			inputData.m_notificationTime = timeStamp;
 			break;
 		}
 		case TelegramContent::OperationData:
 		{
-			memcpy(&inputData.m_inspectionCmd, pData, sizeof(InspectionCommand));
-			inputData.m_interruptTime = timeStamp;
+			memcpy(&inputData.m_dynamicData[0], pData, cCmdDataSize);
+			inputData.m_notificationTime = timeStamp;
 			break;
 		}
 		default:
@@ -232,15 +124,17 @@ void CifXCard::closeCifX()
 {
 	if(m_cifxLoadLib.isInitilized())
 	{
-		printOutput("Closing application and freeing buffers...\n");
+		::OutputDebugString("Closing application and freeing buffers...\n");
 		m_cifxLoadLib.m_pChannelUnregisterNotification(m_hChannel, m_notifyType);
 		m_cifxLoadLib.m_pChannelBusState(m_hChannel, CIFX_BUS_STATE_OFF, nullptr, cDriverTimeout);
 		SendRecvCmdPkt(HIL_UNREGISTER_APP_REQ);
-		printOutput("Closing Channel...\n");
+		::OutputDebugString("Closing Channel...\n");
 		m_cifxLoadLib.m_pChannelClose(m_hChannel);
-		printOutput("Closing Driver...\n");
+		::OutputDebugString("Closing Driver...\n");
 		m_cifxLoadLib.m_pDriverClose(m_hDriver);
-		printOutput("CifX card closed.\n");
+		::OutputDebugString("CifX card closed.\n");
+		SvStl::MessageManager Msg(SvStl::MsgType::Log);
+		Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_CifxClosed, SvStl::SourceFileParams(StdMessageParams));
 	}
 }
 
@@ -253,10 +147,21 @@ HRESULT CifXCard::OpenAndInitializeCifX(const std::string& rAdditionalData)
 	{
 		result = SendConfigurationToCifX();
 		
-		if (!(CIFX_NO_ERROR != result))
+		if (CIFX_NO_ERROR == result)
 		{
 			result = WarmstartAndInitializeCifX();
 		}
+	}
+
+	if (CIFX_NO_ERROR == result)
+	{
+		SvStl::MessageManager Msg(SvStl::MsgType::Log);
+		Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_CifxInitializationSuccess, m_sourceFileParam);
+	}
+	else
+	{
+		SvStl::MessageManager Msg(SvStl::MsgType::Log);
+		Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CifxInitializationError, m_sourceFileParam);
 	}
 	return result;
 }
@@ -264,12 +169,32 @@ HRESULT CifXCard::OpenAndInitializeCifX(const std::string& rAdditionalData)
 void CifXCard::sendVersion()
 {
 	m_protocolInitialized = false;
-	PlcDataVersion plcVersion;
-	plcVersion.m_major = cMajorVersion;
-	plcVersion.m_minor = cMinorVersion;
-	const uint8_t* pData = reinterpret_cast<const uint8_t*> (&plcVersion);
-	writeResponseData(pData, sizeof(PlcDataVersion));
-	printOutput("Send Version\n");
+	m_plcVersion = PlcVersion::PlcDataNone;
+	PlcVersion plcVersion{ PlcVersion::PlcData1 };
+	if (0 == memcmp(&plcVersion, &m_currentInputData.m_dynamicData[0], sizeof(PlcVersion)))
+	{
+		m_plcVersion = plcVersion;
+	}
+	else
+	{
+		plcVersion = PlcVersion::PlcData2;
+		if (0 == memcmp(&plcVersion, &m_currentInputData.m_dynamicData[0], sizeof(PlcVersion)))
+		{
+			m_plcVersion = plcVersion;
+		}
+	}
+
+	const uint8_t* pData = reinterpret_cast<const uint8_t*> (&m_plcVersion);
+	writeResponseData(pData, sizeof(PlcVersion));
+
+	SvStl::MessageManager Msg(SvStl::MsgType::Log);
+	Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_CifxPlcVersion, SvStl::SourceFileParams(StdMessageParams));
+	::OutputDebugString("Send Version\n");
+	//Now that the version is known create the config list
+	::OutputDebugString("Create config lists\n");
+	m_configDataSetVector.reserve(2);
+	m_configDataSetVector.emplace_back(TelegramLayout::Layout1, createConfigList(TelegramLayout::Layout1));
+	m_configDataSetVector.emplace_back(TelegramLayout::Layout2, createConfigList(TelegramLayout::Layout2));
 }
 
 void CifXCard::sendConfigList()
@@ -280,21 +205,37 @@ void CifXCard::sendConfigList()
 	{
 		///Layout index is always either 1 or 2
 		layoutIndex = (layoutIndex % 2) == 1 ? 1 : 2;
-		const std::vector<ConfigDataSet>& rConfigList =  m_configDataSetsMap[static_cast<TelegramLayout> (layoutIndex)];
-		if(0 < rConfigList.size())
+		const auto iter = std::find_if(m_configDataSetVector.begin(), m_configDataSetVector.end(), [&layoutIndex](const auto& rEntry) { return rEntry.first == static_cast<TelegramLayout> (layoutIndex); });
+		if(iter != m_configDataSetVector.end() && 0 < iter->second.size())
 		{
-			const uint8_t* pData = reinterpret_cast<const uint8_t*> (&rConfigList[0]);
-			writeResponseData(pData, sizeof(ConfigDataSet) * rConfigList.size());
-			printOutput("Send Config Layout\n");
+			const uint8_t* pData = reinterpret_cast<const uint8_t*> (&iter->second[0]);
+			writeResponseData(pData, sizeof(ConfigDataSet) * cConfigListSize);
+			SvStl::MessageManager Msg(SvStl::MsgType::Log);
+			Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_CifxPlcConfigData, SvStl::SourceFileParams(StdMessageParams));
+			::OutputDebugString("Send config data Layout\n");
 		}
 	}
 }
 
-void CifXCard::sendOperationData(const InspectionState& rState)
+void CifXCard::sendOperationData(const InspectionState1& rState)
 {
-	m_protocolInitialized = true;
-	const uint8_t* pData = reinterpret_cast<const uint8_t*> (&rState);
-	writeResponseData(pData, sizeof(InspectionState));
+	m_protocolInitialized = (m_plcVersion != PlcVersion::PlcDataNone);
+	InspectionState2 insState2;
+	size_t dynamicDataSize{ 0ULL };
+	const uint8_t* pData{ nullptr };
+	if (PlcVersion::PlcData1 == m_plcVersion)
+	{
+		pData = reinterpret_cast<const uint8_t*> (&rState);
+		dynamicDataSize = sizeof(InspectionState1);
+	}
+	else if (PlcVersion::PlcData2 == m_plcVersion)
+	{
+		memcpy(&insState2.m_channels[0], &rState.m_channels[0], cNumberOfChannels * sizeof(ChannelOut));
+		pData = reinterpret_cast<const uint8_t*> (&insState2);
+		dynamicDataSize = sizeof(InspectionState2);
+	}
+	
+	writeResponseData(pData, dynamicDataSize);
 }
 
 void CifXCard::setReady(bool ready)
@@ -307,47 +248,54 @@ int32_t CifXCard::OpenCifX(const std::string& rAdditionalData)
 {
 	int32_t result{ CIFX_DEV_NOT_READY };
 
+	m_sourceFileParam.clear();
 	result = m_cifxLoadLib.Open();
 	/// Load Dll failed!
 	if (S_OK != result)
 	{
-		printOutput("Could not load cifX32DLL.dll\n");
+		SvStl::MessageManager Msg(SvStl::MsgType::Log);
+		Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CifxDllLoadError, SvStl::SourceFileParams(StdMessageParams));
 		return result;
 	}
-	printOutput("Opening driver...\n");
-	/* Open Driver */
+	::OutputDebugString("Opening driver...\n");
 	result = m_cifxLoadLib.m_pDriverOpen(&m_hDriver);
 	if (CIFX_NO_ERROR != result)
 	{
+		m_sourceFileParam = SvStl::SourceFileParams(StdMessageParams);
 		return result;
 	}
 	DRIVER_INFORMATION driverInfo;
 	memset(&driverInfo, 0, sizeof(driverInfo));
 	m_cifxLoadLib.m_pDriverGetInformation(m_hDriver, sizeof(driverInfo), reinterpret_cast<void*> (&driverInfo));
-	std::string outputString{ "Driver version " };
-	outputString += driverInfo.abDriverVersion + '\n';
-	printOutput(outputString.c_str());
+	std::string driverVersion{ driverInfo.abDriverVersion };
+	::OutputDebugString((_T("Driver version ") + driverVersion + '\n').c_str() );
 
-	printOutput("Opening channel ...\n");
+	::OutputDebugString("Opening channel ...\n");
 	result = m_cifxLoadLib.m_pChannelOpen(m_hDriver, cBoardName, cCifxChannel, &m_hChannel);
 	if (CIFX_NO_ERROR != result)
 	{
+		m_sourceFileParam = SvStl::SourceFileParams(StdMessageParams);
 		return result;
 	}
 	CHANNEL_INFORMATION channelInfo;
 	m_cifxLoadLib.m_pChannelInfo(m_hChannel, sizeof(channelInfo), reinterpret_cast<void*> (&channelInfo));
-	outputString = std::to_string(channelInfo.usFWMajor) + '.' + std::to_string(channelInfo.usFWMinor) + '.' + std::to_string(channelInfo.usFWBuild) + '.' + std::to_string(channelInfo.usFWRevision);
-	m_notifyType =  (rAdditionalData == outputString) ? CIFX_NOTIFY_PD0_IN : CIFX_NOTIFY_SYNC;
-	printOutput(reinterpret_cast<char*> (channelInfo.abFWName));
-	outputString =  ' ' + outputString + '\n';
-	printOutput(outputString.c_str());
+	std::string firmware{ std::to_string(channelInfo.usFWMajor) + '.' + std::to_string(channelInfo.usFWMinor) + '.' + std::to_string(channelInfo.usFWBuild) + '.' + std::to_string(channelInfo.usFWRevision) };
+	m_notifyType =  (rAdditionalData == firmware) ? CIFX_NOTIFY_PD0_IN : CIFX_NOTIFY_SYNC;
+	::OutputDebugString(reinterpret_cast<char*> (channelInfo.abFWName));
+	::OutputDebugString((' ' + firmware + '\n').c_str());
+	SvStl::MessageManager Msg(SvStl::MsgType::Log);
+	SvDef::StringVector msgList;
+	msgList.push_back(driverVersion);
+	msgList.push_back(firmware);
+	Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_CifxVersionInfo, msgList, SvStl::SourceFileParams(StdMessageParams));
 
 	result = m_cifxLoadLib.m_pChannelReset(m_hChannel, CIFX_CHANNELINIT, cResetTimeout);
 	if (CIFX_NO_ERROR != result)
 	{
+		m_sourceFileParam = SvStl::SourceFileParams(StdMessageParams);
 		return result;
 	}
-	printOutput("Processing system restart...\n");
+	::OutputDebugString("Processing system restart...\n");
 	result = m_cifxLoadLib.m_pChannelReset(m_hChannel, CIFX_SYSTEMSTART, cResetTimeout);
 	if (CIFX_NO_ERROR == result)
 	{
@@ -364,13 +312,131 @@ int32_t CifXCard::OpenCifX(const std::string& rAdditionalData)
 				++hostTries;
 			}
 		} while (result == CIFX_DEV_NOT_READY && hostTries < cMaxHostTries);
+		if (CIFX_NO_ERROR != result)
+		{
+			m_sourceFileParam = SvStl::SourceFileParams(StdMessageParams);
+		}
 	}
 
-	if (CIFX_NO_ERROR == result)
+	return result;
+}
+
+int32_t CifXCard::SendConfigurationToCifX()
+{
+	/* common variables for packets */
+	CIFX_PACKET sendPkt;
+	CIFX_PACKET recvPkt;
+
+	m_sourceFileParam.clear();
+	memset(&sendPkt, 0, sizeof(sendPkt));
+	memset(&recvPkt, 0, sizeof(recvPkt));
+
+	/* build configuration packet */
+	BuildConfigurationReq(&sendPkt, m_CifXNodeId, m_maxPlcDataSize);
+
+	/* send configuration Req packet */
+	int32_t result = SendRecvPkt(&sendPkt, &recvPkt);
+	/* check if we got an error within configuration packet */
+	if (CIFX_NO_ERROR != result)
 	{
-		printOutput("Create config lists\n");
-		m_configDataSetsMap[TelegramLayout::Layout1] = createConfigList(TelegramLayout::Layout1);
-		m_configDataSetsMap[TelegramLayout::Layout2] = createConfigList(TelegramLayout::Layout2);
+		m_sourceFileParam = SvStl::SourceFileParams(StdMessageParams);
+		return result;
+
+	}
+	if (CIFX_NO_ERROR != recvPkt.tHeader.ulState)
+	{
+		std::stringstream outputStream;
+		outputStream << std::hex << recvPkt.tHeader.ulState;
+		SvDef::StringVector msgList;
+		msgList.push_back(outputStream.str());
+		SvStl::MessageManager Msg(SvStl::MsgType::Log);
+		m_sourceFileParam = SvStl::SourceFileParams(StdMessageParams);
+		Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CifxConfigReturnError, msgList, m_sourceFileParam);
+		return result;
+	}
+
+	return result;
+}
+
+int32_t CifXCard::WarmstartAndInitializeCifX()
+{
+	m_sourceFileParam.clear();
+	if (false == m_cifxLoadLib.isInitilized())
+	{
+		m_sourceFileParam = SvStl::SourceFileParams(StdMessageParams);
+		return E_FAIL;
+	}
+	::OutputDebugString("Processing channel init...\n");
+
+	uint32_t result = m_cifxLoadLib.m_pChannelReset(m_hChannel, CIFX_CHANNELINIT, cResetTimeout);
+
+	if (CIFX_NO_ERROR != result)
+	{
+		m_sourceFileParam = SvStl::SourceFileParams(StdMessageParams);
+		return result;
+	}
+	::OutputDebugString("Waiting for Warm start");
+
+	uint32_t  dummy{ 0UL };
+	do
+	{
+		result = m_cifxLoadLib.m_pChannelHostState(m_hChannel, CIFX_HOST_STATE_READY, &dummy, cDriverTimeout);
+		::OutputDebugString(".");
+	} while (CIFX_DEV_NOT_RUNNING == result);
+	::OutputDebugString(" -> complete.\n");
+
+
+	/* check CifX state */
+	if ((CIFX_NO_ERROR == result) || (CIFX_DEV_NO_COM_FLAG == result))
+	{
+		if (CIFX_DEV_NO_COM_FLAG == result)
+		{
+			::OutputDebugString("No communication!\n");
+		}
+
+		m_pReadBuffer = std::make_unique<uint8_t[]>(m_maxPlcDataSize);
+		m_pWriteBuffer = std::make_unique<uint8_t[]>(m_maxPlcDataSize);
+
+		/* initialize the read and write buffer with zero */
+		memset(m_pReadBuffer.get(), 0, m_maxPlcDataSize);
+		memset(m_pWriteBuffer.get(), 0, m_maxPlcDataSize);
+
+		///Only call this when using sync notification
+		if (CIFX_NOTIFY_SYNC == m_notifyType)
+		{
+			result = SendRecvCmdPkt(HIL_SET_TRIGGER_TYPE_REQ);
+			if (CIFX_NO_ERROR != result)
+			{
+				m_sourceFileParam = SvStl::SourceFileParams(StdMessageParams);
+				return result;
+			}
+		}
+
+		result = SendRecvCmdPkt(HIL_REGISTER_APP_REQ);
+		if (CIFX_NO_ERROR != result)
+		{
+			m_sourceFileParam = SvStl::SourceFileParams(StdMessageParams);
+			return result;
+		}
+
+		uint32_t State{ 0UL };
+		result = m_cifxLoadLib.m_pChannelDMAState(m_hChannel, CIFX_DMA_STATE_ON, &State);
+		if (CIFX_NO_ERROR != result)
+		{
+			m_sourceFileParam = SvStl::SourceFileParams(StdMessageParams);
+			return result;
+		}
+		::OutputDebugString("DMA is on\n");
+
+		result = m_cifxLoadLib.m_pChannelRegisterNotification(m_hChannel, m_notifyType, notificationHandler, reinterpret_cast<void*> (this));
+		if (CIFX_NO_ERROR != result)
+		{
+			m_sourceFileParam = SvStl::SourceFileParams(StdMessageParams);
+			return result;
+		}
+		::OutputDebugString("Cifx Notification Handler Ready\n");
+
+		result = CIFX_NO_ERROR;
 	}
 
 	return result;
@@ -402,9 +468,7 @@ int32_t CifXCard::SendRecvPkt(CIFX_PACKET* pSendPkt, CIFX_PACKET* pRecvPkt)
 		{
 			/* it is our packet, so return its status as result */
 			result = pRecvPkt->tHeader.ulState;
-
 			/* Note: we also return the packet which we have received (by reference, see signature of function) */
-
 			/* we have received our packet, so we can break here*/
 			break;
 		}
@@ -515,105 +579,161 @@ std::vector<ConfigDataSet> CifXCard::createConfigList(TelegramLayout layout)
 	{
 		case TelegramLayout::Layout1:
 		{
-			InspectionCommand insCmd;
-
-			result[configIndex] = ConfigDataSet {cModeSingleDirect, dataTypeList[typeid(insCmd.m_enable)], startByte, sizeof(insCmd.m_enable)};
-			//Do startByte always before configIndex
-			startByte += result[configIndex].m_byteSize;
-			configIndex++;
-
-			result[configIndex] = ConfigDataSet {cModeSingleDirect, dataTypeList[typeid(insCmd.m_socAbsSeconds)], startByte, sizeof(insCmd.m_socAbsSeconds)};
-			startByte += result[configIndex].m_byteSize;
-			configIndex++;
-
-			result[configIndex] = ConfigDataSet {cModeSingleDirect, dataTypeList[typeid(insCmd.m_socAbsNanoseconds)], startByte, sizeof(insCmd.m_socAbsNanoseconds)};
-			startByte += result[configIndex].m_byteSize;
-			configIndex++;
-
-			result[configIndex] = ConfigDataSet {cModeSingleDirect, dataTypeList[typeid(insCmd.m_socRelative)], startByte, sizeof(insCmd.m_socRelative)};
-			startByte += result[configIndex].m_byteSize;
-			configIndex++;
-
-			if(insCmd.m_reserved.size() > 0)
+			m_triggerDataOffset = 0UL;
+			if (PlcVersion::PlcData1 == m_plcVersion)
 			{
-				result[configIndex] = ConfigDataSet {0, dataTypeList[typeid(insCmd.m_reserved[0])], startByte, sizeof(insCmd.m_reserved)};
+				InspectionCommand1 insCmd;
+
+				result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(insCmd.m_socRelative)], startByte, sizeof(insCmd.m_socRelative) };
+				m_triggerDataOffset += result[configIndex].m_byteSize;
+				//Do startByte always before configIndex
 				startByte += result[configIndex].m_byteSize;
 				configIndex++;
+
+				for (int i = 0; i < insCmd.m_channels.size(); ++i)
+				{
+					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelIn1::m_unitControl)], startByte, sizeof(ChannelIn1::m_unitControl) };
+					startByte += result[configIndex].m_byteSize;
+					configIndex++;
+					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelIn1::m_timeStamp)], startByte, sizeof(ChannelIn1::m_timeStamp) };
+					startByte += result[configIndex].m_byteSize;
+					configIndex++;
+					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelIn1::m_currentObjectType)], startByte, sizeof(ChannelIn1::m_currentObjectType) };
+					startByte += result[configIndex].m_byteSize;
+					configIndex++;
+					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelIn1::m_currentObjectID)], startByte, sizeof(ChannelIn1::m_currentObjectID) };
+					startByte += result[configIndex].m_byteSize;
+					configIndex++;
+					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelIn1::m_previousObjectType)], startByte, sizeof(ChannelIn1::m_previousObjectType) };
+					startByte += result[configIndex].m_byteSize;
+					configIndex++;
+					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelIn1::m_previousObjectID)], startByte, sizeof(ChannelIn1::m_previousObjectID) };
+					startByte += result[configIndex].m_byteSize;
+					configIndex++;
+					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelIn1::m_triggerIndex)], startByte, sizeof(ChannelIn1::m_triggerIndex) };
+					startByte += result[configIndex].m_byteSize;
+					configIndex++;
+					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelIn1::m_triggerCount)], startByte, sizeof(ChannelIn1::m_triggerCount) };
+					startByte += result[configIndex].m_byteSize;
+					configIndex++;
+				}
 			}
+			else if (PlcVersion::PlcData2 == m_plcVersion)
+			{
+				InspectionCommand2 insCmd;
 
-			for(int i=0; i < insCmd.m_channels.size(); ++i)
-			{
-				result[configIndex] = ConfigDataSet {cModeSingleDirect, dataTypeList[typeid(ChannelIn::m_unitControl)], startByte, sizeof(ChannelIn::m_unitControl)};
+				result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(insCmd.m_enable)], startByte, sizeof(insCmd.m_enable) };
+				m_triggerDataOffset += result[configIndex].m_byteSize;
+				//Do startByte always before configIndex
 				startByte += result[configIndex].m_byteSize;
 				configIndex++;
-				result[configIndex] = ConfigDataSet {cModeSingleDirect, dataTypeList[typeid(ChannelIn::m_sequence)], startByte, sizeof(ChannelIn::m_sequence)};
+
+				result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(insCmd.m_socAbsSeconds)], startByte, sizeof(insCmd.m_socAbsSeconds) };
+				m_triggerDataOffset += result[configIndex].m_byteSize;
 				startByte += result[configIndex].m_byteSize;
 				configIndex++;
-				result[configIndex] = ConfigDataSet {cModeSingleDirect, dataTypeList[typeid(ChannelIn::m_timeStamp1)], startByte, sizeof(ChannelIn::m_timeStamp1)};
+
+				result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(insCmd.m_socAbsNanoseconds)], startByte, sizeof(insCmd.m_socAbsNanoseconds) };
+				m_triggerDataOffset += result[configIndex].m_byteSize;
 				startByte += result[configIndex].m_byteSize;
 				configIndex++;
-				result[configIndex] = ConfigDataSet {cModeSingleDirect, dataTypeList[typeid(ChannelIn::m_timeStamp2)], startByte, sizeof(ChannelIn::m_timeStamp2)};
+
+				result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(insCmd.m_socRelative)], startByte, sizeof(insCmd.m_socRelative) };
+				m_triggerDataOffset += result[configIndex].m_byteSize;
 				startByte += result[configIndex].m_byteSize;
 				configIndex++;
-				result[configIndex] = ConfigDataSet {cModeSingleDirect, dataTypeList[typeid(ChannelIn::m_currentObjectType)], startByte, sizeof(ChannelIn::m_currentObjectType)};
-				startByte += result[configIndex].m_byteSize;
-				configIndex++;
-				result[configIndex] = ConfigDataSet {cModeSingleDirect, dataTypeList[typeid(ChannelIn::m_currentObjectID)], startByte, sizeof(ChannelIn::m_currentObjectID)};
-				startByte += result[configIndex].m_byteSize;
-				configIndex++;
-				result[configIndex] = ConfigDataSet {cModeSingleDirect, dataTypeList[typeid(ChannelIn::m_previousObjectType)], startByte, sizeof(ChannelIn::m_previousObjectType)};
-				startByte += result[configIndex].m_byteSize;
-				configIndex++;
-				result[configIndex] = ConfigDataSet {cModeSingleDirect, dataTypeList[typeid(ChannelIn::m_previousObjectID)], startByte, sizeof(ChannelIn::m_previousObjectID)};
-				startByte += result[configIndex].m_byteSize;
-				configIndex++;
-				result[configIndex] = ConfigDataSet {cModeSingleDirect, dataTypeList[typeid(ChannelIn::m_triggerIndex)], startByte, sizeof(ChannelIn::m_triggerIndex)};
-				startByte += result[configIndex].m_byteSize;
-				configIndex++;
-				result[configIndex] = ConfigDataSet {cModeSingleDirect, dataTypeList[typeid(ChannelIn::m_triggerCount)], startByte, sizeof(ChannelIn::m_triggerCount)};
-				startByte += result[configIndex].m_byteSize;
-				configIndex++;
-				result[configIndex] = ConfigDataSet {cModeSingleDirect, dataTypeList[typeid(ChannelIn::m_socTriggerTime)], startByte, sizeof(ChannelIn::m_socTriggerTime)};
-				startByte += result[configIndex].m_byteSize;
-				configIndex++;
-			}
-			///This is the way the PLC sets the not used configuration sets
-			while(configIndex < cConfigListSize)
-			{
-				result[configIndex] = ConfigDataSet {0, 0, startByte, 0ULL};
-				configIndex++;
+
+				if (insCmd.m_reserved.size() > 0)
+				{
+					result[configIndex] = ConfigDataSet{ 0, dataTypeList[typeid(insCmd.m_reserved[0])], startByte, sizeof(insCmd.m_reserved) };
+					m_triggerDataOffset += result[configIndex].m_byteSize;
+					startByte += result[configIndex].m_byteSize;
+					configIndex++;
+				}
+
+				for (int i = 0; i < insCmd.m_channels.size(); ++i)
+				{
+					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelIn2::m_unitControl)], startByte, sizeof(ChannelIn2::m_unitControl) };
+					startByte += result[configIndex].m_byteSize;
+					configIndex++;
+					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelIn2::m_sequence)], startByte, sizeof(ChannelIn2::m_sequence) };
+					startByte += result[configIndex].m_byteSize;
+					configIndex++;
+					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelIn2::m_timeStamp1)], startByte, sizeof(ChannelIn2::m_timeStamp1) };
+					startByte += result[configIndex].m_byteSize;
+					configIndex++;
+					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelIn2::m_timeStamp2)], startByte, sizeof(ChannelIn2::m_timeStamp2) };
+					startByte += result[configIndex].m_byteSize;
+					configIndex++;
+					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelIn2::m_currentObjectType)], startByte, sizeof(ChannelIn2::m_currentObjectType) };
+					startByte += result[configIndex].m_byteSize;
+					configIndex++;
+					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelIn2::m_currentObjectID)], startByte, sizeof(ChannelIn2::m_currentObjectID) };
+					startByte += result[configIndex].m_byteSize;
+					configIndex++;
+					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelIn2::m_previousObjectType)], startByte, sizeof(ChannelIn2::m_previousObjectType) };
+					startByte += result[configIndex].m_byteSize;
+					configIndex++;
+					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelIn2::m_previousObjectID)], startByte, sizeof(ChannelIn2::m_previousObjectID) };
+					startByte += result[configIndex].m_byteSize;
+					configIndex++;
+					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelIn2::m_triggerIndex)], startByte, sizeof(ChannelIn2::m_triggerIndex) };
+					startByte += result[configIndex].m_byteSize;
+					configIndex++;
+					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelIn2::m_triggerCount)], startByte, sizeof(ChannelIn2::m_triggerCount) };
+					startByte += result[configIndex].m_byteSize;
+					configIndex++;
+					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelIn2::m_socTriggerTime)], startByte, sizeof(ChannelIn2::m_socTriggerTime) };
+					startByte += result[configIndex].m_byteSize;
+					configIndex++;
+				}
 			}
 			break;
 		}
 		case TelegramLayout::Layout2:
 		{
-			InspectionState insState;
-			
-			if (insState.m_header.size() > 0)
+			if (PlcVersion::PlcData1 == m_plcVersion)
 			{
-				result[configIndex] = ConfigDataSet {0, dataTypeList[typeid(insState.m_header[0])], startByte, sizeof(insState.m_header)};
-				//Do startByte always before configIndex
-				startByte += result[configIndex].m_byteSize;
-				configIndex++;
-			}
+				InspectionState1 insState;
 
-			for (int i = 0; i < insState.m_channels.size(); ++i)
-			{
-				result[configIndex] = ConfigDataSet {cModeSingleDirect, dataTypeList[typeid(ChannelOut::m_currentObjectType)], startByte, sizeof(ChannelOut::m_currentObjectType)};
-				startByte += result[configIndex].m_byteSize;
-				configIndex++;
-				result[configIndex] = ConfigDataSet {cModeSingleDirect, dataTypeList[typeid(ChannelOut::m_currentObjectID)], startByte, sizeof(ChannelOut::m_currentObjectID)};
-				startByte += result[configIndex].m_byteSize;
-				configIndex++;
-				result[configIndex] = ConfigDataSet {cModeSingleDirect, dataTypeList[typeid(ChannelOut::m_results[0])], startByte, sizeof(ChannelOut::m_results)};
-				startByte += result[configIndex].m_byteSize;
-				configIndex++;
+				for (int i = 0; i < insState.m_channels.size(); ++i)
+				{
+					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelOut::m_currentObjectType)], startByte, sizeof(ChannelOut::m_currentObjectType) };
+					//Do startByte always before configIndex
+					startByte += result[configIndex].m_byteSize;
+					configIndex++;
+					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelOut::m_currentObjectID)], startByte, sizeof(ChannelOut::m_currentObjectID) };
+					startByte += result[configIndex].m_byteSize;
+					configIndex++;
+					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelOut::m_results[0])], startByte, sizeof(ChannelOut::m_results) };
+					startByte += result[configIndex].m_byteSize;
+					configIndex++;
+				}
 			}
-			///This is the way the PLC sets the not used configuration sets
-			while (configIndex < cConfigListSize)
+			else if (PlcVersion::PlcData2 == m_plcVersion)
 			{
-				result[configIndex] = ConfigDataSet {0, 0, startByte, 0ULL};
-				configIndex++;
+				InspectionState2 insState;
+
+				if (insState.m_header.size() > 0)
+				{
+					result[configIndex] = ConfigDataSet{ 0, dataTypeList[typeid(insState.m_header[0])], startByte, sizeof(insState.m_header) };
+					//Do startByte always before configIndex
+					startByte += result[configIndex].m_byteSize;
+					configIndex++;
+				}
+
+				for (int i = 0; i < insState.m_channels.size(); ++i)
+				{
+					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelOut::m_currentObjectType)], startByte, sizeof(ChannelOut::m_currentObjectType) };
+					startByte += result[configIndex].m_byteSize;
+					configIndex++;
+					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelOut::m_currentObjectID)], startByte, sizeof(ChannelOut::m_currentObjectID) };
+					startByte += result[configIndex].m_byteSize;
+					configIndex++;
+					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelOut::m_results[0])], startByte, sizeof(ChannelOut::m_results) };
+					startByte += result[configIndex].m_byteSize;
+					configIndex++;
+				}
 			}
 			break;
 		}
@@ -622,6 +742,12 @@ std::vector<ConfigDataSet> CifXCard::createConfigList(TelegramLayout layout)
 		{
 			break;
 		}
+	}
+	///This is the way the PLC sets the not used configuration sets
+	while (configIndex < cConfigListSize)
+	{
+		result[configIndex] = ConfigDataSet{ 0, 0, startByte, 0ULL };
+		configIndex++;
 	}
 
 	return result;	
@@ -664,7 +790,8 @@ void CifXCard::writeResponseData(const uint8_t* pSdoDynamic, size_t sdoDynamicSi
 
 	if (CIFX_NO_ERROR != m_cifxLoadLib.m_pChannelIOWrite(m_hChannel, 0, 0, m_maxPlcDataSize, m_pWriteBuffer.get(), cTimeout))
 	{
-		printOutput("Write Response Data Failed\n");
+		SvStl::MessageManager Msg(SvStl::MsgType::Log);
+		Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CifxInitializationError, SvStl::SourceFileParams(StdMessageParams));
 	}
 
 }

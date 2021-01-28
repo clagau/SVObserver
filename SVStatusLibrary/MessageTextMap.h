@@ -649,5 +649,16 @@ namespace SvStl
 		{ Tid_BatchfileExecutionTimeout , _T("Execution of batchfile %s timed out.")},
 		{ Tid_UnexpectedConversion , _T("Conversion in set value was not expected") },
 			
+		{ Tid_CifxConfigReturnError , _T("Cifx configuration packet error return value 0x%s") },
+		{ Tid_CifxInitializationSuccess , _T("Cifx initialization successful, ready to receive PLC data") },
+		{ Tid_CifxInitializationError , _T("Cifx initialization error") },
+		{ Tid_CifxClosed , _T("Cifx PLC connection closed") },
+		{ Tid_CifxPlcVersion , _T("Cifx send PLC data version") },
+		{ Tid_CifxPlcConfigData , _T("Cifx send PLC config data") },
+		{ Tid_CifxDllLoadError , _T("Cifx error, could not load CifX32DLL.dll") },
+		{ Tid_CifxVersionInfo , _T("Cifx Driver %s Powerlink Controlled Node %s") },
+		{ Tid_CifxResponseDataError , _T("Cifx error, writing response data") },
+
+		{ Tid_ModuleReady , _T("Module ready set to %s") },
 };
 } //namespace SvStl

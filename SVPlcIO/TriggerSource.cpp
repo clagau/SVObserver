@@ -29,7 +29,7 @@ bool TriggerSource::setTriggerChannel(uint8_t channel, bool active)
 		outputText += rActive ? 'I' : '_';
 	}
 	outputText += '\n';
-	printOutput(outputText.c_str());
+	::OutputDebugString(outputText.c_str());
 	return result;
 }
 

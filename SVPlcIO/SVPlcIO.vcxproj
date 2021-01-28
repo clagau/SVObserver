@@ -173,7 +173,6 @@
     <ClInclude Include="InspectionCommand.h" />
     <ClInclude Include="InspectionState.h" />
     <ClInclude Include="PlcDataTypes.h" />
-    <ClInclude Include="PlcDataVersion.h" />
     <ClInclude Include="PowerLinkConnection.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SimulatedTriggerSource.h" />
@@ -181,7 +180,6 @@
     <ClInclude Include="SVPlcIOExports.h" />
     <ClInclude Include="SVPlcIOImpl.h" />
     <ClInclude Include="Telegram.h" />
-    <ClInclude Include="TimeSync.h" />
     <ClInclude Include="TLR_Results.h" />
     <ClInclude Include="TLR_Types.h" />
     <ClInclude Include="TriggerEngineConnection.h" />

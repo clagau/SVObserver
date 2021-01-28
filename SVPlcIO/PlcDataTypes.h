@@ -13,8 +13,6 @@
 
 namespace SvPlc
 {
-constexpr uint8_t cMajorVersion = 1;
-constexpr uint8_t cMinorVersion = 2;
 
 constexpr unsigned int cNumberOfChannels = 4; /// the number of trigger channels
 constexpr unsigned int cConfigListSize = 62; /// The config list size
