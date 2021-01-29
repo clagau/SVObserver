@@ -84,7 +84,7 @@ void SVOGeneralConfigDlg::SetupList()
 
 void SVOGeneralConfigDlg::OnBtnAddPre()
 {
-	DWORD dwFlags = OFN_DONTADDTORECENT | OFN_ENABLESIZING | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
+	DWORD dwFlags = OFN_DONTADDTORECENT | OFN_ENABLESIZING | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR | OFN_HIDEREADONLY;
 	bool bFullAccess = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
 	SvMc::SVFileDialog dlg(true, bFullAccess, ScriptFileExt, nullptr, dwFlags, ScriptFileFilters, this);
 	dlg.m_ofn.lpstrTitle = _T("Select File");
@@ -99,7 +99,7 @@ void SVOGeneralConfigDlg::OnBtnAddPre()
 
 void SVOGeneralConfigDlg::OnBtnAddPost()
 {
-	DWORD dwFlags = OFN_DONTADDTORECENT | OFN_ENABLESIZING | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
+	DWORD dwFlags = OFN_DONTADDTORECENT | OFN_ENABLESIZING | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR | OFN_HIDEREADONLY;
 	bool bFullAccess = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
 	SvMc::SVFileDialog dlg(true, bFullAccess, ScriptFileExt, nullptr, dwFlags, ScriptFileFilters, this);
 	dlg.m_ofn.lpstrTitle = _T("Select File");
