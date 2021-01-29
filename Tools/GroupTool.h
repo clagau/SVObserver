@@ -41,6 +41,7 @@ public:
 	virtual void fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo, bool addHidden = false, bool stopIfClosed = false, bool firstObject = false) override;
 
 	virtual uint32_t getFirstClosedParent(uint32_t stopSearchAtObjectId) const override;
+	virtual bool isValidDependency(const std::pair<std::string, std::string>& rEntry) const override;
 
 protected:
 	virtual bool useOverlayColorTool() const override { return false; };
@@ -48,11 +49,16 @@ protected:
 private:
 	void Initialize();
 	SvDef::StringPairVector getInvalidDependenciesList() const;
+	bool isValid(const std::pair<std::string, std::string>& rEntry) const;
 
 private:
 	SvVol::SVBoolValueObjectClass m_isClosed;
 	SvOp::ParameterTask* m_pInputTask = nullptr;
 	SvOp::ParameterTask* m_pResultTask = nullptr;
+
+	std::string m_groupStr;
+	std::string m_inputStr;
+	std::string m_resultStr;
 };
 
 } //namespace SvTo

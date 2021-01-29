@@ -136,12 +136,14 @@ void SVArchiveRecordsArray::ValidateImageObjects()
 		SvIe::SVImageClass* pImageObject = entry.GetImage();
 		if (pImageObject)
 		{
+			if (nullptr == m_pArchiveTool || false == m_pArchiveTool->checkIfValidDependency(pImageObject))
+			{
+				return true;
+			}
+
 			entry.m_svObjectReference = SVObjectReference{ pImageObject };
 			entry.BuildImageFileName();
-			if (m_pArchiveTool)
-			{
-				pImageObject->connectObject(m_pArchiveTool->getObjectId());
-			}
+			pImageObject->connectObject(m_pArchiveTool->getObjectId());
 			return false;
 		}
 		else
@@ -197,6 +199,10 @@ int SVArchiveRecordsArray::ValidateResultsObjects()
 		bool bRecordOK = false;
 		if (nullptr != pObject)
 		{
+			if (nullptr == m_pArchiveTool || false == m_pArchiveTool->checkIfValidDependency(pObject))
+			{
+				return true;
+			}
 			if (pObject != entry.m_svObjectReference.getObject())
 			{
 				long lArrayIndex = entry.m_svObjectReference.ArrayIndex();
@@ -208,16 +214,12 @@ int SVArchiveRecordsArray::ValidateResultsObjects()
 			if (pObject->getValue(Value, 0) != SVMSG_SVO_33_OBJECT_INDEX_INVALID)
 			{
 				bRecordOK = true;
-				if (m_pArchiveTool)
-				{
-					pObject->connectObject(m_pArchiveTool->getObjectId());
-				}
+				pObject->connectObject(m_pArchiveTool->getObjectId());
+				return false;
 			}
 		}
-
-
-
-		return !bRecordOK;
+		
+		return true;
 	};
 	auto newEndIter = std::remove_if(m_vecRecords.begin(), m_vecRecords.end(), func);
 	//because disconnect can be changed m_vecRecords, the disconnect-method can be call only after m_vecRecords-changes finished.
@@ -364,10 +366,8 @@ void SVArchiveRecordsArray::emplaceRecordAtBack(const SVObjectReference& rObject
 
 std::string SVArchiveRecordsArray::AdaptDottedNameToInspectionName(std::string DottedName)
 {
-	auto ToolSetName = SvUl::LoadStdString(IDS_CLASSNAME_SVTOOLSET);
-
 	//If the tool set name is in the name it should be a name with inspection name.
-	if (std::string::npos != DottedName.find(ToolSetName))
+	if (std::string::npos != DottedName.find(SvUl::LoadedStrings::g_ToolSetName))
 	{
 		SvOi::IObjectClass* pInspection = m_pArchiveTool->GetAncestorInterface(SvPb::SVInspectionObjectType);
 		if (nullptr != pInspection)

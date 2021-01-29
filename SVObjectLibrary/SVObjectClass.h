@@ -119,6 +119,7 @@ public:
 	/// Preparing to go offline. Is used e.g. by the Archive Tool and to save images if they are not done in edit mode.
 	virtual void goingOffline() {};
 	virtual void copiedSavedImage(SvOi::ITriggerRecordRWPtr pTr) {};
+	virtual bool isValidDependency(const std::pair<std::string, std::string>&) const { return true; };
 
 #pragma region virtual method (IObjectClass)
 	virtual LPCTSTR GetName() const override;
@@ -190,6 +191,7 @@ public:
 
 	virtual SVObjectClass* UpdateObject(uint32_t friendId, SVObjectClass* pObject, SVObjectClass* pNewOwner);
 	virtual bool isCorrectType(SvPb::ObjectSelectorType requiredType, const SVObjectClass* pTestObject = nullptr) const;
+	bool checkIfValidDependency(const SVObjectClass* pObject) const;
 
 protected:
 	/// Convert a string (dotted name) to an object.

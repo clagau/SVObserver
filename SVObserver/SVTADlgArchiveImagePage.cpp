@@ -411,8 +411,7 @@ void SVTADlgArchiveImagePage::ReadSelectedObjects()
 		CalculateFreeMem();
 	}
 
-	std::string ToolName = SvUl::LoadStdString( IDS_CLASSNAME_SVTOOLSET );
-	std::string Prefix = SvUl::Format( _T("%s.%s."), m_pTool->GetInspection()->GetName(), ToolName.c_str() );
+	std::string Prefix = SvUl::Format( _T("%s.%s."), m_pTool->GetInspection()->GetName(), SvUl::LoadedStrings::g_ToolSetName.c_str() );
 
 	int Index = 0;
 	for (auto const& rEntry : m_ImagesToBeArchived)

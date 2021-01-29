@@ -107,7 +107,7 @@ void InputObject::SetInputObject( const SVObjectReference& rObject )
 void InputObject::validateInput()
 {
 	// Check if the input object is still valid otherwise the pointer is invalid
-	if (IsConnected() && !m_InputObjectInfo.CheckExistence())
+	if (IsConnected() && (false == m_InputObjectInfo.CheckExistence() || false == checkIfValidDependency(m_InputObjectInfo.getObject())))
 	{
 		SetInputObject(nullptr);
 	}

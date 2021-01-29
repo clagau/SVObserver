@@ -45,6 +45,10 @@ namespace SvTo
 		m_isCreated &= (nullptr != GetTool());
 		m_isCreated &= (nullptr != GetInspection());
 
+		m_groupStr = GetObjectNameToObjectType(SvPb::SVToolSetObjectType);
+		m_inputStr = m_groupStr + "." + SvUl::LoadStdString(IDS_CLASSNAME_INPUT_PARAMETER_TASK);
+		m_resultStr = m_groupStr + "." + SvUl::LoadStdString(IDS_CLASSNAME_RESULT_PARAMETER_TASK);
+
 		// These values will not be exposed for this Tool.
 		constexpr UINT cAttribute{ SvDef::selectableAttributes | SvPb::audittrail };
 		m_drawToolFlag.SetObjectAttributesAllowed(cAttribute, SvOi::SetAttributeType::RemoveAttribute);
@@ -148,6 +152,9 @@ namespace SvTo
 	bool GroupTool::ResetObject(SvStl::MessageContainerVector* pErrorMessages)
 	{
 		bool result = __super::ResetObject(pErrorMessages);
+		m_groupStr = GetObjectNameToObjectType(SvPb::SVToolSetObjectType);
+		m_inputStr = m_groupStr + "." + SvUl::LoadStdString(IDS_CLASSNAME_INPUT_PARAMETER_TASK);
+		m_resultStr = m_groupStr + "." + SvUl::LoadStdString(IDS_CLASSNAME_RESULT_PARAMETER_TASK);
 		BOOL isClosed = false;
 		m_isClosed.GetValue(isClosed);
 		if (isClosed)
@@ -252,6 +259,13 @@ namespace SvTo
 		}
 	}
 
+	bool GroupTool::isValidDependency(const std::pair<std::string, std::string>& rEntry) const
+	{
+		BOOL isClosed = false;
+		m_isClosed.GetValue(isClosed);
+		return FALSE == isClosed || isValid(rEntry);
+	}
+
 
 	void GroupTool::Initialize()
 	{
@@ -268,17 +282,19 @@ namespace SvTo
 	{
 		SvDef::StringPairVector dependencyList;
 		SvOi::ToolDependencyEnum ToolDependency = /*SvOi::ToolDependencyEnum::Client :*/ SvOi::ToolDependencyEnum::ClientAndSupplier;
-		SvOi::getToolDependency(std::back_inserter(dependencyList), { getObjectId() }, SvPb::SVToolObjectType, ToolDependency);
-		std::string groupStr = GetObjectNameBeforeObjectType(SvPb::SVToolSetObjectType);
-		std::string inputStr = groupStr + "." + SvUl::LoadStdString(IDS_CLASSNAME_INPUT_PARAMETER_TASK);
-		std::string resultStr = groupStr + "." + SvUl::LoadStdString(IDS_CLASSNAME_RESULT_PARAMETER_TASK);
-		//remove input and result connections
-		auto isPartOf = [](const SvDef::StringPair& rPairValue, const std::string& rString) -> bool { return std::string::npos != rPairValue.first.find(rString) || std::string::npos != rPairValue.second.find(rString); };
+		SvOi::getToolDependency(std::back_inserter(dependencyList), { getObjectId() }, SvPb::SVToolSetObjectType, ToolDependency);
+		
 		dependencyList.erase(std::remove_if(dependencyList.begin(), dependencyList.end(),
-			[inputStr, resultStr, isPartOf](const SvDef::StringPair& rEntry) -> bool { return isPartOf(rEntry, inputStr) || isPartOf(rEntry, resultStr); }), dependencyList.end());
-		//remove connection direct with groupTool
-		dependencyList.erase(std::remove_if(dependencyList.begin(), dependencyList.end(),
-			[groupStr](const SvDef::StringPair& rEntry) -> bool { return rEntry.first == groupStr || rEntry.second == groupStr; }), dependencyList.end());
+			[this](const SvDef::StringPair& rEntry) -> bool { return isValid(rEntry); }), dependencyList.end());
 		return dependencyList;
+	}
+
+	bool GroupTool::isValid(const std::pair<std::string, std::string>& rEntry) const
+	{
+		auto isPartOf = [](const SvDef::StringPair& rPairValue, const std::string& rString) -> bool { return rPairValue.first._Starts_with(rString) || rPairValue.second._Starts_with(rString); };
+		auto isBothPartOf = [](const SvDef::StringPair& rPairValue, const std::string& rString) -> bool { return rPairValue.first._Starts_with(rString) && rPairValue.second._Starts_with(rString); };
+		return (isPartOf(rEntry, m_inputStr) || isPartOf(rEntry, m_resultStr) || //input and result connections is always valid
+			(rEntry.first == m_groupStr || rEntry.second == m_groupStr) || //connection direct with groupTool is valid
+			isBothPartOf(rEntry, m_groupStr));	//both inside of the groupTool is valid
 	}
 } //namespace SvTo

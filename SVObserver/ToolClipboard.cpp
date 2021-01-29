@@ -329,7 +329,7 @@ void ToolClipboard::writeSourceIds(SvOi::IObjectWriter& rWriter, SvTo::SVToolCla
 	{
 		if (nullptr != pInput && SvPb::SVImageObjectType == pInput->GetInputObjectInfo().m_ObjectTypeInfo.m_ObjectType && SvPb::noAttributes != pInput->ObjectAttributesAllowed()) 
 		{
-			SVObjectClass* pImage = pInput->GetInputObjectInfo().getFinalObject();
+			SVObjectClass* pImage = pInput->GetInputObjectInfo().getObject();
 			if(pInput->IsConnected() && nullptr !=  pImage)
 			{
 				SVObjectClass* pTool = pImage->GetAncestor(SvPb::SVObjectTypeEnum::SVToolObjectType, true);

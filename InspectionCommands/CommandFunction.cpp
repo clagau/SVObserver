@@ -1375,26 +1375,39 @@ SvPb::InspectionCmdResponse getObjectSelectorItems(SvPb::GetObjectSelectorItemsR
 
 void fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, const SvPb::GetObjectSelectorItemsRequest& request, SvPb::SearchArea area)
 {
+	SvOi::IObjectClass* pImportantObject = SvOi::getObject(request.importantobjectforstopatborder());
+	bool noBlockBecauseOfClosedGroup{ nullptr == pImportantObject || SvDef::InvalidObjectId == pImportantObject->getFirstClosedParent(SvDef::InvalidObjectId) };
 	switch (area)
 	{
 	case SvPb::globalConstantItems:
-		SvOi::fillRootChildSelectorList(treeInserter, _T(""), request.attribute(), request.type());
+	{
+		if (noBlockBecauseOfClosedGroup)
+		{
+			SvOi::fillRootChildSelectorList(treeInserter, _T(""), request.attribute(), request.type());
+		}
 		return;
+	}
 	case SvPb::ppqItems:
 	{
-		SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*> (SvOi::getObject(request.inspectionid()));
-		if (nullptr != pInspection)
+		if (noBlockBecauseOfClosedGroup)
 		{
-			pInspection->fillPPQSelectorList(treeInserter, request.attribute(), request.type());
+			SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*> (SvOi::getObject(request.inspectionid()));
+			if (nullptr != pInspection)
+			{
+				pInspection->fillPPQSelectorList(treeInserter, request.attribute(), request.type());
+			}
 		}
 		return;
 	}
 	case SvPb::cameraObject:
 	{
-		SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*> (SvOi::getObject(request.inspectionid()));
-		if (nullptr != pInspection)
+		if (noBlockBecauseOfClosedGroup)
 		{
-			pInspection->fillCameraSelectorList(treeInserter, request.attribute(), request.type());
+			SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*> (SvOi::getObject(request.inspectionid()));
+			if (nullptr != pInspection)
+			{
+				pInspection->fillCameraSelectorList(treeInserter, request.attribute(), request.type());
+			}
 		}
 		return;
 	}
@@ -1424,7 +1437,6 @@ void fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> tre
 			objectTypeToName = SvPb::SVInspectionObjectType;
 		}
 
-		SvOi::IObjectClass* pImportantObject = SvOi::getObject(request.importantobjectforstopatborder());
 		bool isStopAtBorder{ nullptr != pImportantObject };
 		if (isStopAtBorder)
 		{

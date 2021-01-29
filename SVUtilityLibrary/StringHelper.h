@@ -172,5 +172,11 @@ namespace SvUl
 	inline std::string AsString(unsigned int Value) { return Format(_T("%u"), Value); };
 	inline std::string AsString(unsigned long Value) { return Format(_T("%u"), Value); };
 	inline std::string AsString(double Value) { return Format(_T("%f"), Value); };
+
+	namespace LoadedStrings
+	{
+		//SVOResource/resource.h can not be included, because some apps have its own resource.h and this would lead to macro redefinition
+		static const std::string g_ToolSetName{ SvUl::LoadStdString(10151/*IDS_CLASSNAME_SVTOOLSET*/) };
+	}
 } // namespace SvUl
 

@@ -200,6 +200,30 @@ BEGIN_MESSAGE_MAP(SVIPDoc, CDocument)
 END_MESSAGE_MAP()
 #pragma endregion Declarations
 
+#pragma region local methods
+	uint32_t getObjectAfterThis(uint32_t toolId)
+	{
+		auto* pTool{ SVObjectManagerClass::Instance().GetObject(toolId) };
+		auto* pParent{ dynamic_cast<SvIe::SVTaskObjectListClass*>(nullptr != pTool ? pTool->GetParent() : nullptr) };
+		if (pParent)
+		{
+			for (int i = 0; i < pParent->GetSize(); i++)
+			{
+				const SvIe::SVTaskObjectClass* pCurrentTool = pParent->GetAt(i);
+				if (pCurrentTool && pCurrentTool->getObjectId() == toolId)
+				{
+					if (i + 1 < pParent->GetSize())
+					{
+						return pParent->GetAt(i)->getObjectId();
+					}
+					return SvDef::InvalidObjectId;
+				}
+			}
+		}
+		return SvDef::InvalidObjectId;
+	}
+#pragma endregion local methods
+
 #pragma region Constructor
 SVIPDoc::SVIPDoc()
 	: CDocument()
@@ -1329,7 +1353,14 @@ void SVIPDoc::OnEditPaste()
 		case NavElementType::EndDelimiterTool:
 		case NavElementType::SubLoopTool:
 			ownerId = pNavElement->m_OwnerId;
-			postToolId = pNavElement->m_objectId;
+			if (SvDef::InvalidObjectId == pNavElement->m_objectId)
+			{	//at the end of the Group/Loop-Tool, get the objectId of the next tool after this tool
+				postToolId = getObjectAfterThis(ownerId);
+			}
+			else
+			{
+				postToolId = pNavElement->m_objectId;
+			}
 			break;
 		case NavElementType::StartGrouping:
 		case NavElementType::EndGrouping:
@@ -2475,10 +2506,9 @@ SvDef::StringSet SVIPDoc::TranslateSelectedObjects(const SVObjectReferenceVector
 		ReplaceName = SvDef::FqnPPQVariables;
 		ReplaceName += SvDef::FqnDioInput;
 		TranslateNames[SearchName] = ReplaceName;
-		ReplaceName = SvUl::LoadStdString(IDS_CLASSNAME_SVTOOLSET);
 		SearchName = rInspectionName + _T(".");
-		SearchName += ReplaceName;
-		TranslateNames[SearchName] = ReplaceName;
+		SearchName += SvUl::LoadedStrings::g_ToolSetName;
+		TranslateNames[SearchName] = SvUl::LoadedStrings::g_ToolSetName;
 	}
 
 	SvDef::StringSet SelectedObjectNames;

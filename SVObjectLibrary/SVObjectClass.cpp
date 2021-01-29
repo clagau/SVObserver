@@ -603,6 +603,29 @@ bool SVObjectClass::isCorrectType(SvPb::ObjectSelectorType requiredType, const S
 	}
 }
 
+bool SVObjectClass::checkIfValidDependency(const SVObjectClass* pObject) const
+{
+	if (pObject)
+	{
+		auto namePair = make_pair(pObject->GetObjectNameToObjectType(SvPb::SVToolSetObjectType), GetObjectNameToObjectType(SvPb::SVToolSetObjectType));
+		std::initializer_list<const SVObjectClass*> objectList = { GetParent(), pObject };
+		for (auto* pTestObject : objectList)
+		{
+			auto* pParent = pTestObject;
+			while (pParent)
+			{
+				if (false == pParent->isValidDependency(namePair))
+				{
+					return false;
+				}
+				pParent = pParent->GetParent();
+			}
+		}
+		return true;
+	}
+	return false;
+}
+
 /*
 This method returns Ancestor Object of specified Object Type of this Object, if any.  Otherwise it returns NULL.
 */
@@ -718,11 +741,10 @@ SVObjectClass* SVObjectClass::OverwriteEmbeddedObject(uint32_t uniqueID, SvPb::E
 
 SVObjectReference SVObjectClass::ConvertStringInObject(const std::string& rValue) const
 {
-	const std::string ToolSetName = SvUl::LoadStdString(IDS_CLASSNAME_SVTOOLSET);
 	std::string ObjectName;
 
 	//If the tool set name is at the start then add the inspection name at the beginning
-	if (0 == rValue.find(ToolSetName.c_str()))
+	if (rValue._Starts_with(SvUl::LoadedStrings::g_ToolSetName))
 	{
 		const SvOi::IObjectClass* pInspection = GetAncestorInterface(SvPb::SVInspectionObjectType);
 		if (nullptr != pInspection)

@@ -28,7 +28,6 @@ public:
 
 #pragma region Public Methods
 public:
-
 	//************************************
 	/// Return the current value. If a valid linked value this will be returned otherwise it will return the the variant value.
 	/// \param rValue [out] reference to the value to write to
@@ -75,7 +74,6 @@ public:
 	virtual void disconnectAllInputs() override;
 	/// Disconnected the input connection and set it to nullptr.
 	void DisconnectInput();
-
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
@@ -105,8 +103,6 @@ private:
 	/// \param pErrorMessages [in,out] Pointer to a error list, if pointer != nullptr an error message will be added if an error is happend.
 	/// \returns bool true if linked object is valid
 	bool CheckLinkedObject( const SVObjectClass* const pLinkedObject, const variant_t& rDefault, SvStl::MessageContainerVector *pErrorMessages=nullptr ) const;
-
-	
 #pragma endregion Private Methods
 
 #pragma region Member Variables

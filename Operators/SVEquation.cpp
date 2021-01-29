@@ -121,7 +121,7 @@ int SVEquationSymbolTableClass::AddSymbol(LPCTSTR name)
 
 	std::string LookUpName;
 
-	if (SvUl::Left(SymbolName, m_ToolSetName.size()) == m_ToolSetName)
+	if (SymbolName._Starts_with(m_ToolSetName))
 	{
 		Type = SV_TOOLSET_SYMBOL_TYPE;
 		LookUpName = m_InspectionName;
@@ -147,6 +147,11 @@ int SVEquationSymbolTableClass::AddSymbol(LPCTSTR name)
 	}
 
 	if (0 == (ObjectReference.ObjectAttributesAllowed() & SvPb::selectableForEquation))
+	{
+		return -1;
+	}
+
+	if (false == ObjectReference.getObject()->checkIfValidDependency(SVObjectManagerClass::Instance().GetObject(m_ownerId)))
 	{
 		return -1;
 	}

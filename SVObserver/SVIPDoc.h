@@ -166,7 +166,7 @@ public:
 	afx_msg void OnUpdateEditCutCopy(CCmdUI* PCmdUI);
 	afx_msg void OnEditCopy();
 	afx_msg void OnEditPaste();
-	afx_msg void OnUpdateEditPaste( CCmdUI* PCmdUI );
+	afx_msg void OnUpdateEditPaste(CCmdUI* PCmdUI);
 	afx_msg void OnShowFirstError();
 	afx_msg void OnUpdateShowFirstError( CCmdUI* PCmdUI );
 	afx_msg void OnAddParameterToMonitorList();

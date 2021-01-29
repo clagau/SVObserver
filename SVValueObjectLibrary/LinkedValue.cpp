@@ -467,13 +467,12 @@ namespace SvVol
 			else
 			{
 				//this part is only for backward compatibility, because in older version the name was saved and not the ID.
-				const std::string ToolSetName = SvUl::LoadStdString(IDS_CLASSNAME_SVTOOLSET);
 				std::string ObjectName = objectIdAndIndexString;
 
 				//Default name
 
 				//If the tool set name is at the start then add the inspection name at the beginning
-				if (0 == ObjectName.find(ToolSetName))
+				if (ObjectName._Starts_with(SvUl::LoadedStrings::g_ToolSetName))
 				{
 					SvOi::IObjectClass* pInspection = GetAncestorInterface(SvPb::SVInspectionObjectType);
 					if (nullptr != pInspection)
@@ -597,6 +596,16 @@ namespace SvVol
 			return false;
 		}
 		
+		if (false == checkIfValidDependency(pLinkedObject))
+		{
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_GroupDependencies_Wrong, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				pErrorMessages->push_back(Msg);
+			}
+			return false;
+		}
+
 		//! This is important when copying tools that the value of another inspection is not used due to the object ID being valid
 		//! That is why check that the linked value of an object is in the same inspection
 		const IObjectClass* pLinkedObjectInspection = pLinkedObject->GetAncestorInterface(SvPb::SVInspectionObjectType);
