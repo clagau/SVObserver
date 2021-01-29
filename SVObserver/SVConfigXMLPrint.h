@@ -54,7 +54,7 @@ namespace sv_xml
 	class WriteStartEndElement
 	{
 	public:	
-		// cppcheck-suppress useInitializationList 
+		// cppcheck-suppress useInitializationList symbolName=m_Writer
 		WriteStartEndElement(Writer writer,  LPCWSTR pwszPrefix, LPCWSTR pwszLocalName,LPCWSTR pwszNamespaceUri) 
 		{
 			m_Writer = writer;

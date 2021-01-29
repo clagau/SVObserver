@@ -98,6 +98,7 @@
 #include "SVXMLLibrary/SVObjectXMLWriter.h"
 #include "SVOLibrary/SVHardwareManifest.h"
 #include "Triggering/SVTriggerProcessingClass.h"
+#include "SVUtilityLibrary/SHA256.h"
 
 
 
@@ -2467,6 +2468,19 @@ HRESULT SVObserverApp::OpenSVXFile()
 			while (1)
 			{
 				SVTreeType XMLTree;
+				std::string hash;
+				try
+				{
+					hash = SvUl::SHA256(m_SvxFileName.GetFullFileName().c_str());
+				}
+				catch (const std::exception& )
+				{
+					//hash = e.what();;
+					hash.clear();
+				}
+
+				SVSVIMStateClass::ConfigWasLoaded(hash.c_str());
+				
 				try
 				{
 					hr = SvXml::SVOCMLoadConfiguration(configVer, m_SvxFileName.GetFullFileName().c_str(), XMLTree);
@@ -2970,7 +2984,7 @@ HRESULT SVObserverApp::DestroyConfig(bool AskForSavingOrClosing /* = true */,
 		{
 			SVVisionProcessorHelper::Instance().FireEventNotification(SvPb::EventType::unloadConfig, getConfigFullFileName());
 			SVOLicenseManager::Instance().ClearLicenseErrors();
-
+			SVSVIMStateClass::ConfigWasUnloaded();
 			SVSVIMStateClass::changeState(SV_STATE_UNAVAILABLE | SV_STATE_CLOSING, SV_STATE_READY | SV_STATE_MODIFIED | SV_STATE_EDIT | SV_STATE_STOP);
 
 			if (bOk)

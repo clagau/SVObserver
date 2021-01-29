@@ -888,6 +888,7 @@ void SVRCCommand::QueryMonitorListNames(const SvPb::QueryMonitorListNamesRequest
 	task.finish(std::move(Response));
 }
 
+
 void SVRCCommand::RunOnce(const SvPb::RunOnceRequest& rRequest, SvRpc::Task<SvPb::StandardResponse> task)
 {
 	HRESULT Result{ S_OK };
@@ -1059,7 +1060,7 @@ void SVRCCommand::ConfigCommand(const SvPb::ConfigCommandRequest& rRequest, SvRp
 		if (nullptr != pConfigDataResponse)
 		{
 			pConfigDataResponse->set_configfileloaded(GlobalRCGetConfigurationName(false));
-			pConfigDataResponse->set_lastmodified(SVSVIMStateClass::getLastModifiedTime());
+			pConfigDataResponse->set_lastmodified(static_cast<unsigned long>(SVSVIMStateClass::getLastModifiedTime()));
 		}
 		break;
 	}
@@ -1113,6 +1114,19 @@ void SVRCCommand::SetTriggerConfig(const SvPb::SetTriggerConfigRequest& rRequest
 	SvPb::StandardResponse response;
 	response.set_hresult(result);
 	task.finish(std::move(response));
+}
+void SVRCCommand::GetConfigurationInfo(const SvPb::GetConfigurationInfoRequest&, SvRpc::Task<SvPb::GetConfigurationInfoResponse> task)
+{
+	
+
+	SvPb::GetConfigurationInfoResponse Response;
+
+	Response.set_filename(GlobalRCGetConfigurationName(false).c_str());
+	Response.set_lastmodified(SVSVIMStateClass::getLastModifiedTime());
+	Response.set_loadedsince(SVSVIMStateClass::getLoadedSinceTime());
+	Response.set_hash(SVSVIMStateClass::GetHash().c_str());
+	task.finish(std::move(Response));
+
 }
 
 void SVRCCommand::RegisterNotificationStream(const SvPb::GetNotificationStreamRequest& rRequest,

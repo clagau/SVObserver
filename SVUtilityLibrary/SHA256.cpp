@@ -27,6 +27,10 @@ namespace SvUl
 {
 	std::string SHA256(const char* const path)
 	{
+#ifdef TRACE_HASH_TIME
+		double starttime = SvUl::GetTimeStamp();
+#endif 				
+		
 		std::ifstream fp(path, std::ios::in | std::ios::binary);
 
 		if (false == fp.good())
@@ -60,7 +64,11 @@ namespace SvUl
 		{
 			os << std::setw(2) << static_cast<unsigned int>(hash[i]);
 		}
-
+#ifdef TRACE_HASH_TIME
+		double time = SvUl::GetTimeStamp() - starttime;
+		TRACE1("hash: %s\n ", hash.c_str());
+		TRACE1("Time for hash: %lf\n ", time);
+#endif
 		return os.str();
 	}
 }

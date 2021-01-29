@@ -76,20 +76,16 @@ namespace SvVol
 		HRESULT	Result = S_OK;
 		// cppcheck-suppress unreadVariable symbolName=bisArray
 		// cppcheck-suppress variableScope symbolName=bisArray
-		
 		bool bisArray{ false };
-
 		_variant_t	TempValue(rValue);
-
+		
 		//SVRC sends data as array
 		if (VT_ARRAY == (TempValue.vt & VT_ARRAY))
 		{
+			
 			Result = ConvertArray(TempValue);
 			bisArray = true;
-
 		}
-		
-
 		//If variant is of type VT_EMPTY then this is only a node
 		if (VT_EMPTY == rValue.vt)	
 		{

@@ -399,3 +399,14 @@ message SetTriggerConfigRequest
 	string plcSimulateFile = 1;				//The name of the PLC simulate file to use
 }
 
+message GetConfigurationInfoRequest 
+{
+}
+
+message GetConfigurationInfoResponse 
+{
+  string fileName = 1;          //The path to the loaded configuration file
+  uint64 lastModified = 2;		//The last modified time stamp
+  uint64 loadedSince = 3;		//The load time time stamp	
+  string hash = 4;              //hash code 
+}

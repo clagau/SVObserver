@@ -108,6 +108,8 @@ message SVRCMessages
 		ConfigCommandRequest configCommandRequest = 2047;
 		ConfigCommandResponse configCommandResponse = 2048;
 		SetTriggerConfigRequest setTriggerConfigRequest = 2049;
+		GetConfigurationInfoRequest getConfigurationInfoRequest = 2050;
+		GetConfigurationInfoResponse getConfigurationInfoResponse = 2051;
 	}
 }
 

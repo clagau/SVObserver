@@ -14,12 +14,17 @@
 //Moved to precompiled header: #include <intrin.h>
 #include "SVSVIMStateClass.h"
 #include "NotificationTypeEnum.h"
+#include <mutex>
 #pragma endregion Includes
 
 std::atomic_long SVSVIMStateClass::m_SVIMState{SV_STATE_AVAILABLE};
 
 bool SVSVIMStateClass::m_AutoSaveRequired{false};
-std::atomic<__time32_t> SVSVIMStateClass::m_lastModifiedTime{0L};
+std::atomic<__time64_t> SVSVIMStateClass::m_lastModifiedTime{0LL};
+std::atomic<__time64_t> SVSVIMStateClass::m_loadedSinceTime{ 0LL };
+std::mutex SVSVIMStateClass::m_protectHash;
+std::string SVSVIMStateClass::m_hash;
+
 std::atomic<SvPb::DeviceModeType> SVSVIMStateClass::m_CurrentMode{SvPb::DeviceModeType::unknownMode};
 NotifyFunctor SVSVIMStateClass::m_pNotify{nullptr};
 
@@ -51,7 +56,7 @@ void SVSVIMStateClass::AddState( DWORD dwState )
 	}
 	if (dwState & SV_STATE_LOADING)
 	{
-		m_lastModifiedTime = 0L;
+		m_lastModifiedTime = 0;
 	}
 	CheckModeNotify();
 }
@@ -74,7 +79,7 @@ void SVSVIMStateClass::changeState(DWORD addStates, DWORD removeStates)
 	}
 	if (addStates & SV_STATE_LOADING)
 	{
-		m_lastModifiedTime = 0L;
+		m_lastModifiedTime = 0;
 	}
 
 	CheckModeNotify();
@@ -165,7 +170,7 @@ void SVSVIMStateClass::CheckModeNotify()
 
 void SVSVIMStateClass::setLastModifiedTime()
 {
-	m_lastModifiedTime = ::_time32(nullptr);
+	m_lastModifiedTime = ::_time64(nullptr);
 
 	if (nullptr != m_pNotify)
 	{
@@ -173,3 +178,34 @@ void SVSVIMStateClass::setLastModifiedTime()
 	}
 }
 
+void SVSVIMStateClass::ConfigWasLoaded(LPCSTR hash)
+{
+	m_loadedSinceTime = ::_time64(nullptr);
+	SetHash(hash);
+}
+void SVSVIMStateClass::ConfigWasUnloaded()
+{
+	m_loadedSinceTime = 0L;
+	SetHash(nullptr);
+}
+
+
+void SVSVIMStateClass::SetHash(LPCSTR hash)
+{
+	std::lock_guard<std::mutex> lockGuard(m_protectHash);
+	if (nullptr != hash)
+	{
+		m_hash = hash;
+	}
+	else
+	{
+		m_hash.clear();
+	}
+}
+
+std::string  SVSVIMStateClass::GetHash()
+{
+	std::lock_guard<std::mutex> lockGuard(m_protectHash);
+	std::string result(m_hash);
+	return result;
+}

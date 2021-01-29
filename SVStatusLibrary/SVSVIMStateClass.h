@@ -98,7 +98,9 @@ public:
 
 	static SvPb::DeviceModeType getCurrentMode() { return m_CurrentMode; }
 
-	static __time32_t getLastModifiedTime() { return m_lastModifiedTime; }
+	static __time64_t getLastModifiedTime() { return m_lastModifiedTime; }
+
+	static __time64_t getLoadedSinceTime() { return m_loadedSinceTime;}
 
 	//************************************
 	//! Sets the notification function
@@ -117,6 +119,10 @@ public:
 // Returns:   svModeEnum Enum of the mode
 //************************************
 	static SvPb::DeviceModeType GetMode();
+	
+	static std::string GetHash();
+	static void ConfigWasLoaded(LPCSTR hash = nullptr);
+	static void ConfigWasUnloaded();
 private:
 	//************************************
 	// Method: CheckModeNotify
@@ -125,6 +131,9 @@ private:
 	//************************************
 	static void CheckModeNotify();
 
+	
+	static  void SetHash(LPCSTR hash);
+	
 	static void setLastModifiedTime();
 
 	//This constructor does nothing.
@@ -140,8 +149,11 @@ private:
 
 	static std::atomic<SvPb::DeviceModeType> m_CurrentMode;
 
-	static std::atomic<__time32_t> m_lastModifiedTime;
-
+	static std::atomic<__time64_t> m_lastModifiedTime;
+	static std::atomic<__time64_t> m_loadedSinceTime;
+	static std::mutex m_protectHash;
+	static std::string m_hash;
+	
 	static bool m_AutoSaveRequired; ///< should an autosave be performed at the next appropriate time?
 	///Lockcount >  0 prevents some  SVRC command to avoid crashes because of mult threading issues 
 	static std::atomic<int>  m_LockCountSvrc; //<  

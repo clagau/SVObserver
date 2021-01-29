@@ -170,7 +170,8 @@ int main(int argc, char* argv[])
 					<< "  t getconfigtree" << std::endl
 					<< "  a add tool" << std::endl
 					<< "  d delete tool" << std::endl
-					<< "  g get config data" << std::endl;
+					<< "  g get config data" << std::endl
+					<< " gci  get configuration info" << std::endl;
 			}
 			else if (words[0] == "m")
 			{
@@ -384,6 +385,17 @@ int main(int argc, char* argv[])
 				SvPb::ConfigCommandResponse responseConfigCmd = client.request(std::move(requestConfigCmd), Timeout).get();
 				SV_LOG_GLOBAL(info) << "Config File : " << responseConfigCmd.configdataresponse().configfileloaded().c_str();
 				SV_LOG_GLOBAL(info) << "Last modified: " << responseConfigCmd.configdataresponse().lastmodified();
+			}
+			else if (words[0] == "gci")
+			{
+			SvPb::GetConfigurationInfoRequest requestConfigInfo;
+			
+			SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::GetConfigurationInfoRequest, SvPb::GetConfigurationInfoResponse> client(*pRpcClient);
+			SvPb::GetConfigurationInfoResponse response = client.request(std::move(requestConfigInfo), Timeout).get();
+			SV_LOG_GLOBAL(info) << "Config File : " << response.filename().c_str();
+			SV_LOG_GLOBAL(info) << "Last modified: " << response.lastmodified();
+			SV_LOG_GLOBAL(info) << "Loaded Since: " << response.loadedsince();
+			SV_LOG_GLOBAL(info) << "hash: " << response.hash();
 			}
 			else if (words[0] == "cn" )
 			{

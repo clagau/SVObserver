@@ -52,6 +52,7 @@ public:
 	void GetConfigurationTree(const SvPb::GetConfigurationTreeRequest&, SvRpc::Task<SvPb::GetConfigurationTreeResponse>);
 	void ConfigCommand(const SvPb::ConfigCommandRequest&, SvRpc::Task<SvPb::ConfigCommandResponse>);
 	void SetTriggerConfig(const SvPb::SetTriggerConfigRequest&, SvRpc::Task<SvPb::StandardResponse>);
+	void GetConfigurationInfo(const SvPb::GetConfigurationInfoRequest&, SvRpc::Task<SvPb::GetConfigurationInfoResponse>);
 
 	void RegisterNotificationStream(const SvPb::GetNotificationStreamRequest& rRequest,
 		SvRpc::Observer<SvPb::GetNotificationStreamResponse>& rObserver,
