@@ -88,7 +88,7 @@ body
 	margin: 0;
 	padding: 0;
 	color: #000000;
-	font-family: Calibri;
+	font-family: Arial;
 	font-size: 12px;
 	font-weight: normal;
 	font-style: normal;
@@ -112,9 +112,9 @@ body
 	top: 50%;
 	margin-left: 20px;
 	display: block;
-	background: transparent url('Images/Logo_2.jpg') no-repeat center center;
-	-pie-background: transparent url('Skins/Default/Stylesheets/Images/Logo_2.jpg') no-repeat center center;
-	width: 358px;
+	background: transparent url('Images/Koerber_Logo_RGB_small.png') no-repeat center center;
+	-pie-background: transparent url('Skins/Default/Stylesheets/Images/Koerber_Logo_RGB_small.png') no-repeat center center;
+	width: 89px;
 	height: 53px;
 	margin-top: -26.5px;
 }
@@ -122,7 +122,7 @@ body
 #header .logo > img
 {
 	border: none;
-	width: 358px;
+	width: 89px;
 	height: 53px;
 }
 
@@ -197,7 +197,7 @@ html.right-layout #navigationResizeBar.nav-closed
 {
 	border: none;
 	padding: 0;
-	background-color: #007bc2;
+	background-color: #0060ff;
 }
 
 .showOnFocus:not(:focus)
@@ -753,7 +753,7 @@ ul.tree
 	background-repeat: no-repeat;
 	background-position: 0 3px;
 	position: relative;
-	color: #000000;
+	color: #ffffff;
 	font-size: 14px;
 	line-height: 1.9em;
 }
@@ -971,7 +971,7 @@ ul.tree
 	right: 5px;
 	bottom: 0;
 	left: 5px;
-	background-color: #00568a;
+	background-color: #0060ff;
 }
 
 html.left-layout.no-tabs #contentBody,
@@ -1146,21 +1146,21 @@ iframe.content
 	/* W3C */
 	/*PIE*/
 	margin-top: 0;
-	color: #000000;
+	color: #ffffff;
 	font-weight: bold;
 	border-right: solid 0px #45494c;
 	border-top-left-radius: 0px;
 	border-top-right-radius: 0px;
 	border-bottom-right-radius: 0px;
 	border-bottom-left-radius: 0px;
-	background: #007bc2;
-	background: -moz-linear-gradient(top, #007bc2 0%, #007bc2 100%);
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#007bc2), color-stop(100%,#007bc2));
-	background: -webkit-linear-gradient(top, #007bc2 0%, #007bc2 100%);
-	background: -o-linear-gradient(top, #007bc2 0%,#007bc2 100%);
-	background: -ms-linear-gradient(top, #007bc2 0%,#007bc2 100%);
-	background: linear-gradient(top, #007bc2 0%,#007bc2 100%);
-	-pie-background: linear-gradient(#007bc2, #007bc2);
+	background: #0060ff;
+	background: -moz-linear-gradient(top, #0060ff 0%, #0060ff 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#0060ff), color-stop(100%,#0060ff));
+	background: -webkit-linear-gradient(top, #0060ff 0%, #0060ff 100%);
+	background: -o-linear-gradient(top, #0060ff 0%,#0060ff 100%);
+	background: -ms-linear-gradient(top, #0060ff 0%,#0060ff 100%);
+	background: linear-gradient(top, #0060ff 0%,#0060ff 100%);
+	-pie-background: linear-gradient(#0060ff, #0060ff);
 }
 
 .tabs-panels
@@ -1184,7 +1184,7 @@ iframe.content
 	display: none;
 	padding: 7px;
 	top: 28px;
-	background-color: #007bc2;
+	background-color: #0060ff;
 }
 
 .tabs-panel-content
@@ -1204,7 +1204,7 @@ iframe.content
 	border-top: solid 0px #d0d3d5;
 	border-right: solid 0px #d0d3d5;
 	border-left: solid 0px #d0d3d5;
-	background-color: #007bc2;
+	background-color: #0060ff;
 }
 
 #responsiveHeader
@@ -1217,14 +1217,14 @@ iframe.content
 {
 	height: 100%;
 	display: block;
-	width: 358px;
-	background: transparent url('Images/Logo_2.jpg') no-repeat center center;
-	-pie-background: transparent url('Skins/Default/Stylesheets/Images/Logo_2.jpg') no-repeat center center;
+	width: 89px;
+	background: transparent url('Images/Koerber_Logo_RGB_small.png') no-repeat center center;
+	-pie-background: transparent url('Skins/Default/Stylesheets/Images/Koerber_Logo_RGB_small.png') no-repeat center center;
 }
 
 #responsiveHeader .logo > img
 {
-	width: 358px;
+	width: 89px;
 	height: 53px;
 }
 
@@ -1760,27 +1760,27 @@ a.activityText
 
 #navigation[role="complementary"]
 {
-	background-color: #007bc2;
+	background-color: #0060ff;
 }
 
 #browseSequences.tabs-panel-content
 {
-	background-color: #007bc2;
+	background-color: #0060ff;
 }
 
 #community.tabs-panel-content
 {
-	background-color: #007bc2;
+	background-color: #0060ff;
 }
 
 #glossary.tabs-panel-content
 {
-	background-color: #007bc2;
+	background-color: #0060ff;
 }
 
 #index.tabs-panel-content
 {
-	background-color: #007bc2;
+	background-color: #0060ff;
 }
 
 .web #index .tree-node.tree-node-expanded > div:hover
@@ -1792,7 +1792,7 @@ a.activityText
 #index .tree-node.tree-node-expanded.tree-node-selected > div
 {
 	-pie-background: transparent url('Skins/Default/Stylesheets/Images/arrowTurn.png') no-repeat 0 3px;
-	color: #000000;
+	color: #ffffff;
 	font-weight: bold;
 	background: url('Images/arrowTurn.png') no-repeat  0 3px,transparent;
 }
@@ -1800,7 +1800,7 @@ a.activityText
 .web #index .tree-node.tree-node-expanded.tree-node-selected > div:hover
 {
 	-pie-background: transparent url('Skins/Default/Stylesheets/Images/arrowTurn.png') no-repeat 0 3px;
-	color: #000000;
+	color: #ffffff;
 	font-weight: bold;
 	background: url('Images/arrowTurn.png') no-repeat  0 3px,transparent;
 }
@@ -1814,7 +1814,7 @@ a.activityText
 #index .tree-node.tree-node-collapsed.tree-node-selected > div
 {
 	-pie-background: transparent url('Skins/Default/Stylesheets/Images/arrow.png') no-repeat 0 3px;
-	color: #000000;
+	color: #ffffff;
 	font-weight: bold;
 	background: url('Images/arrow.png') no-repeat  0 3px,transparent;
 }
@@ -1822,7 +1822,7 @@ a.activityText
 .web #index .tree-node.tree-node-collapsed.tree-node-selected > div:hover
 {
 	-pie-background: transparent url('Skins/Default/Stylesheets/Images/arrow.png') no-repeat 0 3px;
-	color: #000000;
+	color: #ffffff;
 	font-weight: bold;
 	background: url('Images/arrow.png') no-repeat  0 3px,transparent;
 }
@@ -1836,7 +1836,7 @@ a.activityText
 #index .tree-node.tree-node-leaf.tree-node-selected > div
 {
 	-pie-background: transparent url('Skins/Default/Stylesheets/Images/index.png') no-repeat 0 3px;
-	color: #000000;
+	color: #ffffff;
 	font-weight: bold;
 	background: url('Images/index.png') no-repeat  0 3px,transparent;
 }
@@ -1844,24 +1844,25 @@ a.activityText
 .web #index .tree-node.tree-node-leaf.tree-node-selected > div:hover
 {
 	-pie-background: transparent url('Skins/Default/Stylesheets/Images/index.png') no-repeat 0 3px;
-	color: #000000;
+	color: #ffffff;
 	font-weight: bold;
 	background: url('Images/index.png') no-repeat  0 3px,transparent;
 }
 
 #search.tabs-panel-content
 {
-	background-color: #007bc2;
+	background-color: #0060ff;
 }
 
 #toc.tabs-panel-content
 {
-	background-color: #007bc2;
+	background-color: #0060ff;
 }
 
 .web .tree-node.tree-node-collapsed > div:hover
 {
 	-pie-background: transparent url('Skins/Default/Stylesheets/Images/book_17x17.png') no-repeat 0 3px;
+	color: #ffffff;
 	font-weight: bold;
 	background: url('Images/book_17x17.png') no-repeat  0 3px,transparent;
 }
@@ -1869,7 +1870,7 @@ a.activityText
 .tree-node.tree-node-collapsed.tree-node-selected > div
 {
 	-pie-background: transparent url('Skins/Default/Stylesheets/Images/book_17x17.png') no-repeat 0 3px;
-	color: #000000;
+	color: #ffffff;
 	font-weight: bold;
 	background: url('Images/book_17x17.png') no-repeat  0 3px,transparent;
 }
@@ -1877,7 +1878,7 @@ a.activityText
 .web .tree-node.tree-node-collapsed.tree-node-selected > div:hover
 {
 	-pie-background: transparent url('Skins/Default/Stylesheets/Images/book_17x17.png') no-repeat 0 3px;
-	color: #000000;
+	color: #ffffff;
 	font-weight: bold;
 	background: url('Images/book_17x17.png') no-repeat  0 3px,transparent;
 }
@@ -1885,6 +1886,7 @@ a.activityText
 .web .tree-node.tree-node-expanded > div:hover
 {
 	-pie-background: transparent url('Skins/Default/Stylesheets/Images/book_17x17.png') no-repeat 0 3px;
+	color: #ffffff;
 	font-weight: bold;
 	background: url('Images/book_17x17.png') no-repeat  0 3px,transparent;
 }
@@ -1892,7 +1894,7 @@ a.activityText
 .tree-node.tree-node-expanded.tree-node-selected > div
 {
 	-pie-background: transparent url('Skins/Default/Stylesheets/Images/book_17x17.png') no-repeat 0 3px;
-	color: #000000;
+	color: #ffffff;
 	font-weight: bold;
 	background: url('Images/book_17x17.png') no-repeat  0 3px,transparent;
 }
@@ -1900,7 +1902,7 @@ a.activityText
 .web .tree-node.tree-node-expanded.tree-node-selected > div:hover
 {
 	-pie-background: transparent url('Skins/Default/Stylesheets/Images/book_17x17.png') no-repeat 0 3px;
-	color: #000000;
+	color: #ffffff;
 	font-weight: bold;
 	background: url('Images/book_17x17.png') no-repeat  0 3px,transparent;
 }
@@ -1908,6 +1910,7 @@ a.activityText
 .web .tree-node.tree-node-leaf > div:hover
 {
 	-pie-background: transparent url('Skins/Default/Stylesheets/Images/icon-page-gray-17x17.png') no-repeat 0 3px;
+	color: #ffffff;
 	font-weight: bold;
 	background: url('Images/icon-page-gray-17x17.png') no-repeat  0 3px,transparent;
 }
@@ -1915,7 +1918,7 @@ a.activityText
 .tree-node.tree-node-leaf.tree-node-selected > div
 {
 	-pie-background: transparent url('Skins/Default/Stylesheets/Images/icon-page-gray-17x17.png') no-repeat 0 3px;
-	color: #000000;
+	color: #ffffff;
 	font-weight: bold;
 	background: url('Images/icon-page-gray-17x17.png') no-repeat  0 3px,transparent;
 }
@@ -1923,35 +1926,35 @@ a.activityText
 .web .tree-node.tree-node-leaf.tree-node-selected > div:hover
 {
 	-pie-background: transparent url('Skins/Default/Stylesheets/Images/icon-page-gray-17x17.png') no-repeat 0 3px;
-	color: #000000;
+	color: #ffffff;
 	font-weight: bold;
 	background: url('Images/icon-page-gray-17x17.png') no-repeat  0 3px,transparent;
 }
 
 .tree-node.tree-node-selected > div
 {
-	color: #000000;
+	color: #ffffff;
 	font-weight: bold;
 	background-color: transparent;
 }
 
 .web .tree-node.tree-node-selected > div:hover
 {
-	color: #000000;
+	color: #ffffff;
 	font-weight: bold;
 	background-color: transparent;
 }
 
 #index .tree-node.tree-node-selected > div
 {
-	color: #000000;
+	color: #ffffff;
 	font-weight: bold;
 	background-color: transparent;
 }
 
 .web #index .tree-node.tree-node-selected > div:hover
 {
-	color: #000000;
+	color: #ffffff;
 	font-weight: bold;
 	background-color: transparent;
 }
@@ -1959,7 +1962,7 @@ a.activityText
 .SearchFilterEntry.tree-node .SearchFilter.active
 {
 	background-color: transparent;
-	color: #000000;
+	color: #ffffff;
 	font-weight: bold;
 }
 
@@ -1995,14 +1998,14 @@ a.activityText
 
 .tabs-nav li#BrowseSequencesTab.tabs-nav-active
 {
-	background: #007bc2;
-	background: -moz-linear-gradient(top, #007bc2 0%, #007bc2 100%);
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#007bc2), color-stop(100%,#007bc2));
-	background: -webkit-linear-gradient(top, #007bc2 0%, #007bc2 100%);
-	background: -o-linear-gradient(top, #007bc2 0%,#007bc2 100%);
-	background: -ms-linear-gradient(top, #007bc2 0%,#007bc2 100%);
-	background: linear-gradient(top, #007bc2 0%,#007bc2 100%);
-	-pie-background: linear-gradient(#007bc2, #007bc2);
+	background: #0060ff;
+	background: -moz-linear-gradient(top, #0060ff 0%, #0060ff 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#0060ff), color-stop(100%,#0060ff));
+	background: -webkit-linear-gradient(top, #0060ff 0%, #0060ff 100%);
+	background: -o-linear-gradient(top, #0060ff 0%,#0060ff 100%);
+	background: -ms-linear-gradient(top, #0060ff 0%,#0060ff 100%);
+	background: linear-gradient(top, #0060ff 0%,#0060ff 100%);
+	-pie-background: linear-gradient(#0060ff, #0060ff);
 }
 
 .tab-icon #BrowseSequencesTab.tabs-nav-active .tabs-nav-icon
@@ -2013,14 +2016,14 @@ a.activityText
 
 .tabs-nav li#CommunityTab.tabs-nav-active
 {
-	background: #007bc2;
-	background: -moz-linear-gradient(top, #007bc2 0%, #007bc2 100%);
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#007bc2), color-stop(100%,#007bc2));
-	background: -webkit-linear-gradient(top, #007bc2 0%, #007bc2 100%);
-	background: -o-linear-gradient(top, #007bc2 0%,#007bc2 100%);
-	background: -ms-linear-gradient(top, #007bc2 0%,#007bc2 100%);
-	background: linear-gradient(top, #007bc2 0%,#007bc2 100%);
-	-pie-background: linear-gradient(#007bc2, #007bc2);
+	background: #0060ff;
+	background: -moz-linear-gradient(top, #0060ff 0%, #0060ff 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#0060ff), color-stop(100%,#0060ff));
+	background: -webkit-linear-gradient(top, #0060ff 0%, #0060ff 100%);
+	background: -o-linear-gradient(top, #0060ff 0%,#0060ff 100%);
+	background: -ms-linear-gradient(top, #0060ff 0%,#0060ff 100%);
+	background: linear-gradient(top, #0060ff 0%,#0060ff 100%);
+	-pie-background: linear-gradient(#0060ff, #0060ff);
 }
 
 .tab-icon #CommunityTab.tabs-nav-active .tabs-nav-icon
@@ -2031,14 +2034,14 @@ a.activityText
 
 .tabs-nav li#GlossaryTab.tabs-nav-active
 {
-	background: #007bc2;
-	background: -moz-linear-gradient(top, #007bc2 0%, #007bc2 100%);
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#007bc2), color-stop(100%,#007bc2));
-	background: -webkit-linear-gradient(top, #007bc2 0%, #007bc2 100%);
-	background: -o-linear-gradient(top, #007bc2 0%,#007bc2 100%);
-	background: -ms-linear-gradient(top, #007bc2 0%,#007bc2 100%);
-	background: linear-gradient(top, #007bc2 0%,#007bc2 100%);
-	-pie-background: linear-gradient(#007bc2, #007bc2);
+	background: #0060ff;
+	background: -moz-linear-gradient(top, #0060ff 0%, #0060ff 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#0060ff), color-stop(100%,#0060ff));
+	background: -webkit-linear-gradient(top, #0060ff 0%, #0060ff 100%);
+	background: -o-linear-gradient(top, #0060ff 0%,#0060ff 100%);
+	background: -ms-linear-gradient(top, #0060ff 0%,#0060ff 100%);
+	background: linear-gradient(top, #0060ff 0%,#0060ff 100%);
+	-pie-background: linear-gradient(#0060ff, #0060ff);
 }
 
 .tab-icon #GlossaryTab.tabs-nav-active .tabs-nav-icon
@@ -2049,14 +2052,14 @@ a.activityText
 
 .tabs-nav li#IndexTab.tabs-nav-active
 {
-	background: #007bc2;
-	background: -moz-linear-gradient(top, #007bc2 0%, #007bc2 100%);
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#007bc2), color-stop(100%,#007bc2));
-	background: -webkit-linear-gradient(top, #007bc2 0%, #007bc2 100%);
-	background: -o-linear-gradient(top, #007bc2 0%,#007bc2 100%);
-	background: -ms-linear-gradient(top, #007bc2 0%,#007bc2 100%);
-	background: linear-gradient(top, #007bc2 0%,#007bc2 100%);
-	-pie-background: linear-gradient(#007bc2, #007bc2);
+	background: #0060ff;
+	background: -moz-linear-gradient(top, #0060ff 0%, #0060ff 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#0060ff), color-stop(100%,#0060ff));
+	background: -webkit-linear-gradient(top, #0060ff 0%, #0060ff 100%);
+	background: -o-linear-gradient(top, #0060ff 0%,#0060ff 100%);
+	background: -ms-linear-gradient(top, #0060ff 0%,#0060ff 100%);
+	background: linear-gradient(top, #0060ff 0%,#0060ff 100%);
+	-pie-background: linear-gradient(#0060ff, #0060ff);
 }
 
 .tab-icon #IndexTab.tabs-nav-active .tabs-nav-icon
@@ -2067,14 +2070,14 @@ a.activityText
 
 .tabs-nav li#SearchTab.tabs-nav-active
 {
-	background: #007bc2;
-	background: -moz-linear-gradient(top, #007bc2 0%, #007bc2 100%);
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#007bc2), color-stop(100%,#007bc2));
-	background: -webkit-linear-gradient(top, #007bc2 0%, #007bc2 100%);
-	background: -o-linear-gradient(top, #007bc2 0%,#007bc2 100%);
-	background: -ms-linear-gradient(top, #007bc2 0%,#007bc2 100%);
-	background: linear-gradient(top, #007bc2 0%,#007bc2 100%);
-	-pie-background: linear-gradient(#007bc2, #007bc2);
+	background: #0060ff;
+	background: -moz-linear-gradient(top, #0060ff 0%, #0060ff 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#0060ff), color-stop(100%,#0060ff));
+	background: -webkit-linear-gradient(top, #0060ff 0%, #0060ff 100%);
+	background: -o-linear-gradient(top, #0060ff 0%,#0060ff 100%);
+	background: -ms-linear-gradient(top, #0060ff 0%,#0060ff 100%);
+	background: linear-gradient(top, #0060ff 0%,#0060ff 100%);
+	-pie-background: linear-gradient(#0060ff, #0060ff);
 }
 
 .tab-icon #SearchTab.tabs-nav-active .tabs-nav-icon
@@ -2084,14 +2087,14 @@ a.activityText
 
 .tabs-nav li#TocTab.tabs-nav-active
 {
-	background: #007bc2;
-	background: -moz-linear-gradient(top, #007bc2 0%, #007bc2 100%);
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#007bc2), color-stop(100%,#007bc2));
-	background: -webkit-linear-gradient(top, #007bc2 0%, #007bc2 100%);
-	background: -o-linear-gradient(top, #007bc2 0%,#007bc2 100%);
-	background: -ms-linear-gradient(top, #007bc2 0%,#007bc2 100%);
-	background: linear-gradient(top, #007bc2 0%,#007bc2 100%);
-	-pie-background: linear-gradient(#007bc2, #007bc2);
+	background: #0060ff;
+	background: -moz-linear-gradient(top, #0060ff 0%, #0060ff 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#0060ff), color-stop(100%,#0060ff));
+	background: -webkit-linear-gradient(top, #0060ff 0%, #0060ff 100%);
+	background: -o-linear-gradient(top, #0060ff 0%,#0060ff 100%);
+	background: -ms-linear-gradient(top, #0060ff 0%,#0060ff 100%);
+	background: linear-gradient(top, #0060ff 0%,#0060ff 100%);
+	-pie-background: linear-gradient(#0060ff, #0060ff);
 }
 
 .tab-icon #TocTab.tabs-nav-active .tabs-nav-icon
