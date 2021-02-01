@@ -84,6 +84,9 @@ namespace SvUl
 		//calculate Hashcode
 		void CalculateSHA256();
 
+		//sort in order of full Filename
+		void Sort();
+
 		std::vector< AuditFile>& GetFiles() { return m_Files; };
 
 	private:

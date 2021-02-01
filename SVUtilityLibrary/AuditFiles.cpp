@@ -163,6 +163,11 @@ namespace SvUl
 		}
 	}
 
+	void  CAuditFiles::Sort()
+	{
+		std::sort(m_Files.begin(), m_Files.end());
+
+	}
 
 	size_t   CAuditFiles::SetValues(const std::vector< AuditFile>& Files, bool bOnlyFlags)
 	{

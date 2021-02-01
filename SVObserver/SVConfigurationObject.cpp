@@ -5821,6 +5821,7 @@ void SVConfigurationObject::UpdateAuditFiles(bool calculateHash)
 		}
 	}
 	m_AuditDefaultList.SyncDefaultList(std::move(Filenames));
+	m_AuditDefaultList.Sort();
 	m_AuditDefaultList.UpdateList();
 	m_AuditWhiteList.UpdateList();
 	if (calculateHash)
