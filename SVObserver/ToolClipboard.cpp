@@ -332,9 +332,19 @@ void ToolClipboard::writeSourceIds(SvOi::IObjectWriter& rWriter, SvTo::SVToolCla
 			SVObjectClass* pImage = pInput->GetInputObjectInfo().getObject();
 			if(pInput->IsConnected() && nullptr !=  pImage)
 			{
-				SVObjectClass* pTool = pImage->GetAncestor(SvPb::SVObjectTypeEnum::SVToolObjectType, true);
+				SVObjectClass* pOwner = pImage->GetParent();
+				bool addImage = true;
+				while (nullptr != pOwner)
+				{
+					if (pOwner->GetObjectType() == SvPb::SVObjectTypeEnum::SVToolObjectType && pOwner->getObjectId() == rTool.getObjectId())
+					{
+						addImage = false;
+						break;
+					}
+					pOwner = pOwner->GetParent();
+				}
 				//Add input image only if not from the tool being copied
-				if(nullptr == pTool || pTool->getObjectId() != rTool.getObjectId())
+				if (addImage)
 				{
 					imageIdVector.insert(pInput->GetInputObjectInfo().getObjectId());
 				}
