@@ -74,7 +74,6 @@ namespace SvVol
 	HRESULT BasicValueObject::setValue(const _variant_t& rValue, int  /*= -1*/, bool)
 	{
 		HRESULT	Result = S_OK;
-		// cppcheck-suppress unreadVariable symbolName=bisArray
 		// cppcheck-suppress variableScope symbolName=bisArray
 		bool bisArray{ false };
 		_variant_t	TempValue(rValue);
@@ -84,6 +83,7 @@ namespace SvVol
 		{
 			
 			Result = ConvertArray(TempValue);
+			// cppcheck-suppress unreadVariable symbolName=bisArray
 			bisArray = true;
 		}
 		//If variant is of type VT_EMPTY then this is only a node
