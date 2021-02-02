@@ -82,9 +82,9 @@ void PrintVariant(const SvPb::Variant& var)
 	}
 }
 
-static void GetNotifications(SvWsl::SVRCClientService& client, int wait )
+SvRpc::ClientStreamContext StartNotifications(SvWsl::SVRCClientService& client)
 {
-	
+
 	SvPb::GetNotificationStreamRequest req;
 	auto ctx = client.GetNotificationStream(std::move(req), SvRpc::Observer<SvPb::GetNotificationStreamResponse>(
 		[](SvPb::GetNotificationStreamResponse&& res) -> SvSyl::SVFuture<void>
@@ -94,7 +94,7 @@ static void GetNotifications(SvWsl::SVRCClientService& client, int wait )
 			if (res.has_event())
 			{
 				std::string typeName = EventType_Name(res.event().type());
-				SV_LOG_GLOBAL(info) << "An event arrives: " << typeName << std::endl;
+				SV_LOG_GLOBAL(info) << "An event  notification arrives: " << typeName << std::endl;
 				if (res.event().eventparameters_size() > 0)
 				{
 					auto var = res.event().eventparameters().Get(0);
@@ -102,10 +102,10 @@ static void GetNotifications(SvWsl::SVRCClientService& client, int wait )
 					PrintVariant(var);
 					SV_LOG_GLOBAL(info) << std::endl;
 				}
-			}			
+			}
 			else
 			{
-				SV_LOG_GLOBAL(info) << "Received notification Debug string " << res.DebugString() << std::endl;
+				SV_LOG_GLOBAL(info) << "A notification arrives " << res.DebugString() << std::endl;
 			}
 			return SvSyl::SVFuture<void>::make_ready();
 		},
@@ -117,8 +117,8 @@ static void GetNotifications(SvWsl::SVRCClientService& client, int wait )
 		{
 			SV_LOG_GLOBAL(info) << "Error while receiving notifications: " << err.message();
 		}));
-	std::this_thread::sleep_for(std::chrono::seconds(wait));
-	ctx.cancel();
+	return ctx;
+	
 }
 
 static bool GetImageId(SvWsl::SVRCClientService& client, uint32_t imageWidth, SvPb::ImageId& rImageIdOut)
@@ -247,6 +247,7 @@ private:
 
 int main(int argc, char* argv[])
 {
+	SvRpc::ClientStreamContext csx(nullptr);
 	SvLog::bootstrap_logging();
 	SvLog::LogSettings logSettings;
 	logSettings.StdoutLogEnabled = true;
@@ -315,7 +316,6 @@ int main(int argc, char* argv[])
 					<< "  q  quit" << std::endl
 					<< "  h  Hilfe" << std::endl
 					<< "  v  (Version)" << std::endl
-					<< "  n  notification" << std::endl
 					<< "  m  (Monitorlist)" << std::endl
 					<< "  p  name triggercount (GetProdukt)" << std::endl
 					<< "  i  StoreNr  imageNr slotNr (GetImage)" << std::endl
@@ -326,10 +326,14 @@ int main(int argc, char* argv[])
 				std::cout << "dis disconnect" << std::endl;
 				std::cout << "con  connect [ip adress] [portnr  = " << SvHttp::Default_Port << "]\n";
 				std::cout << "qli [monitorlistname] [p,r,f,a] [Image=1]  [val=1]" << std::endl;
+				std::cout << "gci  get configuration info" << std::endl;
+				std::cout << "sn start notification" << std::endl;
+				std::cout << "cn cancel notification" << std::endl;;
 			}
+
 			else if (!pRpcClient || !pRpcClient->isConnected())
 			{
-				SV_LOG_GLOBAL(info) << "Nicht verbunde!!!" << std::endl;
+				SV_LOG_GLOBAL(info) << "Nicht verbunden !!!" << std::endl;
 			}
 			else if (words[0] == "v")
 			{
@@ -350,26 +354,25 @@ int main(int argc, char* argv[])
 					SV_LOG_GLOBAL(error) << "Unable to get version" << std::endl;
 				}
 			}
-			else if (words[0] == "n")
+			else if (words[0] == "cn")
 			{
-				int wait{ 10 };
-				if (wordsize > 1)
-				{
-					int t = atoi(words[1].c_str());
-					if (t > -1)
-					{
-						wait = t;
-					}
-				}
+
+				csx.cancel();
+
+			}
+			else if (words[0] == "sn")
+			{
+
 
 				try
 				{
-					GetNotifications(*pService,wait);
+					csx = StartNotifications(*pService);
 				}
 				catch (const std::exception& e)
 				{
 					SV_LOG_GLOBAL(error) << "Unable to get notifications: " << e.what();
 				}
+
 			}
 			else if (pRpcClient && pRpcClient->isConnected() && words[0] == "m")
 			{
@@ -591,14 +594,18 @@ int main(int argc, char* argv[])
 				request.set_type(t);
 				request.set_queryimages(bImage);
 				request.set_queryvalues(bValues);
-
 				auto resp = runRequest(*pService, &SvWsl::SVRCClientService::QueryListItem, std::move(request)).get();
-
 				std::cout << "QueryListItemResponse .DebugString: " << std::endl;
 				std::cout << resp.DebugString() << std::endl;
-
-
-
+			}
+			else if (words[0] == "gci")
+			{
+				SvPb::GetConfigurationInfoRequest request;
+				auto response = runRequest(*pService, &SvWsl::SVRCClientService::GetConfigurationInfo, std::move(request)).get();
+				SV_LOG_GLOBAL(info) << "Config File : " << response.filename().c_str();
+				SV_LOG_GLOBAL(info) << "Last modified: " << response.lastmodified();
+				SV_LOG_GLOBAL(info) << "Loaded Since: " << response.loadedsince();
+				SV_LOG_GLOBAL(info) << "hash: " << response.hash();
 			}
 
 		}

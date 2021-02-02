@@ -67,7 +67,8 @@ public:
 	void RunOnce(SvPb::RunOnceRequest&&, SvRpc::Task<SvPb::StandardResponse> task);
 	void LoadConfig(SvPb::LoadConfigRequest&&, SvRpc::Task<SvPb::StandardResponse> task);
 	void SetTriggerConfig(SvPb::SetTriggerConfigRequest&&, SvRpc::Task<SvPb::StandardResponse> task);
-
+	void GetConfigurationInfo(SvPb::GetConfigurationInfoRequest&&, SvRpc::Task<SvPb::GetConfigurationInfoResponse> );
+	
 private:
 	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::GetGatewayVersionRequest, SvPb::GetVersionResponse> m_GetGatewayVersionClient;
 	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::GetWebAppVersionRequest, SvPb::GetVersionResponse> m_GetWebAppVersionClient;
@@ -105,6 +106,7 @@ private:
 	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::RunOnceRequest, SvPb::StandardResponse> m_RunOnceClient;
 	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::LoadConfigRequest, SvPb::StandardResponse> m_LoadConfigClient;
 	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::SetTriggerConfigRequest, SvPb::StandardResponse> m_SetTriggerConfigClient;
+	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::GetConfigurationInfoRequest, SvPb::GetConfigurationInfoResponse> m_GetConfigurationInfoClient;
 	SVRCClientServiceSetting&  m_rSVRCSettings;
 
 };
