@@ -81,8 +81,6 @@ SVTADlgArchiveImagePage::SVTADlgArchiveImagePage(uint32_t inspectionId, uint32_t
 , m_ImageFilepathroot2WidgetHelper(m_ImageFilepathroot2, SvPb::ArchiveImageFileRootPart2EId, &m_ImageFilepathroot2Button, SvPb::ArchiveImageFileRootPart2LinkEId, m_ValueController)
 , m_ImageFilepathroot3WidgetHelper(m_ImageFilepathroot3, SvPb::ArchiveImageFileRootPart3EId, &m_ImageFilepathroot3Button, SvPb::ArchiveImageFileRootPart3LinkEId, m_ValueController)
 {
-	m_RootPathObjectSelectorController.setSearchAreas({ SvPb::SearchArea::globalConstantItems });
-
 	SvOg::ValueEditWidgetHelper::EnsureDownArrowBitmapIsLoaded();
 
 	m_strCaption = m_psp.pszTitle;
