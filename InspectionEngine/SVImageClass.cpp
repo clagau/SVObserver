@@ -623,16 +623,6 @@ HRESULT SVImageClass::UpdateChild(uint32_t childID, const SVImageInfoClass& rIma
 			rChildInfo = rImageInfo;
 
 			l_hrOk = m_ImageInfo.ValidateAgainstOutputSpace(rChildInfo.GetExtents());
-			if (S_OK != l_hrOk)
-			{
-				auto* pChildObject = dynamic_cast<SVImageClass*>(SvOi::getObject(childID));
-				if (nullptr != pChildObject)
-				{
-					SvStl::MessageManager e(SvStl::MsgType::Data);
-					e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SizeOfChildROIInvalid, SvStl::SourceFileParams(StdMessageParams), 0, childID);
-					pChildObject->setErrorMessageToTool(e.getMessageContainer());
-				}
-			}
 		}
 
 		if (!Unlock())
@@ -1224,15 +1214,6 @@ void SVImageClass::copiedSavedImage(SvOi::ITriggerRecordRWPtr pTr)
 			HRESULT result = SVMatroxBufferInterface::CopyBuffer(image->getHandle()->GetBuffer(), m_savedBuffer->GetBuffer());
 			assert(S_OK == result); UNREFERENCED_PARAMETER(result);
 		}
-	}
-}
-
-void SVImageClass::setErrorMessageToTool(SvStl::MessageContainer& rErrorMessage)
-{
-	auto* pTool = dynamic_cast<SVTaskObjectClass*>(GetTool());
-	if (nullptr != pTool)
-	{
-		pTool->addResetErrorMessage(rErrorMessage);
 	}
 }
 

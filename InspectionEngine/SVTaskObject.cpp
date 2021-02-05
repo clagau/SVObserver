@@ -238,11 +238,6 @@ void SVTaskObjectClass::removeTaskMessage(DWORD MessageCode, SvStl::MessageTextE
 	}
 }
 
-void SVTaskObjectClass::addResetErrorMessage(SvStl::MessageContainer& rErrorMessage)
-{
-	m_ResetErrorMessages.push_back(rErrorMessage);
-}
-
 HRESULT SVTaskObjectClass::SetValuesForAnObject(uint32_t aimObjectID, SVObjectAttributeClass* pDataObject)
 {
 	for (SVObjectPtrVector::iterator Iter = m_embeddedList.begin(); m_embeddedList.end() != Iter; ++Iter)

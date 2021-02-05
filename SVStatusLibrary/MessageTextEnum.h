@@ -515,7 +515,6 @@ enum MessageTextEnum
 	Tid_ZipFileFailed,
 	Tid_UnzipFileFailed,
 	Tid_GetImageFailed_NoTR,
-	Tid_SizeOfChildROIInvalid,
 	Tid_SM_SlotNotFound,
 
 	Tid_TRC_Error_ResetLocker,
