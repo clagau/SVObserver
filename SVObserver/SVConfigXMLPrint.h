@@ -34,8 +34,8 @@
 
 namespace SvTo
 {
-class SVArchiveTool;
-class SVToolClass;
+	class SVArchiveTool;
+	class SVToolClass;
 }
 
 class SVObjectClass;
@@ -44,20 +44,19 @@ typedef CComPtr<IXmlWriter> Writer;
 
 namespace sv_xml
 {
-	
+
 	std::wstring space2underscore(std::wstring text)
 	{
 		std::replace(text.begin(), text.end(), L' ', L'_');
 		return text;
 	}
-	
+
 	class WriteStartEndElement
 	{
-	public:	
-		// cppcheck-suppress useInitializationList symbolName=m_Writer
-		WriteStartEndElement(Writer writer,  LPCWSTR pwszPrefix, LPCWSTR pwszLocalName,LPCWSTR pwszNamespaceUri) 
+	public:
+		WriteStartEndElement(Writer writer, LPCWSTR pwszPrefix, LPCWSTR pwszLocalName, LPCWSTR pwszNamespaceUri)
+			:m_Writer(writer)
 		{
-			m_Writer = writer;
 			std::wstring temp = space2underscore(std::wstring(pwszLocalName));
 			m_Writer->WriteStartElement(pwszPrefix, temp.c_str(), pwszNamespaceUri);
 		}
@@ -66,10 +65,10 @@ namespace sv_xml
 		{
 			m_Writer->WriteEndElement();
 		}
-				
+
 		Writer m_Writer;
 	};
-	
+
 	class SVConfigXMLPrint
 	{
 	public:
@@ -97,16 +96,16 @@ namespace sv_xml
 		void WriteIOSection(Writer writer) const;
 		void WriteMonitorListSection(Writer writer) const;
 		void WritePPQBar(Writer writer) const;
-		void WriteObject( Writer writer, SVObjectClass* pObj ) const;
-		void WriteValueObject( Writer writer, SVObjectClass* pObj ) const;
-		void WriteAllChildren( Writer writer, SvIe::SVTaskObjectListClass* pObj ) const;
-		void WriteChildren( Writer writer, SVObjectClass* pObj ) const;
-		void WriteFriends( Writer writer, SvIe::SVTaskObjectClass* pObj ) const;
-		void WriteInputOutputList( Writer writer, SvIe::SVTaskObjectClass* pTaskObj) const;
-		void WriteValueObject(Writer writer, const std::wstring&  rTag, const std::wstring&  rName, const std::wstring&  rValue) const;
+		void WriteObject(Writer writer, SVObjectClass* pObj) const;
+		void WriteValueObject(Writer writer, SVObjectClass* pObj) const;
+		void WriteAllChildren(Writer writer, SvIe::SVTaskObjectListClass* pObj) const;
+		void WriteChildren(Writer writer, SVObjectClass* pObj) const;
+		void WriteFriends(Writer writer, SvIe::SVTaskObjectClass* pObj) const;
+		void WriteInputOutputList(Writer writer, SvIe::SVTaskObjectClass* pTaskObj) const;
+		void WriteValueObject(Writer writer, const std::wstring& rTag, const std::wstring& rName, const std::wstring& rValue) const;
 		void WriteIOEntryObject(Writer writer, SVIOEntryHostStructPtr IOEntry) const;
 		void WriteGlobalConstants(Writer writer) const;
-		
+
 		void WriteExternalFiles(Writer writer) const;
 		mutable SVConfigurationObject* m_cfo;
 		mutable int nToolNumber;
@@ -124,7 +123,7 @@ namespace sv_xml
 			::GlobalUnlock(hg);
 		}
 
-		const std::string operator()() { return reinterpret_cast<const char *>(::GlobalLock(hg)); }
+		const std::string operator()() { return reinterpret_cast<const char*>(::GlobalLock(hg)); }
 	};
 
 	const std::wstring now()
@@ -166,7 +165,7 @@ namespace sv_xml
 
 	private:
 		Writer m_writer;
-		SVDeviceParamCollection & m_rCamFileParams;
+		SVDeviceParamCollection& m_rCamFileParams;
 	};
 }
 

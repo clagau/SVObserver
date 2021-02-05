@@ -5805,7 +5805,7 @@ void SVConfigurationObject::UpdateAuditFiles(bool calculateHash)
 	if (pApp)
 	{
 		ConfigFilename = pApp->getSvxFullFilename();
-		
+
 	}
 	webAppIdsFilename = SvStl::GlobalPath::Inst().GetRunPath(SvDef::cWebAppIds);
 	auto it = Filenames.begin();
@@ -5848,57 +5848,68 @@ void SVConfigurationObject::SaveAuditList(SvOi::IObjectWriter& rWriter, SvUl::Au
 	if (AuditFileVec.size() > 0)
 	{
 		rWriter.StartElement(lpStartElementName);
+		int FileNr{ 0 };
 		for (const auto& AuditFile : AuditFileVec)
 		{
+			std::string FileTagX = SvUl::Format(SvXml::CTAGF_FILE_X, ++FileNr);
+			rWriter.StartElement(FileTagX.c_str());
 			_variant_t Value{ AuditFile.Fullname.c_str() };
 			rWriter.WriteAttribute(SvXml::CTAG_FILENAME, Value);
 			Value = AuditFile.bhash;
 			rWriter.WriteAttribute(SvXml::CTAG_CALCULATE_HASH, Value);
 			Value = AuditFile.bignore;
 			rWriter.WriteAttribute(SvXml::CTAG_IGNORE_FILE, Value);
+			rWriter.EndElement();
 		}
-		rWriter.EndElement(); //SvXml::CTAG_ADDITIONAL_CONFIG_FILES
+		rWriter.EndElement();
 	}
 }
 
 HRESULT SVConfigurationObject::LoadAuditList(SVTreeType& rTree, SvUl::AuditListType type)
 {
-	HRESULT Result = S_OK;
-	SVTreeType::SVBranchHandle hBranch(nullptr);
+	HRESULT Result{ S_OK };
+	SVTreeType::SVBranchHandle hBranch{ nullptr };
 	LPCTSTR lpStartElementName = (type == SvUl::AuditListType::default) ? SvXml::CTAG_AUDDID_DEFAULT_LIST : SvXml::CTAG_AUDDID_WHITE_LIST;
 	if (SvXml::SVNavigateTree::GetItemBranch(rTree, lpStartElementName, nullptr, hBranch))
 	{
-		SVTreeType::SVLeafHandle hLeaf(rTree.getFirstLeaf(hBranch));
 		auto& AuditFiles = (type == SvUl::AuditListType::default) ? m_AuditDefaultList.GetFiles() : m_AuditWhiteList.GetFiles();
-		while (S_OK == Result && rTree.isValidLeaf(hBranch, hLeaf))
+		SVTreeType::SVBranchHandle hFileBranch = rTree.getFirstBranch(hBranch);
+		while (nullptr != hFileBranch && Result == S_OK)
 		{
 			_variant_t Value;
 			bool ignore{ false };
-			bool hash{ true };
-			if (SvXml::CTAG_CALCULATE_HASH == rTree.getLeafName(hLeaf))
+			bool calcHash{ true };
+
+
+			if (S_OK == rTree.getLeafData(hFileBranch, SvXml::CTAG_CALCULATE_HASH, Value))
 			{
-				if (S_OK == rTree.getLeafData(hLeaf, Value))
-				{
-					hash = (bool)Value;
-				}
+				calcHash = (bool)Value;
 			}
-			if (SvXml::CTAG_IGNORE_FILE == rTree.getLeafName(hLeaf))
+			else
 			{
-				if (S_OK == rTree.getLeafData(hLeaf, Value))
-				{
-					ignore = (bool)Value;
-				}
+				Result = E_FAIL;
 			}
-			if (SvXml::CTAG_FILENAME == rTree.getLeafName(hLeaf))
+			if (S_OK == rTree.getLeafData(hFileBranch, SvXml::CTAG_IGNORE_FILE, Value))
 			{
-				if (S_OK == rTree.getLeafData(hLeaf, Value) && VT_BSTR == Value.vt)
-				{
-					std::string FilePath{ SvUl::createStdString(Value.bstrVal) };
-					AuditFiles.emplace_back(FilePath.c_str(), hash, ignore);
-				}
+				ignore = (bool)Value;
 			}
-			hLeaf = rTree.getNextLeaf(hBranch, hLeaf);
+			else
+			{
+				Result = E_FAIL;
+			}
+
+			if (S_OK == rTree.getLeafData(hFileBranch, SvXml::CTAG_FILENAME, Value) && VT_BSTR == Value.vt)
+			{
+				std::string 	FilePath = SvUl::createStdString(Value.bstrVal);
+				AuditFiles.emplace_back(FilePath.c_str(), calcHash, ignore);
+			}
+			else
+			{
+				Result = E_FAIL;
+			}
+			hFileBranch = rTree.getNextBranch(hBranch, hFileBranch);
 		}
+
 	}
 	return Result;
 }

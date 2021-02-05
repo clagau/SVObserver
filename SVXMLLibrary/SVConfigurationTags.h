@@ -213,4 +213,5 @@ namespace  SvXml
 
 	constexpr char* CTAG_CALCULATE_HASH = _T("CalculateHash");
 	constexpr char* CTAG_IGNORE_FILE = _T("IgnoreFile");
+	constexpr char* CTAGF_FILE_X = _T("File_%d");
 } //namespace SvXml

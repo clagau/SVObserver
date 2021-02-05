@@ -45,7 +45,7 @@ namespace SvUl
 
 	void AuditFile::Trace() const
 	{
-		
+#if defined (TRACE_THEM_ALL) || defined (TRACE_AUDITFILE)	
 		char cbuf[100];
 		cbuf[0] = '\0';
 		std::strftime(cbuf, sizeof(cbuf), "%d %m %Y %H:%M:%S ", std::localtime(&lastWriteDate));
@@ -54,6 +54,7 @@ namespace SvUl
 		std::stringstream ss;
 		ss << Fullname << " " << size << " " << strDate << " " << filename << "  " << extension << std::endl;
 		::OutputDebugString(ss.str().c_str());
+#endif 
 	}
 
 	std::string  AuditFile::Flag2String(bool flag)
@@ -119,23 +120,17 @@ namespace SvUl
 	{
 		for (auto& F : m_Files)
 		{
-			if (false == F.bignore)
+			bfs::path Path = F.Fullname.c_str();
+			F.exist = (bfs::exists(Path) && bfs::is_regular_file(Path));
+			if (F.exist)
 			{
+				F.size = bfs::file_size(Path);
+				F.lastWriteDate = bfs::last_write_time(Path);
 
-				bfs::path Path = F.Fullname.c_str();
-				F.exist = (bfs::exists(Path) && bfs::is_regular_file(Path));
-				if (F.exist)
-				{
-					F.size = bfs::file_size(Path);
-					F.lastWriteDate = bfs::last_write_time(Path);
-
-					F.filename = Path.filename().string();
-					F.extension = Path.extension().string();
-					F.Trace();
-				}
-
+				F.filename = Path.filename().string();
+				F.extension = Path.extension().string();
+				F.Trace();
 			}
-
 		}
 	}
 	void  CAuditFiles::CalculateSHA256()
