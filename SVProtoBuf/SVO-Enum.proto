@@ -1166,6 +1166,7 @@ enum EmbeddedIdEnum
 	ShapeMaskPropertySideThicknessLinkEId = 538;
 	ShapeMaskPropertyTopBottomThicknessLinkEId = 539;
 	ShapeMaskPropertyOffsetLinkEId = 540;
+	MaskImageEId = 541;
 
 	StatNumberOfValidSamplesEId = 560; //Statistics Tool: number of valid values considered in statistic
 

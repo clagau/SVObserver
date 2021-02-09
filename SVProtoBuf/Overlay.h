@@ -31,4 +31,7 @@ namespace SvPb
 			rPbValueObject.set_trpos(rSVOValueObject.getTrPos() + 1);
 		}
 	}
+
+	unsigned char* generateBmpString(SvPb::OverlayShape& rShape, const RECT& rec);
+	unsigned char* generateBmpString(SvPb::Image& image, long width, long height);
 }

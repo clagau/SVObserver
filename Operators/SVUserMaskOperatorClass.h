@@ -56,6 +56,7 @@ public:
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* PDataObject ) override;
 
 	SVShapeMaskHelperClass* GetShapeHelper();
+	const SVShapeMaskHelperClass* GetShapeHelper() const;
 
 	virtual SvDef::StringVector getSpecialImageList() const override;
 	virtual bool getSpecialImage(const std::string& rName, SvOi::SVImageBufferHandlePtr& rImagePtr) const override;
@@ -79,7 +80,10 @@ public:
 
 protected:
 	virtual bool isInputImage(uint32_t imageId) const override;
+	SvStl::MessageTextEnum onRunImageType(RunStatus& rRunStatus);
+	SvStl::MessageTextEnum onRunMask(bool First, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, RunStatus& rRunStatus, DWORD dwMaskType);
 	virtual bool onRun(bool First, SvOi::SVImageBufferHandlePtr RInputImageHandle, SvOi::SVImageBufferHandlePtr ROutputImageHandle, RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages = nullptr) override;
+	virtual void addOverlayGroups(const SvIe::SVImageClass*, SvPb::Overlay& rOverlay) const override;
 	
 	SVImageInfoClass      m_MaskBufferInfo;
 	SvOi::SVImageBufferHandlePtr  m_MaskBufferHandlePtr;
@@ -98,6 +102,7 @@ protected:
 	SvVol::SVLongValueObjectClass       m_lvoFillColor;
 	SvVol::SVEnumerateValueObjectClass  m_evoDrawCriteria;
 	SvVol::SVBoolValueObjectClass m_bvoContRecalc;
+	SvStl::SourceFileParams m_lastErrorPosData;
 
 	enum
 	{

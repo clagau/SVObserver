@@ -24,8 +24,8 @@
 #include "SVStatusLibrary/RunStatus.h"
 #include "SVUtilityLibrary/SVSafeArray.h"
 #include "Tools/SVTool.h"
+#include "SVProtoBuf/Overlay.h"
 #pragma endregion Includes
-
 
 namespace SvOp
 {
@@ -248,6 +248,22 @@ SVShapeMaskHelperClass* SVUserMaskOperatorClass::GetShapeHelper()
 	return pMaskHelper;
 }
 
+const SVShapeMaskHelperClass* SVUserMaskOperatorClass::GetShapeHelper() const
+{
+	SVShapeMaskHelperClass* pMaskHelper = nullptr;
+
+	// Get Friend Object
+	for (size_t i = 0; i < m_friendList.size(); i++)
+	{
+		const SVObjectInfoStruct& friendObjectInfo = m_friendList[i];
+		if (nullptr != (pMaskHelper = dynamic_cast<SVShapeMaskHelperClass*> (friendObjectInfo.getObject())))
+		{
+			return pMaskHelper;
+		}
+	}
+	return nullptr;
+}
+
 SvDef::StringVector SVUserMaskOperatorClass::getSpecialImageList() const
 {
 	return {SvDef::MaskImageName, SvDef::ReferenceImageName};
@@ -465,12 +481,25 @@ HRESULT SVUserMaskOperatorClass::CreateLocalImageBuffer()
 		SVImageInfoClass l_MaskBufferInfo = pImage->GetImageInfo();
 
 		bool bImageInfoChanged = (l_MaskBufferInfo != m_MaskBufferInfo);
-		if ( bImageInfoChanged )
+		if (bImageInfoChanged)
 		{
 			m_MaskBufferInfo = l_MaskBufferInfo;
 			m_MaskBufferInfo.setDibBufferFlag(true);
-			/*l_hrOk = */DestroyLocalImageBuffer();
-			l_hrOk = SvIe::SVImageProcessingClass::CreateImageBuffer( m_MaskBufferInfo, m_MaskBufferHandlePtr );
+
+			DestroyLocalImageBuffer();
+			l_hrOk = SvIe::SVImageProcessingClass::CreateImageBuffer(m_MaskBufferInfo, m_MaskBufferHandlePtr);
+		}
+
+		SVShapeMaskHelperClass* pShape = GetShapeHelper();
+		if (nullptr != pShape)
+		{
+			BOOL isContRecalc;
+			m_bvoContRecalc.GetValue(isContRecalc);
+			DWORD dwMaskType = MASK_TYPE_STATIC;
+			m_dwvoMaskType.GetValue(dwMaskType);
+			long lCriteria;
+			m_evoDrawCriteria.GetValue(lCriteria);
+			pShape->createImageObject(MASK_TYPE_SHAPE == dwMaskType && isContRecalc && lCriteria != SVNone);
 		}
 
 		if( S_OK == l_hrOk )
@@ -603,12 +632,107 @@ HRESULT SVUserMaskOperatorClass::SetObjectValue( SVObjectAttributeClass* pDataOb
 	return hr;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : onRun
-// -----------------------------------------------------------------------------
-// .Description : Runs this operator.
-//              : Returns false, if operator cannot run ( may be deactivated ! )
-////////////////////////////////////////////////////////////////////////////////
+
+SvStl::MessageTextEnum SVUserMaskOperatorClass::onRunImageType(RunStatus& rRunStatus)
+{
+	if (nullptr == m_MaskBufferHandlePtr)
+	{
+		m_lastErrorPosData = SvStl::SourceFileParams(StdMessageParams);
+		return SvStl::Tid_ErrorGettingInputs;
+	}
+
+	SvIe::SVImageClass* pMaskInputImage = getMaskInputImage(true);
+	const SvIe::SVImageClass* pRefImage = getOutputImage(true);
+
+	if (nullptr != pRefImage &&
+		nullptr != pMaskInputImage)
+	{
+		SVPoint<double> point;
+
+		SvOi::ITRCImagePtr pMaskBuffer = pMaskInputImage->getImageReadOnly(rRunStatus.m_triggerRecord.get());
+
+		const SVImageExtentClass& rExtents = pRefImage->GetImageExtents();
+
+		if (S_OK == rExtents.GetExtentProperty(SvPb::SVExtentPropertyPositionPoint, point) &&
+			nullptr != pMaskBuffer && !pMaskBuffer->isEmpty())
+		{
+			if (S_OK != pMaskInputImage->ValidateAgainstOutputExtents(rExtents))
+			{
+				HRESULT MatroxCode = SVMatroxBufferInterface::ClearBuffer(m_MaskBufferHandlePtr->GetBuffer(), 0.0);
+
+				if (S_OK != MatroxCode)
+				{
+					m_lastErrorPosData = SvStl::SourceFileParams(StdMessageParams);
+					return SvStl::Tid_UpdateBufferFailed;
+				}
+			}
+
+			HRESULT MatroxCode = SVMatroxBufferInterface::CopyBuffer(m_MaskBufferHandlePtr->GetBuffer(), pMaskBuffer->getHandle()->GetBuffer(), static_cast<long> (-point.m_x), static_cast<long> (-point.m_y));
+
+			if (S_OK != MatroxCode)
+			{
+				m_lastErrorPosData = SvStl::SourceFileParams(StdMessageParams);
+				return SvStl::Tid_CopyImagesFailed;
+			}
+		}
+		else
+		{
+			m_lastErrorPosData = SvStl::SourceFileParams(StdMessageParams);
+			return SvStl::Tid_ErrorGettingInputs;
+		}
+		return SvStl::Tid_Empty;
+	}
+	else
+	{
+		m_lastErrorPosData = SvStl::SourceFileParams(StdMessageParams);
+		return SvStl::Tid_ErrorGettingInputs;
+	}
+}
+
+SvStl::MessageTextEnum SVUserMaskOperatorClass::onRunMask(bool First, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, RunStatus& rRunStatus, DWORD dwMaskType)
+{
+	if (dwMaskType == MASK_TYPE_IMAGE)
+	{
+		auto errorCode = onRunImageType(rRunStatus);
+		if (SvStl::Tid_Empty != errorCode)
+		{
+			return errorCode;
+		}
+	}// end if ( dwMaskType == MASK_TYPE_IMAGE )
+	else if (dwMaskType == MASK_TYPE_SHAPE)
+	{
+		SVShapeMaskHelperClass* pShapeHelper = GetShapeHelper();
+		BOOL isContRecalc;
+		m_bvoContRecalc.GetValue(isContRecalc);
+		if (isContRecalc)
+		{
+			pShapeHelper->Refresh(&rRunStatus);
+		}
+	}
+
+	long lMaskOperator = SVImageAnd;
+	m_evoCurrentMaskOperator.GetValue(lMaskOperator);
+
+	if (nullptr == m_MaskBufferHandlePtr)
+	{
+		m_lastErrorPosData = SvStl::SourceFileParams(StdMessageParams);
+		return SvStl::Tid_ErrorGettingInputs;
+	}
+	HRESULT MatroxCode = SVMatroxImageInterface::Arithmetic(rOutputImageHandle->GetBuffer(),
+		First ? rInputImageHandle->GetBuffer() : rOutputImageHandle->GetBuffer(),
+		m_MaskBufferHandlePtr->GetBuffer(),
+		static_cast<SVImageOperationTypeEnum>(lMaskOperator));
+
+
+	if (S_OK != MatroxCode)
+	{
+		m_lastErrorPosData = SvStl::SourceFileParams(StdMessageParams);
+		return SvStl::Tid_RunArithmeticFailed;
+	}
+
+	return SvStl::Tid_Empty;
+}
+
 bool SVUserMaskOperatorClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 { 
 	BOOL bActive;
@@ -616,165 +740,33 @@ bool SVUserMaskOperatorClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rI
 
 	if( bActive && nullptr != rInputImageHandle && nullptr != rOutputImageHandle )
 	{
-		if( nullptr != m_MaskBufferHandlePtr )
-		{
-			HRESULT MatroxCode;
+		DWORD dwMaskType = MASK_TYPE_STATIC;
+		m_dwvoMaskType.GetValue(dwMaskType);
+		auto errorCode = onRunMask(First, rInputImageHandle, rOutputImageHandle, rRunStatus, dwMaskType);
 
-			DWORD dwMaskType = MASK_TYPE_STATIC;
-			m_dwvoMaskType.GetValue( dwMaskType );
-
-			if ( dwMaskType == MASK_TYPE_IMAGE )
-			{
-				SvIe::SVImageClass* pMaskInputImage = getMaskInputImage(true);
-				const SvIe::SVImageClass* pRefImage = getOutputImage(true);
-
-				if ( nullptr != pRefImage &&
-					nullptr != pMaskInputImage )
-				{
-					SVPoint<double> point;
-
-					SvOi::ITRCImagePtr pMaskBuffer = pMaskInputImage->getImageReadOnly(rRunStatus.m_triggerRecord.get());
-
-					const SVImageExtentClass& rExtents = pRefImage->GetImageExtents();
-
-					if ( S_OK == rExtents.GetExtentProperty( SvPb::SVExtentPropertyPositionPoint, point ) &&
-						nullptr != pMaskBuffer && !pMaskBuffer->isEmpty() )
-					{
-						if ( S_OK != pMaskInputImage->ValidateAgainstOutputExtents(rExtents) )
-						{
-							MatroxCode = SVMatroxBufferInterface::ClearBuffer(m_MaskBufferHandlePtr->GetBuffer(), 0.0 );
-
-							if (S_OK != MatroxCode)
-							{
-								if (nullptr != pErrorMessages)
-								{
-									SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UpdateBufferFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
-									pErrorMessages->push_back(Msg);
-								}
-								// Signal that something was wrong...
-								rRunStatus.SetInvalid();
-								return false;
-							}
-						}
-
-						MatroxCode = SVMatroxBufferInterface::CopyBuffer(m_MaskBufferHandlePtr->GetBuffer(), pMaskBuffer->getHandle()->GetBuffer(), static_cast<long> (-point.m_x), static_cast<long> (-point.m_y));
-
-						if (S_OK != MatroxCode)
-						{
-							if (nullptr != pErrorMessages)
-							{
-								SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CopyImagesFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
-								pErrorMessages->push_back(Msg);
-							}
-							// Signal that something was wrong...
-							rRunStatus.SetInvalid();
-							return false;
-						}
-					}
-					else
-					{
-						if (nullptr != pErrorMessages)
-						{
-							SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
-							pErrorMessages->push_back(Msg);
-						}
-						// Signal that something was wrong...
-						rRunStatus.SetInvalid();
-						return false;
-					}
-				}
-			}// end if ( dwMaskType == MASK_TYPE_IMAGE )
-
-			else if ( dwMaskType == MASK_TYPE_SHAPE )
-			{
-				SVShapeMaskHelperClass* pShapeHelper = GetShapeHelper();
-				BOOL isContRecalc;
-				m_bvoContRecalc.GetValue(isContRecalc);
-				if (isContRecalc)
-				{
-					pShapeHelper->Refresh();
-				}
-
-				pShapeHelper->onRun(First, rInputImageHandle, rOutputImageHandle, rRunStatus);
-			}
-
-			long lMaskOperator = SVImageAnd;
-			m_evoCurrentMaskOperator.GetValue( lMaskOperator );
-
-			MatroxCode = SVMatroxImageInterface::Arithmetic(rOutputImageHandle->GetBuffer(),
-				First ? rInputImageHandle->GetBuffer() : rOutputImageHandle->GetBuffer(),
-				m_MaskBufferHandlePtr->GetBuffer(),
-				static_cast<SVImageOperationTypeEnum>(lMaskOperator) );
-
-			if (S_OK != MatroxCode)
-			{
-				if (nullptr != pErrorMessages)
-				{
-					SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RunArithmeticFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
-					pErrorMessages->push_back(Msg);
-				}
-				// Signal that something was wrong...
-				rRunStatus.SetInvalid();
-				return false;
-			}
-
-#ifdef _DEBUG999
-			{
-				// Dump the images to .bmp files
-				try
-				{
-					/*MatroxCode = */SVMatroxBufferInterface::Export( m_MaskBufferHandlePtr.milImage,
-						_T("C:\\Temp\\Mask.bmp"),
-						SVFileBitmap );
-
-
-					/*MatroxCode = */SVMatroxBufferInterface::Export( rInputImageHandle.milImage,
-						_T("C:\\Temp\\Input.bmp"),
-						SVFileBitmap);
-
-
-					/*MatroxCode = */SVMatroxBufferInterface::Export( rOutputImageHandle.milImage,
-						_T("C:\\Temp\\Output.bmp"),
-						SVFileBitmap);
-
-				}
-				catch(...)
-				{
-				}
-
-			}
-#endif //_DEBUG999
-			SVShapeMaskHelperClass* pShapeHelper = GetShapeHelper();
-			if ( pShapeHelper )
-			{
-				DWORD dwShapeColor = m_statusColor.GetDefaultValue();
-				if ( MASK_TYPE_SHAPE == dwMaskType )
-				{
-					dwShapeColor = rRunStatus.GetStatusColor();
-				}
-				pShapeHelper->m_statusColor.SetValue(dwShapeColor);
-			}
-			// Success...
-			return true;
-		}
-		else
+		if (SvStl::Tid_Empty != errorCode)
 		{
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, errorCode, m_lastErrorPosData, 0, getObjectId());
 				pErrorMessages->push_back(Msg);
 			}
+			// Signal that something was wrong...
+			rRunStatus.SetInvalid();
 		}
 
-		// Signal that something was wrong...
-		rRunStatus.SetInvalid();
 		SVShapeMaskHelperClass* pShapeHelper = GetShapeHelper();
-		if ( pShapeHelper )
+		if (pShapeHelper)
 		{
 			DWORD dwShapeColor = m_statusColor.GetDefaultValue();
+			if (MASK_TYPE_SHAPE == dwMaskType)
+			{
+				dwShapeColor = rRunStatus.GetStatusColor();
+			}
 			pShapeHelper->m_statusColor.SetValue(dwShapeColor);
 		}
-		return false;
+
+		return SvStl::Tid_Empty == errorCode;
 	}
 
 	// Was deactivated, but everything is ok !!!
@@ -786,6 +778,107 @@ bool SVUserMaskOperatorClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rI
 		pShapeHelper->m_statusColor.SetValue(dwShapeColor);
 	}
 	return false;
+}
+
+void SVUserMaskOperatorClass::addOverlayGroups(const SvIe::SVImageClass*, SvPb::Overlay& rOverlay) const
+{
+	BOOL activated;
+	m_bvoActivated.GetValue(activated);
+
+	SVDrawCriteriaEnum eCriteria;
+	long lValue;
+	m_evoDrawCriteria.GetValue(lValue);
+	eCriteria = (SVDrawCriteriaEnum)lValue;
+
+	if (eCriteria != SVNone && activated)
+	{
+		DWORD dwMaskType;
+		m_dwvoMaskType.GetValue(dwMaskType);
+
+		bool useStaticMask = false;
+		SvIe::SVImageClass* pMaskImage = nullptr;
+		switch (dwMaskType)
+		{
+		case MASK_TYPE_STATIC:
+			useStaticMask = true;
+			break;
+		case MASK_TYPE_IMAGE:
+			pMaskImage = getMaskInputImage();
+			break;
+		case MASK_TYPE_SHAPE:
+			BOOL isContRecalc;
+			m_bvoContRecalc.GetValue(isContRecalc);
+			if (isContRecalc)
+			{
+				const SVShapeMaskHelperClass* pShapeHelper = GetShapeHelper();
+				assert(pShapeHelper);
+				if (pShapeHelper)
+				{
+					pMaskImage = pShapeHelper->getImage();
+				}
+			}
+			else
+			{
+				useStaticMask = true;
+			}
+			break;
+		default:
+			break;
+		}
+		RECT rec;
+		m_MaskBufferInfo.GetOutputRectangle(rec);
+		long height{ rec.bottom - rec.top };
+		long width{ rec.right - rec.left };
+		if (useStaticMask)
+		{
+			if (m_MaskBufferHandlePtr && false == m_MaskBufferHandlePtr->empty())
+			{
+				unsigned char* pSrcLine = nullptr;
+				SVMatroxBufferInterface::GetHostAddress(&pSrcLine, m_MaskBufferHandlePtr->GetBuffer());
+				if (0 < height && 0 < width)
+				{
+					auto& shapeGroup = *rOverlay.add_shapegroups();
+					shapeGroup.set_name("Mask");
+					shapeGroup.set_detaillevel(SvPb::Level1);
+					auto* pImageData = SvPb::generateBmpString(*shapeGroup.add_shapes(), rec);
+					for (int y = 0; y < height; ++y)
+					{
+						for (int x = 0; x < width; ++x)
+						{
+							int offsetSrc = (y * width) + x;
+							int offsetDest = (4 * y * width) + (4 * x);
+							bool isSet = (SVNonBlackPixels == eCriteria && pSrcLine[offsetSrc]) || (SVNonWhitePixels == eCriteria && 0 == pSrcLine[offsetSrc]);
+							pImageData[offsetDest + 0] = 0; // red
+							pImageData[offsetDest + 1] = isSet ? 255: 0; // green
+							pImageData[offsetDest + 2] = isSet ? 255: 0; // blue
+							pImageData[offsetDest + 3] = 100; // alpha
+						}
+					}
+				}
+			}
+		}
+		else if (pMaskImage)
+		{
+			auto& shapeGroup = *rOverlay.add_shapegroups();
+			shapeGroup.set_name("Mask");
+			shapeGroup.set_detaillevel(SvPb::Level1);
+			auto* pImage = shapeGroup.add_shapes()->mutable_image();
+			pImage->mutable_x()->set_value(rec.top);
+			pImage->mutable_y()->set_value(rec.left);
+			pImage->mutable_w()->set_value(width);
+			pImage->mutable_h()->set_value(height);
+			auto* pData = pImage->mutable_imagedymdata();
+			pData->set_trposimage(pMaskImage->getImagePosInTRC());
+			if (SVNonBlackPixels == eCriteria)
+			{
+				pData->set_nonblack(0x64FFFF00);
+			}
+			else if (SVNonWhitePixels == eCriteria)
+			{
+				pData->set_black(0x64FFFF00);
+			}			
+		}		
+	}
 }
 
 SvIe::SVImageClass* SVUserMaskOperatorClass::getMaskInputImage(bool bRunMode /*= false*/) const

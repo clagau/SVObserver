@@ -15,6 +15,8 @@
 #include "SVShapeMaskHelperClass.h"
 #include "SVUserMaskOperatorClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "SVStatusLibrary/RunStatus.h"
+#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #pragma endregion Includes
 
 namespace SvOp
@@ -184,6 +186,39 @@ bool SVShapeMaskHelperClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 	return Result;
 }
 
+void SVShapeMaskHelperClass::createImageObject(bool useImageObject)
+{
+	if (useImageObject)
+	{
+		SVUserMaskOperatorClass* pMaskOperator = dynamic_cast<SVUserMaskOperatorClass*> (GetParent());
+		assert(pMaskOperator);
+		if (pMaskOperator)
+		{
+			if (nullptr == m_pImage)
+			{
+				m_pImage = new SvIe::SVImageClass("MaskImage");
+				RegisterEmbeddedObject(m_pImage, SvPb::MaskImageEId, "MaskImage");
+				CreateChildObject(m_pImage);
+			}
+			m_pImage->resetAllObjects();
+			m_pImage->UpdateImage(pMaskOperator->m_MaskBufferInfo.GetExtents());
+		}
+	}
+	else
+	{
+		if (m_pImage)
+		{
+			auto iter = std::find(m_embeddedList.begin(), m_embeddedList.end(), m_pImage);
+			if (iter != m_embeddedList.end())
+			{
+				m_embeddedList.erase(iter);
+			}
+			delete m_pImage;
+			m_pImage = nullptr;
+		}
+	}
+}
+
 bool SVShapeMaskHelperClass::onRun( bool, SvOi::SVImageBufferHandlePtr RInputImageHandle, SvOi::SVImageBufferHandlePtr ROutputImageHandle, RunStatus& , SvStl::MessageContainerVector * )
 {
 	return TRUE;	// what do we want to do here for the status?
@@ -196,7 +231,7 @@ SVShapeMaskHelperClass::ShapeTypeEnum SVShapeMaskHelperClass::GetShape( )
 	return static_cast <ShapeTypeEnum> (lValue);
 }
 
-HRESULT SVShapeMaskHelperClass::Refresh()
+HRESULT SVShapeMaskHelperClass::Refresh(RunStatus* pRunStatus)
 {
 	HRESULT hr = S_FALSE;
 	if ( m_pShape )
@@ -240,33 +275,41 @@ HRESULT SVShapeMaskHelperClass::Refresh()
 		
 		SVUserMaskOperatorClass* pMaskOperator = dynamic_cast<SVUserMaskOperatorClass*> ( GetParent() );
 		assert( pMaskOperator );
-		if ( pMaskOperator && nullptr != pMaskOperator->m_MaskBufferHandlePtr )
+		if (pMaskOperator && nullptr != pMaskOperator->m_MaskBufferHandlePtr)
 		{
-			////////////////////
-			// FILL PROPERTIES
-			SVMaskFillPropertiesStruct svFillStruct;
-			long lValue;
-			m_evoMaskArea.GetValue( lValue );
-			svFillStruct.bMaskInsideShape = (lValue != 2);
-			pMaskOperator->m_evoFillArea.GetValue( lValue );
-			svFillStruct.bFillMaskArea = ( lValue == 0 );
-			pMaskOperator->m_lvoFillColor.GetValue( lValue );
-			lValue = std::max< long >(   0, lValue );
-			lValue = std::min< long >( 255, lValue );
-			svFillStruct.rgbFillColor = RGB( lValue, lValue, lValue );
+				////////////////////
+				// FILL PROPERTIES
+				SVMaskFillPropertiesStruct svFillStruct;
+				long lValue;
+				m_evoMaskArea.GetValue(lValue);
+				svFillStruct.bMaskInsideShape = (lValue != 2);
+				pMaskOperator->m_evoFillArea.GetValue(lValue);
+				svFillStruct.bFillMaskArea = (lValue == 0);
+				pMaskOperator->m_lvoFillColor.GetValue(lValue);
+				lValue = std::max< long >(0, lValue);
+				lValue = std::min< long >(255, lValue);
+				svFillStruct.rgbFillColor = RGB(lValue, lValue, lValue);
 
-			BOOL bAutoResize = false;
-			m_bvoAutoResize.GetValue( bAutoResize );
-			m_pShape->SetAutoResize( bAutoResize ? true : false );
-			m_pShape->SetImageInfo( pMaskOperator->m_MaskBufferInfo );
-			m_pShape->SetProperties( mapProperties );
+				BOOL bAutoResize = false;
+				m_bvoAutoResize.GetValue(bAutoResize);
+				m_pShape->SetAutoResize(bAutoResize ? true : false);
+				m_pShape->SetImageInfo(pMaskOperator->m_MaskBufferInfo);
+				m_pShape->SetProperties(mapProperties);
 
-			// render based on new values
-			m_pShape->Refresh(svFillStruct);
+				// render based on new values
+				m_pShape->Refresh(svFillStruct);
 
-			// draw the mask to the MIL buffer
-			m_pShape->Draw(pMaskOperator->m_MaskBufferHandlePtr->GetBuffer() );
-		}
+				// draw the mask to the MIL buffer
+				m_pShape->Draw(pMaskOperator->m_MaskBufferHandlePtr->GetBuffer());
+				if (nullptr != m_pImage && pRunStatus && pRunStatus->m_triggerRecord)
+				{
+					SvOi::ITRCImagePtr pImage = m_pImage->getImageToWrite(pRunStatus->m_triggerRecord);
+					if (nullptr != pImage && pImage->isValid())
+					{
+						SVMatroxBufferInterface::CopyBuffer(pImage->getHandle()->GetBuffer(), pMaskOperator->m_MaskBufferHandlePtr->GetBuffer());
+					}					
+				}
+		}		
 	}
 	return hr;
 }

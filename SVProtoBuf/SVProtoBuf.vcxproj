@@ -169,6 +169,7 @@
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Level2</WarningLevel>
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Level2</WarningLevel>
     </ClCompile>
+    <ClCompile Include="Overlay.cpp" />
     <ClCompile Include="PatternUtils.pb.cc">
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Level2</WarningLevel>
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Level2</WarningLevel>

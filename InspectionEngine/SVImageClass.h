@@ -121,6 +121,8 @@ public:
 	virtual SVObjectClass* OverwriteEmbeddedObject(uint32_t uniqueID, SvPb::EmbeddedIdEnum embeddedID) override;
 	virtual HRESULT SetValuesForAnObject(uint32_t aimObjectID, SVObjectAttributeClass* pDataObject) override;
 
+	int getImagePosInTRC() const { return m_imagePosInTRC; };
+
 #pragma region virtual method (ISVImage)
 	virtual SvPb::SVImageTypeEnum GetImageType() const override;
 	virtual SvOi::ISVImage* GetParentImageInterface() const override;

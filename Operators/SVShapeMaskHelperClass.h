@@ -37,10 +37,11 @@ public:
 	virtual ~SVShapeMaskHelperClass();
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
+	void createImageObject(bool useImageObject);
 	//First definition of onRun with this parameter (SVTaskObjectClass has different parameter), so override is not possible
 	virtual bool onRun( bool First, SvOi::SVImageBufferHandlePtr RInputImageHandle, SvOi::SVImageBufferHandlePtr ROutputImageHandle, RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr );
 
-	HRESULT Refresh();
+	HRESULT Refresh(RunStatus* pRunStatus = nullptr);
 
 	enum ShapeTypeEnum
 	{
@@ -52,6 +53,7 @@ public:
 	};
 
 	ShapeTypeEnum GetShape();
+	SvIe::SVImageClass* getImage() const { return m_pImage; };
 
 protected:
 	SvVol::SVBoolValueObjectClass       m_bvoAutoResize;
@@ -67,6 +69,7 @@ protected:
 	SvVol::SVEnumerateValueObjectClass  m_evoXYSymmetry;
 
 	SVMaskShape*           m_pShape;
+	SvIe::SVImageClass* m_pImage{ nullptr };
 
 private:
 	void init();
