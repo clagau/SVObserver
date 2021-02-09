@@ -26,7 +26,7 @@ struct NotificationHandler
 	SvSyl::SVFuture<void>  OnNext(const SvPb::GetNotificationStreamResponse& resp)
 	{
 		SV_LOG_GLOBAL(info) << "Get New Notification: " <<
-			resp.message_case() << " DEBUGSTRING: " << resp.DebugString() << std::endl;
+			resp.type() << " DEBUGSTRING: " << resp.DebugString() << std::endl;
 		return SvSyl::SVFuture<void>::make_ready();
 	}
 	void OnFinish()

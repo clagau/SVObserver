@@ -7,10 +7,8 @@
 //******************************************************************************
 
 #pragma once
-#pragma region Includes
-#include "SVSystemLibrary/SVFuture.h"
-#pragma endregion Includes
 
+typedef std::function<void(const _variant_t&, long)> NotifyFunctor;
 
 namespace SvPb
 {
@@ -20,6 +18,11 @@ namespace SvPenv
 {
 	class Error;
 }
+namespace SvSyl
+{
+	template<class T>
+	class SVFuture;
+}
 
 namespace SvRc
 {
@@ -28,11 +31,11 @@ class RemoteControlImpl;
 class NotificationHandler
 {
 public:
-	explicit NotificationHandler(const RemoteControlImpl& rRemoteCtrl);
+	explicit NotificationHandler(const NotifyFunctor& prNotifier);
 	SvSyl::SVFuture<void> OnNext(const SvPb::GetNotificationStreamResponse& resp);
 	void OnFinish();
 	void OnError(const SvPenv::Error& er);
 private:
-	const RemoteControlImpl& m_rRemoteCtrl;
+	const NotifyFunctor& m_prNotifier;
 };
 } //namespace SvRc

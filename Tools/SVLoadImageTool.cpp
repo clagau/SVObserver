@@ -17,6 +17,7 @@
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "Operators/ToolSizeAdjustTask.h"
 #include "SVStatusLibrary/RunStatus.h"
+#include "SVStatusLibrary/SVSVIMStateClass.h"
 #pragma endregion Includes
 
 namespace SvTo

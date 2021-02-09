@@ -27,7 +27,7 @@
 #include "SvHttpLibrary/WebsocketClientSettings.h"
 #include "SvHttpLibrary/DefaultSettings.h"
 #include "SVLogLibrary/Logging.h"
-#include "SVProtoBuf\SVRC.h"
+#include "SVProtoBuf/SVRC.h"
 #include "SVStatusLibrary/ErrorUtil.h"
 #include "SVRPCLibrary/RPCClient.h"
 #include "WebsocketLibrary/RunRequest.inl"
@@ -86,27 +86,18 @@ SvRpc::ClientStreamContext StartNotifications(SvWsl::SVRCClientService& client)
 {
 
 	SvPb::GetNotificationStreamRequest req;
+	//If the line below is not commented out it would cause only current mode to be notified (add notify type as required empty means all notifications)
+	//req.add_notifylist(SvPb::NotifyType::currentMode);
 	auto ctx = client.GetNotificationStream(std::move(req), SvRpc::Observer<SvPb::GetNotificationStreamResponse>(
 		[](SvPb::GetNotificationStreamResponse&& res) -> SvSyl::SVFuture<void>
 		{
 			//SV_LOG_GLOBAL(info) << "Received notification " << res.id() << " " << res.type() << " " << res.message();
 			std::string temp = res.DebugString();
-			if (res.has_event())
-			{
-				std::string typeName = EventType_Name(res.event().type());
-				SV_LOG_GLOBAL(info) << "An event  notification arrives: " << typeName << std::endl;
-				if (res.event().eventparameters_size() > 0)
-				{
-					auto var = res.event().eventparameters().Get(0);
-					SV_LOG_GLOBAL(info) << "with parameter: ";
-					PrintVariant(var);
-					SV_LOG_GLOBAL(info) << std::endl;
-				}
-			}
-			else
-			{
-				SV_LOG_GLOBAL(info) << "A notification arrives " << res.DebugString() << std::endl;
-			}
+			std::string typeName = NotifyType_Name(res.type());
+			SV_LOG_GLOBAL(info) << "An event notification arrived: " << typeName.c_str() << std::endl;
+			SV_LOG_GLOBAL(info) << "with parameter: ";
+			PrintVariant(res.parameter());
+			SV_LOG_GLOBAL(info) << std::endl;
 			return SvSyl::SVFuture<void>::make_ready();
 		},
 		[]()
@@ -119,6 +110,38 @@ SvRpc::ClientStreamContext StartNotifications(SvWsl::SVRCClientService& client)
 		}));
 	return ctx;
 	
+}
+
+SvRpc::ClientStreamContext StartMessageNotification(SvWsl::SVRCClientService& client)
+{
+
+	SvPb::GetMessageNotificationStreamRequest req;
+	//If the line below is not commented out it would cause only error messages to be notified (add severity as required empty means all notifications)
+	//req.add_severitylist(SvPb::MessageSeverity::sevError);
+	auto ctx = client.GetMessageNotificationStream(std::move(req), SvRpc::Observer<SvPb::GetMessageNotificationStreamResponse>(
+		[](SvPb::GetMessageNotificationStreamResponse&& res) -> SvSyl::SVFuture<void>
+		{
+			//SV_LOG_GLOBAL(info) << "Received notification " << res.id() << " " << res.type() << " " << res.message();
+			std::string temp = res.DebugString();
+			std::string typeName = MessageType_Name(res.type());
+			SV_LOG_GLOBAL(info) << "A message notification arrived: " << typeName.c_str() << std::endl;
+			if (res.msglist().messages_size() > 0)
+			{
+				const SvPb::MessageContainer& rMessage = res.msglist().messages(0);
+				SV_LOG_GLOBAL(info) << "with message" << rMessage.messagetext().c_str() << std::endl;
+			}
+			return SvSyl::SVFuture<void>::make_ready();
+		},
+		[]()
+		{
+			SV_LOG_GLOBAL(info) << "Finished receiving notifications";
+		},
+			[](const SvPenv::Error& err)
+		{
+			SV_LOG_GLOBAL(info) << "Error while receiving notifications: " << err.message();
+		}));
+	return ctx;
+
 }
 
 static bool GetImageId(SvWsl::SVRCClientService& client, uint32_t imageWidth, SvPb::ImageId& rImageIdOut)
@@ -329,6 +352,8 @@ int main(int argc, char* argv[])
 				std::cout << "gci  get configuration info" << std::endl;
 				std::cout << "sn start notification" << std::endl;
 				std::cout << "cn cancel notification" << std::endl;;
+				std::cout << "sm start message notification" << std::endl;
+				std::cout << "cm cancel message notification" << std::endl;;
 			}
 
 			else if (!pRpcClient || !pRpcClient->isConnected())
@@ -362,8 +387,6 @@ int main(int argc, char* argv[])
 			}
 			else if (words[0] == "sn")
 			{
-
-
 				try
 				{
 					csx = StartNotifications(*pService);
@@ -372,7 +395,23 @@ int main(int argc, char* argv[])
 				{
 					SV_LOG_GLOBAL(error) << "Unable to get notifications: " << e.what();
 				}
+			}
+			else if (words[0] == "cm")
+			{
 
+				csx.cancel();
+
+			}
+			else if (words[0] == "sm")
+			{
+				try
+				{
+					csx = StartMessageNotification(*pService);
+				}
+				catch (const std::exception& e)
+				{
+					SV_LOG_GLOBAL(error) << "Unable to get notifications: " << e.what();
+				}
 			}
 			else if (pRpcClient && pRpcClient->isConnected() && words[0] == "m")
 			{

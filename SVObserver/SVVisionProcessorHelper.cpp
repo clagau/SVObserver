@@ -28,6 +28,7 @@
 #include "Definitions/GlobalConst.h"
 #include "Definitions/SVUserMessage.h"
 #include "Definitions/StringTypeDef.h"
+#include "SVProtoBuf/ConverterHelper.h"
 #include "SVProtoBuf/SVRC.h"
 #pragma endregion Includes
 
@@ -39,11 +40,21 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
+void FireNotification(SvPb::NotifyType notifyType, const _variant_t& parameter)
+{
+	SVVisionProcessorHelper::Instance().FireNotification(notifyType, parameter);
+}
+
+void FireMessageNotification(const SvStl::MessageContainer& rMessage, int messageType)
+{
+	SVVisionProcessorHelper::Instance().FireMessageNotification(rMessage, messageType);
+}
+
 SVVisionProcessorHelper& SVVisionProcessorHelper::Instance()
 {
-	static SVVisionProcessorHelper l_Object;
+	static SVVisionProcessorHelper object;
 
-	return l_Object;
+	return object;
 }
 
 #pragma region Constructor
@@ -1114,25 +1125,21 @@ HRESULT SVVisionProcessorHelper::RegisterMonitorList(const std::string& rListNam
 
 void SVVisionProcessorHelper::Startup()
 {
-	SvStl::MessageManager::setNotificationFunction(boost::bind(&SVVisionProcessorHelper::FireNotification, this, _1, _2, _3, _4));
-	SVSVIMStateClass::setNotificationFunction(boost::bind(&SVVisionProcessorHelper::FireNotification, this, _1, _2, _3, _4));
+	SvStl::MessageManager::setNotificationFunction(::FireMessageNotification);
+	SVSVIMStateClass::setNotificationFunction(::FireNotification);
 }
 
 void SVVisionProcessorHelper::Shutdown()
 {
-	SvStl::MessageManager::setNotificationFunction(SvStl::NotifyFunctor());
-	SVSVIMStateClass::setNotificationFunction(SvStl::NotifyFunctor());
-
-
+	//SvStl::MessageManager::setNotificationFunction(nullptr);
+	SVSVIMStateClass::setNotificationFunction(nullptr);
 }
-HRESULT SVVisionProcessorHelper::FireNotification(long notifyType, long value, long msgNr, LPCTSTR msg)
-{
-	HRESULT Result{S_OK};
 
-	SvStl::NotificationType fireNotifyType = static_cast<SvStl::NotificationType> (notifyType);
-	if (SvStl::NotificationType::mode == fireNotifyType)
+void SVVisionProcessorHelper::FireNotification(SvPb::NotifyType notifyType, const _variant_t& parameter) const
+{
+	if (SvPb::NotifyType::currentMode == notifyType)
 	{
-		svModeEnum currentMode = static_cast<svModeEnum> (value);
+		svModeEnum currentMode = static_cast<svModeEnum> (parameter.lVal);
 		RootObject::setRootChildValue(SvDef::FqnEnvironmentModeValue, static_cast<long> (currentMode));
 		RootObject::setRootChildValue(SvDef::FqnEnvironmentModeIsRun, (SvPb::DeviceModeType::runMode == currentMode));
 		RootObject::setRootChildValue(SvDef::FqnEnvironmentModeIsStop, (SvPb::DeviceModeType::stopMode == currentMode));
@@ -1143,93 +1150,66 @@ HRESULT SVVisionProcessorHelper::FireNotification(long notifyType, long value, l
 	}
 
 	SvPb::GetNotificationStreamResponse response;
-	if (BuildNotificationStreamResponse(response, fireNotifyType, value, msgNr, msg))
-	{
-		ProcessNotifications(response);
-	}
-	return Result;
-}
-bool  SVVisionProcessorHelper::FireEventNotification(SvPb::EventType etype, std::variant<std::string, int, double> par)
-{
-	SvPb::GetNotificationStreamResponse response;
-	auto eventresp = response.mutable_event();
-	bool ret = false;
-	if (true == SvPb::EventType_IsValid(etype))
-	{
-		eventresp->set_type(etype);
-		if (std::holds_alternative<std::string>(par))
-		{
-			auto pvar = eventresp->add_eventparameters();
-			pvar->set_strval(std::get<std::string>(par));
-		} 
-		else if (std::holds_alternative<int>(par))
-		{
-			auto pvar = eventresp->add_eventparameters();
-			pvar->set_lval(std::get<int>(par));
-		}
-		else if (std::holds_alternative<double>(par))
-		{
-			auto pvar = eventresp->add_eventparameters();
-			pvar->set_dblval(std::get<double>(par));
-		}
-		ProcessNotifications(response);
-		ret = true;
-	}
-	return ret;
+	response.set_type(notifyType);
+	SvPb::ConvertVariantToProtobuf(parameter, response.mutable_parameter());
+	ProcessNotification(response);
 }
 
-void SVVisionProcessorHelper::ProcessNotifications(const SvPb::GetNotificationStreamResponse& response)
+void SVVisionProcessorHelper::FireMessageNotification(const SvStl::MessageContainer& rMessage, int type) const
 {
-	std::lock_guard<std::mutex> lk(m_SubscriptionsMutex);
-	for (auto it = m_Subscriptions.begin(); it != m_Subscriptions.end(); )
+	SvPb::MessageType messageType = static_cast<SvPb::MessageType> (type);
+	SvPb::MessageContainerVector messagelist;
+	if (SvPb::MessageType::endMsgBox == messageType)
 	{
-		
-		SvPb::GetNotificationStreamResponse copyResponse = response;
-		// client either unsubscribed or disconnected. remove from list.
-		if (it->Context->isCancelled())
+		SvStl::MessageContainer message{ rMessage };
+		message.clearWhat();
+		SvPb::convertMessageToProtobuf(message, messagelist.add_messages());
+	}
+	else
+	{
+		SvPb::convertMessageToProtobuf(rMessage, messagelist.add_messages());
+	}
+	std::lock_guard<std::mutex> lockGuard(m_SubscriptionsMutex);
+	for (auto it = m_MessageSubscriptions.begin(); it != m_MessageSubscriptions.end(); )
+	{
+		// client either unsubscripted or disconnected. remove from list.
+		if (it->m_context->isCancelled())
 		{
-			it = m_Subscriptions.erase(it);
+			it = m_MessageSubscriptions.erase(it);
 			continue;
 		}
-		it->Observer.onNext(std::move(copyResponse));
+		SvPb::GetMessageNotificationStreamResponse response;
+		*response.mutable_msglist() = messagelist;
+		response.set_type(messageType);
+		bool isSeverityInList = it->m_severityList.end() != std::find(it->m_severityList.begin(), it->m_severityList.end(), static_cast<int> (rMessage.getSeverity()));
+		bool allSverities = it->m_severityList.empty();
+		if (allSverities || isSeverityInList)
+		{
+			it->m_observer.onNext(std::move(response));
+		}
 		++it;
 	}
 }
 
-bool SVVisionProcessorHelper::BuildNotificationStreamResponse(SvPb::GetNotificationStreamResponse& response, SvStl::NotificationType notifyType, long value, long msgNr, LPCTSTR msg)
+void SVVisionProcessorHelper::ProcessNotification(const SvPb::GetNotificationStreamResponse& response) const
 {
-	switch (notifyType)
+	std::lock_guard<std::mutex> lockGuard(m_SubscriptionsMutex);
+	for(auto it = m_Subscriptions.begin(); it != m_Subscriptions.end(); )
 	{
-		case SvStl::NotificationType::mode:
+		SvPb::GetNotificationStreamResponse copyResponse = response;
+		// client either unsubscripted or disconnected. remove from list.
+		if (it->m_context->isCancelled())
 		{
-			if (SvPb::DeviceModeType_IsValid(value))
-			{
-				response.set_currentmode(static_cast<SvPb::DeviceModeType> (value));
-			}
-			return true;
+			it = m_Subscriptions.erase(it);
+			continue;
 		}
-		case SvStl::NotificationType::lastModified:
+		bool isNotifyTypeInList = it->m_notifyList.end() != std::find(it->m_notifyList.begin(), it->m_notifyList.end(), static_cast<int> (response.type()));
+		bool allNotifications = it->m_notifyList.empty();
+		if (allNotifications || isNotifyTypeInList)
 		{
-			response.set_lastmodified(value);
-			return true;
+			it->m_observer.onNext(std::move(copyResponse));
 		}
-		case SvStl::NotificationType::message:
-		{
-			auto pMsgNotify = response.mutable_msgnotification();
-			pMsgNotify->set_type(static_cast<SvPb::MessageType>(value));
-			pMsgNotify->set_errornumber(msgNr);
-			pMsgNotify->set_messagetext(msg);
-			return true;
-		}
-		case SvStl::NotificationType::loadConfig:
-		{
-			response.set_configfileloaded(msg);
-			return true;
-		}
-		default:
-		{
-			return false;
-		}
+		++it;
 	}
 }
 
@@ -1279,10 +1259,20 @@ void SVVisionProcessorHelper::SetValuesOrImagesMonitoredObjectLists(const SvDef:
 	}
 }
 
-void SVVisionProcessorHelper::RegisterNotificationStream(const SvPb::GetNotificationStreamRequest&,
+void SVVisionProcessorHelper::RegisterNotificationStream(const SvPb::GetNotificationStreamRequest& rRequest,
 	SvRpc::Observer<SvPb::GetNotificationStreamResponse> observer,
 	SvRpc::ServerStreamContext::Ptr ctx)
 {
-	std::lock_guard<std::mutex> lk(m_SubscriptionsMutex);
-	m_Subscriptions.push_back({std::move(observer), ctx});
+	std::vector<int> notifyList{ rRequest.notifylist().begin(), rRequest.notifylist().end() };
+	std::lock_guard<std::mutex> lockGuard(m_SubscriptionsMutex);
+	m_Subscriptions.push_back({std::move(observer), ctx, std::move(notifyList)});
+}
+
+void SVVisionProcessorHelper::RegisterMessageNotificationStream(const SvPb::GetMessageNotificationStreamRequest& rRequest,
+	SvRpc::Observer<SvPb::GetMessageNotificationStreamResponse> observer,
+	SvRpc::ServerStreamContext::Ptr ctx)
+{
+	std::vector<int> severityList{ rRequest.severitylist().begin(), rRequest.severitylist().end() };
+	std::lock_guard<std::mutex> lockGuard(m_SubscriptionsMutex);
+	m_MessageSubscriptions.push_back({ std::move(observer), ctx, std::move(severityList) });
 }

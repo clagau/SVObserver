@@ -1,6 +1,6 @@
 //*****************************************************************************
 /// \copyright (c) 2020,2020 by Seidenader Maschinenbau GmbH
-/// \file NotificationHandler.h
+/// \file MessageNotificationHandler.h
 /// All Rights Reserved 
 //*****************************************************************************
 // Notification Handler for status changes
@@ -8,14 +8,15 @@
 
 #pragma once
 
-class SVControlCommands;
+typedef std::function<void(const _variant_t&, long)> NotifyFunctor;
+
+namespace SvPb
+{
+	class GetMessageNotificationStreamResponse;
+}
 namespace SvPenv
 {
 	class Error;
-}
-namespace SvPb
-{
-	class GetNotificationStreamResponse;
 }
 namespace SvSyl
 {
@@ -23,13 +24,17 @@ namespace SvSyl
 	class SVFuture;
 }
 
-class NotificationHandler
+namespace SvRc
+{
+
+class MessageNotificationHandler
 {
 public:
-	NotificationHandler(const SVControlCommands& rControl);
-	SvSyl::SVFuture<void>  OnNext(const SvPb::GetNotificationStreamResponse& resp);
+	explicit MessageNotificationHandler(const NotifyFunctor& prNotifier);
+	SvSyl::SVFuture<void> OnNext(const SvPb::GetMessageNotificationStreamResponse& resp);
 	void OnFinish();
 	void OnError(const SvPenv::Error& er);
 private:
-	const SVControlCommands& m_rControl;
+	const NotifyFunctor& m_prNotifier;
 };
+} //namespace SvRc

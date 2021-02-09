@@ -185,7 +185,6 @@
     <ClInclude Include="MessageTextEnum.h" />
     <ClInclude Include="MessageTextGenerator.h" />
     <ClInclude Include="MessageTextMap.h" />
-    <ClInclude Include="NotificationTypeEnum.h" />
     <ClInclude Include="RegistryAccess.h" />
     <ClInclude Include="RunStatus.h" />
     <ClInclude Include="SourceFileParams.h" />

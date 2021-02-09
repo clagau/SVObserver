@@ -20,6 +20,7 @@
 #include <boost/chrono/duration.hpp>
 #include "WebsocketLibrary/SVRCClientService.h"
 #include "SVRPCLibrary/RPCClient.h"
+#include "MessageNotificationHandler.h"
 #include "NotificationHandler.h"
 #include "RCSettings.h"
 #pragma endregion Includes
@@ -73,15 +74,18 @@ public:
 	HRESULT GetProductFilter(const _bstr_t& rListName, unsigned long& rFilter, SVCommandStatus& p_rStatus);
 	HRESULT SetProductFilter(const _bstr_t& rListName, unsigned long filter, SVCommandStatus& p_rStatus);
 	bool isConnected() const { return (m_pRpcClient && m_pRpcClient->isConnected()); }
-	friend class NotificationHandler;
+	const NotifyFunctor& getNotifier() const { return m_pNotifier; }
+
 private:
 	void OnConnectionStatus(SvRpc::ClientStatus Status);
 
 	std::wstring ConvertResult(HRESULT hResult);
 
-	NotifyFunctor m_Notifier;
+	NotifyFunctor m_pNotifier{ nullptr };
 
-	SvRpc::ClientStreamContext m_csx {nullptr};
+	SvRpc::ClientStreamContext m_csxNotification{ nullptr };
+	SvRpc::ClientStreamContext m_csxMessageNotification{ nullptr };
+	MessageNotificationHandler m_messageNotificationHandler;
 	NotificationHandler m_notificationHandler;
 	RCSettings m_settings;
 	std::unique_ptr<SvRpc::RPCClient> m_pRpcClient;

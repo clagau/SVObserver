@@ -8,6 +8,7 @@
 #include "stdafx.h"
 #include "EventLog.h"
 #include "RCSettingsLoader.h"
+#include "RemoteControl.h"
 #include "RemoteControlImpl.h"
 #include "RemoteStructs.h"
 #include "SVLogLibrary/Logging.h"
@@ -41,8 +42,9 @@ SVLog(_T("Unknown exception"), __FILE__, __LINE__); \
 
 namespace SvRc
 {
-RemoteControlImpl::RemoteControlImpl() :
-	m_notificationHandler{*this}
+RemoteControlImpl::RemoteControlImpl()
+	:m_notificationHandler{ m_pNotifier }
+	,m_messageNotificationHandler{ m_pNotifier }
 {
 	HINSTANCE hInst = ::GetModuleHandle(_T("RemoteControl.dll"));
 	std::string IniFile;
@@ -1059,23 +1061,29 @@ HRESULT RemoteControlImpl::ShutDown(long option) const
 
 void RemoteControlImpl::StartNotificationStreaming()
 {
-	SvRpc::Observer<SvPb::GetNotificationStreamResponse> NotificationObserver(boost::bind(&NotificationHandler::OnNext, &m_notificationHandler, _1),
+	SvRpc::Observer<SvPb::GetNotificationStreamResponse> notificationObserver(boost::bind(&NotificationHandler::OnNext, &m_notificationHandler, _1),
 		boost::bind(&NotificationHandler::OnFinish, &m_notificationHandler),
 		boost::bind(&NotificationHandler::OnError, &m_notificationHandler, _1));
+
+	SvRpc::Observer<SvPb::GetMessageNotificationStreamResponse> messageNotificationObserver(boost::bind(&MessageNotificationHandler::OnNext, &m_messageNotificationHandler, _1),
+		boost::bind(&MessageNotificationHandler::OnFinish, &m_messageNotificationHandler),
+		boost::bind(&MessageNotificationHandler::OnError, &m_messageNotificationHandler, _1));
 
 	if (m_pSvrcClientService)
 	{
 		SV_LOG_GLOBAL(info) << "StartNotificationStreaming";
-		m_csx = m_pSvrcClientService->GetNotificationStream(SvPb::GetNotificationStreamRequest(), NotificationObserver);
+		m_csxNotification = m_pSvrcClientService->GetNotificationStream(SvPb::GetNotificationStreamRequest(), notificationObserver);
+		m_csxMessageNotification = m_pSvrcClientService->GetMessageNotificationStream(SvPb::GetMessageNotificationStreamRequest(), messageNotificationObserver);
 	}
 }
 
 void  RemoteControlImpl::StopNotificationStreaming()
 {
-	m_csx.cancel();
-	m_csx = SvRpc::ClientStreamContext{ nullptr };
+	m_csxNotification.cancel();
+	m_csxNotification = SvRpc::ClientStreamContext{ nullptr };
+	m_csxMessageNotification.cancel();
+	m_csxMessageNotification = SvRpc::ClientStreamContext{ nullptr };
 	SV_LOG_GLOBAL(info) << "StopNotificationStreaming";
-
 }
 
 void RemoteControlImpl::OnConnectionStatus(SvRpc::ClientStatus Status)
@@ -1087,7 +1095,7 @@ void RemoteControlImpl::OnConnectionStatus(SvRpc::ClientStatus Status)
 			SV_LOG_GLOBAL(info) << "OnConnectionStatus Connect";
 			if (nullptr != m_pNotifier)
 			{
-				_variant_t connected(_T("Conneted"));
+				_variant_t connected(1L);
 				m_pNotifier(connected, static_cast<long> (NotificationType::Connected));
 			}
 			StartNotificationStreaming();
@@ -1098,7 +1106,7 @@ void RemoteControlImpl::OnConnectionStatus(SvRpc::ClientStatus Status)
 			SV_LOG_GLOBAL(info) << "OnConnectionStatus Disconnect";
 			if (nullptr != m_pNotifier)
 			{
-				_variant_t disconnected(_T("Disconneted"));
+				_variant_t disconnected(2L);
 				m_pNotifier(disconnected, static_cast<long> (NotificationType::Disconnected));
 			}
 			break;

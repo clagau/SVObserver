@@ -1136,6 +1136,13 @@ void SVRCCommand::RegisterNotificationStream(const SvPb::GetNotificationStreamRe
 	SVVisionProcessorHelper::Instance().RegisterNotificationStream(rRequest, rObserver, ctx);
 }
 
+void SVRCCommand::RegisterMessageNotificationStream(const SvPb::GetMessageNotificationStreamRequest& rRequest,
+	SvRpc::Observer<SvPb::GetMessageNotificationStreamResponse>& rObserver,
+	SvRpc::ServerStreamContext::Ptr ctx)
+{
+	SVVisionProcessorHelper::Instance().RegisterMessageNotificationStream(rRequest, rObserver, ctx);
+}
+
 std::string SVRCCommand::GetFileNameFromFilePath(const std::string& rFilePath, const std::string& rExtension /*= std::string()*/) const
 {
 	std::string Result;
@@ -1420,7 +1427,7 @@ void SVRCCommand::clipboardAction(const SvPb::ClipboardRequest rRequest, SvPb::S
 		if (S_OK != result)
 		{
 			const auto& rMessage = clipboard.getLastErrorMessage().getMessageContainer();
-			setMessageToMessagePB(rMessage, pResponse->mutable_errormessages()->add_messages());
+			convertMessageToProtobuf(rMessage, pResponse->mutable_errormessages()->add_messages());
 		}
 		break;
 	}
@@ -1451,7 +1458,7 @@ void SVRCCommand::clipboardAction(const SvPb::ClipboardRequest rRequest, SvPb::S
 				else
 				{
 					const auto& rMessage = clipboard.getLastErrorMessage().getMessageContainer();
-					setMessageToMessagePB(rMessage, pResponse->mutable_errormessages()->add_messages());
+					convertMessageToProtobuf(rMessage, pResponse->mutable_errormessages()->add_messages());
 				}
 			}
 		}
@@ -1459,7 +1466,7 @@ void SVRCCommand::clipboardAction(const SvPb::ClipboardRequest rRequest, SvPb::S
 		{
 			SvStl::MessageManager message(SvStl::MsgType::Log);
 			message.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ClipboardUnzipFailed, SvStl::SourceFileParams(StdMessageParams));
-			setMessageToMessagePB(message.getMessageContainer(), pResponse->mutable_errormessages()->add_messages());
+			convertMessageToProtobuf(message.getMessageContainer(), pResponse->mutable_errormessages()->add_messages());
 		}
 		break;
 	}

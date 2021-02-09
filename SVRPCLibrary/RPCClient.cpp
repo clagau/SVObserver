@@ -110,7 +110,7 @@ void RPCClient::request(SvPenv::Envelope&& Request, Task<SvPenv::Envelope> Task)
 {
 	if (!isConnected())
 	{
-		Task.error(SvUl::build_error(SvPenv::ErrorCode::serviceUnavailable));
+		Task.error(SvStl::build_error(SvPenv::ErrorCode::serviceUnavailable));
 		return;
 	}
 	auto tx_id = ++m_NextTransactionId;
@@ -121,7 +121,7 @@ void RPCClient::request(SvPenv::Envelope&& request, Task<SvPenv::Envelope> task,
 {
 	if (!isConnected())
 	{
-		task.error(SvUl::build_error(SvPenv::ErrorCode::serviceUnavailable));
+		task.error(SvStl::build_error(SvPenv::ErrorCode::serviceUnavailable));
 		return;
 	}
 	auto tx_id = ++m_NextTransactionId;
@@ -152,7 +152,7 @@ ClientStreamContext RPCClient::stream(SvPenv::Envelope&& Request, Observer<SvPen
 {
 	if (!isConnected())
 	{
-		Observer.error(SvUl::build_error(SvPenv::ErrorCode::serviceUnavailable));
+		Observer.error(SvStl::build_error(SvPenv::ErrorCode::serviceUnavailable));
 		return ClientStreamContext(nullptr);
 	}
 	auto txId = ++m_NextTransactionId;
@@ -306,7 +306,7 @@ void RPCClient::on_request_timeout(const boost::system::error_code& error, uint6
 		auto cb = it->second;
 		m_PendingRequests.erase(it);
 
-		cb.error(SvUl::build_error(SvPenv::ErrorCode::timeout));
+		cb.error(SvStl::build_error(SvPenv::ErrorCode::timeout));
 	}
 }
 
@@ -338,7 +338,7 @@ void RPCClient::cancel_all_pending_requests()
 			auto tx_id = it->first;
 			cancel_request_timeout(tx_id);
 			auto& task = it->second;
-			task.error(SvUl::build_error(SvPenv::ErrorCode::serviceUnavailable, "Connection lost. Please retry."));
+			task.error(SvStl::build_error(SvPenv::ErrorCode::serviceUnavailable, "Connection lost. Please retry."));
 			m_PendingRequests.erase(it);
 		}
 	}
@@ -356,7 +356,7 @@ void RPCClient::cancel_all_pending_streams()
 		{
 			auto it = m_PendingStreams.begin();
 			auto& observer = it->second;
-			observer.error(SvUl::build_error(SvPenv::ErrorCode::serviceUnavailable, "Connection lost. Please retry."));
+			observer.error(SvStl::build_error(SvPenv::ErrorCode::serviceUnavailable, "Connection lost. Please retry."));
 			m_PendingStreams.erase(it);
 		}
 	}

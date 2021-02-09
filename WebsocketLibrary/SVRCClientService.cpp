@@ -28,6 +28,7 @@ SVRCClientService::SVRCClientService(SvRpc::RPCClient& rRpcClient, SVRCClientSer
 	m_QueryListNameClient(rRpcClient),
 	m_QueryListItemClient(rRpcClient),
 	m_GetNotificationStreamClient(rRpcClient),
+	m_GetMessageNotificationStreamClient(rRpcClient),
 	m_GetSVObserverVersionClient(rRpcClient),
 	m_GetDeviceModeClient(rRpcClient),
 	m_SetDeviceModeClient(rRpcClient),
@@ -109,6 +110,10 @@ SvRpc::ClientStreamContext SVRCClientService::GetNotificationStream(SvPb::GetNot
 	return m_GetNotificationStreamClient.stream(std::move(req), observer);
 }
 
+SvRpc::ClientStreamContext SVRCClientService::GetMessageNotificationStream(SvPb::GetMessageNotificationStreamRequest&& req, SvRpc::Observer<SvPb::GetMessageNotificationStreamResponse> observer)
+{
+	return m_GetMessageNotificationStreamClient.stream(std::move(req), observer);
+}
 
 void SVRCClientService::GetSVObserverVersion(SvPb::GetSVObserverVersionRequest&& Request, SvRpc::Task<SvPb::GetVersionResponse> task)
 {

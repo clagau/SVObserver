@@ -83,9 +83,6 @@
     <ClInclude Include="MessageTextMap.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="NotificationTypeEnum.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SourceFileParams.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>

@@ -35,7 +35,7 @@ Router::Router(RPCClient& rClient, RequestHandler& rRequestHandler)
 	{
 		if (!conncet_client(rClient))
 		{
-			Task.error(SvUl::build_error(SvPenv::ErrorCode::badGateway, _T("No connection to SVObserver")));
+			Task.error(SvStl::build_error(SvPenv::ErrorCode::badGateway, _T("No connection to SVObserver")));
 			return;
 		}
 
@@ -46,7 +46,7 @@ Router::Router(RPCClient& rClient, RequestHandler& rRequestHandler)
 	{
 		if (!conncet_client(rClient))
 		{
-			Observer.error(SvUl::build_error(SvPenv::ErrorCode::badGateway, _T("No connection to SVObserver")));
+			Observer.error(SvStl::build_error(SvPenv::ErrorCode::badGateway, _T("No connection to SVObserver")));
 			return;
 		}
 

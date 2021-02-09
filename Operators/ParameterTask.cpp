@@ -34,7 +34,7 @@ namespace SvOp
 		SvStl::MessageContainer message;
 		message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, textId, additionalText, SvStl::SourceFileParams(StdMessageParams), 0, objectId);
 		messages.emplace_back(message);
-		return SvPb::setMessageVectorToMessagePB(messages);
+		return SvPb::convertMessageVectorToProtobuf(messages);
 	}
 
 	void checkNameForUnique(uint32_t objectId, SvPb::SetAndSortEmbeddedValueRequest request, SvPb::InspectionCmdResponse& rCmd)
@@ -190,7 +190,7 @@ namespace SvOp
 					SvStl::MessageContainerVector msgVector;
 					if (false == checkObject(rValues.name(), objectRef.getObject(), type, &msgVector))
 					{
-						pResponse->mutable_errormessages()->CopyFrom(SvPb::setMessageVectorToMessagePB(msgVector));
+						pResponse->mutable_errormessages()->CopyFrom(SvPb::convertMessageVectorToProtobuf(msgVector));
 						cmd.set_hresult(E_FAIL);						
 						return cmd;
 					}
@@ -206,7 +206,7 @@ namespace SvOp
 				}
 				SvStl::MessageContainerVector messages;
 				messages.emplace_back(data, getObjectId(), false);
-				pResponse->mutable_errormessages()->CopyFrom(SvPb::setMessageVectorToMessagePB(messages));
+				pResponse->mutable_errormessages()->CopyFrom(SvPb::convertMessageVectorToProtobuf(messages));
 				pResponse->set_errorrow(i);
 				cmd.set_hresult(E_FAIL);
 				return cmd;

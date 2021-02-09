@@ -8,6 +8,7 @@
 
 #pragma once
 
-#pragma warning (push,2)
+#pragma warning (push)
+#pragma warning( disable : 4127 )
 #include "variant.pb.h"
 #pragma warning (pop)

@@ -45,7 +45,7 @@ SvSyl::SVFuture<SvPb::OverlayDesc> OverlayController::getOverlays(std::shared_pt
 					SvPenv::Error err;
 					err.set_errorcode(SvPenv::ErrorCode::unknown);
 					err.set_message("TriggerRecord is not valid anymore");
-					promise->set_exception(SvUl::errorToExceptionPtr(err));
+					promise->set_exception(SvStl::errorToExceptionPtr(err));
 				}
 			}
 			catch (const std::exception& rEx)
@@ -76,11 +76,11 @@ SvSyl::SVFuture<SvPb::OverlayDesc> OverlayController::restructOverlayDesc(uint32
 		SvPenv::Error err;
 		err.set_errorcode(SvPenv::ErrorCode::unknown);
 		err.set_message("Message GetOverlayStructRequest do not return a valid response");
-		promise->set_exception(SvUl::errorToExceptionPtr(err));
+		promise->set_exception(SvStl::errorToExceptionPtr(err));
 	},
 		[promise](const SvPenv::Error& err)
 	{
-		promise->set_exception(SvUl::errorToExceptionPtr(err));
+		promise->set_exception(SvStl::errorToExceptionPtr(err));
 	});
 
 	SvPb::InspectionCmdRequest requestCmd;

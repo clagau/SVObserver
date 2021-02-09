@@ -85,7 +85,7 @@ public:
 		HRESULT hr = SvCmd::InspectionCommands(inspectionID, requestCmd, &responseCmd);
 		if (responseCmd.has_standardresponse())
 		{
-			m_MessageFailList = SvPb::setMessageVectorFromMessagePB(responseCmd.standardresponse().errormessages());
+			m_MessageFailList = SvPb::convertProtobufToMessageVector(responseCmd.standardresponse().errormessages());
 		}
 
 		if (S_OK == hr)
@@ -202,7 +202,7 @@ public:
 		HRESULT hr = SvCmd::InspectionCommands(inspectionID, requestCmd, &responseCmd);
 		if (responseCmd.has_standardresponse() && responseCmd.standardresponse().has_errormessages())
 		{
-			m_MessageFailList = SvPb::setMessageVectorFromMessagePB(responseCmd.standardresponse().errormessages());
+			m_MessageFailList = SvPb::convertProtobufToMessageVector(responseCmd.standardresponse().errormessages());
 		}
 		if (S_OK != hr && 0 < m_MessageFailList.size())
 		{

@@ -176,7 +176,7 @@ namespace SvOg
 					SvStl::MessageContainerVector messageList;
 					if (responseCmd.has_getimageresponse())
 					{
-						messageList = SvPb::setMessageVectorFromMessagePB(responseCmd.getimageresponse().messages());
+						messageList = SvPb::convertProtobufToMessageVector(responseCmd.getimageresponse().messages());
 					}
 
 					if (0 < messageList.size())
@@ -214,7 +214,7 @@ namespace SvOg
 			SvStl::MessageContainerVector messageList;
 			if (responseCmd.has_getimageresponse())
 			{
-				messageList = SvPb::setMessageVectorFromMessagePB(responseCmd.getimageresponse().messages());
+				messageList = SvPb::convertProtobufToMessageVector(responseCmd.getimageresponse().messages());
 			}
 
 			if (0 < messageList.size())
@@ -292,7 +292,7 @@ namespace SvOg
 		HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 		if (hr == S_OK && responseCmd.standardresponse().has_errormessages())
 		{
-			messages = SvPb::setMessageVectorFromMessagePB(responseCmd.standardresponse().errormessages());
+			messages = SvPb::convertProtobufToMessageVector(responseCmd.standardresponse().errormessages());
 		}
 		return hr;
 	}

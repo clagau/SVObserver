@@ -47,7 +47,7 @@
 #define SV_STATE_MODIFIED		0x00000001
 #define SV_STATE_REMOTE_CMD		0x00000002
 
-typedef std::function<HRESULT(long, long, long, LPCTSTR)> NotifyFunctor;
+typedef std::function<void(SvPb::NotifyType, const _variant_t&)> NotifyFunctor;
 
 //This class manages the state variable and uses a lock to 
 //

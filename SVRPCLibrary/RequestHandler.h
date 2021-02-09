@@ -94,7 +94,7 @@ protected:
 		}
 
 		SV_LOG_GLOBAL(warning) << "No request handler for payload type " << payloadType;
-		Task.error(SvUl::build_error(SvPenv::ErrorCode::notImplemented, "No handler for given payload type."));
+		Task.error(SvStl::build_error(SvPenv::ErrorCode::notImplemented, "No handler for given payload type."));
 	}
 
 	void onStream(SvPenv::Envelope&& Envelope, Observer<SvPenv::Envelope> Observer, ServerStreamContext::Ptr Context) override
@@ -114,7 +114,7 @@ protected:
 		}
 
 		SV_LOG_GLOBAL(warning) << "No request handler for payload type " << payloadType;
-		Observer.error(SvUl::build_error(SvPenv::ErrorCode::notImplemented, "No handler for given payload type."));
+		Observer.error(SvStl::build_error(SvPenv::ErrorCode::notImplemented, "No handler for given payload type."));
 	}
 
 private:

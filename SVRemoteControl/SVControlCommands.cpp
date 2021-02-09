@@ -74,9 +74,10 @@ SVLOG(CmdStatus.errorText.c_str()); \
 SV_LOG_GLOBAL(error) << "Unknown exception"  << std::endl; \
 }
 
-SVControlCommands::SVControlCommands(NotifyFunctor p_Func)
-	:m_Notifier(p_Func),
-	m_notificationHandler(this)
+SVControlCommands::SVControlCommands(NotifyFunctor pFunc)
+	:m_pNotifier(pFunc)
+	,m_messageNotificationHandler(*this)
+	,m_notificationHandler(*this)
 {
 
 	HINSTANCE hInst = (HINSTANCE)_AtlBaseModule.m_hInst;
@@ -168,23 +169,29 @@ HRESULT SVControlCommands::SetConnectionData(const _bstr_t& rServerName, boost::
 
 void SVControlCommands::StartNotificationStreaming()
 {
-	SvRpc::Observer<SvPb::GetNotificationStreamResponse> NotifikationObserver(boost::bind(&NotificationHandler::OnNext, &m_notificationHandler, _1),
+	SvRpc::Observer<SvPb::GetNotificationStreamResponse> notificationObserver(boost::bind(&NotificationHandler::OnNext, &m_notificationHandler, _1),
 		boost::bind(&NotificationHandler::OnFinish, &m_notificationHandler),
 		boost::bind(&NotificationHandler::OnError, &m_notificationHandler, _1));
+	
+	SvRpc::Observer<SvPb::GetMessageNotificationStreamResponse> messageNotificationObserver(boost::bind(&MessageNotificationHandler::OnNext, &m_messageNotificationHandler, _1),
+		boost::bind(&MessageNotificationHandler::OnFinish, &m_messageNotificationHandler),
+		boost::bind(&MessageNotificationHandler::OnError, &m_messageNotificationHandler, _1));
 
 	if (m_pSvrcClientService)
 	{
 		SV_LOG_GLOBAL(info) << "StartNotificationStreaming";
-		m_csx = m_pSvrcClientService->GetNotificationStream(SvPb::GetNotificationStreamRequest(), NotifikationObserver);
+		m_csxNotification = m_pSvrcClientService->GetNotificationStream(SvPb::GetNotificationStreamRequest(), notificationObserver);
+		m_csxMessageNotification = m_pSvrcClientService->GetMessageNotificationStream(SvPb::GetMessageNotificationStreamRequest(), messageNotificationObserver);
 	}
 }
 
 void  SVControlCommands::StopNotificationStreaming()
 {
-	m_csx.cancel();
-	m_csx = SvRpc::ClientStreamContext{nullptr};
+	m_csxNotification.cancel();
+	m_csxNotification = SvRpc::ClientStreamContext{nullptr};
+	m_csxMessageNotification.cancel();
+	m_csxMessageNotification = SvRpc::ClientStreamContext{ nullptr };
 	SV_LOG_GLOBAL(info) << "StopNotificationStreaming";
-
 }
 
 
@@ -1285,7 +1292,7 @@ void SVControlCommands::OnConnectionStatus(SvRpc::ClientStatus Status)
 		{
 			SV_LOG_GLOBAL(info) << "OnConnectionStatus Connect";
 			_variant_t connected(_T("Conneted"));
-			m_Notifier(connected, SVNotificationTypesEnum::Connected);
+			m_pNotifier(connected, SVNotificationTypesEnum::Connected);
 			StartNotificationStreaming();
 			break;
 		}
@@ -1293,7 +1300,7 @@ void SVControlCommands::OnConnectionStatus(SvRpc::ClientStatus Status)
 		{
 			SV_LOG_GLOBAL(info) << "OnConnectionStatus Disconnect";
 			_variant_t disconnected(_T("Disconneted"));
-			m_Notifier(disconnected, SVNotificationTypesEnum::Disconnected);
+			m_pNotifier(disconnected, SVNotificationTypesEnum::Disconnected);
 			break;
 		}
 	}

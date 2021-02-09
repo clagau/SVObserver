@@ -360,7 +360,7 @@ namespace SvOg
 					auto& rMsg = responseCmd.setandsortembeddedvalueresponse();
 					if (rMsg.has_errormessages() && 0 < rMsg.errormessages().messages_size())
 					{
-						messages = setMessageVectorFromMessagePB(rMsg.errormessages());
+						messages = convertProtobufToMessageVector(rMsg.errormessages());
 					}
 				}
 

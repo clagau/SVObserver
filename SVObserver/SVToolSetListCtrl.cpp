@@ -362,7 +362,7 @@ bool SVToolSetListCtrl::displayErrorBox(uint32_t toolId) const
 	SvStl::MessageContainerVector messageList;
 	if (hr == S_OK && responseCmd.has_standardresponse())
 	{
-		messageList = SvPb::setMessageVectorFromMessagePB(responseCmd.standardresponse().errormessages());
+		messageList = SvPb::convertProtobufToMessageVector(responseCmd.standardresponse().errormessages());
 	}
 
 	if (0 < messageList.size())

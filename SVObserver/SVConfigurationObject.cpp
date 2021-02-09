@@ -5082,7 +5082,7 @@ bool SVConfigurationObject::areParametersInMonitorList(LPCTSTR ppqName, uint32_t
 				}
 			}
 
-			SvStl::MessageContainerVector messages = SvPb::setMessageVectorFromMessagePB(response.getobjectsformonitorlistresponse().messages());
+			SvStl::MessageContainerVector messages = SvPb::convertProtobufToMessageVector(response.getobjectsformonitorlistresponse().messages());
 			retVal &= (0 == messages.size());
 		}
 	}
@@ -5126,7 +5126,7 @@ SvStl::MessageContainerVector SVConfigurationObject::addParameter2MonitorList(LP
 			}
 			iter->second.SetProductValuesList(productList);
 			SetRemoteMonitorList(monitorList);
-			messages = SvPb::setMessageVectorFromMessagePB(response.getobjectsformonitorlistresponse().messages());
+			messages = SvPb::convertProtobufToMessageVector(response.getobjectsformonitorlistresponse().messages());
 		}
 		else
 		{
@@ -5174,7 +5174,7 @@ SvStl::MessageContainerVector SVConfigurationObject::removeParameter2MonitorList
 			}
 			iter->second.SetProductValuesList(productList);
 			SetRemoteMonitorList(monitorList);
-			messages = SvPb::setMessageVectorFromMessagePB(response.getobjectsformonitorlistresponse().messages());
+			messages = SvPb::convertProtobufToMessageVector(response.getobjectsformonitorlistresponse().messages());
 		}
 		else
 		{

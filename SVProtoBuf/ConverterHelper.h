@@ -30,12 +30,12 @@ void ConvertStringListToProtobuf(const std::set<std::string>& rList, SvPb::Varia
 /// Set messages from SVObserver to a protobuf-structure.
 /// \param messageVec [in] Messages
 /// \returns SvPb::MessageContainerVector The protobuf-structure.
-MessageContainerVector setMessageVectorToMessagePB(const SvStl::MessageContainerVector& rMessageVec);
-void setMessageToMessagePB(const SvStl::MessageContainer& rMessage, MessageContainer* pMessagePB);
+MessageContainerVector convertMessageVectorToProtobuf(const SvStl::MessageContainerVector& rMessageVec);
+void convertMessageToProtobuf(const SvStl::MessageContainer& rMessage, MessageContainer* pMessagePB);
 /// Convert a protobuf-structure to messages from SVObserver.
 /// \param messageVecPB [in] The protobuf-structure.
 /// \returns SvStl::MessageContainerVector The messages
-SvStl::MessageContainerVector setMessageVectorFromMessagePB(const MessageContainerVector& rMessageVecPB);
+SvStl::MessageContainerVector convertProtobufToMessageVector(const MessageContainerVector& rMessageVecPB);
 
 // Converts a flat vector to a recursive tree
 template<typename TreeItem>

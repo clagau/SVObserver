@@ -250,7 +250,7 @@ namespace SvOg
 			}
 			else if (responseCmd.has_standardresponse())
 			{
-				SvStl::MessageContainerVector ErrorMessages = SvPb::setMessageVectorFromMessagePB(responseCmd.standardresponse().errormessages());
+				SvStl::MessageContainerVector ErrorMessages = SvPb::convertProtobufToMessageVector(responseCmd.standardresponse().errormessages());
 				if (!ErrorMessages.empty())
 				{
 					SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );

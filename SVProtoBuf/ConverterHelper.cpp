@@ -357,17 +357,17 @@ void ConvertStringListToProtobuf(const std::set<std::string>& rList, SvPb::Varia
 	}
 }
 
-MessageContainerVector setMessageVectorToMessagePB(const SvStl::MessageContainerVector& rMessageVec)
+MessageContainerVector convertMessageVectorToProtobuf(const SvStl::MessageContainerVector& rMessageVec)
 {
 	MessageContainerVector messageVecPB;
 	for (const auto& rMessage : rMessageVec)
 	{
-		setMessageToMessagePB(rMessage, messageVecPB.add_messages());
+		convertMessageToProtobuf(rMessage, messageVecPB.add_messages());
 	}
 	return messageVecPB;
 }
 
-void setMessageToMessagePB(const SvStl::MessageContainer& rMessage, MessageContainer* pMessagePB)
+void convertMessageToProtobuf(const SvStl::MessageContainer& rMessage, MessageContainer* pMessagePB)
 {
 	const auto& rMessageData = rMessage.getMessage();
 	pMessagePB->set_messagecode(rMessageData.m_MessageCode);
@@ -382,10 +382,12 @@ void setMessageToMessagePB(const SvStl::MessageContainer& rMessage, MessageConta
 	pMessagePB->set_fileline(rMessageData.m_SourceFile.m_Line);
 	pMessagePB->set_filedatetime(rMessageData.m_SourceFile.m_FileDateTime);
 	pMessagePB->set_objectid(rMessage.getObjectId());
+	pMessagePB->set_severity(static_cast<SvPb::MessageSeverity> (rMessage.getSeverity()));
+	pMessagePB->set_messagetext(rMessage.what());
 }
 
 
-SvStl::MessageContainerVector setMessageVectorFromMessagePB(const MessageContainerVector& messagesPB)
+SvStl::MessageContainerVector convertProtobufToMessageVector(const MessageContainerVector& messagesPB)
 {
 	SvStl::MessageContainerVector messageContainerVector;
 	for (auto messagePB : messagesPB.messages())

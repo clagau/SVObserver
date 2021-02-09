@@ -21,55 +21,10 @@ static char THIS_FILE[] = __FILE__;
 namespace SvStl
 {
 #pragma region Constructor
-	MessageData::MessageData() :
-	  m_Logged( false )
-	, m_MessageCode( 0 )
-	, m_ProgramCode( 0 )
-	, m_DateTime( 0 )
-	{
-	}
-
 	MessageData::MessageData( DWORD MessageCode, MessageTextEnum AdditionalTextId, const SvDef::StringVector& rAdditionalTextList ) :
-	m_Logged( false )
-	, m_Displayed( false )
-	, m_MessageCode( MessageCode )
-	, m_AdditionalTextId( AdditionalTextId )
-	, m_AdditionalTextList( rAdditionalTextList )
-	, m_ProgramCode( 0 )
-	, m_DateTime( 0 )
-	{
-	}
-
-	MessageData::MessageData( const MessageData& rRhs ) :
-	  m_Logged( rRhs.m_Logged )
-	, m_Displayed( rRhs.m_Displayed )
-	, m_MessageCode( rRhs.m_MessageCode )
-	, m_AdditionalTextId( rRhs.m_AdditionalTextId )
-	, m_AdditionalTextList( rRhs.m_AdditionalTextList )
-	, m_SourceFile( rRhs.m_SourceFile )
-	, m_ProgramCode( rRhs.m_ProgramCode )
-	, m_DateTime( rRhs.m_DateTime )
-	{
-	}
-
-	const MessageData& MessageData::operator=( const MessageData& rRhs )
-	{
-		if( &rRhs != this )
-		{
-			m_Logged = rRhs.m_Logged;
-			m_Displayed = rRhs.m_Displayed;
-			m_MessageCode = rRhs.m_MessageCode;
-			m_AdditionalTextId = rRhs.m_AdditionalTextId;
-			m_AdditionalTextList = rRhs.m_AdditionalTextList;
-			m_SourceFile = rRhs.m_SourceFile;
-			m_ProgramCode = rRhs.m_ProgramCode;
-			m_DateTime = rRhs.m_DateTime;
-		}
-
-		return *this;
-	}
-
-	MessageData::~MessageData()
+	 m_MessageCode( MessageCode )
+	,m_AdditionalTextId( AdditionalTextId )
+	,m_AdditionalTextList( rAdditionalTextList )
 	{
 	}
 #pragma endregion Constructor

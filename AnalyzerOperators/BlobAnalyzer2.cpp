@@ -15,6 +15,7 @@
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
 #include "SVProtoBuf/ConverterHelper.h"
 #include "SVStatusLibrary/RunStatus.h"
+#include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "Tools/SVTool.h"
 #include "BlobAnalyzer2.h"
@@ -116,7 +117,7 @@ namespace SvAo
 						auto* pError = pResponse->add_error_list();
 						pError->set_row(row);
 						pError->set_fieldid(SvPb::FeatureData::kLowerBoundIndirectFieldNumber);
-						SvPb::setMessageToMessagePB(rMessage, pResponse->mutable_messages()->add_messages());
+						SvPb::convertMessageToProtobuf(rMessage, pResponse->mutable_messages()->add_messages());
 					}
 					catch (...)
 					{
@@ -146,7 +147,7 @@ namespace SvAo
 						}
 
 						
-						SvPb::setMessageToMessagePB(rMessage, pResponse->mutable_messages()->add_messages());
+						SvPb::convertMessageToProtobuf(rMessage, pResponse->mutable_messages()->add_messages());
 					}
 					catch (...)
 					{

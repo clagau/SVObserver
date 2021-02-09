@@ -9,6 +9,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "MessageManager.h"
+#include "SVSVIMStateClass.h"
 #pragma endregion Includes
 
 #pragma region Constructor
@@ -18,7 +19,7 @@ namespace SvStl
 {
 	//! The static functor as pointers so that different instances ( exe dlls can still use one common functor)
 	ShowDisplayFunctor* MessageManager::m_ppShowDisplay {nullptr};
-	NotifyFunctor* MessageManager::m_ppNotify {nullptr};
+	MessageNotifyFunctor* MessageManager::m_ppNotify {nullptr};
 
 	MessageManager::MessageManager(MsgType type) :
 		m_Type(type)
@@ -47,7 +48,7 @@ namespace SvStl
 	}
 
 
-	void MessageManager::setNotificationFunction(const NotifyFunctor& rNotify)
+	void MessageManager::setNotificationFunction(const MessageNotifyFunctor& rNotify)
 	{
 		Initialize();
 		if (nullptr != m_ppNotify)
@@ -184,16 +185,9 @@ namespace SvStl
 
 		if (nullptr != m_ppNotify && nullptr != *m_ppNotify && doNotify)
 		{
-			std::string Msg;
-			m_MessageContainer.Format(Msg);
-			long MsgCode = (0 != m_MessageContainer.getMessage().m_ProgramCode) ? m_MessageContainer.getMessage().m_ProgramCode : m_MessageContainer.getMessage().m_MessageCode;
-			long msgNotify {static_cast<long> (NotificationType::message)};
-			long logMsgBox {static_cast<long> (NotificationMsgEnum::MsgLog)};
-			(*m_ppNotify)(msgNotify, logMsgBox, MsgCode, Msg.c_str());
+			(*m_ppNotify)(m_MessageContainer, static_cast<int> (SvPb::MessageType::msgLog));
 		}
 	}
-
-
 
 	INT_PTR MessageManager::Display(const UINT MsgBoxType)
 	{
@@ -207,28 +201,22 @@ namespace SvStl
 			std::string Msg;
 			std::string MsgDetails;
 			UINT Type(MsgBoxType);
-			int MsgCode(0);
 
 			MsgDetails = m_MessageContainer.Format(Msg);
-			MsgCode = (0 != m_MessageContainer.getMessage().m_ProgramCode) ? m_MessageContainer.getMessage().m_ProgramCode : m_MessageContainer.getMessage().m_MessageCode;
 			//Message box type icon is determined by the severity of the message so set to 0 then get it from the container
 			Type &= ~MB_ICONMASK;
 			Type |= m_MessageContainer.getSeverityIcon();
 
 			if (nullptr != m_ppNotify && nullptr != *m_ppNotify)
 			{
-				long msgNotify {static_cast<long> (NotificationType::message)};
-				long startMsgBox {static_cast<long> (NotificationMsgEnum::StartMsgBox)};
-				(*m_ppNotify)(msgNotify, startMsgBox, MsgCode, Msg.c_str());
+				(*m_ppNotify)(m_MessageContainer, static_cast<int> (SvPb::MessageType::startMsgBox));
 			}
 			Result = (*m_ppShowDisplay)(nullptr, Msg.c_str(), MsgDetails.c_str(), Type);
 			//Message has been displayed do not display again
 			m_MessageContainer.getMessage().m_Displayed = true;
 			if (nullptr != m_ppNotify && nullptr != *m_ppNotify)
 			{
-				long msgNotify {static_cast<long> (NotificationType::message)};
-				long endMsgBox {static_cast<long> (NotificationMsgEnum::EndMsgBox)};
-				(*m_ppNotify)(msgNotify, endMsgBox, MsgCode, Msg.c_str());
+				(*m_ppNotify)(m_MessageContainer, static_cast<int> (SvPb::MessageType::endMsgBox));
 			}
 
 			//the message now has been displayed

@@ -29,7 +29,7 @@ static std::string to_string(const SvPenv::Error& err)
 
 } // namespace std
 
-namespace SvUl
+namespace SvStl
 {
 inline std::runtime_error errorToException(const SvPenv::Error& err)
 {
@@ -65,4 +65,4 @@ SvPenv::Error build_packed_error(SvPenv::ErrorCode ErrorCode, const char* pMsg, 
 	return Result;
 }
 
-} // namespace SvRpc
+} // namespace SvStl

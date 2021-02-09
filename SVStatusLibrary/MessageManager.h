@@ -10,8 +10,7 @@
 
 #pragma region Includes
 #include "MessageContainer.h"
-#include "SVSVIMStateClass.h"
-#include "NotificationTypeEnum.h"
+#include "SVProtoBuf/BasicStructure.h"
 #pragma endregion Includes
 
 namespace SvStl
@@ -81,7 +80,7 @@ namespace SvStl
 		//! Sets the notification function
 		//! \param  [in] pointer to the notification function
 		//************************************
-		static void setNotificationFunction(const NotifyFunctor& rNotify);
+		static void setNotificationFunction(const MessageNotifyFunctor& rNotify);
 
 		//************************************
 		//! Sets the message type
@@ -187,7 +186,7 @@ namespace SvStl
 		MessageContainer m_MessageContainer;
 
 		static ShowDisplayFunctor* m_ppShowDisplay;
-		static NotifyFunctor* m_ppNotify;
+		static MessageNotifyFunctor* m_ppNotify;
 	#pragma endregion Member variables
 	};
 

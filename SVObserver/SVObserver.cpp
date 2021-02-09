@@ -1819,7 +1819,7 @@ BOOL SVObserverApp::InitInstance()
 		exit(-SvStl::Err_10009_LoadOfResourceDllFailed);
 	}
 
-	SvStl::MessageManager::setShowDisplayFunction(boost::bind(&SvMc::DisplayMessageBox::showDialog, _1, _2, _3, _4));
+	SvStl::MessageManager::setShowDisplayFunction(SvMc::DisplayMessageBox::showDialog);
 
 	// load File based write filter DLL. SVObserver will function normally (except for FBWF functionally, of course) if "fbwflib.dll" is not found
 	SvUl::LoadDll::Instance().getDll(SvO::FbwfDllName, ExtrasEngine::ms_FbwfDllInstance);
@@ -2220,7 +2220,7 @@ int SVObserverApp::ExitInstance()
 	// Shutdown MIL
 	SVMatroxApplicationInterface::Shutdown();
 
-	SvStl::MessageManager::setShowDisplayFunction(SvStl::ShowDisplayFunctor());
+	SvStl::MessageManager::setShowDisplayFunction(nullptr);
 
 	//add message to event viewer - SVObserver stopped
 	SvStl::MessageManager Msg(SvStl::MsgType::Log);
@@ -2664,8 +2664,9 @@ HRESULT SVObserverApp::OpenSVXFile()
 			}
 
 			//Finished loading notify load
-			long loadConfigNotify{ static_cast<long> (SvStl::NotificationType::loadConfig) };
-			SVVisionProcessorHelper::Instance().FireNotification(loadConfigNotify, 0L, 0L, getConfigFullFileName().c_str());
+			_variant_t configName;
+			configName.SetString(getConfigFullFileName().c_str());
+			SVVisionProcessorHelper::Instance().FireNotification(SvPb::NotifyType::configLoaded, configName);
 		} // try
 		catch (CUserException* pUE)
 		{
@@ -2982,7 +2983,9 @@ HRESULT SVObserverApp::DestroyConfig(bool AskForSavingOrClosing /* = true */,
 
 		if (bClose)
 		{
-			SVVisionProcessorHelper::Instance().FireEventNotification(SvPb::EventType::unloadConfig, getConfigFullFileName());
+			_variant_t configName;
+			configName.SetString(getConfigFullFileName().c_str());
+			SVVisionProcessorHelper::Instance().FireNotification(SvPb::NotifyType::configUnloaded, configName);
 			SVOLicenseManager::Instance().ClearLicenseErrors();
 			SVSVIMStateClass::ConfigWasUnloaded();
 			SVSVIMStateClass::changeState(SV_STATE_UNAVAILABLE | SV_STATE_CLOSING, SV_STATE_READY | SV_STATE_MODIFIED | SV_STATE_EDIT | SV_STATE_STOP);

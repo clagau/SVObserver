@@ -7,6 +7,7 @@
 #pragma once
 #pragma region Includes
 #include "NotificationHandler.h"
+#include "MessageNotificationHandler.h"
 #include "RCSettings.h"
 #include "SVRPCLibrary/RPCClient.h"
 #include "WebsocketLibrary/SVRCClientService.h"
@@ -21,17 +22,6 @@ struct Value;
 struct Product;
 struct DataDefinition;
 struct MonitorList;
-
-enum NotificationType
-{
-	UnknownNotificationType,
-	CurrentMode,
-	LastModified,
-	Connected,
-	Disconnected,
-	MessageNotification,
-	ConfigLoaded
-};
 
 class RemoteControlImpl
 {
@@ -88,7 +78,9 @@ private:
 	void StringVectorToProtobuf(const std::vector<std::string>& rStringVector, ::google::protobuf::RepeatedPtrField<::std::string>* pStringList) const;
 
 	NotifyFunctor m_pNotifier;
-	SvRpc::ClientStreamContext m_csx{ nullptr };
+	SvRpc::ClientStreamContext m_csxNotification{ nullptr };
+	SvRpc::ClientStreamContext m_csxMessageNotification{ nullptr };
+	MessageNotificationHandler m_messageNotificationHandler;
 	NotificationHandler m_notificationHandler;
 	RCSettings m_settings;
 	std::unique_ptr<SvRpc::RPCClient> m_pRpcClient;

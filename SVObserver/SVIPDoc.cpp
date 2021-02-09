@@ -537,7 +537,7 @@ bool SVIPDoc::AddTool(SvPb::ClassIdEnum classId)
 	}
 	else if (responseCmd.has_standardresponse())
 	{
-		SvStl::MessageContainerVector errorMsgContainer = SvPb::setMessageVectorFromMessagePB(responseCmd.standardresponse().errormessages());
+		SvStl::MessageContainerVector errorMsgContainer = SvPb::convertProtobufToMessageVector(responseCmd.standardresponse().errormessages());
 		if (errorMsgContainer.size() > 0)
 		{
 			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
@@ -3195,7 +3195,7 @@ bool SVIPDoc::deleteTool(NavigatorElement* pNaviElement)
 	}
 	else if (responseCmd.has_standardresponse())
 	{
-		SvStl::MessageContainerVector errorMsgContainer = SvPb::setMessageVectorFromMessagePB(responseCmd.standardresponse().errormessages());
+		SvStl::MessageContainerVector errorMsgContainer = SvPb::convertProtobufToMessageVector(responseCmd.standardresponse().errormessages());
 		if (errorMsgContainer.size() > 0)
 		{
 			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);

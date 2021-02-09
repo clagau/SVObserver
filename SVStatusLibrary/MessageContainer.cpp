@@ -87,18 +87,6 @@ constexpr char* const TaskCategory[CategoryNr]= {
 namespace SvStl
 {
 #pragma region Constructor
-	MessageContainer::MessageContainer() :
-	 m_ObjectId( 0 )
-	{
-	}
-
-	MessageContainer::MessageContainer(const MessageContainer& rRhs) :
-	 m_Message( rRhs.m_Message )
-	,m_AdditionalMessages( rRhs.m_AdditionalMessages )
-	,m_What( rRhs.m_What )
-	,m_ObjectId( rRhs.m_ObjectId )
-	{
-	}
 
 	MessageContainer::MessageContainer( long MessageCode, MessageTextEnum AdditionalTextId, SourceFileParams SourceFile, DWORD ProgramCode /*=0*/, uint32_t objectId /*=0*/ )
 	{
@@ -115,22 +103,6 @@ namespace SvStl
 		setMessage(rMessage, objectId, clearData );
 	}
 
-	const MessageContainer& MessageContainer::operator=(const MessageContainer& rRhs)
-	{
-		if( &rRhs != this )
-		{
-			m_Message = rRhs.m_Message;
-			m_AdditionalMessages = rRhs.m_AdditionalMessages;
-			m_What = rRhs.m_What;
-			m_ObjectId = rRhs.m_ObjectId;
-		}
-
-		return *this;
-	}
-
-	MessageContainer::~MessageContainer()
-	{
-	}
 #pragma endregion Constructor
 
 #pragma region Public Methods
@@ -175,7 +147,7 @@ namespace SvStl
 		//Set the object id only if it is not null
 		if( 0 != objectId )
 		{
-			m_ObjectId = objectId;
+			m_Message.m_ObjectId = objectId;
 		}
 		//Set the date time when this is being set
 		m_Message.m_DateTime = std::time( 0 );
@@ -274,7 +246,7 @@ namespace SvStl
 					Severity = EVENTLOG_WARNING_TYPE;
 					break;
 
-				case SEV_FATAL:
+				case SEV_ERROR:
 					Severity = EVENTLOG_ERROR_TYPE;
 					break;
 				default:
@@ -309,7 +281,7 @@ namespace SvStl
 			Icon = MB_ICONWARNING;
 			break;
 
-		case SEV_FATAL :
+		case SEV_ERROR :
 			Icon = MB_ICONERROR;
 			break;
 
@@ -394,12 +366,12 @@ namespace SvStl
 		return Result;
 	}
 
-	void MessageContainer::setFunctorObjects( ShowDisplayFunctor*& rpShowDisplay, NotifyFunctor*& rpNotify )
+	void MessageContainer::setFunctorObjects( ShowDisplayFunctor*& rpShowDisplay, MessageNotifyFunctor*& rpNotify )
 	{
 		setMessageDll();
 
 		rpShowDisplay = reinterpret_cast<ShowDisplayFunctor*> (::GetProcAddress( m_MessageDll, c_ShowDisplay ));
-		rpNotify = reinterpret_cast<NotifyFunctor*> (::GetProcAddress( m_MessageDll, c_Notify ));
+		rpNotify = reinterpret_cast<MessageNotifyFunctor*> (::GetProcAddress( m_MessageDll, c_Notify ));
 	}
 #pragma endregion Public Methods
 

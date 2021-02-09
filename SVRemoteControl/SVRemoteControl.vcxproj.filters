@@ -86,6 +86,9 @@
     <ClCompile Include="ProtoBufSetter.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="MessageNotificationHandler.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SVRemoteControl.h" />
@@ -207,6 +210,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVRemoteControlConstants.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="MessageNotificationHandler.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

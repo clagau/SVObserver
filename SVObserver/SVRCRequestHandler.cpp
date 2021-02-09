@@ -377,4 +377,14 @@ SVRCRequestHandler::SVRCRequestHandler(SVRCCommand* pCommand) :
 			{
 				pCommand->RegisterNotificationStream(req, observer, ctx);
 			});
+
+	registerStreamHandler<
+		SvPb::SVRCMessages,
+		SvPb::SVRCMessages::kGetMessageNotificationStreamRequest,
+		SvPb::GetMessageNotificationStreamRequest,
+		SvPb::GetMessageNotificationStreamResponse>(
+			[this, pCommand](SvPb::GetMessageNotificationStreamRequest&& req, SvRpc::Observer<SvPb::GetMessageNotificationStreamResponse> observer, SvRpc::ServerStreamContext::Ptr ctx)
+			{
+				pCommand->RegisterMessageNotificationStream(req, observer, ctx);
+			});
 }

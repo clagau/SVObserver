@@ -14,6 +14,18 @@ struct Product;
 struct DataDefinition;
 struct MonitorList;
 
+enum NotificationType
+{
+	UnknownNotificationType,
+	CurrentMode,
+	LastModified,
+	Connected,
+	Disconnected,
+	MessageNotification,
+	ConfigLoaded,
+	ConfigUnloaded
+};
+
 class RemoteControl
 {
 public:

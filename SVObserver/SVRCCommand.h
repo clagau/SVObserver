@@ -57,7 +57,10 @@ public:
 	void RegisterNotificationStream(const SvPb::GetNotificationStreamRequest& rRequest,
 		SvRpc::Observer<SvPb::GetNotificationStreamResponse>& rObserver,
 		SvRpc::ServerStreamContext::Ptr ctx);
-	
+	void RegisterMessageNotificationStream(const SvPb::GetMessageNotificationStreamRequest& rRequest,
+		SvRpc::Observer<SvPb::GetMessageNotificationStreamResponse>& rObserver,
+		SvRpc::ServerStreamContext::Ptr ctx);
+
 private:
 	std::string GetFileNameFromFilePath(const std::string& rFilePath, const std::string& rExtension = std::string()) const;
 	HRESULT ConvertStorageValueToProtobuf(const std::string& rName, const SVStorageResult& rStorage, SvPb::Value* pValue) const;

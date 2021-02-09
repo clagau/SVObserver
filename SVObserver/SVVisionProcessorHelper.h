@@ -28,7 +28,6 @@
 #include "SVPPQObject.h"
 #include "SVRPCLibrary/Observer.h"
 #include "SVRPCLibrary/ServerStreamContext.h"
-#include "SVStatusLibrary/NotificationTypeEnum.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -58,7 +57,7 @@ struct MonitorlistProperties
 	std::string ppqName;
 };
 
-const TCHAR StandardItems[] = _T("StandardItems");
+constexpr TCHAR StandardItems[] = _T("StandardItems");
 #pragma endregion Declarations
 
 class SVVisionProcessorHelper
@@ -91,13 +90,8 @@ public:
 	//************************************
 	HRESULT SetItems(const SVNameStorageMap& rItems, SVNameStatusMap& rStatusItems, bool RunOnce);
 
-	//************************************
-	//! Starts an Message notification via SVRC
-	//! \param rResponse notification response message
-	//! \returns HRESULT
-	//************************************
-	HRESULT FireNotification(long notifyType, long value, long msgNr, LPCTSTR msg);
-	bool FireEventNotification(SvPb::EventType etype,  std::variant<std::string, int,double> par);
+	void FireNotification(SvPb::NotifyType notifyType, const _variant_t& parameter) const;
+	void FireMessageNotification(const SvStl::MessageContainer& rMessage, int messageType) const;
 	HRESULT QueryProductList(const std::string& rListName, SvDef::StringSet& rNames) const;
 	HRESULT QueryRejectCondList(const std::string& rListName, SvDef::StringSet& rNames) const;
 	HRESULT QueryFailStatusList(const std::string& rListName, SvDef::StringSet& rNames) const;
@@ -119,8 +113,11 @@ public:
 
 	void Startup(); // This method is only meant to be called by the main application class
 	void Shutdown();	// This method is only meant to be called by the main application certain class
-	void RegisterNotificationStream(const SvPb::GetNotificationStreamRequest& request,
+	void RegisterNotificationStream(const SvPb::GetNotificationStreamRequest& rRequest,
 		SvRpc::Observer<SvPb::GetNotificationStreamResponse> observer,
+		SvRpc::ServerStreamContext::Ptr ctx);
+	void RegisterMessageNotificationStream(const SvPb::GetMessageNotificationStreamRequest& rRequest,
+		SvRpc::Observer<SvPb::GetMessageNotificationStreamResponse> Observer,
 		SvRpc::ServerStreamContext::Ptr ctx);
 private:
 	typedef boost::function< HRESULT(const SvDef::StringSet&, SVNameStorageResultMap&) > SVGetItemsFunctor;
@@ -142,8 +139,7 @@ private:
 	HRESULT GetObjectDefinition(const SvOi::IObjectClass& rObj, const long p_Filter, SVDataDefinitionStruct& rDataDef) const;
 
 
-	void ProcessNotifications(const SvPb::GetNotificationStreamResponse& response);
-	bool BuildNotificationStreamResponse(SvPb::GetNotificationStreamResponse& response, SvStl::NotificationType notifyType, long value, long msgNr, LPCTSTR msg);
+	void ProcessNotification(const SvPb::GetNotificationStreamResponse& response) const;
 
 	SVGetItemsFunctorMap m_GetItemsFunctors;
 	SVSetItemsFunctorMap m_SetItemsFunctors;
@@ -171,12 +167,20 @@ private:
 private:
 	struct NotificationSubscription
 	{
-		SvRpc::Observer<SvPb::GetNotificationStreamResponse> Observer;
-		SvRpc::ServerStreamContext::Ptr Context;
+		SvRpc::Observer<SvPb::GetNotificationStreamResponse> m_observer;
+		SvRpc::ServerStreamContext::Ptr m_context;
+		std::vector<int> m_notifyList;
+	};
+	struct MessageNotificationSubscription
+	{
+		SvRpc::Observer<SvPb::GetMessageNotificationStreamResponse> m_observer;
+		SvRpc::ServerStreamContext::Ptr m_context;
+		std::vector<int> m_severityList;
 	};
 
-	std::list<NotificationSubscription> m_Subscriptions;
-	std::mutex m_SubscriptionsMutex;
+	mutable std::vector<NotificationSubscription> m_Subscriptions;
+	mutable std::vector<MessageNotificationSubscription> m_MessageSubscriptions;
+	mutable std::mutex m_SubscriptionsMutex;
 #pragma endregion Private Members
 };
 

@@ -124,6 +124,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="EventLog.cpp" />
+    <ClCompile Include="MessageNotificationHandler.cpp" />
     <ClCompile Include="NotificationHandler.cpp" />
     <ClCompile Include="RCSettingsLoader.cpp" />
     <ClCompile Include="RemoteControlImpl.cpp" />
@@ -139,6 +140,7 @@
   <ItemGroup>
     <ClInclude Include="..\AutoBuild\AutoBuild.h" />
     <ClInclude Include="EventLog.h" />
+    <ClInclude Include="MessageNotificationHandler.h" />
     <ClInclude Include="NotificationHandler.h" />
     <ClInclude Include="RCSettings.h" />
     <ClInclude Include="RCSettingsLoader.h" />

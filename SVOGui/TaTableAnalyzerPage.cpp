@@ -628,7 +628,7 @@ HRESULT TaTableAnalyzerPage::checkAllAnaylzer()
 			hrOk = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 			if (S_OK != hrOk && responseCmd.has_standardresponse())
 			{
-				SvStl::MessageContainerVector errorMessageList = SvPb::setMessageVectorFromMessagePB(responseCmd.standardresponse().errormessages());
+				SvStl::MessageContainerVector errorMessageList = SvPb::convertProtobufToMessageVector(responseCmd.standardresponse().errormessages());
 				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 				if (0 < errorMessageList.size())
 				{
@@ -691,7 +691,7 @@ HRESULT TaTableAnalyzerPage::SetAddAnalyzerData(SvStl::MessageContainerVector &r
 				hrOk = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 				if (S_OK != hrOk && responseCmd.has_standardresponse())
 				{
-					SvStl::MessageContainerVector taskResetMessageList = SvPb::setMessageVectorFromMessagePB(responseCmd.standardresponse().errormessages());
+					SvStl::MessageContainerVector taskResetMessageList = SvPb::convertProtobufToMessageVector(responseCmd.standardresponse().errormessages());
 					for (const auto& rMessage : taskResetMessageList)
 					{
 						const auto& rMessageData = rMessage.getMessage();
@@ -713,7 +713,7 @@ HRESULT TaTableAnalyzerPage::SetAddAnalyzerData(SvStl::MessageContainerVector &r
 						HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 						if (hr == S_OK && responseCmd.has_standardresponse())
 						{
-							rErrorMessageList = SvPb::setMessageVectorFromMessagePB(responseCmd.standardresponse().errormessages());
+							rErrorMessageList = SvPb::convertProtobufToMessageVector(responseCmd.standardresponse().errormessages());
 						}
 						if (0 < rErrorMessageList.size())
 						{

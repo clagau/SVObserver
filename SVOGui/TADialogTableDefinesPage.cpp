@@ -323,7 +323,7 @@ HRESULT TADialogTableDefinesPage::ValidateData()
 	HRESULT hResult = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 	if (hResult == S_OK && responseCmd.has_standardresponse())
 	{
-		SvStl::MessageContainerVector errorMessageList = SvPb::setMessageVectorFromMessagePB(responseCmd.standardresponse().errormessages());
+		SvStl::MessageContainerVector errorMessageList = SvPb::convertProtobufToMessageVector(responseCmd.standardresponse().errormessages());
 		if (0 < errorMessageList.size())
 		{
 			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);

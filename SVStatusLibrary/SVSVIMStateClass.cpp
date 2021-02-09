@@ -13,8 +13,6 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <intrin.h>
 #include "SVSVIMStateClass.h"
-#include "NotificationTypeEnum.h"
-#include <mutex>
 #pragma endregion Includes
 
 std::atomic_long SVSVIMStateClass::m_SVIMState{SV_STATE_AVAILABLE};
@@ -162,8 +160,8 @@ void SVSVIMStateClass::CheckModeNotify()
 		m_CurrentMode = NewMode;
 
 		if (nullptr != m_pNotify)
-		{
-			(m_pNotify)(static_cast<long> (SvStl::NotificationType::mode), static_cast<long> (m_CurrentMode), 0L, nullptr);
+		{ 
+			(m_pNotify)(SvPb::NotifyType::currentMode, _variant_t(static_cast<long> (m_CurrentMode)));
 		}
 	}
 }
@@ -174,7 +172,7 @@ void SVSVIMStateClass::setLastModifiedTime()
 
 	if (nullptr != m_pNotify)
 	{
-		(m_pNotify)(static_cast<long> (SvStl::NotificationType::lastModified), static_cast<long> (SVSVIMStateClass::getLastModifiedTime()), 0L, nullptr);
+		(m_pNotify)(SvPb::NotifyType::lastModified, _variant_t(SVSVIMStateClass::getLastModifiedTime()));
 	}
 }
 

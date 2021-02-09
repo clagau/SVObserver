@@ -181,7 +181,7 @@ void TADialogLoopToolParameterPage::resetInspection()
 	SvStl::MessageContainerVector messages;
 	if (responseCmd.has_standardresponse())
 	{
-		messages = SvPb::setMessageVectorFromMessagePB(responseCmd.standardresponse().errormessages());
+		messages = SvPb::convertProtobufToMessageVector(responseCmd.standardresponse().errormessages());
 	}
 
 	if (messages.size() > 0 && 0 != messages[0].getMessage().m_MessageCode)

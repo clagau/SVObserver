@@ -159,8 +159,8 @@ public:
 		std::stringstream ss;
 		ss << what << ": " << ec.message();
 		const auto str = ss.str();
-		auto err = SvUl::build_error(SvPenv::ErrorCode::internalError, str.c_str());
-		auto ptr = SvUl::errorToExceptionPtr(err);
+		auto err = SvStl::build_error(SvPenv::ErrorCode::internalError, str.c_str());
+		auto ptr = SvStl::errorToExceptionPtr(err);
 		promise_.set_exception(ptr);
 	}
 };

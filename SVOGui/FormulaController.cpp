@@ -213,7 +213,7 @@ int FormulaController::ValidateEquation(const std::string& equationString, doubl
 	{
 		retValue = responseCmd.validateandsetequationresponse().validatestatus();
 		result = responseCmd.validateandsetequationresponse().result();
-		rErrorMessages = SvPb::setMessageVectorFromMessagePB(responseCmd.validateandsetequationresponse().messages());;
+		rErrorMessages = SvPb::convertProtobufToMessageVector(responseCmd.validateandsetequationresponse().messages());;
 
 		if (validateSuccessful == retValue && bSetValue)
 		{

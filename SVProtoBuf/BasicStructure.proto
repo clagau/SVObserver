@@ -1,6 +1,23 @@
 syntax = "proto3";
 package SvPb;
 
+///The message type for the message notification when SVObserver displays or logs a message
+enum MessageType
+{
+	unknown=0;
+	startMsgBox=1;					//Dialog is currently being displayed on the SVObserver
+	endMsgBox=2;					//Dialog that was open has been closed on the SVObserver
+	msgLog=3;						//A message has been logged into the event log on the SVObserver
+}
+
+enum MessageSeverity
+{
+	sevSuccess = 0;
+	sevInformational = 1;
+	sevWarning = 2;
+	sevError = 3;
+}
+
 message MessageContainer //structure for a (error/warning/info-)message
 {
 	sint32 messageCode = 1;
@@ -12,6 +29,8 @@ message MessageContainer //structure for a (error/warning/info-)message
 	sint32 fileLine = 7;
 	string fileDateTime = 8;
 	uint32 objectId = 9;
+	MessageSeverity severity = 10;
+	string messageText = 11;		//When the webapp generates the text by itself then this can be removed
 }
 
 message MessageContainerVector

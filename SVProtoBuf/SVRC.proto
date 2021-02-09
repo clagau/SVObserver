@@ -110,6 +110,8 @@ message SVRCMessages
 		SetTriggerConfigRequest setTriggerConfigRequest = 2049;
 		GetConfigurationInfoRequest getConfigurationInfoRequest = 2050;
 		GetConfigurationInfoResponse getConfigurationInfoResponse = 2051;
+		GetMessageNotificationStreamRequest getMessageNotificationStreamRequest = 2052;
+		GetMessageNotificationStreamResponse getMessageNotificationStreamResponse = 2053;
 	}
 }
 

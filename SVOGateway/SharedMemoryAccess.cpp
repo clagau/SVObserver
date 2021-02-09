@@ -560,7 +560,7 @@ SvSyl::SVFuture<void> SharedMemoryAccess::handle_new_trigger_record(std::shared_
 			SvPenv::Error err;
 			err.set_errorcode(SvPenv::ErrorCode::internalError);
 			err.set_message("Connection lost");
-			promise->set_exception(SvUl::errorToExceptionPtr(err));
+			promise->set_exception(SvStl::errorToExceptionPtr(err));
 			return;
 		}
 

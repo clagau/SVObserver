@@ -31,7 +31,7 @@ class SimpleClient
 public:
 	explicit SimpleClient(RPCClient& rClient)
 		: m_rClient(rClient)
-		, m_UnwrapError(SvUl::build_error(SvPenv::ErrorCode::internalError, "Error while unwrapping envelope!"))
+		, m_UnwrapError(SvStl::build_error(SvPenv::ErrorCode::internalError, "Error while unwrapping envelope!"))
 	{
 	}
 
@@ -73,13 +73,13 @@ public:
 			TRes res;
 			if (!m_ResUnwrapper.unwrap(res, std::move(resEnv)))
 			{
-				promise->set_exception(SvUl::errorToExceptionPtr(m_UnwrapError));
+				promise->set_exception(SvStl::errorToExceptionPtr(m_UnwrapError));
 				return;
 			}
 
 			promise->set_value(std::move(res));
 		},
-			[promise](const SvPenv::Error& err) { promise->set_exception(SvUl::errorToExceptionPtr(err)); }),
+			[promise](const SvPenv::Error& err) { promise->set_exception(SvStl::errorToExceptionPtr(err)); }),
 			timeout
 		);
 

@@ -8,15 +8,17 @@
 
 #include "stdafx.h"
 #include "NotificationHandler.h"
-#include "RemoteControlImpl.h"
-#include "SVProtoBuf\SVRC.pb.h"
-#include "SVProtoBuf\Envelope.pb.h"
-#include <iosfwd>
+#include "RemoteControl.h"
+#include "SVProtoBuf/ConverterHelper.h"
+#include "SVProtoBuf/Envelope.h"
+#include "SVProtoBuf/SVRC.h"
+#include "SVStatusLibrary/ErrorUtil.h"
+#include "SVSystemLibrary/SVFuture.h"
 
 namespace SvRc
 {
-NotificationHandler::NotificationHandler(const RemoteControlImpl& rRemoteCtrl) : 
-	m_rRemoteCtrl(rRemoteCtrl)
+NotificationHandler::NotificationHandler(const NotifyFunctor& prNotifier)
+	:m_prNotifier{prNotifier}
 {
 }
 
@@ -24,57 +26,39 @@ SvSyl::SVFuture<void> NotificationHandler::OnNext(const SvPb::GetNotificationStr
 {
 
 	NotificationType type = NotificationType::UnknownNotificationType;
-
-	boost::property_tree::ptree propTree;
-	switch (rResponse.message_case())
+	_variant_t additionalParameter;
+	if (S_OK != SvPb::ConvertProtobufToVariant(rResponse.parameter(), additionalParameter))
 	{
-
-		case SvPb::GetNotificationStreamResponse::kCurrentMode:
+		additionalParameter.Clear();
+	}
+	switch (rResponse.type())
+	{
+		case SvPb::NotifyType::currentMode:
 		{
-			//For HMI change all Unknown mode notifications to modeChanging
-			bool isUnknownMode = SvPb::unknownMode == rResponse.currentmode();
-			int currentMode = static_cast<int> (isUnknownMode ? SvPb::modeChanging : rResponse.currentmode());
-			propTree.put("SVRC.Notification", "CurrentMode");
-			propTree.put("SVRC.DataItems.Mode", currentMode);
 			type = NotificationType::CurrentMode;
 			break;
 		}
-		case SvPb::GetNotificationStreamResponse::kLastModified:
+		case SvPb::NotifyType::lastModified:
 		{
 			type = NotificationType::LastModified;
-			unsigned int  timestamp = rResponse.lastmodified();
-			propTree.put("SVRC.Notification", "LastModified");
-			propTree.put("SVRC.DataItems.TimeStamp", timestamp);
 			break;
 		}
-		case SvPb::GetNotificationStreamResponse::kMsgNotification:
-		{
-			type = NotificationType::MessageNotification;
-			propTree.put("SVRC.Notification", "MessageNotification");
-			propTree.put("SVRC.DataItems.MessageText", rResponse.msgnotification().messagetext());
-			propTree.put("SVRC.DataItems.MessageType", rResponse.msgnotification().type());
-			propTree.put("SVRC.DataItems.MessageNumber", rResponse.msgnotification().errornumber());
-			break;
-		}
-		case SvPb::GetNotificationStreamResponse::kConfigFileLoaded:
+		case SvPb::NotifyType::configLoaded:
 		{
 			type = NotificationType::ConfigLoaded;
-			std::string loadText{_T("The following configuration has been loaded:\n")};
-			loadText += rResponse.configfileloaded();
-			propTree.put("SVRC.Notification", "loadConfigNotification");
-			propTree.put("SVRC.DataItems.MessageText", loadText);
+			break;
+		}
+		case SvPb::NotifyType::configUnloaded:
+		{
+			type = NotificationType::ConfigUnloaded;
 			break;
 		}
 		default:
 			break;
 	}
-	std::stringstream OutStream;
-	boost::property_tree::xml_writer_settings< boost::property_tree::ptree::key_type > Settings(' ', 4);
-	boost::property_tree::write_xml(OutStream, propTree, Settings);
-	_variant_t notifyName(OutStream.str().c_str());
-	if (nullptr != m_rRemoteCtrl.GetNotifyFunctor())
+	if (nullptr != m_prNotifier)
 	{
-		m_rRemoteCtrl.GetNotifyFunctor()(notifyName, static_cast<long> (type));
+		m_prNotifier(additionalParameter, static_cast<long> (type));
 	}
 	return  SvSyl::SVFuture<void>::make_ready();
 }
@@ -85,7 +69,7 @@ void NotificationHandler::OnFinish()
 }
 void NotificationHandler::OnError(const SvPenv::Error& er)
 {
-	SvUl::errorToException(er);
+	SvStl::errorToException(er);
 	return;
 }
 
