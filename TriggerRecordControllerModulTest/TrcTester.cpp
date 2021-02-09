@@ -681,7 +681,7 @@ void runWriterTest(std::promise<bool>&& intPromise, LogClass& rLogClass, const i
 
 void runReaderTest(std::promise<bool>&& intPromise, LogClass& rLogClass, const int numberOfRuns, const TrcTesterConfiguration::TestDataList& rTestData)
 {
-	bool retValue = readerTest(_T("Local"), rLogClass, numberOfRuns, rTestData);
+	bool retValue = readerTest(_T("Local"), {rLogClass, numberOfRuns, rTestData});
 	intPromise.set_value(retValue);
 	rLogClass.LogText("Finished runReaderTest", LogLevel::Information_Level1, LogType::PASS);
 }

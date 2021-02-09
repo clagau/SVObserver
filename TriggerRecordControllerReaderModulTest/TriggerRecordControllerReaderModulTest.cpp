@@ -61,7 +61,7 @@ int main(int argc, char* argv[])
 				tmpString += testName + ')';
 				g_logClass.LogText0(tmpString.c_str(), LogLevel::Information_Level1);
 				TrcTesterConfiguration config(g_logClass);
-				bool retReaderTest = readerTest(testName.c_str(), g_logClass, 100, config.getTestData(), true);
+				bool retReaderTest = readerTest(testName.c_str(), {g_logClass, 100, config.getTestData(), true });
 				g_logClass.Log("Finished readerTest", retReaderTest ? LogLevel::Information_Level1 : LogLevel::Error, retReaderTest ? LogType::PASS : LogType::FAIL, __LINE__, testName.c_str());
 			}
 			MappFree(appId);

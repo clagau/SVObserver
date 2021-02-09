@@ -29,4 +29,20 @@ bool setInspections(std::vector<std::pair<int, int>> numbersOfRecords, SvOi::ITr
 /// \param sleepBetweenTrigger [in] The sleep time between two trigger in microseconds.
 /// \returns bool
 bool writerTest(LogClass& rLogClass, const int numberOfRuns, const TrcTesterConfiguration::TestDataList& rTestData, int sleepBetweenTrigger = 3000);
-bool readerTest(LPCTSTR testName, LogClass& rLogClass, const int numberOfRuns, const TrcTesterConfiguration::TestDataList& rTestData, bool isOtherProcess = false);
+
+struct ReaderTestData
+{
+	ReaderTestData(LogClass& rLogClass, const int numberOfRuns, const TrcTesterConfiguration::TestDataList& rTestData, bool isOtherProcess = false)
+		:m_rLogClass(rLogClass)
+		,m_numberOfRuns(numberOfRuns)
+		,m_rTestDataList(rTestData)
+		,m_isOtherProcess(isOtherProcess)
+	{
+
+	}
+	LogClass& m_rLogClass;
+	const int m_numberOfRuns;
+	const TrcTesterConfiguration::TestDataList& m_rTestDataList;
+	bool m_isOtherProcess = false;
+};
+bool readerTest(LPCTSTR testName, ReaderTestData testData);
