@@ -11,6 +11,7 @@ package SvPb;
 
 import "SVRC-SVOGateway.proto";
 import "SVRC-SVObserver.proto";
+import "SVRC-UserManagement.proto";
 import "BasicStructure.proto";
 import "ConfigCommands.proto";
 import "GetObjectSelector.proto";
@@ -112,6 +113,14 @@ message SVRCMessages
 		GetConfigurationInfoResponse getConfigurationInfoResponse = 2051;
 		GetMessageNotificationStreamRequest getMessageNotificationStreamRequest = 2052;
 		GetMessageNotificationStreamResponse getMessageNotificationStreamResponse = 2053;
+
+		// User Management Commands
+		GetMyPermissionsRequest getMyPermissionsRequest = 3000;
+		GetMyPermissionsResponse getMyPermissionsResponse = 3001;
+		GetGroupDetailsRequest getGroupDetailsRequest = 3002;
+		GetGroupDetailsResponse getGroupDetailsResponse = 3003;
+		UpdateGroupPermissionsRequest updateGroupPermissionsRequest = 3004;
+		UpdateGroupPermissionsResponse updateGroupPermissionsResponse = 3005;
 	}
 }
 

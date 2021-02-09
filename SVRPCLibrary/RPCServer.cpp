@@ -25,16 +25,17 @@ void RPCServer::onConnect(int id, SvHttp::HttpServerConnection& rConnection)
 	SV_LOG_GLOBAL(info) << "[http] Client connected id: " << id;
 	m_Connections[id] = &rConnection;
 	m_ServerStreamContexts[id] = {};
+	// NOTE: m_SessionContexts[id] already initialized in onHandshake which is called before onConnect
 }
 
-bool RPCServer::onHandshake(int , const std::string& token)
+bool RPCServer::onHandshake(int id, const std::string& token)
 {
-	return m_pRequestHandler->onHandshake(token);
+	return m_pRequestHandler->onHandshake(token, m_SessionContexts[id]);
 }
 
 void RPCServer::onTextMessage(int, std::vector<char>&&)
 {
-	throw std::runtime_error("only binary messages expected!");
+	SV_LOG_GLOBAL(warning) << "Received text message. Ignoring it, because only binary messages allowed.";
 }
 
 void RPCServer::onBinaryMessage(int id, std::vector<char>&& buf)
@@ -78,6 +79,7 @@ void RPCServer::onDisconnect(int id)
 {
 	SV_LOG_GLOBAL(info) << "RPCServer::onDisconnect(" << id << ")";
 	m_Connections.erase(id);
+	m_SessionContexts.erase(id);
 	cancel_stream_contexts(id);
 	m_ServerStreamContexts.erase(id);
 }
@@ -86,6 +88,7 @@ void RPCServer::on_request(int id, SvPenv::Envelope&& Request)
 {
 	auto txId = Request.transactionid();
 	m_pRequestHandler->onRequest(
+		m_SessionContexts[id],
 		std::move(Request),
 		Task<SvPenv::Envelope>([this, id, txId](SvPenv::Envelope&& Response) { send_response(id, txId, std::move(Response)); },
 		[this, id, txId](const SvPenv::Error& err) { send_error_response(id, txId, err); }));
@@ -96,7 +99,7 @@ void RPCServer::on_stream(int id, SvPenv::Envelope&& Request)
 	auto txId = Request.transactionid();
 	auto ctx = std::make_shared<ServerStreamContext>();
 	m_ServerStreamContexts[id].insert({txId, ctx});
-	m_pRequestHandler->onStream(std::move(Request),
+	m_pRequestHandler->onStream(m_SessionContexts[id], std::move(Request),
 		Observer<SvPenv::Envelope>(
 		[this, ctx, id, txId](SvPenv::Envelope&& Response) -> SvSyl::SVFuture<void>
 	{

@@ -22,9 +22,19 @@ namespace SvOgw
 ServerRequestHandler::ServerRequestHandler(SharedMemoryAccessInterface* sma, SvAuth::AuthManager* am)
 {
 	registerAuthHandler(
-		[am](const std::string& token) -> bool
+		[am](const std::string& token, SvAuth::SessionContext& rSessionContext) -> bool
 	{
-		return am->rpcAuth(token);
+		return am->rpcAuth(token, rSessionContext);
+	});
+
+	registerRequestMiddleware([sma](const SvAuth::SessionContext& rSessionCtx, const SvPenv::Envelope& rEnvelope, SvRpc::Task<SvPenv::Envelope> task) -> bool
+	{
+		return sma->CheckRequestPermissions(rSessionCtx, rEnvelope, task);
+	});
+
+	registerStreamMiddleware([sma](const SvAuth::SessionContext& rSessionCtx, const SvPenv::Envelope& rEnvelope, SvRpc::Observer<SvPenv::Envelope> observer, SvRpc::ServerStreamContext::Ptr streamCtx) -> bool
+	{
+		return sma->CheckStreamPermissions(rSessionCtx, rEnvelope, observer, streamCtx);
 	});
 
 	registerRequestHandler<
@@ -32,7 +42,7 @@ ServerRequestHandler::ServerRequestHandler(SharedMemoryAccessInterface* sma, SvA
 		SvPb::SVRCMessages::kGetGatewayVersionRequest,
 		SvPb::GetGatewayVersionRequest,
 		SvPb::GetVersionResponse>(
-		[sma](SvPb::GetGatewayVersionRequest&& req, SvRpc::Task<SvPb::GetVersionResponse> task)
+		[sma](const SvAuth::SessionContext&, SvPb::GetGatewayVersionRequest&& req, SvRpc::Task<SvPb::GetVersionResponse> task)
 	{
 		sma->GetVersion(req, task);
 	});
@@ -42,7 +52,7 @@ ServerRequestHandler::ServerRequestHandler(SharedMemoryAccessInterface* sma, SvA
 		SvPb::SVRCMessages::kGetWebAppVersionRequest,
 		SvPb::GetWebAppVersionRequest,
 		SvPb::GetVersionResponse>(
-		[sma](SvPb::GetWebAppVersionRequest&& req, SvRpc::Task<SvPb::GetVersionResponse> task)
+		[sma](const SvAuth::SessionContext&, SvPb::GetWebAppVersionRequest&& req, SvRpc::Task<SvPb::GetVersionResponse> task)
 	{
 		sma->GetWebAppVersion(req, task);
 	});
@@ -52,7 +62,7 @@ ServerRequestHandler::ServerRequestHandler(SharedMemoryAccessInterface* sma, SvA
 		SvPb::SVRCMessages::kGetInspectionsRequest,
 		SvPb::GetInspectionsRequest,
 		SvPb::GetInspectionsResponse>(
-		[sma](SvPb::GetInspectionsRequest&& req, SvRpc::Task<SvPb::GetInspectionsResponse> task)
+		[sma](const SvAuth::SessionContext&, SvPb::GetInspectionsRequest&& req, SvRpc::Task<SvPb::GetInspectionsResponse> task)
 	{
 		sma->GetInspections(req, task);
 	});
@@ -62,7 +72,7 @@ ServerRequestHandler::ServerRequestHandler(SharedMemoryAccessInterface* sma, SvA
 		SvPb::SVRCMessages::kGetProductRequest,
 		SvPb::GetProductRequest,
 		SvPb::GetProductResponse>(
-		[sma](SvPb::GetProductRequest&& req, SvRpc::Task<SvPb::GetProductResponse> task)
+		[sma](const SvAuth::SessionContext&, SvPb::GetProductRequest&& req, SvRpc::Task<SvPb::GetProductResponse> task)
 	{
 		sma->GetProduct(req, task);
 	});
@@ -72,7 +82,7 @@ ServerRequestHandler::ServerRequestHandler(SharedMemoryAccessInterface* sma, SvA
 		SvPb::SVRCMessages::kGetProductDataRequest,
 		SvPb::GetProductDataRequest,
 		SvPb::GetProductDataResponse>(
-		[sma](SvPb::GetProductDataRequest&& req, SvRpc::Task<SvPb::GetProductDataResponse> task)
+		[sma](const SvAuth::SessionContext&, SvPb::GetProductDataRequest&& req, SvRpc::Task<SvPb::GetProductDataResponse> task)
 	{
 		sma->GetProductData(req, task);
 	});
@@ -82,7 +92,7 @@ ServerRequestHandler::ServerRequestHandler(SharedMemoryAccessInterface* sma, SvA
 		SvPb::SVRCMessages::kGetRejectRequest,
 		SvPb::GetRejectRequest,
 		SvPb::GetRejectResponse>(
-		[sma](SvPb::GetRejectRequest&& req, SvRpc::Task<SvPb::GetRejectResponse> task)
+		[sma](const SvAuth::SessionContext&, SvPb::GetRejectRequest&& req, SvRpc::Task<SvPb::GetRejectResponse> task)
 	{
 		sma->GetReject(req, task);
 	});
@@ -92,7 +102,7 @@ ServerRequestHandler::ServerRequestHandler(SharedMemoryAccessInterface* sma, SvA
 		SvPb::SVRCMessages::kGetFailStatusRequest,
 		SvPb::GetFailStatusRequest,
 		SvPb::GetFailStatusResponse>(
-		[sma](SvPb::GetFailStatusRequest&& req, SvRpc::Task<SvPb::GetFailStatusResponse> task)
+		[sma](const SvAuth::SessionContext&, SvPb::GetFailStatusRequest&& req, SvRpc::Task<SvPb::GetFailStatusResponse> task)
 	{
 		sma->GetFailstatus(req, task);
 	});
@@ -102,7 +112,7 @@ ServerRequestHandler::ServerRequestHandler(SharedMemoryAccessInterface* sma, SvA
 		SvPb::SVRCMessages::kGetImageFromIdRequest,
 		SvPb::GetImageFromIdRequest,
 		SvPb::GetImageFromIdResponse>(
-		[sma](SvPb::GetImageFromIdRequest&& req, SvRpc::Task<SvPb::GetImageFromIdResponse> task)
+		[sma](const SvAuth::SessionContext&, SvPb::GetImageFromIdRequest&& req, SvRpc::Task<SvPb::GetImageFromIdResponse> task)
 	{
 		sma->GetImageFromId(req, task);
 	});
@@ -112,7 +122,7 @@ ServerRequestHandler::ServerRequestHandler(SharedMemoryAccessInterface* sma, SvA
 		SvPb::SVRCMessages::kSetRejectStreamPauseStateRequest,
 		SvPb::SetRejectStreamPauseStateRequest,
 		SvPb::EmptyResponse>(
-		[sma](SvPb::SetRejectStreamPauseStateRequest&& req, SvRpc::Task<SvPb::EmptyResponse> task)
+		[sma](const SvAuth::SessionContext&, SvPb::SetRejectStreamPauseStateRequest&& req, SvRpc::Task<SvPb::EmptyResponse> task)
 	{
 		sma->SetRejectStreamPauseState(req, task);
 	});
@@ -122,7 +132,7 @@ ServerRequestHandler::ServerRequestHandler(SharedMemoryAccessInterface* sma, SvA
 		SvPb::SVRCMessages::kGetGatewayNotificationStreamRequest,
 		SvPb::GetGatewayNotificationStreamRequest,
 		SvPb::GetGatewayNotificationStreamResponse>(
-		[sma](SvPb::GetGatewayNotificationStreamRequest&& req, SvRpc::Observer<SvPb::GetGatewayNotificationStreamResponse> observer, SvRpc::ServerStreamContext::Ptr ctx)
+		[sma](const SvAuth::SessionContext&, SvPb::GetGatewayNotificationStreamRequest&& req, SvRpc::Observer<SvPb::GetGatewayNotificationStreamResponse> observer, SvRpc::ServerStreamContext::Ptr ctx)
 	{
 		sma->GetGatewayNotificationStream(req, observer, ctx);
 	});
@@ -132,7 +142,7 @@ ServerRequestHandler::ServerRequestHandler(SharedMemoryAccessInterface* sma, SvA
 		SvPb::SVRCMessages::kGetProductStreamRequest,
 		SvPb::GetProductStreamRequest,
 		SvPb::GetProductStreamResponse>(
-		[sma](SvPb::GetProductStreamRequest&& req, SvRpc::Observer<SvPb::GetProductStreamResponse> observer, SvRpc::ServerStreamContext::Ptr ctx)
+		[sma](const SvAuth::SessionContext&, SvPb::GetProductStreamRequest&& req, SvRpc::Observer<SvPb::GetProductStreamResponse> observer, SvRpc::ServerStreamContext::Ptr ctx)
 	{
 		sma->GetProductStream(req, observer, ctx);
 	});
@@ -142,7 +152,7 @@ ServerRequestHandler::ServerRequestHandler(SharedMemoryAccessInterface* sma, SvA
 		SvPb::SVRCMessages::kQueryListNameRequest,
 		SvPb::QueryListNameRequest,
 		SvPb::QueryListNameResponse>(
-		[sma](SvPb::QueryListNameRequest&& req, SvRpc::Task<SvPb::QueryListNameResponse> task)
+		[sma](const SvAuth::SessionContext&, SvPb::QueryListNameRequest&& req, SvRpc::Task<SvPb::QueryListNameResponse> task)
 	{
 		sma->QueryListName(req, task);
 	});
@@ -152,7 +162,7 @@ ServerRequestHandler::ServerRequestHandler(SharedMemoryAccessInterface* sma, SvA
 		SvPb::SVRCMessages::kQueryListItemRequest,
 		SvPb::QueryListItemRequest,
 		SvPb::QueryListItemResponse>(
-		[sma](SvPb::QueryListItemRequest&& req, SvRpc::Task<SvPb::QueryListItemResponse> task)
+		[sma](const SvAuth::SessionContext&, SvPb::QueryListItemRequest&& req, SvRpc::Task<SvPb::QueryListItemResponse> task)
 	{
 		sma->QueryListItem(req, task);
 	});
@@ -162,7 +172,7 @@ ServerRequestHandler::ServerRequestHandler(SharedMemoryAccessInterface* sma, SvA
 		SvPb::SVRCMessages::kGetTriggerItemsRequest,
 		SvPb::GetTriggerItemsRequest,
 		SvPb::GetTriggerItemsResponse>(
-		[sma](SvPb::GetTriggerItemsRequest&& req, SvRpc::Task<SvPb::GetTriggerItemsResponse> task)
+		[sma](const SvAuth::SessionContext&, SvPb::GetTriggerItemsRequest&& req, SvRpc::Task<SvPb::GetTriggerItemsResponse> task)
 	{
 		sma->GetTriggerItems(req, task);
 	});
@@ -172,9 +182,39 @@ ServerRequestHandler::ServerRequestHandler(SharedMemoryAccessInterface* sma, SvA
 		SvPb::SVRCMessages::kStoreClientLogsRequest,
 		SvPb::StoreClientLogsRequest,
 		SvPb::EmptyResponse>(
-		[sma](SvPb::StoreClientLogsRequest&& req, SvRpc::Task<SvPb::EmptyResponse> task)
+		[sma](const SvAuth::SessionContext&, SvPb::StoreClientLogsRequest&& req, SvRpc::Task<SvPb::EmptyResponse> task)
 	{
 		sma->StoreClientLogs(req, task);
+	});
+
+	registerRequestHandler<
+		SvPb::SVRCMessages,
+		SvPb::SVRCMessages::kGetMyPermissionsRequest,
+		SvPb::GetMyPermissionsRequest,
+		SvPb::GetMyPermissionsResponse>(
+		[sma](const SvAuth::SessionContext& rSessionContext, SvPb::GetMyPermissionsRequest&& req, SvRpc::Task<SvPb::GetMyPermissionsResponse> task)
+	{
+		sma->GetMyPermissions(rSessionContext, req, task);
+	});
+
+	registerRequestHandler<
+		SvPb::SVRCMessages,
+		SvPb::SVRCMessages::kGetGroupDetailsRequest,
+		SvPb::GetGroupDetailsRequest,
+		SvPb::GetGroupDetailsResponse>(
+		[sma](const SvAuth::SessionContext& rSessionContext, SvPb::GetGroupDetailsRequest&& req, SvRpc::Task<SvPb::GetGroupDetailsResponse> task)
+	{
+		sma->GetGroupDetails(rSessionContext, req, task);
+	});
+
+	registerRequestHandler<
+		SvPb::SVRCMessages,
+		SvPb::SVRCMessages::kUpdateGroupPermissionsRequest,
+		SvPb::UpdateGroupPermissionsRequest,
+		SvPb::UpdateGroupPermissionsResponse>(
+		[sma](const SvAuth::SessionContext& rSessionContext, SvPb::UpdateGroupPermissionsRequest&& req, SvRpc::Task<SvPb::UpdateGroupPermissionsResponse> task)
+	{
+		sma->UpdateGroupPermissions(rSessionContext, req, task);
 	});
 }
 

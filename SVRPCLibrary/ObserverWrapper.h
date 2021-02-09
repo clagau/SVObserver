@@ -28,6 +28,7 @@
 #include "ServerStreamContext.h"
 #include "SVLogLibrary/Logging.h"
 #include "SVProtoBuf/Envelope.h"
+#include "SVProtoBuf/SVAuth.h"
 #pragma endregion Includes
 
 namespace SvRpc
@@ -36,17 +37,17 @@ class ObserverWrapperBase
 {
 public:
 	virtual ~ObserverWrapperBase() {}
-	virtual void operator()(SvPenv::Envelope&&, Observer<SvPenv::Envelope>, ServerStreamContext::Ptr) = 0;
+	virtual void operator()(const SvAuth::SessionContext&, SvPenv::Envelope&&, Observer<SvPenv::Envelope>, ServerStreamContext::Ptr) = 0;
 };
 
 template <typename TPayload, typename TReq, typename TRes>
 class ObserverWrapper : public ObserverWrapperBase
 {
 public:
-	explicit ObserverWrapper(std::function<void(TReq&&, Observer<TRes>, ServerStreamContext::Ptr)>&& Handler) : m_Handler(std::move(Handler)) {}
+	explicit ObserverWrapper(std::function<void(const SvAuth::SessionContext&, TReq&&, Observer<TRes>, ServerStreamContext::Ptr)>&& Handler) : m_Handler(std::move(Handler)) {}
 	~ObserverWrapper() override {}
 
-	void operator()(SvPenv::Envelope&& envelope, Observer<SvPenv::Envelope> observer, ServerStreamContext::Ptr ctx) override
+	void operator()(const SvAuth::SessionContext& rSessionContext, SvPenv::Envelope&& envelope, Observer<SvPenv::Envelope> observer, ServerStreamContext::Ptr ctx) override
 	{
 		TReq req;
 		if (!m_ReqUnwrapper.unwrap(req, std::move(envelope)))
@@ -56,7 +57,7 @@ public:
 			return;
 		}
 
-		m_Handler(std::move(req),
+		m_Handler(rSessionContext, std::move(req),
 			Observer<TRes>(
 			[this, observer](TRes&& res) -> SvSyl::SVFuture<void>
 		{
@@ -71,7 +72,7 @@ public:
 	}
 
 private:
-	std::function<void(TReq&&, Observer<TRes>, ServerStreamContext::Ptr)> m_Handler;
+	std::function<void(const SvAuth::SessionContext&, TReq&&, Observer<TRes>, ServerStreamContext::Ptr)> m_Handler;
 	OneOfUtil<TPayload, TReq> m_ReqUnwrapper;
 	OneOfUtil<TPayload, TRes> m_ResWrapper;
 };

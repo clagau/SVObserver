@@ -141,12 +141,16 @@ bool AuthManager::auth(const AuthRequest& req, AuthResponse& res)
 	return true;
 }
 
-bool AuthManager::rpcAuth(const std::string& auth_token)
+bool AuthManager::rpcAuth(const std::string& auth_token, SvAuth::SessionContext& rSessionContext)
 {
+	static std::atomic_uint32_t sessionCounter;
+
 	if (auth_token.empty())
 	{
 		if (m_rSettings.AllowUnauthorizedRpcClients)
 		{
+			rSessionContext.set_id(++sessionCounter);
+			rSessionContext.set_username("sdmAdmin");
 			return true;
 		}
 
@@ -162,8 +166,14 @@ bool AuthManager::rpcAuth(const std::string& auth_token)
 		return false;
 	}
 
-	// TODO: check user level
-	SV_LOG_GLOBAL(debug) << "Received successful auth request on rpc connection";
+	const auto& username = jwt.getPayload().username();
+	rSessionContext.set_id(++sessionCounter);
+	rSessionContext.set_username(username);
+
+	// ignore level for now, will be overwritten by local permissions
+	// TODO do we still want to allow overwriting permissions by level?
+
+	SV_LOG_GLOBAL(debug) << "Received successful rpc auth request for user \"" << username << "\"";
 
 	return true;
 }

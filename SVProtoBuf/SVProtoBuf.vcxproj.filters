@@ -72,6 +72,12 @@
     <ClCompile Include="Overlay.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="Permissions.pb.cc">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVRC-UserManagement.pb.cc">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="BasicStructure.proto">
@@ -120,6 +126,12 @@
       <Filter>Ressourcendateien</Filter>
     </CustomBuild>
     <CustomBuild Include="PatternUtils.proto">
+      <Filter>Ressourcendateien</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Permissions.proto">
+      <Filter>Ressourcendateien</Filter>
+    </CustomBuild>
+    <CustomBuild Include="SVRC-UserManagement.proto">
       <Filter>Ressourcendateien</Filter>
     </CustomBuild>
   </ItemGroup>
@@ -215,6 +227,15 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="ConverterHelper.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Permissions.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Permissions.pb.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVRC-UserManagement.pb.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

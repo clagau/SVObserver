@@ -10,6 +10,7 @@
 #pragma once
 #pragma region Includes
 #include "SVProtoBuf/SVRC.h"
+#include "SVProtobuf/SVAuth.h"
 #include "SVRPCLibrary/Observer.h"
 #include "SVRPCLibrary/ServerStreamContext.h"
 #include "SVRPCLibrary/Task.h"
@@ -39,5 +40,12 @@ public:
 	virtual void SetRejectStreamPauseState(const SvPb::SetRejectStreamPauseStateRequest&, SvRpc::Task<SvPb::EmptyResponse>) = 0;
 	virtual void GetGatewayNotificationStream(const SvPb::GetGatewayNotificationStreamRequest&, SvRpc::Observer<SvPb::GetGatewayNotificationStreamResponse>, SvRpc::ServerStreamContext::Ptr) = 0;
 	virtual void GetProductStream(const SvPb::GetProductStreamRequest&, SvRpc::Observer<SvPb::GetProductStreamResponse>, SvRpc::ServerStreamContext::Ptr) = 0;
+
+	virtual void GetMyPermissions(const SvAuth::SessionContext&, const SvPb::GetMyPermissionsRequest&, SvRpc::Task<SvPb::GetMyPermissionsResponse>) = 0;
+	virtual void GetGroupDetails(const SvAuth::SessionContext&, const SvPb::GetGroupDetailsRequest&, SvRpc::Task<SvPb::GetGroupDetailsResponse>) = 0;
+	virtual void UpdateGroupPermissions(const SvAuth::SessionContext&, const SvPb::UpdateGroupPermissionsRequest&, SvRpc::Task<SvPb::UpdateGroupPermissionsResponse>) = 0;
+
+	virtual bool CheckRequestPermissions(const SvAuth::SessionContext&, const SvPenv::Envelope&, SvRpc::Task<SvPenv::Envelope>) = 0;
+	virtual bool CheckStreamPermissions(const SvAuth::SessionContext&, const SvPenv::Envelope&, SvRpc::Observer<SvPenv::Envelope>, SvRpc::ServerStreamContext::Ptr) = 0;
 };
 }// namespace SvOgw

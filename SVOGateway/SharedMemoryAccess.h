@@ -13,6 +13,7 @@
 //Moved to precompiled header: #include <boost/thread.hpp>
 
 #include "SharedMemoryAccessInterface.h"
+#include "SVAuthLibrary/UserDatabase.h"
 #include "SVOverlayLibrary/OverlayController.h"
 #include "SVProtoBuf/SVRC.h"
 #include "SVSharedMemoryLibrary/ShareControl.h"
@@ -42,7 +43,7 @@ class WebAppVersionLoader;
 class SharedMemoryAccess : public SharedMemoryAccessInterface
 {
 public:
-	SharedMemoryAccess(boost::asio::io_service& rIoService, const SvSml::ShareControlSettings& ControlParameter, const WebAppVersionLoader&, SvRpc::RPCClient& rpcClient);
+	SharedMemoryAccess(boost::asio::io_service& rIoService, const SvSml::ShareControlSettings& ControlParameter, const WebAppVersionLoader&, SvRpc::RPCClient& rpcClient, SvAuth::UserDatabase& userDatabase);
 	virtual ~SharedMemoryAccess();
 
 public:
@@ -61,6 +62,13 @@ public:
 	void SetRejectStreamPauseState(const SvPb::SetRejectStreamPauseStateRequest&, SvRpc::Task<SvPb::EmptyResponse>) override;
 	void GetGatewayNotificationStream(const SvPb::GetGatewayNotificationStreamRequest&, SvRpc::Observer<SvPb::GetGatewayNotificationStreamResponse>, SvRpc::ServerStreamContext::Ptr) override;
 	void GetProductStream(const SvPb::GetProductStreamRequest&, SvRpc::Observer<SvPb::GetProductStreamResponse>, SvRpc::ServerStreamContext::Ptr) override;
+
+	void GetMyPermissions(const SvAuth::SessionContext&, const SvPb::GetMyPermissionsRequest& req, SvRpc::Task<SvPb::GetMyPermissionsResponse> task) override;
+	void GetGroupDetails(const SvAuth::SessionContext&, const SvPb::GetGroupDetailsRequest&, SvRpc::Task<SvPb::GetGroupDetailsResponse>) override;
+	void UpdateGroupPermissions(const SvAuth::SessionContext&, const SvPb::UpdateGroupPermissionsRequest&, SvRpc::Task<SvPb::UpdateGroupPermissionsResponse>) override;
+
+	bool CheckRequestPermissions(const SvAuth::SessionContext&, const SvPenv::Envelope&, SvRpc::Task<SvPenv::Envelope>) override;
+	bool CheckStreamPermissions(const SvAuth::SessionContext&, const SvPenv::Envelope&, SvRpc::Observer<SvPenv::Envelope>, SvRpc::ServerStreamContext::Ptr) override;
 
 private:
 	struct product_stream_t
@@ -119,8 +127,12 @@ private:
 	int get_inspection_pos_for_id(SvOi::ITriggerRecordControllerR&, uint32_t id);
 
 private:
+	bool is_request_allowed(const SvPenv::Envelope& rEnvelope, const SvPb::Permissions& permissions);
+
+private:
 	boost::asio::io_service& m_io_service;
 	const WebAppVersionLoader& m_rWebAppVersionLoader;
+	SvAuth::UserDatabase& m_rUserDatabase;
 	std::unique_ptr<SvSml::ShareControl> m_pShareControlInstance;
 	std::atomic_bool m_trc_ready {false};
 	int m_TrcReadySubscriptionId;

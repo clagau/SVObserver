@@ -8,14 +8,18 @@
 
 #pragma region Includes
 #include "stdafx.h"
+#include "SVLogLibrary/Logging.h"
 #include "Crypto.h"
+#include "PermissionHelper.h"
 #include "UserDatabase.h"
+#include "UserDatabaseLoader.h"
 #pragma endregion Includes
 
 namespace SvAuth
 {
-UserDatabase::UserDatabase()
+UserDatabase::UserDatabase(const std::string& userDatabaseXml)
 	: m_Entries()
+	, m_userDatabaseXml(userDatabaseXml)
 {
 }
 
@@ -77,6 +81,71 @@ bool UserDatabase::findUser(const std::string& username, const UserDatabaseEntry
 
 	*entry = &it->second;
 	return true;
+}
+
+bool UserDatabase::getUserPermissions(const std::string& username, SvPb::Permissions& permissions)
+{
+	// TODO mutex protection against parallel update?
+	for (const auto& it : m_Groups)
+	{
+		const auto& groupDetails = it.second;
+		if (groupDetails.name == "common" || groupDetails.users.find(username) != groupDetails.users.end())
+		{
+			permissions.MergeFrom(groupDetails.permissions);
+		}
+	}
+	return true;
+}
+
+void UserDatabase::getGroupNames(std::set<std::string>& names)
+{
+	for (const auto& it : m_Groups)
+	{
+		names.emplace(it.first);
+	}
+}
+
+bool UserDatabase::getGroupDetails(const std::string& name, std::set<std::string>& users, SvPb::Permissions& permissions)
+{
+	const auto it = m_Groups.find(name);
+	if (it == m_Groups.end())
+	{
+		return false;
+	}
+	users = it->second.users;
+	permissions.Clear();
+	permissions.MergeFrom(it->second.permissions);
+	return true;
+}
+
+void UserDatabase::updateGroupPermissions(const std::map<std::string, SvPb::Permissions>& groupPermissions)
+{
+	if (groupPermissions.empty())
+	{
+		return;
+	}
+
+	for (const auto& gpit : groupPermissions)
+	{
+		const auto& groupname = gpit.first;
+		auto it = m_Groups.find(groupname);
+		if (it == m_Groups.end())
+		{
+			SV_LOG_GLOBAL(warning) << "Unable to update permissions for unknown group " << groupname;
+			return;
+		}
+
+		auto& permissions = it->second.permissions;
+		permissions.Clear();
+		permissions.MergeFrom(gpit.second);
+	}
+
+	writePermissionsToDisk();
+}
+
+void UserDatabase::writePermissionsToDisk()
+{
+	UserDatabaseLoader::save(m_userDatabaseXml, *this);
 }
 
 } // namespace SvAuth

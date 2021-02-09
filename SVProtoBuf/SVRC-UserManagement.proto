@@ -1,0 +1,56 @@
+//*****************************************************************************
+/// \copyright (c) 2020 by Seidenader Maschinenbau GmbH
+/// \file SVRC-UserManagement.proto
+/// All Rights Reserved
+//*****************************************************************************
+/// Protobuf file for all commands related to user management
+//******************************************************************************
+
+syntax = "proto3";
+package SvPb;
+
+import "Permissions.proto";
+
+// commands that are for the currently logged in user
+
+message GetMyPermissionsRequest
+{
+}
+
+message GetMyPermissionsResponse
+{
+	Permissions permissions = 1;
+}
+
+// admin commands for user management
+
+message GetGroupDetailsRequest
+{
+}
+
+message GetGroupDetailsResponse
+{
+	message GroupDetails
+	{
+		string name = 1;
+		repeated string users = 2;
+		Permissions permissions = 3;
+	}
+
+	repeated GroupDetails groupDetails = 1;
+}
+
+message UpdateGroupPermissionsRequest
+{
+	message GroupPermissions
+	{
+		string name = 1;
+		Permissions permissions = 2;
+	}
+
+	repeated GroupPermissions groupPermissions = 1;
+}
+
+message UpdateGroupPermissionsResponse
+{
+}

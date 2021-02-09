@@ -23,12 +23,15 @@ class AuthManager
 public:
 	explicit AuthManager(const AuthManagerSettings&);
 
+	UserDatabase& getUserDatabase() { return m_UserDatabase; }
+	const UserDatabase& getUserDatabase() const { return m_UserDatabase; }
+
 	Jwks getJsonWebKeySet() const;
 
 	bool login(const LoginRequest&, LoginResponse&);
 	bool loginNoPassword(const LoginRequest&, LoginResponse&);
 	bool auth(const AuthRequest&, AuthResponse&);
-	bool rpcAuth(const std::string& token);
+	bool rpcAuth(const std::string& token, SvAuth::SessionContext& ctx);
 	void logout(const LogoutRequest&, LogoutResponse&);
 
 private:
@@ -38,7 +41,7 @@ private:
 
 private:
 	const AuthManagerSettings& m_rSettings;
-	const UserDatabase m_UserDatabase;
+	UserDatabase m_UserDatabase;
 	JwtFactory::SignatureContext m_SecurityContext;
 	JwtFactory m_JwtFactory;
 };

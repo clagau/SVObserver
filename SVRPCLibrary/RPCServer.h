@@ -66,6 +66,7 @@ private:
 private:
 	RequestHandlerBase* m_pRequestHandler;
 	std::map<int, SvHttp::HttpServerConnection*> m_Connections;
+	std::map<int, SvAuth::SessionContext> m_SessionContexts;
 	std::map<int, std::map<uint64_t, std::weak_ptr<ServerStreamContext>>> m_ServerStreamContexts;
 };
 

@@ -101,6 +101,7 @@
     </ClCompile>
     <ClCompile Include="SVMaterialData.cpp" />
     <ClCompile Include="SVObjectXMLWriter.cpp" />
+    <ClCompile Include="SVSimpleXml.cpp" />
     <ClCompile Include="SVVariantConverter.cpp" />
     <ClCompile Include="SVXMLEncryptionClass.cpp" />
     <ClCompile Include="SVXMLMaterialsTree.cpp" />
@@ -122,6 +123,7 @@
     <ClInclude Include="SVMaterialData.h" />
     <ClInclude Include="SVNavigateTree.h" />
     <ClInclude Include="SVObjectXMLWriter.h" />
+    <ClInclude Include="SVSimpleXml.h" />
     <ClInclude Include="SVVariantConverter.h" />
     <ClInclude Include="SVVariantCustomTypes.h" />
     <ClInclude Include="SVXMLEncryptionClass.h" />

@@ -17,116 +17,63 @@
 #include <boost/function.hpp>
 #include <boost/lexical_cast.hpp>
 
+#include "PermissionHelper.h"
 #include "UserDatabaseLoader.h"
 #include "SVLogLibrary/Logging.h"
+#include "SVProtoBuf/SVAuth.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #include "SVXmlLibrary/ISaxElementHandler.h"
 #include "SVXmlLibrary/SaxParser.h"
+#include "SVXmlLibrary/SVSimpleXml.h"
 #include "SVXmlLibrary/SVMaterialData.h"
+#include "SVXmlLibrary/XMLWriter.h"
 #pragma endregion Includes
+
+static std::mutex s_writeMutex;
 
 namespace SvAuth
 {
 
-namespace
+static void loadUserAttributes(UserDatabaseEntry& entry, const SvXml::XmlElement& userEle)
 {
-
-enum ParserState
-{
-	PS_UNKNOWN = 0,
-	PS_START = 1,
-	PS_ASPHERE_ROOT,
-	PS_SIGNATURE,
-	PS_USER_DATABASE,
-	PS_AUTH_QUALITY_CHECKERS,
-	PS_AUTH_QUALITY_CHECKER,
-	PS_USERS,
-	PS_USER,
-	PS_PASSWORD_AUTH,
-	PS_WORK_ENVIRONMENT,
-	PS_PROPERTIES,
-	PS_PERMISSIONS,
-};
-
-std::string ws2s(const std::wstring& wstr)
-{
-#pragma warning(push)
-#pragma warning(disable : 4996)
-	return std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t>().to_bytes(wstr);
-#pragma warning(pop)
-}
-
-using TItFnMap = std::map<std::string, std::function<void(const std::string&)>>;
-
-static void iterateAttributes(ISAXAttributes* pAttributes, const TItFnMap& fns)
-{
-	if (!pAttributes)
+	for (const auto& attr : userEle.attributes)
 	{
-		return;
-	}
-
-	int NoOfAttr(0);
-	pAttributes->getLength(&NoOfAttr);
-	for (int i = 0; i < NoOfAttr; ++i)
-	{
-		const wchar_t *pName(nullptr), *pValue(nullptr);
-		int lName(0), lValue = 0;
-
-		pAttributes->getLocalName(i, &pName, &lName);
-		if (lName == 0)
+		if (attr.name == L"name")
 		{
-			///localname is empty for namespace attributes xmln dt:xmln
-			pAttributes->getQName(i, &pName, &lName);
+			const auto name = SvUl::to_utf8(attr.value);
+			entry.set_firstname(name);
+			entry.set_username(name); // will be overwritten in case we find a passwordAuth node
 		}
-		pAttributes->getValue(i, &pValue, &lValue);
-		if (lValue == 0 || lName == 0)
+		else if (attr.name == L"level")
 		{
-			continue;
-		}
-
-		const auto name = ws2s(std::wstring(pName, lName));
-		const auto value = ws2s(std::wstring(pValue, lValue));
-		const auto it = fns.find(name);
-		if (it != fns.end())
-		{
-			it->second(value);
+			try
+			{
+				entry.set_level(boost::lexical_cast<int>(attr.value));
+			}
+			catch (const boost::bad_lexical_cast&)
+			{
+				SV_LOG_GLOBAL(warning) << "Error while parsing user level " << attr.value;
+			}
 		}
 	}
 }
 
-static void loadUserAttributes(UserDatabaseEntry& entry, ISAXAttributes* pAttributes)
+static void loadPasswordAttributes(UserDatabaseEntry& entry, const SvXml::XmlElement& userEle)
 {
-	TItFnMap itMap;
-	itMap["name"] = [&entry](const std::string& v)
+	SvXml::iterateElements(userEle, L"passwordAuth", [&entry](const SvXml::XmlElement& rPasswordAuth)
 	{
-		entry.set_firstname(v);
-		entry.set_username(v); // will be overwritten in case we find a passwordAuth node
-	};
-	itMap["level"] = [&entry](const std::string& v)
-	{
-		try
+		for (const auto& attr : rPasswordAuth.attributes)
 		{
-			entry.set_level(boost::lexical_cast<int>(v));
+			if (attr.name == L"userName")
+			{
+				entry.set_username(SvUl::to_utf8(attr.value));
+			}
+			else if (attr.name == L"passwordCoded")
+			{
+				entry.set_password(SvUl::to_utf8(attr.value));
+			}
 		}
-		catch (const boost::bad_lexical_cast &)
-		{
-			SV_LOG_GLOBAL(warning) << "Error while parsing user level " << v;
-		}
-	};
-	iterateAttributes(pAttributes, itMap);
-}
-
-static void loadPasswordAttributes(UserDatabaseEntry& entry, ISAXAttributes* pAttributes)
-{
-	TItFnMap itMap;
-	itMap["userName"] = [&entry](const std::string& v)
-	{
-		entry.set_username(v);
-	};
-	itMap["passwordCoded"] = [&entry](const std::string& v)
-	{
-		entry.set_password(v);
-	};
-	iterateAttributes(pAttributes, itMap);
+	});
 }
 
 static bool isValidUser(const UserDatabaseEntry& entry, std::string& errMsg)
@@ -144,145 +91,255 @@ static bool isValidUser(const UserDatabaseEntry& entry, std::string& errMsg)
 	return true;
 }
 
-struct UserDatabaseXmlElementHandler : public SvXml::ISaxElementHandler
+static void loadGroupAttributes(GroupDetails& group, const SvXml::XmlElement& userGroupEle)
 {
-public:
-	explicit UserDatabaseXmlElementHandler(std::map<std::string, UserDatabaseEntry>& rDb)
-		: m_rDb(rDb)
+	for (const auto& attr : userGroupEle.attributes)
 	{
-		m_State.push_back(PS_START);
-	}
-
-	HRESULT  OnStartElement(const wchar_t  *pwchNamespaceUri, int cchNamespaceUri, const wchar_t *pwchName, int cchName, ISAXAttributes *pAttributes, int ) override
-	{
-		const auto ns = std::wstring(pwchNamespaceUri, cchNamespaceUri);
-		const auto name = std::wstring(pwchName, cchName);
-
-		ParserState state = PS_UNKNOWN;
-
-		switch (m_State.back())
+		if (attr.name == L"name")
 		{
-			case PS_START:
-				if (name != L"asphereDatabase")
-				{
-					SV_LOG_GLOBAL(info) << "Unexpected node. Only asphereDatabase allowed, but found " << name;
-					return ERROR_XML_PARSE_ERROR;
-				}
-				state = PS_ASPHERE_ROOT;
-				break;
+			group.name = SvUl::to_utf8(attr.value);
+		}
+	}
+}
 
-			case PS_ASPHERE_ROOT:
-				if (ns == L"http://www.w3.org/2000/09/xmldsig#")
-				{
-					// TODO parse and validate signature
-					state = PS_SIGNATURE;
-				}
-				else if (name == L"userDatabase")
-				{
-					state = PS_USER_DATABASE;
-				}
-				break;
+static void loadGroupUserAssignments(GroupDetails& group, const SvXml::XmlElement& userGroupEle)
+{
+	SvXml::iterateElements(userGroupEle, L"users.refName", [&group](const SvXml::XmlElement& rUserRef)
+	{
+		if (!rUserRef.content.empty())
+		{
+			group.users.emplace(SvUl::to_utf8(rUserRef.content));
+		}
+	});
+}
 
-			case PS_USER_DATABASE:
-				if (name == L"users")
+static void loadGroupPermissionAttributes(GroupDetails& group, const SvXml::XmlElement& userGroupEle)
+{
+	SvXml::iterateElements(userGroupEle, L"workEnvironment.permissions.permission", [&group](const SvXml::XmlElement& rPermission)
+	{
+		for (const auto& attr : rPermission.attributes)
+		{
+			if (attr.name == L"name")
+			{
+				auto permission = SvUl::to_utf8(attr.value);
+				if (SvAuth::PermissionHelper::parsePermission(group.permissions, permission))
 				{
-					state = PS_USERS;
+					SV_LOG_GLOBAL(debug) << "Grop " << group.name << " has permission " << permission;
 				}
-				break;
-
-			case PS_USERS:
-				if (name == L"user")
+				else
 				{
-					state = PS_USER;
-					m_CurrUser = std::make_unique<UserDatabaseEntry>();
-					loadUserAttributes(*m_CurrUser, pAttributes);
+					SV_LOG_GLOBAL(debug) << "Unable to parse permission \"" << permission << "\" for group " << group.name;
 				}
-				break;
+			}
+		}
+	});
+}
 
-			case PS_USER:
-				if (name == L"passwordAuth")
-				{
-					state = PS_PASSWORD_AUTH;
-					loadPasswordAttributes(*m_CurrUser, pAttributes);
-				}
-				break;
+static void setAllPermissions(SvPb::Permissions& permissions)
+{
+	// allow all webapp permissions
+	permissions.mutable_webapp()->mutable_configuration()->set_save(true);
+	permissions.mutable_webapp()->mutable_logs()->set_read(true);
+	permissions.mutable_webapp()->mutable_view(0)->set_type(SvPb::Permissions::WebApp::AnyView);
+	permissions.mutable_webapp()->mutable_view(0)->set_add(true);
+	permissions.mutable_webapp()->mutable_view(0)->set_read(true);
+	permissions.mutable_webapp()->mutable_view(0)->set_edit(true);
+	permissions.mutable_webapp()->mutable_view(0)->set_remove(true);
+	permissions.mutable_webapp()->mutable_viewset()->set_add(true);
+	permissions.mutable_webapp()->mutable_viewset()->set_read(true);
+	permissions.mutable_webapp()->mutable_viewset()->set_edit(true);
+	permissions.mutable_webapp()->mutable_viewset()->set_remove(true);
 
-			default:
-				break;
+	// allow all svobserver permissions
+	permissions.mutable_svobserver()->mutable_clientlogs()->set_store(true);
+	permissions.mutable_svobserver()->mutable_configuration()->set_read(true);
+	permissions.mutable_svobserver()->mutable_configuration()->set_write(true);
+	permissions.mutable_svobserver()->mutable_file()->set_read(true);
+	permissions.mutable_svobserver()->mutable_file()->set_write(true);
+	permissions.mutable_svobserver()->mutable_inspectionstate()->set_edit(true);
+	permissions.mutable_svobserver()->mutable_inspectionstate()->set_read(true);
+	permissions.mutable_svobserver()->mutable_machinestate()->set_set(true);
+	permissions.mutable_svobserver()->mutable_mode()->set_edit(true);
+	permissions.mutable_svobserver()->mutable_mode()->set_read(true);
+	permissions.mutable_svobserver()->mutable_notifications()->set_subscribe(true);
+	permissions.mutable_svobserver()->mutable_tool()->set_add(true);
+	permissions.mutable_svobserver()->mutable_tool()->set_edit(true);
+	permissions.mutable_svobserver()->mutable_tool()->set_read(true);
+	permissions.mutable_svobserver()->mutable_tool()->set_remove(true);
+	permissions.mutable_svobserver()->mutable_value()->set_edit(true);
+	permissions.mutable_svobserver()->mutable_value()->set_read(true);
+
+	// allow all user management permissions
+	permissions.mutable_usermanagement()->mutable_permissions()->set_edit(true);
+	permissions.mutable_usermanagement()->mutable_permissions()->set_read(true);
+}
+
+static bool isValidGroup(const GroupDetails& group, std::string& errMsg)
+{
+	if (group.name.empty())
+	{
+		errMsg = "group name is empty";
+		return false;
+	}
+	return true;
+}
+
+static bool parseUserDatabaseXml(std::map<std::string, UserDatabaseEntry>& rUserDb, std::map<std::string, GroupDetails>& rGroupDb, SvXml::XmlElement& rDoc)
+{
+	SvXml::iterateElements(rDoc, L"asphereDatabase.userDatabase.users.user", [&rUserDb](SvXml::XmlElement& rUser)
+	{
+		UserDatabaseEntry userEntry;
+		loadUserAttributes(userEntry, rUser);
+		loadPasswordAttributes(userEntry, rUser);
+
+		std::string errMsg;
+		if (!isValidUser(userEntry, errMsg))
+		{
+			SV_LOG_GLOBAL(debug) << "Found invalid user in user database: " << errMsg;
+			return;
 		}
 
-		m_State.push_back(state);
-		m_Nodes.push_back(name);
-
-		return S_OK;
-	}
-
-	HRESULT  OnElementData(const wchar_t*, int , int ) override
-	{
-		// We do not need any data. All required data is inside attributes.
-		return S_OK;
-	}
-
-	HRESULT  OnEndElement(const wchar_t*, int , const wchar_t*, int , int ) override
-	{
-		const auto lastState = m_State.back();
-		const auto lastNode = m_Nodes.back();
-
-		m_State.pop_back();
-		m_Nodes.pop_back();
-
-		switch (lastState)
+		rUserDb.insert(std::make_pair(userEntry.username(), userEntry));
+	});
+	SvXml::iterateElements(rDoc, L"asphereDatabase.userDatabase.userGroups.userGroup", [&rGroupDb](SvXml::XmlElement& rUserGroup)
 		{
-			case PS_USER:
+			GroupDetails group;
+			loadGroupAttributes(group, rUserGroup);
+			loadGroupUserAssignments(group, rUserGroup);
+			loadGroupPermissionAttributes(group, rUserGroup);
+			if (group.name == "sdm")
 			{
-				std::string errMsg;
-				if (!isValidUser(*m_CurrUser, errMsg))
-				{
-					SV_LOG_GLOBAL(debug) << "Found invalid user in user database: " << errMsg;
-					break;
-				}
-				m_rDb.insert(std::make_pair(m_CurrUser->username(), *m_CurrUser));
-				break;
+				setAllPermissions(group.permissions);
 			}
 
-			default:
-				break;
-		}
+			std::string errMsg;
+			if (!isValidGroup(group, errMsg))
+			{
+				SV_LOG_GLOBAL(debug) << "Found invalid group in user database: " << errMsg;
+				return;
+			}
 
-		return S_OK;
-	}
+			SV_LOG_GLOBAL(debug) << "Permissions for group " << group.name << ": " << group.permissions.DebugString();
 
-	HRESULT  OnXMLError(int , int , const wchar_t* pwchErrorText, unsigned long , bool ) override
+			rGroupDb.insert(std::make_pair(group.name, group));
+		});
+	return true;
+}
+
+static SvXml::XmlElement* getOrCreateChild(SvXml::XmlElement& ele, const std::wstring& name)
+{
+	for (auto& child : ele.children)
 	{
-		std::wcout << "OnXMLError: " << pwchErrorText << std::endl;
-		return S_OK;
+		if (child.name == name)
+		{
+			return &child;
+		}
 	}
+	return ele.addChild(name);
+}
 
-private:
-	int m_Depth = 0;
-	std::vector<ParserState> m_State;
-	std::vector<std::wstring> m_Nodes;
-	std::unique_ptr<UserDatabaseEntry> m_CurrUser;
-	std::map<std::string, UserDatabaseEntry>& m_rDb;
-};
+static bool isKnownPermission(const SvXml::XmlElement& rPermissionEle)
+{
+	for (const auto& attr : rPermissionEle.attributes)
+	{
+		if (attr.name == L"name")
+		{
+			SvPb::Permissions permissions;
+			return SvAuth::PermissionHelper::parsePermission(permissions, SvUl::to_utf8(attr.value));
+		}
+	}
+	return false;
+}
+
+static void removeKnownPermissions(std::vector<SvXml::XmlElement>& rPermissionElements)
+{
+	for (auto it = rPermissionElements.begin(); it != rPermissionElements.end();)
+	{
+		if (isKnownPermission(*it))
+		{
+			it = rPermissionElements.erase(it);
+		}
+		else
+		{
+			++it;
+		}
+	}
+}
+
+static void patchPermissionsImpl(SvXml::XmlElement& rUser, const SvPb::Permissions& rPermissions)
+{
+	auto& workEnv = *getOrCreateChild(rUser, L"workEnvironment");
+	auto& permissions = *getOrCreateChild(workEnv, L"permissions");
+	
+	google::protobuf::RepeatedPtrField<std::string> permissionList;
+	PermissionHelper::serializePermissions(permissionList, rPermissions);
+
+	// remove known ones, keep unknown ones. then re-add only the known ones that are currently assigned
+	removeKnownPermissions(permissions.children);
+	for (const auto& permission : permissionList)
+	{
+		auto p = permissions.addChild(L"permission");
+		p->addAttribute(L"name", SvUl::to_utf16(permission));
+	}
+}
+
+static void patchPermissions(SvXml::XmlElement& rDoc, const std::map<std::string, GroupDetails>& rGroupDb)
+{
+	SvXml::iterateElements(rDoc, L"asphereDatabase.userDatabase.userGroups.userGroup", [&rGroupDb](SvXml::XmlElement& rUserGroup)
+	{
+		GroupDetails group;
+		loadGroupAttributes(group, rUserGroup); // done to determine the current group name
+
+		auto it = rGroupDb.find(group.name);
+		if (it == rGroupDb.end())
+		{
+			return;
+		}
+		
+		auto& newGroupEntry = it->second;
+		patchPermissionsImpl(rUserGroup, newGroupEntry.permissions);
+	});
 }
 
 UserDatabase UserDatabaseLoader::load(std::filesystem::path path)
 {
-	UserDatabase db;
-	UserDatabaseXmlElementHandler handler(db.m_Entries);
-
-	SvXml::SaxParser parser;
-	parser.AttachElementHandler(&handler);
-	auto hr = parser.ParseFile(path.string().c_str());
-	if (!SUCCEEDED(hr))
+	UserDatabase db(path.string());
+	
+	SvXml::XmlElement doc;
+	if (SvXml::readFromXmlFile(doc, path.string()))
+	{
+		if (parseUserDatabaseXml(db.m_Entries, db.m_Groups, doc))
+		{
+			SV_LOG_GLOBAL(info) << "Successfully loaded " << db.m_Entries.size() << " users from " << path;
+		}
+		else
+		{
+			SV_LOG_GLOBAL(error) << "Unable to parse user database from " << path;
+		}
+	}
+	else
 	{
 		SV_LOG_GLOBAL(error) << "Unable to load user database from " << path;
 	}
 
-	SV_LOG_GLOBAL(info) << "Successfully loaded " << db.m_Entries.size() << " users from " << path;
-
 	return db;
 }
+
+void UserDatabaseLoader::save(std::filesystem::path path, const UserDatabase& rDb)
+{
+	std::lock_guard<std::mutex> lk(s_writeMutex);
+	{
+		SvXml::XmlElement doc;
+		if (!SvXml::readFromXmlFile(doc, path.string()))
+		{
+			return;
+		}
+
+		patchPermissions(doc, rDb.m_Groups);
+
+		SvXml::writeToFile(path.string(), doc);
+	}
+}
+
 
 } // namespace SvAuth

@@ -1,0 +1,132 @@
+//*****************************************************************************
+/// \copyright (c) 2018,2018 by Seidenader Maschinenbau GmbH
+/// \file Permissions.proto
+/// All Rights Reserved
+//*****************************************************************************
+/// Protobuf file listing all permissions
+//******************************************************************************
+
+syntax = "proto3";
+package SvPb;
+
+message Permissions {
+
+	message WebApp {
+		message Configuration {
+			bool save = 1;
+		}
+
+		message Logs {
+			bool read = 1;
+		}
+
+		message ViewSet {
+			bool add = 1;
+			bool read = 2;
+			bool edit = 3;
+			bool remove = 4;
+		}
+
+		enum ViewType {
+			AnyView = 0;
+			ImageView = 1;
+			ListView = 2;
+			ImageStripView = 3;
+			ParameterView = 4;
+			ToolSetView = 5;
+		}
+
+		// Note: we can introduce dedicated feature flags per view by introducing dedicated messages
+		// ```
+		//   message ImageView {
+		//     bool zoom = 1;
+		//   }
+		// ```
+		message View {
+			ViewType type = 1;
+			bool add = 2;
+			bool read = 3;
+			bool edit = 4;
+			bool remove = 5;
+		}
+
+		Configuration configuration = 1;
+		Logs logs = 2;
+		ViewSet viewset = 3;
+		repeated View view = 4;
+	}
+
+	message SVObserver {
+		message Mode {
+			bool read = 1;
+			bool edit = 2;
+		}
+
+		message InspectionState {
+			bool read = 1;
+			bool edit = 2;
+		}
+
+		message Value {
+			bool read = 1;
+			bool edit = 2;
+		}
+
+		message Tool {
+			bool add = 1;
+			bool read = 2;
+			bool edit = 3;
+			bool remove = 4;
+		}
+
+		message Configuration {
+			bool read = 1;
+			bool write = 2;
+		}
+
+		message Notifications {
+			bool subscribe = 1;
+		}
+
+		message ClientLogs {
+			bool store = 1;
+		}
+
+		message File {
+			bool read = 1;
+			bool write = 2;
+		}
+
+		message MachineState {
+			bool set = 1;
+		}
+
+		message Command {
+			bool execute = 1;
+		}
+
+		Mode mode = 1;
+		InspectionState inspectionstate = 2;
+		Value value = 3;
+		Tool tool = 4;
+		Configuration configuration = 5;
+		Notifications notifications = 6;
+		ClientLogs clientlogs = 7;
+		File file = 8;
+		MachineState machinestate = 9;
+		Command command = 10;
+	}
+
+	message UserManagement {
+		message Permissions {
+			bool read = 1;
+			bool edit = 2;
+		}
+
+		Permissions permissions = 1;
+	}
+
+	WebApp webapp = 1;
+	SVObserver svobserver = 2;
+	UserManagement usermanagement = 3;
+}

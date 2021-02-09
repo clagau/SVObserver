@@ -181,6 +181,7 @@
     <ClInclude Include="Crypto.h" />
     <ClInclude Include="Jwt.h" />
     <ClInclude Include="JwtFactory.h" />
+    <ClInclude Include="PermissionHelper.h" />
     <ClInclude Include="RestHandler.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="UserDatabase.h" />
@@ -191,6 +192,7 @@
     <ClCompile Include="AuthManager.cpp" />
     <ClCompile Include="Crypto.cpp" />
     <ClCompile Include="JwtFactory.cpp" />
+    <ClCompile Include="PermissionHelper.cpp" />
     <ClCompile Include="RestHandler.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

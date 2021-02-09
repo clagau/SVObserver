@@ -27,6 +27,7 @@
 #include "Task.h"
 #include "SVLogLibrary/Logging.h"
 #include "SVProtoBuf/Envelope.h"
+#include "SVProtoBuf/SVAuth.h"
 #pragma endregion Includes
 
 namespace SvRpc
@@ -36,18 +37,18 @@ class TaskWrapperBase
 {
 public:
 	virtual ~TaskWrapperBase() {}
-	virtual void operator()(SvPenv::Envelope&&, Task<SvPenv::Envelope>) = 0;
+	virtual void operator()(const SvAuth::SessionContext&, SvPenv::Envelope&&, Task<SvPenv::Envelope>) = 0;
 };
 
 template <typename TPayload, typename TReq, typename TRes>
 class TaskWrapper : public TaskWrapperBase
 {
 public:
-	TaskWrapper(std::function<void(TReq&&, Task<TRes>)>&& Handler) : m_Handler(std::move(Handler)) {}
+	TaskWrapper(std::function<void(const SvAuth::SessionContext&, TReq&&, Task<TRes>)>&& Handler) : m_Handler(std::move(Handler)) {}
 
 	~TaskWrapper() override {}
 
-	void operator()(SvPenv::Envelope&& envelope, Task<SvPenv::Envelope> task) override
+	void operator()(const SvAuth::SessionContext& rSessionContext, SvPenv::Envelope&& envelope, Task<SvPenv::Envelope> task) override
 	{
 		TReq req;
 		if (!m_ReqUnwrapper.unwrap(req, std::move(envelope)))
@@ -57,7 +58,7 @@ public:
 			return;
 		}
 
-		m_Handler(std::move(req),
+		m_Handler(rSessionContext, std::move(req),
 			Task<TRes>(
 			[this, task](TRes&& res)
 		{
@@ -70,7 +71,7 @@ public:
 	}
 
 private:
-	std::function<void(TReq&&, Task<TRes>)> m_Handler;
+	std::function<void(const SvAuth::SessionContext&, TReq&&, Task<TRes>)> m_Handler;
 	OneOfUtil<TPayload, TReq> m_ReqUnwrapper;
 	OneOfUtil<TPayload, TRes> m_ResWrapper;
 };

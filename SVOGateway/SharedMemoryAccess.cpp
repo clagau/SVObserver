@@ -29,9 +29,10 @@
 namespace SvOgw
 {
 
-SharedMemoryAccess::SharedMemoryAccess(boost::asio::io_service& rIoService, const SvSml::ShareControlSettings& ControlParameter, const WebAppVersionLoader& rWebAppVersionLoader, SvRpc::RPCClient& rpcClient)
+SharedMemoryAccess::SharedMemoryAccess(boost::asio::io_service& rIoService, const SvSml::ShareControlSettings& ControlParameter, const WebAppVersionLoader& rWebAppVersionLoader, SvRpc::RPCClient& rpcClient, SvAuth::UserDatabase& rUserDatabase)
 	: m_io_service(rIoService)
 	, m_rWebAppVersionLoader(rWebAppVersionLoader)
+	, m_rUserDatabase(rUserDatabase)
 	, m_pause_timer(rIoService)
 	, m_overlay_controller(rIoService, rpcClient)
 	, m_pShareControlInstance{std::make_unique<SvSml::ShareControl>(ControlParameter)}
@@ -170,6 +171,7 @@ void SharedMemoryAccess::QueryListName(const SvPb::QueryListNameRequest& rReques
 		task.error(Error);
 	}
 }
+
 void SharedMemoryAccess::QueryListItem(const SvPb::QueryListItemRequest& rRequest, SvRpc::Task<SvPb::QueryListItemResponse> task)
 {
 	SvPb::QueryListItemResponse Response;
@@ -183,6 +185,7 @@ void SharedMemoryAccess::QueryListItem(const SvPb::QueryListItemRequest& rReques
 		task.error(Error);
 	}
 }
+
 void SharedMemoryAccess::StoreClientLogs(const SvPb::StoreClientLogsRequest& rRequest, SvRpc::Task<SvPb::EmptyResponse> task)
 {
 	auto map_to_boost_log_severity = [](const SvPb::LogSeverity& severity) -> boost::log::trivial::severity_level
@@ -1131,6 +1134,246 @@ int SharedMemoryAccess::get_inspection_pos_for_id(SvOi::ITriggerRecordController
 		}
 	}
 	return -1;
+}
+
+void SharedMemoryAccess::GetMyPermissions(const SvAuth::SessionContext& rSessionContext, const SvPb::GetMyPermissionsRequest&, SvRpc::Task<SvPb::GetMyPermissionsResponse> task)
+{
+	if (rSessionContext.username().empty())
+	{
+		SvPenv::Error Error;
+		Error.set_errorcode(SvPenv::ErrorCode::badRequest);
+		task.error(Error);
+		return;
+	}
+
+	SvPb::GetMyPermissionsResponse Response;
+	if (!m_rUserDatabase.getUserPermissions(rSessionContext.username(), *Response.mutable_permissions()))
+	{
+		SvPenv::Error Error;
+		Error.set_errorcode(SvPenv::ErrorCode::notFound);
+		task.error(Error);
+		return;
+	}
+
+	task.finish(std::move(Response));
+}
+
+void SharedMemoryAccess::GetGroupDetails(const SvAuth::SessionContext&, const SvPb::GetGroupDetailsRequest&, SvRpc::Task<SvPb::GetGroupDetailsResponse> task)
+{
+	SvPb::GetGroupDetailsResponse Response;
+	std::set<std::string> groupNames;
+	m_rUserDatabase.getGroupNames(groupNames);
+	for (const auto& name : groupNames)
+	{
+		std::set<std::string> users;
+		SvPb::Permissions permissions;
+		if (m_rUserDatabase.getGroupDetails(name, users, permissions))
+		{
+			auto& entry = *Response.add_groupdetails();
+			entry.set_name(name);
+			entry.mutable_permissions()->MergeFrom(permissions);
+			for (const auto& user : users)
+			{
+				entry.add_users(user);
+			}
+		}
+	}
+
+	task.finish(std::move(Response));
+}
+
+void SharedMemoryAccess::UpdateGroupPermissions(const SvAuth::SessionContext&, const SvPb::UpdateGroupPermissionsRequest& req, SvRpc::Task<SvPb::UpdateGroupPermissionsResponse> task)
+{
+	std::map<std::string, SvPb::Permissions> groupPermissions;
+	for (const auto& entry : req.grouppermissions())
+	{
+		groupPermissions.emplace(entry.name(), entry.permissions());
+	}
+	m_rUserDatabase.updateGroupPermissions(groupPermissions);
+	task.finish(SvPb::UpdateGroupPermissionsResponse());
+}
+
+bool SharedMemoryAccess::CheckRequestPermissions(const SvAuth::SessionContext& rSessionContext, const SvPenv::Envelope& rEnvelope, SvRpc::Task<SvPenv::Envelope> task)
+{
+	const auto& username = rSessionContext.username();
+	if (username.empty())
+	{
+		SvPenv::Error Error;
+		Error.set_errorcode(SvPenv::ErrorCode::badRequest);
+		task.error(Error);
+		return true;
+	}
+
+	// Always allow any request for sdmAdmin for now and meant as a migration phase only.
+	// FIXME: this must be removed before releasing SVObserver 10.10
+	if (username == "sdmAdmin")
+	{
+		return false;
+	}
+
+	SvPb::Permissions permissions;
+	if (!m_rUserDatabase.getUserPermissions(rSessionContext.username(), permissions))
+	{
+		SV_LOG_GLOBAL(debug) << "Request of type \"" << rEnvelope.payloadtype() << "\" rejected because user \"" << username << "\" has no permissions configured.";
+		SvPenv::Error Error;
+		Error.set_errorcode(SvPenv::ErrorCode::notFound);
+		task.error(Error);
+		return true;
+	}
+
+	if (!is_request_allowed(rEnvelope, permissions))
+	{
+		SV_LOG_GLOBAL(debug) << "Request of type \"" << rEnvelope.payloadtype() << "\" from user \"" << username << "\" rejected due to missing permissions.";
+		SvPenv::Error Error;
+		Error.set_errorcode(SvPenv::ErrorCode::unauthorized);
+		task.error(Error);
+		return true;
+	}
+
+	return false;
+}
+
+bool SharedMemoryAccess::CheckStreamPermissions(const SvAuth::SessionContext& rSessionContext, const SvPenv::Envelope& rEnvelope, SvRpc::Observer<SvPenv::Envelope> observer, SvRpc::ServerStreamContext::Ptr)
+{
+	const auto& username = rSessionContext.username();
+	if (username.empty())
+	{
+		SvPenv::Error Error;
+		Error.set_errorcode(SvPenv::ErrorCode::badRequest);
+		observer.error(Error);
+		return true;
+	}
+
+	// Always allow any request for sdmAdmin for now and meant as a migration phase only.
+	// FIXME: this must be removed before releasing SVObserver 10.10
+	if (username == "sdmAdmin")
+	{
+		return false;
+	}
+
+	SvPb::Permissions permissions;
+	if (!m_rUserDatabase.getUserPermissions(rSessionContext.username(), permissions))
+	{
+		SV_LOG_GLOBAL(debug) << "Request of type \"" << rEnvelope.payloadtype() << "\" rejected because user \"" << username << "\" has no permissions configured.";
+		SvPenv::Error Error;
+		Error.set_errorcode(SvPenv::ErrorCode::notFound);
+		observer.error(Error);
+		return true;
+	}
+
+	if (!is_request_allowed(rEnvelope, permissions))
+	{
+		SV_LOG_GLOBAL(debug) << "Request of type \"" << rEnvelope.payloadtype() << "\" from user \"" << username << "\" rejected due to missing permissions.";
+		SvPenv::Error Error;
+		Error.set_errorcode(SvPenv::ErrorCode::unauthorized);
+		observer.error(Error);
+		return true;
+	}
+
+	return false;
+}
+
+bool SharedMemoryAccess::is_request_allowed(const SvPenv::Envelope& rEnvelope, const SvPb::Permissions& permissions)
+{
+	auto payloadType = rEnvelope.payloadtype();
+	switch (payloadType)
+	{
+	// read version information
+	case SvPb::SVRCMessages::kGetGatewayVersionRequest:
+	case SvPb::SVRCMessages::kGetSVObserverVersionRequest:
+	case SvPb::SVRCMessages::kGetWebAppVersionRequest:
+		return true; // always allowed
+
+	// read svobserver configuration information
+	case SvPb::SVRCMessages::kQueryListNameRequest:
+	case SvPb::SVRCMessages::kQueryListItemRequest:
+	case SvPb::SVRCMessages::kGetProductRequest:
+	case SvPb::SVRCMessages::kGetImageFromIdRequest:
+	case SvPb::SVRCMessages::kGetFailStatusRequest:
+	case SvPb::SVRCMessages::kGetTriggerItemsRequest:
+	case SvPb::SVRCMessages::kGetRejectRequest:
+	case SvPb::SVRCMessages::kGetProductStreamRequest:
+	case SvPb::SVRCMessages::kGetStateRequest:
+	case SvPb::SVRCMessages::kGetConfigRequest:
+	case SvPb::SVRCMessages::kGetOfflineCountRequest:
+	case SvPb::SVRCMessages::kGetProductFilterRequest:
+	case SvPb::SVRCMessages::kGetInspectionsRequest:
+	case SvPb::SVRCMessages::kGetProductDataRequest:
+	case SvPb::SVRCMessages::kGetInspectionNamesRequest:
+	case SvPb::SVRCMessages::kGetMonitorListPropertiesRequest:
+	case SvPb::SVRCMessages::kGetMaxRejectDepthRequest:
+	case SvPb::SVRCMessages::kGetConfigReportRequest:
+	case SvPb::SVRCMessages::kGetDataDefinitionListRequest:
+	case SvPb::SVRCMessages::kQueryMonitorListRequest:
+	case SvPb::SVRCMessages::kQueryMonitorListNamesRequest:
+	case SvPb::SVRCMessages::kGetObjectSelectorItemsRequest:
+	case SvPb::SVRCMessages::kGetTriggerStreamRequest:
+	case SvPb::SVRCMessages::kGetConfigurationTreeRequest:
+		return permissions.svobserver().configuration().read();
+
+	case SvPb::SVRCMessages::kActivateMonitorListRequest:
+	case SvPb::SVRCMessages::kSetProductFilterRequest:
+	case SvPb::SVRCMessages::kRegisterMonitorListRequest:
+		return permissions.svobserver().configuration().write();
+
+	case SvPb::SVRCMessages::kLoadConfigRequest:
+		return permissions.svobserver().configuration().read();
+
+	case SvPb::SVRCMessages::kPutConfigRequest:
+		return permissions.svobserver().configuration().write();
+
+	// subscribe to notification streams
+	case SvPb::SVRCMessages::kGetGatewayNotificationStreamRequest:
+	case SvPb::SVRCMessages::kGetNotificationStreamRequest:
+		return permissions.svobserver().notifications().subscribe();
+		
+	case SvPb::SVRCMessages::kGetItemsRequest:
+		return permissions.svobserver().value().read();
+
+	case SvPb::SVRCMessages::kSetItemsRequest:
+		return permissions.svobserver().value().edit();
+
+	case SvPb::SVRCMessages::kSetRejectStreamPauseStateRequest:
+		// TODO what about the read state? it is part of the notification :/
+		return permissions.svobserver().inspectionstate().edit();
+
+	case SvPb::SVRCMessages::kGetDeviceModeRequest:
+		// TODO there is also a mode change notification. should this be forbidden?
+		return permissions.svobserver().mode().read();
+
+	case SvPb::SVRCMessages::kRunOnceRequest: // TODO is this correct?
+	case SvPb::SVRCMessages::kSetDeviceModeRequest:
+		return permissions.svobserver().mode().edit();
+
+	case SvPb::SVRCMessages::kStoreClientLogsRequest:
+		return permissions.svobserver().clientlogs().store(); // TODO shall we really always allow all clients to store any logs?
+	
+	case SvPb::SVRCMessages::kGetFileRequest:
+		return permissions.svobserver().file().read();
+
+	case SvPb::SVRCMessages::kPutFileRequest:
+		return permissions.svobserver().file().write();
+	
+	case SvPb::SVRCMessages::kShutdownRequest:
+		return permissions.svobserver().machinestate().set();
+	
+	case SvPb::SVRCMessages::kInspectionCmdRequest:
+	case SvPb::SVRCMessages::kConfigCommandRequest:
+		return permissions.svobserver().command().execute();
+
+	case SvPb::SVRCMessages::kGetMyPermissionsRequest:
+		return true; // always allowed!
+
+	case SvPb::SVRCMessages::kGetGroupDetailsRequest:
+		return permissions.usermanagement().permissions().read();
+
+	case SvPb::SVRCMessages::kUpdateGroupPermissionsRequest:
+		return permissions.usermanagement().permissions().edit();
+
+	default:
+		SV_LOG_GLOBAL(warning) << "No permissions handling for message id " << payloadType << " configured!";
+		return false;
+	}
 }
 
 }// namespace SvOgw

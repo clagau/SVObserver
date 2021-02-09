@@ -225,4 +225,35 @@ void SharedMemoryAccessMock::getImageById(SvPb::Image& img, const SvPb::ImageId&
 	}
 }
 
+void SharedMemoryAccessMock::GetMyPermissions(const SvAuth::SessionContext&, const SvPb::GetMyPermissionsRequest&, SvRpc::Task<SvPb::GetMyPermissionsResponse> task)
+{
+	SvPenv::Error err;
+	err.set_errorcode(SvPenv::ErrorCode::notImplemented);
+	task.error(err);
+}
+
+void SharedMemoryAccessMock::GetGroupDetails(const SvAuth::SessionContext&, const SvPb::GetGroupDetailsRequest&, SvRpc::Task<SvPb::GetGroupDetailsResponse> task)
+{
+	SvPenv::Error err;
+	err.set_errorcode(SvPenv::ErrorCode::notImplemented);
+	task.error(err);
+}
+
+void SharedMemoryAccessMock::UpdateGroupPermissions(const SvAuth::SessionContext&, const SvPb::UpdateGroupPermissionsRequest&, SvRpc::Task<SvPb::UpdateGroupPermissionsResponse> task)
+{
+	SvPenv::Error err;
+	err.set_errorcode(SvPenv::ErrorCode::notImplemented);
+	task.error(err);
+}
+
+bool SharedMemoryAccessMock::CheckRequestPermissions(const SvAuth::SessionContext&, const SvPenv::Envelope&, SvRpc::Task<SvPenv::Envelope>)
+{
+	return false;
+}
+
+bool SharedMemoryAccessMock::CheckStreamPermissions(const SvAuth::SessionContext&, const SvPenv::Envelope&, SvRpc::Observer<SvPenv::Envelope>, SvRpc::ServerStreamContext::Ptr)
+{
+	return false;
+}
+
 }// namespace SvOgw

@@ -12,15 +12,19 @@
 
 #define WIN32_LEAN_AND_MEAN // Exclude rarely-used stuff from Windows headers
 
+#include <cassert>
 #include <chrono>
 #include <filesystem>
 #include <fstream>
+#include <iostream>
 #include <map>
 #include <sstream>
+#include <stack>
 #include <stdio.h>
 #include <string>
 #include <tchar.h>
 
+#include <boost/algorithm/string.hpp>
 #include <boost/array.hpp>
 #pragma warning(push)
 #pragma warning(disable : 4702)

@@ -17,6 +17,7 @@
 #include "ServerStreamContext.h"
 #include "Task.h"
 #include "SVProtoBuf/Envelope.h"
+#include "SVProtoBuf/SVAuth.h"
 #pragma endregion Includes
 
 namespace SvRpc
@@ -25,9 +26,9 @@ class RequestHandlerBase
 {
 public:
 	virtual ~RequestHandlerBase() {}
-	virtual bool onHandshake(const std::string& token) = 0;
-	virtual void onRequest(SvPenv::Envelope&& request, Task<SvPenv::Envelope> handler) = 0;
-	virtual void onStream(SvPenv::Envelope&& request, Observer<SvPenv::Envelope> observer, ServerStreamContext::Ptr ctx) = 0;
+	virtual bool onHandshake(const std::string& token, SvAuth::SessionContext&) = 0;
+	virtual void onRequest(const SvAuth::SessionContext&, SvPenv::Envelope&& request, Task<SvPenv::Envelope> handler) = 0;
+	virtual void onStream(const SvAuth::SessionContext&, SvPenv::Envelope&& request, Observer<SvPenv::Envelope> observer, ServerStreamContext::Ptr ctx) = 0;
 };
 
 } // namespace SvRpc
