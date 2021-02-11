@@ -109,8 +109,6 @@
     <ClInclude Include="AutoBuild.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SharedMemoryAccess.h" />
-    <ClInclude Include="SharedMemoryAccessInterface.h" />
-    <ClInclude Include="SharedMemoryAccessMock.h" />
     <ClInclude Include="ServerRequestHandler.h" />
     <ClInclude Include="Settings.h" />
     <ClInclude Include="SettingsLoader.h" />
@@ -120,7 +118,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SharedMemoryAccess.cpp" />
-    <ClCompile Include="SharedMemoryAccessMock.cpp" />
     <ClCompile Include="ServerRequestHandler.cpp" />
     <ClCompile Include="SettingsLoader.cpp" />
     <ClCompile Include="stdafx.cpp">

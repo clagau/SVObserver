@@ -13,13 +13,13 @@
 
 #include "SVAuthLibrary/AuthManager.h"
 #include "ServerRequestHandler.h"
-#include "SharedMemoryAccessInterface.h"
+#include "SharedMemoryAccess.h"
 #include "SVProtoBuf/SVRC.h"
 #pragma endregion Includes
 
 namespace SvOgw
 {
-ServerRequestHandler::ServerRequestHandler(SharedMemoryAccessInterface* sma, SvAuth::AuthManager* am)
+ServerRequestHandler::ServerRequestHandler(SharedMemoryAccess* sma, SvAuth::AuthManager* am)
 {
 	registerAuthHandler(
 		[am](const std::string& token, SvAuth::SessionContext& rSessionContext) -> bool

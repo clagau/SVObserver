@@ -14,11 +14,13 @@
 
 #pragma region Includes
 #include "SharedMemoryAccess.h"
+#include "SVAuthLibrary/UserDatabase.h"
 #include "SVLogLibrary/Logging.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVOGateway/WebAppVersionLoader.h"
 #include "SVSharedMemoryLibrary/ShareControlSetting.h" 
 #include "SVProtoBuf/ConverterHelper.h"
+#include "SVProtoBuf/SVAuth.h"
 #include "SVSystemLibrary/SVVersionInfo.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "ObjectInterfaces/ITriggerRecordR.h"
@@ -29,10 +31,18 @@
 namespace SvOgw
 {
 
-SharedMemoryAccess::SharedMemoryAccess(boost::asio::io_service& rIoService, const SvSml::ShareControlSettings& ControlParameter, const WebAppVersionLoader& rWebAppVersionLoader, SvRpc::RPCClient& rpcClient, SvAuth::UserDatabase& rUserDatabase)
+SharedMemoryAccess::SharedMemoryAccess(
+	boost::asio::io_service& rIoService,
+	const SvSml::ShareControlSettings& ControlParameter,
+	const WebAppVersionLoader& rWebAppVersionLoader,
+	SvRpc::RPCClient& rpcClient,
+	SvAuth::UserDatabase& rUserDatabase,
+	bool skipPermissionChecks
+)
 	: m_io_service(rIoService)
 	, m_rWebAppVersionLoader(rWebAppVersionLoader)
 	, m_rUserDatabase(rUserDatabase)
+	, m_skipPermissionChecks(skipPermissionChecks)
 	, m_pause_timer(rIoService)
 	, m_overlay_controller(rIoService, rpcClient)
 	, m_pShareControlInstance{std::make_unique<SvSml::ShareControl>(ControlParameter)}
@@ -1195,6 +1205,11 @@ void SharedMemoryAccess::UpdateGroupPermissions(const SvAuth::SessionContext&, c
 
 bool SharedMemoryAccess::CheckRequestPermissions(const SvAuth::SessionContext& rSessionContext, const SvPenv::Envelope& rEnvelope, SvRpc::Task<SvPenv::Envelope> task)
 {
+	if (m_skipPermissionChecks)
+	{
+		return false;
+	}
+
 	const auto& username = rSessionContext.username();
 	if (username.empty())
 	{
@@ -1235,6 +1250,11 @@ bool SharedMemoryAccess::CheckRequestPermissions(const SvAuth::SessionContext& r
 
 bool SharedMemoryAccess::CheckStreamPermissions(const SvAuth::SessionContext& rSessionContext, const SvPenv::Envelope& rEnvelope, SvRpc::Observer<SvPenv::Envelope> observer, SvRpc::ServerStreamContext::Ptr)
 {
+	if (m_skipPermissionChecks)
+	{
+		return false;
+	}
+
 	const auto& username = rSessionContext.username();
 	if (username.empty())
 	{

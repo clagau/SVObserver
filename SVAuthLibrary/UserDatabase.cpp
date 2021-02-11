@@ -10,7 +10,6 @@
 #include "stdafx.h"
 #include "SVLogLibrary/Logging.h"
 #include "Crypto.h"
-#include "PermissionHelper.h"
 #include "UserDatabase.h"
 #include "UserDatabaseLoader.h"
 #pragma endregion Includes

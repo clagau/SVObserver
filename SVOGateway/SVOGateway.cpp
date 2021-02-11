@@ -108,8 +108,8 @@ void StartWebServer(DWORD argc, LPTSTR  *argv)
 		SvAuth::RestHandler restHandler(authManager);
 
 		SvOgw::WebAppVersionLoader webAppVersionLoader(settings.httpSettings);
-		auto sharedMemoryAccess = std::make_unique<SvOgw::SharedMemoryAccess>(IoService, settings.shareControlSettings, webAppVersionLoader, rpcClient, authManager.getUserDatabase());
-		SvOgw::ServerRequestHandler requestHandler(sharedMemoryAccess.get(), &authManager);
+		SvOgw::SharedMemoryAccess sharedMemoryAccess(IoService, settings.shareControlSettings, webAppVersionLoader, rpcClient, authManager.getUserDatabase(), settings.skipPermissionChecks);
+		SvOgw::ServerRequestHandler requestHandler(&sharedMemoryAccess, &authManager);
 
 		SvRpc::RPCServer rpcServer(&requestHandler);
 		settings.httpSettings.pEventHandler = &rpcServer;
@@ -166,8 +166,6 @@ void StartWebServer(DWORD argc, LPTSTR  *argv)
 		///Stop work
 		IoService.stop();
 		ServerThread.join();
-
-		sharedMemoryAccess.reset();
 
 		SvOi::destroyTriggerRecordController();
 	}

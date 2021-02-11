@@ -91,8 +91,6 @@ void SettingsLoader::loadFromIni(Settings& settings)
 	RegGetIntIfExists(pt, settings.observerSetting.PingIntervalSec, "Observer.PingIntervalSec");
 	RegGetIntIfExists(pt, settings.observerSetting.PingTimeoutCount, "Observer.PingTimeoutCount");
 
-
-	RegGetBoolIfExists(pt, settings.dummySharedMemory, "SharedMemory.Dummy");
 	RegGetBoolIfExists(pt, settings.logSettings.StdoutLogEnabled, "Logger.StdoutLogEnabled");
 	RegGetStringIfExists(pt, settings.logSettings.StdoutLogLevel, "Logger.StdoutLogLevel");
 	RegGetBoolIfExists(pt, settings.logSettings.FileLogEnabled, "Logger.FileLogEnabled");
@@ -100,7 +98,6 @@ void SettingsLoader::loadFromIni(Settings& settings)
 	RegGetStringIfExists(pt, settings.logSettings.FileLogLocation, "Logger.FileLogLocation");
 	RegGetBoolIfExists(pt, settings.logSettings.WindowsEventLogEnabled, "Logger.WindowsEventLogEnabled");
 	RegGetStringIfExists(pt, settings.logSettings.WindowsEventLogLevel, "Logger.WindowsEventLogLevel");
-
 	
 	RegGetStringIfExists(pt, settings.httpSettings.Host, "Http.Host");
 	RegGetIntIfExists(pt, settings.httpSettings.Port, "Http.Port");
@@ -119,6 +116,9 @@ void SettingsLoader::loadFromIni(Settings& settings)
 	RegGetBoolIfExists(pt, settings.authSettings.AllowUnauthorizedRpcClients, "Auth.AllowUnauthorizedRpcClients");
 	RegGetIntIfExists(pt, settings.authSettings.JwtAccessTokenValidityInSeconds, "Auth.JwtAccessTokenValidityInSeconds");
 	RegGetIntIfExists(pt, settings.authSettings.JwtAuthTokenValidityInSeconds, "Auth.JwtAuthTokenValidityInSeconds");
+
+	RegGetBoolIfExists(pt, settings.skipPermissionChecks, "Auth.SkipPermissionChecks");
+
 	RegGetIntIfExists(pt, settings.shareControlSettings.DelayBeforeCreateShare, "ShareControl.DelayBeforeCreateShareInMilliSeconds");
 	RegGetIntIfExists(pt, settings.shareControlSettings.DelayBeforeClearShare, "ShareControl.DelayBeforeClearShareInMilliSeconds");
 

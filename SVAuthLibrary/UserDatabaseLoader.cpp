@@ -22,11 +22,7 @@
 #include "SVLogLibrary/Logging.h"
 #include "SVProtoBuf/SVAuth.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "SVXmlLibrary/ISaxElementHandler.h"
-#include "SVXmlLibrary/SaxParser.h"
 #include "SVXmlLibrary/SVSimpleXml.h"
-#include "SVXmlLibrary/SVMaterialData.h"
-#include "SVXmlLibrary/XMLWriter.h"
 #pragma endregion Includes
 
 static std::mutex s_writeMutex;
@@ -140,11 +136,12 @@ static void setAllPermissions(SvPb::Permissions& permissions)
 	// allow all webapp permissions
 	permissions.mutable_webapp()->mutable_configuration()->set_save(true);
 	permissions.mutable_webapp()->mutable_logs()->set_read(true);
-	permissions.mutable_webapp()->mutable_view(0)->set_type(SvPb::Permissions::WebApp::AnyView);
-	permissions.mutable_webapp()->mutable_view(0)->set_add(true);
-	permissions.mutable_webapp()->mutable_view(0)->set_read(true);
-	permissions.mutable_webapp()->mutable_view(0)->set_edit(true);
-	permissions.mutable_webapp()->mutable_view(0)->set_remove(true);
+	auto& anyView = *permissions.mutable_webapp()->add_view();
+	anyView.set_type(SvPb::Permissions::WebApp::AnyView);
+	anyView.set_add(true);
+	anyView.set_read(true);
+	anyView.set_edit(true);
+	anyView.set_remove(true);
 	permissions.mutable_webapp()->mutable_viewset()->set_add(true);
 	permissions.mutable_webapp()->mutable_viewset()->set_read(true);
 	permissions.mutable_webapp()->mutable_viewset()->set_edit(true);
@@ -186,7 +183,7 @@ static bool isValidGroup(const GroupDetails& group, std::string& errMsg)
 
 static bool parseUserDatabaseXml(std::map<std::string, UserDatabaseEntry>& rUserDb, std::map<std::string, GroupDetails>& rGroupDb, SvXml::XmlElement& rDoc)
 {
-	SvXml::iterateElements(rDoc, L"asphereDatabase.userDatabase.users.user", [&rUserDb](SvXml::XmlElement& rUser)
+	SvXml::iterateElements(rDoc, L"asphereDatabase.userDatabase.users.user", [&rUserDb](const SvXml::XmlElement& rUser)
 	{
 		UserDatabaseEntry userEntry;
 		loadUserAttributes(userEntry, rUser);
@@ -201,7 +198,7 @@ static bool parseUserDatabaseXml(std::map<std::string, UserDatabaseEntry>& rUser
 
 		rUserDb.insert(std::make_pair(userEntry.username(), userEntry));
 	});
-	SvXml::iterateElements(rDoc, L"asphereDatabase.userDatabase.userGroups.userGroup", [&rGroupDb](SvXml::XmlElement& rUserGroup)
+	SvXml::iterateElements(rDoc, L"asphereDatabase.userDatabase.userGroups.userGroup", [&rGroupDb](const SvXml::XmlElement& rUserGroup)
 		{
 			GroupDetails group;
 			loadGroupAttributes(group, rUserGroup);
@@ -228,12 +225,11 @@ static bool parseUserDatabaseXml(std::map<std::string, UserDatabaseEntry>& rUser
 
 static SvXml::XmlElement* getOrCreateChild(SvXml::XmlElement& ele, const std::wstring& name)
 {
-	for (auto& child : ele.children)
+	auto& children = ele.children;
+	auto it = std::find_if(children.begin(), children.end(), [&name](const auto& child) { return child.name == name;  });
+	if (it != children.end())
 	{
-		if (child.name == name)
-		{
-			return &child;
-		}
+		return &(*it);
 	}
 	return ele.addChild(name);
 }
@@ -296,7 +292,7 @@ static void patchPermissions(SvXml::XmlElement& rDoc, const std::map<std::string
 			return;
 		}
 		
-		auto& newGroupEntry = it->second;
+		const auto& newGroupEntry = it->second;
 		patchPermissionsImpl(rUserGroup, newGroupEntry.permissions);
 	});
 }

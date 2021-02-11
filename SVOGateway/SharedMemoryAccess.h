@@ -12,15 +12,19 @@
 //Moved to precompiled header: #include <boost/asio/io_service.hpp>
 //Moved to precompiled header: #include <boost/thread.hpp>
 
-#include "SharedMemoryAccessInterface.h"
-#include "SVAuthLibrary/UserDatabase.h"
 #include "SVOverlayLibrary/OverlayController.h"
 #include "SVProtoBuf/SVRC.h"
 #include "SVSharedMemoryLibrary/ShareControl.h"
+#include "SVRPCLibrary/ServerStreamContext.h"
 #include "SVRPCLibrary/Task.h"
 #include "ObjectInterfaces/ITriggerRecordControllerR.h"
 #pragma endregion Includes
 
+namespace SvAuth
+{
+class SessionContext;
+class UserDatabase;
+}
 namespace SvSml
 {
 struct ShareControlSettings;
@@ -40,35 +44,42 @@ namespace SvOgw
 {
 class WebAppVersionLoader;
 
-class SharedMemoryAccess : public SharedMemoryAccessInterface
+class SharedMemoryAccess
 {
 public:
-	SharedMemoryAccess(boost::asio::io_service& rIoService, const SvSml::ShareControlSettings& ControlParameter, const WebAppVersionLoader&, SvRpc::RPCClient& rpcClient, SvAuth::UserDatabase& userDatabase);
-	virtual ~SharedMemoryAccess();
+	SharedMemoryAccess(
+		boost::asio::io_service& rIoService,
+		const SvSml::ShareControlSettings& ControlParameter,
+		const WebAppVersionLoader&,
+		SvRpc::RPCClient& rpcClient,
+		SvAuth::UserDatabase& userDatabase,
+		bool skipPermissionChecks
+	);
+	~SharedMemoryAccess();
 
 public:
-	void GetVersion(const SvPb::GetGatewayVersionRequest&, SvRpc::Task<SvPb::GetVersionResponse>) override;
-	void GetWebAppVersion(const SvPb::GetWebAppVersionRequest&, SvRpc::Task<SvPb::GetVersionResponse>) override;
-	void GetInspections(const SvPb::GetInspectionsRequest&, SvRpc::Task<SvPb::GetInspectionsResponse>) override;
-	void GetProduct(const SvPb::GetProductRequest&, SvRpc::Task<SvPb::GetProductResponse>) override;
-	void GetProductData(const SvPb::GetProductDataRequest&, SvRpc::Task<SvPb::GetProductDataResponse>) override;
-	void GetReject(const SvPb::GetRejectRequest&, SvRpc::Task<SvPb::GetRejectResponse>) override;
-	void GetFailstatus(const SvPb::GetFailStatusRequest&, SvRpc::Task<SvPb::GetFailStatusResponse>) override;
-	void GetImageFromId(const SvPb::GetImageFromIdRequest&, SvRpc::Task<SvPb::GetImageFromIdResponse>) override;
-	void GetTriggerItems(const SvPb::GetTriggerItemsRequest&, SvRpc::Task<SvPb::GetTriggerItemsResponse>) override;
-	void QueryListName(const SvPb::QueryListNameRequest&, SvRpc::Task<SvPb::QueryListNameResponse>) override;
-	void QueryListItem(const SvPb::QueryListItemRequest&, SvRpc::Task<SvPb::QueryListItemResponse>) override;
-	void StoreClientLogs(const SvPb::StoreClientLogsRequest&, SvRpc::Task<SvPb::EmptyResponse>) override;
-	void SetRejectStreamPauseState(const SvPb::SetRejectStreamPauseStateRequest&, SvRpc::Task<SvPb::EmptyResponse>) override;
-	void GetGatewayNotificationStream(const SvPb::GetGatewayNotificationStreamRequest&, SvRpc::Observer<SvPb::GetGatewayNotificationStreamResponse>, SvRpc::ServerStreamContext::Ptr) override;
-	void GetProductStream(const SvPb::GetProductStreamRequest&, SvRpc::Observer<SvPb::GetProductStreamResponse>, SvRpc::ServerStreamContext::Ptr) override;
+	void GetVersion(const SvPb::GetGatewayVersionRequest&, SvRpc::Task<SvPb::GetVersionResponse>);
+	void GetWebAppVersion(const SvPb::GetWebAppVersionRequest&, SvRpc::Task<SvPb::GetVersionResponse>);
+	void GetInspections(const SvPb::GetInspectionsRequest&, SvRpc::Task<SvPb::GetInspectionsResponse>);
+	void GetProduct(const SvPb::GetProductRequest&, SvRpc::Task<SvPb::GetProductResponse>);
+	void GetProductData(const SvPb::GetProductDataRequest&, SvRpc::Task<SvPb::GetProductDataResponse>);
+	void GetReject(const SvPb::GetRejectRequest&, SvRpc::Task<SvPb::GetRejectResponse>);
+	void GetFailstatus(const SvPb::GetFailStatusRequest&, SvRpc::Task<SvPb::GetFailStatusResponse>);
+	void GetImageFromId(const SvPb::GetImageFromIdRequest&, SvRpc::Task<SvPb::GetImageFromIdResponse>);
+	void GetTriggerItems(const SvPb::GetTriggerItemsRequest&, SvRpc::Task<SvPb::GetTriggerItemsResponse>);
+	void QueryListName(const SvPb::QueryListNameRequest&, SvRpc::Task<SvPb::QueryListNameResponse>);
+	void QueryListItem(const SvPb::QueryListItemRequest&, SvRpc::Task<SvPb::QueryListItemResponse>);
+	void StoreClientLogs(const SvPb::StoreClientLogsRequest&, SvRpc::Task<SvPb::EmptyResponse>);
+	void SetRejectStreamPauseState(const SvPb::SetRejectStreamPauseStateRequest&, SvRpc::Task<SvPb::EmptyResponse>);
+	void GetGatewayNotificationStream(const SvPb::GetGatewayNotificationStreamRequest&, SvRpc::Observer<SvPb::GetGatewayNotificationStreamResponse>, SvRpc::ServerStreamContext::Ptr);
+	void GetProductStream(const SvPb::GetProductStreamRequest&, SvRpc::Observer<SvPb::GetProductStreamResponse>, SvRpc::ServerStreamContext::Ptr);
 
-	void GetMyPermissions(const SvAuth::SessionContext&, const SvPb::GetMyPermissionsRequest& req, SvRpc::Task<SvPb::GetMyPermissionsResponse> task) override;
-	void GetGroupDetails(const SvAuth::SessionContext&, const SvPb::GetGroupDetailsRequest&, SvRpc::Task<SvPb::GetGroupDetailsResponse>) override;
-	void UpdateGroupPermissions(const SvAuth::SessionContext&, const SvPb::UpdateGroupPermissionsRequest&, SvRpc::Task<SvPb::UpdateGroupPermissionsResponse>) override;
+	void GetMyPermissions(const SvAuth::SessionContext&, const SvPb::GetMyPermissionsRequest& req, SvRpc::Task<SvPb::GetMyPermissionsResponse> task);
+	void GetGroupDetails(const SvAuth::SessionContext&, const SvPb::GetGroupDetailsRequest&, SvRpc::Task<SvPb::GetGroupDetailsResponse>);
+	void UpdateGroupPermissions(const SvAuth::SessionContext&, const SvPb::UpdateGroupPermissionsRequest&, SvRpc::Task<SvPb::UpdateGroupPermissionsResponse>);
 
-	bool CheckRequestPermissions(const SvAuth::SessionContext&, const SvPenv::Envelope&, SvRpc::Task<SvPenv::Envelope>) override;
-	bool CheckStreamPermissions(const SvAuth::SessionContext&, const SvPenv::Envelope&, SvRpc::Observer<SvPenv::Envelope>, SvRpc::ServerStreamContext::Ptr) override;
+	bool CheckRequestPermissions(const SvAuth::SessionContext&, const SvPenv::Envelope&, SvRpc::Task<SvPenv::Envelope>);
+	bool CheckStreamPermissions(const SvAuth::SessionContext&, const SvPenv::Envelope&, SvRpc::Observer<SvPenv::Envelope>, SvRpc::ServerStreamContext::Ptr);
 
 private:
 	struct product_stream_t
@@ -133,6 +144,7 @@ private:
 	boost::asio::io_service& m_io_service;
 	const WebAppVersionLoader& m_rWebAppVersionLoader;
 	SvAuth::UserDatabase& m_rUserDatabase;
+	bool m_skipPermissionChecks;
 	std::unique_ptr<SvSml::ShareControl> m_pShareControlInstance;
 	std::atomic_bool m_trc_ready {false};
 	int m_TrcReadySubscriptionId;

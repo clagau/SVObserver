@@ -17,8 +17,12 @@
 #include "ServerStreamContext.h"
 #include "Task.h"
 #include "SVProtoBuf/Envelope.h"
-#include "SVProtoBuf/SVAuth.h"
 #pragma endregion Includes
+
+namespace SvAuth
+{
+class SessionContext;
+}
 
 namespace SvRpc
 {

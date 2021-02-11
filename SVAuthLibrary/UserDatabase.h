@@ -26,7 +26,7 @@ class UserDatabase
 {
 private:
 	// use UserDatabaseLoader for loading the UserDatabase
-	UserDatabase(const std::string& userDatabaseXml);
+	explicit UserDatabase(const std::string& userDatabaseXml);
 
 public:
 	bool checkPassword(const std::string& username, const std::string& password) const;

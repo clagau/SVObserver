@@ -14,6 +14,7 @@
 
 #include "SVHttpLibrary/HttpServerConnection.h"
 #include "SVLogLibrary/Logging.h"
+#include "SVProtoBuf/SVAuth.h"
 #include "SVStatusLibrary/ErrorUtil.h"
 
 namespace SvRpc

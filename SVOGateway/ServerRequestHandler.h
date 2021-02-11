@@ -23,11 +23,11 @@ class AuthManager;
 namespace SvOgw
 {
 
-class SharedMemoryAccessInterface;
+class SharedMemoryAccess;
 
 class ServerRequestHandler : public SvRpc::RequestHandler
 {
 public:
-	ServerRequestHandler(SharedMemoryAccessInterface* service, SvAuth::AuthManager* am);
+	ServerRequestHandler(SharedMemoryAccess* service, SvAuth::AuthManager* am);
 };
 }// namespace SvOgw

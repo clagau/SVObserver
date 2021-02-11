@@ -23,7 +23,7 @@ namespace
 struct SimpleXmlElementHandler : public SvXml::ISaxElementHandler
 {
 public:
-	SimpleXmlElementHandler(XmlElement& root) : m_root(root), m_curr(&root)
+	explicit SimpleXmlElementHandler(XmlElement& root) : m_root(root), m_curr(&root)
 	{
 	}
 

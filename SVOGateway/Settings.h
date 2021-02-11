@@ -29,7 +29,7 @@ struct Settings
 		logSettings.eventLogFacility = SvLog::EventLogFacility::Gateway;
 		authSettings.AllowUnauthorizedRpcClients = true;
 	}
-	bool dummySharedMemory {false};
+	bool skipPermissionChecks{ false };
 	SvHttp::WebsocketClientSettings observerSetting;
 	SvLog::LogSettings logSettings;
 	SvHttp::HttpServerSettings httpSettings;

@@ -24,9 +24,6 @@
     <ClCompile Include="SharedMemoryAccess.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SharedMemoryAccessMock.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -60,12 +57,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SharedMemoryAccess.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SharedMemoryAccessInterface.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SharedMemoryAccessMock.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="stdafx.h">

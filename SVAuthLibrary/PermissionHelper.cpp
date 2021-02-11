@@ -21,7 +21,6 @@
 #include <rapidjson/istreamwrapper.h>
 #include <rapidjson/ostreamwrapper.h>
 
-#include "SVLogLibrary/Logging.h"
 #include "PermissionHelper.h"
 #pragma endregion Includes
 
