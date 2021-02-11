@@ -868,7 +868,7 @@ HRESULT SVConfigurationObject::AddDigitalInput(SVPPQObject* pPPQ, const std::str
 	return result;
 }
 
-void SVConfigurationObject::LoadEnviroment(SVTreeType& rTree, bool& ConfigurationColor)
+void SVConfigurationObject::LoadEnvironment(SVTreeType& rTree, bool& ConfigurationColor)
 {
 	SVTreeType::SVBranchHandle hChild(nullptr);
 	bool bOk = SvXml::SVNavigateTree::GetItemBranch(rTree, SvXml::CTAG_ENVIRONMENT, nullptr, hChild);
@@ -876,7 +876,7 @@ void SVConfigurationObject::LoadEnviroment(SVTreeType& rTree, bool& Configuratio
 	if (!bOk)
 	{
 		SvStl::MessageContainer MsgCont;
-		MsgCont.setMessage(SVMSG_SVO_82_NO_ENVIROMENT_TAG, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16061_EnviromentTagIsMissing);
+		MsgCont.setMessage(SVMSG_SVO_82_NO_ENVIROMENT_TAG, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16061_EnvironmentTagIsMissing);
 		throw MsgCont;
 	}
 
@@ -2293,7 +2293,7 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 		long lNumBoardDig(0);
 		long lNumCameras(0);
 		bool ConfigurationColor(false);
-		LoadEnviroment(rTree, ConfigurationColor);
+		LoadEnvironment(rTree, ConfigurationColor);
 		LoadIO(rTree);
 		LoadAcquisitionDevice(rTree, BoardName, lNumBoardDig);
 		LoadCameras(rTree, lNumCameras, ConfigurationColor);
@@ -2785,7 +2785,7 @@ void SVConfigurationObject::SaveEnvironment(SvOi::IObjectWriter& rWriter) const
 
 	rWriter.WriteAttribute(SvXml::CTAG_NEXT_OBJECT_ID, SVObjectManagerClass::Instance().getCurrentNextObjectId());
 
-	rWriter.EndElement(); //End of Enviroment
+	rWriter.EndElement(); //End of Environment
 }
 
 void SVConfigurationObject::SaveIO(SvOi::IObjectWriter& rWriter) const

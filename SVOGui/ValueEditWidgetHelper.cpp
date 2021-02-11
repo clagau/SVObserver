@@ -25,10 +25,11 @@ namespace SvOg
 
 	void ValueEditWidgetHelper::EditboxToValue()
 	{
-		CString Temp;
-		m_rValueEdit.GetWindowText(Temp);
-		m_rValueController.Set<CString>(m_embeddedId, Temp);
-		m_rValueController.Set<CString>(m_embeddedLinkId, Temp);
+		CString temp;
+
+		m_rValueEdit.GetWindowText(temp);
+
+		m_rValueController.Set<CString>(m_embeddedId, temp);
 	}
 
 	void ValueEditWidgetHelper::EnableGuiElements(BOOL enable)
@@ -40,19 +41,26 @@ namespace SvOg
 		}
 	}
 
-	void ValueEditWidgetHelper::ValueToEditbox()
+	std::string ValueEditWidgetHelper::GetValueString()
 	{
 		std::string temp;
 
-		if (SvPb::NoEmbeddedId != m_embeddedLinkId) //i.e. this is a linked value
+		if (SvPb::NoEmbeddedId != m_embeddedLinkId) //is this a linked value?
 		{
 			temp = m_rValueController.Get<CString>(m_embeddedLinkId); //See whether we can get a dotted name
 		}
 
-		if (temp.empty()) // because this is not a linked value (or it is, but there is no associated dotted name)
+		if (temp.empty()) // this either isn't a linked value or its link is currently empty
 		{
 			temp = m_rValueController.Get<CString>(m_embeddedId);
 		}
+
+		return temp;
+	}
+
+	void ValueEditWidgetHelper::ValueToEditbox()
+	{
+		auto temp = GetValueString();
 
 		m_rValueEdit.SetWindowText(temp.c_str());
 

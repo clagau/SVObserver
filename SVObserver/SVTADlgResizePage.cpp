@@ -33,6 +33,17 @@ BEGIN_MESSAGE_MAP(SVTADlgResizePage, CPropertyPage)
 END_MESSAGE_MAP()
 #pragma endregion Message Map
 
+const std::vector<SvPb::EmbeddedIdEnum> SVTADlgResizePage::ms_allScaleFactorEIDs{
+		SvPb::ExtentWidthFactorContentLinkEId,
+		SvPb::ExtentWidthFactorContentEId,
+		SvPb::ExtentHeightFactorContentLinkEId,
+		SvPb::ExtentHeightFactorContentEId,
+		SvPb::ExtentWidthFactorFormatLinkEId,
+		SvPb::ExtentWidthFactorFormatEId,
+		SvPb::ExtentHeightFactorFormatLinkEId,
+		SvPb::ExtentHeightFactorFormatEId
+};
+
 
 SVTADlgResizePage::SVTADlgResizePage(uint32_t inspectionID, uint32_t taskObjectID, SVToolAdjustmentDialogSheetClass* Parent, int id)
 	: CPropertyPage(id)
@@ -51,7 +62,7 @@ SVTADlgResizePage::SVTADlgResizePage(uint32_t inspectionID, uint32_t taskObjectI
 	, m_formatHeightHelper(m_formatScaleEdit[ScaleFactorDimension::Height],
 		SvPb::ExtentHeightFactorFormatEId,
 		&(m_formatScaleButton[ScaleFactorDimension::Height]),
-		SvPb::ExtentFormatHeightFactorLinkEId,
+		SvPb::ExtentHeightFactorFormatLinkEId,
 		m_resizeValueController)
 	, m_resizeValueSelector(inspectionID, SvDef::InvalidObjectId, SvPb::viewable)
 	, m_contentWidthHelper(m_contentScaleEdit[ScaleFactorDimension::Width],
@@ -63,7 +74,10 @@ SVTADlgResizePage::SVTADlgResizePage(uint32_t inspectionID, uint32_t taskObjectI
 		SvPb::ExtentHeightFactorContentEId,
 		&(m_contentScaleButton[ScaleFactorDimension::Height]),
 		SvPb::ExtentHeightFactorContentLinkEId,
-		m_resizeValueController)
+		m_resizeValueController),
+	m_allEditHelpers{
+		std::ref(m_contentWidthHelper), std::ref(m_contentHeightHelper),
+		std::ref(m_formatWidthHelper), std::ref(m_formatHeightHelper)}
 {
 	SvOg::ValueEditWidgetHelper::EnsureDownArrowBitmapIsLoaded();
 
@@ -213,10 +227,10 @@ void SVTADlgResizePage::GetAndDisplayValuesFromTool()
 		m_InterpolationModeCombo.SetCurSel(pos);
 	}
 
-	m_formatWidthHelper.ValueToEditbox();
-	m_formatHeightHelper.ValueToEditbox();
-	m_contentWidthHelper.ValueToEditbox();
-	m_contentHeightHelper.ValueToEditbox();
+	for (SvOg::ValueEditWidgetHelper& rEditHelper : m_allEditHelpers)
+	{
+		rEditHelper.ValueToEditbox();
+	}
 }
 
 void SVTADlgResizePage::getInterpolationModeFromDialog()
@@ -239,7 +253,15 @@ void SVTADlgResizePage::getInterpolationModeFromDialog()
 
 bool SVTADlgResizePage::CommitAndCheckNewParameterValues()
 {
-	SVTADlgResizePage::CommitValues();
+	CommitValuesFromDialog();
+
+#if defined (TRACE_THEM_ALL) || defined (TRACE_RESIZE)
+
+	m_resizeValueController.Init();
+	traceScalefactorValues("Committed");
+
+#endif 
+
 
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
@@ -250,7 +272,7 @@ bool SVTADlgResizePage::CommitAndCheckNewParameterValues()
 	if (S_OK != hResult)
 	{
 		SvStl::MessageManager Msg(SvStl::MsgType::Display);
-		Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorInReset, SvStl::SourceFileParams(StdMessageParams), 0, m_toolID);
+		Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidScaleFactor, SvStl::SourceFileParams(StdMessageParams), 0, m_toolID);
 		return false;
 	}
 	if (S_OK != SvCmd::RunOnceSynchronous(m_inspectionID))
@@ -266,17 +288,17 @@ bool SVTADlgResizePage::CommitAndCheckNewParameterValues()
 }
 
 
-void SVTADlgResizePage::CommitValues()
+void SVTADlgResizePage::CommitValuesFromDialog()
 {
 	m_resizeValueController.Set<long>(SvPb::ResizeInterpolationModeEId, m_selectedInterpolationMode);
 
-	m_contentWidthHelper.EditboxToValue();
-	m_contentHeightHelper.EditboxToValue();
+	for (SvOg::ValueEditWidgetHelper& rEditHelper : m_allEditHelpers)
+	{
+		rEditHelper.EditboxToValue();
+	}
 
-	m_formatWidthHelper.EditboxToValue();
-	m_formatHeightHelper.EditboxToValue();
+	m_resizeValueController.Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
 
-	m_resizeValueController.Commit();
 }
 
 HRESULT SVTADlgResizePage::SetupResizeImageControl()
@@ -318,8 +340,6 @@ void SVTADlgResizePage::OnAnyItemChanged()
 	getInterpolationModeFromDialog();
 
 	CommitAndCheckNewParameterValues();
-
-	GetAndDisplayValuesFromTool();
 }
 
 std::string SVTADlgResizePage::GetToolname() const
@@ -337,3 +357,38 @@ std::string SVTADlgResizePage::GetToolname() const
 	}
 	return inspectionName;
 }
+
+
+void SVTADlgResizePage::traceScalefactorValues(const std::string &rHeading, bool alsoAsDouble) const
+{
+		std::stringstream traceStream;
+
+		traceStream << rHeading << ":" << std::endl;
+
+		bool isLink = true;
+
+		for (SvPb::EmbeddedIdEnum eid: ms_allScaleFactorEIDs)
+		{
+			auto temp = m_resizeValueController.Get<CString>(eid);
+
+			traceStream << "\t" << eid << ": '" << temp.GetBuffer(0) << "'";
+
+			if (isLink) 
+			{
+				traceStream << " -> ";
+			}
+			else
+			{
+				if (alsoAsDouble)
+				{
+					auto temp_d = m_resizeValueController.Get<double>(eid);
+					traceStream << "/" << temp_d;
+				}
+				traceStream << std::endl;
+			}
+			isLink = !isLink;
+		}
+		OutputDebugString(traceStream.str().c_str());
+}
+
+

@@ -120,13 +120,13 @@ public:
 	HRESULT LoadConfiguration(SVTreeType& rTree);
 
 	//************************************
-	//! Load Enviroment section of configuration
+	//! Load Environment section of configuration
 	//! \param rTree [in]
 	//! \param rConfigurationColor [out]
 	//! \throw  MessageContainer
 	//! \returns void
 	//************************************
-	void LoadEnviroment(SVTreeType& rTree, bool& rConfigurationColor);
+	void LoadEnvironment(SVTreeType& rTree, bool& rConfigurationColor);
 
 	//************************************
 	//! Load IO sectiom 

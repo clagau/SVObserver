@@ -640,8 +640,7 @@ namespace SvStl
 		{Tid_Correct_Grouping_Add_S_Items, _T("Correct grouping add  '%s' Items.") },
 		{Tid_GroupDependencies_Wrong, _T("Group Dependencies wrong, if tool closed it is not allowed to have dependencies inside out.") },
 
-		{ Tid_InvalidScaleFactor, _T("Invalid Scale Factor.") },
-			
+		{ Tid_InvalidScaleFactor, _T("Invalid Scale Factor") },
 
 		{ Tid_LinearImageOperatorList_ResultCreateFailed, _T("Create of Results for LinearImageOperatorList failed.") },
 		{ Tid_LinearImageOperatorList_GetResultRangeFailed, _T("Get Range for the Result failed in LinearImageOperatorList.") },

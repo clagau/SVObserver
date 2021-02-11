@@ -87,10 +87,10 @@ void SVToolClass::init()
 	m_svAuxiliarySourceX.SetTypeName(_T("Extent X"));
 	m_svAuxiliarySourceY.SetTypeName(_T("Extent Y"));
 	m_svAuxiliarySourceAngle.SetTypeName(_T("Extent Angle"));
-	m_ExtentHeightFactorContent.SetTypeName(_T("Extent Height Scale Factor"));
-	m_ExtentWidthFactorContent.SetTypeName(_T("Extent Width Scale Factor"));
-	m_ExtentHeightFactorFormat.SetTypeName(_T("Extent Height Format Scale Factor"));
-	m_ExtentWidthFactorFormat.SetTypeName(_T("Extent Width Format Scale Factor "));
+	m_ExtentHeightFactorContent.SetTypeName(_T("Scale Factor"));
+	m_ExtentWidthFactorContent.SetTypeName(_T("Scale Factor"));
+	m_ExtentHeightFactorFormat.SetTypeName(_T("Scale Factor"));
+	m_ExtentWidthFactorFormat.SetTypeName(_T("Scale Factor"));
 
 	RegisterEmbeddedObject(&m_ExtentLeft, SvPb::ExtentRelativeLeftPositionEId, IDS_OBJECTNAME_EXTENT_LEFT, false, SvOi::SVResetItemTool);
 	RegisterEmbeddedObject(&m_ExtentTop, SvPb::ExtentRelativeTopPositionEId, IDS_OBJECTNAME_EXTENT_TOP, false, SvOi::SVResetItemTool);
@@ -130,7 +130,7 @@ void SVToolClass::init()
 	registerEmbeddedLinkedValue(
 		&m_ExtentHeightFactorFormat,
 		SvPb::ExtentHeightFactorFormatEId,
-		SvPb::ExtentFormatHeightFactorLinkEId,
+		SvPb::ExtentHeightFactorFormatLinkEId,
 		IDS_OBJECTNAME_EXTENT_HEIGHT_FACTOR_FORMAT, _variant_t(0.0));
 
 	m_toolExtent.SetTool(this);
@@ -190,7 +190,7 @@ void SVToolClass::init()
 	m_ExtentHeight.SetDefaultValue(SvDef::cDefaultWindowToolHeight, true);
 	m_ExtentWidthFactorContent.SetDefaultValue(SvDef::cDefaultScaleFactor, true);
 	m_ExtentHeightFactorContent.SetDefaultValue(SvDef::cDefaultScaleFactor, true);
-	m_ExtentWidthFactorFormat.SetDefaultValue(0.0, true);  
+	m_ExtentWidthFactorFormat.SetDefaultValue(0.0, true);
 	//this needs to be 0.0 rather than SvDef::cDefaultScaleFactor to ensure proper behaviour 
 	//with pre-10.10 configurations in ResizeTool::CreateObject()
 	m_ExtentHeightFactorFormat.SetDefaultValue(0.0, true);
@@ -238,6 +238,14 @@ SVToolClass::~SVToolClass()
 
 bool SVToolClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 {
+	//@Hack: [Arvid][05.02.21]
+	//AB we already create these linked values here because they may be needed in 
+	//SVToolExtentPropertiesClass::GetProperties() called during CreateObject
+	m_ExtentWidthFactorContent.createAllObjects(rCreateStructure);
+	m_ExtentHeightFactorContent.createAllObjects(rCreateStructure);
+	m_ExtentWidthFactorFormat.createAllObjects(rCreateStructure);
+	m_ExtentHeightFactorFormat.createAllObjects(rCreateStructure);
+
 	bool bOk = SVTaskObjectListClass::CreateObject(rCreateStructure);
 
 	if (bOk)
@@ -285,7 +293,7 @@ bool SVToolClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure
 	m_ExtentWidth.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::remotelySetable | SvPb::extentObject | SvPb::setableOnline, SvOi::SetAttributeType::AddAttribute);
 	m_ExtentHeight.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::remotelySetable | SvPb::extentObject | SvPb::setableOnline, SvOi::SetAttributeType::AddAttribute);
 
-	// Defaults for the Scale Factors should be hidden (but NOT removed at this time, so 
+	// Defaults for the Scale Factors should be hidden but NOT removed at this time
 	m_ExtentWidthFactorContent.SetObjectAttributesAllowed(SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::RemoveAttribute);
 	m_ExtentHeightFactorContent.SetObjectAttributesAllowed(SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::RemoveAttribute);
 	m_ExtentWidthFactorFormat.SetObjectAttributesAllowed(SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::RemoveAttribute);

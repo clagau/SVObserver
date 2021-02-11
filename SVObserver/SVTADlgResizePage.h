@@ -26,7 +26,6 @@ class SVRPropertyItem;
 struct ResizeParameters;
 
 enum ScaleFactorDimension { Width, Height, Max };
-static std::initializer_list<ScaleFactorDimension> c_bothScaleFactorDimensions{ ScaleFactorDimension::Width, ScaleFactorDimension::Height };
 
 class SVTADlgResizePage :
 	public CPropertyPage, 
@@ -49,7 +48,7 @@ private:
 	void getInterpolationModeFromDialog();
 	bool CommitAndCheckNewParameterValues();
 
-	void CommitValues();
+	void CommitValuesFromDialog();
 
 	InterpolationMode m_selectedInterpolationMode = InterpolationMode::Default;
 
@@ -58,8 +57,11 @@ private:
 	void GetAndDisplayValuesFromTool();
 	void PickValue(CButton& rButton, CEdit& rEdit, UINT ResourceID);
 
+	void traceScalefactorValues(const std::string &rHeading, bool alsoAsDouble=false) const ;
 
 	SVToolAdjustmentDialogSheetClass* m_ParentDialog;
+
+	static const std::vector<SvPb::EmbeddedIdEnum> ms_allScaleFactorEIDs;
 
 	std::map<std::string, InterpolationMode> m_InterpolationModeByModeName;
 	std::map<InterpolationMode, std::string> m_InterpolationModeNameByMode;
@@ -92,6 +94,8 @@ private:
 
 	CComboBox m_InterpolationModeCombo;
 	std::vector<std::string> m_InterpolationModeNames;
+
+	std::vector<std::reference_wrapper<SvOg::ValueEditWidgetHelper>> m_allEditHelpers;
 
 	//{{AFX_DATA(SVTADlgResizePage)
 	enum { IDD = IDD_TA_RESIZE_DIALOG };

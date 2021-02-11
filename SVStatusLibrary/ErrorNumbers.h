@@ -312,7 +312,7 @@ namespace SvStl
 	constexpr int Err_16058_ErrorMissingRemoteIndexTag =  Mec_ErrorBase + 58;
 	constexpr int Err_16059_ErrorMissingItemNameTag   =  Mec_ErrorBase + 59;
 	constexpr int Err_16060_IOEntryIsMissing=  Mec_ErrorBase + 60;
-	constexpr int Err_16061_EnviromentTagIsMissing =  Mec_ErrorBase + 61;
+	constexpr int Err_16061_EnvironmentTagIsMissing =  Mec_ErrorBase + 61;
 	///New Errornumbers SAX PARSER
 	constexpr int 	Err_16062_TODO =  Mec_ErrorBase + 62;
 	constexpr int 	Err_16063_SAXPARSER =  Mec_ErrorBase + 63;

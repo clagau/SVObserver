@@ -24,11 +24,16 @@ namespace SvOg
 
 		static void EnsureDownArrowBitmapIsLoaded();
 
+		/// reads a string from an editbox and sets the appropriate ValueObject accordingly.
 		void EditboxToValue();
+		/// reads a string from a ValueObject and sets the appropriate editbox accordingly.
 		void ValueToEditbox();
 		void EnableGuiElements(BOOL enable);
 
+		std::string GetValueString();
+
 	private:
+			
 		static CBitmap ms_downArrowBitmap;
 		static bool ms_downArrowBitmapWasLoaded;
 

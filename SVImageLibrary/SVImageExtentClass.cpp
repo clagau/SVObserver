@@ -102,10 +102,10 @@ static const SVExtentPropertyStringMap cExtentPropertyShortNamesAbridged=
 	{SvPb::SVExtentPropertyHeight, std::string("h")},
 	{SvPb::SVExtentPropertyOutputWidth, std::string("wOut")},
 	{SvPb::SVExtentPropertyOutputHeight, std::string("hOut")},
-	{SvPb::SVExtentPropertyWidthFactorContent, std::string("w*")},
-	{SvPb::SVExtentPropertyHeightFactorContent, std::string("h*")},
-	{SvPb::SVExtentPropertyWidthFactorFormat, std::string("wS*")},
-	{SvPb::SVExtentPropertyHeightFactorFormat, std::string("hS*")},
+	{SvPb::SVExtentPropertyWidthFactorContent, std::string("wC")},
+	{SvPb::SVExtentPropertyHeightFactorContent, std::string("hC*")},
+	{SvPb::SVExtentPropertyWidthFactorFormat, std::string("wF*")},
+	{SvPb::SVExtentPropertyHeightFactorFormat, std::string("hF*")},
 };
 
 static const SVExtentPropertyPointMap cExtentPropertyPointMap =
@@ -5025,17 +5025,17 @@ void SVImageExtentClass::OutputDebugInformationOnExtent(const char* pDescription
 
 					if (referencePropertyAndValue->second != propertyAndValue.second)
 					{
-						info << enumAndName->second << ":" << referencePropertyAndValue->second << "->" << propertyAndValue.second;
+						info << enumAndName->second << "=" << referencePropertyAndValue->second << "->" << propertyAndValue.second;
 					}
 				}
 				else
 				{
-					info << enumAndName->second << ":" << "???->" << propertyAndValue.second;
+					info << enumAndName->second << "=" << "???->" << propertyAndValue.second;
 				}
 			}
 			else
 			{
-				info << enumAndName->second << ":" << propertyAndValue.second;
+				info << enumAndName->second << "=" << propertyAndValue.second;
 			}
 		}
 		info << " ";

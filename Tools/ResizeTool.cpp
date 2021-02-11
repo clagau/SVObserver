@@ -157,6 +157,12 @@ bool ResizeTool::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 {
 	bool bOk = SVToolClass::CreateObject(rCreateStructure);
 
+	// for the ResizeTool, we want to be able to see and store these scale factors
+	m_ExtentWidthFactorContent.SetObjectAttributesAllowed(SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::AddAttribute);
+	m_ExtentHeightFactorContent.SetObjectAttributesAllowed(SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::AddAttribute);
+	m_ExtentWidthFactorFormat.SetObjectAttributesAllowed(SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::AddAttribute);
+	m_ExtentHeightFactorFormat.SetObjectAttributesAllowed(SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::AddAttribute);
+
 	SvIe::SVImageClass* pInputImage = getInputImage();
 	bOk &= (nullptr != pInputImage);
 
@@ -398,7 +404,7 @@ bool ResizeTool::ModifyImageExtentByScaleFactors()
 
 bool ResizeTool::AreAllAllScaleFactorValuesValid()
 {
-	return  isValidScaleFactorLV(m_ExtentWidthFactorContent)
+	return isValidScaleFactorLV(m_ExtentWidthFactorContent)
 		&& isValidScaleFactorLV(m_ExtentHeightFactorContent)
 		&& isValidScaleFactorLV(m_ExtentWidthFactorFormat)
 		&& isValidScaleFactorLV(m_ExtentHeightFactorFormat);

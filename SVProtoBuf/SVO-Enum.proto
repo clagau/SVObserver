@@ -1158,7 +1158,7 @@ enum EmbeddedIdEnum
 	ExtentWidthFactorFormatEId = 516;
 	ExtentWidthFactorFormatLinkEId = 517;
 	ExtentHeightFactorFormatEId = 518;
-	ExtentFormatHeightFactorLinkEId = 519;
+	ExtentHeightFactorFormatLinkEId = 519;
 	ShapeMaskPropertyCenterXLinkEId = 534;
 	ShapeMaskPropertyCenterYLinkEId = 635;
 	ShapeMaskPropertyWidthLinkEId = 536;
