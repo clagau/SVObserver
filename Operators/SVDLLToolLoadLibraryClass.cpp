@@ -157,7 +157,7 @@ namespace SvOp
 		if (nullptr == m_hmHandle)	// can't load library
 		{
 			Result = -12378;
-			e.setMessage(static_cast<DWORD> (Result), SvStl::Tid_ToolLoadError, SvStl::SourceFileParams(StdMessageParams));
+			e.setMessage(0, SvStl::Tid_ToolLoadError, SvStl::SourceFileParams(StdMessageParams));
 		}
 		if (Result == S_OK) //checkResultValueDefinition
 		{
@@ -252,7 +252,7 @@ namespace SvOp
 				else	// error in MIL/HBITMAP definitions
 				{
 					Result = -12372;
-					e.setMessage(-12372, SvStl::Tid_ToolLoadError_ImageDef, SvStl::SourceFileParams(StdMessageParams));
+					e.setMessage(0, SvStl::Tid_ToolLoadError_ImageDef, SvStl::SourceFileParams(StdMessageParams), static_cast<DWORD> (Result));
 
 					// none are defined
 					if (!m_pfnSetMILResultImages && !m_pfnSetMILInputImages
@@ -291,13 +291,13 @@ namespace SvOp
 						if (lTest != 2)
 						{
 							Result = -12349;
-							e.setMessage(static_cast<DWORD> (Result), SvStl::Tid_ToolLoadError_SimpleTest, SvStl::SourceFileParams(StdMessageParams));
+							e.setMessage(0, SvStl::Tid_ToolLoadError_SimpleTest, SvStl::SourceFileParams(StdMessageParams), static_cast<DWORD> (Result));
 						}
 					}
 					catch (...)
 					{
 						Result = -12384;
-						e.setMessage(static_cast<DWORD> (Result), SvStl::Tid_ToolLoadError_SimpleTestException, SvStl::SourceFileParams(StdMessageParams));
+						e.setMessage(0, SvStl::Tid_ToolLoadError_SimpleTestException, SvStl::SourceFileParams(StdMessageParams), static_cast<DWORD> (Result));
 					}
 
 				}
@@ -309,13 +309,13 @@ namespace SvOp
 						Result = m_pfnStartup();
 						if (S_OK != Result)
 						{
-							e.setMessage(static_cast<DWORD> (Result), SvStl::Tid_ToolLoadError_DllStartup, SvStl::SourceFileParams(StdMessageParams));
+							e.setMessage(0, SvStl::Tid_ToolLoadError_DllStartup, SvStl::SourceFileParams(StdMessageParams), static_cast<DWORD> (Result));
 						}
 					}
 					catch (...)
 					{
 						Result = -12385;
-						e.setMessage(static_cast<DWORD> (Result), SvStl::Tid_ToolLoadError_DllStartupException, SvStl::SourceFileParams(StdMessageParams));
+						e.setMessage(0, SvStl::Tid_ToolLoadError_DllStartupException, SvStl::SourceFileParams(StdMessageParams), static_cast<DWORD> (Result));
 					}
 				}
 				// Get Tool Name
@@ -328,7 +328,7 @@ namespace SvOp
 						Result = m_pfnGetToolName(&bstName);
 						if (S_OK != Result)
 						{
-							e.setMessage(static_cast<DWORD> (Result), SvStl::Tid_ToolLoadError_GetToolName, SvStl::SourceFileParams(StdMessageParams));
+							e.setMessage(0, SvStl::Tid_ToolLoadError_GetToolName, SvStl::SourceFileParams(StdMessageParams), static_cast<DWORD> (Result));
 						}
 						else
 						{
@@ -338,7 +338,7 @@ namespace SvOp
 					catch (...)
 					{
 						Result = -12386;
-						e.setMessage(static_cast<DWORD> (Result), SvStl::Tid_ToolLoadError_GetToolNameException, SvStl::SourceFileParams(StdMessageParams));
+						e.setMessage(0, SvStl::Tid_ToolLoadError_GetToolNameException, SvStl::SourceFileParams(StdMessageParams), static_cast<DWORD> (Result));
 					}
 
 				}
@@ -352,7 +352,7 @@ namespace SvOp
 						Result = m_pfnGetToolVersion(&lTmp);
 						if (S_OK != Result)
 						{
-							e.setMessage(static_cast<DWORD> (Result), SvStl::Tid_ToolLoadError_GetToolVersion, SvStl::SourceFileParams(StdMessageParams));
+							e.setMessage(0, SvStl::Tid_ToolLoadError_GetToolVersion, SvStl::SourceFileParams(StdMessageParams), static_cast<DWORD> (Result));
 						}
 						else
 						{
@@ -363,7 +363,7 @@ namespace SvOp
 					catch (...)
 					{
 						Result = -12387;
-						e.setMessage(static_cast<DWORD> (Result), SvStl::Tid_ToolLoadError_GetToolVersionException, SvStl::SourceFileParams(StdMessageParams));
+						e.setMessage(0, SvStl::Tid_ToolLoadError_GetToolVersionException, SvStl::SourceFileParams(StdMessageParams), static_cast<DWORD> (Result));
 					}
 				}
 
@@ -371,7 +371,7 @@ namespace SvOp
 			else	// get proc address failure
 			{
 				Result = -12350;
-				e.setMessage(static_cast<DWORD> (Result), SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
+				e.setMessage(0, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), static_cast<DWORD> (Result));
 
 				if (!m_pfnSimpleTest)                      e.addMessage(SvStl::MessageData(static_cast<DWORD> (-12351), SvStl::Tid_GetProcAddressError_SimpleTest), false);
 				if (!m_pfnGetToolName)                     e.addMessage(SvStl::MessageData(static_cast<DWORD> (-12352), SvStl::Tid_GetProcAddressError_GetToolName), false);
@@ -562,32 +562,32 @@ namespace SvOp
 
 	HRESULT SVDLLToolLoadLibraryClass::RunTool(uint32_t toolId, long* plStatus)
 	{
-		HRESULT l_hrOk = S_FALSE;
+		HRESULT result = S_FALSE;
 
 		if (nullptr != m_pfnRunTool)
 		{
 			try
 			{
-				l_hrOk = m_pfnRunTool(GUID{ toolId }, plStatus);
+				result = m_pfnRunTool(GUID{ toolId }, plStatus);
 			}
 			catch (...)
 			{
-				l_hrOk = SVMSG_SVO_31_EXCEPTION_IN_EXTERNAL_DLL;
+				result = SVMSG_SVO_31_EXCEPTION_IN_EXTERNAL_DLL;
 			}
-			l_hrOk = (l_hrOk == ERROR_USER_EXCEPTION) ? SVMSG_SVO_31_EXCEPTION_IN_EXTERNAL_DLL : l_hrOk;
+			result = (result == ERROR_USER_EXCEPTION) ? SVMSG_SVO_31_EXCEPTION_IN_EXTERNAL_DLL : result;
 
-			if (S_OK != l_hrOk)
+			if (S_OK != result)
 			{
 				assert(false);
 				SvDef::StringVector msgList;
-				msgList.push_back(SvUl::Format(_T("%d"), l_hrOk));
+				msgList.push_back(SvUl::Format(_T("%d"), result));
 
 				SvStl::MessageManager Exception(SvStl::MsgType::Log);
-				Exception.setMessage(static_cast<DWORD> (l_hrOk), SvStl::Tid_RunTool_Exception, msgList, SvStl::SourceFileParams(StdMessageParams));
+				Exception.setMessage(static_cast<DWORD> (result), SvStl::Tid_RunTool_Exception, msgList, SvStl::SourceFileParams(StdMessageParams));
 			}
 		}
 
-		return l_hrOk;
+		return result;
 	}
 
 	HRESULT SVDLLToolLoadLibraryClass::Startup()
@@ -632,31 +632,31 @@ namespace SvOp
 
 	HRESULT SVDLLToolLoadLibraryClass::InitializeRun(uint32_t toolId, long lImageArraySize, SVImageDefinitionStruct* paStructs, long lValueArraySize, VARIANT* pavImputValues)
 	{
-		HRESULT l_hrOk = S_FALSE;
+		HRESULT result = S_FALSE;
 
 		if (nullptr != m_pfnInitializeRun)
 		{
 			try
 			{
-				l_hrOk = m_pfnInitializeRun(GUID{ toolId }, lImageArraySize, paStructs, lValueArraySize, pavImputValues);
+				result = m_pfnInitializeRun(GUID{ toolId }, lImageArraySize, paStructs, lValueArraySize, pavImputValues);
 			}
 			catch (...)
 			{
-				l_hrOk = SVMSG_SVO_31_EXCEPTION_IN_EXTERNAL_DLL;
+				result = SVMSG_SVO_31_EXCEPTION_IN_EXTERNAL_DLL;
 			}
-			l_hrOk = (l_hrOk == ERROR_USER_EXCEPTION) ? SVMSG_SVO_31_EXCEPTION_IN_EXTERNAL_DLL : l_hrOk;
+			result = (result == ERROR_USER_EXCEPTION) ? SVMSG_SVO_31_EXCEPTION_IN_EXTERNAL_DLL : result;
 
-			if (S_OK != l_hrOk)
+			if (S_OK != result)
 			{
 				assert(false);
 				SvDef::StringVector msgList;
-				msgList.push_back(SvUl::Format(_T("%d"), l_hrOk));
+				msgList.push_back(SvUl::Format(_T("%d"), result));
 				SvStl::MessageManager Exception(SvStl::MsgType::Log);
-				Exception.setMessage(static_cast<DWORD> (l_hrOk), SvStl::Tid_SVInitializeRun_Exception, msgList, SvStl::SourceFileParams(StdMessageParams));
+				Exception.setMessage(static_cast<DWORD> (result), SvStl::Tid_SVInitializeRun_Exception, msgList, SvStl::SourceFileParams(StdMessageParams));
 			}
 		}
 
-		return l_hrOk;
+		return result;
 	}
 
 	HRESULT SVDLLToolLoadLibraryClass::UninitializeRun(uint32_t toolId)

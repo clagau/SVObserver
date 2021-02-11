@@ -152,7 +152,14 @@ namespace SvStl
 		//Set the date time when this is being set
 		m_Message.m_DateTime = std::time( 0 );
 
-		Format( m_What );
+		if (0 == m_Message.m_MessageCode)
+		{
+			m_What = m_Message.getAdditionalText();
+		}
+		else
+		{
+			Format(m_What);
+		}
 	}
 
 	void MessageContainer::addMessage( long MessageCode, MessageTextEnum AdditionalTextId, SvDef::StringVector AdditionalTextList, SourceFileParams SourceFile , DWORD ProgramCode )
