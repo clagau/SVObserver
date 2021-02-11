@@ -24,6 +24,7 @@ message Image
 	bytes rgbData = 1;				//The raw RGB image data as a byte array
 	uint32 width = 2;				//The width of the image
 	uint32 height = 3;				//The height of the image
+	string type = 4;                // The image's mime type (by default "image/bmp" is assumed)
 }
 
 ///Standard responce for requests that only return an hResult and MessageContainer

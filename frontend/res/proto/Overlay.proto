@@ -9,6 +9,8 @@
 syntax = "proto3";
 package SvPb;
 
+import "BasicStructure.proto";
+
 message ValueObject
 {
 	double value = 1;
@@ -91,6 +93,7 @@ message OverlayShape
 		OverlayShapeMarkerArray markers = 7;
 		OverlayShapeBlockMarker blockMarker = 8;
 		OverlayShapeGraph graph = 9;
+		OverlayShapeImage image = 10;
 	}
 }
 
@@ -261,4 +264,15 @@ message OverlayShapeGraph
 
 	int32 trPosX = 7;
 	int32 trPosY = 8;
+}
+
+// Same logic that also applies to OverlayShapeRect, but instead of
+// drawing a rectangle, the embedded image is drawn.
+message OverlayShapeImage
+{
+	ValueObject x = 1;
+	ValueObject y = 2;
+	ValueObject w = 3;
+	ValueObject h = 4;
+	Image image = 5;
 }
