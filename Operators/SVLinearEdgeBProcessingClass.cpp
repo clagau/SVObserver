@@ -87,7 +87,7 @@ SVLinearEdgeBProcessingClass::SVLinearEdgeBProcessingClass( SVObjectClass* POwne
 		SvPb::UseLowerThresholdMaxMinusPercentDiffBEId, SvPb::UseLowerThresholdMaxMinusOffsetBEId, SvPb::UseLowerThresholdMinPlusOffsetBEId,
 		SvPb::EdgeBLowerThresholdValueEId, SvPb::LowerThresholdMaxMinusPercentDiffBEId, SvPb::LowerThresholdMaxMinusOffsetBEId,
 		SvPb::LowerThresholdMinPlusOffsetBEId, SvPb::UseUpperThresholdSelectableBEId, SvPb::UseUpperThresholdMaxMinusPercentDiffBEId,
-		SvPb::UseUpperThresholdMaxMinusOffsetBEId, SvPb::UseUpperThresholdMinPlusOffsetBEId, SvPb::EdgeBLowerThresholdValueEId,
+		SvPb::UseUpperThresholdMaxMinusOffsetBEId, SvPb::UseUpperThresholdMinPlusOffsetBEId, SvPb::EdgeBUpperThresholdValueEId,
 		SvPb::UpperThresholdMaxMinusPercentDiffBEId, SvPb::UpperThresholdMaxMinusOffsetBEId, SvPb::UpperThresholdMinPlusOffsetBEId,
 		SvPb::LinearEdgesEId
 	};
