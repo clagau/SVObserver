@@ -46,7 +46,7 @@ private:
 	bool writeAndReadSingleValue(int index, int listSize, const std::vector<std::vector<uint8_t>>& rDataVector);
 	int createDataDefContainer(std::vector<std::vector<uint8_t>>& rDataMemVector, SvPb::DataDefinitionList& rDataDefList);
 	
-	SvOi::ITriggerRecordControllerRW &m_TRController;
+	SvOi::ITriggerRecordControllerRW* m_pTrcRW;
 	TrcTesterConfiguration& m_config;
 	LogClass& m_rLogClass;
 };

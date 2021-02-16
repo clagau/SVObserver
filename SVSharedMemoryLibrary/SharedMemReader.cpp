@@ -140,16 +140,20 @@ SharedMemReader::retvalues  SharedMemReader::_GetProduct(const GetProdPar& par, 
 	pProduct->m_slot = slot;
 	pProduct->m_SlotManagerIndex = SlotManagerIndex;
 	pProduct->m_trigger = rBp->GetTriggerNumber(slot);
-	for (auto ipPair : pML->m_InspectionIdsVector)
+	auto* pTRC = SvOi::getTriggerRecordControllerRInstance();
+	if (nullptr != pTRC)
 	{
-		pProduct->m_triggerRecordMap[ipPair.first] = SvOi::getTriggerRecordControllerRInstance().createTriggerRecordObjectPerTriggerCount(ipPair.second, pProduct->m_trigger);
-#if defined (TRACE_THEM_ALL) || defined (TRACE_TRC)
-		if (nullptr == pProduct->m_triggerRecordMap[ipPair.first])
+		for (auto ipPair : pML->m_InspectionIdsVector)
 		{
-			std::string DebugString = SvUl::Format(_T("_GetProduct: TRC is null; %d\n"), ipPair.first);
-			::OutputDebugString(DebugString.c_str());
-		}
+			pProduct->m_triggerRecordMap[ipPair.first] = pTRC->createTriggerRecordObjectPerTriggerCount(ipPair.second, pProduct->m_trigger);
+#if defined (TRACE_THEM_ALL) || defined (TRACE_TRC)
+			if (nullptr == pProduct->m_triggerRecordMap[ipPair.first])
+			{
+				std::string DebugString = SvUl::Format(_T("_GetProduct: TRC is null; %d\n"), ipPair.first);
+				::OutputDebugString(DebugString.c_str());
+			}
 #endif
+		}
 	}
 	pProduct->m_status = S_OK;
 
@@ -203,7 +207,8 @@ bool SharedMemReader::GetFailStatusData(LPCTSTR Monitorlist, int  TriggerNumber,
 
 SVMatroxBuffer SharedMemReader::GetImageBuffer(int triggerRecordId, int inspectionId, int imageIndex)
 {
-	auto pTr = SvOi::getTriggerRecordControllerRInstance().createTriggerRecordObject(inspectionId, triggerRecordId);
+	auto* pTRC = SvOi::getTriggerRecordControllerRInstance();
+	auto pTr = (nullptr != pTRC) ? pTRC->createTriggerRecordObject(inspectionId, triggerRecordId) : nullptr;
 	if (nullptr != pTr)
 	{
 		SvOi::ITRCImagePtr pImage = nullptr;

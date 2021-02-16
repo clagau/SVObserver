@@ -37,8 +37,11 @@ Image::~Image()
 
 bool Image::isValid() const
 {
+	const auto* pTRC = getTriggerRecordControllerInstance();
+	long resetId = (nullptr != pTRC) ? pTRC->getResetId() : -1L;
+
 	// cppcheck-suppress knownConditionTrueFalse //constructor can change values and if can be true
-	return (getTriggerRecordControllerInstance().getResetId() == m_ResetId && 0 < m_ResetId) || (cLocalTmpImagePos == m_bufferPos);
+	return (resetId == m_ResetId && 0 < m_ResetId && 0 < resetId) || (cLocalTmpImagePos == m_bufferPos);
 }
 
 } //namespace SvTRC

@@ -76,14 +76,17 @@ void SharedMemoryAccess::GetInspections(const SvPb::GetInspectionsRequest&, SvRp
 	SvPenv::Error Error;
 	SvPb::GetInspectionsResponse Response;
 
-	auto& trc = SvOi::getTriggerRecordControllerRInstance();
-	const auto& inspections = trc.getInspections();
-	for (int i = 0; i < inspections.list_size(); ++i)
+	auto* pTrc = SvOi::getTriggerRecordControllerRInstance();
+	if (nullptr != pTrc)
 	{
-		const auto& inspection = inspections.list(i);
-		auto& entry = *Response.add_inspections();
-		entry.set_id(inspection.id());
-		entry.set_name(inspection.name());
+		const auto& rInspections = pTrc->getInspections();
+		for (int i = 0; i < rInspections.list_size(); ++i)
+		{
+			const auto& rInspection = rInspections.list(i);
+			auto& entry = *Response.add_inspections();
+			entry.set_id(rInspection.id());
+			entry.set_name(rInspection.name());
+		}
 	}
 
 	task.finish(std::move(Response));
@@ -234,25 +237,28 @@ void SharedMemoryAccess::StoreClientLogs(const SvPb::StoreClientLogsRequest& rRe
 
 void SharedMemoryAccess::SetRejectStreamPauseState(const SvPb::SetRejectStreamPauseStateRequest& rRequest, SvRpc::Task<SvPb::EmptyResponse> task)
 {
-	auto& trc = SvOi::getTriggerRecordControllerRInstance();
-	google::protobuf::uint32 inspectionId = rRequest.inspectionid();
-	if (inspectionId == 0)
+	auto* pTrc = SvOi::getTriggerRecordControllerRInstance();
+	if (nullptr != pTrc)
 	{
-		trc.pauseTrsOfInterest(rRequest.pause());
-	}
-	else
-	{
-		const auto inspectionPos = get_inspection_pos_for_id(trc, inspectionId);
-		if (inspectionPos < 0)
+		google::protobuf::uint32 inspectionId = rRequest.inspectionid();
+		if (inspectionId == 0)
 		{
-			SvPenv::Error err;
-			err.set_errorcode(SvPenv::ErrorCode::notFound);
-			err.set_message("Unknown inspection id");
-			task.error(err);
-			return;
+			pTrc->pauseTrsOfInterest(rRequest.pause());
 		}
+		else
+		{
+			const auto inspectionPos = get_inspection_pos_for_id(pTrc->getInspections(), inspectionId);
+			if (inspectionPos < 0)
+			{
+				SvPenv::Error err;
+				err.set_errorcode(SvPenv::ErrorCode::notFound);
+				err.set_message("Unknown inspection id");
+				task.error(err);
+				return;
+			}
 
-		trc.pauseTrsOfInterest(rRequest.pause(), inspectionPos);
+			pTrc->pauseTrsOfInterest(rRequest.pause(), inspectionPos);
+		}
 	}
 
 	SvPb::EmptyResponse Response;
@@ -349,15 +355,18 @@ void SharedMemoryAccess::check_queue_for_new_trigger_record()
 
 void SharedMemoryAccess::add_new_triggers_to_product_stream(product_stream_t& product_stream, const std::vector<SvOi::TrInterestEventData>& new_triggers)
 {
-	auto& trc = SvOi::getTriggerRecordControllerRInstance();
-	const auto& inspections = trc.getInspections();
-
-	for (const auto& new_trigger : new_triggers)
+	auto* pTrc = SvOi::getTriggerRecordControllerRInstance();
+	if (nullptr != pTrc)
 	{
-		const auto& inspection = inspections.list(new_trigger.m_inspectionPos);
-		if (is_subscribed_to(product_stream.req, inspection) && ((new_trigger.m_isInterest && product_stream.interestedInRejects) || product_stream.interestedInAllProducts))
+		const auto& rInspections = pTrc->getInspections();
+
+		for (const auto& new_trigger : new_triggers)
 		{
-			product_stream.newTriggerQueue.push_back(new_trigger);
+			const auto& rInspection = rInspections.list(new_trigger.m_inspectionPos);
+			if (is_subscribed_to(product_stream.req, rInspection) && ((new_trigger.m_isInterest && product_stream.interestedInRejects) || product_stream.interestedInAllProducts))
+			{
+				product_stream.newTriggerQueue.push_back(new_trigger);
+			}
 		}
 	}
 }
@@ -421,39 +430,42 @@ void SharedMemoryAccess::update_product_stream_queue(product_stream_t& product_s
 
 void SharedMemoryAccess::flush_product_stream_queue(std::shared_ptr<product_stream_t> ptr)
 {
-	auto& trc = SvOi::getTriggerRecordControllerRInstance();
-	const auto& inspections = trc.getInspections();
-
-	auto& queue = ptr->newTriggerQueue;
-	auto numFreeSlots = ptr->ctx->freeSlotsUntilThrottling();
-	while (numFreeSlots > 0 && !queue.empty())
+	auto* pTrc = SvOi::getTriggerRecordControllerRInstance();
+	if (nullptr != pTrc)
 	{
-		--numFreeSlots;
+		const auto& rInspections = pTrc->getInspections();
 
-		auto eventData = queue.front();
-		queue.erase(queue.begin());
-
-		const auto inspectionPos = eventData.m_inspectionPos;
-		const auto isReject = eventData.m_isInterest;
-		const auto trId = eventData.m_trId;
-
-		auto tro = trc.createTriggerRecordObject(inspectionPos, trId);
-		if (!tro)
+		auto& queue = ptr->newTriggerQueue;
+		auto numFreeSlots = ptr->ctx->freeSlotsUntilThrottling();
+		while (numFreeSlots > 0 && !queue.empty())
 		{
-			SV_LOG_GLOBAL(warning) << "TRC returned invalid TRO for inspectionPos=" << inspectionPos << " and trId=" << trId;
-			continue;
-		}
+			--numFreeSlots;
 
-		// while historical products are still pending, new ones make one historical less
-		// TODO better place for this code?
-		if (!ptr->historicalTriggerQueue.empty())
-		{
-			ptr->historicalTriggerQueue.pop_back();
-		}
+			auto eventData = queue.front();
+			queue.erase(queue.begin());
 
-		const auto& inspection = inspections.list(inspectionPos);
-		
-		handle_new_trigger_record(ptr, tro, inspectionPos, inspection.id(), trId, isReject);
+			const auto inspectionPos = eventData.m_inspectionPos;
+			const auto isReject = eventData.m_isInterest;
+			const auto trId = eventData.m_trId;
+
+			auto tro = pTrc->createTriggerRecordObject(inspectionPos, trId);
+			if (!tro)
+			{
+				SV_LOG_GLOBAL(warning) << "TRC returned invalid TRO for inspectionPos=" << inspectionPos << " and trId=" << trId;
+				continue;
+			}
+
+			// while historical products are still pending, new ones make one historical less
+			// TODO better place for this code?
+			if (!ptr->historicalTriggerQueue.empty())
+			{
+				ptr->historicalTriggerQueue.pop_back();
+			}
+
+			const auto& rInspection = rInspections.list(inspectionPos);
+
+			handle_new_trigger_record(ptr, tro, inspectionPos, rInspection.id(), trId, isReject);
+		}
 	}
 }
 
@@ -602,10 +614,10 @@ SvSyl::SVFuture<void> SharedMemoryAccess::handle_new_trigger_record(std::shared_
 
 SvSyl::SVFuture<void> SharedMemoryAccess::get_product_data(SvPb::GetProductDataResponse& res, const SvPb::GetProductDataRequest& req)
 {
-	auto& trc = SvOi::getTriggerRecordControllerRInstance();
+	auto* pTrc = SvOi::getTriggerRecordControllerRInstance();
 	const auto inspectionId = req.inspectionid();
-	const auto inspectionPos = get_inspection_pos_for_id(trc, inspectionId);
-	if (inspectionPos < 0)
+	int inspectionPos  = (nullptr != pTrc) ? get_inspection_pos_for_id(pTrc->getInspections(), inspectionId) : -1;
+	if (nullptr == pTrc || inspectionPos < 0)
 	{
 		// TODO;
 		return SvSyl::SVPromise<void>::make_ready();
@@ -614,10 +626,10 @@ SvSyl::SVFuture<void> SharedMemoryAccess::get_product_data(SvPb::GetProductDataR
 	auto trId = req.trigger();
 	if (trId <= 0)
 	{
-		trId = trc.getLastTrId(inspectionPos);
+		trId = pTrc->getLastTrId(inspectionPos);
 	}
 
-	auto tro = trc.createTriggerRecordObject(inspectionPos, trId);
+	auto tro = pTrc->createTriggerRecordObject(inspectionPos, trId);
 	if (!tro)
 	{
 		// TODO;
@@ -628,8 +640,8 @@ SvSyl::SVFuture<void> SharedMemoryAccess::get_product_data(SvPb::GetProductDataR
 	std::vector<int> valuePositions;
 	try
 	{
-		collect_image_pos(imagePositions, trc.getImageDefMap(inspectionPos), trc.getChildImageDefMap(inspectionPos), req.imageids());
-		collect_value_pos(valuePositions, trc.getDataDefMap(inspectionPos), req.valueids());
+		collect_image_pos(imagePositions, pTrc->getImageDefMap(inspectionPos), pTrc->getChildImageDefMap(inspectionPos), req.imageids());
+		collect_value_pos(valuePositions, pTrc->getDataDefMap(inspectionPos), req.valueids());
 	}
 	catch (...)
 	{
@@ -643,7 +655,6 @@ SvSyl::SVFuture<void> SharedMemoryAccess::get_product_data(SvPb::GetProductDataR
 	const auto includeoverlays = req.includeoverlays();
 	auto future = collect_images(*res.mutable_images(), *res.mutable_overlays(), tro, req.imageids(), imagePositions, inspectionPos, inspectionId, includeoverlays);
 	collect_values(*res.mutable_values(), *tro, req.valueids(), valuePositions);
-
 	return future;
 }
 
@@ -749,18 +760,18 @@ void SharedMemoryAccess::collect_values(
 
 void SharedMemoryAccess::collect_historical_triggers(product_stream_t& stream)
 {
-	auto& trc = SvOi::getTriggerRecordControllerRInstance();
+	auto* pTrc = SvOi::getTriggerRecordControllerRInstance();
 
 	int startAtTriggerCount = stream.req.startattriggercount();
-	int inspectionPos = get_inspection_pos_for_id(trc, stream.req.inspectionid());
-	if (startAtTriggerCount == 0 || inspectionPos < 0)
+	int inspectionPos = (nullptr != pTrc) ? get_inspection_pos_for_id(pTrc->getInspections(), stream.req.inspectionid()) : -1;
+	if (nullptr == pTrc || startAtTriggerCount == 0 || inspectionPos < 0)
 	{
 		return;
 	}
 
 	if (startAtTriggerCount > 0)
 	{
-		int lastTrId = trc.getLastTrId(inspectionPos);
+		int lastTrId = pTrc->getLastTrId(inspectionPos);
 		if (startAtTriggerCount > lastTrId)
 		{
 			return;
@@ -769,7 +780,7 @@ void SharedMemoryAccess::collect_historical_triggers(product_stream_t& stream)
 		if (stream.interestedInRejects)
 		{
 			int numHistoricalTrigger = lastTrId - startAtTriggerCount + 1;
-			auto trList = trc.getTrsOfInterest(inspectionPos, numHistoricalTrigger);
+			auto trList = pTrc->getTrsOfInterest(inspectionPos, numHistoricalTrigger);
 			for (const auto& tr : trList)
 			{
 				stream.historicalTriggerQueue.emplace_back(inspectionPos, tr->getId(), false);
@@ -788,7 +799,7 @@ void SharedMemoryAccess::collect_historical_triggers(product_stream_t& stream)
 		int numHistoricalTrigger = std::labs(startAtTriggerCount);
 		if (stream.interestedInRejects)
 		{
-			auto trList = trc.getTrsOfInterest(inspectionPos, numHistoricalTrigger);
+			auto trList = pTrc->getTrsOfInterest(inspectionPos, numHistoricalTrigger);
 			for (const auto& tr : trList)
 			{
 				stream.historicalTriggerQueue.emplace_back(inspectionPos, tr->getId(), false);
@@ -796,7 +807,7 @@ void SharedMemoryAccess::collect_historical_triggers(product_stream_t& stream)
 		}
 		else
 		{
-			int lastTrId = trc.getLastTrId(inspectionPos);
+			int lastTrId = pTrc->getLastTrId(inspectionPos);
 			for (int i = lastTrId; i > 0 && i >= lastTrId - numHistoricalTrigger + 1; --i)
 			{
 				stream.historicalTriggerQueue.emplace_back(inspectionPos, i, false);
@@ -810,7 +821,7 @@ void SharedMemoryAccess::collect_historical_triggers(product_stream_t& stream)
 	}
 
 	// update reject flag or history trigger queue entries
-	auto triggersOfInterest = trc.getTrsOfInterest(inspectionPos, static_cast<int>(stream.historicalTriggerQueue.size()));
+	auto triggersOfInterest = pTrc->getTrsOfInterest(inspectionPos, static_cast<int>(stream.historicalTriggerQueue.size()));
 	for (auto& rEntry : stream.historicalTriggerQueue)
 	{
 		rEntry.m_isInterest = std::any_of(triggersOfInterest.cbegin(), triggersOfInterest.cend(), [&rEntry](const auto& tr) { return tr->getId() == rEntry.m_trId; });
@@ -819,13 +830,12 @@ void SharedMemoryAccess::collect_historical_triggers(product_stream_t& stream)
 
 void SharedMemoryAccess::schedule_historical_triggers(std::shared_ptr<product_stream_t> stream)
 {
-	if (stream->ctx->isCancelled())
+	auto* pTrc = SvOi::getTriggerRecordControllerRInstance();
+	if (nullptr == pTrc || stream->ctx->isCancelled())
 	{
 		return;
 	}
 
-	auto& trc = SvOi::getTriggerRecordControllerRInstance();
-	
 	SvOi::ITriggerRecordRPtr triggerRecord = nullptr;
 	SvOi::TrInterestEventData new_trigger(0, 0, false);
 	while (!triggerRecord && !stream->historicalTriggerQueue.empty())
@@ -833,7 +843,7 @@ void SharedMemoryAccess::schedule_historical_triggers(std::shared_ptr<product_st
 		new_trigger = stream->historicalTriggerQueue.front();
 		stream->historicalTriggerQueue.erase(stream->historicalTriggerQueue.begin());
 
-		triggerRecord = trc.createTriggerRecordObject(new_trigger.m_inspectionPos, new_trigger.m_trId);
+		triggerRecord = pTrc->createTriggerRecordObject(new_trigger.m_inspectionPos, new_trigger.m_trId);
 	}
 
 	// There is no valid trigger record left to send. We are done.
@@ -867,21 +877,23 @@ void SharedMemoryAccess::rebuild_trc_pos_caches()
 
 void SharedMemoryAccess::rebuild_trc_pos_cache(product_stream_t& stream)
 {
-	if (!m_trc_ready)
+	auto* pTrc = SvOi::getTriggerRecordControllerRInstance();
+	if (nullptr == pTrc || false == m_trc_ready)
 	{
 		return;
 	}
 
 	try
 	{
-		auto& trc = SvOi::getTriggerRecordControllerRInstance();
-		int inspectionPos = get_inspection_pos_for_id(trc, stream.req.inspectionid());
+		int inspectionPos = get_inspection_pos_for_id(pTrc->getInspections(), stream.req.inspectionid());
 		if (inspectionPos >= 0)
 		{
-			collect_value_pos(stream.valuePositions, trc.getDataDefMap(inspectionPos), stream.req.valueids());
-			collect_value_pos(stream.rejectValuePositions, trc.getDataDefMap(inspectionPos), stream.req.rejectvalueids());
-			collect_image_pos(stream.imagePositions, trc.getImageDefMap(inspectionPos), trc.getChildImageDefMap(inspectionPos), stream.req.imageids());
-			collect_image_pos(stream.rejectImagePositions, trc.getImageDefMap(inspectionPos), trc.getChildImageDefMap(inspectionPos), stream.req.rejectimageids());
+			const auto& rDataDefMap = pTrc->getDataDefMap(inspectionPos);
+			const auto& rChildImageDefMap = pTrc->getChildImageDefMap(inspectionPos);
+			collect_value_pos(stream.valuePositions, rDataDefMap, stream.req.valueids());
+			collect_value_pos(stream.rejectValuePositions, rDataDefMap, stream.req.rejectvalueids());
+			collect_image_pos(stream.imagePositions, rDataDefMap, rChildImageDefMap, stream.req.imageids());
+			collect_image_pos(stream.rejectImagePositions, rDataDefMap, rChildImageDefMap, stream.req.rejectimageids());
 		}
 	}
 	catch (...)
@@ -1035,17 +1047,17 @@ void SharedMemoryAccess::on_trigger_record_pause_state_timer(const boost::system
 
 void SharedMemoryAccess::check_trigger_record_pause_state_changed()
 {
-	auto& trc = SvOi::getTriggerRecordControllerRInstance();
-	if (!trc.isValid())
+	auto* pTrc = SvOi::getTriggerRecordControllerRInstance();
+	if (nullptr == pTrc || false == pTrc->isValid())
 	{
 		return;
 	}
 
-	int numInspections = trc.getInspections().list_size();
+	int numInspections = pTrc->getInspections().list_size();
 	std::vector<bool> newPauseState(numInspections, false);
 	for (int i = 0; i < numInspections; ++i)
 	{
-		newPauseState[i] = trc.isPauseTrsOfInterest(i);
+		newPauseState[i] = pTrc->isPauseTrsOfInterest(i);
 	}
 
 	if (newPauseState == m_pause_state)
@@ -1079,17 +1091,20 @@ void SharedMemoryAccess::on_trigger_record_pause_state_changed_impl(const std::v
 
 void SharedMemoryAccess::send_trigger_record_pause_state_to_client(notification_stream_t& client, const std::vector<bool>& pauseStates)
 {
-	auto& trc = SvOi::getTriggerRecordControllerRInstance();
-	const auto& inspections = trc.getInspections();
-
+	auto* pTrc = SvOi::getTriggerRecordControllerRInstance();
 	SvPb::GetGatewayNotificationStreamResponse res;
-	auto& notification = *res.mutable_rejectstreampaused();
-	for (auto i = 0ull; i < pauseStates.size(); ++i)
+	if (nullptr != pTrc)
 	{
-		if (pauseStates[i])
+		const auto& rInspections = pTrc->getInspections();
+
+		auto& notification = *res.mutable_rejectstreampaused();
+		for (int i = 0; i < static_cast<int> (pauseStates.size()); ++i)
 		{
-			const auto& inspection = inspections.list(static_cast<int>(i));
-			notification.add_pausedinspectionids(inspection.id());
+			if (pauseStates[i])
+			{
+				const auto& inspection = rInspections.list(i);
+				notification.add_pausedinspectionids(inspection.id());
+			}
 		}
 	}
 	client.observer.onNext(std::move(res));
@@ -1097,47 +1112,52 @@ void SharedMemoryAccess::send_trigger_record_pause_state_to_client(notification_
 
 void SharedMemoryAccess::subscribe_to_trc()
 {
-	auto& trc = SvOi::getTriggerRecordControllerRInstance();
-	m_TrcReadySubscriptionId = trc.registerReadyCallback([this]()
+	auto* pTrc = SvOi::getTriggerRecordControllerRInstance();
+	if (nullptr != pTrc)
 	{
-		m_trc_ready = true;
-		m_io_service.post([this]()
+		m_TrcReadySubscriptionId = pTrc->registerReadyCallback([this]()
 		{
-			rebuild_trc_pos_caches();
+			m_trc_ready = true;
+			m_io_service.post([this]()
+				{
+					rebuild_trc_pos_caches();
+				});
 		});
-	});
-	m_TrcResetSubscriptionId = trc.registerResetCallback([this]()
-	{
-		m_trc_ready = false;
-	});
-	m_TrcNewInterestTrSubscriptionId = trc.registerNewInterestTrCallback([this](const std::vector<SvOi::TrInterestEventData>& rEvents)
-	{
-		if (!m_trc_ready)
+		m_TrcResetSubscriptionId = pTrc->registerResetCallback([this]()
 		{
-			return;
-		}
+			m_trc_ready = false;
+		});
+		m_TrcNewInterestTrSubscriptionId = pTrc->registerNewInterestTrCallback([this](const std::vector<SvOi::TrInterestEventData>& rEvents)
+		{
+			if (!m_trc_ready)
+			{
+				return;
+			}
 
-		for (const auto& eventData : rEvents)
-		{
-			on_new_trigger_record(eventData);
-		}
-	});
+			for (const auto& eventData : rEvents)
+			{
+				on_new_trigger_record(eventData);
+			}
+		});
+	}
 }
 
 void SharedMemoryAccess::unsubscribe_from_trc()
 {
-	auto& trc = SvOi::getTriggerRecordControllerRInstance();
-	trc.unregisterReadyCallback(m_TrcReadySubscriptionId);
-	trc.unregisterResetCallback(m_TrcResetSubscriptionId);
-	trc.unregisterNewInterestTrCallback(m_TrcNewInterestTrSubscriptionId);
+	auto* pTrc = SvOi::getTriggerRecordControllerRInstance();
+	if (nullptr != pTrc)
+	{
+		pTrc->unregisterReadyCallback(m_TrcReadySubscriptionId);
+		pTrc->unregisterResetCallback(m_TrcResetSubscriptionId);
+		pTrc->unregisterNewInterestTrCallback(m_TrcNewInterestTrSubscriptionId);
+	}
 }
 
-int SharedMemoryAccess::get_inspection_pos_for_id(SvOi::ITriggerRecordControllerR& trc, uint32_t id)
+int SharedMemoryAccess::get_inspection_pos_for_id(const SvPb::InspectionList& rList, uint32_t id)
 {
-	const auto& inspections = trc.getInspections();
-	for (int i = 0; i < inspections.list_size(); ++i)
+	for (int i = 0; i < rList.list_size(); ++i)
 	{
-		const auto& inspection = inspections.list(i);
+		const auto& inspection = rList.list(i);
 		if (inspection.id() == id)
 		{
 			return i;

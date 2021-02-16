@@ -45,7 +45,11 @@ TriggerRecord::~TriggerRecord()
 		removeTrReferenceCount(m_inspectionPos, m_rData.m_referenceCount);
 		if (finishedTr && !m_blockUpdateLastId)
 		{
-			getTriggerRecordControllerInstance().setLastFinishedTr(SvOi::TrEventData(m_inspectionPos, m_rData.m_trId));
+			auto* pTRC = getTriggerRecordControllerInstance();
+			if (nullptr != pTRC)
+			{
+				pTRC->setLastFinishedTr(SvOi::TrEventData(m_inspectionPos, m_rData.m_trId));
+			}
 		}
 	}
 }
@@ -669,7 +673,11 @@ void removeTrReferenceCount(int ipPos, long& rReferenceCount)
 	long value = InterlockedDecrement(&rReferenceCount);
 	if (0 >= value)
 	{
-		getTriggerRecordControllerInstance().increaseNumberOfFreeTr(ipPos);
+		auto* pTRC = getTriggerRecordControllerInstance();
+		if (nullptr != pTRC)
+		{
+			pTRC->increaseNumberOfFreeTr(ipPos);
+		}
 	}
 	if (0 > value)
 	{

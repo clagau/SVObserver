@@ -741,7 +741,11 @@ void SVObserverApp::OnStop()
 	}
 
 	SVSVIMStateClass::changeState(SV_STATE_UNAVAILABLE | SV_STATE_STOPING, SV_STATE_READY | SV_STATE_RUNNING | SV_STATE_STOP_PENDING);
-	SvOi::getTriggerRecordControllerRWInstance().unlockReset();
+	auto* pTrcRW = SvOi::getTriggerRecordControllerRWInstance();
+	if(nullptr != pTrcRW)
+	{
+		pTrcRW->unlockReset();
+	}
 
 	SVObjectManagerClass::Instance().SetState(SVObjectManagerClass::ReadWrite);
 
@@ -2452,11 +2456,17 @@ HRESULT SVObserverApp::OpenSVXFile()
 		{
 			unsigned long configVer = 0;
 			bool isGlobalInit = true;
+			auto* pTrcRW = SvOi::getTriggerRecordControllerRWInstance();
+			if (nullptr == pTrcRW)
+			{
+				hr = E_FAIL;
+				break;
+			}
 
 			try
 			{
 				//avoid that TRC-memory will be recreated for every loading step, but do it once at the end.
-				SvOi::getTriggerRecordControllerRWInstance().setGlobalInit();
+				pTrcRW->setGlobalInit();
 			}
 			catch (const SvStl::MessageContainer& rExp)
 			{
@@ -2598,7 +2608,7 @@ HRESULT SVObserverApp::OpenSVXFile()
 						try
 						{
 							//the globalInit have to be finished before RebuildInputOutputLists called, because it will do a reset and this need the images and memory.
-							SvOi::getTriggerRecordControllerRWInstance().finishGlobalInit();
+							pTrcRW->finishGlobalInit();
 						}
 						catch (const SvStl::MessageContainer& rExp)
 						{
@@ -5209,7 +5219,11 @@ void SVObserverApp::Start()
 		SVSVIMStateClass::changeState(SV_STATE_UNAVAILABLE | SV_STATE_STARTING, SV_STATE_READY | SV_STATE_START_PENDING);
 
 		SetPriorityClass(GetCurrentProcess(), REALTIME_PRIORITY_CLASS);
-		SvOi::getTriggerRecordControllerRWInstance().lockReset();
+		auto* pTrcRW = SvOi::getTriggerRecordControllerRWInstance();
+		if (nullptr != pTrcRW)
+		{
+			pTrcRW->lockReset();
+		}
 
 		if (IsProductTypeRAID())
 		{
@@ -5958,7 +5972,11 @@ void SVObserverApp::OnStopAll()
 			}
 		}
 
-		SvOi::getTriggerRecordControllerRWInstance().unlockReset();
+		auto* pTrcRW = SvOi::getTriggerRecordControllerRWInstance();
+		if (nullptr != pTrcRW)
+		{
+			pTrcRW->unlockReset();
+		}
 		SVSVIMStateClass::RemoveState(SV_STATE_RUNNING | SV_STATE_TEST);
 
 		SetPriorityClass(GetCurrentProcess(), NORMAL_PRIORITY_CLASS);

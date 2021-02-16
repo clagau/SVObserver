@@ -69,9 +69,12 @@ namespace SvTrcT
 
 	CTriggerRecordControllerTestDlg::~CTriggerRecordControllerTestDlg()
 	{
-		m_recordController.unregisterResetCallback(m_resetCallbackId);
-		m_recordController.unregisterReadyCallback(m_readyCallbackId);
-		m_recordController.unregisterNewTrCallback(m_newTrIdCallbackId);
+		if (nullptr != m_pTRC)
+		{
+			m_pTRC->unregisterResetCallback(m_resetCallbackId);
+			m_pTRC->unregisterReadyCallback(m_readyCallbackId);
+			m_pTRC->unregisterNewTrCallback(m_newTrIdCallbackId);
+		}
 		SvOi::destroyTriggerRecordController();
 
 	}
@@ -155,14 +158,17 @@ namespace SvTrcT
 			SvPb::InspectionList inspList;
 			auto insp = inspList.add_list();
 			insp->set_numberofrecords(m_trNumbers);
-			SvOi::getTriggerRecordControllerRWInstance().setInspections(std::move(inspList));
+			if (nullptr != SvOi::getTriggerRecordControllerRWInstance())
+			{
+				SvOi::getTriggerRecordControllerRWInstance()->setInspections(std::move(inspList));
+			}
 		}
-		else
+		else if(nullptr != m_pTRC)
 		{
-			m_resetCallbackId = m_recordController.registerResetCallback(std::bind(&CTriggerRecordControllerTestDlg::OnResetUpdate, this));
-			m_readyCallbackId = m_recordController.registerReadyCallback(std::bind(&CTriggerRecordControllerTestDlg::OnReadyUpdate, this));
-			m_newTrIdCallbackId = m_recordController.registerNewTrCallback(std::bind(&CTriggerRecordControllerTestDlg::OnNewTrId, this, std::placeholders::_1));
-			m_isTRCValid = m_recordController.isValid();
+			m_resetCallbackId = m_pTRC->registerResetCallback(std::bind(&CTriggerRecordControllerTestDlg::OnResetUpdate, this));
+			m_readyCallbackId = m_pTRC->registerReadyCallback(std::bind(&CTriggerRecordControllerTestDlg::OnReadyUpdate, this));
+			m_newTrIdCallbackId = m_pTRC->registerNewTrCallback(std::bind(&CTriggerRecordControllerTestDlg::OnNewTrId, this, std::placeholders::_1));
+			m_isTRCValid = m_pTRC->isValid();
 		}
 		resetController();
 		updateControls();
@@ -246,11 +252,11 @@ namespace SvTrcT
 				updateButton();
 			}
 		}
-		else
+		else if(nullptr != m_pTRC)
 		{
 			auto comboPos = m_ValueCombo.GetCurSel();
-			int id = m_recordController.getLastTrId(0);
-			auto triggerRecord = m_recordController.createTriggerRecordObject(0, id);
+			int id = m_pTRC-> getLastTrId(0);
+			auto triggerRecord = m_pTRC->createTriggerRecordObject(0, id);
 			if (nullptr != triggerRecord)
 			{
 				_variant_t value = triggerRecord->getDataValue(comboPos);
@@ -329,11 +335,12 @@ namespace SvTrcT
 		}
 
 		SvOi::ITRCImagePtr pMainImage = LoadMainImage(dlg.GetPathName());
-		if (nullptr != pMainImage)
+		if (nullptr != pMainImage && nullptr != m_pTRC)
 		{
-			int lastTRid = m_recordController.getLastTrId(m_inspectionPos);
-			auto lastTriggerRecord = m_recordController.createTriggerRecordObject(m_inspectionPos, lastTRid);
-			auto triggerRecord = SvOi::getTriggerRecordControllerRWInstance().createTriggerRecordObjectToWrite(m_inspectionPos);
+			int lastTRid = m_pTRC->getLastTrId(m_inspectionPos);
+			auto lastTriggerRecord = m_pTRC->createTriggerRecordObject(m_inspectionPos, lastTRid);
+			auto* pTrcRW = SvOi::getTriggerRecordControllerRWInstance();
+			auto triggerRecord = (nullptr != pTrcRW) ? pTrcRW->createTriggerRecordObjectToWrite(m_inspectionPos) : nullptr;
 			if (m_isCopyTR && nullptr != lastTriggerRecord)
 			{
 				triggerRecord->setImages(*(lastTriggerRecord.get()));
@@ -360,66 +367,69 @@ namespace SvTrcT
 				}
 				pos++;
 			}
+			m_lastID.Format("%d", m_pTRC->getLastTrId(m_inspectionPos));
 		}
 		else
 		{
 			MessageBox("Trigger: LoadMainImage failed!");
 		}
 
-		m_lastID.Format("%d", m_recordController.getLastTrId(m_inspectionPos));
 		UpdateData(false);
 	}
 
 	void CTriggerRecordControllerTestDlg::OnSetImage()
 	{
 		UpdateData();
-		int id = m_trIDToDisplay;
-		if (-1 == id)
+		if (nullptr != m_pTRC)
 		{
-			id = m_recordController.getLastTrId(m_inspectionPos);
-			if (m_isReader)
+			int id = m_trIDToDisplay;
+			if (-1 == id)
 			{
-				m_lastID.Format("%d", id);
-				UpdateData(false);
-			}
-		}
-
-		auto triggerRecord = m_recordController.createTriggerRecordObject(m_inspectionPos, id);
-		SvOi::ITRCImagePtr image;
-		auto comboPos = m_ImageCombo.GetCurSel();
-		if (nullptr != triggerRecord)
-		{
-			if (!m_isReader)
-			{
-				int imagePos = 0;
-
-				if (0 < comboPos && m_toolList.size() >= comboPos)
+				id = m_pTRC->getLastTrId(m_inspectionPos);
+				if (m_isReader)
 				{
-					imagePos = m_toolList[comboPos - 1]->getImagePos();
+					m_lastID.Format("%d", id);
+					UpdateData(false);
 				}
+			}
 
-				image = triggerRecord->getImage(imagePos);
+			auto triggerRecord = m_pTRC->createTriggerRecordObject(m_inspectionPos, id);
+			SvOi::ITRCImagePtr image;
+			auto comboPos = m_ImageCombo.GetCurSel();
+			if (nullptr != triggerRecord)
+			{
+				if (!m_isReader)
+				{
+					int imagePos = 0;
+
+					if (0 < comboPos && m_toolList.size() >= comboPos)
+					{
+						imagePos = m_toolList[comboPos - 1]->getImagePos();
+					}
+
+					image = triggerRecord->getImage(imagePos);
+				}
+				else
+				{
+					image = triggerRecord->getImage(comboPos);
+
+				}
+			}
+
+			if (nullptr != image)
+			{
+				m_dialogImage.setImage(image->getHandle());
+				m_dialogImage.Refresh();
 			}
 			else
 			{
-				image = triggerRecord->getImage(comboPos);
+				m_dialogImage.setImage((IPictureDisp*)nullptr);
+				m_dialogImage.Refresh();
 
-			}
-		}
-
-		if (nullptr != image)
-		{
-			m_dialogImage.setImage(image->getHandle());
-			m_dialogImage.Refresh();
-		}
-		else
-		{
-			m_dialogImage.setImage((IPictureDisp*)nullptr);
-			m_dialogImage.Refresh();
-
-			if (m_isReader)
-			{
-				updateImageCombo();
+				if (m_isReader)
+				{
+					updateImageCombo();
+				}
 			}
 		}
 	}
@@ -519,37 +529,43 @@ namespace SvTrcT
 
 	void CTriggerRecordControllerTestDlg::resetController()
 	{
-		if (!m_isReader)
+		if (false == m_isReader)
 		{
-			auto& rRecordControllerRW = SvOi::getTriggerRecordControllerRWInstance();
-			auto inspList = rRecordControllerRW.getInspections();
-			inspList.mutable_list(0)->set_numberofrecords(m_trNumbers);
-			rRecordControllerRW.setInspections(std::move(inspList));
-
-			SVMatroxBufferCreateStruct bufferStruct;
-			bufferStruct.m_lSizeX = m_mainWidth;
-			bufferStruct.m_lSizeY = m_mainHeigth;
-			bufferStruct.m_eAttribute = SVBufAttImageProc;
-			bufferStruct.m_eType = SV8BitUnsigned;
-			rRecordControllerRW.startResetTriggerRecordStructure();
-			rRecordControllerRW.removeAllImageBuffer(m_mainId);
-			rRecordControllerRW.addImageBuffer(m_mainId, bufferStruct, 1);
-			rRecordControllerRW.finishResetTriggerRecordStructure();
-
-			rRecordControllerRW.startResetTriggerRecordStructure(m_inspectionPos);
-			rRecordControllerRW.addOrChangeImage(m_mainId, bufferStruct);
-			int sourcePos = 0;
-			uint32_t sourceImage = m_mainId;
-			for (const auto& tool : m_toolList)
+			auto* pTrcRw = SvOi::getTriggerRecordControllerRWInstance();
+			if (nullptr != pTrcRw)
 			{
-				tool->reset(sourceImage, sourcePos, bufferStruct, rRecordControllerRW);
-				sourcePos = tool->getImagePos();
-				sourceImage = tool->getObjectId();
-				bufferStruct = tool->getBufferOut();
+				auto inspList = pTrcRw->getInspections();
+				inspList.mutable_list(0)->set_numberofrecords(m_trNumbers);
+				pTrcRw->setInspections(std::move(inspList));
+
+				SVMatroxBufferCreateStruct bufferStruct;
+				bufferStruct.m_lSizeX = m_mainWidth;
+				bufferStruct.m_lSizeY = m_mainHeigth;
+				bufferStruct.m_eAttribute = SVBufAttImageProc;
+				bufferStruct.m_eType = SV8BitUnsigned;
+				pTrcRw->startResetTriggerRecordStructure();
+				pTrcRw->removeAllImageBuffer(m_mainId);
+				pTrcRw->addImageBuffer(m_mainId, bufferStruct, 1);
+				pTrcRw->finishResetTriggerRecordStructure();
+
+				pTrcRw->startResetTriggerRecordStructure(m_inspectionPos);
+				pTrcRw->addOrChangeImage(m_mainId, bufferStruct);
+				int sourcePos = 0;
+				uint32_t sourceImage = m_mainId;
+				for (const auto& tool : m_toolList)
+				{
+					tool->reset(sourceImage, sourcePos, bufferStruct, pTrcRw);
+					sourcePos = tool->getImagePos();
+					sourceImage = tool->getObjectId();
+					bufferStruct = tool->getBufferOut();
+				}
+				pTrcRw->finishResetTriggerRecordStructure();
 			}
-			rRecordControllerRW.finishResetTriggerRecordStructure();
 		}
-		m_lastID.Format("%d", m_recordController.getLastTrId(m_inspectionPos));
+		if (nullptr != m_pTRC)
+		{
+			m_lastID.Format("%d", m_pTRC->getLastTrId(m_inspectionPos));
+		}
 	}
 
 	void CTriggerRecordControllerTestDlg::updateToolList()
@@ -581,7 +597,7 @@ namespace SvTrcT
 			else if (m_isTRCValid)
 			{
 				int i = 0;
-				auto imageDefList = m_recordController.getImageDefList(0);
+				auto imageDefList = (nullptr != m_pTRC) ? m_pTRC->getImageDefList(0) : SvPb::ImageList();
 				for (auto imageDef : imageDefList.list())
 				{
 					CString text;
@@ -607,7 +623,7 @@ namespace SvTrcT
 			if (m_isReader && m_isTRCValid)
 			{
 				int i = 0;
-				auto dataDefList = m_recordController.getDataDefList(0);
+				auto dataDefList = (nullptr != m_pTRC) ? m_pTRC->getDataDefList(0) : SvPb::DataDefinitionList();
 				for (auto dataDef : dataDefList.list())
 				{
 					CString text;
@@ -647,7 +663,8 @@ namespace SvTrcT
 		bufferStruct.m_lSizeY = m_mainHeigth;
 		bufferStruct.m_eAttribute = SVBufAttImageProc;
 		bufferStruct.m_eType = SV8BitUnsigned;
-		SvOi::ITRCImagePtr pImage = SvOi::getTriggerRecordControllerRWInstance().getImageBuffer(bufferStruct);
+		auto* pTrcRW = SvOi::getTriggerRecordControllerRWInstance();
+		SvOi::ITRCImagePtr pImage = (nullptr != pTrcRW) ? pTrcRW->getImageBuffer(bufferStruct) : nullptr;
 		if (nullptr != pImage)
 		{
 			auto imageHandle = pImage->getHandle();
@@ -663,7 +680,7 @@ namespace SvTrcT
 
 	void CTriggerRecordControllerTestDlg::OnResetTRCData()
 	{
-		m_isTRCValid = m_recordController.isValid();
+		m_isTRCValid = (nullptr != m_pTRC) ? m_pTRC->isValid() : false;
 		updateImageCombo();
 		updateValueCombo();
 		std::time_t current_time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());

@@ -50,14 +50,18 @@ bool finishedReaderApp(ReaderProcessData data, int timeoutinMs, LogClass& rLogCl
 TrcTester::TrcTester(TrcTesterConfiguration& rConfig, LogClass& rLogClass) :
 	m_config(rConfig),
 	m_rLogClass(rLogClass),
-	m_TRController(SvOi::getTriggerRecordControllerRWInstance())
+	m_pTrcRW(SvOi::getTriggerRecordControllerRWInstance())
 {
 	g_maxSizeFactor = m_config.getMaxSpecifyBufferFactor();
 }
 
 TrcTester::~TrcTester()
 {
-	m_TRController.clearAll(); // avoids error message when MappFree() is called.
+	if (nullptr != m_pTrcRW)
+	{
+		m_pTrcRW->clearAll(); // avoids error message when MappFree() is called.
+	}
+
 	google::protobuf::ShutdownProtobufLibrary();
 }
 
@@ -84,7 +88,7 @@ bool TrcTester::createInspections()
 	std::vector<std::pair<int, int>> numbersOfRecords(m_config.getNumberOfInspections(), {m_config.getNumberOfImagesPerInspection(), 0});
 	for (int i = 0; i < m_config.getNoOfRepetitionsPerStep(); i++)
 	{
-		bool createInspectionsOk = setInspections(numbersOfRecords, m_TRController, m_rLogClass, strTestCreateInspections);
+		bool createInspectionsOk = setInspections(numbersOfRecords, m_pTrcRW, m_rLogClass, strTestCreateInspections);
 		if (!createInspectionsOk)
 		{
 			std::string errorStr = SvUl::Format(_T("(%d, %d) ERROR on %d. iteration!"), m_config.getNumberOfImagesPerInspection(), m_config.getNumberOfInspections(), i);
@@ -98,14 +102,18 @@ bool TrcTester::createInspections()
 
 bool TrcTester::setBuffers()
 {
+	if (nullptr == m_pTrcRW)
+	{
+		return false;
+	}
 	std::string logStr;
 	bool setBufferOk = true;
 	double elapsed_ms_sum = 0.;
 	std::vector<std::pair<int, int>> numbersOfRecords(m_config.getNumberOfInspections(), {m_config.getNumberOfImagesPerInspection(), 0});
 	for (int i = 0; i < m_config.getNoOfRepetitionsPerStep(); i++)
 	{
-		setInspections(numbersOfRecords, m_TRController, m_rLogClass, strTestCreateInspections);
-		m_TRController.setGlobalInit();
+		setInspections(numbersOfRecords, m_pTrcRW, m_rLogClass, strTestCreateInspections);
+		m_pTrcRW->setGlobalInit();
 		double start = SvUl::GetTimeStamp();
 		setBufferOk = setInspectionBuffers(strTestSetBuffers);
 		if (!setBufferOk)
@@ -122,11 +130,11 @@ bool TrcTester::setBuffers()
 			m_rLogClass.Log(logStr.c_str(), LogLevel::Error, LogType::FAIL, __LINE__, strTestSetBuffers);
 			break;
 		}
-		m_TRController.finishGlobalInit();
+		m_pTrcRW->finishGlobalInit();
 		double end = SvUl::GetTimeStamp();
 		double elapsed_ms = end - start;
 		elapsed_ms_sum += elapsed_ms;
-		m_TRController.clearAll();
+		m_pTrcRW->clearAll();
 	}
 
 	if (setBufferOk)
@@ -142,9 +150,9 @@ bool TrcTester::checkBufferMaximum()
 {
 	constexpr int numberOfRecords = 100;
 	
-	bool retValue = setInspections({{numberOfRecords, 0}}, m_TRController, m_rLogClass, strTestCheckBufferMaximum);
+	bool retValue = setInspections({{numberOfRecords, 0}}, m_pTrcRW, m_rLogClass, strTestCheckBufferMaximum);
 	m_rLogClass.Log(_T("setInspections!"), retValue ? LogLevel::Information_Level3 : LogLevel::Error, retValue ? LogType::PASS : LogType::FAIL, __LINE__, strTestCheckBufferMaximum);
-	if (!retValue)
+	if (false == retValue || nullptr == m_pTrcRW)
 	{
 		return false;
 	}
@@ -157,14 +165,14 @@ bool TrcTester::checkBufferMaximum()
 	try
 	{
 		double start = SvUl::GetTimeStamp();
-		m_TRController.startResetTriggerRecordStructure(0);
-		bool independentOk = m_TRController.removeAllImageBuffer();
+		m_pTrcRW->startResetTriggerRecordStructure(0);
+		bool independentOk = m_pTrcRW->removeAllImageBuffer();
 		for (int i = 0; i < numberOfImages; i++)
 		{
-			independentOk &= ( 0 <= m_TRController.addOrChangeImage(getNextObjectId(), specifyBuffer(i / m_config.getSpecifyBufferDiv())));
+			independentOk &= ( 0 <= m_pTrcRW->addOrChangeImage(getNextObjectId(), specifyBuffer(i / m_config.getSpecifyBufferDiv())));
 		}
-		m_TRController.addImageBuffer(getNextObjectId(), specifyBuffer(1), numberOfAddBuffer);
-		m_TRController.finishResetTriggerRecordStructure();
+		m_pTrcRW->addImageBuffer(getNextObjectId(), specifyBuffer(1), numberOfAddBuffer);
+		m_pTrcRW->finishResetTriggerRecordStructure();
 		double end = SvUl::GetTimeStamp();
 		double elapsed_ms = end - start;
 		std::string logStr = SvUl::Format(_T("set images (maxBuffer = %d) good case (%f ms/ %f ms)"), maxBuffer, elapsed_ms, m_config.getMaxTimeCheckBufferPerBuffer()*numberOfImages);
@@ -189,10 +197,10 @@ bool TrcTester::checkBufferMaximum()
 
 	try
 	{
-		m_TRController.startResetTriggerRecordStructure();
-		//m_TRController.removeAllImageBuffer();
-		m_TRController.addImageBuffer(getNextObjectId(), specifyBuffer(3), 1);
-		m_TRController.finishResetTriggerRecordStructure();
+		m_pTrcRW->startResetTriggerRecordStructure();
+		//pTrcRW->removeAllImageBuffer();
+		m_pTrcRW->addImageBuffer(getNextObjectId(), specifyBuffer(3), 1);
+		m_pTrcRW->finishResetTriggerRecordStructure();
 
 		m_rLogClass.Log(_T("set images too many buffers, but no exception"), LogLevel::Error, LogType::FAIL, __LINE__, strTestCheckBufferMaximum);
 		return false;
@@ -213,11 +221,15 @@ bool TrcTester::checkBufferMaximum()
 
 bool TrcTester::createTR2WriteAndRead()
 {
+	if (nullptr == m_pTrcRW)
+	{
+		return false;
+	}
 	std::random_device rd;
 	std::uniform_int_distribution<int> dist(1, SvOi::ITriggerRecordControllerRW::ITriggerRecordControllerRW::cMaxTriggerRecords);
 	constexpr int numberOfInspection = 2;
 	std::vector<std::pair<int, int>> numbersOfRecords = {{dist(rd),0}, {dist(rd),0}};
-	bool retValue = setInspections(numbersOfRecords, m_TRController, m_rLogClass, strTestCreateTR2WriteAndRead);
+	bool retValue = setInspections(numbersOfRecords, m_pTrcRW, m_rLogClass, strTestCreateTR2WriteAndRead);
 	if (!retValue)
 	{
 		m_rLogClass.Log(_T("setInspections!"),  LogLevel::Error, LogType::FAIL, __LINE__, strTestCreateTR2WriteAndRead);
@@ -233,9 +245,9 @@ bool TrcTester::createTR2WriteAndRead()
 	{
 		for (int i = 0; i < numberOfInspection; i++)
 		{
-			m_TRController.startResetTriggerRecordStructure(i);
-			retValue = (0 <= m_TRController.addOrChangeImage(getNextObjectId(), specifyBufferRandom()));
-			m_TRController.finishResetTriggerRecordStructure();
+			m_pTrcRW->startResetTriggerRecordStructure(i);
+			retValue = (0 <= m_pTrcRW->addOrChangeImage(getNextObjectId(), specifyBufferRandom()));
+			m_pTrcRW->finishResetTriggerRecordStructure();
 			if (!retValue)
 			{
 				m_rLogClass.Log(_T("init Inspection"), LogLevel::Error, LogType::FAIL, __LINE__, strTestCreateTR2WriteAndRead);
@@ -261,10 +273,10 @@ bool TrcTester::createTR2WriteAndRead()
 	}
 
 	{
-		SvOi::ITriggerRecordRWPtr tr2W = m_TRController.createTriggerRecordObjectToWrite(0);
+		SvOi::ITriggerRecordRWPtr tr2W = m_pTrcRW->createTriggerRecordObjectToWrite(0);
 		if (nullptr != tr2W)
 		{
-			auto tr2R = m_TRController.createTriggerRecordObject(0, tr2W->getId());
+			auto tr2R = m_pTrcRW->createTriggerRecordObject(0, tr2W->getId());
 			if (nullptr != tr2R)
 			{
 				m_rLogClass.Log(_T("could create read version of TR, but write version still open"), LogLevel::Error, LogType::FAIL, __LINE__, strTestCreateTR2WriteAndRead);
@@ -279,7 +291,7 @@ bool TrcTester::createTR2WriteAndRead()
 		for (int j = 0; j < numberOfInspection; j++)
 		{
 			{ //scope for tr
-				auto tr = m_TRController.createTriggerRecordObjectToWrite(j);
+				auto tr = m_pTrcRW->createTriggerRecordObjectToWrite(j);
 				if (nullptr == tr)
 				{
 					if (readTRVector[j].size() <= numbersOfRecords[j].first)
@@ -312,8 +324,8 @@ bool TrcTester::createTR2WriteAndRead()
 					}
 				}
 			}
-			int id = m_TRController.getLastTrId(j);
-			auto tr2R = m_TRController.createTriggerRecordObject(j, id);
+			int id = m_pTrcRW->getLastTrId(j);
+			auto tr2R = m_pTrcRW->createTriggerRecordObject(j, id);
 			bool shouldFail = readTRVector[j].size() >= numbersOfRecords[j].first + m_config.getNumberOfRecordsAddOne() - m_config.getNumberOfKeepFreeRecords();
 			if (nullptr == tr2R)
 			{
@@ -353,8 +365,8 @@ bool TrcTester::createTR2WriteAndRead()
 
 bool TrcTester::setAndReadImage()
 {
-	bool retValue = setInspections({{12,0}}, m_TRController, m_rLogClass, strTestSetAndReadImage);
-	if (!retValue)
+	bool retValue = setInspections({{12,0}}, m_pTrcRW, m_rLogClass, strTestSetAndReadImage);
+	if (false == retValue || nullptr == m_pTrcRW)
 	{
 		m_rLogClass.Log(_T("setInspections!"), LogLevel::Error, LogType::FAIL, __LINE__, strTestSetAndReadImage);
 		return false;
@@ -365,12 +377,12 @@ bool TrcTester::setAndReadImage()
 	auto bufferStruct = specifyBufferFromImage(imageIds[0]);
 	try
 	{
-		m_TRController.startResetTriggerRecordStructure(0);
-		m_TRController.removeAllImageBuffer();
-		m_TRController.addImageBuffer(getNextObjectId(), bufferStruct, 1);
+		m_pTrcRW->startResetTriggerRecordStructure(0);
+		m_pTrcRW->removeAllImageBuffer();
+		m_pTrcRW->addImageBuffer(getNextObjectId(), bufferStruct, 1);
 		
-		retValue = (0 <= m_TRController.addOrChangeImage(getNextObjectId(), bufferStruct));
-		m_TRController.finishResetTriggerRecordStructure();
+		retValue = (0 <= m_pTrcRW->addOrChangeImage(getNextObjectId(), bufferStruct));
+		m_pTrcRW->finishResetTriggerRecordStructure();
 		if (!retValue)
 		{
 			m_rLogClass.Log(_T("init Inspection"), LogLevel::Error, LogType::FAIL, __LINE__, strTestSetAndReadImage);
@@ -390,7 +402,7 @@ bool TrcTester::setAndReadImage()
 
 	//first time of the next commands needs much longer. Run this before check performance
 	{
-		auto imageHandle = m_TRController.getImageBuffer(bufferStruct);
+		auto imageHandle = m_pTrcRW->getImageBuffer(bufferStruct);
 		MbufCopy(imageIds[0], imageHandle->getHandle()->GetBuffer().GetIdentifier());
 		areImageEqual(imageHandle->getHandle()->GetBuffer().GetIdentifier(), imageIds[0]);
 	}
@@ -401,7 +413,7 @@ bool TrcTester::setAndReadImage()
 	for (int i = 0; i < numberOfRuns; i++)
 	{
 		//write image to buffer
-		auto imageHandle = m_TRController.getImageBuffer(bufferStruct);
+		auto imageHandle = m_pTrcRW->getImageBuffer(bufferStruct);
 		if (nullptr == imageHandle || imageHandle->isEmpty())
 		{
 			m_rLogClass.Log(_T("getImageBuffer return nullptr!"), LogLevel::Error, LogType::FAIL, __LINE__, strTestSetAndReadImage);
@@ -418,7 +430,7 @@ bool TrcTester::setAndReadImage()
 
 		{//scope for tr2W
 			//get TR and set new image
-			auto tr2W = m_TRController.createTriggerRecordObjectToWrite(0);
+			auto tr2W = m_pTrcRW->createTriggerRecordObjectToWrite(0);
 			if (nullptr == tr2W)
 			{
 				m_rLogClass.Log(_T("createTriggerRecordObjectToWrite return nullptr!"), LogLevel::Error, LogType::FAIL, __LINE__, strTestSetAndReadImage);
@@ -434,8 +446,8 @@ bool TrcTester::setAndReadImage()
 				return false;
 			}
 		}
-		int id = m_TRController.getLastTrId(0);
-		auto tr2R = m_TRController.createTriggerRecordObject(0, id);
+		int id = m_pTrcRW->getLastTrId(0);
+		auto tr2R = m_pTrcRW->createTriggerRecordObject(0, id);
 		if (nullptr == tr2R)
 		{
 			std::string errorStr = SvUl::Format(_T("could not create read version of TR (id%d) in run %d"), id, i);
@@ -473,8 +485,8 @@ bool TrcTester::setAndReadImage()
 
 bool TrcTester::setAndReadValues()
 {
-	bool retValue = setInspections({{21, 0}}, m_TRController, m_rLogClass, strTestSetAndReadValues);
-	if (!retValue)
+	bool retValue = setInspections({{21, 0}}, m_pTrcRW, m_rLogClass, strTestSetAndReadValues);
+	if (false == retValue || nullptr == m_pTrcRW)
 	{
 		m_rLogClass.Log(_T("setInspections!"), LogLevel::Error, LogType::FAIL, __LINE__, strTestSetAndReadValues);
 		return false;
@@ -489,9 +501,9 @@ bool TrcTester::setAndReadValues()
 	try
 	{
 		auto tmpDefList = dataDefList;
-		m_TRController.startResetTriggerRecordStructure(0);
-		m_TRController.changeDataDef(std::move(tmpDefList), memOffset, 0);
-		m_TRController.finishResetTriggerRecordStructure();
+		m_pTrcRW->startResetTriggerRecordStructure(0);
+		m_pTrcRW->changeDataDef(std::move(tmpDefList), memOffset, 0);
+		m_pTrcRW->finishResetTriggerRecordStructure();
 	}
 	catch (const SvStl::MessageContainer& rExp)
 	{
@@ -589,18 +601,22 @@ bool TrcTester::testWithReaderApps()
 
 bool TrcTester::setInspectionBuffers(LPCSTR testAreaStr)
 {
+	if (nullptr == m_pTrcRW)
+	{
+		return false;
+	}
 	for (int i = 0; i < m_config.getNumberOfInspections(); i++)
 	{
 		try
 		{
-			m_TRController.startResetTriggerRecordStructure(i);
+			m_pTrcRW->startResetTriggerRecordStructure(i);
 
 			for (int j = 0; j < m_config.getNumberOfBuffersPerInspection(); j++)
 			{
-				m_TRController.addOrChangeImage(getNextObjectId(), specifyBuffer(1 + j));
+				m_pTrcRW->addOrChangeImage(getNextObjectId(), specifyBuffer(1 + j));
 			}
 
-			m_TRController.finishResetTriggerRecordStructure(); // i.e the current inspection will be completed
+			m_pTrcRW->finishResetTriggerRecordStructure(); // i.e the current inspection will be completed
 
 		}
 		catch (const SvStl::MessageContainer& rExp)
@@ -622,16 +638,20 @@ bool TrcTester::setInspectionBuffers(LPCSTR testAreaStr)
 
 bool TrcTester::setIndependentBuffers(LPCSTR testAreaStr)
 {
+	if (nullptr == m_pTrcRW)
+	{
+		return false;
+	}
 	try
 	{
-		m_TRController.startResetTriggerRecordStructure();
+		m_pTrcRW->startResetTriggerRecordStructure();
 		bool independentOk = true;
 		for (int i = 0; i < m_config.getNumberOfBuffersPerInspection(); i++)
 		{
-			independentOk &= m_TRController.removeAllImageBuffer();
-			m_TRController.addImageBuffer(getNextObjectId(), specifyBuffer(m_config.getNumberOfIndependentBuffers()), 1);
+			independentOk &= m_pTrcRW->removeAllImageBuffer();
+			m_pTrcRW->addImageBuffer(getNextObjectId(), specifyBuffer(m_config.getNumberOfIndependentBuffers()), 1);
 		}
-		m_TRController.finishResetTriggerRecordStructure();
+		m_pTrcRW->finishResetTriggerRecordStructure();
 
 		if (!independentOk)
 		{
@@ -767,11 +787,15 @@ bool finishedReaderApp(ReaderProcessData data, int timeoutinMs, LogClass& rLogCl
 
 bool TrcTester::writeAndReadSingleValue(int index, int listSize, const std::vector<std::vector<uint8_t>>& rDataVector)
 {
+	if (nullptr == m_pTrcRW)
+	{
+		return false;
+	}
 	const auto& rRunData = m_config.getValueSet()[index%m_config.getValueSet().size()];
 	const auto& rMemData = rDataVector[index%rDataVector.size()];
 	{//scope for tr2W
 	 //get TR and set new image
-		auto tr2W = m_TRController.createTriggerRecordObjectToWrite(0);
+		auto tr2W = m_pTrcRW->createTriggerRecordObjectToWrite(0);
 		if (nullptr == tr2W)
 		{
 			m_rLogClass.Log(_T("createTriggerRecordObjectToWrite return nullptr!"), LogLevel::Error, LogType::FAIL, __LINE__, strTestSetAndReadValues);
@@ -789,8 +813,8 @@ bool TrcTester::writeAndReadSingleValue(int index, int listSize, const std::vect
 		}
 	}
 	std::this_thread::yield();
-	int id = m_TRController.getLastTrId(0);
-	auto tr2R = m_TRController.createTriggerRecordObject(0, id);
+	int id = m_pTrcRW->getLastTrId(0);
+	auto tr2R = m_pTrcRW->createTriggerRecordObject(0, id);
 	if (nullptr == tr2R)
 	{
 		std::string errorStr = SvUl::Format(_T("could not create read version of TR (id%d) in run %d"), id, index);

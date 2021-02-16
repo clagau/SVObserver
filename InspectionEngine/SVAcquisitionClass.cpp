@@ -43,7 +43,7 @@ static char THIS_FILE[] = __FILE__;
 SVAcquisitionClass::SVAcquisitionClass(const SVAcquisitionConstructParams& p_rParams)
 	: AcquisitionDevice(p_rParams.m_DigitizerName.c_str())
 	, m_LUTAndLRSet(p_rParams.m_LUTAndLRSet)
-	, m_rTRController{SvOi::getTriggerRecordControllerRWInstance()}
+	, m_pTRC{SvOi::getTriggerRecordControllerRWInstance()}
 	, m_rDigitizerProc(SVDigitizerProcessingClass::Instance())
 {
 	m_objectId = getNextAcquisitionId();
@@ -217,7 +217,10 @@ HRESULT SVAcquisitionClass::CreateBuffers(SVImageInfoClass IInfo)
 		Result = DestroyBuffers();
 		try
 		{
-			m_rTRController.addImageBuffer(m_objectId, m_bufferStruct, m_neededBuffer, true);
+			if (nullptr != m_pTRC)
+			{
+				m_pTRC->addImageBuffer(m_objectId, m_bufferStruct, m_neededBuffer, true);
+			}
 		}
 		catch (const SvStl::MessageContainer& rExp)
 		{
@@ -736,7 +739,12 @@ int SVAcquisitionClass::GetBufferFormat() const
 
 SvOi::ITRCImagePtr SVAcquisitionClass::GetNextBuffer()
 {
-	return m_rTRController.getImageBuffer(m_bufferStruct);
+	SvOi::ITRCImagePtr result;
+	if (nullptr != m_pTRC)
+	{
+		result = m_pTRC->getImageBuffer(m_bufferStruct);
+	}
+	return result;
 }
 
 HRESULT SVAcquisitionClass::UpdateWithCompletedBuffer(const SvOi::ITRCImagePtr& rpImage, const double StartTick, const double StopTick)
@@ -767,7 +775,10 @@ void SVAcquisitionClass::setNeededBuffers(int neededBuffers)
 	m_neededBuffer = neededBuffers;
 	try
 	{
-		m_rTRController.addImageBuffer(m_objectId, m_bufferStruct, m_neededBuffer, true);
+		if (nullptr != m_pTRC)
+		{
+			m_pTRC->addImageBuffer(m_objectId, m_bufferStruct, m_neededBuffer, true);
+		}
 	}
 	catch (const SvStl::MessageContainer& rExp)
 	{

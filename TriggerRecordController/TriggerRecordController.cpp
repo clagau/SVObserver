@@ -1302,95 +1302,102 @@ void TriggerRecordController::reduceRequiredImageBuffer(const std::map<int, int>
 #pragma endregion Private Methods
 
 std::shared_ptr<TriggerRecordController> g_pTriggerRecordController = nullptr;
-TriggerRecordController& getTriggerRecordControllerInstance()
+TriggerRecordController* getTriggerRecordControllerInstance()
 {
 	if (nullptr != g_pTriggerRecordController)
 	{
-		return *g_pTriggerRecordController.get();
+		return g_pTriggerRecordController.get();
 	}
 	else
 	{
 		assert(false);
-		SvStl::MessageManager Exception(SvStl::MsgType::Data);
+		SvStl::MessageManager Exception(SvStl::MsgType::Log);
 		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_GetTRCFailed, SvStl::SourceFileParams(StdMessageParams));
-		Exception.Throw();
+		return nullptr;
 	}
 }
 
 ImageBufferController& getImageBufferControllerInstance()
 {
-	return getTriggerRecordControllerInstance().getImageBufferControllerInstance();
+	///getTriggerRecordControllerInstance is not checked here as there is no possibility to return an empty ImageBufferController!
+	return getTriggerRecordControllerInstance()->getImageBufferControllerInstance();
 }
 } //namespace SvTrc
 
 namespace SvOi
 {
-	int getInspectionPos(uint32_t inspectionId)
+int getInspectionPos(uint32_t inspectionId)
+{
+	int result{ -1 };
+	auto* pTrc = SvTrc::getTriggerRecordControllerInstance();
+	if (nullptr != pTrc)
 	{
-		int Return = -1;
-		const auto& rInspectionList = SvTrc::getTriggerRecordControllerInstance().getInspections();
+		const auto& rInspectionList = pTrc->getInspections();
 		const auto& Iter = std::find_if(rInspectionList.list().begin(), rInspectionList.list().end(), [inspectionId](const auto& rItem)-> bool
 			{
 				return rItem.id() == inspectionId;
 			});
 		if (rInspectionList.list().end() != Iter)
 		{
-			Return = static_cast<int>(std::distance(rInspectionList.list().begin(), Iter));
+			result = static_cast<int>(std::distance(rInspectionList.list().begin(), Iter));
 		}
-
-		return Return;
 	}
 
-	ITriggerRecordControllerRW& getTriggerRecordControllerRWInstance()
-	{
-		auto& rTRC = SvTrc::getTriggerRecordControllerInstance();
-		if (rTRC.isWritable())
-		{
-			return SvTrc::getTriggerRecordControllerInstance();
-		}
-		assert(false);
-		SvStl::MessageManager Exception(SvStl::MsgType::Data);
-		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_NotWriteVersion, SvStl::SourceFileParams(StdMessageParams));
-		Exception.Throw();
-	}
+	return result;
+}
 
-	ITriggerRecordControllerR& getTriggerRecordControllerRInstance()
+ITriggerRecordControllerRW* getTriggerRecordControllerRWInstance()
+{
+	auto* pTRC = SvTrc::getTriggerRecordControllerInstance();
+	if (nullptr != pTRC && pTRC->isWritable())
 	{
-		return SvTrc::getTriggerRecordControllerInstance();
+		//Use reinterpret cast for speed as we know it fits!
+		return reinterpret_cast<ITriggerRecordControllerRW*> (pTRC);
 	}
+	assert(false);
+	SvStl::MessageManager Exception(SvStl::MsgType::Log);
+	Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_NotWriteVersion, SvStl::SourceFileParams(StdMessageParams));
+	return nullptr;
+}
 
-	void createTriggerRecordControllerInstance(SvOi::TRC_DataType dataType)
+ITriggerRecordControllerR* getTriggerRecordControllerRInstance()
+{
+	//Use reinterpret cast for speed as we know it fits!
+	return reinterpret_cast<ITriggerRecordControllerR*> (SvTrc::getTriggerRecordControllerInstance());
+}
+
+void createTriggerRecordControllerInstance(TRC_DataType dataType)
+{
+	if (nullptr == SvTrc::g_pTriggerRecordController)
 	{
-		if (nullptr == SvTrc::g_pTriggerRecordController)
+		switch (dataType)
 		{
-			switch (dataType)
-			{
-			case SvOi::TRC_DataType::Local:
-				SvTrc::g_pTriggerRecordController = std::make_shared<SvTrc::TriggerRecordController>(std::make_unique<SvTrc::DataControllerLocal>());
-				break;
-			case SvOi::TRC_DataType::Writer:
-				SvTrc::g_pTriggerRecordController = std::make_shared<SvTrc::TriggerRecordController>(std::make_unique<SvTrc::DataControllerWriter>());
-				break;
-			case SvOi::TRC_DataType::Reader:
-				SvTrc::g_pTriggerRecordController = std::make_shared<SvTrc::TriggerRecordController>(std::make_unique<SvTrc::DataControllerReader>());
-				break;
-			default:
-				assert(false);
-				break;
-			}
-		}
-		else
-		{
+		case ::SvOi::TRC_DataType::Local:
+			SvTrc::g_pTriggerRecordController = std::make_shared<SvTrc::TriggerRecordController>(std::make_unique<SvTrc::DataControllerLocal>());
+			break;
+		case ::SvOi::TRC_DataType::Writer:
+			SvTrc::g_pTriggerRecordController = std::make_shared<SvTrc::TriggerRecordController>(std::make_unique<SvTrc::DataControllerWriter>());
+			break;
+		case ::SvOi::TRC_DataType::Reader:
+			SvTrc::g_pTriggerRecordController = std::make_shared<SvTrc::TriggerRecordController>(std::make_unique<SvTrc::DataControllerReader>());
+			break;
+		default:
 			assert(false);
+			break;
 		}
 	}
-
-	void destroyTriggerRecordController()
+	else
 	{
-		if (nullptr != SvTrc::g_pTriggerRecordController)
-		{
-			SvTrc::g_pTriggerRecordController->clearAll();
-			SvTrc::g_pTriggerRecordController = nullptr;
-		}
+		assert(false);
 	}
-} //namespace SvOi
+}
+
+void destroyTriggerRecordController()
+{
+	if (nullptr != SvTrc::g_pTriggerRecordController)
+	{
+		SvTrc::g_pTriggerRecordController->clearAll();
+		SvTrc::g_pTriggerRecordController = nullptr;
+	}
+}
+}//namespace SvOi

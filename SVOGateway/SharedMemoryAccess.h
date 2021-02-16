@@ -81,6 +81,8 @@ public:
 	bool CheckRequestPermissions(const SvAuth::SessionContext&, const SvPenv::Envelope&, SvRpc::Task<SvPenv::Envelope>);
 	bool CheckStreamPermissions(const SvAuth::SessionContext&, const SvPenv::Envelope&, SvRpc::Observer<SvPenv::Envelope>, SvRpc::ServerStreamContext::Ptr);
 
+	void unsubscribe_from_trc();
+
 private:
 	struct product_stream_t
 	{
@@ -134,8 +136,7 @@ private:
 
 private:
 	void subscribe_to_trc();
-	void unsubscribe_from_trc();
-	int get_inspection_pos_for_id(SvOi::ITriggerRecordControllerR&, uint32_t id);
+	int get_inspection_pos_for_id(const SvPb::InspectionList& rList, uint32_t id);
 
 private:
 	bool is_request_allowed(const SvPenv::Envelope& rEnvelope, const SvPb::Permissions& permissions);

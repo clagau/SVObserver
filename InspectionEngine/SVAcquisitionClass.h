@@ -181,7 +181,7 @@ private:
 	SVAcquisitionClass();
 
 	bool m_LUTAndLRSet;
-	SvOi::ITriggerRecordControllerRW& m_rTRController;
+	SvOi::ITriggerRecordControllerRW* m_pTRC;
 	SVMatroxBufferCreateStruct m_bufferStruct;
 	uint32_t m_objectId = SvDef::InvalidObjectId;
 	int m_neededBuffer = 10;

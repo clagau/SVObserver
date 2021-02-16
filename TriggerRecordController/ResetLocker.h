@@ -37,16 +37,19 @@ namespace SvTrc
 		typedef std::unique_ptr<ResetLocker> ResetLockerPtr;
 		static ResetLockerPtr lockReset(long resetId)
 		{
-			static auto& controller = getTriggerRecordControllerInstance();
-			volatile long* pResetLockCounter = controller.getResetLockCounterRef();
-			if (nullptr != pResetLockCounter)
+			auto* pTRC = getTriggerRecordControllerInstance();
+			if (nullptr != pTRC)
 			{
-				if (0 != controller.getResetId())
+				volatile long* pResetLockCounter = pTRC->getResetLockCounterRef();
+				if (nullptr != pResetLockCounter)
 				{
-					ResetLockerPtr retValue = std::make_unique<ResetLocker>(*pResetLockCounter);
-					if (controller.getResetId() == resetId)
+					if (0 != pTRC->getResetId())
 					{
-						return std::move(retValue);
+						ResetLockerPtr retValue = std::make_unique<ResetLocker>(*pResetLockCounter);
+						if (pTRC->getResetId() == resetId)
+						{
+							return std::move(retValue);
+						}
 					}
 				}
 			}

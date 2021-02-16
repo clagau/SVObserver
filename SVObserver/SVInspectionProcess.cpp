@@ -622,10 +622,14 @@ bool SVInspectionProcess::CanGoOnline()
 			m_trcPos = SvOi::getInspectionPos(getObjectId());
 		}
 		SvSml::SharedMemWriter::Instance().addInspectionIdEntry(GetPPQ()->GetName(), m_StoreIndex, m_trcPos);
-		const auto& rDataDefMap = SvOi::getTriggerRecordControllerRInstance().getDataDefMap(m_trcPos);
-		const auto& rImageMap = SvOi::getTriggerRecordControllerRInstance().getImageDefMap(m_trcPos);
-		const auto& rChildImageMap = SvOi::getTriggerRecordControllerRInstance().getChildImageDefMap(m_trcPos);
-		SvSml::SharedMemWriter::Instance().setDataTrcPos(GetPPQ()->GetName(), m_StoreIndex, m_trcPos, rDataDefMap, rImageMap, rChildImageMap);
+		auto* pTrc = SvOi::getTriggerRecordControllerRInstance();
+		if (nullptr != pTrc)
+		{
+			const auto& rDataDefMap = pTrc->getDataDefMap(m_trcPos);
+			const auto& rImageMap = pTrc->getImageDefMap(m_trcPos);
+			const auto& rChildImageMap = pTrc->getChildImageDefMap(m_trcPos);
+			SvSml::SharedMemWriter::Instance().setDataTrcPos(GetPPQ()->GetName(), m_StoreIndex, m_trcPos, rDataDefMap, rImageMap, rChildImageMap);
+		}
 	}
 
 	return l_bOk;
@@ -1417,15 +1421,21 @@ void SVInspectionProcess::SingleRunModeLoop(bool p_Refresh)
 
 bool SVInspectionProcess::resetAllObjects(SvStl::MessageContainerVector *pErrorMessages/*=nullptr */)
 {
+	auto* pTrcRW = SvOi::getTriggerRecordControllerRWInstance();
+	if (nullptr == pTrcRW)
+	{
+		return false;
+	}
+
 	SvStl::MessageContainerVector ErrorMessages;
 	bool Result = true;
 	try
 	{
-		bool shouldResetTRC = !SvOi::getTriggerRecordControllerRWInstance().isResetLocked();
+		bool shouldResetTRC = (false == pTrcRW->isResetLocked());
 
 		if (shouldResetTRC)
 		{
-			SvOi::getTriggerRecordControllerRWInstance().startResetTriggerRecordStructure(m_trcPos);
+			pTrcRW->startResetTriggerRecordStructure(m_trcPos);
 		}
 
 		if (nullptr != m_pCurrentToolset)
@@ -1448,7 +1458,7 @@ bool SVInspectionProcess::resetAllObjects(SvStl::MessageContainerVector *pErrorM
 
 		if (shouldResetTRC)
 		{
-			SvOi::getTriggerRecordControllerRWInstance().finishResetTriggerRecordStructure();
+			pTrcRW->finishResetTriggerRecordStructure();
 		}
 	}
 	catch (const SvStl::MessageContainer& rExp)
@@ -3817,7 +3827,12 @@ void SVInspectionProcess::buildValueObjectData()
 		}
 	}
 
-	SvOi::getTriggerRecordControllerRWInstance().changeDataDef(std::move(dataDefList), m_memValueDataOffset, m_trcPos);
+	auto* pTrcRW = SvOi::getTriggerRecordControllerRWInstance();
+	if(nullptr != pTrcRW)
+	{
+		pTrcRW->changeDataDef(std::move(dataDefList), m_memValueDataOffset, m_trcPos);
+	}
+
 }
 
 SvSml::RingBufferPointer SVInspectionProcess::GetSlotmanager()

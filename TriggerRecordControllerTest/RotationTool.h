@@ -28,7 +28,7 @@ namespace SvTrcT
 
 #pragma region Public Methods
 	public:
-		virtual void reset(uint32_t sourceId, int sourcePos, const SVMatroxBufferCreateStruct& bufferStructIn, SvOi::ITriggerRecordControllerRW& recordController) override;
+		virtual void reset(uint32_t sourceId, int sourcePos, const SVMatroxBufferCreateStruct& bufferStructIn, SvOi::ITriggerRecordControllerRW* pTrcRW) override;
 		virtual CString getName() const override { return _T("Rotation Tool"); };
 		static CString getDescription() { return _T("Rotated the input image (by 45°)."); };
 

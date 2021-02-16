@@ -33,23 +33,26 @@ WindowTool::WindowTool(uint32_t id)
 #pragma endregion Constructor
 
 #pragma region Public Methods
-void WindowTool::reset(uint32_t sourceId, int sourcePos, const SVMatroxBufferCreateStruct& bufferStructIn, SvOi::ITriggerRecordControllerRW& recordController)
+void WindowTool::reset(uint32_t sourceId, int sourcePos, const SVMatroxBufferCreateStruct& bufferStructIn, SvOi::ITriggerRecordControllerRW* pTrcRW)
 {
-	ToolObject::reset(sourceId, sourcePos, bufferStructIn, recordController);
-	m_bufferStructOut = m_bufferStructIn;
-	MatroxBufferChildDataStruct childStruct;
-	childStruct.m_lBand = 1;
-	childStruct.m_lParentBandCount = 1;
-	childStruct.m_lOffX = m_offsetX;
-	childStruct.m_lOffY = m_offsetY;
-	childStruct.m_lSizeX = m_bufferStructIn.m_lSizeX - 2 * m_offsetX;
-	childStruct.m_lSizeY = m_bufferStructIn.m_lSizeY - 2 * m_offsetY;
-	recordController.addOrChangeChildImage(m_childId, sourceId, childStruct);
+	if (nullptr != pTrcRW)
+	{
+		ToolObject::reset(sourceId, sourcePos, bufferStructIn, pTrcRW);
+		m_bufferStructOut = m_bufferStructIn;
+		MatroxBufferChildDataStruct childStruct;
+		childStruct.m_lBand = 1;
+		childStruct.m_lParentBandCount = 1;
+		childStruct.m_lOffX = m_offsetX;
+		childStruct.m_lOffY = m_offsetY;
+		childStruct.m_lSizeX = m_bufferStructIn.m_lSizeX - 2 * m_offsetX;
+		childStruct.m_lSizeY = m_bufferStructIn.m_lSizeY - 2 * m_offsetY;
+		pTrcRW->addOrChangeChildImage(m_childId, sourceId, childStruct);
 
-	m_bufferStructOut = m_bufferStructIn;
-	m_bufferStructOut.m_lSizeX = childStruct.m_lSizeX;
-	m_bufferStructOut.m_lSizeY = childStruct.m_lSizeY;
-	m_trPos = recordController.addOrChangeImage(getObjectId(), m_bufferStructOut);
+		m_bufferStructOut = m_bufferStructIn;
+		m_bufferStructOut.m_lSizeX = childStruct.m_lSizeX;
+		m_bufferStructOut.m_lSizeY = childStruct.m_lSizeY;
+		m_trPos = pTrcRW->addOrChangeImage(getObjectId(), m_bufferStructOut);
+	}
 };
 
 bool WindowTool::run(const SvOi::ITriggerRecordRWPtr& pTriggerRecord)

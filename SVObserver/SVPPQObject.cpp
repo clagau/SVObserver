@@ -4037,7 +4037,11 @@ bool SVPPQObject::setRejectDepth(long depth, SvStl::MessageContainerVector *pErr
 		}
 		try
 		{
-			SvOi::getTriggerRecordControllerRWInstance().resizeIPNumberOfRecords(inspectionPosVec, getNeededRecords(), m_rejectCount);
+			auto* pTrcRW = SvOi::getTriggerRecordControllerRWInstance();
+			if (nullptr != pTrcRW)
+			{
+				pTrcRW->resizeIPNumberOfRecords(inspectionPosVec, getNeededRecords(), m_rejectCount);
+			}
 		}
 		catch (const SvStl::MessageContainer& rSvE)
 		{
@@ -4113,10 +4117,15 @@ bool SVPPQObject::setInspections2TRC()
 			pInspection->setTrcPos(-1);
 		}
 	}
-	bool result = SvOi::getTriggerRecordControllerRWInstance().setInspections(std::move(inspListMessage));
-	if (result)
+	bool result{ false };
+	auto* pTrcRW = SvOi::getTriggerRecordControllerRWInstance();
+	if (nullptr != pTrcRW)
 	{
-		pConfig->UpdateInspectionList4TRC();
+		result = pTrcRW->setInspections(std::move(inspListMessage));
+		if (result)
+		{
+			pConfig->UpdateInspectionList4TRC();
+		}
 	}
 	return result;
 }
@@ -4161,7 +4170,12 @@ void SVPPQObject::setTRofInterest(const SVProductInfoStruct& rProduct, bool isIn
 
 	try
 	{
-		bool isReject = SvOi::getTriggerRecordControllerRInstance().setTrsOfInterest(trVec, isInterest);
+		bool isReject{ false };
+		auto* pTrc = SvOi::getTriggerRecordControllerRInstance();
+		if (nullptr != pTrc)
+		{
+			isReject = pTrc->setTrsOfInterest(trVec, isInterest);
+		}
 		if (HasActiveMonitorList())
 		{
 			long slotindex = rProduct.m_monitorListSMSlot;
@@ -4215,7 +4229,11 @@ void SVPPQObject::setTR2StoreForInterestMap(uint32_t ipId, SVProductInfoStruct &
 		{
 			try
 			{
-				SvOi::getTriggerRecordControllerRInstance().setTrsOfInterest({trHandle}, rIter.m_bReject);
+				auto* pTrc = SvOi::getTriggerRecordControllerRInstance();
+				if (nullptr != pTrc)
+				{
+					pTrc->setTrsOfInterest({ trHandle }, rIter.m_bReject);
+				}
 			}
 			catch (...)
 			{

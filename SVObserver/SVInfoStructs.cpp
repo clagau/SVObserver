@@ -69,27 +69,33 @@ bool SVInspectionInfoStruct::setNextAvailableTR( )
 
 void SVInspectionInfoStruct::setNextTriggerRecord(SvOi::TriggerData triggerData)
 {
-	m_triggerRecordWrite = SvOi::getTriggerRecordControllerRWInstance().createTriggerRecordObjectToWrite(m_inspectionPosInTrc);
-	if (nullptr != m_triggerRecordWrite)
+	auto* pTrcRW = SvOi::getTriggerRecordControllerRWInstance();
+	if (nullptr != pTrcRW)
 	{
-		m_triggerRecordWrite->setTriggerData(triggerData);
+		m_triggerRecordWrite = pTrcRW->createTriggerRecordObjectToWrite(m_inspectionPosInTrc);
+		if (nullptr != m_triggerRecordWrite)
+		{
+			m_triggerRecordWrite->setTriggerData(triggerData);
+		}
+		m_triggerRecordComplete = nullptr;
 	}
-	m_triggerRecordComplete = nullptr;
 }
 
 void SVInspectionInfoStruct::setTriggerRecordCompleted()
 {
-	if (nullptr != m_triggerRecordWrite)
+	auto* pTrcRW = SvOi::getTriggerRecordControllerRWInstance();
+	if (nullptr != m_triggerRecordWrite && nullptr != pTrcRW)
 	{
-		m_triggerRecordComplete = SvOi::getTriggerRecordControllerRWInstance().closeWriteAndOpenReadTriggerRecordObject(m_triggerRecordWrite);
+		m_triggerRecordComplete = pTrcRW->closeWriteAndOpenReadTriggerRecordObject(m_triggerRecordWrite);
 	}
 }
 
 void SVInspectionInfoStruct::setTriggerRecordIncompleted()
 {
-	if (nullptr != m_triggerRecordWrite)
+	auto* pTrcRW = SvOi::getTriggerRecordControllerRWInstance();
+	if (nullptr != m_triggerRecordWrite && nullptr != pTrcRW)
 	{
-		SvOi::getTriggerRecordControllerRWInstance().closeWriteObjectWithoutUpdateLastTrId(m_triggerRecordWrite);
+		pTrcRW->closeWriteObjectWithoutUpdateLastTrId(m_triggerRecordWrite);
 	}
 }
 

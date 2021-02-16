@@ -66,7 +66,7 @@ namespace SvTrcT
 		void OnResetTRCData();
 
 	private:
-		SvOi::ITriggerRecordControllerR& m_recordController = SvOi::getTriggerRecordControllerRInstance();
+		SvOi::ITriggerRecordControllerR* m_pTRC = SvOi::getTriggerRecordControllerRInstance();
 		bool m_bResetStart = false;
 		bool m_isEdit = false;
 		int m_trNumbers = 10;

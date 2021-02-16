@@ -181,7 +181,7 @@ namespace SvOi
 
 	/// Get an instance of the Tr controller in read modus.
 	/// \returns ITriggerRecordControllerR&
-	ITriggerRecordControllerR& getTriggerRecordControllerRInstance();
+	ITriggerRecordControllerR* getTriggerRecordControllerRInstance();
 
 	/// Return the position of the inspection. If not available, it return -1.
 	/// \param inspectionId [in] Id of the inspection.

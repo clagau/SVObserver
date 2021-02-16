@@ -28,7 +28,7 @@ namespace SvTrcT
 
 #pragma region Public Methods
 	public:
-		virtual void reset(uint32_t sourceId, int sourcePos, const SVMatroxBufferCreateStruct& bufferStructIn, SvOi::ITriggerRecordControllerRW& recordController) override;
+		virtual void reset(uint32_t sourceId, int sourcePos, const SVMatroxBufferCreateStruct& bufferStructIn, SvOi::ITriggerRecordControllerRW* pTcrRW) override;
 		virtual CString getName() const override { return _T("(De)actived Tool"); };
 		static CString getDescription() { return _T("Copy the whole input image every second time."); };
 		virtual bool run(const SvOi::ITriggerRecordRWPtr& pTriggerRecord) override;

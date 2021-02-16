@@ -167,6 +167,9 @@ void StartWebServer(DWORD argc, LPTSTR  *argv)
 		IoService.stop();
 		ServerThread.join();
 
+		//Should be done before destroyTriggerRecordController
+		sharedMemoryAccess.unsubscribe_from_trc();
+
 		SvOi::destroyTriggerRecordController();
 	}
 	catch (std::exception& e)

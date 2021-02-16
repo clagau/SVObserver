@@ -693,41 +693,44 @@ bool SVArchiveTool::AllocateImageBuffers(SvStl::MessageContainerVector *pErrorMe
 			{
 				try
 				{
-					SvOi::ITriggerRecordControllerRW& rTRController = SvOi::getTriggerRecordControllerRWInstance();
-					bool mustResetStarted = !rTRController.isResetStarted();
-					if (mustResetStarted)
+					auto* pTRC = SvOi::getTriggerRecordControllerRWInstance();
+					if (nullptr != pTRC)
 					{
-						rTRController.startResetTriggerRecordStructure();
-					}
-					rTRController.removeAllImageBuffer(getObjectId());
-
-					const char* memoryPoolName = (m_eArchiveMethod == SVArchiveAsynchronous) ? SvDef::ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME : SvDef::ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME;
-
-					for (const auto& iter : bufferMap)
-					{
-						long bufferNumber = iter.second*dwMaxImages;
-						__int64 l_lImageBufferSize = getBufferSize(iter.first) * bufferNumber;
-						hrAllocate = TheSVMemoryManager().ReservePoolMemory(memoryPoolName, this, l_lImageBufferSize);
-						if (S_OK != hrAllocate)
+						bool mustResetStarted = !pTRC->isResetStarted();
+						if (mustResetStarted)
 						{
-							if (nullptr != pErrorMessages)
-							{
-								SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ArchiveTool_NotEnoughBuffer, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
-								pErrorMessages->push_back(Msg);
-							}
-							if (mustResetStarted)
-							{
-								rTRController.finishResetTriggerRecordStructure();
-							}
-							m_lastBufferMap.clear();
-							return false;
+							pTRC->startResetTriggerRecordStructure();
 						}
+						pTRC->removeAllImageBuffer(getObjectId());
 
-						rTRController.addImageBuffer(getObjectId(), iter.first, bufferNumber);
-					}
-					if (mustResetStarted)
-					{
-						rTRController.finishResetTriggerRecordStructure();
+						const char* memoryPoolName = (m_eArchiveMethod == SVArchiveAsynchronous) ? SvDef::ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME : SvDef::ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME;
+
+						for (const auto& iter : bufferMap)
+						{
+							long bufferNumber = iter.second * dwMaxImages;
+							__int64 l_lImageBufferSize = getBufferSize(iter.first) * bufferNumber;
+							hrAllocate = TheSVMemoryManager().ReservePoolMemory(memoryPoolName, this, l_lImageBufferSize);
+							if (S_OK != hrAllocate)
+							{
+								if (nullptr != pErrorMessages)
+								{
+									SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ArchiveTool_NotEnoughBuffer, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+									pErrorMessages->push_back(Msg);
+								}
+								if (mustResetStarted)
+								{
+									pTRC->finishResetTriggerRecordStructure();
+								}
+								m_lastBufferMap.clear();
+								return false;
+							}
+
+							pTRC->addImageBuffer(getObjectId(), iter.first, bufferNumber);
+						}
+						if (mustResetStarted)
+						{
+							pTRC->finishResetTriggerRecordStructure();
+						}
 					}
 					m_lastBufferMap = bufferMap;
 					m_lastMaxImages = dwMaxImages;

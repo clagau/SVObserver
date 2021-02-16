@@ -27,7 +27,7 @@ namespace SvTrcT
 
 #pragma region Public Methods
 	public:
-		virtual void reset(uint32_t sourceId, int sourcePos, const SVMatroxBufferCreateStruct& bufferStructIn, SvOi::ITriggerRecordControllerRW& recordController) override;
+		virtual void reset(uint32_t sourceId, int sourcePos, const SVMatroxBufferCreateStruct& bufferStructIn, SvOi::ITriggerRecordControllerRW* pTrcRW) override;
 		virtual CString getName() const override{ return _T("Window Tool"); };
 		static CString getDescription() { return _T("Copy a part of the input image (10 pixel smaller on all sides)."); };
 
