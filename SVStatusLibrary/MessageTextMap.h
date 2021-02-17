@@ -594,6 +594,7 @@ namespace SvStl
 		{Tid_TRC_Error_setTrOfInterestNumberLockFailed, _T("setTrOfInterestNumber failed because no lock obtained.")},
 		{Tid_TRC_Error_setTrOfInterestFailed, _T("setTrOfInterest failed.")},
 		{Tid_TRC_Error_StopReloadingReader, _T("Stopping Reloading TRC-Reader, because of new reset.")},
+		{Tid_TRC_Error_GetTRData, _T("GetTrData failed: Pos = %s, TRNumber = %s.")},
 
 		{Tid_TRC_Error_ResetInspectionFailed, _T("Reset of TRC failed, because buffer creation failed.\nPossible Reason is too little resources, maybe the PPQs are too long.")},
 		{Tid_TRC_Error_CounterTimeOut, _T("ResetCounter is not go back to zero in %s seconds. Maybe a client is die without reset the counter. The current value is %s.")},

@@ -557,6 +557,7 @@ enum MessageTextEnum
 	Tid_TRC_Error_setTrOfInterestNumberLockFailed,
 	Tid_TRC_Error_setTrOfInterestFailed,
 	Tid_TRC_Error_StopReloadingReader,
+	Tid_TRC_Error_GetTRData,
 
 	Tid_TRC_Error_ResetInspectionFailed,
 	Tid_TRC_Error_CounterTimeOut,

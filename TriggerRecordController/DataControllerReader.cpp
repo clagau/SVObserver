@@ -91,7 +91,11 @@ void TRControllerReaderDataPerIP::reloadData()
 TriggerRecordData& TRControllerReaderDataPerIP::getTRData(int pos) const
 {
 	assert(0 <= pos && getBasicData().m_TriggerRecordNumber > pos && nullptr != m_pTriggerRecords);
-
+	if (0 > pos || getBasicData().m_TriggerRecordNumber <= pos || nullptr == m_pTriggerRecords)
+	{
+		SvStl::MessageManager Exception(SvStl::MsgType::Log);
+		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_GetTRData, {std::to_string(pos), std::to_string(getBasicData().m_TriggerRecordNumber)}, SvStl::SourceFileParams(StdMessageParams));
+	}
 	void* tmp = static_cast<char*>(m_pTriggerRecords) + (pos*getBasicData().m_triggerRecordBufferSize);
 	TriggerRecordData* tr = reinterpret_cast<TriggerRecordData*>(tmp);
 	return *tr;

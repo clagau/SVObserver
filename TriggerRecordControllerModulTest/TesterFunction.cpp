@@ -433,6 +433,8 @@ bool writerTest(LogClass& rLogClass, const int numberOfRuns, const TrcTesterConf
 
 				if (nullptr != lastTRList[ipId])
 				{
+					logStr = SvUl::Format(_T("Writer Tests (%d): ip%d: Set InterestEvent = %d / %d"), testDataId, ipId, lastTRList[ipId]->getId(), 0 == runId % divFac);
+					rLogClass.LogText(logStr.c_str(), LogLevel::Debug, LogType::BLANK);
 					pTrcRW->setTrsOfInterest({lastTRList[ipId]}, 0 == runId % divFac);
 				}
 			}
