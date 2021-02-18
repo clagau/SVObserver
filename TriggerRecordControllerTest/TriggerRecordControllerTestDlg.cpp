@@ -554,7 +554,7 @@ namespace SvTrcT
 				uint32_t sourceImage = m_mainId;
 				for (const auto& tool : m_toolList)
 				{
-					tool->reset(sourceImage, sourcePos, bufferStruct, pTrcRw);
+					tool->reset(sourceImage, sourcePos, bufferStruct, *pTrcRw);
 					sourcePos = tool->getImagePos();
 					sourceImage = tool->getObjectId();
 					bufferStruct = tool->getBufferOut();

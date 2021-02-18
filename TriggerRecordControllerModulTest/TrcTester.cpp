@@ -85,10 +85,14 @@ bool TrcTester::fullTest()
 #pragma region test methods
 bool TrcTester::createInspections()
 {
+	if (nullptr == m_pTrcRW)
+	{
+		return false;
+	}
 	std::vector<std::pair<int, int>> numbersOfRecords(m_config.getNumberOfInspections(), {m_config.getNumberOfImagesPerInspection(), 0});
 	for (int i = 0; i < m_config.getNoOfRepetitionsPerStep(); i++)
 	{
-		bool createInspectionsOk = setInspections(numbersOfRecords, m_pTrcRW, m_rLogClass, strTestCreateInspections);
+		bool createInspectionsOk = setInspections(numbersOfRecords, *m_pTrcRW, m_rLogClass, strTestCreateInspections);
 		if (!createInspectionsOk)
 		{
 			std::string errorStr = SvUl::Format(_T("(%d, %d) ERROR on %d. iteration!"), m_config.getNumberOfImagesPerInspection(), m_config.getNumberOfInspections(), i);
@@ -112,7 +116,7 @@ bool TrcTester::setBuffers()
 	std::vector<std::pair<int, int>> numbersOfRecords(m_config.getNumberOfInspections(), {m_config.getNumberOfImagesPerInspection(), 0});
 	for (int i = 0; i < m_config.getNoOfRepetitionsPerStep(); i++)
 	{
-		setInspections(numbersOfRecords, m_pTrcRW, m_rLogClass, strTestCreateInspections);
+		setInspections(numbersOfRecords, *m_pTrcRW, m_rLogClass, strTestCreateInspections);
 		m_pTrcRW->setGlobalInit();
 		double start = SvUl::GetTimeStamp();
 		setBufferOk = setInspectionBuffers(strTestSetBuffers);
@@ -150,9 +154,13 @@ bool TrcTester::checkBufferMaximum()
 {
 	constexpr int numberOfRecords = 100;
 	
-	bool retValue = setInspections({{numberOfRecords, 0}}, m_pTrcRW, m_rLogClass, strTestCheckBufferMaximum);
+	if (nullptr == m_pTrcRW)
+	{
+		return false;
+	}
+	bool retValue = setInspections({{numberOfRecords, 0}}, *m_pTrcRW, m_rLogClass, strTestCheckBufferMaximum);
 	m_rLogClass.Log(_T("setInspections!"), retValue ? LogLevel::Information_Level3 : LogLevel::Error, retValue ? LogType::PASS : LogType::FAIL, __LINE__, strTestCheckBufferMaximum);
-	if (false == retValue || nullptr == m_pTrcRW)
+	if (false == retValue)
 	{
 		return false;
 	}
@@ -229,7 +237,7 @@ bool TrcTester::createTR2WriteAndRead()
 	std::uniform_int_distribution<int> dist(1, SvOi::ITriggerRecordControllerRW::ITriggerRecordControllerRW::cMaxTriggerRecords);
 	constexpr int numberOfInspection = 2;
 	std::vector<std::pair<int, int>> numbersOfRecords = {{dist(rd),0}, {dist(rd),0}};
-	bool retValue = setInspections(numbersOfRecords, m_pTrcRW, m_rLogClass, strTestCreateTR2WriteAndRead);
+	bool retValue = setInspections(numbersOfRecords, *m_pTrcRW, m_rLogClass, strTestCreateTR2WriteAndRead);
 	if (!retValue)
 	{
 		m_rLogClass.Log(_T("setInspections!"),  LogLevel::Error, LogType::FAIL, __LINE__, strTestCreateTR2WriteAndRead);
@@ -365,8 +373,13 @@ bool TrcTester::createTR2WriteAndRead()
 
 bool TrcTester::setAndReadImage()
 {
-	bool retValue = setInspections({{12,0}}, m_pTrcRW, m_rLogClass, strTestSetAndReadImage);
-	if (false == retValue || nullptr == m_pTrcRW)
+	if (nullptr == m_pTrcRW)
+	{
+		return false;
+	}
+
+	bool retValue = setInspections({{12,0}}, *m_pTrcRW, m_rLogClass, strTestSetAndReadImage);
+	if (false == retValue)
 	{
 		m_rLogClass.Log(_T("setInspections!"), LogLevel::Error, LogType::FAIL, __LINE__, strTestSetAndReadImage);
 		return false;
@@ -485,8 +498,12 @@ bool TrcTester::setAndReadImage()
 
 bool TrcTester::setAndReadValues()
 {
-	bool retValue = setInspections({{21, 0}}, m_pTrcRW, m_rLogClass, strTestSetAndReadValues);
-	if (false == retValue || nullptr == m_pTrcRW)
+	if (nullptr == m_pTrcRW)
+	{
+		return false;
+	}
+	bool retValue = setInspections({{21, 0}}, *m_pTrcRW, m_rLogClass, strTestSetAndReadValues);
+	if (false == retValue)
 	{
 		m_rLogClass.Log(_T("setInspections!"), LogLevel::Error, LogType::FAIL, __LINE__, strTestSetAndReadValues);
 		return false;

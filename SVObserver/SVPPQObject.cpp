@@ -4037,11 +4037,7 @@ bool SVPPQObject::setRejectDepth(long depth, SvStl::MessageContainerVector *pErr
 		}
 		try
 		{
-			auto* pTrcRW = SvOi::getTriggerRecordControllerRWInstance();
-			if (nullptr != pTrcRW)
-			{
-				pTrcRW->resizeIPNumberOfRecords(inspectionPosVec, getNeededRecords(), m_rejectCount);
-			}
+			SvOi::getTriggerRecordControllerRWInstanceThrow().resizeIPNumberOfRecords(inspectionPosVec, getNeededRecords(), m_rejectCount);
 		}
 		catch (const SvStl::MessageContainer& rSvE)
 		{

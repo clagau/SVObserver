@@ -146,11 +146,7 @@ bool RingBufferTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 			{
 				try
 				{
-					auto* pTRC = SvOi::getTriggerRecordControllerRWInstance();
-					if (nullptr != pTRC)
-					{
-						pTRC->addImageBuffer(getObjectId(), bufferStruct, m_ringBufferDepth);
-					}
+					SvOi::getTriggerRecordControllerRWInstanceThrow().addImageBuffer(getObjectId(), bufferStruct, m_ringBufferDepth);
 				}
 				catch (const SvStl::MessageContainer& rExp)
 				{

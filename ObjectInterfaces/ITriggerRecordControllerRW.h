@@ -160,6 +160,6 @@ namespace SvOi
 	};
 
 	/// Get an instance of the TR controller in read/write modus.
-	/// \returns ITriggerRecordControllerRW&
-	ITriggerRecordControllerRW* getTriggerRecordControllerRWInstance();
+	ITriggerRecordControllerRW* getTriggerRecordControllerRWInstance() noexcept;
+	ITriggerRecordControllerRW& getTriggerRecordControllerRWInstanceThrow() noexcept(false);
 } //namespace SvOi

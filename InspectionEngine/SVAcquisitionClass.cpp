@@ -779,6 +779,12 @@ void SVAcquisitionClass::setNeededBuffers(int neededBuffers)
 		{
 			m_pTRC->addImageBuffer(m_objectId, m_bufferStruct, m_neededBuffer, true);
 		}
+		else
+		{
+			SvStl::MessageManager Exception(SvStl::MsgType::Data);
+			Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_GetTRCFailed, SvStl::SourceFileParams(StdMessageParams));
+			Exception.Throw();
+		}
 	}
 	catch (const SvStl::MessageContainer& rExp)
 	{

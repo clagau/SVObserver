@@ -20,7 +20,7 @@ bool areImageEqual(MIL_ID image1, MIL_ID image2);
 SVMatroxBufferCreateStruct specifyBufferFromImage(MIL_ID imageId);
 
 //numbersOfRecords are list of pairs (one per inspection) with first = numberOfRecords and second = number”fInterest
-bool setInspections(std::vector<std::pair<int, int>> numbersOfRecords, SvOi::ITriggerRecordControllerRW* pTrcRW, LogClass& rLogClass, LPCSTR testAreaStr);
+bool setInspections(std::vector<std::pair<int, int>> numbersOfRecords, SvOi::ITriggerRecordControllerRW& rTrcRW, LogClass& rLogClass, LPCSTR testAreaStr);
 
 /// Start the writer test
 /// \param rLogClass [in] Reference to logClass

@@ -1302,7 +1302,7 @@ void TriggerRecordController::reduceRequiredImageBuffer(const std::map<int, int>
 #pragma endregion Private Methods
 
 std::shared_ptr<TriggerRecordController> g_pTriggerRecordController = nullptr;
-TriggerRecordController* getTriggerRecordControllerInstance()
+TriggerRecordController* getTriggerRecordControllerInstance(bool throwException /*= false*/)
 {
 	if (nullptr != g_pTriggerRecordController)
 	{
@@ -1311,8 +1311,12 @@ TriggerRecordController* getTriggerRecordControllerInstance()
 	else
 	{
 		assert(false);
-		SvStl::MessageManager Exception(SvStl::MsgType::Log);
+		SvStl::MessageManager Exception(throwException ? SvStl::MsgType::Data : SvStl::MsgType::Log);
 		Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_GetTRCFailed, SvStl::SourceFileParams(StdMessageParams));
+		if (throwException)
+		{
+			Exception.Throw();
+		}
 		return nullptr;
 	}
 }
@@ -1346,7 +1350,7 @@ int getInspectionPos(uint32_t inspectionId)
 	return result;
 }
 
-ITriggerRecordControllerRW* getTriggerRecordControllerRWInstance()
+ITriggerRecordControllerRW* getTriggerRecordControllerRWInstance() noexcept
 {
 	auto* pTRC = SvTrc::getTriggerRecordControllerInstance();
 	if (nullptr != pTRC && pTRC->isWritable())
@@ -1358,6 +1362,20 @@ ITriggerRecordControllerRW* getTriggerRecordControllerRWInstance()
 	SvStl::MessageManager Exception(SvStl::MsgType::Log);
 	Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_NotWriteVersion, SvStl::SourceFileParams(StdMessageParams));
 	return nullptr;
+}
+
+ITriggerRecordControllerRW& getTriggerRecordControllerRWInstanceThrow() noexcept(false)
+{
+	auto* pTRC = SvTrc::getTriggerRecordControllerInstance(true);
+	if (nullptr != pTRC && pTRC->isWritable())
+	{
+		//Use reinterpret cast for speed as we know it fits!
+		return reinterpret_cast<ITriggerRecordControllerRW&> (*pTRC);
+	}
+	assert(false);
+	SvStl::MessageManager Exception(SvStl::MsgType::Data);
+	Exception.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_NotWriteVersion, SvStl::SourceFileParams(StdMessageParams));
+	Exception.Throw();
 }
 
 ITriggerRecordControllerR* getTriggerRecordControllerRInstance()

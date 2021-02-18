@@ -208,7 +208,7 @@ SVMatroxBufferCreateStruct specifyBufferFromImage(MIL_ID imageId)
 	return bufferStruct;
 }
 
-bool setInspections(std::vector < std::pair <int, int> > numbersOfRecords, SvOi::ITriggerRecordControllerRW* pTrcRW, LogClass& rLogClass, LPCSTR testAreaStr)
+bool setInspections(std::vector < std::pair <int, int> > numbersOfRecords, SvOi::ITriggerRecordControllerRW& rTrcRW, LogClass& rLogClass, LPCSTR testAreaStr)
 {
 	SvPb::InspectionList inspList;
 	for (std::pair<int, int> numberOfRecords : numbersOfRecords)
@@ -222,12 +222,7 @@ bool setInspections(std::vector < std::pair <int, int> > numbersOfRecords, SvOi:
 		pInspStruct->set_numberofrecords(numberOfRecords.first);
 		pInspStruct->set_numberrecordsofinterest(numberOfRecords.second);
 	}
-	bool result{ false };
-	if (nullptr != pTrcRW)
-	{
-		result = pTrcRW->setInspections(std::move(inspList));
-	}
-	return result;
+	return rTrcRW.setInspections(std::move(inspList));
 }
 
 bool writerTest(LogClass& rLogClass, const int numberOfRuns, const TrcTesterConfiguration::TestDataList& rTestData, int sleepBetweenTrigger)
@@ -251,7 +246,7 @@ bool writerTest(LogClass& rLogClass, const int numberOfRuns, const TrcTesterConf
 			numbersOfRecords.emplace_back(rInspectionsData[j].m_recordSize, rInspectionsData[j].m_recordInterestSize);
 			inspectionNumberStr = SvUl::Format("%s%d/%d, ", inspectionNumberStr.c_str(), numbersOfRecords[j].first, numbersOfRecords[j].second);
 		}
-		retValue = setInspections(numbersOfRecords, pTrcRW, rLogClass, strTestWithMoreThreads);
+		retValue = setInspections(numbersOfRecords, *pTrcRW, rLogClass, strTestWithMoreThreads);
 		std::string logStr = SvUl::Format(_T("Writer Tests (%d): CreateInspections(%s)"), testDataId, inspectionNumberStr.c_str());
 
 		//check if interest is set and set pauseStart and pauseStop values
@@ -497,14 +492,10 @@ namespace
 		return false;
 	}
 
-	bool testInterestTr(ReaderTestData& testData, SvOi::ITriggerRecordControllerR* pTRC, SvPb::InspectionList& rInspectionList, int inspectionPos, int testDataId, int runId, int interestNumber)
+	bool testInterestTr(ReaderTestData& testData, SvOi::ITriggerRecordControllerR& rTRC, SvPb::InspectionList& rInspectionList, int inspectionPos, int testDataId, int runId, int interestNumber)
 	{
-		if (nullptr == pTRC)
-		{
-			return false;
-		}
 		bool retValue = true;
-		auto interestTRVec = pTRC->getTrsOfInterest(inspectionPos, interestNumber);
+		auto interestTRVec = rTRC.getTrsOfInterest(inspectionPos, interestNumber);
 		if (0 < interestTRVec.size())
 		{
 			std::vector<int> interestList = calcExpectedInterestList(testData.m_isOtherProcess ? rInspectionList.list(inspectionPos).numberofrecords() : testData.m_rTestDataList[testDataId][inspectionPos].m_recordSize, testData.m_numberOfRuns, divFac);
@@ -566,12 +557,8 @@ namespace
 		return retValue;
 	}
 
-	bool readAllDataFromOneWriterBlock(ReaderTestData& testData, SvOi::ITriggerRecordControllerR* pTRC, SvPb::InspectionList& rInspectionList)
+	bool readAllDataFromOneWriterBlock(ReaderTestData& testData, SvOi::ITriggerRecordControllerR& rTRC, SvPb::InspectionList& rInspectionList)
 	{
-		if (nullptr == pTRC)
-		{
-			return false;
-		}
 		bool retValue = true;
 		auto inspectionSize = rInspectionList.list_size();
 		std::vector<int> lastTrIds(inspectionSize, -1);
@@ -618,7 +605,7 @@ namespace
 			for (const auto newTrInfo : newTrInfoVec)
 			{
 				runId++;
-				int trIdLast = pTRC->getLastTrId(newTrInfo.m_inspectionPos);
+				int trIdLast = rTRC.getLastTrId(newTrInfo.m_inspectionPos);
 
 				if (lastTrIds[newTrInfo.m_inspectionPos] == newTrInfo.m_trId)
 				{
@@ -633,7 +620,7 @@ namespace
 
 				lastTrIds[newTrInfo.m_inspectionPos] = newTrInfo.m_trId;
 
-				auto tr2R = pTRC->createTriggerRecordObject(newTrInfo.m_inspectionPos, newTrInfo.m_trId);
+				auto tr2R = rTRC.createTriggerRecordObject(newTrInfo.m_inspectionPos, newTrInfo.m_trId);
 				if (nullptr == tr2R)
 				{
 					std::string errorStr = SvUl::Format(_T("Reader Tests: createTriggerRecordObject(%d, %d) return nullptr by run %d!"), newTrInfo.m_inspectionPos, newTrInfo.m_trId, runId);
@@ -686,7 +673,7 @@ namespace
 						std::this_thread::sleep_for(1ms);
 					}
 
-					testInterestTr(testData, pTRC, rInspectionList, newTrInfo.m_inspectionPos, testDataId, runId, interestNumber);
+					testInterestTr(testData, rTRC, rInspectionList, newTrInfo.m_inspectionPos, testDataId, runId, interestNumber);
 				}
 			}
 			newTrInfoVec.clear();
@@ -765,12 +752,8 @@ namespace
 		newInterestTrMap.clear();
 	}
 
-	bool readerTestLoop(ReaderTestData& testData, SvOi::ITriggerRecordControllerR* pTRC)
+	bool readerTestLoop(ReaderTestData& testData, SvOi::ITriggerRecordControllerR& rTRC)
 	{
-		if (nullptr == pTRC)
-		{
-			return false;
-		}
 		bool retValue = true;
 		for (int testDataPos = 0; testDataPos < testData.m_rTestDataList.size(); testDataPos++)
 			//for (int runId = 0; runId < numberOfRunsComplete; runId++)
@@ -780,8 +763,8 @@ namespace
 			{
 				break;
 			}
-			auto inspectionList = pTRC->getInspections();
-			retValue = readAllDataFromOneWriterBlock(testData, pTRC, inspectionList);
+			auto inspectionList = rTRC.getInspections();
+			retValue = readAllDataFromOneWriterBlock(testData, rTRC, inspectionList);
 
 			//check newInterestEvents
 			checkInterestEvents(testData, inspectionList, testDataPos);
@@ -808,7 +791,7 @@ bool readerTest(LPCTSTR testName, ReaderTestData testData)
 				OnReadyTRC();
 			}
 
-			retValue = readerTestLoop(testData, pTRC);
+			retValue = readerTestLoop(testData, *pTRC);
 
 			pTRC->unregisterResetCallback(resetCallbackHandle);
 			pTRC->unregisterReadyCallback(readyCallbackHandle);

@@ -28,7 +28,7 @@ public:
 
 #pragma region Public Methods
 	public:
-		virtual void reset(uint32_t sourceId, int sourcePos, const SVMatroxBufferCreateStruct& bufferStructIn, SvOi::ITriggerRecordControllerRW* pTrcRW) override;
+		virtual void reset(uint32_t sourceId, int sourcePos, const SVMatroxBufferCreateStruct& bufferStructIn, SvOi::ITriggerRecordControllerRW& recordController) override;
 		virtual CString getName() const override { return _T("Copy Tool"); };
 		static CString getDescription() { return _T("Copy the whole input image."); };
 		virtual bool run(const SvOi::ITriggerRecordRWPtr& pTriggerRecord) override;

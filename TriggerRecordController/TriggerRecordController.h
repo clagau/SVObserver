@@ -171,6 +171,6 @@ private:
 
 
 
-TriggerRecordController* getTriggerRecordControllerInstance();
+TriggerRecordController* getTriggerRecordControllerInstance(bool throwException = false);
 ImageBufferController& getImageBufferControllerInstance();
 } //namespace SvTrc
