@@ -24,8 +24,8 @@ public:
 
 #pragma region Member Variables
 public:
-	uint8_t m_currentObjectType {0};		//Current object type
-	uint32_t m_currentObjectID {0};			//Current object ID
+	uint8_t m_objectType {0};				//Object type
+	uint32_t m_objectID {0};				//Object ID
 	std::array<uint8_t, cResultSize> m_results
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};	//Results array
 #pragma endregion Member Variables

@@ -80,6 +80,7 @@ void SVToolSet::init()
 	RegisterEmbeddedObject(&m_EnableAuxiliaryExtents, SvPb::EnableAuxiliaryExtentsEId, IDS_OBJECTNAME_AUXILIARYEXTENTS, false, SvOi::SVResetItemNone);
 	///m_ObjectID is of type double as math tool results are also double which would cause problems with m_InspectedObectID which should only be of one type
 	RegisterEmbeddedObject(&m_ObjectID, SvPb::ObjectIDEId, SvDef::c_ObjectID, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_ObjectType, SvPb::ObjectTypeEId, SvDef::c_ObjectType, false, SvOi::SVResetItemNone);
 	RegisterEmbeddedObject(&m_TriggerIndex, SvPb::TriggerIndexEId, SvDef::c_TriggerIndex, false, SvOi::SVResetItemNone);
 	RegisterEmbeddedObject(&m_TriggerPerObjectID, SvPb::TriggerPerObjectIDEId, SvDef::c_TriggerPerObjectID, false, SvOi::SVResetItemNone);
 	RegisterEmbeddedObject(&m_InspectedObjectID, SvPb::InspectedObjectIDEId, SvDef::c_InspectedObjectID, false, SvOi::SVResetItemIP);
@@ -93,6 +94,7 @@ void SVToolSet::init()
 	m_InspectedObjectID.setValue(convertObjectIdToString(m_ObjectID.getObjectId()));
 	//Display them as integers
 	m_ObjectID.SetOutputFormat(SvVol::OutputFormat_int);
+	m_ObjectType.SetOutputFormat(SvVol::OutputFormat_int);
 	m_TriggerIndex.SetOutputFormat(SvVol::OutputFormat_int);
 	m_TriggerPerObjectID.SetOutputFormat(SvVol::OutputFormat_int);
 
@@ -154,6 +156,8 @@ void SVToolSet::init()
 
 	m_ObjectID.setDefaultValue(0.0);
 	m_ObjectID.setSaveValueFlag(false);
+	m_ObjectType.setDefaultValue(0);
+	m_ObjectType.setSaveValueFlag(false);
 	m_TriggerIndex.setDefaultValue(0);
 	m_TriggerIndex.setSaveValueFlag(false);
 	m_TriggerPerObjectID.setDefaultValue(0);
@@ -226,6 +230,7 @@ bool SVToolSet::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 	m_Width.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
 	m_Height.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
 	m_ObjectID.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
+	m_ObjectType.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
 	m_TriggerIndex.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
 	m_TriggerPerObjectID.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
 	m_InspectedObjectID.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);

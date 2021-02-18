@@ -598,16 +598,10 @@ std::vector<ConfigDataSet> CifXCard::createConfigList(TelegramLayout layout)
 					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelIn1::m_timeStamp)], startByte, sizeof(ChannelIn1::m_timeStamp) };
 					startByte += result[configIndex].m_byteSize;
 					configIndex++;
-					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelIn1::m_currentObjectType)], startByte, sizeof(ChannelIn1::m_currentObjectType) };
+					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelIn1::m_objectType)], startByte, sizeof(ChannelIn1::m_objectType) };
 					startByte += result[configIndex].m_byteSize;
 					configIndex++;
-					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelIn1::m_currentObjectID)], startByte, sizeof(ChannelIn1::m_currentObjectID) };
-					startByte += result[configIndex].m_byteSize;
-					configIndex++;
-					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelIn1::m_previousObjectType)], startByte, sizeof(ChannelIn1::m_previousObjectType) };
-					startByte += result[configIndex].m_byteSize;
-					configIndex++;
-					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelIn1::m_previousObjectID)], startByte, sizeof(ChannelIn1::m_previousObjectID) };
+					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelIn1::m_objectID)], startByte, sizeof(ChannelIn1::m_objectID) };
 					startByte += result[configIndex].m_byteSize;
 					configIndex++;
 					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelIn1::m_triggerIndex)], startByte, sizeof(ChannelIn1::m_triggerIndex) };
@@ -692,25 +686,8 @@ std::vector<ConfigDataSet> CifXCard::createConfigList(TelegramLayout layout)
 		}
 		case TelegramLayout::Layout2:
 		{
-			if (PlcVersion::PlcData1 == m_plcVersion)
-			{
-				InspectionState1 insState;
-
-				for (int i = 0; i < insState.m_channels.size(); ++i)
-				{
-					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelOut::m_currentObjectType)], startByte, sizeof(ChannelOut::m_currentObjectType) };
-					//Do startByte always before configIndex
-					startByte += result[configIndex].m_byteSize;
-					configIndex++;
-					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelOut::m_currentObjectID)], startByte, sizeof(ChannelOut::m_currentObjectID) };
-					startByte += result[configIndex].m_byteSize;
-					configIndex++;
-					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelOut::m_results[0])], startByte, sizeof(ChannelOut::m_results) };
-					startByte += result[configIndex].m_byteSize;
-					configIndex++;
-				}
-			}
-			else if (PlcVersion::PlcData2 == m_plcVersion)
+			//PlcData1 only has the channel data
+			if (PlcVersion::PlcData2 == m_plcVersion)
 			{
 				InspectionState2 insState;
 
@@ -721,19 +698,20 @@ std::vector<ConfigDataSet> CifXCard::createConfigList(TelegramLayout layout)
 					startByte += result[configIndex].m_byteSize;
 					configIndex++;
 				}
-
-				for (int i = 0; i < insState.m_channels.size(); ++i)
-				{
-					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelOut::m_currentObjectType)], startByte, sizeof(ChannelOut::m_currentObjectType) };
-					startByte += result[configIndex].m_byteSize;
-					configIndex++;
-					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelOut::m_currentObjectID)], startByte, sizeof(ChannelOut::m_currentObjectID) };
-					startByte += result[configIndex].m_byteSize;
-					configIndex++;
-					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelOut::m_results[0])], startByte, sizeof(ChannelOut::m_results) };
-					startByte += result[configIndex].m_byteSize;
-					configIndex++;
-				}
+			}
+			//PlcData1 and PlcData2 channel out data are the same
+			for (int i = 0; i < cNumberOfChannels; ++i)
+			{
+				result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelOut::m_objectType)], startByte, sizeof(ChannelOut::m_objectType) };
+				//Do startByte always before configIndex
+				startByte += result[configIndex].m_byteSize;
+				configIndex++;
+				result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelOut::m_objectID)], startByte, sizeof(ChannelOut::m_objectID) };
+				startByte += result[configIndex].m_byteSize;
+				configIndex++;
+				result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelOut::m_results[0])], startByte, sizeof(ChannelOut::m_results) };
+				startByte += result[configIndex].m_byteSize;
+				configIndex++;
 			}
 			break;
 		}

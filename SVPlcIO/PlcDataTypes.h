@@ -23,19 +23,20 @@ constexpr uint8_t cModeSingleDirect = 1;
 struct TriggerReport
 {
 	uint8_t m_channel {0};
-	uint32_t m_currentObjectID {0UL};
-	uint32_t m_previousObjectID {0UL};
-	uint8_t m_triggerIndex {0};
-	uint8_t m_triggerPerObjectID {0};
-	double m_triggerTimestamp {0.0};
+	uint32_t m_objectID{ 0UL };
+	uint8_t m_objectType{ 0 };
+	uint8_t m_triggerIndex{0};
+	uint8_t m_triggerPerObjectID{ 0 };
+	double m_triggerTimestamp{ 0.0 };
 	bool m_isValid{false};
 };
 
 struct ResultReport
 {
-	uint8_t m_channel = 0;
-	uint32_t m_currentObjectID = 0;
-	double m_timestamp {0.0};
+	uint8_t m_channel{ 0 };
+	uint32_t m_objectID{ 0UL };
+	uint8_t m_objectType{ 0 };
+	double m_timestamp{ 0.0 };
 	std::array<uint8_t, cResultSize> m_results {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0, 0, 0};
 };
 

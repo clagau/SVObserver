@@ -28,10 +28,8 @@ public:
 public:
 	uint8_t m_unitControl{ 0 };				//When true then do inspection
 	int16_t m_timeStamp{ 0 };				//Time stamp
-	uint8_t m_currentObjectType{ 0 };		//Current object type
-	uint32_t m_currentObjectID{ 0 };		//Current object ID
-	uint8_t m_previousObjectType{ 0 };		//Previous object type
-	uint32_t m_previousObjectID{ 0 };		//Previous object ID
+	uint8_t m_objectType{ 0 };				//Object type
+	uint32_t m_objectID{ 0 };				//Object ID
 	uint8_t m_triggerIndex{ 0 };			//Trigger index
 	uint8_t m_triggerCount{ 0 };			//Trigger count per object
 #pragma endregion Member Variables

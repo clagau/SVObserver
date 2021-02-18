@@ -62,7 +62,7 @@ void HardwareTriggerSource::queueResult(uint8_t channel, ChannelOut&& channelOut
 {
 	///Channel has already been checked
 	std::lock_guard<std::mutex> guard {m_triggerSourceMutex};
-	if(true == m_inspectionStateQueue.empty() || 0 != m_inspectionStateQueue.front().m_channels[channel].m_currentObjectID)
+	if(true == m_inspectionStateQueue.empty() || 0 != m_inspectionStateQueue.front().m_channels[channel].m_objectID)
 	{
 		m_inspectionStateQueue.emplace(InspectionState1{});
 	}
@@ -143,25 +143,50 @@ int32_t HardwareTriggerSource::getPlcTriggerTime(int32_t socRelative, int16_t ti
 
 void HardwareTriggerSource::createTriggerReport(uint8_t channel)
 {
-	InspectionCommand2 inspectionCmd;
-	memcpy(&inspectionCmd, &m_cifXCard.getCurrentInputData().m_dynamicData[0], sizeof(inspectionCmd));
-	const ChannelIn2& rChannel = inspectionCmd.m_channels[channel];
-
-	double triggerTimeStamp = getExecutionTime(inspectionCmd.m_socRelative, rChannel.m_timeStamp1, m_cifXCard.getCurrentInputData().m_notificationTime);
-
-	//When unit control is 1, trigger index is not 0
-	if (cUnitControlActive == rChannel.m_unitControl && 0 != rChannel.m_triggerIndex)
+	PlcVersion plcVersion = m_cifXCard.getPlcVersion();
+	if (PlcVersion::PlcData1 == plcVersion)
 	{
-		TriggerReport report;
-		report.m_channel = channel;
-		report.m_currentObjectID = rChannel.m_currentObjectID;
-		report.m_previousObjectID = rChannel.m_previousObjectID;
-		report.m_triggerIndex = static_cast<uint32_t> (rChannel.m_triggerIndex);
-		report.m_triggerPerObjectID = rChannel.m_triggerCount;
-		report.m_triggerTimestamp = triggerTimeStamp;
-		report.m_isValid = (0 != inspectionCmd.m_socRelative);
-		
-		sendTriggerReport(report);
+		InspectionCommand1 inspectionCmd;
+		memcpy(&inspectionCmd, &m_cifXCard.getCurrentInputData().m_dynamicData[0], sizeof(inspectionCmd));
+		const ChannelIn1& rChannel = inspectionCmd.m_channels[channel];
+		double triggerTimeStamp = getExecutionTime(inspectionCmd.m_socRelative, rChannel.m_timeStamp, m_cifXCard.getCurrentInputData().m_notificationTime);
+
+		bool channelTriggerDataValid = (cUnitControlActive == rChannel.m_unitControl) && (0 != rChannel.m_triggerIndex);
+		if (channelTriggerDataValid)
+		{
+			TriggerReport report;
+			report.m_channel = channel;
+			report.m_objectID = rChannel.m_objectID;
+			report.m_objectType = rChannel.m_objectType;
+			report.m_triggerIndex = static_cast<uint32_t> (rChannel.m_triggerIndex);
+			report.m_triggerPerObjectID = rChannel.m_triggerCount;
+			report.m_triggerTimestamp = triggerTimeStamp;
+			report.m_isValid = (0 != inspectionCmd.m_socRelative);
+
+			sendTriggerReport(report);
+		}
+	}
+	else if (PlcVersion::PlcData2 == plcVersion)
+	{
+		InspectionCommand2 inspectionCmd;
+		memcpy(&inspectionCmd, &m_cifXCard.getCurrentInputData().m_dynamicData[0], sizeof(inspectionCmd));
+		const ChannelIn2& rChannel = inspectionCmd.m_channels[channel];
+		double triggerTimeStamp = getExecutionTime(inspectionCmd.m_socRelative, rChannel.m_timeStamp1, m_cifXCard.getCurrentInputData().m_notificationTime);
+
+		bool channelTriggerDataValid = (cUnitControlActive == rChannel.m_unitControl) && (0 != rChannel.m_triggerIndex);
+		if (channelTriggerDataValid)
+		{
+			TriggerReport report;
+			report.m_channel = channel;
+			report.m_objectID = rChannel.m_currentObjectID;
+			report.m_objectType = rChannel.m_currentObjectType;
+			report.m_triggerIndex = static_cast<uint32_t> (rChannel.m_triggerIndex);
+			report.m_triggerPerObjectID = rChannel.m_triggerCount;
+			report.m_triggerTimestamp = triggerTimeStamp;
+			report.m_isValid = (0 != inspectionCmd.m_socRelative);
+
+			sendTriggerReport(report);
+		}
 	}
 }
 } //namespace SvPlc

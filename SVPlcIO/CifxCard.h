@@ -60,6 +60,7 @@ public:
 	bool isProtocolInitialized() { return m_protocolInitialized; }
 	uint32_t getTriggerDataOffset() { return m_triggerDataOffset; }
 	void setReady(bool ready);
+	PlcVersion getPlcVersion() const { return m_plcVersion; }
 
 private:
 	int32_t OpenCifX(const std::string& rAdditionalData);

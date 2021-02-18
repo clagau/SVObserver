@@ -161,6 +161,11 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed)
 		{
 			m_pCurrentToolset->setObjectID(static_cast<double> (iterData->second));
 		}
+		iterData = (*m_pProduct).m_triggerInfo.m_Data.find(SvTrig::TriggerDataEnum::ObjectType);
+		if ((*m_pProduct).m_triggerInfo.m_Data.end() != iterData)
+		{
+			m_pCurrentToolset->setObjectType(static_cast<DWORD> (iterData->second));
+		}
 		iterData = (*m_pProduct).m_triggerInfo.m_Data.find(SvTrig::TriggerDataEnum::TriggerIndex);
 		if ((*m_pProduct).m_triggerInfo.m_Data.end() != iterData)
 		{

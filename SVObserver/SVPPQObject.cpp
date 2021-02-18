@@ -1640,6 +1640,7 @@ bool SVPPQObject::WriteOutputs(SVProductInfoStruct *pProduct)
 	bool dataValidResult{false};
 	bool writeOutputData{false};
 	DWORD inspectedObjectID{0};
+	_variant_t objectType;
 
 #ifdef _DEBUG
 #ifdef SHOW_PPQ_STATE
@@ -1675,7 +1676,12 @@ bool SVPPQObject::WriteOutputs(SVProductInfoStruct *pProduct)
 
 		DWORD triggerIndex{0};
 		DWORD triggerPerObjectID{0};
-		SvTrig::IntVariantMap::const_iterator  iterData = pProduct->m_triggerInfo.m_Data.find(SvTrig::TriggerDataEnum::TriggerIndex);
+		SvTrig::IntVariantMap::const_iterator  iterData = pProduct->m_triggerInfo.m_Data.find(SvTrig::TriggerDataEnum::ObjectType);
+		if (pProduct->m_triggerInfo.m_Data.end() != iterData)
+		{
+			objectType = iterData->second;
+		}
+		iterData = pProduct->m_triggerInfo.m_Data.find(SvTrig::TriggerDataEnum::TriggerIndex);
 		if (pProduct->m_triggerInfo.m_Data.end() != iterData)
 		{
 			triggerIndex = static_cast<DWORD> (iterData->second);
@@ -1718,6 +1724,10 @@ bool SVPPQObject::WriteOutputs(SVProductInfoStruct *pProduct)
 			{
 				SvTrig::IntVariantMap outputData;
 				outputData[SvTrig::TriggerDataEnum::ObjectID] = _variant_t(inspectedObjectID);
+				if (VT_EMPTY != objectType.vt)
+				{
+					outputData[SvTrig::TriggerDataEnum::ObjectType] = objectType;
+				}
 				outputData[SvTrig::TriggerDataEnum::OutputData] = rOutputValues[0].second;
 				m_pOutputList->WriteOutputData(triggerChannel, outputData);
 			}

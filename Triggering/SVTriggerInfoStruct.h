@@ -21,6 +21,7 @@ enum TriggerDataEnum : int
 	TriggerPerObjectID,
 	OutputData,
 	TriggerChannel,
+	ObjectType,
 };
 
 

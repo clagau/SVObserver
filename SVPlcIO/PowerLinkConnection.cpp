@@ -71,9 +71,8 @@ void PowerlinkConnection::writeResult(const ResultReport& rResultReport)
 	if (rResultReport.m_channel < cNumberOfChannels)
 	{
 		ChannelOut channelOut;
-		//Type = 1 single product
-		channelOut.m_currentObjectType = 1;
-		channelOut.m_currentObjectID = rResultReport.m_currentObjectID;
+		channelOut.m_objectType = rResultReport.m_objectType;
+		channelOut.m_objectID = rResultReport.m_objectID;
 		channelOut.m_results = rResultReport.m_results;
 		m_pTriggersource->queueResult(rResultReport.m_channel, std::move(channelOut));
 	}

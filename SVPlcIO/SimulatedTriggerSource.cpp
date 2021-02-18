@@ -21,6 +21,7 @@ constexpr size_t cCycleParameterNumber = 8;
 constexpr uint8_t cPlcInvalid = 4;
 constexpr uint8_t cPlcBad = 5;
 constexpr uint8_t cPlcGood = 6;
+constexpr uint8_t cSingleObjectType = 1;
 constexpr LPCTSTR cResultFilename = _T("Result");
 constexpr LPCTSTR cResultExtension = _T(".csv");
 constexpr LPCTSTR cResultHeader = _T("ObjectID; Trigger Timestamp; Result Timestamp; Results\r\n");
@@ -40,7 +41,7 @@ void ChannelTimer(std::atomic_bool& rRun, SimulatedTriggerData simTriggerData)
 		std::this_thread::sleep_for(std::chrono::milliseconds(simTriggerData.m_initialDelay));
 	}
 	uint8_t currentIndex {1};
-	uint32_t currentObjectID {simTriggerData.m_objectID};
+	uint32_t objectID {simTriggerData.m_objectID};
 
 	while(rRun)
 	{
@@ -50,8 +51,9 @@ void ChannelTimer(std::atomic_bool& rRun, SimulatedTriggerData simTriggerData)
 			TriggerReport triggerReport;
 			triggerReport.m_triggerTimestamp = SvUl::GetTimeStamp();
 			triggerReport.m_channel = simTriggerData.m_channel;
+			triggerReport.m_objectID = objectID;
+			triggerReport.m_objectType = cSingleObjectType;
 			triggerReport.m_triggerPerObjectID = simTriggerData.m_triggerPerObjectID;
-			triggerReport.m_currentObjectID = currentObjectID;
 			triggerReport.m_triggerIndex = currentIndex;
 			triggerReport.m_isValid = true;
 			{
@@ -70,8 +72,8 @@ void ChannelTimer(std::atomic_bool& rRun, SimulatedTriggerData simTriggerData)
 				std::this_thread::sleep_for(std::chrono::milliseconds(simTriggerData.m_objectDelay));
 			}
 			currentIndex = 1;
-			currentObjectID++;
-			if(simTriggerData.m_objectNumber > 0 && currentObjectID > simTriggerData.m_objectID + simTriggerData.m_objectNumber)
+			objectID++;
+			if(simTriggerData.m_objectNumber > 0 && objectID > simTriggerData.m_objectID + simTriggerData.m_objectNumber)
 			{
 				rRun = false;
 			}
@@ -273,7 +275,7 @@ void SimulatedTriggerSource::queueResult(uint8_t channel, ChannelOut&& channelOu
 	double triggerTimestamp{0.0};
 	{
 		std::lock_guard<std::mutex> guard{ m_triggerSourceMutex };
-		const auto iter = m_channel[channel].m_objectIDTimeMap.find(channelOut.m_currentObjectID);
+		const auto iter = m_channel[channel].m_objectIDTimeMap.find(channelOut.m_objectID);
 		if (m_channel[channel].m_objectIDTimeMap.end() != iter)
 		{
 			triggerTimestamp = iter->second;
@@ -286,7 +288,7 @@ void SimulatedTriggerSource::queueResult(uint8_t channel, ChannelOut&& channelOu
 	{
 		resultString += std::to_string(rResult) + ' ';
 	}
-	std::string fileData = SvUl::Format(_T("%4lu; %.3f; %.3f; %s\r\n"), channelOut.m_currentObjectID, triggerTimestamp, SvUl::GetTimeStamp(), resultString.c_str());
+	std::string fileData = SvUl::Format(_T("%4lu; %.3f; %.3f; %s\r\n"), channelOut.m_objectID, triggerTimestamp, SvUl::GetTimeStamp(), resultString.c_str());
 	
 	{
 		std::lock_guard<std::mutex> guard{ m_triggerSourceMutex };
@@ -310,7 +312,7 @@ void SimulatedTriggerSource::createTriggerReport(uint8_t channel)
 		sendTriggerReport(triggerReport);
 		{
 			std::lock_guard<std::mutex> guard{ m_triggerSourceMutex };
-			m_channel[channel].m_objectIDTimeMap[triggerReport.m_currentObjectID] = triggerReport.m_triggerTimestamp;
+			m_channel[channel].m_objectIDTimeMap[triggerReport.m_objectID] = triggerReport.m_triggerTimestamp;
 		}
 	}
 }

@@ -121,7 +121,12 @@ HRESULT SVPlcIOImpl::SetOutputData(unsigned long triggerIndex, const SvTrig::Int
 	auto iterData = rData.find(SvTrig::TriggerDataEnum::ObjectID);
 	if (rData.end() != iterData)
 	{
-		reportResult.m_currentObjectID = iterData->second;
+		reportResult.m_objectID = iterData->second;
+	}
+	iterData = rData.find(SvTrig::TriggerDataEnum::ObjectType);
+	if (rData.end() != iterData)
+	{
+		reportResult.m_objectType = iterData->second;
 	}
 	iterData = rData.find(SvTrig::TriggerDataEnum::OutputData);
 	if (rData.end() != iterData)
@@ -143,7 +148,7 @@ HRESULT SVPlcIOImpl::SetOutputData(unsigned long triggerIndex, const SvTrig::Int
 		{
 			resultString += std::to_string(rResult) + ' ';
 		}
-		std::string fileData = SvUl::Format(_T("%d; %d; %f; %d; %s\r\n"), triggerIndex, outputCount, reportResult.m_timestamp, reportResult.m_currentObjectID, resultString.c_str());
+		std::string fileData = SvUl::Format(_T("%d; %d; %f; %d; %s\r\n"), triggerIndex, outputCount, reportResult.m_timestamp, reportResult.m_objectID, resultString.c_str());
 		m_logOutFile.write(fileData.c_str(), fileData.size());
 	}
 	return S_OK;
@@ -388,7 +393,8 @@ void SVPlcIOImpl::reportTrigger(const TriggerReport& rTriggerReport)
 		SvTrig::IntVariantMap triggerData;
 		triggerData[SvTrig::TriggerDataEnum::TimeStamp] = _variant_t(rTriggerReport.m_triggerTimestamp);
 		triggerData[SvTrig::TriggerDataEnum::TriggerChannel] = _variant_t(rTriggerReport.m_channel);
-		triggerData[SvTrig::TriggerDataEnum::ObjectID] = _variant_t(rTriggerReport.m_currentObjectID);
+		triggerData[SvTrig::TriggerDataEnum::ObjectType] = _variant_t(rTriggerReport.m_objectType);
+		triggerData[SvTrig::TriggerDataEnum::ObjectID] = _variant_t(rTriggerReport.m_objectID);
 		triggerData[SvTrig::TriggerDataEnum::TriggerIndex] = _variant_t(rTriggerReport.m_triggerIndex);
 		triggerData[SvTrig::TriggerDataEnum::TriggerPerObjectID] = _variant_t(rTriggerReport.m_triggerPerObjectID);
 
@@ -403,7 +409,7 @@ void SVPlcIOImpl::reportTrigger(const TriggerReport& rTriggerReport)
 			const TriggerReport& rData = rTriggerReport;
 			///This is required as m_inputCount[rData.m_channel] is atomic
 			uint32_t inputCount = m_inputCount[rData.m_channel];
-			std::string fileData = SvUl::Format(_T("%d; %d; %f; %d; %d; %d; %f\r\n"), triggerIndex, inputCount, rData.m_triggerTimestamp, rData.m_currentObjectID, rData.m_triggerIndex, rData.m_triggerPerObjectID, SvUl::GetTimeStamp());
+			std::string fileData = SvUl::Format(_T("%d; %d; %f; %d; %d; %d; %f\r\n"), triggerIndex, inputCount, rData.m_triggerTimestamp, rData.m_objectID, rData.m_triggerIndex, rData.m_triggerPerObjectID, SvUl::GetTimeStamp());
 			m_logInFile.write(fileData.c_str(), fileData.size());
 		}
 	}
