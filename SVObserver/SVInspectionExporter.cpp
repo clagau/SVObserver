@@ -98,31 +98,35 @@ static void WriteGlobalConstants(SvOi::IObjectWriter& rWriter, SVObjectClass* pO
 		SvOl::DependencyManager::Instance().updateVertexIndex();
 		SvOl::DependencyManager::Instance().getDependents(GlobalConstantSet, Inserter, SvOl::JoinType::Dependent);
 
-		SvOl::DependencyManager::Dependencies::const_iterator PairIter( DependencyList.begin() );
-
-		for( ; DependencyList.end() != PairIter; ++PairIter )
-		{
-			SVObjectClass* pObjectSupplier = SVObjectManagerClass::Instance().GetObject( PairIter->first );
-			SVObjectClass* pObjectClient = SVObjectManagerClass::Instance().GetObject( PairIter->second );
+		std::set<SvVol::BasicValueObject*> globalSet;
+		for(const auto& rEntry : DependencyList)
+		{ 
+			SVObjectClass* pObjectSupplier = SVObjectManagerClass::Instance().GetObject(rEntry.first);
+			SVObjectClass* pObjectClient = SVObjectManagerClass::Instance().GetObject(rEntry.second);
 			SVObjectClass* pOwner = (nullptr != pObjectClient) ? pObjectClient->GetAncestor(SvPb::SVInspectionObjectType) : nullptr;
 			SvVol::BasicValueObject* pGlobalConstant = dynamic_cast<SvVol::BasicValueObject*> (pObjectSupplier);
 			//! Check that the client is from the same inspection
-			if( pOwner == pInspection && nullptr != pGlobalConstant )
+			if (pOwner == pInspection && nullptr != pGlobalConstant)
 			{
-				rWriter.StartElement( pGlobalConstant->GetCompleteName().c_str() );
-
-				_variant_t Value;
-				pGlobalConstant->getValue( Value );
-				rWriter.WriteAttribute( SvXml::CTAG_VALUE, Value );
-				Value.Clear();
-				std::string Description( pGlobalConstant->getDescription() );
-				//This is needed to remove any CR LF in the description
-				SvUl::AddEscapeSpecialCharacters( Description, true );
-				Value.SetString( Description.c_str() );
-				rWriter.WriteAttribute( SvXml::CTAG_DESCRIPTION, Value );
-
-				rWriter.EndElement();
+				globalSet.emplace(pGlobalConstant);
 			}
+		}
+
+		for (const auto* pGlobalConstant : globalSet)
+		{
+			rWriter.StartElement(pGlobalConstant->GetCompleteName().c_str());
+
+			_variant_t Value;
+			pGlobalConstant->getValue(Value);
+			rWriter.WriteAttribute(SvXml::CTAG_VALUE, Value);
+			Value.Clear();
+			std::string Description(pGlobalConstant->getDescription());
+			//This is needed to remove any CR LF in the description
+			SvUl::AddEscapeSpecialCharacters(Description, true);
+			Value.SetString(Description.c_str());
+			rWriter.WriteAttribute(SvXml::CTAG_DESCRIPTION, Value);
+
+			rWriter.EndElement();
 		}
 	}
 	rWriter.EndElement();

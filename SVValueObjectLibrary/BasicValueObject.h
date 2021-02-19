@@ -145,7 +145,7 @@ public:
 	//! The method gets the objects description
 	//! \returns The objects description
 	//************************************
-	inline LPCTSTR getDescription();
+	inline LPCTSTR getDescription() const;
 
 	virtual bool isIndirectValue() const override { return false; };
 

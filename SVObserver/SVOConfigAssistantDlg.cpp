@@ -1968,7 +1968,7 @@ bool SVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 					const std::string& importFilename = pInspectionObj->GetImportFilename();
 					if (!importFilename.empty())
 					{
-						SVInspectionImportHelper importer  = SVInspectionImportHelper(std::string(importFilename), std::string(inspectionName), std::string(ToolsetImage));
+						SVInspectionImportHelper importer  = SVInspectionImportHelper(importFilename, inspectionName, ToolsetImage);
 						std::string title = _T( "Importing Inspection..." );
 						SVImportProgress<SVInspectionImportHelper> progress(importer, title.c_str());
 						progress.DoModal();
@@ -2024,7 +2024,7 @@ bool SVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 							pInspection->SetName( inspectionName.c_str() );
 							RenameInspectionObjects(Key.c_str(), inspectionName.c_str());
 
-							pInspection->SetToolsetImage(ToolsetImage.c_str());
+							pInspection->SetToolsetImage(ToolsetImage);
 
 							bRet = pInspection->CreateInspection(inspectionName.c_str());
 
@@ -2038,7 +2038,7 @@ bool SVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 
 				if ( nullptr != pInspection )
 				{
-					pInspection->SetToolsetImage(ToolsetImage.c_str());
+					pInspection->SetToolsetImage(ToolsetImage);
 
 					pInspection->SetNewDisableMethod( NewDisableMethod == _T( "Method 2" ) );
 

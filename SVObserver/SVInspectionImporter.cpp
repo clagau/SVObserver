@@ -177,25 +177,27 @@ static bool importGlobalConstants( SVTreeType& rTree, std::vector<SvUl::GlobalCo
 
 		while( Result && nullptr != hItemChild )
 		{
-			SvUl::GlobalConstantData& rGlobalData = rImportedGlobals.emplace_back();
-			rGlobalData.m_DottedName = rTree.getBranchName( hItemChild );
-
-			_variant_t Value;
-			Result = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_VALUE, hItemChild, Value );
-			if( Result )
+			std::string dottedName = rTree.getBranchName( hItemChild );
+			if (std::none_of(rImportedGlobals.begin(), rImportedGlobals.end(), [dottedName](const auto& rData) { return rData.m_DottedName == dottedName; }))
 			{
-				rGlobalData.m_Value = Value;
+				SvUl::GlobalConstantData& rGlobalData = rImportedGlobals.emplace_back();
+				rGlobalData.m_DottedName = std::move(dottedName);
+				_variant_t Value;
+				Result = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_VALUE, hItemChild, Value);
+				if (Result)
+				{
+					rGlobalData.m_Value = Value;
+				}
+				Value.Clear();
+				Result = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_DESCRIPTION, hItemChild, Value);
+				if (Result)
+				{
+					std::string Description = SvUl::createStdString(Value.bstrVal);
+					//This is needed to insert any CR LF in the description which were replaced while saving
+					SvUl::RemoveEscapedSpecialCharacters(Description, true);
+					rGlobalData.m_Description = Description;
+				}
 			}
-			Value.Clear();
-			Result = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_DESCRIPTION, hItemChild, Value );
-			if( Result )
-			{
-				std::string Description = SvUl::createStdString( Value.bstrVal );
-				//This is needed to insert any CR LF in the description which were replaced while saving
-				SvUl::RemoveEscapedSpecialCharacters( Description, true );
-				rGlobalData.m_Description = Description;
-			}
-			
 			
 			hItemChild = rTree.getNextBranch( hItem, hItemChild );
 		}

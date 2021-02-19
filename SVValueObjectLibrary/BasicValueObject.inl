@@ -66,7 +66,7 @@ inline void BasicValueObject::setDescription( LPCTSTR Description )
 	m_Description = (nullptr != Description) ? Description : std::string();
 }
 
-inline LPCTSTR BasicValueObject::getDescription()
+inline LPCTSTR BasicValueObject::getDescription() const
 {
 	return m_Description.c_str();
 }
