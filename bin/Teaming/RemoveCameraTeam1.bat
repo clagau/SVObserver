@@ -1,0 +1,1 @@
+powershell -noprofile -command "&{start-process powershell -ArgumentList ' -noprofile -executionpolicy remotesigned -File C:\SVObserver\bin\Teaming\PS\RemoveCameraTeam1.ps1' -verb runas}"
