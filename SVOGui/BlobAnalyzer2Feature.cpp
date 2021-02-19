@@ -27,47 +27,49 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvOg
 {
-	constexpr int cHeaderSize = 1;
-	constexpr int cTextColumnSize = 150;
-	constexpr int cBoxColumnSize = 30;
-
-	struct ColumnDef 
+	namespace 
 	{
-		std::string m_name;
-		int m_columnSize;
-		int m_protoBufFieldId = -1;
+		constexpr int cHeaderSize = 1;
+		constexpr int cTextColumnSize = 150;
+		constexpr int cBoxColumnSize = 30;
 
-		ColumnDef(const std::string& name, int columnSize, int protoBufFieldId = -1) : m_name(name), m_columnSize(columnSize), m_protoBufFieldId(protoBufFieldId) {};
-		//int type;
-	};
+		struct ColumnDef
+		{
+			std::string m_name;
+			int m_columnSize;
+			int m_protoBufFieldId = -1;
 
-	enum ColumnPos
-	{
-		CustomFeatureButtonColumn = 0,
-		NameColumn,
-		SortEnableColumn,
-		SortDirectionColumn,
-		ExcludeEnabledColumn,
-		ExcludeInnerColumn,
-		LowerBoundColumn,
-		LowerBoundButtonColumn,
-		UpperBoundColumn,
-		UpperBoundButtonColumn,
-	};
+			ColumnDef(const std::string& name, int columnSize, int protoBufFieldId = -1) : m_name(name), m_columnSize(columnSize), m_protoBufFieldId(protoBufFieldId) {};
+		};
 
-	constexpr long g_FirstExcludeColumnToHide = ExcludeInnerColumn;
+		enum ColumnPos
+		{
+			CustomFeatureButtonColumn = 0,
+			NameColumn,
+			SortEnableColumn,
+			SortDirectionColumn,
+			ExcludeEnabledColumn,
+			ExcludeInnerColumn,
+			LowerBoundColumn,
+			LowerBoundButtonColumn,
+			UpperBoundColumn,
+			UpperBoundButtonColumn,
+		};
 
-	std::map<int, ColumnDef> g_columnFeatureDefArray = { { CustomFeatureButtonColumn, ColumnDef{"", cBoxColumnSize}},
-		{NameColumn, ColumnDef{"Name", cTextColumnSize}},
-		{SortEnableColumn, {"Sort", cBoxColumnSize, SvPb::FeatureData::kIsSortFieldNumber}},
-		{SortDirectionColumn, {"Up", cBoxColumnSize, SvPb::FeatureData::kIsAscentFieldNumber }},
-		{ExcludeEnabledColumn, {"Exclude", cBoxColumnSize, SvPb::FeatureData::kIsExcludeFieldNumber}},
-		{ExcludeInnerColumn, {"Inner", cBoxColumnSize, SvPb::FeatureData::kIsExcludeInnerFieldNumber }},
-		{LowerBoundColumn, {"Lower Bound", cTextColumnSize, SvPb::FeatureData::kLowerBoundIndirectFieldNumber}},
-		{LowerBoundButtonColumn, {"", cBoxColumnSize}},
-		{UpperBoundColumn, {"Upper Bound", cTextColumnSize, SvPb::FeatureData::kUpperBoundIndirectFieldNumber}},
-		{UpperBoundButtonColumn, {"", cBoxColumnSize}}
-	};
+		constexpr long g_FirstExcludeColumnToHide = ExcludeInnerColumn;
+
+		std::map<int, ColumnDef> g_columnFeatureDefArray = { { CustomFeatureButtonColumn, ColumnDef{"", cBoxColumnSize}},
+			{NameColumn, ColumnDef{"Name", cTextColumnSize}},
+			{SortEnableColumn, {"Sort", cBoxColumnSize, SvPb::FeatureData::kIsSortFieldNumber}},
+			{SortDirectionColumn, {"Up", cBoxColumnSize, SvPb::FeatureData::kIsAscentFieldNumber }},
+			{ExcludeEnabledColumn, {"Exclude", cBoxColumnSize, SvPb::FeatureData::kIsExcludeFieldNumber}},
+			{ExcludeInnerColumn, {"Inner", cBoxColumnSize, SvPb::FeatureData::kIsExcludeInnerFieldNumber }},
+			{LowerBoundColumn, {"Lower Bound", cTextColumnSize, SvPb::FeatureData::kLowerBoundIndirectFieldNumber}},
+			{LowerBoundButtonColumn, {"", cBoxColumnSize}},
+			{UpperBoundColumn, {"Upper Bound", cTextColumnSize, SvPb::FeatureData::kUpperBoundIndirectFieldNumber}},
+			{UpperBoundButtonColumn, {"", cBoxColumnSize}}
+		};
+	}
 	
 	BEGIN_MESSAGE_MAP(BlobAnalyzer2Feature, CPropertyPage)
 		//{{AFX_MSG_MAP(BlobAnalyzer2Feature)
@@ -465,33 +467,36 @@ namespace SvOg
 		{
 			if (0 < responseCmd.setfeaturesresponse().error_list().size())
 			{
-				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-				SvStl::MessageContainerVector tmpMessages =  SvPb::convertProtobufToMessageVector(responseCmd.setfeaturesresponse().messages());
-				if (0 < tmpMessages.size())
+				for (const auto& error : responseCmd.setfeaturesresponse().error_list())
 				{
-					Msg.setMessage(tmpMessages[0].getMessage());
-				}
-				else
-				{
-					Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SetFeatureParameterFailed, SvStl::SourceFileParams(StdMessageParams));
-				}
-				const auto& range = responseCmd.setfeaturesresponse().error_list(0);
-				auto iter = std::find_if(g_columnFeatureDefArray.begin(), g_columnFeatureDefArray.end(), [range](const auto& rEntry) { return rEntry.second.m_protoBufFieldId == range.fieldid(); });
-				if (g_columnFeatureDefArray.end() != iter)
-				{
-					m_Grid.SetSelectedRange(range.row(), iter->first, range.row(), iter->first);
-					m_Grid.SetFocusCell(range.row(), iter->first);
-					CRect rect;
-					if (m_Grid.GetCellRect(range.row(), iter->first, rect))
+					auto iter = std::find_if(g_columnFeatureDefArray.begin(), g_columnFeatureDefArray.end(), [error](const auto& rEntry) { return rEntry.second.m_protoBufFieldId == error.fieldid(); });
+					if (g_columnFeatureDefArray.end() != iter)
 					{
-						SvGcl::GridCellBase* pCell = m_Grid.GetCell(range.row(), iter->first);
-						if (pCell)
+						m_Grid.SetSelectedRange(error.row(), iter->first, error.row(), iter->first);
+						m_Grid.SetFocusCell(error.row(), iter->first);
+						CRect rect;
+						if (m_Grid.GetCellRect(error.row(), iter->first, rect))
 						{
-							pCell->Edit(range.row(), iter->first, rect, CPoint(-1, -1), IDC_INPLACE_CONTROL, 0);
+							SvGcl::GridCellBase* pCell = m_Grid.GetCell(error.row(), iter->first);
+							if (pCell)
+							{
+								pCell->Edit(error.row(), iter->first, rect, CPoint(-1, -1), IDC_INPLACE_CONTROL, 0);
+							}
 						}
+						SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+						SvStl::MessageContainerVector tmpMessages = SvPb::convertProtobufToMessageVector(responseCmd.setfeaturesresponse().messages());
+						if (0 < tmpMessages.size())
+						{
+							Msg.setMessage(tmpMessages[0].getMessage());
+						}
+						else
+						{
+							Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SetFeatureParameterFailed, SvStl::SourceFileParams(StdMessageParams));
+						}
+						hResult = E_FAIL;
+						break;
 					}
 				}
-				hResult = E_FAIL;
 			}
 		}
 

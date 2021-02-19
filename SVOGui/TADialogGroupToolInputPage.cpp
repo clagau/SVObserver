@@ -23,36 +23,70 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvOg
 {
-	constexpr int cHeaderSize = 1;
-	constexpr int cTypeColumnSize = 100;
-	constexpr int cNameColumnSize = 150;
-	constexpr int cIndirectNameColumnSize = 220;
-	constexpr int cBoxColumnSize = 25;
-
-	struct ColumnDef
+	namespace
 	{
-		std::string m_name;
-		int m_columnSize;
+		constexpr int cHeaderSize = 1;
+		constexpr int cTypeColumnSize = 100;
+		constexpr int cNameColumnSize = 150;
+		constexpr int cIndirectNameColumnSize = 220;
+		constexpr int cBoxColumnSize = 25;
 
-		ColumnDef(const std::string& name, int columnSize) : m_name(name), m_columnSize(columnSize) {};
-	};
+		struct ColumnDef
+		{
+			std::string m_name;
+			int m_columnSize;
 
-	enum ColumnPos
-	{
-		NameColumn = 0,
-		TypeColumn,
-		DefaultColumn,
-		ValueColumn,
-		ValueButtonColumn,
-	};
+			ColumnDef(const std::string& name, int columnSize) : m_name(name), m_columnSize(columnSize) {};
+		};
 
-	std::map<int, ColumnDef> g_columnInputObjectsDefArray = { { NameColumn, ColumnDef{"Name", cNameColumnSize}},
-		{TypeColumn, {"Type", cTypeColumnSize }},
-		{DefaultColumn, {"Default", cNameColumnSize}},
-		{ValueColumn, {"Value", cIndirectNameColumnSize }},
-		{ValueButtonColumn, {"", cBoxColumnSize}},
-	};
+		enum ColumnPos
+		{
+			NameColumn = 0,
+			TypeColumn,
+			DefaultColumn,
+			ValueColumn,
+			ValueButtonColumn,
+		};
 
+		std::map<int, ColumnDef> g_columnInputObjectsDefArray = { { NameColumn, ColumnDef{"Name", cNameColumnSize}},
+			{TypeColumn, {"Type", cTypeColumnSize }},
+			{DefaultColumn, {"Default", cNameColumnSize}},
+			{ValueColumn, {"Value", cIndirectNameColumnSize }},
+			{ValueButtonColumn, {"", cBoxColumnSize}},
+		};
+
+
+
+		std::string checkText(SvPb::InputTypeEnum type, const std::string& text)
+		{
+			std::string result{ text };
+			try
+			{
+				switch (type)
+				{
+				case SvPb::InputTypeEnum::TypeDecimal:
+					// cppcheck-suppress ignoredReturnValue ; only for check if it possible to move string in double. In error case function throws exception.
+					std::stod(text);
+					break;
+				case SvPb::InputTypeEnum::TypeText:
+					break;
+				default: //do nothing
+					result = {};
+					break;
+				}
+			}
+			catch (...)
+			{
+				SvDef::StringVector msgList;
+				msgList.push_back(text);
+				SvStl::MessageManager msg(SvStl::MsgType::Data);
+				msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ConvertTextToVariantFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
+				msg.Throw();
+			}
+
+			return result;
+		}
+	}
 
 	std::string getDefaultString(SvPb::InputTypeEnum type)
 	{
@@ -64,37 +98,6 @@ namespace SvOg
 			return {};
 		}
 	}
-
-	std::string checkText(SvPb::InputTypeEnum type, const std::string& text)
-	{
-		std::string result{ text };
-		try
-		{
-			switch (type)
-			{
-			case SvPb::InputTypeEnum::TypeDecimal:
-				// cppcheck-suppress ignoredReturnValue ; only for check if it possible to move string in double. In error case function throws exception.
-				std::stod(text);
-				break;
-			case SvPb::InputTypeEnum::TypeText:
-				break;
-			default: //do nothing
-				result = {};
-				break;
-			}
-		}
-		catch (...)
-		{
-			SvDef::StringVector msgList;
-			msgList.push_back(text);
-			SvStl::MessageManager msg(SvStl::MsgType::Data);
-			msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ConvertTextToVariantFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
-			msg.Throw();
-		}
-
-		return result;
-	}
-
 
 	BEGIN_MESSAGE_MAP(TADialogGroupToolInputPage, CPropertyPage)
 		//{{AFX_MSG_MAP(TaDlgGroupToolInput)

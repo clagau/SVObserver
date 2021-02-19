@@ -23,33 +23,36 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvOg
 {
-	constexpr int cHeaderSize = 1;
-	constexpr int cTypeColumnSize = 100;
-	constexpr int cNameColumnSize = 150;
-	constexpr int cIndirectNameColumnSize = 320;
-	constexpr int cBoxColumnSize = 25;
-
-	struct ColumnDef
+	namespace
 	{
-		std::string m_name;
-		int m_columnSize;
+		constexpr int cHeaderSize = 1;
+		constexpr int cTypeColumnSize = 100;
+		constexpr int cNameColumnSize = 150;
+		constexpr int cIndirectNameColumnSize = 320;
+		constexpr int cBoxColumnSize = 25;
 
-		ColumnDef(const std::string& name, int columnSize) : m_name(name), m_columnSize(columnSize) {};
-	};
+		struct ColumnDef
+		{
+			std::string m_name;
+			int m_columnSize;
 
-	enum ColumnPos
-	{
-		NameColumn = 0,
-		TypeColumn,
-		ValueColumn,
-		ValueButtonColumn,
-	};
+			ColumnDef(const std::string& name, int columnSize) : m_name(name), m_columnSize(columnSize) {};
+		};
 
-	std::map<int, ColumnDef> g_columnResultObjectsDefArray = { { NameColumn, ColumnDef{"Name", cNameColumnSize}},
-		{TypeColumn, {"Type", cTypeColumnSize }},
-		{ValueColumn, {"Value", cIndirectNameColumnSize }},
-		{ValueButtonColumn, {"", cBoxColumnSize}},
-	};
+		enum ColumnPos
+		{
+			NameColumn = 0,
+			TypeColumn,
+			ValueColumn,
+			ValueButtonColumn,
+		};
+
+		std::map<int, ColumnDef> g_columnResultObjectsDefArray = { { NameColumn, ColumnDef{"Name", cNameColumnSize}},
+			{TypeColumn, {"Type", cTypeColumnSize }},
+			{ValueColumn, {"Value", cIndirectNameColumnSize }},
+			{ValueButtonColumn, {"", cBoxColumnSize}},
+		};
+	}
 
 	//define in TADialogGroupToolInputPage.cpp
 	std::string getDefaultString(SvPb::InputTypeEnum type);

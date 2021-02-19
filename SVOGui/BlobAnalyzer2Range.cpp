@@ -21,45 +21,48 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvOg
 {
-	constexpr int cHeaderSize = 1;
-	constexpr int cNameColumnSize = 150;
-	constexpr int cRangeColumnSize = 95;
-	constexpr int cBoxColumnSize = 25;
-
-	struct ColumnDef
+	namespace
 	{
-		std::string m_name;
-		int m_columnSize;
-		int m_protoBufFieldId = -1;
+		constexpr int cHeaderSize = 1;
+		constexpr int cNameColumnSize = 150;
+		constexpr int cRangeColumnSize = 95;
+		constexpr int cBoxColumnSize = 25;
 
-		ColumnDef(const std::string& name, int columnSize, int protoBufFieldId = -1) : m_name(name), m_columnSize(columnSize), m_protoBufFieldId(protoBufFieldId) {};
-	};
+		struct ColumnDef
+		{
+			std::string m_name;
+			int m_columnSize;
+			int m_protoBufFieldId = -1;
 
-	enum ColumnPos
-	{
-		NameColumn = 0,
-		RangeEnableColumn,
-		FailHighColumn,
-		FailHighButtonColumn,
-		WarnHighColumn,
-		WarnHighButtonColumn,
-		WarnLowColumn,
-		WarnLowButtonColumn,
-		FailLowColumn,
-		FailLowButtonColumn,
-	};
+			ColumnDef(const std::string& name, int columnSize, int protoBufFieldId = -1) : m_name(name), m_columnSize(columnSize), m_protoBufFieldId(protoBufFieldId) {};
+		};
 
-	std::map<int, ColumnDef> g_columnRangeDefArray = { { NameColumn, ColumnDef{"Name", cNameColumnSize}},
-		{RangeEnableColumn, {"", cBoxColumnSize, SvPb::FeatureData::kIsRangeFieldNumber}},
-		{FailHighColumn, {"Fail High", cRangeColumnSize, SvPb::FeatureData::kRangeFailHighIndirectFieldNumber }},
-		{FailHighButtonColumn, {"", cBoxColumnSize}},
-		{WarnHighColumn, {"Warn High", cRangeColumnSize, SvPb::FeatureData::kRangeWarnHighIndirectFieldNumber }},
-		{WarnHighButtonColumn, {"", cBoxColumnSize}},
-		{WarnLowColumn, {"Warn Low", cRangeColumnSize, SvPb::FeatureData::kRangeWarnLowIndirectFieldNumber }},
-		{WarnLowButtonColumn, {"", cBoxColumnSize}},
-		{FailLowColumn, {"Fail Low", cRangeColumnSize, SvPb::FeatureData::kRangeFailLowIndirectFieldNumber }},
-		{FailLowButtonColumn, {"", cBoxColumnSize}},
-	};
+		enum ColumnPos
+		{
+			NameColumn = 0,
+			RangeEnableColumn,
+			FailHighColumn,
+			FailHighButtonColumn,
+			WarnHighColumn,
+			WarnHighButtonColumn,
+			WarnLowColumn,
+			WarnLowButtonColumn,
+			FailLowColumn,
+			FailLowButtonColumn,
+		};
+
+		std::map<int, ColumnDef> g_columnRangeDefArray = { { NameColumn, ColumnDef{"Name", cNameColumnSize}},
+			{RangeEnableColumn, {"", cBoxColumnSize, SvPb::FeatureData::kIsRangeFieldNumber}},
+			{FailHighColumn, {"Fail High", cRangeColumnSize, SvPb::FeatureData::kRangeFailHighIndirectFieldNumber }},
+			{FailHighButtonColumn, {"", cBoxColumnSize}},
+			{WarnHighColumn, {"Warn High", cRangeColumnSize, SvPb::FeatureData::kRangeWarnHighIndirectFieldNumber }},
+			{WarnHighButtonColumn, {"", cBoxColumnSize}},
+			{WarnLowColumn, {"Warn Low", cRangeColumnSize, SvPb::FeatureData::kRangeWarnLowIndirectFieldNumber }},
+			{WarnLowButtonColumn, {"", cBoxColumnSize}},
+			{FailLowColumn, {"Fail Low", cRangeColumnSize, SvPb::FeatureData::kRangeFailLowIndirectFieldNumber }},
+			{FailLowButtonColumn, {"", cBoxColumnSize}},
+		};
+	}
 
 	BEGIN_MESSAGE_MAP(BlobAnalyzer2Range, CPropertyPage)
 		//{{AFX_MSG_MAP(BlobAnalyzer2Range)
@@ -341,34 +344,36 @@ namespace SvOg
 		{
 			if (0 < responseCmd.setfeaturesresponse().error_list().size())
 			{
-				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-				SvStl::MessageContainerVector tmpMessages = SvPb::convertProtobufToMessageVector(responseCmd.setfeaturesresponse().messages());
-				if (0 < tmpMessages.size())
+				for (const auto& error : responseCmd.setfeaturesresponse().error_list())
 				{
-					Msg.setMessage(tmpMessages[0].getMessage());
-				}
-				else
-				{
-					Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SetFeatureParameterFailed, SvStl::SourceFileParams(StdMessageParams));
-				}
-
-				const auto& range = responseCmd.setfeaturesresponse().error_list(0);
-				auto iter = std::find_if(g_columnRangeDefArray.begin(), g_columnRangeDefArray.end(), [range](const auto& rEntry) { return rEntry.second.m_protoBufFieldId == range.fieldid(); });
-				if (g_columnRangeDefArray.end() != iter)
-				{
-					m_Grid.SetSelectedRange(range.row(), iter->first, range.row(), iter->first);
-					m_Grid.SetFocusCell(range.row(), iter->first);
-					CRect rect;
-					if (m_Grid.GetCellRect(range.row(), iter->first, rect))
+					auto iter = std::find_if(g_columnRangeDefArray.begin(), g_columnRangeDefArray.end(), [error](const auto& rEntry) { return rEntry.second.m_protoBufFieldId == error.fieldid(); });
+					if (g_columnRangeDefArray.end() != iter)
 					{
-						SvGcl::GridCellBase* pCell = m_Grid.GetCell(range.row(), iter->first);
-						if (pCell)
+						m_Grid.SetSelectedRange(error.row(), iter->first, error.row(), iter->first);
+						m_Grid.SetFocusCell(error.row(), iter->first);
+						CRect rect;
+						if (m_Grid.GetCellRect(error.row(), iter->first, rect))
 						{
-							pCell->Edit(range.row(), iter->first, rect, CPoint(-1, -1), IDC_INPLACE_CONTROL, 0);
+							SvGcl::GridCellBase* pCell = m_Grid.GetCell(error.row(), iter->first);
+							if (pCell)
+							{
+								pCell->Edit(error.row(), iter->first, rect, CPoint(-1, -1), IDC_INPLACE_CONTROL, 0);
+							}
 						}
+						SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+						SvStl::MessageContainerVector tmpMessages = SvPb::convertProtobufToMessageVector(responseCmd.setfeaturesresponse().messages());
+						if (0 < tmpMessages.size())
+						{
+							Msg.setMessage(tmpMessages[0].getMessage());
+						}
+						else
+						{
+							Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SetFeatureParameterFailed, SvStl::SourceFileParams(StdMessageParams));
+						}
+						hResult = E_FAIL;
+						break;
 					}
-				}
-				hResult = E_FAIL;
+				}				
 			}
 		}
 
