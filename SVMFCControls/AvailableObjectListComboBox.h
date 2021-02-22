@@ -42,6 +42,7 @@ namespace SvMc
 
 	private:
 		Container m_List;
+		bool m_isFirstListText = false;
 	};
 } //namespace SvMc
 

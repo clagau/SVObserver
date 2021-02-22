@@ -36,11 +36,12 @@ namespace SvMc
 			if (!rFirstListText.empty())
 			{
 				InsertString(0, rFirstListText.c_str());
+				m_isFirstListText = true;
 			}
 
 			if (!rSelectedItem.empty())
 			{
-				SelectString(0, rSelectedItem.c_str());
+				SelectString(m_isFirstListText ? 0 : -1, rSelectedItem.c_str());
 			}
 		}
 	}
@@ -72,7 +73,7 @@ namespace SvMc
 	template <class value>
 	void AvailableObjectListComboBox<value>::remove(const std::string& rItemName)
 	{
-		int iIndex = FindString(0, rItemName.c_str());
+		int iIndex = FindString(m_isFirstListText ? 0 : -1, rItemName.c_str());
 
 		if (iIndex != LB_ERR)
 		{
