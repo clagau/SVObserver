@@ -2268,7 +2268,7 @@ bool SVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectPtrVect
 						const SVImportedRemoteInput& input = boost::any_cast<const SVImportedRemoteInput &>(*it);
 						pConfig->AddImportedRemoteInput(pPPQ, input.name, input.ppqPosition, input.index, input.value);
 					}
-					else
+					else if(SVHardwareManifest::isDiscreteIOSystem(m_lConfigurationType))
 					{
 						const SVImportedInput& input = boost::any_cast<const SVImportedInput &>(*it);
 						pConfig->AddImportedDigitalInput(pPPQ, input.name, input.ppqPosition);
