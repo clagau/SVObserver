@@ -498,6 +498,15 @@ namespace SvOg
 					}
 				}
 			}
+			else if (responseCmd.setfeaturesresponse().has_messages())
+			{
+				SvStl::MessageContainerVector tmpMessages = SvPb::convertProtobufToMessageVector(responseCmd.setfeaturesresponse().messages());
+				if (0 < tmpMessages.size())
+				{
+					SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+					Msg.setMessage(tmpMessages[0].getMessage());
+				}
+			}
 		}
 
 		if (S_OK == hResult)

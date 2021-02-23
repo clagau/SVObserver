@@ -411,7 +411,8 @@ HRESULT SVValueObjectClass<T>::setValue(const _variant_t& rValue, int Index /*= 
 	HRESULT result {S_OK};
 	std::vector<T> valueVector = variant2VectorType(rValue);
 
-	if (!isArray() || 0 == (VT_ARRAY & rValue.vt) || nullptr == rValue.parray)
+	int32_t arraySize = static_cast<int32_t> (valueVector.size());
+	if (-1 < Index)
 	{
 		if (1 == valueVector.size())
 		{
@@ -420,7 +421,6 @@ HRESULT SVValueObjectClass<T>::setValue(const _variant_t& rValue, int Index /*= 
 	}
 	else
 	{
-		int32_t arraySize = static_cast<int32_t> (valueVector.size());
 		if (arraySize > 0)
 		{
 			if (fixArrasize == false)
@@ -450,12 +450,10 @@ HRESULT SVValueObjectClass<T>::setValue(const _variant_t& rValue, int Index /*= 
 
 			}
 		}
-		
 		else if (arraySize == 0)
 		{
 			SetResultSize(0);
 		}
-		
 		else
 		{
 			result = SvStl::Err_10029_ValueObject_Parameter_WrongSize;
@@ -801,7 +799,6 @@ T SVValueObjectClass<T>::convertVariantValue(const _variant_t& rValue, const _va
 	{
 		result = ConvertString2Type(SvUl::createStdString(rValue), rDefaultValue);
 	}
-	///@TODO[mec] for enable array size 1 (~VT_ARRAY & rValue.vt)
 	//!For type safety check that the VT type is either the default value main value or when not set yet (VT_EMPTY)
 	else if (rDefaultValue.vt == rValue.vt || ValueType2Variant(m_pValue).vt == rValue.vt || ValueType2Variant(m_pValue).vt == VT_EMPTY)
 	{
@@ -822,9 +819,7 @@ template <typename T>
 std::vector<T> SVValueObjectClass<T>::variant2VectorType(const _variant_t& rValue, const _variant_t& rDefaultValue) const
 {
 	ValueVector result;
-
-	//@TODO[mec] avoid isArray for enabling array size 1
-	if (!isArray() ||  0 == (VT_ARRAY & rValue.vt) || nullptr == rValue.parray)
+	if ( 0 == (VT_ARRAY & rValue.vt) || nullptr == rValue.parray)
 	{
 		T value = convertVariantValue(rValue, rDefaultValue);
 		result.emplace_back(value);

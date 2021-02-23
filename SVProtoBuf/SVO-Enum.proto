@@ -1168,6 +1168,17 @@ enum EmbeddedIdEnum
 	ShapeMaskPropertyOffsetLinkEId = 540;
 	MaskImageEId = 541;
 	ObjectTypeEId = 542;
+	IsColorAdditionalImageEId = 543;
+	BackgroundColor1EId = 544;
+	BackgroundColor2EId = 545;
+	BackgroundColor3EId = 546;
+	DrawTypesEId = 547;
+	BlobTypesEId = 548;
+	Color1EId = 549;
+	Color2EId = 550;
+	Color3EId = 551;
+	DrawAdditionalImageStepNamesEId = 552;
+	UseAdditionalImageEId = 553;
 
 	StatNumberOfValidSamplesEId = 560; //Statistics Tool: number of valid values considered in statistic
 

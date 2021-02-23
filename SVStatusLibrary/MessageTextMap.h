@@ -468,6 +468,8 @@ namespace SvStl
 		{Tid_ExcludeBlobUpperBoundLowerThanLowerBound, _T("Upper Bound is lower than Lower Bound for feature %s.")},
 		{Tid_FeatureNameFailed, _T("Rename failed: Feature name must be unique and is not a name of a standard feature.")},
 		{Tid_RangeBlobUpperBoundLowerThanLowerBound, _T("Range setting failed for feature %s: %s\nis less than\n%s") },
+		{Tid_InvalidDrawTypeWithSelectedFeatures, _T("Draw Step \"%s\" is invalid, because the DrawType is not possible with the correct selected Features.")},
+		{Tid_InvalidDrawTypeAfterDeletingFeature, _T("After deleting of a feature, the additional draw step \"%s\" become invalid.")},
 
 		{Tid_FailedtoStart, _T("Failed to start %s")},
 		{Tid_SocketInvalid, _T("Invalid socket Error: %s")},

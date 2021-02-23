@@ -431,6 +431,8 @@ enum MessageTextEnum
 	Tid_ExcludeBlobUpperBoundLowerThanLowerBound,
 	Tid_FeatureNameFailed,
 	Tid_RangeBlobUpperBoundLowerThanLowerBound,
+	Tid_InvalidDrawTypeWithSelectedFeatures,
+	Tid_InvalidDrawTypeAfterDeletingFeature,
 
 	Tid_FailedtoStart,
 	Tid_SocketInvalid,

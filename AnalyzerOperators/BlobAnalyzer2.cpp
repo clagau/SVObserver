@@ -155,6 +155,10 @@ namespace SvAo
 						Msg.setMessage(rMessage.getMessage());
 					}
 				}
+				else
+				{
+					SvPb::convertMessageToProtobuf(rMessage, pResponse->mutable_messages()->add_messages());
+				}
 			}
 		}
 
@@ -253,20 +257,20 @@ namespace SvAo
 			m_pBlobFeatureList->setResultBufferId(m_ResultBufferID);
 			m_pBlobFeatureList->setResultTable(m_pResultTable);
 
-			auto* pBlobDrawTask = dynamic_cast<BlobDrawTask*>(getFirstObject({ SvPb::BlobDrawObjectType }));
-			if (nullptr == pBlobDrawTask)
+			m_pDrawTask = dynamic_cast<BlobDrawTask*>(getFirstObject({ SvPb::BlobDrawObjectType }));
+			if (nullptr == m_pDrawTask)
 			{
-				pBlobDrawTask = new BlobDrawTask;
-				Add(pBlobDrawTask);
+				m_pDrawTask = new BlobDrawTask;
+				Add(m_pDrawTask);
 			}
 
-			if (nullptr == pBlobDrawTask)
+			if (nullptr == m_pDrawTask)
 			{
 				SvStl::MessageManager MesMan(SvStl::MsgType::Log);
 				MesMan.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16148);
 				throw;
 			}
-			pBlobDrawTask->setResultBufferId(m_ResultBufferID);
+			m_pDrawTask->setResultBufferId(m_ResultBufferID);
 
 			updateBlobFeatures();
 			allocateBlobNumberResult();
@@ -596,14 +600,22 @@ namespace SvAo
 		
 		long maxBlobDataArraySize = 0;
 		m_maxBlobDataArraySize.GetValue(maxBlobDataArraySize);
-		std::set<MIL_ID> featureGroups;
-		m_pBlobFeatureList->updateTableDefinition(maxBlobDataArraySize, m_ResultColumnForOverlayArray, featureGroups);
+		std::set<MIL_ID> tmpFeatureGroups;
+		m_pBlobFeatureList->updateTableDefinition(maxBlobDataArraySize, m_ResultColumnForOverlayArray, tmpFeatureGroups);
 
 		MblobControl(m_BlobContextID, M_ALL_FEATURES, M_DISABLE);
-		for (auto group : featureGroups)
+		for (auto group : tmpFeatureGroups)
 		{
 			MblobControl(m_BlobContextID, group, M_ENABLE);
 		}
+
+		std::set<MIL_ID> diff;
+		std::set_difference(m_featureGroups.begin(), m_featureGroups.end(), tmpFeatureGroups.begin(), tmpFeatureGroups.end(), std::inserter(diff, diff.begin()));
+		if (0 < diff.size())
+		{
+			result = m_pDrawTask->resetStepsForDeletedFeature(diff, pErrorMessages) && result;
+		}
+		m_featureGroups = tmpFeatureGroups;
 		return result;
 	}
 

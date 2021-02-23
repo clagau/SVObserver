@@ -26,6 +26,7 @@ class TableObject;
 namespace SvAo
 {
 class BlobFeatureList;
+class BlobDrawTask;
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -58,6 +59,8 @@ public:
 	virtual bool IsPtOverResult( const POINT& rPoint ) override;
 	virtual	SvDef::StringVector getAnalyzerResult() override;
 
+	const std::set<MIL_ID>& getFeatureGroups() const { return m_featureGroups; };
+
 protected:
 	virtual HRESULT onCollectOverlays(SvIe::SVImageClass* pImage, SVExtentMultiLineStructVector& rMultiLineArray ) override;
 	virtual void addOverlayGroups(const SvIe::SVImageClass* pImage, SvPb::Overlay& rOverlay) const override;
@@ -85,7 +88,9 @@ private:
 	SvOp::TableObject* m_pResultTable;
 	std::array<SvVol::DoubleSortValuePtr, 4> m_ResultColumnForOverlayArray{ nullptr };
 	std::vector<BlobExcludeData> m_excludeDataVec;
-	BlobFeatureList* m_pBlobFeatureList = nullptr;
+	BlobFeatureList* m_pBlobFeatureList{ nullptr };
+	BlobDrawTask* m_pDrawTask{ nullptr };
+	std::set<MIL_ID> m_featureGroups;
 };
 
 } //namespace SvAo
