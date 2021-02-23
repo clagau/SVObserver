@@ -519,6 +519,7 @@ HRESULT RemoteControlImpl::SetItems(SvRc::Product& rProduct, bool runOnce) const
 			const SvPb::Value& rValue = Response.errorlist(i);
 			rProduct.m_errorVector[i].m_name = rValue.name();
 			rProduct.m_errorVector[i].m_count = rValue.count();
+			rProduct.m_errorVector[i].m_status = rValue.status();
 			SvPb::ConvertProtobufToVariant(rValue.item(), rProduct.m_errorVector[i].m_item);
 		}
 
