@@ -16,6 +16,7 @@
 #pragma comment (lib, "libssl.lib")
 #include <openssl/sha.h>
 #include "sha256.h"
+#include "SVClock.h"
 
 #pragma endregion Includes
 
@@ -25,11 +26,13 @@
 
 namespace SvUl
 {
-	std::string SHA256(const char* const path)
+	std::string SHA256(const char* const path, double* pDuration)
 	{
-#ifdef TRACE_HASH_TIME
-		double starttime = SvUl::GetTimeStamp();
-#endif 				
+		if (nullptr != pDuration)
+		{
+			*pDuration = SvUl::GetTimeStamp();
+		}
+			
 		
 		std::ifstream fp(path, std::ios::in | std::ios::binary);
 
@@ -64,11 +67,11 @@ namespace SvUl
 		{
 			os << std::setw(2) << static_cast<unsigned int>(hash[i]);
 		}
-#ifdef TRACE_HASH_TIME
-		double time = SvUl::GetTimeStamp() - starttime;
-		TRACE1("hash: %s\n ", hash.c_str());
-		TRACE1("Time for hash: %lf\n ", time);
-#endif
+
+		if (nullptr != pDuration)
+		{
+			*pDuration = SvUl::GetTimeStamp() - *pDuration;
+		}
 		return os.str();
 	}
 }

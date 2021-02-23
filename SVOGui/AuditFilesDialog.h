@@ -6,7 +6,8 @@
 
 #pragma once
 #include "SVUtilityLibrary/AuditFiles.h"
-
+#include "GridCtrlLibrary/GridCtrl.h"
+#include "SVMFCControls/DlgItemResizer.h"
 
 namespace SvOg
 {
@@ -16,7 +17,7 @@ namespace SvOg
 		DECLARE_DYNAMIC(AuditFilesDialog)
 
 	public:
-		enum columnType { Ename = 0, Esize, Edate, EIgnore, ECalcHash, EHashValue, EColumncount };
+		enum columnType { Ename = 0, Esize, Etimestamp, EIgnore, EHash, ETime,  EHashValue, EColumncount };
 		enum DialogType { EDefault, WhiteList };
 		AuditFilesDialog(const std::vector< SvUl::AuditFile>& rList, DialogType t, CWnd* pParent = nullptr);   // standard constructor
 		virtual ~AuditFilesDialog();
@@ -30,36 +31,32 @@ namespace SvOg
 
 		std::vector< SvUl::AuditFile>& GetFiles() { return m_AuditFiles.GetFiles(); };
 	protected:
+		void setResizeControls();
 		virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-		void UpdateListctrl(bool rebuild);
 		const static LPCSTR HeaderNames[EColumncount];
 		const static DWORD  HeaderWith[EColumncount];
-
+		void InitFileGrid();
+		void UpdateFileGrid();
 
 		DECLARE_MESSAGE_MAP()
-	
 		virtual BOOL OnInitDialog();
 		virtual void OnOK();
 		virtual void OnCancel();
 		afx_msg void OnSize(UINT nType, int cx, int cy);
-		afx_msg void OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/);
-		afx_msg void OnDefaultCalctrue();
-		afx_msg void OnDefaultCalcfalse();
-		afx_msg void OnDefaultIgnoretrue();
-		afx_msg void OnDefaultIgnorefalse();
-		afx_msg void OnDefaultCalchash();
-		afx_msg void OnBnClickedButtonCalc();
-		afx_msg void OnDefaultAddfile();
-		afx_msg void OnDefaultDeletefile();
-
+		afx_msg void OnHelp();
+		afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
+		afx_msg void OnBnClickedButtonAdd();
+		afx_msg void OnBnClickedButtonRemove();
+		afx_msg void OnBnClickedButtonHelp();
+		afx_msg void OnGridBeginEdit(NMHDR* pNotifyStruct, LRESULT* pResult);
+		afx_msg void OnGridClick(NMHDR* pNotifyStruct, LRESULT* /*pResult*/);
 	private:
-		void IterateForSelected(columnType col, bool par); 
-		void LstCtrl2Data();
-
-		CMenu m_ContextMenu;
+		void FileGrid2Data();
+		SvMc::DlgItemResizer m_Resizer;				//Object which handles the resizing of all controls
+		SvGcl::GridCtrl m_FileGrid;						
 		DialogType m_DialogType;
 		SvUl::CAuditFiles                 m_AuditFiles;
-		CListCtrl m_ListCtrl;
+		
 
 	};
 }

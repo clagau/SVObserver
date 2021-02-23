@@ -17,6 +17,7 @@ namespace SvUl
 		default, white
 	};
 
+
 	struct AuditFile
 	{
 		explicit AuditFile(LPCSTR fullname) :Fullname(fullname)
@@ -32,16 +33,17 @@ namespace SvUl
 		void Trace() const;
 		std::string GetFormatedWriteDate() const;
 		std::string GetFormatedSize() const;
-		std::string  GetFormatedIgnoreFlag() const;
-		std::string  GetFormatedHashFlag() const;
+	
 
 		std::string GetExtension() const;
 		std::string GetFilename() const;
 		std::string GetFullname() const;
 		std::string GetHashvalue() const;
 
-		static std::string Flag2String(bool flag);
-		static bool   String2Flag(const std::string& flags);
+		std::string GetFormatedDuration() const;
+
+		
+	
 		friend bool operator<(const AuditFile& l, const AuditFile& r)
 		{
 			return l.Fullname < r.Fullname;
@@ -59,6 +61,7 @@ namespace SvUl
 		std::string extension;
 		std::string filename;
 		std::string hashvalue;
+		double  duration{ 0 };
 		bool exist{ false };
 	};
 
@@ -83,6 +86,7 @@ namespace SvUl
 
 		//calculate Hashcode
 		void CalculateSHA256();
+		void  CalculateSHA256(int index);
 
 		//sort in order of full Filename
 		void Sort();

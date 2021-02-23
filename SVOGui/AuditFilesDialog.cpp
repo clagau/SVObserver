@@ -8,14 +8,14 @@
 #include "stdafx.h"
 #include "AuditFilesDialog.h"
 #include "SVUtilityLibrary/AuditFiles.h"
-#include "SVUtilityLibrary/SHA256.h"
 #include "SVOResource/ConstGlobalSvOr.h"
+#include "GridCtrlLibrary/GridCellCheck.h"
 #pragma endregion Includes
 
 namespace SvOg
 {
-	const LPCSTR AuditFilesDialog::HeaderNames[EColumncount] = { "Name", "Size","Date","Ignore","CalcHash", "HashValue" };
-	const DWORD  AuditFilesDialog::HeaderWith[EColumncount] = { 120,60,120,40,40,200 };
+	const LPCSTR AuditFilesDialog::HeaderNames[EColumncount] = { "Name", "Size","Time Stamp","Ignore","Hash","Time(µs)", "Hash Value" };
+	const DWORD  AuditFilesDialog::HeaderWith[EColumncount] = { 160,80,80,40,40,60,200 };
 	IMPLEMENT_DYNAMIC(AuditFilesDialog, CDialog)
 
 		AuditFilesDialog::AuditFilesDialog(const std::vector< SvUl::AuditFile>& rList, DialogType t, CWnd* pParent /*=nullptr*/)
@@ -23,302 +23,222 @@ namespace SvOg
 		m_DialogType(t)
 	{
 		m_AuditFiles.SetValues(rList);
-		if (m_DialogType == WhiteList)
-		{
-			m_ContextMenu.LoadMenu(IDR_MENU_REPORT_WHITE);
-		}
-		else
-		{
-			m_ContextMenu.LoadMenu(IDR_MENU_REPORT);
-		}
 	}
 
 	AuditFilesDialog::~AuditFilesDialog()
 	{
-		m_ContextMenu.DestroyMenu();
+		
 	}
 
 	void AuditFilesDialog::DoDataExchange(CDataExchange* pDX)
 	{
 		CDialog::DoDataExchange(pDX);
-
-		DDX_Control(pDX, IDC_LIST_REPORT_FILE, m_ListCtrl);
+		DDX_Control(pDX, IDC_FILEGRID, m_FileGrid);
 	}
 
 
 	BEGIN_MESSAGE_MAP(AuditFilesDialog, CDialog)
 		ON_WM_SIZE()
-		ON_WM_CONTEXTMENU()
-		ON_COMMAND(ID_DEFAULT_CALCTRUE, &AuditFilesDialog::OnDefaultCalctrue)
-		ON_COMMAND(ID_DEFAULT_CALCFALSE, &AuditFilesDialog::OnDefaultCalcfalse)
-		ON_COMMAND(ID_DEFAULT_IGNORETRUE, &AuditFilesDialog::OnDefaultIgnoretrue)
-		ON_COMMAND(ID_DEFAULT_IGNOREFALSE, &AuditFilesDialog::OnDefaultIgnorefalse)
-		ON_COMMAND(ID_DEFAULT_CALCHASH, &AuditFilesDialog::OnDefaultCalchash)
-		ON_BN_CLICKED(IDC_BUTTON_CALC, &AuditFilesDialog::OnBnClickedButtonCalc)
-		ON_COMMAND(ID_DEFAULT_ADDFILE, &AuditFilesDialog::OnDefaultAddfile)
-		ON_COMMAND(ID_DEFAULT_DELETEFILE, &AuditFilesDialog::OnDefaultDeletefile)
+		ON_NOTIFY(GVN_BEGINLABELEDIT, IDC_FILEGRID, OnGridBeginEdit)
+		ON_BN_CLICKED(IDC_BUTTON_ADD, &AuditFilesDialog::OnBnClickedButtonAdd)
+		ON_BN_CLICKED(IDC_BUTTON_REMOVE, &AuditFilesDialog::OnBnClickedButtonRemove)
+		ON_BN_CLICKED(IDHELP, &AuditFilesDialog::OnBnClickedButtonHelp)
+		ON_COMMAND(ID_HELP, OnHelp)
+		ON_NOTIFY(NM_CLICK, IDC_FILEGRID, OnGridClick)
 	END_MESSAGE_MAP()
 
 
 	// DlgReportDefaultFile message handlers
 
+	void AuditFilesDialog::setResizeControls()
+	{
+		m_Resizer.Add(this, IDC_FILEGRID, SvMc::RESIZE_LOCKALL);
+		m_Resizer.Add(this, IDHELP, SvMc::RESIZE_LOCKRIGHT | SvMc::RESIZE_LOCKBOTTOM);
+		m_Resizer.Add(this, IDCANCEL, SvMc::RESIZE_LOCKRIGHT | SvMc::RESIZE_LOCKBOTTOM);
+		m_Resizer.Add(this, IDOK, SvMc::RESIZE_LOCKRIGHT | SvMc::RESIZE_LOCKBOTTOM);
+		m_Resizer.Add(this, IDC_BUTTON_REMOVE, SvMc::RESIZE_LOCKRIGHT | SvMc::RESIZE_LOCKBOTTOM);
+		m_Resizer.Add(this, IDC_BUTTON_ADD, SvMc::RESIZE_LOCKRIGHT | SvMc::RESIZE_LOCKBOTTOM);
+
+	}
+	void AuditFilesDialog::InitFileGrid()
+	{
+
+		m_FileGrid.SetRedraw(FALSE);
+		m_FileGrid.AutoSize(GVS_DATA);
+		m_FileGrid.SetColumnCount(EColumncount);
+		m_FileGrid.SetFixedRowSelection(TRUE);
+		m_FileGrid.SetFixedRowCount(1);
+		m_FileGrid.SetFixedColumnSelection(FALSE);
+		m_FileGrid.AllowReorderColumn(false);
+		//m_FileGrid.SetSingleRowSelection(true);
+
+		//add header
+		SvGcl::GV_ITEM Item;
+		Item.mask = GVIF_TEXT;
+		for (int col = 0; col < EColumncount; col++)
+		{
+			Item.row = 0;
+			Item.col = col;
+			Item.strText = HeaderNames[col];
+			m_FileGrid.SetItem(&Item);
+			m_FileGrid.SetColumnWidth(col, HeaderWith[col]);
+		}
+
+	}
 
 	BOOL AuditFilesDialog::OnInitDialog()
 	{
 		CDialog::OnInitDialog();
-		
+		setResizeControls();
+		CWnd* pRemovButton = GetDlgItem(IDC_BUTTON_REMOVE);
+		CWnd* pAddButton = GetDlgItem(IDC_BUTTON_ADD);
+
 		if (m_DialogType == WhiteList)
 		{
-			SetHelpID(static_cast<UINT> (ID_CONFIGREPORT_ADDITIONALFILES - SvOr::HELPFILE_ID_OFFSET));
+			SetHelpID(static_cast<UINT> (ID_AUDITTRAIL_ADDITIONALFILES - SvOr::HELPFILE_ID_OFFSET));
 			SetWindowText("Additional Report Files");
+
+			if (pRemovButton)
+			{
+				pRemovButton->ShowWindow(SW_SHOW);
+				pRemovButton->EnableWindow(TRUE);
+			}
+			if (pAddButton)
+			{
+				pAddButton->ShowWindow(SW_SHOW);
+				pAddButton->EnableWindow(TRUE);
+			}
+
+
 		}
 		else
 		{
 			SetWindowText("Default Report Files");
-			SetHelpID(static_cast<UINT> (ID_CONFIGREPORT_DEFAULTFILES - SvOr::HELPFILE_ID_OFFSET));
-		}
+			SetHelpID(static_cast<UINT> (ID_AUDITTRAIL_DEFAULTFILES - SvOr::HELPFILE_ID_OFFSET));
 
-		for (int i = 0; i < EColumncount; i++)
-		{
-			int WidthFactor = 1;
-			if (i == 0 && (m_DialogType == WhiteList))
+			if (pRemovButton)
 			{
-				WidthFactor = 2;// double with of first column because of fuulpath
+				pRemovButton->ShowWindow(SW_HIDE);
+				pRemovButton->EnableWindow(FALSE);
 			}
-
-			m_ListCtrl.InsertColumn(i, HeaderNames[i], LVCFMT_LEFT, HeaderWith[i], i);
+			if (pAddButton)
+			{
+				pAddButton->ShowWindow(SW_HIDE);
+				pAddButton->EnableWindow(FALSE);
+			}
 		}
-		UpdateListctrl(true);
+		m_AuditFiles.CalculateSHA256();
+		InitFileGrid();
+	
+		UpdateFileGrid();
 
 		return TRUE;  // return TRUE unless you set the focus to a control
 					  // EXCEPTION: OCX Property Pages should return FALSE
 	}
 
-	void AuditFilesDialog::UpdateListctrl(bool rebuild)
+	void AuditFilesDialog::UpdateFileGrid()
 	{
-
-		if (rebuild)
-		{
-			m_ListCtrl.DeleteAllItems();
-		}
+		m_FileGrid.SetRedraw(FALSE);
 		auto& rlist = m_AuditFiles.GetFiles();
-		for (int i = 0; i < rlist.size(); i++)
+		
+		m_FileGrid.SetRowCount(static_cast<int>(rlist.size()) + 1);
+		for (int i = 0; i < static_cast<int>(rlist.size()); i++)
 		{
-			SvUl::AuditFile& rAF = rlist[i];
-			if (rebuild)
+			int row = i + 1;
+			if (m_DialogType == WhiteList)
 			{
-				if (m_DialogType == WhiteList)
-				{
-					m_ListCtrl.InsertItem(LVIF_TEXT | LVIF_PARAM, i, rAF.GetFullname().c_str(), 0, 0, 0, i);
-				}
-				else
-				{
-					m_ListCtrl.InsertItem(LVIF_TEXT | LVIF_PARAM, i, rAF.GetFilename().c_str(), 0, 0, 0, i);
-				}
+				m_FileGrid.SetItemText(row, Ename, rlist[i].GetFullname().c_str());
 			}
 			else
 			{
-				if (m_DialogType == WhiteList)
-				{
-					m_ListCtrl.SetItemText(i, Ename, rAF.GetFullname().c_str());
-				}
-				else
-				{
-					m_ListCtrl.SetItemText(i, Ename, rAF.GetFilename().c_str());
-				}
+				m_FileGrid.SetItemText(row, Ename, rlist[i].GetFilename().c_str());
 			}
-			//Esize, Edate, EIgnore, ECalcHash, EColumncount
-			m_ListCtrl.SetItemText(i, Edate, rAF.GetFormatedWriteDate().c_str());
-			m_ListCtrl.SetItemText(i, Esize, rAF.GetFormatedSize().c_str());
-			m_ListCtrl.SetItemText(i, EIgnore, rAF.GetFormatedIgnoreFlag().c_str());
-			m_ListCtrl.SetItemText(i, ECalcHash, rAF.GetFormatedHashFlag().c_str());
-			m_ListCtrl.SetItemText(i, EHashValue, rAF.GetHashvalue().c_str());
+			m_FileGrid.SetItemState(row, Ename, m_FileGrid.GetItemState(row, Ename) | GVIS_READONLY);
+
+			m_FileGrid.SetItemText(row, Esize, rlist[i].GetFormatedSize().c_str());
+			m_FileGrid.SetItemState(row, Esize, m_FileGrid.GetItemState(row, Esize) | GVIS_READONLY);
+
+			m_FileGrid.SetItemText(row, Etimestamp, rlist[i].GetFormatedWriteDate().c_str());
+			m_FileGrid.SetItemState(row, Etimestamp, m_FileGrid.GetItemState(row, Etimestamp) | GVIS_READONLY);
+
+			using namespace SvGcl;
+			m_FileGrid.SetCellType(row, EIgnore, RUNTIME_CLASS(GridCellCheck));
+			m_FileGrid.SetItemState(row, EIgnore, m_FileGrid.GetItemState(row, EIgnore) & ~GVIS_READONLY);
+			SvGcl::GridCellCheck* cell = dynamic_cast<SvGcl::GridCellCheck*>(m_FileGrid.GetCell(row, EIgnore));
+			if (nullptr != cell)
+			{
+				cell->SetCheck(rlist[i].bignore);
+			}
+			m_FileGrid.SetCellType(row, EHash, RUNTIME_CLASS(GridCellCheck));
+			cell = dynamic_cast<SvGcl::GridCellCheck*>(m_FileGrid.GetCell(row, EHash));
+			if (nullptr != cell)
+			{
+				cell->SetCheck(rlist[i].bhash);
+			}
+
+			m_FileGrid.SetItemText(row, ETime, rlist[i].GetFormatedDuration().c_str());
+			m_FileGrid.SetItemState(row, ETime, m_FileGrid.GetItemState(row, ETime) | GVIS_READONLY);
+
+			m_FileGrid.SetItemText(row, EHashValue, rlist[i].GetHashvalue().c_str());
+			m_FileGrid.SetItemState(row, EHashValue, m_FileGrid.GetItemState(row, EHashValue) | GVIS_READONLY);
 		}
+		m_FileGrid.SetRedraw(TRUE);
+
 	}
-	void AuditFilesDialog::LstCtrl2Data()
+	//Get checkboxes 
+	void AuditFilesDialog::FileGrid2Data()
 	{
-		int Itemcount = m_ListCtrl.GetItemCount();
 		auto& rlist = m_AuditFiles.GetFiles();
-		for (int item = 0; item < Itemcount; item++)
+		int ItemCount = static_cast<int>(rlist.size());
+
+		if (m_FileGrid.GetRowCount() != ItemCount + 1)
 		{
+			assert(false);
+			return;
+		}
+		for (int item = 0; item < ItemCount; item++)
+		{
+			int row = item + 1;
+			auto* pCellIg = dynamic_cast<SvGcl::GridCellCheck*>(m_FileGrid.GetCell(row, EIgnore));
+			auto* pCellHs = dynamic_cast<SvGcl::GridCellCheck*>(m_FileGrid.GetCell(row, EHash));
 
-			char textbuffer[512];
-			m_ListCtrl.GetItemText(item, EIgnore, textbuffer, 512);
-			rlist[item].bignore = SvUl::AuditFile::String2Flag(textbuffer);
-
-
-			m_ListCtrl.GetItemText(item, ECalcHash, textbuffer, 512);
-			rlist[item].bhash = SvUl::AuditFile::String2Flag(textbuffer);
-
-			m_ListCtrl.GetItemText(item, EHashValue, textbuffer, 512);
-			rlist[item].hashvalue = textbuffer;
-
+			rlist[item].bignore = pCellIg && pCellIg->GetCheck();
+			rlist[item].bhash = pCellHs && pCellHs->GetCheck();
 
 		}
 	}
+
 
 	void AuditFilesDialog::OnOK()
 	{
-		LstCtrl2Data();
+		FileGrid2Data();
 		CDialog::OnOK();
 	}
 
 
 	void AuditFilesDialog::OnCancel()
 	{
-		// TODO: Add your specialized code here and/or call the base class
 
 		CDialog::OnCancel();
 	}
 
+	void AuditFilesDialog::OnGridBeginEdit(NMHDR* /*pNotifyStruct*/, LRESULT* pResult)
+	{
+		//editing is not allowed
+		//SvGcl::NM_GRIDVIEW* pItem = (SvGcl::NM_GRIDVIEW*)pNotifyStruct;
+		*pResult = -1;
+	}
 
 	void AuditFilesDialog::OnSize(UINT nType, int cx, int cy)
 	{
 		CDialog::OnSize(nType, cx, cy);
 
-
-		int fs = 10;
-		int bh = 20;
-		int bw = 50;
-		CWnd* pOK = GetDlgItem(IDOK);
-		CWnd* pC = GetDlgItem(IDCANCEL);
-		CWnd* pCalc = GetDlgItem(IDC_BUTTON_CALC);
-		RECT okR;
-		if (pOK && ::IsWindow(pOK->GetSafeHwnd()))
-		{
-			pOK->GetWindowRect(&okR);
-			bw = okR.right - okR.left;
-			bh = okR.bottom - okR.top;
-			pOK->MoveWindow(cx - 2 * fs - 2 * bw, cy - fs - bh, bw, bh);;
-		}
-		if (pC && ::IsWindow(pC->GetSafeHwnd()))
-		{
-
-			pC->MoveWindow(cx - fs - bw, cy - fs - bh, bw, bh);;
-		}
-		if (pCalc && ::IsWindow(pCalc->GetSafeHwnd()))
-		{
-
-			pCalc->MoveWindow(cx - 3 * fs - 3 * bw, cy - fs - bh, bw, bh);;
-		}
-
-
-
-		int gap = 3 * fs + bh;
-
-		if (::IsWindow(m_ListCtrl.GetSafeHwnd()))
-		{
-			m_ListCtrl.MoveWindow(fs, fs, cx - fs, cy - gap);
-
-		}
-
-
-
+		m_Resizer.Resize(this);
 	}
 
 
-	void AuditFilesDialog::OnContextMenu(CWnd*, CPoint point)
+	void AuditFilesDialog::OnBnClickedButtonAdd()
 	{
-		{
-			CMenu* pPopupMenu = m_ContextMenu.GetSubMenu(0);
-			assert(nullptr != pPopupMenu);
-			CWnd* pOwner = this;
-			while (pOwner->GetStyle() & WS_CHILD)
-			{
-				pOwner = pOwner->GetParent();
-			}
-			pPopupMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, pOwner);
-		}
-	}
-
-
-	void AuditFilesDialog::OnDefaultCalctrue()
-	{
-		IterateForSelected(ECalcHash, true);
-	}
-
-
-	void AuditFilesDialog::OnDefaultCalcfalse()
-	{
-		IterateForSelected(ECalcHash, false);
-	}
-
-
-	void AuditFilesDialog::OnDefaultIgnoretrue()
-	{
-		IterateForSelected(EIgnore, true);
-	}
-
-
-	void AuditFilesDialog::OnDefaultIgnorefalse()
-	{
-		IterateForSelected(EIgnore, false);
-	}
-
-
-	void AuditFilesDialog::OnDefaultCalchash()
-	{
-		IterateForSelected(EHashValue, false);
-	}
-
-	void AuditFilesDialog::IterateForSelected(columnType col, bool par)
-	{
-		int uSelectedCount = m_ListCtrl.GetSelectedCount();
-
-
-		// Update all of the selected items.
-		if (uSelectedCount > 0)
-		{
-			for (int i = 0, nItem = -1; i < uSelectedCount; i++)
-			{
-
-				
-				nItem = m_ListCtrl.GetNextItem(nItem, LVNI_SELECTED);
-				ASSERT(nItem != -1);
-				switch (col)
-				{
-
-				case EIgnore:
-					m_ListCtrl.SetItemText(nItem, EIgnore, SvUl::AuditFile::Flag2String(par).c_str());
-					break;
-				case ECalcHash:
-					m_ListCtrl.SetItemText(nItem, ECalcHash, SvUl::AuditFile::Flag2String(par).c_str());
-					break;
-				case 	EHashValue:
-				{
-					std::string hash;
-					try
-					{
-						SvUl::AuditFile& rAF = m_AuditFiles.GetFiles()[i];
-						hash = SvUl::SHA256(rAF.GetFullname().c_str());
-					}
-					catch (const std::exception& e)
-					{
-						hash = e.what();;
-					}
-					m_ListCtrl.SetItemText(nItem, EHashValue, hash.c_str());
-				}
-				}
-
-
-			}
-		}
-	}
-
-
-
-	void AuditFilesDialog::OnBnClickedButtonCalc()
-	{
-		LstCtrl2Data();
-		m_AuditFiles.CalculateSHA256();
-		UpdateListctrl(false);
-
-	}
-
-
-	void AuditFilesDialog::OnDefaultAddfile()
-	{
-
 		if (m_DialogType != WhiteList)
 		{
 			return;
@@ -332,13 +252,15 @@ namespace SvOg
 			CString pathName = fileDlg.GetPathName();
 			auto& files = m_AuditFiles.GetFiles();
 			files.emplace_back(pathName.GetString());
+			m_AuditFiles.Sort();
 			m_AuditFiles.UpdateList();
-			UpdateListctrl(true);
+			m_AuditFiles.CalculateSHA256();
+			UpdateFileGrid();
+
 		}
 	}
 
-
-	void AuditFilesDialog::OnDefaultDeletefile()
+	void AuditFilesDialog::OnBnClickedButtonRemove()
 	{
 		if (m_DialogType != WhiteList)
 		{
@@ -346,28 +268,91 @@ namespace SvOg
 		}
 		//delelete all selected Entries
 		std::vector<UINT> IndexToDelete;
-
-		int uSelectedCount = m_ListCtrl.GetSelectedCount();
-		if (uSelectedCount > 0)
+		///
+		auto selection = m_FileGrid.GetSelectedCellRange();
+		for (int i = selection.GetMaxRow(); i >= selection.GetMinRow(); --i)
 		{
-			for (int i = 0, nItem = -1; i < uSelectedCount; i++)
+			for (int j = selection.GetMinCol(); j <= selection.GetMaxCol(); ++j)
 			{
-				nItem = m_ListCtrl.GetNextItem(nItem, LVNI_SELECTED);
-				if (nItem != -1)
+				if (m_FileGrid.IsCellSelected(i, j))
 				{
-					IndexToDelete.push_back(nItem);
+					int index = i - 1;
+					if (index >= 0)
+					{
+						IndexToDelete.push_back(index);
+					}
+
+					break;
 				}
 			}
-			for (int i = (int)IndexToDelete.size() - 1; i >= 0; i--)
+
+		}
+		m_FileGrid.SetSelectedRange({});
+
+		for (int i = (int)IndexToDelete.size() - 1; i >= 0; i--)
+		{
+			int  index = IndexToDelete[i];
+			if (index < (int)m_AuditFiles.GetFiles().size())
 			{
-				int  index = IndexToDelete[i];
-				if (index < (int)m_AuditFiles.GetFiles().size())
-				{
-					m_AuditFiles.GetFiles().erase(m_AuditFiles.GetFiles().begin() + index);
-				}
+				m_AuditFiles.GetFiles().erase(m_AuditFiles.GetFiles().begin() + index);
 			}
-			m_AuditFiles.UpdateList();
-			UpdateListctrl(true);
+		}
+		m_AuditFiles.UpdateList();
+		UpdateFileGrid();
+	}
+
+	void AuditFilesDialog::OnBnClickedButtonHelp()
+	{
+		long lContextID = GetWindowContextHelpId();
+		OnCommandHelp(0, lContextID);
+	}
+	void AuditFilesDialog::OnHelp()
+	{
+		AfxGetApp()->HtmlHelp(m_nIDHelp);
+	}
+
+	BOOL AuditFilesDialog::OnHelpInfo(HELPINFO* pHelpInfo)
+	{
+		pHelpInfo->iCtrlId = m_nIDHelp;
+		AfxGetApp()->HtmlHelp(pHelpInfo->iCtrlId, HH_HELP_CONTEXT);
+		return TRUE;
+	}
+
+	void AuditFilesDialog::OnGridClick(NMHDR* pNotifyStruct, LRESULT* /*pResult*/)
+	{
+		SvGcl::NM_GRIDVIEW* pItem = (SvGcl::NM_GRIDVIEW*)pNotifyStruct;
+
+		switch (pItem->iColumn)
+		{
+		case EHash:
+		case EIgnore:
+		{
+			bool hash{ true }, ignore{ false };
+			SvGcl::GridCellCheck* cell = dynamic_cast<SvGcl::GridCellCheck*>(m_FileGrid.GetCell(pItem->iRow, EIgnore));
+			SvGcl::GridCellCheck* cellH = dynamic_cast<SvGcl::GridCellCheck*>(m_FileGrid.GetCell(pItem->iRow, EHash));
+
+			if (cell && cellH)
+			{
+				hash = cellH->GetCheck();
+				ignore = cell->GetCheck();
+			}
+			auto& rlist = m_AuditFiles.GetFiles();
+			int index = pItem->iRow - 1;
+			if (index >= 0 && index < rlist.size())
+			{
+
+				rlist[index].bignore = ignore;
+				rlist[index].bhash = hash;
+			}
+			m_AuditFiles.CalculateSHA256(index);
+			UpdateFileGrid();
+		}
+		break;
+		default:
+			break;
+
 		}
 	}
+
+
 }

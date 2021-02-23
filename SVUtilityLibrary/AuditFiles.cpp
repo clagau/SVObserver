@@ -34,13 +34,11 @@ namespace SvUl
 	}
 
 
-	std::string   AuditFile::GetFormatedIgnoreFlag() const
+	
+	std::string AuditFile::GetFormatedDuration() const
 	{
-		return Flag2String(bignore);
-	}
-	std::string  AuditFile::GetFormatedHashFlag() const
-	{
-		return Flag2String(bhash);
+		int durationInMycro = static_cast<int> (1000.0 * duration);
+		return std::to_string(durationInMycro);
 	}
 
 	void AuditFile::Trace() const
@@ -57,24 +55,7 @@ namespace SvUl
 #endif 
 	}
 
-	std::string  AuditFile::Flag2String(bool flag)
-	{
-		std::string ret;
-		ret = flag ? "true" : "false";
-		return ret;
-	}
-
-
-	bool    AuditFile::String2Flag(const std::string& flags)
-	{
-		if (flags.compare("true") == 0 || flags.compare("TRUE") == 0)
-			return true;
-		else
-			return false;
-	}
-
-
-
+	
 	std::string AuditFile::GetExtension() const
 	{
 		return extension;
@@ -133,6 +114,35 @@ namespace SvUl
 			}
 		}
 	}
+
+	void  CAuditFiles::CalculateSHA256(int index)
+	{
+		if (index < 0 || index >= static_cast<int>(m_Files.size()))
+		{
+			return;
+		}
+
+		auto& F = m_Files[index];
+		std::string hash;
+		hash.clear();
+		double duration = 0.0;
+		if (false == F.bignore && true == F.bhash)
+		{
+			try
+			{
+				hash = SHA256(F.GetFullname().c_str(), &duration);
+			}
+			catch (const std::exception& e)
+			{
+				hash = e.what();
+				duration = 0;
+			}
+		}
+		F.hashvalue = hash;
+		F.duration = duration;
+
+
+	}
 	void  CAuditFiles::CalculateSHA256()
 	{
 
@@ -140,20 +150,21 @@ namespace SvUl
 		for (auto& F : m_Files)
 		{
 			hash.clear();
-
+			double duration = 0.0;
 			if (false == F.bignore && true == F.bhash)
 			{
 				try
 				{
-					hash = SHA256(F.GetFullname().c_str());
+					hash = SHA256(F.GetFullname().c_str(), &duration);
 				}
 				catch (const std::exception& e)
 				{
-					hash = e.what();;
+					hash = e.what();
+					duration = 0;
 				}
 			}
 			F.hashvalue = hash;
-
+			F.duration = duration;
 
 		}
 	}

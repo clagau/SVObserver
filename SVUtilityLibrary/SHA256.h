@@ -9,6 +9,6 @@
 
 namespace SvUl
 {
-	std::string SHA256(const char* const path);
+	std::string SHA256(const char* const path, double* pDuration=nullptr );
 
 }
