@@ -550,7 +550,7 @@ void ToolSetView::RenameItem()
 			if (SvDef::InvalidObjectId != toolId) // it's a Tool
 			{
 				TheSVObserverApp.OnObjectRenamed(m_LabelSaved, toolId);
-				
+				NavElement->m_DisplayName = m_LabelEdited;
 			}
 			break;
 		case NavElementType::GroupTool:
@@ -560,12 +560,14 @@ void ToolSetView::RenameItem()
 			{
 				rGroupings.RenameItem(m_LabelSaved, m_LabelEdited);
 				TheSVObserverApp.OnObjectRenamed(m_LabelSaved, toolId);
+				NavElement->m_DisplayName = m_LabelEdited;
 				
 			}
 			break;
 		case NavElementType::EndGrouping:
 		case NavElementType::StartGrouping:
 			rGroupings.RenameItem(m_LabelSaved, m_LabelEdited);
+			NavElement->m_DisplayName = m_LabelEdited;
 			break;
 	}
 	
@@ -794,7 +796,7 @@ void ToolSetView::OnEndLabelEditToolSetList(NMHDR*, LRESULT* pResult)
 	{
 		return;
 	}
-	std::string Selection(NavElement->m_DisplayName);
+
 	CString Text;
 	pEdit->GetWindowText(Text);
 	std::string NewText(Text);
