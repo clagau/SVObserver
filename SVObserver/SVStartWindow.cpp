@@ -35,7 +35,7 @@ SVStartWindow::SVStartWindow(CWnd* pParent /*=nullptr*/)
 
 	Version += SvSyl::SVVersionInfo::GetVersion();
 
-	startImage.TextOut( 0.42, 0.70, RGB( 0, 0, 0 ), Version.c_str() );
+	startImage.TextOut( 0.39, 0.60, RGB( 0, 0, 0 ), Version.c_str() );
 }
 
 SVStartWindow::~SVStartWindow()

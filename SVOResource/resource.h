@@ -2386,6 +2386,7 @@
 #define IDC_BTN_RANGE_MIN2              16184
 #define IDC_BTN_RANGE_DELTA             16185
 #define IDC_BTN_RANGE_MAX               16186
+#define IDC_WEBSITE						16187
 #define ID_UNDO_CHANGES                 20000
 #define ID_BROWSE_BUTTON                20001
 #define ID_PLUSBUTTON                   20002
