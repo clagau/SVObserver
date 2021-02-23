@@ -38,6 +38,7 @@
 #include <concrt.h>
 #include <ctime>
 #include <deque>
+#include <filesystem>
 #include <fstream>
 #include <io.h>
 #include <iostream>
@@ -58,6 +59,7 @@
 #include <tchar.h>
 #include <utility>
 #include <vector>
+
 
 #include <boost/function.hpp>							//Used by static library
 #include <boost/circular_buffer.hpp>					//Used by static library

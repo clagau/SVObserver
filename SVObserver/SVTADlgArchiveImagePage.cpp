@@ -12,7 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <numeric>
-#include <filesystem>
 #include "SVTADlgArchiveImagePage.h"
 #include "SVInspectionProcess.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
@@ -30,7 +29,6 @@
 #include "Tools/ArchiveToolHelper.h"
 #include "SVOLibrary/SVMemoryManager.h"
 #pragma endregion Includes
-
 
 #pragma region Declarations
 #ifdef _DEBUG
@@ -240,20 +238,38 @@ bool SVTADlgArchiveImagePage::validateImageFilepathRoot()
 {
 	if (!m_pTool->updateCurrentImagePathRoot(true))
 	{
-		return false; //current m_currentImagePathRoot cannot even be determined
+		return false; // the current image path root cannot even be determined
 	}
 
 	std::string imagepathroot = m_pTool->getCurrentImagePathRoot();
 
-	if(std::filesystem::is_directory(imagepathroot))
+	std::string problem = _T("");
+
+	try
 	{
-		return true; // m_currentImagePathRoot exists already
+		if (pathCanProbablyBeCreatedOrExitsAlready(imagepathroot))
+		{
+			return true;
+		}
+		else
+		{
+			problem = imagepathroot;
+		}
+	}
+	catch (std::exception& e)
+	{
+		problem = e.what();
 	}
 
-	//since it is very hard to reliably determine whether a directory path can be created:
-	//we just check for a drive letter here:
+	if (problem.size() > 0)
+	{
+		SvDef::StringVector msgList;
+		msgList.push_back(imagepathroot);
+		SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
+		Exception.setMessage(SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_InvalidPath, msgList, SvStl::SourceFileParams(StdMessageParams));
+	}
 
-	return ValidateArchivePath(imagepathroot);
+	return false;
 }
 
 BOOL SVTADlgArchiveImagePage::OnInitDialog() 

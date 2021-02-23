@@ -129,7 +129,7 @@ bool SVTADlgArchiveResultsPage::QueryAllowExit()
 		return false;
 	}
 
-	if(!ValidateArchivePath(ArchiveFilepath))
+	if(!pathCanProbablyBeCreatedOrExitsAlready(ArchiveFilepath))
 	{
 		return false; 
 	}

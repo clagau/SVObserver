@@ -31,7 +31,6 @@
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVSystemLibrary/SVThreadManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "SVUtilityLibrary/SVUtilityGlobals.h"
 #include "ObjectInterfaces/ITriggerRecordControllerRW.h"
 #pragma endregion Includes
 
@@ -584,19 +583,9 @@ bool SVArchiveTool::initializeOnRun(SvStl::MessageContainerVector *pErrorMessage
 		{
 			return false;
 		}
-		if (_access(m_currentImagePathRoot.c_str(), 0) != 0)
+		if (!ensureCurrentImagePathRootExists())
 		{
-			if (!SVFileNameManagerClass::Instance().CreatePath(m_currentImagePathRoot.c_str()))
-			{
-				if (nullptr != pErrorMessages)
-				{
-					SvDef::StringVector msgList;
-					msgList.push_back(m_currentImagePathRoot);
-					SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ArchiveTool_CreatePathFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId()); 
-					pErrorMessages->push_back(Msg);
-				}
-				return false;
-			}
+			return false;
 		}
 	}
 
@@ -1242,18 +1231,29 @@ bool SVArchiveTool::updateCurrentImagePathRoot(bool displayMessageOnInvalidKeywo
 
 bool SVArchiveTool::ensureCurrentImagePathRootExists()
 {
-	TCHAR lastCharacter = m_currentImagePathRoot.back();
-	if (lastCharacter != _T('\\') && lastCharacter != _T('/'))
+	bool ok = false;
+	try
 	{
-		m_currentImagePathRoot += _T("\\"); //ensure that SVCheckPathDir() can recognize this as a directory
-	}
+		std::filesystem::create_directories(m_currentImagePathRoot);
 
-	if (!SVCheckPathDir(m_currentImagePathRoot.c_str(), TRUE)) //create this directory if it does not exist yet
+		if (!ok)
+		{
+			if (std::filesystem::is_directory(m_currentImagePathRoot))
+			{
+				return true;
+			}
+		}
+	}
+	catch (std::exception& e)
 	{
-		return false;
+		ok = false;
+		SvDef::StringVector msgList;
+		msgList.push_back(e.what());
+		SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
+		Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_InvalidPath, msgList, SvStl::SourceFileParams(StdMessageParams));
 	}
-
-	return true;
+	
+	return ok;
 }
 
 

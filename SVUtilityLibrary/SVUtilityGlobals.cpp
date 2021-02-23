@@ -12,8 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVUtilityGlobals.h"
-#include "SVStatusLibrary/MessageManager.h"
-#include "SVMessage/SVMessage.h"
 #pragma endregion Includes
 
 
@@ -149,36 +147,75 @@ bool SVCheckPathDir( LPCTSTR PathName, bool CreateIfDoesNotExist )
 	return false;
 }
 
-bool ValidateArchivePath(const std::string& rFilePath)
+bool pathCanProbablyBeCreatedOrExitsAlready(const std::string& rFilePath)
+{
+	//unfortunately, std::filesystem::exists() currently seems to have a serious problem with network paths 
+	//that don't exist so we use _access() instead.
+
+	if (0 == _access(rFilePath.c_str(), 0))
+	{
+		return true; // rFilePath exists already
+	}
+
+	//since it is very hard to reliably determine whether a directory path can be created:
+	//we just do some basic checks
+	if (isFilepathOnRegularPartition(rFilePath)|| isFilepathOnNetwork(rFilePath))
+	{
+		return true;
+	}
+
+	return false;
+}
+
+
+bool isFilepathOnRegularPartition(const std::string& rFilePath)
 {
 	size_t pos = 0;
 	std::string delimiter = ":";
 
 	pos = rFilePath.find(delimiter);
 
-	if (std::string::npos != pos) // if we find one colon (we do not want network paths here)...
+	if (1 == pos) //if we find one colon at the right position ...
 	{
-		if (std::string::npos == rFilePath.find(delimiter, pos + 1)) // ... but, of course, not more than one ...
+		if (std::string::npos == rFilePath.find(delimiter, 2)) // ... but, of course, not more than one ...
 		{
-			auto Drive = rFilePath.substr(0, pos + 1);
-
-			if (!_access(Drive.c_str(), 0)) // ... and the drive we have found actually exists ...
-			{
-				return true; // ... we consider this a valid path!
-			}
+			return true; // ... we consider this to be a valid path!
 		}
 	}
 
 	// But otherwise, we do not:
-
-	SvDef::StringVector msgList;
-	msgList.push_back(rFilePath);
-	SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
-	Exception.setMessage(SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_InvalidPath, msgList, SvStl::SourceFileParams(StdMessageParams));
 	return false;
-	//@TODO[Arvid][10.00][20.07.2020] a function here should not require GUI access!
-
 }
+
+
+bool isFilepathOnNetwork(const std::string& rFilePath) 
+{
+	size_t pos = 0;
+	std::string delimiter = "\\";
+
+	pos = rFilePath.find(delimiter);
+
+	if (0 == pos) 
+	{
+		auto nextBackslashPosition = rFilePath.find("\\", pos + 2);
+		if ((nextBackslashPosition > 3) &&
+			(rFilePath.size() > nextBackslashPosition))
+		{
+			return true;
+		}
+
+		auto nextSlashPosition = rFilePath.find("/", pos + 2);
+		if ((nextSlashPosition > 3) &&
+			(rFilePath.size() > nextSlashPosition))
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+
 
 bool SVDeleteFiles( LPCTSTR PathName, bool IncludeSubDirectories )
 {
