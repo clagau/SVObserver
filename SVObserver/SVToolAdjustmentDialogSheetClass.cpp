@@ -535,7 +535,16 @@ void SVToolAdjustmentDialogSheetClass::OnOK()
 	bool resetResult = false;
 	if (nullptr != pObject)
 	{
-		resetResult = pObject->resetAllObjects();
+		//If parent is a tool then it must be reset
+		SvOi::IObjectClass* pParent = SvOi::getObject(pObject->GetParentID());
+		if (nullptr != pParent && SvPb::SVToolObjectType == pParent->GetObjectType())
+		{
+			resetResult = pParent->resetAllObjects();
+		}
+		else
+		{
+			resetResult = pObject->resetAllObjects();
+		}
 		//Reset all tools dependent on this tool
 		std::set<uint32_t> ToolSet;
 		ToolSet.insert(pObject->getObjectId());
