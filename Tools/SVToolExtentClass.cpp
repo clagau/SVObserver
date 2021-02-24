@@ -394,6 +394,33 @@ HRESULT SVToolExtentClass::updateImageExtent()
 	return result;
 }
 
+
+HRESULT SVToolExtentClass::adaptScaleFactorExtentProperty(const SVImageExtentClass& rImageExtent, SvPb::SVExtentPropertyEnum extentProperty)
+{
+	double dValue = 0.0;
+
+	HRESULT hrOk = rImageExtent.GetExtentProperty(extentProperty, dValue);
+
+	if (S_OK == hrOk)
+	{
+		if (SvTo::isValidScaleFactor(dValue))
+		{
+			return SetExtentValue(extentProperty, dValue);
+		}
+		else
+		{
+			_variant_t value;
+			GetExtentValue(extentProperty, value);
+			if (false == SvTo::isValidScaleFactor(value))
+			{
+				return SetExtentValue(extentProperty, SvDef::cDefaultScaleFactor);
+			}
+		}
+	}
+
+	return hrOk;
+}
+
 HRESULT SVToolExtentClass::SetImageExtent(const SVImageExtentClass& rImageExtent) 
 {
 	HRESULT l_hrOk = S_OK;
@@ -409,106 +436,41 @@ HRESULT SVToolExtentClass::SetImageExtent(const SVImageExtentClass& rImageExtent
 		m_eTranslation = translation;
 	}
 
-	if (S_OK == rImageExtent.GetExtentProperty(SvPb::SVExtentPropertyPositionPointX, dValue))
+	for (auto extentProperty :
+			{
+				SvPb::SVExtentPropertyPositionPointX,
+				SvPb::SVExtentPropertyPositionPointY,
+				SvPb::SVExtentPropertyPositionPointEndOfLineX,
+				SvPb::SVExtentPropertyPositionPointEndOfLineY,
+				SvPb::SVExtentPropertyRotationAngle,
+				SvPb::SVExtentPropertyTranslationOffsetX,
+				SvPb::SVExtentPropertyTranslationOffsetY,
+				SvPb::SVExtentPropertyHeight,
+				SvPb::SVExtentPropertyWidth,
+				SvPb::SVExtentPropertyStartAngle,
+				SvPb::SVExtentPropertyEndAngle,
+				SvPb::SVExtentPropertyInnerRadius,
+				SvPb::SVExtentPropertyOuterRadius
+			}
+		)
 	{
-		l_hrOk &= SetExtentValue(SvPb::SVExtentPropertyPositionPointX, dValue);
+		if (S_OK == rImageExtent.GetExtentProperty(extentProperty, dValue))
+			l_hrOk &= SetExtentValue(extentProperty, dValue);
 	}
 
-	if (S_OK == rImageExtent.GetExtentProperty(SvPb::SVExtentPropertyPositionPointY, dValue))
+	for (auto extentProperty :
+			{
+				SvPb::SVExtentPropertyHeightFactorContent,
+				SvPb::SVExtentPropertyWidthFactorContent,
+				SvPb::SVExtentPropertyHeightFactorFormat,
+				SvPb::SVExtentPropertyWidthFactorFormat
+			}
+		)
 	{
-		l_hrOk &= SetExtentValue(SvPb::SVExtentPropertyPositionPointY, dValue);
+		// cppcheck-suppress useStlAlgorithm
+		l_hrOk &= adaptScaleFactorExtentProperty(rImageExtent, extentProperty);
 	}
 
-	if (S_OK == rImageExtent.GetExtentProperty(SvPb::SVExtentPropertyPositionPointEndOfLineX, dValue))
-	{
-		l_hrOk &= SetExtentValue(SvPb::SVExtentPropertyPositionPointEndOfLineX, dValue);
-	}
-
-	if (S_OK == rImageExtent.GetExtentProperty(SvPb::SVExtentPropertyPositionPointEndOfLineY, dValue))
-	{
-		l_hrOk &= SetExtentValue(SvPb::SVExtentPropertyPositionPointEndOfLineY, dValue);
-	}
-
-	if (S_OK == rImageExtent.GetExtentProperty(SvPb::SVExtentPropertyRotationAngle, dValue))
-	{
-		l_hrOk &= SetExtentValue(SvPb::SVExtentPropertyRotationAngle, dValue);
-	}
-
-	if (S_OK == rImageExtent.GetExtentProperty(SvPb::SVExtentPropertyTranslationOffsetX, dValue))
-	{
-		l_hrOk &= SetExtentValue(SvPb::SVExtentPropertyTranslationOffsetX, dValue);
-	}
-
-	if (S_OK == rImageExtent.GetExtentProperty(SvPb::SVExtentPropertyTranslationOffsetY, dValue))
-	{
-		l_hrOk &= SetExtentValue(SvPb::SVExtentPropertyTranslationOffsetY, dValue);
-	}
-
-	if (S_OK == rImageExtent.GetExtentProperty(SvPb::SVExtentPropertyHeight, dValue))
-	{
-		l_hrOk &= SetExtentValue(SvPb::SVExtentPropertyHeight, dValue);
-	}
-
-	if (S_OK == rImageExtent.GetExtentProperty(SvPb::SVExtentPropertyWidth, dValue))
-	{
-		l_hrOk &= SetExtentValue(SvPb::SVExtentPropertyWidth, dValue);
-	}
-
-	if (S_OK == rImageExtent.GetExtentProperty(SvPb::SVExtentPropertyStartAngle, dValue))
-	{
-		l_hrOk &= SetExtentValue(SvPb::SVExtentPropertyStartAngle, dValue);
-	}
-
-	if (S_OK == rImageExtent.GetExtentProperty(SvPb::SVExtentPropertyEndAngle, dValue))
-	{
-		l_hrOk &= SetExtentValue(SvPb::SVExtentPropertyEndAngle, dValue);
-	}
-
-	if (S_OK == rImageExtent.GetExtentProperty(SvPb::SVExtentPropertyInnerRadius, dValue))
-	{
-		l_hrOk &= SetExtentValue(SvPb::SVExtentPropertyInnerRadius, dValue);
-	}
-
-	if (S_OK == rImageExtent.GetExtentProperty(SvPb::SVExtentPropertyOuterRadius, dValue))
-	{
-		l_hrOk &= SetExtentValue(SvPb::SVExtentPropertyOuterRadius, dValue);
-	}
-
-	if (S_OK == rImageExtent.GetExtentProperty(SvPb::SVExtentPropertyHeightFactorContent, dValue))
-	{
-		if (!SvTo::isValidScaleFactor(dValue))
-		{
-			dValue = SvDef::cDefaultScaleFactor;
-		}
-		l_hrOk &= SetExtentValue(SvPb::SVExtentPropertyHeightFactorContent, dValue);
-	}
-
-	if (S_OK == rImageExtent.GetExtentProperty(SvPb::SVExtentPropertyWidthFactorContent, dValue))
-	{
-		if (!SvTo::isValidScaleFactor(dValue))
-		{
-			dValue = SvDef::cDefaultScaleFactor;
-		}
-		l_hrOk &= SetExtentValue(SvPb::SVExtentPropertyWidthFactorContent, dValue);
-	}
-
-	if (S_OK == rImageExtent.GetExtentProperty(SvPb::SVExtentPropertyHeightFactorFormat, dValue))
-	{
-		if (!SvTo::isValidScaleFactor(dValue))
-		{
-			dValue = SvDef::cDefaultScaleFactor;
-		}
-		l_hrOk &= SetExtentValue(SvPb::SVExtentPropertyHeightFactorFormat, dValue);
-	}
-
-	if (S_OK == rImageExtent.GetExtentProperty(SvPb::SVExtentPropertyWidthFactorFormat, dValue))
-	{
-		if (!SvTo::isValidScaleFactor(dValue))
-		{
-			dValue = SvDef::cDefaultScaleFactor;
-		}
-		l_hrOk &= SetExtentValue(SvPb::SVExtentPropertyWidthFactorFormat, dValue);
-	}
 
 	return l_hrOk;
 }
@@ -619,7 +581,6 @@ HRESULT SVToolExtentClass::UpdateOffsetDataToImage(SVExtentOffsetStruct& rOffset
 					offsetData.m_psvRootImage = pImageParent;
 				}
 			}
-
 			
 			offsetData.m_bAlwaysUpdate |= m_bAlwaysUpdate;
 			if (pAuxRefImage==0 || pAuxRefImage == pImageParent)

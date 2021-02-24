@@ -107,7 +107,7 @@ public:
 	HRESULT TranslatePointToSource(SVPoint<double> inPoint, SVPoint<double>& rOutPoint );
 	std::string GetAuxiliaryDrawTypeString() const;
 
-	// ******* End Source Extent Data
+	HRESULT adaptScaleFactorExtentProperty(const SVImageExtentClass& rImageExtent, SvPb::SVExtentPropertyEnum extentProperty);
 
 private:
 	typedef std::set< SvPb::SVExtentTranslationEnum > SVTranslationFilterSet;

@@ -263,6 +263,27 @@ SvVol::SVStringValueObjectClass* ResizeTool::GetInputImageNames()
 
 bool ResizeTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
+#if defined (TRACE_THEM_ALL) || defined (TRACE_RESIZE)
+	std::stringstream traceStream;
+
+	traceStream << "Scale factors (w/h): ";
+
+	double scaleFactor = 0.0;
+	m_ExtentWidthFactorContent.getValue(scaleFactor);
+	traceStream << "Content:" << scaleFactor << "/";
+	m_ExtentHeightFactorContent.getValue(scaleFactor);
+	traceStream << scaleFactor << ", ";
+
+	m_ExtentWidthFactorFormat.getValue(scaleFactor);
+	traceStream << "Format:" << scaleFactor << "/";
+	m_ExtentHeightFactorFormat.getValue(scaleFactor);
+	traceStream << scaleFactor << std::endl;
+
+	OutputDebugString(traceStream.str().c_str());
+	//uncomment the next line to enable error reporting to cmd window
+	//SV_LOG_GLOBAL(info) << traceStream.str();
+#endif
+
 	if (!AreAllAllScaleFactorValuesValid())
 	{
 		reportGeneralError(SvStl::Tid_InvalidScaleFactor, pErrorMessages, true);
