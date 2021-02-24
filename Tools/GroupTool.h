@@ -59,6 +59,7 @@ private:
 	std::string m_groupStr;
 	std::string m_inputStr;
 	std::string m_resultStr;
+	std::vector<std::string> m_embeddedNameList;
 };
 
 } //namespace SvTo
