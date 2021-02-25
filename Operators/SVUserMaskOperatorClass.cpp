@@ -146,6 +146,12 @@ bool SVUserMaskOperatorClass::CreateObject( const SVObjectLevelCreateStruct& rCr
 	m_lvoFillColor.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 	m_bvoContRecalc.SetObjectAttributesAllowed(cAttributes, SvOi::SetAttributeType::AddAttribute);
 
+	//The return value of CreateLocalImageBuffer will be ignored here because :
+	// -Currently(24.2.2021) the method can return an error(because of problems with scale factors), but it is called again in OnResetObjectand by then it works correctly.
+	// - m_isCreated is only set in CreateObject and if it is set to false the object remains invalid forever.For this reason m_isCreated should only be set to failed if a problem is either
+	//	persistent or will not be verified again in OnResetObject.
+	CreateLocalImageBuffer();
+
 	m_isCreated = bOk;
 
 	return m_isCreated;

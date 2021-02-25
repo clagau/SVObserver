@@ -53,7 +53,7 @@ public:
 	};
 
 	ShapeTypeEnum GetShape();
-	SvIe::SVImageClass* getImage() const { return m_pImage; };
+	SvIe::SVImageClass* getImage() const { return m_pImage.get(); };
 
 protected:
 	SvVol::SVBoolValueObjectClass       m_bvoAutoResize;
@@ -69,7 +69,7 @@ protected:
 	SvVol::SVEnumerateValueObjectClass  m_evoXYSymmetry;
 
 	SVMaskShape*           m_pShape;
-	SvIe::SVImageClass* m_pImage{ nullptr };
+	std::unique_ptr<SvIe::SVImageClass> m_pImage{ nullptr };
 
 private:
 	void init();

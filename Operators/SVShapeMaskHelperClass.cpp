@@ -83,12 +83,22 @@ void SVShapeMaskHelperClass::init()
 	EnumVector.push_back(SvOi::NameValuePair{ _T("Horizontal Axis Right"), 90 });
 	m_evoXYSymmetry.SetEnumTypes(EnumVector);
 	m_evoXYSymmetry.SetDefaultValue(0l);
+
+	m_pImage = std::make_unique<SvIe::SVImageClass>("MaskImage");
+	m_pImage->InitializeImage(SvPb::SVImageTypeEnum::SVImageTypeIndependent);
+	RegisterEmbeddedObject(m_pImage.get(), SvPb::MaskImageEId, "MaskImage");
 }
 
 SVShapeMaskHelperClass::~SVShapeMaskHelperClass()
 {
 	if ( m_pShape )
 		delete m_pShape;
+
+	if (m_pImage)
+	{
+		RemoveEmbeddedObject(m_pImage.get());
+		m_pImage = nullptr;
+	}
 }
 
 bool SVShapeMaskHelperClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
@@ -196,9 +206,10 @@ void SVShapeMaskHelperClass::createImageObject(bool useImageObject)
 		{
 			if (nullptr == m_pImage)
 			{
-				m_pImage = new SvIe::SVImageClass("MaskImage");
-				RegisterEmbeddedObject(m_pImage, SvPb::MaskImageEId, "MaskImage");
-				CreateChildObject(m_pImage);
+				m_pImage = std::make_unique<SvIe::SVImageClass>("MaskImage");
+				m_pImage->InitializeImage(SvPb::SVImageTypeEnum::SVImageTypeIndependent);
+				RegisterEmbeddedObject(m_pImage.get(), SvPb::MaskImageEId, "MaskImage");
+				CreateChildObject(m_pImage.get());
 			}
 			m_pImage->resetAllObjects();
 			m_pImage->UpdateImage(pMaskOperator->m_MaskBufferInfo.GetExtents());
@@ -208,12 +219,7 @@ void SVShapeMaskHelperClass::createImageObject(bool useImageObject)
 	{
 		if (m_pImage)
 		{
-			auto iter = std::find(m_embeddedList.begin(), m_embeddedList.end(), m_pImage);
-			if (iter != m_embeddedList.end())
-			{
-				m_embeddedList.erase(iter);
-			}
-			delete m_pImage;
+			RemoveEmbeddedObject(m_pImage.get());
 			m_pImage = nullptr;
 		}
 	}
