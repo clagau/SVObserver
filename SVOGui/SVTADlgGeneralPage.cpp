@@ -195,6 +195,7 @@ namespace SvOg
 		}
 		else
 		{
+			SetHelpID(IDD_TA_GENERAL_DIALOG_GROUPTOOL);
 			m_bCloseTool = m_values.Get<bool>(SvPb::IsClosedEId);
 			GetDlgItem(IDC_TOOL_OVERLAYCOLOR_TEXT)->ShowWindow(SW_HIDE);
 			GetDlgItem(IDC_TOOL_OVERLAYCOLOR_COMBO)->ShowWindow(SW_HIDE);
