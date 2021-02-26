@@ -13,13 +13,14 @@
 
 enum SVFileAcquisitionDeviceParamEnum
 {
-	SVFileAcquisitionParameterFilename, 
+	SVFileAcquisitionParameterFilename,
 	SVFileAcquisitionParameterDirectory,
 	SVFileAcquisitionParameterLoadingMode,
 	SVFileAcquisitionParameterImageWidth,
 	SVFileAcquisitionParameterImageHeight,
 	SVFileAcquisitionParameterImageFormat,
+	SVFileAcquisitionParameterMaxPreloadFileNumber,
+	SVFileAcquisitionParameterPreloadTimeDelay,
 	SVFileAcquisitionParameterSize
 };
-
 

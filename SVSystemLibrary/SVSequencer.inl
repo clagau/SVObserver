@@ -10,8 +10,9 @@
 //******************************************************************************
 
 template<typename IteratorType>
-SVSequencer<IteratorType>::SVSequencer()
-: bContinuousMode(true)
+SVSequencer<IteratorType>::SVSequencer(ValueType def)
+: bContinuousMode(true),
+m_default(def)
 {
 }
 
@@ -27,7 +28,7 @@ void SVSequencer<IteratorType>::Init(const IteratorType& begin, const IteratorTy
 template<typename IteratorType>
 typename SVSequencer<IteratorType>::ValueType SVSequencer<IteratorType>::GetNext()
 {
-	ValueType info;
+	ValueType info = m_default;
 	if (currentIt == endIt)
 	{
 		// if continuous - wrap back around

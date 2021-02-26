@@ -81,6 +81,21 @@ HRESULT SVFileAcquisitionClass::SetDeviceParameters( const SVDeviceParamCollecti
 	return hr;
 }
 
+
+HRESULT SVFileAcquisitionClass::SetDeviceParameter(int parameter, const _variant_t& rValue)
+{
+	HRESULT hr = S_OK;
+
+	// Send these to the FileAcquisition device
+	if (IsDigitizerSubsystemValid())
+	{
+		hr = m_rDigitizerProc.GetDigitizerSubsystem(m_DigName.c_str())->ParameterSetValue(m_hDigitizer, parameter, rValue);
+	}
+	return hr;
+}
+
+
+
 HRESULT SVFileAcquisitionClass::LoadFiles(SVFileNameArrayClass& )
 {
 	HRESULT hrOk = S_OK;

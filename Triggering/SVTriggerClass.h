@@ -62,7 +62,8 @@ public:
 	SvDef::TriggerType getType() const { return m_type; }
 
 protected:
-	virtual void processTriggers(SvTrig::SVTriggerInfoStruct& rTriggerInfo) override;
+	virtual void preProcessTriggers(SvTrig::SVTriggerInfoStruct& rTriggerInfo) override;
+	virtual void postProcessTriggers() override;
 
 private:
 	int m_digitizerNumber{ -1 };

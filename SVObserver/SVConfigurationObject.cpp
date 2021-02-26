@@ -71,6 +71,8 @@
 #include "ObjectInterfaces/ICommand.h"
 #include "SVUtilityLibrary/AuditFiles.h"
 #include "SVStatusLibrary/GlobalPath.h"
+#include "InspectionEngine/SVFileAcquisitionClass.h"
+#include "SVFileAcquisitionDevice/SVFileAcquisitionDeviceParamEnum.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -2445,7 +2447,13 @@ HRESULT SVConfigurationObject::LoadFileAcquisitionConfiguration(SVTreeType& rTre
 			{
 				SVImageInfoClass svImageInfo;
 
+				_variant_t MaxFileNr = TheSVObserverApp.getMaxPreloadFileNumber();
+				_variant_t TimeDelay = TheSVObserverApp.getPreloadTimeDelay();
+				
 				// Set the device parameters for the File Acquisition device (Note: do this before calling LoadFiles)
+				psvDevice->SetDeviceParameter(SVFileAcquisitionParameterPreloadTimeDelay, TimeDelay);
+				psvDevice->SetDeviceParameter(SVFileAcquisitionParameterMaxPreloadFileNumber, MaxFileNr);
+				
 				psvDevice->SetDeviceParameters(svDeviceParams);	// needs to come before LR (quick fix for now)
 				psvDevice->SetLightReference(svLight);
 				psvDevice->SetLut(lut);

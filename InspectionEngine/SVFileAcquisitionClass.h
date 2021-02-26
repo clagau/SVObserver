@@ -28,6 +28,7 @@ public:
 	virtual HRESULT Destroy() override;
 
 	virtual HRESULT SetDeviceParameters( const SVDeviceParamCollection& rDeviceParams ) override;
+	virtual HRESULT SetDeviceParameter(int parameter, const _variant_t& rValue) override;
 
 	virtual HRESULT LoadFiles( SVFileNameArrayClass &rArray) override;
 	virtual HRESULT UnloadFiles() override;

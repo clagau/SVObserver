@@ -45,6 +45,12 @@ constexpr char* NAKSectionTag = _T("NAK_SETTINGS");
 constexpr char*  NAKMode = _T("NAKMode");
 constexpr char*  NAKParameter = _T("NAKPar");
 
+constexpr char* FileAcquisitionSectionTag = _T("FileAcquisition");
+constexpr char* MaxPreloadFileNumber = _T("MaxFileNumber");
+constexpr char* PreloadTimeDelay = _T("TimeDelay");
+
+
+
 constexpr char* ProcessorSectionTag = _T("Processor");
 constexpr char* RAIDTag = _T("RAID");
 constexpr char* FrameGrabberSectionTag = _T("Frame Grabber");
@@ -161,6 +167,10 @@ void  SVOIniLoader::LoadSVIMIni(LPCTSTR svimIniFile)
 	m_rInitialInfo.m_NAKMode = static_cast<SvDef::NakGeneration>(SvimIni.GetValueInt(NAKSectionTag, NAKMode, SvDef::NakGeneration::Bursts));
 	m_rInitialInfo.m_NAKParameter = SvimIni.GetValueInt(NAKSectionTag, NAKParameter, SvDef::DefaultNakParameter);
 	m_rInitialInfo.m_preTriggerTimeWindow = SvimIni.GetValueDouble(SettingsTag, PreTriggerTimeWindowTag, 0.0);
+
+	m_rInitialInfo.m_PreloadTimeDelay = SvimIni.GetValueInt(FileAcquisitionSectionTag, PreloadTimeDelay, DefaultPreloadTimeDelay);
+	m_rInitialInfo.m_MaxPreloadFileNumber = SvimIni.GetValueInt(FileAcquisitionSectionTag, MaxPreloadFileNumber, DefaultMaxPreloadFileNumber);
+
 }
 
 HRESULT SVOIniLoader::LoadHardwareIni(LPCTSTR hardwareIniFile)

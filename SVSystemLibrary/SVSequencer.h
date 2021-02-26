@@ -16,18 +16,19 @@
 template<typename IteratorType>
 struct SVSequencer
 {
-	typedef typename std::iterator_traits<IteratorType>::value_type ValueType;
 
+	using  ValueType = typename std::iterator_traits<IteratorType>::value_type;
 	IteratorType startIt;
 	IteratorType endIt;
 	IteratorType currentIt;
 	bool bContinuousMode;
 
-	SVSequencer();
+	SVSequencer(ValueType defaultValue);
 
 	void Init(const IteratorType& begin, const IteratorType& end, bool bWrap=true);
 	
 	ValueType GetNext();
+	ValueType m_default;
 };
 
 #include "SVSequencer.inl"

@@ -526,7 +526,7 @@ HRESULT CDllTool::run_copySelectedTableInput2Output(int Select)
 		assert(dim == 1);	UNREFERENCED_PARAMETER(dim);
 		int len = saInput.GetCount();
 		std::stringstream sts;
-		::OutputDebugString(" Table Names\n");
+		//::OutputDebugString(" Table Names\n");
 
 		for (int y = 0; y < len; y++)
 		{
@@ -536,8 +536,8 @@ HRESULT CDllTool::run_copySelectedTableInput2Output(int Select)
 			{
 				m_aResultValues[RESULTVALUE_BSTR_ROWNAME] = bstrname;
 			}
-			::OutputDebugString(LPCSTR(bstrname));
-			::OutputDebugString("\n");
+			//::OutputDebugString(LPCSTR(bstrname));
+			//::OutputDebugString("\n");
 		}
 
 	}
@@ -551,6 +551,8 @@ HRESULT CDllTool::run()
 	HRESULT hr = S_OK;
 
 	long inputLong = m_aInputValues[InputValue_LONG];
+//	if(inputLong > 0 && inputLong < 2000)
+//		::Sleep(inputLong);
 	m_aResultValues[ResultValue_LONG] = inputLong;
 
 	double inputdouble = m_aInputValues[InputValue_DOUBLE];

@@ -152,7 +152,7 @@ HRESULT SVTriggerClass::Stop()
 	return l_hrOk;
 }
 
-void SVTriggerClass::processTriggers(SvTrig::SVTriggerInfoStruct& rTriggerInfo)
+void SVTriggerClass::preProcessTriggers(SvTrig::SVTriggerInfoStruct& rTriggerInfo)
 {
 	if (SvDef::TriggerType::SoftwareTrigger == m_type || SvDef::TriggerType::CameraTrigger == m_type)
 	{
@@ -169,12 +169,14 @@ void SVTriggerClass::processTriggers(SvTrig::SVTriggerInfoStruct& rTriggerInfo)
 		rTriggerInfo.m_Data[SvTrig::TriggerDataEnum::ObjectID] = _variant_t(m_currentObjectID);
 		rTriggerInfo.m_Data[SvTrig::TriggerDataEnum::TriggerIndex] = _variant_t(m_triggerIndex);
 		rTriggerInfo.m_Data[SvTrig::TriggerDataEnum::TriggerPerObjectID] = _variant_t(getTriggerPerObjectID());
-
 	}
+}
 
-	for(const auto& rAcquisitionParameter : m_acqTriggerParameters)
+void SVTriggerClass::postProcessTriggers()
+{
+	for (const auto& rAcquisitionParameter : m_acqTriggerParameters)
 	{
-		if(nullptr != rAcquisitionParameter.m_pDllDigitizer)
+		if (nullptr != rAcquisitionParameter.m_pDllDigitizer)
 		{
 			rAcquisitionParameter.m_pDllDigitizer->InternalTrigger(rAcquisitionParameter.m_triggerChannel);
 		}

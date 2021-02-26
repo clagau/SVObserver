@@ -114,6 +114,10 @@ public:
 
 	HRESULT GetDeviceParameters( SVDeviceParamCollection& rDeviceParams );
 	virtual HRESULT SetDeviceParameters( const SVDeviceParamCollection& rDeviceParams );
+	virtual HRESULT SetDeviceParameter(int , const _variant_t& ) 
+	{
+		return E_FAIL;
+	}
 
 	virtual HRESULT IsValidCameraFileParameters( SVDeviceParamCollection& rDeviceParams );
 	virtual HRESULT GetCameraFileParameters( SVDeviceParamCollection& rDeviceParams );

@@ -275,6 +275,16 @@ _variant_t SVFileAcquisitionDevice::CameraGetParameter(unsigned long cameraIndex
 				result.lVal = rCamera.GetLoadingMode();
 				break;
 			}
+			case SVFileAcquisitionParameterMaxPreloadFileNumber:
+			{
+				result = rCamera.GetMaxPreLoadFilenumber();
+				break;
+			}
+			case SVFileAcquisitionParameterPreloadTimeDelay:
+			{
+				result = rCamera.GetPreloadTimeDelay();
+				break;
+			}
 
 			default:
 			{
@@ -342,6 +352,19 @@ HRESULT SVFileAcquisitionDevice::CameraSetParameter(unsigned long cameraIndex, i
 					rCamera.SetLoadingMode(value);
 					result = S_OK;
 				}
+				break;
+			}
+
+			case SVFileAcquisitionParameterMaxPreloadFileNumber:
+			{
+				rCamera.SetMaxPreLoadFilenumber(rValue.operator int() );
+				result = S_OK;
+				break;
+			}
+			case SVFileAcquisitionParameterPreloadTimeDelay:
+			{
+				rCamera.SetPreloadTimeDelay(rValue.operator int());
+				result = S_OK;
 				break;
 			}
 

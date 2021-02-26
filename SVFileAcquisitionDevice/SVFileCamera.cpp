@@ -23,6 +23,11 @@
 #include "ObjectInterfaces/ITRCImage.h"
 #pragma endregion Includes
 
+//#define TRACE_LOADTIME true
+#ifdef TRACE_LOADTIME
+#include "SVUtilityLibrary/SVClock.h"
+#endif 
+
 const std::string& SVFileCamera::GetName() const
 {
 	return m_name;
@@ -88,6 +93,8 @@ bool SVFileCamera::IsSingleIterationLoadMode() const
 	return (m_fileData.mode == SingleIterationMode);
 }
 
+
+
 HRESULT SVFileCamera::Start(const EventHandler& startFrameHandler, const EventHandler& endFrameHandler, unsigned long p_ulIndex)
 {
 	HRESULT hr = S_FALSE;
@@ -109,7 +116,34 @@ HRESULT SVFileCamera::Start(const EventHandler& startFrameHandler, const EventHa
 		info.filename = m_fileData.fileName;
 		m_fileList.insert(info);
 	}
-		
+
+
+	m_UsePreLoadImages = true;
+	if (m_fileList.size() > m_MaxPreloadFileNumber)
+	{
+		m_UsePreLoadImages = false;
+	}
+
+	if (m_UsePreLoadImages)
+	{
+		m_images.resize(m_fileList.size(), M_NULL);
+		int index{ 0 };
+		for (auto& finfo : m_fileList)
+		{
+			MIL_ID id = MbufImport(finfo.filename.c_str(), M_DEFAULT, M_RESTORE, M_DEFAULT_HOST, M_NULL);
+			if (id != NULL)
+			{
+				m_images.at(index++) = id;
+			}
+			else
+			{
+				return E_FAIL;
+			}
+
+		}
+		m_loadedImageSequence.Init(m_images.begin(), m_images.end(), !IsSingleIterationLoadMode());
+	}
+
 	// init sequencer - everybody wraps except Single Iteration mode
 	m_loadSequence.Init(m_fileList.begin(), m_fileList.end(), !IsSingleIterationLoadMode());
 
@@ -122,8 +156,18 @@ void SVFileCamera::Stop()
 {
 	//stop loader thread
 	m_thread.Destroy();
-
-	if (M_NULL != m_image)
+	if (m_UsePreLoadImages)
+	{
+		for (auto& id : m_images)
+		{
+			if (M_NULL != id)
+			{
+				MbufFree(id);
+				id = M_NULL;
+			}
+		}
+	}
+	else if (M_NULL != m_image)
 	{
 		MbufFree(m_image);
 		m_image = M_NULL;
@@ -140,10 +184,14 @@ std::string SVFileCamera::GetNextFilename()
 	const SVFileInfo& fileInfo = m_loadSequence.GetNext();
 	return fileInfo.filename;
 }
+MIL_ID SVFileCamera::GetNextImageId()
+{
+	return m_loadedImageSequence.GetNext();
+}
 
 HRESULT SVFileCamera::DoOneShot()
 {
-	return m_thread.Signal((void *)this);
+	return m_thread.Signal((void*)this);
 }
 
 HRESULT SVFileCamera::CopyImage(SvOi::ITRCImage* pImage)
@@ -152,37 +200,59 @@ HRESULT SVFileCamera::CopyImage(SvOi::ITRCImage* pImage)
 	return hr;
 }
 
-void SVFileCamera::OnAPCEvent( ULONG_PTR data )
+void SVFileCamera::OnAPCEvent(ULONG_PTR data)
 {
 	SVFileCamera* pCamera = reinterpret_cast<SVFileCamera*>(data);
-	if(nullptr != pCamera)
+	if (nullptr != pCamera)
 	{
-		std::string filename = pCamera->GetNextFilename();
 		// fire StartFrame event
 		pCamera->m_startFrameEvent.Fire(pCamera->m_index);
-		// Load file
-		if (filename.empty() || S_OK != pCamera->loadImage(filename))
+#ifdef TRACE_LOADTIME
+		double Duration = SvUl::GetTimeStamp();
+#endif
+		if (pCamera->m_UsePreLoadImages)
 		{
-			// add to event log
-			SvDef::StringVector msgList;
-			SvStl::MessageTextEnum id = SvStl::Tid_Empty;
-			if (filename.empty())
+			pCamera->m_image = pCamera->GetNextImageId();
+			if (pCamera->m_PreloadTimeDelay > 0)
 			{
-				msgList.push_back(pCamera->GetDirectory());
-				id = SvStl::Tid_FileCamera_NoImageFile;
+				Sleep(pCamera->m_PreloadTimeDelay );
 			}
-			else
-			{
-				msgList.push_back(filename);
-				id = SvStl::Tid_FileCamera_LoadFailed;
-			}
-			SvStl::MessageManager Exception(SvStl::MsgType::Log );
-			Exception.setMessage( SVMSG_IMAGE_LOAD_ERROR, id, msgList, SvStl::SourceFileParams(StdMessageParams) );
 		}
+		else
+		{
+			std::string filename = pCamera->GetNextFilename();
+			// Load file
+			if (filename.empty() || S_OK != pCamera->loadImage(filename))
+			{
+				// add to event log
+				SvDef::StringVector msgList;
+				SvStl::MessageTextEnum id = SvStl::Tid_Empty;
+				if (filename.empty())
+				{
+					msgList.push_back(pCamera->GetDirectory());
+					id = SvStl::Tid_FileCamera_NoImageFile;
+				}
+				else
+				{
+					msgList.push_back(filename);
+					id = SvStl::Tid_FileCamera_LoadFailed;
+				}
+				SvStl::MessageManager Exception(SvStl::MsgType::Log);
+				Exception.setMessage(SVMSG_IMAGE_LOAD_ERROR, id, msgList, SvStl::SourceFileParams(StdMessageParams));
+			}
+
+		}
+#ifdef TRACE_LOADTIME
+		Duration = SvUl::GetTimeStamp() -Duration;
+		std::stringstream ss;
+		ss << "Fileloading time(µ): " << Duration * 1000 << std::endl;
+		OutputDebugString(ss.str().c_str());
+#endif
+
 	}
 }
 
-void SVFileCamera::OnThreadEvent(bool& )
+void SVFileCamera::OnThreadEvent(bool&)
 {
 	// check file Load status ?
 	if (M_NULL != m_image)
@@ -194,16 +264,18 @@ void SVFileCamera::OnThreadEvent(bool& )
 
 HRESULT SVFileCamera::loadImage(std::string fileName)
 {
+
+
 	if (M_NULL != m_image)
 	{
-		MbufClear(m_image,0);
-		m_image = MbufImport(fileName.c_str(), M_DEFAULT, M_LOAD, M_DEFAULT_HOST, &m_image);
+		MbufClear(m_image, 0);
+		MbufImport(fileName.c_str(), M_DEFAULT, M_LOAD, M_NULL, &m_image);
 	}
 	else
 	{
 		m_image = MbufImport(fileName.c_str(), M_DEFAULT, M_RESTORE, M_DEFAULT_HOST, M_NULL);
 	}
-	
+
 	if (M_NULL != m_image)
 	{
 		return S_OK;

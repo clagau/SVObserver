@@ -47,7 +47,7 @@ private:
 	SVFileCameraStruct m_fileData;
 	std::string m_name;
 	SVFileList m_fileList;
-	SVSequencer<FileListIterator> m_loadSequence;
+	SVSequencer<FileListIterator> m_loadSequence{ SVFileInfo() };
 	MIL_ID m_image = M_NULL;
 	SVAsyncProcedure m_thread;
 	SVFrameEventHandler m_startFrameEvent;
@@ -58,9 +58,15 @@ private:
 
 	std::string GetNextFilename();
 
+	MIL_ID GetNextImageId();
+	SVSequencer<std::vector<MIL_ID>::const_iterator> m_loadedImageSequence{ 0 };
+	bool m_UsePreLoadImages{ true };
+	int m_MaxPreloadFileNumber{ 50 };
+	int m_PreloadTimeDelay{ -1 };
+
+	std::vector<MIL_ID> m_images;
 public:
 	long m_lIsStarted{0L};
-
 	SVFileCamera() = default;
 	explicit SVFileCamera(LPCTSTR name) : m_name{name} {};
 	SVFileCamera::SVFileCamera(const SVFileCamera& rRhs) = delete;
@@ -85,6 +91,12 @@ public:
 
 	void SetLoadingMode(SVFileAcquisitonLoadingModeEnum mode);
 	SVFileAcquisitonLoadingModeEnum GetLoadingMode() const;
+	
+	void SetMaxPreLoadFilenumber(int number) { m_MaxPreloadFileNumber = number; };
+	int GetMaxPreLoadFilenumber() const { return m_MaxPreloadFileNumber; };
+	void SetPreloadTimeDelay(int del) { m_PreloadTimeDelay = del; };
+	int GetPreloadTimeDelay() const { return m_PreloadTimeDelay; };
+
 	bool IsSingleIterationLoadMode() const;
 	
 	HRESULT Start(const EventHandler& startFrameHandler, const EventHandler& endFrameHandler, unsigned long p_ulIndex);
@@ -101,5 +113,6 @@ public:
 
 	double m_StartTimeStamp{0.0};
 	SVAcquisitionBufferInterface* m_pBufferInterface{nullptr};
+	
 };
 

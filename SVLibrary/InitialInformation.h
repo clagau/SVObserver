@@ -32,6 +32,8 @@ enum SVHardwareErrorEnums
 
 namespace SvLib
 {
+	constexpr  int DefaultMaxPreloadFileNumber = 50;
+	constexpr  int DefaultPreloadTimeDelay = -1;
 	struct InitialInformation
 	{
 
@@ -95,6 +97,11 @@ namespace SvLib
 		// ForcedImageUpdateTimeInSeconds=N
 		// Where N is 0 to 255, 0 means no forced update.
 		unsigned char m_forcedImageUpdateTimeInSeconds{0};
+
+		//Parameter for file acquisition 
+		long m_MaxPreloadFileNumber{ DefaultMaxPreloadFileNumber };
+		long  m_PreloadTimeDelay{ DefaultPreloadTimeDelay };
+
 #pragma endregion Member variables
 	};
 } //namespace SvLib

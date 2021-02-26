@@ -16,8 +16,8 @@
 struct SVFileInfo
 {
 	std::string filename;
-	UINT64 fileSize;
-	FILETIME creationDate;
-	FILETIME modifiedDate;
+	UINT64 fileSize{ 0 };
+	FILETIME creationDate{0,0};
+	FILETIME modifiedDate{ 0,0 };
 };
 

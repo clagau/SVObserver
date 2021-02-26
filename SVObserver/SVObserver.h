@@ -278,6 +278,11 @@ public:
 
 	bool IsForcedImageUpdateActive() const { return (m_rInitialInfo.m_forcedImageUpdateTimeInSeconds) ? true : false; }
 	unsigned char GetForcedImageUpdateTimeInSeconds() const { return m_rInitialInfo.m_forcedImageUpdateTimeInSeconds; }
+	
+	long getMaxPreloadFileNumber() const { return m_rInitialInfo.m_MaxPreloadFileNumber; }
+	long getPreloadTimeDelay() const { return m_rInitialInfo.m_PreloadTimeDelay; }
+	
+
 #pragma endregion
 #pragma endregion Public Methods
 
