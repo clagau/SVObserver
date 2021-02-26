@@ -16,8 +16,6 @@
 #include "SVImageAnalyzerClass.h"
 #include "ObjectInterfaces/NameValueVector.h"
 #include "Definitions/SVImageFormatEnum.h"
-//#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
-//#include "SVMatroxLibrary/MatroxImageProps.h"
 #pragma endregion Includes
 
 namespace
@@ -177,10 +175,6 @@ namespace SvAo
 					}
 					MblobDraw(M_DEFAULT, m_ResultBufferID, pImageBuffer->getHandle()->GetBuffer().GetIdentifier(), drawType, blobType, M_DEFAULT);
 				}
-				//@TODO[MZA][10.10][18.02.2021] test code for color tools can be removed if finished.
-				//MatroxImageProps imageProps;
-				//SVMatroxBufferInterface::InquireBufferProperties(pImageBuffer->getHandle()->GetBuffer(), imageProps);
-				//SVMatroxBufferInterface::Export(pImageBuffer->getHandle()->GetBuffer(), (char*)_T("C:\\Temp\\Background.bmp"), SVFileBitmap);
 			}
 		}
 		catch (const SvStl::MessageContainer& e)
@@ -283,7 +277,7 @@ namespace SvAo
 
 		RegisterEmbeddedObject(&m_useAdditionalImage, SvPb::UseAdditionalImageEId, IDS_USE_ADDITIONAL_IMAGE, false, SvOi::SVResetItemOwner);
 		m_useAdditionalImage.SetDefaultValue(BOOL(false), true);
-		m_AdditionalImages.InitializeImage(SvPb::SVImageTypeEnum::SVImageTypePhysical);
+		m_AdditionalImages.InitializeImage(SvPb::SVImageTypeEnum::SVImageTypeIndependent);
 		RegisterEmbeddedObject(&m_AdditionalImages, SvPb::OutputImageEId, "Additional Image");
 		RegisterEmbeddedObject(&m_isColorAdditionalImage, SvPb::IsColorAdditionalImageEId, IDS_IS_COLOR_ADDITIONALIMAGE, false, SvOi::SVResetItemOwner);
 		m_isColorAdditionalImage.SetDefaultValue(BOOL(false), true);

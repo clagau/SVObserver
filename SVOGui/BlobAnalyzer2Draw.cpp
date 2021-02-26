@@ -169,6 +169,7 @@ namespace SvOg
 
 	void BlobAnalyzer2Draw::OnSelchangeList1()
 	{
+		UpdateData();
 		int index = m_AdditionalImageListBox.GetCurSel();
 		if (false == SetComboValue(index, m_DrawTypeArray, m_cbDrawTypeAdditionalImage))
 		{
@@ -330,9 +331,8 @@ namespace SvOg
 		//Additional Image Controls
 		int selectedIndex = m_AdditionalImageListBox.GetCurSel();
 		bool isValueSelected = (0 <= selectedIndex && m_numberOfSteps > selectedIndex);
-		//@TODO[MZA][10.10][18.02.2021] Color Selection is disabled, because it works not yet
-		GetDlgItem(IDC_BLACK_RADIO)->EnableWindow(false);// m_useAdditionalImage);
-		GetDlgItem(IDC_NONBLACK_RADIO)->EnableWindow(false);// m_useAdditionalImage);
+		GetDlgItem(IDC_BLACK_RADIO)->EnableWindow(m_useAdditionalImage);
+		GetDlgItem(IDC_NONBLACK_RADIO)->EnableWindow(m_useAdditionalImage);
 		GetDlgItem(IDC_EDIT_BC_RED)->EnableWindow(m_useAdditionalImage);
 		GetDlgItem(IDC_EDIT_BC_GREEN)->ShowWindow(0 != m_AdditionalImageColor ? SW_SHOW : SW_HIDE );
 		GetDlgItem(IDC_EDIT_BC_GREEN)->EnableWindow(m_useAdditionalImage);

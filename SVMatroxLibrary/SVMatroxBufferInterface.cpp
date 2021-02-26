@@ -1530,6 +1530,8 @@ HRESULT SVMatroxBufferInterface::CopyBufferToFileDIB(std::string& rTo, SVBitmapI
 					MbufGetColor(milId, M_PACKED+M_BGR32, M_ALL_BAND, bufferVector);
 					break;
 				case 24:
+					MbufGetColor(milId, M_PACKED + M_BGR24, M_ALL_BAND, bufferVector);
+					break;
 				case 8:
 				default:
 					MbufGet(milId, bufferVector);
