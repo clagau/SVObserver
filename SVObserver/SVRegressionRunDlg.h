@@ -14,6 +14,7 @@
 #pragma region Includes
 #include "SVMFCControls/SVSliderCtrl.h"
 #include "SVRegressionTestStruct.h"
+#include "RegressionTestController.h"
 #include "ObjectInterfaces/IFormulaController.h"
 #pragma endregion Includes
 
@@ -23,7 +24,7 @@ class SVRegressionRunDlg : public CDialog
 {
 #pragma region Constructor
 public:
-	explicit SVRegressionRunDlg(SvOi::IFormulaControllerPtr pFormulaController, uint32_t inspectionID, CWnd* pParent = nullptr);   // standard constructor
+	explicit SVRegressionRunDlg(RegressionTestController& rRegessionController, uint32_t inspectionID, CWnd* pParent = nullptr);   // standard constructor
 	virtual ~SVRegressionRunDlg();
 #pragma endregion Constructor
 
@@ -64,7 +65,6 @@ protected:
 #pragma region Public Methods
 public:
 	void SetIPDocParent(SVIPDoc* pIPDocParent);
-	void SetUsePlayCondition(bool usePlayCondition) { m_bPlayByEquation = usePlayCondition; };
 #pragma endregion Public Methods
 
 #pragma region Private Methods
@@ -127,6 +127,7 @@ private:
 	int	m_timeDelayInMS;
 	uint32_t m_InspectionID;
 
+	RegressionTestController& m_rRegressionController;
 	SvOi::IFormulaControllerPtr m_pFormulaController;
 #pragma endregion Member variables
 };

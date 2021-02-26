@@ -501,6 +501,9 @@
     <ClCompile Include="SVOGeneralConfigDlg.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="RegressionTestController.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="SVObserver.odl">
@@ -1052,6 +1055,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVOGeneralConfigDlg.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="RegressionTestController.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

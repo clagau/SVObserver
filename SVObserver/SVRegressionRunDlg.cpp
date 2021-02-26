@@ -29,9 +29,10 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 #pragma region Constructor
-SVRegressionRunDlg::SVRegressionRunDlg(SvOi::IFormulaControllerPtr pFormulaController, uint32_t inspectionID, CWnd* pParent /*=nullptr*/)
+SVRegressionRunDlg::SVRegressionRunDlg(RegressionTestController& rRegessionController, uint32_t inspectionID, CWnd* pParent /*=nullptr*/)
 	: CDialog(SVRegressionRunDlg::IDD, pParent)
-	, m_pFormulaController(pFormulaController)
+	, m_rRegressionController(rRegessionController)
+	, m_pFormulaController(rRegessionController.getPlayEquationController())
 	, m_iconPlay(nullptr)
 	, m_iconPause(nullptr)
 	, m_iconStop(nullptr)
@@ -41,7 +42,6 @@ SVRegressionRunDlg::SVRegressionRunDlg(SvOi::IFormulaControllerPtr pFormulaContr
 	, m_iconFrameBack(nullptr)
 	, m_timeDelayText( _T( " 0.0" ) ) // Lead with a space for all values less than 10.
 	, m_bFirst(false)
-	, m_bPlayByEquation(false)
 	, m_ctlToolTip(nullptr)
 	, m_enumMode(RunToEnd)
 	, m_enumPlayPause(Pause)
@@ -49,6 +49,7 @@ SVRegressionRunDlg::SVRegressionRunDlg(SvOi::IFormulaControllerPtr pFormulaContr
 	, m_pIPDocParent(nullptr)
 	, m_timeDelayInMS(0)
 	, m_InspectionID(inspectionID)
+	, m_bPlayByEquation(rRegessionController.usePlayCondition())
 {
 	m_sliderDelayTime.SetInvertVerticalArrowKeys(true);
 	//{{AFX_DATA_INIT(SVRegressionRunDlg)
@@ -180,7 +181,7 @@ BOOL SVRegressionRunDlg::OnInitDialog()
 		}
 		delete[] lwp;
 
-		EnableButtons(m_pIPDocParent->getRegCameras().size() > 0);
+		EnableButtons(m_rRegressionController.getRegCameras().size() > 0);
 
 		UpdateData(FALSE);
 
@@ -265,22 +266,22 @@ void SVRegressionRunDlg::OnBtnBeginning()
 {
 	if ( m_enumPlayPause == Play )
 	{
-		m_pIPDocParent->SetRegressionTestRunMode(RegModeBackToBeginningPlay);
+		m_rRegressionController.setRunMode(RegModeBackToBeginningPlay);
 	}
 	else
 	{
-		m_pIPDocParent->SetRegressionTestRunMode(RegModeBackToBeginningStop);
+		m_rRegressionController.setRunMode(RegModeBackToBeginningStop);
 	}
 }
 
 void SVRegressionRunDlg::OnBtnFrameBack()
 {
-	m_pIPDocParent->SetRegressionTestRunMode(RegModeSingleStepBack);
+	m_rRegressionController.setRunMode(RegModeSingleStepBack);
 }
 
 void SVRegressionRunDlg::OnBtnFrameUp()
 {
-	m_pIPDocParent->SetRegressionTestRunMode(RegModeSingleStepForward);
+	m_rRegressionController.setRunMode(RegModeSingleStepForward);
 }
 
 void SVRegressionRunDlg::OnBtnMode()
@@ -291,7 +292,7 @@ void SVRegressionRunDlg::OnBtnMode()
 		m_enumMode = Continue;
 		m_btnMode.SetIcon(m_iconModeContinue);
 		m_ctlToolTip->UpdateTipText(IDS_REGTEST_MODE_CONTINUOUS,&m_btnMode);
-		m_pIPDocParent->SetRegressionTestPlayMode(Continue);
+		m_rRegressionController.setPlayMode(Continue);
 	}
 	else // must be continue
 	{
@@ -299,7 +300,7 @@ void SVRegressionRunDlg::OnBtnMode()
 		m_enumMode = RunToEnd;
 		m_btnMode.SetIcon(m_iconModeRunToEnd);
 		m_ctlToolTip->UpdateTipText(IDS_REGTEST_MODE_RUNTOEND,&m_btnMode);
-		m_pIPDocParent->SetRegressionTestPlayMode(RunToEnd);
+		m_rRegressionController.setPlayMode(RunToEnd);
 	}
 }
 
@@ -307,7 +308,7 @@ void SVRegressionRunDlg::OnBtnPlay()
 {
 	if ( m_enumPlayPause == Play )
 	{
-		m_pIPDocParent->SetRegressionTestRunMode(RegModePause);
+		m_rRegressionController.setRunMode(RegModePause);
 		//set button to Pause;
 		m_enumPlayPause = Pause;
 		m_btnPlayPause.SetIcon(m_iconPlay);
@@ -317,7 +318,7 @@ void SVRegressionRunDlg::OnBtnPlay()
 	}
 	else // must be paused
 	{
-		m_pIPDocParent->SetRegressionTestRunMode(RegModePlay);
+		m_rRegressionController.setRunMode(RegModePlay);
 		//set button to play
 		m_enumPlayPause = Play;
 		m_btnPlayPause.SetIcon(m_iconPause);
@@ -336,7 +337,7 @@ void SVRegressionRunDlg::OnBtnStop()
 void SVRegressionRunDlg::OnCheckPlayCond()
 {
 	UpdateData(true); // get data from dialog
-	m_pIPDocParent->SetRegressionTestUsePlayCondition(m_bPlayByEquation?true:false);
+	m_rRegressionController.usePlayCondition(m_bPlayByEquation?true:false);
 }
 
 void SVRegressionRunDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
@@ -356,7 +357,7 @@ void SVRegressionRunDlg::OnShowWindow(BOOL bShow, UINT nStatus)
 {
 	CDialog::OnShowWindow(bShow, nStatus);
 
-	m_pIPDocParent->SetRegressionTimeoutPeriod(m_timeDelayInMS);
+	m_rRegressionController.setTimeoutPeriod(m_timeDelayInMS);
 }
 void SVRegressionRunDlg::OnClose()
 {
@@ -371,7 +372,7 @@ void SVRegressionRunDlg::OnBtnSettings()
 		OnBtnPlay();
 	}
 	//set regression to pause 
-	m_pIPDocParent->SetRegressionTestRunMode(RegModePause);
+	m_rRegressionController.setRunMode(RegModePause);
 
 	SVRegressionFileSelectSheet dlgRegFileSelect("Regression Test", m_InspectionID);
 
@@ -379,17 +380,17 @@ void SVRegressionRunDlg::OnBtnSettings()
 
 	SvIe::SVVirtualCameraPtrVector cameraVector = m_pIPDocParent->GetCameras();
 
-	dlgRegFileSelect.CreatePages(&m_pIPDocParent->getRegCameras(), &m_pIPDocParent->getRegImages(), cameraVector);
+	dlgRegFileSelect.CreatePages(&m_rRegressionController.getRegCameras(), &m_rRegressionController.getRegImages(), cameraVector);
 	if ( IDOK == dlgRegFileSelect.DoModal() )
 	{
-		if ( m_pIPDocParent->getRegCameras().size() > 0 )
+		if (m_rRegressionController.getRegCameras().size() > 0 )
 		{
 			EnableButtons(TRUE);
 		}
 		m_lstCameraImages.ResetContent();
 		if ( !m_bFirst )
 		{
-			m_pIPDocParent->SetRegressionTestRunMode(RegModeResetSettings);
+			m_rRegressionController.setRunMode(RegModeResetSettings);
 		}
 		else
 		{
@@ -398,7 +399,7 @@ void SVRegressionRunDlg::OnBtnSettings()
 	}
 	else
 	{
-		if ( 0 == m_pIPDocParent->getRegCameras().size() )
+		if ( 0 == m_rRegressionController.getRegCameras().size() )
 		{
 			EnableButtons(FALSE);
 		}
@@ -475,11 +476,11 @@ LRESULT SVRegressionRunDlg::SetPlayPauseBtn(WPARAM , LPARAM )
 {
 	HRESULT hRet = S_OK;
 
-	RegressionRunModeEnum enumVal = m_pIPDocParent->GetRegressionRunMode();
+	RegressionRunModeEnum enumVal = m_rRegressionController.getRunMode();
 
 	if ( enumVal == RegModePlay )
 	{
-		m_pIPDocParent->SetRegressionTestRunMode(RegModePlay);
+		m_rRegressionController.setRunMode(RegModePlay);
 		//set button to Play;
 		m_enumPlayPause = Play;
 		m_btnPlayPause.SetIcon(m_iconPause);
@@ -489,7 +490,7 @@ LRESULT SVRegressionRunDlg::SetPlayPauseBtn(WPARAM , LPARAM )
 	}
 	else // must be paused
 	{
-		m_pIPDocParent->SetRegressionTestRunMode(RegModePause);
+		m_rRegressionController.setRunMode(RegModePause);
 		//set button to Pause
 		m_enumPlayPause = Pause;
 		m_btnPlayPause.SetIcon(m_iconPlay);
@@ -521,7 +522,7 @@ LRESULT SVRegressionRunDlg::CloseRegressionTest(WPARAM, LPARAM)
 
 	delete m_ctlToolTip;
 
-	m_pIPDocParent->SetRegressionTestRunMode(RegModeStopExit);
+	m_rRegressionController.setRunMode(RegModeStopExit);
 
 	return (LRESULT)TRUE;
 }
@@ -614,7 +615,7 @@ void SVRegressionRunDlg::setDelayTime( int position )
 	//set the data in IPDoc.
 	UpdateData(FALSE);
 
-	m_pIPDocParent->SetRegressionTimeoutPeriod(m_timeDelayInMS);
+	m_rRegressionController.setTimeoutPeriod(m_timeDelayInMS);
 }
 
 void SVRegressionRunDlg::OnBnClickedButtonFormula()

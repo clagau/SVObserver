@@ -194,6 +194,7 @@ echo %time%
     <ClCompile Include="PlcOutputsView.cpp" />
     <ClCompile Include="RangeClassHelper.cpp" />
     <ClCompile Include="RangeXDialogClass.cpp" />
+    <ClCompile Include="RegressionTestController.cpp" />
     <ClCompile Include="RemoteCommand.cpp" />
     <ClCompile Include="RemoteMonitorListController.cpp" />
     <ClCompile Include="RemoteMonitorListHelper.cpp" />
@@ -390,6 +391,7 @@ echo %time%
     <ClInclude Include="PlcOutputsView.h" />
     <ClInclude Include="RangeClassHelper.h" />
     <ClInclude Include="RangeXDialogClass.h" />
+    <ClInclude Include="RegressionTestController.h" />
     <ClInclude Include="RemoteCommand.h" />
     <ClInclude Include="RemoteMonitorList.h" />
     <ClInclude Include="RemoteMonitorListController.h" />

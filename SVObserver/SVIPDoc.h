@@ -23,6 +23,7 @@
 #include "ObjectInterfaces/IFormulaController.h"
 #include "NavigatorElement.h"
 #pragma endregion Includes
+#include "RegressionTestController.h"
 
 
 #pragma region Declarations
@@ -60,11 +61,6 @@ public:
 		RefreshView = 0x00000001,
 		ItemRenamed = 0x00000002,
 		RefreshDelete = 0x4
-	};
-
-	enum
-	{
-		MinRegressionTime = 40,
 	};
 
 #pragma region Constructor
@@ -138,10 +134,6 @@ public:
 	uint32_t GetObjectIdFromToolToInsertBefore(const std::string& rName) const;
 
 	void updateToolsetView(uint32_t toolID, uint32_t postID, uint32_t ownerID, LPCSTR pSelctedName = NULL);
-
-	std::vector<RegressionTestStruct>& getRegCameras() { return m_regCameras; };
-	std::vector<RegressionTestStruct>& getRegImages() { return m_regImages; };
-	
 
 	HANDLE m_hDisplayChangedEvent; // Set if the display settings have been changed since the Doc was opened. // @WARNING:  bad practice making members public
 
@@ -259,11 +251,7 @@ public:
 	
 	ToolSetView* GetToolSetView() const;
 	SVToolSet* GetToolSet() const;
-	void SetRegressionTestUsePlayCondition(bool usePlayCondition) { m_bRegressionTestUsePlayCondition = usePlayCondition; };
-	void SetRegressionTestPlayEquationController(SvOi::IFormulaControllerPtr pRegressionTestPlayEquationController) { m_pRegressionTestPlayEquationController = pRegressionTestPlayEquationController; }
-	/// Return true if Regression Test should go to pause because of the Play condition.
-	/// \returns bool
-	bool shouldPauseRegressionTestByCondition();
+	void SetRegressionTestPlayEquationController(SvOi::IFormulaControllerPtr pRegressionTestPlayEquationController) { m_regTest.setPlayEquationController(pRegressionTestPlayEquationController); }
 
 	bool isImageAvailable(SvPb::SVObjectSubTypeEnum ImageType) const;
 	SvOi::ITriggerRecordRPtr getLastTriggerRecord() const { return m_triggerRecord; };
@@ -375,29 +363,10 @@ private:
 	SvDef::StringSet TranslateSelectedObjects(const SVObjectReferenceVector& rSelectedObjects, const std::string& rInspectionName) const;
 
 
-	struct RegressionRuningState
-	{
-		bool bFirst = true;
-		bool bRunFlag = false;
-		bool bListDone = false;
-		bool bModeReset = false;
-		bool isLastImage = false;
-	};
-	RegressionRunFileStruct RegressionTestSetFiles(RegressionTestStruct& rRegTestStruct, RegressionRuningState& runState);
+
 #pragma endregion Private Methods
 
-	RegressionRunModeEnum m_regtestRunMode;
-	RegressionPlayModeEnum m_regtestRunPlayMode;
-	HANDLE m_hRegressionHandle;
-	int m_iRegessionTimeoutMS;
-	bool m_bRegressionTestRunning;
-	bool m_bRegressionTestStopping;
-	bool m_bRegressionTestUsePlayCondition;
-	SvOi::IFormulaControllerPtr m_pRegressionTestPlayEquationController;
-	std::string m_RegressionTestLoadEquationText;
-	bool m_bRegressionTestInitEquationText;
-	std::vector<RegressionTestStruct> m_regCameras;
-	std::vector<RegressionTestStruct> m_regImages;
+	RegressionTestController m_regTest;
 
 	uint32_t m_InspectionID;
 	SVDisplayObject m_oDisplay;
