@@ -9,7 +9,10 @@
 syntax = "proto3";
 package SvPb;
 
+option java_package = "de.sdm.svrc.proto.v1010";
+
 import "Variant.proto";
+import "BasicStructure.proto";
 import "SVRC-Enum.proto";
 import "SVO-Enum.proto";
 
@@ -334,29 +337,27 @@ message GetTriggerStreamResponse
 	bool is_reject = 2;
 }
 
-//This structure is sent for message notifications
-message MsgNotification
-{
-	MessageType type = 1;			//The message type start end or log
-	string messageText = 2;			//The message text being displayed
-	int32 errorNumber = 3;			//The error number being displayed
-}
-
 //This registers which notifications are streamed by SVObserver
 message GetNotificationStreamRequest
 {
+	repeated NotifyType notifyList = 1;		//The notification list to receive if empty all are received
 }
 
-//The notification response is one of the values depending which notification type is being streamed
 message GetNotificationStreamResponse
 {
-	oneof message
-	{
-		DeviceModeType currentMode = 1;			//The current SVObserver device mode
-		uint32 lastModified = 2;				//The last modified time stamp
-		MsgNotification msgNotification = 3;	//The message notification structure
-		string configFileLoaded = 4;			//The path to the loaded configuration file
-	}
+	NotifyType type = 1;		//The notification type
+	Variant Parameter = 2;		//The additional parameter to the notification
+}
+
+message GetMessageStreamRequest
+{
+	repeated MessageSeverity severityList = 1;	//The severity types to receive if empty all are received
+}
+
+message GetMessageStreamResponse
+{
+	MessageType type = 1;		//The message type start end or log
+	MessageContainerVector messageList = 2;
 }
 
 ///This is the recursive structure for the configuration tree
@@ -364,7 +365,7 @@ message ConfigTreeItem
 {
 	string name = 1;						//The name of the item
 	string location = 2;					//The location which is the dotted name of leaf or branch
-	uint32 objectID = 3;						//The object ID of the tree item
+	uint32 objectID = 3;					//The object ID of the tree item
 	sfixed32 position = 4;					//The position of the item in the tree SVObserver relevant
 	bool isValid = 5;						//The initial valid state
 	SVObjectTypeEnum objectType = 6;		//The major type eg Inspection or tool
@@ -381,14 +382,19 @@ message GetConfigurationTreeResponse
 	ConfigTreeItem tree = 1;				//The configuration tree as recursive structure
 }
 
-message GetConfigurationInfoRequest
+message SetTriggerConfigRequest
+{
+	string plcSimulateFile = 1;				//The name of the PLC simulate file to use
+}
+
+message GetConfigurationInfoRequest 
 {
 }
 
-message GetConfigurationInfoResponse
+message GetConfigurationInfoResponse 
 {
-  string fileName = 1; //The path to the loaded configuration file
-  uint64 lastModified = 2; //The last modified time stamp
-  uint64 loadedSince = 3; //The load time time stamp
-  string hash = 4; //hash code
+  string fileName = 1;          //The path to the loaded configuration file
+  uint64 lastModified = 2;		//The last modified time stamp
+  uint64 loadedSince = 3;		//The load time time stamp	
+  string hash = 4;              //hash code 
 }

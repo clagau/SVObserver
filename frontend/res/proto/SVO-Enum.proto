@@ -9,6 +9,8 @@
 syntax = "proto3";
 package SvPb;
 
+option java_package = "de.sdm.svrc.proto.v1010";
+
 enum SVObjectTypeEnum
 {
 	SVNotSetObjectType						= 0x00000000;
@@ -75,6 +77,8 @@ enum SVObjectTypeEnum
 	SVToolSizeAdjustTaskType				= 0x00300000;
 
 	ParameterTaskObjectType					= 0x00400000;
+
+	InputConnectedType						= 0x00500000;
 }
 
 // place all sub types here
@@ -354,8 +358,10 @@ enum SVExtentPropertyEnum
 	SVExtentPropertyOutputPositionPointY    = 0x00000200;
 	SVExtentPropertyOutputPositionPoint     = 0x00000300;
 
-	SVExtentPropertyHeightScaleFactor		= 0x00040000; ///< Used by Resize Tool and the Image Tool Height Doubling operation
-	SVExtentPropertyWidthScaleFactor		= 0x00080000; ///< Used by Resize Tool
+	SVExtentPropertyWidthFactorFormat		= 0x00010000; ///< Used by Resize Tool
+	SVExtentPropertyHeightFactorFormat		= 0x00020000; ///< Used by Resize Tool and the Image Tool Height Doubling operation
+	SVExtentPropertyWidthFactorContent		= 0x00080000; ///< Used by Resize Tool
+	SVExtentPropertyHeightFactorContent		= 0x00040000; ///< Used by Resize Tool and the Image Tool Height Doubling operation
 
 	SVExtentPropertyStartAngle              = 0x00100000;
 	SVExtentPropertyEndAngle                = 0x00200000;
@@ -371,7 +377,7 @@ enum SVExtentPropertyEnum
 	SVExtentPropertyPositionsInput = 0x000000DF;
 
 	//SVExtentPropertyDimensionsInput = SVExtentPropertyWidth | SVExtentPropertyHeight | SVExtentPropertyStartAngle | SVExtentPropertyEndAngle | SVExtentPropertyInnerRadius
-	//                        | SVExtentPropertyOuterRadius | SVExtentPropertyHeightScaleFactor | SVExtentPropertyWidthScaleFactor,
+	//                        | SVExtentPropertyOuterRadius | SVExtentPropertyHeightFactorContent | SVExtentPropertyWidthFactorContent,
 	SVExtentPropertyDimensionsInput = 0x03FC0000;
 
 	//SVExtentPropertyDimentionsOutput = SVExtentPropertyOutputWidth | SVExtentPropertyOutputHeight,
@@ -379,9 +385,6 @@ enum SVExtentPropertyEnum
 
 	//SVExtentPropertyRectangle = SVExtentPropertyWidth | SVExtentPropertyHeight | SVExtentPropertyDimentionsOutput,
 	SVExtentPropertyRectangle = 0x0F000000;
-
-	//SVExtentPropertyScaleFactor = SVExtentPropertyWidthScaleFactor | SVExtentPropertyHeightScaleFactor,
-	SVExtentPropertyScaleFactor = 0x000C0000;
 
 	//SVExtentPropertyPie = SVExtentPropertyStartAngle | SVExtentPropertyEndAngle	| SVExtentPropertyInnerRadius | SVExtentPropertyOuterRadius	| SVExtentPropertyDimentionsOutput,
 	SVExtentPropertyPie = 0x0CF00000;
@@ -646,6 +649,7 @@ enum ClassIdEnum
 	RemoteOutputDataControllerClassId = 446;
 	InputParameterTaskClassId = 448;
 	ResultParameterTaskClassId = 449;
+	InputConnectedClassId = 450;
 }
 
 enum EmbeddedIdEnum
@@ -928,7 +932,7 @@ enum EmbeddedIdEnum
 	ShiftToolModeEId = 285;
 	ShiftToolReferenceXEId = 286;
 	ShiftToolReferenceYEId = 287;
-	//ShiftToolEnableSourceImageExtentsEId = 288;
+	ContRecalcEId = 288;
 	ImageTransformDisplacementXEId = 289;
 	ImageTransformDisplacementYEId = 290;
 	TopResultEId = 291;
@@ -973,8 +977,8 @@ enum EmbeddedIdEnum
 	ExtentRelativeBottomPositionEId = 330;
 	ExtentWidthEId = 331;
 	ExtentHeightEId = 332;
-	ExtentWidthScaleFactorEId = 333;
-	ExtentHeightScaleFactorEId = 334;
+	ExtentWidthFactorContentEId = 333;
+	ExtentHeightFactorContentEId = 334;
 	UpdateAuxiliaryExtentsEId = 335;
 	AuxiliarySourceXEId = 336;
 	AuxiliarySourceYEId = 337;
@@ -1135,8 +1139,9 @@ enum EmbeddedIdEnum
 	ArchiveImageFileRootPart1LinkEId = 496;
 	ArchiveImageFileRootPart2LinkEId = 497;
 	ArchiveImageFileRootPart3LinkEId = 498;
-
+	IsClosedEId = 499;
 	TriggerPerObjectIDEId = 500;
+	
 	FeatureTypeEId = 501;
 	SortEnumEId = 502;
 	IsExcludeEId = 503;
@@ -1149,12 +1154,23 @@ enum EmbeddedIdEnum
 	IsGrayImageEId = 510;
 	IsRangeEId = 511;
 	IsCustomFeatureEId = 512;
-	
-
-	
-
 	NumberOfObjectsEId = 513;
-	StatNumberOfValidSamplesEId = 560; //Statis Tool: number of valid values considered in statistic
+	ExtentWidthFactorContentLinkEId = 514;
+	ExtentHeightFactorContentLinkEId = 515;
+	ExtentWidthFactorFormatEId = 516;
+	ExtentWidthFactorFormatLinkEId = 517;
+	ExtentHeightFactorFormatEId = 518;
+	ExtentHeightFactorFormatLinkEId = 519;
+	ShapeMaskPropertyCenterXLinkEId = 534;
+	ShapeMaskPropertyCenterYLinkEId = 635;
+	ShapeMaskPropertyWidthLinkEId = 536;
+	ShapeMaskPropertyHeightLinkEId = 537;
+	ShapeMaskPropertySideThicknessLinkEId = 538;
+	ShapeMaskPropertyTopBottomThicknessLinkEId = 539;
+	ShapeMaskPropertyOffsetLinkEId = 540;
+	MaskImageEId = 541;
+
+	StatNumberOfValidSamplesEId = 560; //Statistics Tool: number of valid values considered in statistic
 
 	//The following Ids are the first of an array and must have 100 reserved Ids 
 	OutputImageEId = 1000; //Output Images, e.g. External needs 4
@@ -1171,6 +1187,65 @@ enum EmbeddedIdEnum
 	ResultObjectValueEId = 2000; //Result value object (for e.g. Result in Group Tool)
 	ResultObjectLinkedEId = 2100; //Result value object linked (for e.g. Result in Group Tool)
 	ResultObjectTypeEId = 2200; //Type for Result Object (for e.g. Result in Group Tool)
+
+
+
+	//IDs for Inputs
+	LUTOperatorInputEId = 100000;
+	GrayImageInputEId = 100001;
+	NewColumnInputEId = 100002;
+	ExcludeColumnInputEId = 100003;
+	SortColumnInputEId = 100004;
+	ProfileOrientationInputEId = 100005;
+	UseRoationAngleInputEId = 100006;
+	MarkerImageInputEId = 100007;
+	SeedImageInputEId = 100008;
+	MinThresholdInputEId = 100009;
+	MaxThresholdInputEId = 100010;
+	DeltaThresholdInputEId = 100011;
+	LinearDataInputEId = 100012;
+	ResultInputEId = 100013;
+	UpperThresholdInputEId = 100014;
+	LowerThresholdInputEId = 100015;
+	AutoThresholdInputEId = 100016;
+	TranslationXResultInputEId = 100017;
+	TranslationYResultInputEId  = 100018;
+	RotationXResultInputEId = 100019;
+	RotationYResultInputEId = 100020;
+	RotationAngleResultInputEId = 100021;
+	CenterXResultInputEId = 100022;
+	CenterYResultInputEId = 100023;
+	StartRadiusResultInputEId = 100024;
+	EndRadiusResultInputEId = 100025;
+	StartAngleResultInputEId = 100026;
+	EndAngleResultInputEId = 100027;
+	ImageArithmeticAImageInputEId = 100028;
+	ImageArithmeticAEnableOffsetInputEId = 100029;
+	ImageArithmeticAOffsetPointInputEId = 100030;
+	ImageArithmeticBImageInputEId = 100031;
+	ImageArithmeticBEnableOffsetInputEId = 100032;
+	ImageArithmeticBOffsetPointInputEId = 100033;
+	ImageArithmeticOperatorInputEId = 100034;
+	WidthInputEId = 100035;
+	HeightInputEId = 100036;
+	PositionXInputEId = 100037;
+	PositionYInputEId = 100038;
+	RangeValueInputEId = 100039;
+	Band0ImageInputEId = 100040;
+	Band1ImageInputEId = 100041;
+	Band2ImageInputEId = 100042;
+	UserMaskImageInputEId = 100043;
+	ToolSetConditionalInputEId = 100044;
+	SourceTableInputEId = 100045;
+	TranslationXInputEId = 100046;
+	TranslationYInputEId = 100047;
+	AuxImageInputEId = 100048;
+	ToolConditionalInputEId = 100049;
+	OverlayColorInputEId = 100050;
+	BarCodeResultEId = 100051;
+
+	//The following Ids are the first of an array and must have 100 reserved Ids 
+	ImageInputEId = 150000;
 }
 
 

@@ -9,6 +9,8 @@
 syntax = "proto3";
 package SvPb;
 
+option java_package = "de.sdm.svrc.proto.v1010";
+
 ///The entries in the monitor list can belong to one or more of the following groups:
 /// there are also free entries that do not belong to Productitem RejectCondition and FailstatusList
 enum ListType
@@ -55,15 +57,6 @@ enum DeviceModeType
 	modeChanging = 100;				//This indicates that the mode is in transition to another mode
 }
 
-///The message type for the message notification when SVObserver displays or logs a message
-enum MessageType
-{
-	unknown=0;
-	startMsgBox=1;					//Dialog is currently being displayed on the SVObserver
-	endMsgBox=2;					//Dialog that was open has been closed on the SVObserver
-	msgLog=3;						//A message has been logged into the event log on the SVObserver
-}
-
 ///Product filter types
 enum ProductFilterEnum
 {
@@ -76,3 +69,12 @@ enum ImageFormatEnum
 {
 	bmp = 0;
 }
+
+enum NotifyType
+{
+	currentMode = 0;			//The current SVObserver device mode
+	lastModified = 1;			//The last modified time stamp
+	configLoaded = 2;			//Configuration loaded file path is the parameter
+	configUnloaded = 3;			//Configuration uloaded
+}
+

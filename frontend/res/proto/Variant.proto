@@ -9,6 +9,8 @@
 syntax = "proto3";
 package SvPb;
 
+option java_package = "de.sdm.svrc.proto.v1010";
+
 message Variant
 {
 	fixed32 type = 1;			//The Variant type VT

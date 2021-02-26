@@ -9,6 +9,8 @@
 syntax = "proto3";
 package SvPb;
 
+option java_package = "de.sdm.svrc.proto.v1010";
+
 message Permissions {
 
 	message WebApp {
@@ -77,53 +79,53 @@ message Permissions {
 			bool read = 2;
 			bool edit = 3;
 			bool remove = 4;
-    }
+		}
 
-    message Configuration {
-      bool read = 1;
-      bool write = 2;
-    }
+		message Configuration {
+			bool read = 1;
+			bool write = 2;
+		}
 
-    message Notifications {
-      bool subscribe = 1;
-    }
+		message Notifications {
+			bool subscribe = 1;
+		}
 
-    message ClientLogs {
-      bool store = 1;
-    }
+		message ClientLogs {
+			bool store = 1;
+		}
 
-    message File {
-      bool read = 1;
-      bool write = 2;
-    }
+		message File {
+			bool read = 1;
+			bool write = 2;
+		}
 
-    message MachineState {
-      bool set = 1;
-    }
+		message MachineState {
+			bool set = 1;
+		}
 
-    message Command {
-      bool execute = 1;
-    }
+		message Command {
+			bool execute = 1;
+		}
 
 		Mode mode = 1;
 		InspectionState inspectionstate = 2;
 		Value value = 3;
-    Tool tool = 4;
-    Configuration configuration = 5;
-    Notifications notifications = 6;
-    ClientLogs clientlogs = 7;
-    File file = 8;
-    MachineState machinestate = 9;
-    Command command = 10;
+		Tool tool = 4;
+		Configuration configuration = 5;
+		Notifications notifications = 6;
+		ClientLogs clientlogs = 7;
+		File file = 8;
+		MachineState machinestate = 9;
+		Command command = 10;
 	}
 
 	message UserManagement {
-		message Permissions {
+		message UserPermissions {
 			bool read = 1;
 			bool edit = 2;
 		}
 
-		Permissions permissions = 1;
+		UserPermissions userpermissions = 1;
 	}
 
 	WebApp webapp = 1;

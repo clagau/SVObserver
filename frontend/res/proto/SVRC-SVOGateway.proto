@@ -9,6 +9,8 @@
 syntax = "proto3";
 package SvPb;
 
+option java_package = "de.sdm.svrc.proto.v1010";
+
 import "Variant.proto";
 import "SVRC-Enum.proto";
 import "BasicStructure.proto";
@@ -207,6 +209,17 @@ message GetGatewayNotificationStreamResponse
 message RejectStreamPauseNotification
 {
 	repeated uint32 pausedInspectionIds = 1;
+}
+
+message GetGatewayMessageStreamRequest
+{
+	repeated MessageSeverity severityList = 1;	//The severity types to receive if empty all are received
+}
+
+message GetGatewayMessageStreamResponse
+{
+	MessageType type = 1;		//The message type start end or log
+	MessageContainerVector messageList = 2;
 }
 
 //Similar to GetProductRequest for rejects

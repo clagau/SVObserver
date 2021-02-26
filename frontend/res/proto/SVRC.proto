@@ -9,6 +9,8 @@
 syntax = "proto3";
 package SvPb;
 
+option java_package = "de.sdm.svrc.proto.v1010";
+
 import "SVRC-SVOGateway.proto";
 import "SVRC-SVObserver.proto";
 import "SVRC-UserManagement.proto";
@@ -57,6 +59,8 @@ message SVRCMessages
 		GetWebAppVersionRequest getWebAppVersionRequest = 1027;
 		GetProductDataRequest getProductDataRequest = 1028;
 		GetProductDataResponse getProductDataResponse = 1029;
+		GetGatewayMessageStreamRequest getGatewayMessageStreamRequest = 1030;
+		GetGatewayMessageStreamResponse getGatewayMessageStreamResponse = 1031;
 
 		//SVObserver commands
 		SetDeviceModeRequest setDeviceModeRequest = 2000;
@@ -108,9 +112,11 @@ message SVRCMessages
 		GetConfigurationTreeResponse getConfigurationTreeResponse = 2046;
 		ConfigCommandRequest configCommandRequest = 2047;
 		ConfigCommandResponse configCommandResponse = 2048;
-    GetConfigurationInfoRequest getConfigurationInfoRequest = 2050;
+		SetTriggerConfigRequest setTriggerConfigRequest = 2049;
+		GetConfigurationInfoRequest getConfigurationInfoRequest = 2050;
 		GetConfigurationInfoResponse getConfigurationInfoResponse = 2051;
-
+		GetMessageStreamRequest getMessageStreamRequest = 2052;
+		GetMessageStreamResponse getMessageStreamResponse = 2053;
 
 		// User Management Commands
 		GetMyPermissionsRequest getMyPermissionsRequest = 3000;

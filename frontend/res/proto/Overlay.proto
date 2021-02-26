@@ -9,6 +9,8 @@
 syntax = "proto3";
 package SvPb;
 
+option java_package = "de.sdm.svrc.proto.v1010";
+
 import "BasicStructure.proto";
 
 message ValueObject
@@ -275,4 +277,18 @@ message OverlayShapeImage
 	ValueObject w = 3;
 	ValueObject h = 4;
 	Image image = 5;
+	oneof DataType
+	{
+		OverlayShapeImageDynamic imageDymData = 6;
+	}
+}
+
+message OverlayShapeImageDynamic
+{
+	int32 trPosImage = 1;
+	oneof Values
+	{
+		int32 NonBlack = 2;//alpha/blue/green/red
+		int32 Black = 3;//alpha/blue/green/red
+	}
 }

@@ -10,6 +10,8 @@
 syntax = "proto3";
 package SvPb;
 
+option java_package = "de.sdm.svrc.proto.v1010";
+
 import "SVO-Enum.proto";
 
 ///This is the recursive structure for the object selector tree
@@ -37,6 +39,7 @@ message GetObjectSelectorItemsRequest
 	ObjectAttributes attribute = 4;	//The object attribute to filter the toolset items
 	bool wholeArray = 5;			//True to display whole array values (All values in the Array eg. Blob Analyzer.Box X Max[]) 
 	ObjectSelectorType type = 6;	//item types required
+	uint32 importantObjectForStopAtBorder = 10; //If this value set (!= SvDef::InvalidObjectId), than it look from this up to parent if any Border (e.g. Closed GroupTool) is available and set this than as starting position and also stop at a closed GroupTool.
 
 	oneof filter
 	{
