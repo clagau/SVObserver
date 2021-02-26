@@ -1,5 +1,4 @@
 @echo off
-call vcvars32.bat
 echo Deleting %1 file
 del %1
 echo Generating %1 file

@@ -403,6 +403,18 @@ SvOp::SVResult* SVStatTool::GetResult(SVStatisticsFeatureEnum aFeatureIndex)
 	return pResult;
 }
 
+std::vector<std::string> SVStatTool::getToolAdjustNameList() const
+{
+	constexpr std::array<LPCTSTR, 3> cToolAdjustNameList
+	{
+		_T("Parameters"),
+		_T("Conditional"),
+		_T("Comment"),
+	};
+	return { cToolAdjustNameList.begin(), cToolAdjustNameList.end() };
+}
+
+
 std::string SVStatTool::GetOccurenceTestValue()
 {
 	std::string Value;

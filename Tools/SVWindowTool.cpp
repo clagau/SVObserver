@@ -299,6 +299,24 @@ void SVWindowToolClass::getToolsWithReplaceableSourceImage(SvPb::GetToolsWithRep
 	rData->set_objectid(getObjectId());
 }
 
+std::vector<std::string> SVWindowToolClass::getToolAdjustNameList() const
+{
+	constexpr std::array<LPCTSTR, 10> cToolAdjustNameList
+	{
+		_T("Image Source"),
+		_T("Size and Position"),
+		_T("Filter"),
+		_T("Threshold"),
+		_T("Mask"),
+		_T("LUT"),
+		_T("Analyzer"),
+		_T("Conditional"),
+		_T("General"),
+		_T("Comment"),
+	};
+	return { cToolAdjustNameList.begin(), cToolAdjustNameList.end() };
+}
+
 SvVol::SVStringValueObjectClass* SVWindowToolClass::GetInputImageNames()
 {
 	return &m_SourceImageNames;

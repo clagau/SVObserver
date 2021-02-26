@@ -40,6 +40,8 @@ public:
 
 	virtual void addOverlays(const SvIe::SVImageClass* p_Image, SvPb::OverlayDesc& rOverlay) const override;
 
+	virtual std::vector<std::string> getToolAdjustNameList() const override;
+
 	enum WarpType
 	{
 		WarpTypeInvalid = 0,

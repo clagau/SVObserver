@@ -20,7 +20,7 @@ namespace SvTo
 {
 
 /// Implements the GroupTool
-class GroupTool :public SVToolClass
+class GroupTool : public SVToolClass
 {
 	SV_DECLARE_CLASS(GroupTool);
 public:
@@ -42,6 +42,7 @@ public:
 
 	virtual uint32_t getFirstClosedParent(uint32_t stopSearchAtObjectId) const override;
 	virtual bool isValidDependency(const std::pair<std::string, std::string>& rEntry) const override;
+	virtual std::vector<std::string> getToolAdjustNameList() const override;
 
 protected:
 	virtual bool useOverlayColorTool() const override { return false; };

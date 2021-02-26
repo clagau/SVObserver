@@ -42,14 +42,13 @@ public:
 	SVObjectReferenceVector getImageArchiveList();
 	void setImageArchiveList(const SVObjectReferenceVector& rObjectRefVector);
 	virtual bool areAuxExtentsAvailable() const override { return false; };
+	virtual std::vector<std::string> getToolAdjustNameList() const override;
 
 	bool GetArchiveResultFilepath( std::string& rName );
 	const std::string GetImageArchivePathPart1() const;
 	const std::string GetImageArchivePathPart2() const;
 	const std::string GetImageArchivePathPart3() const;
-	bool SetFileArchive( LPCTSTR lpszName );
 	const std::string& getNextImageDirectory(const std::string& imagePathRoot);
-	std::string	getNextImageFileName(const std::string& rFileNameImage, bool useAlternativeImagePaths);
 
 	static long CalculateImageMemory(SvIe::SVImageClass* pImage );
 	static long CalculateImageMemory( std::vector<SvIe::SVImageClass*> imagePtrVector );

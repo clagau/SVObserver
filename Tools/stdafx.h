@@ -32,6 +32,7 @@
 //! Precompiled headers section
 //************************************
 #pragma region Precompiled Headers
+#include <array>
 #include <algorithm>
 #include <cmath>
 #include <comdef.h>

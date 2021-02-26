@@ -161,6 +161,19 @@ bool TableTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 
 	return Result;
 }
+
+std::vector<std::string> TableTool::getToolAdjustNameList() const
+{
+	constexpr std::array<LPCTSTR, 4> cToolAdjustNameList
+	{
+		_T("Parameters"),
+		_T("Table"),
+		_T("Conditional"),
+		_T("Comment"),
+	};
+	return { cToolAdjustNameList.begin(), cToolAdjustNameList.end() };
+}
+
 #pragma endregion Public Methods
 
 #pragma region Protected Methods

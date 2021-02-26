@@ -231,6 +231,18 @@ void LoopTool::addOverlays(const SvIe::SVImageClass* pImage, SvPb::OverlayDesc& 
 	}
 }
 
+std::vector<std::string> LoopTool::getToolAdjustNameList() const
+{
+	constexpr std::array<LPCTSTR, 3> cToolAdjustNameList
+	{
+		_T("Loop Condition"),
+		_T("Conditional"),
+		_T("Comment"),
+	};
+	return { cToolAdjustNameList.begin(), cToolAdjustNameList.end() };
+}
+
+
 long  LoopTool::setToolPosition(long ToolPosition)
 {
 	long pos(ToolPosition);

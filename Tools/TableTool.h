@@ -43,6 +43,7 @@ public:
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 	virtual bool areAuxExtentsAvailable() const override { return false; };
+	virtual std::vector<std::string> getToolAdjustNameList() const override;
 #pragma endregion Public Methods
 
 #pragma region Protected Methods

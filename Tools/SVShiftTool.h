@@ -67,6 +67,8 @@ public:
 	virtual void overwriteInputSource(SvOi::SVImageBufferHandlePtr imageHandlePtr) override;
 	virtual void getToolsWithReplaceableSourceImage(SvPb::GetToolsWithReplaceableSourceImageResponse&) const override;
 
+	virtual std::vector<std::string> getToolAdjustNameList() const override;
+
 #pragma endregion Public Methods
 
 protected:

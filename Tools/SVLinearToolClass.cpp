@@ -207,6 +207,24 @@ bool SVLinearToolClass::DoesObjectHaveExtents() const
 	return true;
 }
 
+std::vector<std::string> SVLinearToolClass::getToolAdjustNameList() const
+{
+	constexpr std::array<LPCTSTR, 10> cToolAdjustNameList
+	{
+		_T("Image Source"),
+		_T("Size and Position"),
+		_T("Filter"),
+		_T("Threshold"),
+		_T("Analyzer"),
+		_T("Special"),
+		_T("Profile Values Ranges"),
+		_T("Conditional"),
+		_T("General"),
+		_T("Comment"),
+	};
+	return { cToolAdjustNameList.begin(), cToolAdjustNameList.end() };
+}
+
 bool SVLinearToolClass::GetRotation() const
 {
 	BOOL bVal = false;

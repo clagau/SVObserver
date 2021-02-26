@@ -41,6 +41,7 @@ public:
 	virtual SvOi::ParametersForML getParameterForMonitorList(SvStl::MessageContainerVector& rMessages) const override;
 	virtual void overwriteInputSource(SvOi::SVImageBufferHandlePtr imageHandlePtr) override;
 	virtual void getToolsWithReplaceableSourceImage(SvPb::GetToolsWithReplaceableSourceImageResponse&) const override;
+	virtual std::vector<std::string> getToolAdjustNameList() const override;
 
 protected:
 

@@ -50,6 +50,7 @@ public:
 	//No overlay for this tool.
 	virtual void addOverlays(const SvIe::SVImageClass*, SvPb::OverlayDesc& ) const  override {};
 
+	virtual std::vector<std::string> getToolAdjustNameList() const override;
 protected:
 	void init();
 

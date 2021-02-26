@@ -35,6 +35,7 @@ public:
 
 	virtual SvOi::ParametersForML getParameterForMonitorList(SvStl::MessageContainerVector& rMessages) const override;
 	virtual bool areAuxExtentsAvailable() const override { return false; };
+	virtual std::vector<std::string> getToolAdjustNameList() const override;
 
 protected:
 	virtual bool useOverlayColorTool() const override { return false; };

@@ -35,6 +35,8 @@ public:
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
+	virtual std::vector<std::string> getToolAdjustNameList() const override;
+
 	HRESULT ValidateAngle(double &p_dWarpAngle );
 
 	enum WarpType

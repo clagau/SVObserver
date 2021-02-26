@@ -256,6 +256,20 @@ bool ResizeTool::DoesObjectHaveExtents() const
 	return true;
 }
 
+std::vector<std::string> ResizeTool::getToolAdjustNameList() const
+{
+	constexpr std::array<LPCTSTR, 6> cToolAdjustNameList
+	{
+		_T("Image Source"),
+		_T("Size and Position"),
+		_T("Resize"),
+		_T("Conditional"),
+		_T("General"),
+		_T("Comment"),
+	};
+	return { cToolAdjustNameList.begin(), cToolAdjustNameList.end() };
+}
+
 SvVol::SVStringValueObjectClass* ResizeTool::GetInputImageNames()
 {
 	return &m_SourceImageNames;

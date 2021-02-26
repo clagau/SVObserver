@@ -40,7 +40,8 @@ public:
 	///  otherwise returns a nullptr.
 	virtual SVToolClass* GetObjectAtPoint(const SVPoint<double>& rPoint) override;
 	virtual bool DoesObjectHaveExtents() const override;
-	
+	virtual std::vector<std::string> getToolAdjustNameList() const override;
+
 	/// GetInputImageNames
 	///  Retrieves source image name from m_SourceImageNames.
 	virtual SvVol::SVStringValueObjectClass* GetInputImageNames() override;

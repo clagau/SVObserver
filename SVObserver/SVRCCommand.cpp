@@ -1307,31 +1307,6 @@ void SVRCCommand::ConvertTreeNames(SvPb::TreeItem* pTreeItem) const
 
 void SVRCCommand::addObjectChildren(uint32_t inspectionID, uint32_t parentID, std::back_insert_iterator<std::vector<uint32_t>> inserter) const
 {
-	constexpr std::array<std::pair<SvPb::SVObjectTypeEnum, SvPb::SVObjectSubTypeEnum>, 21> compatibleTypes =
-	{ {
-		{SvPb::SVInspectionObjectType, SvPb::SVNotSetSubObjectType},
-		{SvPb::SVToolObjectType, SvPb::SVWindowToolObjectType},
-		{SvPb::SVToolObjectType, SvPb::SVMathToolObjectType},
-		{SvPb::SVToolObjectType, SvPb::SVToolImageObjectType},
-		{SvPb::SVToolObjectType, SvPb::SVToolArchiveObjectType},
-		{SvPb::SVToolObjectType, SvPb::SVToolLoadImageObjectType},
-		{SvPb::SVToolObjectType, SvPb::SVStatisticsToolObjectType},
-		{SvPb::SVToolObjectType, SvPb::SVToolAcquisitionObjectType},
-		{SvPb::SVToolObjectType, SvPb::SVTransformationToolObjectType},
-		{SvPb::SVToolObjectType, SvPb::SVPolarTransformationToolObjectType},
-		{SvPb::SVToolObjectType, SvPb::SVColorToolObjectType},
-		{SvPb::SVToolObjectType, SvPb::SVToolCylindricalObjectType},
-		{SvPb::SVToolObjectType, SvPb::SVPerspectiveToolObjectType},
-		{SvPb::SVToolObjectType, SvPb::SVExternalToolObjectType},
-		{SvPb::SVToolObjectType, SvPb::SVLinearToolObjectType},
-		{SvPb::SVToolObjectType, SvPb::SVShiftToolObjectType},
-		{SvPb::SVToolObjectType, SvPb::SVResizeToolObjectType},
-		{SvPb::SVToolObjectType, SvPb::SVRingBufferToolObjectType},
-		{SvPb::SVToolObjectType, SvPb::SVTableToolObjectType},
-		{SvPb::SVToolObjectType, SvPb::SVTableAnalyzerToolObjectType},
-		{SvPb::SVToolObjectType, SvPb::LoopToolObjectType},
-	} };
-
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	auto* pRequest = requestCmd.mutable_taskobjectlistrequest();
@@ -1343,8 +1318,8 @@ void SVRCCommand::addObjectChildren(uint32_t inspectionID, uint32_t parentID, st
 		for (int i = 0; i < responseCmd.taskobjectlistresponse().taskobjectinfos_size(); ++i)
 		{
 			auto rTaskObj = responseCmd.taskobjectlistresponse().taskobjectinfos(i);
-			auto iter = std::find(compatibleTypes.begin(), compatibleTypes.end(), std::pair<SvPb::SVObjectTypeEnum, SvPb::SVObjectSubTypeEnum>{rTaskObj.objecttype(), rTaskObj.objectsubtype()});
-			if (compatibleTypes.end() != iter)
+			SvOi::IObjectClass* pTaskObject = SvOi::getObject(rTaskObj.taskobjectid());
+			if (nullptr != pTaskObject && SvPb::SVToolObjectType == pTaskObject->GetObjectType())
 			{
 				inserter = rTaskObj.taskobjectid();
 				addObjectChildren(inspectionID, rTaskObj.taskobjectid(), inserter);
@@ -1355,12 +1330,11 @@ void SVRCCommand::addObjectChildren(uint32_t inspectionID, uint32_t parentID, st
 
 void SVRCCommand::addConfigItem(uint32_t inspectionID, uint32_t objectID, std::back_insert_iterator<std::vector<SvPb::ConfigTreeItem>> inserter) const
 {
-	SvPb::ConfigTreeItem item;
-
 	SvOi::IObjectClass* pObject = SvOi::getObject(objectID);
 
 	if (nullptr != pObject)
 	{
+		std::vector<std::string> toolAdjustNameList;
 		std::string text(pObject->GetName());
 		bool isValid{ true };
 		long toolPos{ -1 };
@@ -1370,6 +1344,7 @@ void SVRCCommand::addConfigItem(uint32_t inspectionID, uint32_t objectID, std::b
 			if (nullptr != pTool)
 			{
 				toolPos = pTool->getToolPosition();
+				toolAdjustNameList = pTool->getToolAdjustNameList();
 			}
 			isValid = false;
 			SvPb::InspectionCmdRequest requestCmd;
@@ -1383,6 +1358,7 @@ void SVRCCommand::addConfigItem(uint32_t inspectionID, uint32_t objectID, std::b
 				isValid = responseCmd.getobjectparametersresponse().isvalid();
 			}
 		}
+		SvPb::ConfigTreeItem item;
 		item.set_name(SvUl::to_utf8(text));
 		text = pObject->GetObjectNameToObjectType(SvPb::SVInspectionObjectType);
 		///Tool Set should be removed from the location name
@@ -1393,9 +1369,25 @@ void SVRCCommand::addConfigItem(uint32_t inspectionID, uint32_t objectID, std::b
 		item.set_position(toolPos);
 		item.set_objecttype(pObject->GetObjectType());
 		item.set_objectsubtype(pObject->GetObjectSubType());
-
 		// cppcheck-suppress unreadVariable symbolName=inserter ; cppCheck doesn't know back_insert_iterator
 		inserter = item;
+
+		//For every tool adjust name an entry is made in the config tree with the object id from the parent tool
+		for (const auto& rName : toolAdjustNameList)
+		{
+			item.set_name(SvUl::to_utf8(rName));
+			text = pObject->GetObjectNameToObjectType(SvPb::SVInspectionObjectType);
+			text += '.' + rName;
+			///Tool Set should be removed from the location name
+			SvUl::searchAndReplace(text, _T("Tool Set."), _T(""));
+			item.set_location(SvUl::to_utf8(text));
+			toolPos = -1;
+			item.set_position(toolPos);
+			item.set_objecttype(SvPb::SVNotSetObjectType);
+			item.set_objectsubtype(SvPb::SVNotSetSubObjectType);
+			// cppcheck-suppress unreadVariable symbolName=inserter ; cppCheck doesn't know back_insert_iterator
+			inserter = item;
+		}
 	}
 }
 

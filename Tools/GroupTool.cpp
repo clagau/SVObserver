@@ -267,6 +267,19 @@ namespace SvTo
 		m_isClosed.GetValue(isClosed);
 		return FALSE == isClosed || isValid(rEntry);
 	}
+	
+	std::vector<std::string> GroupTool::getToolAdjustNameList() const
+	{
+		constexpr std::array<LPCTSTR, 5> cToolAdjustNameList
+		{
+			_T("Input"),
+			_T("Result"),
+			_T("Conditional"),
+			_T("General"),
+			_T("Comment"),
+		};
+		return { cToolAdjustNameList.begin(), cToolAdjustNameList.end() };
+	}
 
 
 	void GroupTool::Initialize()

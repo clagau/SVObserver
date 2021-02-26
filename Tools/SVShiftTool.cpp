@@ -146,6 +146,58 @@ bool SVShiftTool::DoesObjectHaveExtents() const
 {
 	return true;
 }
+
+SvVol::SVDoubleValueObjectClass* SVShiftTool::GetTranslationXInput(bool bRunMode /*= false*/) const
+{
+	return m_TranslationXInput.getInput<SvVol::SVDoubleValueObjectClass>(bRunMode);
+}
+
+SvVol::SVDoubleValueObjectClass* SVShiftTool::GetTranslationYInput(bool bRunMode /*= false*/) const
+{
+	return m_TranslationYInput.getInput<SvVol::SVDoubleValueObjectClass>(bRunMode);
+}
+
+void SVShiftTool::addOverlays(const SvIe::SVImageClass* pImage, SvPb::OverlayDesc& rOverlay) const
+{
+	auto* pOverlay = rOverlay.add_overlays();
+	pOverlay->set_name(GetName());
+	pOverlay->set_objectid(getObjectId());
+	pOverlay->set_displaybounding(true);
+	auto* pBoundingBox = pOverlay->mutable_boundingshape();
+	auto* pRect = pBoundingBox->mutable_rect();
+	SvPb::setValueObject(m_LeftResult, *pRect->mutable_x(), true);
+	SvPb::setValueObject(m_TopResult, *pRect->mutable_y(), true);
+	SvPb::setValueObject(m_ExtentWidth, *pRect->mutable_w());
+	SvPb::setValueObject(m_ExtentHeight, *pRect->mutable_h());
+	setStateValueToOverlay(*pOverlay);
+	collectOverlays(pImage, *pOverlay);
+}
+
+void SVShiftTool::overwriteInputSource(SvOi::SVImageBufferHandlePtr imageHandlePtr)
+{
+	m_replaceSourceImage = imageHandlePtr;
+}
+
+void SVShiftTool::getToolsWithReplaceableSourceImage(SvPb::GetToolsWithReplaceableSourceImageResponse& rResponse) const
+{
+	auto* rData = rResponse.add_list();
+	rData->set_objectname(GetObjectNameBeforeObjectType(SvPb::SVToolSetObjectType));
+	rData->set_objectid(getObjectId());
+}
+
+std::vector<std::string> SVShiftTool::getToolAdjustNameList() const
+{
+	constexpr std::array<LPCTSTR, 6> cToolAdjustNameList
+	{
+		_T("Image Source"),
+		_T("Size and Position"),
+		_T("Translation"),
+		_T("Conditional"),
+		_T("General"),
+		_T("Comment"),
+	};
+	return { cToolAdjustNameList.begin(), cToolAdjustNameList.end() };
+}
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
@@ -161,18 +213,18 @@ bool SVShiftTool::isInputImage(uint32_t imageId) const
 	return Result;
 }
 
-bool SVShiftTool::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVShiftTool::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages)
 {
 	//@WARNING[MZA][7.50][17.01.2017] Not sure if we need to check ValidateLocal in Run-mode, maybe it is enough to check it in ResetObject
-	bool Result = __super::onRun( rRunStatus, pErrorMessages ) && ValidateLocal(pErrorMessages);
-	if( Result )
+	bool Result = __super::onRun(rRunStatus, pErrorMessages) && ValidateLocal(pErrorMessages);
+	if (Result)
 	{
 		long Mode;
-		if( S_OK != m_evoShiftMode.GetValue( Mode ) )
+		if (S_OK != m_evoShiftMode.GetValue(Mode))
 		{
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 				pErrorMessages->push_back(Msg);
 			}
 		}
@@ -195,7 +247,7 @@ bool SVShiftTool::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *p
 		double dLeft(0.0);
 		double dTop(0.0);
 
-		if (S_OK != m_ExtentLeft.GetValue(dLeft) || !std::isfinite(dLeft)  || S_OK != m_ExtentTop.GetValue(dTop) || !std::isfinite(dTop))
+		if (S_OK != m_ExtentLeft.GetValue(dLeft) || !std::isfinite(dLeft) || S_OK != m_ExtentTop.GetValue(dTop) || !std::isfinite(dTop))
 		{
 			Result = false;
 			if (nullptr != pErrorMessages)
@@ -222,11 +274,11 @@ bool SVShiftTool::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *p
 				Result = Result && (S_OK == m_LearnedTranslationY.GetValue(Value));
 				LearnedTranslationY = static_cast<long> (Value);
 
-				Result = Result &&  (nullptr != pTranslationXInput && S_OK == pTranslationXInput->GetValue(dInputTranslationX) );
+				Result = Result && (nullptr != pTranslationXInput && S_OK == pTranslationXInput->GetValue(dInputTranslationX));
 				Result = Result && std::isfinite(dInputTranslationX);
-				Result = Result && (nullptr != pTranslationYInput && S_OK == pTranslationYInput->GetValue(dInputTranslationY) );
+				Result = Result && (nullptr != pTranslationYInput && S_OK == pTranslationYInput->GetValue(dInputTranslationY));
 				Result = Result && std::isfinite(dInputTranslationY);
-				
+
 
 				if (!Result)
 				{
@@ -310,7 +362,7 @@ bool SVShiftTool::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *p
 			{
 				inputImage = m_replaceSourceImage;
 			}
-			
+
 
 
 			double l_OffsetX = 0.0;
@@ -361,44 +413,6 @@ bool SVShiftTool::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *p
 		}
 	}
 	return Result;
-}
-
-SvVol::SVDoubleValueObjectClass* SVShiftTool::GetTranslationXInput(bool bRunMode /*= false*/) const
-{
-	return m_TranslationXInput.getInput<SvVol::SVDoubleValueObjectClass>(bRunMode);
-}
-
-SvVol::SVDoubleValueObjectClass* SVShiftTool::GetTranslationYInput(bool bRunMode /*= false*/) const
-{
-	return m_TranslationYInput.getInput<SvVol::SVDoubleValueObjectClass>(bRunMode);
-}
-
-void SVShiftTool::addOverlays(const SvIe::SVImageClass* pImage, SvPb::OverlayDesc& rOverlay) const
-{
-	auto* pOverlay = rOverlay.add_overlays();
-	pOverlay->set_name(GetName());
-	pOverlay->set_objectid(getObjectId());
-	pOverlay->set_displaybounding(true);
-	auto* pBoundingBox = pOverlay->mutable_boundingshape();
-	auto* pRect = pBoundingBox->mutable_rect();
-	SvPb::setValueObject(m_LeftResult, *pRect->mutable_x(), true);
-	SvPb::setValueObject(m_TopResult, *pRect->mutable_y(), true);
-	SvPb::setValueObject(m_ExtentWidth, *pRect->mutable_w());
-	SvPb::setValueObject(m_ExtentHeight, *pRect->mutable_h());
-	setStateValueToOverlay(*pOverlay);
-	collectOverlays(pImage, *pOverlay);
-}
-
-void SVShiftTool::overwriteInputSource(SvOi::SVImageBufferHandlePtr imageHandlePtr)
-{
-	m_replaceSourceImage = imageHandlePtr;
-}
-
-void SVShiftTool::getToolsWithReplaceableSourceImage(SvPb::GetToolsWithReplaceableSourceImageResponse& rResponse) const
-{
-	auto* rData = rResponse.add_list();
-	rData->set_objectname(GetObjectNameBeforeObjectType(SvPb::SVToolSetObjectType));
-	rData->set_objectid(getObjectId());
 }
 #pragma endregion Protected Methods
 

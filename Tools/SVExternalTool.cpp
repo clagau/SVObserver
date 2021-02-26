@@ -83,4 +83,19 @@ SvVol::SVStringValueObjectClass* SVExternalTool::GetInputImageNames()
 	return &m_SourceImageNames;	
 }
 
+std::vector<std::string> SVExternalTool::getToolAdjustNameList() const
+{
+	constexpr std::array<LPCTSTR, 7> cToolAdjustNameList
+	{
+		_T("Select External DLL"),
+		_T("Input Images"),
+		_T("Input Values"),
+		_T("Result Values"),
+		_T("Conditional"),
+		_T("General"),
+		_T("Comment"),
+	};
+	return { cToolAdjustNameList.begin(), cToolAdjustNameList.end() };
+}
+
 } //namespace SvTo

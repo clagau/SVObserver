@@ -132,4 +132,19 @@ SvVol::SVStringValueObjectClass* SVTransformationToolClass::GetInputImageNames()
 	return &m_SourceImageNames;
 }
 
+std::vector<std::string> SVTransformationToolClass::getToolAdjustNameList() const
+{
+	constexpr std::array<LPCTSTR, 7> cToolAdjustNameList
+	{
+		_T("Image Source"),
+		_T("Translation"),
+		_T("Rotation"),
+		_T("Learn"),
+		_T("Conditional"),
+		_T("General"),
+		_T("Comment"),
+	};
+	return { cToolAdjustNameList.begin(), cToolAdjustNameList.end() };
+}
+
 } //namespace SvTo

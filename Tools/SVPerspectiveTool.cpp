@@ -528,6 +528,19 @@ void SVPerspectiveToolClass::addOverlays(const SvIe::SVImageClass*, SvPb::Overla
 	setStateValueToOverlay(*pOverlay);
 }
 
+std::vector<std::string> SVPerspectiveToolClass::getToolAdjustNameList() const
+{
+	constexpr std::array<LPCTSTR, 5> cToolAdjustNameList
+	{
+		_T("Image Source"),
+		_T("Warp Function"),
+		_T("Conditional"),
+		_T("General"),
+		_T("Comment"),
+	};
+	return { cToolAdjustNameList.begin(), cToolAdjustNameList.end() };
+}
+
 SvVol::SVStringValueObjectClass* SVPerspectiveToolClass::GetInputImageNames()
 {
 	return &m_SourceImageNames;

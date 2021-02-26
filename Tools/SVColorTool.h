@@ -54,6 +54,8 @@ public:
 	virtual HRESULT SetImageExtentToParent() override;
 	virtual HRESULT SetImageExtentToFit(const SVImageExtentClass& rImageExtent) override;
 
+	virtual std::vector<std::string> getToolAdjustNameList() const override;
+
 	virtual SVToolClass* GetObjectAtPoint(const SVPoint<double>& rPoint) override;
 	SvIe::SVImageClass* getOutputImage() { return &m_OutputImage; };
 

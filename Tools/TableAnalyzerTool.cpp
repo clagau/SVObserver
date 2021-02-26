@@ -183,11 +183,20 @@ void TableAnalyzerTool::OnEmbeddedIDChanged(const SVObjectClass* pOwnerObject, S
 		m_pResultTable->changeEmbeddedId(oldEmbeddedID, newEmbeddedID);
 	}
 }
+
+std::vector<std::string> TableAnalyzerTool::getToolAdjustNameList() const
+{
+	constexpr std::array<LPCTSTR, 5> cToolAdjustNameList
+	{
+		_T("Table Source"),
+		_T("Analyzer"),
+		_T("Row Range"),
+		_T("Conditional"),
+		_T("Comment"),
+	};
+	return { cToolAdjustNameList.begin(), cToolAdjustNameList.end() };
+}
 #pragma endregion Public Methods
-
-#pragma region Protected Methods
-
-#pragma endregion Protected Methods
 
 #pragma region Private Methods
 bool TableAnalyzerTool::ValidateLocal(SvStl::MessageContainerVector * pErrorMessages) const

@@ -34,6 +34,8 @@ public:
 
 	virtual SvVol::SVStringValueObjectClass* GetInputImageNames() override;
 
+	virtual std::vector<std::string> getToolAdjustNameList() const override;
+
 protected:
 	virtual bool isInputImage(uint32_t) const override { return false; };
 	virtual HRESULT UpdateImageWithExtent() override;

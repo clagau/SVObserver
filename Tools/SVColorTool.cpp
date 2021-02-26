@@ -206,6 +206,20 @@ HRESULT SVColorToolClass::SetImageExtentToFit(const SVImageExtentClass& rImageEx
 	return m_toolExtent.UpdateExtentAgainstParentImage(rImageExtent);;
 }
 
+std::vector<std::string> SVColorToolClass::getToolAdjustNameList() const
+{
+	constexpr std::array<LPCTSTR, 5> cToolAdjustNameList
+	{
+		_T("Color Tool Adjustment"),
+		_T("Size and Position"),
+		_T("Conditional"),
+		_T("General"),
+		_T("Comment"),
+	};
+	return { cToolAdjustNameList.begin(), cToolAdjustNameList.end() };
+}
+
+
 SVToolClass* SVColorToolClass::GetObjectAtPoint(const SVPoint<double>& rPoint)
 {
 	if (SvPb::SVExtentLocationPropertyUnknown != GetImageExtent().GetLocationPropertyAt(rPoint))

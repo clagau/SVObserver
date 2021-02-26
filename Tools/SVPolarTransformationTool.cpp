@@ -205,4 +205,17 @@ void SVPolarTransformationToolClass::addOverlays(const SvIe::SVImageClass*, SvPb
 	}
 }
 
+std::vector<std::string> SVPolarTransformationToolClass::getToolAdjustNameList() const
+{
+	constexpr std::array<LPCTSTR, 5> cToolAdjustNameList
+	{
+		_T("Image Source"),
+		_T("Polar Unwrap"),
+		_T("Conditional"),
+		_T("General"),
+		_T("Comment"),
+	};
+	return { cToolAdjustNameList.begin(), cToolAdjustNameList.end() };
+}
+
 } //namespace SvTo

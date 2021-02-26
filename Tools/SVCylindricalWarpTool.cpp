@@ -302,6 +302,19 @@ bool SVCylindricalWarpToolClass::ResetObject(SvStl::MessageContainerVector *pErr
 	return Result;
 }
 
+std::vector<std::string> SVCylindricalWarpToolClass::getToolAdjustNameList() const
+{
+	constexpr std::array<LPCTSTR, 5> cToolAdjustNameList
+	{
+		_T("Image Source"),
+		_T("Warp Parameters"),
+		_T("Conditional"),
+		_T("General"),
+		_T("Comment"),
+	};
+	return { cToolAdjustNameList.begin(), cToolAdjustNameList.end() };
+}
+
 bool SVCylindricalWarpToolClass::DoesObjectHaveExtents() const
 {
 	return false;

@@ -43,6 +43,8 @@ public:
 	virtual SVToolClass* GetObjectAtPoint(const SVPoint<double>& rPoint) override;
 	virtual bool DoesObjectHaveExtents() const override;
 
+	virtual std::vector<std::string> getToolAdjustNameList() const override;
+
 	bool GetRotation() const;
 	
 

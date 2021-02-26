@@ -79,6 +79,7 @@ public:
 	SvOp::SVResult* GetResult( SVStatisticsFeatureEnum aFeatureIndex );
 
 	virtual bool areAuxExtentsAvailable() const override { return false; };
+	virtual std::vector<std::string> getToolAdjustNameList() const override;
 
 protected:
 	/// Get the current input value and consider also the return value, i.e. whether the valus is valid.

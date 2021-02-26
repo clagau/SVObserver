@@ -124,6 +124,16 @@ void SVAcquisitionToolClass::getToolsWithReplaceableSourceImage(SvPb::GetToolsWi
 	rData->set_objectid(getObjectId());
 }
 
+std::vector<std::string> SVAcquisitionToolClass::getToolAdjustNameList() const
+{
+	constexpr std::array<LPCTSTR, 2> cToolAdjustNameList
+	{
+		_T("Acquisition Source"),
+		_T("Comment"),
+	};
+	return { cToolAdjustNameList.begin(), cToolAdjustNameList.end() };
+}
+
 bool SVAcquisitionToolClass::Run(RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages)
 {
 	if (nullptr != m_replaceSourceImage)

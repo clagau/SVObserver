@@ -26,7 +26,7 @@ namespace SvOi
 typedef std::pair<std::string, uint32_t> ParameterPairForML;
 typedef std::vector<ParameterPairForML> ParametersForML;
 
-	//this class is a interface. It should only have pure virtual public method and no member variables
+	//this class is an interface. It should only have pure virtual public methods and no member variables
 	class ITool
 	{
 	public:
@@ -53,5 +53,6 @@ typedef std::vector<ParameterPairForML> ParametersForML;
 		virtual HRESULT setExtentToParent() = 0;
 		virtual bool isAllowedLocation(const SvPb::SVExtentLocationPropertyEnum Location, SvPb::SVExtentDirectionsEnum Direction = SvPb::SVExtentDirectionBoth) const = 0;
 		virtual SvPb::InspectionCmdResponse getInvalidDependencies() const = 0;
+		virtual std::vector<std::string> getToolAdjustNameList() const = 0;
 	};
 } //namespace SvOi

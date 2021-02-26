@@ -912,6 +912,18 @@ SVObjectReferenceVector SVArchiveTool::getImageArchiveList()
 	return Result;
 }
 
+std::vector<std::string> SVArchiveTool::getToolAdjustNameList() const
+{
+	constexpr std::array<LPCTSTR, 4> cToolAdjustNameList
+	{
+		_T("Archive Results"),
+		_T("Archive Image"),
+		_T("Conditional"),
+		_T("Comment"),
+	};
+	return { cToolAdjustNameList.begin(), cToolAdjustNameList.end() };
+}
+
 bool SVArchiveTool::GetArchiveResultFilepath(std::string& rName)
 {
 	bool Result = (S_OK == m_stringFileArchivePath.GetValue(rName));

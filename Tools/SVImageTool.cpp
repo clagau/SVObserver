@@ -325,6 +325,23 @@ void SVImageToolClass::addOverlays(const SvIe::SVImageClass* pImage, SvPb::Overl
 	collectOverlays(pImage, *pOverlay);
 }
 
+std::vector<std::string> SVImageToolClass::getToolAdjustNameList() const
+{
+	constexpr std::array<LPCTSTR, 9> cToolAdjustNameList
+	{
+		_T("Image Source"),
+		_T("Size and Position"),
+		_T("Filter"),
+		_T("Threshold"),
+		_T("Mask"),
+		_T("LUT"),
+		_T("Conditional"),
+		_T("General"),
+		_T("Comment"),
+	};
+	return { cToolAdjustNameList.begin(), cToolAdjustNameList.end() };
+}
+
 HRESULT SVImageToolClass::SetImageExtentToParent()
 {
 	SVImageExtentClass NewExtent;

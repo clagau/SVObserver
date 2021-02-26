@@ -193,6 +193,18 @@ bool RingBufferTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	return Result;
 }
 
+std::vector<std::string> RingBufferTool::getToolAdjustNameList() const
+{
+	constexpr std::array<LPCTSTR, 4> cToolAdjustNameList
+	{
+		_T("Image Source"),
+		_T("Parameters"),
+		_T("Conditional"),
+		_T("Comment"),
+	};
+	return { cToolAdjustNameList.begin(), cToolAdjustNameList.end() };
+}
+
 SvIe::SVImageClass* RingBufferTool::getOutputImage(int index)
 {
 	SvIe::SVImageClass *retValue = nullptr;

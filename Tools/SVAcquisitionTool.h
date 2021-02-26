@@ -37,6 +37,7 @@ public:
 	virtual void overwriteInputSource(SvOi::SVImageBufferHandlePtr imageHandlePtr) override;
 	virtual void getToolsWithReplaceableSourceImage(SvPb::GetToolsWithReplaceableSourceImageResponse&) const override;
 	virtual bool areAuxExtentsAvailable() const override { return false; };
+	virtual std::vector<std::string> getToolAdjustNameList() const override;
 
 protected:
 	virtual bool Run(RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages = nullptr) override;

@@ -261,6 +261,19 @@ HRESULT SVLoadImageToolClass::GetParentExtent( SVImageExtentClass& rParentExtent
 	return hr;
 }
 
+std::vector<std::string> SVLoadImageToolClass::getToolAdjustNameList() const
+{
+	constexpr std::array<LPCTSTR, 5> cToolAdjustNameList
+	{
+		_T("Image Source"),
+		_T("Size and Position"),
+		_T("Conditional"),
+		_T("General"),
+		_T("Comment"),
+	};
+	return { cToolAdjustNameList.begin(), cToolAdjustNameList.end() };
+}
+
 bool SVLoadImageToolClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const
 {
 	std::string PathName;

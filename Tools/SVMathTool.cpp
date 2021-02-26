@@ -126,4 +126,15 @@ SvOi::ParametersForML SVMathToolClass::getParameterForMonitorList(SvStl::Message
 	return retList;
 }
 
+std::vector<std::string> SVMathToolClass::getToolAdjustNameList() const
+{
+	constexpr std::array<LPCTSTR, 4> cToolAdjustNameList
+	{
+		_T("Formula"),
+		_T("Range"),
+		_T("Conditional"),
+		_T("Comment"),
+	};
+	return { cToolAdjustNameList.begin(), cToolAdjustNameList.end() };
+}
 } //namespace SvTo
