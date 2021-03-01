@@ -1150,7 +1150,8 @@ void SVVisionProcessorHelper::FireNotification(SvPb::NotifyType notifyType, cons
 	}
 
 	SvPb::GetNotificationStreamResponse response;
-	switch (notifyType) {
+	switch (notifyType) 
+	{
 	case SvPb::NotifyType::currentMode:
 		response.set_currentmode(static_cast<SvPb::DeviceModeType>(parameter.lVal));
 		break;
@@ -1159,9 +1160,6 @@ void SVVisionProcessorHelper::FireNotification(SvPb::NotifyType notifyType, cons
 		break;
 	case SvPb::NotifyType::configLoaded:
 		response.set_configfileloaded(SvUl::createStdString(parameter));
-		break;
-	case SvPb::NotifyType::configUnloaded:
-		response.set_configfileunloaded(SvUl::createStdString(parameter));
 		break;
 	default:
 		break;
