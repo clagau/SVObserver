@@ -464,7 +464,6 @@ SvStl::MessageContainerVector SVTaskObjectClass::validateAndSetEmbeddedValues(co
 			messages.push_back(rSvE);
 			Result = rSvE.getMessage().m_MessageCode;
 		}
-
 	}
 
 	if (shouldSet)
@@ -479,6 +478,7 @@ SvStl::MessageContainerVector SVTaskObjectClass::validateAndSetEmbeddedValues(co
 					if (S_OK == Result)
 					{
 						Result = rEntry.m_pValueObject->setValue(rEntry.m_Value, rEntry.m_ArrayIndex);
+
 					}
 					else
 					{

@@ -273,6 +273,9 @@ HRESULT SVImageToolClass::UpdateTranslation()
 			double heightScaleFactor = 2.0;
 			toolImageExtents.SetExtentProperty(SvPb::SVExtentPropertyHeightFactorContent, heightScaleFactor);
 			toolImageExtents.SetExtentProperty(SvPb::SVExtentPropertyHeightFactorFormat, heightScaleFactor);
+			double widthScaleFactor = 1.0;
+			toolImageExtents.SetExtentProperty(SvPb::SVExtentPropertyWidthFactorContent, widthScaleFactor);
+			toolImageExtents.SetExtentProperty(SvPb::SVExtentPropertyWidthFactorFormat, widthScaleFactor);
 			extentChanged = true;
 		}
 		else if ( l_lValue == SvDef::SVImageOperatorFlipVertical )

@@ -48,7 +48,7 @@ private:
 	};
 	typedef std::map<SvPb::SVExtentPropertyEnum, SVExtentPropertyInfoStructImpl> SVToolExtentPropertiesMap;
 
-	SVToolExtentPropertiesMap m_svProperties;
+	SVToolExtentPropertiesMap m_extentPropertyInfo;
 };
 
 } //namespace SvIe

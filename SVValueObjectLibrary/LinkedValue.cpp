@@ -143,7 +143,12 @@ namespace SvVol
 		}
 		else
 		{
-			return __super::setValue(rValue, Index, fixArraysize);
+			auto res = __super::setValue(rValue, Index, fixArraysize);
+			if(S_OK == res)
+			{
+				res = ResetObject(); //now Linked Values are fully usable once they have been set
+			}
+			return res;
 		}
 	}
 

@@ -1,7 +1,7 @@
 //*****************************************************************************
 /// \copyright COPYRIGHT (c) 2015 by Seidenader Maschinenbau GmbH
 /// All Rights Reserved 
-/// \Author	Jim Brown
+/// Contains the function definitions for the Resize Tool class 
 //*****************************************************************************
 
 #pragma region Includes
@@ -278,20 +278,32 @@ SvVol::SVStringValueObjectClass* ResizeTool::GetInputImageNames()
 bool ResizeTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 #if defined (TRACE_THEM_ALL) || defined (TRACE_RESIZE)
+
+	std::vector<std::reference_wrapper<const SvVol::LinkedValue>>
+		allScaleFactorLinkedValues
+	{
+		std::cref(m_ExtentWidthFactorContent),
+		std::cref(m_ExtentHeightFactorContent),
+		std::cref(m_ExtentWidthFactorFormat),
+		std::cref(m_ExtentHeightFactorFormat)
+	};
+
 	std::stringstream traceStream;
 
-	traceStream << "Scale factors (w/h): ";
+	traceStream << "Scale factors (wC/hC/wF/hF):";
 
-	double scaleFactor = 0.0;
-	m_ExtentWidthFactorContent.getValue(scaleFactor);
-	traceStream << "Content:" << scaleFactor << "/";
-	m_ExtentHeightFactorContent.getValue(scaleFactor);
-	traceStream << scaleFactor << ", ";
+	for (auto& rSflv : allScaleFactorLinkedValues)
+	{
+		auto& rSvo = rSflv.getLinkedName();
 
-	m_ExtentWidthFactorFormat.getValue(scaleFactor);
-	traceStream << "Format:" << scaleFactor << "/";
-	m_ExtentHeightFactorFormat.getValue(scaleFactor);
-	traceStream << scaleFactor << std::endl;
+		std::string ln;
+		rSvo.getValue(ln);
+		traceStream << " '" << ln << "': ";
+		double scaleFactor = 0.0;
+		rSflv.getValue(scaleFactor);
+		traceStream << scaleFactor;
+	}
+	traceStream << std::endl;
 
 	OutputDebugString(traceStream.str().c_str());
 	//uncomment the next line to enable error reporting to cmd window
@@ -388,7 +400,6 @@ bool ResizeTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 
 	return result;
 }
-
 
 bool ResizeTool::ModifyImageExtentByScaleFactors()
 {

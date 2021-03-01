@@ -1,10 +1,8 @@
 //*****************************************************************************
-/// \copyright COPYRIGHT (c) 2015 by Seidenader Maschinenbau GmbH
+/// \copyright COPYRIGHT (c) 2015, 2021 by Seidenader Maschinenbau GmbH
 /// All Rights Reserved 
-/// \Author	Jim Brown
 //*****************************************************************************
-
-/// Classes and functions to ....
+/// Contains the Resize Tool class definition
 //******************************************************************************
 
 #pragma once
@@ -70,7 +68,6 @@ private:
 	virtual bool onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	bool ModifyImageExtentByScaleFactors();
-
 #pragma endregion Private Methods
 
 #pragma region Private Members

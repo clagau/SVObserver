@@ -39,7 +39,7 @@ HRESULT SVToolExtentPropertiesClass::Initialize()
 {
 	HRESULT l_hrOk = S_OK;
 
-	m_svProperties.clear();
+	m_extentPropertyInfo.clear();
 
 	return l_hrOk;
 }
@@ -50,7 +50,7 @@ HRESULT SVToolExtentPropertiesClass::GetProperties( SVImageExtentClass& rExtents
 
 	SVToolExtentPropertiesMap::const_iterator iter;
 
-	for ( iter = m_svProperties.begin(); S_OK == result && iter != m_svProperties.end(); ++iter )
+	for ( iter = m_extentPropertyInfo.begin(); S_OK == result && iter != m_extentPropertyInfo.end(); ++iter )
 	{
 		if ( nullptr != iter->second.pValueObject )
 		{
@@ -70,9 +70,9 @@ HRESULT SVToolExtentPropertiesClass::GetExtentObject( SvPb::SVExtentPropertyEnum
 {
 	HRESULT result{E_FAIL};
 
-	SVToolExtentPropertiesMap::const_iterator iter = m_svProperties.find( p_eProperty );
+	SVToolExtentPropertiesMap::const_iterator iter = m_extentPropertyInfo.find( p_eProperty );
 
-	if (m_svProperties.end() != iter)
+	if (m_extentPropertyInfo.end() != iter)
 	{
 		rpValueObject = iter->second.pValueObject;
 		result = S_OK;
@@ -85,11 +85,11 @@ void SVToolExtentPropertiesClass::SetExtentObject( SvPb::SVExtentPropertyEnum p_
 {
 	if ( nullptr == pValueObject )
 	{
-		m_svProperties.erase( p_eProperty );
+		m_extentPropertyInfo.erase( p_eProperty );
 	}
 	else
 	{
-		m_svProperties[ p_eProperty ].pValueObject = pValueObject;
+		m_extentPropertyInfo[ p_eProperty ].pValueObject = pValueObject;
 	}
 }
 
@@ -97,9 +97,9 @@ HRESULT SVToolExtentPropertiesClass::GetPropertyInfo( SvPb::SVExtentPropertyEnum
 {
 	HRESULT result{E_FAIL};
 
-	SVToolExtentPropertiesMap::const_iterator iter = m_svProperties.find( eProperty );
+	SVToolExtentPropertiesMap::const_iterator iter = m_extentPropertyInfo.find( eProperty );
 
-	if ( iter != m_svProperties.end() )
+	if ( iter != m_extentPropertyInfo.end() )
 	{
 		rInfo = iter->second.info;
 		result = S_OK;
@@ -112,9 +112,9 @@ HRESULT SVToolExtentPropertiesClass::SetPropertyInfo( SvPb::SVExtentPropertyEnum
 {
 	HRESULT result{E_FAIL};
 
-	SVToolExtentPropertiesMap::iterator iter = m_svProperties.find( eProperty );
+	SVToolExtentPropertiesMap::iterator iter = m_extentPropertyInfo.find( eProperty );
 
-	if ( iter != m_svProperties.end() )
+	if ( iter != m_extentPropertyInfo.end() )
 	{
 		iter->second.info = rInfo;
 		result = S_OK;

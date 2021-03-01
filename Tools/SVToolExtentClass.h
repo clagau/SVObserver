@@ -76,7 +76,9 @@ public:
 	void SetExtentObject( SvPb::SVExtentPropertyEnum p_eProperty, SvOi::IValueObject* pValueObject );
 
 	HRESULT GetExtentValue( SvPb::SVExtentPropertyEnum p_eProperty, _variant_t& rValue ) const;
-	HRESULT SetExtentValue( SvPb::SVExtentPropertyEnum p_eProperty, const _variant_t& rValue );
+	HRESULT SetExtentValue(SvPb::SVExtentPropertyEnum p_eProperty, const _variant_t& rValue);
+	bool correspondingLinkedValueIsIndirect(SvPb::SVExtentPropertyEnum extentProperty);
+
 
 	HRESULT GetExtentPropertyInfo( SvPb::SVExtentPropertyEnum p_eProperty, SvIe::SVExtentPropertyInfoStruct& p_rInfo ) const;
 	HRESULT SetExtentPropertyInfo( SvPb::SVExtentPropertyEnum p_eProperty, const SvIe::SVExtentPropertyInfoStruct& p_rInfo );

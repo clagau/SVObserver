@@ -332,21 +332,21 @@ HRESULT SVToolExtentClass::SetLinearTranslation(SvPb::SVExtentTranslationEnum eT
 	return l_hrOk;
 }
 
-HRESULT SVToolExtentClass::GetExtentObject(SvPb::SVExtentPropertyEnum p_eProperty, SvOi::IValueObject*& rpValueObject) const
+HRESULT SVToolExtentClass::GetExtentObject(SvPb::SVExtentPropertyEnum extentProperty, SvOi::IValueObject*& rpValueObject) const
 {
-	return m_Properties.GetExtentObject(p_eProperty, rpValueObject);
+	return m_Properties.GetExtentObject(extentProperty, rpValueObject);
 }
 
-void SVToolExtentClass::SetExtentObject(SvPb::SVExtentPropertyEnum p_eProperty, SvOi::IValueObject* pValueObject)
+void SVToolExtentClass::SetExtentObject(SvPb::SVExtentPropertyEnum extentProperty, SvOi::IValueObject* pValueObject)
 {
-	m_Properties.SetExtentObject(p_eProperty, pValueObject);
+	m_Properties.SetExtentObject(extentProperty, pValueObject);
 }
 
-HRESULT SVToolExtentClass::GetExtentValue(SvPb::SVExtentPropertyEnum p_eProperty, _variant_t& rValue) const
+HRESULT SVToolExtentClass::GetExtentValue(SvPb::SVExtentPropertyEnum extentProperty, _variant_t& rValue) const
 {
 	rValue.Clear();
 	SvOi::IValueObject* pValueObject(nullptr);
-	HRESULT l_hrOk = GetExtentObject(p_eProperty, pValueObject);
+	HRESULT l_hrOk = GetExtentObject(extentProperty, pValueObject);
 
 	if (nullptr != pValueObject)
 	{
@@ -360,10 +360,10 @@ HRESULT SVToolExtentClass::GetExtentValue(SvPb::SVExtentPropertyEnum p_eProperty
 	return l_hrOk;
 }
 
-HRESULT SVToolExtentClass::SetExtentValue(SvPb::SVExtentPropertyEnum p_eProperty, const _variant_t& rValue)
+HRESULT SVToolExtentClass::SetExtentValue(SvPb::SVExtentPropertyEnum extentProperty, const _variant_t& rValue)
 {
 	SvOi::IValueObject* pValueObject(nullptr);
-	HRESULT l_hrOk = GetExtentObject(p_eProperty, pValueObject);
+	HRESULT l_hrOk = GetExtentObject(extentProperty, pValueObject);
 
 	if (nullptr != pValueObject)
 	{
@@ -374,6 +374,22 @@ HRESULT SVToolExtentClass::SetExtentValue(SvPb::SVExtentPropertyEnum p_eProperty
 		l_hrOk = E_FAIL;
 	}
 	return l_hrOk;
+}
+
+bool SVToolExtentClass::correspondingLinkedValueIsIndirect(SvPb::SVExtentPropertyEnum extentProperty)
+{
+	SvOi::IValueObject* pValueObject(nullptr);
+	if (S_OK == GetExtentObject(extentProperty, pValueObject))
+	{
+		auto pLinkedValue = dynamic_cast<SvVol::LinkedValue*>(pValueObject);
+
+		if (nullptr != pLinkedValue)
+		{
+			return pLinkedValue->isIndirectValue();
+		}
+	}
+
+	return false; // if it is not a proper linked value, it cannot be indirect
 }
 
 HRESULT SVToolExtentClass::updateImageExtent()
@@ -467,8 +483,12 @@ HRESULT SVToolExtentClass::SetImageExtent(const SVImageExtentClass& rImageExtent
 			}
 		)
 	{
-		// cppcheck-suppress useStlAlgorithm
-		l_hrOk &= adaptScaleFactorExtentProperty(rImageExtent, extentProperty);
+		if(false == correspondingLinkedValueIsIndirect(extentProperty))
+		{
+			// cppcheck-suppress useStlAlgorithm
+			l_hrOk &= adaptScaleFactorExtentProperty(rImageExtent, extentProperty);
+		}
+		//else: do nothing here for indirect linked values
 	}
 
 
@@ -864,14 +884,14 @@ std::string SVToolExtentClass::GetAuxiliaryDrawTypeString() const
 	return Result;
 }
 
-HRESULT SVToolExtentClass::GetExtentPropertyInfo(SvPb::SVExtentPropertyEnum p_eProperty, SvIe::SVExtentPropertyInfoStruct& rInfo) const
+HRESULT SVToolExtentClass::GetExtentPropertyInfo(SvPb::SVExtentPropertyEnum extentProperty, SvIe::SVExtentPropertyInfoStruct& rInfo) const
 {
-	return m_Properties.GetPropertyInfo(p_eProperty, rInfo);
+	return m_Properties.GetPropertyInfo(extentProperty, rInfo);
 }
 
-HRESULT SVToolExtentClass::SetExtentPropertyInfo(SvPb::SVExtentPropertyEnum p_eProperty, const SvIe::SVExtentPropertyInfoStruct& rInfo)
+HRESULT SVToolExtentClass::SetExtentPropertyInfo(SvPb::SVExtentPropertyEnum extentProperty, const SvIe::SVExtentPropertyInfoStruct& rInfo)
 {
-	return m_Properties.SetPropertyInfo(p_eProperty, rInfo);
+	return m_Properties.SetPropertyInfo(extentProperty, rInfo);
 }
 
 void SVToolExtentClass::getExtentProperties(::google::protobuf::RepeatedPtrField< ::SvPb::ExtentParameter >& rExtentProperties) const

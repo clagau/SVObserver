@@ -257,11 +257,9 @@ bool SVTADlgResizePage::CommitAndCheckNewParameterValues()
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_RESIZE)
 
-	m_resizeValueController.Init();
 	traceScalefactorValues("Committed");
 
 #endif 
-
 
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
@@ -297,7 +295,7 @@ void SVTADlgResizePage::CommitValuesFromDialog()
 		rEditHelper.EditboxToValue();
 	}
 
-	m_resizeValueController.Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
+	m_resizeValueController.Commit();
 
 }
 
