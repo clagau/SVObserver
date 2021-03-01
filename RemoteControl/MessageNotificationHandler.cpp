@@ -21,17 +21,17 @@ MessageNotificationHandler::MessageNotificationHandler(const NotifyFunctor& prNo
 {
 }
 
-SvSyl::SVFuture<void> MessageNotificationHandler::OnNext(const SvPb::GetMessageNotificationStreamResponse& rResponse)
+SvSyl::SVFuture<void> MessageNotificationHandler::OnNext(const SvPb::GetMessageStreamResponse& rResponse)
 {
 
 	NotificationType type = NotificationType::MessageNotification;
 
 	boost::property_tree::ptree propTree;
 	propTree.put("SVRC.Notification", "MessageNotification");
-	if(rResponse.msglist().messages_size() > 0)
+	if(rResponse.messagelist().messages_size() > 0)
 	{
 		//Get only first message
-		const SvPb::MessageContainer& rMessage = rResponse.msglist().messages(0);
+		const SvPb::MessageContainer& rMessage = rResponse.messagelist().messages(0);
 		propTree.put("SVRC.DataItems.MessageText", rMessage.messagetext());
 		propTree.put("SVRC.DataItems.MessageType", rResponse.type());
 		propTree.put("SVRC.DataItems.MessageNumber", rMessage.messagecode());

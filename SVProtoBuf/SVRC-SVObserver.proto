@@ -9,6 +9,8 @@
 syntax = "proto3";
 package SvPb;
 
+option java_package = "de.sdm.svrc.proto.v1010";
+
 import "Variant.proto";
 import "BasicStructure.proto";
 import "SVRC-Enum.proto";
@@ -335,6 +337,14 @@ message GetTriggerStreamResponse
 	bool is_reject = 2;
 }
 
+//This structure is sent for message notifications
+message MsgNotification
+{
+	MessageType type = 1;                   //The message type start end or log
+	string messageText = 2;                 //The message text being displayed
+	int32 errorNumber = 3;                  //The error number being displayed
+}
+
 //This registers which notifications are streamed by SVObserver
 message GetNotificationStreamRequest
 {
@@ -343,19 +353,28 @@ message GetNotificationStreamRequest
 
 message GetNotificationStreamResponse
 {
-	NotifyType type = 1;		//The notification type
-	Variant Parameter = 2;		//The additional parameter to the notification
+	oneof message
+	{
+		DeviceModeType currentMode = 1;                 //The current SVObserver device mode
+		uint32 lastModified = 2;                                //The last modified time stamp
+		MsgNotification DEPRECATED_msgNotification = 3;    //The message notification structure. not triggered anymore. use GetMessageStreamRequest instead
+		string configFileLoaded = 4;                    //The path to the loaded configuration file
+		string configFileUnloaded = 5;                    //The path to the loaded configuration file
+	}
+
+	NotifyType type = 11;            //The notification type
+	Variant parameter = 12;          //The additional parameter to the notification
 }
 
-message GetMessageNotificationStreamRequest
+message GetMessageStreamRequest
 {
 	repeated MessageSeverity severityList = 1;	//The severity types to receive if empty all are received
 }
 
-message GetMessageNotificationStreamResponse
+message GetMessageStreamResponse
 {
 	MessageType type = 1;		//The message type start end or log
-	MessageContainerVector msgList = 2;
+	MessageContainerVector messageList = 2;
 }
 
 ///This is the recursive structure for the configuration tree

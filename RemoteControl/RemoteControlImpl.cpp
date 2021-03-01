@@ -1066,7 +1066,7 @@ void RemoteControlImpl::StartNotificationStreaming()
 		boost::bind(&NotificationHandler::OnFinish, &m_notificationHandler),
 		boost::bind(&NotificationHandler::OnError, &m_notificationHandler, _1));
 
-	SvRpc::Observer<SvPb::GetMessageNotificationStreamResponse> messageNotificationObserver(boost::bind(&MessageNotificationHandler::OnNext, &m_messageNotificationHandler, _1),
+	SvRpc::Observer<SvPb::GetMessageStreamResponse> messageObserver(boost::bind(&MessageNotificationHandler::OnNext, &m_messageNotificationHandler, _1),
 		boost::bind(&MessageNotificationHandler::OnFinish, &m_messageNotificationHandler),
 		boost::bind(&MessageNotificationHandler::OnError, &m_messageNotificationHandler, _1));
 
@@ -1074,7 +1074,7 @@ void RemoteControlImpl::StartNotificationStreaming()
 	{
 		SV_LOG_GLOBAL(info) << "StartNotificationStreaming";
 		m_csxNotification = m_pSvrcClientService->GetNotificationStream(SvPb::GetNotificationStreamRequest(), notificationObserver);
-		m_csxMessageNotification = m_pSvrcClientService->GetMessageNotificationStream(SvPb::GetMessageNotificationStreamRequest(), messageNotificationObserver);
+		m_csxMessageNotification = m_pSvrcClientService->GetMessageStream(SvPb::GetMessageStreamRequest(), messageObserver);
 	}
 }
 

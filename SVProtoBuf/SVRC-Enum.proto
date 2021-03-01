@@ -9,6 +9,8 @@
 syntax = "proto3";
 package SvPb;
 
+option java_package = "de.sdm.svrc.proto.v1010";
+
 ///The entries in the monitor list can belong to one or more of the following groups:
 /// there are also free entries that do not belong to Productitem RejectCondition and FailstatusList
 enum ListType

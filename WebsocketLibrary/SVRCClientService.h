@@ -40,8 +40,8 @@ public:
 	void QueryListItem(SvPb::QueryListItemRequest&& req, SvRpc::Task<SvPb::QueryListItemResponse> task);
 	SvRpc::ClientStreamContext GetNotificationStream(SvPb::GetNotificationStreamRequest&& req,
 		SvRpc::Observer<SvPb::GetNotificationStreamResponse> observer);
-	SvRpc::ClientStreamContext GetMessageNotificationStream(SvPb::GetMessageNotificationStreamRequest&& req,
-		SvRpc::Observer<SvPb::GetMessageNotificationStreamResponse> observer);
+	SvRpc::ClientStreamContext GetMessageStream(SvPb::GetMessageStreamRequest&& req,
+		SvRpc::Observer<SvPb::GetMessageStreamResponse> observer);
 
 	void GetSVObserverVersion(SvPb::GetSVObserverVersionRequest&&, SvRpc::Task<SvPb::GetVersionResponse> task);
 	void GetDeviceMode(SvPb::GetDeviceModeRequest&&, SvRpc::Task<SvPb::GetDeviceModeResponse> task);
@@ -81,7 +81,7 @@ private:
 	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::GetImageFromIdRequest, SvPb::GetImageFromIdResponse> m_GetImageFromIdClient;
 	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::GetFailStatusRequest, SvPb::GetFailStatusResponse> m_GetFailStatusClient;
 	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::GetNotificationStreamRequest, SvPb::GetNotificationStreamResponse> m_GetNotificationStreamClient;
-	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::GetMessageNotificationStreamRequest, SvPb::GetMessageNotificationStreamResponse> m_GetMessageNotificationStreamClient;
+	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::GetMessageStreamRequest, SvPb::GetMessageStreamResponse> m_GetMessageStreamClient;
 
 	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::GetSVObserverVersionRequest, SvPb::GetVersionResponse> m_GetSVObserverVersionClient;
 	SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::GetDeviceModeRequest, SvPb::GetDeviceModeResponse> m_GetDeviceModeClient;

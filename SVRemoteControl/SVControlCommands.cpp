@@ -172,16 +172,16 @@ void SVControlCommands::StartNotificationStreaming()
 	SvRpc::Observer<SvPb::GetNotificationStreamResponse> notificationObserver(boost::bind(&NotificationHandler::OnNext, &m_notificationHandler, _1),
 		boost::bind(&NotificationHandler::OnFinish, &m_notificationHandler),
 		boost::bind(&NotificationHandler::OnError, &m_notificationHandler, _1));
-	
-	SvRpc::Observer<SvPb::GetMessageNotificationStreamResponse> messageNotificationObserver(boost::bind(&MessageNotificationHandler::OnNext, &m_messageNotificationHandler, _1),
-		boost::bind(&MessageNotificationHandler::OnFinish, &m_messageNotificationHandler),
-		boost::bind(&MessageNotificationHandler::OnError, &m_messageNotificationHandler, _1));
+	//
+	//SvRpc::Observer<SvPb::GetMessageNotificationStreamResponse> messageNotificationObserver(boost::bind(&MessageNotificationHandler::OnNext, &m_messageNotificationHandler, _1),
+	//	boost::bind(&MessageNotificationHandler::OnFinish, &m_messageNotificationHandler),
+	//	boost::bind(&MessageNotificationHandler::OnError, &m_messageNotificationHandler, _1));
 
 	if (m_pSvrcClientService)
 	{
 		SV_LOG_GLOBAL(info) << "StartNotificationStreaming";
 		m_csxNotification = m_pSvrcClientService->GetNotificationStream(SvPb::GetNotificationStreamRequest(), notificationObserver);
-		m_csxMessageNotification = m_pSvrcClientService->GetMessageNotificationStream(SvPb::GetMessageNotificationStreamRequest(), messageNotificationObserver);
+		//m_csxMessageNotification = m_pSvrcClientService->GetMessageNotificationStream(SvPb::GetMessageNotificationStreamRequest(), messageNotificationObserver);
 	}
 }
 
@@ -189,8 +189,8 @@ void  SVControlCommands::StopNotificationStreaming()
 {
 	m_csxNotification.cancel();
 	m_csxNotification = SvRpc::ClientStreamContext{nullptr};
-	m_csxMessageNotification.cancel();
-	m_csxMessageNotification = SvRpc::ClientStreamContext{ nullptr };
+	//m_csxMessageNotification.cancel();
+	//m_csxMessageNotification = SvRpc::ClientStreamContext{ nullptr };
 	SV_LOG_GLOBAL(info) << "StopNotificationStreaming";
 }
 

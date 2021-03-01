@@ -378,11 +378,11 @@ SVRCRequestHandler::SVRCRequestHandler(SVRCCommand* pCommand) :
 
 	registerStreamHandler<
 		SvPb::SVRCMessages,
-		SvPb::SVRCMessages::kGetMessageNotificationStreamRequest,
-		SvPb::GetMessageNotificationStreamRequest,
-		SvPb::GetMessageNotificationStreamResponse>(
-			[this, pCommand](const SvAuth::SessionContext&, SvPb::GetMessageNotificationStreamRequest&& req, SvRpc::Observer<SvPb::GetMessageNotificationStreamResponse> observer, SvRpc::ServerStreamContext::Ptr ctx)
+		SvPb::SVRCMessages::kGetMessageStreamRequest,
+		SvPb::GetMessageStreamRequest,
+		SvPb::GetMessageStreamResponse>(
+			[this, pCommand](const SvAuth::SessionContext&, SvPb::GetMessageStreamRequest&& req, SvRpc::Observer<SvPb::GetMessageStreamResponse> observer, SvRpc::ServerStreamContext::Ptr ctx)
 			{
-				pCommand->RegisterMessageNotificationStream(req, observer, ctx);
+				pCommand->RegisterMessageStream(req, observer, ctx);
 			});
 }

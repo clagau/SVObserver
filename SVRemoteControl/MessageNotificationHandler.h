@@ -12,7 +12,7 @@ class SVControlCommands;
 
 namespace SvPb
 {
-	class GetMessageNotificationStreamResponse;
+	//class GetMessageNotificationStreamResponse;
 }
 namespace SvPenv
 {
@@ -28,7 +28,7 @@ class MessageNotificationHandler
 {
 public:
 	explicit MessageNotificationHandler(const SVControlCommands& rControl);
-	SvSyl::SVFuture<void> OnNext(const SvPb::GetMessageNotificationStreamResponse& resp);
+	//SvSyl::SVFuture<void> OnNext(const SvPb::GetMessageNotificationStreamResponse& resp);
 	void OnFinish();
 	void OnError(const SvPenv::Error& er);
 private:

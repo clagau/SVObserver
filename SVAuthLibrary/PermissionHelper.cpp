@@ -88,8 +88,8 @@ void PermissionHelper::serializePermissions(google::protobuf::RepeatedPtrField<s
 	addPermissionIf(p.svobserver().value().edit(), "svobserver.value.edit");
 	addPermissionIf(p.svobserver().value().read(), "svobserver.value.read");
 
-	addPermissionIf(p.usermanagement().permissions().edit(), "usermanagement.permissions.edit");
-	addPermissionIf(p.usermanagement().permissions().read(), "usermanagement.permissions.read");
+	addPermissionIf(p.usermanagement().userpermissions().edit(), "usermanagement.userpermissions.edit");
+	addPermissionIf(p.usermanagement().userpermissions().read(), "usermanagement.userpermissions.read");
 
 	auto addPermissionWithPrefixIf = [&permissions](bool b, const char* prefix, const std::string& infix, const char* remainder)
 	{

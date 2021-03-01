@@ -63,6 +63,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PropTreeTest", "PropTreeTes
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RemoteControl", "RemoteControl\RemoteControl.vcxproj", "{0DA22C18-0024-452E-AC6B-56291A1A4669}"
+	ProjectSection(ProjectDependencies) = postProject
+		{2F3FD18D-3FDE-414C-8AF5-4A872B1519FF} = {2F3FD18D-3FDE-414C-8AF5-4A872B1519FF}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SlotManagerTester", "SlotManagerTester\SlotManagerTester.vcxproj", "{01BD7A65-25A4-4C8E-B36C-23D36972F58A}"
 	ProjectSection(ProjectDependencies) = postProject

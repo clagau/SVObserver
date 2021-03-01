@@ -108,9 +108,15 @@ void StartWebServer(DWORD argc, LPTSTR  *argv)
 		SvAuth::RestHandler restHandler(authManager);
 
 		SvOgw::WebAppVersionLoader webAppVersionLoader(settings.httpSettings);
-		SvOgw::SharedMemoryAccess sharedMemoryAccess(IoService, settings.shareControlSettings, webAppVersionLoader, rpcClient, authManager.getUserDatabase(), settings.skipPermissionChecks);
-		SvOgw::ServerRequestHandler requestHandler(&sharedMemoryAccess, &authManager);
 
+		SvOgw::SharedMemoryAccess sharedMemoryAccess(IoService, settings.shareControlSettings, webAppVersionLoader, rpcClient, authManager.getUserDatabase(), settings.skipPermissionChecks);
+		SvStl::MessageManager::setNotificationFunction(
+			[&sharedMemoryAccess](const SvStl::MessageContainer& rMessage, int messageType)
+			{
+				sharedMemoryAccess.onMessageContainer(rMessage, messageType);
+			});
+
+		SvOgw::ServerRequestHandler requestHandler(&sharedMemoryAccess, &authManager);
 		SvRpc::RPCServer rpcServer(&requestHandler);
 		settings.httpSettings.pEventHandler = &rpcServer;
 		settings.httpSettings.HttpRequestHandler = std::bind(&on_http_request, std::ref(restHandler), std::placeholders::_1, std::placeholders::_2);

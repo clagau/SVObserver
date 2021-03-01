@@ -8,6 +8,8 @@
 syntax = "proto3";
 package SvPb;
 
+option java_package = "de.sdm.svrc.proto.v1010";
+
 import "BasicStructure.proto";
 
 enum ClipboardActionEnum

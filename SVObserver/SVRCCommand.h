@@ -57,8 +57,8 @@ public:
 	void RegisterNotificationStream(const SvPb::GetNotificationStreamRequest& rRequest,
 		SvRpc::Observer<SvPb::GetNotificationStreamResponse>& rObserver,
 		SvRpc::ServerStreamContext::Ptr ctx);
-	void RegisterMessageNotificationStream(const SvPb::GetMessageNotificationStreamRequest& rRequest,
-		SvRpc::Observer<SvPb::GetMessageNotificationStreamResponse>& rObserver,
+	void RegisterMessageStream(const SvPb::GetMessageStreamRequest& rRequest,
+		SvRpc::Observer<SvPb::GetMessageStreamResponse>& rObserver,
 		SvRpc::ServerStreamContext::Ptr ctx);
 
 private:

@@ -9,6 +9,8 @@
 syntax = "proto3";
 package SvPb;
 
+option java_package = "de.sdm.svrc.proto.v1010";
+
 message Permissions {
 
 	message WebApp {
@@ -118,12 +120,12 @@ message Permissions {
 	}
 
 	message UserManagement {
-		message Permissions {
+		message UserPermissions {
 			bool read = 1;
 			bool edit = 2;
 		}
 
-		Permissions permissions = 1;
+		UserPermissions userpermissions = 1;
 	}
 
 	WebApp webapp = 1;

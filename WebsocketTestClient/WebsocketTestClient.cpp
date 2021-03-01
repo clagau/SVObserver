@@ -112,22 +112,22 @@ SvRpc::ClientStreamContext StartNotifications(SvWsl::SVRCClientService& client)
 	
 }
 
-SvRpc::ClientStreamContext StartMessageNotification(SvWsl::SVRCClientService& client)
+SvRpc::ClientStreamContext StartMessageStream(SvWsl::SVRCClientService& client)
 {
 
-	SvPb::GetMessageNotificationStreamRequest req;
+	SvPb::GetMessageStreamRequest req;
 	//If the line below is not commented out it would cause only error messages to be notified (add severity as required empty means all notifications)
 	//req.add_severitylist(SvPb::MessageSeverity::sevError);
-	auto ctx = client.GetMessageNotificationStream(std::move(req), SvRpc::Observer<SvPb::GetMessageNotificationStreamResponse>(
-		[](SvPb::GetMessageNotificationStreamResponse&& res) -> SvSyl::SVFuture<void>
+	auto ctx = client.GetMessageStream(std::move(req), SvRpc::Observer<SvPb::GetMessageStreamResponse>(
+		[](SvPb::GetMessageStreamResponse&& res) -> SvSyl::SVFuture<void>
 		{
 			//SV_LOG_GLOBAL(info) << "Received notification " << res.id() << " " << res.type() << " " << res.message();
 			std::string temp = res.DebugString();
 			std::string typeName = MessageType_Name(res.type());
 			SV_LOG_GLOBAL(info) << "A message notification arrived: " << typeName.c_str() << std::endl;
-			if (res.msglist().messages_size() > 0)
+			if (res.messagelist().messages_size() > 0)
 			{
-				const SvPb::MessageContainer& rMessage = res.msglist().messages(0);
+				const SvPb::MessageContainer& rMessage = res.messagelist().messages(0);
 				SV_LOG_GLOBAL(info) << "with message" << rMessage.messagetext().c_str() << std::endl;
 			}
 			return SvSyl::SVFuture<void>::make_ready();
@@ -406,7 +406,7 @@ int main(int argc, char* argv[])
 			{
 				try
 				{
-					csx = StartMessageNotification(*pService);
+					csx = StartMessageStream(*pService);
 				}
 				catch (const std::exception& e)
 				{

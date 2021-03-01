@@ -116,8 +116,8 @@ public:
 	void RegisterNotificationStream(const SvPb::GetNotificationStreamRequest& rRequest,
 		SvRpc::Observer<SvPb::GetNotificationStreamResponse> observer,
 		SvRpc::ServerStreamContext::Ptr ctx);
-	void RegisterMessageNotificationStream(const SvPb::GetMessageNotificationStreamRequest& rRequest,
-		SvRpc::Observer<SvPb::GetMessageNotificationStreamResponse> Observer,
+	void RegisterMessageStream(const SvPb::GetMessageStreamRequest& rRequest,
+		SvRpc::Observer<SvPb::GetMessageStreamResponse> Observer,
 		SvRpc::ServerStreamContext::Ptr ctx);
 private:
 	typedef boost::function< HRESULT(const SvDef::StringSet&, SVNameStorageResultMap&) > SVGetItemsFunctor;
@@ -171,15 +171,15 @@ private:
 		SvRpc::ServerStreamContext::Ptr m_context;
 		std::vector<int> m_notifyList;
 	};
-	struct MessageNotificationSubscription
+	struct MessageSubscription
 	{
-		SvRpc::Observer<SvPb::GetMessageNotificationStreamResponse> m_observer;
+		SvRpc::Observer<SvPb::GetMessageStreamResponse> m_observer;
 		SvRpc::ServerStreamContext::Ptr m_context;
 		std::vector<int> m_severityList;
 	};
 
 	mutable std::vector<NotificationSubscription> m_Subscriptions;
-	mutable std::vector<MessageNotificationSubscription> m_MessageSubscriptions;
+	mutable std::vector<MessageSubscription> m_MessageSubscriptions;
 	mutable std::mutex m_SubscriptionsMutex;
 #pragma endregion Private Members
 };

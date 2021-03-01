@@ -167,8 +167,8 @@ static void setAllPermissions(SvPb::Permissions& permissions)
 	permissions.mutable_svobserver()->mutable_value()->set_read(true);
 
 	// allow all user management permissions
-	permissions.mutable_usermanagement()->mutable_permissions()->set_edit(true);
-	permissions.mutable_usermanagement()->mutable_permissions()->set_read(true);
+	permissions.mutable_usermanagement()->mutable_userpermissions()->set_edit(true);
+	permissions.mutable_usermanagement()->mutable_userpermissions()->set_read(true);
 }
 
 static bool isValidGroup(const GroupDetails& group, std::string& errMsg)

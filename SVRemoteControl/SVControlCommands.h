@@ -84,7 +84,7 @@ private:
 	NotifyFunctor m_pNotifier{ nullptr };
 
 	SvRpc::ClientStreamContext m_csxNotification{ nullptr };
-	SvRpc::ClientStreamContext m_csxMessageNotification{ nullptr };
+	//SvRpc::ClientStreamContext m_csxMessageNotification{ nullptr };
 	MessageNotificationHandler m_messageNotificationHandler;
 	NotificationHandler m_notificationHandler;
 	RCSettings m_settings;

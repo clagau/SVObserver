@@ -1136,11 +1136,11 @@ void SVRCCommand::RegisterNotificationStream(const SvPb::GetNotificationStreamRe
 	SVVisionProcessorHelper::Instance().RegisterNotificationStream(rRequest, rObserver, ctx);
 }
 
-void SVRCCommand::RegisterMessageNotificationStream(const SvPb::GetMessageNotificationStreamRequest& rRequest,
-	SvRpc::Observer<SvPb::GetMessageNotificationStreamResponse>& rObserver,
+void SVRCCommand::RegisterMessageStream(const SvPb::GetMessageStreamRequest& rRequest,
+	SvRpc::Observer<SvPb::GetMessageStreamResponse>& rObserver,
 	SvRpc::ServerStreamContext::Ptr ctx)
 {
-	SVVisionProcessorHelper::Instance().RegisterMessageNotificationStream(rRequest, rObserver, ctx);
+	SVVisionProcessorHelper::Instance().RegisterMessageStream(rRequest, rObserver, ctx);
 }
 
 std::string SVRCCommand::GetFileNameFromFilePath(const std::string& rFilePath, const std::string& rExtension /*= std::string()*/) const

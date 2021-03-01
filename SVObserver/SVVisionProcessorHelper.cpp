@@ -1150,6 +1150,22 @@ void SVVisionProcessorHelper::FireNotification(SvPb::NotifyType notifyType, cons
 	}
 
 	SvPb::GetNotificationStreamResponse response;
+	switch (notifyType) {
+	case SvPb::NotifyType::currentMode:
+		response.set_currentmode(static_cast<SvPb::DeviceModeType>(parameter.lVal));
+		break;
+	case SvPb::NotifyType::lastModified:
+		response.set_lastmodified(static_cast<SvPb::DeviceModeType>(parameter.llVal));
+		break;
+	case SvPb::NotifyType::configLoaded:
+		response.set_configfileloaded(SvUl::createStdString(parameter));
+		break;
+	case SvPb::NotifyType::configUnloaded:
+		response.set_configfileunloaded(SvUl::createStdString(parameter));
+		break;
+	default:
+		break;
+	}
 	response.set_type(notifyType);
 	SvPb::ConvertVariantToProtobuf(parameter, response.mutable_parameter());
 	ProcessNotification(response);
@@ -1178,8 +1194,8 @@ void SVVisionProcessorHelper::FireMessageNotification(const SvStl::MessageContai
 			it = m_MessageSubscriptions.erase(it);
 			continue;
 		}
-		SvPb::GetMessageNotificationStreamResponse response;
-		*response.mutable_msglist() = messagelist;
+		SvPb::GetMessageStreamResponse response;
+		*response.mutable_messagelist() = messagelist;
 		response.set_type(messageType);
 		bool isSeverityInList = it->m_severityList.end() != std::find(it->m_severityList.begin(), it->m_severityList.end(), static_cast<int> (rMessage.getSeverity()));
 		bool allSverities = it->m_severityList.empty();
@@ -1268,8 +1284,8 @@ void SVVisionProcessorHelper::RegisterNotificationStream(const SvPb::GetNotifica
 	m_Subscriptions.push_back({std::move(observer), ctx, std::move(notifyList)});
 }
 
-void SVVisionProcessorHelper::RegisterMessageNotificationStream(const SvPb::GetMessageNotificationStreamRequest& rRequest,
-	SvRpc::Observer<SvPb::GetMessageNotificationStreamResponse> observer,
+void SVVisionProcessorHelper::RegisterMessageStream(const SvPb::GetMessageStreamRequest& rRequest,
+	SvRpc::Observer<SvPb::GetMessageStreamResponse> observer,
 	SvRpc::ServerStreamContext::Ptr ctx)
 {
 	std::vector<int> severityList{ rRequest.severitylist().begin(), rRequest.severitylist().end() };

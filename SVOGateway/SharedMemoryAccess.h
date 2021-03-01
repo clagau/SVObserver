@@ -40,6 +40,11 @@ namespace SvRpc
 class RPCClient;
 }
 
+namespace SvStl
+{
+	class MessageContainer;
+}
+
 namespace SvOgw
 {
 class WebAppVersionLoader;
@@ -58,6 +63,9 @@ public:
 	~SharedMemoryAccess();
 
 public:
+	void onMessageContainer(const SvStl::MessageContainer& rMessage, int messageType);
+
+public:
 	void GetVersion(const SvPb::GetGatewayVersionRequest&, SvRpc::Task<SvPb::GetVersionResponse>);
 	void GetWebAppVersion(const SvPb::GetWebAppVersionRequest&, SvRpc::Task<SvPb::GetVersionResponse>);
 	void GetInspections(const SvPb::GetInspectionsRequest&, SvRpc::Task<SvPb::GetInspectionsResponse>);
@@ -72,6 +80,7 @@ public:
 	void StoreClientLogs(const SvPb::StoreClientLogsRequest&, SvRpc::Task<SvPb::EmptyResponse>);
 	void SetRejectStreamPauseState(const SvPb::SetRejectStreamPauseStateRequest&, SvRpc::Task<SvPb::EmptyResponse>);
 	void GetGatewayNotificationStream(const SvPb::GetGatewayNotificationStreamRequest&, SvRpc::Observer<SvPb::GetGatewayNotificationStreamResponse>, SvRpc::ServerStreamContext::Ptr);
+	void GetGatewayMessageStream(const SvPb::GetGatewayMessageStreamRequest&, SvRpc::Observer<SvPb::GetGatewayMessageStreamResponse>, SvRpc::ServerStreamContext::Ptr);
 	void GetProductStream(const SvPb::GetProductStreamRequest&, SvRpc::Observer<SvPb::GetProductStreamResponse>, SvRpc::ServerStreamContext::Ptr);
 
 	void GetMyPermissions(const SvAuth::SessionContext&, const SvPb::GetMyPermissionsRequest& req, SvRpc::Task<SvPb::GetMyPermissionsResponse> task);
@@ -135,6 +144,15 @@ private:
 	void send_trigger_record_pause_state_to_client(notification_stream_t&, const std::vector<bool>&);
 
 private:
+	struct message_stream_t
+	{
+		message_stream_t(const SvPb::GetGatewayMessageStreamRequest&, SvRpc::Observer<SvPb::GetGatewayMessageStreamResponse>, SvRpc::ServerStreamContext::Ptr);
+		std::vector<int> severityList;
+		SvRpc::Observer<SvPb::GetGatewayMessageStreamResponse> observer;
+		SvRpc::ServerStreamContext::Ptr ctx;
+	};
+
+private:
 	void subscribe_to_trc();
 	int get_inspection_pos_for_id(const SvPb::InspectionList& rList, uint32_t id);
 
@@ -159,6 +177,8 @@ private:
 	boost::asio::deadline_timer m_pause_timer;
 	std::vector<bool> m_pause_state;
 	std::vector<std::shared_ptr<notification_stream_t>> m_notification_streams;
+	std::mutex m_message_streams_mutex;
+	std::vector<std::shared_ptr<message_stream_t>> m_message_streams;
 	SvOv::OverlayController m_overlay_controller;
 };
 }// namespace SvOgw

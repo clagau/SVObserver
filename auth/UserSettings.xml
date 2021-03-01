@@ -714,8 +714,8 @@ XIr4Aq6bFk3+cFhcHMs=</Y></DSAKeyValue></KeyValue></KeyInfo></Signature>
                         <permission name="svobserver.tool.remove"/>
                         <permission name="svobserver.value.edit"/>
                         <permission name="svobserver.value.read"/>
-                        <permission name="usermanagement.permissions.edit"/>
-                        <permission name="usermanagement.permissions.read"/>
+                        <permission name="usermanagement.userpermissions.edit"/>
+                        <permission name="usermanagement.userpermissions.read"/>
                         <permission name="webapp.configuration.save"/>
                         <permission name="webapp.logs.read"/>
                         <permission name="webapp.view[type=AnyView].add"/>

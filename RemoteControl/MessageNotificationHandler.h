@@ -12,7 +12,7 @@ typedef std::function<void(const _variant_t&, long)> NotifyFunctor;
 
 namespace SvPb
 {
-	class GetMessageNotificationStreamResponse;
+	class GetMessageStreamResponse;
 }
 namespace SvPenv
 {
@@ -31,7 +31,7 @@ class MessageNotificationHandler
 {
 public:
 	explicit MessageNotificationHandler(const NotifyFunctor& prNotifier);
-	SvSyl::SVFuture<void> OnNext(const SvPb::GetMessageNotificationStreamResponse& resp);
+	SvSyl::SVFuture<void> OnNext(const SvPb::GetMessageStreamResponse& resp);
 	void OnFinish();
 	void OnError(const SvPenv::Error& er);
 private:

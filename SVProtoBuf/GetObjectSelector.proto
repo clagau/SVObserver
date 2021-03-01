@@ -10,6 +10,8 @@
 syntax = "proto3";
 package SvPb;
 
+option java_package = "de.sdm.svrc.proto.v1010";
+
 import "SVO-Enum.proto";
 
 ///This is the recursive structure for the object selector tree

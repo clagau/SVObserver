@@ -25,8 +25,10 @@
 #include "SVUtilityLibrary/StringHelper.h"
 #include "ObjectInterfaces/ITriggerRecordR.h"
 #include "ObjectInterfaces/ITriggerRecordControllerR.h"
+#include "SVStatusLibrary/MessageContainer.h"
 #include "SVStatusLibrary/MessageTextGenerator.h"
 #pragma endregion Includes
+
 
 namespace SvOgw
 {
@@ -277,6 +279,18 @@ void SharedMemoryAccess::GetGatewayNotificationStream(
 
 	// send initial pause state to client
 	send_trigger_record_pause_state_to_client(*state, m_pause_state);
+}
+
+void SharedMemoryAccess::GetGatewayMessageStream(
+	const SvPb::GetGatewayMessageStreamRequest& rRequest,
+	SvRpc::Observer<SvPb::GetGatewayMessageStreamResponse> observer,
+	SvRpc::ServerStreamContext::Ptr ctx)
+{
+	auto state = std::make_shared<message_stream_t>(rRequest, observer, ctx);
+	{
+		std::lock_guard<std::mutex> lockGuard(m_message_streams_mutex);
+		m_message_streams.push_back(state);
+	}
 }
 
 void SharedMemoryAccess::GetProductStream(
@@ -1110,6 +1124,60 @@ void SharedMemoryAccess::send_trigger_record_pause_state_to_client(notification_
 	client.observer.onNext(std::move(res));
 }
 
+SharedMemoryAccess::message_stream_t::message_stream_t(
+	const SvPb::GetGatewayMessageStreamRequest& streamReq,
+	SvRpc::Observer<SvPb::GetGatewayMessageStreamResponse> observer,
+	SvRpc::ServerStreamContext::Ptr ctx)
+	: severityList(streamReq.severitylist().begin(), streamReq.severitylist().end())
+	, observer(observer)
+	, ctx(ctx)
+{
+}
+
+void SharedMemoryAccess::onMessageContainer(const SvStl::MessageContainer& rMessage, int type)
+{
+	SvPb::MessageType messageType = static_cast<SvPb::MessageType> (type);
+	SvPb::MessageContainerVector messagelist;
+	if (SvPb::MessageType::endMsgBox == messageType)
+	{
+		SvStl::MessageContainer message{ rMessage };
+		message.clearWhat();
+		SvPb::convertMessageToProtobuf(message, messagelist.add_messages());
+	}
+	else
+	{
+		SvPb::convertMessageToProtobuf(rMessage, messagelist.add_messages());
+	}
+
+	std::lock_guard<std::mutex> lockGuard(m_message_streams_mutex);
+	for (auto it = m_message_streams.begin(); it != m_message_streams.end(); )
+	{
+		auto msgStreamPtr = *it;
+		auto& msgStream = *msgStreamPtr;
+		if (msgStream.ctx->isCancelled())
+		{
+			it = m_message_streams.erase(it);
+			continue;
+		}
+
+		bool isSeverityInList = std::find(
+			msgStream.severityList.begin(),
+			msgStream.severityList.end(),
+			static_cast<int> (rMessage.getSeverity())
+		) != msgStream.severityList.end();
+		bool allSverities = msgStream.severityList.empty();
+		if (allSverities || isSeverityInList)
+		{
+			SvPb::GetGatewayMessageStreamResponse response;
+			*response.mutable_messagelist() = messagelist;
+			response.set_type(messageType);
+			// TODO are we on the correct thread already? can we post from here?
+			msgStream.observer.onNext(std::move(response));
+		}
+		++it;
+	}
+}
+
 void SharedMemoryAccess::subscribe_to_trc()
 {
 	auto* pTrc = SvOi::getTriggerRecordControllerRInstance();
@@ -1364,9 +1432,11 @@ bool SharedMemoryAccess::is_request_allowed(const SvPenv::Envelope& rEnvelope, c
 
 	// subscribe to notification streams
 	case SvPb::SVRCMessages::kGetGatewayNotificationStreamRequest:
+	case SvPb::SVRCMessages::kGetGatewayMessageStreamRequest:
 	case SvPb::SVRCMessages::kGetNotificationStreamRequest:
+	case SvPb::SVRCMessages::kGetMessageStreamRequest:
 		return permissions.svobserver().notifications().subscribe();
-		
+
 	case SvPb::SVRCMessages::kGetItemsRequest:
 		return permissions.svobserver().value().read();
 
@@ -1405,10 +1475,10 @@ bool SharedMemoryAccess::is_request_allowed(const SvPenv::Envelope& rEnvelope, c
 		return true; // always allowed!
 
 	case SvPb::SVRCMessages::kGetGroupDetailsRequest:
-		return permissions.usermanagement().permissions().read();
+		return permissions.usermanagement().userpermissions().read();
 
 	case SvPb::SVRCMessages::kUpdateGroupPermissionsRequest:
-		return permissions.usermanagement().permissions().edit();
+		return permissions.usermanagement().userpermissions().edit();
 
 	default:
 		SV_LOG_GLOBAL(warning) << "No permissions handling for message id " << payloadType << " configured!";

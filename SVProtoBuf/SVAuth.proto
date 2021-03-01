@@ -9,6 +9,8 @@
 syntax = "proto3";
 package SvAuth;
 
+option java_package = "de.sdm.svrc.proto.v1010";
+
 enum JwtAlgorithm {
 	HS256 = 0;
 	RS256 = 1;

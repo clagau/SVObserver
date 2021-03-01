@@ -9,6 +9,8 @@
 syntax = "proto3";
 package SvPb;
 
+option java_package = "de.sdm.svrc.proto.v1010";
+
 enum SVObjectTypeEnum
 {
 	SVNotSetObjectType						= 0x00000000;
