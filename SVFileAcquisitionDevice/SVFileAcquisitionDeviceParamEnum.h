@@ -24,3 +24,14 @@ enum SVFileAcquisitionDeviceParamEnum
 	SVFileAcquisitionParameterSize
 };
 
+constexpr char* SVFileAcquisitionParameterNames[SVFileAcquisitionParameterSize] =
+{
+	_T("Filename"),
+	_T("Directory"),
+	_T("File Loading Mode"),
+	_T("Image Width"),
+	_T("Image Height"),
+	_T("Image Format"),
+	_T("Max Preload FileNumber"),
+	_T("PreloadTimeDelay")
+};
