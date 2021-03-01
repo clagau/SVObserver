@@ -357,9 +357,8 @@ message GetNotificationStreamResponse
 	{
 		DeviceModeType currentMode = 1;                 //The current SVObserver device mode
 		uint32 lastModified = 2;                                //The last modified time stamp
-		MsgNotification DEPRECATED_msgNotification = 3;    //The message notification structure. not triggered anymore. use GetMessageStreamRequest instead
+		//Leave ID 3 empty for compatibility!
 		string configFileLoaded = 4;                    //The path to the loaded configuration file
-		string configFileUnloaded = 5;                    //The path to the loaded configuration file
 	}
 
 	NotifyType type = 11;            //The notification type
