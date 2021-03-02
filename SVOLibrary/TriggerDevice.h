@@ -58,7 +58,7 @@ protected:
 	void Process(bool& rWaitForEvents);
 
 	virtual void preProcessTriggers(SvTrig::SVTriggerInfoStruct&) {}
-	virtual void postProcessTriggers() {}
+	virtual void postProcessTriggers(DWORD) {}
 
 private:
 	TriggerDevice() = default;

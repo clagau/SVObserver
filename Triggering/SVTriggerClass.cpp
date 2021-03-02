@@ -20,6 +20,15 @@
 
 namespace SvTrig
 {
+void PostponedInternalTrigger(SVDigitizerLoadLibraryClass* pAcqusitionDll, unsigned long digitizerHandle, DWORD sleepDuration)
+{
+	if (nullptr != pAcqusitionDll)
+	{
+		Sleep(sleepDuration);
+		pAcqusitionDll->InternalTrigger(digitizerHandle);
+	}
+}
+
 SVTriggerClass::SVTriggerClass(LPCTSTR deviceName) : TriggerDevice(deviceName)
 {
 	std::string name{deviceName};
@@ -172,13 +181,20 @@ void SVTriggerClass::preProcessTriggers(SvTrig::SVTriggerInfoStruct& rTriggerInf
 	}
 }
 
-void SVTriggerClass::postProcessTriggers()
+void SVTriggerClass::postProcessTriggers(DWORD sleepDuration)
 {
 	for (const auto& rAcquisitionParameter : m_acqTriggerParameters)
 	{
 		if (nullptr != rAcquisitionParameter.m_pDllDigitizer)
 		{
-			rAcquisitionParameter.m_pDllDigitizer->InternalTrigger(rAcquisitionParameter.m_triggerChannel);
+			if (0 == sleepDuration)
+			{
+				rAcquisitionParameter.m_pDllDigitizer->InternalTrigger(rAcquisitionParameter.m_triggerChannel);
+			}
+			else
+			{
+				std::thread(PostponedInternalTrigger, rAcquisitionParameter.m_pDllDigitizer, rAcquisitionParameter.m_triggerChannel, sleepDuration).detach();
+			}
 		}
 	}
 }

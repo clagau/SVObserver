@@ -63,7 +63,7 @@ public:
 
 protected:
 	virtual void preProcessTriggers(SvTrig::SVTriggerInfoStruct& rTriggerInfo) override;
-	virtual void postProcessTriggers() override;
+	virtual void postProcessTriggers(DWORD sleepDuration) override;
 
 private:
 	int m_digitizerNumber{ -1 };

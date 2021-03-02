@@ -107,12 +107,26 @@ void TriggerDevice::Process(bool&)
 		if (triggerInfo.bValid && nullptr != m_pPpqTriggerCallback)
 		{
 			triggerInfo.lTriggerCount = ++m_triggerCount;
+			DWORD sleepDuration{ 0 };
 			//If in the input data it has a valid time stamp value then it is more accurate then use it
 			SvTrig::IntVariantMap::const_iterator iterData{ triggerInfo.m_Data.end() };
 			iterData = triggerInfo.m_Data.find(SvTrig::TriggerDataEnum::TimeStamp);
 			if (triggerInfo.m_Data.end() != iterData && VT_R8 == iterData->second.vt && 0.0 < iterData->second.dblVal)
 			{
 				triggerInfo.m_triggerTimeStamp = iterData->second.dblVal;
+				//When ObjectID is present then PLC connected so make sure the acquisition is done after the trigger timestamp
+				iterData = triggerInfo.m_Data.find(SvTrig::TriggerDataEnum::ObjectID);
+				if (triggerInfo.m_Data.end() != iterData)
+				{
+					double timeDifference = triggerInfo.m_triggerTimeStamp - SvUl::GetTimeStamp();
+					bool isTimeInTheFuture = timeDifference > 0.0;
+					if (isTimeInTheFuture)
+					{
+						sleepDuration = static_cast<DWORD> (timeDifference);
+						//Add 1ms as time difference has a rest and we need to make sure the sleep duartion is longer
+						++sleepDuration;
+					}
+				}
 			}
 			else
 			{
@@ -122,7 +136,7 @@ void TriggerDevice::Process(bool&)
 
 			preProcessTriggers(triggerInfo);
 			m_pPpqTriggerCallback(std::move(triggerInfo));
-			postProcessTriggers();
+			postProcessTriggers(sleepDuration);
 		}
 		done = (1 > m_triggerQueue.size());
 	}
