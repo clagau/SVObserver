@@ -37,7 +37,7 @@ public:
 	SVObjectClass* getNumberOfRowObject() const;
 
 	virtual const std::vector<SvVol::DoubleSortValuePtr>& getValueList() const override { return m_ValueList; };
-	virtual SvVol::ValueObjectSortContainer& getSortContainer() override;
+	SvVol::ValueObjectSortContainer& getSortContainer();
 	/// Set a new sort Container to this object and its column values.
 	/// \param sortMap [in] the new container
 	virtual void setSortContainer(const SvVol::ValueObjectSortContainer& sortMap) override;

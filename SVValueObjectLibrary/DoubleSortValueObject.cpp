@@ -86,13 +86,15 @@ HRESULT DoubleSortValueObject::setSortContainerDummy(const DummySortContainer& r
 HRESULT DoubleSortValueObject::SetValue(const double& rValue, int Index )
 {
 
-	if (0 <= Index && m_DummySortContainer.bIsActive && m_DummySortContainer.SimpleSize > Index)
+	if (m_DummySortContainer.bIsActive)
 	{
-		setHasChanged(true);
-		return SVValueObjectClass<double>::SetValue(rValue, Index);
+		if (0 <= Index && m_DummySortContainer.SimpleSize > Index)
+		{
+			setHasChanged(true);
+			return SVValueObjectClass<double>::SetValue(rValue, Index);
+		}
 	}
-
-	if (0 <= Index && m_spSortContainer.get()&& m_spSortContainer->size() > Index)
+	else if (0 <= Index && m_spSortContainer.get()&& m_spSortContainer->size() > Index)
 	{
 		setHasChanged(true);
 		return SVValueObjectClass<double>::SetValue( rValue, m_spSortContainer->at(Index));
@@ -110,21 +112,20 @@ HRESULT DoubleSortValueObject::GetValue( double& rValue, int Index) const
 	rValue = 0.0;
 	if(0 <= Index)
 	{
-		if (m_DummySortContainer.bIsActive &&  m_DummySortContainer.SimpleSize > Index)
+		if (m_DummySortContainer.bIsActive)
 		{
-			
-			return SVValueObjectClass<double>::GetValue(rValue, Index);
+			if (m_DummySortContainer.SimpleSize > Index)
+			{
+				return SVValueObjectClass<double>::GetValue(rValue, Index);
+			}
 		}
-
 		else if (m_spSortContainer.get() && m_spSortContainer->size() > Index)
 		{
 			Index = m_spSortContainer->at(Index);
 			return SVValueObjectClass<double>::GetValue(rValue, Index);
 		}
-		else
-		{
-			return E_BOUNDS;
-		}
+		
+		return E_BOUNDS;
 	}
 	return E_FAIL;
 }
@@ -137,7 +138,6 @@ HRESULT DoubleSortValueObject::SetArrayValues(const ValueVector& rValues)
 	assert(Size <= getArraySize());
  	if (Size <= m_doubleData.size())
 	{
-
 		SetResultSize(Size);
 		if (0 < Size && m_DummySortContainer.bIsActive)
 		{
