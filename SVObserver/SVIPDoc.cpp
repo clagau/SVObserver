@@ -2151,7 +2151,7 @@ void SVIPDoc::RunRegressionTest()
 			static_cast<SVMainFrame*>(AfxGetApp()->m_pMainWnd)->m_pregTestDlg->ShowWindow(SW_SHOW);
 
 			DWORD dwThreadID;
-			::CreateThread(nullptr, 0, SVRegressionTestRunThread, (LPVOID)this, 0, &dwThreadID);
+			m_RegressionTestHandle = ::CreateThread(nullptr, 0, SVRegressionTestRunThread, (LPVOID)this, 0, &dwThreadID);
 		}
 	}
 	else
@@ -3185,7 +3185,7 @@ void SVIPDoc::OnEditAdjustToolPosition()
 	{
 		//------ Warp tool hands back a SvDef::SVPolarTransformObjectType. Sub type 1792.
 		//------ Window tool, Luminance hands back a SvDef::SVImageObjectType. Sub type 0.
-		if (SVImageView* pImageView = GetImageView())
+		if (GetImageView())
 		{
 			SVSVIMStateClass::AddState(SV_STATE_EDITING);
 			std::string DlgName = SvUl::Format(_T("Adjust Tool Size and Position - %s"), pTool->GetName());
@@ -3408,6 +3408,7 @@ void SVIPDoc::RegressionTestComplete()
 		pMainFrm->m_pregTestDlg = nullptr;
 	}
 
+	CloseHandle(m_RegressionTestHandle);
 	SVSVIMStateClass::RemoveState(SV_STATE_REGRESSION);
 }
 

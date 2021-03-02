@@ -27,6 +27,7 @@ class RegressionTestController
 	};
 
 public:
+	RegressionTestController() = default;
 	RegressionRunFileStruct RegressionTestSetFiles(RegressionTestStruct& rRegTestStruct, RegressionRuningState& runState);
 	DWORD runThread(HWND hMainWnd, HWND hRegressionWnd, SVInspectionProcess& rIP);
 
@@ -46,7 +47,7 @@ public:
 	void setLoadEquationText(const std::string& rText) { m_LoadEquationText = rText; };
 
 private:
-	SvIe::SVVirtualCameraPtrVector GetCameras(SVInspectionProcess& rIP) const;
+	SvIe::SVVirtualCameraPtrVector GetCameras(const SVInspectionProcess& rIP) const;
 	bool runOnce(SVInspectionProcess& rIP);
 	void setPlayPause(HWND hRegressionWnd, RegressionRuningState& runState);
 	bool setImagesForNextRun(SVInspectionProcess& rIP, RegressionRuningState& runState, std::back_insert_iterator<std::vector<RegressionRunFileStruct>> fileNameInserter);
@@ -54,7 +55,7 @@ private:
 private:
 	RegressionRunModeEnum m_RunMode;
 	RegressionPlayModeEnum m_RunPlayMode;
-	int m_iTimeoutMS;
+	int m_iTimeoutMS = 0;
 	bool m_isRunning{ false };
 	bool m_isStopping;
 	bool m_UsePlayCondition{ false };

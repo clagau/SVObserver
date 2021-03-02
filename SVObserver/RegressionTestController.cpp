@@ -258,7 +258,7 @@ void RegressionTestController::resetEquationText()
 	}
 }
 
-SvIe::SVVirtualCameraPtrVector RegressionTestController::GetCameras(SVInspectionProcess& rIP) const
+SvIe::SVVirtualCameraPtrVector RegressionTestController::GetCameras(const SVInspectionProcess& rIP) const
 {
 	return rIP.GetCameras();
 }
@@ -324,6 +324,7 @@ bool RegressionTestController::setImagesForNextRun(SVInspectionProcess& rIP, Reg
 
 		if (runState.bRunFlag)
 		{
+			// cppcheck-suppress unreadVariable symbolName=fileNameInserter ; cppCheck doesn't know back_insert_iterator
 			fileNameInserter = runFileStruct;
 
 			const auto& rCameraList = GetCameras(rIP);

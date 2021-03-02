@@ -374,5 +374,6 @@ private:
 	CMDIChildWnd* m_pMDIChildWnd;
 	SVToolGrouping m_toolGroupings;
 	bool m_isDestroying = false;
+	HANDLE m_RegressionTestHandle = nullptr;
 };
 

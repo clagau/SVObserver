@@ -14,11 +14,11 @@
 #pragma region Includes
 #include "SVMFCControls/SVSliderCtrl.h"
 #include "SVRegressionTestStruct.h"
-#include "RegressionTestController.h"
 #include "ObjectInterfaces/IFormulaController.h"
 #pragma endregion Includes
 
 class SVIPDoc;
+class RegressionTestController;
 
 class SVRegressionRunDlg : public CDialog
 {
