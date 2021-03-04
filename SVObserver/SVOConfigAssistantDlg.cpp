@@ -3885,7 +3885,7 @@ void SVOConfigAssistantDlg::resolveGlobalConflicts( SvUl::GlobalConflictPairVect
 {
 	if( 0 < rGlobalConflicts.size() )
 	{
-		SvOg::GlobalConstantConflictDlg ConflictDlg( rGlobalConflicts, AfxGetMainWnd() );
+		SvOg::GlobalConstantConflictDlg ConflictDlg( rGlobalConflicts, this );
 		if( IDOK == ConflictDlg.DoModal() )
 		{
 			SvUl::GlobalConflictPairVector::const_iterator Iter( rGlobalConflicts.cbegin() );
