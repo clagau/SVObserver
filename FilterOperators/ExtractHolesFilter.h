@@ -16,7 +16,7 @@
 
 class ExtractHolesFilter : public BlobReconstructBasicFilter
 {
-	SV_DECLARE_CLASS(ExtractHolesFilter);
+	SV_DECLARE_CLASS
 
 public:
 	ExtractHolesFilter(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_EXTRACTHOLESFILTER);

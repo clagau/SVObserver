@@ -24,7 +24,7 @@ namespace SvOp
 class SVLinearEdgeProcessingClass : public SvIe::SVTaskObjectClass
 {
 	///This class does not need to call SV_DECLARE_CLASS as it is a base class and only derived classes are instantiated
-	//SV_DECLARE_CLASS( SVLinearEdgeProcessingClass );
+	//SV_DECLARE_CLASS
 
 public:
 	SVLinearEdgeProcessingClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVLINEAREDGEPROCESSING );

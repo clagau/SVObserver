@@ -22,7 +22,7 @@ namespace SvOp
 
 class SVImageArithmetic : public SvIe::SVTaskObjectClass
 {
-	SV_DECLARE_CLASS( SVImageArithmetic )
+	SV_DECLARE_CLASS
 
 public:
 	SVImageArithmetic( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVIMAGEARITHMETIC );

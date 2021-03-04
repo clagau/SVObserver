@@ -19,7 +19,7 @@ namespace SvOl
 {
 class InputObject : public SVObjectClass
 {
-	SV_DECLARE_CLASS(InputObject);
+	SV_DECLARE_CLASS
 
 	explicit InputObject(LPCTSTR ObjectName);
 	InputObject(SVObjectClass* pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_INPUTCONNECTOBJECT);

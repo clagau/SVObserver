@@ -23,7 +23,7 @@ namespace SvAo
 
 class SVLuminanceAnalyzer : public SVImageAnalyzerClass
 {
-	SV_DECLARE_CLASS( SVLuminanceAnalyzer );
+	SV_DECLARE_CLASS
 
 public:
 	explicit SVLuminanceAnalyzer( LPCSTR ObjectName /* = "Luminace Analyzer" */ );

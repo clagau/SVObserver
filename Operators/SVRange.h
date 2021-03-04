@@ -36,7 +36,7 @@ static const VARTYPE cVarType_Value = VT_R8;
 ////////////////////////////////////////////////////////////////////////////////
 class SVRange : public SvIe::SVTaskObjectClass, public ISVCancel
 {
-	SV_DECLARE_CLASS( SVRange );
+	SV_DECLARE_CLASS
 
 public:
 	SVRange( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVRANGE );

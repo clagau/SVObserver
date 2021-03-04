@@ -24,7 +24,7 @@ namespace SvAo
 {
 	class BlobFeatureList : public SvIe::SVTaskObjectListClass
 	{
-		SV_DECLARE_CLASS(BlobFeatureList);
+		SV_DECLARE_CLASS
 
 	public:
 		BlobFeatureList(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_BLOBFEATURELIST);

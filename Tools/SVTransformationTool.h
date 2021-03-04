@@ -20,7 +20,7 @@ namespace SvTo
 
 class SVTransformationToolClass : public SVToolClass
 {
-	SV_DECLARE_CLASS( SVTransformationToolClass );
+	SV_DECLARE_CLASS
 
 public:
 	SVTransformationToolClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTRANSFORMATIONTOOL );

@@ -17,7 +17,7 @@
 
 class SVErosionFilterClass : public SVFilterClass
 {
-	SV_DECLARE_CLASS( SVErosionFilterClass );
+	SV_DECLARE_CLASS
 public:
 	SVErosionFilterClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVEROSIONFILTER );
 	virtual ~SVErosionFilterClass();

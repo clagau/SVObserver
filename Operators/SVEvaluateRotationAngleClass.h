@@ -16,7 +16,7 @@ namespace SvOp
 
 class SVEvaluateRotationAngleClass : public SVEvaluate
 {
-	SV_DECLARE_CLASS( SVEvaluateRotationAngleClass )
+	SV_DECLARE_CLASS
 
 public:
 	SVEvaluateRotationAngleClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVEVALUATE_ROTATION_ANGLE );

@@ -98,7 +98,7 @@ struct SVFindPredicate
 class SVConfigurationObject : public SVObjectClass
 {
 	///This class does not need to call SV_DECLARE_CLASS as it is a base class and only derived classes are instantiated
-	//SV_DECLARE_CLASS( SVConfigurationObject );
+	//SV_DECLARE_CLASS
 
 public:
 	typedef std::map<std::string, SvIe::SVConfigurationAcquisitionDeviceInfoStruct*> SVAcquisitionDeviceMap;

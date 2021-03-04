@@ -29,7 +29,7 @@ class SVByteValueObjectClass : public SVValueObjectClass<BYTE>
 	// and the MIL LUT functions needs the pointer to a BYTE block
 	friend class SVLUTOperator;
 
-	SV_DECLARE_CLASS( SVByteValueObjectClass );
+	SV_DECLARE_CLASS
 
 public:
 	explicit SVByteValueObjectClass(LPCTSTR ObjectName);

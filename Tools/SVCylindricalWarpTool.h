@@ -24,7 +24,7 @@ namespace SvTo
 
 class SVCylindricalWarpToolClass : public SVToolClass  
 {
-	SV_DECLARE_CLASS( SVCylindricalWarpToolClass );
+	SV_DECLARE_CLASS
 
 public:
 	SVCylindricalWarpToolClass( SVObjectClass* p_pOwner = nullptr, int p_iStringResourceID = IDS_CLASSNAME_SVCYLINDRICALTOOL );

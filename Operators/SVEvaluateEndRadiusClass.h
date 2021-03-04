@@ -16,7 +16,7 @@ namespace SvOp
 
 class SVEvaluateEndRadiusClass : public SVEvaluate
 {
-	SV_DECLARE_CLASS( SVEvaluateEndRadiusClass )
+	SV_DECLARE_CLASS
 
 public:
 	SVEvaluateEndRadiusClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVEVALUATE_END_RADIUS );

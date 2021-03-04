@@ -51,7 +51,7 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 class SVDataBufferClass : public SVObjectAppClass
 {
-	SV_DECLARE_CLASS( SVDataBufferClass );
+	SV_DECLARE_CLASS
 
 public:
 	SVDataBufferClass( SVObjectClass* pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVDATABUFFER );

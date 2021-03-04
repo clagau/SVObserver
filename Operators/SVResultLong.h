@@ -21,7 +21,7 @@ namespace SvOp
 
 class SVLongResult : public SVResult  
 {
-	SV_DECLARE_CLASS( SVLongResult );
+	SV_DECLARE_CLASS
 
 public:
 	SVLongResult( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_RESULT_LONG );

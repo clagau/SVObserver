@@ -22,7 +22,7 @@ namespace SvOp
 
 class IndexEquation : public EquationArray
 {
-	SV_DECLARE_CLASS(IndexEquation);
+	SV_DECLARE_CLASS
 
 #pragma region Constructor
 public:

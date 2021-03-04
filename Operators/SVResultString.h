@@ -20,7 +20,7 @@ namespace SvOp
 
 class SVStringResult : public SVResult  
 {
-	SV_DECLARE_CLASS( SVStringResult );
+	SV_DECLARE_CLASS
 
 public:
 	SVStringResult( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_RESULT_STRING );

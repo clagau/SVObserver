@@ -20,7 +20,7 @@ namespace SvTo
 
 class SVWindowToolClass : public SVToolClass
 {
-	SV_DECLARE_CLASS( SVWindowToolClass );
+	SV_DECLARE_CLASS
 
 public:
 	explicit SVWindowToolClass(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVWINDOWTOOL);

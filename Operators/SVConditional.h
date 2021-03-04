@@ -21,7 +21,7 @@ namespace SvOp
 
 class SVConditional : public SVEquation
 {
-	SV_DECLARE_CLASS( SVConditional );
+	SV_DECLARE_CLASS
 
 //******************************************************************************
 // Serialization Declaration(s):

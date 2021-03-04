@@ -22,7 +22,7 @@ namespace SvVol
 
 class SVDPointValueObjectClass : public SVValueObjectClass<SVPoint<double>>
 {
-	SV_DECLARE_CLASS( SVDPointValueObjectClass );
+	SV_DECLARE_CLASS
 
 public:
 	explicit SVDPointValueObjectClass(LPCTSTR ObjectName);

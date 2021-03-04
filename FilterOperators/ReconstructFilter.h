@@ -17,7 +17,7 @@
 
 class ReconstructFilter : public BlobReconstructBasicFilter
 {
-	SV_DECLARE_CLASS(ReconstructFilter);
+	SV_DECLARE_CLASS
 
 public:
 	ReconstructFilter(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_RECONSTRUCTFILTER);

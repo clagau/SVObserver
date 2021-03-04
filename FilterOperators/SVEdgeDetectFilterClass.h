@@ -17,7 +17,7 @@
 
 class SVEdgeDetectFilterClass : public SVFilterClass
 {
-	SV_DECLARE_CLASS( SVEdgeDetectFilterClass );
+	SV_DECLARE_CLASS
 public:
 	SVEdgeDetectFilterClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVEDGEDETECTFILTER );
 	virtual ~SVEdgeDetectFilterClass();

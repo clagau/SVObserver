@@ -8,13 +8,13 @@
 
 #pragma region Includes
 #include "SVTool.h"
-#include "Operators/TableFillByEquationObject.h"
 #pragma endregion Includes
 
 namespace SvOp
 {
 class SVEquation;
 class TableColumnEquation;
+class TableFillByEquationObject;
 }
 
 namespace SvTo
@@ -23,7 +23,7 @@ namespace SvTo
 class TableTool : public SVToolClass
 /// \brief This class perform the Table tool
 {
-	SV_DECLARE_CLASS (TableTool);
+	SV_DECLARE_CLASS
 
 #pragma region Constructor
 public:

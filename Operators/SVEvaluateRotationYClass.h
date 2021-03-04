@@ -16,7 +16,7 @@ namespace SvOp
 
 class SVEvaluateRotationYClass : public SVEvaluate
 {
-	SV_DECLARE_CLASS( SVEvaluateRotationYClass )
+	SV_DECLARE_CLASS
 public:
 	SVEvaluateRotationYClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVEVALUATE_ROTATION_Y );
 	virtual ~SVEvaluateRotationYClass();

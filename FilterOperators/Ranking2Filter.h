@@ -18,7 +18,7 @@ class Ranking2Filter : public SVFilterClass
 {
 public:
 #pragma region Declarations
-	SV_DECLARE_CLASS(Ranking2Filter);
+	SV_DECLARE_CLASS
 #pragma endregion Declarations
 
 public:

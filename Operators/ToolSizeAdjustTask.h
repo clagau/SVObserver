@@ -33,7 +33,7 @@ namespace SvOp
 //! the friendlist of this class holds the Svevaluationobjects 
 class ToolSizeAdjustTask : public SvIe::SVTaskObjectClass, public SvOi::IToolSizeAdjustTask
 {
-	SV_DECLARE_CLASS( ToolSizeAdjustTask );
+	SV_DECLARE_CLASS
 public:
     ToolSizeAdjustTask( bool AllowFullsize = true, bool AllowAdjustSize = true, bool AllowAdjustPosition = true, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_TOOLSIZEADJUSTTASK );
 	virtual ~ToolSizeAdjustTask();

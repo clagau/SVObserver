@@ -20,7 +20,7 @@ namespace SvAo
 
 class LinearEdgeCountingAnalyzer : public SVLinearAnalyzerClass
 {
-	SV_DECLARE_CLASS( LinearEdgeCountingAnalyzer );
+	SV_DECLARE_CLASS
 
 public:
 	LinearEdgeCountingAnalyzer( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_LINEAREDGECOUNTINGANALYZER );

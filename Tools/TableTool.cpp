@@ -11,6 +11,7 @@
 #include "ObjectInterfaces/IObjectManager.h"
 #include "Operators/SVEquation.h"
 #include "Operators/TableColumnEquation.h"
+#include "Operators/TableFillByEquationObject.h"
 #include "Definitions/GlobalConst.h"
 #include "Definitions/StringTypeDef.h"
 #include "Definitions/TextDefineSVDef.h"

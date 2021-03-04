@@ -16,7 +16,7 @@ namespace SvOp
 
 class TableColumnEquation : public SVEquation
 {
-	SV_DECLARE_CLASS( TableColumnEquation );
+	SV_DECLARE_CLASS
 
 #pragma region Constructor
 public:

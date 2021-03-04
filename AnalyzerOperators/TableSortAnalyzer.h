@@ -19,7 +19,7 @@ namespace SvAo
 class TableSortAnalyzer : public SvIe::SVTaskObjectClass
 {
 #pragma region Constructor
-	SV_DECLARE_CLASS(TableSortAnalyzer);
+	SV_DECLARE_CLASS
 public:
 	explicit TableSortAnalyzer(LPCTSTR ObjectName);
 	TableSortAnalyzer(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_TABLEANALYZER_SORT);

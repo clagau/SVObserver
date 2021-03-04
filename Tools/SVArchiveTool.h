@@ -93,7 +93,7 @@ public:
 	SvVol::SVStringValueObjectClass	m_HeaderObjectIDs;
 
 protected:
-	SV_DECLARE_CLASS( SVArchiveTool )
+	SV_DECLARE_CLASS
 
 	virtual bool onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 	virtual bool useOverlayColorTool() const override { return false; };

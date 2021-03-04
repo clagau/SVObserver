@@ -33,7 +33,7 @@ class BlobDrawTask;
 //
 class BlobAnalyzer2 : public SVImageAnalyzerClass, public SvOi::IBlobAnalyzer2
 {
-	SV_DECLARE_CLASS(BlobAnalyzer2);
+	SV_DECLARE_CLASS
 
 public:
 	BlobAnalyzer2(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVBLOBANALYZER2);

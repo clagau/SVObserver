@@ -45,7 +45,7 @@ namespace SvTo
 class SVToolClass : public SvIe::SVTaskObjectListClass, public SvOi::ITool
 {
 	///This class does not need to call SV_DECLARE_CLASS as it is a base class and only derived classes are instantiated
-	//SV_DECLARE_CLASS(SVToolClass);
+	//SV_DECLARE_CLASS
 
 public:
 	SVToolClass(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTOOL);

@@ -42,7 +42,7 @@ enum ToolSetTimes
 
 class SVToolSet : public SvIe::SVTaskObjectListClass, public SvOi::IToolSet
 {
-	SV_DECLARE_CLASS( SVToolSet );
+	SV_DECLARE_CLASS
 
 	friend class SVInspectionProcess; // for access to Run()
 

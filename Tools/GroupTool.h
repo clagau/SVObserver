@@ -22,7 +22,7 @@ namespace SvTo
 /// Implements the GroupTool
 class GroupTool : public SVToolClass
 {
-	SV_DECLARE_CLASS(GroupTool);
+	SV_DECLARE_CLASS
 public:
 	GroupTool(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_GROUPTOOL);
 	virtual ~GroupTool();

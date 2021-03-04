@@ -20,7 +20,7 @@ namespace SvTo
 
 class SVExternalTool : public SVToolClass
 {
-	SV_DECLARE_CLASS( SVExternalTool );
+	SV_DECLARE_CLASS
 
 public:
 	SVExternalTool( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SV_EXTERNAL_TOOL );

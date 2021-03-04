@@ -21,7 +21,7 @@ namespace SvTo
 
 class SVAcquisitionToolClass : public SVToolClass
 {
-	SV_DECLARE_CLASS( SVAcquisitionToolClass );
+	SV_DECLARE_CLASS
 
 public:
 	SVAcquisitionToolClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVACQUISITIONTOOL );

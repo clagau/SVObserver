@@ -20,7 +20,7 @@ namespace SvIe
 class SVMainImageClass : public SVCameraImageTemplate 
 {
 // Wasn't in old implementation, take back out for now. may be needed in future.
-//SV_DECLARE_CLASS( SVMainImageClass );
+//SV_DECLARE_CLASS
 
 public:
 	explicit SVMainImageClass( LPCSTR ObjectName );

@@ -38,7 +38,7 @@ enum
 
 class SVBarCodeAnalyzerClass : public SVImageAnalyzerClass  
 {
-	SV_DECLARE_CLASS (SVBarCodeAnalyzerClass);
+	SV_DECLARE_CLASS
 
 public:
 	SVBarCodeAnalyzerClass(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVBARCODEANALYZER);

@@ -23,7 +23,7 @@ namespace SvOp
 class SVTransform : public SvIe::SVTaskObjectClass
 {
 	///This class does not need to call SV_DECLARE_CLASS as it is a base class and only derived classes are instantiated
-	//SV_DECLARE_CLASS( SVTransform )
+	//SV_DECLARE_CLASS
 
 //******************************************************************************
 // Constructor(s):

@@ -24,7 +24,7 @@ namespace SvVol
 
 class SVCharValueObjectClass : public SVValueObjectClass<char>
 {
-	SV_DECLARE_CLASS( SVCharValueObjectClass );
+	SV_DECLARE_CLASS
 
 public:
 	explicit SVCharValueObjectClass(LPCTSTR ObjectName);

@@ -18,7 +18,7 @@ namespace SvOp
 class TableCopyObject : public TableObject
 {
 #pragma region Constructor
-	SV_DECLARE_CLASS( TableCopyObject );
+	SV_DECLARE_CLASS
 public:
 	explicit TableCopyObject( LPCTSTR ObjectName );
 	TableCopyObject( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_TABLE_OBJECT );

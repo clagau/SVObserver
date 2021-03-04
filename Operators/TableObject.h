@@ -21,7 +21,7 @@ namespace SvOp //< Operators
 class TableObject : public SvIe::SVTaskObjectClass, public SvOi::ITableObject
 {
 #pragma region Constructor
-	SV_DECLARE_CLASS( TableObject );
+	SV_DECLARE_CLASS
 public:
 	explicit TableObject( LPCTSTR ObjectName );
 	TableObject( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_TABLE_OBJECT );

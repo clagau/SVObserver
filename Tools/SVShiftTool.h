@@ -36,7 +36,7 @@ enum SV_SHIFT_ENUM
 
 class SVShiftTool : public SVToolClass
 {
-	SV_DECLARE_CLASS( SVShiftTool );
+	SV_DECLARE_CLASS
 
 public:
 #pragma region Constructor

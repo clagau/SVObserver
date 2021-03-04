@@ -1246,7 +1246,7 @@ bool SVArchiveTool::ensureCurrentImagePathRootExists()
 	bool ok = false;
 	try
 	{
-		std::filesystem::create_directories(m_currentImagePathRoot);
+		ok = std::filesystem::create_directories(m_currentImagePathRoot);
 
 		if (!ok)
 		{

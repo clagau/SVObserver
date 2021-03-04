@@ -18,7 +18,7 @@
 
 class SVMaxMinusMinFilterClass : public SVFilterClass
 {
-	SV_DECLARE_CLASS( SVMaxMinusMinFilterClass );
+	SV_DECLARE_CLASS
 public:
 	SVMaxMinusMinFilterClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVMAXMINUSMINFILTER );
 	virtual ~SVMaxMinusMinFilterClass();

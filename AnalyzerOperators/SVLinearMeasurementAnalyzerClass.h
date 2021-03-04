@@ -22,7 +22,7 @@ namespace SvAo
 
 class SVLinearMeasurementAnalyzerClass : public SVLinearAnalyzerClass
 {
-	SV_DECLARE_CLASS( SVLinearMeasurementAnalyzerClass );
+	SV_DECLARE_CLASS
 
 public:
 	SVLinearMeasurementAnalyzerClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVLINEARMEASUREMENTLINEANALYZER );

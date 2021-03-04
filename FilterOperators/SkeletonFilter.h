@@ -17,7 +17,7 @@
 
 class SkeletonFilter : public SVFilterClass
 {
-	SV_DECLARE_CLASS( SkeletonFilter );
+	SV_DECLARE_CLASS
 
 public:
 	SkeletonFilter( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVSKELETONFILTER );

@@ -16,7 +16,7 @@
 
 class SVDilationFilterClass : public SVFilterClass
 {
-	SV_DECLARE_CLASS( SVDilationFilterClass );
+	SV_DECLARE_CLASS
 public:
 	SVDilationFilterClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVDILATIONFILTER );
 	virtual ~SVDilationFilterClass();

@@ -24,7 +24,7 @@ namespace SvOp
 
 class SVImageTransform : public SVTransform
 {
-	SV_DECLARE_CLASS( SVImageTransform )
+	SV_DECLARE_CLASS
 
 #pragma region Constructor
 public:

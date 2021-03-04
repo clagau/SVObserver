@@ -25,7 +25,7 @@ class SVRemoteOutputObject : public SVOutputObject
 {
 #pragma region Constructor
 public:
-	SV_DECLARE_CLASS( SVRemoteOutputObject );
+	SV_DECLARE_CLASS
 
 	SVRemoteOutputObject();
 	virtual ~SVRemoteOutputObject() = default;

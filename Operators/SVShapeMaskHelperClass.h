@@ -31,7 +31,7 @@ namespace SvOp
 
 class SVShapeMaskHelperClass : public SvIe::SVTaskObjectClass
 {
-	SV_DECLARE_CLASS( SVShapeMaskHelperClass );
+	SV_DECLARE_CLASS
 public:
 	SVShapeMaskHelperClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SHAPE_MASK_HELPER );
 	virtual ~SVShapeMaskHelperClass();

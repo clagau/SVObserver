@@ -20,7 +20,7 @@ namespace SvVol
 
 class SVInt64ValueObjectClass : public SVValueObjectClass<__int64>
 {
-	SV_DECLARE_CLASS( SVInt64ValueObjectClass );
+	SV_DECLARE_CLASS
 
 public:
 	explicit SVInt64ValueObjectClass(LPCTSTR ObjectName);

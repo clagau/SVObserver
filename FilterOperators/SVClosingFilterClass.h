@@ -17,7 +17,7 @@
 
 class SVClosingFilterClass : public SVFilterClass
 {
-	SV_DECLARE_CLASS( SVClosingFilterClass );
+	SV_DECLARE_CLASS
 public:
 	SVClosingFilterClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVCLOSINGFILTER );
 	virtual ~SVClosingFilterClass();

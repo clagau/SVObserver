@@ -23,7 +23,7 @@ class SVObjectClass;
 //******************************************************************************
 
 // Should be in the class definition...
-#define SV_DECLARE_CLASS( XCLASSNAME )					\
+#define SV_DECLARE_CLASS					\
 		public:	\
 			virtual SvPb::ClassIdEnum GetClassID() const; \
 			virtual LPCTSTR GetClassName() const;

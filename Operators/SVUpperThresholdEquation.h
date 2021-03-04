@@ -20,7 +20,7 @@ namespace SvOp
 
 class SVUpperThresholdEquation : public SVEquation
 {
-	SV_DECLARE_CLASS( SVUpperThresholdEquation);
+	SV_DECLARE_CLASS
 
 public:
 	SVUpperThresholdEquation( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVUPPERTHRESHOLDEQUATION );

@@ -16,7 +16,7 @@ namespace SvOp
 
 class SVEvaluateEndAngleClass : public SVEvaluate
 {
-	SV_DECLARE_CLASS( SVEvaluateEndAngleClass )
+	SV_DECLARE_CLASS
 
 public:
 	SVEvaluateEndAngleClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVEVALUATE_END_ANGLE );

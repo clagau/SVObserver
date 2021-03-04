@@ -21,7 +21,7 @@ namespace SvOp
 
 class SVPointXResult : public SVResult  
 {
-	SV_DECLARE_CLASS( SVPointXResult );
+	SV_DECLARE_CLASS
 
 public:
 	SVPointXResult( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_RESULT_POINT_X );

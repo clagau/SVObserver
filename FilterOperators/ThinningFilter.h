@@ -18,7 +18,7 @@
 
 class ThinningFilter : public SVFilterClass
 {
-	SV_DECLARE_CLASS( ThinningFilter );
+	SV_DECLARE_CLASS
 
 public:
 	ThinningFilter( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTHINNINGFILTER );

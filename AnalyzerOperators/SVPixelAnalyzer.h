@@ -18,7 +18,7 @@ namespace SvAo
 
 class SVPixelAnalyzer : public SVImageAnalyzerClass
 {
-	SV_DECLARE_CLASS( SVPixelAnalyzer );
+	SV_DECLARE_CLASS
 
 public:
 	explicit SVPixelAnalyzer( LPCSTR ObjectName /* = "Pixel Analyzer" */ );

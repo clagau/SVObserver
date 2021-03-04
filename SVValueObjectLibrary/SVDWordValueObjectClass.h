@@ -24,7 +24,7 @@ namespace SvVol
 
 class SVDWordValueObjectClass : public SVValueObjectClass<DWORD>
 {
-	SV_DECLARE_CLASS( SVDWordValueObjectClass );
+	SV_DECLARE_CLASS
 
 public:
 	explicit SVDWordValueObjectClass(LPCTSTR ObjectName);

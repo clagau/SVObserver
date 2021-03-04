@@ -23,7 +23,7 @@ namespace SvTo
 
 class SVPerspectiveToolClass : public SVToolClass
 {
-	SV_DECLARE_CLASS( SVPerspectiveToolClass );
+	SV_DECLARE_CLASS
 
 public:
 	SVPerspectiveToolClass( SVObjectClass *p_pOwner = nullptr, int p_iStringResourceID = IDS_CLASSNAME_SVPERSPECTIVETOOL );

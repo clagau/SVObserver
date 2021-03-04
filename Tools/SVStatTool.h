@@ -48,7 +48,7 @@ enum { SV_NUMBER_OF_STAT_FEATURES = SV_STATS_TOPOF_LIST };
 
 class SVStatTool : public SVToolClass
 {
-	SV_DECLARE_CLASS( SVStatTool );
+	SV_DECLARE_CLASS
 public:
 	SVStatTool( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVSTATISTICSTOOL );
 	virtual ~SVStatTool();

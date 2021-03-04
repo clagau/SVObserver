@@ -23,7 +23,7 @@ class Custom2Filter : public SVFilterClass
 {
 public:
 #pragma region Declarations
-	SV_DECLARE_CLASS( Custom2Filter );
+	SV_DECLARE_CLASS
 #pragma endregion Declarations
 
 public:

@@ -26,7 +26,7 @@ namespace SvTo
 
 class SVLinearToolClass : public SVToolClass
 {
-	SV_DECLARE_CLASS( SVLinearToolClass );
+	SV_DECLARE_CLASS
 
 public:
 #pragma region Constructor

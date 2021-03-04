@@ -17,7 +17,7 @@
 
 class SVHorizEdgeFilterClass : public SVFilterClass
 {
-	SV_DECLARE_CLASS( SVHorizEdgeFilterClass );
+	SV_DECLARE_CLASS
 public:
 	SVHorizEdgeFilterClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVHORIZEDGEFILTER );
 	virtual ~SVHorizEdgeFilterClass();

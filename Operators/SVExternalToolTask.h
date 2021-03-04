@@ -97,7 +97,7 @@ struct SVExternalToolTaskData
 
 class SVExternalToolTask : public SvIe::SVTaskObjectListClass, public SvOi::IExternalToolTask, public SvOi::IExternalToolTaskDataAdmin
 {
-	SV_DECLARE_CLASS( SVExternalToolTask )
+	SV_DECLARE_CLASS
 
 public:
 	SVExternalToolTask( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SV_EXTERNAL_TOOL_TASK );

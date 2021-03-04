@@ -33,7 +33,7 @@ namespace SvIe
 
 class SVImageClass : public SVObjectAppClass, public SvOi::ISVImage
 {
-	SV_DECLARE_CLASS( SVImageClass );
+	SV_DECLARE_CLASS
 
 public:
 

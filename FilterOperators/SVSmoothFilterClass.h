@@ -16,7 +16,7 @@
 
 class SVSmoothFilterClass : public SVFilterClass
 {
-	SV_DECLARE_CLASS( SVSmoothFilterClass );
+	SV_DECLARE_CLASS
 public:
 	SVSmoothFilterClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVSMOOTHFILTER );
 	virtual ~SVSmoothFilterClass();

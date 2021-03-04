@@ -66,7 +66,7 @@ namespace SvAo
 	class BlobFeatureTask : public SvIe::SVTaskObjectListClass
 		/// \brief Class for the parameter a feature of the blob analyzer.
 	{
-		SV_DECLARE_CLASS(BlobFeatureTask);
+		SV_DECLARE_CLASS
 
 #pragma region Constructor
 	public:

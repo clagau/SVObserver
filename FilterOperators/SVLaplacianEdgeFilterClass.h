@@ -17,7 +17,7 @@
 
 class SVLaplacianEdgeFilterClass : public SVFilterClass
 {
-	SV_DECLARE_CLASS( SVLaplacianEdgeFilterClass );
+	SV_DECLARE_CLASS
 public:
 	SVLaplacianEdgeFilterClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVLAPLACIANEDGEFILTER );
 	virtual ~SVLaplacianEdgeFilterClass();

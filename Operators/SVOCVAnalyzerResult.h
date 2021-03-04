@@ -35,7 +35,7 @@ namespace SvOp
 class SVOCVAnalyzeResult : public SVResult
 {
 protected:
-	SV_DECLARE_CLASS( SVOCVAnalyzeResult )
+	SV_DECLARE_CLASS
 
 public:
 	SVOCVAnalyzeResult( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVOCVANALYZERESULT );

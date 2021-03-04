@@ -20,7 +20,7 @@ namespace SvVol
 
 class SVLongValueObjectClass : public SVValueObjectClass<long>
 {
-	SV_DECLARE_CLASS( SVLongValueObjectClass );
+	SV_DECLARE_CLASS
 
 public:
 	explicit SVLongValueObjectClass(LPCTSTR ObjectName);

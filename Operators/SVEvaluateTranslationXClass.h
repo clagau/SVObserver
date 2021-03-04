@@ -16,7 +16,7 @@ namespace SvOp
 
 class SVEvaluateTranslationXClass : public SVEvaluate
 {
-	SV_DECLARE_CLASS( SVEvaluateTranslationXClass )
+	SV_DECLARE_CLASS
 
 public:
 	SVEvaluateTranslationXClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVEVALUATE_TRANSLATION_X );

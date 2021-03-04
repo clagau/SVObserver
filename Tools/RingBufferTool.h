@@ -19,7 +19,7 @@ namespace SvTo
 
 class RingBufferTool : public SVToolClass
 {
-	SV_DECLARE_CLASS (RingBufferTool);
+	SV_DECLARE_CLASS
 
 #pragma region Constructor
 public:

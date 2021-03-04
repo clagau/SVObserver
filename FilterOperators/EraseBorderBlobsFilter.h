@@ -16,7 +16,7 @@
 
 class EraseBorderBlobsFilter : public BlobReconstructBasicFilter
 {
-	SV_DECLARE_CLASS(EraseBorderBlobsFilter);
+	SV_DECLARE_CLASS
 
 public:
 	EraseBorderBlobsFilter(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_ERASEBORDERBLOBSFILTER);

@@ -26,7 +26,7 @@ class SVEquation;
 
 class SVImagePolarTransform : public SVPolarTransform
 {
-	SV_DECLARE_CLASS( SVImagePolarTransform )
+	SV_DECLARE_CLASS
 
 public:
 	SVImagePolarTransform( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVIMAGEPOLARTRANSFORM );

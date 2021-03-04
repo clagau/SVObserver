@@ -36,7 +36,7 @@ namespace SvOp
 ////////////////////////////////////////////////////////////////////////////////
 class SVStdImageOperatorListClass : public SVUnaryImageOperatorList 
 {
-	SV_DECLARE_CLASS( SVStdImageOperatorListClass )
+	SV_DECLARE_CLASS
 
 	friend class SVUnaryImageOperatorClass;
 

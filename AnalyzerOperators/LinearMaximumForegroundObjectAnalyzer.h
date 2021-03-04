@@ -21,7 +21,7 @@ namespace SvAo
 
 class LinearMaximumForegroundObjectAnalyzer : public SVLinearAnalyzerClass
 {
-	SV_DECLARE_CLASS( LinearMaximumForegroundObjectAnalyzer );
+	SV_DECLARE_CLASS
 
 public:
 	LinearMaximumForegroundObjectAnalyzer( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_LINEARMAXIMUMFOREGROUNDOBJECTANALYZER );

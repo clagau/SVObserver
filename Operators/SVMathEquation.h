@@ -20,7 +20,7 @@ namespace SvOp
 
 class SVMathEquation : public SVEquation
 {
-	SV_DECLARE_CLASS( SVMathEquation);
+	SV_DECLARE_CLASS
 
 public:
 	SVMathEquation( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVMATHEQUATION );

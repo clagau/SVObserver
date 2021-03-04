@@ -16,7 +16,7 @@
 
 class SVOpeningFilterClass : public SVFilterClass
 {
-	SV_DECLARE_CLASS( SVOpeningFilterClass );
+	SV_DECLARE_CLASS
 public:
 	SVOpeningFilterClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVOPENINGFILTER );
 	virtual ~SVOpeningFilterClass();

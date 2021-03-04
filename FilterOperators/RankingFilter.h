@@ -23,7 +23,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 class RankingFilter : public SVFilterClass
 {
-	SV_DECLARE_CLASS( RankingFilter );
+	SV_DECLARE_CLASS
 
 public:
 	RankingFilter( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVRANKINGFILTER );

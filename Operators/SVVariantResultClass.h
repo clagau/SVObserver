@@ -24,7 +24,7 @@ class SVVariantResultClass : public SVResult
 public:
 	SVVariantResultClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_RESULT_VARIANT );
 	virtual ~SVVariantResultClass();
-	SV_DECLARE_CLASS( SVVariantResultClass );
+	SV_DECLARE_CLASS
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 

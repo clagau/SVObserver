@@ -25,7 +25,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 class CustomFilter : public SVFilterClass
 {
-	SV_DECLARE_CLASS( CustomFilter );
+	SV_DECLARE_CLASS
 
 public:
 	CustomFilter( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVCUSTOMFILTER );

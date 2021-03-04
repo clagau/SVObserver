@@ -16,7 +16,7 @@
 
 class SVVertEdgeFilterClass : public SVFilterClass
 {
-	SV_DECLARE_CLASS( SVVertEdgeFilterClass );
+	SV_DECLARE_CLASS
 public:
 	SVVertEdgeFilterClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVVERTEDGEFILTER );
 	virtual ~SVVertEdgeFilterClass();

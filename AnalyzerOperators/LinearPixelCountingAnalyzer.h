@@ -20,7 +20,7 @@ namespace SvAo
 
 class LinearPixelCountingAnalyzer : public SVLinearAnalyzerClass
 {
-	SV_DECLARE_CLASS( LinearPixelCountingAnalyzer );
+	SV_DECLARE_CLASS
 
 public:
 	LinearPixelCountingAnalyzer( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_LINEARPIXELCOUNTINGANALYZER );

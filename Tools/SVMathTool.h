@@ -24,7 +24,7 @@ namespace SvTo
 
 class SVMathToolClass : public SVToolClass
 {
-	SV_DECLARE_CLASS( SVMathToolClass );
+	SV_DECLARE_CLASS
 
 public:
 	SVMathToolClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVMATHTOOL );

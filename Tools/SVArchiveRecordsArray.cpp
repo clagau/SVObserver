@@ -196,7 +196,6 @@ int SVArchiveRecordsArray::ValidateResultsObjects()
 	{
 		SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(entry.m_svObjectReference.getObjectId());
 
-		bool bRecordOK = false;
 		if (nullptr != pObject)
 		{
 			if (nullptr == m_pArchiveTool || false == m_pArchiveTool->checkIfValidDependency(pObject))
@@ -213,7 +212,6 @@ int SVArchiveRecordsArray::ValidateResultsObjects()
 			double Value;
 			if (pObject->getValue(Value, 0) != SVMSG_SVO_33_OBJECT_INDEX_INVALID)
 			{
-				bRecordOK = true;
 				pObject->connectObject(m_pArchiveTool->getObjectId());
 				return false;
 			}

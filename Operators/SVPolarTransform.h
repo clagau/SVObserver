@@ -21,7 +21,7 @@ namespace SvOp
 
 class SVPolarTransform : public SvIe::SVTaskObjectClass
 {
-	SV_DECLARE_CLASS( SVPolarTransform )
+	SV_DECLARE_CLASS
 
 public:
 	SVPolarTransform( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVPOLARTRANSFORM );

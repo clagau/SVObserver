@@ -29,7 +29,7 @@ namespace SvTo
 //! The tool also has the Color Threshold as and embedded value
 class SVColorToolClass : public SVToolClass
 {
-	SV_DECLARE_CLASS( SVColorToolClass );
+	SV_DECLARE_CLASS
 
 #pragma region Constructor
 public:

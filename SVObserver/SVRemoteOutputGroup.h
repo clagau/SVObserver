@@ -25,7 +25,7 @@ class IObjectWriter;
 class SVRemoteOutputGroup : public SVObjectClass
 {
 public:
-	SV_DECLARE_CLASS( SVRemoteOutputGroup );
+	SV_DECLARE_CLASS
 
 	explicit SVRemoteOutputGroup(LPCTSTR ObjectName);
 	SVRemoteOutputGroup( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVREMOTEOUTPUTGROUP);

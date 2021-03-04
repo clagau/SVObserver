@@ -58,7 +58,7 @@ class SVInspectionProcess :
 	public SVObjectClass,
 	public SvOi::IInspectionProcess
 {
-	SV_DECLARE_CLASS( SVInspectionProcess );
+	SV_DECLARE_CLASS
 
 public:
 	typedef std::unordered_map<std::string, SVObjectClass*> SVValueObjectMap;

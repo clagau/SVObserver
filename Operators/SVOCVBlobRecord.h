@@ -23,7 +23,7 @@ namespace SvOp
 class SVOCVCharacterResult : public SvIe::SVTaskObjectClass
 {
 protected:
-	SV_DECLARE_CLASS( SVOCVCharacterResult )
+	SV_DECLARE_CLASS
 
 public:
 	explicit SVOCVCharacterResult(LPCSTR ObjectName );

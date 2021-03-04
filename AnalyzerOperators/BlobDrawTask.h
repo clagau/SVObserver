@@ -30,7 +30,7 @@ namespace SvAo
 
 	class BlobDrawTask : public SvIe::SVTaskObjectListClass
 	{
-		SV_DECLARE_CLASS(BlobDrawTask);
+		SV_DECLARE_CLASS
 
 	public:
 		BlobDrawTask(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_BLOBDRAW);

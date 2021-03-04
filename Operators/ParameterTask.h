@@ -65,7 +65,7 @@ namespace SvOp
 
 	class InputParameterTask : public ParameterTask
 	{
-		SV_DECLARE_CLASS(InputParameterTask);
+		SV_DECLARE_CLASS
 
 		InputParameterTask(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_INPUT_PARAMETER_TASK);
 		virtual ~InputParameterTask();
@@ -73,7 +73,7 @@ namespace SvOp
 
 	class ResultParameterTask : public ParameterTask
 	{
-		SV_DECLARE_CLASS(ResultParameterTask);
+		SV_DECLARE_CLASS
 
 		ResultParameterTask(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_RESULT_PARAMETER_TASK);
 		virtual ~ResultParameterTask();

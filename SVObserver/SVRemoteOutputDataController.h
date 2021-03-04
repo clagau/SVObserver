@@ -31,7 +31,7 @@ class SVPPQObject;
 
 class SVRemoteOutputDataController : public SVObjectClass
 {
-	SV_DECLARE_CLASS( SVRemoteOutputDataController );
+	SV_DECLARE_CLASS
 
 public:
 	explicit SVRemoteOutputDataController(LPCTSTR ObjectName);

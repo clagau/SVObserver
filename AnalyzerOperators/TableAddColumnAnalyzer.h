@@ -21,7 +21,7 @@ namespace SvAo
 class TableAddColumnAnalyzer : public SvIe::SVTaskObjectClass
 {
 #pragma region Constructor
-	SV_DECLARE_CLASS(TableAddColumnAnalyzer);
+	SV_DECLARE_CLASS
 public:
 	explicit TableAddColumnAnalyzer(LPCTSTR ObjectName);
 	TableAddColumnAnalyzer(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_TABLEANALYZER_ADDCOLUMN);

@@ -20,7 +20,7 @@ namespace SvVol
 
 class SVDoubleValueObjectClass : public SVValueObjectClass<double>
 {
-	SV_DECLARE_CLASS( SVDoubleValueObjectClass );
+	SV_DECLARE_CLASS
 
 public:
 	explicit SVDoubleValueObjectClass( LPCTSTR ObjectName );

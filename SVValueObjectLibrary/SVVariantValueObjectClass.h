@@ -21,7 +21,7 @@ namespace SvVol
 
 class SVVariantValueObjectClass : public SVValueObjectClass<_variant_t>
 {
-	SV_DECLARE_CLASS( SVVariantValueObjectClass );
+	SV_DECLARE_CLASS
 
 public:
 	explicit SVVariantValueObjectClass( LPCTSTR ObjectName );

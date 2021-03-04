@@ -20,7 +20,7 @@ namespace SvVol
 
 class SVTimerValueObjectClass : public SVInt64ValueObjectClass  
 {
-	SV_DECLARE_CLASS( SVTimerValueObjectClass );
+	SV_DECLARE_CLASS
 
 public:
 	explicit SVTimerValueObjectClass(LPCTSTR ObjectName);

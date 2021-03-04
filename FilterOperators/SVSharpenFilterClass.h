@@ -16,7 +16,7 @@
 
 class SVSharpenFilterClass : public SVFilterClass
 {
-	SV_DECLARE_CLASS( SVSharpenFilterClass );
+	SV_DECLARE_CLASS
 public:
 	SVSharpenFilterClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVSHARPENFILTER );
 	virtual ~SVSharpenFilterClass();

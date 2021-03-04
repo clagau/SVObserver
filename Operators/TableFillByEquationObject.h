@@ -19,7 +19,7 @@ class TableColumnEquation;
 class TableFillByEquationObject : public TableObject
 {
 #pragma region Constructor
-	SV_DECLARE_CLASS( TableFillByEquationObject );
+	SV_DECLARE_CLASS
 public:
 	explicit TableFillByEquationObject( LPCTSTR ObjectName );
 	TableFillByEquationObject( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_TABLE_OBJECT );

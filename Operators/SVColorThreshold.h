@@ -40,7 +40,7 @@ struct BandThreshold
 //! An extra output image which is a combined image of all 3 Threshold images as bitwise AND
 class SVColorThreshold : public SVOperator
 {
-	SV_DECLARE_CLASS( SVColorThreshold );
+	SV_DECLARE_CLASS
 
 #pragma region Constructor
 public:

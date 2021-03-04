@@ -34,7 +34,7 @@ struct DummySortContainer
 
 class DoubleSortValueObject : public SVDoubleValueObjectClass
 {
-	SV_DECLARE_CLASS( DoubleSortValueObject );
+	SV_DECLARE_CLASS
 #pragma region Constructor
 public:
 	explicit DoubleSortValueObject( LPCTSTR ObjectName );

@@ -19,7 +19,7 @@ namespace SvAo
 class TableExcludeAnalyzer : public SvIe::SVTaskObjectClass
 {
 #pragma region Constructor
-	SV_DECLARE_CLASS( TableExcludeAnalyzer );
+	SV_DECLARE_CLASS
 public:
 	explicit TableExcludeAnalyzer( LPCTSTR ObjectName );
 	TableExcludeAnalyzer( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_TABLEANALYZER_EXCLUDE );

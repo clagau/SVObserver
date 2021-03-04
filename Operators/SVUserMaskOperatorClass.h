@@ -36,7 +36,7 @@ struct SVMaskFillPropertiesStruct;
 
 class SVUserMaskOperatorClass : public SVUnaryImageOperatorClass, public SvOi::IMask
 {
-	SV_DECLARE_CLASS( SVUserMaskOperatorClass );
+	SV_DECLARE_CLASS
 public:
 	SVUserMaskOperatorClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVUSERMASKOPERATOR );
 	virtual ~SVUserMaskOperatorClass();

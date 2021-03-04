@@ -131,7 +131,7 @@ The Get Array Values operator fills the provided array with the values of the sp
 */
 class SVEquation : public SvIe::SVTaskObjectClass, public SVEquationBase, public SvOi::IEquation
 {
-	SV_DECLARE_CLASS( SVEquation );
+	SV_DECLARE_CLASS
 
 	/**
 	@SVObjectName Equation Parsing Data

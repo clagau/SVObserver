@@ -22,7 +22,7 @@ namespace SvVol
 
 class SVStringValueObjectClass : public SVValueObjectClass<std::string>
 {
-	SV_DECLARE_CLASS( SVStringValueObjectClass );
+	SV_DECLARE_CLASS
 
 public:
 	explicit SVStringValueObjectClass( LPCTSTR ObjectName );

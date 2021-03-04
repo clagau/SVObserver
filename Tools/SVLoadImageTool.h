@@ -23,7 +23,7 @@ namespace SvTo
 
 class SVLoadImageToolClass : public SVToolClass
 {
-	SV_DECLARE_CLASS( SVLoadImageToolClass );
+	SV_DECLARE_CLASS
 
 public:
 	SVLoadImageToolClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVLOADIMAGETOOL );

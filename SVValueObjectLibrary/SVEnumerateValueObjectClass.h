@@ -24,7 +24,7 @@ namespace SvVol
 
 class SVEnumerateValueObjectClass : public SVValueObjectClass<long>, public SvOi::IEnumerateValueObject
 {
-	SV_DECLARE_CLASS( SVEnumerateValueObjectClass );
+	SV_DECLARE_CLASS
 public:
 	explicit SVEnumerateValueObjectClass(LPCTSTR ObjectName);
 	SVEnumerateValueObjectClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVENUMERATEVALUEOBJECT );

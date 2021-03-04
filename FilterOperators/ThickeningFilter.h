@@ -18,7 +18,7 @@
 
 class ThickeningFilter : public SVFilterClass
 {
-	SV_DECLARE_CLASS( ThickeningFilter );
+	SV_DECLARE_CLASS
 public:
 
 	ThickeningFilter( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTHICKENINGFILTER );

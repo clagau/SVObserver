@@ -27,7 +27,7 @@ namespace SvOp
 
 class SVBarCodeResult : public SVStringResult  
 {
-	SV_DECLARE_CLASS(SVBarCodeResult);
+	SV_DECLARE_CLASS
 
 public:
 	bool m_bFailedToRead = false;

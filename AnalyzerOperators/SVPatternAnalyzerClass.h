@@ -27,7 +27,7 @@ namespace SvAo
 
 class SVPatternAnalyzerClass : public SVImageAnalyzerClass, public SvOi::IPatternAnalyzer  
 {
-	SV_DECLARE_CLASS (SVPatternAnalyzerClass);
+	SV_DECLARE_CLASS
 
 	friend class SVSetupDialogManager;
 

@@ -35,7 +35,7 @@ namespace SvOp
 ////////////////////////////////////////////////////////////////////////////////
 class SVInPlaceImageOperatorListClass : public SVUnaryImageOperatorList 
 {
-	SV_DECLARE_CLASS( SVInPlaceImageOperatorListClass )
+	SV_DECLARE_CLASS
 
 public:
 	SVInPlaceImageOperatorListClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVINPLACEIMAGEOPERATORLIST );

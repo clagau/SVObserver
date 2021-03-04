@@ -19,7 +19,7 @@ namespace SvTo
 /// Implements the LoopTool
 class LoopTool : public SVToolClass
 {
-	SV_DECLARE_CLASS(LoopTool);
+	SV_DECLARE_CLASS
 public:
 	LoopTool(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_LOOPTOOL);
 	virtual ~LoopTool();

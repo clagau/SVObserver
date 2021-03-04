@@ -16,7 +16,7 @@ namespace SvOp
 
 class SVEvaluateCenterYClass : public SVEvaluate
 {
-	SV_DECLARE_CLASS( SVEvaluateCenterYClass )
+	SV_DECLARE_CLASS
 
 public:
 	SVEvaluateCenterYClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVEVALUATE_CENTER_Y );

@@ -24,7 +24,7 @@ namespace SvOp
 
 class SVLinearImageOperatorList : public SVStdImageOperatorListClass 
 {
-	SV_DECLARE_CLASS( SVLinearImageOperatorList )
+	SV_DECLARE_CLASS
 
 private:
 	static constexpr int m_defaultDoubleResultLowFail = 0;

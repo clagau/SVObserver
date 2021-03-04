@@ -17,7 +17,7 @@ namespace SvOp
 class EQAdjustSizeHeight : public EQAdjustSize
 {
 
-	SV_DECLARE_CLASS( EQAdjustSizeHeight);
+	SV_DECLARE_CLASS
 public:
 	EQAdjustSizeHeight( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_EQ_ADJUSTSIZE_HEIGHT );
 	virtual ~EQAdjustSizeHeight();

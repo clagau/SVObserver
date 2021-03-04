@@ -22,7 +22,7 @@ namespace SvOp
 class SVEvaluate : public SVMathContainer
 {
 	///This class does not need to call SV_DECLARE_CLASS as it is a base class and only derived classes are instantiated
-	//SV_DECLARE_CLASS( SVEvaluate )
+	//SV_DECLARE_CLASS
 
 public:
 	SVEvaluate( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVEVALUATE );

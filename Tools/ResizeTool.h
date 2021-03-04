@@ -18,7 +18,7 @@ namespace SvTo
 
 class ResizeTool: public SVToolClass
 {
-	SV_DECLARE_CLASS (ResizeTool);
+	SV_DECLARE_CLASS
 
 #pragma region Public Methods
 public:

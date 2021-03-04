@@ -30,7 +30,7 @@ namespace SvAo
 class SVLinearAnalyzerClass : public SVAnalyzerClass, public SvOi::ISVLinearAnalyzer
 {
 	///This class does not need to call SV_DECLARE_CLASS as it is a base class and only derived classes are instantiated
-	//SV_DECLARE_CLASS( SVLinearAnalyzerClass );
+	//SV_DECLARE_CLASS
 
 	friend class SVSetupDialogManager;
 

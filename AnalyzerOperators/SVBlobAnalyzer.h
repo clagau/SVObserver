@@ -80,7 +80,7 @@ const LPCSTR g_strBlobFillTypeEnums =
 //
 class SVBlobAnalyzerClass : public SVImageAnalyzerClass, public SvOi::IBlobAnalyzer
 {
-	SV_DECLARE_CLASS( SVBlobAnalyzerClass );
+	SV_DECLARE_CLASS
 
 	friend class SVSetupDialogManager;
 

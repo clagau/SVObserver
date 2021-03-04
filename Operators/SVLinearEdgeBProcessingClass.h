@@ -20,7 +20,7 @@ namespace SvOp
 
 class SVLinearEdgeBProcessingClass : public SVLinearEdgeProcessingClass
 {
-	SV_DECLARE_CLASS( SVLinearEdgeBProcessingClass );
+	SV_DECLARE_CLASS
 
 public:
 	SVLinearEdgeBProcessingClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVLINEAREDGEBPROCESSING );

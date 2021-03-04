@@ -23,7 +23,7 @@
 class RootObject : public SVObjectClass
 {
 #pragma region Declarations
-	SV_DECLARE_CLASS( RootObject );
+	SV_DECLARE_CLASS
 #pragma endregion Declarations
 
 public:

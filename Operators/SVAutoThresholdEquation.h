@@ -21,7 +21,7 @@ namespace SvOp
 
 class SVAutoThresholdEquation : public SVEquation
 {
-	SV_DECLARE_CLASS( SVAutoThresholdEquation);
+	SV_DECLARE_CLASS
 
 //******************************************************************************
 // Serialization Declaration(s):

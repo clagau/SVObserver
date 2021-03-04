@@ -26,7 +26,7 @@ namespace SvOp
 
 class SVLUTOperator : public SVUnaryImageOperatorClass
 {
-	SV_DECLARE_CLASS( SVLUTOperator );
+	SV_DECLARE_CLASS
 
 public:
 	SVLUTOperator( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVLUTOPERATOR );

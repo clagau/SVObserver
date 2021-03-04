@@ -22,7 +22,7 @@ namespace SvVol
 
 class SVFileNameValueObjectClass : public SVStringValueObjectClass
 {
-	SV_DECLARE_CLASS( SVFileNameValueObjectClass );
+	SV_DECLARE_CLASS
 
 public:
 	explicit SVFileNameValueObjectClass( LPCTSTR ObjectName );

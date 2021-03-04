@@ -21,7 +21,7 @@ namespace SvAo
 
 class LinearMaximumObjectAnalyzer : public SVLinearAnalyzerClass
 {
-	SV_DECLARE_CLASS( LinearMaximumObjectAnalyzer );
+	SV_DECLARE_CLASS
 
 public:
 	LinearMaximumObjectAnalyzer( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_LINEARMAXIMUMOBJECTANALYZER );

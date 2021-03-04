@@ -41,7 +41,7 @@ This class is the base class to all configuration level objects.  These objects 
 */
 class SVObjectClass : public SvOi::IObjectClass
 {
-	SV_DECLARE_CLASS( SVObjectClass );
+	SV_DECLARE_CLASS
 	
 	enum RefreshObjectType
 	{

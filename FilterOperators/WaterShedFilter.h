@@ -20,7 +20,7 @@
 
 class WatershedFilter : public SVFilterClass
 {
-	SV_DECLARE_CLASS( WatershedFilter );
+	SV_DECLARE_CLASS
 
 public:
 	WatershedFilter( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVWATERSHEDFILTER );

@@ -19,7 +19,7 @@ namespace SvAo
 
 class SVOCVAnalyzer : public SVImageAnalyzerClass
 {
-	SV_DECLARE_CLASS( SVOCVAnalyzer );
+	SV_DECLARE_CLASS
 
 public:
 	SVOCVAnalyzer( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVOCVANALYZER	);

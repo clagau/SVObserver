@@ -21,7 +21,7 @@ namespace SvOp
 
 class SVLUTEquation : public EquationArray
 {
-	SV_DECLARE_CLASS( SVLUTEquation );
+	SV_DECLARE_CLASS
 
 public:
 	SVLUTEquation( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVLUTEQUATION );

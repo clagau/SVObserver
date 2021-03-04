@@ -23,7 +23,7 @@ namespace SvVol
 
 class SVBoolValueObjectClass : public SVValueObjectClass<BOOL>
 {
-	SV_DECLARE_CLASS( SVBoolValueObjectClass );
+	SV_DECLARE_CLASS
 
 public:
 	explicit SVBoolValueObjectClass(LPCTSTR ObjectName);

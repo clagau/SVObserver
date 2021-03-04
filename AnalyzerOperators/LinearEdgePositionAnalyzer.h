@@ -22,7 +22,7 @@ namespace SvAo
 
 class LinearEdgePositionAnalyzer : public SVLinearAnalyzerClass
 {
-	SV_DECLARE_CLASS( LinearEdgePositionAnalyzer );
+	SV_DECLARE_CLASS
 
 public:
 	LinearEdgePositionAnalyzer( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_LINEAREDGEPOSITIONANALYZER );

@@ -19,7 +19,7 @@ namespace SvTo
 class TableAnalyzerTool : public SVToolClass
 /// \brief This class perform the Table Analyzer Tool
 {
-	SV_DECLARE_CLASS (TableAnalyzerTool);
+	SV_DECLARE_CLASS
 
 #pragma region Constructor
 public:

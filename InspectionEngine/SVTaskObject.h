@@ -54,7 +54,7 @@ struct SVExtentPropertyInfoStruct;
 class SVTaskObjectClass : public SVObjectAppClass, public SvOi::ITaskObject
 {
 	///This class does not need to call SV_DECLARE_CLASS as it is a base class and only derived classes are instantiated
-	//SV_DECLARE_CLASS(SVTaskObjectClass)
+	//SV_DECLARE_CLASS
 
 	friend class SVTaskObjectListClass; // For access to Run()
 	friend class SvTo::SVToolClass; // For access to Run()

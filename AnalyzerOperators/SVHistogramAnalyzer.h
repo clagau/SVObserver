@@ -24,7 +24,7 @@ namespace SvAo
 
 class SVHistogramAnalyzer : public SVImageAnalyzerClass
 {
-	SV_DECLARE_CLASS( SVHistogramAnalyzer );
+	SV_DECLARE_CLASS
 
 	friend class SVSetupDialogManager;
 

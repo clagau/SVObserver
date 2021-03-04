@@ -16,7 +16,7 @@
 
 class FillHolesFilter : public BlobReconstructBasicFilter
 {
-	SV_DECLARE_CLASS(FillHolesFilter);
+	SV_DECLARE_CLASS
 
 public:
 	FillHolesFilter(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_FILLHOLESFILTER);
