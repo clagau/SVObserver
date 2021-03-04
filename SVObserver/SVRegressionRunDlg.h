@@ -85,6 +85,8 @@ private:
 
 	/// Set the Equation text to the screen
 	void setEquationText();
+
+	void SortSelectedFiles(std::vector<RegressionTestStruct>& rRegTestList);
 #pragma endregion Private Methods
 
 #pragma region Member variables

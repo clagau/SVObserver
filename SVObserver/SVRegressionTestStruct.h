@@ -34,6 +34,7 @@ struct RegressionTestStruct
 	SvDef::StringVector stdVectorFile {};
 	SvDef::StringVector::iterator stdIteratorStart {};
 	SvDef::StringVector::iterator stdIteratorCurrent {};
+	std::vector<std::pair<std::string, std::string>> fileSortRange;
 };
 
 struct RegressionRunFileStruct

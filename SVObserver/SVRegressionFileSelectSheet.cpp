@@ -123,7 +123,9 @@ void SVRegressionFileSelectSheet::OnOK()
 		{
 			if ( pPage->GetFileSelectType() != RegNone )
 			{
+				constexpr size_t cReseverveFileNumber = 1000;
 				RegressionTestStruct regStruct;
+				regStruct.stdVectorFile.reserve(cReseverveFileNumber);
 				regStruct.iFileMethod = pPage->GetFileSelectType();
 				regStruct.Name = pPage->GetPageName();
 				regStruct.FirstFile = pPage->GetSelectedFile();
@@ -292,13 +294,6 @@ bool SVRegressionFileSelectSheet::ValidateAndFillFileList(RegressionTestStruct& 
 				throw Exception;
 			}
 			rStruct.stdVectorFile.push_back(rStruct.FirstFile);
-			SvDef::StringVector::iterator iter;
-
-			iter = std::find(rStruct.stdVectorFile.begin(), rStruct.stdVectorFile.end(), rStruct.FirstFile);
-
-			//set the structs starting and current position to the start
-			rStruct.stdIteratorStart = iter;
-			rStruct.stdIteratorCurrent = rStruct.stdIteratorStart;
 			isFileSet = true;
 		}
 	}
@@ -391,15 +386,6 @@ int SVRegressionFileSelectSheet::FillFileList(RegressionTestStruct& rStruct)
 		count++;
 		rStruct.stdVectorFile.push_back(std::string(fileFinder.GetFilePath()));
 	}
-	std::sort(rStruct.stdVectorFile.begin(), rStruct.stdVectorFile.end());
-	//find the starting position
-	SvDef::StringVector::iterator iter;
-
-	iter = std::find(rStruct.stdVectorFile.begin(), rStruct.stdVectorFile.end(), rStruct.FirstFile);
-
-	//set the structs starting and current position to the start
-	rStruct.stdIteratorStart = iter;
-	rStruct.stdIteratorCurrent = rStruct.stdIteratorStart;
 	return count;
 }
 
@@ -424,11 +410,12 @@ int SVRegressionFileSelectSheet::FillFileListFromDirectory(RegressionTestStruct&
 			currentPath = currentPath.substr(0, Pos);
 		}
 	}
+	else
+	{
+		//If the first file is a directory then clear it so that the first file is set to the vector begin
+		rStruct.FirstFile.clear();
+	}
 	int count = FillFileListFromDirectory(rStruct, currentPath);
-
-	//set the structs starting and current position to the start
-	rStruct.stdIteratorStart = rStruct.stdVectorFile.begin();
-	rStruct.stdIteratorCurrent = rStruct.stdIteratorStart;
 	return count;
 }
 
@@ -439,14 +426,19 @@ int SVRegressionFileSelectSheet::FillFileListFromDirectory(RegressionTestStruct&
 	std::string fileMask = rCurrentPath + _T("\\*.bmp");
 	CFileFind fileFinder;
 	BOOL bFound = fileFinder.FindFile(fileMask.c_str());
-
+	std::string firstFile;
 	while (bFound)
 	{
 		bFound = fileFinder.FindNextFile();
-		count++;
 		rStruct.stdVectorFile.push_back(std::string(fileFinder.GetFilePath()));
+		if (0 == count)
+		{
+			firstFile = fileFinder.GetFilePath();
+		}
+		count++;
 	}
 
+	rStruct.fileSortRange.emplace_back(firstFile, fileFinder.GetFilePath());
 	if (RegressionFileEnum::RegSubDirectories == rStruct.iFileMethod)
 	{
 		fileMask = rCurrentPath + _T("\\*");
@@ -458,9 +450,10 @@ int SVRegressionFileSelectSheet::FillFileListFromDirectory(RegressionTestStruct&
 			if (fileFinder.IsDirectory() && !fileFinder.IsDots())
 			{
 				//skip directory which start with underscore (e.g. C:/images/_Name)
-				std::string tmpPathName(fileFinder.GetFilePath());
-				if (tmpPathName.size() > rCurrentPath.size()+1 && '_' != tmpPathName[rCurrentPath.size()+1])
+				std::string directoryName{ fileFinder.GetFileName().GetString() };
+				if (directoryName.size() > 0 && '_' != directoryName[0])
 				{
+					std::string tmpPathName{ fileFinder.GetFilePath().GetString() };
 					count += FillFileListFromDirectory(rStruct, tmpPathName);
 				}
 			}			

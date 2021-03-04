@@ -383,12 +383,14 @@ void SVRegressionRunDlg::OnBtnSettings()
 	dlgRegFileSelect.CreatePages(&m_rRegressionController.getRegCameras(), &m_rRegressionController.getRegImages(), cameraVector);
 	if ( IDOK == dlgRegFileSelect.DoModal() )
 	{
+		SortSelectedFiles(m_rRegressionController.getRegCameras());
+		SortSelectedFiles(m_rRegressionController.getRegImages());
 		if (m_rRegressionController.getRegCameras().size() > 0 )
 		{
 			EnableButtons(TRUE);
 		}
 		m_lstCameraImages.ResetContent();
-		if ( !m_bFirst )
+		if (FALSE == m_bFirst)
 		{
 			m_rRegressionController.setRunMode(RegModeResetSettings);
 		}
@@ -641,5 +643,32 @@ void SVRegressionRunDlg::setEquationText()
 	}
 
 	UpdateData(false);
+}
+
+void SVRegressionRunDlg::SortSelectedFiles(std::vector<RegressionTestStruct>& rRegTestList)
+{
+	//StrCmpLogicalW is the sorting function used by Windows Explorer
+	auto FileCompare = [](const std::string& rLhs, const std::string& rRhs) { return ::StrCmpLogicalW(_bstr_t{ rLhs.c_str() }, _bstr_t{ rRhs.c_str() }) < 0; };
+	for (auto& rRegTest : rRegTestList)
+	{
+		if (rRegTest.fileSortRange.size() > 0)
+		{
+			//This is for different directories so that each directory is sorted separately
+			for (const auto& rSortRange : rRegTest.fileSortRange)
+			{
+				auto startIter = std::find(rRegTest.stdVectorFile.begin(), rRegTest.stdVectorFile.end(), rSortRange.first);
+				auto endIter = std::find(rRegTest.stdVectorFile.begin(), rRegTest.stdVectorFile.end(), rSortRange.second);
+				++endIter;
+				std::sort(startIter, endIter, FileCompare);
+			}
+		}
+		else
+		{
+			std::sort(rRegTest.stdVectorFile.begin(), rRegTest.stdVectorFile.end(), FileCompare);
+		}
+		bool hasStartFile = rRegTest.FirstFile.empty() ? false : true;
+		rRegTest.stdIteratorStart = hasStartFile ? std::find(rRegTest.stdVectorFile.begin(), rRegTest.stdVectorFile.end(), rRegTest.FirstFile) : rRegTest.stdVectorFile.begin();
+		rRegTest.stdIteratorCurrent = rRegTest.stdIteratorStart;
+	}
 }
 #pragma endregion Private Methods
