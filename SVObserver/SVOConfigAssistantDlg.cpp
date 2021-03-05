@@ -160,7 +160,7 @@ BOOL SVOConfigAssistantDlg::OnInitDialog()
 	m_dlgPropSheet.AddPage(&m_CameraPage);
 	m_dlgPropSheet.AddPage(&m_InspectionPage);
 	m_dlgPropSheet.AddPage(&m_PPQPage);
-	m_dlgPropSheet.AddPage(&m_GeneralPage);
+	m_dlgPropSheet.AddPage(&m_FileExecutionPage);
 
 	m_dlgPropSheet.Create(this, WS_CHILD | WS_VISIBLE, 0);
 	m_dlgPropSheet.ModifyStyleEx (0, WS_EX_CONTROLPARENT);
@@ -416,7 +416,7 @@ void SVOConfigAssistantDlg::ReloadForCurrentSystem()
 		m_CameraPage.SetupList();
 		m_InspectionPage.SetupList();
 		m_PPQPage.SetupList();
-		m_GeneralPage.SetupList();
+		m_FileExecutionPage.SetupList();
 		m_ctlMsgList.ResetContent();
 		SetupMessages();
 		OnChangeEditConfigurationName();
@@ -2646,7 +2646,7 @@ bool SVOConfigAssistantDlg::GetConfigurationForExisting()
 	m_CameraPage.SetupList();
 	m_InspectionPage.SetupList();
 	m_PPQPage.SetupList();
-	m_GeneralPage.SetupList();
+	m_FileExecutionPage.SetupList();
 
 	m_bCameraGood = TRUE;
 	m_bTriggerGood = TRUE;

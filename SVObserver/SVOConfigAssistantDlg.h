@@ -193,7 +193,7 @@ protected:
 	SVOCameraDlg           m_CameraPage;
 	SVOInspectionSourceDlg m_InspectionPage;
 	SVOProPosQueDlg        m_PPQPage;
-	SVOFileExecutionConfigDlg m_GeneralPage;
+	SVOFileExecutionConfigDlg m_FileExecutionPage;
 
 	// Generated message map functions
 	//{{AFX_MSG(SVOConfigAssistantDlg)
