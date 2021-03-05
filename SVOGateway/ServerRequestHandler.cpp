@@ -139,6 +139,16 @@ ServerRequestHandler::ServerRequestHandler(SharedMemoryAccess* sma, SvAuth::Auth
 
 	registerStreamHandler<
 		SvPb::SVRCMessages,
+		SvPb::SVRCMessages::kGetGatewayMessageStreamRequest,
+		SvPb::GetGatewayMessageStreamRequest,
+		SvPb::GetGatewayMessageStreamResponse>(
+			[sma](const SvAuth::SessionContext&, SvPb::GetGatewayMessageStreamRequest&& req, SvRpc::Observer<SvPb::GetGatewayMessageStreamResponse> observer, SvRpc::ServerStreamContext::Ptr ctx)
+			{
+				sma->GetGatewayMessageStream(req, observer, ctx);
+			});
+
+	registerStreamHandler<
+		SvPb::SVRCMessages,
 		SvPb::SVRCMessages::kGetProductStreamRequest,
 		SvPb::GetProductStreamRequest,
 		SvPb::GetProductStreamResponse>(

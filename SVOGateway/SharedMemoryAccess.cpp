@@ -494,6 +494,7 @@ static bool read_image(SvPb::Image& resImg, SvOi::ITRCImagePtr imgPtr)
 	// See https://docs.microsoft.com/en-us/previous-versions/dd183376(v=vs.85)
 	resImg.set_height(std::labs(info.GetHeight()));
 	resImg.set_width(info.GetWidth());
+	resImg.set_type("image/bmp");
 	return rc == S_OK;
 }
 
@@ -702,6 +703,7 @@ SvSyl::SVFuture<void> SharedMemoryAccess::collect_images(
 
 		if (imagePos < 0)
 		{
+			SV_LOG_GLOBAL(debug) << "Ignoring image with invalid position " << imagePos;
 			continue;
 		}
 
@@ -899,15 +901,17 @@ void SharedMemoryAccess::rebuild_trc_pos_cache(product_stream_t& stream)
 
 	try
 	{
-		int inspectionPos = get_inspection_pos_for_id(pTrc->getInspections(), stream.req.inspectionid());
+		int inspectionId = stream.req.inspectionid();
+		int inspectionPos = get_inspection_pos_for_id(pTrc->getInspections(), inspectionId);
 		if (inspectionPos >= 0)
 		{
 			const auto& rDataDefMap = pTrc->getDataDefMap(inspectionPos);
+			const auto& rImageDefMap = pTrc->getImageDefMap(inspectionPos);
 			const auto& rChildImageDefMap = pTrc->getChildImageDefMap(inspectionPos);
 			collect_value_pos(stream.valuePositions, rDataDefMap, stream.req.valueids());
 			collect_value_pos(stream.rejectValuePositions, rDataDefMap, stream.req.rejectvalueids());
-			collect_image_pos(stream.imagePositions, rDataDefMap, rChildImageDefMap, stream.req.imageids());
-			collect_image_pos(stream.rejectImagePositions, rDataDefMap, rChildImageDefMap, stream.req.rejectimageids());
+			collect_image_pos(stream.imagePositions, rImageDefMap, rChildImageDefMap, stream.req.imageids());
+			collect_image_pos(stream.rejectImagePositions, rImageDefMap, rChildImageDefMap, stream.req.rejectimageids());
 		}
 	}
 	catch (...)
@@ -1185,6 +1189,7 @@ void SharedMemoryAccess::subscribe_to_trc()
 	{
 		m_TrcReadySubscriptionId = pTrc->registerReadyCallback([this]()
 		{
+			SV_LOG_GLOBAL(debug) << "TRC is ready";
 			m_trc_ready = true;
 			m_io_service.post([this]()
 				{
@@ -1193,6 +1198,7 @@ void SharedMemoryAccess::subscribe_to_trc()
 		});
 		m_TrcResetSubscriptionId = pTrc->registerResetCallback([this]()
 		{
+			SV_LOG_GLOBAL(debug) << "TRC was reset";
 			m_trc_ready = false;
 		});
 		m_TrcNewInterestTrSubscriptionId = pTrc->registerNewInterestTrCallback([this](const std::vector<SvOi::TrInterestEventData>& rEvents)
@@ -1207,6 +1213,12 @@ void SharedMemoryAccess::subscribe_to_trc()
 				on_new_trigger_record(eventData);
 			}
 		});
+
+		SV_LOG_GLOBAL(debug) << "Successfully registered to TRC callbacks";
+	}
+	else
+	{
+		SV_LOG_GLOBAL(warning) << "TRC is not available. Unable to register callbacks!";
 	}
 }
 

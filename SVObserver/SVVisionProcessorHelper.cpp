@@ -1210,7 +1210,6 @@ void SVVisionProcessorHelper::ProcessNotification(const SvPb::GetNotificationStr
 	std::lock_guard<std::mutex> lockGuard(m_SubscriptionsMutex);
 	for(auto it = m_Subscriptions.begin(); it != m_Subscriptions.end(); )
 	{
-		SvPb::GetNotificationStreamResponse copyResponse = response;
 		// client either unsubscripted or disconnected. remove from list.
 		if (it->m_context->isCancelled())
 		{
@@ -1221,6 +1220,8 @@ void SVVisionProcessorHelper::ProcessNotification(const SvPb::GetNotificationStr
 		bool allNotifications = it->m_notifyList.empty();
 		if (allNotifications || isNotifyTypeInList)
 		{
+			SvPb::GetNotificationStreamResponse copyResponse;
+			copyResponse.CopyFrom(response);
 			it->m_observer.onNext(std::move(copyResponse));
 		}
 		++it;
