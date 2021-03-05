@@ -27,7 +27,7 @@
 #include "SVImportedInspectionInfo.h" 
 #include "SVUtilityLibrary/GlobalConstantData.h"
 #include "Definitions/StringTypeDef.h"
-#include "SVOGeneralConfigDlg.h"
+#include "SVOFileExecutionConfigDlg.h"
 #pragma endregion Includes
 
 // Moved SVIM_FULL_BOARD, etc. to SVObserverEnums.h
@@ -193,7 +193,7 @@ protected:
 	SVOCameraDlg           m_CameraPage;
 	SVOInspectionSourceDlg m_InspectionPage;
 	SVOProPosQueDlg        m_PPQPage;
-	SVOGeneralConfigDlg	   m_GeneralPage;
+	SVOFileExecutionConfigDlg m_GeneralPage;
 
 	// Generated message map functions
 	//{{AFX_MSG(SVOConfigAssistantDlg)

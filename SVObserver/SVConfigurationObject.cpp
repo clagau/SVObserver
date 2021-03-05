@@ -961,6 +961,22 @@ void SVConfigurationObject::LoadEnvironment(SVTreeType& rTree, bool& Configurati
 	{
 		SVObjectManagerClass::Instance().fitNextObjectId(Value);
 	}
+
+	if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_PRE_RUN_EXECUTION, hChild, Value))
+	{
+		if (Value.vt == VT_BSTR)
+		{
+			m_preRunExecutionFile = SvUl::createStdString(Value);
+		}		
+	}
+
+	if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_POST_RUN_EXECUTION, hChild, Value))
+	{	
+		if (Value.vt == VT_BSTR)
+		{
+			m_postRunExecutionFile = SvUl::createStdString(Value);
+		}
+	}
 }
 
 bool SVConfigurationObject::LoadIO(SVTreeType& rTree)
@@ -2796,6 +2812,14 @@ void SVConfigurationObject::SaveEnvironment(SvOi::IObjectWriter& rWriter) const
 	}
 
 	rWriter.WriteAttribute(SvXml::CTAG_NEXT_OBJECT_ID, SVObjectManagerClass::Instance().getCurrentNextObjectId());
+	
+	svValue.Clear();
+	svValue.SetString(m_preRunExecutionFile.c_str());
+	rWriter.WriteAttribute(SvXml::CTAG_PRE_RUN_EXECUTION, svValue);
+
+	svValue.Clear();
+	svValue.SetString(m_postRunExecutionFile.c_str());
+	rWriter.WriteAttribute(SvXml::CTAG_POST_RUN_EXECUTION, svValue);
 
 	rWriter.EndElement(); //End of Environment
 }

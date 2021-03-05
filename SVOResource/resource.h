@@ -134,7 +134,7 @@
 #define IDD_DLG_CONFIG_ASSISTANT        5095
 #define IDD_DLG_PROPPAGE_AA_CAMERA      5096
 #define IDD_DLG_PROPPAGE_AA_TRIGGER     5097
-#define IDD_DLG_PROPPAGE_AA_GENERAL     5098
+#define IDC_DLG_PROPPAGE_FILE_EXEC		5098
 #define IDD_LUT_DIALOG                  5100
 #define IDD_CUSTOM_FILTER               5102
 #define IDD_OCV_MATCH_DIALOG            5105
@@ -1819,8 +1819,8 @@
 #define IDC_BC_MULTI_STRINGFILE         15576
 #define IDC_BC_MULTI_SELECTFILE         15577
 #define IDC_BTN_ADVANCED                15578
-#define IDC_BTN_ADD_PRE                 15579
-#define IDC_BTN_ADD_POST                15580
+#define IDC_ADD_PRE_FILE_EXEC           15579
+#define IDC_ADD_POST_FILE_EXEC          15580
 #define IDC_LST_CAMERA                  15581
 #define IDC_LST_TRIGGERS                15582
 #define IDC_BTN_NEW_TRIG                15583
@@ -2380,8 +2380,8 @@
 #define IDS_OBJECTNAME_FORMAT_HEIGHT_SCALE 16176
 #define IDS_OBJECTNAME_CONTENT_WIDTH_SCALE 16177
 #define IDS_OBJECTNAME_CONTENT_HEIGHT_SCALE 16178
-#define IDC_EDT_PREBATCH                16179
-#define IDC_EDT_POSTBATCH               16180
+#define ID_PRE_FILE_EXEC                16179
+#define ID_POST_FILE_EXEC               16180
 #define IDC_BTN_RANGE_MIN               16183
 #define IDC_BTN_RANGE_MIN2              16184
 #define IDC_BTN_RANGE_DELTA             16185
@@ -2619,9 +2619,9 @@
 #define IDS_TRIGGER_TO_ACQUISITION_START_TIME 61483
 #define IDS_ACQUISITION_TIME            61484
 #define IDS_TRIGGER_TIMESTAMP           61485
-#define IDC_BTN_REMOVE_PRE              61486
-#define IDC_BTN_REMOVE_POST             61487
-#define IDC_GENERAL_TAB_MESSAGE         61488
+#define IDC_REMOVE_PRE_FILE_EXEC        61486
+#define IDC_REMOVE_POST_FILE_EXEC       61487
+#define IDC_FILE_EXEC_MESSAGE			61488
 
 // Next default values for new objects
 // 

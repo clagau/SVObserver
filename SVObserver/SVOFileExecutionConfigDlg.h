@@ -1,20 +1,20 @@
 //*****************************************************************************
 // \copyright COPYRIGHT (c) 2020,2020 by Seidenader Maschinenbau GmbH. All Rights Reserved
-/// \file SVOGeneralConfigDlg.h
+/// \file SVOFileExecutionConfigDlg.h
 /// This is the class for the General Tab in the edit config dialog
 //******************************************************************************
 
 #pragma once
 class SVOConfigAssistantDlg;
 
-class SVOGeneralConfigDlg : public CPropertyPage
+class SVOFileExecutionConfigDlg : public CPropertyPage
 {
 public:
-	SVOGeneralConfigDlg(CWnd* pParent = nullptr);   // standard constructor
-	virtual ~SVOGeneralConfigDlg();
+	SVOFileExecutionConfigDlg(CWnd* pParent = nullptr);   // standard constructor
+	virtual ~SVOFileExecutionConfigDlg();
     void SetupList();
 
-	enum { IDD = IDD_DLG_PROPPAGE_AA_GENERAL};
+	enum { IDD = IDC_DLG_PROPPAGE_FILE_EXEC};
 	CButton	m_btnAddPre;
 	CButton m_btnAddPost;
 	CButton m_btnRemovePre;
@@ -26,8 +26,8 @@ public:
 
 	enum ProcessPosition
 	{
-		PreBatch = 0,
-		PostBatch = 1,
+		PreRun = 0,
+		PostRun = 1,
 	};
 
 protected:
@@ -44,6 +44,7 @@ protected:
 	afx_msg void OnEditPreTextfield();
 	afx_msg void OnEditPostTextfield();
 	void copyAndAddToConfig(std::string path, int preOrPost);
+	void createErrorMessage();
 	void clearTextfieldAndRemoveFromConfig(int preOrPost);
 
 	DECLARE_MESSAGE_MAP()

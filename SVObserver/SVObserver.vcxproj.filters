@@ -498,7 +498,7 @@
     <ClCompile Include="SVTADlgResizePage.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVOGeneralConfigDlg.cpp">
+    <ClCompile Include="SVOFileExecutionConfigDlg.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="RegressionTestController.cpp">
@@ -1054,7 +1054,7 @@
     <ClInclude Include="SVTADlgResizePage.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVOGeneralConfigDlg.h">
+    <ClInclude Include="SVOFileExecutionConfigDlg.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="RegressionTestController.h">

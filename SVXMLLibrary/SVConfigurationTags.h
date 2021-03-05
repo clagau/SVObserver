@@ -199,6 +199,9 @@ namespace  SvXml
 	constexpr char* CTAG_AUDDID_DEFAULT_LIST = _T("AuditDefaultList");
 	constexpr char* CTAG_AUDDID_WHITE_LIST = _T("AuditWhiteList");
 
+	constexpr char* CTAG_PRE_RUN_EXECUTION = _T("PreRunExecution");
+	constexpr char* CTAG_POST_RUN_EXECUTION = _T("PostRunExecution");
+
 	/// These are tool copy / paste tags
 	constexpr char* ToolCopyTag = _T( "Tool-Copy" );
 	constexpr char* ToolsTag = _T( "Tools" );

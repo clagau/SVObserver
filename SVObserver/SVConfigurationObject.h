@@ -394,6 +394,11 @@ public:
 	void UpdateAuditFiles(bool calculatehash);
 	const std::vector< SvUl::AuditFile>& GetAuditDefaultList()   const;
 	const std::vector< SvUl::AuditFile>& GetAuditWhiteList()    const ;
+
+	void setPreRunExecutionFilePath(LPCTSTR filepath) {m_preRunExecutionFile = filepath;}
+	void setPostRunExecutionFilePath(LPCTSTR filepath) {m_postRunExecutionFile = filepath;}
+	const std::string& getPreRunExecutionFilePath() const {return m_preRunExecutionFile;}
+	const std::string& getPostRunExecutionFilePath() const {return m_postRunExecutionFile;}
 private:
 	typedef std::set<SVInspectionProcess*> SVInspectionSet;
 	typedef std::map<UINT, SVObjectReferenceVector> AttributesSetMap;
@@ -508,6 +513,10 @@ private:
 	SVInspectionProcessVector   m_arInspectionArray;
 	SVIMProductEnum             m_eProductType{ SVIM_PRODUCT_TYPE_UNKNOWN };
 	volatile bool               m_bConfigurationValid = false;
+
+	//Put filenames here
+	std::string m_preRunExecutionFile;
+	std::string m_postRunExecutionFile;
 
 	SVAcquisitionDeviceMap m_AcquisitionDeviceMap;
 	SvPb::InspectionList m_inspList4TRC;

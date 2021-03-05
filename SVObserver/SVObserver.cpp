@@ -801,29 +801,33 @@ void SVObserverApp::OnStop()
 	SvStl::MessageManager Exception(SvStl::MsgType::Log);
 	Exception.setMessage(SVMSG_SVO_28_SVOBSERVER_GO_OFFLINE, TriggerCounts.c_str(), SvStl::SourceFileParams(StdMessageParams));
 
-	if (std::filesystem::exists(SvStl::GlobalPath::Inst().GetRunPath() + "\\postBatch.bat"))
+	if (pConfig != nullptr)
 	{
-		SHELLEXECUTEINFO ShExecInfo = { 0 };
-		ShExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
-		ShExecInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
-		ShExecInfo.hwnd = NULL;
-		ShExecInfo.lpVerb = NULL;
-		ShExecInfo.lpFile = "postBatch.bat";
-		ShExecInfo.lpParameters = "";
-		ShExecInfo.lpDirectory = SvStl::GlobalPath::Inst().GetRunPath().c_str();
-		ShExecInfo.nShow = SW_HIDE;
-		ShExecInfo.hInstApp = NULL;
-		
-		ShellExecuteEx(&ShExecInfo);
-		DWORD returnValue = WaitForSingleObject(ShExecInfo.hProcess, batExecutionTimeout);
-		
-
-		if (returnValue == WAIT_TIMEOUT)
+		if (std::filesystem::exists(pConfig->getPostRunExecutionFilePath()))
 		{
-			SvDef::StringVector msgList;
-			msgList.push_back("postBatch.bat");
-			SvStl::MessageManager Msg(SvStl::MsgType::Log);			
-			Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_BatchfileExecutionTimeout, msgList, SvStl::SourceFileParams(StdMessageParams));
+			std::string filenameOfPostExecutionFile = std::filesystem::path(pConfig->getPostRunExecutionFilePath()).filename().generic_string();
+			SHELLEXECUTEINFO ShExecInfo = { 0 };
+			ShExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
+			ShExecInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
+			ShExecInfo.hwnd = NULL;
+			ShExecInfo.lpVerb = NULL;
+			ShExecInfo.lpFile = filenameOfPostExecutionFile.c_str();
+			ShExecInfo.lpParameters = "";
+			ShExecInfo.lpDirectory = SvStl::GlobalPath::Inst().GetRunPath().c_str();
+			ShExecInfo.nShow = SW_HIDE;
+			ShExecInfo.hInstApp = NULL;
+
+			ShellExecuteEx(&ShExecInfo);
+			DWORD returnValue = WaitForSingleObject(ShExecInfo.hProcess, batExecutionTimeout);
+
+
+			if (returnValue == WAIT_TIMEOUT)
+			{
+				SvDef::StringVector msgList;
+				msgList.push_back(filenameOfPostExecutionFile);
+				SvStl::MessageManager Msg(SvStl::MsgType::Log);
+				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_BatchfileExecutionTimeout, msgList, SvStl::SourceFileParams(StdMessageParams));
+			}
 		}
 	}
 
@@ -5011,31 +5015,37 @@ void SVObserverApp::Start()
 		return;
 	}
 
-	if (std::filesystem::exists(SvStl::GlobalPath::Inst().GetRunPath() + "\\preBatch.bat"))
+	SVConfigurationObject* pConfig(nullptr);
+	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
+	if (pConfig != nullptr)
 	{
-		SHELLEXECUTEINFO ShExecInfo = { 0 };
-		ShExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
-		ShExecInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
-		ShExecInfo.hwnd = NULL;
-		ShExecInfo.lpVerb = NULL;
-		ShExecInfo.lpFile = "preBatch.bat";
-		ShExecInfo.lpParameters = "";
-		ShExecInfo.lpDirectory = SvStl::GlobalPath::Inst().GetRunPath().c_str();
-		ShExecInfo.nShow = SW_HIDE;
-		ShExecInfo.hInstApp = NULL;
 
-		ShellExecuteEx(&ShExecInfo);
-		DWORD returnValue = WaitForSingleObject(ShExecInfo.hProcess, batExecutionTimeout);
-
-		if (returnValue == WAIT_TIMEOUT)
+		if (std::filesystem::exists(pConfig->getPreRunExecutionFilePath()))
 		{
-			SvDef::StringVector msgList;
-			msgList.push_back("postBatch.bat");
-			SvStl::MessageManager Msg(SvStl::MsgType::Log);
-			Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_BatchfileExecutionTimeout, msgList, SvStl::SourceFileParams(StdMessageParams));
+			std::string filenameOfPreExecutionFile = std::filesystem::path(pConfig->getPreRunExecutionFilePath()).filename().generic_string();
+			SHELLEXECUTEINFO ShExecInfo = { 0 };
+			ShExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
+			ShExecInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
+			ShExecInfo.hwnd = NULL;
+			ShExecInfo.lpVerb = NULL;
+			ShExecInfo.lpFile = filenameOfPreExecutionFile.c_str();
+			ShExecInfo.lpParameters = "";
+			ShExecInfo.lpDirectory = SvStl::GlobalPath::Inst().GetRunPath().c_str();
+			ShExecInfo.nShow = SW_HIDE;
+			ShExecInfo.hInstApp = NULL;
+
+			ShellExecuteEx(&ShExecInfo);
+			DWORD returnValue = WaitForSingleObject(ShExecInfo.hProcess, batExecutionTimeout);
+
+			if (returnValue == WAIT_TIMEOUT)
+			{
+				SvDef::StringVector msgList;
+				msgList.push_back(filenameOfPreExecutionFile);
+				SvStl::MessageManager Msg(SvStl::MsgType::Log);
+				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_BatchfileExecutionTimeout, msgList, SvStl::SourceFileParams(StdMessageParams));
+			}
 		}
 	}
-
 	SVSVIMStateClass::RemoveState(SV_STATE_EDIT | SV_STATE_STOP);
 
 	UpdateAndGetLogDataManager();
@@ -5046,8 +5056,6 @@ void SVObserverApp::Start()
 
 	SVObjectManagerClass::Instance().ClearAllIndicator();
 
-	SVConfigurationObject* pConfig(nullptr);
-	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 	assert(nullptr != pConfig);
 
 	if (nullptr == m_pMainWnd || nullptr == pConfig)
