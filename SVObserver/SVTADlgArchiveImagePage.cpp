@@ -243,7 +243,7 @@ bool SVTADlgArchiveImagePage::validateImageFilepathRoot()
 
 	std::string imagepathroot = m_pTool->getCurrentImagePathRoot();
 
-	std::string problem = _T("");
+	bool isProblem = false;
 
 	try
 	{
@@ -253,15 +253,15 @@ bool SVTADlgArchiveImagePage::validateImageFilepathRoot()
 		}
 		else
 		{
-			problem = imagepathroot;
+			isProblem = true;
 		}
 	}
-	catch (std::exception& e)
+	catch (...)
 	{
-		problem = e.what();
+		isProblem = true;
 	}
 
-	if (problem.size() > 0)
+	if (isProblem)
 	{
 		SvDef::StringVector msgList;
 		msgList.push_back(imagepathroot);
@@ -748,7 +748,7 @@ afx_msg void SVTADlgArchiveImagePage::OnButtonImageFilepathroot1()
 	m_ImageFilepathroot1.GetWindowText(Temp);
 	std::string Value = Temp;
 	std::string Title = SvUl::LoadStdString(IDC_ARCHIVE_IMAGE_FILEPATHROOT1);
-	if (m_RootPathObjectSelectorController.Show(Value, Title, this, SvPb::allValueObjects, SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed, m_pTool->getObjectId()))
+	if (m_RootPathObjectSelectorController.Show(Value, Title, this, SvPb::stringValueObjects, SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed, m_pTool->getObjectId()))
 	{
 		m_ImageFilepathroot1.SetWindowText(Value.c_str());
 	}
