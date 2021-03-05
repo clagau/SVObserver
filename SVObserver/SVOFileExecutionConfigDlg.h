@@ -14,7 +14,7 @@ public:
 	virtual ~SVOFileExecutionConfigDlg();
     void SetupList();
 
-	enum { IDD = IDC_DLG_PROPPAGE_FILE_EXEC};
+	enum { IDD = IDD_DLG_PROPPAGE_FILE_EXEC};
 	CButton	m_btnAddPre;
 	CButton m_btnAddPost;
 	CButton m_btnRemovePre;
