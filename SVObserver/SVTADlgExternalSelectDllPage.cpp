@@ -404,7 +404,8 @@ void SVTADlgExternalSelectDllPage::InitializeDll(bool jumpToInputPage, bool setD
 		UpdateData(FALSE);
 
 		SvPb::InitializeExternalToolTaskResponse statusMessagesResponse;
-		m_externalToolTaskController.initialize(statusMessagesResponse);
+
+		auto hrInitialize = m_externalToolTaskController.initialize(statusMessagesResponse);
 
 		for (const auto& message : statusMessagesResponse.statusmessages())
 		{
@@ -413,19 +414,32 @@ void SVTADlgExternalSelectDllPage::InitializeDll(bool jumpToInputPage, bool setD
 		}
 		UpdateData(FALSE);
 
+		if (S_OK != hrInitialize)
+		{
+			SvStl::MessageContainer mc;
+			mc.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InitExternalTaskFailed, SvStl::SourceFileParams(StdMessageParams), 0, m_ToolObjectID);
+			throw mc;
+		}
+
 		if (setDefaultValues)
 		{
 			setDefaultValuesForInputs();
 		}
-		m_externalToolTaskController.resetAllObjects();
-		//@TODO[MEC][10.10][18.01.2021]	 fix svb 529
 
-		m_strStatus += _T("DLL passes the tests.");
+		if (false == m_externalToolTaskController.resetAllObjects())
+		{
+			SvStl::MessageContainer mc;
+			mc.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorInReset, SvStl::SourceFileParams(StdMessageParams), 0, m_ToolObjectID);
+			throw mc;
+		}
+
+		//if we arrive here, Initialization has been successful
+
+		m_strStatus += _T("DLL tests passed.");
 		m_strStatus += cCRLF;
 		UpdateData(FALSE);
 		m_StatusEdit.SetSel(m_strStatus.GetLength(), m_strStatus.GetLength());
 
-		//if we arrive here, Initialization has been successful
 		pParent->SendMessage(SV_ADD_PAGES_FOR_TESTED_DLL);
 
 		if (jumpToInputPage)
@@ -439,7 +453,7 @@ void SVTADlgExternalSelectDllPage::InitializeDll(bool jumpToInputPage, bool setD
 		m_pSheet->AddAdditionalPagesForExternalTool(true);
 		// display all sub-errors in box
 		UpdateData(TRUE);
-		m_strStatus += _T("DLL did not pass.");
+		m_strStatus += _T("Failure on DLL tests!");
 		m_strStatus += cCRLF;
 
 		if (!e.getMessage().getAdditionalText().empty())

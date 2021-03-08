@@ -375,7 +375,6 @@ HRESULT CDllTool::initRun(const ImageDefinitionStruct* const p_paStructs, const 
 	m_aResultValues[RESULTVALUE_DOUBLE_ARRAY_ROW].vt = VT_ARRAY | VT_R8;
 	m_aResultValues[RESULTVALUE_DOUBLE_ARRAY_ROW].parray = sa2.Detach();
 
-
 	setInputValues(p_pavInputValues);
 
 	for (int i = 0; i < NUM_RESULT_IMAGES; i++)
@@ -396,7 +395,7 @@ HRESULT CDllTool::initRun(const ImageDefinitionStruct* const p_paStructs, const 
 		{
 			aIndex[0] = x;
 			aIndex[1] = y;
-			double value = (x + 1) *(y + 1);
+			double value = (x + 1) * (y + 1);
 			hr = tdimsa.MultiDimSetAt(aIndex, value);
 			assert(S_OK == hr);
 		}

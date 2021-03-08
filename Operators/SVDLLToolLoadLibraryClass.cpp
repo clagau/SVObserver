@@ -132,6 +132,7 @@ namespace SvOp
 		return Result;
 	}
 
+	//@TODO [Arvid][10.10][8.3.2021] Diese Methode ist _erheblich_ zu lang!
 	HRESULT SVDLLToolLoadLibraryClass::Open(LPCTSTR libraryName, std::vector<std::string>& rStatusMsgs)
 	{
 		HRESULT Result(S_OK);
@@ -661,8 +662,8 @@ namespace SvOp
 
 	HRESULT SVDLLToolLoadLibraryClass::UninitializeRun(uint32_t toolId)
 	{
-		HRESULT l_hrOk = S_FALSE;
 
+		HRESULT l_hrOk = S_FALSE;
 		if (nullptr != m_pfnUninitializeRun)
 		{
 			try

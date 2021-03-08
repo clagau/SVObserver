@@ -195,6 +195,12 @@ private:
 
 	void updateImageInputInfo();
 
+	void getDllNameAndVersion(std::vector<std::string>& rStatusMsgs);
+	std::vector<SVImageDefinitionStruct> initializeInputImages(std::vector<std::string>& rStatusMsgs, bool inCreationProces);
+	void initializeInputObjects(std::vector<std::string>& rStatusMsgs, bool initializeAll);
+	void prepareForRunning(std::vector<SVImageDefinitionStruct>&, std::vector<std::string>& rStatusMsgs);
+	void initializeResultImages(std::vector<std::string>& rStatusMsgs);
+
 	SVDLLToolLoadLibraryClass m_dll;
 
 	SVExternalToolTaskData m_Data;	// this is our cancelable data

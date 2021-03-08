@@ -68,7 +68,7 @@ HRESULT ExternalToolTaskController::initialize(SvPb::InitializeExternalToolTaskR
 	pRequest->set_initializeall(initializeAll);
 	HRESULT hr = SvCmd::InspectionCommands(m_inspectionId, requestCmd, &responseCmd);
 
-	if (S_OK == hr && responseCmd.has_initializeexternaltooltaskresponse())
+	if (responseCmd.has_initializeexternaltooltaskresponse())
 	{
 		response = responseCmd.initializeexternaltooltaskresponse();
 	}

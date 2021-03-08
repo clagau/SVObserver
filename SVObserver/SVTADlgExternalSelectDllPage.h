@@ -13,7 +13,6 @@
 #pragma region Includes
 #include "SVOGui\ISVPropertyPageDialog.h"
 #include "SVOGui/ExternalToolTaskController.h"
-#include "Definitions/ObjectDefines.h"
 #include "SVOGui/DataController.h"
 #pragma endregion Includes
 
@@ -64,7 +63,6 @@ protected:
 	CToolTipCtrl m_ToolTip;
 	const uint32_t m_ToolObjectID;
 	const uint32_t m_InspectionID;
-	uint32_t m_TaskObjectID = SvDef::InvalidObjectId;
 
 	// Generated message map functions
 	//{{AFX_MSG(SVTADlgExternalSelectDllPage)
