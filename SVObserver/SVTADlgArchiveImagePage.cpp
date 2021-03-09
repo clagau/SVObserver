@@ -328,6 +328,7 @@ BOOL SVTADlgArchiveImagePage::OnInitDialog()
 	SVObjectReferenceVector imageVector{m_pTool->getImageArchiveList()};
 	m_ImagesToBeArchived.swap(imageVector);
 
+	MemoryUsage();
 	m_mapInitialSelectedImageMemUsage = m_mapSelectedImageMemUsage;
 	m_ToolImageMemoryUsage = CalculateToolMemoryUsage();
 	m_InitialToolImageMemoryUsage = m_ToolImageMemoryUsage;
