@@ -89,14 +89,18 @@ namespace SvOg
 	BOOL AuditFilesDialog::OnInitDialog()
 	{
 		CDialog::OnInitDialog();
+		// Remove Close Button
+		ModifyStyle(WS_SYSMENU, 0, SWP_FRAMECHANGED);
+
 		setResizeControls();
 		CWnd* pRemovButton = GetDlgItem(IDC_BUTTON_REMOVE);
 		CWnd* pAddButton = GetDlgItem(IDC_BUTTON_ADD);
 
+
 		if (m_DialogType == WhiteList)
 		{
 			SetHelpID(static_cast<UINT> (ID_AUDITTRAIL_ADDITIONALFILES - SvOr::HELPFILE_ID_OFFSET));
-			SetWindowText("Additional Report Files");
+			SetWindowText("Additional Files");
 
 			if (pRemovButton)
 			{
@@ -113,7 +117,7 @@ namespace SvOg
 		}
 		else
 		{
-			SetWindowText("Default Report Files");
+			SetWindowText("Default Files");
 			SetHelpID(static_cast<UINT> (ID_AUDITTRAIL_DEFAULTFILES - SvOr::HELPFILE_ID_OFFSET));
 
 			if (pRemovButton)
