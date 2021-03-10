@@ -21,6 +21,7 @@ namespace SvTo
 {
 	static bool isValidScaleFactorLV(SvVol::LinkedValue& scaleFactorValue);
 	static bool isValidInterpolationMode(InterpolationMode interpolationMode);
+	static bool isValidOverscanActive(OverscanActive overscanActive);
 	static void reportGeneralError(SvStl::MessageTextEnum AdditionalTextId, SvStl::MessageContainerVector* pErrorMessages, bool displayIfNotAddedToErrorList);
 
 
@@ -65,19 +66,30 @@ void ResizeTool::LocalInitialize()
 
 	BuildEmbeddedObjectList();
 
-	SvOi::NameValueVector enumVector;
+	SvOi::NameValueVector interpolationEnumVector;
 
-	for (const auto pair : c_allInterpolationModesNameValuePairs)
+	for (const auto pair : c_allInterpolationModeNameValuePairs)
 	{
 		// the following is in my eyes not particularly clear and beautiful:  
-		// std::copy(c_allInterpolationModesNameValuePairs.begin(), c_allInterpolationModesNameValuePairs.end(), enumVector.begin());
-		// it also requires the size of enumVector to be set beforehand. Hence: cppcheck-suppress
-		// cppcheck-suppress useStlAlgorithm; the following is in my eyes not particularly clear and beautiful:  std::copy(c_allInterpolationModesNameValuePairs.begin(), c_allInterpolationModesNameValuePairs.end(), enumVector.begin()); and it also requires the size of enumVector to be set beforehand
-		enumVector.emplace_back(pair);
+		// std::copy(c_allInterpolationModeNameValuePairs.begin(), c_allInterpolationModeNameValuePairs.end(), interpolationEnumVector.begin());
+		// it also requires the size of interpolationEnumVector to be set beforehand. Hence: cppcheck-suppress
+		// cppcheck-suppress useStlAlgorithm;
+		interpolationEnumVector.emplace_back(pair);
 	}
 
-	m_ResizeInterpolationMode.SetEnumTypes(enumVector);
+	m_ResizeInterpolationMode.SetEnumTypes(interpolationEnumVector);
 	m_ResizeInterpolationMode.SetDefaultValue(InterpolationMode::Default, true);
+
+	SvOi::NameValueVector overscanEnumVector;
+
+	for (const auto pair : c_allOverscanActiveNameValuePairs)
+	{
+		// cppcheck-suppress useStlAlgorithm; see comment above concerning interpolationEnumVector
+		overscanEnumVector.emplace_back(pair);
+	}
+
+	m_ResizeOverscanActive.SetEnumTypes(overscanEnumVector);
+	m_ResizeOverscanActive.SetDefaultValue(OverscanActive::OverscanEnable, true);
 
 	SvOp::ToolSizeAdjustTask::AddToFriendlist(this, true, true, true);
 
@@ -86,7 +98,6 @@ void ResizeTool::LocalInitialize()
 	m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
 	m_ObjectTypeInfo.m_SubType = SvPb::SVResizeToolObjectType;
 }
-
 
 void ResizeTool::BuildInputObjectList()
 {
@@ -108,6 +119,13 @@ void ResizeTool::BuildEmbeddedObjectList()
 		&m_ResizeInterpolationMode, 
 		SvPb::ResizeInterpolationModeEId, 
 		IDS_OBJECTNAME_RESIZE_INTERPOLATIONMODE, 
+		false, 
+		SvOi::SVResetItemTool);
+
+	RegisterEmbeddedObject(
+		&m_ResizeOverscanActive,
+		SvPb::ResizeOverscanEId, 
+		IDS_OBJECTNAME_RESIZE_OVERSCAN, 
 		false, 
 		SvOi::SVResetItemTool);
 
@@ -332,6 +350,21 @@ bool ResizeTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 		}
 	}
 
+	if (!isOverscanActiveValueOK())
+	{
+		SvStl::MessageContainer Msg(SVMSG_SVO_5045_INVALIDOVERSCAN, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
+
+		if (nullptr != pErrorMessages)
+		{
+			pErrorMessages->push_back(Msg);
+		}
+		else
+		{
+			SvStl::MessageManager Exception(SvStl::MsgType::Display);
+			Exception.setMessage(Msg.getMessage());
+		}
+	}
+
 	if (!ModifyImageExtentByScaleFactors())
 	{
 		reportGeneralError(SvStl::Tid_UpdateOutputImageExtentsFailed, pErrorMessages, true);
@@ -463,6 +496,13 @@ bool ResizeTool::isInterpolationModeValueOK()
 	return isValidInterpolationMode(static_cast<InterpolationMode> (Value));
 }
 
+bool ResizeTool::isOverscanActiveValueOK()
+{
+	long Value(0L);
+	m_ResizeOverscanActive.GetValue(Value);
+	return isValidOverscanActive(static_cast<OverscanActive> (Value));
+}
+
 bool ResizeTool::isInputImage(uint32_t imageId) const
 {
 	bool Result(false);
@@ -519,6 +559,17 @@ bool ResizeTool::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pEr
 		}
 	}
 
+	long overscanActive = 0;
+	if (!SUCCEEDED(m_ResizeOverscanActive.GetValue(overscanActive)))
+	{
+		Result = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg(SVMSG_SVO_5033_GETOVERSCANFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+			pErrorMessages->push_back(Msg);
+		}
+	}
+
 	SvOi::ITRCImagePtr pRoiImageBuffer = m_LogicalROIImage.getImageReadOnly(rRunStatus.m_triggerRecord.get());
 	if (nullptr == pRoiImageBuffer || pRoiImageBuffer->isEmpty())
 	{
@@ -547,7 +598,8 @@ bool ResizeTool::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pEr
 			pRoiImageBuffer->getHandle()->GetBuffer(),
 			contentWidthScaleFactor,
 			contentHeightScaleFactor,
-			interpolationMode);
+			interpolationMode,
+			overscanActive);
 
 		if (!SUCCEEDED(hr))
 		{
@@ -595,6 +647,18 @@ bool isValidInterpolationMode(InterpolationMode interpolationMode)
 
 	return false;
 }
+
+
+bool isValidOverscanActive(OverscanActive overscanActive)
+{
+	if (std::find(c_allOverscanStates.begin(), c_allOverscanStates.end(), overscanActive) != c_allOverscanStates.end())
+	{
+		return true;
+	}
+
+	return false;
+}
+
 
 
 bool isValidScaleFactorLV(SvVol::LinkedValue& scaleFactorValue)

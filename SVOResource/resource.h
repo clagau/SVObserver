@@ -1688,7 +1688,6 @@
 #define IDC_INTERPOLATION_MODE_COMBO    15360
 #define IDC_CENTER_X_EDIT               15361
 #define IDC_OVERSCAN_COMBO              15361
-#define IDC_INTERPOLATION_MODE_COMBO3   15362
 #define IDC_PERFORMANCE_COMBO           15362
 #define IDC_CENTER_Y_EDIT               15363
 #define IDC_UP_BUTTON                   15368

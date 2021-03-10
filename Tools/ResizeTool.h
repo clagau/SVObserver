@@ -47,7 +47,8 @@ public:
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	bool AreAllAllScaleFactorValuesValid();
-	bool isInterpolationModeValueOK ();
+	bool isInterpolationModeValueOK();
+	bool isOverscanActiveValueOK();
 
 	SvIe::SVImageClass* getInputImage(bool bRunMode = false) const;
 
@@ -78,6 +79,7 @@ private:
 	SvIe::SVImageClass m_LogicalROIImage;
 
 	SvVol::SVEnumerateValueObjectClass	m_ResizeInterpolationMode;
+	SvVol::SVEnumerateValueObjectClass	m_ResizeOverscanActive;
 
 #pragma endregion Private Members
 };

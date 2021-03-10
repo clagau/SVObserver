@@ -1622,12 +1622,15 @@ HRESULT SVMatroxImageInterface::Resize(
 	const SVMatroxBuffer&		p_rSource,
 	const double				p_dScaleFactorX,
 	const double				p_dScaleFactorY,
-	long						interpolationMode)
+	long						interpolationMode,
+	long						overscanActive)
+
 {
 	HRESULT l_Code(S_OK);
 
-	const InterpolationMode interpolationModeOption =
-		static_cast <InterpolationMode>(interpolationMode);
+	const InterpolationMode interpolationModeOption = static_cast <InterpolationMode>(interpolationMode);
+
+	const OverscanActive overscanActiveOption = static_cast <OverscanActive>(overscanActive);
 
 #ifdef USE_TRY_BLOCKS
 	try
@@ -1651,7 +1654,7 @@ HRESULT SVMatroxImageInterface::Resize(
 				p_rDest.GetIdentifier(),
 				p_dScaleFactorX,
 				p_dScaleFactorY,
-				interpolationModeOption | M_OVERSCAN_ENABLE);
+				interpolationModeOption | overscanActiveOption);
 
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 

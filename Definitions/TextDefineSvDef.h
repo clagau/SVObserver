@@ -45,9 +45,11 @@ constexpr char* Interpolate = _T("Interpolate");
 constexpr char* Bicubic = _T("Bicubic");
 constexpr char* Bilinear = _T("Bilinear");
 constexpr char* NearestNeighbor = _T("Nearest Neighbor");
+//since SVO-1155: 'Clear' is no longer used
 constexpr char* Clear = _T("Clear");
 constexpr char* Enabled = _T("Enabled");
 constexpr char* Disabled = _T("Disabled");
+//since SVO-1155: 'Fast' and 'Precise' are no longer used
 constexpr char* Fast = _T("Fast");
 constexpr char* Precise = _T("Precise");
 
@@ -75,4 +77,11 @@ static std::initializer_list<const char*> c_allInterpolationModeNames
 	SvDef::Bilinear,
 	SvDef::NearestNeighbor
 };
+
+static std::initializer_list<const char*> c_allUsedOverscanNames
+{
+	SvDef::Enabled,
+	SvDef::Disabled
+};
+
 } //namespace SvDef
