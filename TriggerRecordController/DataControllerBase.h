@@ -203,6 +203,7 @@ public:
 	virtual void removeImageMemory(std::string memoryName) { assert(false); throw E_NOTIMPL; };
 	virtual int createMilBufferinMemory(int , SvPb::ImageStructData& , int ) { assert(false); throw E_NOTIMPL; };
 	virtual int contractMilBufferinMemory(int , SvPb::ImageStructData& , int ) { assert(false); throw E_NOTIMPL; };
+	virtual bool isReady() const = 0;
 
 	std::vector<SVMatroxBuffer>& getBufferVectorRef() { return m_bufferVector; }
 
@@ -213,6 +214,7 @@ public:
 
 	void setResetCallback(std::function<void()>&& reloadCallback) { m_reloadCallback = reloadCallback; };
 	void setReadyCallback(std::function<void()>&& readyCallback) { m_readyCallback = readyCallback; };
+	void sendReadyCallbackIfReady(const std::function<void()>& readyCallback) const;
 	void setNewTrIdCallback(std::function<void(SvOi::TrEventData)>&& newTrIdCallback) { m_newTrIdCallback = newTrIdCallback; };
 	void setNewInterestTrIdsCallback(std::function<void(std::vector<SvOi::TrInterestEventData>&&)>&& newTrIdCallback) { m_newInterestTrIdsCallback = newTrIdCallback; };
 

@@ -188,6 +188,10 @@ int TriggerRecordController::registerReadyCallback(std::function<void()> pCallba
 		std::lock_guard<std::mutex> guard(m_callbackMutex);
 		int handle = handleCounter++;
 		m_readyCallbacks.push_back(std::pair<int, std::function<void()>>(handle, pCallback));
+		if (nullptr != m_pDataController)
+		{
+			m_pDataController->sendReadyCallbackIfReady(pCallback);
+		}
 		return handle;
 	}
 	return -1;

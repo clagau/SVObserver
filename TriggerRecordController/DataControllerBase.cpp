@@ -210,6 +210,14 @@ const std::unordered_map<uint32_t, int>& DataControllerBase::getDataDefMap(int i
 	Exception.Throw();
 }
 
+void DataControllerBase::sendReadyCallbackIfReady(const std::function<void()>& readyCallback) const
+{
+	if (readyCallback && isReady())
+	{
+		readyCallback();
+	}
+}
+
 bool DataControllerBase::isIPInit(int inspectionPos)
 {
 	auto* pData = getTRControllerData(inspectionPos);

@@ -116,6 +116,7 @@ public:
 	virtual const TRControllerBaseDataPerIP* getTRControllerData(int inspectionId) const override;
 
 	virtual long* getImageRefCountPtr(int pos) override;
+	virtual bool isReady() const override { return 0 < m_resetId; };
 #pragma endregion Protected Methods
 
 #pragma region Private Methods
