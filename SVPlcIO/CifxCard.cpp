@@ -21,6 +21,7 @@
 #include "SVUtilityLibrary/SVClock.h"
 #pragma endregion Includes
 
+//#define TRACE_PLC
 //This is to avoid CheckInclude false positives EPLCN_IF_QUEUE_NAME
 
 namespace SvPlc
@@ -39,6 +40,10 @@ constexpr uint32_t cProductCode = 1UL;			///CIFX
 constexpr uint32_t cSerialNumber = 0UL;			///Use serial number from SecMem or FDL
 constexpr uint32_t cRevisionNumber = 0UL;
 
+#if defined (TRACE_THEM_ALL) || defined (TRACE_PLC)
+//This is used to check which config set does not match
+ConfigDataSet gPlcConfig[cConfigListSize];
+#endif
 
 void APIENTRY notificationHandler(uint32_t notification, uint32_t, void* , void* pvUser)
 {
@@ -84,6 +89,13 @@ void CifXCard::readProcessData(uint32_t notification)
 			inputData.m_notificationTime = timeStamp;
 			break;
 		}
+
+#if defined (TRACE_THEM_ALL) || defined (TRACE_PLC)
+		case TelegramContent::ConfigurationData:
+		{
+			memcpy(&gPlcConfig, pData, cConfigListSize * sizeof(ConfigDataSet));
+		}
+#endif
 		case TelegramContent::OperationData:
 		{
 			memcpy(&inputData.m_dynamicData[0], pData, cCmdDataSize);
@@ -188,7 +200,10 @@ void CifXCard::sendVersion()
 	writeResponseData(pData, sizeof(PlcVersion));
 
 	SvStl::MessageManager Msg(SvStl::MsgType::Log);
-	Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_CifxPlcVersion, SvStl::SourceFileParams(StdMessageParams));
+	SvDef::StringVector msgList;
+	msgList.push_back(std::to_string(LOBYTE(plcVersion)));
+	msgList.push_back(std::to_string(HIBYTE(plcVersion)));
+	Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_CifxPlcVersion, msgList, SvStl::SourceFileParams(StdMessageParams));
 	::OutputDebugString("Send Version\n");
 	//Now that the version is known create the config list
 	::OutputDebugString("Create config lists\n");
@@ -211,8 +226,30 @@ void CifXCard::sendConfigList()
 			const uint8_t* pData = reinterpret_cast<const uint8_t*> (&iter->second[0]);
 			writeResponseData(pData, sizeof(ConfigDataSet) * cConfigListSize);
 			SvStl::MessageManager Msg(SvStl::MsgType::Log);
-			Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_CifxPlcConfigData, SvStl::SourceFileParams(StdMessageParams));
+			SvDef::StringVector msgList{std::to_string(layoutIndex)};
+			Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_CifxPlcConfigData, msgList, SvStl::SourceFileParams(StdMessageParams));
 			::OutputDebugString("Send config data Layout\n");
+#if defined (TRACE_THEM_ALL) || defined (TRACE_PLC)
+			if (cConfigListSize == iter->second.size())
+			{
+				const std::vector<ConfigDataSet>& rConfigList = iter->second;
+				for (int i = 0; i < cConfigListSize; ++i)
+				{
+					if (rConfigList[i].m_byteSize != gPlcConfig[i].m_byteSize ||
+						rConfigList[i].m_dataType != gPlcConfig[i].m_dataType ||
+						rConfigList[i].m_mode != gPlcConfig[i].m_mode ||
+						rConfigList[i].m_startByte != gPlcConfig[i].m_startByte)
+					{
+						std::string text{ _T("ConfigID ") };
+						text += std::to_string(i) + _T(" ==> SVObserver Data: ");
+						text += std::to_string(rConfigList[i].m_byteSize) + ',' + std::to_string(rConfigList[i].m_dataType) + ',' + std::to_string(rConfigList[i].m_mode) + ',' + std::to_string(rConfigList[i].m_startByte);
+						text += _T("<> PLC Data: ");
+						text += std::to_string(gPlcConfig[i].m_byteSize) + ',' + std::to_string(gPlcConfig[i].m_dataType) + ',' + std::to_string(gPlcConfig[i].m_mode) + ',' + std::to_string(gPlcConfig[i].m_startByte) + '\n';
+						::OutputDebugString(text.c_str());
+					}
+				}
+			}
+#endif
 		}
 	}
 }
