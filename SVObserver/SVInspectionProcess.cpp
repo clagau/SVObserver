@@ -2035,7 +2035,7 @@ bool SVInspectionProcess::ProcessInputImageRequests(SVInspectionInfoStruct& rIpI
 			{
 				pTool->overwriteInputSource(l_pInRequest->m_ImageHandlePtr);
 				l_pInRequest->m_ImageHandlePtr.reset();
-				return true;
+				continue;
 			}
 		}
 		else
