@@ -1236,6 +1236,13 @@ DWORD SVTaskObjectClass::GetObjectColor() const
 	return dwColor;
 }
 
+DWORD SVTaskObjectClass::GetStatusTag() const
+{
+	DWORD dwState;
+	m_statusTag.GetValue(dwState);
+	return dwState;
+}
+
 
 void SVTaskObjectClass::Persist(SvOi::IObjectWriter& rWriter)
 {
@@ -1312,13 +1319,7 @@ bool SVTaskObjectClass::Run(RunStatus& rRunStatus, SvStl::MessageContainerVector
 	// Run yourself...
 	bool bRetVal = onRun(rRunStatus, &m_RunErrorMessages);
 
-	// Get Status Color...
-	DWORD dwValue = rRunStatus.GetStatusColor();
-	m_statusColor.SetValue(dwValue);
-
-	// Get Status...
-	dwValue = rRunStatus.GetState();
-	m_statusTag.SetValue(dwValue);
+	setStatus(rRunStatus);
 
 	if (nullptr != pErrorMessages && !m_RunErrorMessages.empty())
 	{
@@ -1758,5 +1759,16 @@ SVObjectClass* SVTaskObjectClass::GetEmbeddedValueObject(SvPb::EmbeddedIdEnum em
 	}
 
 	return pResult;
+}
+
+void SVTaskObjectClass::setStatus(const RunStatus& state)
+{
+	setStatus(state.GetStatusColor(), state.GetState());
+}
+
+void SVTaskObjectClass::setStatus(DWORD color, DWORD state)
+{
+	m_statusColor.SetValue(color);
+	m_statusTag.SetValue(state);
 }
 } //namespace SvIe

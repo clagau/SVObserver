@@ -62,6 +62,7 @@ public:
 	const std::set<MIL_ID>& getFeatureGroups() const { return m_featureGroups; };
 
 protected:
+	virtual bool Run(RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages = nullptr) override;
 	virtual HRESULT onCollectOverlays(SvIe::SVImageClass* pImage, SVExtentMultiLineStructVector& rMultiLineArray ) override;
 	virtual void addOverlayGroups(const SvIe::SVImageClass* pImage, SvPb::Overlay& rOverlay) const override;
 

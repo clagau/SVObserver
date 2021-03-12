@@ -284,13 +284,7 @@ bool SVLinearImageOperatorList::Run(RunStatus& rRunStatus, SvStl::MessageContain
 		rRunStatus.SetInvalid();
 	}
 
-	// Get Status Color...
-	DWORD dwValue = rRunStatus.GetStatusColor();
-	m_statusColor.SetValue(dwValue);
-
-	// Get Status...
-	dwValue = rRunStatus.GetState();
-	m_statusTag.SetValue(dwValue);
+	setStatus(rRunStatus);
 
 	return result;
 }

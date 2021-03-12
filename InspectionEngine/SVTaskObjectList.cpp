@@ -1033,13 +1033,7 @@ bool SVTaskObjectListClass::Run(RunStatus& rRunStatus, SvStl::MessageContainerVe
 		rRunStatus.m_triggerRecord = std::move(ChildRunStatus.m_triggerRecord);
 	}
 
-	// Get Status Color...
-	DWORD dwValue = rRunStatus.GetStatusColor();
-	m_statusColor.SetValue(dwValue);
-
-	// Get Status...
-	dwValue = rRunStatus.GetState();
-	m_statusTag.SetValue(dwValue);
+	setStatus(rRunStatus);
 
 	if (nullptr != pErrorMessages && !m_RunErrorMessages.empty())
 	{

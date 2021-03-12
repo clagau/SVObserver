@@ -14,7 +14,6 @@
 
 #include "SVMessage/SVMessage.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
-#include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "AnalyzerOperators/SVAnalyzer.h"
 #include "Operators/SVConditional.h"
 #include "SVInspectionProcess.h"
@@ -574,13 +573,7 @@ bool SVToolSet::Run(RunStatus& rRunStatus, SvStl::MessageContainerVector *pError
 		}
 	}
 
-	// Get Status Color...
-	DWORD dwValue = rRunStatus.GetStatusColor();
-	m_statusColor.SetValue(dwValue);
-
-	// Get State
-	dwValue = rRunStatus.GetState();
-	m_statusTag.SetValue(dwValue);
+	setStatus(rRunStatus);
 
 	if (nullptr != pErrorMessages && !m_RunErrorMessages.empty())
 	{

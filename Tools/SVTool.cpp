@@ -500,13 +500,7 @@ inline  void SVToolClass::UpdateStateAndCounter(RunStatus& rRunStatus)
 		}
 	}
 
-	// Get Status Color...
-	DWORD dwValue = rRunStatus.GetStatusColor();
-	m_statusColor.SetValue(dwValue);
-
-	// Get Status...
-	dwValue = rRunStatus.GetState();
-	m_statusTag.SetValue(dwValue);
+	setStatus(rRunStatus);
 }
 
 bool SVToolClass::Run(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)

@@ -175,6 +175,7 @@ protected:
 public:
 	// Get the local object color...
 	virtual DWORD GetObjectColor() const override;
+	DWORD SVTaskObjectClass::GetStatusTag() const;
 	virtual void Persist(SvOi::IObjectWriter& rWriter) override;
 	void PersistFriends(SvOi::IObjectWriter& rWriter);
 	void PersistInputs(SvOi::IObjectWriter& rWriter);
@@ -205,6 +206,9 @@ public:
 	/// \param rOldEmbeddedID [in] Old embeddedId
 	/// \param rNewEmbeddedID [in] New embeddedId
 	virtual void OnEmbeddedIDChanged(const SVObjectClass* , SvPb::EmbeddedIdEnum , SvPb::EmbeddedIdEnum ) {};
+
+	void setStatus(const RunStatus& state);
+	void setStatus(DWORD color, DWORD state);
 
 protected:
 	// Direct Method Call

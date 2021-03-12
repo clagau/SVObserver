@@ -568,6 +568,14 @@ namespace SvAo
 		return S_OK;
 	}
 
+	bool BlobAnalyzer2::Run(RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages)
+	{
+		bool retVal = __super::Run(rRunStatus, pErrorMessages);
+		//set the TableTool to the same state than the BlobFeatureList
+		m_pResultTable->setStatus(m_pBlobFeatureList->GetObjectColor(), m_pBlobFeatureList->GetStatusTag());
+		return retVal;
+	}
+
 	void BlobAnalyzer2::addOverlayGroups(const SvIe::SVImageClass*, SvPb::Overlay& rOverlay) const
 	{
 		auto* pGroup = rOverlay.add_shapegroups();

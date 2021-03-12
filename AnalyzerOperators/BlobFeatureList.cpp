@@ -598,8 +598,7 @@ namespace SvAo
 			rRunStatus.updateState(ChildRunStatus, false);
 		}
 
-		m_statusColor.SetValue(rRunStatus.GetStatusColor());
-		m_statusTag.SetValue(rRunStatus.GetState());
+		setStatus(rRunStatus);
 
 		return retVal;
 	}

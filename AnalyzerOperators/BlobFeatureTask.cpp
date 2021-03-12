@@ -174,8 +174,7 @@ namespace SvAo
 				rRunStatus.SetPassed();
 			}
 		}
-		m_statusColor.SetValue(rRunStatus.GetStatusColor());
-		m_statusTag.SetValue(rRunStatus.GetState());
+		setStatus(rRunStatus);
 	}
 
 	void BlobFeatureTask::addExcludeBlobs(std::set<int>& rExcludeSet)

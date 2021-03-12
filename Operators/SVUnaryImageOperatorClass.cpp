@@ -76,13 +76,7 @@ bool SVUnaryImageOperatorClass::Run( bool First, SvOi::SVImageBufferHandlePtr RI
 	// Run yourself...
 	bool bRetVal =  onRun( First, RInputImageHandle, ROutputImageHandle, rRunStatus, &m_RunErrorMessages );
 
-	// Get Status Color...
-	DWORD dwValue = rRunStatus.GetStatusColor();
-	m_statusColor.SetValue(dwValue);
-
-	// Get Status...
-	dwValue = rRunStatus.GetState();
-	m_statusTag.SetValue(dwValue);
+	setStatus(rRunStatus);
 
 	if (nullptr != pErrorMessages && !m_RunErrorMessages.empty())
 	{
