@@ -36,26 +36,24 @@ $var = Get-WmiObject -class Win32_processor | ft NumberOfCores
 [long]$memory = 0
 Get-WmiObject -Class Win32_PhysicalMemory | ForEach-Object -Process { $memory += $_.Capacity }
 $memory = $memory / 1GB
-if ($memory -gt 12)
+if ($memory -gt 24)
 {
-  # format the V:\ drive 6GB
-  $cmdout = imdisk -a -s 3G -m V: -p "/fs:ntfs /q /y"
+  # format the V:\ drive 8GB
+  $cmdout = imdisk -a -s 8G -m V: -p "/fs:ntfs /q /y"
   if ($LastExitCode -ne 0)
   {
     echo "Could not format imdisk for V-drive"
     write-eventlog -logname Application -source SVException -eventID 13  -entrytype Warning -message "Could not format imdisk for V-drive 6GB. $cmdout"  -Category 0
   }
-  
-  #Check whether the [IOBoard] code in the model number (taken from the registry) indicates that a RabbitBoard is to be used
-  $ioboard_code = ((Get-ItemProperty Registry::HKEY_LOCAL_MACHINE\HARDWARE\DESCRIPTION\System\BIOS -name SystemProductName).SystemProductName )[6..7] -join ''
-  if (($ioboard_code -as [int] -le 22) -and ($ioboard_code -as [int] -gt 0))
-  { #if so: initialize RabbitBoard
-      # Wait 20 Seconds
-      Start-Sleep -s 20
-      # On a good run through InitializeIOSubsystem takes 13 seconds on both 
-      C:\SVObserver\bin\InitializeIOSubsystem.exe
-      # Wait 20 Seconds
-      Start-Sleep -s 20
+}
+elseif ($memory -gt 12 -and $memory -le 24)
+{
+  # format the V:\ drive 3GB
+  $cmdout = imdisk -a -s 3G -m V: -p "/fs:ntfs /q /y"
+  if ($LastExitCode -ne 0)
+  {
+    echo "Could not format imdisk for V-drive"
+    write-eventlog -logname Application -source SVException -eventID 13  -entrytype Warning -message "Could not format imdisk for V-drive 6GB. $cmdout"  -Category 0
   }
 }
 else
@@ -70,6 +68,17 @@ else
   }
 }
 
+#Check whether the [IOBoard] code in the model number (taken from the registry) indicates that a RabbitBoard is to be used
+$ioboard_code = ((Get-ItemProperty Registry::HKEY_LOCAL_MACHINE\HARDWARE\DESCRIPTION\System\BIOS -name SystemProductName).SystemProductName )[6..7] -join ''
+if (($ioboard_code -as [int] -le 22) -and ($ioboard_code -as [int] -gt 0))
+{ #if so: initialize RabbitBoard
+  # Wait 20 Seconds
+  Start-Sleep -s 20
+  # On a good run through InitializeIOSubsystem takes 13 seconds on both 
+  C:\SVObserver\bin\InitializeIOSubsystem.exe
+  # Wait 20 Seconds
+  Start-Sleep -s 20
+}
 
 restart-service $SVOWebSrvName
 
