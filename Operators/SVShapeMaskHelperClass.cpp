@@ -170,18 +170,31 @@ bool SVShapeMaskHelperClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 		m_bvoAutoResize.SetObjectAttributesAllowed( SvPb::audittrail, AddRemoveType );
 		m_evoShapeType.SetObjectAttributesAllowed( SvPb::audittrail, AddRemoveType );
 		m_evoMaskArea.SetObjectAttributesAllowed( SvPb::audittrail, AddRemoveType );
-		m_voCenterX.SetObjectAttributesAllowed( SvPb::audittrail, AddRemoveType );
-		m_voCenterY.SetObjectAttributesAllowed( SvPb::audittrail, AddRemoveType );
-		m_voWidth.SetObjectAttributesAllowed( SvPb::audittrail, AddRemoveType );
-		m_voHeight.SetObjectAttributesAllowed( SvPb::audittrail, AddRemoveType );
+		//Remove audittrail for LinkedValue, but not set this flag, because the LinkedValue set in UpdateLinkedName the audittrail-flag for the correct values before this is called. 
+		//(if linked value indirect, the audittrail-flag has to disabled for the value and only watched to the linked names) 
+		if (SvOi::SetAttributeType::RemoveAttribute == AddRemoveType)
+		{
+			m_voCenterX.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
+			m_voCenterY.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
+			m_voWidth.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
+			m_voHeight.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
+		}
 
-		AddRemoveType = bIsShape && bIsDoughnut ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
-		m_voSideThickness.SetObjectAttributesAllowed( SvPb::audittrail, AddRemoveType );
-		m_voTopBottomThickness.SetObjectAttributesAllowed( SvPb::audittrail, AddRemoveType );
+		if (!bIsShape || !bIsDoughnut)
+		{
+			m_voSideThickness.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
+			m_voTopBottomThickness.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
+		}
 
-		AddRemoveType = bIsShape && bIsTrapezoid ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
-		m_voOffset.SetObjectAttributesAllowed( SvPb::audittrail, AddRemoveType );
-		m_evoXYSymmetry.SetObjectAttributesAllowed( SvPb::audittrail, AddRemoveType );
+		if (!bIsShape || !bIsTrapezoid)
+		{
+			m_voOffset.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
+			m_evoXYSymmetry.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
+		}
+		else
+		{
+			m_evoXYSymmetry.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::AddAttribute);
+		}
 	}
 	else
 	{
