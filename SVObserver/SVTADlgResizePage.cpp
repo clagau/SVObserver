@@ -98,7 +98,7 @@ void SVTADlgResizePage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT_CONTENT_WIDTH_FACTOR, m_contentScaleEdit[ScaleFactorDimension::Width]);
 	DDX_Control(pDX, IDC_EDIT_CONTENT_HEIGHT_FACTOR, m_contentScaleEdit[ScaleFactorDimension::Height]);
 	DDX_Control(pDX, IDC_INTERPOLATION_MODE_COMBO, m_InterpolationModeCombo);
-	DDX_Control(pDX, IDC_OVERSCAN_COMBO, m_OverscanActiveCombo);
+	DDX_Control(pDX, IDC_OVERSCAN_COMBO, m_OverscanModeCombo);
 	DDX_Control(pDX, IDC_EDIT_FORMAT_WIDTH_FACTOR, m_formatScaleEdit[ScaleFactorDimension::Width]);
 	DDX_Control(pDX, IDC_EDIT_FORMAT_HEIGHT_FACTOR, m_formatScaleEdit[ScaleFactorDimension::Height]);
 	DDX_Control(pDX, IDC_BUTTON_FORMAT_WIDTH_FACTOR, m_contentScaleButton[ScaleFactorDimension::Width]);
@@ -117,18 +117,6 @@ BOOL SVTADlgResizePage::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 
-	for (const auto pair : c_allInterpolationModeNameValuePairs)
-	{
-		m_InterpolationModeByModeName[pair.first] = pair.second;
-		m_InterpolationModeNameByMode[pair.second] = pair.first;
-	}
-
-	for (const auto pair : c_allOverscanActiveNameValuePairs)
-	{
-		m_OverscanActiveByModeName[pair.first] = pair.second;
-		m_OverscanActiveNameByMode[pair.second] = pair.first;
-	}
-
 	HRESULT hr = S_OK;
 	m_ImageController.Init();
 	
@@ -140,7 +128,7 @@ BOOL SVTADlgResizePage::OnInitDialog()
 	else
 	{
 		ResetAndFillInterpolationModeComboBox();
-		ResetAndFillOverscanActiveComboBox();
+		ResetAndFillOverscanModeComboBox();
 		hr = SetupResizeImageControl();
 	}
 
@@ -202,7 +190,7 @@ void SVTADlgResizePage::PickValue(CButton& rButton, CEdit& rEdit, UINT ResourceI
 	rButton.GetWindowText(Temp);
 	std::string Value = Temp;
 	std::string Title = SvUl::LoadStdString(ResourceID);
-	if (m_resizeValueSelector.Show(Value, Title, this, SvPb::allValueObjects, SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed, m_toolID))
+	if (m_resizeValueSelector.Show(Value, Title, this, SvPb::allNumberValueObjects, SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed, m_toolID))
 	{
 		rEdit.SetWindowText(Value.c_str());
 	}
@@ -224,39 +212,53 @@ void SVTADlgResizePage::ResetAndFillInterpolationModeComboBox()
 	m_InterpolationModeCombo.SetCurSel(0); //default: auto
 }
 
-void SVTADlgResizePage::ResetAndFillOverscanActiveComboBox()
+void SVTADlgResizePage::ResetAndFillOverscanModeComboBox()
 {
-	m_OverscanActiveNames.clear();
-	m_OverscanActiveCombo.ResetContent();
+	m_OverscanModeNames.clear();
+	m_OverscanModeCombo.ResetContent();
 
 	for (auto name : SvDef::c_allUsedOverscanNames)
 	{
-		m_OverscanActiveCombo.AddString(name);
-		m_OverscanActiveNames.emplace_back(name);
+		m_OverscanModeCombo.AddString(name);
+		m_OverscanModeNames.emplace_back(name);
 	}
 
-	m_OverscanActiveCombo.SetCurSel(0); //default: Enabled
+	m_OverscanModeCombo.SetCurSel(0); //default: Enabled
 }
 
 
 void SVTADlgResizePage::GetAndDisplayValuesFromTool()
 {
-	auto mode = static_cast<InterpolationMode>(m_resizeValueController.Get<long>(SvPb::ResizeInterpolationModeEId));
-	auto modestring = m_InterpolationModeNameByMode[mode];
+	auto interpolationMode = static_cast<InterpolationMode>(m_resizeValueController.Get<long>(SvPb::ResizeInterpolationModeEId));
 
-	auto pos = m_InterpolationModeCombo.FindStringExact(0, modestring.c_str());
-	if (pos > -1 && pos < m_InterpolationModeNames.size())
+	auto interpolationNameAndMode = std::find_if(c_interpolationNamesAndModes.begin(), c_interpolationNamesAndModes.end(),
+		[interpolationMode](const std::pair<std::string, InterpolationMode>& rPair)
+		{return rPair.second == interpolationMode; });
+
+	if (interpolationNameAndMode != c_interpolationNamesAndModes.end())
 	{
-		m_InterpolationModeCombo.SetCurSel(pos);
+		auto pos = m_InterpolationModeCombo.FindStringExact(0, interpolationNameAndMode->first.c_str());
+		if (pos > -1 && pos < m_InterpolationModeNames.size())
+		{
+			m_InterpolationModeCombo.SetCurSel(pos);
+		}
+
 	}
 
-	auto overscanActive = static_cast<OverscanActive>(m_resizeValueController.Get<long>(SvPb::ResizeOverscanEId));
-	modestring = m_OverscanActiveNameByMode[overscanActive];
+	auto overscanMode = static_cast<OverscanMode>(m_resizeValueController.Get<long>(SvPb::ResizeOverscanEId));
 
-	pos = m_OverscanActiveCombo.FindStringExact(0, modestring.c_str());
-	if (pos > -1 && pos < m_OverscanActiveNames.size())
+	auto overscanNameAndMode = std::find_if(c_overscanNamesAndModes.begin(), c_overscanNamesAndModes.end(),
+		[overscanMode](const std::pair<std::string, OverscanMode>& rPair)
+		{return rPair.second == overscanMode; });
+
+	if (overscanNameAndMode != c_overscanNamesAndModes.end())
 	{
-		m_OverscanActiveCombo.SetCurSel(pos);
+		auto pos = m_OverscanModeCombo.FindStringExact(0, overscanNameAndMode->first.c_str());
+		if (pos > -1 && pos < m_OverscanModeNames.size())
+		{
+			m_OverscanModeCombo.SetCurSel(pos);
+		}
+
 	}
 
 	for (SvOg::ValueEditWidgetHelper& rEditHelper : m_allEditHelpers)
@@ -272,32 +274,40 @@ void SVTADlgResizePage::getInterpolationModeFromDialog()
 
 	std::string selectedInterpolation(interpolationModeName.GetBuffer(0));
 
-	if (m_InterpolationModeByModeName.find(selectedInterpolation) == m_InterpolationModeByModeName.end())
+	auto modeandname = std::find_if(c_interpolationNamesAndModes.begin(), c_interpolationNamesAndModes.end(),
+		[selectedInterpolation](const std::pair<std::string, InterpolationMode>& rPair)
+		{return rPair.first == selectedInterpolation; });
+
+	if (modeandname == c_interpolationNamesAndModes.end())
 	{
 		m_InterpolationModeCombo.SetCurSel(0); //default: auto
 		m_selectedInterpolationMode = InterpolationMode::Default;
 	}
 	else
 	{
-		m_selectedInterpolationMode = m_InterpolationModeByModeName[selectedInterpolation];
+		m_selectedInterpolationMode = modeandname->second;
 	}
 }
 
-void SVTADlgResizePage::getOverscanActiveFromDialog()
+void SVTADlgResizePage::getOverscanModeFromDialog()
 {
-	CString OverscanActiveName;
-	m_OverscanActiveCombo.GetLBText(m_OverscanActiveCombo.GetCurSel(), OverscanActiveName);
+	CString OverscanModeName;
+	m_OverscanModeCombo.GetLBText(m_OverscanModeCombo.GetCurSel(), OverscanModeName);
 
-	std::string selectedOverscan(OverscanActiveName.GetBuffer(0));
+	std::string selectedOverscan(OverscanModeName.GetBuffer(0));
 
-	if (m_OverscanActiveByModeName.find(selectedOverscan) == m_OverscanActiveByModeName.end())
+	auto modeandname = std::find_if(c_overscanNamesAndModes.begin(), c_overscanNamesAndModes.end(),
+		[selectedOverscan](const std::pair<std::string, OverscanMode>& rPair)
+		{return rPair.first == selectedOverscan; });
+
+	if (modeandname == c_overscanNamesAndModes.end())
 	{
-		m_OverscanActiveCombo.SetCurSel(0); //default: auto
-		m_selectedOverscanActive = OverscanActive::OverscanEnable;
+		m_OverscanModeCombo.SetCurSel(0); //default: enable
+		m_selectedOverscanMode = OverscanMode::OverscanEnable;
 	}
 	else
 	{
-		m_selectedOverscanActive = m_OverscanActiveByModeName[selectedOverscan];
+		m_selectedOverscanMode = modeandname->second;
 	}
 }
 
@@ -339,7 +349,7 @@ bool SVTADlgResizePage::CommitAndCheckNewParameterValues()
 void SVTADlgResizePage::CommitValuesFromDialog()
 {
 	m_resizeValueController.Set<long>(SvPb::ResizeInterpolationModeEId, m_selectedInterpolationMode);
-	m_resizeValueController.Set<long>(SvPb::ResizeOverscanEId, m_selectedOverscanActive);
+	m_resizeValueController.Set<long>(SvPb::ResizeOverscanEId, m_selectedOverscanMode);
 
 	for (SvOg::ValueEditWidgetHelper& rEditHelper : m_allEditHelpers)
 	{
@@ -387,7 +397,7 @@ void SVTADlgResizePage::UpdateImages()
 void SVTADlgResizePage::OnAnyItemChanged()
 {
 	getInterpolationModeFromDialog();
-	getOverscanActiveFromDialog();
+	getOverscanModeFromDialog();
 
 	CommitAndCheckNewParameterValues();
 }

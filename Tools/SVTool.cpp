@@ -87,7 +87,7 @@ void SVToolClass::init()
 	m_svAuxiliarySourceX.SetTypeName(_T("Extent X"));
 	m_svAuxiliarySourceY.SetTypeName(_T("Extent Y"));
 	m_svAuxiliarySourceAngle.SetTypeName(_T("Extent Angle"));
-	m_ExtentHeightFactorContent.SetTypeName(_T("Scale Factor"));
+	m_ExtentHeightFactorContent.SetTypeName(_T("Scale Factor")); 
 	m_ExtentWidthFactorContent.SetTypeName(_T("Scale Factor"));
 	m_ExtentHeightFactorFormat.SetTypeName(_T("Scale Factor"));
 	m_ExtentWidthFactorFormat.SetTypeName(_T("Scale Factor"));
@@ -238,14 +238,6 @@ SVToolClass::~SVToolClass()
 
 bool SVToolClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 {
-	//@Hack: [Arvid][05.02.21]
-	//AB we already create these linked values here because they may be needed in 
-	//SVToolExtentPropertiesClass::GetProperties() called during CreateObject
-	m_ExtentWidthFactorContent.createAllObjects(rCreateStructure);
-	m_ExtentHeightFactorContent.createAllObjects(rCreateStructure);
-	m_ExtentWidthFactorFormat.createAllObjects(rCreateStructure);
-	m_ExtentHeightFactorFormat.createAllObjects(rCreateStructure);
-
 	bool bOk = SVTaskObjectListClass::CreateObject(rCreateStructure);
 
 	if (bOk)

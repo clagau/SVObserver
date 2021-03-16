@@ -58,6 +58,22 @@ HRESULT SVToolExtentPropertiesClass::GetProperties( SVImageExtentClass& rExtents
 
 			if ( S_OK == ( result = iter->second.pValueObject->getValue( Value ) ) )
 			{
+				if (Value.vt == VT_EMPTY)	//@Hack: [Arvid][05.03.12], SVO-1155 
+					// when this is called by SVToolClass::CreateObject() linked Values 
+					// containing dotted names are not properly usable yet.
+					// Therefore we use a default value in this case.
+					// When this fuction is called later these linked Values are correctly set
+				{
+					auto extentProperty = iter->first;
+					if (extentProperty == SvPb::SVExtentPropertyWidthFactorFormat ||
+						extentProperty == SvPb::SVExtentPropertyHeightFactorFormat ||
+						extentProperty == SvPb::SVExtentPropertyWidthFactorContent ||
+						extentProperty == SvPb::SVExtentPropertyHeightFactorContent)
+					{
+						Value.vt = VT_R8;
+						Value.dblVal = 1.0;
+					}
+				}
 				result = (VT_R8 == Value.vt) ? rExtents.SetExtentProperty( iter->first, Value.dblVal ) : E_INVALIDARG;
 			}
 		}

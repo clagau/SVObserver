@@ -45,13 +45,8 @@ constexpr char* Interpolate = _T("Interpolate");
 constexpr char* Bicubic = _T("Bicubic");
 constexpr char* Bilinear = _T("Bilinear");
 constexpr char* NearestNeighbor = _T("Nearest Neighbor");
-//since SVO-1155: 'Clear' is no longer used
-constexpr char* Clear = _T("Clear");
 constexpr char* Enabled = _T("Enabled");
 constexpr char* Disabled = _T("Disabled");
-//since SVO-1155: 'Fast' and 'Precise' are no longer used
-constexpr char* Fast = _T("Fast");
-constexpr char* Precise = _T("Precise");
 
 constexpr char* cPpqFixedName = _T("PPQ_");
 constexpr char* cTriggerFixedName = _T("Trigger_");

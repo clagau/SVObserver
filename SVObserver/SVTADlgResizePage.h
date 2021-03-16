@@ -40,20 +40,20 @@ public:
 
 private:
 	void ResetAndFillInterpolationModeComboBox();
-	void ResetAndFillOverscanActiveComboBox();
+	void ResetAndFillOverscanModeComboBox();
 
 	HRESULT SetupResizeImageControl();
 
 	std::string GetToolname() const;
 
 	void getInterpolationModeFromDialog();
-	void getOverscanActiveFromDialog();
+	void getOverscanModeFromDialog();
 	bool CommitAndCheckNewParameterValues();
 
 	void CommitValuesFromDialog();
 
 	InterpolationMode m_selectedInterpolationMode = InterpolationMode::Default;
-	OverscanActive m_selectedOverscanActive = OverscanActive::OverscanEnable;
+	OverscanMode m_selectedOverscanMode = OverscanMode::OverscanEnable;
 
 	void UpdateImages();
 
@@ -65,11 +65,6 @@ private:
 	SVToolAdjustmentDialogSheetClass* m_ParentDialog;
 
 	static const std::vector<SvPb::EmbeddedIdEnum> ms_allScaleFactorEIDs;
-
-	std::map<std::string, InterpolationMode> m_InterpolationModeByModeName;
-	std::map<InterpolationMode, std::string> m_InterpolationModeNameByMode;
-	std::map<std::string, OverscanActive> m_OverscanActiveByModeName;
-	std::map<OverscanActive, std::string> m_OverscanActiveNameByMode;
 
 	long m_ROITabHandle;
 	long m_OutputTabHandle;
@@ -99,8 +94,8 @@ private:
 
 	CComboBox m_InterpolationModeCombo;
 	std::vector<std::string> m_InterpolationModeNames;
-	CComboBox m_OverscanActiveCombo;
-	std::vector<std::string> m_OverscanActiveNames;
+	CComboBox m_OverscanModeCombo;
+	std::vector<std::string> m_OverscanModeNames;
 
 	std::vector<std::reference_wrapper<SvOg::ValueEditWidgetHelper>> m_allEditHelpers;
 

@@ -48,7 +48,7 @@ public:
 
 	bool AreAllAllScaleFactorValuesValid();
 	bool isInterpolationModeValueOK();
-	bool isOverscanActiveValueOK();
+	bool isOverscanModeValueOK();
 
 	SvIe::SVImageClass* getInputImage(bool bRunMode = false) const;
 
@@ -79,7 +79,7 @@ private:
 	SvIe::SVImageClass m_LogicalROIImage;
 
 	SvVol::SVEnumerateValueObjectClass	m_ResizeInterpolationMode;
-	SvVol::SVEnumerateValueObjectClass	m_ResizeOverscanActive;
+	SvVol::SVEnumerateValueObjectClass	m_ResizeOverscanMode;
 
 #pragma endregion Private Members
 };

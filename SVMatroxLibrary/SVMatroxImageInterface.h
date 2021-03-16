@@ -113,7 +113,7 @@ public:
 								const double p_dScaleFactorX, 
 								const double p_dScaleFactorY, 
 								long interpolationMode,
-								long overscanActive);
+								long overscanMode);
 		
 	static SVMatroxFileTypeEnum getFileType( LPCTSTR FileExt );
 

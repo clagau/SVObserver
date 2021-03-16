@@ -28,7 +28,7 @@
 
 */
 
-//	Uses include Resize function
+//	Uses include resize tool
 enum InterpolationMode
 {
 	Default =					0x00000004L, // M_INTERPOLATE
@@ -38,8 +38,8 @@ enum InterpolationMode
 	NearestNeighbor =			0x00000040L  // M_NEAREST_NEIGHBOR 
 };
 
-//	Used by Resize function
-enum OverscanActive
+//	Used by resize tool
+enum OverscanMode
 {
 	OverscanInitialize =	0,           // for initialization only
 	OverscanEnable =		0x00008000L, // M_OVERSCAN_ENABLE
@@ -47,32 +47,19 @@ enum OverscanActive
 };
 
 
-static std::initializer_list<InterpolationMode> c_allInterpolationModes
+//	Used by resize tool
+const std::initializer_list<std::pair<std::string, InterpolationMode>> c_interpolationNamesAndModes
 {
-	InterpolationMode::Default,
-	InterpolationMode::Bilinear,
-	InterpolationMode::Bicubic,
-	InterpolationMode::NearestNeighbor
-};
-
-static std::initializer_list<OverscanActive> c_allOverscanStates
-{
-	OverscanActive::OverscanInitialize,
-	OverscanActive::OverscanEnable,
-	OverscanActive::OverscanDisable
-};
-
-const std::initializer_list<std::pair<std::string, InterpolationMode>> c_allInterpolationModeNameValuePairs
-{
-	{ SvDef::Interpolate, InterpolationMode::Default },
-	{ SvDef::Bicubic, InterpolationMode::Bicubic },
-	{ SvDef::Bilinear, InterpolationMode::Bilinear },
-	{ SvDef::NearestNeighbor, InterpolationMode::NearestNeighbor },
+	{ SvDef::Interpolate , InterpolationMode::Default},
+	{ SvDef::Bicubic , InterpolationMode::Bicubic},
+	{ SvDef::Bilinear , InterpolationMode::Bilinear},
+	{ SvDef::NearestNeighbor , InterpolationMode::NearestNeighbor},
 };
 
 
-const std::initializer_list<std::pair<std::string, OverscanActive>> c_allOverscanActiveNameValuePairs
+//	Used by resize tool
+const std::initializer_list<std::pair<std::string ,OverscanMode>> c_overscanNamesAndModes
 {
-	{ SvDef::Enabled, OverscanActive::OverscanEnable },
-	{ SvDef::Disabled, OverscanActive::OverscanDisable },
+	{ SvDef::Enabled, OverscanMode::OverscanEnable },
+	{ SvDef::Disabled, OverscanMode::OverscanDisable },
 };
