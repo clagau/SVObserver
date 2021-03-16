@@ -68,7 +68,7 @@ __int64 SVInt64ValueObjectClass::ConvertString2Type( const std::string& rValue )
 	Exception.Throw();
 }
 
-void SVInt64ValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter)
+void SVInt64ValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter) const
 {
 	// Where does Object Depth Get put into the Script ??? (maybe at the SVObjectClass)
 	// Object Depth is implicit (it's the count of the values)
@@ -86,7 +86,7 @@ void SVInt64ValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter)
 	rWriter.WriteAttribute(scElementTag, list);
 }
 
-void SVInt64ValueObjectClass::WriteDefaultValues(SvOi::IObjectWriter& rWriter)
+void SVInt64ValueObjectClass::WriteDefaultValues(SvOi::IObjectWriter& rWriter) const
 {
 	_variant_t Value(GetDefaultValue());
 	rWriter.WriteAttribute(scDefaultTag, Value);

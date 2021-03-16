@@ -23,6 +23,7 @@
 #include "SVInspectionProcess.h"
 #include "SVIPDoc.h"
 #include "SVObserver.h"
+#include "SVConfigurationObject.h"
 #include "SVPPQObject.h"
 #include "ObjectInterfaces/IObjectWriter.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
@@ -53,28 +54,47 @@ static void WriteVersion(SvOi::IObjectWriter& rWriter, unsigned long p_version)
 	rWriter.EndElement();
 }
 
-static void WritePPQInputs(SvOi::IObjectWriter& rWriter, SVObjectClass* pObject)
+static void WritePPQInputOutputs(SvOi::IObjectWriter& rWriter, const SVInspectionProcess& rInspection)
 {
 	rWriter.StartElement(SvXml::CTAG_PPQ);
 
-	SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*> (pObject);
-	if ( nullptr != pInspection )
+	SVPPQObject* pPPQ = rInspection.GetPPQ();
+	if ( nullptr != pPPQ )
 	{
-		SVPPQObject* pPPQ = pInspection->GetPPQ();
-		if ( nullptr != pPPQ )
+		//These are the inputs which are attached to the PPQ (using the PPQ Bar)
+		pPPQ->PersistInputs(rWriter);
+
+		rWriter.StartElement(SvXml::CTAG_IO);
 		{
-			pPPQ->PersistInputs(rWriter);
+			long count{ 0L };
+			const SVIOEntryHostStructPtrVector& rUsedOutputs = pPPQ->getUsedOutputs();
+			for (const auto& rOutputEntry : rUsedOutputs)
+			{
+				SVObjectClass* pOutput = SVObjectManagerClass::Instance().GetObject(rOutputEntry->m_IOId);
+				bool isOutputEnabledAndPlcType = rOutputEntry->m_Enabled && nullptr != pOutput && SvPb::SVObjectSubTypeEnum::PlcOutputObjectType == pOutput->GetObjectSubType();
+				if (isOutputEnabledAndPlcType)
+				{
+					std::string IOEntry = SvUl::Format(SvXml::CTAGF_IO_ENTRY_X, count);
+
+					rWriter.StartElement(IOEntry.c_str());
+					pOutput->Persist(rWriter);
+					rWriter.EndElement();
+					++count;
+				}
+			}
+			_variant_t writeValue = count;
+			rWriter.WriteAttribute(SvXml::CTAG_NUMBER_OF_IO_ENTRIES, writeValue);
 		}
+		rWriter.EndElement();
 	}
 	rWriter.EndElement();
 }
 
-static void WriteGlobalConstants(SvOi::IObjectWriter& rWriter, SVObjectClass* pObject)
+static void WriteGlobalConstants(SvOi::IObjectWriter& rWriter, const SVInspectionProcess& rInspection)
 {
 	rWriter.StartElement(SvXml::CTAG_GLOBAL_CONSTANTS);
 
-	SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*> (pObject);
-	if ( nullptr != pInspection && nullptr != pInspection->GetToolSet() )
+	if (nullptr != rInspection.GetToolSet() )
 	{
 		SvVol::BasicValueObjects::ValueVector GlobalConstantObjects;
 
@@ -106,7 +126,7 @@ static void WriteGlobalConstants(SvOi::IObjectWriter& rWriter, SVObjectClass* pO
 			SVObjectClass* pOwner = (nullptr != pObjectClient) ? pObjectClient->GetAncestor(SvPb::SVInspectionObjectType) : nullptr;
 			SvVol::BasicValueObject* pGlobalConstant = dynamic_cast<SvVol::BasicValueObject*> (pObjectSupplier);
 			//! Check that the client is from the same inspection
-			if (pOwner == pInspection && nullptr != pGlobalConstant)
+			if (pOwner == &rInspection && nullptr != pGlobalConstant)
 			{
 				globalSet.emplace(pGlobalConstant);
 			}
@@ -130,6 +150,18 @@ static void WriteGlobalConstants(SvOi::IObjectWriter& rWriter, SVObjectClass* pO
 		}
 	}
 	rWriter.EndElement();
+}
+
+static void WriteObjectAttributes(SvOi::IObjectWriter& rWriter, const SVInspectionProcess& rInspection)
+{
+	SVConfigurationObject* pConfig(nullptr);
+	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
+	if (nullptr != pConfig)
+	{
+		SVConfigurationObject::AttributesSetMap attributeSetPairVector;
+		pConfig->getInspectionObjectAttributesSet(&rInspection, attributeSetPairVector);
+		pConfig->SaveObjectAttributesSet(rWriter, attributeSetPairVector);
+	}
 }
 
 static bool ShouldExcludeFile(LPCTSTR filename)
@@ -240,7 +272,8 @@ HRESULT SVInspectionExporter::Export(const std::string& rFileName, const std::st
 		// Write out the SVObserver version - will be checked against when importing
 		SVObjectClass* pObject;
 		result = SVObjectManagerClass::Instance().GetObjectByDottedName(rInspectionName.c_str(), pObject);
-		if (S_OK == result)
+		SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*> (pObject);
+		if (S_OK == result && nullptr != pInspection)
 		{
 			std::string dstXmlFile = GetFilenameWithoutExt(rFileName);
 			dstXmlFile += scXmlExt;
@@ -257,23 +290,28 @@ HRESULT SVInspectionExporter::Export(const std::string& rFileName, const std::st
 				SvXml::SVObjectXMLWriter writer(os);
 
 				writer.WriteRootElement(_T("Inspection_Export"));
-				writer.WriteSchema();
-				writer.WriteStartOfBase();
-				WriteVersion(writer, p_version);
-				
-				WritePPQInputs(writer, pObject);
+				{
+					writer.WriteSchema();
+					writer.WriteStartOfBase();
+					{
+						WriteVersion(writer, p_version);
 
-				WriteGlobalConstants(writer, pObject);
+						WritePPQInputOutputs(writer, *pInspection);
 
-				hasDependentFiles = WriteDependentFileList(writer, dstDependencyZipFile);
+						WriteGlobalConstants(writer, *pInspection);
 
-				pObject->Persist(writer);
+						WriteObjectAttributes(writer, *pInspection);
 
-				// Persist Document Views, Conditional History...
-				PersistDocument(pObject->getObjectId(), writer);
+						hasDependentFiles = WriteDependentFileList(writer, dstDependencyZipFile);
 
-				writer.EndElement(); // end of BaseNode
-				writer.EndElement(); // end of Root Element
+						pObject->Persist(writer);
+
+						// Persist Document Views, Conditional History...
+						PersistDocument(pInspection->getObjectId(), writer);
+					}
+					writer.EndElement();
+				}
+				writer.EndElement();
 
 				os.close();
 			}

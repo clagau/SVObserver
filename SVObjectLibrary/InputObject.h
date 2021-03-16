@@ -41,7 +41,7 @@ class InputObject : public SVObjectClass
 
 	virtual UINT SetObjectAttributesAllowed(UINT Attributes, SvOi::SetAttributeType Type) override;
 
-	virtual void Persist(SvOi::IObjectWriter& rWriter) override;
+	virtual void Persist(SvOi::IObjectWriter& rWriter) const override;
 
 	template <typename T>
 	T* getInput(bool bRunMode = false) const

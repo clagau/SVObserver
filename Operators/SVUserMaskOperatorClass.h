@@ -51,7 +51,7 @@ public:
 
 	SvIe::SVImageClass* getMaskInputImage(bool bRunMode = false) const;
 
-	virtual void Persist(SvOi::IObjectWriter& rWriter) override;
+	virtual void Persist(SvOi::IObjectWriter& rWriter) const override;
 
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* PDataObject ) override;
 

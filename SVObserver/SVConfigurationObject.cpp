@@ -2209,7 +2209,7 @@ bool SVConfigurationObject::LoadPPQ(SVTreeType& rTree)
 
 
 			// This means it is a Digital input
-			if (_T("Digital") == Type)
+			if (SvXml::cDigitalType == Type)
 			{
 				if (!SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_ITEM_NAME, hDataChild, Value))
 				{
@@ -2236,7 +2236,7 @@ bool SVConfigurationObject::LoadPPQ(SVTreeType& rTree)
 				AddDigitalInput(pPPQ, DataName, lPPQPosition);
 			}
 			// This means it is a Remote input
-			else if (_T("Remote") == Type)
+			else if (SvXml::cRemoteType == Type)
 			{
 				_variant_t RemoteValue = 0.0;
 				if (!SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_ITEM_NAME, hDataChild, Value))
@@ -2846,40 +2846,10 @@ void SVConfigurationObject::SaveIO(SvOi::IObjectWriter& rWriter) const
 		{
 			rWriter.StartElement(IOEntry.c_str());
 
-			_variant_t svVariant;
-
-			SVDigitalInputObject* pInput = dynamic_cast<SVDigitalInputObject*> (m_pInputObjectList->GetInput(inputEntryVector[lIn]->m_IOId).get());
-			if (nullptr == pInput) { continue; }
-
-			std::string EntryName = pInput->GetName();
-			svVariant.SetString(EntryName.c_str());
-			rWriter.WriteAttribute(SvXml::CTAG_IO_ENTRY_NAME, svVariant);
-			svVariant.Clear();
-
-			svVariant = static_cast<int> (pInput->GetObjectSubType());
-			rWriter.WriteAttribute(SvXml::CTAG_TYPE, svVariant);
-			svVariant.Clear();
-
-			svVariant = pInput->GetChannel();
-			rWriter.WriteAttribute(SvXml::CTAG_CHANNEL, svVariant);
-			svVariant.Clear();
-
-			svVariant = false;
-			rWriter.WriteAttribute(SvXml::CTAG_IS_OUTPUT, svVariant);
-			svVariant.Clear(); //Must clear VT_BOOL Type after use
-
-			svVariant = (pInput->IsInverted());
-			rWriter.WriteAttribute(SvXml::CTAG_IS_INVERTED, svVariant);
-			svVariant.Clear(); //Must clear VT_BOOL Type after use
-
-			svVariant = pInput->IsForced();
-			rWriter.WriteAttribute(SvXml::CTAG_IS_FORCED, svVariant);
-			svVariant.Clear(); //Must clear VT_BOOL Type after use
-
-			svVariant = pInput->GetForcedValue();
-			rWriter.WriteAttribute(SvXml::CTAG_FORCED_VALUE, svVariant);
-			svVariant.Clear(); //Must clear VT_BOOL Type after use
-
+			if (nullptr != m_pInputObjectList->GetInput(inputEntryVector[lIn]->m_IOId))
+			{
+				m_pInputObjectList->GetInput(inputEntryVector[lIn]->m_IOId)->Persist(rWriter);
+			}
 			rWriter.EndElement();
 
 			lCount++;
@@ -2898,91 +2868,13 @@ void SVConfigurationObject::SaveIO(SvOi::IObjectWriter& rWriter) const
 	{
 		std::string IOEntry = SvUl::Format(SvXml::CTAGF_IO_ENTRY_X, lCount);
 
-		if (outputEntryVector[lOut]->m_ObjectType == IO_DIGITAL_OUTPUT)
+		rWriter.StartElement(IOEntry.c_str());
+		if (nullptr != m_pOutputObjectList->GetOutput(outputEntryVector[lOut]->m_IOId))
 		{
-			rWriter.StartElement(IOEntry.c_str());
-
-			_variant_t svVariant;
-			SVDigitalOutputObject* pOutput = dynamic_cast<SVDigitalOutputObject*> (m_pOutputObjectList->GetOutput(outputEntryVector[lOut]->m_IOId).get());
-			if (nullptr == pOutput) { continue; }
-
-			svVariant.SetString(pOutput->GetName());
-			rWriter.WriteAttribute(SvXml::CTAG_IO_ENTRY_NAME, svVariant);
-			svVariant.Clear();
-
-			svVariant = static_cast<int> (pOutput->GetObjectSubType());
-			rWriter.WriteAttribute(SvXml::CTAG_TYPE, svVariant);
-			svVariant.Clear();
-
-			svVariant = pOutput->GetChannel();
-			rWriter.WriteAttribute(SvXml::CTAG_CHANNEL, svVariant);
-			svVariant.Clear();
-
-			svVariant = true;
-			rWriter.WriteAttribute(SvXml::CTAG_IS_OUTPUT, svVariant);
-			svVariant.Clear(); //Must clear VT_BOOL Type after use
-
-			svVariant = (pOutput->IsInverted());
-			rWriter.WriteAttribute(SvXml::CTAG_IS_INVERTED, svVariant);
-			svVariant.Clear(); //Must clear VT_BOOL Type after use
-
-			svVariant = (pOutput->IsForced());
-			rWriter.WriteAttribute(SvXml::CTAG_IS_FORCED, svVariant);
-			svVariant.Clear(); //Must clear VT_BOOL Type after use
-
-			svVariant = (pOutput->GetForcedValue());
-			rWriter.WriteAttribute(SvXml::CTAG_FORCED_VALUE, svVariant);
-			svVariant.Clear(); //Must clear VT_BOOL Type after use
-
-			svVariant = (pOutput->isCombined());
-			rWriter.WriteAttribute(SvXml::CTAG_IS_COMBINED, svVariant);
-			svVariant.Clear(); //Must clear VT_BOOL Type after use
-
-			svVariant = pOutput->isAndACK();
-			rWriter.WriteAttribute(SvXml::CTAG_IS_COMBINED_ACK, svVariant);
-			svVariant.Clear(); //Must clear VT_BOOL Type after use
-
-			rWriter.EndElement();
-
-			lCount++;
+			m_pOutputObjectList->GetOutput(outputEntryVector[lOut]->m_IOId)->Persist(rWriter);
 		}
-		else if (outputEntryVector[lOut]->m_ObjectType == IO_PLC_OUTPUT)
-		{
-			rWriter.StartElement(IOEntry.c_str());
-
-			_variant_t svVariant;
-
-			PlcOutputObject* pOutput = dynamic_cast<PlcOutputObject*> (m_pOutputObjectList->GetOutput(outputEntryVector[lOut]->m_IOId).get());
-			if (nullptr == pOutput) { continue; }
-
-			svVariant.SetString(pOutput->GetName());
-			rWriter.WriteAttribute(SvXml::CTAG_IO_ENTRY_NAME, svVariant);
-			svVariant.Clear();
-
-			svVariant = static_cast<int> (pOutput->GetObjectSubType());
-			rWriter.WriteAttribute(SvXml::CTAG_TYPE, svVariant);
-			svVariant.Clear();
-
-			svVariant = pOutput->GetChannel();
-			rWriter.WriteAttribute(SvXml::CTAG_CHANNEL, svVariant);
-			svVariant.Clear();
-
-			svVariant = true;
-			rWriter.WriteAttribute(SvXml::CTAG_IS_OUTPUT, svVariant);
-			svVariant.Clear(); //Must clear VT_BOOL Type after use
-
-			svVariant = (pOutput->isCombined());
-			rWriter.WriteAttribute(SvXml::CTAG_IS_COMBINED, svVariant);
-			svVariant.Clear(); //Must clear VT_BOOL Type after use
-
-			svVariant = pOutput->isAndACK();
-			rWriter.WriteAttribute(SvXml::CTAG_IS_COMBINED_ACK, svVariant);
-			svVariant.Clear(); //Must clear VT_BOOL Type after use
-
-			rWriter.EndElement();
-
-			lCount++;
-		}
+		rWriter.EndElement();
+		lCount++;
 
 	}// end for ( long lOut = 0; lOut < lOutSize; lOut++ )
 
@@ -3654,7 +3546,6 @@ void SVConfigurationObject::getInspectionObjectAttributesSet(const SVInspectionP
 	}
 }
 
-
 void SVConfigurationObject::ConvertColorToStandardProductType(bool& rConfigColor)
 {
 	SVIMProductEnum CurrentType(TheSVObserverApp.GetSVIMType());
@@ -3669,8 +3560,6 @@ void SVConfigurationObject::ConvertColorToStandardProductType(bool& rConfigColor
 		SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
 	}
 }
-
-
 
 void SVConfigurationObject::SaveConfiguration(SvXml::SVObjectXMLWriter& rWriter) const
 {
@@ -3824,12 +3713,13 @@ bool SVConfigurationObject::FinishIPDoc(SVInspectionProcess* pInspection, bool i
 			pPPQ->m_pInputList = GetInputObjectList();
 			pPPQ->RebuildInputList();
 
-			pPPQ->m_pOutputList = GetOutputObjectList();
-			pPPQ->RebuildOutputList();
-
 			pInspection->RebuildInspectionInputList();
 
 			pInspection->RebuildInspection(isLoad);
+
+			//Rebuild output list must be called after rebuild inspection as it adds the published bool values
+			pPPQ->m_pOutputList = GetOutputObjectList();
+			pPPQ->RebuildOutputList();
 
 			// Init Document
 			pInspection->ValidateAndInitialize(true);
@@ -5544,7 +5434,7 @@ HRESULT SVConfigurationObject::LoadGlobalConstants(SVTreeType& rTree)
 	return Result;
 }
 
-HRESULT SVConfigurationObject::LoadObjectAttributesSet(SVTreeType& rTree)
+HRESULT SVConfigurationObject::LoadObjectAttributesSet(SVTreeType& rTree, ObjectAttributeInserter inserter)
 {
 	HRESULT Result{ S_OK };
 
@@ -5567,8 +5457,6 @@ HRESULT SVConfigurationObject::LoadObjectAttributesSet(SVTreeType& rTree)
 			auto const Iter = AttributeSetTypes.find(rTree.getBranchName(hChild));
 			if (AttributeSetTypes.end() != Iter)
 			{
-				UINT Attribute = Iter->second;
-
 				SVTreeType::SVLeafHandle hLeaf(rTree.getFirstLeaf(hChild));
 
 				while (S_OK == Result && rTree.isValidLeaf(hChild, hLeaf))
@@ -5587,48 +5475,36 @@ HRESULT SVConfigurationObject::LoadObjectAttributesSet(SVTreeType& rTree)
 								objectIdString = SvUl::Left(ValueText, Pos);
 								ValueText = SvUl::Mid(ValueText, Pos);
 							}
-
-							uint32_t uniqueID = calcObjectId(objectIdString);
-							SVObjectReference ObjectRef{ SVObjectManagerClass::Instance().GetObject(uniqueID) };
-							if (nullptr != ObjectRef.getObject())
+							ObjectAttribute objectAttribute;
+							objectAttribute.m_attributeIndex.reserve(100);
+							objectAttribute.m_objectID = calcObjectId(objectIdString);
+							objectAttribute.m_Attribute = Iter->second;
+							if (false == ValueText.empty())
 							{
-								if (ValueText.empty())
+								auto StartPos = 0LL;
+								auto EndPos = ValueText.find(',');
+								while (std::string::npos != EndPos)
 								{
-									ObjectRef.SetObjectAttributesSet(Attribute, SvOi::AddAttribute);
-								}
-								else
-								{
-									std::vector<int> AttributeIndexes;
-									auto StartPos = 0LL;
-									auto EndPos = ValueText.find(',');
-									while (std::string::npos != EndPos)
+									std::string Range = ValueText.substr(StartPos, EndPos - StartPos);
+									auto RangePos = Range.find('-');
+									if (std::string::npos != RangePos)
 									{
-										std::string Range = ValueText.substr(StartPos, EndPos - StartPos);
-										auto RangePos = Range.find('-');
-										if (std::string::npos != RangePos)
+										int IndexStart = atoi(SvUl::Left(Range, RangePos).c_str());
+										int IndexEnd = atoi(SvUl::Mid(Range, RangePos + 1).c_str());
+										for (int i = IndexStart; i <= IndexEnd; i++)
 										{
-											int IndexStart = atoi(SvUl::Left(Range, RangePos).c_str());
-											int IndexEnd = atoi(SvUl::Mid(Range, RangePos + 1).c_str());
-											for (int i = IndexStart; i <= IndexEnd; i++)
-											{
-												AttributeIndexes.push_back(i);
-											}
+											objectAttribute.m_attributeIndex.push_back(i);
 										}
-										else
-										{
-											AttributeIndexes.push_back(atoi(Range.c_str()));
-										}
-										StartPos = EndPos + 1;
-										EndPos = ValueText.find(',', StartPos);
 									}
-									for (auto const& rEntry : AttributeIndexes)
+									else
 									{
-										ObjectRef.SetArrayIndex(rEntry);
-										ObjectRef.SetObjectAttributesSet(Attribute, SvOi::AddAttribute);
-
+										objectAttribute.m_attributeIndex.push_back(atoi(Range.c_str()));
 									}
+									StartPos = EndPos + 1;
+									EndPos = ValueText.find(',', StartPos);
 								}
 							}
+							inserter = objectAttribute;
 						}
 					}
 					hLeaf = rTree.getNextLeaf(hChild, hLeaf);
@@ -5639,6 +5515,29 @@ HRESULT SVConfigurationObject::LoadObjectAttributesSet(SVTreeType& rTree)
 		}
 	}
 	return Result;
+}
+
+void SVConfigurationObject::SetObjectAttributes(const ObjectAttributeList& rObjectAttributeList) const
+{
+	for (const auto& rObjectAttribute : rObjectAttributeList)
+	{
+		SVObjectReference ObjectRef{ SVObjectManagerClass::Instance().GetObject(rObjectAttribute.m_objectID) };
+		if (nullptr != ObjectRef.getObject())
+		{
+			if (0 == rObjectAttribute.m_attributeIndex.size())
+			{
+				ObjectRef.SetObjectAttributesSet(rObjectAttribute.m_Attribute, SvOi::AddAttribute);
+			}
+			else
+			{
+				for (auto index : rObjectAttribute.m_attributeIndex)
+				{
+					ObjectRef.SetArrayIndex(index);
+					ObjectRef.SetObjectAttributesSet(rObjectAttribute.m_Attribute, SvOi::AddAttribute);
+				}
+			}
+		}
+	}
 }
 
 HRESULT SVConfigurationObject::LoadAdditionalFiles(SVTreeType& rTree)

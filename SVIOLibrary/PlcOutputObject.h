@@ -23,6 +23,7 @@ public:
 
 #pragma region Public Methods
 public:
+	virtual void Persist(SvOi::IObjectWriter& rWriter) const override;
 	///PLC output does not need to write any value
 	virtual HRESULT Write( const _variant_t&) override { return S_OK; }
 	virtual HRESULT Reset() override { return S_OK;}

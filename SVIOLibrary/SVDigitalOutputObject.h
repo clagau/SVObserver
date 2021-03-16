@@ -22,6 +22,8 @@ public:
 
 #pragma region Public Methods
 public:
+	virtual void Persist(SvOi::IObjectWriter& rWriter) const override;
+
 	virtual HRESULT Write( const _variant_t& rValue ) override;
 	virtual HRESULT Reset() override;
 	virtual bool isCombined() const override;

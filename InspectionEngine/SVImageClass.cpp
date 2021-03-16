@@ -813,7 +813,7 @@ HRESULT SVImageClass::RemoveObjectConnection(uint32_t objectID)
 	return l_Status;
 }
 
-void SVImageClass::Persist(SvOi::IObjectWriter& rWriter)
+void SVImageClass::Persist(SvOi::IObjectWriter& rWriter) const
 {
 	rWriter.StartElement(GetObjectName()); // use internal name for node name
 
@@ -824,7 +824,7 @@ void SVImageClass::Persist(SvOi::IObjectWriter& rWriter)
 	rWriter.EndElement();
 }
 
-void SVImageClass::PersistImageAttributes(SvOi::IObjectWriter& rWriter)
+void SVImageClass::PersistImageAttributes(SvOi::IObjectWriter& rWriter) const
 {
 	long TempValue = 0;
 
@@ -848,9 +848,8 @@ void SVImageClass::PersistImageAttributes(SvOi::IObjectWriter& rWriter)
 	{
 		rWriter.StartElement(scEmbeddedsTag);
 		// Get embedded object script...
-		for (SVObjectPtrVector::iterator Iter = m_embeddedList.begin(); m_embeddedList.end() != Iter; ++Iter)
+		for (const auto* pObject : m_embeddedList)
 		{
-			SVObjectClass* pObject = *Iter;
 			if (nullptr != pObject)
 			{
 				pObject->Persist(rWriter);

@@ -7,7 +7,9 @@
 #include "stdafx.h"
 #include "SVDigitalInputObject.h"
 #include "SVIOConfigurationInterfaceClass.h"
+#include "ObjectInterfaces/IObjectWriter.h"
 #include "SVObjectLibrary/SVClsids.h"
+#include "SVXMLLibrary/SVConfigurationTags.h"
 #pragma endregion Includes
 
 SVDigitalInputObject::SVDigitalInputObject( LPCSTR strObjectName )
@@ -20,6 +22,39 @@ SVDigitalInputObject::SVDigitalInputObject( SVObjectClass *pOwner, int StringRes
 :SVInputObject( pOwner, StringResourceID )
 {
 	LocalInitialize();
+}
+
+void SVDigitalInputObject::Persist(SvOi::IObjectWriter& rWriter) const
+{
+	_variant_t svVariant;
+
+	svVariant.SetString(GetName());
+	rWriter.WriteAttribute(SvXml::CTAG_IO_ENTRY_NAME, svVariant);
+	svVariant.Clear();
+
+	svVariant = static_cast<int> (GetObjectSubType());
+	rWriter.WriteAttribute(SvXml::CTAG_TYPE, svVariant);
+	svVariant.Clear();
+
+	svVariant = GetChannel();
+	rWriter.WriteAttribute(SvXml::CTAG_CHANNEL, svVariant);
+	svVariant.Clear();
+
+	svVariant = false;
+	rWriter.WriteAttribute(SvXml::CTAG_IS_OUTPUT, svVariant);
+	svVariant.Clear();
+
+	svVariant = IsInverted();
+	rWriter.WriteAttribute(SvXml::CTAG_IS_INVERTED, svVariant);
+	svVariant.Clear();
+
+	svVariant = IsForced();
+	rWriter.WriteAttribute(SvXml::CTAG_IS_FORCED, svVariant);
+	svVariant.Clear();
+
+	svVariant = GetForcedValue();
+	rWriter.WriteAttribute(SvXml::CTAG_FORCED_VALUE, svVariant);
+	svVariant.Clear();
 }
 
 HRESULT SVDigitalInputObject::Read( _variant_t& rValue ) const

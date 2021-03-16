@@ -1243,17 +1243,16 @@ DWORD SVTaskObjectClass::GetStatusTag() const
 	return dwState;
 }
 
-
-void SVTaskObjectClass::Persist(SvOi::IObjectWriter& rWriter)
+void SVTaskObjectClass::Persist(SvOi::IObjectWriter& rWriter) const
 {
-	SVObjectAppClass::Persist(rWriter);
+	__super::Persist(rWriter);
 
 	PersistFriends(rWriter);
 	PersistEmbeddeds(rWriter);
 	PersistInputs(rWriter);
 }
 
-void SVTaskObjectClass::PersistFriends(SvOi::IObjectWriter& rWriter)
+void SVTaskObjectClass::PersistFriends(SvOi::IObjectWriter& rWriter) const
 {
 	// Get script of close friends list members...
 	if (m_friendList.size())
@@ -1276,13 +1275,13 @@ void SVTaskObjectClass::PersistFriends(SvOi::IObjectWriter& rWriter)
 	}
 }
 
-void SVTaskObjectClass::PersistInputs(SvOi::IObjectWriter& rWriter)
+void SVTaskObjectClass::PersistInputs(SvOi::IObjectWriter& rWriter) const
 {
 	// Set up input list...
 	if (0 < m_inputs.size())
 	{
 		rWriter.StartElement(scInputsTag);
-		for (auto* pInput : m_inputs)
+		for (const auto* pInput : m_inputs)
 		{
 			if (pInput)
 			{
@@ -1293,16 +1292,15 @@ void SVTaskObjectClass::PersistInputs(SvOi::IObjectWriter& rWriter)
 	}
 }
 
-void SVTaskObjectClass::PersistEmbeddeds(SvOi::IObjectWriter& rWriter)
+void SVTaskObjectClass::PersistEmbeddeds(SvOi::IObjectWriter& rWriter) const
 {
 	// Set up embedded object definitions...
 	if (0 < m_embeddedList.size())
 	{
 		rWriter.StartElement(scEmbeddedsTag);
 		// Get embedded object script...
-		for (SVObjectPtrVector::iterator Iter = m_embeddedList.begin(); m_embeddedList.end() != Iter; ++Iter)
+		for (const auto* pObject : m_embeddedList)
 		{
-			SVObjectClass* pObject = *Iter;
 			if (nullptr != pObject)
 			{
 				pObject->Persist(rWriter);

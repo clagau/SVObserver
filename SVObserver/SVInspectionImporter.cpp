@@ -37,12 +37,13 @@
 #include "SVXMLLibrary/SaxExtractPropertiesHandler.h"
 #pragma endregion Includes
 
-static LPCTSTR scImportNewExt = _T(".new.xml");
-static LPCTSTR scDependentsZipExt = _T(".dependents.zip");
-static LPCTSTR scExportExt = _T(".bxp");
-static LPCTSTR scColorExportExt = _T(".cxp");
-static LPCTSTR scZipExt = _T(".zip");
-static LPCTSTR scXMLExt = _T(".xml");
+constexpr LPCTSTR scImportNewExt = _T(".new.xml");
+constexpr LPCTSTR scDependentsZipExt = _T(".dependents.zip");
+constexpr LPCTSTR scExportExt = _T(".bxp");
+constexpr LPCTSTR scColorExportExt = _T(".cxp");
+constexpr LPCTSTR scZipExt = _T(".zip");
+constexpr LPCTSTR scXMLExt = _T(".xml");
+constexpr int cImportOperationNumber = 11;
 
 static bool isZipFile(const std::string& filename)
 {
@@ -91,80 +92,106 @@ static std::string GetFilenameWithoutExt(const std::string& filename)
 	return result;
 }
 
-template<typename SVTreeType, typename Insertor>
-static bool ImportPPQInputs(SVTreeType& rTree, Insertor insertor)
+using InputListInserter = std::insert_iterator<ImportedInputList>;
+using OutputListInserter = std::insert_iterator<ImportedOutputList>;
+static bool ImportPPQInputsOutputs(SvXml::SVXMLMaterialsTree& rTree, InputListInserter inputInserter, OutputListInserter outputInserter)
 {
 	bool bOk = true;
 	
 	SVTreeType::SVBranchHandle hItem;
 	if (SvXml::SVNavigateTree::GetItemBranch(rTree, SvXml::CTAG_PPQ, nullptr, hItem))
 	{
-		SVTreeType::SVBranchHandle hItemInputs;
-		if (SvXml::SVNavigateTree::GetItemBranch(rTree, SvXml::CTAG_INPUT, hItem , hItemInputs))
+		SVTreeType::SVBranchHandle hItemIO;
+		if (SvXml::SVNavigateTree::GetItemBranch(rTree, SvXml::CTAG_INPUT, hItem , hItemIO))
 		{
 			SVTreeType::SVBranchHandle htiDataChild( nullptr );
-				
-			htiDataChild = rTree.getFirstBranch(hItemInputs);
-
+			htiDataChild = rTree.getFirstBranch(hItemIO);
 			while (bOk && nullptr != htiDataChild )
 			{
 				std::string DataName( rTree.getBranchName(htiDataChild) );
-				
-				long l_PPQPosition = -1;
-				_variant_t svValue;
-				std::string Type;
+				_variant_t value;
+				std::string inputType;
+				_variant_t inputValue = 0.0;
+				long PPQPosition{ -1L };
+				long index = 0;
 
-				bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_IO_TYPE, htiDataChild, svValue);
+				bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_IO_TYPE, htiDataChild, value);
 				if (bOk)
 				{
-					Type = SvUl::createStdString( svValue );
+					inputType = SvUl::createStdString( value );
 				}
-				bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_ITEM_NAME, htiDataChild, svValue);
+				bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_ITEM_NAME, htiDataChild, value);
 				if (bOk)
 				{
-					DataName = SvUl::createStdString( svValue );
+					DataName = SvUl::createStdString( value );
 				}
-				bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_PPQ_POSITION, htiDataChild, svValue);
+				bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_PPQ_POSITION, htiDataChild, value);
 				if (bOk)
 				{
-					l_PPQPosition = svValue;
+					PPQPosition = value;
 				}
-				///Remote imput must be imported even it is not assigned to a ppq otherwise
-				//we get corrupt configurations 
+				//These values are only required for remote inputs and are optional
+				if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_REMOTE_INDEX, htiDataChild, value))
 				{
-					// This means it is a Digital input
-					if( _T("Digital") == Type )
+					index = value;
+				}
+				if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_REMOTE_INITIAL_VALUE, htiDataChild, value))
+				{
+					inputValue = value;
+				}
+				inputInserter = ImportedInput{ DataName, inputType, PPQPosition, inputValue, index};
+				htiDataChild = rTree.getNextBranch(hItemIO, htiDataChild);
+			}
+		}
+		hItemIO = nullptr;
+		if (SvXml::SVNavigateTree::GetItemBranch(rTree, SvXml::CTAG_IO, hItem, hItemIO))
+		{
+			_variant_t value;
+			if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_NUMBER_OF_IO_ENTRIES, hItemIO, value))
+			{
+				int ioSize = value;
+				for (int i = 0; i < ioSize; ++i)
+				{
+					SVTreeType::SVBranchHandle hSubChild;
+					std::string IOEntry = SvUl::Format(SvXml::CTAGF_IO_ENTRY_X, i);
+					if (SvXml::SVNavigateTree::GetItemBranch(rTree, IOEntry.c_str(), hItemIO, hSubChild))
 					{
-						insertor = boost::any(SVImportedInput(DataName, l_PPQPosition));
-					}
-					// This means it is a Digital input
-					else if( _T("Remote") == Type )
-					{								
-						_variant_t l_Variant = 0.0;
-						long l_Index = 0;
-
-						bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_REMOTE_INDEX, htiDataChild, svValue);
+						ImportedOutput importedOutput;
+						bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_IO_ENTRY_NAME, hSubChild, value);
+						if (bOk && VT_BSTR == value.vt)
+						{
+							importedOutput.m_name = SvUl::createStdString(value);
+						}
+						bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_TYPE, hSubChild, value);
 						if (bOk)
 						{
-							l_Index = svValue;
+							importedOutput.m_subType = value;
 						}
-						if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_REMOTE_INITIAL_VALUE, htiDataChild, svValue))
+						bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_CHANNEL, hSubChild, value);
+						if (bOk)
 						{
-							l_Variant = svValue;
+							importedOutput.m_channel = value;
 						}
-						// Add Remote Input
-						insertor = boost::any(SVImportedRemoteInput(DataName, l_PPQPosition, l_Index, l_Variant));
+						bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_IS_COMBINED, hSubChild, value);
+						if (bOk)
+						{
+							importedOutput.m_isCombined = value ? true : false;
+						}
+						bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_IS_COMBINED_ACK, hSubChild, value);
+						if (bOk)
+						{
+							importedOutput.m_isAndAck = value ? true : false;
+						}
+						outputInserter = importedOutput;
 					}
 				}
-				htiDataChild = rTree.getNextBranch(hItemInputs, htiDataChild);
 			}
 		}
 	}
 	return bOk;
 }
 
-template<typename SVTreeType>
-static bool importGlobalConstants( SVTreeType& rTree, std::vector<SvUl::GlobalConstantData>& rImportedGlobals )
+static bool importGlobalConstants(SvXml::SVXMLMaterialsTree& rTree, std::vector<SvUl::GlobalConstantData>& rImportedGlobals)
 {
 	bool Result( true );
 
@@ -206,7 +233,7 @@ static bool importGlobalConstants( SVTreeType& rTree, std::vector<SvUl::GlobalCo
 	return Result;
 }
 
-static void getLinkedValueUsingGlobalConst(SVTreeType& rTree, std::back_insert_iterator<std::vector<std::pair<std::string, SVTreeType::SVBranchHandle>>> listInserter, SVTreeType::SVBranchHandle startBranch = nullptr )
+static void getLinkedValueUsingGlobalConst(SvXml::SVXMLMaterialsTree& rTree, std::back_insert_iterator<std::vector<std::pair<std::string, SVTreeType::SVBranchHandle>>> listInserter, SVTreeType::SVBranchHandle startBranch = nullptr )
 {
 	if (nullptr != startBranch)
 	{
@@ -255,7 +282,7 @@ static void getLinkedValueUsingGlobalConst(SVTreeType& rTree, std::back_insert_i
 	}
 }
 
-static void checkGlobalConstants(SVTreeType& rTree, SvUl::GlobalConflictPairVector& rGlobalConflicts )
+static void checkGlobalConstants(SvXml::SVXMLMaterialsTree& rTree, SvUl::GlobalConflictPairVector& rGlobalConflicts )
 {
 	std::vector<SvUl::GlobalConstantData> importedGlobals;
 	importGlobalConstants(rTree, importedGlobals);
@@ -319,31 +346,46 @@ static void checkGlobalConstants(SVTreeType& rTree, SvUl::GlobalConflictPairVect
 	}
 }
 
-typedef std::insert_iterator<SVImportedInputList> InputListInsertor;
+static void ImportObjectAttributes(SvXml::SVXMLMaterialsTree& rTree, ObjectAttributeInserter attributeInserter)
+{
+	SVConfigurationObject* pConfig(nullptr);
+	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
+	if (nullptr != pConfig)
+	{
+		pConfig->LoadObjectAttributesSet(rTree, attributeInserter);
+	}
+}
 
-HRESULT LoadInspectionXml(SvXml::SVXMLMaterialsTree& rXmlTree, const std::string& zipFilename, const std::string& inspectionName, const std::string& cameraName, SVImportedInspectionInfo& inspectionInfo, SvUl::GlobalConflictPairVector& rGlobalConflicts, SVIProgress& rProgress, int& currentOp, int numOperations)
+HRESULT LoadInspectionXml(SvXml::SVXMLMaterialsTree& rXmlTree, const std::string& zipFilename, const std::string& inspectionName, const std::string& cameraName, SVImportedInspectionInfo& inspectionInfo, SvUl::GlobalConflictPairVector& rGlobalConflicts, SVIProgress& rProgress, int& currentOp)
 {
 	HRESULT hr = S_OK;
 
 	rProgress.UpdateText(_T("Importing Dependent Files..."));
-	rProgress.UpdateProgress(++currentOp, numOperations);
+	rProgress.UpdateProgress(++currentOp, cImportOperationNumber);
 
 	SvDef::StringVector Files;
 	SvUl::unzipAll(zipFilename, SvStl::GlobalPath::Inst().GetRunPath(), Files);
 
-	rProgress.UpdateText(_T("Importing PPQ Inputs..."));
-	rProgress.UpdateProgress(++currentOp, numOperations);
+	rProgress.UpdateText(_T("Importing PPQ Inputs/Outputs ..."));
+	rProgress.UpdateProgress(++currentOp, cImportOperationNumber);
 
-	InputListInsertor insertor(inspectionInfo.m_inputList, inspectionInfo.m_inputList.begin());
-	ImportPPQInputs(rXmlTree, insertor);
+	InputListInserter inputInserter(inspectionInfo.m_inputList, inspectionInfo.m_inputList.end());
+	OutputListInserter outputInserter(inspectionInfo.m_outputList, inspectionInfo.m_outputList.end());
+	ImportPPQInputsOutputs(rXmlTree, inputInserter, outputInserter);
 
 	rProgress.UpdateText(_T("Importing Global Constants..."));
-	rProgress.UpdateProgress(++currentOp, numOperations);
+	rProgress.UpdateProgress(++currentOp, cImportOperationNumber);
 
 	checkGlobalConstants(rXmlTree, rGlobalConflicts);
 
+	rProgress.UpdateText(_T("Importing object attributes..."));
+	rProgress.UpdateProgress(++currentOp, cImportOperationNumber);
+
+	ObjectAttributeInserter attributeInserter(inspectionInfo.m_objectAttributeList, inspectionInfo.m_objectAttributeList.end());
+	ImportObjectAttributes(rXmlTree, attributeInserter);
+
 	rProgress.UpdateText(_T("Creating Inspection object..."));
-	rProgress.UpdateProgress(++currentOp, numOperations);
+	rProgress.UpdateProgress(++currentOp, cImportOperationNumber);
 
 	SvXml::SVXMLMaterialsTree::SVBranchHandle hItem;
 	if (SvXml::SVNavigateTree::GetItemBranch(rXmlTree, SvXml::CTAG_INSPECTION_PROCESS, nullptr, hItem))
@@ -351,7 +393,7 @@ HRESULT LoadInspectionXml(SvXml::SVXMLMaterialsTree& rXmlTree, const std::string
 		SvXml::SVXMLMaterialsTree::SVBranchHandle hItemToolset;
 		if (SvXml::SVNavigateTree::GetItemBranch(rXmlTree, SvXml::CTAG_TOOLSET_SET, hItem, hItemToolset))
 		{
-			rProgress.UpdateProgress(++currentOp, numOperations);
+			rProgress.UpdateProgress(++currentOp, cImportOperationNumber);
 
 			// Set the Caption
 			SVParserProgressDialog l_ParserProgressDialog(_T("Loading Inspection(s) ..."));
@@ -363,7 +405,7 @@ HRESULT LoadInspectionXml(SvXml::SVXMLMaterialsTree& rXmlTree, const std::string
 			if (S_OK == hr)
 			{
 				rProgress.UpdateText(_T("Creating Toolset objects..."));
-				rProgress.UpdateProgress(++currentOp, numOperations);
+				rProgress.UpdateProgress(++currentOp, cImportOperationNumber);
 
 				SVObjectClass* pObject = nullptr;
 				SVObjectManagerClass::Instance().GetObjectByIdentifier(inspectionInfo.m_inspectionId, pObject);
@@ -374,7 +416,7 @@ HRESULT LoadInspectionXml(SvXml::SVXMLMaterialsTree& rXmlTree, const std::string
 					pInspection->CreateInspection(inspectionName.c_str());
 
 					rProgress.UpdateText(_T("Setting Inspection Camera name..."));
-					rProgress.UpdateProgress(++currentOp, numOperations);
+					rProgress.UpdateProgress(++currentOp, cImportOperationNumber);
 
 					SVConfigurationObject::updateConfTreeToNewestVersion(rXmlTree, hItemToolset);
 
@@ -391,7 +433,7 @@ HRESULT LoadInspectionXml(SvXml::SVXMLMaterialsTree& rXmlTree, const std::string
 						pInspection->connectAllInputs();
 
 						rProgress.UpdateText(_T("Parsing Complete."));
-						rProgress.UpdateProgress(++currentOp, numOperations);
+						rProgress.UpdateProgress(++currentOp, cImportOperationNumber);
 					}
 					else
 					{
@@ -444,8 +486,7 @@ HRESULT SVInspectionImporter::Import(const std::string& filename, const std::str
 	zipFilename += scDependentsZipExt;
 
 	int currentOp = 0;
-	int numOperations = 10;
-	rProgress.UpdateProgress(++currentOp, numOperations);
+	rProgress.UpdateProgress(++currentOp, cImportOperationNumber);
 
 	SvDef::StringVector FileList;
 
@@ -477,10 +518,10 @@ HRESULT SVInspectionImporter::Import(const std::string& filename, const std::str
 	HRESULT hr = loadAndReplaceData(inFileName, inspectionName, XmlTree);
 	if (S_OK == hr)
 	{
-		rProgress.UpdateProgress(++currentOp, numOperations);
-		result = LoadInspectionXml(XmlTree, zipFilename, inspectionName, cameraName, inspectionInfo, rGlobalConflicts, rProgress, currentOp, numOperations);
+		rProgress.UpdateProgress(++currentOp, cImportOperationNumber);
+		result = LoadInspectionXml(XmlTree, zipFilename, inspectionName, cameraName, inspectionInfo, rGlobalConflicts, rProgress, currentOp);
 
-		rProgress.UpdateProgress(++currentOp, numOperations);
+		rProgress.UpdateProgress(++currentOp, cImportOperationNumber);
 		rProgress.UpdateText(_T("Import Complete."));
 	}
 	else

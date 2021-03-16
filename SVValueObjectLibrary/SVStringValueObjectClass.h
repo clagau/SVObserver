@@ -65,8 +65,8 @@ protected:
 	//! \returns the number of bytes for the data
 	virtual int32_t getByteSize(bool useResultSize, bool memBlockData) const override;
 
-	virtual void WriteValues(SvOi::IObjectWriter& rWriter) override;
-	virtual void WriteDefaultValues(SvOi::IObjectWriter& rWriter) override;
+	virtual void WriteValues(SvOi::IObjectWriter& rWriter) const override;
+	virtual void WriteDefaultValues(SvOi::IObjectWriter& rWriter) const override;
 private:
 	void LocalInitialize();
 

@@ -138,7 +138,7 @@ double SVDoubleValueObjectClass::ConvertString2Type( const std::string& rValue )
 	return atof( rValue.c_str() );
 }
 
-void SVDoubleValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter)
+void SVDoubleValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter) const
 {
 	// Where does Object Depth Get put into the Script ??? (maybe at the SVObjectClass)
 	// Object Depth is implicit (it's the count of the values)
@@ -156,7 +156,7 @@ void SVDoubleValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter)
 	rWriter.WriteAttribute(scElementTag, list);
 }
 
-void SVDoubleValueObjectClass::WriteDefaultValues(SvOi::IObjectWriter& rWriter)
+void SVDoubleValueObjectClass::WriteDefaultValues(SvOi::IObjectWriter& rWriter) const
 {
 	_variant_t Value(GetDefaultValue());
 	rWriter.WriteAttribute(scDefaultTag, Value);

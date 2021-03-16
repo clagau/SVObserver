@@ -525,7 +525,7 @@ int32_t SVVariantValueObjectClass::getByteSize(bool useResultSize, bool memBlock
 	return result;
 }
 
-void SVVariantValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter)
+void SVVariantValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter) const
 {
 	// Object Depth is implicit (it's the count of the values)
 	std::vector<_variant_t> list;
@@ -578,7 +578,7 @@ void SVVariantValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter)
 	rWriter.WriteAttribute(scElementTag, list);
 }
 
-void SVVariantValueObjectClass::WriteDefaultValues(SvOi::IObjectWriter& rWriter)
+void SVVariantValueObjectClass::WriteDefaultValues(SvOi::IObjectWriter& rWriter) const
 {
 	_variant_t Value(GetDefaultValue());
 	rWriter.WriteAttribute(scDefaultTag, Value);

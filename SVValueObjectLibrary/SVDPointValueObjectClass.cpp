@@ -106,7 +106,7 @@ SVPoint<double> SVDPointValueObjectClass::ConvertString2Type( const std::string&
 	Exception.Throw();
 }
 
-void SVDPointValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter)
+void SVDPointValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter) const
 {
 	// Get the Data Values (Member Info, Values)
 	_variant_t value;
@@ -129,7 +129,7 @@ void SVDPointValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter)
 	rWriter.WriteAttribute(scElementTag, list);
 }
 
-void SVDPointValueObjectClass::WriteDefaultValues(SvOi::IObjectWriter& rWriter)
+void SVDPointValueObjectClass::WriteDefaultValues(SvOi::IObjectWriter& rWriter) const
 {
 	_variant_t value;
 	value.SetString(GetDefaultValue().toString().c_str());

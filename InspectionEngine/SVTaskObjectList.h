@@ -43,7 +43,7 @@ public:
 	
 	virtual void getOutputList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter) const override;
 
-	virtual void Persist(SvOi::IObjectWriter& rWriter) override;
+	virtual void Persist(SvOi::IObjectWriter& rWriter) const override;
 
 	virtual bool isInputImage(uint32_t imageId) const override;
 

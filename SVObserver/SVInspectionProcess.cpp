@@ -2173,7 +2173,7 @@ void SVInspectionProcess::RemoveCamera(const std::string& rCameraName)
 	}
 }
 
-bool SVInspectionProcess::IsNewDisableMethodSet()
+bool SVInspectionProcess::IsNewDisableMethodSet() const
 {
 	return m_bNewDisableMethod;
 }
@@ -3178,7 +3178,7 @@ void SVInspectionProcess::SVInspectionTracking::EventEnd(const std::string& p_rN
 }
 #endif
 
-void SVInspectionProcess::Persist(SvOi::IObjectWriter& rWriter)
+void SVInspectionProcess::Persist(SvOi::IObjectWriter& rWriter) const
 {
 	// until it becomes a task object list...
 	rWriter.StartElement(GetObjectName()); // use internal name for node name

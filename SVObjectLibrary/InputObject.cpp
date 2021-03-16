@@ -159,7 +159,7 @@ UINT InputObject::SetObjectAttributesAllowed(UINT Attributes, SvOi::SetAttribute
 	return retValue;
 }
 
-void InputObject::Persist(SvOi::IObjectWriter& rWriter)
+void InputObject::Persist(SvOi::IObjectWriter& rWriter) const
 {
 	//@TODO[MZA][10.10][10.12.2020] wie kann man das wieder reinnehmen?
 	//if (SvPb::noAttributes == ObjectAttributesAllowed())

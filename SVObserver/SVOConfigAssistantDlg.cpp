@@ -16,6 +16,8 @@
 //Moved to precompiled header: #include <io.h>
 
 #include "SVOConfigAssistantDlg.h"
+#include "SVIOLibrary/PlcOutputObject.h"
+#include "SVIOLibrary/SVOutputObjectList.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVHBitmapUtilitiesLibrary/SVImageFile.h"
@@ -47,6 +49,7 @@
 #include "SVUtilityLibrary/StringHelper.h"
 #include "Definitions/GlobalConst.h"
 #include "Definitions/TextDefineSvDef.h"
+#include "SVXMLLibrary/SVConfigurationTags.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -1994,7 +1997,7 @@ bool SVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 									SVOPPQObjPtr pPPQObj = GetPPQObjectByInspectionName(inspectionName);
 									if( nullptr != pPPQObj )
 									{
-										pPPQObj->SetImportedInputList(importer.info.m_inputList);
+										pPPQObj->SetImportedInspectionInfo(std::move(importer.info));
 									}
 
 									bool bNewDisableMethod = pInspection->IsNewDisableMethodSet();
@@ -2260,28 +2263,67 @@ bool SVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectPtrVect
 					}
 				}
 
-				const SVImportedInputList& list = pPPQObj->GetImportedInputList();
-				for (SVImportedInputList::const_iterator it = list.begin();it != list.end();++it)
+				const SVImportedInspectionInfo& rImportedInspectionInfo = pPPQObj->GetImportedInspectionInfo();
+				pConfig->SetObjectAttributes(rImportedInspectionInfo.m_objectAttributeList);
+				for (const auto& rImportInput : rImportedInspectionInfo.m_inputList)
 				{
-					if (it->type() == typeid(SVImportedRemoteInput))
+					if(SvXml::cRemoteType == rImportInput.m_type)
 					{
-						const SVImportedRemoteInput& input = boost::any_cast<const SVImportedRemoteInput &>(*it);
-						pConfig->AddImportedRemoteInput(pPPQ, input.name, input.ppqPosition, input.index, input.value);
+						pConfig->AddImportedRemoteInput(pPPQ, rImportInput.m_name, rImportInput.m_ppqPosition, rImportInput.m_index, rImportInput.m_value);
 					}
-					else if(SVHardwareManifest::isDiscreteIOSystem(m_lConfigurationType))
+					else if(SVHardwareManifest::isDiscreteIOSystem(m_lConfigurationType) && SvXml::cDigitalType == rImportInput.m_type)
 					{
-						const SVImportedInput& input = boost::any_cast<const SVImportedInput &>(*it);
-						pConfig->AddImportedDigitalInput(pPPQ, input.name, input.ppqPosition);
+						pConfig->AddImportedDigitalInput(pPPQ, rImportInput.m_name, rImportInput.m_ppqPosition);
+					}
+				}
+				for (const auto& rImportOutput : rImportedInspectionInfo.m_outputList)
+				{
+					if (SvPb::PlcOutputObjectType == static_cast<SvPb::SVObjectSubTypeEnum> (rImportOutput.m_subType))
+					{
+						unsigned long outputNr{ 0UL };
+						SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount(outputNr);
+						SVOutputObjectList* pOutputList{ pConfig->GetOutputObjectList() };
+						if (nullptr != pOutputList)
+						{
+							int ppqIndex = atoi(pPPQObj->GetPPQName().c_str());
+							uint32_t outputIndex = rImportOutput.m_channel % outputNr;
+							long channelNr = ppqIndex * outputNr + outputIndex;
+							uint32_t ioID = ObjectIdEnum::PlcOutputId + channelNr;
+							SVOutputObjectPtr pOutput = pOutputList->GetOutput(ioID);
+							bool isPlcOutputFree = nullptr == pOutput;
+							if (isPlcOutputFree)
+							{
+								pOutput = std::make_shared<PlcOutputObject>();
+								PlcOutputObject* pPlcOutput = dynamic_cast<PlcOutputObject*> (pOutput.get());
+								pOutput->updateObjectId(ioID);
+								pOutput->SetName(rImportOutput.m_name.c_str());
+								if (nullptr != pPlcOutput)
+								{
+									pPlcOutput->SetChannel(channelNr);
+									pPlcOutput->Combine(rImportOutput.m_isCombined, rImportOutput.m_isAndAck);
+								}
+								pOutputList->AttachOutput(pOutput);
+							}
+							else
+							{
+								SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
+								SvDef::StringVector msgList;
+								msgList.push_back(std::to_string(channelNr + 1));
+								msgList.push_back(pPPQ->GetName());
+								msgList.push_back(rImportOutput.m_name);
+								Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_PlcOutputAlreadyUsed, msgList, SvStl::SourceFileParams(StdMessageParams));
+							}
+						}
 					}
 				}
 				// cleanup so we don't do it again
-				pPPQObj->ClearImportedInputList();
+				pPPQObj->ClearImportedInspectionInfo();
 
 				if (bNew)
 				{
 					bRet = pPPQ->Create() && bRet;
-					pPPQ->m_pInputList = pConfig->GetInputObjectList( );
-					pPPQ->m_pOutputList = pConfig->GetOutputObjectList( );
+					pPPQ->m_pInputList = pConfig->GetInputObjectList();
+					pPPQ->m_pOutputList = pConfig->GetOutputObjectList();
 					bRet = pConfig->AddPPQ(pPPQ) && bRet;
 				}
 				else

@@ -346,7 +346,7 @@ void SVEquation::SetEquationText(const std::string& rText)
 	}
 }
 
-void SVEquation::Persist(SvOi::IObjectWriter& rWriter)
+void SVEquation::Persist(SvOi::IObjectWriter& rWriter) const
 {
 	SVTaskObjectClass::Persist(rWriter);
 

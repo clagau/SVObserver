@@ -591,7 +591,7 @@ bool SVUserMaskOperatorClass::Refresh()
 	return false;
 }
 
-void SVUserMaskOperatorClass::Persist( SvOi::IObjectWriter& rWriter )
+void SVUserMaskOperatorClass::Persist( SvOi::IObjectWriter& rWriter ) const
 {
 	SVTaskObjectClass::Persist(rWriter);
 	

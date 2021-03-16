@@ -176,10 +176,10 @@ public:
 	// Get the local object color...
 	virtual DWORD GetObjectColor() const override;
 	DWORD SVTaskObjectClass::GetStatusTag() const;
-	virtual void Persist(SvOi::IObjectWriter& rWriter) override;
-	void PersistFriends(SvOi::IObjectWriter& rWriter);
-	void PersistInputs(SvOi::IObjectWriter& rWriter);
-	void PersistEmbeddeds(SvOi::IObjectWriter& rWriter);
+	virtual void Persist(SvOi::IObjectWriter& rWriter) const override;
+	void PersistFriends(SvOi::IObjectWriter& rWriter) const;
+	void PersistInputs(SvOi::IObjectWriter& rWriter) const;
+	void PersistEmbeddeds(SvOi::IObjectWriter& rWriter) const;
 
 	const std::vector<SvOl::InputObject*>& GetPrivateInputList() const { return m_inputs; };
 

@@ -15,7 +15,7 @@
 //Moved to precompiled header: #include <deque>
 //Moved to precompiled header: #include <memory>
 //Moved to precompiled header: #include <utility>
-#include "SVImportedInputList.h"
+#include "SVImportedInspectionInfo.h"
 #include "SVPPQConstants.h"
 #include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
@@ -70,9 +70,9 @@ public:
 	bool IsConditionalOutputCameraInput() const;
 	void RemoveCameraInputConditionalOutput();
 
-	void SetImportedInputList(const SVImportedInputList& list);
-	const SVImportedInputList& GetImportedInputList() const;
-	void ClearImportedInputList();
+	void SetImportedInspectionInfo(SVImportedInspectionInfo&& importedInspectionInfo) { m_importedInspectionInfo = std::move(importedInspectionInfo); };
+	const SVImportedInspectionInfo& GetImportedInspectionInfo() const { return m_importedInspectionInfo; }
+	void ClearImportedInspectionInfo() { m_importedInspectionInfo = {}; }
 
 private:
 	std::string m_PPQName {};
@@ -90,7 +90,7 @@ private:
 	long m_lInspectionTimeout {0};
 	std::string m_conditionalOutputName {PPQ_CONDITIONAL_OUTPUT_ALWAYS};
 	SVNameObjectIdPairList m_availableInputs;
-	SVImportedInputList m_importedInputList;
+	SVImportedInspectionInfo m_importedInspectionInfo;
 };
 
 typedef std::shared_ptr< SVOPPQObj > SVOPPQObjPtr;

@@ -20,8 +20,8 @@ class SVIProgress;
 class SVInspectionImporter
 {
 private:
-	SVInspectionImporter();
-	~SVInspectionImporter();
+	SVInspectionImporter() = default;
+	~SVInspectionImporter() = default;
 
 public:
 	static HRESULT Import(const std::string& filename, const std::string& inspectionName, const std::string& cameraName, SVImportedInspectionInfo& inspectionInfo, SvUl::GlobalConflictPairVector& rGlobalConflicts, SVIProgress& rProgress);

@@ -76,7 +76,7 @@ public:
 	virtual void SetDisabled();
 	virtual DWORD GetObjectColor() const;
 
-	virtual void Persist( SvOi::IObjectWriter& rWriter );
+	virtual void Persist( SvOi::IObjectWriter& rWriter ) const;
 
 	virtual HRESULT GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index = 0 ) const;
 

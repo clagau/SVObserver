@@ -122,7 +122,7 @@ HRESULT SVTaskObjectListClass::ConnectToObject(const std::string& rInputName, ui
 	return result;
 }
 
-void SVTaskObjectListClass::Persist(SvOi::IObjectWriter& rWriter)
+void SVTaskObjectListClass::Persist(SvOi::IObjectWriter& rWriter) const
 {
 	rWriter.StartElement(GetObjectName()); // use internal name for node name
 	SVTaskObjectClass::Persist(rWriter);

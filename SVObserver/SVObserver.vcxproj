@@ -249,7 +249,6 @@ echo %time%
     <ClCompile Include="SVHistogramAnalyzerSetup.cpp" />
     <ClCompile Include="SVImageView.cpp" />
     <ClCompile Include="SVImageViewScroll.cpp" />
-    <ClCompile Include="SVImportedInspectionInfo.cpp" />
     <ClCompile Include="SVInfoStructs.cpp" />
     <ClCompile Include="SVInspectionExporter.cpp" />
     <ClCompile Include="SVInspectionImporter.cpp" />
@@ -388,6 +387,7 @@ echo %time%
     <ClInclude Include="MonitorListSelector.h" />
     <ClInclude Include="MonitorListView.h" />
     <ClInclude Include="NavigatorElement.h" />
+    <ClInclude Include="ObjectAttribute.h" />
     <ClInclude Include="PlcOutputsView.h" />
     <ClInclude Include="RangeClassHelper.h" />
     <ClInclude Include="RangeXDialogClass.h" />
@@ -436,7 +436,6 @@ echo %time%
     <ClInclude Include="SVHistogramAnalyzerSetup.h" />
     <ClInclude Include="SVImageView.h" />
     <ClInclude Include="SVImageViewScroll.h" />
-    <ClInclude Include="SVImportedInputList.h" />
     <ClInclude Include="SVImportedInspectionInfo.h" />
     <ClInclude Include="SVImportProgress.h" />
     <ClInclude Include="SVInfoStructs.h" />

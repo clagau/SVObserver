@@ -107,7 +107,7 @@ DWORD SVDWordValueObjectClass::ConvertString2Type( const std::string& rValue ) c
 	return 0; //will never be reached, because the exception will throw before. But this line avoids a warning
 }
 
-void SVDWordValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter)
+void SVDWordValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter) const
 {
 	// Where does Object Depth Get put into the Script ??? (maybe at the SVObjectClass)
 	// Object Depth is implicit (it's the count of the values)
@@ -129,7 +129,7 @@ void SVDWordValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter)
 	rWriter.WriteAttribute(scElementTag, list);
 }
 
-void SVDWordValueObjectClass::WriteDefaultValues(SvOi::IObjectWriter& rWriter)
+void SVDWordValueObjectClass::WriteDefaultValues(SvOi::IObjectWriter& rWriter) const
 {
 	_variant_t Value(GetDefaultValue());
 	Value.ChangeType(VT_UI4);

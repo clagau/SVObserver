@@ -113,7 +113,7 @@ SVPoint<long> SVPointValueObjectClass::ConvertString2Type( const std::string& rV
 	Exception.Throw();
 }
 
-void SVPointValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter)
+void SVPointValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter) const
 {
 	// Where does Object Depth Get put into the Script ??? (maybe at the SVObjectClass)
 	// Object Depth is implicit (it's the count of the values)
@@ -138,7 +138,7 @@ void SVPointValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter)
 	rWriter.WriteAttribute(scElementTag, list);
 }
 
-void SVPointValueObjectClass::WriteDefaultValues(SvOi::IObjectWriter& rWriter)
+void SVPointValueObjectClass::WriteDefaultValues(SvOi::IObjectWriter& rWriter) const
 {
 	std::string TempValue;
 	TempValue = SvUl::Format(_T("%d, %d"), GetDefaultValue().m_x, GetDefaultValue().m_y);

@@ -70,8 +70,8 @@ protected:
 
 	virtual std::string ConvertType2String( const long& rValue ) const override;
 
-	virtual void WriteValues(SvOi::IObjectWriter& rWriter) override;
-	virtual void WriteDefaultValues(SvOi::IObjectWriter& rWriter) override;
+	virtual void WriteValues(SvOi::IObjectWriter& rWriter) const override;
+	virtual void WriteDefaultValues(SvOi::IObjectWriter& rWriter) const override;
 private:
 	void LocalInitialize();
 	

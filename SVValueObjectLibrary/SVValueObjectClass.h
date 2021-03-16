@@ -82,7 +82,7 @@ public:
 	virtual UINT SetObjectAttributesAllowed(UINT Attributes, SvOi::SetAttributeType Type) override;
 	virtual HRESULT getValue(double& rValue, int Index = -1) const override;
 	virtual HRESULT getValues(std::vector<double>& rValues) const override;
-	virtual void Persist(SvOi::IObjectWriter& rWriter) override;
+	virtual void Persist(SvOi::IObjectWriter& rWriter) const override;
 	//! For these methods see IValueObject documentation
 	virtual HRESULT setDefaultValue(const _variant_t& rValue) override { return SetDefaultValue(Variant2ValueType(rValue), false); }
 	virtual _variant_t getDefaultValue() const override { return ValueType2Variant(&m_DefaultValue); };
@@ -119,10 +119,10 @@ public:
 	void SetLegacyVectorObjectCompatibility() { m_LegacyVectorObjectCompatibility = true; }
 
 	/// getter and setter for ShouldSaveValue-Flag
-	bool shouldSaveValue() { return m_shouldSaveValue; };
+	bool shouldSaveValue() const { return m_shouldSaveValue; };
 
 	/// getter and setter for ShouldSaveDefaultValue-Flag
-	bool shouldSaveDefaultValue() { return m_shouldSaveDefaultValue; };
+	bool shouldSaveDefaultValue() const { return m_shouldSaveDefaultValue; };
 	void setSaveDefaultValueFlag(bool isValueSaved) { m_shouldSaveDefaultValue = isValueSaved; };
 #pragma endregion Public Methods
 
@@ -169,11 +169,11 @@ protected:
 
 	/// Write the Values of this object to the IObjectWriter
 	/// \param rWriter [in,out] The IObjectWriter
-	virtual void WriteValues(SvOi::IObjectWriter& rWriter) = 0;
+	virtual void WriteValues(SvOi::IObjectWriter& rWriter) const = 0;
 
 	/// Write the Default-Values of this object to the IObjectWriter
 	/// \param rWriter [in,out] The IObjectWriter
-	virtual void WriteDefaultValues(SvOi::IObjectWriter& rWriter) = 0;
+	virtual void WriteDefaultValues(SvOi::IObjectWriter& rWriter) const = 0;
 
 	/// !!can throw Exception!!
 	T convertVariantValue(const _variant_t&, const _variant_t& rDefaultValue) const;

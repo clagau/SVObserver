@@ -14,6 +14,7 @@
 #pragma region Includes
 //Moved to precompiled header: #include <map>
 #include "MonitorListAttributeStruct.h"
+#include "ObjectAttribute.h"
 #include "RemoteMonitorList.h"
 #include "SVInspectionProcess.h"
 #include "SVPPQObject.h"
@@ -58,7 +59,6 @@ namespace  SvXml
 	class SVObjectXMLWriter;
 }
 
-
 class SVDeviceParamCollection;
 class SVDeviceParam;
 class SVFileNameArrayClass;
@@ -102,6 +102,7 @@ class SVConfigurationObject : public SVObjectClass
 
 public:
 	typedef std::map<std::string, SvIe::SVConfigurationAcquisitionDeviceInfoStruct*> SVAcquisitionDeviceMap;
+	typedef std::map<UINT, SVObjectReferenceVector> AttributesSetMap;
 
 	explicit SVConfigurationObject(LPCSTR ObjectName);
 	SVConfigurationObject(SVObjectClass* pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVCONFIGURATIONOBJECT);
@@ -191,9 +192,7 @@ public:
 
 	bool DestroyConfiguration();
 
-	void SetInputObjectList(std::unique_ptr<SVInputObjectList>&& pInputObjectList) { m_pInputObjectList.swap(pInputObjectList); }
 	SVInputObjectList* GetInputObjectList() const { return (nullptr != m_pInputObjectList) ? m_pInputObjectList.get() : nullptr; }
-	void SetOutputObjectList(std::unique_ptr<SVOutputObjectList>&& pOutputObjectList) { m_pOutputObjectList.swap(pOutputObjectList); }
 	SVOutputObjectList* GetOutputObjectList() const { return (nullptr != m_pOutputObjectList) ? m_pOutputObjectList.get() : nullptr; }
 
 	std::list<SVFileNameClass>& getAdditionalFiles() { return m_AdditionalFiles; }
@@ -335,9 +334,11 @@ public:
 	//************************************
 	//! The method loads the ObjectAttributesSet
 	//! \param rTree <in> a reference to the XML-tree which it will be loaded from
+	//! \param inserter <out> a container inserter to add entries to list of objects to set 
 	//! \returns S_OK, if loading successful
 	//************************************
-	HRESULT LoadObjectAttributesSet(SVTreeType& rTree);
+	HRESULT LoadObjectAttributesSet(SVTreeType& rTree, ObjectAttributeInserter inserter);
+	void SetObjectAttributes(const ObjectAttributeList& rObjectAttributeList) const;
 
 	//************************************
 	//! The method loads the Additional File list
@@ -399,9 +400,16 @@ public:
 	void setPostRunExecutionFilePath(LPCTSTR filepath) {m_postRunExecutionFile = filepath;}
 	const std::string& getPreRunExecutionFilePath() const {return m_preRunExecutionFile;}
 	const std::string& getPostRunExecutionFilePath() const {return m_postRunExecutionFile;}
+
+	//************************************
+	//! The method saves the Object Attributes Set list
+	//! \param rWriter <in> a reference to the xml-writer
+	//! \param rAttributesSetMap <in> a reference to attribute set map
+	//************************************
+	void SaveObjectAttributesSet(SvOi::IObjectWriter& rWriter, const AttributesSetMap& rAttributesSetMap) const;
+	void getInspectionObjectAttributesSet(const SVInspectionProcess* pInspection, AttributesSetMap& rAttributesSetMap) const;
 private:
 	typedef std::set<SVInspectionProcess*> SVInspectionSet;
-	typedef std::map<UINT, SVObjectReferenceVector> AttributesSetMap;
 
 	bool FinishIPDoc(SVInspectionProcess* pInspection, bool isLoad = false);
 	void SaveEnvironment(SvOi::IObjectWriter& rWriter) const;
@@ -439,24 +447,10 @@ private:
 	void SaveGlobalConstants(SvOi::IObjectWriter& rWriter) const;
 
 	//************************************
-	//! The method saves the Object Attributes Set list
-	//! \param rWriter <in> a reference to the xml-writer
-	//! \param rAttributesSetMap <in> a reference to attribute set map
-	//************************************
-	void SaveObjectAttributesSet(SvOi::IObjectWriter& rWriter, const AttributesSetMap& rAttributesSetMap) const;
-
-	//************************************
 	//! The method saves the Additional file list
 	//! \param rWriter <in> a reference to the xml-writer
 	//************************************
 	void SaveAdditionalFiles(SvOi::IObjectWriter& rWriter) const;
-
-	//************************************
-	//! The method gets Object Attributes for the inspection
-	//! \param pInspection <in> a pointer to the inspection
-	//! \param rAttributesSetMap <in> a reference to attribute set map
-	//************************************
-	void getInspectionObjectAttributesSet(const SVInspectionProcess* pInspection, AttributesSetMap& rAttributesSetMap) const;
 
 	//************************************
 	//! The method checks and if necessary converts the product type to a mixed type

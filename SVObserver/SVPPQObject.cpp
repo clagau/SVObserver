@@ -3773,7 +3773,7 @@ void SVPPQObject::PersistInputs(SvOi::IObjectWriter& rWriter)
 			{
 			case IO_DIGITAL_INPUT:
 			{
-				l_svValue.SetString(_T("Digital"));
+				l_svValue.SetString(SvXml::cDigitalType);
 				rWriter.WriteAttribute(SvXml::CTAG_IO_TYPE, l_svValue);
 				l_svValue.Clear();
 
@@ -3793,7 +3793,7 @@ void SVPPQObject::PersistInputs(SvOi::IObjectWriter& rWriter)
 
 			case IO_REMOTE_INPUT:
 			{
-				l_svValue.SetString(_T("Remote"));
+				l_svValue.SetString(SvXml::cRemoteType);
 				rWriter.WriteAttribute(SvXml::CTAG_IO_TYPE, l_svValue);
 				l_svValue.Clear();
 

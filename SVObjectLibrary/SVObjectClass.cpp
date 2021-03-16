@@ -771,7 +771,7 @@ HRESULT SVObjectClass::RemoveObjectConnection(uint32_t )
 	return S_OK;
 }
 
-void SVObjectClass::Persist(SvOi::IObjectWriter& rWriter)
+void SVObjectClass::Persist(SvOi::IObjectWriter& rWriter) const
 {
 	_variant_t value;
 	value.SetString(GetName()); // use user editable name for Data Element ObjectName attribute

@@ -20,6 +20,7 @@
 #include "ExtrasEngine.h"
 #include "RootObject.h"
 #include "LoadConfigWarning.h"
+#include "ObjectAttribute.h"
 #include "SoftwareTriggerDlg.h"
 #include "SVAboutDialogClass.h"
 #include "SVArchiveWritingDlg.h"
@@ -2595,8 +2596,13 @@ HRESULT SVObserverApp::OpenSVXFile()
 						break;
 					}
 
-					hr = pConfig->LoadObjectAttributesSet(XMLTree);
-					if (hr & SvDef::svErrorCondition)
+					ObjectAttributeList objectAttributeList;
+					hr = pConfig->LoadObjectAttributesSet(XMLTree, std::inserter(objectAttributeList, objectAttributeList.end()));
+					if (S_OK == hr)
+					{
+						pConfig->SetObjectAttributes(objectAttributeList);
+					}
+					else if (hr & SvDef::svErrorCondition)
 					{
 						break;
 					}

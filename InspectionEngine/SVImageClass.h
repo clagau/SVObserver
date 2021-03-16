@@ -76,8 +76,8 @@ public:
 
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* PDataObject ) override;
 
-	virtual void Persist( SvOi::IObjectWriter& rWriter ) override;
-	void PersistImageAttributes( SvOi::IObjectWriter& rWriter );
+	virtual void Persist( SvOi::IObjectWriter& rWriter ) const override;
+	void PersistImageAttributes( SvOi::IObjectWriter& rWriter ) const;
 
 	const SVImageClass* const GetRootImage() const;
 	HRESULT TranslateFromOutputSpaceToImage(SVImageClass* pImage, SVPoint<double> inPoint, SVPoint<double>& rOutPoint) const;

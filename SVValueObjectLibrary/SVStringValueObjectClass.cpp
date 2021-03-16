@@ -279,7 +279,7 @@ int32_t SVStringValueObjectClass::getByteSize(bool useResultSize, bool memBlockD
 	return result;
 }
 
-void SVStringValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter)
+void SVStringValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter) const
 {
 	// Where does Object Depth Get put into the Script ??? (maybe at the SVObjectClass)
 	// Object Depth is implicit (it's the count of the values)
@@ -303,7 +303,7 @@ void SVStringValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter)
 	rWriter.WriteAttribute(scElementTag, list);
 }
 
-void SVStringValueObjectClass::WriteDefaultValues(SvOi::IObjectWriter& rWriter)
+void SVStringValueObjectClass::WriteDefaultValues(SvOi::IObjectWriter& rWriter) const
 {
 	std::string TempValue(GetDefaultValue());
 	SvUl::AddEscapeSpecialCharacters(TempValue, true);

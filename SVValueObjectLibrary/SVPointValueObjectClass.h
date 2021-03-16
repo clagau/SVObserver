@@ -54,8 +54,8 @@ protected:
 	//! \returns the VT type
 	virtual DWORD GetType() const override { return SvDef::VT_POINT; };
 
-	virtual void WriteValues(SvOi::IObjectWriter& rWriter) override;
-	virtual void WriteDefaultValues(SvOi::IObjectWriter& rWriter) override;
+	virtual void WriteValues(SvOi::IObjectWriter& rWriter) const override;
+	virtual void WriteDefaultValues(SvOi::IObjectWriter& rWriter) const override;
 private:
 	void LocalInitialize();
 };

@@ -152,7 +152,7 @@ public:
 	void ConnectToolSetMainImage();
 
 	/// is the new disable method set?
-	bool IsNewDisableMethodSet() override;
+	bool IsNewDisableMethodSet() const override;
 	void SetNewDisableMethod( bool bNewDisableMethod ); 
 
 	virtual bool getEnableAuxiliaryExtent() const override;
@@ -201,7 +201,7 @@ public:
 
 	HRESULT RemoveImage(SvIe::SVImageClass* pImage);
 
-	virtual void Persist(SvOi::IObjectWriter& rWriter) override;
+	virtual void Persist(SvOi::IObjectWriter& rWriter) const override;
 
 	//************************************
 	//! Get all active ppqVariables for the used inspection.

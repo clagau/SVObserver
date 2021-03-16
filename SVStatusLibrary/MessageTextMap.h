@@ -662,5 +662,6 @@ namespace SvStl
 
 		{ Tid_ModuleReady , _T("Module ready set to %s") },
 		{ Tid_ModelTypeMismatch , _T("Model mismatch SVIM type is %s, the loaded configuration is type %s\nConfiguration shall not be able to go into Run mode") },
+		{ Tid_PlcOutputAlreadyUsed , _T("PLC Output %s for %s is already being used and cannot be imported with the value:\n%s") },
 };
 } //namespace SvStl

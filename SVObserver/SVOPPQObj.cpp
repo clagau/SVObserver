@@ -252,18 +252,3 @@ void SVOPPQObj::RemoveCameraInputConditionalOutput()
 	}
 }
 
-void SVOPPQObj::SetImportedInputList(const SVImportedInputList& list)
-{
-	m_importedInputList = list;
-}
-
-const SVImportedInputList& SVOPPQObj::GetImportedInputList() const
-{
-	return m_importedInputList;
-}
-
-void SVOPPQObj::ClearImportedInputList()
-{
-	m_importedInputList.clear();
-}
-

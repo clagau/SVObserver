@@ -168,9 +168,6 @@
     <ClCompile Include="SVImageViewScroll.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVImportedInspectionInfo.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVInfoStructs.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -676,9 +673,6 @@
     <ClInclude Include="SVImageViewScroll.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVImportedInputList.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVImportedInspectionInfo.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -1058,6 +1052,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="RegressionTestController.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectAttribute.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

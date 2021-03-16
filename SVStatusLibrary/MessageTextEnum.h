@@ -627,5 +627,6 @@ enum MessageTextEnum
 
 	Tid_ModuleReady,
 	Tid_ModelTypeMismatch,
+	Tid_PlcOutputAlreadyUsed,
 };
 } //namespace SvStl

@@ -207,6 +207,8 @@ public:
 	bool setRejectDepth(long depth, SvStl::MessageContainerVector *pErrorMessages =nullptr);
 
 	void setPreTriggerTimeWindow(double preTriggerTimeWindow) { m_PPQPositions.setPreTriggerTimeWindow(preTriggerTimeWindow); }
+
+	const SVIOEntryHostStructPtrVector& getUsedOutputs() const { return m_UsedOutputs; }
 protected:
 
 	struct SVCameraQueueElement

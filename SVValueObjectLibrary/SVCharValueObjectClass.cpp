@@ -99,7 +99,7 @@ TCHAR SVCharValueObjectClass::ConvertString2Type( const std::string& rValue ) co
 	return 0; //will never reached, because the exception will throw before. But this line avoids a warning
 }
 
-void SVCharValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter)
+void SVCharValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter) const
 {
 	// Where does Object Depth Get put into the Script ??? (maybe at the SVObjectClass)
 	// Object Depth is implicit (it's the count of the values)
@@ -117,7 +117,7 @@ void SVCharValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter)
 	rWriter.WriteAttribute(scElementTag, list);
 }
 
-void SVCharValueObjectClass::WriteDefaultValues(SvOi::IObjectWriter& rWriter)
+void SVCharValueObjectClass::WriteDefaultValues(SvOi::IObjectWriter& rWriter) const
 {
 	_variant_t Value(GetDefaultValue());
 	rWriter.WriteAttribute(scDefaultTag, Value);

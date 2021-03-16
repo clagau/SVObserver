@@ -7,8 +7,10 @@
 #include "stdafx.h"
 #include "SVDigitalOutputObject.h"
 #include "SVIOConfigurationInterfaceClass.h"
+#include "ObjectInterfaces/IObjectWriter.h"
 #include "SVObjectLibrary/SVClsids.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVXMLLibrary/SVConfigurationTags.h"
 #pragma endregion Includes
 
 SVDigitalOutputObject::SVDigitalOutputObject( LPCSTR strObjectName ) : SVOutputObject( strObjectName )
@@ -19,6 +21,46 @@ SVDigitalOutputObject::SVDigitalOutputObject( LPCSTR strObjectName ) : SVOutputO
 SVDigitalOutputObject::SVDigitalOutputObject( SVObjectClass *pOwner, int StringResourceID ) : SVOutputObject( pOwner, StringResourceID )
 {
 	LocalInitialize();
+}
+
+void SVDigitalOutputObject::Persist(SvOi::IObjectWriter& rWriter) const
+{
+	_variant_t svVariant;
+	svVariant.SetString(GetName());
+	rWriter.WriteAttribute(SvXml::CTAG_IO_ENTRY_NAME, svVariant);
+	svVariant.Clear();
+
+	svVariant = static_cast<int> (GetObjectSubType());
+	rWriter.WriteAttribute(SvXml::CTAG_TYPE, svVariant);
+	svVariant.Clear();
+
+	svVariant = GetChannel();
+	rWriter.WriteAttribute(SvXml::CTAG_CHANNEL, svVariant);
+	svVariant.Clear();
+
+	svVariant = true;
+	rWriter.WriteAttribute(SvXml::CTAG_IS_OUTPUT, svVariant);
+	svVariant.Clear();
+
+	svVariant = IsInverted();
+	rWriter.WriteAttribute(SvXml::CTAG_IS_INVERTED, svVariant);
+	svVariant.Clear();
+
+	svVariant = IsForced();
+	rWriter.WriteAttribute(SvXml::CTAG_IS_FORCED, svVariant);
+	svVariant.Clear();
+
+	svVariant = GetForcedValue();
+	rWriter.WriteAttribute(SvXml::CTAG_FORCED_VALUE, svVariant);
+	svVariant.Clear();
+
+	svVariant = isCombined();
+	rWriter.WriteAttribute(SvXml::CTAG_IS_COMBINED, svVariant);
+	svVariant.Clear();
+
+	svVariant = isAndACK();
+	rWriter.WriteAttribute(SvXml::CTAG_IS_COMBINED_ACK, svVariant);
+	svVariant.Clear();
 }
 
 HRESULT SVDigitalOutputObject::Write( const _variant_t& rValue )
