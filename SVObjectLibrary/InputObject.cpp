@@ -69,39 +69,44 @@ void InputObject::SetInputObjectType( const SvDef::SVObjectTypeInfoStruct& rType
 
 void InputObject::SetInputObject(uint32_t objectID )
 {
+	SetInputObject(SVObjectReference(objectID));
+}
+
+void InputObject::SetInputObject( SVObjectClass* pObject )
+{
+	SetInputObject(SVObjectReference(pObject));
+}
+
+void InputObject::SetInputObject( const SVObjectReference& rObject )
+{
 	uint32_t oldObjectId = m_InputObjectInfo.getObjectId();
-	if(objectID != oldObjectId || (SvDef::InvalidObjectId != objectID && nullptr == m_InputObjectInfo.getObject()))
+
+	bool shouldNewConnect = rObject.getObjectId() != oldObjectId || (SvDef::InvalidObjectId != rObject.getObjectId() && nullptr == m_InputObjectInfo.getObject());
+	if (shouldNewConnect)
 	{
 		auto* pOldObject = SVObjectManagerClass::Instance().GetObject(oldObjectId);
 		if (pOldObject)
 		{
 			pOldObject->disconnectObject(getObjectId());
 		}
+	}
 
-		m_InputObjectInfo.SetObject( objectID );
+	m_InputObjectInfo.SetObject(rObject);
 
-		auto* pNewObject = m_InputObjectInfo.getObject();
-		if (pNewObject)
+	auto* pNewObject = m_InputObjectInfo.getObject();
+	if (pNewObject)
+	{
+		m_IsConnected = true;
+		if (shouldNewConnect)
 		{
-			m_IsConnected = true;
 			pNewObject->connectObject(getObjectId());
 			correctDependencies();
 		}
-		else
-		{
-			m_IsConnected = false;
-		}		
 	}
-}
-
-void InputObject::SetInputObject( SVObjectClass* pObject )
-{
-	SetInputObject(pObject ? pObject->getObjectId() : SvDef::InvalidObjectId);
-}
-
-void InputObject::SetInputObject( const SVObjectReference& rObject )
-{
-	SetInputObject(rObject.getObjectId());
+	else
+	{
+		m_IsConnected = false;
+	}
 }
 
 void InputObject::validateInput()
