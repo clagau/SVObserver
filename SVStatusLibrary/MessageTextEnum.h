@@ -626,5 +626,6 @@ enum MessageTextEnum
 	Tid_CifxResponseDataError,
 
 	Tid_ModuleReady,
+	Tid_ModelTypeMismatch,
 };
 } //namespace SvStl

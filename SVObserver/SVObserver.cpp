@@ -2629,6 +2629,17 @@ HRESULT SVObserverApp::OpenSVXFile()
 						}
 						// Upgrade the configuration depending on the version being loaded
 						pConfig->UpgradeConfiguration();
+
+						bool isSvimPlc = SVHardwareManifest::isPlcSystem(GetSVIMType());
+						bool isConfigPlc = SVHardwareManifest::isPlcSystem(pConfig->GetProductType());
+						if (isSvimPlc != isConfigPlc)
+						{
+							SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
+							SvDef::StringVector msgList;
+							msgList.emplace_back(isSvimPlc ? SvDef::SVO_PRODUCT_SVIM_NEO1 : SvDef::SVO_PRODUCT_SVIM_X2_GD8A);
+							msgList.emplace_back(isConfigPlc ? SvDef::SVO_PRODUCT_SVIM_NEO1 : SvDef::SVO_PRODUCT_SVIM_X2_GD8A);
+							Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ModelTypeMismatch, msgList, SvStl::SourceFileParams(StdMessageParams));
+						}
 					}
 				}
 
@@ -2642,7 +2653,6 @@ HRESULT SVObserverApp::OpenSVXFile()
 				SvDef::StringVector msgList;
 				msgList.push_back(getConfigFullFileName());
 				msgList.push_back(SvUl::Format(_T("%d"), l_lTime));
-
 				SvStl::MessageManager Exception(SvStl::MsgType::Log);
 				Exception.setMessage(SVMSG_SVO_29_SVOBSERVER_CONFIG_LOADED, SvStl::Tid_ConfigLoadTime, msgList, SvStl::SourceFileParams(StdMessageParams));
 
