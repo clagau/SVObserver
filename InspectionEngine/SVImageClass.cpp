@@ -66,7 +66,9 @@ bool SVImageClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructur
 
 	SVObjectManagerClass::Instance().RegisterSubObject(getObjectId());
 	SVObjectManagerClass::Instance().RegisterSubObject(m_width.getObjectId());
+	m_width.SetObjectOwner(this);
 	SVObjectManagerClass::Instance().RegisterSubObject(m_height.getObjectId());
+	m_height.SetObjectOwner(this);
 
 	l_bOk &= (S_OK == UpdateFromToolInformation());
 
