@@ -151,7 +151,7 @@ bool SVTADlgArchiveImagePage::QueryAllowExit()
 		msgList.push_back(SvUl::Format(_T("%ld"), UpperLimitImageNumbers));
 		SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
 		Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_Error_you_have_Selected_X_Must_less_then_Y, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16075_ImageNrToBig  );
-		return false;
+		return true;
 	}
 
 	if( MaxImagesWarningLimit < m_ImagesToArchive)

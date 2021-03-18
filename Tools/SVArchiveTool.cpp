@@ -1304,7 +1304,7 @@ bool SVArchiveTool::ValidateImagePathAndAvailableSpace(uint32_t objectId, SvStl:
 	}
 
 	//
-	// Make sure we have at least 100 Meg bytes space on the drive.
+	// Make sure we have at least 100 MB free on the drive.
 	//
 	//For systems with 16GB of memory the amount of memory will be 300Meg
 	if (((__int64)100'000'000) > lFreeBytesAvailableToCaller.QuadPart)
