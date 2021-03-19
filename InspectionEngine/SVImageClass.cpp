@@ -24,6 +24,7 @@
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
 #include "SVObjectLibrary/SVObjectClass.h"
+#include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
@@ -62,21 +63,30 @@ SVImageClass::SVImageClass(SVObjectClass* POwner, int StringResourceID)
 
 bool SVImageClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 {
-	bool l_bOk = SVObjectAppClass::CreateObject(rCreateStructure);
+	bool bOk = SVObjectAppClass::CreateObject(rCreateStructure);
 
 	SVObjectManagerClass::Instance().RegisterSubObject(getObjectId());
-	SVObjectManagerClass::Instance().RegisterSubObject(m_width.getObjectId());
-	m_width.SetObjectOwner(this);
-	SVObjectManagerClass::Instance().RegisterSubObject(m_height.getObjectId());
-	m_height.SetObjectOwner(this);
+	if (bOk)
+	{
+		for (auto* pObject : m_embeddedList)
+		{
+			if (IsCreated() && nullptr != pObject)
+			{
+				SVObjectLevelCreateStruct createStruct = rCreateStructure;
+				createStruct.OwnerObjectInfo.SetObject(this);
+				bOk &= pObject->createAllObjects(createStruct);
+				assert(bOk);
+			}
+		}
+	}
 
-	l_bOk &= (S_OK == UpdateFromToolInformation());
+	bOk &= (S_OK == UpdateFromToolInformation());
 
 	SetObjectAttributesAllowed(SvPb::publishResultImage | SvPb::dataDefinitionImage, SvOi::SetAttributeType::AddAttribute);	// add this to older configs
 
-	m_isCreated = l_bOk;
+	m_isCreated = bOk;
 
-	return l_bOk;
+	return bOk;
 }
 
 bool SVImageClass::CloseObject()
