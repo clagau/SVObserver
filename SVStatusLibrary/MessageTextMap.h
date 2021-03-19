@@ -641,7 +641,7 @@ namespace SvStl
 		{Tid_SetParameterValuesFailed, _T("Setting of the parameter '%s' failed.") },
 		
 		{Tid_Correct_Grouping_Add_S_Items, _T("Correct grouping add  '%s' Items.") },
-		{Tid_GroupDependencies_Wrong, _T("Group Dependencies wrong, if tool closed it is not allowed to have dependencies inside out.") },
+		{Tid_GroupDependencies_Wrong, _T("Group Dependencies wrong. If the tool closed, it is not allowed to have dependencies outside of the Group Tool.") },
 
 		{ Tid_InvalidScaleFactor, _T("Invalid Scale Factor") },
 

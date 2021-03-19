@@ -116,6 +116,7 @@ private:
 	HRESULT BuildMaskLines( SVExtentMultiLineStruct& p_MultiLine );
 	HRESULT CreateLocalImageBuffer();
 	HRESULT DestroyLocalImageBuffer();
+	void updateMaskImageFlags(DWORD dwMaskType);
 
 	void init();
 

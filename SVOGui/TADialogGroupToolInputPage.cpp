@@ -209,12 +209,14 @@ namespace SvOg
 			case 0: //decimal
 			{
 				ObjectSelectorController objectSelector(m_InspectionID);
+				objectSelector.setSearchAreas({ SvPb::SearchArea::globalConstantItems, SvPb::SearchArea::cameraObject, SvPb::SearchArea::ppqItems, SvPb::SearchArea::toolsetItems });
 				isChanged = objectSelector.Show(cellText, m_Grid.GetCell(pItem->iRow, NameColumn)->GetText(), this, SvPb::allNumberValueObjects, { m_toolId });
 				break;
 			}
 			case 1: //text
 			{
 				ObjectSelectorController objectSelector(m_InspectionID, SvDef::InvalidObjectId, SvPb::ObjectAttributes::viewable);
+				objectSelector.setSearchAreas({ SvPb::SearchArea::globalConstantItems, SvPb::SearchArea::cameraObject, SvPb::SearchArea::ppqItems, SvPb::SearchArea::toolsetItems });
 				isChanged = objectSelector.Show(cellText, m_Grid.GetCell(pItem->iRow, NameColumn)->GetText(), this, SvPb::allValueObjects, { m_toolId });
 				break;
 			}

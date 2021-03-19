@@ -152,6 +152,10 @@ bool SVUserMaskOperatorClass::CreateObject( const SVObjectLevelCreateStruct& rCr
 	//	persistent or will not be verified again in OnResetObject.
 	CreateLocalImageBuffer();
 
+	DWORD dwMaskType = MASK_TYPE_STATIC;
+	m_dwvoMaskType.GetValue(dwMaskType);
+	updateMaskImageFlags(dwMaskType);
+
 	m_isCreated = bOk;
 
 	return m_isCreated;
@@ -163,15 +167,7 @@ bool SVUserMaskOperatorClass::ResetObject(SvStl::MessageContainerVector *pErrorM
 
 	DWORD dwMaskType = MASK_TYPE_STATIC;
 	m_dwvoMaskType.GetValue(dwMaskType);
-	if (dwMaskType == MASK_TYPE_IMAGE)
-	{
-		m_userMaskImageInput.validateInput();
-		m_userMaskImageInput.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::embedable, SvOi::SetAttributeType::OverwriteAttribute);
-	}
-	else
-	{
-		m_userMaskImageInput.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
-	}
+	updateMaskImageFlags(dwMaskType);
 
 	BOOL bActive = false;
 	m_bvoActivated.GetValue(bActive);
@@ -956,6 +952,20 @@ bool SVUserMaskOperatorClass::SetMaskData(HGLOBAL hGlobal)
 {
 	return m_graphixObject.SetGraphixData(hGlobal) ? true : false;
 }
+
+void SVUserMaskOperatorClass::updateMaskImageFlags(DWORD dwMaskType)
+{
+	if (dwMaskType == MASK_TYPE_IMAGE)
+	{
+		m_userMaskImageInput.validateInput();
+		m_userMaskImageInput.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::embedable, SvOi::SetAttributeType::OverwriteAttribute);
+	}
+	else
+	{
+		m_userMaskImageInput.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
+	}
+}
+
 #pragma endregion IMask
 
 } //namespace SvOp

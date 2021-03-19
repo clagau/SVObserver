@@ -249,7 +249,7 @@ namespace SvOg
 					if (0 < rList.size())
 					{
 						std::string messageText = std::accumulate(rList.rbegin(), rList.rend(),
-							std::string{ "There are invalid dependencies. Tool will become invalid, should continue?\n\nInvalid dependencies:" },
+							std::string{ "There are invalid dependencies. Tool will become invalid, do you still want to continue?\n\nInvalid dependencies:" },
 							[](std::string a, const auto& b) { return std::move(a) + "\n" + b.namefrom() + "  ->  " + b.nameto(); });
 						int retCode = MessageBox(messageText.c_str(), "Invalid Dependencies", MB_YESNO);
 						if (IDNO == retCode)

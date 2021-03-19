@@ -148,16 +148,15 @@ HRESULT SVToolExtentClass::UpdateExtentToParentExtents(SVImageExtentClass& rNewE
 
 HRESULT SVToolExtentClass::GetParentExtent(SVImageExtentClass& rParentExtent) const
 {
-	HRESULT l_Status = S_OK;
-	SvIe::SVImageClass* pParent = m_pToolImage->GetParentImage();
-
-	if (nullptr != pParent)
+	HRESULT l_Status = E_FAIL;
+	if (nullptr != m_pToolImage)
 	{
-		rParentExtent = pParent->GetImageExtents();
-	}
-	else
-	{
-		l_Status = E_FAIL;
+		SvIe::SVImageClass* pParent = m_pToolImage->GetParentImage();
+		if (nullptr != pParent)
+		{
+			rParentExtent = pParent->GetImageExtents();
+			l_Status = S_OK;
+		}
 	}
 	return l_Status;
 }

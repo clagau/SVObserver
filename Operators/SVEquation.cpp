@@ -151,11 +151,6 @@ int SVEquationSymbolTableClass::AddSymbol(LPCTSTR name)
 		return -1;
 	}
 
-	if (false == ObjectReference.getObject()->checkIfValidDependency(SVObjectManagerClass::Instance().GetObject(m_ownerId)))
-	{
-		return -1;
-	}
-
 	// Add to combined symbol table if not already there
 	// Objects will be deletet in ClearAll() called by the ~SVEquationSymbolTableClass:;
 	SVEquationSymbolStruct* pSymbolStruct = new SVEquationSymbolStruct();
@@ -170,7 +165,7 @@ int SVEquationSymbolTableClass::AddSymbol(LPCTSTR name)
 	symbolIndex = static_cast<int> (m_SVEquationSymbolPtrVector.size() - 1);
 	// add it to the top
 	m_toolsetSymbolTable.push_back(ObjectReference);
-	return symbolIndex;
+	return ObjectReference.getObject()->checkIfValidDependency(SVObjectManagerClass::Instance().GetObject(m_ownerId)) ? symbolIndex : -1;
 }
 
 
