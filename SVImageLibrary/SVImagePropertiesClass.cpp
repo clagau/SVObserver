@@ -122,25 +122,7 @@ HRESULT SVImagePropertiesClass::GetImageProperty( SvDef::SVImagePropertyEnum p_e
 	{
 		case SvDef::SVImagePropertyEnum::SVImagePropertyFormat:
 		{
-			switch( p_rlValue )
-			{
-				case SvDef::SVImageFormatUnknown:
-				case SvDef::SVImageFormatMono8:
-				case SvDef::SVImageFormatBGR888:
-				case SvDef::SVImageFormatBGR888X:
-				{
-					p_rlValue = m_iFormat;
-
-					break;
-				}
-				default:
-				{
-					l_hrOk = S_FALSE;
-
-					break;
-				}
-			}
-
+			p_rlValue = m_iFormat;
 			break;
 		}
 		case SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth:

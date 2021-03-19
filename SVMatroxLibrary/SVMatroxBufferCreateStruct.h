@@ -36,4 +36,4 @@ public:
 
 bool SetImageDepth(SVMatroxBufferCreateStruct& rBuffer, long p_lDepth);
 
-int getBufferSize(const SVMatroxBufferCreateStruct& rBuffer);
+__int64 getBufferSize(const SVMatroxBufferCreateStruct& rBuffer);

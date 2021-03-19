@@ -70,7 +70,7 @@ bool SetImageDepth(SVMatroxBufferCreateStruct& rBuffer, long p_lDepth)
 	return l_bRet;
 }
 
-int getBufferSize(const SVMatroxBufferCreateStruct& rBuffer)
+__int64 getBufferSize(const SVMatroxBufferCreateStruct& rBuffer)
 {
 	return rBuffer.m_lSizeBand * rBuffer.m_lSizeX * rBuffer.m_lSizeY;
 }
