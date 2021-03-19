@@ -34,12 +34,12 @@
             </div>
         </div>
         <div role="main" id="mc-main-content">
-            <h1><a name="kanchor30"></a>Parameter View</h1>
+            <h1><a name="kanchor51"></a>Parameter View</h1>
             <p>This view type indicates parameters and their values in reference to a selected image view. The parameter view is context sensitive, as this view always displays the parameters that are applied to a custom overlay in an Image View when in run mode.</p>
             <p>For example, a parameter view that is targeted to an instance of image view includes all relevant parameters to manage one or more custom overlays.</p>
-            <p class="Zwischenüberschrift"><a name="kanchor31"></a><span style="font-size: 18pt; font-weight: bold;">Custom Overlay Parameters</span>
+            <p class="Zwischenüberschrift"><a name="kanchor52"></a><span style="font-size: 18pt; font-weight: bold;">Custom Overlay Parameters</span>
             </p>
-            <p><a class="MCPopupThumbnailLink MCPopupThumbnailHover" href="Resources/Images/ParamView.PNG"><img class="MCPopupThumbnail img" data-mc-width="615" data-mc-height="460" src="Resources/Images/ParamView_thumb_216_0.png" style="mc-thumbnail-max-width: 216px;mc-thumbnail-max-height: auto;mc-thumbnail: hover;" tabindex="" /></a>
+            <p><a class="MCPopupThumbnailLink MCPopupThumbnailHover" href="Resources/Images/ParamView.PNG"><img class="MCPopupThumbnail img" data-mc-width="653" data-mc-height="491" src="Resources/Images/ParamView_thumb_216_0.png" style="mc-thumbnail-max-width: 216px;mc-thumbnail-max-height: auto;mc-thumbnail: hover;" tabindex="" /></a>
             </p>
             <p>
                 <img src="Resources/Images/Hand.png" /> Hover over image to enlarge</p>
@@ -73,32 +73,40 @@
                     </tr>
                 </tbody>
             </table>
-            <p>The overlay list includes the following elements:</p>
-            <table style="width: 100%;caption-side: top;mc-table-style: url('Resources/TableStyles/Basic.css');" class="TableStyle-Basic" cellspacing="0">
-                <col style="width: 99px;" class="TableStyle-Basic-Column-Column1" />
-                <col class="TableStyle-Basic-Column-Column1" />
-                <tbody>
-                    <tr class="TableStyle-Basic-Body-Body1">
-                        <td class="TableStyle-Basic-BodyE-Column1-Body1"><b>Element</b>
-                        </td>
-                        <td class="TableStyle-Basic-BodyD-Column1-Body1"><b>Description</b>
-                        </td>
-                    </tr>
-                    <tr class="TableStyle-Basic-Body-Body1">
-                        <td class="TableStyle-Basic-BodyE-Column1-Body1">
-                            <p>Label</p>
-                        </td>
-                        <td class="TableStyle-Basic-BodyD-Column1-Body1">Name of custom overlay</td>
-                    </tr>
-                    <tr class="TableStyle-Basic-Body-Body1">
-                        <td class="TableStyle-Basic-BodyB-Column1-Body1">
-                            <img src="Resources/Images/Image_view_ov_list_check.PNG" />
-                            <img src="Resources/Images/Image_view_ov_list_uncheck.PNG" />
-                        </td>
-                        <td class="TableStyle-Basic-BodyA-Column1-Body1">Show or hide individual custom overlay</td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="MCDropDown MCDropDown_Closed dropDown"><span class="MCDropDownHead dropDownHead"><a href="javascript:void(0)" class="MCDropDownHotSpot dropDownHotspot MCDropDownHotSpot_ MCHotSpotImage" aria-expanded="false"><img class="MCDropDown_Image_Icon" src="../Skins/Default/Stylesheets/Images/transparent.gif" height="16" width="18" alt="Closed" data-mc-alt2="Open" />Hide custom overlays in image view</a></span>
+                <div class="MCDropDownBody dropDownBody">
+                    <p>You have two options to hide custom overlays in the image:</p>
+                    <p><u>Hide all custom overlays</u>
+                    </p>
+                    <p>
+                        <p>→ Uncheck the checkbox next to the heading <b>Overlays</b>.</p>
+                        <p>→   Custom overlays are no longer displayed with the image.</p>
+                    </p>
+                    <p><b style="text-decoration: underline; font-weight: normal;">Hide individual custom overlays</b>
+                    </p>
+                    <p style="font-style: normal;">
+                        <p>→ Uncheck the checkbox next to the custom overlay you want to hide <img src="Resources/Images/Image_view_ov_list_uncheck.PNG" />.</p>
+                        <p>→ The respective custom overlay is no longer displayed with the image.</p>
+                    </p>
+                </div>
+            </div>
+            <div class="MCDropDown MCDropDown_Closed dropDown"><span class="MCDropDownHead dropDownHead"><a href="javascript:void(0)" class="MCDropDownHotSpot dropDownHotspot MCDropDownHotSpot_ MCHotSpotImage" aria-expanded="false"><img class="MCDropDown_Image_Icon" src="../Skins/Default/Stylesheets/Images/transparent.gif" height="16" width="18" alt="Closed" data-mc-alt2="Open" />Show custom overlays in image view</a></span>
+                <div class="MCDropDownBody dropDownBody">
+                    <p>You have two options to display custom overlays in the featured image:</p>
+                    <p><u>Show all custom overlays</u>
+                    </p>
+                    <p>
+                        <p>→ Activate the checkbox next to the heading <b>Overlays</b>.</p>
+                        <p>→   Custom overlays are displayed in the image.</p>
+                    </p>
+                    <p><u>Show individual custom overlays</u>
+                    </p>
+                    <p style="font-style: normal;">
+                        <p>→   Check the checkbox next to the custom overlay you want to show <img src="Resources/Images/Image_view_ov_list_check.PNG" />.</p>
+                        <p>→   The respective custom overlay is displayed in the image.</p>
+                    </p>
+                </div>
+            </div>
             <table style="width: 100%;mc-table-style: url('Resources/TableStyles/Note.css');margin-left: 0;margin-right: auto;" class="TableStyle-Note" cellspacing="0">
                 <tbody>
                     <tr class="TableStyle-Note-Body-Body1">
@@ -203,6 +211,12 @@
                     </tr>
                 </tbody>
             </table>
+            <p style="font-weight: bold;text-decoration: underline;">Exceeding maximum allowed values</p>
+            <p>The maximum value for dimensions-related parameters (X, Y, Offset Left, Offset Top, Width and Height) is fixed to two times the image size.</p>
+            <p>If you enter a fixed value for one of these parameters, the value changes automatically to the maximum allowed value.</p>
+            <p>If the value for a variable exceeds the allowed maximum, you see in the notifications area a notification specifying the allowed range. If you expand the list of notifications, you see a counter that shows how often the value has already exceeded the maximum. The maximum allowed value is used to visualize the overlay.</p>
+            <p style="font-style: italic;">Example:</p>
+            <p>The image has a size of 100 px. The maximum value is 200 px. When the variable entered for X has a value of 250 px, the overlay is positioned at 200 px as it is the maximum value. You see a notification specifying that the value should be within a range of minus 200 to 200 px.</p>
             <p class="Zwischenüberschrift"><a name="Parameter_View_Controls"></a><b style="font-size: 18pt;">Parameter Controls</b>&#160;</p>
             <p class="MyStyle">
                 <img src="Resources/Images/ParamView_controls_all.png" />
@@ -227,18 +241,6 @@
                         <td class="TableStyle-Basic-BodyD-Column1-Body1">Add custom overlay</td>
                     </tr>
                     <tr class="TableStyle-Basic-Body-Body1">
-                        <td class="TableStyle-Basic-BodyE-Column1-Body1">
-                            <img src="Resources/Images/src_assets_icons_show.svg" />
-                        </td>
-                        <td class="TableStyle-Basic-BodyD-Column1-Body1">Hide all custom overlays</td>
-                    </tr>
-                    <tr class="TableStyle-Basic-Body-Body1">
-                        <td class="TableStyle-Basic-BodyE-Column1-Body1">
-                            <img src="Resources/Images/src_assets_icons_show-off.svg" />
-                        </td>
-                        <td class="TableStyle-Basic-BodyD-Column1-Body1">Show all custom overlays</td>
-                    </tr>
-                    <tr class="TableStyle-Basic-Body-Body1">
                         <td class="TableStyle-Basic-BodyB-Column1-Body1">
                             <img src="Resources/Images/src_assets_icons_delete-dustbin.svg" />
                         </td>
@@ -249,7 +251,6 @@
                     </tr>
                 </tbody>
             </table>
-            <p>If you click on the header "Overlays", the overlay list is ordered alphabetically. If you click again, the order is reversed.</p>
             <table class="TableStyle_Instruction" style="mc-table-style: url('Resources/TableStyles/Instruction.css');caption-side: top;width: 100%;" cellspacing="0">
                 <col style="width: 525px;" />
                 <tbody>
@@ -305,7 +306,7 @@
             <p class="Zwischenüberschrift"><a name="TargetImage"></a><span style="font-size: 18pt; font-weight: bold;">Target Image</span>
             </p>
             <p>The dependency between the custom overlay parameters and the target image featured in an image view is visualized by a green frame around the target image view.</p>
-            <p><a class="MCPopupThumbnailLink MCPopupThumbnailHover" href="Resources/Images/ParamView_ImageView.PNG"><img class="MCPopupThumbnail img" data-mc-width="577" data-mc-height="632" src="Resources/Images/ParamView_ImageView_thumb_216_0.png" style="mc-thumbnail-max-width: 216px;mc-thumbnail-max-height: auto;mc-thumbnail: hover;" tabindex="" /></a>
+            <p><a class="MCPopupThumbnailLink MCPopupThumbnailHover" href="Resources/Images/ParamView_ImageView.PNG"><img class="MCPopupThumbnail img" data-mc-width="642" data-mc-height="757" src="Resources/Images/ParamView_ImageView_thumb_216_0.png" style="mc-thumbnail-max-width: 216px;mc-thumbnail-max-height: auto;mc-thumbnail: hover;" tabindex="" /></a>
             </p>
             <p>
                 <img src="Resources/Images/Hand.png" /> Hover over image to enlarge</p>

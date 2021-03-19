@@ -1,9 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<MadCapLog Protocol="2" Description="MadCap Flare 2019 r2 Generiert HTML5.fltar" Date="2021-02-01T13:24:29.2568745+01:00">
+<MadCapLog Protocol="2" Description="MadCap Flare 2019 r2 Generiert HTML5.fltar" Date="2021-03-16T15:41:54.0164486+01:00">
     <Messages>Target HTML5 wird kompiliert...
 Vorher generierten Inhalt entfernen...
 Skin-Info wird geladen...
-Skin existiert nicht: C:\Users\1342\Desktop\SVOWebApp\10.10\SVOWebApp\Project\Skins\SVOWebAppHelp.flskn
 Gathering Glossary information...
 Gathering Auto-index information...
 Loading Master TOC...
@@ -19,6 +18,10 @@ Von der Ausgabe ausgeschlossen:file:///C:/Users/1342/Desktop/SVOWebApp/10.10/SVO
 Von der Ausgabe ausgeschlossen:file:///C:/Users/1342/Desktop/SVOWebApp/10.10/SVOWebApp/Content/Title.htm.
 Bild "Bottom-bar_ViewSetManager.png" regeneriert für "" Medium: Resources\Images\Bottom-bar_ViewSetManager.png
 Bild "Bottom_bar_menu.png" regeneriert für "" Medium: Resources\Images\Bottom_bar_menu.png
+Bild "Image_view_controls.png" regeneriert für "" Medium: Resources\Images\Image_view_controls.png
+Bild "Image_view_controls_ov_info.png" regeneriert für "" Medium: Resources\Images\Image_view_controls_ov_info.png
+Bild "Image_view_controls_ov_list.png" regeneriert für "" Medium: Resources\Images\Image_view_controls_ov_list.png
+Bild "Image_view_control_OverlayList_2.png" regeneriert für "" Medium: Resources\Images\Image_view_control_OverlayList_2.png
 Bild "Image_view_w_overlays.PNG" regeneriert für "" Medium: Resources\Images\Image_view_w_overlays.png
 Bild "list-view_set-alias.png" regeneriert für "" Medium: Resources\Images\list-view_set-alias.png
 Bild "List_view_intro_neu.png" regeneriert für "" Medium: Resources\Images\List_view_intro_neu.png
@@ -28,6 +31,7 @@ https://www.madcapsoftware.com/downloads/ghostscript64.aspx
 Bild "Menu_about.png" regeneriert für "" Medium: Resources\Images\Menu_about.png
 Bild "Menu_help.png" regeneriert für "" Medium: Resources\Images\Menu_help.png
 Bild "Menu_log_out.png" regeneriert für "" Medium: Resources\Images\Menu_log_out.png
+Bild "Menu_permissions.png" regeneriert für "" Medium: Resources\Images\Menu_permissions.png
 Bild "Menu_shortcut_help.png" regeneriert für "" Medium: Resources\Images\Menu_shortcut_help.png
 Bild "Op_mode_edit.png" regeneriert für "" Medium: Resources\Images\Op_mode_edit.png
 Bild "Op_mode_regression.png" regeneriert für "" Medium: Resources\Images\Op_mode_regression.png
@@ -35,17 +39,20 @@ Bild "Op_mode_run.png" regeneriert für "" Medium: Resources\Images\Op_mode_run.
 Bild "Op_mode_stop.png" regeneriert für "" Medium: Resources\Images\Op_mode_stop.png
 Bild "Op_mode_test.png" regeneriert für "" Medium: Resources\Images\Op_mode_test.png
 Bild "ParamView.PNG" regeneriert für "" Medium: Resources\Images\ParamView.png
+Bild "ParamView_controls_all.png" regeneriert für "" Medium: Resources\Images\ParamView_controls_all.png
 Bild "ParamView_ImageView.PNG" regeneriert für "" Medium: Resources\Images\ParamView_ImageView.png
+Bild "ParamView_overlay_list.PNG" regeneriert für "" Medium: Resources\Images\ParamView_overlay_list.png
+Bild "Permissions.png" regeneriert für "" Medium: Resources\Images\Permissions.png
 Bild "save-button.png" regeneriert für "" Medium: Resources\Images\save-button.png
 Bild "select-view-type_image.png" regeneriert für "" Medium: Resources\Images\select-view-type_image.png
 Bild "select-view-type_toolset.png" regeneriert für "" Medium: Resources\Images\select-view-type_toolset.png
 Bild "ShowHideBar_1.PNG" regeneriert für "" Medium: Resources\Images\ShowHideBar_1.png
-Bild "Start-screen.bmp" regeneriert für "" Medium: Resources\Images\Start-screen.bmp
-Bild "Start-screen1.png" regeneriert für "" Medium: Resources\Images\Start-screen1.png
 Bild "toggle-button_pause-resume-inspections-dropdown.png" regeneriert für "" Medium: Resources\Images\toggle-button_pause-resume-inspections-dropdown.png
 Bild "toggle-button_pause-resume-inspections.png" regeneriert für "" Medium: Resources\Images\toggle-button_pause-resume-inspections.png
+Bild "Toolset-view.png" regeneriert für "" Medium: Resources\Images\Toolset-view.png
 Bild "TopBar.png" regeneriert für "" Medium: Resources\Images\TopBar.png
 Bild "TopBar_notifications_example.png" regeneriert für "" Medium: Resources\Images\TopBar_notifications_example.png
+Bild "User-and-other-menus.png" regeneriert für "" Medium: Resources\Images\User-and-other-menus.png
 Bild "UserInterfacePlain.png" regeneriert für "" Medium: Resources\Images\UserInterfacePlain.png
 Bild "View.png" regeneriert für "" Medium: Resources\Images\View.png
 Bild "ViewSetManager.png" regeneriert für "" Medium: Resources\Images\ViewSetManager.png
@@ -121,6 +128,9 @@ General structure\Top_bar\Toggle-pause-resume-inspection.htm generiert
 Topic: General structure\Top_bar\6_User.htm wird verarbeitet...
 Hauptseite Other-Topics.flmsp wird übernommen...
 General structure\Top_bar\6_User.htm generiert
+Topic: General structure\Top_bar\Permissions.htm wird verarbeitet...
+Hauptseite Other-Topics.flmsp wird übernommen...
+General structure\Top_bar\Permissions.htm generiert
 Topic: General structure\Top_bar\Shortcuts.htm wird verarbeitet...
 Hauptseite Other-Topics.flmsp wird übernommen...
 General structure\Top_bar\Shortcuts.htm generiert
@@ -262,29 +272,6 @@ Glossary_Print.htm generiert
 Generating output skins...
 Generating synonyms file...
 Generating alias file...
-Topic Identifier "Shortcuts" in keiner Header-Datei deklariert
-Topic Identifier "Menu" in keiner Header-Datei deklariert
-Topic Identifier "Connection" in keiner Header-Datei deklariert
-Topic Identifier "View_Manager" in keiner Header-Datei deklariert
-Topic Identifier "Date_Time" in keiner Header-Datei deklariert
-Topic Identifier "Language_Settings" in keiner Header-Datei deklariert
-Topic Identifier "Notifications" in keiner Header-Datei deklariert
-Topic Identifier "Operating_Mode" in keiner Header-Datei deklariert
-Topic Identifier "Top_Bar" in keiner Header-Datei deklariert
-Topic Identifier "User" in keiner Header-Datei deklariert
-Topic Identifier "User_Interface" in keiner Header-Datei deklariert
-Topic Identifier "View" in keiner Header-Datei deklariert
-Topic Identifier "View_Set" in keiner Header-Datei deklariert
-Topic Identifier "Image_Strip_View" in keiner Header-Datei deklariert
-Topic Identifier "Image_View" in keiner Header-Datei deklariert
-Topic Identifier "List_View" in keiner Header-Datei deklariert
-Topic Identifier "Parameter_View" in keiner Header-Datei deklariert
-Topic Identifier "View_Types" in keiner Header-Datei deklariert
-Topic Identifier "View_Set_Navigation" in keiner Header-Datei deklariert
-Topic Identifier "Login" in keiner Header-Datei deklariert
-Topic Identifier "Requirements" in keiner Header-Datei deklariert
-Topic Identifier "Start" in keiner Header-Datei deklariert
-Topic Identifier "System_Configuration" in keiner Header-Datei deklariert
 Generating final TOC...
 Sprachen-Strings werden generiert...
 Generating concept and keyword anchors in output files...
@@ -299,38 +286,14 @@ Skins\Default\Stylesheets\TextEffects.micro-content.css generiert
 Skins\Default\Stylesheets\Topic.micro-content.css generiert
 SVOWebApp_WebHelp.htm generiert
 Saving result set...
-Ignored Compiler Warnings: 273
-Output generated in 56 Sekunde(n).
+Ignored Compiler Warnings: 266
+Output generated in 1 Minuten(n) und 2 Sekunde(n).
 
 Fertig
 Protokoll wird in "C:\Users\1342\Desktop\SVOWebApp\10.10\SVOWebApp\Output\1342\HTML5\HTML5.mclog" gespeichert
 </Messages>
     <Warnings>
-        <LogEntry File="../../../Project/Advanced/MyAliasFile.flali" Message="Skin existiert nicht: C:\Users\1342\Desktop\SVOWebApp\10.10\SVOWebApp\Project\Skins\SVOWebAppHelp.flskn&#xA;" LineIndex="-1" CharIndex="-1" Subsystem="Compiler" Target="HTML5" ErrorID="20018" />
         <LogEntry File="../../../Content/Resources/Images/Logo.eps" Message="Sie müssen Ghostscript installieren, um eine Postscript-Datei (z.&#160;B. EPS, PS) einzufügen. Mit Ghostscript können diese Elemente in der Ausgabe zu einem unterstützten Dateityp umgewandelt werden. Ghostscript wird auch verwendet, um Vektorgrafiken im XML-Editor darzustellen. Um die neueste Version von Ghostscript zu installieren, klicken Sie auf den folgenden Link.&#xA;&#xA;https://www.madcapsoftware.com/downloads/ghostscript64.aspx&#xA;" LineIndex="-1" CharIndex="-1" Subsystem="Bildprozessor" Target="HTML5" ErrorID="10032" />
-        <LogEntry Message="Topic Identifier &quot;Shortcuts&quot; in keiner Header-Datei deklariert&#xA;" LineIndex="-1" CharIndex="-1" Subsystem="Compiler: Alias" Target="HTML5" ErrorID="20014" />
-        <LogEntry Message="Topic Identifier &quot;Menu&quot; in keiner Header-Datei deklariert&#xA;" LineIndex="-1" CharIndex="-1" Subsystem="Compiler: Alias" Target="HTML5" ErrorID="20014" />
-        <LogEntry Message="Topic Identifier &quot;Connection&quot; in keiner Header-Datei deklariert&#xA;" LineIndex="-1" CharIndex="-1" Subsystem="Compiler: Alias" Target="HTML5" ErrorID="20014" />
-        <LogEntry Message="Topic Identifier &quot;View_Manager&quot; in keiner Header-Datei deklariert&#xA;" LineIndex="-1" CharIndex="-1" Subsystem="Compiler: Alias" Target="HTML5" ErrorID="20014" />
-        <LogEntry Message="Topic Identifier &quot;Date_Time&quot; in keiner Header-Datei deklariert&#xA;" LineIndex="-1" CharIndex="-1" Subsystem="Compiler: Alias" Target="HTML5" ErrorID="20014" />
-        <LogEntry Message="Topic Identifier &quot;Language_Settings&quot; in keiner Header-Datei deklariert&#xA;" LineIndex="-1" CharIndex="-1" Subsystem="Compiler: Alias" Target="HTML5" ErrorID="20014" />
-        <LogEntry Message="Topic Identifier &quot;Notifications&quot; in keiner Header-Datei deklariert&#xA;" LineIndex="-1" CharIndex="-1" Subsystem="Compiler: Alias" Target="HTML5" ErrorID="20014" />
-        <LogEntry Message="Topic Identifier &quot;Operating_Mode&quot; in keiner Header-Datei deklariert&#xA;" LineIndex="-1" CharIndex="-1" Subsystem="Compiler: Alias" Target="HTML5" ErrorID="20014" />
-        <LogEntry Message="Topic Identifier &quot;Top_Bar&quot; in keiner Header-Datei deklariert&#xA;" LineIndex="-1" CharIndex="-1" Subsystem="Compiler: Alias" Target="HTML5" ErrorID="20014" />
-        <LogEntry Message="Topic Identifier &quot;User&quot; in keiner Header-Datei deklariert&#xA;" LineIndex="-1" CharIndex="-1" Subsystem="Compiler: Alias" Target="HTML5" ErrorID="20014" />
-        <LogEntry Message="Topic Identifier &quot;User_Interface&quot; in keiner Header-Datei deklariert&#xA;" LineIndex="-1" CharIndex="-1" Subsystem="Compiler: Alias" Target="HTML5" ErrorID="20014" />
-        <LogEntry Message="Topic Identifier &quot;View&quot; in keiner Header-Datei deklariert&#xA;" LineIndex="-1" CharIndex="-1" Subsystem="Compiler: Alias" Target="HTML5" ErrorID="20014" />
-        <LogEntry Message="Topic Identifier &quot;View_Set&quot; in keiner Header-Datei deklariert&#xA;" LineIndex="-1" CharIndex="-1" Subsystem="Compiler: Alias" Target="HTML5" ErrorID="20014" />
-        <LogEntry Message="Topic Identifier &quot;Image_Strip_View&quot; in keiner Header-Datei deklariert&#xA;" LineIndex="-1" CharIndex="-1" Subsystem="Compiler: Alias" Target="HTML5" ErrorID="20014" />
-        <LogEntry Message="Topic Identifier &quot;Image_View&quot; in keiner Header-Datei deklariert&#xA;" LineIndex="-1" CharIndex="-1" Subsystem="Compiler: Alias" Target="HTML5" ErrorID="20014" />
-        <LogEntry Message="Topic Identifier &quot;List_View&quot; in keiner Header-Datei deklariert&#xA;" LineIndex="-1" CharIndex="-1" Subsystem="Compiler: Alias" Target="HTML5" ErrorID="20014" />
-        <LogEntry Message="Topic Identifier &quot;Parameter_View&quot; in keiner Header-Datei deklariert&#xA;" LineIndex="-1" CharIndex="-1" Subsystem="Compiler: Alias" Target="HTML5" ErrorID="20014" />
-        <LogEntry Message="Topic Identifier &quot;View_Types&quot; in keiner Header-Datei deklariert&#xA;" LineIndex="-1" CharIndex="-1" Subsystem="Compiler: Alias" Target="HTML5" ErrorID="20014" />
-        <LogEntry Message="Topic Identifier &quot;View_Set_Navigation&quot; in keiner Header-Datei deklariert&#xA;" LineIndex="-1" CharIndex="-1" Subsystem="Compiler: Alias" Target="HTML5" ErrorID="20014" />
-        <LogEntry Message="Topic Identifier &quot;Login&quot; in keiner Header-Datei deklariert&#xA;" LineIndex="-1" CharIndex="-1" Subsystem="Compiler: Alias" Target="HTML5" ErrorID="20014" />
-        <LogEntry Message="Topic Identifier &quot;Requirements&quot; in keiner Header-Datei deklariert&#xA;" LineIndex="-1" CharIndex="-1" Subsystem="Compiler: Alias" Target="HTML5" ErrorID="20014" />
-        <LogEntry Message="Topic Identifier &quot;Start&quot; in keiner Header-Datei deklariert&#xA;" LineIndex="-1" CharIndex="-1" Subsystem="Compiler: Alias" Target="HTML5" ErrorID="20014" />
-        <LogEntry Message="Topic Identifier &quot;System_Configuration&quot; in keiner Header-Datei deklariert&#xA;" LineIndex="-1" CharIndex="-1" Subsystem="Compiler: Alias" Target="HTML5" ErrorID="20014" />
     </Warnings>
     <Errors />
 </MadCapLog>
