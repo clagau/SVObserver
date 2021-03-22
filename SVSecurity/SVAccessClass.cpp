@@ -39,15 +39,13 @@ void AccessEventSource();
 
 SVAccessClass::SVAccessClass()
 {
-	USES_CONVERSION;
-
 	// Initialize the login server
 	// to be later used for validation
 	PWKSTA_USER_INFO_1 pInfo = nullptr;
 	NET_API_STATUS ns = NetWkstaUserGetInfo( nullptr, 1, (LPBYTE*)&pInfo );
 	if( ns == NERR_Success )
 	{
-		m_LogonServer = W2A( ( LPWSTR )pInfo->wkui1_logon_server);
+		m_LogonServer = SvUl::createStdString(pInfo->wkui1_logon_server);
 	}
 	else
 	{
@@ -206,7 +204,6 @@ bool SVAccessClass::IsUserAMember( const std::string& rUser, const std::string& 
 {
 	// Checks to see if the user is a member of at least one of the groups in strGroups
 	// strGroups is a comma seperated list of groups.
-	USES_CONVERSION;
 	bool Result = false;
 
 	LPLOCALGROUP_USERS_INFO_0 pBuf = nullptr;
@@ -228,8 +225,8 @@ bool SVAccessClass::IsUserAMember( const std::string& rUser, const std::string& 
 													&entriesread,
 													&totalentries);
 #else
-		NET_API_STATUS nas = NetUserGetLocalGroups(  A2W( m_LogonServer.c_str() ),
-													 A2W( rUser.c_str() ),
+		NET_API_STATUS nas = NetUserGetLocalGroups(  _bstr_t( m_LogonServer.c_str() ),
+													 _bstr_t( rUser.c_str() ),
 													 0,
 													 LG_INCLUDE_INDIRECT,
 													(LPBYTE*) &pBuf,
@@ -245,7 +242,7 @@ bool SVAccessClass::IsUserAMember( const std::string& rUser, const std::string& 
 #ifdef _UNICODE
 			std::string sGroup = pTmpBuf->lgrui0_name;
 #else
-			std::string sGroup = W2A( pTmpBuf->lgrui0_name );
+			std::string sGroup = SvUl::createStdString( pTmpBuf->lgrui0_name );
 #endif
 			// Compare multiple groups
 			size_t Start = static_cast<size_t> (-1);
@@ -276,8 +273,6 @@ bool SVAccessClass::IsUserAMember( const std::string& rUser, const std::string& 
 // This function is used to determine whether or not to display menu items.
 bool SVAccessClass::IsDisplayable(long lId)
 {
-	USES_CONVERSION;
-	//
 	// This function returns true if the given Id has access to be shown or used
 	// If The logon mode is not used then all menu items are shown because the user
 	// will be forced to logon in this mode when the menu item is selected.
@@ -318,7 +313,6 @@ bool SVAccessClass::IsDisplayable(long lId)
 // This function checks the current logged on user against the supplied ID
 bool SVAccessClass::IsCurrentUserValidated(long lId)
 {
-	USES_CONVERSION;
 	//
 	// This function returns true if the current user has access to the given ID
 	// 
@@ -355,8 +349,6 @@ bool SVAccessClass::IsCurrentUserValidated(long lId)
 // user can enter his credentials.
 HRESULT SVAccessClass::Validate(  long lId1 )
 {
-	USES_CONVERSION;
-
 	HRESULT hr = S_FALSE;
 	std::string Status;
 

@@ -533,18 +533,10 @@ void SVMainFrame::OnClose()
 		TheSVObserverApp.Logout();
 
 		// Last checking...
-		switch( TheSVObserverApp.CanCloseMainFrame() )
+		if (S_OK == TheSVObserverApp.CanCloseMainFrame() )
 		{
-			case S_OK:
-			{
-				CMDIFrameWnd::OnClose();
-
-				break;
-			}
-			default:
-			{
-				break;
-			}
+			SVSVIMStateClass::changeState(SV_STATE_UNAVAILABLE, SV_STATE_READY);
+			CMDIFrameWnd::OnClose();
 		}
 	}
 }

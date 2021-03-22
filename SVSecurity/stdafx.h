@@ -55,7 +55,6 @@
 #include <afxcmn.h>			// MFC support for Windows Common Controls
 #include <afxdtctl.h>		// MFC support for Internet Explorer 4 Common Controls
 #include <afxext.h>         // MFC extensions
-#include <atlconv.h>		// for USES_CONVERSION
 #include <afxpriv.h>
 #include <afxtempl.h>
 #include <afxdlgs.h>

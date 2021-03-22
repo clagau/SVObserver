@@ -59,6 +59,8 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+constexpr DWORD cDefaultNotAllowedStates = SV_STATE_UNAVAILABLE | SV_STATE_CREATING | SV_STATE_LOADING | SV_STATE_SAVING | SV_STATE_CLOSING | SV_STATE_EDITING |
+SV_STATE_CANCELING | SV_STATE_INTERNAL_RUN | SV_STATE_START_PENDING | SV_STATE_STARTING | SV_STATE_STOP_PENDING | SV_STATE_STOPING | SV_STATE_REMOTE_CMD;
 #pragma endregion Declarations
 
 #pragma region Constructor
@@ -568,13 +570,18 @@ STDMETHODIMP SVCommand::SVPutSVIMFile(BSTR bstrDestFile, long lOffset, long lBlo
 
 STDMETHODIMP SVCommand::SVLoadSVIMConfig(BSTR bstrConfigFilename)
 {
-	std::string ConfigFile = SvUl::createStdString(_bstr_t(bstrConfigFilename));
+	HRESULT result = (SVSVIMStateClass::CheckState(cDefaultNotAllowedStates) || SVSVIMStateClass::isSvrcBlocked()) ? SVMSG_SVO_ACCESS_DENIED : S_OK;
 
-	SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
-	HRESULT Result = SVVisionProcessorHelper::Instance().LoadConfiguration(ConfigFile);
-	SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
+	if (S_OK == result)
+	{
+		std::string ConfigFile = SvUl::createStdString(_bstr_t(bstrConfigFilename));
 
-	return Result;
+		SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
+		result = SVVisionProcessorHelper::Instance().LoadConfiguration(ConfigFile);
+		SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
+	}
+
+	return result;
 }
 
 
@@ -1913,14 +1920,12 @@ HRESULT SVCommand::SVGetDataList(SAFEARRAY* psaNames, SAFEARRAY** ppsaValues, SA
 
 STDMETHODIMP SVCommand::SVRunOnce(BSTR bstrName)
 {
-	USES_CONVERSION;
-
 	HRESULT              hrResult = S_FALSE;
 
 	if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
 	{
 		SVInspectionProcess* pInspection(nullptr);
-		if (SVConfigurationObject::GetInspection(W2T(bstrName), pInspection))
+		if (SVConfigurationObject::GetInspection(SvUl::createStdString(bstrName).c_str(), pInspection))
 		{
 			hrResult = SvCmd::RunOnceSynchronous(pInspection->getObjectId());
 		}
@@ -1936,8 +1941,6 @@ STDMETHODIMP SVCommand::SVRunOnce(BSTR bstrName)
 
 STDMETHODIMP SVCommand::SVSetSourceImage(BSTR bstrName, BSTR bstrImage)
 {
-	USES_CONVERSION;
-
 	HRESULT                  hrResult = S_OK;
 
 	if (SVSVIMStateClass::CheckState(SV_STATE_REGRESSION | SV_STATE_TEST | SV_STATE_RUNNING))
@@ -1947,7 +1950,7 @@ STDMETHODIMP SVCommand::SVSetSourceImage(BSTR bstrName, BSTR bstrImage)
 	}
 
 	SVInspectionProcess* pInspection(nullptr);
-	if (SVConfigurationObject::GetInspection(W2T(bstrName), pInspection))
+	if (SVConfigurationObject::GetInspection(SvUl::createStdString(bstrName).c_str(), pInspection))
 	{
 		SvIe::SVCameraImageTemplate* pMainImage = pInspection->GetToolSetMainImage();
 		if (nullptr != pMainImage)
@@ -1972,9 +1975,13 @@ STDMETHODIMP SVCommand::SVSetSourceImage(BSTR bstrName, BSTR bstrImage)
 
 STDMETHODIMP SVCommand::SVSetInputs(SAFEARRAY* psaNames, SAFEARRAY* psaValues, SAFEARRAY**)
 {
-	USES_CONVERSION;
+	HRESULT result = (SVSVIMStateClass::CheckState(cDefaultNotAllowedStates) || SVSVIMStateClass::isSvrcBlocked()) ? SVMSG_SVO_ACCESS_DENIED : S_OK;
 
-	HRESULT                Result = S_OK;
+	if (S_OK != result)
+	{
+		return result;
+	}
+
 	HRESULT                Status = S_OK;
 
 	long lNumberOfElements1 = psaNames->rgsabound[0].cElements;
@@ -1982,8 +1989,8 @@ STDMETHODIMP SVCommand::SVSetInputs(SAFEARRAY* psaNames, SAFEARRAY* psaValues, S
 
 	if ((lNumberOfElements1 == 0) || (lNumberOfElements1 != lNumberOfElements2))
 	{
-		Result = SVMSG_TOO_MANY_REQUESTED_ITEMS;
-		return Result;
+		result = SVMSG_TOO_MANY_REQUESTED_ITEMS;
+		return result;
 	}
 
 	SvDef::StringSet		ParameterNames;
@@ -2032,22 +2039,21 @@ STDMETHODIMP SVCommand::SVSetInputs(SAFEARRAY* psaNames, SAFEARRAY* psaValues, S
 		ParameterObjects[std::string(Name)] = Parameter;
 	}// end for	
 
-	Result = Status;
+	result = Status;
 
-	if (S_OK == Result && 0 != ParameterObjects.size())
+	if (S_OK == result && 0 != ParameterObjects.size())
 	{
 		SVNameStatusMap SetItemsResult;
-		Result = SVVisionProcessorHelper::Instance().SetItems(ParameterObjects, SetItemsResult, false);
+		SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
+		result = SVVisionProcessorHelper::Instance().SetItems(ParameterObjects, SetItemsResult, false);
+		SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
 	}
 
-
-	return Result;
+	return result;
 }
 
 HRESULT SVCommand::SVSetImageList(SAFEARRAY* psaNames, SAFEARRAY* psaImages, SAFEARRAY** ppsaStatus)
 {
-	USES_CONVERSION;
-
 	HRESULT hr = S_OK;
 	HRESULT hrStatus = S_OK;
 	SVInspectionProcess* pInspection(nullptr);
@@ -2162,9 +2168,13 @@ HRESULT SVCommand::SVSetImageList(SAFEARRAY* psaNames, SAFEARRAY* psaImages, SAF
 
 HRESULT SVCommand::SVSetToolParameterList(SAFEARRAY* psaNames, SAFEARRAY* psaValues, SAFEARRAY**)
 {
-	USES_CONVERSION;
+	HRESULT result = (SVSVIMStateClass::CheckState(cDefaultNotAllowedStates) || SVSVIMStateClass::isSvrcBlocked()) ? SVMSG_SVO_ACCESS_DENIED : S_OK;
 
-	HRESULT Result = S_OK;
+	if (S_OK != result)
+	{
+		return result;
+	}
+
 	HRESULT Status = S_OK;
 
 	long NumberOfElements = psaNames->rgsabound[0].cElements;
@@ -2172,13 +2182,13 @@ HRESULT SVCommand::SVSetToolParameterList(SAFEARRAY* psaNames, SAFEARRAY* psaVal
 
 	if (0 == NumberOfElements)
 	{
-		Result = SVMSG_REQUESTED_LIST_IS_EMPTY;
-		return Result;
+		result = SVMSG_REQUESTED_LIST_IS_EMPTY;
+		return result;
 	}
 	else if (NumberOfElements != NumberOfElementsValues)
 	{
-		Result = SVMSG_TOO_MANY_REQUESTED_ITEMS;
-		return Result;
+		result = SVMSG_TOO_MANY_REQUESTED_ITEMS;
+		return result;
 	}
 
 	SVConfigurationObject* pConfig = nullptr;
@@ -2220,15 +2230,17 @@ HRESULT SVCommand::SVSetToolParameterList(SAFEARRAY* psaNames, SAFEARRAY* psaVal
 		Parameter.m_Variant = Values;
 		ParameterObjects[std::string(Name)] = Parameter;
 	}// end for ( long l = 0; l < lNumberOfElements; l++ )
-	Result = Status;
+	result = Status;
 
-	if (S_OK == Result && 0 != ParameterObjects.size())
+	if (S_OK == result && 0 != ParameterObjects.size())
 	{
 		SVNameStatusMap SetItemsResult;
-		Result = SVVisionProcessorHelper::Instance().SetItems(ParameterObjects, SetItemsResult, false);
+		SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
+		result = SVVisionProcessorHelper::Instance().SetItems(ParameterObjects, SetItemsResult, false);
+		SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
 	}
 
-	return Result;
+	return result;
 }
 
 HRESULT SVCommand::SVLockImage(long, long, BSTR)
@@ -2337,8 +2349,6 @@ STDMETHODIMP SVCommand::SVGetTransferValueDefinitionList(BSTR bstrInspectionName
 	long*,
 	VARIANT* p_pvData)
 {
-	USES_CONVERSION;
-
 	if (nullptr == p_pvData)
 	{
 		return S_FALSE;
@@ -2347,7 +2357,7 @@ STDMETHODIMP SVCommand::SVGetTransferValueDefinitionList(BSTR bstrInspectionName
 	HRESULT hr = S_OK;
 	SVInspectionProcess* pInspection(nullptr);
 
-	if (SVConfigurationObject::GetInspection(W2T(bstrInspectionName), pInspection))
+	if (SVConfigurationObject::GetInspection(SvUl::createStdString(bstrInspectionName).c_str(), pInspection))
 	{
 		// Get Data Definition list from inspection
 		SVToolSet* pToolSet = pInspection->GetToolSet();
@@ -2476,8 +2486,6 @@ STDMETHODIMP SVCommand::SVGetTransferImageDefinitionList(BSTR bstrInspectionName
 	long*,
 	VARIANT* p_pvData)
 {
-	USES_CONVERSION;
-
 	if (nullptr == p_pvData)
 	{
 		return SVMSG_INVALID_VARIANT_PARAMETER;
@@ -2486,7 +2494,7 @@ STDMETHODIMP SVCommand::SVGetTransferImageDefinitionList(BSTR bstrInspectionName
 	HRESULT hr = S_OK;
 	SVInspectionProcess* pInspection(nullptr);
 
-	if (SVConfigurationObject::GetInspection(W2T(bstrInspectionName), pInspection))
+	if (SVConfigurationObject::GetInspection(SvUl::createStdString(bstrInspectionName).c_str(), pInspection))
 	{
 		// Get Image list from the tool set.
 		SvIe::SVImageClassPtrVector ImageList;

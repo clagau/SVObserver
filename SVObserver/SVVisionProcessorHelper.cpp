@@ -87,7 +87,7 @@ HRESULT SVVisionProcessorHelper::LoadConfiguration(std::string& rFileName) const
 {
 	HRESULT Result{S_OK};
 
-	if (!SVSVIMStateClass::CheckState(SV_STATE_TEST | SV_STATE_REGRESSION))
+	if (false == SVSVIMStateClass::CheckState(SV_STATE_TEST | SV_STATE_REGRESSION))
 	{
 		TCHAR szDrive[_MAX_DRIVE];
 		TCHAR szDir[_MAX_DIR];
@@ -405,14 +405,6 @@ static HRESULT CheckForRemoteInputProblems(const SVObjectNameInfo& rInfo, const 
 
 HRESULT SVVisionProcessorHelper::SetItems(const SVNameStorageMap& rItems, SVNameStatusMap& rStatusItems, bool RunOnce)
 {
-	DWORD notAllowedStates = SV_STATE_START_PENDING | SV_STATE_STARTING | SV_STATE_STOP_PENDING | SV_STATE_STOPING |
-		SV_STATE_CREATING | SV_STATE_LOADING | SV_STATE_SAVING | SV_STATE_CLOSING;
-
-	if (SVSVIMStateClass::CheckState(notAllowedStates) || SVSVIMStateClass::isSvrcBlocked())
-	{
-		return SVMSG_SVO_ACCESS_DENIED;
-	}
-
 	HRESULT l_Status = S_OK;
 
 	typedef std::map<std::string, SVNameStorageMap> SVStringNameStorageMap;
@@ -554,14 +546,6 @@ HRESULT SVVisionProcessorHelper::GetStandardItems(const SvDef::StringSet& rNames
 
 HRESULT SVVisionProcessorHelper::GetInspectionItems(const SvDef::StringSet& rNames, SVNameStorageResultMap& rItems) const
 {
-	DWORD notAllowedStates = SV_STATE_START_PENDING | SV_STATE_STARTING | SV_STATE_STOP_PENDING | SV_STATE_STOPING |
-		SV_STATE_CREATING | SV_STATE_LOADING | SV_STATE_SAVING | SV_STATE_CLOSING;
-
-	if (SVSVIMStateClass::CheckState(notAllowedStates) || SVSVIMStateClass::isSvrcBlocked())
-	{
-		return SVMSG_SVO_ACCESS_DENIED;
-	}
-
 	HRESULT l_Status = S_OK;
 
 	SVConfigurationObject* pConfig(nullptr);
@@ -582,14 +566,6 @@ HRESULT SVVisionProcessorHelper::GetInspectionItems(const SvDef::StringSet& rNam
 
 HRESULT SVVisionProcessorHelper::GetRemoteInputItems(const SvDef::StringSet& rNames, SVNameStorageResultMap& rItems) const
 {
-	DWORD notAllowedStates = SV_STATE_START_PENDING | SV_STATE_STARTING | SV_STATE_STOP_PENDING | SV_STATE_STOPING |
-		SV_STATE_CREATING | SV_STATE_LOADING | SV_STATE_SAVING | SV_STATE_CLOSING;
-
-	if (SVSVIMStateClass::CheckState(notAllowedStates) || SVSVIMStateClass::isSvrcBlocked())
-	{
-		return SVMSG_SVO_ACCESS_DENIED;
-	}
-
 	HRESULT l_Status = S_OK;
 
 	SVConfigurationObject* pConfig(nullptr);
@@ -690,14 +666,6 @@ HRESULT SVVisionProcessorHelper::SetInspectionItems(const SVNameStorageMap& rIte
 HRESULT SVVisionProcessorHelper::SetRemoteInputItems(const SVNameStorageMap& rItems, SVNameStatusMap& rStatus, bool )
 {
 	HRESULT l_Status = S_OK;
-
-	DWORD notAllowedStates = SV_STATE_START_PENDING | SV_STATE_STARTING | SV_STATE_STOP_PENDING | SV_STATE_STOPING |
-		SV_STATE_CREATING | SV_STATE_LOADING | SV_STATE_SAVING | SV_STATE_CLOSING;
-
-	if (SVSVIMStateClass::CheckState(notAllowedStates) || SVSVIMStateClass::isSvrcBlocked())
-	{
-		return SVMSG_SVO_ACCESS_DENIED;
-	}
 
 	SVConfigurationObject* pConfig(nullptr);
 
@@ -1037,16 +1005,6 @@ HRESULT SVVisionProcessorHelper::QueryMonitorListNames(SvDef::StringSet& rNames)
 
 HRESULT SVVisionProcessorHelper::SetProductFilter(const std::string& rListName, SvSml::SVProductFilterEnum filter)
 {
-
-
-	DWORD notAllowedStates = SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION |
-		SV_STATE_START_PENDING | SV_STATE_STARTING | SV_STATE_STOP_PENDING | SV_STATE_STOPING |
-		SV_STATE_CREATING | SV_STATE_LOADING | SV_STATE_SAVING | SV_STATE_CLOSING;
-	if (SVSVIMStateClass::CheckState(notAllowedStates))
-	{
-		return  SVMSG_SVO_ACCESS_DENIED;
-	}
-
 	SVConfigurationObject* pConfig = nullptr;
 	HRESULT hr = SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 	if (S_OK == hr && nullptr != pConfig)
@@ -1079,10 +1037,7 @@ HRESULT SVVisionProcessorHelper::GetProductFilter(const std::string& rListName, 
 HRESULT SVVisionProcessorHelper::RegisterMonitorList(const std::string& rListName, const std::string& rPPQName, int rejectDepth, const SvDef::StringSet& rProdList, const SvDef::StringSet& rRejectCondList, const SvDef::StringSet& rFailStatusList, SVNameStatusMap& rStatusOfItemsWithError)
 {
 	HRESULT hr = S_OK;
-	DWORD notAllowedStates = SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION |
-		SV_STATE_START_PENDING | SV_STATE_STARTING | SV_STATE_STOP_PENDING | SV_STATE_STOPING |
-		SV_STATE_CREATING | SV_STATE_LOADING | SV_STATE_SAVING | SV_STATE_CLOSING;
-	if (!SVSVIMStateClass::CheckState(notAllowedStates) && SVSVIMStateClass::CheckState(SV_STATE_READY))
+	if (SVSVIMStateClass::CheckState(SV_STATE_READY))
 	{
 		SVConfigurationObject* pConfig = nullptr;
 		hr = SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);

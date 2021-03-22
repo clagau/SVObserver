@@ -19,8 +19,8 @@ struct SVStorageResult;
 class SVRCCommand 
 {
 public:
-	SVRCCommand();
-	~SVRCCommand();
+	SVRCCommand() = default;
+	~SVRCCommand() = default;
 
 	void GetVersion(const SvPb::GetSVObserverVersionRequest&, SvRpc::Task<SvPb::GetVersionResponse>);
 	void GetDeviceMode(const SvPb::GetDeviceModeRequest&, SvRpc::Task<SvPb::GetDeviceModeResponse>);
@@ -62,6 +62,7 @@ public:
 		SvRpc::ServerStreamContext::Ptr ctx);
 
 private:
+	HRESULT CheckState(DWORD additionalStates=0) const;
 	std::string GetFileNameFromFilePath(const std::string& rFilePath, const std::string& rExtension = std::string()) const;
 	HRESULT ConvertStorageValueToProtobuf(const std::string& rName, const SVStorageResult& rStorage, SvPb::Value* pValue) const;
 	HRESULT ConvertStorageImageToProtobuf(const std::string& rName, const SVStorageResult& rStorage, SvPb::Value* pValue) const;

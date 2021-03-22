@@ -47,8 +47,6 @@ bool SVPackedFile::UnPackFiles( LPCTSTR PackedFileName, LPCTSTR UnPackDir /* = n
 	BYTE Buffer[_MAX_PATH * sizeof (TCHAR)];
 	TCHAR szDrive[_MAX_DRIVE], szDir[_MAX_DIR], szFName[_MAX_FNAME], szExt[_MAX_EXT];
 
-	USES_CONVERSION;
-
 	m_configFilePath.clear();
 
 	if (PackedFile.Open (PackedFileName, CFile::shareDenyNone | CFile::modeRead | CFile::typeBinary, &FileException))
@@ -65,13 +63,14 @@ bool SVPackedFile::UnPackFiles( LPCTSTR PackedFileName, LPCTSTR UnPackDir /* = n
 							PackedFile.Read (&PathLen, sizeof (PathLen));
 							memset (Buffer, 0, _MAX_PATH * sizeof (TCHAR));
 							PackedFile.Read (Buffer, PathLen);
+							std::string pathPackedFile{ SvUl::createStdString(reinterpret_cast<wchar_t*> (Buffer)) };
 							if( nullptr == UnPackDir )
 							{
-								Path = SvUl::Format (_T("%s%s"), W2T(reinterpret_cast<wchar_t*> (Buffer) ), W2T( FindData.cFileName));
+								Path = SvUl::Format (_T("%s%s"), pathPackedFile.c_str(), SvUl::createStdString( FindData.cFileName).c_str());
 							}
 							else
 							{
-								Path = SvUl::Format (_T("%s\\%s"), UnPackDir, W2T( FindData.cFileName));
+								Path = SvUl::Format (_T("%s\\%s"), UnPackDir, SvUl::createStdString( FindData.cFileName).c_str());
 							}
 
 							_tsplitpath (Path.c_str(), szDrive, szDir, szFName, szExt);
@@ -80,7 +79,7 @@ bool SVPackedFile::UnPackFiles( LPCTSTR PackedFileName, LPCTSTR UnPackDir /* = n
 								m_configFilePath = Path;
 							}
 
-							CreateDirectoryW (reinterpret_cast<wchar_t*> (Buffer), nullptr);
+							CreateDirectory(pathPackedFile.c_str(), nullptr);
 
 							if (SourceFile.Open (Path.c_str(), CFile::shareDenyNone | CFile::modeCreate | CFile::modeWrite | CFile::typeBinary, &FileException))
 							{

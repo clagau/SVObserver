@@ -50,7 +50,6 @@
 #include <afxext.h>         // MFC extensions
 #include <afxcmn.h>			// MFC support for Windows Common Controls
 #include <afxdisp.h>        // MFC Automation classes
-#include <atlconv.h>
 
 #include <comdef.h>
 
