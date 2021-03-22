@@ -500,7 +500,7 @@ void SVRCCommand::GetItems(const SvPb::GetItemsRequest& rRequest, SvRpc::Task<Sv
 
 void SVRCCommand::SetItems(const SvPb::SetItemsRequest& rRequest, SvRpc::Task<SvPb::SetItemsResponse> task)
 {
-	HRESULT result{ CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION) };
+	HRESULT result{ CheckState() };
 	SvPb::SetItemsResponse Response;
 
 	if (S_OK == result)
