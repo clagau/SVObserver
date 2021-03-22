@@ -667,6 +667,16 @@ bool SVFileNameClass::SaveFile()
 	return bOk;
 }
 
+
+bool SVFileNameClass::operator == (const SVFileNameClass& rhs) const
+{
+	std::string thisFilenameWithPath = SVFileNameClass::GetFullFileName();
+	std::string rhsFilenameWithPath = rhs.GetFullFileName();
+
+	return thisFilenameWithPath == rhsFilenameWithPath;
+}
+
+
 void SVFileNameClass::Init()
 {
 	m_FileType = 0;

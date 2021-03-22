@@ -2312,8 +2312,11 @@ void SVObserverApp::RemoveFileFromConfig(LPCTSTR FilePath)
 		{
 			if (FilePath == rFile.GetFullFileName())
 			{
+				// cppcheck-suppress useStlAlgorithm
+				pConfig->getAdditionalFiles().remove(rFile);
 				SVFileNameManagerClass::Instance().RemoveItem(&rFile);
 				SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
+				break;
 			}
 		}
 	}

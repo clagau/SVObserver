@@ -215,6 +215,8 @@ public:
 	//************************************
 	void setExcludeCharacters( LPCTSTR ExculdeChar ) { m_ExcludeChar = ExculdeChar; };
 
+	bool operator == (const SVFileNameClass& rhs) const;
+
 private:
 	void Init();
 
