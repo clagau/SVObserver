@@ -42,6 +42,7 @@ namespace SvOg
 	public:
 		virtual bool QueryAllowExit() override; //from ISVPropertyPageDialog
 		virtual BOOL OnSetActive() override;
+		virtual BOOL OnKillActive() override;
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
@@ -53,7 +54,6 @@ namespace SvOg
 																	 //}}AFX_VIRTUAL
 	protected:
 		//{{AFX_MSG(BlobAnalyzer2Draw)
-		virtual BOOL OnInitDialog() override;
 		void OnCheckEnable();
 		void OnChangeData();
 		void OnBnClickedInsert();

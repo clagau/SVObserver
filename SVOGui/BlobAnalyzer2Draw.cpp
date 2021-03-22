@@ -72,6 +72,11 @@ namespace SvOg
 		init();
 		return true;
 	}
+
+	BOOL BlobAnalyzer2Draw::OnKillActive()
+	{
+		return setInspectionData();
+	}
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
@@ -102,16 +107,6 @@ namespace SvOg
 		DDX_Text(pDX, IDC_EDIT_COLOR3, m_color3);
 		DDV_MinMaxLong(pDX, m_color3, 0, 255);
 		//}}AFX_DATA_MAP
-	}
-
-	BOOL BlobAnalyzer2Draw::OnInitDialog()
-	{
-		CPropertyPage::OnInitDialog();
-
-		init();
-
-		return TRUE;  // return TRUE unless you set the focus to a control
-					  // EXCEPTION: OCX-Eigenschaftenseiten sollten FALSE zurückgeben
 	}
 
 	void BlobAnalyzer2Draw::OnCheckEnable()
@@ -298,6 +293,8 @@ namespace SvOg
 		m_Values.Set<byte>(SvPb::BackgroundColor1EId, static_cast<byte>(m_background_color1));
 		m_Values.Set<byte>(SvPb::BackgroundColor2EId, static_cast<byte>(m_background_color2));
 		m_Values.Set<byte>(SvPb::BackgroundColor3EId, static_cast<byte>(m_background_color3));
+		//set all vectors to the same size
+		setNumberOfSteps();
 		CString tmpString;
 		if (m_StepNames.size() > 0)
 		{
@@ -370,10 +367,18 @@ namespace SvOg
 	void BlobAnalyzer2Draw::setNumberOfSteps()
 	{
 		m_numberOfSteps = static_cast<int>(std::min({ m_StepNames.size(), m_DrawTypeArray.size(), m_BlobTypeArray.size(), m_Color1Array.size(), m_Color2Array.size(), m_Color3Array.size() }));
+		//resize all value-vectors to the same size
+		m_StepNames.resize(m_numberOfSteps);
+		m_DrawTypeArray.resize(m_numberOfSteps);
+		m_BlobTypeArray.resize(m_numberOfSteps);
+		m_Color1Array.resize(m_numberOfSteps);
+		m_Color2Array.resize(m_numberOfSteps);
+		m_Color3Array.resize(m_numberOfSteps);
 	}
 
 	void BlobAnalyzer2Draw::fillStepNames()
 	{
+		m_StepNames.clear();
 		auto fullString = m_Values.Get<CString>(SvPb::DrawAdditionalImageStepNamesEId);
 		int curPos = 0;
 		auto resToken = fullString.Tokenize(_T("|"), curPos);
