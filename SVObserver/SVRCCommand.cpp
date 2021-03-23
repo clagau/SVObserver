@@ -1167,7 +1167,7 @@ void SVRCCommand::SetTriggerConfig(const SvPb::SetTriggerConfigRequest& rRequest
 }
 void SVRCCommand::GetConfigurationInfo(const SvPb::GetConfigurationInfoRequest&, SvRpc::Task<SvPb::GetConfigurationInfoResponse> task)
 {
-	HRESULT result{ CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION) };
+	HRESULT result{ CheckState() };
 	SvPb::GetConfigurationInfoResponse Response;
 
 	if (S_OK == result)
@@ -1462,12 +1462,10 @@ void SVRCCommand::clipboardAction(const SvPb::ClipboardRequest rRequest, SvPb::S
 		return;
 	}
 
-	DWORD notAllowedStates = SV_STATE_START_PENDING | SV_STATE_STARTING | SV_STATE_STOP_PENDING | SV_STATE_STOPING |
-		SV_STATE_CREATING | SV_STATE_LOADING | SV_STATE_SAVING | SV_STATE_CLOSING;
-
-	if (SVSVIMStateClass::CheckState(notAllowedStates))
+	HRESULT result{ CheckState() };
+	if (S_OK != result)
 	{
-		pResponse->set_hresult(SVMSG_SVO_ACCESS_DENIED);
+		pResponse->set_hresult(result);
 		return;
 	}
 
@@ -1477,7 +1475,7 @@ void SVRCCommand::clipboardAction(const SvPb::ClipboardRequest rRequest, SvPb::S
 	{
 		ToolClipboard clipboard;
 		SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
-		HRESULT result = clipboard.writeToClipboard(rRequest.objectid());
+		result = clipboard.writeToClipboard(rRequest.objectid());
 		SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
 		pResponse->set_hresult(result);
 		if (S_OK != result)
@@ -1499,7 +1497,7 @@ void SVRCCommand::clipboardAction(const SvPb::ClipboardRequest rRequest, SvPb::S
 				uint32_t ownerID = pObject->GetParentID();
 				uint32_t toolID;
 				SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
-				HRESULT result = clipboard.readFromClipboard(postID, ownerID, toolID);
+				result = clipboard.readFromClipboard(postID, ownerID, toolID);
 				SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
 				pResponse->set_hresult(result);
 				if (S_OK == result)
