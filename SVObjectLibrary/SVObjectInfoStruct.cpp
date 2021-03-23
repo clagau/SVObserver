@@ -64,12 +64,7 @@ HRESULT SVObjectInfoStruct::SetObject( SVObjectClass* pObject )
 
 	if( nullptr != pObject )
 	{
-		m_ObjectRef = SVObjectReference{ pObject };
-		if (SvPb::NoEmbeddedId == m_ObjectTypeInfo.m_EmbeddedID && SvPb::SVNotSetObjectType == m_ObjectTypeInfo.m_ObjectType &&
-			SvPb::SVNotSetSubObjectType == m_ObjectTypeInfo.m_SubType && nullptr != m_ObjectRef.getFinalObject())
-		{
-			m_ObjectTypeInfo = m_ObjectRef.getFinalObject()->getObjectTypeInfo();
-		}
+		SetObject(SVObjectReference{ pObject });		
 	}
 	else
 	{
@@ -81,6 +76,11 @@ HRESULT SVObjectInfoStruct::SetObject( SVObjectClass* pObject )
 HRESULT SVObjectInfoStruct::SetObject( const SVObjectReference& rObjectRef )
 {
 	m_ObjectRef = rObjectRef;
+	if (SvPb::SVNotSetObjectType == m_ObjectTypeInfo.m_ObjectType &&
+		SvPb::SVNotSetSubObjectType == m_ObjectTypeInfo.m_SubType && nullptr != m_ObjectRef.getFinalObject())
+	{
+		m_ObjectTypeInfo = m_ObjectRef.getFinalObject()->getObjectTypeInfo();
+	}
 	return S_OK;
 }
 

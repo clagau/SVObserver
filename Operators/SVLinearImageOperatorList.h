@@ -29,8 +29,8 @@ class SVLinearImageOperatorList : public SVStdImageOperatorListClass
 private:
 	static constexpr int m_defaultDoubleResultLowFail = 0;
 	static constexpr int m_defaultDoubleResultLowWarn = 0; 
-	static constexpr int m_defaultDoubleResultHighFail = 9999;
-	static constexpr int m_defaultDoubleResultHighWarn = 9999;
+	static constexpr int m_defaultDoubleResultHighFail = 9999999;
+	static constexpr int m_defaultDoubleResultHighWarn = 9999999;
 
 public:
 	SVLinearImageOperatorList( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVLINEARIMAGEOPERATORLIST );
