@@ -2310,9 +2310,9 @@ void SVObserverApp::RemoveFileFromConfig(LPCTSTR FilePath)
 		const auto& rAdditionalFiles = pConfig->getAdditionalFiles();
 		for (const auto& rFile : rAdditionalFiles)
 		{
+			// cppcheck-suppress useStlAlgorithm; rAdditionalFiles is an overload of std::vector
 			if (FilePath == rFile.GetFullFileName())
 			{
-				// cppcheck-suppress useStlAlgorithm
 				pConfig->getAdditionalFiles().remove(rFile);
 				SVFileNameManagerClass::Instance().RemoveItem(&rFile);
 				SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
