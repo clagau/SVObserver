@@ -14,7 +14,7 @@
 #include "SVVariantConverter.h"
 #include "SVVariantCustomTypes.h"
 
-constexpr WCHAR* cBaseNode = L"SV_BASENODE";
+constexpr const WCHAR* cBaseNode = L"SV_BASENODE";
 
 namespace  SvXml
 {

@@ -67,9 +67,11 @@
 #include <mutex>
 #include <queue>				//Used by static library
 #include <set>					//Used by static library
+#include <stdexcept>			//Used by static library
 #include <tchar.h>				//Used by static library
 #include <unordered_map>
 
+#define BOOST_BIND_NO_PLACEHOLDERS
 #include <boost/any.hpp>
 #include <boost/bind.hpp>
 #include <boost/config.hpp>

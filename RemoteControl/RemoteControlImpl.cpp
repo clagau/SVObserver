@@ -1062,13 +1062,13 @@ HRESULT RemoteControlImpl::ShutDown(long option) const
 
 void RemoteControlImpl::StartNotificationStreaming()
 {
-	SvRpc::Observer<SvPb::GetNotificationStreamResponse> notificationObserver(boost::bind(&NotificationHandler::OnNext, &m_notificationHandler, _1),
+	SvRpc::Observer<SvPb::GetNotificationStreamResponse> notificationObserver(boost::bind(&NotificationHandler::OnNext, &m_notificationHandler, boost::arg<1>()),
 		boost::bind(&NotificationHandler::OnFinish, &m_notificationHandler),
-		boost::bind(&NotificationHandler::OnError, &m_notificationHandler, _1));
+		boost::bind(&NotificationHandler::OnError, &m_notificationHandler, boost::arg<1>()));
 
-	SvRpc::Observer<SvPb::GetMessageStreamResponse> messageObserver(boost::bind(&MessageNotificationHandler::OnNext, &m_messageNotificationHandler, _1),
+	SvRpc::Observer<SvPb::GetMessageStreamResponse> messageObserver(boost::bind(&MessageNotificationHandler::OnNext, &m_messageNotificationHandler, boost::arg<1>()),
 		boost::bind(&MessageNotificationHandler::OnFinish, &m_messageNotificationHandler),
-		boost::bind(&MessageNotificationHandler::OnError, &m_messageNotificationHandler, _1));
+		boost::bind(&MessageNotificationHandler::OnError, &m_messageNotificationHandler, boost::arg<1>()));
 
 	if (m_pSvrcClientService)
 	{

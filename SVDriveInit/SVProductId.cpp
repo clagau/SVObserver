@@ -71,7 +71,7 @@ bool SVProductId::UpdateProductId() const
       unsigned long l_ulValue = 0;
 
       if ( ERROR_SUCCESS == RegCreateKeyEx(HKEY_LOCAL_MACHINE, _T( "Software\\Microsoft\\Windows\\CurrentVersion\\RunOnce" ),
-                          0, _T(""),REG_OPTION_NON_VOLATILE,
+                          0, nullptr,REG_OPTION_NON_VOLATILE,
                           KEY_ALL_ACCESS,
                           (SECURITY_ATTRIBUTES *) nullptr,
                           &l_hKey, & l_ulValue ) )
@@ -102,7 +102,7 @@ bool SVProductId::UpdateProductId() const
       // 
       ZeroMemory(&si, sizeof(STARTUPINFO));
       si.cb        = sizeof(STARTUPINFO);
-      si.lpDesktop = _T("winsta0\\default");
+      si.lpDesktop = const_cast<char*> (_T("winsta0\\default"));
       
       // 
       // launch the process

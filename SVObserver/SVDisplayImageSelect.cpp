@@ -76,7 +76,7 @@ BOOL SVDisplayImageSelect::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 		
-	constexpr TCHAR* c_NoImage = _T("[None]");
+	constexpr const char* c_NoImage = _T("[None]");
 
 	SetTitle();
 

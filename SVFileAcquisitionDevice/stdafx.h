@@ -63,6 +63,7 @@
 #include <unordered_map>
 #include <vector>
 
+#define BOOST_BIND_NO_PLACEHOLDERS
 #include <boost/bind.hpp>
 #include <boost/config.hpp>
 #include <boost/function.hpp>

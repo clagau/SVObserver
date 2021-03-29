@@ -22,12 +22,12 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvOg
 {
-	constexpr char* WidthTag = "Width";
-	constexpr char* HeidghtTag = "Height";
-	constexpr char* ClippingTag = "IsClipping";
-	constexpr char* AbsoluteValueTag = "AbsoluteValue";
-	constexpr char* TransformationTag = "TransformationFactor";
-	constexpr char* CellValueTag = "CellValue";
+	constexpr const char* WidthTag = "Width";
+	constexpr const char* HeidghtTag = "Height";
+	constexpr const char* ClippingTag = "IsClipping";
+	constexpr const char* AbsoluteValueTag = "AbsoluteValue";
+	constexpr const char* TransformationTag = "TransformationFactor";
+	constexpr const char* CellValueTag = "CellValue";
 
 	SVCustomFilterDlg::SVCustomFilterDlg(uint32_t inspectionId, uint32_t filterId, CWnd* pParent) :
 		CDialog(SVCustomFilterDlg::IDD, pParent)

@@ -291,7 +291,7 @@ namespace SvOg
 		{
 			CString name;
 			m_AvailableToolForColorOverlayCombo.GetLBText(index, name);
-			std::string stdName = name;
+			std::string stdName = name.GetString();
 			auto iter = std::find_if(m_availableToolList.begin(), m_availableToolList.end(), [stdName](const auto& rEntry) { return rEntry.first == stdName; });
 			if (m_availableToolList.end() != iter)
 			{

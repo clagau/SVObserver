@@ -43,7 +43,7 @@ namespace SvAo
 		void updateTableDefinition(long maxArraySize, std::array<SvVol::DoubleSortValuePtr, 4>& resultColumnForOverlayArray, std::set<MIL_ID>& rRequiredFeatureGroup);
 		bool updateBlobFeatures(SvStl::MessageContainerVector* pErrorMessages, std::back_insert_iterator<std::vector<BlobExcludeData>> excludeDataVecInserter);
 
-		void BlobFeatureList::setSortControls(MIL_ID blobContextId) const;
+		void setSortControls(MIL_ID blobContextId) const;
 
 		void setNumberOfBlobsObject(SvVol::SVLongValueObjectClass* pNumberOfBlobsObject) { m_pNumberOfBlobsObject = pNumberOfBlobsObject; };
 		void setResultTable(SvOp::TableObject* pResultTable) { m_pResultTable = pResultTable; };

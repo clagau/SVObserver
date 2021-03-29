@@ -9,8 +9,11 @@
 //* .Check In Date   : $Date:   22 Apr 2013 09:46:20  $
 //******************************************************************************
 #pragma region Includes
-#include "Stdafx.h"
+#include "stdafx.h"
+#pragma warning( push )
+#pragma warning( disable : 4471 )
 #import <msxml3.dll> raw_interfaces_only 
+#pragma warning( pop )
 #include "SVSystemLibrary/SVSAXErrorHandlerImpl.h"
 #include "SVGigeCameraDBParser.h"
 #include "SVGigeCameraDBContent.h"

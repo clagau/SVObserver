@@ -33,7 +33,7 @@ HRESULT SVMatroxGigeHandleList<MaxHandles, HandleType, InvalidHandle, value_type
 {
 	HRESULT hr = S_FALSE;
 
-	Collection::iterator it = m_list.find(handle);
+	typename Collection::iterator it = m_list.find(handle);
 	if (it != m_list.end())
 	{
 		m_handleMgr.ReleaseHandle(it->first);
@@ -48,7 +48,7 @@ value_type& SVMatroxGigeHandleList<MaxHandles, HandleType, InvalidHandle, value_
 {
 	status = S_FALSE;
 
-	Collection::iterator it = m_list.find(handle);
+	typename Collection::iterator it = m_list.find(handle);
 	if (it != m_list.end())
 	{
 		status = S_OK;
@@ -64,7 +64,7 @@ const value_type& SVMatroxGigeHandleList<MaxHandles, HandleType, InvalidHandle, 
 {
 	status = S_FALSE;
 
-	Collection::const_iterator it = m_list.find(handle);
+	typename Collection::const_iterator it = m_list.find(handle);
 	if (it != m_list.end())
 	{
 		status = S_OK;

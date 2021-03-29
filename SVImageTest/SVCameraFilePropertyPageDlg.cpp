@@ -145,7 +145,7 @@ BOOL SVCameraFilePropertyPageDlg::OnInitDialog()
 					if (!pCombo)
 						break;
 					
-					pCombo->SetCtrlID( PROP_CAMERA_FILE_BASE + rCamFileParam->Type() );
+					pCombo->SetCtrlID(static_cast<UINT>(PROP_CAMERA_FILE_BASE) + static_cast<UINT>(rCamFileParam->Type()));
 					std::string Label = rCamFileParam->VisualName();
 					
 					if ( Label.empty() )
@@ -171,7 +171,7 @@ BOOL SVCameraFilePropertyPageDlg::OnInitDialog()
 						if (!pCombo)
 							break;
 						
-						pCombo->SetCtrlID( PROP_CAMERA_FILE_BASE + rCamFileParam->Type() );
+						pCombo->SetCtrlID(static_cast<UINT>(PROP_CAMERA_FILE_BASE) + static_cast<UINT>(rCamFileParam->Type()));
 						std::string Label = rCamFileParam->VisualName();
 						if ( Label.empty() )
 						{
@@ -202,7 +202,7 @@ BOOL SVCameraFilePropertyPageDlg::OnInitDialog()
 						if (!pEdit)
 							break;
 						
-						pEdit->SetCtrlID( PROP_CAMERA_FILE_BASE + rCamFileParam->Type() );
+						pEdit->SetCtrlID(static_cast<UINT>(PROP_CAMERA_FILE_BASE) + static_cast<UINT>(rCamFileParam->Type()));
 						std::string Label = rCamFileParam->VisualName();
 						if( Label.empty() )
 						{
@@ -260,7 +260,7 @@ BOOL SVCameraFilePropertyPageDlg::OnInitDialog()
 								if (!pCombo)
 									break;
 								
-								pCombo->SetCtrlID( PROP_CAMERA_FILE_BASE + rCamFileParam->Type() );
+								pCombo->SetCtrlID(static_cast<UINT>(PROP_CAMERA_FILE_BASE) + static_cast<UINT>(rCamFileParam->Type()));
 								std::string Label = rCamFileParam->VisualName();
 								
 								if ( Label.empty() )
@@ -305,7 +305,7 @@ BOOL SVCameraFilePropertyPageDlg::OnInitDialog()
 								if (!pCombo)
 									break;
 								
-								pCombo->SetCtrlID( PROP_CAMERA_FILE_BASE + rCamFileParam->Type() );
+								pCombo->SetCtrlID(static_cast<UINT>(PROP_CAMERA_FILE_BASE) + static_cast<UINT>(rCamFileParam->Type()));
 								std::string Label = rCamFileParam->VisualName();
 								
 								if ( Label.empty() )

@@ -69,8 +69,8 @@ public:
 	long m_lIsStarted{0L};
 	SVFileCamera() = default;
 	explicit SVFileCamera(LPCTSTR name) : m_name{name} {};
-	SVFileCamera::SVFileCamera(const SVFileCamera& rRhs) = delete;
-	SVFileCamera::SVFileCamera(SVFileCamera&& rRhs) = default;
+	SVFileCamera(const SVFileCamera& rRhs) = delete;
+	SVFileCamera(SVFileCamera&& rRhs) = default;
 	SVFileCamera &operator=(const SVFileCamera& rRhs) = delete;
 	SVFileCamera &operator=(SVFileCamera&& rRhs) = default;
 

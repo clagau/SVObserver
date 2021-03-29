@@ -36,7 +36,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-constexpr char* cDigitalOutputName = ("Digital Output %d");
+constexpr const char* cDigitalOutputName = ("Digital Output %d");
 
 IMPLEMENT_DYNCREATE(SVDiscreteOutputsView, CListView)
 

@@ -113,11 +113,6 @@ public:
 
 	static bool isSvrcBlocked();
 
-//************************************
-// Method:    GetMode
-// Description:  Get the value of the mode
-// Returns:   svModeEnum Enum of the mode
-//************************************
 	static SvPb::DeviceModeType GetMode();
 	
 	static std::string GetHash();

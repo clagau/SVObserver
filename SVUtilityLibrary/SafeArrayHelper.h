@@ -23,65 +23,76 @@ namespace SvUl
 	//! function returns a 1 dim safe array with 0 element 
 	_variant_t GetEmptySafeArray(VARTYPE  vart);
 
-	/// function converts 1 dim safearray of type T to  ; seperated values 
-	template <typename T> std::string SafeArrayToString(SAFEARRAY  *pArray)
+	/// function converts 1 dim safearray of type T to  ; seperated values
+	template<typename T>
+	std::string SafeArrayToString(SAFEARRAY* pArray)
 	{
-		std::stringstream sst;
-		CComSafeArray<T> safeArray(pArray);
-		for (int i = safeArray.GetLowerBound(); i <= safeArray.GetUpperBound(); i++)
+		if (nullptr != pArray)
 		{
-			sst << safeArray[i];
-			if (i < safeArray.GetUpperBound())
+			std::stringstream sst;
+			long lowerBound = pArray->rgsabound[0].lLbound;
+			long upperBound = lowerBound + static_cast<long> (pArray->rgsabound[0].cElements);
+
+			for (long i = lowerBound; i <= upperBound; ++i)
 			{
-				sst << ";";
+				T value;
+				if (S_OK == ::SafeArrayGetElement(pArray, &i, &value))
+				{
+					sst << value;
+					if (i < upperBound)
+					{
+						sst << ';';
+					}
+				}
 			}
+			return  sst.str();
 		}
-		return  sst.str();
-
-
+		return {};
 	}
 
 	///function creates a 1 dim safe array of type T from comma seperated string. return value is size of array  
 	///empty string is array of size 0, negative result signalks an error.
-	template <typename T> int StringToSafeArray(const std::string& value, _variant_t& rvariant)
+	template<typename T>
+	int StringToSafeArray(const std::string& rText, _variant_t& rVariant)
 	{
-		
-
-		if (value == "")
+		T tempType{};
+		_variant_t tempValue{ tempType };
+		VARTYPE varType{ tempValue.vt };
+		rVariant.Clear();
+		if (rText.empty())
 		{
-			rvariant.Clear();
-			CComSafeArray<T> sa(ULONG(0), LONG(0));
-			rvariant.vt = sa.GetType() | VT_ARRAY;
-			rvariant.parray = sa.Detach();
+			SAFEARRAYBOUND arrayBound;
+			arrayBound.lLbound = 0;
+			arrayBound.cElements = 0;
+			rVariant.parray = ::SafeArrayCreate(varType, 1, &arrayBound);
+			rVariant.vt = varType | VT_ARRAY;
 			return 0;
 		}
 
 		std::vector<std::string> words;
-		boost::algorithm::split(words, value, boost::is_any_of(" ,;"), boost::token_compress_on);
+		boost::algorithm::split(words, rText, boost::is_any_of(" ,;"), boost::token_compress_on);
 		if (words.size() == 0)
 		{
 			return -1;
 		}
 		
-		CComSafeArray<T> sa(ULONG(words.size()));
-		for (int i = 0; i < words.size(); i++)
+		SAFEARRAYBOUND arrayBound;
+		arrayBound.lLbound = 0;
+		arrayBound.cElements = static_cast<unsigned long> (words.size());
+		rVariant.parray = ::SafeArrayCreate(varType, 1, &arrayBound);
+		rVariant.vt = varType | VT_ARRAY;
+		for (long i = 0; i < static_cast<long> (words.size()); i++)
 		{
 			try
 			{
-				sa[i] = boost::lexical_cast<T>(words[i]);
+				T value = boost::lexical_cast<T>(words[i]);
+				::SafeArrayPutElement(rVariant.parray, &i, &value);
 			}
 			catch (...)
 			{
 				return -1;
 			}
 		}
-
-		rvariant.Clear();
-		int ret = sa.GetCount();
-		rvariant.vt = sa.GetType() | VT_ARRAY;
-		rvariant.parray = sa.Detach();
-		return ret;
+		return static_cast<int> (arrayBound.cElements);
 	}
-
-
 }

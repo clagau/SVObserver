@@ -363,8 +363,7 @@ bool SVRPropertyItemFile::SVROpenFile()
 
 	if (IDOK == dlg.DoModal())			// Start the FileDialog
 	{									// user clicked OK, enter files selected into edit control
-		std::string Path = dlg.GetPathName();
-		SetWindowText( Path.c_str() );
+		SetWindowText(dlg.GetPathName().GetString());
 		bReturnValue = true;
 	}
 	

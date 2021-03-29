@@ -46,7 +46,7 @@ enum
 };
 
 const int c_offsetXForCursorToolbar = 340;
-const TCHAR* const cQuote = _T("\"");
+constexpr const TCHAR* cQuote = _T("\"");
 
 BEGIN_MESSAGE_MAP(SVFormulaEditorPageClass, CPropertyPage)
 	//{{AFX_MSG_MAP(SVFormulaEditorPageClass)
@@ -407,8 +407,8 @@ void SVFormulaEditorPageClass::OnAddLocalVariableButton()
 		if (m_ToolsetOutputVariable.Right(1) == _T("]"))	// array
 		{
 			int iArrayIndexPos = m_ToolsetOutputVariable.ReverseFind(_T('['));
-			std::string RootName = m_ToolsetOutputVariable.Left(iArrayIndexPos);
-			std::string Index = m_ToolsetOutputVariable.Mid(iArrayIndexPos);
+			std::string RootName = m_ToolsetOutputVariable.Left(iArrayIndexPos).GetString();
+			std::string Index = m_ToolsetOutputVariable.Mid(iArrayIndexPos).GetString();
 			Index = Index.substr(1, Index.size() - 2);	// strip off [ ]
 			std::string Name = cQuote + RootName + cQuote + _T("[ ") + Index + _T(" ]");
 			insertIntoEditor(Name.c_str());
@@ -416,7 +416,7 @@ void SVFormulaEditorPageClass::OnAddLocalVariableButton()
 		else
 		{
 			// Variables are delimited by double qoutes
-			std::string Name = cQuote + m_ToolsetOutputVariable + cQuote;
+			std::string Name = (cQuote + m_ToolsetOutputVariable + cQuote).GetString();
 			insertIntoEditor(Name.c_str());
 		}
 	}
@@ -428,16 +428,16 @@ void SVFormulaEditorPageClass::OnAddConstantButton()
 
 	if (!m_ConstantValue.IsEmpty())
 	{
-		std::string TempString = m_ConstantValue;
+		std::string TempString = m_ConstantValue.GetString();
 
 		switch (m_constantType)
 		{
 			case SV_FORMULA_BINARY_CONSTANT_TYPE:
-				TempString += _T("b");
+				TempString += 'b';
 				break;
 
 			case SV_FORMULA_HEXADECIMAL_CONSTANT_TYPE:
-				TempString += _T("h");
+				TempString += 'h';
 				break;
 
 			default:

@@ -23,8 +23,8 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-constexpr TCHAR* thresholdHsiNames[] {_T("Hue Threshold Adjustment"), _T("Saturation Threshold Adjustment"), _T("Intensity Threshold Adjustment")};
-constexpr TCHAR* thresholdRgbNames[] {_T("Red Threshold Adjustment"), _T("Green Threshold Adjustment"), _T("Blue Threshold Adjustment")};
+constexpr const char* thresholdHsiNames[] {_T("Hue Threshold Adjustment"), _T("Saturation Threshold Adjustment"), _T("Intensity Threshold Adjustment")};
+constexpr const char* thresholdRgbNames[] {_T("Red Threshold Adjustment"), _T("Green Threshold Adjustment"), _T("Blue Threshold Adjustment")};
 #pragma endregion Declarations
 
 IMPLEMENT_DYNAMIC(SVTADlgColorThresholdSheet, CPropertySheet)

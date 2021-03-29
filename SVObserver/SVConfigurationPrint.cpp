@@ -68,7 +68,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-constexpr char* ToolGroupCommentLabel = _T("Tool Comment:");
+constexpr const char* ToolGroupCommentLabel = _T("Tool Comment:");
 
 constexpr int LEFT_MARGIN = 50;
 
@@ -256,28 +256,6 @@ UINT AFXAPI AfxGetFileTitle(LPCTSTR lpszPathName, LPTSTR lpszTitle, UINT nMax);
 BOOL CALLBACK _AfxAbortProc(HDC, int);
 
 
-/////////////////////////////////////////////////////////////////////////////
-//
-//
-//
-//
-class CPrintingDialog : public CDialog
-{
-public:
-	//{{AFX_DATA(CPrintingDialog)
-	enum { IDD = AFX_IDD_PRINTDLG };
-	//}}AFX_DATA
-	explicit CPrintingDialog(CWnd* pParent)
-	{
-		Create(CPrintingDialog::IDD, pParent);      // modeless !
-		_afxWinState->m_bUserAbort = FALSE;
-	}
-	virtual ~CPrintingDialog() { }
-	
-	virtual BOOL OnInitDialog() override;
-	virtual void OnCancel() override;
-};
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -384,12 +362,10 @@ void SVConfigurationPrint::DoPrintConfig()
 		// Call on begin printing...
 		OnBeginPrinting();
 		
-		m_printDC.SetAbortProc(_AfxAbortProc);
-		
 		// disable main window while printing & init printing status dialog
 		AfxGetMainWnd()->EnableWindow(FALSE);
 		
-		CPrintingDialog   dlgPrintStatus(AfxGetMainWnd());
+		CPrintDialog   dlgPrintStatus(true, PD_ALLPAGES | PD_USEDEVMODECOPIES | PD_NOPAGENUMS | PD_HIDEPRINTTOFILE | PD_NOSELECTION, AfxGetMainWnd());
 		
 		CString           strTemp;
 		
@@ -487,11 +463,11 @@ void SVConfigurationPrint::DoPrintConfig()
 			// page successfully started, so now render the page
 			PrintPage();
 			
-			if (m_printDC.EndPage() < 0 || ! _AfxAbortProc(m_printDC.m_hDC, 0))
+			if (m_printDC.EndPage() < 0)
 			{
 				bError = TRUE;
 				break;
-			}  // end if( printDC.EndPage() < 0 || ! _AfxAbortProc( printDC.m_hDC, 0 ) )
+			}
 		}  // end for(  printInfo.m_nCurPage = nStartPage; ...
 		
 		// cleanup document printing process
@@ -1304,7 +1280,7 @@ void SVConfigurationPrint::OnVirtualPrint(BOOL bRealPrintInput /* = FALSE */)
 		pString[31] = '\0';
 		strTime.ReleaseBuffer();
     }
-	std::string Value = strDate + _T(" ") + strTime;
+	std::string Value = (strDate + _T(" ") + strTime).GetString();
 	
 	PrintValueObject(pDC, ptCurPos, _T("Current Date:"), Value.c_str() );
 	

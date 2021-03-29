@@ -125,7 +125,7 @@ BOOL CSMViewDlg::OnInitDialog()
 	}
 
 	m_EditTrigger.SetWindowText("-1");
-	boost::function<bool(DWORD)> f = boost::bind(&CSMViewDlg::PostRefresh, this, _1);
+	boost::function<bool(DWORD)> f = boost::bind(&CSMViewDlg::PostRefresh, this, boost::arg<1>());
 	SvSml::ShareEvents::GetInstance().SetCallbackFunction(f);
 	SvSml::ShareEvents::GetInstance().StartWatch();
 

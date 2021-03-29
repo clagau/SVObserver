@@ -29,7 +29,7 @@ public:
 	SVEquationYaccClass();
 	~SVEquationYaccClass();
 
-	int yyerror(char *s);
+	int yyerror(const char*);
 	int yylex();
 	int yyparse();
 

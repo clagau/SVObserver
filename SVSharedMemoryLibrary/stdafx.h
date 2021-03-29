@@ -66,7 +66,7 @@
 #include <string>
 #include <vector>
 #include <winioctl.h>
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include <boost/function.hpp>
 #define BOOST_DATE_TIME_NO_LIB
 #include <boost/utility.hpp>

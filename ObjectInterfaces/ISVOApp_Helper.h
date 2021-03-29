@@ -11,10 +11,13 @@
 #pragma region Declarations
 class SVDeviceParamCollection;
 
+#pragma warning (push)
+#pragma warning (disable : 4471)
 namespace SvPb
 {
 	enum ClassIdEnum;
 }
+#pragma warning (pop)
 #pragma endregion Declarations
 
 namespace SvOi

@@ -9,7 +9,11 @@
 //* .Check In Date   : $Date:   23 Apr 2013 12:36:16  $
 //******************************************************************************
 
-
+constexpr int UseLargerArchiveMemoryPool = 16000;
+constexpr int AsyncDefault4GB = 50;
+constexpr int AsyncDefault16GB = 200;
+constexpr int GoOfflineDefault4GB = 300;
+constexpr int GoOfflineDefault16GB = 2000;
 
 template <typename OWNERTYPE>
 inline void SVMemoryManager<OWNERTYPE>::InitializeMemoryManager(LPCTSTR strPoolName1, LPCTSTR strPoolName2, const SvLib::SVOINIClass& rSvimIni)
@@ -50,7 +54,7 @@ inline HRESULT SVMemoryManager<OWNERTYPE>::CreatePool( LPCTSTR strPoolName, __in
 {
 	HRESULT hr = S_FALSE;
 
-	SVMemoryPoolMap::iterator iter = m_mapPools.find( std::string(strPoolName) );
+	typename SVMemoryPoolMap::iterator iter = m_mapPools.find( std::string(strPoolName) );
 	if ( iter == m_mapPools.end() )// ensure it doesn't already exist
 	{
 #if defined (TRACE_THEM_ALL) || defined (TRACE_MEMORY)
@@ -66,7 +70,7 @@ inline HRESULT SVMemoryManager<OWNERTYPE>::ReservePoolMemory( LPCTSTR strPoolNam
 {
 	HRESULT hr = S_FALSE;
 
-	SVMemoryPoolMap::iterator iter = m_mapPools.find( std::string(strPoolName) );
+	typename SVMemoryPoolMap::iterator iter = m_mapPools.find( std::string(strPoolName) );
 	if ( iter != m_mapPools.end() )// make sure it exists
 	{
 #if defined (TRACE_THEM_ALL) || defined (TRACE_MEMORY)
@@ -83,7 +87,7 @@ inline HRESULT SVMemoryManager<OWNERTYPE>::ReleasePoolMemory( LPCTSTR strPoolNam
 {
 	HRESULT hr = S_FALSE;
 
-	SVMemoryPoolMap::iterator iter = m_mapPools.find( std::string(strPoolName) );
+	typename SVMemoryPoolMap::iterator iter = m_mapPools.find( std::string(strPoolName) );
 	if ( iter != m_mapPools.end() )// make sure it exists
 	{
 #if defined (TRACE_THEM_ALL) || defined (TRACE_MEMORY)
@@ -100,7 +104,7 @@ inline HRESULT SVMemoryManager<OWNERTYPE>::ReleasePoolMemory( LPCTSTR strPoolNam
 {
 	HRESULT hr = S_FALSE;
 
-	SVMemoryPoolMap::iterator iter = m_mapPools.find( std::string(strPoolName) );
+	typename SVMemoryPoolMap::iterator iter = m_mapPools.find( std::string(strPoolName) );
 	if ( iter != m_mapPools.end() )// make sure it exists
 	{
 #if defined (TRACE_THEM_ALL) || defined (TRACE_MEMORY)
@@ -125,7 +129,7 @@ inline __int64 SVMemoryManager<OWNERTYPE>::FreeBytes( LPCTSTR strPoolName )
 {
 	__int64 lSize = 0;
 
-	SVMemoryPoolMap::iterator iter = m_mapPools.find( std::string(strPoolName) );
+	typename SVMemoryPoolMap::iterator iter = m_mapPools.find( std::string(strPoolName) );
 	if ( iter != m_mapPools.end() )// make sure it exists
 	{
 		lSize = iter->second.FreeBytes( );
@@ -142,7 +146,7 @@ inline __int64 SVMemoryManager<OWNERTYPE>::SizeOfPoolBytes( LPCTSTR strPoolName 
 {
 	__int64 lSize = 0;
 
-	SVMemoryPoolMap::iterator iter = m_mapPools.find( std::string(strPoolName) );
+	typename SVMemoryPoolMap::iterator iter = m_mapPools.find( std::string(strPoolName) );
 	if ( iter != m_mapPools.end() )// make sure it exists
 	{
 		lSize = iter->second.SizeOfPoolBytes();

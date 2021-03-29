@@ -89,7 +89,7 @@ private:
 
 	const static DWORD  WRITE_FLAG = 0x80000000;
 	const static DWORD WRITE_FLAG_COMPLEMENT = ~WRITE_FLAG;
-	const  static LPCTSTR SMRingBuffer::s_BaseName;
+	const  static LPCTSTR s_BaseName;
 	int				m_Retry;
 	DWORD			m_AllocationGranularity;
 	DWORD			m_InfoSize;

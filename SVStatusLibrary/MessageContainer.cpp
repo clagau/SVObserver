@@ -26,30 +26,30 @@ static char THIS_FILE[] = __FILE__;
 
 HINSTANCE SvStl::MessageContainer::m_MessageDll( nullptr );
 
-constexpr char* SvEventSource = _T("SVException");
-constexpr char* SvSecuritySource =  _T("SVSecurity");
-constexpr char* SvAccessSource =  _T("SVAccess");
+constexpr const char* SvEventSource = _T("SVException");
+constexpr const char* SvSecuritySource =  _T("SVSecurity");
+constexpr const char* SvAccessSource =  _T("SVAccess");
 
-constexpr char* c_ShowDisplay = _T("g_ShowDisplay");
-constexpr char* c_Notify = _T("g_Notify");
+constexpr const char* c_ShowDisplay = _T("g_ShowDisplay");
+constexpr const char* c_Notify = _T("g_Notify");
 
-constexpr char* DetailsToken = _T("#Details#");
-constexpr char* DebugLogFormat = _T( "Exception: ErrorCode: %d\nMessage: %s\n" );
-constexpr char* RegPathEventLog = _T("HKEY_LOCAL_MACHINE\\System\\CurrentControlSet\\Services\\EventLog\\Application\\");
-constexpr char* EventMsgFile = _T( "EventMessageFile" );
-constexpr char* SourceCategoryEventFormat = _T("Source: %s\r\nCategory: %s\r\nEventID: %d\r\n");
-constexpr char* ErrorLoadingDll = _T("SVException\r\nSVMessage.dll could not be loaded!\r\nError: 0x%X");
-constexpr char* DefaultEventFormat = _T("Source File: %s [%d] (%s)\r\nProgramCode: %d [0X%08X]\r\nCompiled: %s %s\n");
+constexpr const char* DetailsToken = _T("#Details#");
+constexpr const char* DebugLogFormat = _T( "Exception: ErrorCode: %d\nMessage: %s\n" );
+constexpr const char* RegPathEventLog = _T("HKEY_LOCAL_MACHINE\\System\\CurrentControlSet\\Services\\EventLog\\Application\\");
+constexpr const char* EventMsgFile = _T( "EventMessageFile" );
+constexpr const char* SourceCategoryEventFormat = _T("Source: %s\r\nCategory: %s\r\nEventID: %d\r\n");
+constexpr const char* ErrorLoadingDll = _T("SVException\r\nSVMessage.dll could not be loaded!\r\nError: 0x%X");
+constexpr const char* DefaultEventFormat = _T("Source File: %s [%d] (%s)\r\nProgramCode: %d [0X%08X]\r\nCompiled: %s %s\n");
 
 constexpr int SubstituteStringNr = 9;
 
 constexpr UINT CategoryNr = 31;
 constexpr UINT CategoryBase = FAC_SVProtoBuf;
-constexpr char* const CategoryUnknown = _T("Unknown");
-constexpr char* const CategoryNone = _T("None");
-constexpr char* const CategorySystem = _T("System");
-constexpr char* const CategoryApplication = _T("Application");
-constexpr char* const TaskCategory[CategoryNr]= { 
+constexpr const char* const CategoryUnknown = _T("Unknown");
+constexpr const char* const CategoryNone = _T("None");
+constexpr const char* const CategorySystem = _T("System");
+constexpr const char* const CategoryApplication = _T("Application");
+constexpr const char* const TaskCategory[CategoryNr]= { 
 	_T("SVProtoBuf"),
 	_T("SVGateway"),  
 	_T("TriggerRecordController"), 

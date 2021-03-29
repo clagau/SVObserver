@@ -71,7 +71,7 @@ private:
 			}
 			
 			//Add the amount of Memory even if you are over the limit.  The Archive Tool Dialog will handle negative memory properly
-			SVMemoryPoolEntryMap::iterator iter = m_mapEntries.find(owner);
+			typename SVMemoryPoolEntryMap::iterator iter = m_mapEntries.find(owner);
 			if ( iter == m_mapEntries.end() )
 			{
 				SVSingleLock lock( m_critsec );
@@ -87,7 +87,7 @@ private:
 		{
 			HRESULT hr = S_FALSE;
 			
-			SVMemoryPoolEntryMap::iterator iter = m_mapEntries.find(owner);
+			typename SVMemoryPoolEntryMap::iterator iter = m_mapEntries.find(owner);
 			if ( iter != m_mapEntries.end() )
 			{
 				::InterlockedExchangeAdd64( const_cast <PLONGLONG> (&m_lUsed), -iter->second.lSize );
@@ -112,7 +112,7 @@ private:
 		{
 			HRESULT hr = S_FALSE;
 			
-			SVMemoryPoolEntryMap::iterator iter = m_mapEntries.find(owner);
+			typename SVMemoryPoolEntryMap::iterator iter = m_mapEntries.find(owner);
 			if ( iter != m_mapEntries.end() )
 			{
 				if( lSizeInBytes >= iter->second.lSize )

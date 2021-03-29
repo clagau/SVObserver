@@ -16,7 +16,7 @@
 #include "SVTriggerConstants.h"
 #include "SVTriggerInfoStruct.h"
 #include "SVIOLibrary/SVIOTriggerLoadLibraryClass.h"
-#include "Triggering/SVTriggerClass.h"
+#include "SVTriggerClass.h"
 #pragma endregion Includes
 
 namespace SvTrig

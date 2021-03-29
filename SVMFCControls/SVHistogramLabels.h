@@ -58,76 +58,77 @@ namespace SvMc
 		};
 	}
 
+	typedef std::function<double(double)> Func;
+
 	template<label::position Anchor>
 	struct TheAnchor
 	{
-		typedef histogram::Func Func;
-		void AnchorUpdate(const CRect & rect, const Func & func);
+		void AnchorUpdate(const CRect& rRect, Func func);
 	protected:
 		CPoint  m_anchor;
 	};
 
 	template<>
-	inline void TheAnchor<label::top>::AnchorUpdate(const CRect & rect, const Func & )
+	inline void TheAnchor<label::top>::AnchorUpdate(const CRect& rRect, Func)
 	{
-		m_anchor.x = rect.CenterPoint().x;
-		m_anchor.y = rect.top - 2;
+		m_anchor.x = rRect.CenterPoint().x;
+		m_anchor.y = rRect.top - 2;
 	}
 
 	template<>
-	inline void TheAnchor<label::leftTop>::AnchorUpdate(const CRect & rect, const Func & )
+	inline void TheAnchor<label::leftTop>::AnchorUpdate(const CRect& rRect, Func)
 	{
-		m_anchor.x = rect.left - 2;
-		m_anchor.y = rect.top;
+		m_anchor.x = rRect.left - 2;
+		m_anchor.y = rRect.top;
 	}
 
 	template<>
-	inline void TheAnchor<label::leftUpper>::AnchorUpdate(const CRect & rect, const Func & func)
+	inline void TheAnchor<label::leftUpper>::AnchorUpdate(const CRect& rRect, Func func)
 	{
-		m_anchor.x = rect.left - 2;
-		m_anchor.y = rect.bottom - static_cast<int>(rect.Height()*func(75.0) / func(100.0));
+		m_anchor.x = rRect.left - 2;
+		m_anchor.y = rRect.bottom - static_cast<int>(rRect.Height()*func(75.0) / func(100.0));
 	}
 
 	template<>
-	inline void TheAnchor<label::leftCenter>::AnchorUpdate(const CRect & rect, const Func & func)
+	inline void TheAnchor<label::leftCenter>::AnchorUpdate(const CRect& rRect, Func func)
 	{
-		m_anchor.x = rect.left - 2;
-		m_anchor.y = rect.bottom - static_cast<int>(rect.Height()*func(50.0) / func(100.0));
+		m_anchor.x = rRect.left - 2;
+		m_anchor.y = rRect.bottom - static_cast<int>(rRect.Height()*func(50.0) / func(100.0));
 	}
 
 	template<>
-	inline void TheAnchor<label::leftLower>::AnchorUpdate(const CRect & rect, const Func & func)
+	inline void TheAnchor<label::leftLower>::AnchorUpdate(const CRect& rRect, Func func)
 	{
-		m_anchor.x = rect.left - 2;
-		m_anchor.y = rect.bottom - static_cast<int>(rect.Height()*func(25.0) / func(100.0));
+		m_anchor.x = rRect.left - 2;
+		m_anchor.y = rRect.bottom - static_cast<int>(rRect.Height()*func(25.0) / func(100.0));
 	}
 
 	template<>
-	inline void TheAnchor<label::leftBottom>::AnchorUpdate(const CRect & rect, const Func & )
+	inline void TheAnchor<label::leftBottom>::AnchorUpdate(const CRect& rRect, Func)
 	{
-		m_anchor.x = rect.left - 2;
-		m_anchor.y = rect.bottom;
+		m_anchor.x = rRect.left - 2;
+		m_anchor.y = rRect.bottom;
 	}
 
 	template<>
-	inline void TheAnchor<label::bottomLeft>::AnchorUpdate(const CRect & rect, const Func & )
+	inline void TheAnchor<label::bottomLeft>::AnchorUpdate(const CRect& rRect, Func)
 	{
-		m_anchor.x = rect.left;
-		m_anchor.y = rect.bottom + 2;
+		m_anchor.x = rRect.left;
+		m_anchor.y = rRect.bottom + 2;
 	}
 
 	template<>
-	inline void TheAnchor<label::bottom>::AnchorUpdate(const CRect & rect, const Func & )
+	inline void TheAnchor<label::bottom>::AnchorUpdate(const CRect& rRect, Func)
 	{
-		m_anchor.x = rect.CenterPoint().x;
-		m_anchor.y = rect.bottom + 2;
+		m_anchor.x = rRect.CenterPoint().x;
+		m_anchor.y = rRect.bottom + 2;
 	}
 
 	template<>
-	inline void TheAnchor<label::bottomRight>::AnchorUpdate(const CRect & rect, const Func& )
+	inline void TheAnchor<label::bottomRight>::AnchorUpdate(const CRect& rRect, Func)
 	{
-		m_anchor.x = rect.right;
-		m_anchor.y = rect.bottom + 2;
+		m_anchor.x = rRect.right;
+		m_anchor.y = rRect.bottom + 2;
 	}
 
 	template<label::position Anchor>
@@ -230,12 +231,12 @@ namespace SvMc
 
 		void UpdateRect(const CSize & sz)
 		{
-			RectUpdate(m_anchor, sz);
+			this->RectUpdate(this->m_anchor, sz);
 		}
 
-		void UpdateAnchor(const CRect & rect, const Func & func)
+		void UpdateAnchor(const CRect& rRect, Func func)
 		{
-			AnchorUpdate(rect, func);
+			this->AnchorUpdate(rRect, func);
 			m_changed = true;
 		}
 
@@ -243,13 +244,13 @@ namespace SvMc
 		{
 			if (m_changed)
 			{
-				Erase(dc, m_oldtxt, m_rect);
+				this->Erase(dc, m_oldtxt, this->m_rect);
 			}
 			if (m_text.GetLength())
 			{
 				dc.SetBkMode(mode);
 				UpdateRect(dc.GetOutputTextExtent(m_text));
-				dc.ExtTextOut(m_rect.left, m_rect.top, 0, nullptr, m_text, nullptr);
+				dc.ExtTextOut(this->m_rect.left, this->m_rect.top, 0, nullptr, m_text, nullptr);
 				m_oldtxt = m_text;
 				m_changed = false;
 			}
@@ -270,8 +271,8 @@ namespace SvMc
 		{
 			m_text = "";
 			m_changed = false;
-			m_anchor = CPoint(0, 0);
-			m_rect = CRect(0, 0, 0, 0);
+			this->m_anchor = CPoint(0, 0);
+			this->m_rect = CRect(0, 0, 0, 0);
 		}
 
 	private:
@@ -283,13 +284,12 @@ namespace SvMc
 	template<typename LabelType, typename Tail>
 	struct Labels : public LabelType, public Tail
 	{
-		typedef LabelType LabelBase;
 		enum { index = Tail::index + 1, flag = LabelType::pos, mode = LabelType::mode };
 
 		void DrawLabels(CPaintDC & dc, CWnd * wnd)
 		{
 			int tmp_mode = dc.SetBkMode(mode);
-			static_cast<LabelBase &>(*this).Draw(dc, wnd);
+			static_cast<LabelType&> (*this).Draw(dc, wnd);
 			static_cast<Tail &>(*this).DrawLabels(dc, wnd);
 			dc.SetBkMode(tmp_mode);
 		}
@@ -300,7 +300,7 @@ namespace SvMc
 			if (flags)
 			{
 				if (flags & flag)
-					static_cast<LabelBase &>(*this).SetText(i);
+					static_cast<LabelType&>(*this).SetText(i);
 				static_cast<Tail &>(*this).SetLabelText(i, flags & ~flag);
 			}
 		}
@@ -310,7 +310,7 @@ namespace SvMc
 			if (flags)
 			{
 				if (flags & flag)
-					static_cast<LabelBase &>(*this).SetText(str);
+					static_cast<LabelType&>(*this).SetText(str);
 				static_cast<Tail &>(*this).SetLabelText(str, flags & ~flag);
 			}
 
@@ -318,14 +318,14 @@ namespace SvMc
 
 		void UpdateAnchors(const CRect & rect, const histogram::Func & func)
 		{
-			static_cast<LabelBase &>(*this).UpdateAnchor(rect, func);
+			static_cast<LabelType&>(*this).UpdateAnchor(rect, func);
 			static_cast<Tail &>(*this).UpdateAnchors(rect, func);
 		}
 
 		const CRect & GetLabelRect(int flags) const
 		{
 			if (flags & flag)
-				return static_cast<const LabelBase &>(*this).GetRect();
+				return static_cast<const LabelType&>(*this).GetRect();
 			else
 				return static_cast<const Tail &>(*this).GetLabelRect(flags);
 		}

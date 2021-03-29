@@ -31,7 +31,6 @@ class SVResult;
 }
 
 class SVToolSet;
-enum SVInspectionStateEnum;
 
 class SVResultList
 {

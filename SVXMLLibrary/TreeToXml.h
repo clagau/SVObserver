@@ -44,7 +44,7 @@ public:
 		if (rTree.hasLeaves(TreeNodeHandle))
 		{
 
-			SVT_TREE::SVLeafHandle pLeaf;
+			typename SVT_TREE::SVLeafHandle pLeaf;
 			pLeaf = rTree.getFirstLeaf(TreeNodeHandle);
 			while (rTree.isValidLeaf(TreeNodeHandle, pLeaf))
 			{
@@ -69,8 +69,8 @@ public:
 
 		if (rTree.hasBranches(TreeNodeHandle))
 		{
-			SVT_TREE::SVBranchHandle Child(nullptr);
-			SVT_TREE::SVBranchHandle Parent(TreeNodeHandle);
+			typename SVT_TREE::SVBranchHandle Child(nullptr);
+			typename SVT_TREE::SVBranchHandle Parent(TreeNodeHandle);
 			Child = rTree.getFirstBranch(TreeNodeHandle);
 			while (nullptr != Child)
 			{

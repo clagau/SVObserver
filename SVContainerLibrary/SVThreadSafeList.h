@@ -18,7 +18,7 @@ class SVThreadSafeList
 {
 #pragma region Public
 public:
-	typedef std::deque<type> Container;
+	typedef std::deque<typename type> Container;
 	typedef typename Container::size_type size_type;
 
 	SVThreadSafeList() {}
@@ -84,7 +84,7 @@ public:
 		Concurrency::reader_writer_lock::scoped_lock lock(m_dataLock);  // writer lock
 		if (0 <= nIndex && m_list.size() > nIndex)
 		{
-			Container::const_iterator it = m_list.begin() + nIndex;
+			auto it = m_list.begin() + nIndex;
 			m_list.erase(it);
 		}
 	}

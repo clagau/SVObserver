@@ -9,7 +9,7 @@
 #pragma once
 
 #pragma region Includes
-#include <SVProtoBuf/Permissions.h>
+#include "SVProtoBuf/Permissions.h"
 #pragma endregion Includes
 
 namespace SvAuth

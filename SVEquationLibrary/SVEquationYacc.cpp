@@ -54,7 +54,7 @@ SVEquationYaccClass::~SVEquationYaccClass()
 {
 }
 
-int SVEquationYaccClass::yyerror(char*) 
+int SVEquationYaccClass::yyerror(const char*) 
 { 
 	yacc_err = 1;
 	current_recursive_depth = 0;	// reset this var on error

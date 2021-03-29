@@ -24,7 +24,7 @@ namespace SvUl
 	uint32_t FindObjectId(const T& rList, const std::string& rName)
 	{
 		uint32_t retID = SvDef::InvalidObjectId;
-		T::const_iterator it = find_if(rList.begin(), rList.end(), [rName](const auto item)->bool
+		typename T::const_iterator it = find_if(rList.begin(), rList.end(), [rName](const auto item)->bool
 		{
 			return rName == item.first;
 		});

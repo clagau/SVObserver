@@ -25,7 +25,7 @@ namespace SvCmd
 
 
 	HRESULT InspectionCommands(uint32_t inspectionID, const SvPb::InspectionCmdRequest& rRequest, SvPb::InspectionCmdResponse* pResp
-		,ThreadPref t /*= ThreadPref::default */ )
+		,ThreadPref t /*= ThreadPref::threadDefault */ )
 	{
 		using InspectionTask = std::packaged_task<SvPb::InspectionCmdResponse()>;
 		SvPb::InspectionCmdResponse response;
@@ -45,11 +45,11 @@ namespace SvCmd
 			CurrentThread = (std::get<ThFkt>(it->second))();
 			CurrentTimout = (std::get<TiFkt>(it->second))();
 
-			if (t != ThreadPref::default)
+			if (t != ThreadPref::threadDefault)
 			{
 				CurrentThread = t;
 			}
-			if (CurrentThread == ThreadPref::default)
+			if (CurrentThread == ThreadPref::threadDefault)
 			{
 				CurrentThread = ThreadPref::inspection;
 			}

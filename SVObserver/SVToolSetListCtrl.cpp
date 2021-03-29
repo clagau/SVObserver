@@ -771,7 +771,7 @@ void SVToolSetListCtrl::CollapseItem(int item)
 	lvItem.iSubItem = 0;
 
 	GetItem(&lvItem);
-	std::string Name = GetItemText(item, 0);
+	std::string Name = GetItemText(item, 0).GetString();
 	// Send to View...
 	ToolSetView* pView = GetView();
 	if (pView)
@@ -788,7 +788,7 @@ void SVToolSetListCtrl::ExpandItem(int item)
 	lvItem.iSubItem = 0;
 
 	GetItem(&lvItem);
-	std::string Name = GetItemText(item, 0);
+	std::string Name = GetItemText(item, 0).GetString();
 	// Send to View...
 	ToolSetView* pView = GetView();
 	if (pView)

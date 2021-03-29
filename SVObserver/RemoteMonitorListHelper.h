@@ -20,7 +20,7 @@
 class RemoteMonitorListHelper
 {
 public:
-	static SvSml::MonitorListCpyPointer  RemoteMonitorListHelper::CreateMLcopy(const RemoteMonitorNamedList& remoteMonitorNamedlist);
+	static SvSml::MonitorListCpyPointer  CreateMLcopy(const RemoteMonitorNamedList& remoteMonitorNamedlist);
 
 	/// returns a monitorobject for the objectname 
 	static MonitoredObject GetMonitoredObjectFromName(const std::string& name);

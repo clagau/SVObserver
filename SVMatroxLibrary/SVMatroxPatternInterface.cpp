@@ -197,22 +197,13 @@ long SVMatroxPatternInterface::Convert2MatroxType(SVPatternSearchParameterTypeEn
 long SVMatroxPatternInterface::Convert2MatroxType(SVPatternResultEnum eType)
 {
 	long l_lMatroxType = M_UNINITIALIZED;
-	switch (eType & SVPatBaseType)
+	SVPatternResultEnum filteredType = static_cast<SVPatternResultEnum> (static_cast<int> (eType) & static_cast<int> (SVPatternTypeEnum::SVPatBaseType));
+	switch (filteredType)
 	{
 		// Results
-		case SVCountList:
-		{
-			l_lMatroxType = M_COUNT_LIST;
-			break;
-		}
 		case SVEventList:
 		{
 			l_lMatroxType = M_EVENT_LIST;
-			break;
-		}
-		case SVExtremeList:
-		{
-			l_lMatroxType = M_EXTREME_LIST;
 			break;
 		}
 		case SVHistList:

@@ -218,7 +218,7 @@ void SVOProPosQueDlg::OnBtnAddVt()
         {
             if (!Dlg.m_sSelectItemListValue.IsEmpty())
             {
-                std::string NewTrigger = Dlg.m_sSelectItemListValue;
+                std::string NewTrigger = Dlg.m_sSelectItemListValue.GetString();
                 m_ctlVTEdit.SetWindowText( NewTrigger.c_str() );
                 pPPQObj->DetachTriggerFromPPQ();
                 pPPQObj->AttachTriggerToPPQ( NewTrigger.c_str() );

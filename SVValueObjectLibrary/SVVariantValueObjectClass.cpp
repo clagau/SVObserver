@@ -541,9 +541,9 @@ void SVVariantValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter) const
 
 		if (VT_BSTR == Value.vt)
 		{
-			std::string temp = static_cast<_bstr_t>(Value);
+			std::string temp = SvUl::createStdString(Value);
 			SvUl::AddEscapeSpecialCharacters(temp, true);
-			Value = static_cast<_bstr_t>(temp.c_str());
+			Value.SetString(temp.c_str());
 		}
 			
 		// The parser does not like reading in empty safe array.

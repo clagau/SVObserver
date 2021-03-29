@@ -206,10 +206,10 @@ void CPropTreeTestDlg::SetupTrigger()
 	}
 }
 
-afx_msg void CPropTreeTestDlg::OnItemChanged( NMHDR* p_NotifyStruct, LRESULT* p_lResult )
+afx_msg void CPropTreeTestDlg::OnItemChanged( NMHDR* p_NotifyStruct, LRESULT* pResult )
 {
 	LPNMPROPTREE l_pNMPropTree = reinterpret_cast< LPNMPROPTREE >( p_NotifyStruct );
-	p_lResult = S_OK;
+	*pResult = S_OK;
 
 	if ( l_pNMPropTree->pItem )
 	{

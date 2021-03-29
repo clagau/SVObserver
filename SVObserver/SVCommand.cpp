@@ -2035,7 +2035,7 @@ STDMETHODIMP SVCommand::SVSetInputs(SAFEARRAY* psaNames, SAFEARRAY* psaValues, S
 		//Values must be in array format
 		Values.Add(_variant_t(bstrValue));
 		Parameter.m_StorageType = SVVisionProcessor::SVStorageValue;
-		Parameter.m_Variant = Values;
+		Parameter.m_Variant = Values.operator _variant_t();
 		ParameterObjects[std::string(Name)] = Parameter;
 	}// end for	
 
@@ -2227,7 +2227,7 @@ HRESULT SVCommand::SVSetToolParameterList(SAFEARRAY* psaNames, SAFEARRAY* psaVal
 		//Values must be in array format
 		Values.Add(_variant_t(bstrValue));
 		Parameter.m_StorageType = SVVisionProcessor::SVStorageValue;
-		Parameter.m_Variant = Values;
+		Parameter.m_Variant = Values.operator _variant_t();
 		ParameterObjects[std::string(Name)] = Parameter;
 	}// end for ( long l = 0; l < lNumberOfElements; l++ )
 	result = Status;

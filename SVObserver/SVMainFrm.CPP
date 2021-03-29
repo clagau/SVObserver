@@ -54,8 +54,8 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-constexpr char* cMatroxNoLicense = _T("No Matrox License");
-constexpr char* cGigeNoLicense = _T("No GigE License");
+constexpr const char* cMatroxNoLicense = _T("No Matrox License");
+constexpr const char* cGigeNoLicense = _T("No GigE License");
 #pragma endregion Declarations
 
 IMPLEMENT_DYNAMIC(SVMainFrame, CMDIFrameWnd)

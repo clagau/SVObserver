@@ -27,9 +27,9 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-constexpr char* scAUTO = _T("Auto");
-constexpr char* scENABLE = _T("Enable");
-constexpr char* scDISABLE = _T("Disable");
+constexpr const char* scAUTO = _T("Auto");
+constexpr const char* scENABLE = _T("Enable");
+constexpr const char* scDISABLE = _T("Disable");
 
 IMPLEMENT_DYNCREATE(SVPatAdvancedPageClass, CPropertyPage)
 
@@ -135,7 +135,7 @@ void SVPatAdvancedPageClass::InitializeControlValues()
 	m_PreliminaryAcceptanceThresholdSliderCtrl.SetRange(1, 100);
 	m_PreliminaryAcceptanceThresholdSliderCtrl.SetTicFreq(10);
 
-	if (m_dPreliminaryAcceptanceThreshold != SVValueDefault)
+	if (static_cast<SVMatroxBufferValues>(m_dPreliminaryAcceptanceThreshold) != SVValueDefault)
 	{
 		m_PreliminaryAcceptanceThresholdSliderCtrl.SetPos(static_cast<int>(m_dPreliminaryAcceptanceThreshold));
 	}
@@ -183,13 +183,13 @@ void SVPatAdvancedPageClass::SetInitialCheckBoxesState()
 	bool bChecked = (m_lAdditionalCandidates == SVValueDefault);
 	m_AdditionalCandidatesAutoCheckBox.SetCheck((bChecked) ? BST_CHECKED : BST_UNCHECKED);
 
-	bChecked = (m_dCandidateSpacingXMin == SVValueDefault);
+	bChecked = (static_cast<SVMatroxBufferValues>(m_dCandidateSpacingXMin) == SVValueDefault);
 	m_CandidateSpacingXMinAutoCheckBox.SetCheck((bChecked) ? BST_CHECKED : BST_UNCHECKED);
 
-	bChecked = (m_dCandidateSpacingYMin == SVValueDefault);
+	bChecked = (static_cast<SVMatroxBufferValues>(m_dCandidateSpacingYMin) == SVValueDefault);
 	m_CandidateSpacingYMinAutoCheckBox.SetCheck((bChecked) ? BST_CHECKED : BST_UNCHECKED);
 
-	bChecked = (m_dPreliminaryAcceptanceThreshold == SVValueDefault);
+	bChecked = (static_cast<SVMatroxBufferValues>(m_dPreliminaryAcceptanceThreshold) == SVValueDefault);
 	m_PreliminaryAcceptanceThresholdAutoCheckBox.SetCheck((bChecked) ? BST_CHECKED : BST_UNCHECKED);
 }
 
@@ -208,7 +208,7 @@ void SVPatAdvancedPageClass::UpdateAdditionalCandidatesString()
 
 void SVPatAdvancedPageClass::UpdateCandidateSpacingXMinString()
 {
-	bool bEnable = (m_dCandidateSpacingXMin != SVValueDefault);
+	bool bEnable = (static_cast<SVMatroxBufferValues>(m_dCandidateSpacingXMin) != SVValueDefault);
 	if (bEnable)
 	{
 		m_CandidateSpacingXMinStr.Format(_T("%4.1lf"), m_dCandidateSpacingXMin);
@@ -221,7 +221,7 @@ void SVPatAdvancedPageClass::UpdateCandidateSpacingXMinString()
 
 void SVPatAdvancedPageClass::UpdateCandidateSpacingYMinString()
 {
-	bool bEnable = (m_dCandidateSpacingYMin != SVValueDefault);
+	bool bEnable = (static_cast<SVMatroxBufferValues>(m_dCandidateSpacingYMin) != SVValueDefault);
 	if (bEnable)
 	{
 		m_CandidateSpacingYMinStr.Format(_T("%4.1lf"), m_dCandidateSpacingYMin);
@@ -234,7 +234,7 @@ void SVPatAdvancedPageClass::UpdateCandidateSpacingYMinString()
 
 void SVPatAdvancedPageClass::UpdatePreliminaryAcceptanceThresholdString()
 {
-	bool bEnable = (m_dPreliminaryAcceptanceThreshold != SVValueDefault);
+	bool bEnable = (static_cast<SVMatroxBufferValues>(m_dPreliminaryAcceptanceThreshold) != SVValueDefault);
 	if (bEnable)
 	{
 		m_PreliminaryAcceptanceThresholdStr.Format(_T("%d"), static_cast<long>(m_dPreliminaryAcceptanceThreshold));
@@ -247,26 +247,26 @@ void SVPatAdvancedPageClass::UpdatePreliminaryAcceptanceThresholdString()
 
 void SVPatAdvancedPageClass::EnablePreliminaryAcceptanceThresholdEdit()
 {
-	bool bEnable = (m_dPreliminaryAcceptanceThreshold != SVValueDefault);
+	bool bEnable = (static_cast<SVMatroxBufferValues>(m_dPreliminaryAcceptanceThreshold) != SVValueDefault);
 	m_PreliminaryAcceptanceThresholdSliderCtrl.EnableWindow(bEnable);
 	m_AcceptanceThresholdEditCtrl.EnableWindow(bEnable);
 }
 
 void SVPatAdvancedPageClass::EnableAdditionalCandidatesEdit()
 {
-	bool bEnable = (m_lAdditionalCandidates != SVValueDefault);
+	bool bEnable = (static_cast<SVMatroxBufferValues>(m_lAdditionalCandidates) != SVValueDefault);
 	m_AdditionalCandidatesEditCtrl.EnableWindow(bEnable);
 }
 
 void SVPatAdvancedPageClass::EnableCandidateSpacingXMinEdit()
 {
-	bool bEnable = (m_dCandidateSpacingXMin != SVValueDefault);
+	bool bEnable = (static_cast<SVMatroxBufferValues>(m_dCandidateSpacingXMin) != SVValueDefault);
 	m_CandidateSpacingXMinEditCtrl.EnableWindow(bEnable);
 }
 
 void SVPatAdvancedPageClass::EnableCandidateSpacingYMinEdit()
 {
-	bool bEnable = (m_dCandidateSpacingYMin != SVValueDefault);
+	bool bEnable = (static_cast<SVMatroxBufferValues>(m_dCandidateSpacingYMin) != SVValueDefault);
 	m_CandidateSpacingYMinEditCtrl.EnableWindow(bEnable);
 }
 
@@ -316,7 +316,7 @@ void SVPatAdvancedPageClass::OnAcceptanceThresholdAutoClicked()
 	UpdatePreliminaryAcceptanceThresholdString();
 	EnablePreliminaryAcceptanceThresholdEdit();
 
-	if (m_dPreliminaryAcceptanceThreshold != SVValueDefault)
+	if (static_cast<SVMatroxBufferValues>(m_dPreliminaryAcceptanceThreshold) != SVValueDefault)
 	{
 		SetSliderPosition(IDC_PAT_ACCEPTANCE_THRESHOLD_VALUE);
 	}

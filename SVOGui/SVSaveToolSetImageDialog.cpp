@@ -95,7 +95,7 @@ namespace SvOg
 			{
 				SVFileNameClass	svfncImageFile;
 			
-				std::string Path = AfxGetApp()->GetProfileString(	_T("Settings"), _T("ImagesFilePath"), _T("C:\\Images"));	// Default
+				std::string Path = AfxGetApp()->GetProfileString(	_T("Settings"), _T("ImagesFilePath"), _T("C:\\Images")).GetString();	// Default
 			
 				svfncImageFile.SetFileType(SV_IMAGE_SOURCE_FILE_TYPE);
 				svfncImageFile.SetPathName( Path.c_str() );

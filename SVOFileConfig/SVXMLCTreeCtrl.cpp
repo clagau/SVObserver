@@ -130,7 +130,7 @@ SVXMLCTreeCtrl::SVBranchHandle SVXMLCTreeCtrl::findBranch( const SVBranchHandle 
 
 	while( nullptr == pResult && nullptr != pBranch )
 	{
-		std::string BranchName = m_rTree.GetItemText( pBranch );
+		std::string BranchName = m_rTree.GetItemText( pBranch ).GetString();
 
 		if( 0 == m_rTree.GetItemData( pBranch ) && Name == BranchName )
 		{
@@ -275,7 +275,7 @@ SVXMLCTreeCtrl::SVLeafHandle SVXMLCTreeCtrl::findLeaf( const SVBranchHandle pPar
 
 	while( nullptr == pResult && nullptr != pBranch )
 	{
-		std::string BranchName = m_rTree.GetItemText( pBranch );
+		std::string BranchName = m_rTree.GetItemText( pBranch ).GetString();
 
 		if( m_rTree.GetItemData( pBranch ) && Name == BranchName )
 		{

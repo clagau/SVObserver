@@ -482,7 +482,7 @@ BOOL SVRegressionFileSelectSheet::OnInitDialog()
 			pPage = dynamic_cast<SVRegressionFileSelectDlg*>(GetPage(l_iCount));
 			if (pPage)
 			{
-				std::string TmpName = pPage->GetPageName();
+				std::string TmpName = pPage->GetPageName().GetString();
 				if (pPage->isCamera())
 				{
 					auto foundIter = std::find_if(m_pRegressionCameraList->begin(), m_pRegressionCameraList->end(), [TmpName](const auto& rRegStruct)->bool

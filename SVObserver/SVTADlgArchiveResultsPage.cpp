@@ -89,7 +89,7 @@ bool SVTADlgArchiveResultsPage::QueryAllowExit()
 	CString Text;
 	// Update the file path to the archive file for associated archive tool.
 	m_ArchiveFileName.GetWindowText( Text );
-	std::string ArchiveFilepath = Text;
+	std::string ArchiveFilepath = Text.GetString();
 
 	//check for valid drive for text archive
 	SvTo::ArchiveToolHelper athArchivePathAndName;
@@ -333,7 +333,7 @@ void SVTADlgArchiveResultsPage::OnBrowse()
 	//get current path
 	CString Text;
 	m_ArchiveFileName.GetWindowText( Text );
-	std::string ArchiveFullName = Text;
+	std::string ArchiveFullName = Text.GetString();
 
 	SVCheckPathDir( ArchiveFullName.c_str(), TRUE );
 

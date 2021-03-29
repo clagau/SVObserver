@@ -58,49 +58,49 @@
 
 constexpr int GrayScaleBitDepth = 8;
 
-constexpr char*  c_Color = _T(" Color");
+constexpr const char*  c_Color = _T(" Color");
 
 // Defines for Camera File extensions
-constexpr char*  cGigeCameraFileDefExt = _T(".ogc");
+constexpr const char*  cGigeCameraFileDefExt = _T(".ogc");
 
-constexpr char* SVIM_BOARD_FILEACQUISITION_STRING     ( _T("File") );
-constexpr char* SVIM_BOARD_MATROX_GIGE	( _T("Matrox_GIGE") );
+constexpr const char* SVIM_BOARD_FILEACQUISITION_STRING     ( _T("File") );
+constexpr const char* SVIM_BOARD_MATROX_GIGE	( _T("Matrox_GIGE") );
 
-constexpr char* cSvimDigName    ( _T(".Dig_") );
+constexpr const char* cSvimDigName    ( _T(".Dig_") );
 
-constexpr char* ERR_STR                 ( _T( "**ERROR**   " ) );
-constexpr char* WARNING_STR             ( _T( "**WARNING** " ) );
-constexpr char* CAMERA_INVALID_FILES    ( _T( "-Camera files are invalid" ) );
-constexpr char* CAMERA_NONE_DEFINED     ( _T( "-No cameras defined" ) );
-constexpr char* TRIGGER_NONE_DEFINED    ( _T( "-No trigger defined" ) );
-constexpr char* INSPECT_NONE_DEFINED    ( _T( "-No inspection defined" ) );
-constexpr char* PPQ_NONE_DEFINED        ( _T( "-No PPQ defined" ) );
-constexpr char* PPQ_NO_TRIGGER          ( _T( "-No Trigger attached to PPQ" ) );
-constexpr char* PPQ_NO_CAMERA           ( _T( "-No Camera attached to PPQ" ) );
-constexpr char* PPQ_NO_INSPECT          ( _T( "-No Inspection attached to PPQ" ) );
-constexpr char* CONFIG_NAME_ERR         ( _T( " No Configuration name" ) );
-constexpr char* INVALID_CAMERA          ( _T( "-Camera is invalid for current product" ) );
-constexpr char* INVALID_TRIGGER         ( _T( "-Trigger is invalid for current product" ) );
-constexpr char* INSPECTION_ERROR        ( _T( "-Inspection is not attached to a PPQ" ) );
-constexpr char* TOOLSET_IMAGE_ERROR     ( _T( "-Inspection has no Toolset Image" ) );
-constexpr char* PPQ_PROP_SRC_IMG_ERROR  ( _T( "- Property -'Maintain souce image' set to TRUE, PPQ length > ") );
-constexpr char* PPQ_CONDITIONAL_OUTPUT_INVALID ( _T( "-Conditional Output for PPQ is not valid" ) );
-constexpr char* MESSAGE_UNSUPPORTED_CAM_FILE ( _T("The camera file you have selected is not an SVResearch supported file.") );
-constexpr char* MESSAGE_INCORRECT_CAM_FILE   ( _T("The selected camera file does not match the physical camera.") );
-constexpr char* MESSAGE_NOT_COLOR_CAM_FILE   ( _T("The selected camera file is not a color camera file.") );
-constexpr char* MESSAGE_NOT_COLOR_CAM        ( _T("The physical camera is not a color camera.") );
-constexpr char* MESSAGE_NOT_MONO_CAM_FILE    (_T("The selected camera file is not a mono camera file."));
-constexpr char* MESSAGE_ONE_INVERT_CONTROL   ( _T("There is only one Invert control on a SVIM X-Series for all triggers and strobes.") );
-constexpr char* MESSAGE_SOFTWARE_TRIGGER_NOT_ALLOWED ( _T("The camera does not support Software Triggering.") );
-constexpr char* MESSAGE_CAMERA_TRIGGER_NOT_ALLOWED (_T("Camera trigger is not allowed PPQ Length <= 2."));
-constexpr char* MESSAGE_FILE_ACQUISITION_NOT_ALLOWED ( _T("File Acquisition is not allowed.") );
-constexpr char* MESSAGE_FILE_ACQUISITION_INVALID_FILE ( _T("The Image Filename specified is Invalid.") );
-constexpr char* MESSAGE_FILE_ACQUISITION_INVALID_DIRECTORY ( _T("The Image Directory specified is Invalid.") );
-constexpr char* MESSAGE_FILE_ACQUISITION_MISSING_FILENAME ( _T("The Image Filename must be specified.") );
-constexpr char* MESSAGE_FILE_ACQUISITION_MISSING_DIRECTORY ( _T("The Image Directory must be specified.") );
-constexpr char* MESSAGE_FILE_ACQUISITION_INVALID_IMAGE_SIZE ( _T("The Image Size is Invalid.") );
-constexpr char* MESSAGE_FILE_ACQUISITION_COLOR_MISMATCH ( _T("The bitmap file acquisition color does not match the camera color setting") );
-constexpr char* MESSAGE_INSPECTION_CAMERA_COLOR  ( _T("-The toolset camera image color does not match the inspection color") );
+constexpr const char* ERR_STR                 ( _T( "**ERROR**   " ) );
+constexpr const char* WARNING_STR             ( _T( "**WARNING** " ) );
+constexpr const char* CAMERA_INVALID_FILES    ( _T( "-Camera files are invalid" ) );
+constexpr const char* CAMERA_NONE_DEFINED     ( _T( "-No cameras defined" ) );
+constexpr const char* TRIGGER_NONE_DEFINED    ( _T( "-No trigger defined" ) );
+constexpr const char* INSPECT_NONE_DEFINED    ( _T( "-No inspection defined" ) );
+constexpr const char* PPQ_NONE_DEFINED        ( _T( "-No PPQ defined" ) );
+constexpr const char* PPQ_NO_TRIGGER          ( _T( "-No Trigger attached to PPQ" ) );
+constexpr const char* PPQ_NO_CAMERA           ( _T( "-No Camera attached to PPQ" ) );
+constexpr const char* PPQ_NO_INSPECT          ( _T( "-No Inspection attached to PPQ" ) );
+constexpr const char* CONFIG_NAME_ERR         ( _T( " No Configuration name" ) );
+constexpr const char* INVALID_CAMERA          ( _T( "-Camera is invalid for current product" ) );
+constexpr const char* INVALID_TRIGGER         ( _T( "-Trigger is invalid for current product" ) );
+constexpr const char* INSPECTION_ERROR        ( _T( "-Inspection is not attached to a PPQ" ) );
+constexpr const char* TOOLSET_IMAGE_ERROR     ( _T( "-Inspection has no Toolset Image" ) );
+constexpr const char* PPQ_PROP_SRC_IMG_ERROR  ( _T( "- Property -'Maintain souce image' set to TRUE, PPQ length > ") );
+constexpr const char* PPQ_CONDITIONAL_OUTPUT_INVALID ( _T( "-Conditional Output for PPQ is not valid" ) );
+constexpr const char* MESSAGE_UNSUPPORTED_CAM_FILE ( _T("The camera file you have selected is not an SVResearch supported file.") );
+constexpr const char* MESSAGE_INCORRECT_CAM_FILE   ( _T("The selected camera file does not match the physical camera.") );
+constexpr const char* MESSAGE_NOT_COLOR_CAM_FILE   ( _T("The selected camera file is not a color camera file.") );
+constexpr const char* MESSAGE_NOT_COLOR_CAM        ( _T("The physical camera is not a color camera.") );
+constexpr const char* MESSAGE_NOT_MONO_CAM_FILE    (_T("The selected camera file is not a mono camera file."));
+constexpr const char* MESSAGE_ONE_INVERT_CONTROL   ( _T("There is only one Invert control on a SVIM X-Series for all triggers and strobes.") );
+constexpr const char* MESSAGE_SOFTWARE_TRIGGER_NOT_ALLOWED ( _T("The camera does not support Software Triggering.") );
+constexpr const char* MESSAGE_CAMERA_TRIGGER_NOT_ALLOWED (_T("Camera trigger is not allowed PPQ Length <= 2."));
+constexpr const char* MESSAGE_FILE_ACQUISITION_NOT_ALLOWED ( _T("File Acquisition is not allowed.") );
+constexpr const char* MESSAGE_FILE_ACQUISITION_INVALID_FILE ( _T("The Image Filename specified is Invalid.") );
+constexpr const char* MESSAGE_FILE_ACQUISITION_INVALID_DIRECTORY ( _T("The Image Directory specified is Invalid.") );
+constexpr const char* MESSAGE_FILE_ACQUISITION_MISSING_FILENAME ( _T("The Image Filename must be specified.") );
+constexpr const char* MESSAGE_FILE_ACQUISITION_MISSING_DIRECTORY ( _T("The Image Directory must be specified.") );
+constexpr const char* MESSAGE_FILE_ACQUISITION_INVALID_IMAGE_SIZE ( _T("The Image Size is Invalid.") );
+constexpr const char* MESSAGE_FILE_ACQUISITION_COLOR_MISMATCH ( _T("The bitmap file acquisition color does not match the camera color setting") );
+constexpr const char* MESSAGE_INSPECTION_CAMERA_COLOR  ( _T("-The toolset camera image color does not match the inspection color") );
 
 const SVOConfigAssistantDlg::SVProductStringVector SVOConfigAssistantDlg::m_ProductStringVector
 {

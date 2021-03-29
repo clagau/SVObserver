@@ -169,8 +169,8 @@ HRESULT SVFileAcquisitionDevice::CameraStart(unsigned long cameraIndex)
 			// Check if already Running
 			if (!rCamera.IsRunning())
 			{
-				SVFileCamera::EventHandler startHandler = boost::bind(&SVFileAcquisitionDevice::CameraProcessStartFrame, this, _1);
-				SVFileCamera::EventHandler endHandler = boost::bind(&SVFileAcquisitionDevice::CameraProcessEndFrame, this, _1);
+				SVFileCamera::EventHandler startHandler = boost::bind(&SVFileAcquisitionDevice::CameraProcessStartFrame, this, boost::arg<1>());
+				SVFileCamera::EventHandler endHandler = boost::bind(&SVFileAcquisitionDevice::CameraProcessEndFrame, this, boost::arg<1>());
 
 				result = rCamera.Start(startHandler, endHandler, cameraIndex);
 			}

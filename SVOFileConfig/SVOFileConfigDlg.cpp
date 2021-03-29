@@ -338,7 +338,7 @@ void SVOFileConfigDlg::FixConfiguration()
 
 	while( l_Current != NULL )
 	{
-		std::string l_strName = mTree.GetItemText( l_Current );
+		std::string l_strName = mTree.GetItemText( l_Current ).GetString();
 
 		if( l_strName == _T("IO"))
 		{
@@ -357,7 +357,7 @@ void SVOFileConfigDlg::ReIndexIOEntries(HTREEITEM p_Item)
 	// Find all IOEntries.
 	while( l_Current != NULL )
 	{
-		std::string Name = mTree.GetItemText( l_Current);
+		std::string Name = mTree.GetItemText( l_Current).GetString();
 
 		if( std::string::npos != Name.find( _T("IOEntry") ) )
 		{
@@ -372,7 +372,7 @@ void SVOFileConfigDlg::ReIndexIOEntries(HTREEITEM p_Item)
 	l_Current = mTree.GetChildItem( p_Item);
 	while( l_Current != NULL )
 	{
-		std::string Name = mTree.GetItemText( l_Current);
+		std::string Name = mTree.GetItemText( l_Current).GetString();
 
 		if( Name == _T("NumberOfIOEntries") )
 		{
@@ -395,7 +395,7 @@ void SVOFileConfigDlg::CheckConfiguration()
 
 	while( Current != NULL )
 	{
-		std::string Name = mTree.GetItemText( Current );
+		std::string Name = mTree.GetItemText( Current ).GetString();
 
 		if( Name == _T("IO"))
 		{
@@ -503,7 +503,7 @@ void SVOFileConfigDlg::GetIOChildren(HTREEITEM p_Item)
 	HTREEITEM l_Current = mTree.GetChildItem( p_Item);
 	while( l_Current != NULL )
 	{
-		std::string Name = mTree.GetItemText( l_Current);
+		std::string Name = mTree.GetItemText( l_Current).GetString();
 
 		if( std::string::npos != Name.find( _T("IOEntry") ) )
 		{
@@ -535,7 +535,7 @@ void SVOFileConfigDlg::GetPPQs(HTREEITEM p_Item)
 	HTREEITEM l_Current = mTree.GetChildItem( p_Item);
 	while( l_Current != NULL )
 	{
-		std::string PPQName = mTree.GetItemText( l_Current);
+		std::string PPQName = mTree.GetItemText( l_Current).GetString();
 
 		m_PPQs.push_back( PPQName );
 
@@ -549,7 +549,7 @@ void SVOFileConfigDlg::GetInspections(HTREEITEM p_Item)
 	HTREEITEM l_Current = mTree.GetChildItem( p_Item);
 	while( l_Current != NULL )
 	{
-		std::string Name = mTree.GetItemText( l_Current);
+		std::string Name = mTree.GetItemText( l_Current).GetString();
 		m_Inspections.push_back( Name );
 
 		l_Current = mTree.GetNextSiblingItem(l_Current);

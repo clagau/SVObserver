@@ -9,7 +9,7 @@
 #include "CifxLoadLibrary.h"
 #pragma endregion Includes
 
-constexpr char* cCifxDll = "cifX32dll.dll";
+constexpr const char* cCifxDll = "cifX32dll.dll";
 
 CifxLoadLibrary::~CifxLoadLibrary()
 {

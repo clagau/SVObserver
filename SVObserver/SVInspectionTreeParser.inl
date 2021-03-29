@@ -88,12 +88,12 @@ bool SVInspectionTreeParser< SVTreeType >::GetValues(typename SVTreeType::SVBran
 {
 	bool bRetVal = false;
 
-	SVTreeType::SVBranchHandle hBranch = nullptr;
+	typename SVTreeType::SVBranchHandle hBranch = nullptr;
 	SvXml::SVNavigateTree::GetItemBranch(m_rTree, tag.c_str(), hItem, hBranch);
 	if(nullptr != hBranch)
 	{
 		bRetVal = true;
-		SVTreeType::SVLeafHandle hValue;
+		typename SVTreeType::SVLeafHandle hValue;
 		hValue = m_rTree.getFirstLeaf(hBranch);
 		do
 		{
@@ -199,7 +199,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessChildren(typename SVTreeTyp
 	}
 
 	// iterate thru nodes and process
-	SVTreeType::SVBranchHandle hItem( nullptr );
+	typename SVTreeType::SVBranchHandle hItem( nullptr );
 	hItem = m_rTree.getFirstBranch(hParentItem);
 	do
 	{
@@ -245,7 +245,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessFriends(typename SVTreeType
 	// Destroy Friends
 	SVObjectBuilder::DestroyFriends(ownerID);
 
-	SVTreeType::SVBranchHandle hItem( nullptr );
+	typename SVTreeType::SVBranchHandle hItem( nullptr );
 	hItem = m_rTree.getFirstBranch(hFriends);
 	do
 	{
@@ -302,7 +302,7 @@ template< typename SVTreeType >
 HRESULT SVInspectionTreeParser< SVTreeType >::ProcessEmbeddeds(typename SVTreeType::SVBranchHandle hEmbeddeds, uint32_t ownerID)
 {
 	HRESULT hr = S_OK;
-	SVTreeType::SVBranchHandle hItem( nullptr );
+	typename SVTreeType::SVBranchHandle hItem( nullptr );
 	hItem = m_rTree.getFirstBranch(hEmbeddeds);
 	do
 	{
@@ -402,7 +402,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessBranchObjectValues(typename
 
 	if( nullptr != hItem && SvXml::SVNavigateTree::HasChildren( m_rTree, hItem ) )
 	{
-		SVTreeType::SVBranchHandle hValue( nullptr );
+		typename SVTreeType::SVBranchHandle hValue( nullptr );
 
 		hValue = m_rTree.getFirstBranch(hItem);
 
@@ -418,7 +418,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessBranchObjectValues(typename
 				std::vector<_variant_t> values;
 				if (SvXml::SVNavigateTree::HasChildren(m_rTree, hValue))
 				{
-					SVTreeType::SVLeafHandle hChildValue = m_rTree.getFirstLeaf(hValue);
+					typename SVTreeType::SVLeafHandle hChildValue = m_rTree.getFirstLeaf(hValue);
 
 					do
 					{
@@ -467,7 +467,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessLeafObjectValues(typename S
 
 	if( nullptr != hItem && SvXml::SVNavigateTree::HasChildren( m_rTree, hItem ) )
 	{
-		SVTreeType::SVLeafHandle hValue( m_rTree.getFirstLeaf(hItem) );
+		typename SVTreeType::SVLeafHandle hValue( m_rTree.getFirstLeaf(hItem) );
 
 		while( S_OK == hr && m_rTree.isValidLeaf(hItem, hValue) )
 		{
@@ -547,7 +547,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessInputs(typename SVTreeType:
 {
 	HRESULT hr = S_OK;
 	SvDef::StringPairVector InputPairVector;
-	SVTreeType::SVBranchHandle hInput{ m_rTree.getFirstBranch(hInputs) };
+	typename SVTreeType::SVBranchHandle hInput{ m_rTree.getFirstBranch(hInputs) };
 	do
 	{
 		if (hInput)
@@ -607,13 +607,13 @@ bool SVInspectionTreeParser< SVTreeType >::HasTag(typename SVTreeType::SVBranchH
 {
 	bool l_Status = true;
 
-	SVTreeType::SVBranchHandle hValues( nullptr );
+	typename SVTreeType::SVBranchHandle hValues( nullptr );
 
 	hValues = m_rTree.findBranch(hItem, tag.c_str());
 
 	if( nullptr == hValues )
 	{
-		SVTreeType::SVLeafHandle hLeaf;
+		typename SVTreeType::SVLeafHandle hLeaf;
 
 		hLeaf = m_rTree.findLeaf(hItem, tag.c_str());
 		if( !m_rTree.isValidLeaf(hItem, hLeaf) )

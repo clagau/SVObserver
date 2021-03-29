@@ -68,10 +68,13 @@ bool SVHistogramBase::SetScale(histogram::scale s)
 	}
 }
 
-unsigned SVHistogramBase::GetOptions() const
+#pragma warning (push)
+#pragma warning (disable : 5054)
+unsigned int SVHistogramBase::GetOptions() const
 {
-	return m_scale | m_axis | m_colors | m_clip | m_disp | m_placement;
+	return static_cast<unsigned int >(m_scale | m_axis | m_colors | m_clip | m_disp | m_placement);
 }
+#pragma warning (pop)
 
 bool SVHistogramBase::Clip(int left, int right)
 {

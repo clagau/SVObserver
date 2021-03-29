@@ -155,7 +155,7 @@ void SVCameraPropDlgClass::OnOK()
 
 	for( int i = 0; i < l_iCount; i++ )
 	{
-		std::string Data = m_svListCtrl.GetItemText( i, 1 );
+		std::string Data = m_svListCtrl.GetItemText( i, 1 ).GetString();
 		long parameterID = static_cast<long>(m_svListCtrl.GetItemData( i ));
 		_variant_t value = atol(Data.c_str());
 

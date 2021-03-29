@@ -11,13 +11,13 @@
 namespace SvDef
 {
 #pragma region Declarations
-constexpr TCHAR* const c_ObjectID = _T("Object ID");
-constexpr TCHAR* const c_ObjectType = _T("Object Type");
-constexpr TCHAR* const c_TriggerIndex = _T("Trigger Index");
-constexpr TCHAR* const c_TriggerPerObjectID = _T("Trigger per Object ID");
-constexpr TCHAR* const c_InspectedObjectID = _T("Inspected Object ID");
-constexpr TCHAR* const c_InspectedObjectIDLink = _T("Inspected Object ID Link");
-constexpr TCHAR* const c_InspectionName = _T("Inspection Name");
+constexpr const TCHAR* c_ObjectID = _T("Object ID");
+constexpr const TCHAR* c_ObjectType = _T("Object Type");
+constexpr const TCHAR* c_TriggerIndex = _T("Trigger Index");
+constexpr const TCHAR* c_TriggerPerObjectID = _T("Trigger per Object ID");
+constexpr const TCHAR* c_InspectedObjectID = _T("Inspected Object ID");
+constexpr const TCHAR* c_InspectedObjectIDLink = _T("Inspected Object ID Link");
+constexpr const TCHAR* c_InspectionName = _T("Inspection Name");
 
 #pragma endregion Declarations
 } //namespace SvDef

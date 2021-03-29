@@ -26,7 +26,7 @@ namespace SvCl
 	template< typename VertexName, typename EdgeType >
 	ObjectGraph<VertexName, EdgeType>::ObjectGraph( const DependencySet& rList, const EdgeType& rEdgeType )
 	{
-		DependencySet::const_iterator it( rList.cbegin() );
+		typename DependencySet::const_iterator it( rList.cbegin() );
 		for(; rList.cend() != it; ++it )
 		{
 			Add( it->first );
@@ -71,7 +71,7 @@ namespace SvCl
 	{
 		HRESULT Result( E_FAIL );
 
-		VertexNameDataMap::iterator it = m_VertexNameDataMap.find( rVertexName );
+		typename VertexNameDataMap::iterator it = m_VertexNameDataMap.find( rVertexName );
 		if( it != m_VertexNameDataMap.end() )
 		{
 			removeVertex( it->second );
@@ -199,7 +199,7 @@ namespace SvCl
 		VertexSet Children;
 		//Insert the main Vertex in the dependency check and all dependencies found
 		Children.insert(rVertexSet.begin(), rVertexSet.end());
-		DependencySet::const_iterator Iter( ChildDependencies.begin() );
+		typename DependencySet::const_iterator Iter( ChildDependencies.begin() );
 		for( ; ChildDependencies.end() != Iter; ++Iter )
 		{
 			Children.insert( Iter->first );
@@ -227,7 +227,7 @@ namespace SvCl
 	bool ObjectGraph<VertexName, EdgeType>::saveGraphDot( LPCTSTR FileName, IGraphNameLookup& nameLookup )
 	{
 		bool bRetVal = true;
-		VertexNameFunc NameLookupFunc = boost::bind<LPCTSTR, IGraphNameLookup, VertexName> ( &IGraphNameLookup::getVertexName, &nameLookup, _1 );
+		VertexNameFunc NameLookupFunc = boost::bind<LPCTSTR, IGraphNameLookup, VertexName> ( &IGraphNameLookup::getVertexName, &nameLookup, boost::arg<1>());
 		m_DotGraph = OutputGraphviz<VertexName, EdgeType, DependencyGraph, VertexNameFunc> ( FileName, m_Graph, NameLookupFunc );
 		return bRetVal;
 	}
@@ -235,12 +235,12 @@ namespace SvCl
 	template< typename VertexName, typename EdgeType >
 	void ObjectGraph<VertexName, EdgeType>::updateVertexIndex( )
 	{
-		boost::property_map<DependencyGraph, boost::vertex_index_t>::type my_vertex_index_map=get(boost::vertex_index, m_Graph);
+		typename boost::property_map<DependencyGraph, boost::vertex_index_t>::type my_vertex_index_map=get(boost::vertex_index, m_Graph);
 		std::size_t current_index=0;
-
-		BGL_FORALL_VERTICES(vertex, m_Graph, DependencyGraph)
+		typename boost::graph_traits<DependencyGraph>::vertex_iterator b, e;
+		for (boost::tie(b, e) = boost::vertices(m_Graph); b != e; ++b)
 		{
-			put(my_vertex_index_map, vertex, current_index++);
+			put(my_vertex_index_map, *b, current_index++);
 		}
 	}
 
@@ -249,7 +249,7 @@ namespace SvCl
 	{
 		VertexData Result( nullptr );
 
-		VertexNameDataMap::iterator it = m_VertexNameDataMap.find( rVertexName );
+		typename VertexNameDataMap::iterator it = m_VertexNameDataMap.find( rVertexName );
 		if( it != m_VertexNameDataMap.end() )
 		{
 			Result = it->second;
@@ -263,7 +263,7 @@ namespace SvCl
 	{
 		VertexData Result( nullptr );
 
-		VertexNameDataMap::const_iterator it = m_VertexNameDataMap.find( rVertexName );
+		typename VertexNameDataMap::const_iterator it = m_VertexNameDataMap.find( rVertexName );
 		if( it != m_VertexNameDataMap.end() )
 		{
 			Result = it->second;
@@ -273,7 +273,7 @@ namespace SvCl
 	}
 
 	template< typename VertexName, typename EdgeType >
-	void ObjectGraph<VertexName, EdgeType>::removeVertex( VertexData v )
+	void ObjectGraph<VertexName, EdgeType>::removeVertex(VertexData v)
 	{
 		//Find all edges of the vertex to remove these before removing the vertex itself
 		EdgeVector DisconnectVector;
@@ -281,7 +281,7 @@ namespace SvCl
 		inedge_connection( m_Graph, v, std::back_inserter( DisconnectVector ) );
 		outedge_connection( m_Graph, v, std::back_inserter( DisconnectVector ) );
 
-		EdgeVector::const_iterator it;
+		typename EdgeVector::const_iterator it;
 		for( it = DisconnectVector.begin(); it != DisconnectVector.end(); ++it )
 		{
 			VertexData v1 = boost::source( *it, m_Graph );
@@ -299,7 +299,7 @@ namespace SvCl
 	{
 		bool Result( false );
 
-		DependencyGraph::out_edge_iterator EdgeIt, EdgeIt_end;
+		typename DependencyGraph::out_edge_iterator EdgeIt, EdgeIt_end;
 		for( boost::tie(EdgeIt, EdgeIt_end) = boost::out_edges( rV1, m_Graph ); EdgeIt != EdgeIt_end; ++EdgeIt )
 		{
 			const VertexData rTargetV = boost::target( *EdgeIt, m_Graph );

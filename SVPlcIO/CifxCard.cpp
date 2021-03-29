@@ -33,7 +33,7 @@ constexpr uint32_t cResetTimeout = 5000;
 constexpr uint32_t cTimeout = 2;
 
 constexpr uint16_t cMaxHostTries = 50;
-constexpr char* cBoardName = "CIFx0";
+constexpr const char* cBoardName = "CIFx0";
 /* Identity Information */
 constexpr uint32_t cVendorId = 0x00000044UL;	///Hilscher Vendor ID
 constexpr uint32_t cProductCode = 1UL;			///CIFX
@@ -308,7 +308,7 @@ int32_t CifXCard::OpenCifX(const std::string& rAdditionalData)
 	::OutputDebugString((_T("Driver version ") + driverVersion + '\n').c_str() );
 
 	::OutputDebugString("Opening channel ...\n");
-	result = m_cifxLoadLib.m_pChannelOpen(m_hDriver, cBoardName, cCifxChannel, &m_hChannel);
+	result = m_cifxLoadLib.m_pChannelOpen(m_hDriver, const_cast<char*> (cBoardName), cCifxChannel, &m_hChannel);
 	if (CIFX_NO_ERROR != result)
 	{
 		m_sourceFileParam = SvStl::SourceFileParams(StdMessageParams);

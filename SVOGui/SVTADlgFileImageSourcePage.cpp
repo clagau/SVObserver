@@ -118,7 +118,7 @@ namespace SvOg
 		UpdateData(true);
 	
 		// Try to read the current image file path name from registry...
-		std::string Path = AfxGetApp()->GetProfileString(	_T("Settings"),_T( "ImagesFilePath" ), _T("C:\\Images"));
+		std::string Path = AfxGetApp()->GetProfileString(	_T("Settings"),_T( "ImagesFilePath" ), _T("C:\\Images")).GetString();
 		
 		m_svfncImageSourceFile.SetPathName(Path.c_str());
 		m_svfncImageSourceFile.SetFileType(SV_IMAGE_SOURCE_FILE_TYPE);

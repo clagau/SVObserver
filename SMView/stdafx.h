@@ -30,6 +30,7 @@
 #pragma warning (push)
 #pragma warning (disable : 4005)
 
+#define BOOST_BIND_NO_PLACEHOLDERS
 #include <boost/any.hpp>
 #include <boost/bind.hpp>
 #include <boost/function.hpp>			//Used by static library

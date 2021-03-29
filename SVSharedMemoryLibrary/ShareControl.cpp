@@ -31,7 +31,7 @@ ShareControl::ShareControl(const ShareControlSettings& ControlParameter )
 	}
 	m_pLastResponseData = std::make_unique<LastResponseData>();
 	SvSml::ShareEvents::GetInstance().SetParameter(ControlParameter);
-	SvSml::ShareEvents::GetInstance().SetCallbackFunction(boost::bind(&SvSml::ShareControl::EventHandler, boost::ref((*this)), _1));
+	SvSml::ShareEvents::GetInstance().SetCallbackFunction(boost::bind(&SvSml::ShareControl::EventHandler, boost::ref((*this)), boost::arg<1>()));
 	SvSml::ShareEvents::GetInstance().StartWatch();
 }
 ShareControl::~ShareControl()

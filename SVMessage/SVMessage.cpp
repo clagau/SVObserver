@@ -58,7 +58,7 @@ BOOL APIENTRY DllMain( HMODULE,
 DWORD g_dwData = EVENTLOG_ERROR_TYPE | EVENTLOG_WARNING_TYPE | EVENTLOG_INFORMATION_TYPE; 
 DWORD g_dwCatagoryCount = 23;
 
-HRESULT AddMessageKeys( TCHAR *p_pszBuf )
+HRESULT AddMessageKeys(const TCHAR* p_pszBuf )
 {
 	//@Todo MEC_04_27 regsrv32 does not work this code is probably never called	
 	HKEY hk; 
@@ -167,7 +167,7 @@ HRESULT AddMessageKeys( TCHAR *p_pszBuf )
 	return S_OK;
 }
 
-void DeleteMessageKeys( TCHAR *p_pszBuf )
+void DeleteMessageKeys(const TCHAR* p_pszBuf)
 {
 	TCHAR szBuf[MAX_PATH]; 
 

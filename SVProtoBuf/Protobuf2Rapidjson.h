@@ -9,10 +9,11 @@
 #include <sstream>
 #pragma warning(push)
 #pragma warning(disable : 4996)
+#pragma warning(disable : 5054)
 #include <rapidjson/document.h>
-#pragma warning(pop)
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/writer.h>
+#pragma warning(pop)
 #pragma warning( push )
 #pragma warning( disable : 4127 )
 #include <google/protobuf/descriptor.h>

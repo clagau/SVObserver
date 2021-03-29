@@ -702,7 +702,7 @@ bool SVBarCodeAnalyzerClass::checkEccAndEncValues(long type, double eccValue, do
 	auto iter = std::find_if(rTypeInfoMessage.typeparameters().cbegin(), rTypeInfoMessage.typeparameters().cend(), [type](const auto& rEntry) { return rEntry.type() == type; });
 	if (iter != rTypeInfoMessage.typeparameters().cend())
 	{
-		if (SVValueDefault != eccValue)
+		if (SVValueDefault != static_cast<SVMatroxBufferValues> (eccValue))
 		{
 			auto eccIter = std::find_if(iter->possibleecctypes().cbegin(), iter->possibleecctypes().cend(), [eccValue](const auto& rEntry) { return rEntry == eccValue; });
 			if (eccIter == iter->possibleecctypes().cend())
@@ -715,7 +715,7 @@ bool SVBarCodeAnalyzerClass::checkEccAndEncValues(long type, double eccValue, do
 				return false;
 			}
 		}
-		if (SVValueDefault != encValue)
+		if (SVValueDefault != static_cast<SVMatroxBufferValues> (encValue))
 		{
 			auto encIter = std::find_if(iter->possibleenctypes().cbegin(), iter->possibleenctypes().cend(), [encValue](const auto& rEntry) { return rEntry == encValue; });
 			if (encIter == iter->possibleenctypes().cend())

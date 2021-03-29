@@ -18,8 +18,8 @@
 #include "SVXMLLibrary/SVNavigateTree.h"
 #pragma endregion Includes
 
-constexpr char* c_DefaultToolGroupName = _T("Group");
-constexpr char* c_EndPrefix = _T("End ");
+constexpr const char* c_DefaultToolGroupName = _T("Group");
+constexpr const char* c_EndPrefix = _T("End ");
 
 bool SVToolGrouping::Correct(const SvOi::ObjectInfoVector& toolsetinfo, int& rNchanged)
 {

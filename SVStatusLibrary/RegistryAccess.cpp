@@ -144,7 +144,7 @@ void RegistryAccess::InitRegistry(LPCTSTR pKey)
 			if( ERROR_SUCCESS != RegCreateKeyEx ( hBaseKey,
 				fullKeyString.c_str(),
 				static_cast< DWORD >( 0 ),
-				_T( "" ),
+				nullptr,
 				REG_OPTION_NON_VOLATILE,
 				KEY_ALL_ACCESS,
 				static_cast< SECURITY_ATTRIBUTES* >( nullptr ),

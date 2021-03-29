@@ -61,6 +61,7 @@
 #include <cstdio>
 #include <functional>
 #include <future>
+#include <iostream>
 #include <memory>
 #include <fstream>
 #include <sstream>
@@ -70,14 +71,19 @@
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <list>
+
+#define BOOST_BIND_NO_PLACEHOLDERS
 #include <boost/array.hpp>
 #include <boost/asio.hpp>
 #include <boost/asio/deadline_timer.hpp>
 #include <boost/asio/io_service.hpp>
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include <boost/chrono/duration.hpp>
 #include <boost/config.hpp>
 #include <boost/function.hpp>
+#include <boost/log/attributes/mutable_constant.hpp>
+#include <boost/log/trivial.hpp>
+#include <boost/log/utility/manipulators/add_value.hpp>
 #include <boost/shared_array.hpp>
 #include <boost/scoped_array.hpp>
 #include <boost/property_tree/json_parser.hpp>

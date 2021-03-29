@@ -106,7 +106,7 @@ void CDisplayPicture::OnPaint()
 
 	if(!imageValid)
 	{
-		char *pStr = "Camera has no valid settings!";
-		dc.TextOut( 0, 0, pStr, static_cast< int >( strlen( pStr ) ) );
+		constexpr const char* pStr = "Camera has no valid settings!";
+		dc.TextOut( 0, 0, pStr, static_cast<int>(strlen(pStr)));
 	}
 }

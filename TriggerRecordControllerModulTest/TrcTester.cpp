@@ -24,13 +24,13 @@
 
 constexpr int triggerIdOffset = 100'000;
 static int g_maxSizeFactor = 32;
-LPTSTR strTestCreateInspections = _T("createInspections");
-LPTSTR strTestSetBuffers = _T("setBuffers");
-LPTSTR strTestCheckBufferMaximum = _T("checkBufferMaximum");
-LPTSTR strTestCreateTR2WriteAndRead = _T("createTR2WriteAndRead");
-LPTSTR strTestSetAndReadImage = _T("setAndReadImage");
-LPTSTR strTestSetAndReadValues = _T("setAndReadValues");
-LPTSTR strTestWithReaderApps = _T("testWithReaderApps");
+constexpr const char* strTestCreateInspections = _T("createInspections");
+constexpr const char* strTestSetBuffers = _T("setBuffers");
+constexpr const char* strTestCheckBufferMaximum = _T("checkBufferMaximum");
+constexpr const char* strTestCreateTR2WriteAndRead = _T("createTR2WriteAndRead");
+constexpr const char* strTestSetAndReadImage = _T("setAndReadImage");
+constexpr const char* strTestSetAndReadValues = _T("setAndReadValues");
+constexpr const char* strTestWithReaderApps = _T("testWithReaderApps");
 
 struct ReaderProcessData
 {

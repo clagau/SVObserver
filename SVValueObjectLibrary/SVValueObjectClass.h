@@ -44,7 +44,7 @@ class SVValueObjectClass : public SVObjectClass, public SvOi::IValueObject
 {
 protected:
 	using ValueType = typename T;
-	using ValueVector = std::vector<ValueType>;
+	using ValueVector = std::vector<typename ValueType>;
 
 #pragma region Constructor
 	explicit SVValueObjectClass( LPCTSTR ObjectName );

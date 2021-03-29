@@ -54,6 +54,7 @@
 #include <vector>
 #include <comdef.h>
 
+#define BOOST_BIND_NO_PLACEHOLDERS
 #include <boost/any.hpp>
 #include <boost/bind.hpp>
 #include <boost/config.hpp>

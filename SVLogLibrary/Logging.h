@@ -12,8 +12,6 @@
 #pragma once
 #pragma warning(push)
 #pragma warning(disable : 4714)
-#include <boost/log/trivial.hpp>
-#include <boost/log/utility/manipulators/add_value.hpp>
 #include "LogSettings.h"
 #pragma warning(pop)
 

@@ -34,6 +34,7 @@
 #pragma warning( disable: 4172 )	//Disable returning address warning for boost graphs
 
 #define VC_EXTRALEAN		// Exclude rarely-used stuff from Windows headers
+#define NOMINMAX			// Exclude min/max macros
 
 #define _CRT_SECURE_NO_DEPRECATE 
 #define _AFX_SECURE_NO_DEPRECATE
@@ -66,6 +67,7 @@
 #include <utility>
 #include <vector>
 
+#define BOOST_BIND_NO_PLACEHOLDERS
 #include <boost/algorithm/string.hpp>
 #include <boost/bind.hpp>
 #include <boost/config.hpp>
@@ -85,7 +87,9 @@
 #include <boost/utility.hpp>
 
 #pragma warning (push)
-#pragma warning (disable : 4003 4996)
+#pragma warning (disable : 4003)
+#pragma warning (disable : 4996)
+#pragma warning (disable : 5054)
 #include <rapidjson/document.h>
 #include <rapidjson/istreamwrapper.h>
 #pragma warning (pop)

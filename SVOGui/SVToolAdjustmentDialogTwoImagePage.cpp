@@ -24,10 +24,10 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvOg
 {
-	constexpr char* FirstImageTag = _T("First Image");
-	constexpr char* SecondImageTag = _T("Second Image");
-	constexpr char* ResultImageTag = _T("Result Image");
-	constexpr char* NoImageTag = _T("(No Image Available)"); // maybe move this to the control class?
+	constexpr const char* FirstImageTag = _T("First Image");
+	constexpr const char* SecondImageTag = _T("Second Image");
+	constexpr const char* ResultImageTag = _T("Result Image");
+	constexpr const char* NoImageTag = _T("(No Image Available)"); // maybe move this to the control class?
 	static const int NumberOfImagesRequired = 2;
 
 	enum ImageTabsEnum

@@ -33,7 +33,7 @@ namespace SvOg
 		~ImageController() {}
 
 		ImageController(const ImageController&) = delete;
-		ImageController &ImageController::operator=(const ImageController&) = delete;
+		ImageController& operator=(const ImageController&) = delete;
 
 		HRESULT Init();
 

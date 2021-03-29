@@ -139,8 +139,7 @@ void SVArchiveHeaderEditDlg::OnOK()
 		int index = 0;
 		for(SvDef::StringPairVector::iterator it = m_Strings.begin() ; it != m_Strings.end(); ++it )
 		{
-			std::string Text = m_HeaderListCtrl.GetItemText(index,1);
-			it->second = Text;
+			it->second = m_HeaderListCtrl.GetItemText(index, 1).GetString();
 			index++;
 		}
 	}
@@ -211,7 +210,7 @@ void SVArchiveHeaderEditDlg::DisplaySelectedText(  )
 	}
 	if( m_HeaderListCtrl.GetItemCount() > 0 )
 	{
-		std::string DisplayText = m_HeaderListCtrl.GetItemText(iSel,0);
+		std::string DisplayText = m_HeaderListCtrl.GetItemText(iSel,0).GetString();
 		// get position of ok button
 		CRect OkRec;
 		CRect ListRec;

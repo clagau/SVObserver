@@ -56,7 +56,7 @@ namespace SvMc
 		{
 			CString name;
 			GetLBText(index, name);
-			Container::const_iterator iter = std::find_if(m_List.begin(), m_List.end(), [&](const auto& rVal)->bool
+			const auto iter = std::find_if(m_List.cbegin(), m_List.cend(), [&](const auto& rVal)->bool
 			{
 				return (!rVal.first.empty() && 0 == rVal.first.compare(name));
 			});

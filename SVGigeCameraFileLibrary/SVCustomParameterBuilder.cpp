@@ -22,36 +22,36 @@
 #include "SVUtilityLibrary/StringHelper.h"
 
 // For Custom params
-constexpr char* cValue = _T("Value");
-constexpr char* cCustomID = _T("CustomID");
-constexpr char* cDataType = _T("DataType");
-constexpr char* cLongDataType = _T("Long");
-constexpr char* cBoolDataType = _T("Boolean");
-constexpr char* cStringDataType = _T("String");
-constexpr char* cInt64DataType = _T("I64");
-constexpr char* cComplexDataType = _T("Complex");
-constexpr char* cUnknownDataType = _T("Unknown");
+constexpr const char* cValue = _T("Value");
+constexpr const char* cCustomID = _T("CustomID");
+constexpr const char* cDataType = _T("DataType");
+constexpr const char* cLongDataType = _T("Long");
+constexpr const char* cBoolDataType = _T("Boolean");
+constexpr const char* cStringDataType = _T("String");
+constexpr const char* cInt64DataType = _T("I64");
+constexpr const char* cComplexDataType = _T("Complex");
+constexpr const char* cUnknownDataType = _T("Unknown");
 
 // Commomn Attribtes
-constexpr char* cDESCRIPTION = _T("Description");
-constexpr char* cVISUALNAME = _T("VisualName");
-constexpr char* cORDER = _T("Order");
-constexpr char* cDETAILLEVEL = _T("DetailLevel");
+constexpr const char* cDESCRIPTION = _T("Description");
+constexpr const char* cVISUALNAME = _T("VisualName");
+constexpr const char* cORDER = _T("Order");
+constexpr const char* cDETAILLEVEL = _T("DetailLevel");
 
 // option qualifiers
-constexpr char* cMIN = _T("min");
-constexpr char* cMAX = _T("max");
-constexpr char* cOFFSET = _T("offset");
-constexpr char* cMULTIPLIER = _T("multiplier");
-constexpr char* cUNIT_DIVISOR = _T("unit_divisor");
-constexpr char* cUNIT = _T("unit");
+constexpr const char* cMIN = _T("min");
+constexpr const char* cMAX = _T("max");
+constexpr const char* cOFFSET = _T("offset");
+constexpr const char* cMULTIPLIER = _T("multiplier");
+constexpr const char* cUNIT_DIVISOR = _T("unit_divisor");
+constexpr const char* cUNIT = _T("unit");
 
-constexpr char* cOPTION = _T("Option_");
+constexpr const char* cOPTION = _T("Option_");
 
 // defaults
 constexpr double DefaultMultiplier = 1.0;
 constexpr double DefaultDivisor = 1.0;
-constexpr char* cDEFAULTUNIT = _T("Unit");
+constexpr const char* cDEFAULTUNIT = _T("Unit");
 
 typedef std::map<std::string, SVDeviceParamDataTypeEnum> DeviceDataTypeEnumNameMap;
 static const DeviceDataTypeEnumNameMap cDeviceDataTypeEnumNameMap

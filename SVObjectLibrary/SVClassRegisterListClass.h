@@ -17,11 +17,14 @@
 
 class SVObjectClass;
 class SVClassRegisterClass;
+#pragma warning (push)
+#pragma warning (disable : 4471)
 namespace SvPb
 {
 	enum ClassIdEnum;
 	enum EmbeddedIdEnum;
 }
+#pragma warning (pop)
 
 SvPb::ClassIdEnum calcClassId(const _variant_t& rClassIdVariant);
 SvPb::EmbeddedIdEnum calcEmbeddedId(const _variant_t& rEmbeddedIdVariant, const _variant_t& rObjectName);

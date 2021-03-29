@@ -29,14 +29,14 @@ static char THIS_FILE[] = __FILE__;
 namespace SvOg
 {
 
-constexpr char* NoColumnTag = _T("(No Column Available)");
-constexpr char* IsAscTag = _T("IsAsc");
-constexpr char* ExcludeHighTag = _T("ExcludeHigh");
-constexpr char* ExcludeHighLinkTag = _T("ExcludeHigh_Link");
-constexpr char* ExcludeLowTag = _T("ExcludeLow");
-constexpr char* ExcludeLowLinkTag = _T("ExcludeLow_Link");
-constexpr char* LimitValueTag = _T("LimitValue");
-constexpr char* LimitValueLinkTag = _T("LimitValue_Link");
+constexpr const char* NoColumnTag = _T("(No Column Available)");
+constexpr const char* IsAscTag = _T("IsAsc");
+constexpr const char* ExcludeHighTag = _T("ExcludeHigh");
+constexpr const char* ExcludeHighLinkTag = _T("ExcludeHigh_Link");
+constexpr const char* ExcludeLowTag = _T("ExcludeLow");
+constexpr const char* ExcludeLowLinkTag = _T("ExcludeLow_Link");
+constexpr const char* LimitValueTag = _T("LimitValue");
+constexpr const char* LimitValueLinkTag = _T("LimitValue_Link");
 
 BEGIN_MESSAGE_MAP(TaTableAnalyzerPage, CPropertyPage)
 	//{{AFX_MSG_MAP(TaTableAnalyzerPage)
@@ -260,7 +260,7 @@ void TaTableAnalyzerPage::OnButtonClickExcludeHigh()
 {
 	CString Temp;
 	m_EditExcludeHigh.GetWindowText(Temp);
-	std::string Value = Temp;
+	std::string Value = Temp.GetString();
 	std::string Title = SvUl::LoadStdString(IDS_OBJECTNAME_TABLEANALYZEREXCLUDE_HIGHVALUE);
 	if (m_objectSelector.Show(Value, Title, this, SvPb::allNumberValueObjects, SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed, m_TaskObjectID))
 	{
@@ -273,7 +273,7 @@ void TaTableAnalyzerPage::OnButtonClickExcludeLow()
 {
 	CString Temp;
 	m_EditExcludeLow.GetWindowText(Temp);
-	std::string Value = Temp;
+	std::string Value = Temp.GetString();
 	std::string Title = SvUl::LoadStdString(IDS_OBJECTNAME_TABLEANALYZEREXCLUDE_LOWVALUE);
 	if (m_objectSelector.Show(Value, Title, this, SvPb::allNumberValueObjects, SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed, m_TaskObjectID))
 	{
@@ -286,7 +286,7 @@ void TaTableAnalyzerPage::OnButtonClickLimitValue()
 {
 	CString Temp;
 	m_EditLimitValue.GetWindowText(Temp);
-	std::string Value = Temp;
+	std::string Value = Temp.GetString();
 	std::string Title = SvUl::LoadStdString(IDS_OBJECTNAME_TABLEANALYZERLIMIT_VALUE);
 	if (m_objectSelector.Show(Value, Title, this, SvPb::allNumberValueObjects, SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed, m_TaskObjectID))
 	{
@@ -521,13 +521,13 @@ void TaTableAnalyzerPage::setExcludeProperties()
 		m_pValues->Init();
 	}
 
-	std::string highString = m_pValues->Get<CString>(SvPb::TableAnaylzerExcludeHigh_LinkEId);
+	std::string highString = m_pValues->Get<CString>(SvPb::TableAnaylzerExcludeHigh_LinkEId).GetString();
 	if (highString.empty())
 	{
 		highString = m_pValues->Get<CString>(SvPb::TableAnaylzerExcludeHighEId);
 	}
 	m_EditExcludeHigh.SetWindowText(highString.c_str());
-	std::string lowString = m_pValues->Get<CString>(SvPb::TableAnaylzerExcludeLow_LinkEId);
+	std::string lowString = m_pValues->Get<CString>(SvPb::TableAnaylzerExcludeLow_LinkEId).GetString();
 	if (lowString.empty())
 	{
 		lowString = m_pValues->Get<CString>(SvPb::TableAnaylzerExcludeLowEId);
@@ -544,7 +544,7 @@ void TaTableAnalyzerPage::setLimitProperties()
 		m_pValues->Init();
 	}
 
-	std::string valueString = m_pValues->Get<CString>(SvPb::TableAnaylzerLimitValue_LinkEId);
+	std::string valueString = m_pValues->Get<CString>(SvPb::TableAnaylzerLimitValue_LinkEId).GetString();
 	if (valueString.empty())
 	{
 		valueString = m_pValues->Get<CString>(SvPb::TableAnaylzerLimitValueEId);
@@ -656,8 +656,8 @@ HRESULT TaTableAnalyzerPage::SetAddAnalyzerData(SvStl::MessageContainerVector &r
 		CString columnName;
 		m_EditAddColumnName.GetWindowText(columnName);
 
-		std::string oldName = columnName;
-		std::string newName = columnName;
+		std::string newName = columnName.GetString();
+		std::string oldName = newName;
 		SvUl::RemoveCharacters(newName, SvDef::cGeneralExcludeChars);
 		if (newName != oldName)
 		{

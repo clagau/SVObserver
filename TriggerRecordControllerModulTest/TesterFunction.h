@@ -14,7 +14,7 @@ namespace SvOi
 class ITriggerRecordControllerRW;
 }
 
-extern LPTSTR strTestWithMoreThreads;
+constexpr const char* strTestWithMoreThreads = _T("testWithMoreThreads");
 
 bool areImageEqual(MIL_ID image1, MIL_ID image2);
 SVMatroxBufferCreateStruct specifyBufferFromImage(MIL_ID imageId);

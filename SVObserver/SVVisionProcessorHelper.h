@@ -31,7 +31,6 @@
 #pragma endregion Includes
 
 #pragma region Declarations
-enum svModeEnum;
 //This enum is the same as the client interface of the SVRC
 enum SVDataDefinitionListType
 {

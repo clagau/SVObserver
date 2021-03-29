@@ -112,7 +112,7 @@ private:
 	}
 
 public:
-	bool ExcludeSameLineageSelectorFilter::operator()(const SvOi::IObjectClass* pObject, unsigned int attributeMask, int ) const
+	bool operator()(const SvOi::IObjectClass* pObject, unsigned int attributeMask, int ) const
 	{
 		bool bRetVal = false;
 		if (nullptr != pObject)

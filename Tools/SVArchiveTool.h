@@ -59,7 +59,7 @@ public:
 	bool updateCurrentImagePathRoot(bool displayMessageOnInvalidKeywords = false);
 	bool ensureCurrentImagePathRootExists();
 
-	bool SVArchiveTool::SetFileArchivePath(LPCTSTR lpszName);
+	bool SetFileArchivePath(LPCTSTR lpszName);
 	std::string getNextImageFileName();
 
 	

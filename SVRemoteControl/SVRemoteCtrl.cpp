@@ -110,11 +110,11 @@ SVRemoteCtrl::SVRemoteCtrl()
 	m_servername(L""),
 	m_VPName(L""),
 	m_imageScale(100),
-m_dispatcher(new SVControlCommands(boost::bind(&SVRemoteCtrl::NotifyClient, this, _1, _2)))
+m_dispatcher(new SVControlCommands(boost::bind(&SVRemoteCtrl::NotifyClient, this, boost::arg<1>(), boost::arg<2>())))
 {
 	m_bWindowOnly = TRUE;
 
-	m_AsyncThread.Create(boost::bind(&SVRemoteCtrl::AsyncThreadFunc, this, _1), _T("SVRemoteCtrl"));
+	m_AsyncThread.Create(boost::bind(&SVRemoteCtrl::AsyncThreadFunc, this, boost::arg<1>()), _T("SVRemoteCtrl"));
 }
 
 LRESULT SVRemoteCtrl::OnSetFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)

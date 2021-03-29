@@ -268,7 +268,7 @@ HRESULT SVMatroxGige::CameraSetParameter(unsigned long digitizerHandle, int para
 		{
 			case  SvDef::SVGigeParameterFeatureOverrides:
 			{
-				_bstr_t xmlData = rValue;
+				_bstr_t xmlData{ rValue };
 				result = rCamera.BuildGigeFeaturesMap(xmlData);
 			}
 			break;

@@ -84,6 +84,7 @@
 #include <tuple>			//Used by static library
 #include <vector>
 
+#define BOOST_BIND_NO_PLACEHOLDERS
 #include <boost/any.hpp>
 #include <boost/bind.hpp>
 #include <boost/function.hpp>

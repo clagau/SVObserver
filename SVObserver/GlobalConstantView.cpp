@@ -255,7 +255,7 @@ int GlobalConstantView::insertItem(const SvVol::BasicValueObjectPtr& rpObject, i
 
 	std::string ValueText;
 	lvItem.mask = LVIF_IMAGE | LVIF_TEXT | LVIF_STATE | LVIF_PARAM;
-	lvItem.pszText = _T("");
+	lvItem.pszText = nullptr;
 	lvItem.iIndent = 0;
 	lvItem.state = INDEXTOSTATEIMAGEMASK( 1 );
 	lvItem.stateMask = LVIS_STATEIMAGEMASK;

@@ -32,55 +32,55 @@
 #pragma endregion Includes
 
 // section headings
-constexpr char* cINFO = _T("Info");
-constexpr char* cSETTINGS = _T("Settings");
-constexpr char* cCUSTOMSETTINGS = _T("Custom Settings");
+constexpr const char* cINFO = _T("Info");
+constexpr const char* cSETTINGS = _T("Settings");
+constexpr const char* cCUSTOMSETTINGS = _T("Custom Settings");
 
 // common tags
-constexpr char* cDESCRIPTION = _T("_Description");
-constexpr char* cVISUALNAME = _T("_VisualName");
-constexpr char* cORDER = _T("_Order");
-constexpr char* cDETAILLEVEL = _T("_DetailLevel");
-constexpr char* cOPTIONFORMAT = _T("%s_Option_%d");
-constexpr char* cOPTIONDESCFORMAT = _T("%s_Option_%d_Description");
+constexpr const char* cDESCRIPTION = _T("_Description");
+constexpr const char* cVISUALNAME = _T("_VisualName");
+constexpr const char* cORDER = _T("_Order");
+constexpr const char* cDETAILLEVEL = _T("_DetailLevel");
+constexpr const char* cOPTIONFORMAT = _T("%s_Option_%d");
+constexpr const char* cOPTIONDESCFORMAT = _T("%s_Option_%d_Description");
 
 // option qualifiers
-constexpr char* cMIN = _T("_min");
-constexpr char* cMAX = _T("_max");
-constexpr char* cOFFSET = _T("_offset");
-constexpr char* cMULTIPLIER = _T("_multiplier");
-constexpr char* cUNIT_DIVISOR = _T("_unit_divisor");
-constexpr char* cUNIT = _T("_unit");
+constexpr const char* cMIN = _T("_min");
+constexpr const char* cMAX = _T("_max");
+constexpr const char* cOFFSET = _T("_offset");
+constexpr const char* cMULTIPLIER = _T("_multiplier");
+constexpr const char* cUNIT_DIVISOR = _T("_unit_divisor");
+constexpr const char* cUNIT = _T("_unit");
 
 // defaults
-constexpr char* cDEFAULTMULTIPLIER = _T("1.0");
-constexpr char* cDEFAULTDIVISOR = _T("1.0");
-constexpr char* cDEFAULTUNIT = "Unit";
+constexpr const char* cDEFAULTMULTIPLIER = _T("1.0");
+constexpr const char* cDEFAULTDIVISOR = _T("1.0");
+constexpr const char* cDEFAULTUNIT = "Unit";
 
 // Info Tags
-constexpr char* scVERSION = _T("Version");
-constexpr char* scCAMERATYPE = _T("CameraType");
+constexpr const char* scVERSION = _T("Version");
+constexpr const char* scCAMERATYPE = _T("CameraType");
 
 // Settings Tags
-constexpr char* scHSTEP = _T("_HStep");
-constexpr char* scVSTEP = _T("_VStep");
-constexpr char* scHPOSSTEP = _T("_HPosStep");
-constexpr char* scVPOSSTEP = _T("_VPosStep");
-constexpr char* scMINTRANSFERTIME = _T("_MinTransferTime");
-constexpr char* scMAXTRANSFERTIME = _T("_MaxTransferTime");
-constexpr char* scOPTIMIZEDTRANSFERX = _T("_OptimizedTransferX");
-constexpr char* scOPTIMIZEDTRANSFERY = _T("_OptimizedTransferY");
+constexpr const char* scHSTEP = _T("_HStep");
+constexpr const char* scVSTEP = _T("_VStep");
+constexpr const char* scHPOSSTEP = _T("_HPosStep");
+constexpr const char* scVPOSSTEP = _T("_VPosStep");
+constexpr const char* scMINTRANSFERTIME = _T("_MinTransferTime");
+constexpr const char* scMAXTRANSFERTIME = _T("_MaxTransferTime");
+constexpr const char* scOPTIMIZEDTRANSFERX = _T("_OptimizedTransferX");
+constexpr const char* scOPTIMIZEDTRANSFERY = _T("_OptimizedTransferY");
 
 // LUT Tags
-constexpr char* scNUMBANDS = _T("_NumBands");
-constexpr char* scBANDSIZE = _T("_BandSize");
-constexpr char* scMAXVALUE = _T("_MaxValue");
+constexpr const char* scNUMBANDS = _T("_NumBands");
+constexpr const char* scBANDSIZE = _T("_BandSize");
+constexpr const char* scMAXVALUE = _T("_MaxValue");
 
 constexpr int iKEY_DOES_NOT_EXIST = -987654321;
 constexpr int MAX_STRING_BUFFER = 128;
 
 // For Custom params
-constexpr char* cValue = _T("Value");
+constexpr const char* cValue = _T("Value");
 
 static SVMaterialsTree::iterator GetBaseNode(SVMaterialsTree& rTree, const std::string& rKey)
 {

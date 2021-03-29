@@ -409,7 +409,7 @@ void SVHistogramAnalyzer::init()
 					std::make_pair(msvValley.GetEmbeddedID(),   
 						IDS_CLASSNAME_HISTOGRAMANALYZER_VALLEYRESULT)
 				),
-				boost::bind(&SVHistogramAnalyzer::AddResult, this, _1)
+				boost::bind(&SVHistogramAnalyzer::AddResult, this, boost::arg<1>())
 			);
 		}
 		catch (const fail_to_create &)

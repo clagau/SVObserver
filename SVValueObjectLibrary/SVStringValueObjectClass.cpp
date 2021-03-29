@@ -28,7 +28,7 @@ namespace SvVol
 static char THIS_FILE[] = __FILE__;
 #endif
 
-constexpr char* cTextType = _T("Text");
+constexpr const char* cTextType = _T("Text");
 
 #pragma endregion Declarations
 

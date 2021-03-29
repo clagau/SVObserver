@@ -42,7 +42,7 @@ HRESULT SVCommandDataTemplate< p_BaseDataType, SVTemplateDataType, SVTemplateArg
 {
 	HRESULT l_Status = S_OK;
 
-	if( ( m_DataType & SV_COMMAND_DATA_TYPE_READ_ONLY ) == 0 )
+	if( ( this->m_DataType & SV_COMMAND_DATA_TYPE_READ_ONLY ) == 0 )
 	{
 		m_Data = p_rData;
 	}

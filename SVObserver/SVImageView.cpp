@@ -511,7 +511,7 @@ void SVImageView::SaveViewOrImageToDisk(bool ViewOnly, bool showOverlays)
 
 	m_ViewOrImageFilename.SetFileType(SV_IMAGE_SOURCE_FILE_TYPE);
 	
-	std::string Path = AfxGetApp()->GetProfileString( RegSection, RegKeySaveViewPath, DefaultPath );
+	std::string Path = AfxGetApp()->GetProfileString(RegSection, RegKeySaveViewPath, DefaultPath).GetString();
 	m_ViewOrImageFilename.SetPathName( Path.c_str() );
 	
 	bool bResult = m_ViewOrImageFilename.SaveFile(); // Show Save File Dialog

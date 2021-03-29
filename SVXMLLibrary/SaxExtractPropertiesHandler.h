@@ -104,7 +104,7 @@ namespace SvXml
 		//! Extract the properties from the xmlfile stops parsing when the properties are found 
 		HRESULT  ExtractProperties(LPCTSTR FileName, long& rNewDisableMethod, long& rEnableAuxExtents, unsigned long& rVersionNumber);
 
-		HRESULT  SaxExtractPropertiesHandler::ExtractProperties(LPCTSTR FileName, unsigned long& rVersionNumber);
+		HRESULT  ExtractProperties(LPCTSTR FileName, unsigned long& rVersionNumber);
 
 #pragma endregion Public Methods
 

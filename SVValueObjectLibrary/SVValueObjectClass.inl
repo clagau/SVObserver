@@ -518,8 +518,8 @@ HRESULT SVValueObjectClass<T>::getValues(std::vector<_variant_t>&  rValues) cons
 		Result = GetArrayValues(ValueArray);
 		if (S_OK == Result)
 		{
-			ValueVector::const_iterator FromIter(ValueArray.begin());
-			std::vector<_variant_t>::iterator ToIter(rValues.begin());
+			auto FromIter{ ValueArray.cbegin() };
+			auto ToIter{ rValues.begin() };
 
 			while (ToIter != rValues.end() && FromIter != ValueArray.end() &&
 				FromIter != ValueArray.begin() + getResultSize())
@@ -564,7 +564,7 @@ HRESULT SVValueObjectClass<T>::getValue(std::string& rValueString, int Index /*=
 		Result = GetArrayValues(Values);
 		if (S_OK == Result)
 		{
-			ValueVector::const_iterator Iter(Values.begin());
+			auto Iter{ Values.cbegin() };
 			for (; Values.end() != Iter; ++Iter)
 			{
 				if (!rValueString.empty())

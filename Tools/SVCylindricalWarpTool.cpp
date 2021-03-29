@@ -29,8 +29,8 @@ namespace SvTo
 static char THIS_FILE[] = __FILE__;
 #endif
 
-constexpr TCHAR* const CYLINDRICAL_WARP_TYPE_HORIZONTAL = _T("Horizontal Warp");
-constexpr TCHAR* const CYLINDRICAL_WARP_TYPE_VERTICAL = _T("Vertical Warp");
+constexpr const char* CYLINDRICAL_WARP_TYPE_HORIZONTAL = _T("Horizontal Warp");
+constexpr const char* CYLINDRICAL_WARP_TYPE_VERTICAL = _T("Vertical Warp");
 #pragma endregion Declarations
 
 SV_IMPLEMENT_CLASS( SVCylindricalWarpToolClass, SvPb::CylindricalWarpToolClassId)

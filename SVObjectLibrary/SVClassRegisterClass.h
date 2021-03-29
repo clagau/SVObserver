@@ -16,10 +16,13 @@
 
 class SVObjectClass;
 
+#pragma warning (push)
+#pragma warning (disable : 4471)
 namespace SvPb
 {
 	enum ClassIdEnum;
 }
+#pragma warning (pop)
 
 class SVClassRegisterClass
 { 

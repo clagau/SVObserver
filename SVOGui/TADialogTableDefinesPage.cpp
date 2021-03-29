@@ -33,9 +33,9 @@ constexpr int cNameColumnSize = 150;
 constexpr int cFormulaColumnSize = 500;
 constexpr int cNameColumn = 0;
 constexpr int cFormulaColumn = 1;
-constexpr char* cEquationName = _T("Table Column");
-constexpr char* cHeaderName_NameColumn = _T("Column Name");
-constexpr char* cHeaderName_FormulaColumn = _T("Formula");
+constexpr const char* cEquationName = _T("Table Column");
+constexpr const char* cHeaderName_NameColumn = _T("Column Name");
+constexpr const char* cHeaderName_FormulaColumn = _T("Formula");
 
 BEGIN_MESSAGE_MAP(TADialogTableDefinesPage, CPropertyPage)
 	//{{AFX_MSG_MAP(TADialogTableDefinesPage)

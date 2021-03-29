@@ -38,7 +38,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-constexpr char* cCRLF(_T("\r\n"));
+constexpr const char* cCRLF(_T("\r\n"));
 
 enum { WM_UPDATE_STATUS = WM_APP + 100 };
 
@@ -255,7 +255,7 @@ void SVTADlgExternalSelectDllPage::OnBrowse()
 		AfxGetApp()->WriteProfileString(_T("Settings"), _T("Last External Tool Dll Path"), m_strLastDllPath);
 
 		m_strDLLPath = cfd.GetPathName();
-		std::string DLLname = cfd.GetFileName();
+		std::string DLLname = cfd.GetFileName().GetString();
 		UpdateData(FALSE);
 
 		//The dll path has to be completely processed by the underlying object,

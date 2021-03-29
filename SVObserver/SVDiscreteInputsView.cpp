@@ -33,7 +33,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-constexpr char* cDigitalInputName = ("Digital Input %d");
+constexpr const char* cDigitalInputName = ("Digital Input %d");
 
 IMPLEMENT_DYNCREATE(SVDiscreteInputsView, CListView)
 

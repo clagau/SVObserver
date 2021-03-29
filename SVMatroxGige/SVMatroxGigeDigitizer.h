@@ -16,7 +16,6 @@
 //Moved to precompiled header: #include <vector>
 #include "SVMatroxGigeCameraId.h"
 #include "SVMatroxGigeAcqParams.h"
-#include "SVMatroxGigeBufferCreator.h"
 #include "SVGigeCameraParametersLibrary/SVGigeDeviceParameterStruct.h"
 #include "SVMatroxDigitizerLibrary/SVMatroxDigitizerInterface.h"
 #include "SVMatroxLibrary/SVMatroxBufferArray.h"
@@ -41,7 +40,6 @@ public:
 class SVMatroxGigeDigitizer
 {
 private:
-	typedef SVMatroxGigeBufferCreator<SVBufAttGrabImageProc> AcqBufferCreator;
 	SVMatroxBufferArray m_AcqBuffers;
 	SVGigeDeviceParameterMap m_featuresMap;
 	long m_deviceNumber{0L};
@@ -105,4 +103,5 @@ public:
 
 private:
 #pragma endregion Member Variables
+	HRESULT BuildCreateStruct(unsigned long p_ulWidth, unsigned long p_ulHeight, unsigned long p_ulFormat, SVMatroxBufferCreateStruct& rCreateStruct);
 };

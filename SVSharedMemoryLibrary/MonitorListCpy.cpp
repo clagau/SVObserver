@@ -3,9 +3,7 @@
 #include "MonitorListCpy.h"
 #include "Definitions/GlobalConst.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#pragma warning (push ,2)
-#include "SVPRotobuf\MonitorListStore.pb.h"
-#pragma warning(pop)
+#include "SVPRotobuf\MonitorListStore.h"
 namespace SvSml
 {
 	MonitorListCpy::MonitorListCpy(void)

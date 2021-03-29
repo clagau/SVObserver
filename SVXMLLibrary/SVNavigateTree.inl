@@ -17,7 +17,7 @@ namespace  SvXml
 	{
 		bool Result( false );
 
-		SVTreeType::SVLeafHandle pLeaf;
+		typename SVTreeType::SVLeafHandle pLeaf;
 
 		Result = S_OK == rTree.createLeaf( pParent, Name, rVariant, &pLeaf );
 
@@ -34,7 +34,7 @@ namespace  SvXml
 	{
 		bool Result( false );
 
-		SVTreeType::SVLeafHandle pLeaf;
+		typename SVTreeType::SVLeafHandle pLeaf;
 
 		Result = GetItemLeaf( rTree, Name, pParent, pLeaf );
 
@@ -60,7 +60,7 @@ namespace  SvXml
 	{
 		bool Result( false );
 
-		SVTreeType::SVBranchHandle pBranch( nullptr );
+		typename SVTreeType::SVBranchHandle pBranch( nullptr );
 
 		Result = S_OK == rTree.createBranch( pParent, Name, &pBranch );
 
@@ -77,7 +77,7 @@ namespace  SvXml
 	{
 		bool bOk = false;
 
-		SVTreeType::SVBranchHandle pBranch( nullptr );
+		typename SVTreeType::SVBranchHandle pBranch( nullptr );
 
 		bOk = GetItemBranch( rTree, Name, pParent, pBranch );
 
@@ -112,7 +112,7 @@ namespace  SvXml
 	bool SVNavigateTree::GetItem( SVTreeType &rTree, LPCTSTR Name, typename SVTreeType::SVBranchHandle pParent, _variant_t &rData )
 	{
 		bool Result( false );
-		SVTreeType::SVLeafHandle pLeaf;
+		typename SVTreeType::SVLeafHandle pLeaf;
 
 		Result = GetItemLeaf( rTree, Name, pParent, pLeaf );
 		if ( Result )
@@ -167,15 +167,15 @@ namespace  SvXml
 
 			l_ProcessHandles.push_back( startBranch );
 
-			SVProcessChildHandleDeque::iterator l_Iter = l_ProcessHandles.begin();
+			auto l_Iter = l_ProcessHandles.begin();
 
 			while( ! status && l_Iter != l_ProcessHandles.end() )
 			{
-				SVTreeType::SVBranchHandle localBranch = *l_Iter;
+				typename SVTreeType::SVBranchHandle localBranch = *l_Iter;
 
 				l_ProcessHandles.erase( l_Iter );
 
-				SVTreeType::SVBranchHandle childBranch( rTree.getFirstBranch( localBranch ) );
+				typename SVTreeType::SVBranchHandle childBranch( rTree.getFirstBranch( localBranch ) );
 
 				while( ! status && rTree.isValidBranch( childBranch ) )
 				{

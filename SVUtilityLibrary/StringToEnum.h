@@ -17,7 +17,7 @@ public:
 	static bool GetEnum(LookupTable table, StringType value, Type& enumValue)
 	{
 		bool  bRetVal = false;
-		LookupTable::const_iterator it = table.find(value);
+		typename LookupTable::const_iterator it = table.find(value);
 		if (it != table.end())
 		{
 			enumValue = it->second;

@@ -36,7 +36,7 @@
 #include "SVSystemLibrary/SVVersionInfo.h"
 #include "ObjectInterfaces/ITriggerRecordControllerR.h"
 
-constexpr char* cLocalHost(_T("127.0.0.1"));
+constexpr const char* cLocalHost(_T("127.0.0.1"));
 
 bool CheckCommandLineArgs(int argc, _TCHAR* argv[], LPCTSTR option)
 {
@@ -209,7 +209,7 @@ int main(int argc, _TCHAR* argv[])
 
 		SERVICE_TABLE_ENTRY ServiceTable[] =
 		{
-			{cServiceName, (LPSERVICE_MAIN_FUNCTION)ServiceMain},
+			{const_cast<LPSTR> (cServiceName), (LPSERVICE_MAIN_FUNCTION)ServiceMain},
 			{nullptr, nullptr}
 		};
 

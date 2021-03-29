@@ -42,6 +42,7 @@
 #include <fstream>
 #include <functional>
 #include <future>
+#include <iostream>
 #include <memory>
 #include <set>
 #include <string>
@@ -52,5 +53,8 @@
 #include <boost/asio/deadline_timer.hpp>
 #include <boost/asio/io_service.hpp>
 #pragma warning(pop)
+#include <boost/log/attributes/mutable_constant.hpp>
+#include <boost/log/trivial.hpp>
+#include <boost/log/utility/manipulators/add_value.hpp>
 
 // TODO: reference additional headers your program requires here

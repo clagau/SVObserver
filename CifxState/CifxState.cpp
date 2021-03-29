@@ -24,10 +24,10 @@ constexpr uint32_t cResetTimeout = 5000;
 constexpr uint16_t cMaxHostTries = 50;
 constexpr uint32_t cTimeout = 2;
 
-constexpr char* cBoardName = "CIFx0";
-constexpr char* cResult = "Result=%d\n";
-constexpr char* cMissingMessageID = "Message ID %d missing\n";
-constexpr char* cCheckPlcC = "-CHECKPLCCOMS";
+constexpr const char* cBoardName = "CIFx0";
+constexpr const char* cResult = "Result=%d\n";
+constexpr const char* cMissingMessageID = "Message ID %d missing\n";
+constexpr const char* cCheckPlcC = "-CHECKPLCCOMS";
 const uint32_t cCifXNodeId = 11; //The Powerlink Node Id used for the Hilscher CifX card value shall be 11-14 (SVIM1-SVIM4)
 const uint32_t cMaxPLC_DataSize = 456; //The maximum size of the PLC-data in bytes Telegram = 20 Bytes Dynamic = 436 Bytes
 
@@ -420,7 +420,7 @@ int main(int argc, char* args[])
 	{
 		return processError(CifxMessage::OpenDriverError, result);
 	}
-	result = g_cifxLoadLib.m_pChannelOpen(g_hDriver, cBoardName, cCifxChannel, &g_hChannel);
+	result = g_cifxLoadLib.m_pChannelOpen(g_hDriver, const_cast<char*> (cBoardName), cCifxChannel, &g_hChannel);
 	if(CIFX_NO_ERROR == result)
 	{
 		printMessage(CifxMessage::OpenChannelSuccess);
@@ -445,7 +445,7 @@ int main(int argc, char* args[])
 	Sleep(cResetTimeout);
 	if (CIFX_NO_ERROR == result)
 	{
-		constexpr char* cPD0NotificationVersion = "3.4.0.2";
+		constexpr const char cPD0NotificationVersion[] = "3.4.0.2";
 		CHANNEL_INFORMATION channelInfo;
 		g_cifxLoadLib.m_pChannelInfo(g_hChannel, sizeof(channelInfo), reinterpret_cast<void*> (&channelInfo));
 		std::string outputString((char*) channelInfo.abFWName);

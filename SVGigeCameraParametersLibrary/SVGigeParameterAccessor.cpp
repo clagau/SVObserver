@@ -22,8 +22,8 @@
 // This Method uses the default Setter and getter
 SVGigeParameterAccessor::SVGigeParameterAccessor(const SVGigeFeature& rFeature)
 : feature(rFeature)
-, GetParam(boost::bind(SVGigeParameterAccessor::GetFeature, _1, _2, _3))
-, SetParam(boost::bind(SVGigeParameterAccessor::SetFeature, _1, _2, _3))
+, GetParam(boost::bind(SVGigeParameterAccessor::GetFeature, boost::arg<1>(), boost::arg<2>(), boost::arg<3>()))
+, SetParam(boost::bind(SVGigeParameterAccessor::SetFeature, boost::arg<1>(), boost::arg<2>(), boost::arg<3>()))
 {
 }
 

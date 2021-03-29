@@ -85,7 +85,7 @@ HRESULT SVFileSystemScanner<Insertor>::ScanForDirectories(LPCTSTR dirName, LPCTS
 	fileSpec = dirSpec;
 	fileSpec += (nullptr != filter) ? filter : std::string();
 
-	HANDLE fHandle = FindFirstFile(fileSpec, &fileData);
+	HANDLE fHandle = FindFirstFile(fileSpec.c_str(), &fileData);
 
 	if (fHandle != INVALID_HANDLE_VALUE)
 	{

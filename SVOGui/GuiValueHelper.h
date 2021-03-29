@@ -63,7 +63,7 @@ namespace SvOg
 			safeArray.Add( v );
 		}
 			
-		v = safeArray;
+		v = safeArray.operator _variant_t();
 		return v;
 	}
 } //namespace SvOg

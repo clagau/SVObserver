@@ -6,6 +6,10 @@
 //******************************************************************************
 #pragma once
 
+#pragma region Includes
+#include "SVOLibrary/SVHardwareManifest.h"
+#pragma endregion Includes
+
 namespace SvXml
 {
 	template<typename TreeType>

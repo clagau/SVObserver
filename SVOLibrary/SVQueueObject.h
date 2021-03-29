@@ -30,7 +30,7 @@ template <typename T>
 class SVTQueueObject
 {
 public:
-	typedef std::deque< T > SVQueueBase;
+	typedef std::deque<typename T> SVQueueBase;
 
 	//This constructor initializes the local attibutes.
 	SVTQueueObject();

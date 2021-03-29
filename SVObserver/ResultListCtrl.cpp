@@ -130,7 +130,7 @@ void ResultListCtrl::updateList()
 		Temp = SvUl::Format( _T( "%.3f ms ( %.3f ms )" ), m_ResultData.m_ToolSetEndTime * 1000, m_ResultData.m_ToolSetAvgTime * 1000 );
 	}
 
-	std::string Prev = GetItemText( i, 1 );
+	std::string Prev = GetItemText(i, 1).GetString();
 	if( Prev != Temp )
 	{
 		SetItemText( i, 1, Temp.c_str() );
@@ -241,7 +241,7 @@ int ResultListCtrl::updateResults(bool bRedrawDefinitions)
 			}
 			else
 			{
-				std::string TempName = GetItemText(i, 0);
+				std::string TempName = GetItemText(i, 0).GetString();
 
 				if (TempName != Name)
 				{
@@ -290,7 +290,7 @@ void ResultListCtrl::DrawItem( LPDRAWITEMSTRUCT lpDrawItemStruct )
 		GetItemRect( nItem, rcLabel, LVIR_LABEL );
 		GetItemRect( nItem, rcIcon, LVIR_ICON );
 		CRect rcCol( rcBounds );
-		std::string Label = GetItemText( nItem, 0 );
+		std::string Label = GetItemText(nItem, 0).GetString();
 		DWORD_PTR dwColor = GetItemData( nItem );
 
 		// Labels are offset by a certain amount

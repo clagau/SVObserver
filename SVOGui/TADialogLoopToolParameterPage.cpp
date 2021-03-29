@@ -132,7 +132,7 @@ HRESULT TADialogLoopToolParameterPage::SetPageData()
 				if (LoopCount > MaxLoopCount)
 				{
 					SvDef::StringVector messageList;
-					std::string valueString = m_values.Get<CString>(SvPb::MaxLoopsEId);
+					std::string valueString = m_values.Get<CString>(SvPb::MaxLoopsEId).GetString();
 					messageList.push_back(valueString);
 					valueString = m_values.Get<CString>(SvPb::LinkedLoopsEId);
 					messageList.push_back(valueString);
@@ -195,7 +195,7 @@ void TADialogLoopToolParameterPage::OnBnClickedButtonBreakCondition()
 {
 	CString Temp;
 	m_EditBreakCondition.GetWindowText(Temp);
-	std::string Value = Temp;
+	std::string Value = Temp.GetString();
 	if (m_objectSelector.Show(Value, "Loop break condition", this, SvPb::allNumberValueObjects, SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed, m_TaskObjectID))
 	{
 		m_EditBreakCondition.SetWindowText(Value.c_str());
@@ -209,7 +209,7 @@ void TADialogLoopToolParameterPage::OnBnClickedButtonLastLoopCount()
 {
 	CString Temp;
 	m_EditLoopsValue.GetWindowText(Temp);
-	std::string Value = Temp;
+	std::string Value = Temp.GetString();
 
 	if (m_objectSelector.Show(Value, "Loops Count", this, SvPb::allNumberValueObjects, SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed, m_TaskObjectID))
 	{

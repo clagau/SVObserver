@@ -51,7 +51,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-constexpr std::array<char*, 5> cTriggerMode
+constexpr std::array<const char*, 5> cTriggerMode
 {
 	_T("Next Trigger"),
 	_T("Time Delay"),
@@ -60,7 +60,7 @@ constexpr std::array<char*, 5> cTriggerMode
 	_T("Extended Time Delay Data Completion")
 };
 
-constexpr std::array<char*, 5> cPpqLengthInfo
+constexpr std::array<const char*, 5> cPpqLengthInfo
 {
 	_T("Next Trigger Mode - in this mode the PPQ length must be 2 or greater."),
 	_T("Time Delay Mode - in this mode the PPQ length must be 1."),
@@ -69,7 +69,7 @@ constexpr std::array<char*, 5> cPpqLengthInfo
 	_T("Extended Time Delay && Data Completion Mode - in this mode the PPQ length must be 1 or greater.")
 };
 
-constexpr std::array<char*, 5> cTriggerModeInfo
+constexpr std::array<const char*, 5> cTriggerModeInfo
 {
 	_T("Next Trigger Mode - in this mode outputs are written on each trigger."),
 	_T("Time Delay Mode - in this mode outputs are written after the specified Output Delay Time."),
@@ -78,14 +78,14 @@ constexpr std::array<char*, 5> cTriggerModeInfo
 	_T("Extended Time Delay && Data Completion Mode - in this mode outputs are written after completion of the Inspection or after the specified Output Delay Time. This Output Delay Time can exceed the time between triggers.")
 };
 
-constexpr std::array<char*, 3> cTriggerType
+constexpr std::array<const char*, 3> cTriggerType
 {
 	_T("Hardware"),
 	_T("Software"),
 	_T("Camera"),
 };
 
-constexpr char* cGigeCameraFileFilter = _T("Camera Files (*.ogc)|*.ogc||");
+constexpr const char* cGigeCameraFileFilter = _T("Camera Files (*.ogc)|*.ogc||");
 
 class SVCameraDeviceImageFormatUpdater : public ISVCameraDeviceImageFormatUpdater
 {
@@ -473,7 +473,7 @@ void SVOPropertyPageDlg::SetupCameraDeviceParam(SVRPropertyItem* pRoot, const SV
 					SVRPropertyItemCombo* pCombo = (SVRPropertyItemCombo*)m_Tree.InsertItem(new SVRPropertyItemCombo(), pRoot);
 					if (pCombo)
 					{
-						pCombo->SetCtrlID( PROP_CAMERA_FILE_BASE + pCamFileParam->Type() );
+						pCombo->SetCtrlID(static_cast<UINT> (PROP_CAMERA_FILE_BASE) + static_cast<UINT>(pCamFileParam->Type()));
 						std::string Label = pCamFileParam->VisualName();
 						if( Label.empty() )
 						{
@@ -502,7 +502,7 @@ void SVOPropertyPageDlg::SetupCameraDeviceParam(SVRPropertyItem* pRoot, const SV
 					SVRPropertyItemEdit* pEdit = (SVRPropertyItemEdit*)m_Tree.InsertItem(new SVRPropertyItemEdit(), pRoot);
 					if (pEdit)
 					{
-						pEdit->SetCtrlID( PROP_CAMERA_FILE_BASE + pCamFileParam->Type() );
+						pEdit->SetCtrlID(static_cast<UINT>(PROP_CAMERA_FILE_BASE) + static_cast<UINT>(pCamFileParam->Type()));
 						
 						std::string Label = pCamFileParam->VisualName();
 						if( Label.empty() )
@@ -527,7 +527,7 @@ void SVOPropertyPageDlg::SetupCameraDeviceParam(SVRPropertyItem* pRoot, const SV
 				SVRPropertyItemCombo* pCombo = (SVRPropertyItemCombo *)m_Tree.InsertItem(new SVRPropertyItemCombo(),pRoot);
 				if (pCombo)
 				{
-					pCombo->SetCtrlID( PROP_CAMERA_FILE_BASE + pCamFileParam->Type() );
+					pCombo->SetCtrlID(static_cast<UINT>(PROP_CAMERA_FILE_BASE) + static_cast<UINT>(pCamFileParam->Type()));
 					std::string Label = pCamFileParam->VisualName();
 					if( Label.empty() )
 					{
@@ -564,7 +564,7 @@ void SVOPropertyPageDlg::SetupCameraDeviceParam(SVRPropertyItem* pRoot, const SV
 							SVRPropertyItemCombo* pCombo = (SVRPropertyItemCombo *)m_Tree.InsertItem(new SVRPropertyItemCombo(), pRoot);
 							if (pCombo)
 							{
-								pCombo->SetCtrlID( PROP_CAMERA_FILE_BASE + pCamFileParam->Type() );
+								pCombo->SetCtrlID(static_cast<UINT>(PROP_CAMERA_FILE_BASE) + static_cast<UINT>(pCamFileParam->Type()));
 								std::string Label = pCamFileParam->VisualName();
 								if( Label.empty() )
 								{
@@ -608,7 +608,7 @@ void SVOPropertyPageDlg::SetupCameraDeviceParam(SVRPropertyItem* pRoot, const SV
 							SVRPropertyItemCombo* pCombo = (SVRPropertyItemCombo *)m_Tree.InsertItem(new SVRPropertyItemCombo(), pRoot);
 							if (pCombo)
 							{
-								pCombo->SetCtrlID( PROP_CAMERA_FILE_BASE + pCamFileParam->Type() );
+								pCombo->SetCtrlID(static_cast<UINT>(PROP_CAMERA_FILE_BASE) + static_cast<UINT>(pCamFileParam->Type()));
 								std::string Label = pCamFileParam->VisualName();
 								if ( Label.empty() )
 								{

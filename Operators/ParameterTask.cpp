@@ -22,11 +22,9 @@ namespace SvOp
 	static char THIS_FILE[] = __FILE__;
 #endif
 
-	long g_maxNumberOfObjects = 50;
-
-	const LPCSTR g_strObjectTypeEnum = _T("Decimal=0,Text=1,Table=2,GrayImage=3,ColorImage=4,Image=5");
-
-	constexpr char* cTypeNamePostfix = _T(" Type");
+	constexpr long cMaxNumberOfObjects = 50;
+	constexpr const char* cObjectTypeEnum = _T("Decimal=0,Text=1,Table=2,GrayImage=3,ColorImage=4,Image=5");
+	constexpr const char* cTypeNamePostfix = _T(" Type");
 
 	SvPb::MessageContainerVector createMessage(uint32_t objectId, SvStl::MessageTextEnum textId, SvDef::StringVector additionalText = {})
 	{
@@ -150,7 +148,7 @@ namespace SvOp
 		auto* pResponse = cmd.mutable_setandsortembeddedvalueresponse();
 		pResponse->set_errorrow(-1);
 		
-		if (request.embeddedlist_size() > g_maxNumberOfObjects)
+		if (request.embeddedlist_size() > cMaxNumberOfObjects)
 		{
 			pResponse->mutable_errormessages()->CopyFrom(createMessage(getObjectId(), SvStl::Tid_TooManyVariables));
 			cmd.set_hresult(E_FAIL);
@@ -230,12 +228,12 @@ namespace SvOp
 			if (SvPb::NoEmbeddedId != rValues.oldembeddedid())
 			{
 				int oldPos = rValues.oldembeddedid() - m_startEmbeddedIdValue;
-				assert(i <= oldPos && g_maxNumberOfObjects > oldPos);
-				if (i < oldPos && g_maxNumberOfObjects > oldPos)
+				assert(i <= oldPos && cMaxNumberOfObjects > oldPos);
+				if (i < oldPos && cMaxNumberOfObjects > oldPos)
 				{
 					std::swap(m_objects[i], m_objects[oldPos]);
 					std::swap(m_TypeObjects[i], m_TypeObjects[oldPos]);
-					for (auto iter = request.mutable_embeddedlist()->begin() + i; request.embeddedlist().end() != iter; ++iter)
+					for (auto iter = request.mutable_embeddedlist()->begin() + i; request.mutable_embeddedlist()->end() != iter; ++iter)
 					{
 						if (iter->oldembeddedid() == m_startEmbeddedIdValue + i)
 						{	//move id, because position moved.
@@ -279,9 +277,9 @@ namespace SvOp
 		RegisterEmbeddedObject(&m_NumberOfObjects, SvPb::NumberOfObjectsEId, IDS_OBJECTNAME_NUMBER_OF_OBJECTS, false, SvOi::SVResetItemNone);
 		m_NumberOfObjects.SetDefaultValue(0);
 
-		m_objects.resize(g_maxNumberOfObjects);
-		m_TypeObjects.resize(g_maxNumberOfObjects);
-		for (int i = 0; i < g_maxNumberOfObjects; ++i)
+		m_objects.resize(cMaxNumberOfObjects);
+		m_TypeObjects.resize(cMaxNumberOfObjects);
+		for (int i = 0; i < cMaxNumberOfObjects; ++i)
 		{
 			std::string name = SvUl::LoadStdString(IDS_OBJECTNAME_INPUT_01 + i);
 			m_objects[i] = new SvVol::LinkedValue();
@@ -290,7 +288,7 @@ namespace SvOp
 			RegisterEmbeddedObject(m_objects[i], m_startEmbeddedIdValue + i, name.c_str(), false, SvOi::SVResetItemTool);
 			RegisterEmbeddedObject(&m_objects[i]->getLinkedName(), m_startEmbeddedIdLinked + i, (name + SvDef::cLinkName).c_str(), false, SvOi::SVResetItemNone);
 			RegisterEmbeddedObject(m_TypeObjects[i], m_startEmbeddedIdType + i, (name + cTypeNamePostfix).c_str(), false, SvOi::SVResetItemOwner);
-			m_TypeObjects[i]->SetEnumTypes(g_strObjectTypeEnum);
+			m_TypeObjects[i]->SetEnumTypes(cObjectTypeEnum);
 			m_TypeObjects[i]->SetDefaultValue(0l, true);
 		}
 
@@ -307,9 +305,9 @@ namespace SvOp
 			number = 0;
 			m_NumberOfObjects.SetValue(number);
 		}
-		else if (g_maxNumberOfObjects < number)
+		else if (cMaxNumberOfObjects < number)
 		{
-			number = g_maxNumberOfObjects;
+			number = cMaxNumberOfObjects;
 			m_NumberOfObjects.SetValue(number);
 		}
 
@@ -343,7 +341,7 @@ namespace SvOp
 			m_objects[i]->getLinkedName().SetObjectAttributesAllowed(defaultStringValueAttributes, SvOi::SetAttributeType::AddAttribute);
 			m_TypeObjects[i]->SetObjectAttributesAllowed(defaultStringValueAttributes, SvOi::SetAttributeType::AddAttribute);
 		}
-		for (int i = number; g_maxNumberOfObjects > i; ++i)
+		for (int i = number; cMaxNumberOfObjects > i; ++i)
 		{
 			m_objects[i]->SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
 			m_objects[i]->getLinkedName().SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);

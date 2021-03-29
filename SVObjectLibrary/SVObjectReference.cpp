@@ -24,8 +24,11 @@ SVObjectReference::SVObjectReference( SVObjectClass* pObject ):
 	m_ArrayIndex(-1)
 	,m_pObject(pObject)
 {
-	m_objectId = (nullptr != m_pObject) ? m_pObject->getObjectId() : SvDef::InvalidObjectId;
-	(nullptr != m_pObject) ? m_NameInfo.ParseObjectName(m_pObject->GetCompleteName().c_str()) : m_NameInfo.clear();
+	if (nullptr != m_pObject)
+	{
+		m_objectId = m_pObject->getObjectId();
+		m_NameInfo.ParseObjectName(m_pObject->GetCompleteName().c_str());
+	}
 }
 
 SVObjectReference::SVObjectReference(uint32_t objectId)

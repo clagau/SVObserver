@@ -77,10 +77,12 @@
 #include <tchar.h>
 #include <vector>			//Used by static library
 
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include <boost/config.hpp>
 #include <boost/function.hpp>
 #include <boost/scoped_array.hpp>
 #pragma endregion Precompiled Headers
-
+#pragma warning( push )
+#pragma warning( disable : 4471 )
 #import <msxml3.dll> raw_interfaces_only 
+#pragma warning( pop )

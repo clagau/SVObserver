@@ -69,9 +69,9 @@ public:
 
 	const std::string checkName( LPCTSTR ToolName ) const;
 	//insensitive compare with name in m_TaskObjectVector
-	bool SVTaskObjectListClass::IsNameUnique(LPCSTR  pName, LPCTSTR pExclude) const;
+	bool IsNameUnique(LPCSTR  pName, LPCTSTR pExclude) const;
 
-	const std::string  SVTaskObjectListClass::MakeUniqueToolName(LPCTSTR ToolName) const;
+	const std::string  MakeUniqueToolName(LPCTSTR ToolName) const;
 	virtual void setEditModeFreezeFlag(bool flag) override;
 	virtual void copiedSavedImage(SvOi::ITriggerRecordRWPtr pTr) override;
 	virtual void goingOffline() override;

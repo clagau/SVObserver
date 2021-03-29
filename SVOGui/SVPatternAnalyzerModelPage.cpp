@@ -735,9 +735,7 @@ namespace SvOg
 		//
 		// Try to read the current image file path name from registry...
 		//
-		std::string Path = AfxGetApp()->GetProfileString(	_T( "Settings" ), 
-														  _T( "SVCFilePath" ), 
-														  SvStl::GlobalPath::Inst().GetRunPath().c_str() );   // Default
+		std::string Path = AfxGetApp()->GetProfileString(_T("Settings"), _T("SVCFilePath"), SvStl::GlobalPath::Inst().GetRunPath().c_str() ).GetString();   // Default
 
 		svfncFileName.SetDefaultPathName( Path );
 

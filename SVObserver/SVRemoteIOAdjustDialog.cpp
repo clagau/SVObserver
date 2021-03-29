@@ -47,7 +47,7 @@ void SVRemoteIOAdjustDialog::SetIOValue( const _variant_t& p_rValue )
 
 	if( nullptr != m_ValueEditControl.GetSafeHwnd() )
 	{
-		_bstr_t l_Value = m_Value;
+		_bstr_t l_Value{ m_Value };
 
 		m_ValueEditControl.SetWindowText( l_Value );
 	}

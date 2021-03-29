@@ -57,8 +57,8 @@ public:
 		double y;
 		if (2 == _stscanf(temp.c_str(), cFormat, &x, &y))
 		{
-			m_x = static_cast<T> x;
-			m_y = static_cast<T> y;
+			m_x = static_cast<T> (x);
+			m_y = static_cast<T> (y);
 		}
 		else
 		{

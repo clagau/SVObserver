@@ -111,12 +111,6 @@
 #pragma region Declarations
 #define ID_TRIGGER_SETTINGS 21017
 
-constexpr int UseLargerArchiveMemoryPool = 16000;
-constexpr int AsyncDefault4GB = 50;
-constexpr int AsyncDefault16GB = 200;
-constexpr int GoOfflineDefault4GB = 300;
-constexpr int GoOfflineDefault16GB = 2000;
-
 constexpr double	cNormalNonPageMemoryUsage = 80.0;		 //Value as a percentage of the total Non-Page size
 
 #pragma endregion Declarations

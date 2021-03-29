@@ -19,8 +19,8 @@ template< unsigned long p_BaseDataType, typename SVTemplateDataType, typename SV
 class SVCommandDataTemplateFacade : public SVCommandDataFacade
 {
 public:
-	typedef SVTemplateDataType SVDataType;
-	typedef SVTemplateArgType SVArgType;
+	typedef typename SVTemplateDataType SVDataType;
+	typedef typename SVTemplateArgType SVArgType;
 
 	virtual ~SVCommandDataTemplateFacade();
 

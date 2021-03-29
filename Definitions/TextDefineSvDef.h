@@ -10,60 +10,60 @@
 
 namespace SvDef
 {
-constexpr char* SourceImageInputName = _T("SourceImage");
-constexpr char* WatershedMarkerImageConnectionName = _T("WatershedFilterMarkerImage");
-constexpr char* SeedImageConnectionName = _T("SeedImage");
-constexpr char* ImageAnalyzerImageName = _T("ImageAnalyzerImage");
-constexpr char* cColorToolInputImage = _T("ColorToolInputImage");
-constexpr char* PatternModelImageName = _T("Model Image");
-constexpr char* PatternDontCareImageName = _T("Dont care Image");
-constexpr char* MaskImageName = _T("Mask Image");
-constexpr char* ReferenceImageName = _T("Reference Image");
-constexpr char* TableClearEquationName = _T("ClearConditionalFormula");
-constexpr char* cInputTag_SourceTable = _T("SourceTable");
-constexpr char* GrayImageConnectionName = _T("Gray Image");
-constexpr char* CustomFeatureEquationName = _T("CustomFeatureFormula");
+constexpr const char* SourceImageInputName = _T("SourceImage");
+constexpr const char* WatershedMarkerImageConnectionName = _T("WatershedFilterMarkerImage");
+constexpr const char* SeedImageConnectionName = _T("SeedImage");
+constexpr const char* ImageAnalyzerImageName = _T("ImageAnalyzerImage");
+constexpr const char* cColorToolInputImage = _T("ColorToolInputImage");
+constexpr const char* PatternModelImageName = _T("Model Image");
+constexpr const char* PatternDontCareImageName = _T("Dont care Image");
+constexpr const char* MaskImageName = _T("Mask Image");
+constexpr const char* ReferenceImageName = _T("Reference Image");
+constexpr const char* TableClearEquationName = _T("ClearConditionalFormula");
+constexpr const char* cInputTag_SourceTable = _T("SourceTable");
+constexpr const char* GrayImageConnectionName = _T("Gray Image");
+constexpr const char* CustomFeatureEquationName = _T("CustomFeatureFormula");
 
-constexpr char* cTrue = _T("TRUE");
-constexpr char* cFalse = _T("FALSE");
+constexpr const char* cTrue = _T("TRUE");
+constexpr const char* cFalse = _T("FALSE");
 
-constexpr char* SVO_PRODUCT_SVIM_X2_GD1A = _T("SVIM X2-GD1A");
-constexpr char* SVO_PRODUCT_SVIM_X2_GD2A = _T("SVIM X2-GD2A");
-constexpr char* SVO_PRODUCT_SVIM_X2_GD4A = _T("SVIM X2-GD4A");
-constexpr char* SVO_PRODUCT_SVIM_X2_GD8A = _T("SVIM X2-GD8A");
-constexpr char* SVO_PRODUCT_SVIM_NEO1 = _T("SVIM NEO1");
+constexpr const char* SVO_PRODUCT_SVIM_X2_GD1A = _T("SVIM X2-GD1A");
+constexpr const char* SVO_PRODUCT_SVIM_X2_GD2A = _T("SVIM X2-GD2A");
+constexpr const char* SVO_PRODUCT_SVIM_X2_GD4A = _T("SVIM X2-GD4A");
+constexpr const char* SVO_PRODUCT_SVIM_X2_GD8A = _T("SVIM X2-GD8A");
+constexpr const char* SVO_PRODUCT_SVIM_NEO1 = _T("SVIM NEO1");
 
-constexpr char* cBucketTag = _T("Array");			// for backwards compatibility
-constexpr char* cArrayTag = _T("Array_Elements");	// new style; one bucket, all array values
+constexpr const char* cBucketTag = _T("Array");			// for backwards compatibility
+constexpr const char* cArrayTag = _T("Array_Elements");	// new style; one bucket, all array values
 
-constexpr char* cModuleReady = _T("Module Ready");
-constexpr char* cRaidErrorIndicator = _T("Raid Error Indicator");
+constexpr const char* cModuleReady = _T("Module Ready");
+constexpr const char* cRaidErrorIndicator = _T("Raid Error Indicator");
 
-constexpr char* cLinkName = _T(" Link");
+constexpr const char* cLinkName = _T(" Link");
 
-constexpr char* Interpolate = _T("Interpolate");
-constexpr char* Bicubic = _T("Bicubic");
-constexpr char* Bilinear = _T("Bilinear");
-constexpr char* NearestNeighbor = _T("Nearest Neighbor");
-constexpr char* Enabled = _T("Enabled");
-constexpr char* Disabled = _T("Disabled");
+constexpr const char* Interpolate = _T("Interpolate");
+constexpr const char* Bicubic = _T("Bicubic");
+constexpr const char* Bilinear = _T("Bilinear");
+constexpr const char* NearestNeighbor = _T("Nearest Neighbor");
+constexpr const char* Enabled = _T("Enabled");
+constexpr const char* Disabled = _T("Disabled");
 
-constexpr char* cPpqFixedName = _T("PPQ_");
-constexpr char* cTriggerFixedName = _T("Trigger_");
-constexpr char* cCameraFixedName = _T("Camera_");
-constexpr char* cInspectionFixedName = _T("Inspection_");
+constexpr const char* cPpqFixedName = _T("PPQ_");
+constexpr const char* cTriggerFixedName = _T("Trigger_");
+constexpr const char* cCameraFixedName = _T("Camera_");
+constexpr const char* cInspectionFixedName = _T("Inspection_");
 
-constexpr char* cInputTag_SortColumn = _T("SortColumn");
-constexpr char* cInputTag_ExcludeColumn = _T("ExcludeColumn");
-constexpr char* cInputTag_NewColumn = _T("NewColumn");
-constexpr char* cInputTag_LongResultValue = _T("LongResultValue");
+constexpr const char* cInputTag_SortColumn = _T("SortColumn");
+constexpr const char* cInputTag_ExcludeColumn = _T("ExcludeColumn");
+constexpr const char* cInputTag_NewColumn = _T("NewColumn");
+constexpr const char* cInputTag_LongResultValue = _T("LongResultValue");
 
-constexpr char* ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME = _T("ArchiveToolOnlineAsync");
-constexpr char* ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME = _T("ArchiveToolGoOffline");
+constexpr const char* ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME = _T("ArchiveToolOnlineAsync");
+constexpr const char* ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME = _T("ArchiveToolGoOffline");
 
-constexpr char* SizeAdjustTextNone = _T("Manual");
-constexpr char* SizeAdjustTextFormula = _T("Formula");
-constexpr char* SizeAdjustTextFullSize = _T("Auto Fit");
+constexpr const char* SizeAdjustTextNone = _T("Manual");
+constexpr const char* SizeAdjustTextFormula = _T("Formula");
+constexpr const char* SizeAdjustTextFullSize = _T("Auto Fit");
 
 static std::initializer_list<const char*> c_allInterpolationModeNames
 {

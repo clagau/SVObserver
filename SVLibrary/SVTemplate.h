@@ -23,12 +23,12 @@
 #pragma endregion Includes
 
 // ignore allocators for now
-template < class T >
-class vector2d : public std::vector< std::vector<T> >
+template<typename T>
+class vector2d : public std::vector<std::vector<T>>
 {
 public:
-	typedef std::vector<T> row_type;
-	typedef std::vector< std::vector<T> > base;
+	using row_type = std::vector<typename T>;
+	using base = std::vector<row_type> ;
 	void resize ( int iNewRows, int iNewCols );
 	void resize(typename base::size_type n, T x = T()) {base::resize(n,x);}
 	void fill( T value );
@@ -41,22 +41,22 @@ private:
 	typedef std::vector< std::vector<T> > base;
 };
 
-template < class T >
+template<typename T>
 void vector2d<T>::resize( int iNewRows, int iNewCols )
 {
 	row_type aDefault(iNewCols);
 	base::resize(iNewRows, aDefault);
 
-	for ( size_t i=0; i < size(); i++ )
+	for ( size_t i=0; i < this->size(); i++ )
 	{
 		base::at(i).resize(iNewCols);
 	}
 }
 
-template < class T >
+template <typename T>
 void vector2d<T>::fill( T value )
 {
-	for ( size_t i=0; i < size(); i++ )
+	for ( size_t i=0; i < this->size(); i++ )
 	{
 		std::fill(base::at(i).begin(), base::at(i).end(), value);
 	}
@@ -83,7 +83,7 @@ T& vector2d<T>::at( int iRow, int iCol )
 template < class T >
 int vector2d<T>::num_rows()
 {
-	return size();
+	return this->size();
 }
 
 template < class T >
@@ -409,7 +409,7 @@ bool TDoubleFactory<TYPEID, TYPEID2, FACTORYBASE>::SetDefault(const TYPEID& id)
 template <typename TYPEID, typename TYPEID2, class FACTORYBASE>
 FACTORYBASE* TDoubleFactory<TYPEID, TYPEID2, FACTORYBASE>::New(const TYPEID& id)
 {
-	CreateFnMap::const_iterator iter = mapCreateFn.find(id);
+	typename CreateFnMap::const_iterator iter = mapCreateFn.find(id);
 	if (iter != mapCreateFn.end())
 	{
 		if (nullptr == iter->second)
@@ -448,7 +448,7 @@ FACTORYBASE* TDoubleFactory<TYPEID, TYPEID2, FACTORYBASE>::New(const TYPEID& id)
 template <typename TYPEID, typename TYPEID2, class FACTORYBASE>
 FACTORYBASE* TDoubleFactory<TYPEID, TYPEID2, FACTORYBASE>::New(const TYPEID2& id2)
 {
-	TypeMapSecondary::const_iterator iter = mapSecondaryType.find(id);
+	typename TypeMapSecondary::const_iterator iter = mapSecondaryType.find(id2);
 	if (iter == mapSecondaryType.end())
 	{
 		if ( mbSetDefault )
@@ -466,7 +466,7 @@ FACTORYBASE* TDoubleFactory<TYPEID, TYPEID2, FACTORYBASE>::New(const TYPEID2& id
 			// id not found in map; unknown type
 			std::string sError;
 			std::stringstream stream;
-			stream << "Unknown Type: " << id;
+			stream << "Unknown Type: " << id2;
 			sError = stream.str();
 			throw std::runtime_error(sError);
 		}

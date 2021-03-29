@@ -72,6 +72,7 @@
 #include <set>				//Used by static library
 #include <shlwapi.h>
 #include <string>			//Used by static library
+#include <stdexcept>
 #include <tchar.h>			//Used by static library
 #include <vector>
 

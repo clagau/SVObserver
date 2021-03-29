@@ -15,21 +15,21 @@
 namespace SvXml
 {
 	#pragma region String Defines
-	LPCWSTR const TAG_ALIAS = L"alias ";
-	LPCWSTR const TAG_SINGLE_QUOTE = L"\'";
-	const TCHAR* const TAG_VIPER = "Viper_";
-	const TCHAR* const TAG_1394 = "Matrox_1394";
-	const TCHAR* const TAG_GAGETOOL = "Gage Tool";
-	const TCHAR* const TAG_PROFILETOOL = "Profile Tool";
-	const TCHAR* const TAG_OCROCVANALYZER = "OCR  OCV Analyzer";
-	const TCHAR* const TAG_OCROCVGRAYANALYZER = "OCR  OCV Gray Scale Analyzer";
+	constexpr const wchar_t* TAG_ALIAS = L"alias ";
+	constexpr const wchar_t* TAG_SINGLE_QUOTE = L"\'";
+	constexpr const char* TAG_VIPER = "Viper_";
+	constexpr const char* TAG_1394 = "Matrox_1394";
+	constexpr const char* TAG_GAGETOOL = "Gage Tool";
+	constexpr const char* TAG_PROFILETOOL = "Profile Tool";
+	constexpr const char* TAG_OCROCVANALYZER = "OCR  OCV Analyzer";
+	constexpr const char* TAG_OCROCVGRAYANALYZER = "OCR  OCV Gray Scale Analyzer";
 
-	const TCHAR* const ITEM_ANALOG_CAMERA = _T("Analog Camera - Obsolete");
-	const TCHAR* const ITEM_1394_CAMERA = _T("1394 Camera - Obsolete");
-	const TCHAR* const ITEM_GAGE_TOOL = _T("Gage Tool - Obsolete");
-	const TCHAR* const ITEM_PROFILE_TOOL = _T("Profile Tool - Obsolete");
-	const TCHAR* const ITEM_FAST_OCR = _T("Fast OCR - Obsolete");
-	const TCHAR* const ITEM_PRODUCTTYPE = _T("Unknown Product Type");
+	constexpr const char* ITEM_ANALOG_CAMERA = _T("Analog Camera - Obsolete");
+	constexpr const char* ITEM_1394_CAMERA = _T("1394 Camera - Obsolete");
+	constexpr const char* ITEM_GAGE_TOOL = _T("Gage Tool - Obsolete");
+	constexpr const char* ITEM_PROFILE_TOOL = _T("Profile Tool - Obsolete");
+	constexpr const char* ITEM_FAST_OCR = _T("Fast OCR - Obsolete");
+	constexpr const char* ITEM_PRODUCTTYPE = _T("Unknown Product Type");
 	#pragma endregion String Defines
 
 	struct ObsoleteItem
@@ -61,8 +61,8 @@ namespace SvXml
 	template<typename TreeType>
 	static bool HasAcquisitionDevice(TreeType& rTree, const ObsoleteItems& rItems, std::string& rItemType, int& rErrorCode)
 	{
-		TreeType::SVBranchHandle hChild( nullptr );
-		TreeType::SVBranchHandle hBoardChild( nullptr );
+		typename TreeType::SVBranchHandle hChild( nullptr );
+		typename TreeType::SVBranchHandle hBoardChild( nullptr );
 
 		bool bFound = false;
 		bool bOk = SVNavigateTree::GetItemBranch( rTree, CTAG_ACQUISITION_DEVICE, nullptr, hChild );
@@ -91,14 +91,14 @@ namespace SvXml
 	{
 		bool bFound = false;
 
-		TreeType::SVBranchHandle htiChild(nullptr );
+		typename TreeType::SVBranchHandle htiChild(nullptr );
 		if( SVNavigateTree::GetItemBranch( rTree, CTAG_INSPECTION, nullptr, htiChild ) )
 		{
-			TreeType::SVBranchHandle htiSubChild( rTree.getFirstBranch( htiChild ) );
+			typename TreeType::SVBranchHandle htiSubChild( rTree.getFirstBranch( htiChild ) );
 		
 			while( !bFound && nullptr != htiSubChild )
 			{
-				TreeType::SVBranchHandle htiDataChild( rTree.getFirstBranch( htiSubChild ) );
+				typename TreeType::SVBranchHandle htiDataChild( rTree.getFirstBranch( htiSubChild ) );
 			
 				while( !bFound && nullptr != htiDataChild )
 				{
@@ -106,7 +106,7 @@ namespace SvXml
 
 					if ( 0 == rDataName.compare( CTAG_SVIPDOC ) )
 					{
-						TreeType::SVBranchHandle htiSVIPDoc = htiDataChild;
+						typename TreeType::SVBranchHandle htiSVIPDoc = htiDataChild;
 						_variant_t value;
 						if ( SVNavigateTree::GetItem( rTree, CTAG_TOOLSET_SCRIPT, htiSVIPDoc, value ) )
 						{
@@ -129,12 +129,12 @@ namespace SvXml
 					}
 					else if ( 0 == rDataName.compare( CTAG_INSPECTION_PROCESS ) )
 					{
-						TreeType::SVBranchHandle hItemToolset;
+						typename TreeType::SVBranchHandle hItemToolset;
 						if( SVNavigateTree::GetItemBranch( rTree, CTAG_TOOLSET_SET, htiDataChild, hItemToolset ) )
 						{
 							for (ObsoleteItems::const_iterator it = rItems.begin();it != rItems.end() && !bFound; ++it)
 							{
-								TreeType::SVBranchHandle node(nullptr );
+								typename TreeType::SVBranchHandle node(nullptr );
 								if ( SVNavigateTree::GetItemBranch( rTree, it->m_tag.c_str(), hItemToolset, node ) )
 								{
 									bFound = true;
@@ -156,7 +156,7 @@ namespace SvXml
 	static bool HasInvalidProductType(TreeType& rTree, std::string& rItemType, int& rErrorCode)
 	{
 		bool bInvalid = false;
-		TreeType::SVBranchHandle hChild(nullptr);
+		typename TreeType::SVBranchHandle hChild(nullptr);
 
 		if (SVNavigateTree::GetItemBranch(rTree, CTAG_ENVIRONMENT, nullptr, hChild))
 		{

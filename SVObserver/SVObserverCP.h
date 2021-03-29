@@ -44,13 +44,13 @@ public:
 		T* pT = static_cast< T* >( this );
 
 		int nConnectionIndex;
-		int nConnections = m_vec.GetSize();
+		int nConnections = this->m_vec.GetSize();
 
 		for( nConnectionIndex = 0; nConnectionIndex < nConnections; ++nConnectionIndex )
 		{
 			pT->Lock();
 
-			IUnknown* pTemp = m_vec.GetAt( nConnectionIndex );
+			IUnknown* pTemp = this->m_vec.GetAt( nConnectionIndex );
 
 			// the following line is needed when this function is called from different thread
 			// than what Advise was called
@@ -83,7 +83,7 @@ public:
 			IID iid;
 			IUnknown* p = nullptr;
 
-			GetConnectionInterface( &iid );
+			this->GetConnectionInterface( &iid );
 
 			l_Status = pUnkSink->QueryInterface( iid, reinterpret_cast< void** >( &p ) );
 
@@ -112,7 +112,7 @@ public:
 
 		pT->Lock();
 
-		IUnknown* p = m_vec.GetUnknown( dwCookie );
+		IUnknown* p = this->m_vec.GetUnknown( dwCookie );
 
 		if( nullptr != p )
 		{

@@ -15,7 +15,6 @@
 #include "resource.h"
 
 class MonitorListMap;
-enum CallBackType;
 
 //! CShareViewDlg dialog application's main dialog
 class CSMViewDlg : public CDialogEx

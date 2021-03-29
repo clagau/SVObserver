@@ -40,6 +40,7 @@
 #include <atomic>
 #include <condition_variable>
 #include <functional>
+#include <iostream>
 #include <map>
 #include <memory>
 #include <stdio.h>
@@ -51,5 +52,7 @@
 #include <boost/asio/deadline_timer.hpp>
 #include <boost/asio/io_service.hpp>
 #include <boost/chrono/duration.hpp>
-
+#include <boost/log/attributes/mutable_constant.hpp>
+#include <boost/log/trivial.hpp>
+#include <boost/log/utility/manipulators/add_value.hpp>
 #pragma endregion Precompiled Headers

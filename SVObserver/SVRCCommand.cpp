@@ -35,7 +35,7 @@
 #include "Triggering/SVTriggerObject.h"
 #pragma endregion Includes
 
-constexpr char* c_DefaultConfigurationName = _T("Configuration");
+constexpr const char* c_DefaultConfigurationName = _T("Configuration");
 
 void SVRCCommand::GetVersion(const SvPb::GetSVObserverVersionRequest&, SvRpc::Task<SvPb::GetVersionResponse> task)
 {

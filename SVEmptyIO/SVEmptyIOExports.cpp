@@ -17,8 +17,8 @@
 #pragma endregion Includes
 
 
-constexpr char* c_ioBoardName = "IO_Board_1";
-constexpr char* c_digitizer = ".Dig_";
+constexpr const char* c_ioBoardName = _T("IO_Board_1");
+constexpr const char* c_digitizer = _T(".Dig_");
 constexpr unsigned long cTriggerMaxCount = 4UL;
 constexpr unsigned long cInputMaxCount = 8UL;
 constexpr unsigned long cOutputMaxCount = 16UL;

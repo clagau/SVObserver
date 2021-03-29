@@ -15,6 +15,7 @@
 #include <chrono>
 #include <filesystem>
 #include <fstream>
+#include <iostream>
 #include <map>
 #include <sstream>
 #include <stdio.h>
@@ -26,3 +27,6 @@
 #pragma warning(disable : 4702)
 #include <boost/asio.hpp>
 #pragma warning(pop)
+#include <boost/log/attributes/mutable_constant.hpp>
+#include <boost/log/trivial.hpp>
+#include <boost/log/utility/manipulators/add_value.hpp>

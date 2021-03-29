@@ -8,8 +8,8 @@
 #pragma once
 namespace SvSml
 {
-	constexpr char* SharedMemorySectionTag = _T("SharedMemory");
-	constexpr char* NumProductSlotTag = _T("NumProductSlot");
-	constexpr char* CreateTimeoutTag = _T("CreateTimeout");
-	constexpr char* CreateWaitTimeTag = _T("CreateWaitTime");
+	constexpr const char* SharedMemorySectionTag = _T("SharedMemory");
+	constexpr const char* NumProductSlotTag = _T("NumProductSlot");
+	constexpr const char* CreateTimeoutTag = _T("CreateTimeout");
+	constexpr const char* CreateWaitTimeTag = _T("CreateWaitTime");
 }

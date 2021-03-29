@@ -64,64 +64,64 @@ constexpr int			cMaximumCameras = 4;
 constexpr int			cMinPatternModelNewSize = 8;
 constexpr int			cMinPatternModelLoadSize = 4;
 
-constexpr char* cGeneralExcludeChars = _T("\\/:*\"<>|;&$@'[]{}()^~!%?=§€`´°²³µ#,.+-\xd7\xf7");
-constexpr char* cExcludeCharsToolIpName = cGeneralExcludeChars;
-constexpr char* cExcludeCharsConfigName = _T("\\/:*\"<>|;&$@'[]{}()^~!%?=§€`´°²³µ#");
+constexpr const char* cGeneralExcludeChars = _T("\\/:*\"<>|;&$@'[]{}()^~!%?=§€`´°²³µ#,.+-\xd7\xf7");
+constexpr const char* cExcludeCharsToolIpName = cGeneralExcludeChars;
+constexpr const char* cExcludeCharsConfigName = _T("\\/:*\"<>|;&$@'[]{}()^~!%?=§€`´°²³µ#");
 
 
 //! Fully qualified names
-constexpr char* FqnRoot = _T("Root");
-constexpr char* FqnGlobal = _T("Global");
-constexpr char* FqnConfiguration = _T("Configuration Object");
-constexpr char* FqnInspections = _T("Inspections");
-constexpr char* FqnPPQs = _T("PPQs");
-constexpr char* FqnPPQVariables = _T("PPQ Variables");
-constexpr char* FqnRemoteInputs = _T("RemoteInputs");
+constexpr const char* FqnRoot = _T("Root");
+constexpr const char* FqnGlobal = _T("Global");
+constexpr const char* FqnConfiguration = _T("Configuration Object");
+constexpr const char* FqnInspections = _T("Inspections");
+constexpr const char* FqnPPQs = _T("PPQs");
+constexpr const char* FqnPPQVariables = _T("PPQ Variables");
+constexpr const char* FqnRemoteInputs = _T("RemoteInputs");
 //! Environment FQN names
-constexpr char* FqnEnvironment = _T("Environment");
-constexpr char* FqnEnvironmentView = _T("Environment.View");
-constexpr char* FqnEnvironmentModelNumber = _T("Environment.Model Number");
-constexpr char* FqnEnvironmentSerialNumber = _T("Environment.Serial Number");
-constexpr char* FqnEnvironmentWin = _T("Environment.Windows");
-constexpr char* FqnEnvironmentWinKey = _T("Environment.Windows.Win Key");
-constexpr char* FqnEnvironmentAutoSave = _T("Environment.Auto Save");
-constexpr char* FqnEnvironmentDiskProtection = _T("Environment.Disk Protection");
-constexpr char* FqnEnvironmentStartLastConfig = _T("Environment.Start Last Configuration");
-constexpr char* FqnEnvironmentImageUpdate = _T("Environment.View.Image Display Update");
-constexpr char* FqnEnvironmentResultUpdate = _T("Environment.View.Result Display Update");
+constexpr const char* FqnEnvironment = _T("Environment");
+constexpr const char* FqnEnvironmentView = _T("Environment.View");
+constexpr const char* FqnEnvironmentModelNumber = _T("Environment.Model Number");
+constexpr const char* FqnEnvironmentSerialNumber = _T("Environment.Serial Number");
+constexpr const char* FqnEnvironmentWin = _T("Environment.Windows");
+constexpr const char* FqnEnvironmentWinKey = _T("Environment.Windows.Win Key");
+constexpr const char* FqnEnvironmentAutoSave = _T("Environment.Auto Save");
+constexpr const char* FqnEnvironmentDiskProtection = _T("Environment.Disk Protection");
+constexpr const char* FqnEnvironmentStartLastConfig = _T("Environment.Start Last Configuration");
+constexpr const char* FqnEnvironmentImageUpdate = _T("Environment.View.Image Display Update");
+constexpr const char* FqnEnvironmentResultUpdate = _T("Environment.View.Result Display Update");
 
-constexpr char* FqnEnvironmentConfigurationName = _T("Environment.Configuration Name");
-constexpr char* FqnEnvironmentConfigurationFileName = _T("Environment.Configuration Filename");
+constexpr const char* FqnEnvironmentConfigurationName = _T("Environment.Configuration Name");
+constexpr const char* FqnEnvironmentConfigurationFileName = _T("Environment.Configuration Filename");
 
-constexpr char* FqnEnvironmentCurrentDate = _T("Environment.Current Date");
-constexpr char* FqnEnvironmentCurrentTime = _T("Environment.Current Time");
+constexpr const char* FqnEnvironmentCurrentDate = _T("Environment.Current Date");
+constexpr const char* FqnEnvironmentCurrentTime = _T("Environment.Current Time");
 
-constexpr char* FqnEnvironmentMode = _T("Environment.Mode");
-constexpr char* FqnEnvironmentModeIsRun = _T("Environment.Mode.Is Run");
-constexpr char* FqnEnvironmentModeIsStop = _T("Environment.Mode.Is Stop");
-constexpr char* FqnEnvironmentModeIsRegressionTest = _T("Environment.Mode.Is Regression Test");
-constexpr char* FqnEnvironmentModeIsTest = _T("Environment.Mode.Is Test");
-constexpr char* FqnEnvironmentModeIsEdit = _T("Environment.Mode.Is Edit");
-constexpr char* FqnEnvironmentModeValue = _T("Environment.Mode.Value");
+constexpr const char* FqnEnvironmentMode = _T("Environment.Mode");
+constexpr const char* FqnEnvironmentModeIsRun = _T("Environment.Mode.Is Run");
+constexpr const char* FqnEnvironmentModeIsStop = _T("Environment.Mode.Is Stop");
+constexpr const char* FqnEnvironmentModeIsRegressionTest = _T("Environment.Mode.Is Regression Test");
+constexpr const char* FqnEnvironmentModeIsTest = _T("Environment.Mode.Is Test");
+constexpr const char* FqnEnvironmentModeIsEdit = _T("Environment.Mode.Is Edit");
+constexpr const char* FqnEnvironmentModeValue = _T("Environment.Mode.Value");
 //! Camera FQN names
-constexpr char* FqnCameras = _T("Cameras");
-constexpr char* FqnCameraSerialNumber = _T("Serial Number");
-constexpr char* FqnCameraShutter = _T("Shutter");
-constexpr char* FqnCameraGain = _T("Gain");
-constexpr char* FqnCameraRegPath = _T("Reg Image Pathname");
-constexpr char* FqnCameraRegFile = _T("Reg Image Filename");
+constexpr const char* FqnCameras = _T("Cameras");
+constexpr const char* FqnCameraSerialNumber = _T("Serial Number");
+constexpr const char* FqnCameraShutter = _T("Shutter");
+constexpr const char* FqnCameraGain = _T("Gain");
+constexpr const char* FqnCameraRegPath = _T("Reg Image Pathname");
+constexpr const char* FqnCameraRegFile = _T("Reg Image Filename");
 //! PPQ FQN names
-constexpr char* FqnPpqLength = _T("Length");
-constexpr char* FqnPpqTriggerCount = _T("Trigger Count");
+constexpr const char* FqnPpqLength = _T("Length");
+constexpr const char* FqnPpqTriggerCount = _T("Trigger Count");
 //! PPQ Variables FQN names
-constexpr char* FqnRemoteInput = _T(".Remote Input");
-constexpr char* FqnDioInput = _T(".DIO.Input");
+constexpr const char* FqnRemoteInput = _T(".Remote Input");
+constexpr const char* FqnDioInput = _T(".DIO.Input");
 
-constexpr char* cConfigExtension = _T(".svx");
-constexpr char* cPackedConfigExtension = _T(".svz");
+constexpr const char* cConfigExtension = _T(".svx");
+constexpr const char* cPackedConfigExtension = _T(".svz");
 
-constexpr char* cWebApp = _T("WebApp.json");
-constexpr char* cWebAppIds = _T("WebAppIds.json");
+constexpr const char* cWebApp = _T("WebApp.json");
+constexpr const char* cWebAppIds = _T("WebAppIds.json");
 
 constexpr LCID LCID_USA = MAKELCID(MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), SORT_DEFAULT);
 
@@ -136,7 +136,7 @@ constexpr DWORD svErrorCondition = 0xc0000000;
 constexpr unsigned long VT_POINT = 80;
 constexpr unsigned long VT_DPOINT = 81;
 
-constexpr char* cIndexKeyword = _T("IDX");
+constexpr const char* cIndexKeyword = _T("IDX");
 
 #pragma endregion Declarations
 } //namespace SvDef

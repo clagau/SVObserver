@@ -697,7 +697,7 @@ void ToolSetView::EditToolComment(uint32_t toolId)
 		Values.Init();
 
 		// Get the tool comment...
-		std::string ToolComment = Values.Get<CString>(SvPb::ToolCommentTypeEId);
+		std::string ToolComment = Values.Get<CString>(SvPb::ToolCommentTypeEId).GetString();
 		SvOg::SVTextEditDialog Dlg(ToolComment.c_str());
 		if (IDOK == Dlg.DoModal())
 		{
@@ -1044,7 +1044,7 @@ void ToolSetView::ToggleExpandCollapse(int item)
 		lvItem.iSubItem = 0;
 		SVToolGrouping& rGroupings = pDoc->GetToolGroupings();
 		m_toolSetListCtrl.GetItem(&lvItem);
-		std::string Name = m_toolSetListCtrl.GetItemText(item, 0);
+		std::string Name = m_toolSetListCtrl.GetItemText(item, 0).GetString();
 
 		bool bState = rGroupings.IsCollapsed(Name.c_str());
 		if (rGroupings.Collapse(Name.c_str(), bState ? false : true))

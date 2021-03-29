@@ -18,11 +18,11 @@
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
-constexpr char* cSvimTriggerSourceIoBoard = _T("IO_Board_1");
-constexpr char* cSvimSoftwareTriggerSource = _T("SoftwareTrigger_1");
-constexpr char* cSvimHardwareTriggerSource = _T("HardwareTrigger");
-constexpr char* cSvimCameraTriggerSource = _T("CameraTrigger");
-constexpr char* cSvimDigName = _T(".Dig_");
+constexpr const char* cSvimTriggerSourceIoBoard = _T("IO_Board_1");
+constexpr const char* cSvimSoftwareTriggerSource = _T("SoftwareTrigger_1");
+constexpr const char* cSvimHardwareTriggerSource = _T("HardwareTrigger");
+constexpr const char* cSvimCameraTriggerSource = _T("CameraTrigger");
+constexpr const char* cSvimDigName = _T(".Dig_");
 
 typedef std::set<SVIMProductEnum> SVIMProductEnumSet;
 typedef std::map<SVIMProductEnum, SVIMProductEnumSet> SVIMProductCompatibilityList;

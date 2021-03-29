@@ -282,7 +282,7 @@ bool SVTQueueObject<T>::RemoveAt( long lPosition )
 	{
 		SVCriticalSectionSingleLock lock( m_critsec );
 
-		SVQueueBase::iterator l_Iter = m_Queue.begin();
+		auto l_Iter = m_Queue.begin();
 
 		std::advance( l_Iter, lPosition );
 

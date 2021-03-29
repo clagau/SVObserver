@@ -12,6 +12,7 @@
 #include <boost/optional.hpp>
 #pragma warning(push)
 #pragma warning(disable : 4996)
+#pragma warning(disable : 5054)
 #include <rapidjson/document.h>
 #pragma warning(pop)
 

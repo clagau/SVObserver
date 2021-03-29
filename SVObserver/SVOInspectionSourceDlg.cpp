@@ -226,7 +226,7 @@ void SVOInspectionSourceDlg::OnBtnImportIpd()
 
 	if (dlg.DoModal() == IDOK)
 	{
-		std::string PathName = dlg.GetPathName();
+		std::string PathName = dlg.GetPathName().GetString();
    
 		// Create new IP
 		OnBtnAddIpd();
@@ -302,7 +302,7 @@ void SVOInspectionSourceDlg::OnBtnExportIpd()
 				SvMc::SVFileDialog dlg(false, bFullAccess, fileExt, InspectionName.GetString(), dwFlags, fileFilters, this);
 				if (dlg.DoModal() == IDOK)
 				{
-					std::string pathName = dlg.GetPathName();
+					std::string pathName = dlg.GetPathName().GetString();
 			   
 					// Create XML file
 					SVInspectionExporter::Export( pathName, Name, TheSVObserverApp.getCurrentVersion(), IsColor );

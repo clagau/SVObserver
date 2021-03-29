@@ -24,7 +24,7 @@ enum SVFileAcquisitionDeviceParamEnum
 	SVFileAcquisitionParameterSize
 };
 
-constexpr char* SVFileAcquisitionParameterNames[SVFileAcquisitionParameterSize] =
+constexpr const char* SVFileAcquisitionParameterNames[SVFileAcquisitionParameterSize] =
 {
 	_T("Filename"),
 	_T("Directory"),

@@ -500,7 +500,7 @@ namespace SvXml
 		m_WriteTime = ::GetTickCount() - tick;
 
 		XMLFile.open( path );
-		XMLFile << mystream.str();
+		XMLFile.write(mystream.str(), mystream.str().size());
 		XMLFile.close();
 
 		return true;

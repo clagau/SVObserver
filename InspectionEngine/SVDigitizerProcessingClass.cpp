@@ -38,7 +38,7 @@ namespace SvIe
 static char THIS_FILE[] = __FILE__;
 #endif
 
-constexpr char* cMatroxGigeDigitizer = _T("Matrox_GIGE.Dig_%d");
+constexpr const char* cMatroxGigeDigitizer = _T("Matrox_GIGE.Dig_%d");
 #pragma endregion Declarations
 
 SVDigitizerProcessingClass& SVDigitizerProcessingClass::Instance()

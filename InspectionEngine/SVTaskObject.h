@@ -175,7 +175,7 @@ protected:
 public:
 	// Get the local object color...
 	virtual DWORD GetObjectColor() const override;
-	DWORD SVTaskObjectClass::GetStatusTag() const;
+	DWORD GetStatusTag() const;
 	virtual void Persist(SvOi::IObjectWriter& rWriter) const override;
 	void PersistFriends(SvOi::IObjectWriter& rWriter) const;
 	void PersistInputs(SvOi::IObjectWriter& rWriter) const;

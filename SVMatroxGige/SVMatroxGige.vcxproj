@@ -162,7 +162,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="SVMatroxGige.def" />
-    <None Include="SVMatroxGigeBufferCreator.inl" />
     <None Include="SVMatroxGigeHandleList.inl" />
     <None Include="res\SVMatroxGige.rc2" />
   </ItemGroup>
@@ -176,7 +175,6 @@
     <ClInclude Include="SVGigeStandardCameraFeatures.h" />
     <ClInclude Include="SVMatroxGige.h" />
     <ClInclude Include="SVMatroxGigeAcqParams.h" />
-    <ClInclude Include="SVMatroxGigeBufferCreator.h" />
     <ClInclude Include="SVMatroxGigeBufferStruct.h" />
     <ClInclude Include="SVMatroxGigeCallbackStruct.h" />
     <ClInclude Include="SVMatroxGigeCameraId.h" />

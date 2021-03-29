@@ -40,13 +40,13 @@ namespace SvOg
 	constexpr int MaxCellCharSize = 3;
 	constexpr COLORREF KERNEL_CENTER_COLOR = RGB( 240, 240, 240 );
 
-	constexpr char* HeaderCell = _T("Row / Column");
-	constexpr char* NoCommonValue = _T("###");
-	constexpr char* SumSelections[] = {_T("Total Sum"), _T("Positive Sum"), _T("Negative Sum"), _T("Absolute Sum") };
-	constexpr char* StatusGridSingleCell = _T("Row: %d  Col: %d  Index: %d");
-	constexpr char* StatusGridMultiCell = _T("Count: %d  Sum: %d");
-	constexpr char* CustomFilterExportFileFilters = _T("Custom Filter Export Files (*.xcf)|*.xcf||");
-	constexpr char* CustomFilterExportFileExt = _T("xcf");
+	constexpr const char* HeaderCell = _T("Row / Column");
+	constexpr const char* NoCommonValue = _T("###");
+	constexpr const char* SumSelections[] = {_T("Total Sum"), _T("Positive Sum"), _T("Negative Sum"), _T("Absolute Sum") };
+	constexpr const char* StatusGridSingleCell = _T("Row: %d  Col: %d  Index: %d");
+	constexpr const char* StatusGridMultiCell = _T("Count: %d  Sum: %d");
+	constexpr const char* CustomFilterExportFileFilters = _T("Custom Filter Export Files (*.xcf)|*.xcf||");
+	constexpr const char* CustomFilterExportFileExt = _T("xcf");
 #pragma endregion Declarations
 
 	BEGIN_MESSAGE_MAP(Custom2FilterDlg, CDialog)

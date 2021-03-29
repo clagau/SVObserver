@@ -41,7 +41,7 @@ public:
 
 	void SetOptions(unsigned opt);
 
-	unsigned GetOptions() const;
+	unsigned int GetOptions() const;
 
 	bool Clip(int left, int right);
 
@@ -107,10 +107,10 @@ protected:
 	histogram::disp_options m_disp {histogram::normal};
 	histogram::height_options m_height {histogram::dynamic};
 	histogram::placement m_placement {histogram::elsewhere};
-	unsigned m_disabled {0};
+	unsigned int m_disabled {0};
 	double m_variance {0.};
 	double m_std_dev {0.};
-	RECT m_client;
+	RECT m_client{ 0,0,0,0 };
 
 	int min_px {0};
 	int max_px {0};

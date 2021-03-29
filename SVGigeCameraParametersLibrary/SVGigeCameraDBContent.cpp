@@ -11,7 +11,10 @@
 
 #pragma region Includes
 #include "StdAfx.h"
+#pragma warning( push )
+#pragma warning( disable : 4471 )
 #import <msxml3.dll> raw_interfaces_only 
+#pragma warning( pop )
 //Moved to precompiled header: #include <string>
 //Moved to precompiled header: #include <vector>
 //Moved to precompiled header: #include <map>

@@ -20,6 +20,8 @@ class SVCommandDataTemplate : public SVCommandDataTemplateFacade< p_BaseDataType
 {
 public:
 	typedef SVCommandDataTemplateFacade< p_BaseDataType, SVTemplateDataType, SVTemplateArgType > SVCommandDataInterface;
+	typedef typename SVTemplateDataType SVDataType;
+	typedef typename SVTemplateArgType SVArgType;
 
 	SVCommandDataTemplate();
 	explicit SVCommandDataTemplate(const SVDataType& p_rValue, bool p_ReadOnly = false);
@@ -31,7 +33,6 @@ public:
 
 protected:
 	SVDataType m_Data;
-
 };
 
 #include "SVCommandDataTemplate.inl"

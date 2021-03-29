@@ -59,9 +59,6 @@
     <None Include="res\SVMatroxGige.rc2">
       <Filter>Ressourcendateien</Filter>
     </None>
-    <None Include="SVMatroxGigeBufferCreator.inl">
-      <Filter>Headerdateien</Filter>
-    </None>
     <None Include="SVMatroxGigeHandleList.inl">
       <Filter>Headerdateien</Filter>
     </None>
@@ -88,9 +85,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxGigeAcqParams.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVMatroxGigeBufferCreator.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxGigeBufferStruct.h">

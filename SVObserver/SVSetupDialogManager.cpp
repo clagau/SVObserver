@@ -584,7 +584,7 @@ HRESULT SVSetupDialogManager::SVPatternAnalyzerClassSetupDialog(uint32_t objectI
 		GeneralPage.m_bAccuracy = l_pAnalyzer->m_bAngleAccuracy;
 
 		l_pAnalyzer->msv_dpatAngleAccuracy.GetValue(GeneralPage.m_dAngularAccuracy);
-		if (GeneralPage.m_dAngularAccuracy == SVValueDefault || GeneralPage.m_dAngularAccuracy == SVValueDisable)
+		if (static_cast<SVMatroxBufferValues>(GeneralPage.m_dAngularAccuracy) == SVValueDefault || static_cast<SVMatroxBufferValues>(GeneralPage.m_dAngularAccuracy) == SVValueDisable)
 		{
 			GeneralPage.m_dAngularAccuracy = 0.1;
 		}

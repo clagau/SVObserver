@@ -21,8 +21,8 @@ inline std::string path_to_filename(std::string path)
 template<typename ValueType>
 inline ValueType set_get_attribute(const char* name, ValueType value)
 {
-	const auto& thread_attr = ::boost::log::core::get()->get_thread_attributes()[name];
-	auto attr = ::boost::log::attribute_cast<::boost::log::attributes::mutable_constant<ValueType>>(thread_attr);
+	const auto& thread_attr = boost::log::core::get()->get_thread_attributes()[name];
+	auto attr = boost::log::attribute_cast<boost::log::attributes::mutable_constant<ValueType>>(thread_attr);
 	if (!attr)
 	{
 		std::cerr << "The requested logger attribute " << name << " is not available. Make sure you initialized the logging library." << std::endl;

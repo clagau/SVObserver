@@ -115,9 +115,9 @@ int main(int argc, char* argv[])
 
 	NotificationHandler Handler;
 
-	SvRpc::Observer<SvPb::GetNotificationStreamResponse> NotifikationObserver(boost::bind(&NotificationHandler::OnNext, &Handler, _1),
+	SvRpc::Observer<SvPb::GetNotificationStreamResponse> NotifikationObserver(boost::bind(&NotificationHandler::OnNext, &Handler, boost::arg<1>()),
 		boost::bind(&NotificationHandler::OnFinish, &Handler),
-		boost::bind(&NotificationHandler::OnError, &Handler, _1));
+		boost::bind(&NotificationHandler::OnError, &Handler, boost::arg<1>()));
 	SvRpc::ClientStreamContext csx(nullptr);
 
 

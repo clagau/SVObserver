@@ -9,12 +9,12 @@ public:
 	{
 		HRESULT hr = S_OK;
 		T * pThis = static_cast<T *>(this);
-		int cConnections = m_vec.GetSize();
+		int cConnections = this->m_vec.GetSize();
 
 		for (int iConnection = 0; iConnection < cConnections; iConnection++)
 		{
 			pThis->Lock();
-			CComPtr<IUnknown> punkConnection = m_vec.GetAt(iConnection);
+			CComPtr<IUnknown> punkConnection = this->m_vec.GetAt(iConnection);
 			pThis->Unlock();
 
 			IDispatch * pConnection = static_cast<IDispatch *>(punkConnection.p);

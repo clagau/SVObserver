@@ -49,7 +49,7 @@
 #include <comdef.h>
 
 #include <boost/any.hpp>
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include <boost/config.hpp>
 #include <boost/function.hpp>
 #define BOOST_DATE_TIME_NO_LIB

@@ -406,7 +406,7 @@ SvStl::MessageContainerVector convertProtobufToMessageVector(const MessageContai
 
 
 template<typename TreeItem>
-void convertVectorToTree(const std::vector<TreeItem>& rItemVector, TreeItem* pTree)
+void convertVectorToTree(const std::vector<typename TreeItem>& rItemVector, typename TreeItem* pTree)
 {
 	std::map<std::string, TreeItem*> treeNodes;
 
@@ -418,7 +418,7 @@ void convertVectorToTree(const std::vector<TreeItem>& rItemVector, TreeItem* pTr
 		std::vector<std::string> newBranchNames;
 		while(false == location.empty())
 		{
-			std::map<std::string, TreeItem*>::const_iterator iter = treeNodes.find(location);
+			auto iter = std::as_const(treeNodes).find(location);
 			if(treeNodes.end() == iter)
 			{
 				size_t startPos = location.rfind('.');

@@ -63,14 +63,13 @@ namespace SvCl
 			EdgeVector EdgesFound;
 			outedge_connection( rGraph, rSrcVertex, std::back_inserter( EdgesFound ) );
 
-			EdgeVector::const_iterator it;
-			for( it = EdgesFound.begin(); it != EdgesFound.end(); ++it )
+			for (auto it{ EdgesFound.cbegin() }; it != EdgesFound.cend(); ++it)
 			{
 				Vertex PartnerVertex( boost::target( *it, rGraph ) );
 				const VertexName& rPartnerName = boost::get( boost::get( boost::vertex_name, rGraph ), PartnerVertex );
 				if( rSrcName != rPartnerName )
 				{
-					typename typedef std::pair< VertexName, VertexName > Dependency;
+					typedef std::pair< VertexName, VertexName > Dependency;
 
 					m_DestinationSet.insert( rPartnerName );
 					Dependency Dependent( rSrcName, rPartnerName );
@@ -92,9 +91,9 @@ namespace SvCl
 				m_DestinationSet.insert( rDiscoveredName );
 			}
 
-			std::set<VertexName>::const_iterator Iter( m_DestinationSet.find( rDiscoveredName ) );
+			const auto iter( std::as_const(m_DestinationSet).find( rDiscoveredName ) );
 
-			if( m_DestinationSet.cend() != Iter )
+			if( m_DestinationSet.cend() != iter )
 			{
 				addMatchingOuterEdges( DiscoveredVertex, rDiscoveredName, rGraph );
 			}

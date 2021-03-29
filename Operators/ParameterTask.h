@@ -33,7 +33,7 @@ namespace SvOp
 
 #pragma region Public Methods
 	public:
-		virtual bool ParameterTask::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure) override;
+		virtual bool CreateObject(const SVObjectLevelCreateStruct& rCreateStructure) override;
 		virtual bool ResetObject(SvStl::MessageContainerVector* pErrorMessages = nullptr) override;
 
 		SvPb::InspectionCmdResponse setAndSortEmbeddedValues(SvPb::SetAndSortEmbeddedValueRequest request);

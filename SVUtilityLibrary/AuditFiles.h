@@ -14,7 +14,7 @@ namespace SvUl
 	};
 	enum class AuditListType
 	{
-		default, white
+		auditDefault, white
 	};
 
 

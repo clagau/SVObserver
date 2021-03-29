@@ -63,17 +63,17 @@ SVVisionProcessorHelper::SVVisionProcessorHelper()
 
 	m_GetItemsFunctors = SVGetItemsFunctorMap
 	{
-		{StandardItems, boost::bind(&SVVisionProcessorHelper::GetStandardItems, this, _1, _2)},
-		{SvDef::FqnInspections, boost::bind(&SVVisionProcessorHelper::GetInspectionItems, this, _1, _2)},
-		{SvDef::FqnRemoteInputs, boost::bind(&SVVisionProcessorHelper::GetRemoteInputItems, this, _1, _2)}
+		{StandardItems, boost::bind(&SVVisionProcessorHelper::GetStandardItems, this, boost::arg<1>(), boost::arg<2>())},
+		{SvDef::FqnInspections, boost::bind(&SVVisionProcessorHelper::GetInspectionItems, this, boost::arg<1>(), boost::arg<2>())},
+		{SvDef::FqnRemoteInputs, boost::bind(&SVVisionProcessorHelper::GetRemoteInputItems, this, boost::arg<1>(), boost::arg<2>())}
 	};
 
 	m_SetItemsFunctors = SVSetItemsFunctorMap
 	{
-		{StandardItems, boost::bind(&SVVisionProcessorHelper::SetStandardItems, this, _1, _2, _3)},
-		{SvDef::FqnInspections, boost::bind(&SVVisionProcessorHelper::SetInspectionItems, this, _1, _2, _3)},
-		{SvDef::FqnRemoteInputs, boost::bind(&SVVisionProcessorHelper::SetRemoteInputItems, this, _1, _2, _3)},
-		{SvDef::FqnCameras, boost::bind(&SVVisionProcessorHelper::SetCameraItems, this, _1, _2, _3)}
+		{StandardItems, boost::bind(&SVVisionProcessorHelper::SetStandardItems, this, boost::arg<1>(), boost::arg<2>(), boost::arg<3>())},
+		{SvDef::FqnInspections, boost::bind(&SVVisionProcessorHelper::SetInspectionItems, this, boost::arg<1>(), boost::arg<2>(), boost::arg<3>())},
+		{SvDef::FqnRemoteInputs, boost::bind(&SVVisionProcessorHelper::SetRemoteInputItems, this, boost::arg<1>(), boost::arg<2>(), boost::arg<3>())},
+		{SvDef::FqnCameras, boost::bind(&SVVisionProcessorHelper::SetCameraItems, this, boost::arg<1>(), boost::arg<2>(), boost::arg<3>())}
 	};
 }
 
@@ -1094,7 +1094,7 @@ void SVVisionProcessorHelper::FireNotification(SvPb::NotifyType notifyType, cons
 {
 	if (SvPb::NotifyType::currentMode == notifyType)
 	{
-		svModeEnum currentMode = static_cast<svModeEnum> (parameter.lVal);
+		SvPb::DeviceModeType currentMode = static_cast<SvPb::DeviceModeType> (parameter.lVal);
 		RootObject::setRootChildValue(SvDef::FqnEnvironmentModeValue, static_cast<long> (currentMode));
 		RootObject::setRootChildValue(SvDef::FqnEnvironmentModeIsRun, (SvPb::DeviceModeType::runMode == currentMode));
 		RootObject::setRootChildValue(SvDef::FqnEnvironmentModeIsStop, (SvPb::DeviceModeType::stopMode == currentMode));

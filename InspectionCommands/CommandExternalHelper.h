@@ -38,7 +38,13 @@ struct SVObjectTypeInfoStruct;
 namespace SvCmd
 {
 
-enum class ThreadPref { cur, inspection, async,default };
+enum class ThreadPref
+{ 
+	cur,
+	inspection,
+	async,
+	threadDefault
+};
 
 /// Call an inspection command synchronous if required. (Send it to the inspection thread.)
 /// \param inspectionID [in] id for the inspection to find the inspection thread.
@@ -46,7 +52,7 @@ enum class ThreadPref { cur, inspection, async,default };
 /// \param pResponse [in, out] The response message (must fit to the request message). If request message has no response message, it should be nullptr.
 ///\param ThreadPref t  [in] default means use setting from InspectionCommandMap  
 /// /// \returns HRESULT ErrorCode.
-HRESULT InspectionCommands(uint32_t inspectionID, const SvPb::InspectionCmdRequest& rReq, SvPb::InspectionCmdResponse* pRes,ThreadPref t = ThreadPref::default);
+HRESULT InspectionCommands(uint32_t inspectionID, const SvPb::InspectionCmdRequest& rReq, SvPb::InspectionCmdResponse* pRes,ThreadPref t = ThreadPref::threadDefault);
 
 HRESULT RunOnceSynchronous(uint32_t inspectionID);
 

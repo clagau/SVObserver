@@ -49,7 +49,7 @@ namespace SvSml
 		void Insert(MonitorListCpyPointer& MLCpyPtr);
 		DWORD GetInspectionStoreId(const std::string& InspectionName);
 		const MonitorListCpy*  GetMonitorListCpyPointer(const std::string& Monitorlistname)  const;
-		const MonitorListCpy*  SharedMemWriter::GetMonitorListCpyPointerForPPQ(const std::string& PPQNAME)  const;
+		const MonitorListCpy*  GetMonitorListCpyPointerForPPQ(const std::string& PPQNAME)  const;
 		MonitorEntryPointer GetMonitorEntryPointer(const std::string& rname);
 		void WriteMonitorList();
 		bool clearInspectionIdsVector(const std::string& rPPQName);

@@ -1050,11 +1050,11 @@ bool SVOCVAnalyzeResult::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVe
 				}// end else
 
 				// Determine MIL pass/fail status 
-				bool bStringPassed = dValidString == SVValueTrue;
+				bool bStringPassed = static_cast<SVMatroxBufferValues> (dValidString) == SVValueTrue;
 				bool bCharsPassed = true;
 				for( k = 0; k < l_lLength; k++ )
 				{
-					bCharsPassed &= l_adValidChars[k] == SVValueTrue;
+					bCharsPassed &= static_cast<SVMatroxBufferValues>(l_adValidChars[k]) == SVValueTrue;
 				}// end for
 
 				// Cleanup results

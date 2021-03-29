@@ -122,7 +122,7 @@ bool TADialogRingBufferParameterPage::QueryAllowExit()
 	{
 		CString Temp;
 		m_EditRingDepth.GetWindowText(Temp);
-		std::string Value = Temp;
+		std::string Value = Temp.GetString();
 		std::string Title = SvUl::LoadStdString(IDS_OBJECTNAME_RINGBUFFER_DEPTH);
 		if (m_objectSelector.Show(Value, Title, this, SvPb::allNumberValueObjects, SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed, m_TaskObjectID))
 		{
@@ -136,7 +136,7 @@ bool TADialogRingBufferParameterPage::QueryAllowExit()
 
 		CString Temp;
 		m_EditImageIndex[ButtonIndex].GetWindowText( Temp );
-		std::string Value = Temp;
+		std::string Value = Temp.GetString();
 		std::string Title = SvUl::LoadStdString( IDS_OBJECTNAME_RINGBUFFER_INDEX1 + ButtonIndex	 );
 		if (m_objectSelector.Show( Value, Title, this, SvPb::allNumberValueObjects, SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed, m_TaskObjectID))
 		{
@@ -184,7 +184,7 @@ bool TADialogRingBufferParameterPage::QueryAllowExit()
 
 		CString Text;
 		m_EditRingDepth.GetWindowText(Text);
-		std::string Value = Text;
+		std::string Value = Text.GetString();
 		long depth = 0;
 		bool isNumber = SvUl::Convert2Number( Value, depth, true );
 		if( !isNumber || (SvDef::cRingBufferDepthMin <= depth && SvDef::cRingBufferDepthMax >= depth) )

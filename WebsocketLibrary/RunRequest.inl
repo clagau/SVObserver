@@ -35,7 +35,7 @@ std::future<TRes> runStream(TClientService& client,
 		return SvSyl::SVFuture<void>::make_ready();
 	},
 		[promise]() { promise->set_value({}); },
-		[promise](const SvPenv::Error& err) { promise->set_exception(SvUl::errorToExceptionPtr(err)); });
+		[promise](const SvPenv::Error& err) { promise->set_exception(SvStl::errorToExceptionPtr(err)); });
 	(client.*getter)(std::move(req), observer);
 	return promise->get_future();
 }

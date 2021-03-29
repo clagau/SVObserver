@@ -66,13 +66,16 @@ BOOL SVSquare::RegisterWindowClass()
 	return TRUE;
 }
 
+#pragma warning (push)
+#pragma warning (disable : 5054)
 SVHistogramAnalyzerSetup::SVHistogramAnalyzerSetup(CWnd* pParent /*=nullptr*/)
 	: CDialog(SVHistogramAnalyzerSetup::IDD, pParent), m_pAnalyzer(nullptr)
 {
-	unsigned opt = m_histogram.GetOptions();
+	unsigned int opt = m_histogram.GetOptions();
 	opt &= ~(histogram::color_mask | histogram::clip_mask | histogram::placement_mask);
 	m_histogram.SetOptions(opt | histogram::config | histogram::clip | histogram::analyzer);
 }
+#pragma warning (pop)
 
 SVHistogramAnalyzerSetup::~SVHistogramAnalyzerSetup()
 {

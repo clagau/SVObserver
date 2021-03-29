@@ -16,7 +16,7 @@
 
 
 #pragma region Declarations
-constexpr char* UnknownboardTag = _T("Unknown board");
+constexpr const char* UnknownboardTag = _T("Unknown board");
 #pragma endregion Declarations
 
 

@@ -16,7 +16,7 @@ namespace SvMc
 	class AvailableObjectListComboBox : public CComboBox
 	{
 	public:
-		using PairClass = std::pair<std::string, value>;
+		using PairClass = std::pair<std::string, typename value>;
 		using Container = std::vector<PairClass>;
 		AvailableObjectListComboBox() = default;
 		virtual ~AvailableObjectListComboBox() = default;

@@ -143,6 +143,7 @@ namespace Gdiplus
 #include <ws2tcpip.h>		//Used by static library
 #include <xmllite.h>
 
+#define BOOST_BIND_NO_PLACEHOLDERS
 #include <boost\algorithm\string.hpp>
 #include <boost\algorithm\string\replace.hpp>
 #include <boost/any.hpp>
@@ -170,6 +171,9 @@ namespace Gdiplus
 #include <boost/graph/graphviz.hpp>							//Used by static library
 #pragma warning(pop)
 #include <boost/lexical_cast.hpp>
+#include <boost/log/attributes/mutable_constant.hpp>
+#include <boost/log/trivial.hpp>
+#include <boost/log/utility/manipulators/add_value.hpp>
 #include <boost/math/special_functions/round.hpp>
 #include <boost/scoped_array.hpp>							//Used by static library
 #include <boost/shared_array.hpp>							//Used by static library

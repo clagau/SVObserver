@@ -74,12 +74,12 @@ const SVMatroxGigeDigitizer& SVMatroxGigeDigitizer::operator=( const SVMatroxGig
 
 HRESULT SVMatroxGigeDigitizer::CreateAcquisitionBuffers(const SVMatroxSystem& rSystem, unsigned long width, unsigned long height, unsigned long format)
 {
-	AcqBufferCreator l_creator;
-	SVMatroxBufferCreateStruct l_createStruct;
-	HRESULT hr = l_creator.BuildCreateStruct(width, height, format, l_createStruct);
+	SVMatroxBufferCreateStruct createStruct;
+	createStruct.m_eAttribute = SVBufAttGrabImageProc;
+	HRESULT hr = BuildCreateStruct(width, height, format, createStruct);
 	if (S_OK == hr)
 	{
-		hr = m_AcqBuffers.Create(rSystem, l_createStruct, NUM_ACQUISITION_BUFFERS);
+		hr = m_AcqBuffers.Create(rSystem, createStruct, NUM_ACQUISITION_BUFFERS);
 	}
 	return hr;
 }
@@ -188,5 +188,32 @@ HRESULT SVMatroxGigeDigitizer::GetGigeEventList()
 {
 	m_eventList.clear();
 	return SVMatroxDigitizerInterface::GetGigeEventList(*(m_Digitizer.get()), m_eventList);
+}
+
+HRESULT SVMatroxGigeDigitizer::BuildCreateStruct(unsigned long p_ulWidth, unsigned long p_ulHeight, unsigned long p_ulFormat, SVMatroxBufferCreateStruct& rCreateStruct)
+{
+	HRESULT l_hr = S_OK;
+
+	rCreateStruct.m_lSizeX = p_ulWidth;
+	rCreateStruct.m_lSizeY = p_ulHeight;
+
+	switch (p_ulFormat)
+	{
+	case SvDef::SVImageFormatMono8:
+		rCreateStruct.m_lSizeBand = 1;
+		rCreateStruct.m_eType = SV8BitUnsigned;
+		break;
+
+	case SvDef::SVImageFormatBGR888:
+	case SvDef::SVImageFormatBGR888X:
+		rCreateStruct.m_lSizeBand = 3;
+		rCreateStruct.m_eType = SV8BitUnsigned;
+		break;
+
+	default:
+		l_hr = S_FALSE;
+		break;
+	}
+	return l_hr;
 }
 

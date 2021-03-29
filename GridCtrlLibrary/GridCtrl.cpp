@@ -2437,7 +2437,7 @@ namespace SvGcl
 			nIndex = strLine.Find(_T("\n"));
 
 			// Store the remaining chars after the newline
-			CString strNext = (nIndex < 0)? _T("")  : strLine.Mid(nIndex + 1);
+			CString strNext = (nIndex < 0) ? _T("")  : strLine.Mid(nIndex + 1).GetString();
 
 			// Remove all chars after the newline
 			if (nIndex >= 0)
@@ -2484,7 +2484,7 @@ namespace SvGcl
 					if (iColVis > PasteRange.GetMaxCol()) PasteRange.SetMaxCol(iColVis);
 				}
 
-				strLine = (nLineIndex >= 0)? strLine.Mid(nLineIndex + 1) : _T("");
+				strLine = (nLineIndex >= 0)? strLine.Mid(nLineIndex + 1).GetString() : _T("");
 				nLineIndex = strLine.FindOneOf(_T("\t,"));
 				strCellText = (nLineIndex >= 0)? strLine.Left(nLineIndex) : strLine;
 
@@ -7184,7 +7184,7 @@ namespace SvGcl
 				for (int j = 0; j < nNumColumns; j++)
 				{
 					File.WriteString(GetItemText(i,j));
-					File.WriteString((j==(nNumColumns-1))? _T("\n"): strSeparator);
+					File.WriteString((j==(nNumColumns-1)) ? _T("\n"): strSeparator.GetString());
 				}
 			}
 

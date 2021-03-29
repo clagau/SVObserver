@@ -20,7 +20,7 @@ class RPCClient;
 class Router
 {
 public:
-	Router::Router(RPCClient& rClient, RequestHandler& rRequestHandler);
+	Router(RPCClient& rClient, RequestHandler& rRequestHandler);
 };
 
 } // namespace SvRpc

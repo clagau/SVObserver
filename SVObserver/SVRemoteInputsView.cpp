@@ -171,7 +171,7 @@ void SVRemoteInputsView::OnLButtonDblClk(UINT, CPoint point)
 					_variant_t value;
 					SVRemoteIOAdjustDialog dlg;
 
-					std::string Name = m_rCtrl.GetItemText( item, 1 );
+					std::string Name = m_rCtrl.GetItemText(item, 1).GetString();
 
 					pRemoteInput->Read(value);
 

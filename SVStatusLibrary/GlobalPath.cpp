@@ -28,32 +28,32 @@ static char THIS_FILE[] = __FILE__;
 namespace SvStl
 {
 	///defaultValue 
-	constexpr char* DefaultLastValidFolder =   _T( "C:\\Last Valid" );	
-	constexpr char* DefaultTempFolder = _T( "C:\\Temp" );
-	constexpr char* DefaultRunFolder = _T( "C:\\RUN" );
-	constexpr char* DefaultObserverBinPath = _T( "C:\\SVObserver\\bin" );
-	constexpr char* DefaultObserverPath = _T( "C:\\SVObserver" );	
-	constexpr char* DefaultSecondObserverPath = _T( "D:\\SVObserver" );	
-	constexpr char* DefaultRamDrive = _T("V:");
+	constexpr const char* DefaultLastValidFolder =   _T( "C:\\Last Valid" );	
+	constexpr const char* DefaultTempFolder = _T( "C:\\Temp" );
+	constexpr const char* DefaultRunFolder = _T( "C:\\RUN" );
+	constexpr const char* DefaultObserverBinPath = _T( "C:\\SVObserver\\bin" );
+	constexpr const char* DefaultObserverPath = _T( "C:\\SVObserver" );	
+	constexpr const char* DefaultSecondObserverPath = _T( "D:\\SVObserver" );	
+	constexpr const char* DefaultRamDrive = _T("V:");
 
 	///subdirectories and sub-subdirectories of DefaultSecondObserverPath 
-	constexpr char* AutoSaveRelativePath = _T( "Autosave" );	
-	const TCHAR* const AutoSaveTemp1FileName = _T("Temp1MostRecent.svz");///< the first autosave temp file name
-	const TCHAR* const AutoSaveTemp2FileName = _T("Temp2.svz");///< the second autosave temp file name
-	const TCHAR* const AutoSaveTemp3FileName = _T("Temp3.svz");///< the third autosave temp file name
+	constexpr const char* AutoSaveRelativePath = _T( "Autosave" );
+	constexpr const char* const AutoSaveTemp1FileName = _T("Temp1MostRecent.svz");///< the first autosave temp file name
+	constexpr const char* const AutoSaveTemp2FileName = _T("Temp2.svz");///< the second autosave temp file name
+	constexpr const char* const AutoSaveTemp3FileName = _T("Temp3.svz");///< the third autosave temp file name
 
-	const TCHAR* const TempRelativePath = _T("Temp");	///< the "temporary" temp directory name
+	constexpr const char* const TempRelativePath = _T("Temp");	///< the "temporary" temp directory name
 
 	///TAGS 
-	constexpr char* SVIMDirectorySectionTag = _T("SVIM Directories");
-	constexpr char* SVIMObserverBinPathTag = _T("ObserverBinPath");
-	constexpr char* SVIMSVObserverRunPathTag = _T("ObserverRunPath");
-	constexpr char* SVIMSVObserverTempPath = _T("ObserverTempPath");
-	constexpr char* SVIMSVObserverPath = _T("ObserverPath");
-	constexpr char* SVIMSVObserverSecondPath = _T("ObserverSecondPath");
-	constexpr char* SVIMSVObserverLastValidPath = _T("LastValidPath");
-	constexpr char* SVIMRamDrive = _T("RamDrive");
-	constexpr char* ConfigWarningFilename = _T("ConfigWarningFilename");
+	constexpr const char* SVIMDirectorySectionTag = _T("SVIM Directories");
+	constexpr const char* SVIMObserverBinPathTag = _T("ObserverBinPath");
+	constexpr const char* SVIMSVObserverRunPathTag = _T("ObserverRunPath");
+	constexpr const char* SVIMSVObserverTempPath = _T("ObserverTempPath");
+	constexpr const char* SVIMSVObserverPath = _T("ObserverPath");
+	constexpr const char* SVIMSVObserverSecondPath = _T("ObserverSecondPath");
+	constexpr const char* SVIMSVObserverLastValidPath = _T("LastValidPath");
+	constexpr const char* SVIMRamDrive = _T("RamDrive");
+	constexpr const char* ConfigWarningFilename = _T("ConfigWarningFilename");
 
 
 	GlobalPath::GlobalPath():

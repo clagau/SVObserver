@@ -159,7 +159,7 @@ namespace SvStl
 		static void Initialize();
 
 		//!has this message been repeated so often it should be suppressed?
-		bool MessageManager::suppressLogAndNotify() const;
+		bool suppressLogAndNotify() const;
 
 		//************************************
 		//! Logs the message if the type is set to be logged

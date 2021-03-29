@@ -56,6 +56,7 @@
 #include <vector>
 #include <windows.h>
 
+#define BOOST_BIND_NO_PLACEHOLDERS
 #include <boost/any.hpp>
 #include <boost/array.hpp>
 #pragma warning(push)
@@ -67,7 +68,9 @@
 #include <boost/function.hpp> //Used by static library
 #pragma warning(push)
 #pragma warning(disable : 4714)
+#include <boost/log/attributes/mutable_constant.hpp>
 #include <boost/log/trivial.hpp>
+#include <boost/log/utility/manipulators/add_value.hpp>
 #pragma warning(pop)
 #include <boost/thread.hpp>
 

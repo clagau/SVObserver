@@ -94,7 +94,7 @@ void SVOFileExecutionConfigDlg::OnBtnAddPre()
 
 	if (dlg.DoModal() == IDOK)
 	{
-		std::string PathName = dlg.GetPathName();
+		std::string PathName = dlg.GetPathName().GetString();
 		copyAndAddToConfig(PathName, SVOFileExecutionConfigDlg::ProcessPosition::PreRun);
 
 	}
@@ -109,7 +109,7 @@ void SVOFileExecutionConfigDlg::OnBtnAddPost()
 
 	if (dlg.DoModal() == IDOK)
 	{
-		std::string PathName = dlg.GetPathName();
+		std::string PathName = dlg.GetPathName().GetString();
 		copyAndAddToConfig(PathName, SVOFileExecutionConfigDlg::ProcessPosition::PostRun);
 
 	}
@@ -152,7 +152,8 @@ void SVOFileExecutionConfigDlg::copyAndAddToConfig(std::string path, int preOrPo
 		if (pConfig != nullptr)
 		{
 			CString runDirectory = SvStl::GlobalPath::Inst().GetRunPath().c_str();
-			CString destinationPath = runDirectory + "\\" + std::filesystem::path(path).filename().c_str();
+			CString destinationPath = runDirectory + "\\";
+			destinationPath += std::filesystem::path(path).filename().c_str();
 		
 			if (SVOFileExecutionConfigDlg::ProcessPosition::PreRun == preOrPost)
 			{	

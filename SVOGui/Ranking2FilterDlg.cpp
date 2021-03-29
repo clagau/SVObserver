@@ -37,9 +37,9 @@ constexpr int CellSize = 40;
 constexpr int HeaderColumnSize = 60;
 constexpr COLORREF KERNEL_CENTER_COLOR = RGB(240, 240, 240);
 
-constexpr char* HeaderCell = _T("Row / Column");
-constexpr char* StatusGridSingleCell = _T("Row: %d  Col: %d  Index: %d");
-constexpr char* StatusGridMultiCell = _T("Count: %d");
+constexpr const char* HeaderCell = _T("Row / Column");
+constexpr const char* StatusGridSingleCell = _T("Row: %d  Col: %d  Index: %d");
+constexpr const char* StatusGridMultiCell = _T("Count: %d");
 #pragma endregion Declarations
 
 BEGIN_MESSAGE_MAP(Ranking2FilterDlg, CDialog)

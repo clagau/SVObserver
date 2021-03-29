@@ -8,6 +8,8 @@
 
 #pragma once
 
-#pragma warning (push,2)
+#pragma warning (push)
+#pragma warning( disable : 5054 )
+#pragma warning( disable : 4127 )
 #include "BasicStructure.pb.h"
 #pragma warning (pop)

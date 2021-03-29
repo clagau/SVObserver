@@ -30,8 +30,8 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-constexpr char* cGigeCameraFileDefExt = _T(".ogc");
-constexpr char* cGigeCameraFileFilter = _T("Digitizer Files (*.ogc)|*.ogc||");
+constexpr const char* cGigeCameraFileDefExt = _T(".ogc");
+constexpr const char* cGigeCameraFileFilter = _T("Digitizer Files (*.ogc)|*.ogc||");
 
 const static int AcqImageBufferCnt = 10;
 

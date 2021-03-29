@@ -206,7 +206,7 @@ inline SVFuture<T> SVFuture<T>::make_ready(T t)
 template<class T>
 inline SVFuture<T> SVFuture<T>::make_exceptional(std::exception_ptr ptr)
 {
-	Promise<T> promise;
+	class Promise<T> promise;
 	promise.set_exception(ptr);
 	return promise.get_future();
 }
@@ -294,22 +294,22 @@ inline SVPromise<T>::SVPromise() : SVFuture<T>(std::make_shared<detail::State<T>
 template<class T>
 inline SVFuture<T> SVPromise<T>::get_future()
 {
-	return SVFuture<T>(m_state);
+	return SVFuture<T>(this->m_state);
 }
 
 template<class T>
 inline void SVPromise<T>::set_value(T t)
 {
-	std::unique_lock<std::mutex> lk(m_state->mutex);
+	std::unique_lock<std::mutex> lk(this->m_state->mutex);
 
-	m_state->value = std::move(t);
-	m_state->is_done = true;
-	m_state->is_success = true;
+	this->m_state->value = std::move(t);
+	this->m_state->is_done = true;
+	this->m_state->is_success = true;
 
 	// trigger all future.get()
-	m_state->cv.notify_all();
+	this->m_state->cv.notify_all();
 
-	auto fn = m_state->fn;
+	auto fn = this->m_state->fn;
 	lk.unlock();
 
 	// trigger all future.then()
@@ -322,16 +322,16 @@ inline void SVPromise<T>::set_value(T t)
 template<class T>
 inline void SVPromise<T>::set_exception(std::exception_ptr exptr)
 {
-	std::unique_lock<std::mutex> lk(m_state->mutex);
+	std::unique_lock<std::mutex> lk(this->m_state->mutex);
 
-	m_state->exptr = exptr;
-	m_state->is_done = true;
-	m_state->is_success = false;
+	this->m_state->exptr = exptr;
+	this->m_state->is_done = true;
+	this->m_state->is_success = false;
 
 	// trigger all future.get()
-	m_state->cv.notify_all();
+	this->m_state->cv.notify_all();
 
-	auto fn = m_state->fn;
+	auto fn = this->m_state->fn;
 	lk.unlock();
 
 	// trigger all future.then()

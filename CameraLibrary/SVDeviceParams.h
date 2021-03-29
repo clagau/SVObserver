@@ -148,7 +148,7 @@ template<typename TYPE> struct TDeviceOption	// used for discrete selectable val
 	TYPE m_Value;
 	std::string m_Description;
 	TDeviceOption() {};
-	TDeviceOption(const TYPE& rValue) { value = rValue; };
+	TDeviceOption(const TYPE& rValue) { this->value = rValue; };
 	TDeviceOption(const TYPE& rValue, const std::string& rDescription) { m_Value = rValue; m_Description = rDescription; };
 	operator TYPE() const { return m_Value; };
 };
@@ -188,7 +188,7 @@ public:
 
 template<typename TYPE> struct TDeviceParamInfo
 {
-	typedef TDeviceOption<TYPE> OptionType;
+	typedef typename TDeviceOption<TYPE> OptionType;
 	typedef std::vector<OptionType> OptionsType;
 	
 	OptionsType options;
@@ -200,7 +200,7 @@ template<typename TYPE> struct TDeviceParamInfo
 	bool OptionExists(std::string description) const
 	{
 		bool bRet = false;
-		OptionsType::const_iterator it = std::find_if(options.begin(), options.end(), OptionDescMatch<OptionType>(description));
+		typename OptionsType::const_iterator it = std::find_if(options.begin(), options.end(), OptionDescMatch<OptionType>(description));
 		if (it != options.end())
 		{
 			bRet = true;

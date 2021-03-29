@@ -45,6 +45,7 @@
 
 #include <comutil.h>
 #include <filesystem>
+#include <iostream>
 #include <memory>
 #include <sstream>
 #include <string>
@@ -55,6 +56,9 @@
 #include <boost/asio/deadline_timer.hpp>
 #include <boost/asio/io_service.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
+#include <boost/log/attributes/mutable_constant.hpp>
+#include <boost/log/trivial.hpp>
+#include <boost/log/utility/manipulators/add_value.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/ini_parser.hpp>
 #include <boost/property_tree/xml_parser.hpp>

@@ -387,7 +387,7 @@ void SVChildrenSetupDialog::OnItemChangedChildrenList(NMHDR*, LRESULT* pResult)
 		//
 		// Check for 'empty' string as item string.
 		//
-		std::string ItemText = m_ChildrenListCtrl.GetItemText(0,0);
+		std::string ItemText = m_ChildrenListCtrl.GetItemText(0,0).GetString();
 		std::string Empty = SvUl::LoadStdString( IDS_EMPTY_STRING );
 		if( ItemText == Empty )
 		{

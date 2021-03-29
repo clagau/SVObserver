@@ -3015,7 +3015,7 @@ void SVConfigurationObject::SaveAcquistionConfiguration(SvOi::IObjectWriter& rWr
 
 		SAFEARRAY* psaParam = nullptr;
 		rLut(iBand).Info().GetTransformParameters(psaParam);
-		svVariant = SvUl::SVSAFEARRAY(psaParam);
+		svVariant = SvUl::SVSAFEARRAY(psaParam).operator _variant_t();
 		rWriter.WriteAttribute(SvXml::CTAG_LUT_TRANSFORM_PARAMETERS, svVariant);
 		svVariant.Clear();
 
@@ -3028,7 +3028,7 @@ void SVConfigurationObject::SaveAcquistionConfiguration(SvOi::IObjectWriter& rWr
 
 		SAFEARRAY* psaBandData = nullptr;
 		rLut(iBand).GetBandData(psaBandData);
-		svVariant = SvUl::SVSAFEARRAY(psaBandData);
+		svVariant = SvUl::SVSAFEARRAY(psaBandData).operator _variant_t();
 		rWriter.WriteAttribute(SvXml::CTAG_LUT_BAND_DATA, svVariant);
 		svVariant.Clear();
 		rWriter.EndElement(); // csBand
@@ -5784,8 +5784,8 @@ const std::vector< SvUl::AuditFile>& SVConfigurationObject::GetAuditWhiteList() 
 
 void SVConfigurationObject::SaveAuditList(SvOi::IObjectWriter& rWriter, SvUl::AuditListType type) const
 {
-	auto& AuditFileVec = (type == SvUl::AuditListType::default) ? GetAuditDefaultList() : GetAuditWhiteList();
-	LPCTSTR lpStartElementName = (type == SvUl::AuditListType::default) ? SvXml::CTAG_AUDDID_DEFAULT_LIST : SvXml::CTAG_AUDDID_WHITE_LIST;
+	auto& AuditFileVec = (type == SvUl::AuditListType::auditDefault) ? GetAuditDefaultList() : GetAuditWhiteList();
+	LPCTSTR lpStartElementName = (type == SvUl::AuditListType::auditDefault) ? SvXml::CTAG_AUDDID_DEFAULT_LIST : SvXml::CTAG_AUDDID_WHITE_LIST;
 	if (AuditFileVec.size() > 0)
 	{
 		rWriter.StartElement(lpStartElementName);
@@ -5810,10 +5810,10 @@ HRESULT SVConfigurationObject::LoadAuditList(SVTreeType& rTree, SvUl::AuditListT
 {
 	HRESULT Result{ S_OK };
 	SVTreeType::SVBranchHandle hBranch{ nullptr };
-	LPCTSTR lpStartElementName = (type == SvUl::AuditListType::default) ? SvXml::CTAG_AUDDID_DEFAULT_LIST : SvXml::CTAG_AUDDID_WHITE_LIST;
+	LPCTSTR lpStartElementName = (type == SvUl::AuditListType::auditDefault) ? SvXml::CTAG_AUDDID_DEFAULT_LIST : SvXml::CTAG_AUDDID_WHITE_LIST;
 	if (SvXml::SVNavigateTree::GetItemBranch(rTree, lpStartElementName, nullptr, hBranch))
 	{
-		auto& AuditFiles = (type == SvUl::AuditListType::default) ? m_AuditDefaultList.GetFiles() : m_AuditWhiteList.GetFiles();
+		auto& AuditFiles = (type == SvUl::AuditListType::auditDefault) ? m_AuditDefaultList.GetFiles() : m_AuditWhiteList.GetFiles();
 		SVTreeType::SVBranchHandle hFileBranch = rTree.getFirstBranch(hBranch);
 		while (nullptr != hFileBranch && Result == S_OK)
 		{
@@ -5857,11 +5857,11 @@ HRESULT SVConfigurationObject::LoadAuditList(SVTreeType& rTree, SvUl::AuditListT
 
 void  SVConfigurationObject::SaveAuditList(SvOi::IObjectWriter& rWriter) const
 {
-	SaveAuditList(rWriter, SvUl::AuditListType::default);
+	SaveAuditList(rWriter, SvUl::AuditListType::auditDefault);
 	SaveAuditList(rWriter, SvUl::AuditListType::white);
 };
 
 HRESULT  SVConfigurationObject::LoadAuditList(SVTreeType& rTree)
 {
-	return (LoadAuditList(rTree, SvUl::AuditListType::default) | LoadAuditList(rTree, SvUl::AuditListType::white));
+	return (LoadAuditList(rTree, SvUl::AuditListType::auditDefault) | LoadAuditList(rTree, SvUl::AuditListType::white));
 }

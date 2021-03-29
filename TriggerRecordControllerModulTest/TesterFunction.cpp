@@ -32,7 +32,6 @@ HANDLE g_resetEvent = nullptr;
 HANDLE g_readyEvent = nullptr;
 HANDLE g_newTrEvent = nullptr;
 constexpr int triggerIdOffset = 100'000;
-LPTSTR strTestWithMoreThreads = _T("testWithMoreThreads");
 constexpr int divFac = 3;
 
 using namespace std::chrono_literals;

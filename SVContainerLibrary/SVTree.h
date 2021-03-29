@@ -21,10 +21,10 @@ namespace SvCl
 	{
 	#pragma region Declarations
 	public:
-		typedef Data ElementData;
-		typedef std::shared_ptr< Data > DataPtr;
-		typedef std::pair<Key, DataPtr > SVTreeElement;
-		typedef tcl::sequential_tree< SVTreeElement > SVTreeContainer;
+		typedef typename Data ElementData;
+		typedef std::shared_ptr<typename Data> DataPtr;
+		typedef std::pair<typename Key, DataPtr> SVTreeElement;
+		typedef tcl::sequential_tree<SVTreeElement> SVTreeContainer;
 	#pragma endregion Declarations
 
 	#pragma region Constructor

@@ -62,6 +62,7 @@
 #include <vector>
 #include <utility>
 
+#define BOOST_BIND_NO_PLACEHOLDERS
 #include <boost/config.hpp>
 #include <boost/bind.hpp>
 #include <boost/function.hpp>

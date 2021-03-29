@@ -8,6 +8,7 @@
 #pragma once
 
 #pragma region Includes
+#include "IGraphNameLookup.h"
 //Moved to precompiled header: #include <fstream>
 //Moved to precompiled header: #include <iostream>
 //Moved to precompiled header: #include <iterator>
@@ -33,52 +34,50 @@ class IGraphNameLookup;
 	struct edge_type_t 
 	{
 		enum { num = 101 };
-		typedef boost::edge_property_tag kind;
+		using kind = boost::edge_property_tag;
 	};
 	#pragma endregion Declarations
 
-	template< typename VertexName, typename EdgeType >
+	template<typename VertexName, typename EdgeType>
 	class ObjectGraph
 	{
 	#pragma region Declarations
 	public:
 		//! The graph dependency decelerations which are vertex pairs defining an edge
-		typedef std::set<VertexName> VertexSet;
-		typedef std::pair<VertexName, VertexName> Dependency;
-		typedef std::set<Dependency> DependencySet;
-		typedef std::insert_iterator<DependencySet> DependencyInserter;
+		using VertexSet = std::set<typename VertexName>;
+		using Dependency = std::pair<typename VertexName, typename VertexName>;
+		using DependencySet = std::set<Dependency>;
+		using DependencyInserter = std::insert_iterator<DependencySet>;
 
 		//! The boost graph vertex and edge properties
-		typedef typename boost::property< boost::vertex_name_t, VertexName > VertexObj;
-		typedef boost::property< boost::vertex_index_t, size_t, VertexObj > VertexIndex;
-		typedef boost::property< boost::vertex_color_t, boost::default_color_type, VertexIndex > VertexProperty;
-		typedef boost::property< edge_type_t, EdgeType > EdgeProperty;
+		using VertexObj = boost::property<boost::vertex_name_t, typename VertexName>;
+		using VertexIndex =  boost::property<boost::vertex_index_t, size_t, VertexObj>;
+		using VertexProperty = boost::property<boost::vertex_color_t, boost::default_color_type, VertexIndex>;
+		using EdgeProperty = boost::property<edge_type_t, EdgeType>;
 
-		typedef boost::function<LPCTSTR ( const VertexName& )> VertexNameFunc;
+		typedef boost::function<LPCTSTR (const VertexName&)> VertexNameFunc;
 
 		//! The boost graph library deceleration using the adjacency type
-		typedef boost::adjacency_list<boost::vecS,
+		using DependencyGraph = boost::adjacency_list<boost::vecS,
 			boost::listS,
 			boost::bidirectionalS,
 			VertexProperty,
-			EdgeProperty>
-			DependencyGraph;
+			EdgeProperty>;
 
-		typename typedef boost::graph_traits<DependencyGraph>::vertex_descriptor VertexData;
-		typename typedef boost::graph_traits<DependencyGraph>::edge_descriptor EdgeData;
-		typename typedef boost::property_map<DependencyGraph, edge_type_t>::type EdgeTypeMap;
-		typename typedef boost::property_map<DependencyGraph, edge_type_t>::const_type EdgeTypeMapConst;
+		using VertexData = typename boost::graph_traits<DependencyGraph>::vertex_descriptor;
+		using EdgeData = typename boost::graph_traits<DependencyGraph>::edge_descriptor;
+		using EdgeTypeMap = typename boost::property_map<DependencyGraph, edge_type_t>::type ;
+		using EdgeTypeMapConst = typename boost::property_map<DependencyGraph, edge_type_t>::const_type;
 
-		typename typedef std::vector<EdgeData> EdgeVector;
+		using EdgeVector = std::vector<EdgeData> ;
 	
-		typedef std::map<VertexName, VertexData> VertexNameDataMap;
+		using VertexNameDataMap = std::map<VertexName, VertexData>;
 	#pragma endregion Declarations
 
 	#pragma region Constructor
 	public:
 		ObjectGraph();
 		ObjectGraph( const ObjectGraph& rObjectGraphManager );
-		ObjectGraph& operator=( const ObjectGraph& rObjectGraphManager );
 
 		//! Graph constructor using dependency set and edge type
 		//! \param rList [in] reference to the dependency set

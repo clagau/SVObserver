@@ -31,7 +31,7 @@ void SVConfigurationTreeWriter< SVTreeType >::WriteAttribute(LPCTSTR pName, cons
 {
 	if (nullptr != pName && (VT_NULL != value.vt || VT_EMPTY != value.vt))
 	{
-		SVTreeType::SVBranchHandle hItem = m_nodes[0];
+		typename SVTreeType::SVBranchHandle hItem = m_nodes[0];
 		_variant_t v(value);
 		
 		SvXml::SVNavigateTree::AddItem(m_rTree, hItem, pName, v);
@@ -54,8 +54,8 @@ void SVConfigurationTreeWriter< SVTreeType >::WriteAttribute(LPCTSTR pName, cons
 template< typename SVTreeType >
 void SVConfigurationTreeWriter< SVTreeType >::StartElement(LPCTSTR pName)
 {
-	SVTreeType::SVBranchHandle hItem;
-	SVTreeType::SVBranchHandle hParentItem = (m_nodes.size()) ? m_nodes[0] : m_htiParent;
+	typename SVTreeType::SVBranchHandle hItem;
+	typename SVTreeType::SVBranchHandle hParentItem = (m_nodes.size()) ? m_nodes[0] : m_htiParent;
 	SvXml::SVNavigateTree::AddBranch(m_rTree, hParentItem, pName, &hItem);
 	m_nodes.push_front(hItem);
 }
