@@ -329,7 +329,6 @@ void ResultValueDefinition::setDefinition(const ResultValueDefinitionStructEx&  
 	m_UseDisplayNames = true;
 }
 
-// cppcheck-suppress unusedFunction
 int ResultValueDefinition::getIndex() const
 {
 	return m_ValueIndex;

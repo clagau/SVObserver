@@ -326,7 +326,7 @@ HRESULT SVTaskObjectClass::GetChildObject(SVObjectClass*& rpObject, const SVObje
 				for (SVObjectPtrVector::const_iterator Iter = m_embeddedList.begin(); nullptr == rpObject && m_embeddedList.end() != Iter; ++Iter)
 				{
 					SVObjectClass* pObject = *Iter;
-					if (nullptr != pObject && (Index + 1 == rNameInfo.m_NameArray.size() - 1 || SvPb::SVImageObjectType == pObject->GetObjectType()))
+					if (nullptr != pObject)
 					{
 						l_Status = pObject->GetChildObject(rpObject, rNameInfo, Index + 1);
 					}

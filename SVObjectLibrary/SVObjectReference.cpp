@@ -18,6 +18,7 @@
 #include "ObjectInterfaces/IValueObject.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/SVGUID.h"
+#include "SVProtoBuf/GetObjectSelector.pb.h"
 #pragma endregion Includes
 
 SVObjectReference::SVObjectReference( SVObjectClass* pObject ):
@@ -112,7 +113,7 @@ SvOi::IValueObject* SVObjectReference::getValueObject(bool forceCast) const
 {
 	if(nullptr == m_pValueObject || forceCast)
 	{
-		m_pValueObject = dynamic_cast<SvOi::IValueObject*> (m_pObject);
+		m_pValueObject = dynamic_cast<SvOi::IValueObject*> (getFinalObject());
 	}
 	return m_pValueObject;
 }
@@ -335,5 +336,60 @@ long SVObjectReference::IncrementIndex()
 	}
 
 	return m_ArrayIndex;
+}
+
+void SVObjectReference::fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, bool wholeArray, SvOi::IsObjectAllowedFunc pFunctor, UINT attribute, SvPb::SVObjectTypeEnum nameToType)
+{
+	SvPb::TreeItem insertItem;
+	auto* pValueObject = getValueObject(false);
+	if (nullptr != pValueObject)
+	{
+		insertItem.set_type(pValueObject->getTypeName());
+	}
+
+	if (isArray())
+	{
+		if (wholeArray && pFunctor(getObject(), attribute, 0))
+		{
+			SetEntireArray();
+			insertItem.set_name(GetName(true));
+			UINT AttributesSet = ObjectAttributesSet();
+			insertItem.set_location(GetObjectNameToObjectType(nameToType, true, true));
+			insertItem.set_objectidindex(GetObjectIdAndIndexOneBased());
+			insertItem.set_selected((AttributesSet & attribute) == attribute);
+			// cppcheck-suppress unreadVariable symbolName=treeInserter ; cppCheck doesn't know back_insert_iterator
+			treeInserter = insertItem;
+		}
+
+		// add array elements
+		if (nullptr != pValueObject)
+		{
+			int iArraySize = pValueObject->getArraySize();
+			for (int i = 0; i < iArraySize; i++)
+			{
+				if (pFunctor(getObject(), attribute, i))
+				{
+					SetArrayIndex(i);
+					insertItem.set_name(GetName(true));
+					UINT AttributesSet = ObjectAttributesSet();
+					insertItem.set_location(GetObjectNameToObjectType(nameToType, true, true));
+					insertItem.set_objectidindex(GetObjectIdAndIndexOneBased());
+					insertItem.set_selected((AttributesSet & attribute) == attribute);
+					// cppcheck-suppress unreadVariable symbolName=treeInserter ; cppCheck doesn't know back_insert_iterator
+					treeInserter = insertItem;
+				}
+			}
+		}
+	}
+	else if (pFunctor(getObject(), attribute, 0))
+	{
+		insertItem.set_name(GetName());
+		UINT AttributesSet = ObjectAttributesSet();
+		insertItem.set_location(GetObjectNameToObjectType(nameToType, true));
+		insertItem.set_objectidindex(GetObjectIdAndIndexOneBased());
+		insertItem.set_selected((AttributesSet & attribute) == attribute);
+		// cppcheck-suppress unreadVariable symbolName=treeInserter ; cppCheck doesn't know back_insert_iterator
+		treeInserter = insertItem;
+	}
 }
 

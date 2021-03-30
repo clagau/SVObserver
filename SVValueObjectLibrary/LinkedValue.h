@@ -72,8 +72,13 @@ public:
 
 	virtual void disconnectObjectInput(uint32_t objectId) override;
 	virtual void disconnectAllInputs() override;
+	virtual void fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, SvOi::IsObjectAllowedFunc pFunctor, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum nameToType, SvPb::ObjectSelectorType requiredType, bool stopIfClosed = false, bool firstObject = false) const override;
 	/// Disconnected the input connection and set it to nullptr.
 	void DisconnectInput();
+
+	virtual UINT ObjectAttributesSet(int iIndex = 0) const override;
+
+	virtual HRESULT GetChildObject(SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index = 0) const;
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
@@ -111,9 +116,10 @@ private:
 	SVStringValueObjectClass m_LinkedName;
 	SVObjectReference m_LinkedObjectRef;
 	mutable bool m_CircularReference;					//! Use this flag during GetValue to make sure no circular references are present
+
+	//@TODO[MZA][10.10][25.03.2021] it should be unique_ptr but for this the copy-constructor has to be deleted.
+	std::vector<std::shared_ptr<LinkedValue>> m_children;
 #pragma endregion Member Variables
-
-
 };
 
 } //namespace SvVol

@@ -13,11 +13,13 @@
 #include "Definitions/GlobalConst.h"
 #include "Definitions/ObjectDefines.h"
 #include "Definitions/StringTypeDef.h"
+#include "ObjectInterfaces/ITableObject.h"
 #include "ObjectInterfaces/IObjectClass.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/SafeArrayHelper.h"
+#include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #pragma endregion Includes
 
 namespace SvVol
@@ -194,7 +196,16 @@ namespace SvVol
 			if (nullptr != m_LinkedObjectRef.getValueObject())
 			{
 				m_CircularReference = true;
-				Result = m_LinkedObjectRef.getValue(rValue);
+				if (m_LinkedObjectRef.getIndex() == Index || -1 != m_LinkedObjectRef.getIndex())
+				{
+					Result = m_LinkedObjectRef.getValue(rValue);
+				}
+				else
+				{
+					auto refObject = m_LinkedObjectRef;
+					refObject.SetArrayIndex(Index);
+					Result = refObject.getValue(rValue);
+				}
 				m_CircularReference = false;
 			}
 			else
@@ -207,7 +218,7 @@ namespace SvVol
 				//If the Linked Value is of type BOOL and is to be converted to the default type then we need the absolute value
 				if (VT_BOOL == rValue.vt && GetDefaultType() != rValue.vt)
 				{
-				rValue.boolVal = rValue.boolVal ? 1 : 0;
+					rValue.boolVal = rValue.boolVal ? 1 : 0;
 				}
 				if (S_OK != ::VariantChangeTypeEx(&rValue, &rValue, SvDef::LCID_USA, VARIANT_ALPHABOOL, GetDefaultType()))
 				{
@@ -412,6 +423,22 @@ namespace SvVol
 		DisconnectInput(); 
 		__super::disconnectAllInputs();
 	}
+
+	void LinkedValue::fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, SvOi::IsObjectAllowedFunc pFunctor, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum nameToType, SvPb::ObjectSelectorType requiredType, bool stopIfClosed, bool firstObject) const
+	{
+		__super::fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType, stopIfClosed, firstObject);
+		for (auto& rChild : m_children)
+		{
+			if (nullptr != rChild)
+			{
+				if (rChild->isCorrectType(requiredType))
+				{
+					SVObjectReference ObjectRef{ rChild->getObjectId() };
+					ObjectRef.fillSelectorList(treeInserter, wholeArray, pFunctor, attribute, nameToType);
+				}
+			}
+		}
+	}
 #pragma endregion Protected Methods
 
 #pragma region Private Methods
@@ -519,10 +546,36 @@ namespace SvVol
 			{
 				m_LinkedObjectRef = LinkedObjectRef;
 			}
+
 			//Convert old dotted name format to Unique ID
 			if (convertOldName)
 			{
 				SVVariantValueObjectClass::setValue(m_LinkedObjectRef.GetCompleteName(true));
+			}
+
+			auto* pTable = dynamic_cast<SvOi::ITableObject*>(m_LinkedObjectRef.getFinalObject());
+			if (nullptr != pTable)
+			{ //Add children-LinkedValues for TableObject
+				const auto& tableValues = pTable->getValueList();
+				m_children.resize(tableValues.size());
+				SVObjectLevelCreateStruct createStruct;
+				createStruct.OwnerObjectInfo.SetObject(this);
+				for (int i = 0; i < tableValues.size(); ++i)
+				{
+					if (nullptr == m_children[i])
+					{
+						m_children[i] = std::make_shared<LinkedValue>();
+						m_children[i]->createAllObjects(createStruct);
+					}
+					m_children[i]->SetName(tableValues[i]->GetName());
+					m_children[i]->setValue(tableValues[i]->GetObjectNameToObjectType(SvPb::SVToolSetObjectType));
+					m_children[i]->setDefaultValue(tableValues[i]->getDefaultValue());
+					Result = m_children[i]->resetAllObjects(pErrorMessages) && Result;
+				}
+			}
+			else
+			{
+				m_children.clear();
 			}
 		}
 		else	// plain data
@@ -560,6 +613,39 @@ namespace SvVol
 			m_LinkedObjectRef.getObject()->disconnectObject(getObjectId());
 			m_LinkedObjectRef = SVObjectReference();
 		}
+	}
+
+	UINT LinkedValue::ObjectAttributesSet(int iIndex) const
+	{
+		if (nullptr != m_LinkedObjectRef.getObject())
+		{
+			return m_LinkedObjectRef.getObject()->ObjectAttributesSet(iIndex);
+		}
+		else
+		{
+			return __super::ObjectAttributesSet(iIndex);
+		}
+	}
+
+	HRESULT LinkedValue::GetChildObject(SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index/* = 0*/) const
+	{
+		HRESULT l_Status = __super::GetChildObject(rpObject, rNameInfo, Index);
+
+		if (S_OK != l_Status)
+		{
+			for (auto pChild : m_children)
+			{
+				if (nullptr != pChild)
+				{
+					l_Status = pChild->GetChildObject(rpObject, rNameInfo, Index + 1);
+					if (S_OK == l_Status && nullptr != rpObject)
+					{
+						return l_Status;
+					}
+				}
+			}
+		}
+		return l_Status;
 	}
 
 	bool LinkedValue::ConnectInput()

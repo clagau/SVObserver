@@ -109,6 +109,7 @@ public:
 	bool operator < ( const SVObjectReference& rhs ) const;
 
 	std::string GetIndexString(bool OneBased = false) const;
+	long getIndex() const { return m_ArrayIndex; };
 
 	/// Get the value of object depend of the index. If object is not a value object, it will return an error.
 	/// \param rValue [out] The return value.
@@ -123,6 +124,8 @@ public:
 	//************************************
 	long IncrementIndex();
 
+	void fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, bool wholeArray, SvOi::IsObjectAllowedFunc pFunctor, UINT attribute, SvPb::SVObjectTypeEnum nameToType);
+	
 protected:	
 	const std::string& GetIndex() const;
 	

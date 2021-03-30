@@ -340,59 +340,13 @@ SvOi::IObjectClass* SVObjectClass::getFirstObject(const SvDef::SVObjectTypeInfoS
 	return nullptr;
 }
 
+
 void SVObjectClass::fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, SvOi::IsObjectAllowedFunc pFunctor, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum nameToType, SvPb::ObjectSelectorType requiredType, bool /*stopIfClosed = false*/, bool /*firstObject = false*/) const
 {
-	SVObjectReference ObjectRef { getObjectId() };
 	if (isCorrectType(requiredType))
 	{
-		SvPb::TreeItem insertItem;
-
-		if (nullptr != ObjectRef.getValueObject())
-		{
-			insertItem.set_type(ObjectRef.getValueObject()->getTypeName());
-		}
-
-		if (ObjectRef.isArray())
-		{
-			if (wholeArray && pFunctor(ObjectRef.getObject(), attribute, 0))
-			{
-				ObjectRef.SetEntireArray();
-				insertItem.set_name(ObjectRef.GetName(true));
-				UINT AttributesSet = ObjectRef.ObjectAttributesSet();
-				insertItem.set_location(ObjectRef.GetObjectNameToObjectType(nameToType, true, true));
-				insertItem.set_objectidindex(ObjectRef.GetObjectIdAndIndexOneBased());
-				insertItem.set_selected((AttributesSet & attribute) == attribute);
-				// cppcheck-suppress unreadVariable symbolName=treeInserter ; cppCheck doesn't know back_insert_iterator
-				treeInserter = insertItem;
-			}
-
-			// add array elements
-			int iArraySize = ObjectRef.getValueObject()->getArraySize();
-			for (int i = 0; i < iArraySize; i++)
-			{
-				if (pFunctor(ObjectRef.getObject(), attribute, i))
-				{
-					ObjectRef.SetArrayIndex(i);
-					insertItem.set_name(ObjectRef.GetName(true));
-					UINT AttributesSet = ObjectRef.ObjectAttributesSet();
-					insertItem.set_location(ObjectRef.GetObjectNameToObjectType(nameToType, true, true));
-					insertItem.set_objectidindex(ObjectRef.GetObjectIdAndIndexOneBased());
-					insertItem.set_selected((AttributesSet & attribute) == attribute);
-					// cppcheck-suppress unreadVariable symbolName=treeInserter ; cppCheck doesn't know back_insert_iterator
-					treeInserter = insertItem;
-				}
-			}
-		}
-		else if (pFunctor(ObjectRef.getObject(), attribute, 0))
-		{
-			insertItem.set_name(ObjectRef.GetName());
-			UINT AttributesSet = ObjectRef.ObjectAttributesSet();
-			insertItem.set_location(ObjectRef.GetObjectNameToObjectType(nameToType, true));
-			insertItem.set_objectidindex(ObjectRef.GetObjectIdAndIndexOneBased());
-			insertItem.set_selected((AttributesSet & attribute) == attribute);
-			// cppcheck-suppress unreadVariable symbolName=treeInserter ; cppCheck doesn't know back_insert_iterator
-			treeInserter = insertItem;
-		}
+		SVObjectReference ObjectRef{ getObjectId() };
+		ObjectRef.fillSelectorList(treeInserter, wholeArray, pFunctor, attribute, nameToType);
 	}
 }
 
