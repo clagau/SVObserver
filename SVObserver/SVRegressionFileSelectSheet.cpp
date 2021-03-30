@@ -410,11 +410,6 @@ int SVRegressionFileSelectSheet::FillFileListFromDirectory(RegressionTestStruct&
 			currentPath = currentPath.substr(0, Pos);
 		}
 	}
-	else
-	{
-		//If the first file is a directory then clear it so that the first file is set to the vector begin
-		rStruct.FirstFile.clear();
-	}
 	int count = FillFileListFromDirectory(rStruct, currentPath);
 	return count;
 }

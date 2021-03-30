@@ -40,7 +40,10 @@ RegressionRunFileStruct RegressionTestController::RegressionTestSetFiles(Regress
 			}
 		}
 
-		runFileStruct.FileName = *rRegTestStruct.stdIteratorCurrent;
+		if (rRegTestStruct.stdVectorFile.end() != rRegTestStruct.stdIteratorCurrent)
+		{
+			runFileStruct.FileName = *rRegTestStruct.stdIteratorCurrent;
+		}
 		break;
 	}
 	case RegModeSingleStepForward:
@@ -54,7 +57,10 @@ RegressionRunFileStruct RegressionTestController::RegressionTestSetFiles(Regress
 		{
 			rRegTestStruct.stdIteratorCurrent = rRegTestStruct.stdVectorFile.begin();
 		}
-		runFileStruct.FileName = *rRegTestStruct.stdIteratorCurrent;
+		if (rRegTestStruct.stdVectorFile.end() != rRegTestStruct.stdIteratorCurrent)
+		{
+			runFileStruct.FileName = *rRegTestStruct.stdIteratorCurrent;
+		}
 		runState.bRunFlag = true;
 		break;
 	}
@@ -77,21 +83,30 @@ RegressionRunFileStruct RegressionTestController::RegressionTestSetFiles(Regress
 			rRegTestStruct.stdIteratorCurrent = rRegTestStruct.stdVectorFile.end() - 1;
 		}
 
-		runFileStruct.FileName = *rRegTestStruct.stdIteratorCurrent;
+		if (rRegTestStruct.stdVectorFile.end() != rRegTestStruct.stdIteratorCurrent)
+		{
+			runFileStruct.FileName = *rRegTestStruct.stdIteratorCurrent;
+		}
 		runState.bRunFlag = true;
 		break;
 	}
 	case RegModeBackToBeginningPlay:
 	{
 		rRegTestStruct.stdIteratorCurrent = rRegTestStruct.stdIteratorStart;
-		runFileStruct.FileName = *rRegTestStruct.stdIteratorCurrent;
+		if (rRegTestStruct.stdVectorFile.end() != rRegTestStruct.stdIteratorCurrent)
+		{
+			runFileStruct.FileName = *rRegTestStruct.stdIteratorCurrent;
+		}
 		runState.bRunFlag = true;
 		break;
 	}
 	case RegModeBackToBeginningStop:
 	{
 		rRegTestStruct.stdIteratorCurrent = rRegTestStruct.stdIteratorStart;
-		runFileStruct.FileName = *rRegTestStruct.stdIteratorCurrent;
+		if (rRegTestStruct.stdVectorFile.end() != rRegTestStruct.stdIteratorCurrent)
+		{
+			runFileStruct.FileName = *rRegTestStruct.stdIteratorCurrent;
+		}
 		runState.bRunFlag = true;
 		break;
 	}
