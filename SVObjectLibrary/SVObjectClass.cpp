@@ -695,28 +695,28 @@ SVObjectClass* SVObjectClass::OverwriteEmbeddedObject(uint32_t uniqueID, SvPb::E
 	return nullptr;
 }
 
-SVObjectReference SVObjectClass::ConvertStringInObject(const std::string& rValue) const
+SVObjectReference SVObjectClass::GetObjectReferenceForDottedName(const std::string& rDottedName) const
 {
-	std::string ObjectName;
+	std::string fullDottedName;
 
 	//If the tool set name is at the start then add the inspection name at the beginning
-	if (rValue._Starts_with(SvUl::LoadedStrings::g_ToolSetName))
+	if (rDottedName._Starts_with(SvUl::LoadedStrings::g_ToolSetName))
 	{
 		const SvOi::IObjectClass* pInspection = GetAncestorInterface(SvPb::SVInspectionObjectType);
 		if (nullptr != pInspection)
 		{
-			ObjectName = pInspection->GetName();
-			ObjectName += _T(".");
-			ObjectName += rValue;
+			fullDottedName = pInspection->GetName();
+			fullDottedName += _T(".");
+			fullDottedName += rDottedName;
 		}
 	}
 	else
 	{
-		ObjectName = rValue;
+		fullDottedName = rDottedName;
 	}
 
 	SVObjectReference objectRef;
-	SVObjectManagerClass::Instance().GetObjectByDottedName(ObjectName, objectRef);
+	SVObjectManagerClass::Instance().GetObjectByDottedName(fullDottedName, objectRef);
 	return objectRef;
 }
 

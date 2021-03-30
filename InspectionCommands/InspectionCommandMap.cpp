@@ -609,14 +609,6 @@ namespace SvCmd
 		)
 		},
 
-		{ SvPb::InspectionCmdRequest::kValidateValueObjectRequest,
-		std::make_tuple(
-		[] {return ThreadPref::inspection; },
-		[] {return std::chrono::seconds{ 120 }; },
-		[](const SvPb::InspectionCmdRequest& rRequest) {return  validateValueObject(rRequest.validatevalueobjectrequest()); }
-		)
-		},
-
 		{ SvPb::InspectionCmdRequest::kGetToolsWithReplaceableSourceImageRequest,
 		std::make_tuple(
 		[] {return ThreadPref::inspection; },

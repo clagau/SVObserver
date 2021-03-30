@@ -44,9 +44,6 @@ public:
 // Implementation
 protected:
 	int SelectObject( std::string& rSelectedName, SVRPropertyItem* pItem );
-	HRESULT ValidateItem(SVRPropertyItem* pItem);
-
-	std::string getCompleteName(SVRPropertyItem* pItem) const;
 
 	int GetItemIndex(SVRPropertyItem* pItem);
 	const std::unique_ptr<SvPb::InputValueDefinition> GetInputDefinitionPtr(SVRPropertyItem* pItem);

@@ -23,7 +23,7 @@
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVMatroxLibrary/SVMatroxErrorEnum.h"
 #include "SVStatusLibrary/GlobalPath.h"
-#include "SVStatusLibrary\MessageContainer.h"
+#include "SVStatusLibrary/MessageContainer.h"
 #include "SVStatusLibrary/RunStatus.h"
 #include "SVResult.h"
 #include "SVVariantResultClass.h"
@@ -31,7 +31,7 @@
 #include "TableObject.h"
 #include "ObjectInterfaces/ISVOApp_Helper.h"
 #include "ObjectInterfaces/IObjectClass.h"
-
+#include "SVUtilityLibrary/SafeArrayHelper.h"
 
 #pragma endregion Includes
 
@@ -107,16 +107,11 @@ SVExternalToolTask::SVExternalToolTask(SVObjectClass* POwner, int StringResource
 		ObjectName += SvDef::cLinkName;
 		RegisterEmbeddedObject(&m_Data.m_aInputObjects[i].getLinkedName(), SvPb::ExternalInputLinkedEId+i, ObjectName.c_str(), false, SvOi::SVResetItemNone);
 
-
-
 		// set default values
 		VARIANT vtTemp;
 		::VariantInit(&vtTemp);
 		vtTemp.vt = VT_EMPTY;
 		m_Data.m_aInputObjects[i].SetDefaultValue(vtTemp, true);
-
-
-
 	}
 
 	// Set Default Image Parameters for Result Images
@@ -605,10 +600,131 @@ HRESULT SVExternalToolTask::triggerInitialize(std::vector<std::string>& rStatusM
 	return Initialize(rStatusMsgs, inCreationProcess, initializeAll);
 }
 
-HRESULT SVExternalToolTask::validateValueParameter(uint32_t taskObjectId, long index, _variant_t newVal)
+HRESULT SVExternalToolTask::validateValueParameter(uint32_t taskObjectId, long index, _variant_t val, SvPb::ExDllInterfaceType ediType)
 {
-	return m_dll.ValidateValueParameter(taskObjectId, index, newVal);
+	if (0 > index || index >= m_Data.m_InputDefinitions.size())
+	{
+		return E_INVALIDARG;
+	}
+
+	std::string stringValue = (LPCTSTR)(_bstr_t)val;
+	auto object = GetObjectReferenceForDottedName(stringValue);
+	if (nullptr != object.getObject())
+	{
+		if (ValidateValueObject(object.getObject(), m_Data.m_InputDefinitions[index]))
+		{
+			return S_OK; //a dotted name refers to a valid object
+		}
+	}
+
+
+	VARTYPE vartype = static_cast<VARTYPE>(m_Data.m_InputDefinitions[index].getVt());
+
+	switch (ediType)
+	{
+	case SvOp::ExDllInterfaceType::Array:
+		{
+			_variant_t  vtNew;
+			//@todo[mec] allow arrays of size 1
+			if (vartype == (VT_ARRAY | VT_R8))
+			{
+				if (SvUl::StringToSafeArray<double>(stringValue, vtNew) < 0)
+				{
+					break;
+				}
+
+			}
+			else if (vartype == (VT_ARRAY | VT_I4))
+			{
+				if (SvUl::StringToSafeArray<long>(stringValue, vtNew) < 0)
+				{
+					break;
+				}
+
+			}
+
+			return m_dll.ValidateValueParameter(taskObjectId, index, vtNew);
+		}
+
+	case SvOp::ExDllInterfaceType::Scalar:
+	{
+		try
+		{
+			_variant_t vtNew;
+			vtNew.ChangeType(vartype, &val);
+			return m_dll.ValidateValueParameter(taskObjectId, index, vtNew);
+		}
+		catch (...)
+		{
+			break;
+		}
+	}
+
+	case SvOp::ExDllInterfaceType::TableArray:
+	{
+		_variant_t  vtNew;
+		if (stringValue.empty())
+		{
+			return S_OK;
+		}
+		else
+		{
+			break;
+		}
+	}
+
+		default:
+			break;
+	}
+
+	return E_INVALIDARG;  //if we arrive here: there is something wrong with the parameter!
 }
+
+
+bool SVExternalToolTask::ValidateValueObject(SVObjectClass* pObject, const SvOp::InputValueDefinition& rInputedef)
+{
+	bool res{ false };
+	if (static_cast<int>(rInputedef.getType()) == static_cast<int>(SvOp::ExDllInterfaceType::TableArray))
+	{
+		SvOp::TableObject* pTableObject = dynamic_cast<SvOp::TableObject*>(pObject);
+		res = (pTableObject != nullptr);
+	}
+	else
+	{
+		SvOi::IValueObject* pValueObject = dynamic_cast<SvOi::IValueObject*>(pObject);
+		res = (pValueObject != nullptr);
+		if (res)
+		{
+			DWORD type = pValueObject->GetType();
+
+			SvVol::SVVariantValueObjectClass* pVariant = dynamic_cast<SvVol::SVVariantValueObjectClass*>(pObject);
+			if (pVariant)
+			{
+				type |= pVariant->GetValueType();
+				type |= pVariant->GetDefaultType();
+			}
+
+			switch (rInputedef.getVt())
+			{
+			case VT_ARRAY | VT_R8:
+				if (type != VT_R8) //disallow array objects
+				{
+					res = false;
+				}
+				break;
+			case VT_ARRAY | VT_I4:
+				if (type != VT_I4)
+				{
+					res = false;
+				}
+				break;
+			}
+		}
+	}
+
+	return res;
+}
+
 
 std::string SVExternalToolTask::getDllMessageString(long hResultError) const
 {

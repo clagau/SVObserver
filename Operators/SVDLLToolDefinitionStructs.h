@@ -85,8 +85,8 @@ private:
 #pragma pack (pop)
 
 //!class describing the inputvalue definitions for External dll
-/// contents the structure from the dll with some additional calculated information 
-class  InputValueDefinition : public SvOi::IInputValueDefinition
+/// contains the structure from the dll with some additional calculated information 
+class InputValueDefinition : public SvOi::IInputValueDefinition
 {
 public:
 	InputValueDefinition() = default;

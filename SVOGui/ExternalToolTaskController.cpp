@@ -11,6 +11,9 @@
 #include "ExternalToolTaskController.h"
 #include "InspectionCommands/CommandExternalHelper.h"
 #include "SVProtoBuf/ConverterHelper.h"
+#include "SVStatusLibrary/MessageManager.h"
+#include "SVMessage/SVMessage.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
 #pragma endregion Includes
 
 
@@ -139,7 +142,7 @@ long ExternalToolTaskController::getNumInputValues() const
 
 	if (S_OK == hr && responseCmd.has_getinputvaluesdefinitionexternaltoolresponse())
 	{
-		return responseCmd.getinputvaluesdefinitionexternaltoolresponse().numinputvalues();
+ 		return responseCmd.getinputvaluesdefinitionexternaltoolresponse().numinputvalues();
 	}
 
 	return 0;
@@ -182,20 +185,51 @@ HRESULT ExternalToolTaskController::setPropTreeState(const std::map<std::string,
 	return hr;
 }
 
-HRESULT ExternalToolTaskController::validateValueParameter(uint32_t taskObjectId, long index, _variant_t newVal)
+bool ExternalToolTaskController::validateValueParameterWrapper(uint32_t taskObjectId, long index, _variant_t newVal, SvPb::ExDllInterfaceType type)
 {
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	auto* pRequest = requestCmd.mutable_validatevalueparameterexternaltoolrequest();
-	pRequest->set_objectid(m_objectId);
 	pRequest->set_taskobjectid(taskObjectId);
 	pRequest->set_index(index);
+	pRequest->set_exdllinterfacetype(type);
 	ConvertVariantToProtobuf(newVal, pRequest->mutable_newvalue());
-	
-	
+
 	HRESULT hr = SvCmd::InspectionCommands(m_inspectionId, requestCmd, &responseCmd);
 
-	return hr;
+	if (S_OK == hr)
+	{
+		hr = responseCmd.hresult();
+
+		if (S_OK == hr)
+		{
+			return true;
+		}
+	}
+
+	SvStl::MessageContainerVector messageContainers;
+
+	if (responseCmd.has_validatevalueparameterexternaltoolresponse())
+	{
+		messageContainers = SvPb::convertProtobufToMessageVector(responseCmd.validatevalueparameterexternaltoolresponse().errormessages());
+	}
+	else
+	{
+		SvDef::StringVector msgList;
+		msgList.push_back(_T("<error description missing>"));
+
+		SvStl::MessageContainer msg;
+		msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ExternalDllError, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10046, getExternalToolTaskObjectId());
+		messageContainers.push_back(msg);
+	}
+
+	for (const auto& mc : messageContainers)
+	{
+		SvStl::MessageManager mm(SvStl::MsgType::Log | SvStl::MsgType::Display);
+		mm.setMessage(mc.getMessage());
+	}
+	return false;
+
 }
 
 std::string ExternalToolTaskController::getDllMessageString(long hResultError) const
@@ -320,23 +354,4 @@ uint32_t ExternalToolTaskController::getExternalToolTaskObjectId() const
 	}
 
 	return 0;
-}
-
-SvPb::ValidateValueObjectResponse ExternalToolTaskController::isValueObjectValid(const std::string& dottedName, const SvPb::InputValueDefinition& valueDefinition) const
-{
-	SvPb::InspectionCmdRequest requestCmd;
-	SvPb::InspectionCmdResponse responseCmd;
-	auto* pRequest = requestCmd.mutable_validatevalueobjectrequest();
-	pRequest->set_dottedname(dottedName);
-	auto* valDefinition = pRequest->mutable_valuedefinition();
-	*valDefinition = valueDefinition;
-
-	SvPb::ValidateValueObjectResponse response;
-	HRESULT hr = SvCmd::InspectionCommands(m_inspectionId, requestCmd, &responseCmd);
-	if (S_OK == hr && responseCmd.has_validatevalueobjectresponse())
-	{
-		response = responseCmd.validatevalueobjectresponse();
-	}
-
-	return response;
 }

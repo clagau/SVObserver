@@ -36,7 +36,8 @@
 #include "Definitions\TextDefineSvDef.h"
 #include "SVStatusLibrary\ErrorNumbers.h"
 #include "SVStatusLibrary/MessageContainer.h"
-#include "SVStatusLibrary\MessageManager.h"
+#include "SVStatusLibrary/MessageManager.h"
+#include "SVStatusLibrary/MessageTextGenerator.h"
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
 #include "SVMatroxLibrary\SVMatroxBufferInterface.h"
 #include "SVMatroxLibrary\SVMatroxSimpleEnums.h"
@@ -51,8 +52,6 @@
 #include "ObjectSelectorFilter.h"
 #include "ObjectInterfaces\ILinkedObject.h"
 #include "ObjectInterfaces\ISVLinearAnalyzer.h"
-#include "ObjectInterfaces\ITableObject.h"
-#include "SVValueObjectLibrary/SVVariantValueObjectClass.h"
 #include <atltypes.h>
 
 #pragma endregion Includes
@@ -222,11 +221,11 @@ SvPb::InspectionCmdResponse ResetObject(SvPb::ResetObjectRequest request)
 
 	if (nullptr != pObject)
 	{
-		SvStl::MessageContainerVector messages;
-		HRESULT result = pObject->resetAllObjects(&messages) ? S_OK : E_FAIL;
+		SvStl::MessageContainerVector messageContainers;
+		HRESULT result = pObject->resetAllObjects(&messageContainers) ? S_OK : E_FAIL;
 		cmdResponse.set_hresult(result); 
 		SvPb::StandardResponse* pResponse = cmdResponse.mutable_standardresponse();
-		pResponse->mutable_errormessages()->CopyFrom(SvPb::convertMessageVectorToProtobuf(messages));
+		pResponse->mutable_errormessages()->CopyFrom(SvPb::convertMessageVectorToProtobuf(messageContainers));
 	}
 	else
 	{
@@ -343,10 +342,11 @@ SvPb::InspectionCmdResponse ValidateAndSetEquation(SvPb::ValidateAndSetEquationR
 		//save old string
 		oldString = pEquation->GetEquationText();
 		pEquation->SetEquationText(request.equationtext());
-		SvStl::MessageContainerVector messages;
-		SvOi::EquationTestResult testResult = pEquation->Test(&messages);
+		SvStl::MessageContainerVector messageContainers;
+		SvOi::EquationTestResult testResult = pEquation->Test(&messageContainers);
+		
 		SvPb::ValidateAndSetEquationResponse* pResponse = cmdResponse.mutable_validateandsetequationresponse();
-		pResponse->mutable_messages()->CopyFrom(SvPb::convertMessageVectorToProtobuf(messages));
+		pResponse->mutable_messages()->CopyFrom(SvPb::convertMessageVectorToProtobuf(messageContainers));
 		int retValue = 0;
 		if (testResult.bPassed)
 		{// set result and set return value to successful
@@ -378,10 +378,10 @@ SvPb::InspectionCmdResponse getObjectsForMonitorList(SvPb::GetObjectsForMonitorL
 	SvOi::ITool* pTool = dynamic_cast<SvOi::ITool *>(SvOi::getObject(request.objectid()));
 	if (nullptr != pTool)
 	{
-		SvStl::MessageContainerVector messages;
-		SvOi::ParametersForML paramList = pTool->getParameterForMonitorList(messages);
+		SvStl::MessageContainerVector messageContainers;
+		SvOi::ParametersForML paramList = pTool->getParameterForMonitorList(messageContainers);
 		SvPb::GetObjectsForMonitorListResponse* pResponse = cmdResponse.mutable_getobjectsformonitorlistresponse();
-		pResponse->mutable_messages()->CopyFrom(SvPb::convertMessageVectorToProtobuf(messages));
+		pResponse->mutable_messages()->CopyFrom(SvPb::convertMessageVectorToProtobuf(messageContainers));
 		for (auto& item : paramList)
 		{
 			auto* pEntry = pResponse->add_list();
@@ -1123,11 +1123,11 @@ SvPb::InspectionCmdResponse setEmbeddedValues(SvPb::SetEmbeddedValuesRequest req
 	SvOi::ITaskObject* pTaskObject = dynamic_cast<SvOi::ITaskObject*> (SvOi::getObject(request.objectid()));
 	if (nullptr != pTaskObject)
 	{
-		SvStl::MessageContainerVector messages = pTaskObject->validateAndSetEmbeddedValues(ChangedValues, true);
+		SvStl::MessageContainerVector messageContainers = pTaskObject->validateAndSetEmbeddedValues(ChangedValues, true);
 		SvPb::StandardResponse* pResponse = cmdResponse.mutable_standardresponse();
-		if (0 != messages.size())
+		if (0 != messageContainers.size())
 		{
-			pResponse->mutable_errormessages()->CopyFrom(SvPb::convertMessageVectorToProtobuf(messages));
+			pResponse->mutable_errormessages()->CopyFrom(SvPb::convertMessageVectorToProtobuf(messageContainers));
 			cmdResponse.set_hresult(E_FAIL);
 		}
 	}
@@ -1864,21 +1864,42 @@ SvPb::InspectionCmdResponse setPropTreeStateExternalTool(SvPb::SetPropTreeStateE
 	{
 		cmdResponse.set_hresult(E_POINTER);
 	}
-	return cmdResponse;
+	return cmdResponse;	
 }
 
 SvPb::InspectionCmdResponse validateValueParameterExternalTool(SvPb::ValidateValueParameterExternalToolRequest request)
 {
 	SvPb::InspectionCmdResponse cmdResponse;
 
-	SvOi::IObjectClass* pObject = SvOi::getObject(request.objectid());
+	SvOi::IObjectClass* pObject = SvOi::getObject(request.taskobjectid());
 	auto* pExternalToolTask = dynamic_cast<SvOi::IExternalToolTask*> (pObject);
 
 	if (nullptr != pExternalToolTask)
 	{
+		SvStl::MessageContainerVector messageContainers;
+
 		_variant_t value;
 		SvPb::ConvertProtobufToVariant(request.newvalue(), value);
-		pExternalToolTask->validateValueParameter(request.taskobjectid(), request.index(), value);
+		auto ediType = static_cast<SvPb::ExDllInterfaceType>(request.exdllinterfacetype());
+		auto hr = pExternalToolTask->validateValueParameter(request.taskobjectid(), request.index(), value, ediType);
+		cmdResponse.set_hresult(hr);
+
+		if (S_OK != hr)
+		{
+			auto dllMessageString = pExternalToolTask->getDllMessageString(hr);
+
+			SvDef::StringVector msgList;
+			if (dllMessageString.empty())
+			{
+				dllMessageString = SvStl::MessageTextGenerator::Instance().getText(SvStl::Tid_ExternalDllSomethingWrongWithInputValue);
+			}		
+			msgList.push_back(dllMessageString);
+			SvStl::MessageContainer msg;
+			msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ExternalDllError, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10046, request.taskobjectid());
+			messageContainers.push_back(msg);
+			SvPb::ValidateValueParameterExternalToolResponse* pResponse = cmdResponse.mutable_validatevalueparameterexternaltoolresponse();
+			pResponse->mutable_errormessages()->CopyFrom(SvPb::convertMessageVectorToProtobuf(messageContainers));
+		}
 	}
 	else
 	{
@@ -2010,72 +2031,6 @@ SvPb::InspectionCmdResponse getImageInfoExternalTool(SvPb::GetImageInfoExternalT
 	{
 		cmdResponse.set_hresult(E_POINTER);
 	}
-	return cmdResponse;
-}
-
-SvPb::InspectionCmdResponse validateValueObject(SvPb::ValidateValueObjectRequest request)
-{
-	SvPb::InspectionCmdResponse cmdResponse;
-
-	SvOi::IObjectClass* pObject = nullptr;
-	SVObjectManagerClass::Instance().GetObjectByDottedName(request.dottedname(), pObject);
-
-	bool objectExists{ false };
-	bool isValid{ false };
-
-	if (pObject != nullptr)
-	{
-		objectExists = true;
-		auto rInputedef = request.valuedefinition();
-				
-		if (rInputedef.type() == SvPb::ExDllInterfaceType::TableArray)
-		{
-			SvOi::ITableObject* pTableObject = dynamic_cast<SvOi::ITableObject*>(pObject);
-			isValid = (pTableObject != nullptr);
-		}
-		else
-		{
-			SvOi::IValueObject* pValueObject = dynamic_cast<SvOi::IValueObject*>(pObject);
-			isValid = (pValueObject != nullptr);
-			if (isValid)
-			{
-				DWORD type = pValueObject->GetType();
-
-				SvVol::SVVariantValueObjectClass* pVariant = dynamic_cast<SvVol::SVVariantValueObjectClass*>(pObject);
-				if (pVariant)
-				{
-					type |= pVariant->GetValueType();
-					type |= pVariant->GetDefaultType();
-				}
-
-				switch (rInputedef.vt())
-				{
-				case VT_ARRAY | VT_R8:
-					if (type != VT_R8) //allow not array objects
-					{
-						isValid = false;
-					}
-					break;
-				case VT_ARRAY | VT_I4:
-					if (type != VT_I4)
-					{
-						isValid = false;
-					}
-					break;
-				}
-			}
-		}
-	}
-	else
-	{
-		objectExists = false;
-		isValid = false;
-	}
-	auto* pResponse = cmdResponse.mutable_validatevalueobjectresponse();
-	assert(pResponse != nullptr);
-	pResponse->set_objectexists(objectExists);
-	pResponse->set_isvalid(isValid);
-
 	return cmdResponse;
 }
 

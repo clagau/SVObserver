@@ -365,7 +365,7 @@ namespace SvVol
 		//If string is not object ID then check if it is a dotted name
 		if (nullptr == LinkedObjectRef.getObject())
 		{
-			LinkedObjectRef = ConvertStringInObject(rValue);
+			LinkedObjectRef = GetObjectReferenceForDottedName(rValue);
 		}
 
 		if (nullptr != LinkedObjectRef.getObject())

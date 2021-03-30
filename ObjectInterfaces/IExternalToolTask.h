@@ -36,7 +36,7 @@ namespace SvOi
 		virtual void SetAllAttributes() = 0;
 		virtual HRESULT ClearData() = 0;
 
-		virtual HRESULT validateValueParameter(uint32_t laskObjectId, long index, _variant_t newVal) = 0;
+		virtual HRESULT validateValueParameter(uint32_t taskObjectId, long index, _variant_t newVal, SvPb::ExDllInterfaceType ediType) = 0;
 		virtual std::string getDllMessageString(long hResultError) const = 0;
 
 		virtual SvOi::IObjectClass* getResultRangeObjectAtIndex(int index) = 0;

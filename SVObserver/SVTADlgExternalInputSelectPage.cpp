@@ -12,8 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVTADlgExternalInputSelectPage.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
-#include "Definitions/GlobalConst.h"
 #include "Definitions/SVUserMessage.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "ObjectSelectorLibrary\ObjectTreeGenerator.h"
@@ -397,36 +395,34 @@ void SVTADlgExternalInputSelectPage::OnItemChanged(NMHDR* pNotifyStruct, LRESULT
 	LPNMPROPTREE pNMPropTree = (LPNMPROPTREE)pNotifyStruct;
 	*plResult = S_OK;
 
-	if (pNMPropTree->pItem)
+	SVRPropertyItem* pItem = pNMPropTree->pItem;
+
+	if (pItem)
 	{
-		SVRPropertyItem* pItem = pNMPropTree->pItem;
-		int iIndex = GetItemIndex(pItem);
-		assert(iIndex >= 0);
+		auto pDef = this->GetInputDefinitionPtr(pItem);
 
-		auto inputDefinitions = m_externalToolTaskController.getInputValuesDefinition().inputvaluesdefinition();
-		// do validation
-		bool bValidated = true;
-
-		std::string CompleteObjectName = getCompleteName(pItem);
-		auto response = m_externalToolTaskController.isValueObjectValid(CompleteObjectName, inputDefinitions[iIndex]);
-
-		if (response.objectexists())
+		if (!pDef)
 		{
-			// selected a value object as input;
-			bValidated = response.isvalid();
-		}
-		else
-		{
-			bValidated = S_OK == ValidateItem(pItem);
+			*plResult = S_FALSE;
+			return;
 		}
 
-		if (!bValidated)
+		SvPb::ExDllInterfaceType type = pDef->type();
+
+		int index = GetItemIndex(pItem);
+		assert(index >= 0 && index < m_inputValueCount);
+
+		_variant_t newVal;
+		pItem->GetItemValue(newVal);
+
+		std::string Name;
+		pItem->GetItemValue(Name);
+
+		if (false == m_externalToolTaskController.validateValueParameterWrapper(m_TaskObjectID, index, newVal, type))
 		{
 			*plResult = S_FALSE;
 		}
-
-	}// end if ( pNMPropTree->pItem )
-
+	}
 }
 
 // Loops through Tree Items to fill existing SVInputObjectInfo array (if input is another VO) and/or SVValueObjects with 
@@ -509,103 +505,6 @@ const std::unique_ptr<SvPb::InputValueDefinition> SVTADlgExternalInputSelectPage
 	{
 		return nullptr;
 	}
-}
-
-HRESULT SVTADlgExternalInputSelectPage::ValidateItem(SVRPropertyItem* pItem)
-{
-
-	int iIndex = GetItemIndex(pItem);
-	std::string Value;
-	pItem->GetItemValue(Value);
-	_variant_t  vtItem(Value.c_str());
-	_variant_t  vtNew;
-
-	auto pDef = this->GetInputDefinitionPtr(pItem);
-	if (!pDef)
-		return E_FAIL;
-
-	VARTYPE vt = static_cast<VARTYPE>(pDef->vt());
-	SvPb::ExDllInterfaceType type = pDef->type();
-	HRESULT  hr = E_FAIL;
-	if (type == SvPb::ExDllInterfaceType::Array)
-	{
-		//@todo[mec] allow arrays of size 1
-		if (vt == (VT_ARRAY | VT_R8))
-		{
-			if (SvUl::StringToSafeArray<double>(Value, vtNew) >= 0)
-			{
-				hr = S_OK;
-			}
-
-		}
-		else if (vt == (VT_ARRAY | VT_I4))
-		{
-			if (SvUl::StringToSafeArray<long>(Value, vtNew) >= 0)
-			{
-				hr = S_OK;
-			}
-
-		}
-	}
-	else if (type == SvPb::ExDllInterfaceType::Scalar)
-	{
-		hr = ::VariantChangeTypeEx(&vtNew, &vtItem, SvDef::LCID_USA, VARIANT_ALPHABOOL, vt);
-	}
-	else if (type == SvPb::ExDllInterfaceType::TableArray)
-	{
-		if (Value.empty())
-		{
-			return S_OK;
-		}
-		else
-		{
-			return E_FAIL;
-		}
-	}
-
-
-	if (S_OK != hr)
-	{
-		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_InvalidData, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10048);
-	}
-	else
-	{
-		// CALL DLL TO VALIDATE RANGE
-		hr = m_externalToolTaskController.validateValueParameter(m_TaskObjectID, (long)iIndex, vtNew);
-		if (S_OK != hr)
-		{
-			std::string Message = m_externalToolTaskController.getDllMessageString(hr);
-			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-			Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, Message.c_str(), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10049);
-		}
-	}
-
-	return hr;
-}
-
-std::string SVTADlgExternalInputSelectPage::getCompleteName(SVRPropertyItem* pItem) const
-{
-	if (nullptr == pItem)
-	{
-		return std::string();
-	}
-	std::string CompleteObjectName = GetName(m_InspectionID);
-	std::string Name;
-	pItem->GetItemValue(Name);
-	// if object name starts with tool set, inspection name must be added
-	// else it must not be added, because it can be another object (e.g. "PPQ_1.Length" or "Environment.Mode.IsRun")
-	if (0 == Name._Starts_with(SvUl::LoadedStrings::g_ToolSetName))
-	{
-		// Inspection name plus object name.
-		CompleteObjectName += "." + Name;
-	}
-	else
-	{
-		// Object name is already complete.
-		CompleteObjectName = Name;
-	}
-	return CompleteObjectName;
 }
 
 int SVTADlgExternalInputSelectPage::GetItemIndex(SVRPropertyItem* pItem)

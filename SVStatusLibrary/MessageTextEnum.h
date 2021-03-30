@@ -493,6 +493,7 @@ enum MessageTextEnum
 	Tid_LockingFailed,
 	Tid_ExternalTask_CannotRun,
 	Tid_ExternalTask_UnknownException,
+	Tid_ExternalDllSomethingWrongWithInputValue,
 	Tid_ExternalDllError,
 	Tid_BinarizeFailed,
 	Tid_SetValueFailed,

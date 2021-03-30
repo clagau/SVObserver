@@ -144,6 +144,7 @@ long InputValueDefinition::getVt() const
 {
 	return m_VT;
 }
+
 std::string InputValueDefinition::getDisplayName() const
 {
 	return m_DisplayName;

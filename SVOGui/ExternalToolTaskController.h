@@ -41,7 +41,9 @@ public:
 	std::map<std::string, bool> getPropTreeState() const;
 	HRESULT setPropTreeState(const std::map<std::string, bool>&);
 
-	HRESULT validateValueParameter(uint32_t laskObjectId, long index, _variant_t newVal);
+	///encapsulates the protobuf communication to check the correctness of an external DLL input parameter
+	bool validateValueParameterWrapper(uint32_t laskObjectId, long index, _variant_t newVal, SvPb::ExDllInterfaceType type);
+
 	std::string getDllMessageString(long hResultError) const;
 
 	// results
@@ -53,7 +55,6 @@ public:
 
 	uint32_t getExternalToolTaskObjectId() const;
 
-	SvPb::ValidateValueObjectResponse isValueObjectValid(const std::string& dottedName, const SvPb::InputValueDefinition& valueDefinition) const;
 private:
 	uint32_t m_inspectionId;
 	uint32_t m_objectId;

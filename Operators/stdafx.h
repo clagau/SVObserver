@@ -62,4 +62,5 @@
 
 #include <boost/function.hpp>						//Used by static library
 #include <boost/circular_buffer.hpp>				//Used by static library
+#include <boost/lexical_cast.hpp>
 #pragma endregion Precompiled Headers

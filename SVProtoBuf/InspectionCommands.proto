@@ -852,10 +852,15 @@ message SetPropTreeStateExternalToolRequest
 
 message ValidateValueParameterExternalToolRequest
 {
-	uint32 objectId = 1;
-	uint32 taskObjectId = 2;
-	sint32 index = 3;
-	Variant newValue = 4;
+	uint32 taskObjectId = 1;
+	sint32 index = 2;
+	Variant newValue = 3;
+	uint32 exDllInterfaceType = 4;
+}
+
+message ValidateValueParameterExternalToolResponse
+{
+	MessageContainerVector errorMessages = 1;
 }
 
 message GetDllMessageStringRequest
@@ -912,7 +917,8 @@ message GetImageInfoExternalToolResponse
 message ValidateValueObjectRequest
 {
 	string dottedName = 1;
-	InputValueDefinition valueDefinition = 2;
+	uint32 objectId = 2;
+	InputValueDefinition valueDefinition = 3;
 }
 
 message ValidateValueObjectResponse
@@ -1023,7 +1029,6 @@ message InspectionCmdRequest
 		GetTableResultsExternalToolRequest getTableResultsExternalToolRequest = 64;
 		GetResultRangeObjectRequest getResultRangeObjectRequest = 65;
 		GetImageInfoExternalToolRequest getImageInfoExternalToolRequest = 66;
-		ValidateValueObjectRequest validateValueObjectRequest = 67;
 		SetAndSortEmbeddedValueRequest setAndSortEmbeddedValueRequest = 68;
 		GetInvalidDependenciesRequest getInvalidDependenciesRequest = 69;
 	}
@@ -1080,8 +1085,8 @@ message InspectionCmdResponse
 		GetResultRangeObjectResponse getResultRangeObjectResponse = 44;
 		InitializeExternalToolTaskResponse initializeExternalToolTaskResponse = 45;
 		GetImageInfoExternalToolResponse getImageInfoExternalToolResponse = 46;
-		ValidateValueObjectResponse validateValueObjectResponse = 47;
 		SetAndSortEmbeddedValueResponse setAndSortEmbeddedValueResponse = 48;
 		GetInvalidDependenciesResponse getInvalidDependenciesResponse = 49;
+		ValidateValueParameterExternalToolResponse validateValueParameterExternalToolResponse = 50; //muss das am Ende sein oder kann man es dazwischenschieben?
 	}
 }

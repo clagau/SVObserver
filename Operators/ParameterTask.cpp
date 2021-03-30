@@ -184,7 +184,7 @@ namespace SvOp
 					break;
 				default: //variant must be empty
 					defaults[i].Clear();
-					SVObjectReference objectRef = ConvertStringInObject(rValues.value());
+					SVObjectReference objectRef = GetObjectReferenceForDottedName(rValues.value());
 					SvStl::MessageContainerVector msgVector;
 					if (false == checkObject(rValues.name(), objectRef.getObject(), type, &msgVector))
 					{

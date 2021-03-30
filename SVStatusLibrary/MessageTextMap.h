@@ -530,6 +530,7 @@ namespace SvStl
 		{Tid_LockingFailed, _T("Locking failed.")},
 		{Tid_ExternalTask_CannotRun, _T("External task cannot run.")},
 		{Tid_ExternalTask_UnknownException, _T("External task: Unknown exception.") },
+		{Tid_ExternalDllSomethingWrongWithInputValue, _T("Something is wrong with the input value") },
 		{Tid_ExternalDllError, _T("External DLL Error (%s)") },
 		{Tid_BinarizeFailed, _T("Binarize failed.")},
 		{Tid_SetValueFailed, _T("Setting of value failed.")},

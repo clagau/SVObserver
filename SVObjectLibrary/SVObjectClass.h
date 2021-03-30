@@ -197,7 +197,7 @@ protected:
 	/// Convert a string (dotted name) to an object.
 	/// \param rValue [in] Input string
 	/// \returns SVObjectReference A reference to the found object. 
-	SVObjectReference ConvertStringInObject(const std::string& rValue) const;
+	SVObjectReference GetObjectReferenceForDottedName(const std::string& rValue) const;
 
 	virtual HRESULT RemoveObjectConnection(uint32_t objectID );
 

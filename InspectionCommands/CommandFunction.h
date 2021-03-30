@@ -179,6 +179,5 @@ SvPb::InspectionCmdResponse getResultValuesDefinitionExternalTool(SvPb::GetResul
 SvPb::InspectionCmdResponse getTableResultsExternalTool(SvPb::GetTableResultsExternalToolRequest request);
 SvPb::InspectionCmdResponse getResultRangeObject(SvPb::GetResultRangeObjectRequest request);
 SvPb::InspectionCmdResponse getImageInfoExternalTool(SvPb::GetImageInfoExternalToolRequest request);
-SvPb::InspectionCmdResponse validateValueObject(SvPb::ValidateValueObjectRequest request);
 SvPb::InspectionCmdResponse getInvalidDependencies(SvPb::GetInvalidDependenciesRequest request);
 } //namespace SvCmd

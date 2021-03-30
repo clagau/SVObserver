@@ -115,7 +115,8 @@ public:
 	virtual HRESULT triggerInitialize(std::vector<std::string>& rStatusMsgs, bool inCreationProcess = false, bool initializeAll = false) override;
 	virtual void SetAllAttributes() override;
 	virtual HRESULT ClearData() override;
-	virtual HRESULT validateValueParameter(uint32_t laskObjectId, long index, _variant_t newVal) override;
+	virtual HRESULT validateValueParameter(uint32_t laskObjectId, long index, _variant_t newVal, SvPb::ExDllInterfaceType ediType) override;
+
 	virtual std::string getDllMessageString(long hResultError) const override;
 	virtual SvOi::IObjectClass* getResultRangeObjectAtIndex(int index) override;
 	virtual SvPb::GetImageInfoExternalToolResponse getImageInfoList() const override;
@@ -200,6 +201,7 @@ private:
 	void initializeInputObjects(std::vector<std::string>& rStatusMsgs, bool initializeAll);
 	void prepareForRunning(std::vector<SVImageDefinitionStruct>&, std::vector<std::string>& rStatusMsgs);
 	void initializeResultImages(std::vector<std::string>& rStatusMsgs);
+	bool ValidateValueObject(SVObjectClass* pObject, const SvOp::InputValueDefinition& rInputedef);
 
 	SVDLLToolLoadLibraryClass m_dll;
 
