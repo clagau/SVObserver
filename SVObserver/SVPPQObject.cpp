@@ -2865,17 +2865,17 @@ void SVPPQObject::cameraCallback(ULONG_PTR pCaller, CameraInfo&& cameraInfo)
 	SvIe::SVVirtualCamera* pCamera = reinterpret_cast<SvIe::SVVirtualCamera*> (pCaller);
 	bool valid = (m_bOnline && (nullptr != pCamera) && (nullptr != cameraInfo.m_pImage));
 
-	if (nullptr != GetTrigger())
-	{
-		///If camera trigger we need to fire the trigger when a valid image has arrived
-		if (SvDef::TriggerType::CameraTrigger == GetTrigger()->getType() && nullptr != cameraInfo.m_pImage)
-		{
-			GetTrigger()->Fire(cameraInfo.m_startFrameTime);
-		}
-	}
-
 	if (valid)
 	{
+		if (nullptr != GetTrigger())
+		{
+			bool isCameraTriggerAndHwCameraWithImage = SvDef::TriggerType::CameraTrigger == GetTrigger()->getType() && false == pCamera->IsFileAcquisition() && nullptr != cameraInfo.m_pImage;
+			if (isCameraTriggerAndHwCameraWithImage)
+			{
+				GetTrigger()->Fire(cameraInfo.m_startFrameTime);
+			}
+		}
+
 		m_CameraResponseQueue.AddTail(SVCameraQueueElement(pCamera, cameraInfo));
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
 		::OutputDebugString(SvUl::Format(_T("%s Finished Camera Acquisition %s\n"), GetName(), pCamera->GetName()).c_str());
