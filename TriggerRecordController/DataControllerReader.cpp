@@ -121,7 +121,8 @@ int TRControllerReaderDataPerIP::getTrId2Send()
 
 SvOi::TrInterestEventData TRControllerReaderDataPerIP::getInterestTrId2Send()
 {
-	if (nullptr != m_pBasicData && 0 <= m_pBasicData->m_lastSetOfInterestFlagPos && m_pBasicData->m_lastSetOfInterestFlagPos != m_lastSendInterestPos)
+	if (nullptr != m_pBasicData && 0 <= m_pBasicData->m_lastSetOfInterestFlagPos && m_pBasicData->m_lastSetOfInterestFlagPos != m_lastSendInterestPos 
+		&& m_pBasicData->m_TriggerRecordNumber > m_pBasicData->m_lastSetOfInterestFlagPos)
 	{
 		m_lastSendInterestPos = m_pBasicData->m_lastSetOfInterestFlagPos;
 		TriggerRecordData& rCurrentTR = getTRData(m_lastSendInterestPos);
