@@ -75,10 +75,14 @@ namespace SvOl
 				//Basic value objects don't have tools check if main object is of type ToolObjectType
 				bool isSupplier = pSupplier->GetObjectType() == SvPb::SVBasicValueObjectType || pSupplier->GetObjectType() == SvPb::SVToolObjectType;
 				bool isClient = pClient->GetObjectType() == SvPb::SVToolObjectType;
-				SvOi::IObjectClass* pParent = SvOi::getObject(pSupplier->GetParentID());
-				bool isParentToolset = (nullptr != pParent) && (SvPb::SVToolSetObjectType == pParent->GetObjectType());
-				SvPb::SVObjectTypeEnum supplierAncestorType = isParentToolset ? SvPb::SVToolSetObjectType	: SvPb::SVToolObjectType;
-				SvOi::IObjectClass* pToolSupplier = isSupplier ? pSupplier : pSupplier->GetAncestorInterface(supplierAncestorType);
+				auto* pToolParent = pSupplier->GetAncestorInterface(SvPb::SVToolObjectType);
+				bool isParentTool = (nullptr != pToolParent);
+				SvPb::SVObjectTypeEnum supplierAncestorType = isParentTool ? SvPb::SVToolObjectType : SvPb::SVToolSetObjectType;
+				SvOi::IObjectClass* pToolSupplier = pSupplier;
+				if (false == isSupplier)
+				{
+					pToolSupplier = (isParentTool ? pToolParent : pSupplier->GetAncestorInterface(supplierAncestorType));
+				}
 				SvOi::IObjectClass* pToolClient = isClient ? pClient : pClient->GetAncestorInterface(SvPb::SVToolObjectType);
 				if (nullptr != pToolSupplier && nullptr != pToolClient)
 				{
