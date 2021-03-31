@@ -31,7 +31,7 @@ namespace SvOg
 #pragma region Declarations
 	protected:
 		//{{AFX_DATA(TADialogGroupToolResultPage)
-		enum { IDD = IDD_GROUPTOOL_INPUT_DIALOG };
+		enum { IDD = IDD_GROUPTOOL_INPUTRESULT_DIALOG };
 		//}}AFX_DATA
 #pragma endregion Declarations
 
