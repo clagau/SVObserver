@@ -899,12 +899,12 @@ SVObjectReferenceVector SVArchiveTool::getImageArchiveList()
 	const auto& rRecVec = m_ImageCollection.getRecordVec();
 	for (const auto& rRecord : rRecVec)
 	{
-		SvIe::SVImageClass* pImage = dynamic_cast <SvIe::SVImageClass*> (rRecord.GetObjectReference().getObject());
+		SvIe::SVImageClass* pImage = dynamic_cast <SvIe::SVImageClass*> (rRecord.GetObjectReference().getFinalObject());
 		if (nullptr != pImage)
 		{
 			if (SvPb::archivableImage == (pImage->ObjectAttributesAllowed() & SvPb::archivableImage))
 			{
-				Result.emplace_back( pImage );
+				Result.emplace_back(rRecord.GetObjectReference());
 			}
 		}
 	}

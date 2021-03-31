@@ -633,9 +633,8 @@ bool SVTADlgArchiveImagePage::checkImageMemory(uint32_t imageId, bool bNewState)
 	UpdateData();
 	bool bOk = true;
 
-	SVObjectClass* pObject( nullptr );
-	SVObjectManagerClass::Instance().GetObjectByIdentifier(imageId, pObject );
-	SvIe::SVImageClass* pImage = dynamic_cast <SvIe::SVImageClass*> ( pObject );
+	SVObjectReference objectRef(imageId);
+	SvIe::SVImageClass* pImage = dynamic_cast <SvIe::SVImageClass*> (objectRef.getFinalObject());
 	assert(pImage);
 
 	//Get amount of memory needed for the selected image.

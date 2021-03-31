@@ -133,17 +133,19 @@ void SVArchiveRecordsArray::ValidateImageObjects()
 {
 	auto func = [this](auto& entry)
 	{
-		SvIe::SVImageClass* pImageObject = entry.GetImage();
-		if (pImageObject)
+		auto& rRef = entry.GetObjectReference();
+		auto* pObject = rRef.getObject();
+		auto* pImageObject = dynamic_cast<SvIe::SVImageClass*>(rRef.getFinalObject());
+		if (nullptr != pObject && nullptr != pImageObject)
 		{
-			if (nullptr == m_pArchiveTool || false == m_pArchiveTool->checkIfValidDependency(pImageObject))
+			if (nullptr == m_pArchiveTool || false == m_pArchiveTool->checkIfValidDependency(pObject))
 			{
 				return true;
 			}
 
-			entry.m_svObjectReference = SVObjectReference{ pImageObject };
+			entry.m_svObjectReference = rRef;
 			entry.BuildImageFileName();
-			pImageObject->connectObject(m_pArchiveTool->getObjectId());
+			pObject->connectObject(m_pArchiveTool->getObjectId());
 			return false;
 		}
 		else

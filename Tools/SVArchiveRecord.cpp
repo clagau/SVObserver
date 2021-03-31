@@ -32,7 +32,7 @@ void SVArchiveRecord::InitArchiveRecord(SVArchiveTool* pArchiveTool, SVObjectRef
 
 	m_svObjectReference = rObject;
 
-	auto pObject = m_svObjectReference.getObject();
+	auto* pObject = m_svObjectReference.getFinalObject();
 
 	if(nullptr != dynamic_cast <SvIe::SVImageClass*> (pObject))
 	{
@@ -168,7 +168,7 @@ HRESULT SVArchiveRecord::AllocateBuffers(long lBufferNumber, BufferStructCountMa
 
 	HRESULT hr = S_FALSE;
 	m_lMaxIndex = 0;
-	SvIe::SVImageClass* pImage = dynamic_cast <SvIe::SVImageClass*> (m_svObjectReference.getObject());
+	SvIe::SVImageClass* pImage = dynamic_cast <SvIe::SVImageClass*> (m_svObjectReference.getFinalObject());
 	//It must more add-on buffer for the parent image not for the child image.
 	while (nullptr != pImage && pImage->isChildImageInTRC())
 	{
@@ -229,7 +229,7 @@ HRESULT SVArchiveRecord::WriteImageQueue()
 
 HRESULT SVArchiveRecord::WriteImage(const SvOi::ITriggerRecordR* pTriggerRecord)
 {
-	SvIe::SVImageClass* pImage = dynamic_cast <SvIe::SVImageClass*> (m_svObjectReference.getObject());
+	SvIe::SVImageClass* pImage = dynamic_cast <SvIe::SVImageClass*> (m_svObjectReference.getFinalObject());
 	
 	if (nullptr == pImage)
 	{
@@ -318,7 +318,7 @@ SvIe::SVImageClass* SVArchiveRecord::GetImage()
 
 	if (nullptr != m_svObjectReference.getObject())
 	{
-		pImage = dynamic_cast<SvIe::SVImageClass*> (SvOi::getObject(m_svObjectReference.getObjectId()));
+		pImage = dynamic_cast<SvIe::SVImageClass*> (m_svObjectReference.getFinalObject());
 	}
 
 	return pImage;
