@@ -184,8 +184,8 @@ BEGIN_MESSAGE_MAP(SVObserverApp, CWinApp)
 	ON_COMMAND(ID_EXTRAS_LOGIN, OnExtrasLogin)
 	ON_COMMAND(ID_EXTRAS_UTILITIES_EDIT, OnExtrasUtilitiesEdit)
 	ON_COMMAND(ID_EXTRAS_SECURITY_SETUP, OnExtrasSecuritySetup)
-	ON_COMMAND(ID_AUDITTRAIL_DEFAULTFILES, OnExtrasConfigReportDefaultFiles)
-	ON_COMMAND(ID_AUDITTRAIL_ADDITIONALFILES, OnExtrasConfigReportAdditionalFiles)
+	ON_COMMAND(ID_AUDITTRAIL_DEFAULTFILES, OnAuditTrailDefaultFiles)
+	ON_COMMAND(ID_AUDITTRAIL_ADDITIONALFILES, OnAuditTrailAdditionalFiles)
 	ON_COMMAND(ID_EXTRAS_THREAD_AFFINITY, OnThreadAffinitySetup)
 	ON_COMMAND_RANGE(ID_EXTRAS_UTILITIES_BASE, ID_EXTRAS_UTILITIES_LIMIT, OnRunUtility)
 
@@ -259,8 +259,8 @@ BEGIN_MESSAGE_MAP(SVObserverApp, CWinApp)
 	ON_UPDATE_COMMAND_UI(ID_PREV_PANE, OnUpdatePrevPane)
 	ON_UPDATE_COMMAND_UI(ID_APP_EXIT, OnUpdateAppExit)
 	ON_UPDATE_COMMAND_UI(ID_EXTRAS_SECURITY_SETUP, OnUpdateExtrasSecuritySetup)
-	ON_UPDATE_COMMAND_UI(ID_AUDITTRAIL_DEFAULTFILES, OnUpdateExtrasConfigReportDefaultFiles)
-	ON_UPDATE_COMMAND_UI(ID_AUDITTRAIL_ADDITIONALFILES, OnUpdateExtrasConfigReportAdditionalFiles)
+	ON_UPDATE_COMMAND_UI(ID_AUDITTRAIL_DEFAULTFILES, OnUpdateAuditTrailDefaultFiles)
+	ON_UPDATE_COMMAND_UI(ID_AUDITTRAIL_ADDITIONALFILES, OnUpdateAuditTrailAdditionalFiles)
 
 
 	//}}AFX_MSG_MAP
@@ -532,12 +532,12 @@ void SVObserverApp::OnUpdateThreadAffinitySetup(CCmdUI* PCmdUI)
 	PCmdUI->Enable(lPipeCount >= 8 && !SVSVIMStateClass::CheckState(SV_STATE_RUNNING));
 }
 
-void SVObserverApp::OnUpdateExtrasConfigReportDefaultFiles(CCmdUI* PCmdUI)
+void SVObserverApp::OnUpdateAuditTrailDefaultFiles(CCmdUI* PCmdUI)
 {
 	PCmdUI->Enable(true);
 }
 
-void SVObserverApp::OnUpdateExtrasConfigReportAdditionalFiles(CCmdUI* PCmdUI)
+void SVObserverApp::OnUpdateAuditTrailAdditionalFiles(CCmdUI* PCmdUI)
 {
 	PCmdUI->Enable(true);
 }
@@ -1618,7 +1618,7 @@ void SVObserverApp::OnExtrasSecuritySetup()
 	SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 }
 
-void SVObserverApp::OnExtrasConfigReportDefaultFiles()
+void SVObserverApp::OnAuditTrailDefaultFiles()
 {
 	SVConfigurationObject* pConfig(nullptr);
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
@@ -1638,7 +1638,7 @@ void SVObserverApp::OnExtrasConfigReportDefaultFiles()
 	}
 }
 
-void SVObserverApp::OnExtrasConfigReportAdditionalFiles()
+void SVObserverApp::OnAuditTrailAdditionalFiles()
 {
 	SVConfigurationObject* pConfig(nullptr);
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
