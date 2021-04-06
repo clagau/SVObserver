@@ -64,6 +64,7 @@ void SVPublishList::Refresh(SvIe::SVTaskObjectClass * pRootObject)
 				e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorFindingPPQEntries, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17043_ErrorFindingPPQEntries);
 				DebugBreak();
 			}
+			++iter;
 		}
 	}
 	m_objectIdList.erase(iter_removeStart, m_objectIdList.end());
