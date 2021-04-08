@@ -35,7 +35,6 @@
 
 #pragma endregion Includes
 
-
 namespace SvOp
 {
 
