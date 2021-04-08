@@ -217,6 +217,12 @@ bool SVLUTOperator::RecalcLUT( RunStatus& rRunStatus )
 			return false;
 		}
 
+		// Check LUT Vector size...
+		if (m_lutVector.getArraySize() != m_lutElementNumber)
+		{
+			m_lutVector.SetArraySize(m_lutElementNumber);
+		}
+
 		switch( lLutMode )
 		{
 			case SvPb::LUTIdentity:	// Identity...
@@ -230,7 +236,6 @@ bool SVLUTOperator::RecalcLUT( RunStatus& rRunStatus )
 					byteVec[i] = (BYTE) i;
 				}
 
-				m_lutVector.SetArraySize(static_cast<int>(byteVec.size()));
 				if( S_OK != m_lutVector.SetArrayValues(byteVec) )
 				{
 					return false;
@@ -375,12 +380,6 @@ bool SVLUTOperator::RecalcLUT( RunStatus& rRunStatus )
 			default:
 				// Unknown Mode...
 				return false;
-		}
-
-		// Check LUT Vector size...
-		if( m_lutVector.getArraySize() != m_lutElementNumber )
-		{
-			m_lutVector.SetArraySize( m_lutElementNumber );
 		}
 
 		// Fill Mil Lut Buffer...

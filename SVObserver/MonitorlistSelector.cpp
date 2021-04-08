@@ -223,7 +223,7 @@ MonitoredObjectList MonitorlistSelector::GetMonitoredObjectList(const SvDef::Str
 		monitoredObj.m_objectId = (nullptr != objectRef.getObject()) ? objectRef.getObject()->getObjectId() : SvDef::InvalidObjectId;
 		if(nullptr != objectRef.getValueObject())
 		{
-			monitoredObj.isArray = objectRef.getValueObject()->isArray();
+			monitoredObj.isArray = objectRef.isArray();
 			monitoredObj.wholeArray = objectRef.isEntireArray();
 			if (monitoredObj.isArray)
 			{

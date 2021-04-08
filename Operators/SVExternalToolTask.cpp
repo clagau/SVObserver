@@ -2053,9 +2053,9 @@ void SVExternalToolTask::collectInputValues()
 		int LVIndex = m_Data.m_InputDefinitions[i].getLinkedValueIndex();
 		if (m_Data.m_InputDefinitions[i].getType() == SvPb::ExDllInterfaceType::Scalar)
 		{
-			m_Data.m_aInputObjects[LVIndex].GetValue(m_InspectionInputValues[i]);
+			HRESULT hrGetValue = m_Data.m_aInputObjects[LVIndex].GetValue(m_InspectionInputValues[i]);
 			HRESULT hrChangeType = ::VariantChangeTypeEx(&m_InspectionInputValues[i], &m_InspectionInputValues[i], SvDef::LCID_USA, 0, static_cast<VARTYPE>(m_Data.m_InputDefinitions[i].getVt()));
-			if (S_OK != hrChangeType)
+			if (S_OK != hrGetValue || S_OK != hrChangeType)
 			{
 				m_InspectionInputValues[i].Clear();
 				m_InspectionInputValues[i].ChangeType(static_cast<VARTYPE>(m_Data.m_InputDefinitions[i].getVt()));

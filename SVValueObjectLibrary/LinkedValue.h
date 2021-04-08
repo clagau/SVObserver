@@ -79,6 +79,11 @@ public:
 	virtual UINT ObjectAttributesSet(int iIndex = 0) const override;
 
 	virtual HRESULT GetChildObject(SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index = 0) const;
+
+	virtual bool isArray() const override;
+
+	virtual int32_t getArraySize() const override;
+	virtual int32_t getResultSize() const override;
 #pragma endregion Public Methods
 
 #pragma region Protected Methods

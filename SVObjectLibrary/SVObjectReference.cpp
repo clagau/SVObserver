@@ -111,9 +111,9 @@ void  SVObjectReference::clear()
 
 SvOi::IValueObject* SVObjectReference::getValueObject(bool forceCast) const
 {
-	if(nullptr == m_pValueObject || forceCast)
+	if (nullptr == m_pValueObject || forceCast)
 	{
-		m_pValueObject = dynamic_cast<SvOi::IValueObject*> (getFinalObject());
+		m_pValueObject = dynamic_cast<SvOi::IValueObject*> (m_pObject);
 	}
 	return m_pValueObject;
 }

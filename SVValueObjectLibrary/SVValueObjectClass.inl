@@ -478,7 +478,7 @@ HRESULT SVValueObjectClass<T>::getValue(_variant_t& rValue, int Index /*= -1*/) 
 	{
 		ValueType Value;
 		Result = GetValue(Value, Index);
-		if (S_OK == Result)
+		if (S_OK == Result || SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == Result || E_BOUNDS == Result)
 		{
 			rValue = ValueType2Variant(&Value);
 		}

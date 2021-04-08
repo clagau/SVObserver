@@ -452,7 +452,8 @@ namespace SvOp
 			case SvPb::InputTypeEnum::TypeText:
 			{
 				_variant_t value;
-				if (S_OK != pObject->GetValue(value) || VT_EMPTY == value.vt)
+				HRESULT hr = pObject->GetValue(value);
+				if ((S_OK != hr && SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE != hr && E_BOUNDS != hr) || VT_EMPTY == value.vt)
 				{
 					SvStl::MessageManager Msg(SvStl::MsgType::Log);
 					SvDef::StringVector msgList;

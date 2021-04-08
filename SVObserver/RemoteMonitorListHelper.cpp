@@ -99,7 +99,7 @@ MonitoredObject RemoteMonitorListHelper::GetMonitoredObjectFromName(const std::s
 		Result.m_objectId = (nullptr != ObjectRef.getObject()) ? ObjectRef.getObject()->getObjectId() : SvDef::InvalidObjectId;
 		if (nullptr != ObjectRef.getValueObject())
 		{
-			Result.isArray = ObjectRef.getValueObject()->isArray();
+			Result.isArray = ObjectRef.isArray();
 			Result.wholeArray = ObjectRef.isEntireArray();
 			if (Result.isArray)
 			{

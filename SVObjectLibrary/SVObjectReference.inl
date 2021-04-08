@@ -56,7 +56,7 @@ inline std::string SVObjectReference::DefaultValue() const
 
 inline bool SVObjectReference::isArray() const
 {
-	const SvOi::IValueObject* pValueObject = getValueObject(true); 
+	const SvOi::IValueObject* pValueObject = getValueObject(true);
 	// the parameter forceCast was added to the getValueObject() call since problems were cause otherwise
 	// when SVArchiveRecordsArray::RemoveDisconnectedObject() is called by the BasicValueObject destructor
 	// which can happen because of the changes in SVO-2297

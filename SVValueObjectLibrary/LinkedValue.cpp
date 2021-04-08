@@ -213,7 +213,7 @@ namespace SvVol
 				Result = __super::GetValue(rValue, Index);
 			}
 
-			if (S_OK == Result)
+			if (S_OK == Result || SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == Result || E_BOUNDS == Result)
 			{
 				//If the Linked Value is of type BOOL and is to be converted to the default type then we need the absolute value
 				if (VT_BOOL == rValue.vt && GetDefaultType() != rValue.vt)
@@ -646,6 +646,66 @@ namespace SvVol
 			}
 		}
 		return l_Status;
+	}
+
+	bool LinkedValue::isArray() const
+	{
+		if (nullptr != m_LinkedObjectRef.getObject())
+		{
+			//if Reference to an index then this linkedValue is not an array
+			if (0 <= m_LinkedObjectRef.ArrayIndex())
+			{
+				return false;
+			}
+			else
+			{
+				return m_LinkedObjectRef.isArray();
+			}
+		}
+		else
+		{
+			return __super::isArray();
+		}
+	}
+
+	int32_t LinkedValue::getArraySize() const
+	{
+		if (nullptr != m_LinkedObjectRef.getObject())
+		{
+			//if Reference to an index then this linkedValue is not an array
+			if (0 <= m_LinkedObjectRef.ArrayIndex() || nullptr == m_LinkedObjectRef.getValueObject())
+			{
+				return 1;
+			}
+			else
+			{
+				return m_LinkedObjectRef.getValueObject()->getArraySize();
+			}
+		}
+		else
+		{
+			return __super::getArraySize();
+		}
+	}
+
+	int32_t LinkedValue::getResultSize() const
+	{
+		if (nullptr != m_LinkedObjectRef.getObject())
+		{
+			//if Reference to an index then this linkedValue is not an array
+			if (0 <= m_LinkedObjectRef.ArrayIndex() || nullptr == m_LinkedObjectRef.getValueObject())
+			{
+				return 1;
+			}
+			else
+			{
+				return m_LinkedObjectRef.getValueObject()->getResultSize();
+			}
+		}
+		else
+		{
+			return __super::getResultSize();
+		}
 	}
 
 	bool LinkedValue::ConnectInput()
