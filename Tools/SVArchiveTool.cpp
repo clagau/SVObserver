@@ -583,7 +583,7 @@ bool SVArchiveTool::initializeOnRun(SvStl::MessageContainerVector *pErrorMessage
 		{
 			return false;
 		}
-		if (!ensureCurrentImagePathRootExists())
+		if (!ensureNextImageDirectoryExists())
 		{
 			return false;
 		}
@@ -1241,16 +1241,19 @@ bool SVArchiveTool::updateCurrentImagePathRoot(bool displayMessageOnInvalidKeywo
 }
 
 
-bool SVArchiveTool::ensureCurrentImagePathRootExists()
+bool SVArchiveTool::ensureNextImageDirectoryExists()
 {
 	bool ok = false;
+
+	auto nextImageDirectory = getNextImageDirectory(m_currentImagePathRoot);
+
 	try
 	{
-		ok = std::filesystem::create_directories(m_currentImagePathRoot);
+		ok = std::filesystem::create_directories(nextImageDirectory);
 
 		if (!ok)
 		{
-			if (std::filesystem::is_directory(m_currentImagePathRoot))
+			if (std::filesystem::is_directory(nextImageDirectory))
 			{
 				return true;
 			}
@@ -1276,7 +1279,7 @@ bool SVArchiveTool::ValidateImagePathAndAvailableSpace(uint32_t objectId, SvStl:
 		return false;
 	}
 
-	ensureCurrentImagePathRootExists();
+	ensureNextImageDirectoryExists();
 
 	ULARGE_INTEGER lFreeBytesAvailableToCaller;
 	ULARGE_INTEGER lTotalNumberOfBytes;

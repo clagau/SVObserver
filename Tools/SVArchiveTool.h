@@ -57,7 +57,7 @@ public:
 	/// used by SVArchiveRecord::BuildArchiveImageFilePath
 	const std::string getCurrentImagePathRoot() const;
 	bool updateCurrentImagePathRoot(bool displayMessageOnInvalidKeywords = false);
-	bool ensureCurrentImagePathRootExists();
+	bool ensureNextImageDirectoryExists();
 
 	bool SetFileArchivePath(LPCTSTR lpszName);
 	std::string getNextImageFileName();
