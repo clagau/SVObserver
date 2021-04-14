@@ -157,11 +157,20 @@ void SVOFileExecutionConfigDlg::copyAndAddToConfig(std::string path, int preOrPo
 		
 			if (SVOFileExecutionConfigDlg::ProcessPosition::PreRun == preOrPost)
 			{	
+				if (!pConfig->getPreRunExecutionFilePath().empty())
+				{
+					std::remove(pConfig->getPreRunExecutionFilePath().c_str());
+				}
+
 				pConfig->setPreRunExecutionFilePath(destinationPath);
 				m_edtPrePath = std::filesystem::path(path).filename().c_str();
 			}
 			else if (SVOFileExecutionConfigDlg::ProcessPosition::PostRun == preOrPost)
 			{
+				if (!pConfig->getPostRunExecutionFilePath().empty())
+				{
+					std::remove(pConfig->getPostRunExecutionFilePath().c_str());
+				}
 				pConfig->setPostRunExecutionFilePath(destinationPath);
 				m_edtPostPath = std::filesystem::path(path).filename().c_str();
 			}
