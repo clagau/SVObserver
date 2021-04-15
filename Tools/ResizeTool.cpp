@@ -136,29 +136,6 @@ ResizeTool::~ResizeTool(void)
 }
 
 
-bool ResizeTool::CloseObject()
-{
-	bool bRetVal = true;
-
-	if (m_isCreated)
-	{
-		//		This statement should not be necessary because it should be set within 
-		//		the base class.  
-		//		isCreated = FALSE;
-
-		bRetVal = m_LogicalROIImage.CloseObject();
-
-		bRetVal = m_OutputImage.CloseObject() && bRetVal;
-
-		// This should end up setting isCreated to FALSE within 
-		// SVObjectClass::CloseObject().
-		bRetVal = SVToolClass::CloseObject() && bRetVal;
-	}
-
-	return bRetVal;
-}
-
-
 bool ResizeTool::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 {
 	bool bOk = SVToolClass::CreateObject(rCreateStructure);
@@ -169,17 +146,17 @@ bool ResizeTool::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 	m_ExtentWidthFactorFormat.SetObjectAttributesAllowed(SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::AddAttribute);
 	m_ExtentHeightFactorFormat.SetObjectAttributesAllowed(SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::AddAttribute);
 
-	SvIe::SVImageClass* pInputImage = getInputImage();
-	bOk &= (nullptr != pInputImage);
-
-	bOk &= (S_OK == m_LogicalROIImage.InitializeImage(pInputImage));
-
 	// We do not want the ROI image showing up as an output image.
 	m_LogicalROIImage.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
 
 	m_toolExtent.SetTranslation(SvPb::SVExtentTranslationResize);
 
-	bOk &= (S_OK == m_OutputImage.InitializeImage(pInputImage));
+	SvIe::SVImageClass* pInputImage = getInputImage();
+	if (nullptr != pInputImage)
+	{
+		m_LogicalROIImage.InitializeImage(pInputImage);
+		m_OutputImage.InitializeImage(pInputImage);
+	}
 
 	bOk &= (nullptr != GetTool());
 

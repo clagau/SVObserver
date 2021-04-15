@@ -42,7 +42,7 @@ SVUnaryImageOperatorList::~SVUnaryImageOperatorList()
 
 bool SVUnaryImageOperatorList::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	m_isCreated = SVTaskObjectListClass::CreateObject(rCreateStructure) && nullptr != GetTool() && nullptr != GetInspection() && nullptr != getInputImage();
+	m_isCreated = SVTaskObjectListClass::CreateObject(rCreateStructure) && nullptr != GetTool() && nullptr != GetInspection();
 
 	return m_isCreated;
 }

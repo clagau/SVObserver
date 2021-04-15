@@ -99,10 +99,7 @@ bool SVImageClass::CloseObject()
 		pTool->SetToolImage(SvDef::InvalidObjectId);
 	}
 
-	if (m_isCreated)
-	{
-		rc = DestroyImage();
-	}
+	rc = DestroyImage() && rc;
 
 	SVObjectManagerClass::Instance().UnregisterSubObject(getObjectId());
 	SVObjectManagerClass::Instance().UnregisterSubObject(m_width.getObjectId());

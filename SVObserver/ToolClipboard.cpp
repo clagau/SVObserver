@@ -612,23 +612,31 @@ HRESULT ToolClipboard::validateIds(std::string& rXmlData, uint32_t postId, uint3
 	SvTo::SVToolClass* pPostTool = dynamic_cast<SvTo::SVToolClass*>(SVObjectManagerClass::Instance().GetObject(postId));
 	if (nullptr != pDoc && nullptr != pToolSet)
 	{
-		//Color tool can not be inserted into a IPD without color images
-		if (SvPb::ColorToolClassId == toolClassId && !pDoc->isImageAvailable(SvPb::SVImageColorType))
-		{
-			result = E_FAIL;
-			SvStl::MessageManager e(SvStl::MsgType::Data);
-			e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ColorToolInsertFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25006_ColorToolInsert);
-			e.Throw();
+		if (isColorCamera)
+		{//Only color tools are allowed to be the first tool in a color system
+			if (SvPb::ColorToolClassId != toolClassId && ((nullptr != pPostTool && pPostTool->getToolPosition() == 1) || (0 == pToolSet->GetSize())))
+			{
+				result = E_FAIL;
+				SvStl::MessageManager e(SvStl::MsgType::Data);
+				e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_NonColorToolInsertFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25007_NonColorToolInsert);
+				e.Throw();
+			}
 		}
-		//Only color tools are allowed to be the first tool in a color system
-		else if (SvPb::ColorToolClassId != toolClassId && isColorCamera && ((nullptr != pPostTool && pPostTool->getToolPosition() == 1) || (0 == pToolSet->GetSize())))
+		else if (!pDoc->isImageAvailable(SvPb::SVImageColorType))
 		{
-			result = E_FAIL;
-			SvStl::MessageManager e(SvStl::MsgType::Data);
-			e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_NonColorToolInsertFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25007_NonColorToolInsert);
-			e.Throw();
+			const std::string colorToolTypeString = "<DATA Name=\"ClassID\" Type=\"VT_INT\">35</DATA>";
+			bool isColorToolInto = (std::string::npos != rXmlData.find(colorToolTypeString));
+			//Color tool can not be inserted into a IPD without color images
+			if (isColorToolInto)
+			{
+				result = E_FAIL;
+				SvStl::MessageManager e(SvStl::MsgType::Data);
+				e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ColorToolInsertFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25006_ColorToolInsert);
+				e.Throw();
+			}
 		}
-		else
+		
+		if (S_OK == result)
 		{
 			for (auto inputImageId : rInputImages)
 			{

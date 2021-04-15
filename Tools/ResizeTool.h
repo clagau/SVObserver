@@ -26,7 +26,6 @@ public:
 
 	virtual ~ResizeTool(void);
 
-	virtual bool CloseObject() override;
 	virtual bool CreateObject(const SVObjectLevelCreateStruct& rCreateStructure) override;
 
 	virtual HRESULT SetImageExtentToParent() override;

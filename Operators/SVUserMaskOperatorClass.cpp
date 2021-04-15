@@ -120,16 +120,8 @@ void SVUserMaskOperatorClass::init()
 
 bool SVUserMaskOperatorClass::CloseObject()
 {
-	bool bOk = S_OK == DestroyLocalImageBuffer();
-
-	if ( m_isCreated )
-	{
-		m_isCreated = false;
-
-		bOk = SVUnaryImageOperatorClass::CloseObject();
-	}
-
-	return bOk;
+	DestroyLocalImageBuffer();
+	return __super::CloseObject();
 }
 
 bool SVUserMaskOperatorClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
@@ -516,13 +508,9 @@ HRESULT SVUserMaskOperatorClass::CreateLocalImageBuffer()
 	return l_hrOk;
 }
 
-HRESULT SVUserMaskOperatorClass::DestroyLocalImageBuffer()
+void SVUserMaskOperatorClass::DestroyLocalImageBuffer()
 {
-	HRESULT l_hrOk = S_OK;
-
 	m_MaskBufferHandlePtr.reset();
-
-	return l_hrOk;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

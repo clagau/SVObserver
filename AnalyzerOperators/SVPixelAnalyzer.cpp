@@ -103,16 +103,6 @@ bool SVPixelAnalyzer::CreateObject( const SVObjectLevelCreateStruct& rCreateStru
 			break;
         }
 		
-		SvIe::SVImageClass* pImage = getInputImage ();
-		
-        if (!pImage)
-        {
-			SvStl::MessageManager MesMan(SvStl::MsgType::Log );
-			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
-			isError = true;
-			break;
-        }
-
 		SVMatroxImageInterface::Destroy(m_contextID);
 		SVMatroxImageInterface::Destroy(m_ResultID);
 		
@@ -191,6 +181,17 @@ bool SVPixelAnalyzer::onRun(RunStatus &rRunStatus, SvStl::MessageContainerVector
 bool SVPixelAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::ResetObject(pErrorMessages);
+
+	SvIe::SVImageClass* pImage = getInputImage();
+	if (!pImage)
+	{
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+			pErrorMessages->push_back(Msg);
+		}
+		Result = false;
+	}
 
 	if (M_NULL == m_contextID || M_NULL == m_ResultID)
 	{

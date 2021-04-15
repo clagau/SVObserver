@@ -66,29 +66,18 @@ bool SVStdImageOperatorListClass::CreateObject(const SVObjectLevelCreateStruct& 
 	// Image input must already exist, and must be created!!!
 
 	// Embedded Image output must already exist!!!
+	m_isCreated = __super::CreateObject(rCreateStructure);
 	SvIe::SVImageClass* pInputImage = getInputImage();
-	m_isCreated = __super::CreateObject(rCreateStructure) && (nullptr != pInputImage);
-	m_isCreated &= (S_OK == m_OutputImage.InitializeImage(pInputImage)) && (S_OK == m_LogicalROIImage.InitializeImage(pInputImage));
+	if (nullptr != pInputImage)
+	{
+		m_OutputImage.InitializeImage(pInputImage);
+		m_LogicalROIImage.InitializeImage(pInputImage);
+	}
 
 	// We do not want the ROI image showing up as an output image.
 	m_LogicalROIImage.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
 
 	return m_isCreated;
-}
-
-bool SVStdImageOperatorListClass::CloseObject()
-{
-	bool bRetVal = m_LogicalROIImage.CloseObject();
-	bRetVal = m_OutputImage.CloseObject() && bRetVal;
-
-	if (m_isCreated)
-	{
-		m_isCreated = false;
-
-		bRetVal = __super::CloseObject() && bRetVal;
-	}
-
-	return bRetVal;
 }
 
 bool SVStdImageOperatorListClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)

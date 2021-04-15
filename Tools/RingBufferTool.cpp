@@ -56,7 +56,6 @@ bool RingBufferTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStruc
 	bool bOk = SVToolClass::CreateObject( rCreateStructure );
 
 	SvIe::SVImageClass* pInputImage = m_InputImage.getInput<SvIe::SVImageClass>();
-	bOk &= (nullptr != pInputImage);
 
 	m_toolExtent.SetTranslation(SvPb::SVExtentTranslationNone);
 	SetToolROIExtentToFullInputImage ();

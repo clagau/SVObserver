@@ -125,7 +125,8 @@ bool SVImageTransform::CreateObject( const SVObjectLevelCreateStruct& rCreateStr
 		pTool->SetImageExtentProperty( SvPb::SVExtentPropertyRotationAngle, &m_extentRotationAngle );
 	}
 
-	result = result && S_OK == UpdateTransformData();
+	//Tool should be set to created, even if UpdateTransformData failed. In this case an error will be caused in ResetObject anyway.
+	UpdateTransformData();
 
 	m_isCreated = result;
 
@@ -243,7 +244,7 @@ bool SVImageTransform::onRun( RunStatus& runStatus, SvStl::MessageContainerVecto
 		}
 	}
 
-	if (bRetVal && S_OK != UpdateTransformData())
+	if (bRetVal && S_OK != UpdateTransformData(true))
 	{
 		bRetVal = false;
 		if (nullptr != pErrorMessages)
@@ -380,22 +381,22 @@ bool SVImageTransform::onRun( RunStatus& runStatus, SvStl::MessageContainerVecto
 	return bRetVal;
 }
 
-HRESULT SVImageTransform::UpdateTransformData( )
+HRESULT SVImageTransform::UpdateTransformData(bool bRunMode)
 {
 	HRESULT l_hrOk = S_OK;
 
-	SvIe::SVImageClass* pInputImage = m_inputImage.getInput<SvIe::SVImageClass>(true);
+	SvIe::SVImageClass* pInputImage = m_inputImage.getInput<SvIe::SVImageClass>(bRunMode);
 	SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*>(GetTool());
 
 	if( nullptr != pInputImage && nullptr != pTool )
 	{
 		POINT UseExtentsOnlyPoint{0L, 0L};
 
-		SvVol::SVDoubleValueObjectClass* pTranslationXResult = m_inputTranslationXResult.getInput<SvVol::SVDoubleValueObjectClass>(true);
-		SvVol::SVDoubleValueObjectClass* pTranslationYResult = m_inputTranslationYResult.getInput<SvVol::SVDoubleValueObjectClass>(true);
-		SvVol::SVDoubleValueObjectClass* pRotationXResult = m_inputRotationXResult.getInput<SvVol::SVDoubleValueObjectClass>(true);
-		SvVol::SVDoubleValueObjectClass* pRotationYResult = m_inputRotationYResult.getInput<SvVol::SVDoubleValueObjectClass>(true);
-		SvVol::SVDoubleValueObjectClass* pRotationAngleResult = m_inputRotationAngleResult.getInput<SvVol::SVDoubleValueObjectClass>(true);
+		SvVol::SVDoubleValueObjectClass* pTranslationXResult = m_inputTranslationXResult.getInput<SvVol::SVDoubleValueObjectClass>(bRunMode);
+		SvVol::SVDoubleValueObjectClass* pTranslationYResult = m_inputTranslationYResult.getInput<SvVol::SVDoubleValueObjectClass>(bRunMode);
+		SvVol::SVDoubleValueObjectClass* pRotationXResult = m_inputRotationXResult.getInput<SvVol::SVDoubleValueObjectClass>(bRunMode);
+		SvVol::SVDoubleValueObjectClass* pRotationYResult = m_inputRotationYResult.getInput<SvVol::SVDoubleValueObjectClass>(bRunMode);
+		SvVol::SVDoubleValueObjectClass* pRotationAngleResult = m_inputRotationAngleResult.getInput<SvVol::SVDoubleValueObjectClass>(bRunMode);
 
 		BOOL bTranslationEnabled( false );
 		BOOL bRotationEnabled( false );

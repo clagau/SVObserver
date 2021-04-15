@@ -48,7 +48,7 @@ protected:
 	virtual bool isInputImage(uint32_t imageId) const override;
 	virtual bool onRun( RunStatus& runStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
-	HRESULT UpdateTransformData();
+	HRESULT UpdateTransformData(bool bRunMode = false);
 #pragma endregion
 
 #pragma region Private Methods
