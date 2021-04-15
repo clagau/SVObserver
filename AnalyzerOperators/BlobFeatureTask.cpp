@@ -387,6 +387,7 @@ namespace SvAo
 				{
 					pObject->SetObjectOwner(this);
 					pObject->SetName(SvDef::CustomFeatureEquationName);
+					pObject->SetEquationText(SvDef::cIndexKeyword);
 					AddFriend(pObject->getObjectId());
 					if (CreateChildObject(pObject))
 					{
