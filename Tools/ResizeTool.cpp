@@ -11,6 +11,7 @@
 #include "Definitions/TextDefineSvDef.h"
 #include "SVMatroxLibrary/SVMatroxEnums.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
+#include "SVMatroxLibrary/SVMatroxBuffer.h"
 #include "SVStatusLibrary/RunStatus.h"
 #include "SVStatusLibrary/MessageContainer.h"
 
@@ -515,8 +516,6 @@ bool ResizeTool::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pEr
 		reportGeneralError(SvStl::Tid_InvalidScaleFactor, pErrorMessages, false);
 	}
 
-	// m_ExtentWidthFactorFormat and m_ExtentHeightFactorFormat need not (and must not) be checked or used here
-
 	long interpolationMode = 0;
 	if (!SUCCEEDED(m_ResizeInterpolationMode.GetValue(interpolationMode)))
 	{
@@ -563,6 +562,21 @@ bool ResizeTool::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pEr
 
 	if (Result)
 	{
+		// m_ExtentWidthFactorFormat and m_ExtentHeightFactorFormat are used only to determine whether the resize result is smaller
+		// than the output buffer in either dimension and hence the output buffer must be cleared
+		// they are not needed for the resize operation itself and therefore are not checked for validity
+
+		double formatHeightScaleFactor = 0.0;
+		m_ExtentHeightFactorFormat.getValue(formatHeightScaleFactor);
+
+		double formatWidthScaleFactor = 0.0;
+		m_ExtentWidthFactorFormat.getValue(formatWidthScaleFactor);
+
+		if ((contentHeightScaleFactor < formatHeightScaleFactor) || (contentWidthScaleFactor < formatWidthScaleFactor))
+		{
+			MbufClear(pOutputImageBuffer->getHandle()->GetBuffer().GetIdentifier(), 0);
+		}
+
 		HRESULT hr = SVMatroxImageInterface::Resize(pOutputImageBuffer->getHandle()->GetBuffer(),
 			pRoiImageBuffer->getHandle()->GetBuffer(),
 			contentWidthScaleFactor,

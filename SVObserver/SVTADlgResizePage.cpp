@@ -165,29 +165,29 @@ BOOL SVTADlgResizePage::OnSetActive()
 
 void SVTADlgResizePage::OnButtonFormatWidthFactor()
 {
-	PickValue(m_formatScaleButton[ScaleFactorDimension::Width], m_formatScaleEdit[ScaleFactorDimension::Width], IDS_OBJECTNAME_FORMAT_WIDTH_SCALE);
+	PickValue(m_formatScaleEdit[ScaleFactorDimension::Width], IDS_OBJECTNAME_FORMAT_WIDTH_SCALE);
 }
 
 void SVTADlgResizePage::OnButtonFormatHeightFactor()
 {
-	PickValue(m_formatScaleButton[ScaleFactorDimension::Height], m_formatScaleEdit[ScaleFactorDimension::Height], IDS_OBJECTNAME_FORMAT_HEIGHT_SCALE);
+	PickValue(m_formatScaleEdit[ScaleFactorDimension::Height], IDS_OBJECTNAME_FORMAT_HEIGHT_SCALE);
 }
 
 void SVTADlgResizePage::OnButtonContentWidthFactor()
 {
-	PickValue(m_contentScaleButton[ScaleFactorDimension::Width], m_contentScaleEdit[ScaleFactorDimension::Width], IDS_OBJECTNAME_CONTENT_WIDTH_SCALE);
+	PickValue(m_contentScaleEdit[ScaleFactorDimension::Width], IDS_OBJECTNAME_CONTENT_WIDTH_SCALE);
 }
 
 void SVTADlgResizePage::OnButtonContentHeightFactor()
 {
-	PickValue(m_contentScaleButton[ScaleFactorDimension::Height], m_contentScaleEdit[ScaleFactorDimension::Height], IDS_OBJECTNAME_CONTENT_HEIGHT_SCALE);
+	PickValue(m_contentScaleEdit[ScaleFactorDimension::Height], IDS_OBJECTNAME_CONTENT_HEIGHT_SCALE);
 }
 
-void SVTADlgResizePage::PickValue(CButton& rButton, CEdit& rEdit, UINT ResourceID)
+void SVTADlgResizePage::PickValue(CEdit& rEdit, UINT ResourceID)
 {
 	CString Temp;
 
-	rButton.GetWindowText(Temp);
+	rEdit.GetWindowText(Temp);
 	std::string Value = Temp.GetString();
 	std::string Title = SvUl::LoadStdString(ResourceID);
 	if (m_resizeValueSelector.Show(Value, Title, this, SvPb::allNumberValueObjects, SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed, m_toolID))

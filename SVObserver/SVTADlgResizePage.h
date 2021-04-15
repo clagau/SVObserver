@@ -58,7 +58,7 @@ private:
 	void UpdateImages();
 
 	void GetAndDisplayValuesFromTool();
-	void PickValue(CButton& rButton, CEdit& rEdit, UINT ResourceID);
+	void PickValue(CEdit& rEdit, UINT ResourceID);
 
 	void traceScalefactorValues(const std::string &rHeading, bool alsoAsDouble=false) const ;
 

@@ -905,9 +905,13 @@ void SVToolClass::removeEmbeddedExtents()
 	RemoveEmbeddedObject(&m_ExtentWidth);
 	RemoveEmbeddedObject(&m_ExtentHeight);
 	RemoveEmbeddedObject(&m_ExtentWidthFactorContent);
+	RemoveEmbeddedObject(&m_ExtentWidthFactorContent.getLinkedName());
 	RemoveEmbeddedObject(&m_ExtentHeightFactorContent);
+	RemoveEmbeddedObject(&m_ExtentHeightFactorContent.getLinkedName());
 	RemoveEmbeddedObject(&m_ExtentWidthFactorFormat);
+	RemoveEmbeddedObject(&m_ExtentWidthFactorFormat.getLinkedName());
 	RemoveEmbeddedObject(&m_ExtentHeightFactorFormat);
+	RemoveEmbeddedObject(&m_ExtentHeightFactorFormat.getLinkedName());
 }
 
 HRESULT SVToolClass::GetPropertyInfo(SvPb::SVExtentPropertyEnum p_eProperty, SvIe::SVExtentPropertyInfoStruct& p_rInfo) const
