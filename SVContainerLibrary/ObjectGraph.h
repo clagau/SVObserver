@@ -58,11 +58,7 @@ class IGraphNameLookup;
 		typedef boost::function<LPCTSTR (const VertexName&)> VertexNameFunc;
 
 		//! The boost graph library deceleration using the adjacency type
-		using DependencyGraph = boost::adjacency_list<boost::vecS,
-			boost::listS,
-			boost::bidirectionalS,
-			VertexProperty,
-			EdgeProperty>;
+		using DependencyGraph = boost::adjacency_list<boost::vecS, boost::listS, boost::bidirectionalS, VertexProperty, EdgeProperty>;
 
 		using VertexData = typename boost::graph_traits<DependencyGraph>::vertex_descriptor;
 		using EdgeData = typename boost::graph_traits<DependencyGraph>::edge_descriptor;

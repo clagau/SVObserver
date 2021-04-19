@@ -179,7 +179,6 @@ std::vector<SvOi::IObjectClass*> SVTaskObjectClass::getOutputListFiltered(UINT u
 
 void SVTaskObjectClass::GetOutputListFiltered(SVObjectReferenceVector& rObjectList, UINT uiAttributes, bool bAND) const
 {
-	rObjectList.clear();
 	std::vector<SvOi::IObjectClass*> outputList;
 	getOutputList(std::back_inserter(outputList));
 	for (auto* pIObject : outputList)

@@ -2325,33 +2325,37 @@ bool SVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectPtrVect
 						SVOutputObjectList* pOutputList{ pConfig->GetOutputObjectList() };
 						if (nullptr != pOutputList)
 						{
-							int ppqIndex = atoi(pPPQObj->GetPPQName().c_str());
-							uint32_t outputIndex = rImportOutput.m_channel % outputNr;
-							long channelNr = ppqIndex * outputNr + outputIndex;
-							uint32_t ioID = ObjectIdEnum::PlcOutputId + channelNr;
-							SVOutputObjectPtr pOutput = pOutputList->GetOutput(ioID);
-							bool isPlcOutputFree = nullptr == pOutput;
-							if (isPlcOutputFree)
+							std::string ppqName = pPPQObj->GetPPQName();
+							int ppqIndex = atoi(SvUl::Mid(ppqName, std::string(SvDef::cPpqFixedName).length()).c_str()) - 1;
+							if (ppqIndex >= 0)
 							{
-								pOutput = std::make_shared<PlcOutputObject>();
-								PlcOutputObject* pPlcOutput = dynamic_cast<PlcOutputObject*> (pOutput.get());
-								pOutput->updateObjectId(ioID);
-								pOutput->SetName(rImportOutput.m_name.c_str());
-								if (nullptr != pPlcOutput)
+								uint32_t outputIndex = rImportOutput.m_channel % outputNr;
+								long channelNr = ppqIndex * outputNr + outputIndex;
+								uint32_t ioID = ObjectIdEnum::PlcOutputId + channelNr;
+								SVOutputObjectPtr pOutput = pOutputList->GetOutput(ioID);
+								bool isPlcOutputFree = nullptr == pOutput;
+								if (isPlcOutputFree)
 								{
-									pPlcOutput->SetChannel(channelNr);
-									pPlcOutput->Combine(rImportOutput.m_isCombined, rImportOutput.m_isAndAck);
+									pOutput = std::make_shared<PlcOutputObject>();
+									PlcOutputObject* pPlcOutput = dynamic_cast<PlcOutputObject*> (pOutput.get());
+									pOutput->updateObjectId(ioID);
+									pOutput->SetName(rImportOutput.m_name.c_str());
+									if (nullptr != pPlcOutput)
+									{
+										pPlcOutput->SetChannel(channelNr);
+										pPlcOutput->Combine(rImportOutput.m_isCombined, rImportOutput.m_isAndAck);
+									}
+									pOutputList->AttachOutput(pOutput);
 								}
-								pOutputList->AttachOutput(pOutput);
-							}
-							else
-							{
-								SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
-								SvDef::StringVector msgList;
-								msgList.push_back(std::to_string(channelNr + 1));
-								msgList.push_back(pPPQ->GetName());
-								msgList.push_back(rImportOutput.m_name);
-								Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_PlcOutputAlreadyUsed, msgList, SvStl::SourceFileParams(StdMessageParams));
+								else
+								{
+									SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
+									SvDef::StringVector msgList;
+									msgList.push_back(std::to_string(channelNr + 1));
+									msgList.push_back(pPPQ->GetName());
+									msgList.push_back(rImportOutput.m_name);
+									Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_PlcOutputAlreadyUsed, msgList, SvStl::SourceFileParams(StdMessageParams));
+								}
 							}
 						}
 					}
