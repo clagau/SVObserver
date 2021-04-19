@@ -14,8 +14,12 @@
 
 #include "SVHttpLibrary/HttpServerConnection.h"
 #include "SVLogLibrary/Logging.h"
+#include "SVMessage/SVMessage.h"
 #include "SVProtoBuf/SVAuth.h"
 #include "SVStatusLibrary/ErrorUtil.h"
+#include "SVStatusLibrary/MessageManager.h"
+#include "SVStatusLibrary/MessageTextGenerator.h"
+#include "SVUtilityLibrary/StringHelper.h"
 
 namespace SvRpc
 {
@@ -36,15 +40,21 @@ bool RPCServer::onHandshake(int id, const std::string& token)
 
 void RPCServer::onTextMessage(int, std::vector<char>&&)
 {
-	SV_LOG_GLOBAL(warning) << "Received text message. Ignoring it, because only binary messages allowed.";
+	SV_LOG_GLOBAL(warning) << SvStl::MessageTextGenerator::Instance().getText(SvStl::Tid_RPC_ReceivedTextMessage);
+	SvStl::MessageManager Exception(SvStl::MsgType::Notify);
+	Exception.setMessage(SVMSG_SVO_1_GENERAL_WARNING, SvStl::Tid_RPC_ReceivedTextMessage, SvStl::SourceFileParams(StdMessageParams));
 }
 
 void RPCServer::onBinaryMessage(int id, std::vector<char>&& buf)
 {
 	if (buf.size() > static_cast<size_t>(std::numeric_limits<int>::max()))
 	{
-		SV_LOG_GLOBAL(error) << "Message too large " << buf.size() << ". Must not be larger than "
-			<< std::numeric_limits<int>::max() << ".";
+		SvDef::StringVector msgList;
+		msgList.push_back(SvUl::Format(_T("%z"), buf.size()));
+		msgList.push_back(SvUl::Format(_T("%u"), std::numeric_limits<int>::max()));
+		SV_LOG_GLOBAL(warning) << SvStl::MessageTextGenerator::Instance().getText(SvStl::Tid_RPC_MessageTooLarge, msgList);
+		SvStl::MessageManager Exception(SvStl::MsgType::Notify);
+		Exception.setMessage(SVMSG_SVO_1_GENERAL_WARNING, SvStl::Tid_RPC_MessageTooLarge, msgList, SvStl::SourceFileParams(StdMessageParams));
 		return;
 	}
 
@@ -71,7 +81,11 @@ void RPCServer::onBinaryMessage(int id, std::vector<char>&& buf)
 			break;
 
 		default:
-			SV_LOG_GLOBAL(error) << "Invalid message type " << type;
+			SvDef::StringVector msgList;
+			msgList.push_back(SvUl::Format(_T("%d"), type));
+			SV_LOG_GLOBAL(warning) << SvStl::MessageTextGenerator::Instance().getText(SvStl::Tid_RPC_InvalidMessageType, msgList);
+			SvStl::MessageManager Exception(SvStl::MsgType::Notify);
+			Exception.setMessage(SVMSG_SVO_1_GENERAL_WARNING, SvStl::Tid_RPC_InvalidMessageType, msgList, SvStl::SourceFileParams(StdMessageParams));
 			break;
 	}
 }

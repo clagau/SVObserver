@@ -33,6 +33,7 @@
 #include "SVRPCLibrary/Router.h"
 #include "SVRPCLibrary/RPCServer.h"
 #include "SVStatusLibrary/MessageManager.h"
+#include "SVStatusLibrary/MessageTextGenerator.h"
 #include "SVSystemLibrary/SVVersionInfo.h"
 #include "ObjectInterfaces/ITriggerRecordControllerR.h"
 
@@ -88,7 +89,7 @@ void StartWebServer(DWORD argc, LPTSTR  *argv)
 			SV_LOG_GLOBAL(error) << std::string(rRuntimeError.what());
 		}
 		
-		SV_LOG_GLOBAL(info) << "SVOGatewayIniPath:" << settingsLoader.GetIni();
+		SV_LOG_GLOBAL(info) << "SVOGatewayIniPath: " << settingsLoader.GetIni();
 		SV_LOG_GLOBAL(info) << "WebsocketServer is starting";
 
 		boost::asio::io_service IoService {1};
@@ -129,13 +130,19 @@ void StartWebServer(DWORD argc, LPTSTR  *argv)
 		{
 			if (status == SvRpc::ClientStatus::Connected &&  nullptr == pServer)
 			{
+				SV_LOG_GLOBAL(info) << SvStl::MessageTextGenerator::Instance().getText(SvStl::Tid_Gateway_SVObserverConnected);
+				SvStl::MessageManager Exception(SvStl::MsgType::Notify);
+				Exception.setMessage(SVMSG_SVGateway_2_GENERAL_INFORMATIONAL, SvStl::Tid_Gateway_SVObserverConnected, SvStl::SourceFileParams(StdMessageParams));
+
 				pServer = std::make_unique<SvHttp::HttpServer>(settings.httpSettings, IoService);
 				pServer->start();
-				SV_LOG_GLOBAL(debug) << "Start HTTP server in callback in Router";
 			}
 			else if (status == SvRpc::ClientStatus::Disconnected &&  pServer.get())
 			{
-				SV_LOG_GLOBAL(debug) << "Stop HTTP server in callback in Router";
+				SV_LOG_GLOBAL(info) << SvStl::MessageTextGenerator::Instance().getText(SvStl::Tid_Gateway_SVObserverDisconnected);
+				SvStl::MessageManager Exception(SvStl::MsgType::Notify);
+				Exception.setMessage(SVMSG_SVGateway_2_GENERAL_INFORMATIONAL, SvStl::Tid_Gateway_SVObserverDisconnected, SvStl::SourceFileParams(StdMessageParams));
+
 				pServer->stop();
 				pServer.reset(nullptr);
 			}

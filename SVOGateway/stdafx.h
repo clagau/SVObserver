@@ -54,7 +54,6 @@
 #include <tchar.h>
 #include <thread>
 #include <vector>
-#include <windows.h>
 
 #define BOOST_BIND_NO_PLACEHOLDERS
 #include <boost/any.hpp>

@@ -2158,7 +2158,7 @@ HRESULT SVImageView::BlitToPrimarySurface( CRect& p_rDestRect )
 			std::ostringstream oss;
 			oss << "GetBltStatus() Failed!! Result = " << status;
 			msgList.push_back(oss.str());
-			Msg.setMessage(SVMSG_SVO_0_GENERAL_ERROR, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams));
+			Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams));
 		}
 	}
 	else

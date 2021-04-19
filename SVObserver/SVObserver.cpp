@@ -20,7 +20,6 @@
 #include "ExtrasEngine.h"
 #include "RootObject.h"
 #include "LoadConfigWarning.h"
-#include "ObjectAttribute.h"
 #include "SoftwareTriggerDlg.h"
 #include "SVAboutDialogClass.h"
 #include "SVArchiveWritingDlg.h"

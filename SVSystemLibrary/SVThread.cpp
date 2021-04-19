@@ -16,6 +16,7 @@
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageData.h"
 #include "SVStatusLibrary/MessageManager.h"
+#include "SVLogLibrary/Logging.h"
 #pragma endregion Includes
 
 // This const defines how long the destroy should wait at most to complete the shutdown
@@ -214,16 +215,8 @@ void SVThread::SetPriority(int priority)
 bool SVThread::IsActive() const
 {
 	bool bRetVal = nullptr != m_hThread;
-
-	if( bRetVal )
-	{
-		DWORD exitCode = STILL_ACTIVE;
-
-		bRetVal = bRetVal && ( ::WaitForSingleObject( m_hThreadComplete, 0 ) == WAIT_TIMEOUT );
-		bRetVal = bRetVal && ( ::GetExitCodeThread(m_hThread, &exitCode) != FALSE );
-		bRetVal = bRetVal && ( exitCode == STILL_ACTIVE );
-	}
-
+	bRetVal = bRetVal && ( ::WaitForSingleObject( m_hThreadComplete, 0 ) == WAIT_TIMEOUT );
+	bRetVal = bRetVal && (::WaitForSingleObject(m_hThread,0) == WAIT_TIMEOUT) ;
 	return bRetVal;
 }
 

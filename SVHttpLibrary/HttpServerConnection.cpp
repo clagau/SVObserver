@@ -15,13 +15,18 @@
 #include <boost/beast/websocket.hpp>
 
 #include "url.hpp"
-#include "SVSystemLibrary/SVEncodeDecodeUtilities.h"
+
 #include "SVLogLibrary/Logging.h"
+#include "SVMessage/SVMessage.h"
+#include "SVSystemLibrary/SVEncodeDecodeUtilities.h"
+#include "SVStatusLibrary/MessageManager.h"
+#include "SVStatusLibrary/MessageTextGenerator.h"
 
 #include "HttpRequest.h"
 #include "HttpResponse.h"
 #include "HttpServerConnection.h"
 #include "HttpServerSettings.h"
+
 
 namespace SvHttp
 {
@@ -83,7 +88,13 @@ void HttpServerConnection::close_impl()
 			m_WsSocket.next_layer().close(ec);
 			if (ec)
 			{
-				SV_LOG_GLOBAL(warning) << "Error while closing websocket connection: " << ec;
+				std::stringstream ss;
+				ss << ec;
+				SvDef::StringVector msgList;
+				msgList.push_back(ss.str());
+				SV_LOG_GLOBAL(warning) << SvStl::MessageTextGenerator::Instance().getText(SvStl::Tid_Http_ConnectionCloseError, msgList);
+				SvStl::MessageManager Exception(SvStl::MsgType::Notify);
+				Exception.setMessage(SVMSG_SVO_2_GENERAL_INFORMATIONAL, SvStl::Tid_Http_ConnectionCloseError, msgList, SvStl::SourceFileParams(StdMessageParams));
 			}
 		}
 	}
@@ -266,7 +277,13 @@ void HttpServerConnection::http_on_error(const boost::system::error_code& error)
 	}
 	else
 	{
-		SV_LOG_GLOBAL(warning) << "client connection error: " << error;
+		std::stringstream ss;
+		ss << error;
+		SvDef::StringVector msgList;
+		msgList.push_back(ss.str());
+		SV_LOG_GLOBAL(warning) << SvStl::MessageTextGenerator::Instance().getText(SvStl::Tid_Http_ConnectionError, msgList);
+		SvStl::MessageManager Exception(SvStl::MsgType::Notify);
+		Exception.setMessage(SVMSG_SVO_2_GENERAL_INFORMATIONAL, SvStl::Tid_Http_ConnectionError, msgList, SvStl::SourceFileParams(StdMessageParams));
 	}
 
 	if (!m_IsDisconnectErrorHandled)
@@ -299,7 +316,13 @@ void HttpServerConnection::http_do_close()
 	}
 	if (ec)
 	{
-		SV_LOG_GLOBAL(warning) << "Error while closing http connection: " << ec;
+		std::stringstream ss;
+		ss << ec;
+		SvDef::StringVector msgList;
+		msgList.push_back(ss.str());
+		SV_LOG_GLOBAL(warning) << SvStl::MessageTextGenerator::Instance().getText(SvStl::Tid_Http_ConnectionCloseError, msgList);
+		SvStl::MessageManager Exception(SvStl::MsgType::Notify);
+		Exception.setMessage(SVMSG_SVO_2_GENERAL_INFORMATIONAL, SvStl::Tid_Http_ConnectionCloseError, msgList, SvStl::SourceFileParams(StdMessageParams));
 	}
 }
 
@@ -737,7 +760,7 @@ void HttpServerConnection::ws_on_frame_sent(const boost::system::error_code& err
 	ws_send_next_frame();
 }
 
-void HttpServerConnection::ws_on_error(const boost::system::error_code& error, const char* source)
+void HttpServerConnection::ws_on_error(const boost::system::error_code& error, const char*)
 {
 	if (!error)
 	{
@@ -756,10 +779,13 @@ void HttpServerConnection::ws_on_error(const boost::system::error_code& error, c
 	}
 	else
 	{
-		SV_LOG_GLOBAL(warning) << "client connection error in "
-			<< source << ": "
-			<< error.category().name() << " "
-			<< error.message();
+		std::stringstream ss;
+		ss << error;
+		SvDef::StringVector msgList;
+		msgList.push_back(ss.str());
+		SV_LOG_GLOBAL(warning) << SvStl::MessageTextGenerator::Instance().getText(SvStl::Tid_Http_ConnectionError, msgList);
+		SvStl::MessageManager Exception(SvStl::MsgType::Notify);
+		Exception.setMessage(SVMSG_SVO_1_GENERAL_WARNING, SvStl::Tid_Http_ConnectionError, msgList, SvStl::SourceFileParams(StdMessageParams));
 	}
 
 	// When error happens during handshake, we did not even call the onConnect yet.

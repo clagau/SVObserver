@@ -42,6 +42,12 @@ HRESULT SVAsyncProcedure::Signal(void* pData)
 
 	HRESULT Result = S_OK;
 
+	
+	if (m_thread.IsDisabled())
+	{
+		return Result;
+	}
+
 	if( ! m_thread.IsActive() )
 	{
 		Exception.setMessage( SVMSG_THREAD_CREATION_ERROR, m_tag.c_str(), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25037_AsyncProcedure );

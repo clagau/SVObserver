@@ -664,5 +664,28 @@ namespace SvStl
 		{ Tid_ModuleReady , _T("Module ready set to %s") },
 		{ Tid_ModelTypeMismatch , _T("Model mismatch SVIM type is %s, the loaded configuration is type %s\nConfiguration shall not be able to go into Run mode") },
 		{ Tid_PlcOutputAlreadyUsed , _T("PLC Output %s for %s is already being used and cannot be imported with the value:\n%s") },
+
+		{ Tid_Http_ConnectionError, _T("Client connection error: %s") },
+		{ Tid_Http_ConnectionCloseError, _T("Error while closing http connection: %s") },
+
+		{ Tid_WebSocket_ConnectionError, _T("WebSocket client connection error: %s") },
+		{ Tid_WebSocket_ConnectionCloseError, _T("Error while closing websocket connection: %s") },
+		{ Tid_WebSocket_PingTimeout, _T("Server did not respond to ping messages. Closing connection.") },
+
+		{ Tid_RPC_ReceivedTextMessage, _T("Received a text message, but only binary messages expected.") },
+		{ Tid_RPC_MessageTooLarge, _T("Message too large %s bytes. Must not be larger than %s bytes.") },
+		{ Tid_RPC_InvalidMessageType, _T("Invalid message type %s") },
+
+		{ Tid_Gateway_SVObserverConnected , _T("Gateway successfully connected to SVObserver") },
+		{ Tid_Gateway_SVObserverDisconnected , _T("Connection to SVObserver lost") },
+		{ Tid_Gateway_TRC_NotAvailable , _T("TRC is not available. Unable to register callbacks!") },
+		{ Tid_Gateway_TRC_CreateTriggerRecordObjectFailed , _T("TRC returned invalid TRO for inspectionPos=%s and trId=%s") },
+		{ Tid_Gateway_TRC_PauseStateError , _T("TRC pause state polling error: %s") },
+		{ Tid_Gateway_RequestPermissionsNotConfigured , _T("No permissions handling for message with payload type %d configured!") },
+		{ Tid_Gateway_UserPermissionsNotConfigured , _T("Request of type %s rejected because user %s has no permissions configured.") },
+		{ Tid_Gateway_RequestNotAllowed , _T("Request of type %s from user %s rejected due to missing permissions.") },
+		{ Tid_Gateway_ReadValueFailed , _T("Error reading value with id %s") },
+		{ Tid_Gateway_ReadImageFailed , _T("Error reading image with id %s for inspection %s") },
+			
 };
 } //namespace SvStl

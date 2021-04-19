@@ -17,6 +17,7 @@
 #include "SVAuthLibrary/UserDatabase.h"
 #include "SVLogLibrary/Logging.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
+#include "SVMessage/SVMessage.h"
 #include "SVOGateway/WebAppVersionLoader.h"
 #include "SVSharedMemoryLibrary/ShareControlSetting.h" 
 #include "SVProtoBuf/ConverterHelper.h"
@@ -26,6 +27,7 @@
 #include "ObjectInterfaces/ITriggerRecordR.h"
 #include "ObjectInterfaces/ITriggerRecordControllerR.h"
 #include "SVStatusLibrary/MessageContainer.h"
+#include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/MessageTextGenerator.h"
 #pragma endregion Includes
 
@@ -465,7 +467,12 @@ void SharedMemoryAccess::flush_product_stream_queue(std::shared_ptr<product_stre
 			auto tro = pTrc->createTriggerRecordObject(inspectionPos, trId);
 			if (!tro)
 			{
-				SV_LOG_GLOBAL(warning) << "TRC returned invalid TRO for inspectionPos=" << inspectionPos << " and trId=" << trId;
+				SvDef::StringVector msgList;
+				msgList.push_back(SvUl::Format(_T("%d"), inspectionPos));
+				msgList.push_back(SvUl::Format(_T("%d"), trId));
+				SV_LOG_GLOBAL(warning) << SvStl::MessageTextGenerator::Instance().getText(SvStl::Tid_Gateway_TRC_CreateTriggerRecordObjectFailed, msgList);
+				SvStl::MessageManager Exception(SvStl::MsgType::Notify);
+				Exception.setMessage(SVMSG_SVGateway_2_GENERAL_INFORMATIONAL, SvStl::Tid_Gateway_TRC_CreateTriggerRecordObjectFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
 				continue;
 			}
 
@@ -729,7 +736,12 @@ SvSyl::SVFuture<void> SharedMemoryAccess::collect_images(
 		//stream.req.imageformat()
 		if (!read_image(img, imgPtr))
 		{
-			SV_LOG_GLOBAL(warning) << "Error reading image with id " << imageId << " for " << inspectionPos;
+			SvDef::StringVector msgList;
+			msgList.push_back(SvUl::Format(_T("%u"), imageId));
+			msgList.push_back(SvUl::Format(_T("%d"), inspectionPos));
+			SV_LOG_GLOBAL(warning) << SvStl::MessageTextGenerator::Instance().getText(SvStl::Tid_Gateway_ReadImageFailed, msgList);
+			SvStl::MessageManager Exception(SvStl::MsgType::Notify);
+			Exception.setMessage(SVMSG_SVGateway_2_GENERAL_INFORMATIONAL, SvStl::Tid_Gateway_ReadImageFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
 			continue;
 		}
 
@@ -769,7 +781,11 @@ void SharedMemoryAccess::collect_values(
 		if (!read_variant(value, variant))
 		{
 			const auto valueId = valueIds.Get(static_cast<int>(i));
-			SV_LOG_GLOBAL(warning) << "Error reading value with id " << valueId;
+			SvDef::StringVector msgList;
+			msgList.push_back(SvUl::Format(_T("%u"), valueId));
+			SV_LOG_GLOBAL(warning) << SvStl::MessageTextGenerator::Instance().getText(SvStl::Tid_Gateway_ReadValueFailed, msgList);
+			SvStl::MessageManager Exception(SvStl::MsgType::Notify);
+			Exception.setMessage(SVMSG_SVGateway_2_GENERAL_INFORMATIONAL, SvStl::Tid_Gateway_ReadValueFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
 		}
 	}
 }
@@ -1054,7 +1070,13 @@ void SharedMemoryAccess::on_trigger_record_pause_state_timer(const boost::system
 	}
 	if (error)
 	{
-		SV_LOG_GLOBAL(error) << "TRC pause state polling error: " << error;
+		std::stringstream ss;
+		ss << error;
+		SvDef::StringVector msgList;
+		msgList.push_back(ss.str());
+		SV_LOG_GLOBAL(warning) << SvStl::MessageTextGenerator::Instance().getText(SvStl::Tid_Gateway_TRC_PauseStateError, msgList);
+		SvStl::MessageManager Exception(SvStl::MsgType::Notify);
+		Exception.setMessage(SVMSG_SVGateway_1_GENERAL_WARNING, SvStl::Tid_Gateway_TRC_PauseStateError, msgList, SvStl::SourceFileParams(StdMessageParams));
 		return;
 	}
 
@@ -1218,7 +1240,9 @@ void SharedMemoryAccess::subscribe_to_trc()
 	}
 	else
 	{
-		SV_LOG_GLOBAL(warning) << "TRC is not available. Unable to register callbacks!";
+		SV_LOG_GLOBAL(warning) << SvStl::MessageTextGenerator::Instance().getText(SvStl::Tid_Gateway_TRC_NotAvailable);
+		SvStl::MessageManager Exception(SvStl::MsgType::Notify);
+		Exception.setMessage(SVMSG_SVGateway_2_GENERAL_INFORMATIONAL, SvStl::Tid_Gateway_TRC_NotAvailable, SvStl::SourceFileParams(StdMessageParams));
 	}
 }
 
@@ -1329,7 +1353,13 @@ bool SharedMemoryAccess::CheckRequestPermissions(const SvAuth::SessionContext& r
 	SvPb::Permissions permissions;
 	if (!m_rUserDatabase.getUserPermissions(rSessionContext.username(), permissions))
 	{
-		SV_LOG_GLOBAL(debug) << "Request of type \"" << rEnvelope.payloadtype() << "\" rejected because user \"" << username << "\" has no permissions configured.";
+		SvDef::StringVector msgList;
+		msgList.push_back(SvUl::Format(_T("%d"), rEnvelope.payloadtype()));
+		msgList.push_back(username);
+		SV_LOG_GLOBAL(warning) << SvStl::MessageTextGenerator::Instance().getText(SvStl::Tid_Gateway_UserPermissionsNotConfigured, msgList);
+		SvStl::MessageManager Exception(SvStl::MsgType::Notify);
+		Exception.setMessage(SVMSG_SVGateway_2_GENERAL_INFORMATIONAL, SvStl::Tid_Gateway_UserPermissionsNotConfigured, msgList, SvStl::SourceFileParams(StdMessageParams));
+
 		SvPenv::Error Error;
 		Error.set_errorcode(SvPenv::ErrorCode::notFound);
 		task.error(Error);
@@ -1338,7 +1368,13 @@ bool SharedMemoryAccess::CheckRequestPermissions(const SvAuth::SessionContext& r
 
 	if (!is_request_allowed(rEnvelope, permissions))
 	{
-		SV_LOG_GLOBAL(debug) << "Request of type \"" << rEnvelope.payloadtype() << "\" from user \"" << username << "\" rejected due to missing permissions.";
+		SvDef::StringVector msgList;
+		msgList.push_back(SvUl::Format(_T("%d"), rEnvelope.payloadtype()));
+		msgList.push_back(username);
+		SV_LOG_GLOBAL(info) << SvStl::MessageTextGenerator::Instance().getText(SvStl::Tid_Gateway_RequestNotAllowed, msgList);
+		SvStl::MessageManager Exception(SvStl::MsgType::Notify);
+		Exception.setMessage(SVMSG_SVGateway_2_GENERAL_INFORMATIONAL, SvStl::Tid_Gateway_RequestNotAllowed, msgList, SvStl::SourceFileParams(StdMessageParams));
+
 		SvPenv::Error Error;
 		Error.set_errorcode(SvPenv::ErrorCode::unauthorized);
 		task.error(Error);
@@ -1374,7 +1410,13 @@ bool SharedMemoryAccess::CheckStreamPermissions(const SvAuth::SessionContext& rS
 	SvPb::Permissions permissions;
 	if (!m_rUserDatabase.getUserPermissions(rSessionContext.username(), permissions))
 	{
-		SV_LOG_GLOBAL(debug) << "Request of type \"" << rEnvelope.payloadtype() << "\" rejected because user \"" << username << "\" has no permissions configured.";
+		SvDef::StringVector msgList;
+		msgList.push_back(SvUl::Format(_T("%ld"), rEnvelope.payloadtype()));
+		msgList.push_back(username);
+		SV_LOG_GLOBAL(warning) << SvStl::MessageTextGenerator::Instance().getText(SvStl::Tid_Gateway_UserPermissionsNotConfigured, msgList);
+		SvStl::MessageManager Exception(SvStl::MsgType::Notify);
+		Exception.setMessage(SVMSG_SVGateway_2_GENERAL_INFORMATIONAL, SvStl::Tid_Gateway_UserPermissionsNotConfigured, msgList, SvStl::SourceFileParams(StdMessageParams));
+
 		SvPenv::Error Error;
 		Error.set_errorcode(SvPenv::ErrorCode::notFound);
 		observer.error(Error);
@@ -1383,7 +1425,13 @@ bool SharedMemoryAccess::CheckStreamPermissions(const SvAuth::SessionContext& rS
 
 	if (!is_request_allowed(rEnvelope, permissions))
 	{
-		SV_LOG_GLOBAL(debug) << "Request of type \"" << rEnvelope.payloadtype() << "\" from user \"" << username << "\" rejected due to missing permissions.";
+		SvDef::StringVector msgList;
+		msgList.push_back(SvUl::Format(_T("%ld"), rEnvelope.payloadtype()));
+		msgList.push_back(username);
+		SV_LOG_GLOBAL(info) << SvStl::MessageTextGenerator::Instance().getText(SvStl::Tid_Gateway_RequestNotAllowed, msgList);
+		SvStl::MessageManager Exception(SvStl::MsgType::Notify);
+		Exception.setMessage(SVMSG_SVGateway_2_GENERAL_INFORMATIONAL, SvStl::Tid_Gateway_RequestNotAllowed, msgList, SvStl::SourceFileParams(StdMessageParams));
+
 		SvPenv::Error Error;
 		Error.set_errorcode(SvPenv::ErrorCode::unauthorized);
 		observer.error(Error);
@@ -1429,11 +1477,13 @@ bool SharedMemoryAccess::is_request_allowed(const SvPenv::Envelope& rEnvelope, c
 	case SvPb::SVRCMessages::kGetObjectSelectorItemsRequest:
 	case SvPb::SVRCMessages::kGetTriggerStreamRequest:
 	case SvPb::SVRCMessages::kGetConfigurationTreeRequest:
+	case SvPb::SVRCMessages::kGetConfigurationInfoRequest:
 		return permissions.svobserver().configuration().read();
 
 	case SvPb::SVRCMessages::kActivateMonitorListRequest:
 	case SvPb::SVRCMessages::kSetProductFilterRequest:
 	case SvPb::SVRCMessages::kRegisterMonitorListRequest:
+	case SvPb::SVRCMessages::kSetTriggerConfigRequest:
 		return permissions.svobserver().configuration().write();
 
 	case SvPb::SVRCMessages::kLoadConfigRequest:
@@ -1469,16 +1519,16 @@ bool SharedMemoryAccess::is_request_allowed(const SvPenv::Envelope& rEnvelope, c
 
 	case SvPb::SVRCMessages::kStoreClientLogsRequest:
 		return permissions.svobserver().clientlogs().store(); // TODO shall we really always allow all clients to store any logs?
-	
+
 	case SvPb::SVRCMessages::kGetFileRequest:
 		return permissions.svobserver().file().read();
 
 	case SvPb::SVRCMessages::kPutFileRequest:
 		return permissions.svobserver().file().write();
-	
+
 	case SvPb::SVRCMessages::kShutdownRequest:
 		return permissions.svobserver().machinestate().set();
-	
+
 	case SvPb::SVRCMessages::kInspectionCmdRequest:
 	case SvPb::SVRCMessages::kConfigCommandRequest:
 		return permissions.svobserver().command().execute();
@@ -1493,7 +1543,11 @@ bool SharedMemoryAccess::is_request_allowed(const SvPenv::Envelope& rEnvelope, c
 		return permissions.usermanagement().userpermissions().edit();
 
 	default:
-		SV_LOG_GLOBAL(warning) << "No permissions handling for message id " << payloadType << " configured!";
+		SvDef::StringVector msgList;
+		msgList.push_back(SvUl::Format(_T("%d"), payloadType));
+		SV_LOG_GLOBAL(error) << SvStl::MessageTextGenerator::Instance().getText(SvStl::Tid_Gateway_RequestPermissionsNotConfigured, msgList);
+		SvStl::MessageManager Exception(SvStl::MsgType::Notify);
+		Exception.setMessage(SVMSG_SVGateway_2_GENERAL_INFORMATIONAL, SvStl::Tid_Gateway_RequestPermissionsNotConfigured, msgList, SvStl::SourceFileParams(StdMessageParams));
 		return false;
 	}
 }

@@ -629,5 +629,27 @@ enum MessageTextEnum
 	Tid_ModuleReady,
 	Tid_ModelTypeMismatch,
 	Tid_PlcOutputAlreadyUsed,
+
+	Tid_Http_ConnectionError,
+	Tid_Http_ConnectionCloseError,
+
+	Tid_WebSocket_ConnectionError,
+	Tid_WebSocket_ConnectionCloseError,
+	Tid_WebSocket_PingTimeout,
+
+	Tid_RPC_ReceivedTextMessage,
+	Tid_RPC_MessageTooLarge,
+	Tid_RPC_InvalidMessageType,
+
+	Tid_Gateway_SVObserverConnected,
+	Tid_Gateway_SVObserverDisconnected,
+	Tid_Gateway_TRC_NotAvailable,
+	Tid_Gateway_TRC_CreateTriggerRecordObjectFailed,
+	Tid_Gateway_TRC_PauseStateError,
+	Tid_Gateway_RequestPermissionsNotConfigured,
+	Tid_Gateway_UserPermissionsNotConfigured,
+	Tid_Gateway_RequestNotAllowed,
+	Tid_Gateway_ReadValueFailed,
+	Tid_Gateway_ReadImageFailed,
 };
 } //namespace SvStl

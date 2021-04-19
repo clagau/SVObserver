@@ -109,7 +109,12 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed)
 #ifdef EnableTracking
 		m_InspectionTracking.EventStart(_T("Process Inspections"));
 #endif
-		assert((*m_pProduct).m_triggered);
+		if ((*m_pProduct).m_triggered == 0)
+		{
+			SvStl::MessageManager Msg(SvStl::MsgType::Log );
+			Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, _T("Produkt not triggerd in ProcessInspection"), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16223);
+		}
+		
 		// Get the info struct for this inspection
 		const auto iter = (*m_pProduct).m_svInspectionInfos.find(getObjectId());
 		bool validProduct = (*m_pProduct).m_svInspectionInfos.end() != iter || false == (*m_pProduct).m_triggered;

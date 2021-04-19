@@ -30,12 +30,15 @@
 
 #define NOMINMAX
 #define VC_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
+#define WIN32_LEAN_AND_MEAN
 #define _CRT_SECURE_NO_WARNINGS
 
 //************************************
 //! Precompiled headers section
 //************************************
 #pragma region Precompiled Headers
+#include <windows.h>
+#include <comutil.h>
 
 #include <atomic>
 #include <condition_variable>

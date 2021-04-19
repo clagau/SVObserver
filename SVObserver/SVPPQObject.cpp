@@ -2285,7 +2285,12 @@ HRESULT SVPPQObject::StartInspection(uint32_t inspectionID)
 		long ppqPos = m_PPQPositions.GetIndexByTriggerCount(pProduct->ProcessCount());
 		::OutputDebugString(SvUl::Format(_T("%s Start Inspection TRI=%d, PPQPos=%d\n"), GetName(), pProduct->ProcessCount(), ppqPos).c_str());
 #endif
-		assert(pProduct->m_triggered);
+		
+		if (pProduct->m_triggered == 0)
+		{
+			SvStl::MessageManager Msg(SvStl::MsgType::Log);
+			Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, _T("SVPPQObject::StartInspection product not triggerd"), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16223);
+		}
 		result = pProduct->m_svInspectionInfos[inspectionID].m_pInspection->StartProcess(pProduct);
 
 #ifdef EnableTracking

@@ -11,11 +11,15 @@
 #include "stdafx.h"
 
 #include <iostream>
+#include <winerror.h>
 
 #include "SVLogLibrary/Logging.h"
+#include "SVMessage/SVMessage.h"
+#include "SVStatusLibrary/MessageTextGenerator.h"
+#include "SVStatusLibrary/MessageManager.h"
+
 #include "WebsocketClient.h"
 #include "WebsocketClientSettings.h"
-#include <winerror.h>
 
 
 namespace SvHttp
@@ -76,7 +80,13 @@ void WebsocketClient::disconnect()
 		m_Socket.next_layer().close(ec);
 		if (ec)
 		{
-			SV_LOG_GLOBAL(warning) << "Error while closing websocket connection: " << ec;
+			std::stringstream ss;
+			ss << ec;
+			SvDef::StringVector msgList;
+			msgList.push_back(ss.str());
+			SV_LOG_GLOBAL(warning) << SvStl::MessageTextGenerator::Instance().getText(SvStl::Tid_WebSocket_ConnectionCloseError, msgList);
+			SvStl::MessageManager Exception(SvStl::MsgType::Notify);
+			Exception.setMessage(SVMSG_SVO_2_GENERAL_INFORMATIONAL, SvStl::Tid_WebSocket_ConnectionCloseError, msgList, SvStl::SourceFileParams(StdMessageParams));
 		}
 	}
 	m_IoWork.reset();
@@ -133,7 +143,13 @@ void WebsocketClient::handle_connection_error(const boost::system::error_code& e
 	}
 	else
 	{
-		SV_LOG_GLOBAL(error) << "server connection error: " << ec;
+		std::stringstream ss;
+		ss << ec;
+		SvDef::StringVector msgList;
+		msgList.push_back(ss.str());
+		SV_LOG_GLOBAL(warning) << SvStl::MessageTextGenerator::Instance().getText(SvStl::Tid_WebSocket_ConnectionError, msgList);
+		SvStl::MessageManager Exception(SvStl::MsgType::Notify);
+		Exception.setMessage(SVMSG_SVO_2_GENERAL_INFORMATIONAL, SvStl::Tid_WebSocket_ConnectionError, msgList, SvStl::SourceFileParams(StdMessageParams));
 	}
 
 	close_connection();
@@ -152,7 +168,13 @@ void WebsocketClient::close_connection()
 		m_Socket.next_layer().close(ec);
 		if (ec)
 		{
-			SV_LOG_GLOBAL(warning) << "Error while closing websocket connection: " << ec;
+			std::stringstream ss;
+			ss << ec;
+			SvDef::StringVector msgList;
+			msgList.push_back(ss.str());
+			SV_LOG_GLOBAL(warning) << SvStl::MessageTextGenerator::Instance().getText(SvStl::Tid_WebSocket_ConnectionCloseError, msgList);
+			SvStl::MessageManager Exception(SvStl::MsgType::Notify);
+			Exception.setMessage(SVMSG_SVO_2_GENERAL_INFORMATIONAL, SvStl::Tid_WebSocket_ConnectionCloseError, msgList, SvStl::SourceFileParams(StdMessageParams));
 		}
 	}
 	if (!m_IsDisconnectEventSent && !m_IsShuttingDown)
@@ -324,7 +346,10 @@ void WebsocketClient::on_ping_interval(const boost::system::error_code& error)
 	++m_PingTimeoutCount;
 	if (m_rSettings.PingTimeoutCount > 0 && m_PingTimeoutCount > m_rSettings.PingTimeoutCount)
 	{
-		SV_LOG_GLOBAL(info) << "Client did not respond to ping messages. Closing connection.";
+		SV_LOG_GLOBAL(info) << SvStl::MessageTextGenerator::Instance().getText(SvStl::Tid_WebSocket_ConnectionCloseError);
+		SvStl::MessageManager Exception(SvStl::MsgType::Notify);
+		Exception.setMessage(SVMSG_SVO_2_GENERAL_INFORMATIONAL, SvStl::Tid_WebSocket_PingTimeout, SvStl::SourceFileParams(StdMessageParams));
+
 		m_Socket.next_layer().close();
 		return;
 	}

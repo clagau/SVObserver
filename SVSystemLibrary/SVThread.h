@@ -40,6 +40,7 @@ public:
 
 	unsigned long GetThreadID() const;
 
+	bool IsDisabled() { return (m_pProcessThread == nullptr || m_tag.empty()); };
 	HRESULT Restart();
 
 	int GetPriority() const;

@@ -8,10 +8,14 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include "SVLogLibrary/Logging.h"
-#include "ClientStreamContext.h"
-#include "SVStatusLibrary/ErrorUtil.h"
 #include "RPCClient.h"
+#include "ClientStreamContext.h"
+#include "SVLogLibrary/Logging.h"
+#include "SVMessage/SVMessage.h"
+#include "SVStatusLibrary/ErrorUtil.h"
+#include "SVStatusLibrary/MessageManager.h"
+#include "SVStatusLibrary/MessageTextGenerator.h"
+#include "SVUtilityLibrary/StringHelper.h"
 
 namespace SvRpc
 {
@@ -206,7 +210,9 @@ void RPCClient::on_disconnect()
 
 void RPCClient::onTextMessage(std::vector<char>&&)
 {
-	SV_LOG_GLOBAL(error) << "Received a text message, but only binary messages expected!";
+	SV_LOG_GLOBAL(warning) << SvStl::MessageTextGenerator::Instance().getText(SvStl::Tid_RPC_ReceivedTextMessage);
+	SvStl::MessageManager Exception(SvStl::MsgType::Notify);
+	Exception.setMessage(SVMSG_SVO_1_GENERAL_WARNING, SvStl::Tid_RPC_ReceivedTextMessage, SvStl::SourceFileParams(StdMessageParams));
 }
 
 void RPCClient::onBinaryMessage(std::vector<char>&& buf)
@@ -220,8 +226,12 @@ void RPCClient::on_binary_message(std::shared_ptr<std::vector<char>> ptr)
 	const auto& buf = *ptr;
 	if (buf.size() > static_cast<size_t>(std::numeric_limits<int>::max()))
 	{
-		SV_LOG_GLOBAL(error) << "Message too large " << buf.size() << ". Must not be larger than "
-			<< std::numeric_limits<int>::max() << ".";
+		SvDef::StringVector msgList;
+		msgList.push_back(SvUl::Format(_T("%z"), buf.size()));
+		msgList.push_back(SvUl::Format(_T("%u"), std::numeric_limits<int>::max()));
+		SV_LOG_GLOBAL(warning) << SvStl::MessageTextGenerator::Instance().getText(SvStl::Tid_RPC_MessageTooLarge, msgList);
+		SvStl::MessageManager Exception(SvStl::MsgType::Notify);
+		Exception.setMessage(SVMSG_SVO_1_GENERAL_WARNING, SvStl::Tid_RPC_MessageTooLarge, msgList, SvStl::SourceFileParams(StdMessageParams));
 		return;
 	}
 
@@ -252,7 +262,11 @@ void RPCClient::on_binary_message(std::shared_ptr<std::vector<char>> ptr)
 			break;
 
 		default:
-			SV_LOG_GLOBAL(error) << "Invalid message type " << type;
+			SvDef::StringVector msgList;
+			msgList.push_back(SvUl::Format(_T("%d"), type));
+			SV_LOG_GLOBAL(warning) << SvStl::MessageTextGenerator::Instance().getText(SvStl::Tid_RPC_InvalidMessageType, msgList);
+			SvStl::MessageManager Exception(SvStl::MsgType::Notify);
+			Exception.setMessage(SVMSG_SVO_1_GENERAL_WARNING, SvStl::Tid_RPC_InvalidMessageType, msgList, SvStl::SourceFileParams(StdMessageParams));
 			break;
 	}
 }
