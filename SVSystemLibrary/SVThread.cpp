@@ -16,7 +16,6 @@
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageData.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVLogLibrary/Logging.h"
 #pragma endregion Includes
 
 // This const defines how long the destroy should wait at most to complete the shutdown
