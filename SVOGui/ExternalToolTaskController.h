@@ -10,6 +10,14 @@
 #include "SVProtoBuf/InspectionCommands.h"
 #include <map>
 
+
+namespace SvStl
+{
+	class MessageContainer;
+	typedef std::vector<MessageContainer> MessageContainerVector;
+}
+
+
 class ExternalToolTaskController
 {
 public:
@@ -31,7 +39,7 @@ public:
 
 	HRESULT initialize(bool inCreationProcess = false, bool initializeAll = false);
 	HRESULT initialize(SvPb::InitializeExternalToolTaskResponse& response, bool inCreationProcess = false, bool initializeAll = false);
-	bool resetAllObjects();
+	std::pair<bool, std::string> resetAllObjects(bool showFirstError);
 	HRESULT clearData();
 	HRESULT setAllAttributes();
 

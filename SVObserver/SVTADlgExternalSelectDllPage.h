@@ -83,6 +83,8 @@ protected:
 	bool m_preserveStatus{ false };
 
 private:
+	void showDllConfigurationPages(bool show);
+
 	ExternalToolTaskController m_externalToolTaskController;
 	SvOg::ValueController m_valueController;
 };

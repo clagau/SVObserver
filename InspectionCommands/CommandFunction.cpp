@@ -1731,11 +1731,18 @@ SvPb::InspectionCmdResponse resetAllObjects(SvPb::ResetAllObjectsRequest request
 
 	if (nullptr != pObject)
 	{
+		auto* pResponse = cmdResponse.mutable_resetallobjectsresponse();
+
 		if (false == pObject->resetAllObjects())
 		{
+			SvOi::ITaskObject* pTask = dynamic_cast<SvOi::ITaskObject*> (pObject);
+			if (nullptr != pTask)
+			{
+				pResponse->mutable_errormessages()->CopyFrom(SvPb::convertMessageVectorToProtobuf(pTask->getErrorMessages()));
+			}
+
 			cmdResponse.set_hresult(S_FALSE);
 		}
-
 	}
 	else
 	{

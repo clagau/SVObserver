@@ -31,7 +31,6 @@
 #include <tlhelp32.h> 
 #include "SVUtilityLibrary/ModuleInfo.h"
 
-
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
@@ -79,7 +78,6 @@ SVTADlgExternalSelectDllPage::SVTADlgExternalSelectDllPage(uint32_t inspectionID
 	, m_externalToolTaskController(inspectionID, toolObjectID)
 	, m_valueController{ SvOg::BoundValues{ inspectionID, m_externalToolTaskController.getExternalToolTaskObjectId() } }
 {
-
 	//{{AFX_DATA_INIT(SVTADlgExternalSelectDllPage)
 	m_strDLLPath = _T("");
 	m_strStatus = _T("");
@@ -109,7 +107,24 @@ void SVTADlgExternalSelectDllPage::DoDataExchange(CDataExchange* pDX)
 
 BOOL SVTADlgExternalSelectDllPage::OnInitDialog()
 {
-	
+	//@TODO [Arvid][10.00][20.4.2021] as suggested by Marc, rather than checking this pointer here it would be better 
+	//		to use a reference to the sheet	(which should be passed to the constructor of this page by the sheet), 
+	//		ideally for all tool select sheets. Since we are currently close to the release of Version 10.10 I am not doing this
+	//		right now but leave it for some later time.
+
+	if(nullptr == m_pSheet)
+	{
+		//this should never happen!
+
+		SvStl::MessageManager mm(SvStl::MsgType::Log | SvStl::MsgType::Display);
+		SvDef::StringVector msgList;
+		msgList.push_back("No Parent Sheet");
+		mm.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams));
+		mm.Process();
+
+		return FALSE;
+	}
+
 	// stuff the value before base OnInitDialog
 
 	m_valueController.Init();
@@ -117,7 +132,6 @@ BOOL SVTADlgExternalSelectDllPage::OnInitDialog()
 	auto strDllPath = getStdStringFromValueController(SvPb::EmbeddedIdEnum::DllFileNameEId);
 	// cppcheck-suppress danglingLifetime //m_strDLLPath is a CString and will not merely hold a copy of a pointer
 	m_strDLLPath = strDllPath.c_str();
-	
 
 	CPropertyPage::OnInitDialog();	// create button and list box windows
 
@@ -130,7 +144,6 @@ BOOL SVTADlgExternalSelectDllPage::OnInitDialog()
 	m_ToolTip.SetDelayTime(250, TTDT_RESHOW);
 
 	InitializeDll(true);
-
 	
 	for (auto i = 0; i < ExternalToolTaskController::NUM_TOOL_DEPENDENCIES; ++i)
 	{
@@ -162,7 +175,8 @@ void SVTADlgExternalSelectDllPage::OnOK()
 	try
 	{
 		m_externalToolTaskController.initialize();
-		m_externalToolTaskController.resetAllObjects();
+
+		m_externalToolTaskController.resetAllObjects(false); //first error will be displayed anyway when containing sheet is closed
 	}
 	catch (const SvStl::MessageContainer&)
 	{
@@ -300,11 +314,7 @@ void SVTADlgExternalSelectDllPage::OnBrowse()
 		}
 		m_externalToolTaskController.clearData();
 
-		CWnd *pParent = GetParent();
-		if (nullptr != pParent)
-		{
-			pParent->SendMessage(SV_REMOVE_PAGES_FOR_TESTED_DLL);
-		}
+		showDllConfigurationPages(false);
 		testExternalDll(m_ResetInput == TRUE);
 	}
 }// end void SVTADlgExternalSelectDllPage::OnBrowse() 
@@ -384,18 +394,20 @@ void SVTADlgExternalSelectDllPage::SetDependencies()
 	m_externalToolTaskController.setAllAttributes();	// update dependency attributes
 }
 
+
+void SVTADlgExternalSelectDllPage::showDllConfigurationPages(bool show)
+{
+	m_pSheet->SendMessage(show ? SV_ADD_PAGES_FOR_TESTED_DLL : SV_REMOVE_PAGES_FOR_TESTED_DLL);
+}
+
+
 void SVTADlgExternalSelectDllPage::InitializeDll(bool jumpToInputPage, bool setDefaultValues)
 {
+	bool dllWasInitialized = false;
 
 	try
 	{
-		CWnd *pParent = GetParent();
-		if (nullptr == pParent)//this should never happen!
-		{
-			return;
-		}
-
-		pParent->SendMessage(SV_REMOVE_PAGES_FOR_TESTED_DLL);
+		showDllConfigurationPages(false);
 
 		if (!m_preserveStatus)
 		{
@@ -426,8 +438,22 @@ void SVTADlgExternalSelectDllPage::InitializeDll(bool jumpToInputPage, bool setD
 			setDefaultValuesForInputs();
 		}
 
-		if (false == m_externalToolTaskController.resetAllObjects())
+		dllWasInitialized = true;
+
+		auto [ok, firstError] = m_externalToolTaskController.resetAllObjects(true);
+
+		if (!ok)
 		{
+			jumpToInputPage = false; //an error occurred here - we want to remain on the selection page and see what happened
+
+			std::string error = firstError.c_str();
+			error = std::regex_replace(error, std::regex("\\("), cCRLF+std::string("  ("));
+			error = std::regex_replace(error, std::regex("\\)\\s?"), std::string(")") + cCRLF);
+
+			m_strStatus += error.c_str();
+			m_strStatus += "!";
+			m_strStatus += cCRLF;
+
 			SvStl::MessageContainer mc;
 			mc.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorInReset, SvStl::SourceFileParams(StdMessageParams), 0, m_ToolObjectID);
 			throw mc;
@@ -440,20 +466,13 @@ void SVTADlgExternalSelectDllPage::InitializeDll(bool jumpToInputPage, bool setD
 		UpdateData(FALSE);
 		m_StatusEdit.SetSel(m_strStatus.GetLength(), m_strStatus.GetLength());
 
-		pParent->SendMessage(SV_ADD_PAGES_FOR_TESTED_DLL);
-
-		if (jumpToInputPage)
-		{
-			pParent->PostMessage(PSM_SETCURSEL, c_indexOfInputValuePage, 0);
-		}
 	}
 	catch (const SvStl::MessageContainer& e)
 	{
 		//if we arrive here, Initialization has failed
 		m_pSheet->AddAdditionalPagesForExternalTool(true);
 		// display all sub-errors in box
-		UpdateData(TRUE);
-		m_strStatus += _T("Failure on DLL tests!");
+		m_strStatus += _T("External DLL test failed!");
 		m_strStatus += cCRLF;
 
 		if (!e.getMessage().getAdditionalText().empty())
@@ -468,7 +487,14 @@ void SVTADlgExternalSelectDllPage::InitializeDll(bool jumpToInputPage, bool setD
 			m_strStatus += iter->getAdditionalText().c_str();
 			m_strStatus += cCRLF;
 		}
+
 		UpdateData(FALSE);
+	}
+	showDllConfigurationPages(dllWasInitialized);
+
+	if (dllWasInitialized && jumpToInputPage)
+	{
+		m_pSheet->PostMessage(PSM_SETCURSEL, c_indexOfInputValuePage, 0);
 	}
 }
 

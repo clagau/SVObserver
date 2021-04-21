@@ -79,18 +79,46 @@ HRESULT ExternalToolTaskController::initialize(SvPb::InitializeExternalToolTaskR
 	return hr;
 }
 
-bool ExternalToolTaskController::resetAllObjects()
+std::pair<bool, std::string> ExternalToolTaskController::resetAllObjects(bool showFirstError)
 {
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	auto* pRequest = requestCmd.mutable_resetallobjectsrequest();
 	pRequest->set_objectid(m_objectId);
 	HRESULT hr = SvCmd::InspectionCommands(m_inspectionId, requestCmd, &responseCmd);
+	std::pair<bool, std::string> result(false, ""); // ok? / error description
 
-	bool ret = (hr == S_OK) ? true : false;
-	
-	return ret;
+	if (responseCmd.has_resetallobjectsresponse())
+	{
+		SvPb::ResetAllObjectsResponse response = responseCmd.resetallobjectsresponse();
 
+		SvStl::MessageContainerVector errorMessages = SvPb::convertProtobufToMessageVector(response.errormessages());
+
+		if (S_OK == hr)
+		{
+			result.first = true;
+		}
+		else
+		{
+			if (false == errorMessages.empty() && showFirstError)
+			{
+				auto& mc = errorMessages[0]; //currently just the first error message is displayed
+				{
+					SvStl::MessageManager mm(SvStl::MsgType::Log | SvStl::MsgType::Display);
+					mm.setMessage(mc.getMessage());
+					mm.Process();
+					result.second = mc.What();
+				}
+			}
+			return result;
+		}
+	}
+	else
+	{
+		result.second = "Wrong response type";
+	}
+
+	return result;
 }
 
 HRESULT ExternalToolTaskController::clearData()

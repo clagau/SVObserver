@@ -807,6 +807,11 @@ message ResetAllObjectsRequest
 	uint32 objectId = 1;
 }
 
+message ResetAllObjectsResponse
+{
+	MessageContainerVector errorMessages = 1;
+}
+
 message ClearDataExternalToolRequest
 {
 	uint32 objectId = 1;
@@ -1087,6 +1092,7 @@ message InspectionCmdResponse
 		GetImageInfoExternalToolResponse getImageInfoExternalToolResponse = 46;
 		SetAndSortEmbeddedValueResponse setAndSortEmbeddedValueResponse = 48;
 		GetInvalidDependenciesResponse getInvalidDependenciesResponse = 49;
-		ValidateValueParameterExternalToolResponse validateValueParameterExternalToolResponse = 50; //muss das am Ende sein oder kann man es dazwischenschieben?
+		ValidateValueParameterExternalToolResponse validateValueParameterExternalToolResponse = 50;
+		ResetAllObjectsResponse resetAllObjectsResponse = 51;
 	}
 }
