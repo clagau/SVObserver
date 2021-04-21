@@ -436,40 +436,51 @@ void SVMaskShapeEditorDlg::ObjectChangedExDialogImage(long , long , VARIANT* Par
 	// SET SHAPE PROPERTIES
 	VariantParamMap ParaMap;
 	SvOg::DisplayHelper::FillParameterMap(ParaMap, ParameterList, ParameterValue);
+	bool isResizeable = 0 != (static_cast<int>(ParaMap[CDSVPictureDisplay::P_AllowEdit]) & static_cast<int>(CDSVPictureDisplay::AllowResize));
+	bool isMoveable = 0 != (static_cast<int>(ParaMap[CDSVPictureDisplay::P_AllowEdit]) & static_cast<int>(CDSVPictureDisplay::AllowMove));
 
 	if( m_eShapeType != SvOp::SVShapeMaskHelperClass::SVMaskShapeTypeInvalid )
 	{
 		long width = ParaMap[ CDSVPictureDisplay::P_X2 ].lVal - ParaMap[ CDSVPictureDisplay::P_X1 ].lVal;
 		long Height = ParaMap[ CDSVPictureDisplay::P_Y2 ].lVal - ParaMap[ CDSVPictureDisplay::P_Y1 ].lVal;
-		long CenterX = ParaMap[ CDSVPictureDisplay::P_X1 ].lVal + width / 2;
-		long CenterY = ParaMap[ CDSVPictureDisplay::P_Y1 ].lVal + Height / 2;
-
-		m_ShapeHelperValues.Set(SvPb::ShapeMaskPropertyWidthEId, width);
-		m_ShapeHelperValues.Set(SvPb::ShapeMaskPropertyHeightEId, Height);
-		m_ShapeHelperValues.Set(SvPb::ShapeMaskPropertyCenterXEId, CenterX);
-		m_ShapeHelperValues.Set(SvPb::ShapeMaskPropertyCenterYEId, CenterY);
+		
+		if (isResizeable)
+		{
+			m_ShapeHelperValues.Set(SvPb::ShapeMaskPropertyWidthEId, width);
+			m_ShapeHelperValues.Set(SvPb::ShapeMaskPropertyHeightEId, Height);
+		}
+		if (isMoveable)
+		{
+			long CenterX = ParaMap[CDSVPictureDisplay::P_X1].lVal + width / 2;
+			long CenterY = ParaMap[CDSVPictureDisplay::P_Y1].lVal + Height / 2;
+			m_ShapeHelperValues.Set(SvPb::ShapeMaskPropertyCenterXEId, CenterX);
+			m_ShapeHelperValues.Set(SvPb::ShapeMaskPropertyCenterYEId, CenterY);
+		}
 	}
 
 	if( m_eShapeType == SvOp::SVShapeMaskHelperClass::SVMaskShapeTypeSymmetricTrapezoid )
 	{
-		m_ShapeHelperValues.Set(SvPb::ShapeMaskPropertyOffsetEId, ParaMap[ CDSVPictureDisplay::P_Offset ].lVal);
+		if (isResizeable)
+		{
+			m_ShapeHelperValues.Set(SvPb::ShapeMaskPropertyOffsetEId, ParaMap[CDSVPictureDisplay::P_Offset].lVal);
+		}
 
 		switch( ParaMap[ CDSVPictureDisplay::P_SubType ].lVal )
 		{
 		case CDSVPictureDisplay::VerticalAxisTop:
-			m_ShapeHelperValues.Set(SvPb::ShapeMaskPropertySymmetryOrientationEId, SvOp::SVMaskShapeSymmetricTrapezoid::VerticalAxisTop);
+			m_ShapeHelperValues.Set<long>(SvPb::ShapeMaskPropertySymmetryOrientationEId, SvOp::SVMaskShapeSymmetricTrapezoid::VerticalAxisTop);
 			break;
 
 		case CDSVPictureDisplay::VerticalAxisBottom:
-			m_ShapeHelperValues.Set(SvPb::ShapeMaskPropertySymmetryOrientationEId, SvOp::SVMaskShapeSymmetricTrapezoid::VerticalAxisBottom);
+			m_ShapeHelperValues.Set<long>(SvPb::ShapeMaskPropertySymmetryOrientationEId, SvOp::SVMaskShapeSymmetricTrapezoid::VerticalAxisBottom);
 			break;
 
 		case CDSVPictureDisplay::HorizontalAxisLeft:
-			m_ShapeHelperValues.Set(SvPb::ShapeMaskPropertySymmetryOrientationEId, SvOp::SVMaskShapeSymmetricTrapezoid::HorizontalAxisLeft);
+			m_ShapeHelperValues.Set<long>(SvPb::ShapeMaskPropertySymmetryOrientationEId, SvOp::SVMaskShapeSymmetricTrapezoid::HorizontalAxisLeft);
 			break;
 
 		case CDSVPictureDisplay::HorizontalAxisRight:
-			m_ShapeHelperValues.Set(SvPb::ShapeMaskPropertySymmetryOrientationEId, SvOp::SVMaskShapeSymmetricTrapezoid::HorizontalAxisRight);
+			m_ShapeHelperValues.Set<long>(SvPb::ShapeMaskPropertySymmetryOrientationEId, SvOp::SVMaskShapeSymmetricTrapezoid::HorizontalAxisRight);
 			break;
 
 		default:
@@ -477,10 +488,10 @@ void SVMaskShapeEditorDlg::ObjectChangedExDialogImage(long , long , VARIANT* Par
 		}
 	}
 
-	if( m_eShapeType == SvOp::SVShapeMaskHelperClass::SVMaskShapeTypeDoughnut )
+	if( m_eShapeType == SvOp::SVShapeMaskHelperClass::SVMaskShapeTypeDoughnut && isResizeable)
 	{
-		m_ShapeHelperValues.Set(SvPb::ShapeMaskPropertySideThicknessEId, ParaMap[ CDSVPictureDisplay::P_SideThickness ].lVal);
-		m_ShapeHelperValues.Set(SvPb::ShapeMaskPropertyTopBottomThicknessEId, ParaMap[ CDSVPictureDisplay::P_TopThickness ].lVal);
+		m_ShapeHelperValues.Set(SvPb::ShapeMaskPropertySideThicknessEId, ParaMap[CDSVPictureDisplay::P_SideThickness].lVal);
+		m_ShapeHelperValues.Set(SvPb::ShapeMaskPropertyTopBottomThicknessEId, ParaMap[CDSVPictureDisplay::P_TopThickness].lVal);
 	}
 
 	m_ShapeHelperValues.Commit(SvOg::PostAction::doReset);
@@ -802,7 +813,7 @@ void SVMaskShapeEditorDlg::setShapeType(SvOp::SVShapeMaskHelperClass::ShapeTypeE
 		ParMap[ CDSVPictureDisplay::P_Y2 ] = rect.bottom;
 		ParMap[ CDSVPictureDisplay::P_Color ] = SvDef::Green;
 		ParMap[ CDSVPictureDisplay::P_SelectedColor ] = SvDef::Green;
-		ParMap[ CDSVPictureDisplay::P_AllowEdit ] = m_bAutoResize ? CDSVPictureDisplay::AllowNone : CDSVPictureDisplay::AllowAll;
+		ParMap[ CDSVPictureDisplay::P_AllowEdit ] = getDrawChangeType();
 
 		//add new shape types
 		switch (m_eShapeType)
@@ -834,7 +845,7 @@ void SVMaskShapeEditorDlg::setShapeType(SvOp::SVShapeMaskHelperClass::ShapeTypeE
 		for (int i = 0; i < m_numberOfTabs; i++)
 		{
 			m_dialogImage.AddOverlay( i, static_cast< LPVARIANT >( saPar ), static_cast< LPVARIANT >( saVal ), &(m_handleToActiveObjects[ i ] ) );
-			m_dialogImage.SetEditAllow(i, m_handleToActiveObjects[i], 7);
+			m_dialogImage.SetEditAllow(i, m_handleToActiveObjects[i], getDrawChangeType());
 		}
 		saPar.Destroy();
 		saVal.Destroy();
@@ -854,7 +865,7 @@ void SVMaskShapeEditorDlg::resetShapeOverlay()
 	ParMap[ CDSVPictureDisplay::P_Y2 ] = rect.bottom;
 	ParMap[ CDSVPictureDisplay::P_Color ] = SvDef::Green;
 	ParMap[ CDSVPictureDisplay::P_SelectedColor ] = SvDef::Green;
-	ParMap[ CDSVPictureDisplay::P_AllowEdit ] = m_bAutoResize ? CDSVPictureDisplay::AllowNone : CDSVPictureDisplay::AllowAll;
+	ParMap[ CDSVPictureDisplay::P_AllowEdit ] = getDrawChangeType();
 
 	//add new shape types
 	switch (m_eShapeType)
@@ -901,6 +912,7 @@ void SVMaskShapeEditorDlg::resetShapeOverlay()
 	for (int i = 0; i < m_numberOfTabs; i++)
 	{
 		m_dialogImage.EditOverlay( i, m_handleToActiveObjects[i], static_cast< LPVARIANT >( saPar ), static_cast< LPVARIANT >( saVal ) );
+		m_dialogImage.SetEditAllow(i, m_handleToActiveObjects[i], getDrawChangeType());
 	}
 	saVal.Destroy();
 	saPar.Destroy();
@@ -969,6 +981,37 @@ int SVMaskShapeEditorDlg::SelectObject(std::string& rObjectName, SVRPropertyItem
 	}
 
 	return static_cast<int>(Result);
+}
+
+CDSVPictureDisplay::AllowType SVMaskShapeEditorDlg::getDrawChangeType() const
+{
+	if (m_bAutoResize)
+	{
+		return CDSVPictureDisplay::AllowNone;
+	}
+
+	//If string empty it is a direct value and it is allowed to change it
+	bool bMove = m_ShapeHelperValues.Get<CString>(SvPb::ShapeMaskPropertyCenterXLinkEId).IsEmpty() &&
+		m_ShapeHelperValues.Get<CString>(SvPb::ShapeMaskPropertyCenterYLinkEId).IsEmpty();
+
+	bool bAll = bMove && m_ShapeHelperValues.Get<CString>(SvPb::ShapeMaskPropertyWidthLinkEId).IsEmpty() &&
+		m_ShapeHelperValues.Get<CString>(SvPb::ShapeMaskPropertyHeightLinkEId).IsEmpty();
+
+	switch (m_eShapeType)
+	{
+	case SvOp::SVShapeMaskHelperClass::SVMaskShapeTypeDoughnut:
+		bAll &= m_ShapeHelperValues.Get<CString>(SvPb::ShapeMaskPropertySideThicknessLinkEId).IsEmpty() &&
+			m_ShapeHelperValues.Get<CString>(SvPb::ShapeMaskPropertyTopBottomThicknessLinkEId).IsEmpty();
+		break;
+	case SvOp::SVShapeMaskHelperClass::SVMaskShapeTypeSymmetricTrapezoid:
+		bAll &= m_ShapeHelperValues.Get<CString>(SvPb::ShapeMaskPropertyOffsetLinkEId).IsEmpty();
+		break;
+	default: //nothing to do
+		break;
+	}
+
+	CDSVPictureDisplay::AllowType type = bAll ? CDSVPictureDisplay::AllowResizeAndMove : bMove ? CDSVPictureDisplay::AllowMove : CDSVPictureDisplay::AllowNone;
+	return type;
 }
 #pragma endregion Private Methods
 

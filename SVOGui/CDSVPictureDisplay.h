@@ -68,7 +68,7 @@ enum
 	MarkerROI = 8,
     InvalidROIType = 9
 }_ROIType;
-enum
+enum AllowType
 {
     AllowNone = 0,
     AllowMove = 1,

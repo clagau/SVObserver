@@ -96,10 +96,10 @@ bool Doughnut::IsValidObjectAtPoint( HTTYPE& SelType, const CPoint& imagePoint, 
 	bool bRet = false;
 	long allow = GetEditAllowed();
 
-	bool bAlMoveAndSize = 0 != (allow & AllowResizeAndMove);
-	bool bAlMove = 0 != (allow & AllowMove);
-	bool bAlSize = 0 != (allow & AllowResize);
-	bool bAlDelete = 0 != (allow & AllowDelete);
+	bool bAlMoveAndSize = AllowResizeAndMove == (allow & AllowResizeAndMove);
+	bool bAlMove = AllowMove == (allow & AllowMove);
+	bool bAlSize = AllowResize == (allow & AllowResize);
+	bool bAlDelete = AllowDelete == (allow & AllowDelete);
 
 	CPoint Center;
 	Center.x = (m_InnerRect.right + m_InnerRect.left ) / 2;

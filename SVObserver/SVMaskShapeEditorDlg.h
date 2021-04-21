@@ -16,6 +16,7 @@
 //TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
 #include "SVOGui/PictureDisplay.h"
 #include "SVRPropertyTree/SVRPropTree.h"
+#include "SVOGui/CDSVPictureDisplay.h"
 #include "SVOGui/DataController.h"
 #include "SVOGui/MaskController.h"
 #pragma endregion Includes
@@ -143,6 +144,8 @@ private:
 	RECT getRect() const;
 
 	int SelectObject(std::string& rObjectName, SVRPropertyItem* pItem);
+
+	CDSVPictureDisplay::AllowType getDrawChangeType() const;
 #pragma endregion Private Methods
 
 #pragma region Member Variables
