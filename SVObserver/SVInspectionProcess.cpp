@@ -102,44 +102,51 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed)
 {
 	HRESULT l_Status = S_OK;
 
-	rProcessed = (nullptr != m_pProduct);
+	SVProductInfoStruct product;
 
+	if (false == m_processActive)
+	{
+		m_processActive = true;
+		{
+			std::lock_guard<std::mutex>  Autolock(m_inspectionMutex);
+			std::swap(product, m_product);
+		}
+		if (false == product.m_triggered)
+		{
+			m_processActive = false;
+		}
+	}
+	rProcessed = m_processActive;
 	if (rProcessed)
 	{
 #ifdef EnableTracking
 		m_InspectionTracking.EventStart(_T("Process Inspections"));
 #endif
-		if ((*m_pProduct).m_triggered == 0)
-		{
-			SvStl::MessageManager Msg(SvStl::MsgType::Log );
-			Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, _T("Produkt not triggerd in ProcessInspection"), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16223);
-		}
-		
+	
 		// Get the info struct for this inspection
-		const auto iter = (*m_pProduct).m_svInspectionInfos.find(getObjectId());
-		bool validProduct = (*m_pProduct).m_svInspectionInfos.end() != iter || false == (*m_pProduct).m_triggered;
+		const auto iter = product.m_svInspectionInfos.find(getObjectId());
+		bool validProduct = product.m_svInspectionInfos.end() != iter || false == product.m_triggered;
 		validProduct = (false == validProduct) ? false : iter->second.m_InProcess && iter->second.m_HasBeenQueued;
 		if (false == validProduct)
 		{
 			return E_FAIL;
 		}
-		const SVInspectionInfoStruct& rIPInfo = iter->second;
-		m_inspectionInfo = rIPInfo;
-		m_inspectionInfo.m_BeginInspection = SvUl::GetTimeStamp();
+		SVInspectionInfoStruct& rIPInfo = iter->second;
+		rIPInfo.m_BeginInspection = SvUl::GetTimeStamp();
 		
 		size_t l_InputXferCount = 0;
 
 		/// Note this is the PPQ position of the previous trigger
-		m_pCurrentToolset->setPpqPosition((*m_pProduct).m_lastPPQPosition);
-		double triggerTimeStamp = (*m_pProduct).m_triggerInfo.m_triggerTimeStamp;
+		m_pCurrentToolset->setPpqPosition(product.m_lastPPQPosition);
+		double triggerTimeStamp = product.m_triggerInfo.m_triggerTimeStamp;
 		double time {0.0};
-		if ((*m_pProduct).m_triggerInfo.m_PreviousTrigger > 0.0)
+		if (product.m_triggerInfo.m_PreviousTrigger > 0.0)
 		{
-			time = (triggerTimeStamp - (*m_pProduct).m_triggerInfo.m_PreviousTrigger) * SvUl::c_MicrosecondsPerMillisecond;
+			time = (triggerTimeStamp - product.m_triggerInfo.m_PreviousTrigger) * SvUl::c_MicrosecondsPerMillisecond;
 		}
 		m_pCurrentToolset->setTime(time, ToolSetTimes::TriggerDelta);
 
-		time = (m_inspectionInfo.m_BeginInspection - triggerTimeStamp) * SvUl::c_MicrosecondsPerMillisecond;
+		time = (rIPInfo.m_BeginInspection - triggerTimeStamp) * SvUl::c_MicrosecondsPerMillisecond;
 		m_pCurrentToolset->setTime(time, ToolSetTimes::TriggerToStart);
 
 		double triggerToAcqTime{ 0.0 };
@@ -147,8 +154,8 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed)
 
 		if (nullptr != m_pToolSetCamera)
 		{
-			SvIe::SVObjectIdSVCameraInfoStructMap::const_iterator iterCamera((*m_pProduct).m_svCameraInfos.find(m_pToolSetCamera->getObjectId()));
-			if ((*m_pProduct).m_svCameraInfos.cend() != iterCamera)
+			SvIe::SVObjectIdSVCameraInfoStructMap::const_iterator iterCamera(product.m_svCameraInfos.find(m_pToolSetCamera->getObjectId()));
+			if (product.m_svCameraInfos.cend() != iterCamera)
 			{
 				triggerToAcqTime = (iterCamera->second.m_StartFrameTimeStamp - triggerTimeStamp) * SvUl::c_MicrosecondsPerMillisecond;
 				acqTime = (iterCamera->second.m_EndFrameTimeStamp - iterCamera->second.m_StartFrameTimeStamp) * SvUl::c_MicrosecondsPerMillisecond;
@@ -160,35 +167,34 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed)
 		m_pCurrentToolset->setTime(triggerToAcqTime, ToolSetTimes::TriggerToAcquisitionStart);
 		m_pCurrentToolset->setTime(acqTime, ToolSetTimes::AcquisitionTime);
 		
-		SvTrig::IntVariantMap::const_iterator iterData{ (*m_pProduct).m_triggerInfo.m_Data.end()};
-		iterData = (*m_pProduct).m_triggerInfo.m_Data.find(SvTrig::TriggerDataEnum::ObjectID);
-		if ((*m_pProduct).m_triggerInfo.m_Data.end() != iterData)
+		SvTrig::IntVariantMap::const_iterator iterData = product.m_triggerInfo.m_Data.find(SvTrig::TriggerDataEnum::ObjectID);
+		if (product.m_triggerInfo.m_Data.end() != iterData)
 		{
 			m_pCurrentToolset->setObjectID(static_cast<double> (iterData->second));
 		}
-		iterData = (*m_pProduct).m_triggerInfo.m_Data.find(SvTrig::TriggerDataEnum::ObjectType);
-		if ((*m_pProduct).m_triggerInfo.m_Data.end() != iterData)
+		iterData = product.m_triggerInfo.m_Data.find(SvTrig::TriggerDataEnum::ObjectType);
+		if (product.m_triggerInfo.m_Data.end() != iterData)
 		{
 			m_pCurrentToolset->setObjectType(static_cast<DWORD> (iterData->second));
 		}
-		iterData = (*m_pProduct).m_triggerInfo.m_Data.find(SvTrig::TriggerDataEnum::TriggerIndex);
-		if ((*m_pProduct).m_triggerInfo.m_Data.end() != iterData)
+		iterData = product.m_triggerInfo.m_Data.find(SvTrig::TriggerDataEnum::TriggerIndex);
+		if (product.m_triggerInfo.m_Data.end() != iterData)
 		{
 			m_pCurrentToolset->setTriggerIndex(iterData->second);
 		}
-		iterData = (*m_pProduct).m_triggerInfo.m_Data.find(SvTrig::TriggerDataEnum::TriggerPerObjectID);
-		if ((*m_pProduct).m_triggerInfo.m_Data.end() != iterData)
+		iterData = product.m_triggerInfo.m_Data.find(SvTrig::TriggerDataEnum::TriggerPerObjectID);
+		if (product.m_triggerInfo.m_Data.end() != iterData)
 		{
 			m_pCurrentToolset->setTriggerPerObjectID(iterData->second);
 		}
 
 
-		assert(m_PPQInputs.size() == (*m_pProduct).m_triggerInfo.m_Inputs.size());
+		assert(m_PPQInputs.size() == product.m_triggerInfo.m_Inputs.size());
 		// Copy inputs to Inspection Process's Value objects
 		for (size_t i = 0; i < m_PPQInputs.size(); i++)
 		{
 			auto& rInputEntry = m_PPQInputs[i];
-			const auto& rInputValue = (*m_pProduct).m_triggerInfo.m_Inputs.at(i);
+			const auto& rInputValue = product.m_triggerInfo.m_Inputs.at(i);
 				
 			//Is the input enabled
 			if(nullptr != rInputEntry && rInputEntry->m_Enabled && VT_EMPTY != rInputValue.vt)
@@ -218,13 +224,13 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed)
 			}
 		}
 
-		bool l_Process = (l_InputXferCount == m_PPQInputs.size()) && (isProductAlive(GetPPQ(), (*m_pProduct).m_triggerInfo.lTriggerCount));
+		bool l_Process = (l_InputXferCount == m_PPQInputs.size()) && (isProductAlive(GetPPQ(), product.m_triggerInfo.lTriggerCount));
 
 		// Check if tool set is alive and enabled...
 		if (!l_Process)
 		{
 			// Product has left the PPQ ... don't inspect
-			m_inspectionInfo.m_InspectedState = PRODUCT_NOT_INSPECTED;
+			rIPInfo.m_InspectedState = PRODUCT_NOT_INSPECTED;
 		}
 		else
 		{
@@ -232,19 +238,19 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed)
 			// That means: true  - The Tool Set were running.
 			//			   false - The Tool Set Condition failed and the Tool Set were
 			//					   NOT running!
-			RunInspection(m_inspectionInfo, (*m_pProduct).m_svCameraInfos, (*m_pProduct).m_triggerInfo.lTriggerCount);
+			RunInspection(rIPInfo, product.m_svCameraInfos, product.m_triggerInfo.lTriggerCount);
 
-			if (PRODUCT_INSPECTION_NOT_RUN != (m_inspectionInfo.m_InspectedState & PRODUCT_INSPECTION_NOT_RUN))
+			if (PRODUCT_INSPECTION_NOT_RUN != (rIPInfo.m_InspectedState & PRODUCT_INSPECTION_NOT_RUN))
 			{
-				m_inspectionInfo.m_InspectedState = GetToolSet()->GetResultList()->GetInspectionState();
+				rIPInfo.m_InspectedState = GetToolSet()->GetResultList()->GetInspectionState();
 
-				m_inspectionInfo.m_EndInspection = SvUl::GetTimeStamp();
-				m_inspectionInfo.setTriggerRecordCompleted();
+				rIPInfo.m_EndInspection = SvUl::GetTimeStamp();
+				rIPInfo.setTriggerRecordCompleted();
 
-				time = (m_inspectionInfo.m_EndInspection - triggerTimeStamp) * SvUl::c_MicrosecondsPerMillisecond;
+				time = (rIPInfo.m_EndInspection - triggerTimeStamp) * SvUl::c_MicrosecondsPerMillisecond;
 				m_pCurrentToolset->setTime(time, ToolSetTimes::TriggerToCompletion);
 
-				m_inspectionInfo.m_ObjectID = m_pCurrentToolset->getInspectedObjectID();
+				rIPInfo.m_ObjectID = m_pCurrentToolset->getInspectedObjectID();
 #ifdef _DEBUG
 				//					std::string l_TempStateString = SvUl::Format( _T( "SVInspectionProcess::ProcessInspection|%s|TRI=%ld\n" ),
 				//						GetName(), p_rProduct.ProcessCount() );
@@ -252,19 +258,17 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed)
 #endif
 
 					// Mark last run product
-				LastProductUpdate(m_pProduct);
-				SVInspectionInfoStruct empty;
-				std::swap(m_inspectionInfo, empty);
+				LastProductUpdate(product);
 			}
 		}
-		m_pProduct = nullptr;
+		m_processActive = false;
 		SVObjectManagerClass::Instance().DecrementInspectionIndicator();
 
 		if (l_Process)
 		{
 			m_NotifyWithLastInspected = true;
 
-			m_inspectionInfo.ClearIndexes();
+			rIPInfo.ClearIndexes();
 		}
 
 #ifdef EnableTracking
@@ -355,11 +359,11 @@ HRESULT SVInspectionProcess::ProcessNotifyWithLastInspected(bool& p_rProcessed)
 		m_NotifyWithLastInspected = false;
 
 		SVPPQObject* pPPQ{GetPPQ()};
-		if (nullptr != pPPQ && pPPQ->HasActiveMonitorList() && m_svLastRunProduct.m_triggered)
+		if (nullptr != pPPQ && pPPQ->HasActiveMonitorList() && m_lastRunProduct.m_triggered)
 		{
-			m_svLastRunProduct.m_svInspectionInfos[getObjectId()].m_bReject = isReject();
+			m_lastRunProduct.m_svInspectionInfos[getObjectId()].m_bReject = isReject();
 		}
-		std::pair<long, SVInspectionInfoStruct> data {m_svLastRunProduct.ProcessCount(), m_svLastRunProduct.m_svInspectionInfos[getObjectId()]};
+		std::pair<long, SVInspectionInfoStruct> data {m_lastRunProduct.ProcessCount(), m_lastRunProduct.m_svInspectionInfos[getObjectId()]};
 		SVObjectManagerClass::Instance().UpdateObservers(std::string(SvO::cInspectionProcessTag), getObjectId(), data);
 
 		p_rProcessed = true;
@@ -509,12 +513,12 @@ void SVInspectionProcess::ThreadProcess(bool& p_WaitForEvents)
 
 	ProcessCommandQueue(l_Processed);
 
-	if (m_svLastRunProduct.m_triggered && SvDef::InvalidObjectId != m_PPQId)
+	if (m_lastRunProduct.m_triggered && SvDef::InvalidObjectId != m_PPQId)
 	{
-		std::pair<long, SVInspectionInfoStruct> data { m_svLastRunProduct.ProcessCount(), m_svLastRunProduct.m_svInspectionInfos[getObjectId()] };
+		std::pair<long, SVInspectionInfoStruct> data { m_lastRunProduct.ProcessCount(), m_lastRunProduct.m_svInspectionInfos[getObjectId()] };
 		SVObjectManagerClass::Instance().UpdateObserver(m_PPQId, data);
 	}
-	m_svLastRunProduct.m_triggered = false;
+	m_lastRunProduct.m_triggered = false;
 	p_WaitForEvents = !l_Processed;
 }
 
@@ -524,7 +528,7 @@ void SVInspectionProcess::DestroyInspection()
 	m_NotifyWithLastInspected = false;
 	::Sleep(0);
 	m_AsyncProcedure.Destroy();
-	resetLastProcduct();
+	resetLastProduct();
 	if (SvDef::InvalidObjectId != m_PPQId)
 	{
 		// Release all published outputs before we destroy the toolset
@@ -538,10 +542,10 @@ void SVInspectionProcess::DestroyInspection()
 	m_InputRequests.Destroy();
 	m_InputImageRequests.Destroy();
 	m_CommandQueue.Destroy();
-	if (nullptr != m_pProduct)
+	if (m_processActive)
 	{
 		SVObjectManagerClass::Instance().DecrementInspectionIndicator();
-		m_pProduct = nullptr;
+		m_processActive = false;
 	}
 	m_PPQInputs.clear();
 	m_PPQId = SvDef::InvalidObjectId;
@@ -669,7 +673,7 @@ bool SVInspectionProcess::GoOnline()
 	m_InspectionTracking.clear();
 #endif
 
-	resetLastProcduct();
+	resetLastProduct();
 	m_offlineRequest = false;
 
 	m_AsyncProcedure.SetPriority(THREAD_PRIORITY_NORMAL);
@@ -793,13 +797,13 @@ bool SVInspectionProcess::GoOffline()
 #endif
 
 	m_offlineRequest = true;
-	//Wait a while to make sure that m_pProduct and m_offlineRequest not set simultaneously
+	//Wait a while to make sure that m_processActive and m_offlineRequest not set simultaneously
 	::Sleep(10);
 	///Wait a maximum of 10 seconds that inspection is done to avoid infinite loop
 	constexpr int cMaxWaitLoop = 1000;
 	for (int i = 0; i < cMaxWaitLoop; ++i)
 	{
-		if (nullptr == m_pProduct)
+		if (false == m_processActive)
 		{
 			break;
 		}
@@ -808,10 +812,10 @@ bool SVInspectionProcess::GoOffline()
 			::Sleep(10);
 		}
 	}
-	//This should usually be nullptr if inspection has run last time however if the max wait loop has been reached then we should set m_pProduct to nullptr
-	if (nullptr != m_pProduct)
+	//This should usually be false if inspection process has terminated normally
+	if (true == m_processActive)
 	{
-		m_pProduct = nullptr;
+		m_processActive = false;
 	}
 	m_AsyncProcedure.SetPriority(THREAD_PRIORITY_NORMAL);
 
@@ -895,7 +899,7 @@ HRESULT SVInspectionProcess::StartProcess(SVProductInfoStruct* pProduct)
 	HRESULT result{ S_OK };
 
 	// Make sure that the lists are the same size
-	if(nullptr == pProduct || m_PPQInputs.size() != pProduct->m_triggerInfo.m_Inputs.size() || nullptr != m_pProduct)
+	if(nullptr == pProduct || m_PPQInputs.size() != pProduct->m_triggerInfo.m_Inputs.size() || m_processActive)
 	{
 		return E_FAIL;
 	}
@@ -934,7 +938,10 @@ HRESULT SVInspectionProcess::StartProcess(SVProductInfoStruct* pProduct)
 
 	if (false == m_offlineRequest)
 	{
-		m_pProduct = pProduct;
+		{
+			std::lock_guard<std::mutex>  Autolock(m_inspectionMutex);
+			m_product = *pProduct;
+		}
 		SVObjectManagerClass::Instance().IncrementInspectionIndicator();
 		result = m_AsyncProcedure.Signal(nullptr);
 	}
@@ -1265,7 +1272,7 @@ HRESULT SVInspectionProcess::RebuildInspection(bool shouldCreateAllObject)
 	if (l_Product.empty())
 	{
 		l_Product.setInspectionTriggerRecordComplete(getObjectId());
-		LastProductUpdate(&l_Product);
+		LastProductUpdate(l_Product);
 	}
 
 	////////////////////////
@@ -1415,7 +1422,7 @@ void SVInspectionProcess::SingleRunModeLoop(bool p_Refresh)
 	RunInspection(l_svProduct.m_svInspectionInfos[getObjectId()], l_svProduct.m_svCameraInfos, l_svProduct.m_triggerInfo.lTriggerCount);
 	l_svProduct.setInspectionTriggerRecordComplete(getObjectId());
 
-	LastProductUpdate(&l_svProduct);
+	LastProductUpdate(l_svProduct);
 
 	if (p_Refresh)
 	{
@@ -1616,7 +1623,7 @@ HRESULT SVInspectionProcess::InitializeRunOnce()
 		//And this is important, because else an event is sent and leads to wrong image updates in webApp.
 		product.setInspectionTriggerRecordComplete(SvDef::InvalidObjectId);
 
-		HRESULT l_Temp = LastProductUpdate(&product);
+		HRESULT l_Temp = LastProductUpdate(product);
 
 		if (S_OK == l_Status) { l_Status = l_Temp; }
 	}
@@ -2277,22 +2284,19 @@ void SVInspectionProcess::AddInputImageRequestToTool(const std::string& rName, u
 
 std::pair<SvTrig::SVTriggerInfoStruct, SVInspectionInfoStruct> SVInspectionProcess::getLastProductData() const
 {
-	if (!m_LastRunProductNULL)
+	std::lock_guard<std::mutex>  Autolock(m_inspectionMutex);
+	auto ipInfoIter = m_lastRunProduct.m_svInspectionInfos.find(getObjectId());
+	if (m_lastRunProduct.m_svInspectionInfos.end() != ipInfoIter)
 	{
-		std::lock_guard<std::mutex>  Autolock(m_LastRunMutex);
-		auto ipInfoIter = m_svLastRunProduct.m_svInspectionInfos.find(getObjectId());
-		if (m_svLastRunProduct.m_svInspectionInfos.end() != ipInfoIter)
-		{
-			return {m_svLastRunProduct.m_triggerInfo, ipInfoIter->second};
-		}
+		return {m_lastRunProduct.m_triggerInfo, ipInfoIter->second};
 	}
 	return {};
 }
 
-void SVInspectionProcess::resetLastProcduct()
+void SVInspectionProcess::resetLastProduct()
 {
-	m_LastRunProductNULL = true;
-	m_svLastRunProduct.Assign({});
+	std::lock_guard<std::mutex>  Autolock(m_inspectionMutex);
+	m_lastRunProduct.Assign({});
 }
 
 HRESULT SVInspectionProcess::LastProductCopySourceImagesTo(SVProductInfoStruct *p_psvProduct)
@@ -3860,44 +3864,18 @@ void SVInspectionProcess::fillObjectList(std::back_insert_iterator<std::vector<S
 }
 
 
-HRESULT SVInspectionProcess::LastProductUpdate(const SVProductInfoStruct* pProduct)
+HRESULT SVInspectionProcess::LastProductUpdate(const SVProductInfoStruct& rProduct)
 {
-	HRESULT l_hrOk = S_OK;
-
-	m_LastRunProductNULL = nullptr == pProduct;
-
-	if (!m_LastRunProductNULL)
-	{
-		std::lock_guard<std::mutex>  Autolock(m_LastRunMutex);
-		l_hrOk = m_svLastRunProduct.Assign(*pProduct);
-		///Note this insures that no need to synchronize m_pProduct
-		if (pProduct == m_pProduct)
-		{
-			m_inspectionInfo.ClearIndexes();
-			m_svLastRunProduct.m_svInspectionInfos[getObjectId()] = m_inspectionInfo;
-		}
-		else
-		{
-			pProduct->SetProductComplete();
-		}
-
-	}
-
-	return l_hrOk;
+	rProduct.SetProductComplete();
+	std::lock_guard<std::mutex>  Autolock(m_inspectionMutex);
+	return m_lastRunProduct.Assign(rProduct);
 }
 
 SVProductInfoStruct SVInspectionProcess::LastProductGet() const
 {
-	SVProductInfoStruct l_Temp;
+	SVProductInfoStruct result;
 
-	std::lock_guard<std::mutex>  Autolock(m_LastRunMutex);
-
-	l_Temp.Assign(m_svLastRunProduct);
-
-	if (m_LastRunProductNULL)
-	{
-		l_Temp.Reset();
-	}
-
-	return l_Temp;
+	std::lock_guard<std::mutex>  Autolock(m_inspectionMutex);
+	result.Assign(m_lastRunProduct);
+	return result;
 }

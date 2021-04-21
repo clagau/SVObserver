@@ -162,7 +162,7 @@ public:
 	HRESULT CollectOverlays(SvIe::SVImageClass* pImage, SVExtentMultiLineStructVector& rMultiLineArray);
 
 	std::pair<SvTrig::SVTriggerInfoStruct, SVInspectionInfoStruct> getLastProductData() const;
-	void resetLastProcduct();
+	void resetLastProduct();
 
 	HRESULT LastProductNotify();
 
@@ -359,7 +359,7 @@ private:
 
 	HRESULT FindPPQInputObjectByName(SVObjectClass*& p_rpObject, LPCTSTR p_FullName) const;
 
-	HRESULT LastProductUpdate(const SVProductInfoStruct* pProduct);
+	HRESULT LastProductUpdate(const SVProductInfoStruct& rProduct);
 	SVProductInfoStruct LastProductGet() const;
 
 	SVIOEntryHostStructPtrVector m_PPQInputs;
@@ -402,9 +402,8 @@ private:
 	SVInspectionTracking m_InspectionTracking;
 #endif
 
-	mutable std::mutex m_LastRunMutex;
-	bool m_LastRunProductNULL{false};
-	SVProductInfoStruct m_svLastRunProduct;
+	mutable std::mutex m_inspectionMutex;
+	SVProductInfoStruct m_lastRunProduct;
 
 	bool m_bNewDisableMethod{false};
 	bool m_initialAuxiliaryExtents {false}; //This is only required to be able to read old configuration files with extents set
@@ -431,8 +430,8 @@ private:
 	std::atomic_bool m_resetting{false};
 
 	std::atomic_bool m_offlineRequest{ false };
-	std::atomic<const SVProductInfoStruct*> m_pProduct{ nullptr };
-	SVInspectionInfoStruct m_inspectionInfo;
+	std::atomic_bool m_processActive{ false };
+	SVProductInfoStruct m_product{};
 };
 
 typedef std::vector<SVInspectionProcess*> SVInspectionProcessVector;

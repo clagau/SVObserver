@@ -90,7 +90,7 @@ BOOL CSVIOTESTApp::InitInstance()
 
 		dlg.m_psvTriggers = &m_svTriggers;
 		dlg.m_csDigital = l_iniLoader.GetInitialInfo().m_DigitalIODLL.c_str();
-		dlg.m_csTrigger = l_iniLoader.GetInitialInfo().m_Trigger.c_str();
+		dlg.m_csTrigger = l_iniLoader.GetInitialInfo().m_TriggerDLL.c_str();
 		dlg.m_lSystemType = atol(l_iniLoader.GetInitialInfo().m_IOBoard.c_str());
 
 		dlg.DoModal();

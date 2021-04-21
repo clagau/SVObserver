@@ -689,7 +689,7 @@ bool SVPPQObject::DetachInspection(SVInspectionProcess* pInspection)
 
 	pInspection->SetPPQIdentifier(SvDef::InvalidObjectId);
 
-	m_arInspections[i]->resetLastProcduct();
+	m_arInspections[i]->resetLastProduct();
 
 	m_arInspections.erase(m_arInspections.begin() + i);
 
