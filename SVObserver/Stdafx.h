@@ -181,7 +181,6 @@ namespace Gdiplus
 #include <boost/type_traits.hpp>
 #include <boost/utility.hpp>
 #include <google\protobuf\stubs\common.h>
-#include <regex>
 #pragma endregion Precompiled Headers
 
 // Global includes that everyone needs
