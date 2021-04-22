@@ -54,14 +54,16 @@ namespace SvMc
 			{
 				if (IDOK == LOWORD(wParam))
 				{
+					///Note here we must use static_cast as the CWnd* value is a temporary and could then cast to nullptr!
 					// Figure out the dialog object from the hwnd.
-					if (SVFileDialog* pDlg = reinterpret_cast<SVFileDialog *>(CWnd::FromHandle(hwnd)))
+					if (SVFileDialog* pDlg = static_cast<SVFileDialog*> (CWnd::FromHandle(hwnd)))
 					{
 						// Get the directory that has been selected.
 						// This will eliminate any files that might have been selected.
 						TCHAR path[MAX_PATH];
 						GetCurrentDirectory(MAX_PATH, path);
-						(dynamic_cast<SVDlgFolder*>(pDlg->GetDlgItem(0)))->SetSelectedPath(path);
+						///Note here we must use static_cast as the CWnd* value is a temporary and could then cast to nullptr!
+						(static_cast<SVDlgFolder*>(pDlg->GetDlgItem(0)))->SetSelectedPath(path);
 						pDlg->EndDialog(IDOK);
 						return false;
 					}

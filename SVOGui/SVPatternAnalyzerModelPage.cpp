@@ -656,8 +656,8 @@ namespace SvOg
 							SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
 							Msg.setMessage( ErrorMessages[0].getMessage() );
 						}
-					
-						CEdit* pEdit = dynamic_cast<CEdit*> (GetDlgItem(nId));
+						///Note here we must use static_cast as the CWnd* value is a temporary and could then cast to nullptr!
+						CEdit* pEdit = static_cast<CEdit*> (GetDlgItem(nId));
 						if(nullptr != pEdit)
 						{
 							pEdit->SetFocus();
@@ -684,7 +684,8 @@ namespace SvOg
 						Msg.setMessage(ErrorMessages[0].getMessage());
 					}
 
-					CEdit* pEdit = dynamic_cast<CEdit*> (GetDlgItem(nId));
+					///Note here we must use static_cast as the CWnd* value is a temporary and could then cast to nullptr!
+					CEdit* pEdit = static_cast<CEdit*> (GetDlgItem(nId));
 					if (nullptr != pEdit)
 					{
 						pEdit->SetFocus();

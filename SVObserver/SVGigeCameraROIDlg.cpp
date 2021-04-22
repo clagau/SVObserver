@@ -335,7 +335,8 @@ void SVGigeCameraROIDlg::OnDeltaPosSpinBinningVert(NMHDR* pNMHDR, LRESULT* pResu
 	}
 	else
 	{
-		CEdit* pEdit = dynamic_cast<CEdit *>(GetDlgItem(IDC_EDIT_VERT));
+		///Note here we must use static_cast as the CWnd* value is a temporary and could then cast to nullptr!
+		CEdit* pEdit = static_cast<CEdit*> (GetDlgItem(IDC_EDIT_VERT));
 		if (pEdit)
 		{
 			m_verticalBinningParam->lValue = newValue;
@@ -374,7 +375,8 @@ void SVGigeCameraROIDlg::OnDeltaPosSpinBinningHoriz(NMHDR* pNMHDR, LRESULT* pRes
 	}
 	else
 	{
-		CEdit* pEdit = dynamic_cast<CEdit *>(GetDlgItem(IDC_EDIT_HORIZ));
+		///Note here we must use static_cast as the CWnd* value is a temporary and could then cast to nullptr!
+		CEdit* pEdit = static_cast<CEdit*> (GetDlgItem(IDC_EDIT_HORIZ));
 		if (pEdit)
 		{
 			m_horizontalBinningParam->lValue = newValue;

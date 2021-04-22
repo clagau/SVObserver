@@ -207,7 +207,8 @@ BOOL SVMaskEditorDialog::OnInitDialog()
 
 
 			// Load Button Icons...
-			CButton* pRadio = dynamic_cast<CButton*> (GetDlgItem(IDC_PEN_RADIO));
+			///Note here we must use static_cast as the CWnd* value is a temporary and could then cast to nullptr!
+			CButton* pRadio = static_cast<CButton*> (GetDlgItem(IDC_PEN_RADIO));
 			HICON hIcon;
 			int iconSize = 16;
 			if (nullptr != pRadio)
@@ -223,7 +224,7 @@ BOOL SVMaskEditorDialog::OnInitDialog()
 				pRadio->SetCheck(1);
 			}
 
-			pRadio = dynamic_cast<CButton*> (GetDlgItem(IDC_POLYGON_RADIO));
+			pRadio = static_cast<CButton*> (GetDlgItem(IDC_POLYGON_RADIO));
 			if (nullptr != pRadio)
 			{
 				hIcon = (HICON) ::LoadImage(AfxGetInstanceHandle(),
@@ -235,7 +236,7 @@ BOOL SVMaskEditorDialog::OnInitDialog()
 				pRadio->SetIcon(hIcon);
 			}
 
-			pRadio = dynamic_cast<CButton*> (GetDlgItem(IDC_RECT_RADIO));
+			pRadio = static_cast<CButton*> (GetDlgItem(IDC_RECT_RADIO));
 			if (nullptr != pRadio)
 			{
 				hIcon = (HICON) ::LoadImage(AfxGetInstanceHandle(),
@@ -247,7 +248,7 @@ BOOL SVMaskEditorDialog::OnInitDialog()
 				pRadio->SetIcon(hIcon);
 			}
 
-			pRadio = dynamic_cast<CButton*> (GetDlgItem(IDC_ELLIPSE_RADIO));
+			pRadio = static_cast<CButton*> (GetDlgItem(IDC_ELLIPSE_RADIO));
 			if (nullptr != pRadio)
 			{
 				hIcon = (HICON) ::LoadImage(AfxGetInstanceHandle(),
@@ -259,7 +260,7 @@ BOOL SVMaskEditorDialog::OnInitDialog()
 				pRadio->SetIcon(hIcon);
 			}
 
-			pRadio = dynamic_cast<CButton*> (GetDlgItem(IDC_POLYLINE_RADIO));
+			pRadio = static_cast<CButton*> (GetDlgItem(IDC_POLYLINE_RADIO));
 			if (nullptr != pRadio)
 			{
 				hIcon = (HICON) ::LoadImage(AfxGetInstanceHandle(),
@@ -271,7 +272,7 @@ BOOL SVMaskEditorDialog::OnInitDialog()
 				pRadio->SetIcon(hIcon);
 			}
 
-			pRadio = dynamic_cast<CButton*> (GetDlgItem(IDC_FILLED_RECT_RADIO));
+			pRadio = static_cast<CButton*> (GetDlgItem(IDC_FILLED_RECT_RADIO));
 			if (nullptr != pRadio)
 			{
 				hIcon = (HICON) ::LoadImage(AfxGetInstanceHandle(),
@@ -283,7 +284,7 @@ BOOL SVMaskEditorDialog::OnInitDialog()
 				pRadio->SetIcon(hIcon);
 			}
 
-			pRadio = dynamic_cast<CButton*> (GetDlgItem(IDC_FILLED_ELLIPSE_RADIO));
+			pRadio = static_cast<CButton*> (GetDlgItem(IDC_FILLED_ELLIPSE_RADIO));
 			if (nullptr != pRadio)
 			{
 				hIcon = (HICON) ::LoadImage(AfxGetInstanceHandle(),
@@ -295,7 +296,7 @@ BOOL SVMaskEditorDialog::OnInitDialog()
 				pRadio->SetIcon(hIcon);
 			}
 
-			pRadio = dynamic_cast<CButton*> (GetDlgItem(IDC_FILL_RADIO));
+			pRadio = static_cast<CButton*> (GetDlgItem(IDC_FILL_RADIO));
 			if (nullptr != pRadio)
 			{
 				hIcon = (HICON) ::LoadImage(AfxGetInstanceHandle(),
