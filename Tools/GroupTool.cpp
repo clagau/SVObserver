@@ -152,11 +152,8 @@ namespace SvTo
 	bool GroupTool::ResetObject(SvStl::MessageContainerVector* pErrorMessages)
 	{
 		bool result = __super::ResetObject(pErrorMessages);
-		m_groupStr = GetObjectNameToObjectType(SvPb::SVToolSetObjectType);
-		m_inputStr = m_groupStr + "." + SvUl::LoadStdString(IDS_CLASSNAME_INPUT_PARAMETER_TASK);
-		m_resultStr = m_groupStr + "." + SvUl::LoadStdString(IDS_CLASSNAME_RESULT_PARAMETER_TASK);
-		m_embeddedNameList.clear();
-		std::transform(m_embeddedList.begin(), m_embeddedList.end(), std::back_inserter(m_embeddedNameList), [](const auto* pObject) -> std::string { return pObject->GetObjectNameToObjectType(SvPb::SVToolSetObjectType); });
+		updateValidCheckStrings();
+
 		BOOL isClosed = false;
 		m_isClosed.GetValue(isClosed);
 		if (isClosed)
@@ -281,6 +278,14 @@ namespace SvTo
 		return { cToolAdjustNameList.begin(), cToolAdjustNameList.end() };
 	}
 
+	void GroupTool::OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName)
+	{
+		__super::OnObjectRenamed(rRenamedObject, rOldName);
+		if (&rRenamedObject == this)
+		{
+			updateValidCheckStrings();
+		}
+	}
 
 	void GroupTool::Initialize()
 	{
@@ -310,11 +315,20 @@ namespace SvTo
 		auto isBothPartOf = [](const SvDef::StringPair& rPairValue, const std::string& rString) -> bool { return rPairValue.first._Starts_with(rString) && rPairValue.second._Starts_with(rString); };
 		auto isPartOfOneInTheList = [](const SvDef::StringPair& rPairValue, const std::vector<std::string>& rNameList) -> bool
 		{
-			return std::any_of(rNameList.begin(), rNameList.end(), [rPairValue](const std::string& rName) { return rPairValue.first._Starts_with(rName) || rPairValue.second._Starts_with(rName); });
+			return std::any_of(rNameList.begin(), rNameList.end(), [rPairValue](const std::string& rName) { return rPairValue.first == rName || rPairValue.second == rName; });
 		};
 		return (isPartOf(rEntry, m_inputStr) || //input connections is always valid
 			(rEntry.first == m_groupStr || rEntry.second == m_groupStr) || //connection direct with groupTool is valid
 			isBothPartOf(rEntry, m_groupStr) || //both inside of the groupTool is valid
 			isPartOfOneInTheList(rEntry, m_embeddedNameList));	//is one of it is an embeddedValue it is valid
+	}
+
+	void GroupTool::updateValidCheckStrings()
+	{
+		m_groupStr = GetObjectNameToObjectType(SvPb::SVToolSetObjectType);
+		m_inputStr = m_groupStr + "." + SvUl::LoadStdString(IDS_CLASSNAME_INPUT_PARAMETER_TASK);
+		m_resultStr = m_groupStr + "." + SvUl::LoadStdString(IDS_CLASSNAME_RESULT_PARAMETER_TASK);
+		m_embeddedNameList.clear();
+		std::transform(m_embeddedList.begin(), m_embeddedList.end(), std::back_inserter(m_embeddedNameList), [](const auto* pObject) -> std::string { return pObject->GetObjectNameToObjectType(SvPb::SVToolSetObjectType); });
 	}
 } //namespace SvTo

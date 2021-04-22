@@ -43,6 +43,7 @@ public:
 	virtual uint32_t getFirstClosedParent(uint32_t stopSearchAtObjectId) const override;
 	virtual bool isValidDependency(const std::pair<std::string, std::string>& rEntry) const override;
 	virtual std::vector<std::string> getToolAdjustNameList() const override;
+	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName) override;
 
 protected:
 	virtual bool useOverlayColorTool() const override { return false; };
@@ -51,6 +52,7 @@ private:
 	void Initialize();
 	SvDef::StringPairVector getInvalidDependenciesList() const;
 	bool isValid(const std::pair<std::string, std::string>& rEntry) const;
+	void updateValidCheckStrings();
 
 private:
 	SvVol::SVBoolValueObjectClass m_isClosed;
