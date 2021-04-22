@@ -37,7 +37,7 @@ void SVArchiveRecord::InitArchiveRecord(SVArchiveTool* pArchiveTool, SVObjectRef
 	if(nullptr != dynamic_cast <SvIe::SVImageClass*> (pObject))
 	{
 		BuildImageFileName();
-		BuildImageFilePaths();
+		BuildDefaultImageFilePaths();
 	}
 	else
 	{
@@ -71,7 +71,7 @@ void SVArchiveRecord::BuildImageFileName()
 	SvUl::searchAndReplace(m_ImageFileName, _T("."), _T("_"));
 }
 
-void SVArchiveRecord::BuildImageFilePaths()
+void SVArchiveRecord::BuildDefaultImageFilePaths()
 {
 	assert(0 < m_ImageFileName.size());
 	assert(m_pArchiveTool);
@@ -124,7 +124,9 @@ HRESULT SVArchiveRecord::GetNextImageFilePath(std::string& rImageFile, bool useA
 	SVFileNameClass svFileName;
 	if (useAlternativeImagePaths)
 	{
-		svFileName.SetPathName(m_pArchiveTool->getNextImageDirectory(m_ImagePathRoot).c_str());
+		std::string imageDirectoryPath = m_pArchiveTool->alternativeImageDirectory(m_ImagePathRoot);
+		std::filesystem::create_directories(imageDirectoryPath);
+		svFileName.SetPathName(imageDirectoryPath.c_str());
 		svFileName.SetFileName(m_pArchiveTool->getNextImageFileName().c_str());
 		m_FileNames[m_lLastIndex] = (svFileName.GetFullFileName()); 
 	}

@@ -102,7 +102,7 @@ bool SVTADlgArchiveResultsPage::QueryAllowExit()
 		if (athArchivePathAndName.areTokensValid())
 		{
 			std::string TmpArchiveFileName = athArchivePathAndName.TranslatePath( ArchiveFilepath );
-			if (false == pathCanProbablyBeCreatedOrExitsAlready(TmpArchiveFileName.c_str()))
+			if (false == pathCanProbablyBeCreatedOrExistsAlready(TmpArchiveFileName.c_str()))
 			{
 				pathErrorDescriptionId = SvStl::Tid_InvalidKeywordsInPath;
 			}
@@ -114,7 +114,7 @@ bool SVTADlgArchiveResultsPage::QueryAllowExit()
 	}
 	else
 	{	//not using Keywords 
-		if (false == pathCanProbablyBeCreatedOrExitsAlready(ArchiveFilepath))
+		if (false == pathCanProbablyBeCreatedOrExistsAlready(ArchiveFilepath))
 		{
 			pathErrorDescriptionId = SvStl::Tid_InvalidPath;
 		}

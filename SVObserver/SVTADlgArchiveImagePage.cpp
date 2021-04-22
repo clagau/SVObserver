@@ -128,14 +128,10 @@ bool SVTADlgArchiveImagePage::QueryAllowExit()
 
 	//update the image path
 
-	updateImageFilePathRootElements();
-
-	if (!validateImageFilepathRoot())
+	if (!validateArchiveImageFilepath())
 	{
 		return false; //don't allow to exit with invalid path
 	}
-
-	m_ValueController.Set<bool>(SvPb::UseAlternativeImagePathsEId, m_useAlternativeImagePaths ? true : false);
 
 	int iCurSel = m_WhenToArchive.GetCurSel();
 	m_eSelectedArchiveMethod = static_cast<SvTo::SVArchiveMethodEnum> (m_WhenToArchive.GetItemData(iCurSel));
@@ -192,8 +188,6 @@ void SVTADlgArchiveImagePage::updateImageFilePathRootElements()
 	m_ImageFilepathroot1WidgetHelper.EditboxToValue();
 	m_ImageFilepathroot2WidgetHelper.EditboxToValue();
 	m_ImageFilepathroot3WidgetHelper.EditboxToValue();
-
-	m_ValueController.Commit(SvOg::PostAction::doReset); //changes need to be committed before validateImageFilepathRoot() is called
 }
 
 
@@ -234,40 +228,35 @@ void SVTADlgArchiveImagePage::DoDataExchange(CDataExchange* pDX)
 }
 
 
-bool SVTADlgArchiveImagePage::validateImageFilepathRoot()
+bool SVTADlgArchiveImagePage::validateArchiveImageFilepath()
 {
+	updateImageFilePathRootElements();
+
+	m_ValueController.Set<bool>(SvPb::UseAlternativeImagePathsEId, m_useAlternativeImagePaths ? true : false);
+	m_ValueController.Commit(SvOg::PostAction::doNothing); //changes need to be committed before paths can be built
+
 	if (!m_pTool->updateCurrentImagePathRoot(true))
 	{
 		return false; // the current image path root cannot even be determined
 	}
 
-	std::string imagepathroot = m_pTool->getCurrentImagePathRoot();
-
-	bool isProblem = false;
+	std::string imageDirectoryPath = m_pTool->archiveImageDirectory();
 
 	try
 	{
-		if (pathCanProbablyBeCreatedOrExitsAlready(imagepathroot))
+		if (pathCanProbablyBeCreatedOrExistsAlready(imageDirectoryPath))
 		{
 			return true;
-		}
-		else
-		{
-			isProblem = true;
 		}
 	}
 	catch (...)
 	{
-		isProblem = true;
 	}
 
-	if (isProblem)
-	{
-		SvDef::StringVector msgList;
-		msgList.push_back(imagepathroot);
-		SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
-		Exception.setMessage(SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_InvalidPath, msgList, SvStl::SourceFileParams(StdMessageParams));
-	}
+	SvDef::StringVector msgList;
+	msgList.push_back(imageDirectoryPath);
+	SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
+	Exception.setMessage(SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_InvalidPath, msgList, SvStl::SourceFileParams(StdMessageParams));
 
 	return false;
 }

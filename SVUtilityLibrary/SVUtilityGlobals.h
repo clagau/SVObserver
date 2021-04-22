@@ -31,7 +31,7 @@ void KeepPrevError( HRESULT& p_rhrPrev, HRESULT p_hrNew );
 bool SVCheckPathDir( LPCTSTR PathName, bool CreateIfDoesNotExist );
 bool SVDeleteFiles( LPCTSTR PathName, bool IncludeSubDirectories );
 
-bool pathCanProbablyBeCreatedOrExitsAlready(const std::string& rFilePath); //
+bool pathCanProbablyBeCreatedOrExistsAlready(const std::string& rFilePath); //
 bool isFilepathOnRegularPartition(const std::string& rFilePath);
 bool isFilepathOnNetwork(const std::string& rFilePath);
 

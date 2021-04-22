@@ -583,7 +583,7 @@ bool SVArchiveTool::initializeOnRun(SvStl::MessageContainerVector *pErrorMessage
 		{
 			return false;
 		}
-		if (!ensureNextImageDirectoryExists())
+		if (!ensureArchiveImageDirectoryExists())
 		{
 			return false;
 		}
@@ -988,15 +988,7 @@ HRESULT SVArchiveTool::WriteBuffers()
 }
 
 
-void SVArchiveTool::addToCurrentImageDirectorypathAndCreateIt(const std::string& rDirectoryName)
-{
-	m_currentImagedirectoryName += "\\";
-	m_currentImagedirectoryName += rDirectoryName;
-	_mkdir(m_currentImagedirectoryName.c_str()); // fails quietly when the directory already exists - which is what we want here because we do not want to check for existence of the directory each time
-}
-
-
-const std::string& SVArchiveTool::getNextImageDirectory(const std::string& rImagePathRoot)
+const std::string SVArchiveTool::alternativeImageDirectory(const std::string& rImagePathRoot)
 {
 	_variant_t temporaryVariant;
 
@@ -1012,9 +1004,11 @@ const std::string& SVArchiveTool::getNextImageDirectory(const std::string& rImag
 	std::string baseDirectoryname;
 	m_baseDirectoryname.GetValue(baseDirectoryname);
 
-	m_currentImagedirectoryName = rImagePathRoot;
+	std::string imageDirectoryPath = rImagePathRoot; //ABX
 
 	std::string namedDirectoryname = SvUl::Format("%s%06ld", baseDirectoryname.c_str(), DirectorynameIndex);
+
+	auto concatDir = [](const std::string& rA, const std::string& rB) {return rA + "\\" + rB;};
 
 	if (SubfolderSelection != 0)
 	{
@@ -1033,21 +1027,19 @@ const std::string& SVArchiveTool::getNextImageDirectory(const std::string& rImag
 
 		if(namedDirectoryInCategoryDirectory)
 		{
-			addToCurrentImageDirectorypathAndCreateIt(categoryDirectoryName);
-			addToCurrentImageDirectorypathAndCreateIt(namedDirectoryname);
+			imageDirectoryPath = concatDir(rImagePathRoot,concatDir(categoryDirectoryName,namedDirectoryname));
 		}
 		else
 		{
-			addToCurrentImageDirectorypathAndCreateIt(namedDirectoryname);
-			addToCurrentImageDirectorypathAndCreateIt(categoryDirectoryName);
+			imageDirectoryPath = concatDir(rImagePathRoot, concatDir(namedDirectoryname, categoryDirectoryName));
 		}
 	}
 	else
 	{
-		addToCurrentImageDirectorypathAndCreateIt(namedDirectoryname);
+		imageDirectoryPath = concatDir(rImagePathRoot, namedDirectoryname);
 	}
 
-	 return m_currentImagedirectoryName;
+	return imageDirectoryPath;
 }
 
 
@@ -1241,19 +1233,33 @@ bool SVArchiveTool::updateCurrentImagePathRoot(bool displayMessageOnInvalidKeywo
 }
 
 
-bool SVArchiveTool::ensureNextImageDirectoryExists()
+std::string SVArchiveTool::archiveImageDirectory()
+{
+	BOOL useAlternativeImagePaths = FALSE;
+	m_useAlternativeImagePaths.GetValue(useAlternativeImagePaths);
+
+	std::string imageDirectoryPath = useAlternativeImagePaths ? alternativeImageDirectory(m_currentImagePathRoot) : m_currentImagePathRoot;
+
+	return imageDirectoryPath;
+}
+
+
+bool SVArchiveTool::ensureArchiveImageDirectoryExists()
 {
 	bool ok = false;
 
-	auto nextImageDirectory = getNextImageDirectory(m_currentImagePathRoot);
+	BOOL useAlternativeImagePaths = FALSE;
+	m_useAlternativeImagePaths.GetValue(useAlternativeImagePaths);
+
+	auto imageDirectoryPath = archiveImageDirectory();
 
 	try
 	{
-		ok = std::filesystem::create_directories(nextImageDirectory);
+		ok = std::filesystem::create_directories(imageDirectoryPath);
 
 		if (!ok)
 		{
-			if (std::filesystem::is_directory(nextImageDirectory))
+			if (std::filesystem::is_directory(imageDirectoryPath))
 			{
 				return true;
 			}
@@ -1279,7 +1285,11 @@ bool SVArchiveTool::ValidateImagePathAndAvailableSpace(uint32_t objectId, SvStl:
 		return false;
 	}
 
-	ensureNextImageDirectoryExists();
+	if(!ensureArchiveImageDirectoryExists())
+	{
+		return false;
+	}
+
 
 	ULARGE_INTEGER lFreeBytesAvailableToCaller;
 	ULARGE_INTEGER lTotalNumberOfBytes;

@@ -41,7 +41,7 @@ public:
 #pragma region Public Methods
 	void InitArchiveRecord(SVArchiveTool* pArchiveTool, SVObjectReference refObject);
 
-	void BuildImageFilePaths();
+	void BuildDefaultImageFilePaths(); ///> assemble the filepaths that will be used _unless_ the "Alternative Image Paths" is checked
 	HRESULT	GetNextImageFilePath(std::string& rImageFile, bool useAlternativeImagePaths);
 	void BuildImageFileName();            // For images only
 

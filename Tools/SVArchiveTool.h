@@ -48,7 +48,7 @@ public:
 	const std::string GetImageArchivePathPart1() const;
 	const std::string GetImageArchivePathPart2() const;
 	const std::string GetImageArchivePathPart3() const;
-	const std::string& getNextImageDirectory(const std::string& imagePathRoot);
+	const std::string alternativeImageDirectory(const std::string& imagePathRoot);
 
 	static long CalculateImageMemory(SvIe::SVImageClass* pImage );
 	static long CalculateImageMemory( std::vector<SvIe::SVImageClass*> imagePtrVector );
@@ -57,7 +57,8 @@ public:
 	/// used by SVArchiveRecord::BuildArchiveImageFilePath
 	const std::string getCurrentImagePathRoot() const;
 	bool updateCurrentImagePathRoot(bool displayMessageOnInvalidKeywords = false);
-	bool ensureNextImageDirectoryExists();
+	std::string archiveImageDirectory(); //the directory into which the next archive image is to be placed
+	bool ensureArchiveImageDirectoryExists();
 
 	bool SetFileArchivePath(LPCTSTR lpszName);
 	std::string getNextImageFileName();
@@ -112,7 +113,6 @@ private:
 	bool AllocateImageBuffers(SvStl::MessageContainerVector *pErrorMessages=nullptr);
 	bool CreateTextArchiveFile(SvStl::MessageContainerVector *pErrorMessages=nullptr);
 	bool ValidateOnRun(SvStl::MessageContainerVector *pErrorMessages=nullptr);
-	void addToCurrentImageDirectorypathAndCreateIt(const std::string& rDirectoryName);
 
 	bool ValidateImagePathAndAvailableSpace(uint32_t objectId, SvStl::MessageContainerVector* pErrorMessages);///< Checks the directory and the available space for storing image archive files.
 	bool InitializeAndValidate();
@@ -145,8 +145,6 @@ private:
 
 	std::ofstream m_fileArchive;       // The file for archived results.
 	UINT m_uiValidateCount;
-
-	std::string m_currentImagedirectoryName = {};
 
 	BufferStructCountMap m_lastBufferMap;
 	DWORD m_lastMaxImages = 0;

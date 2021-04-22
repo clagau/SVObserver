@@ -147,7 +147,7 @@ bool SVCheckPathDir( LPCTSTR PathName, bool CreateIfDoesNotExist )
 	return false;
 }
 
-bool pathCanProbablyBeCreatedOrExitsAlready(const std::string& rFilePath)
+bool pathCanProbablyBeCreatedOrExistsAlready(const std::string& rFilePath)
 {
 	//unfortunately, std::filesystem::exists() currently seems to have a serious problem with network paths 
 	//that don't exist so we use _access() instead.
@@ -155,6 +155,14 @@ bool pathCanProbablyBeCreatedOrExitsAlready(const std::string& rFilePath)
 	if (0 == _access(rFilePath.c_str(), 0))
 	{
 		return true; // rFilePath exists already
+	}
+
+	//taken from: https ://docs.microsoft.com/de-de/windows/win32/api/shlobj_core/nf-shlobj_core-pathcleanupspec?redirectedfrom=MSDN
+	constexpr auto c_illegalCharacters = R"(*?"<>|')";
+
+	if (std::string::npos != rFilePath.find_first_of(c_illegalCharacters))
+	{
+		return false;
 	}
 
 	//since it is very hard to reliably determine whether a directory path can be created:
