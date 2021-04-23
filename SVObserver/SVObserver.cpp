@@ -733,6 +733,8 @@ void SVObserverApp::OnStop()
 		pArchiveWriteDlg->ShowWindow(SW_SHOW);
 		SVYieldPaintMessages();
 	}
+	
+	bool wasInRunMode = SVSVIMStateClass::CheckState(SV_STATE_RUNNING);
 
 	SVSVIMStateClass::changeState(SV_STATE_UNAVAILABLE | SV_STATE_STOPING, SV_STATE_READY | SV_STATE_RUNNING | SV_STATE_STOP_PENDING);
 	auto* pTrcRW = SvOi::getTriggerRecordControllerRWInstance();
@@ -797,7 +799,7 @@ void SVObserverApp::OnStop()
 
 	if (pConfig != nullptr)
 	{
-		if (std::filesystem::exists(pConfig->getPostRunExecutionFilePath()))
+		if (std::filesystem::exists(pConfig->getPostRunExecutionFilePath()) && wasInRunMode)
 		{
 			std::string filenameOfPostExecutionFile = std::filesystem::path(pConfig->getPostRunExecutionFilePath()).filename().generic_string();
 			SHELLEXECUTEINFO ShExecInfo = { 0 };

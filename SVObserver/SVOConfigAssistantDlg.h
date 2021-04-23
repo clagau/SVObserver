@@ -56,7 +56,7 @@ enum ConfigTypeEnum
     CAMERA_DLG          = 1,
     INSPECT_DLG         = 2,
     PPQ_DLG             = 3,
-	GENERAL_DLG			= 4,
+	EXECUTION_DLG		= 4,
 };
 
 enum ConfigMsgTypeEnum
@@ -166,6 +166,9 @@ public:
 	bool IsGigeSystem() const;
 	bool IsFileAcquisition(int iDig) const;
 
+	void SetPreExecutionFilePath(LPCTSTR filepath) { m_preExecutionFilePath = filepath; };
+	void SetPostExecutionFilePath(LPCTSTR filepath) { m_postExecutionFilePath = filepath; };
+
 	// Dialog Data
 	//{{AFX_DATA(SVOConfigAssistantDlg)
 	enum { IDD = IDD_DLG_CONFIG_ASSISTANT };
@@ -237,6 +240,9 @@ private:
 	bool m_bPPQGood {false};
 	bool m_bConfigName {false};
 	bool m_bInspectionDeleted {false};
+
+	std::string m_preExecutionFilePath;
+	std::string m_postExecutionFilePath;
 
 	int m_iLastInspectionNum{0};
 

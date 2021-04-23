@@ -102,6 +102,7 @@ constexpr const char* MESSAGE_FILE_ACQUISITION_MISSING_DIRECTORY ( _T("The Image
 constexpr const char* MESSAGE_FILE_ACQUISITION_INVALID_IMAGE_SIZE ( _T("The Image Size is Invalid.") );
 constexpr const char* MESSAGE_FILE_ACQUISITION_COLOR_MISMATCH ( _T("The bitmap file acquisition color does not match the camera color setting") );
 constexpr const char* MESSAGE_INSPECTION_CAMERA_COLOR  ( _T("-The toolset camera image color does not match the inspection color") );
+constexpr const char* EXECUTION_FILES_MISSING(_T("- Execution file missing"));
 
 const SVOConfigAssistantDlg::SVProductStringVector SVOConfigAssistantDlg::m_ProductStringVector
 {
@@ -3165,6 +3166,46 @@ bool SVOConfigAssistantDlg::ItemChanged(int iItemDlg, LPCTSTR LabelName, int iAc
 			}// end switch (iAction)
 			break;
 		}// end case PPQ_DLG:
+
+		case EXECUTION_DLG:
+		{
+			switch (iAction)
+			{
+				case ITEM_ACTION_REFRESH:
+				{
+					constexpr const char* PRE_EXECUTION_FILE(_T("PreExecutionFile"));
+					constexpr const char* POST_EXECUTION_FILE(_T("PostExecutionFile"));
+
+					Message = BuildDisplayMessage(MESSAGE_TYPE_ERROR, PRE_EXECUTION_FILE, EXECUTION_FILES_MISSING);
+					if (!std::filesystem::exists(m_preExecutionFilePath) && m_preExecutionFilePath.length() != 0)
+					{
+						AddMessageToList(EXECUTION_DLG, Message.c_str());
+					}
+					else
+					{
+						RemoveMessageFromList(Message.c_str());
+					}
+
+					Message = BuildDisplayMessage(MESSAGE_TYPE_ERROR, POST_EXECUTION_FILE, EXECUTION_FILES_MISSING);
+					if (!std::filesystem::exists(m_postExecutionFilePath) && m_postExecutionFilePath.length() != 0)
+					{
+						AddMessageToList(EXECUTION_DLG, Message.c_str());
+					}
+					else
+					{
+						RemoveMessageFromList(Message.c_str());
+					}
+
+					break;
+				}
+
+				default:
+				{
+					break;
+				}
+			}
+		}
+
 		default:
 		{
 			break;

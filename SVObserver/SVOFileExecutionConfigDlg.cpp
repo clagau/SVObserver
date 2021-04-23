@@ -198,35 +198,12 @@ void SVOFileExecutionConfigDlg::createErrorMessage()
 	prePathName = m_edtPrePath.FindOneOf("\\") == -1 ?  runDirectory + "\\" + m_edtPrePath : m_edtPrePath;
 	postPathName = m_edtPostPath.FindOneOf("\\") == -1 ? runDirectory + "\\" + m_edtPostPath : m_edtPostPath;
 
+	m_pParent->SetPreExecutionFilePath(prePathName.c_str());
+	m_pParent->SetPostExecutionFilePath(postPathName.c_str());
 
-	if (!std::filesystem::exists(prePathName) && prePathName.length() != 0)
-	{
-		missingFiles.push_back("preRunExecution");
-	}
+	m_pParent->ItemChanged(EXECUTION_DLG, "", ITEM_ACTION_REFRESH);
 
-	if (!std::filesystem::exists(postPathName) && postPathName.length() != 0)
-	{
-		missingFiles.push_back("postRunExecution");
-	}
-	
-	CString message = "";
-	
-	std::string stringOfMissingFiles;
-	if (missingFiles.size() >= 1)
-	{
-		stringOfMissingFiles = std::accumulate(missingFiles.begin(), missingFiles.end(), std::string(),
-			[](const std::string& ss, const std::string& s)
-			{
-				return ss.empty() ? s : ss + ", " + s;
-			});
-
-		message.Format("File for %s does not exist !", stringOfMissingFiles.c_str());
-	}
-	m_messageField = message;
 	UpdateData(FALSE);
-
-
-	
 }
 
 void SVOFileExecutionConfigDlg::clearTextfieldAndRemoveFromConfig(int preOrPost)
@@ -238,7 +215,9 @@ void SVOFileExecutionConfigDlg::clearTextfieldAndRemoveFromConfig(int preOrPost)
 	{
 		CString runDirectory = SvStl::GlobalPath::Inst().GetRunPath().c_str();
 		CString filename = "";
-	
+		
+		bool differnentExecutionFiles = pConfig->getPostRunExecutionFilePath() == pConfig->getPreRunExecutionFilePath();
+
 		if (SVOFileExecutionConfigDlg::ProcessPosition::PreRun == preOrPost)
 		{	
 			filename = m_edtPrePath;
@@ -252,10 +231,13 @@ void SVOFileExecutionConfigDlg::clearTextfieldAndRemoveFromConfig(int preOrPost)
 			pConfig->setPostRunExecutionFilePath("");
 		}
 
-		CString fullPath = runDirectory + "\\" + filename;
-		std::remove(fullPath);
-		TheSVObserverApp.RemoveFileFromConfig(fullPath);
-
+		if (differnentExecutionFiles)
+		{
+			CString fullPath = runDirectory + "\\" + filename;
+			std::remove(fullPath);
+			TheSVObserverApp.RemoveFileFromConfig(fullPath);
+		}
+		
 		UpdateData(FALSE);
 		createErrorMessage();
 	}
