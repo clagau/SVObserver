@@ -32,8 +32,6 @@ typedef std::vector<SVGroupDef> SVGroupDefVect;
 
 class SVRemoteOutputGroupAddRemoveDlg : public CDialog
 {
-	DECLARE_DYNAMIC(SVRemoteOutputGroupAddRemoveDlg)
-
 public:
 	SVRemoteOutputGroupAddRemoveDlg(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~SVRemoteOutputGroupAddRemoveDlg();

@@ -30,8 +30,6 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-IMPLEMENT_DYNAMIC(SVRegressionFileSelectSheet, CPropertySheet)
-
 SVRegressionFileSelectSheet::SVRegressionFileSelectSheet(UINT nIDCaption, uint32_t inspectionID, CWnd* pParentWnd, UINT iSelectPage)
 	:CPropertySheet(nIDCaption, pParentWnd, iSelectPage)
 	, m_InspectionID(inspectionID)

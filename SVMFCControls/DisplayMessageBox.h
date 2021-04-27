@@ -41,8 +41,6 @@ namespace SvMc
 
 		enum { IDD = IDD_DISPLAY_MSG_BOX };
 
-		DECLARE_DYNAMIC(DisplayMessageBox)
-
 	public:
 #pragma region Constructor
 		//************************************

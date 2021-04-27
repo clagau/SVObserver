@@ -21,8 +21,6 @@
 #include "InspectionCommands/CommandExternalHelper.h"
 #pragma endregion Includes
 
-IMPLEMENT_DYNAMIC(SVSquare, CStatic)
-
 BEGIN_MESSAGE_MAP(SVSquare, CStatic)
 	ON_WM_PAINT()
 END_MESSAGE_MAP()

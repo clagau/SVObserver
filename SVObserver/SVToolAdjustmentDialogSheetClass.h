@@ -37,8 +37,6 @@ class SVIPDoc;
 
 class SVToolAdjustmentDialogSheetClass : public CPropertySheet
 {
-	DECLARE_DYNAMIC(SVToolAdjustmentDialogSheetClass)
-
 	//{{AFX_VIRTUAL(SVToolAdjustmentDialogSheetClass)
 public:
 	virtual BOOL OnInitDialog() override;

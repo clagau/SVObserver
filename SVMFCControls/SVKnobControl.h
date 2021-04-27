@@ -55,8 +55,6 @@ namespace SvMc
 
 	class SVKnobControl : public CStatic
 	{
-		DECLARE_DYNAMIC(SVKnobControl)
-
 	public:
 		SVKnobControl(long minTimerInterval_ms, long maxTimerInterval_ms);
 		virtual ~SVKnobControl();

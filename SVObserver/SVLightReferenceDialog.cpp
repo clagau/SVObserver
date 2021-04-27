@@ -20,8 +20,6 @@
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
-IMPLEMENT_DYNAMIC(SVLightReferenceDialogPropertySheetClass, CPropertySheet)
-
 BEGIN_MESSAGE_MAP(SVLightReferenceDialogPropertySheetClass, CPropertySheet)
 	//{{AFX_MSG_MAP(SVLightReferenceDialogPropertySheetClass)
 	ON_WM_CLOSE()

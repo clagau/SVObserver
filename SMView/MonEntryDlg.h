@@ -12,8 +12,6 @@
 /// MonEntryDlg dialog to display details for one monitorentry
 class MonEntryDlg : public CDialog
 {
-	DECLARE_DYNAMIC(MonEntryDlg)
-
 public:
 	MonEntryDlg(CWnd* pParent = NULL);   // standard constructor
 	virtual ~MonEntryDlg();

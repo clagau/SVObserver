@@ -20,8 +20,6 @@ namespace SvOg
 	#pragma region Declarations
 	private:
 		enum { IDD = IDD_GLOBAL_CONSTANT_CONFLICT };
-
-		DECLARE_DYNAMIC(GlobalConstantConflictDlg)
 	#pragma endregion Declarations
 
 	#pragma region Constructor

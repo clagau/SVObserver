@@ -14,8 +14,6 @@ namespace SvOg
 
 	class AuditFilesDialog : public CDialog
 	{
-		DECLARE_DYNAMIC(AuditFilesDialog)
-
 	public:
 		enum columnType { Ename = 0, Esize, Etimestamp, EIgnore, EHash, ETime,  EHashValue, EColumncount };
 		enum DialogType { EDefault, WhiteList };

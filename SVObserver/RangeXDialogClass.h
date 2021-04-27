@@ -19,8 +19,6 @@
 
 class RangeXDialogClass : public CDialog
 {
-	DECLARE_DYNAMIC(RangeXDialogClass)
-
 public:
 	RangeXDialogClass(uint32_t inspectionID, uint32_t toolId, uint32_t taskID, uint32_t rangeID, CWnd* parent = nullptr);
 	virtual ~RangeXDialogClass();

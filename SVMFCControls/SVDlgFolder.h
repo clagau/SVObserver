@@ -18,8 +18,6 @@ namespace SvMc
 {
 	class SVDlgFolder : public SVFileDialog
 	{
-		DECLARE_DYNAMIC(SVDlgFolder)
-
 	public:
 		explicit SVDlgFolder(bool bFullAccess, LPCTSTR initialDir = nullptr);
 		virtual ~SVDlgFolder();

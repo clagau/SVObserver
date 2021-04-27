@@ -22,8 +22,6 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-IMPLEMENT_DYNAMIC(SVSecuritySetupSheet, CPropertySheet)
-
 void SVSecuritySetupSheet::Initialize(void)
 {
 	m_psh.dwFlags &= ~PSH_HASHELP;

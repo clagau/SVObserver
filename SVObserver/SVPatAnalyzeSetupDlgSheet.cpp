@@ -18,8 +18,6 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-IMPLEMENT_DYNAMIC(SVPatAnalyzeSetupDlgSheet, CPropertySheet)
-
 SVPatAnalyzeSetupDlgSheet::SVPatAnalyzeSetupDlgSheet(UINT nIDCaption, CWnd* pParentWnd, UINT iSelectPage)
 : CPropertySheet(nIDCaption, pParentWnd, iSelectPage)
 {

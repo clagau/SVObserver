@@ -24,8 +24,6 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-IMPLEMENT_DYNAMIC(SVPictureTabs, CDialog)
-
 SVPictureTabs::SVPictureTabs(CWnd* pParent /*=nullptr*/)
 : CDialog(SVPictureTabs::IDD, pParent)
 , m_lLastTab(0L)

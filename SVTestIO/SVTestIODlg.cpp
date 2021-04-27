@@ -18,8 +18,6 @@
 
 #define WM_SETOUTPUT (WM_USER + 101)
 
-IMPLEMENT_DYNAMIC(SVTestIODlg, CDialog)
-
 SVTestIODlg::SVTestIODlg(CWnd* pParent /*=nullptr*/) : CDialog(SVTestIODlg::IDD, pParent)
 {
 	

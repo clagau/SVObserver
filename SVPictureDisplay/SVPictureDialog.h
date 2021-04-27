@@ -18,8 +18,6 @@
 
 class SVPictureDialog : public CDialog
 {
-	DECLARE_DYNAMIC(SVPictureDialog)
-
 public:
 #pragma region Constructor
 	explicit SVPictureDialog(long p_lTab, AppearanceTypes p_lAppearance = TopButtons);

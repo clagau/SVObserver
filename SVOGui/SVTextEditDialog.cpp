@@ -24,7 +24,6 @@ namespace SvOg
 	BEGIN_MESSAGE_MAP(SVTextEditDialog, CDialog)
 	END_MESSAGE_MAP()
 
-	IMPLEMENT_DYNAMIC(SVTextEditDialog, CDialog)
 	#pragma endregion Declarations
 
 	#pragma region Constructor

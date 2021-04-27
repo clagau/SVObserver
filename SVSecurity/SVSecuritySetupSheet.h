@@ -32,8 +32,6 @@ class SVAccessClass;
 
 class SVSecuritySetupSheet : public CPropertySheet
 {
-	DECLARE_DYNAMIC(SVSecuritySetupSheet)
-
 // Construction
 public:
 	

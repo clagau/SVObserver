@@ -16,7 +16,6 @@ namespace SvOg
 {
 	const LPCSTR AuditFilesDialog::HeaderNames[EColumncount] = { "Name", "Size","Time Stamp","Ignore","Hash","Time(µs)", "Hash Value" };
 	const DWORD  AuditFilesDialog::HeaderWith[EColumncount] = { 160,80,80,40,40,60,200 };
-	IMPLEMENT_DYNAMIC(AuditFilesDialog, CDialog)
 
 		AuditFilesDialog::AuditFilesDialog(const std::vector< SvUl::AuditFile>& rList, DialogType t, CWnd* pParent /*=nullptr*/)
 		: CDialog(IDD_DLG_REPORT_FILE, pParent),

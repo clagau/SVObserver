@@ -44,14 +44,12 @@
 // CFileTrace is a CFile that "writes" to the trace window
 //
 class CFileTrace : public CFile {
-	DECLARE_DYNAMIC(CFileTrace)
 	CFileTrace() { m_strFileName = _T("Mfx File Tracer"); }
 	static BOOL autoInit;
 	virtual void Write(const void* lpBuf, UINT nCount) override;
 public:
 	static  BOOL Init();	
 };
-IMPLEMENT_DYNAMIC(CFileTrace, CFile)
 
 //////////////////
 // Override to write to TraceWin applet instead of file.

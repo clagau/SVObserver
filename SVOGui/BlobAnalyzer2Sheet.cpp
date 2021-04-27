@@ -23,9 +23,6 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvOg
 {
-
-	IMPLEMENT_DYNAMIC(BlobAnalyzer2Sheet, CPropertySheet)
-
 	BEGIN_MESSAGE_MAP(BlobAnalyzer2Sheet, CPropertySheet)
 		//{{AFX_MSG_MAP(BlobAnalyzer2Sheet)
 		ON_COMMAND(IDOK, OnOK)

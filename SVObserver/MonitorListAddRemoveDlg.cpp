@@ -25,8 +25,6 @@ BEGIN_MESSAGE_MAP(MonitorListAddRemoveDlg, CDialog)
 	ON_LBN_DBLCLK(IDC_USED_LIST, OnDblClickUsedList)
 END_MESSAGE_MAP()
 
-IMPLEMENT_DYNAMIC(MonitorListAddRemoveDlg, CDialog)
-
 MonitorListAddRemoveDlg::MonitorListAddRemoveDlg(const RemoteMonitorListMap& rMonitorList, const PPQNameListNames& rList, CWnd* pParent /*=nullptr*/)
 : CDialog(MonitorListAddRemoveDlg::IDD, pParent)
 , m_MonitorList(rMonitorList)

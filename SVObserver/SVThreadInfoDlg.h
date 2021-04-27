@@ -52,7 +52,6 @@ private:
 	void AddComboAffinitys( SVRPropertyItemCombo* pCombo, AffinityBitList& affinitys );
 	bool FindName( SVRPropertyItem* pRoot, LPCTSTR Name );
 
-	DECLARE_DYNAMIC(SVThreadInfoDlg)
 	SVRPropTree m_ThreadList;
 	int m_IdIndex;
 	int m_DisplayState;

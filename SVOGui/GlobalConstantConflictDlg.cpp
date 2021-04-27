@@ -30,8 +30,6 @@ namespace SvOg
 	constexpr int GridColumnNumber = 4;
 	constexpr int GridColumnWidth[] = {30, 150, 80, 100};
 
-	IMPLEMENT_DYNAMIC(GlobalConstantConflictDlg, CDialog)
-
 	BEGIN_MESSAGE_MAP(GlobalConstantConflictDlg, CDialog)
 		ON_NOTIFY(NM_CLICK, IDC_GLOBAL_CONFLICT_GRID, &GlobalConstantConflictDlg::OnGridClick)
 	END_MESSAGE_MAP()

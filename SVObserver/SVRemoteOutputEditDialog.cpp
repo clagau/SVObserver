@@ -21,8 +21,6 @@
 #include "Definitions/GlobalConst.h"
 #pragma endregion Includes
 
-IMPLEMENT_DYNAMIC(SVRemoteOutputEditDialog, CDialog)
-
 SVRemoteOutputEditDialog::SVRemoteOutputEditDialog(CWnd* pParent /*=nullptr*/)
 : CDialog(SVRemoteOutputEditDialog::IDD, pParent)
 , m_ValueObjectSourceName(_T("Invalid"))

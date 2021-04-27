@@ -18,23 +18,18 @@
 
 TCHAR SVRCCurrentSVCPathName[ _MAX_PATH ];
 
-CMDIChildWnd* SVSearchForMDIChildWnd( CWnd* PStartWnd )
+CMDIChildWnd* SVSearchForMDIChildWnd( CWnd* pWnd )
 {
 	// Only for MFC-Threads!
 
-	while( nullptr != PStartWnd )
+	while( nullptr != pWnd)
 	{
-		if( ! PStartWnd->IsKindOf( RUNTIME_CLASS( CWnd ) ) )
+		if (CMDIChildWnd* pMdiChild{dynamic_cast<CMDIChildWnd*> (pWnd)})
 		{
-			return nullptr;
+			return pMdiChild;
 		}
 
-		if( PStartWnd->IsKindOf( RUNTIME_CLASS( CMDIChildWnd ) ) )
-		{
-			return( ( CMDIChildWnd* ) PStartWnd );
-		}
-
-		PStartWnd = PStartWnd->GetParent();
+		pWnd = pWnd->GetParent();
 	}
 	return nullptr;
 }

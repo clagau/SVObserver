@@ -27,9 +27,6 @@ class SVROIFigureEditor;
 
 class SVTADlgColorThresholdSheet : public CPropertySheet
 {
-	DECLARE_DYNAMIC(SVTADlgColorThresholdSheet)
-
-// Construction
 public:
 	SVTADlgColorThresholdSheet(SvTo::SVColorToolClass* pTool, UINT nIDCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
 	SVTADlgColorThresholdSheet(SvTo::SVColorToolClass* pTool, LPCTSTR pszCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);

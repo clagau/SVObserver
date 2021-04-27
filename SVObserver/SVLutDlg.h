@@ -22,7 +22,6 @@ class SVLutDlg : public CPropertySheet
 public:
 	typedef std::map< uint32_t, SVLut > SVLutMap;
 
-//	DECLARE_DYNAMIC(SVLutDlg)
 	explicit SVLutDlg(LPCTSTR Caption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
 	virtual ~SVLutDlg();
 

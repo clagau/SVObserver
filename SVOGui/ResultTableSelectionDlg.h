@@ -21,8 +21,6 @@ namespace SvOg
 	public:
 		enum { IDD = IDD_RESULT_TABLE_SELECTION };
 
-		DECLARE_DYNAMIC(ResultTableSelectionDlg)
-
 	#pragma endregion Declarations
 	
 	#pragma region Constructor

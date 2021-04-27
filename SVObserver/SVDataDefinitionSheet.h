@@ -26,8 +26,6 @@ class TreeItem;
 
 class SVDataDefinitionSheet : public CPropertySheet
 {
-	DECLARE_DYNAMIC(SVDataDefinitionSheet)
-
 #pragma region Constructor
 public:
 	SVDataDefinitionSheet(SVIPDoc* pDoc, LPCTSTR pszCaption, const std::string& rInspectionName, uint32_t inspectionID, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);

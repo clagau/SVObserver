@@ -20,8 +20,6 @@
 // SVRemoteOutputGroupAddRemoveDlg dialog
 #define ONE_OUTPUT_GROUP_PER_PPQ 
 
-IMPLEMENT_DYNAMIC(SVRemoteOutputGroupAddRemoveDlg, CDialog)
-
 SVRemoteOutputGroupAddRemoveDlg::SVRemoteOutputGroupAddRemoveDlg(CWnd* pParent /*=nullptr*/)
 	: CDialog(SVRemoteOutputGroupAddRemoveDlg::IDD, pParent)
 	, m_lOutputGroupCount(0)

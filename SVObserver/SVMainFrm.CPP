@@ -58,8 +58,6 @@ constexpr const char* cMatroxNoLicense = _T("No Matrox License");
 constexpr const char* cGigeNoLicense = _T("No GigE License");
 #pragma endregion Declarations
 
-IMPLEMENT_DYNAMIC(SVMainFrame, CMDIFrameWnd)
-
 //******************************************************************************
 // Message Map Entries
 //******************************************************************************

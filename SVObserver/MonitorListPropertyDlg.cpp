@@ -21,8 +21,6 @@
 
 enum {IDC_MONITOR_PROPERTY_TREE = 100};
 
-IMPLEMENT_DYNAMIC(MonitorListPropertyDlg, CDialog)
-
 MonitorListPropertyDlg::MonitorListPropertyDlg(RemoteMonitorListMap& MonitorList, LPCTSTR Name, CWnd* pParent)
 : CDialog(MonitorListPropertyDlg::IDD, pParent)
 , m_MonitorList(MonitorList)

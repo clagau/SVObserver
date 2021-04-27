@@ -20,10 +20,6 @@
 #include "SVRPropertyTree/SVRPropTreeItemEdit.h"
 #pragma endregion Includes
 
-// SVThreadInfoDlg dialog
-
-IMPLEMENT_DYNAMIC(SVThreadInfoDlg, CDialog)
-
 enum 
 {
 	IDC_PROPERTYTREE = 100,

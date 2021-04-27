@@ -17,8 +17,6 @@
 // MDI support (zero or more documents)
 class SVMultiDocTemplate : public CMultiDocTemplate
 {
-	DECLARE_DYNAMIC( SVMultiDocTemplate )
-
 public:
 	SVMultiDocTemplate( UINT NIDResource, CRuntimeClass* PDocClass, CRuntimeClass* PFrameClass, CRuntimeClass* PViewClass );
 	virtual ~SVMultiDocTemplate();

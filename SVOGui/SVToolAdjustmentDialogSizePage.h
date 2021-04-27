@@ -18,8 +18,6 @@ namespace SvOg
 //! \brief Property Page: Position and Size for The ToolAdjustmen Dialog
 class SVToolAdjustmentDialogSizePage : public CPropertyPage, public ISVPropertyPageDialog
 {
-	DECLARE_DYNAMIC(SVToolAdjustmentDialogSizePage)
-
 public:
 	SVToolAdjustmentDialogSizePage(uint32_t inspectionId, uint32_t taskObjectId);
 	virtual ~SVToolAdjustmentDialogSizePage();

@@ -101,8 +101,6 @@ protected:
 ////////////////////////////////////////////////////////////////////////////////
 class SVPPQEntryDialogPropertySheetClass : public CPropertySheet
 {
-	DECLARE_DYNAMIC(SVPPQEntryDialogPropertySheetClass)
-
 // Construction
 public:
 	explicit SVPPQEntryDialogPropertySheetClass(UINT nIDCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);

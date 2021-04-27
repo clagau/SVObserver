@@ -48,8 +48,6 @@ BEGIN_MESSAGE_MAP(SVAdjustToolSizePositionDlg, CDialog)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-IMPLEMENT_DYNAMIC(SVAdjustToolSizePositionDlg, CDialog)
-
 inline bool ApproxEqual(float f1, float f2)
 {
 	return (fabs(f1 - f2) < FLT_EPSILON);

@@ -24,8 +24,6 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-IMPLEMENT_DYNAMIC(RangeXDialogClass, CDialog)
-
 RangeXDialogClass::RangeXDialogClass(uint32_t inspectionID, uint32_t toolId, uint32_t taskID, uint32_t rangeID, CWnd* parent /*=nullptr*/)
 : CDialog(RangeXDialogClass::IDD, parent)
 , m_rangeController(inspectionID, taskID, rangeID)

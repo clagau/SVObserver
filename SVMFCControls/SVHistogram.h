@@ -31,8 +31,6 @@ namespace SvMc
 {
 	class SVHistogram : public CStatic, public HistogramLabels, public SvUl::SVHistogramBase
 	{
-		DECLARE_DYNAMIC(SVHistogram)
-
 	public:
 		SVHistogram();
 		virtual ~SVHistogram();

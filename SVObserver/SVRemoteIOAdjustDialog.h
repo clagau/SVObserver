@@ -13,8 +13,6 @@
 
 class SVRemoteIOAdjustDialog : public CDialog
 {
-	DECLARE_DYNAMIC(SVRemoteIOAdjustDialog)
-
 public:
 	SVRemoteIOAdjustDialog(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~SVRemoteIOAdjustDialog();

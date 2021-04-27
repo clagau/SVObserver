@@ -54,8 +54,6 @@ namespace SvMc
 		};
 	}
 
-	IMPLEMENT_DYNAMIC(SVHistogram, CStatic)
-
 		SVHistogram::SVHistogram(): 
 	CStatic(),
 		SVHistogramBase(),

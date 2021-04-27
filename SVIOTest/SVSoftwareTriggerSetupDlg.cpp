@@ -14,8 +14,6 @@
 #include "SVSoftwareTriggerSetupDlg.h"
 #pragma endregion Includes
 
-IMPLEMENT_DYNAMIC(SVSoftwareTriggerSetupDlg, CDialog)
-
 SVSoftwareTriggerSetupDlg::SVSoftwareTriggerSetupDlg(CWnd* pParent /*=nullptr*/)
 	: CDialog(SVSoftwareTriggerSetupDlg::IDD, pParent)
 	, m_period1(0)

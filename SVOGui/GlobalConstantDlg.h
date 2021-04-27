@@ -21,8 +21,6 @@ namespace SvOg
 	public:
 		enum { IDD = IDD_GLOBAL_CONSTANT };
 
-		DECLARE_DYNAMIC(GlobalConstantDlg)
-
 	#pragma endregion Declarations
 	
 	#pragma region Constructor

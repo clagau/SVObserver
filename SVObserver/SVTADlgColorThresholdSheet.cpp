@@ -27,8 +27,6 @@ constexpr const char* thresholdHsiNames[] {_T("Hue Threshold Adjustment"), _T("S
 constexpr const char* thresholdRgbNames[] {_T("Red Threshold Adjustment"), _T("Green Threshold Adjustment"), _T("Blue Threshold Adjustment")};
 #pragma endregion Declarations
 
-IMPLEMENT_DYNAMIC(SVTADlgColorThresholdSheet, CPropertySheet)
-
 SVTADlgColorThresholdSheet::SVTADlgColorThresholdSheet(SvTo::SVColorToolClass* pTool, UINT nIDCaption, CWnd* pParentWnd, UINT iSelectPage)
 	:CPropertySheet(nIDCaption, pParentWnd, iSelectPage)
 	, m_pTool{pTool}

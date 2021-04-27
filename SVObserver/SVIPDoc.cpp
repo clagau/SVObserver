@@ -86,11 +86,14 @@ union SVViewUnion
 {
 	CView* pView{nullptr};	//Note for union only one field can be initialized
 	SVImageViewScroll* pImageScroll;
-	SVImageView* pImageView;
 	ToolSetView* pToolSetView;
 	ResultTabbedView* pResultView;
 };
 
+constexpr const char* cSVImageViewScrollName = _T("SVImageViewScroll");
+constexpr const char* cSVImageViewName = _T("SVImageView");
+constexpr const char* cToolSetViewName = _T("ToolSetView");
+constexpr const char* cResultTabbedViewName = _T("ResultTabbedView");
 constexpr int MaxImageViews = 8;
 
 IMPLEMENT_DYNCREATE(SVIPDoc, CDocument)
@@ -201,27 +204,48 @@ END_MESSAGE_MAP()
 #pragma endregion Declarations
 
 #pragma region local methods
-	uint32_t getObjectAfterThis(uint32_t toolId)
+uint32_t getObjectAfterThis(uint32_t toolId)
+{
+	auto* pTool{ SVObjectManagerClass::Instance().GetObject(toolId) };
+	auto* pParent{ dynamic_cast<SvIe::SVTaskObjectListClass*>(nullptr != pTool ? pTool->GetParent() : nullptr) };
+	if (pParent)
 	{
-		auto* pTool{ SVObjectManagerClass::Instance().GetObject(toolId) };
-		auto* pParent{ dynamic_cast<SvIe::SVTaskObjectListClass*>(nullptr != pTool ? pTool->GetParent() : nullptr) };
-		if (pParent)
+		for (int i = 0; i < pParent->GetSize(); i++)
 		{
-			for (int i = 0; i < pParent->GetSize(); i++)
+			const SvIe::SVTaskObjectClass* pCurrentTool = pParent->GetAt(i);
+			if (pCurrentTool && pCurrentTool->getObjectId() == toolId)
 			{
-				const SvIe::SVTaskObjectClass* pCurrentTool = pParent->GetAt(i);
-				if (pCurrentTool && pCurrentTool->getObjectId() == toolId)
+				if (i + 1 < pParent->GetSize())
 				{
-					if (i + 1 < pParent->GetSize())
-					{
-						return pParent->GetAt(i)->getObjectId();
-					}
-					return SvDef::InvalidObjectId;
+					return pParent->GetAt(i)->getObjectId();
 				}
+				return SvDef::InvalidObjectId;
 			}
 		}
-		return SvDef::InvalidObjectId;
 	}
+	return SvDef::InvalidObjectId;
+}
+
+LPCTSTR getViewClassName(CView* pView)
+{
+	if (nullptr != dynamic_cast<SVImageViewScroll*> (pView))
+	{
+		return cSVImageViewScrollName;
+	}
+	else if (nullptr != dynamic_cast<SVImageView*> (pView))
+	{
+		return cSVImageViewName;
+	}
+	else if (nullptr != dynamic_cast<ToolSetView*> (pView))
+	{
+		return cToolSetViewName;
+	}
+	else if (nullptr != dynamic_cast<ResultTabbedView*> (pView))
+	{
+		return cResultTabbedViewName;
+	}
+	return nullptr;
+}
 #pragma endregion local methods
 
 #pragma region Constructor
@@ -2529,29 +2553,31 @@ void SVIPDoc::SaveViews(SvOi::IObjectWriter& rWriter)
 
 		while (nullptr != (View.pView = GetNextView(vPos)))
 		{
-			rWriter.StartElement(View.pView->GetRuntimeClass()->m_lpszClassName);
+			std::string viewClassName = getViewClassName(View.pView);
+			assert(false == viewClassName.empty());
+			if (false == viewClassName.empty() && cSVImageViewName != viewClassName)
+			{
+				rWriter.StartElement(viewClassName.c_str());
 
-			svVariant = ++ViewNumber;
-			rWriter.WriteAttribute(SvXml::CTAG_VIEW_NUMBER, svVariant);
-			svVariant.Clear();
+				svVariant = ++ViewNumber;
+				rWriter.WriteAttribute(SvXml::CTAG_VIEW_NUMBER, svVariant);
+				svVariant.Clear();
 
-			if (View.pView->IsKindOf(RUNTIME_CLASS(SVImageViewScroll)))
-			{
-				View.pImageScroll->GetParameters(rWriter);
+				//Note Image View scroll saves also the Image view parameters
+				if (cSVImageViewScrollName == viewClassName)
+				{
+					View.pImageScroll->GetParameters(rWriter);
+				}
+				else if (cToolSetViewName == viewClassName)
+				{
+					View.pToolSetView->GetParameters(rWriter);
+				}
+				else if (cResultTabbedViewName == viewClassName)
+				{
+					View.pResultView->GetParameters(rWriter);
+				}
+				rWriter.EndElement();
 			}
-			else if (View.pView->IsKindOf(RUNTIME_CLASS(SVImageView)))
-			{
-				View.pImageView->GetParameters(rWriter);
-			}
-			else if (View.pView->IsKindOf(RUNTIME_CLASS(ToolSetView)))
-			{
-				View.pToolSetView->GetParameters(rWriter);
-			}
-			else if (View.pView->IsKindOf(RUNTIME_CLASS(ResultTabbedView)))
-			{
-				View.pResultView->GetParameters(rWriter);
-			}
-			rWriter.EndElement();
 		}
 	}
 	rWriter.EndElement();
@@ -2587,15 +2613,9 @@ void SVIPDoc::SaveViewPlacements(SvOi::IObjectWriter& rWriter)
 			assert(pWndSplitter2 && pWndSplitter2->GetSafeHwnd());
 
 			SVIPSplitterFrame* pFrame = dynamic_cast<SVIPSplitterFrame*>(pWndSplitter2->GetParent());
-			if (nullptr != pFrame)
+			if (nullptr != pFrame && nullptr != pFrame->GetSafeHwnd())
 			{
-				CRuntimeClass* pClass = pFrame->GetRuntimeClass();
-				assert(_T("SVIPSplitterFrame") == std::string(pClass->m_lpszClassName));	UNREFERENCED_PARAMETER(pClass);
-
-				if (pFrame->GetSafeHwnd())
-				{
-					pFrame->GetWindowPlacement(&wndpl);
-				}
+				pFrame->GetWindowPlacement(&wndpl);
 			}
 		}
 	}
@@ -2794,18 +2814,12 @@ bool SVIPDoc::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle htiPar
 
 					SVIPSplitterFrame* pFrame = dynamic_cast<SVIPSplitterFrame*>(pWndSplitter2->GetParent());
 
-					if (nullptr != pFrame)
+					if (nullptr != pFrame && nullptr != pFrame->GetSafeHwnd())
 					{
-						CRuntimeClass* pClass = pFrame->GetRuntimeClass();
-						assert(_T("SVIPSplitterFrame") == std::string(pClass->m_lpszClassName)); UNREFERENCED_PARAMETER(pClass);
-
-						if (pFrame->GetSafeHwnd())
-						{
-							bOk = pFrame->SetWindowPlacement(&wndpl) ? true : false; // WINDOWPLACEMENT* lpwndpl
-						}// end if
+						bOk = pFrame->SetWindowPlacement(&wndpl) ? true : false;
 					}
-				} // if(pWndSplitter && pWndSplitter->GetSafeHwnd())
-			} // if( View.pToolSetView && View.pToolSetView->GetSafeHwnd() )
+				}
+			}
 		} 
 	}
 
@@ -2847,37 +2861,30 @@ bool SVIPDoc::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle htiPar
 							for (long lNumberOfViews = 0; lNumberOfViews < lViewNumber; lNumberOfViews++)
 							{
 								View.pView = GetNextView(vPos);
-								if (!View.pView)
+								if (nullptr == View.pView)
 								{
 									break;  // if there are not enough views, exit the loop
 								}
 							}
 
-							// if there were not enough views or the view found is the
-							// wrong class, find the first matching view
-							if (!View.pView ||
-								Name.compare(View.pView->GetRuntimeClass()->m_lpszClassName))
+							std::string viewClassName = getViewClassName(View.pView);
+							if (viewClassName != Name)
 							{
-								vPos = GetFirstViewPosition();
-								while (nullptr != (View.pView = GetNextView(vPos)) &&
-									(Name.compare(View.pView->GetRuntimeClass()->m_lpszClassName)));
+								viewClassName.clear();
 							}
 
-							if (nullptr != View.pView)  // this should never fail, but if it does, we'll try to continue
+							if (nullptr != View.pView && false == viewClassName.empty() && cSVImageViewName != viewClassName)
 							{
-								if (View.pView->IsKindOf(RUNTIME_CLASS(SVImageViewScroll)))
+								//Note Image View scroll saves also the Image view parameters
+								if (cSVImageViewScrollName == viewClassName)
 								{
 									bOk = View.pImageScroll->SetParameters(rTree, htiItem);
 								}
-								else if (View.pView->IsKindOf(RUNTIME_CLASS(SVImageView)))
-								{
-									bOk = View.pImageView->SetParameters(rTree, htiItem);
-								}
-								else if (View.pView->IsKindOf(RUNTIME_CLASS(ToolSetView)))
+								else if (cToolSetViewName == viewClassName)
 								{
 									bOk = View.pToolSetView->SetParameters(rTree, htiItem);
 								}
-								else if (View.pView->IsKindOf(RUNTIME_CLASS(ResultTabbedView)))
+								else if (cResultTabbedViewName == viewClassName)
 								{
 									bOk = View.pResultView->SetParameters(rTree, htiItem);
 								}
@@ -2914,31 +2921,24 @@ bool SVIPDoc::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle htiPar
 									break;  // if there are not enough views, exit the loop
 							}
 
-							// if there were not enough views or the view found is the
-							// wrong class, find the first matching view
-							if (!View.pView ||
-								Name.compare(View.pView->GetRuntimeClass()->m_lpszClassName))
+							std::string viewClassName = getViewClassName(View.pView);
+							if (viewClassName != Name)
 							{
-								vPos = GetFirstViewPosition();
-								while (nullptr != (View.pView = GetNextView(vPos)) &&
-									(Name.compare(View.pView->GetRuntimeClass()->m_lpszClassName)));
+								viewClassName.clear();
 							}
 
-							if (nullptr != View.pView)  // this should never fail, but if it does, we'll try to continue
+							if (nullptr != View.pView && false == viewClassName.empty() && cSVImageViewName != viewClassName)
 							{
-								if (View.pView->IsKindOf(RUNTIME_CLASS(SVImageViewScroll)))
+								//Note Image View scroll saves also the Image view parameters
+								if (cSVImageViewScrollName == viewClassName)
 								{
 									bOk = View.pImageScroll->CheckParameters(rTree, htiItem);
 								}
-								else if (View.pView->IsKindOf(RUNTIME_CLASS(SVImageView)))
-								{
-									bOk = View.pImageView->CheckParameters(rTree, htiItem);
-								}
-								else if (View.pView->IsKindOf(RUNTIME_CLASS(ToolSetView)))
+								else if (cToolSetViewName == viewClassName)
 								{
 									bOk = View.pToolSetView->CheckParameters(rTree, htiItem);
 								}
-								else if (View.pView->IsKindOf(RUNTIME_CLASS(ResultTabbedView)))
+								else if (cResultTabbedViewName == viewClassName)
 								{
 									bOk = View.pResultView->CheckParameters(rTree, htiItem);
 								}

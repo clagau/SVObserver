@@ -15,8 +15,6 @@
 
 namespace SvMc
 {
-	IMPLEMENT_DYNAMIC(SVKnobControl, CStatic)
-
 	SVKnobControl::SVKnobControl(long minTimerInterval_ms, long maxTimerInterval_ms) :
 		CStatic(),
 		m_dragging(false),

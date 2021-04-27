@@ -24,8 +24,6 @@
 
 class SVPictureTabs : public CDialog
 {
-	DECLARE_DYNAMIC(SVPictureTabs)
-
 public:
 #pragma region Constructor
 	SVPictureTabs(CWnd* pParent = nullptr);

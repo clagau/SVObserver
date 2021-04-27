@@ -42,8 +42,6 @@ namespace SvMc
 	constexpr char ButtonContinue[] = _T("Continue");
 	#pragma endregion Declarations
 
-	IMPLEMENT_DYNAMIC(DisplayMessageBox, CDialog)
-
 	BEGIN_MESSAGE_MAP(DisplayMessageBox, CDialog)
 		ON_CONTROL_RANGE(BN_CLICKED, ID_BUTTON1, ID_BUTTON3, &DisplayMessageBox::OnBnClickedButton)
 		ON_WM_CTLCOLOR()

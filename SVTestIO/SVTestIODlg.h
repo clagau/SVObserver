@@ -25,8 +25,6 @@ const int c_upperBoundForOutputChannel = 17;
 
 class SVTestIODlg : public CDialog, public SvTrig::IODeviceBase
 {
-	DECLARE_DYNAMIC(SVTestIODlg)
-
 public:
 	SVTestIODlg(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~SVTestIODlg();

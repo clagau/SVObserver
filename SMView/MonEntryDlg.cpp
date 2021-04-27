@@ -11,8 +11,6 @@
 
 
 
-IMPLEMENT_DYNAMIC(MonEntryDlg, CDialog)
-
 MonEntryDlg::MonEntryDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(MonEntryDlg::IDD, pParent)
 		, m_Name(_T(""))

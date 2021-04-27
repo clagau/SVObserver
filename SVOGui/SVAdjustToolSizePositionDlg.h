@@ -22,7 +22,6 @@ namespace SvOg
 {
 class SVAdjustToolSizePositionDlg : public CDialog
 {
-	DECLARE_DYNCREATE(SVAdjustToolSizePositionDlg)
 #pragma region Constructor
 public:
 	SVAdjustToolSizePositionDlg(uint32_t inspectionId, uint32_t taskObjectId, LPCTSTR pszCaption, CWnd* pParentWnd = nullptr);

@@ -12,8 +12,6 @@
 #include "SVSharedMemoryLibrary\MonitorListCpy.h"
 #include "MonEntryDlg.h"
 
-IMPLEMENT_DYNAMIC(MonitorListDlg, CDialog)
-
 LPCTSTR MonitorListDlg::ColHeader[] = { _T("List"),_T("Name"),_T("Type"), _T("Size")};
 DWORD MonitorListDlg::ColHeaderWidth[] = {40,300,80, 80};
 

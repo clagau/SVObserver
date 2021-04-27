@@ -44,8 +44,6 @@ enum SVShiftResultEnum
 
 class SVTADlgTranslationShiftPage : public CPropertyPage
 {
-//	DECLARE_DYNAMIC(SVTADlgTranslationShiftPage)
-
 public:
 	SVTADlgTranslationShiftPage( uint32_t inspectionId, uint32_t taskObjectId, SVToolAdjustmentDialogSheetClass* Parent );
 	virtual ~SVTADlgTranslationShiftPage();

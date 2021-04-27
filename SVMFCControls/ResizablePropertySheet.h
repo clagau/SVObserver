@@ -22,10 +22,6 @@ namespace SvMc
 {
 	class ResizablePropertySheet : public CPropertySheet
 	{
-	#pragma region Declarations
-		DECLARE_DYNAMIC(ResizablePropertySheet)
-	#pragma endregion Declarations
-
 	public:
 	#pragma region Constructor
 		ResizablePropertySheet();

@@ -24,8 +24,6 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-IMPLEMENT_DYNAMIC(SVDataDefinitionSheet, CPropertySheet)
-
 BEGIN_MESSAGE_MAP(SVDataDefinitionSheet, CPropertySheet)
 	ON_COMMAND(IDOK,OnOK)
 END_MESSAGE_MAP()

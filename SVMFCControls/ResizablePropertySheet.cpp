@@ -27,8 +27,6 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvMc
 {
-	IMPLEMENT_DYNAMIC(ResizablePropertySheet, CPropertySheet)
-
 	BEGIN_MESSAGE_MAP(ResizablePropertySheet, CPropertySheet)
 		//{{AFX_MSG_MAP(ResizablePropertySheet)
 		ON_WM_SIZE()

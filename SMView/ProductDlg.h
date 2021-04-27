@@ -14,7 +14,6 @@
 
 class ProductDlg : public CDialog
 {
-	DECLARE_DYNAMIC(ProductDlg)
 public:
 	explicit ProductDlg(SvSml::MLProduct* pProduct, CWnd* pParent = NULL);
 	explicit ProductDlg(SvSml::vecpProd *pFailstatus, CWnd* pParent = NULL);

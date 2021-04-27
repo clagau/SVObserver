@@ -23,8 +23,6 @@ static char THIS_FILE[] = __FILE__;
 // SVBarCodeProperties
 namespace SvOg
 {
-	IMPLEMENT_DYNAMIC(SVBarCodeProperties, CPropertySheet)
-
 		SVBarCodeProperties::SVBarCodeProperties(uint32_t inspectionId, uint32_t analyzerId, uint32_t resultId, UINT nIDCaption, CWnd* pParentWnd, UINT iSelectPage)
 		:CPropertySheet(nIDCaption, pParentWnd, iSelectPage)
 		, m_inspectionId(inspectionId)

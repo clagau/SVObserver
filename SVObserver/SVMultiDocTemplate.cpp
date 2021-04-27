@@ -94,6 +94,4 @@ void SVMultiDocTemplate::AssertValid() const
 #pragma code_seg(AFX_INIT_SEG)
 #endif
 
-IMPLEMENT_DYNAMIC( SVMultiDocTemplate, CMultiDocTemplate )
-
 /////////////////////////////////////////////////////////////////////////////

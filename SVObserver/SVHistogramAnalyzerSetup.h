@@ -23,7 +23,6 @@ class SVHistogramAnalyzer;
 
 class SVSquare: public CStatic
 {
-	DECLARE_DYNAMIC(SVSquare)
 public:
 	SVSquare():CStatic(), m_color(SvDef::Aqua)
 	{
@@ -43,7 +42,6 @@ private:
 
 class SVHistogramAnalyzerSetup : public CDialog
 {
-//	DECLARE_DYNAMIC(SVHistogramAnalyzerSetup)
 public:
 	SvAo::SVHistogramAnalyzer* m_pAnalyzer;
 

@@ -16,8 +16,6 @@
 
 namespace SvMc
 {
-	IMPLEMENT_DYNAMIC(SVDlgFolder, SVFileDialog)
-
 		WNDPROC SVDlgFolder::m_wndProc = nullptr;
 
 	SVDlgFolder::SVDlgFolder(bool bFullAccess, LPCTSTR initialDir) 

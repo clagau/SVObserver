@@ -13,8 +13,6 @@
 
 class SVPatAnalyzeSetupDlgSheet : public CPropertySheet
 {
-	DECLARE_DYNAMIC(SVPatAnalyzeSetupDlgSheet)
-
 public:
 	explicit SVPatAnalyzeSetupDlgSheet(UINT nIDCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
 	explicit SVPatAnalyzeSetupDlgSheet(LPCTSTR pszCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);

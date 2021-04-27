@@ -18,8 +18,6 @@
 
 // SVArchiveHeaderEditDlg dialog
 
-IMPLEMENT_DYNAMIC(SVArchiveHeaderEditDlg, CDialog)
-
 SVArchiveHeaderEditDlg::SVArchiveHeaderEditDlg(CWnd* pParent /*=nullptr*/)
 	: CDialog(SVArchiveHeaderEditDlg::IDD, pParent)
 	,m_pEdit(nullptr)

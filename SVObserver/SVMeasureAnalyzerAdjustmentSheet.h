@@ -15,8 +15,6 @@ class SVIPDoc;
 
 class SVMeasureAnalyzerAdjustmentSheet : public CPropertySheet
 {
-	DECLARE_DYNAMIC(SVMeasureAnalyzerAdjustmentSheet)
-
 protected:
 	//{{AFX_MSG(SVMeasureAnalyzerAdjustmentSheet)
 	afx_msg void OnDestroy();

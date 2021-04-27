@@ -182,8 +182,6 @@ void SVPPQEntryDialogCameraPageClass::OnOK()
 
 }// end OnOk
 
-IMPLEMENT_DYNAMIC(SVPPQEntryDialogPropertySheetClass, CPropertySheet)
-
 SVPPQEntryDialogPropertySheetClass::SVPPQEntryDialogPropertySheetClass(UINT nIDCaption, CWnd* pParentWnd, UINT iSelectPage)
 	:CPropertySheet(nIDCaption, pParentWnd, iSelectPage)
 {

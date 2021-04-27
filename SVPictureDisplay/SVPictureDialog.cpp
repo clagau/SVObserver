@@ -25,8 +25,6 @@ static char THIS_FILE[] = __FILE__;
 #pragma endregion Declarations
 
 
-IMPLEMENT_DYNAMIC(SVPictureDialog, CDialog)
-
 SVPictureDialog::SVPictureDialog( long p_lTab, AppearanceTypes p_lAppearance )
 : CDialog( SVPictureDialog::IDD )
 , m_ButtonSize(40)

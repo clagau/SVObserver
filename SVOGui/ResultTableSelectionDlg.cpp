@@ -23,7 +23,6 @@ namespace SvOg
 	BEGIN_MESSAGE_MAP(ResultTableSelectionDlg, CDialog)
 	END_MESSAGE_MAP()
 
-	IMPLEMENT_DYNAMIC(ResultTableSelectionDlg, CDialog)
 	#pragma endregion Declarations
 
 	#pragma region Constructor

@@ -17,8 +17,6 @@ DWORD ProductDlg::ColHeaderWidth[] = { 40,400,40, 40,40,100 };
 
 // ProductDlg dialog
 
-IMPLEMENT_DYNAMIC(ProductDlg, CDialog)
-
 ProductDlg::ProductDlg(SvSml::MLProduct* pProduct, CWnd* pParent /*=NULL*/)
 	: CDialog(IDD_PRODUCT_DLG, pParent)
 {

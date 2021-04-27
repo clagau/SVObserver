@@ -21,8 +21,6 @@ static char THIS_FILE[] = __FILE__;
 //
 static CPoint gPtPosition(0,0);
 
-IMPLEMENT_DYNAMIC(SVMeasureAnalyzerAdjustmentSheet, CPropertySheet)
-
 SVMeasureAnalyzerAdjustmentSheet::SVMeasureAnalyzerAdjustmentSheet(UINT nIDCaption, CWnd* pParentWnd, UINT iSelectPage)
 	:CPropertySheet(nIDCaption, pParentWnd, iSelectPage)
 {

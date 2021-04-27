@@ -25,8 +25,6 @@
 // SVTADlgTranslationShiftPage dialog
 
 // Put in by the wizard but not needed.
-//IMPLEMENT_DYNAMIC(SVTADlgTranslationShiftPage, CPropertyPage)
-
 enum {IDC_SHIFT_VALUE_TRUE = 100};
 #pragma endregion Declarations
 

@@ -36,8 +36,6 @@ public:
 	virtual BOOL OnInitDialog() override;
 
 protected:
-	DECLARE_DYNAMIC(SVLightReferenceDialogPropertySheetClass)
-
 	//{{AFX_MSG(SVLightReferenceDialogPropertySheetClass)
 	afx_msg void OnClose();
 	//}}AFX_MSG

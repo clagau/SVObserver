@@ -77,8 +77,6 @@ private:
 
 class SoftwareTriggerDlg : public CDialog
 {
-	DECLARE_DYNAMIC(SoftwareTriggerDlg)
-
 	SoftwareTriggerDlg(CWnd* pParent = nullptr);   // standard constructor
 public:
 	virtual ~SoftwareTriggerDlg();

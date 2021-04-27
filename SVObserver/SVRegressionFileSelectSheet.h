@@ -18,8 +18,6 @@
 
 class SVRegressionFileSelectSheet : public CPropertySheet
 {
-	DECLARE_DYNAMIC(SVRegressionFileSelectSheet)
-
 // Construction
 public:
 	explicit SVRegressionFileSelectSheet(UINT nIDCaption, uint32_t inspectionID, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);

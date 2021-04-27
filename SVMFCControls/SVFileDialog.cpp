@@ -91,8 +91,6 @@ namespace SvMc
 		return CWnd::WindowProc(message, wParam, lParam);
 	}
 
-	IMPLEMENT_DYNAMIC(SVFileDialog, CFileDialog)
-
 		SVFileDialog::SVFileDialog(BOOL bOpenFileDialog, bool bFullAccess, LPCTSTR lpszDefExt, LPCTSTR lpszFileName, DWORD dwFlags, LPCTSTR lpszFilter, CWnd* pParentWnd) 
 		: CFileDialog(bOpenFileDialog, lpszDefExt, lpszFileName, dwFlags, lpszFilter, pParentWnd, 0, false)
 		, m_bFullAccess(bFullAccess)

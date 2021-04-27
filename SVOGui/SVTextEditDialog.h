@@ -19,9 +19,6 @@ namespace SvOg
 	class SVTextEditDialog : public CDialog
 	{
 		enum { IDD = IDD_TEXT_EDIT };
-
-		DECLARE_DYNAMIC(SVTextEditDialog)
-
 	#pragma region Constructor
 	public:
 		//************************************

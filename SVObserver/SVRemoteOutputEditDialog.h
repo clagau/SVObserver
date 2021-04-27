@@ -22,8 +22,6 @@ class SVRemoteOutputObject;
 
 class SVRemoteOutputEditDialog : public CDialog
 {
-	DECLARE_DYNAMIC(SVRemoteOutputEditDialog)
-
 	public:
 	enum { IDD = IDD_REMOTE_OUTPUT_EDIT };
 	std::string  m_GroupName;

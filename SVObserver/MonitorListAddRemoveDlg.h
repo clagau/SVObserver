@@ -16,8 +16,6 @@
 
 class MonitorListAddRemoveDlg : public CDialog
 {
-	DECLARE_DYNAMIC(MonitorListAddRemoveDlg)
-
 #pragma region Public Methods
 public:
 	MonitorListAddRemoveDlg(const RemoteMonitorListMap& rMonitorList, const PPQNameListNames& rList, CWnd* pParent = nullptr);   // standard constructor

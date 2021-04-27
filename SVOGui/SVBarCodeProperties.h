@@ -23,8 +23,6 @@ namespace SvOg
 {
 	class SVBarCodeProperties : public CPropertySheet
 	{
-		DECLARE_DYNAMIC(SVBarCodeProperties)
-
 	public:
 		SVBarCodeProperties(uint32_t inspectionId, uint32_t analyzerId, uint32_t resultId, UINT nIDCaption = IDS_DIALOG_TITLE_BARCODEPROPERTIES, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
 		virtual ~SVBarCodeProperties();

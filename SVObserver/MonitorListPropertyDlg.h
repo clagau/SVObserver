@@ -30,8 +30,6 @@ enum MonitorListPropertyEnum
 
 class MonitorListPropertyDlg : public CDialog
 {
-	DECLARE_DYNAMIC(MonitorListPropertyDlg)
-
 #pragma region Public
 public:
 	MonitorListPropertyDlg(RemoteMonitorListMap& MonitorList, LPCTSTR Name, CWnd* pParent = nullptr);   // standard constructor

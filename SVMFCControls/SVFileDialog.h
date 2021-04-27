@@ -38,8 +38,6 @@ namespace SvMc
 
 	class SVFileDialog : public CFileDialog
 	{
-		DECLARE_DYNAMIC(SVFileDialog)
-
 	public:
 		SVFileDialog(BOOL bOpenFileDialog, // TRUE for FileOpen, FALSE for FileSaveAs
 			bool bFullAccess,

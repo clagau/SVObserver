@@ -15,8 +15,6 @@ namespace SvOg
 
 	class BlobAnalyzer2Sheet : public CPropertySheet
 	{
-		DECLARE_DYNAMIC(BlobAnalyzer2Sheet)
-
 		//{{AFX_VIRTUAL(BlobAnalyzer2Sheet)
 	public:
 		virtual BOOL OnInitDialog() override;

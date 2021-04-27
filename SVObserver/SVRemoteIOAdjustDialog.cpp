@@ -12,8 +12,6 @@
 #include "stdafx.h"
 #include "SVRemoteIOAdjustDialog.h"
 
-IMPLEMENT_DYNAMIC(SVRemoteIOAdjustDialog, CDialog)
-
 BEGIN_MESSAGE_MAP(SVRemoteIOAdjustDialog, CDialog)
 END_MESSAGE_MAP()
 

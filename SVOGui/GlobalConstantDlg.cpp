@@ -31,7 +31,6 @@ namespace SvOg
 	BEGIN_MESSAGE_MAP(GlobalConstantDlg, CDialog)
 	END_MESSAGE_MAP()
 
-	IMPLEMENT_DYNAMIC(GlobalConstantDlg, CDialog)
 	#pragma endregion Declarations
 
 	#pragma region Constructor

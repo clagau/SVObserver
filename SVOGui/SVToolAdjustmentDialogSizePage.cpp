@@ -26,7 +26,6 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvOg
 {
-IMPLEMENT_DYNAMIC(SVToolAdjustmentDialogSizePage, CPropertyPage)
 
 SVToolAdjustmentDialogSizePage::SVToolAdjustmentDialogSizePage(uint32_t inspectionId, uint32_t taskObjectId)
 : CPropertyPage(SVToolAdjustmentDialogSizePage::IDD)

@@ -13,8 +13,6 @@
 //! MonitorLIstDlg dialog  to Display Entries of one Monitorlist 
 class MonitorListDlg : public CDialog
 {
-	DECLARE_DYNAMIC(MonitorListDlg)
-
 public:
 	enum ECOL {List =0, Name, Type, ECOL_Size };
 	static LPCTSTR ColHeader[ECOL_Size+1];
