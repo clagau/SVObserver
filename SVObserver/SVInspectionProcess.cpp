@@ -109,7 +109,8 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed)
 		m_processActive = true;
 		{
 			std::lock_guard<std::mutex>  Autolock(m_inspectionMutex);
-			std::swap(product, m_product);
+			product = std::move(m_product);
+			m_product.Reset();
 		}
 		if (false == product.m_triggered)
 		{
@@ -940,7 +941,7 @@ HRESULT SVInspectionProcess::StartProcess(SVProductInfoStruct* pProduct)
 	{
 		{
 			std::lock_guard<std::mutex>  Autolock(m_inspectionMutex);
-			m_product = *pProduct;
+			m_product = pProduct->copyInspectionToNewProduct(getObjectId());
 		}
 		SVObjectManagerClass::Instance().IncrementInspectionIndicator();
 		result = m_AsyncProcedure.Signal(nullptr);

@@ -191,16 +191,9 @@ HRESULT SVProductInfoStruct::Assign( const SVProductInfoStruct &rData, bool shou
 
 		m_svInspectionInfos.clear();
 
-		if (!shouldSkipIPInfo)
+		if (false == shouldSkipIPInfo)
 		{
-			ObjectIdSVInspectionInfoStructMap::const_iterator l_InspectIter = rData.m_svInspectionInfos.begin();
-
-			while (l_InspectIter != rData.m_svInspectionInfos.end())
-			{
-				m_svInspectionInfos[l_InspectIter->first] = l_InspectIter->second;
-
-				++l_InspectIter;
-			}
+			m_svInspectionInfos = rData.m_svInspectionInfos;
 		}
 
 		if( rData.IsProductActive() )
@@ -210,6 +203,21 @@ HRESULT SVProductInfoStruct::Assign( const SVProductInfoStruct &rData, bool shou
 	}
 
 	return l_Status;
+}
+
+SVProductInfoStruct SVProductInfoStruct::copyInspectionToNewProduct(uint32_t iPId)
+{
+	SVProductInfoStruct result;
+
+	result.Assign(*this, true);
+	auto ipIter = m_svInspectionInfos.find(iPId);
+	if (m_svInspectionInfos.end() != ipIter)
+	{
+		result.m_svInspectionInfos[ipIter->first] = ipIter->second;
+		ipIter->second.m_triggerRecordWrite = nullptr;
+	}
+	return result;
+
 }
 
 bool SVProductInfoStruct::empty() const

@@ -132,6 +132,8 @@ struct SVProductInfoStruct
 	/// \returns HRESULT
 	HRESULT Assign( const SVProductInfoStruct &p_rsvData, bool shouldSkipIPInfo = false );
 
+	SVProductInfoStruct copyInspectionToNewProduct(uint32_t iPId);
+
 	bool empty() const;
 
 	void InitProductInfo();
