@@ -430,8 +430,10 @@ int SVRegressionFileSelectSheet::FillFileListFromDirectory(RegressionTestStruct&
 		}
 		count++;
 	}
-
-	rStruct.fileSortRange.emplace_back(firstFile, fileFinder.GetFilePath());
+	if (false == firstFile.empty())
+	{
+		rStruct.fileSortRange.emplace_back(firstFile, fileFinder.GetFilePath());
+	}
 	if (RegressionFileEnum::RegSubDirectories == rStruct.iFileMethod)
 	{
 		fileMask = rCurrentPath + _T("\\*");
