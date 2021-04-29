@@ -1621,6 +1621,7 @@ void SVObserverApp::OnExtrasSecuritySetup()
 
 void SVObserverApp::OnAuditTrailDefaultFiles()
 {
+	SVSVIMStateClass::AddState(SV_STATE_EDITING);
 	SVConfigurationObject* pConfig(nullptr);
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 	if ((nullptr != pConfig))
@@ -1629,6 +1630,7 @@ void SVObserverApp::OnAuditTrailDefaultFiles()
 	}
 	else
 	{
+		SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 		return;
 	}
 	SvOg::AuditFilesDialog Dlg(pConfig->GetAuditDefaultList(), SvOg::AuditFilesDialog::EDefault);
@@ -1637,10 +1639,12 @@ void SVObserverApp::OnAuditTrailDefaultFiles()
 		pConfig->SetAuditDefaultList(std::move(Dlg.GetFiles()));
 		SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
 	}
+	SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 }
 
 void SVObserverApp::OnAuditTrailAdditionalFiles()
 {
+	SVSVIMStateClass::AddState(SV_STATE_EDITING);
 	SVConfigurationObject* pConfig(nullptr);
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 	if ((nullptr != pConfig))
@@ -1649,6 +1653,7 @@ void SVObserverApp::OnAuditTrailAdditionalFiles()
 	}
 	else
 	{
+		SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 		return;
 	}
 	SvOg::AuditFilesDialog Dlg(pConfig->GetAuditWhiteList(), SvOg::AuditFilesDialog::WhiteList);
@@ -1657,6 +1662,7 @@ void SVObserverApp::OnAuditTrailAdditionalFiles()
 		pConfig->SetAuditWhiteList(std::move(Dlg.GetFiles()));
 		SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
 	}
+	SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 }
 
 void SVObserverApp::OnModeEdit()
