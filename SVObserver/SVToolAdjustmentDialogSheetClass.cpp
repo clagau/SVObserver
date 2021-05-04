@@ -80,8 +80,8 @@ BEGIN_MESSAGE_MAP(SVToolAdjustmentDialogSheetClass, CPropertySheet)
 	//{{AFX_MSG_MAP(SVToolAdjustmentDialogSheetClass)
 	ON_WM_DESTROY()
 	ON_COMMAND(IDOK, OnOK)
-	ON_MESSAGE(SV_REMOVE_PAGES_FOR_TESTED_DLL, RemovePagesForTestedExternalTool)
-	ON_MESSAGE(SV_ADD_PAGES_FOR_TESTED_DLL, AddPagesForTestedExternalTool)
+	ON_MESSAGE(SV_REMOVE_PAGES_FOR_TESTED_DLL, ExternalToolShowOnlyPagesForUntestedDll)
+	ON_MESSAGE(SV_ADD_PAGES_FOR_TESTED_DLL, ExternalToolShowAllPages)
 	
 	ON_WM_SYSCOMMAND()
 	//}}AFX_MSG_MAP
@@ -378,7 +378,6 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 
 		case SvPb::SVObjectSubTypeEnum::SVExternalToolObjectType:
 			AddPage(new SVTADlgExternalSelectDllPage(m_InspectionID, m_TaskObjectID, this));
-			AddAdditionalPagesForExternalTool(false);
 			break;
 
 		case SvPb::SVObjectSubTypeEnum::SVRingBufferToolObjectType:
@@ -618,8 +617,19 @@ void SVToolAdjustmentDialogSheetClass::OnSysCommand(UINT nID, LPARAM lParam)
 }
 
 
-LRESULT SVToolAdjustmentDialogSheetClass::AddPagesForTestedExternalTool(WPARAM, LPARAM)
+void SVToolAdjustmentDialogSheetClass::ExternalToolRetainOnlySelectDllPage()
 {
+	while (GetPageCount() > 1) // if the external DLL is uninitialized only the first page ("Select External DLL")
+							   // plus the "additional pages" "Conditional", "General" (which will be added elsewhere) should be displayed
+	{
+		RemovePage(1);
+	}
+}
+
+LRESULT SVToolAdjustmentDialogSheetClass::ExternalToolShowAllPages(WPARAM, LPARAM)
+{
+	ExternalToolRetainOnlySelectDllPage();
+
 	AddPage(new SvOg::SVExternalToolImageSelectPage(m_InspectionID, m_TaskObjectID));
 	AddPage(new SVTADlgExternalInputSelectPage(_T("Input Values"), m_InspectionID, m_TaskObjectID));
 	AddPage(new SVTADlgExternalResultPage(_T("Result Values"), m_InspectionID, m_externalToolTaskController.getExternalToolTaskObjectId()));
@@ -629,13 +639,11 @@ LRESULT SVToolAdjustmentDialogSheetClass::AddPagesForTestedExternalTool(WPARAM, 
 }
 
 
-LRESULT SVToolAdjustmentDialogSheetClass::RemovePagesForTestedExternalTool(WPARAM, LPARAM)
+LRESULT SVToolAdjustmentDialogSheetClass::ExternalToolShowOnlyPagesForUntestedDll(WPARAM, LPARAM)
 {
-	while (GetPageCount() > 1) //if the external DLL is uninitialized only the first page ("Select External DLL")
-							   // plus "Conditional", "General" and "Comment" (which will be added elsewhere) should be displayed
-	{
-		RemovePage(1);
-	}
+	ExternalToolRetainOnlySelectDllPage();
+
+	AddAdditionalPagesForExternalTool(false);
 	return S_OK;
 }
 

@@ -470,7 +470,7 @@ void SVTADlgExternalSelectDllPage::InitializeDll(bool jumpToInputPage, bool setD
 	catch (const SvStl::MessageContainer& e)
 	{
 		//if we arrive here, Initialization has failed
-		m_pSheet->AddAdditionalPagesForExternalTool(true);
+
 		// display all sub-errors in box
 		m_strStatus += _T("External DLL test failed!");
 		m_strStatus += cCRLF;

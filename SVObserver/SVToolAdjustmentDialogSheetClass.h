@@ -82,8 +82,9 @@ private:
 	ControllerPtr m_conditionalController;
 	ExternalToolTaskController m_externalToolTaskController;
 
-	LRESULT AddPagesForTestedExternalTool(WPARAM, LPARAM);
-	LRESULT RemovePagesForTestedExternalTool(WPARAM, LPARAM);
+	void ExternalToolRetainOnlySelectDllPage();
+	LRESULT ExternalToolShowAllPages(WPARAM, LPARAM);
+	LRESULT ExternalToolShowOnlyPagesForUntestedDll(WPARAM, LPARAM);
 };
 
 /// this is the postion at which the "Input Values" page will be found - if it is present at all, that is!
