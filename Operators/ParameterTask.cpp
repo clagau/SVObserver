@@ -258,6 +258,11 @@ namespace SvOp
 			}
 		}
 
+		for (int i = request.embeddedlist_size(); m_objects.size() > i; ++i)
+		{
+			m_objects[i]->SetObjectEmbedded(m_startEmbeddedIdValue + i, this, m_objects[i]->GetObjectName());
+		}
+
 		m_NumberOfObjects.SetValue(request.embeddedlist_size());
 		registerParameter();
 

@@ -619,8 +619,9 @@ namespace SvOg
 		bool bMoveDownEnable = false;
 		if (Selection.GetMinRow() == Selection.GetMaxRow())
 		{
-			bMoveUpEnable = (1 < Selection.GetMinRow() && Selection.GetMinRow() <= m_inputData.size());
-			bMoveDownEnable = (0 < Selection.GetMinRow() && Selection.GetMinRow() + 2 < m_Grid.GetRowCount());
+			int pos = Selection.GetMinRow(); //GetMaxRow identically
+			bMoveUpEnable = (1 < pos && pos <= m_inputData.size());
+			bMoveDownEnable = (0 < pos && pos + 1 < m_Grid.GetRowCount());
 		}
 
 		GetDlgItem(IDC_BUTTON_MOVEUP)->EnableWindow(bMoveUpEnable);

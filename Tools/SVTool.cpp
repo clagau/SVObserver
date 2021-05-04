@@ -302,7 +302,9 @@ bool SVToolClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure
 
 	if (areAuxExtentsAvailable())
 	{
-		m_AuxSourceImageInput.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::embedable, SvOi::SetAttributeType::OverwriteAttribute);
+		BOOL bEnabled{ false };
+		m_svUpdateAuxiliaryExtents.GetValue(bEnabled);
+		m_AuxSourceImageInput.SetObjectAttributesAllowed(bEnabled ? SvPb::audittrail | SvPb::embedable : SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
 	}
 	else
 	{

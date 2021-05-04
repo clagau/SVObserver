@@ -169,6 +169,15 @@ bool SVColorToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages
 			pErrorMessages->push_back(Msg);
 		}
 	}
+	else if (pInputImage->GetObjectSubType() != SvPb::SVImageColorType)
+	{
+		Result = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WrongInputImageType, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+			pErrorMessages->push_back(Msg);
+		}
+	}
 
 	CollectInputImageNames();
 
