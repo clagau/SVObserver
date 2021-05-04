@@ -3878,30 +3878,30 @@ HRESULT SVConfigurationObject::AttachAcqToTriggers()
 		if (bOk)
 		{
 			SvTrig::SVTriggerClass* pTriggerDevice = pTrigger->getDevice();
-			SVPPQObject* pPPQ = reinterpret_cast<SVPPQObject*>(pTrigger->GetParent());
-			if (nullptr != pTriggerDevice)
+			SVPPQObject* pPPQ = dynamic_cast<SVPPQObject*>(pTrigger->GetParent());
+			if (nullptr != pTriggerDevice && nullptr != pPPQ)
 			{
 				pTriggerDevice->clearAcquisitionTriggers();
-			}
-			int iDigNum = pTrigger->getDevice()->getDigitizerNumber();
-			if (nullptr != pPPQ && nullptr != pTriggerDevice && SvDef::TriggerType::SoftwareTrigger == pTrigger->getType())
-			{
-				SetupSoftwareTrigger(pTriggerDevice, iDigNum, pTrigger->GetSoftwareTriggerPeriod(), pPPQ);
-			}
-
-			// need to add acquisition trigger for File Acquisition
-			if (nullptr != pPPQ && nullptr != pTrigger->getDevice() && nullptr != pTrigger->getDevice()->getDLLTrigger())
-			{
-				SvIe::SVVirtualCameraPtrVector cameraVector = pPPQ->GetVirtualCameras();
-
-				for (auto* pCamera : cameraVector)
+				int iDigNum = pTriggerDevice->getDigitizerNumber();
+				if (SvDef::TriggerType::SoftwareTrigger == pTrigger->getType())
 				{
-					if (nullptr != pCamera)
+					SetupSoftwareTrigger(pTriggerDevice, iDigNum, pTrigger->GetSoftwareTriggerPeriod(), pPPQ);
+				}
+
+				// need to add acquisition trigger for File Acquisition
+				if (nullptr != pTriggerDevice->getDLLTrigger())
+				{
+					SvIe::SVVirtualCameraPtrVector cameraVector = pPPQ->GetVirtualCameras();
+
+					for (auto* pCamera : cameraVector)
 					{
-						///File acquisition require acquisition trigger
-						if (pCamera->IsFileAcquisition())
+						if (nullptr != pCamera)
 						{
-							pCamera->RegisterTrigger(pTrigger->getDevice());
+							///File acquisition require acquisition trigger
+							if (pCamera->IsFileAcquisition())
+							{
+								pCamera->RegisterTrigger(pTrigger->getDevice());
+							}
 						}
 					}
 				}

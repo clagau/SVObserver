@@ -631,6 +631,7 @@ bool SVPPQObject::DetachTrigger(SvTrig::SVTriggerObject* pTrigger)
 
 	if (bOk)
 	{
+		m_pTrigger->SetObjectOwner(nullptr);
 		bOk = m_pTrigger->UnregisterCallback();
 
 		m_pTrigger = nullptr;

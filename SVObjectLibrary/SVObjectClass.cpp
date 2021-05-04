@@ -396,20 +396,19 @@ Set new object owner using owner pointer.
 */
 bool SVObjectClass::SetObjectOwner(SVObjectClass* pNewOwner)
 {
-	// Check if object exists...
-	if (nullptr != pNewOwner)
+	assert(pNewOwner != this); // can't own yourself...
+
+	//First disconnect the previous owner
+	uint32_t objectId = m_ownerObjectInfo.getObjectId();
+	if (SvDef::InvalidObjectId != objectId)
 	{
-		assert(pNewOwner != this); // can't own yourself...
+		SVObjectManagerClass::Instance().disconnectDependency(objectId, getObjectId(), SvOl::JoinType::Owner);
+	}
 
-		//First disconnect the previous owner
-		uint32_t objectId = m_ownerObjectInfo.getObjectId();
-		if (SvDef::InvalidObjectId != objectId)
-		{
-			SVObjectManagerClass::Instance().disconnectDependency(objectId, getObjectId(), SvOl::JoinType::Owner);
-		}
-
-		m_ownerObjectInfo.SetObject(pNewOwner);
-		objectId = m_ownerObjectInfo.getObjectId();
+	m_ownerObjectInfo.SetObject(pNewOwner);
+	objectId = m_ownerObjectInfo.getObjectId();
+	if (SvDef::InvalidObjectId != objectId)
+	{
 		SVObjectManagerClass::Instance().connectDependency(objectId, getObjectId(), SvOl::JoinType::Owner);
 		return true;
 	}
