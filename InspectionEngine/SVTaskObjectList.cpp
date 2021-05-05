@@ -99,9 +99,9 @@ void SVTaskObjectListClass::fillObjectList(std::back_insert_iterator<std::vector
 	}
 }
 
-HRESULT SVTaskObjectListClass::ConnectToObject(const std::string& rInputName, uint32_t newID, SvPb::SVObjectTypeEnum objectType)
+HRESULT SVTaskObjectListClass::ConnectToObject(const std::string& rInputName, uint32_t newID, SvPb::SVObjectTypeEnum objectType /*= SvPb::SVNotSetObjectType*/, bool shouldResetObject /*= false*/)
 {
-	HRESULT result = __super::ConnectToObject(rInputName, newID, objectType);
+	HRESULT result = __super::ConnectToObject(rInputName, newID, objectType, shouldResetObject);
 	if (S_OK == result)
 	{
 		return S_OK;
@@ -111,7 +111,7 @@ HRESULT SVTaskObjectListClass::ConnectToObject(const std::string& rInputName, ui
 	{
 		if (m_TaskObjectVector[i])
 		{
-			result = m_TaskObjectVector[i]->ConnectToObject(rInputName, newID, objectType);
+			result = m_TaskObjectVector[i]->ConnectToObject(rInputName, newID, objectType, shouldResetObject);
 			if (S_OK == result)
 			{
 				return S_OK;

@@ -650,7 +650,7 @@ SvPb::InspectionCmdResponse connectToObject(SvPb::ConnectToObjectRequest request
 	SvOi::ITaskObject* pObject = dynamic_cast<SvOi::ITaskObject*> (SvOi::getObject(request.objectid()));
 	if(nullptr != pObject)
 	{
-		result.set_hresult(pObject->ConnectToObject(request.inputname(), request.newconnectedid(), request.objecttype()));
+		result.set_hresult(pObject->ConnectToObject(request.inputname(), request.newconnectedid(), request.objecttype(), true));
 	}
 	else
 	{

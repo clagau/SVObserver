@@ -918,14 +918,14 @@ SvStl::MessageContainerVector SVTaskObjectClass::getErrorMessages() const
 	return list;
 };
 
-HRESULT SVTaskObjectClass::ConnectToObject(const std::string& rInputName, uint32_t newID, SvPb::SVObjectTypeEnum objectType)
+HRESULT SVTaskObjectClass::ConnectToObject(const std::string& rInputName, uint32_t newID, SvPb::SVObjectTypeEnum objectType /*= SvPb::SVNotSetObjectType*/, bool shouldResetObject /*= false*/)
 {
 	for (size_t i = 0; i < m_friendList.size(); ++i)
 	{
 		const SVObjectInfoStruct& rFriend = m_friendList[i];
 		if (SVTaskObjectClass* pTaskObject = dynamic_cast<SVTaskObjectClass*>(rFriend.getObject()))
 		{
-			HRESULT result = pTaskObject->ConnectToObject(rInputName, newID, objectType);
+			HRESULT result = pTaskObject->ConnectToObject(rInputName, newID, objectType, shouldResetObject);
 			if (S_OK == result)
 			{
 				return result;
@@ -971,6 +971,14 @@ HRESULT SVTaskObjectClass::ConnectToObject(const std::string& rInputName, uint32
 				else
 				{
 					result = E_POINTER;
+				}
+			}
+			if (shouldResetObject && S_OK == result)
+			{
+				SVObjectClass* pTool = GetTool();
+				if (nullptr != pTool)
+				{
+					pTool->resetAllObjects();
 				}
 			}
 		}

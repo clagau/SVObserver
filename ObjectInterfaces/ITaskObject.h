@@ -50,7 +50,7 @@ namespace SvOi
 		/// \param newID [in] id of the new object connected to the input
 		/// \param objectType [in] Type of the new object (this type will be checked if it fit), if not set, it will not check and also tried to connected.
 		/// \returns HRESULT
-		virtual HRESULT ConnectToObject(const std::string& rInputName, uint32_t newID, SvPb::SVObjectTypeEnum objectType = SvPb::SVNotSetObjectType) = 0;
+		virtual HRESULT ConnectToObject(const std::string& rInputName, uint32_t newID, SvPb::SVObjectTypeEnum objectType = SvPb::SVNotSetObjectType, bool shouldResetObject = false) = 0;
 
 		/// Gets the list of error messages happen in offline modus and will be reset if object is reset.
 		/// \return a const reference to the message list
