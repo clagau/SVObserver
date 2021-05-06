@@ -22,7 +22,6 @@ public:
 
 	CString m_edtPrePath;
 	CString m_edtPostPath;
-	CString m_messageField;
 
 	enum ProcessPosition
 	{
@@ -43,9 +42,8 @@ protected:
 	afx_msg void OnBtnRemovePost();
 	afx_msg void OnEditPreTextfield();
 	afx_msg void OnEditPostTextfield();
-	void copyAndAddToConfig(std::string path, int preOrPost);
-	void createErrorMessage();
-	void clearTextfieldAndRemoveFromConfig(int preOrPost);
+	void addExecutionFileToConfig(std::string path, ProcessPosition preOrPost);
+	void clearTextfieldAndRemoveFromConfig(ProcessPosition preOrPost);
 
 	DECLARE_MESSAGE_MAP()
 private:

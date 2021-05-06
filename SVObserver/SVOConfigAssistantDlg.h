@@ -169,6 +169,9 @@ public:
 	void SetPreExecutionFilePath(LPCTSTR filepath) { m_preExecutionFilePath = filepath; };
 	void SetPostExecutionFilePath(LPCTSTR filepath) { m_postExecutionFilePath = filepath; };
 
+	std::string GetPreExecutionFilePath() { return m_preExecutionFilePath; };
+	std::string GetPostExecutionFilePath() { return m_postExecutionFilePath; };
+
 	// Dialog Data
 	//{{AFX_DATA(SVOConfigAssistantDlg)
 	enum { IDD = IDD_DLG_CONFIG_ASSISTANT };

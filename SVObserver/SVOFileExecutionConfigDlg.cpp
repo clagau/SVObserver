@@ -37,7 +37,6 @@ void SVOFileExecutionConfigDlg::DoDataExchange(CDataExchange* pDX)
 	CDialog::DoDataExchange(pDX);
 	DDX_Text(pDX, ID_PRE_FILE_EXEC, m_edtPrePath);
 	DDX_Text(pDX, ID_POST_FILE_EXEC, m_edtPostPath);
-	DDX_Text(pDX, IDC_FILE_EXEC_MESSAGE, m_messageField);
 }
 
 BEGIN_MESSAGE_MAP(SVOFileExecutionConfigDlg, CDialog)
@@ -58,31 +57,24 @@ BOOL SVOFileExecutionConfigDlg::OnInitDialog()
 	m_pParent = (SVOConfigAssistantDlg*)GetParent()->GetParent();
 	SetupList();
 
-	SetWindowContextHelpId(IDD + SvOr::HELPFILE_DLG_IDD_OFFSET);
-
-	SVConfigurationObject* pConfig(nullptr);
-	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-	if (pConfig != nullptr)
-	{
-		if (!pConfig->getPreRunExecutionFilePath().empty())
-		{
-			m_edtPrePath = std::filesystem::path(pConfig->getPreRunExecutionFilePath()).filename().c_str();
-		}
-
-		if (!pConfig->getPostRunExecutionFilePath().empty())
-		{
-			m_edtPostPath = std::filesystem::path(pConfig->getPostRunExecutionFilePath()).filename().c_str();
-		}
-	}
-
-	UpdateData(FALSE);
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // EXCEPTION: OCX Property Pages should return FALSE
 }
 
 void SVOFileExecutionConfigDlg::SetupList()
 {
+	SetWindowContextHelpId(IDD + SvOr::HELPFILE_DLG_IDD_OFFSET);
+	if (m_pParent->GetPreExecutionFilePath().empty() == false)
+	{
+		m_edtPrePath = std::filesystem::path(m_pParent->GetPreExecutionFilePath()).filename().c_str();
+	}
 
+	if (m_pParent->GetPostExecutionFilePath().empty() == false)
+	{
+		m_edtPostPath = std::filesystem::path(m_pParent->GetPostExecutionFilePath()).filename().c_str();
+	}
+
+	UpdateData(FALSE);
 }
 
 void SVOFileExecutionConfigDlg::OnBtnAddPre()
@@ -95,7 +87,7 @@ void SVOFileExecutionConfigDlg::OnBtnAddPre()
 	if (dlg.DoModal() == IDOK)
 	{
 		std::string PathName = dlg.GetPathName().GetString();
-		copyAndAddToConfig(PathName, SVOFileExecutionConfigDlg::ProcessPosition::PreRun);
+		addExecutionFileToConfig(PathName, SVOFileExecutionConfigDlg::ProcessPosition::PreRun);
 
 	}
 }
@@ -110,7 +102,7 @@ void SVOFileExecutionConfigDlg::OnBtnAddPost()
 	if (dlg.DoModal() == IDOK)
 	{
 		std::string PathName = dlg.GetPathName().GetString();
-		copyAndAddToConfig(PathName, SVOFileExecutionConfigDlg::ProcessPosition::PostRun);
+		addExecutionFileToConfig(PathName, SVOFileExecutionConfigDlg::ProcessPosition::PostRun);
 
 	}
 }
@@ -129,7 +121,7 @@ void SVOFileExecutionConfigDlg::OnEditPreTextfield()
 {
 	UpdateData(TRUE);
 	std::string PathName(m_edtPrePath);
-	copyAndAddToConfig(PathName, SVOFileExecutionConfigDlg::ProcessPosition::PreRun);
+	addExecutionFileToConfig(PathName, SVOFileExecutionConfigDlg::ProcessPosition::PreRun);
 	
 }
 
@@ -137,108 +129,47 @@ void SVOFileExecutionConfigDlg::OnEditPostTextfield()
 {
 	UpdateData(TRUE);
 	std::string PathName(m_edtPostPath);
-	copyAndAddToConfig(PathName, SVOFileExecutionConfigDlg::ProcessPosition::PostRun);
+	addExecutionFileToConfig(PathName, SVOFileExecutionConfigDlg::ProcessPosition::PostRun);
 }
 
-void SVOFileExecutionConfigDlg::copyAndAddToConfig(std::string path, int preOrPost)
+void SVOFileExecutionConfigDlg::addExecutionFileToConfig(std::string path, ProcessPosition preOrPost)
 {
-	m_messageField = "";
-
-	if (std::filesystem::exists(path))
-	{
-		SVConfigurationObject* pConfig(nullptr);
-		SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-		
-		if (pConfig != nullptr)
-		{
-			CString runDirectory = SvStl::GlobalPath::Inst().GetRunPath().c_str();
-			CString destinationPath = runDirectory + "\\";
-			destinationPath += std::filesystem::path(path).filename().c_str();
-		
-			if (SVOFileExecutionConfigDlg::ProcessPosition::PreRun == preOrPost)
-			{	
-				if (!pConfig->getPreRunExecutionFilePath().empty())
-				{
-					std::remove(pConfig->getPreRunExecutionFilePath().c_str());
-				}
-
-				pConfig->setPreRunExecutionFilePath(destinationPath);
-				m_edtPrePath = std::filesystem::path(path).filename().c_str();
-			}
-			else if (SVOFileExecutionConfigDlg::ProcessPosition::PostRun == preOrPost)
-			{
-				if (!pConfig->getPostRunExecutionFilePath().empty())
-				{
-					std::remove(pConfig->getPostRunExecutionFilePath().c_str());
-				}
-				pConfig->setPostRunExecutionFilePath(destinationPath);
-				m_edtPostPath = std::filesystem::path(path).filename().c_str();
-			}
-
-			::CopyFile(path.c_str(), destinationPath, false);
-			TheSVObserverApp.AddFileToConfig(destinationPath);
-		}
-	}
-
-	createErrorMessage();
-
-
-	UpdateData(FALSE);
-}
-
-void SVOFileExecutionConfigDlg::createErrorMessage()
-{
-	std::vector<std::string> missingFiles;
-	
 	CString runDirectory = SvStl::GlobalPath::Inst().GetRunPath().c_str();
 
-	std::string prePathName;
-	std::string postPathName;
+	if (path.find("\\") == std::string::npos)
+	{
+		runDirectory += "\\";
+		path = std::string(runDirectory) + path;
+	}
 
-	prePathName = m_edtPrePath.FindOneOf("\\") == -1 ?  runDirectory + "\\" + m_edtPrePath : m_edtPrePath;
-	postPathName = m_edtPostPath.FindOneOf("\\") == -1 ? runDirectory + "\\" + m_edtPostPath : m_edtPostPath;
-
-	m_pParent->SetPreExecutionFilePath(prePathName.c_str());
-	m_pParent->SetPostExecutionFilePath(postPathName.c_str());
+	if (ProcessPosition::PreRun == preOrPost)
+	{	
+		m_pParent->SetPreExecutionFilePath(path.c_str());
+		m_edtPrePath = std::filesystem::path(path).filename().c_str();
+	}
+	else if (ProcessPosition::PostRun == preOrPost)
+	{
+		m_pParent->SetPostExecutionFilePath(path.c_str());
+		m_edtPostPath = std::filesystem::path(path).filename().c_str();
+	}
 
 	m_pParent->ItemChanged(EXECUTION_DLG, "", ITEM_ACTION_REFRESH);
-
 	UpdateData(FALSE);
 }
 
-void SVOFileExecutionConfigDlg::clearTextfieldAndRemoveFromConfig(int preOrPost)
+void SVOFileExecutionConfigDlg::clearTextfieldAndRemoveFromConfig(ProcessPosition preOrPost)
 {
-	SVConfigurationObject* pConfig(nullptr);
-	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-
-	if (pConfig != nullptr)
-	{
-		CString runDirectory = SvStl::GlobalPath::Inst().GetRunPath().c_str();
-		CString filename = "";
-		
-		bool differnentExecutionFiles = pConfig->getPostRunExecutionFilePath() == pConfig->getPreRunExecutionFilePath();
-
 		if (SVOFileExecutionConfigDlg::ProcessPosition::PreRun == preOrPost)
 		{	
-			filename = m_edtPrePath;
+			m_pParent->SetPreExecutionFilePath("");
 			m_edtPrePath = "";
-			pConfig->setPreRunExecutionFilePath("");
 		}
 		else if (SVOFileExecutionConfigDlg::ProcessPosition::PostRun == preOrPost)
 		{
-			filename = m_edtPostPath;
+			m_pParent->SetPostExecutionFilePath("");
 			m_edtPostPath = "";
-			pConfig->setPostRunExecutionFilePath("");
-		}
-
-		if (differnentExecutionFiles)
-		{
-			CString fullPath = runDirectory + "\\" + filename;
-			std::remove(fullPath);
-			TheSVObserverApp.RemoveFileFromConfig(fullPath);
 		}
 		
 		UpdateData(FALSE);
-		createErrorMessage();
-	}
+		m_pParent->ItemChanged(EXECUTION_DLG, "", ITEM_ACTION_REFRESH);
 }

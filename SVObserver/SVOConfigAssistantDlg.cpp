@@ -50,6 +50,7 @@
 #include "Definitions/GlobalConst.h"
 #include "Definitions/TextDefineSvDef.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
+#include "SVStatusLibrary/GlobalPath.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -2454,6 +2455,62 @@ bool SVOConfigAssistantDlg::SendDataToConfiguration()
 	// the better solution is to have the acqs subscribe and the triggers provide
 	pConfig->AttachAcqToTriggers();
 
+	//POST/PRE Execution
+	//Save & copy filepath
+	if (pConfig != nullptr)
+	{
+		CString runDirectory = SvStl::GlobalPath::Inst().GetRunPath().c_str();
+
+		if (m_preExecutionFilePath.empty() == false && m_preExecutionFilePath != pConfig->getPreRunExecutionFilePath())
+		{
+			if (pConfig->getPreRunExecutionFilePath() != pConfig->getPostRunExecutionFilePath())
+			{
+				std::remove(pConfig->getPreRunExecutionFilePath().c_str());
+				TheSVObserverApp.RemoveFileFromConfig(pConfig->getPreRunExecutionFilePath().c_str());
+			}
+
+			CString destinationPath = runDirectory + "\\" + std::filesystem::path(m_preExecutionFilePath).filename().c_str();
+			::CopyFile(m_preExecutionFilePath.c_str(), destinationPath, false);
+			TheSVObserverApp.AddFileToConfig(destinationPath);
+			m_preExecutionFilePath = destinationPath;
+			pConfig->setPreRunExecutionFilePath(destinationPath);
+		}
+		else if (m_preExecutionFilePath.empty())
+		{
+			if (pConfig->getPreRunExecutionFilePath() != pConfig->getPostRunExecutionFilePath())
+			{
+				std::remove(pConfig->getPreRunExecutionFilePath().c_str());
+				TheSVObserverApp.RemoveFileFromConfig(pConfig->getPreRunExecutionFilePath().c_str());
+			}
+			pConfig->setPreRunExecutionFilePath(m_preExecutionFilePath.c_str());
+		}
+
+		if (m_postExecutionFilePath.empty() == false && m_postExecutionFilePath != pConfig->getPostRunExecutionFilePath())
+		{
+			if (pConfig->getPreRunExecutionFilePath() != pConfig->getPostRunExecutionFilePath())
+			{
+				std::remove(pConfig->getPostRunExecutionFilePath().c_str());
+				TheSVObserverApp.RemoveFileFromConfig(pConfig->getPostRunExecutionFilePath().c_str());
+			}
+
+			CString destinationPath = runDirectory + "\\" + std::filesystem::path(m_postExecutionFilePath).filename().c_str();
+			::CopyFile(m_postExecutionFilePath.c_str(), destinationPath, false);
+			TheSVObserverApp.AddFileToConfig(destinationPath);
+			m_postExecutionFilePath = destinationPath;
+			pConfig->setPostRunExecutionFilePath(destinationPath);
+		}
+		else if (m_postExecutionFilePath.empty())
+		{
+			if (pConfig->getPreRunExecutionFilePath() != pConfig->getPostRunExecutionFilePath())
+			{
+				std::remove(pConfig->getPostRunExecutionFilePath().c_str());
+				TheSVObserverApp.RemoveFileFromConfig(pConfig->getPostRunExecutionFilePath().c_str());
+			}
+			pConfig->setPostRunExecutionFilePath(m_postExecutionFilePath.c_str());
+		}
+	}
+	//
+
 	if ( m_bNewConfiguration )
 	{
 		pConfig->SetConfigurationLoaded();
@@ -2729,6 +2786,12 @@ bool SVOConfigAssistantDlg::GetConfigurationForExisting()
 		}
 	}
 	//end of load PPQ section...
+
+	//load Execution section...
+	m_preExecutionFilePath = pConfig->getPreRunExecutionFilePath();
+	m_postExecutionFilePath = pConfig->getPostRunExecutionFilePath();
+	//end of load Execution section..
+
 	m_TriggerPage.SetupList();
 	m_CameraPage.SetupList();
 	m_InspectionPage.SetupList();

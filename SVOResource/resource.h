@@ -2619,7 +2619,6 @@
 #define IDS_TRIGGER_TIMESTAMP           61485
 #define IDC_REMOVE_PRE_FILE_EXEC        61486
 #define IDC_REMOVE_POST_FILE_EXEC       61487
-#define IDC_FILE_EXEC_MESSAGE			61488
 
 // Next default values for new objects
 // 
