@@ -668,6 +668,23 @@ namespace SvVol
 		}
 	}
 
+	HRESULT LinkedValue::getValue(std::string& rValueString, int Index, const std::string& rFormatString) const
+	{
+		auto* pValue = dynamic_cast<SvOi::IValueObject*>(m_LinkedObjectRef.getFinalObject());
+		if (nullptr != pValue)
+		{
+			if (0 <= m_LinkedObjectRef.ArrayIndex())
+			{
+				Index = m_LinkedObjectRef.ArrayIndex();
+			}
+			return pValue->getValue(rValueString, Index, rFormatString);
+		}
+		else
+		{
+			return __super::getValue(rValueString, Index, rFormatString);
+		}
+	}
+
 	int32_t LinkedValue::getArraySize() const
 	{
 		if (nullptr != m_LinkedObjectRef.getObject())
