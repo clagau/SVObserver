@@ -31,6 +31,7 @@
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVSystemLibrary/SVEncodeDecodeUtilities.h"
 #include "SVSystemLibrary/SVVersionInfo.h"
+#include "SVUtilityLibrary/SVClock.h"
 #include "Triggering/SVTriggerClass.h"
 #include "Triggering/SVTriggerObject.h"
 #pragma endregion Includes
@@ -1165,6 +1166,7 @@ void SVRCCommand::SetTriggerConfig(const SvPb::SetTriggerConfigRequest& rRequest
 	response.set_hresult(result);
 	task.finish(std::move(response));
 }
+
 void SVRCCommand::GetConfigurationInfo(const SvPb::GetConfigurationInfoRequest&, SvRpc::Task<SvPb::GetConfigurationInfoResponse> task)
 {
 	HRESULT result{ CheckState() };
@@ -1182,6 +1184,66 @@ void SVRCCommand::GetConfigurationInfo(const SvPb::GetConfigurationInfoRequest&,
 
 	task.finish(std::move(Response));
 
+}
+
+void SVRCCommand::SoftwareTrigger(const SvPb::SoftwareTriggerRequest& rRequest, SvRpc::Task<SvPb::StandardResponse> task)
+{
+	HRESULT result{ CheckState() };
+
+	if (S_OK == result)
+	{
+		SVConfigurationObject* pConfig{ nullptr };
+		SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
+		if (nullptr != pConfig)
+		{
+			result = E_INVALIDARG;
+			
+			int ppqCount = pConfig->GetPPQCount();
+			for (int i = 0; i < ppqCount; ++i)
+			{
+				SVPPQObject* pPPQ = pConfig->GetPPQ(i);
+				if (nullptr != pPPQ && nullptr != pPPQ->GetTrigger())
+				{
+					long inspectionCount{ 0L };
+					pPPQ->GetInspectionCount(inspectionCount);
+					for (long j = 0; j < inspectionCount; ++j)
+					{
+						SVInspectionProcess* pInspection{ nullptr };
+						pPPQ->GetInspection(j, pInspection);
+						if (nullptr != pInspection)
+						{
+							std::string inspectionName = SvUl::to_ansi(rRequest.inspectionname());
+							//Period 0 means a single trigger
+							if (pInspection->GetName() == inspectionName && 0 == rRequest.period())
+							{
+								SvIe::SVVirtualCameraPtrVector cameraVector = pPPQ->GetVirtualCameras();
+								bool canExternalSoftwareTrigger{ cameraVector.size() > 0 };
+								canExternalSoftwareTrigger &= std::all_of(cameraVector.begin(), cameraVector.end(), [](const auto* pCamera) { return pCamera->canExternalSoftwareTrigger(); });
+	
+								SvTrig::SVTriggerObject* pTrigger = pPPQ->GetTrigger();
+								if (nullptr != pTrigger && canExternalSoftwareTrigger)
+								{
+									SvTrig::SVTriggerInfoStruct triggerInfo;
+									triggerInfo.bValid = true;
+									triggerInfo.m_Data[SvTrig::TriggerDataEnum::TimeStamp] = _variant_t(SvUl::GetTimeStamp());
+									triggerInfo.m_Data[SvTrig::TriggerDataEnum::SoftwareTrigger] = true;
+									pTrigger->Fire(std::move(triggerInfo));
+									result = S_OK;
+								}
+								else
+								{
+									result = E_NOTIMPL;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	SvPb::StandardResponse response;
+	response.set_hresult(result);
+	task.finish(std::move(response));
 }
 
 void SVRCCommand::RegisterNotificationStream(const SvPb::GetNotificationStreamRequest& rRequest,

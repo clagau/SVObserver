@@ -1033,6 +1033,35 @@ HRESULT RemoteControlImpl::SetTriggerConfig(LPCTSTR plcSimulatedFile) const
 	return result;
 }
 
+HRESULT RemoteControlImpl::SoftwareTrigger(const SvRc::TriggerItem& rTrigger) const
+{
+	HRESULT result{ S_OK };
+	try
+	{
+		if (nullptr == m_pRpcClient || nullptr == m_pSvrcClientService || false == m_pRpcClient->isConnected())
+		{
+			throw std::invalid_argument("Not connected to neither SVOGateway nor SVObserver");
+		}
+
+		SvPb::SoftwareTriggerRequest Request;
+		Request.set_inspectionname(rTrigger.m_inspectionName);
+		Request.set_period(rTrigger.m_period);
+		Request.set_startobjectid(rTrigger.m_startObjectID);
+		Request.set_triggerperobjectid(rTrigger.m_triggerPerObjectID);
+		Request.set_numberobjectid(rTrigger.m_numberObjectID);
+		SvPb::StandardResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
+			&SvWsl::SVRCClientService::SoftwareTrigger,
+			std::move(Request)).get();
+
+		result = Response.hresult();
+
+		SVLog(result, __FILE__, __LINE__);
+	}
+	HANDLE_EXCEPTION(result)
+
+	return result;
+}
+
 
 HRESULT RemoteControlImpl::ShutDown(long option) const
 {

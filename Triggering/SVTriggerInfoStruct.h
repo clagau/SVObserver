@@ -22,6 +22,7 @@ enum TriggerDataEnum : int
 	OutputData,
 	TriggerChannel,
 	ObjectType,
+	SoftwareTrigger,
 };
 
 

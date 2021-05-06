@@ -141,13 +141,10 @@ namespace SvTrig
 		}
 	}
 
-	void SVTriggerObject::Fire(double timeStamp)
+	void SVTriggerObject::Fire(SvTrig::SVTriggerInfoStruct&& triggerInfo)
 	{
 		if (nullptr != m_pTriggerDevice)
 		{
-			SvTrig::SVTriggerInfoStruct triggerInfo;
-			triggerInfo.bValid = true;
-			triggerInfo.m_Data[SvTrig::TriggerDataEnum::TimeStamp] = _variant_t(timeStamp);
 			///Trigger channel 0 based
 			triggerInfo.m_Data[SvTrig::TriggerDataEnum::TriggerChannel] = _variant_t(m_pTriggerDevice->getTriggerChannel());
 			m_pTriggerDevice->Notify(triggerInfo);

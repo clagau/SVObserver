@@ -51,13 +51,14 @@ void __stdcall SVTriggerClass::triggerCallback(const SvTrig::IntVariantMap& rTri
 	Notify(triggerInfo);
 }
 
-void SVTriggerClass::addAcquisitionTrigger(SVDigitizerLoadLibraryClass* pDllDigitizer, unsigned long triggerChannel)
+void SVTriggerClass::addAcquisitionTrigger(AcquisitionParameter&& acqParameter)
 {
-	AcquisitionParameter acqParameter;
-	acqParameter.m_pDllDigitizer = pDllDigitizer;
-	acqParameter.m_triggerChannel = triggerChannel;
 	auto it = std::find(m_acqTriggerParameters.begin(), m_acqTriggerParameters.end(), acqParameter);
-	if(it == m_acqTriggerParameters.end())
+	if (it != m_acqTriggerParameters.end())
+	{
+		*it = acqParameter;
+	}
+	else
 	{
 		m_acqTriggerParameters.emplace_back(acqParameter);
 	}
@@ -73,7 +74,7 @@ void SVTriggerClass::enableInternalTrigger() const
 	///When software trigger then we need to enable the internal trigger
 	for (const auto& rAcquisitionParameter : m_acqTriggerParameters)
 	{
-		if (nullptr != rAcquisitionParameter.m_pDllDigitizer)
+		if (nullptr != rAcquisitionParameter.m_pDllDigitizer && rAcquisitionParameter.m_active)
 		{
 			rAcquisitionParameter.m_pDllDigitizer->InternalTriggerEnable(rAcquisitionParameter.m_triggerChannel);
 		}
@@ -181,11 +182,12 @@ void SVTriggerClass::preProcessTriggers(SvTrig::SVTriggerInfoStruct& rTriggerInf
 	}
 }
 
-void SVTriggerClass::postProcessTriggers(DWORD sleepDuration)
+void SVTriggerClass::postProcessTriggers(DWORD sleepDuration, bool softwareTrigger)
 {
 	for (const auto& rAcquisitionParameter : m_acqTriggerParameters)
 	{
-		if (nullptr != rAcquisitionParameter.m_pDllDigitizer)
+		bool active = rAcquisitionParameter.m_active || softwareTrigger;
+		if (nullptr != rAcquisitionParameter.m_pDllDigitizer && active)
 		{
 			if (0 == sleepDuration)
 			{

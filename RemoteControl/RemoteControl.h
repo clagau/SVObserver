@@ -13,6 +13,7 @@ struct Value;
 struct Product;
 struct DataDefinition;
 struct MonitorList;
+struct TriggerItem;
 
 enum NotificationType
 {
@@ -65,6 +66,7 @@ public:
 	HRESULT GetProductFilter(LPCTSTR listName, unsigned long& rFilter) const;
 	HRESULT SetProductFilter(LPCTSTR listName, unsigned long filter) const;
 	HRESULT SetTriggerConfig(LPCTSTR plcSimulatedFile) const;
+	HRESULT SoftwareTrigger(const SvRc::TriggerItem& rTrigger) const;
 
 	void SetNotifyCallback(NotifyFunctor pNotifier) const;
 	HRESULT ShutDown(long option) const;

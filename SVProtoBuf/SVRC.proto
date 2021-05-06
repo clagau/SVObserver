@@ -117,6 +117,7 @@ message SVRCMessages
 		GetConfigurationInfoResponse getConfigurationInfoResponse = 2051;
 		GetMessageStreamRequest getMessageStreamRequest = 2052;
 		GetMessageStreamResponse getMessageStreamResponse = 2053;
+		SoftwareTriggerRequest softwareTriggerRequest = 2054;
 
 		// User Management Commands
 		GetMyPermissionsRequest getMyPermissionsRequest = 3000;

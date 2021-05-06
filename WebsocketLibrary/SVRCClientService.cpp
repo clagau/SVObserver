@@ -55,7 +55,8 @@ SVRCClientService::SVRCClientService(SvRpc::RPCClient& rRpcClient, SVRCClientSer
 	m_RunOnceClient(rRpcClient),
 	m_LoadConfigClient(rRpcClient),
 	m_SetTriggerConfigClient(rRpcClient),
-	m_GetConfigurationInfoClient(rRpcClient)
+	m_GetConfigurationInfoClient(rRpcClient),
+	m_SoftwareTriggerClient(rRpcClient)
 {
 
 }
@@ -248,6 +249,11 @@ void SVRCClientService::SetTriggerConfig(SvPb::SetTriggerConfigRequest&& Request
 void SVRCClientService::GetConfigurationInfo(SvPb::GetConfigurationInfoRequest&& Request, SvRpc::Task<SvPb::GetConfigurationInfoResponse> task)
 {
 	m_GetConfigurationInfoClient.request(std::move(Request), task, m_rSVRCSettings.ShortTimeout);
+}
+
+void SVRCClientService::SoftwareTrigger(SvPb::SoftwareTriggerRequest&& Request, SvRpc::Task<SvPb::StandardResponse> task)
+{
+	m_SoftwareTriggerClient.request(std::move(Request), task, m_rSVRCSettings.ShortTimeout);
 }
 
 }//namespace SvWsl

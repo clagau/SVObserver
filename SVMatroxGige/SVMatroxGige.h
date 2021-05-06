@@ -70,7 +70,7 @@ private:
 	HRESULT DestroyDigitizers(SVMatroxGigeSystem& rSystem);
 	HRESULT DestroyDigitizer(SVMatroxGigeDigitizer& digitizer);
 
-	HRESULT StartDigitizer(SVMatroxGigeDigitizer& rCamera);
+	HRESULT StartDigitizer(SVMatroxGigeDigitizer& rCamera, const _variant_t& rTriggerSource);
 	HRESULT StopDigitizer(SVMatroxGigeDigitizer& rCamera);
 
 	bool IsValidDigitizerHandle(unsigned long digitizerHandle) const;
@@ -86,7 +86,7 @@ private:
 	HRESULT UnRegisterMatroxDigitizerHooks(const SVMatroxGigeDigitizer& p_rCamera);
 
 	HRESULT SetGrabMode(const SVMatroxGigeDigitizer& p_rCamera);
-	HRESULT EnableTriggering(const SVMatroxGigeDigitizer& p_rCamera);
+	HRESULT EnableTriggering(const SVMatroxGigeDigitizer& p_rCamera, const _variant_t& rTriggerSource);
 
 	const SVMatroxGigeDigitizer& GetDigitizer(unsigned long digitizerHandle) const;
 	SVMatroxGigeDigitizer& GetDigitizer(unsigned long digitizerHandle);

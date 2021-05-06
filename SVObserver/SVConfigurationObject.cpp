@@ -3825,41 +3825,6 @@ void SVConfigurationObject::SetConfigurationLoaded()
 	m_bConfigurationValid = true;
 }
 
-void SVConfigurationObject::SetupSoftwareTrigger(SvTrig::SVTriggerClass* pTrigger, int iDigNum, long triggerPeriod, SVPPQObject* pPPQ)
-{
-	assert(nullptr != pTrigger && nullptr != pPPQ);
-	if (nullptr == pTrigger || nullptr == pPPQ)
-	{
-		return;
-	}
-
-	unsigned long triggerHandle = pTrigger->getDLLTrigger()->GetHandle(iDigNum);
-	_variant_t value = triggerPeriod;
-
-	// Setup the Triggering device
-	pTrigger->getDLLTrigger()->SetParameterValue(triggerHandle, 0, value);
-
-	// get Handles for all cameras associated with this trigger
-	SvIe::SVVirtualCameraPtrVector cameraVector = pPPQ->GetVirtualCameras();
-
-	for (auto* pCamera : cameraVector)
-	{
-		if (nullptr != pCamera)
-		{
-			SvIe::SVAcquisitionClassPtr pAcq = pCamera->GetAcquisitionDevice();
-			if (nullptr != pAcq)
-			{
-				// need the digitizer name here ...
-				SvTrig::SVDigitizerLoadLibraryClass* pAcqDLL = SvIe::SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(pAcq->DigName().c_str());
-				if (pAcqDLL)
-				{
-					pTrigger->addAcquisitionTrigger(pAcqDLL, pAcq->m_hDigitizer);
-				}
-			}
-		}
-	}
-}
-
 HRESULT SVConfigurationObject::AttachAcqToTriggers()
 {
 	HRESULT hr = S_OK;
@@ -3883,24 +3848,32 @@ HRESULT SVConfigurationObject::AttachAcqToTriggers()
 			{
 				pTriggerDevice->clearAcquisitionTriggers();
 				int iDigNum = pTriggerDevice->getDigitizerNumber();
-				if (SvDef::TriggerType::SoftwareTrigger == pTrigger->getType())
-				{
-					SetupSoftwareTrigger(pTriggerDevice, iDigNum, pTrigger->GetSoftwareTriggerPeriod(), pPPQ);
-				}
+				bool isSoftwareTrigger = SvDef::TriggerType::SoftwareTrigger == pTrigger->getType();
 
-				// need to add acquisition trigger for File Acquisition
 				if (nullptr != pTriggerDevice->getDLLTrigger())
 				{
+					if (isSoftwareTrigger)
+					{
+						unsigned long triggerHandle = pTriggerDevice->getDLLTrigger()->GetHandle(iDigNum);
+						_variant_t value = pTrigger->GetSoftwareTriggerPeriod();
+						pTriggerDevice->getDLLTrigger()->SetParameterValue(triggerHandle, 0, value);
+					}
 					SvIe::SVVirtualCameraPtrVector cameraVector = pPPQ->GetVirtualCameras();
-
 					for (auto* pCamera : cameraVector)
 					{
-						if (nullptr != pCamera)
+						bool isFileAcquisition = pCamera->IsFileAcquisition();
+						bool addAcquisitionTrigger = isSoftwareTrigger || isFileAcquisition || pCamera->canExternalSoftwareTrigger();
+						SvIe::SVAcquisitionClassPtr pAcq = pCamera->GetAcquisitionDevice();
+						if (nullptr != pAcq)
 						{
-							///File acquisition require acquisition trigger
-							if (pCamera->IsFileAcquisition())
+							SvTrig::SVDigitizerLoadLibraryClass* pAcqDLL = SvIe::SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(pAcq->DigName().c_str());
+							if (pAcqDLL && addAcquisitionTrigger)
 							{
-								pCamera->RegisterTrigger(pTrigger->getDevice());
+								SvTrig::AcquisitionParameter acquisitionParameter;
+								acquisitionParameter.m_pDllDigitizer = pAcqDLL;
+								acquisitionParameter.m_triggerChannel = pAcq->m_hDigitizer;
+								acquisitionParameter.m_active = isSoftwareTrigger || isFileAcquisition;
+								pTriggerDevice->addAcquisitionTrigger(std::move(acquisitionParameter));
 							}
 						}
 					}

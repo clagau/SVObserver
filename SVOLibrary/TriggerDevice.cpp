@@ -108,9 +108,9 @@ void TriggerDevice::Process(bool&)
 		{
 			triggerInfo.lTriggerCount = ++m_triggerCount;
 			DWORD sleepDuration{ 0 };
+			bool softwareTrigger{ false };
 			//If in the input data it has a valid time stamp value then it is more accurate then use it
-			SvTrig::IntVariantMap::const_iterator iterData{ triggerInfo.m_Data.end() };
-			iterData = triggerInfo.m_Data.find(SvTrig::TriggerDataEnum::TimeStamp);
+			SvTrig::IntVariantMap::const_iterator iterData = triggerInfo.m_Data.find(SvTrig::TriggerDataEnum::TimeStamp);
 			if (triggerInfo.m_Data.end() != iterData && VT_R8 == iterData->second.vt && 0.0 < iterData->second.dblVal)
 			{
 				triggerInfo.m_triggerTimeStamp = iterData->second.dblVal;
@@ -134,9 +134,15 @@ void TriggerDevice::Process(bool&)
 				triggerInfo.m_triggerTimeStamp = SvUl::GetTimeStamp();
 			}
 
+			iterData = triggerInfo.m_Data.find(SvTrig::TriggerDataEnum::SoftwareTrigger);
+			if (triggerInfo.m_Data.end() != iterData && VT_BOOL == iterData->second.vt)
+			{
+				softwareTrigger = iterData->second ? true : false;
+			}
+
 			preProcessTriggers(triggerInfo);
 			m_pPpqTriggerCallback(std::move(triggerInfo));
-			postProcessTriggers(sleepDuration);
+			postProcessTriggers(sleepDuration, softwareTrigger);
 		}
 		done = (1 > m_triggerQueue.size());
 	}

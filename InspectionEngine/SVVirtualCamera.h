@@ -45,8 +45,8 @@ class SVVirtualCamera : public SVObjectClass
 {
 public:
 #pragma region Constructor
-	explicit SVVirtualCamera( LPCSTR ObjectName );
-	SVVirtualCamera( SVObjectClass *pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVCAMERAOBJECT );
+	explicit SVVirtualCamera(LPCSTR ObjectName) : SVObjectClass(ObjectName) {}
+	SVVirtualCamera(SVObjectClass* pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVCAMERAOBJECT) : SVObjectClass(pOwner, StringResourceID) {}
 	virtual ~SVVirtualCamera();
 #pragma endregion Constructor
 
@@ -86,8 +86,8 @@ public:
     HRESULT GetBand(int& riBand) const;
     HRESULT GetBandSize(int& riBandSize) const;
 
-	inline long BandLink() {return mlBandLink;}
-	inline long SetBandLink(long l) {return mlBandLink = l;}
+	long BandLink() {return mlBandLink;}
+	long SetBandLink(long l) {return mlBandLink = l;}
 
 	bool IsFileAcquisition() const;
 	void SetFileAcquisitionMode(bool bFileAcquisition);
@@ -113,18 +113,16 @@ public:
 	long GetFileImageHeight() const;
 	void SetFileImageHeight(long height);
 
-	void RegisterTrigger(SvTrig::SVTriggerClass* pTrigger);
-
 	void	createCameraParameters();
 	HRESULT updateCameraParameters();
 	HRESULT updateCameraLongParameter( LPCTSTR Name, const SVLongValueDeviceParam* pLongValueDeviceParam);
 	HRESULT updateDeviceParameters(SVDeviceParamCollection& rCameraParameters);
 
-	inline void SetIsColor( bool IsColor ){ m_IsColor = IsColor; };
-	inline bool IsColor()const { return m_IsColor; };
+	void SetIsColor( bool IsColor ){ m_IsColor = IsColor; };
+	bool IsColor() const { return m_IsColor; };
 
-	inline void setCameraID( long CameraID ) { m_CameraID = CameraID; };
-	inline long getCameraID() const { return m_CameraID; };
+	void setCameraID( long CameraID ) { m_CameraID = CameraID; };
+	long getCameraID() const { return m_CameraID; };
 
 	void setTempImage(const SVMatroxBuffer pImage);
 	SVMatroxBuffer getTempImage();
@@ -133,6 +131,8 @@ public:
 
 	void addNeededBuffer(uint32_t id, int neededBufferSize);
 	void removeNeededBufferEntry(uint32_t id);
+
+	inline bool canExternalSoftwareTrigger() const { return m_canExtenalSoftwareTrigger; };
 #pragma endregion Public Methods
 
 private:
@@ -143,20 +143,20 @@ private:
 
 #pragma region Member Variables
 protected:
-	long mlBandLink;
+	long mlBandLink{ 0L };
 
 private:
 	SVAcquisitionClassPtr m_pDevice;
 	SvVol::BasicValueObjects m_CameraValues;
-	bool m_bFileAcquisition;
-	bool m_IsColor;
+	bool m_bFileAcquisition{ false };
+	bool m_IsColor{ false };
+	bool m_canExtenalSoftwareTrigger{ false };
 	std::string m_imageFilename;
 	std::string m_imageDirectoryName;
-	bool m_bImageSizeEditModeFileBased;
-	long m_imageLoadingMode;
-	SIZE m_imageSize;
-	SvTrig::SVTriggerClass* m_pTrigger{nullptr};
-	long m_CameraID;
+	bool m_bImageSizeEditModeFileBased{ true };
+	long m_imageLoadingMode{ 0L };
+	SIZE m_imageSize{ 0L, 0L };
+	long m_CameraID{ 0L };
 
 	std::mutex m_tmpImage_mutex;
 	SVMatroxBuffer m_tmpImage;

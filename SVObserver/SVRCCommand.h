@@ -53,6 +53,7 @@ public:
 	void ConfigCommand(const SvPb::ConfigCommandRequest&, SvRpc::Task<SvPb::ConfigCommandResponse>);
 	void SetTriggerConfig(const SvPb::SetTriggerConfigRequest&, SvRpc::Task<SvPb::StandardResponse>);
 	void GetConfigurationInfo(const SvPb::GetConfigurationInfoRequest&, SvRpc::Task<SvPb::GetConfigurationInfoResponse>);
+	void SoftwareTrigger(const SvPb::SoftwareTriggerRequest&, SvRpc::Task<SvPb::StandardResponse>);
 
 	void RegisterNotificationStream(const SvPb::GetNotificationStreamRequest& rRequest,
 		SvRpc::Observer<SvPb::GetNotificationStreamResponse>& rObserver,

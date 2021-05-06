@@ -169,6 +169,11 @@ HRESULT RemoteControl::SetTriggerConfig(LPCTSTR plcSimulatedFile) const
 	return RemoteControlImpl::Instance().SetTriggerConfig(plcSimulatedFile);
 }
 
+HRESULT RemoteControl::SoftwareTrigger(const SvRc::TriggerItem& rTrigger) const
+{
+	return RemoteControlImpl::Instance().SoftwareTrigger(rTrigger);
+}
+
 // cppcheck-suppress unusedFunction
 void RemoteControl::SetNotifyCallback(NotifyFunctor pNotifier) const
 {

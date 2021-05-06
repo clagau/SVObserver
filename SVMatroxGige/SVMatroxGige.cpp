@@ -392,7 +392,8 @@ HRESULT SVMatroxGige::CameraStart( unsigned long digitizerHandle )
 			}
 			if ( S_OK == hr )
 			{
-				hr = StartDigitizer(rCamera);
+				variant_t triggerSource = CameraGetParameter(digitizerHandle, SvDef::SVGigeParameterTriggerSource);
+				hr = StartDigitizer(rCamera, triggerSource);
 			}
 			
 			if ( S_OK != hr )
@@ -800,7 +801,7 @@ HRESULT SVMatroxGige::DestroyDigitizer(SVMatroxGigeDigitizer& rCamera)
 	return result;
 }
 
-HRESULT SVMatroxGige::StartDigitizer(SVMatroxGigeDigitizer& rCamera)
+HRESULT SVMatroxGige::StartDigitizer(SVMatroxGigeDigitizer& rCamera, const _variant_t& rTriggerSource)
 {
 	rCamera.m_frameStack.clear();
 
@@ -811,7 +812,7 @@ HRESULT SVMatroxGige::StartDigitizer(SVMatroxGigeDigitizer& rCamera)
 	}
 	if (S_OK == hr)
 	{
-		hr = EnableTriggering(rCamera);
+		hr = EnableTriggering(rCamera, rTriggerSource);
 	}
 	if (S_OK == hr)
 	{
@@ -964,14 +965,13 @@ HRESULT SVMatroxGige::SetGrabMode(const SVMatroxGigeDigitizer& rCamera)
 	return result;
 }
 
-HRESULT SVMatroxGige::EnableTriggering(const SVMatroxGigeDigitizer& rCamera)
+HRESULT SVMatroxGige::EnableTriggering(const SVMatroxGigeDigitizer& rCamera, const _variant_t& rTriggerSource)
 {
 	HRESULT result{ E_FAIL };
 
 	if (rCamera.m_params.TriggerType == SvDef::TriggerType::HardwareTrigger)
 	{
-		_variant_t value("External Trigger");
-		result = SVMatroxGigeDeviceParameterManager::SetParameter(rCamera, SvDef::SVGigeParameterTriggerSource, value);
+		result = SVMatroxGigeDeviceParameterManager::SetParameter(rCamera, SvDef::SVGigeParameterTriggerSource, rTriggerSource);
 	}
 	else if (rCamera.m_params.TriggerType == SvDef::TriggerType::SoftwareTrigger)
 	{
@@ -1045,7 +1045,8 @@ void SVMatroxGige::HandleConnect(SVMatroxGigeSystem& rSystem, long deviceNumber)
 
 								if (S_OK == hr)
 								{
-									hr = StartDigitizer(rCamera);
+									variant_t triggerSource = CameraGetParameter(handle, SvDef::SVGigeParameterTriggerSource);
+									hr = StartDigitizer(rCamera, triggerSource);
 									if (S_OK != hr)
 									{
 										// log an exception

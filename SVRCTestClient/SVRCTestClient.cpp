@@ -171,7 +171,8 @@ int main(int argc, char* argv[])
 					<< "  a add tool" << std::endl
 					<< "  d delete tool" << std::endl
 					<< "  g get config data" << std::endl
-					<< " gci  get configuration info" << std::endl;
+					<< " gci  get configuration info" << std::endl
+					<< " s  software trigger" << std::endl;
 			}
 			else if (words[0] == "m")
 			{
@@ -388,14 +389,22 @@ int main(int argc, char* argv[])
 			}
 			else if (words[0] == "gci")
 			{
-			SvPb::GetConfigurationInfoRequest requestConfigInfo;
+				SvPb::GetConfigurationInfoRequest requestConfigInfo;
 			
-			SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::GetConfigurationInfoRequest, SvPb::GetConfigurationInfoResponse> client(*pRpcClient);
-			SvPb::GetConfigurationInfoResponse response = client.request(std::move(requestConfigInfo), Timeout).get();
-			SV_LOG_GLOBAL(info) << "Config File : " << response.filename().c_str();
-			SV_LOG_GLOBAL(info) << "Last modified: " << response.lastmodified();
-			SV_LOG_GLOBAL(info) << "Loaded Since: " << response.loadedsince();
-			SV_LOG_GLOBAL(info) << "hash: " << response.hash();
+				SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::GetConfigurationInfoRequest, SvPb::GetConfigurationInfoResponse> client(*pRpcClient);
+				SvPb::GetConfigurationInfoResponse response = client.request(std::move(requestConfigInfo), Timeout).get();
+				SV_LOG_GLOBAL(info) << "Config File : " << response.filename().c_str();
+				SV_LOG_GLOBAL(info) << "Last modified: " << response.lastmodified();
+				SV_LOG_GLOBAL(info) << "Loaded Since: " << response.loadedsince();
+				SV_LOG_GLOBAL(info) << "hash: " << response.hash();
+			}
+			else if (words[0] == "s")
+			{
+				SvPb::SoftwareTriggerRequest requestSoftwareTrigger;
+				requestSoftwareTrigger.set_inspectionname("Inspection_1");
+				requestSoftwareTrigger.set_period(0L);
+				SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::SoftwareTriggerRequest, SvPb::StandardResponse> client(*pRpcClient);
+				auto response = client.request(std::move(requestSoftwareTrigger), Timeout).get();
 			}
 			else if (words[0] == "cn" )
 			{

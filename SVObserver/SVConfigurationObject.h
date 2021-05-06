@@ -469,8 +469,6 @@ private:
 	void SaveDeviceParamSpecial(SvOi::IObjectWriter& rWriter, const SVDeviceParam* pParam) const;
 	HRESULT LoadDeviceParamSpecial(SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent, SVDeviceParam* pParam);
 
-	void SetupSoftwareTrigger(SvTrig::SVTriggerClass* pTriggerDevice, int iDigNum, long triggerPeriod, SVPPQObject* pPPQ);
-
 	void GetRemoteInputInspections(const std::string& p_rRemoteInputName, SVInspectionSet& p_rInspections) const;
 
 	//************************************

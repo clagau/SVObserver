@@ -537,7 +537,8 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 						},
 						SVGigeFeatureStringEnumList
 						{
-							{{_T("External Trigger"), _T("Line0")},
+							{{_T("All Trigger"), _T("All")},
+							{_T("External Trigger"), _T("Line0")},
 							{_T("Software Trigger"), _T("Software")}}
 						}
 					}

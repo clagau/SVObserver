@@ -34,30 +34,6 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SVVirtualCamera::SVVirtualCamera( LPCSTR ObjectName ) : SVObjectClass( ObjectName )
- ,mlBandLink( 0 )
- ,m_bFileAcquisition( false )
- ,m_IsColor( false )
- ,m_bImageSizeEditModeFileBased( true )
- ,m_imageLoadingMode( 0 )
- ,m_CameraID( 0 )
-{
-	m_imageSize.cx = 0;
-	m_imageSize.cy = 0;
-}
-
-SVVirtualCamera::SVVirtualCamera( SVObjectClass* POwner, int StringResourceID ) : SVObjectClass( POwner, StringResourceID )
- ,mlBandLink( 0 )
- ,m_bFileAcquisition( false )
- ,m_IsColor( false )
- ,m_bImageSizeEditModeFileBased( true )
- ,m_imageLoadingMode( 0 )
- ,m_CameraID( 0 )
-{
-	m_imageSize.cx = 0;
-	m_imageSize.cy = 0;
-}
-
 SVVirtualCamera::~SVVirtualCamera()
 {
 	DestroyLocal();
@@ -337,6 +313,7 @@ bool SVVirtualCamera::IsFileAcquisition() const
 void SVVirtualCamera::SetFileAcquisitionMode(bool bFileAcquisition)
 {
 	m_bFileAcquisition = bFileAcquisition;
+	m_canExtenalSoftwareTrigger = bFileAcquisition;
 }
 
 LPCTSTR SVVirtualCamera::GetImageFilename() const
@@ -409,24 +386,6 @@ void SVVirtualCamera::SetFileImageHeight(long height)
 	m_imageSize.cy = height;
 }
 
-void SVVirtualCamera::RegisterTrigger(SvTrig::SVTriggerClass* pTrigger)
-{
-	if (nullptr != pTrigger)
-	{
-		m_pTrigger = pTrigger;
-		if(nullptr != m_pDevice)
-		{
-			// need the digitizer name here ...
-			SvTrig::SVDigitizerLoadLibraryClass* pAcqDLL = SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(m_pDevice->DigName().c_str());
-
-			if (nullptr != pAcqDLL)
-			{
-				m_pTrigger->addAcquisitionTrigger(pAcqDLL, m_pDevice->m_hDigitizer);
-			}
-		}
-	}
-}
-
 void SVVirtualCamera::createCameraParameters()
 {
 	SvVol::BasicValueObjectPtr pValue;
@@ -469,7 +428,19 @@ HRESULT SVVirtualCamera::updateCameraParameters()
 			pDeviceParam = nullptr;
 			m_CameraValues.setValueObject( SvDef::FqnCameraSerialNumber, SerialNumberValue, this, SvPb::SVCameraObjectType );
 		}
-		pDeviceParam = CameraParameters.GetParameter( DeviceParamGain );
+		pDeviceParam = CameraParameters.GetParameter(DeviceParamGigeTriggerSource);
+		if (nullptr != pDeviceParam)
+		{
+			variant_t triggerSource;
+			pDeviceParam->GetValue(triggerSource.GetVARIANT());
+			pDeviceParam = nullptr;
+			if (_T("All Trigger") == SvUl::createStdString(triggerSource))
+			{
+				m_canExtenalSoftwareTrigger = true;
+			}
+		}
+
+		pDeviceParam = CameraParameters.GetParameter(DeviceParamGain);
 		/*Result = */updateCameraLongParameter( SvDef::FqnCameraGain, dynamic_cast< SVLongValueDeviceParam* >( pDeviceParam ) );
 
 		pDeviceParam = CameraParameters.GetParameter( DeviceParamShutter );

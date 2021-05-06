@@ -2873,12 +2873,16 @@ void SVPPQObject::cameraCallback(ULONG_PTR pCaller, CameraInfo&& cameraInfo)
 
 	if (valid)
 	{
-		if (nullptr != GetTrigger())
+		SvTrig::SVTriggerObject* pTrigger = GetTrigger();
+		if (nullptr != pTrigger)
 		{
-			bool isCameraTriggerAndHwCameraWithImage = SvDef::TriggerType::CameraTrigger == GetTrigger()->getType() && false == pCamera->IsFileAcquisition() && nullptr != cameraInfo.m_pImage;
+			bool isCameraTriggerAndHwCameraWithImage = SvDef::TriggerType::CameraTrigger == pTrigger->getType() && false == pCamera->IsFileAcquisition() && nullptr != cameraInfo.m_pImage;
 			if (isCameraTriggerAndHwCameraWithImage)
 			{
-				GetTrigger()->Fire(cameraInfo.m_startFrameTime);
+				SvTrig::SVTriggerInfoStruct triggerInfo;
+				triggerInfo.bValid = true;
+				triggerInfo.m_Data[SvTrig::TriggerDataEnum::TimeStamp] = _variant_t(cameraInfo.m_startFrameTime);
+				pTrigger->Fire(std::move(triggerInfo));
 			}
 		}
 

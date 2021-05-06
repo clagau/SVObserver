@@ -26,11 +26,15 @@ struct AcquisitionParameter
 {
 	bool operator==(const AcquisitionParameter& rRhs)
 	{
-		return (m_pDllDigitizer == rRhs.m_pDllDigitizer) && (m_triggerChannel == rRhs.m_triggerChannel);
+		bool result{ m_pDllDigitizer == rRhs.m_pDllDigitizer };
+		result &= (m_triggerChannel == rRhs.m_triggerChannel);
+		//m_active needs not to be the same
+		return result;
 	}
 
 	SVDigitizerLoadLibraryClass* m_pDllDigitizer {nullptr};
 	unsigned long m_triggerChannel {0UL};
+	bool m_active{ false };
 };
 
 class SVTriggerClass : public TriggerDevice  
@@ -41,7 +45,7 @@ public:
 
 	void __stdcall triggerCallback(const SvTrig::IntVariantMap& rTriggerData);
 
-	void addAcquisitionTrigger(SVDigitizerLoadLibraryClass* pDllDigitizer, unsigned long triggerChannel);
+	void addAcquisitionTrigger(AcquisitionParameter&& acqParameter);
 	void clearAcquisitionTriggers();
 	void enableInternalTrigger() const;
 
@@ -63,7 +67,7 @@ public:
 
 protected:
 	virtual void preProcessTriggers(SvTrig::SVTriggerInfoStruct& rTriggerInfo) override;
-	virtual void postProcessTriggers(DWORD sleepDuration) override;
+	virtual void postProcessTriggers(DWORD sleepDuration, bool softwareTrigger) override;
 
 private:
 	int m_digitizerNumber{ -1 };

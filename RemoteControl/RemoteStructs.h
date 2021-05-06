@@ -45,4 +45,13 @@ struct MonitorList
 	std::vector<std::string> m_rejectVector;
 	std::vector<std::string> m_failStatusVector;
 };
+
+struct TriggerItem
+{
+	std::string m_inspectionName;
+	long m_period{ 0L };
+	long m_startObjectID{ 0L };
+	long m_triggerPerObjectID{ 0L };
+	unsigned long m_numberObjectID{ 0UL };
+};
 } //namespace SvRc

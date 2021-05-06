@@ -50,8 +50,7 @@ namespace SvTrig
 		long getTriggerPerObjectID() const;
 		void setObjectIDParameters(long startObjectID, long triggerPerObjectID);
 
-		///Fires a trigger with given time stamp
-		void Fire(double timeStamp);
+		void Fire(SvTrig::SVTriggerInfoStruct&& triggerInfo);
 
 		long GetSoftwareTriggerPeriod() const;
 		void SetSoftwareTriggerPeriod(long period, bool setTimer = false);

@@ -62,6 +62,7 @@ public:
 	HRESULT GetProductFilter(LPCTSTR listName, unsigned long& rFilter) const;
 	HRESULT SetProductFilter(LPCTSTR listName, unsigned long filter) const;
 	HRESULT SetTriggerConfig(LPCTSTR plcSimulatedFile) const;
+	HRESULT SoftwareTrigger(const SvRc::TriggerItem& rTrigger) const;
 
 	NotifyFunctor GetNotifyFunctor() const { return m_pNotifier; }
 	void SetNotifyFunctor(NotifyFunctor pNotifier) { m_pNotifier = pNotifier; }
