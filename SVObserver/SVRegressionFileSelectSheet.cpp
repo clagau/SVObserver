@@ -30,6 +30,8 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+constexpr size_t cReseverveNumber = 1000;
+
 SVRegressionFileSelectSheet::SVRegressionFileSelectSheet(UINT nIDCaption, uint32_t inspectionID, CWnd* pParentWnd, UINT iSelectPage)
 	:CPropertySheet(nIDCaption, pParentWnd, iSelectPage)
 	, m_InspectionID(inspectionID)
@@ -121,9 +123,8 @@ void SVRegressionFileSelectSheet::OnOK()
 		{
 			if ( pPage->GetFileSelectType() != RegNone )
 			{
-				constexpr size_t cReseverveFileNumber = 1000;
 				RegressionTestStruct regStruct;
-				regStruct.stdVectorFile.reserve(cReseverveFileNumber);
+				regStruct.stdVectorFile.reserve(cReseverveNumber);
 				regStruct.iFileMethod = pPage->GetFileSelectType();
 				regStruct.Name = pPage->GetPageName();
 				regStruct.FirstFile = pPage->GetSelectedFile();
@@ -438,7 +439,8 @@ int SVRegressionFileSelectSheet::FillFileListFromDirectory(RegressionTestStruct&
 	{
 		fileMask = rCurrentPath + _T("\\*");
 		bFound = fileFinder.FindFile(fileMask.c_str());
-
+		SvDef::StringVector folderList;
+		folderList.reserve(cReseverveNumber);
 		while (bFound)
 		{
 			bFound = fileFinder.FindNextFile();
@@ -448,10 +450,16 @@ int SVRegressionFileSelectSheet::FillFileListFromDirectory(RegressionTestStruct&
 				std::string directoryName{ fileFinder.GetFileName().GetString() };
 				if (directoryName.size() > 0 && '_' != directoryName[0])
 				{
-					std::string tmpPathName{ fileFinder.GetFilePath().GetString() };
-					count += FillFileListFromDirectory(rStruct, tmpPathName);
+					folderList.emplace_back(fileFinder.GetFilePath().GetString());
 				}
 			}			
+		}
+		//StrCmpLogicalW is the sorting function used by Windows Explorer
+		auto FolderCompare = [](const std::string& rLhs, const std::string& rRhs) { return ::StrCmpLogicalW(_bstr_t{ rLhs.c_str() }, _bstr_t{ rRhs.c_str() }) < 0; };
+		std::sort(folderList.begin(), folderList.end(), FolderCompare);
+		for (const auto& rFolder : folderList)
+		{
+			count += FillFileListFromDirectory(rStruct, rFolder);
 		}
 	}
 
