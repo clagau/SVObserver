@@ -1169,10 +1169,12 @@ void SVRCCommand::SetTriggerConfig(const SvPb::SetTriggerConfigRequest& rRequest
 
 void SVRCCommand::GetConfigurationInfo(const SvPb::GetConfigurationInfoRequest&, SvRpc::Task<SvPb::GetConfigurationInfoResponse> task)
 {
-	HRESULT result{ CheckState() };
+	constexpr DWORD cNotAllowedStates = SV_STATE_CREATING | SV_STATE_LOADING | SV_STATE_SAVING | SV_STATE_CLOSING | SV_STATE_CANCELING | SV_STATE_INTERNAL_RUN | 
+		SV_STATE_START_PENDING | SV_STATE_STARTING | SV_STATE_STOP_PENDING | SV_STATE_STOPING | SV_STATE_REMOTE_CMD;
+
 	SvPb::GetConfigurationInfoResponse Response;
 
-	if (S_OK == result)
+	if (SVSVIMStateClass::CheckState(cNotAllowedStates) == false)
 	{
 		SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
 		Response.set_filename(GlobalRCGetConfigurationName(false).c_str());
