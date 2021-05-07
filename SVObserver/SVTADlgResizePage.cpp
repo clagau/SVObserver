@@ -139,7 +139,7 @@ BOOL SVTADlgResizePage::OnInitDialog()
 	}
 	else
 	{
-		const SvUl::NameObjectIdList& rImageList = m_ImageController.GetResultImages();
+		SvUl::NameObjectIdList namesAndIds = m_ImageController.GetResultImages();
 
 		//we want to look just at the part of the dotted name after the last dot
 		for (auto& rNameAndId : namesAndIds)
@@ -152,8 +152,8 @@ BOOL SVTADlgResizePage::OnInitDialog()
 		}
 
 		m_ROIImageID = SvUl::FindObjectId(namesAndIds, SvUl::LoadStdString(IDS_OBJECTNAME_ROIIMAGE));
-		assert(0 != m_ROIImageID);
-		if (0 == m_ROIImageID)
+		assert(SvDef::InvalidObjectId != m_ROIImageID);
+		if (SvDef::InvalidObjectId == m_ROIImageID)
 		{//if the imagename we want still cannot be found we use the position in the list
 			if (1 < namesAndIds.size())
 			{
@@ -161,8 +161,8 @@ BOOL SVTADlgResizePage::OnInitDialog()
 			}
 		}
 		m_OutputImageID = SvUl::FindObjectId(namesAndIds, SvUl::LoadStdString(IDS_OBJECTNAME_IMAGE1));
-		assert(0 != m_OutputImageID);
-		if (0 == m_OutputImageID)
+		assert(SvDef::InvalidObjectId != m_OutputImageID);
+		if (SvDef::InvalidObjectId == m_OutputImageID)
 		{//if the imagename we want still cannot be found we use the position in the list
 			if (0 < namesAndIds.size())
 			{
@@ -407,6 +407,8 @@ HRESULT SVTADlgResizePage::SetupResizeImageControl()
 
 void SVTADlgResizePage::UpdateImages()
 {
+	assert(SvDef::InvalidObjectId != m_ROIImageID && SvDef::InvalidObjectId != m_OutputImageID);
+
 	if (SvDef::InvalidObjectId != m_ROIImageID && SvDef::InvalidObjectId != m_OutputImageID)
 	{
 		IPictureDisp* pROIImage = m_ImageController.GetImage(m_ROIImageID);
