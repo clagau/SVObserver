@@ -141,11 +141,34 @@ BOOL SVTADlgResizePage::OnInitDialog()
 	{
 		const SvUl::NameObjectIdList& rImageList = m_ImageController.GetResultImages();
 
-		std::string toolName = GetToolname();
-		std::string tmpString = toolName + _T(".") + SvUl::LoadStdString(IDS_OBJECTNAME_ROIIMAGE);
-		m_ROIImageID = SvUl::FindObjectId(rImageList, tmpString);
-		tmpString = toolName + _T(".") + SvUl::LoadStdString(IDS_OBJECTNAME_IMAGE1);
-		m_OutputImageID = SvUl::FindObjectId(rImageList, tmpString);
+		//we want to look just at the part of the dotted name after the last dot
+		for (auto& rNameAndId : namesAndIds)
+		{
+			auto positionOfLastDot = rNameAndId.first.rfind(_T("."));
+			if(positionOfLastDot != std::string::npos)
+			{
+				rNameAndId.first = rNameAndId.first.substr(positionOfLastDot + 1);
+			}
+		}
+
+		m_ROIImageID = SvUl::FindObjectId(namesAndIds, SvUl::LoadStdString(IDS_OBJECTNAME_ROIIMAGE));
+		assert(0 != m_ROIImageID);
+		if (0 == m_ROIImageID)
+		{//if the imagename we want still cannot be found we use the position in the list
+			if (1 < namesAndIds.size())
+			{
+				m_ROIImageID = namesAndIds[1].second;
+			}
+		}
+		m_OutputImageID = SvUl::FindObjectId(namesAndIds, SvUl::LoadStdString(IDS_OBJECTNAME_IMAGE1));
+		assert(0 != m_OutputImageID);
+		if (0 == m_OutputImageID)
+		{//if the imagename we want still cannot be found we use the position in the list
+			if (0 < namesAndIds.size())
+			{
+				m_OutputImageID = namesAndIds[0].second;
+			}
+		}
 	}
 
 	GetAndDisplayValuesFromTool();
