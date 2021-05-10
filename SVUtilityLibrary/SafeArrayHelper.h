@@ -14,7 +14,7 @@
 namespace SvUl
 {
 
-	/// function converts var to string. If var is a 1 dim safearray the string is the comma seperated values 
+	/// function converts var to string. If var is a 1 dim safearray the string is the comma separated values 
 	std::string VariantToString(_variant_t var);
 
 	//! function returns a 1 dim safe array with one element for an scalar variant
@@ -33,13 +33,13 @@ namespace SvUl
 			long lowerBound = pArray->rgsabound[0].lLbound;
 			long upperBound = lowerBound + static_cast<long> (pArray->rgsabound[0].cElements);
 
-			for (long i = lowerBound; i <= upperBound; ++i)
+			for (long i = lowerBound; i < upperBound; ++i)
 			{
 				T value;
 				if (S_OK == ::SafeArrayGetElement(pArray, &i, &value))
 				{
 					sst << value;
-					if (i < upperBound)
+					if (i < upperBound - 1)
 					{
 						sst << ';';
 					}
@@ -50,8 +50,8 @@ namespace SvUl
 		return {};
 	}
 
-	///function creates a 1 dim safe array of type T from comma seperated string. return value is size of array  
-	///empty string is array of size 0, negative result signalks an error.
+	///function creates a 1 dim safe array of type T from comma separated string. return value is size of array  
+	///empty string is array of size 0, negative result signals an error.
 	template<typename T>
 	int StringToSafeArray(const std::string& rText, _variant_t& rVariant)
 	{
