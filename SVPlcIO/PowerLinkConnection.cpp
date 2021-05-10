@@ -70,7 +70,7 @@ void PowerlinkConnection::writeResult(const ResultReport& rResultReport)
 {
 	if (rResultReport.m_channel < cNumberOfChannels)
 	{
-		ChannelOut channelOut;
+		ChannelOut1 channelOut;
 		channelOut.m_objectType = rResultReport.m_objectType;
 		channelOut.m_objectID = rResultReport.m_objectID;
 		channelOut.m_results = rResultReport.m_results;

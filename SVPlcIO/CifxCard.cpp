@@ -83,29 +83,29 @@ void CifXCard::readProcessData(uint32_t notification)
 
 		switch (inputData.m_telegram.m_content)
 		{
-		case TelegramContent::VersionData:
-		{
-			memcpy(&inputData.m_dynamicData[0], pData, sizeof(PlcVersion));
-			inputData.m_notificationTime = timeStamp;
-			break;
-		}
+			case TelegramContent::VersionData:
+			{
+				memcpy(&inputData.m_dynamicData[0], pData, sizeof(PlcVersion));
+				inputData.m_notificationTime = timeStamp;
+				break;
+			}
 
-#if defined (TRACE_THEM_ALL) || defined (TRACE_PLC)
-		case TelegramContent::ConfigurationData:
-		{
-			memcpy(&gPlcConfig, pData, cConfigListSize * sizeof(ConfigDataSet));
-		}
-#endif
-		case TelegramContent::OperationData:
-		{
-			memcpy(&inputData.m_dynamicData[0], pData, cCmdDataSize);
-			inputData.m_notificationTime = timeStamp;
-			break;
-		}
-		default:
-		{
-			break;
-		}
+	#if defined (TRACE_THEM_ALL) || defined (TRACE_PLC)
+			case TelegramContent::ConfigurationData:
+			{
+				memcpy(&gPlcConfig, pData, cConfigListSize * sizeof(ConfigDataSet));
+			}
+	#endif
+			case TelegramContent::OperationData:
+			{
+				memcpy(&inputData.m_dynamicData[0], pData, cCmdDataSize);
+				inputData.m_notificationTime = timeStamp;
+				break;
+			}
+			default:
+			{
+				break;
+			}
 		}
 		//Reduce lock guard scope
 		{
@@ -257,6 +257,7 @@ void CifXCard::sendConfigList()
 void CifXCard::sendOperationData(const InspectionState1& rState)
 {
 	m_protocolInitialized = (m_plcVersion != PlcVersion::PlcDataNone);
+	//InspectionSatet2 must be here due to pData pointing to it!
 	InspectionState2 insState2;
 	size_t dynamicDataSize{ 0ULL };
 	const uint8_t* pData{ nullptr };
@@ -267,7 +268,11 @@ void CifXCard::sendOperationData(const InspectionState1& rState)
 	}
 	else if (PlcVersion::PlcData2 == m_plcVersion)
 	{
-		memcpy(&insState2.m_channels[0], &rState.m_channels[0], cNumberOfChannels * sizeof(ChannelOut));
+		for (unsigned int i = 0; i < cNumberOfChannels; ++i)
+		{
+			//ChannelOut2 does not have the measurement value array ChannelOut1 so do not copy it
+			memcpy(&insState2.m_channels[i], &rState.m_channels[i], sizeof(ChannelOut2));
+		}
 		pData = reinterpret_cast<const uint8_t*> (&insState2);
 		dynamicDataSize = sizeof(InspectionState2);
 	}
@@ -632,6 +637,9 @@ std::vector<ConfigDataSet> CifXCard::createConfigList(TelegramLayout layout)
 					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelIn1::m_unitControl)], startByte, sizeof(ChannelIn1::m_unitControl) };
 					startByte += result[configIndex].m_byteSize;
 					configIndex++;
+					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelIn1::m_sequence)], startByte, sizeof(ChannelIn1::m_sequence) };
+					startByte += result[configIndex].m_byteSize;
+					configIndex++;
 					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelIn1::m_timeStamp)], startByte, sizeof(ChannelIn1::m_timeStamp) };
 					startByte += result[configIndex].m_byteSize;
 					configIndex++;
@@ -723,11 +731,28 @@ std::vector<ConfigDataSet> CifXCard::createConfigList(TelegramLayout layout)
 		}
 		case TelegramLayout::Layout2:
 		{
-			//PlcData1 only has the channel data
-			if (PlcVersion::PlcData2 == m_plcVersion)
+			if (PlcVersion::PlcData1 == m_plcVersion)
+			{
+				for (int i = 0; i < cNumberOfChannels; ++i)
+				{
+					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelOut1::m_objectType)], startByte, sizeof(ChannelOut1::m_objectType) };
+					//Do startByte always before configIndex
+					startByte += result[configIndex].m_byteSize;
+					configIndex++;
+					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelOut1::m_objectID)], startByte, sizeof(ChannelOut1::m_objectID) };
+					startByte += result[configIndex].m_byteSize;
+					configIndex++;
+					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelOut1::m_results[0])], startByte, sizeof(ChannelOut1::m_results) };
+					startByte += result[configIndex].m_byteSize;
+					configIndex++;
+					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelOut1::m_measurementValues[0])], startByte, sizeof(ChannelOut1::m_measurementValues) };
+					startByte += result[configIndex].m_byteSize;
+					configIndex++;
+				}
+			}
+			else if (PlcVersion::PlcData2 == m_plcVersion)
 			{
 				InspectionState2 insState;
-
 				if (insState.m_header.size() > 0)
 				{
 					result[configIndex] = ConfigDataSet{ 0, dataTypeList[typeid(insState.m_header[0])], startByte, sizeof(insState.m_header) };
@@ -735,20 +760,19 @@ std::vector<ConfigDataSet> CifXCard::createConfigList(TelegramLayout layout)
 					startByte += result[configIndex].m_byteSize;
 					configIndex++;
 				}
-			}
-			//PlcData1 and PlcData2 channel out data are the same
-			for (int i = 0; i < cNumberOfChannels; ++i)
-			{
-				result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelOut::m_objectType)], startByte, sizeof(ChannelOut::m_objectType) };
-				//Do startByte always before configIndex
-				startByte += result[configIndex].m_byteSize;
-				configIndex++;
-				result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelOut::m_objectID)], startByte, sizeof(ChannelOut::m_objectID) };
-				startByte += result[configIndex].m_byteSize;
-				configIndex++;
-				result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelOut::m_results[0])], startByte, sizeof(ChannelOut::m_results) };
-				startByte += result[configIndex].m_byteSize;
-				configIndex++;
+				for (int i = 0; i < cNumberOfChannels; ++i)
+				{
+					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelOut2::m_objectType)], startByte, sizeof(ChannelOut2::m_objectType) };
+					//Do startByte always before configIndex
+					startByte += result[configIndex].m_byteSize;
+					configIndex++;
+					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelOut2::m_objectID)], startByte, sizeof(ChannelOut2::m_objectID) };
+					startByte += result[configIndex].m_byteSize;
+					configIndex++;
+					result[configIndex] = ConfigDataSet{ cModeSingleDirect, dataTypeList[typeid(ChannelOut2::m_results[0])], startByte, sizeof(ChannelOut2::m_results) };
+					startByte += result[configIndex].m_byteSize;
+					configIndex++;
+				}
 			}
 			break;
 		}
@@ -773,11 +797,11 @@ void CifXCard::writeResponseData(const uint8_t* pSdoDynamic, size_t sdoDynamicSi
 
 	Telegram outputTelegram;
 	///The content ID needs to be incremented for each send
-	m_contentID++;
+	++m_contentID;
 	///Content ID is not allowed to be 0
 	if(0 == m_contentID)
 	{
-		m_contentID++;
+		++m_contentID;
 	}
 	outputTelegram.m_contentID = m_contentID;
 	outputTelegram.m_referenceID = m_currentInputData.m_telegram.m_contentID;

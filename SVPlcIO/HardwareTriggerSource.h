@@ -24,7 +24,7 @@ public:
 	virtual bool isReady() override	{ return m_cifXCard.isProtocolInitialized(); }
 	virtual HRESULT initialize() override;
 	virtual void analyzeTelegramData() override;
-	virtual void queueResult(uint8_t channel, ChannelOut&& channelOut) override;
+	virtual void queueResult(uint8_t channel, ChannelOut1&& channelOut) override;
 	virtual void setReady(bool ready) override { m_cifXCard.setReady(ready); }
 
 private:
@@ -40,6 +40,7 @@ private:
 	uint32_t m_numberOfFailures {0UL};
 
 	uint32_t m_ProcessDataChanges {0UL};
+	int8_t m_previousSequenceCode[cNumberOfChannels] = { 0, 0, 0, 0 };
 
 	std::array<uint8_t, cCmdDataSize> m_previousTriggerData;
 	std::queue<InspectionState1> m_inspectionStateQueue;

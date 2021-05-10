@@ -27,6 +27,7 @@ public:
 #pragma region Member Variables
 public:
 	uint8_t m_unitControl{ 0 };				//When true then do inspection
+	int8_t m_sequence{ 0 };					//Sequence number
 	int16_t m_timeStamp{ 0 };				//Time stamp
 	uint8_t m_objectType{ 0 };				//Object type
 	uint32_t m_objectID{ 0 };				//Object ID

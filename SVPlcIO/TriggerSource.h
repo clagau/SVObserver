@@ -12,7 +12,7 @@
 
 namespace SvPlc
 {
-struct ChannelOut;
+struct ChannelOut1;
 
 class TriggerSource
 {
@@ -26,7 +26,7 @@ public:
 	virtual bool setTriggerChannel(uint8_t channel, bool active);
 	virtual bool isReady() { return true; }
 	virtual void analyzeTelegramData() = 0;
-	virtual void queueResult(uint8_t , ChannelOut&& ) {}
+	virtual void queueResult(uint8_t , ChannelOut1&& ) {}
 	virtual void setReady(bool ) {}
 
 protected:

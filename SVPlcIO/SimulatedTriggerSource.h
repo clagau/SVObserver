@@ -43,7 +43,7 @@ public:
 	virtual HRESULT initialize() override;
 	virtual bool setTriggerChannel(uint8_t channel, bool active) override;
 	virtual void analyzeTelegramData() override;
-	virtual void queueResult(uint8_t channel, ChannelOut&& channelOut) override;
+	virtual void queueResult(uint8_t channel, ChannelOut1&& channelOut) override;
 	virtual void createTriggerReport(uint8_t channel) override;
 
 private:

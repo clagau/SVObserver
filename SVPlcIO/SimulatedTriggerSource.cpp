@@ -58,7 +58,7 @@ void ChannelTimer(std::atomic_bool& rRun, SimulatedTriggerData simTriggerData)
 			triggerReport.m_isValid = true;
 			{
 				std::lock_guard<std::mutex> guard {gTriggerDataMutex};
-				std::swap(gTriggerReport[triggerReport.m_channel], triggerReport);
+				gTriggerReport[triggerReport.m_channel] = std::move(triggerReport);
 			}
 			gNewTrigger[simTriggerData.m_channel] = true;
 			currentIndex++;
@@ -148,7 +148,7 @@ HRESULT SimulatedTriggerSource::initialize()
 
 						if (triggerData.m_channel < cNumberOfChannels)
 						{
-							std::swap(m_channel[triggerData.m_channel].m_simulatedTriggerData, triggerData);
+							m_channel[triggerData.m_channel].m_simulatedTriggerData = std::move(triggerData);
 						}
 					}
 				}
@@ -257,7 +257,7 @@ void SimulatedTriggerSource::analyzeTelegramData()
 	}
 }
 
-void SimulatedTriggerSource::queueResult(uint8_t channel, ChannelOut&& channelOut)
+void SimulatedTriggerSource::queueResult(uint8_t channel, ChannelOut1&& channelOut)
 {
 	/// Highest priority is invalid then bad then good (of all 14 results)
 	if (channelOut.m_results.end() != std::find(channelOut.m_results.begin(), channelOut.m_results.end(), cPlcInvalid))
@@ -307,7 +307,8 @@ void SimulatedTriggerSource::createTriggerReport(uint8_t channel)
 		TriggerReport triggerReport;
 		{
 			std::lock_guard<std::mutex> guard {gTriggerDataMutex};
-			std::swap(triggerReport, gTriggerReport[channel]);
+			triggerReport = std::move(gTriggerReport[channel]);
+			gTriggerReport[channel] = {};
 		}
 		sendTriggerReport(triggerReport);
 		{

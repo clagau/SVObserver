@@ -58,7 +58,7 @@ HRESULT HardwareTriggerSource::initialize()
 	return result;
 }
 
-void HardwareTriggerSource::queueResult(uint8_t channel, ChannelOut&& channelOut)
+void HardwareTriggerSource::queueResult(uint8_t channel, ChannelOut1&& channelOut)
 {
 	///Channel has already been checked
 	std::lock_guard<std::mutex> guard {m_triggerSourceMutex};
@@ -66,7 +66,7 @@ void HardwareTriggerSource::queueResult(uint8_t channel, ChannelOut&& channelOut
 	{
 		m_inspectionStateQueue.emplace(InspectionState1{});
 	}
-	std::swap(m_inspectionStateQueue.back().m_channels[channel], channelOut);
+	m_inspectionStateQueue.back().m_channels[channel] = std::move(channelOut);
 }
 
 void HardwareTriggerSource::analyzeTelegramData()
@@ -96,7 +96,7 @@ void HardwareTriggerSource::analyzeTelegramData()
 				std::lock_guard<std::mutex> guard {m_triggerSourceMutex};
 				if(false == m_inspectionStateQueue.empty())
 				{
-					std::swap(sendInpectionState, m_inspectionStateQueue.front());
+					sendInpectionState = std::move(m_inspectionStateQueue.front());
 					m_inspectionStateQueue.pop();
 				}
 			}
@@ -152,6 +152,7 @@ void HardwareTriggerSource::createTriggerReport(uint8_t channel)
 		double triggerTimeStamp = getExecutionTime(inspectionCmd.m_socRelative, rChannel.m_timeStamp, m_cifXCard.getCurrentInputData().m_notificationTime);
 
 		bool channelTriggerDataValid = (cUnitControlActive == rChannel.m_unitControl) && (0 != rChannel.m_triggerIndex);
+		channelTriggerDataValid &= m_previousSequenceCode[channel] != rChannel.m_sequence && (0 != rChannel.m_sequence % 2);
 		if (channelTriggerDataValid)
 		{
 			TriggerReport report;
@@ -164,6 +165,7 @@ void HardwareTriggerSource::createTriggerReport(uint8_t channel)
 			report.m_isValid = (0 != inspectionCmd.m_socRelative);
 
 			sendTriggerReport(report);
+			m_previousSequenceCode[channel] = rChannel.m_sequence;
 		}
 	}
 	else if (PlcVersion::PlcData2 == plcVersion)
