@@ -102,13 +102,11 @@ std::pair<bool, std::string> ExternalToolTaskController::resetAllObjects(bool sh
 		{
 			if (false == errorMessages.empty() && showFirstError)
 			{
+				SvStl::MessageManager mm(SvStl::MsgType::Log | SvStl::MsgType::Display);
 				auto& mc = errorMessages[0]; //currently just the first error message is displayed
-				{
-					SvStl::MessageManager mm(SvStl::MsgType::Log | SvStl::MsgType::Display);
-					mm.setMessage(mc.getMessage());
-					mm.Process();
-					result.second = mc.What();
-				}
+				mm.setMessage(mc.getMessage());
+				mm.Process();
+				result.second = mc.What();
 			}
 			return result;
 		}

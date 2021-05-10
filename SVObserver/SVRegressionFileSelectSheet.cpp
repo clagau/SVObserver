@@ -457,10 +457,7 @@ int SVRegressionFileSelectSheet::FillFileListFromDirectory(RegressionTestStruct&
 		//StrCmpLogicalW is the sorting function used by Windows Explorer
 		auto FolderCompare = [](const std::string& rLhs, const std::string& rRhs) { return ::StrCmpLogicalW(_bstr_t{ rLhs.c_str() }, _bstr_t{ rRhs.c_str() }) < 0; };
 		std::sort(folderList.begin(), folderList.end(), FolderCompare);
-		for (const auto& rFolder : folderList)
-		{
-			count += FillFileListFromDirectory(rStruct, rFolder);
-		}
+		count = std::accumulate(folderList.begin(), folderList.end(), count, [this, &rStruct](int sum, const auto& rFolder) {return sum + FillFileListFromDirectory(rStruct, rFolder);} );
 	}
 
 	return count;

@@ -427,23 +427,6 @@ void SVTADlgResizePage::OnAnyItemChanged()
 	CommitAndCheckNewParameterValues();
 }
 
-std::string SVTADlgResizePage::GetToolname() const
-{
-	std::string inspectionName;
-	SvPb::InspectionCmdRequest requestCmd;
-	SvPb::InspectionCmdResponse responseCmd;
-	auto* pRequest = requestCmd.mutable_getobjectparametersrequest();
-	pRequest->set_objectid(m_toolID);
-
-	HRESULT hr = SvCmd::InspectionCommands(m_inspectionID, requestCmd, &responseCmd);
-	if (S_OK == hr && responseCmd.has_getobjectparametersresponse())
-	{
-		inspectionName = responseCmd.getobjectparametersresponse().name();
-	}
-	return inspectionName;
-}
-
-
 void SVTADlgResizePage::traceScalefactorValues(const std::string &rHeading, bool alsoAsDouble) const
 {
 		std::stringstream traceStream;

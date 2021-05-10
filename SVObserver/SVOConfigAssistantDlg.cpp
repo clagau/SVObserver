@@ -2457,59 +2457,55 @@ bool SVOConfigAssistantDlg::SendDataToConfiguration()
 
 	//POST/PRE Execution
 	//Save & copy filepath
-	if (pConfig != nullptr)
+	CString runDirectory = SvStl::GlobalPath::Inst().GetRunPath().c_str();
+
+	if (m_preExecutionFilePath.empty() == false && m_preExecutionFilePath != pConfig->getPreRunExecutionFilePath())
 	{
-		CString runDirectory = SvStl::GlobalPath::Inst().GetRunPath().c_str();
-
-		if (m_preExecutionFilePath.empty() == false && m_preExecutionFilePath != pConfig->getPreRunExecutionFilePath())
+		if (pConfig->getPreRunExecutionFilePath() != pConfig->getPostRunExecutionFilePath())
 		{
-			if (pConfig->getPreRunExecutionFilePath() != pConfig->getPostRunExecutionFilePath())
-			{
-				std::remove(pConfig->getPreRunExecutionFilePath().c_str());
-				TheSVObserverApp.RemoveFileFromConfig(pConfig->getPreRunExecutionFilePath().c_str());
-			}
-
-			CString destinationPath = runDirectory + "\\" + std::filesystem::path(m_preExecutionFilePath).filename().c_str();
-			::CopyFile(m_preExecutionFilePath.c_str(), destinationPath, false);
-			TheSVObserverApp.AddFileToConfig(destinationPath);
-			m_preExecutionFilePath = destinationPath;
-			pConfig->setPreRunExecutionFilePath(destinationPath);
-		}
-		else if (m_preExecutionFilePath.empty())
-		{
-			if (pConfig->getPreRunExecutionFilePath() != pConfig->getPostRunExecutionFilePath())
-			{
-				std::remove(pConfig->getPreRunExecutionFilePath().c_str());
-				TheSVObserverApp.RemoveFileFromConfig(pConfig->getPreRunExecutionFilePath().c_str());
-			}
-			pConfig->setPreRunExecutionFilePath(m_preExecutionFilePath.c_str());
+			std::remove(pConfig->getPreRunExecutionFilePath().c_str());
+			TheSVObserverApp.RemoveFileFromConfig(pConfig->getPreRunExecutionFilePath().c_str());
 		}
 
-		if (m_postExecutionFilePath.empty() == false && m_postExecutionFilePath != pConfig->getPostRunExecutionFilePath())
-		{
-			if (pConfig->getPreRunExecutionFilePath() != pConfig->getPostRunExecutionFilePath())
-			{
-				std::remove(pConfig->getPostRunExecutionFilePath().c_str());
-				TheSVObserverApp.RemoveFileFromConfig(pConfig->getPostRunExecutionFilePath().c_str());
-			}
-
-			CString destinationPath = runDirectory + "\\" + std::filesystem::path(m_postExecutionFilePath).filename().c_str();
-			::CopyFile(m_postExecutionFilePath.c_str(), destinationPath, false);
-			TheSVObserverApp.AddFileToConfig(destinationPath);
-			m_postExecutionFilePath = destinationPath;
-			pConfig->setPostRunExecutionFilePath(destinationPath);
-		}
-		else if (m_postExecutionFilePath.empty())
-		{
-			if (pConfig->getPreRunExecutionFilePath() != pConfig->getPostRunExecutionFilePath())
-			{
-				std::remove(pConfig->getPostRunExecutionFilePath().c_str());
-				TheSVObserverApp.RemoveFileFromConfig(pConfig->getPostRunExecutionFilePath().c_str());
-			}
-			pConfig->setPostRunExecutionFilePath(m_postExecutionFilePath.c_str());
-		}
+		CString destinationPath = runDirectory + "\\" + std::filesystem::path(m_preExecutionFilePath).filename().c_str();
+		::CopyFile(m_preExecutionFilePath.c_str(), destinationPath, false);
+		TheSVObserverApp.AddFileToConfig(destinationPath);
+		m_preExecutionFilePath = destinationPath;
+		pConfig->setPreRunExecutionFilePath(destinationPath);
 	}
-	//
+	else if (m_preExecutionFilePath.empty())
+	{
+		if (pConfig->getPreRunExecutionFilePath() != pConfig->getPostRunExecutionFilePath())
+		{
+			std::remove(pConfig->getPreRunExecutionFilePath().c_str());
+			TheSVObserverApp.RemoveFileFromConfig(pConfig->getPreRunExecutionFilePath().c_str());
+		}
+		pConfig->setPreRunExecutionFilePath(m_preExecutionFilePath.c_str());
+	}
+
+	if (m_postExecutionFilePath.empty() == false && m_postExecutionFilePath != pConfig->getPostRunExecutionFilePath())
+	{
+		if (pConfig->getPreRunExecutionFilePath() != pConfig->getPostRunExecutionFilePath())
+		{
+			std::remove(pConfig->getPostRunExecutionFilePath().c_str());
+			TheSVObserverApp.RemoveFileFromConfig(pConfig->getPostRunExecutionFilePath().c_str());
+		}
+
+		CString destinationPath = runDirectory + "\\" + std::filesystem::path(m_postExecutionFilePath).filename().c_str();
+		::CopyFile(m_postExecutionFilePath.c_str(), destinationPath, false);
+		TheSVObserverApp.AddFileToConfig(destinationPath);
+		m_postExecutionFilePath = destinationPath;
+		pConfig->setPostRunExecutionFilePath(destinationPath);
+	}
+	else if (m_postExecutionFilePath.empty())
+	{
+		if (pConfig->getPreRunExecutionFilePath() != pConfig->getPostRunExecutionFilePath())
+		{
+			std::remove(pConfig->getPostRunExecutionFilePath().c_str());
+			TheSVObserverApp.RemoveFileFromConfig(pConfig->getPostRunExecutionFilePath().c_str());
+		}
+		pConfig->setPostRunExecutionFilePath(m_postExecutionFilePath.c_str());
+	}
 
 	if ( m_bNewConfiguration )
 	{

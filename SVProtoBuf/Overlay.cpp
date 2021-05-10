@@ -6,6 +6,7 @@
 /// Function for Overlays
 //******************************************************************************
 
+#include "stdafx.h"
 #include "Overlay.h"
 
 namespace SvPb

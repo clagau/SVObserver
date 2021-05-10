@@ -27,9 +27,10 @@
 #ifndef _WIN32_IE			// Allow use of features specific to IE 6.0 or later.
 #define _WIN32_IE 0x0600	// Change this to the appropriate value to target other versions of IE.
 #endif
+#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
 
 #define NOMINMAX
-#define VC_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
+#define VC_EXTRALEAN            // Exclude rarely-used stuff from Windows headers
 #define _CRT_SECURE_NO_WARNINGS
 
 #pragma warning(disable : 4996) ///Required to be able to copy std::vector to protobuf repeated field
@@ -40,6 +41,7 @@
 #pragma region Precompiled Headers
 
 #include <atomic>
+#include <comutil.h>
 #include <condition_variable>
 #include <functional>
 #include <map>

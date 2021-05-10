@@ -236,13 +236,11 @@ static SvXml::XmlElement* getOrCreateChild(SvXml::XmlElement& ele, const std::ws
 
 static bool isKnownPermission(const SvXml::XmlElement& rPermissionEle)
 {
-	for (const auto& attr : rPermissionEle.attributes)
+	auto iter = std::find_if(rPermissionEle.attributes.begin(), rPermissionEle.attributes.end(), [](const auto& rEntry) {return rEntry.name == L"name"; });
+	if (rPermissionEle.attributes.end() != iter)
 	{
-		if (attr.name == L"name")
-		{
-			SvPb::Permissions permissions;
-			return SvAuth::PermissionHelper::parsePermission(permissions, SvUl::to_utf8(attr.value));
-		}
+		SvPb::Permissions permissions;
+		return SvAuth::PermissionHelper::parsePermission(permissions, SvUl::to_utf8(iter->value));
 	}
 	return false;
 }

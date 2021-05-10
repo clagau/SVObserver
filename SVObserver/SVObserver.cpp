@@ -2309,16 +2309,13 @@ void SVObserverApp::RemoveFileFromConfig(LPCTSTR FilePath)
 	if (nullptr != pConfig)
 	{
 		const auto& rAdditionalFiles = pConfig->getAdditionalFiles();
-		for (const auto& rFile : rAdditionalFiles)
+		auto iter = std::find_if(rAdditionalFiles.begin(), rAdditionalFiles.end(), [&FilePath](const SVFileNameClass& rFile) {return FilePath == rFile.GetFullFileName(); });
+		if(rAdditionalFiles.end() != iter)
 		{
-			// cppcheck-suppress useStlAlgorithm; rAdditionalFiles is an overload of std::vector
-			if (FilePath == rFile.GetFullFileName())
-			{
-				pConfig->getAdditionalFiles().remove(rFile);
-				SVFileNameManagerClass::Instance().RemoveItem(&rFile);
-				SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
-				break;
-			}
+			const SVFileNameClass& rSVFileName = *iter;
+			pConfig->getAdditionalFiles().remove(rSVFileName);
+			SVFileNameManagerClass::Instance().RemoveItem(&rSVFileName);
+			SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
 		}
 	}
 }

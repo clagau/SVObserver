@@ -44,8 +44,6 @@ private:
 
 	HRESULT SetupResizeImageControl();
 
-	std::string GetToolname() const;
-
 	void getInterpolationModeFromDialog();
 	void getOverscanModeFromDialog();
 	bool CommitAndCheckNewParameterValues();
