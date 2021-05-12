@@ -69,8 +69,8 @@ public:
 	bool GoOnline();
 	bool GoOffline();
 
-	bool RegisterCallback(PpqCameraCallBack pPpqCameraCallbak);
-	bool UnregisterCallback();
+	bool RegisterCallback(ULONG_PTR pPPQ, PpqCameraCallBack pPpqCameraCallback);
+	bool UnregisterCallback(ULONG_PTR pPPQ);
 
     SVAcquisitionClassPtr GetAcquisitionDevice() const { return m_pDevice; }
 	

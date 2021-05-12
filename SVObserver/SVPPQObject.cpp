@@ -308,6 +308,9 @@ void SVPPQObject::init()
 	{
 		m_childObjects.push_back(pPpqLength.get());
 	}
+
+	m_cameraCallback = [this](ULONG_PTR pCaller, const CameraInfo& rCameraInfo) { cameraCallback(pCaller, rCameraInfo); };
+	m_triggerCallback = [this](SvTrig::SVTriggerInfoStruct&& triggerInfo) { triggerCallback(std::move(triggerInfo)); };
 }
 
 HRESULT SVPPQObject::GetChildObject(SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index) const
@@ -583,7 +586,7 @@ bool SVPPQObject::AttachTrigger(SvTrig::SVTriggerObject* pTrigger)
 
 	m_pTrigger->SetObjectOwner(this);
 
-	return m_pTrigger->RegisterCallback(std::bind(&SVPPQObject::triggerCallback, this, std::placeholders::_1));
+	return m_pTrigger->RegisterCallback(m_triggerCallback);
 }
 
 bool SVPPQObject::AttachCamera(SvIe::SVVirtualCamera* pCamera, long lPosition, bool p_AllowMinusOne)
@@ -607,7 +610,7 @@ bool SVPPQObject::AttachCamera(SvIe::SVVirtualCamera* pCamera, long lPosition, b
 
 		RebuildProductCameraInfoStructs();
 
-		l_bOk &= pCamera->RegisterCallback(std::bind(&SVPPQObject::cameraCallback, this, std::placeholders::_1, std::placeholders::_2));
+		l_bOk &= pCamera->RegisterCallback(reinterpret_cast<ULONG_PTR> (this), m_cameraCallback);
 		pCamera->addNeededBuffer(getObjectId(), getPPQLength());
 	}
 
@@ -646,7 +649,7 @@ bool SVPPQObject::DetachCamera(SvIe::SVVirtualCamera* pCamera, bool bRemoveDepen
 
 	bool l_Status = true;
 
-	l_Status &= pCamera->UnregisterCallback();
+	l_Status &= pCamera->UnregisterCallback(reinterpret_cast<ULONG_PTR> (this));
 	pCamera->removeNeededBufferEntry(getObjectId());
 
 	SVCameraInfoMap::iterator l_svIter = m_Cameras.find(pCamera);
@@ -2866,27 +2869,27 @@ HRESULT SVPPQObject::BuildCameraInfos(SvIe::SVObjectIdSVCameraInfoStructMap& p_r
 	return l_Status;
 }
 
-void SVPPQObject::cameraCallback(ULONG_PTR pCaller, CameraInfo&& cameraInfo)
+void SVPPQObject::cameraCallback(ULONG_PTR pCaller, const CameraInfo& rCameraInfo)
 {
 	SvIe::SVVirtualCamera* pCamera = reinterpret_cast<SvIe::SVVirtualCamera*> (pCaller);
-	bool valid = (m_bOnline && (nullptr != pCamera) && (nullptr != cameraInfo.m_pImage));
+	bool valid = (m_bOnline && (nullptr != pCamera) && (nullptr != rCameraInfo.m_pImage));
 
 	if (valid)
 	{
 		SvTrig::SVTriggerObject* pTrigger = GetTrigger();
 		if (nullptr != pTrigger)
 		{
-			bool isCameraTriggerAndHwCameraWithImage = SvDef::TriggerType::CameraTrigger == pTrigger->getType() && false == pCamera->IsFileAcquisition() && nullptr != cameraInfo.m_pImage;
+			bool isCameraTriggerAndHwCameraWithImage = SvDef::TriggerType::CameraTrigger == pTrigger->getType() && false == pCamera->IsFileAcquisition() && nullptr != rCameraInfo.m_pImage;
 			if (isCameraTriggerAndHwCameraWithImage)
 			{
 				SvTrig::SVTriggerInfoStruct triggerInfo;
 				triggerInfo.bValid = true;
-				triggerInfo.m_Data[SvTrig::TriggerDataEnum::TimeStamp] = _variant_t(cameraInfo.m_startFrameTime);
+				triggerInfo.m_Data[SvTrig::TriggerDataEnum::TimeStamp] = _variant_t(rCameraInfo.m_startFrameTime);
 				pTrigger->Fire(std::move(triggerInfo));
 			}
 		}
 
-		m_CameraResponseQueue.AddTail(SVCameraQueueElement(pCamera, cameraInfo));
+		m_CameraResponseQueue.AddTail(SVCameraQueueElement(pCamera, rCameraInfo));
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
 		::OutputDebugString(SvUl::Format(_T("%s Finished Camera Acquisition %s\n"), GetName(), pCamera->GetName()).c_str());
 #endif

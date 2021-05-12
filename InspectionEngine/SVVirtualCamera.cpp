@@ -137,20 +137,20 @@ bool SVVirtualCamera::GoOffline()
 	return (nullptr != m_pDevice) && ( S_OK == m_pDevice->Stop() );
 }
 
-bool SVVirtualCamera::RegisterCallback(PpqCameraCallBack pPpqCameraCallback)
+bool SVVirtualCamera::RegisterCallback(ULONG_PTR pPPQ, PpqCameraCallBack pPpqCameraCallback)
 {
 	if (nullptr != m_pDevice)
 	{
-		return (S_OK == m_pDevice->RegisterCallback(reinterpret_cast<ULONG_PTR> (this), pPpqCameraCallback));
+		return (S_OK == m_pDevice->RegisterCallback(reinterpret_cast<ULONG_PTR> (this), pPPQ, pPpqCameraCallback));
 	}
 	return false;
 }
 
-bool SVVirtualCamera::UnregisterCallback()
+bool SVVirtualCamera::UnregisterCallback(ULONG_PTR pPPQ)
 {
 	if (nullptr != m_pDevice)
 	{
-		return (S_OK == m_pDevice->UnregisterCallback());
+		return (S_OK == m_pDevice->UnregisterCallback(pPPQ));
 	}
 	return false;
 }
@@ -184,7 +184,7 @@ bool SVVirtualCamera::DestroyLocal()
 {
 	bool bOk = GoOffline();
 
-	bOk &= (S_OK == m_pDevice->UnregisterCallback());
+	bOk &= (S_OK == m_pDevice->UnregisterCallback(0UL));
 
 	m_pDevice = nullptr;
 	mlBandLink = 0;

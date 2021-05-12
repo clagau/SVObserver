@@ -37,6 +37,8 @@ struct SVTriggerInfoStruct
 	SVTriggerInfoStruct& operator=(const SVTriggerInfoStruct& rRhs) = default;
 	SVTriggerInfoStruct& operator=(SVTriggerInfoStruct&& rRhs) = default;
 
+	void clear() { *this = {}; }
+
 	bool bValid{false};
 	long lTriggerCount{0L};
 	bool m_ToggleState{false};

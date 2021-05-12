@@ -23,6 +23,7 @@
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVObjectLibrary/SVObserverTemplate.h"
 #include "SVOLibrary/SVQueueObject.h"
+#include "SVOLibrary/TriggerDevice.h"
 #include "SVSharedMemoryLibrary/SMRingbuffer.h"
 #include "SVSystemLibrary/SVAsyncProcedure.h"
 #include "SVValueObjectLibrary/BasicValueObjects.h"
@@ -178,7 +179,7 @@ public:
 	void GetAllOutputs( SVIOEntryHostStructPtrVector& p_IOEntries ) const;
 	void AddDefaultOutputs();
 
-	void __stdcall cameraCallback(ULONG_PTR pCaller, CameraInfo&& cameraInfo);
+	void __stdcall cameraCallback(ULONG_PTR pCaller, const CameraInfo& rCameraInfo);
 
 	void __stdcall triggerCallback(SvTrig::SVTriggerInfoStruct&& triggerInfo);
 
@@ -473,6 +474,8 @@ private:
 	void calcUseProcessingOffset4InterestFlag();
 	long getNeededRecords() const;
 
+	PpqCameraCallBack m_cameraCallback;
+	PpqTriggerCallBack m_triggerCallback;
 	SvVol::BasicValueObjects	m_PpqValues;
 	SvDef::SVPPQOutputModeEnum m_outputMode;
 	long m_outputDelay;

@@ -53,7 +53,7 @@ public:
 	virtual void Notify(const SvTrig::SVTriggerInfoStruct& rTriggerInfo);
 
 protected:
-	typedef SVRingBuffer<SvTrig::SVTriggerInfoStruct> TriggerQueue;
+	typedef SVRingBuffer<SvTrig::SVTriggerInfoStruct, SVElementClear> TriggerQueue;
 
 	void Process(bool& rWaitForEvents);
 

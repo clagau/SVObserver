@@ -25,7 +25,7 @@ void AcquisitionDevice::ClearDevice()
 {
 	if (false == m_isStarted)
 	{
-		m_pPpqCameraCallback = nullptr;
+		m_PpqCameraCallbackList.clear();
 	}
 	m_cameraQueue.clear();
 }
@@ -61,7 +61,7 @@ HRESULT AcquisitionDevice::Destroy()
 {
 	m_isStarted = false;
 	m_Thread.Destroy();
-	m_pPpqCameraCallback = nullptr;
+	m_PpqCameraCallbackList.clear();
 	m_cameraQueue.clear();
 	return S_OK;
 }
@@ -69,22 +69,45 @@ HRESULT AcquisitionDevice::Destroy()
 /*
 This method adds the callback data to the callback list.
 */
-HRESULT AcquisitionDevice::RegisterCallback(ULONG_PTR pCaller, PpqCameraCallBack pPpqCameraCallback)
+HRESULT AcquisitionDevice::RegisterCallback(ULONG_PTR pCaller, ULONG_PTR pPPQ, PpqCameraCallBack pPpqCameraCallback)
 {
 	if (false == m_isStarted)
 	{
-		m_pCaller = pCaller;
-		m_pPpqCameraCallback = pPpqCameraCallback;
+		if (0UL == m_pCaller)
+		{
+			m_pCaller = pCaller;
+		}
+		else if (m_pCaller != pCaller)
+		{
+			return E_FAIL;
+		}
+
+		m_PpqCameraCallbackList.push_back({ pPPQ, pPpqCameraCallback });
 		return S_OK;
 	}
 	return E_FAIL;
 }
 
-HRESULT AcquisitionDevice::UnregisterCallback()
+HRESULT AcquisitionDevice::UnregisterCallback(ULONG_PTR pPPQ)
 {
 	if (false == m_isStarted)
 	{
-		m_pPpqCameraCallback = nullptr;
+		if (0UL != pPPQ)
+		{
+			auto iter = std::find_if(m_PpqCameraCallbackList.begin(), m_PpqCameraCallbackList.end(), [&pPPQ](const auto& rCallback) { return rCallback.first == pPPQ; });
+			if (m_PpqCameraCallbackList.end() != iter)
+			{
+				m_PpqCameraCallbackList.erase(iter);
+			}
+		}
+		else
+		{
+			m_PpqCameraCallbackList.clear();
+		}
+		if (m_PpqCameraCallbackList.empty())
+		{
+			m_pCaller = 0UL;
+		}
 		return S_OK;
 	}
 	return E_FAIL;
@@ -113,6 +136,7 @@ HRESULT AcquisitionDevice::Stop()
 	m_isStarted = false;
 	m_Thread.SetPriority(THREAD_PRIORITY_NORMAL);
 	m_Thread.Destroy();
+	Reset();
 
 	return S_OK;
 }
@@ -134,9 +158,9 @@ void AcquisitionDevice::Process( bool& )
 		CameraInfo cameraInfo;
 		m_cameraQueue.RemoveHead(&cameraInfo);
 
-		if (nullptr != m_pPpqCameraCallback)
+		for(const auto& rCallback : m_PpqCameraCallbackList)
 		{
-			m_pPpqCameraCallback(m_pCaller, std::move(cameraInfo));
+			rCallback.second(m_pCaller, cameraInfo);
 		}
 		m_cameraQueue.GetSize(queueSize);
 		done = (1 > queueSize);

@@ -85,6 +85,7 @@ HRESULT TriggerDevice::Stop()
 	m_isStarted = false;
 	m_Thread.SetPriority( THREAD_PRIORITY_NORMAL );
 	m_Thread.Destroy();
+	Reset();
 
 	return S_OK;
 }

@@ -19,7 +19,7 @@
 #include "SVQueueObject.h"
 #pragma endregion Includes
 
-typedef std::function<void(ULONG_PTR, CameraInfo&&)> PpqCameraCallBack;
+typedef std::function<void(ULONG_PTR, const CameraInfo&)> PpqCameraCallBack;
 
 class AcquisitionDevice
 {
@@ -37,8 +37,8 @@ public:
 	virtual HRESULT Create();
 	virtual HRESULT Destroy();
 
-	virtual HRESULT RegisterCallback(ULONG_PTR pCaller, PpqCameraCallBack pPpqCameraCallback);
-	virtual HRESULT UnregisterCallback();
+	virtual HRESULT RegisterCallback(ULONG_PTR pCaller, ULONG_PTR pPPQ, PpqCameraCallBack pPpqCameraCallback);
+	virtual HRESULT UnregisterCallback(ULONG_PTR pPPQ);
 
 	virtual HRESULT Start();
 	virtual HRESULT Stop();
@@ -68,12 +68,12 @@ private:
 	bool m_isStarted{false};
 	bool m_isCreated{ false };
 
-	ULONG_PTR m_pCaller{ 0UL }; 
+	ULONG_PTR m_pCaller{ 0UL };
 
 	SVAsyncProcedure m_Thread;
 
 	CameraQueue m_cameraQueue;
 
-	PpqCameraCallBack m_pPpqCameraCallback;
+	std::vector<std::pair<ULONG_PTR, PpqCameraCallBack>> m_PpqCameraCallbackList;
 };
 
