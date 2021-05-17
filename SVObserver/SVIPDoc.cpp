@@ -2555,11 +2555,10 @@ void SVIPDoc::SaveViews(SvOi::IObjectWriter& rWriter)
 		{
 			std::string viewClassName = getViewClassName(View.pView);
 			assert(false == viewClassName.empty());
+			svVariant = ++ViewNumber;
 			if (false == viewClassName.empty() && cSVImageViewName != viewClassName)
 			{
 				rWriter.StartElement(viewClassName.c_str());
-
-				svVariant = ++ViewNumber;
 				rWriter.WriteAttribute(SvXml::CTAG_VIEW_NUMBER, svVariant);
 				svVariant.Clear();
 
