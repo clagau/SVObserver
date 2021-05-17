@@ -218,11 +218,11 @@ public:
 	afx_msg void OnUpdateShowToolRelations(CCmdUI* pCmdUI);
 	afx_msg void OnToolDependencies();
 	afx_msg void OnUpdateAddGeneralTool(CCmdUI* PCmdUI);
+	afx_msg void OnUpdateAddGeneralImageMonoTypeTool(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateAddCylindricalWarpTool(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateAddTransformationTool(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateAddColorTool(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateAddLoopTool(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateAddGroupTool(CCmdUI* PCmdUI);
+	afx_msg void OnUpdateAddToolWithSubTools(CCmdUI* PCmdUI);
 	
 	//}}AFX_MSG
 

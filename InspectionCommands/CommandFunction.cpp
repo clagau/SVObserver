@@ -58,85 +58,6 @@
 
 namespace SvCmd
 {
-SvPb::StandardResponse canDeleteObject(const SvOi::IObjectClass* const pObject)
-{
-	/// Do not need to check for nullptr from function parameters
-	SvPb::StandardResponse response;
-	
-	const SvOi::IInspectionProcess* pInspection = dynamic_cast<const SvOi::IInspectionProcess*> (pObject->GetAncestorInterface(SvPb::SVInspectionObjectType));
-	if (nullptr != pInspection && pInspection->IsColorCamera())
-	{
-		const SvOi::IObjectClass* const pParent = SvOi::getObject(pObject->GetParentID());
-		///Color inspection must have first tool as color tool
-		if (nullptr != pParent && SvPb::SVToolSetObjectType == pParent->GetObjectType())
-		{
-			const SvOi::ITaskObjectListClass* const pParentTaskObjectList = dynamic_cast<const SvOi::ITaskObjectListClass* const> (pParent);
-			if (nullptr != pParentTaskObjectList)
-			{
-				SvPb::TaskObjectListResponse taskObjListResponse;
-				pParentTaskObjectList->GetTaskObjectListInfo(taskObjListResponse);
-				int taskObjectSize = taskObjListResponse.taskobjectinfos_size();
-				if (0 < taskObjectSize)
-				{
-					///If first tool is color tool then can only be deleted if second is also color tool
-					if(pObject->getObjectId() == taskObjListResponse.taskobjectinfos(0).taskobjectid())
-					{
-						if(1 < taskObjectSize && SvPb::SVColorToolObjectType != taskObjListResponse.taskobjectinfos(1).objectsubtype())
-						{
-							SvStl::MessageContainer message(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ColorToolMustBeFirstMessage, SvStl::SourceFileParams(StdMessageParams));
-							SvPb::convertMessageToProtobuf(message, response.mutable_errormessages()->add_messages());
-							response.set_hresult(E_FAIL);
-						}
-					}
-				}
-			}
-		}
-	}
-	return response;
-}
-
-SvPb::StandardResponse canCreateObject(const SvOi::IObjectClass* const pParent, const SvOi::IObjectClass* const pObject, uint32_t taskObjectBeforeID)
-{
-	/// Do not need to check for nullptr from function parameters
-	SvPb::StandardResponse response;
-	const SvOi::IInspectionProcess* pInspection = dynamic_cast<const SvOi::IInspectionProcess*> (pParent->GetAncestorInterface(SvPb::SVInspectionObjectType));
-	if (nullptr != pInspection && pInspection->IsColorCamera())
-	{
-		///Color inspection must have first tool as color tool 
-		if (SvPb::SVToolSetObjectType == pParent->GetObjectType())
-		{
-			const SvOi::ITaskObjectListClass* const pParentTaskObjectList = dynamic_cast<const SvOi::ITaskObjectListClass* const> (pParent);
-			if (nullptr != pParentTaskObjectList)
-			{
-				SvPb::TaskObjectListResponse taskObjListResponse;
-				pParentTaskObjectList->GetTaskObjectListInfo(taskObjListResponse);
-				int taskObjectSize = taskObjListResponse.taskobjectinfos_size();
-				bool canCreate {true};
-				///If first inserted tool then tool must be color
-				if (0 == taskObjectSize)
-				{
-					canCreate = SvPb::SVColorToolObjectType == pObject->GetObjectSubType();
-				}
-				else
-				{
-					///We are only interested to see if the new task object is to be inserted in the first position
-					if (taskObjectBeforeID == taskObjListResponse.taskobjectinfos(0).taskobjectid())
-					{
-						canCreate = SvPb::SVColorToolObjectType == pObject->GetObjectSubType();
-					}
-				}
-				if (false == canCreate)
-				{
-					SvStl::MessageContainer message(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ColorToolMustBeFirstMessage, SvStl::SourceFileParams(StdMessageParams));
-					SvPb::convertMessageToProtobuf(message, response.mutable_errormessages()->add_messages());
-					response.set_hresult(E_FAIL);
-				}
-			}
-		}
-	}
-	return response;
-}
-
 SvPb::InspectionCmdResponse InspectionRunOnce(SvPb::InspectionRunOnceRequest request)
 {
 	SvPb::InspectionCmdResponse cmdResponse;
@@ -159,13 +80,6 @@ SvPb::InspectionCmdResponse DeleteObject(SvPb::DeleteObjectRequest request)
 	SvOi::IObjectClass* pObject = SvOi::getObject(request.objectid());
 	if (nullptr != pObject)
 	{
-		SvPb::StandardResponse stdResponse = canDeleteObject(pObject);
-		if(S_OK != stdResponse.hresult())
-		{
-			*cmdResponse.mutable_standardresponse() = stdResponse;
-			cmdResponse.set_hresult(stdResponse.hresult());
-			return cmdResponse;
-		}
 		DWORD flag = 0;
 		switch (request.flag())
 		{
@@ -891,54 +805,41 @@ SvPb::InspectionCmdResponse createObject(SvPb::CreateObjectRequest request)
 
 			if (nullptr != pParentTaskObjectList && nullptr != pTaskObject && nullptr != pObjectApp && nullptr != pObject)
 			{
-				SvPb::StandardResponse stdResponse = canCreateObject(pParent, pObject, request.taskobjectinsertbeforeid());
-
-				if(S_OK != stdResponse.hresult())
+				if (SvPb::CreateObjectRequest::kTaskObjectInsertBeforeId == request.message_case())
 				{
-					///Delete the object
-					delete pTaskObject;
-					pObject = nullptr;
-					*cmdResponse.mutable_standardresponse() = stdResponse;
-					cmdResponse.set_hresult(stdResponse.hresult());
+					pParentTaskObjectList->InsertBefore(request.taskobjectinsertbeforeid(), *pTaskObject);
 				}
 				else
 				{
-					if (SvPb::CreateObjectRequest::kTaskObjectInsertBeforeId == request.message_case())
-					{
-						pParentTaskObjectList->InsertBefore(request.taskobjectinsertbeforeid(), *pTaskObject);
-					}
-					else
-					{
-						pParentTaskObjectList->InsertAt(request.taskobjectpos(), *pTaskObject);
-					}
+					pParentTaskObjectList->InsertAt(request.taskobjectpos(), *pTaskObject);
+				}
 
-					// And last - Create (initialize) it
-					if (!pObject->is_Created())
+				// And last - Create (initialize) it
+				if (!pObject->is_Created())
+				{
+					// And finally try to create the child object...
+					if (!pObjectApp->CreateChildObject(*pObject, SvDef::SVMFResetObject))
 					{
-						// And finally try to create the child object...
-						if (!pObjectApp->CreateChildObject(*pObject, SvDef::SVMFResetObject))
+						cmdResponse.set_hresult(SvStl::Err_10021_InsertTaskObject_CreateObjectFailed);
+
+						// Remove it from the Tool TaskObjectList ( Destruct it )
+						uint32_t objectID = pObject->getObjectId();
+						if (SvDef::InvalidObjectId != objectID)
 						{
-							cmdResponse.set_hresult(SvStl::Err_10021_InsertTaskObject_CreateObjectFailed);
-
-							// Remove it from the Tool TaskObjectList ( Destruct it )
-							uint32_t objectID = pObject->getObjectId();
-							if (SvDef::InvalidObjectId != objectID)
-							{
-								pParentTaskObjectList->Delete(objectID);
-							}
-							else
-							{
-								delete pTaskObject;
-							}
-							pObject = nullptr;
+							pParentTaskObjectList->Delete(objectID);
 						}
 						else
 						{
-							SvOi::ITool* pTool = dynamic_cast<SvOi::ITool*> (pObject);
-							if (nullptr != pTool)
-							{
-								pTool->finishAddTool();
-							}
+							delete pTaskObject;
+						}
+						pObject = nullptr;
+					}
+					else
+					{
+						SvOi::ITool* pTool = dynamic_cast<SvOi::ITool*> (pObject);
+						if (nullptr != pTool)
+						{
+							pTool->finishAddTool();
 						}
 					}
 				}

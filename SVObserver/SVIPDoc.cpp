@@ -177,26 +177,26 @@ BEGIN_MESSAGE_MAP(SVIPDoc, CDocument)
 	ON_COMMAND(ID_ADD_LOOPTOOL, OnAddLoopTool)
 	ON_COMMAND(ID_ADD_GROUPTOOL, OnAddGroupTool)
 	ON_UPDATE_COMMAND_UI(ID_ADD_LOADIMAGETOOL, OnUpdateAddGeneralTool)
-	ON_UPDATE_COMMAND_UI(ID_ADD_IMAGETOOL, OnUpdateAddGeneralTool)
 	ON_UPDATE_COMMAND_UI(ID_ADD_ARCHIVETOOL, OnUpdateAddGeneralTool)
 	ON_UPDATE_COMMAND_UI(ID_ADD_MATHTOOL, OnUpdateAddGeneralTool)
+	ON_UPDATE_COMMAND_UI(ID_ADD_ACQUISITIONTOOL, OnUpdateAddGeneralTool)
 	ON_UPDATE_COMMAND_UI(ID_ADD_STATISTICSTOOL, OnUpdateAddGeneralTool)
 	ON_UPDATE_COMMAND_UI(ID_ADD_EXTERNAL_TOOL, OnUpdateAddGeneralTool)
-	ON_UPDATE_COMMAND_UI(ID_ADD_POLARUNWRAPTOOL, OnUpdateAddGeneralTool)
-	ON_UPDATE_COMMAND_UI(ID_ADD_ACQUISITIONTOOL, OnUpdateAddGeneralTool)
-	ON_UPDATE_COMMAND_UI(ID_ADD_LINEARTOOL, OnUpdateAddGeneralTool)
-	ON_UPDATE_COMMAND_UI(ID_ADD_RESIZETOOL, OnUpdateAddGeneralTool)
 	ON_UPDATE_COMMAND_UI(ID_ADD_RINGBUFFERTOOL, OnUpdateAddGeneralTool)
 	ON_UPDATE_COMMAND_UI(ID_ADD_TABLETOOL, OnUpdateAddGeneralTool)
 	ON_UPDATE_COMMAND_UI(ID_ADD_TABLEANALYZERTOOL, OnUpdateAddGeneralTool)
-	ON_UPDATE_COMMAND_UI(ID_ADD_PERSPECTIVEWARPTOOL, OnUpdateAddGeneralTool)
 	ON_UPDATE_COMMAND_UI(ID_ADD_SHIFTTOOL, OnUpdateAddGeneralTool)
-	ON_UPDATE_COMMAND_UI(ID_ADD_WINDOWTOOL, OnUpdateAddGeneralTool)
+	ON_UPDATE_COMMAND_UI(ID_ADD_WINDOWTOOL, OnUpdateAddGeneralImageMonoTypeTool)
+	ON_UPDATE_COMMAND_UI(ID_ADD_IMAGETOOL, OnUpdateAddGeneralImageMonoTypeTool)
+	ON_UPDATE_COMMAND_UI(ID_ADD_POLARUNWRAPTOOL, OnUpdateAddGeneralImageMonoTypeTool)
+	ON_UPDATE_COMMAND_UI(ID_ADD_LINEARTOOL, OnUpdateAddGeneralImageMonoTypeTool)
+	ON_UPDATE_COMMAND_UI(ID_ADD_RESIZETOOL, OnUpdateAddGeneralImageMonoTypeTool)
+	ON_UPDATE_COMMAND_UI(ID_ADD_PERSPECTIVEWARPTOOL, OnUpdateAddGeneralImageMonoTypeTool)
 	ON_UPDATE_COMMAND_UI(ID_ADD_CYLINDRICALWARPTOOL, OnUpdateAddCylindricalWarpTool)
 	ON_UPDATE_COMMAND_UI(ID_ADD_TRANSFORMATIONTOOL, OnUpdateAddTransformationTool)
 	ON_UPDATE_COMMAND_UI(ID_ADD_COLORTOOL, OnUpdateAddColorTool)
-	ON_UPDATE_COMMAND_UI(ID_ADD_LOOPTOOL, OnUpdateAddLoopTool)
-	ON_UPDATE_COMMAND_UI(ID_ADD_GROUPTOOL, OnUpdateAddGroupTool)
+	ON_UPDATE_COMMAND_UI(ID_ADD_LOOPTOOL, OnUpdateAddToolWithSubTools)
+	ON_UPDATE_COMMAND_UI(ID_ADD_GROUPTOOL, OnUpdateAddToolWithSubTools)
 
 
 
@@ -3283,6 +3283,13 @@ void SVIPDoc::OnToolDependencies()
 
 void SVIPDoc::OnUpdateAddGeneralTool(CCmdUI* PCmdUI)
 {
+	bool Enabled = TheSVObserverApp.OkToEdit();
+
+	PCmdUI->Enable(Enabled);
+}
+
+void SVIPDoc::OnUpdateAddGeneralImageMonoTypeTool(CCmdUI* PCmdUI)
+{
 	bool Enabled = TheSVObserverApp.OkToEdit() && isImageAvailable(SvPb::SVImageMonoType);
 
 	PCmdUI->Enable(Enabled);
@@ -3321,30 +3328,16 @@ void SVIPDoc::OnUpdateAddColorTool(CCmdUI* PCmdUI)
 
 	PCmdUI->Enable(Enabled);
 }
-afx_msg void SVIPDoc::OnUpdateAddLoopTool(CCmdUI* PCmdUI)
+
+afx_msg void SVIPDoc::OnUpdateAddToolWithSubTools(CCmdUI* PCmdUI)
 {
 	bool Enabled = !SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST);
 	// Check current user access...
-	Enabled = Enabled && TheSVObserverApp.OkToEdit() && isImageAvailable(SvPb::SVImageMonoType);;
+	Enabled = Enabled && TheSVObserverApp.OkToEdit();
 	ToolSetView* pView = GetToolSetView();
 	if (!pView || pView->IsSubToolSelected())
 	{
-		//no LOOPTOOL in LOOPTOOL!
-		Enabled = false;
-	}
-
-	PCmdUI->Enable(Enabled);
-}
-
-afx_msg void SVIPDoc::OnUpdateAddGroupTool(CCmdUI* PCmdUI)
-{
-	bool Enabled = !SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST);
-	// Check current user access...
-	Enabled = Enabled && TheSVObserverApp.OkToEdit() && isImageAvailable(SvPb::SVImageMonoType);;
-	ToolSetView* pView = GetToolSetView();
-	if (!pView || pView->IsSubToolSelected())
-	{
-		//no LOOPTOOL in LOOPTOOL!
+		//no Loop tool as sub tool
 		Enabled = false;
 	}
 

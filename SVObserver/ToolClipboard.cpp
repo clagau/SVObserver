@@ -601,7 +601,7 @@ HRESULT ToolClipboard::validateIds(std::string& rXmlData, uint32_t postId, uint3
 			messageList.push_back(SvStl::MessageData::convertId2AdditionalText(firstTId));
 			messageList.push_back(SvStl::MessageData::convertId2AdditionalText(secondTId));
 			SvStl::MessageManager e(SvStl::MsgType::Data);
-			e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_LoopToolInsertLoopToolFailed, messageList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25006_ColorToolInsert);
+			e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_LoopToolInsertLoopToolFailed, messageList, SvStl::SourceFileParams(StdMessageParams));
 			e.Throw();
 		}
 	}
@@ -612,17 +612,7 @@ HRESULT ToolClipboard::validateIds(std::string& rXmlData, uint32_t postId, uint3
 	SvTo::SVToolClass* pPostTool = dynamic_cast<SvTo::SVToolClass*>(SVObjectManagerClass::Instance().GetObject(postId));
 	if (nullptr != pDoc && nullptr != pToolSet)
 	{
-		if (isColorCamera)
-		{//Only color tools are allowed to be the first tool in a color system
-			if (SvPb::ColorToolClassId != toolClassId && ((nullptr != pPostTool && pPostTool->getToolPosition() == 1) || (0 == pToolSet->GetSize())))
-			{
-				result = E_FAIL;
-				SvStl::MessageManager e(SvStl::MsgType::Data);
-				e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_NonColorToolInsertFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25007_NonColorToolInsert);
-				e.Throw();
-			}
-		}
-		else if (!pDoc->isImageAvailable(SvPb::SVImageColorType))
+		if (!pDoc->isImageAvailable(SvPb::SVImageColorType))
 		{
 			const std::string colorToolTypeString = "<DATA Name=\"ClassID\" Type=\"VT_INT\">35</DATA>";
 			bool isColorToolInto = (std::string::npos != rXmlData.find(colorToolTypeString));
@@ -631,7 +621,7 @@ HRESULT ToolClipboard::validateIds(std::string& rXmlData, uint32_t postId, uint3
 			{
 				result = E_FAIL;
 				SvStl::MessageManager e(SvStl::MsgType::Data);
-				e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ColorToolInsertFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25006_ColorToolInsert);
+				e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ColorToolInsertFailed, SvStl::SourceFileParams(StdMessageParams));
 				e.Throw();
 			}
 		}
@@ -671,14 +661,23 @@ HRESULT ToolClipboard::validateIds(std::string& rXmlData, uint32_t postId, uint3
 							else
 							{
 								SVObjectClass* pBand0Image = dynamic_cast<SVObjectClass*> (pToolSet->getBand0Image());
-								if (nullptr != pBand0Image)
+								bool hasMonoImage = pDoc->isImageAvailable(SvPb::SVImageMonoType) && nullptr != pBand0Image;
+								if(hasMonoImage)
 								{
 									DefaultImageId = pBand0Image->getObjectId();
+								}
+								else
+								{
+									result = E_FAIL;
+									SvStl::MessageManager e(SvStl::MsgType::Data);
+									e.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_MonoToolInsertFailed, SvStl::SourceFileParams(StdMessageParams));
+									e.Throw();
 								}
 							}
 						}
 						else
 						{
+							pDoc->isImageAvailable(SvPb::SVImageMonoType);
 							//For mono IPD the toolset image can be used for all tools except color tool
 							if (nullptr != m_pInspection->GetToolSetMainImage() && SvPb::ColorToolClassId != toolClassId)
 							{
@@ -722,15 +721,14 @@ HRESULT ToolClipboard::replaceToolName( std::string& rXmlData, SVTreeType& rTree
 		ToolItem = rTree.getFirstBranch(ToolsItem);
 
 		if( rTree.isValidBranch( ToolItem ) )
-		{
+		{ 
 			_variant_t ObjectName;
 
 			SvXml::SVNavigateTree::GetItem( rTree, scObjectNameTag, ToolItem, ObjectName);
 			std::string ToolName = SvUl::createStdString(ObjectName.bstrVal);
 			std::string NewName;
 
-			//@Todo[mec] kann ein Colortool owner eines tools sein?
-			if (nullptr != pOwner &&( SvPb::SVColorToolObjectType == pOwner->GetObjectSubType() || SvPb::LoopToolObjectType == pOwner->GetObjectSubType() || SvPb::GroupToolObjectType == pOwner->GetObjectSubType()) )
+			if (nullptr != pOwner && (SvPb::LoopToolObjectType == pOwner->GetObjectSubType() || SvPb::GroupToolObjectType == pOwner->GetObjectSubType()) )
 			{
 				NewName = static_cast<const SvIe::SVTaskObjectListClass*>(pOwner)->MakeUniqueToolName(ToolName.c_str());
 			}

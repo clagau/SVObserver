@@ -445,8 +445,8 @@ void SVShiftTool::LocalInitialize()
 
 	SvOp::ToolSizeAdjustTask::AddToFriendlist(this, false, true, true);
 
-	// Identify our input type needs...
-	m_ImageInput.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType); //this is not a problem even if color images will be used since m_ImageInput will be updated in ResetObject() anyway
+	// Identify our input type needs (SVNotSetSubObjectType means both mono and color type)
+	m_ImageInput.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVNotSetSubObjectType);
 	registerInputObject( &m_ImageInput, SvDef::SourceImageInputName, SvPb::ImageInputEId);
 
 	m_TranslationXInput.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVDoubleValueObjectType, SvPb::OutputEvaluateTranslationXResultEId);

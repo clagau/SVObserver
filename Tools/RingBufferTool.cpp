@@ -315,8 +315,8 @@ void RingBufferTool::LocalInitialize ()
 
 void RingBufferTool::BuildInputObjectList ()
 {
-	// Source Image
-	m_InputImage.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
+	// Source Image (SVNotSetSubObjectType means both mono and color type)
+	m_InputImage.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVNotSetSubObjectType);
 	registerInputObject( &m_InputImage, SvDef::SourceImageInputName, SvPb::ImageInputEId);
 }
 
