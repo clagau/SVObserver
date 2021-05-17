@@ -94,7 +94,7 @@ bool SVImageClass::CloseObject()
 	bool rc = (S_OK == ClearParentConnection());
 
 	SvOi::ITool* pTool = dynamic_cast<SvOi::ITool*> (GetTool());
-	if (nullptr != pTool)
+	if (nullptr != pTool && pTool->GetToolImage() == getObjectId())
 	{
 		pTool->SetToolImage(SvDef::InvalidObjectId);
 	}

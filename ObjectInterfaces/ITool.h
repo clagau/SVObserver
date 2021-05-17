@@ -37,6 +37,7 @@ typedef std::vector<ParameterPairForML> ParametersForML;
 		virtual SvUl::NameObjectIdPair getAuxSourceImage() const = 0;
 		virtual HRESULT setAuxSourceImage(uint32_t objectID) = 0;
 		virtual void SetToolImage(uint32_t objectID ) = 0;
+		virtual uint32_t GetToolImage() const = 0;
 		virtual HRESULT UpdateImageWithExtent() = 0;
 		virtual bool SetFirstInputImageName( LPCTSTR FirstName) = 0;
 		virtual long getToolPosition() const = 0;

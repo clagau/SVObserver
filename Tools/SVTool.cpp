@@ -743,11 +743,6 @@ void SVToolClass::UpdateBottomAndRight()
 	}
 }
 
-const SvIe::SVImageClass* SVToolClass::GetToolImage() const
-{
-	return m_toolExtent.GetToolImage();
-}
-
 void SVToolClass::SetAlwaysUpdate(bool p_bAlwaysUpdate)
 {
 	m_toolExtent.SetAlwaysUpdate(p_bAlwaysUpdate);
@@ -1101,7 +1096,7 @@ bool SVToolClass::addEntryToMonitorList(SvOi::ParametersForML &retList, SvPb::Em
 #pragma region ITool methods
 bool SVToolClass::areAuxExtentsAvailable() const
 {
-	return (nullptr != GetToolImage()) ? GetInspectionInterface()->getEnableAuxiliaryExtent() : false;
+	return (SvDef::InvalidObjectId != GetToolImage()) ? GetInspectionInterface()->getEnableAuxiliaryExtent() : false;
 }
 
 SvUl::NameObjectIdList SVToolClass::getAvailableAuxSourceImages() const
@@ -1143,6 +1138,13 @@ void SVToolClass::SetToolImage(uint32_t objectID)
 {
 	SvIe::SVImageClass* pImage = dynamic_cast<SvIe::SVImageClass*> (SvOi::getObject(objectID));
 	m_toolExtent.SetToolImage(pImage);
+}
+
+
+uint32_t SVToolClass::GetToolImage() const
+{
+	auto* pImage = m_toolExtent.GetToolImage();
+	return nullptr != pImage ? pImage->getObjectId() : SvDef::InvalidObjectId;
 }
 
 long SVToolClass::getToolPosition() const

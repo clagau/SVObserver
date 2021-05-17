@@ -74,8 +74,6 @@ public:
 
 	virtual HRESULT SetImageExtent(const SVImageExtentClass& rImageExtent) override;
 
-	const SvIe::SVImageClass* GetToolImage() const;
-
 	void SetAlwaysUpdate(bool p_bAlwaysUpdate);
 
 	HRESULT GetRootOffsetData(SVExtentOffsetStruct& p_rsvOffsetData);
@@ -154,6 +152,7 @@ public:
 	virtual SvUl::NameObjectIdPair getAuxSourceImage() const override;
 	virtual HRESULT setAuxSourceImage(uint32_t objectID) override;
 	virtual void SetToolImage(uint32_t objectID) override;
+	virtual uint32_t GetToolImage() const override;
 	virtual long getToolPosition() const override;
 	virtual void getExtentProperties(::google::protobuf::RepeatedPtrField< ::SvPb::ExtentParameter >& rExtentProperties, SvPb::SVExtentTranslationEnum& rTranslationType) const override;
 	virtual HRESULT getParentExtentProperties(::google::protobuf::RepeatedPtrField< ::SvPb::ExtentParameter >& rExtentProperties, SvPb::SVExtentTranslationEnum& rTranslationType) const override;
