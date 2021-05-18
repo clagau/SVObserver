@@ -1450,15 +1450,12 @@ bool SVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 		{
 			SVFileNameClass svFile;
 			SVLut lut;
-			int Digitizer = SvIe::SVDigitizerProcessingClass::Instance().getDigitizerID( pCameraObj->GetCameraID() );
-			if( -1 != Digitizer )
-			{
-				pCameraObj->SetDigNumber( Digitizer );
-			}
-			DigName = BuildDigName( *pCameraObj );
 			// For File Acquisition
 			if ( pCameraObj->IsFileAcquisition())
 			{
+				//File acquisition should set the digitizer number always to the camera ID
+				pCameraObj->SetDigNumber(pCameraObj->GetCameraID());
+				DigName = BuildDigName(*pCameraObj);
 				psvDevice = SvIe::SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( DigName.c_str() );
 				if ( nullptr != psvDevice )
 				{
@@ -1524,6 +1521,12 @@ bool SVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 			}
 			else
 			{
+				int Digitizer = SvIe::SVDigitizerProcessingClass::Instance().getDigitizerID(pCameraObj->GetCameraID());
+				if (-1 != Digitizer)
+				{
+					pCameraObj->SetDigNumber(Digitizer);
+				}
+				DigName = BuildDigName(*pCameraObj);
 				svFile.SetFullFileName( pCameraObj->GetCameraFile().c_str() );
 			
 				if ( 0 == SvUl::CompareNoCase( svFile.GetExtension(), std::string(cGigeCameraFileDefExt) ) )
@@ -1724,11 +1727,14 @@ bool SVOConfigAssistantDlg::SendCameraDataToConfiguration()
 
 				if ( nullptr != pCamera )
 				{
-					// move from editing camera object to configuration camera object
-					int Digitizer = SvIe::SVDigitizerProcessingClass::Instance().getDigitizerID( pCameraObj->GetCameraID() );
-					if( -1 != Digitizer )
+					if (false == pCameraObj->IsFileAcquisition())
 					{
-						pCameraObj->SetDigNumber( Digitizer );
+						// move from editing camera object to configuration camera object
+						int Digitizer = SvIe::SVDigitizerProcessingClass::Instance().getDigitizerID(pCameraObj->GetCameraID());
+						if (-1 != Digitizer)
+						{
+							pCameraObj->SetDigNumber(Digitizer);
+						}
 					}
 					pCamera->setCameraID( pCameraObj->GetCameraID() );
 					pCamera->SetFileAcquisitionMode(pCameraObj->IsFileAcquisition());
@@ -2904,9 +2910,12 @@ bool SVOConfigAssistantDlg::ItemChanged(int iItemDlg, LPCTSTR LabelName, int iAc
 						const SVOCameraObjPtr pCameraObj( m_CameraList.GetCameraObjectByPosition( iC ) );
 						if( nullptr != pCameraObj )
 						{
-							//The digitizer number can change after calling the camera manager so set the camera file as changed to reload
-							int Digitizer = SvIe::SVDigitizerProcessingClass::Instance().getDigitizerID(pCameraObj->GetCameraID());
-							pCameraObj->SetDigNumber(Digitizer);
+							if (false == pCameraObj->IsFileAcquisition())
+							{
+								//The digitizer number can change after calling the camera manager so set the camera file as changed to reload
+								int Digitizer = SvIe::SVDigitizerProcessingClass::Instance().getDigitizerID(pCameraObj->GetCameraID());
+								pCameraObj->SetDigNumber(Digitizer);
+							}
 							pCameraObj->SetCameraFileChanged();
 							CheckCamera( *pCameraObj );
 							CheckColor( *pCameraObj );
