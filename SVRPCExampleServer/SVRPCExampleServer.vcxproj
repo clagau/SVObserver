@@ -71,7 +71,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>nafxcwd.lib;LIBCMTD.lib;SVRPCLibrary.lib;SVLogLibrary.lib;SVHttpLibrary.lib;SVXMLLibrary.lib;SVSystemLibrary.lib;SVUtilityLibrary.lib;SVStatusLibrary.lib;SVAuthLibrary.lib;libprotobufd.lib;Rpcrt4.lib;Version.lib;SVProtobuf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>nafxcwd.lib;LIBCMTD.lib;SVRPCLibrary.lib;SVLogLibrary.lib;SVHttpLibrary.lib;SVXMLLibrary.lib;SVSystemLibrary.lib;SVUtilityLibrary.lib;SVStatusLibrary.lib;SVAuthLibrary.lib;libprotobuf.lib;Rpcrt4.lib;Version.lib;SVProtobuf.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Configuration)\$(Platform)\bin\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>nafxcwd.lib;LIBCMTD.lib;</IgnoreSpecificDefaultLibraries>
       <AddModuleNamesToAssembly>

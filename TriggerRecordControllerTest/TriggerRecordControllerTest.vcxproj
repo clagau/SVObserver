@@ -69,7 +69,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>SVCommandLibrary.lib;SVImageLibrary.lib;SVMatroxLibrary.lib;SVMFCControls.lib;SVOGui.lib;SVProtoBuf.lib;SVSharedMemoryLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVUtilityLibrary.lib;TriggerRecordController.lib;Rpcrt4.lib;mil.lib;milim.lib;libprotobufd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SVCommandLibrary.lib;SVImageLibrary.lib;SVMatroxLibrary.lib;SVMFCControls.lib;SVOGui.lib;SVProtoBuf.lib;SVSharedMemoryLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVUtilityLibrary.lib;TriggerRecordController.lib;Rpcrt4.lib;mil.lib;milim.lib;libprotobuf.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Midl>

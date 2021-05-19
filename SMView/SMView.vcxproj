@@ -75,7 +75,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SVImageLibrary.lib;SVMatroxLibrary.lib;SVProtoBuf.lib;SVSharedMemoryLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVUtilityLibrary.lib;TriggerRecordController.lib;libprotobufd.lib;RPCRT4.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SVImageLibrary.lib;SVMatroxLibrary.lib;SVProtoBuf.lib;SVSharedMemoryLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVUtilityLibrary.lib;TriggerRecordController.lib;libprotobuf.lib;RPCRT4.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Configuration)\$(Platform)\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Midl>

@@ -134,7 +134,7 @@
     </ResourceCompile>
     <Link>
       <RegisterOutput>true</RegisterOutput>
-      <AdditionalDependencies>SVHttpLibrary.lib;SVLogLibrary.lib;SVProtobuf.lib;SVRPCLibrary.lib;SVStatusLibrary.lib;SVUtilityLibrary.lib;WebsocketLibrary.lib;$(SolutionDir)FreeImage\$(Platform)\FreeImage.lib;gdiplus.lib;libprotobufd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SVHttpLibrary.lib;SVLogLibrary.lib;SVProtobuf.lib;SVRPCLibrary.lib;SVStatusLibrary.lib;SVUtilityLibrary.lib;WebsocketLibrary.lib;$(SolutionDir)FreeImage\$(Platform)\FreeImage.lib;gdiplus.lib;libprotobuf.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).ocx</OutputFile>
       <ModuleDefinitionFile>.\SVRemoteControl.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -182,7 +182,7 @@
     </ResourceCompile>
     <Link>
       <RegisterOutput>true</RegisterOutput>
-      <AdditionalDependencies>SVHttpLibrary.lib;SVLogLibrary.lib;SVProtobuf.lib;SVRPCLibrary.lib;SVStatusLibrary.lib;SVUtilityLibrary.lib;WebsocketLibrary.lib;$(SolutionDir)FreeImage\$(Platform)\FreeImage.lib;gdiplus.lib;libprotobufd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SVHttpLibrary.lib;SVLogLibrary.lib;SVProtobuf.lib;SVRPCLibrary.lib;SVStatusLibrary.lib;SVUtilityLibrary.lib;WebsocketLibrary.lib;$(SolutionDir)FreeImage\$(Platform)\FreeImage.lib;gdiplus.lib;libprotobuf.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).ocx</OutputFile>
       <ModuleDefinitionFile>.\SVRemoteControl.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
