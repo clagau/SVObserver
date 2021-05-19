@@ -47,7 +47,7 @@ Notable SVIM Image Changes:
 - SVO-3157 SVIM NEO Disk Partition
 
 Base Image Name:
-- X2C1000
+- X2C1010
 - NEO1010
 
 SOFTWARE VERSIONS:
