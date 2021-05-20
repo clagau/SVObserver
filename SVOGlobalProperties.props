@@ -22,7 +22,7 @@
       <PreprocessorDefinitions>SV_DESIRED_MIL_VERSION#0x1000;BOOST_THREAD_VERSION=4;_WIN32_WINNT=0x600;RAPIDJSON_HAS_STDSTRING=1;RAPIDJSON_SSE2=1;RAPIDJSON_SSE42=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(PATH_3RDPARTY)\Matrox\MIL10PP3_64bit\Lib;$(PATH_3RDPARTY)\boost_1_72_0\stage\x64;$(PATH_3RDPARTY)\protobuf\protobuf-3.17.0\lib\Release;$(PATH_3RDPARTY)\openssl-1.1.0i\lib\release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(PATH_3RDPARTY)\Matrox\MIL10PP3_64bit\Lib;$(PATH_3RDPARTY)\boost_1_76_0\stage\x64;$(PATH_3RDPARTY)\protobuf\protobuf-3.17.0\lib\Release;$(PATH_3RDPARTY)\openssl-1.1.0i\lib\release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
