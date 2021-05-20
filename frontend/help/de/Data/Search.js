@@ -1,1 +1,0 @@
-define({r:0.5,st:'Stem',n:1,t:[0],m:[],u:['../Content/General structure/General structure.htm'],s:['$','entri','oxygen','votr'],p:[['$',43],['and',39],['brackets',51],['contributor',57],['dxerr',45],['general',39],['indicated',60],['limited',54],['notification',17],['overlays',30],['redistribute',41],['software',39],['the',33],['toute',43],['within',51]]});
