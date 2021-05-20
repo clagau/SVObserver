@@ -1,0 +1,1 @@
+define({'GUI':{d:'Graphical user interface',l:''},'HMI':{d:'Human machine interface',l:''},'SVIM':{d:'Seidenader Vision Inspection Machine',l:''},'SVRC':{d:'Seidenader Vision Remote Control',l:''}});
