@@ -4080,7 +4080,6 @@ HRESULT SVImageExtentClass::BuildOutputDimensions()
 			if (S_OK == result)
 			{
 				dValue = inputHeight * heightScaleFactor;
-
 				result = SetExtentProperty(SvPb::SVExtentPropertyOutputHeight, dValue, false);
 			}
 

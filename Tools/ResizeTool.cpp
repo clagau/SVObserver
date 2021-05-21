@@ -170,15 +170,19 @@ bool ResizeTool::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 
 	m_isCreated = bOk;
 
-		
 	double widthScaleFactor = 0.0;
 	m_ExtentWidthFactorFormat.getValue(widthScaleFactor);
 	if (widthScaleFactor == 0.0)
 	//m_ExtentWidthFactorFormat having a default value of 0.0 rather than SvDef::cDefaultScaleFactor
 	// ensures proper behaviour with pre-10.10 configurations
 	{
-		m_ExtentWidthFactorContent.getValue(widthScaleFactor);
-		m_ExtentWidthFactorFormat.setValue(widthScaleFactor);
+		std::string tmpStr;
+		m_ExtentWidthFactorFormat.getLinkedName().getValue(tmpStr);
+		if (tmpStr.empty()) //but a dotted name (even if currently having a value of zero) must not be overwritten with a numeric value!
+		{
+			m_ExtentWidthFactorContent.getValue(widthScaleFactor);
+			m_ExtentWidthFactorFormat.setValue(widthScaleFactor);
+		}
 	}
 
 	double heightScaleFactor = 0.0;
@@ -187,8 +191,13 @@ bool ResizeTool::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 	//m_ExtentHeightFactorFormat having a default value of 0.0 rather than SvDef::cDefaultScaleFactor
 	// ensures proper behaviour with pre-10.10 configurations
 	{
-		m_ExtentHeightFactorContent.getValue(heightScaleFactor);
-		m_ExtentHeightFactorFormat.setValue(heightScaleFactor);
+		std::string tmpStr;
+		m_ExtentHeightFactorFormat.getLinkedName().getValue(tmpStr);
+		if (tmpStr.empty()) //but a dotted name (even if currently having a value of zero) must not be overwritten with a numeric value!
+		{
+			m_ExtentHeightFactorContent.getValue(heightScaleFactor);
+			m_ExtentHeightFactorFormat.setValue(heightScaleFactor);
+		}
 	}
 
 	return bOk;

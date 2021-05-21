@@ -1004,7 +1004,7 @@ const std::string SVArchiveTool::alternativeImageDirectory(const std::string& rI
 	std::string baseDirectoryname;
 	m_baseDirectoryname.GetValue(baseDirectoryname);
 
-	std::string imageDirectoryPath = rImagePathRoot; //ABX
+	std::string imageDirectoryPath = rImagePathRoot;
 
 	std::string namedDirectoryname = SvUl::Format("%s%06ld", baseDirectoryname.c_str(), DirectorynameIndex);
 
