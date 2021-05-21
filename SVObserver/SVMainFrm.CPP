@@ -109,7 +109,8 @@ BEGIN_MESSAGE_MAP(SVMainFrame, CMDIFrameWnd)
 	ON_MESSAGE(SV_SET_MODE, OnSetMode)
 	ON_MESSAGE(SV_LOAD_PACKED_CONFIGURATION, OnLoadPackedConfiguration)
 	ON_MESSAGE(SV_REFRESH_STATUS_BAR, InvalidateStatusBar )
-	ON_MESSAGE(SV_SHUTDOWN, Shutdown )
+	ON_MESSAGE(SV_SHUTDOWN, Shutdown)
+	ON_MESSAGE(SV_UPDATE_IPDOC_VIEWS, UpdateIPDocViews)
 	ON_COMMAND(ID_TOOLBAR_ZOOM, &SVMainFrame::OnToolbarZoom)
 	ON_UPDATE_COMMAND_UI(ID_TOOLBAR_ZOOM, &SVMainFrame::OnUpdateToolbarZoom)
 	ON_MESSAGE(SV_REGISTER_MONITOR_LIST, &SVMainFrame::RemoteRegisterMonitorList)
@@ -747,6 +748,16 @@ LRESULT SVMainFrame::Shutdown(WPARAM wParam, LPARAM)
 	char cmd[50];
 	sprintf_s(cmd, "SVShutdown.exe %d 15", shutdownOption);
 	system(cmd);
+	return 0;
+}
+
+LRESULT SVMainFrame::UpdateIPDocViews(WPARAM wParam, LPARAM lParam)
+{
+	SVIPDoc* pDoc = TheSVObserverApp.GetIPDoc(static_cast<uint32_t> (wParam));
+	if (nullptr != pDoc)
+	{
+		pDoc->UpdateAllViews(nullptr, lParam);
+	}
 	return 0;
 }
 

@@ -1007,36 +1007,63 @@ void SVRCCommand::ExecuteInspectionCmd(const SvPb::InspectionCmdRequest& rReques
 
 	if (S_OK == result)
 	{
+		std::string deleteObjectName;
+		if (SvPb::InspectionCmdRequest::kDeleteObjectRequest == rRequest.message_case())
+		{
+			SvOi::IObjectClass* pObject = SvOi::getObject(rRequest.deleteobjectrequest().objectid());
+			SvOi::IObjectClass* pParent = (nullptr != pObject) ? SvOi::getObject(pObject->GetParentID()) : nullptr;
+			//Only when a tools parent is the Tool Set then the name needs to be removed from the tool set grouping
+			if (nullptr != pParent && SvPb::SVToolSetObjectType == pParent->GetObjectType())
+			{
+				deleteObjectName = pObject->GetName();
+			}
+		}
+
 		uint32_t inspectionID = rRequest.inspectionid();
 		SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
 		SvCmd::InspectionCommands(inspectionID, rRequest, &response);
 		SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
 
-		///@WARNING [gra][10.00][23.03.2020] This next section to update SVIPDoc should be done in the inspection commands but only after the Group Tool has been done
-		if (S_OK == response.hresult())
+		///@WARNING [gra][10.10][21.05.2021] This next section to update SVIPDoc should be done in the inspection commands
+		SVIPDoc* pDoc = TheSVObserverApp.GetIPDoc(inspectionID);
+		if (S_OK == response.hresult() && nullptr != pDoc)
 		{
-			bool isCreate{ true };
 			switch (rRequest.message_case())
 			{
 				case SvPb::InspectionCmdRequest::kDeleteObjectRequest:
-					isCreate = false;
-					///Fall through
+				{
+					if (false == deleteObjectName.empty())
+					{
+						pDoc->GetToolGroupings().RemoveTool(deleteObjectName);
+					}
+					pDoc->RunOnce();
+					pDoc->SetModifiedFlag();
+
+					CWnd* pWnd = AfxGetApp()->m_pMainWnd;
+					if (nullptr != pWnd)
+					{
+						pWnd->PostMessage(SV_UPDATE_IPDOC_VIEWS, static_cast<WPARAM> (inspectionID), static_cast<LPARAM> (SVIPDoc::SVIPViewUpdateHints::RefreshDelete));
+					}
+					break;
+				}
 				case SvPb::InspectionCmdRequest::kCreateObjectRequest:
 				{
-					SVIPDoc* pDoc = TheSVObserverApp.GetIPDoc(inspectionID);
-					if (nullptr != pDoc)
+					SvOi::IObjectClass* pObject = SvOi::getObject(response.createobjectresponse().objectid());
+					SvOi::IObjectClass* pParent = (nullptr != pObject) ? SvOi::getObject(pObject->GetParentID()) : nullptr;
+					pObject = SvOi::getObject(rRequest.createobjectrequest().taskobjectinsertbeforeid());
+					//Only when a tools parent is the Tool Set then the name needs to be added to the tool set grouping
+					if (nullptr != pParent && nullptr != pObject && SvPb::SVToolSetObjectType == pParent->GetObjectType())
 					{
-						pDoc->RunOnce();
-						pDoc->SetModifiedFlag();
-						if (true == isCreate)
-						{
-							SvOi::IObjectClass* pObject = SvOi::getObject(rRequest.createobjectrequest().taskobjectinsertbeforeid());
-							if (nullptr != pObject)
-							{
-								pDoc->GetToolGroupings().AddTool(response.createobjectresponse().name(), pObject->GetName());
-							}
-							pDoc->SetSelectedToolID(response.createobjectresponse().objectid());
-						}
+						pDoc->GetToolGroupings().AddTool(response.createobjectresponse().name(), pObject->GetName());
+					}
+					pDoc->RunOnce();
+					pDoc->SetModifiedFlag();
+					pDoc->SetSelectedToolID(response.createobjectresponse().objectid());
+
+					CWnd* pWnd = AfxGetApp()->m_pMainWnd;
+					if (nullptr != pWnd)
+					{
+						pWnd->PostMessage(SV_UPDATE_IPDOC_VIEWS, inspectionID, static_cast<WPARAM> (SVIPDoc::SVIPViewUpdateHints::RefreshView));
 					}
 					break;
 				}
@@ -1100,7 +1127,6 @@ void SVRCCommand::ConfigCommand(const SvPb::ConfigCommandRequest& rRequest, SvRp
 
 	if (S_OK == result)
 	{
-		SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
 		switch (rRequest.message_case())
 		{
 			case SvPb::ConfigCommandRequest::kClipboardRequest:
@@ -1113,8 +1139,10 @@ void SVRCCommand::ConfigCommand(const SvPb::ConfigCommandRequest& rRequest, SvRp
 				SvPb::ConfigDataResponse* pConfigDataResponse = response.mutable_configdataresponse();
 				if (nullptr != pConfigDataResponse)
 				{
+					SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
 					pConfigDataResponse->set_configfileloaded(GlobalRCGetConfigurationName(false));
 					pConfigDataResponse->set_lastmodified(static_cast<unsigned long>(SVSVIMStateClass::getLastModifiedTime()));
+					SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
 				}
 				break;
 			}
@@ -1123,7 +1151,6 @@ void SVRCCommand::ConfigCommand(const SvPb::ConfigCommandRequest& rRequest, SvRp
 				break;
 			}
 		}
-		SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
 	}
 
 	task.finish(std::move(response));
@@ -1526,71 +1553,117 @@ void SVRCCommand::clipboardAction(const SvPb::ClipboardRequest rRequest, SvPb::S
 		return;
 	}
 
-	HRESULT result{ CheckState() };
-	if (S_OK != result)
-	{
-		pResponse->set_hresult(result);
-		return;
-	}
-
 	switch (rRequest.action())
 	{
-	case SvPb::ClipboardActionEnum::Copy:
-	{
-		ToolClipboard clipboard;
-		SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
-		result = clipboard.writeToClipboard(rRequest.objectid());
-		SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
-		pResponse->set_hresult(result);
-		if (S_OK != result)
-		{
-			const auto& rMessage = clipboard.getLastErrorMessage().getMessageContainer();
-			convertMessageToProtobuf(rMessage, pResponse->mutable_errormessages()->add_messages());
-		}
-		break;
-	}
-	case SvPb::ClipboardActionEnum::Paste:
-	{
-		if (ToolClipboard::isClipboardDataValid())
+		case SvPb::ClipboardActionEnum::Copy:
 		{
 			ToolClipboard clipboard;
-			uint32_t postID{ rRequest.objectid() };
-			SvOi::IObjectClass* pObject = SvOi::getObject(postID);
-			if (nullptr != pObject)
+			SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
+			HRESULT result = clipboard.writeToClipboard(rRequest.objectid());
+			SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
+			pResponse->set_hresult(result);
+			if (S_OK != result)
 			{
-				uint32_t ownerID = pObject->GetParentID();
-				uint32_t toolID;
-				SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
-				result = clipboard.readFromClipboard(postID, ownerID, toolID);
-				SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
-				pResponse->set_hresult(result);
-				if (S_OK == result)
+				const auto& rMessage = clipboard.getLastErrorMessage().getMessageContainer();
+				convertMessageToProtobuf(rMessage, pResponse->mutable_errormessages()->add_messages());
+			}
+			break;
+		}
+		case SvPb::ClipboardActionEnum::Paste:
+		{
+			if (ToolClipboard::isClipboardDataValid())
+			{
+				ToolClipboard clipboard;
+				uint32_t postID{ rRequest.objectid() };
+				SvOi::IObjectClass* pObject = SvOi::getObject(postID);
+				if (nullptr != pObject)
 				{
-					SvOi::IObjectClass* pInspection = pObject->GetAncestorInterface(SvPb::SVInspectionObjectType);
-					SVIPDoc* pDoc = (nullptr != pInspection) ? TheSVObserverApp.GetIPDoc(pInspection->getObjectId()) : nullptr;
-					if (nullptr != pDoc)
+					uint32_t ownerID = pObject->GetParentID();
+					uint32_t toolID;
+					SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
+					HRESULT result = clipboard.readFromClipboard(postID, ownerID, toolID);
+					pResponse->set_hresult(result);
+					if (S_OK == result)
 					{
-						pDoc->updateToolsetView(toolID, postID, ownerID);
+						SvOi::IObjectClass* pInspection = pObject->GetAncestorInterface(SvPb::SVInspectionObjectType);
+						///@WARNING [gra][10.10][21.05.2021] SVIPDoc should be done in the inspection commands
+						SVIPDoc* pDoc = (nullptr != pInspection) ? TheSVObserverApp.GetIPDoc(pInspection->getObjectId()) : nullptr;
+						if (nullptr != pDoc)
+						{
+							pDoc->updateToolsetView(toolID, postID, ownerID);
+						}
 					}
-				}
-				else
-				{
-					const auto& rMessage = clipboard.getLastErrorMessage().getMessageContainer();
-					convertMessageToProtobuf(rMessage, pResponse->mutable_errormessages()->add_messages());
+					else
+					{
+						const auto& rMessage = clipboard.getLastErrorMessage().getMessageContainer();
+						convertMessageToProtobuf(rMessage, pResponse->mutable_errormessages()->add_messages());
+					}
+					SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
 				}
 			}
+			else
+			{
+				SvStl::MessageManager message(SvStl::MsgType::Log);
+				message.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ClipboardUnzipFailed, SvStl::SourceFileParams(StdMessageParams));
+				convertMessageToProtobuf(message.getMessageContainer(), pResponse->mutable_errormessages()->add_messages());
+			}
+			break;
 		}
-		else
+		case SvPb::ClipboardActionEnum::Cut:
 		{
-			SvStl::MessageManager message(SvStl::MsgType::Log);
-			message.setMessage(SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ClipboardUnzipFailed, SvStl::SourceFileParams(StdMessageParams));
-			convertMessageToProtobuf(message.getMessageContainer(), pResponse->mutable_errormessages()->add_messages());
+			ToolClipboard clipboard;
+			SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
+			HRESULT result = clipboard.writeToClipboard(rRequest.objectid());
+			pResponse->set_hresult(result);
+			if (S_OK == result)
+			{
+				SvOi::IObjectClass* pObject = SvOi::getObject(rRequest.objectid());
+				SvOi::IObjectClass* pInspection = (nullptr != pObject) ? pObject->GetAncestorInterface(SvPb::SVInspectionObjectType) : nullptr;
+				if (nullptr != pInspection)
+				{
+					std::string deleteObjectName;
+					SvOi::IObjectClass* pParent = SvOi::getObject(pObject->GetParentID());
+					//Only when a tools parent is the Tool Set then the name needs to be removed from the tool set grouping
+					if (nullptr != pParent && SvPb::SVToolSetObjectType == pParent->GetObjectType())
+					{
+						deleteObjectName = pObject->GetName();
+					}
+					uint32_t inspectionID{pInspection->getObjectId()};
+					SvPb::InspectionCmdRequest requestCmd;
+					SvPb::InspectionCmdResponse responseCmd;;
+					requestCmd.set_inspectionid(inspectionID);
+					SvPb::DeleteObjectRequest* pDelObj = requestCmd.mutable_deleteobjectrequest();
+					pDelObj->set_objectid(rRequest.objectid());
+					SvCmd::InspectionCommands(inspectionID, requestCmd, &responseCmd);
+					if (false == deleteObjectName.empty())
+					{
+						///@WARNING [gra][10.10][21.05.2021] SVIPDoc should be done in the inspection commands
+						SVIPDoc* pDoc = (nullptr != pInspection) ? TheSVObserverApp.GetIPDoc(pInspection->getObjectId()) : nullptr;
+						if (nullptr != pDoc)
+						{
+							pDoc->GetToolGroupings().RemoveTool(deleteObjectName);
+							pDoc->RunOnce();
+							pDoc->SetModifiedFlag();
+						}
+					}
+					CWnd* pWnd = AfxGetApp()->m_pMainWnd;
+					if (nullptr != pWnd)
+					{
+						pWnd->PostMessage(SV_UPDATE_IPDOC_VIEWS, inspectionID, static_cast<WPARAM> (SVIPDoc::SVIPViewUpdateHints::RefreshDelete));
+					}
+				}
+			}
+			else
+			{
+				const auto& rMessage = clipboard.getLastErrorMessage().getMessageContainer();
+				convertMessageToProtobuf(rMessage, pResponse->mutable_errormessages()->add_messages());
+			}
+			SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
+			break;
 		}
-		break;
-	}
-	default:
-	{
-		break;
-	}
+		default:
+		{
+			break;
+		}
 	}
 }

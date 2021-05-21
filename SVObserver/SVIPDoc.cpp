@@ -1442,16 +1442,19 @@ void SVIPDoc::updateToolsetView(uint32_t toolID, uint32_t postID, uint32_t owner
 		SVObjectClass*  pOwnerObject(SVObjectManagerClass::Instance().GetObject(ownerID));
 		if (pOwnerObject && SvPb::LoopToolObjectType != pOwnerObject->GetObjectSubType() && SvPb::GroupToolObjectType != pOwnerObject->GetObjectSubType())
 		{
-			std::string name(pSelectedName);
+			std::string name;
 			
-			if((pSelectedName == nullptr) && (postID != SvDef::InvalidObjectId))
+			if(pSelectedName == nullptr)
 			{
 				SVObjectClass* pObjectPost(SVObjectManagerClass::Instance().GetObject(postID));
-				if (pObjectPost)
+				if (nullptr != pObjectPost)
 				{
 					name = pObjectPost->GetName();
 				}
-
+			}
+			else
+			{
+				name = pSelectedName;
 			}
 			m_toolGroupings.AddTool(pTool->GetName(), name);
 
@@ -1483,7 +1486,10 @@ void SVIPDoc::updateToolsetView(uint32_t toolID, uint32_t postID, uint32_t owner
 		}
 
 		RunOnce();
-		UpdateAllViews(nullptr, SVIPDoc::RefreshView);
+		if (nullptr != pSelectedName)
+		{
+			UpdateAllViews(nullptr, SVIPDoc::RefreshView);
+		}
 		SetSelectedToolID(toolID);
 		SetModifiedFlag();
 	}

@@ -108,7 +108,8 @@ public:
 	void RefreshAllSplitters();
 
 	LRESULT InvalidateStatusBar( WPARAM wParam, LPARAM lParam );
-	LRESULT Shutdown( WPARAM wParam, LPARAM lParam );
+	LRESULT Shutdown(WPARAM wParam, LPARAM lParam);
+	LRESULT UpdateIPDocViews(WPARAM wParam, LPARAM lParam);
 
 	virtual void OnUpdateFrameTitle( BOOL bAddToTitle ) override;
 	void UpdateFrameTitleForDocument( LPCTSTR lpszDocName );

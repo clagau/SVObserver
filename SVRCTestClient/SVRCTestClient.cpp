@@ -43,7 +43,6 @@ struct NotificationHandler
 };
 
 
-
 void GetNotifications(SvWsl::SVRCClientService& client)
 {
 	SvPb::GetNotificationStreamRequest req;
@@ -170,6 +169,9 @@ int main(int argc, char* argv[])
 					<< "  t getconfigtree" << std::endl
 					<< "  a add tool" << std::endl
 					<< "  d delete tool" << std::endl
+					<< "  cc clipboard copy tool" << std::endl
+					<< "  cv clipboard paste tool" << std::endl
+					<< "  cx clipboard cut tool" << std::endl
 					<< "  g get config data" << std::endl
 					<< " gci  get configuration info" << std::endl
 					<< " s  software trigger" << std::endl;
@@ -330,10 +332,10 @@ int main(int argc, char* argv[])
 
 				requestCmd = SvPb::InspectionCmdRequest {};
 				pGetObjectID = requestCmd.mutable_getobjectidrequest();
-				pGetObjectID->set_name("Inspections.Inspection_1.Tool Set");
+				pGetObjectID->set_name("Inspections.Inspection_1.Tool Set");	//"Inspections.Inspection_1.Tool Set.LoopTool"
 				responseCmd.Clear();
 				responseCmd = client.request(std::move(requestCmd), Timeout).get();
-				uint32_t toolSetID = responseCmd.getobjectidresponse().objectid();
+				uint32_t parentID = responseCmd.getobjectidresponse().objectid();
 
 				requestCmd = SvPb::InspectionCmdRequest {};
 				pGetObjectID = requestCmd.mutable_getobjectidrequest();
@@ -346,7 +348,7 @@ int main(int argc, char* argv[])
 				requestCmd.set_inspectionid(inspectionID);
 				SvPb::CreateObjectRequest* pCreateObj = requestCmd.mutable_createobjectrequest();
 				pCreateObj->set_taskobjectinsertbeforeid(responseCmd.getobjectidresponse().objectid());
-				pCreateObj->set_ownerid(toolSetID);
+				pCreateObj->set_ownerid(parentID);
 				pCreateObj->set_classid(SvPb::WindowToolClassId);
 
 				responseCmd.Clear();
@@ -376,7 +378,51 @@ int main(int argc, char* argv[])
 
 				responseCmd.Clear();
 				responseCmd = client.request(std::move(requestCmd), Timeout).get();
+			}
+			else if (words[0] == "cc")
+			{
+				SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::InspectionCmdRequest, SvPb::InspectionCmdResponse> clientInspection(*pRpcClient);
+				SvPb::InspectionCmdRequest requestCmd;
+				auto* pGetObjectID = requestCmd.mutable_getobjectidrequest();
+				pGetObjectID->set_name("Inspections.Inspection_1.Tool Set.Math Tool");
+				SvPb::InspectionCmdResponse responseCmd = clientInspection.request(std::move(requestCmd), Timeout).get();
 
+				SvPb::ConfigCommandRequest requestConfigCmd;
+				auto* pClipboard = requestConfigCmd.mutable_clipboardrequest();
+				pClipboard->set_action(SvPb::ClipboardActionEnum::Copy);
+				pClipboard->set_objectid(responseCmd.getobjectidresponse().objectid());
+				SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::ConfigCommandRequest, SvPb::ConfigCommandResponse> client(*pRpcClient);
+				client.request(std::move(requestConfigCmd), Timeout);
+			}
+			else if (words[0] == "cv")
+			{
+				SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::InspectionCmdRequest, SvPb::InspectionCmdResponse> clientInspection(*pRpcClient);
+				SvPb::InspectionCmdRequest requestCmd;
+				auto* pGetObjectID = requestCmd.mutable_getobjectidrequest();
+				pGetObjectID->set_name("Inspections.Inspection_1.Tool Set.Archive Tool");
+				SvPb::InspectionCmdResponse responseCmd = clientInspection.request(std::move(requestCmd), Timeout).get();
+
+				SvPb::ConfigCommandRequest requestConfigCmd;
+				auto* pClipboard = requestConfigCmd.mutable_clipboardrequest();
+				pClipboard->set_action(SvPb::ClipboardActionEnum::Paste);
+				pClipboard->set_objectid(responseCmd.getobjectidresponse().objectid());
+				SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::ConfigCommandRequest, SvPb::ConfigCommandResponse> client(*pRpcClient);
+				client.request(std::move(requestConfigCmd), Timeout);
+			}
+			else if (words[0] == "cx")
+			{
+				SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::InspectionCmdRequest, SvPb::InspectionCmdResponse> clientInspection(*pRpcClient);
+				SvPb::InspectionCmdRequest requestCmd;
+				auto* pGetObjectID = requestCmd.mutable_getobjectidrequest();
+				pGetObjectID->set_name("Inspections.Inspection_1.Tool Set.Math Tool");
+				SvPb::InspectionCmdResponse responseCmd = clientInspection.request(std::move(requestCmd), Timeout).get();
+
+				SvPb::ConfigCommandRequest requestConfigCmd;
+				auto* pClipboard = requestConfigCmd.mutable_clipboardrequest();
+				pClipboard->set_action(SvPb::ClipboardActionEnum::Cut);
+				pClipboard->set_objectid(responseCmd.getobjectidresponse().objectid());
+				SvRpc::SimpleClient<SvPb::SVRCMessages, SvPb::ConfigCommandRequest, SvPb::ConfigCommandResponse> client(*pRpcClient);
+				client.request(std::move(requestConfigCmd), Timeout);
 			}
 			else if (words[0] == "g")
 			{

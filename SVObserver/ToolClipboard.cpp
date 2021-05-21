@@ -57,7 +57,7 @@ HRESULT ToolClipboard::writeToClipboard(uint32_t toolId) const
 
 	try
 	{
-		if( ::OpenClipboard( AfxGetMainWnd()->m_hWnd ) )
+		if( ::OpenClipboard(AfxGetApp()->m_pMainWnd->m_hWnd) )
 		{    
 			UINT  ClipboardFormat( ::RegisterClipboardFormat( SvO::ToolClipboardFormat ) );
 
@@ -423,7 +423,7 @@ HRESULT ToolClipboard::convertClipboardDataToString( std::string& rClipboardData
 {
 	HRESULT Result( S_OK );
 
-	if( ::OpenClipboard( AfxGetMainWnd()->GetSafeHwnd() ) )
+	if( ::OpenClipboard(AfxGetApp()->m_pMainWnd->m_hWnd) )
 	{
 		UINT  ClipboardFormat( ::RegisterClipboardFormat( SvO::ToolClipboardFormat ) );
 		HGLOBAL ClipboardMemData = nullptr;
