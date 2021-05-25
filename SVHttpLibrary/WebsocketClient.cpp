@@ -187,7 +187,21 @@ void WebsocketClient::close_connection()
 
 void WebsocketClient::send_handshake()
 {
-	m_Socket.async_handshake(m_rSettings.Host, m_rSettings.Path, std::bind(&WebsocketClient::handle_handshake_response, this, std::placeholders::_1));
+	if (!m_rSettings.Protocol.empty())
+	{
+		auto protocol = m_rSettings.Protocol;
+		m_Socket.set_option(boost::beast::websocket::stream_base::decorator(
+			[protocol](boost::beast::websocket::request_type& m)
+			{
+				m.insert(boost::beast::http::field::sec_websocket_protocol, protocol);
+			}
+		));
+	}
+
+	m_Socket.async_handshake(
+		m_rSettings.Host,
+		m_rSettings.Path,
+		std::bind(&WebsocketClient::handle_handshake_response, this, std::placeholders::_1));
 }
 
 void WebsocketClient::handle_handshake_response(const boost::system::error_code& error)

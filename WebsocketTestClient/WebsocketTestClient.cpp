@@ -24,6 +24,7 @@
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
 
+#include "SvAuthLibrary/AuthClient.h"
 #include "SvHttpLibrary/WebsocketClientSettings.h"
 #include "SvHttpLibrary/DefaultSettings.h"
 #include "SVLogLibrary/Logging.h"
@@ -33,6 +34,7 @@
 #include "WebsocketLibrary/RunRequest.inl"
 #include "WebsocketLibrary/SVRCClientService.h"
 #include "WebsocketLibrary/SVRCClientServiceSettings.h"
+#include "cxxopts.hpp"
 #pragma endregion Includes
 
 void PrintCurImage(const SvPb::ImageId& rCurrentImage)
@@ -268,28 +270,73 @@ private:
 	SvWsl::SVRCClientService& m_rClient;
 };
 
+static bool login(const std::string& host, uint16_t port, const std::string& user, const std::string& password, std::string& token)
+{
+	bool success = false;
+
+	boost::asio::io_context io_context;
+	SvAuth::AuthClient client(io_context, host, port);
+
+	std::thread io_thread([&]() { io_context.run();  });
+
+	std::string accessToken;
+	if (client.login(user, password, accessToken))
+	{
+		if (client.auth(accessToken, token))
+		{
+			success = true;
+		}
+	}
+
+	io_context.stop();
+	io_thread.join();
+
+	return success;
+}
+
 int main(int argc, char* argv[])
 {
+	cxxopts::Options options("WebsocketTestClient", "Interactive cli client for testing the SVRC connection");
+	options.add_options()
+		("help", "produce help message")
+		("host", "remote host", cxxopts::value<std::string>()->default_value("127.0.0.1"))
+		("port", "remote port", cxxopts::value<uint16_t>()->default_value("80"))
+		("username", "username", cxxopts::value<std::string>()->default_value(""))
+		("password", "password", cxxopts::value<std::string>()->default_value(""))
+		("loglevel", "loglevel", cxxopts::value<std::string>()->default_value("info"))
+		;
+
+	auto result = options.parse(argc, argv);
+
+	if (result.count("help")) {
+		std::cout << options.help() << std::endl;
+		return 0;
+	}
+
 	SvRpc::ClientStreamContext csx(nullptr);
 	SvLog::bootstrap_logging();
 	SvLog::LogSettings logSettings;
 	logSettings.StdoutLogEnabled = true;
-	logSettings.StdoutLogLevel = "debug";
+	logSettings.StdoutLogLevel = result["debug"].as<std::string>();
 	logSettings.FileLogEnabled = false;
 	logSettings.WindowsEventLogEnabled = false;
 	SvLog::init_logging(logSettings);
 
 	SvHttp::WebsocketClientSettings clientSettings;
-	clientSettings.Host = "127.0.0.1";
-	//	clientSettings.Host = "192.168.10.111";
-	clientSettings.Port = SvHttp::Default_Port;
-	if (argc > 1)
+	clientSettings.Host = result["host"].as<std::string>();
+	clientSettings.Port = result["port"].as<uint16_t>();
+
+	if (result.count("username"))
 	{
-		clientSettings.Host = argv[1];
-	}
-	if (argc > 2)
-	{
-		clientSettings.Port = static_cast<uint16_t> (atoi(argv[2]));
+		std::string token;
+		const std::string& username = result["username"].as<std::string>();
+		if (!login(clientSettings.Host, clientSettings.Port, username, result["password"].as<std::string>(), token))
+		{
+			SV_LOG_GLOBAL(error) << "Failed generating the token for user " << username;
+			return 1;
+		}
+
+		clientSettings.Protocol = "access_token, " + token;
 	}
 
 	auto pRpcClient = std::make_unique<SvRpc::RPCClient>(clientSettings);

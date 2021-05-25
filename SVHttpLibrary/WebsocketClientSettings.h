@@ -27,6 +27,10 @@ struct WebsocketClientSettings
 	/// Path of the WebSocket server to connect to.
 	std::string Path {"/"};
 
+	/// Optional protocol to use for that websocket connection.
+	/// This can be used to send authentication details, for example.
+	std::string Protocol{ "" };
+	
 	/// Size of the read buffer in bytes. Tweak to get an optimal trade-off
 	/// between memory usage and throughput. A value between 2k and 64k is
 	/// recommended.
