@@ -1638,7 +1638,7 @@ void SVRCCommand::clipboardAction(const SvPb::ClipboardRequest rRequest, SvPb::S
 					if (false == deleteObjectName.empty())
 					{
 						///@WARNING [gra][10.10][21.05.2021] SVIPDoc should be done in the inspection commands
-						SVIPDoc* pDoc = (nullptr != pInspection) ? TheSVObserverApp.GetIPDoc(pInspection->getObjectId()) : nullptr;
+						SVIPDoc* pDoc = TheSVObserverApp.GetIPDoc(pInspection->getObjectId());
 						if (nullptr != pDoc)
 						{
 							pDoc->GetToolGroupings().RemoveTool(deleteObjectName);
