@@ -317,7 +317,7 @@ int main(int argc, char* argv[])
 	SvLog::bootstrap_logging();
 	SvLog::LogSettings logSettings;
 	logSettings.StdoutLogEnabled = true;
-	logSettings.StdoutLogLevel = result["debug"].as<std::string>();
+	logSettings.StdoutLogLevel = result["loglevel"].as<std::string>();
 	logSettings.FileLogEnabled = false;
 	logSettings.WindowsEventLogEnabled = false;
 	SvLog::init_logging(logSettings);
