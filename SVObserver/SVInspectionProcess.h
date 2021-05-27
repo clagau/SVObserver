@@ -359,7 +359,7 @@ private:
 
 	HRESULT FindPPQInputObjectByName(SVObjectClass*& p_rpObject, LPCTSTR p_FullName) const;
 
-	HRESULT LastProductUpdate(const SVProductInfoStruct& rProduct);
+	void LastProductUpdate(const SVProductInfoStruct& rProduct);
 	SVProductInfoStruct LastProductGet() const;
 
 	SVIOEntryHostStructPtrVector m_PPQInputs;

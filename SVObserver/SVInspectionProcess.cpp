@@ -104,19 +104,16 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed)
 
 	SVProductInfoStruct product;
 
-	if (false == m_processActive)
 	{
-		m_processActive = true;
-		{
-			std::lock_guard<std::mutex>  Autolock(m_inspectionMutex);
-			product = std::move(m_product);
-			m_product.Reset();
-		}
-		if (false == product.m_triggered)
-		{
-			m_processActive = false;
-		}
+		std::lock_guard<std::mutex>  Autolock(m_inspectionMutex);
+		product = std::move(m_product);
+		m_product.Reset();
 	}
+	if (false == product.m_triggered)
+	{
+		m_processActive = false;
+	}
+
 	rProcessed = m_processActive;
 	if (rProcessed)
 	{
@@ -258,7 +255,8 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed)
 				//					::OutputDebugString( l_TempStateString.c_str() );
 #endif
 
-					// Mark last run product
+				// Mark last run product
+				rIPInfo.ClearIndexes();
 				LastProductUpdate(product);
 			}
 		}
@@ -268,7 +266,6 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed)
 		if (l_Process)
 		{
 			m_NotifyWithLastInspected = true;
-
 			rIPInfo.ClearIndexes();
 		}
 
@@ -939,6 +936,7 @@ HRESULT SVInspectionProcess::StartProcess(SVProductInfoStruct* pProduct)
 
 	if (false == m_offlineRequest)
 	{
+		m_processActive = true;
 		{
 			std::lock_guard<std::mutex>  Autolock(m_inspectionMutex);
 			m_product = pProduct->copyInspectionToNewProduct(getObjectId());
@@ -1624,9 +1622,7 @@ HRESULT SVInspectionProcess::InitializeRunOnce()
 		//And this is important, because else an event is sent and leads to wrong image updates in webApp.
 		product.setInspectionTriggerRecordComplete(SvDef::InvalidObjectId);
 
-		HRESULT l_Temp = LastProductUpdate(product);
-
-		if (S_OK == l_Status) { l_Status = l_Temp; }
+		LastProductUpdate(product);
 	}
 	else
 	{
@@ -2286,10 +2282,13 @@ void SVInspectionProcess::AddInputImageRequestToTool(const std::string& rName, u
 std::pair<SvTrig::SVTriggerInfoStruct, SVInspectionInfoStruct> SVInspectionProcess::getLastProductData() const
 {
 	std::lock_guard<std::mutex>  Autolock(m_inspectionMutex);
-	auto ipInfoIter = m_lastRunProduct.m_svInspectionInfos.find(getObjectId());
-	if (m_lastRunProduct.m_svInspectionInfos.end() != ipInfoIter)
+	if (false == m_lastRunProduct.empty())
 	{
-		return {m_lastRunProduct.m_triggerInfo, ipInfoIter->second};
+		auto ipInfoIter = m_lastRunProduct.m_svInspectionInfos.find(getObjectId());
+		if (m_lastRunProduct.m_svInspectionInfos.end() != ipInfoIter)
+		{
+			return { m_lastRunProduct.m_triggerInfo, ipInfoIter->second };
+		}
 	}
 	return {};
 }
@@ -2297,7 +2296,7 @@ std::pair<SvTrig::SVTriggerInfoStruct, SVInspectionInfoStruct> SVInspectionProce
 void SVInspectionProcess::resetLastProduct()
 {
 	std::lock_guard<std::mutex>  Autolock(m_inspectionMutex);
-	m_lastRunProduct.Assign({});
+	m_lastRunProduct.Reset();
 }
 
 HRESULT SVInspectionProcess::LastProductCopySourceImagesTo(SVProductInfoStruct *p_psvProduct)
@@ -3865,11 +3864,14 @@ void SVInspectionProcess::fillObjectList(std::back_insert_iterator<std::vector<S
 }
 
 
-HRESULT SVInspectionProcess::LastProductUpdate(const SVProductInfoStruct& rProduct)
+void SVInspectionProcess::LastProductUpdate(const SVProductInfoStruct& rProduct)
 {
-	rProduct.SetProductComplete();
-	std::lock_guard<std::mutex>  Autolock(m_inspectionMutex);
-	return m_lastRunProduct.Assign(rProduct);
+	if (false == rProduct.empty())
+	{
+		rProduct.SetProductComplete();
+		std::lock_guard<std::mutex>  Autolock(m_inspectionMutex);
+		m_lastRunProduct.Assign(rProduct);
+	}
 }
 
 SVProductInfoStruct SVInspectionProcess::LastProductGet() const
