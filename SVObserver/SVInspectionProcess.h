@@ -403,6 +403,7 @@ private:
 #endif
 
 	mutable std::mutex m_inspectionMutex;
+	bool m_lastRunProductValid{ true };
 	SVProductInfoStruct m_lastRunProduct;
 
 	bool m_bNewDisableMethod{false};
