@@ -39,7 +39,7 @@ public:
 	CButton	m_btnBrowse;
 	CButton	m_btnAdd;
 	CListBox m_lbDependentList;
-	CString	m_strDLLPath;
+	CString	m_currentExternalDllFilepath;
 	CString	m_strStatus;
 	//}}AFX_DATA
 
@@ -59,7 +59,7 @@ protected:
 
 	std::string getStdStringFromValueController(SvPb::EmbeddedIdEnum objectId, int index = 0);
 	SVToolAdjustmentDialogSheetClass* m_pSheet;
-	CString m_strLastDllPath;
+	CString m_previousExternalDllDirectorypath;
 	CToolTipCtrl m_ToolTip;
 	const uint32_t m_ToolObjectID;
 	const uint32_t m_InspectionID;

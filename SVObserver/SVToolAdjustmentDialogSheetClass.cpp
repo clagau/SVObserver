@@ -148,14 +148,11 @@ CPropertyPage* SVToolAdjustmentDialogSheetClass::createToolAdjustmentDialogComme
 }
 
 
-void SVToolAdjustmentDialogSheetClass::AddAdditionalPagesForExternalTool(bool addToolAdjustmentDialogCommentPage)
+void SVToolAdjustmentDialogSheetClass::AddAdditionalPagesForExternalTool()
 {
 	addConditionalDialog();
 	AddPage(new SvOg::SVTADlgGeneralPage(m_InspectionID, m_TaskObjectID, SvPb::SVObjectSubTypeEnum::SVExternalToolObjectType));
-	if (addToolAdjustmentDialogCommentPage)
-	{
-		AddPage(createToolAdjustmentDialogCommentPage());
-	}
+	AddPage(createToolAdjustmentDialogCommentPage());
 }
 
 
@@ -634,7 +631,7 @@ LRESULT SVToolAdjustmentDialogSheetClass::ExternalToolShowAllPages(WPARAM, LPARA
 	AddPage(new SVTADlgExternalInputSelectPage(_T("Input Values"), m_InspectionID, m_TaskObjectID));
 	AddPage(new SVTADlgExternalResultPage(_T("Result Values"), m_InspectionID, m_externalToolTaskController.getExternalToolTaskObjectId()));
 
-	AddAdditionalPagesForExternalTool(true);
+	AddAdditionalPagesForExternalTool();
 	return S_OK;
 }
 
@@ -643,7 +640,7 @@ LRESULT SVToolAdjustmentDialogSheetClass::ExternalToolShowOnlyPagesForUntestedDl
 {
 	ExternalToolRetainOnlySelectDllPage();
 
-	AddAdditionalPagesForExternalTool(false);
+	AddAdditionalPagesForExternalTool();
 	return S_OK;
 }
 

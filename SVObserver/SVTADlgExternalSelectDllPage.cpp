@@ -79,7 +79,7 @@ SVTADlgExternalSelectDllPage::SVTADlgExternalSelectDllPage(uint32_t inspectionID
 	, m_valueController{ SvOg::BoundValues{ inspectionID, m_externalToolTaskController.getExternalToolTaskObjectId() } }
 {
 	//{{AFX_DATA_INIT(SVTADlgExternalSelectDllPage)
-	m_strDLLPath = _T("");
+	m_currentExternalDllFilepath = _T("");
 	m_strStatus = _T("");
 	//}}AFX_DATA_INIT
 }
@@ -96,7 +96,7 @@ void SVTADlgExternalSelectDllPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_ADD, m_btnAdd);
 	DDX_Check(pDX, IDC_RESET_INPUT, m_ResetInput);
 	DDX_Control(pDX, IDC_DEPENDENT_LIST, m_lbDependentList);
-	DDX_Text(pDX, IDC_DLL_PATH, m_strDLLPath);
+	DDX_Text(pDX, IDC_DLL_PATH, m_currentExternalDllFilepath);
 	DDX_Text(pDX, IDC_DLL_STATUS, m_strStatus);
 	//}}AFX_DATA_MAP
 }
@@ -130,12 +130,12 @@ BOOL SVTADlgExternalSelectDllPage::OnInitDialog()
 	m_valueController.Init();
 
 	auto strDllPath = getStdStringFromValueController(SvPb::EmbeddedIdEnum::DllFileNameEId);
-	// cppcheck-suppress danglingLifetime //m_strDLLPath is a CString and will not merely hold a copy of a pointer
-	m_strDLLPath = strDllPath.c_str();
+	// cppcheck-suppress danglingLifetime //m_currentExternalDllFilepath is a CString and will not merely hold a copy of a pointer
+	m_currentExternalDllFilepath = strDllPath.c_str();
 
 	CPropertyPage::OnInitDialog();	// create button and list box windows
 
-	m_strLastDllPath = AfxGetApp()->GetProfileString(_T("Settings"), _T("Last External Tool Dll Path"), SvStl::GlobalPath::Inst().GetRunPath().c_str());
+	m_previousExternalDllDirectorypath = AfxGetApp()->GetProfileString(_T("Settings"), _T("Last External Tool Dll Path"), SvStl::GlobalPath::Inst().GetRunPath().c_str());
 
 	m_ToolTip.Create(this, TTS_NOPREFIX | WS_VISIBLE);
 	m_ToolTip.Activate(TRUE);
@@ -167,7 +167,7 @@ void SVTADlgExternalSelectDllPage::OnOK()
 	UpdateData();
 
 	// set dll path
-	m_valueController.Set<CString>(SvPb::EmbeddedIdEnum::DllFileNameEId, m_strDLLPath);
+	m_valueController.Set<CString>(SvPb::EmbeddedIdEnum::DllFileNameEId, m_currentExternalDllFilepath);
 	
 	// Copy DLL Dependents from listbox to Task Class FileNameValueObject List...
 	SetDependencies();
@@ -220,20 +220,20 @@ void SVTADlgExternalSelectDllPage::OnAdd()
 		_T("All Files (*.*)|*.*|Dynamic Link Library(*.dll)|*.dll||"));
 
 	TCHAR tszPath[MAX_PATH] = { 0 };
-	_tcscpy(tszPath, m_strLastDllPath);
+	_tcscpy(tszPath, m_previousExternalDllDirectorypath);
 	cfd.m_ofn.lpstrInitialDir = tszPath;
 	cfd.m_ofn.lpstrTitle = _T("Select File");
 
 	if (cfd.DoModal() == IDOK)
 	{
 		// Extract File Name
-		m_strLastDllPath = cfd.GetPathName();
-		int iFind = m_strLastDllPath.ReverseFind(_T('\\'));
+		m_previousExternalDllDirectorypath = cfd.GetPathName();
+		int iFind = m_previousExternalDllDirectorypath.ReverseFind(_T('\\'));
 		if (iFind >= 0)
 		{
-			m_strLastDllPath = m_strLastDllPath.Left(iFind);
+			m_previousExternalDllDirectorypath = m_previousExternalDllDirectorypath.Left(iFind);
 		}
-		AfxGetApp()->WriteProfileString(_T("Settings"), _T("Last External Tool Dll Path"), m_strLastDllPath);
+		AfxGetApp()->WriteProfileString(_T("Settings"), _T("Last External Tool Dll Path"), m_previousExternalDllDirectorypath);
 
 		// Check for already existing DLL Paths
 		if (LB_ERR == m_lbDependentList.FindString(0, cfd.GetPathName()))
@@ -254,28 +254,28 @@ void SVTADlgExternalSelectDllPage::OnBrowse()
 		_T("Dynamic Link Library(*.dll)|*.dll|All Files (*.*)|*.*||"));
 
 	TCHAR tszPath[MAX_PATH] = { 0 };
-	_tcscpy(tszPath, m_strLastDllPath);
+	_tcscpy(tszPath, m_previousExternalDllDirectorypath);
 	cfd.m_ofn.lpstrInitialDir = tszPath;
 	cfd.m_ofn.lpstrTitle = _T("Select File");
 
 	if (cfd.DoModal() == IDOK)
 	{
-		m_strLastDllPath = cfd.GetPathName();
-		int iFind = m_strLastDllPath.ReverseFind(_T('\\'));
+		m_previousExternalDllDirectorypath = cfd.GetPathName();
+		int iFind = m_previousExternalDllDirectorypath.ReverseFind(_T('\\'));
 		if (iFind >= 0)
 		{
-			m_strLastDllPath = m_strLastDllPath.Left(iFind);
+			m_previousExternalDllDirectorypath = m_previousExternalDllDirectorypath.Left(iFind);
 		}
-		AfxGetApp()->WriteProfileString(_T("Settings"), _T("Last External Tool Dll Path"), m_strLastDllPath);
+		AfxGetApp()->WriteProfileString(_T("Settings"), _T("Last External Tool Dll Path"), m_previousExternalDllDirectorypath);
 
-		m_strDLLPath = cfd.GetPathName();
+		m_currentExternalDllFilepath = cfd.GetPathName();
 		std::string DLLname = cfd.GetFileName().GetString();
 		UpdateData(FALSE);
 
 		//The dll path has to be completely processed by the underlying object,
 		//thus a commit is necessary after set and an init is necessary before get in order to fetch the processed value.
-		std::string dllPath(m_strDLLPath.GetString());
-		m_valueController.Set<CString>(SvPb::EmbeddedIdEnum::DllFileNameEId, m_strDLLPath);
+		std::string dllPath(m_currentExternalDllFilepath.GetString());
+		m_valueController.Set<CString>(SvPb::EmbeddedIdEnum::DllFileNameEId, m_currentExternalDllFilepath);
 		m_valueController.Commit(SvOg::PostAction::doNothing);
 
 		m_valueController.Init();
@@ -294,7 +294,7 @@ void SVTADlgExternalSelectDllPage::OnBrowse()
 				m_valueController.Commit(SvOg::PostAction::doNothing);
 
 				InitializeDll(false, false);
-				m_valueController.Set<CString>(SvPb::EmbeddedIdEnum::DllFileNameEId, m_strDLLPath);
+				m_valueController.Set<CString>(SvPb::EmbeddedIdEnum::DllFileNameEId, m_currentExternalDllFilepath);
 				
 				bool isUsed =  SvUl::ModuleInfo::isProcessModuleName(GetCurrentProcessId(), DLLname);
 
@@ -305,9 +305,9 @@ void SVTADlgExternalSelectDllPage::OnBrowse()
 					m_strStatus += cCRLF;
 					m_preserveStatus = true;
 
-					m_strDLLPath = _T("");
+					m_currentExternalDllFilepath = _T("");
 					UpdateData(FALSE);
-					m_valueController.Set<CString>(SvPb::EmbeddedIdEnum::DllFileNameEId, m_strDLLPath);
+					m_valueController.Set<CString>(SvPb::EmbeddedIdEnum::DllFileNameEId, m_currentExternalDllFilepath);
 				}
 			
 			}
@@ -326,7 +326,7 @@ void SVTADlgExternalSelectDllPage::testExternalDll(bool setDefaultValues)
 	SetDependencies();
 
 	// DLL Path
-	m_valueController.SetDefault<CString>(SvPb::EmbeddedIdEnum::DllFileNameEId, m_strDLLPath);
+	m_valueController.SetDefault<CString>(SvPb::EmbeddedIdEnum::DllFileNameEId, m_currentExternalDllFilepath);
 	// ensure that all data are available for initialize dll
 	m_valueController.Commit(SvOg::PostAction::doNothing);
 	InitializeDll(false, setDefaultValues);

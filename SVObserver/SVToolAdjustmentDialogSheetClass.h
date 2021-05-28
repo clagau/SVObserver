@@ -64,7 +64,7 @@ public:
 	uint32_t GetInspectionID() const {return m_InspectionID; }
 	uint32_t GetTaskObjectID() const {return m_TaskObjectID; }
 
-	void AddAdditionalPagesForExternalTool(bool addToolAdjustmentDialogCommentPage);
+	void AddAdditionalPagesForExternalTool();
 
 protected:
 	void init();

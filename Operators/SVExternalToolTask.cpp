@@ -811,7 +811,7 @@ namespace SvOp
 		hr = m_dll.GetInputImageInformation(&m_aInputImageInformationStructs);
 		if (S_OK != hr)
 		{
-			rStatusMsgs.push_back("Error on GetNumberOfInputImages()");
+			rStatusMsgs.push_back("Error on GetInputImageInformation()");
 			throw hr;
 		}
 
