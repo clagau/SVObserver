@@ -257,6 +257,8 @@ public:
 	void setTrcPos(int pos) { m_trcPos = pos; };
 	int getTrcPos() const { return m_trcPos; };
 
+	bool isProcessActive() const { return m_processActive; };
+
 protected:
 	
 	struct WatchListElement 

@@ -2282,7 +2282,8 @@ HRESULT SVPPQObject::StartInspection(uint32_t inspectionID)
 		}
 	}
 
-	if (nullptr != pProduct && nullptr != pProduct->m_svInspectionInfos[inspectionID].m_pInspection)
+	bool canStartInspection = nullptr != pProduct && nullptr != pProduct->m_svInspectionInfos[inspectionID].m_pInspection && false == pProduct->m_svInspectionInfos[inspectionID].m_pInspection->isProcessActive();
+	if (canStartInspection)
 	{
 		pProduct->m_lastPPQPosition = m_lastPPQPosition;
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)

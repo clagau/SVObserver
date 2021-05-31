@@ -127,6 +127,7 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed)
 		validProduct = (false == validProduct) ? false : iter->second.m_InProcess && iter->second.m_HasBeenQueued;
 		if (false == validProduct)
 		{
+			rProcessed = false;
 			return E_FAIL;
 		}
 		SVInspectionInfoStruct& rIPInfo = iter->second;
@@ -364,8 +365,13 @@ HRESULT SVInspectionProcess::ProcessNotifyWithLastInspected(bool& p_rProcessed)
 		std::pair<long, SVInspectionInfoStruct> data {m_lastRunProduct.ProcessCount(), m_lastRunProduct.m_svInspectionInfos[getObjectId()]};
 		SVObjectManagerClass::Instance().UpdateObservers(std::string(SvO::cInspectionProcessTag), getObjectId(), data);
 
-		p_rProcessed = true;
+		if (m_lastRunProduct.m_triggered && SvDef::InvalidObjectId != m_PPQId)
+		{
+			SVObjectManagerClass::Instance().UpdateObserver(m_PPQId, data);
+		}
+		m_lastRunProduct.m_triggered = false;
 
+		p_rProcessed = true;
 #ifdef EnableTracking
 		m_InspectionTracking.EventEnd(_T("Process Notify With Last Inspected"));
 #endif
@@ -502,22 +508,25 @@ void CALLBACK SVInspectionProcess::APCThreadProcess(ULONG_PTR)
 
 void SVInspectionProcess::ThreadProcess(bool& p_WaitForEvents)
 {
-	bool l_Processed = false;
+	bool processed = false;
 #ifdef EnableTracking
 	m_InspectionTracking.SetStartTime();
 #endif
-	ProcessInspection(l_Processed);
-	ProcessNotifyWithLastInspected(l_Processed);
 
-	ProcessCommandQueue(l_Processed);
-
-	if (m_lastRunProduct.m_triggered && SvDef::InvalidObjectId != m_PPQId)
+	if (m_processActive)
 	{
-		std::pair<long, SVInspectionInfoStruct> data { m_lastRunProduct.ProcessCount(), m_lastRunProduct.m_svInspectionInfos[getObjectId()] };
-		SVObjectManagerClass::Instance().UpdateObserver(m_PPQId, data);
+		ProcessInspection(processed);
 	}
-	m_lastRunProduct.m_triggered = false;
-	p_WaitForEvents = !l_Processed;
+	if (false == processed)
+	{
+		ProcessNotifyWithLastInspected(processed);
+	}
+	if (false == processed)
+	{
+		ProcessCommandQueue(processed);
+	}
+
+	p_WaitForEvents = (false == processed);
 }
 
 void SVInspectionProcess::DestroyInspection()
