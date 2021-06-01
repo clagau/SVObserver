@@ -1005,8 +1005,10 @@ namespace SvOp
 
 	void SVExternalToolTask::prepareForRunning(std::vector<SVImageDefinitionStruct>& aInputImages, std::vector<std::string>& rStatusMsgs)
 	{
-		HRESULT hr = m_dll.InitializeRun(getObjectId(), (long)aInputImages.size(), aInputImages.size() ? &(aInputImages[0]) : nullptr,
+		HRESULT hr = m_dll.InitializeRun(getObjectId(), (long)aInputImages.size(), 
+			aInputImages.size() ? &(aInputImages[0]) : nullptr,
 			(long)m_InspectionInputValues.size(), m_InspectionInputValues.size() ? &(m_InspectionInputValues[0]) : nullptr);
+
 		if (S_OK != hr)
 		{
 			rStatusMsgs.push_back("Error on InitializeRun()");
@@ -1150,13 +1152,13 @@ namespace SvOp
 		m_Data.m_aResultImageDefinitions.clear();
 
 		// try to connect to DLL
-		std::string DllPath;
-		m_Data.m_voDllPath.GetValue(DllPath);
+		std::string dllPath;
+		m_Data.m_voDllPath.GetValue(dllPath);
 
 		try
 		{
 			rStatusMsgs.clear();
-			hr = m_dll.Open(DllPath.c_str(), rStatusMsgs);
+			hr = m_dll.Open(dllPath.c_str(), rStatusMsgs);
 		}
 		catch (const SvStl::MessageContainer& e)
 		{

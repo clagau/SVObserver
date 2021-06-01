@@ -36,6 +36,7 @@ namespace SvOp
 	{
 		Close();
 	}
+
 	HRESULT  SVDLLToolLoadLibraryClass::InitInputValueDef(SvStl::MessageContainer& rE)
 	{
 		HRESULT Result{ S_OK };
@@ -133,9 +134,14 @@ namespace SvOp
 	}
 
 	//@TODO [Arvid][10.10][8.3.2021] Diese Methode ist _erheblich_ zu lang!
-	HRESULT SVDLLToolLoadLibraryClass::Open(LPCTSTR libraryName, std::vector<std::string>& rStatusMsgs)
+	HRESULT SVDLLToolLoadLibraryClass::Open(const std::string& rDllPath, std::vector<std::string>& rStatusMsgs)
 	{
+		std::filesystem::path fullPath(rDllPath);
+
+		m_dllName = fullPath.filename().string();
+
 		HRESULT Result(S_OK);
+
 		SvStl::MessageContainer e;
 		if (nullptr != m_hmHandle)
 		{
@@ -143,17 +149,17 @@ namespace SvOp
 		}
 
 		rStatusMsgs.reserve(25);
-		if (_access(libraryName, 0) == 0)
+		if (_access(rDllPath.c_str(), 0) == 0)
 		{
 			// Check bitness
-			if (CheckBitness(libraryName) != ImageFileMachineAMD64)
+			if (CheckBitness(rDllPath.c_str()) != ImageFileMachineAMD64)
 			{
-				std::string Message = SvUl::Format(_T("%s is not 64 Bit!"), libraryName);
+				std::string Message = SvUl::Format(_T("%s is not 64 Bit!"), rDllPath.c_str());
 				rStatusMsgs.emplace_back(Message);
 			}
 		}
 		rStatusMsgs.emplace_back(_T("Attempting LoadLibrary"));
-		m_hmHandle = ::LoadLibrary(libraryName);
+		m_hmHandle = ::LoadLibrary(rDllPath.c_str());
 		Sleep(0);
 		if (nullptr == m_hmHandle)	// can't load library
 		{
@@ -577,12 +583,13 @@ namespace SvOp
 			}
 			result = (result == ERROR_USER_EXCEPTION) ? SVMSG_SVO_31_EXCEPTION_IN_EXTERNAL_DLL : result;
 
+			assert(S_OK == result);
+
 			if (S_OK != result)
 			{
-				assert(false);
 				SvDef::StringVector msgList;
-				msgList.push_back(SvUl::Format(_T("%d"), result));
-
+				msgList.push_back(SvUl::Format(_T("0x%xld"), result));
+				msgList.push_back(m_dllName);
 				SvStl::MessageManager Exception(SvStl::MsgType::Log);
 				Exception.setMessage(static_cast<DWORD> (result), SvStl::Tid_RunTool_Exception, msgList, SvStl::SourceFileParams(StdMessageParams));
 			}
@@ -631,7 +638,8 @@ namespace SvOp
 		return l_hrOk;
 	}
 
-	HRESULT SVDLLToolLoadLibraryClass::InitializeRun(uint32_t toolId, long lImageArraySize, SVImageDefinitionStruct* paStructs, long lValueArraySize, VARIANT* pavImputValues)
+	HRESULT SVDLLToolLoadLibraryClass::InitializeRun(uint32_t toolId, long lImageArraySize, SVImageDefinitionStruct* paStructs, 
+		long lValueArraySize, VARIANT* pavInputValues)
 	{
 		HRESULT result = S_FALSE;
 
@@ -639,7 +647,7 @@ namespace SvOp
 		{
 			try
 			{
-				result = m_pfnInitializeRun(GUID{ toolId }, lImageArraySize, paStructs, lValueArraySize, pavImputValues);
+				result = m_pfnInitializeRun(GUID{ toolId }, lImageArraySize, paStructs, lValueArraySize, pavInputValues);
 			}
 			catch (...)
 			{
@@ -647,11 +655,15 @@ namespace SvOp
 			}
 			result = (result == ERROR_USER_EXCEPTION) ? SVMSG_SVO_31_EXCEPTION_IN_EXTERNAL_DLL : result;
 
+			assert(S_OK == result);
+
 			if (S_OK != result)
 			{
-				assert(false);
+
 				SvDef::StringVector msgList;
-				msgList.push_back(SvUl::Format(_T("%d"), result));
+				msgList.push_back(SvUl::Format(_T("0x%xld"), result));
+				msgList.push_back(m_dllName);
+				
 				SvStl::MessageManager Exception(SvStl::MsgType::Log);
 				Exception.setMessage(static_cast<DWORD> (result), SvStl::Tid_SVInitializeRun_Exception, msgList, SvStl::SourceFileParams(StdMessageParams));
 			}
@@ -662,7 +674,6 @@ namespace SvOp
 
 	HRESULT SVDLLToolLoadLibraryClass::UninitializeRun(uint32_t toolId)
 	{
-
 		HRESULT l_hrOk = S_FALSE;
 		if (nullptr != m_pfnUninitializeRun)
 		{
@@ -676,8 +687,10 @@ namespace SvOp
 			}
 			l_hrOk = (l_hrOk == ERROR_USER_EXCEPTION) ? SVMSG_SVO_31_EXCEPTION_IN_EXTERNAL_DLL : l_hrOk;
 		}
+
 		return l_hrOk;
 	}
+
 	HRESULT SVDLLToolLoadLibraryClass::GetInputValueDefinitions(long* plArraySize, InputValueDefinitionStructEx** ppaStructs)
 	{
 		HRESULT l_hrOk = S_FALSE;

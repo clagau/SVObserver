@@ -106,7 +106,7 @@ public:
 	SVDLLToolLoadLibraryClass();
 	~SVDLLToolLoadLibraryClass();
 
-	HRESULT Open(LPCTSTR libraryName, std::vector<std::string>& rStatusMsgs);
+	HRESULT Open(const std::string& rDllPath, std::vector<std::string>& rStatusMsgs);
 	HRESULT Close();
 
 	HRESULT GetToolName (BSTR* pbstrToolName);
@@ -114,7 +114,8 @@ public:
 	HRESULT RunTool (uint32_t toolId, long* plStatus);
 	HRESULT Startup ();
 	HRESULT ShutDown ();
-	HRESULT InitializeRun (uint32_t toolId, long lImageArraySize, SVImageDefinitionStruct* paStructs, long lValueArraySize, VARIANT* pavInputValues);
+	HRESULT InitializeRun (uint32_t toolId, long lImageArraySize, SVImageDefinitionStruct* paStructs, 
+		long lValueArraySize, VARIANT* pavInputValues);
 	HRESULT UninitializeRun (uint32_t toolId);
 	HRESULT GetInputValueDefinitions (long* plArraySize,InputValueDefinitionStruct** ppaStructs);
 	HRESULT DestroyInputValueDefinitionStructures (InputValueDefinitionStruct* paStructs);
@@ -173,6 +174,8 @@ private:
 	bool m_bUseMil {false};
 	bool m_bUseResultEx {false};
 	bool m_bUseInputEx {false};
+	std::string m_dllName{"(uninitialized)"};
+
 	SimpleTestPtr m_pfnSimpleTest {nullptr};
 	GetToolNamePtr m_pfnGetToolName {nullptr};
 	GetToolVersionPtr m_pfnGetToolVersion {nullptr};

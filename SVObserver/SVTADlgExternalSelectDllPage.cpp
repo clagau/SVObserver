@@ -284,32 +284,25 @@ void SVTADlgExternalSelectDllPage::OnBrowse()
 		m_preserveStatus = false;
 		if (runpath != dllPath)
 		{
-			bool isVersionEqual = SvSyl::FileVersion::isEqual(runpath.c_str(), dllPath.c_str());
-	
-			if (false == isVersionEqual)
-			{
-				//check if previous Version is still used 
-				//Unload current dll  
-				m_valueController.Set<CString>(SvPb::EmbeddedIdEnum::DllFileNameEId, CString());
-				m_valueController.Commit(SvOg::PostAction::doNothing);
+			//Unload current dll  
+			m_valueController.Set<CString>(SvPb::EmbeddedIdEnum::DllFileNameEId, CString());
+			m_valueController.Commit(SvOg::PostAction::doNothing);
 
-				InitializeDll(false, false);
-				m_valueController.Set<CString>(SvPb::EmbeddedIdEnum::DllFileNameEId, m_currentExternalDllFilepath);
+			InitializeDll(false, false);
+			m_valueController.Set<CString>(SvPb::EmbeddedIdEnum::DllFileNameEId, m_currentExternalDllFilepath);
 				
-				bool isUsed =  SvUl::ModuleInfo::isProcessModuleName(GetCurrentProcessId(), DLLname);
+			bool isUsed =  SvUl::ModuleInfo::isProcessModuleName(GetCurrentProcessId(), DLLname);
 
-				if (isUsed)
-				{
-					std::string Status = SvStl::MessageTextGenerator::Instance().getText(SvStl::Tid_CouldNotCopyDll);
-					m_strStatus = Status.c_str();
-					m_strStatus += cCRLF;
-					m_preserveStatus = true;
+			if (isUsed)
+			{
+				std::string Status = SvStl::MessageTextGenerator::Instance().getText(SvStl::Tid_CouldNotCopyDll);
+				m_strStatus = Status.c_str();
+				m_strStatus += cCRLF;
+				m_preserveStatus = true;
 
-					m_currentExternalDllFilepath = _T("");
-					UpdateData(FALSE);
-					m_valueController.Set<CString>(SvPb::EmbeddedIdEnum::DllFileNameEId, m_currentExternalDllFilepath);
-				}
-			
+				m_currentExternalDllFilepath = _T("");
+				UpdateData(FALSE);
+				m_valueController.Set<CString>(SvPb::EmbeddedIdEnum::DllFileNameEId, m_currentExternalDllFilepath);
 			}
 		}
 		m_externalToolTaskController.clearData();
