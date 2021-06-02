@@ -22,7 +22,6 @@
 #include "SVStatusLibrary\GlobalPath.h"
 #include "SVStatusLibrary\MessageContainer.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "SVSystemLibrary/FileVersion.h"
 #include "SVStatusLibrary/MessageTextGenerator.h"
 #include "SVUtilityLibrary/SafeArrayHelper.h"
 
