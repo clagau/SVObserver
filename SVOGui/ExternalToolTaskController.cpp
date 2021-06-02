@@ -102,7 +102,7 @@ std::pair<bool, std::string> ExternalToolTaskController::resetAllObjects(bool sh
 		{
 			if (false == errorMessages.empty() && showFirstError)
 			{
-				SvStl::MessageManager mm(SvStl::MsgType::Log | SvStl::MsgType::Display);
+				SvStl::MessageManager mm(SvStl::MsgType::Log); // will be displayed in "DLL Status" widget in TA Dialog
 				auto& mc = errorMessages[0]; //currently just the first error message is displayed
 				mm.setMessage(mc.getMessage());
 				mm.Process();
