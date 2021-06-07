@@ -171,7 +171,7 @@ bool JwtFactory::decode_payload(
 
 bool JwtFactory::check_timestamps(const JwtStandardFields& fields)
 {
-	const auto leeway = 10; // allow a margin of a few seconds to account for clock skew
+	const auto leeway = 60; // allow a margin of a few seconds to account for clock skew
 	const auto now = static_cast<uint64_t>(std::chrono::seconds(std::time(NULL)).count());
 
 	if (fields.exp() > 0 && fields.exp() < now - leeway)

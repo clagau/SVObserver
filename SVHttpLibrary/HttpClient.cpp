@@ -62,16 +62,37 @@ public:
 			req_.prepare_payload();
 		}
 		
+		std::string port = req.Url.port();
+		if (port.empty())
+		{
+			const auto& scheme = req.Url.scheme();
+			if (scheme == "http")
+			{
+				port = "80";
+			}
+			else if (scheme == "https")
+			{
+				port = "443";
+			}
+			else
+			{
+				auto err = SvStl::build_error(SvPenv::ErrorCode::internalError, "Unsupported url scheme");
+				auto ptr = SvStl::errorToExceptionPtr(err);
+				promise_.set_exception(ptr);
+				return promise_.get_future();
+			}
+		}
+
 		// Look up the domain name
 		resolver_.async_resolve(
 			req.Url.host(),
-			req.Url.port(),
+			port,
 			std::bind(
-			&RestRequest::on_resolve,
-			shared_from_this(),
-			std::placeholders::_1,
-			std::placeholders::_2));
-
+				&RestRequest::on_resolve,
+				shared_from_this(),
+				std::placeholders::_1,
+				std::placeholders::_2));
+		
 		return promise_.get_future();
 	}
 

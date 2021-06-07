@@ -275,6 +275,8 @@ static bool login(const std::string& host, uint16_t port, const std::string& use
 	bool success = false;
 
 	boost::asio::io_context io_context;
+	auto io_work = std::make_unique<boost::asio::io_context::work>(io_context);
+	
 	SvAuth::AuthClient client(io_context, host, port);
 
 	std::thread io_thread([&]() { io_context.run();  });
@@ -288,6 +290,7 @@ static bool login(const std::string& host, uint16_t port, const std::string& use
 		}
 	}
 
+	io_work.reset();
 	io_context.stop();
 	io_thread.join();
 
