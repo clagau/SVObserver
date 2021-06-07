@@ -72,16 +72,14 @@ public:
 	void SetTranslation( SvPb::SVExtentTranslationEnum eTranslation );
 	HRESULT SetLinearTranslation(SvPb::SVExtentTranslationEnum eTranslation);
 
-	HRESULT GetExtentObject( SvPb::SVExtentPropertyEnum p_eProperty, SvOi::IValueObject*& rpValueObject ) const;
-	void SetExtentObject( SvPb::SVExtentPropertyEnum p_eProperty, SvOi::IValueObject* pValueObject );
+	HRESULT GetExtentObject( SvPb::SVExtentPropertyEnum extentProperty, SvOi::IValueObject*& rpValueObject ) const;
+	void SetExtentObject( SvPb::SVExtentPropertyEnum extentProperty, SvOi::IValueObject* pValueObject );
 
-	HRESULT GetExtentValue( SvPb::SVExtentPropertyEnum p_eProperty, _variant_t& rValue ) const;
-	HRESULT SetExtentValue(SvPb::SVExtentPropertyEnum p_eProperty, const _variant_t& rValue);
-	bool correspondingLinkedValueIsIndirect(SvPb::SVExtentPropertyEnum extentProperty);
+	HRESULT GetExtentValue(SvPb::SVExtentPropertyEnum extentProperty, _variant_t& rValue) const;
+	HRESULT SetExtentValue(SvPb::SVExtentPropertyEnum extentProperty, const _variant_t& rValue);
 
-
-	HRESULT GetExtentPropertyInfo( SvPb::SVExtentPropertyEnum p_eProperty, SvIe::SVExtentPropertyInfoStruct& p_rInfo ) const;
-	HRESULT SetExtentPropertyInfo( SvPb::SVExtentPropertyEnum p_eProperty, const SvIe::SVExtentPropertyInfoStruct& p_rInfo );
+	HRESULT GetExtentPropertyInfo( SvPb::SVExtentPropertyEnum extentProperty, SvIe::SVExtentPropertyInfoStruct& p_rInfo ) const;
+	HRESULT SetExtentPropertyInfo( SvPb::SVExtentPropertyEnum extentProperty, const SvIe::SVExtentPropertyInfoStruct& p_rInfo );
 
 	void getExtentProperties(::google::protobuf::RepeatedPtrField< ::SvPb::ExtentParameter >& rExtentProperties) const;
 
@@ -109,9 +107,11 @@ public:
 	HRESULT TranslatePointToSource(SVPoint<double> inPoint, SVPoint<double>& rOutPoint );
 	std::string GetAuxiliaryDrawTypeString() const;
 
-	HRESULT adaptScaleFactorExtentProperty(const SVImageExtentClass& rImageExtent, SvPb::SVExtentPropertyEnum extentProperty);
+	HRESULT ensureValidScaleFactorUnlessDottedName(const SVImageExtentClass& rImageExtent, SvPb::SVExtentPropertyEnum extentProperty);
 
 private:
+	bool ExtentObjectHasLinkedName(SvPb::SVExtentPropertyEnum extentProperty) const;
+
 	typedef std::set< SvPb::SVExtentTranslationEnum > SVTranslationFilterSet;
 
 	// ******* Begin Source Extent Data

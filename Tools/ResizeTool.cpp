@@ -173,12 +173,13 @@ bool ResizeTool::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 	double widthScaleFactor = 0.0;
 	m_ExtentWidthFactorFormat.getValue(widthScaleFactor);
 	if (widthScaleFactor == 0.0)
-	//m_ExtentWidthFactorFormat having a default value of 0.0 rather than SvDef::cDefaultScaleFactor
+	// m_ExtentWidthFactorFormat having a default value of 0.0 rather than SvDef::cDefaultScaleFactor
 	// ensures proper behaviour with pre-10.10 configurations
 	{
 		std::string tmpStr;
 		m_ExtentWidthFactorFormat.getLinkedName().getValue(tmpStr);
-		if (tmpStr.empty()) //but a dotted name (even if currently having a value of zero) must not be overwritten with a numeric value!
+		if (tmpStr.empty()) // A dotted name must not be overwritten with a numeric value - even if currently having a value of zero!
+			// We are assuming that an non-empty linked name means that a dotted name is present.
 		{
 			m_ExtentWidthFactorContent.getValue(widthScaleFactor);
 			m_ExtentWidthFactorFormat.setValue(widthScaleFactor);
@@ -193,7 +194,8 @@ bool ResizeTool::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 	{
 		std::string tmpStr;
 		m_ExtentHeightFactorFormat.getLinkedName().getValue(tmpStr);
-		if (tmpStr.empty()) //but a dotted name (even if currently having a value of zero) must not be overwritten with a numeric value!
+		if (tmpStr.empty()) // A dotted name must not be overwritten with a numeric value - even if currently having a value of zero!
+			// We are assuming that an non-empty linked name means that a dotted name is present.
 		{
 			m_ExtentHeightFactorContent.getValue(heightScaleFactor);
 			m_ExtentHeightFactorFormat.setValue(heightScaleFactor);

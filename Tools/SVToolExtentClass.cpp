@@ -19,6 +19,7 @@
 #include "ObjectInterfaces/IValueObject.h"
 #include "Definitions/SVResetStruct.h"
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
+#include "SVValueObjectLibrary/LinkedValue.h"
 #pragma endregion Includes
 
 namespace SvTo
@@ -359,6 +360,27 @@ HRESULT SVToolExtentClass::GetExtentValue(SvPb::SVExtentPropertyEnum extentPrope
 	return l_hrOk;
 }
 
+bool SVToolExtentClass::ExtentObjectHasLinkedName(SvPb::SVExtentPropertyEnum extentProperty) const
+{
+	SvOi::IValueObject* pValueObject(nullptr);
+	HRESULT l_hrOk = GetExtentObject(extentProperty, pValueObject);
+
+	if (l_hrOk == S_OK && nullptr != pValueObject)
+	{
+		std::string tmpStr;
+		SvVol::LinkedValue* pLinkedObject = dynamic_cast<SvVol::LinkedValue*>(pValueObject);
+		if (nullptr == pLinkedObject)
+		{
+			return false;
+		}
+
+		pLinkedObject->getLinkedName().getValue(tmpStr);
+		return (false == tmpStr.empty());
+	}
+	return false;
+}
+
+
 HRESULT SVToolExtentClass::SetExtentValue(SvPb::SVExtentPropertyEnum extentProperty, const _variant_t& rValue)
 {
 	SvOi::IValueObject* pValueObject(nullptr);
@@ -373,22 +395,6 @@ HRESULT SVToolExtentClass::SetExtentValue(SvPb::SVExtentPropertyEnum extentPrope
 		l_hrOk = E_FAIL;
 	}
 	return l_hrOk;
-}
-
-bool SVToolExtentClass::correspondingLinkedValueIsIndirect(SvPb::SVExtentPropertyEnum extentProperty)
-{
-	SvOi::IValueObject* pValueObject(nullptr);
-	if (S_OK == GetExtentObject(extentProperty, pValueObject))
-	{
-		auto pLinkedValue = dynamic_cast<SvVol::LinkedValue*>(pValueObject);
-
-		if (nullptr != pLinkedValue)
-		{
-			return pLinkedValue->isIndirectValue();
-		}
-	}
-
-	return false; // if it is not a proper linked value, it cannot be indirect
 }
 
 HRESULT SVToolExtentClass::updateImageExtent()
@@ -410,7 +416,7 @@ HRESULT SVToolExtentClass::updateImageExtent()
 }
 
 
-HRESULT SVToolExtentClass::adaptScaleFactorExtentProperty(const SVImageExtentClass& rImageExtent, SvPb::SVExtentPropertyEnum extentProperty)
+HRESULT SVToolExtentClass::ensureValidScaleFactorUnlessDottedName(const SVImageExtentClass& rImageExtent, SvPb::SVExtentPropertyEnum extentProperty)
 {
 	double dValue = 0.0;
 
@@ -424,9 +430,12 @@ HRESULT SVToolExtentClass::adaptScaleFactorExtentProperty(const SVImageExtentCla
 		}
 		else
 		{
-			_variant_t value;
+			_variant_t value{0.0};
 			GetExtentValue(extentProperty, value);
-			if (false == SvTo::isValidScaleFactor(value))
+			
+			if (false == SvTo::isValidScaleFactor(value) && false == ExtentObjectHasLinkedName(extentProperty))
+			// A dotted name must not be overwritten with a numeric value - even if currently having an invalid value!
+			// We assume here that a non-empty linked name means that a dotted name is present.
 			{
 				return SetExtentValue(extentProperty, SvDef::cDefaultScaleFactor);
 			}
@@ -482,12 +491,8 @@ HRESULT SVToolExtentClass::SetImageExtent(const SVImageExtentClass& rImageExtent
 			}
 		)
 	{
-		if(false == correspondingLinkedValueIsIndirect(extentProperty))
-		{
-			// cppcheck-suppress useStlAlgorithm
-			l_hrOk &= adaptScaleFactorExtentProperty(rImageExtent, extentProperty);
-		}
-		//else: do nothing here for indirect linked values
+		// cppcheck-suppress useStlAlgorithm
+		l_hrOk &= ensureValidScaleFactorUnlessDottedName(rImageExtent, extentProperty);
 	}
 
 
