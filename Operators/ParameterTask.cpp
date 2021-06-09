@@ -350,6 +350,8 @@ namespace SvOp
 		}
 		for (int i = number; cMaxNumberOfObjects > i; ++i)
 		{
+			m_objects[i]->setDefaultValue(0.0);
+			m_objects[i]->setValue(m_objects[i]->getDefaultValue());
 			m_objects[i]->SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
 			m_objects[i]->getLinkedName().SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
 			m_objects[i]->DisconnectInput();

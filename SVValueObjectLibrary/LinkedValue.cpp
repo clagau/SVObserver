@@ -567,6 +567,7 @@ namespace SvVol
 						m_children[i] = std::make_shared<LinkedValue>();
 						m_children[i]->createAllObjects(createStruct);
 					}
+					m_children[i]->donotCheckForDependency();
 					m_children[i]->SetName(tableValues[i]->GetName());
 					m_children[i]->setValue(tableValues[i]->GetObjectNameToObjectType(SvPb::SVToolSetObjectType));
 					m_children[i]->setDefaultValue(tableValues[i]->getDefaultValue());
@@ -729,7 +730,10 @@ namespace SvVol
 	{
 		if (nullptr != m_LinkedObjectRef.getObject())
 		{
-			m_LinkedObjectRef.getObject()->connectObject(getObjectId());
+			if (m_checkForValidDependency)
+			{	// children of a linkedValue (for tableObject) should not be connected because their parent already connected.
+				m_LinkedObjectRef.getObject()->connectObject(getObjectId());
+			}
 			return true;
 		}
 		return false;
@@ -764,7 +768,7 @@ namespace SvVol
 			return false;
 		}
 		
-		if (false == checkIfValidDependency(pLinkedObject))
+		if (m_checkForValidDependency && false == checkIfValidDependency(pLinkedObject))
 		{
 			if (nullptr != pErrorMessages)
 			{

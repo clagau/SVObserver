@@ -118,6 +118,8 @@ private:
 	/// \param pErrorMessages [in,out] Pointer to a error list, if pointer != nullptr an error message will be added if an error is happend.
 	/// \returns bool true if linked object is valid
 	bool CheckLinkedObject( const SVObjectClass* const pLinkedObject, const variant_t& rDefault, SvStl::MessageContainerVector *pErrorMessages=nullptr ) const;
+
+	void donotCheckForDependency() { m_checkForValidDependency = false; };
 #pragma endregion Private Methods
 
 #pragma region Member Variables
@@ -125,6 +127,7 @@ private:
 	
 	SVStringValueObjectClass m_LinkedName;
 	SVObjectReference m_LinkedObjectRef;
+	bool m_checkForValidDependency = true; //Child-LinkedValue should not check for valid dependency because it was already checked by the parent and is an indirect link.
 	mutable bool m_CircularReference;					//! Use this flag during GetValue to make sure no circular references are present
 
 	//@TODO[MZA][10.10][25.03.2021] it should be unique_ptr but for this the copy-constructor has to be deleted.

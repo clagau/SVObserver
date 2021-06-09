@@ -318,6 +318,7 @@ namespace SvTo
 			return std::any_of(rNameList.begin(), rNameList.end(), [rPairValue](const std::string& rName) { return rPairValue.first == rName || rPairValue.second == rName; });
 		};
 		return (isPartOf(rEntry, m_inputStr) || //input connections is always valid
+			rEntry.first._Starts_with(m_resultStr) || // group tool results may use only values from tools contained in the group tool, but may be used from outside
 			(rEntry.first == m_groupStr || rEntry.second == m_groupStr) || //connection direct with groupTool is valid
 			isBothPartOf(rEntry, m_groupStr) || //both inside of the groupTool is valid
 			isPartOfOneInTheList(rEntry, m_embeddedNameList));	//is one of it is an embeddedValue it is valid

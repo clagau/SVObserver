@@ -165,7 +165,15 @@ int SVEquationSymbolTableClass::AddSymbol(LPCTSTR name)
 	symbolIndex = static_cast<int> (m_SVEquationSymbolPtrVector.size() - 1);
 	// add it to the top
 	m_toolsetSymbolTable.push_back(ObjectReference);
-	return ObjectReference.getObject()->checkIfValidDependency(SVObjectManagerClass::Instance().GetObject(m_ownerId)) ? symbolIndex : -1;
+	auto pOwner = SVObjectManagerClass::Instance().GetObject(m_ownerId);
+	if (nullptr != pOwner)
+	{
+		return pOwner->checkIfValidDependency(ObjectReference.getObject()) ? symbolIndex : -1;
+	}
+	else
+	{
+		return -1;
+	}
 }
 
 
