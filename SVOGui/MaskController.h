@@ -8,9 +8,6 @@
 #pragma once
 
 #pragma region Includes
-//Moved to precompiled header: #include <boost/any.hpp>
-//Moved to precompiled header: #include <string>
-//Moved to precompiled header: #include <comdef.h>
 #include "ImageController.h"
 
 #pragma endregion Includes

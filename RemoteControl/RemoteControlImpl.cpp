@@ -91,14 +91,15 @@ HRESULT RemoteControlImpl::Connect(LPCTSTR serverName, long timeout)
 
 		if (nullptr != m_pRpcClient)
 		{
-			m_pRpcClient->addStatusListener(std::bind(&RemoteControlImpl::OnConnectionStatus, this, std::placeholders::_1));
+			auto listenerFunctor = [this](SvRpc::ClientStatus status) { return OnConnectionStatus(status);  };
+			m_pRpcClient->addStatusListener(listenerFunctor);
 			m_pSvrcClientService = std::make_unique<SvWsl::SVRCClientService>(*m_pRpcClient, m_settings.m_svrcClientSettings);
 			m_pRpcClient->waitForConnect(connectTimeout);
 
 			if (false == m_pRpcClient->isConnected())
 			{
 				m_pRpcClient = std::make_unique<SvRpc::RPCClient>(m_settings.m_httpClientSettings);
-				m_pRpcClient->addStatusListener(std::bind(&RemoteControlImpl::OnConnectionStatus, this, std::placeholders::_1));
+				m_pRpcClient->addStatusListener(listenerFunctor);
 				m_pSvrcClientService = std::make_unique<SvWsl::SVRCClientService>(*m_pRpcClient, m_settings.m_svrcClientSettings);
 				m_pRpcClient->waitForConnect(connectTimeout);
 			}
@@ -1091,13 +1092,16 @@ HRESULT RemoteControlImpl::ShutDown(long option) const
 
 void RemoteControlImpl::StartNotificationStreaming()
 {
-	SvRpc::Observer<SvPb::GetNotificationStreamResponse> notificationObserver(boost::bind(&NotificationHandler::OnNext, &m_notificationHandler, boost::arg<1>()),
-		boost::bind(&NotificationHandler::OnFinish, &m_notificationHandler),
-		boost::bind(&NotificationHandler::OnError, &m_notificationHandler, boost::arg<1>()));
+	auto nextNotificationFunction = [this](const SvPb::GetNotificationStreamResponse& rResponse) { return m_notificationHandler.OnNext(rResponse); };
+	auto finishNotificationFunction = [this]() { return m_notificationHandler.OnFinish(); };
+	auto errorNotificationFunction = [this](const SvPenv::Error& error) { return m_notificationHandler.OnError(error); };
 
-	SvRpc::Observer<SvPb::GetMessageStreamResponse> messageObserver(boost::bind(&MessageNotificationHandler::OnNext, &m_messageNotificationHandler, boost::arg<1>()),
-		boost::bind(&MessageNotificationHandler::OnFinish, &m_messageNotificationHandler),
-		boost::bind(&MessageNotificationHandler::OnError, &m_messageNotificationHandler, boost::arg<1>()));
+	SvRpc::Observer<SvPb::GetNotificationStreamResponse> notificationObserver(nextNotificationFunction, finishNotificationFunction, errorNotificationFunction);
+
+	auto nextMsgFunction = [this](const SvPb::GetMessageStreamResponse& rResponse) { return m_messageNotificationHandler.OnNext(rResponse); };
+	auto finishMsgFunction = [this]() { return m_messageNotificationHandler.OnFinish(); };
+	auto errorMsgFunction = [this](const SvPenv::Error& error) { return m_messageNotificationHandler.OnError(error); };
+	SvRpc::Observer<SvPb::GetMessageStreamResponse> messageObserver(nextMsgFunction, finishMsgFunction, errorNotificationFunction);
 
 	if (m_pSvrcClientService)
 	{

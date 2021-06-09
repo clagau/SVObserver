@@ -224,10 +224,10 @@ namespace SvCl
 	}
 
 	template< typename VertexName, typename EdgeType >
-	bool ObjectGraph<VertexName, EdgeType>::saveGraphDot( LPCTSTR FileName, IGraphNameLookup& nameLookup )
+	bool ObjectGraph<VertexName, EdgeType>::saveGraphDot( LPCTSTR FileName, IGraphNameLookup& rNameLookup )
 	{
 		bool bRetVal = true;
-		VertexNameFunc NameLookupFunc = boost::bind<LPCTSTR, IGraphNameLookup, VertexName> ( &IGraphNameLookup::getVertexName, &nameLookup, boost::arg<1>());
+		VertexNameFunc NameLookupFunc = [&rNameLookup](const VertexName& rName) {return rNameLookup.getVertexName(rName); };
 		m_DotGraph = OutputGraphviz<VertexName, EdgeType, DependencyGraph, VertexNameFunc> ( FileName, m_Graph, NameLookupFunc );
 		return bRetVal;
 	}

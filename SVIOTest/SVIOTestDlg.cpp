@@ -665,7 +665,8 @@ void CSVIOTESTDlg::OnStartTriggers()
 		StartTrigger(triggerchannel);
 		if (numTriggers >= triggerchannel)
 		{
-			m_psvTriggers->Register( triggerchannel, std::bind(&CSVIOTESTDlg::triggerCallback, this, std::placeholders::_1));
+			auto triggerFunction = [this](const SvTrig::IntVariantMap& rTriggerData) {return triggerCallback(rTriggerData);  };
+			m_psvTriggers->Register( triggerchannel, triggerFunction);
 		}
 	}
 

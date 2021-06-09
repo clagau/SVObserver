@@ -16,10 +16,6 @@
 #endif
 
 #pragma region Includes
-//Moved to precompiled header: #include <map>
-//Moved to precompiled header: #include <memory>
-//Moved to precompiled header: #include <vector>
-//Moved to precompiled header: #include <boost/any.hpp>
 #include "Definitions/GlobalConst.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"

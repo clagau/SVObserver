@@ -58,11 +58,4 @@
 
 #include <mil.h>
 #include <MILDyn\milblob.h>
-
-#include <boost/any.hpp>
-
-#define BOOST_BIND_NO_PLACEHOLDERS
-#include <boost/bind.hpp>
-#include <boost/config.hpp>
-#include <boost/function.hpp>
 #pragma endregion Precompiled Headers

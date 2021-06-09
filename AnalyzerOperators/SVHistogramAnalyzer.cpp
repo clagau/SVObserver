@@ -11,11 +11,6 @@
 
 #pragma region Includes
 #include "stdafx.h"
-//Moved to precompiled header: #include <boost/utility.hpp>
-//Moved to precompiled header: #include <boost/fusion/container.hpp>
-//Moved to precompiled header: #include <boost/fusion/algorithm.hpp>
-//Moved to precompiled header: #include <boost/bind.hpp>
-//Moved to precompiled header: #include <functional>
 #include "SVHistogramAnalyzer.h"
 #include "Definitions/SVImageFormatEnum.h"
 #include "InspectionEngine/SVDataBuffer.h"
@@ -184,8 +179,6 @@ SVHistogramAnalyzer::SVHistogramAnalyzer( SVObjectClass* POwner, int StringResou
 {
 	init();
 }
-
-namespace fusion = boost::fusion;
 
 struct fail_to_create: public std::runtime_error
 {
@@ -399,18 +392,17 @@ void SVHistogramAnalyzer::init()
 		typedef std::pair<SvPb::EmbeddedIdEnum, DWORD> Param;
 		try
 		{
-			// Add results for first/second peak and valley
-			fusion::for_each(
-				fusion::vector<Param, Param, Param>(
-					std::make_pair(msvHighPeak.GetEmbeddedID(),
-						IDS_CLASSNAME_HISTOGRAMANALYZER_FIRSTPEAKRESULT),
-					std::make_pair(msvLowPeak.GetEmbeddedID(),  
-						IDS_CLASSNAME_HISTOGRAMANALYZER_SECONDPEAKRESULT),
-					std::make_pair(msvValley.GetEmbeddedID(),   
-						IDS_CLASSNAME_HISTOGRAMANALYZER_VALLEYRESULT)
-				),
-				boost::bind(&SVHistogramAnalyzer::AddResult, this, boost::arg<1>())
-			);
+			constexpr std::array<Param, 3> cResultParameters
+			{
+				std::make_pair(SvPb::HistogramHighPeakEId, IDS_CLASSNAME_HISTOGRAMANALYZER_FIRSTPEAKRESULT),
+				std::make_pair(SvPb::HistogramLowPeakEId, IDS_CLASSNAME_HISTOGRAMANALYZER_SECONDPEAKRESULT),
+				std::make_pair(SvPb::HistogramValleyEId, IDS_CLASSNAME_HISTOGRAMANALYZER_VALLEYRESULT)
+			};
+
+			for (const auto& rResultParam : cResultParameters)
+			{
+				AddResult(rResultParam);
+			}
 		}
 		catch (const fail_to_create &)
 		{
@@ -420,7 +412,7 @@ void SVHistogramAnalyzer::init()
 		}
 }
 
-void SVHistogramAnalyzer::AddResult(const std::pair<SvPb::EmbeddedIdEnum, DWORD> & p)
+void SVHistogramAnalyzer::AddResult(const std::pair<SvPb::EmbeddedIdEnum, DWORD>& p)
 {
 	SvIe::SVClassInfoStruct l_resultInfo;
 	SvDef::SVObjectTypeInfoStruct l_ifceInfo;
@@ -1091,7 +1083,8 @@ HRESULT SVHistogramAnalyzer::paintHistogramImage(const SvOi::ITriggerRecordRWPtr
 	
 	m_histogram.SetClient(l_client);
 	MILCanvas canvas(pImageBuffer->getHandle()->GetBuffer());
-	m_histogram.DrawHistogram(std::bind(&MILCanvas::Draw, &canvas, std::placeholders::_1, std::placeholders::_2));
+	SvUl::SVHistogramBase::drawFunctor drawFunction = [&canvas](const RECT& rRect, int param) {canvas.Draw(rRect, param); };
+	m_histogram.DrawHistogram(drawFunction);
 
 	return hr;
 }

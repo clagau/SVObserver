@@ -9,8 +9,6 @@
 #pragma once
 
 #pragma region Includes
-//Moved to precompiled header: #include <string>
-//Moved to precompiled header: #include <boost\assign\list_of.hpp>
 #include "SVOResource\resource.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes

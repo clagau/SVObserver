@@ -12,10 +12,6 @@
 #pragma once
 
 #pragma region Includes
-//Moved to precompiled header: #include <deque>
-//Moved to precompiled header: #include <ostream>
-//Moved to precompiled header: #include <boost/function.hpp>
-
 #include "SVXMLLibrary/XMLwriter.h"
 #include "ObjectInterfaces/IObjectWriter.h"
 #pragma endregion Includes

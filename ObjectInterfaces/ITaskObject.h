@@ -7,7 +7,6 @@
 #pragma once
 
 #pragma region Includes
-//Moved to precompiled header: #include <boost\function.hpp>
 #include "IValueObject.h"
 #include "SVProtoBuf/SVRC.h"
 #include "Definitions/SVObjectTypeInfoStruct.h"

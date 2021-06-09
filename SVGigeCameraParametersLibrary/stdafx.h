@@ -38,6 +38,7 @@
 #include <windows.h>
 
 #include <comdef.h>
+#include <functional>
 #include <map>
 #include <memory>
 #include <string>
@@ -45,10 +46,5 @@
 #include <vector>
 #include <utility>
 #include <unordered_map>
-
-#define BOOST_BIND_NO_PLACEHOLDERS
-#include <boost/bind.hpp>
-#include <boost/config.hpp>
-#include <boost/function.hpp>
 #pragma endregion Precompiled Headers
 

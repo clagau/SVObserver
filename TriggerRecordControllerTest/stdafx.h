@@ -43,9 +43,6 @@
 #include <vector>
 #include <ctime>
 
-#include <boost/function.hpp>							//Used by status library
-
-
 
 #ifdef _UNICODE
 #if defined _M_IX86

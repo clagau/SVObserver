@@ -165,9 +165,12 @@ namespace SvTrcT
 		}
 		else if(nullptr != m_pTRC)
 		{
-			m_resetCallbackId = m_pTRC->registerResetCallback(std::bind(&CTriggerRecordControllerTestDlg::OnResetUpdate, this));
-			m_readyCallbackId = m_pTRC->registerReadyCallback(std::bind(&CTriggerRecordControllerTestDlg::OnReadyUpdate, this));
-			m_newTrIdCallbackId = m_pTRC->registerNewTrCallback(std::bind(&CTriggerRecordControllerTestDlg::OnNewTrId, this, std::placeholders::_1));
+			auto resetUpdateFunctor = [this]() { return OnResetUpdate(); };
+			auto readyUpdateFunctor = [this]() { return OnReadyUpdate(); };
+			auto newTrIdFunctor = [this](SvOi::TrEventData data) { return OnNewTrId(data); };
+			m_resetCallbackId = m_pTRC->registerResetCallback(resetUpdateFunctor);
+			m_readyCallbackId = m_pTRC->registerReadyCallback(readyUpdateFunctor);
+			m_newTrIdCallbackId = m_pTRC->registerNewTrCallback(newTrIdFunctor);
 			m_isTRCValid = m_pTRC->isValid();
 		}
 		resetController();

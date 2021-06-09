@@ -11,8 +11,6 @@
 
 #pragma region Includes
 #include "stdafx.h"
-//Moved to precompiled header: #include <map>
-//Moved to precompiled header: #include <boost/bind.hpp>
 #include "SVFileAcquisitionDevice.h"
 #include "SVFileAcquisitionDeviceParamEnum.h"
 #include "SVImageLibrary/SVAcquisitionBufferInterface.h"
@@ -167,10 +165,10 @@ HRESULT SVFileAcquisitionDevice::CameraStart(unsigned long cameraIndex)
 		if (::InterlockedExchange(&(rCamera.m_lIsStarted), 1) == 0)
 		{
 			// Check if already Running
-			if (!rCamera.IsRunning())
+			if (false == rCamera.IsRunning())
 			{
-				SVFileCamera::EventHandler startHandler = boost::bind(&SVFileAcquisitionDevice::CameraProcessStartFrame, this, boost::arg<1>());
-				SVFileCamera::EventHandler endHandler = boost::bind(&SVFileAcquisitionDevice::CameraProcessEndFrame, this, boost::arg<1>());
+				SVFileCamera::EventHandler startHandler = [this](unsigned long cameraIndex) { return CameraProcessStartFrame(cameraIndex);  };
+				SVFileCamera::EventHandler endHandler = [this](unsigned long cameraIndex) { return CameraProcessEndFrame(cameraIndex);  };
 
 				result = rCamera.Start(startHandler, endHandler, cameraIndex);
 			}

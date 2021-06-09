@@ -11,8 +11,6 @@
 
 #pragma once
 
-//Moved to precompiled header: #include <boost/utility.hpp>
-
 class SVMatroxSystemInterface;
 class SVMatroxBufferInterface;
 class SVMatroxDigitizerInterface;

@@ -46,6 +46,7 @@
 #include <ctime>			//Used by static library
 #include <deque>
 #include <fstream>
+#include <functional>
 #include <iostream>
 #include <iterator>
 #include <list>
@@ -63,9 +64,6 @@
 #include <utility>
 
 #define BOOST_BIND_NO_PLACEHOLDERS
-#include <boost/config.hpp>
-#include <boost/bind.hpp>
-#include <boost/function.hpp>
 #pragma warning(push)
 #pragma warning(disable : 4244 4458 4459)
 #include <boost/graph/adjacency_list.hpp>

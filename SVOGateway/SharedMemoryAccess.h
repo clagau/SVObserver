@@ -10,7 +10,6 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <boost/asio/io_service.hpp>
-//Moved to precompiled header: #include <boost/thread.hpp>
 
 #include "SVOverlayLibrary/OverlayController.h"
 #include "SVProtoBuf/SVRC.h"

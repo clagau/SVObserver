@@ -9,8 +9,6 @@
 //* .Check In Date   : $Date:   22 Apr 2013 14:27:36  $
 //******************************************************************************
 #include "stdafx.h"
-//Moved to precompiled header: #include #include <boost/config.hpp>
-//Moved to precompiled header: #include #include <mil.h>
 #include "SVMatroxDigitizerGrabEnums.h"
 
 // Assign mappings for Grab Mode Types

@@ -11,12 +11,6 @@
 
 #pragma region Includes
 #include "stdafx.h"
-//Moved to precompiled header: #include <mmsystem.h>
-//Moved to precompiled header: #include <fstream>
-//Moved to precompiled header: #include <algorithm>
-//Moved to precompiled header: #include <limits>
-//Moved to precompiled header: #include <boost/bind.hpp>
-
 #include "MonitorListAttributeStruct.h"
 #include "SVPPQObject.h"
 #include "SVConfigurationObject.h"
@@ -1072,7 +1066,8 @@ void SVPPQObject::GoOnline()
 	}// end if
 
 	// Create the PPQ's threads
-	if (S_OK != m_AsyncProcedure.Create(&SVPPQObject::APCThreadProcess, std::bind(&SVPPQObject::ThreadProcess, this, std::placeholders::_1), GetName(), SVAffinityPPQ))
+	auto threadProcess = [this](bool& rProcessed) {ThreadProcess(rProcessed); };
+	if (S_OK != m_AsyncProcedure.Create(&SVPPQObject::APCThreadProcess, threadProcess, GetName(), SVAffinityPPQ))
 	{
 		SvStl::MessageContainer Msg(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_GoOnlineFailure_CreatePPQThread, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10185);
 		throw Msg;
@@ -1395,34 +1390,6 @@ bool SVPPQObject::RebuildInputList()
 	return false;
 }// end RebuildInputList
 
-typedef boost::function<bool(SVIOEntryHostStructPtr ioEntry, const std::string& name)> CompareIOEntryNameFunc;
-static bool CompareNameWithIOEntry(SVIOEntryHostStructPtr pIoEntry, const std::string& name)
-{
-	bool bRetVal = false;
-	if (nullptr != pIoEntry && nullptr != pIoEntry->getObject())
-	{
-		bRetVal = (pIoEntry->getObject()->GetName() == name);
-	}
-	return bRetVal;
-}
-
-// @CLEAN This is a different class that should be moved to its own file.
-template<typename CompareTo, typename CompareFunc>
-class FindIOEntry
-{
-public:
-	FindIOEntry(const CompareTo& data, CompareFunc func)
-		: m_data(data), m_compareFunc(func) {}
-
-	bool operator()(SVIOEntryHostStructPtr ioEntry) const
-	{
-		return m_compareFunc(ioEntry, m_data);
-	}
-
-private:
-	CompareTo m_data;
-	CompareFunc m_compareFunc;
-};
 
 // AddToAvailableInputs searches the m_AllInputs by name. If it does not exist,
 // then the new input is added. Two types are supported: 
@@ -1594,7 +1561,15 @@ bool SVPPQObject::ResolveConditionalOutput()
 	if (!AlwaysWriteOutputs())
 	{
 		// Get Input with this name and assign id
-		SVIOEntryHostStructPtrVector::const_iterator it = std::find_if(m_UsedInputs.begin(), m_UsedInputs.end(), FindIOEntry<std::string, CompareIOEntryNameFunc>(m_conditionalOutputName, CompareNameWithIOEntry));
+		auto compareNameWithIOEntry = [this](SVIOEntryHostStructPtr pIoEntry)
+		{
+			if (nullptr != pIoEntry && nullptr != pIoEntry->getObject())
+			{
+				return (pIoEntry->getObject()->GetName() == m_conditionalOutputName);
+			}
+			return false;
+		};
+		SVIOEntryHostStructPtrVector::const_iterator it = std::find_if(m_UsedInputs.begin(), m_UsedInputs.end(), compareNameWithIOEntry);
 		if (it != m_UsedInputs.end())
 		{
 			SVIOEntryHostStructPtr pIoEntry = (*it);
@@ -2850,20 +2825,19 @@ HRESULT SVPPQObject::ProcessCameraResponse(const SVCameraQueueElement& rElement)
 	return l_Status;
 }
 
-HRESULT SVPPQObject::BuildCameraInfos(SvIe::SVObjectIdSVCameraInfoStructMap& p_rCameraInfos) const
+HRESULT SVPPQObject::BuildCameraInfos(SvIe::SVObjectIdSVCameraInfoStructMap& rCameraInfos) const
 {
 	HRESULT l_Status = S_OK;
 
-	p_rCameraInfos.clear();
-
-	SVCameraInfoMap::const_iterator Iter(m_Cameras.begin());
-
-	for (; m_Cameras.end() != Iter; ++Iter)
+	rCameraInfos.clear();
+	
+	for (const auto& rCamera : m_Cameras)
 	{
-		if (-1 != Iter->second.m_CameraPPQIndex)
+		if (-1 != rCamera.second.m_CameraPPQIndex)
 		{
-			uint32_t rCameraID(Iter->first->getObjectId());
-			p_rCameraInfos[rCameraID].setCamera(rCameraID, boost::bind(&SvIe::SVVirtualCamera::ReserveNextImageHandle, Iter->first));
+			uint32_t rCameraID(rCamera.first->getObjectId());
+			auto nextImageHandleFunctor = [&rCamera]() { return rCamera.first->ReserveNextImageHandle(); };
+			rCameraInfos[rCameraID].setCamera(rCameraID, nextImageHandleFunctor);
 		}
 	}
 

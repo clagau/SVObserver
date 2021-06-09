@@ -44,11 +44,14 @@
 //************************************
 #pragma region Precompiled Headers
 #include <windows.h>
+
+#include <assert.h>
 #include <atomic>
 #include <cmath>
 #include <comdef.h>
 #include <deque>
 #include <fstream>
+#include <functional>
 #include <iostream>
 #include <iomanip>
 #include <intrin.h>
@@ -66,8 +69,6 @@
 #include <string>
 #include <vector>
 #include <winioctl.h>
-#include <boost/bind/bind.hpp>
-#include <boost/function.hpp>
 #define BOOST_DATE_TIME_NO_LIB
 #include <boost/utility.hpp>
 //#define  TRACE_MANAGER TRUE 

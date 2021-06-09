@@ -11,7 +11,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "InitialInformation.h"
-//Moved to precompiled header: #include <boost\algorithm\string.hpp>
 #pragma endregion Includes
 
 

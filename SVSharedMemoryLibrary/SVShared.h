@@ -11,16 +11,6 @@
 #pragma once
 
 #pragma region Includes
-//Moved to precompiled header: #include <vector>
-//Moved to precompiled header: #include <deque>
-//Moved to precompiled header: #include <string>
-//Moved to precompiled header: #include <iostream>
-//Moved to precompiled header: #include <iomanip>
-//Moved to precompiled header: #include <limits>
-
-
-//Moved to precompiled header: #include <boost/function.hpp>
-//Moved to precompiled header: #include <boost/bind.hpp>
 #pragma endregion Includes
 
 namespace SvSml

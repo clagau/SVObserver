@@ -16,6 +16,7 @@
 
 
 #include <array>
+#include <assert.h>
 #include <chrono>
 #include <comdef.h>
 #include <ctime>
@@ -33,7 +34,3 @@
 
 #include <mil.h>
 
-#include <boost/function.hpp>							//Used by status library
-
-
-// TODO: Hier auf zusätzliche Header, die das Programm erfordert, verweisen.

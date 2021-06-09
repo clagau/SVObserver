@@ -66,7 +66,6 @@
 #include <unordered_map>
 #include <vector>			//Used by static library
 
-#include <boost/config.hpp>
 #include <boost/algorithm/string.hpp>
 #pragma endregion Precompiled Headers
 

@@ -12,11 +12,6 @@
 #pragma once
 
 #pragma region Includes
-//Moved to precompiled header: #include <string>
-//Moved to precompiled header: #include <sstream>
-//Moved to precompiled header: #define BOOST_DATE_TIME_NO_LIB
-//Moved to precompiled header: #include <boost/date_time.hpp>
-//Moved to precompiled header: #include <xmllite.h>
 
 #include "CameraLibrary/SVDeviceParams.h"
 #include "CameraLibrary/SVBoolValueDeviceParam.h"

@@ -58,10 +58,5 @@
 #include <string>			//Used by static library
 #include <tchar.h>			//Used by static library
 #include <vector>			//Used by static library
-
-#define BOOST_BIND_NO_PLACEHOLDERS
-#include <boost/bind.hpp>
-#include <boost/config.hpp>
-#include <boost/function.hpp>
 #pragma endregion Precompiled Headers
 

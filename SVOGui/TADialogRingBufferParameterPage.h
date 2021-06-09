@@ -9,7 +9,6 @@
 #pragma once
 
 #pragma region Includes
-//Moved to precompiled header: #include <boost\function.hpp>
 #include "SVOResource/resource.h"
 #include "Definitions/GlobalConst.h"
 #include "ISVPropertyPageDialog.h"

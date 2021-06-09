@@ -101,7 +101,6 @@
     <ClInclude Include="IODeviceBase.h" />
     <ClInclude Include="Stdafx.h" />
     <ClInclude Include="SVDigitizerLoadLibraryClass.h" />
-    <ClInclude Include="SVInternalTrigger.h" />
     <ClInclude Include="SVOTriggerList.h" />
     <ClInclude Include="SVOTriggerObj.h" />
     <ClInclude Include="SVTriggerClass.h" />

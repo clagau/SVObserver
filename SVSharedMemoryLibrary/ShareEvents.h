@@ -49,7 +49,7 @@ typedef enum { Change, Ready, UKnown } CallBackParam;
 	//!Stops the Watchthread
 	void StopWatch();
 	//!callbackfunction for watch thread 
-	void SetCallbackFunction(boost::function<bool(DWORD)>cbFct);
+	void SetCallbackFunction(std::function<bool(DWORD)> functor);
 
 	//! True if InitEventIsSet
 	bool GetIsReady() const;
@@ -74,7 +74,7 @@ private:
 	std::atomic<long> m_readyCounter;
 
 
-	boost::function<bool(DWORD)> m_CallBackFct;
+	std::function<bool(DWORD)> m_CallBackFct;
 	HANDLE m_hChangeEvent {NULL};
 	HANDLE m_hReadyEvent {NULL};
 

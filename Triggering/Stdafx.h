@@ -73,11 +73,8 @@
 
 #define BOOST_BIND_NO_PLACEHOLDERS
 #include <boost/any.hpp>
-#include <boost/bind.hpp>
-#include <boost/config.hpp>
 #define BOOST_DATE_TIME_NO_LIB
 #include <boost/date_time.hpp>
-#include <boost/function.hpp>	//Used by static library
 #include <boost/utility.hpp>
 #pragma endregion Precompiled Headers
 

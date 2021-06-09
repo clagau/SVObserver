@@ -61,7 +61,6 @@
 #include <unordered_map>
 #include <vector>
 
-#include <boost/function.hpp>						//Used by static library
 #include <boost/circular_buffer.hpp>				//Used by static library
-#include <boost/lexical_cast.hpp>
+#include <boost/lexical_cast.hpp>					//Used by static library
 #pragma endregion Precompiled Headers

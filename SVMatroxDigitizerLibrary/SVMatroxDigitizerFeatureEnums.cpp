@@ -9,8 +9,6 @@
 //* .Check In Date   : $Date:   22 Apr 2013 14:27:26  $
 //******************************************************************************
 #include "stdafx.h"
-//Moved to precompiled header: #include <boost/config.hpp>
-//Moved to precompiled header: #include <mil.h>
 #include "SVMatroxDigitizerFeatureEnums.h"
 
 // Assign mappings for Feature Types

@@ -70,7 +70,6 @@
 
 
 #include <boost/algorithm/string.hpp>
-#include <boost/function.hpp> //Used by static library
 #include <boost/foreach.hpp>
 #include <boost/scoped_array.hpp>
 

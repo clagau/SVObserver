@@ -54,6 +54,7 @@
 #include <comutil.h>		//Used by static library
 #include <ctime>			//Used by static library
 #include <deque>
+#include <functional>		//Used by static library
 #include <iterator>			//Used by static library
 #include <list>				//Used by static library
 #include <map>				//Used by static library
@@ -64,7 +65,4 @@
 #include <string>
 #include <tchar.h>			//Used by static library
 #include <vector>
-
-#include <boost/any.hpp>
-#include <boost/function.hpp> //Used by static library
 #pragma endregion Precompiled Headers

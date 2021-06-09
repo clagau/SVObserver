@@ -52,13 +52,10 @@
 #include <tchar.h>
 #include <vector>
 
-#include <boost/array.hpp>
 #pragma warning(push)
 #pragma warning(disable : 4702)
 #include <boost/asio.hpp>
 #include <boost/asio/deadline_timer.hpp>
 #include <boost/asio/io_service.hpp>
 #pragma warning(pop)
-#include <boost/chrono/duration.hpp>
-
 #pragma endregion Precompiled Headers

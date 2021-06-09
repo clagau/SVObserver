@@ -11,8 +11,6 @@
 
 #pragma region Includes
 #include "stdafx.h"
-//Moved to precompiled header: #include <boost/config.hpp>
-//Moved to precompiled header: #include <boost/bind.hpp>
 #include "SVVisionProcessorHelper.h"
 
 #include "RemoteCommand.h"
@@ -58,24 +56,6 @@ SVVisionProcessorHelper& SVVisionProcessorHelper::Instance()
 }
 
 #pragma region Constructor
-SVVisionProcessorHelper::SVVisionProcessorHelper()
-{
-
-	m_GetItemsFunctors = SVGetItemsFunctorMap
-	{
-		{StandardItems, boost::bind(&SVVisionProcessorHelper::GetStandardItems, this, boost::arg<1>(), boost::arg<2>())},
-		{SvDef::FqnInspections, boost::bind(&SVVisionProcessorHelper::GetInspectionItems, this, boost::arg<1>(), boost::arg<2>())},
-		{SvDef::FqnRemoteInputs, boost::bind(&SVVisionProcessorHelper::GetRemoteInputItems, this, boost::arg<1>(), boost::arg<2>())}
-	};
-
-	m_SetItemsFunctors = SVSetItemsFunctorMap
-	{
-		{StandardItems, boost::bind(&SVVisionProcessorHelper::SetStandardItems, this, boost::arg<1>(), boost::arg<2>(), boost::arg<3>())},
-		{SvDef::FqnInspections, boost::bind(&SVVisionProcessorHelper::SetInspectionItems, this, boost::arg<1>(), boost::arg<2>(), boost::arg<3>())},
-		{SvDef::FqnRemoteInputs, boost::bind(&SVVisionProcessorHelper::SetRemoteInputItems, this, boost::arg<1>(), boost::arg<2>(), boost::arg<3>())},
-		{SvDef::FqnCameras, boost::bind(&SVVisionProcessorHelper::SetCameraItems, this, boost::arg<1>(), boost::arg<2>(), boost::arg<3>())}
-	};
-}
 
 SVVisionProcessorHelper::~SVVisionProcessorHelper()
 {
@@ -1080,6 +1060,28 @@ HRESULT SVVisionProcessorHelper::RegisterMonitorList(const std::string& rListNam
 
 void SVVisionProcessorHelper::Startup()
 {
+	SVGetItemsFunctor getStandardItems = [this](const SvDef::StringSet& rNames, SVNameStorageResultMap& rItems) {return GetStandardItems(rNames, rItems); };
+	SVGetItemsFunctor getInspectionItems = [this](const SvDef::StringSet& rNames, SVNameStorageResultMap& rItems) {return GetInspectionItems(rNames, rItems); };
+	SVGetItemsFunctor getRemoteInputItems = [this](const SvDef::StringSet& rNames, SVNameStorageResultMap& rItems) {return GetRemoteInputItems(rNames, rItems); };
+	m_GetItemsFunctors = SVGetItemsFunctorMap
+	{
+		std::make_pair(StandardItems,  getStandardItems),
+		std::make_pair(SvDef::FqnInspections,  getInspectionItems),
+		std::make_pair(SvDef::FqnRemoteInputs, getRemoteInputItems),
+	};
+
+	SVSetItemsFunctor setStandardItems = [this](const SVNameStorageMap& rItems, SVNameStatusMap& rStatus, bool runOnce) {return SetStandardItems(rItems, rStatus, runOnce); };
+	SVSetItemsFunctor setInspectionItems = [this](const SVNameStorageMap& rItems, SVNameStatusMap& rStatus, bool runOnce) {return SetInspectionItems(rItems, rStatus, runOnce); };
+	SVSetItemsFunctor setRemoteInputItems = [this](const SVNameStorageMap& rItems, SVNameStatusMap& rStatus, bool runOnce) {return SetRemoteInputItems(rItems, rStatus, runOnce); };
+	SVSetItemsFunctor setCameraItems = [this](const SVNameStorageMap& rItems, SVNameStatusMap& rStatus, bool runOnce) {return SetCameraItems(rItems, rStatus, runOnce); };
+	m_SetItemsFunctors = SVSetItemsFunctorMap
+	{
+		std::make_pair(StandardItems,  setStandardItems),
+		std::make_pair(SvDef::FqnInspections,  setInspectionItems),
+		std::make_pair(SvDef::FqnRemoteInputs, setRemoteInputItems),
+		std::make_pair(SvDef::FqnCameras, setCameraItems),
+	};
+
 	SvStl::MessageManager::setNotificationFunction(::FireMessageNotification);
 	SVSVIMStateClass::setNotificationFunction(::FireNotification);
 }

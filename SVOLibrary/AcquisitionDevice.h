@@ -70,7 +70,7 @@ private:
 
 	ULONG_PTR m_pCaller{ 0UL };
 
-	SVAsyncProcedure m_Thread;
+	SvSyl::SVAsyncProcedure m_Thread;
 
 	CameraQueue m_cameraQueue;
 

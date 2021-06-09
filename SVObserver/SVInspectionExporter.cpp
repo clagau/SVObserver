@@ -11,13 +11,6 @@
 
 #pragma region Includes
 #include "stdafx.h"
-//Moved to precompiled header: #include <boost/config.hpp>
-//Moved to precompiled header: #include <boost/foreach.hpp>
-//Moved to precompiled header: #include <boost/function.hpp>
-//Moved to precompiled header: #include <string>
-//Moved to precompiled header: #include <fstream>
-//Moved to precompiled header: #include <set>
-//Moved to precompiled header: #include <iterator>
 #include "SVInspectionExporter.h"
 #include "RootObject.h"
 #include "SVInspectionProcess.h"

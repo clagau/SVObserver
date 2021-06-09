@@ -113,14 +113,8 @@ SvSyl::SVFuture<void> HttpServerConnection::sendBinaryMessage(const std::vector<
 void HttpServerConnection::http_do_read()
 {
 	m_Request = {};
-	boost::beast::http::async_read(
-		m_Socket,
-		m_Buf,
-		m_Request,
-		std::bind(&HttpServerConnection::http_on_read,
-		shared_from_this(),
-		std::placeholders::_1,
-		std::placeholders::_2));
+	auto readFunctor = [this](const boost::system::error_code& rError, size_t bytes) {return http_on_read(rError, bytes); };
+	boost::beast::http::async_read(m_Socket, m_Buf, m_Request, readFunctor);
 }
 
 void HttpServerConnection::http_on_read(const boost::system::error_code& error, size_t )
@@ -330,16 +324,9 @@ template<class Body>
 void HttpServerConnection::http_do_write_impl(boost::beast::http::response<Body>& Response)
 {
 	http_access_log(Response);
-	boost::beast::http::async_write(
-		m_Socket,
-		Response,
-		std::bind(
-		&HttpServerConnection::http_on_write,
-		shared_from_this(),
-		std::placeholders::_1,
-		std::placeholders::_2,
-		Response.need_eof()
-	));
+	bool close = Response.need_eof();
+	auto writeFunctor = [this, close](const boost::system::error_code& rError, size_t bytes) {return http_on_write(rError, bytes, close); };
+	boost::beast::http::async_write(m_Socket, Response, writeFunctor);
 }
 
 void HttpServerConnection::http_do_write(boost::beast::http::response<boost::beast::http::empty_body>&& Response)
@@ -552,9 +539,9 @@ HttpServerConnection::http_build_file_get(const std::filesystem::path& path, boo
 ///       requests can not have a body.
 /// But we add the WebSocket specific workaround as described here:
 ///   https://stackoverflow.com/a/4361358
-std::string HttpServerConnection::ws_get_access_token(std::string& protocol)
+std::string HttpServerConnection::ws_get_access_token(std::string& rProtocol)
 {
-	protocol = "";
+	rProtocol.clear();
 
 	const auto& auth_header = m_Request[boost::beast::http::field::authorization];
 	if (!auth_header.empty())
@@ -586,7 +573,7 @@ std::string HttpServerConnection::ws_get_access_token(std::string& protocol)
 		return "";
 	}
 
-	// Pass access_token as a protocoal via Sec-WebSocket-Protocol header
+	// Pass access_token as a protocol via Sec-WebSocket-Protocol header
 	// In Browser: new WebSocket(url, ['access_token', '${access_token}'])
 	const auto& ws_protocol = m_Request[boost::beast::http::field::sec_websocket_protocol];
 	if (!ws_protocol.empty())
@@ -594,7 +581,7 @@ std::string HttpServerConnection::ws_get_access_token(std::string& protocol)
 		const auto access_token_prefix = std::string {"access_token, "};
 		if (ws_protocol.starts_with(access_token_prefix))
 		{
-			protocol = "access_token";
+			rProtocol = "access_token";
 			return ws_protocol.substr(access_token_prefix.size()).to_string();
 		}
 	}
@@ -604,24 +591,21 @@ std::string HttpServerConnection::ws_get_access_token(std::string& protocol)
 	return "";
 }
 
-void HttpServerConnection::ws_do_upgrade(std::string protocol)
+void HttpServerConnection::ws_do_upgrade(const std::string& rProtocol)
 {
 	m_IsUpgraded = true;
-	m_WsSocket.set_option(boost::beast::websocket::stream_base::decorator(
-		std::bind(&HttpServerConnection::ws_on_decorate, shared_from_this(), std::placeholders::_1, protocol))
-	);
-	m_WsSocket.async_accept(
-		m_Request,
-		std::bind(&HttpServerConnection::ws_on_handshake, shared_from_this(), std::placeholders::_1)
-	);
+	auto decorateFunctor = [this, rProtocol](boost::beast::websocket::response_type& m) {return ws_on_decorate(m, rProtocol); };
+	auto handshakeFunctor = [this](const boost::system::error_code& rError) {return ws_on_handshake(rError); };
+	m_WsSocket.set_option(boost::beast::websocket::stream_base::decorator(decorateFunctor));
+	m_WsSocket.async_accept(m_Request, handshakeFunctor);
 }
 
-void HttpServerConnection::ws_on_decorate(boost::beast::websocket::response_type& m, std::string protocol)
+void HttpServerConnection::ws_on_decorate(boost::beast::websocket::response_type& m, const std::string& rProtocol)
 {
 	m.insert(boost::beast::http::field::server, "SVObserver");
-	if (!protocol.empty())
+	if (!rProtocol.empty())
 	{
-		m.insert(boost::beast::http::field::sec_websocket_protocol, protocol);
+		m.insert(boost::beast::http::field::sec_websocket_protocol, rProtocol);
 	}
 }
 
@@ -656,13 +640,8 @@ void HttpServerConnection::ws_on_handshake(const boost::system::error_code& erro
 void HttpServerConnection::ws_do_read()
 {
 	m_WsBuf.resize(m_rSettings.ReadBufferSize);
-	boost::asio::async_read(m_WsSocket,
-		boost::asio::buffer(m_WsBuf),
-		boost::asio::transfer_at_least(1),
-		std::bind(&HttpServerConnection::ws_on_read,
-		shared_from_this(),
-		std::placeholders::_1,
-		std::placeholders::_2));
+	auto readFunctor = [this](const boost::system::error_code& rError, size_t bytes_read) {return ws_on_read(rError, bytes_read); };
+	boost::asio::async_read(m_WsSocket, boost::asio::buffer(m_WsBuf), boost::asio::transfer_at_least(1), readFunctor);
 }
 
 void HttpServerConnection::ws_on_read(const boost::system::error_code& error, size_t bytes_read)
@@ -735,9 +714,8 @@ void HttpServerConnection::ws_send_next_frame()
 	m_IsSendingFrame = true;
 	auto& pendingFrame = m_FrameQueue.front();
 	m_WsSocket.binary(pendingFrame.IsBinary);
-	m_WsSocket.async_write(
-		boost::asio::buffer(pendingFrame.Frame),
-		std::bind(&HttpServerConnection::ws_on_frame_sent, shared_from_this(), std::placeholders::_1, std::placeholders::_2));
+	auto frameSentFunctor = [this](const boost::system::error_code& rError, size_t bytes) {return ws_on_frame_sent(rError, bytes); };
+	m_WsSocket.async_write(boost::asio::buffer(pendingFrame.Frame), frameSentFunctor);
 }
 
 void HttpServerConnection::ws_on_frame_sent(const boost::system::error_code& error, size_t)

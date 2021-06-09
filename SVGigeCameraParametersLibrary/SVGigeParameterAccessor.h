@@ -10,17 +10,14 @@
 //******************************************************************************
 #pragma once
 #pragma region Includes
-//Moved to precompiled header: #include <comdef.h>
-//Moved to precompiled header: #include <boost/config.hpp>
-//Moved to precompiled header: #include <boost/function.hpp>
 #include "SVGigeFeature.h"
 #include "SVMatroxDigitizerLibrary/SVMatroxDigitizer.h"
 #pragma endregion Includes
 
 struct SVGigeParameterAccessor
 {
-	typedef boost::function<HRESULT(SVMatroxDigitizerPtr, const SVGigeFeature& rFeature, _variant_t&)> ParamGetter;
-	typedef boost::function<HRESULT(SVMatroxDigitizerPtr, const SVGigeFeature& rFeature, const _variant_t&)> ParamSetter;
+	using ParamGetter = std::function<HRESULT(SVMatroxDigitizerPtr, const SVGigeFeature& rFeature, _variant_t&)>;
+	using ParamSetter = std::function<HRESULT(SVMatroxDigitizerPtr, const SVGigeFeature& rFeature, const _variant_t&)>;
 
 	ParamGetter GetParam;
 	ParamSetter SetParam;

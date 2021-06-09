@@ -47,6 +47,7 @@
 #include <windows.h>
 
 #include <array>
+#include <assert.h>
 #include <atomic>			//Used by static library
 #include <comdef.h>
 #include <comutil.h>		//Used by static library
@@ -63,8 +64,4 @@
 #include <unordered_map>
 #include <vector>
 
-#define BOOST_BIND_NO_PLACEHOLDERS
-#include <boost/bind.hpp>
-#include <boost/config.hpp>
-#include <boost/function.hpp>
 #pragma endregion Precompiled Headers

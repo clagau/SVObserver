@@ -61,7 +61,5 @@
 #include <utility>
 #include <vector>
 
-
-#include <boost/function.hpp>							//Used by static library
 #include <boost/circular_buffer.hpp>					//Used by static library
 #pragma endregion Precompiled Headers

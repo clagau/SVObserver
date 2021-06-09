@@ -49,6 +49,7 @@
 #include <afxext.h>         // MFC extensions
 #include <afxtempl.h>
 
+#include <assert.h>
 #include <cmath>
 #include <comdef.h>
 #include <comutil.h>
@@ -57,6 +58,4 @@
 #include <string>
 #include <vector>
 
-#include <boost/config.hpp>
-#include <boost/shared_ptr.hpp>
 #pragma endregion Precompiled Headers

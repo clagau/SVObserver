@@ -55,23 +55,17 @@
 #include <thread>
 #include <vector>
 
-#define BOOST_BIND_NO_PLACEHOLDERS
-#include <boost/any.hpp>
-#include <boost/array.hpp>
 #pragma warning(push)
 #pragma warning(disable : 4702)
 #include <boost/asio.hpp>
 #include <boost/asio/io_service.hpp>
 #pragma warning(pop)
-#include <boost/bind.hpp>
-#include <boost/function.hpp> //Used by static library
 #pragma warning(push)
 #pragma warning(disable : 4714)
 #include <boost/log/attributes/mutable_constant.hpp>
 #include <boost/log/trivial.hpp>
 #include <boost/log/utility/manipulators/add_value.hpp>
 #pragma warning(pop)
-#include <boost/thread.hpp>
 
 #define BOOST_DATE_TIME_NO_LIB
 #include <boost/scoped_array.hpp>

@@ -11,9 +11,6 @@
 
 #pragma region Includes
 #include "stdafx.h"
-//Moved to precompiled header: #include <boost/config.hpp>
-//Moved to precompiled header: #include <boost/bind.hpp>
-
 #include "SVObserver.h"
 
 #include "SVObserver_i.h"

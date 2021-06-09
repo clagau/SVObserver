@@ -11,11 +11,6 @@
 #pragma once
 
 #pragma region Includes
-//Moved to precompiled header: #include <vector>
-//Moved to precompiled header: #include <set>
-//Moved to precompiled header: #include <iterator>
-//Moved to precompiled header: #include <boost/config.hpp>
-//Moved to precompiled header: #include <boost/function.hpp>
 #include <mil.h>
 #include "SVFileCameraStruct.h"
 #include "SVEventHandler.h"
@@ -39,7 +34,7 @@ private:
 	typedef std::insert_iterator<SVFileList> Insertor;
 
 public:
-	typedef boost::function<HRESULT (unsigned long)> EventHandler;
+	using EventHandler = std::function<HRESULT (unsigned long)>;
 	typedef SVEventHandler<EventHandler> SVFrameEventHandler;
 
 private:
@@ -49,7 +44,7 @@ private:
 	SVFileList m_fileList;
 	SVSequencer<FileListIterator> m_loadSequence{ SVFileInfo() };
 	MIL_ID m_image = M_NULL;
-	SVAsyncProcedure m_thread;
+	SvSyl::SVAsyncProcedure m_thread;
 	SVFrameEventHandler m_startFrameEvent;
 	SVFrameEventHandler m_endFrameEvent;
 

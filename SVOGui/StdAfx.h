@@ -85,9 +85,6 @@
 #include <vector>
 
 #define BOOST_BIND_NO_PLACEHOLDERS
-#include <boost/any.hpp>
-#include <boost/bind.hpp>
-#include <boost/function.hpp>
 #include <boost/lexical_cast.hpp>
 
 #include "SVOResource\resource.h"

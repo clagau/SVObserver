@@ -54,13 +54,6 @@
 #include <vector>
 #include <comdef.h>
 
-#define BOOST_BIND_NO_PLACEHOLDERS
-#include <boost/any.hpp>
-#include <boost/bind.hpp>
-#include <boost/config.hpp>
-#include <boost/function.hpp>
-#define BOOST_DATE_TIME_NO_LIB
-
 #include <boost/circular_buffer.hpp>					//Used by value object library
 
 #pragma warning(push)

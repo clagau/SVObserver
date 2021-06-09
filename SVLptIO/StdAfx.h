@@ -61,10 +61,6 @@
 #include <time.h>
 #include <unordered_map>
 #include <vector>
-
-#define BOOST_BIND_NO_PLACEHOLDERS
-#include <boost/bind.hpp>		//Used by static library
-#include <boost/function.hpp>	//Used by static library
 #pragma endregion Precompiled Headers
 
 

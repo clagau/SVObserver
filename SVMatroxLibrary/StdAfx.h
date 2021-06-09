@@ -65,11 +65,6 @@
 #include <vector>
 #include <utility>			//Used by static library
 
-#define BOOST_BIND_NO_PLACEHOLDERS
-#include <boost/bind.hpp>
-#include <boost/config.hpp>
-#include <boost/function.hpp>							//Used by static library
-
 #include <mil.h>
 #pragma endregion Precompiled Headers
 

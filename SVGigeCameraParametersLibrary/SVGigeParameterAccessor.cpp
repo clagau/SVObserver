@@ -10,8 +10,6 @@
 //******************************************************************************
 #pragma region Includes
 #include "stdafx.h"
-//Moved to precompiled header: #include <boost/config.hpp>
-//Moved to precompiled header: #include <boost/bind.hpp>
 #include "SVGigeParameterAccessor.h"
 #include "SVMatroxDigitizerLibrary/SVMatroxDigitizerInterface.h"
 #include "SVMatroxDigitizerLibrary/SVMatroxDigitizer.h"
@@ -19,17 +17,28 @@
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
+SVGigeParameterAccessor::ParamGetter defaultGetter = [](SVMatroxDigitizerPtr digitizer, const SVGigeFeature& rFeature, _variant_t& rValue)
+{
+	return SVGigeParameterAccessor::GetFeature(digitizer, rFeature, rValue);
+};
+
+SVGigeParameterAccessor::ParamSetter defaultSetter = [](SVMatroxDigitizerPtr digitizer, const SVGigeFeature& rFeature, const _variant_t& rValue)
+{
+	return SVGigeParameterAccessor::SetFeature(digitizer, rFeature, rValue);
+};
+
+
 // This Method uses the default Setter and getter
 SVGigeParameterAccessor::SVGigeParameterAccessor(const SVGigeFeature& rFeature)
 : feature(rFeature)
-, GetParam(boost::bind(SVGigeParameterAccessor::GetFeature, boost::arg<1>(), boost::arg<2>(), boost::arg<3>()))
-, SetParam(boost::bind(SVGigeParameterAccessor::SetFeature, boost::arg<1>(), boost::arg<2>(), boost::arg<3>()))
+, GetParam(defaultGetter)
+, SetParam(defaultSetter)
 {
 }
 
 // This Method is for overriding Setter and getter that do not require the Feature
-SVGigeParameterAccessor::SVGigeParameterAccessor(const SVGigeFeature& p_Feature, const ParamGetter& getterFunc, const ParamSetter& setterFunc)
-: feature(p_Feature)
+SVGigeParameterAccessor::SVGigeParameterAccessor(const SVGigeFeature& rFeature, const ParamGetter& getterFunc, const ParamSetter& setterFunc)
+: feature(rFeature)
 , GetParam(getterFunc)
 , SetParam(setterFunc)
 {

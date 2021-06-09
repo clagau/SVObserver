@@ -12,10 +12,6 @@
 #pragma once
 
 #pragma region Includes
-//Moved to precompiled header: #include <map>
-//Moved to precompiled header: #include <boost/config.hpp>
-//Moved to precompiled header: #include <boost/function.hpp>
-
 #include "SVProtoBuf/SVO-Enum.h"
 #pragma endregion Includes
 
@@ -27,17 +23,20 @@ namespace SvPb
 class SVSetupDialogManager
 {
 public:
-	static SVSetupDialogManager& Instance();
+	SVSetupDialogManager(const SVSetupDialogManager&) = delete;
+	SVSetupDialogManager(SVSetupDialogManager&&) = delete;
+	virtual ~SVSetupDialogManager() = default;
 
-	virtual ~SVSetupDialogManager();
+	SVSetupDialogManager& operator=(const SVSetupDialogManager&) = delete;
+	SVSetupDialogManager& operator=(SVSetupDialogManager&&) = delete;
+
+	static SVSetupDialogManager& Instance();
 
 	HRESULT SetupDialog(SvPb::ClassIdEnum classId, uint32_t objectId, CWnd* pParentWnd );
 
-protected:
-	typedef boost::function<HRESULT (uint32_t, CWnd*)> SVSetupDialogFunction;
-	typedef std::unordered_map< SvPb::ClassIdEnum, SVSetupDialogFunction > SVSetupDialogMap;
 
-	SVSetupDialogManager();
+protected:
+	SVSetupDialogManager() = default;
 
 	static HRESULT SVBarCodeAnalyzerClassSetupDialog( uint32_t objectId, CWnd* PParentWnd );
 	static HRESULT SVBlobAnalyzerClassSetupDialog( uint32_t objectId, CWnd* PParentWnd );
@@ -51,10 +50,37 @@ protected:
 	static HRESULT SVPixelAnalyzerClassSetupDialog( uint32_t objectId, CWnd* PParentWnd );
 	static HRESULT SVResultClassSetupDialog( uint32_t objectId, CWnd* PParentWnd );
 
-	SVSetupDialogMap m_SetupDialogs;
-
 private:
-	SVSetupDialogManager( const SVSetupDialogManager& p_rObject );
-	const SVSetupDialogManager& operator=( const SVSetupDialogManager& p_rObject );
+
+	using SVSetupDialogFunction = std::function<HRESULT(uint32_t, CWnd*)>;
+
+	std::array<std::pair<SvPb::ClassIdEnum, SVSetupDialogFunction>, 25> m_SetupDialogs
+	{
+		std::make_pair(SvPb::LuminanceAnalyzerClassId, &SVSetupDialogManager::SVLuminanceAnalyzerClassSetupDialog),
+		std::make_pair(SvPb::BarCodeAnalyzerClassId, &SVSetupDialogManager::SVBarCodeAnalyzerClassSetupDialog),
+		std::make_pair(SvPb::BlobAnalyzerClassId, &SVSetupDialogManager::SVBlobAnalyzerClassSetupDialog),
+		std::make_pair(SvPb::BlobAnalyzer2ClassId, &SVSetupDialogManager::BlobAnalyzer2SetupDialog),
+		std::make_pair(SvPb::ColorToolClassId, &SVSetupDialogManager::SVColorToolClassSetupDialog),
+		std::make_pair(SvPb::DPointXResultClassId, &SVSetupDialogManager::SVResultClassSetupDialog),
+		std::make_pair(SvPb::DPointYResultClassId, &SVSetupDialogManager::SVResultClassSetupDialog),
+		std::make_pair(SvPb::HistogramAnalyzerClassId, &SVSetupDialogManager::SVHistogramAnalyzerSetupDialog),
+		std::make_pair(SvPb::LinearEdgeCountingLineAnalyzerClassId, &SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog),
+		std::make_pair(SvPb::LinearEdgePositionLineAnalyzerClassId, &SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog),
+		std::make_pair(SvPb::LinearMaximumBackgroundObjectLineAnalyzerClassId, &SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog),
+		std::make_pair(SvPb::LinearMaximumForegroundObjectLineAnalyzerClassId, &SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog),
+		std::make_pair(SvPb::LinearMaximumObjectLineAnalyzerClassId, &SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog),
+		std::make_pair(SvPb::LinearPixelCountingLineAnalyzerClassId, &SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog),
+		std::make_pair(SvPb::LinearMeasurementAnalyzerClassId, &SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog),
+		std::make_pair(SvPb::OCVAnalyzerClassId, &SVSetupDialogManager::SVOCVAnalyzerClassSetupDialog),
+		std::make_pair(SvPb::OCVAnalyzerResultClassId, &SVSetupDialogManager::SVResultClassSetupDialog),
+		std::make_pair(SvPb::PatternAnalyzerClassId, &SVSetupDialogManager::SVPatternAnalyzerClassSetupDialog),
+		std::make_pair(SvPb::PixelAnalyzerClassId, &SVSetupDialogManager::SVPixelAnalyzerClassSetupDialog),
+		std::make_pair(SvPb::DoubleResultClassId, &SVSetupDialogManager::SVResultClassSetupDialog),
+		std::make_pair(SvPb::LongResultClassId, &SVSetupDialogManager::SVResultClassSetupDialog),
+		std::make_pair(SvPb::PointXResultClassId, &SVSetupDialogManager::SVResultClassSetupDialog),
+		std::make_pair(SvPb::PointYResultClassId, &SVSetupDialogManager::SVResultClassSetupDialog),
+		std::make_pair(SvPb::StringResultClassId, &SVSetupDialogManager::SVResultClassSetupDialog),
+		std::make_pair(SvPb::VariantResultClassId, &SVSetupDialogManager::SVResultClassSetupDialog)
+	};
 };
 

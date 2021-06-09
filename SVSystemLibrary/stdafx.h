@@ -77,9 +77,7 @@
 #include <tchar.h>
 #include <vector>			//Used by static library
 
-#include <boost/bind/bind.hpp>
 #include <boost/config.hpp>
-#include <boost/function.hpp>
 #include <boost/scoped_array.hpp>
 #pragma endregion Precompiled Headers
 #pragma warning( push )

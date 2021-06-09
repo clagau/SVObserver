@@ -59,6 +59,7 @@
 #include <comutil.h>
 #include <direct.h>
 #include <iostream>
+#include <functional>
 #include <guiddef.h>
 #include <io.h>
 #include <limits>
@@ -80,7 +81,6 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/config.hpp>
-#include <boost/function.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/scoped_array.hpp>
 #include <boost/static_assert.hpp>

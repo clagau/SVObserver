@@ -12,9 +12,6 @@
 #pragma once
 
 #pragma region Includes
-//Moved to precompiled header: #include <string>
-//Moved to precompiled header: #include <boost/config.hpp>
-//Moved to precompiled header: #include <boost/shared_ptr.hpp>
 #include "SVPictureDialog.h"
 #pragma endregion Includes
 

@@ -272,7 +272,8 @@ namespace SvMc
 		GetClientRect(&m_client);
 		UpdateAnchors(m_client, m_func);
 		GDICanvas canvas(this, m_client, &m_bmp, m_colors ? m_backColor : SvDef::White);
-		DrawHistogram(std::bind(&GDICanvas::Draw, &canvas, std::placeholders::_1, std::placeholders::_2));
+		SvUl::SVHistogramBase::drawFunctor drawFunction = [&canvas](const RECT& rRect, int param) {canvas.Draw(rRect, param); };
+		DrawHistogram(drawFunction);
 
 		SetLabelText(m_factor*100.0/scale, label::leftTop);
 		//static_cast<Label<label::leftTop> &>(*this).SetText(100.0/scale);

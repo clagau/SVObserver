@@ -13,6 +13,8 @@
 
 #include "SVThread.h"
 
+namespace SvSyl
+{
 class SVAsyncProcedure
 {
 private:
@@ -39,5 +41,4 @@ public:
 
 	HRESULT Signal(void* pData);
 };
-
-
+} //namespace SvSyl

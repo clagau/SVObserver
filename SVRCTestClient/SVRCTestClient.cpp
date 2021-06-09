@@ -112,11 +112,12 @@ int main(int argc, char* argv[])
 		ClientSettings.Port = static_cast<uint16_t> (atoi(argv[2]));
 	}
 
-	NotificationHandler Handler;
+	NotificationHandler notificationHandler;
+	auto nextNotificationFunction = [&notificationHandler](const SvPb::GetNotificationStreamResponse& rResponse) { return notificationHandler.OnNext(rResponse); };
+	auto finishNotificationFunction = [&notificationHandler]() { return notificationHandler.OnFinish(); };
+	auto errorNotificationFunction = [&notificationHandler](const SvPenv::Error& error) { return notificationHandler.OnError(error); };
 
-	SvRpc::Observer<SvPb::GetNotificationStreamResponse> NotifikationObserver(boost::bind(&NotificationHandler::OnNext, &Handler, boost::arg<1>()),
-		boost::bind(&NotificationHandler::OnFinish, &Handler),
-		boost::bind(&NotificationHandler::OnError, &Handler, boost::arg<1>()));
+	SvRpc::Observer<SvPb::GetNotificationStreamResponse> NotificationObserver(nextNotificationFunction, finishNotificationFunction, errorNotificationFunction);
 	SvRpc::ClientStreamContext csx(nullptr);
 
 
@@ -278,7 +279,7 @@ int main(int argc, char* argv[])
 
 				SvPb::GetNotificationStreamRequest getNotificationStreamRequest;
 
-				csx = streamClient.stream(std::move(getNotificationStreamRequest), NotifikationObserver);
+				csx = streamClient.stream(std::move(getNotificationStreamRequest), NotificationObserver);
 	
 			}
 			else if (words[0] == "i")

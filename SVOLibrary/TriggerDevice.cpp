@@ -64,7 +64,8 @@ HRESULT TriggerDevice::UnregisterCallback()
 
 HRESULT TriggerDevice::Start()
 {
-	HRESULT result = m_Thread.Create( &TriggerDevice::APCProc, std::bind(&TriggerDevice::Process, this, std::placeholders::_1), m_DeviceName.c_str(), SVAffinityAcq );
+	auto threadProcess = [this](bool& rProcessed) {return Process(rProcessed); };
+	HRESULT result = m_Thread.Create( &TriggerDevice::APCProc, threadProcess, m_DeviceName.c_str(), SVAffinityAcq );
 
 	if( S_OK == result)
 	{

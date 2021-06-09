@@ -8,7 +8,6 @@
 
 #pragma region Includes
 #include "stdafx.h"
-//Moved to precompiled header: #include <boost/bind.hpp>
 #include "ImageController.h"
 #include "DisplayHelper.h"
 #include "InspectionCommands\CommandExternalHelper.h"

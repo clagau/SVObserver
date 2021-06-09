@@ -51,15 +51,15 @@
 #include <afxext.h>         // MFC extensions
 #include <afxtempl.h>		// MFC Templates
 
+#include <assert.h>
 #include <comutil.h>		//Used by static library
 #include <ctime>			//Used by static library
 #include <deque>			//Used by static library
+#include <functional>		//Used by static library
 #include <list>				//Used by static library
 #include <map>				//Used by static library
 #include <set>				//Used by static library
 #include <string>			//Used by static library
 #include <tchar.h>			//Used by static library
 #include <vector>			//Used by static library
-
-#include <boost/function.hpp>							//Used by SVMatroxLibrary
 #pragma endregion Precompiled Headers

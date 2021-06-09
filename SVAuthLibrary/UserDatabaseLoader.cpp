@@ -14,7 +14,6 @@
 #include <codecvt>
 #include <locale>
 
-#include <boost/function.hpp>
 #include <boost/lexical_cast.hpp>
 
 #include "PermissionHelper.h"

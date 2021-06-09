@@ -11,8 +11,6 @@
 
 #pragma region Includes
 #include "stdafx.h"
-//Moved to precompiled header: #include <assert.h>
-//Moved to precompiled header: #include <boost/config.hpp>
 #include "SVMatroxImageInterface.h"
 #include "SVMatroxEnums.h"
 

@@ -11,8 +11,6 @@
 #pragma once
 
 #pragma region Includes
-//Moved to precompiled header: #include <boost/config.hpp>
-//Moved to precompiled header: #include <boost/function.hpp>
 #include "Definitions/ObjectDefines.h"
 #include "SVIOLibrary/SVIOEntryHostStruct.h"
 

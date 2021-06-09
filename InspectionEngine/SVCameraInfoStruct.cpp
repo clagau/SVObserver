@@ -59,7 +59,7 @@ void SVCameraInfoStruct::ClearCameraInfo()
 
 const SvOi::ITRCImagePtr SVCameraInfoStruct::GetNextImage()
 {
-	if (!m_NextImageFunctor.empty())
+	if (nullptr != m_NextImageFunctor)
 	{
 		m_pImage = m_NextImageFunctor();
 	}

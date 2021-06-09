@@ -12,8 +12,6 @@
 #pragma once
 
 #pragma region Includes
-//Moved to precompiled header: #include <boost/config.hpp>
-//Moved to precompiled header: #include <boost/function.hpp>
 #include "SVInfoStructs.h"
 #include "SVInspectionProcess.h"
 #include "SVPPQShiftRegister.h"
@@ -356,7 +354,7 @@ protected:
 
 	HRESULT BuildCameraInfos(SvIe::SVObjectIdSVCameraInfoStructMap& rCameraInfos) const;
 
-	mutable SVAsyncProcedure m_AsyncProcedure;
+	mutable SvSyl::SVAsyncProcedure m_AsyncProcedure;
 
 	std::atomic<double> m_NextOutputDelayTimestamp;
 

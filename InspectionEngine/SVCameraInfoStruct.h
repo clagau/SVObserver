@@ -10,9 +10,6 @@
 #pragma once
 
 #pragma region Includes
-//Moved to precompiled header: #include <map>
-//Moved to precompiled header: #include <vector>
-//Moved to precompiled header: #include <boost/function.hpp>
 #include "ObjectInterfaces/ITRCImage.h"
 #include "Definitions/ObjectDefines.h"
 #pragma endregion Includes
@@ -21,7 +18,7 @@ namespace SvIe
 {
 
 #pragma region Declarations
-typedef boost::function<SvOi::ITRCImagePtr ()> NextImageHandleFunctor;
+using NextImageHandleFunctor = std::function<SvOi::ITRCImagePtr(void)>;
 #pragma endregion Declarations
 
 struct SVCameraInfoStruct 

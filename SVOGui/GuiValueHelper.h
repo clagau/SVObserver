@@ -8,7 +8,6 @@
 #pragma once
 
 #pragma region Includes
-//Moved to precompiled header: #include <boost/any.hpp>
 //Moved to precompiled header: #include <vector>
 //Moved to precompiled header: #include <comdef.h>
 //Moved to precompiled header: #include <atlsafe.h>

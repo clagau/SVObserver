@@ -79,6 +79,4 @@
 #include <tchar.h>			//Used by static library
 #include <vector>
 #include <winuser.h>
-
-#include <boost/function.hpp> //Used by static library
 #pragma endregion Precompiled Headers

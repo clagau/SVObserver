@@ -9,20 +9,6 @@
 
 #pragma region Includes
 #include "IGraphNameLookup.h"
-//Moved to precompiled header: #include <fstream>
-//Moved to precompiled header: #include <iostream>
-//Moved to precompiled header: #include <iterator>
-//Moved to precompiled header: #include <vector>
-//Moved to precompiled header: #include <boost/bind.hpp>
-//Moved to precompiled header: #include <boost/config.hpp>
-//Moved to precompiled header: #include <boost/function.hpp>
-//Moved to precompiled header: #include <boost/graph/adjacency_list.hpp>
-//Moved to precompiled header: #include <boost/graph/depth_first_search.hpp>
-//Moved to precompiled header: #include <boost/graph/breadth_first_search.hpp>
-//Moved to precompiled header: #include <boost/graph/reverse_graph.hpp>
-//Moved to precompiled header: #include <boost/graph/filtered_graph.hpp>
-//Moved to precompiled header: #include <boost/graph/graphviz.hpp>
-//Moved to precompiled header: #include <boost/utility.hpp>
 #pragma endregion Includes
 
 
@@ -55,7 +41,7 @@ class IGraphNameLookup;
 		using VertexProperty = boost::property<boost::vertex_color_t, boost::default_color_type, VertexIndex>;
 		using EdgeProperty = boost::property<edge_type_t, EdgeType>;
 
-		typedef boost::function<LPCTSTR (const VertexName&)> VertexNameFunc;
+		using VertexNameFunc = std::function<LPCTSTR (const VertexName&)>;
 
 		//! The boost graph library deceleration using the adjacency type
 		using DependencyGraph = boost::adjacency_list<boost::vecS, boost::listS, boost::bidirectionalS, VertexProperty, EdgeProperty>;
@@ -141,7 +127,7 @@ class IGraphNameLookup;
 		//! \param FileName [in] The name of the file to save
 		//! \param nameLookup [in] Function used to get the vertex name
 		//! \returns true on success
-		bool saveGraphDot( LPCTSTR FileName, IGraphNameLookup& nameLookup );
+		bool saveGraphDot( LPCTSTR FileName, IGraphNameLookup& rNameLookup );
 
 		void updateVertexIndex();
 

@@ -11,8 +11,6 @@
 
 #pragma region Includes
 #include "stdafx.h"
-//Moved to precompiled header: #include <cmath>
-//Moved to precompiled header: #include <boost\shared_ptr.hpp>
 #include "SVDisplayPicture.h"
 #include "SVROIList.h"
 #include "RectangleObject.h"

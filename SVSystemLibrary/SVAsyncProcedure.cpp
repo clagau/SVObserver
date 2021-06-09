@@ -18,6 +18,8 @@
 #include "SVMessage\SVMessage.h"
 #pragma endregion Includes
 
+namespace SvSyl
+{
 SVAsyncProcedure::SVAsyncProcedure()
 {
 }
@@ -110,4 +112,4 @@ bool SVAsyncProcedure::IsActive() const
 {
 	return m_thread.IsActive();
 }
-
+} //namespace SvSyl

@@ -56,6 +56,7 @@
 #include <ctime>			//Used by static library
 #include <comdef.h>
 #include <deque>
+#include <functional>		//Used by static library
 #include <iterator>			//Used by static library
 #include <list>				//Used by static library
 #include <map>
@@ -68,9 +69,5 @@
 #include <utility>
 #include <unordered_map>
 #include <vector>
-
-#include <boost/config.hpp>
-#include <boost/function.hpp>							//Used by static library
-#include <boost/utility.hpp>
 
 #pragma endregion Precompiled Headers

@@ -15,11 +15,8 @@
 #include "SVSharedMemoryLibrary\MonitorListCpy.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "MonitorLIstDlg.h"
-#include <boost\date_time\c_time.hpp>
 #include "SVSharedMemoryLibrary\MLProduct.h"
 #include "ProductDlg.h"
-//Moved to precompiled header: #include <boost/function.hpp> 
-//Moved to precompiled header:  #include <boost/bind.hpp>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -125,8 +122,8 @@ BOOL CSMViewDlg::OnInitDialog()
 	}
 
 	m_EditTrigger.SetWindowText("-1");
-	boost::function<bool(DWORD)> f = boost::bind(&CSMViewDlg::PostRefresh, this, boost::arg<1>());
-	SvSml::ShareEvents::GetInstance().SetCallbackFunction(f);
+	std::function<bool(DWORD)> functor = [this](DWORD param) { return PostRefresh(param); };
+	SvSml::ShareEvents::GetInstance().SetCallbackFunction(functor);
 	SvSml::ShareEvents::GetInstance().StartWatch();
 
 

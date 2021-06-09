@@ -50,6 +50,7 @@
 #include <windows.h>
 
 #define _USE_MATH_DEFINES
+#include <assert.h>
 #include <cmath>
 #include <concrt.h>			//Used by static library
 #include <comutil.h>		//Used by static library
@@ -66,6 +67,4 @@
 #include <typeinfo>
 #include <vector>
 #include <utility>			//Used by static library
-
-#include <boost/function.hpp>							//Used by static library
 #pragma endregion Precompiled Headers

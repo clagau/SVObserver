@@ -67,12 +67,7 @@
 #include <utility>
 #include <vector>
 
-#define BOOST_BIND_NO_PLACEHOLDERS
 #include <boost/algorithm/string.hpp>
-#include <boost/bind.hpp>
-#include <boost/config.hpp>
-#include <boost/foreach.hpp>
-#include <boost/function.hpp>
 #pragma warning(push)
 #pragma warning(disable : 4244 4458 4459)
 #include <boost/graph/adjacency_list.hpp>				//Used by static library

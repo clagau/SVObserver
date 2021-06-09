@@ -11,8 +11,6 @@
 #pragma once
 
 #pragma region Includes
-//Moved to precompiled header: #include <map>
-//Moved to precompiled header: #include <boost/foreach.hpp>
 #include "SVConfigurationTreeWriter.h"
 #include "ObjectInterfaces/IObjectWriter.h"
 #pragma endregion Includes

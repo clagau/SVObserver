@@ -102,9 +102,9 @@ namespace SvSml
 
 	
 
-	void ShareEvents::SetCallbackFunction(boost::function<bool(DWORD )>cbFct)
+	void ShareEvents::SetCallbackFunction(std::function<bool(DWORD)> functor)
 	{
-		m_CallBackFct  = cbFct;
+		m_CallBackFct  = functor;
 	}
 
 

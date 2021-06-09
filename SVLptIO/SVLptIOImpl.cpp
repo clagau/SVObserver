@@ -596,7 +596,8 @@ HRESULT SVLptIOImpl::afterStartTrigger()
 		if( !isIrqHandlerEnabled() )
 		{
 			::SetThreadPriority(::GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
-			result = EnableAckInterrupt(boost::bind(&SVLptIOImpl::HandleIRQ, this));
+			IrqHandler irqHandler = [this]() { return HandleIRQ(); };
+			result = EnableAckInterrupt(irqHandler);
 		}
 	}
 

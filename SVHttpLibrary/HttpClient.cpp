@@ -83,16 +83,10 @@ public:
 			}
 		}
 
+		auto resolveFunctor = [this] (boost::system::error_code ec, boost::asio::ip::tcp::resolver::results_type results) {return on_resolve(ec, results); };
 		// Look up the domain name
-		resolver_.async_resolve(
-			req.Url.host(),
-			port,
-			std::bind(
-				&RestRequest::on_resolve,
-				shared_from_this(),
-				std::placeholders::_1,
-				std::placeholders::_2));
-		
+		resolver_.async_resolve(req.Url.host(), port, resolveFunctor);
+
 		return promise_.get_future();
 	}
 
@@ -101,31 +95,25 @@ public:
 		boost::asio::ip::tcp::resolver::results_type results)
 	{
 		if (ec)
+		{
 			return fail(ec, "resolve");
+		}
 
+		auto connectFunctor = [this] (const boost::system::error_code& rError, boost::asio::ip::tcp::resolver::iterator it) {return on_connect(rError, it); };
 		// Make the connection on the IP address we get from a lookup
-		boost::asio::async_connect(
-			socket_,
-			results.begin(),
-			results.end(),
-			std::bind(
-			&RestRequest::on_connect,
-			shared_from_this(),
-			std::placeholders::_1));
+		boost::asio::async_connect(socket_, results.begin(), results.end(), connectFunctor);
 	}
 
-	void on_connect(boost::system::error_code ec)
+	void on_connect(const boost::system::error_code& rError, boost::asio::ip::tcp::resolver::iterator)
 	{
-		if (ec)
-			return fail(ec, "connect");
+		if (rError)
+		{
+			return fail(rError, "connect");
+		}
 
+		auto writeFunctor = [this](boost::system::error_code ec, std::size_t bytes_transferred) {return on_write(ec, bytes_transferred); };
 		// Send the HTTP request to the remote host
-		boost::beast::http::async_write(socket_, req_,
-			std::bind(
-			&RestRequest::on_write,
-			shared_from_this(),
-			std::placeholders::_1,
-			std::placeholders::_2));
+		boost::beast::http::async_write(socket_, req_, writeFunctor);
 	}
 
 	void on_write(
@@ -137,13 +125,9 @@ public:
 		if (ec)
 			return fail(ec, "write");
 
+		auto readFunctor = [this](boost::system::error_code ec, std::size_t bytes_transferred) {return on_read(ec, bytes_transferred); };
 		// Receive the HTTP response
-		boost::beast::http::async_read(socket_, buffer_, res_,
-			std::bind(
-			&RestRequest::on_read,
-			shared_from_this(),
-			std::placeholders::_1,
-			std::placeholders::_2));
+		boost::beast::http::async_read(socket_, buffer_, res_, readFunctor);
 	}
 
 	void on_read(

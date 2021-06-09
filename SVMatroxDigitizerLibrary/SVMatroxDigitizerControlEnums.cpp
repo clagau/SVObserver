@@ -9,8 +9,6 @@
 //* .Check In Date   : $Date:   01 Oct 2013 10:45:26  $
 //******************************************************************************
 #include "stdafx.h"
-//Moved to precompiled header: #include <boost/config.hpp>
-//Moved to precompiled header: #include <mil.h>
 #include "SVMatroxDigitizerControlEnums.h"
 
 // Assign mappings for Control Camera Types

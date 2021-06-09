@@ -89,7 +89,8 @@ HRESULT SVTriggerClass::RegisterCallback(PpqTriggerCallBack pPpqTriggerCallback)
 	{
 		if ( S_OK == result)
 		{
-			result = m_pDLLTrigger->Register(m_triggerChannel, std::bind(&SVTriggerClass::triggerCallback, this, std::placeholders::_1));
+			auto triggerFunctor = [this](const SvTrig::IntVariantMap& rTriggerData) {return triggerCallback(rTriggerData); };
+			result = m_pDLLTrigger->Register(m_triggerChannel, triggerFunctor);
 		}
 
 		if ( S_OK != result )

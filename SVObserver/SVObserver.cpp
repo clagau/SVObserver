@@ -1947,7 +1947,7 @@ BOOL SVObserverApp::InitInstance()
 	ValidateMRUList();
 
 	int diagnostic = SvimIni.GetValueInt(_T("Settings"), _T("Diagnostic"), 0);
-	SVThread::SetDiagnostic(diagnostic == 1);
+	SvSyl::SVThread::SetDiagnostic(diagnostic == 1);
 
 	// Get SourceImageDepth
 	m_lSouceImageDepth = GetProfileInt(_T("Settings"), _T("Source Image Depth"), -1);

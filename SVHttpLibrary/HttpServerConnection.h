@@ -76,9 +76,9 @@ private:
 	boost::beast::http::response<boost::beast::http::file_body> http_build_file_get(const std::filesystem::path&, boost::beast::http::file_body::value_type body);
 
 private:
-	std::string ws_get_access_token(std::string& protocol);
-	void ws_do_upgrade(std::string protocol);
-	void ws_on_decorate(boost::beast::websocket::response_type& m, std::string protocol);
+	std::string ws_get_access_token(std::string& rProtocol);
+	void ws_do_upgrade(const std::string& rProtocol);
+	void ws_on_decorate(boost::beast::websocket::response_type& m, const std::string& rProtocol);
 	void ws_on_handshake(const boost::system::error_code& error);
 	void ws_access_log();
 

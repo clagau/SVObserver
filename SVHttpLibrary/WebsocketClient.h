@@ -64,7 +64,7 @@ public:
 
 private:
 	void handle_resolve(const boost::system::error_code& ec, boost::asio::ip::tcp::resolver::results_type);
-	void handle_connect(const boost::system::error_code& ec);
+	void handle_connect(const boost::system::error_code& ec, boost::asio::ip::tcp::resolver::iterator it);
 	void handle_connection_error(const boost::system::error_code& ec);
 	void handle_connection_success();
 	void close_connection();

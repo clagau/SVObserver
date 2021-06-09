@@ -22,6 +22,7 @@
 #include <afxcontrolbars.h>     // MFC support for ribbons and control bars
 
 #include <atomic>
+#include <functional>
 #include <string>
 #include <vector>
 #include <map>
@@ -31,10 +32,6 @@
 #pragma warning (disable : 4005)
 
 #define BOOST_BIND_NO_PLACEHOLDERS
-#include <boost/any.hpp>
-#include <boost/bind.hpp>
-#include <boost/function.hpp>			//Used by static library
-
 #define BOOST_DATE_TIME_NO_LIB
 
 #pragma warning (push)

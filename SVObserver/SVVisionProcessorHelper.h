@@ -12,12 +12,6 @@
 #pragma once
 
 #pragma region Includes
-//Moved to precompiled header: #include <comdef.h>
-//Moved to precompiled header: #include <map>
-//Moved to precompiled header: #include <set>
-//Moved to precompiled header: #include <boost/config.hpp>
-//Moved to precompiled header: #include <boost/function.hpp>
-
 #include "Definitions/StringTypeDef.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVSharedMemoryLibrary/SVProductFilterEnum.h"
@@ -119,8 +113,8 @@ public:
 		SvRpc::Observer<SvPb::GetMessageStreamResponse> Observer,
 		SvRpc::ServerStreamContext::Ptr ctx);
 private:
-	typedef boost::function< HRESULT(const SvDef::StringSet&, SVNameStorageResultMap&) > SVGetItemsFunctor;
-	typedef boost::function< HRESULT(const SVNameStorageMap&, SVNameStatusMap&, bool RunOnce) > SVSetItemsFunctor;
+	using SVGetItemsFunctor = std::function<HRESULT(const SvDef::StringSet&, SVNameStorageResultMap&)>;
+	using SVSetItemsFunctor = std::function<HRESULT(const SVNameStorageMap&, SVNameStatusMap&, bool RunOnce)>;
 	typedef std::map<std::string, SVGetItemsFunctor> SVGetItemsFunctorMap;
 	typedef std::map<std::string, SVSetItemsFunctor> SVSetItemsFunctorMap;
 
@@ -144,7 +138,7 @@ private:
 	SVSetItemsFunctorMap m_SetItemsFunctors;
 
 
-	SVVisionProcessorHelper();
+	SVVisionProcessorHelper() = default;
 	SVVisionProcessorHelper(const SVVisionProcessorHelper& rObject) = delete;
 	const SVVisionProcessorHelper& operator=(const SVVisionProcessorHelper& rObject) = delete;
 

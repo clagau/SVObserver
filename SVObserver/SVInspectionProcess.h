@@ -12,12 +12,6 @@
 #pragma once
 
 #pragma region Includes
-//Moved to precompiled header: #include <vector>
-//Moved to precompiled header: #include <boost/function.hpp>
-//Moved to precompiled header: #include <boost/tokenizer.hpp>
-//Moved to precompiled header: #include <boost/lexical_cast.hpp>
-//Moved to precompiled header: #include <boost/type_traits.hpp>
-
 #include "ObjectInterfaces/IInspectionProcess.h"
 #include "Definitions/SVResetStruct.h"
 #include "ObjectInterfaces/IFormulaController.h"
@@ -370,7 +364,7 @@ private:
 
 	uint32_t m_PPQId{SvDef::InvalidObjectId};
 
-	mutable SVAsyncProcedure m_AsyncProcedure;
+	mutable SvSyl::SVAsyncProcedure m_AsyncProcedure;
 	std::atomic_bool m_NotifyWithLastInspected;
 
 	volatile long m_lInputRequestMarkerCount{0L};
@@ -489,7 +483,7 @@ namespace SVDetail
 		}
 	}
 
-	typedef boost::function<bool (const std::string& rString)> Validator;
+	using Validator = std::function<bool (const std::string& rString)>;
 }
 
 template<typename T>

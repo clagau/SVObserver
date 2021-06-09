@@ -14,16 +14,9 @@
 #include "SVThreadManager.h"
 #pragma endregion Includes
 
-//namespace SvSyl
-//{
-/*
-SVThreadSignalHandler must have the following prototype:
-
-     void SVProcessThreadData( bool& p_WaitForEvents );
-
-*/
-
-typedef std::function<void(bool&)> ProcessThread;
+namespace SvSyl
+{
+using ProcessThread = std::function<void(bool&)>;
 
 class SVThread
 {
@@ -68,4 +61,4 @@ private:
 	ProcessThread m_pProcessThread{ nullptr };
 #pragma endregion Member Variables
 };
-//} //namespace SvSyl
+} //namespace SvSyl

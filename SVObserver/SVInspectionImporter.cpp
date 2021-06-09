@@ -11,11 +11,6 @@
 
 #pragma region Includes
 #include "stdafx.h"
-//Moved to precompiled header: #include <map>
-//Moved to precompiled header: #include <boost/config.hpp>
-//Moved to precompiled header: #include <boost/any.hpp>
-//Moved to precompiled header: #include <iterator>
-//Moved to precompiled header: #include <deque>
 #include "SVInspectionImporter.h"
 #include "RootObject.h"
 #include "SVConfigurationObject.h"
@@ -633,9 +628,7 @@ HRESULT SVInspectionImporter::loadAndReplaceData(const std::string& inFileName, 
 		{
 			std::string oldString = SvUl::Format(rString.c_str(), oldInspectionName.c_str());
 			std::string newString = SvUl::Format(rString.c_str(), rNewInspectionName.c_str());
-			boost::algorithm::replace_all(xmlString, oldString, newString);
-			//alternative without boost:
-			//SvUl::searchAndReplace(xmlString, oldString.c_str(), newString.c_str());
+			SvUl::searchAndReplace(xmlString, oldString.c_str(), newString.c_str());
 		}
 	}
 

@@ -187,7 +187,7 @@ void SoftwareTriggerDlg::OnDeltaposSpin(NMHDR *pNMHDR, LRESULT *pResult)
 	if (l_spin)
 	{
 		int Value = pNMUpDown->iDelta;
-		if (!l_spin->Increment(Value)) //, boost::bind(&SVSpinGroup::GetValue, m_spins)))
+		if (!l_spin->Increment(Value))
 		{
 			*pResult = 1;
 		}

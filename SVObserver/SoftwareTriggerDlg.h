@@ -12,9 +12,6 @@
 #pragma once
 
 #pragma region Includes
-//Moved to precompiled header: #include <limits>
-//Moved to precompiled header: #include <boost/function.hpp>
-//Moved to precompiled header: #include <boost/bind.hpp>
 #include "SVMFCControls/SVKnobControl.h"
 #include "Triggering/SVTriggerObject.h"
 #include "SVUtilityLibrary/StringHelper.h"
@@ -61,7 +58,7 @@ public:
 	void Show();
 	bool Hide();
 	bool SetValue(int val);
-	bool Increment(int val); //, boost::function<int ()> total);
+	bool Increment(int val);
 	SVSpinGroup * find(int spinId);
 	int GetValue() const;
 private:

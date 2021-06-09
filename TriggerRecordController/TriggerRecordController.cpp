@@ -50,10 +50,14 @@ TriggerRecordController::TriggerRecordController(std::unique_ptr<DataControllerB
 	: m_pDataController(std::move(pDataController))
 	, m_imageBufferController(*m_pDataController)
 {
-	m_pDataController->setResetCallback(std::bind(&TriggerRecordController::sendResetCall, this));
-	m_pDataController->setReadyCallback(std::bind(&TriggerRecordController::sendReadyCall, this));
-	m_pDataController->setNewTrIdCallback(std::bind(&TriggerRecordController::sendTrIdCall, this, std::placeholders::_1));	
-	m_pDataController->setNewInterestTrIdsCallback(std::bind(&TriggerRecordController::sendInterestTrIdCall, this, std::placeholders::_1));
+	auto resetCallbackFunctor = [this]() {return sendResetCall(); };
+	auto readyCallbackFunctor = [this]() {return sendReadyCall(); };
+	auto newTrIdCallbackFunctor = [this](SvOi::TrEventData data) {return sendTrIdCall(data); };
+	auto interestTrIdCallbackFunctor = [this](std::vector<SvOi::TrInterestEventData>&& data) {return sendInterestTrIdCall(std::move(data)); };
+	m_pDataController->setResetCallback(resetCallbackFunctor);
+	m_pDataController->setReadyCallback(readyCallbackFunctor);
+	m_pDataController->setNewTrIdCallback(newTrIdCallbackFunctor);
+	m_pDataController->setNewInterestTrIdsCallback(interestTrIdCallbackFunctor);
 }
 
 TriggerRecordController::~TriggerRecordController()

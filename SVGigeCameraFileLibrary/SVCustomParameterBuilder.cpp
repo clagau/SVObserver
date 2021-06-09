@@ -9,9 +9,6 @@
 //* .Check In Date   : $Date:   13 May 2013 11:03:58  $
 //******************************************************************************
 #include "stdafx.h"
-//Moved to precompiled header: #include <comdef.h>
-//Moved to precompiled header: #include <map>
-//Moved to precompiled header: #include <boost/config.hpp>
 #include "SVCustomParameterBuilder.h"
 #include "CameraLibrary/SVBoolValueDeviceParam.h"
 #include "CameraLibrary/SVCustomDeviceParam.h"

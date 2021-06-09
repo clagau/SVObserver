@@ -9,8 +9,6 @@
 //* .Check In Date   : $Date:   01 Oct 2013 10:45:28  $
 //******************************************************************************
 #include "stdafx.h"
-//Moved to precompiled header: #include <boost/config.hpp>
-//Moved to precompiled header: #include <mil.h>
 #include "SVMatroxDigitizerInquireEnums.h"
 
 // Assign mappings for Inquire Board Types

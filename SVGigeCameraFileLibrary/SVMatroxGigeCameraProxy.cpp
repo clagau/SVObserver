@@ -13,11 +13,6 @@
 #include "stdafx.h"
 #pragma warning (push)
 #pragma warning (disable : 4996)
-//Moved to precompiled header: #include <deque>
-//Moved to precompiled header: #include <string>
-//Moved to precompiled header: #include <comdef.h>
-//Moved to precompiled header: #include <boost/config.hpp>
-//Moved to precompiled header: #include <boost/algorithm/string.hpp>
 #include "SVMatroxGigeCameraProxy.h"
 #include "CameraLibrary/SVStringValueDeviceParam.h"
 #include "CameraLibrary/SVLongValueDeviceParam.h"

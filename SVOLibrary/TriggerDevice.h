@@ -69,7 +69,7 @@ private:
 	long m_startObjectID{ 1L };
 	long m_triggerPerObjectID{ 1L };
 
-	SVAsyncProcedure m_Thread;
+	SvSyl::SVAsyncProcedure m_Thread;
 
 	TriggerQueue m_triggerQueue{ 10 };
 

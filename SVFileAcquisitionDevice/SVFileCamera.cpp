@@ -12,8 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVFileCamera.h"
-//Moved to precompiled header: #include <boost/bind.hpp>
-
 #include "Definitions/StringTypeDef.h"
 #include "Definitions/SVImageFormatEnum.h"
 #include "SVFileSystemLibrary/SVFileSystemScanner.h"
@@ -147,8 +145,8 @@ HRESULT SVFileCamera::Start(const EventHandler& startFrameHandler, const EventHa
 	// init sequencer - everybody wraps except Single Iteration mode
 	m_loadSequence.Init(m_fileList.begin(), m_fileList.end(), !IsSingleIterationLoadMode());
 
-	// start loader thread
-	hr = m_thread.Create(&SVFileCamera::OnAPCEvent, std::bind(&SVFileCamera::OnThreadEvent, this, std::placeholders::_1), m_name.c_str(), SVAffinityAcq);
+	auto threadEvent = [this](bool& rProcessed) {return OnThreadEvent(rProcessed); };
+	hr = m_thread.Create(&SVFileCamera::OnAPCEvent, threadEvent, m_name.c_str(), SVAffinityAcq);
 	return hr;
 }
 

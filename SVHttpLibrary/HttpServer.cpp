@@ -73,8 +73,8 @@ void HttpServer::close_connections(std::vector<std::shared_ptr<HttpServerConnect
 
 void HttpServer::start_accept()
 {
-	m_Acceptor.async_accept(m_Socket,
-		std::bind(&HttpServer::handle_accept, this, std::placeholders::_1));
+	auto handleAcceptFunctor = [this](const boost::system::error_code& ec) { return handle_accept(ec); };
+	m_Acceptor.async_accept(m_Socket, handleAcceptFunctor);
 }
 
 void HttpServer::handle_accept(const boost::system::error_code& ec)
@@ -101,7 +101,8 @@ void HttpServer::handle_accept(const boost::system::error_code& ec)
 void HttpServer::schedule_cleanup()
 {
 	m_CleanupTimer.expires_from_now(boost::posix_time::seconds(m_rSettings.ConnectionCleanupIntervalSec));
-	m_CleanupTimer.async_wait(std::bind(&HttpServer::do_cleanup, this, std::placeholders::_1));
+	auto cleanupFunctor = [this] (const boost::system::error_code& ec) { return do_cleanup(ec); };
+	m_CleanupTimer.async_wait(cleanupFunctor);
 }
 
 void HttpServer::do_cleanup(const boost::system::error_code& error)

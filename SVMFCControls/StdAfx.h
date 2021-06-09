@@ -55,11 +55,13 @@
 #include <afxdlgs.h>
 
 #include <algorithm>
+#include <assert.h>
 #include <comutil.h>		//Used by static library
 #include <concrt.h>			//Used by static library
 #include <ctime>			//Used by static library
 #include <deque>			//Used by static library
 #include <Dlgs.h>
+#include <functional>
 #include <Guiddef.h>
 #include <list>
 #include <io.h>
@@ -72,6 +74,4 @@
 #include <string>			//Used by static library
 #include <tchar.h>			//Used by static library
 #include <vector>			//Used by static library
-
-#include <boost/function.hpp>
 #pragma endregion Precompiled Headers

@@ -810,7 +810,8 @@ void DataControllerWriter::setInspectionList(SvPb::InspectionList&& rInspectionL
 			size_t pos = m_dataVector.size();
 			m_dataVector.emplace_back(std::make_shared<TRControllerWriterDataPerIP>());
 			assert(nullptr != m_dataVector[pos]);
-			m_dataVector[pos]->init(std::bind(&DataControllerWriter::setInspectionSMData, this, static_cast<int>(pos), std::placeholders::_1, std::placeholders::_2));
+			auto setInspectionSMDataFunctor = [this, pos](const std::string& rSmName, int smSize) {return setInspectionSMData(static_cast<int>(pos), rSmName, smSize); };
+			m_dataVector[pos]->init(setInspectionSMDataFunctor);
 		}
 	}
 	else if (m_inspectionList.list_size() < m_dataVector.size())

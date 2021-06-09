@@ -58,8 +58,5 @@
 #include <tchar.h>			//Used by static library
 #include <vector>			//Used by static library
 
-#include <boost/config.hpp>
-#include <boost/utility.hpp>
-
 #include <mil.h>
 #pragma endregion Precompiled Headers

@@ -199,7 +199,8 @@ void SVPlcIOImpl::beforeStartTrigger(unsigned long triggerIndex)
 				m_logOutFile.write(fileData.c_str(), fileData.size());
 			}
 		}
-		Tec::startTriggerEngine(std::bind(&SVPlcIOImpl::reportTrigger, this, std::placeholders::_1), m_triggerType, m_plcNodeID, m_plcTransferTime, m_AdditionalData);
+		auto reportTriggerCallback = [this](const TriggerReport& rTriggerReport) { return reportTrigger(rTriggerReport); };
+		Tec::startTriggerEngine(reportTriggerCallback, m_triggerType, m_plcNodeID, m_plcTransferTime, m_AdditionalData);
 		Tec::setReady(m_moduleReady);
 		m_engineStarted = true;
 		::SetThreadPriority(::GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);

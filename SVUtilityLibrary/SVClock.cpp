@@ -13,8 +13,6 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <limits>
 //Moved to precompiled header: #include <map>
-//Moved to precompiled header: #include "boost/config.hpp"
-//Moved to precompiled header: #include "boost/assign.hpp"
 #include "SVClock.h"
 #pragma endregion Includes
 

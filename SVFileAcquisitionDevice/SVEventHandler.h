@@ -11,9 +11,6 @@
 
 #pragma once
 
-//Moved to precompiled header: #include <boost/config.hpp>
-//Moved to precompiled header: #include <boost/function.hpp>
-
 template <typename T>
 class SVEventHandler
 {

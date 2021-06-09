@@ -1059,7 +1059,8 @@ SharedMemoryAccess::notification_stream_t::notification_stream_t(
 void SharedMemoryAccess::schedule_trigger_record_pause_state()
 {
 	m_pause_timer.expires_from_now(boost::posix_time::milliseconds(20));
-	m_pause_timer.async_wait(std::bind(&SharedMemoryAccess::on_trigger_record_pause_state_timer, this, std::placeholders::_1));
+	auto waitFunctor = [this](const boost::system::error_code& rError) { return on_trigger_record_pause_state_timer(rError); };
+	m_pause_timer.async_wait(waitFunctor);
 }
 
 void SharedMemoryAccess::on_trigger_record_pause_state_timer(const boost::system::error_code& error)

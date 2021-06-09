@@ -10,7 +10,6 @@
 //******************************************************************************
 
 #pragma region Includes
-//Moved to precompiled header: #include <boost/bind>
 #include "stdafx.h"
 #include "SVObserver/svobserver.h"
 #include "SVTADlgExternalSelectDllPage.h"

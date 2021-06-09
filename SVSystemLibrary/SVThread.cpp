@@ -23,6 +23,8 @@
 // The old value was 5 s, but this was for some cases to short, so we have increased it to 10 s.
 constexpr int cTimeoutShutdownThread = 10000;
 
+namespace SvSyl
+{
 bool SVThread::m_diagnostic{ false };
 
 #pragma region Constructor
@@ -292,3 +294,4 @@ DWORD WINAPI SVThread::ThreadProc(LPVOID pParam)
 	return static_cast<DWORD> (result);
 }
 #pragma endregion Private Methods
+} //namespace SvSyl

@@ -44,8 +44,8 @@
 #pragma region Precompiled Headers
 #include <windows.h>
 
+#include <functional>
 #include <stdio.h>
 #include <tchar.h>
 
-#include <boost\function.hpp>
 #pragma endregion Precompiled Headers

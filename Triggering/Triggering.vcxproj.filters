@@ -50,9 +50,6 @@
     <ClInclude Include="IODeviceBase.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVInternalTrigger.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVOTriggerList.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>

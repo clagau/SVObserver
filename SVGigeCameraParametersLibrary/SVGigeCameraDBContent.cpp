@@ -15,12 +15,6 @@
 #pragma warning( disable : 4471 )
 #import <msxml3.dll> raw_interfaces_only 
 #pragma warning( pop )
-//Moved to precompiled header: #include <string>
-//Moved to precompiled header: #include <vector>
-//Moved to precompiled header: #include <map>
-//Moved to precompiled header: #include <memory>
-//Moved to precompiled header: #include <utility>
-//Moved to precompiled header: #include <boost/config.hpp>
 #include "SVGigeDeviceParameterStruct.h"
 #include "SVGigeEmptyGetter.h"
 #include "SVGigeEmptySetter.h"
@@ -505,11 +499,11 @@ SVGigeParameterAccessor SVGigeCameraDBContent::ConstructGigeParameterAccessor()
 			// check for Accessor(Getter/Setter) 
 			if (!m_GigeDeviceParameterInfo.m_GigeFeatureAccessor.m_accessor.m_getterName.empty())
 			{
-				gigeParameterAccessorHolder = std::shared_ptr<SVGigeParameterAccessor>{ new SVGigeParameterAccessor(feature, GetGetterFunc(), GetSetterFunc()) };
+				gigeParameterAccessorHolder = std::make_shared<SVGigeParameterAccessor>(feature, GetGetterFunc(), GetSetterFunc());
 			}
 			else
 			{
-				gigeParameterAccessorHolder = std::shared_ptr<SVGigeParameterAccessor>{ new SVGigeParameterAccessor(feature) };
+				gigeParameterAccessorHolder = std::make_shared<SVGigeParameterAccessor>(feature);
 			}
 		}
 		else
@@ -524,11 +518,11 @@ SVGigeParameterAccessor SVGigeCameraDBContent::ConstructGigeParameterAccessor()
 			// check for Accessor(Getter/Setter) 
 			if (!m_GigeDeviceParameterInfo.m_GigeFeatureAccessor.m_accessor.m_getterName.empty())
 			{
-				gigeParameterAccessorHolder = std::shared_ptr<SVGigeParameterAccessor>{ new SVGigeParameterAccessor(feature, GetGetterFunc(), GetSetterFunc()) };
+				gigeParameterAccessorHolder = std::make_shared<SVGigeParameterAccessor>(feature, GetGetterFunc(), GetSetterFunc());
 			}
 			else
 			{
-				gigeParameterAccessorHolder = std::shared_ptr<SVGigeParameterAccessor>{ new SVGigeParameterAccessor(feature) };
+				gigeParameterAccessorHolder = std::make_shared<SVGigeParameterAccessor>(feature);
 			}
 		}
 	}
@@ -549,11 +543,11 @@ SVGigeParameterAccessor SVGigeCameraDBContent::ConstructGigeParameterAccessor()
 			// check for Accessor(Getter/Setter) 
 			if (!m_GigeDeviceParameterInfo.m_GigeFeatureAccessor.m_accessor.m_getterName.empty())
 			{
-				gigeParameterAccessorHolder = std::shared_ptr<SVGigeParameterAccessor>{ new SVGigeParameterAccessor(feature, GetGetterFunc(), GetSetterFunc()) };
+				gigeParameterAccessorHolder = std::make_shared<SVGigeParameterAccessor>(feature, GetGetterFunc(), GetSetterFunc());
 			}
 			else
 			{
-				gigeParameterAccessorHolder = std::shared_ptr<SVGigeParameterAccessor>{ new SVGigeParameterAccessor(feature) };
+				gigeParameterAccessorHolder = std::make_shared<SVGigeParameterAccessor>(feature);
 			}
 		}
 		else
@@ -567,11 +561,11 @@ SVGigeParameterAccessor SVGigeCameraDBContent::ConstructGigeParameterAccessor()
 			// check for Accessor(Getter/Setter) 
 			if (!m_GigeDeviceParameterInfo.m_GigeFeatureAccessor.m_accessor.m_getterName.empty())
 			{
-				gigeParameterAccessorHolder = std::shared_ptr<SVGigeParameterAccessor>{ new SVGigeParameterAccessor(feature, GetGetterFunc(), GetSetterFunc()) };
+				gigeParameterAccessorHolder = std::make_shared<SVGigeParameterAccessor>(feature, GetGetterFunc(), GetSetterFunc());
 			}
 			else
 			{
-				gigeParameterAccessorHolder = std::shared_ptr<SVGigeParameterAccessor>{ new SVGigeParameterAccessor(feature) };
+				gigeParameterAccessorHolder = std::make_shared<SVGigeParameterAccessor>(feature);
 			}
 		}
 	}

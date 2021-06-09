@@ -63,8 +63,6 @@
 #include <tchar.h>
 #include <vector>			//Used by static library
 
-#include <boost/config.hpp>
-#include <boost/function.hpp>					//Used by static library
 #pragma endregion Precompiled Headers
 
 

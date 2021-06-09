@@ -148,7 +148,8 @@ void RPCClient::schedule_timeout(uint64_t tx_id, boost::posix_time::time_duratio
 	// use shared_ptr because boost::asio::deadline_timer is neither movable nor copyable
 	auto timer = std::make_shared<boost::asio::deadline_timer>(m_IoContex);
 	timer->expires_from_now(timeout);
-	timer->async_wait(std::bind(&RPCClient::on_request_timeout, this, std::placeholders::_1, tx_id));
+	auto waitFunctor = [this, tx_id](const boost::system::error_code& rError) { return on_request_timeout(rError, tx_id);  };
+	timer->async_wait(waitFunctor);
 	m_PendingRequestsTimer.emplace(tx_id, timer);
 }
 
@@ -168,12 +169,14 @@ ClientStreamContext RPCClient::stream(SvPenv::Envelope&& Request, Observer<SvPen
 
 	send_envelope(std::move(Request));
 
-	return ClientStreamContext(std::bind(&RPCClient::cancel_stream, this, txId));
+	auto cancelStreamFunctor = [this, txId]() { return cancel_stream(txId); };
+	return ClientStreamContext(cancelStreamFunctor);
 }
 
 void RPCClient::onConnect()
 {
-	m_IoContex.dispatch(std::bind(&RPCClient::on_connect, this));
+	auto connectFunctor = [this]() { return on_connect(); };
+	m_IoContex.dispatch(connectFunctor);
 }
 
 void RPCClient::on_connect()
@@ -194,7 +197,8 @@ void RPCClient::on_connect()
 
 void RPCClient::onDisconnect()
 {
-	m_IoContex.dispatch(std::bind(&RPCClient::on_disconnect, this));
+	auto disconnectFunctor = [this]() { return on_disconnect(); };
+	m_IoContex.dispatch(disconnectFunctor);
 }
 
 void RPCClient::on_disconnect()
@@ -218,7 +222,8 @@ void RPCClient::onTextMessage(std::vector<char>&&)
 void RPCClient::onBinaryMessage(std::vector<char>&& buf)
 {
 	auto ptr = std::make_shared<std::vector<char>>(std::move(buf));
-	m_IoContex.dispatch(std::bind(&RPCClient::on_binary_message, this, ptr));
+	auto dispatchFunctor = [this, ptr]() {return on_binary_message(ptr); };
+	m_IoContex.dispatch(dispatchFunctor);
 }
 
 void RPCClient::on_binary_message(std::shared_ptr<std::vector<char>> ptr)
@@ -279,7 +284,8 @@ void RPCClient::schedule_reconnect(boost::posix_time::time_duration timeout)
 	}
 	SV_LOG_GLOBAL(debug) << "Scheduling reconnect in " << timeout.seconds() << " seconds.";
 	m_ReconnectTimer.expires_from_now(timeout);
-	m_ReconnectTimer.async_wait(std::bind(&RPCClient::on_reconnect, this, std::placeholders::_1));
+	auto reconnectFuntor = [this](const boost::system::error_code& rError) {return on_reconnect(rError); };
+	m_ReconnectTimer.async_wait(reconnectFuntor);
 }
 
 void RPCClient::on_reconnect(const boost::system::error_code& error)

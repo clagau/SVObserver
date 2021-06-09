@@ -56,7 +56,5 @@
 #include <WinBase.h>
 
 #include <boost/algorithm/string/split.hpp>
-#include <boost/function.hpp>
-
 #include <mil.h>
 #pragma endregion Precompiled Headers

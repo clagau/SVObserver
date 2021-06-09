@@ -48,8 +48,8 @@
 #pragma region Precompiled Headers
 #include <windows.h>
 
-#include <assert.h>
 #include <algorithm>
+#include <assert.h>
 #include <cmath>
 #include <comutil.h>
 #include <ctime>			//Used by static library
@@ -67,7 +67,4 @@
 #include <string>
 #include <tchar.h>			//Used by static library
 #include <vector>
-
-#include <boost/config.hpp>
-#include <boost/function.hpp>
 #pragma endregion Precompiled Headers

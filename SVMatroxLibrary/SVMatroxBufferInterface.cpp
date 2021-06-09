@@ -10,8 +10,6 @@
 // ******************************************************************************
 #pragma region Includes
 #include "stdafx.h"
-//Moved to precompiled header: #include <assert.h>
-#include <boost/format.hpp>
 #include "MatroxImageProps.h"
 #include "SVMatroxBufferInterface.h"
 #include "SVMatroxApplicationInterface.h"
@@ -27,6 +25,7 @@
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVUtilityLibrary/SVBitmapInfo.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 enum ImageBands
@@ -1294,7 +1293,7 @@ HRESULT SVMatroxBufferInterface::CreateBuffer(SVMatroxBuffer& rBuffer, MatroxIma
 	else
 	{
 		SvDef::StringVector msg;
-		msg.push_back(boost::str(boost::format("Matrox Code: 0X%08X") % Code));
+		msg.push_back(SvUl::Format("Matrox Code: 0X%08X", Code));
 		SvStl::MessageContainer message(SVMSG_SVO_5079_CREATEBUFFERFAILED, SvStl::Tid_Default, msg, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16226);
 		throw message;
 	}

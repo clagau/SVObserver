@@ -55,18 +55,6 @@ bool CheckCommandLineArgs(int argc, _TCHAR* argv[], LPCTSTR option)
 	return bFound;
 }
 
-bool on_http_request(SvAuth::RestHandler& rRestHandler, const SvHttp::HttpRequest& req, SvHttp::HttpResponse& res)
-{
-	if (rRestHandler.onRestRequest(req, res))
-	{
-		return true;
-	}
-
-	return false;
-}
-
-
-
 void StartWebServer(DWORD argc, LPTSTR  *argv)
 {
 	SvLog::bootstrap_logging();
@@ -120,7 +108,8 @@ void StartWebServer(DWORD argc, LPTSTR  *argv)
 		SvOgw::ServerRequestHandler requestHandler(&sharedMemoryAccess, &authManager);
 		SvRpc::RPCServer rpcServer(&requestHandler);
 		settings.httpSettings.pEventHandler = &rpcServer;
-		settings.httpSettings.HttpRequestHandler = std::bind(&on_http_request, std::ref(restHandler), std::placeholders::_1, std::placeholders::_2);
+		auto httpRequestHandler = [&restHandler](const SvHttp::HttpRequest& req, SvHttp::HttpResponse& res) { return restHandler.onRestRequest(req, res); };
+		settings.httpSettings.HttpRequestHandler = httpRequestHandler;
 
 		std::unique_ptr<SvHttp::HttpServer> pServer {nullptr};
 		std::thread ServerThread([&] { IoService.run(); });

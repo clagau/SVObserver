@@ -53,6 +53,7 @@
 #include "SVOGui/BlobAnalyzer2Sheet.h"
 #pragma endregion Inlcudes
 
+	
 SVSetupDialogManager& SVSetupDialogManager::Instance()
 {
 	static SVSetupDialogManager l_Object;
@@ -60,19 +61,15 @@ SVSetupDialogManager& SVSetupDialogManager::Instance()
 	return l_Object;
 }
 
-SVSetupDialogManager::~SVSetupDialogManager()
-{
-}
-
 HRESULT SVSetupDialogManager::SetupDialog(SvPb::ClassIdEnum classId, uint32_t objectId, CWnd* pParentWnd)
 {
 	HRESULT l_Status = S_OK;
 
-	SVSetupDialogMap::iterator l_Iter = m_SetupDialogs.find(classId);
+	auto iter = std::find_if(m_SetupDialogs.begin(), m_SetupDialogs.end(), [&classId](const std::pair<SvPb::ClassIdEnum, SVSetupDialogFunction>& rEntry) {return rEntry.first == classId; });
 
-	if (l_Iter != m_SetupDialogs.end())
+	if (m_SetupDialogs.end() != iter)
 	{
-		l_Status = (l_Iter->second)(objectId, pParentWnd);
+		l_Status = (iter->second)(objectId, pParentWnd);
 	}
 	else
 	{
@@ -80,36 +77,6 @@ HRESULT SVSetupDialogManager::SetupDialog(SvPb::ClassIdEnum classId, uint32_t ob
 	}
 
 	return l_Status;
-}
-
-SVSetupDialogManager::SVSetupDialogManager()
-	: m_SetupDialogs {
-		{SvPb::LuminanceAnalyzerClassId, &SVSetupDialogManager::SVLuminanceAnalyzerClassSetupDialog},
-		{SvPb::BarCodeAnalyzerClassId, &SVSetupDialogManager::SVBarCodeAnalyzerClassSetupDialog},
-		{SvPb::BlobAnalyzerClassId, &SVSetupDialogManager::SVBlobAnalyzerClassSetupDialog},
-		{SvPb::BlobAnalyzer2ClassId, &SVSetupDialogManager::BlobAnalyzer2SetupDialog },
-		{SvPb::ColorToolClassId, &SVSetupDialogManager::SVColorToolClassSetupDialog},
-		{SvPb::DPointXResultClassId, &SVSetupDialogManager::SVResultClassSetupDialog},
-		{SvPb::DPointYResultClassId, &SVSetupDialogManager::SVResultClassSetupDialog},
-		{SvPb::HistogramAnalyzerClassId, &SVSetupDialogManager::SVHistogramAnalyzerSetupDialog},
-		{SvPb::LinearEdgeCountingLineAnalyzerClassId, &SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog},
-		{SvPb::LinearEdgePositionLineAnalyzerClassId, &SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog},
-		{SvPb::LinearMaximumBackgroundObjectLineAnalyzerClassId, &SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog},
-		{SvPb::LinearMaximumForegroundObjectLineAnalyzerClassId, &SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog},
-		{SvPb::LinearMaximumObjectLineAnalyzerClassId, &SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog},
-		{SvPb::LinearPixelCountingLineAnalyzerClassId, &SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog},
-		{SvPb::LinearMeasurementAnalyzerClassId, &SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog},
-		{SvPb::OCVAnalyzerClassId, &SVSetupDialogManager::SVOCVAnalyzerClassSetupDialog},
-		{SvPb::OCVAnalyzerResultClassId, &SVSetupDialogManager::SVResultClassSetupDialog},
-		{SvPb::PatternAnalyzerClassId, &SVSetupDialogManager::SVPatternAnalyzerClassSetupDialog},
-		{SvPb::PixelAnalyzerClassId, &SVSetupDialogManager::SVPixelAnalyzerClassSetupDialog},
-		{SvPb::DoubleResultClassId, &SVSetupDialogManager::SVResultClassSetupDialog},
-		{SvPb::LongResultClassId, &SVSetupDialogManager::SVResultClassSetupDialog},
-		{SvPb::PointXResultClassId, &SVSetupDialogManager::SVResultClassSetupDialog},
-		{SvPb::PointYResultClassId, &SVSetupDialogManager::SVResultClassSetupDialog},
-		{SvPb::StringResultClassId, &SVSetupDialogManager::SVResultClassSetupDialog},
-		{SvPb::VariantResultClassId, &SVSetupDialogManager::SVResultClassSetupDialog}}
-{
 }
 
 HRESULT SVSetupDialogManager::SVBarCodeAnalyzerClassSetupDialog(uint32_t objectId, CWnd* )

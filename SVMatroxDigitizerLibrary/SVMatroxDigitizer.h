@@ -12,8 +12,6 @@
 #pragma once
 
 #pragma region Includes
-//Moved to precompiled header: #include <memory>
-//Moved to precompiled header: #include <boost/utility.hpp>
 #pragma endregion Includes
 
 class SVMatroxDigitizerInterface;

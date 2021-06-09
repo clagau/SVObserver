@@ -77,5 +77,4 @@
 #include <vector>
 
 #include <boost\algorithm\string.hpp>
-#include <boost\function.hpp> //Used by static library
 #pragma endregion Precompiled Headers

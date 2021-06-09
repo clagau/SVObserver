@@ -30,14 +30,15 @@ ShareControl::ShareControl(const ShareControlSettings& ControlParameter )
 		m_DelayBeforeClearShare = ControlParameter.DelayBeforeClearShare;
 	}
 	m_pLastResponseData = std::make_unique<LastResponseData>();
+	std::function<bool(DWORD)> eventHandler = [this](DWORD event) { return EventHandler(event); };
 	SvSml::ShareEvents::GetInstance().SetParameter(ControlParameter);
-	SvSml::ShareEvents::GetInstance().SetCallbackFunction(boost::bind(&SvSml::ShareControl::EventHandler, boost::ref((*this)), boost::arg<1>()));
+	SvSml::ShareEvents::GetInstance().SetCallbackFunction(eventHandler);
 	SvSml::ShareEvents::GetInstance().StartWatch();
 }
 ShareControl::~ShareControl()
 {
 	SvSml::ShareEvents::GetInstance().StopWatch();
-	SvSml::ShareEvents::GetInstance().SetCallbackFunction(0);
+	SvSml::ShareEvents::GetInstance().SetCallbackFunction(nullptr);
 }
 
 bool  ShareControl::QueryListName(const SvPb::QueryListNameRequest& rRequest, SvPb::QueryListNameResponse& rResponse, SvPenv::Error& rError)

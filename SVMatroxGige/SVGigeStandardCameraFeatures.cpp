@@ -10,8 +10,6 @@
 //******************************************************************************
 #pragma region Includes
 #include "stdafx.h"
-//Moved to precompiled header: #include <comdef.h>
-//Moved to precompiled header: #include <boost/config.hpp>
 #include "SVGigeStandardCameraFeatures.h"
 #include "SVGigeCameraParametersLibrary/SVGigeEmptySetter.h"
 #include "SVGigeCameraParametersLibrary/SVGigeEmptyGetter.h"

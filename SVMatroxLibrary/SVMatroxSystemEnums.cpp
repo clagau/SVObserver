@@ -9,8 +9,6 @@
 //* .Check In Date   : $Date:   01 Oct 2013 11:15:30  $
 //******************************************************************************
 #include "stdafx.h"
-//Moved to precompiled header: #include <boost/config.hpp>
-//Moved to precompiled header: #include <mil.h>
 #include "SVMatroxSystemEnums.h"
 
 const MIL_INT cDefaultPitchByteType = M_DEFAULT_PITCH_BYTE_MULTIPLE;

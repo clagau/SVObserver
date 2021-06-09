@@ -16,8 +16,6 @@
 //Moved to precompiled header: #include <string>
 //Moved to precompiled header: #include <deque>
 //Moved to precompiled header: #include <iterator>
-//Moved to precompiled header: #include <boost/config.hpp>
-//Moved to precompiled header: #include <boost/algorithm/string.hpp>
 #include "SVGigeCameraFileReader.h"
 #include "SVUtilityLibrary/StringHelper.h"
 

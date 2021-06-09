@@ -93,7 +93,6 @@ namespace Gdiplus
 
 #include <array>
 #include <atlsafe.h>
-#include <functional>
 #include <assert.h>
 #include <cmath>
 #include <colordlg.h>
@@ -152,13 +151,11 @@ namespace Gdiplus
 #include <boost/asio.hpp>
 #include <boost/asio/io_service.hpp>
 #pragma warning(pop)
-#include <boost/bind.hpp>
 #include <boost/circular_buffer.hpp>
 #include <boost/config.hpp>
 #define BOOST_DATE_TIME_NO_LIB
 #include <boost/date_time.hpp>
 #include <boost/foreach.hpp>
-#include <boost/function.hpp>
 #include <boost/fusion/container.hpp>						//Used by static library
 #include <boost/fusion/algorithm.hpp>						//Used by static library
 #pragma warning(push)

@@ -12,7 +12,6 @@
 #pragma once
 
 #pragma region Includes
-//Moved to precompiled header: #include <functional>
 #pragma endregion Includes
 
 namespace SvUl

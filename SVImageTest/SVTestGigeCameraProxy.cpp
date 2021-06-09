@@ -13,10 +13,6 @@
 #include "stdafx.h"
 #pragma warning (push)
 #pragma warning (disable : 4996)
-//Moved to precompiled header: #include <deque>
-//Moved to precompiled header: #include <map>
-//Moved to precompiled header: #include <boost/config.hpp>
-//Moved to precompiled header: #include <boost/algorithm/string.hpp>
 #include "SVTestGigeCameraProxy.h"
 #include "Definitions/SVGigeEnums.h"
 #include "CameraLibrary/SVBoolValueDeviceParam.h"

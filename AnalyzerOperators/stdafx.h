@@ -60,10 +60,5 @@
 #include <mil.h>
 #include <MILDyn\milblob.h>
 
-#define BOOST_BIND_NO_PLACEHOLDERS
-#include <boost/bind.hpp>
-#include <boost/function.hpp>						//Used by static library
-#include <boost/fusion/container.hpp>
-#include <boost/fusion/algorithm.hpp>
 #include <boost/circular_buffer.hpp>				//Used by static library
 #pragma endregion Precompiled Headers
