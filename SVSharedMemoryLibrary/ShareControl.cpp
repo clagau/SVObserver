@@ -18,6 +18,8 @@
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVProtoBuf/ConverterHelper.h"
+#include "SVLogLibrary\Logging.h"
+#include "SVStatusLibrary\MessageTextGenerator.h"
 
 namespace SvSml
 {
@@ -140,9 +142,17 @@ bool ShareControl::GetImageFromId(const  SvPb::GetImageFromIdRequest& req, SvPb:
 	SVBitmapInfo bitmapInfo;
 	auto pData = resp.mutable_imagedata();
 	SVMatroxBuffer imageBuffer = m_MemReader.GetImageBuffer(triggerRecordId, inspectionId, imageindex);
-	//@Todo[MEC][8.00] [22.11.2017] true is for testscript for binary compare  false is faster 
 	std::string ImageBuffer;
-	SVMatroxBufferInterface::CopyBufferToFileDIB(ImageBuffer, bitmapInfo, imageBuffer);
+	DWORD res = SVMatroxBufferInterface::CopyBufferToFileDIB(ImageBuffer, bitmapInfo, imageBuffer);
+	if (S_OK != res)
+	{
+		SvDef::StringVector msgList;
+		err.set_errorcode(SvPenv::ErrorCode::internalError);
+		err.set_message(SvStl::MessageTextGenerator::Instance().getText(SvStl::Tid_ShareControl_NoImageForId, msgList).c_str());
+		SvStl::MessageManager Exception(SvStl::MsgType::Log);
+		Exception.setMessage(SVMSG_SVGateway_0_GENERAL_ERROR, SvStl::Tid_ShareControl_NoImageForId, msgList, SvStl::SourceFileParams(StdMessageParams));
+		return false;
+	}
 	pData->mutable_rgbdata()->swap(ImageBuffer);
 	pData->set_width(std::abs(bitmapInfo.GetWidth()));
 	pData->set_height(std::abs(bitmapInfo.GetHeight()));
@@ -225,11 +235,13 @@ bool ShareControl::GetProductItem(bool isReject, int triggerCount, int peviousTr
 {
 	if (!isReady(rError))
 	{
+		SV_LOG_GLOBAL(trace) << "Shared Memory not ready";
 		return false;
 	}
 
 	if (!isMonitorListActive(rListName, rError))
 	{
+		SV_LOG_GLOBAL(trace) << "MonitorList not active: " << rListName.c_str();
 		return false;
 	}
 
@@ -271,7 +283,7 @@ bool ShareControl::GetProductItem(bool isReject, int triggerCount, int peviousTr
 						SvDef::StringVector msgList;
 						msgList.emplace_back(rListName);
 						exception.setMessage(SVMSG_SVGateway_0_GENERAL_ERROR, SvStl::Tid_SM_SlotNotFound, msgList, SvStl::SourceFileParams(StdMessageParams));
-
+				
 						rError.set_errorcode(SvPenv::ErrorCode::internalError);
 						rError.set_message(exception.getMessageContainer().what());
 						return false;
@@ -310,6 +322,7 @@ bool ShareControl::GetProductItem(bool isReject, int triggerCount, int peviousTr
 			break;
 			case SvSml::SharedMemReader::fail:
 			{
+				SV_LOG_GLOBAL(trace) << "GetProductItem fails";
 				rError.set_errorcode(SvPenv::ErrorCode::notFound);
 				return false;
 			}
@@ -328,6 +341,7 @@ bool  ShareControl::SetProductResponse(bool nameInResponse, const SvSml::MLProdu
 {
 	if (nullptr == pProduct || nullptr == pProductMsg)
 	{
+		SV_LOG_GLOBAL(trace) << "Missing Pointer in SetProductResponse";
 		rError.set_errorcode(SvPenv::ErrorCode::notFound);
 		return false;
 	}

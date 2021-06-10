@@ -11,6 +11,7 @@
 #include "SharedMemReader.h"
 #include "ObjectInterfaces/ITriggerRecordControllerR.h"
 #include "SVMatroxLibrary\SVMatroxBuffer.h"
+#include "SVLogLibrary/Logging.h"
 #pragma endregion Includes
 
 //#define TRACE_TRC
@@ -89,17 +90,20 @@ SharedMemReader::retvalues  SharedMemReader::_GetProduct(const GetProdPar& par, 
 {
 	if (nullptr == pProduct)
 	{
+		SV_LOG_GLOBAL(trace) << "no Productptr";
 		return fail;
 	}
 	pProduct->ResetProduct();
 	const MonitorListCpy*  pML = m_MLContainer.GetMonitorListCpyPointer(Monitorlist);
 	if (nullptr == pML || FALSE == pML->GetIsActive())
 	{
+		SV_LOG_GLOBAL(trace) << "no MonitorlistMetadat or no active Monitorlist";
 		return fail;
 	}
 	int SlotManagerIndex = GetSlotManagerIndexForMonitorList(Monitorlist);
 	if (SlotManagerIndex < 0)
 	{
+		SV_LOG_GLOBAL(trace) << "no slotmanager for " << Monitorlist;
 		assert(false);
 		return fail;
 	}
@@ -125,6 +129,8 @@ SharedMemReader::retvalues  SharedMemReader::_GetProduct(const GetProdPar& par, 
 	}
 	if (0 > slot)
 	{
+		
+		SV_LOG_GLOBAL(trace) << "no slot  for  product" ;
 		return fail;
 	}
 	if (nullptr != pLastProduct)
@@ -146,13 +152,13 @@ SharedMemReader::retvalues  SharedMemReader::_GetProduct(const GetProdPar& par, 
 		for (auto ipPair : pML->m_InspectionIdsVector)
 		{
 			pProduct->m_triggerRecordMap[ipPair.first] = pTRC->createTriggerRecordObjectPerTriggerCount(ipPair.second, pProduct->m_trigger);
-#if defined (TRACE_THEM_ALL) || defined (TRACE_TRC)
+
 			if (nullptr == pProduct->m_triggerRecordMap[ipPair.first])
 			{
-				std::string DebugString = SvUl::Format(_T("_GetProduct: TRC is null; %d\n"), ipPair.first);
-				::OutputDebugString(DebugString.c_str());
+				SV_LOG_GLOBAL(trace)  << SvUl::Format(_T("_GetProduct: TRC is null; %d\n"), ipPair.first);
+				
 			}
-#endif
+
 		}
 	}
 	pProduct->m_status = S_OK;

@@ -247,6 +247,7 @@ void SharedMemoryAccess::SetRejectStreamPauseState(const SvPb::SetRejectStreamPa
 		google::protobuf::uint32 inspectionId = rRequest.inspectionid();
 		if (inspectionId == 0)
 		{
+			SV_LOG_GLOBAL(trace) << "pauseTrsOfInterest";
 			pTrc->pauseTrsOfInterest(rRequest.pause());
 		}
 		else
@@ -254,6 +255,7 @@ void SharedMemoryAccess::SetRejectStreamPauseState(const SvPb::SetRejectStreamPa
 			const auto inspectionPos = get_inspection_pos_for_id(pTrc->getInspections(), inspectionId);
 			if (inspectionPos < 0)
 			{
+				SV_LOG_GLOBAL(trace) << "Unknown inspection id in pauseTrsOfInterest";
 				SvPenv::Error err;
 				err.set_errorcode(SvPenv::ErrorCode::notFound);
 				err.set_message("Unknown inspection id");
@@ -1284,6 +1286,7 @@ void SharedMemoryAccess::GetMyPermissions(const SvAuth::SessionContext& rSession
 	SvPb::GetMyPermissionsResponse Response;
 	if (!m_rUserDatabase.getUserPermissions(rSessionContext.username(), *Response.mutable_permissions()))
 	{
+		SV_LOG_GLOBAL(trace) << "User not found";
 		SvPenv::Error Error;
 		Error.set_errorcode(SvPenv::ErrorCode::notFound);
 		task.error(Error);

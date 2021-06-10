@@ -45,6 +45,7 @@
 #include "Triggering/SVTriggerObject.h"
 #include "Triggering/SVTriggerClass.h"
 #include "ObjectInterfaces/ITriggerRecordControllerRW.h"
+#include "SVLogLibrary/Logging.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -2605,7 +2606,7 @@ bool SVPPQObject::SetProductIncomplete(SVProductInfoStruct& p_rProduct)
 	if (p_rProduct.IsProductActive())
 	{
 	p_rProduct.SetProductComplete();
-
+	SV_LOG_GLOBAL(trace) << "Product Incomplete: " << GetName() <<  " : " << p_rProduct.ProcessCount() <<   " : "  << m_PPQPositions.GetIndexByTriggerCount(p_rProduct.ProcessCount());
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
 		long ppqPos = m_PPQPositions.GetIndexByTriggerCount(p_rProduct.ProcessCount());
 		::OutputDebugString(SvUl::Format(_T("%s Product incomplete TRI=%d, PPQPos=%d\n"), GetName(), p_rProduct.ProcessCount(), ppqPos).c_str());

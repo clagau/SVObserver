@@ -685,6 +685,8 @@ namespace SvStl
 		{ Tid_Gateway_RequestNotAllowed , _T("Request of type %s from user %s rejected due to missing permissions.") },
 		{ Tid_Gateway_ReadValueFailed , _T("Error reading value with id %s") },
 		{ Tid_Gateway_ReadImageFailed , _T("Error reading image with id %s for inspection %s") },
-			
+		
+		{Tid_ShareControl_NoImageForId, _T("No Image for id found") },
+
 };
 } //namespace SvStl

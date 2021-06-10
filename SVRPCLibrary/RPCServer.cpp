@@ -258,6 +258,7 @@ SvSyl::SVFuture<void> RPCServer::send_envelope(int id, const SvPenv::Envelope& r
 		return SvSyl::SVFuture<void>::make_ready();
 	}
 
+	SV_LOG_GLOBAL(trace) << "Response with SVRC MessageType:" << rEnvelope.payloadtype();
 	auto resSize = rEnvelope.ByteSizeLong();
 	std::vector<char> buf;
 	buf.resize(resSize);

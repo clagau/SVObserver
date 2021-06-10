@@ -71,6 +71,9 @@
 #include <winioctl.h>
 #define BOOST_DATE_TIME_NO_LIB
 #include <boost/utility.hpp>
+#include <boost/log/attributes/mutable_constant.hpp>
+#include <boost/log/trivial.hpp>
+#include <boost/log/utility/manipulators/add_value.hpp>
 //#define  TRACE_MANAGER TRUE 
 #pragma endregion Precompiled Headers
 

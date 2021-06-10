@@ -2763,6 +2763,7 @@ bool SVInspectionProcess::Run(RunStatus& rRunStatus)
 	}
 	else
 	{
+		SV_LOG_GLOBAL(trace) << "Inspection not valid";
 		rRunStatus.SetInvalid();
 		rRunStatus.SetInspectionStarted(false);
 #if defined (TRACE_THEM_ALL) || defined (TRACE_TRC)

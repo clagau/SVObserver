@@ -26,6 +26,8 @@
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVUtilityLibrary/SVBitmapInfo.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "SVLogLibrary/Logging.h"
+#include "SVStatusLibrary/MessageManager.h"
 #pragma endregion Includes
 
 enum ImageBands
@@ -1071,13 +1073,15 @@ HRESULT SVMatroxBufferInterface::GetPositionPoint(SVPoint<long>& rPoint, const S
 HRESULT SVMatroxBufferInterface::GetBitmapInfo(LPBITMAPINFO& p_rpBitmapInfo, const SVMatroxBuffer& p_rBuffer)
 {
 	HRESULT l_Code(S_OK);
+	MIL_INT	ret = 0; 
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
 	{
+		
 		if (!p_rBuffer.empty())
 		{
-			MbufInquire(p_rBuffer.GetIdentifier(), M_BITMAPINFO, &p_rpBitmapInfo);
+			ret = MbufInquire(p_rBuffer.GetIdentifier(), M_BITMAPINFO, &p_rpBitmapInfo);
 
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 		}
@@ -1093,7 +1097,17 @@ HRESULT SVMatroxBufferInterface::GetBitmapInfo(LPBITMAPINFO& p_rpBitmapInfo, con
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(S_OK == l_Code);
+	if (ret == M_ERROR || S_OK != l_Code)
+	{
+		SvStl::MessageManager Exception(SvStl::MsgType::Log);
+		SvDef::StringVector msgList;
+		msgList.push_back( " Error in SVMatroxBufferInterface::GetBitmapInfo:");
+		Exception.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams));
+		if(S_OK == l_Code)
+		{
+			l_Code = E_FAIL;
+		}	
+	}
 	return l_Code;
 }
 

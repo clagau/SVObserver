@@ -107,6 +107,7 @@ HRESULT SVFileCamera::Start(const EventHandler& startFrameHandler, const EventHa
 	{
 		// Get File List
 		SVFileSystemScanner<Insertor>::ScanForFiles(m_fileData.directory.c_str(), _T("*.bmp"), Insertor(m_fileList, m_fileList.end()));
+		
 	}
 	else // Single File Mode
 	{
@@ -114,6 +115,11 @@ HRESULT SVFileCamera::Start(const EventHandler& startFrameHandler, const EventHa
 		info.filename = m_fileData.fileName;
 		m_fileList.insert(info);
 	}
+	std::stringstream ss;
+	ss << "SVFileCamera start filelist size for" <<  GetName().c_str()  << " : " << m_fileList.size(); 
+	SvStl::MessageManager Msg(SvStl::MsgType::Log);
+	Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, ss.str().c_str(), SvStl::SourceFileParams(StdMessageParams));
+
 
 
 	m_UsePreLoadImages = true;
