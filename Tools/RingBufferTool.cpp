@@ -169,7 +169,9 @@ bool RingBufferTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 			m_ringBuffer.clear();
 			m_ringBuffer.resize(m_ringBufferDepth);
 			m_isBufferFull = false;
-			if (false == SVSVIMStateClass::CheckState(SV_STATE_REGRESSION))
+			BOOL freezeFlag(false);
+			m_editFreezeFlag.GetValue(freezeFlag);
+			if (false == SVSVIMStateClass::CheckState(SV_STATE_REGRESSION) && FALSE == freezeFlag)
 			{
 				m_nextBufferPos = -1;
 			}
