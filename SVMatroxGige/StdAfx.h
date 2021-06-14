@@ -51,6 +51,7 @@
 #pragma region Precompiled Headers
 #include <windows.h>
 
+#include <assert.h>
 #include <atomic>			//Used by static library
 #include <bitset>			//Used by static library
 #include <ctime>			//Used by static library
@@ -64,6 +65,7 @@
 #include <numeric>
 #include <set>				//Used by static library
 #include <stack>
+#include <stdexcept>
 #include <string>			//Used by static library
 #include <tchar.h>			//Used by static library
 #include <utility>

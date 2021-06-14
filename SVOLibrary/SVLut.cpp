@@ -297,12 +297,12 @@ ULONG SVLutBand::Band() const
 	return mulBand;
 }
 
-SVLutEntry& SVLutBand::operator () (UINT nIndex)
+UINT& SVLutBand::operator () (UINT nIndex)
 {
 	return maTable[nIndex];
 }
 
-const SVLutEntry& SVLutBand::operator () (UINT nIndex) const
+const UINT& SVLutBand::operator () (UINT nIndex) const
 {
 	return maTable[nIndex];
 }
@@ -559,12 +559,12 @@ const SVLutBand& SVLut::operator () (UINT nBand) const
 	return m_Bands[nBand];
 }
 
-SVLutEntry& SVLut::operator () (UINT nBand, UINT nIndex)
+UINT& SVLut::operator () (UINT nBand, UINT nIndex)
 {
 	return m_Bands[nBand](nIndex);
 }
 
-const SVLutEntry& SVLut::operator () (UINT nBand, UINT nIndex) const
+const UINT& SVLut::operator () (UINT nBand, UINT nIndex) const
 {
 	return m_Bands[nBand](nIndex);
 }

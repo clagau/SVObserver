@@ -151,7 +151,6 @@ SVImageView::SVImageView()
 , m_sourceImageWidth( 0 )
 , m_sourceImageHeight( 0 )
 , m_sourceBitCount( 0 )
-, m_hActionIcon(nullptr)
 ,m_ViewOrImageFilename(SvStl::GlobalPath::Inst().GetSecondObserverPath(_T("Image.bmp")).c_str())
 {
 	Initialize();
@@ -186,10 +185,10 @@ SVImageView::~SVImageView()
 		DeleteObject( m_hWindowBackgroundColor );
 	}
 
-	if( (HICON) nullptr != m_hActionIcon)
+	if(nullptr != m_hActionIcon)
 	{
 		::DestroyIcon( m_hActionIcon );
-		m_hActionIcon = (HICON) nullptr;
+		m_hActionIcon = nullptr;
 	}
 }
 
@@ -1535,10 +1534,10 @@ HICON SVImageView::GetObjectCursor( SvPb::SVExtentLocationPropertyEnum p_svLocat
 	LPCTSTR l_cursorMove = IDC_SIZEALL;
 
 	//If action icon is loaded then need to clean it up before next icon
-	if( (HICON) nullptr != m_hActionIcon)
+	if(nullptr != m_hActionIcon)
 	{
 		::DestroyIcon( m_hActionIcon  );
-		m_hActionIcon = (HICON) nullptr;
+		m_hActionIcon = nullptr;
 	}
 
 	SVImageExtentClass l_svExtents;
@@ -1595,9 +1594,7 @@ HICON SVImageView::GetObjectCursor( SvPb::SVExtentLocationPropertyEnum p_svLocat
 		case SvPb::SVExtentLocationPropertyRotate:
 		{
 			l_cursorId = 0;
-			m_hActionIcon = ::LoadImage(AfxGetResourceHandle(),
-	                                   MAKEINTRESOURCE(IDI_ARROW_ROTATE),
-	                                   IMAGE_ICON, SvOr::IconSize, SvOr::IconSize, LR_DEFAULTCOLOR);
+			m_hActionIcon = static_cast<HICON> (::LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_ARROW_ROTATE), IMAGE_ICON, SvOr::IconSize, SvOr::IconSize, LR_DEFAULTCOLOR));
 			l_hCursor = m_hActionIcon;
 			break;
 		}

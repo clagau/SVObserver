@@ -557,7 +557,7 @@ HRESULT CDllTool::run()
 	double inputdouble = m_aInputValues[InputValue_DOUBLE];
 	m_aResultValues[ResultValue_DOUBLE].dblVal = inputdouble;
 
-	_bstr_t inputstring = m_aInputValues[InputValue_BSTR];
+	_bstr_t inputstring = m_aInputValues[InputValue_BSTR].bstrVal;
 	std::wstring output = L"Input: ";
 	output += (wchar_t*)inputstring;
 

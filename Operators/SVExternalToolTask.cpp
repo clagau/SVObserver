@@ -627,7 +627,7 @@ namespace SvOp
 
 		VARTYPE vartype = static_cast<VARTYPE>(m_Data.m_InputDefinitions[index].getVt());
 
-		switch (ediType)
+		switch (static_cast<SvOp::ExDllInterfaceType> (ediType))
 		{
 		case SvOp::ExDllInterfaceType::Array:
 		{

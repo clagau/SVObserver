@@ -57,24 +57,6 @@ private:
 	SVLutTransform* mpTransform;	// transform object;
 };
 
-typedef ULONG SVLutValueType;
-
-template <typename T> 
-class SVLutValue
-{
-public:
-	SVLutValue();
-	SVLutValue(const T& val);
-	operator T() const;
-	T& operator = (const T& rhs);
-
-	T value;
-	typedef T ValueType;
-};
-
-typedef SVLutValue<UINT> SVLutEntry;   // this is needed so the specialization can be called.
-                                       // there is still an automatic conversion to/from SVLutValueType. (!)
-
 class SVLutBand
 {
 public:
@@ -86,8 +68,8 @@ public:
 
 	bool operator == ( const SVLutBand& rhs ) const;
 
-	SVLutEntry& operator () (UINT nIndex);
-	const SVLutEntry& operator () (UINT nIndex) const;
+	UINT& operator () (UINT nIndex);
+	const UINT& operator () (UINT nIndex) const;
 
 	ULONG Band() const;
 	bool Create(const SVLutInfo& info, UINT uiBand);
@@ -105,7 +87,7 @@ public:
 	const SVLutInfo& Info() const;
 
 private:
-	std::vector < SVLutEntry > maTable;
+	std::vector < UINT > maTable;
 	ULONG mulBand = 0;
 	SVLutInfo mInfo;
 
@@ -138,47 +120,18 @@ public:
 
 	SVLutBand& operator () (UINT nBand);
 	const SVLutBand& operator () (UINT nBand) const;
-	SVLutEntry& operator () (UINT nBand, UINT nIndex);
-	const SVLutEntry& operator () (UINT nBand, UINT nIndex) const;
+	UINT& operator () (UINT nBand, UINT nIndex);
+	const UINT& operator () (UINT nBand, UINT nIndex) const;
 
 	int NumBands() const;
 	const SVLutInfo& Info() const;
 
 private:
-	std::vector< SVLutBand > m_Bands;
+	std::vector<SVLutBand> m_Bands;
 	SVLutInfo mInfo;
 };
 
 
-template <typename T>
-inline SVLutValue<T>::SVLutValue()
-{
-}
-
-// specialize for UINT so can init to 0
-inline SVLutValue<UINT>::SVLutValue()
-{
-	value = 0;
-}
-
-template <typename T>
-inline SVLutValue<T>::SVLutValue(const T& rVal)
-{
-	value = rVal;
-}
-
-template <typename T>
-inline SVLutValue<T>::operator T() const
-{
-	return value;
-}
-
-template <typename T>
-inline T& SVLutValue<T>::operator = (const T& rhs)
-{
-	value = rhs;
-	return value;
-}
 
 class SVLutTestCases
 {

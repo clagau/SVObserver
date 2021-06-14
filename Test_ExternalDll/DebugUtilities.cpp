@@ -22,7 +22,7 @@ int start_fdb(int mode)
 	return 0;
 }
 
-int cdecl fdb(char *msg,...)
+int cdecl fdb(const char *msg,...)
 {
 	if (debugmode==0) return 0;
 

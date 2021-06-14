@@ -17,7 +17,6 @@
 #include "SVProtoBuf/SVO-Enum.h"
 #include "SVOGui/ZoomHelper.h"
 #include "SVUtilityLibrary/SVBitmapInfo.h"
-#include "SVUtilityLibrary/SVWinHandle.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #pragma endregion Includes
 
@@ -247,8 +246,8 @@ private:
 	CPoint m_mousePoint;
 	CPoint m_lastMouseMovePoint;
 
-	HBRUSH m_hWindowBackgroundColor;
-	SVWinHandle<HICON> m_hActionIcon;
+	HBRUSH m_hWindowBackgroundColor{ nullptr };
+	HICON m_hActionIcon{ nullptr };
 
 	int m_sourceImageWidth;
 	int m_sourceImageHeight;

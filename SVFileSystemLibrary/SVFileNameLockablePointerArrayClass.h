@@ -30,14 +30,14 @@ public:
 	//This operator is the default constructor for this 
 	//class.  This method sets all attributes to their 
 	//default values.
-	SVFileNameLockablePointerArrayClass();
+	SVFileNameLockablePointerArrayClass() = default;
 
 	//This operator is the copy constructor.  This method 
 	//will take all of the attributes from the supplies 
 	//object and make a copy of them within the new object.
-	SVFileNameLockablePointerArrayClass(const SVFileNameLockablePointerArrayClass& orig);
+	SVFileNameLockablePointerArrayClass(const SVFileNameLockablePointerArrayClass& orig) = default;
 
-	virtual ~SVFileNameLockablePointerArrayClass();
+	virtual ~SVFileNameLockablePointerArrayClass() = default;
 
 	iterator begin() { return m_FileNamePtrVector.begin(); };
 	iterator end() { return m_FileNamePtrVector.end(); };

@@ -647,29 +647,12 @@ bool SVAdjustToolSizePositionDlg::IsFullSize()
 void SVAdjustToolSizePositionDlg::createIcons()
 {
 	HINSTANCE hInstance = ::AfxGetResourceHandle();
-	m_icoArrowDown = ::LoadImage(hInstance,
-		MAKEINTRESOURCE(IDI_ARROW_DOWN),
-		IMAGE_ICON, SvOr::IconSize, SvOr::IconSize, LR_DEFAULTCOLOR);
-
-	m_icoArrowUp = ::LoadImage(hInstance,
-		MAKEINTRESOURCE(IDI_ARROW_UP),
-		IMAGE_ICON, SvOr::IconSize, SvOr::IconSize, LR_DEFAULTCOLOR);
-
-	m_icoArrowLeft = ::LoadImage(hInstance,
-		MAKEINTRESOURCE(IDI_ARROW_LEFT),
-		IMAGE_ICON, SvOr::IconSize, SvOr::IconSize, LR_DEFAULTCOLOR);
-
-	m_icoArrowRight = ::LoadImage(hInstance,
-		MAKEINTRESOURCE(IDI_ARROW_RIGHT),
-		IMAGE_ICON, SvOr::IconSize, SvOr::IconSize, LR_DEFAULTCOLOR);
-
-	m_icoArrowClockwise = ::LoadImage(hInstance,
-		MAKEINTRESOURCE(IDI_ARROW_CLOCKWISE),
-		IMAGE_ICON, SvOr::IconSize, SvOr::IconSize, LR_DEFAULTCOLOR);
-
-	m_icoArrowCounterclockwise = ::LoadImage(hInstance,
-		MAKEINTRESOURCE(IDI_ARROW_COUNTERCLOCKWISE),
-		IMAGE_ICON, SvOr::IconSize, SvOr::IconSize, LR_DEFAULTCOLOR);
+	m_icoArrowDown = static_cast<HICON> (::LoadImage(hInstance, MAKEINTRESOURCE(IDI_ARROW_DOWN), IMAGE_ICON, SvOr::IconSize, SvOr::IconSize, LR_DEFAULTCOLOR));
+	m_icoArrowUp = static_cast<HICON> (::LoadImage(hInstance, MAKEINTRESOURCE(IDI_ARROW_UP), IMAGE_ICON, SvOr::IconSize, SvOr::IconSize, LR_DEFAULTCOLOR));
+	m_icoArrowLeft = static_cast<HICON> (::LoadImage(hInstance, MAKEINTRESOURCE(IDI_ARROW_LEFT), IMAGE_ICON, SvOr::IconSize, SvOr::IconSize, LR_DEFAULTCOLOR));
+	m_icoArrowRight = static_cast<HICON> (::LoadImage(hInstance, MAKEINTRESOURCE(IDI_ARROW_RIGHT), IMAGE_ICON, SvOr::IconSize, SvOr::IconSize, LR_DEFAULTCOLOR));
+	m_icoArrowClockwise = static_cast<HICON> (::LoadImage(hInstance, MAKEINTRESOURCE(IDI_ARROW_CLOCKWISE), IMAGE_ICON, SvOr::IconSize, SvOr::IconSize, LR_DEFAULTCOLOR));
+	m_icoArrowCounterclockwise = static_cast<HICON> (::LoadImage(hInstance, MAKEINTRESOURCE(IDI_ARROW_COUNTERCLOCKWISE), IMAGE_ICON, SvOr::IconSize, SvOr::IconSize, LR_DEFAULTCOLOR));
 }
 #pragma endregion Private Methods
 } //namespace SvOg

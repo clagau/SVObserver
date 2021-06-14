@@ -833,7 +833,7 @@ HRESULT SVMatroxOcrInterface::Get(const SVMatroxOcr& p_rFontId, SVOcrControlEnum
 
 	{
 		double l_dSize = 0;
-		if (p_eControlType == SVOcrString)
+		if (p_eControlType == SVOcrStringSize)
 		{
 			if (!p_rFontId.empty())
 			{

@@ -7,7 +7,7 @@ int start_fdb(int mode);
 
 #if _DEBUG
 #      define FDB(str, ...) fdb(str, __VA_ARGS__)
-       int cdecl fdb(char *msg, ...);
+       int cdecl fdb(const char *msg, ...);
 #else
 #  define FDB(str, ...)
 #endif

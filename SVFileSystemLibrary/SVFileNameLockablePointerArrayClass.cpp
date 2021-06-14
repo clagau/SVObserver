@@ -15,19 +15,6 @@
 #include "SVFileNameClass.h"
 #pragma endregion Includes
 
-SVFileNameLockablePointerArrayClass::SVFileNameLockablePointerArrayClass()
-{
-}
-
-SVFileNameLockablePointerArrayClass::SVFileNameLockablePointerArrayClass(const SVFileNameLockablePointerArrayClass& orig)
-{
-	*this = orig;
-}
-
-SVFileNameLockablePointerArrayClass::~SVFileNameLockablePointerArrayClass()
-{
-}
-
 const SVFileNameLockablePointerArrayClass SVFileNameLockablePointerArrayClass::operator=(const SVFileNameLockablePointerArrayClass& rRhs)
 {
 	m_FileNamePtrVector = rRhs.getFileNamePtrVector();

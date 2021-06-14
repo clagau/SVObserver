@@ -176,9 +176,6 @@
     <ClInclude Include="SVSafeArray.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVWinHandle.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="ZipHelper.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>

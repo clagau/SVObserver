@@ -12,7 +12,6 @@
 #pragma once
 
 #pragma region Includes
-#include "SVUtilityLibrary/SVWinHandle.h"
 #include "SVRPropertyTree/SVRPropTree.h"
 #include "SVMFCControls\SVUpDownButton.h"
 #include "DataController.h"
@@ -147,12 +146,12 @@ private:
 	const static int m_iPropertyFilter = SvPb::SVExtentPropertyPositionsInput | SvPb::SVExtentPropertyDimensionsInput;
 	const static int ID_BASE = 1000;
 
-	SVWinHandle<HICON> m_icoArrowUp;
-	SVWinHandle<HICON> m_icoArrowDown;
-	SVWinHandle<HICON> m_icoArrowLeft;
-	SVWinHandle<HICON> m_icoArrowRight;
-	SVWinHandle<HICON> m_icoArrowClockwise;
-	SVWinHandle<HICON> m_icoArrowCounterclockwise;
+	HICON m_icoArrowUp{ nullptr };
+	HICON m_icoArrowDown{ nullptr };
+	HICON m_icoArrowLeft{ nullptr };
+	HICON m_icoArrowRight{ nullptr };
+	HICON m_icoArrowClockwise{ nullptr };
+	HICON m_icoArrowCounterclockwise{ nullptr };
 	SvMc::SVUpDownButton* m_pButton = nullptr;
 	std::string m_Title;
 

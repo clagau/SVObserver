@@ -21,7 +21,10 @@ struct InputValueDefinitionStructEx;
 struct ResultValueDefinitionStructEx;
 struct ResultTableDefinitionStructEx;
 struct ResultValueDefinitionStructAd;
+#pragma warning(push)
+#pragma warning(disable : 4471)
 enum SVImageFormatEnum;
+#pragma warning(pop)
 struct ImageDefinitionStruct;
 class CDllTool;
 
