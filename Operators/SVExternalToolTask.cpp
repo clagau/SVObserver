@@ -1189,10 +1189,10 @@ namespace SvOp
 			catch (HRESULT hrException)
 			{
 				hr = hrException;// Error Initializing Tool 
-				if (S_OK == hr)
-				{
-					hr = E_FAIL; // if an exception occurred it's not a success
-				}
+				// in principle: if an exception occurred it should not be a success
+				// so one might add: if (S_OK == hr){ hr = E_FAIL;  }
+				// but this raises problems with some existing external DLLs (see SVB-603)
+				// so control flow here should remain for the time being as it was in 10.10 Beta 29
 			}
 			catch (int)
 			{
