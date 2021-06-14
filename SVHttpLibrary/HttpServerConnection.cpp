@@ -113,7 +113,8 @@ SvSyl::SVFuture<void> HttpServerConnection::sendBinaryMessage(const std::vector<
 void HttpServerConnection::http_do_read()
 {
 	m_Request = {};
-	auto readFunctor = [this](const boost::system::error_code& rError, size_t bytes) {return http_on_read(rError, bytes); };
+	auto pSharedThis = shared_from_this();
+	auto readFunctor = [pSharedThis](const boost::system::error_code& rError, size_t bytes) {return pSharedThis->http_on_read(rError, bytes); };
 	boost::beast::http::async_read(m_Socket, m_Buf, m_Request, readFunctor);
 }
 
@@ -325,7 +326,8 @@ void HttpServerConnection::http_do_write_impl(boost::beast::http::response<Body>
 {
 	http_access_log(Response);
 	bool close = Response.need_eof();
-	auto writeFunctor = [this, close](const boost::system::error_code& rError, size_t bytes) {return http_on_write(rError, bytes, close); };
+	auto pSharedThis = shared_from_this();
+	auto writeFunctor = [pSharedThis, close](const boost::system::error_code& rError, size_t bytes) {return pSharedThis->http_on_write(rError, bytes, close); };
 	boost::beast::http::async_write(m_Socket, Response, writeFunctor);
 }
 
@@ -594,8 +596,9 @@ std::string HttpServerConnection::ws_get_access_token(std::string& rProtocol)
 void HttpServerConnection::ws_do_upgrade(const std::string& rProtocol)
 {
 	m_IsUpgraded = true;
-	auto decorateFunctor = [this, rProtocol](boost::beast::websocket::response_type& m) {return ws_on_decorate(m, rProtocol); };
-	auto handshakeFunctor = [this](const boost::system::error_code& rError) {return ws_on_handshake(rError); };
+	auto pSharedThis = shared_from_this();
+	auto decorateFunctor = [pSharedThis, rProtocol](boost::beast::websocket::response_type& m) {return pSharedThis->ws_on_decorate(m, rProtocol); };
+	auto handshakeFunctor = [pSharedThis](const boost::system::error_code& rError) {return pSharedThis->ws_on_handshake(rError); };
 	m_WsSocket.set_option(boost::beast::websocket::stream_base::decorator(decorateFunctor));
 	m_WsSocket.async_accept(m_Request, handshakeFunctor);
 }
@@ -640,7 +643,8 @@ void HttpServerConnection::ws_on_handshake(const boost::system::error_code& erro
 void HttpServerConnection::ws_do_read()
 {
 	m_WsBuf.resize(m_rSettings.ReadBufferSize);
-	auto readFunctor = [this](const boost::system::error_code& rError, size_t bytes_read) {return ws_on_read(rError, bytes_read); };
+	auto pSharedThis = shared_from_this();
+	auto readFunctor = [pSharedThis](const boost::system::error_code& rError, size_t bytes_read) {return pSharedThis->ws_on_read(rError, bytes_read); };
 	boost::asio::async_read(m_WsSocket, boost::asio::buffer(m_WsBuf), boost::asio::transfer_at_least(1), readFunctor);
 }
 
@@ -714,7 +718,8 @@ void HttpServerConnection::ws_send_next_frame()
 	m_IsSendingFrame = true;
 	auto& pendingFrame = m_FrameQueue.front();
 	m_WsSocket.binary(pendingFrame.IsBinary);
-	auto frameSentFunctor = [this](const boost::system::error_code& rError, size_t bytes) {return ws_on_frame_sent(rError, bytes); };
+	auto pSharedThis = shared_from_this();
+	auto frameSentFunctor = [pSharedThis](const boost::system::error_code& rError, size_t bytes) {return pSharedThis->ws_on_frame_sent(rError, bytes); };
 	m_WsSocket.async_write(boost::asio::buffer(pendingFrame.Frame), frameSentFunctor);
 }
 
