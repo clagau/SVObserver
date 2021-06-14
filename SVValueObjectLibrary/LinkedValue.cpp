@@ -32,6 +32,22 @@ namespace SvVol
 #endif
 #pragma endregion Declarations
 
+//RAII class to set and reset flag
+struct LifeFlag
+{
+	explicit LifeFlag(bool& flag) :
+		m_rFlag(flag)
+	{
+		m_rFlag = true;
+	}
+	~LifeFlag()
+	{
+		m_rFlag = false;
+	}
+private:
+	bool& m_rFlag;
+};
+
 #pragma region Constructor
 	LinkedValue::LinkedValue() :
 		m_CircularReference(false)
@@ -58,8 +74,7 @@ namespace SvVol
 		//! When getting the value from an indirect value make sure it is not referencing this object
 		if (nullptr != m_LinkedObjectRef.getValueObject())
 		{
-
-			m_CircularReference = true;
+			LifeFlag circularCheck(m_CircularReference);
 			if (m_LinkedObjectRef.isEntireArray())
 			{
 				Result = m_LinkedObjectRef.getValue(rValue);
@@ -70,8 +85,6 @@ namespace SvVol
 				Result = m_LinkedObjectRef.getValue(skalvalue);
 				rValue = SvUl::VariantToSafeArray(skalvalue);
 			}
-
-			m_CircularReference = false;
 		}
 		else
 		{
@@ -195,7 +208,7 @@ namespace SvVol
 			//! When getting the value from an indirect value make sure it is not referencing this object
 			if (nullptr != m_LinkedObjectRef.getValueObject())
 			{
-				m_CircularReference = true;
+				LifeFlag circularCheck(m_CircularReference);
 				if (m_LinkedObjectRef.getIndex() == Index || -1 != m_LinkedObjectRef.getIndex())
 				{
 					Result = m_LinkedObjectRef.getValue(rValue);
@@ -206,7 +219,6 @@ namespace SvVol
 					refObject.SetArrayIndex(Index);
 					Result = refObject.getValue(rValue);
 				}
-				m_CircularReference = false;
 			}
 			else
 			{
@@ -259,8 +271,9 @@ namespace SvVol
 
 	void LinkedValue::setIndirectValueSaveFlag(bool shouldSaveValue)
 	{
-		if (nullptr != m_LinkedObjectRef.getValueObject())
+		if (false == m_CircularReference && nullptr != m_LinkedObjectRef.getValueObject())
 		{
+			LifeFlag circularCheck(m_CircularReference);
 			m_LinkedObjectRef.getValueObject()->setSaveValueFlag(shouldSaveValue);
 		}
 	}
@@ -268,11 +281,10 @@ namespace SvVol
 	DWORD LinkedValue::GetType() const
 	{
 		DWORD result;
-		if (!m_CircularReference && nullptr != m_LinkedObjectRef.getValueObject())
+		if (false == m_CircularReference && nullptr != m_LinkedObjectRef.getValueObject())
 		{
-			m_CircularReference = true;
+			LifeFlag circularCheck(m_CircularReference);
 			result = m_LinkedObjectRef.getValueObject()->GetType();
-			m_CircularReference = false;
 		}
 		else
 		{
@@ -292,9 +304,8 @@ namespace SvVol
 		{
 			return false;
 		}
-		m_CircularReference = true;
+		LifeFlag circularCheck(m_CircularReference);
 		bool result = pRefObject->isCircularReference();
-		m_CircularReference = false;
 		return result;
 	}
 
@@ -618,14 +629,21 @@ namespace SvVol
 
 	UINT LinkedValue::ObjectAttributesSet(int iIndex) const
 	{
+		UINT result{ 0 };
+
 		if (nullptr != m_LinkedObjectRef.getObject())
 		{
-			return m_LinkedObjectRef.getObject()->ObjectAttributesSet(iIndex);
+			if (false == m_CircularReference)
+			{
+				LifeFlag circularCheck(m_CircularReference);
+				result = m_LinkedObjectRef.getObject()->ObjectAttributesSet(iIndex);
+			}
 		}
 		else
 		{
-			return __super::ObjectAttributesSet(iIndex);
+			result = __super::ObjectAttributesSet(iIndex);
 		}
+		return result;
 	}
 
 	HRESULT LinkedValue::GetChildObject(SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index/* = 0*/) const
@@ -651,22 +669,25 @@ namespace SvVol
 
 	bool LinkedValue::isArray() const
 	{
+		bool result{ false };
+
 		if (nullptr != m_LinkedObjectRef.getObject())
 		{
-			//if Reference to an index then this linkedValue is not an array
-			if (0 <= m_LinkedObjectRef.ArrayIndex())
+			if (false == m_CircularReference)
 			{
-				return false;
-			}
-			else
-			{
-				return m_LinkedObjectRef.isArray();
+				LifeFlag circularCheck(m_CircularReference);
+				//if Reference to an index then this linkedValue is not an array
+				if (0 > m_LinkedObjectRef.ArrayIndex())
+				{
+					result = m_LinkedObjectRef.isArray();
+				}
 			}
 		}
 		else
 		{
-			return __super::isArray();
+			result = __super::isArray();
 		}
+		return result;
 	}
 
 	HRESULT LinkedValue::getValue(std::string& rValueString, int Index, const std::string& rFormatString) const
@@ -688,42 +709,48 @@ namespace SvVol
 
 	int32_t LinkedValue::getArraySize() const
 	{
+		int32_t result{ 1L };
+
 		if (nullptr != m_LinkedObjectRef.getObject())
 		{
-			//if Reference to an index then this linkedValue is not an array
-			if (0 <= m_LinkedObjectRef.ArrayIndex() || nullptr == m_LinkedObjectRef.getValueObject())
+			if (false == m_CircularReference && nullptr != m_LinkedObjectRef.getValueObject())
 			{
-				return 1;
-			}
-			else
-			{
-				return m_LinkedObjectRef.getValueObject()->getArraySize();
+				LifeFlag circularCheck(m_CircularReference);
+				//if Reference to an index then this linkedValue is not an array
+				if (0 > m_LinkedObjectRef.ArrayIndex())
+				{
+					result = m_LinkedObjectRef.getValueObject()->getArraySize();
+				}
 			}
 		}
 		else
 		{
-			return __super::getArraySize();
+			result =  __super::getArraySize();
 		}
+		return result;
 	}
 
 	int32_t LinkedValue::getResultSize() const
 	{
+		int32_t result{ 1L };
+
 		if (nullptr != m_LinkedObjectRef.getObject())
 		{
-			//if Reference to an index then this linkedValue is not an array
-			if (0 <= m_LinkedObjectRef.ArrayIndex() || nullptr == m_LinkedObjectRef.getValueObject())
+			if (false == m_CircularReference && nullptr != m_LinkedObjectRef.getValueObject())
 			{
-				return 1;
-			}
-			else
-			{
-				return m_LinkedObjectRef.getValueObject()->getResultSize();
+				LifeFlag circularCheck(m_CircularReference);
+				//if Reference to an index then this linkedValue is not an array
+				if (0 > m_LinkedObjectRef.ArrayIndex())
+				{
+					result = m_LinkedObjectRef.getValueObject()->getResultSize();
+				}
 			}
 		}
 		else
 		{
-			return __super::getResultSize();
+			result = __super::getResultSize();
 		}
+		return result;
 	}
 
 	bool LinkedValue::ConnectInput()
@@ -816,7 +843,7 @@ namespace SvVol
 		{
 			SvStl::MessageManager Exception(SvStl::MsgType::Log);
 			Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_CircularReference, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
-			Exception.Throw();			
+			Exception.Throw();
 		}
 		const SvOi::IObjectClass* pObject = m_LinkedObjectRef.getObject();
 		const LinkedValue* pRefObject = dynamic_cast<const LinkedValue*>(pObject);
@@ -825,9 +852,8 @@ namespace SvVol
 			return pObject;
 		}
 		
-		m_CircularReference = true;
+		LifeFlag circularCheck(m_CircularReference);
 		const SvOi::IObjectClass* pLastObject = pRefObject->getLinkedObject();
-		m_CircularReference = false;
 		return nullptr != pLastObject ? pLastObject : pObject;
 	}
 #pragma endregion Private Methods
