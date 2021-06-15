@@ -209,6 +209,8 @@ SVProductInfoStruct SVProductInfoStruct::copyInspectionToNewProduct(uint32_t iPI
 {
 	SVProductInfoStruct result;
 
+	///Product needs to be active so that the product indicator is set correctly
+	result.m_ProductActive = true;
 	result.Assign(*this, true);
 	auto ipIter = m_svInspectionInfos.find(iPId);
 	if (m_svInspectionInfos.end() != ipIter)
