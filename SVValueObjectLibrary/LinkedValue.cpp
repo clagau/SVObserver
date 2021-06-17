@@ -457,13 +457,14 @@ private:
 	{
 		bool Result = true;
 		bool convertOldName(false);
-		_variant_t Value;
-
-		//! Here we need the non linked value (objectId as string or constant value)
-		__super::GetValue(Value);
-
-
-		std::string objectIdAndIndexString = SvUl::createStdString(Value);
+		
+		std::string objectIdAndIndexString;
+		auto* pValueArray = valuePtr();
+		assert(nullptr != pValueArray);
+		if (nullptr != pValueArray)
+		{	//Here we look if the direct value is a valid objectId to find out if this object is linked to another value.
+			objectIdAndIndexString = SvUl::createStdString(pValueArray[0]);
+		}
 
 		SVObjectReference LinkedObjectRef(objectIdAndIndexString);
 
@@ -491,20 +492,24 @@ private:
 			std::string idString = objectIdAndIndexString.substr(0, Pos);
 			if (SvDef::InvalidObjectId != calcObjectId(idString))
 			{
-				Result = false;
-				if (nullptr != pErrorMessages)
+				//@TODO[MZA][10.10][16.06.2021] some (special child linked values) objectID are not saved. For this reason it this add this code. But this should be changed in later versions
+				std::string linkedValueName;
+				getLinkedName().GetValue(linkedValueName);
+				LinkedObjectRef = GetObjectReferenceForDottedName(linkedValueName);
+				if (nullptr == LinkedObjectRef.getObject())
 				{
-					SvDef::StringVector msgList;
+					Result = false;
+					if (nullptr != pErrorMessages)
+					{
+						SvDef::StringVector msgList;
+						std::string objectName = GetObjectNameBeforeObjectType(SvPb::SVObjectTypeEnum::SVToolObjectType);
 
-					std::string linkedValueName;
-					getLinkedName().GetValue(linkedValueName);
-					std::string objectName = GetObjectNameBeforeObjectType(SvPb::SVObjectTypeEnum::SVToolObjectType);
+						msgList.push_back(linkedValueName);
+						msgList.push_back(objectName);
 
-					msgList.push_back(linkedValueName);
-					msgList.push_back(objectName);
-
-					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ConnectInputFailedLinkedValueNotFound, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
-					pErrorMessages->push_back(Msg);
+						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ConnectInputFailedLinkedValueNotFound, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+						pErrorMessages->push_back(Msg);
+					}
 				}
 			}
 			else
@@ -595,11 +600,14 @@ private:
 			if (Result)
 			{
 				DisconnectInput();
+				m_children.clear();
 
 				VARTYPE defaultType = GetDefaultType();
+				_variant_t value;
+				__super::GetValue(value);
 				//@TODO[mec] enable array size 0 
-				//if (VT_EMPTY != defaultType && Value.vt != defaultType &&  ( ~VT_ARRAY & Value.vt) != defaultType)
-				if (VT_EMPTY != defaultType && Value.vt != defaultType)
+				//if (VT_EMPTY != defaultType && value.vt != defaultType &&  ( ~VT_ARRAY & value.vt) != defaultType)
+				if (VT_EMPTY != defaultType && value.vt != defaultType)
 				{
 					Result = false;
 					if (nullptr != pErrorMessages)
