@@ -507,7 +507,7 @@ bool SVToolClass::Run(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErr
 	m_editFreezeFlag.GetValue(freezeFlag);
 	if (TRUE == freezeFlag && isEnabled)
 	{
-		if (SVSVIMStateClass::CheckState(SV_STATE_READY|SV_STATE_EDIT) && false == SVSVIMStateClass::CheckState(SV_STATE_REGRESSION))
+		if (SVSVIMStateClass::CheckState(SV_STATE_READY|SV_STATE_EDIT) && (false == SVSVIMStateClass::CheckState(SV_STATE_REGRESSION|SV_STATE_TEST)))
 		{
 			assert(rRunStatus.m_triggerRecord);
 			if (nullptr != rRunStatus.m_triggerRecord)
