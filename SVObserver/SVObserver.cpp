@@ -4558,6 +4558,8 @@ void SVObserverApp::SetTestMode(bool p_bNoSecurity)
 		{
 			UpdateAndGetLogDataManager();
 
+			//@WARNING [gra][10.10][15.06.2021] Test and Run mode should use the same code to avoid issues that changes are made only to one part
+			SVObjectManagerClass::Instance().ClearAllIndicator();
 			if (m_pMainWnd)
 			{
 				SVPPQObject* pPPQ(nullptr);
