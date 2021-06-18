@@ -660,22 +660,21 @@ void CSVIOTESTDlg::OnStartTriggers()
 {
 	unsigned long numTriggers = m_psvTriggers->GetCount();
 
-	for(unsigned int triggerchannel = 1; triggerchannel < 5; triggerchannel++)
+	for(unsigned int triggerchannel = 0; triggerchannel < numTriggers; ++triggerchannel)
 	{
+		unsigned long triggerIndex = m_psvTriggers->GetHandle(triggerchannel);
 		StartTrigger(triggerchannel);
 		if (numTriggers >= triggerchannel)
 		{
 			auto triggerFunction = [this](const SvTrig::IntVariantMap& rTriggerData) {return triggerCallback(rTriggerData);  };
-			m_psvTriggers->Register( triggerchannel, triggerFunction);
+			m_psvTriggers->Register(triggerIndex, triggerFunction);
 		}
 	}
 
-	for(unsigned triggerchannel = 1; triggerchannel < 5; triggerchannel++)
+	for (unsigned int triggerchannel = 0; triggerchannel < numTriggers; ++triggerchannel)
 	{
-		if (numTriggers >= triggerchannel)
-		{
-			m_psvTriggers->Start( triggerchannel );
-		}
+		unsigned long triggerIndex = m_psvTriggers->GetHandle(triggerchannel);
+		m_psvTriggers->Start( triggerIndex );
 	}
 
 	m_bInterruptEnabled = true;
@@ -692,45 +691,18 @@ void CSVIOTESTDlg::OnStopTriggers()
 {
 	unsigned long numTriggers = m_psvTriggers->GetCount();
 
-	if (numTriggers > 3)
+	for (unsigned int triggerchannel = 0; triggerchannel < numTriggers; ++triggerchannel)
 	{
-		m_psvTriggers->Stop( 4 );
+		unsigned long triggerIndex = m_psvTriggers->GetHandle(triggerchannel);
+		m_psvTriggers->Stop(triggerIndex);
 	}
 
-	if (numTriggers > 2)
+	for (unsigned int triggerchannel = 0; triggerchannel < numTriggers; ++triggerchannel)
 	{
-		m_psvTriggers->Stop( 3 );
+		unsigned long triggerIndex = m_psvTriggers->GetHandle(triggerchannel);
+		m_psvTriggers->Unregister(triggerIndex);
 	}
 
-	if (numTriggers > 1)
-	{
-		m_psvTriggers->Stop( 2 );
-	}
-
-	if (numTriggers > 0)
-	{
-		m_psvTriggers->Stop( 1 );
-	}
-
-	if (numTriggers > 3)
-	{
-		m_psvTriggers->Unregister(4);
-	}
-
-	if (numTriggers > 2)
-	{
-		m_psvTriggers->Unregister(3);
-	}
-
-	if (numTriggers > 1)
-	{
-		m_psvTriggers->Unregister(2);
-	}
-
-	if (numTriggers > 1)
-	{
-		m_psvTriggers->Unregister(1);
-	}
 	m_bInterruptEnabled = false;
 	_variant_t moduleReady = m_bInterruptEnabled;
 	SVIOConfigurationInterfaceClass::Instance().SetParameterValue(SVModuleReady, &moduleReady.GetVARIANT());
