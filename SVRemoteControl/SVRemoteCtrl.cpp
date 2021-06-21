@@ -110,11 +110,12 @@ SVRemoteCtrl::SVRemoteCtrl()
 	m_servername(L""),
 	m_VPName(L""),
 	m_imageScale(100),
-m_dispatcher(new SVControlCommands(boost::bind(&SVRemoteCtrl::NotifyClient, this, boost::arg<1>(), boost::arg<2>())))
+	m_dispatcher{new SVControlCommands([this](_variant_t& rData, SVNotificationTypesEnum type) { return NotifyClient(rData, type); })}
 {
 	m_bWindowOnly = TRUE;
 
-	m_AsyncThread.Create(boost::bind(&SVRemoteCtrl::AsyncThreadFunc, this, boost::arg<1>()), _T("SVRemoteCtrl"));
+	auto threadProcess = [this](bool& rProcessed) {AsyncThreadFunc(rProcessed); };
+	m_AsyncThread.Create(threadProcess, _T("SVRemoteCtrl"));
 }
 
 LRESULT SVRemoteCtrl::OnSetFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -939,9 +940,9 @@ STDMETHODIMP SVRemoteCtrl::put_ImageScale(LONG newVal)
 	return S_OK;
 }
 
-void SVRemoteCtrl::NotifyClient(_variant_t& p_Data, SVNotificationTypesEnum p_Type)
+void SVRemoteCtrl::NotifyClient(_variant_t& rData, SVNotificationTypesEnum type)
 {
-	Fire_OnNotify(p_Data, p_Type);
+	Fire_OnNotify(rData, type);
 }
 
 STDMETHODIMP SVRemoteCtrl::RegisterMonitorList(BSTR listName, BSTR ppqName, int rejectDepth, VARIANT productItemList,

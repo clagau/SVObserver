@@ -72,23 +72,19 @@
 #include <ws2tcpip.h>
 #include <list>
 
-#define BOOST_BIND_NO_PLACEHOLDERS
-#include <boost/array.hpp>
 #include <boost/asio.hpp>
 #include <boost/asio/deadline_timer.hpp>
 #include <boost/asio/io_service.hpp>
-#include <boost/bind/bind.hpp>
-#include <boost/chrono/duration.hpp>
-#include <boost/config.hpp>
-#include <boost/function.hpp>
+#include <boost/date_time/posix_time/posix_time_types.hpp>
 #include <boost/log/attributes/mutable_constant.hpp>
 #include <boost/log/trivial.hpp>
 #include <boost/log/utility/manipulators/add_value.hpp>
 #include <boost/shared_array.hpp>
-#include <boost/scoped_array.hpp>
-#include <boost/property_tree/json_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
+#include <boost/property_tree/ini_parser.hpp>
 #include <boost/property_tree/xml_parser.hpp>
+
 #pragma endregion Precompiled Headers
 
 ///AVOIDING warnings in Protobuf generated header

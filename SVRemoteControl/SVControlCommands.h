@@ -27,7 +27,7 @@
 
 
 
-typedef boost::function< void(_variant_t&, SVNotificationTypesEnum) > NotifyFunctor;
+typedef std::function< void(_variant_t&, SVNotificationTypesEnum) > NotifyFunctor;
 
 class SVControlCommands
 {

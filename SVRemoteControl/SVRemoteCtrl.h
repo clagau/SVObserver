@@ -195,14 +195,14 @@ public:
 	
 
 protected:
-	typedef boost::function<void ( bool& )> SVAsyncThreadFunc;
+	typedef std::function<void ( bool& )> SVAsyncThreadFunc;
 
 	CContainedWindow m_ctlStatic;
 	DWORD m_cookie;
 	svr::dev m_device;
 	_bstr_t m_servername;
 	_bstr_t m_VPName;
-	SVEventThread< SVAsyncThreadFunc > m_AsyncThread;
+	SVEventThread<SVAsyncThreadFunc> m_AsyncThread;
 	SVAsyncCommandHelper m_AsyncCommandHelper;
 
 	void AsyncThreadFunc( bool& p_rWaitForEvent );
@@ -210,7 +210,7 @@ protected:
 	HRESULT SetControlServer( SVCommandStatus& p_rStatus );
 
 private:
-	void NotifyClient( _variant_t& p_Data, SVNotificationTypesEnum p_Type );
+	void NotifyClient( _variant_t& rData, SVNotificationTypesEnum type );
 
 	CComBSTR c_success;
 	CComBSTR c_svcontrol;
