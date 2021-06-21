@@ -110,7 +110,7 @@ namespace SvXml
 	void  SaxParser::CreateSaxReader()
 	{
 		HRESULT hr = CoCreateInstance(
-			__uuidof(SAXXMLReader60), 
+			__uuidof(SAXXMLReader30), 
 			nullptr, 
 			CLSCTX_ALL, 
 			__uuidof(ISAXXMLReader), 
@@ -157,7 +157,7 @@ namespace SvXml
 		}
 
 		HRESULT hr = CoCreateInstance(
-			__uuidof(XMLSchemaCache60), 
+			__uuidof(XMLSchemaCache), 
 			nullptr, 
 			CLSCTX_ALL, 
 			__uuidof(IXMLDOMSchemaCollection2), 

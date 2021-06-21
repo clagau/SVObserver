@@ -6,7 +6,7 @@
 /// The class holds the SaxParser and Implements ISaxElementHandler (the callback function for the sax parser)
 /// the class holds 3 trees RevisonTree, EncryptionTree, and m_DataTree for the data and a Propertiemap 
 /// During Parsing the Propertie map m_Properties  is build. When all properties found parsing is stoped.
-///naming convention from msxml6.h is used 
+///naming convention from msxml2.h is used 
 //******************************************************************************
 #pragma once
 
@@ -38,7 +38,7 @@ namespace SvXml
 	/// The class holds the SaxParser and Implements ISaxElementHandler (the callback function for the sax parser)
 	/// the class holds 3 trees RevisonTree, EncryptionTree, and m_DataTree for the data and a Propertiemap 
 	/// During Parsing the Propertie map m_Properties  is build. When all properties found parsing is stoped.
-	///naming convention from msxml6.h is used 
+	///naming convention from msxml2.h is used 
 
 	class SaxExtractPropertiesHandler  : public SvXml::ISaxElementHandler
 	{

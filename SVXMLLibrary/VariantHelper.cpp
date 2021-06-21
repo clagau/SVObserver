@@ -221,6 +221,11 @@ namespace SvXml
 				{
 					pVar->fltVal = static_cast <float> (wcstod (pNumericVal, nullptr));
 				}
+				//This is when the float value is evaluated to infinity and saved into the configuration
+				else if (wcscmp(pVal, L"inf") == 0)
+				{
+					pVar->fltVal = std::numeric_limits<float>::infinity();
+				}
 				else
 				{
 					bInvalidArgument = true;
@@ -238,6 +243,11 @@ namespace SvXml
 				else if ((iswdigit (*pNumericVal)) || ((*pNumericVal == '-') && iswdigit (*(pNumericVal + 1))))
 				{
 					pVar->dblVal = static_cast <double> (wcstod (pNumericVal, nullptr));
+				}
+				//This is when the double value is evaluated to infinity and saved into the configuration
+				else if (wcscmp(pVal, L"inf") == 0)
+				{
+					pVar->dblVal = std::numeric_limits<double>::infinity();
 				}
 				else
 				{

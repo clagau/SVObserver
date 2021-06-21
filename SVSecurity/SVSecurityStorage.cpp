@@ -11,7 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include <msxml6.h>
+#include <msxml2.h>
 #include "SVSecurityStorage.h"
 #include "SVMessage/SVMessage.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"

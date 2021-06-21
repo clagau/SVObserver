@@ -28,7 +28,7 @@ namespace SvXml
 	/// /brief Implement ISaxElementHandler 
 	/// The class holds the SaxParser and Implements ISaxElementHandler (the callback function for the sax parser)
 	/// the class holds 3 trees RevisonTree, EncryptionTree, and m_pData_Tree for the data
-	///naming convention from msxml6.h is used 
+	///naming convention from msxml2.h is used 
 	template<typename TreeType>
 	class SaxXMLHandler : public SvXml::ISaxElementHandler
 	{

@@ -12,7 +12,7 @@
 #pragma region Includes
 //Moved to precompiled header: #include <string>
 //Moved to precompiled header: #include <comutil.h>
-#include <msxml6.h>
+#include <msxml2.h>
 #include "SaxContentHandler.h"
 #include "SaxErrorHandler.h"
 #pragma endregion Includes

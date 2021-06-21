@@ -6,7 +6,7 @@
 //******************************************************************************
 #pragma once
 #pragma region Includes
-#include <msxml6.h>
+#include <msxml2.h>
 #pragma endregion Includes
 
 
@@ -17,7 +17,7 @@ class ISaxElementHandler;
 /// \brief SaxContentHandler implements ISAXContentHandler
 /// Receive content events during parsing and delegate
 // them to the attached element handler.
-///naming convention from msxml6.h is used 
+///naming convention from msxml2.h is used 
 class SaxContentHandler : public ISAXContentHandler
 {
 #pragma region Constructor

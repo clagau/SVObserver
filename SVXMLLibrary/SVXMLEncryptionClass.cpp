@@ -10,7 +10,7 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include <msxml6.h>
+#include <msxml2.h>
 #include "SVXMLEncryptionClass.h"
 #include "SVMessage\SVMessage.h"
 #include "SVUtilityLibrary/SVUtilityGlobals.h"

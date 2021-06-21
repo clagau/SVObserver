@@ -10,14 +10,14 @@
 #pragma once
 
 #pragma region Includes
-#include <msxml6.h>
+#include <msxml2.h>
 #pragma endregion Includes
 
 namespace  SvXml
 {
 	/// /brief wstring Interface to handle XML events  
 	/// Get the events from SaxContentHandler and SaxErrorHandler
-	///naming convention from msxml6.h is used 
+	///naming convention from msxml2.h is used 
 	class ISaxElementHandler
 	{
 	public:
