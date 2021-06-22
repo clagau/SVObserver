@@ -26,7 +26,6 @@
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVUtilityLibrary/SVBitmapInfo.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "SVLogLibrary/Logging.h"
 #include "SVStatusLibrary/MessageManager.h"
 #pragma endregion Includes
 
