@@ -16,13 +16,14 @@
 #include "SVObserver/SVIPDoc.h"
 #include "SVObserver/SVToolAdjustmentDialogSheetClass.h"
 #include "Definitions/SVUserMessage.h"
-#include "SVMFCControls\SVFileDialog.h"
-#include "SVObjectLibrary\SVObjectManagerClass.h"
-#include "SVStatusLibrary\GlobalPath.h"
-#include "SVStatusLibrary\MessageContainer.h"
-#include "SVUtilityLibrary/StringHelper.h"
+#include "SVMFCControls/SVFileDialog.h"
+#include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVStatusLibrary/GlobalPath.h"
+#include "SVStatusLibrary/MessageContainer.h"
 #include "SVStatusLibrary/MessageTextGenerator.h"
+#include "SVSystemLibrary/FileVersion.h"
 #include "SVUtilityLibrary/SafeArrayHelper.h"
+#include "SVUtilityLibrary/StringHelper.h"
 
 //#include <Psapi.h>
 #pragma endregion Includes
@@ -289,18 +290,24 @@ void SVTADlgExternalSelectDllPage::OnBrowse()
 			InitializeDll(false, false);
 			m_valueController.Set<CString>(SvPb::EmbeddedIdEnum::DllFileNameEId, m_currentExternalDllFilepath);
 				
-			bool isUsed =  SvUl::ModuleInfo::isProcessModuleName(GetCurrentProcessId(), DLLname);
+			bool isVersionEqual = SvSyl::FileVersion::isEqual(runpath.c_str(), dllPath.c_str());
 
-			if (isUsed)
+			if (false == isVersionEqual)
 			{
-				std::string Status = SvStl::MessageTextGenerator::Instance().getText(SvStl::Tid_CouldNotCopyDll);
-				m_strStatus = Status.c_str();
-				m_strStatus += cCRLF;
-				m_preserveStatus = true;
+				//check if previous version is still used
+				bool isUsed =  SvUl::ModuleInfo::isProcessModuleName(GetCurrentProcessId(), DLLname);
 
-				m_currentExternalDllFilepath = _T("");
-				UpdateData(FALSE);
-				m_valueController.Set<CString>(SvPb::EmbeddedIdEnum::DllFileNameEId, m_currentExternalDllFilepath);
+				if (isUsed)
+				{
+					std::string Status = SvStl::MessageTextGenerator::Instance().getText(SvStl::Tid_CouldNotCopyDll);
+					m_strStatus = Status.c_str();
+					m_strStatus += cCRLF;
+					m_preserveStatus = true;
+
+					m_currentExternalDllFilepath = _T("");
+					UpdateData(FALSE);
+					m_valueController.Set<CString>(SvPb::EmbeddedIdEnum::DllFileNameEId, m_currentExternalDllFilepath);
+				}
 			}
 		}
 		m_externalToolTaskController.clearData();
