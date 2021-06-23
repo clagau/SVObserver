@@ -135,6 +135,13 @@ void CDllTool::getInputValuesDefinitionEx(std::array<InputValueDefinitionStructE
 	inputDefEx[InputValue_LONG_TABLE_SELECT].vDefaultValue.lVal = 0;
 	inputDefEx[InputValue_LONG_TABLE_SELECT].vDefaultValue.vt = VT_I4;
 
+	inputDefEx[InpitValue_LONG_DELAY_MS].vt = VT_I4;
+	inputDefEx[InpitValue_LONG_DELAY_MS].Name = "Delay";
+	inputDefEx[InpitValue_LONG_DELAY_MS].HelpText = "Delay(ms)";
+	inputDefEx[InpitValue_LONG_DELAY_MS].Group = "DelayGroup";
+	inputDefEx[InpitValue_LONG_DELAY_MS].vDefaultValue.lVal = 0;
+	inputDefEx[InpitValue_LONG_DELAY_MS].vDefaultValue.vt = VT_I4;
+
 }
 
 
@@ -549,9 +556,14 @@ HRESULT CDllTool::run()
 	///copy input to output
 	HRESULT hr = S_OK;
 
+	long delay = m_aInputValues[InpitValue_LONG_DELAY_MS];
+	delay = delay > 3000 ? 3000 : delay;
+	if (delay > 0)
+	{
+		::Sleep(delay);
+	}
+
 	long inputLong = m_aInputValues[InputValue_LONG];
-//	if(inputLong > 0 && inputLong < 2000)
-//		::Sleep(inputLong);
 	m_aResultValues[ResultValue_LONG] = inputLong;
 
 	double inputdouble = m_aInputValues[InputValue_DOUBLE];
@@ -561,14 +573,10 @@ HRESULT CDllTool::run()
 	std::wstring output = L"Input: ";
 	output += (wchar_t*)inputstring;
 
-
-
-
 	m_aResultValues[ResultValue_BSTR] = _bstr_t(output.c_str());
 	long Select = m_aInputValues[InputValue_LONG_TABLE_SELECT];
 
 	m_aResultValues[ResultValue_DOUBLE_ARRAY].Clear();
-
 
 	ATLASSERT(m_aInputValues[InputValue_DOUBLE_ARRAY].vt == (VT_ARRAY | VT_R8));
 	if (m_aInputValues[InputValue_DOUBLE_ARRAY].vt == (VT_ARRAY | VT_R8))
@@ -578,7 +586,7 @@ HRESULT CDllTool::run()
 		CComSafeArray<double> saInput((m_aInputValues[InputValue_DOUBLE_ARRAY].parray));
 
 		inputarrayLen = saInput.GetCount();
-		
+	
 
 		//copy input to output 
 		CComSafeArray<double> saOutput(inputarrayLen);
@@ -603,7 +611,7 @@ HRESULT CDllTool::run()
 		CComSafeArray<int> saInput((m_aInputValues[InputValue_INT_ARRAY].parray));
 
 		inputarrayLen = saInput.GetCount();
-		
+	
 
 		//copy input to output 
 		CComSafeArray<int> saOutput(inputarrayLen);

@@ -240,8 +240,9 @@ SvOi::ITRCImagePtr ImageBufferController::createNewImageHandle(int structId, int
 	const auto& rList = m_rDataController.getImageStructList().list();
 	if (0 <= structId &&  rList.size() > structId)
 	{
+		int Buffernumber = rList[structId].numberofbuffers();
 		int offset = rList[structId].offset();
-		for (int i = 0; i < rList[structId].numberofbuffers(); i++)
+		for (int i = 0; i < Buffernumber; i++)
 		{
 			int imagePosTmp = i + offset;
 			long* pValue = m_rDataController.getImageRefCountPtr(imagePosTmp);
@@ -257,7 +258,7 @@ SvOi::ITRCImagePtr ImageBufferController::createNewImageHandle(int structId, int
 		}
 
 		SvDef::StringVector msgList;
-		msgList.push_back(SvUl::Format(_T("%d"), structId));
+		msgList.push_back(std::format("{}, ({}) ", structId, Buffernumber));
 		SvStl::MessageManager e(SvStl::MsgType::Log);
 		e.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_NoBufferFree, msgList, SvStl::SourceFileParams(StdMessageParams));
 	}

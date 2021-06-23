@@ -53,9 +53,9 @@ void SVInspectionInfoStruct::clearTRCs()
 	m_triggerRecordComplete = nullptr;
 }
 
-bool SVInspectionInfoStruct::setNextAvailableTR( )
+bool SVInspectionInfoStruct::setNextAvailableTR()
 {
-	if( nullptr != m_pInspection )
+	if (nullptr != m_pInspection)
 	{
 		setNextTriggerRecord();
 	}
@@ -100,43 +100,41 @@ void SVInspectionInfoStruct::setTriggerRecordIncompleted()
 }
 
 SVProductInfoStruct::SVProductInfoStruct()
-: m_ProductActive( 0 )
-, m_monitorListSMSlot(-1)
-, m_lastPPQPosition {0L}
+	: m_ProductActive(0)
+	, m_monitorListSMSlot(-1)
+	, m_lastPPQPosition{ 0L }
 {
 	Reset();
 }
 
-SVProductInfoStruct::SVProductInfoStruct( const SVProductInfoStruct &rRhs )
-: m_ProductState( rRhs.m_ProductState )
-, m_triggered( rRhs.m_triggered )
-, m_dataComplete( rRhs.m_dataComplete )
-, m_triggerInfo( rRhs.m_triggerInfo )
-, m_outputsInfo( rRhs.m_outputsInfo )
-, m_pPPQ( rRhs.m_pPPQ )
-, m_svCameraInfos( rRhs.m_svCameraInfos )
-, m_svInspectionInfos( rRhs.m_svInspectionInfos )
-, m_ProductActive( 0 )
-, m_monitorListSMSlot(rRhs.m_monitorListSMSlot)
-, m_lastPPQPosition{rRhs.m_lastPPQPosition}
+SVProductInfoStruct::SVProductInfoStruct(const SVProductInfoStruct& rRhs)
+	: m_triggered(rRhs.m_triggered)
+	, m_dataComplete(rRhs.m_dataComplete)
+	, m_triggerInfo(rRhs.m_triggerInfo)
+	, m_outputsInfo(rRhs.m_outputsInfo)
+	, m_pPPQ(rRhs.m_pPPQ)
+	, m_svCameraInfos(rRhs.m_svCameraInfos)
+	, m_svInspectionInfos(rRhs.m_svInspectionInfos)
+	, m_ProductActive(0)
+	, m_monitorListSMSlot(rRhs.m_monitorListSMSlot)
+	, m_lastPPQPosition{ rRhs.m_lastPPQPosition }
+	, m_CantProcessReason{ rRhs.m_CantProcessReason }
 {
-	for(int i=0; i < SvDef::cMaximumCameras; ++i)
+	for (int i = 0; i < SvDef::cMaximumCameras; ++i)
 	{
 		m_hasCameraImage[i] = rRhs.m_hasCameraImage[i];
 	}
-	if( rRhs.IsProductActive() )
+	if (rRhs.IsProductActive())
 	{
 		SetProductActive();
 	}
 }
 
-SVProductInfoStruct &SVProductInfoStruct::operator=( const SVProductInfoStruct &rRhs )
+SVProductInfoStruct& SVProductInfoStruct::operator=(const SVProductInfoStruct& rRhs)
 {
-	if( this != &rRhs )
+	if (this != &rRhs)
 	{
 		SetProductComplete();
-
-		m_ProductState = rRhs.m_ProductState;
 		m_triggered = rRhs.m_triggered;
 
 		for (int i = 0; i < SvDef::cMaximumCameras; ++i)
@@ -154,7 +152,7 @@ SVProductInfoStruct &SVProductInfoStruct::operator=( const SVProductInfoStruct &
 		m_svInspectionInfos = rRhs.m_svInspectionInfos;
 		m_monitorListSMSlot = rRhs.m_monitorListSMSlot;
 
-		if( rRhs.IsProductActive() )
+		if (rRhs.IsProductActive())
 		{
 			SetProductActive();
 		}
@@ -163,15 +161,13 @@ SVProductInfoStruct &SVProductInfoStruct::operator=( const SVProductInfoStruct &
 	return *this;
 }
 
-HRESULT SVProductInfoStruct::Assign( const SVProductInfoStruct &rData, bool shouldSkipIPInfo)
+HRESULT SVProductInfoStruct::Assign(const SVProductInfoStruct& rData, bool shouldSkipIPInfo)
 {
 	HRESULT l_Status = S_OK;
 
-	if( this != &rData )
+	if (this != &rData)
 	{
 		SetProductComplete();
-
-		m_ProductState = rData.m_ProductState;
 		m_triggered = rData.m_triggered;
 
 		for (int i = 0; i < SvDef::cMaximumCameras; ++i)
@@ -180,7 +176,6 @@ HRESULT SVProductInfoStruct::Assign( const SVProductInfoStruct &rData, bool shou
 		}
 		m_dataComplete = rData.m_dataComplete;
 		m_lastPPQPosition = rData.m_lastPPQPosition;
-		
 		m_triggerInfo = rData.m_triggerInfo;
 		m_outputsInfo = rData.m_outputsInfo;
 		m_pPPQ = rData.m_pPPQ;
@@ -196,7 +191,7 @@ HRESULT SVProductInfoStruct::Assign( const SVProductInfoStruct &rData, bool shou
 			m_svInspectionInfos = rData.m_svInspectionInfos;
 		}
 
-		if( rData.IsProductActive() )
+		if (rData.IsProductActive())
 		{
 			SetProductActive();
 		}
@@ -231,23 +226,23 @@ void SVProductInfoStruct::InitProductInfo()
 {
 	SetProductComplete();
 
-	m_ProductState.clear();
 	for (int i = 0; i < SvDef::cMaximumCameras; ++i)
 	{
 		m_hasCameraImage[i] = false;
 	}
-	m_triggered			= false;
-	m_dataComplete		= false;
+	m_CantProcessReason = CantProcessEnum::NoReason;
+	m_triggered = false;
+	m_dataComplete = false;
 	m_monitorListSMSlot = -1;
 	m_outputsInfo = std::move(SVOutputsInfoStruct{});
 	m_triggerInfo = std::move(SvTrig::SVTriggerInfoStruct{});
-	
-	for(auto& rCamera : m_svCameraInfos)
+
+	for (auto& rCamera : m_svCameraInfos)
 	{
 		rCamera.second.ClearInfo();
 	}
 
-	for(auto& rInspection : m_svInspectionInfos)
+	for (auto& rInspection : m_svInspectionInfos)
 	{
 		rInspection.second.Init();
 	}
@@ -257,24 +252,23 @@ void SVProductInfoStruct::Reset()
 {
 	SetProductComplete();
 
-	m_ProductState.clear();
 	for (int i = 0; i < SvDef::cMaximumCameras; ++i)
 	{
 		m_hasCameraImage[i] = false;
 	}
-	m_triggered			= false;
-	m_dataComplete		= false;
+	m_triggered = false;
+	m_dataComplete = false;
 	m_monitorListSMSlot = -1;
-	m_outputsInfo = std::move(SVOutputsInfoStruct {});
+	m_outputsInfo = std::move(SVOutputsInfoStruct{});
 	m_pPPQ = nullptr;
-	m_triggerInfo = std::move(SvTrig::SVTriggerInfoStruct {});
-	
-	for(auto& rCamera : m_svCameraInfos)
+	m_triggerInfo = std::move(SvTrig::SVTriggerInfoStruct{});
+
+	for (auto& rCamera : m_svCameraInfos)
 	{
 		rCamera.second = std::move(SvIe::SVCameraInfoStruct{});
 	}
 
-	for(auto& rInspection : m_svInspectionInfos)
+	for (auto& rInspection : m_svInspectionInfos)
 	{
 		rInspection.second = std::move(SVInspectionInfoStruct{});
 	}
@@ -282,12 +276,12 @@ void SVProductInfoStruct::Reset()
 
 void SVProductInfoStruct::ClearIndexes()
 {
-	for(auto& rCamera : m_svCameraInfos)
+	for (auto& rCamera : m_svCameraInfos)
 	{
 		rCamera.second.ClearCameraInfo();
 	}
 
-	for(auto& rInspection : m_svInspectionInfos)
+	for (auto& rInspection : m_svInspectionInfos)
 	{
 		rInspection.second.ClearIndexes();
 	}
@@ -301,12 +295,12 @@ void SVProductInfoStruct::clearTRCs()
 	}
 }
 
-bool SVProductInfoStruct::setNextAvailableCameraImage( )
+bool SVProductInfoStruct::setNextAvailableCameraImage()
 {
-	for( auto& rCameraData : m_svCameraInfos )
+	for (auto& rCameraData : m_svCameraInfos)
 	{
 		SvOi::ITRCImagePtr pImage = rCameraData.second.GetNextImage();
-		if( nullptr == pImage )
+		if (nullptr == pImage)
 		{
 			return false;
 		}
@@ -315,32 +309,32 @@ bool SVProductInfoStruct::setNextAvailableCameraImage( )
 	return true;
 }
 
-void SVProductInfoStruct::DumpIndexInfo( std::string& rData )
+void SVProductInfoStruct::DumpIndexInfo(std::string& rData)
 {
-	rData = SvUl::Format( _T( "TriggerCount=%ld-DataComplete=%s" ),	 ProcessCount(),  m_dataComplete ? _T( "T" ) : _T( "F" ));
+	rData = SvUl::Format(_T("TriggerCount=%ld-DataComplete=%s"), ProcessCount(), m_dataComplete ? _T("T") : _T("F"));
 
-	for(const auto& rCamera : m_svCameraInfos)
+	for (const auto& rCamera : m_svCameraInfos)
 	{
-		if(SvDef::InvalidObjectId != rCamera.first)
+		if (SvDef::InvalidObjectId != rCamera.first)
 		{
-			std::string CameraName( _T( "(null)" ) );
+			std::string CameraName(_T("(null)"));
 
-			SvOi::IObjectClass* pCamera =  SvOi::getObject( rCamera.first );
-			if( nullptr != pCamera )
+			SvOi::IObjectClass* pCamera = SvOi::getObject(rCamera.first);
+			if (nullptr != pCamera)
 			{
 				CameraName = pCamera->GetName();
 			}
 
 			SvOi::ITRCImagePtr pImage = rCamera.second.getImage();
-			rData += SvUl::Format( _T( " : %s-Index=%ld" ), CameraName.c_str(), (nullptr != pImage) ? pImage->getBufferPos() : -1);
+			rData += SvUl::Format(_T(" : %s-Index=%ld"), CameraName.c_str(), (nullptr != pImage) ? pImage->getBufferPos() : -1);
 		}
 	}
 
-	for(const auto& rInspection : m_svInspectionInfos)
+	for (const auto& rInspection : m_svInspectionInfos)
 	{
-		std::string l_Temp = SvUl::Format( _T( " : %s-State=0x%x" ), 
-			( nullptr != rInspection.second.m_pInspection ) ? rInspection.second.m_pInspection->GetName() : _T( "(null)" ), 
-			rInspection.second.m_InspectedState );
+		std::string l_Temp = SvUl::Format(_T(" : %s-State=0x%x"),
+			(nullptr != rInspection.second.m_pInspection) ? rInspection.second.m_pInspection->GetName() : _T("(null)"),
+			rInspection.second.m_InspectedState);
 
 		rData += l_Temp;
 	}
@@ -359,13 +353,13 @@ void SVProductInfoStruct::SetProductActive()
 
 void SVProductInfoStruct::SetProductComplete() const
 {
-	if(m_ProductActive)
+	if (m_ProductActive)
 	{
 		SVObjectManagerClass::Instance().DecrementProductIndicator();
 		m_ProductActive = false;
 	}
 
-	for(auto& rIpInfoPair: m_svInspectionInfos)
+	for (auto& rIpInfoPair : m_svInspectionInfos)
 	{
 		rIpInfoPair.second.m_CanProcess = false;
 		rIpInfoPair.second.m_InProcess = false;
@@ -392,17 +386,17 @@ void SVProductInfoStruct::setInspectionTriggerRecordComplete(uint32_t iPId)
 }
 
 SVInspectionNameUpdate::SVInspectionNameUpdate()
-: m_InspectionName()
+	: m_InspectionName()
 {
 }
 
-SVInspectionNameUpdate::SVInspectionNameUpdate( const std::string& p_rName )
-: m_InspectionName( p_rName )
+SVInspectionNameUpdate::SVInspectionNameUpdate(const std::string& p_rName)
+	: m_InspectionName(p_rName)
 {
 }
 
-SVInspectionNameUpdate::SVInspectionNameUpdate( const SVInspectionNameUpdate& p_rObject )
-: m_InspectionName( p_rObject.m_InspectionName )
+SVInspectionNameUpdate::SVInspectionNameUpdate(const SVInspectionNameUpdate& p_rObject)
+	: m_InspectionName(p_rObject.m_InspectionName)
 {
 }
 
@@ -411,17 +405,17 @@ SVInspectionNameUpdate::~SVInspectionNameUpdate()
 }
 
 SVRemoveImages::SVRemoveImages()
-: m_Images()
+	: m_Images()
 {
 }
 
-SVRemoveImages::SVRemoveImages( const std::set<uint32_t>& p_rImages )
-: m_Images( p_rImages )
+SVRemoveImages::SVRemoveImages(const std::set<uint32_t>& p_rImages)
+	: m_Images(p_rImages)
 {
 }
 
-SVRemoveImages::SVRemoveImages( const SVRemoveImages& p_rObject )
-: m_Images( p_rObject.m_Images )
+SVRemoveImages::SVRemoveImages(const SVRemoveImages& p_rObject)
+	: m_Images(p_rObject.m_Images)
 {
 }
 
@@ -430,17 +424,17 @@ SVRemoveImages::~SVRemoveImages()
 }
 
 SVRemoveValues::SVRemoveValues()
-: m_Values()
+	: m_Values()
 {
 }
 
-SVRemoveValues::SVRemoveValues( const std::set<uint32_t>& p_rValues )
-: m_Values( p_rValues )
+SVRemoveValues::SVRemoveValues(const std::set<uint32_t>& p_rValues)
+	: m_Values(p_rValues)
 {
 }
 
-SVRemoveValues::SVRemoveValues( const SVRemoveValues& p_rObject )
-: m_Values( p_rObject.m_Values )
+SVRemoveValues::SVRemoveValues(const SVRemoveValues& p_rObject)
+	: m_Values(p_rObject.m_Values)
 {
 }
 
@@ -457,13 +451,13 @@ SVRemoveSubjectStruct::~SVRemoveSubjectStruct()
 }
 
 SVInputRequestInfoStruct::SVInputRequestInfoStruct()
-: m_ValueObjectRef(), m_Value()
+	: m_ValueObjectRef(), m_Value()
 {
 	Reset();
 }
 
-SVInputRequestInfoStruct::SVInputRequestInfoStruct( const SVObjectReference& rValueObject, const _variant_t& rValue )
-: m_ValueObjectRef( rValueObject ), m_Value( rValue )
+SVInputRequestInfoStruct::SVInputRequestInfoStruct(const SVObjectReference& rValueObject, const _variant_t& rValue)
+	: m_ValueObjectRef(rValueObject), m_Value(rValue)
 {
 }
 
@@ -478,10 +472,10 @@ void SVInputRequestInfoStruct::Init()
 }// end Init
 
 SVInputImageRequestInfoStruct::SVInputImageRequestInfoStruct()
-: m_ObjectName()
-, m_ImageInfo()
-, m_ImageHandlePtr()
-, m_bUsingCameraName( false )
+	: m_ObjectName()
+	, m_ImageInfo()
+	, m_ImageHandlePtr()
+	, m_bUsingCameraName(false)
 {
 }
 
@@ -501,40 +495,40 @@ void SVInputImageRequestInfoStruct::Init()
 }// end Init
 
 SVProductInfoRequestStruct::SVProductInfoRequestStruct()
-: m_pProduct( nullptr ), m_WaitHandle( nullptr )
+	: m_pProduct(nullptr), m_WaitHandle(nullptr)
 {
-	m_WaitHandle = ::CreateEvent( nullptr, TRUE, FALSE, nullptr );
+	m_WaitHandle = ::CreateEvent(nullptr, TRUE, FALSE, nullptr);
 }
 
-SVProductInfoRequestStruct::SVProductInfoRequestStruct( SVProductInfoStruct* p_pProduct )
-: m_pProduct( p_pProduct ), m_WaitHandle( nullptr )
+SVProductInfoRequestStruct::SVProductInfoRequestStruct(SVProductInfoStruct* p_pProduct)
+	: m_pProduct(p_pProduct), m_WaitHandle(nullptr)
 {
-	m_WaitHandle = ::CreateEvent( nullptr, TRUE, FALSE, nullptr );
+	m_WaitHandle = ::CreateEvent(nullptr, TRUE, FALSE, nullptr);
 }
 
-SVProductInfoRequestStruct::SVProductInfoRequestStruct( const SVProductInfoRequestStruct& p_rObject )
-: m_pProduct( p_rObject.m_pProduct ), m_WaitHandle( nullptr )
+SVProductInfoRequestStruct::SVProductInfoRequestStruct(const SVProductInfoRequestStruct& p_rObject)
+	: m_pProduct(p_rObject.m_pProduct), m_WaitHandle(nullptr)
 {
-	p_rObject.GetWaitHandle( m_WaitHandle );
+	p_rObject.GetWaitHandle(m_WaitHandle);
 }
 
 SVProductInfoRequestStruct::~SVProductInfoRequestStruct()
 {
-	if( nullptr != m_WaitHandle )
+	if (nullptr != m_WaitHandle)
 	{
-		::CloseHandle( m_WaitHandle );
+		::CloseHandle(m_WaitHandle);
 
 		m_WaitHandle = nullptr;
 	}
 }
 
-const SVProductInfoRequestStruct& SVProductInfoRequestStruct::operator=( const SVProductInfoRequestStruct& p_rObject )
+const SVProductInfoRequestStruct& SVProductInfoRequestStruct::operator=(const SVProductInfoRequestStruct& p_rObject)
 {
-	if( this != &p_rObject )
+	if (this != &p_rObject)
 	{
 		m_pProduct = p_rObject.m_pProduct;
 
-		p_rObject.GetWaitHandle( m_WaitHandle );
+		p_rObject.GetWaitHandle(m_WaitHandle);
 	}
 
 	return *this;
@@ -542,19 +536,19 @@ const SVProductInfoRequestStruct& SVProductInfoRequestStruct::operator=( const S
 
 bool SVProductInfoRequestStruct::empty() const
 {
-	return ( nullptr == m_pProduct );
+	return (nullptr == m_pProduct);
 }
 
 void SVProductInfoRequestStruct::clear()
 {
-	if( nullptr != m_pProduct )
+	if (nullptr != m_pProduct)
 	{
 		m_pProduct = nullptr;
 	}
 
-	if( nullptr != m_WaitHandle )
+	if (nullptr != m_WaitHandle)
 	{
-		::ResetEvent( m_WaitHandle );
+		::ResetEvent(m_WaitHandle);
 	}
 }
 
@@ -562,9 +556,9 @@ HRESULT SVProductInfoRequestStruct::NotifyRequestComplete() const
 {
 	HRESULT l_Status = S_OK;
 
-	if( nullptr != m_WaitHandle )
+	if (nullptr != m_WaitHandle)
 	{
-		::SetEvent( m_WaitHandle );
+		::SetEvent(m_WaitHandle);
 	}
 	else
 	{
@@ -578,11 +572,11 @@ HRESULT SVProductInfoRequestStruct::WaitForRequest() const
 {
 	HRESULT l_Status = S_OK;
 
-	if( nullptr != m_WaitHandle )
+	if (nullptr != m_WaitHandle)
 	{
-		if( ::ResetEvent( m_WaitHandle ) )
+		if (::ResetEvent(m_WaitHandle))
 		{
-			if( ::WaitForSingleObject( m_WaitHandle, INFINITE ) != WAIT_OBJECT_0 )
+			if (::WaitForSingleObject(m_WaitHandle, INFINITE) != WAIT_OBJECT_0)
 			{
 				l_Status = E_FAIL;
 			}
@@ -600,18 +594,18 @@ HRESULT SVProductInfoRequestStruct::WaitForRequest() const
 	return l_Status;
 }
 
-HRESULT SVProductInfoRequestStruct::GetWaitHandle( HANDLE& p_rHandle ) const
+HRESULT SVProductInfoRequestStruct::GetWaitHandle(HANDLE& p_rHandle) const
 {
 	HRESULT l_Status = S_OK;
 
-	if( nullptr != p_rHandle )
+	if (nullptr != p_rHandle)
 	{
-		::CloseHandle( p_rHandle );
+		::CloseHandle(p_rHandle);
 
 		p_rHandle = nullptr;
 	}
 
-	if( ! ::DuplicateHandle( GetCurrentProcess(), m_WaitHandle, GetCurrentProcess(), &p_rHandle, 0, FALSE, DUPLICATE_SAME_ACCESS ) )
+	if (!::DuplicateHandle(GetCurrentProcess(), m_WaitHandle, GetCurrentProcess(), &p_rHandle, 0, FALSE, DUPLICATE_SAME_ACCESS))
 	{
 		l_Status = E_FAIL;
 	}

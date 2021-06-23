@@ -48,6 +48,7 @@ class SVResultList;
 
 #define  BUFFER_IMAGE_FILENAME_LEN 1024
 
+
 class SVInspectionProcess : 
 	public SVObjectClass,
 	public SvOi::IInspectionProcess
@@ -119,7 +120,9 @@ public:
 	bool GoOnline();
 	bool GoOffline();
 
-	bool CanProcess( SVProductInfoStruct *pProduct );
+	///If images or inputs are missing, CanProcess will return  false, 
+	bool CanProcess( SVProductInfoStruct *pProduct, CantProcessEnum& rReason );
+	
 	HRESULT StartProcess( SVProductInfoStruct *pProduct );
 
 	bool RebuildInspectionInputList();

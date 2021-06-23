@@ -202,31 +202,6 @@ long SVPPQShiftRegister::GetIndexByTriggerTimeStamp(double checkTime, int camera
 	return result;
 }
 
-HRESULT SVPPQShiftRegister::GetProductStates( std::string& p_rProductStates ) const
-{
-	HRESULT l_Status = S_OK;
-
-	if( !( m_Products.empty() ) )
-	{
-		for( size_t i = 0; i < m_Products.size(); ++i )
-		{
-			std::string l_TempString;
-
-			if( nullptr != m_Products[ i ] )
-			{
-				l_TempString = SvUl::Format( _T( "%d:%s\n" ), i, m_Products[ i ]->m_ProductState.c_str() );
-			}
-			else
-			{
-				l_TempString = SvUl::Format( _T( "%d:NULL\n" ), i );
-			}
-
-			p_rProductStates += l_TempString;
-		}
-	}
-
-	return l_Status;
-}
 
 bool SVPPQShiftRegister::findTimeMatch(double checkTime, double triggerTime, double nextTriggerTime, bool isStartPos)  const
 {

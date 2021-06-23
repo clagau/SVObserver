@@ -39,8 +39,6 @@ public:
 
 	long GetIndexByTriggerTimeStamp(double checkTime, int cameraID) const;
 
-	HRESULT GetProductStates( std::string& p_rProductStates ) const;
-
 	void setPreTriggerTimeWindow(double preTriggerTimeWindow) { m_preTriggerTimeWindow = preTriggerTimeWindow; }
 
 private:

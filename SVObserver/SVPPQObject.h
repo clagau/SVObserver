@@ -499,6 +499,15 @@ private:
 	std::unordered_map<uint32_t, IpInfoDeque> m_storeForInterestMap;
 
 	SVObjectPtrVector m_childObjects;
+
+	SvVol::BasicValueObjectPtr m_spTiggercount{ nullptr };
+	SvVol::BasicValueObjectPtr m_spNotCompleteCount{ nullptr };
+	SvVol::BasicValueObjectPtr m_spMissingImageCount{ nullptr };
+	mutable SvVol::BasicValueObjectPtr m_spPpqLength{ nullptr };
+
+	int m_MissingImageCount{ 0 };
+	int m_NotCompleteCount{ 0 };
+	
 };
 
 typedef std::vector<SVPPQObject*> SVPPQObjectPtrVector;

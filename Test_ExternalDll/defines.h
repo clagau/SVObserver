@@ -1,9 +1,9 @@
 #pragma once
 
 //TODO: set all defines and static parameters to you needed values
-#define	DLLVERSION 1,0,0,0
+#define	DLLVERSION 2,0,0,0
 #define TOOLNAME					"Test External DLL"
-#define	DLLINTERFACEVERSION		"DLL-V 0.1.2.3 (14.07.2020)"
+#define	DLLINTERFACEVERSION		"DLL-V 2.0 (15.06.2021)"
 #define	LSTRGROUPNAME			TOOLNAME "-ExternalDll"
 #define DEBUGFILE				"C:\\SVIMDLLDebug_" TOOLNAME ".txt"
 
@@ -24,6 +24,7 @@ enum InputValuesEnum
 	InputValue_TABLE_NAMES,
 	InputValue_Second_Double_Array,
 	InputValue_LONG_TABLE_SELECT,
+	InpitValue_LONG_DELAY_MS,
 	NUM_INPUT_VALUES
 };
 enum InputImagesEnum

@@ -41,6 +41,25 @@ enum SVProductInspectedState
 	PRODUCT_INSPECTION_NOT_RUN  = 0x8000	// 1000 0000 0000 0000
 };
 
+enum class  CantProcessEnum : unsigned int
+{
+	NoReason = 0,
+	MissingProduct = 1 << 0,
+	MissingImage = 1 << 1,
+	MissingInput = 1 << 2
+};
+
+inline constexpr CantProcessEnum operator|(CantProcessEnum lhs, CantProcessEnum rhs)
+{
+	return static_cast<CantProcessEnum>(static_cast<unsigned int>(lhs) | static_cast<unsigned int>(rhs));
+}
+
+inline constexpr bool operator&(CantProcessEnum lhs, CantProcessEnum  rhs)
+{
+	return (static_cast<unsigned int>(lhs) & static_cast<unsigned int>(rhs)) != 0;
+}
+
+
 class SVPPQObject;
 class SVInspectionProcess;
 
@@ -153,11 +172,11 @@ struct SVProductInfoStruct
 	/// \param iPId [in] id of the IP. If SvDef::InvalidObjectId then for inspection will done the action.
 	void setInspectionTriggerRecordComplete(uint32_t iPId);
 
-	mutable std::string m_ProductState;
 	bool m_triggered;
 	bool m_hasCameraImage[SvDef::cMaximumCameras];
 	bool m_dataComplete;
 	long m_lastPPQPosition;
+	CantProcessEnum m_CantProcessReason = CantProcessEnum::NoReason ; //last Reason which prevent start of inspection
 
 	SvTrig::SVTriggerInfoStruct m_triggerInfo;
 	SVOutputsInfoStruct m_outputsInfo;
