@@ -13,7 +13,6 @@
 #include "stdafx.h"
 #include "SVPPQShiftRegister.h"
 #include "SVInfoStructs.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 size_t SVPPQShiftRegister::size() const
