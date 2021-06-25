@@ -57,7 +57,6 @@ namespace SvTrig
 				m_pUnregisterBufferInterface = (SVDigitizerUnregisterBufferInterfacePtr) ::GetProcAddress(m_handle, "SVDigitizerUnregisterBufferInterface");
 				m_pStart = (SVDigitizerStartPtr) ::GetProcAddress(m_handle, "SVDigitizerStart");
 				m_pStop = (SVDigitizerStopPtr) ::GetProcAddress(m_handle, "SVDigitizerStop");
-				m_pInternalTriggerEnable = (SVDigitizerInternalTriggerEnablePtr) ::GetProcAddress(m_handle, "SVDigitizerInternalTriggerEnable");
 				m_pInternalTrigger = (SVDigitizerInternalTriggerPtr) ::GetProcAddress(m_handle, "SVDigitizerInternalTrigger");
 
 				m_pParameterGetList = (SVDigitizerParameterGetListPtr) ::GetProcAddress(m_handle, "SVDigitizerParameterGetList");
@@ -81,7 +80,6 @@ namespace SvTrig
 					nullptr != m_pStart &&
 					nullptr != m_pStop &&
 					nullptr != m_pUnregisterBufferInterface &&
-					nullptr != m_pInternalTriggerEnable &&
 					nullptr != m_pInternalTrigger &&
 					nullptr != m_pDestroyBuffers
 					)
@@ -142,7 +140,6 @@ namespace SvTrig
 		m_pStart = nullptr;
 		m_pStop = nullptr;
 		m_pUnregisterBufferInterface = nullptr;
-		m_pInternalTriggerEnable = nullptr;
 		m_pInternalTrigger = nullptr;
 		m_pDestroyBuffers = nullptr;
 		m_pSetParameters = nullptr;
@@ -310,17 +307,6 @@ namespace SvTrig
 		if (nullptr != m_pStop)
 		{
 			result = m_pStop(digitizerHandle);
-		}
-		return result;
-	}
-
-	HRESULT SVDigitizerLoadLibraryClass::InternalTriggerEnable(unsigned long digitizerHandle)
-	{
-		HRESULT result{ E_FAIL };
-
-		if (nullptr != m_pInternalTriggerEnable)
-		{
-			result = m_pInternalTriggerEnable(digitizerHandle);
 		}
 		return result;
 	}

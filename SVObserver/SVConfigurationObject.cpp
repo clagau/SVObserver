@@ -1814,11 +1814,17 @@ bool SVConfigurationObject::LoadTrigger(SVTreeType& rTree)
 
 			if (bOk)
 			{
-				SvTrig::SVTriggerClass* psvDevice = SvTrig::SVTriggerProcessingClass::Instance().GetTrigger(DeviceName.c_str());
+				SvTrig::SVTriggerClass* pMainTriggerDevice{ SvTrig::SVTriggerProcessingClass::Instance().GetTrigger(DeviceName.c_str()) };
 
-				if (nullptr != psvDevice)
+				if (nullptr != pMainTriggerDevice)
 				{
-					bOk = pTrigger->Create(psvDevice);
+					SvTrig::SVTriggerClass* pSoftwareTrigger{ nullptr };
+					if (SvDef::TriggerType::SoftwareTrigger != pMainTriggerDevice->getType())
+					{
+						std::string softwareTriggerName{ SVHardwareManifest::BuildTriggerDeviceName(m_eProductType, pMainTriggerDevice->getDigitizerNumber(), SvDef::TriggerType::SoftwareTrigger) };
+						pSoftwareTrigger = SvTrig::SVTriggerProcessingClass::Instance().GetTrigger(softwareTriggerName.c_str());
+					}
+					bOk = pTrigger->Create(pMainTriggerDevice, pSoftwareTrigger);
 				}
 			}
 
@@ -3145,12 +3151,9 @@ void SVConfigurationObject::SaveTrigger(SvOi::IObjectWriter& rWriter) const
 				rWriter.WriteAttribute(SvXml::CTAG_TRIGGER_DEVICE, variantValue);
 				variantValue.Clear();
 			}
-			if (SvDef::TriggerType::SoftwareTrigger == pTrigger->getType())
-			{
-				variantValue = pTrigger->GetSoftwareTriggerPeriod();
-				rWriter.WriteAttribute(SvXml::CTAG_SOFTWARETRIGGER_PERIOD, variantValue);
-				variantValue.Clear();
-			}
+			variantValue = pTrigger->GetSoftwareTriggerPeriod();
+			rWriter.WriteAttribute(SvXml::CTAG_SOFTWARETRIGGER_PERIOD, variantValue);
+			variantValue.Clear();
 			variantValue = pTrigger->getStartObjectID();
 			rWriter.WriteAttribute(SvXml::CTAG_START_OBJECT_ID, variantValue);
 			variantValue.Clear();
@@ -3862,12 +3865,11 @@ HRESULT SVConfigurationObject::AttachAcqToTriggers()
 					for (auto* pCamera : cameraVector)
 					{
 						bool isFileAcquisition = pCamera->IsFileAcquisition();
-						bool addAcquisitionTrigger = isSoftwareTrigger || isFileAcquisition || pCamera->canExternalSoftwareTrigger();
 						SvIe::SVAcquisitionClassPtr pAcq = pCamera->GetAcquisitionDevice();
 						if (nullptr != pAcq)
 						{
 							SvTrig::SVDigitizerLoadLibraryClass* pAcqDLL = SvIe::SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(pAcq->DigName().c_str());
-							if (pAcqDLL && addAcquisitionTrigger)
+							if (pAcqDLL)
 							{
 								SvTrig::AcquisitionParameter acquisitionParameter;
 								acquisitionParameter.m_pDllDigitizer = pAcqDLL;

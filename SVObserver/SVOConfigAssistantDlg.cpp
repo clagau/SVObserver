@@ -234,9 +234,9 @@ BOOL SVOConfigAssistantDlg::OnInitDialog()
 void SVOConfigAssistantDlg::SetupSystemComboBox()
 {
 	SVIMProductEnumList list; 
-	typedef std::insert_iterator<SVIMProductEnumList> Insertor;
-	Insertor insertor(list, list.begin());
-	SVHardwareManifest::GetSupportedSVIMList( insertor );
+	typedef std::insert_iterator<SVIMProductEnumList> Inserter;
+	Inserter inserter(list, list.begin());
+	SVHardwareManifest::GetSupportedSVIMList( inserter );
 
 	for (SVIMProductEnumList::iterator l_Iter = list.begin();l_Iter != list.end(); ++l_Iter)
 	{
@@ -686,57 +686,6 @@ bool SVOConfigAssistantDlg::RemovePPQFromList(LPCTSTR PPQ)
 	}
 
 	return m_PPQList.RemovePPQFromList(PPQ);
-}
-
-std::string SVOConfigAssistantDlg::BuildTrgDig( const SvTrig::SVOTriggerObj& rTriggerObj) const
-{
-	std::string Result;
-
-	int iDig = rTriggerObj.GetTriggerDigNumber();
-
-	switch (rTriggerObj.getTriggerType())
-	{
-		case SvDef::TriggerType::HardwareTrigger:
-		{
-			switch (m_lConfigurationType)
-			{
-				case SVIM_PRODUCT_X2_GD1A:
-				case SVIM_PRODUCT_X2_GD1A_COLOR:
-				case SVIM_PRODUCT_X2_GD2A:
-				case SVIM_PRODUCT_X2_GD2A_COLOR:
-				case SVIM_PRODUCT_X2_GD4A:
-				case SVIM_PRODUCT_X2_GD4A_COLOR:
-				case SVIM_PRODUCT_X2_GD8A:
-				case SVIM_PRODUCT_X2_GD8A_COLOR:
-				{
-					Result = SVHardwareManifest::BuildIOBoardTriggerDeviceName(iDig);
-					break;
-				}
-				case SVIM_PRODUCT_NEO1:
-				{
-					Result = SVHardwareManifest::BuildHardwareTriggerDeviceName(iDig);
-					break;
-				}
-
-				default:
-				{
-					break;
-				}
-			}
-			break;
-		}
-		case SvDef::TriggerType::SoftwareTrigger:
-		{
-			Result = SVHardwareManifest::BuildSoftwareTriggerDeviceName(iDig);
-			break;
-		}
-		case SvDef::TriggerType::CameraTrigger:
-		{
-			Result = SVHardwareManifest::BuildAcquisitionTriggerDeviceName(iDig);
-			break;
-		}
-	}
-	return Result;
 }
 
 std::string SVOConfigAssistantDlg::BuildDigName(const SVOCameraObj& rCameraObj) const
@@ -1794,17 +1743,14 @@ bool SVOConfigAssistantDlg::SendTriggerDataToConfiguration()
 	int iTrgCnt = m_TriggerList.GetTriggerListCount();
 	if (iTrgCnt > 0)
 	{
-		std::string TriggerDisplayName;
-		std::string DeviceName;
-
 		// Check for Triggers changed
 		for (int i = 0; i < iTrgCnt; i++)
 		{
 			const SvTrig::SVOTriggerObjPtr pTriggerObj( GetTriggerObject(i) );
 			if( nullptr != pTriggerObj )
 			{
-				TriggerDisplayName = pTriggerObj->GetTriggerDisplayName();
-				DeviceName = BuildTrgDig( *pTriggerObj );
+				std::string TriggerDisplayName{ pTriggerObj->GetTriggerDisplayName() };
+				std::string DeviceName{ SVHardwareManifest::BuildTriggerDeviceName(m_lConfigurationType, pTriggerObj->GetTriggerDigNumber(), pTriggerObj->getTriggerType()) };
 
 				pTrigger = nullptr;
 				lCfgTrgCnt = pConfig->GetTriggerCount();
@@ -1839,15 +1785,18 @@ bool SVOConfigAssistantDlg::SendTriggerDataToConfiguration()
 
 				if ( nullptr != pTrigger )
 				{
-					SvTrig::SVTriggerClass* psvDevice = SvTrig::SVTriggerProcessingClass::Instance().GetTrigger( DeviceName.c_str() );
-					if ( nullptr != psvDevice )
+					SvTrig::SVTriggerClass* pMainTriggerDevice{ SvTrig::SVTriggerProcessingClass::Instance().GetTrigger(DeviceName.c_str()) };
+					if (nullptr != pMainTriggerDevice)
 					{
-						bRet = pTrigger->Create(psvDevice) && bRet;
+						SvTrig::SVTriggerClass* pSoftwareTrigger{ nullptr };
+						if (SvDef::TriggerType::SoftwareTrigger != pMainTriggerDevice->getType())
+						{
+							std::string softwareTriggerName{ SVHardwareManifest::BuildTriggerDeviceName(m_lConfigurationType, pMainTriggerDevice->getDigitizerNumber(), SvDef::TriggerType::SoftwareTrigger) };
+							pSoftwareTrigger = SvTrig::SVTriggerProcessingClass::Instance().GetTrigger(softwareTriggerName.c_str());
+						}
+						bRet = pTrigger->Create(pMainTriggerDevice, pSoftwareTrigger) && bRet;
 					}
-					if (SvDef::TriggerType::SoftwareTrigger == pTriggerObj->getTriggerType())
-					{
-						pTrigger->SetSoftwareTriggerPeriod(pTriggerObj->GetTimerPeriod());
-					}
+					pTrigger->SetSoftwareTriggerPeriod(pTriggerObj->GetTimerPeriod());
 					pTrigger->setObjectIDParameters(pTriggerObj->getStartObjectID(), pTriggerObj->getTriggerPerObjectID());
 
 					if ( bAddTrigger )

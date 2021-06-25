@@ -28,7 +28,7 @@ public:
 	virtual ~TriggerDevice() = default;
 
 	long getTriggerCount() { return m_triggerCount; }
-	void resetTriggerCount() { m_triggerCount = 0L; }
+	void setTriggerCount(long triggerCount = 0L) { m_triggerCount = triggerCount; }
 
 	long getStartObjectID() const { return m_startObjectID; }
 	long getTriggerPerObjectID() const { return m_triggerPerObjectID; }

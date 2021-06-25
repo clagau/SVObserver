@@ -270,35 +270,36 @@ HRESULT SVMatroxGige::CameraSetParameter(unsigned long digitizerHandle, int para
 			{
 				_bstr_t xmlData{ rValue };
 				result = rCamera.BuildGigeFeaturesMap(xmlData);
+				break;
 			}
-			break;
-
 			case  SvDef::SVGigeBeginTrackParameters:
 			{
 				TrackCameraParams(rCamera);
 				result = S_OK;
+				break;
 			}
-			break;
-
 			case  SvDef::SVGigeEndTrackParameters:
 			{
 				LockMainCameraParamList(rCamera);
 				result = S_OK;
+				break;
 			}
-			break;
-
 			case  SvDef::SVGigeParameterLineInput:
 			{
 				rCamera.SetLineInputMoniker(SvUl::createStdString(rValue));
 				result = S_OK;
+				break;
 			}
-			break;
-
 			case  SvDef::SVGigeParameterInputEvent: // Internal use only, not settable via normal logic
 			case  SvDef::SVGigeParameterInputEventName: // Internal use only, not settable via normal logic
 			{
+				break;
 			}
-			break;
+			case SvDef::SVTriggerType:
+			{
+				rCamera.m_params.TriggerType = static_cast<SvDef::TriggerType> (rValue.lVal);
+				break;
+			}
 
 			default:
 			{
@@ -433,20 +434,6 @@ HRESULT SVMatroxGige::CameraStop( unsigned long digitizerHandle )
 				hr = SVMatroxGigeDeviceParameterManager::SetParameter(l_rCamera, SvDef::SVGigeParameterTriggerEnable, value);
 			}
 		}
-	}
-	return hr;
-}
-
-HRESULT SVMatroxGige::InternalTriggerEnable(unsigned long digitizerHandle)
-{
-	HRESULT hr = S_FALSE;
-	if (IsValidDigitizer(digitizerHandle))
-	{
-		SVMatroxGigeDigitizer& l_rCamera = GetDigitizer(digitizerHandle);
-
-		l_rCamera.m_params.TriggerType = SvDef::TriggerType::SoftwareTrigger;
-
-		hr = S_OK;
 	}
 	return hr;
 }
@@ -969,14 +956,24 @@ HRESULT SVMatroxGige::EnableTriggering(const SVMatroxGigeDigitizer& rCamera, con
 {
 	HRESULT result{ E_FAIL };
 
-	if (rCamera.m_params.TriggerType == SvDef::TriggerType::HardwareTrigger)
+	switch (rCamera.m_params.TriggerType)
 	{
-		result = SVMatroxGigeDeviceParameterManager::SetParameter(rCamera, SvDef::SVGigeParameterTriggerSource, rTriggerSource);
-	}
-	else if (rCamera.m_params.TriggerType == SvDef::TriggerType::SoftwareTrigger)
-	{
-		_variant_t value("Software Trigger");
-		result = SVMatroxGigeDeviceParameterManager::SetParameter(rCamera, SvDef::SVGigeParameterTriggerSource, value);
+		case SvDef::TriggerType::HardwareTrigger:
+		case SvDef::TriggerType::CameraTrigger:
+		{
+			result = SVMatroxGigeDeviceParameterManager::SetParameter(rCamera, SvDef::SVGigeParameterTriggerSource, rTriggerSource);
+			break;
+		}
+		case SvDef::TriggerType::SoftwareTrigger:
+		{
+			_variant_t value("Software Trigger");
+			result = SVMatroxGigeDeviceParameterManager::SetParameter(rCamera, SvDef::SVGigeParameterTriggerSource, value);
+			break;
+		}
+		default:
+		{
+			break;
+		}
 	}
 
 	if (S_OK == result)

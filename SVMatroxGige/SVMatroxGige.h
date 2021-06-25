@@ -43,7 +43,6 @@ public:
 	HRESULT CameraSetParameter(unsigned long digitizerHandle, int parameterID, const _variant_t& rValue);
 	_variant_t CameraGetParameterList(unsigned long digitizerHandle) const;
 
-	HRESULT InternalTriggerEnable(unsigned long digitizerHandle);
 	HRESULT InternalTrigger(unsigned long digitizerHandle);
 
 	void ScanForCameras();

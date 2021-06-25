@@ -172,7 +172,6 @@ BEGIN_MESSAGE_MAP(SVObserverApp, CWinApp)
 	ON_COMMAND(ID_EDIT_EDITIOLIST, OnEditIOList)
 
 	ON_COMMAND(ID_MODE_TEST, OnTestMode)
-	ON_COMMAND(ID_MODE_TEST_BTN, OnModeTestBtn)
 	ON_COMMAND(ID_MODE_RUN, OnRunMode)
 	ON_COMMAND(ID_MODE_STOPTEST, OnStopTestMode)
 	ON_COMMAND(ID_MODE_EDIT, OnModeEdit)
@@ -201,9 +200,7 @@ BEGIN_MESSAGE_MAP(SVObserverApp, CWinApp)
 	ON_UPDATE_COMMAND_UI(ID_TRIGGER_SETTINGS, OnUpdateTriggerSettings)
 	ON_UPDATE_COMMAND_UI(ID_MODE_RUN, OnUpdateModeRun)
 
-	ON_UPDATE_COMMAND_UI(ID_MODE_STOPTEST, OnUpdateModeStopTest)
 	ON_UPDATE_COMMAND_UI(ID_MODE_TEST, OnUpdateModeTest)
-	ON_UPDATE_COMMAND_UI(ID_MODE_TEST_BTN, OnUpdateModeTestBtn)
 	ON_UPDATE_COMMAND_UI(ID_MODE_EDIT, OnUpdateModeEdit)
 	ON_UPDATE_COMMAND_UI(ID_GO_OFFLINE, OnUpdateGoOffline)
 	ON_UPDATE_COMMAND_UI(ID_GO_ONLINE, OnUpdateGoOnline)
@@ -478,21 +475,45 @@ void SVObserverApp::OnEditEnvironment()
 void SVObserverApp::OnTestMode()
 {
 	if (SVSVIMStateClass::CheckState(SV_STATE_REMOTE_CMD))
+	{
 		return;
-	ExtrasEngine::Instance().ExecuteAutoSaveIfAppropriate(false);//before entering test mode: perform autosave
-	SetTestMode();
-}
+	}
+	bool allowAccess{ false };
 
-void SVObserverApp::OnModeTestBtn()
-{
-	OnTestMode();
+	if (SVSVIMStateClass::CheckState(SV_STATE_TEST))
+	{
+		if (!SVSVIMStateClass::CheckState(SV_STATE_REGRESSION))
+		{
+			return;
+		}
+	}
+
+	if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
+	{
+		if (S_OK == m_svSecurityMgr.SVValidate(SECURITY_POINT_MODE_MENU_EXIT_RUN_MODE, SECURITY_POINT_MODE_MENU_TEST))
+		{
+			OnStop();
+			allowAccess = true;
+		}
+	}
+	else if (S_OK == m_svSecurityMgr.SVValidate(SECURITY_POINT_MODE_MENU_TEST))
+	{
+		allowAccess = true;
+	}
+
+	if (allowAccess)
+	{
+		ExtrasEngine::Instance().ExecuteAutoSaveIfAppropriate(false);
+		Start(SV_STATE_TEST);
+		SoftwareTriggerDlg::Instance().ShowWindow(SW_SHOW);
+	}
 }
 
 void SVObserverApp::OnRunMode()
 {
 	try
 	{
-		Start();
+		Start(SV_STATE_RUNNING);
 	}
 	catch (const SvStl::MessageContainer& rExp)
 	{
@@ -509,10 +530,7 @@ void SVObserverApp::OnRunMode()
 ////////////////////////////////////////////////////////////////////////////////
 void SVObserverApp::OnStopTestMode()
 {
-	if (!SVSVIMStateClass::CheckState(SV_STATE_EDIT
-		| SV_STATE_REGRESSION
-		| SV_STATE_TEST
-		| SV_STATE_RUNNING))
+	if (false == SVSVIMStateClass::CheckState(SV_STATE_TEST))
 	{
 		return;
 	}
@@ -996,12 +1014,6 @@ void SVObserverApp::OnUpdateHelpFinder(CCmdUI* PCmdUI)
 	PCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING));
 }
 
-void SVObserverApp::OnUpdateModeStopTest(CCmdUI* PCmdUI)
-{
-	PCmdUI->Enable(SVSVIMStateClass::CheckState(SV_STATE_TEST)
-		&& m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_MODE_MENU_TEST));
-}
-
 void SVObserverApp::OnUpdateModeTest(CCmdUI* PCmdUI)
 {
 	PCmdUI->Enable((SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT | SV_STATE_STOP)) &&
@@ -1009,14 +1021,6 @@ void SVObserverApp::OnUpdateModeTest(CCmdUI* PCmdUI)
 
 	PCmdUI->SetCheck(SVSVIMStateClass::CheckState(SV_STATE_TEST) &&
 		!SVSVIMStateClass::CheckState(SV_STATE_REGRESSION));
-}
-
-void SVObserverApp::OnUpdateModeTestBtn(CCmdUI* pCmdUI)
-{
-	pCmdUI->Enable((SVSVIMStateClass::CheckState(SV_STATE_REGRESSION | SV_STATE_EDIT | SV_STATE_READY)) &&
-		SVSVIMStateClass::CheckState(SV_STATE_READY) &&
-		!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST) &&
-		m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_MODE_MENU_TEST));
 }
 
 void SVObserverApp::OnUpdateNextPane(CCmdUI* PCmdUI)
@@ -1241,7 +1245,7 @@ void SVObserverApp::OnGoOnline()
 
 					try
 					{
-						Start();
+						Start(SV_STATE_RUNNING);
 					}
 					catch (const SvStl::MessageContainer& rExp)
 					{
@@ -3626,10 +3630,7 @@ HRESULT SVObserverApp::SetMode(unsigned long lNewMode)
 
 	SvPb::DeviceModeType Mode = SvPb::DeviceModeType_IsValid(lNewMode) ? static_cast<SvPb::DeviceModeType> (lNewMode) : SvPb::DeviceModeType::unknownMode;
 
-	if (SVSVIMStateClass::CheckState(SV_STATE_START_PENDING |
-		SV_STATE_STARTING |
-		SV_STATE_STOP_PENDING |
-		SV_STATE_STOPING))
+	if (SVSVIMStateClass::CheckState(SV_STATE_START_PENDING | SV_STATE_STARTING | SV_STATE_STOP_PENDING | SV_STATE_STOPING))
 	{
 		l_hr = SVMSG_50_MODE_CHANGING_ERROR;
 	}
@@ -3643,18 +3644,16 @@ HRESULT SVObserverApp::SetMode(unsigned long lNewMode)
 	}
 	else if (SvPb::DeviceModeType::runMode == Mode)
 	{
-		if (SVSVIMStateClass::CheckState(SV_STATE_TEST) ||
-			SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
+		if (SVSVIMStateClass::CheckState(SV_STATE_TEST | SV_STATE_RUNNING))
 		{
 			OnStop();
 		}
 		// Try to go online...
-		if (!SVSVIMStateClass::CheckState(SV_STATE_REGRESSION) &&
-			SVSVIMStateClass::CheckState(SV_STATE_READY))
+		if (false == SVSVIMStateClass::CheckState(SV_STATE_REGRESSION) && SVSVIMStateClass::CheckState(SV_STATE_READY))
 		{
 			try
 			{
-				Start();
+				Start(SV_STATE_RUNNING);
 			}
 			catch (const SvStl::MessageContainer& rExp)
 			{
@@ -3671,8 +3670,7 @@ HRESULT SVObserverApp::SetMode(unsigned long lNewMode)
 	else if (SvPb::DeviceModeType::stopMode == Mode)
 	{
 		// Go offline
-		if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING) ||
-			SVSVIMStateClass::CheckState(SV_STATE_TEST))
+		if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST))
 		{
 			OnStop();
 		}
@@ -3695,10 +3693,9 @@ HRESULT SVObserverApp::SetMode(unsigned long lNewMode)
 			OnStop();
 		}
 
-		if (!SVSVIMStateClass::CheckState(SV_STATE_TEST) &&
-			SVSVIMStateClass::CheckState(SV_STATE_READY))
+		if (false == SVSVIMStateClass::CheckState(SV_STATE_TEST) && SVSVIMStateClass::CheckState(SV_STATE_READY))
 		{
-			SetTestMode(true);
+			Start(SV_STATE_TEST);
 		}
 		else
 		{
@@ -3712,14 +3709,12 @@ HRESULT SVObserverApp::SetMode(unsigned long lNewMode)
 	}
 	else if (SvPb::DeviceModeType::editMode == Mode)
 	{
-		if (SVSVIMStateClass::CheckState(SV_STATE_TEST) ||
-			SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
+		if (SVSVIMStateClass::CheckState(SV_STATE_TEST | SV_STATE_RUNNING))
 		{
 			OnStop();
 		}
 
-		if (!SVSVIMStateClass::CheckState(SV_STATE_REGRESSION) &&
-			SVSVIMStateClass::CheckState(SV_STATE_READY))
+		if (false == SVSVIMStateClass::CheckState(SV_STATE_REGRESSION) && SVSVIMStateClass::CheckState(SV_STATE_READY))
 		{
 			SetModeEdit(true);
 		}
@@ -4517,161 +4512,6 @@ HRESULT SVObserverApp::SetModeEdit(bool p_bState)
 	return l_hr;
 }
 
-void SVObserverApp::SetTestMode(bool p_bNoSecurity)
-{
-	bool l_bAllowAccess = false;
-
-	if (SVSVIMStateClass::CheckState(SV_STATE_TEST))
-	{
-		if (!SVSVIMStateClass::CheckState(SV_STATE_REGRESSION))
-		{
-			return;
-		}
-	}
-
-	if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
-	{
-		if (p_bNoSecurity || S_OK == m_svSecurityMgr.SVValidate(SECURITY_POINT_MODE_MENU_EXIT_RUN_MODE,
-			SECURITY_POINT_MODE_MENU_TEST))
-		{
-			OnStop();
-			l_bAllowAccess = true;
-		}
-	}
-	else if (p_bNoSecurity || S_OK == m_svSecurityMgr.SVValidate(SECURITY_POINT_MODE_MENU_TEST))
-	{
-		l_bAllowAccess = true;
-	}
-
-	if (l_bAllowAccess)
-	{
-
-		SVSVIMStateClass::SVRCBlocker block;
-
-		if (SVSVIMStateClass::CheckState(SV_STATE_REGRESSION))
-		{
-			StopRegression();
-		}
-
-		if (!SVSVIMStateClass::CheckState(SV_STATE_TEST) &&
-			!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_STOP_PENDING | SV_STATE_STOPING))
-		{
-			UpdateAndGetLogDataManager();
-
-			//@WARNING [gra][10.10][15.06.2021] Test and Run mode should use the same code to avoid issues that changes are made only to one part
-			SVObjectManagerClass::Instance().ClearAllIndicator();
-			if (m_pMainWnd)
-			{
-				SVPPQObject* pPPQ(nullptr);
-				long l;
-				long lSize = 0;
-
-				SVConfigurationObject* pConfig(nullptr);
-				SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-
-				SoftwareTriggerDlg& l_trgrDlg = SoftwareTriggerDlg::Instance();
-				l_trgrDlg.ShowWindow(SW_HIDE);
-				l_trgrDlg.ClearTriggers();
-				//If the pointer is a nullptr the lSize is 0
-				if (nullptr != pConfig) { lSize = pConfig->GetPPQCount(); }
-				for (l = 0; l < lSize; l++)
-				{
-					pPPQ = pConfig->GetPPQ(l);
-					if (nullptr == pPPQ)
-					{
-						return;
-					}
-					try
-					{
-						pPPQ->PrepareGoOnline();
-					}
-					catch (const SvStl::MessageContainer& rExp)
-					{
-						//This is the topmost catch for MessageContainer exceptions
-						SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
-						Exception.setMessage(rExp.getMessage());
-						return;
-					}
-
-					SvTrig::SVTriggerObject* pTrigger{ pPPQ->GetTrigger() };
-					if (nullptr != pTrigger && SvDef::TriggerType::SoftwareTrigger == pTrigger->getType())
-					{
-						l_trgrDlg.AddTrigger(pTrigger);
-					}
-				}// end for
-
-				if (l_trgrDlg.HasTriggers())
-				{
-					l_trgrDlg.SelectTrigger();
-				}
-
-				for (l = 0; l < lSize; l++)
-				{
-					pPPQ = pConfig->GetPPQ(l);
-					if (nullptr != pPPQ)
-					{
-						try
-						{
-							pPPQ->GoOnline();
-						}
-						catch (const SvStl::MessageContainer& rExp)
-						{
-							//This is the topmost catch for MessageContainer exceptions
-							SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
-							Exception.setMessage(rExp.getMessage());
-
-							//failed, goOffline, before return
-							for (l = 0; l < lSize; l++)
-							{
-								pPPQ = pConfig->GetPPQ(l);
-								if (nullptr != pPPQ)
-								{
-									pPPQ->GoOffline();
-								}
-							}// end for
-
-							SetAllIPDocumentsOffline();
-							return;
-						}
-					}
-				}// end for
-
-				SetAllIPDocumentsOnline();
-
-				SVSVIMStateClass::changeState(SV_STATE_TEST, SV_STATE_EDIT | SV_STATE_STOP);
-
-				//Now that we are in the test state we allow trigger processing!
-				try
-				{
-					StartTrigger(pConfig);
-				}
-				catch (const SvStl::MessageContainer& rExp)
-				{
-					OnStop();
-
-					SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
-					Exception.setMessage(rExp.getMessage());
-					return;
-				}
-
-				//Module ready should be the last set!
-				if (nullptr != pConfig) { pConfig->SetModuleReady(true); }
-
-				SVObjectManagerClass::Instance().SetState(SVObjectManagerClass::ReadOnly);
-
-				if (SoftwareTriggerDlg::Instance().HasTriggers())
-				{
-					EnableTriggerSettings();
-				}
-				else
-				{
-					DisableTriggerSettings();
-				}
-			}// end if
-		}
-	}
-}
-
 HRESULT SVObserverApp::GetTriggersAndCounts(std::string& rTriggerCounts) const
 {
 	HRESULT l_hr = S_FALSE;
@@ -5014,11 +4854,11 @@ HRESULT SVObserverApp::CheckDrive(const std::string& rDrive) const
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
-void SVObserverApp::Start()
+void SVObserverApp::Start(DWORD desiredState)
 {
 	SVSVIMStateClass::SVRCBlocker block;
 
-	if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_STARTING))
+	if (SVSVIMStateClass::CheckState(desiredState | SV_STATE_STARTING))
 	{
 		if (SVSVIMStateClass::CheckState(SV_STATE_START_PENDING))
 		{
@@ -5158,10 +4998,11 @@ void SVObserverApp::Start()
 				// Do this before calling CanGoOnline 
 				pPPQ->SetMonitorList(ppqMonitorList[pPPQ->GetName()]);
 				pPPQ->SetSlotmanager(SvSml::SharedMemWriter::Instance().GetSlotManager(pPPQ->GetName()));
-				pPPQ->PrepareGoOnline();
+				bool isTestMode{ desiredState == SV_STATE_TEST };
+				pPPQ->PrepareGoOnline(isTestMode);
 
 				SvTrig::SVTriggerObject* pTrigger{ pPPQ->GetTrigger() };
-				if (nullptr != pTrigger && SvDef::TriggerType::SoftwareTrigger == pTrigger->getType())
+				if (nullptr != pTrigger && SvDef::TriggerType::SoftwareTrigger == pTrigger->getType() || isTestMode)
 				{
 					l_trgrDlg.AddTrigger(pTrigger);
 				}
@@ -5215,10 +5056,10 @@ void SVObserverApp::Start()
 				}
 			}// end for
 		}
-		catch (SvStl::MessageContainer&)
+		catch (const SvStl::MessageContainer&)
 		{
 			//cleanup goOnline, after fail, before exception leave this method
-			for (long l = 0; l < lSize; l++)
+			for (long l = 0; l < lSize; ++l)
 			{
 				auto* pPPQ = pConfig->GetPPQ(l);
 				if (nullptr != pPPQ)
@@ -5236,8 +5077,8 @@ void SVObserverApp::Start()
 		}// end if
 
 		SetAllIPDocumentsOnline();
-
-		SVSVIMStateClass::changeState(SV_STATE_UNAVAILABLE | SV_STATE_STARTING, SV_STATE_READY | SV_STATE_START_PENDING);
+		DWORD removeState = (desiredState == SV_STATE_RUNNING) ? SV_STATE_READY | SV_STATE_START_PENDING : SV_STATE_START_PENDING;
+		SVSVIMStateClass::changeState(SV_STATE_UNAVAILABLE | SV_STATE_STARTING, removeState);
 
 		SetPriorityClass(GetCurrentProcess(), REALTIME_PRIORITY_CLASS);
 		auto* pTrcRW = SvOi::getTriggerRecordControllerRWInstance();
@@ -5276,7 +5117,7 @@ void SVObserverApp::Start()
 			}
 		}
 
-		SVSVIMStateClass::changeState(SV_STATE_RUNNING, SV_STATE_UNAVAILABLE | SV_STATE_STARTING);
+		SVSVIMStateClass::changeState(desiredState, SV_STATE_UNAVAILABLE | SV_STATE_STARTING);
 
 		//Now that we are in the running state we allow trigger processing!
 		StartTrigger(pConfig);
@@ -5982,16 +5823,6 @@ void SVObserverApp::OnStopAll()
 	if (m_pMainWnd)
 	{
 		GetMainFrame()->SetStatusInfoText(_T(""));
-
-		if (SVSVIMStateClass::CheckState(SV_STATE_TEST))
-		{
-			CMenu* pMainMenu = m_pMainWnd->GetMenu();
-			if (pMainMenu)
-			{
-				pMainMenu->ModifyMenu(ID_MODE_STOPTEST, MF_BYCOMMAND | MF_STRING,
-					ID_MODE_TEST, _T("&Test"));
-			}
-		}
 
 		auto* pTrcRW = SvOi::getTriggerRecordControllerRWInstance();
 		if (nullptr != pTrcRW)

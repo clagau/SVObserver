@@ -132,7 +132,7 @@ public:
 	void addNeededBuffer(uint32_t id, int neededBufferSize);
 	void removeNeededBufferEntry(uint32_t id);
 
-	inline bool canExternalSoftwareTrigger() const { return m_canExtenalSoftwareTrigger; };
+	inline bool canExternalSoftwareTrigger() const { return m_canExternalSoftwareTrigger; };
 #pragma endregion Public Methods
 
 private:
@@ -150,7 +150,7 @@ private:
 	SvVol::BasicValueObjects m_CameraValues;
 	bool m_bFileAcquisition{ false };
 	bool m_IsColor{ false };
-	bool m_canExtenalSoftwareTrigger{ false };
+	bool m_canExternalSoftwareTrigger{ false };
 	std::string m_imageFilename;
 	std::string m_imageDirectoryName;
 	bool m_bImageSizeEditModeFileBased{ true };

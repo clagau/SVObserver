@@ -33,7 +33,6 @@ namespace SvTrig
 	typedef HRESULT (WINAPI *SVDigitizerStartPtr)(unsigned long);
 	typedef HRESULT (WINAPI *SVDigitizerStopPtr)(unsigned long);
 	typedef HRESULT (WINAPI *SVDigitizerUnregisterBufferInterfacePtr)(unsigned long);
-	typedef HRESULT (WINAPI *SVDigitizerInternalTriggerEnablePtr)(unsigned long);
 	typedef HRESULT (WINAPI *SVDigitizerInternalTriggerPtr)(unsigned long);
 	typedef HRESULT (WINAPI *SVDigitizerDestroyBuffersPtr)(unsigned long);
 	typedef _variant_t (WINAPI *SVDigitizerParameterGetNamePtr)(unsigned long, unsigned long);
@@ -71,7 +70,6 @@ namespace SvTrig
 		HRESULT Start(unsigned long digitizerHandle);
 		HRESULT Stop(unsigned long digitizerHandle);
 
-		HRESULT InternalTriggerEnable(unsigned long digitizerHandle);
 		HRESULT InternalTrigger(unsigned long digitizerHandle) const;
 
 		_variant_t ParameterGetName(unsigned long digitizerHandle, int parameterID) const;
@@ -114,8 +112,6 @@ namespace SvTrig
 		SVDigitizerStartPtr m_pStart{ nullptr };
 		//This attribute holds the address to the SVDigitizerStop function in the DLL.
 		SVDigitizerStopPtr m_pStop{ nullptr };
-		//This attribute holds the address to the SVDigitizerInternalTriggerEnable function in the DLL.
-		SVDigitizerInternalTriggerEnablePtr m_pInternalTriggerEnable{ nullptr };
 		//This attribute holds the address to the SVDigitizerInternalTrigger function in the DLL.
 		SVDigitizerInternalTriggerPtr m_pInternalTrigger{ nullptr };
 		//This attribute holds the address to the SVDigitizerParameterGetName function in the DLL.

@@ -826,13 +826,13 @@ void SVPPQObject::RebuildProductCameraInfoStructs()
 	}// end for
 }
 
-void SVPPQObject::PrepareGoOnline()
+void SVPPQObject::PrepareGoOnline(bool isTestMode)
 {
 	SvSml::SharedMemWriter::Instance().clearInspectionIdsVector(GetName());
 
 	calcUseProcessingOffset4InterestFlag();
 
-	if (!m_pTrigger->CanGoOnline())
+	if (!m_pTrigger->CanGoOnline(isTestMode))
 	{
 		SvDef::StringVector msgList;
 		msgList.push_back(m_pTrigger->GetCompleteName());
@@ -2824,10 +2824,7 @@ void SVPPQObject::cameraCallback(ULONG_PTR pCaller, const CameraInfo& rCameraInf
 			bool isCameraTriggerAndHwCameraWithImage = SvDef::TriggerType::CameraTrigger == pTrigger->getType() && false == pCamera->IsFileAcquisition() && nullptr != rCameraInfo.m_pImage;
 			if (isCameraTriggerAndHwCameraWithImage)
 			{
-				SvTrig::SVTriggerInfoStruct triggerInfo;
-				triggerInfo.bValid = true;
-				triggerInfo.m_Data[SvTrig::TriggerDataEnum::TimeStamp] = _variant_t(rCameraInfo.m_startFrameTime);
-				pTrigger->Fire(std::move(triggerInfo));
+				pTrigger->Fire(rCameraInfo.m_startFrameTime);
 			}
 		}
 

@@ -386,11 +386,6 @@ _variant_t SVFileAcquisitionDevice::CameraGetParameterList(unsigned long cameraI
 	return result;
 }
 
-HRESULT SVFileAcquisitionDevice::InternalTriggerEnable(unsigned long)
-{
-	return S_OK;
-}
-
 HRESULT SVFileAcquisitionDevice::InternalTrigger(unsigned long cameraIndex)
 {
 	return FireOneShot(cameraIndex);

@@ -17,7 +17,6 @@ EXPORTS
 	SVDigitizerStart @130
 	SVDigitizerStop @131
 	
-	SVDigitizerInternalTriggerEnable @132
 	SVDigitizerInternalTrigger @133
 	
 	SVDigitizerSetParameters @150

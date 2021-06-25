@@ -313,7 +313,7 @@ bool SVVirtualCamera::IsFileAcquisition() const
 void SVVirtualCamera::SetFileAcquisitionMode(bool bFileAcquisition)
 {
 	m_bFileAcquisition = bFileAcquisition;
-	m_canExtenalSoftwareTrigger = bFileAcquisition;
+	m_canExternalSoftwareTrigger = bFileAcquisition;
 }
 
 LPCTSTR SVVirtualCamera::GetImageFilename() const
@@ -436,7 +436,7 @@ HRESULT SVVirtualCamera::updateCameraParameters()
 			pDeviceParam = nullptr;
 			if (_T("All Trigger") == SvUl::createStdString(triggerSource))
 			{
-				m_canExtenalSoftwareTrigger = true;
+				m_canExternalSoftwareTrigger = true;
 			}
 		}
 

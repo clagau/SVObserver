@@ -27,8 +27,6 @@ SVMatroxGigeDigitizer::SVMatroxGigeDigitizer(unsigned long deviceNumber, unsigne
 : m_deviceNumber(deviceNumber)
 , m_SystemHandle(systemHandle)
 {
-	m_params.TriggerType = SvDef::TriggerType::HardwareTrigger;
-	m_params.TriggerMode = SVMatroxDigitizerGrab::SVEdgeRising;
 }
 
 SVMatroxGigeDigitizer::SVMatroxGigeDigitizer( const SVMatroxGigeDigitizer& p_rValue)

@@ -14,6 +14,7 @@
 //Moved to precompiled header: #include <fstream>
 #include "SVDigitizerLoadLibraryClass.h"
 #include "SVTriggerClass.h"
+#include "Definitions/SVGigeEnums.h"
 #include "SVIOLibrary/SVIOTriggerLoadLibraryClass.h"
 #include "Triggering/SVTriggerConstants.h"
 #pragma endregion Includes
@@ -69,14 +70,15 @@ void SVTriggerClass::clearAcquisitionTriggers()
 	m_acqTriggerParameters.clear();
 }
 	
-void SVTriggerClass::enableInternalTrigger() const
+void SVTriggerClass::setTriggerType(bool isTestMode) const
 {
-	///When software trigger then we need to enable the internal trigger
+	SvDef::TriggerType triggerType{ isTestMode ? SvDef::TriggerType::SoftwareTrigger : m_type };
 	for (const auto& rAcquisitionParameter : m_acqTriggerParameters)
 	{
-		if (nullptr != rAcquisitionParameter.m_pDllDigitizer && rAcquisitionParameter.m_active)
+		if (nullptr != rAcquisitionParameter.m_pDllDigitizer)
 		{
-			rAcquisitionParameter.m_pDllDigitizer->InternalTriggerEnable(rAcquisitionParameter.m_triggerChannel);
+			_variant_t value{ static_cast<long> (triggerType) };
+			rAcquisitionParameter.m_pDllDigitizer->ParameterSetValue(rAcquisitionParameter.m_triggerChannel, SvDef::SVTriggerType, value);
 		}
 	}
 }

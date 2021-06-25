@@ -104,7 +104,6 @@ public:
 	bool IsPPQInList(LPCTSTR PPQName) const;
 
 	std::string BuildDigName( const SVOCameraObj& rCameraObj ) const;
-	std::string BuildTrgDig(const SvTrig::SVOTriggerObj& rTriggerObj) const;
 
 	bool RenameInspection(LPCTSTR InspectionName, LPCTSTR NewName);
 

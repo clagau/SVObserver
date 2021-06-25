@@ -102,7 +102,8 @@ public:
 	afx_msg void OnEnKillfocusUsecEdit();
 	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 	afx_msg void OnBnClickedPausebutton();
-	
+	afx_msg void OnSingleTrigger();
+
 	void ClearTriggers();
 	bool AddTrigger(SvTrig::SVTriggerObject* pTrigger);
 	bool HasTriggers() const { return m_triggerTabs.GetItemCount() > 0; }
@@ -110,7 +111,7 @@ public:
 
 	void OnStop();
 
-	static SoftwareTriggerDlg & Instance();
+	static SoftwareTriggerDlg& Instance();
 
 private:
 	CSpinButtonCtrl		m_msecSpin;
@@ -119,18 +120,10 @@ private:
 	CSpinButtonCtrl		m_secSpin;
 	CEdit				m_secEdit;
 	CStatic				m_secLabel;
-	CSpinButtonCtrl		m_minSpin;
-	CEdit				m_minEdit;
-	CStatic				m_minLabel;
-	CSpinButtonCtrl		m_hourSpin;
-	CEdit				m_hourEdit;
-	CStatic				m_hourLabel;
-	CSpinButtonCtrl		m_daySpin;
-	CEdit				m_dayEdit;
-	CStatic				m_dayLabel;
 	CStatic				m_frequency;
 	CStatic				m_ppmLabel;
 	CButton				m_pauseBtn;
+	CButton				m_singleTriggerBtn;
 
 	SVSpinGroup*		m_pSpins = nullptr;
 	CBrush*				m_pBrush;

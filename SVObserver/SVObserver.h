@@ -61,7 +61,6 @@ public:
 	afx_msg void OnFileOpenSVC();
 	afx_msg void OnEditEnvironment();
 	afx_msg void OnTestMode();
-	afx_msg void OnModeTestBtn();
 	afx_msg void OnRunMode();
 	afx_msg void OnStopTestMode();
 	afx_msg void OnThreadAffinitySetup();
@@ -95,9 +94,7 @@ public:
 	afx_msg void OnUpdateExtrasTestOutputs(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateHelp(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateHelpFinder(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateModeStopTest(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateModeTest(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateModeTestBtn(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateNextPane(CCmdUI* PCmdUI);
 	afx_msg void OnUpdatePrevPane(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateWindowArrange(CCmdUI* PCmdUI);
@@ -248,7 +245,6 @@ public:
 	HRESULT SendCameraParameters();
 
 	HRESULT SetModeEdit( bool p_bState );
-	void SetTestMode(bool p_bNoSecurity = false);
 	HRESULT GetTriggersAndCounts( std::string& rTriggerCounts ) const;
 
 	void RefreshAllIPDocuments();
@@ -289,9 +285,8 @@ public:
 #pragma region Protected Methods
 protected:
 
-	/// Start the configuration (go online).
 	/// In error cases this method throw Exception.
-	void Start();
+	void Start(DWORD desiredState);
 
 	HRESULT DisconnectAllCameraBuffers();
 	HRESULT ConnectCameraBuffers();

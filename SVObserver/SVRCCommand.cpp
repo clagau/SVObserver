@@ -31,7 +31,6 @@
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVSystemLibrary/SVEncodeDecodeUtilities.h"
 #include "SVSystemLibrary/SVVersionInfo.h"
-#include "SVUtilityLibrary/SVClock.h"
 #include "Triggering/SVTriggerClass.h"
 #include "Triggering/SVTriggerObject.h"
 #pragma endregion Includes
@@ -1250,14 +1249,18 @@ void SVRCCommand::SoftwareTrigger(const SvPb::SoftwareTriggerRequest& rRequest, 
 								canExternalSoftwareTrigger &= std::all_of(cameraVector.begin(), cameraVector.end(), [](const auto* pCamera) { return pCamera->canExternalSoftwareTrigger(); });
 	
 								SvTrig::SVTriggerObject* pTrigger = pPPQ->GetTrigger();
-								if (nullptr != pTrigger && canExternalSoftwareTrigger)
+								if (nullptr != pTrigger)
 								{
-									SvTrig::SVTriggerInfoStruct triggerInfo;
-									triggerInfo.bValid = true;
-									triggerInfo.m_Data[SvTrig::TriggerDataEnum::TimeStamp] = _variant_t(SvUl::GetTimeStamp());
-									triggerInfo.m_Data[SvTrig::TriggerDataEnum::SoftwareTrigger] = true;
-									pTrigger->Fire(std::move(triggerInfo));
-									result = S_OK;
+									canExternalSoftwareTrigger |= SvDef::TriggerType::SoftwareTrigger == pTrigger->getType();
+									if (canExternalSoftwareTrigger)
+									{
+										pTrigger->Fire();
+										result = S_OK;
+									}
+									else
+									{
+										result = E_NOTIMPL;
+									}
 								}
 								else
 								{

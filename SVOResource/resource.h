@@ -2176,18 +2176,13 @@
 #define IDC_USEC_EDIT                   15962
 #define IDC_SPINMSEC                    15965
 #define IDC_SPINSEC                     15966
-#define IDC_SPINMIN                     15967
-#define IDC_SPINHOUR                    15968
-#define IDC_SPINDAY                     15969
 #define IDC_EDITMSEC                    15972
 #define IDC_EDITSEC                     15973
 #define IDC_STATICMSEC                  15974
 #define IDC_STATICSEC                   15975
-#define IDC_STATICMIN                   15976
-#define IDC_STATICHOUR                  15977
-#define IDC_STATICDAY                   15978
 #define IDC_FREQUENCY                   15981
 #define IDC_PARTSPERMINUTE              15982
+#define IDC_SINGLETRIGGER               15983
 #define IDC_PAUSEBUTTON                 15984
 #define IDC_REMOTE_IONAME               15985
 #define IDC_VALUE_EDIT                  15986
@@ -2510,7 +2505,6 @@
 #define ID_EXTRAS_SECURITY_SETUP        20175
 #define ID_INDICATOR_USER               20177
 #define ID_INDICATOR_MODE               20178
-#define ID_MODE_TEST_BTN                20179
 #define ID_PUBLISHED_RESULT_IMAGES_PICKER 20180
 #define ID_EDIT_DATA_DEFINITION_LISTS   20182
 #define ID_REMOTE_OUTPUT_PROPERTIES     20190

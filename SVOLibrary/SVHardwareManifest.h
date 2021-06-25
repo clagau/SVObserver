@@ -19,6 +19,11 @@
 #include "SVObserverEnums.h"
 #pragma endregion Includes
 
+namespace SvDef
+{
+	enum class TriggerType;
+}
+
 class SVHardwareManifest
 {
 public:
@@ -31,8 +36,8 @@ public:
 
 	static SVIMTypeInfoStruct GetSVIMTypeInfo( SVIMProductEnum p_ID  );
 
-	template <typename Insertor>
-	static void GetSupportedSVIMList( Insertor insertor )
+	template <typename Inserter>
+	static void GetSupportedSVIMList( Inserter inserter )
 	{
 		for (SVIMTypeMap::const_iterator l_Iter = m_SVIMTypeMap.begin(); l_Iter != m_SVIMTypeMap.end(); ++l_Iter)
 		{
@@ -40,10 +45,13 @@ public:
 
 			if ( l_SVIMInfo.m_Supported )
 			{
-				insertor = l_Iter->first;
+				// cppcheck-suppress unreadVariable symbolName=inserter ; cppCheck doesn't know back_insert_iterator
+				inserter = l_Iter->first;
 			}
 		}
 	}
+
+	static std::string BuildTriggerDeviceName(SVIMProductEnum productType, int iDig, SvDef::TriggerType triggerType);
 
 	//************************************
 	//! This is a static method to generate the software trigger name

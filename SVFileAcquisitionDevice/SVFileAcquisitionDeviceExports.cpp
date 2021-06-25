@@ -97,11 +97,6 @@ HRESULT WINAPI SVDigitizerStop(unsigned long digitizerHandle)
 	return g_fileAcqDevice.CameraStop(digitizerHandle - 1);
 }
 
-HRESULT WINAPI SVDigitizerInternalTriggerEnable(unsigned long digitizerHandle)
-{
-	return g_fileAcqDevice.InternalTriggerEnable(digitizerHandle - 1);
-}
-
 HRESULT WINAPI SVDigitizerInternalTrigger(unsigned long digitizerHandle)
 {
 	return g_fileAcqDevice.InternalTrigger(digitizerHandle - 1);

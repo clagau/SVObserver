@@ -20,6 +20,7 @@
 #include "CameraLibrary/SVCustomDeviceParam.h"
 #include "Definitions/StringTypeDef.h"
 #include "Definitions/SVGigeEnums.h"
+#include "Definitions/TriggerType.h"
 #include "InspectionEngine/SVMatroxGigeAcquisitionClass.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
 #include "SVMessage/SVMessage.h"
@@ -1006,7 +1007,8 @@ bool SVMatroxGigeCameraProxy::CanSoftwareTrigger() const
 // For SingleGrabHelper
 HRESULT SVMatroxGigeCameraProxy::EnableSoftwareTrigger(unsigned long hDigitizer, SvTrig::SVDigitizerLoadLibraryClass* pDigitizer)
 {
-	return pDigitizer->InternalTriggerEnable(hDigitizer);
+	_variant_t value{ static_cast<long> (SvDef::TriggerType::SoftwareTrigger) };
+	return pDigitizer->ParameterSetValue(hDigitizer, SvDef::SVTriggerType, value);
 }
 
 // For SingleGrabHelper

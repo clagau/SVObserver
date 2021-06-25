@@ -45,7 +45,6 @@ public:
 	HRESULT CameraSetParameter(unsigned long cameraIndex, int parameterID, const _variant_t& rValue);
 	_variant_t CameraGetParameterList(unsigned long cameraIndex) const;
 
-	HRESULT InternalTriggerEnable(unsigned long cameraIndex);
 	HRESULT InternalTrigger(unsigned long cameraIndex);
 
 private:

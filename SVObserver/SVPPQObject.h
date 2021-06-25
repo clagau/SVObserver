@@ -146,7 +146,7 @@ public:
 	
 	/// Check and prepare if configuration can go online.
 	/// In error cases this method throw Exception.
-	void PrepareGoOnline();
+	void PrepareGoOnline(bool isTestMode);
 	
 	/// Go online.
 	/// In error cases this method throw Exception.

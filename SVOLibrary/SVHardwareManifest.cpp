@@ -11,7 +11,8 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "SVOLibrary/SVHardwareManifest.h"
+#include "SVHardwareManifest.h"
+#include "Definitions/TriggerType.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
@@ -138,6 +139,55 @@ SVIMTypeInfoStruct SVHardwareManifest::GetSVIMTypeInfo(SVIMProductEnum p_ID)
 	return SVIMTypeInfoStruct(false, 0, 0);
 }
 
+std::string SVHardwareManifest::BuildTriggerDeviceName(SVIMProductEnum productType, int digitizerIndex, SvDef::TriggerType triggerType)
+{
+	std::string Result;
+
+	switch (triggerType)
+	{
+		case SvDef::TriggerType::HardwareTrigger:
+		{
+			switch (productType)
+			{
+				case SVIM_PRODUCT_X2_GD1A:
+				case SVIM_PRODUCT_X2_GD1A_COLOR:
+				case SVIM_PRODUCT_X2_GD2A:
+				case SVIM_PRODUCT_X2_GD2A_COLOR:
+				case SVIM_PRODUCT_X2_GD4A:
+				case SVIM_PRODUCT_X2_GD4A_COLOR:
+				case SVIM_PRODUCT_X2_GD8A:
+				case SVIM_PRODUCT_X2_GD8A_COLOR:
+				{
+					Result = SVHardwareManifest::BuildIOBoardTriggerDeviceName(digitizerIndex);
+					break;
+				}
+				case SVIM_PRODUCT_NEO1:
+				{
+					Result = SVHardwareManifest::BuildHardwareTriggerDeviceName(digitizerIndex);
+					break;
+				}
+
+				default:
+				{
+					break;
+				}
+			}
+			break;
+		}
+		case SvDef::TriggerType::SoftwareTrigger:
+		{
+			Result = SVHardwareManifest::BuildSoftwareTriggerDeviceName(digitizerIndex);
+			break;
+		}
+		case SvDef::TriggerType::CameraTrigger:
+		{
+			Result = SVHardwareManifest::BuildAcquisitionTriggerDeviceName(digitizerIndex);
+			break;
+		}
+	}
+	return Result;
+}
+
 std::string SVHardwareManifest::BuildSoftwareTriggerDeviceName(int iDig)
 {
 	return SvUl::Format("%s%s%d", cSvimSoftwareTriggerSource, cSvimDigName, iDig);
@@ -158,6 +208,7 @@ std::string SVHardwareManifest::BuildHardwareTriggerDeviceName(int iDig)
 	return SvUl::Format("%s%s%d", cSvimHardwareTriggerSource, cSvimDigName, iDig);
 }
 
+// cppcheck-suppress unusedFunction
 bool SVHardwareManifest::IsValidProductType(SVIMProductEnum productType)
 {
 	static const SVIMProductEnumSet list

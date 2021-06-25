@@ -252,11 +252,6 @@ HRESULT WINAPI SVDigitizerUnregisterBufferInterface(unsigned long)
 	return E_FAIL;
 }
 
-HRESULT WINAPI SVDigitizerInternalTriggerEnable(unsigned long)
-{
-	return S_OK;
-}
-
 HRESULT WINAPI SVDigitizerInternalTrigger(unsigned long)
 {
 	return E_FAIL;

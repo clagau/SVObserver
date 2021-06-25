@@ -260,21 +260,10 @@ BOOL SVOTriggerDeviceDlg::OnHelpInfo(HELPINFO* pHelpInfo)
 	return TRUE;
 }
 
-void SVOTriggerDeviceDlg::EnablePropertyEdit(int iSelection)
+void SVOTriggerDeviceDlg::EnablePropertyEdit(int)
 {
 	EnablePropertyButton(true);
-
-	// check for advanced properties
-	CString TriggerName;
-	m_ctlTriggerList.GetText(iSelection, TriggerName);
-    SvTrig::SVOTriggerObjPtr pTriggerObj = m_pParent->GetTriggerObjectByName(TriggerName);
-	bool buttonEnabled{ false };
-	if( nullptr != pTriggerObj)
-	{
-		buttonEnabled = SvDef::TriggerType::SoftwareTrigger == pTriggerObj->getTriggerType();
-		buttonEnabled |= SvDef::TriggerType::CameraTrigger == pTriggerObj->getTriggerType();
-	}
-	EnableAdvancedPropertyButton(buttonEnabled);
+	EnableAdvancedPropertyButton(true);
 }
 
 void SVOTriggerDeviceDlg::DisablePropertyEdit()

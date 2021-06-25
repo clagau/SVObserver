@@ -42,18 +42,10 @@ void SoftwareTriggerDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_SPINSEC, m_secSpin);
 	DDX_Control(pDX, IDC_EDITSEC, m_secEdit);
 	DDX_Control(pDX, IDC_STATICSEC, m_secLabel);
-	DDX_Control(pDX, IDC_SPINMIN, m_minSpin);
-	DDX_Control(pDX, IDC_EDITMIN, m_minEdit);
-	DDX_Control(pDX, IDC_STATICMIN, m_minLabel);
-	DDX_Control(pDX, IDC_SPINHOUR, m_hourSpin);
-	DDX_Control(pDX, IDC_EDITHOUR, m_hourEdit);
-	DDX_Control(pDX, IDC_STATICHOUR, m_hourLabel);
-	DDX_Control(pDX, IDC_SPINDAY, m_daySpin);
-	DDX_Control(pDX, IDC_EDITDAY, m_dayEdit);
-	DDX_Control(pDX, IDC_STATICDAY, m_dayLabel);
 	DDX_Control(pDX, IDC_FREQUENCY, m_frequency);
 	DDX_Control(pDX, IDC_PARTSPERMINUTE, m_ppmLabel);
 	DDX_Control(pDX, IDC_PAUSEBUTTON, m_pauseBtn);
+	DDX_Control(pDX, IDC_SINGLETRIGGER, m_singleTriggerBtn);
 }
 
 
@@ -61,13 +53,11 @@ BEGIN_MESSAGE_MAP(SoftwareTriggerDlg, CDialog)
 	ON_NOTIFY(TCN_SELCHANGE, IDC_TRIGGER_TABS, &SoftwareTriggerDlg::OnTcnSelchangeTriggerTabs)
 	ON_EN_CHANGE(IDC_USEC_EDIT, &SoftwareTriggerDlg::OnEnChangeUsecEdit)
 	ON_BN_CLICKED(IDOK, &SoftwareTriggerDlg::OnBnClickedOk)
+	ON_BN_CLICKED(IDC_SINGLETRIGGER, &SoftwareTriggerDlg::OnSingleTrigger)
 	ON_WM_CREATE()
 	ON_MESSAGE(WM_TRIGGER_CHANGE, &SoftwareTriggerDlg::OnTriggerChange)
 	ON_NOTIFY(UDN_DELTAPOS, IDC_SPINMSEC, &SoftwareTriggerDlg::OnDeltaposSpin)
 	ON_NOTIFY(UDN_DELTAPOS, IDC_SPINSEC, &SoftwareTriggerDlg::OnDeltaposSpin)
-	ON_NOTIFY(UDN_DELTAPOS, IDC_SPINMIN, &SoftwareTriggerDlg::OnDeltaposSpin)
-	ON_NOTIFY(UDN_DELTAPOS, IDC_SPINHOUR, &SoftwareTriggerDlg::OnDeltaposSpin)
-	ON_NOTIFY(UDN_DELTAPOS, IDC_SPINDAY, &SoftwareTriggerDlg::OnDeltaposSpin)
 	ON_EN_KILLFOCUS(IDC_USEC_EDIT, &SoftwareTriggerDlg::OnEnKillfocusUsecEdit)
 	ON_WM_CTLCOLOR()
 	ON_BN_CLICKED(IDC_PAUSEBUTTON, &SoftwareTriggerDlg::OnBnClickedPausebutton)
@@ -96,6 +86,7 @@ int SoftwareTriggerDlg::SelectTrigger()
 			m_knobCtrl.SetValue( Value );
 			SetFrequency( Value );
 			m_pauseBtn.SetWindowText( pTrigger->ButtonText().c_str() );
+			m_singleTriggerBtn.EnableWindow(pTrigger->Paused());
 		}
 		else
 		{
@@ -217,7 +208,7 @@ BOOL SoftwareTriggerDlg::OnInitDialog()
 	sv::Def limit2(false, 121);
 	SVSpinGroup* pNext = new SVSpinGroup(m_secSpin, m_secEdit, m_secLabel, limit2, nullptr);
 	m_pSpins = new SVSpinGroup(m_msecSpin, m_msecEdit, m_msecLabel, limit1, pNext);
-
+	m_singleTriggerBtn.EnableWindow(false);
 	return TRUE;  // return TRUE unless you set the focus to a control
 }
 
@@ -321,7 +312,20 @@ void SoftwareTriggerDlg::OnBnClickedPausebutton()
 	{
 		SVTriggerProxy* pTrigger = reinterpret_cast<SVTriggerProxy *>(item.lParam);
 		pTrigger->Toggle();
+		m_singleTriggerBtn.EnableWindow(pTrigger->Paused());
 		m_pauseBtn.SetWindowText( pTrigger->ButtonText().c_str() );
 	}
 }
 
+void SoftwareTriggerDlg::OnSingleTrigger()
+{
+	int idx = m_triggerTabs.GetCurSel();
+	TCITEM item;
+	memset(&item, 0, sizeof(TCITEM));
+	item.mask = TCIF_PARAM;
+	if (m_triggerTabs.GetItem(idx, &item) && item.lParam)
+	{
+		SVTriggerProxy* pTrigger = reinterpret_cast<SVTriggerProxy*>(item.lParam);
+		pTrigger->GetTrigger()->Fire();
+	}
+}

@@ -864,20 +864,17 @@ void SVOPropertyPageDlg::SetupAdvancedTrigger()
 		pRoot->SetLabelText(_T("Trigger - Advanced"));
 		pRoot->SetInfoText(_T("Advanced Properties for a Trigger"));
 
-		if(SvDef::TriggerType::SoftwareTrigger == m_TriggerObj.getTriggerType())
+		SVRPropertyItemEdit* pEdit = (SVRPropertyItemEdit*)m_Tree.InsertItem(new SVRPropertyItemEdit(), pRoot);
+		if (pEdit)
 		{
-			SVRPropertyItemEdit* pEdit = (SVRPropertyItemEdit*)m_Tree.InsertItem(new SVRPropertyItemEdit(), pRoot);
-			if (pEdit)
-			{
-				pEdit->SetCtrlID(PROP_ADV_TRIGGER_PERIOD);
-				pEdit->SetLabelText(_T("Timer Period"));
-				std::string Text = SvUl::Format(_T("Enter the period for the Software Trigger, in milliseconds (minimum %d milliseconds)."), SvTrig::MinTimerPeriod_ms);
-				pEdit->SetInfoText(Text.c_str());
+			pEdit->SetCtrlID(PROP_ADV_TRIGGER_PERIOD);
+			pEdit->SetLabelText(_T("Timer Period"));
+			std::string Text = SvUl::Format(_T("Enter the period for the Software Trigger (also used for Test Mode), in milliseconds (minimum %d milliseconds)."), SvTrig::MinTimerPeriod_ms);
+			pEdit->SetInfoText(Text.c_str());
 
-				pEdit->SetItemValue(m_TriggerObj.GetTimerPeriod());
-			}
+			pEdit->SetItemValue(m_TriggerObj.GetTimerPeriod());
 		}
-		SVRPropertyItemEdit* pEdit = dynamic_cast<SVRPropertyItemEdit*> (m_Tree.InsertItem(new SVRPropertyItemEdit(), pRoot));
+		pEdit = dynamic_cast<SVRPropertyItemEdit*> (m_Tree.InsertItem(new SVRPropertyItemEdit(), pRoot));
 		if (pEdit)
 		{
 			pEdit->SetCtrlID(PROP_ADV_TRIGGER_START_OBJECT_ID);

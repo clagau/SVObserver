@@ -15,6 +15,8 @@
 #include "SVCameraPage.h"
 #include "CameraLibrary/SVDeviceParamCollection.h"
 #include "CameraLibrary/SVLongValueDeviceParam.h"
+#include "Definitions/SVGigeEnums.h"
+#include "Definitions/TriggerType.h"
 #include "SVCameraPropDlgClass.h"
 #include "SVCameraFilePropertyPageDlg.h"
 #include "SVTestAcquisitionClass.h"
@@ -335,7 +337,8 @@ void SVCameraPage::StartAcquire()
 	{
 		unsigned long digitizerHandle = m_pAcquisition->m_rSubsystem.m_svDigitizers.GetHandle(m_lSelectedCamera);
 
-		m_pAcquisition->m_rSubsystem.m_svDigitizers.InternalTriggerEnable(digitizerHandle);
+		_variant_t value{ static_cast<long> (SvDef::TriggerType::SoftwareTrigger) };
+		m_pAcquisition->m_rSubsystem.m_svDigitizers.ParameterSetValue(digitizerHandle, SvDef::SVTriggerType, value);
 
 		if (m_timerID == 0)
 		{
