@@ -267,6 +267,8 @@ namespace SvOp
 
 		m_NumberOfObjects.SetValue(request.embeddedlist_size());
 		registerParameter();
+		//The next method is needed, because if an object will be deleted, but used in the ResultView, the ResultList has to rebuild, otherwise it can crash.
+		GetInspectionInterface()->SetDefaultInputs();
 
 		return cmd;
 	}
@@ -322,18 +324,20 @@ namespace SvOp
 		{
 			long type;
 			m_TypeObjects[i]->GetValue(type);
-			constexpr UINT defaultStringValueAttributes = SvPb::viewable | SvPb::publishable | SvPb::archivable | SvPb::embedable | SvPb::audittrail | SvPb::dataDefinitionValue;
+			m_objects[i]->UpdateLinkedName();
+			constexpr UINT defaultStringValueAttributes = SvPb::viewable | SvPb::publishable | SvPb::archivable | SvPb::embedable | SvPb::dataDefinitionValue;
+			constexpr UINT defaultValueValueAttributes = SvDef::defaultValueObjectAttributes && (~SvPb::audittrail);
 			SvPb::InputTypeEnum typeEnum{ type };
 			switch (typeEnum)
 			{
 			case SvPb::InputTypeEnum::TypeDecimal:
-				m_objects[i]->SetObjectAttributesAllowed(SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::AddAttribute);
+				m_objects[i]->SetObjectAttributesAllowed(defaultValueValueAttributes, SvOi::SetAttributeType::AddAttribute);
 				break;
 			case SvPb::InputTypeEnum::TypeText:
 				m_objects[i]->SetObjectAttributesAllowed(defaultStringValueAttributes, SvOi::SetAttributeType::AddAttribute);
 				break;
 			case SvPb::InputTypeEnum::TypeTable:
-				m_objects[i]->SetObjectAttributesAllowed(SvDef::defaultValueObjectAttributes | SvPb::taskObject, SvOi::SetAttributeType::AddAttribute);
+				m_objects[i]->SetObjectAttributesAllowed(defaultValueValueAttributes | SvPb::taskObject, SvOi::SetAttributeType::AddAttribute);
 				break;
 			case SvPb::InputTypeEnum::TypeGrayImage:
 			case SvPb::InputTypeEnum::TypeColorImage:
@@ -345,7 +349,6 @@ namespace SvOp
 				break;
 			}
 			
-			m_objects[i]->getLinkedName().SetObjectAttributesAllowed(defaultStringValueAttributes, SvOi::SetAttributeType::AddAttribute);
 			m_TypeObjects[i]->SetObjectAttributesAllowed(defaultStringValueAttributes, SvOi::SetAttributeType::AddAttribute);
 		}
 		for (int i = number; cMaxNumberOfObjects > i; ++i)
