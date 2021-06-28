@@ -785,7 +785,7 @@ bool readerTest(LPCTSTR testName, ReaderTestData testData)
 			int readyCallbackHandle = pTRC->registerReadyCallback(OnReadyTRC);
 			int newTrCallBackHandle = pTRC->registerNewTrCallback(OnNewTr);
 			LogClass* pLogClass = &testData.m_rLogClass;
-			auto newInterestTrFunctor = [&pLogClass](const std::vector<SvOi::TrInterestEventData>& rDataVec) { return OnNewInterestTr(pLogClass, rDataVec); };
+			auto newInterestTrFunctor = [pLogClass](const std::vector<SvOi::TrInterestEventData>& rDataVec) { return OnNewInterestTr(pLogClass, rDataVec); };
 			int newInterestCallBackHandle = pTRC->registerNewInterestTrCallback(newInterestTrFunctor);
 			if (pTRC->isValid())
 			{

@@ -82,8 +82,15 @@ public:
 				return promise_.get_future();
 			}
 		}
-		auto pSharedThis = shared_from_this();
-		auto resolveFunctor = [pSharedThis] (boost::system::error_code ec, boost::asio::ip::tcp::resolver::results_type results) {return pSharedThis->on_resolve(ec, results); };
+		std::weak_ptr<RestRequest> pWeakThis{ shared_from_this() };
+		auto resolveFunctor = [pWeakThis] (boost::system::error_code ec, boost::asio::ip::tcp::resolver::results_type results)
+		{
+			auto pThis = pWeakThis.lock();
+			if (nullptr != pThis)
+			{
+				pThis->on_resolve(ec, results);
+			}
+		};
 		// Look up the domain name
 		resolver_.async_resolve(req.Url.host(), port, resolveFunctor);
 
@@ -99,8 +106,15 @@ public:
 			return fail(ec, "resolve");
 		}
 
-		auto pSharedThis = shared_from_this();
-		auto connectFunctor = [pSharedThis] (const boost::system::error_code& rError, boost::asio::ip::tcp::resolver::iterator it) {return pSharedThis->on_connect(rError, it); };
+		std::weak_ptr<RestRequest> pWeakThis{ shared_from_this() };
+		auto connectFunctor = [pWeakThis] (const boost::system::error_code& rError, boost::asio::ip::tcp::resolver::iterator it)
+		{
+			auto pThis = pWeakThis.lock();
+			if (nullptr != pThis)
+			{
+				pThis->on_connect(rError, it);
+			}
+		};
 		// Make the connection on the IP address we get from a lookup
 		boost::asio::async_connect(socket_, results.begin(), results.end(), connectFunctor);
 	}
@@ -112,8 +126,15 @@ public:
 			return fail(rError, "connect");
 		}
 
-		auto pSharedThis = shared_from_this();
-		auto writeFunctor = [pSharedThis](boost::system::error_code ec, std::size_t bytes_transferred) {return pSharedThis->on_write(ec, bytes_transferred); };
+		std::weak_ptr<RestRequest> pWeakThis{ shared_from_this() };
+		auto writeFunctor = [pWeakThis](boost::system::error_code ec, std::size_t bytes_transferred)
+		{
+			auto pThis = pWeakThis.lock();
+			if (nullptr != pThis)
+			{
+				pThis->on_write(ec, bytes_transferred);
+			}
+		};
 		// Send the HTTP request to the remote host
 		boost::beast::http::async_write(socket_, req_, writeFunctor);
 	}
@@ -125,10 +146,19 @@ public:
 		boost::ignore_unused(bytes_transferred);
 
 		if (ec)
+		{
 			return fail(ec, "write");
+		}
 
-		auto pSharedThis = shared_from_this();
-		auto readFunctor = [pSharedThis](boost::system::error_code ec, std::size_t bytes_transferred) {return pSharedThis->on_read(ec, bytes_transferred); };
+		std::weak_ptr<RestRequest> pWeakThis{ shared_from_this() };
+		auto readFunctor = [pWeakThis](boost::system::error_code ec, std::size_t bytes_transferred)
+		{
+			auto pThis = pWeakThis.lock();
+			if (nullptr != pThis)
+			{
+				pThis->on_read(ec, bytes_transferred);
+			}
+		};
 		// Receive the HTTP response
 		boost::beast::http::async_read(socket_, buffer_, res_, readFunctor);
 	}

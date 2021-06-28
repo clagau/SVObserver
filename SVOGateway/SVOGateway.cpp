@@ -108,7 +108,8 @@ void StartWebServer(DWORD argc, LPTSTR  *argv)
 		SvOgw::ServerRequestHandler requestHandler(&sharedMemoryAccess, &authManager);
 		SvRpc::RPCServer rpcServer(&requestHandler);
 		settings.httpSettings.pEventHandler = &rpcServer;
-		auto httpRequestHandler = [&restHandler](const SvHttp::HttpRequest& req, SvHttp::HttpResponse& res) { return restHandler.onRestRequest(req, res); };
+		auto refHandler{ std::ref(restHandler) };
+		auto httpRequestHandler = [refHandler](const SvHttp::HttpRequest& req, SvHttp::HttpResponse& res) { return refHandler.get().onRestRequest(req, res); };
 		settings.httpSettings.HttpRequestHandler = httpRequestHandler;
 
 		std::unique_ptr<SvHttp::HttpServer> pServer {nullptr};

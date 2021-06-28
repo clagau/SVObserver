@@ -272,7 +272,8 @@ namespace SvMc
 		GetClientRect(&m_client);
 		UpdateAnchors(m_client, m_func);
 		GDICanvas canvas(this, m_client, &m_bmp, m_colors ? m_backColor : SvDef::White);
-		SvUl::SVHistogramBase::drawFunctor drawFunction = [&canvas](const RECT& rRect, int param) {canvas.Draw(rRect, param); };
+		//canvas can be captured as reference due to function pointer called directly (no callback function!)
+		SvUl::SVHistogramBase::drawFunctor drawFunction = [&canvas](const RECT& rRect, int param) { canvas.Draw(rRect, param); };
 		DrawHistogram(drawFunction);
 
 		SetLabelText(m_factor*100.0/scale, label::leftTop);

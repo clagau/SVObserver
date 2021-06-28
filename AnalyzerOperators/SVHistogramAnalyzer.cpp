@@ -1083,6 +1083,7 @@ HRESULT SVHistogramAnalyzer::paintHistogramImage(const SvOi::ITriggerRecordRWPtr
 	
 	m_histogram.SetClient(l_client);
 	MILCanvas canvas(pImageBuffer->getHandle()->GetBuffer());
+	//canvas can be captured as reference due to function pointer called directly (no callback function!)
 	SvUl::SVHistogramBase::drawFunctor drawFunction = [&canvas](const RECT& rRect, int param) {canvas.Draw(rRect, param); };
 	m_histogram.DrawHistogram(drawFunction);
 
