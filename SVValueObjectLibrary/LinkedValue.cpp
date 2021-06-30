@@ -600,7 +600,6 @@ private:
 			if (Result)
 			{
 				DisconnectInput();
-				m_children.clear();
 
 				VARTYPE defaultType = GetDefaultType();
 				_variant_t value;
@@ -633,6 +632,7 @@ private:
 			m_LinkedObjectRef.getObject()->disconnectObject(getObjectId());
 			m_LinkedObjectRef = SVObjectReference();
 		}
+		m_children.clear();
 	}
 
 	UINT LinkedValue::ObjectAttributesSet(int iIndex) const

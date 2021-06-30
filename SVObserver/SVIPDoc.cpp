@@ -1239,12 +1239,12 @@ void SVIPDoc::OnEditDelete()
 			if (deleteTool(pNavElement.get()))
 			{
 				m_toolGroupings.RemoveTool(pNavElement->m_DisplayName);
+				RebuildResultsList();
+				//pInspection->RebuildInspectionInputList();
 				UpdateAllViews(nullptr, RefreshDelete);
 				SetModifiedFlag();
 				RunOnce(); // this will cause rebuild to be called so why are we calling rebuild above?
 			}
-
-
 		}
 		break;
 
@@ -1626,6 +1626,7 @@ void SVIPDoc::OpenToolAdjustmentDialog(int tab)
 			}
 			SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 		}
+		RebuildResultsList();
 		UpdateAllViews(nullptr, RefreshView);
 	}
 }

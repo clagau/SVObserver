@@ -9,6 +9,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "ObjectSelectorController.h"
+#include "Definitions/GlobalConst.h"
 #include "InspectionCommands/CommandExternalHelper.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "SVUtilityLibrary/StringHelper.h"
@@ -85,6 +86,12 @@ bool ObjectSelectorController::Show(std::string& rName, const std::string& rTitl
 		SVObjectReference objectRef{ SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult() };
 
 		rName = objectRef.GetObjectNameBeforeObjectType(SvPb::SVInspectionObjectType, true);
+
+		//@TODO[gra][10.10][29.06.2021]: This quick fix needs to be done properly using object reference (Inspection name is only added to Linked Values when preceded with Tool Set!
+		if (std::string::npos != rName.find(SvDef::FqnRemoteInput[1]) || std::string::npos != rName.find(SvDef::FqnDioInput[1]))
+		{
+			rName = objectRef.GetCompleteName();
+		}
 		result = true;
 	}
 
