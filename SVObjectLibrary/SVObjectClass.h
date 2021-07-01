@@ -193,6 +193,8 @@ public:
 	virtual bool isCorrectType(SvPb::ObjectSelectorType requiredType, const SVObjectClass* pTestObject = nullptr) const;
 	bool checkIfValidDependency(const SVObjectClass* pObject) const;
 
+	size_t getObjectAttributesSetSize() const { return m_ObjectAttributesSet.size(); };
+
 protected:
 	/// Convert a string (dotted name) to an object.
 	/// \param rValue [in] Input string

@@ -326,7 +326,7 @@ namespace SvOp
 			m_TypeObjects[i]->GetValue(type);
 			m_objects[i]->UpdateLinkedName();
 			constexpr UINT defaultStringValueAttributes = SvPb::viewable | SvPb::publishable | SvPb::archivable | SvPb::embedable | SvPb::dataDefinitionValue;
-			constexpr UINT defaultValueValueAttributes = SvDef::defaultValueObjectAttributes && (~SvPb::audittrail);
+			constexpr UINT defaultValueValueAttributes = SvDef::defaultValueObjectAttributes & (~SvPb::audittrail);
 			SvPb::InputTypeEnum typeEnum{ type };
 			switch (typeEnum)
 			{
@@ -349,7 +349,7 @@ namespace SvOp
 				break;
 			}
 			
-			m_TypeObjects[i]->SetObjectAttributesAllowed(defaultStringValueAttributes, SvOi::SetAttributeType::AddAttribute);
+			m_TypeObjects[i]->SetObjectAttributesAllowed(defaultStringValueAttributes & (~SvPb::dataDefinitionValue), SvOi::SetAttributeType::OverwriteAttribute);
 		}
 		for (int i = number; cMaxNumberOfObjects > i; ++i)
 		{

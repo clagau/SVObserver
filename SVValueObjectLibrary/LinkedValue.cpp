@@ -637,21 +637,14 @@ private:
 
 	UINT LinkedValue::ObjectAttributesSet(int iIndex) const
 	{
-		UINT result{ 0 };
+		//@TODO[MZA][10.20][01.07.2021] Normally LinkedValue has the size of 1, but Special case: if LinkedValue a child of another LinkedValue (TableObject-Column-Object) get a ObjectAttributesSet-Size from the colum-object.
+		//But this part of the code should be improved.
+		if (getObjectAttributesSetSize() <= iIndex)
+		{
+			iIndex = 0;
+		}
 
-		if (nullptr != m_LinkedObjectRef.getObject())
-		{
-			if (false == m_CircularReference)
-			{
-				LifeFlag circularCheck(m_CircularReference);
-				result = m_LinkedObjectRef.getObject()->ObjectAttributesSet(iIndex);
-			}
-		}
-		else
-		{
-			result = __super::ObjectAttributesSet(iIndex);
-		}
-		return result;
+		return __super::ObjectAttributesSet(iIndex);
 	}
 
 	HRESULT LinkedValue::GetChildObject(SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index/* = 0*/) const
