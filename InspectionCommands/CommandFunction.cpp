@@ -974,7 +974,7 @@ SvPb::InspectionCmdResponse getEmbeddedValues(SvPb::GetEmbeddedValuesRequest req
 				ConvertVariantToProtobuf(Value, pElement->mutable_value());
 				ConvertVariantToProtobuf(DefaultValue, pElement->mutable_defaultvalue());
 			}
-			else if (E_BOUNDS == result || SVMSG_SVO_105_CIRCULAR_REFERENCE == result)
+			else if (E_BOUNDS == result || SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == result || SVMSG_SVO_105_CIRCULAR_REFERENCE == result)
 			{
 				Value.Clear();
 				auto* pElement = pResponse->add_list();
