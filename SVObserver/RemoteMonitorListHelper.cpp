@@ -62,7 +62,10 @@ void RemoteMonitorListHelper::GetPropertiesFromMonitoredObject(const MonitoredOb
 	data.wholeArray = rMonitoredObject.wholeArray;
 	data.isArray= rMonitoredObject.isArray;
 	data.arrayIndex = rMonitoredObject.arrayIndex;
-	data.ObjectType = ObjectRef.getObject()->GetObjectType();
+	if (auto* pFinalObj = ObjectRef.getFinalObject(); nullptr != pFinalObj)
+	{
+		data.ObjectType = pFinalObj->GetObjectType();
+	}
 	
 	SvOi::IValueObject* pValueObject = dynamic_cast<SvOi::IValueObject*>  (ObjectRef.getObject());
 	if (pValueObject)

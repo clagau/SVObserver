@@ -3116,9 +3116,9 @@ HRESULT SVInspectionProcess::GetInspectionImage(LPCTSTR Name, SvIe::SVImageClass
 
 	for (const auto pObject : list)
 	{
-		SvIe::SVImageClass* pImage = dynamic_cast<SvIe::SVImageClass*>(pObject);
+		SvIe::SVImageClass* pImage = SvIe::castObjectToImage(pObject);
 
-		if (pImage->GetCompleteName() == ImageName)
+		if (nullptr != pImage && pImage->GetCompleteName() == ImageName)
 		{
 			// We found the image by name
 			p_rRefObject = pImage;

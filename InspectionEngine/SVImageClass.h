@@ -194,6 +194,8 @@ private:
 	bool m_removeChildCircularReference = false;
 };
 
+SVImageClass* castObjectToImage(SvOi::IObjectClass* pObject);
+
 typedef std::set<SVImageClass*> SVImageClassPtrSet;
 typedef std::vector<SVImageClass*> SVImageClassPtrVector;
 

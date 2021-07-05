@@ -32,6 +32,7 @@
 #include "SVUtilityLibrary/SVClock.h"
 #include "ObjectInterfaces/ITriggerRecordControllerRW.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "ObjectInterfaces/ILinkedObject.h"
 #pragma endregion Includes
 
 namespace SvIe
@@ -1577,4 +1578,25 @@ void SVImageClass::copyCurrent2SaveImage()
 	}
 }
 
+SVImageClass* castObjectToImage(SvOi::IObjectClass* pObject)
+{
+	SvIe::SVImageClass* pImage;
+	auto* pLinked = dynamic_cast<SvOi::ILinkedObject*>(pObject);
+	if (nullptr != pLinked)
+	{
+		try
+		{
+			pImage = dynamic_cast<SvIe::SVImageClass*> (const_cast<SvOi::IObjectClass*>(pLinked->getLinkedObject()));
+		}
+		catch (...)
+		{
+			pImage = nullptr;
+		}
+	}
+	else
+	{
+		pImage = dynamic_cast<SvIe::SVImageClass*> (pObject);
+	}
+	return pImage;
+}
 } //namespace SvIe
