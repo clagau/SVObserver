@@ -144,6 +144,7 @@ namespace SvOp
 
 	SvPb::InspectionCmdResponse ParameterTask::setAndSortEmbeddedValues(SvPb::SetAndSortEmbeddedValueRequest request)
 	{
+		//@TODO[MZA][10.20][02.07.2021] more comments needed and method should be split in more methods
 		SvPb::InspectionCmdResponse cmd;
 		auto* pResponse = cmd.mutable_setandsortembeddedvalueresponse();
 		pResponse->set_errorrow(-1);
@@ -220,6 +221,34 @@ namespace SvOp
 			}
 		}
 		
+		long newFreePos = cMaxNumberOfObjects;
+		m_NumberOfObjects.GetValue(newFreePos);
+
+		//Set empty-"oldembeddedid" to the free position
+		for (auto iter = request.mutable_embeddedlist()->begin(); request.mutable_embeddedlist()->end() != iter; ++iter)
+		{
+			if (SvPb::NoEmbeddedId == iter->oldembeddedid())
+			{
+				if (newFreePos < cMaxNumberOfObjects)
+				{
+					iter->set_oldembeddedid(m_startEmbeddedIdValue + newFreePos);
+					newFreePos++;
+				}
+				else
+				{
+					for (SvPb::EmbeddedIdEnum id = m_startEmbeddedIdValue; id < m_startEmbeddedIdValue + cMaxNumberOfObjects; id = id + 1)
+					{
+						if (std::none_of(request.embeddedlist().begin(), request.embeddedlist().end(), [id](auto& rObj) { return rObj.oldembeddedid() == id; }))
+						{
+							iter->set_oldembeddedid(id);
+							int pos = id - m_startEmbeddedIdValue;
+							m_objects[pos]->DisconnectInput();
+							break;
+						}
+					}					
+				}
+			}
+		}
 
 		//Sort values in embedded names and set values and rename.
 		for (int i = 0; request.embeddedlist_size() > i; ++i)
