@@ -35,6 +35,7 @@
 #include "ObjectInterfaces/ILinkedObject.h"
 #pragma endregion Includes
 
+//#define TRACE_IMAGE true 
 namespace SvIe
 {
 
@@ -401,7 +402,15 @@ HRESULT SVImageClass::RebuildStorage(SvStl::MessageContainerVector *pErrorMessag
 		
 
 		//Update children but do not check if they cause errors as these are handled somewhere else
-		UpdateChildren();
+		// cppcheck-suppress  unreadVariable symbolName=huc
+#pragma warning(suppress : 4189)
+		auto huc = UpdateChildren();
+#if defined (TRACE_THEM_ALL) || defined (TRACE_IMAGE) 		
+		if (huc != S_OK)
+		{
+			OutputDebugString("Updatechildren returns FAIL\n");
+		}
+#endif 
 	}
 
 	if (S_OK == hr)
@@ -548,15 +557,45 @@ HRESULT SVImageClass::UpdateFromToolInformation()
 			}
 		}
 
-		if (SvPb::SVImageTypeEnum::SVImageTypeIndependent != m_ImageType &&
-			SvPb::SVImageTypeEnum::SVImageTypeDependent != m_ImageType)
+		
+		if (SvPb::SVImageTypeEnum::SVImageTypePhysical == m_ImageType)
 		{
 			SvOi::ITool* pTool = GetToolInterface();
 			if (nullptr != pTool)
 			{
 				pTool->SetToolImage(getObjectId());
+
+#if defined (TRACE_THEM_ALL) || defined (TRACE_IMAGE) 		
+				std::string toolname;
+				if (GetTool())
+				{
+					toolname = GetTool()->GetCompleteName();
+				}
+				auto msg = std::format("Image was set:tool:{}, type:{}, name:{}\n ",
+					toolname, int(GetImageType()), GetCompleteName());
+				OutputDebugString(msg.c_str());
+#endif 
 			}
 		}
+#if defined (TRACE_THEM_ALL) || defined (TRACE_IMAGE) 			
+		else
+		{
+			SvOi::ITool* pTool = GetToolInterface();
+			if (nullptr != pTool)
+			{
+
+				std::string toolname;
+				if (GetTool())
+				{
+					toolname = GetTool()->GetCompleteName();
+				}
+				auto msg = std::format("Image was set:tool:{}, type:{}, name:{}\n ",
+					toolname, int(GetImageType()), GetCompleteName());
+				OutputDebugString(msg.c_str());
+			}
+
+		}
+#endif 
 
 		ToolID = nullptr != GetTool() ? GetTool()->getObjectId() : SvDef::InvalidObjectId;
 	}
@@ -632,7 +671,81 @@ HRESULT SVImageClass::UpdateChild(uint32_t childID, const SVImageInfoClass& rIma
 			SVImageInfoClass& rChildInfo = m_ChildArrays[childID];
 			rChildInfo = rImageInfo;
 
-			l_hrOk = m_ImageInfo.ValidateAgainstOutputSpace(rChildInfo.GetExtents());
+			auto* pChildObject = SvOi::getObject(childID);
+			auto isROI{ false };
+			if (pChildObject)
+			{
+				isROI = (pChildObject->GetEmbeddedID() == SvPb::LogicalROIImageEId);
+			}
+
+
+			if (isROI)
+			{
+				l_hrOk = m_ImageInfo.ValidateAgainstOutputSpace(rChildInfo.GetExtents());
+			}
+
+			auto* pChildObjectImage = dynamic_cast<SVImageClass*>(pChildObject);
+
+			if (nullptr != pChildObjectImage)
+			{
+				auto pTool = dynamic_cast<SVTaskObjectClass*>(pChildObjectImage->GetTool());
+
+				if (nullptr != pTool && isROI)
+				{
+					SvStl::MessageManager e(SvStl::MsgType::Data);
+					e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SizeOfChildROIInvalid, SvStl::SourceFileParams(StdMessageParams), 0, childID);
+
+					if (S_OK != l_hrOk)
+					{
+						pTool->addOrRemoveResetErrorMessage(e.getMessageContainer(), true);
+					}
+					else
+					{
+						pTool->addOrRemoveResetErrorMessage(e.getMessageContainer(), false);
+					}
+				}
+			}
+#if defined (TRACE_THEM_ALL) || defined (TRACE_IMAGE) 		
+			std::string msg = { "ValidateAgainstOuput: " };
+			msg += GetCompleteName();
+
+			if (l_hrOk == S_OK)
+				msg += ": OK ";
+			else
+				msg += ": NOT OK ";
+
+			if (GetTool())
+			{
+				GetTool()->GetName();
+				GetTool()->GetObjectName();
+				GetTool()->GetCompleteName();
+				msg += std::format("(tool:{}) ", GetTool()->GetCompleteName());
+			}
+			else
+				msg += "(no tool )";
+
+			if (pChildObject)
+			{
+
+				auto name = pChildObject->GetCompleteName();
+				msg += std::format("  CHILDOBJECT(ROI{}): {} ", isROI, name);
+				auto* pChildImage = dynamic_cast<SVImageClass*>(pChildObject);
+				if (pChildImage && pChildImage->GetTool())
+				{
+					msg += std::format("(Tool: {} )", pChildImage->GetTool()->GetCompleteName());
+					pChildImage->GetTool()->GetName();
+					pChildImage->GetTool()->GetObjectName();
+					pChildImage->GetTool()->GetCompleteName();
+					pChildImage->GetImageType();
+				}
+				else
+					msg += "(no tool )";
+
+			}
+			//
+			msg += "\n";
+			::OutputDebugString(msg.c_str());
+#endif
 		}
 
 		if (!Unlock())

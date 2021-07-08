@@ -65,6 +65,10 @@ public:
 	SVTaskObjectClass(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTASKOBJECT);
 
 	virtual ~SVTaskObjectClass();
+	
+	//add the errormessage if add is true and errormessagetext is different from last errormessagetext 
+	//remove last errormessage if add is false and errormessagetext is last errormessagetext 
+	void addOrRemoveResetErrorMessage(SvStl::MessageContainer& rErrorMessage, bool add);
 
 	virtual bool resetAllObjects(SvStl::MessageContainerVector *pErrorMessages = nullptr) override;
 

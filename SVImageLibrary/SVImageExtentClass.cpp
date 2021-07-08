@@ -405,30 +405,7 @@ HRESULT SVImageExtentClass::UpdateData()
 
 bool SVImageExtentClass::hasFigure() const
 {
-	bool result {false};
-
-	switch (m_figure.m_eShape)
-	{
-		case SvDef::SVExtentShapePoint:
-		case SvDef::SVExtentShapeArrow:
-		case SvDef::SVExtentShapeLine:
-		case SvDef::SVExtentShapeLineHorizontal:
-		case SvDef::SVExtentShapeLineVertical:
-		case SvDef::SVExtentShapeRectangle:
-		case SvDef::SVExtentShapePie:
-		case SvDef::SVExtentShapeCircle:
-		case SvDef::SVExtentShapeDoubleCircle:
-		case SvDef::SVExtentShapeHexagon:
-		{
-			result = true;
-			break;
-		}
-		default:
-		{
-			break;
-		}
-	}
-	return result;
+	return (SvDef::SVExtentShapeUnknown != m_figure.m_eShape);
 }
 
 SvPb::SVExtentLocationPropertyEnum SVImageExtentClass::GetLocationPropertyAt(const SVPoint<double>& rPoint) const

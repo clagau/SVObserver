@@ -1776,4 +1776,33 @@ void SVTaskObjectClass::setStatus(DWORD color, DWORD state)
 	m_statusColor.SetValue(color);
 	m_statusTag.SetValue(state);
 }
+void SVTaskObjectClass::addOrRemoveResetErrorMessage(SvStl::MessageContainer& rErrorMessage, bool add)
+{
+	if (add )
+	{
+		if (m_ResetErrorMessages.size() == 0)
+		{
+			m_ResetErrorMessages.push_back(rErrorMessage);
+		}
+		else
+		{
+			auto it = m_ResetErrorMessages.back();
+			if (0 != std::string(rErrorMessage.what()).compare(it.what()))
+			{
+				m_ResetErrorMessages.push_back(rErrorMessage);
+			}
+		}
+	}
+	else if (m_ResetErrorMessages.size() > 0 && add == false)
+	{
+		auto it = m_ResetErrorMessages.back();
+		if (0 == std::string(rErrorMessage.what()).compare(it.what()))
+		{
+			m_ResetErrorMessages.pop_back();
+		}
+	}
+
+}
+
+
 } //namespace SvIe

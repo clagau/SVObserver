@@ -47,8 +47,10 @@ public:
 
 	SVImageExtentClass& operator=(const SVImageExtentClass& rRhs);
 
+	//Set all values to zero
 	void Initialize();
 
+	//type of transformation 
 	SvPb::SVExtentTranslationEnum GetTranslation() const;
 	void SetTranslation( SvPb::SVExtentTranslationEnum p_eTranslation );
 
@@ -62,11 +64,14 @@ public:
 	HRESULT SetExtentProperty(SvPb::SVExtentPropertyEnum eProperty, double dValue, bool clearOutputData = true);
 	HRESULT SetExtentProperty(SvPb::SVExtentPropertyEnum eProperty, const SVPoint<double>& rValue, bool clearOutputData = true);
 
+	//Calculate output data from input
 	HRESULT UpdateData();
 
+	//type of output data 
 	bool hasFigure() const;
 	const SVExtentFigureStruct& GetFigure() const { return m_figure; }
 
+	//move to toolextent? where is the point 
 	SvPb::SVExtentLocationPropertyEnum GetLocationPropertyAt(const SVPoint<double>& rPoint) const;
 
 	HRESULT Update( SvPb::SVExtentLocationPropertyEnum eLocation, const SVPoint<double>& rStartPoint, const SVPoint<double>& rEndPoint);
