@@ -654,5 +654,7 @@ enum MessageTextEnum
 	Tid_Gateway_ReadImageFailed,
 
 	Tid_ShareControl_NoImageForId,
+
+	Tid_SVRC_AccessDenied,
 };
 } //namespace SvStl

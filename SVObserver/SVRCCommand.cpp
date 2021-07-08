@@ -1297,7 +1297,15 @@ HRESULT SVRCCommand::CheckState(DWORD additionalStates /*=0*/) const
 	constexpr DWORD cDefaultNotAllowedStates = SV_STATE_UNAVAILABLE | SV_STATE_CREATING | SV_STATE_LOADING | SV_STATE_SAVING | SV_STATE_CLOSING | SV_STATE_EDITING |
 		SV_STATE_CANCELING | SV_STATE_INTERNAL_RUN | SV_STATE_START_PENDING | SV_STATE_STARTING | SV_STATE_STOP_PENDING | SV_STATE_STOPING | SV_STATE_REMOTE_CMD;
 
-	bool accessDenied = SVSVIMStateClass::CheckState(cDefaultNotAllowedStates | additionalStates) || SVSVIMStateClass::isSvrcBlocked();
+	bool accessDenied = SVSVIMStateClass::CheckState(cDefaultNotAllowedStates | additionalStates);
+	if (accessDenied)
+	{
+		SvDef::StringVector msgList;
+		msgList.emplace_back(std::move(SvUl::Format(_T("0X%X"), SVSVIMStateClass::GetState())));
+		msgList.emplace_back(std::move(SvUl::Format(_T("0X%X"), cDefaultNotAllowedStates | additionalStates)));
+		SvStl::MessageManager message(SvStl::MsgType::Log);
+		message.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SVRC_AccessDenied, msgList, SvStl::SourceFileParams(StdMessageParams));
+	}
 	return  accessDenied  ? SVMSG_SVO_ACCESS_DENIED : S_OK;
 }
 

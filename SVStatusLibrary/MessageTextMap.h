@@ -690,5 +690,6 @@ namespace SvStl
 		
 		{Tid_ShareControl_NoImageForId, _T("No Image for id found") },
 
+		{ Tid_SVRC_AccessDenied, _T("SVRC Access denied: Current state = %s, Check state = %s") },
 };
 } //namespace SvStl

@@ -385,6 +385,11 @@ static HRESULT CheckForRemoteInputProblems(const SVObjectNameInfo& rInfo, const 
 
 HRESULT SVVisionProcessorHelper::SetItems(const SVNameStorageMap& rItems, SVNameStatusMap& rStatusItems, bool RunOnce)
 {
+	if (SVSVIMStateClass::isSvrcBlocked())
+	{
+		return SVMSG_SVO_ACCESS_DENIED;
+	}
+
 	HRESULT l_Status = S_OK;
 
 	typedef std::map<std::string, SVNameStorageMap> SVStringNameStorageMap;
@@ -526,6 +531,11 @@ HRESULT SVVisionProcessorHelper::GetStandardItems(const SvDef::StringSet& rNames
 
 HRESULT SVVisionProcessorHelper::GetInspectionItems(const SvDef::StringSet& rNames, SVNameStorageResultMap& rItems) const
 {
+	if (SVSVIMStateClass::isSvrcBlocked())
+	{
+		return SVMSG_SVO_ACCESS_DENIED;
+	}
+
 	HRESULT l_Status = S_OK;
 
 	SVConfigurationObject* pConfig(nullptr);
@@ -546,6 +556,11 @@ HRESULT SVVisionProcessorHelper::GetInspectionItems(const SvDef::StringSet& rNam
 
 HRESULT SVVisionProcessorHelper::GetRemoteInputItems(const SvDef::StringSet& rNames, SVNameStorageResultMap& rItems) const
 {
+	if (SVSVIMStateClass::isSvrcBlocked())
+	{
+		return SVMSG_SVO_ACCESS_DENIED;
+	}
+
 	HRESULT l_Status = S_OK;
 
 	SVConfigurationObject* pConfig(nullptr);
@@ -645,6 +660,11 @@ HRESULT SVVisionProcessorHelper::SetInspectionItems(const SVNameStorageMap& rIte
 
 HRESULT SVVisionProcessorHelper::SetRemoteInputItems(const SVNameStorageMap& rItems, SVNameStatusMap& rStatus, bool )
 {
+	if (SVSVIMStateClass::isSvrcBlocked())
+	{
+		return SVMSG_SVO_ACCESS_DENIED;
+	}
+
 	HRESULT l_Status = S_OK;
 
 	SVConfigurationObject* pConfig(nullptr);

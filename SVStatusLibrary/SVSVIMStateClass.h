@@ -75,6 +75,9 @@ public:
 		}
 
 	};
+
+	static long GetState() { return m_SVIMState; }
+
 	//This operation adds a sub-state to the existing state 
 	//value.  The value passed in as a parameter is ORed to 
 	//the existing value.
