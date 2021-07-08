@@ -534,7 +534,7 @@ void SVVariantValueObjectClass::WriteValues(SvOi::IObjectWriter& rWriter) const
 	_variant_t Value;
 
 	// for all elements in the array
-	for (int32_t i = 0; i < getArraySize(); i++)
+	for (int32_t i = 0; i < SVVariantValueObjectClass::getArraySize(); i++)
 	{
 		//Make sure this is not a derived virtual method which is called
 		SVVariantValueObjectClass::GetValue(Value, i);

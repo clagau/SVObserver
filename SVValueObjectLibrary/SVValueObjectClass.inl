@@ -738,7 +738,6 @@ inline HRESULT SVValueObjectClass<T>::ValidateIndex(int ArrayIndex) const
 	{
 		if (ArrayIndex >= 0 && ArrayIndex < getArraySize())
 		{
-			//Use the variable not the function getResultSize in this case
 			if (1 == getArraySize() || ArrayIndex < getResultSize())
 			{
 				return S_OK;
