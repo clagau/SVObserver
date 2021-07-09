@@ -402,9 +402,8 @@ HRESULT SVImageClass::RebuildStorage(SvStl::MessageContainerVector *pErrorMessag
 		
 
 		//Update children but do not check if they cause errors as these are handled somewhere else
-		// cppcheck-suppress  unreadVariable symbolName=huc
 #pragma warning(suppress : 4189)
-		auto huc = UpdateChildren();
+		auto huc = UpdateChildren(); // cppcheck-suppress unreadVariable
 #if defined (TRACE_THEM_ALL) || defined (TRACE_IMAGE) 		
 		if (huc != S_OK)
 		{
@@ -730,7 +729,7 @@ HRESULT SVImageClass::UpdateChild(uint32_t childID, const SVImageInfoClass& rIma
 				auto name = pChildObject->GetCompleteName();
 				msg += std::format("  CHILDOBJECT(ROI{}): {} ", isROI, name);
 				auto* pChildImage = dynamic_cast<SVImageClass*>(pChildObject);
-				if (pChildImage && pChildImage->GetTool())
+				if (pChildImage && pChildImage->GetTool()) // cppcheck-suppress knownConditionTrueFalse
 				{
 					msg += std::format("(Tool: {} )", pChildImage->GetTool()->GetCompleteName());
 					pChildImage->GetTool()->GetName();
