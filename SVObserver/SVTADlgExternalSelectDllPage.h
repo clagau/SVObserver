@@ -12,23 +12,22 @@
 
 #pragma region Includes
 #include "SVOGui\ISVPropertyPageDialog.h"
-#include "SVOGui/ExternalToolTaskController.h"
 #include "SVOGui/DataController.h"
 #pragma endregion Includes
 
+
+class ExternalToolTaskController;
 class SVToolAdjustmentDialogSheetClass;
 struct SVCancelData;
 
 class SVTADlgExternalSelectDllPage : public CPropertyPage, public SvOg::ISVPropertyPageDialog
 {
 public:
-	SVTADlgExternalSelectDllPage(uint32_t inspectionID, uint32_t toolObjectID, SVToolAdjustmentDialogSheetClass* pSheet);   // standard constructor
+	SVTADlgExternalSelectDllPage(uint32_t inspectionID, uint32_t toolObjectID, CWnd& rParent, ExternalToolTaskController& rExternalToolTaskController);   // standard constructor
 	virtual ~SVTADlgExternalSelectDllPage() {};
 
 	// ISVPropertyPageDialog
 	bool QueryAllowExit() override;
-
-	SVIPDoc* GetIPDoc() const;
 
 // Dialog Data
 	//{{AFX_DATA(SVTADlgExternalSelectDllPage)
@@ -58,7 +57,7 @@ protected:
 	void setDefaultValuesForInputs();
 
 	std::string getStdStringFromValueController(SvPb::EmbeddedIdEnum objectId, int index = 0);
-	SVToolAdjustmentDialogSheetClass* m_pSheet;
+	CWnd& m_rParent;
 	CString m_previousExternalDllDirectorypath;
 	CToolTipCtrl m_ToolTip;
 	const uint32_t m_ToolObjectID;
@@ -85,7 +84,7 @@ protected:
 private:
 	void showDllConfigurationPages(bool show);
 
-	ExternalToolTaskController m_externalToolTaskController;
+	ExternalToolTaskController& m_rExternalToolTaskController;
 	SvOg::ValueController m_valueController;
 };
 

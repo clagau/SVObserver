@@ -212,6 +212,7 @@ echo %time%
     <ClCompile Include="RootChildren.cpp" />
     <ClCompile Include="RootObject.cpp" />
     <ClCompile Include="SelectedObjectsPage.cpp" />
+    <ClCompile Include="SheetForExternalToolAdjustment.cpp" />
     <ClCompile Include="SoftwareTriggerDlg.cpp" />
     <ClCompile Include="StdAfx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -405,6 +406,7 @@ echo %time%
     <ClInclude Include="RootChildren.h" />
     <ClInclude Include="RootObject.h" />
     <ClInclude Include="SelectedObjectsPage.h" />
+    <ClInclude Include="SheetForExternalToolAdjustment.h" />
     <ClInclude Include="SoftwareTriggerDlg.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="SVAboutDialogClass.h" />

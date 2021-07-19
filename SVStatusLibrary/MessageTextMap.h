@@ -25,6 +25,7 @@ namespace SvStl
 		{Tid_Default, _T("%s")},
 		{Tid_Started, _T("Started")},
 		{Tid_Stopped, _T("Stopped")},
+		{Tid_ReturnValue, _T("Return Value: %s")}, 
 		{Tid_ErrorClass, _T("Error Nbr = %s, Program Cd = %s")},
 		{Tid_XmlParserError, _T("%s, Error Code:%s, On line %s position %s")},
 		{Tid_RestoreVariantError, _T("RestoreVariant returns: %s")},

@@ -16,7 +16,6 @@
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "ObjectSelectorLibrary\ObjectTreeGenerator.h"
 #include "Definitions/StringTypeDef.h"
-#include "SVObserver/SVToolAdjustmentDialogSheetClass.h"
 #include "SVOGui\SVExternalToolImageSelectPage.h"
 #include "SVTADlgExternalResultPage.h"
 #include "SVUtilityLibrary/StringHelper.h"
@@ -53,12 +52,12 @@ BEGIN_MESSAGE_MAP(SVTADlgExternalInputSelectPage, CPropertyPage)
 END_MESSAGE_MAP()
 
 
-SVTADlgExternalInputSelectPage::SVTADlgExternalInputSelectPage(LPCTSTR Title, uint32_t inspectionID, uint32_t toolObjectID, int id)
-	: CPropertyPage(id)
+SVTADlgExternalInputSelectPage::SVTADlgExternalInputSelectPage(LPCTSTR Title, uint32_t inspectionID, uint32_t toolObjectID, ExternalToolTaskController& rExternalToolTaskController)
+	: CPropertyPage(IDD)
 	, m_InspectionID(inspectionID)
 	, m_ToolObjectID(toolObjectID)
-	, m_externalToolTaskController(inspectionID, toolObjectID)
-	, m_TaskObjectID(m_externalToolTaskController.getExternalToolTaskObjectId())
+	, m_rExternalToolTaskController(rExternalToolTaskController)
+	, m_TaskObjectID(m_rExternalToolTaskController.getExternalToolTaskObjectId())
 	, m_InputValues{ SvOg::BoundValues{ inspectionID, m_TaskObjectID } }
 {
 	SVObjectClass* pObject = nullptr;
@@ -66,7 +65,7 @@ SVTADlgExternalInputSelectPage::SVTADlgExternalInputSelectPage(LPCTSTR Title, ui
 	m_psp.pszTitle = Title;
 	m_psp.dwFlags |= PSP_USETITLE;
 
-	m_inputValueCount = m_externalToolTaskController.getNumInputValues();
+	m_inputValueCount = m_rExternalToolTaskController.getNumInputValues();
 	if (m_inputValueCount > COUNT_OF_INPUT_OUTPUT_IDs)
 	{
 		m_inputValueCount = COUNT_OF_INPUT_OUTPUT_IDs;
@@ -121,7 +120,7 @@ BOOL SVTADlgExternalInputSelectPage::OnInitDialog()
 
 		SVRPropertyItem* pGroupItem = nullptr;
 
-		auto inputDefinitions = m_externalToolTaskController.getInputValuesDefinition().inputvaluesdefinition();
+		auto inputDefinitions = m_rExternalToolTaskController.getInputValuesDefinition().inputvaluesdefinition();
 
 
 		int iItemCount = 0;
@@ -143,7 +142,7 @@ BOOL SVTADlgExternalInputSelectPage::OnInitDialog()
 			AddItemToTree(inputDefinitions[i], pGroupItem, ID_BASE + i);
 		}
 
-		bool bOk = m_Tree.RestoreState(m_externalToolTaskController.getPropTreeState());
+		bool bOk = m_Tree.RestoreState(m_rExternalToolTaskController.getPropTreeState());
 		if (!bOk)
 		{
 			SVRPropertyItem* pChild = pRoot->GetChild();
@@ -294,11 +293,11 @@ void SVTADlgExternalInputSelectPage::OnUndoChanges()
 
 	if (nullptr != pParent)
 	{
-		pParent->PostMessage(SV_REMOVE_PAGES_FOR_TESTED_DLL);
+		pParent->PostMessage(SV_ADAPT_TO_UNTESTED_DLL);
 
-		pParent->PostMessage(SV_ADD_PAGES_FOR_TESTED_DLL);
+		pParent->PostMessage(SV_ADAPT_TO_TESTED_DLL);
 
-		pParent->PostMessage(PSM_SETCURSEL, c_indexOfInputValuePage, 0);
+		pParent->PostMessage(SV_SELECT_INPUT_VALUE_PAGE);
 	}
 }
 
@@ -418,18 +417,24 @@ void SVTADlgExternalInputSelectPage::OnItemChanged(NMHDR* pNotifyStruct, LRESULT
 		std::string Name;
 		pItem->GetItemValue(Name);
 
-		if (false == m_externalToolTaskController.validateValueParameterWrapper(m_TaskObjectID, index, newVal, type))
+		if (false == m_rExternalToolTaskController.validateValueParameterWrapper(m_TaskObjectID, index, newVal, type))
 		{
 			*plResult = S_FALSE;
 		}
 	}
 }
 
-// Loops through Tree Items to fill existing SVInputObjectInfo array (if input is another VO) and/or SVValueObjects with 
-// constant values (if input is not another VO)
 void SVTADlgExternalInputSelectPage::OnOK()
 {
-	auto inputDefinitions = m_externalToolTaskController.getInputValuesDefinition().inputvaluesdefinition();
+	updateInputValuesFromPropertyTree();
+	CPropertyPage::OnOK();
+}
+
+// Loops through Tree Items to fill existing SVInputObjectInfo array (if input is another VO) and/or SVValueObjects with 
+// constant values (if input is not another VO)
+void SVTADlgExternalInputSelectPage::updateInputValuesFromPropertyTree()
+{
+	auto inputDefinitions = m_rExternalToolTaskController.getInputValuesDefinition().inputvaluesdefinition();
 	SVRPropertyItem* pGroup = nullptr;
 	if (m_Tree.GetRootItem() && nullptr != m_Tree.GetRootItem()->GetChild())
 	{
@@ -485,10 +490,9 @@ void SVTADlgExternalInputSelectPage::OnOK()
 		}
 		std::map<std::string, bool> propTreeState;
 		m_Tree.SaveState(propTreeState);
-		m_externalToolTaskController.setPropTreeState(propTreeState);
+		m_rExternalToolTaskController.setPropTreeState(propTreeState);
 
 		m_InputValues.Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
-		CPropertyPage::OnOK();
 	}
 }
 
@@ -496,7 +500,7 @@ void SVTADlgExternalInputSelectPage::OnOK()
 const std::unique_ptr<SvPb::InputValueDefinition> SVTADlgExternalInputSelectPage::GetInputDefinitionPtr(SVRPropertyItem* pItem)
 {
 	int iIndex = GetItemIndex(pItem);
-	auto inputDefinitions = m_externalToolTaskController.getInputValuesDefinition().inputvaluesdefinition();
+	auto inputDefinitions = m_rExternalToolTaskController.getInputValuesDefinition().inputvaluesdefinition();
 	if (iIndex >= 0 && inputDefinitions.size() > iIndex)
 	{
 		return  std::make_unique< SvPb::InputValueDefinition>(inputDefinitions[iIndex]);
@@ -532,9 +536,7 @@ std::string SVTADlgExternalInputSelectPage::GetName(uint32_t id) const
 
 BOOL SVTADlgExternalInputSelectPage::OnKillActive()
 {
-	// Since the ValueController used here share the same data with the one used on another page (see SVTADlgExternalInputSelectPage),
-	// we need to avoid unwanted interactions between the two. Therefore ensure a Commit() w/o call for each controller by page leave.
-	m_InputValues.Commit(SvOg::PostAction::doNothing);
+	updateInputValuesFromPropertyTree();
 
 	return CPropertyPage::OnKillActive();
 }

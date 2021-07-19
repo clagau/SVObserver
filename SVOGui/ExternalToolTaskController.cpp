@@ -1,9 +1,9 @@
 //******************************************************************************
 /// COPYRIGHT (c) 2015 by Seidenader Maschinenbau GmbH
 /// All Rights Reserved
-//******************************************************************************
+/// \file ExternalToolTaskController.cpp
 /// ExternalToolTaskController definition. 
-//**************
+//******************************************************************************
 
 
 #pragma region Includes
@@ -11,9 +11,9 @@
 #include "ExternalToolTaskController.h"
 #include "InspectionCommands/CommandExternalHelper.h"
 #include "SVProtoBuf/ConverterHelper.h"
-#include "SVStatusLibrary/MessageManager.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
+#include "SVStatusLibrary/MessageManager.h"
 #pragma endregion Includes
 
 
@@ -46,37 +46,29 @@ HRESULT ExternalToolTaskController::setExternalToolTaskId()
 	return hr;
 }
 
-
-HRESULT ExternalToolTaskController::initialize(bool inCreationProcess, bool initializeAll)
+std::pair<HRESULT, SvPb::InitializeExternalToolTaskResponse> ExternalToolTaskController::initialize()
 {
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	auto* pRequest = requestCmd.mutable_initializeexternaltooltaskrequest();
 	pRequest->set_objectid(m_objectId);
-	pRequest->set_increationprocess(inCreationProcess);
-	pRequest->set_initializeall(initializeAll);
+	pRequest->set_increationprocess(false);
+	pRequest->set_initializeall(false);
 	HRESULT hr = SvCmd::InspectionCommands(m_inspectionId, requestCmd, &responseCmd);
 
-
-	return hr;
-}
-
-HRESULT ExternalToolTaskController::initialize(SvPb::InitializeExternalToolTaskResponse& response, bool inCreationProcess, bool initializeAll)
-{
-	SvPb::InspectionCmdRequest requestCmd;
-	SvPb::InspectionCmdResponse responseCmd;
-	auto* pRequest = requestCmd.mutable_initializeexternaltooltaskrequest();
-	pRequest->set_objectid(m_objectId);
-	pRequest->set_increationprocess(inCreationProcess);
-	pRequest->set_initializeall(initializeAll);
-	HRESULT hr = SvCmd::InspectionCommands(m_inspectionId, requestCmd, &responseCmd);
+	SvPb::InitializeExternalToolTaskResponse response;
 
 	if (responseCmd.has_initializeexternaltooltaskresponse())
 	{
 		response = responseCmd.initializeexternaltooltaskresponse();
 	}
 
-	return hr;
+	return { hr, response };
+}
+
+HRESULT ExternalToolTaskController::runOnce()
+{	
+	return SvCmd::RunOnceSynchronous(m_inspectionId);
 }
 
 std::pair<bool, std::string> ExternalToolTaskController::resetAllObjects(bool showFirstError)

@@ -11,7 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "SVExternalToolImageSelectPage.h"
+#include "SVExternalToolImageSelectPage.h" //@TODO [Arvid][10.20][8.7.2021] rename to SVTADlgExternalToolImageSelectPage
 #include "SVRPropertyTree/SVRPropTreeItemCombo.h"
 #pragma endregion Includes
 
@@ -26,6 +26,25 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 	
+SvPb::SVObjectSubTypeEnum GetImageSubtype(bool mayBeColor, bool mayBeBlackAndWhite)
+{
+	SvPb::SVObjectSubTypeEnum ImageSubType = SvPb::SVImageMonoType; //for the time being: b/w Images are always acceptable
+
+	if (mayBeColor)
+	{
+		if (mayBeBlackAndWhite)
+		{
+			ImageSubType = SvPb::SVNotSetSubObjectType;
+		}
+		else
+		{
+			ImageSubType = SvPb::SVImageColorType;
+		}
+
+	}
+
+	return ImageSubType;
+}
 
 	BEGIN_MESSAGE_MAP(SVExternalToolImageSelectPage, CPropertyPage)
 		//{{AFX_MSG_MAP(SVExternalToolImageSelectPage)
@@ -36,25 +55,6 @@ static char THIS_FILE[] = __FILE__;
 	#pragma endregion Declarations
 
 
-	SvPb::SVObjectSubTypeEnum GetImageSubtype(bool mayBeColor, bool mayBeBlackAndWhite)
-	{
-		SvPb::SVObjectSubTypeEnum ImageSubType = SvPb::SVImageMonoType; //for the time being: b/w Images are always acceptable
-
-		if (mayBeColor)
-		{
-			if (mayBeBlackAndWhite)
-			{
-				ImageSubType = SvPb::SVNotSetSubObjectType;
-			}
-			else
-			{
-				ImageSubType = SvPb::SVImageColorType;
-			}
-
-		}
-
-		return ImageSubType;
-	}
 	#pragma region Constructor
 	SVExternalToolImageSelectPage::SVExternalToolImageSelectPage(uint32_t inspectionId, uint32_t taskObjectId, int id)
 	: CPropertyPage(id)

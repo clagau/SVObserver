@@ -30,13 +30,10 @@ namespace SvStl
 		return object;
 	}
 
-	MessageTextGenerator::MessageTextGenerator()
-	{
-	}
 #pragma endregion Constructor
 
 #pragma region Public Methods
-	std::string MessageTextGenerator::getText(MessageTextEnum messageId, const SvDef::StringVector &additionalList) const
+	std::string MessageTextGenerator::getText(MessageTextEnum messageId, const SvDef::StringVector &additionalList)  const
 	{
 		std::string retString("");
 		MessageTextMap::const_iterator it = cMessageTextMap.find(messageId);

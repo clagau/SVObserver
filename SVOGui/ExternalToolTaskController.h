@@ -34,12 +34,12 @@ public:
 	ExternalToolTaskController() = delete;
 	ExternalToolTaskController(uint32_t inspectionId, uint32_t ownerId);
 
-
 	HRESULT setExternalToolTaskId();
 
-	HRESULT initialize(bool inCreationProcess = false, bool initializeAll = false);
-	HRESULT initialize(SvPb::InitializeExternalToolTaskResponse& response, bool inCreationProcess = false, bool initializeAll = false);
+	std::pair<HRESULT, SvPb::InitializeExternalToolTaskResponse> initialize();
 	std::pair<bool, std::string> resetAllObjects(bool showFirstError);
+	HRESULT runOnce();
+
 	HRESULT clearData();
 	HRESULT setAllAttributes();
 

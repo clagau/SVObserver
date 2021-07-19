@@ -362,8 +362,6 @@ private:
 	//! \returns the selected string set of object names
 	SvDef::StringSet TranslateSelectedObjects(const SVObjectReferenceVector& rSelectedObjects, const std::string& rInspectionName) const;
 
-
-
 #pragma endregion Private Methods
 
 	RegressionTestController m_regTest;

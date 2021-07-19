@@ -501,6 +501,9 @@
     <ClCompile Include="RegressionTestController.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="SheetForExternalToolAdjustment.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="SVObserver.odl">
@@ -1055,6 +1058,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="ObjectAttribute.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SheetForExternalToolAdjustment.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

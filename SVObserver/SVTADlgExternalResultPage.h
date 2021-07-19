@@ -13,15 +13,15 @@
 
 #pragma region Includes
 #include "SVRPropertyTree/SVRPropTree.h"
-#include "SVOGui/ExternalToolTaskController.h"
 #include "SVOGui/DataController.h"
 #pragma endregion Includes
 
+class ExternalToolTaskController;
 
 class SVTADlgExternalResultPage : public CPropertyPage
 {
 public:
-	SVTADlgExternalResultPage(LPCTSTR Title, uint32_t inspectionId, uint32_t taskObjectId, int id = IDD );
+	SVTADlgExternalResultPage(LPCTSTR Title, uint32_t inspectionId, uint32_t taskObjectId, ExternalToolTaskController& rExternalToolTaskController);
 	virtual ~SVTADlgExternalResultPage();
 
 	//{{AFX_DATA(SVTADlgExternalResultPage)
@@ -42,10 +42,12 @@ protected:
 	int SelectObject(int iIndex);
 	int GetItemIndex(SVRPropertyItem* pItem);
 
+	void rebuildPropertyTree();
+
 	const uint32_t m_InspectionID;
 	const uint32_t m_TaskObjectID;
 	std::string						m_sTitle;
-	ExternalToolTaskController m_externalToolTaskController;
+	ExternalToolTaskController& m_rExternalToolTaskController;
 	SvOg::ValueController m_ValueController;
 
 	enum
@@ -55,6 +57,7 @@ protected:
 
 	SVRPropTree	m_Tree;
 	
+	BOOL OnSetActive() override;
 	afx_msg void OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult);
     afx_msg void OnItemQueryShowButton(NMHDR* pNotifyStruct, LRESULT* plResult);
     afx_msg void OnItemButtonClick(NMHDR* pNotifyStruct, LRESULT* plResult);

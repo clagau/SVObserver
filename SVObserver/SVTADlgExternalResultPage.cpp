@@ -12,9 +12,9 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVTADlgExternalResultPage.h"
+#include "SVOGui/ExternalToolTaskController.h"
 #include "SVObserver/SVSetupDialogManager.h"
 #include "SVRPropertyTree/SVRPropTreeItemEdit.h"
-#include "InspectionCommands/CommandExternalHelper.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/SafeArrayHelper.h"
 #pragma endregion Includes
@@ -25,12 +25,19 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-SVTADlgExternalResultPage::SVTADlgExternalResultPage(LPCTSTR Title, uint32_t inspectionId, uint32_t taskObjectId, int )
+BEGIN_MESSAGE_MAP(SVTADlgExternalResultPage, CPropertyPage)
+	//{{AFX_MSG_MAP(SVTADlgExternalResultPage)
+	//}}AFX_MSG_MAP
+	ON_NOTIFY(PTN_QUERY_SHOW_BUTTON, IDC_RESULT_LIST, OnItemQueryShowButton)
+	ON_NOTIFY(PTN_ITEMBUTTONCLICK, IDC_RESULT_LIST, OnItemButtonClick)
+END_MESSAGE_MAP()
+
+SVTADlgExternalResultPage::SVTADlgExternalResultPage(LPCTSTR Title, uint32_t inspectionId, uint32_t taskObjectId, ExternalToolTaskController& rExternalToolTaskController)
 	: CPropertyPage(SVTADlgExternalResultPage::IDD)
+	, m_rExternalToolTaskController(rExternalToolTaskController)
 	, m_InspectionID(inspectionId)
 	, m_TaskObjectID(taskObjectId)
 	, m_sTitle(Title)
-	, m_externalToolTaskController(inspectionId, taskObjectId)
 	, m_ValueController{ SvOg::BoundValues{ inspectionId, m_TaskObjectID } }
 {
 	m_psp.pszTitle = m_sTitle.c_str();
@@ -54,13 +61,6 @@ void SVTADlgExternalResultPage::DoDataExchange(CDataExchange* pDX)
 }
 
 
-BEGIN_MESSAGE_MAP(SVTADlgExternalResultPage, CPropertyPage)
-	//{{AFX_MSG_MAP(SVTADlgExternalResultPage)
-	//}}AFX_MSG_MAP
-	ON_NOTIFY(PTN_QUERY_SHOW_BUTTON, IDC_RESULT_LIST, OnItemQueryShowButton)
-	ON_NOTIFY(PTN_ITEMBUTTONCLICK, IDC_RESULT_LIST, OnItemButtonClick)
-END_MESSAGE_MAP()
-
 /////////////////////////////////////////////////////////////////////////////
 // SVTADlgExternalResultPage message handlers
 
@@ -68,30 +68,40 @@ BOOL SVTADlgExternalResultPage::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 
+	DWORD dwStyle;
+	CRect rc;
+
+	// PTS_NOTIFY - SVRPropTree will send notification messages to the parent window
+	dwStyle = WS_CHILD | WS_VISIBLE | PTS_NOTIFY;
+
+	// Init the control's size to cover the entire client area
+	GetDlgItem(IDC_RESULT_LIST)->GetWindowRect(rc);
+	ScreenToClient(rc);
+	// Create SVRPropTree control
+
+	m_Tree.Create(dwStyle, rc, this, IDC_RESULT_LIST);
+	m_Tree.SetColumn(m_Tree.GetColumn() * 2); //sets the splitter position to twice the default
+
+	return TRUE;  // return TRUE unless you set the focus to a control
+				  // EXCEPTION: OCX Property Pages should return FALSE
+}
+
+
+void SVTADlgExternalResultPage::rebuildPropertyTree()
+{
 	if (m_InspectionID > 0)
 	{
-		SvCmd::RunOnceSynchronous(m_InspectionID);
+		m_rExternalToolTaskController.runOnce();
 	}
 
 	m_ValueController.Init();
 
-	if (m_externalToolTaskController.getNumResultValues() > 0)
+	if (m_rExternalToolTaskController.getNumResultValues() > 0)
 	{
 		GetDlgItem(IDC_NO_RESULT_TXT)->ShowWindow(SW_HIDE);
 		GetDlgItem(IDC_RESULT_LIST)->ShowWindow(SW_SHOW);
 
-		DWORD dwStyle;
-		CRect rc;
-
-		// PTS_NOTIFY - SVRPropTree will send notification messages to the parent window
-		dwStyle = WS_CHILD | WS_VISIBLE | PTS_NOTIFY;
-
-		// Init the control's size to cover the entire client area
-		GetDlgItem(IDC_RESULT_LIST)->GetWindowRect(rc);
-		ScreenToClient(rc);
-		// Create SVRPropTree control
-		m_Tree.Create(dwStyle, rc, this, IDC_RESULT_LIST);
-		m_Tree.SetColumn(m_Tree.GetColumn() * 2);
+		m_Tree.DeleteAllItems();
 
 		SVRPropertyItem* pRoot = m_Tree.InsertItem(new SVRPropertyItem());
 		assert(pRoot);
@@ -99,13 +109,12 @@ BOOL SVTADlgExternalResultPage::OnInitDialog()
 		pRoot->SetLabelText(_T("External Tool Results"));
 		pRoot->SetInfoText(_T(""));
 
-		
 		std::map<std::string, SVRPropertyItem*> mapGroupItems;
 		std::map<std::string, SVRPropertyItem*>::iterator iterGroup;
 
 		SVRPropertyItem* pGroupItem = nullptr;
-		
-		auto resultDefinitions = m_externalToolTaskController.getResultValuesDefinition().resultvaluesdefinition();
+
+		auto resultDefinitions = m_rExternalToolTaskController.getResultValuesDefinition().resultvaluesdefinition();
 		int NumResults = static_cast<int>(resultDefinitions.size());
 		for (int i = 0; i < NumResults; i++)
 		{
@@ -114,7 +123,7 @@ BOOL SVTADlgExternalResultPage::OnInitDialog()
 			{
 				std::string GroupName = rDefinition.groupname();
 				if ((iterGroup = mapGroupItems.find(GroupName)) == mapGroupItems.end())
-				{	
+				{
 					bool bTreeStyle = true;	// false = list-style
 					pGroupItem = m_Tree.InsertItem(new SVRPropertyItem(), pRoot);
 					pGroupItem->SetCanShrink(bTreeStyle);
@@ -124,12 +133,11 @@ BOOL SVTADlgExternalResultPage::OnInitDialog()
 					pGroupItem->SetBold(true);
 					mapGroupItems[GroupName] = pGroupItem;
 				}
-				else	
+				else
 				{
 					pGroupItem = iterGroup->second;
 				}
 			}
-
 
 			SVRPropertyItem* pParent = pGroupItem != 0 ? pGroupItem : pRoot;
 			SVRPropertyItemEdit* pEdit = (SVRPropertyItemEdit*)m_Tree.InsertItem(new SVRPropertyItemEdit(), pParent);
@@ -141,13 +149,11 @@ BOOL SVTADlgExternalResultPage::OnInitDialog()
 			int iID = ID_BASE + i;
 			pEdit->SetCtrlID(iID);
 
-			
 			std::string sLabel = SvUl::LoadStdString(IDS_OBJECTNAME_RESULT_01 + static_cast<int>(i));
 			///use the same displayname as in 8.20
 			sLabel += " (";
 			sLabel += rDefinition.displayname();
 			sLabel += ")";
-			
 
 			pEdit->SetLabelText(sLabel.c_str());
 
@@ -179,12 +185,11 @@ BOOL SVTADlgExternalResultPage::OnInitDialog()
 			pEdit->OnRefresh();
 		}
 
-		auto tableResultsResponse = m_externalToolTaskController.getTableResults();
+		auto tableResultsResponse = m_rExternalToolTaskController.getTableResults();
 
 		int NumTableResults = tableResultsResponse.tableresultsdefinition_size();
 		for (int i = 0; i < NumTableResults; i++)
 		{
-
 			auto rDefinition = tableResultsResponse.tableresultsdefinition()[i];
 			auto table = tableResultsResponse.tableobjects()[i];
 
@@ -193,7 +198,7 @@ BOOL SVTADlgExternalResultPage::OnInitDialog()
 				std::string GroupName = rDefinition.groupname();
 
 				if ((iterGroup = mapGroupItems.find(GroupName)) == mapGroupItems.end())
-				{	
+				{
 					bool bTreeStyle = true;	// false = list-style
 					pGroupItem = m_Tree.InsertItem(new SVRPropertyItem(), pRoot);
 					pGroupItem->SetCanShrink(bTreeStyle);
@@ -203,7 +208,7 @@ BOOL SVTADlgExternalResultPage::OnInitDialog()
 					pGroupItem->SetBold(true);
 					mapGroupItems[GroupName] = pGroupItem;
 				}
-				else	
+				else
 				{
 					pGroupItem = iterGroup->second;
 				}
@@ -239,8 +244,6 @@ BOOL SVTADlgExternalResultPage::OnInitDialog()
 			pEdit->OnRefresh();
 		}
 
-
-
 		SVRPropertyItem* pChild = pRoot->GetChild();
 		while (pChild)
 		{
@@ -253,14 +256,23 @@ BOOL SVTADlgExternalResultPage::OnInitDialog()
 	{
 		GetDlgItem(IDC_NO_RESULT_TXT)->ShowWindow(SW_SHOW);
 		GetDlgItem(IDC_RESULT_LIST)->ShowWindow(SW_HIDE);
-
 	}
 
 	UpdateData(FALSE);
-
-	return TRUE;  // return TRUE unless you set the focus to a control
-				  // EXCEPTION: OCX Property Pages should return FALSE
 }
+
+
+
+
+BOOL SVTADlgExternalResultPage::OnSetActive()
+{
+
+	rebuildPropertyTree();
+
+	return CPropertyPage::OnSetActive();
+}
+
+
 
 
 void SVTADlgExternalResultPage::OnItemQueryShowButton(NMHDR* pNotifyStruct, LRESULT* plResult)
@@ -272,7 +284,7 @@ void SVTADlgExternalResultPage::OnItemQueryShowButton(NMHDR* pNotifyStruct, LRES
 		SVRPropertyItem* pItem = pNMPropTree->pItem;
 		int iIndex = GetItemIndex(pItem);
 
-		auto resultDefinitions = m_externalToolTaskController.getResultValuesDefinition().resultvaluesdefinition();
+		auto resultDefinitions = m_rExternalToolTaskController.getResultValuesDefinition().resultvaluesdefinition();
 		*plResult = FALSE;
 
 		if (resultDefinitions.size() > iIndex)
@@ -311,7 +323,7 @@ void SVTADlgExternalResultPage::OnItemButtonClick(NMHDR* pNotifyStruct, LRESULT*
 // display VO picker dialog and return selection
 int SVTADlgExternalResultPage::SelectObject(int iIndex)
 {
-	auto response = m_externalToolTaskController.getResultRangeObjectAtIndex(iIndex);
+	auto response = m_rExternalToolTaskController.getResultRangeObjectAtIndex(iIndex);
 
 	if (response.classid() != SvPb::ClassIdEnum::NoObjectClassId && response.objectid() > 0)
 	{

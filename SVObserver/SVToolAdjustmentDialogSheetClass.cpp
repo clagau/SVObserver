@@ -14,8 +14,6 @@
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVIPDoc.h"
 #include "SVInspectionProcess.h"
-#include "SVTADlgExternalSelectDllPage.h"
-#include "SVTADlgExternalInputSelectPage.h"
 #include "SVOGui/SVPerspectiveWarpPage.h"
 #include "SVTADlgAcquisitionSourcePage.h"
 #include "SVTADlgArchiveImagePage.h"
@@ -28,13 +26,10 @@
 #include "SVTADlgTranslationPage.h"
 #include "SVTADlgResizePage.h"
 #include "SVTADlgTranslationShiftPage.h"
-#include "SVTADlgExternalResultPage.h"
 #include "SVToolAdjustmentDialogAnalyzerPageClass.h"
 #include "SVToolAdjustmentDialogMaskPageClass.h"
 #include "Definitions/StringTypeDef.h"
-#include "Definitions/SVUserMessage.h"
 #include "ObjectInterfaces/IDependencyManager.h"
-#include "SVOGui\SVExternalToolImageSelectPage.h"
 #include "SVOGui/SVToolAdjustmentDialogCommentPage.h"
 #include "SVOGui/SVToolAdjustmentDialogSizePage.h"
 #include "SVOGui/ISVPropertyPageDialog.h"
@@ -60,7 +55,6 @@
 #include "SVOGui/ToolAdjustToolSetPage.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
-#include "SVStatusLibrary/MessageManager.h"
 #include "Tools/SVTool.h"
 #include "SVOGui/TADialogGroupToolResultPage.h"
 #include "SVOGui/TADialogLinearResultRangesPage.h"
@@ -76,35 +70,23 @@ static char THIS_FILE[] = __FILE__;
 #pragma endregion Declarations
 
 
+IMPLEMENT_DYNAMIC(SVToolAdjustmentDialogSheetClass, CPropertySheet)
+
 BEGIN_MESSAGE_MAP(SVToolAdjustmentDialogSheetClass, CPropertySheet)
 	//{{AFX_MSG_MAP(SVToolAdjustmentDialogSheetClass)
 	ON_WM_DESTROY()
 	ON_COMMAND(IDOK, OnOK)
-	ON_MESSAGE(SV_REMOVE_PAGES_FOR_TESTED_DLL, ExternalToolShowOnlyPagesForUntestedDll)
-	ON_MESSAGE(SV_ADD_PAGES_FOR_TESTED_DLL, ExternalToolShowAllPages)
 	
 	ON_WM_SYSCOMMAND()
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
-
-SVToolAdjustmentDialogSheetClass::SVToolAdjustmentDialogSheetClass(SVIPDoc* p_pIPDoc, uint32_t inspectionID, uint32_t taskObjectID, UINT nIDCaption, CWnd* pParentWnd, UINT iSelectPage)
-	: CPropertySheet(nIDCaption, pParentWnd, iSelectPage)
-	, m_pIPDoc(p_pIPDoc)
-	, m_InspectionID(inspectionID)
-	, m_TaskObjectID(taskObjectID)
-	, m_externalToolTaskController(inspectionID, taskObjectID)
-{
-	init();
-}
 
 SVToolAdjustmentDialogSheetClass::SVToolAdjustmentDialogSheetClass(SVIPDoc* p_pIPDoc, uint32_t inspectionID, uint32_t taskObjectID, LPCTSTR pszCaption, CWnd* pParentWnd, UINT iSelectPage)
 	: CPropertySheet(pszCaption, pParentWnd, iSelectPage)
 	, m_pIPDoc(p_pIPDoc)
 	, m_InspectionID(inspectionID)
 	, m_TaskObjectID(taskObjectID)
-	, m_externalToolTaskController(inspectionID, taskObjectID)
 {
-	init();
 }
 
 void SVToolAdjustmentDialogSheetClass::init()
@@ -373,9 +355,7 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 			AddPage(new SvOg::SVTADlgGeneralPage(m_InspectionID, m_TaskObjectID, subType));
 			break;
 
-		case SvPb::SVObjectSubTypeEnum::SVExternalToolObjectType:
-			AddPage(new SVTADlgExternalSelectDllPage(m_InspectionID, m_TaskObjectID, this));
-			break;
+//		case SvPb::SVObjectSubTypeEnum::SVExternalToolObjectType: now handled in it own class SheetForExternalToolAdjustment
 
 		case SvPb::SVObjectSubTypeEnum::SVRingBufferToolObjectType:
 			// When the Object sub type is not set, then both mono and color images are placed into the selection list
@@ -464,11 +444,11 @@ BOOL SVToolAdjustmentDialogSheetClass::OnInitDialog()
 
 	if(nullptr != pTaskObject)
 	{
-		CString l_Temp = _T("Tool Adjustment: ");
-		l_Temp += pTaskObject->GetObjectName();
-		l_Temp += _T(" - ");
-		l_Temp += pTaskObject->GetName();
-		SetWindowText(l_Temp);
+		CString Temp = _T("Tool Adjustment: ");
+		Temp += pTaskObject->GetObjectName();
+		Temp += _T(" - ");
+		Temp += pTaskObject->GetName();
+		SetWindowText(Temp);
 	}
 	return bResult;
 }
@@ -486,70 +466,15 @@ void SVToolAdjustmentDialogSheetClass::OnDestroy()
 	// ~SVToolAdjustmentDialogSheetClass() !!!
 }
 
+
 void SVToolAdjustmentDialogSheetClass::OnOK()
 {
-	CWaitCursor l_cwcMouse;
+	CWaitCursor cwcMouse;
 
-	// Try to validate the Equations
-	int cnt = GetPageCount();
-
-	for (int i = 0; i < cnt; i++)
-	{
-		CPropertyPage* pPage = GetPage(i);
-		if (pPage && pPage->GetSafeHwnd())
-		{
-			if (SvOg::SVFormulaEditorPageClass* l_pFormulaEditor = dynamic_cast <SvOg::SVFormulaEditorPageClass*> (pPage))
-			{
-				if (!l_pFormulaEditor->validateAndSetEquation())
-				{
-					// Equation must be valid or disabled
-					SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-					Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_InvalidFormula, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10219);
-					return;
-				}
-			}
-			else
-			{
-				if (SvOg::ISVPropertyPageDialog* pIDlg = dynamic_cast <SvOg::ISVPropertyPageDialog*> (pPage))
-				{
-					if (pIDlg->QueryAllowExit() == false)	// exit not allowed
-					{
-						return;
-					}
-				}
-				if (CPropertyPage* l_pPropertyPage = dynamic_cast <CPropertyPage*> (pPage))
-				{
-					l_pPropertyPage->OnOK();
-				}
-			}
-		}
-	}
+	ValidateAllSheets();
 
 	SvOi::IObjectClass* pObject = GetTaskObject();
-	bool resetResult = false;
-	if (nullptr != pObject)
-	{
-		//If parent is a tool then it must be reset
-		SvOi::IObjectClass* pParent = SvOi::getObject(pObject->GetParentID());
-		if (nullptr != pParent && SvPb::SVToolObjectType == pParent->GetObjectType())
-		{
-			resetResult = pParent->resetAllObjects();
-		}
-		else
-		{
-			resetResult = pObject->resetAllObjects();
-		}
-		//Reset all tools dependent on this tool
-		std::set<uint32_t> ToolSet;
-		ToolSet.insert(pObject->getObjectId());
-		std::set<uint32_t> ToolDependencySet;
-		SvOi::getToolDependency(std::inserter(ToolDependencySet, ToolDependencySet.end()), ToolSet);
-		for (auto const& rEntry : ToolDependencySet)
-		{
-			SvOi::IObjectClass* pTool = SvOi::getObject(rEntry);
-			pTool->resetAllObjects();
-		}
-	}
+	bool resetResult = ResetTools(pObject);
 
 	if (resetResult)
 	{
@@ -579,6 +504,79 @@ void SVToolAdjustmentDialogSheetClass::OnOK()
 		}
 	}
 }
+
+
+void SVToolAdjustmentDialogSheetClass::ValidateAllSheets()
+{
+	// Try to validate the Equations
+	int cnt = GetPageCount();
+
+	for (int i = 0; i < cnt; i++)
+	{
+		CPropertyPage* pPage = GetPage(i);
+		if (pPage && pPage->GetSafeHwnd())
+		{
+			if (SvOg::SVFormulaEditorPageClass* pFormulaEditor = dynamic_cast <SvOg::SVFormulaEditorPageClass*> (pPage))
+			{
+				if (!pFormulaEditor->validateAndSetEquation())
+				{
+					// Equation must be valid or disabled
+					SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+					Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_InvalidFormula, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10219);
+					return;
+				}
+			}
+			else
+			{
+				if (SvOg::ISVPropertyPageDialog* pIDlg = dynamic_cast <SvOg::ISVPropertyPageDialog*> (pPage))
+				{
+					if (pIDlg->QueryAllowExit() == false)	// exit not allowed
+					{
+						return;
+					}
+				}
+				if (CPropertyPage* pPropertyPage = dynamic_cast <CPropertyPage*> (pPage))
+				{
+					pPropertyPage->OnOK();
+				}
+			}
+		}
+	}
+}
+
+
+bool SVToolAdjustmentDialogSheetClass::ResetTools(SvOi::IObjectClass* pObject)
+{
+	bool resetResult = false;
+	if (nullptr != pObject)
+	{
+		//If parent is a tool then it must be reset
+		SvOi::IObjectClass* pParent = SvOi::getObject(pObject->GetParentID());
+		if (nullptr != pParent && SvPb::SVToolObjectType == pParent->GetObjectType())
+		{
+			resetResult = pParent->resetAllObjects();
+		}
+		else
+		{
+			resetResult = pObject->resetAllObjects();
+		}
+		//Reset all tools dependent on this tool
+		std::set<uint32_t> ToolSet;
+		ToolSet.insert(pObject->getObjectId());
+		std::set<uint32_t> ToolDependencySet;
+		SvOi::getToolDependency(std::inserter(ToolDependencySet, ToolDependencySet.end()), ToolSet);
+		for (auto const& rEntry : ToolDependencySet)
+		{
+			SvOi::IObjectClass* pTool = SvOi::getObject(rEntry);
+			pTool->resetAllObjects();
+		}
+	}
+
+	return resetResult;
+}
+
+
+
 
 
 void SVToolAdjustmentDialogSheetClass::markDocumentAsDirty(bool runOnce)
@@ -611,37 +609,6 @@ void SVToolAdjustmentDialogSheetClass::OnSysCommand(UINT nID, LPARAM lParam)
 	}
 
 	CPropertySheet::OnSysCommand(nID, lParam);
-}
-
-
-void SVToolAdjustmentDialogSheetClass::ExternalToolRetainOnlySelectDllPage()
-{
-	while (GetPageCount() > 1) // if the external DLL is uninitialized only the first page ("Select External DLL")
-							   // plus the "additional pages" "Conditional", "General" (which will be added elsewhere) should be displayed
-	{
-		RemovePage(1);
-	}
-}
-
-LRESULT SVToolAdjustmentDialogSheetClass::ExternalToolShowAllPages(WPARAM, LPARAM)
-{
-	ExternalToolRetainOnlySelectDllPage();
-
-	AddPage(new SvOg::SVExternalToolImageSelectPage(m_InspectionID, m_TaskObjectID));
-	AddPage(new SVTADlgExternalInputSelectPage(_T("Input Values"), m_InspectionID, m_TaskObjectID));
-	AddPage(new SVTADlgExternalResultPage(_T("Result Values"), m_InspectionID, m_externalToolTaskController.getExternalToolTaskObjectId()));
-
-	AddAdditionalPagesForExternalTool();
-	return S_OK;
-}
-
-
-LRESULT SVToolAdjustmentDialogSheetClass::ExternalToolShowOnlyPagesForUntestedDll(WPARAM, LPARAM)
-{
-	ExternalToolRetainOnlySelectDllPage();
-
-	AddAdditionalPagesForExternalTool();
-	return S_OK;
 }
 
 

@@ -13,9 +13,9 @@
 #pragma region Includes
 #include "SVRPropertyTree/SVRPropTree.h"
 #include "SVOGui/DataController.h"
-#include "SVOGui/ExternalToolTaskController.h"
 #pragma endregion Includes
 
+class ExternalToolTaskController;
 
 class SVTADlgExternalInputSelectPage : public CPropertyPage
 {
@@ -23,7 +23,7 @@ class SVTADlgExternalInputSelectPage : public CPropertyPage
 
 // Construction
 public:
-	SVTADlgExternalInputSelectPage(LPCTSTR Title, uint32_t inspectionID, uint32_t toolObjectID, int id = IDD);
+	SVTADlgExternalInputSelectPage(LPCTSTR Title, uint32_t inspectionID, uint32_t toolObjectID, ExternalToolTaskController& rExternalToolTaskController);
 	virtual ~SVTADlgExternalInputSelectPage() = default;
 
 	// Dialog Data
@@ -44,6 +44,7 @@ public:
 // Implementation
 protected:
 	int SelectObject( std::string& rSelectedName, SVRPropertyItem* pItem );
+	void updateInputValuesFromPropertyTree();
 
 	int GetItemIndex(SVRPropertyItem* pItem);
 	const std::unique_ptr<SvPb::InputValueDefinition> GetInputDefinitionPtr(SVRPropertyItem* pItem);
@@ -78,7 +79,7 @@ private:
 	const uint32_t m_InspectionID;
 	const uint32_t m_ToolObjectID;
 
-	ExternalToolTaskController m_externalToolTaskController;
+	ExternalToolTaskController& m_rExternalToolTaskController;
 	const uint32_t m_TaskObjectID;
 	SvOg::ValueController m_InputValues;
 };

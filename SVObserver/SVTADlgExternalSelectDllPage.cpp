@@ -13,8 +13,7 @@
 #include "stdafx.h"
 #include "SVObserver/svobserver.h"
 #include "SVTADlgExternalSelectDllPage.h"
-#include "SVObserver/SVIPDoc.h"
-#include "SVObserver/SVToolAdjustmentDialogSheetClass.h"
+#include "SVOGui/ExternalToolTaskController.h"
 #include "Definitions/SVUserMessage.h"
 #include "SVMFCControls/SVFileDialog.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
@@ -39,7 +38,6 @@ static char THIS_FILE[] = __FILE__;
 constexpr const char* cCRLF(_T("\r\n"));
 
 enum { WM_UPDATE_STATUS = WM_APP + 100 };
-
 
 /////////////////////////////////////////////////////////////////////////////
 // SVTADlgExternalSelectDllPage dialog
@@ -69,13 +67,13 @@ BEGIN_MESSAGE_MAP(SVTADlgExternalSelectDllPage, CPropertyPage)
 	ON_MESSAGE(WM_UPDATE_STATUS, OnUpdateStatus)
 END_MESSAGE_MAP()
 
-SVTADlgExternalSelectDllPage::SVTADlgExternalSelectDllPage(uint32_t inspectionID, uint32_t toolObjectID, SVToolAdjustmentDialogSheetClass* pSheet)
+SVTADlgExternalSelectDllPage::SVTADlgExternalSelectDllPage(uint32_t inspectionID, uint32_t toolObjectID, CWnd& rParent, ExternalToolTaskController& rExternalToolTaskController)
 	: CPropertyPage(IDD)
 	, m_InspectionID(inspectionID)
 	, m_ToolObjectID(toolObjectID) //attention: SVToolAdjustmentDialogSheetClass::m_TaskObjectID is passed to this value when this constructor is called by SVToolAdjustmentDialogSheetClass!
-	, m_pSheet(pSheet)
-	, m_externalToolTaskController(inspectionID, toolObjectID)
-	, m_valueController{ SvOg::BoundValues{ inspectionID, m_externalToolTaskController.getExternalToolTaskObjectId() } }
+	, m_rParent(rParent)
+	, m_rExternalToolTaskController(rExternalToolTaskController)
+	, m_valueController{ SvOg::BoundValues{ inspectionID, m_rExternalToolTaskController.getExternalToolTaskObjectId() } }
 {
 	//{{AFX_DATA_INIT(SVTADlgExternalSelectDllPage)
 	m_currentExternalDllFilepath = _T("");
@@ -106,24 +104,6 @@ void SVTADlgExternalSelectDllPage::DoDataExchange(CDataExchange* pDX)
 
 BOOL SVTADlgExternalSelectDllPage::OnInitDialog()
 {
-	//@TODO [Arvid][10.00][20.4.2021] as suggested by Marc, rather than checking this pointer here it would be better 
-	//		to use a reference to the sheet	(which should be passed to the constructor of this page by the sheet), 
-	//		ideally for all tool select sheets. Since we are currently close to the release of Version 10.10 I am not doing this
-	//		right now but leave it for some later time.
-
-	if(nullptr == m_pSheet)
-	{
-		//this should never happen!
-
-		SvStl::MessageManager mm(SvStl::MsgType::Log | SvStl::MsgType::Display);
-		SvDef::StringVector msgList;
-		msgList.push_back("No Parent Sheet");
-		mm.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams));
-		mm.Process();
-
-		return FALSE;
-	}
-
 	// stuff the value before base OnInitDialog
 
 	m_valueController.Init();
@@ -173,9 +153,9 @@ void SVTADlgExternalSelectDllPage::OnOK()
 
 	try
 	{
-		m_externalToolTaskController.initialize();
+		m_rExternalToolTaskController.initialize();
 
-		m_externalToolTaskController.resetAllObjects(false); //first error will be displayed anyway when containing sheet is closed
+		m_rExternalToolTaskController.resetAllObjects(false); //first error will be displayed anyway when containing sheet is closed
 	}
 	catch (const SvStl::MessageContainer&)
 	{
@@ -183,12 +163,7 @@ void SVTADlgExternalSelectDllPage::OnOK()
 
 	m_valueController.Commit(SvOg::PostAction::doNothing);
 
-	SVIPDoc* l_pIPDoc = GetIPDoc();
-
-	if (nullptr != l_pIPDoc)
-	{
-		l_pIPDoc->UpdateAllViews(nullptr);
-	}
+	m_rParent.SendMessage(SV_UPDATE_IPDOC_VIEWS);
 
 	CPropertyPage::OnOK();
 }
@@ -208,12 +183,11 @@ void SVTADlgExternalSelectDllPage::OnDelete()
 		m_lbDependentList.DeleteString(iCurrentPos);
 		testExternalDll();
 	}
-
 }
 
 void SVTADlgExternalSelectDllPage::OnAdd()
 {
-	bool bFullAccess = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
+	bool bFullAccess = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS); //@TODO [Arvid][10.20][13.7.2021] is this necessary? otherwise we could do without #include "SVObserver/svobserver.h" and move this file and its header file to SVOGui
 	SvMc::SVFileDialog cfd(true, bFullAccess, _T("dll"), _T(""),
 		OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
 		_T("All Files (*.*)|*.*|Dynamic Link Library(*.dll)|*.dll||"));
@@ -247,7 +221,7 @@ void SVTADlgExternalSelectDllPage::OnAdd()
 void SVTADlgExternalSelectDllPage::OnBrowse()
 {
 	UpdateData();
-	bool bFullAccess = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
+	bool bFullAccess = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS); //@TODO [Arvid][10.20][13.7.2021] is this necessary? otherwise we could do without #include "SVObserver/svobserver.h" and move this file and its header file to SVOGui
 	SvMc::SVFileDialog cfd(true, bFullAccess, _T("dll"), _T(""),
 		OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
 		_T("Dynamic Link Library(*.dll)|*.dll|All Files (*.*)|*.*||"));
@@ -310,7 +284,7 @@ void SVTADlgExternalSelectDllPage::OnBrowse()
 				}
 			}
 		}
-		m_externalToolTaskController.clearData();
+		m_rExternalToolTaskController.clearData();
 
 		showDllConfigurationPages(false);
 		testExternalDll(m_ResetInput == TRUE);
@@ -333,7 +307,7 @@ void SVTADlgExternalSelectDllPage::testExternalDll(bool setDefaultValues)
 void SVTADlgExternalSelectDllPage::setDefaultValuesForInputs()
 {
 	
-	auto inputDefinitions = m_externalToolTaskController.getInputValuesDefinition();
+	auto inputDefinitions = m_rExternalToolTaskController.getInputValuesDefinition();
 	int size = inputDefinitions.inputvaluesdefinition_size();
 	for (int i = 0; i < size; i++)
 	{
@@ -389,13 +363,13 @@ void SVTADlgExternalSelectDllPage::SetDependencies()
 		m_valueController.Set<CString>(SvPb::EmbeddedIdEnum::DllDependencyFileNameEId + i, Temp);
 	}
 
-	m_externalToolTaskController.setAllAttributes();	// update dependency attributes
+	m_rExternalToolTaskController.setAllAttributes();	// update dependency attributes
 }
 
 
 void SVTADlgExternalSelectDllPage::showDllConfigurationPages(bool show)
 {
-	m_pSheet->SendMessage(show ? SV_ADD_PAGES_FOR_TESTED_DLL : SV_REMOVE_PAGES_FOR_TESTED_DLL);
+	m_rParent.PostMessage (show ? SV_ADAPT_TO_TESTED_DLL : SV_ADAPT_TO_UNTESTED_DLL);
 }
 
 
@@ -415,9 +389,7 @@ void SVTADlgExternalSelectDllPage::InitializeDll(bool jumpToInputPage, bool setD
 		}
 		UpdateData(FALSE);
 
-		SvPb::InitializeExternalToolTaskResponse statusMessagesResponse;
-
-		auto hrInitialize = m_externalToolTaskController.initialize(statusMessagesResponse);
+		auto [hrInitialize, statusMessagesResponse] = m_rExternalToolTaskController.initialize();
 
 		if (S_OK != hrInitialize)
 		{
@@ -438,7 +410,7 @@ void SVTADlgExternalSelectDllPage::InitializeDll(bool jumpToInputPage, bool setD
 
 		dllWasInitialized = true;
 
-		auto [ok, firstError] = m_externalToolTaskController.resetAllObjects(true);
+		auto [ok, firstError] = m_rExternalToolTaskController.resetAllObjects(true);
 
 		if (!ok)
 		{
@@ -503,7 +475,7 @@ void SVTADlgExternalSelectDllPage::InitializeDll(bool jumpToInputPage, bool setD
 
 	if (dllWasInitialized && jumpToInputPage)
 	{
-		m_pSheet->PostMessage(PSM_SETCURSEL, c_indexOfInputValuePage, 0);
+		m_rParent.PostMessage(SV_SELECT_INPUT_VALUE_PAGE);
 	}
 }
 
@@ -530,20 +502,6 @@ bool SVTADlgExternalSelectDllPage::QueryAllowExit()
 {
 	return true;
 }
-
-
-SVIPDoc* SVTADlgExternalSelectDllPage::GetIPDoc() const
-{
-	SVIPDoc* l_pIPDoc = nullptr;
-
-	if (nullptr != m_pSheet)
-	{
-		l_pIPDoc = m_pSheet->GetIPDoc();
-	}
-
-	return l_pIPDoc;
-}
-
 
 
 BOOL SVTADlgExternalSelectDllPage::OnKillActive()

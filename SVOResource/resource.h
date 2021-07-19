@@ -1547,7 +1547,9 @@
 #define IDC_BROWSE                      15217
 #define IDC_SORT_FEATURE_EDT            15218
 #define IDC_TOTAL_WIDTH                 15218
+#define IDC_RUN_ONCE                    15219
 #define IDC_BROWSE2                     15220
+#define IDC_RE_INITIALIZE               15220
 #define IDC_AVAILABLE_IMAGES_COMBO      15224
 #define IDC_IMAGE_SOURCE_EDIT           15225
 #define IDC_IMAGE                       15226

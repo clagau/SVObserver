@@ -14,6 +14,7 @@ enum MessageTextEnum
 	Tid_Default,
 	Tid_Started,
 	Tid_Stopped,
+	Tid_ReturnValue,
 	Tid_ErrorClass,
 	Tid_XmlParserError,
 	Tid_RestoreVariantError,

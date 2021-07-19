@@ -15,14 +15,14 @@
 
 namespace SvStl
 {
-	class MessageTextGenerator
+	class MessageTextGenerator //@TODO [Arvid][10.20][7.7.2021] this class has no data members! it should be removed and its methods converted to free functions
 	{
 #pragma region Constructor
 	public:
 		static MessageTextGenerator& Instance();
 
 	private:
-		MessageTextGenerator();
+		MessageTextGenerator()=default; 
 #pragma endregion Constructor
 
 #pragma region Public Methods
