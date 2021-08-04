@@ -24,6 +24,7 @@
 #include "SVCommandLibrary/SVCommandDataHolder.h"
 #include "SVMessage/SVMessage.h"
 #include "SVUtilityLibrary/StringHelper.h"
+#include "LookUp.h"
 #pragma endregion Includes
 
 /**
@@ -532,6 +533,53 @@ HRESULT SVMatroxImageInterface::Destroy(__int64& rResultId)
 	return l_Code;
 }
 
+HRESULT SVMatroxImageInterface::ArithmeticGainOffset(const SVMatroxBuffer& p_rDestId, double gain, double offset)
+{
+
+	if (p_rDestId.empty())
+	{
+		return SVMEE_INVALID_HANDLE;
+	}
+	if (gain != 1.0)
+	{
+		if (offset == 0.0)
+		{
+			MimArith(p_rDestId.GetIdentifier(), gain, p_rDestId.GetIdentifier(), M_MULT_CONST + M_SATURATION + M_FLOAT_PROC);
+		}
+		else
+		{
+			MimArith(p_rDestId.GetIdentifier(), gain, p_rDestId.GetIdentifier(), M_MULT_CONST + M_FLOAT_PROC + M_SATURATION);
+			MimArith(p_rDestId.GetIdentifier(), offset, p_rDestId.GetIdentifier(), M_ADD_CONST + M_FLOAT_PROC + M_SATURATION);
+		}
+	}
+	else if (offset != 0.0)
+	{
+		MimArith(p_rDestId.GetIdentifier(), offset, p_rDestId.GetIdentifier(), M_ADD_CONST + M_SATURATION + M_FLOAT_PROC);
+	}
+
+	HRESULT l_Code = SVMatroxApplicationInterface::GetLastStatus();
+	assert(l_Code == S_OK);
+	return l_Code;
+}
+
+
+HRESULT SVMatroxImageInterface::ArithmeticGainOffsetClip(const SVMatroxBuffer& p_rDestId, const SVMatroxBuffer& p_dSource, double gain, double offset)
+{
+
+	if (p_rDestId.empty())
+	{
+		return SVMEE_INVALID_HANDLE;
+	}
+
+	HRESULT hres = ArithmeticGainOffset(p_dSource, gain, offset);
+	if (hres == S_OK)
+	{
+		MimClip(p_dSource.GetIdentifier(), p_rDestId.GetIdentifier(), M_SATURATION, M_NULL, M_NULL, M_NULL, M_NULL);
+		hres = SVMatroxApplicationInterface::GetLastStatus();
+	}
+	
+	return hres;
+}
 
 /**
 @SVOperationName Image Arithmatic
@@ -613,6 +661,57 @@ HRESULT SVMatroxImageInterface::Arithmetic(const SVMatroxBuffer& p_rDestId,
 	return l_Code;
 }
 
+HRESULT SVMatroxImageInterface::ArithmeticLut(const SVMatroxBuffer& rDestId, const SVMatroxBuffer& rSource1, const SVMatroxBuffer& rSource2, const std::unique_ptr<LookUp>& lookupPtr)
+{
+
+	if (rDestId.empty() || rSource1.empty() || rSource2.empty() || !lookupPtr)
+	{
+		return SVMEE_INVALID_HANDLE;
+	}
+	
+	MIL_INT Address_1 = MbufInquire(rSource1.GetIdentifier(), M_HOST_ADDRESS, M_NULL);
+	MIL_INT Pitch_1 = MbufInquire(rSource1.GetIdentifier(), M_PITCH, M_NULL);
+	MIL_INT Height_1 = MbufInquire(rSource1.GetIdentifier(), M_SIZE_Y, M_NULL);
+	MIL_INT Width_1 = MbufInquire(rSource1.GetIdentifier(), M_SIZE_X, M_NULL);
+
+	MIL_INT Adresss_2 = MbufInquire(rSource2.GetIdentifier(), M_HOST_ADDRESS, M_NULL);
+	MIL_INT Pitch_2 = MbufInquire(rSource2.GetIdentifier(), M_PITCH, M_NULL);
+	MIL_INT Height_2 = MbufInquire(rSource2.GetIdentifier(), M_SIZE_Y, M_NULL);
+	MIL_INT Width_2 = MbufInquire(rSource2.GetIdentifier(), M_SIZE_X, M_NULL);
+
+	MIL_INT Dest = MbufInquire(rDestId.GetIdentifier(), M_HOST_ADDRESS, M_NULL);
+	MIL_INT PitchDest = MbufInquire(rDestId.GetIdentifier(), M_PITCH, M_NULL);
+	MIL_INT Height_Dest = MbufInquire(rDestId.GetIdentifier(), M_SIZE_Y, M_NULL);
+	MIL_INT Width_Dest = MbufInquire(rDestId.GetIdentifier(), M_SIZE_X, M_NULL);
+
+	
+
+	auto Width = std::min(Width_1, Width_2);
+	Width = std::min(Width, Width_Dest);
+
+	auto Height = std::min(Height_1, Height_2);
+	Height = std::min(Height, Height_Dest);
+	
+	//use reference because of performance 
+	 BYTE*& rData = lookupPtr->getDataRef();
+	int depth = lookupPtr->getDepth();
+	
+	for (int y = 0; y < Height; y++)
+	{
+		BYTE* lineptr_1 = &((BYTE*)Address_1)[Pitch_1 * (y)];
+		BYTE*  lineptr_2 = &((BYTE*)Adresss_2)[Pitch_2 * (y)];
+		BYTE* lineptr_Dest = &((BYTE*)Dest)[PitchDest * (y)];
+		for (int x = 0; x < Width; x++)
+		{
+			//*lineptrDest = lookupPtr->get(*lineptr_B1,*lineptr_B2);
+			*lineptr_Dest = rData[depth * (*lineptr_2) + (*lineptr_1)];
+			lineptr_Dest++;
+			lineptr_1++;
+			lineptr_2++;
+		}
+	}
+	return S_OK;
+}
 /**
 @SVOperationName Image Binarize
 
@@ -1616,8 +1715,8 @@ HRESULT SVMatroxImageInterface::Watershed(const SVMatroxBuffer& p_rDest,
 
 */
 HRESULT SVMatroxImageInterface::Resize(
-	const SVMatroxBuffer&		p_rDest,
-	const SVMatroxBuffer&		p_rSource,
+	const SVMatroxBuffer& p_rDest,
+	const SVMatroxBuffer& p_rSource,
 	const double				p_dScaleFactorX,
 	const double				p_dScaleFactorY,
 	long						interpolationMode,
@@ -1654,7 +1753,7 @@ HRESULT SVMatroxImageInterface::Resize(
 
 			break;
 		} // while (true)
-	}
+}
 
 #ifdef USE_TRY_BLOCKS
 	catch (...)

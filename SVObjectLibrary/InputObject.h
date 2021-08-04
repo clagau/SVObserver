@@ -56,6 +56,19 @@ class InputObject : public SVObjectClass
 
 		return nullptr;
 	}
+	template <typename T>
+	T* getInputObject(bool bRunMode = false) const
+	{
+		if (IsConnected() && nullptr != GetInputObjectInfo().getObject())
+		{
+			SVObjectClass* pObject = GetInputObjectInfo().getObject();
+			//! Use static_cast to avoid time penalty in run mode for dynamic_cast
+			//! We are sure that when getObject() is not nullptr that it is the correct type
+			return bRunMode ? static_cast<T*> (pObject) : dynamic_cast<T*> (pObject);
+		}
+
+		return nullptr;
+	}
 
 private:
 	void correctDependencies();

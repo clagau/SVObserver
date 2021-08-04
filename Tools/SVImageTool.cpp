@@ -35,53 +35,31 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVImageToolClass, SvPb::ImageToolClassId );
+SV_IMPLEMENT_CLASS(SVImageToolClass, SvPb::ImageToolClassId);
 
-SVImageToolClass::SVImageToolClass( SVObjectClass* POwner, int StringResourceID )
-				 :SVToolClass( POwner, StringResourceID )
+SVImageToolClass::SVImageToolClass(SVObjectClass* POwner, int StringResourceID)
+	:SVToolClass(POwner, StringResourceID)
 {
 	init();
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : init
-// -----------------------------------------------------------------------------
-// .Description : Initialization of newly Instantiated Object
-////////////////////////////////////////////////////////////////////////////////
 void SVImageToolClass::init()
 {
 	m_canResizeToParent = true;
 	// Set up your type...
 	m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
-	m_ObjectTypeInfo.m_SubType    = SvPb::SVToolImageObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::SVToolImageObjectType;
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &m_outputEnableOffsetA, SvPb::EnableOffsetAEId, IDS_OBJECTNAME_ENABLEOFFSETA, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_outputOffsetAPoint, SvPb::OffsetAPointEId, IDS_OBJECTNAME_OFFSETAPOINT, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_outputEnableOffsetB, SvPb::EnableOffsetBEId, IDS_OBJECTNAME_ENABLEOFFSETB, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_outputOffsetBPoint, SvPb::OffsetBPointEId, IDS_OBJECTNAME_OFFSETBPOINT, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_outputOperator, SvPb::ArithmeticOperatorEId, IDS_OBJECTNAME_ARITHMETICOPERATOR, false, SvOi::SVResetItemOwner);
+	BuildEmbeddedObjectList();
 
 	m_toolExtent.SetTranslation(SvPb::SVExtentTranslationFigureShift);
 
-	// Register SourceImageNames Value Object
-	RegisterEmbeddedObject( &m_SourceImageNames, SvPb::SourceImageNamesEId, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemTool );
-	m_SourceImageNames.SetArraySize(2);
-
-	// Set Embedded Defaults...
-	SVPoint<long> defaultPoint(0,0);
-	m_outputEnableOffsetA.SetDefaultValue( BOOL(false) );
-	m_outputOffsetAPoint.SetDefaultValue( defaultPoint );
-	m_outputEnableOffsetB.SetDefaultValue(BOOL(false) );
-	m_outputOffsetBPoint.SetDefaultValue( defaultPoint );
-	m_outputOperator.SetDefaultValue( SVImageSubSaturation );
-
 	// Default taskObjectList items:
-
 	SvOp::SVImageArithmetic* pArithmetic = new SvOp::SVImageArithmetic;
-	if(nullptr != pArithmetic)
+	if (nullptr != pArithmetic)
 	{
-		Add( pArithmetic );
+		Add(pArithmetic);
 	}
 
 	// Build an operator list...
@@ -94,69 +72,94 @@ void SVImageToolClass::init()
 	SvOp::SVUnaryImageOperatorList* pOperatorList = new SvOp::SVInPlaceImageOperatorListClass;
 
 	// Operator list defaults:
-	if( pOperatorList )
+	if (pOperatorList)
 	{
 		// Requires a SVThresholdClass Object
-		SvOp::SVThresholdClass* pThresholdOperator = new SvOp::SVThresholdClass( pOperatorList );
-		if( pThresholdOperator )
+		SvOp::SVThresholdClass* pThresholdOperator = new SvOp::SVThresholdClass(pOperatorList);
+		if (pThresholdOperator)
 		{
 			// Activated by default!
 			// We don't want to use this operator by default.
 			// So deactivate it...
-			pThresholdOperator->GetThresholdActivateAttribute().SetDefaultValue(BOOL(false) );
-			pOperatorList->Add( pThresholdOperator );
+			pThresholdOperator->GetThresholdActivateAttribute().SetDefaultValue(BOOL(false));
+			pOperatorList->Add(pThresholdOperator);
 		}
 
 		// and Requires a SVUsermaskOperatorClass Object
 		// Deactivated by default!
-		pOperatorList->Add( new SvOp::SVUserMaskOperatorClass(pOperatorList) );
+		pOperatorList->Add(new SvOp::SVUserMaskOperatorClass(pOperatorList));
 
 		// and Requires a SVLUTOperator Object
 		// Deactivated by default!
-		pOperatorList->Add( new SvOp::SVLUTOperator(pOperatorList) );
+		pOperatorList->Add(new SvOp::SVLUTOperator(pOperatorList));
 
 		// Add the UnaryImageOperatorList to the Tool's List
-		Add( pOperatorList );
+		Add(pOperatorList);
 
 		// Ensure input image gets connected to preceeding image output 
 		// ( SVImageArithmetic image output !!! )
 		pOperatorList->connectAllInputs();
 	}
 
-	SvOp::ToolSizeAdjustTask::AddToFriendlist(this, true,true,false);
+	SvOp::ToolSizeAdjustTask::AddToFriendlist(this, true, true, false);
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : Standard Destructor of class SVImageToolClass
-// -----------------------------------------------------------------------------
-// .Description : Standard destructor
-////////////////////////////////////////////////////////////////////////////////
 SVImageToolClass::~SVImageToolClass()
-{ 
+{
 	SVImageToolClass::CloseObject();
 }
 
-bool SVImageToolClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
+
+void SVImageToolClass::BuildEmbeddedObjectList()
+{
+	RegisterEmbeddedObject(&m_outputOperator, SvPb::ArithmeticOperatorEId, IDS_OBJECTNAME_ARITHMETICOPERATOR, false, SvOi::SVResetItemTool);
+	m_outputOperator.SetDefaultValue(SVImageSubSaturation);
+
+	RegisterEmbeddedObject(&m_SourceImageNames, SvPb::SourceImageNamesEId, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemTool);
+	m_SourceImageNames.SetArraySize(2);
+
+	RegisterEmbeddedObject(&m_IsGainOffsetEnabled, SvPb::ImageToolEnabledGainId, IDS_OBJECTNAME_IMAGETOOL_ENABLE_GAIN, false, SvOi::SVResetItemTool);
+	m_IsGainOffsetEnabled.SetDefaultValue(FALSE);
+
+	RegisterEmbeddedObject(&m_UseLut, SvPb::ImageToolUseLutId, IDS_OBJECTNAME_IMAGETOOL_USE_LUT, false, SvOi::SVResetItemTool);
+	m_UseLut.SetDefaultValue(FALSE);
+
+	RegisterEmbeddedObject(&m_LinkedGain, SvPb::ImageToolGainId, IDS_OBJECTNAME_IMAGETOOL_GAIN, false, SvOi::SVResetItemTool);
+
+	m_LinkedGain.SetDefaultValue(_variant_t(1.0), true);
+	
+	std::string ObjectName = SvUl::LoadStdString(IDS_OBJECTNAME_IMAGETOOL_GAIN);
+	ObjectName += SvDef::cLinkName;
+	RegisterEmbeddedObject(&m_LinkedGain.getLinkedName(), SvPb::ImageToolLinkedGainId, ObjectName.c_str(), false, SvOi::SVResetItemTool);
+	m_LinkedGain.getLinkedName().SetDefaultValue(_T(""), false);
+
+	RegisterEmbeddedObject(&m_LinkedOffset, SvPb::ImageToolOffsetId, IDS_OBJECTNAME_IMAGETOOL_OFFSET, false, SvOi::SVResetItemTool);
+	m_LinkedOffset.SetDefaultValue(_variant_t(0.0), true);
+	
+	ObjectName = SvUl::LoadStdString(IDS_OBJECTNAME_IMAGETOOL_OFFSET);
+	ObjectName += SvDef::cLinkName;
+	RegisterEmbeddedObject(&m_LinkedOffset.getLinkedName(), SvPb::ImageToolLinkedOffsetId, ObjectName.c_str(), false, SvOi::SVResetItemTool);
+	m_LinkedOffset.getLinkedName().SetDefaultValue(_T(""), false);
+
+}
+
+bool SVImageToolClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 {
 	bool bOk = SVToolClass::CreateObject(rCreateStructure);
 
 	// Set / Reset Printable Flags
-	m_outputEnableOffsetA.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
-	m_outputOffsetAPoint.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
-	m_outputEnableOffsetB.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
-	m_outputOffsetBPoint.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
-	m_outputOperator.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
+	m_outputOperator.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::AddAttribute);
 
 	m_SourceImageNames.setSaveValueFlag(false);
-	m_SourceImageNames.SetObjectAttributesAllowed( SvPb::remotelySetable | SvPb::setableOnline, SvOi::SetAttributeType::RemoveAttribute );
+	m_SourceImageNames.SetObjectAttributesAllowed(SvPb::remotelySetable | SvPb::setableOnline, SvOi::SetAttributeType::RemoveAttribute);
 
 	bOk &= S_OK == UpdateTranslation();
-	
-	if(bOk)
+
+	if (bOk)
 	{
 		bOk = (S_OK == SvOp::ToolSizeAdjustTask::EnsureInFriendList(this, true, true, false));
 	}
-	
+
 	m_isCreated = bOk;
 
 	return bOk;
@@ -183,7 +186,7 @@ HRESULT SVImageToolClass::SetImageExtent(const SVImageExtentClass& rImageExtent)
 
 	const SVExtentFigureStruct& rFigure = rImageExtent.GetFigure();
 
-	if ( (rFigure.m_svTopLeft.m_x >= 0) && (rFigure.m_svTopLeft.m_y >= 0) )
+	if ((rFigure.m_svTopLeft.m_x >= 0) && (rFigure.m_svTopLeft.m_y >= 0))
 	{
 		l_hrOk = SVToolClass::SetImageExtent(rImageExtent);
 	}
@@ -205,16 +208,16 @@ HRESULT SVImageToolClass::SetImageExtent(const SVImageExtentClass& rImageExtent)
 //				:	to have default equations in your tool and/or 
 //				:	friends, children, embeddeds, etc.
 ////////////////////////////////////////////////////////////////////////////////
-bool SVImageToolClass::SetDefaultFormulas(SvStl::MessageContainerVector *pErrorMessages)
+bool SVImageToolClass::SetDefaultFormulas(SvStl::MessageContainerVector* pErrorMessages)
 {
 	bool bRetVal = true;
 
 	// Set Default Formula of LUTEquation, if any...
 	SvDef::SVObjectTypeInfoStruct lutEquationInfo;
-	lutEquationInfo.m_ObjectType	= SvPb::SVEquationObjectType;
-	lutEquationInfo.m_SubType		= SvPb::SVLUTEquationObjectType;
+	lutEquationInfo.m_ObjectType = SvPb::SVEquationObjectType;
+	lutEquationInfo.m_SubType = SvPb::SVLUTEquationObjectType;
 	SvOp::SVLUTEquation* pLUTEquation = dynamic_cast<SvOp::SVLUTEquation*>(getFirstObject(lutEquationInfo));
-	if( pLUTEquation )
+	if (pLUTEquation)
 	{
 		bRetVal = pLUTEquation->SetDefaultFormula(pErrorMessages) && bRetVal;
 	}
@@ -222,9 +225,19 @@ bool SVImageToolClass::SetDefaultFormulas(SvStl::MessageContainerVector *pErrorM
 	return bRetVal;
 }
 
-bool SVImageToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
+bool SVImageToolClass::ResetObject(SvStl::MessageContainerVector* pErrorMessages)
 {
 	bool Result = true;
+
+	long op;
+	BOOL isEnabled;
+	m_outputOperator.GetValue(op);
+	m_IsGainOffsetEnabled.GetValue(isEnabled);
+
+	if (SvOp::SVImageArithmetic::useFloatBuffer(op) == false && isEnabled)
+	{
+		m_IsGainOffsetEnabled.SetValue(FALSE);
+	}
 
 	SvIe::SVExtentPropertyInfoStruct info;
 	getToolExtent().GetExtentPropertyInfo(SvPb::SVExtentPropertyPositionPointX, info);
@@ -236,12 +249,12 @@ bool SVImageToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages
 	getToolExtent().SetExtentPropertyInfo(SvPb::SVExtentPropertyPositionPointY, info);
 	getToolExtent().getImageExtent().SetExtentProperty(SvPb::SVExtentPropertyPositionPointY, 0.);
 
-	if( S_OK != UpdateTranslation() )
+	if (S_OK != UpdateTranslation())
 	{
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UpdateTranslationFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UpdateTranslationFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -251,23 +264,23 @@ bool SVImageToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages
 	UpdateImageWithExtent();
 
 	return Result;
-} 
+}
 
 HRESULT SVImageToolClass::UpdateTranslation()
 {
 	//get operator type
-	long	l_lValue =		0;
+	long	l_lValue = 0;
 	bool	extentChanged = false;
 
-	HRESULT result{S_OK};
+	HRESULT result {S_OK};
 
 	SVImageExtentClass toolImageExtents = GetImageExtent();
 
-	if( S_OK == m_outputOperator.GetValue(l_lValue))
+	if (S_OK == m_outputOperator.GetValue(l_lValue))
 	{
 		//change translation type on extents to match operator if:
 		//			Height Double, Flip Horizontal of Flip Vertical
-		if ( l_lValue == SvDef::SVImageOperatorDoubleHeight )
+		if (l_lValue == SvDef::SVImageOperatorDoubleHeight)
 		{
 			toolImageExtents.SetTranslation(SvPb::SVExtentTranslationDoubleHeight);
 			double heightScaleFactor = 2.0;
@@ -278,12 +291,12 @@ HRESULT SVImageToolClass::UpdateTranslation()
 			toolImageExtents.SetExtentProperty(SvPb::SVExtentPropertyWidthFactorFormat, widthScaleFactor);
 			extentChanged = true;
 		}
-		else if ( l_lValue == SvDef::SVImageOperatorFlipVertical )
+		else if (l_lValue == SvDef::SVImageOperatorFlipVertical)
 		{
 			toolImageExtents.SetTranslation(SvPb::SVExtentTranslationFlipVertical);
 			extentChanged = true;
 		}
-		else if ( l_lValue == SvDef::SVImageOperatorFlipHorizontal )
+		else if (l_lValue == SvDef::SVImageOperatorFlipHorizontal)
 		{
 			toolImageExtents.SetTranslation(SvPb::SVExtentTranslationFlipHorizontal);
 			extentChanged = true;
@@ -342,19 +355,20 @@ std::vector<std::string> SVImageToolClass::getToolAdjustNameList() const
 		_T("General"),
 		_T("Comment"),
 	};
-	return { cToolAdjustNameList.begin(), cToolAdjustNameList.end() };
+	return {cToolAdjustNameList.begin(), cToolAdjustNameList.end()};
 }
 
 HRESULT SVImageToolClass::SetImageExtentToParent()
 {
 	SVImageExtentClass NewExtent;
-	HRESULT l_hrOk = m_toolExtent.UpdateExtentToParentExtents( NewExtent );
+	HRESULT l_hrOk = m_toolExtent.UpdateExtentToParentExtents(NewExtent);
 
-	if( S_OK == l_hrOk )
+	if (S_OK == l_hrOk)
 	{
 		l_hrOk = SVToolClass::SetImageExtent(NewExtent);
 	}
 	return l_hrOk;
 }
+
 
 } //namespace SvTo

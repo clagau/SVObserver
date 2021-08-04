@@ -437,5 +437,8 @@
     <ClInclude Include="EquationArray.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="LookUp.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

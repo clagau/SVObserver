@@ -30,6 +30,7 @@ public:
 	virtual ~SVImageToolClass();
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
+	
 
 	virtual SVToolClass* GetObjectAtPoint(const SVPoint<double>& rPoint) override;
 	virtual bool DoesObjectHaveExtents() const override;
@@ -51,14 +52,15 @@ protected:
 
 private:
 	void init();
-
-	SvVol::SVBoolValueObjectClass m_outputEnableOffsetA;
-	SvVol::SVPointValueObjectClass m_outputOffsetAPoint;
-	SvVol::SVBoolValueObjectClass m_outputEnableOffsetB;
-	SvVol::SVPointValueObjectClass m_outputOffsetBPoint;
+	void  BuildEmbeddedObjectList();
+	
 	SvVol::SVLongValueObjectClass m_outputOperator;
 	// String value object for Source Image Names
 	SvVol::SVStringValueObjectClass m_SourceImageNames;
+	SvVol::LinkedValue	m_LinkedGain; //!  Linked value for Gain
+	SvVol::LinkedValue	m_LinkedOffset; //!  Linked value for Offset
+	SvVol::SVBoolValueObjectClass m_IsGainOffsetEnabled; //!  Is gain and offset enabled
+	SvVol::SVBoolValueObjectClass m_UseLut; //!  Use LUT table
 };
 
 } //namespace SvTo

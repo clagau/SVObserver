@@ -34,6 +34,7 @@ enum SVMatroxBufferTypeEnum
 
 	SV32BitUnsigned			= 0x000000020,
 	SV32BitSigned			= SV32BitUnsigned | SVBufferSigned,
+	SV32BitFloat             =0x40000000 | SV32BitUnsigned,
 
 };
 
@@ -818,12 +819,14 @@ enum SVImageOperationTypeEnum
 	SVImageDefaultKernel		= 0x00100000L,	// M_ID_OFFSET_OF_DEFAULT_KERNEL 
 	SVOverScanDisable			= SVImageDefaultKernel >> 1L,// M_OVERSCAN_DISABLE
 	SVSaturation				= 0x2000L,		// M_SATURATION
+	SVFloatProc                 =   0x40000000L,// M_FLOAT_PROC
 
 	// Combinations.
 
 	SVImageAddSaturation		= SVImageAdd | SVSaturation,
 	SVImageSubSaturation		= SVImageSub | SVSaturation,
 	SVImageMulSaturation		= SVImageMult | SVSaturation,
+	SVImageSubAbsSaturation = SVImageSubAbs | SVSaturation,
 
 
 	SVNearestNeighOverScanClear = SVNearestNeighbor | SVOverScanClear,

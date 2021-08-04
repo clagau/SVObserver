@@ -123,6 +123,7 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="LookUp.cpp" />
     <ClCompile Include="StdAfx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -161,6 +162,7 @@
     <ClCompile Include="SVOLicenseManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="LookUp.h" />
     <ClInclude Include="MatroxImageProps.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="SVBufferResource.h" />

@@ -483,6 +483,34 @@ long SVImageInfoClass::GetBufferSize()
 	return lHeight * lWidth * lDepth;
 }
 
+long SVImageInfoClass::getOutputWidth() const
+{
+	long width {0};
+	m_svExtents.GetExtentProperty(SvPb::SVExtentPropertyOutputWidth, width);
+	return width;
+}
+long SVImageInfoClass::getOutputHeight() const
+{
+	long height {0};
+	m_svExtents.GetExtentProperty(SvPb::SVExtentPropertyOutputHeight, height);
+	return height;
+}
+long SVImageInfoClass::getBandNumber() const
+{
+	long bands {0};
+	GetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, bands);
+	return bands;
+}
+
+long SVImageInfoClass::getPixelDepth() const
+{
+	long depth {0};
+	GetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, depth);
+	return depth;
+}
+
+
+
 BITMAPINFOHEADER SVImageInfoClass::GetBitmapInfoHeader() const
 {
 	BITMAPINFOHEADER l_info;

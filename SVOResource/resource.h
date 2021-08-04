@@ -85,7 +85,7 @@
 #define IDD_CHILDREN_DIALOG             5023
 #define IDD_BLOB2_RANGE_DIALOG          5024
 #define IDD_BLOB2_DRAW_DIALOG           5025
-#define IDD_GROUPTOOL_INPUTRESULT_DIALOG      5026
+#define IDD_GROUPTOOL_INPUTRESULT_DIALOG 5026
 #define IDD_PROFILE_GR_EDGE_MARKER_ADJUST_DIALOG 5028
 #define IDD_TA_TWO_IMAGE_DIALOG         5033
 #define IDD_TA_PASS_FAIL_DIALOG         5037
@@ -134,7 +134,7 @@
 #define IDD_DLG_CONFIG_ASSISTANT        5095
 #define IDD_DLG_PROPPAGE_AA_CAMERA      5096
 #define IDD_DLG_PROPPAGE_AA_TRIGGER     5097
-#define IDD_DLG_PROPPAGE_FILE_EXEC		5098
+#define IDD_DLG_PROPPAGE_FILE_EXEC      5098
 #define IDD_LUT_DIALOG                  5100
 #define IDD_CUSTOM_FILTER               5102
 #define IDD_OCV_MATCH_DIALOG            5105
@@ -939,17 +939,17 @@
 #define IDS_OBJECTNAME_BLOB_MOMENT_X1Y1_GRAY 10957
 #define IDS_OBJECTNAME_BLOB_MOMENT_X0Y2_GRAY 10958
 #define IDS_OBJECTNAME_BLOB_MOMENT_X2Y0_GRAY 10959
-#define IDS_USE_ADDITIONAL_IMAGE              10960
-#define IDS_IS_COLOR_ADDITIONALIMAGE         10961
-#define IDS_BACKGROUND_COLOR1                10962
-#define IDS_BACKGROUND_COLOR2                10963
-#define IDS_BACKGROUND_COLOR3                10964
-#define IDS_ADDITONAL_IMAGE_DRAW_TYPES		 10965
-#define IDS_ADDITONAL_IMAGE_BLOB_TYPES		 10966
-#define IDS_ADDITONAL_IMAGE_COLOR1   		 10967
-#define IDS_ADDITONAL_IMAGE_COLOR2  		 10968
-#define IDS_ADDITONAL_IMAGE_COLOR3  		 10969
-#define IDS_ADDITONAL_IMAGE_STEPNAMES  		 10970
+#define IDS_USE_ADDITIONAL_IMAGE        10960
+#define IDS_IS_COLOR_ADDITIONALIMAGE    10961
+#define IDS_BACKGROUND_COLOR1           10962
+#define IDS_BACKGROUND_COLOR2           10963
+#define IDS_BACKGROUND_COLOR3           10964
+#define IDS_ADDITONAL_IMAGE_DRAW_TYPES  10965
+#define IDS_ADDITONAL_IMAGE_BLOB_TYPES  10966
+#define IDS_ADDITONAL_IMAGE_COLOR1      10967
+#define IDS_ADDITONAL_IMAGE_COLOR2      10968
+#define IDS_ADDITONAL_IMAGE_COLOR3      10969
+#define IDS_ADDITONAL_IMAGE_STEPNAMES   10970
 #define IDS_OBJECTNAME_UPDATE_AUXILIARY_EXTENTS_OBJECT 11000
 #define IDS_OBJECTNAME_AUXILIARY_SOURCE_X 11001
 #define IDS_OBJECTNAME_AUXILIARY_SOURCE_Y 11002
@@ -1382,7 +1382,7 @@
 #define IDC_SHUTDOWN_TEXT               15011
 #define IDC_SLIDER1                     15012
 #define IDC_CHECK1                      15013
-#define IDC_CHECK2                      15014
+#define IDC_CHECK_USE_LUT               15014
 #define IDC_CHECK3                      15015
 #define IDC_CHECK4                      15017
 #define IDC_EDIT1                       15018
@@ -1696,13 +1696,13 @@
 #define IDC_LEFT_BUTTON                 15370
 #define IDC_RIGHT_BUTTON                15371
 #define IDC_STATIC_BLACKCOLOR           15372
-#define IDC_EDIT_BC_RED		            15373
-#define IDC_EDIT_BC_GREEN	            15374
+#define IDC_EDIT_BC_RED                 15373
+#define IDC_EDIT_BC_GREEN               15374
 #define IDC_EDIT_BC_BLUE                15375
-#define IDC_COMBO_DRAW_TYPE				15376
-#define IDC_COMBO_BLOB_TYPE2			15377
-#define IDC_EDIT_COLOR1		            15378
-#define IDC_EDIT_COLOR2	                15379
+#define IDC_COMBO_DRAW_TYPE             15376
+#define IDC_COMBO_BLOB_TYPE2            15377
+#define IDC_EDIT_COLOR1                 15378
+#define IDC_EDIT_COLOR2                 15379
 #define IDC_EDIT_COLOR3                 15380
 #define IDC_MOVETOOL_RADIO              15381
 #define IDC_STATIC_DRAW                 15382
@@ -2381,8 +2381,20 @@
 #define IDC_BTN_RANGE_MIN2              16184
 #define IDC_BTN_RANGE_DELTA             16185
 #define IDC_BTN_RANGE_MAX               16186
-#define IDC_WEBSITE						16187
+#define IDC_WEBSITE                     16187
 #define IDC_FILEGRID                    16188
+#define IDS_OBJECTNAME_IMAGETOOL_GAIN   16189
+#define IDS_OBJECTNAME_IMAGETOOL_OFFSET 16190
+#define IDS_OBJECTNAME_IMAGETOOL_ENABLE_GAIN 16191
+#define IDS_OBJECTNAME_IMAGETOOL_USE_LUT 16192
+#define IDC_CHECK_ENABLE_GAIN           16193
+#define IDC_EDIT2                       16194
+#define IDC_EDIT_GAIN                   16194
+#define IDC_BUTTON_LINK_GAIN            16195
+#define IDC_EDIT_OFFSET                 16196
+#define IDC_BUTTON_LINK_OFFSET          16197
+#define IDC_STATIC_GAIN                 16198
+#define IDC_STATIC_OFFSET                 16199
 #define ID_UNDO_CHANGES                 20000
 #define ID_BROWSE_BUTTON                20001
 #define ID_PLUSBUTTON                   20002
@@ -2621,9 +2633,9 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        11154
+#define _APS_NEXT_RESOURCE_VALUE        11155
 #define _APS_NEXT_COMMAND_VALUE         20372
-#define _APS_NEXT_CONTROL_VALUE         16189
+#define _APS_NEXT_CONTROL_VALUE         16200
 #define _APS_NEXT_SYMED_VALUE           3002
 #endif
 #endif

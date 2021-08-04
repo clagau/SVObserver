@@ -79,6 +79,10 @@ public:
 
 	void setDibBufferFlag(bool isDibBuffer) { m_isDibBuffer = isDibBuffer; };
 	bool getDibBufferFlag() const { return m_isDibBuffer; };
+	long getOutputWidth() const;
+	long getOutputHeight() const;
+	long getBandNumber() const;
+	long  getPixelDepth() const;
 
 private:
 	uint32_t m_OwnerImageID{ SvDef::InvalidObjectId };

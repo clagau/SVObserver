@@ -167,6 +167,7 @@
     <ClInclude Include="EQAdjustSizePositionY.h" />
     <ClInclude Include="EQAdjustSizeWidth.h" />
     <ClInclude Include="EquationArray.h" />
+    <ClInclude Include="LookUp.h" />
     <ClInclude Include="ParameterTask.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SVAutoThresholdEquation.h" />

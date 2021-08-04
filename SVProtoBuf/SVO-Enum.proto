@@ -1184,6 +1184,16 @@ enum EmbeddedIdEnum
 
 	StatNumberOfValidSamplesEId = 560; //Statistics Tool: number of valid values considered in statistic
 
+	ImageToolEnabledGainId = 561;
+	ImageToolGainId = 562;
+	ImageToolOffsetId = 563;
+	ImageToolLinkedGainId = 564;
+	ImageToolLinkedOffsetId = 565;
+	ImageToolUseLutId = 566;
+
+
+
+
 	//The following Ids are the first of an array and must have 100 reserved Ids 
 	OutputImageEId = 1000; //Output Images, e.g. External needs 4
 	RingBufferIndexEId = 1100; //For ringBuffer index of output images (by now 2 indexes)
@@ -1255,6 +1265,10 @@ enum EmbeddedIdEnum
 	ToolConditionalInputEId = 100049;
 	OverlayColorInputEId = 100050;
 	BarCodeResultEId = 100051;
+	ImageArithmeticGainEnabledEId = 100052;
+	ImageArithmeticGainEId = 100053;
+	ImageArithmeticOffsetEId = 100054;
+	ImageArithmeticUseLutEId = 100055;
 
 	//The following Ids are the first of an array and must have 100 reserved Ids 
 	ImageInputEId = 150000;

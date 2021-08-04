@@ -1477,6 +1477,10 @@ std::unordered_map<std::string, SvPb::EmbeddedIdEnum> g_ExchangeInputEmbeddedID 
 	{"ToolAuxSourceImage", SvPb::AuxImageInputEId},
 	{"ToolConditionalValue", SvPb::ToolConditionalInputEId},
 	{"OverlayColor_Tool", SvPb::OverlayColorInputEId},
+	{"ImageArithmeticGainEnabled", SvPb::ImageArithmeticGainEnabledEId},
+	{"ImageArithmeticOffset", SvPb::ImageArithmeticOffsetEId },
+	{"ImageArithmeticGain", SvPb::ImageArithmeticGainEId },
+	{"ImageArithmeticUseLut", SvPb::ImageArithmeticUseLutEId },
 };
 
 SvPb::EmbeddedIdEnum calcInputEmbeddedId(const _variant_t& rObjectName)
