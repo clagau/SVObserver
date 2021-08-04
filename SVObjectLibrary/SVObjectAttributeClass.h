@@ -51,6 +51,7 @@ public:
 	bool GetData(SVObjectDPointArrayClass& rData);
 	bool GetData(SvCl::SVObjectVariantArrayClass& rData);
 	bool GetData(SvCl::SVObjectInt64ArrayClass& rData);
+	variant_t getData();
 
 	// this function handles old-style configs
 	template <typename T>	

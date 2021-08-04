@@ -168,7 +168,6 @@ void SVToolAdjustmentDialogMaskPageClass::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_CHK_ACTIVATE_MASK, m_bActivateMask);
 	DDX_Radio(pDX, IDC_RADIO_STATIC_MASK, m_iMaskType);
 	DDX_Text(pDX, IDC_EDIT_FILL_COLOR, m_sFillColor);
-	DDX_Radio(pDX, IDC_RADIO_STATIC_MASK, m_iMaskType);
 	DDX_Control(pDX, IDC_DRAW_MASK_CRITERIA, m_DrawCriteriaCombo);
 	//}}AFX_DATA_MAP
 }

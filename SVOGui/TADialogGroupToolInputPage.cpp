@@ -7,12 +7,12 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "TADialogGroupToolInputPage.h"
-#include "ObjectSelectorController.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "GridCtrlLibrary/GridCellCombo.h"
-#include "SVUtilityLibrary/SafeArrayHelper.h"
 #include "DisplayHelper.h"
+#include "Definitions/GlobalConst.h"
+#include "LinkedValueSelectorDialog.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -57,21 +57,20 @@ namespace SvOg
 
 
 
-		std::string checkText(SvPb::InputTypeEnum type, const std::string& text)
+		variant_t checkText(SvPb::InputTypeEnum type, const std::string& text)
 		{
-			std::string result{ text };
+			variant_t result{};
 			try
 			{
 				switch (type)
 				{
 				case SvPb::InputTypeEnum::TypeDecimal:
-					// cppcheck-suppress ignoredReturnValue ; only for check if it possible to move string in double. In error case function throws exception.
-					std::stod(text);
+					result = std::stod(text);
 					break;
 				case SvPb::InputTypeEnum::TypeText:
+					result = text.c_str();
 					break;
-				default: //do nothing
-					result = {};
+				default: //do nothing, empty variant
 					break;
 				}
 			}
@@ -86,17 +85,58 @@ namespace SvOg
 
 			return result;
 		}
+
+		variant_t checkText(SvPb::InputTypeEnum type, const variant_t& value)
+		{
+			variant_t result{};
+			bool isValid{ true };
+			switch (type)
+			{
+			case SvPb::InputTypeEnum::TypeDecimal:
+				isValid = (S_OK == ::VariantChangeTypeEx(&result, &value, SvDef::LCID_USA, VARIANT_ALPHABOOL, VT_R8));
+				break;
+			case SvPb::InputTypeEnum::TypeText:
+				isValid = (S_OK == ::VariantChangeTypeEx(&result, &value, SvDef::LCID_USA, VARIANT_ALPHABOOL, VT_BSTR));
+				break;
+			default: //do nothing, empty variant
+				break;
+			}
+
+			if (false == isValid)
+			{
+				SvDef::StringVector msgList;
+				msgList.push_back(static_cast<std::string>(static_cast<CString>(value)));
+				SvStl::MessageManager msg(SvStl::MsgType::Data);
+				msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ConvertTextToVariantFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
+				msg.Throw();
+			}
+
+			return result;
+		}
 	}
 
-	std::string getDefaultString(SvPb::InputTypeEnum type)
+	bool setValue(GroupInputData& data, const std::string& newStr)
 	{
-		switch (type)
+		if (SvPb::LinkedSelectedType::DirectValue == data.m_data.m_type && SvPb::isValueType(data.m_type))
 		{
-		case SvPb::InputTypeEnum::TypeDecimal: //decimal
-			return "0";
-		default: //do nothing
-			return {};
+			variant_t tmp{ newStr.c_str() };
+			SvStl::MessageContainer msgContainer;
+			bool isValid = (S_OK == ::VariantChangeTypeEx(&data.m_data.m_directValue, &tmp, SvDef::LCID_USA, VARIANT_ALPHABOOL, data.m_data.m_defaultValue.vt));
+			if (false == isValid)
+			{
+				SvDef::StringVector msgList;
+				msgList.push_back(data.m_name);
+				msgContainer.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_LinkedValue_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
+				SvStl::MessageManager Msg(SvStl::MsgType::Display);
+				Msg.setMessage(msgContainer.getMessage());
+			}
+			else
+			{
+				data.m_data.m_Value = data.m_data.m_directValue;
+			}
+			return isValid;
 		}
+		return false;
 	}
 
 	BEGIN_MESSAGE_MAP(TADialogGroupToolInputPage, CPropertyPage)
@@ -201,56 +241,67 @@ namespace SvOg
 		{
 		case ValueButtonColumn:
 		{
-			const auto& type = getType(m_Grid.GetCell(pItem->iRow, TypeColumn)->GetText());
-			std::string cellText = m_Grid.GetCell(pItem->iRow, ValueColumn)->GetText();
-			bool isChanged = false;
-			switch (type.second)
+			ObjectSelectorData data;
+			LinkedValueSelectorTypesEnum possibleType = LinkedValueSelectorTypesEnum::None;
+			switch (m_inputData[pItem->iRow - 1].m_type)
 			{
-			case 0: //decimal
+			case SvPb::InputTypeEnum::TypeDecimal:
 			{
-				ObjectSelectorController objectSelector(m_InspectionID);
-				objectSelector.setSearchAreas({ SvPb::SearchArea::globalConstantItems, SvPb::SearchArea::cameraObject, SvPb::SearchArea::ppqItems, SvPb::SearchArea::toolsetItems });
-				isChanged = objectSelector.Show(cellText, m_Grid.GetCell(pItem->iRow, NameColumn)->GetText(), this, SvPb::allNumberValueObjects, { m_toolId });
+				possibleType = LinkedValueSelectorTypesEnum::All;
+				data.m_type = SvPb::allNumberValueObjects;
+				data.m_attribute = SvPb::selectableForEquation;
+				data.m_searchArea = { SvPb::SearchArea::globalConstantItems, SvPb::SearchArea::cameraObject, SvPb::SearchArea::ppqItems, SvPb::SearchArea::toolsetItems };
 				break;
 			}
-			case 1: //text
+			case SvPb::InputTypeEnum::TypeText:
 			{
-				ObjectSelectorController objectSelector(m_InspectionID, SvDef::InvalidObjectId, SvPb::ObjectAttributes::viewable);
-				objectSelector.setSearchAreas({ SvPb::SearchArea::globalConstantItems, SvPb::SearchArea::cameraObject, SvPb::SearchArea::ppqItems, SvPb::SearchArea::toolsetItems });
-				isChanged = objectSelector.Show(cellText, m_Grid.GetCell(pItem->iRow, NameColumn)->GetText(), this, SvPb::allValueObjects, { m_toolId });
+				possibleType = LinkedValueSelectorTypesEnum::DirectIndirect;
+				data.m_type = SvPb::allValueObjects;
+				data.m_attribute = SvPb::ObjectAttributes::viewable;
+				data.m_searchArea = { SvPb::SearchArea::globalConstantItems, SvPb::SearchArea::cameraObject, SvPb::SearchArea::ppqItems, SvPb::SearchArea::toolsetItems };
 				break;
 			}
-			case 2: //table
+			case SvPb::InputTypeEnum::TypeTable:
 			{
-				ObjectSelectorController objectSelector(m_InspectionID, SvDef::InvalidObjectId, SvPb::ObjectAttributes::taskObject);
-				isChanged = objectSelector.Show(cellText, m_Grid.GetCell(pItem->iRow, NameColumn)->GetText(), this, SvPb::tableObjects, { m_toolId });
+				possibleType = LinkedValueSelectorTypesEnum::Indirect;
+				data.m_type = SvPb::tableObjects;
+				data.m_attribute = SvPb::ObjectAttributes::taskObject;
+				data.m_searchArea = { SvPb::SearchArea::toolsetItems };
 				break;
 			}
-			case 3: //gray image
+			case SvPb::InputTypeEnum::TypeGrayImage:
 			{
-				ObjectSelectorController objectSelector(m_InspectionID, SvDef::InvalidObjectId, SvPb::ObjectAttributes::archivableImage);
-				isChanged = objectSelector.Show(cellText, m_Grid.GetCell(pItem->iRow, NameColumn)->GetText(), this, SvPb::grayImageObjects, { m_toolId });
+				possibleType = LinkedValueSelectorTypesEnum::Indirect;
+				data.m_type = SvPb::grayImageObjects;
+				data.m_attribute = SvPb::ObjectAttributes::archivableImage;
+				data.m_searchArea = { SvPb::SearchArea::toolsetItems };
 				break;
 			}
-			case 4: //color image
+			case SvPb::InputTypeEnum::TypeColorImage:
 			{
-				ObjectSelectorController objectSelector(m_InspectionID, SvDef::InvalidObjectId, SvPb::ObjectAttributes::archivableImage);
-				isChanged = objectSelector.Show(cellText, m_Grid.GetCell(pItem->iRow, NameColumn)->GetText(), this, SvPb::colorImageObjects, { m_toolId });
+				possibleType = LinkedValueSelectorTypesEnum::Indirect;
+				data.m_type = SvPb::colorImageObjects;
+				data.m_attribute = SvPb::ObjectAttributes::archivableImage;
+				data.m_searchArea = { SvPb::SearchArea::toolsetItems };
 				break;
 			}
-			case 5: //image
+			case SvPb::InputTypeEnum::TypeImage:
 			{
-				ObjectSelectorController objectSelector(m_InspectionID, SvDef::InvalidObjectId, SvPb::ObjectAttributes::archivableImage);
-				isChanged = objectSelector.Show(cellText, m_Grid.GetCell(pItem->iRow, NameColumn)->GetText(), this, SvPb::allImageObjects, { m_toolId });
+				possibleType = LinkedValueSelectorTypesEnum::Indirect;
+				data.m_type = SvPb::allImageObjects;
+				data.m_attribute = SvPb::ObjectAttributes::archivableImage;
+				data.m_searchArea = { SvPb::SearchArea::toolsetItems };
 				break;
 			}
-			default:
-				break;
 			}
-			if (isChanged)
+
+			data.m_excludeSameLineageVector = { m_toolId };
+			data.m_stopAtId = m_toolId;
+			LinkedValueSelectorDialog dlg(m_InspectionID, m_Values.GetObjectID(SvPb::ExternalInputEId+(pItem->iRow - 1)), m_inputData[pItem->iRow - 1].m_name, m_inputData[pItem->iRow - 1].m_data, m_inputData[pItem->iRow - 1].m_data.m_defaultValue.vt, data, nullptr, possibleType);
+			if (IDOK == dlg.DoModal())
 			{
-				m_inputData[pItem->iRow - 1].m_ValueStr = cellText;
-				m_Grid.GetCell(pItem->iRow, ValueColumn)->SetText(cellText.c_str());
+				m_inputData[pItem->iRow - 1].m_data = dlg.getData();
+				setValueColumn(pItem->iRow - 1);
 				m_Grid.Refresh();
 			}
 		}
@@ -297,31 +348,32 @@ namespace SvOg
 			}
 			case DefaultColumn:
 			{
-				if (SvPb::InputTypeEnum::TypeDecimal == m_inputData[pItem->iRow - 1].m_type || SvPb::InputTypeEnum::TypeText == m_inputData[pItem->iRow - 1].m_type)
+				if (SvPb::isValueType(m_inputData[pItem->iRow - 1].m_type))
 				{
 					try
 					{
 						//check if text a correct variant	
-						m_inputData[pItem->iRow - 1].m_defaultValue = checkText(m_inputData[pItem->iRow - 1].m_type, cellText);
+						m_inputData[pItem->iRow - 1].m_data.m_defaultValue = checkText(m_inputData[pItem->iRow - 1].m_type, cellText);
 					}
 					catch (const SvStl::MessageContainer& rSvE)
 					{
 						SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 						Msg.setMessage(rSvE.getMessage());
 						bAcceptChange = false;
-						m_inputData[pItem->iRow - 1].m_defaultValue = getDefaultString(m_inputData[pItem->iRow - 1].m_type);
-						m_Grid.SetItemText(pItem->iRow, DefaultColumn, m_inputData[pItem->iRow - 1].m_defaultValue.c_str());
+						m_inputData[pItem->iRow - 1].m_data.m_defaultValue = SvPb::getDefaultString(m_inputData[pItem->iRow - 1].m_type);
+						m_Grid.SetItemText(pItem->iRow, DefaultColumn, static_cast<CString>(m_inputData[pItem->iRow - 1].m_data.m_defaultValue));
 					}
 				}
 				else
 				{
-					m_inputData[pItem->iRow - 1].m_defaultValue = _variant_t{};
+					m_inputData[pItem->iRow - 1].m_data.m_defaultValue = _variant_t{};
 				}
 				break;
 			}
 			case ValueColumn:
 			{
-				m_inputData[pItem->iRow - 1].m_ValueStr = cellText;
+				bAcceptChange = setValue(m_inputData[pItem->iRow - 1], cellText);
+				break;
 			}
 			}
 		}
@@ -417,8 +469,7 @@ namespace SvOg
 				pTmp->set_name(data.m_name);
 				pTmp->set_oldembeddedid(data.m_oldEmbeddedId);
 				pTmp->set_type(data.m_type);
-				pTmp->set_defaultvalue(data.m_defaultValue);
-				pTmp->set_value(data.m_ValueStr);
+				*pTmp->mutable_value() = convertLinkedValue(data.m_data);
 			}
 
 			HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
@@ -515,19 +566,18 @@ namespace SvOg
 			}
 
 			//check if defaultValue correct
-			auto defaultValue = getDefaultString(type);
 			try
 			{
-				m_inputData[i].m_defaultValue = checkText(m_inputData[i].m_type, m_inputData[i].m_defaultValue);
+				m_inputData[i].m_data.m_defaultValue = checkText(m_inputData[i].m_type, m_inputData[i].m_data.m_defaultValue);
 			}
 			catch(...)
 			{
-				m_inputData[i].m_defaultValue = defaultValue;
+				m_inputData[i].m_data.m_defaultValue = SvPb::getDefaultString(type);
 			}
 			
-			if (2 > type) //table
+			if (SvPb::isValueType(type)) 
 			{
-				m_Grid.SetItemText(row, DefaultColumn, m_inputData[i].m_defaultValue.c_str());
+				m_Grid.SetItemText(row, DefaultColumn, static_cast<CString>(m_inputData[i].m_data.m_defaultValue));
 				m_Grid.SetItemState(row, DefaultColumn, m_Grid.GetItemState(row, DefaultColumn) & (~GVIS_READONLY));
 			}
 			else
@@ -536,13 +586,8 @@ namespace SvOg
 				m_Grid.SetItemState(row, DefaultColumn, m_Grid.GetItemState(row, DefaultColumn) | GVIS_READONLY);
 			}
 
-			auto value = std::string(static_cast<LPCSTR>(m_Values.Get<_bstr_t>(SvPb::ExternalInputLinkedEId + i)));
-			if (m_inputData[i].m_ValueStr.empty())
-			{
-				m_inputData[i].m_ValueStr = defaultValue;
-			}
-			m_Grid.SetItemText(row, ValueColumn, m_inputData[i].m_ValueStr.c_str());
-			m_Grid.SetItemState(row, ValueColumn, m_Grid.GetItemState(row, ValueColumn) & (~GVIS_READONLY));
+			setValueColumn(i);
+			
 			SvGcl::GV_ITEM buttonItem;
 			buttonItem.mask = GVIF_IMAGE;
 			buttonItem.iImage = 0;
@@ -553,6 +598,34 @@ namespace SvOg
 
 		m_Grid.Refresh();
 		UpdateEnableButtons();
+	}
+
+	void TADialogGroupToolInputPage::setValueColumn(int pos)
+	{
+		bool isChangeable{ false };
+		CString valueString;
+		if (SvPb::isValueType(m_inputData[pos].m_type))
+		{
+			valueString = static_cast<CString>(m_inputData[pos].m_data.m_Value);
+			isChangeable = SvPb::LinkedSelectedType::DirectValue == m_inputData[pos].m_data.m_type;
+			if (valueString.IsEmpty())
+			{
+				valueString = static_cast<CString>(SvPb::getDefaultString(m_inputData[pos].m_type));
+			}
+		}
+		else
+		{
+			valueString = m_inputData[pos].m_data.m_indirectDotName.c_str();
+		}
+		m_Grid.SetItemText(pos+1, ValueColumn, valueString);
+		if (isChangeable)
+		{
+			m_Grid.SetItemState(pos+1, ValueColumn, m_Grid.GetItemState(pos+1, ValueColumn) & (~GVIS_READONLY));
+		}
+		else
+		{
+			m_Grid.SetItemState(pos+1, ValueColumn, m_Grid.GetItemState(pos+1, ValueColumn) | GVIS_READONLY);
+		}
 	}
 
 	void TADialogGroupToolInputPage::showContextMenu(CPoint point)
@@ -598,16 +671,7 @@ namespace SvOg
 			data.m_name = m_Values.GetName(SvPb::ExternalInputEId + i);
 			data.m_oldEmbeddedId = SvPb::ExternalInputEId + i;
 			data.m_type = static_cast<SvPb::InputTypeEnum>(m_Values.Get<int>(SvPb::InputObjectTypeEId + i));
-			data.m_defaultValue = m_Values.GetDefault<CString>(SvPb::ExternalInputEId + i);
-			data.m_ValueStr = std::string(static_cast<LPCSTR>(m_Values.Get<_bstr_t>(SvPb::ExternalInputLinkedEId + i)));
-			if (data.m_ValueStr.empty())
-			{
-				auto valueVar = m_Values.Get<variant_t>(SvPb::ExternalInputEId + i);
-				if (VT_EMPTY != valueVar.vt)
-				{
-					data.m_ValueStr = SvUl::VariantToString(valueVar);
-				}
-			}
+			data.m_data = m_Values.Get<LinkedValueData>(SvPb::ExternalInputEId + i);
 			m_inputData.emplace_back(std::move(data));
 		}
 	}

@@ -75,10 +75,10 @@ BEGIN_MESSAGE_MAP(SVToolAdjustmentDialogTwoImagePageClass, CPropertyPage)
 	ON_CBN_SELCHANGE(IDC_OPERATOR_COMBO, OnSelchangeOperatorCombo)
 	ON_BN_CLICKED(IDC_CHECK_ENABLE_GAIN, OnCheckEnableGain)
 	ON_BN_CLICKED(IDC_CHECK_USE_LUT, OnCheckUseLut)
-	ON_BN_CLICKED(IDC_BUTTON_LINK_GAIN, OnBnClickedButtonLinkGain)
-	ON_BN_CLICKED(IDC_BUTTON_LINK_OFFSET, OnBnClickedButtonLinkOffset)
-	ON_EN_KILLFOCUS(IDC_EDIT_OFFSET, OnInputChangedOffset)
-	ON_EN_KILLFOCUS(IDC_EDIT_GAIN, OnInputChangedGain)
+	ON_BN_CLICKED(IDC_BUTTON_LINK_GAIN, OnBnClickedButtonGain)
+	ON_EN_KILLFOCUS(IDC_EDIT_GAIN, OnKillFocusGain)
+	ON_BN_CLICKED(IDC_BUTTON_LINK_OFFSET, OnBnClickedButtonOffset)
+	ON_EN_KILLFOCUS(IDC_EDIT_OFFSET, OnKillFocusOffset)
 	ON_WM_CHAR()
 
 	//}}AFX_MSG_MAP
@@ -91,7 +91,6 @@ SVToolAdjustmentDialogTwoImagePageClass::SVToolAdjustmentDialogTwoImagePageClass
 	, m_InspectionID(inspectionId)
 	, m_TaskObjectID(taskObjectId)
 	, m_values {SvOg::BoundValues{ inspectionId, taskObjectId }}
-	, m_objectSelector(inspectionId)
 {
 }
 
@@ -118,12 +117,6 @@ HRESULT SVToolAdjustmentDialogTwoImagePageClass::SetInspectionData()
 	
 	m_values.Set<bool>(SvPb::ImageToolEnabledGainId, m_IsGainEnabled);
 	m_values.Set<bool>(SvPb::ImageToolUseLutId, m_UseLut);
-
-	CString Value;
-	m_EditGainValue.GetWindowText(Value);
-	m_values.Set<CString>(SvPb::ImageToolGainId, Value);
-	m_EditOffsetValue.GetWindowText(Value);
-	m_values.Set<CString>(SvPb::ImageToolOffsetId, Value);
 
 	hr = m_values.Commit(SvOg::PostAction::doRunOnce | SvOg::PostAction::doReset);
 	
@@ -194,6 +187,8 @@ BOOL SVToolAdjustmentDialogTwoImagePageClass::OnInitDialog()
 	Init();
 	m_values.Init();
 
+	m_GainWidget = std::make_unique<LinkedValueWidgetHelper>(m_EditGainValue, m_ButtonGainLink, m_InspectionID, m_TaskObjectID, SvPb::ImageToolGainId, &m_values, ObjectSelectorData {m_TaskObjectID});
+	m_OffsetWidget = std::make_unique<LinkedValueWidgetHelper>(m_EditOffsetValue, m_ButtonOffsetLink, m_InspectionID, m_TaskObjectID, SvPb::ImageToolOffsetId, &m_values, ObjectSelectorData {m_TaskObjectID});
 	const SvUl::NameObjectIdList& rAvailableImageList = GetAvailableImageList();
 	RetreiveCurrentlySelectedImageNames();
 	RetreiveResultImageNames();
@@ -247,36 +242,10 @@ BOOL SVToolAdjustmentDialogTwoImagePageClass::OnInitDialog()
 	
 	m_IsGainEnabled = m_values.Get<BOOL>(SvPb::ImageToolEnabledGainId);;
 	m_UseLut = m_values.Get<BOOL>(SvPb::ImageToolUseLutId);
-	CString valueString = m_values.Get<CString>(SvPb::ImageToolLinkedGainId);
-	if (!valueString.IsEmpty())
-	{
-		m_EditGainValue.SetWindowText(valueString.GetString());
-	}
-	else 
-	{
-		double dvalue = m_values.Get<double>(SvPb::ImageToolGainId);
-		std::string val= std::format("{}", dvalue);
-		m_EditGainValue.SetWindowText(val.c_str());
-	}
 	
-	valueString = m_values.Get<CString>(SvPb::ImageToolLinkedOffsetId);
-	if (!valueString.IsEmpty())
-	{
-		m_EditOffsetValue.SetWindowText(valueString.GetString());
-	}
-	else
-	{
-		double dval = m_values.Get<double>(SvPb::ImageToolOffsetId);
-		std::string val = std::format("{}", dval);
-		m_EditOffsetValue.SetWindowText(val.c_str());
-	}
 	
 	ShowGainAndOffset(lOperator);
-	// Put the Down Arrow on the Button
-	m_downArrowBitmap.LoadOEMBitmap(OBM_DNARROW);
-	m_ButtonGainLink.SetBitmap(static_cast<HBITMAP> (m_downArrowBitmap));
-	m_ButtonOffsetLink.SetBitmap(static_cast<HBITMAP> (m_downArrowBitmap));
-	 UpdateData(false); // set data to dialog
+	UpdateData(false); // set data to dialog
 	
 	return true;
 }
@@ -400,10 +369,6 @@ void SVToolAdjustmentDialogTwoImagePageClass::ShowGainAndOffset(long op)
 			pWnd->ShowWindow(command);
 		}
 	}
-	//if (nullptr != (pWnd = GetDlgItem(IDC_CHECK_USE_LUT)))
-	//{
-	//	pWnd->EnableWindow(FALSE);
-	//}
 }
 
 
@@ -416,45 +381,35 @@ void SVToolAdjustmentDialogTwoImagePageClass::OnCheckUseLut()
 {
 	refresh();
 }
-void SVToolAdjustmentDialogTwoImagePageClass::OnBnClickedButtonLinkGain()
+void SVToolAdjustmentDialogTwoImagePageClass::OnBnClickedButtonGain()
 {
-	CString Temp;
-	m_EditGainValue.GetWindowText(Temp);
-	std::string Value = Temp.GetString();
-	if (m_objectSelector.Show(Value, "Gain value", this, SvPb::allNumberValueObjects, SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed, m_TaskObjectID))
-	{
-		m_EditGainValue.SetWindowText(Value.c_str());
-	}
+	m_GainWidget->OnButton();
 	refresh();
 }
-void SVToolAdjustmentDialogTwoImagePageClass::OnBnClickedButtonLinkOffset()
+void SVToolAdjustmentDialogTwoImagePageClass::OnBnClickedButtonOffset()
 {
-	CString Temp;
-	m_EditOffsetValue.GetWindowText(Temp);
-	std::string Value = Temp.GetString();
-	if (m_objectSelector.Show(Value, "Offset value", this, SvPb::allNumberValueObjects, SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed, m_TaskObjectID))
-	{
-		m_EditOffsetValue.SetWindowText(Value.c_str());
-	}
+	m_OffsetWidget->OnButton();
 	refresh();
 }
 
-void SVToolAdjustmentDialogTwoImagePageClass::OnInputChangedOffset()
+void SVToolAdjustmentDialogTwoImagePageClass::OnKillFocusGain()
 {
 	if (m_IgnoreNotification)
 	{
 		return;
 	}
-		refresh();
+	m_GainWidget->EditboxToValue();
+	refresh();
 
 }
-void SVToolAdjustmentDialogTwoImagePageClass::OnInputChangedGain()
+void SVToolAdjustmentDialogTwoImagePageClass::OnKillFocusOffset()
 {
 	if (m_IgnoreNotification)
 	{
 		return;
 	}
-		refresh();
+	m_OffsetWidget->EditboxToValue();
+	refresh();
 }
 
 void SVToolAdjustmentDialogTwoImagePageClass::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)

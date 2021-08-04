@@ -360,24 +360,24 @@ HRESULT SVToolExtentClass::GetExtentValue(SvPb::SVExtentPropertyEnum extentPrope
 	return l_hrOk;
 }
 
-bool SVToolExtentClass::ExtentObjectHasLinkedName(SvPb::SVExtentPropertyEnum extentProperty) const
+bool SVToolExtentClass::isDirectValue(SvPb::SVExtentPropertyEnum extentProperty) const
 {
 	SvOi::IValueObject* pValueObject(nullptr);
 	HRESULT l_hrOk = GetExtentObject(extentProperty, pValueObject);
 
 	if (l_hrOk == S_OK && nullptr != pValueObject)
 	{
-		std::string tmpStr;
 		SvVol::LinkedValue* pLinkedObject = dynamic_cast<SvVol::LinkedValue*>(pValueObject);
 		if (nullptr == pLinkedObject)
 		{
-			return false;
+			return true;
 		}
 
-		pLinkedObject->getLinkedName().getValue(tmpStr);
-		return (false == tmpStr.empty());
+		SvPb::LinkedValue linkedValue;
+		pLinkedObject->fillLinkedData(linkedValue);
+		return (linkedValue.type() == SvPb::DirectValue);
 	}
-	return false;
+	return true;
 }
 
 
@@ -433,7 +433,7 @@ HRESULT SVToolExtentClass::ensureValidScaleFactorUnlessDottedName(const SVImageE
 			_variant_t value{0.0};
 			GetExtentValue(extentProperty, value);
 			
-			if (false == SvTo::isValidScaleFactor(value) && false == ExtentObjectHasLinkedName(extentProperty))
+			if (false == SvTo::isValidScaleFactor(value) && isDirectValue(extentProperty))
 			// A dotted name must not be overwritten with a numeric value - even if currently having an invalid value!
 			// We assume here that a non-empty linked name means that a dotted name is present.
 			{

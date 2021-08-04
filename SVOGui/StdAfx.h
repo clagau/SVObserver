@@ -82,6 +82,7 @@
 #include <string>
 #include <tchar.h>			//Used by static library
 #include <tuple>			//Used by static library
+#include <variant>
 #include <vector>
 
 #define BOOST_BIND_NO_PLACEHOLDERS

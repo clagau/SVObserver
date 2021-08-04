@@ -48,11 +48,20 @@ public:
 	/// \param ownerUniqueID [in] id of the owner
 	/// \returns HRESULT
 	static HRESULT OverwriteEmbeddedObject(SvPb::EmbeddedIdEnum embeddedID, uint32_t uniqueID, const std::string& objectName, uint32_t ownerUniqueID);
+	static HRESULT SetEmbeddedLinkedChildIds(uint32_t uniqueID, const std::vector<uint32_t>& rObjectIds);
 	static HRESULT OverwriteInputObject(SvPb::EmbeddedIdEnum embeddedID, uint32_t uniqueID, const std::string& objectName, uint32_t connectID, uint32_t ownerUniqueID);
 	static HRESULT SetObjectValue(uint32_t ownerID, uint32_t objectID, const std::string& itemName, const _variant_t& value, SVObjectScriptDataObjectTypeEnum dstDataType);
 	static HRESULT SetObjectValue(uint32_t ownerID, uint32_t objectID, const std::string& itemName, const std::vector<_variant_t>& values, SVObjectScriptDataObjectTypeEnum dstDataType);
 	static HRESULT SetInputs(uint32_t objectID, const SvDef::StringPairVector& rInputPairVector);
 
 	static HRESULT GetObjectDataType(uint32_t ownerID, uint32_t objectID, SVObjectScriptDataObjectTypeEnum& dataType);
+
+	/// Special code for old configs (older than 10.20)
+	/// Set the indirectString to the linked value.
+	/// \param ownerID [in] object which contains the linked value.
+	/// \param embeddedId [in] embeddedId of the linked value.
+	/// \param rValueString [in] string vector to set.
+	/// \returns HRESULT
+	static HRESULT SetIndirectStringToObject(uint32_t ownerID, SvPb::EmbeddedIdEnum embeddedId, const std::vector<_variant_t>& rValueString);
 };
 

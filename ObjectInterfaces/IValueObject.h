@@ -10,11 +10,14 @@
 //Moved to precompiled header: #include <vector>
 //Moved to precompiled header: #include <utility>
 //Moved to precompiled header: #include <comdef.h>
-
+#include "SVProtoBuf/InspectionCommands.h"
+#include <variant>
 #pragma endregion Includes
 
 namespace SvOi
 {
+	class ILinkedObject;
+
 	enum SVResetItemEnum //! used with Embedded Object registration.
 	{
 		//!  Used in cases where changing the Tool value can have an impact on 
@@ -148,8 +151,8 @@ namespace SvOi
 		//! Update the memory block data
 		virtual void updateMemBlockData() = 0;
 
-		//! is true for linkedvalue with indirect value set
-		virtual bool isIndirectValue() const = 0;
+		//! Return the SelectedType. If it not a LinkedValue, it returns SvPb::LinkedSelectedType::DirectValue.
+		virtual SvPb::LinkedSelectedType getSelectedType() const = 0;
 
 		//! Sets a 'standard' format string to be used when the value of the object value needs to be output
 		virtual void setStandardFormatString() = 0;
@@ -170,7 +173,17 @@ namespace SvOi
 		int m_ArrayIndex{ -1 };
 	};
 
+	struct SetLinkedStruct
+	{
+		SetLinkedStruct(ILinkedObject* pValueObject, SvPb::LinkedValue linkedData) :
+			m_pValueObject{ pValueObject }
+			, m_linkedData {linkedData} {}
+
+		ILinkedObject* m_pValueObject{ nullptr };
+		SvPb::LinkedValue m_linkedData;
+	};
+
 	typedef std::set<IValueObject*> IValueObjectPtrSet;
-	typedef std::vector<SetValueStruct> SetValueStructVector;
+	typedef std::vector<std::variant<SetValueStruct, SetLinkedStruct> > SetValueStructVector;
 
 } //namespace SvOi

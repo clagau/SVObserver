@@ -27,13 +27,6 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-struct SVResultClassCancelData : public SVCancelData	// this does not need to be visible to anyone but this file.
-{
-	SVResultClassCancelData() {m_pRangeData = nullptr;}
-	virtual ~SVResultClassCancelData() {if (m_pRangeData) delete m_pRangeData;}
-	SVCancelData* m_pRangeData;
-};
-
 ///For this class it is not necessary to call SV_IMPLEMENT_CLASS as it is a base class and only derived classes are instantiated.
 //SV_IMPLEMENT_CLASS( SVResult, SvPb::ResultClassId);
 
@@ -198,40 +191,6 @@ bool SVResult::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErr
 
 	rRunStatus.SetInvalid();
 	return false;
-}
-
-HRESULT SVResult::GetCancelData(SVCancelData*& rpCancelData)
-{
-	assert(nullptr == rpCancelData);
-	SVResultClassCancelData* pData = new SVResultClassCancelData;
-	rpCancelData = pData;
-
-	if ( SVRange* pRange = GetResultRange() )
-	{
-		pRange->GetCancelData( pData->m_pRangeData );
-	}
-
-	return S_OK;
-}
-
-HRESULT SVResult::SetCancelData(SVCancelData* pCancelData)
-{
-	SVResultClassCancelData* pData = dynamic_cast<SVResultClassCancelData*> (pCancelData);
-	if ( pData )
-	{
-		if ( SVRange* pRange = GetResultRange() )
-		{
-			return pRange->SetCancelData( pData->m_pRangeData );
-		}
-		else
-		{
-			return S_OK;
-		}
-	}
-	else
-	{
-		return S_FALSE;
-	}
 }
 
 bool SVResult::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const

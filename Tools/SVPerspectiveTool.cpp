@@ -346,7 +346,7 @@ void SVPerspectiveToolClass::LocalInitialize()
 	registerInputObject( &m_InputImage, SvDef::SourceImageInputName, SvPb::ImageInputEId);
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &m_OutputImage, SvPb::OutputImageEId, IDS_OBJECTNAME_IMAGE1 );
+	RegisterEmbeddedImage( &m_OutputImage, SvPb::OutputImageEId, IDS_OBJECTNAME_IMAGE1 );
 
 	RegisterEmbeddedObject( &m_svXOffset, SvPb::TranslationXOffsetEId, IDS_X_OFFSET, false, SvOi::SVResetItemTool );
 	RegisterEmbeddedObject( &m_svYOffset, SvPb::TranslationYOffsetEId, IDS_Y_OFFSET, false, SvOi::SVResetItemTool );

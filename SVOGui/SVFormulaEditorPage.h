@@ -23,9 +23,15 @@ namespace SvOg
 	{
 	public:
 		explicit SVFormulaEditorPageClass(SvOi::IFormulaControllerPtr controller, bool isDisableCheckboxesVisible = false, UINT captionID = IDS_FORMULA_STRING, UINT disableExtentionID = IDS_TOOL_STRING);   // standard constructor
+		
+		/// This Constructor is for formula editor which not set the equation, but test if it is valid.
+		/// \param controller [in]
+		/// \param m_equationString [in] Start equation text.
+		SVFormulaEditorPageClass(SvOi::IFormulaControllerPtr controller, const std::string& m_equationString);
 		virtual ~SVFormulaEditorPageClass();
 
 		bool validateAndSetEquation();
+		std::string getEquationText() const;
 
 		// Dialog Data
 		//{{AFX_DATA(SVFormulaEditorPageClass)
@@ -54,7 +60,6 @@ namespace SvOg
 		void insertIntoEditor( LPCTSTR tszValue );
 		void advanceInEditor( long Pos );
 		void deleteInEditor( long Pos );
-		std::string getEquationText() const;
 		std::string getSelectedEquationText() const;
 		void setEquationText();
 		bool createToolbars();
@@ -109,5 +114,8 @@ namespace SvOg
 		bool m_isConditionalPage;
 		UINT m_disableExtentionID;
 		CBitmap m_downArrowBitmap;
+
+		bool m_useInternalTextAndDontSetItToEquation = false;
+		std::string m_internalEquationText;
 	};
 } //namespace SvOg

@@ -16,7 +16,6 @@ constexpr const TCHAR* c_ObjectType = _T("Object Type");
 constexpr const TCHAR* c_TriggerIndex = _T("Trigger Index");
 constexpr const TCHAR* c_TriggerPerObjectID = _T("Trigger per Object ID");
 constexpr const TCHAR* c_InspectedObjectID = _T("Inspected Object ID");
-constexpr const TCHAR* c_InspectedObjectIDLink = _T("Inspected Object ID Link");
 constexpr const TCHAR* c_InspectionName = _T("Inspection Name");
 
 #pragma endregion Declarations

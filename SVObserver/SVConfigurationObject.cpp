@@ -14,7 +14,6 @@
 //Moved to precompiled header: #include <comdef.h>
 //Moved to precompiled header: #include <regex>
 #include "SVConfigurationObject.h"
-#include "RangeClassHelper.h"
 #include "RemoteMonitorListHelper.h"
 #include "RemoteMonitorNamedList.h"
 #include "RootObject.h"
@@ -2406,6 +2405,16 @@ void SVConfigurationObject::UpgradeConfiguration()
 			}
 		}
 	}
+
+	//For Inspection and Tool Set the Create-method is called before data is read from the config-file. 
+	//For this reason the indirect-Ref for the inspectedObjectId has the wrong objectId, if it is set from toolSet-init. Correct this here.
+	for (auto* pInsp : m_arInspectionArray)
+	{
+		if (pInsp && pInsp->GetToolSet())
+		{
+			pInsp->GetToolSet()->reloadInspectedObjectIdIndirectValue();
+		}
+	}
 }
 
 HRESULT SVConfigurationObject::LoadAcquisitionDeviceFilename(SVTreeType& rTree, SVTreeType::SVBranchHandle hDig, SVFileNameArrayClass& rFileArray)
@@ -4439,7 +4448,7 @@ HRESULT SVConfigurationObject::SetInspectionItems(const SVNameStorageMap& p_rIte
 								l_Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
 							}
 						}
-						if (l_AddParameter && ObjectRef.getValueObject() && ObjectRef.getValueObject()->isIndirectValue())
+						if (l_AddParameter && ObjectRef.getValueObject() && SvPb::LinkedSelectedType::DirectValue != ObjectRef.getValueObject()->getSelectedType())
 						{
 
 							p_rStatus[l_Iter->first] = SVMSG_OBJECT_CANNOT_BE_SET_INDIRECT_VALUE;
@@ -4447,31 +4456,6 @@ HRESULT SVConfigurationObject::SetInspectionItems(const SVNameStorageMap& p_rIte
 							if (S_OK == l_Status)
 							{
 								l_Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
-							}
-						}
-
-						bool rangeParameter = RangeClassHelper::IsOwnedByRangeObject(*ObjectRef.getObject());
-
-						if (l_AddParameter && rangeParameter)
-						{
-							HRESULT hresult;
-							std::string Value;
-							if (l_Iter->second.m_Variant.vt == (VT_BSTR | VT_ARRAY))
-							{
-								long  index = 0;
-								BSTR bstrValue = nullptr;
-								SafeArrayGetElementNoCopy(l_Iter->second.m_Variant.parray, &index, &bstrValue);
-								Value = SvUl::createStdString(bstrValue);
-							}
-
-							if (!RangeClassHelper::IsAllowedToSet(*ObjectRef.getObject(), Value, l_Online, hresult))
-							{
-								p_rStatus[l_Iter->first] = hresult;
-								l_AddParameter = false;
-								if (S_OK == l_Status)
-								{
-									l_Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
-								}
 							}
 						}
 					}

@@ -99,9 +99,9 @@ namespace SvOg
 			CPropertyPage* pPage = GetPage(i);
 			if( pPage && pPage->GetSafeHwnd() ) 
 			{
-				if( SVFormulaEditorPageClass* pFormularPage = dynamic_cast<SVFormulaEditorPageClass*>( pPage ) )
+				if( SVFormulaEditorPageClass* pFormulaPage = dynamic_cast<SVFormulaEditorPageClass*>( pPage ) )
 				{
-					if( !pFormularPage->validateAndSetEquation() )
+					if( !pFormulaPage->validateAndSetEquation() )
 					{
 						// Equation must be valid or disabled
 						SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );

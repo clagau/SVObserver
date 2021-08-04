@@ -105,6 +105,14 @@ namespace SvOsl
 		//! \param helpID <in> the ID for the help file
 		//************************************
 		void setSelectorType( const SelectorTypeEnum& rSelectorType, int helpID = 0);
+
+		SvCl::ObjectTreeItems& getTreeContainer() { return m_TreeContainer; };
+
+		//************************************
+		//! The method checks if the tree has been modified
+		//! \return true if tree has been modified
+		//************************************
+		bool checkModifiedItems();
 #pragma endregion Public Methods
 
 	private:
@@ -116,14 +124,7 @@ namespace SvOsl
 		//! \param rTreeItem <in> reference to tree item to insert
 		//************************************
 		void insertTreeObject(const SvPb::TreeItem& rTreeItem);
-
-		//************************************
-		//! The method checks if the tree has been modified
-		//! \return true if tree has been modified
-		//************************************
-		bool checkModifiedItems();
-
-	#pragma endregion Private Methods
+#pragma endregion Private Methods
 
 	private:
 	#pragma region Member Variables

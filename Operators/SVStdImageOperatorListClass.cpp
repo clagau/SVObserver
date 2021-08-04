@@ -46,8 +46,8 @@ void SVStdImageOperatorListClass::init()
 	m_ObjectTypeInfo.m_SubType = SvPb::SVStdImageOperatorListObjectType;
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject(&m_OutputImage, SvPb::OutputImageEId, IDS_OBJECTNAME_IMAGE1);
-	RegisterEmbeddedObject(&m_LogicalROIImage, SvPb::LogicalROIImageEId, IDS_OBJECTNAME_ROIIMAGE);
+	RegisterEmbeddedImage(&m_OutputImage, SvPb::OutputImageEId, IDS_OBJECTNAME_IMAGE1);
+	RegisterEmbeddedImage(&m_LogicalROIImage, SvPb::LogicalROIImageEId, IDS_OBJECTNAME_ROIIMAGE);
 
 	// This logical ROI image is referenced in the embedded list, but 
 	//  will be hidden from most exposure.

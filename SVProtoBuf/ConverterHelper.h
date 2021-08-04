@@ -32,6 +32,8 @@ void ConvertStringListToProtobuf(const std::set<std::string>& rList, SvPb::Varia
 /// \returns SvPb::MessageContainerVector The protobuf-structure.
 MessageContainerVector convertMessageVectorToProtobuf(const SvStl::MessageContainerVector& rMessageVec);
 void convertMessageToProtobuf(const SvStl::MessageContainer& rMessage, MessageContainer* pMessagePB);
+
+SvStl::MessageContainer convertProtobufToMessage(const MessageContainer& messagePB);
 /// Convert a protobuf-structure to messages from SVObserver.
 /// \param messageVecPB [in] The protobuf-structure.
 /// \returns SvStl::MessageContainerVector The messages
@@ -40,4 +42,17 @@ SvStl::MessageContainerVector convertProtobufToMessageVector(const MessageContai
 // Converts a flat vector to a recursive tree
 template<typename TreeItem>
 void convertVectorToTree(const std::vector<TreeItem>& rItemVector, TreeItem* pTree);
+
+/// Return the default string for the InputTypeEnum-value
+/// \param type [in]
+/// \returns variant_t
+variant_t getDefaultString(SvPb::InputTypeEnum type);
+
+/// Return a bool if a InputTypeEnum is a value type.
+/// \param type [in]
+/// \returns bool
+constexpr bool isValueType(SvPb::InputTypeEnum type) 
+{
+	return (SvPb::InputTypeEnum::TypeDecimal == type || SvPb::InputTypeEnum::TypeText == type);
+}
 } //namespace SvPb

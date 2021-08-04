@@ -45,6 +45,7 @@ public:
 	bool IsSelected();
 	bool IsChecked();
 	bool IsReadOnly();
+	bool IsButtonActiveIfReadOnly();
 	bool IsActivated();
 	bool IsHidden();
 	bool CanShrink();
@@ -55,6 +56,7 @@ public:
 	void Expand(bool bExpand = true);
 	void Check(bool bCheck = true);
 	void ReadOnly(bool bReadOnly = true);
+	void ReadOnly(bool bReadOnly, bool bButtonEnabled);
 	void HideItem(bool bHide = true);
 	void SetCanShrink(bool bShrinkable = true);
 	void SetCanHighlight(bool bCanHighlight);
@@ -183,6 +185,10 @@ public:
 	// Called to activate the item
 	virtual void OnActivate();
 
+	//Only needed to handle buttons in readonly-EditItem 
+	virtual void ReadOnlyActivate() {};
+	virtual void HideEditItemCtrls() {};
+
 	// Called to tell the control that is will loss the focus and no new focus will be set. 
 	//(Will be set a new focus, OnKillFocus will be fired automatically.)
 	virtual void OnLossFocus();
@@ -237,6 +243,7 @@ protected:
 		ItemActivated = 0x00000010,
 		ItemReadOnly  = 0x00000020,
 		ItemHidden    = 0x00000040,
+		ItemButtonEnableIfReadOnly = 0x00000080,  //only used if ItemEdit and ReadOnly
 	};
 
 	// @cmember Item state

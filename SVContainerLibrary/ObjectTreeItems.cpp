@@ -70,6 +70,7 @@ namespace SvCl
 			Iter = createNode(ParentIter, Branch, LeafName);
 			if (end() != Iter)
 			{
+				m_BranchMap[Iter->first] = Iter;
 				rSelectorItem.m_Name = Iter->second->m_Name;
 				rSelectorItem.m_Location = Iter->second->m_Location;
 				*Iter->second = rSelectorItem;
@@ -88,10 +89,7 @@ namespace SvCl
 			if( Iter->second->isNode() )
 			{
 				ObjectSelectorItem::CheckedStateEnum CheckedState = getNodeCheckedState(Iter.base());
-				if( Iter->second->m_CheckedState != CheckedState )
-				{
-					Iter->second->m_CheckedState = CheckedState;
-				}
+				Iter->second->m_CheckedState = CheckedState;
 			}
 			Iter++;
 		}
@@ -144,7 +142,7 @@ namespace SvCl
 					LoopChildren = false;
 				}
 
-				IterChild++;
+				++IterChild;
 			}
 
 			if( AllChecked )

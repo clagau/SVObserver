@@ -14,13 +14,12 @@
 #include "ISVPropertyPageDialog.h"
 #include "RangeController.h"
 #include "Definitions/RangeEnum.h"
-#include "ObjectSelectorController.h"
-
+#include "LinkedValueWidgetHelper.h"
 #pragma endregion Includes
 
 namespace SvOg
 {
-	class SVTADlgPassFailPage : public CPropertyPage, public SvOg::ISVPropertyPageDialog, public SvOg::RangeController
+	class SVTADlgPassFailPage : public CPropertyPage, public SvOg::ISVPropertyPageDialog
 	{
 	public:
 #pragma region Constructor
@@ -46,44 +45,27 @@ namespace SvOg
 		//}}AFX_VIRTUAL
 
 		//{{AFX_MSG(SVTADlgPassFailPage)
-		afx_msg void OnBnClickedFailHighIndirect();
-		afx_msg void OnBnClickedWarnlHighIndirect();
-		afx_msg void OnBnClickedWarnLowIndirect();
-		afx_msg void OnBnClickedFailedLowIndirect();
+		void OnButtonRange(UINT nID);
+		void OnKillFocusRange(UINT nID);
 		//{{AFX_MSG
 #pragma region Protected Methods
 
 #pragma region Privated Methods
-	//************************************
-	/// Show an object selector and return the name of the selection.
-	/// \param Name [in,out] Name of the object.
-	/// \param fieldEnum [in] Enum of the value
-	/// \returns bool true if a new object would selected.
-	//************************************
-		bool ShowObjectSelector(std::string& rName, RangeEnum::ERange fieldEnum);
 #pragma region Privated Methods
 
 #pragma region Member Variables
 	protected:
 		//{{AFX_DATA(SVTADlgPassFailPage)
 		enum { IDD = IDD_TA_PASS_FAIL_DIALOG };
-		CButton m_ButtonFailHigh;
-		CButton m_ButtonWarnHigh;
-		CButton m_ButtonWarnLow;
-		CButton m_ButtonFailLow;
-		CString m_FailHigh;
-		CString m_FailLow;
-		CString m_WarnHigh;
-		CString m_WarnLow;
+		std::array<std::unique_ptr<SvOg::LinkedValueWidgetHelper>, RangeEnum::ER_COUNT> m_RangeWidgets;
+		std::array<CButton, RangeEnum::ER_COUNT> m_RangeButtons;
+		std::array<CEdit, RangeEnum::ER_COUNT> m_RangeEdits;
 		//}}AFX_DATA
 
 	private:
 		HRESULT SetInspectionData();
 		bool UpdateRangeValues();
-		void InitData();
-
-		CBitmap m_downArrowBitmap;
-		ObjectSelectorController m_objectSelector;
+		SvOg::RangeController m_rangeController;
 		uint32_t m_toolId;
 #pragma endregion Member Variables
 	};

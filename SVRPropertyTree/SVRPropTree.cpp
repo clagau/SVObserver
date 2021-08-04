@@ -389,7 +389,7 @@ void SVRPropTree::UpdatedItems()
 		m_List.UpdateResize();
 		m_List.Invalidate();
 
-		if ( nullptr != m_pFocus && ! m_pFocus->IsReadOnly() )
+		if ( nullptr != m_pFocus && (! m_pFocus->IsReadOnly() || m_pFocus->IsButtonActiveIfReadOnly()) )
 		{
 			m_pFocus->Activate();
 		}

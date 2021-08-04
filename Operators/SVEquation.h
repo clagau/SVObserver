@@ -168,7 +168,7 @@ public:
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 	
-	bool HasCondition();
+	bool HasCondition() const;
 
 #pragma region IEquation
 	virtual const std::string& GetEquationText() const override;
@@ -189,7 +189,7 @@ public:
 	virtual double GetSubscriptedPropertyValue( int SymbolIndex, int Index, double Default = 0.0 ) override;
 	virtual HRESULT GetArrayValues( int iSymbolIndex, std::vector< double >& values ) override;
 
-	bool IsEnabled();
+	bool IsEnabled() const;
 
 	virtual void Persist(SvOi::IObjectWriter& rWriter) const override;
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* PDataObject ) override;

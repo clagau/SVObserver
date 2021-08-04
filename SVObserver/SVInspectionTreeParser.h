@@ -46,10 +46,11 @@ private:
 	
 	HRESULT ProcessEmbeddeds(typename SVTreeType::SVBranchHandle hItem, uint32_t ownerID);
 	HRESULT ProcessEmbedded(typename SVTreeType::SVBranchHandle hItem, uint32_t ownerID);
+	HRESULT ProcessEmbeddedChilds(typename SVTreeType::SVBranchHandle hItem, uint32_t ownerID);
 	HRESULT ProcessEmbeddedValues(typename SVTreeType::SVBranchHandle hItem, uint32_t ownerID, uint32_t objectID, SVObjectScriptDataObjectTypeEnum dataType);
 
-	HRESULT ProcessBranchObjectValues(typename SVTreeType::SVBranchHandle hItem, uint32_t ownerID, uint32_t objectID);
-	HRESULT ProcessLeafObjectValues(typename SVTreeType::SVBranchHandle hItem, uint32_t ownerID, uint32_t objectID);
+	HRESULT ProcessBranchObjectValues(typename SVTreeType::SVBranchHandle hItem, uint32_t ownerID, uint32_t objectID, bool excludeDefaultAndArray);
+	HRESULT ProcessLeafObjectValues(typename SVTreeType::SVBranchHandle hItem, uint32_t ownerID, uint32_t objectID, bool excludeDefaultAndArray);
 
 	HRESULT ProcessEquation(uint32_t ownerID, const _variant_t& equation);
 

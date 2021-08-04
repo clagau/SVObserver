@@ -128,19 +128,8 @@ void SVImageToolClass::BuildEmbeddedObjectList()
 
 	m_LinkedGain.SetDefaultValue(_variant_t(1.0), true);
 	
-	std::string ObjectName = SvUl::LoadStdString(IDS_OBJECTNAME_IMAGETOOL_GAIN);
-	ObjectName += SvDef::cLinkName;
-	RegisterEmbeddedObject(&m_LinkedGain.getLinkedName(), SvPb::ImageToolLinkedGainId, ObjectName.c_str(), false, SvOi::SVResetItemTool);
-	m_LinkedGain.getLinkedName().SetDefaultValue(_T(""), false);
-
 	RegisterEmbeddedObject(&m_LinkedOffset, SvPb::ImageToolOffsetId, IDS_OBJECTNAME_IMAGETOOL_OFFSET, false, SvOi::SVResetItemTool);
 	m_LinkedOffset.SetDefaultValue(_variant_t(0.0), true);
-	
-	ObjectName = SvUl::LoadStdString(IDS_OBJECTNAME_IMAGETOOL_OFFSET);
-	ObjectName += SvDef::cLinkName;
-	RegisterEmbeddedObject(&m_LinkedOffset.getLinkedName(), SvPb::ImageToolLinkedOffsetId, ObjectName.c_str(), false, SvOi::SVResetItemTool);
-	m_LinkedOffset.getLinkedName().SetDefaultValue(_T(""), false);
-
 }
 
 bool SVImageToolClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)

@@ -14,7 +14,7 @@
 #pragma region Includes
 #include "Definitions/RangeEnum.h"
 #include "SVOGui/RangeController.h"
-#include "SVOGui/ObjectSelectorController.h"
+#include "SVOGui/LinkedValueWidgetHelper.h"
 #pragma endregion Includes
 
 class RangeXDialogClass : public CDialog
@@ -39,34 +39,18 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 public:
-	//************************************
-	// Description:  Shows the Object Selector
-	// Parameter:  name<in/out>:  previous and new name of object
-	// Returns:   bool:  true if a new object was selected
-	//************************************
-	bool ShowObjectSelector(std::string& rName, RangeEnum::ERange fieldEnum);
-
 	afx_msg void OnBnClickedOk();
 	afx_msg void OnBnClickedCancel();
 	virtual BOOL OnInitDialog() override;
-	afx_msg void OnBnClickedFailHighIndirect();
-	afx_msg void OnBnClickedWarnlHighIndirect();
-	afx_msg void OnBnClickedWarnLowIndirect();
-	afx_msg void OnBnClickedFailedLowIndirect();
+	void OnButtonRange(UINT nID);
+	void OnKillFocusRange(UINT nID);
 
 protected:
-	CString m_FailHigh;
-	CString m_FailLow;
-	CString m_WarnHigh;
-	CString m_WarnLow;
-	CButton m_ButtonFailHigh;
-	CButton m_ButtonWarnHigh;
-	CButton m_ButtonWarnLow;
-	CButton m_ButtonFailLow;
-	CBitmap m_downArrowBitmap;
+	std::array<std::unique_ptr<SvOg::LinkedValueWidgetHelper>, RangeEnum::ER_COUNT> m_RangeWidgets;
+	std::array<CButton, RangeEnum::ER_COUNT> m_RangeButtons;
+	std::array<CEdit, RangeEnum::ER_COUNT> m_RangeEdits;
 
 	SvOg::RangeController m_rangeController;
-	SvOg::ObjectSelectorController m_objectSelector;
 	uint32_t m_toolId;
 };
 

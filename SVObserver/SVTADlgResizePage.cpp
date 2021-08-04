@@ -15,17 +15,18 @@
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVMatroxLibrary/SVMatroxEnums.h"
+#include "SVOGui/LinkedValueWidgetHelper.h"
 #pragma endregion Includes
 
 
 #pragma region Message Map
 BEGIN_MESSAGE_MAP(SVTADlgResizePage, CPropertyPage)
-	ON_EN_KILLFOCUS(IDC_EDIT_CONTENT_WIDTH_FACTOR, OnAnyItemChanged)
-	ON_EN_KILLFOCUS(IDC_EDIT_CONTENT_HEIGHT_FACTOR, OnAnyItemChanged)
-	ON_EN_KILLFOCUS(IDC_EDIT_FORMAT_WIDTH_FACTOR, OnAnyItemChanged)
-	ON_EN_KILLFOCUS(IDC_EDIT_FORMAT_HEIGHT_FACTOR, OnAnyItemChanged)
-	ON_CBN_SELCHANGE(IDC_INTERPOLATION_MODE_COMBO, OnAnyItemChanged)
-	ON_CBN_SELCHANGE(IDC_OVERSCAN_COMBO, OnAnyItemChanged)
+	ON_EN_KILLFOCUS(IDC_EDIT_CONTENT_WIDTH_FACTOR, OnContentWidthFactorChanged)
+	ON_EN_KILLFOCUS(IDC_EDIT_CONTENT_HEIGHT_FACTOR, OnContentHeightFactorChanged)
+	ON_EN_KILLFOCUS(IDC_EDIT_FORMAT_WIDTH_FACTOR, OnFormatWidthFactorChanged)
+	ON_EN_KILLFOCUS(IDC_EDIT_FORMAT_HEIGHT_FACTOR, OnFormatHeightFactorChanged)
+	ON_CBN_SELCHANGE(IDC_INTERPOLATION_MODE_COMBO, OnInterpolationModeChanged)
+	ON_CBN_SELCHANGE(IDC_OVERSCAN_COMBO, OnOverscanChanged)
 	ON_BN_CLICKED(IDC_BUTTON_CONTENT_WIDTH_FACTOR, OnButtonContentWidthFactor)
 	ON_BN_CLICKED(IDC_BUTTON_CONTENT_HEIGHT_FACTOR, OnButtonContentHeightFactor)
 	ON_BN_CLICKED(IDC_BUTTON_FORMAT_WIDTH_FACTOR, OnButtonFormatWidthFactor)
@@ -33,18 +34,6 @@ BEGIN_MESSAGE_MAP(SVTADlgResizePage, CPropertyPage)
 
 END_MESSAGE_MAP()
 #pragma endregion Message Map
-
-const std::vector<SvPb::EmbeddedIdEnum> SVTADlgResizePage::ms_allScaleFactorEIDs{
-		SvPb::ExtentWidthFactorContentLinkEId,
-		SvPb::ExtentWidthFactorContentEId,
-		SvPb::ExtentHeightFactorContentLinkEId,
-		SvPb::ExtentHeightFactorContentEId,
-		SvPb::ExtentWidthFactorFormatLinkEId,
-		SvPb::ExtentWidthFactorFormatEId,
-		SvPb::ExtentHeightFactorFormatLinkEId,
-		SvPb::ExtentHeightFactorFormatEId
-};
-
 
 SVTADlgResizePage::SVTADlgResizePage(uint32_t inspectionID, uint32_t taskObjectID, SVToolAdjustmentDialogSheetClass* Parent, int id)
 	: CPropertyPage(id)
@@ -55,33 +44,7 @@ SVTADlgResizePage::SVTADlgResizePage(uint32_t inspectionID, uint32_t taskObjectI
 	, m_inspectionID(inspectionID)
 	, m_toolID(taskObjectID)
 	, m_resizeValueController{ SvOg::BoundValues{ inspectionID, taskObjectID } }
-	, m_formatWidthHelper(m_formatScaleEdit[ScaleFactorDimension::Width],
-		SvPb::ExtentWidthFactorFormatEId,
-		&(m_formatScaleButton[ScaleFactorDimension::Width]),
-		SvPb::ExtentWidthFactorFormatLinkEId,
-		m_resizeValueController)
-	, m_formatHeightHelper(m_formatScaleEdit[ScaleFactorDimension::Height],
-		SvPb::ExtentHeightFactorFormatEId,
-		&(m_formatScaleButton[ScaleFactorDimension::Height]),
-		SvPb::ExtentHeightFactorFormatLinkEId,
-		m_resizeValueController)
-	, m_resizeValueSelector(inspectionID, SvDef::InvalidObjectId, SvPb::viewable)
-	, m_contentWidthHelper(m_contentScaleEdit[ScaleFactorDimension::Width],
-		SvPb::ExtentWidthFactorContentEId,
-		&(m_contentScaleButton[ScaleFactorDimension::Width]),
-		SvPb::ExtentWidthFactorContentLinkEId,
-		m_resizeValueController)
-	, m_contentHeightHelper(m_contentScaleEdit[ScaleFactorDimension::Height],
-		SvPb::ExtentHeightFactorContentEId,
-		&(m_contentScaleButton[ScaleFactorDimension::Height]),
-		SvPb::ExtentHeightFactorContentLinkEId,
-		m_resizeValueController),
-	m_allEditHelpers{
-		std::ref(m_contentWidthHelper), std::ref(m_contentHeightHelper),
-		std::ref(m_formatWidthHelper), std::ref(m_formatHeightHelper)}
 {
-	SvOg::ValueEditWidgetHelper::EnsureDownArrowBitmapIsLoaded();
-
 	m_resizeValueController.Init();
 }
 
@@ -119,6 +82,15 @@ BOOL SVTADlgResizePage::OnInitDialog()
 
 	HRESULT hr = S_OK;
 	m_ImageController.Init();
+
+	SvOg::ObjectSelectorData osData;
+	osData.m_attribute = SvPb::viewable;
+
+	m_contentScaleWidgets[0] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_contentScaleEdit[0], m_contentScaleButton[0], m_inspectionID, m_toolID, SvPb::ExtentWidthFactorContentEId, &m_resizeValueController, osData);
+	m_contentScaleWidgets[1] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_contentScaleEdit[1], m_contentScaleButton[1], m_inspectionID, m_toolID, SvPb::ExtentHeightFactorContentEId, &m_resizeValueController, osData);
+
+	m_formatScaleWidgets[0] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_formatScaleEdit[0], m_formatScaleButton[0], m_inspectionID, m_toolID, SvPb::ExtentWidthFactorFormatEId, &m_resizeValueController, osData);
+	m_formatScaleWidgets[1] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_formatScaleEdit[1], m_formatScaleButton[1], m_inspectionID, m_toolID, SvPb::ExtentHeightFactorFormatEId, &m_resizeValueController, osData);
 	
 	if (nullptr == m_ParentDialog)
 	{
@@ -136,39 +108,6 @@ BOOL SVTADlgResizePage::OnInitDialog()
 	{
 		SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		Exception.setMessage(hr, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 5015);
-	}
-	else
-	{
-		SvUl::NameObjectIdList namesAndIds = m_ImageController.GetResultImages();
-
-		//we want to look just at the part of the dotted name after the last dot
-		for (auto& rNameAndId : namesAndIds)
-		{
-			auto positionOfLastDot = rNameAndId.first.rfind(_T("."));
-			if(positionOfLastDot != std::string::npos)
-			{
-				rNameAndId.first = rNameAndId.first.substr(positionOfLastDot + 1);
-			}
-		}
-
-		m_ROIImageID = SvUl::FindObjectId(namesAndIds, SvUl::LoadStdString(IDS_OBJECTNAME_ROIIMAGE));
-		assert(SvDef::InvalidObjectId != m_ROIImageID);
-		if (SvDef::InvalidObjectId == m_ROIImageID)
-		{//if the imagename we want still cannot be found we use the position in the list
-			if (1 < namesAndIds.size())
-			{
-				m_ROIImageID = namesAndIds[1].second;
-			}
-		}
-		m_OutputImageID = SvUl::FindObjectId(namesAndIds, SvUl::LoadStdString(IDS_OBJECTNAME_IMAGE1));
-		assert(SvDef::InvalidObjectId != m_OutputImageID);
-		if (SvDef::InvalidObjectId == m_OutputImageID)
-		{//if the imagename we want still cannot be found we use the position in the list
-			if (0 < namesAndIds.size())
-			{
-				m_OutputImageID = namesAndIds[0].second;
-			}
-		}
 	}
 
 	GetAndDisplayValuesFromTool();
@@ -188,37 +127,26 @@ BOOL SVTADlgResizePage::OnSetActive()
 
 void SVTADlgResizePage::OnButtonFormatWidthFactor()
 {
-	PickValue(m_formatScaleEdit[ScaleFactorDimension::Width], IDS_OBJECTNAME_FORMAT_WIDTH_SCALE);
+	m_formatScaleWidgets[Width]->OnButton();
+	CommitAndCheckNewParameterValues();
 }
 
 void SVTADlgResizePage::OnButtonFormatHeightFactor()
 {
-	PickValue(m_formatScaleEdit[ScaleFactorDimension::Height], IDS_OBJECTNAME_FORMAT_HEIGHT_SCALE);
+	m_formatScaleWidgets[Height]->OnButton();
+	CommitAndCheckNewParameterValues();
 }
 
 void SVTADlgResizePage::OnButtonContentWidthFactor()
 {
-	PickValue(m_contentScaleEdit[ScaleFactorDimension::Width], IDS_OBJECTNAME_CONTENT_WIDTH_SCALE);
+	m_contentScaleWidgets[Width]->OnButton();
+	CommitAndCheckNewParameterValues();
 }
 
 void SVTADlgResizePage::OnButtonContentHeightFactor()
 {
-	PickValue(m_contentScaleEdit[ScaleFactorDimension::Height], IDS_OBJECTNAME_CONTENT_HEIGHT_SCALE);
-}
-
-void SVTADlgResizePage::PickValue(CEdit& rEdit, UINT ResourceID)
-{
-	CString Temp;
-
-	rEdit.GetWindowText(Temp);
-	std::string Value = Temp.GetString();
-	std::string Title = SvUl::LoadStdString(ResourceID);
-	if (m_resizeValueSelector.Show(Value, Title, this, SvPb::allNumberValueObjects, SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed, m_toolID))
-	{
-		rEdit.SetWindowText(Value.c_str());
-	}
-
-	OnAnyItemChanged();
+	m_contentScaleWidgets[Height]->OnButton();
+	CommitAndCheckNewParameterValues();
 }
 
 void SVTADlgResizePage::ResetAndFillInterpolationModeComboBox()
@@ -283,66 +211,11 @@ void SVTADlgResizePage::GetAndDisplayValuesFromTool()
 		}
 
 	}
-
-	for (SvOg::ValueEditWidgetHelper& rEditHelper : m_allEditHelpers)
-	{
-		rEditHelper.ValueToEditbox();
-	}
-}
-
-void SVTADlgResizePage::getInterpolationModeFromDialog()
-{
-	CString interpolationModeName;
-	m_InterpolationModeCombo.GetLBText(m_InterpolationModeCombo.GetCurSel(), interpolationModeName);
-
-	std::string selectedInterpolation(interpolationModeName.GetBuffer(0));
-
-	auto modeandname = std::find_if(c_interpolationNamesAndModes.begin(), c_interpolationNamesAndModes.end(),
-		[selectedInterpolation](const std::pair<std::string, InterpolationMode>& rPair)
-		{return rPair.first == selectedInterpolation; });
-
-	if (modeandname == c_interpolationNamesAndModes.end())
-	{
-		m_InterpolationModeCombo.SetCurSel(0); //default: auto
-		m_selectedInterpolationMode = InterpolationMode::Default;
-	}
-	else
-	{
-		m_selectedInterpolationMode = modeandname->second;
-	}
-}
-
-void SVTADlgResizePage::getOverscanModeFromDialog()
-{
-	CString OverscanModeName;
-	m_OverscanModeCombo.GetLBText(m_OverscanModeCombo.GetCurSel(), OverscanModeName);
-
-	std::string selectedOverscan(OverscanModeName.GetBuffer(0));
-
-	auto modeandname = std::find_if(c_overscanNamesAndModes.begin(), c_overscanNamesAndModes.end(),
-		[selectedOverscan](const std::pair<std::string, OverscanMode>& rPair)
-		{return rPair.first == selectedOverscan; });
-
-	if (modeandname == c_overscanNamesAndModes.end())
-	{
-		m_OverscanModeCombo.SetCurSel(0); //default: enable
-		m_selectedOverscanMode = OverscanMode::OverscanEnable;
-	}
-	else
-	{
-		m_selectedOverscanMode = modeandname->second;
-	}
 }
 
 bool SVTADlgResizePage::CommitAndCheckNewParameterValues()
 {
 	CommitValuesFromDialog();
-
-#if defined (TRACE_THEM_ALL) || defined (TRACE_RESIZE)
-
-	traceScalefactorValues("Committed");
-
-#endif 
 
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
@@ -374,18 +247,42 @@ void SVTADlgResizePage::CommitValuesFromDialog()
 	m_resizeValueController.Set<long>(SvPb::ResizeInterpolationModeEId, m_selectedInterpolationMode);
 	m_resizeValueController.Set<long>(SvPb::ResizeOverscanEId, m_selectedOverscanMode);
 
-	for (SvOg::ValueEditWidgetHelper& rEditHelper : m_allEditHelpers)
-	{
-		rEditHelper.EditboxToValue();
-	}
-
 	m_resizeValueController.Commit();
-
 }
 
 HRESULT SVTADlgResizePage::SetupResizeImageControl()
 {
 	HRESULT	hr = S_OK;
+
+	SvUl::NameObjectIdList namesAndIds = m_ImageController.GetResultImages();
+	//we want to look just at the part of the dotted name after the last dot
+	for (auto& rNameAndId : namesAndIds)
+	{
+		auto positionOfLastDot = rNameAndId.first.rfind(_T("."));
+		if (positionOfLastDot != std::string::npos)
+		{
+			rNameAndId.first = rNameAndId.first.substr(positionOfLastDot + 1);
+		}
+	}
+
+	m_ROIImageID = SvUl::FindObjectId(namesAndIds, SvUl::LoadStdString(IDS_OBJECTNAME_ROIIMAGE));
+	assert(SvDef::InvalidObjectId != m_ROIImageID);
+	if (SvDef::InvalidObjectId == m_ROIImageID)
+	{//if the imagename we want still cannot be found we use the position in the list
+		if (1 < namesAndIds.size())
+		{
+			m_ROIImageID = namesAndIds[1].second;
+		}
+	}
+	m_OutputImageID = SvUl::FindObjectId(namesAndIds, SvUl::LoadStdString(IDS_OBJECTNAME_IMAGE1));
+	assert(SvDef::InvalidObjectId != m_OutputImageID);
+	if (SvDef::InvalidObjectId == m_OutputImageID)
+	{//if the imagename we want still cannot be found we use the position in the list
+		if (0 < namesAndIds.size())
+		{
+			m_OutputImageID = namesAndIds[0].second;
+		}
+	}
 
 	if (S_OK != m_DialogImage.AddTab(_T("Source ROI"), &m_ROITabHandle))
 	{
@@ -419,44 +316,72 @@ void SVTADlgResizePage::UpdateImages()
 	m_DialogImage.Refresh();
 }
 
-void SVTADlgResizePage::OnAnyItemChanged()
+void SVTADlgResizePage::OnInterpolationModeChanged()
 {
-	getInterpolationModeFromDialog();
-	getOverscanModeFromDialog();
+	CString interpolationModeName;
+	m_InterpolationModeCombo.GetLBText(m_InterpolationModeCombo.GetCurSel(), interpolationModeName);
 
+	std::string selectedInterpolation(interpolationModeName.GetBuffer(0));
+
+	auto modeandname = std::find_if(c_interpolationNamesAndModes.begin(), c_interpolationNamesAndModes.end(),
+		[selectedInterpolation](const std::pair<std::string, InterpolationMode>& rPair)
+	{return rPair.first == selectedInterpolation; });
+
+	if (modeandname == c_interpolationNamesAndModes.end())
+	{
+		m_InterpolationModeCombo.SetCurSel(0); //default: auto
+		m_selectedInterpolationMode = InterpolationMode::Default;
+	}
+	else
+	{
+		m_selectedInterpolationMode = modeandname->second;
+	}
 	CommitAndCheckNewParameterValues();
 }
 
-void SVTADlgResizePage::traceScalefactorValues(const std::string &rHeading, bool alsoAsDouble) const
+void SVTADlgResizePage::OnOverscanChanged()
 {
-		std::stringstream traceStream;
+	CString OverscanModeName;
+	m_OverscanModeCombo.GetLBText(m_OverscanModeCombo.GetCurSel(), OverscanModeName);
 
-		traceStream << rHeading << ":" << std::endl;
+	std::string selectedOverscan(OverscanModeName.GetBuffer(0));
 
-		bool isLink = true;
+	auto modeandname = std::find_if(c_overscanNamesAndModes.begin(), c_overscanNamesAndModes.end(),
+		[selectedOverscan](const std::pair<std::string, OverscanMode>& rPair)
+	{return rPair.first == selectedOverscan; });
 
-		for (SvPb::EmbeddedIdEnum eid: ms_allScaleFactorEIDs)
-		{
-			auto temp = m_resizeValueController.Get<CString>(eid);
-
-			traceStream << "\t" << eid << ": '" << temp.GetBuffer(0) << "'";
-
-			if (isLink) 
-			{
-				traceStream << " -> ";
-			}
-			else
-			{
-				if (alsoAsDouble)
-				{
-					auto temp_d = m_resizeValueController.Get<double>(eid);
-					traceStream << "/" << temp_d;
-				}
-				traceStream << std::endl;
-			}
-			isLink = !isLink;
-		}
-		OutputDebugString(traceStream.str().c_str());
+	if (modeandname == c_overscanNamesAndModes.end())
+	{
+		m_OverscanModeCombo.SetCurSel(0); //default: enable
+		m_selectedOverscanMode = OverscanMode::OverscanEnable;
+	}
+	else
+	{
+		m_selectedOverscanMode = modeandname->second;
+	}
+	CommitAndCheckNewParameterValues();
 }
 
+void SVTADlgResizePage::OnContentWidthFactorChanged()
+{
+	m_contentScaleWidgets[Width]->EditboxToValue();
+	CommitAndCheckNewParameterValues();
+}
 
+void SVTADlgResizePage::OnContentHeightFactorChanged()
+{
+	m_contentScaleWidgets[Height]->EditboxToValue();
+	CommitAndCheckNewParameterValues();
+}
+
+void SVTADlgResizePage::OnFormatWidthFactorChanged()
+{
+	m_formatScaleWidgets[Width]->EditboxToValue();
+	CommitAndCheckNewParameterValues();
+}
+
+void SVTADlgResizePage::OnFormatHeightFactorChanged()
+{
+	m_formatScaleWidgets[Height]->EditboxToValue();
+	CommitAndCheckNewParameterValues();
+}

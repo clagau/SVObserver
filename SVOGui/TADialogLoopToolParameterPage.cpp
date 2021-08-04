@@ -25,7 +25,9 @@ namespace SvOg
 BEGIN_MESSAGE_MAP(TADialogLoopToolParameterPage, CPropertyPage)
 	//{{AFX_MSG_MAP(TADialogLoopToolParameterPage)
 	ON_BN_CLICKED(IDC_BUTTON_LINKED_LOOPS, OnBnClickedButtonLastLoopCount)
+	ON_EN_KILLFOCUS(IDC_EDIT_LINKED_LOOPS, OnKillFocusLastLoopCount)
 	ON_BN_CLICKED(IDC_BUTTON_LINKED_BREAK_CONDITION, OnBnClickedButtonBreakCondition)
+	ON_EN_KILLFOCUS(IDC_EDIT_BREAK_CONDITION, OnKillFocusBreakCondition)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -35,7 +37,6 @@ TADialogLoopToolParameterPage::TADialogLoopToolParameterPage(uint32_t inspection
 	, m_InspectionID(inspectionID)
 	, m_TaskObjectID(taskObjectID)
 	, m_values {SvOg::BoundValues{ inspectionID, taskObjectID }}
-	, m_objectSelector(inspectionID)
 {
 }
 
@@ -60,36 +61,20 @@ void TADialogLoopToolParameterPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_MAX_LOOPS, m_MaxLoopCount);
 	DDV_MinMaxLong(pDX, m_MaxLoopCount, 1, 10000);
 	DDX_Control(pDX, IDC_EDIT_LINKED_LOOPS, m_EditLoopsValue);
-	DDX_Control(pDX, IDC_BUTTON_LINKED_LOOPS, m_ButtonLoopsLink);
+	DDX_Control(pDX, IDC_BUTTON_LINKED_LOOPS, m_ButtonLoopsValue);
 
 	DDX_Control(pDX, IDC_EDIT_BREAK_CONDITION, m_EditBreakCondition);
-	DDX_Control(pDX, IDC_BUTTON_LINKED_BREAK_CONDITION, m_ButtonBreakConditionLink);
+	DDX_Control(pDX, IDC_BUTTON_LINKED_BREAK_CONDITION, m_ButtonBreakCondition);
 	//}}AFX_DATA_MAP
 }
 
 BOOL TADialogLoopToolParameterPage::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
-	// Put the Down Arrow on the Button
-	m_downArrowBitmap.LoadOEMBitmap(OBM_DNARROW);
-	m_ButtonLoopsLink.SetBitmap(static_cast<HBITMAP> (m_downArrowBitmap));
-
-	m_ButtonBreakConditionLink.SetBitmap(static_cast<HBITMAP> (m_downArrowBitmap));
 	m_values.Init();
 	m_MaxLoopCount = m_values.Get<long>(SvPb::MaxLoopsEId);
-	CString valueString = m_values.Get<CString>(SvPb::LinkedLoops_LinkedEId);
-	if (valueString.IsEmpty())
-	{
-		valueString = m_values.Get<CString>(SvPb::LinkedLoopsEId);
-	}
-	m_EditLoopsValue.SetWindowText(valueString.GetString());
-
-	valueString = m_values.Get<CString>(SvPb::LoopBreak_LinkedEId);
-	if (valueString.IsEmpty())
-	{
-		valueString = m_values.Get<CString>(SvPb::LoopBreakEId);
-	}
-	m_EditBreakCondition.SetWindowText(valueString.GetString());
+	m_LoopsValueWidget = std::make_unique<LinkedValueWidgetHelper>(m_EditLoopsValue, m_ButtonLoopsValue, m_InspectionID, m_TaskObjectID, SvPb::LinkedLoopsEId, &m_values, ObjectSelectorData{m_TaskObjectID});
+	m_BreakConditionWidget = std::make_unique<LinkedValueWidgetHelper>(m_EditBreakCondition, m_ButtonBreakCondition, m_InspectionID, m_TaskObjectID, SvPb::LoopBreakEId, &m_values, ObjectSelectorData {m_TaskObjectID});
 	UpdateData(FALSE);
 	return TRUE;
 }
@@ -113,29 +98,21 @@ HRESULT TADialogLoopToolParameterPage::SetPageData()
 	BOOL updateState = UpdateData(true);
 	if (updateState)
 	{
-		CString Value;
-		m_EditLoopsValue.GetWindowText(Value);
-		m_values.Set<CString>(SvPb::LinkedLoopsEId, Value);
 		m_values.Set<long>(SvPb::MaxLoopsEId, m_MaxLoopCount);
-
-		m_EditBreakCondition.GetWindowText(Value);
-		m_values.Set<CString>(SvPb::LoopBreakEId, Value);
-
 		hResult = m_values.Commit();
 		if (S_OK == hResult)
 		{
-			Value = m_values.Get<CString>(SvPb::LinkedLoops_LinkedEId);
-			if (Value.IsEmpty())
+			auto data = m_values.Get<LinkedValueData>(SvPb::LinkedLoopsEId);
+			if (SvPb::LinkedSelectedType::DirectValue == data.m_type)
 			{
 				long MaxLoopCount = m_values.Get<long>(SvPb::MaxLoopsEId);
-				long LoopCount = m_values.Get<long>(SvPb::LinkedLoopsEId);
+				long LoopCount = data.m_Value;
 				if (LoopCount > MaxLoopCount)
 				{
 					SvDef::StringVector messageList;
 					std::string valueString = m_values.Get<CString>(SvPb::MaxLoopsEId).GetString();
 					messageList.push_back(valueString);
-					valueString = m_values.Get<CString>(SvPb::LinkedLoopsEId);
-					messageList.push_back(valueString);
+					messageList.push_back(std::to_string(LoopCount));
 					
 					SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 					Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_IsLessThan, messageList, SvStl::SourceFileParams(StdMessageParams), 0);
@@ -193,30 +170,22 @@ void TADialogLoopToolParameterPage::resetInspection()
 
 void TADialogLoopToolParameterPage::OnBnClickedButtonBreakCondition()
 {
-	CString Temp;
-	m_EditBreakCondition.GetWindowText(Temp);
-	std::string Value = Temp.GetString();
-	if (m_objectSelector.Show(Value, "Loop break condition", this, SvPb::allNumberValueObjects, SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed, m_TaskObjectID))
-	{
-		m_EditBreakCondition.SetWindowText(Value.c_str());
-	}
-	UpdateData(false);
+	m_BreakConditionWidget->OnButton();
 }
-
-
 
 void TADialogLoopToolParameterPage::OnBnClickedButtonLastLoopCount()
 {
-	CString Temp;
-	m_EditLoopsValue.GetWindowText(Temp);
-	std::string Value = Temp.GetString();
-
-	if (m_objectSelector.Show(Value, "Loops Count", this, SvPb::allNumberValueObjects, SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed, m_TaskObjectID))
-	{
-		m_EditLoopsValue.SetWindowText(Value.c_str());
-	}
-	UpdateData(false);
+	m_LoopsValueWidget->OnButton();
 }
 
+void TADialogLoopToolParameterPage::OnKillFocusBreakCondition()
+{
+	m_BreakConditionWidget->EditboxToValue();
+}
+
+void TADialogLoopToolParameterPage::OnKillFocusLastLoopCount()
+{
+	m_LoopsValueWidget->EditboxToValue();
+}
 
 } //namespace SvOg

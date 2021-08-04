@@ -14,7 +14,6 @@
 #pragma region Includes
 #include "InspectionEngine/SVTaskObject.h"
 #include "SVMaskShape.h"
-#include "ObjectInterfaces/SVImageBufferHandleInterface.h"
 #include "SVValueObjectLibrary\SVBoolValueObjectClass.h"
 #include "SVValueObjectLibrary\SVEnumerateValueObjectClass.h"
 #include "SVValueObjectLibrary/LinkedValue.h"
@@ -38,8 +37,6 @@ public:
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 	void createImageObject(bool useImageObject);
-	//First definition of onRun with this parameter (SVTaskObjectClass has different parameter), so override is not possible
-	virtual bool onRun( bool First, SvOi::SVImageBufferHandlePtr RInputImageHandle, SvOi::SVImageBufferHandlePtr ROutputImageHandle, RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr );
 
 	HRESULT Refresh(RunStatus* pRunStatus = nullptr);
 

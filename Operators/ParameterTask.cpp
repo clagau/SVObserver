@@ -87,11 +87,10 @@ namespace SvOp
 	}
 #pragma endregion Declarations
 
-	ParameterTask::ParameterTask(SvPb::EmbeddedIdEnum startEmbeddedIdValue, SvPb::EmbeddedIdEnum startEmbeddedIdLinked, SvPb::EmbeddedIdEnum startEmbeddedIdType,
+	ParameterTask::ParameterTask(SvPb::EmbeddedIdEnum startEmbeddedIdValue, SvPb::EmbeddedIdEnum startEmbeddedIdType,
 		SVObjectClass* pOwner, int StringResourceID)
 		: SVTaskObjectClass(pOwner, StringResourceID)
 		, m_startEmbeddedIdValue(startEmbeddedIdValue)
-		, m_startEmbeddedIdLinked(startEmbeddedIdLinked)
 		, m_startEmbeddedIdType(startEmbeddedIdType)
 	{
 		init();
@@ -99,30 +98,6 @@ namespace SvOp
 
 	ParameterTask::~ParameterTask()
 	{
-		for (auto* pObject : m_objects)
-		{
-			auto iter = std::find(m_embeddedList.begin(), m_embeddedList.end(), pObject);
-			if (m_embeddedList.end() != iter)
-			{
-				m_embeddedList.erase(iter);
-				iter = std::find(m_embeddedList.begin(), m_embeddedList.end(), &pObject->getLinkedName());
-				if (m_embeddedList.end() != iter)
-				{
-					m_embeddedList.erase(iter);
-				}
-			}
-
-			delete pObject;
-		}
-		for (auto* pObject : m_TypeObjects)
-		{
-			auto iter = std::find(m_embeddedList.begin(), m_embeddedList.end(), pObject);
-			if (m_embeddedList.end() != iter)
-			{
-				m_embeddedList.erase(iter);
-			}
-			delete pObject;
-		}
 	}
 
 	bool ParameterTask::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
@@ -130,6 +105,37 @@ namespace SvOp
 		m_isCreated = __super::CreateObject(rCreateStructure);
 		registerParameter();
 		return m_isCreated;
+	}
+
+	bool ParameterTask::CloseObject()
+	{
+		for (auto& rObject : m_objects)
+		{
+			auto iter = std::find(m_embeddedList.begin(), m_embeddedList.end(), rObject.get());
+			if (m_embeddedList.end() != iter)
+			{
+				m_embeddedList.erase(iter);
+			}
+			if (rObject.get())
+			{
+				rObject->CloseObject();
+			}
+		}
+		m_objects.clear();
+		for (auto& rObject : m_TypeObjects)
+		{
+			auto iter = std::find(m_embeddedList.begin(), m_embeddedList.end(), rObject.get());
+			if (m_embeddedList.end() != iter)
+			{
+				m_embeddedList.erase(iter);
+			}
+			if (rObject.get())
+			{
+				rObject->CloseObject();
+			}
+		}
+		m_TypeObjects.clear();
+		return __super::CloseObject();
 	}
 
 	bool ParameterTask::ResetObject(SvStl::MessageContainerVector* pErrorMessages)
@@ -176,21 +182,43 @@ namespace SvOp
 				switch (type)
 				{
 				case SvPb::InputTypeEnum::TypeDecimal:
-					defaults[i] = std::stod(rValues.defaultvalue());
-					m_objects[i]->validateValue(rValues.value().c_str(), defaults[i]);
+					SvPb::ConvertProtobufToVariant(rValues.value().defaultvalue(), defaults[i]);
+					if (VT_R8 != defaults[i].vt)
+					{
+						pResponse->mutable_errormessages()->CopyFrom(createMessage(getObjectId(), SvStl::Tid_ValidateValue_LinkedTypeInvalid));
+						cmd.set_hresult(E_FAIL);
+						return cmd;
+					}
+					m_objects[i]->validateValue(rValues.value());
 					break;
 				case SvPb::InputTypeEnum::TypeText:
-					defaults[i] = rValues.defaultvalue().c_str();
-					m_objects[i]->validateValue(rValues.value().c_str(), defaults[i]);
+					SvPb::ConvertProtobufToVariant(rValues.value().defaultvalue(), defaults[i]);
+					if (VT_BSTR != defaults[i].vt)
+					{
+						pResponse->mutable_errormessages()->CopyFrom(createMessage(getObjectId(), SvStl::Tid_ValidateValue_LinkedTypeInvalid));
+						cmd.set_hresult(E_FAIL);
+						return cmd;
+					}
+					m_objects[i]->validateValue(rValues.value());
 					break;
 				default: //variant must be empty
 					defaults[i].Clear();
-					SVObjectReference objectRef = GetObjectReferenceForDottedName(rValues.value());
-					SvStl::MessageContainerVector msgVector;
-					if (false == checkObject(rValues.name(), objectRef.getObject(), type, &msgVector))
+					if (SvPb::LinkedSelectedType::IndirectValue == rValues.value().type())
 					{
-						pResponse->mutable_errormessages()->CopyFrom(SvPb::convertMessageVectorToProtobuf(msgVector));
-						cmd.set_hresult(E_FAIL);						
+						SVObjectReference refObject{ GetObjectReferenceForDottedName(rValues.value().indirectdotname()) };
+						SvStl::MessageContainerVector msgVector;
+						if (false == checkObject(rValues.name(), refObject.getObject(), type, &msgVector))
+						{
+							pResponse->mutable_errormessages()->CopyFrom(SvPb::convertMessageVectorToProtobuf(msgVector));
+							cmd.set_hresult(E_FAIL);
+							return cmd;
+						}
+					}
+					else
+					{
+						assert(false);
+						pResponse->mutable_errormessages()->CopyFrom(createMessage(getObjectId(), SvStl::Tid_ValidateValue_LinkedObjectInvalid));
+						cmd.set_hresult(E_FAIL);
 						return cmd;
 					}
 					break;
@@ -275,14 +303,12 @@ namespace SvOp
 			m_TypeObjects[i]->SetValue(rValues.type());
 			m_TypeObjects[i]->SetObjectEmbedded(m_startEmbeddedIdType + i, this, (rValues.name() + cTypeNamePostfix).c_str());
 			m_objects[i]->SetObjectEmbedded(m_startEmbeddedIdValue + i, this, rValues.name().c_str());
-			m_objects[i]->getLinkedName().SetObjectEmbedded(m_startEmbeddedIdLinked + i, this, (rValues.name() + SvDef::cLinkName).c_str());
 			m_objects[i]->setDefaultValue(defaults[i]);
-			m_objects[i]->setValue(_variant_t(rValues.value().c_str()));
+			m_objects[i]->setValue(rValues.value());
 			assert (m_objects[i]->resetAllObjects());
 			if (rValues.name() != oldName)
 			{
 				GetInspection()->OnObjectRenamed(*m_objects[i], oldName);
-				GetInspection()->OnObjectRenamed(m_objects[i]->getLinkedName(), oldName + SvDef::cLinkName);
 				GetInspection()->OnObjectRenamed(*m_TypeObjects[i], oldName + cTypeNamePostfix);
 			}
 		}
@@ -290,7 +316,6 @@ namespace SvOp
 		for (int i = request.embeddedlist_size(); m_objects.size() > i; ++i)
 		{
 			m_objects[i]->SetObjectEmbedded(m_startEmbeddedIdValue + i, this, m_objects[i]->GetObjectName());
-			m_objects[i]->getLinkedName().SetObjectEmbedded(m_startEmbeddedIdLinked + i, this, m_objects[i]->getLinkedName().GetObjectName());
 			m_TypeObjects[i]->SetObjectEmbedded(m_startEmbeddedIdType + i, this, m_TypeObjects[i]->GetObjectName());
 		}
 
@@ -320,12 +345,11 @@ namespace SvOp
 		for (int i = 0; i < cMaxNumberOfObjects; ++i)
 		{
 			std::string name = SvUl::LoadStdString(IDS_OBJECTNAME_INPUT_01 + i);
-			m_objects[i] = new SvVol::LinkedValue();
+			m_objects[i] = std::make_unique<SvVol::LinkedValue>();
 			m_objects[i]->setSaveDefaultValueFlag(true);
-			m_TypeObjects[i] = new SvVol::SVEnumerateValueObjectClass();
-			RegisterEmbeddedObject(m_objects[i], m_startEmbeddedIdValue + i, name.c_str(), false, SvOi::SVResetItemTool);
-			RegisterEmbeddedObject(&m_objects[i]->getLinkedName(), m_startEmbeddedIdLinked + i, (name + SvDef::cLinkName).c_str(), false, SvOi::SVResetItemNone);
-			RegisterEmbeddedObject(m_TypeObjects[i], m_startEmbeddedIdType + i, (name + cTypeNamePostfix).c_str(), false, SvOi::SVResetItemOwner);
+			m_TypeObjects[i] = std::make_unique <SvVol::SVEnumerateValueObjectClass>();
+			RegisterEmbeddedObject(m_objects[i].get(), m_startEmbeddedIdValue + i, name.c_str(), false, SvOi::SVResetItemTool);
+			RegisterEmbeddedObject(m_TypeObjects[i].get(), m_startEmbeddedIdType + i, (name + cTypeNamePostfix).c_str(), false, SvOi::SVResetItemOwner);
 			m_TypeObjects[i]->SetEnumTypes(cObjectTypeEnum);
 			m_TypeObjects[i]->SetDefaultValue(0l, true);
 		}
@@ -353,7 +377,7 @@ namespace SvOp
 		{
 			long type;
 			m_TypeObjects[i]->GetValue(type);
-			m_objects[i]->UpdateLinkedName();
+			m_objects[i]->UpdateContent();
 			constexpr UINT defaultStringValueAttributes = SvPb::viewable | SvPb::publishable | SvPb::archivable | SvPb::embedable | SvPb::dataDefinitionValue;
 			constexpr UINT defaultValueValueAttributes = SvDef::defaultValueObjectAttributes & (~SvPb::audittrail);
 			SvPb::InputTypeEnum typeEnum{ type };
@@ -383,9 +407,8 @@ namespace SvOp
 		for (int i = number; cMaxNumberOfObjects > i; ++i)
 		{
 			m_objects[i]->setDefaultValue(0.0);
-			m_objects[i]->setValue(m_objects[i]->getDefaultValue());
+			m_objects[i]->setDirectValue(m_objects[i]->getDefaultValue());
 			m_objects[i]->SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
-			m_objects[i]->getLinkedName().SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
 			m_objects[i]->DisconnectInput();
 			m_TypeObjects[i]->SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
 		}
@@ -483,7 +506,7 @@ namespace SvOp
 		m_NumberOfObjects.GetValue(number);
 		for (int i = 0; number > i; ++i)
 		{
-			auto* pObject = m_objects[i];
+			auto* pObject = m_objects[i].get();
 			long type;
 			m_TypeObjects[i]->GetValue(type);
 			SvPb::InputTypeEnum typeEnum{ type };
@@ -536,7 +559,7 @@ namespace SvOp
 
 	SV_IMPLEMENT_CLASS(InputParameterTask, SvPb::InputParameterTaskClassId);
 	InputParameterTask::InputParameterTask(SVObjectClass* pOwner, int StringResourceID)
-		: ParameterTask(SvPb::ExternalInputEId, SvPb::ExternalInputLinkedEId, SvPb::InputObjectTypeEId, pOwner, StringResourceID)
+		: ParameterTask(SvPb::ExternalInputEId, SvPb::InputObjectTypeEId, pOwner, StringResourceID)
 	{
 		m_ObjectTypeInfo.m_ObjectType = SvPb::ParameterTaskObjectType;
 		m_ObjectTypeInfo.m_SubType = SvPb::ParameterInputObjectType;
@@ -548,7 +571,7 @@ namespace SvOp
 
 	SV_IMPLEMENT_CLASS(ResultParameterTask, SvPb::ResultParameterTaskClassId);
 	ResultParameterTask::ResultParameterTask(SVObjectClass* pOwner, int StringResourceID)
-		: ParameterTask(SvPb::ResultObjectValueEId, SvPb::ResultObjectLinkedEId, SvPb::ResultObjectTypeEId, pOwner, StringResourceID)
+		: ParameterTask(SvPb::ResultObjectValueEId, SvPb::ResultObjectTypeEId, pOwner, StringResourceID)
 	{
 		m_ObjectTypeInfo.m_ObjectType = SvPb::ParameterTaskObjectType;
 		m_ObjectTypeInfo.m_SubType = SvPb::ParameterResultObjectType;

@@ -123,6 +123,8 @@ SvPb::InspectionCmdResponse getEmbeddedValues(SvPb::GetEmbeddedValuesRequest req
 
 SvPb::InspectionCmdResponse setEmbeddedValues(SvPb::SetEmbeddedValuesRequest request);
 
+SvPb::InspectionCmdResponse validateLinkedValue(SvPb::ValidateLinkedValueRequest request);
+
 SvPb::InspectionCmdResponse getOutputRectangle(SvPb::GetOutputRectangleRequest request);
 
 SvPb::InspectionCmdResponse getToolSizeAdjustParameter(SvPb::GetToolSizeAdjustParameterRequest request);

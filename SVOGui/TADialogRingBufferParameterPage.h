@@ -13,7 +13,7 @@
 #include "Definitions/GlobalConst.h"
 #include "ISVPropertyPageDialog.h"
 #include "DataController.h"
-#include "ObjectSelectorController.h"
+#include "LinkedValueWidgetHelper.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -54,7 +54,9 @@ namespace SvOg
 		virtual BOOL OnKillActive( ) override;
 		//afx_msg void OnButtonBufferDepth();
 		afx_msg void OnButtonImageIndex( UINT nID );
+		afx_msg void OnKillFocusImageIndex(UINT nID);
 		afx_msg void OnButtonDepth();
+		afx_msg void OnKillFocusDepth();
 		//}}AFX_MSG
 
 		//************************************
@@ -69,7 +71,6 @@ namespace SvOg
 	private:
 		HRESULT SetPageData();
 		HRESULT SetRingDepth();
-		HRESULT SetImageIndex(int indexNumber);
 #pragma endregion Private Methods
 
 #pragma region Member Variables
@@ -79,12 +80,11 @@ namespace SvOg
 
 		CEdit m_EditRingDepth;
 		CButton m_ButtonRingDepth;
+		std::unique_ptr<LinkedValueWidgetHelper> m_DepthWidget;
 		CEdit m_EditImageIndex[SvDef::cRingBufferNumberOutputImages];
-		CButton m_ButtonImageIndex1;
-		CButton m_ButtonImageIndex2;
-		CBitmap m_downArrowBitmap;
+		CButton m_ButtonImageIndex[SvDef::cRingBufferNumberOutputImages];
+		std::array<std::unique_ptr<LinkedValueWidgetHelper>, SvDef::cRingBufferNumberOutputImages> m_ImageIndexWidget;
 		ValueController m_values;
-		ObjectSelectorController m_objectSelector;
 #pragma endregion Member Variables
 	};
 } //namespace SvOg

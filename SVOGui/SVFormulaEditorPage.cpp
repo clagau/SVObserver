@@ -71,6 +71,20 @@ SVFormulaEditorPageClass::SVFormulaEditorPageClass(SvOi::IFormulaControllerPtr c
 {
 }
 
+SVFormulaEditorPageClass::SVFormulaEditorPageClass(SvOi::IFormulaControllerPtr controller, const std::string& m_equationString)
+	: CPropertyPage(SVFormulaEditorPageClass::IDD, IDS_FORMULA_STRING)
+	, m_FormulaController(controller)
+	, m_internalEquationText(m_equationString)
+	, m_useInternalTextAndDontSetItToEquation(true)
+	, m_isConditionalPage(false)
+	, m_disableExtentionID(0)
+	, m_ConstantValue(_T(""))
+	, m_constantType(0)
+	, m_ToolsetOutputVariable(_T(""))
+{
+
+}
+
 SVFormulaEditorPageClass::~SVFormulaEditorPageClass()
 {
 	m_FormulaController.reset();
@@ -347,7 +361,16 @@ std::string SVFormulaEditorPageClass::getSelectedEquationText() const
 void SVFormulaEditorPageClass::setEquationText()
 {
 	// Get text from EquationStruct and place into Editor
-	std::string equationText = m_FormulaController->GetEquationText();
+	std::string equationText;
+	if (m_useInternalTextAndDontSetItToEquation)
+	{
+		equationText = m_internalEquationText;
+	}
+	else
+	{
+		equationText = m_FormulaController->GetEquationText();
+	}
+
 	if (nullptr != m_EditWnd.GetSafeHwnd())
 	{
 		m_EditWnd.SendMessage(SCI_SETTEXT, 0, reinterpret_cast<LPARAM>(equationText.c_str()));
@@ -647,7 +670,7 @@ bool SVFormulaEditorPageClass::validateAndSetEquation()
 
 		double value = 0;
 		SvStl::MessageContainerVector ErrorMessages;
-		const int result = m_FormulaController->ValidateEquation(equationText, value, true, ErrorMessages);
+		const int result = m_FormulaController->ValidateEquation(equationText, value, false == m_useInternalTextAndDontSetItToEquation, ErrorMessages);
 		for (const auto& rMessage : ErrorMessages)
 		{
 			SvStl::MessageManager message(SvStl::MsgType::Log | SvStl::MsgType::Display);

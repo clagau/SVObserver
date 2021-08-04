@@ -59,7 +59,7 @@ SVImageTransform::SVImageTransform( SVObjectClass* POwner, int StringResourceID 
 	m_extentSourceY.SetTypeName( _T("Extent Y") );
 	m_extentRotationAngle.SetTypeName( _T("Extent Angle") );
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &m_outputImage, SvPb::OutputImageEId, IDS_OBJECTNAME_IMAGE1 );
+	RegisterEmbeddedImage( &m_outputImage, SvPb::OutputImageEId, IDS_OBJECTNAME_IMAGE1 );
 	RegisterEmbeddedObject( &m_useExtentsOnly, SvPb::UseExtentsOnlyEId, IDS_OBJECTNAME_USE_EXTENTS_ONLY, false, SvOi::SVResetItemNone );
 	RegisterEmbeddedObject( &m_extentWidth, SvPb::ExtentWidthEId, IDS_OBJECTNAME_EXTENT_WIDTH, false, SvOi::SVResetItemNone );
 	RegisterEmbeddedObject( &m_extentHeight, SvPb::ExtentHeightEId, IDS_OBJECTNAME_EXTENT_HEIGHT, false, SvOi::SVResetItemNone );

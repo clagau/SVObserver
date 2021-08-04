@@ -906,13 +906,18 @@ inline void SVConfigXMLPrint::WriteValueObject(Writer writer, SVObjectClass* pOb
 		writer->WriteStartElement(nullptr, SvUl::to_utf16(pObj->GetClassName(), cp_dflt).c_str(), nullptr);
 		writer->WriteAttributeString(nullptr, XML_Name, nullptr, SvUl::to_utf16(pObj->GetName(), cp_dflt).c_str());
 
-		BOOL bGotValue = FALSE;
+		bool bGotValue {false};
 		std::string sValue;
 		if (SvVol::SVDWordValueObjectClass* pdwValueObject = dynamic_cast <SvVol::SVDWordValueObjectClass*> (pObj))
 		{
 			DWORD dwValue = 0;
 			bGotValue = (S_OK == pdwValueObject->GetValue(dwValue));
 			sValue = SvUl::AsString(dwValue);
+		}
+		else if (SvVol::LinkedValue* pLinkedValue = dynamic_cast<SvVol::LinkedValue*>(pObj))
+		{
+			writer->WriteAttributeString(nullptr, L"Type", nullptr, utf16(std::to_string(pLinkedValue->getSelectedType())).c_str() );
+			writer->WriteAttributeString(nullptr, L"Content", nullptr, SvUl::to_utf16(pLinkedValue->getContentStr(), cp_dflt).c_str());
 		}
 		else
 		{

@@ -386,21 +386,18 @@ void convertMessageToProtobuf(const SvStl::MessageContainer& rMessage, MessageCo
 	pMessagePB->set_messagetext(rMessage.what());
 }
 
+SvStl::MessageContainer convertProtobufToMessage(const MessageContainer& messagePB)
+{
+	SvStl::SourceFileParams fileParam(messagePB.compiledate().c_str(), messagePB.compiletime().c_str(), messagePB.filename().c_str(), messagePB.fileline(), messagePB.filedatetime().c_str());
+	SvDef::StringVector AdditionalTextList(messagePB.additionaltextlist().size());
+	std::ranges::copy(messagePB.additionaltextlist(), AdditionalTextList.begin());
+	return {messagePB.messagecode(), static_cast<SvStl::MessageTextEnum>(messagePB.additionaltextid()), AdditionalTextList, fileParam, 0, messagePB.objectid()};
+}
 
 SvStl::MessageContainerVector convertProtobufToMessageVector(const MessageContainerVector& messagesPB)
 {
-	SvStl::MessageContainerVector messageContainerVector;
-	for (auto messagePB : messagesPB.messages())
-	{
-		SvStl::SourceFileParams fileParam(messagePB.compiledate().c_str(), messagePB.compiletime().c_str(), messagePB.filename().c_str(), messagePB.fileline(), messagePB.filedatetime().c_str());
-		SvDef::StringVector AdditionalTextList;
-		for (auto text : messagePB.additionaltextlist())
-		{
-			AdditionalTextList.push_back(text);
-		}
-		SvStl::MessageContainer messageContainer(messagePB.messagecode(), static_cast<SvStl::MessageTextEnum>(messagePB.additionaltextid()), AdditionalTextList, fileParam, 0, messagePB.objectid());
-		messageContainerVector.push_back(messageContainer);
-	}
+	SvStl::MessageContainerVector messageContainerVector(messagesPB.messages().size());
+	std::ranges::transform(messagesPB.messages(), messageContainerVector.begin(), [](const auto& rEntry) { return convertProtobufToMessage(rEntry); });
 	return messageContainerVector;
 }
 
@@ -462,4 +459,17 @@ void convertVectorToTree(const std::vector<typename TreeItem>& rItemVector, type
 ///Static library instantiations
 template void convertVectorToTree<SvPb::TreeItem>(const std::vector<SvPb::TreeItem>& rItemVector, SvPb::TreeItem* pTree);
 template void convertVectorToTree<SvPb::ConfigTreeItem>(const std::vector<SvPb::ConfigTreeItem>& rItemVector, SvPb::ConfigTreeItem* pTree);
+
+variant_t getDefaultString(SvPb::InputTypeEnum type)
+{
+	switch (type)
+	{
+	case SvPb::InputTypeEnum::TypeDecimal: //decimal
+		return 0.0;
+	case SvPb::InputTypeEnum::TypeText:
+		return "";
+	default: //do nothing
+		return {};
+	}
+}
 } //namespace SvPB

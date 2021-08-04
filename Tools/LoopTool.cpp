@@ -8,7 +8,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "LoopTool.h"
-#include "Definitions/TextDefineSvDef.h"
 #include "ObjectInterfaces/IInspectionProcess.h"
 #include "Operators/SVConditional.h"
 #include "SVStatusLibrary/RunStatus.h"
@@ -61,26 +60,11 @@ void LoopTool::BuildEmbeddedObjectList()
 	vtTemp.lVal = DefaultLinkedLoops;
 	m_LinkedLoops.SetDefaultValue(vtTemp, true);
 
-	std::string ObjectName = SvUl::LoadStdString(IDS_OBJECTNAME_LOOPTOOL_LINKEDLOOPS);
-	ObjectName += SvDef::cLinkName;
-	RegisterEmbeddedObject(&m_LinkedLoops.getLinkedName(), SvPb::LinkedLoops_LinkedEId, ObjectName.c_str(), false, SvOi::SVResetItemNone);
-	m_LinkedLoops.getLinkedName().SetDefaultValue(_T(""), false);
-
-
-
 	RegisterEmbeddedObject(&m_LinkedBreak, SvPb::LoopBreakEId, IDS_OBJECTNAME_LOOPTOOL_BREAK, false, SvOi::SVResetItemNone);
 	::VariantInit(&vtTemp);
 	vtTemp.vt = VT_I4;
 	vtTemp.lVal = DefaultLinkedBreak;
 	m_LinkedBreak.SetDefaultValue(vtTemp, true);
-
-	ObjectName = SvUl::LoadStdString(IDS_OBJECTNAME_LOOPTOOL_BREAK);
-	ObjectName += SvDef::cLinkName;
-	RegisterEmbeddedObject(&m_LinkedBreak.getLinkedName(), SvPb::LoopBreak_LinkedEId, ObjectName.c_str(), false, SvOi::SVResetItemNone);
-	m_LinkedBreak.getLinkedName().SetDefaultValue(_T(""), false);
-
-
-
 }
 
 bool LoopTool::Run(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)

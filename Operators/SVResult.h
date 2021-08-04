@@ -12,7 +12,6 @@
 #pragma once
 
 #pragma region Includes
-#include "SVLibrary/ISVCancel.h"
 #include "InspectionEngine/SVTaskObjectList.h"
 #include "SVObjectLibrary/InputObject.h"
 #include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
@@ -34,7 +33,7 @@ enum
 // .Title       : Base Class of module SVResult 
 ////////////////////////////////////////////////////////////////////////////////
 
-class SVResult : public SvIe::SVTaskObjectListClass, public ISVCancel
+class SVResult : public SvIe::SVTaskObjectListClass
 {
 	///This class does not need to call SV_DECLARE_CLASS as it is a base class and only derived classes are instantiated
 	//SV_DECLARE_CLASS
@@ -46,10 +45,6 @@ public:
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
-
-	// ISVCancel interface
-	virtual HRESULT GetCancelData(SVCancelData*& rpData) override;
-	virtual HRESULT SetCancelData(SVCancelData* pData) override;
 
 	bool IsFailed();
 	bool IsWarned();

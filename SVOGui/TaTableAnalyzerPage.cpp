@@ -48,6 +48,9 @@ BEGIN_MESSAGE_MAP(TaTableAnalyzerPage, CPropertyPage)
 	ON_BN_CLICKED(IDC_BUTTON_EXCLUDE_HIGH, OnButtonClickExcludeHigh)
 	ON_BN_CLICKED(IDC_BUTTON_EXCLUDE_LOW, OnButtonClickExcludeLow)
 	ON_BN_CLICKED(IDC_BUTTON_LIMIT_VALUE, OnButtonClickLimitValue)
+	ON_EN_KILLFOCUS(IDC_EDIT_EXCLUDE_HIGH, OnKillFocusExcludeHigh)
+	ON_EN_KILLFOCUS(IDC_EDIT_EXCLUDE_LOW, OnKillFocusExcludeLow)
+	ON_EN_KILLFOCUS(IDC_EDIT_LIMIT_VALUE, OnKillFocusLimitValue)
 	ON_BN_CLICKED(IDC_BUTTON_ADDCOLUMN_FORMULA, OnAddColumnFormula)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
@@ -61,7 +64,6 @@ TaTableAnalyzerPage::TaTableAnalyzerPage(uint32_t inspectionId, uint32_t taskObj
 	, m_SortDirection(-1)
 	, m_selectedSubType(SvPb::SVNotSetSubObjectType)
 	, m_inputName(_T(""))
-	, m_objectSelector(inspectionId)
 {
 }
 
@@ -123,12 +125,11 @@ BOOL TaTableAnalyzerPage::OnInitDialog()
 
 	m_availableAnaylzerCB.Init(availableList, _T(""), Analyzer_NoAnalyzerAvailable);
 
-	// Put the Down Arrow on the Button
-	m_downArrowBitmap.LoadOEMBitmap(OBM_DNARROW);
-
-	m_ButtonExcludeHigh.SetBitmap(static_cast<HBITMAP> (m_downArrowBitmap));
-	m_ButtonExcludeLow.SetBitmap(static_cast<HBITMAP> (m_downArrowBitmap));
-	m_ButtonLimitValue.SetBitmap(static_cast<HBITMAP> (m_downArrowBitmap));
+	SvOg::ObjectSelectorData osData;
+	osData.m_stopAtId = m_TaskObjectID;
+	m_ExcludeHighWidget = std::make_unique<LinkedValueWidgetHelper>(m_EditExcludeHigh, m_ButtonExcludeHigh, m_InspectionID, m_TaskObjectID, SvPb::TableAnaylzerExcludeHighEId, nullptr, ObjectSelectorData {m_TaskObjectID});
+	m_ExcludeLowWidget = std::make_unique<LinkedValueWidgetHelper>(m_EditExcludeLow, m_ButtonExcludeLow, m_InspectionID, m_TaskObjectID, SvPb::TableAnaylzerExcludeLowEId, nullptr, ObjectSelectorData {m_TaskObjectID});
+	m_LimitWidget = std::make_unique<LinkedValueWidgetHelper>(m_EditLimitValue, m_ButtonLimitValue, m_InspectionID, m_TaskObjectID, SvPb::TableAnaylzerLimitValueEId, nullptr, ObjectSelectorData {m_TaskObjectID});
 
 	RetrieveAvailableColumnList();
 	refresh();
@@ -258,41 +259,32 @@ void TaTableAnalyzerPage::OnChangeColumnSelection()
 
 void TaTableAnalyzerPage::OnButtonClickExcludeHigh()
 {
-	CString Temp;
-	m_EditExcludeHigh.GetWindowText(Temp);
-	std::string Value = Temp.GetString();
-	std::string Title = SvUl::LoadStdString(IDS_OBJECTNAME_TABLEANALYZEREXCLUDE_HIGHVALUE);
-	if (m_objectSelector.Show(Value, Title, this, SvPb::allNumberValueObjects, SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed, m_TaskObjectID))
-	{
-		m_EditExcludeHigh.SetWindowText(Value.c_str());
-	}
-	UpdateData(false);
+	m_ExcludeHighWidget->OnButton();
 }
 
 void TaTableAnalyzerPage::OnButtonClickExcludeLow()
 {
-	CString Temp;
-	m_EditExcludeLow.GetWindowText(Temp);
-	std::string Value = Temp.GetString();
-	std::string Title = SvUl::LoadStdString(IDS_OBJECTNAME_TABLEANALYZEREXCLUDE_LOWVALUE);
-	if (m_objectSelector.Show(Value, Title, this, SvPb::allNumberValueObjects, SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed, m_TaskObjectID))
-	{
-		m_EditExcludeLow.SetWindowText(Value.c_str());
-	}
-	UpdateData(false);
+	m_ExcludeLowWidget->OnButton();
 }
 
 void TaTableAnalyzerPage::OnButtonClickLimitValue()
 {
-	CString Temp;
-	m_EditLimitValue.GetWindowText(Temp);
-	std::string Value = Temp.GetString();
-	std::string Title = SvUl::LoadStdString(IDS_OBJECTNAME_TABLEANALYZERLIMIT_VALUE);
-	if (m_objectSelector.Show(Value, Title, this, SvPb::allNumberValueObjects, SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed, m_TaskObjectID))
-	{
-		m_EditLimitValue.SetWindowText(Value.c_str());
-	}
-	UpdateData(false);
+	m_LimitWidget->OnButton();
+}
+
+void TaTableAnalyzerPage::OnKillFocusExcludeHigh()
+{
+	m_ExcludeHighWidget->EditboxToValue();
+}
+
+void TaTableAnalyzerPage::OnKillFocusExcludeLow()
+{
+	m_ExcludeLowWidget->EditboxToValue();
+}
+
+void TaTableAnalyzerPage::OnKillFocusLimitValue()
+{
+	m_LimitWidget->EditboxToValue();
 }
 
 void TaTableAnalyzerPage::OnAddColumnFormula()
@@ -347,20 +339,12 @@ HRESULT TaTableAnalyzerPage::SetInspectionData()
 				break;
 			case SvPb::TableAnalyzerExcludeType:
 			{
-				CString Value;
-				m_EditExcludeHigh.GetWindowText(Value);
-				m_pValues->Set<CString>(SvPb::TableAnaylzerExcludeHighEId, Value);
-				m_EditExcludeLow.GetWindowText(Value);
-				m_pValues->Set<CString>(SvPb::TableAnaylzerExcludeLowEId, Value);
 				hrOk = m_pValues->Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
 				errorMessageList = m_pValues->getFailedMessageList();
 			}
 			break;
 			case SvPb::TableAnalyzerLimitType:
 			{
-				CString Value;
-				m_EditLimitValue.GetWindowText(Value);
-				m_pValues->Set<CString>(SvPb::TableAnaylzerLimitValueEId, Value);
 				hrOk = m_pValues->Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
 				errorMessageList = m_pValues->getFailedMessageList();
 			}
@@ -478,14 +462,8 @@ void TaTableAnalyzerPage::ShowControls(long SubType)
 	GetDlgItem(IDC_EXCLUDE_LABEL)->ShowWindow((SvPb::TableAnalyzerExcludeType == SubType) ? SW_SHOW : SW_HIDE);
 	GetDlgItem(IDC_EXCLUDE_LABEL2)->ShowWindow((SvPb::TableAnalyzerExcludeType == SubType) ? SW_SHOW : SW_HIDE);
 	GetDlgItem(IDC_EXCLUDE_LABEL3)->ShowWindow((SvPb::TableAnalyzerExcludeType == SubType) ? SW_SHOW : SW_HIDE);
-	m_EditExcludeHigh.ShowWindow((SvPb::TableAnalyzerExcludeType == SubType) ? SW_SHOW : SW_HIDE);
-	m_EditExcludeLow.ShowWindow((SvPb::TableAnalyzerExcludeType == SubType) ? SW_SHOW : SW_HIDE);
-	GetDlgItem(IDC_BUTTON_EXCLUDE_HIGH)->ShowWindow((SvPb::TableAnalyzerExcludeType == SubType) ? SW_SHOW : SW_HIDE);
-	GetDlgItem(IDC_BUTTON_EXCLUDE_LOW)->ShowWindow((SvPb::TableAnalyzerExcludeType == SubType) ? SW_SHOW : SW_HIDE);
 
 	GetDlgItem(IDC_LIMIT_LABEL)->ShowWindow((SvPb::TableAnalyzerLimitType == SubType) ? SW_SHOW : SW_HIDE);
-	m_EditLimitValue.ShowWindow((SvPb::TableAnalyzerLimitType == SubType) ? SW_SHOW : SW_HIDE);
-	GetDlgItem(IDC_BUTTON_LIMIT_VALUE)->ShowWindow((SvPb::TableAnalyzerLimitType == SubType) ? SW_SHOW : SW_HIDE);
 
 	GetDlgItem(IDC_ADDCOLUMN_LABEL)->ShowWindow((SvPb::TableAnalyzerAddColumnType == SubType) ? SW_SHOW : SW_HIDE);
 	m_EditAddColumnName.ShowWindow((SvPb::TableAnalyzerAddColumnType == SubType) ? SW_SHOW : SW_HIDE);
@@ -495,16 +473,40 @@ void TaTableAnalyzerPage::ShowControls(long SubType)
 	RedrawWindow();
 }
 
+void TaTableAnalyzerPage::updateValueController()
+{
+	if (nullptr == m_pValues || m_selectedAnalyzerID != m_pValues->GetTaskID())
+	{
+		auto pValues = std::shared_ptr<ValueController> {new ValueController{ SvOg::BoundValues{ m_InspectionID, m_selectedAnalyzerID } }};
+		pValues->Init();
+		switch (m_selectedSubType)
+		{
+			case SvPb::TableAnalyzerExcludeType:
+				m_ExcludeHighWidget->setValueController(pValues.get());
+				m_ExcludeLowWidget->setValueController(pValues.get());
+				m_LimitWidget->setValueController(nullptr);
+				break;
+			case SvPb::TableAnalyzerLimitType:
+				m_ExcludeHighWidget->setValueController(nullptr);
+				m_ExcludeLowWidget->setValueController(nullptr);
+				m_LimitWidget->setValueController(pValues.get());
+				break;
+			default:
+				m_ExcludeHighWidget->setValueController(nullptr);
+				m_ExcludeLowWidget->setValueController(nullptr);
+				m_LimitWidget->setValueController(nullptr);
+				break;
+		}
+		
+		m_pValues = pValues;
+	}
+}
+
 void TaTableAnalyzerPage::setSortProperties()
 {
 	setColumnSelectionCB();
 
-	if (nullptr == m_pValues || m_selectedAnalyzerID != m_pValues->GetTaskID())
-	{
-		m_pValues.reset();
-		m_pValues = std::shared_ptr<ValueController> {new ValueController{ SvOg::BoundValues{ m_InspectionID, m_selectedAnalyzerID } }};
-		m_pValues->Init();
-	}
+	updateValueController();
 
 	m_SortDirection = m_pValues->Get<bool>(SvPb::TableAnaylzerSortIsASCEId) ? 0 : 1;
 	UpdateData(FALSE);
@@ -514,42 +516,12 @@ void TaTableAnalyzerPage::setExcludeProperties()
 {
 	setColumnSelectionCB();
 
-	if (nullptr == m_pValues || m_selectedAnalyzerID != m_pValues->GetTaskID())
-	{
-		m_pValues.reset();
-		m_pValues = std::shared_ptr<ValueController> {new ValueController{ SvOg::BoundValues{ m_InspectionID, m_selectedAnalyzerID } }};
-		m_pValues->Init();
-	}
-
-	std::string highString = m_pValues->Get<CString>(SvPb::TableAnaylzerExcludeHigh_LinkEId).GetString();
-	if (highString.empty())
-	{
-		highString = m_pValues->Get<CString>(SvPb::TableAnaylzerExcludeHighEId);
-	}
-	m_EditExcludeHigh.SetWindowText(highString.c_str());
-	std::string lowString = m_pValues->Get<CString>(SvPb::TableAnaylzerExcludeLow_LinkEId).GetString();
-	if (lowString.empty())
-	{
-		lowString = m_pValues->Get<CString>(SvPb::TableAnaylzerExcludeLowEId);
-	}
-	m_EditExcludeLow.SetWindowText(lowString.c_str());
+	updateValueController();
 }
 
 void TaTableAnalyzerPage::setLimitProperties()
 {
-	if (nullptr == m_pValues || m_selectedAnalyzerID != m_pValues->GetTaskID())
-	{
-		m_pValues.reset();
-		m_pValues = std::shared_ptr<ValueController> {new ValueController{ SvOg::BoundValues{ m_InspectionID, m_selectedAnalyzerID } }};
-		m_pValues->Init();
-	}
-
-	std::string valueString = m_pValues->Get<CString>(SvPb::TableAnaylzerLimitValue_LinkEId).GetString();
-	if (valueString.empty())
-	{
-		valueString = m_pValues->Get<CString>(SvPb::TableAnaylzerLimitValueEId);
-	}
-	m_EditLimitValue.SetWindowText(valueString.c_str());
+	updateValueController();
 }
 
 void TaTableAnalyzerPage::setAddColumnProperties()

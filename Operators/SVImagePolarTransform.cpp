@@ -70,7 +70,7 @@ SVImagePolarTransform::SVImagePolarTransform( SVObjectClass* POwner, int StringR
 
 	RegisterEmbeddedObject( &m_useFormulaInput, SvPb::OutputUseFormulaEId, IDS_OBJECTNAME_USE_FORMULA, false, SvOi::SVResetItemTool );
 
-	RegisterEmbeddedObject( &m_outputImage, SvPb::OutputImageEId, IDS_OBJECTNAME_IMAGE1 );
+	RegisterEmbeddedImage( &m_outputImage, SvPb::OutputImageEId, IDS_OBJECTNAME_IMAGE1 );
 	
 	// Prepare known interpolation types...
 	std::string Enable = SvUl::LoadStdString( IDS_ENABLE_STRING );

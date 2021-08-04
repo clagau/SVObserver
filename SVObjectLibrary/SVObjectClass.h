@@ -34,6 +34,11 @@ struct SVObjectLevelCreateStruct;
 struct SVObjectNameInfo;
 
 class SVObjectAttributeClass;
+class RunStatus;
+
+typedef std::vector<SVObjectClass*> SVObjectPtrVector;
+typedef std::back_insert_iterator<SVObjectPtrVector> SVObjectPtrVectorInserter;
+typedef std::set<SVObjectClass*> SVObjectPtrSet;
 #pragma endregion Declarations
 
 /*
@@ -77,6 +82,8 @@ public:
 	virtual DWORD GetObjectColor() const;
 
 	virtual void Persist( SvOi::IObjectWriter& rWriter ) const;
+
+	void PersistBaseData(SvOi::IObjectWriter& rWriter) const;
 
 	virtual HRESULT GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index = 0 ) const;
 
@@ -147,6 +154,7 @@ public:
 	virtual bool resetAllObjects( SvStl::MessageContainerVector *pErrorMessages=nullptr ) override { return ResetObject(pErrorMessages); };
 	virtual HRESULT getValue(double& , int = 0) const override { return E_NOTIMPL; };
 	virtual HRESULT getValues(std::vector<double>& ) const override { return E_NOTIMPL; };
+	virtual void getOutputList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter) const override;
 
 	virtual void fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, SvOi::IsObjectAllowedFunc pFunctor, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum nameToType, SvPb::ObjectSelectorType requiredType, bool stopIfClosed = false, bool firstObject = false) const override;
 	virtual void fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo, bool addHidden = false, bool stopIfClosed = false, bool firstObject = false) override;
@@ -195,6 +203,15 @@ public:
 
 	size_t getObjectAttributesSetSize() const { return m_ObjectAttributesSet.size(); };
 
+	bool RegisterEmbeddedObject(SVObjectClass* pEmbeddedObject, SvPb::EmbeddedIdEnum embeddedID, int StringResourceID, bool p_bResetAlways, SvOi::SVResetItemEnum eRequiredReset);
+	bool RegisterEmbeddedObject(SVObjectClass* pEmbeddedObject, SvPb::EmbeddedIdEnum embeddedID, LPCTSTR strName, bool p_bResetAlways, SvOi::SVResetItemEnum eRequiredReset);
+
+	virtual bool runEmbedded(RunStatus&, SvStl::MessageContainerVector*) { return true; };
+
+	/// Old for loading old configs older than 10.20
+	/// Set indirect value string to LinkedValue to help to convert LinkedValue from old to new struct.
+	HRESULT setIndirectStringToObject(SvPb::EmbeddedIdEnum embeddedId, const std::vector<_variant_t>& rValueString);
+
 protected:
 	/// Convert a string (dotted name) to an object.
 	/// \param rValue [in] Input string
@@ -203,12 +220,22 @@ protected:
 
 	virtual HRESULT RemoveObjectConnection(uint32_t objectID );
 
+	bool RegisterEmbeddedObjectAsClass(SVObjectClass* PEmbeddedObject, SvPb::EmbeddedIdEnum embeddedID, LPCTSTR newObjectName);
+	void AddEmbeddedObject(SVObjectClass* pObject);
+	void disableEmbeddedObject(SVObjectClass* pObjectToDisable);
+	void RemoveEmbeddedObject(SVObjectClass* pObjectToRemove);
+	bool createEmbeddedChildren();
+
 	/// Call method createAllObjects for the child object with the right create struct.
 	/// \param rChildObject [in]
 	/// \returns bool
 	virtual bool createAllObjectsFromChild( SVObjectClass& ) { return false; };
 
 	bool isUsed() const { return 0 < m_connectedSet.size(); };
+
+private:
+	void init();
+	void PersistEmbeddeds(SvOi::IObjectWriter& rWriter) const;
 
 protected:
 	//This attribute holds the enumerated bits of allowed object attributes.
@@ -225,10 +252,11 @@ protected:
 	SvDef::SVObjectTypeInfoStruct m_ObjectTypeInfo;
 	uint32_t m_objectId = SvDef::InvalidObjectId;
 
+	SVObjectPtrVector m_embeddedList;
+
 	bool m_editModeFreezeFlag = false;
 
 private:
-	void init();
 	
 	//ATTENTION: order of the parameter (especially m_ObjectName before m_Name) is important, because it is needed for the constructors.
 	int m_resourceID;		//String resource ID, of NOT user changeable name.
@@ -237,9 +265,3 @@ private:
 	std::set <uint32_t> m_connectedSet;
 	std::mutex m_inputMutex;
 };
-
-#pragma region Declarations
-typedef std::vector<SVObjectClass*> SVObjectPtrVector;
-typedef std::back_insert_iterator<SVObjectPtrVector> SVObjectPtrVectorInserter;
-typedef std::set<SVObjectClass*> SVObjectPtrSet;
-#pragma region Declarations

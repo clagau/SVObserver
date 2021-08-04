@@ -15,7 +15,7 @@
 
 struct RangeEnum
 {
-	enum ERange { ER_FailHigh = 0, ER_WarnHigh, ER_FailLow, ER_WarnLow, ER_COUNT = 4 };
+	enum ERange { ER_FailHigh = 0, ER_WarnHigh, ER_WarnLow, ER_FailLow, ER_COUNT = 4 };
 
 	//************************************
 	// Description: Translate enum to string

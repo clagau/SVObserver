@@ -109,7 +109,7 @@ public:
 	virtual void setMemBlockPointer(uint8_t* pMemBlockBase) override;
 	///Only specialized versions, namely DoubleSortValue, SVStringValue and SVVariantValue need an implementation
 	virtual void updateMemBlockData() override {}
-	virtual bool isIndirectValue() const override { return false; };
+	virtual SvPb::LinkedSelectedType getSelectedType() const override { return SvPb::LinkedSelectedType::DirectValue; };
 	virtual void setStandardFormatString() = 0;
 	virtual std::string getFixedWidthFormatString(uint32_t totalWidth, uint32_t decimals) override;
 
@@ -187,10 +187,12 @@ protected:
 	int32_t getMemSizeReserved() const { return m_memSizeReserved; }
 	void setHasChanged(bool hasChanged) const { m_hasChanged = hasChanged; }
 	bool hasChanged() const { return m_hasChanged; }
+	void setSaveFutherDataFlag() const { m_saveFurtherData = true; };
 #pragma endregion Protected Methods
 
 #pragma region Member Variables
 private:
+	mutable bool m_saveFurtherData = false;
 	std::string m_TypeName;					//The data type name
 	bool m_shouldSaveValue{true};			//If true, the value will be saved in configuration file, else it will not be saved and after loading the configuration it is default value.
 	bool m_shouldSaveDefaultValue{false};	//If true, the default value will be saved in configuration file, else it will not be saved and after loading the configuration it is default of the default value.

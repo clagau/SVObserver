@@ -27,7 +27,6 @@ static char THIS_FILE[] = __FILE__;
 RangeXDialogClass::RangeXDialogClass(uint32_t inspectionID, uint32_t toolId, uint32_t taskID, uint32_t rangeID, CWnd* parent /*=nullptr*/)
 : CDialog(RangeXDialogClass::IDD, parent)
 , m_rangeController(inspectionID, taskID, rangeID)
-, m_objectSelector(inspectionID)
 , m_toolId (toolId)
 {
 	m_rangeController.Init();
@@ -40,23 +39,21 @@ RangeXDialogClass::~RangeXDialogClass()
 void RangeXDialogClass::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
-	DDX_Text(pDX, IDC_EDIT_FAILHIGH, m_FailHigh);
-	DDX_Text(pDX, IDC_EDIT_WARNHIGH, m_WarnHigh);
-	DDX_Text(pDX, IDC_EDIT_WARNLOW, m_WarnLow);
-	DDX_Text(pDX, IDC_EDIT_FAILLOW, m_FailLow);
-	DDX_Control(pDX, IDC_BUTTON_FAILHIGH, m_ButtonFailHigh);
-	DDX_Control(pDX, IDC_BUTTON_WARNHIGH, m_ButtonWarnHigh);
-	DDX_Control(pDX, IDC_BUTTON_WARNLOW, m_ButtonWarnLow);
-	DDX_Control(pDX, IDC_BUTTON_FAILLOW, m_ButtonFailLow);
+	DDX_Control(pDX, IDC_BUTTON_FAILHIGH, m_RangeButtons[RangeEnum::ER_FailHigh]);
+	DDX_Control(pDX, IDC_BUTTON_WARNHIGH, m_RangeButtons[RangeEnum::ER_WarnHigh]);
+	DDX_Control(pDX, IDC_BUTTON_WARNLOW, m_RangeButtons[RangeEnum::ER_WarnLow]);
+	DDX_Control(pDX, IDC_BUTTON_FAILLOW, m_RangeButtons[RangeEnum::ER_FailLow]);
+	DDX_Control(pDX, IDC_EDIT_FAILHIGH, m_RangeEdits[RangeEnum::ER_FailHigh]);
+	DDX_Control(pDX, IDC_EDIT_WARNHIGH, m_RangeEdits[RangeEnum::ER_WarnHigh]);
+	DDX_Control(pDX, IDC_EDIT_WARNLOW, m_RangeEdits[RangeEnum::ER_WarnLow]);
+	DDX_Control(pDX, IDC_EDIT_FAILLOW, m_RangeEdits[RangeEnum::ER_FailLow]);
 }
 
 BEGIN_MESSAGE_MAP(RangeXDialogClass, CDialog)
 	ON_BN_CLICKED(IDOK, &RangeXDialogClass::OnBnClickedOk)
 	ON_BN_CLICKED(IDCANCEL, &RangeXDialogClass::OnBnClickedCancel)
-	ON_BN_CLICKED(IDC_BUTTON_FAILHIGH, &RangeXDialogClass::OnBnClickedFailHighIndirect)
-	ON_BN_CLICKED(IDC_BUTTON_WARNHIGH, &RangeXDialogClass::OnBnClickedWarnlHighIndirect)
-	ON_BN_CLICKED(IDC_BUTTON_WARNLOW, &RangeXDialogClass::OnBnClickedWarnLowIndirect)
-	ON_BN_CLICKED(IDC_BUTTON_FAILLOW, &RangeXDialogClass::OnBnClickedFailedLowIndirect)
+	ON_CONTROL_RANGE(BN_CLICKED, IDC_BUTTON_FAILHIGH, IDC_BUTTON_FAILLOW, OnButtonRange)
+	ON_CONTROL_RANGE(EN_KILLFOCUS, IDC_EDIT_FAILHIGH, IDC_EDIT_FAILLOW, OnKillFocusRange)
 END_MESSAGE_MAP()
 
 void RangeXDialogClass::OnBnClickedOk()
@@ -84,16 +81,10 @@ BOOL RangeXDialogClass::OnInitDialog()
 {
 	__super::OnInitDialog();
 
-	// Put the Down Arrow on the Button
-	m_downArrowBitmap.LoadOEMBitmap( OBM_DNARROW );
-
-	//(HBITMAP) is a call to the overloaded function operator HBITMAP and no c style cast
-	m_ButtonFailHigh.SetBitmap( ( HBITMAP )m_downArrowBitmap );
-	m_ButtonWarnHigh.SetBitmap( ( HBITMAP )m_downArrowBitmap );
-	m_ButtonWarnLow.SetBitmap( ( HBITMAP )m_downArrowBitmap );
-	m_ButtonFailLow.SetBitmap( ( HBITMAP )m_downArrowBitmap );
-
-	SetDlgData();
+	for (int i = 0; i < m_RangeWidgets.size(); ++i)
+	{
+		m_RangeWidgets[i] = m_rangeController.createWidget(static_cast<RangeEnum::ERange>(i), m_RangeEdits[i], m_RangeButtons[i]);
+	}
 
 	std::string Title = m_rangeController.GetOwnerName();
 	SetWindowText( Title.c_str() );
@@ -120,71 +111,25 @@ BOOL RangeXDialogClass::OnInitDialog()
 	return true;
 }
 
-void RangeXDialogClass::SetDlgData()
+void RangeXDialogClass::OnButtonRange(UINT nID)
 {
-	try
-	{
-		m_FailHigh = m_rangeController.Get(m_rangeController.FailHigh).c_str();
-		m_FailLow = m_rangeController.Get(m_rangeController.FailLow).c_str();
-		m_WarnHigh = m_rangeController.Get(m_rangeController.WarnHigh).c_str();
-		m_WarnLow = m_rangeController.Get(m_rangeController.WarnLow).c_str();
-	}
-	catch (...)
-	{
-		assert(false);
-		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Init_RangeControlFailed, SvStl::SourceFileParams(StdMessageParams));
-	}
-	UpdateData(false);
-}
+	int index(nID - IDC_BUTTON_FAILHIGH);
 
-bool RangeXDialogClass::ShowObjectSelector( std::string& rName, RangeEnum::ERange fieldEnum)
-{
-	std::string Title = m_rangeController.GetOwnerName();
-	Title += _T(": ");
-	Title += RangeEnum::ERange2String(fieldEnum).c_str();
-
-	return m_objectSelector.Show(rName, Title, this, SvPb::allNumberValueObjects, { m_toolId }, m_toolId);
-}
-
-// @TODO:  The next 4 methods are very similar.  Consider refactoring to call a common method.  Otherwise, clean up the camelcase and result checking in all the methods.
-void RangeXDialogClass::OnBnClickedFailHighIndirect()
-{
-	std::string Value(m_FailHigh);
-	if (ShowObjectSelector(Value, RangeEnum::ER_FailHigh))
+	assert(m_RangeWidgets.size() > index && 0 <= index && m_RangeWidgets[index]);
+	if (m_RangeWidgets.size() > index && 0 <= index && m_RangeWidgets[index])
 	{
-		m_FailHigh = Value.c_str();
-		UpdateData(false);
+		m_RangeWidgets[index]->OnButton();
 	}
 }
 
-void RangeXDialogClass::OnBnClickedWarnlHighIndirect()
+void RangeXDialogClass::OnKillFocusRange(UINT nID)
 {
-	std::string Value(m_WarnHigh);
-	if (ShowObjectSelector(Value, RangeEnum::ER_WarnHigh))
-	{
-		m_WarnHigh = Value.c_str();
-		UpdateData(false);
-	}
-}
+	int index(nID - IDC_EDIT_FAILHIGH);
 
-void RangeXDialogClass::OnBnClickedWarnLowIndirect()
-{
-	std::string Value(m_WarnLow);
-	if (ShowObjectSelector(Value, RangeEnum::ER_WarnLow))
+	assert(m_RangeWidgets.size() > index && 0 <= index && m_RangeWidgets[index]);
+	if (m_RangeWidgets.size() > index && 0 <= index && m_RangeWidgets[index])
 	{
-		m_WarnLow = Value.c_str();
-		UpdateData(false);
-	}
-}
-
-void RangeXDialogClass::OnBnClickedFailedLowIndirect()
-{
-	std::string Value(m_FailLow);
-	if (ShowObjectSelector(Value, RangeEnum::ER_FailLow))
-	{
-		m_FailLow = Value.c_str();
-		UpdateData(false);
+		m_RangeWidgets[index]->EditboxToValue();
 	}
 }
 
@@ -192,16 +137,11 @@ HRESULT RangeXDialogClass::SetInspectionData()
 {
 	UpdateData(true); // get data from dialog
 
-	// Validate Entered data for existance and if within bounds		
-	m_rangeController.IsFieldValid(SvStl::Tid_FailHigh, static_cast<LPCSTR>(m_FailHigh));
-	m_rangeController.IsFieldValid(SvStl::Tid_FailLow, static_cast<LPCSTR>(m_FailLow));
-	m_rangeController.IsFieldValid(SvStl::Tid_WarnHigh, static_cast<LPCSTR>(m_WarnHigh));
-	m_rangeController.IsFieldValid(SvStl::Tid_WarnLow, static_cast<LPCSTR>(m_WarnLow));
-
-	m_rangeController.Set(m_rangeController.FailHigh, static_cast<LPCSTR>(m_FailHigh));
-	m_rangeController.Set(m_rangeController.FailLow, static_cast<LPCSTR>(m_FailLow));
-	m_rangeController.Set(m_rangeController.WarnHigh, static_cast<LPCSTR>(m_WarnHigh));
-	m_rangeController.Set(m_rangeController.WarnLow, static_cast<LPCSTR>(m_WarnLow));
+	// Validate Entered data for existence and if within bounds		
+	m_rangeController.IsFieldValid(RangeEnum::ERange::ER_FailHigh);
+	m_rangeController.IsFieldValid(RangeEnum::ERange::ER_FailLow);
+	m_rangeController.IsFieldValid(RangeEnum::ERange::ER_WarnHigh);
+	m_rangeController.IsFieldValid(RangeEnum::ERange::ER_WarnLow);
 
 	return m_rangeController.Commit();
 }

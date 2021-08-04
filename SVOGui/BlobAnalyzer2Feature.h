@@ -12,7 +12,6 @@
 #include "SVProtoBuf/InspectionCommands.h"
 #include "DataController.h"
 #include "ISVPropertyPageDialog.h"
-#include "ObjectSelectorController.h"
 #pragma endregion Includes
 
 
@@ -92,8 +91,6 @@ namespace SvOg
 		SvPb::GetAvailableFeaturesResponse getAvailableFeatures() const;
 		bool isFeatureNecessary(unsigned int type) const;
 
-		bool ShowObjectSelector(std::string& rName, const std::string& title);
-
 		void sortFeatures(int pos);
 
 		bool isNameNotUsed(const std::string& rName) const;
@@ -112,7 +109,6 @@ namespace SvOg
 		google::protobuf::RepeatedPtrField< SvPb::FeatureData > m_featureData;
 		unsigned int m_nextCustomId = 0;
 
-		ObjectSelectorController m_objectSelector;
 		CBitmap m_downArrowBitmap;
 		CImageList m_ImageList;
 

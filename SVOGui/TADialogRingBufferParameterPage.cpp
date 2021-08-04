@@ -23,6 +23,38 @@
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
+
+bool checkDepthValue(const variant_t& rValue, SvStl::MessageContainer& rMessageContainer)
+{
+	bool isOk{ true };
+	try
+	{
+		int value = (int)rValue;
+		isOk = (SvDef::cRingBufferDepthMin <= value && SvDef::cRingBufferDepthMax >= value);
+	}
+	catch (...)
+	{
+		isOk = false;
+	}
+	if (false == isOk)
+	{
+		SvDef::StringVector msgList;
+		msgList.push_back(SvUl::Format(_T("%d"), SvDef::cRingBufferDepthMin));
+		msgList.push_back(SvUl::Format(_T("%d"), SvDef::cRingBufferDepthMax));
+		variant_t val;
+		HRESULT hr = ::VariantChangeTypeEx(&val, &rValue, SvDef::LCID_USA, VARIANT_ALPHABOOL, VT_BSTR);	// use United States locale
+		if (S_OK == hr)
+		{
+			msgList.push_back(SvUl::createStdString(val));
+		}
+		else
+		{
+			msgList.push_back("<undef>");
+		}
+		rMessageContainer.setMessage(SVMSG_SVO_62_RINGBUFFER_INVALID_VALUE, SvStl::Tid_RingBuffer_Depth_Invalid_ValueString, msgList, SvStl::SourceFileParams(StdMessageParams));
+	}
+	return isOk;
+}
 #pragma endregion Declarations
 
 namespace SvOg
@@ -30,7 +62,9 @@ namespace SvOg
 #pragma region Declarations
 	BEGIN_MESSAGE_MAP(TADialogRingBufferParameterPage, CPropertyPage)
 		ON_BN_CLICKED(IDC_BUTTON_RING_DEPTH, OnButtonDepth)
+		ON_EN_KILLFOCUS(IDC_EDIT_RING_DEPTH, OnKillFocusDepth)
 		ON_CONTROL_RANGE(BN_CLICKED, IDC_BUTTON_IMAGE_INDEX1, IDC_BUTTON_IMAGE_INDEX2, OnButtonImageIndex)
+		ON_CONTROL_RANGE(EN_KILLFOCUS, IDC_EDIT_IMAGE_INDEX1, IDC_EDIT_IMAGE_INDEX2, OnKillFocusImageIndex)
 	END_MESSAGE_MAP()
 #pragma endregion Declarations
 
@@ -39,7 +73,6 @@ namespace SvOg
 		: CPropertyPage(TADialogRingBufferParameterPage::IDD)
 		, m_InspectionID(inspectionID)
 		, m_TaskObjectID(taskID)
-		, m_objectSelector(inspectionID)
 		, m_values{ SvOg::BoundValues{ inspectionID, taskID } }
 	{
 	}
@@ -65,8 +98,8 @@ bool TADialogRingBufferParameterPage::QueryAllowExit()
 		DDX_Control(pDX, IDC_BUTTON_RING_DEPTH, m_ButtonRingDepth);
 		DDX_Control(pDX, IDC_EDIT_IMAGE_INDEX1, m_EditImageIndex[0]);
 		DDX_Control(pDX, IDC_EDIT_IMAGE_INDEX2, m_EditImageIndex[1]);
-		DDX_Control(pDX, IDC_BUTTON_IMAGE_INDEX1, m_ButtonImageIndex1);
-		DDX_Control(pDX, IDC_BUTTON_IMAGE_INDEX2, m_ButtonImageIndex2);
+		DDX_Control(pDX, IDC_BUTTON_IMAGE_INDEX1, m_ButtonImageIndex[0]);
+		DDX_Control(pDX, IDC_BUTTON_IMAGE_INDEX2, m_ButtonImageIndex[1]);
 	}
 
 	BOOL TADialogRingBufferParameterPage::OnInitDialog() 
@@ -75,32 +108,11 @@ bool TADialogRingBufferParameterPage::QueryAllowExit()
 
 		m_values.Init();
 
-		// Put the Down Arrow on the Button
-		m_downArrowBitmap.LoadOEMBitmap( OBM_DNARROW );
-
-		m_ButtonRingDepth.SetBitmap(static_cast<HBITMAP> (m_downArrowBitmap));
-		m_ButtonImageIndex1.SetBitmap( static_cast<HBITMAP> (m_downArrowBitmap) );
-		m_ButtonImageIndex2.SetBitmap( static_cast<HBITMAP> (m_downArrowBitmap) );
-
-		std::string depthString(m_values.Get<CString>(SvPb::RingBufferLink_DepthEId));
-		if (depthString.empty())
+		m_DepthWidget = std::make_unique<LinkedValueWidgetHelper>(m_EditRingDepth, m_ButtonRingDepth, m_InspectionID, m_TaskObjectID, SvPb::RingBuffer_DepthEId, &m_values, ObjectSelectorData{m_TaskObjectID}, checkDepthValue);
+		for (int i=0; i < m_ImageIndexWidget.size(); ++i)
 		{
-			depthString = m_values.Get<CString>(SvPb::RingBuffer_DepthEId);
+			m_ImageIndexWidget[i] = std::make_unique<LinkedValueWidgetHelper>(m_EditImageIndex[i], m_ButtonImageIndex[i], m_InspectionID, m_TaskObjectID, SvPb::RingBufferIndexEId + i, &m_values, ObjectSelectorData {m_TaskObjectID});
 		}
-		std::string indexString1( m_values.Get<CString>(SvPb::RingBufferIndexLinkEId) );
-		if( indexString1.empty() )
-		{
-			indexString1 = m_values.Get<CString>(SvPb::RingBufferIndexEId);
-		}
-		std::string indexString2( m_values.Get<CString>(SvPb::RingBufferIndexLinkEId + 1) );
-		if( indexString2.empty() )
-		{
-			indexString2 = m_values.Get<CString>(SvPb::RingBufferIndexEId+1);
-		}
-		//set edit controls
-		m_EditRingDepth.SetWindowText( depthString.c_str() );
-		m_EditImageIndex[0].SetWindowText( indexString1.c_str() );
-		m_EditImageIndex[1].SetWindowText( indexString2.c_str() );
 
 		return TRUE;
 	}
@@ -120,27 +132,37 @@ bool TADialogRingBufferParameterPage::QueryAllowExit()
 
 	void TADialogRingBufferParameterPage::OnButtonDepth()
 	{
-		CString Temp;
-		m_EditRingDepth.GetWindowText(Temp);
-		std::string Value = Temp.GetString();
-		std::string Title = SvUl::LoadStdString(IDS_OBJECTNAME_RINGBUFFER_DEPTH);
-		if (m_objectSelector.Show(Value, Title, this, SvPb::allNumberValueObjects, SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed, m_TaskObjectID))
+		assert(m_DepthWidget);
+		if (m_DepthWidget)
 		{
-			m_EditRingDepth.SetWindowText(Value.c_str());
+			m_DepthWidget->OnButton();
 		}
+	}
+
+	void TADialogRingBufferParameterPage::OnKillFocusDepth()
+	{
+		m_DepthWidget->EditboxToValue();
 	}
 
 	void TADialogRingBufferParameterPage::OnButtonImageIndex( UINT nID )
 	{
 		int ButtonIndex( nID-IDC_BUTTON_IMAGE_INDEX1 );
 
-		CString Temp;
-		m_EditImageIndex[ButtonIndex].GetWindowText( Temp );
-		std::string Value = Temp.GetString();
-		std::string Title = SvUl::LoadStdString( IDS_OBJECTNAME_RINGBUFFER_INDEX1 + ButtonIndex	 );
-		if (m_objectSelector.Show( Value, Title, this, SvPb::allNumberValueObjects, SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed, m_TaskObjectID))
+		assert(m_ImageIndexWidget[ButtonIndex]);
+		if (m_ImageIndexWidget[ButtonIndex])
 		{
-			m_EditImageIndex[ButtonIndex].SetWindowText( Value.c_str() );
+			m_ImageIndexWidget[ButtonIndex]->OnButton();
+		}
+	}
+
+	void TADialogRingBufferParameterPage::OnKillFocusImageIndex(UINT nID)
+	{
+		int ButtonIndex(nID - IDC_EDIT_IMAGE_INDEX1);
+
+		assert(m_ImageIndexWidget[ButtonIndex]);
+		if (m_ImageIndexWidget[ButtonIndex])
+		{
+			m_ImageIndexWidget[ButtonIndex]->EditboxToValue();
 		}
 	}
 #pragma endregion Protected Methods
@@ -149,15 +171,6 @@ bool TADialogRingBufferParameterPage::QueryAllowExit()
 	HRESULT TADialogRingBufferParameterPage::SetPageData()
 	{
 		HRESULT Result = SetRingDepth();
-
-		if( S_OK == Result )
-		{
-			Result = SetImageIndex(0);
-		}
-		if( S_OK == Result )
-		{
-			Result = SetImageIndex(1);
-		}
 
 		if( S_OK == Result )
 		{
@@ -181,41 +194,19 @@ bool TADialogRingBufferParameterPage::QueryAllowExit()
 	HRESULT TADialogRingBufferParameterPage::SetRingDepth()
 	{
 		HRESULT Result( S_OK );
-
-		CString Text;
-		m_EditRingDepth.GetWindowText(Text);
-		std::string Value = Text.GetString();
-		long depth = 0;
-		bool isNumber = SvUl::Convert2Number( Value, depth, true );
-		if( !isNumber || (SvDef::cRingBufferDepthMin <= depth && SvDef::cRingBufferDepthMax >= depth) )
+		auto data = m_values.Get<LinkedValueData>(SvPb::RingBuffer_DepthEId);
+		if (SvPb::DirectValue == data.m_type)
 		{
-			m_values.Set<CString>(SvPb::RingBuffer_DepthEId, Text);
+			SvStl::MessageContainer messageContainer;
+			bool isOk = checkDepthValue(data.m_Value, messageContainer);
+			if (false == isOk)
+			{
+				SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
+				Exception.setMessage(messageContainer.getMessage());
+				Result = E_FAIL;
+			}
 		}
-		else
-		{
-			SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
-			SvDef::StringVector msgList;
-			msgList.push_back( SvUl::Format(_T("%d"), SvDef::cRingBufferDepthMin) );
-			msgList.push_back( SvUl::Format(_T("%d"), SvDef::cRingBufferDepthMax) );
-			msgList.push_back( Value );
-			Exception.setMessage( SVMSG_SVO_62_RINGBUFFER_INVALID_VALUE, SvStl::Tid_RingBuffer_Depth_Invalid_ValueString, msgList, SvStl::SourceFileParams(StdMessageParams), Result );
-			Result = E_FAIL;
-		}
-
-		return Result;
-	}
-
-	HRESULT TADialogRingBufferParameterPage::SetImageIndex( int Index )
-	{
-		HRESULT Result( S_OK );
-
-		if( 0 <= Index && SvDef::cRingBufferNumberOutputImages > Index )
-		{
-			CString Value;
-			m_EditImageIndex[Index].GetWindowText( Value );
-
-			m_values.Set<CString>(SvPb::RingBufferIndexEId+Index, Value);
-		}
+		
 		return Result;
 	}
 #pragma endregion Private Methods

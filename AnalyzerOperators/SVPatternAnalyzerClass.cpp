@@ -1373,13 +1373,14 @@ bool SVPatternAnalyzerClass::getNewUseDontCareValue(const SvOi::SetValueStructVe
 	BOOL useDontCare = false;
 	SvOi::SetValueStructVector::const_iterator iter = std::find_if(rValueVector.begin(), rValueVector.end(), [&](const SvOi::SetValueStructVector::value_type& rEntry)->bool
 	{
-		return rEntry.m_pValueObject == &m_bpatDontCare;
+		return 0 == rEntry.index() && std::get<SvOi::SetValueStruct>(rEntry).m_pValueObject == &m_bpatDontCare;
 	}
 	);
 	if (rValueVector.end() != iter)
 	{
-		assert(VT_BOOL == iter->m_Value.vt);
-		useDontCare = iter->m_Value.boolVal;
+		const auto& rValueStruct = std::get<SvOi::SetValueStruct>(*iter);
+		assert(VT_BOOL == rValueStruct.m_Value.vt);
+		useDontCare = rValueStruct.m_Value.boolVal;
 	}
 	else
 	{
@@ -1393,13 +1394,14 @@ bool SVPatternAnalyzerClass::validateNewDontCareFileName(const SvOi::SetValueStr
 	bool isValueToSet = false;
 	SvOi::SetValueStructVector::const_iterator iter = std::find_if(rValueVector.begin(), rValueVector.end(), [&](const SvOi::SetValueStructVector::value_type& rEntry)->bool
 	{
-		return rEntry.m_pValueObject == &m_DontCareImageFile;
+		return 0 == rEntry.index() && std::get<SvOi::SetValueStruct>(rEntry).m_pValueObject == &m_DontCareImageFile;
 	}
 	);
 	if (rValueVector.end() != iter)
 	{
-		assert(VT_BSTR == iter->m_Value.vt);
-		std::string newFileName = SvUl::createStdString(iter->m_Value.bstrVal);
+		const auto& rValueStruct = std::get<SvOi::SetValueStruct>(*iter);
+		assert(VT_BSTR == rValueStruct.m_Value.vt);
+		std::string newFileName = SvUl::createStdString(rValueStruct.m_Value.bstrVal);
 
 		SVMatroxBuffer importHandle;
 		if (S_OK != SVMatroxBufferInterface::Import(importHandle, newFileName, SVFileBitmap, true) ||
@@ -1435,15 +1437,16 @@ bool SVPatternAnalyzerClass::validateNewModelFileName(const SvOi::SetValueStruct
 	bool isValueToSet = false;
 	SvOi::SetValueStructVector::const_iterator iter = std::find_if(rValueVector.begin(), rValueVector.end(), [&](const SvOi::SetValueStructVector::value_type& rEntry)->bool
 	{
-		return rEntry.m_pValueObject == &msv_szModelImageFile;
+		return 0 == rEntry.index() && std::get<SvOi::SetValueStruct>(rEntry).m_pValueObject == &msv_szModelImageFile;
 	}
 	);
 	if (rValueVector.end() != iter)
 	{
-		assert(VT_BSTR == iter->m_Value.vt);
+		const auto& rValueStruct = std::get<SvOi::SetValueStruct>(*iter);
+		assert(VT_BSTR == rValueStruct.m_Value.vt);
 		std::string fileName;
 		msv_szModelImageFile.GetValue(fileName);
-		std::string newFileName = SvUl::createStdString(iter->m_Value.bstrVal);
+		std::string newFileName = SvUl::createStdString(rValueStruct.m_Value.bstrVal);
 		if (fileName != newFileName)
 		{
 			SVMatroxBuffer importHandle;

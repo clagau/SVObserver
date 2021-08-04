@@ -1492,6 +1492,73 @@ SvPb::EmbeddedIdEnum calcInputEmbeddedId(const _variant_t& rObjectName)
 	}
 	return SvPb::NoEmbeddedId;
 }
+
+
+std::unordered_map<SvPb::EmbeddedIdEnum, SvPb::EmbeddedIdEnum> g_EmbeddedIdFromIndirectMap = {{SvPb::InspectedObjectIDLinkEId, SvPb::InspectedObjectIDEId},
+		{SvPb::RingBufferLink_DepthEId, SvPb::RingBuffer_DepthEId},
+		{SvPb::ExcludeLowerBoundIndirectEId, SvPb::ExcludeLowerBoundEId},
+		{SvPb::ExcludeUpperBoundIndirectEId, SvPb::ExcludeUpperBoundEId},
+		{SvPb::ExtentWidthFactorContentLinkEId, SvPb::ExtentWidthFactorContentEId},
+		{SvPb::ExtentHeightFactorContentLinkEId, SvPb::ExtentHeightFactorContentEId},
+		{SvPb::ExtentWidthFactorFormatLinkEId, SvPb::ExtentWidthFactorFormatEId},
+		{SvPb::ExtentHeightFactorFormatLinkEId, SvPb::ExtentHeightFactorFormatEId},
+		{SvPb::RangeClassFailHighIndirectEId, SvPb::RangeClassFailHighEId},
+		{SvPb::RangeClassFailLowIndirectEId, SvPb::RangeClassFailLowEId},
+		{SvPb::RangeClassWarnHighIndirectEId, SvPb::RangeClassWarnHighEId},
+		{SvPb::RangeClassWarnLowIndirectEId, SvPb::RangeClassWarnLowEId},
+		{SvPb::ShapeMaskPropertyCenterXLinkEId, SvPb::ShapeMaskPropertyCenterXEId},
+		{SvPb::ShapeMaskPropertyCenterYLinkEId, SvPb::ShapeMaskPropertyCenterYEId},
+		{SvPb::ShapeMaskPropertyWidthLinkEId, SvPb::ShapeMaskPropertyWidthEId},
+		{SvPb::ShapeMaskPropertyHeightLinkEId, SvPb::ShapeMaskPropertyHeightEId},
+		{SvPb::ShapeMaskPropertySideThicknessLinkEId, SvPb::ShapeMaskPropertySideThicknessEId},
+		{SvPb::ShapeMaskPropertyTopBottomThicknessLinkEId, SvPb::ShapeMaskPropertyTopBottomThicknessEId},
+		{SvPb::ShapeMaskPropertyOffsetLinkEId, SvPb::ShapeMaskPropertyOffsetEId},
+		{SvPb::RingBufferIndexLinkEId, SvPb::RingBufferIndexEId},
+		{SvPb::RingBufferIndexLinkEId + 1, SvPb::RingBufferIndexEId + 1},
+		{SvPb::FilenameIndex1LinkEId, SvPb::FilenameIndex1EId},
+		{SvPb::FilenameIndex2LinkEId, SvPb::FilenameIndex2EId},
+		{SvPb::SubfolderSelectionLinkEId, SvPb::SubfolderSelectionEId},
+		{SvPb::DirectorynameIndexLinkEId, SvPb::DirectorynameIndexEId},
+		{SvPb::SubfolderLocationLinkEId, SvPb::SubfolderLocationEId},
+		{SvPb::ArchiveImageFileRootPart1LinkEId, SvPb::ArchiveImageFileRootPart1EId},
+		{SvPb::ArchiveImageFileRootPart2LinkEId, SvPb::ArchiveImageFileRootPart2EId},
+		{SvPb::ArchiveImageFileRootPart3LinkEId, SvPb::ArchiveImageFileRootPart3EId},
+		{SvPb::TableAnaylzerExcludeHigh_LinkEId, SvPb::TableAnaylzerExcludeHighEId},
+		{SvPb::TableAnaylzerExcludeLow_LinkEId, SvPb::TableAnaylzerExcludeLowEId},
+		{SvPb::TableAnaylzerLimitValue_LinkEId, SvPb::TableAnaylzerLimitValueEId},
+		{SvPb::LinkedLoops_LinkedEId, SvPb::LinkedLoopsEId},
+		{SvPb::LoopBreak_LinkedEId, SvPb::LoopBreakEId},
+
+};
+
+void fillEmbeddedIdFromIndirectLinked()
+{
+	for (int i = 0; i < COUNT_OF_INPUT_OUTPUT_IDs; ++i)
+	{
+		g_EmbeddedIdFromIndirectMap[SvPb::ExternalInputLinkedEId + i] = SvPb::ExternalInputEId + i;
+	}
+	for (int i = 0; i < COUNT_OF_INPUT_OUTPUT_IDs; ++i)
+	{
+		g_EmbeddedIdFromIndirectMap[SvPb::ResultObjectLinkedEId + i] = SvPb::ResultObjectValueEId + i;
+	}
+}
+SvPb::EmbeddedIdEnum getEmbeddedIdFromIndirectLinked(SvPb::EmbeddedIdEnum indirectLinkedEmbeddedId)
+{
+	static bool init = false;
+	if (!init)
+	{
+		fillEmbeddedIdFromIndirectLinked();
+		init = true;
+	}
+	
+	auto iter = g_EmbeddedIdFromIndirectMap.find(indirectLinkedEmbeddedId);
+	if (g_EmbeddedIdFromIndirectMap.end() != iter)
+	{
+		return iter->second;
+	}
+	return SvPb::NoEmbeddedId;
+}
+
 #pragma region ObjectIdGuids
 const GUID RootUidGuid = { 0xa5c94500, 0xf204, 0x469d,{ 0x8f, 0xff, 0x48, 0x26, 0xef, 0x33, 0x18, 0x51 } };
 const GUID GlobalUidGuid = { 0xa5c94501, 0xf204, 0x469d,{ 0x8f, 0xff, 0x48, 0x26, 0xef, 0x33, 0x18, 0x51 } };

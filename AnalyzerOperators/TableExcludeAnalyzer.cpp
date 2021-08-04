@@ -10,8 +10,6 @@
 #include "stdafx.h"
 #include "TableExcludeAnalyzer.h"
 #include "Tools/TableAnalyzerTool.h"
-#include "Definitions/TextDefineSvDef.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 namespace SvAo
@@ -79,7 +77,7 @@ bool TableExcludeAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMess
 		}
 	}
 
-	if (!m_excludeLow.isIndirectValue() && !m_excludeHigh.isIndirectValue())
+	if (SvPb::LinkedSelectedType::DirectValue == m_excludeLow.getSelectedType() && SvPb::LinkedSelectedType::DirectValue == m_excludeHigh.getSelectedType())
 	{
 		//check if high greater than low
 		_variant_t TempValue;
@@ -176,21 +174,11 @@ void TableExcludeAnalyzer::BuildEmbeddedObjectList()
 	vtTemp.dblVal = cDefaultHighValue;
 	m_excludeHigh.SetDefaultValue( vtTemp, true );
 
-	std::string ObjectName = SvUl::LoadStdString( IDS_OBJECTNAME_TABLEANALYZEREXCLUDE_HIGHVALUE );
-	ObjectName +=  SvDef::cLinkName;
-	RegisterEmbeddedObject( &m_excludeHigh.getLinkedName(), SvPb::TableAnaylzerExcludeHigh_LinkEId, ObjectName.c_str(), false, SvOi::SVResetItemNone );
-	m_excludeHigh.getLinkedName().SetDefaultValue( _T(""), false );
-
 	//set excludeLow-Value
 	RegisterEmbeddedObject( &m_excludeLow, SvPb::TableAnaylzerExcludeLowEId, IDS_OBJECTNAME_TABLEANALYZEREXCLUDE_LOWVALUE, true, SvOi::SVResetItemTool );
 	//vtTemp.vt = cVarType_Value;
 	vtTemp.dblVal = cDefaultLowValue;
 	m_excludeLow.SetDefaultValue( vtTemp, true );
-
-	ObjectName = SvUl::LoadStdString( IDS_OBJECTNAME_TABLEANALYZEREXCLUDE_LOWVALUE );
-	ObjectName +=  SvDef::cLinkName;
-	RegisterEmbeddedObject( &m_excludeLow.getLinkedName(), SvPb::TableAnaylzerExcludeLow_LinkEId, ObjectName.c_str(), false, SvOi::SVResetItemNone );
-	m_excludeLow.getLinkedName().SetDefaultValue( _T(""), false );
 }
 
 void TableExcludeAnalyzer::BuildInputObjectList()

@@ -125,7 +125,6 @@
     <ClInclude Include="DrawObject.h" />
     <ClInclude Include="InitialInformation.h" />
     <ClInclude Include="Intersect.h" />
-    <ClInclude Include="ISVCancel.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="SVGraphix.h" />
     <ClInclude Include="SVOINIClass.h" />

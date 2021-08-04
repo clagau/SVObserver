@@ -87,8 +87,6 @@ namespace SvOi
 		/// \returns bool return true if setting of this image was succeeded.
 		virtual bool getSpecialImage(const std::string& rName, SVImageBufferHandlePtr& rImagePtr) const = 0;
 
-		virtual void getOutputList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter) const = 0;
-
 		// Get the embedded list of the task object
 		/// \returns a list of embedded IDs
 		virtual std::vector<uint32_t> getEmbeddedList() const = 0;

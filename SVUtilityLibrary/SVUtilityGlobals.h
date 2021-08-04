@@ -21,10 +21,6 @@ typedef unsigned long SVHANDLE;
 #define SV_SEVERITY( p_Status ) \
 	( ( ( ( unsigned long ) p_Status ) >> 30 ) & 0x00000003 )
 
-HRESULT SafeArrayPutElementNoCopy(SAFEARRAY* psa, long* rgIndices, void* pv);
-HRESULT SafeArrayGetElementNoCopy(SAFEARRAY* psa, long* rgIndices, void* pv);
-HRESULT SafeArrayGetElementPointer(SAFEARRAY* psa, long* rgIndices, void** ppv);
-
 void KeepPrevError( HRESULT& p_rhrPrev, HRESULT p_hrNew );
 
 //@TODO[Arvid][10.00][20.07.2020] Die folgenden Funktionen wären besser in der SVFileSystemLibrary aufgehoben:

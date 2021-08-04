@@ -23,6 +23,8 @@ namespace SvUl
 	//! function returns a 1 dim safe array with 0 element 
 	_variant_t GetEmptySafeArray(VARTYPE  vart);
 
+	bool isSameVar(const _variant_t& rValue1, const _variant_t& rValue2);
+
 	/// function converts 1 dim safearray of type T to  ; seperated values
 	template<typename T>
 	std::string SafeArrayToString(SAFEARRAY* pArray)

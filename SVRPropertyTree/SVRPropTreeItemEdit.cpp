@@ -235,7 +235,7 @@ void SVRPropertyItemEdit::OnEnable(BOOL bEnable)
 	CEdit::OnEnable(bEnable);
 	if ( m_bShowButton )
 	{
-		m_btnDots.EnableWindow( bEnable );
+		m_btnDots.EnableWindow( IsButtonActiveIfReadOnly() );
 	}
 }
 
@@ -313,6 +313,18 @@ void SVRPropertyItemEdit::OnActivate()
 
 }
 
+void SVRPropertyItemEdit::ReadOnlyActivate()
+{
+	Activate();
+	EnableWindow(FALSE);
+}
+
+void SVRPropertyItemEdit::HideEditItemCtrls()
+{
+	ShowWindow(SW_HIDE);
+	m_btnDots.ShowWindow(SW_HIDE);
+}
+
 void SVRPropertyItemEdit::OnLossFocus()
 {
 	OnKillFocus(nullptr);
@@ -324,12 +336,8 @@ BOOL SVRPropertyItemEdit::CreateEdit(DWORD dwStyle)
 
 	if ( bRet )
 	{
-		m_btnDots.Create("", WS_CHILD, CRect(0,0,0,0), m_pProp->GetCtrlParent(), 32000-GetCtrlID());
-		m_btnDots.SetWindowText(m_ButtonText.c_str());
-		m_btnDots.SetOwner( this );
-
-		SendMessage(WM_SETFONT, (WPARAM)m_pProp->GetNormalFont()->m_hObject);
-		m_btnDots.SendMessage(WM_SETFONT, (WPARAM)m_pProp->GetNormalFont()->m_hObject);
+		CreateBtn();
+		SendMessage(WM_SETFONT, (WPARAM)m_pProp->GetNormalFont()->m_hObject);		
 	}
 
 	return bRet;
@@ -346,6 +354,16 @@ void SVRPropertyItemEdit::DisplayButton()
 	m_btnDots.SetWindowPos(nullptr, m_rc.right-iButtonWidth, m_rc.top, iButtonWidth, m_rc.Height(), SWP_NOZORDER | (m_bShowButton ? SWP_SHOWWINDOW : SWP_HIDEWINDOW));
 }
 
+void SVRPropertyItemEdit::CreateBtn()
+{
+	if (nullptr == m_btnDots.m_hWnd)
+	{
+		m_btnDots.Create("", WS_CHILD, CRect(0, 0, 0, 0), m_pProp->GetCtrlParent(), 32000 - GetCtrlID());
+	}
+	m_btnDots.SetWindowText(m_ButtonText.c_str());
+	m_btnDots.SetOwner(this);
+	m_btnDots.SendMessage(WM_SETFONT, (WPARAM)m_pProp->GetNormalFont()->m_hObject);
+}
 
 void SVRPropertyItemEdit::ButtonClicked()
 {

@@ -349,6 +349,14 @@ namespace SvCmd
 		)
 		},
 
+		{ SvPb::InspectionCmdRequest::kValidateLinkedValueRequest,
+		std::make_tuple(
+		[] {return ThreadPref::inspection; },
+		[] {return std::chrono::seconds{120}; } ,
+		[](const SvPb::InspectionCmdRequest& rRequest) {return  validateLinkedValue(rRequest.validatelinkedvaluerequest()); }
+		)
+		},
+
 		{ SvPb::InspectionCmdRequest::kGetOutputRectangleRequest,
 		std::make_tuple(
 		[] {return ThreadPref::inspection; },

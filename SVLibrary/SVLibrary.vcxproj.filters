@@ -53,9 +53,6 @@
     <ClInclude Include="Intersect.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="ISVCancel.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="StdAfx.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>

@@ -13,8 +13,10 @@
 #pragma region Includes
 #include "SVRPropertyTree/SVRPropTree.h"
 #include "SVOGui/DataController.h"
+#include "SVOGui/LinkedValueSelectorDialog.h"
 #pragma endregion Includes
 
+class SVRPropertyItemEdit;
 class ExternalToolTaskController;
 
 class SVTADlgExternalInputSelectPage : public CPropertyPage
@@ -43,7 +45,7 @@ public:
 
 // Implementation
 protected:
-	int SelectObject( std::string& rSelectedName, SVRPropertyItem* pItem );
+	void SelectObject( SVRPropertyItemEdit& rItem );
 	void updateInputValuesFromPropertyTree();
 
 	int GetItemIndex(SVRPropertyItem* pItem);
@@ -72,6 +74,9 @@ private:
 
 	SVRPropertyItem* AddGroupToTree(const std::string& groupName, std::map<std::string, SVRPropertyItem*>& rMapGroupItems, SVRPropertyItem* pRoot);
 	void AddItemToTree(const SvPb::InputValueDefinition& rDefinition, SVRPropertyItem* pGroupItem, int iID);
+	void setValueColumn(SvPb::EmbeddedIdEnum eId, SvOg::LinkedValueSelectorTypesEnum selectorTypes, SVRPropertyItemEdit& rEdit);
+	bool setStringToData(SVRPropertyItem& rItem);
+
 private:
 	SVRPropTree	m_Tree;
 	int m_inputValueCount;

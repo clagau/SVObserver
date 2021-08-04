@@ -276,7 +276,12 @@ void SVRPropTreeCtrl::OnLButtonDown(UINT, CPoint point)
 
 	LONG nHit = m_pProp->HitTest(point);
 
-	SVRPropertyItem* pItem;
+	SVRPropertyItem* pItem = m_pProp->FindItem(point);
+	if (nullptr != m_pLastReadonlyActivated && pItem != m_pLastReadonlyActivated)
+	{
+		m_pLastReadonlyActivated->HideEditItemCtrls();
+	}
+
 	CRect rc;
 	CDC* pDC;
 
@@ -299,7 +304,7 @@ void SVRPropTreeCtrl::OnLButtonDown(UINT, CPoint point)
 			break;
 
 		case HTCHECKBOX:
-			if (nullptr != (pItem = m_pProp->FindItem(point)))
+			if (nullptr != pItem)
 			{
 				pItem->Check(!pItem->IsChecked());
 				m_pProp->SendNotify(PTN_CHECKCLICK, pItem);
@@ -308,7 +313,7 @@ void SVRPropTreeCtrl::OnLButtonDown(UINT, CPoint point)
 			break;
 
 		case HTEXPAND:
-			if (nullptr != (pItem = m_pProp->FindItem(point)))
+			if (nullptr != pItem)
 			{
 				if ( pItem->CanShrink() || !pItem->IsExpanded() )
 				{
@@ -326,7 +331,7 @@ void SVRPropTreeCtrl::OnLButtonDown(UINT, CPoint point)
 			break;
 
 		default:
-			if (nullptr != (pItem = m_pProp->FindItem(point)))
+			if (nullptr != pItem)
 			{
 				if ( pItem->CanHighlight() )
 				{
@@ -346,8 +351,18 @@ void SVRPropTreeCtrl::OnLButtonDown(UINT, CPoint point)
 
 					if (nHit==HTATTRIBUTE && !pItem->IsRootLevel())
 					{
-						if (!m_pProp->SendNotify(PTN_PROPCLICK, pItem) && !pItem->IsReadOnly())
-							pItem->Activate();
+						if (!m_pProp->SendNotify(PTN_PROPCLICK, pItem))
+						{
+							if (!pItem->IsReadOnly())
+							{
+								pItem->Activate();
+							}
+							else
+							{
+								pItem->ReadOnlyActivate();
+								m_pLastReadonlyActivated = pItem;
+							}
+						}
 					}
 				}
 			}

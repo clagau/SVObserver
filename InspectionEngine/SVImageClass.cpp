@@ -31,7 +31,6 @@
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVUtilityLibrary/SVClock.h"
 #include "ObjectInterfaces/ITriggerRecordControllerRW.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #include "ObjectInterfaces/ILinkedObject.h"
 #pragma endregion Includes
 
@@ -68,19 +67,8 @@ bool SVImageClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructur
 	bool bOk = SVObjectAppClass::CreateObject(rCreateStructure);
 
 	SVObjectManagerClass::Instance().RegisterSubObject(getObjectId());
-	if (bOk)
-	{
-		for (auto* pObject : m_embeddedList)
-		{
-			if (IsCreated() && nullptr != pObject)
-			{
-				SVObjectLevelCreateStruct createStruct = rCreateStructure;
-				createStruct.OwnerObjectInfo.SetObject(this);
-				bOk &= pObject->createAllObjects(createStruct);
-				assert(bOk);
-			}
-		}
-	}
+
+	bOk &= createEmbeddedChildren();
 
 	bOk &= (S_OK == UpdateFromToolInformation());
 
@@ -186,16 +174,11 @@ void SVImageClass::init()
 	m_width.SetTypeName(_T("Image Width"));
 	m_height.SetTypeName(_T("Image Height"));
 
-	m_width.setResetOptions(false, SvOi::SVResetItemTool);
-	m_width.SetObjectEmbedded(SvPb::ExtentWidthEId, this, SvUl::LoadStdString(IDS_OBJECTNAME_EXTENT_WIDTH).c_str());
-	m_height.setResetOptions(false, SvOi::SVResetItemTool);
-	m_height.SetObjectEmbedded(SvPb::ExtentHeightEId, this, SvUl::LoadStdString(IDS_OBJECTNAME_EXTENT_HEIGHT).c_str());
+	RegisterEmbeddedObject(&m_width, SvPb::ExtentWidthEId, IDS_OBJECTNAME_EXTENT_WIDTH, false, SvOi::SVResetItemTool);
+	RegisterEmbeddedObject(&m_height, SvPb::ExtentHeightEId, IDS_OBJECTNAME_EXTENT_HEIGHT, false, SvOi::SVResetItemTool);
 
 	m_width.SetDefaultValue(100, true);
 	m_height.SetDefaultValue(100, true);
-
-	m_embeddedList.push_back(&m_width);
-	m_embeddedList.push_back(&m_height);
 }
 
 SVImageClass::~SVImageClass()
@@ -964,21 +947,6 @@ void SVImageClass::PersistImageAttributes(SvOi::IObjectWriter& rWriter) const
 	m_ImageInfo.GetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, TempValue);
 	Value = TempValue;
 	rWriter.WriteAttribute(scBandLinkTag, Value);
-
-	// Set up embedded object definitions...
-	if (0 < m_embeddedList.size())
-	{
-		rWriter.StartElement(scEmbeddedsTag);
-		// Get embedded object script...
-		for (const auto* pObject : m_embeddedList)
-		{
-			if (nullptr != pObject)
-			{
-				pObject->Persist(rWriter);
-			}
-		}
-		rWriter.EndElement();
-	}
 }
 
 HRESULT SVImageClass::SetObjectValue(SVObjectAttributeClass* pDataObject)
@@ -1260,46 +1228,10 @@ void SVImageClass::getOutputList(std::back_insert_iterator<std::vector<SvOi::IOb
 {
 	if (0 != ObjectAttributesAllowed())
 	{
-		for (auto* pObject : m_embeddedList)
-		{
-			if (nullptr != pObject)
-			{
-				// cppcheck-suppress unreadVariable symbolName=inserter ; cppCheck doesn't know back_insert_iterator
-				// cppcheck-suppress useStlAlgorithm ; std::accumulate will not used because in the current way it is more clear
-				inserter = pObject;
-			}
-		}
+		__super::getOutputList(inserter);
 	}
 }
 
-HRESULT SVImageClass::GetChildObject(SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index) const
-{
-	HRESULT l_Status = SVObjectAppClass::GetChildObject(rpObject, rNameInfo, Index);
-
-	if (S_OK != l_Status && 0 != ObjectAttributesAllowed())
-	{
-		if (static_cast<const size_t> (Index) < rNameInfo.m_NameArray.size() && rNameInfo.m_NameArray[Index] == GetName() && Index + 1 == rNameInfo.m_NameArray.size() - 1)
-		{
-			for (const auto* pObject : m_embeddedList)
-			{
-				if (nullptr != pObject)
-				{
-					l_Status = pObject->GetChildObject(rpObject, rNameInfo, Index + 1);
-					if (S_OK == l_Status && nullptr != rpObject)
-					{
-						return S_OK;
-					}
-				}
-			}
-		}
-		else
-		{
-			l_Status = S_FALSE;
-		}
-	}
-
-	return l_Status;
-}
 void SVImageClass::setEditModeFreezeFlag(bool flag)
 {
 	__super::setEditModeFreezeFlag(flag);
@@ -1345,14 +1277,6 @@ void SVImageClass::fillSelectorList(std::back_insert_iterator<std::vector<SvPb::
 	{
 		nameToType = (SvPb::SVNotSetObjectType == nameToType) ? GetObjectType() : nameToType;
 		__super::fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType, stopIfClosed);
-
-		for (auto* pObject : m_embeddedList)
-		{
-			if (nullptr != pObject)
-			{
-				pObject->fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType, stopIfClosed);
-			}
-		}
 	}
 }
 
@@ -1361,53 +1285,11 @@ void SVImageClass::fillObjectList(std::back_insert_iterator<std::vector<SvOi::IO
 	if (0 != ObjectAttributesAllowed() || addHidden)
 	{
 		__super::fillObjectList(inserter, rObjectInfo, addHidden, stopIfClosed);
-
-		for (auto* pObject : m_embeddedList)
-		{
-			if (nullptr != pObject)
-			{
-				pObject->fillObjectList(inserter, rObjectInfo, addHidden, stopIfClosed);
-			}
-		}
 	}
-}
-
-SVObjectClass* SVImageClass::OverwriteEmbeddedObject(uint32_t uniqueID, SvPb::EmbeddedIdEnum embeddedID)
-{
-	// Check here all embedded members ( embedded objects could be only identified by embeddedID!!!! )... 
-	for (SVObjectPtrVector::iterator Iter = m_embeddedList.begin(); m_embeddedList.end() != Iter; ++Iter)
-	{
-		SVObjectClass* pObject = *Iter;
-		if (nullptr != pObject)
-		{
-			if (pObject->GetEmbeddedID() == embeddedID)
-			{
-				return pObject->OverwriteEmbeddedObject(uniqueID, embeddedID);
-			}
-		}
-	}
-	return __super::OverwriteEmbeddedObject(uniqueID, embeddedID);
 }
 
 HRESULT SVImageClass::SetValuesForAnObject(uint32_t aimObjectID, SVObjectAttributeClass* pDataObject)
 {
-	for (SVObjectPtrVector::iterator Iter = m_embeddedList.begin(); m_embeddedList.end() != Iter; ++Iter)
-	{
-		SVObjectClass* pObject = *Iter;
-		if (nullptr != pObject)
-		{
-			// check if it's this object
-			if (aimObjectID == pObject->getObjectId())
-			{
-				// Set the Object's Data Member Value
-				if (S_OK == pObject->SetObjectValue(pDataObject))
-				{
-					return S_OK;
-				}
-			}
-		}
-	}
-
 	return __super::SetValuesForAnObject(aimObjectID, pDataObject);
 }
 

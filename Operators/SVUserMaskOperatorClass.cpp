@@ -748,6 +748,7 @@ bool SVUserMaskOperatorClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rI
 		SVShapeMaskHelperClass* pShapeHelper = GetShapeHelper();
 		if (pShapeHelper)
 		{
+			pShapeHelper->onRun(rRunStatus, pErrorMessages);
 			DWORD dwShapeColor = m_statusColor.GetDefaultValue();
 			if (MASK_TYPE_SHAPE == dwMaskType)
 			{

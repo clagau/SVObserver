@@ -24,7 +24,6 @@
 #include "ObjectInterfaces/IInspectionProcess.h"
 #include "ObjectInterfaces/ITaskObjectListClass.h"
 #include "ObjectInterfaces/IToolSet.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVObjectLibrary/DependencyManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVValueObjectLibrary/LinkedValue.h"
@@ -83,27 +82,7 @@ SVTaskObjectClass::~SVTaskObjectClass()
 {
 	SVTaskObjectClass::DestroyFriends();
 
-	// empty the Embedded List
-	for (SVObjectPtrVector::iterator Iter = m_embeddedList.begin(); m_embeddedList.end() != Iter; ++Iter)
-	{
-		SVObjectClass* pObject = *Iter;
-		if (nullptr != pObject && pObject->IsCreated())
-		{
-			pObject->CloseObject();
-		}
-	}
-	m_embeddedList.clear();
-
-	for (auto* pInput : m_inputs)
-	{
-		if (nullptr != pInput && pInput->IsCreated())
-		{
-			pInput->CloseObject();
-		}
-	}
-	m_inputs.clear();
-
-	SVTaskObjectClass::CloseObject();
+	assert(0 == m_inputs.size());
 }
 
 bool SVTaskObjectClass::resetAllObjects(SvStl::MessageContainerVector *pErrorMessages/*=nullptr */)
@@ -151,19 +130,7 @@ void SVTaskObjectClass::getOutputList(std::back_insert_iterator<std::vector<SvOi
 		}
 	}
 
-	for (SVObjectPtrVector::const_iterator Iter = m_embeddedList.begin(); m_embeddedList.end() != Iter; ++Iter)
-	{
-		SVObjectClass* pObject = *Iter;
-		if (nullptr != pObject)
-		{
-			inserter = pObject;
-		}
-		SVImageClass* pImage = dynamic_cast<SVImageClass*>(pObject);
-		if (nullptr != pImage)
-		{
-			pImage->getOutputList(inserter);
-		}
-	}
+	__super::getOutputList(inserter);
 }
 
 std::vector<SvOi::IObjectClass*> SVTaskObjectClass::getOutputListFiltered(UINT uiAttributes, bool bAND) const
@@ -239,23 +206,6 @@ void SVTaskObjectClass::removeTaskMessage(DWORD MessageCode, SvStl::MessageTextE
 
 HRESULT SVTaskObjectClass::SetValuesForAnObject(uint32_t aimObjectID, SVObjectAttributeClass* pDataObject)
 {
-	for (SVObjectPtrVector::iterator Iter = m_embeddedList.begin(); m_embeddedList.end() != Iter; ++Iter)
-	{
-		SVObjectClass* pObject = *Iter;
-		if (nullptr != pObject)
-		{
-			// check if it's this object
-			if (aimObjectID == pObject->getObjectId())
-			{
-				// Set the Object's Data Member Value
-				if (S_OK == pObject->SetObjectValue(pDataObject))
-				{
-					return S_OK;
-				}
-			}
-		}
-	}
-
 	return __super::SetValuesForAnObject(aimObjectID, pDataObject);
 }
 
@@ -319,18 +269,6 @@ HRESULT SVTaskObjectClass::GetChildObject(SVObjectClass*& rpObject, const SVObje
 					l_Status = rfriend.getObject()->GetChildObject(rpObject, rNameInfo, Index + 1);
 				}
 			}
-
-			if (S_OK != l_Status)
-			{
-				for (SVObjectPtrVector::const_iterator Iter = m_embeddedList.begin(); nullptr == rpObject && m_embeddedList.end() != Iter; ++Iter)
-				{
-					SVObjectClass* pObject = *Iter;
-					if (nullptr != pObject)
-					{
-						l_Status = pObject->GetChildObject(rpObject, rNameInfo, Index + 1);
-					}
-				}
-			}
 		}
 		else
 		{
@@ -355,14 +293,6 @@ void SVTaskObjectClass::fillSelectorList(std::back_insert_iterator<std::vector<S
 			pObject->fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType, stopIfClosed);
 		}
 	}
-
-	for (auto* pObject : m_embeddedList)
-	{
-		if (nullptr != pObject)
-		{
-			pObject->fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType, stopIfClosed);
-		}
-	}
 }
 
 void SVTaskObjectClass::fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo, bool addHidden /*= false*/, bool stopIfClosed /*= false*/, bool /*firstObject = false*/)
@@ -373,14 +303,6 @@ void SVTaskObjectClass::fillObjectList(std::back_insert_iterator<std::vector<SvO
 	{
 		// Check if Friend is alive...
 		auto* pObject = SVObjectManagerClass::Instance().GetObject(m_friendList[i].getObjectId());
-		if (nullptr != pObject)
-		{
-			pObject->fillObjectList(inserter, rObjectInfo, addHidden, stopIfClosed);
-		}
-	}
-
-	for (auto* pObject : m_embeddedList)
-	{
 		if (nullptr != pObject)
 		{
 			pObject->fillObjectList(inserter, rObjectInfo, addHidden, stopIfClosed);
@@ -448,15 +370,36 @@ SvStl::MessageContainerVector SVTaskObjectClass::validateAndSetEmbeddedValues(co
 	{
 		try
 		{
-			if (nullptr != rEntry.m_pValueObject)
+			switch (rEntry.index())
 			{
-				rEntry.m_pValueObject->validateValue(rEntry.m_Value, rEntry.m_DefaultValue);
-			}
-			else
+			case 0:
 			{
-				SvStl::MessageContainer Msg(SVMSG_SVO_NULL_POINTER, SvStl::Tid_Default, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
-				throw Msg;
+				auto& rData = std::get<0>(rEntry);
+				if (nullptr != rData.m_pValueObject)
+				{
+					rData.m_pValueObject->validateValue(rData.m_Value, rData.m_DefaultValue);
+				}
+				else
+				{
+					SvStl::MessageContainer Msg(SVMSG_SVO_NULL_POINTER, SvStl::Tid_Default, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+					throw Msg;
+				}
+				break;
 			}
+			case 1:
+				auto & rData = std::get<1>(rEntry);
+				if (nullptr != rData.m_pValueObject)
+				{
+					rData.m_pValueObject->validateValue(rData.m_linkedData);
+				}
+				else
+				{
+					SvStl::MessageContainer Msg(SVMSG_SVO_NULL_POINTER, SvStl::Tid_Default, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+					throw Msg;
+				}
+				break;
+			}
+			
 		}
 		catch (const SvStl::MessageContainer& rSvE)
 		{
@@ -465,53 +408,18 @@ SvStl::MessageContainerVector SVTaskObjectClass::validateAndSetEmbeddedValues(co
 		}
 	}
 
-	if (shouldSet)
+	if (shouldSet && S_OK == Result)
 	{
 		for (auto const& rEntry : rValueVector)
 		{
-			if (nullptr != rEntry.m_pValueObject)
+			switch (rEntry.index())
 			{
-				try
-				{
-					Result = rEntry.m_pValueObject->setDefaultValue(rEntry.m_DefaultValue);
-					if (S_OK == Result)
-					{
-						Result = rEntry.m_pValueObject->setValue(rEntry.m_Value, rEntry.m_ArrayIndex);
-
-					}
-					else
-					{
-						assert(false);
-					}
-				}
-				catch (...)
-				{
-					Result = E_FAIL;
-				}
-			}
-			else
-			{
-				Result = E_POINTER;
-			}
-			if (S_OK != Result)
-			{
-				SvStl::MessageManager Msg(SvStl::MsgType::Log);
-				SvDef::StringVector msgList;
-				SvOi::IObjectClass* pObject = dynamic_cast<SvOi::IObjectClass*> (rEntry.m_pValueObject);
-				if (nullptr != pObject)
-				{
-					msgList.push_back(pObject->GetName());
-				}
-				//! Check if general error or specific error for detailed information
-				if (E_FAIL == Result || S_FALSE == Result)
-				{
-					Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SetEmbeddedValueFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
-				}
-				else
-				{
-					Msg.setMessage(Result, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
-				}
-				messages.push_back(Msg.getMessageContainer());
+			case 0:
+				Result = setEmbeddedValue(std::get<0>(rEntry), std::back_inserter(messages));
+				break;
+			case 1:
+				Result = setEmbeddedValue(std::get<1>(rEntry), std::back_inserter(messages));
+				break;
 			}
 		}
 	}
@@ -653,23 +561,6 @@ void SVTaskObjectClass::moveFriendObject(uint32_t objectToMoveId, uint32_t preOb
 	}
 }
 #pragma endregion virtual method (ITaskObject)
-
-SVObjectClass* SVTaskObjectClass::OverwriteEmbeddedObject(uint32_t uniqueID, SvPb::EmbeddedIdEnum embeddedID)
-{
-	// Check here all embedded members ( embedded objects could be only identified by embeddedID!!!! )... 
-	for (SVObjectPtrVector::iterator Iter = m_embeddedList.begin(); m_embeddedList.end() != Iter; ++Iter)
-	{
-		SVObjectClass* pObject = *Iter;
-		if (nullptr != pObject)
-		{
-			if (pObject->GetEmbeddedID() == embeddedID)
-			{
-				return pObject->OverwriteEmbeddedObject(uniqueID, embeddedID);
-			}
-		}
-	}
-	return __super::OverwriteEmbeddedObject(uniqueID, embeddedID);
-}
 
 void SVTaskObjectClass::DestroyFriend(SVObjectClass* pObject)
 {
@@ -1018,18 +909,7 @@ bool SVTaskObjectClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStr
 		}
 	}
 
-	// Create the embeddeds...
-	// Save the owner and set the owner of our embeddeds to us!
-	for (SVObjectPtrVector::iterator Iter = m_embeddedList.begin(); m_embeddedList.end() != Iter; ++Iter)
-	{
-		SVObjectClass* pObject = *Iter;
-		if (nullptr != pObject)
-		{
-			Result = CreateChildObject(pObject) && Result;
-
-			assert(Result);
-		}
-	}
+	Result = createEmbeddedChildren() && Result;
 
 	for (auto* pInput : m_inputs)
 	{
@@ -1050,77 +930,17 @@ bool SVTaskObjectClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStr
 	return Result;
 }
 
-bool SVTaskObjectClass::RegisterEmbeddedObject(SVImageClass* pEmbeddedObject, SvPb::EmbeddedIdEnum embeddedID, int StringResourceID)
+bool SVTaskObjectClass::RegisterEmbeddedImage(SVImageClass* pEmbeddedObject, SvPb::EmbeddedIdEnum embeddedID, int StringResourceID)
 {
 	std::string Name = SvUl::LoadStdString(StringResourceID);
-	return RegisterEmbeddedObject(pEmbeddedObject, embeddedID, Name.c_str());
+	return RegisterEmbeddedImage(pEmbeddedObject, embeddedID, Name.c_str());
 }
 
-bool SVTaskObjectClass::RegisterEmbeddedObject(SVImageClass* pEmbeddedObject, SvPb::EmbeddedIdEnum embeddedID, LPCTSTR newString)
+bool SVTaskObjectClass::RegisterEmbeddedImage(SVImageClass* pEmbeddedObject, SvPb::EmbeddedIdEnum embeddedID, LPCTSTR newString)
 {
 	bool l_bOk = nullptr != pEmbeddedObject && RegisterEmbeddedObjectAsClass(pEmbeddedObject, embeddedID, newString);
 
 	return l_bOk;
-}
-
-// bool p_bResetAlways - input 
-//    true - means that the object will initiate a reset whenever the value is 
-//        set. Even if set to the same value.
-//    false - means that the object will only initiate a reset if its value 
-//        changes.
-//
-// The only place that this is ever set to true is for the color HSI 
-// conversion value (Color Tool) and it is probably not necessary there.
-//
-bool SVTaskObjectClass::RegisterEmbeddedObject(SVObjectClass* pEmbeddedObject, SvPb::EmbeddedIdEnum embeddedID, int StringResourceID, bool ResetAlways, SvOi::SVResetItemEnum RequiredReset)
-{
-	std::string Name = SvUl::LoadStdString(StringResourceID);
-	return RegisterEmbeddedObject(pEmbeddedObject, embeddedID, Name.c_str(), ResetAlways, RequiredReset);
-}
-
-bool SVTaskObjectClass::RegisterEmbeddedObject(SVObjectClass* pEmbeddedObject, SvPb::EmbeddedIdEnum embeddedID, LPCTSTR Name, bool ResetAlways, SvOi::SVResetItemEnum RequiredReset)
-{
-	bool Result(false);
-
-	SvOi::IValueObject* pValueObject = dynamic_cast<SvOi::IValueObject*> (pEmbeddedObject);
-	if (nullptr != pValueObject)
-	{
-		pValueObject->setResetOptions(ResetAlways, RequiredReset);
-
-		Result = RegisterEmbeddedObjectAsClass(pEmbeddedObject, embeddedID, Name);
-	}
-
-	return Result;
-}
-
-bool SVTaskObjectClass::RegisterEmbeddedObjectAsClass(SVObjectClass* pEmbeddedObject, SvPb::EmbeddedIdEnum embeddedID, LPCTSTR ObjectName)
-{
-	assert(nullptr != pEmbeddedObject);
-	if (nullptr != pEmbeddedObject)
-	{
-		for (SVObjectPtrVector::iterator Iter = m_embeddedList.begin(); m_embeddedList.end() != Iter; ++Iter)
-		{
-			SVObjectClass* pObject = *Iter;
-			if (nullptr != pObject)
-			{
-				if (embeddedID == pObject->GetEmbeddedID())
-				{
-					SvStl::MessageManager Msg(SvStl::MsgType::Log);
-					Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_DuplicateEmbeddedId, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10204);
-					assert(false);
-					return false;
-				}
-			}
-		}
-		// Set object embedded to Setup the Embedded ID
-		pEmbeddedObject->SetObjectEmbedded(embeddedID, this, ObjectName);
-
-		// Add to embedded object to List of Embedded Objects
-		AddEmbeddedObject(pEmbeddedObject);
-
-		return true;
-	}
-	return false;
 }
 
 SVObjectClass* SVTaskObjectClass::overwriteInputObject(uint32_t uniqueId, SvPb::EmbeddedIdEnum embeddedId)
@@ -1255,7 +1075,6 @@ void SVTaskObjectClass::Persist(SvOi::IObjectWriter& rWriter) const
 	__super::Persist(rWriter);
 
 	PersistFriends(rWriter);
-	PersistEmbeddeds(rWriter);
 	PersistInputs(rWriter);
 }
 
@@ -1299,24 +1118,6 @@ void SVTaskObjectClass::PersistInputs(SvOi::IObjectWriter& rWriter) const
 	}
 }
 
-void SVTaskObjectClass::PersistEmbeddeds(SvOi::IObjectWriter& rWriter) const
-{
-	// Set up embedded object definitions...
-	if (0 < m_embeddedList.size())
-	{
-		rWriter.StartElement(scEmbeddedsTag);
-		// Get embedded object script...
-		for (const auto* pObject : m_embeddedList)
-		{
-			if (nullptr != pObject)
-			{
-				pObject->Persist(rWriter);
-			}
-		}
-		rWriter.EndElement();
-	}
-}
-
 bool SVTaskObjectClass::Run(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	clearRunErrorMessages();
@@ -1337,6 +1138,14 @@ bool SVTaskObjectClass::Run(RunStatus& rRunStatus, SvStl::MessageContainerVector
 bool SVTaskObjectClass::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool bRetVal = (S_OK == updateImageExtent());
+
+	for (auto* pObject : m_embeddedList)
+	{
+		if (pObject)
+		{
+			bRetVal = pObject->runEmbedded(rRunStatus, pErrorMessages) && bRetVal;
+		}
+	}
 
 	// Run first friends...
 	bRetVal &= runFriends(rRunStatus, pErrorMessages);
@@ -1414,43 +1223,6 @@ void SVTaskObjectClass::getInputs(std::back_insert_iterator<std::vector<SvOl::In
 	std::copy(m_inputs.begin(), m_inputs.end(), inserter);
 }
 
-// Add embedded object pointer to the embedded List.
-// Use this only for real embedded objects.
-void SVTaskObjectClass::AddEmbeddedObject(SVObjectClass* pObject)
-{
-	assert(nullptr != pObject);
-
-	// Add to Owner's List of Embedded Objects
-	m_embeddedList.push_back(pObject);
-}
-
-/////////////////////////////////////////////////////////////////////////////
-//
-//
-void SVTaskObjectClass::RemoveEmbeddedObject(SVObjectClass* pObjectToRemove)
-{
-	if (nullptr != pObjectToRemove)
-	{
-		pObjectToRemove->SetObjectAttributesAllowed(SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::RemoveAttribute);
-		// Reset any selection
-		pObjectToRemove->SetObjectAttributesSet(0, SvOi::SetAttributeType::OverwriteAttribute);
-
-		// Get this object's outputInfo
-		pObjectToRemove->disconnectAllInputs();
-	}
-
-	// iterate and remove object if in embedded list.
-	for (SVObjectPtrVector::iterator Iter = m_embeddedList.begin(); m_embeddedList.end() != Iter; ++Iter)
-	{
-		SVObjectClass* pObject = *Iter;
-		if (nullptr != pObject && pObject == pObjectToRemove)
-		{
-			m_embeddedList.erase(Iter);
-			break;
-		}
-	}
-}
-
 // Added to process friends
 bool SVTaskObjectClass::CloseObject()
 {
@@ -1470,16 +1242,6 @@ bool SVTaskObjectClass::CloseObject()
 		}
 	}
 
-	// Close Embeddeds...
-	for (SVObjectPtrVector::iterator Iter = m_embeddedList.begin(); m_embeddedList.end() != Iter; ++Iter)
-	{
-		SVObjectClass* pObject = *Iter;
-		if (nullptr != pObject && pObject->IsCreated())
-		{
-			pObject->CloseObject();
-		}
-	}
-
 	for (auto* pInput : m_inputs)
 	{
 		if (nullptr != pInput && pInput->IsCreated())
@@ -1487,6 +1249,8 @@ bool SVTaskObjectClass::CloseObject()
 			pInput->CloseObject();
 		}
 	}
+	m_inputs.clear();
+
 	return Result;
 }
 
@@ -1736,16 +1500,6 @@ HRESULT SVTaskObjectClass::onCollectOverlays(SVImageClass* p_Image, SVExtentMult
 	return l_Status;
 }
 
-void SVTaskObjectClass::registerEmbeddedLinkedValue(SvVol::LinkedValue* pEmbeddedObject, SvPb::EmbeddedIdEnum embeddedID, SvPb::EmbeddedIdEnum embeddedLinkID, int StringResourceID, _variant_t defaultValue)
-{
-	RegisterEmbeddedObject(pEmbeddedObject, embeddedID, StringResourceID, true, SvOi::SVResetItemTool);
-	pEmbeddedObject->SetDefaultValue(defaultValue, true);
-	std::string objectName = SvUl::LoadStdString(StringResourceID);
-	objectName += SvDef::cLinkName;
-	RegisterEmbeddedObject(&(pEmbeddedObject->getLinkedName()), embeddedLinkID, objectName.c_str(), false, SvOi::SVResetItemNone);
-	pEmbeddedObject->getLinkedName().SetDefaultValue(_T(""), false);
-}
-
 SVObjectClass* SVTaskObjectClass::GetEmbeddedValueObject(SvPb::EmbeddedIdEnum embeddedID)
 {
 	SVObjectClass* pResult = nullptr;
@@ -1776,6 +1530,105 @@ void SVTaskObjectClass::setStatus(DWORD color, DWORD state)
 	m_statusColor.SetValue(color);
 	m_statusTag.SetValue(state);
 }
+
+HRESULT SVTaskObjectClass::setEmbeddedValue(const SvOi::SetValueStruct& rEntry, std::back_insert_iterator<SvStl::MessageContainerVector> inserter)
+{
+	HRESULT Result = S_OK;
+	if (nullptr != rEntry.m_pValueObject)
+	{
+		try
+		{
+			Result = rEntry.m_pValueObject->setDefaultValue(rEntry.m_DefaultValue);
+			if (S_OK == Result)
+			{
+				Result = rEntry.m_pValueObject->setValue(rEntry.m_Value, rEntry.m_ArrayIndex);
+			}
+			else
+			{
+				assert(false);
+			}
+		}
+		catch (...)
+		{
+			Result = E_FAIL;
+		}
+	}
+	else
+	{
+		Result = E_POINTER;
+	}
+	if (S_OK != Result)
+	{
+		SvStl::MessageManager Msg(SvStl::MsgType::Log);
+		SvDef::StringVector msgList;
+		SvOi::IObjectClass* pObject = dynamic_cast<SvOi::IObjectClass*> (rEntry.m_pValueObject);
+		if (nullptr != pObject)
+		{
+			msgList.push_back(pObject->GetName());
+		}
+		//! Check if general error or specific error for detailed information
+		if (E_FAIL == Result || S_FALSE == Result)
+		{
+			Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SetEmbeddedValueFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+		}
+		else
+		{
+			Msg.setMessage(Result, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+		}
+		// cppcheck-suppress unreadVariable symbolName=inserter ; cppCheck doesn't know back_insert_iterator
+		inserter = Msg.getMessageContainer();
+	}			
+	return Result;
+}
+
+HRESULT SVTaskObjectClass::setEmbeddedValue(const SvOi::SetLinkedStruct& rEntry, std::back_insert_iterator<SvStl::MessageContainerVector> inserter)
+{
+	HRESULT Result = S_OK;
+	if (nullptr != rEntry.m_pValueObject)
+	{
+		try
+		{
+			Result = rEntry.m_pValueObject->setValue(rEntry.m_linkedData);
+		}
+		catch (const SvStl::MessageContainer& rSvE)
+		{
+			// cppcheck-suppress unreadVariable symbolName=inserter ; cppCheck doesn't know back_insert_iterator
+			inserter = rSvE;
+			return E_FAIL;
+		}
+		catch (...)
+		{
+			Result = E_FAIL;
+		}
+	}
+	else
+	{
+		Result = E_POINTER;
+	}
+	if (S_OK != Result)
+	{
+		SvStl::MessageManager Msg(SvStl::MsgType::Log);
+		SvDef::StringVector msgList;
+		SvOi::IObjectClass* pObject = dynamic_cast<SvOi::IObjectClass*> (rEntry.m_pValueObject);
+		if (nullptr != pObject)
+		{
+			msgList.push_back(pObject->GetName());
+		}
+		//! Check if general error or specific error for detailed information
+		if (E_FAIL == Result || S_FALSE == Result)
+		{
+			Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SetEmbeddedValueFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+		}
+		else
+		{
+			Msg.setMessage(Result, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+		}
+		// cppcheck-suppress unreadVariable symbolName=inserter ; cppCheck doesn't know back_insert_iterator
+		inserter = Msg.getMessageContainer();
+	}
+	return Result;
+}
+
 void SVTaskObjectClass::addOrRemoveResetErrorMessage(SvStl::MessageContainer& rErrorMessage, bool add)
 {
 	if (add )
@@ -1803,6 +1656,5 @@ void SVTaskObjectClass::addOrRemoveResetErrorMessage(SvStl::MessageContainer& rE
 	}
 
 }
-
-
 } //namespace SvIe
+

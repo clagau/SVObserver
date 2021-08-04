@@ -27,14 +27,6 @@ namespace SvOp
 static char THIS_FILE[] = __FILE__;
 #endif
 
-struct SVRangeClassCancelData : public SVCancelData	// this does not need to be visible to anyone but this file.
-{
-	SvVol::LinkedValue FailLow;
-	SvVol::LinkedValue FailHigh;
-	SvVol::LinkedValue WarnLow;
-	SvVol::LinkedValue WarnHigh;
-};
-
 const TCHAR* const ToolSetName = _T("Tool Set");
 #pragma endregion Declarations
 
@@ -64,10 +56,6 @@ void SVRange::init()
 	RegisterEmbeddedObject(&m_LinkedValues[RangeEnum::ER_WarnHigh], SvPb::RangeClassWarnHighEId, IDS_OBJECTNAME_WARN_HIGH, false, SvOi::SVResetItemNone);
 	RegisterEmbeddedObject(&m_LinkedValues[RangeEnum::ER_FailLow], SvPb::RangeClassFailLowEId, IDS_OBJECTNAME_FAIL_LOW, false, SvOi::SVResetItemNone);
 	RegisterEmbeddedObject(&m_LinkedValues[RangeEnum::ER_WarnLow], SvPb::RangeClassWarnLowEId, IDS_OBJECTNAME_WARN_LOW, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_LinkedValues[RangeEnum::ER_FailHigh].getLinkedName(), SvPb::RangeClassFailHighIndirectEId, IDS_OBJECTNAME_FAIL_HIGH_INDIRECT, false, SvOi::SVResetItemOwner);
-	RegisterEmbeddedObject(&m_LinkedValues[RangeEnum::ER_WarnHigh].getLinkedName(), SvPb::RangeClassWarnHighIndirectEId, IDS_OBJECTNAME_WARN_HIGH_INDIRECT, false, SvOi::SVResetItemOwner);
-	RegisterEmbeddedObject(&m_LinkedValues[RangeEnum::ER_FailLow].getLinkedName(), SvPb::RangeClassFailLowIndirectEId, IDS_OBJECTNAME_FAIL_LOW_INDIRECT, false, SvOi::SVResetItemOwner);
-	RegisterEmbeddedObject(&m_LinkedValues[RangeEnum::ER_WarnLow].getLinkedName(), SvPb::RangeClassWarnLowIndirectEId, IDS_OBJECTNAME_WARN_LOW_INDIRECT, false, SvOi::SVResetItemOwner);
 
 	// Set Embedded defaults
 	_variant_t vtTemp;
@@ -79,11 +67,6 @@ void SVRange::init()
 	vtTemp.dblVal = highDef;
 	m_LinkedValues[RangeEnum::ER_FailHigh].SetDefaultValue(vtTemp, true);
 	m_LinkedValues[RangeEnum::ER_WarnHigh].SetDefaultValue(vtTemp, true);
-
-	for (int i = 0; i < RangeEnum::ER_COUNT; i++)
-	{
-		m_LinkedValues[i].getLinkedName().SetDefaultValue(_T(""), true);
-	}
 
 	// Setup up the input
 	registerInputObject(&m_rangeValueInput, _T("RangeValue"), SvPb::RangeValueInputEId);
@@ -99,7 +82,6 @@ bool SVRange::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 	for (int i = 0; i < RangeEnum::ER_COUNT; i++)
 	{
 		m_LinkedValues[i].SetObjectAttributesAllowed(cAttributes, SvOi::SetAttributeType::AddAttribute);
-		m_LinkedValues[i].getLinkedName().SetObjectAttributesAllowed(SvPb::audittrail | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
 	}
 
 	return m_isCreated;
@@ -147,6 +129,7 @@ void SVRange::addEntriesToMonitorList(std::back_insert_iterator<SvOi::Parameters
 
 bool SVRange::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector*)
 {
+	__super::onRun(rRunStatus);
 	double InputValue, rangeValues[RangeEnum::ER_COUNT];
 	getInputValue(InputValue);
 
@@ -175,94 +158,6 @@ bool SVRange::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector*)
 	}
 
 	return true;
-}
-
-// ISVCancel interface
-HRESULT SVRange::GetCancelData(SVCancelData*& rpCancelData)
-{
-	assert(nullptr == rpCancelData);
-	SVRangeClassCancelData* pData = new SVRangeClassCancelData;
-	rpCancelData = pData;
-
-	pData->FailHigh = m_LinkedValues[RangeEnum::ER_FailHigh];
-	pData->FailLow = m_LinkedValues[RangeEnum::ER_FailLow];
-	pData->WarnHigh = m_LinkedValues[RangeEnum::ER_WarnHigh];
-	pData->WarnLow = m_LinkedValues[RangeEnum::ER_WarnLow];
-
-	return S_OK;
-}
-
-HRESULT SVRange::SetCancelData(SVCancelData* pCancelData)
-{
-	SVRangeClassCancelData* pData = dynamic_cast<SVRangeClassCancelData*> (pCancelData);
-	if (pData)
-	{
-		m_LinkedValues[RangeEnum::ER_FailHigh] = pData->FailHigh;
-		m_LinkedValues[RangeEnum::ER_FailLow] = pData->FailLow;
-		m_LinkedValues[RangeEnum::ER_WarnHigh] = pData->WarnHigh;
-		m_LinkedValues[RangeEnum::ER_WarnLow] = pData->WarnLow;
-
-		return S_OK;
-	}
-	else
-	{
-		return S_FALSE;
-	}
-}
-
-HRESULT SVRange::SetValuesForAnObject(uint32_t aimObjectID, SVObjectAttributeClass* pDataObject)
-{
-	//This method in this class is only for backward compatibility (configuration older then 8.10), to set the indirect values correct to the linkedValues
-	SvCl::SVObjectStdStringArrayClass valueStringArray;
-	if (SV_STRING_Type == pDataObject->GetType() && pDataObject->GetData(valueStringArray) && 1 == valueStringArray.size() && !valueStringArray[0].empty())
-	{
-		for (SVObjectPtrVector::iterator Iter = m_embeddedList.begin(); m_embeddedList.end() != Iter; ++Iter)
-		{
-			SVObjectClass* pObject = *Iter;
-			if (nullptr != pObject)
-			{
-				// check if it's this object
-				if (aimObjectID == pObject->getObjectId())
-				{
-					if (SvPb::RangeClassFailHighIndirectEId == pObject->GetEmbeddedID())
-					{
-						if (VT_BSTR != m_LinkedValues[RangeEnum::ER_FailHigh].GetType())
-						{
-							m_LinkedValues[RangeEnum::ER_FailHigh].SetObjectValue(pDataObject);
-							return S_OK;
-						}
-					}
-					if (SvPb::RangeClassWarnHighIndirectEId == pObject->GetEmbeddedID())
-					{
-						if (VT_BSTR != m_LinkedValues[RangeEnum::ER_WarnHigh].GetType())
-						{
-							m_LinkedValues[RangeEnum::ER_WarnHigh].SetObjectValue(pDataObject);
-							return S_OK;
-						}
-					}
-					if (SvPb::RangeClassFailLowIndirectEId == pObject->GetEmbeddedID())
-					{
-						if (VT_BSTR != m_LinkedValues[RangeEnum::ER_FailLow].GetType())
-						{
-							m_LinkedValues[RangeEnum::ER_FailLow].SetObjectValue(pDataObject);
-							return S_OK;
-						}
-					}
-					if (SvPb::RangeClassWarnLowIndirectEId == pObject->GetEmbeddedID())
-					{
-						if (VT_BSTR != m_LinkedValues[RangeEnum::ER_WarnLow].GetType())
-						{
-							m_LinkedValues[RangeEnum::ER_WarnLow].SetObjectValue(pDataObject);
-							return S_OK;
-						}
-					}
-					break;
-				}
-			}
-		}
-	}
-
-	return __super::SetValuesForAnObject(aimObjectID, pDataObject);
 }
 
 void SVRange::setHighValues(double failHigh, double warnHigh)
@@ -318,7 +213,7 @@ bool SVRange::checkLinkedValues(RangeEnum::ERange firstType, RangeEnum::ERange s
 		{RangeEnum::ERange::ER_WarnLow, SvStl::Tid_WarnLow}
 	};
 	bool Result = true;
-	if (!m_LinkedValues[firstType].isIndirectValue() && !m_LinkedValues[secondType].isIndirectValue())
+	if (SvPb::LinkedSelectedType::DirectValue == m_LinkedValues[firstType].getSelectedType() && SvPb::LinkedSelectedType::DirectValue == m_LinkedValues[secondType].getSelectedType())
 	{
 		//check if high greater than low
 		double excludeHigh = 0;

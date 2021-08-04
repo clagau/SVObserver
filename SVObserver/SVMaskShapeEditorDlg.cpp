@@ -18,7 +18,7 @@
 #include "SVRPropertyTree/SVRPropTreeItemCombo.h"
 #include "SVRPropertyTree/SVRPropTreeItemEdit.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
+#include "SVOGui/LinkedValueSelectorDialog.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -373,20 +373,42 @@ void SVMaskShapeEditorDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult
 
 		// do validation
 		int iPropertyID = pItem->GetCtrlID();
-		const auto& propertyEId = GetPropertyEmbeddedId(iPropertyID);
+		auto embeddedId = GetPropertyEmbeddedId(iPropertyID);
 
 		SVRPropertyItemCombo* pCombo = dynamic_cast <SVRPropertyItemCombo*> (pItem);
 		if ( pCombo )
 		{
 			long lNewValue;
 			pCombo->GetItemValue( lNewValue );
-			m_ShapeHelperValues.Set<long>(propertyEId.first, lNewValue);
+			m_ShapeHelperValues.Set<long>(embeddedId, lNewValue);
 		}
 		else
 		{
-			std::string sValue;
-			pItem->GetItemValue( sValue );
-			m_ShapeHelperValues.Set<CString>(propertyEId.first, sValue.c_str());
+			auto data = m_ShapeHelperValues.Get<SvOg::LinkedValueData>(embeddedId);
+			if (SvPb::LinkedSelectedType::DirectValue == data.m_type)
+			{
+				_variant_t newVal;
+				pItem->GetItemValue(newVal);
+
+				std::string Name;
+				pItem->GetItemValue(Name);
+
+				bool isValid = (S_OK == ::VariantChangeTypeEx(&data.m_directValue, &newVal, SvDef::LCID_USA, VARIANT_ALPHABOOL, data.m_defaultValue.vt));
+				if (false == isValid)
+				{
+					SvDef::StringVector msgList;
+					msgList.push_back(pItem->GetLabelText());
+					SvStl::MessageContainer msgContainer;
+					msgContainer.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_LinkedValue_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
+					SvStl::MessageManager Msg(SvStl::MsgType::Display);
+					Msg.setMessage(msgContainer.getMessage());
+					*plResult = -1;
+					return;
+				}
+
+				data.m_Value = data.m_directValue;
+				m_ShapeHelperValues.Set<SvOg::LinkedValueData>(embeddedId, data);
+			}
 		}
 
 		
@@ -414,17 +436,28 @@ void SVMaskShapeEditorDlg::OnItemButtonClick(NMHDR* pNotifyStruct, LRESULT* plRe
 	*plResult = TRUE;
 
 	LPNMPROPTREE pNMPropTree = (LPNMPROPTREE)pNotifyStruct;
-
-	if (pNMPropTree->pItem)
+	SVRPropertyItemEdit* pEditItem = dynamic_cast<SVRPropertyItemEdit*>(pNMPropTree->pItem);
+	if (pEditItem)
 	{
-		SVRPropertyItem* pItem = pNMPropTree->pItem;
+		int iPropertyID = pEditItem->GetCtrlID();
+		auto embeddedId = GetPropertyEmbeddedId(iPropertyID);
 
-		// display value object picker
-		std::string ObjectName;
-		if (SelectObject(ObjectName, pItem) == IDOK && !ObjectName.empty())
+		SvOg::ObjectSelectorData objSelectorData;
+		objSelectorData.m_attribute = SvPb::archivable;
+		objSelectorData.m_searchArea = {SvPb::SearchArea::globalConstantItems, SvPb::SearchArea::cameraObject, SvPb::SearchArea::ppqItems, SvPb::SearchArea::toolsetItems};
+		objSelectorData.m_stopAtId = m_TaskObjectID;
+
+		auto data = m_ShapeHelperValues.Get<SvOg::LinkedValueData>(embeddedId);
+
+		SvOg::LinkedValueSelectorDialog dlg(m_InspectionID, m_ShapeHelperValues.GetObjectID(embeddedId),
+			m_ShapeHelperValues.GetName(embeddedId),
+			data,
+			data.m_defaultValue.vt,
+			objSelectorData);
+		if (IDOK == dlg.DoModal())
 		{
-			pItem->SetItemValue(ObjectName.c_str());
-			pItem->OnRefresh();
+			m_ShapeHelperValues.Set(embeddedId, dlg.getData());
+			setValueColumn(embeddedId, *pEditItem);
 		}
 	}// end if ( pNMPropTree->pItem )
 }
@@ -562,12 +595,12 @@ UINT_PTR CALLBACK SVMaskShapeEditorDlg::ColorDlgHookFn( HWND hdlg, UINT uiMsg, W
 #pragma endregion Protected Methods
 
 #pragma region Private Methods
-unsigned int SVMaskShapeEditorDlg::GetPropertyID(const std::pair<SvPb::EmbeddedIdEnum, SvPb::EmbeddedIdEnum>& rPropertyPair)
+unsigned int SVMaskShapeEditorDlg::GetPropertyID(SvPb::EmbeddedIdEnum embeddedId)
 {
-	auto iter = std::find_if(m_propertyIds.begin(), m_propertyIds.end(), [rPropertyPair](const auto& rPair) { return rPropertyPair == rPair; });
+	auto iter = std::find_if(m_propertyIds.begin(), m_propertyIds.end(), [embeddedId](const auto& rPair) { return embeddedId == rPair; });
 	if (m_propertyIds.end() == iter)
 	{
-		m_propertyIds.push_back(rPropertyPair);
+		m_propertyIds.push_back(embeddedId);
 		//The new id is pos+1 in the list. 
 		return static_cast<unsigned int>(m_propertyIds.size());
 	}
@@ -575,18 +608,14 @@ unsigned int SVMaskShapeEditorDlg::GetPropertyID(const std::pair<SvPb::EmbeddedI
 	return static_cast<unsigned int>(std::distance(m_propertyIds.begin(), iter) + 1);
 }
 
-namespace
-{
-	constexpr std::pair<SvPb::EmbeddedIdEnum, SvPb::EmbeddedIdEnum> dummyEmptyPair{ SvPb::NoEmbeddedId, SvPb::NoEmbeddedId };
-}
-const std::pair<SvPb::EmbeddedIdEnum, SvPb::EmbeddedIdEnum>& SVMaskShapeEditorDlg::GetPropertyEmbeddedId(int iPropertyID)
+SvPb::EmbeddedIdEnum SVMaskShapeEditorDlg::GetPropertyEmbeddedId(int iPropertyID)
 {
 	if (0 < iPropertyID && iPropertyID <= m_propertyIds.size())
 	{
 		return m_propertyIds[iPropertyID-1];
 	}
 
-	return dummyEmptyPair;
+	return SvPb::NoEmbeddedId;
 }
 
 HRESULT SVMaskShapeEditorDlg::BuildPropertyList()
@@ -600,23 +629,20 @@ HRESULT SVMaskShapeEditorDlg::BuildPropertyList()
 	pRoot->HideItem();
 	pRoot->SetHeight(2); //@TODO:  Document the reason for the use of the magic number 2.
 
-	std::initializer_list<std::pair<SvPb::EmbeddedIdEnum, SvPb::EmbeddedIdEnum>> baseEmbeddedIdList = {
-	{SvPb::ShapeMaskPropertyCenterXEId, SvPb::ShapeMaskPropertyCenterXLinkEId},
-	{SvPb::ShapeMaskPropertyCenterYEId, SvPb::ShapeMaskPropertyCenterYLinkEId},
-	{SvPb::ShapeMaskPropertyWidthEId, SvPb::ShapeMaskPropertyWidthLinkEId},
-	{SvPb::ShapeMaskPropertyHeightEId, SvPb::ShapeMaskPropertyHeightLinkEId} };
+	//first = embedded, second = true means LinkedValue, false not LinkedValue
+	std::initializer_list<SvPb::EmbeddedIdEnum> baseEmbeddedIdList = {
+	SvPb::ShapeMaskPropertyCenterXEId,
+	SvPb::ShapeMaskPropertyCenterYEId,
+	SvPb::ShapeMaskPropertyWidthEId,
+	SvPb::ShapeMaskPropertyHeightEId };
 	for (const auto& embeddedIdPair : baseEmbeddedIdList)//propertiesListMap[m_eShapeType])
 	{
 		setPropertyToList(embeddedIdPair, pRoot);
 	}
-	std::map<SvOp::SVShapeMaskHelperClass::ShapeTypeEnum, std::initializer_list<std::pair<SvPb::EmbeddedIdEnum, SvPb::EmbeddedIdEnum>>> propertiesListMap =
+	std::map<SvOp::SVShapeMaskHelperClass::ShapeTypeEnum, std::initializer_list<SvPb::EmbeddedIdEnum>> propertiesListMap =
 	{
-		{SvOp::SVShapeMaskHelperClass::SVMaskShapeTypeDoughnut, {
-			{SvPb::ShapeMaskPropertySideThicknessEId, SvPb::ShapeMaskPropertySideThicknessLinkEId},
-			{SvPb::ShapeMaskPropertyTopBottomThicknessEId, SvPb::ShapeMaskPropertyTopBottomThicknessLinkEId} }},
-		{SvOp::SVShapeMaskHelperClass::SVMaskShapeTypeSymmetricTrapezoid, {
-			{SvPb::ShapeMaskPropertyOffsetEId, SvPb::ShapeMaskPropertyOffsetLinkEId},
-			{SvPb::ShapeMaskPropertySymmetryOrientationEId, SvPb::NoEmbeddedId} }}
+		{SvOp::SVShapeMaskHelperClass::SVMaskShapeTypeDoughnut, {SvPb::ShapeMaskPropertySideThicknessEId, SvPb::ShapeMaskPropertyTopBottomThicknessEId}},
+		{SvOp::SVShapeMaskHelperClass::SVMaskShapeTypeSymmetricTrapezoid, {SvPb::ShapeMaskPropertyOffsetEId, SvPb::ShapeMaskPropertySymmetryOrientationEId}}
 	};
 	for (const auto& embeddedIdPair : propertiesListMap[m_eShapeType])
 	{
@@ -636,48 +662,47 @@ HRESULT SVMaskShapeEditorDlg::BuildPropertyList()
 	return S_OK;
 }
 
-void SVMaskShapeEditorDlg::setPropertyToList(const std::pair<SvPb::EmbeddedIdEnum, SvPb::EmbeddedIdEnum>& embeddedIdPair, SVRPropertyItem* pRoot)
+void SVMaskShapeEditorDlg::setPropertyToList(SvPb::EmbeddedIdEnum embeddedId, SVRPropertyItem* pRoot)
 {
-	std::string Name{ m_ShapeHelperValues.GetName(embeddedIdPair.first) };
+	std::string Name{ m_ShapeHelperValues.GetName(embeddedId) };
 	if (false == Name.empty())
 	{
 		SVRPropertyItem* pItem = nullptr;
-		auto enumList = m_ShapeHelperValues.GetEnumTypes(embeddedIdPair.first);
-		if (0 < enumList.size())
+		if (m_ShapeHelperValues.isLinkedValue(embeddedId))
 		{
-			SVRPropertyItemCombo* pCombo = dynamic_cast <SVRPropertyItemCombo*> (m_Tree.InsertItem(new SVRPropertyItemCombo, pRoot));
-			pItem = pCombo;
-
-			pCombo->EnableButton(false);
-			pCombo->CreateComboBox(WS_CHILD | WS_VSCROLL | CBS_DROPDOWNLIST);
-
-			for (auto const& rEntry : enumList)
-			{
-				int iPos = pCombo->AddString(rEntry.first.c_str());
-				pCombo->SetItemData(iPos, static_cast<DWORD_PTR> (rEntry.second));
-			}
-			long value = m_ShapeHelperValues.Get<long>(embeddedIdPair.first);
-			pCombo->SetItemValue(value);
+			SVRPropertyItemEdit* pEdit = dynamic_cast <SVRPropertyItemEdit*> (m_Tree.InsertItem(new SVRPropertyItemEdit(), pRoot));
+			pItem = pEdit;
+			assert(pEdit);
+			setValueColumn(embeddedId, *pEdit);
 		}
 		else
 		{
-			std::string valueString;
-			if (SvDef::InvalidObjectId != embeddedIdPair.second)
+			auto enumList = m_ShapeHelperValues.GetEnumTypes(embeddedId);
+			if (0 < enumList.size())
 			{
-				valueString = m_ShapeHelperValues.Get<CString>(embeddedIdPair.second);
+				SVRPropertyItemCombo* pCombo = dynamic_cast <SVRPropertyItemCombo*> (m_Tree.InsertItem(new SVRPropertyItemCombo, pRoot));
+				pItem = pCombo;
+
+				pCombo->EnableButton(false);
+				pCombo->CreateComboBox(WS_CHILD | WS_VSCROLL | CBS_DROPDOWNLIST);
+
+				for (auto const& rEntry : enumList)
+				{
+					int iPos = pCombo->AddString(rEntry.first.c_str());
+					pCombo->SetItemData(iPos, static_cast<DWORD_PTR> (rEntry.second));
+				}
+				long value = m_ShapeHelperValues.Get<long>(embeddedId);
+				pCombo->SetItemValue(value);
 			}
-			if (valueString.empty())
+			else
 			{
-				valueString = m_ShapeHelperValues.Get<CString>(embeddedIdPair.first);
+				assert(false);
 			}
-			SVRPropertyItemEdit* pEdit = dynamic_cast <SVRPropertyItemEdit*> (m_Tree.InsertItem(new SVRPropertyItemEdit(), pRoot));
-			pItem = pEdit;
-			pEdit->SetItemValue(valueString.c_str());
 		}
 
 		assert(pItem);
 
-		pItem->SetCtrlID(GetPropertyID(embeddedIdPair));
+		pItem->SetCtrlID(GetPropertyID(embeddedId));
 		pItem->SetBold(false);
 		pItem->SetHeight(16); //@TODO:  Document the reason for the use of the magic number 16.
 		pItem->SetLabelText(Name.c_str());
@@ -694,27 +719,22 @@ HRESULT SVMaskShapeEditorDlg::RefreshProperties()
 
 	while ( pChild )
 	{
-		const auto& propertyEId = GetPropertyEmbeddedId(pChild->GetCtrlID());
+		auto embeddedId = GetPropertyEmbeddedId(pChild->GetCtrlID());
 		if ( SVRPropertyItemCombo* pCombo = dynamic_cast <SVRPropertyItemCombo*> (pChild) )
 		{
-			pCombo->SetItemValue( m_ShapeHelperValues.Get<long>(propertyEId.first));
+			pCombo->SetItemValue( m_ShapeHelperValues.Get<long>(embeddedId));
+		}
+		else if(SVRPropertyItemEdit* pEdit = dynamic_cast <SVRPropertyItemEdit*> (pChild))
+		{
+			setValueColumn(embeddedId, *pEdit);
 		}
 		else
 		{
-			std::string valueString;
-			if (SvDef::InvalidObjectId != propertyEId.second)
-			{
-				valueString = m_ShapeHelperValues.Get<CString>(propertyEId.second);
-			}
-			if (valueString.empty())
-			{
-				valueString = m_ShapeHelperValues.Get<CString>(propertyEId.first);
-			}
-			pChild->SetItemValue(valueString.c_str());
+			assert(false);
 		}
 
 		const std::initializer_list<SvPb::EmbeddedIdEnum> availableWithAutoResize { SvPb::ShapeMaskPropertyOffsetEId, SvPb::ShapeMaskPropertySymmetryOrientationEId, SvPb::ShapeMaskPropertySideThicknessEId, SvPb::ShapeMaskPropertyTopBottomThicknessEId };
-		if (m_bAutoResize && std::none_of(availableWithAutoResize.begin(), availableWithAutoResize.end(), [propertyEId](auto value) { return propertyEId.first == value; }))
+		if (m_bAutoResize && std::none_of(availableWithAutoResize.begin(), availableWithAutoResize.end(), [embeddedId](auto value) { return embeddedId == value; }))
 		{
 			pChild->SetItemValue( CString(_T("---")) );
 			// grey out property
@@ -896,12 +916,12 @@ void SVMaskShapeEditorDlg::resetShapeOverlay()
 		default:
 			break; // Do nothing.
 		}
-		ParMap[ CDSVPictureDisplay::P_Offset ] = m_ShapeHelperValues.Get<long>(SvPb::ShapeMaskPropertyOffsetEId);
+		ParMap[ CDSVPictureDisplay::P_Offset ] = m_ShapeHelperValues.Get<SvOg::LinkedValueData>(SvPb::ShapeMaskPropertyOffsetEId).m_Value;
 		break;
 	case SvOp::SVShapeMaskHelperClass::SVMaskShapeTypeDoughnut:
 		ParMap[ CDSVPictureDisplay::P_Type ] = CDSVPictureDisplay::DoughnutROI;
-		ParMap[ CDSVPictureDisplay::P_SideThickness ] = m_ShapeHelperValues.Get<long>(SvPb::ShapeMaskPropertySideThicknessEId);
-		ParMap[ CDSVPictureDisplay::P_TopThickness ] = m_ShapeHelperValues.Get<long>(SvPb::ShapeMaskPropertyTopBottomThicknessEId);
+		ParMap[ CDSVPictureDisplay::P_SideThickness ] = m_ShapeHelperValues.Get<SvOg::LinkedValueData>(SvPb::ShapeMaskPropertySideThicknessEId).m_Value;
+		ParMap[ CDSVPictureDisplay::P_TopThickness ] = m_ShapeHelperValues.Get<SvOg::LinkedValueData>(SvPb::ShapeMaskPropertyTopBottomThicknessEId).m_Value;
 		break;
 	default:
 		break; // Do nothing.
@@ -926,10 +946,10 @@ RECT SVMaskShapeEditorDlg::getRect() const
 	}
 	else
 	{
-		long lCenterX = m_ShapeHelperValues.Get<long>(SvPb::ShapeMaskPropertyCenterXEId);
-		long lCenterY = m_ShapeHelperValues.Get<long>(SvPb::ShapeMaskPropertyCenterYEId);
-		long lWidth = m_ShapeHelperValues.Get<long>(SvPb::ShapeMaskPropertyWidthEId);
-		long lHeight = m_ShapeHelperValues.Get<long>(SvPb::ShapeMaskPropertyHeightEId);
+		long lCenterX = m_ShapeHelperValues.Get<SvOg::LinkedValueData>(SvPb::ShapeMaskPropertyCenterXEId).m_Value;
+		long lCenterY = m_ShapeHelperValues.Get<SvOg::LinkedValueData>(SvPb::ShapeMaskPropertyCenterYEId).m_Value;
+		long lWidth = m_ShapeHelperValues.Get<SvOg::LinkedValueData>(SvPb::ShapeMaskPropertyWidthEId).m_Value;
+		long lHeight = m_ShapeHelperValues.Get<SvOg::LinkedValueData>(SvPb::ShapeMaskPropertyHeightEId).m_Value;
 		long lHalfWidth = lWidth / 2;
 		long lHalfHeight = lHeight / 2;
 
@@ -943,46 +963,6 @@ RECT SVMaskShapeEditorDlg::getRect() const
 	}
 }
 
-int SVMaskShapeEditorDlg::SelectObject(std::string& rObjectName, SVRPropertyItem* pItem)
-{
-	SvPb::InspectionCmdRequest requestCmd;
-	SvPb::InspectionCmdResponse responseCmd;
-	*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
-		{ SvPb::SearchArea::globalConstantItems, SvPb::SearchArea::cameraObject, SvPb::SearchArea::ppqItems, SvPb::SearchArea::toolsetItems },
-		m_InspectionID, SvPb::archivable, SvDef::InvalidObjectId, true, SvPb::allNumberValueObjects, SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed, m_TaskObjectID);
-	SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
-
-	SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject);
-	if (responseCmd.has_getobjectselectoritemsresponse())
-	{
-		SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(responseCmd.getobjectselectoritemsresponse().tree());
-	}
-
-	std::string value;
-	pItem->GetItemValue(value);
-
-	if (!value.empty())
-	{
-		SvDef::StringSet checkedItems;
-		checkedItems.insert(value);
-		SvOsl::ObjectTreeGenerator::Instance().setCheckItems(checkedItems);
-	}
-
-	std::string Filter = SvUl::LoadStdString(IDS_FILTER);
-	std::string ToolsetOutput = SvUl::LoadStdString(IDS_SELECT_TOOLSET_OUTPUT);
-	std::string Title = _T("Select ValueObject");
-
-	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog(Title.c_str(), ToolsetOutput.c_str(), Filter.c_str(), this);
-
-	if (IDOK == Result)
-	{
-		SVObjectReference objectRef{ SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult() };
-		rObjectName = objectRef.GetObjectNameBeforeObjectType(SvPb::SVInspectionObjectType, true);
-	}
-
-	return static_cast<int>(Result);
-}
-
 CDSVPictureDisplay::AllowType SVMaskShapeEditorDlg::getDrawChangeType() const
 {
 	if (m_bAutoResize)
@@ -991,20 +971,17 @@ CDSVPictureDisplay::AllowType SVMaskShapeEditorDlg::getDrawChangeType() const
 	}
 
 	//If string empty it is a direct value and it is allowed to change it
-	bool bMove = m_ShapeHelperValues.Get<CString>(SvPb::ShapeMaskPropertyCenterXLinkEId).IsEmpty() &&
-		m_ShapeHelperValues.Get<CString>(SvPb::ShapeMaskPropertyCenterYLinkEId).IsEmpty();
+	bool bMove = isChangable(SvPb::ShapeMaskPropertyCenterXEId) && isChangable(SvPb::ShapeMaskPropertyCenterYEId);
 
-	bool bAll = bMove && m_ShapeHelperValues.Get<CString>(SvPb::ShapeMaskPropertyWidthLinkEId).IsEmpty() &&
-		m_ShapeHelperValues.Get<CString>(SvPb::ShapeMaskPropertyHeightLinkEId).IsEmpty();
+	bool bAll = bMove && isChangable(SvPb::ShapeMaskPropertyWidthEId) && isChangable(SvPb::ShapeMaskPropertyHeightEId);
 
 	switch (m_eShapeType)
 	{
 	case SvOp::SVShapeMaskHelperClass::SVMaskShapeTypeDoughnut:
-		bAll &= m_ShapeHelperValues.Get<CString>(SvPb::ShapeMaskPropertySideThicknessLinkEId).IsEmpty() &&
-			m_ShapeHelperValues.Get<CString>(SvPb::ShapeMaskPropertyTopBottomThicknessLinkEId).IsEmpty();
+		bAll &= isChangable(SvPb::ShapeMaskPropertySideThicknessEId) &&	isChangable(SvPb::ShapeMaskPropertyTopBottomThicknessEId);
 		break;
 	case SvOp::SVShapeMaskHelperClass::SVMaskShapeTypeSymmetricTrapezoid:
-		bAll &= m_ShapeHelperValues.Get<CString>(SvPb::ShapeMaskPropertyOffsetLinkEId).IsEmpty();
+		bAll &= isChangable(SvPb::ShapeMaskPropertyOffsetEId);
 		break;
 	default: //nothing to do
 		break;
@@ -1012,6 +989,23 @@ CDSVPictureDisplay::AllowType SVMaskShapeEditorDlg::getDrawChangeType() const
 
 	CDSVPictureDisplay::AllowType type = bAll ? CDSVPictureDisplay::AllowResizeAndMove : bMove ? CDSVPictureDisplay::AllowMove : CDSVPictureDisplay::AllowNone;
 	return type;
+}
+
+void SVMaskShapeEditorDlg::setValueColumn(SvPb::EmbeddedIdEnum embeddedId, SVRPropertyItemEdit& rEdit)
+{
+	auto data = m_ShapeHelperValues.Get<SvOg::LinkedValueData>(embeddedId);
+	CString valueString = SvUl::VariantToString(data.m_Value).c_str();
+
+	rEdit.SetItemValue(valueString);
+	rEdit.ReadOnly(SvPb::LinkedSelectedType::DirectValue != data.m_type, true);
+	rEdit.OnRefresh();
+	m_Tree.UpdatedItems();
+}
+
+bool SVMaskShapeEditorDlg::isChangable(SvPb::EmbeddedIdEnum embeddedId) const
+{
+	auto data = m_ShapeHelperValues.Get<SvOg::LinkedValueData>(embeddedId);
+	return SvPb::LinkedSelectedType::DirectValue == data.m_type;
 }
 #pragma endregion Private Methods
 

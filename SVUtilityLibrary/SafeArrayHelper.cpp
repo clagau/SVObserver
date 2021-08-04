@@ -13,7 +13,6 @@
 #pragma endregion Includes
 namespace SvUl
 {
-
 	_variant_t GetEmptySafeArray(VARTYPE  vart)
 	{
 
@@ -216,8 +215,57 @@ namespace SvUl
 
 	}
 
+	bool isSameVar(const _variant_t& rValue1, const _variant_t& rValue2)
+	{
+		if (rValue1.vt != rValue2.vt)
+		{
+			return false;
+		}
 
+		if ((rValue1.vt & VT_ARRAY) != VT_ARRAY)
+		{
+			return rValue1 == rValue2;
+		}
+		else
+		{
+			if (nullptr == rValue1.parray || nullptr == rValue2.parray)
+			{
+				return rValue1.parray == rValue2.parray;
+			}
 
+			if (rValue1.parray->cDims != rValue2.parray->cDims)
+			{
+				return false;
+			}
+
+			assert(1 == rValue1.parray->cDims); //for other dims, it is not implemented.
+			if (1 == rValue1.parray->cDims)
+			{
+				size_t size1 = rValue1.parray->cbElements * rValue1.parray->rgsabound[0].cElements;
+				size_t size2 = rValue2.parray->cbElements * rValue2.parray->rgsabound[0].cElements;
+
+				if (size1 != size2)
+				{
+					return false;
+				}
+
+				if ((VT_ARRAY | VT_BSTR) != rValue1.vt)
+				{
+					return 0 == memcmp(rValue1.parray->pvData, rValue2.parray->pvData, size1);
+				}
+				else
+				{
+					//not implemented for VT_BSTR
+					assert(false);
+					return false;
+				}
+			}
+			else
+			{
+				return false;
+			}			
+		}
+	}
 }
 
 

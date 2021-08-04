@@ -59,7 +59,7 @@ namespace SvAo
 
 		void moveFeatureTasks(size_t posFrom, size_t posTo);
 
-		bool rangeCheck(SvStl::MessageContainerVector* pErrorMessages, const BlobFeatureTask* pFeatureTask, const std::string& higherText, const std::string& lowerText, double higherValue, double lowerValue, SvStl::MessageTextEnum higherId, SvStl::MessageTextEnum lowerId);
+		bool rangeCheck(SvStl::MessageContainerVector* pErrorMessages, const BlobFeatureTask* pFeatureTask, const SvVol::LinkedValue& rHigherValue, const SvVol::LinkedValue& rLowerValue, SvStl::MessageTextEnum higherId, SvStl::MessageTextEnum lowerId);
 
 		MIL_ID			m_ResultBufferID = M_NULL;
 

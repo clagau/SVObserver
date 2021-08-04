@@ -116,7 +116,7 @@ namespace SvAo
 						int row = std::stoi(rMessage.getMessage().m_AdditionalTextList[1]);
 						auto* pError = pResponse->add_error_list();
 						pError->set_row(row);
-						pError->set_fieldid(SvPb::FeatureData::kLowerBoundIndirectFieldNumber);
+						pError->set_fieldid(SvPb::FeatureData::kLowerBoundFieldNumber);
 						SvPb::convertMessageToProtobuf(rMessage, pResponse->mutable_messages()->add_messages());
 					}
 					catch (...)
@@ -135,15 +135,15 @@ namespace SvAo
 						auto textId = SvStl::MessageData::convertAdditionalText2Id(rMessage.getMessage().m_AdditionalTextList[1]);
 						if (SvStl::Tid_FailHigh == textId)
 						{
-							pError->set_fieldid(SvPb::FeatureData::kRangeFailHighIndirectFieldNumber);
+							pError->set_fieldid(SvPb::FeatureData::kRangeFailHighFieldNumber);
 						}
 						else if(SvStl::Tid_WarnHigh == textId)
 						{
-							pError->set_fieldid(SvPb::FeatureData::kRangeWarnHighIndirectFieldNumber);
+							pError->set_fieldid(SvPb::FeatureData::kRangeWarnHighFieldNumber);
 						}
 						else
 						{
-							pError->set_fieldid(SvPb::FeatureData::kRangeWarnLowIndirectFieldNumber);
+							pError->set_fieldid(SvPb::FeatureData::kRangeWarnLowFieldNumber);
 						}
 
 						

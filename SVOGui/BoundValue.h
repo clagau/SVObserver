@@ -13,6 +13,7 @@
 //Moved to precompiled header: #include <comdef.h>
 #include "SVProtoBuf/SVO-Enum.h"
 #include "Definitions/ObjectDefines.h"
+#include "LinkedValue.h"
 #pragma endregion Includes
 
 
@@ -98,10 +99,11 @@ private:
 #pragma endregion Member Variables
 };
 
+
 class BoundValues
 {
 public:
-	typedef std::map<SvPb::EmbeddedIdEnum, BoundValue> Container;
+	typedef std::map<SvPb::EmbeddedIdEnum, std::variant<BoundValue, LinkedValue>> Container;
 	typedef Container::iterator iterator;
 	typedef Container::const_iterator const_iterator;
 	typedef Container::value_type value_type;
@@ -132,28 +134,57 @@ public:
 	variant_t GetDefaultValue(SvPb::EmbeddedIdEnum embeddedID) const
 	{
 		Container::const_iterator it = m_values.find(embeddedID);
-		if (m_values.end() != it)
+		assert(m_values.end() != it && 0 == it->second.index());
+		if (m_values.end() != it && 0 == it->second.index())
 		{
-			return it->second.GetDefaultValue();
+			return std::get<0>(it->second).GetDefaultValue();
 		}
 		return variant_t();
+	}
+
+	bool isLinkedValue(SvPb::EmbeddedIdEnum embeddedID) const
+	{
+		Container::const_iterator it = m_values.find(embeddedID);
+		return (m_values.end() != it && 1 == it->second.index());
 	}
 
 	variant_t GetValue(SvPb::EmbeddedIdEnum embeddedID) const
 	{
 		Container::const_iterator it = m_values.find(embeddedID);
+		assert(m_values.end() != it);
 		if (m_values.end() != it)
 		{
-			return it->second.GetValue();
+			return std::visit([](const auto& val) -> variant_t { return val.GetValue(); }, it->second);
 		}
 		return variant_t();
 	}
 
-	std::vector<std::pair<SvPb::EmbeddedIdEnum, _variant_t>> getCurrentValues() const
+	LinkedValueData getLinkedData(SvPb::EmbeddedIdEnum embeddedID) const
 	{
-		std::vector< std::pair<SvPb::EmbeddedIdEnum, _variant_t>> list;
+		Container::const_iterator it = m_values.find(embeddedID);
+		assert(m_values.end() != it && 1 == it->second.index());
+		if (m_values.end() != it && 1 == it->second.index())
+		{
+			return std::get<1>(it->second).getLinkedData();
+		}
+		return {};
+	}
+
+	std::vector<std::pair<SvPb::EmbeddedIdEnum, std::variant<_variant_t, LinkedValueData>>> getCurrentValues() const
+	{
+		std::vector< std::pair<SvPb::EmbeddedIdEnum, std::variant<_variant_t, LinkedValueData>>> list;
 		std::transform(m_values.begin(), m_values.end(), std::back_inserter(list),
-			[](const auto& rValue) -> std::pair<SvPb::EmbeddedIdEnum, _variant_t> { return { rValue.first, rValue.second.GetValue() }; });
+			[](const auto& rValue) -> std::pair<SvPb::EmbeddedIdEnum, std::variant<_variant_t, LinkedValueData>> 
+			{ 
+				if (0 == rValue.second.index())
+				{
+					return { rValue.first, std::get<0>(rValue.second).GetValue() };
+				}
+				else
+				{
+					return { rValue.first, std::get<1>(rValue.second).getLinkedData() };
+				}
+			});
 		return list;
 	}
 
@@ -162,9 +193,10 @@ public:
 		if (!m_ReadOnly)
 		{
 			Container::iterator it = m_values.find(embeddedID);
-			if (m_values.end() != it)
+			assert(m_values.end() != it && 0 == it->second.index());
+			if (m_values.end() != it && 0 == it->second.index())
 			{
-				it->second.SetDefaultValue(rDefaultValue);
+				std::get<0>(it->second).SetDefaultValue(rDefaultValue);
 				return true;
 			}
 		}
@@ -176,9 +208,25 @@ public:
 		if (!m_ReadOnly)
 		{
 			Container::iterator it = m_values.find(embeddedID);
-			if (m_values.end() != it)
+			assert(m_values.end() != it && 0 == it->second.index());
+			if (m_values.end() != it && 0 == it->second.index())
 			{
-				it->second.SetValue(rValue, ArrayIndex);
+				std::get<0>(it->second).SetValue(rValue, ArrayIndex);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	bool setLinkedData(SvPb::EmbeddedIdEnum embeddedID, const LinkedValueData& data)
+	{
+		if (!m_ReadOnly)
+		{
+			Container::iterator it = m_values.find(embeddedID);
+			assert(m_values.end() != it && 1 == it->second.index());
+			if (m_values.end() != it && 1 == it->second.index())
+			{
+				std::get<1>(it->second).setLinkedData(data);
 				return true;
 			}
 		}
@@ -191,7 +239,7 @@ public:
 		Container::const_iterator it = m_values.find(embeddedID);
 		if (it != m_values.end())
 		{
-			objectID = it->second.GetObjectID();
+			objectID = std::visit([](const auto& val) -> uint32_t { return val.GetObjectID(); }, it->second);
 		}
 		return objectID;
 	}

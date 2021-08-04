@@ -48,7 +48,7 @@ void SVLoadImageToolClass::init()
 	// Identify our input type needs
 	
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &m_fileImage, SvPb::OutputImageEId, IDS_OBJECTNAME_IMAGE1 );
+	RegisterEmbeddedImage( &m_fileImage, SvPb::OutputImageEId, IDS_OBJECTNAME_IMAGE1 );
 	RegisterEmbeddedObject( &m_currentPathName, SvPb::PathNameEId, IDS_OBJECTNAME_PATHNAME, false, SvOi::SVResetItemTool );
 	RegisterEmbeddedObject( &m_continuousReload, SvPb::ContinuousReloadEId, IDS_OBJECTNAME_CONTINUOUS_RELOAD, false, SvOi::SVResetItemNone );
 

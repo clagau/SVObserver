@@ -26,6 +26,7 @@ namespace
 	const TCHAR* const scClassIDTag(_T( "ClassID" ));
 	const TCHAR* const scFriendsTag(_T( "Friends" ));
 	const TCHAR* const scEmbeddedsTag(_T( "Embeddeds" ));
+	const TCHAR* const scLinkedChildsTag(_T("LinkedChilds"));
 	const TCHAR* const scInputsTag(_T( "Inputs" ));
 	const TCHAR* const scInputTag(_T( "Input" ));
 	const TCHAR* const scEquationBufferTag(_T("EquationBuffer"));
@@ -36,5 +37,8 @@ namespace
 	const TCHAR* const scMaskDataTag(_T( "MaskData" ));
 	const TCHAR* const scValueTag(_T( "Value" ));
 	const TCHAR* const scArraySizeTag(_T("Array Size"));
+	const TCHAR* const scLinkedDirectValueTag(_T("Direct Value"));
+	const TCHAR* const scLinkedIndirectValueTag(_T("IndirectID"));
+	const TCHAR* const scLinkedFormulaTag(_T("Formula"));
 }
 

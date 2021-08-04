@@ -46,18 +46,16 @@ namespace SvAo
 
 	bool setLinkedValue(std::string indirectValue, double value, SvVol::LinkedValue& linkedValue)
 	{
-		HRESULT hr = S_OK;
+		bool result = true;
 		if (indirectValue.empty())
 		{
-			hr = linkedValue.setValue(value);
+			result = linkedValue.setDirectValue(value);
 		}
 		else
 		{
-			_variant_t tmp;
-			tmp.SetString(indirectValue.c_str());
 			try
 			{
-				hr = linkedValue.setValue(tmp);
+				result = linkedValue.setIndirectValue(indirectValue);
 				linkedValue.resetAllObjects();
 			}
 			catch (...)
@@ -65,7 +63,7 @@ namespace SvAo
 				return false;
 			}
 		}
-		return S_OK == hr;
+		return result;
 	}
 
 #pragma region Constructor
@@ -80,20 +78,14 @@ namespace SvAo
 		RegisterEmbeddedObject(&m_isExcludeValue, SvPb::IsExcludeEId, IDS_BLOBFEATURE_ISEXCLUDE, false, SvOi::SVResetItemOwner);
 		RegisterEmbeddedObject(&m_isInnerExcludeValue, SvPb::IsInnerExcludeEId, IDS_BLOBFEATURE_ISINNER_EXCLDUE, false, SvOi::SVResetItemOwner);
 		RegisterEmbeddedObject(&m_ExcludeLowerBoundValue, SvPb::ExcludeLowerBoundEId, IDS_BLOBFEATURE_EXCLUDE_LOWER, false, SvOi::SVResetItemOwner);
-		RegisterEmbeddedObject(&m_ExcludeLowerBoundValue.getLinkedName(), SvPb::ExcludeLowerBoundIndirectEId, IDS_BLOBFEATURE_EXCLUDE_LOWER_INDIRECT, false, SvOi::SVResetItemOwner);
 		RegisterEmbeddedObject(&m_ExcludeUpperBoundValue, SvPb::ExcludeUpperBoundEId, IDS_BLOBFEATURE_EXCLUDE_UPPER, false, SvOi::SVResetItemOwner);
-		RegisterEmbeddedObject(&m_ExcludeUpperBoundValue.getLinkedName(), SvPb::ExcludeUpperBoundIndirectEId, IDS_BLOBFEATURE_EXCLUDE_UPPER_INDIRECT, false, SvOi::SVResetItemOwner);
-
+		
 		RegisterEmbeddedObject(&m_isRangeValue, SvPb::IsRangeEId, IDS_BLOBFEATURE_ISEXCLUDE, false, SvOi::SVResetItemOwner);
 		RegisterEmbeddedObject(&m_RangeValues[RangeEnum::ER_FailHigh], SvPb::RangeClassFailHighEId, IDS_OBJECTNAME_FAIL_HIGH, false, SvOi::SVResetItemNone);
 		RegisterEmbeddedObject(&m_RangeValues[RangeEnum::ER_WarnHigh], SvPb::RangeClassWarnHighEId, IDS_OBJECTNAME_WARN_HIGH, false, SvOi::SVResetItemNone);
 		RegisterEmbeddedObject(&m_RangeValues[RangeEnum::ER_FailLow], SvPb::RangeClassFailLowEId, IDS_OBJECTNAME_FAIL_LOW, false, SvOi::SVResetItemNone);
 		RegisterEmbeddedObject(&m_RangeValues[RangeEnum::ER_WarnLow], SvPb::RangeClassWarnLowEId, IDS_OBJECTNAME_WARN_LOW, false, SvOi::SVResetItemNone);
-		RegisterEmbeddedObject(&m_RangeValues[RangeEnum::ER_FailHigh].getLinkedName(), SvPb::RangeClassFailHighIndirectEId, IDS_OBJECTNAME_FAIL_HIGH_INDIRECT, false, SvOi::SVResetItemOwner);
-		RegisterEmbeddedObject(&m_RangeValues[RangeEnum::ER_WarnHigh].getLinkedName(), SvPb::RangeClassWarnHighIndirectEId, IDS_OBJECTNAME_WARN_HIGH_INDIRECT, false, SvOi::SVResetItemOwner);
-		RegisterEmbeddedObject(&m_RangeValues[RangeEnum::ER_FailLow].getLinkedName(), SvPb::RangeClassFailLowIndirectEId, IDS_OBJECTNAME_FAIL_LOW_INDIRECT, false, SvOi::SVResetItemOwner);
-		RegisterEmbeddedObject(&m_RangeValues[RangeEnum::ER_WarnLow].getLinkedName(), SvPb::RangeClassWarnLowIndirectEId, IDS_OBJECTNAME_WARN_LOW_INDIRECT, false, SvOi::SVResetItemOwner);
-
+		
 		m_featureTypeValue.SetDefaultValue(0, true);
 		m_isCustomFeature.SetDefaultValue(BOOL(false), true);
 
@@ -102,9 +94,7 @@ namespace SvAo
 		m_isExcludeValue.SetDefaultValue(BOOL(false), true);
 		m_isInnerExcludeValue.SetDefaultValue(BOOL(false), true);
 		m_ExcludeLowerBoundValue.SetDefaultValue(static_cast<double>(lowDef), true);
-		m_ExcludeLowerBoundValue.getLinkedName().SetDefaultValue(_T(""), true);
 		m_ExcludeUpperBoundValue.SetDefaultValue(static_cast<double>(highDef), true);
-		m_ExcludeUpperBoundValue.getLinkedName().SetDefaultValue(_T(""), true);
 
 		m_isRangeValue.SetDefaultValue(BOOL(false), true);
 		_variant_t vtTemp;
@@ -116,11 +106,6 @@ namespace SvAo
 		vtTemp.dblVal = highDef;
 		m_RangeValues[RangeEnum::ER_FailHigh].SetDefaultValue(vtTemp, true);
 		m_RangeValues[RangeEnum::ER_WarnHigh].SetDefaultValue(vtTemp, true);
-
-		for (int i = 0; i < RangeEnum::ER_COUNT; i++)
-		{
-			m_RangeValues[i].getLinkedName().SetDefaultValue(_T(""), true);
-		}
 	}
 #pragma endregion Constructor
 
@@ -262,35 +247,40 @@ namespace SvAo
 		if (rData.is_exclude())
 		{
 			m_isInnerExcludeValue.SetValue(rData.is_exclude_inner());
-			if (!setLinkedValue(rData.lower_bound_indirect(), rData.lower_bound(), m_ExcludeLowerBoundValue))
+			SvStl::MessageContainerVector messageContainers = validateAndSetEmbeddedValues({{SvOi::SetLinkedStruct{&m_ExcludeLowerBoundValue, rData.lower_bound()}}}, true);
+			if (0 != messageContainers.size())
 			{
-				return rData.kLowerBoundIndirectFieldNumber;
+				return rData.kLowerBoundFieldNumber;
 			}
-
-			if (!setLinkedValue(rData.upper_bound_indirect(), rData.upper_bound(), m_ExcludeUpperBoundValue))
+			messageContainers = validateAndSetEmbeddedValues({{SvOi::SetLinkedStruct{&m_ExcludeUpperBoundValue, rData.upper_bound()}}}, true);
+			if (0 != messageContainers.size())
 			{
-				return rData.kUpperBoundIndirectFieldNumber;
+				return rData.kUpperBoundFieldNumber;
 			}
 		}
 		
 		m_isRangeValue.SetValue(rData.is_range());
 		if (rData.is_range())
 		{
-			if (!setLinkedValue(rData.range_fail_high_indirect(), rData.range_fail_high(), m_RangeValues[RangeEnum::ER_FailHigh]))
+			SvStl::MessageContainerVector messageContainers = validateAndSetEmbeddedValues({{SvOi::SetLinkedStruct{&m_RangeValues[RangeEnum::ER_FailHigh], rData.range_fail_high()}}}, true);
+			if (0 != messageContainers.size())
 			{
-				return rData.kRangeFailHighIndirectFieldNumber;
+				return rData.kRangeFailHighFieldNumber;
 			}
-			if (!setLinkedValue(rData.range_warn_high_indirect(), rData.range_warn_high(), m_RangeValues[RangeEnum::ER_WarnHigh]))
+			messageContainers = validateAndSetEmbeddedValues({{SvOi::SetLinkedStruct{&m_RangeValues[RangeEnum::ER_WarnHigh], rData.range_warn_high()}}}, true);
+			if (0 != messageContainers.size())
 			{
-				return rData.kRangeWarnHighIndirectFieldNumber;
+				return rData.kRangeWarnHighFieldNumber;
 			}
-			if (!setLinkedValue(rData.range_warn_low_indirect(), rData.range_warn_low(), m_RangeValues[RangeEnum::ER_WarnLow]))
+			messageContainers = validateAndSetEmbeddedValues({{SvOi::SetLinkedStruct{&m_RangeValues[RangeEnum::ER_WarnLow], rData.range_warn_low()}}}, true);
+			if (0 != messageContainers.size())
 			{
-				return rData.kRangeWarnLowIndirectFieldNumber;
+				return rData.kRangeWarnLowFieldNumber;
 			}
-			if (!setLinkedValue(rData.range_fail_low_indirect(), rData.range_fail_low(), m_RangeValues[RangeEnum::ER_FailLow]))
+			messageContainers = validateAndSetEmbeddedValues({{SvOi::SetLinkedStruct{&m_RangeValues[RangeEnum::ER_FailLow], rData.range_fail_low()}}}, true);
+			if (0 != messageContainers.size())
 			{
-				return rData.kRangeFailLowIndirectFieldNumber;
+				return rData.kRangeFailLowFieldNumber;
 			}
 		}
 
@@ -310,20 +300,9 @@ namespace SvAo
 
 	BlobRangeData BlobFeatureTask::getRangeData() const
 	{
-		BlobRangeData data;
-		data.m_featureType = getFeatureType();
 		BOOL tmpBool = false;
 		m_isRangeValue.GetValue(tmpBool);
-		data.m_isEnabled = (TRUE == tmpBool);
-		m_RangeValues[RangeEnum::ER_FailHigh].getValue(data.m_failHigh);
-		m_RangeValues[RangeEnum::ER_FailHigh].getLinkedName().getValue(data.m_failHighIndirect);
-		m_RangeValues[RangeEnum::ER_WarnHigh].getValue(data.m_warnHigh);
-		m_RangeValues[RangeEnum::ER_WarnHigh].getLinkedName().getValue(data.m_warnHighIndirect);
-		m_RangeValues[RangeEnum::ER_WarnLow].getValue(data.m_warnLow);
-		m_RangeValues[RangeEnum::ER_WarnLow].getLinkedName().getValue(data.m_warnLowIndirect);
-		m_RangeValues[RangeEnum::ER_FailLow].getValue(data.m_failLow);
-		m_RangeValues[RangeEnum::ER_FailLow].getLinkedName().getValue(data.m_failLowIndirect);
-		return data;
+		return {getFeatureType(), (TRUE == tmpBool), m_RangeValues};
 	}
 
 	SortEnum BlobFeatureTask::getSortEnum() const

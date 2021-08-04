@@ -341,7 +341,7 @@ void SVHistogramAnalyzer::init()
 			IDS_OBJECTNAME_HISTOGRAM_FIXEDHEIGHT,
 			false, SvOi::SVResetItemNone );
 
-		RegisterEmbeddedObject( 
+		RegisterEmbeddedImage(
 			&m_histogramImage,
 			SvPb::HistogramImageEId,
 			IDS_OBJECTNAME_HISTOGRAMIMAGE

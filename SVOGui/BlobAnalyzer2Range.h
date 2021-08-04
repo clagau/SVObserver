@@ -14,7 +14,7 @@
 #include "SVProtoBuf/InspectionCommands.h"
 #include "RangeController.h"
 #include "Definitions/RangeEnum.h"
-#include "ObjectSelectorController.h"
+#include "LinkedValueWidgetHelper.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -54,11 +54,8 @@ namespace SvOg
 		virtual BOOL OnInitDialog() override;
 		virtual BOOL OnSetActive() override;
 		virtual BOOL OnKillActive() override;
-		afx_msg void OnBnClickedFailHighIndirect();
-		afx_msg void OnBnClickedWarnlHighIndirect();
-		afx_msg void OnBnClickedWarnLowIndirect();
-		afx_msg void OnBnClickedFailedLowIndirect();
-
+		void OnButtonRange(UINT nID);
+		void OnKillFocusRange(UINT nID);
 		void OnGridClick(NMHDR*, LRESULT*);
 		void OnGridBeginEdit(NMHDR* pNotifyStruct, LRESULT* pResult);
 		void OnGridEndEdit(NMHDR* pNotifyStruct, LRESULT* pResult);
@@ -81,10 +78,6 @@ namespace SvOg
 		void showContextMenu(CPoint point);
 
 		HRESULT loadFeatureData();
-
-		void setDlgData();
-
-		bool ShowObjectSelector(std::string& rName, RangeEnum::ERange fieldEnum);
 #pragma endregion Private Methods
 
 #pragma region Member Variables
@@ -94,15 +87,9 @@ namespace SvOg
 		const uint32_t m_TaskObjectID;
 
 		RangeController m_NumberRangeController;
-		ObjectSelectorController m_objectSelector;
-		CString m_FailHigh;
-		CString m_FailLow;
-		CString m_WarnHigh;
-		CString m_WarnLow;
-		CButton m_ButtonFailHigh;
-		CButton m_ButtonWarnHigh;
-		CButton m_ButtonWarnLow;
-		CButton m_ButtonFailLow;
+		std::array<std::unique_ptr<LinkedValueWidgetHelper>, RangeEnum::ER_COUNT> m_RangeWidgets;
+		std::array<CButton, RangeEnum::ER_COUNT> m_RangeButtons;
+		std::array<CEdit, RangeEnum::ER_COUNT> m_RangeEdits;
 		CBitmap m_downArrowBitmap;
 		CImageList m_ImageList;
 

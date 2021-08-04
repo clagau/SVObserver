@@ -47,7 +47,10 @@ HRESULT ToolAdjustToolSetPage::SetInspectionData()
 	UpdateData(true); // get data from dialog
 
 	//We need to set the main LinkedValue object
-	m_values.Set<CString>(SvPb::InspectedObjectIDEId, m_InspectedObjectID);
+	auto data = m_values.Get<LinkedValueData>(SvPb::InspectedObjectIDEId);
+	data.m_indirectDotName = std::string{m_InspectedObjectID};
+	data.m_type = SvPb::IndirectValue;
+	m_values.Set<LinkedValueData>(SvPb::InspectedObjectIDEId, data);
 	m_values.Commit();
 
 	return Result;
@@ -69,7 +72,8 @@ BOOL ToolAdjustToolSetPage::OnInitDialog()
 	m_values.Init();
 
 	//We need to get the linked object Id to get the dotted name
-	m_InspectedObjectID = m_values.Get<CString>(SvPb::InspectedObjectIDLinkEId);
+	const auto& data = m_values.Get<LinkedValueData>(SvPb::InspectedObjectIDEId);
+	m_InspectedObjectID = data.m_indirectDotName.c_str();
 
 	UpdateData(false);
 

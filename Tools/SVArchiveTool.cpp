@@ -100,20 +100,14 @@ void SVArchiveTool::initializeArchiveTool()
 		IDS_OBJECTNAME_ARCHIVE_RESULT_NAMES,
 		false, SvOi::SVResetItemTool);
 
-	registerEmbeddedLinkedValue(
-		&m_imageFileRootPath1,
-		SvPb::ArchiveImageFileRootPart1EId, SvPb::ArchiveImageFileRootPart1LinkEId,
-		IDS_OBJECTNAME_ARCHIVE_IMAGE_ROOT_PART1, _variant_t(""));
+	RegisterEmbeddedObject(&m_imageFileRootPath1, SvPb::ArchiveImageFileRootPart1EId, IDS_OBJECTNAME_ARCHIVE_IMAGE_ROOT_PART1, true, SvOi::SVResetItemTool);
+	m_imageFileRootPath1.SetDefaultValue(_variant_t(""), true);
 
-	registerEmbeddedLinkedValue(
-		&m_imageFileRootPath2,
-		SvPb::ArchiveImageFileRootPart2EId, SvPb::ArchiveImageFileRootPart2LinkEId,
-		IDS_OBJECTNAME_ARCHIVE_IMAGE_ROOT_PART2, _variant_t(""));
+	RegisterEmbeddedObject(&m_imageFileRootPath2, SvPb::ArchiveImageFileRootPart2EId, IDS_OBJECTNAME_ARCHIVE_IMAGE_ROOT_PART2, true, SvOi::SVResetItemTool);
+	m_imageFileRootPath2.SetDefaultValue(_variant_t(""), true);
 
-	registerEmbeddedLinkedValue(
-		&m_imageFileRootPath3,
-		SvPb::ArchiveImageFileRootPart3EId, SvPb::ArchiveImageFileRootPart3LinkEId,
-		IDS_OBJECTNAME_ARCHIVE_IMAGE_ROOT_PART3, _variant_t(""));
+	RegisterEmbeddedObject(&m_imageFileRootPath3, SvPb::ArchiveImageFileRootPart3EId, IDS_OBJECTNAME_ARCHIVE_IMAGE_ROOT_PART3, true, SvOi::SVResetItemTool);
+	m_imageFileRootPath3.SetDefaultValue(_variant_t(""), true);
 
 	RegisterEmbeddedObject(
 		&m_dwAppendArchiveFile,
@@ -206,30 +200,20 @@ void SVArchiveTool::initializeArchiveTool()
 		IDS_BASE_DIRECTORYNAME,
 		false, SvOi::SVResetItemNone);
 
-	registerEmbeddedLinkedValue(
-		&m_FilenameIndex1,
-		SvPb::FilenameIndex1EId, SvPb::FilenameIndex1LinkEId,
-		IDS_OBJECTNAME_FILENAME_INDEX1, _variant_t(0UL));
+	RegisterEmbeddedObject(&m_FilenameIndex1, SvPb::FilenameIndex1EId, IDS_OBJECTNAME_FILENAME_INDEX1, true, SvOi::SVResetItemTool);
+	m_FilenameIndex1.SetDefaultValue(_variant_t(0UL), true);
 
-	registerEmbeddedLinkedValue(
-		&m_FilenameIndex2,
-		SvPb::FilenameIndex2EId, SvPb::FilenameIndex2LinkEId,
-		IDS_OBJECTNAME_FILENAME_INDEX2, _variant_t(0UL));
+	RegisterEmbeddedObject(&m_FilenameIndex2, SvPb::FilenameIndex2EId, IDS_OBJECTNAME_FILENAME_INDEX2, true, SvOi::SVResetItemTool);
+	m_FilenameIndex2.SetDefaultValue(_variant_t(0UL), true);
 
-	registerEmbeddedLinkedValue(
-		&m_DirectorynameIndex,
-		SvPb::DirectorynameIndexEId, SvPb::DirectorynameIndexLinkEId,
-		IDS_OBJECTNAME_DIRECTORYNAME_INDEX, _variant_t(0UL));
+	RegisterEmbeddedObject(&m_DirectorynameIndex, SvPb::DirectorynameIndexEId, IDS_OBJECTNAME_FILENAME_INDEX2, true, SvOi::SVResetItemTool);
+	m_DirectorynameIndex.SetDefaultValue(_variant_t(0UL), true);
 
-	registerEmbeddedLinkedValue(
-		&m_SubfolderSelection,
-		SvPb::SubfolderSelectionEId, SvPb::SubfolderSelectionLinkEId,
-		IDS_OBJECTNAME_SUBFOLDER_SELECTION, _variant_t(0UL));
+	RegisterEmbeddedObject(&m_SubfolderSelection, SvPb::SubfolderSelectionEId, IDS_OBJECTNAME_SUBFOLDER_SELECTION, true, SvOi::SVResetItemTool);
+	m_SubfolderSelection.SetDefaultValue(_variant_t(0UL), true);
 
-	registerEmbeddedLinkedValue(
-		&m_SubfolderLocation,
-		SvPb::SubfolderLocationEId, SvPb::SubfolderLocationLinkEId,
-		IDS_OBJECTNAME_SUBFOLDER_LOCATION, _variant_t(0UL));
+	RegisterEmbeddedObject(&m_SubfolderLocation, SvPb::SubfolderLocationEId, IDS_OBJECTNAME_SUBFOLDER_LOCATION, true, SvOi::SVResetItemTool);
+	m_SubfolderLocation.SetDefaultValue(_variant_t(0UL), true);
 
 	// no need to register image buffer
 

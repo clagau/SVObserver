@@ -161,6 +161,8 @@ namespace SvOi
 		//! \returns S_OK if succeeded
 		virtual HRESULT getValues(std::vector<double>& rValues) const = 0;
 
+		virtual void getOutputList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter) const = 0;
+
 		/// Fill a list with object for selector, which fit requirements.
 		/// \param treeInserter [in,out] Back_inserter where the object will be added.
 		/// \param pFunctor [in]

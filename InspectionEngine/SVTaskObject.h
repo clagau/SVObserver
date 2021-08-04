@@ -95,10 +95,8 @@ public:
 
 	virtual void SetDisabled() override;
 
-	bool RegisterEmbeddedObject(SVImageClass* pEmbeddedObject, SvPb::EmbeddedIdEnum embeddedID, int StringResourceID);
-	bool RegisterEmbeddedObject(SVImageClass* pEmbeddedObject, SvPb::EmbeddedIdEnum embeddedID, LPCTSTR newString);
-	bool RegisterEmbeddedObject(SVObjectClass* pEmbeddedObject, SvPb::EmbeddedIdEnum embeddedID, int StringResourceID, bool p_bResetAlways, SvOi::SVResetItemEnum eRequiredReset);
-	bool RegisterEmbeddedObject(SVObjectClass* pEmbeddedObject, SvPb::EmbeddedIdEnum embeddedID, LPCTSTR strName, bool p_bResetAlways, SvOi::SVResetItemEnum eRequiredReset);
+	bool RegisterEmbeddedImage(SVImageClass* pEmbeddedObject, SvPb::EmbeddedIdEnum embeddedID, int StringResourceID);
+	bool RegisterEmbeddedImage(SVImageClass* pEmbeddedObject, SvPb::EmbeddedIdEnum embeddedID, LPCTSTR newString);
 
 	virtual SVObjectClass* overwriteInputObject(uint32_t uniqueId, SvPb::EmbeddedIdEnum embeddedId) override;
 	/// Moved an embedded-object in the embedded-list to a new position.
@@ -165,17 +163,12 @@ public:
 #pragma endregion virtual method (ITaskObject)
 
 #pragma region Methods to replace processMessage
-	virtual SVObjectClass* OverwriteEmbeddedObject(uint32_t uniqueID, SvPb::EmbeddedIdEnum embeddedID) override;
 	virtual SvOi::IObjectClass* getFirstObject(const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends = true, const SvOi::IObjectClass* pRequestor = nullptr) const override;
 	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName) override;
 #pragma endregion Methods to replace processMessage
 
 protected:
-	bool RegisterEmbeddedObjectAsClass(SVObjectClass* PEmbeddedObject, SvPb::EmbeddedIdEnum embeddedID, LPCTSTR newObjectName);
-
-	/// calls RegisterEmbeddedObject(() twice to register a linked value referring to 'T' in one function call
-	void registerEmbeddedLinkedValue(SvVol::LinkedValue* pEmbeddedObject, SvPb::EmbeddedIdEnum embeddedID, SvPb::EmbeddedIdEnum embeddedLinkID, int StringResourceID, _variant_t defaultValue);
-
+	
 public:
 	// Get the local object color...
 	virtual DWORD GetObjectColor() const override;
@@ -183,7 +176,6 @@ public:
 	virtual void Persist(SvOi::IObjectWriter& rWriter) const override;
 	void PersistFriends(SvOi::IObjectWriter& rWriter) const;
 	void PersistInputs(SvOi::IObjectWriter& rWriter) const;
-	void PersistEmbeddeds(SvOi::IObjectWriter& rWriter) const;
 
 	const std::vector<SvOl::InputObject*>& GetPrivateInputList() const { return m_inputs; };
 
@@ -201,8 +193,6 @@ public:
 	/// \param rOverlay [in,out] Protobuf Message.
 	virtual void collectOverlays(const SVImageClass* pImage, SvPb::Overlay& rOverlay) const;
 
-	void AddEmbeddedObject(SVObjectClass* pObject);
-	void RemoveEmbeddedObject(SVObjectClass* pObjectToRemove);
 	SVObjectClass* GetEmbeddedValueObject(SvPb::EmbeddedIdEnum embeddedID);
 
 	/// This method will be called if a embeddedId has be changed.
@@ -243,6 +233,8 @@ protected:
 
 private:
 	HRESULT LocalInitialize();
+	HRESULT setEmbeddedValue(const SvOi::SetValueStruct& rEntry, std::back_insert_iterator<SvStl::MessageContainerVector> inserter);
+	HRESULT setEmbeddedValue(const SvOi::SetLinkedStruct& rEntry, std::back_insert_iterator<SvStl::MessageContainerVector> inserter);
 
 protected:
 	SvOi::IValueObjectPtrSet m_ValueObjectSet;
@@ -253,16 +245,6 @@ protected:
 	bool m_bSkipFirstFriend; //if true first friend will not be "run" by "runFriends". Is used for conditionalTask, because it will be run before the normal run separately.
 	//Contains a list of friend objects, which will be informed about certain actions or messages this object is doing/processing.
 	SVObjectInfoArrayClass m_friendList;
-
-	//////////////////////////////////////////////////////////////////////////////////////////////
-	// .Description : Contains pointer to SVObjectClass items, but doesn't owns these
-	//				: SVObjectClass items. That means it doesn't construct
-	//				: or destruct the items! 
-	//////////////////////////////////////////////////////////////////////////////////////////////
-	// Only SVTaskObjectListClass and SVTaskObjectClass can have Embedded Objects
-	// Embedded Objects can be SVObjectClass Objects
-	//////////////////////////////////////////////////////////////////////////////////////////////
-	SVObjectPtrVector m_embeddedList;
 
 	std::vector<SvOl::InputObject*> m_inputs;
 

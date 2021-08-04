@@ -666,6 +666,14 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObject, CPoin
 				bGotValue = (S_OK == pdwValueObject->GetValue( dwValue ));
 				sValue = SvUl::AsString( dwValue );
 			}
+			else if (SvVol::LinkedValue* pLinkedValue = dynamic_cast<SvVol::LinkedValue*>(pObject))
+			{
+				ptCurPos.x = (nIndentLevel + 1) * m_shortTabPixels;
+				PrintValueObject(pDC, ptCurPos, sLabel.c_str(), "");
+				ptCurPos.x = (nIndentLevel + 2) * m_shortTabPixels;
+				PrintValueObject(pDC, ptCurPos, "Type", std::to_string(pLinkedValue->getSelectedType()).c_str());
+				PrintValueObject(pDC, ptCurPos, "Content", pLinkedValue->getContentStr().c_str());
+			}
 			else
 			{
 				bGotValue = (S_OK == pValueObject->getValue( sValue ));

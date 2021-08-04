@@ -278,7 +278,7 @@ namespace SvAo
 		RegisterEmbeddedObject(&m_useAdditionalImage, SvPb::UseAdditionalImageEId, IDS_USE_ADDITIONAL_IMAGE, false, SvOi::SVResetItemOwner);
 		m_useAdditionalImage.SetDefaultValue(BOOL(false), true);
 		m_AdditionalImages.InitializeImage(SvPb::SVImageTypeEnum::SVImageTypeIndependent);
-		RegisterEmbeddedObject(&m_AdditionalImages, SvPb::OutputImageEId, "Additional Image");
+		RegisterEmbeddedImage(&m_AdditionalImages, SvPb::OutputImageEId, "Additional Image");
 		RegisterEmbeddedObject(&m_isColorAdditionalImage, SvPb::IsColorAdditionalImageEId, IDS_IS_COLOR_ADDITIONALIMAGE, false, SvOi::SVResetItemOwner);
 		m_isColorAdditionalImage.SetDefaultValue(BOOL(false), true);
 		RegisterEmbeddedObject(&m_backgroundColor1, SvPb::BackgroundColor1EId, IDS_BACKGROUND_COLOR1, false, SvOi::SVResetItemOwner);

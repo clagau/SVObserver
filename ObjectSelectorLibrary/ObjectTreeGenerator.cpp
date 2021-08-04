@@ -178,15 +178,11 @@ namespace SvOsl
 		for (int i = 0; i < rTreeItem.children_size(); i++)
 		{
 			const SvPb::TreeItem& rChild = rTreeItem.children(i);
-			//If no children then it is a leaf
-			if(0 == rChild.children_size())
+			if(false == rChild.objectidindex().empty())
 			{
 				insertTreeObject(rChild);
 			}
-			else
-			{
-				insertChildren(rChild);
-			}
+			insertChildren(rChild);
 		}
 	}
 
@@ -197,7 +193,14 @@ namespace SvOsl
 		{
 			SelectorItem.m_CheckedState = rTreeItem.selected() ? SvCl::ObjectSelectorItem::CheckedEnabled : SvCl::ObjectSelectorItem::UncheckedEnabled;
 		}
-		SelectorItem.m_Attribute = static_cast<SvCl::ObjectSelectorItem::AttributeEnum> (SvCl::ObjectSelectorItem::Leaf | SvCl::ObjectSelectorItem::Checkable);
+		if (0 == rTreeItem.children_size())
+		{
+			SelectorItem.m_Attribute = static_cast<SvCl::ObjectSelectorItem::AttributeEnum> (SvCl::ObjectSelectorItem::Leaf | SvCl::ObjectSelectorItem::Checkable);
+		}
+		else
+		{
+			SelectorItem.m_Attribute = static_cast<SvCl::ObjectSelectorItem::AttributeEnum> (SvCl::ObjectSelectorItem::Node | SvCl::ObjectSelectorItem::Leaf | SvCl::ObjectSelectorItem::Checkable);
+		}
 
 		m_TreeContainer.insertLeaf(SelectorItem.m_Location, SelectorItem );
 		m_LeafCount++;

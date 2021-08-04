@@ -323,7 +323,7 @@ bool SVEquation::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 	return bOk;
 }
 
-bool SVEquation::HasCondition()
+bool SVEquation::HasCondition() const
 {
 	return !m_equationStruct.EquationBuffer.empty();
 }
@@ -390,7 +390,7 @@ HRESULT SVEquation::SetObjectValue(SVObjectAttributeClass* pDataObject)
 ////////////////////////////////////////////////////////////////////////////////
 // 
 ////////////////////////////////////////////////////////////////////////////////
-bool SVEquation::IsEnabled()
+bool SVEquation::IsEnabled() const
 {
 	BOOL bEnabled;
 	m_enabled.GetValue(bEnabled);

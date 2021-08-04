@@ -333,10 +333,6 @@ void RingBufferTool::BuildEmbeddedObjectList ()
 	vtTemp.vt = cVarType_imageIndex;
 	vtTemp.lVal = cDefaultRingBufferDepth;
 	m_BufferDepth.SetDefaultValue(vtTemp, true);
-	std::string objectName = SvUl::LoadStdString(IDS_OBJECTNAME_RINGBUFFER_DEPTH);
-	objectName += SvDef::cLinkName;
-	RegisterEmbeddedObject(&m_BufferDepth.getLinkedName(), SvPb::RingBufferLink_DepthEId, objectName.c_str(), false, SvOi::SVResetItemNone);
-	m_BufferDepth.getLinkedName().SetDefaultValue(_T(""), false);
 
 	RegisterEmbeddedObject( &m_FlagOfOutputImage, SvPb::RingBuffer_FlagOfOutputImagesEId, IDS_OBJECTNAME_RINGBUFFER_FLAG, false, SvOi::SVResetItemNone );
 	m_FlagOfOutputImage.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
@@ -353,12 +349,7 @@ void RingBufferTool::BuildEmbeddedObjectList ()
 		vtTemp.lVal = cDefaultIndexValue[i];
 		m_ImageIndexManager[i].SetDefaultValue( vtTemp, true );
 
-		objectName = SvUl::LoadStdString( RingbufferIndexNames[i] );
-		objectName +=  SvDef::cLinkName;
-		RegisterEmbeddedObject( &m_ImageIndexManager[i].getLinkedName(), SvPb::RingBufferIndexLinkEId+i, objectName.c_str(), false, SvOi::SVResetItemNone );
-		m_ImageIndexManager[i].getLinkedName().SetDefaultValue( _T(""), false );
-
-		RegisterEmbeddedObject(&m_OutputImages[i], SvPb::OutputImageEId+i, ImageNames[i]);
+		RegisterEmbeddedImage(&m_OutputImages[i], SvPb::OutputImageEId+i, ImageNames[i]);
 	}
 }
 

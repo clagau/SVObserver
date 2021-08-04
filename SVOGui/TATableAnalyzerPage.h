@@ -13,7 +13,7 @@
 #include "SVMFCControls\ObjectsListBox.h"
 #include "SVUtilityLibrary\NameObjectIdList.h"
 #include "DataController.h"
-#include "ObjectSelectorController.h"
+#include "LinkedValueWidgetHelper.h"
 #include "ISVPropertyPageDialog.h"
 #include "ObjectInterfaces\IFormulaController.h"
 #pragma endregion Includes
@@ -55,6 +55,9 @@ namespace SvOg
 		void OnButtonClickExcludeHigh();
 		void OnButtonClickExcludeLow();
 		void OnButtonClickLimitValue();
+		void OnKillFocusExcludeHigh();
+		void OnKillFocusExcludeLow();
+		void OnKillFocusLimitValue();
 		void OnAddColumnFormula();
 
 		virtual BOOL OnSetActive() override;
@@ -76,6 +79,8 @@ namespace SvOg
 
 		/// Retrieve the available analyzer in the list
 		HRESULT RetrieveAvailableColumnList();
+
+		void updateValueController();
 
 		/// Update the displayed property controls of the selected sort analyzer.
 		void setSortProperties();
@@ -118,9 +123,10 @@ namespace SvOg
 		CButton m_ButtonExcludeHigh;
 		CButton m_ButtonExcludeLow;
 		CButton m_ButtonLimitValue;
+		std::unique_ptr<LinkedValueWidgetHelper> m_ExcludeHighWidget;
+		std::unique_ptr<LinkedValueWidgetHelper> m_ExcludeLowWidget;
+		std::unique_ptr<LinkedValueWidgetHelper> m_LimitWidget;
 		CEdit m_EditAddColumnName;
-		CBitmap m_downArrowBitmap;
-		ObjectSelectorController m_objectSelector;
 		CString m_AddFormulaString;
 
 		int m_SortDirection;

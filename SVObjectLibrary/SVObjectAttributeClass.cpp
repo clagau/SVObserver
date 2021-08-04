@@ -1007,6 +1007,85 @@ bool SVObjectAttributeClass::GetData(SvCl::SVObjectInt64ArrayClass& rData)
 	return bOk;
 }// end GetData(SVObjectInt64ArrayClass& svData)
 
+variant_t SVObjectAttributeClass::getData()
+{
+	//rData.clear();
+	switch (GetType())
+	{
+	case SV_BOOL_Type:
+	{
+		if (0 < m_BoolArray.size())
+		{
+			return m_BoolArray[0];
+		}
+		break;
+	}
+	case SV_BYTE_Type:
+	{
+		if (0 < m_ByteArray.size())
+		{
+			return m_ByteArray[0];
+		}
+		break;
+	}
+	case SV_STRING_Type:
+	{
+		if (0 < m_StringArray.size())
+		{
+			return m_StringArray[0].c_str();
+		}
+		break;
+	}
+	case SV_DOUBLE_Type:
+	{
+		if (0 < m_DoubleArray.size())
+		{
+			return m_DoubleArray[0];
+		}
+		break;
+	}
+	case SV_DWORD_Type:
+	{
+		if (0 < m_DWordArray.size())
+		{
+			return m_DWordArray[0];
+		}
+		break;
+	}
+	case SV_LONG_Type:
+	{
+		if (0 < m_LongArray.size())
+		{
+			return m_LongArray[0];
+		}
+		break;
+	}
+	case SV_VARIANT_Type:
+	{
+		if (0 < m_VariantArray.size())
+		{
+			return m_VariantArray[0];
+		}
+		break;
+	}
+	case SV_INT64_Type:
+	{
+		if (0 < m_Int64Array.size())
+		{
+			return m_Int64Array[0];
+		}
+		break;
+	}
+	case SV_POINT_Type:
+	case SV_DPOINT_Type:
+	default:
+	{
+		break;
+	}
+	}
+	return {};
+}
+
 void SVObjectAttributeClass::SetName(LPCTSTR szName)
 {
 	m_Name = szName;

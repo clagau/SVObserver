@@ -14,8 +14,6 @@
 #include "SVTADlgPassFailPage.h"
 #include "SVStatusLibrary\MessageContainer.h"
 #include "SVStatusLibrary\MessageManager.h"
-#include "SVMessage\SVMessage.h"
-#include "SVStatusLibrary/MessageTextEnum.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -29,10 +27,8 @@ namespace SvOg
 {
 	BEGIN_MESSAGE_MAP(SVTADlgPassFailPage, CPropertyPage)
 		//{{AFX_MSG_MAP(SVTADlgPassFailPage)
-		ON_BN_CLICKED(IDC_BUTTON_FAILHIGH, &SVTADlgPassFailPage::OnBnClickedFailHighIndirect)
-		ON_BN_CLICKED(IDC_BUTTON_WARNHIGH, &SVTADlgPassFailPage::OnBnClickedWarnlHighIndirect)
-		ON_BN_CLICKED(IDC_BUTTON_WARNLOW, &SVTADlgPassFailPage::OnBnClickedWarnLowIndirect)
-		ON_BN_CLICKED(IDC_BUTTON_FAILLOW, &SVTADlgPassFailPage::OnBnClickedFailedLowIndirect)
+		ON_CONTROL_RANGE(BN_CLICKED, IDC_BUTTON_FAILHIGH, IDC_BUTTON_FAILLOW, OnButtonRange)
+		ON_CONTROL_RANGE(EN_KILLFOCUS, IDC_EDIT_FAILHIGH, IDC_EDIT_FAILLOW, OnKillFocusRange)
 		//}}AFX_MSG_MAP
 	END_MESSAGE_MAP()
 	#pragma endregion Declarations
@@ -40,11 +36,10 @@ namespace SvOg
 	#pragma region Constructor
 	SVTADlgPassFailPage::SVTADlgPassFailPage(uint32_t inspectionID, uint32_t taskID, UINT captionID)
 	: CPropertyPage( SVTADlgPassFailPage::IDD, captionID )
-	, RangeController(inspectionID, taskID)
-	, m_objectSelector (inspectionID)
+	, m_rangeController(inspectionID, taskID)
 	, m_toolId(taskID)
 	{
-		Init();
+		m_rangeController.Init();
 	}
 	#pragma endregion Constructor
 
@@ -65,18 +60,13 @@ namespace SvOg
 	{
 		UpdateData(true); // get data from dialog
 
-		// Validate Entered data for existance and if within bounds		
-		IsFieldValid(SvStl::Tid_FailHigh, static_cast<LPCSTR>(m_FailHigh));
-		IsFieldValid(SvStl::Tid_FailLow, static_cast<LPCSTR>(m_FailLow));
-		IsFieldValid(SvStl::Tid_WarnHigh, static_cast<LPCSTR>(m_WarnHigh));
-		IsFieldValid(SvStl::Tid_WarnLow, static_cast<LPCSTR>(m_WarnLow));
-		
-		Set(FailHigh, static_cast<LPCSTR>(m_FailHigh));
-		Set(FailLow, static_cast<LPCSTR>(m_FailLow));
-		Set(WarnHigh, static_cast<LPCSTR>(m_WarnHigh));
-		Set(WarnLow, static_cast<LPCSTR>(m_WarnLow));
+			// Validate Entered data for existence and if within bounds		
+		m_rangeController.IsFieldValid(RangeEnum::ERange::ER_FailHigh);
+		m_rangeController.IsFieldValid(RangeEnum::ERange::ER_FailLow);
+		m_rangeController.IsFieldValid(RangeEnum::ERange::ER_WarnHigh);
+		m_rangeController.IsFieldValid(RangeEnum::ERange::ER_WarnLow);
 
-		return Commit();
+		return m_rangeController.Commit();
 	}
 
 	#pragma region Protected Methods
@@ -85,49 +75,26 @@ namespace SvOg
 		CPropertyPage::DoDataExchange(pDX);
 
 		//{{AFX_DATA_MAP(SVTADlgPassFailPage)
-		DDX_Text(pDX, IDC_EDIT_FAILHIGH, m_FailHigh);
-		DDX_Text(pDX, IDC_EDIT_WARNHIGH, m_WarnHigh);
-		DDX_Text(pDX, IDC_EDIT_WARNLOW, m_WarnLow);
-		DDX_Text(pDX, IDC_EDIT_FAILLOW, m_FailLow);
-		DDX_Control(pDX, IDC_BUTTON_FAILHIGH, m_ButtonFailHigh);
-		DDX_Control(pDX, IDC_BUTTON_WARNHIGH, m_ButtonWarnHigh);
-		DDX_Control(pDX, IDC_BUTTON_WARNLOW, m_ButtonWarnLow);
-		DDX_Control(pDX, IDC_BUTTON_FAILLOW, m_ButtonFailLow);
+		DDX_Control(pDX, IDC_BUTTON_FAILHIGH, m_RangeButtons[RangeEnum::ER_FailHigh]);
+		DDX_Control(pDX, IDC_BUTTON_WARNHIGH, m_RangeButtons[RangeEnum::ER_WarnHigh]);
+		DDX_Control(pDX, IDC_BUTTON_WARNLOW, m_RangeButtons[RangeEnum::ER_WarnLow]);
+		DDX_Control(pDX, IDC_BUTTON_FAILLOW, m_RangeButtons[RangeEnum::ER_FailLow]);
+		DDX_Control(pDX, IDC_EDIT_FAILHIGH, m_RangeEdits[RangeEnum::ER_FailHigh]);
+		DDX_Control(pDX, IDC_EDIT_WARNHIGH, m_RangeEdits[RangeEnum::ER_WarnHigh]);
+		DDX_Control(pDX, IDC_EDIT_WARNLOW, m_RangeEdits[RangeEnum::ER_WarnLow]);
+		DDX_Control(pDX, IDC_EDIT_FAILLOW, m_RangeEdits[RangeEnum::ER_FailLow]);
 		//}}AFX_DATA_MAP
-	}
-
-	void SVTADlgPassFailPage::InitData()
-	{
-		try
-		{
-			m_FailHigh = Get(FailHigh).c_str();
-			m_FailLow = Get(FailLow).c_str();
-			m_WarnHigh = Get(WarnHigh).c_str();
-			m_WarnLow  = Get(WarnLow).c_str();
-		}
-		catch (...)
-		{
-			assert(false);
-			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-			Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Init_RangeControlFailed, SvStl::SourceFileParams(StdMessageParams));
-		}
 	}
 
 	BOOL SVTADlgPassFailPage::OnInitDialog() 
 	{
 		CPropertyPage::OnInitDialog();
 
-		// Put the Down Arrow on the Button
-		m_downArrowBitmap.LoadOEMBitmap(OBM_DNARROW);
+		for (int i = 0; i < m_RangeWidgets.size(); ++i)
+		{
+			m_RangeWidgets[i] = m_rangeController.createWidget(static_cast<RangeEnum::ERange>(i), m_RangeEdits[i], m_RangeButtons[i]);
+		}
 
-		//(HBITMAP) is a call to the overloaded function operator HBITMAP and no c style cast
-		// And it is NOT needed as the implicit cast will call the casting operator.
-		m_ButtonFailHigh.SetBitmap(m_downArrowBitmap);
-		m_ButtonWarnHigh.SetBitmap(m_downArrowBitmap);
-		m_ButtonWarnLow.SetBitmap(m_downArrowBitmap);
-		m_ButtonFailLow.SetBitmap(m_downArrowBitmap);
-
-		InitData();
 		UpdateData(false); // set data to dialog
 
 		return true;  // return TRUE unless you set the focus to a control
@@ -136,13 +103,28 @@ namespace SvOg
 
 	BOOL SVTADlgPassFailPage::OnSetActive() 
 	{
-		InitData();
+		m_rangeController.Init();
+		for (auto& rWidget : m_RangeWidgets)
+		{
+			rWidget->update();
+		}
 		return CPropertyPage::OnSetActive();
 	}
 
 	BOOL SVTADlgPassFailPage::OnKillActive() 
 	{
 		UpdateData(true);
+
+		auto* pWnd = GetFocus();
+		if (nullptr != pWnd)
+		{
+			auto nId = pWnd->GetDlgCtrlID();
+			if (std::ranges::any_of(m_RangeEdits, [nId](const auto& rEntry) { return nId == rEntry.GetDlgCtrlID(); }))
+			{
+				OnKillFocusRange(nId);
+			}
+		}
+
 		bool bOk = UpdateRangeValues();
 
 		if (bOk)
@@ -152,47 +134,25 @@ namespace SvOg
 		return bOk;
 	}
 
-	void SVTADlgPassFailPage::OnBnClickedFailHighIndirect()
+	void SVTADlgPassFailPage::OnButtonRange(UINT nID)
 	{
-		UpdateData();
-		std::string Value( m_FailHigh );
-		if( ShowObjectSelector( Value, RangeEnum::ER_FailHigh) )
+		int index(nID - IDC_BUTTON_FAILHIGH);
+
+		assert(m_RangeWidgets.size() > index && 0 <= index && m_RangeWidgets[index]);
+		if (m_RangeWidgets.size() > index && 0 <= index && m_RangeWidgets[index])
 		{
-			m_FailHigh = Value.c_str();
-			UpdateData( false );
+			m_RangeWidgets[index]->OnButton();
 		}
 	}
 
-	void SVTADlgPassFailPage::OnBnClickedWarnlHighIndirect()
+	void SVTADlgPassFailPage::OnKillFocusRange(UINT nID)
 	{
-		UpdateData();
-		std::string Value( m_WarnHigh );
-		if( ShowObjectSelector( Value, RangeEnum::ER_WarnHigh) )
-		{
-			m_WarnHigh = Value.c_str();
-			UpdateData( false );
-		}
-	}
+		int index(nID - IDC_EDIT_FAILHIGH);
 
-	void SVTADlgPassFailPage::OnBnClickedWarnLowIndirect()
-	{
-		UpdateData();
-		std::string Value( m_WarnLow );
-		if( ShowObjectSelector( Value, RangeEnum::ER_WarnLow) )
+		assert(m_RangeWidgets.size() > index && 0 <= index && m_RangeWidgets[index]);
+		if (m_RangeWidgets.size() > index && 0 <= index && m_RangeWidgets[index])
 		{
-			m_WarnLow = Value.c_str();
-			UpdateData( false );
-		}
-	}
-
-	void SVTADlgPassFailPage::OnBnClickedFailedLowIndirect()
-	{
-		UpdateData();
-		std::string Value( m_FailLow );
-		if( ShowObjectSelector( Value, RangeEnum::ER_FailLow) )
-		{
-			m_FailLow = Value.c_str();
-			UpdateData( false );
+			m_RangeWidgets[index]->EditboxToValue();
 		}
 	}
 	#pragma endregion Protected Methods
@@ -211,16 +171,6 @@ namespace SvOg
 			return false;
 		}
 	}
-
-	bool SVTADlgPassFailPage::ShowObjectSelector(std::string& rName, RangeEnum::ERange fieldEnum)
-	{
-		std::string Title = GetOwnerName();
-		Title += _T(": ");
-		Title += RangeEnum::ERange2String(fieldEnum);
-
-		return m_objectSelector.Show(rName, Title, this, SvPb::allNumberValueObjects, {m_toolId}, m_toolId);
-	}
-
 	#pragma endregion Private Methods
 } //namespace SvOg
 

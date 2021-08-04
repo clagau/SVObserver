@@ -30,6 +30,7 @@
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVXMLLibrary/SaxExtractPropertiesHandler.h"
+#include "SVUtilityLibrary/SafeArrayHelper.h"
 #pragma endregion Includes
 
 constexpr LPCTSTR scImportNewExt = _T(".new.xml");
@@ -307,7 +308,7 @@ static void checkGlobalConstants(SvXml::SVXMLMaterialsTree& rTree, SvUl::GlobalC
 		{
 			_variant_t valueTmp;
 			pGlobalConstant->getValue(valueTmp);
-			if (rGlobalImport.m_Value != valueTmp)
+			if (false == SvUl::isSameVar(rGlobalImport.m_Value, valueTmp))
 			{
 				auto& rPair = rGlobalConflicts.emplace_back();
 				rPair.first.m_objectId = pGlobalConstant->getObjectId();

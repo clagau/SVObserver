@@ -108,7 +108,6 @@ public:
 
 	void getOutputList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter) const;
 
-	virtual HRESULT GetChildObject(SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index = 0) const override;
 	virtual void setEditModeFreezeFlag(bool flag) override;
 	virtual void goingOffline() override;
 
@@ -118,7 +117,6 @@ public:
 
 	virtual void fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, SvOi::IsObjectAllowedFunc pFunctor, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum nameToType, SvPb::ObjectSelectorType requiredType, bool stopIfClosed = false, bool firstObject = false) const override;
 	virtual void fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo, bool addHidden = false, bool stopIfClosed = false, bool firstObject = false) override;
-	virtual SVObjectClass* OverwriteEmbeddedObject(uint32_t uniqueID, SvPb::EmbeddedIdEnum embeddedID) override;
 	virtual HRESULT SetValuesForAnObject(uint32_t aimObjectID, SVObjectAttributeClass* pDataObject) override;
 
 	int getImagePosInTRC() const { return m_imagePosInTRC; };
@@ -189,7 +187,6 @@ private:
 
 	mutable bool m_bCriticalSectionCreated;
 	mutable CRITICAL_SECTION m_hCriticalSection;
-	SVObjectPtrVector m_embeddedList;
 
 	bool m_removeChildCircularReference = false;
 };

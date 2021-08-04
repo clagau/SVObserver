@@ -192,7 +192,6 @@ echo %time%
     <ClCompile Include="MonitorListSelector.cpp" />
     <ClCompile Include="MonitorListView.cpp" />
     <ClCompile Include="PlcOutputsView.cpp" />
-    <ClCompile Include="RangeClassHelper.cpp" />
     <ClCompile Include="RangeXDialogClass.cpp" />
     <ClCompile Include="RegressionTestController.cpp" />
     <ClCompile Include="RemoteCommand.cpp" />
@@ -390,7 +389,6 @@ echo %time%
     <ClInclude Include="NavigatorElement.h" />
     <ClInclude Include="ObjectAttribute.h" />
     <ClInclude Include="PlcOutputsView.h" />
-    <ClInclude Include="RangeClassHelper.h" />
     <ClInclude Include="RangeXDialogClass.h" />
     <ClInclude Include="RegressionTestController.h" />
     <ClInclude Include="RemoteCommand.h" />

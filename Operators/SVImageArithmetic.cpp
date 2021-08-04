@@ -76,7 +76,7 @@ SVImageArithmetic::SVImageArithmetic(SVObjectClass* POwner, int StringResourceID
 	registerInputObject(&m_InputUseLut, _T("ImageArithmeticUseLut"), SvPb::ImageArithmeticUseLutEId);
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject(&m_OutputImage, SvPb::OutputImageEId, IDS_OBJECTNAME_IMAGE1);
+	RegisterEmbeddedImage(&m_OutputImage, SvPb::OutputImageEId, IDS_OBJECTNAME_IMAGE1);
 	m_OutputImage.InitializeImage(SvPb::SVImageTypeEnum::SVImageTypePhysical);
 }
 

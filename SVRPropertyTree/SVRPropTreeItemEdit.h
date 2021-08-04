@@ -106,6 +106,10 @@ public:
 
 	// @cmember Called to activate the item.
 	virtual void OnActivate() override;
+
+	//Only needed to handle buttons in readonly-EditItem 
+	virtual void ReadOnlyActivate() override;
+	virtual void HideEditItemCtrls() override;
 	
 	// Called to tell the control that is will loss the focus and no new focus will be set. 
 	//(Will be set a new focus, OnKillFocus will be fired automatically.)
@@ -140,6 +144,7 @@ protected:
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 
 	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult ) override;
+	void CreateBtn();
 	void ButtonClicked();
 	void DisplayButton();
 

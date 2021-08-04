@@ -83,7 +83,7 @@ void SVCylindricalWarpToolClass::LocalInitialize()
 	registerInputObject( &m_InputImage, SvDef::SourceImageInputName, SvPb::ImageInputEId);
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &m_OutputImage, SvPb::OutputImageEId, IDS_OBJECTNAME_IMAGE1 );
+	RegisterEmbeddedImage( &m_OutputImage, SvPb::OutputImageEId, IDS_OBJECTNAME_IMAGE1 );
 
 	// Register SourceImageNames Value Object
 	RegisterEmbeddedObject( &m_SourceImageNames, SvPb::SourceImageNamesEId, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemTool );

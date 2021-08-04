@@ -14,9 +14,8 @@
 #include "SVOGui/PictureDisplay.h"
 #include "SVOGui/ISVPropertyPageDialog.h"  // for QueryAllowExit()
 #include "SVOGui/ImageController.h"
-#include "SVOGui/ObjectSelectorController.h"
 #include "SVOGui/DataController.h"
-#include "SVOGui/ValueEditWidgetHelper.h"
+#include "SVOGui/LinkedValueWidgetHelper.h"
 #pragma endregion Includes
 
 class SVToolAdjustmentDialogSheetClass;
@@ -56,9 +55,6 @@ private:
 	void UpdateImages();
 
 	void GetAndDisplayValuesFromTool();
-	void PickValue(CEdit& rEdit, UINT ResourceID);
-
-	void traceScalefactorValues(const std::string &rHeading, bool alsoAsDouble=false) const ;
 
 	SVToolAdjustmentDialogSheetClass* m_ParentDialog;
 
@@ -71,8 +67,6 @@ private:
 	uint32_t m_ROIImageID = SvDef::InvalidObjectId;
 	uint32_t m_OutputImageID = SvDef::InvalidObjectId;
 
-	SvOg::ObjectSelectorController m_resizeValueSelector;
-
 	const uint32_t m_inspectionID;
 	const uint32_t m_toolID;
 
@@ -80,22 +74,16 @@ private:
 
 	CEdit m_contentScaleEdit[ScaleFactorDimension::Max];
 	CButton m_contentScaleButton[ScaleFactorDimension::Max];
+	std::array<std::unique_ptr<SvOg::LinkedValueWidgetHelper>, ScaleFactorDimension::Max > m_contentScaleWidgets;
 
 	CEdit m_formatScaleEdit[ScaleFactorDimension::Max];
 	CButton m_formatScaleButton[ScaleFactorDimension::Max];
-
-	SvOg::ValueEditWidgetHelper	m_formatWidthHelper;
-	SvOg::ValueEditWidgetHelper	m_formatHeightHelper;
-
-	SvOg::ValueEditWidgetHelper	m_contentWidthHelper;
-	SvOg::ValueEditWidgetHelper	m_contentHeightHelper;
+	std::array<std::unique_ptr<SvOg::LinkedValueWidgetHelper>, ScaleFactorDimension::Max > m_formatScaleWidgets;
 
 	CComboBox m_InterpolationModeCombo;
 	std::vector<std::string> m_InterpolationModeNames;
 	CComboBox m_OverscanModeCombo;
 	std::vector<std::string> m_OverscanModeNames;
-
-	std::vector<std::reference_wrapper<SvOg::ValueEditWidgetHelper>> m_allEditHelpers;
 
 	//{{AFX_DATA(SVTADlgResizePage)
 	enum { IDD = IDD_TA_RESIZE_DIALOG };
@@ -115,7 +103,12 @@ private:
 #pragma region AFX MSG
 	// Generated message map functions
 	//{{AFX_MSG(SVTADlgResizePage)
-	afx_msg void OnAnyItemChanged();
+	afx_msg void OnInterpolationModeChanged();
+	afx_msg void OnOverscanChanged();
+	afx_msg void OnContentWidthFactorChanged();
+	afx_msg void OnContentHeightFactorChanged();
+	afx_msg void OnFormatWidthFactorChanged();
+	afx_msg void OnFormatHeightFactorChanged();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 

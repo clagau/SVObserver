@@ -15,7 +15,6 @@
 #include "Definitions/RangeEnum.h"
 #include "InspectionEngine/SVTaskObject.h"
 #include "ObjectInterfaces/ITool.h"
-#include "SVLibrary/ISVCancel.h"
 #include "SVObjectLibrary/InputObject.h"
 #include "SVValueObjectLibrary/LinkedValue.h"
 #pragma endregion Includes
@@ -34,7 +33,7 @@ static const VARTYPE cVarType_Value = VT_R8;
 // .Title       : Class SVRange
 // -----------------------------------------------------------------------------
 ////////////////////////////////////////////////////////////////////////////////
-class SVRange : public SvIe::SVTaskObjectClass, public ISVCancel
+class SVRange : public SvIe::SVTaskObjectClass
 {
 	SV_DECLARE_CLASS
 
@@ -45,12 +44,6 @@ public:
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
-
-	// ISVCancel interface
-	virtual HRESULT GetCancelData(SVCancelData*& rpData) override;
-	virtual HRESULT SetCancelData(SVCancelData* pData) override;
-
-	virtual HRESULT SetValuesForAnObject(uint32_t aimObjectID, SVObjectAttributeClass* pDataObject) override;
 
 	void setHighValues(double failHigh, double warnHigh);
 	void setLowValues(double failLow, double warnLow);

@@ -46,14 +46,7 @@ namespace SvAo
 	{
 		MIL_ID m_featureType = M_NULL;
 		bool m_isEnabled = false;
-		double m_failHigh = 9999.;
-		double m_warnHigh = 9999.;
-		double m_warnLow = 0.;
-		double m_failLow = 0.;
-		std::string m_failHighIndirect = "";
-		std::string m_warnHighIndirect = "";
-		std::string m_warnLowIndirect = "";
-		std::string m_failLowIndirect = "";
+		const std::array<SvVol::LinkedValue, RangeEnum::ER_COUNT>& m_rRangeValues;
 	};
 
 	enum class SortEnum

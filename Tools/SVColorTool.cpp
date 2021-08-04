@@ -319,11 +319,11 @@ void SVColorToolClass::LocalInitialize()
 	registerInputObject(&m_InputImage, SvDef::cColorToolInputImage, SvPb::ImageInputEId);
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject(&m_OutputImage, SvPb::OutputImageEId, IDS_OBJECTNAME_IMAGE1);
-	RegisterEmbeddedObject(&m_LogicalROIImage, SvPb::LogicalROIImageEId, IDS_OBJECTNAME_ROIIMAGE);
-	RegisterEmbeddedObject(&m_bandImage[SvDef::Band0], SvPb::Band0ImageEId, IDS_OBJECTNAME_BAND0_IMAGE);
-	RegisterEmbeddedObject(&m_bandImage[SvDef::Band1], SvPb::Band1ImageEId, IDS_OBJECTNAME_BAND1_IMAGE);
-	RegisterEmbeddedObject(&m_bandImage[SvDef::Band2], SvPb::Band2ImageEId, IDS_OBJECTNAME_BAND2_IMAGE);
+	RegisterEmbeddedImage(&m_OutputImage, SvPb::OutputImageEId, IDS_OBJECTNAME_IMAGE1);
+	RegisterEmbeddedImage(&m_LogicalROIImage, SvPb::LogicalROIImageEId, IDS_OBJECTNAME_ROIIMAGE);
+	RegisterEmbeddedImage(&m_bandImage[SvDef::Band0], SvPb::Band0ImageEId, IDS_OBJECTNAME_BAND0_IMAGE);
+	RegisterEmbeddedImage(&m_bandImage[SvDef::Band1], SvPb::Band1ImageEId, IDS_OBJECTNAME_BAND1_IMAGE);
+	RegisterEmbeddedImage(&m_bandImage[SvDef::Band2], SvPb::Band2ImageEId, IDS_OBJECTNAME_BAND2_IMAGE);
 
 	RegisterEmbeddedObject(&m_convertToHSI, SvPb::ConvertToHSIEId, IDS_OBJECTNAME_CONVERT_TO_HSI, true, SvOi::SVResetItemIP);
 	RegisterEmbeddedObject(&m_hasROI, SvPb::HasROIEId, IDS_OBJECTNAME_HAS_ROI, true, SvOi::SVResetItemIP);

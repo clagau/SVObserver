@@ -265,10 +265,10 @@ void SVColorThreshold::LocalInitialize()
 	/////////////////////////////////////////////////////////////////////////
 	// Image Outputs
 	/////////////////////////////////////////////////////////////////////////
-	RegisterEmbeddedObject(&m_BandThreshold[SvDef::BandEnum::Band0].m_OutputImage, SvPb::Band0ImageEId, IDS_OBJECTNAME_BAND0_IMAGE);
-	RegisterEmbeddedObject(&m_BandThreshold[SvDef::BandEnum::Band1].m_OutputImage, SvPb::Band1ImageEId, IDS_OBJECTNAME_BAND1_IMAGE);
-	RegisterEmbeddedObject(&m_BandThreshold[SvDef::BandEnum::Band2].m_OutputImage, SvPb::Band2ImageEId, IDS_OBJECTNAME_BAND2_IMAGE);
-	RegisterEmbeddedObject(&m_OutputImage, SvPb::OutputImageEId, IDS_OBJECTNAME_IMAGE1);
+	RegisterEmbeddedImage(&m_BandThreshold[SvDef::BandEnum::Band0].m_OutputImage, SvPb::Band0ImageEId, IDS_OBJECTNAME_BAND0_IMAGE);
+	RegisterEmbeddedImage(&m_BandThreshold[SvDef::BandEnum::Band1].m_OutputImage, SvPb::Band1ImageEId, IDS_OBJECTNAME_BAND1_IMAGE);
+	RegisterEmbeddedImage(&m_BandThreshold[SvDef::BandEnum::Band2].m_OutputImage, SvPb::Band2ImageEId, IDS_OBJECTNAME_BAND2_IMAGE);
+	RegisterEmbeddedImage(&m_OutputImage, SvPb::OutputImageEId, IDS_OBJECTNAME_IMAGE1);
 
 	/////////////////////////////////////////////////////////////////////////
 	// Band 0 Threshold

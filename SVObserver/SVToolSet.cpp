@@ -43,7 +43,7 @@ void SVToolSet::init()
 	// Register Embedded Objects
 	RegisterEmbeddedObject(&m_isObjectValid, SvPb::TaskObjectClassIsObjectValidEId, IDS_OBJECTNAME_ISVALID, false, SvOi::SVResetItemNone);
 	RegisterEmbeddedObject(&m_Enabled, SvPb::ToolSetEnabledEId, IDS_OBJECTNAME_ENABLED, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_MainImageObject, SvPb::OutputImageEId, IDS_OBJECTNAME_IMAGE1);
+	RegisterEmbeddedImage(&m_MainImageObject, SvPb::OutputImageEId, IDS_OBJECTNAME_IMAGE1);
 
 	RegisterEmbeddedObject(&m_Passed, SvPb::PassedEId, IDS_OBJECTNAME_PASSED, false, SvOi::SVResetItemNone);
 	RegisterEmbeddedObject(&m_Failed, SvPb::FailedEId, IDS_OBJECTNAME_FAILED, false, SvOi::SVResetItemNone);
@@ -83,14 +83,13 @@ void SVToolSet::init()
 	RegisterEmbeddedObject(&m_TriggerIndex, SvPb::TriggerIndexEId, SvDef::c_TriggerIndex, false, SvOi::SVResetItemNone);
 	RegisterEmbeddedObject(&m_TriggerPerObjectID, SvPb::TriggerPerObjectIDEId, SvDef::c_TriggerPerObjectID, false, SvOi::SVResetItemNone);
 	RegisterEmbeddedObject(&m_InspectedObjectID, SvPb::InspectedObjectIDEId, SvDef::c_InspectedObjectID, false, SvOi::SVResetItemIP);
-	RegisterEmbeddedObject(&m_InspectedObjectID.getLinkedName(), SvPb::InspectedObjectIDLinkEId, SvDef::c_InspectedObjectIDLink, false, SvOi::SVResetItemIP);
-
+	
 	RegisterEmbeddedObject(&m_ToolComment, SvPb::ToolCommentTypeEId, IDS_OBJECTNAME_TOOLSET_COMMENT, false, SvOi::SVResetItemNone);
 
 	RegisterEmbeddedObject(&m_InspectionName, SvPb::InspectionNameEId, SvDef::c_InspectionName, false, SvOi::SVResetItemIP);
 
 	//Link inspected object ID with incoming object ID as default
-	m_InspectedObjectID.setValue(convertObjectIdToString(m_ObjectID.getObjectId()));
+	m_InspectedObjectID.setIndirectValue(SVObjectReference {&m_ObjectID});
 	//Display them as integers
 	m_ObjectID.SetOutputFormat(SvVol::OutputFormat_int);
 	m_ObjectType.SetOutputFormat(SvVol::OutputFormat_int);

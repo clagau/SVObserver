@@ -31,6 +31,7 @@
 #pragma once
 
 class SVRPropTree;
+class SVRPropertyItem;
 
 /////////////////////////////////////////////////////////////////////////////
 // SVRPropTreeCtrl window
@@ -79,6 +80,8 @@ protected:
 
 	// TRUE if we are dragging the splitter
 	BOOL            m_bColDrag;
+
+	SVRPropertyItem* m_pLastReadonlyActivated = nullptr;
 
 	// Generated message map functions
 protected:

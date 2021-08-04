@@ -49,8 +49,6 @@ ResizeTool::ResizeTool(SVObjectClass* pOwner, int stringResourceID)
 	LocalInitialize();
 }
 
-SvVol::LinkedValue m_FilenameIndex1;
-
 void ResizeTool::LocalInitialize()
 {
 	m_canResizeToParent = true;
@@ -119,12 +117,12 @@ void ResizeTool::BuildEmbeddedObjectList()
 		false, 
 		SvOi::SVResetItemTool);
 
-	RegisterEmbeddedObject(
+	RegisterEmbeddedImage(
 		&m_OutputImage,
 		SvPb::OutputImageEId,
 		IDS_OBJECTNAME_IMAGE1);
 
-	RegisterEmbeddedObject(
+	RegisterEmbeddedImage(
 		&m_LogicalROIImage,
 		SvPb::LogicalROIImageEId,
 		IDS_OBJECTNAME_ROIIMAGE);
@@ -176,13 +174,11 @@ bool ResizeTool::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 	// m_ExtentWidthFactorFormat having a default value of 0.0 rather than SvDef::cDefaultScaleFactor
 	// ensures proper behaviour with pre-10.10 configurations
 	{
-		std::string tmpStr;
-		m_ExtentWidthFactorFormat.getLinkedName().getValue(tmpStr);
-		if (tmpStr.empty()) // A dotted name must not be overwritten with a numeric value - even if currently having a value of zero!
+		if (SvPb::LinkedSelectedType::DirectValue == m_ExtentWidthFactorFormat.getSelectedType()) // A dotted name must not be overwritten with a numeric value - even if currently having a value of zero!
 			// We are assuming that an non-empty linked name means that a dotted name is present.
 		{
 			m_ExtentWidthFactorContent.getValue(widthScaleFactor);
-			m_ExtentWidthFactorFormat.setValue(widthScaleFactor);
+			m_ExtentWidthFactorFormat.setDirectValue(widthScaleFactor);
 		}
 	}
 
@@ -192,13 +188,11 @@ bool ResizeTool::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 	//m_ExtentHeightFactorFormat having a default value of 0.0 rather than SvDef::cDefaultScaleFactor
 	// ensures proper behaviour with pre-10.10 configurations
 	{
-		std::string tmpStr;
-		m_ExtentHeightFactorFormat.getLinkedName().getValue(tmpStr);
-		if (tmpStr.empty()) // A dotted name must not be overwritten with a numeric value - even if currently having a value of zero!
+		if (SvPb::LinkedSelectedType::DirectValue == m_ExtentHeightFactorFormat.getSelectedType()) // A dotted name must not be overwritten with a numeric value - even if currently having a value of zero!
 			// We are assuming that an non-empty linked name means that a dotted name is present.
 		{
 			m_ExtentHeightFactorContent.getValue(heightScaleFactor);
-			m_ExtentHeightFactorFormat.setValue(heightScaleFactor);
+			m_ExtentHeightFactorFormat.setDirectValue(heightScaleFactor);
 		}
 	}
 
@@ -272,39 +266,6 @@ SvVol::SVStringValueObjectClass* ResizeTool::GetInputImageNames()
 
 bool ResizeTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-#if defined (TRACE_THEM_ALL) || defined (TRACE_RESIZE)
-
-	std::vector<std::reference_wrapper<const SvVol::LinkedValue>>
-		allScaleFactorLinkedValues
-	{
-		std::cref(m_ExtentWidthFactorContent),
-		std::cref(m_ExtentHeightFactorContent),
-		std::cref(m_ExtentWidthFactorFormat),
-		std::cref(m_ExtentHeightFactorFormat)
-	};
-
-	std::stringstream traceStream;
-
-	traceStream << "Scale factors (wC/hC/wF/hF):";
-
-	for (auto& rSflv : allScaleFactorLinkedValues)
-	{
-		auto& rSvo = rSflv.getLinkedName();
-
-		std::string ln;
-		rSvo.getValue(ln);
-		traceStream << " '" << ln << "': ";
-		double scaleFactor = 0.0;
-		rSflv.getValue(scaleFactor);
-		traceStream << scaleFactor;
-	}
-	traceStream << std::endl;
-
-	OutputDebugString(traceStream.str().c_str());
-	//uncomment the next line to enable error reporting to cmd window
-	//SV_LOG_GLOBAL(info) << traceStream.str();
-#endif
-
 	if (!AreAllAllScaleFactorValuesValid())
 	{
 		reportGeneralError(SvStl::Tid_InvalidScaleFactor, pErrorMessages, true);

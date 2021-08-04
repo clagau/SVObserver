@@ -17,12 +17,11 @@
 #include "PictureDisplay.h"
 #include "ImageController.h"
 #include "DataController.h"
+#include "LinkedValueWidgetHelper.h"
 #pragma endregion Includes
-#include "ObjectSelectorController.h"
 
 namespace SvOg
 {
-
 class SVToolAdjustmentDialogTwoImagePageClass : public CPropertyPage, protected SvOg::ImageController
 {
 	DECLARE_MESSAGE_MAP()
@@ -54,12 +53,11 @@ protected:
 	afx_msg void OnSelchangeOperatorCombo();
 	afx_msg void OnCheckEnableGain();
 	afx_msg void OnCheckUseLut();
-	afx_msg void OnBnClickedButtonLinkGain();
-	afx_msg void OnBnClickedButtonLinkOffset();
+	afx_msg void OnBnClickedButtonGain();
+	afx_msg void OnKillFocusGain();
+	afx_msg void OnBnClickedButtonOffset();
+	afx_msg void OnKillFocusOffset();
 	afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
-	void OnInputChangedOffset();
-	void OnInputChangedGain();
-
 	//}}AFX_MSG
 #pragma endregion Protected Methods
 
@@ -91,8 +89,10 @@ private:
 
 	CButton m_ButtonGainLink;
 	CEdit m_EditGainValue;
+	std::unique_ptr<LinkedValueWidgetHelper> m_GainWidget;
 	CButton m_ButtonOffsetLink;
 	CEdit m_EditOffsetValue;
+	std::unique_ptr<LinkedValueWidgetHelper> m_OffsetWidget;
 
 	bool m_IgnoreNotification {false};
 
@@ -107,8 +107,6 @@ private:
 	const uint32_t m_TaskObjectID;
 
 	ValueController m_values;
-	CBitmap m_downArrowBitmap;
-	ObjectSelectorController m_objectSelector;
 #pragma endregion Member variables
 };
 } //namespace SvOg

@@ -38,8 +38,8 @@ public:
 	virtual void setMemBlockPointer(uint8_t* pMemBlockBase) override;
 	virtual void updateMemBlockData() override;
 
-	HRESULT SetValueKeepType(LPCTSTR Value) {return SetValueKeepType(Value, 0);}
-	HRESULT SetValueKeepType(LPCTSTR Value, int Index);
+	virtual HRESULT SetValueKeepType(LPCTSTR Value) {return SetValueKeepType(Value, 0);}
+	virtual HRESULT SetValueKeepType(LPCTSTR Value, int Index);
 	VARTYPE GetDefaultType() const { return GetDefaultValue().vt; }
 	VARTYPE GetValueType() const { return (nullptr !=  valuePtr()) ? valuePtr()->vt : VT_NULL; };
 

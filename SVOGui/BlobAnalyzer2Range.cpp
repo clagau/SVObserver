@@ -11,6 +11,8 @@
 #include "SVStatusLibrary/MessageManager.h"
 #include "GridCtrlLibrary/GridCellCheck.h"
 #include "DisplayHelper.h"
+#include "BlobAnalyzer2Helper.h"
+#include "Definitions/GlobalConst.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -53,23 +55,21 @@ namespace SvOg
 
 		std::map<int, ColumnDef> g_columnRangeDefArray = { { NameColumn, ColumnDef{"Name", cNameColumnSize}},
 			{RangeEnableColumn, {"", cBoxColumnSize, SvPb::FeatureData::kIsRangeFieldNumber}},
-			{FailHighColumn, {"Fail High", cRangeColumnSize, SvPb::FeatureData::kRangeFailHighIndirectFieldNumber }},
+			{FailHighColumn, {"Fail High", cRangeColumnSize, SvPb::FeatureData::kRangeFailHighFieldNumber }},
 			{FailHighButtonColumn, {"", cBoxColumnSize}},
-			{WarnHighColumn, {"Warn High", cRangeColumnSize, SvPb::FeatureData::kRangeWarnHighIndirectFieldNumber }},
+			{WarnHighColumn, {"Warn High", cRangeColumnSize, SvPb::FeatureData::kRangeWarnHighFieldNumber }},
 			{WarnHighButtonColumn, {"", cBoxColumnSize}},
-			{WarnLowColumn, {"Warn Low", cRangeColumnSize, SvPb::FeatureData::kRangeWarnLowIndirectFieldNumber }},
+			{WarnLowColumn, {"Warn Low", cRangeColumnSize, SvPb::FeatureData::kRangeWarnLowFieldNumber }},
 			{WarnLowButtonColumn, {"", cBoxColumnSize}},
-			{FailLowColumn, {"Fail Low", cRangeColumnSize, SvPb::FeatureData::kRangeFailLowIndirectFieldNumber }},
+			{FailLowColumn, {"Fail Low", cRangeColumnSize, SvPb::FeatureData::kRangeFailLowFieldNumber }},
 			{FailLowButtonColumn, {"", cBoxColumnSize}},
 		};
 	}
 
 	BEGIN_MESSAGE_MAP(BlobAnalyzer2Range, CPropertyPage)
 		//{{AFX_MSG_MAP(BlobAnalyzer2Range)
-		ON_BN_CLICKED(IDC_BUTTON_FAILHIGH, &OnBnClickedFailHighIndirect)
-		ON_BN_CLICKED(IDC_BUTTON_WARNHIGH, &OnBnClickedWarnlHighIndirect)
-		ON_BN_CLICKED(IDC_BUTTON_WARNLOW, &OnBnClickedWarnLowIndirect)
-		ON_BN_CLICKED(IDC_BUTTON_FAILLOW, &OnBnClickedFailedLowIndirect)
+		ON_CONTROL_RANGE(BN_CLICKED, IDC_BUTTON_FAILHIGH, IDC_BUTTON_FAILLOW, OnButtonRange)
+		ON_CONTROL_RANGE(EN_KILLFOCUS, IDC_EDIT_FAILHIGH, IDC_EDIT_FAILLOW, OnKillFocusRange)
 		ON_NOTIFY(NM_CLICK, IDC_GRID, OnGridClick)
 		ON_NOTIFY(GVN_BEGINLABELEDIT, IDC_GRID, OnGridBeginEdit)
 		ON_NOTIFY(GVN_ENDLABELEDIT, IDC_GRID, OnGridEndEdit)
@@ -83,7 +83,6 @@ namespace SvOg
 		, m_toolID(toolId)
 		, m_TaskObjectID(taskObjectId)
 		, m_NumberRangeController(inspectionId, m_TaskObjectID)
-		, m_objectSelector(inspectionId)
 	{
 		m_NumberRangeController.Init();
 	}
@@ -106,14 +105,14 @@ namespace SvOg
 		CPropertyPage::DoDataExchange(pDX);
 		//{{AFX_DATA_MAP(BlobAnalyzer2Range)
 		DDX_Control(pDX, IDC_GRID, m_Grid);
-		DDX_Text(pDX, IDC_EDIT_FAILHIGH, m_FailHigh);
-		DDX_Text(pDX, IDC_EDIT_WARNHIGH, m_WarnHigh);
-		DDX_Text(pDX, IDC_EDIT_WARNLOW, m_WarnLow);
-		DDX_Text(pDX, IDC_EDIT_FAILLOW, m_FailLow);
-		DDX_Control(pDX, IDC_BUTTON_FAILHIGH, m_ButtonFailHigh);
-		DDX_Control(pDX, IDC_BUTTON_WARNHIGH, m_ButtonWarnHigh);
-		DDX_Control(pDX, IDC_BUTTON_WARNLOW, m_ButtonWarnLow);
-		DDX_Control(pDX, IDC_BUTTON_FAILLOW, m_ButtonFailLow);
+		DDX_Control(pDX, IDC_BUTTON_FAILHIGH, m_RangeButtons[RangeEnum::ER_FailHigh]);
+		DDX_Control(pDX, IDC_BUTTON_WARNHIGH, m_RangeButtons[RangeEnum::ER_WarnHigh]);
+		DDX_Control(pDX, IDC_BUTTON_WARNLOW, m_RangeButtons[RangeEnum::ER_WarnLow]);
+		DDX_Control(pDX, IDC_BUTTON_FAILLOW, m_RangeButtons[RangeEnum::ER_FailLow]);
+		DDX_Control(pDX, IDC_EDIT_FAILHIGH, m_RangeEdits[RangeEnum::ER_FailHigh]);
+		DDX_Control(pDX, IDC_EDIT_WARNHIGH, m_RangeEdits[RangeEnum::ER_WarnHigh]);
+		DDX_Control(pDX, IDC_EDIT_WARNLOW, m_RangeEdits[RangeEnum::ER_WarnLow]);
+		DDX_Control(pDX, IDC_EDIT_FAILLOW, m_RangeEdits[RangeEnum::ER_FailLow]);
 		//}}AFX_DATA_MAP
 	}
 
@@ -123,12 +122,10 @@ namespace SvOg
 
 		//(HBITMAP) is a call to the overloaded function operator HBITMAP and no c style cast
 		DisplayHelper::setIconListToGrid(m_ImageList, m_downArrowBitmap, m_Grid);
-		m_ButtonFailHigh.SetBitmap((HBITMAP)m_downArrowBitmap);
-		m_ButtonWarnHigh.SetBitmap((HBITMAP)m_downArrowBitmap);
-		m_ButtonWarnLow.SetBitmap((HBITMAP)m_downArrowBitmap);
-		m_ButtonFailLow.SetBitmap((HBITMAP)m_downArrowBitmap);
-
-		setDlgData();
+		for (int i = 0; i < m_RangeWidgets.size(); ++i)
+		{
+			m_RangeWidgets[i] = m_NumberRangeController.createWidget(static_cast<RangeEnum::ERange>(i), m_RangeEdits[i], m_RangeButtons[i]);
+		}
 
 		HRESULT result = loadFeatureData();
 		if (S_OK != result)
@@ -168,6 +165,16 @@ namespace SvOg
 			}
 		}
 
+		auto* pWnd = GetFocus();
+		if (nullptr != pWnd)
+		{
+			auto nId = pWnd->GetDlgCtrlID();
+			if (std::ranges::any_of(m_RangeEdits, [nId](const auto& rEntry) { return nId == rEntry.GetDlgCtrlID(); }))
+			{
+				OnKillFocusRange(nId);
+			}
+		}
+
 		bool ret = setInspectionData();
 		if (ret)
 		{
@@ -183,6 +190,9 @@ namespace SvOg
 		{
 			return;
 		}
+
+		std::string Title = m_NumberRangeController.GetOwnerName();
+		Title += _T(": ");
 
 		switch (pItem->iColumn)
 		{
@@ -203,49 +213,29 @@ namespace SvOg
 		case FailHighButtonColumn:
 			if (m_featureData[pItem->iRow - 1].is_range())
 			{
-				std::string cellText = m_Grid.GetCell(pItem->iRow, FailHighColumn)->GetText();
-				if (ShowObjectSelector(cellText, RangeEnum::ER_FailHigh))
-				{
-					m_Grid.GetCell(pItem->iRow, FailHighColumn)->SetText(cellText.c_str());
-					m_featureData[pItem->iRow - 1].set_range_fail_high_indirect(cellText);
-					m_Grid.Refresh();
-				}
+				Title += RangeEnum::ERange2String(RangeEnum::ER_FailHigh);
+				startObjectSelector(m_Grid, Title, pItem->iRow, FailHighColumn, m_InspectionID, m_toolID, m_featureData[pItem->iRow - 1].range_fail_high_id(), *m_featureData[pItem->iRow - 1].mutable_range_fail_high());
 			}
 			break;
 		case WarnHighButtonColumn:
 			if (m_featureData[pItem->iRow - 1].is_range())
 			{
-				std::string cellText = m_Grid.GetCell(pItem->iRow, WarnHighColumn)->GetText();
-				if (ShowObjectSelector(cellText, RangeEnum::ER_WarnHigh))
-				{
-					m_Grid.GetCell(pItem->iRow, WarnHighColumn)->SetText(cellText.c_str());
-					m_featureData[pItem->iRow - 1].set_range_warn_high_indirect(cellText);
-					m_Grid.Refresh();
-				}
+				Title += RangeEnum::ERange2String(RangeEnum::ER_WarnHigh);
+				startObjectSelector(m_Grid, Title, pItem->iRow, WarnHighColumn, m_InspectionID, m_toolID, m_featureData[pItem->iRow - 1].range_warn_high_id(), *m_featureData[pItem->iRow - 1].mutable_range_warn_high());
 			}
 			break;
 		case WarnLowButtonColumn:
 			if (m_featureData[pItem->iRow - 1].is_range())
 			{
-				std::string cellText = m_Grid.GetCell(pItem->iRow, WarnLowColumn)->GetText();
-				if (ShowObjectSelector(cellText, RangeEnum::ER_WarnLow))
-				{
-					m_Grid.GetCell(pItem->iRow, WarnLowColumn)->SetText(cellText.c_str());
-					m_featureData[pItem->iRow - 1].set_range_warn_low_indirect(cellText);
-					m_Grid.Refresh();
-				}
+				Title += RangeEnum::ERange2String(RangeEnum::ER_WarnLow);
+				startObjectSelector(m_Grid, Title, pItem->iRow, WarnLowColumn, m_InspectionID, m_toolID, m_featureData[pItem->iRow - 1].range_warn_low_id(), *m_featureData[pItem->iRow - 1].mutable_range_warn_low());
 			}
 			break;
 		case FailLowButtonColumn:
 			if (m_featureData[pItem->iRow - 1].is_range())
 			{
-				std::string cellText = m_Grid.GetCell(pItem->iRow, FailLowColumn)->GetText();
-				if (ShowObjectSelector(cellText, RangeEnum::ER_FailLow))
-				{
-					m_Grid.GetCell(pItem->iRow, FailLowColumn)->SetText(cellText.c_str());
-					m_featureData[pItem->iRow - 1].set_range_fail_low_indirect(cellText);
-					m_Grid.Refresh();
-				}
+				Title += RangeEnum::ERange2String(RangeEnum::ER_FailLow);
+				startObjectSelector(m_Grid, Title, pItem->iRow, FailLowButtonColumn, m_InspectionID, m_toolID, m_featureData[pItem->iRow - 1].range_fail_low_id(), *m_featureData[pItem->iRow - 1].mutable_range_fail_low());
 			}
 			break;
 		default:
@@ -266,64 +256,71 @@ namespace SvOg
 
 		if (0 < pItem->iRow && m_featureData.size() >= pItem->iRow)
 		{
+			SvPb::LinkedValue* pLinkedValue = nullptr;
 			std::string cellText = m_Grid.GetCell(pItem->iRow, pItem->iColumn)->GetText();
 			switch (pItem->iColumn)
 			{
-			case FailHighColumn:
-				m_featureData[pItem->iRow - 1].set_range_fail_high_indirect(cellText);
-				break;
-			case WarnHighColumn:
-				m_featureData[pItem->iRow - 1].set_range_warn_high_indirect(cellText);
-				break;
-			case WarnLowColumn:
-				m_featureData[pItem->iRow - 1].set_range_warn_low_indirect(cellText);
-				break;
-			case FailLowColumn:
-				m_featureData[pItem->iRow - 1].set_range_fail_low_indirect(cellText);
-				break;
+				case FailHighColumn:
+					pLinkedValue = m_featureData[pItem->iRow - 1].mutable_range_fail_high();
+					break;
+				case WarnHighColumn:
+					pLinkedValue = m_featureData[pItem->iRow - 1].mutable_range_warn_high();
+					break;
+				case WarnLowColumn:
+					pLinkedValue = m_featureData[pItem->iRow - 1].mutable_range_warn_low();
+					break;
+				case FailLowColumn:
+					pLinkedValue = m_featureData[pItem->iRow - 1].mutable_range_fail_low();
+					break;
+			}
+
+			assert(nullptr != pLinkedValue);
+			if (nullptr != pLinkedValue && SvPb::LinkedSelectedType::DirectValue == pLinkedValue->type())
+			{
+				variant_t tmp {cellText.c_str()};
+				SvStl::MessageContainer msgContainer;
+				bool isValid = (S_OK == ::VariantChangeTypeEx(&tmp, &tmp, SvDef::LCID_USA, VARIANT_ALPHABOOL, VT_R8));
+				if (false == isValid)
+				{
+					SvDef::StringVector msgList;
+					auto iter = g_columnRangeDefArray.find(pItem->iColumn);
+					msgList.push_back(g_columnRangeDefArray.end() != iter ? iter->second.m_name : "");
+					msgContainer.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_LinkedValue_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
+					SvStl::MessageManager Msg(SvStl::MsgType::Display);
+					Msg.setMessage(msgContainer.getMessage());
+					*pResult = -1;
+					return;
+				}
+				else
+				{
+					SvPb::ConvertVariantToProtobuf(tmp, pLinkedValue->mutable_directvalue());
+					SvPb::ConvertVariantToProtobuf(tmp, pLinkedValue->mutable_value());
+				}
 			}
 		}
 
 		*pResult = 0;
 	}
 
-	void BlobAnalyzer2Range::OnBnClickedFailHighIndirect()
+	void BlobAnalyzer2Range::OnButtonRange(UINT nID)
 	{
-		std::string Value(m_FailHigh);
-		if (ShowObjectSelector(Value, RangeEnum::ER_FailHigh))
+		int index(nID - IDC_BUTTON_FAILHIGH);
+
+		assert(m_RangeWidgets.size() > index && 0 <= index && m_RangeWidgets[index]);
+		if (m_RangeWidgets.size() > index && 0 <= index && m_RangeWidgets[index])
 		{
-			m_FailHigh = Value.c_str();
-			UpdateData(false);
+			m_RangeWidgets[index]->OnButton();
 		}
 	}
 
-	void BlobAnalyzer2Range::OnBnClickedWarnlHighIndirect()
+	void BlobAnalyzer2Range::OnKillFocusRange(UINT nID)
 	{
-		std::string Value(m_WarnHigh);
-		if (ShowObjectSelector(Value, RangeEnum::ER_WarnHigh))
-		{
-			m_WarnHigh = Value.c_str();
-			UpdateData(false);
-		}
-	}
+		int index(nID - IDC_EDIT_FAILHIGH);
 
-	void BlobAnalyzer2Range::OnBnClickedWarnLowIndirect()
-	{
-		std::string Value(m_WarnLow);
-		if (ShowObjectSelector(Value, RangeEnum::ER_WarnLow))
+		assert(m_RangeWidgets.size() > index && 0 <= index && m_RangeWidgets[index]);
+		if (m_RangeWidgets.size() > index && 0 <= index && m_RangeWidgets[index])
 		{
-			m_WarnLow = Value.c_str();
-			UpdateData(false);
-		}
-	}
-
-	void BlobAnalyzer2Range::OnBnClickedFailedLowIndirect()
-	{
-		std::string Value(m_FailLow);
-		if (ShowObjectSelector(Value, RangeEnum::ER_FailLow))
-		{
-			m_FailLow = Value.c_str();
-			UpdateData(false);
+			m_RangeWidgets[index]->EditboxToValue();
 		}
 	}
 #pragma endregion Protected Methods
@@ -384,16 +381,11 @@ namespace SvOg
 
 		try
 		{
-			// Validate Entered data for existance and if within bounds		
-			m_NumberRangeController.IsFieldValid(SvStl::Tid_FailHigh, static_cast<LPCSTR>(m_FailHigh));
-			m_NumberRangeController.IsFieldValid(SvStl::Tid_FailLow, static_cast<LPCSTR>(m_FailLow));
-			m_NumberRangeController.IsFieldValid(SvStl::Tid_WarnHigh, static_cast<LPCSTR>(m_WarnHigh));
-			m_NumberRangeController.IsFieldValid(SvStl::Tid_WarnLow, static_cast<LPCSTR>(m_WarnLow));
-
-			m_NumberRangeController.Set(m_NumberRangeController.FailHigh, static_cast<LPCSTR>(m_FailHigh));
-			m_NumberRangeController.Set(m_NumberRangeController.FailLow, static_cast<LPCSTR>(m_FailLow));
-			m_NumberRangeController.Set(m_NumberRangeController.WarnHigh, static_cast<LPCSTR>(m_WarnHigh));
-			m_NumberRangeController.Set(m_NumberRangeController.WarnLow, static_cast<LPCSTR>(m_WarnLow));
+			// Validate Entered data for existence and if within bounds		
+			m_NumberRangeController.IsFieldValid(RangeEnum::ERange::ER_FailHigh);
+			m_NumberRangeController.IsFieldValid(RangeEnum::ERange::ER_FailLow);
+			m_NumberRangeController.IsFieldValid(RangeEnum::ERange::ER_WarnHigh);
+			m_NumberRangeController.IsFieldValid(RangeEnum::ERange::ER_WarnLow);
 
 			hResult = m_NumberRangeController.Commit();
 		}
@@ -448,28 +440,20 @@ namespace SvOg
 			}
 			if (m_featureData[i].is_range())
 			{
-				std::string tmp = m_featureData[i].range_fail_high_indirect().empty() ? std::to_string(m_featureData[i].range_fail_high()) : m_featureData[i].range_fail_high_indirect();
-				m_Grid.SetItemText(row, FailHighColumn, tmp.c_str());
-				m_Grid.SetItemState(row, FailHighColumn, m_Grid.GetItemState(row, FailHighColumn) & (~GVIS_READONLY));
+				setValueColumn(m_Grid, row, FailHighColumn, convertLinkedValue(m_featureData[i].range_fail_high()));
 				SvGcl::GV_ITEM buttonItem;
 				buttonItem.mask = GVIF_IMAGE;
 				buttonItem.iImage = 0;
 				buttonItem.row = row;
 				buttonItem.col = FailHighButtonColumn;
 				m_Grid.SetItem(&buttonItem);
-				tmp = m_featureData[i].range_warn_high_indirect().empty() ? std::to_string(m_featureData[i].range_warn_high()) : m_featureData[i].range_warn_high_indirect();
-				m_Grid.SetItemText(row, WarnHighColumn, tmp.c_str());
-				m_Grid.SetItemState(row, WarnHighColumn, m_Grid.GetItemState(row, WarnHighColumn) & (~GVIS_READONLY));
+				setValueColumn(m_Grid, row, WarnHighColumn, convertLinkedValue(m_featureData[i].range_warn_high()));
 				buttonItem.col = WarnHighButtonColumn;
 				m_Grid.SetItem(&buttonItem);
-				tmp = m_featureData[i].range_warn_low_indirect().empty() ? std::to_string(m_featureData[i].range_warn_low()) : m_featureData[i].range_warn_low_indirect();
-				m_Grid.SetItemText(row, WarnLowColumn, tmp.c_str());
-				m_Grid.SetItemState(row, WarnLowColumn, m_Grid.GetItemState(row, WarnLowColumn) & (~GVIS_READONLY));
+				setValueColumn(m_Grid, row, WarnLowColumn, convertLinkedValue(m_featureData[i].range_warn_low()));
 				buttonItem.col = WarnLowButtonColumn;
 				m_Grid.SetItem(&buttonItem);
-				tmp = m_featureData[i].range_fail_low_indirect().empty() ? std::to_string(m_featureData[i].range_fail_low()) : m_featureData[i].range_fail_low_indirect();
-				m_Grid.SetItemText(row, FailLowColumn, tmp.c_str());
-				m_Grid.SetItemState(row, FailLowColumn, m_Grid.GetItemState(row, FailLowColumn) & (~GVIS_READONLY));
+				setValueColumn(m_Grid, row, FailLowColumn, convertLinkedValue(m_featureData[i].range_fail_low()));
 				buttonItem.col = FailLowButtonColumn;
 				m_Grid.SetItem(&buttonItem);
 			}
@@ -540,33 +524,6 @@ namespace SvOg
 		}
 
 		return hResult;
-	}
-
-	void BlobAnalyzer2Range::setDlgData()
-	{
-		try
-		{
-			m_FailHigh = m_NumberRangeController.Get(m_NumberRangeController.FailHigh).c_str();
-			m_FailLow = m_NumberRangeController.Get(m_NumberRangeController.FailLow).c_str();
-			m_WarnHigh = m_NumberRangeController.Get(m_NumberRangeController.WarnHigh).c_str();
-			m_WarnLow = m_NumberRangeController.Get(m_NumberRangeController.WarnLow).c_str();
-		}
-		catch (...)
-		{
-			assert(false);
-			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-			Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Init_RangeControlFailed, SvStl::SourceFileParams(StdMessageParams));
-		}
-		UpdateData(false);
-	}
-
-	bool BlobAnalyzer2Range::ShowObjectSelector(std::string& rName, RangeEnum::ERange fieldEnum)
-	{
-		std::string Title = m_NumberRangeController.GetOwnerName();
-		Title += _T(": ");
-		Title += RangeEnum::ERange2String(fieldEnum).c_str();
-
-		return m_objectSelector.Show(rName, Title, this, SvPb::allNumberValueObjects, { m_toolID }, m_toolID);
 	}
 #pragma endregion Private Mehods
 } //namespace SvOg

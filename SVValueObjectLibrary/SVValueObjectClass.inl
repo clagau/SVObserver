@@ -402,7 +402,10 @@ void SVValueObjectClass<T>::Persist(SvOi::IObjectWriter& rWriter) const
 		}
 	}
 
-	rWriter.EndElement();
+	if (false == m_saveFurtherData)
+	{
+		rWriter.EndElement();
+	}
 }
 
 template <typename T>
@@ -875,6 +878,8 @@ _variant_t SVValueObjectClass<T>::vectorType2SafeArray(long arraySize) const
 				varType = VT_VARIANT;
 			}
 		}
+
+		varType = varType & (~VT_ARRAY);
 
 		result.parray = ::SafeArrayCreate(varType, 1, &arrayBound);
 		result.vt = varType | VT_ARRAY;

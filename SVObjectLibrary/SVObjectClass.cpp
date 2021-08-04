@@ -20,6 +20,7 @@
 #include "SVToolsetScriptTags.h"
 #include "Definitions/Color.h"
 #include "Definitions/StringTypeDef.h"
+#include "ObjectInterfaces/ILinkedObject.h"
 #include "ObjectInterfaces/IObjectWriter.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
@@ -99,6 +100,7 @@ This destructor unregisters itself from the object manager and frees all of the 
 */
 SVObjectClass::~SVObjectClass()
 {
+	assert(0 == m_embeddedList.size());
 	disconnectAllInputs();
 
 	SVObjectManagerClass::Instance().CloseUniqueObjectID(this);
@@ -216,6 +218,17 @@ This method executes the close object method on all objects that use this object
 */
 bool SVObjectClass::CloseObject()
 {
+	// Close Embeddeds...
+	for (SVObjectPtrVector::iterator Iter = m_embeddedList.begin(); m_embeddedList.end() != Iter; ++Iter)
+	{
+		SVObjectClass* pObject = *Iter;
+		if (nullptr != pObject)
+		{
+			pObject->CloseObject();
+		}
+	}
+	m_embeddedList.clear();
+
 	m_isCreated = false;
 
 	return true;
@@ -340,26 +353,53 @@ SvOi::IObjectClass* SVObjectClass::getFirstObject(const SvDef::SVObjectTypeInfoS
 	return nullptr;
 }
 
+void SVObjectClass::getOutputList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter) const
+{
+	for (auto* pObject : m_embeddedList)
+	{
+		if (nullptr != pObject)
+		{
+			inserter = pObject;
+			pObject->getOutputList(inserter);
+		}
+	}
+}
 
-void SVObjectClass::fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, SvOi::IsObjectAllowedFunc pFunctor, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum nameToType, SvPb::ObjectSelectorType requiredType, bool /*stopIfClosed = false*/, bool /*firstObject = false*/) const
+void SVObjectClass::fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, SvOi::IsObjectAllowedFunc pFunctor, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum nameToType, SvPb::ObjectSelectorType requiredType, bool stopIfClosed /*= false*/, bool /*firstObject = false*/) const
 {
 	if (isCorrectType(requiredType))
 	{
 		SVObjectReference ObjectRef{ getObjectId() };
 		ObjectRef.fillSelectorList(treeInserter, wholeArray, pFunctor, attribute, nameToType);
 	}
+
+	for (auto* pObject : m_embeddedList)
+	{
+		if (nullptr != pObject)
+		{
+			pObject->fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType, stopIfClosed);
+		}
+	}
 }
 
-void SVObjectClass::fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo, bool /*addHidden = false*/, bool /*stopIfClosed = false*/, bool /*firstObject = false*/)
+void SVObjectClass::fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo, bool addHidden /*= false*/, bool stopIfClosed /*= false*/, bool /*firstObject = false*/)
 {
 	if ((SvPb::NoEmbeddedId == rObjectInfo.m_EmbeddedID || rObjectInfo.m_EmbeddedID == GetEmbeddedID()) &&
 		(SvPb::SVNotSetObjectType == rObjectInfo.m_ObjectType || rObjectInfo.m_ObjectType == GetObjectType()) &&
 		(SvPb::SVNotSetSubObjectType == rObjectInfo.m_SubType || rObjectInfo.m_SubType == GetObjectSubType())
 		)
 	{
-		// cppcheck-suppress unreadVariable symbolName=inserter ; cppCheck doesn't know back_insert_iterator
 		inserter = this;
 	}
+
+	for (auto* pObject : m_embeddedList)
+	{
+		if (nullptr != pObject)
+		{
+			pObject->fillObjectList(inserter, rObjectInfo, addHidden, stopIfClosed);
+		}
+	}
+
 }
 
 uint32_t SVObjectClass::getFirstClosedParent(uint32_t stopSearchAtObjectId) const
@@ -438,6 +478,23 @@ void SVObjectClass::SetObjectEmbedded(SvPb::EmbeddedIdEnum embeddedID, SVObjectC
 
 HRESULT SVObjectClass::SetValuesForAnObject(uint32_t aimObjectID, SVObjectAttributeClass* pDataObject)
 {
+	for (SVObjectPtrVector::iterator Iter = m_embeddedList.begin(); m_embeddedList.end() != Iter; ++Iter)
+	{
+		SVObjectClass* pObject = *Iter;
+		if (nullptr != pObject)
+		{
+			// check if it's this object
+			if (aimObjectID == pObject->getObjectId())
+			{
+				// Set the Object's Data Member Value
+				if (S_OK == pObject->SetObjectValue(pDataObject))
+				{
+					return S_OK;
+				}
+			}
+		}
+	}
+
 	// check if it is for us
 	if (getObjectId() == aimObjectID)
 	{
@@ -581,6 +638,50 @@ bool SVObjectClass::checkIfValidDependency(const SVObjectClass* pObject) const
 	return false;
 }
 
+// bool p_bResetAlways - input 
+//    true - means that the object will initiate a reset whenever the value is 
+//        set. Even if set to the same value.
+//    false - means that the object will only initiate a reset if its value 
+//        changes.
+//
+// The only place that this is ever set to true is for the color HSI 
+// conversion value (Color Tool) and it is probably not necessary there.
+//
+bool SVObjectClass::RegisterEmbeddedObject(SVObjectClass* pEmbeddedObject, SvPb::EmbeddedIdEnum embeddedID, int StringResourceID, bool ResetAlways, SvOi::SVResetItemEnum RequiredReset)
+{
+	std::string Name = SvUl::LoadStdString(StringResourceID);
+	return RegisterEmbeddedObject(pEmbeddedObject, embeddedID, Name.c_str(), ResetAlways, RequiredReset);
+}
+
+bool SVObjectClass::RegisterEmbeddedObject(SVObjectClass* pEmbeddedObject, SvPb::EmbeddedIdEnum embeddedID, LPCTSTR Name, bool ResetAlways, SvOi::SVResetItemEnum RequiredReset)
+{
+	bool Result(false);
+
+	SvOi::IValueObject* pValueObject = dynamic_cast<SvOi::IValueObject*> (pEmbeddedObject);
+	if (nullptr != pValueObject)
+	{
+		pValueObject->setResetOptions(ResetAlways, RequiredReset);
+
+		Result = RegisterEmbeddedObjectAsClass(pEmbeddedObject, embeddedID, Name);
+	}
+
+	return Result;
+}
+
+HRESULT SVObjectClass::setIndirectStringToObject(SvPb::EmbeddedIdEnum embeddedId, const std::vector<_variant_t>& rValueString)
+{
+	auto iter = std::ranges::find_if(m_embeddedList, [embeddedId](const auto* pEntry) { return pEntry->GetEmbeddedID() == embeddedId; });
+	if (m_embeddedList.end() != iter)
+	{
+		auto* pLinked = dynamic_cast<SvOi::ILinkedObject*>(*iter);
+		if (pLinked)
+		{
+			return pLinked->setIndirectStringForOldStruct(rValueString);
+		}
+	}
+	return E_FAIL;
+}
+
 /*
 This method returns Ancestor Object of specified Object Type of this Object, if any.  Otherwise it returns NULL.
 */
@@ -686,11 +787,24 @@ bool SVObjectClass::createAllObjects(const SVObjectLevelCreateStruct& rCreateStr
 
 SVObjectClass* SVObjectClass::OverwriteEmbeddedObject(uint32_t uniqueID, SvPb::EmbeddedIdEnum embeddedID)
 {
+	// Check here all embedded members ( embedded objects could be only identified by embeddedID!!!! )... 
+	for (SVObjectClass* pObject : m_embeddedList)
+	{
+		if (nullptr != pObject)
+		{
+			if (pObject->GetEmbeddedID() == embeddedID)
+			{
+				return pObject->OverwriteEmbeddedObject(uniqueID, embeddedID);
+			}
+		}
+	}
+
 	if (GetEmbeddedID() == embeddedID && SvPb::NoEmbeddedId != embeddedID)
 	{
 		SVObjectManagerClass::Instance().ChangeUniqueObjectID(this, uniqueID);
 		return this;
 	}
+	
 	return nullptr;
 }
 
@@ -724,7 +838,96 @@ HRESULT SVObjectClass::RemoveObjectConnection(uint32_t )
 	return S_OK;
 }
 
+bool SVObjectClass::RegisterEmbeddedObjectAsClass(SVObjectClass* pEmbeddedObject, SvPb::EmbeddedIdEnum embeddedID, LPCTSTR ObjectName)
+{
+	assert(nullptr != pEmbeddedObject);
+	if (nullptr != pEmbeddedObject)
+	{
+		for (SVObjectPtrVector::iterator Iter = m_embeddedList.begin(); m_embeddedList.end() != Iter; ++Iter)
+		{
+			SVObjectClass* pObject = *Iter;
+			if (nullptr != pObject)
+			{
+				if (embeddedID == pObject->GetEmbeddedID())
+				{
+					SvStl::MessageManager Msg(SvStl::MsgType::Log);
+					Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_DuplicateEmbeddedId, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10204);
+					assert(false);
+					return false;
+				}
+			}
+		}
+		// Set object embedded to Setup the Embedded ID
+		pEmbeddedObject->SetObjectEmbedded(embeddedID, this, ObjectName);
+
+		// Add to embedded object to List of Embedded Objects
+		AddEmbeddedObject(pEmbeddedObject);
+
+		return true;
+	}
+	return false;
+}
+
+void SVObjectClass::AddEmbeddedObject(SVObjectClass* pObject)
+{
+	assert(nullptr != pObject);
+
+	// Add to Owner's List of Embedded Objects
+	m_embeddedList.push_back(pObject);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+//
+//
+
+void SVObjectClass::disableEmbeddedObject(SVObjectClass* pObjectToDisable)
+{
+	if (nullptr != pObjectToDisable)
+	{
+		pObjectToDisable->SetObjectAttributesAllowed(SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::RemoveAttribute);
+		// Reset any selection
+		pObjectToDisable->SetObjectAttributesSet(0, SvOi::SetAttributeType::OverwriteAttribute);
+
+		// Get this object's outputInfo
+		pObjectToDisable->disconnectAllInputs();
+	}
+}
+
+void SVObjectClass::RemoveEmbeddedObject(SVObjectClass* pObjectToRemove)
+{
+	disableEmbeddedObject(pObjectToRemove);
+
+	m_embeddedList.erase(std::remove(m_embeddedList.begin(), m_embeddedList.end(), pObjectToRemove), m_embeddedList.end());
+}
+
+bool SVObjectClass::createEmbeddedChildren()
+{
+	bool result = true;
+	// Create the embeddeds...
+// Save the owner and set the owner of our embeddeds to us!
+	for (auto* pObject : m_embeddedList)
+	{
+		if (nullptr != pObject)
+		{
+			result = createAllObjectsFromChild(*pObject) && result;
+			assert(result);
+		}
+		else
+		{
+			assert(false);
+			result = false;
+		}
+	}
+	return result;
+}
+
 void SVObjectClass::Persist(SvOi::IObjectWriter& rWriter) const
+{
+	PersistBaseData(rWriter);
+	PersistEmbeddeds(rWriter);
+}
+
+void SVObjectClass::PersistBaseData(SvOi::IObjectWriter& rWriter) const
 {
 	_variant_t value;
 	value.SetString(GetName()); // use user editable name for Data Element ObjectName attribute
@@ -748,27 +951,50 @@ void SVObjectClass::Persist(SvOi::IObjectWriter& rWriter) const
 	}
 }
 
+void SVObjectClass::PersistEmbeddeds(SvOi::IObjectWriter& rWriter) const
+{
+	// Set up embedded object definitions...
+	if (0 < m_embeddedList.size())
+	{
+		rWriter.StartElement(scEmbeddedsTag);
+		// Get embedded object script...
+		for (const auto* pObject : m_embeddedList)
+		{
+			if (nullptr != pObject)
+			{
+				pObject->Persist(rWriter);
+			}
+		}
+		rWriter.EndElement();
+	}
+}
+
 HRESULT SVObjectClass::GetChildObject(SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index) const
 {
-	HRESULT l_Status = S_OK;
-
-	if (Index == (rNameInfo.m_NameArray.size() - 1))
+	if (Index < rNameInfo.m_NameArray.size() && rNameInfo.m_NameArray[Index] == GetName())
 	{
-		if (rNameInfo.m_NameArray[Index] == GetName())
+		if (Index == (rNameInfo.m_NameArray.size() - 1))
 		{
 			rpObject = const_cast<SVObjectClass*>(this);
+			return S_OK;
 		}
-		else
+		else if (0 != ObjectAttributesAllowed())
 		{
-			l_Status = S_FALSE;
+			for (const auto* pObject : m_embeddedList)
+			{
+				if (nullptr != pObject)
+				{
+					HRESULT l_Status = pObject->GetChildObject(rpObject, rNameInfo, Index + 1);
+					if (S_OK == l_Status && nullptr != rpObject)
+					{
+						return S_OK;
+					}
+				}
+			}
 		}
-	}
-	else
-	{
-		l_Status = S_FALSE;
 	}
 
-	return l_Status;
+	return S_FALSE;
 }
 
 /*

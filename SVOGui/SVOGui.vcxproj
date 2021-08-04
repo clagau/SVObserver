@@ -121,6 +121,7 @@
     <ClCompile Include="BlobAnalyzer2Draw.cpp" />
     <ClCompile Include="BlobAnalyzer2Feature.cpp" />
     <ClCompile Include="BlobAnalyzer2FeatureSelector.cpp" />
+    <ClCompile Include="BlobAnalyzer2Helper.cpp" />
     <ClCompile Include="BlobAnalyzer2Range.cpp" />
     <ClCompile Include="BlobAnalyzer2Sheet.cpp" />
     <ClCompile Include="BlobAnalyzer2General.cpp" />
@@ -133,6 +134,9 @@
     <ClCompile Include="GlobalConstantConflictDlg.cpp" />
     <ClCompile Include="GlobalConstantDlg.cpp" />
     <ClCompile Include="ImageController.cpp" />
+    <ClCompile Include="LinkedValue.cpp" />
+    <ClCompile Include="LinkedValueSelectorDialog.cpp" />
+    <ClCompile Include="LinkedValueWidgetHelper.cpp" />
     <ClCompile Include="MaskController.cpp" />
     <ClCompile Include="NormalizerController.cpp" />
     <ClCompile Include="ObjectSelectorController.cpp" />
@@ -208,6 +212,7 @@
     <ClInclude Include="BlobAnalyzer2Feature.h" />
     <ClInclude Include="BlobAnalyzer2FeatureSelector.h" />
     <ClInclude Include="BlobAnalyzer2General.h" />
+    <ClInclude Include="BlobAnalyzer2Helper.h" />
     <ClInclude Include="BlobAnalyzer2Range.h" />
     <ClInclude Include="BlobReconstructFilterDlg.h" />
     <ClInclude Include="BlobAnalyzer2Sheet.h" />
@@ -223,6 +228,9 @@
     <ClInclude Include="GuiValueHelper.h" />
     <ClInclude Include="ImageController.h" />
     <ClInclude Include="ISVPropertyPageDialog.h" />
+    <ClInclude Include="LinkedValue.h" />
+    <ClInclude Include="LinkedValueSelectorDialog.h" />
+    <ClInclude Include="LinkedValueWidgetHelper.h" />
     <ClInclude Include="MaskController.h" />
     <ClInclude Include="NormalizerController.h" />
     <ClInclude Include="ObjectSelectorController.h" />

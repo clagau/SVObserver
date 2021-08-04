@@ -81,7 +81,25 @@ SVObjectReference::SVObjectReference(const std::string& objectIdAndIndexString)
 	else
 	{
 		m_NameInfo.clear();
-		m_ArrayIndex = -1;
+		if (std::string::npos != Pos)
+		{
+			auto text = objectIdAndIndexString.substr(Pos, std::string::npos);
+			int count = sscanf(text.c_str(), "[%ld]", &m_ArrayIndex);
+			if (1 == count)
+			{
+				--m_ArrayIndex;
+				m_ArrayIndex = std::max(-1l, m_ArrayIndex);
+			}
+			else
+			{
+				assert(false);
+				m_ArrayIndex = -1l;
+			}
+		}
+		else
+		{
+			m_ArrayIndex = -1l;
+		}
 	}
 }
 
@@ -108,6 +126,24 @@ void  SVObjectReference::clear()
 	m_ArrayIndex = -1;
 }
 
+void SVObjectReference::update()
+{
+	auto* pObject = SVObjectManagerClass::Instance().GetObject(m_objectId);
+	if (m_pObject != pObject)
+	{
+		m_pObject = pObject;
+		m_pValueObject = nullptr;
+		m_pFinalObject = nullptr;
+	}
+}
+
+void SVObjectReference::reloadObjectId()
+{
+	if (nullptr != m_pObject)
+	{
+		m_objectId = m_pObject->getObjectId();
+	}
+}
 
 SvOi::IValueObject* SVObjectReference::getValueObject(bool forceCast) const
 {

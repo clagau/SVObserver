@@ -25,22 +25,38 @@
 #include "SVUtilityLibrary/SVGUID.h"
 #pragma endregion Includes
 
-static const SvDef::StringSet cObjectAttributeFilter
-{
-	std::string(scObjectNameTag),
-	std::string(scClassIDTag),
-	std::string(scUniqueReferenceIDTag),
-	std::string(scEmbeddedIDTag)
-};
-
 // The attribute object type table is needed to convert string type to point or double point type.
 typedef std::map<std::string, SVObjectScriptDataObjectTypeEnum> SVObjectAttributeTypeMap;
 
 static const SVObjectAttributeTypeMap cObjectAttributeType
 {
 	{_T("RotationCenter"),	SV_POINT_Type},
-	{_T("Translation"),		SV_POINT_Type}
+	{_T("Translation"),		SV_POINT_Type},
+	{scDefaultTag,			SV_VARIANT_Type}
 };
+
+namespace
+{
+	static const SvDef::StringSet cObjectAttributeFilter
+	{
+		std::string(scObjectNameTag),
+		std::string(scClassIDTag),
+		std::string(scUniqueReferenceIDTag),
+		std::string(scEmbeddedIDTag)
+	};
+
+	bool checkIfProcess(const std::string& DataName, bool excludeDefaultAndArray)
+	{
+		bool shouldProcess = (cObjectAttributeFilter.find(DataName.c_str()) == cObjectAttributeFilter.end());
+		if (excludeDefaultAndArray)
+		{
+			constexpr auto cExcludeTypes = { scDefaultTag, scArrayElementsTag };
+			auto iter = std::ranges::find(cExcludeTypes, DataName);
+			shouldProcess &= (iter == cExcludeTypes.end());
+		}
+		return shouldProcess;
+	}
+}
 
 template< typename SVTreeType >
 SVInspectionTreeParser< SVTreeType >::SVInspectionTreeParser(SVTreeType& rTreeCtrl, typename SVTreeType::SVBranchHandle hItem, unsigned long parserHandle, uint32_t ownerId, SVObjectClass* pOwnerObject, CWnd* pWnd)
@@ -268,10 +284,6 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessFriend(typename SVTreeType:
 	_variant_t uniqueID;
 	_variant_t attributesAllowed;
 
-	std::string Name;
-		
-	Name = m_rTree.getBranchName(hItem);
-	
 	GetItemValue(scObjectNameTag, hItem, objectName);
 	GetItemValue(scClassIDTag, hItem, classIDVariant);
 	SvPb::ClassIdEnum classId = calcClassId(classIDVariant);
@@ -335,7 +347,8 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessEmbedded(typename SVTreeTyp
 	if (S_OK == hr)
 	{
 		SVObjectScriptDataObjectTypeEnum dataType;
-		if (S_OK == SVObjectBuilder::GetObjectDataType(ownerID, objectID, dataType))
+		bool isDataTypeValid = (S_OK == SVObjectBuilder::GetObjectDataType(ownerID, objectID, dataType));
+		if (isDataTypeValid)
 		{
 			hr = ProcessAttributes(ownerID, objectID, hItem);
 		
@@ -346,9 +359,24 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessEmbedded(typename SVTreeTyp
 		}
 		else
 		{
-			HRESULT l_Temp = ProcessLeafObjectValues(hItem, ownerID, objectID);
+			//special code to load indirect linked values from old configs (older than 8.20)
+			SvPb::EmbeddedIdEnum linkedValueEmbeddedId = getEmbeddedIdFromIndirectLinked(embeddedId);
+			if (SvDef::InvalidObjectId != linkedValueEmbeddedId)
+			{
+				std::vector<_variant_t> values;
+				bool bVal = GetValues(hItem, scArrayElementsTag, values);
+				if (bVal && 0 < values.size() && VT_BSTR == values[0].vt)
+				{
+					hr = SVObjectBuilder::SetIndirectStringToObject(ownerID, linkedValueEmbeddedId, values);
+				}
+			}
+		}
 
-			hr = ProcessBranchObjectValues(hItem, ownerID, objectID);
+		if (S_OK == hr)
+		{
+			HRESULT l_Temp = ProcessLeafObjectValues(hItem, ownerID, objectID, isDataTypeValid);
+
+			hr = ProcessBranchObjectValues(hItem, ownerID, objectID, isDataTypeValid);
 
 			if( l_Temp != S_OK )
 			{
@@ -356,6 +384,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessEmbedded(typename SVTreeTyp
 			}
 		}
 	}
+	
 	if (S_OK == hr)
 	{
 		_variant_t arraySize;
@@ -367,6 +396,28 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessEmbedded(typename SVTreeTyp
 	m_count++;
 	UpdateProgress(m_count, m_totalSize);
 
+	return hr;
+}
+
+template< typename SVTreeType >
+HRESULT SVInspectionTreeParser< SVTreeType >::ProcessEmbeddedChilds(typename SVTreeType::SVBranchHandle hItem, uint32_t ownerID)
+{
+	HRESULT hr = S_OK;
+
+	typename SVTreeType::SVBranchHandle hChild = m_rTree.getFirstBranch(hItem);
+	std::vector<uint32_t> objectIdList;
+	while (hChild)
+	{
+		_variant_t uniqueID;
+		GetItemValue(scUniqueReferenceIDTag, hChild, uniqueID);
+		objectIdList.push_back(calcObjectId(uniqueID));
+
+		hChild = m_rTree.getNextBranch(hItem, hChild);
+	}
+	if (false == objectIdList.empty())
+	{
+		hr = SVObjectBuilder::SetEmbeddedLinkedChildIds(ownerID, objectIdList);
+	}
 	return hr;
 }
 
@@ -395,7 +446,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessEmbeddedValues(typename SVT
 }
 
 template< typename SVTreeType >
-HRESULT SVInspectionTreeParser< SVTreeType >::ProcessBranchObjectValues(typename SVTreeType::SVBranchHandle hItem, uint32_t , uint32_t objectID)
+HRESULT SVInspectionTreeParser< SVTreeType >::ProcessBranchObjectValues(typename SVTreeType::SVBranchHandle hItem, uint32_t , uint32_t objectID, bool excludeDefaultAndArray)
 {
 	HRESULT hr = S_OK;
 
@@ -412,7 +463,11 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessBranchObjectValues(typename
 			{
 				hr = ProcessEmbeddeds(hValue, objectID);
 			}
-			else if (cObjectAttributeFilter.find(DataName.c_str()) == cObjectAttributeFilter.end())
+			else if (DataName == scLinkedChildsTag)
+			{
+				hr = ProcessEmbeddedChilds(hValue, objectID);
+			}
+			else if (checkIfProcess(DataName, excludeDefaultAndArray))
 			{
 				std::vector<_variant_t> values;
 				if (SvXml::SVNavigateTree::HasChildren(m_rTree, hValue))
@@ -460,7 +515,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessBranchObjectValues(typename
 }
 
 template< typename SVTreeType >
-HRESULT SVInspectionTreeParser< SVTreeType >::ProcessLeafObjectValues(typename SVTreeType::SVBranchHandle hItem, uint32_t, uint32_t objectID)
+HRESULT SVInspectionTreeParser< SVTreeType >::ProcessLeafObjectValues(typename SVTreeType::SVBranchHandle hItem, uint32_t, uint32_t objectID, bool excludeDefaultAndArray)
 {
 	HRESULT hr = S_OK;
 
@@ -470,18 +525,12 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessLeafObjectValues(typename S
 
 		while( S_OK == hr && m_rTree.isValidLeaf(hItem, hValue) )
 		{
-			std::vector<_variant_t> ValueList;
-
-			std::string DataName;
-
-			DataName = m_rTree.getLeafName(hValue);
-
-			if( cObjectAttributeFilter.find( DataName.c_str() ) == cObjectAttributeFilter.end() )
+			std::string DataName = m_rTree.getLeafName(hValue);
+						
+			if(checkIfProcess(DataName, excludeDefaultAndArray))
 			{
 				_variant_t Data;
-
 				m_rTree.getLeafData(hValue, Data);
-				ValueList.push_back(Data);
 
 				SVObjectScriptDataObjectTypeEnum l_Type = SV_UNKNOWN_Type;
 
@@ -489,14 +538,12 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessLeafObjectValues(typename S
 				// This functionality is not necessary for the RotationPoint and Translation elements because they are nto being persisted.
 				// It is an example of what could be done to convert to a specific dastionation data type.
 				SVObjectAttributeTypeMap::const_iterator l_Iter = cObjectAttributeType.find( DataName.c_str() );
-
 				if( l_Iter != cObjectAttributeType.end() )
 				{
 					l_Type = l_Iter->second; 
 				}
-				//End of attribute object type section
 
-				hr = SVObjectBuilder::SetObjectValue(objectID, objectID, DataName.c_str(), ValueList, l_Type);
+				hr = SVObjectBuilder::SetObjectValue(objectID, objectID, DataName.c_str(), Data, l_Type);
 			}
 
 			hValue = m_rTree.getNextLeaf(hItem, hValue);

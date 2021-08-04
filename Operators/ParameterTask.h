@@ -26,7 +26,7 @@ namespace SvOp
 	{
 #pragma region Constructor
 	public:
-		ParameterTask(SvPb::EmbeddedIdEnum startEmbeddedIdValue, SvPb::EmbeddedIdEnum startEmbeddedIdLinked, SvPb::EmbeddedIdEnum startEmbeddedIdType,
+		ParameterTask(SvPb::EmbeddedIdEnum startEmbeddedIdValue, SvPb::EmbeddedIdEnum startEmbeddedIdType,
 			SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_PARAMETER_TASK);
 		virtual ~ParameterTask();
 #pragma endregion Constructor
@@ -34,6 +34,7 @@ namespace SvOp
 #pragma region Public Methods
 	public:
 		virtual bool CreateObject(const SVObjectLevelCreateStruct& rCreateStructure) override;
+		virtual bool CloseObject() override;
 		virtual bool ResetObject(SvStl::MessageContainerVector* pErrorMessages = nullptr) override;
 
 		SvPb::InspectionCmdResponse setAndSortEmbeddedValues(SvPb::SetAndSortEmbeddedValueRequest request);
@@ -55,10 +56,9 @@ namespace SvOp
 #pragma region Member Variables
 	private:
 		SvVol::SVLongValueObjectClass m_NumberOfObjects;
-		std::vector<SvVol::LinkedValue*> m_objects;
-		std::vector<SvVol::SVEnumerateValueObjectClass*>  m_TypeObjects;
+		std::vector<std::unique_ptr<SvVol::LinkedValue>> m_objects;
+		std::vector< std::unique_ptr<SvVol::SVEnumerateValueObjectClass>>  m_TypeObjects;
 		SvPb::EmbeddedIdEnum m_startEmbeddedIdValue;
-		SvPb::EmbeddedIdEnum m_startEmbeddedIdLinked;
 		SvPb::EmbeddedIdEnum m_startEmbeddedIdType;
 #pragma endregion Member Variables
 	};

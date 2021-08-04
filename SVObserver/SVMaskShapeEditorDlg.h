@@ -15,9 +15,11 @@
 #include "Operators/SVShapeMaskHelperClass.h"
 //TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
 #include "SVOGui/PictureDisplay.h"
+#include "SVRPropertyTree/SVRPropTreeItemEdit.h"
 #include "SVRPropertyTree/SVRPropTree.h"
 #include "SVOGui/CDSVPictureDisplay.h"
 #include "SVOGui/DataController.h"
+#include "SVOGui/LinkedValue.h"
 #include "SVOGui/MaskController.h"
 #pragma endregion Includes
 
@@ -107,11 +109,11 @@ protected:
 
 #pragma region Private Methods
 private:
-	unsigned int GetPropertyID(const std::pair<SvPb::EmbeddedIdEnum, SvPb::EmbeddedIdEnum>& rPropertyPair);
-	const std::pair<SvPb::EmbeddedIdEnum, SvPb::EmbeddedIdEnum>& GetPropertyEmbeddedId(int iPropertyID);
+	unsigned int GetPropertyID(SvPb::EmbeddedIdEnum embeddedId);
+	SvPb::EmbeddedIdEnum GetPropertyEmbeddedId(int iPropertyID);
 	HRESULT BuildPropertyList();
 
-	void setPropertyToList(const std::pair<SvPb::EmbeddedIdEnum, SvPb::EmbeddedIdEnum>& embeddedIdPair, SVRPropertyItem* pRoot);
+	void setPropertyToList(SvPb::EmbeddedIdEnum embeddedId, SVRPropertyItem* pRoot);
 
 	HRESULT RefreshProperties();
 
@@ -143,9 +145,9 @@ private:
 
 	RECT getRect() const;
 
-	int SelectObject(std::string& rObjectName, SVRPropertyItem* pItem);
-
 	CDSVPictureDisplay::AllowType getDrawChangeType() const;
+	void setValueColumn(SvPb::EmbeddedIdEnum embeddedId, SVRPropertyItemEdit& rEdit);
+	bool isChangable(SvPb::EmbeddedIdEnum) const;
 #pragma endregion Private Methods
 
 #pragma region Member Variables
@@ -166,15 +168,15 @@ private:
 	//}}AFX_DATA
 
 	static const long m_numberOfTabs = 3;
-	std::vector<std::pair<SvPb::EmbeddedIdEnum, SvPb::EmbeddedIdEnum>> m_propertyIds;
+	std::vector<SvPb::EmbeddedIdEnum> m_propertyIds;
 	static SVMaskShapeEditorDlg* m_pThis;
 	bool m_isInit;
 	long m_currentTabNumber; //only use until m_isInit is true
 	long m_handleToActiveObjects[m_numberOfTabs];
 	SvOp::SVShapeMaskHelperClass::ShapeTypeEnum m_eShapeType;
 	SvOg::MaskController m_maskController;
-	std::vector<std::pair<SvPb::EmbeddedIdEnum, _variant_t>> m_ValuesSaved;
-	std::vector<std::pair<SvPb::EmbeddedIdEnum, _variant_t>> m_ShapeHelperValuesSaved;
+	std::vector<std::pair<SvPb::EmbeddedIdEnum, std::variant<_variant_t, SvOg::LinkedValueData>>> m_ValuesSaved;
+	std::vector<std::pair<SvPb::EmbeddedIdEnum, std::variant<_variant_t, SvOg::LinkedValueData>>> m_ShapeHelperValuesSaved;
 	
 	const uint32_t m_InspectionID;
 	const uint32_t m_TaskObjectID;

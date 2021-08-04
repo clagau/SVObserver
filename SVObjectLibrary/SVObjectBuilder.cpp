@@ -23,6 +23,7 @@
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
+#include "ObjectInterfaces/ILinkedObject.h"
 #include "ObjectInterfaces/ITaskObject.h"
 #include "InputObject.h"
 #pragma warning (pop)
@@ -271,6 +272,26 @@ HRESULT SVObjectBuilder::OverwriteEmbeddedObject(SvPb::EmbeddedIdEnum embeddedID
 	return hr;
 }
 
+HRESULT SVObjectBuilder::SetEmbeddedLinkedChildIds(uint32_t uniqueID, const std::vector<uint32_t>& rObjectIds)
+{
+	HRESULT hr = S_OK;
+
+	SVObjectClass* pObject = nullptr;
+	SVObjectManagerClass::Instance().GetObjectByIdentifier(uniqueID, pObject);
+	SvOi::ILinkedObject* pLinkedObject = dynamic_cast<SvOi::ILinkedObject*>(pObject);
+	if (nullptr != pLinkedObject)
+	{
+		pLinkedObject->setChildIds(rObjectIds);
+	}
+	else
+	{
+		hr = S_FALSE;
+		assert(false);
+	}
+
+	return hr;
+}
+
 HRESULT SVObjectBuilder::OverwriteInputObject(SvPb::EmbeddedIdEnum embeddedID, uint32_t uniqueID, const std::string& objectName, uint32_t connectID, uint32_t ownerUniqueID)
 {
 	HRESULT hr = S_OK;
@@ -474,3 +495,16 @@ HRESULT SVObjectBuilder::GetObjectDataType(uint32_t ownerID, uint32_t objectID, 
 	return hr;
 }
 
+HRESULT SVObjectBuilder::SetIndirectStringToObject(uint32_t ownerID, SvPb::EmbeddedIdEnum embeddedId, const std::vector<_variant_t>& rValueString)
+{
+	SVObjectClass* pOwnerObject = nullptr;
+	SVObjectManagerClass::Instance().GetObjectByIdentifier(ownerID, pOwnerObject);
+	if (pOwnerObject)
+	{
+		return pOwnerObject->setIndirectStringToObject(embeddedId, rValueString);
+	}
+	else
+	{
+		return E_FAIL;
+	}
+}

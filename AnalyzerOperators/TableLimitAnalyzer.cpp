@@ -10,7 +10,6 @@
 #include "stdafx.h"
 #include "TableLimitAnalyzer.h"
 #include "Tools/TableAnalyzerTool.h"
-#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 namespace SvAo
@@ -116,11 +115,6 @@ void TableLimitAnalyzer::BuildEmbeddedObjectList()
 	vtTemp.vt = cVarType_Value;
 	vtTemp.lVal = cDefaultLimitValue;
 	m_LimitValue.SetDefaultValue( vtTemp, true );
-
-	std::string ObjectName = SvUl::LoadStdString( IDS_OBJECTNAME_TABLEANALYZERLIMIT_VALUE );
-	ObjectName +=  SvDef::cLinkName;
-	RegisterEmbeddedObject( &m_LimitValue.getLinkedName(), SvPb::TableAnaylzerLimitValue_LinkEId, ObjectName.c_str(), false, SvOi::SVResetItemNone );
-	m_LimitValue.getLinkedName().SetDefaultValue( _T(""), false );
 }
 #pragma endregion Private Methods
 

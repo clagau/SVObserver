@@ -83,7 +83,6 @@ enum MessageTextEnum
 	Tid_CouldNotExecuteFormatString,
 
 	//RangeValue
-	Tid_RangeValue_EmptyString,
 	Tid_RangeValue_WrongRange,
 	Tid_Init_RangeControlFailed,
 	Tid_ErrorUnknownEnum,
@@ -424,6 +423,9 @@ enum MessageTextEnum
 	Tid_SetEmbeddedValueFailed,
 	Tid_ValidateValue_InvalidElementInVariantArray,
 	Tid_ValidateValue_ArraySizeInvalid,
+	Tid_ValidateValue_LinkedTypeInvalid,
+	Tid_ValidateValue_LinkedObjectInvalid,
+	Tid_ValidateValue_FormulaFailed,
 	Tid_UnexpectedError,
 	Tid_Too_Many_Blobs,
 	Tid_SetFeatureParameterFailed,
@@ -588,7 +590,7 @@ enum MessageTextEnum
 	Tid_ErrorPpqTriggerCount,
 
 	Tid_CircularReference,
-
+	Tid_EmptyObjectForIndirectValue,
 	Tid_ErrorMemoryAllocation,
 	Tid_ErrorMemoryBlockDataReservedSize,
 

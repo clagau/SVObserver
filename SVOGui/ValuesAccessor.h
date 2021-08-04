@@ -9,6 +9,7 @@
 
 #pragma region Includes
 #include "BoundValue.h"
+#include "LinkedValue.h"
 #include "ObjectInterfaces/NameValueVector.h"
 #include "InspectionCommands/CommandExternalHelper.h"
 #include "SVMessage/SVMessage.h"
@@ -50,10 +51,26 @@ public:
 		{
 			for (auto& rItem : responseCmd.getembeddedvaluesresponse().list())
 			{
-				_variant_t value, defaultValue;
-				SvPb::ConvertProtobufToVariant(rItem.value(), value);
-				SvPb::ConvertProtobufToVariant(rItem.defaultvalue(), defaultValue);
-				rValues[rItem.embeddedid()] = {rItem.objectid(), value, defaultValue};
+				switch (rItem.valueData_case())
+				{
+				case SvPb::ValueObjectValues::ValueDataCase::kValue:
+				{
+					_variant_t value, defaultValue;
+					SvPb::ConvertProtobufToVariant(rItem.value().value(), value);
+					SvPb::ConvertProtobufToVariant(rItem.value().defaultvalue(), defaultValue);
+					rValues[rItem.embeddedid()] = BoundValue{ rItem.objectid(), value, defaultValue };
+					break;
+				}
+				case SvPb::ValueObjectValues::ValueDataCase::kLinkedValue:
+				{
+					rValues[rItem.embeddedid()] = LinkedValue(rItem.objectid(), std::move(convertLinkedValue(rItem.linkedvalue())));
+					break;
+				}
+				default:
+					assert(false);
+					break;
+				}
+				
 			}
 		}
 
@@ -73,13 +90,39 @@ public:
 		for (const auto& rValue : rValues)
 		{
 			auto* pEntry = pRequest->add_list();
-			pEntry->set_ismodified(rValue.second.isModified());
-			pEntry->set_isdefaultmodified(rValue.second.isDefaultModified());
-			pEntry->set_arrayindex(rValue.second.GetArrayIndex());
-			pEntry->mutable_values()->set_objectid(rValue.second.GetObjectID());
+			std::visit([&pEntry](const auto& val) 
+				{ 
+					pEntry->set_ismodified(val.isModified());
+					pEntry->set_isdefaultmodified(val.isDefaultModified());
+					pEntry->set_arrayindex(val.GetArrayIndex());
+					pEntry->mutable_values()->set_objectid(val.GetObjectID());
+				}, rValue.second);
 			pEntry->mutable_values()->set_embeddedid(rValue.first);
-			SvPb::ConvertVariantToProtobuf(rValue.second.GetValue(), pEntry->mutable_values()->mutable_value());
-			SvPb::ConvertVariantToProtobuf(rValue.second.GetDefaultValue(), pEntry->mutable_values()->mutable_defaultvalue());
+			switch (rValue.second.index())
+			{
+			case 0:
+			{
+				const auto& rBoundValue = std::get<0>(rValue.second);
+				auto* pValue = pEntry->mutable_values()->mutable_value();
+				SvPb::ConvertVariantToProtobuf(rBoundValue.GetValue(), pValue->mutable_value());
+				SvPb::ConvertVariantToProtobuf(rBoundValue.GetDefaultValue(), pValue->mutable_defaultvalue());
+				break;
+			}
+			case 1:
+			{
+				const auto& rLinkedData = std::get<1>(rValue.second).getLinkedData();
+				auto* pValue = pEntry->mutable_values()->mutable_linkedvalue();
+				pValue->set_type(static_cast<SvPb::LinkedSelectedType>(rLinkedData.m_type));
+				SvPb::ConvertVariantToProtobuf(rLinkedData.m_directValue, pValue->mutable_directvalue());
+				pValue->set_indirectdotname(rLinkedData.m_indirectDotName);
+				pValue->set_formula(rLinkedData.m_formula);
+				break;
+			}
+			default:
+				assert(false);
+				break;
+			}
+			
 		}
 
 		HRESULT hr = SvCmd::InspectionCommands(inspectionID, requestCmd, &responseCmd);
@@ -93,9 +136,12 @@ public:
 			//Reset modified flags
 			for (auto& rValue : rValues)
 			{
-				rValue.second.ClearModified();
-				rValue.second.ClearDefaultModified();
-				rValue.second.ClearArrayIndex();
+				std::visit([](const auto& val)
+					{
+						val.ClearModified();
+						val.ClearDefaultModified();
+						val.ClearArrayIndex();
+					}, rValue.second);
 			}
 
 			bool bReset {doAction & PostAction::doReset};

@@ -110,7 +110,7 @@ public:
 	HRESULT ensureValidScaleFactorUnlessDottedName(const SVImageExtentClass& rImageExtent, SvPb::SVExtentPropertyEnum extentProperty);
 
 private:
-	bool ExtentObjectHasLinkedName(SvPb::SVExtentPropertyEnum extentProperty) const;
+	bool isDirectValue(SvPb::SVExtentPropertyEnum extentProperty) const;
 
 	typedef std::set< SvPb::SVExtentTranslationEnum > SVTranslationFilterSet;
 

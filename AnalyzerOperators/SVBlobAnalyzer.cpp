@@ -592,15 +592,17 @@ bool SVBlobAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCreateS
 		
 		m_lvoBlobSampleSize.GetValue( m_lBlobSampleSize );
 		m_lvoMaxBlobDataArraySize.GetValue( m_lMaxBlobDataArraySize );
-		
+
 		//--- It is assumed, in the body of the class, that only enabled features
 		//--- are registered.  All features needed to be register before now so that
 		//--- the scripting would have access to them.
 		for (int i = 0; i < SvOi::SV_NUMBER_OF_BLOB_FEATURES; i++)
 		{
+			fillResultId(i);
+
 			if (FeaturesEnabled[i] == _T('0'))
 			{
-				RemoveEmbeddedObject(&m_Value[i]);
+				disableEmbeddedObject(&m_Value[i]);
 			}
 			m_Value[i].SetArraySize(m_lMaxBlobDataArraySize);	// no longer sample size (max number of blobs found)
 		}
@@ -785,13 +787,14 @@ void SVBlobAnalyzerClass::UpdateBlobFeatures()
 			{
 				if ('1' == FeaturesEnabled[i])
 				{
+					m_Value[i].SetObjectAttributesAllowed(SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::OverwriteAttribute);
 					EnableFeature(i);
 				}
 				else
 				{
 					m_Value[i].SetObjectAttributesAllowed(SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::RemoveAttribute);
 					FreeResult(i);
-					RemoveEmbeddedObject(&m_Value[i]);
+					disableEmbeddedObject(&m_Value[i]);
 				}
 			}
 		}
@@ -809,16 +812,8 @@ void SVBlobAnalyzerClass::UpdateBlobFeatures()
 void SVBlobAnalyzerClass::EnableFeature(int Feature)
 {
 	assert(0 <= Feature && SvOi::SV_NUMBER_OF_BLOB_FEATURES > Feature);
-	//! Check is Feature already in embedded list	
-	SVObjectPtrVector::const_iterator Iter = std::find_if(m_embeddedList.begin(), m_embeddedList.end(), [Feature](const SVObjectPtrVector::value_type pEntry)->bool
+	if (SvDef::InvalidObjectId == m_ResultIds[Feature])
 	{
-		return (pEntry->GetEmbeddedID() == BlobFeatureConstants[Feature].embeddedID);
-	}
-	);
-	if (m_embeddedList.end() == Iter)
-	{
-		m_Value[Feature].SetObjectAttributesAllowed(SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::OverwriteAttribute);
-		RegisterEmbeddedObject(&m_Value[Feature], BlobFeatureConstants[Feature].embeddedID, BlobFeatureConstants[Feature].NewStringResourceID, false, SvOi::SVResetItemNone);
 		AllocateResult(Feature);
 	}
 }
@@ -1696,6 +1691,31 @@ SvDef::StringVector SVBlobAnalyzerClass::getAnalyzerResult()
 
 	}
 	return result;
+}
+
+void SVBlobAnalyzerClass::fillResultId(int featurePos)
+{
+	SVObjectPtrVector::const_iterator iterEmbedded = std::find_if(m_embeddedList.begin(), m_embeddedList.end(), [featurePos](const SVObjectPtrVector::value_type pEntry)->bool
+		{
+			return (pEntry->GetEmbeddedID() == BlobFeatureConstants[featurePos].embeddedID);
+		}
+	);
+	if (m_embeddedList.end() != iterEmbedded)
+	{
+		auto* pObject = *iterEmbedded;
+		if (nullptr != pObject)
+		{
+			auto iter = std::ranges::find_if(m_TaskObjectVector, [pObject](const auto* pEntry)
+				{
+					const auto* pResult = dynamic_cast<const SvOp::SVResult*>(pEntry);
+					return pResult && pResult->getInput() == pObject;
+				});
+			if (m_TaskObjectVector.end() != iter && nullptr != *iter)
+			{
+				m_ResultIds[featurePos] = (*iter)->getObjectId();
+			}
+		}
+	}
 }
 
 } //namespace SvAo

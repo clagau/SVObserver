@@ -9,7 +9,8 @@
 #pragma region Includes
 //Moved to precompiled header: #include <string>
 #include "DataController.h"
-#include "SVStatusLibrary/MessageTextEnum.h"
+#include "LinkedValueWidgetHelper.h"
+#include "Definitions/RangeEnum.h"
 
 #pragma endregion Includes
 
@@ -24,21 +25,15 @@ namespace SvOg
 		void Init();
 		HRESULT Commit();
 	
-		std::string Get(const std::string& rName) const;
-		void Set(const std::string& rName, const std::string& rValue);
+		LinkedValueData Get(RangeEnum::ERange fieldId) const;
+		void Set(RangeEnum::ERange fieldId, const LinkedValueData& rValue);
 
 		std::string GetOwnerName() const;
-		void IsFieldValid(SvStl::MessageTextEnum fieldName, const std::string& rValue);
+		void IsFieldValid(RangeEnum::ERange fieldId) const;
 
-		static const std::string FailHigh;
-		static const std::string FailLow;
-		static const std::string WarnHigh;
-		static const std::string WarnLow;
+		std::unique_ptr<LinkedValueWidgetHelper> createWidget(RangeEnum::ERange fieldId, CEdit& rValueEdit, CButton& rSelectButton);
 
 	private:
-		std::string GetIndirectValue(SvPb::EmbeddedIdEnum embeddedID) const;
-		std::string GetDirectValue(SvPb::EmbeddedIdEnum embeddedID) const;
-
 		const uint32_t m_InspectionID;
 		const uint32_t m_TaskObjectID;
 		uint32_t m_RangeID;

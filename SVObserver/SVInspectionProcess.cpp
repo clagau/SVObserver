@@ -434,6 +434,7 @@ SVInspectionProcess::~SVInspectionProcess()
 	m_PPQId = SvDef::InvalidObjectId;
 	m_WatchListDatas.clear();
 	m_SlotManager.reset();
+	m_RegressionTestPlayEquation.CloseObject();
 }
 
 bool SVInspectionProcess::IsCameraInInspection(const std::string& rCameraName) const

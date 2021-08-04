@@ -23,8 +23,7 @@ namespace SvOg
 		std::string m_name{ c_inputName };
 		SvPb::EmbeddedIdEnum m_oldEmbeddedId = SvPb::NoEmbeddedId;
 		SvPb::InputTypeEnum m_type = SvPb::InputTypeEnum::TypeDecimal;
-		std::string m_defaultValue = "0";
-		std::string m_ValueStr = "0";
+		LinkedValueData m_data;
 	};
 
 	class TADialogGroupToolInputPage : public CPropertyPage, public ISVPropertyPageDialog
@@ -86,6 +85,8 @@ namespace SvOg
 
 		// Fill the grid Control. Define the number of rows and fill it with the data.
 		void FillGridControl();
+
+		void setValueColumn(int pos);
 
 		/// Show the context menu for right mouse click
 		/// \param point [in] Mouse position

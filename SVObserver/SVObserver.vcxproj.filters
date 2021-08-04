@@ -42,9 +42,6 @@
     <ClCompile Include="MonitorListView.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="RangeClassHelper.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="RangeXDialogClass.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -539,9 +536,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="NavigatorElement.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="RangeClassHelper.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="RangeXDialogClass.h">

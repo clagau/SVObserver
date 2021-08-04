@@ -12,7 +12,7 @@
 #include "SVOResource/resource.h"
 #include "ISVPropertyPageDialog.h"
 #include "DataController.h"
-#include "ObjectSelectorController.h"
+#include "LinkedValueWidgetHelper.h"
 #pragma endregion Includes
 
 
@@ -41,6 +41,8 @@ protected:
 	virtual BOOL OnKillActive() override;
 	void OnBnClickedButtonLastLoopCount();
 	void OnBnClickedButtonBreakCondition();
+	void OnKillFocusLastLoopCount();
+	void OnKillFocusBreakCondition();
 	//}}AFX_MSG
 private:
 	/// Set the date of the page in the business logic
@@ -49,18 +51,17 @@ private:
 	//Reset the inspection.
 	void resetInspection();
 private:
-	ObjectSelectorController m_objectSelector;
-	CButton m_ButtonLoopsLink;
+	CButton m_ButtonLoopsValue;
 	CEdit m_EditLoopsValue;
-
-	CButton m_ButtonBreakConditionLink;
+	std::unique_ptr<LinkedValueWidgetHelper> m_LoopsValueWidget;
+	CButton m_ButtonBreakCondition;
 	CEdit m_EditBreakCondition;
+	std::unique_ptr<LinkedValueWidgetHelper> m_BreakConditionWidget;
 
 
 	long m_MaxLoopCount;
 	uint32_t m_InspectionID;
 	uint32_t m_TaskObjectID;
 	ValueController m_values;
-	CBitmap m_downArrowBitmap;
 };
 } //namespace SvOg

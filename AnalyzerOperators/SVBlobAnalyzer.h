@@ -98,7 +98,7 @@ public:
 	virtual bool CloseObject() override;
 
 	virtual bool CreateObject(const SVObjectLevelCreateStruct& rCreateStructure) override;
-	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
+	virtual bool ResetObject(SvStl::MessageContainerVector* pErrorMessages = nullptr) override;
 
 	DWORD BuildFeatureListID ();
 	void UpdateBlobFeatures();
@@ -191,6 +191,7 @@ protected:
 private:
 	void init();
 	void CreateArray();
+	void fillResultId(int featurePos);
 	
 	std::string m_PreviousFeaturesEnabled;
 	static const int m_defaultResultNumberOfBlobsLowFail = 0;

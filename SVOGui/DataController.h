@@ -12,6 +12,7 @@
 #include "ObjectInterfaces\NameValueVector.h"
 #include "SVStatusLibrary\MessageContainer.h"
 #include "SVStatusLibrary\MessageManager.h"
+#include "LinkedValue.h"
 #include "ValuesAccessor.h"
 #pragma endregion Includes
 
@@ -36,7 +37,7 @@ namespace SvOg
 			return GetValues(m_Data);
 		}
 
-		std::vector<std::pair<SvPb::EmbeddedIdEnum, _variant_t>> getCurrentValues()
+		std::vector<std::pair<SvPb::EmbeddedIdEnum, std::variant<_variant_t, LinkedValueData>>> getCurrentValues()
 		{
 			return m_Data.getCurrentValues();
 		}
@@ -47,10 +48,21 @@ namespace SvOg
 			return static_cast<DataType>(m_Data.GetDefaultValue(embeddedID));
 		}
 
+		bool isLinkedValue(SvPb::EmbeddedIdEnum embeddedID) const
+		{
+			return m_Data.isLinkedValue(embeddedID);
+		}
+
 		template<typename DataType>
 		DataType Get(SvPb::EmbeddedIdEnum embeddedID) const
 		{
 			return static_cast<DataType>(m_Data.GetValue(embeddedID));
+		}
+
+		template<>
+		LinkedValueData Get(SvPb::EmbeddedIdEnum embeddedID) const
+		{
+			return m_Data.getLinkedData(embeddedID);
 		}
 
 		uint32_t GetAllowedAttributeFlags(SvPb::EmbeddedIdEnum embeddedID) const
@@ -72,11 +84,24 @@ namespace SvOg
 			return m_Data.SetValue(embeddedID, Value, ArrayIndex);
 		}
 
-		void setValues(const std::vector< std::pair<SvPb::EmbeddedIdEnum, _variant_t>>& values)
+		template<>
+		bool Set(SvPb::EmbeddedIdEnum embeddedID, const LinkedValueData& data, int /*ArrayIndex = -1*/)
+		{
+			return m_Data.setLinkedData(embeddedID, data);
+		}
+
+		void setValues(const std::vector< std::pair<SvPb::EmbeddedIdEnum, std::variant<_variant_t, LinkedValueData>>>& values)
 		{
 			for (const auto& value : values)
 			{
-				m_Data.SetValue(value.first, value.second);
+				if (0 == value.second.index())
+				{
+					m_Data.SetValue(value.first, std::get<0>(value.second));
+				}
+				else
+				{
+					m_Data.setLinkedData(value.first, std::get<1>(value.second));
+				}
 			}
 		}
 

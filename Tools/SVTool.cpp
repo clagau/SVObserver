@@ -109,29 +109,17 @@ void SVToolClass::init()
 	// Tool Comment...
 	RegisterEmbeddedObject(&m_ToolComment, SvPb::ToolCommentTypeEId, IDS_OBJECTNAME_TOOL_COMMENT, false, SvOi::SVResetItemNone);
 
-	registerEmbeddedLinkedValue(
-		&m_ExtentWidthFactorContent,
-		SvPb::ExtentWidthFactorContentEId,
-		SvPb::ExtentWidthFactorContentLinkEId,
-		IDS_OBJECTNAME_EXTENT_WIDTH_FACTOR_CONTENT, _variant_t(0.0));
+	RegisterEmbeddedObject(&m_ExtentWidthFactorContent, SvPb::ExtentWidthFactorContentEId, IDS_OBJECTNAME_EXTENT_WIDTH_FACTOR_CONTENT, true, SvOi::SVResetItemTool);
+	m_ExtentWidthFactorContent.SetDefaultValue(_variant_t(0.0), true);
 
-	registerEmbeddedLinkedValue(
-		&m_ExtentHeightFactorContent, 
-		SvPb::ExtentHeightFactorContentEId,
-		SvPb::ExtentHeightFactorContentLinkEId,
-		IDS_OBJECTNAME_EXTENT_HEIGHT_FACTOR_CONTENT, _variant_t(0.0));
+	RegisterEmbeddedObject(&m_ExtentHeightFactorContent, SvPb::ExtentHeightFactorContentEId, IDS_OBJECTNAME_EXTENT_HEIGHT_FACTOR_CONTENT, true, SvOi::SVResetItemTool);
+	m_ExtentHeightFactorContent.SetDefaultValue(_variant_t(0.0), true);
 
-	registerEmbeddedLinkedValue(
-		&m_ExtentWidthFactorFormat,
-		SvPb::ExtentWidthFactorFormatEId,
-		SvPb::ExtentWidthFactorFormatLinkEId,
-		IDS_OBJECTNAME_EXTENT_WIDTH_FACTOR_FORMAT, _variant_t(0.0));
+	RegisterEmbeddedObject(&m_ExtentWidthFactorFormat, SvPb::ExtentWidthFactorFormatEId, IDS_OBJECTNAME_EXTENT_WIDTH_FACTOR_FORMAT, true, SvOi::SVResetItemTool);
+	m_ExtentWidthFactorFormat.SetDefaultValue(_variant_t(0.0), true);
 
-	registerEmbeddedLinkedValue(
-		&m_ExtentHeightFactorFormat,
-		SvPb::ExtentHeightFactorFormatEId,
-		SvPb::ExtentHeightFactorFormatLinkEId,
-		IDS_OBJECTNAME_EXTENT_HEIGHT_FACTOR_FORMAT, _variant_t(0.0));
+	RegisterEmbeddedObject(&m_ExtentHeightFactorFormat, SvPb::ExtentHeightFactorFormatEId, IDS_OBJECTNAME_EXTENT_HEIGHT_FACTOR_FORMAT, true, SvOi::SVResetItemTool);
+	m_ExtentHeightFactorFormat.SetDefaultValue(_variant_t(0.0), true);
 
 	m_toolExtent.SetTool(this);
 	m_toolExtent.SetTranslation(SvPb::SVExtentTranslationShift);
@@ -894,20 +882,16 @@ void SVToolClass::removeEmbeddedExtents()
 	m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyWidthFactorContent, nullptr);
 	m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyHeightFactorContent, nullptr);
 
-	RemoveEmbeddedObject(&m_ExtentLeft); // Remove it from the Embedded List so it is not scripted
-	RemoveEmbeddedObject(&m_ExtentTop);
-	RemoveEmbeddedObject(&m_ExtentRight);
-	RemoveEmbeddedObject(&m_ExtentBottom);
-	RemoveEmbeddedObject(&m_ExtentWidth);
-	RemoveEmbeddedObject(&m_ExtentHeight);
-	RemoveEmbeddedObject(&m_ExtentWidthFactorContent);
-	RemoveEmbeddedObject(&m_ExtentWidthFactorContent.getLinkedName());
-	RemoveEmbeddedObject(&m_ExtentHeightFactorContent);
-	RemoveEmbeddedObject(&m_ExtentHeightFactorContent.getLinkedName());
-	RemoveEmbeddedObject(&m_ExtentWidthFactorFormat);
-	RemoveEmbeddedObject(&m_ExtentWidthFactorFormat.getLinkedName());
-	RemoveEmbeddedObject(&m_ExtentHeightFactorFormat);
-	RemoveEmbeddedObject(&m_ExtentHeightFactorFormat.getLinkedName());
+	disableEmbeddedObject(&m_ExtentLeft); // Remove it from the Embedded List so it is not scripted
+	disableEmbeddedObject(&m_ExtentTop);
+	disableEmbeddedObject(&m_ExtentRight);
+	disableEmbeddedObject(&m_ExtentBottom);
+	disableEmbeddedObject(&m_ExtentWidth);
+	disableEmbeddedObject(&m_ExtentHeight);
+	disableEmbeddedObject(&m_ExtentWidthFactorContent);
+	disableEmbeddedObject(&m_ExtentHeightFactorContent);
+	disableEmbeddedObject(&m_ExtentWidthFactorFormat);
+	disableEmbeddedObject(&m_ExtentHeightFactorFormat);
 }
 
 HRESULT SVToolClass::GetPropertyInfo(SvPb::SVExtentPropertyEnum p_eProperty, SvIe::SVExtentPropertyInfoStruct& p_rInfo) const

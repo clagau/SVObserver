@@ -72,7 +72,7 @@ struct SVExternalToolTaskData
 
 	// Inputs
 	std::array<SvOl::InputObject, NUM_INPUT_IMAGES> m_aInputImageInfo; 
-	std::vector<SvVol::LinkedValue> m_aInputObjects; //[NUM_INPUT_OBJECTS]; // our own value objects
+	std::array<SvVol::LinkedValue, NUM_INPUT_OBJECTS> m_aInputObjects; // our own value objects
 
 
 	std::vector<SvVol::SVVariantValueObjectClass> m_aResultObjects; //[NUM_RESULT_OBJECTS];

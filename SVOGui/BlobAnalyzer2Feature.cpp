@@ -17,6 +17,7 @@
 #include "SVFormulaEditorSheet.h"
 #include "DisplayHelper.h"
 #include "Definitions/GlobalConst.h"
+#include "BlobAnalyzer2Helper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -64,9 +65,9 @@ namespace SvOg
 			{SortDirectionColumn, {"Up", cBoxColumnSize, SvPb::FeatureData::kIsAscentFieldNumber }},
 			{ExcludeEnabledColumn, {"Exclude", cBoxColumnSize, SvPb::FeatureData::kIsExcludeFieldNumber}},
 			{ExcludeInnerColumn, {"Inner", cBoxColumnSize, SvPb::FeatureData::kIsExcludeInnerFieldNumber }},
-			{LowerBoundColumn, {"Lower Bound", cTextColumnSize, SvPb::FeatureData::kLowerBoundIndirectFieldNumber}},
+			{LowerBoundColumn, {"Lower Bound", cTextColumnSize, SvPb::FeatureData::kLowerBoundFieldNumber}},
 			{LowerBoundButtonColumn, {"", cBoxColumnSize}},
-			{UpperBoundColumn, {"Upper Bound", cTextColumnSize, SvPb::FeatureData::kUpperBoundIndirectFieldNumber}},
+			{UpperBoundColumn, {"Upper Bound", cTextColumnSize, SvPb::FeatureData::kUpperBoundFieldNumber}},
 			{UpperBoundButtonColumn, {"", cBoxColumnSize}}
 		};
 	}
@@ -91,7 +92,6 @@ namespace SvOg
 		, m_InspectionID(inspectionId)
 		, m_toolID(toolId)
 		, m_TaskObjectID(taskObjectId)
-		, m_objectSelector(inspectionId)
 		, m_Values{ SvOg::BoundValues{ inspectionId, taskObjectId } }
 	{
 	}
@@ -280,6 +280,7 @@ namespace SvOg
 				}
 			}
 			setInspectionData();
+			loadFeatureData();
 			FillGridControl();
 		}
 	}
@@ -355,27 +356,17 @@ namespace SvOg
 		case UpperBoundButtonColumn:
 			if (m_featureData[pItem->iRow - 1].is_exclude())
 			{
-				std::string cellText = m_Grid.GetCell(pItem->iRow, UpperBoundColumn)->GetText();
 				auto iter = g_columnFeatureDefArray.find(UpperBoundColumn);
-				if (ShowObjectSelector(cellText, g_columnFeatureDefArray.end() != iter ? iter->second.m_name : "ObjectSelector"))
-				{
-					m_Grid.GetCell(pItem->iRow, UpperBoundColumn)->SetText(cellText.c_str());
-					m_featureData[pItem->iRow - 1].set_upper_bound_indirect(cellText);
-					m_Grid.Refresh();
-				}
+				auto name = g_columnFeatureDefArray.end() != iter ? iter->second.m_name : "ObjectSelector";
+				startObjectSelector(m_Grid, name, pItem->iRow, UpperBoundColumn, m_InspectionID, m_toolID, m_featureData[pItem->iRow - 1].upper_bound_id(), *m_featureData[pItem->iRow - 1].mutable_upper_bound());
 			}
 			break;
 		case LowerBoundButtonColumn:
 			if (m_featureData[pItem->iRow - 1].is_exclude())
 			{
-				std::string cellText = m_Grid.GetCell(pItem->iRow, LowerBoundColumn)->GetText();
 				auto iter = g_columnFeatureDefArray.find(LowerBoundColumn);
-				if (ShowObjectSelector(cellText, g_columnFeatureDefArray.end() != iter ? iter->second.m_name : "ObjectSelector"))
-				{
-					m_Grid.GetCell(pItem->iRow, LowerBoundColumn)->SetText(cellText.c_str());
-					m_featureData[pItem->iRow - 1].set_lower_bound_indirect(cellText);
-					m_Grid.Refresh();
-				}
+				auto name = g_columnFeatureDefArray.end() != iter ? iter->second.m_name : "ObjectSelector";
+				startObjectSelector(m_Grid, name, pItem->iRow, LowerBoundColumn, m_InspectionID, m_toolID, m_featureData[pItem->iRow - 1].lower_bound_id(), *m_featureData[pItem->iRow - 1].mutable_lower_bound());
 			}
 			break;
 		default:
@@ -406,14 +397,40 @@ namespace SvOg
 			case LowerBoundColumn:
 			{
 				std::string cellText = m_Grid.GetCell(pItem->iRow, pItem->iColumn)->GetText();
+				SvPb::LinkedValue* pLinkedValue;
 				if (LowerBoundColumn == pItem->iColumn)
 				{
-					m_featureData[pItem->iRow - 1].set_lower_bound_indirect(cellText);
+					pLinkedValue = m_featureData[pItem->iRow - 1].mutable_lower_bound();
 				}
 				else
 				{
-					m_featureData[pItem->iRow - 1].set_upper_bound_indirect(cellText);
+					pLinkedValue = m_featureData[pItem->iRow - 1].mutable_upper_bound();
 				}
+				
+				assert(nullptr != pLinkedValue);
+				if (nullptr != pLinkedValue && SvPb::LinkedSelectedType::DirectValue == pLinkedValue->type())
+				{
+					variant_t tmp {cellText.c_str()};
+					SvStl::MessageContainer msgContainer;
+					bool isValid = (S_OK == ::VariantChangeTypeEx(&tmp, &tmp, SvDef::LCID_USA, VARIANT_ALPHABOOL, VT_R8));
+					if (false == isValid)
+					{
+						SvDef::StringVector msgList;
+						auto iter = g_columnFeatureDefArray.find(pItem->iColumn);
+						msgList.push_back(g_columnFeatureDefArray.end() != iter ? iter->second.m_name : "");
+						msgContainer.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_LinkedValue_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
+						SvStl::MessageManager Msg(SvStl::MsgType::Display);
+						Msg.setMessage(msgContainer.getMessage());
+						*pResult = -1;
+						return;
+					}
+					else
+					{
+						SvPb::ConvertVariantToProtobuf(tmp, pLinkedValue->mutable_directvalue());
+						SvPb::ConvertVariantToProtobuf(tmp, pLinkedValue->mutable_value());
+					}
+				}
+
 				setInspectionData();
 			}
 			break;
@@ -640,17 +657,13 @@ namespace SvOg
 						pCell->SetCheck(m_featureData[i].is_exclude_inner());
 					}
 					m_Grid.SetItemState(row, ExcludeInnerColumn, m_Grid.GetItemState(row, ExcludeInnerColumn) & (~GVIS_READONLY));
-					std::string tmp = m_featureData[i].lower_bound_indirect().empty() ? std::to_string(m_featureData[i].lower_bound()) : m_featureData[i].lower_bound_indirect();
-					m_Grid.SetItemText(row, LowerBoundColumn, tmp.c_str());
-					m_Grid.SetItemState(row, LowerBoundColumn, m_Grid.GetItemState(row, LowerBoundColumn) & (~GVIS_READONLY));
+					setValueColumn(m_Grid, row, LowerBoundColumn, convertLinkedValue(m_featureData[i].lower_bound()));
 					buttonItem.mask = GVIF_IMAGE;
 					buttonItem.iImage = 0;
 					buttonItem.row = row;
 					buttonItem.col = LowerBoundButtonColumn;
 					m_Grid.SetItem(&buttonItem);
-					tmp = m_featureData[i].upper_bound_indirect().empty() ? std::to_string(m_featureData[i].upper_bound()) : m_featureData[i].upper_bound_indirect();
-					m_Grid.SetItemText(row, UpperBoundColumn, tmp.c_str());
-					m_Grid.SetItemState(row, UpperBoundColumn, m_Grid.GetItemState(row, UpperBoundColumn) & (~GVIS_READONLY));
+					setValueColumn(m_Grid, row, UpperBoundColumn, convertLinkedValue(m_featureData[i].upper_bound()));
 					buttonItem.col = UpperBoundButtonColumn;
 					m_Grid.SetItem(&buttonItem);
 				}
@@ -785,11 +798,6 @@ namespace SvOg
 			return iter->isnecessary();
 		}
 		return false;
-	}
-
-	bool BlobAnalyzer2Feature::ShowObjectSelector(std::string& rName, const std::string& title)
-	{
-		return m_objectSelector.Show(rName, title, this, SvPb::allNumberValueObjects, { m_toolID }, m_toolID);
 	}
 
 	void BlobAnalyzer2Feature::sortFeatures(int pos)

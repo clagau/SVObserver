@@ -15,7 +15,6 @@
 #include "Definitions/SVUserMessage.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "ObjectSelectorLibrary\ObjectTreeGenerator.h"
-#include "Definitions/StringTypeDef.h"
 #include "SVOGui\SVExternalToolImageSelectPage.h"
 #include "SVTADlgExternalResultPage.h"
 #include "SVUtilityLibrary/StringHelper.h"
@@ -23,7 +22,8 @@
 #include "InspectionCommands/CommandExternalHelper.h"
 #include "SVRPropertyTree/SVRPropTreeItemEdit.h"
 #include "SVUtilityLibrary/SafeArrayHelper.h"
-
+#include "SVOGui/LinkedValue.h"
+#include "SVOGui/LinkedValueSelectorDialog.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -39,6 +39,62 @@
 enum { IDC_INPUT_LIST_TREE = 99 };
 
 enum { MAX_ITEMS_FOR_AUTO_EXPAND = 8 };
+
+std::pair<SvOg::LinkedValueSelectorTypesEnum, std::string> getTypeData(const SvPb::InputValueDefinition& rDefinition)
+{
+	std::pair<SvOg::LinkedValueSelectorTypesEnum, std::string> result = { SvOg::LinkedValueSelectorTypesEnum::All, "" };
+	
+	switch (rDefinition.vt())
+	{
+	case VT_BOOL: result.second = _T("Bool");
+		break;
+
+	case VT_I4:   result.second = _T("Long");
+		break;
+
+	case VT_R8:   result.second = _T("Double");
+		break;
+
+	case VT_BSTR: 
+		result.first = SvOg::LinkedValueSelectorTypesEnum::DirectIndirect;
+		result.second = _T("String");
+		break;
+
+	case VT_R8 | VT_ARRAY:
+		if (rDefinition.type() == SvPb::ExDllInterfaceType::TableArray)
+		{
+			result.first = SvOg::LinkedValueSelectorTypesEnum::Indirect;
+			result.second = _T("Table or Table Element");
+		}
+		else
+		{
+			result.first = SvOg::LinkedValueSelectorTypesEnum::DirectIndirect;
+			result.second = _T("Double array");
+		}
+		break;
+
+	case VT_I4 | VT_ARRAY:
+		if (rDefinition.type() == SvPb::ExDllInterfaceType::TableArray)
+		{
+			result.first = SvOg::LinkedValueSelectorTypesEnum::Indirect;
+			result.second = _T("Table or Table Element");
+		}
+		else
+		{
+			result.first = SvOg::LinkedValueSelectorTypesEnum::DirectIndirect;
+			result.second = _T("Long Array");
+		}
+		break;
+
+
+	default:
+		result.first = SvOg::LinkedValueSelectorTypesEnum::None;
+		result.second = _T("???");
+		break;
+	}
+
+	return result;
+}
 
 //IMPLEMENT_DYNCREATE(SVTADlgExternalInputSelectPage, CPropertyPage)
 
@@ -134,12 +190,10 @@ BOOL SVTADlgExternalInputSelectPage::OnInitDialog()
 			}
 
 			pGroupItem = AddGroupToTree(inputDefinitions[i].groupname(), mapGroupItems, pRoot);
-
-			iItemCount++;
-
 			assert(pGroupItem);
 
 			AddItemToTree(inputDefinitions[i], pGroupItem, ID_BASE + i);
+			++iItemCount;
 		}
 
 		bool bOk = m_Tree.RestoreState(m_rExternalToolTaskController.getPropTreeState());
@@ -208,7 +262,7 @@ SVRPropertyItem* SVTADlgExternalInputSelectPage::AddGroupToTree(const std::strin
 
 void SVTADlgExternalInputSelectPage::AddItemToTree(const SvPb::InputValueDefinition& rDefinition, SVRPropertyItem* pGroupItem, int iID)
 {
-	SVRPropertyItemEdit* pEdit = (SVRPropertyItemEdit*)m_Tree.InsertItem(new SVRPropertyItemEdit(), pGroupItem);
+	SVRPropertyItemEdit* pEdit = dynamic_cast<SVRPropertyItemEdit*>(m_Tree.InsertItem(new SVRPropertyItemEdit(), pGroupItem));
 	if (nullptr == pEdit)
 	{
 		return;
@@ -225,65 +279,14 @@ void SVTADlgExternalInputSelectPage::AddItemToTree(const SvPb::InputValueDefinit
 
 	pEdit->SetLabelText(Label.c_str());
 
-	std::string Type;
-	switch (rDefinition.vt())
-	{
-	case VT_BOOL: Type = _T("Bool");
-		break;
-
-	case VT_I4:   Type = _T("Long");
-		break;
-
-	case VT_R8:   Type = _T("Double");
-		break;
-
-	case VT_BSTR: Type = _T("String");
-		break;
-
-	case VT_R8 | VT_ARRAY:
-
-		if (rDefinition.type() == SvPb::ExDllInterfaceType::TableArray)
-		{
-			Type = _T("Table or Table Element");
-		}
-		else
-		{
-			Type = _T("Double array");
-		}
-		break;
-
-	case VT_I4 | VT_ARRAY:
-		if (rDefinition.type() == SvPb::ExDllInterfaceType::TableArray)
-		{
-			Type = _T("Table or Table Element");
-		}
-		else
-		{
-			Type = _T("Long Array");
-		}
-		break;
-
-
-	default:
-		Type = _T("???");
-		break;
-	}
+	auto [objectSelectType, typeString] = getTypeData(rDefinition);
 
 	std::string Description = rDefinition.helptext();
 
-	Description = _T(" (Type: ") + Type + _T(")  ") + Description;
+	Description = _T(" (Type: ") + typeString + _T(")  ") + Description;
 	pEdit->SetInfoText(Description.c_str());
 
-	std::string Value(m_InputValues.Get<CString>(SvPb::ExternalInputLinkedEId + LVIndex));
-	if (Value.empty())
-	{
-		_variant_t temp = m_InputValues.Get<_variant_t>(SvPb::ExternalInputEId + LVIndex);
-
-		Value = SvUl::VariantToString(temp);
-	}
-
-	pEdit->SetItemValue(Value.c_str());
-	pEdit->OnRefresh();
+	setValueColumn(SvPb::ExternalInputEId + LVIndex, objectSelectType, *pEdit);
 }
 
 
@@ -316,112 +319,72 @@ void SVTADlgExternalInputSelectPage::OnItemButtonClick(NMHDR* pNotifyStruct, LRE
 	{
 		SVRPropertyItem* pItem = pNMPropTree->pItem;
 
+		auto* pEditItem = dynamic_cast<SVRPropertyItemEdit*>(pItem);
+
 		// display value object picker
-		std::string ObjectName;
-		if (SelectObject(ObjectName, pItem) == IDOK && !ObjectName.empty())
+		assert(pEditItem);
+		if (nullptr != pEditItem)
 		{
-			pItem->SetItemValue(ObjectName.c_str());
-			pItem->OnRefresh();
+			//set focus away from this control, so that changed values will be set, before SelectObject is called.
+			SetFocus();
+			SelectObject(*pEditItem);
 		}
 	}// end if ( pNMPropTree->pItem )
 }
 
 // display VO picker dialog and return selection
-int SVTADlgExternalInputSelectPage::SelectObject(std::string& rObjectName, SVRPropertyItem* pItem)
+void SVTADlgExternalInputSelectPage::SelectObject(SVRPropertyItemEdit& rItem)
 {
-	
-	//const  SvOp::InputValueDefinition* pDef = GetInputValueDefinitionPtr(pItem);
-	auto pDef = this->GetInputDefinitionPtr(pItem);
-	bool isTable(false);
-	if (nullptr == pDef)
+	auto pDef = GetInputDefinitionPtr(&rItem);
+	if (pDef)
 	{
-		assert(false);
-		return IDCANCEL;
+		SvOg::ObjectSelectorData objSelectorData;
+		bool isTable{ pDef->type() == SvPb::ExDllInterfaceType::TableArray };
+
+		if (!isTable)
+		{
+			objSelectorData.m_type = (pDef->vt() & VT_BSTR) == 0 ? SvPb::allNumberValueObjects : SvPb::allValueObjects;
+			objSelectorData.m_attribute = SvPb::archivable;
+			objSelectorData.m_searchArea = { SvPb::SearchArea::globalConstantItems, SvPb::SearchArea::cameraObject, SvPb::SearchArea::ppqItems, SvPb::SearchArea::toolsetItems };
+		}
+		else
+		{
+			objSelectorData.m_type = SvPb::tableObjects;
+			objSelectorData.m_attribute = SvPb::taskObject;
+			objSelectorData.m_searchArea = { SvPb::SearchArea::toolsetItems };
+		}
+		objSelectorData.m_excludeSameLineageVector = { m_ToolObjectID };
+		objSelectorData.m_stopAtId = m_ToolObjectID;
+
+		auto [objectSelectType, _] = getTypeData(*pDef);
+		SvPb::EmbeddedIdEnum eId = SvPb::ExternalInputEId + pDef->linkedvalueindex();
+		SvOg::LinkedValueSelectorDialog dlg(m_InspectionID, m_InputValues.GetObjectID(eId), 
+			m_InputValues.GetName(eId),
+			m_InputValues.Get<SvOg::LinkedValueData>(eId),
+			isTable? VT_EMPTY : static_cast<VARTYPE>(pDef->vt()),
+			objSelectorData, nullptr, objectSelectType);
+		if (IDOK == dlg.DoModal())
+		{
+			m_InputValues.Set(eId, dlg.getData());
+			setValueColumn(eId, objectSelectType, rItem);
+		}
 	}
-	isTable = (pDef->type() == SvPb::ExDllInterfaceType::TableArray);
-	
-	SvPb::InspectionCmdRequest requestCmd;
-	SvPb::InspectionCmdResponse responseCmd;
-	if (!isTable)
-	{
-		SvPb::ObjectSelectorType type = (pDef->vt() & VT_BSTR) == 0 ? SvPb::allNumberValueObjects : SvPb::allValueObjects;
-		*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
-		{SvPb::SearchArea::globalConstantItems, SvPb::SearchArea::cameraObject, SvPb::SearchArea::ppqItems, SvPb::SearchArea::toolsetItems},
-			m_InspectionID, SvPb::archivable, SvDef::InvalidObjectId, true, type, SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed, m_ToolObjectID);
-		SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
-	}
-	else
-	{
-		*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
-			{ SvPb::SearchArea::toolsetItems },
-			m_InspectionID, SvPb::taskObject, SvDef::InvalidObjectId, true, SvPb::tableObjects, SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed, m_ToolObjectID);
-		SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
-	}
-
-	SvOsl::ObjectTreeGenerator::Instance().setSelectorType(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject);
-	if (responseCmd.has_getobjectselectoritemsresponse())
-	{
-		SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects(responseCmd.getobjectselectoritemsresponse().tree());
-	}
-
-	std::string value;
-	pItem->GetItemValue(value);
-
-	if (!value.empty())
-	{
-		SvDef::StringSet checkedItems;
-		checkedItems.insert(value);
-		SvOsl::ObjectTreeGenerator::Instance().setCheckItems(checkedItems);
-	}
-
-	std::string Filter = SvUl::LoadStdString(IDS_FILTER);
-	std::string ToolsetOutput = SvUl::LoadStdString(IDS_SELECT_TOOLSET_OUTPUT);
-	std::string Title = SvUl::Format(_T("%s - %s"), ToolsetOutput.c_str(), GetName(m_ToolObjectID).c_str());
-
-	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog(Title.c_str(), ToolsetOutput.c_str(), Filter.c_str(), this);
-
-	if (IDOK == Result)
-	{
-		SVObjectReference objectRef {SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult()};
-		rObjectName = objectRef.GetObjectNameBeforeObjectType(SvPb::SVInspectionObjectType, true);
-	}
-
-	return static_cast<int>(Result);
 }
 
 void SVTADlgExternalInputSelectPage::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 {
 	LPNMPROPTREE pNMPropTree = (LPNMPROPTREE)pNotifyStruct;
-	*plResult = S_OK;
-
 	SVRPropertyItem* pItem = pNMPropTree->pItem;
 
 	if (pItem)
 	{
-		auto pDef = this->GetInputDefinitionPtr(pItem);
-
-		if (!pDef)
+		if (setStringToData(*pItem))
 		{
-			*plResult = S_FALSE;
+			*plResult = S_OK;
 			return;
 		}
-
-		SvPb::ExDllInterfaceType type = pDef->type();
-
-		int index = GetItemIndex(pItem);
-		assert(index >= 0 && index < m_inputValueCount);
-
-		_variant_t newVal;
-		pItem->GetItemValue(newVal);
-
-		std::string Name;
-		pItem->GetItemValue(Name);
-
-		if (false == m_rExternalToolTaskController.validateValueParameterWrapper(m_TaskObjectID, index, newVal, type))
-		{
-			*plResult = S_FALSE;
-		}
 	}
+	*plResult = S_FALSE;
 }
 
 void SVTADlgExternalInputSelectPage::OnOK()
@@ -434,60 +397,8 @@ void SVTADlgExternalInputSelectPage::OnOK()
 // constant values (if input is not another VO)
 void SVTADlgExternalInputSelectPage::updateInputValuesFromPropertyTree()
 {
-	auto inputDefinitions = m_rExternalToolTaskController.getInputValuesDefinition().inputvaluesdefinition();
-	SVRPropertyItem* pGroup = nullptr;
 	if (m_Tree.GetRootItem() && nullptr != m_Tree.GetRootItem()->GetChild())
 	{
-		pGroup = m_Tree.GetRootItem()->GetChild()->GetChild();
-		while (pGroup)
-		{
-			SVRPropertyItem* pItem = pGroup->GetChild();
-			while (pItem)
-			{
-				int iIndex = GetItemIndex(pItem);
-				assert(iIndex >= 0 && iIndex < m_inputValueCount);
-				if (iIndex >= 0 && iIndex < m_inputValueCount)
-				{
-					int LVIndex = inputDefinitions[iIndex].linkedvalueindex();
-					std::string Value;
-					pItem->GetItemValue(Value);
-					bool done {false};
-					_variant_t  array;
-					SvPb::ExDllInterfaceType  type = inputDefinitions[iIndex].type();
-					if (type == SvPb::ExDllInterfaceType::Array)
-					{
-					switch (inputDefinitions[iIndex].vt())
-					{
-						case VT_ARRAY | VT_R8:
-						{
-							if (SvUl::StringToSafeArray<double>(Value, array) >= 0)
-							{
-								m_InputValues.Set<_variant_t>(SvPb::ExternalInputEId + LVIndex, array);
-								done = true;
-							}
-							break;
-						}
-						case VT_ARRAY | VT_I4:
-						{
-							if (SvUl::StringToSafeArray<long>(Value, array) >= 0)
-							{
-								m_InputValues.Set<_variant_t>(SvPb::ExternalInputEId + LVIndex, array);
-								done = true;
-							}
-							break;
-						}
-						}
-					}
-					if (!done)
-					{
-						m_InputValues.Set<CString>(SvPb::ExternalInputEId + LVIndex, Value.c_str());
-					}
-				}
-
-				pItem = pItem->GetSibling();
-			}
-			pGroup = pGroup->GetSibling();
-		}
 		std::map<std::string, bool> propTreeState;
 		m_Tree.SaveState(propTreeState);
 		m_rExternalToolTaskController.setPropTreeState(propTreeState);
@@ -539,4 +450,63 @@ BOOL SVTADlgExternalInputSelectPage::OnKillActive()
 	updateInputValuesFromPropertyTree();
 
 	return CPropertyPage::OnKillActive();
+}
+
+void SVTADlgExternalInputSelectPage::setValueColumn(SvPb::EmbeddedIdEnum eId, SvOg::LinkedValueSelectorTypesEnum selectorTypes, SVRPropertyItemEdit& rEdit)
+{
+	auto data = m_InputValues.Get<SvOg::LinkedValueData>(eId);
+	bool isReadOnly{ true };
+	CString valueString;
+	if (SvOg::LinkedValueSelectorTypesEnum::All == selectorTypes || SvOg::LinkedValueSelectorTypesEnum::DirectIndirect == selectorTypes)
+	{
+		valueString = SvUl::VariantToString(data.m_Value).c_str();
+		isReadOnly = (SvPb::LinkedSelectedType::DirectValue != data.m_type);
+	}
+	else
+	{
+		valueString = data.m_indirectDotName.c_str();
+	}
+
+	rEdit.SetItemValue(valueString);
+	rEdit.OnRefresh();
+	rEdit.ReadOnly(isReadOnly, true);
+}
+
+bool SVTADlgExternalInputSelectPage::setStringToData(SVRPropertyItem& rItem)
+{
+	auto pDef = GetInputDefinitionPtr(&rItem);
+
+	int index = GetItemIndex(&rItem);
+	assert(index >= 0 && index < m_inputValueCount);
+	if (!pDef || index < 0 || index >= m_inputValueCount)
+	{
+		return false;
+	}
+
+	SvPb::ExDllInterfaceType type = pDef->type();
+	SvPb::EmbeddedIdEnum eId = SvPb::ExternalInputEId + pDef->linkedvalueindex();
+	auto data = m_InputValues.Get<SvOg::LinkedValueData>(eId);
+	if (SvPb::LinkedSelectedType::DirectValue == data.m_type)
+	{
+		_variant_t newVal;
+		rItem.GetItemValue(newVal);
+
+		std::string Name;
+		rItem.GetItemValue(Name);
+
+		if (false == m_rExternalToolTaskController.validateValueParameterWrapper(m_TaskObjectID, index, newVal, type))
+		{
+			return false;
+		}
+		else
+		{
+			bool isOk = SvOg::LinkedValueSelectorDialog::createVariantFromString(static_cast<VARTYPE>(pDef->vt()), std::string {Name}, data.m_directValue);
+			if (isOk)
+			{
+				data.m_Value = data.m_directValue;
+				m_InputValues.Set<SvOg::LinkedValueData>(eId, data);
+			}
+		}
+	}
+	return true;
 }

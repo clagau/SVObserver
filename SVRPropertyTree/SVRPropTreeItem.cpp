@@ -133,6 +133,10 @@ bool SVRPropertyItem::IsReadOnly()
 	return (m_dwState & ItemReadOnly) ? true : false;
 }
 
+bool SVRPropertyItem::IsButtonActiveIfReadOnly()
+{
+	return (m_dwState & ItemButtonEnableIfReadOnly) ? true : false;
+}
 
 bool SVRPropertyItem::IsActivated()
 {
@@ -223,6 +227,18 @@ void SVRPropertyItem::ReadOnly(bool bReadOnly)
 	}
 }
 
+void SVRPropertyItem::ReadOnly(bool bReadOnly, bool bButtonEnabled)
+{
+	ReadOnly(bReadOnly);
+	if (bButtonEnabled)
+	{
+		m_dwState |= ItemButtonEnableIfReadOnly;
+	}
+	else
+	{
+		m_dwState &= ~ItemButtonEnableIfReadOnly;
+	}
+}
 
 void SVRPropertyItem::HideItem(bool bHide)
 {

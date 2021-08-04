@@ -218,27 +218,27 @@ namespace SvAo
 			const auto& excludeData = pTask->getExcludeData();
 			pFeatureData->set_is_exclude(excludeData.m_isEnabled);
 			pFeatureData->set_is_exclude_inner(excludeData.m_isInner);
-			double tmpDouble = 0;
-			excludeData.m_rLowerBoundValue.getValue(tmpDouble);
-			pFeatureData->set_lower_bound(tmpDouble);
-			std::string tmpStr;
-			excludeData.m_rLowerBoundValue.getLinkedName().getValue(tmpStr);
-			pFeatureData->set_lower_bound_indirect(tmpStr);
-			excludeData.m_rUpperBoundValue.getValue(tmpDouble);
-			pFeatureData->set_upper_bound(tmpDouble);
-			excludeData.m_rUpperBoundValue.getLinkedName().getValue(tmpStr);
-			pFeatureData->set_upper_bound_indirect(tmpStr);
+			pFeatureData->set_lower_bound_id(excludeData.m_rLowerBoundValue.getObjectId());
+			auto* pValue = pFeatureData->mutable_lower_bound();
+			excludeData.m_rLowerBoundValue.fillLinkedData(*pValue);
+			pFeatureData->set_upper_bound_id(excludeData.m_rUpperBoundValue.getObjectId());
+			pValue = pFeatureData->mutable_upper_bound();
+			excludeData.m_rUpperBoundValue.fillLinkedData(*pValue);
 
 			const auto& rangeData = pTask->getRangeData();
 			pFeatureData->set_is_range(rangeData.m_isEnabled);
-			pFeatureData->set_range_fail_high(rangeData.m_failHigh);
-			pFeatureData->set_range_fail_high_indirect(rangeData.m_failHighIndirect);
-			pFeatureData->set_range_warn_high(rangeData.m_warnHigh);
-			pFeatureData->set_range_warn_high_indirect(rangeData.m_warnHighIndirect);
-			pFeatureData->set_range_warn_low(rangeData.m_warnLow);
-			pFeatureData->set_range_warn_low_indirect(rangeData.m_warnLowIndirect);
-			pFeatureData->set_range_fail_low(rangeData.m_failLow);
-			pFeatureData->set_range_fail_low_indirect(rangeData.m_failLowIndirect);
+			pFeatureData->set_range_fail_high_id(rangeData.m_rRangeValues[RangeEnum::ER_FailHigh].getObjectId());
+			pValue = pFeatureData->mutable_range_fail_high();
+			rangeData.m_rRangeValues[RangeEnum::ER_FailHigh].fillLinkedData(*pValue);
+			pFeatureData->set_range_warn_high_id(rangeData.m_rRangeValues[RangeEnum::ER_WarnHigh].getObjectId());
+			pValue = pFeatureData->mutable_range_warn_high();
+			rangeData.m_rRangeValues[RangeEnum::ER_WarnHigh].fillLinkedData(*pValue);
+			pFeatureData->set_range_warn_low_id(rangeData.m_rRangeValues[RangeEnum::ER_WarnLow].getObjectId());
+			pValue = pFeatureData->mutable_range_warn_low();
+			rangeData.m_rRangeValues[RangeEnum::ER_WarnLow].fillLinkedData(*pValue);
+			pFeatureData->set_range_fail_low_id(rangeData.m_rRangeValues[RangeEnum::ER_FailLow].getObjectId());
+			pValue = pFeatureData->mutable_range_fail_low();
+			rangeData.m_rRangeValues[RangeEnum::ER_FailLow].fillLinkedData(*pValue);
 		}
 		return cmdResponse;
 	}
@@ -484,10 +484,7 @@ namespace SvAo
 			auto excludeData = pFeatureTask->getExcludeData();
 			if (excludeData.m_isEnabled)
 			{
-				std::string lowerStr, upperStr;
-				excludeData.m_rLowerBoundValue.getLinkedName().getValue(lowerStr);
-				excludeData.m_rUpperBoundValue.getLinkedName().getValue(upperStr);
-				if (lowerStr.empty() && upperStr.empty())
+				if (SvPb::LinkedSelectedType::DirectValue == excludeData.m_rLowerBoundValue.getSelectedType() && SvPb::LinkedSelectedType::DirectValue == excludeData.m_rUpperBoundValue.getSelectedType())
 				{ //check if lower < upper
 					double lower, upper;
 					excludeData.m_rLowerBoundValue.getValue(lower);
@@ -523,9 +520,9 @@ namespace SvAo
 			auto rangeData = pFeatureTask->getRangeData();
 			if (rangeData.m_isEnabled)
 			{
-				result &= rangeCheck(pErrorMessages, pFeatureTask, rangeData.m_failHighIndirect, rangeData.m_warnHighIndirect, rangeData.m_failHigh, rangeData.m_warnHigh, SvStl::Tid_FailHigh, SvStl::Tid_WarnHigh);
-				result &= rangeCheck(pErrorMessages, pFeatureTask, rangeData.m_warnHighIndirect, rangeData.m_warnLowIndirect, rangeData.m_warnHigh, rangeData.m_warnLow, SvStl::Tid_WarnHigh, SvStl::Tid_WarnLow);
-				result &= rangeCheck(pErrorMessages, pFeatureTask, rangeData.m_warnLowIndirect, rangeData.m_failLowIndirect, rangeData.m_warnLow, rangeData.m_failLow, SvStl::Tid_WarnLow, SvStl::Tid_FailLow);
+				result &= rangeCheck(pErrorMessages, pFeatureTask, rangeData.m_rRangeValues[RangeEnum::ER_FailHigh], rangeData.m_rRangeValues[RangeEnum::ER_WarnHigh], SvStl::Tid_FailHigh, SvStl::Tid_WarnHigh);
+				result &= rangeCheck(pErrorMessages, pFeatureTask, rangeData.m_rRangeValues[RangeEnum::ER_WarnHigh], rangeData.m_rRangeValues[RangeEnum::ER_WarnLow], SvStl::Tid_WarnHigh, SvStl::Tid_WarnLow);
+				result &= rangeCheck(pErrorMessages, pFeatureTask, rangeData.m_rRangeValues[RangeEnum::ER_WarnLow], rangeData.m_rRangeValues[RangeEnum::ER_FailLow], SvStl::Tid_WarnLow, SvStl::Tid_FailLow);
 			}
 		}
 
@@ -619,10 +616,13 @@ namespace SvAo
 		std::rotate(iterFromR, iterFromR + 1, iterToR);
 	}
 
-	bool BlobFeatureList::rangeCheck(SvStl::MessageContainerVector* pErrorMessages, const BlobFeatureTask* pFeatureTask, const std::string& higherText, const std::string& lowerText, double higherValue, double lowerValue, SvStl::MessageTextEnum higherId, SvStl::MessageTextEnum lowerId)
+	bool BlobFeatureList::rangeCheck(SvStl::MessageContainerVector* pErrorMessages, const BlobFeatureTask* pFeatureTask, const SvVol::LinkedValue& rHigherValue, const SvVol::LinkedValue& rLowerValue, SvStl::MessageTextEnum higherId, SvStl::MessageTextEnum lowerId)
 	{
-		if (higherText.empty() && lowerText.empty())
+		if (SvPb::LinkedSelectedType::DirectValue == rHigherValue.getSelectedType() && SvPb::LinkedSelectedType::DirectValue == rLowerValue.getSelectedType())
 		{ //check if lower < upper
+			double higherValue, lowerValue;
+			rHigherValue.getValue(higherValue);
+			rLowerValue.getValue(lowerValue);
 			if (higherValue < lowerValue)
 			{
 				if (nullptr != pErrorMessages)

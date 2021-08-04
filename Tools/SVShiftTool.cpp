@@ -471,7 +471,7 @@ void SVShiftTool::LocalInitialize()
 	RegisterEmbeddedObject( &m_DisplacementY, SvPb::ImageTransformDisplacementYEId, IDS_TRANSFORM_DISPLACEMENTY, false, SvOi::SVResetItemNone );
 	RegisterEmbeddedObject( &m_LeftResult, SvPb::LeftResultEId, IDS_OBJECTNAME_LEFT_RESULT, false, SvOi::SVResetItemNone );
 	RegisterEmbeddedObject( &m_TopResult, SvPb::TopResultEId, IDS_OBJECTNAME_TOP_RESULT, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_OutputImage, SvPb::OutputImageEId, IDS_OBJECTNAME_IMAGE1 );
+	RegisterEmbeddedImage( &m_OutputImage, SvPb::OutputImageEId, IDS_OBJECTNAME_IMAGE1 );
 
 	m_LearnedTranslationX.SetObjectAttributesAllowed( SvPb::extentObject, SvOi::SetAttributeType::RemoveAttribute );
 	m_LearnedTranslationY.SetObjectAttributesAllowed( SvPb::extentObject, SvOi::SetAttributeType::RemoveAttribute );

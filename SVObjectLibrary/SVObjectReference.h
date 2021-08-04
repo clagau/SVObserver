@@ -56,6 +56,12 @@ public:
 	void setObjectId(uint32_t objectId) { m_objectId = objectId; };
 	void clear();
 
+	/// Load object from objectId
+	void update();
+	
+	/// if object different to objectId, objectId will be set to current objectId. if m_pObject == nullptr, this method do nothing.
+	void reloadObjectId();
+
 	SVObjectClass* getObject() const;
 	SVObjectClass* getFinalObject() const;
 	SvOi::IValueObject* getValueObject(bool forceCast=false) const;

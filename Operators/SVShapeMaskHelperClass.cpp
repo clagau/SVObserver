@@ -49,13 +49,20 @@ void SVShapeMaskHelperClass::init()
 	RegisterEmbeddedObject( &m_bvoAutoResize, SvPb::ShapeMaskAutoResizeEId, IDS_OBJECTNAME_SHAPE_MASK_AUTO_RESIZE, false, SvOi::SVResetItemTool );
 	RegisterEmbeddedObject( &m_evoShapeType, SvPb::ShapeMaskTypeEId, IDS_OBJECTNAME_SHAPE_MASK_TYPE, false, SvOi::SVResetItemTool );
 	RegisterEmbeddedObject( &m_evoMaskArea, SvPb::ShapeMaskMaskAreaEId, IDS_OBJECTNAME_SHAPE_MASK_MASK_AREA, false, SvOi::SVResetItemTool );
-	registerEmbeddedLinkedValue(&m_voCenterX, SvPb::ShapeMaskPropertyCenterXEId, SvPb::ShapeMaskPropertyCenterXLinkEId, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_CENTER_X, _variant_t(50L));
-	registerEmbeddedLinkedValue( &m_voCenterY, SvPb::ShapeMaskPropertyCenterYEId, SvPb::ShapeMaskPropertyCenterYLinkEId, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_CENTER_Y, _variant_t(50L));
-	registerEmbeddedLinkedValue( &m_voWidth, SvPb::ShapeMaskPropertyWidthEId, SvPb::ShapeMaskPropertyWidthLinkEId, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_WIDTH, _variant_t(80L));
-	registerEmbeddedLinkedValue( &m_voHeight, SvPb::ShapeMaskPropertyHeightEId, SvPb::ShapeMaskPropertyHeightLinkEId, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_HEIGHT, _variant_t(80L));
-	registerEmbeddedLinkedValue( &m_voSideThickness, SvPb::ShapeMaskPropertySideThicknessEId, SvPb::ShapeMaskPropertySideThicknessLinkEId, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_SIDE_THICKNESS, _variant_t(20L));
-	registerEmbeddedLinkedValue( &m_voTopBottomThickness, SvPb::ShapeMaskPropertyTopBottomThicknessEId, SvPb::ShapeMaskPropertyTopBottomThicknessLinkEId, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_TOP_BOTTOM_THICKNESS, _variant_t(20L));
-	registerEmbeddedLinkedValue( &m_voOffset, SvPb::ShapeMaskPropertyOffsetEId, SvPb::ShapeMaskPropertyOffsetLinkEId, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_OFFSET, _variant_t(20L));
+	RegisterEmbeddedObject(&m_voCenterX, SvPb::ShapeMaskPropertyCenterXEId, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_CENTER_X, true, SvOi::SVResetItemTool);
+	m_voCenterX.SetDefaultValue(_variant_t(50L), true);
+	RegisterEmbeddedObject(&m_voCenterY, SvPb::ShapeMaskPropertyCenterYEId, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_CENTER_Y, true, SvOi::SVResetItemTool);
+	m_voCenterY.SetDefaultValue(_variant_t(50L), true);
+	RegisterEmbeddedObject(&m_voWidth, SvPb::ShapeMaskPropertyWidthEId, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_WIDTH, true, SvOi::SVResetItemTool);
+	m_voWidth.SetDefaultValue(_variant_t(80L), true);
+	RegisterEmbeddedObject(&m_voHeight, SvPb::ShapeMaskPropertyHeightEId, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_HEIGHT, true, SvOi::SVResetItemTool);
+	m_voHeight.SetDefaultValue(_variant_t(80L), true);
+	RegisterEmbeddedObject(&m_voSideThickness, SvPb::ShapeMaskPropertySideThicknessEId, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_SIDE_THICKNESS, true, SvOi::SVResetItemTool);
+	m_voSideThickness.SetDefaultValue(_variant_t(20L), true);
+	RegisterEmbeddedObject(&m_voTopBottomThickness, SvPb::ShapeMaskPropertyTopBottomThicknessEId, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_TOP_BOTTOM_THICKNESS, true, SvOi::SVResetItemTool);
+	m_voTopBottomThickness.SetDefaultValue(_variant_t(20L), true);
+	RegisterEmbeddedObject(&m_voOffset, SvPb::ShapeMaskPropertyOffsetEId, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_OFFSET, true, SvOi::SVResetItemTool);
+	m_voOffset.SetDefaultValue(_variant_t(20L), true);
 	RegisterEmbeddedObject( &m_evoXYSymmetry, SvPb::ShapeMaskPropertySymmetryOrientationEId, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_XY_SYMMETRY, false, SvOi::SVResetItemTool );
 
 	m_bvoAutoResize.SetDefaultValue( false, false );
@@ -86,7 +93,7 @@ void SVShapeMaskHelperClass::init()
 
 	m_pImage = std::make_unique<SvIe::SVImageClass>("MaskImage");
 	m_pImage->InitializeImage(SvPb::SVImageTypeEnum::SVImageTypeIndependent);
-	RegisterEmbeddedObject(m_pImage.get(), SvPb::MaskImageEId, "MaskImage");
+	RegisterEmbeddedImage(m_pImage.get(), SvPb::MaskImageEId, "MaskImage");
 }
 
 SVShapeMaskHelperClass::~SVShapeMaskHelperClass()
@@ -221,7 +228,7 @@ void SVShapeMaskHelperClass::createImageObject(bool useImageObject)
 			{
 				m_pImage = std::make_unique<SvIe::SVImageClass>("MaskImage");
 				m_pImage->InitializeImage(SvPb::SVImageTypeEnum::SVImageTypeIndependent);
-				RegisterEmbeddedObject(m_pImage.get(), SvPb::MaskImageEId, "MaskImage");
+				RegisterEmbeddedImage(m_pImage.get(), SvPb::MaskImageEId, "MaskImage");
 				CreateChildObject(m_pImage.get());
 			}
 			m_pImage->resetAllObjects();
@@ -236,11 +243,6 @@ void SVShapeMaskHelperClass::createImageObject(bool useImageObject)
 			m_pImage = nullptr;
 		}
 	}
-}
-
-bool SVShapeMaskHelperClass::onRun( bool, SvOi::SVImageBufferHandlePtr RInputImageHandle, SvOi::SVImageBufferHandlePtr ROutputImageHandle, RunStatus& , SvStl::MessageContainerVector * )
-{
-	return TRUE;	// what do we want to do here for the status?
 }
 
 SVShapeMaskHelperClass::ShapeTypeEnum SVShapeMaskHelperClass::GetShape( )

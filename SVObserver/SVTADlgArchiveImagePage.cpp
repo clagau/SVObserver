@@ -48,14 +48,22 @@ BEGIN_MESSAGE_MAP(SVTADlgArchiveImagePage, CPropertyPage)
 	ON_EN_CHANGE(IDC_EDIT_MAX_IMAGES, OnChangeEditMaxImages)
 	ON_BN_CLICKED(IDC_CHECK_STOP_AT_MAX, OnStopAtMaxClicked)
 	ON_BN_CLICKED(IDC_BUTTON_FILENAME_INDEX1, OnButtonFilenameIndex1)
+	ON_EN_KILLFOCUS(IDC_EDIT_FILENAME_INDEX1, OnKillFocusFilenameIndex1)
 	ON_BN_CLICKED(IDC_BUTTON_FILENAME_INDEX2, OnButtonFilenameIndex2)
+	ON_EN_KILLFOCUS(IDC_EDIT_FILENAME_INDEX2, OnKillFocusFilenameIndex2)
 	ON_BN_CLICKED(IDC_BUTTON_DIRECTORYNAME_INDEX, OnButtonDirectorynameIndex)
+	ON_EN_KILLFOCUS(IDC_EDIT_DIRECTORYNAME_INDEX, OnKillFocusDirectorynameIndex)
 	ON_BN_CLICKED(IDC_BUTTON_SUBFOLDER_SELECTION, OnButtonSubfolderSelection)
+	ON_EN_KILLFOCUS(IDC_EDIT_SUBFOLDER_SELECTION, OnKillFocusSubfolderSelection)
 	ON_BN_CLICKED(IDC_BUTTON_SUBFOLDER_LOCATION, OnButtonSubfolderLocation)
+	ON_EN_KILLFOCUS(IDC_EDIT_SUBFOLDER_LOCATION, OnKillFocusSubfolderLocation)
 	ON_BN_CLICKED(IDC_USE_ALTERNATIVE_IMAGE_PATHS, OnButtonUseAlternativeImagePaths)
 	ON_BN_CLICKED(IDC_BUTTON_IMAGE_FILEPATHROOT1, OnButtonImageFilepathroot1)
 	ON_BN_CLICKED(IDC_BUTTON_IMAGE_FILEPATHROOT2, OnButtonImageFilepathroot2)
 	ON_BN_CLICKED(IDC_BUTTON_IMAGE_FILEPATHROOT3, OnButtonImageFilepathroot3)
+	ON_EN_KILLFOCUS(IDC_ARCHIVE_IMAGE_FILEPATHROOT1, OnKillFocusImageFilepathroot1)
+	ON_EN_KILLFOCUS(IDC_ARCHIVE_IMAGE_FILEPATHROOT2, OnKillFocusImageFilepathroot2)
+	ON_EN_KILLFOCUS(IDC_ARCHIVE_IMAGE_FILEPATHROOT3, OnKillFocusImageFilepathroot3)
 END_MESSAGE_MAP()
 
 constexpr int UpperLimitImageNumbers = 10000000; ///Upper Limit for Input 
@@ -72,15 +80,10 @@ SVTADlgArchiveImagePage::SVTADlgArchiveImagePage(uint32_t inspectionId, uint32_t
 : CPropertyPage(SVTADlgArchiveImagePage::IDD)
 , m_pParent(Parent)
 , m_inspectionId(inspectionId)
-, m_RootPathObjectSelectorController(inspectionId, SvDef::InvalidObjectId, SvPb::viewable)
+, m_taskId(taskObjectId)
 , m_ValueController{ SvOg::BoundValues{ inspectionId, taskObjectId } }
 , m_alternativeImagePaths(m_ValueController, inspectionId, taskObjectId)
-, m_ImageFilepathroot1WidgetHelper(m_ImageFilepathroot1, SvPb::ArchiveImageFileRootPart1EId, &m_ImageFilepathroot1Button, SvPb::ArchiveImageFileRootPart1LinkEId, m_ValueController)
-, m_ImageFilepathroot2WidgetHelper(m_ImageFilepathroot2, SvPb::ArchiveImageFileRootPart2EId, &m_ImageFilepathroot2Button, SvPb::ArchiveImageFileRootPart2LinkEId, m_ValueController)
-, m_ImageFilepathroot3WidgetHelper(m_ImageFilepathroot3, SvPb::ArchiveImageFileRootPart3EId, &m_ImageFilepathroot3Button, SvPb::ArchiveImageFileRootPart3LinkEId, m_ValueController)
 {
-	SvOg::ValueEditWidgetHelper::EnsureDownArrowBitmapIsLoaded();
-
 	m_strCaption = m_psp.pszTitle;
 	if( nullptr != m_pParent )
 	{
@@ -176,21 +179,6 @@ bool SVTADlgArchiveImagePage::QueryAllowExit()
 
 	return true;
 }
-
-
-void SVTADlgArchiveImagePage::updateImageFilePathRootElements()
-{
-	if (false == ::IsWindow(m_hWnd))
-	{
-		return; //this avoids this function from having undefined effects if it is called from SVTADlgArchiveResultsPage::QueryAllowExit() 
-				//before the SVTADlgArchiveImagePage window is created
-	}
-	m_ImageFilepathroot1WidgetHelper.EditboxToValue();
-	m_ImageFilepathroot2WidgetHelper.EditboxToValue();
-	m_ImageFilepathroot3WidgetHelper.EditboxToValue();
-}
-
-
 #pragma endregion Public Methods
 
 #pragma region Private Methods
@@ -230,8 +218,6 @@ void SVTADlgArchiveImagePage::DoDataExchange(CDataExchange* pDX)
 
 bool SVTADlgArchiveImagePage::validateArchiveImageFilepath()
 {
-	updateImageFilePathRootElements();
-
 	m_ValueController.Set<bool>(SvPb::UseAlternativeImagePathsEId, m_useAlternativeImagePaths ? true : false);
 	m_ValueController.Commit(SvOg::PostAction::doNothing); //changes need to be committed before paths can be built
 
@@ -307,9 +293,15 @@ BOOL SVTADlgArchiveImagePage::OnInitDialog()
 
 	m_wndAvailableArchiveImageMemory.ShowWindow( lMode == SvTo::SVArchiveGoOffline );
 
-	m_ImageFilepathroot1.SetWindowText(m_pTool->GetImageArchivePathPart1().c_str());
-	m_ImageFilepathroot2.SetWindowText(m_pTool->GetImageArchivePathPart2().c_str());
-	m_ImageFilepathroot3.SetWindowText(m_pTool->GetImageArchivePathPart3().c_str());
+	SvOg::ObjectSelectorData osData;
+	osData.m_attribute = SvPb::viewable;
+	osData.m_type = SvPb::allValueObjects;
+	osData.m_stopAtId = m_taskId;
+	m_ImageFilepathrootWidgetHelpers[0] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_ImageFilepathroot1, m_ImageFilepathroot1Button, m_inspectionId, m_taskId, SvPb::ArchiveImageFileRootPart1EId, &m_ValueController, osData);
+	m_ImageFilepathrootWidgetHelpers[1] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_ImageFilepathroot2, m_ImageFilepathroot2Button, m_inspectionId, m_taskId, SvPb::ArchiveImageFileRootPart2EId, &m_ValueController, osData);
+	m_ImageFilepathrootWidgetHelpers[2] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_ImageFilepathroot3, m_ImageFilepathroot3Button, m_inspectionId, m_taskId, SvPb::ArchiveImageFileRootPart3EId, &m_ValueController, osData);
+	m_alternativeImagePaths.init();
+
 
 	m_StopAtMaxImagesButton.SetCheck(m_ValueController.Get<bool>(SvPb::ArchiveStopAtMaxImagesEId));
 	m_useAlternativeImagePaths = m_ValueController.Get<bool>(SvPb::UseAlternativeImagePathsEId);
@@ -331,10 +323,6 @@ BOOL SVTADlgArchiveImagePage::OnInitDialog()
 	}
 
 	m_alternativeImagePaths.TextValuesToEditboxes();
-
-	m_ImageFilepathroot1WidgetHelper.ValueToEditbox();
-	m_ImageFilepathroot2WidgetHelper.ValueToEditbox();
-	m_ImageFilepathroot3WidgetHelper.ValueToEditbox();
 
 	ReadSelectedObjects();
 
@@ -537,7 +525,12 @@ void SVTADlgArchiveImagePage::OnBrowseImageFilepathroot1()
 		}
 	}
 
-	m_ImageFilepathroot1.SetWindowText(firstPartOfImageArchivePathRoot);
+	auto data = m_ValueController.Get<SvOg::LinkedValueData>(SvPb::ArchiveImageFileRootPart1EId);
+	data.m_type = SvPb::DirectValue;
+	data.m_directValue = firstPartOfImageArchivePathRoot;
+	data.m_Value = data.m_directValue;
+	m_ValueController.Set<SvOg::LinkedValueData>(SvPb::ArchiveImageFileRootPart1EId, data);
+	m_ImageFilepathrootWidgetHelpers[0]->update();
 }
 
 void SVTADlgArchiveImagePage::OnSelchangeWhenToArchive() 
@@ -730,46 +723,47 @@ afx_msg void SVTADlgArchiveImagePage::OnButtonUseAlternativeImagePaths()
 	m_alternativeImagePaths.OnButtonUseAlternativeImagePaths(m_useAlternativeImagePaths);
 }
 
-afx_msg void SVTADlgArchiveImagePage::OnButtonImageFilepathroot1()
+void SVTADlgArchiveImagePage::OnButtonImageFilepathroot1()
 {
-	CString Temp;
-
-	m_ImageFilepathroot1.GetWindowText(Temp);
-	std::string Value = Temp.GetString();
-	std::string Title = SvUl::LoadStdString(IDC_ARCHIVE_IMAGE_FILEPATHROOT1);
-	if (m_RootPathObjectSelectorController.Show(Value, Title, this, SvPb::stringValueObjects, SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed, m_pTool->getObjectId()))
-	{
-		m_ImageFilepathroot1.SetWindowText(Value.c_str());
-	}
-
+	m_ImageFilepathrootWidgetHelpers[0]->OnButton();
 }
 
-afx_msg void SVTADlgArchiveImagePage::OnButtonImageFilepathroot2()
+void SVTADlgArchiveImagePage::OnButtonImageFilepathroot2()
 {
-	CString Temp;
-
-	m_ImageFilepathroot2.GetWindowText(Temp);
-	std::string Value = Temp.GetString();
-	std::string Title = SvUl::LoadStdString(IDC_ARCHIVE_IMAGE_FILEPATHROOT2);
-	if (m_RootPathObjectSelectorController.Show(Value, Title, this, SvPb::allValueObjects, SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed, m_pTool->getObjectId()))
-	{
-		m_ImageFilepathroot2.SetWindowText(Value.c_str());
-	}
-
+	m_ImageFilepathrootWidgetHelpers[1]->OnButton();
 }
 
-afx_msg void SVTADlgArchiveImagePage::OnButtonImageFilepathroot3()
+void SVTADlgArchiveImagePage::OnButtonImageFilepathroot3()
 {
-	CString Temp;
+	m_ImageFilepathrootWidgetHelpers[2]->OnButton();
+}
 
-	m_ImageFilepathroot3.GetWindowText(Temp);
-	std::string Value = Temp.GetString();
-	std::string Title = SvUl::LoadStdString(IDC_ARCHIVE_IMAGE_FILEPATHROOT3);
-	if (m_RootPathObjectSelectorController.Show(Value, Title, this, SvPb::allValueObjects, SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed, m_pTool->getObjectId()))
-	{
-		m_ImageFilepathroot3.SetWindowText(Value.c_str());
-	}
+void SVTADlgArchiveImagePage::OnKillFocusImageFilepathroot1()
+{
+	m_ImageFilepathrootWidgetHelpers[0]->EditboxToValue();
+}
 
+void SVTADlgArchiveImagePage::OnKillFocusImageFilepathroot2()
+{
+	m_ImageFilepathrootWidgetHelpers[1]->EditboxToValue();
+}
+
+void SVTADlgArchiveImagePage::OnKillFocusImageFilepathroot3()
+{
+	m_ImageFilepathrootWidgetHelpers[2]->EditboxToValue();
+}
+
+void SVTADlgArchiveImagePage::AlternativeImagePathController::init()
+{
+	SvOg::ObjectSelectorData osData;
+	osData.m_attribute = SvPb::viewable;
+	osData.m_type = SvPb::allNumberValueObjects;
+	osData.m_stopAtId = m_taskId;
+	m_WidgetHelpers[LinkedValueEnums::DirectorynameIndex] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_EditDirectorynameIndex, m_ButtonDirectorynameIndex, m_inspectionId, m_taskId, SvPb::DirectorynameIndexEId, &m_rValueController, osData);
+	m_WidgetHelpers[LinkedValueEnums::FilenameIndex1] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_EditFilenameIndex1, m_ButtonFilenameIndex1, m_inspectionId, m_taskId, SvPb::FilenameIndex1EId, &m_rValueController, osData);
+	m_WidgetHelpers[LinkedValueEnums::FilenameIndex2] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_EditFilenameIndex2, m_ButtonFilenameIndex2, m_inspectionId, m_taskId, SvPb::FilenameIndex2EId, &m_rValueController, osData);
+	m_WidgetHelpers[LinkedValueEnums::SubfolderSelection] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_EditSubfolderSelection, m_ButtonSubfolderSelection, m_inspectionId, m_taskId, SvPb::SubfolderSelectionEId, &m_rValueController, osData);
+	m_WidgetHelpers[LinkedValueEnums::SubfolderLocation] = std::make_unique<SvOg::LinkedValueWidgetHelper>(m_EditSubfolderLocation, m_ButtonSubfolderLocation, m_inspectionId, m_taskId, SvPb::SubfolderLocationEId, &m_rValueController, osData);
 }
 
 void SVTADlgArchiveImagePage::AlternativeImagePathController::DoDataExchange(CDataExchange* pDX)
@@ -789,76 +783,36 @@ void SVTADlgArchiveImagePage::AlternativeImagePathController::DoDataExchange(CDa
 	DDX_Control(pDX, IDC_BUTTON_DIRECTORYNAME_INDEX, m_ButtonDirectorynameIndex);
 }
 
-void SVTADlgArchiveImagePage::AlternativeImagePathController::SelectFilenameIndex1(CWnd* pParent)
+
+void SVTADlgArchiveImagePage::AlternativeImagePathController::OnButton(LinkedValueEnums widgetEnum)
 {
-	CString Temp;
-	m_EditFilenameIndex1.GetWindowText(Temp);
-	std::string Value = Temp.GetString();
-	std::string Title = SvUl::LoadStdString(IDS_OBJECTNAME_FILENAME_INDEX1);
-	if (m_ObjectSelectorController.Show(Value, Title, pParent, SvPb::allNumberValueObjects, SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed, m_taskId))
+	if (widgetEnum < m_WidgetHelpers.size() && m_WidgetHelpers[widgetEnum])
 	{
-		m_EditFilenameIndex1.SetWindowText(Value.c_str());
+		m_WidgetHelpers[widgetEnum]->OnButton();
 	}
 }
 
-
-void SVTADlgArchiveImagePage::AlternativeImagePathController::SelectFilenameIndex2(CWnd* pParent)
+void SVTADlgArchiveImagePage::AlternativeImagePathController::OnKillFocus(LinkedValueEnums widgetEnum)
 {
-	CString Temp;
-	m_EditFilenameIndex2.GetWindowText(Temp);
-	std::string Value = Temp.GetString();
-	std::string Title = SvUl::LoadStdString(IDS_OBJECTNAME_FILENAME_INDEX2);
-	if (m_ObjectSelectorController.Show(Value, Title, pParent, SvPb::allNumberValueObjects, SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed, m_taskId))
+	if (widgetEnum < m_WidgetHelpers.size() && m_WidgetHelpers[widgetEnum])
 	{
-		m_EditFilenameIndex2.SetWindowText(Value.c_str());
+		m_WidgetHelpers[widgetEnum]->EditboxToValue();
 	}
 }
-
-
-void SVTADlgArchiveImagePage::AlternativeImagePathController::SelectDirectorynameIndex(CWnd* pParent)
-{
-	CString Temp;
-	m_EditDirectorynameIndex.GetWindowText(Temp);
-	std::string Value = Temp.GetString();
-	std::string Title = SvUl::LoadStdString(IDS_OBJECTNAME_DIRECTORYNAME_INDEX);
-	if (m_ObjectSelectorController.Show(Value, Title, pParent, SvPb::allNumberValueObjects, SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed, m_taskId))
-	{
-		m_EditDirectorynameIndex.SetWindowText(Value.c_str());
-	}
-}
-
-
-void SVTADlgArchiveImagePage::AlternativeImagePathController::SelectSubfolderSelection(CWnd* pParent)
-{
-	CString Temp;
-	m_EditSubfolderSelection.GetWindowText(Temp);
-	std::string Value = Temp.GetString();
-	std::string Title = SvUl::LoadStdString(IDS_OBJECTNAME_SUBFOLDER_SELECTION);
-	if (m_ObjectSelectorController.Show(Value, Title, pParent, SvPb::allNumberValueObjects, SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed, m_taskId))
-	{
-		m_EditSubfolderSelection.SetWindowText(Value.c_str());
-	}
-}
-
-
-void SVTADlgArchiveImagePage::AlternativeImagePathController::SelectSubfolderLocation(CWnd* pParent)
-{
-	CString Temp;
-	m_EditSubfolderLocation.GetWindowText(Temp);
-	std::string Value = Temp.GetString();
-	std::string Title = SvUl::LoadStdString(IDS_OBJECTNAME_SUBFOLDER_LOCATION);
-	if (m_ObjectSelectorController.Show(Value, Title, pParent, SvPb::allNumberValueObjects, SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed, m_taskId))
-	{
-		m_EditSubfolderLocation.SetWindowText(Value.c_str());
-	}
-}
-
 
 afx_msg void SVTADlgArchiveImagePage::AlternativeImagePathController::OnButtonUseAlternativeImagePaths(BOOL enable) 
 {
 	for (SvOg::ValueEditWidgetHelper& uiInfo : m_vecValueAndGuiInfo)
 	{
 		uiInfo.EnableGuiElements(enable);
+	}
+
+	for (auto& pWidget : m_WidgetHelpers)
+	{
+		if (pWidget)
+		{
+			pWidget->EnableGuiElements(enable);
+		}
 	}
 }
 

@@ -94,7 +94,6 @@ namespace SvStl
 		{Tid_CouldNotExecuteFormatString, _T("could not execute '%s'")},
 
 		//RangeValue
-		{Tid_RangeValue_EmptyString, _T("Empty String in %s.")},
 		{Tid_RangeValue_WrongRange, _T("%s must between %s and %s.")},
 		{Tid_Init_RangeControlFailed, _T("Initialisation of range control failed.")},
 		{Tid_ErrorUnknownEnum, _T("Unknown enum")},
@@ -450,7 +449,7 @@ namespace SvStl
 		{Tid_ConnectTableSourceFailed, _T("Connect Table Source \"%s\" with \"%s\" failed.")},
 		{Tid_ConnectFailed, _T("Connect \"%s\" failed.")},
 		{Tid_ConnectInputFailed, _T("Connect Input failed.")},
-		{Tid_ConnectInputFailedLinkedValueNotFound, _T("Connect Input failed: Linked Value (%s -> %s) cannot be found") },
+		{Tid_ConnectInputFailedLinkedValueNotFound, _T("Connect Input failed: Linked Value (%s) cannot be found") },
 		{Tid_NoValidTableConnected, _T("There is no valid table connected to the tool.")},
 		{Tid_Error_CreationAnalyzerFailed, _T("Creation of Analyzer Failed")},
 		{Tid_Error_SetTableAnalyzerData, _T("Set from Table Analyzer Data failed: %s")},
@@ -461,6 +460,9 @@ namespace SvStl
 		{Tid_SetEmbeddedValueFailed, _T("Setting of an embedded parameter failed: [%s]")},
 		{Tid_ValidateValue_InvalidElementInVariantArray, _T("Validate Value failed: Invalid element in VariantArray: %s")},
 		{Tid_ValidateValue_ArraySizeInvalid, _T("Validate Value failed: Array Size must be greater than zero.")},
+		{Tid_ValidateValue_LinkedTypeInvalid, _T("Validate Value failed: Linked Type invalid.") },
+		{Tid_ValidateValue_LinkedObjectInvalid, _T("Validate Value failed: The Linked Object invalid.") },
+		{Tid_ValidateValue_FormulaFailed, _T("Validate Value failed: Formula invalid.")},
 		{Tid_UnexpectedError, _T("An unexpected error ocurred.")},
 		{Tid_Too_Many_Blobs, _T("Too many blobs found, analyzer failed.")},
 		{Tid_SetFeatureParameterFailed, _T("Feature parameter are invalid.")},
@@ -624,7 +626,7 @@ namespace SvStl
 
 		{Tid_ErrorPpqTriggerCount, _T("The current configuration uses the variable 'PPQ_x.Trigger Count' in equations which is no longer allowed (respective tools will become invalid) as it is not synchronous to the inspection\nPlease replace all occurrences with the variable 'Tool Set.Trigger Count'")},
 		{Tid_CircularReference, _T("A circular reference has been generated")},
-
+		{Tid_EmptyObjectForIndirectValue, _T("Empty object for the indirect linked value")},
 		{Tid_ErrorMemoryAllocation, _T("Memory allocation failed")},
 		{Tid_ErrorMemoryBlockDataReservedSize, _T("Size of reserved memory block data to small")},
 		{Tid_ErrorInRebuildTrcPosCache, _T("Exception in rebuild_trc_pos_cache")},
