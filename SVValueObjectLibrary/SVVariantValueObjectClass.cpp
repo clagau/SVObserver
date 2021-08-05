@@ -14,6 +14,7 @@
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
 #include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary\SafeArrayHelper.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "Definitions/GlobalConst.h"
 #include "Definitions/TextDefineSVDef.h"
@@ -439,14 +440,21 @@ std::string SVVariantValueObjectClass::ConvertType2String( const _variant_t& rVa
 
 	default:
 		{
-			_variant_t Value;
-			if ( S_OK == ::VariantChangeTypeEx(&Value, &rValue, SvDef::LCID_USA, VARIANT_ALPHABOOL, VT_BSTR) )
+			if (0 == (rValue.vt & VT_ARRAY))
 			{
-				Result = SvUl::createStdString( Value );
-				if( VT_BOOL == rValue.vt )
+				_variant_t Value;
+				if (S_OK == ::VariantChangeTypeEx(&Value, &rValue, SvDef::LCID_USA, VARIANT_ALPHABOOL, VT_BSTR))
 				{
-					Result = SvUl::MakeUpper( Result.c_str());
+					Result = SvUl::createStdString(Value);
+					if (VT_BOOL == rValue.vt)
+					{
+						Result = SvUl::MakeUpper(Result.c_str());
+					}
 				}
+			}
+			else
+			{
+				Result = SvUl::VariantToString(rValue);
 			}
 		}
 	}

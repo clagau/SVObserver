@@ -52,6 +52,28 @@ namespace SvUl
 		return {};
 	}
 
+	template<typename T>
+	std::vector<T> SafeArrayToVector(SAFEARRAY* pArray)
+	{
+		if (nullptr != pArray)
+		{
+			std::vector<T> retVec;
+			long lowerBound = pArray->rgsabound[0].lLbound;
+			long upperBound = lowerBound + static_cast<long> (pArray->rgsabound[0].cElements);
+
+			for (long i = lowerBound; i < upperBound; ++i)
+			{
+				T value;
+				if (S_OK == ::SafeArrayGetElement(pArray, &i, &value))
+				{
+					retVec.push_back(value);
+				}
+			}
+			return retVec;
+		}
+		return {};
+	}
+
 	///function creates a 1 dim safe array of type T from comma separated string. return value is size of array  
 	///empty string is array of size 0, negative result signals an error.
 	template<typename T>
@@ -97,4 +119,7 @@ namespace SvUl
 		}
 		return static_cast<int> (arrayBound.cElements);
 	}
+
+	template<typename T>
+	variant_t vectorToSafeArray(const std::vector<T>& rVec);
 }

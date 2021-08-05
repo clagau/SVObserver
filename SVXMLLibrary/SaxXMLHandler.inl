@@ -374,6 +374,16 @@ namespace SvXml
 						m_spUINTVector->push_back(val); 
 						break;
 					}
+				case VT_R8:
+				{
+					if (nullptr == m_spDoubleVector.get())
+					{
+						m_spDoubleVector = std::unique_ptr<std::vector<double>>(new(std::vector<double>));
+					}
+					double val = _wtof(pSaxTreeElement->GetContent());
+					m_spDoubleVector->push_back(val);
+					break;
+				}
 				case VT_BSTR:
 				default:
 					{
@@ -400,7 +410,7 @@ namespace SvXml
 			{
 
 				_variant_t variant = GetVariantArray();
-				if( VT_I4 == (variant.vt & VT_TYPEMASK)   || VT_UI4 == (variant.vt & VT_TYPEMASK)   || VT_EMPTY == (variant.vt & VT_TYPEMASK) )
+				if( VT_I4 == (variant.vt & VT_TYPEMASK)   || VT_UI4 == (variant.vt & VT_TYPEMASK) || VT_R8 == (variant.vt & VT_TYPEMASK) || VT_EMPTY == (variant.vt & VT_TYPEMASK) )
 				{
 
 					SVNavigateTree::AddItem( *m_pData_Tree , m_CurrentBranchHandle, CW2CT(m_ArrayName.c_str()), variant );
@@ -512,6 +522,7 @@ namespace SvXml
 		m_ArrayName = pName;
 		m_spIntVector.reset();
 		m_spUINTVector.reset();
+		m_spDoubleVector.reset();
 		m_spWstringVector.reset();
 	}
 
@@ -537,7 +548,7 @@ namespace SvXml
 		else if(m_spUINTVector.get())
 		{
 			SAFEARRAY* pSafeArray = ::SafeArrayCreateVector(VT_I4, 0, static_cast<ULONG> (m_spUINTVector->size()));
-			for (long i = 0; i < static_cast<long>(m_spIntVector->size()); i++)
+			for (long i = 0; i < static_cast<long>(m_spUINTVector->size()); i++)
 			{
 				if (S_OK != ::SafeArrayPutElement(pSafeArray, &i, static_cast<void*> (&m_spUINTVector->at(i))))
 				{
@@ -548,6 +559,20 @@ namespace SvXml
 			result.vt = VT_I4 | VT_ARRAY;
 			result.parray = pSafeArray;
 		} 
+		else if (m_spDoubleVector.get())
+		{
+			SAFEARRAY* pSafeArray = ::SafeArrayCreateVector(VT_R8, 0, static_cast<ULONG> (m_spDoubleVector->size()));
+			for (long i = 0; i < static_cast<long>(m_spDoubleVector->size()); i++)
+			{
+				if (S_OK != ::SafeArrayPutElement(pSafeArray, &i, static_cast<void*> (&m_spDoubleVector->at(i))))
+				{
+					::SafeArrayDestroy(pSafeArray);
+					return result;
+				}
+			}
+			result.vt = VT_R8 | VT_ARRAY;
+			result.parray = pSafeArray;
+		}
 		return result;
 	}
 

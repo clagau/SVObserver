@@ -266,6 +266,46 @@ namespace SvUl
 			}			
 		}
 	}
+
+	namespace
+	{
+	template<typename T>
+	variant_t vectorToSafeArray(const std::vector<T>& rVec, VARTYPE varType)
+	{
+		SAFEARRAYBOUND arrayBound;
+		arrayBound.lLbound = 0;
+		arrayBound.cElements = static_cast<ULONG>(rVec.size());
+		_variant_t result;
+		result.parray = ::SafeArrayCreate(varType, 1, &arrayBound);
+		result.vt = varType | VT_ARRAY;
+
+		for (long i = 0; i < rVec.size(); ++i)
+		{
+			T val = rVec[i];
+			::SafeArrayPutElement(result.parray, &i, static_cast<void*>(&val));
+		}
+
+		return result;
+	}
+	}
+
+	template<>
+	variant_t vectorToSafeArray<double>(const std::vector<double>& rVec)
+	{
+		return vectorToSafeArray(rVec, VT_R8);
+	}
+
+	template<>
+	variant_t vectorToSafeArray<long>(const std::vector<long>& rVec)
+	{
+		return vectorToSafeArray(rVec, VT_I4);
+	}
+
+	template<>
+	variant_t vectorToSafeArray<__int64>(const std::vector<__int64>& rVec)
+	{
+		return vectorToSafeArray(rVec, VT_I8);
+	}
 }
 
 

@@ -204,6 +204,7 @@ namespace SvXml
 
 		std::unique_ptr<std::vector<int>> m_spIntVector;   /// when Parsing VT_Array int goes here 
 		std::unique_ptr<std::vector<UINT>> m_spUINTVector; /// when Parsing VT_Array uint goes here 
+		std::unique_ptr<std::vector<double>> m_spDoubleVector; /// when Parsing VT_Array uint goes here 
 		std::unique_ptr<std::vector<std::wstring>> m_spWstringVector; /// when Parsing VT_Array wstring goes here 
 		std::wstring m_ArrayName;   /// when parsing VT_Array this is the name of the array 
 

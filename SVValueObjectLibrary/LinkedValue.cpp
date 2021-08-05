@@ -608,15 +608,18 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 
 	void LinkedValue::fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, SvOi::IsObjectAllowedFunc pFunctor, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum nameToType, SvPb::ObjectSelectorType requiredType, bool stopIfClosed, bool firstObject) const
 	{
-		__super::fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType, stopIfClosed, firstObject);
-		for (auto& rChild : m_children)
+		if (SvPb::noAttributes == attribute || SvPb::noAttributes != ObjectAttributesAllowed())
 		{
-			if (nullptr != rChild)
+			__super::fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType, stopIfClosed, firstObject);
+			for (auto& rChild : m_children)
 			{
-				if (rChild->isCorrectType(requiredType))
+				if (nullptr != rChild)
 				{
-					SVObjectReference ObjectRef{ rChild->getObjectId() };
-					ObjectRef.fillSelectorList(treeInserter, wholeArray, pFunctor, attribute, nameToType);
+					if (rChild->isCorrectType(requiredType))
+					{
+						SVObjectReference ObjectRef {rChild->getObjectId()};
+						ObjectRef.fillSelectorList(treeInserter, wholeArray, pFunctor, attribute, nameToType);
+					}
 				}
 			}
 		}
@@ -1074,7 +1077,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 			{
 				m_directValue.boolVal = m_directValue.boolVal ? 1 : 0;
 			}
-			if (S_OK != ::VariantChangeTypeEx(&m_directValue, &m_directValue, SvDef::LCID_USA, VARIANT_ALPHABOOL, GetDefaultType()))
+			if (GetDefaultType() != m_directValue.vt && S_OK != ::VariantChangeTypeEx(&m_directValue, &m_directValue, SvDef::LCID_USA, VARIANT_ALPHABOOL, GetDefaultType()))
 			{
 				//empty value if variant can not be converted in the right type
 				::VariantClear(&m_directValue);

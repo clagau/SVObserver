@@ -373,11 +373,14 @@ void SVObjectClass::fillSelectorList(std::back_insert_iterator<std::vector<SvPb:
 		ObjectRef.fillSelectorList(treeInserter, wholeArray, pFunctor, attribute, nameToType);
 	}
 
-	for (auto* pObject : m_embeddedList)
+	if (SvPb::noAttributes == attribute || SvPb::noAttributes != ObjectAttributesAllowed())
 	{
-		if (nullptr != pObject)
+		for (auto* pObject : m_embeddedList)
 		{
-			pObject->fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType, stopIfClosed);
+			if (nullptr != pObject)
+			{
+				pObject->fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType, stopIfClosed);
+			}
 		}
 	}
 }

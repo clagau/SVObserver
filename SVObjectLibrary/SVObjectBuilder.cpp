@@ -19,6 +19,7 @@
 #include "SVObjectClass.h"
 #include "SVObjectAttributeClass.h"
 #include "Definitions/StringTypeDef.h"
+#include "SVUtilityLibrary/SafeArrayHelper.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVMessage/SVMessage.h"
@@ -391,6 +392,57 @@ static void BuildDataArray(SVObjectAttributeClass& dataObject, const std::string
 				case VT_I8:
 					dataObject.AddData(rValue.llVal);
 					break;
+
+				case VT_R8 | VT_ARRAY:
+				{
+					auto vec = SvUl::SafeArrayToVector<double>(rValue.parray);
+					for (auto val : vec)
+					{
+						dataObject.AddData(val);
+					}
+					break;
+				}
+
+				case VT_UI4 | VT_ARRAY:
+				{
+					auto vec = SvUl::SafeArrayToVector<DWORD>(rValue.parray);
+					for (auto val : vec)
+					{
+						dataObject.AddData(val);
+					}
+					break;
+				}
+
+				case VT_I4 | VT_ARRAY:
+				{
+					auto vec = SvUl::SafeArrayToVector<long>(rValue.parray);
+					for (auto val : vec)
+					{
+						dataObject.AddData(val);
+					}
+					break;
+				}
+
+				case VT_I1 | VT_ARRAY:
+				case VT_UI1 | VT_ARRAY:
+				{
+					auto vec = SvUl::SafeArrayToVector<BYTE>(rValue.parray);
+					for (auto val : vec)
+					{
+						dataObject.AddData(val);
+					}
+					break;
+				}
+
+				case VT_I8 | VT_ARRAY:
+				{
+					auto vec = SvUl::SafeArrayToVector<long long>(rValue.parray);
+					for (auto val : vec)
+					{
+						dataObject.AddData(val);
+					}
+					break;
+				}
 
 				case VT_NULL:
 				case VT_EMPTY:

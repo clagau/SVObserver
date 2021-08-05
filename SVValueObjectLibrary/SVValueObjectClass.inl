@@ -859,9 +859,6 @@ _variant_t SVValueObjectClass<T>::vectorType2SafeArray(long arraySize) const
 
 	if (arraySize > 0 && arraySize <= static_cast<long> (getArraySize()))
 	{
-		SAFEARRAYBOUND arrayBound;
-		arrayBound.lLbound = 0;
-		arrayBound.cElements = arraySize;
 		VARTYPE varType = ValueType2Variant(&m_DefaultValue).vt;
 
 		//Take the typ of the first element when no defaultvalue is set
@@ -881,6 +878,9 @@ _variant_t SVValueObjectClass<T>::vectorType2SafeArray(long arraySize) const
 
 		varType = varType & (~VT_ARRAY);
 
+		SAFEARRAYBOUND arrayBound;
+		arrayBound.lLbound = 0;
+		arrayBound.cElements = arraySize;
 		result.parray = ::SafeArrayCreate(varType, 1, &arrayBound);
 		result.vt = varType | VT_ARRAY;
 

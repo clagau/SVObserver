@@ -13,6 +13,7 @@
 #include "stdafx.h"
 #include "SVObjectAttributeClass.h"
 #include "Definitions/TextDefineSVDef.h"
+#include "SVUtilityLibrary/SafeArrayHelper.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "Definitions/GlobalConst.h"
 #pragma endregion Includes
@@ -1038,9 +1039,13 @@ variant_t SVObjectAttributeClass::getData()
 	}
 	case SV_DOUBLE_Type:
 	{
-		if (0 < m_DoubleArray.size())
+		if (1 == m_DoubleArray.size())
 		{
 			return m_DoubleArray[0];
+		}
+		else if (1 < m_DoubleArray.size())
+		{
+			return SvUl::vectorToSafeArray(m_DoubleArray);
 		}
 		break;
 	}
@@ -1054,9 +1059,13 @@ variant_t SVObjectAttributeClass::getData()
 	}
 	case SV_LONG_Type:
 	{
-		if (0 < m_LongArray.size())
+		if (1 == m_LongArray.size())
 		{
 			return m_LongArray[0];
+		}
+		else if (1 < m_LongArray.size())
+		{
+			return SvUl::vectorToSafeArray(m_LongArray);
 		}
 		break;
 	}
