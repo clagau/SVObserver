@@ -19,7 +19,7 @@ public:
 	void Init(double gain, double offset, int op);
 	BYTE get(int x, int y);
 	int getDepth() { return m_depth; }
-	BYTE*& getDataRef() { return m_Data; }
+	const BYTE*& getDataRef() { return const_cast<const BYTE*&>(  m_Data); }
 private:
 	int m_depth {0};
 	double m_gain = INT_MAX;

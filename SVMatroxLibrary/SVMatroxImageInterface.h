@@ -141,7 +141,7 @@ public:
 								long overscanMode);
 
 	static SVMatroxFileTypeEnum getFileType(LPCTSTR FileExt);
-
+	static bool isFloatBufferAllowed(long  op);
 private:
 	static long Convert2MatroxType(SVImageOperationTypeEnum p_eDisp);
 	static long Convert2MatroxType(SVImageWaterShedEnum p_eType);

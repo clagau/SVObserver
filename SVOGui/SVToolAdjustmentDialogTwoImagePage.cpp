@@ -13,8 +13,8 @@
 #include "stdafx.h"
 #include "SVToolAdjustmentDialogTwoImagePage.h"
 #include "SVMatroxLibrary\SVMatroxSimpleEnums.h"
-#include "Definitions/ImageOperatorEnums.h"
-#include "Operators\SVImageArithmetic.h"
+#include "Definitions\ImageOperatorEnums.h"
+#include "SVMatroxLibrary\SVMatroxImageInterface.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -39,7 +39,7 @@ enum ImageTabsEnum
 };
 struct NoNotification
 {
-	NoNotification(bool& rNotificationFlag):m_rNotificationFlag(rNotificationFlag)
+	explicit NoNotification(bool& rNotificationFlag):m_rNotificationFlag(rNotificationFlag)
 	{
 		m_rNotificationFlag = true;
 	}
@@ -108,8 +108,8 @@ HRESULT SVToolAdjustmentDialogTwoImagePageClass::SetInspectionData()
 	long lOperator = static_cast<long>(m_operatorCtrl.GetItemData(m_operatorCtrl.GetCurSel()));
 	m_values.Set<long>(SvPb::ArithmeticOperatorEId, lOperator);
 	
-	bool UseFloatBuffer = SvOp::SVImageArithmetic::useFloatBuffer(lOperator);
-	if (!UseFloatBuffer)
+	bool IsFloatBufferAllowed = SVMatroxImageInterface::isFloatBufferAllowed(lOperator);
+	if (!IsFloatBufferAllowed)
 	{
 		m_IsGainEnabled = false;
 		m_UseLut = false;
@@ -148,8 +148,7 @@ void SVToolAdjustmentDialogTwoImagePageClass::refresh()
 	if (hres != S_OK)
 	{
 		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-		//@todo error handling
-		Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, "Werte konnten nicht gesetzt werden!", SvStl::SourceFileParams(StdMessageParams), 0);
+		Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidValues, SvStl::SourceFileParams(StdMessageParams), 0);
 	}
 	
 
@@ -348,14 +347,14 @@ void SVToolAdjustmentDialogTwoImagePageClass::RetreiveResultImageNames()
 void SVToolAdjustmentDialogTwoImagePageClass::ShowGainAndOffset(long op)
 {
 	
-	bool UseFloatBuffer = SvOp::SVImageArithmetic::useFloatBuffer(op);
+	bool IsFloatBufferAllowed = SVMatroxImageInterface::isFloatBufferAllowed(op);
 	CWnd* pWnd(nullptr);
 
 	
 	if (nullptr != (pWnd = GetDlgItem(IDC_CHECK_ENABLE_GAIN)))
 	{
-		pWnd->EnableWindow(UseFloatBuffer);
-		pWnd->ShowWindow(UseFloatBuffer ? SW_SHOW : SW_HIDE);
+		pWnd->EnableWindow(IsFloatBufferAllowed);
+		pWnd->ShowWindow(IsFloatBufferAllowed ? SW_SHOW : SW_HIDE);
 		
 	}
 

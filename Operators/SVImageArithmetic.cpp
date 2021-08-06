@@ -21,9 +21,7 @@
 #include "SVStatusLibrary/RunStatus.h"
 #include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
 #include "SVValueObjectLibrary/SVLongValueObjectClass.h"
-#include "SVValueObjectLibrary/SVPointValueObjectClass.h"
 #include "SVMatroxLibrary/SVMatroxBufferCreateStruct.h"
-#include <format>
 #include "SVValueObjectLibrary/SVValueObjectClass.h"
 #pragma endregion Includes
 
@@ -375,7 +373,7 @@ bool SVImageArithmetic::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVect
 
 	}
 	
-	bool UseFloatBuffer = enableGain && useFloatBuffer(SVImageOperationTypeEnum(lOperator));
+	bool UseFloatBuffer = enableGain && SVMatroxImageInterface::isFloatBufferAllowed(SVImageOperationTypeEnum(lOperator));
 
 
 	// Filter for special image arithmetic operators...
@@ -590,21 +588,6 @@ bool SVImageArithmetic::ValidateLocal(SvStl::MessageContainerVector* pErrorMessa
 	return Result;
 }
 
-bool SVImageArithmetic::useFloatBuffer(long operation)
-{
-	switch (operation & ~SVSaturation)
-	{
-		case    SVImageAdd: // M_ADD 
-		case	SVImageDiv:  // M_DIV 
-		case	SVImageMult:  // M_MULT
-		case	SVImageSub:  // M_SUB
-		case	SVImageSubAbs: // M_SUB_ABS 
-			return true;
-			break;
-		default:
-			return false;
-	}
 
-}
 
 } //namespace SvOp

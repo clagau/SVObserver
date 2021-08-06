@@ -660,5 +660,6 @@ enum MessageTextEnum
 	Tid_ShareControl_NoImageForId,
 
 	Tid_SVRC_AccessDenied,
+	Tid_InvalidValues,
 };
 } //namespace SvStl

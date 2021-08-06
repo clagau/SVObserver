@@ -693,7 +693,7 @@ HRESULT SVMatroxImageInterface::ArithmeticLut(const SVMatroxBuffer& rDestId, con
 	Height = std::min(Height, Height_Dest);
 	
 	//use reference because of performance 
-	 BYTE*& rData = lookupPtr->getDataRef();
+	const BYTE*& rData = lookupPtr->getDataRef();
 	int depth = lookupPtr->getDepth();
 	
 	for (int y = 0; y < Height; y++)
@@ -1786,4 +1786,21 @@ SVMatroxFileTypeEnum SVMatroxImageInterface::getFileType(LPCTSTR FileExt)
 	}
 
 	return Result;
+}
+
+bool SVMatroxImageInterface::isFloatBufferAllowed(long operation)
+{
+	switch (operation & ~SVSaturation)
+	{
+		case    SVImageAdd: // M_ADD 
+		case	SVImageDiv:  // M_DIV 
+		case	SVImageMult:  // M_MULT
+		case	SVImageSub:  // M_SUB
+		case	SVImageSubAbs: // M_SUB_ABS 
+			return true;
+			break;
+		default:
+			return false;
+	}
+
 }

@@ -38,7 +38,7 @@ public:
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	SvIe::SVImageClass* getOutputImage() { return &m_OutputImage; }
-	static bool useFloatBuffer(long  op);
+	
 protected:
 	virtual bool isInputImage(uint32_t imageId) const override;
 	virtual bool onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;

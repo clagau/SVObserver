@@ -14,7 +14,6 @@
 #include "SVTool.h"
 #include "SVValueObjectLibrary\SVBoolValueObjectClass.h"
 #include "SVValueObjectLibrary\SVLongValueObjectClass.h"
-#include "SVValueObjectLibrary\SVPointValueObjectClass.h"
 #include "SVValueObjectLibrary\SVStringValueObjectClass.h"
 #pragma region Includes
 

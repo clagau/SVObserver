@@ -23,6 +23,7 @@
 #include "Operators/ToolSizeAdjustTask.h"
 #include "SVProtoBuf/ConverterHelper.h"
 #include "SVProtoBuf/Overlay.h"
+#include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #pragma endregion Includes
 
 namespace SvTo
@@ -223,7 +224,7 @@ bool SVImageToolClass::ResetObject(SvStl::MessageContainerVector* pErrorMessages
 	m_outputOperator.GetValue(op);
 	m_IsGainOffsetEnabled.GetValue(isEnabled);
 
-	if (SvOp::SVImageArithmetic::useFloatBuffer(op) == false && isEnabled)
+	if (SVMatroxImageInterface::isFloatBufferAllowed(op) == false && isEnabled)
 	{
 		m_IsGainOffsetEnabled.SetValue(FALSE);
 	}
