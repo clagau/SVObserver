@@ -224,9 +224,10 @@ HRESULT SVWindowToolClass::SetImageExtentToParent()
 
 HRESULT SVWindowToolClass::SetImageExtentToFit( const SVImageExtentClass& rImageExtent )
 {
-	HRESULT l_hrOk = m_toolExtent.UpdateExtentAgainstParentImage( rImageExtent );
-	return l_hrOk;
+	auto result = m_toolExtent.UpdateExtentAgainstParentImage(rImageExtent);
+	return result;
 }
+
 
 SVToolClass* SVWindowToolClass::GetObjectAtPoint(const SVPoint<double>& rPoint )
 {

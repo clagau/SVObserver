@@ -43,8 +43,6 @@ public:
 	virtual void getToolsWithReplaceableSourceImage(SvPb::GetToolsWithReplaceableSourceImageResponse&) const override;
 	virtual std::vector<std::string> getToolAdjustNameList() const override;
 
-protected:
-
 private:
 	void init();
 	void BuildEmbeddedObjectList ();

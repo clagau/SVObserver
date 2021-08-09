@@ -61,12 +61,12 @@ public:
 
 	SVImageExtentClass& getImageExtent() {return m_rImageExtent;}
 
-	HRESULT ValidExtentAgainstParentImage( const SVImageExtentClass& p_rImageExtent ) const;
-	HRESULT UpdateExtentToParentExtents( SVImageExtentClass& p_rNewExtent  );
-	HRESULT UpdateExtentAgainstParentImage( const SVImageExtentClass& p_rImageExtent );
-	HRESULT GetParentExtent( SVImageExtentClass& p_rParent ) const;
+	HRESULT ValidExtentAgainstParentImage( const SVImageExtentClass& rImageExtent ) const;
+	HRESULT UpdateExtentToParentExtents( SVImageExtentClass& rNewExtent  );
+	HRESULT UpdateExtentAgainstParentImage( const SVImageExtentClass& rImageExtent );
+	HRESULT GetParentExtent( SVImageExtentClass& rParent ) const;
 
-	HRESULT UpdateImageWithExtent( SVToolExtentTypeEnum p_ToolExtentType );
+	HRESULT UpdateImageWithExtent( SVToolExtentTypeEnum ToolExtentType );
 
 	SvPb::SVExtentTranslationEnum GetTranslation() const;
 	void SetTranslation( SvPb::SVExtentTranslationEnum eTranslation );
@@ -78,8 +78,8 @@ public:
 	HRESULT GetExtentValue(SvPb::SVExtentPropertyEnum extentProperty, _variant_t& rValue) const;
 	HRESULT SetExtentValue(SvPb::SVExtentPropertyEnum extentProperty, const _variant_t& rValue);
 
-	HRESULT GetExtentPropertyInfo( SvPb::SVExtentPropertyEnum extentProperty, SvIe::SVExtentPropertyInfoStruct& p_rInfo ) const;
-	HRESULT SetExtentPropertyInfo( SvPb::SVExtentPropertyEnum extentProperty, const SvIe::SVExtentPropertyInfoStruct& p_rInfo );
+	HRESULT GetExtentPropertyInfo( SvPb::SVExtentPropertyEnum extentProperty, SvIe::SVExtentPropertyInfoStruct& rInfo ) const;
+	HRESULT SetExtentPropertyInfo( SvPb::SVExtentPropertyEnum extentProperty, const SvIe::SVExtentPropertyInfoStruct& rInfo );
 
 	void getExtentProperties(::google::protobuf::RepeatedPtrField< ::SvPb::ExtentParameter >& rExtentProperties) const;
 

@@ -184,7 +184,7 @@ HRESULT SVToolExtentClass::UpdateExtentAgainstParentImage(const SVImageExtentCla
 	return l_Status;
 }
 
-HRESULT SVToolExtentClass::UpdateImageWithExtent(SVToolExtentTypeEnum p_ToolExtentType)
+HRESULT SVToolExtentClass::UpdateImageWithExtent(SVToolExtentTypeEnum ToolExtentType)
 {
 	HRESULT l_Status = S_OK;
 
@@ -231,7 +231,7 @@ HRESULT SVToolExtentClass::UpdateImageWithExtent(SVToolExtentTypeEnum p_ToolExte
 					}
 				}
 
-				if (SVTransformationToolExtent == p_ToolExtentType)
+				if (SVTransformationToolExtent == ToolExtentType)
 				{
 					double l_Value = 0.0;
 					const SVImageExtentClass& rInputExtent = pParent->GetImageExtents();
@@ -499,7 +499,7 @@ HRESULT SVToolExtentClass::SetImageExtent(const SVImageExtentClass& rImageExtent
 	return l_hrOk;
 }
 
-HRESULT SVToolExtentClass::GetRootOffsetData(SVExtentOffsetStruct& p_rsvOffsetData)
+HRESULT SVToolExtentClass::GetRootOffsetData(SVExtentOffsetStruct& rsvOffsetData)
 {
 	HRESULT l_svOk = S_FALSE;
 
@@ -508,30 +508,30 @@ HRESULT SVToolExtentClass::GetRootOffsetData(SVExtentOffsetStruct& p_rsvOffsetDa
 		l_svOk = UpdateOffsetDataToImage(m_svRootOffsetData, nullptr);
 	}
 
-	p_rsvOffsetData = m_svRootOffsetData;
+	rsvOffsetData = m_svRootOffsetData;
 
-	if (nullptr != p_rsvOffsetData.m_psvImage)
+	if (nullptr != rsvOffsetData.m_psvImage)
 	{
 		l_svOk = S_OK;
 	}
 	return l_svOk;
 }
 
-HRESULT SVToolExtentClass::GetSelectedOffsetData(SVExtentOffsetStruct& p_rsvOffsetData)
+HRESULT SVToolExtentClass::GetSelectedOffsetData(SVExtentOffsetStruct& rsvOffsetData)
 {
 	HRESULT l_svOk = S_FALSE;
 
 	
 	if (nullptr == m_pSelectedImage )
 	{
-		p_rsvOffsetData = m_svRootOffsetData;
+		rsvOffsetData = m_svRootOffsetData;
 	}
 	else
 	{
-		p_rsvOffsetData = m_svSelectedOffsetData;
+		rsvOffsetData = m_svSelectedOffsetData;
 	}
 
-	if (nullptr != p_rsvOffsetData.m_psvImage)
+	if (nullptr != rsvOffsetData.m_psvImage)
 	{
 		l_svOk = S_OK;
 	}
@@ -624,13 +624,13 @@ HRESULT SVToolExtentClass::UpdateOffsetDataToImage(SVExtentOffsetStruct& rOffset
 	return l_svOk;
 }
 
-HRESULT SVToolExtentClass::UpdateOffsetData(bool p_bForceUpdate)
+HRESULT SVToolExtentClass::UpdateOffsetData(bool bForceUpdate)
 {
 	HRESULT l_svOk = S_OK;
 
 	try
 	{
-		if (p_bForceUpdate ||
+		if (bForceUpdate ||
 			m_bAlwaysUpdate ||
 			m_svRootOffsetData.m_bAlwaysUpdate ||
 			nullptr == m_svRootOffsetData.m_psvImage)
@@ -679,7 +679,7 @@ HRESULT SVToolExtentClass::UpdateOffsetData(bool p_bForceUpdate)
 
 		if (S_OK == l_svOk)
 		{
-			if (p_bForceUpdate ||
+			if (bForceUpdate ||
 				m_bAlwaysUpdate ||
 				m_svSelectedOffsetData.m_bAlwaysUpdate ||
 				nullptr == m_svSelectedOffsetData.m_psvImage ||

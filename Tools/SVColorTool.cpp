@@ -212,7 +212,7 @@ HRESULT SVColorToolClass::SetImageExtentToParent()
 
 HRESULT SVColorToolClass::SetImageExtentToFit(const SVImageExtentClass& rImageExtent)
 {
-	return m_toolExtent.UpdateExtentAgainstParentImage(rImageExtent);;
+	return m_toolExtent.UpdateExtentAgainstParentImage(rImageExtent);
 }
 
 std::vector<std::string> SVColorToolClass::getToolAdjustNameList() const

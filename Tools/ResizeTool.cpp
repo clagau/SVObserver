@@ -205,6 +205,20 @@ SvIe::SVImageClass* ResizeTool::getInputImage(bool bRunMode /*= false*/) const
 	return m_InputImage.getInput<SvIe::SVImageClass>(bRunMode);
 }
 
+
+HRESULT ResizeTool::SetImageExtent(const SVImageExtentClass& rImageExtent)
+{
+	HRESULT hrOk = m_toolExtent.ValidExtentAgainstParentImage(rImageExtent);
+
+	if (S_OK == hrOk)
+	{
+		hrOk = SVToolClass::SetImageExtent(rImageExtent);
+	}
+
+	return hrOk;
+}
+
+
 HRESULT ResizeTool::SetImageExtentToParent()
 {
 	SVImageExtentClass NewExtent;
@@ -218,17 +232,14 @@ HRESULT ResizeTool::SetImageExtentToParent()
 	return Result;
 }
 
-HRESULT ResizeTool::SetImageExtent(const SVImageExtentClass& rImageExtent)
+
+
+HRESULT ResizeTool::SetImageExtentToFit(const SVImageExtentClass& rImageExtent)
 {
-	HRESULT hrOk = m_toolExtent.ValidExtentAgainstParentImage(rImageExtent);
-
-	if (S_OK == hrOk)
-	{
-		hrOk = SVToolClass::SetImageExtent(rImageExtent);
-	}
-
-	return hrOk;
+	auto result = m_toolExtent.UpdateExtentAgainstParentImage(rImageExtent);
+	return result;
 }
+
 
 SVToolClass* ResizeTool::GetObjectAtPoint(const SVPoint<double>& rPoint)
 {
@@ -266,7 +277,14 @@ SvVol::SVStringValueObjectClass* ResizeTool::GetInputImageNames()
 
 bool ResizeTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	if (!AreAllAllScaleFactorValuesValid())
+	if (false == __super::ResetObject(pErrorMessages))
+	{
+		return false;
+	}
+
+	UpdateImageWithExtent();
+
+	if (!areAllAllScaleFactorValuesValid())
 	{
 		reportGeneralError(SvStl::Tid_InvalidScaleFactor, pErrorMessages, true);
 
@@ -320,7 +338,6 @@ bool ResizeTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_RESIZE)
 	m_OutputImage.GetImageExtents().OutputDebugInformationOnExtent(" reset", &extent);
-	m_OutputImage.GetImageExtents().OutputDebugInformationOnExtent(" reset");
 	auto toolimageextent = m_toolExtent.getImageExtent();
 	toolimageextent.OutputDebugInformationOnExtent("reset2");
 #endif
@@ -419,7 +436,7 @@ bool ResizeTool::ModifyImageExtentByScaleFactors()
 	return ok;
 }
 
-bool ResizeTool::AreAllAllScaleFactorValuesValid()
+bool ResizeTool::areAllAllScaleFactorValuesValid()
 {
 	return isValidScaleFactorLV(m_ExtentWidthFactorContent)
 		&& isValidScaleFactorLV(m_ExtentHeightFactorContent)
@@ -466,7 +483,6 @@ bool ResizeTool::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pEr
 	bool Result = __super::onRun(rRunStatus, pErrorMessages);
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_RESIZE)
-	m_OutputImage.GetImageExtents().OutputDebugInformationOnExtent("on run");
 	auto toolimageextent = m_toolExtent.getImageExtent();
 	m_OutputImage.GetImageExtents().OutputDebugInformationOnExtent("on run", &toolimageextent);
 #endif

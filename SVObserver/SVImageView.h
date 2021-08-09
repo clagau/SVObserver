@@ -56,41 +56,41 @@ public:
 	SVIPDoc* GetIPDoc() const;
 
 	void AttachToImage(uint32_t imageId);
-	void AttachToImage( LPCTSTR p_imageName );
+	void AttachToImage( LPCTSTR imageName );
 	void DetachFromImage();
 
 	ImageIdPair GetImageID() const;
 
 	SvIe::SVImageClass* GetImage();
-	void GetImageRect( CRect &p_rect );
+	void GetImageRect( CRect &rect );
 
 	void GetParameters(SvOi::IObjectWriter& rWriter);
 
 	typedef SvXml::SVXMLMaterialsTree SVTreeType;
 
-	bool SetParameters( SVTreeType& p_tree, SVTreeType::SVBranchHandle p_parent );
+	bool SetParameters( SVTreeType& tree, SVTreeType::SVBranchHandle parent );
 
-	bool CheckParameters( SVTreeType& p_tree, SVTreeType::SVBranchHandle p_parent );
+	bool CheckParameters( SVTreeType& tree, SVTreeType::SVBranchHandle parent );
 
 	HRESULT RecreateImageSurface();
 
-	void ShowExtremeLUT( bool p_show = true );
+	void ShowExtremeLUT( bool show = true );
 	
-	void TransformFromViewSpace( CPoint& p_point );
+	void TransformFromViewSpace( CPoint& point );
 
-	BOOL GetObjectAtPoint( POINT p_point );
+	BOOL GetObjectAtPoint( POINT point );
 
 	//{{AFX_MSG(SVImageView)
-	afx_msg void OnLButtonDown( UINT p_nFlags, CPoint p_point );
-	afx_msg void OnMouseMove( UINT p_nFlags, CPoint p_point );
-	afx_msg void OnLButtonUp( UINT p_nFlags, CPoint p_point );
-	afx_msg void OnLButtonDblClk( UINT p_nFlags, CPoint p_point );
-	afx_msg void OnRButtonDblClk( UINT p_nFlags, CPoint p_point );
-	afx_msg void OnCaptureChanged( CWnd* p_pWnd );
-	afx_msg void OnNcMouseMove( UINT p_hitTest, CPoint p_point );
+	afx_msg void OnLButtonDown( UINT nFlags, CPoint point );
+	afx_msg void OnMouseMove( UINT nFlags, CPoint point );
+	afx_msg void OnLButtonUp( UINT nFlags, CPoint point );
+	afx_msg void OnLButtonDblClk( UINT nFlags, CPoint point );
+	afx_msg void OnRButtonDblClk( UINT nFlags, CPoint point );
+	afx_msg void OnCaptureChanged( CWnd* pWnd );
+	afx_msg void OnNcMouseMove( UINT hitTest, CPoint point );
 	afx_msg void OnDestroy();
-	afx_msg void OnContextMenu( CWnd* p_pWnd, CPoint p_point );
-	afx_msg BOOL OnEraseBkgnd( CDC* p_pDC );
+	afx_msg void OnContextMenu( CWnd* pWnd, CPoint point );
+	afx_msg BOOL OnEraseBkgnd( CDC* pDC );
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnKillFocus(CWnd* pNewWnd);
 	afx_msg void OnZoomTypeChanged(UINT nId);
@@ -101,12 +101,12 @@ public:
 
 	//{{AFX_VIRTUAL( SVImageView )
 	public:
-	virtual BOOL Create( LPCTSTR p_className, LPCTSTR p_windowName, DWORD p_style, const RECT& p_rect, CWnd* p_pParentWnd, UINT p_NID, CCreateContext* p_pContext = nullptr ) override;
+	virtual BOOL Create( LPCTSTR className, LPCTSTR windowName, DWORD style, const RECT& rect, CWnd* pParentWnd, UINT NID, CCreateContext* pContext = nullptr ) override;
 	virtual void OnInitialUpdate() override;
-	virtual BOOL OnCommand( WPARAM p_wParam, LPARAM p_lParam ) override;
+	virtual BOOL OnCommand( WPARAM wParam, LPARAM lParam ) override;
 	protected:
-	virtual void OnDraw( CDC* p_pDC ) override;
-	virtual void OnUpdate( CView* p_pSender, LPARAM p_lHint, CObject* p_pHint ) override;
+	virtual void OnDraw( CDC* pDC ) override;
+	virtual void OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint ) override;
 	//}}AFX_VIRTUAL
 
 public:
@@ -165,41 +165,41 @@ public:
 
 protected:
 	void Initialize();
-	bool GetScrollPosition( CPoint& p_point );
-	bool SetScrollPosition( CPoint& p_point );
+	bool GetScrollPosition( CPoint& point );
+	bool SetScrollPosition( CPoint& point );
 
-	bool SetScaleIndex( unsigned long p_scaleIndex );
-	bool SetImageRect( CRect& p_rect );
+	bool SetScaleIndex( unsigned long scaleIndex );
+	bool SetImageRect( CRect& rect );
 
-	HRESULT ShouldDraw( const SVExtentMultiLineStruct& p_rMultiLine );
-	void DrawOverlay( SVDrawContext* PDrawContext, const SVExtentMultiLineStruct& p_rMultiLine );
-	void UpdateOverlays( HDC p_hDC, long p_X, long p_Y );
+	HRESULT ShouldDraw( const SVExtentMultiLineStruct& rMultiLine );
+	void DrawOverlay( SVDrawContext* PDrawContext, const SVExtentMultiLineStruct& rMultiLine );
+	void UpdateOverlays( HDC hDC, long X, long Y );
 
 	void SelectDisplayImage();
 
 	void ReleaseImageSurface();
 
-	HICON GetObjectCursor( POINT p_point );
-	HICON GetObjectCursor( SvPb::SVExtentLocationPropertyEnum p_svLocation, POINT p_point);
+	HICON GetObjectCursor( POINT point );
+	HICON GetObjectCursor( SvPb::SVExtentLocationPropertyEnum svLocation, POINT point);
 
-	HRESULT GetToolExtents(SVImageExtentClass& p_svToolExtents);
+	HRESULT GetToolExtents(SVImageExtentClass& svToolExtents);
 
 #ifdef _DEBUG
 	virtual void AssertValid() const override;
-	virtual void Dump( CDumpContext& p_dc ) const override;
+	virtual void Dump( CDumpContext& dc ) const override;
 #endif
 
 	SVBitmapInfo GetBitmapInfo() const;
 	const unsigned char* GetBitmapBits() const;
 
-	HRESULT UpdateImageSurfaces( const SVBitmapInfo& p_rBitmapInfo );
-	HRESULT CopyBitsToSurface( const CRect& p_rSourceRect, const SVBitmapInfo& p_rBitmapInfo, const unsigned char* p_pBitmapBits );
+	HRESULT UpdateImageSurfaces( const SVBitmapInfo& rBitmapInfo );
+	HRESULT CopyBitsToSurface( const CRect& rSourceRect, const SVBitmapInfo& rBitmapInfo, const unsigned char* pBitmapBits );
 
-	HRESULT BlitToScaledSurface( CRect& p_rSourceRect, CRect& p_rDestRect, LPCTSTR Filepath = nullptr, bool showOverlays = true);
-	HRESULT BlitToPrimarySurface( CRect& p_rDestRect );
+	HRESULT BlitToScaledSurface( CRect& rSourceRect, CRect& rDestRect, LPCTSTR Filepath = nullptr, bool showOverlays = true);
+	HRESULT BlitToPrimarySurface( CRect& rDestRect );
 	HRESULT RecreateLostSurface();
 
-	HRESULT GetRectInfo( CRect& p_rSourceRect, CRect& p_rDestRect );
+	HRESULT GetRectInfo( CRect& rSourceRect, CRect& rDestRect );
 
 	HRESULT UpdateBufferFromIPDoc();
 	HRESULT UpdateSurface();

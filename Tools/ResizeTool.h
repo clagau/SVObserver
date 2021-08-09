@@ -20,7 +20,7 @@ class ResizeTool: public SVToolClass
 {
 	SV_DECLARE_CLASS
 
-#pragma region Public Methods
+#pragma region public methods
 public:
 	ResizeTool(SVObjectClass* pOwner = nullptr, int stringResourceID = IDS_OBJECTNAME_RESIZETOOL);
 
@@ -28,8 +28,9 @@ public:
 
 	virtual bool CreateObject(const SVObjectLevelCreateStruct& rCreateStructure) override;
 
+	virtual HRESULT SetImageExtent(const SVImageExtentClass& rImageExtent) override;
 	virtual HRESULT SetImageExtentToParent() override;
-	virtual HRESULT SetImageExtent( const SVImageExtentClass& rImageExtent) override;
+	virtual HRESULT SetImageExtentToFit(const SVImageExtentClass& rImageExtent) override;
 	
 	/// GetObjectAtPoint
 	///  Tests to see if the passed in point (usually from a mouse location)
@@ -45,15 +46,15 @@ public:
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
-	bool AreAllAllScaleFactorValuesValid();
+	bool areAllAllScaleFactorValuesValid();
 	bool isInterpolationModeValueOK();
 	bool isOverscanModeValueOK();
 
 	SvIe::SVImageClass* getInputImage(bool bRunMode = false) const;
 
-#pragma endregion Public Methods
+#pragma endregion public methods
 
-#pragma region Private Methods
+#pragma region private methods
 private:
 
 	// Source Image - input
@@ -68,9 +69,9 @@ private:
 	virtual bool onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	bool ModifyImageExtentByScaleFactors();
-#pragma endregion Private Methods
+#pragma endregion private methods
 
-#pragma region Private Members
+#pragma region private attributes
 	SvVol::SVStringValueObjectClass m_SourceImageNames;
 
 	// Output Image - embedded
@@ -80,7 +81,7 @@ private:
 	SvVol::SVEnumerateValueObjectClass	m_ResizeInterpolationMode;
 	SvVol::SVEnumerateValueObjectClass	m_ResizeOverscanMode;
 
-#pragma endregion Private Members
+#pragma endregion private attributes
 };
 
 } //namespace SvTo

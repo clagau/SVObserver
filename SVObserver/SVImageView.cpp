@@ -112,35 +112,35 @@ static void UpdatePaletteForLut(bool bLut, LPDIRECTDRAWSURFACE7 pSurface)
 }
 
 // We operating on the real (unscaled) image here
-// function  argument p_Width is in bytes not pixels!
-static void CalcLut(BYTE* p_pFrom, BYTE* p_pTo, unsigned long p_Width, unsigned long p_Mask, unsigned long p_LowerValue, unsigned long p_UpperValue, size_t p_PixelWidth )
+// function  argument pWidth is in bytes not pixels!
+static void CalcLut(BYTE* pFrom, BYTE* pTo, unsigned long pWidth, unsigned long pMask, unsigned long pLowerValue, unsigned long pUpperValue, size_t pixelWidth )
 {
-	if( 1 < p_PixelWidth )
+	if( 1 < pixelWidth )
 	{
-		BYTE* l_pSrc = p_pFrom;
-		BYTE* l_pDst = p_pTo;
+		BYTE* l_pSrc = pFrom;
+		BYTE* l_pDst = pTo;
 
-		for( size_t l_col = 0; l_col < p_Width / p_PixelWidth; ++l_col )
+		for( size_t l_col = 0; l_col < pWidth / pixelWidth; ++l_col )
 		{
 			unsigned long* l_pSrcPixel = reinterpret_cast< unsigned long* >( l_pSrc );
 			unsigned long* l_pDstPixel = reinterpret_cast< unsigned long* >( l_pDst );
 
 			unsigned long l_Value = *l_pSrcPixel;
 
-			if( 0xFFFFFFFF == ( l_Value | ( ~p_Mask ) )  )
+			if( 0xFFFFFFFF == ( l_Value | ( ~pMask ) )  )
 			{
-				*l_pDstPixel = ( l_Value & ( ~p_Mask ) ) | p_UpperValue;
+				*l_pDstPixel = ( l_Value & ( ~pMask ) ) | pUpperValue;
 			}
-			else if( 0x00000000 == ( l_Value & p_Mask )  )
+			else if( 0x00000000 == ( l_Value & pMask )  )
 			{
-				*l_pDstPixel = l_Value | p_LowerValue;
+				*l_pDstPixel = l_Value | pLowerValue;
 			}
 			else
 			{
 				*l_pDstPixel = l_Value;
 			}
-			l_pSrc += p_PixelWidth;
-			l_pDst += p_PixelWidth;
+			l_pSrc += pixelWidth;
+			l_pDst += pixelWidth;
 		}
 	}
 }
@@ -273,12 +273,12 @@ void SVImageView::AttachToImage(uint32_t imageId)
 	}
 }
 
-void SVImageView::AttachToImage( LPCTSTR p_imageName )
+void SVImageView::AttachToImage( LPCTSTR pImageName )
 {
 	uint32_t l_ImageId = SvDef::InvalidObjectId;
 	bool Attach( false );
 
-	std::string l_imageName = p_imageName;
+	std::string l_imageName = pImageName;
 
 	if( l_imageName.empty() )
 	{
@@ -325,12 +325,12 @@ void SVImageView::DetachFromImage()
 	m_OverlayData.clear();
 }
 
-void SVImageView::GetImageRect( CRect& p_rect )
+void SVImageView::GetImageRect( CRect& rRect )
 {
-	p_rect.top = 0;
-	p_rect.left = 0;
-	p_rect.right = 0;
-	p_rect.bottom = 0;
+	rRect.top = 0;
+	rRect.left = 0;
+	rRect.right = 0;
+	rRect.bottom = 0;
 
 	SVIPDoc* l_pIPDoc = GetIPDoc();
 
@@ -338,28 +338,28 @@ void SVImageView::GetImageRect( CRect& p_rect )
 	{
 		SVBitmapInfo l_BitmapInfo = GetBitmapInfo();
 
-		p_rect.right = l_BitmapInfo.GetWidth();
+		rRect.right = l_BitmapInfo.GetWidth();
 
-		if( p_rect.right < 0 )
+		if( rRect.right < 0 )
 		{
-			p_rect.right = 0;
+			rRect.right = 0;
 		}
 
-		p_rect.bottom = ::labs( l_BitmapInfo.GetHeight() );
+		rRect.bottom = ::labs( l_BitmapInfo.GetHeight() );
 
-		if( p_rect.bottom < 0 )
+		if( rRect.bottom < 0 )
 		{
-			p_rect.bottom = 0;
+			rRect.bottom = 0;
 		}
 
-		p_rect.right = static_cast< long >( static_cast< double >( p_rect.right * m_ZoomHelper.GetZoom() ) );
-		p_rect.bottom = static_cast< long >( static_cast< double >( p_rect.bottom * m_ZoomHelper.GetZoom() ) );
+		rRect.right = static_cast< long >( static_cast< double >( rRect.right * m_ZoomHelper.GetZoom() ) );
+		rRect.bottom = static_cast< long >( static_cast< double >( rRect.bottom * m_ZoomHelper.GetZoom() ) );
 	}
 }
 
-BOOL SVImageView::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
+BOOL SVImageView::OnCommand( WPARAM wParam, LPARAM lParam )
 {
-	switch( p_wParam )
+	switch( wParam )
 	{
 		case ID_CONFIG_ANALYZER:
 		{
@@ -477,7 +477,7 @@ BOOL SVImageView::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 		l_pIPDoc->UpdateWithLastProduct();
 	}
 
-	return CView::OnCommand( p_wParam, p_lParam );
+	return CView::OnCommand( wParam, lParam );
 }
 
 void SVImageView::SaveViewOrImageToDisk(bool ViewOnly, bool showOverlays)
@@ -525,13 +525,13 @@ void SVImageView::SaveViewOrImageToDisk(bool ViewOnly, bool showOverlays)
 // -----------------------------------------------------------------------------
 // .Description : ...
 ////////////////////////////////////////////////////////////////////////////////
-void SVImageView::OnContextMenu( CWnd* , CPoint p_point )
+void SVImageView::OnContextMenu( CWnd* , CPoint point )
 {
 	CMenu l_menu;
 	bool RunOrTestMode = SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST );
 
-	m_mousePoint.x = p_point.x;
-	m_mousePoint.y = p_point.y;
+	m_mousePoint.x = point.x;
+	m_mousePoint.y = point.y;
 
 	// Map mouse point to client
 	ScreenToClient( &m_mousePoint );
@@ -607,16 +607,16 @@ void SVImageView::OnContextMenu( CWnd* , CPoint p_point )
 				}
 			}
 
-			l_pPopup->TrackPopupMenu( TPM_LEFTALIGN | TPM_RIGHTBUTTON, p_point.x, p_point.y, this );
+			l_pPopup->TrackPopupMenu( TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, this );
 		}
 	}
 }
 
-void SVImageView::TransformFromViewSpace( CPoint& p_point )
+void SVImageView::TransformFromViewSpace( CPoint& point )
 {
 	SVDrawContext l_svDrawContext( nullptr, m_ZoomHelper.GetZoom() );
 
-	l_svDrawContext.InverseTransform( &p_point, &p_point, 1 );
+	l_svDrawContext.InverseTransform( &point, &point, 1 );
 }
 
 void SVImageView::SelectDisplayImage()
@@ -689,12 +689,12 @@ HRESULT SVImageView::RecreateImageSurface()
 	return hr;
 }
 
-void SVImageView::ShowExtremeLUT( bool p_show /* = true */ )
+void SVImageView::ShowExtremeLUT( bool show /* = true */ )
 {
-	m_showExtremeLUT = p_show;
+	m_showExtremeLUT = show;
 	if( m_pDDImageSurface )
 	{
-		UpdatePaletteForLut(p_show, m_pDDImageSurface);
+		UpdatePaletteForLut(show, m_pDDImageSurface);
 	}
 	if( GetSafeHwnd() )
 	{
@@ -720,7 +720,7 @@ void SVImageView::OnDraw( CDC*  )
 	}
 }
 
-BOOL SVImageView::Create( LPCTSTR , LPCTSTR , DWORD p_style, const RECT& p_rect, CWnd* p_pParentWnd, UINT p_NID, CCreateContext* p_pContext )
+BOOL SVImageView::Create( LPCTSTR , LPCTSTR , DWORD pointstyle, const RECT& rRect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext )
 {
 	BOOL Result( TRUE );
 
@@ -740,7 +740,7 @@ BOOL SVImageView::Create( LPCTSTR , LPCTSTR , DWORD p_style, const RECT& p_rect,
 
 	if( Result )
 	{
-		Result = CWnd::Create( WindowClass.lpszClassName, _T( "Untitled Main Image" ), p_style, p_rect, p_pParentWnd, p_NID, p_pContext );
+		Result = CWnd::Create( WindowClass.lpszClassName, _T( "Untitled Main Image" ), pointstyle, rRect, pParentWnd, nID, pContext );
 	}
 
 	if( Result )
@@ -756,7 +756,7 @@ void SVImageView::OnInitialUpdate()
 	CView::OnInitialUpdate();
 }
 
-void SVImageView::OnUpdate( CView* p_pSender, LPARAM p_lHint, CObject* p_pHint )
+void SVImageView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint )
 {
 	bool Update = true;
 
@@ -787,7 +787,7 @@ void SVImageView::OnUpdate( CView* p_pSender, LPARAM p_lHint, CObject* p_pHint )
 
 		UpdateBufferFromIPDoc();
 
-		CView::OnUpdate( p_pSender, p_lHint, p_pHint );
+		CView::OnUpdate( pSender, lHint, pHint );
 	}
 
 	if( 0 == GetUpdateRect( nullptr ) )
@@ -796,12 +796,12 @@ void SVImageView::OnUpdate( CView* p_pSender, LPARAM p_lHint, CObject* p_pHint )
 	}
 }
 
-void SVImageView::OnLButtonDblClk( UINT p_nFlags, CPoint p_point )
+void SVImageView::OnLButtonDblClk( UINT nFlags, CPoint point )
 {
 	if( !SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
 	{
 		SVIPDoc* l_psvIPDoc = GetIPDoc();
-		CPoint l_point = p_point;
+		CPoint l_point = point;
 
 		// Compensate for Scaling of Displayed Image
 		TransformFromViewSpace( l_point );
@@ -822,15 +822,15 @@ void SVImageView::OnLButtonDblClk( UINT p_nFlags, CPoint p_point )
 			}
 		}
 
-		CWnd::OnLButtonDblClk( p_nFlags, p_point );
+		CWnd::OnLButtonDblClk( nFlags, point );
 	}
 }
 
-void SVImageView::OnRButtonDblClk( UINT p_nFlags, CPoint p_point )
+void SVImageView::OnRButtonDblClk( UINT nFlags, CPoint point )
 {
 	if( !SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
 	{
-		CPoint l_point = p_point;
+		CPoint l_point = point;
 		SVIPDoc* l_psvIPDoc = GetIPDoc();
 		
 		// Compensate for Scaling of Displayed Image
@@ -858,11 +858,11 @@ void SVImageView::OnRButtonDblClk( UINT p_nFlags, CPoint p_point )
 			}
 		}
 
-		CWnd::OnRButtonDblClk( p_nFlags, p_point );
+		CWnd::OnRButtonDblClk( nFlags, point );
 	}
 }
 
-void SVImageView::OnLButtonDown( UINT p_nFlags, CPoint p_point )
+void SVImageView::OnLButtonDown( UINT nFlags, CPoint point )
 {
 	if( !SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&
 		TheSVObserverApp.OkToEdit() )
@@ -870,7 +870,7 @@ void SVImageView::OnLButtonDown( UINT p_nFlags, CPoint p_point )
 		if(false == ImageIsEmpty())
 		{
 			std::string Text;
-			CPoint l_point = p_point;
+			CPoint l_point = point;
 
 			// Compensate for Scaling of Displayed Image
 			TransformFromViewSpace( l_point );
@@ -879,63 +879,62 @@ void SVImageView::OnLButtonDown( UINT p_nFlags, CPoint p_point )
 			m_svMousePickLocation = m_svLocation;
 			if( m_isPicked )
 			{
-				SVImageExtentClass l_svExtents;
+				SVImageExtentClass extent;
 
 				POINT l_tempPoint;
 
 				long l_width = 0;
 				long l_height = 0;
 
-				if( S_OK == GetToolExtents( l_svExtents ) &&
-					S_OK == l_svExtents.GetExtentProperty( SvPb::SVExtentPropertyPositionPoint, l_tempPoint ) &&
-					S_OK == l_svExtents.GetExtentProperty( SvPb::SVExtentPropertyWidth, l_width ) &&
-					S_OK == l_svExtents.GetExtentProperty( SvPb::SVExtentPropertyHeight, l_height ) )
+				if( S_OK == GetToolExtents( extent ) &&
+					S_OK == extent.GetExtentProperty( SvPb::SVExtentPropertyPositionPoint, l_tempPoint ) &&
+					S_OK == extent.GetExtentProperty( SvPb::SVExtentPropertyWidth, l_width ) &&
+					S_OK == extent.GetExtentProperty( SvPb::SVExtentPropertyHeight, l_height ) )
 				{
 					Text = SvUl::Format( _T(" X: %d, Y: %d    cX: %d, cY: %d "), l_tempPoint.x, l_tempPoint.y, l_width, l_height );
 				}
 				else
 				{
-					Text = SvUl::Format( _T(" Col: %d, Row: %d "), p_point.x, p_point.y );
+					Text = SvUl::Format( _T(" Col: %d, Row: %d "), point.x, point.y );
 				}
 
-				m_lastMouseMovePoint = p_point;
+				m_lastMouseMovePoint = point;
 
 				SetCapture();
 			}
 			else
 			{
-				Text = SvUl::Format( _T(" Col: %d, Row: %d "), p_point.x, p_point.y );
+				Text = SvUl::Format( _T(" Col: %d, Row: %d "), point.x, point.y );
 			}
 
 			TheSVObserverApp.SetStatusText( Text.c_str() );
 		}
 
-		CWnd::OnLButtonDown( p_nFlags, p_point );
+		CWnd::OnLButtonDown( nFlags, point );
 	}
 }
 
-void SVImageView::OnMouseMove( UINT nFlags, CPoint point ) 
+void SVImageView::OnMouseMove( UINT nFlags, CPoint point) 
 {
 	if( !SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&
 		TheSVObserverApp.OkToEdit() )
 	{
 		if (m_lastMouseMovePoint == point)
 		{
-			//avoid calling this function when mous is not moving
+			//nothing to do here if the mouse pointer is not moving
 			return;
 		}
 		
-		CPoint l_point = point;
-		CPoint l_clientPoint = point;
-		CPoint l_screenPoint = point;
+		CPoint clientPoint = point;
+		CPoint screenPoint = point;
 
-		ClientToScreen( &l_screenPoint );
+		ClientToScreen( &screenPoint );
 
-		CRect l_rect;
-		CRect l_screenRect;
+		CRect rect;
+		CRect screenRect;
 
-		GetClientRect( l_rect );
-		GetWindowRect( l_screenRect );
+		GetClientRect( rect );
+		GetWindowRect( screenRect );
 
 
 		// Get Color of Mouse Point ( inside of View )
@@ -948,74 +947,74 @@ void SVImageView::OnMouseMove( UINT nFlags, CPoint point )
 		BYTE blueValue  = GetBValue( color );
 
 		// Compensate for Scaling of Displayed Image
-		TransformFromViewSpace( l_point );
+		TransformFromViewSpace( point );
 
 		// Status Text: Mouse Pos and Color
-		std::string Text = SvUl::Format( _T(" Col: %d, Row: %d    RGB: %u/%u/%u "), l_point.x, l_point.y, redValue, greenValue, blueValue ); 
+		std::string Text = SvUl::Format( _T(" Col: %d, Row: %d    RGB: %u/%u/%u "), point.x, point.y, redValue, greenValue, blueValue ); 
 
-		HICON l_hCursor = nullptr;
+		HICON hCursor = nullptr;
 
-		SVImageExtentClass l_svExtents;
+		SVImageExtentClass extent;
 
-		SVIPDoc* l_pIPDoc = GetIPDoc();
+		SVIPDoc* pIPDoc = GetIPDoc();
 
 		if (m_isPicked)
 		{
-			if( nullptr != l_pIPDoc && m_isPicked && S_OK == GetToolExtents( l_svExtents ) )
+			if( nullptr != pIPDoc && m_isPicked && S_OK == GetToolExtents( extent ) )
 			{
-				CPoint l_startPoint = m_lastMouseMovePoint;
+				CPoint startPoint = m_lastMouseMovePoint;
 
-				SVImageExtentClass l_svTempExtents = l_svExtents;
+				SVImageExtentClass tempExtent = extent;
 
-				TransformFromViewSpace( l_startPoint );
+				TransformFromViewSpace( startPoint );
 
-				l_hCursor = GetObjectCursor( m_svMousePickLocation, l_point );
-				SVPoint<double> startPoint(l_startPoint);
+				hCursor = GetObjectCursor( m_svMousePickLocation, point );
+				SVPoint<double> startSVPoint(startPoint);
 				if( (SvPb::SVExtentLocationPropertyRotate == m_svMousePickLocation ||
-					m_svMousePickLocation == l_svExtents.GetLocationPropertyAt(startPoint) ) &&
-					S_OK == l_svTempExtents.Update( m_svMousePickLocation, startPoint, SVPoint<double>(l_point) ) )
+					m_svMousePickLocation == extent.GetLocationPropertyAt(startSVPoint) ) &&
+					S_OK == tempExtent.Update( m_svMousePickLocation, startSVPoint, SVPoint<double>(point) ) )
 				{
-					bool l_bUpdate = S_OK == l_pIPDoc->UpdateExtents( m_pTool, l_svTempExtents );
+					bool bUpdate = S_OK == pIPDoc->UpdateExtents( m_pTool, tempExtent );
 
-					if( l_bUpdate || l_rect.PtInRect( l_clientPoint ) )
+					if( bUpdate || rect.PtInRect( clientPoint ) )
 					{
-						l_bUpdate = l_bUpdate || S_OK == l_pIPDoc->UpdateExtentsToFit( m_pTool, l_svTempExtents );
+						bUpdate = bUpdate || S_OK == pIPDoc->UpdateExtentsToFit( m_pTool, tempExtent );
 					}
 
-					if( l_bUpdate )
+					if( bUpdate )
 					{
-						long l_left = 0;
-						long l_top = 0;
-						long l_width = 0;
-						long l_height = 0;
+						long left = 0;
+						long top = 0;
+						long width = 0;
+						long height = 0;
 
-						l_svExtents.GetExtentProperty( SvPb::SVExtentPropertyPositionPointX, l_left );
-						l_svExtents.GetExtentProperty( SvPb::SVExtentPropertyPositionPointY, l_top );
-						l_svExtents.GetExtentProperty( SvPb::SVExtentPropertyWidth, l_width );
-						l_svExtents.GetExtentProperty( SvPb::SVExtentPropertyHeight, l_height );
+						extent.GetExtentProperty( SvPb::SVExtentPropertyPositionPointX, left );
+						extent.GetExtentProperty( SvPb::SVExtentPropertyPositionPointY, top );
+						extent.GetExtentProperty( SvPb::SVExtentPropertyWidth, width );
+						extent.GetExtentProperty( SvPb::SVExtentPropertyHeight, height );
 
 						// Status Text: Mouse Pos and Tool Extent
-						Text = SvUl::Format( _T(" Col: %d, Row: %d    X: %d, Y: %d    cX: %d, cY: %d "), l_point.x, l_point.y, l_left, l_top, l_width, l_height );
+						Text = SvUl::Format( _T(" Col: %d, Row: %d    X: %d, Y: %d    cX: %d, cY: %d "), point.x, point.y, left, top, width, height );
 					}
 				}
 			}
 			else
 			{
-				l_hCursor = GetObjectCursor( l_point );
+				hCursor = GetObjectCursor( point );
 			}
 		}
 		else
 		{
-			l_hCursor = GetObjectCursor( l_point );
+			hCursor = GetObjectCursor( point );
 		}
 
 		//If no icon returned then use standard arrow
-		if (nullptr == l_hCursor)
+		if (nullptr == hCursor)
 		{
 			m_mouseIsOverTool = FALSE;
-			l_hCursor = AfxGetApp()->LoadStandardCursor( IDC_ARROW );
+			hCursor = AfxGetApp()->LoadStandardCursor( IDC_ARROW );
 		}
-		SetCursor( l_hCursor );
+		SetCursor( hCursor );
 		
 		TheSVObserverApp.SetStatusText( Text.c_str() );
 
@@ -1030,7 +1029,7 @@ void SVImageView::OnMouseMove( UINT nFlags, CPoint point )
 // -----------------------------------------------------------------------------
 // .Description : ...
 ////////////////////////////////////////////////////////////////////////////////
-void SVImageView::OnLButtonUp( UINT p_nFlags, CPoint p_point )
+void SVImageView::OnLButtonUp( UINT nFlags, CPoint point )
 {
 	m_isPicked = FALSE;
 
@@ -1038,10 +1037,10 @@ void SVImageView::OnLButtonUp( UINT p_nFlags, CPoint p_point )
 
 	ReleaseCapture();
 
-	std::string Text = SvUl::Format( _T(" Col: %d, Row: %d "), p_point.x, p_point.y );
+	std::string Text = SvUl::Format( _T(" Col: %d, Row: %d "), point.x, point.y );
 	TheSVObserverApp.SetStatusText( Text.c_str() );
 
-	CWnd::OnLButtonUp( p_nFlags, p_point );
+	CWnd::OnLButtonUp( nFlags, point );
 
 	if( !SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION ) )
 	{
@@ -1054,11 +1053,11 @@ void SVImageView::OnLButtonUp( UINT p_nFlags, CPoint p_point )
 // -----------------------------------------------------------------------------
 // .Description : ...
 ////////////////////////////////////////////////////////////////////////////////
-void SVImageView::OnCaptureChanged( CWnd* p_pWnd )
+void SVImageView::OnCaptureChanged( CWnd* pWnd )
 {
 	TheSVObserverApp.SetStatusText( nullptr );
 
-	CWnd::OnCaptureChanged( p_pWnd );
+	CWnd::OnCaptureChanged( pWnd );
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1066,11 +1065,11 @@ void SVImageView::OnCaptureChanged( CWnd* p_pWnd )
 // -----------------------------------------------------------------------------
 // .Description : ...
 ////////////////////////////////////////////////////////////////////////////////
-void SVImageView::OnNcMouseMove( UINT p_hitTest, CPoint p_point )
+void SVImageView::OnNcMouseMove( UINT hitTest, CPoint point )
 {
 	TheSVObserverApp.SetStatusText( nullptr );
 
-	CWnd::OnNcMouseMove( p_hitTest, p_point );
+	CWnd::OnNcMouseMove( hitTest, point );
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1104,7 +1103,7 @@ SVIPDoc* SVImageView::GetIPDoc() const
 	return dynamic_cast< SVIPDoc* >( GetDocument() );
 }
 
-bool SVImageView::GetScrollPosition( CPoint& p_point )
+bool SVImageView::GetScrollPosition( CPoint& point )
 {
 	bool l_bOk = false;
 
@@ -1116,14 +1115,14 @@ bool SVImageView::GetScrollPosition( CPoint& p_point )
 
 		if( l_bOk )
 		{
-			p_point = l_psvScroll->GetScrollPosition();
+			point = l_psvScroll->GetScrollPosition();
 		}
 	}
 
 	return l_bOk;
 }
 
-bool SVImageView::SetScrollPosition( CPoint& p_point )
+bool SVImageView::SetScrollPosition( CPoint& point )
 {
 	bool l_bOk = false;
 
@@ -1135,7 +1134,7 @@ bool SVImageView::SetScrollPosition( CPoint& p_point )
 
 		if( l_bOk )
 		{
-			l_psvScroll->ScrollToPosition( p_point );
+			l_psvScroll->ScrollToPosition( point );
 		}
 	}
 
@@ -1288,7 +1287,7 @@ const ZoomHelper& SVImageView::GetZoomHelper() const
 	return m_ZoomHelper;
 }
 
-bool SVImageView::SetImageRect( CRect& p_rect )
+bool SVImageView::SetImageRect( CRect& rRect )
 {
 	bool l_bOk = false;
 
@@ -1300,13 +1299,13 @@ bool SVImageView::SetImageRect( CRect& p_rect )
 
 		if( l_bOk )
 		{
-			l_psvScroll->SetImageSize( p_rect.Size() );
+			l_psvScroll->SetImageSize( rRect.Size() );
 		}
 	}
 	return l_bOk;
 }
 
-HRESULT SVImageView::ShouldDraw( const SVExtentMultiLineStruct& p_rMultiLine )
+HRESULT SVImageView::ShouldDraw( const SVExtentMultiLineStruct& rMultiLine )
 {
 	HRESULT l_hrOk = S_OK;
 
@@ -1317,14 +1316,14 @@ HRESULT SVImageView::ShouldDraw( const SVExtentMultiLineStruct& p_rMultiLine )
 		l_SelectedID = GetIPDoc()->GetSelectedToolID();
 	}
 
-	switch( p_rMultiLine.m_ToolSetDrawFlag )
+	switch( rMultiLine.m_ToolSetDrawFlag )
 	{
 		case 0:	// "All Tools=0"
 			l_hrOk = S_OK;
 			return l_hrOk;
 
 		case 1: // "Current Tool"
-			if(SvDef::InvalidObjectId != l_SelectedID && ( l_SelectedID == p_rMultiLine.m_ObjectID || l_SelectedID == p_rMultiLine.m_ToolID ) )
+			if(SvDef::InvalidObjectId != l_SelectedID && ( l_SelectedID == rMultiLine.m_ObjectID || l_SelectedID == rMultiLine.m_ToolID ) )
 				l_hrOk = S_OK;
 			else
 				l_hrOk = S_FALSE;
@@ -1333,7 +1332,7 @@ HRESULT SVImageView::ShouldDraw( const SVExtentMultiLineStruct& p_rMultiLine )
 
 		case 2: // "Warned Tools"
 		{
-			if( p_rMultiLine.m_Warned )
+			if( rMultiLine.m_Warned )
 				l_hrOk = S_OK;
 			else
 				l_hrOk = S_FALSE;
@@ -1343,7 +1342,7 @@ HRESULT SVImageView::ShouldDraw( const SVExtentMultiLineStruct& p_rMultiLine )
 
 		case 3: // "Failed Tools"
 		{
-			if( p_rMultiLine.m_Failed )
+			if( rMultiLine.m_Failed )
 				l_hrOk = S_OK;
 			else
 				l_hrOk = S_FALSE;
@@ -1353,7 +1352,7 @@ HRESULT SVImageView::ShouldDraw( const SVExtentMultiLineStruct& p_rMultiLine )
 
 		case 4: // "Passed Tools"
 		{
-			if( p_rMultiLine.m_Passed )
+			if( rMultiLine.m_Passed )
 				l_hrOk = S_OK;
 			else
 				l_hrOk = S_FALSE;
@@ -1371,14 +1370,14 @@ HRESULT SVImageView::ShouldDraw( const SVExtentMultiLineStruct& p_rMultiLine )
 	}
 	
 	// Check Tool's Draw Flag...
-	switch( p_rMultiLine.m_ToolDrawFlag )
+	switch( rMultiLine.m_ToolDrawFlag )
 	{
 		case 0:	// "Always=0"
 			l_hrOk = S_OK;
 			break;
 
 		case 1: // "If Current"
-			if(SvDef::InvalidObjectId != l_SelectedID && ( l_SelectedID == p_rMultiLine.m_ObjectID || l_SelectedID == p_rMultiLine.m_ToolID ) )
+			if(SvDef::InvalidObjectId != l_SelectedID && ( l_SelectedID == rMultiLine.m_ObjectID || l_SelectedID == rMultiLine.m_ToolID ) )
 				l_hrOk = S_OK;
 			else
 				l_hrOk = S_FALSE;
@@ -1386,7 +1385,7 @@ HRESULT SVImageView::ShouldDraw( const SVExtentMultiLineStruct& p_rMultiLine )
 
 		case 2: // "If Warned"
 		{
-			if( p_rMultiLine.m_Warned )
+			if( rMultiLine.m_Warned )
 				l_hrOk = S_OK;
 			else
 				l_hrOk = S_FALSE;
@@ -1395,7 +1394,7 @@ HRESULT SVImageView::ShouldDraw( const SVExtentMultiLineStruct& p_rMultiLine )
 
 		case 3: // "If Failed"
 		{
-			if( p_rMultiLine.m_Failed )
+			if( rMultiLine.m_Failed )
 				l_hrOk = S_OK;
 			else
 				l_hrOk = S_FALSE;
@@ -1404,7 +1403,7 @@ HRESULT SVImageView::ShouldDraw( const SVExtentMultiLineStruct& p_rMultiLine )
 
 		case 4: // "If Passed"
 		{
-			if( p_rMultiLine.m_Passed )
+			if( rMultiLine.m_Passed )
 				l_hrOk = S_OK;
 			else
 				l_hrOk = S_FALSE;
@@ -1419,18 +1418,18 @@ HRESULT SVImageView::ShouldDraw( const SVExtentMultiLineStruct& p_rMultiLine )
 	return l_hrOk;
 }
 
-void SVImageView::DrawOverlay( SVDrawContext* PDrawContext, const SVExtentMultiLineStruct& p_rMultiLine )
+void SVImageView::DrawOverlay( SVDrawContext* PDrawContext, const SVExtentMultiLineStruct& rMultiLine )
 {
-	BOOL bDrawAllowed = ( ( nullptr != PDrawContext ) && ( S_OK == ShouldDraw( p_rMultiLine ) ) );
+	BOOL bDrawAllowed = ( ( nullptr != PDrawContext ) && ( S_OK == ShouldDraw( rMultiLine ) ) );
 
 	if( bDrawAllowed )
 	{
 		HGDIOBJ hPen;
 		HGDIOBJ hPenOld;
 
-		COLORREF color = p_rMultiLine.m_Color;
-		POINT titlePoint = static_cast<POINT> (p_rMultiLine.m_StringPoint);
-		std::string Title = p_rMultiLine.m_csString;
+		COLORREF color = rMultiLine.m_Color;
+		POINT titlePoint = static_cast<POINT> (rMultiLine.m_StringPoint);
+		std::string Title = rMultiLine.m_csString;
 
 		uint32_t l_SelectedID = SvDef::InvalidObjectId;
 
@@ -1449,7 +1448,7 @@ void SVImageView::DrawOverlay( SVDrawContext* PDrawContext, const SVExtentMultiL
 		int l_PenStyle = PS_SOLID;
 
 		// Check for current selection...
-		if(SvDef::InvalidObjectId != l_SelectedID && ( l_SelectedID == p_rMultiLine.m_ObjectID || l_SelectedID == p_rMultiLine.m_ToolID ) )
+		if(SvDef::InvalidObjectId != l_SelectedID && ( l_SelectedID == rMultiLine.m_ObjectID || l_SelectedID == rMultiLine.m_ToolID ) )
 		{
 			l_PenStyle = PS_DOT;
 		}
@@ -1460,8 +1459,8 @@ void SVImageView::DrawOverlay( SVDrawContext* PDrawContext, const SVExtentMultiL
 
 		SVDrawObjectList drawObjectList;
 
-		drawObjectList.AddExtentMultiLineData( p_rMultiLine, l_PenStyle );
-		drawObjectList.m_bDrawFigureHatched = p_rMultiLine.m_bDrawFigureHatched;
+		drawObjectList.AddExtentMultiLineData( rMultiLine, l_PenStyle );
+		drawObjectList.m_bDrawFigureHatched = rMultiLine.m_bDrawFigureHatched;
 		drawObjectList.Draw( PDrawContext );
 
 		SelectObject( PDrawContext->DC, hPenOld );
@@ -1469,7 +1468,7 @@ void SVImageView::DrawOverlay( SVDrawContext* PDrawContext, const SVExtentMultiL
 	}
 }
 
-void SVImageView::UpdateOverlays(HDC hDC, long p_X, long p_Y)
+void SVImageView::UpdateOverlays(HDC hDC, long X, long Y)
 {
 	// Get drawing device context...
 	::SetBkMode(hDC, TRANSPARENT);
@@ -1480,8 +1479,8 @@ void SVImageView::UpdateOverlays(HDC hDC, long p_X, long p_Y)
 	// Use Drawing Context
 
 	SVDrawContext drawContext(hDC, m_ZoomHelper.GetZoom());
-	drawContext.ViewPortOffset.x = -p_X;
-	drawContext.ViewPortOffset.y = -p_Y;
+	drawContext.ViewPortOffset.x = -X;
+	drawContext.ViewPortOffset.y = -Y;
 
 	// Draw tool figures...
 	for (SVExtentMultiLineStructVector::iterator l_Iter = m_OverlayData.begin(); l_Iter != m_OverlayData.end(); ++l_Iter)
@@ -1493,19 +1492,19 @@ void SVImageView::UpdateOverlays(HDC hDC, long p_X, long p_Y)
 	::SelectObject(hDC, hFontOld);
 }
 
-HICON SVImageView::GetObjectCursor( POINT p_point )
+HICON SVImageView::GetObjectCursor( POINT point )
 {
 	HICON l_hCursor = nullptr;
 
-	if( GetObjectAtPoint( p_point ) )
+	if( GetObjectAtPoint( point ) )
 	{
-		l_hCursor = GetObjectCursor(m_svLocation, p_point);
+		l_hCursor = GetObjectCursor(m_svLocation, point);
 	}
 
 	return l_hCursor;
 }
 
-HICON SVImageView::GetObjectCursor( SvPb::SVExtentLocationPropertyEnum p_svLocation, POINT p_point )
+HICON SVImageView::GetObjectCursor( SvPb::SVExtentLocationPropertyEnum svLocation, POINT point )
 {
 	HICON l_hCursor = nullptr;
 
@@ -1523,25 +1522,25 @@ HICON SVImageView::GetObjectCursor( SvPb::SVExtentLocationPropertyEnum p_svLocat
 		m_hActionIcon = nullptr;
 	}
 
-	SVImageExtentClass l_svExtents;
+	SVImageExtentClass extent;
 	//Check the rotation angle to determine icon symbols
-	if( S_OK == GetToolExtents( l_svExtents ) )
+	if( S_OK == GetToolExtents( extent ) )
 	{
 		double l_dRotationAngle = 0.0;
 		//Check that this is the Linear tool with rotation
-		if(SvPb::SVExtentTranslationProfile == l_svExtents.GetTranslation() )
+		if(SvPb::SVExtentTranslationProfile == extent.GetTranslation() )
 		{
-			if( S_OK == l_svExtents.GetExtentProperty( SvPb::SVExtentPropertyRotationAngle, l_dRotationAngle) )
+			if( S_OK == extent.GetExtentProperty( SvPb::SVExtentPropertyRotationAngle, l_dRotationAngle) )
 			{
 				l_dRotationAngle = fmod(l_dRotationAngle, 180.0);
 			}
 		}
 		//Check that this is the Polar Unwrap tool with rotation
-		else if(SvPb::SVExtentTranslationPolarUnwrap == l_svExtents.GetTranslation() )
+		else if(SvPb::SVExtentTranslationPolarUnwrap == extent.GetTranslation() )
 		{
 			SVPoint<double> center;
-			SVPoint<double> mousePosition(p_point);
-			if( S_OK == l_svExtents.GetExtentProperty( SvPb::SVExtentPropertyPositionPoint, center) )
+			SVPoint<double> mousePosition(point);
+			if( S_OK == extent.GetExtentProperty( SvPb::SVExtentPropertyPositionPoint, center) )
 			{
 				//Polar unwrap needs an offset of 90° for the displayed cursor to be correct
 				l_dRotationAngle = SVGetRotationAngle(center, mousePosition) + 90.0;
@@ -1572,7 +1571,7 @@ HICON SVImageView::GetObjectCursor( SvPb::SVExtentLocationPropertyEnum p_svLocat
 		}
 	}
 
-	switch( p_svLocation )
+	switch( svLocation )
 	{
 		case SvPb::SVExtentLocationPropertyRotate:
 		{
@@ -1621,7 +1620,7 @@ HICON SVImageView::GetObjectCursor( SvPb::SVExtentLocationPropertyEnum p_svLocat
 			break;
 		}
 	}
-	if( IDC_ARROW == l_cursorId && SvPb::SVExtentLocationPropertyDisabled != p_svLocation )
+	if( IDC_ARROW == l_cursorId && SvPb::SVExtentLocationPropertyDisabled != svLocation )
 	{
 		m_mouseIsOverTool = FALSE;
 	}
@@ -1642,7 +1641,7 @@ HICON SVImageView::GetObjectCursor( SvPb::SVExtentLocationPropertyEnum p_svLocat
 // -----------------------------------------------------------------------------
 // .Description : Get Object under Mouse point
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVImageView::GetObjectAtPoint( POINT p_point )
+BOOL SVImageView::GetObjectAtPoint( POINT point )
 {
 	BOOL l_bOk = FALSE;
 
@@ -1659,13 +1658,13 @@ BOOL SVImageView::GetObjectAtPoint( POINT p_point )
 
 	if( nullptr != pTool && pTool->isInputImage( m_ImageIdPair.m_imageId ) )
 	{
-		SVImageExtentClass l_svExtents;
-		SVPoint<double> point(p_point);
-		m_pTool = pTool->GetObjectAtPoint(point);
+		SVImageExtentClass extent;
+		SVPoint<double> svPoint(point);
+		m_pTool = pTool->GetObjectAtPoint(svPoint);
 
-		if( S_OK == GetToolExtents( l_svExtents ) )
+		if( S_OK == GetToolExtents( extent ) )
 		{
-			m_svLocation = l_svExtents.GetLocationPropertyAt(point);
+			m_svLocation = extent.GetLocationPropertyAt(svPoint);
 		}
 	
 		////check if move or sizing is allowed  
@@ -1703,7 +1702,7 @@ void SVImageView::GetParameters(SvOi::IObjectWriter& rWriter)
 	}
 }
 
-bool SVImageView::SetParameters( SVTreeType& p_tree, SVTreeType::SVBranchHandle p_parent )
+bool SVImageView::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle parent )
 {
 	bool bZoomExOK = false;
 
@@ -1711,11 +1710,11 @@ bool SVImageView::SetParameters( SVTreeType& p_tree, SVTreeType::SVBranchHandle 
 
 	bool l_bUseImageView = false;
 
-	bool l_bOk = SvXml::SVNavigateTree::GetItem( p_tree, SvXml::CTAG_VIEW_INITIALIZED, p_parent, Value );
+	bool l_bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_VIEW_INITIALIZED, parent, Value );
 	if( l_bOk )
 	{
 		l_bUseImageView = Value;
-		bZoomExOK = SvXml::SVNavigateTree::GetItem( p_tree, SvXml::CTAG_IMAGE_ZOOM_FACTOR_EX, p_parent, Value );
+		bZoomExOK = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_IMAGE_ZOOM_FACTOR_EX, parent, Value );
 		if(bZoomExOK)
 		{
 			double dZoom = Value;
@@ -1728,7 +1727,7 @@ bool SVImageView::SetParameters( SVTreeType& p_tree, SVTreeType::SVBranchHandle 
 
 	if( l_bOk && !bZoomExOK )
 	{
-		l_bOk = SvXml::SVNavigateTree::GetItem( p_tree, SvXml::CTAG_IMAGE_ZOOM_FACTOR, p_parent, Value );
+		l_bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_IMAGE_ZOOM_FACTOR, parent, Value );
 		if( l_bOk )
 		{
 			long l_index = 0;
@@ -1753,7 +1752,7 @@ bool SVImageView::SetParameters( SVTreeType& p_tree, SVTreeType::SVBranchHandle 
 
 	if( l_bOk && l_bUseImageView )
 	{
-		l_bOk = SvXml::SVNavigateTree::GetItem( p_tree, SvXml::CTAG_IMAGE_NAME, p_parent, Value );
+		l_bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_IMAGE_NAME, parent, Value );
 		if( l_bOk )
 		{
 			_bstr_t l_String( Value.bstrVal );
@@ -1773,18 +1772,18 @@ bool SVImageView::SetParameters( SVTreeType& p_tree, SVTreeType::SVBranchHandle 
 	return l_bOk;
 }
 
-bool SVImageView::CheckParameters( SVTreeType& p_tree, SVTreeType::SVBranchHandle p_parent )
+bool SVImageView::CheckParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle parent )
 {
 	_variant_t Value;
 
 	bool l_bUseImageView = false;
 	bool bZoomExOK = false;
 
-	bool l_bOk = SvXml::SVNavigateTree::GetItem( p_tree, SvXml::CTAG_VIEW_INITIALIZED, p_parent, Value );
+	bool l_bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_VIEW_INITIALIZED, parent, Value );
 	if( l_bOk )
 	{
 		l_bUseImageView = Value;
-		bZoomExOK = SvXml::SVNavigateTree::GetItem( p_tree, SvXml::CTAG_IMAGE_ZOOM_FACTOR_EX, p_parent, Value );
+		bZoomExOK = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_IMAGE_ZOOM_FACTOR_EX, parent, Value );
 		if(bZoomExOK)
 		{
 			double dZoom = Value;
@@ -1801,7 +1800,7 @@ bool SVImageView::CheckParameters( SVTreeType& p_tree, SVTreeType::SVBranchHandl
 
 	if( l_bOk && !bZoomExOK )
 	{
-		l_bOk = SvXml::SVNavigateTree::GetItem( p_tree, SvXml::CTAG_IMAGE_ZOOM_FACTOR, p_parent, Value );
+		l_bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_IMAGE_ZOOM_FACTOR, parent, Value );
 		if( l_bOk )
 		{
 			long l_index = 0;
@@ -1829,7 +1828,7 @@ bool SVImageView::CheckParameters( SVTreeType& p_tree, SVTreeType::SVBranchHandl
 
 	if( l_bOk && l_bUseImageView )
 	{
-		l_bOk = SvXml::SVNavigateTree::GetItem( p_tree, SvXml::CTAG_IMAGE_NAME, p_parent, Value );
+		l_bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_IMAGE_NAME, parent, Value );
 		if( l_bOk )
 		{
 			_bstr_t l_String( Value.bstrVal );
@@ -1898,22 +1897,22 @@ const unsigned char* SVImageView::GetBitmapBits() const
 	return nullptr;
 }
 
-HRESULT SVImageView::UpdateImageSurfaces( const SVBitmapInfo& p_rBitmapInfo )
+HRESULT SVImageView::UpdateImageSurfaces( const SVBitmapInfo& rBitmapInfo )
 {
 	HRESULT status = S_OK;
 
-	if( !( SVDirectX::Instance().empty() ) && !( p_rBitmapInfo.empty() ) )
+	if( !( SVDirectX::Instance().empty() ) && !( rBitmapInfo.empty() ) )
 	{
-		if( m_sourceImageWidth != p_rBitmapInfo.GetWidth() ||
-			m_sourceImageHeight != ::labs( p_rBitmapInfo.GetHeight() ) ||
-			m_sourceBitCount != p_rBitmapInfo.GetBitCount() ||
+		if( m_sourceImageWidth != rBitmapInfo.GetWidth() ||
+			m_sourceImageHeight != ::labs( rBitmapInfo.GetHeight() ) ||
+			m_sourceBitCount != rBitmapInfo.GetBitCount() ||
 			nullptr == m_pDDImageSurface || nullptr == m_pDDScaledImageSurface )
 		{
-			m_sourceImageWidth = p_rBitmapInfo.GetWidth();
-			m_sourceImageHeight = ::labs( p_rBitmapInfo.GetHeight() );
-			m_sourceBitCount = p_rBitmapInfo.GetBitCount();
+			m_sourceImageWidth = rBitmapInfo.GetWidth();
+			m_sourceImageHeight = ::labs( rBitmapInfo.GetHeight() );
+			m_sourceBitCount = rBitmapInfo.GetBitCount();
 
-			status = SVDirectX::CreateSurface( p_rBitmapInfo, &m_pDDImageSurface );
+			status = SVDirectX::CreateSurface( rBitmapInfo, &m_pDDImageSurface );
 			
 			if( DD_OK == status )
 			{
@@ -2043,7 +2042,7 @@ void SVImageView::UpdateZoomToolbar()
 	}
 }
 
-HRESULT SVImageView::BlitToScaledSurface( CRect& p_rSourceRect, CRect& p_rDestRect, LPCTSTR Filepath, bool showOverlays)
+HRESULT SVImageView::BlitToScaledSurface( CRect& rSourceRect, CRect& rDestRect, LPCTSTR Filepath, bool showOverlays)
 {
 	HRESULT status = S_OK;
 
@@ -2051,7 +2050,7 @@ HRESULT SVImageView::BlitToScaledSurface( CRect& p_rSourceRect, CRect& p_rDestRe
 	{
 		HDC scaledDC = nullptr;
 
-		CRect l_ScaledRect( 0, 0, p_rDestRect.Width(), p_rDestRect.Height() );
+		CRect l_ScaledRect( 0, 0, rDestRect.Width(), rDestRect.Height() );
 
 		status = m_pDDScaledImageSurface->GetDC( &scaledDC );
 
@@ -2072,10 +2071,10 @@ HRESULT SVImageView::BlitToScaledSurface( CRect& p_rSourceRect, CRect& p_rDestRe
 					l_ScaledRect.Width(),
 					l_ScaledRect.Height(),
 					surfaceDC,
-					p_rSourceRect.left,
-					p_rSourceRect.top,
-					p_rSourceRect.Width(),
-					p_rSourceRect.Height(),
+					rSourceRect.left,
+					rSourceRect.top,
+					rSourceRect.Width(),
+					rSourceRect.Height(),
 					SRCCOPY );
 
 				::SetStretchBltMode( scaledDC, iStretchMode );
@@ -2085,7 +2084,7 @@ HRESULT SVImageView::BlitToScaledSurface( CRect& p_rSourceRect, CRect& p_rDestRe
 
 			if (showOverlays)
 			{
-				UpdateOverlays( scaledDC, p_rSourceRect.left, p_rSourceRect.top );
+				UpdateOverlays( scaledDC, rSourceRect.left, rSourceRect.top );
 			}
 
 			if( nullptr != Filepath )
@@ -2111,13 +2110,13 @@ HRESULT SVImageView::BlitToScaledSurface( CRect& p_rSourceRect, CRect& p_rDestRe
 	return status;
 }
 
-HRESULT SVImageView::BlitToPrimarySurface( CRect& p_rDestRect )
+HRESULT SVImageView::BlitToPrimarySurface( CRect& rDestRect )
 {
 	HRESULT status = S_OK;
 
 	if( nullptr != m_pDDScaledImageSurface )
 	{
-		CRect l_ScaledRect( 0, 0, p_rDestRect.Width(), p_rDestRect.Height() );
+		CRect l_ScaledRect( 0, 0, rDestRect.Width(), rDestRect.Height() );
 
 		SVDirectX::Instance().SetClipperHWnd( 0, m_hWnd );
 
@@ -2125,7 +2124,7 @@ HRESULT SVImageView::BlitToPrimarySurface( CRect& p_rDestRect )
 		if (S_OK == status)
 		{
 			status = SVDirectX::Instance().Blt(
-				&p_rDestRect,            // destination rectangle
+				&rDestRect,            // destination rectangle
 				m_pDDScaledImageSurface, // source surface
 				&l_ScaledRect,           // source rectangle
 				DDBLT_WAIT,              // DDBLT_DONOTWAIT| DDBLT_ASYNC, // Flag <<<<<<<<<<<<<<<<<<<<<<
@@ -2191,7 +2190,7 @@ HRESULT SVImageView::RecreateLostSurface()
 	return status;
 }
 
-HRESULT SVImageView::GetRectInfo( CRect& p_rSourceRect, CRect& p_rDestRect )
+HRESULT SVImageView::GetRectInfo( CRect& rSourceRect, CRect& rDestRect )
 {
 	HRESULT status = S_OK;
 
@@ -2213,17 +2212,17 @@ HRESULT SVImageView::GetRectInfo( CRect& p_rSourceRect, CRect& p_rDestRect )
 		long l_sourceImageWidth = l_BitmapInfo.GetWidth();
 		double l_zoomFactor = 1 / m_ZoomHelper.GetZoom();
 
-		p_rDestRect.left = l_xScroll; 
-		p_rDestRect.top = l_yScroll;
-		p_rDestRect.right =  std::min( l_parentRect.Width() + l_xScroll, l_imageRect.Width() );
-		p_rDestRect.bottom = std::min( l_parentRect.Height() + l_yScroll, l_imageRect.Height() );
+		rDestRect.left = l_xScroll; 
+		rDestRect.top = l_yScroll;
+		rDestRect.right =  std::min( l_parentRect.Width() + l_xScroll, l_imageRect.Width() );
+		rDestRect.bottom = std::min( l_parentRect.Height() + l_yScroll, l_imageRect.Height() );
 
-		p_rSourceRect.right = static_cast< long >( std::min< double >( l_zoomFactor * ( l_xScroll + p_rDestRect.Width() ), l_sourceImageWidth ) );
-		p_rSourceRect.left = static_cast< long >( l_zoomFactor * l_xScroll );
-		p_rSourceRect.bottom = static_cast< long >( std::min< double >( l_zoomFactor * ( l_yScroll + p_rDestRect.Height() ), l_sourceImageHeight ) );
-		p_rSourceRect.top = static_cast< long >( l_zoomFactor * l_yScroll );
+		rSourceRect.right = static_cast< long >( std::min< double >( l_zoomFactor * ( l_xScroll + rDestRect.Width() ), l_sourceImageWidth ) );
+		rSourceRect.left = static_cast< long >( l_zoomFactor * l_xScroll );
+		rSourceRect.bottom = static_cast< long >( std::min< double >( l_zoomFactor * ( l_yScroll + rDestRect.Height() ), l_sourceImageHeight ) );
+		rSourceRect.top = static_cast< long >( l_zoomFactor * l_yScroll );
 
-		ClientToScreen( &p_rDestRect );
+		ClientToScreen( &rDestRect );
 	}
 	else
 	{

@@ -96,7 +96,7 @@ static const SVExtentPropertyStringMap cExtentPropertyShortNames =
 };
 
 ///contains properties of a subset of cExtentPropertyShortNames. Useful if only some extent properties are of interest and to be logged
-static const SVExtentPropertyStringMap cExtentPropertyShortNamesAbridged= 
+static const SVExtentPropertyStringMap cExtentPropertyShortNamesAbridged =
 {
 	{SvPb::SVExtentPropertyWidth, std::string("w")},
 	{SvPb::SVExtentPropertyHeight, std::string("h")},
@@ -4972,9 +4972,11 @@ bool SVImageExtentClass::isEnabled(SvPb::SVExtentPropertyEnum eProperty) const
 
 
 //Arvid: useful for debugging extents 
-void SVImageExtentClass::OutputDebugInformationOnExtent(const char* pDescription, const SVImageExtentClass* pReference) const
+bool SVImageExtentClass::OutputDebugInformationOnExtent(const char* pDescription, const SVImageExtentClass* pReference, long deltaThreshold) const
 {
 	std::stringstream info;
+
+	bool isBigDelta = false;
 
 	info.flags(std::ios::fixed);
 	info.precision(2);
@@ -4995,13 +4997,21 @@ void SVImageExtentClass::OutputDebugInformationOnExtent(const char* pDescription
 		{
 			if (nullptr != pReference)
 			{
+				OutputDebugInformationOnExtent(pDescription); //If we want delta information we usually also need information on the reference
+
 				auto referencePropertyAndValue = pReference->m_extentValues.find(propertyAndValue.first);
 				if (referencePropertyAndValue != pReference->m_extentValues.end())
 				{
 
 					if (referencePropertyAndValue->second != propertyAndValue.second)
 					{
-						info << enumAndName->second << "=" << referencePropertyAndValue->second << "->" << propertyAndValue.second;
+//						info << enumAndName->second << "=" << referencePropertyAndValue->second << "->" << propertyAndValue.second;
+						auto del = propertyAndValue.second - referencePropertyAndValue->second;
+						info << enumAndName->second << ": " << del;
+						if(deltaThreshold>0)
+						{
+							isBigDelta = (abs(del) > deltaThreshold);
+						}
 					}
 				}
 				else
@@ -5019,6 +5029,15 @@ void SVImageExtentClass::OutputDebugInformationOnExtent(const char* pDescription
 
 	info << "\n";
 
+	if (isBigDelta)
+	{
+		info << "\n\t\tBig Delta!\n\n";
+	}
+
+
+
 	OutputDebugString(info.str().c_str());
+
+	return isBigDelta;
 }
 
