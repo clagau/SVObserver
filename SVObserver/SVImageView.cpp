@@ -914,43 +914,44 @@ void SVImageView::OnLButtonDown( UINT nFlags, CPoint point )
 	}
 }
 
-void SVImageView::OnMouseMove( UINT nFlags, CPoint point) 
+void SVImageView::OnMouseMove(UINT nFlags, CPoint point)
 {
-	if( !SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&
-		TheSVObserverApp.OkToEdit() )
+	if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST) &&
+		TheSVObserverApp.OkToEdit())
 	{
 		if (m_lastMouseMovePoint == point)
 		{
 			//nothing to do here if the mouse pointer is not moving
 			return;
 		}
-		
+
+		CPoint point1 = point;
 		CPoint clientPoint = point;
 		CPoint screenPoint = point;
 
-		ClientToScreen( &screenPoint );
+		ClientToScreen(&screenPoint);
 
 		CRect rect;
 		CRect screenRect;
 
-		GetClientRect( rect );
-		GetWindowRect( screenRect );
+		GetClientRect(rect);
+		GetWindowRect(screenRect);
 
 
 		// Get Color of Mouse Point ( inside of View )
-		HDC hDC = ::GetDC( m_hWnd );
-		COLORREF color  = ::GetPixel( hDC, point.x, point.y );
-		::ReleaseDC( m_hWnd, hDC );
+		HDC hDC = ::GetDC(m_hWnd);
+		COLORREF color = ::GetPixel(hDC, point.x, point.y);
+		::ReleaseDC(m_hWnd, hDC);
 
-		BYTE redValue   = GetRValue( color );
-		BYTE greenValue = GetGValue( color );
-		BYTE blueValue  = GetBValue( color );
+		BYTE redValue = GetRValue(color);
+		BYTE greenValue = GetGValue(color);
+		BYTE blueValue = GetBValue(color);
 
 		// Compensate for Scaling of Displayed Image
-		TransformFromViewSpace( point );
+		TransformFromViewSpace(point1);
 
 		// Status Text: Mouse Pos and Color
-		std::string Text = SvUl::Format( _T(" Col: %d, Row: %d    RGB: %u/%u/%u "), point.x, point.y, redValue, greenValue, blueValue ); 
+		std::string Text = SvUl::Format(_T(" Col: %d, Row: %d    RGB: %u/%u/%u "), point1.x, point1.y, redValue, greenValue, blueValue);
 
 		HICON hCursor = nullptr;
 
@@ -960,65 +961,65 @@ void SVImageView::OnMouseMove( UINT nFlags, CPoint point)
 
 		if (m_isPicked)
 		{
-			if( nullptr != pIPDoc && m_isPicked && S_OK == GetToolExtents( extent ) )
+			if (nullptr != pIPDoc && m_isPicked && S_OK == GetToolExtents(extent))
 			{
 				CPoint startPoint = m_lastMouseMovePoint;
 
 				SVImageExtentClass tempExtent = extent;
 
-				TransformFromViewSpace( startPoint );
+				TransformFromViewSpace(startPoint);
 
-				hCursor = GetObjectCursor( m_svMousePickLocation, point );
+				hCursor = GetObjectCursor(m_svMousePickLocation, point1);
 				SVPoint<double> startSVPoint(startPoint);
-				if( (SvPb::SVExtentLocationPropertyRotate == m_svMousePickLocation ||
-					m_svMousePickLocation == extent.GetLocationPropertyAt(startSVPoint) ) &&
-					S_OK == tempExtent.Update( m_svMousePickLocation, startSVPoint, SVPoint<double>(point) ) )
+				if ((SvPb::SVExtentLocationPropertyRotate == m_svMousePickLocation ||
+					m_svMousePickLocation == extent.GetLocationPropertyAt(startSVPoint)) &&
+					S_OK == tempExtent.Update(m_svMousePickLocation, startSVPoint, SVPoint<double>(point1)))
 				{
-					bool bUpdate = S_OK == pIPDoc->UpdateExtents( m_pTool, tempExtent );
+					bool bUpdate = S_OK == pIPDoc->UpdateExtents(m_pTool, tempExtent);
 
-					if( bUpdate || rect.PtInRect( clientPoint ) )
+					if (bUpdate || rect.PtInRect(clientPoint))
 					{
-						bUpdate = bUpdate || S_OK == pIPDoc->UpdateExtentsToFit( m_pTool, tempExtent );
+						bUpdate = bUpdate || S_OK == pIPDoc->UpdateExtentsToFit(m_pTool, tempExtent);
 					}
 
-					if( bUpdate )
+					if (bUpdate)
 					{
 						long left = 0;
 						long top = 0;
 						long width = 0;
 						long height = 0;
 
-						extent.GetExtentProperty( SvPb::SVExtentPropertyPositionPointX, left );
-						extent.GetExtentProperty( SvPb::SVExtentPropertyPositionPointY, top );
-						extent.GetExtentProperty( SvPb::SVExtentPropertyWidth, width );
-						extent.GetExtentProperty( SvPb::SVExtentPropertyHeight, height );
+						extent.GetExtentProperty(SvPb::SVExtentPropertyPositionPointX, left);
+						extent.GetExtentProperty(SvPb::SVExtentPropertyPositionPointY, top);
+						extent.GetExtentProperty(SvPb::SVExtentPropertyWidth, width);
+						extent.GetExtentProperty(SvPb::SVExtentPropertyHeight, height);
 
 						// Status Text: Mouse Pos and Tool Extent
-						Text = SvUl::Format( _T(" Col: %d, Row: %d    X: %d, Y: %d    cX: %d, cY: %d "), point.x, point.y, left, top, width, height );
+						Text = SvUl::Format(_T(" Col: %d, Row: %d    X: %d, Y: %d    cX: %d, cY: %d "), point1.x, point1.y, left, top, width, height);
 					}
 				}
 			}
 			else
 			{
-				hCursor = GetObjectCursor( point );
+				hCursor = GetObjectCursor(point1);
 			}
 		}
 		else
 		{
-			hCursor = GetObjectCursor( point );
+			hCursor = GetObjectCursor(point1);
 		}
 
 		//If no icon returned then use standard arrow
 		if (nullptr == hCursor)
 		{
 			m_mouseIsOverTool = FALSE;
-			hCursor = AfxGetApp()->LoadStandardCursor( IDC_ARROW );
+			hCursor = AfxGetApp()->LoadStandardCursor(IDC_ARROW);
 		}
-		SetCursor( hCursor );
-		
-		TheSVObserverApp.SetStatusText( Text.c_str() );
+		SetCursor(hCursor);
 
-		CWnd::OnMouseMove( nFlags, point );
+		TheSVObserverApp.SetStatusText(Text.c_str());
+
+		CWnd::OnMouseMove(nFlags, point);
 	}
 
 	m_lastMouseMovePoint = point;
