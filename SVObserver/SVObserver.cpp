@@ -503,6 +503,10 @@ void SVObserverApp::OnTestMode()
 
 	if (allowAccess)
 	{
+		if (SVSVIMStateClass::CheckState(SV_STATE_REGRESSION))
+		{
+			StopRegression();
+		}
 		ExtrasEngine::Instance().ExecuteAutoSaveIfAppropriate(false);
 		Start(SV_STATE_TEST);
 		SoftwareTriggerDlg::Instance().ShowWindow(SW_SHOW);
