@@ -58,8 +58,6 @@ private:
 
 	SVToolAdjustmentDialogSheetClass* m_ParentDialog;
 
-	static const std::vector<SvPb::EmbeddedIdEnum> ms_allScaleFactorEIDs;
-
 	long m_ROITabHandle;
 	long m_OutputTabHandle;
 

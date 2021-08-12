@@ -35,6 +35,61 @@ BEGIN_MESSAGE_MAP(SVTADlgResizePage, CPropertyPage)
 END_MESSAGE_MAP()
 #pragma endregion Message Map
 
+#if defined (TRACE_THEM_ALL) || defined (TRACE_RESIZE)
+
+void traceScalefactorValues(const std::string& rHeading, const SvOg::ValueController& rVC)
+{
+	const std::vector<SvPb::EmbeddedIdEnum> allScaleFactorEIDs
+	{
+			SvPb::ExtentWidthFactorContentEId,
+			SvPb::ExtentHeightFactorContentEId,
+			SvPb::ExtentWidthFactorFormatEId,
+			SvPb::ExtentHeightFactorFormatEId
+	};
+
+	std::stringstream traceStream;
+
+	traceStream << rHeading << ":" << std::endl;
+
+	for (SvPb::EmbeddedIdEnum eid : allScaleFactorEIDs)
+	{
+		traceStream << "\t" << "'" << rVC.GetName(eid) << " (id=" << eid << ")': ";
+
+		SvOg::LinkedValueData lvd = rVC.Get<SvOg::LinkedValueData>(eid);
+
+		if (lvd.m_type == SvPb::LinkedSelectedType::None)
+		{
+			traceStream << "[None]";
+		}
+		else
+		{
+			if (lvd.m_type == SvPb::LinkedSelectedType::IndirectValue)
+			{
+				traceStream << lvd.m_indirectDotName;
+				traceStream << " -> ";
+			}
+			if (lvd.m_type == SvPb::LinkedSelectedType::Formula)
+			{
+				traceStream << lvd.m_formula;
+				traceStream << " = ";
+			}
+
+			if (lvd.m_Value.vt == VT_R8)
+			{
+				traceStream << static_cast<double> (lvd.m_Value);
+			}
+			else
+			{
+				traceStream << static_cast<CString> (lvd.m_Value).GetBuffer();
+			}
+		}
+		traceStream << std::endl;
+	}
+	OutputDebugString(traceStream.str().c_str());
+}
+
+#endif 
+
 SVTADlgResizePage::SVTADlgResizePage(uint32_t inspectionID, uint32_t taskObjectID, SVToolAdjustmentDialogSheetClass* Parent, int id)
 	: CPropertyPage(id)
 	, m_ParentDialog(Parent)
@@ -217,6 +272,12 @@ bool SVTADlgResizePage::CommitAndCheckNewParameterValues()
 {
 	CommitValuesFromDialog();
 
+#if defined (TRACE_THEM_ALL) || defined (TRACE_RESIZE)
+
+	traceScalefactorValues("Committed", m_resizeValueController);
+
+#endif 
+
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
 	auto* pRequest = requestCmd.mutable_resetallobjectsrequest();
@@ -385,3 +446,4 @@ void SVTADlgResizePage::OnFormatHeightFactorChanged()
 	m_formatScaleWidgets[Height]->EditboxToValue();
 	CommitAndCheckNewParameterValues();
 }
+
