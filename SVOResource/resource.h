@@ -1375,6 +1375,7 @@
 #define IDS_BLOB_IS_GRAY_IMAGE          14595
 #define IDS_BLOBFEATURE_ISCUSTOMFEATURE 14596
 #define IDS_OBJECTNAME_STAT_NUMBEROF_VALID_SAMPLES 14597
+#define IDS_BLOBFEATURE_ISRANGE         14598
 #define IDC_LEARN_BUTTON                15001
 #define IDC_RANGE                       15003
 #define IDC_PQ_TAB                      15010
