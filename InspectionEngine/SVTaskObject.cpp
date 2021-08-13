@@ -104,6 +104,19 @@ bool SVTaskObjectClass::resetAllObjects(SvStl::MessageContainerVector *pErrorMes
 	Result &= resetAllOutputListObjects(&m_ResetErrorMessages);
 	Result &= __super::resetAllObjects(&m_ResetErrorMessages);
 
+	m_embeddedFormulaLinked.clear();
+	for (auto* pObject : m_embeddedList)
+	{
+		if (nullptr != pObject && SvPb::LinkedValueClassId == pObject->GetClassID())
+		{
+			auto* pLinkedObject = dynamic_cast<SvVol::LinkedValue*>(pObject);
+			if (nullptr != pLinkedObject && SvPb::LinkedSelectedType::Formula == pLinkedObject->getSelectedType())
+			{
+				m_embeddedFormulaLinked.push_back(pLinkedObject);
+			}
+		}
+	}
+	
 	if (nullptr != pErrorMessages && !m_ResetErrorMessages.empty())
 	{
 		pErrorMessages->insert(pErrorMessages->end(), m_ResetErrorMessages.begin(), m_ResetErrorMessages.end());
@@ -1138,13 +1151,11 @@ bool SVTaskObjectClass::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVect
 {
 	bool bRetVal = (S_OK == updateImageExtent());
 
-	auto isLinked = [](SVObjectClass* pEntry) { return nullptr != pEntry && SvPb::LinkedValueClassId == pEntry->GetClassID(); };
-	auto transToLinked = [](SVObjectClass* pEntry) { return dynamic_cast<SvVol::LinkedValue*>(pEntry); };
-	for (auto* pLinkObject : m_embeddedList | std::views::filter(isLinked) | std::views::transform(transToLinked))
+	for (auto* pLinkedObject : m_embeddedFormulaLinked)
 	{
-		if (pLinkObject)
+		if (pLinkedObject)
 		{
-			bRetVal = pLinkObject->runEmbedded(rRunStatus, pErrorMessages) && bRetVal;
+			bRetVal = pLinkedObject->runEmbedded(rRunStatus, pErrorMessages) && bRetVal;
 		}
 	}
 

@@ -245,6 +245,7 @@ protected:
 	bool m_bSkipFirstFriend; //if true first friend will not be "run" by "runFriends". Is used for conditionalTask, because it will be run before the normal run separately.
 	//Contains a list of friend objects, which will be informed about certain actions or messages this object is doing/processing.
 	SVObjectInfoArrayClass m_friendList;
+	std::vector<SvVol::LinkedValue*> m_embeddedFormulaLinked;
 
 	std::vector<SvOl::InputObject*> m_inputs;
 
