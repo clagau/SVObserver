@@ -313,19 +313,24 @@ void SVTADlgExternalSelectDllPage::setDefaultValuesForInputs()
 	{
 		auto& rInputDef = inputDefinitions.inputvaluesdefinition()[i];
 		int LinkValueIndex = rInputDef.linkedvalueindex();
+		auto data = m_valueController.Get<SvOg::LinkedValueData>(SvPb::EmbeddedIdEnum::ExternalInputEId + LinkValueIndex);
 		if (rInputDef.type() == SvPb::ExDllInterfaceType::Scalar || rInputDef.type() == SvPb::ExDllInterfaceType::Array)
 		{
 			_variant_t value;
 			SvPb::ConvertProtobufToVariant(rInputDef.defaultvalue(), value);
-
-			m_valueController.SetDefault<_variant_t>(SvPb::EmbeddedIdEnum::ExternalInputEId + LinkValueIndex, value);
-			m_valueController.Set<_variant_t>(SvPb::EmbeddedIdEnum::ExternalInputEId + LinkValueIndex, value);
+			data.m_defaultValue = value;
+			data.m_directValue = value;
+			data.m_Value = value;
+			data.m_type = SvPb::DirectValue;
 		}
 		else if (rInputDef.type() == SvPb::ExDllInterfaceType::TableArray || rInputDef.type() == SvPb::ExDllInterfaceType::TableNames)
 		{
-			m_valueController.SetDefault<_variant_t>(SvPb::EmbeddedIdEnum::ExternalInputEId + LinkValueIndex, _variant_t());
-			m_valueController.Set<_variant_t>(SvPb::EmbeddedIdEnum::ExternalInputEId + LinkValueIndex, _variant_t());
+			data.m_defaultValue = _variant_t {};
+			data.m_directValue = _variant_t {};
+			data.m_Value = _variant_t {};
+			data.m_type = SvPb::IndirectValue;
 		}
+		m_valueController.Set<SvOg::LinkedValueData>(SvPb::EmbeddedIdEnum::ExternalInputEId + LinkValueIndex, data);
 	}
 	
 }

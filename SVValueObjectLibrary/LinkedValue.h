@@ -81,6 +81,7 @@ public:
 
 	virtual void disconnectObjectInput(uint32_t objectId) override;
 	virtual void disconnectAllInputs() override;
+	virtual void getOutputList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter) const override;
 	virtual void fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, SvOi::IsObjectAllowedFunc pFunctor, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum nameToType, SvPb::ObjectSelectorType requiredType, bool stopIfClosed = false, bool firstObject = false) const override;
 	/// Disconnected the input connection and set it to nullptr.
 	void DisconnectInput();
@@ -103,7 +104,7 @@ public:
 	virtual void Persist(SvOi::IObjectWriter& rWriter) const override;
 	virtual HRESULT SetObjectValue(SVObjectAttributeClass* PDataObject) override;
 
-	virtual bool runEmbedded(RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages);
+	bool runEmbedded(RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages);
 
 	virtual SvPb::LinkedSelectedType getSelectedType() const override;
 
@@ -156,6 +157,8 @@ private:
 	/// \param rFormula [in] The formula text.
 	/// \returns variant_t
 	variant_t validateFormula(const std::string& rFormula) const;
+
+	void setSelectedType(SvPb::LinkedSelectedType type);
 #pragma endregion Private Methods
 
 #pragma region Member Variables
@@ -164,7 +167,8 @@ private:
 	bool m_checkForValidDependency = true; //Child-LinkedValue should not check for valid dependency because it was already checked by the parent and is an indirect link.
 	mutable bool m_CircularReference;					//! Use this flag during GetValue to make sure no circular references are present
 	SVStringValueObjectClass m_Content;
-	SVEnumerateValueObjectClass m_Type;
+	SVEnumerateValueObjectClass m_TypeValue;
+	SvPb::LinkedSelectedType m_type = SvPb::None;
 
 	std::string m_oldIndirectString; //! only used during load/create phase, if old config (older than 10.20) is load.
 

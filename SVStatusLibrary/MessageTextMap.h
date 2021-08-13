@@ -627,6 +627,7 @@ namespace SvStl
 		{Tid_ErrorPpqTriggerCount, _T("The current configuration uses the variable 'PPQ_x.Trigger Count' in equations which is no longer allowed (respective tools will become invalid) as it is not synchronous to the inspection\nPlease replace all occurrences with the variable 'Tool Set.Trigger Count'")},
 		{Tid_CircularReference, _T("A circular reference has been generated")},
 		{Tid_EmptyObjectForIndirectValue, _T("Empty object for the indirect linked value")},
+		{Tid_InvalidObjectForIndirectValue, _T("An invalid object is selected.")},
 		{Tid_ErrorMemoryAllocation, _T("Memory allocation failed")},
 		{Tid_ErrorMemoryBlockDataReservedSize, _T("Size of reserved memory block data to small")},
 		{Tid_ErrorInRebuildTrcPosCache, _T("Exception in rebuild_trc_pos_cache")},

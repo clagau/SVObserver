@@ -373,9 +373,7 @@ bool SVToolExtentClass::isDirectValue(SvPb::SVExtentPropertyEnum extentProperty)
 			return true;
 		}
 
-		SvPb::LinkedValue linkedValue;
-		pLinkedObject->fillLinkedData(linkedValue);
-		return (linkedValue.type() == SvPb::DirectValue);
+		return (pLinkedObject->getSelectedType() == SvPb::DirectValue);
 	}
 	return true;
 }
@@ -426,6 +424,7 @@ HRESULT SVToolExtentClass::ensureValidScaleFactorUnlessDottedName(const SVImageE
 	{
 		if (SvTo::isValidScaleFactor(dValue))
 		{
+			//@TODO[Arvid][10.20][10.08.2021] Set a direct value to an indirect value leads to an assert (RT00100.0157.002-Resize.txt) and involved SVO-3373.
 			return SetExtentValue(extentProperty, dValue);
 		}
 		else

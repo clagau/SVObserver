@@ -206,8 +206,6 @@ public:
 	bool RegisterEmbeddedObject(SVObjectClass* pEmbeddedObject, SvPb::EmbeddedIdEnum embeddedID, int StringResourceID, bool p_bResetAlways, SvOi::SVResetItemEnum eRequiredReset);
 	bool RegisterEmbeddedObject(SVObjectClass* pEmbeddedObject, SvPb::EmbeddedIdEnum embeddedID, LPCTSTR strName, bool p_bResetAlways, SvOi::SVResetItemEnum eRequiredReset);
 
-	virtual bool runEmbedded(RunStatus&, SvStl::MessageContainerVector*) { return true; };
-
 	/// Old for loading old configs older than 10.20
 	/// Set indirect value string to LinkedValue to help to convert LinkedValue from old to new struct.
 	HRESULT setIndirectStringToObject(SvPb::EmbeddedIdEnum embeddedId, const std::vector<_variant_t>& rValueString);

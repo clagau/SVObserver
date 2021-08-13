@@ -9,6 +9,7 @@
 #include "LinkedValueSelectorDialog.h"
 #include "GridCtrlLibrary/GridCellBase.h"
 #include "GridCtrlLibrary/GridCtrl.h"
+#include "Definitions/Color.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -24,10 +25,12 @@ void setValueColumn(SvGcl::GridCtrl& rGrid, int pos, int colPos, const LinkedVal
 	rGrid.SetItemText(pos, colPos, valueString);
 	if (SvPb::LinkedSelectedType::DirectValue == rData.m_type)
 	{
+		rGrid.SetItemBkColour(pos, colPos, SvDef::White);
 		rGrid.SetItemState(pos, colPos, rGrid.GetItemState(pos, colPos) & (~GVIS_READONLY));
 	}
 	else
 	{
+		rGrid.SetItemBkColour(pos, colPos, SvDef::WhiteSmoke);
 		rGrid.SetItemState(pos, colPos, rGrid.GetItemState(pos, colPos) | GVIS_READONLY);
 	}
 }

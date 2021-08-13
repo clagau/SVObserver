@@ -127,6 +127,7 @@ SVExternalToolTask::SVExternalToolTask(SVObjectClass* POwner, int StringResource
 		imageInfo.SetExtentProperty(SvPb::SVExtentPropertyHeight, 100);
 
 		SvIe::SVImageClass* pImage = &(m_aResultImages[i]);
+		pImage->SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::OverwriteAttribute);
 		pImage->InitializeImage(SvPb::SVImageTypeEnum::SVImageTypePhysical);
 		pImage->UpdateImage(SvDef::InvalidObjectId, imageInfo);
 	}
@@ -1097,8 +1098,6 @@ void SVExternalToolTask::initializeResultImages(std::vector<std::string>& rStatu
 
 	for (int i = m_Data.m_lNumResultImages; i < SVExternalToolTaskData::NUM_RESULT_IMAGES; i++)
 	{
-		//@TODO[MZA][10.20][28.04.2021] hier sollte es nicht entfernt werden sondern versteckt, aber dann darf es auch nicht in den TRC hinzugefügt werden.
-		RemoveEmbeddedObject(&(m_aResultImages[i]));
 		SvIe::SVImageClass* pImage = &(m_aResultImages[i]);
 		pImage->SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::OverwriteAttribute);
 	}

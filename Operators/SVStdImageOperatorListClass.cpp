@@ -75,7 +75,7 @@ bool SVStdImageOperatorListClass::CreateObject(const SVObjectLevelCreateStruct& 
 	}
 
 	// We do not want the ROI image showing up as an output image.
-	m_LogicalROIImage.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
+	m_LogicalROIImage.SetObjectAttributesAllowed(SvPb::embedable, SvOi::SetAttributeType::OverwriteAttribute);
 
 	return m_isCreated;
 }

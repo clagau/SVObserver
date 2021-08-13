@@ -373,6 +373,10 @@ HRESULT SVImageClass::RebuildStorage(SvStl::MessageContainerVector *pErrorMessag
 {
 	HRESULT hr = S_OK;
 
+	if (0 == ObjectAttributesAllowed())
+	{
+		return hr;
+	}
 	
 	if (m_LastReset <= m_LastUpdate)
 	{

@@ -296,7 +296,7 @@ namespace SvOg
 			}
 
 			data.m_excludeSameLineageVector = { m_toolId };
-			data.m_stopAtId = m_toolId;
+			data.m_stopAtId = m_InspectionID;
 			LinkedValueSelectorDialog dlg(m_InspectionID, m_Values.GetObjectID(SvPb::ExternalInputEId+(pItem->iRow - 1)), m_inputData[pItem->iRow - 1].m_name, m_inputData[pItem->iRow - 1].m_data, m_inputData[pItem->iRow - 1].m_data.m_defaultValue.vt, data, nullptr, possibleType);
 			if (IDOK == dlg.DoModal())
 			{
@@ -620,10 +620,12 @@ namespace SvOg
 		m_Grid.SetItemText(pos+1, ValueColumn, valueString);
 		if (isChangeable)
 		{
+			m_Grid.SetItemBkColour(pos + 1, ValueColumn, SvDef::White);
 			m_Grid.SetItemState(pos+1, ValueColumn, m_Grid.GetItemState(pos+1, ValueColumn) & (~GVIS_READONLY));
 		}
 		else
 		{
+			m_Grid.SetItemBkColour(pos + 1, ValueColumn, SvDef::WhiteSmoke);
 			m_Grid.SetItemState(pos+1, ValueColumn, m_Grid.GetItemState(pos+1, ValueColumn) | GVIS_READONLY);
 		}
 	}

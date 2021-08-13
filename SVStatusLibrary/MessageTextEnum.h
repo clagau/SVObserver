@@ -591,6 +591,7 @@ enum MessageTextEnum
 
 	Tid_CircularReference,
 	Tid_EmptyObjectForIndirectValue,
+	Tid_InvalidObjectForIndirectValue,
 	Tid_ErrorMemoryAllocation,
 	Tid_ErrorMemoryBlockDataReservedSize,
 

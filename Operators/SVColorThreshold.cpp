@@ -327,15 +327,15 @@ void SVColorThreshold::LocalInitialize()
 	// Identify our input type needs...
 	m_BandThreshold[SvDef::BandEnum::Band0].m_InputImage.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType, SvPb::Band0ImageEId);
 	registerInputObject(&m_BandThreshold[SvDef::BandEnum::Band0].m_InputImage, _T("ColorThresholdBand0Image"), SvPb::Band0ImageInputEId);
-	m_BandThreshold[SvDef::BandEnum::Band0].m_InputImage.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
+	m_BandThreshold[SvDef::BandEnum::Band0].m_InputImage.SetObjectAttributesAllowed(SvPb::embedable, SvOi::SetAttributeType::OverwriteAttribute);;
 
 	m_BandThreshold[SvDef::BandEnum::Band1].m_InputImage.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType, SvPb::Band1ImageEId);
 	registerInputObject(&m_BandThreshold[SvDef::BandEnum::Band1].m_InputImage, _T("ColorThresholdBand1Image"), SvPb::Band1ImageInputEId);
-	m_BandThreshold[SvDef::BandEnum::Band1].m_InputImage.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
+	m_BandThreshold[SvDef::BandEnum::Band1].m_InputImage.SetObjectAttributesAllowed(SvPb::embedable, SvOi::SetAttributeType::OverwriteAttribute);;
 
 	m_BandThreshold[SvDef::BandEnum::Band2].m_InputImage.SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType, SvPb::Band2ImageEId);
 	registerInputObject(&m_BandThreshold[SvDef::BandEnum::Band2].m_InputImage, _T("ColorThresholdBand2Image"), SvPb::Band2ImageInputEId);
-	m_BandThreshold[SvDef::BandEnum::Band2].m_InputImage.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);;
+	m_BandThreshold[SvDef::BandEnum::Band2].m_InputImage.SetObjectAttributesAllowed(SvPb::embedable, SvOi::SetAttributeType::OverwriteAttribute);;
 }
 
 bool SVColorThreshold::createImages()

@@ -57,13 +57,13 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 		m_CircularReference(false)
 	{
 		const LPCSTR g_strTypeEnums = _T("None=0,Value=1,Link=2,Formula=3");
-		m_Type.SetEnumTypes(g_strTypeEnums);
+		m_TypeValue.SetEnumTypes(g_strTypeEnums);
 
 		RegisterEmbeddedObject(&m_Content, SvPb::LinkedValueContentEId, IDS_OBJECTNAME_LINKEDVALUE_CONTENT, false, SvOi::SVResetItemNone);
-		RegisterEmbeddedObject(&m_Type, SvPb::LinkedValueTypeEId, IDS_OBJECTNAME_LINKEDVALUE_TYPE, false, SvOi::SVResetItemNone);
+		RegisterEmbeddedObject(&m_TypeValue, SvPb::LinkedValueTypeEId, IDS_OBJECTNAME_LINKEDVALUE_TYPE, false, SvOi::SVResetItemNone);
 
 		m_Content.SetDefaultValue("", true);
-		m_Type.SetDefaultValue(static_cast<long>(SvPb::LinkedSelectedType::None), true);
+		m_TypeValue.SetDefaultValue(static_cast<long>(SvPb::LinkedSelectedType::None), true);
 	}
 
 	LinkedValue::~LinkedValue()
@@ -167,7 +167,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 
 	HRESULT LinkedValue::setValue(const SvPb::LinkedValue& rData)
 	{
-		m_Type.SetValue(rData.type());
+		setSelectedType(rData.type());
 		SvPb::ConvertProtobufToVariant(rData.directvalue(), m_directValue);
 		m_indirectValueRef = GetObjectReferenceForDottedName(rData.indirectdotname());
 		m_formulaString = rData.formula();
@@ -209,7 +209,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 
 	bool LinkedValue::setDirectValue(const _variant_t& rValue)
 	{
-		m_Type.SetValue(static_cast<long>(SvPb::LinkedSelectedType::DirectValue));
+		setSelectedType(SvPb::LinkedSelectedType::DirectValue);
 		m_directValue = rValue;
 		bool isOk = UpdateConnection();
 		assert(isOk);
@@ -225,7 +225,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 	bool LinkedValue::setIndirectValue(const SVObjectReference& rReference)
 	{
 		m_indirectValueRef = rReference;
-		m_Type.SetValue(static_cast<long>(SvPb::LinkedSelectedType::IndirectValue));
+		setSelectedType(SvPb::LinkedSelectedType::IndirectValue);
 		bool isOk = UpdateConnection();
 		assert(isOk);
 		return isOk;
@@ -512,6 +512,10 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 	bool LinkedValue::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 	{
 		bool ret = __super::CreateObject(rCreateStructure);
+		long lValue = 0;
+		m_TypeValue.GetValue(lValue);
+		m_type = static_cast<SvPb::LinkedSelectedType>(lValue);
+
 		m_equation.CreateObject(rCreateStructure);
 		UpdateConnection();
 		return ret;
@@ -604,6 +608,19 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 	{ 
 		DisconnectInput(); 
 		__super::disconnectAllInputs();
+	}
+
+	void LinkedValue::getOutputList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter) const
+	{
+		__super::getOutputList(inserter);
+
+		for (auto& rUniqueObject : m_children)
+		{
+			if (nullptr != rUniqueObject)
+			{
+				inserter = rUniqueObject.get();
+			}
+		}
 	}
 
 	void LinkedValue::fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, SvOi::IsObjectAllowedFunc pFunctor, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum nameToType, SvPb::ObjectSelectorType requiredType, bool stopIfClosed, bool firstObject) const
@@ -757,7 +774,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 		}
 		if (nullptr != LinkedObjectRef.getObject())	// input is another VO
 		{
-			m_Type.SetValue(static_cast<long>(SvPb::LinkedSelectedType::IndirectValue));
+			setSelectedType(SvPb::LinkedSelectedType::IndirectValue);
 			if (VT_EMPTY == m_directValue.vt)
 			{
 				m_directValue = GetDefaultValue();
@@ -767,7 +784,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 		}
 		else	// plain data
 		{
-			m_Type.SetValue(static_cast<long>(SvPb::LinkedSelectedType::DirectValue));
+			setSelectedType(SvPb::LinkedSelectedType::DirectValue);
 			assert(Result);
 			if (Result)
 			{
@@ -861,6 +878,15 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 				return false;
 			}
 		}
+		else if (0 == m_LinkedObjectRef.getObject()->ObjectAttributesAllowed())
+		{
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidObjectForIndirectValue, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				pErrorMessages->push_back(Msg);
+			}
+			return false;
+		}
 
 		auto* pTable = dynamic_cast<SvOi::ITableObject*>(m_LinkedObjectRef.getFinalObject());
 		if (nullptr != pTable)
@@ -907,10 +933,9 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 
 	UINT LinkedValue::ObjectAttributesSet(int iIndex) const
 	{
-		//@TODO[MZA][10.20][01.07.2021] Normally LinkedValue has the size of 1, but Special case: if LinkedValue a child of another LinkedValue (TableObject-Column-Object) get a ObjectAttributesSet-Size from the colum-object.
-		//But this part of the code should be improved.
 		if (getObjectAttributesSetSize() <= iIndex)
 		{
+			assert(false);
 			iIndex = 0;
 		}
 
@@ -1118,9 +1143,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 
 	SvPb::LinkedSelectedType LinkedValue::getSelectedType() const
 	{
-		long lValue = 0;
-		m_Type.GetValue(lValue);
-		return static_cast<SvPb::LinkedSelectedType>(lValue);
+		return m_type;
 	}
 
 	HRESULT LinkedValue::setIndirectStringForOldStruct(const std::vector<_variant_t>& rValueString)
@@ -1271,6 +1294,15 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 			Exception.Throw();
 		}
 		return value;
+	}
+
+	void LinkedValue::setSelectedType(SvPb::LinkedSelectedType type)
+	{
+		if (type != m_type)
+		{
+			m_type = type;
+			m_TypeValue.SetValue(type);
+		}
 	}
 #pragma endregion Private Methods
 

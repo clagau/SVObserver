@@ -378,8 +378,13 @@ namespace SvOp
 			long type;
 			m_TypeObjects[i]->GetValue(type);
 			m_objects[i]->UpdateContent();
-			constexpr UINT defaultStringValueAttributes = SvPb::viewable | SvPb::publishable | SvPb::archivable | SvPb::embedable | SvPb::dataDefinitionValue;
-			constexpr UINT defaultValueValueAttributes = SvDef::defaultValueObjectAttributes & (~SvPb::audittrail);
+			UINT defaultStringValueAttributes = SvPb::viewable | SvPb::publishable | SvPb::archivable | SvPb::embedable | SvPb::dataDefinitionValue;
+			UINT defaultValueValueAttributes = SvDef::defaultValueObjectAttributes & (~SvPb::audittrail);
+			if (SvPb::ParameterInputObjectType == GetObjectSubType())
+			{
+				defaultStringValueAttributes |= SvPb::remotelySetable;
+				defaultValueValueAttributes |= SvPb::remotelySetable;
+			}
 			SvPb::InputTypeEnum typeEnum{ type };
 			switch (typeEnum)
 			{

@@ -2609,6 +2609,7 @@ HRESULT SVObserverApp::OpenSVXFile()
 					hr = pConfig->LoadObjectAttributesSet(XMLTree, std::inserter(objectAttributeList, objectAttributeList.end()));
 					if (S_OK == hr)
 					{
+						//Set ObjectAttributes needs before RebuildInputOutputLists, because digital Output will be set in this method and then the attributes must be set.
 						pConfig->SetObjectAttributes(objectAttributeList);
 					}
 					else if (hr & SvDef::svErrorCondition)
@@ -2633,6 +2634,11 @@ HRESULT SVObserverApp::OpenSVXFile()
 					}
 
 					pConfig->RebuildInputOutputLists(true);
+					if (S_OK == hr)
+					{
+						//Set ObjectAttributes also after RebuildInputOutputLists, because the LinkedValue-Children will be create in this function.
+						pConfig->SetObjectAttributes(objectAttributeList);
+					}
 
 					if (pConfig->IsConfigurationLoaded())
 					{

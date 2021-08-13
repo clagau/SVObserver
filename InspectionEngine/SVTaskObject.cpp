@@ -102,7 +102,6 @@ bool SVTaskObjectClass::resetAllObjects(SvStl::MessageContainerVector *pErrorMes
 	}
 
 	Result &= resetAllOutputListObjects(&m_ResetErrorMessages);
-
 	Result &= __super::resetAllObjects(&m_ResetErrorMessages);
 
 	if (nullptr != pErrorMessages && !m_ResetErrorMessages.empty())
@@ -1001,7 +1000,7 @@ bool SVTaskObjectClass::resetAllOutputListObjects(SvStl::MessageContainerVector 
 	{
 		SVObjectClass* pObject = *Iter;
 
-		if (nullptr != pObject)
+		if (nullptr != pObject && pObject->ObjectAttributesAllowed())
 		{
 			//the error of this embedded objects must be saved by this object.
 			Result = pObject->resetAllObjects(pErrorMessages) && Result;
@@ -1139,11 +1138,13 @@ bool SVTaskObjectClass::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVect
 {
 	bool bRetVal = (S_OK == updateImageExtent());
 
-	for (auto* pObject : m_embeddedList)
+	auto isLinked = [](SVObjectClass* pEntry) { return nullptr != pEntry && SvPb::LinkedValueClassId == pEntry->GetClassID(); };
+	auto transToLinked = [](SVObjectClass* pEntry) { return dynamic_cast<SvVol::LinkedValue*>(pEntry); };
+	for (auto* pLinkObject : m_embeddedList | std::views::filter(isLinked) | std::views::transform(transToLinked))
 	{
-		if (pObject)
+		if (pLinkObject)
 		{
-			bRetVal = pObject->runEmbedded(rRunStatus, pErrorMessages) && bRetVal;
+			bRetVal = pLinkObject->runEmbedded(rRunStatus, pErrorMessages) && bRetVal;
 		}
 	}
 

@@ -523,7 +523,7 @@ HRESULT SVObjectClass::SetObjectValue(SVObjectAttributeClass* pDataObject)
 		SvCl::SVObjectDWordArrayClass svDWordArray;
 		SvCl::SVObjectStdStringArrayClass StringArray;
 
-		if( true == (bOk = pDataObject->GetAttributeData(_T("AttributesSet"), svDWordArray)))
+		if( true == (bOk = pDataObject->GetAttributeData(scAttributesSetTag, svDWordArray)))
 		{
 			int iSize = static_cast<int> (svDWordArray.size());
 			{
