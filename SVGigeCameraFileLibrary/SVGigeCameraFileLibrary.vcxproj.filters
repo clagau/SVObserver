@@ -24,19 +24,13 @@
     <ClCompile Include="SVGigeCameraParamValidateClass.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVGigeCameraProxy.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVCustomParameterBuilder.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVGigeCameraStruct.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVGigeCameraManager.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVMatroxGigeCameraProxy.cpp">
+    <ClCompile Include="SVGigeCameraProxy.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
@@ -50,19 +44,13 @@
     <ClInclude Include="SVGigeCameraParamValidateClass.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVGigeCameraProxy.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVCustomParameterBuilder.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVGigeCameraStruct.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVGigeCameraManager.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVMatroxGigeCameraProxy.h">
+    <ClInclude Include="SVGigeCameraProxy.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

@@ -21,7 +21,7 @@
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVObjectLibrary/SVObserverTemplate.h"
 #include "SVOLibrary/SVQueueObject.h"
-#include "SVOLibrary/TriggerDevice.h"
+#include "Triggering/TriggerDevice.h"
 #include "SVSharedMemoryLibrary/SMRingbuffer.h"
 #include "SVSystemLibrary/SVAsyncProcedure.h"
 #include "SVValueObjectLibrary/BasicValueObjects.h"

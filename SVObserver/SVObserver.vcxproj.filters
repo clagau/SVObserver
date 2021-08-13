@@ -501,6 +501,9 @@
     <ClCompile Include="SheetForExternalToolAdjustment.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="TADialogLinearResultRangesPage.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="SVObserver.odl">
@@ -904,9 +907,6 @@
     <ClInclude Include="SVROIFigureEditor.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVSetupDialogManager.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVShiftToolUtility.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -1055,6 +1055,12 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SheetForExternalToolAdjustment.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVSetupDialogManager.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="TADialogLinearResultRangesPage.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

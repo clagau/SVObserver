@@ -102,6 +102,7 @@
     <ClInclude Include="SVDigitizerProcessingClass.h" />
     <ClInclude Include="SVExtentPropertyInfoStruct.h" />
     <ClInclude Include="SVFileAcquisitionClass.h" />
+    <ClInclude Include="SVGigeCameraManager.h" />
     <ClInclude Include="SVGlobalHandles.h" />
     <ClInclude Include="SVImageBuffer.h" />
     <ClInclude Include="SVImageClass.h" />
@@ -111,6 +112,7 @@
     <ClInclude Include="SVIPResultItemDefinition.h" />
     <ClInclude Include="SVMainImageClass.h" />
     <ClInclude Include="SVMatroxGigeAcquisitionClass.h" />
+    <ClInclude Include="SVMatroxGigeCameraProxy.h" />
     <ClInclude Include="SVObjectAppClass.h" />
     <ClInclude Include="SVTaskObject.h" />
     <ClInclude Include="SVTaskObjectList.h" />
@@ -131,6 +133,7 @@
     <ClCompile Include="SVDataBuffer.cpp" />
     <ClCompile Include="SVDigitizerProcessingClass.cpp" />
     <ClCompile Include="SVFileAcquisitionClass.cpp" />
+    <ClCompile Include="SVGigeCameraManager.cpp" />
     <ClCompile Include="SVImageBuffer.cpp" />
     <ClCompile Include="SVImageClass.cpp" />
     <ClCompile Include="SVImageProcessingClass.cpp" />
@@ -139,6 +142,7 @@
     <ClCompile Include="SVIPResultItemDefinition.cpp" />
     <ClCompile Include="SVMainImageClass.cpp" />
     <ClCompile Include="SVMatroxGigeAcquisitionClass.cpp" />
+    <ClCompile Include="SVMatroxGigeCameraProxy.cpp" />
     <ClCompile Include="SVObjectAppClass.cpp" />
     <ClCompile Include="SVTaskObject.cpp" />
     <ClCompile Include="SVTaskObjectList.cpp" />

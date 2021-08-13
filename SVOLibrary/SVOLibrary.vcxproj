@@ -98,11 +98,11 @@
     <ClCompile Include="SVLutTransform.cpp" />
     <ClCompile Include="SVQueueObject.cpp" />
     <ClCompile Include="SVTriggerDeviceParams.cpp" />
-    <ClCompile Include="TriggerDevice.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AcquisitionDevice.h" />
     <ClInclude Include="CameraInfo.h" />
+    <ClInclude Include="ObsoleteItemChecker.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SVAcquisitionConstructParams.h" />
     <ClInclude Include="SVContainableCriticalSection.h" />
@@ -116,9 +116,9 @@
     <ClInclude Include="SVOLibrary.h" />
     <ClInclude Include="SVQueueObject.h" />
     <ClInclude Include="SVTriggerDeviceParams.h" />
-    <ClInclude Include="TriggerDevice.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="ObsoleteItemChecker.inl" />
     <None Include="SVContainableCriticalSection.inl" />
     <None Include="SVMemoryManager.inl" />
     <None Include="SVTQueueObject.inl" />

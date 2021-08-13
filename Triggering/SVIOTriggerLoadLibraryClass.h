@@ -27,15 +27,17 @@ typedef _variant_t(WINAPI *SVTriggerGetParameterNamePtr)(unsigned long, unsigned
 typedef _variant_t (WINAPI *SVTriggerGetParameterValuePtr)(unsigned long, unsigned long);
 typedef HRESULT (WINAPI *SVTriggerSetParameterValuePtr)(unsigned long, unsigned long, const _variant_t&);
 
-class SVIOTriggerLoadLibraryClass  
+namespace SvTrig
+{
+class SVIOTriggerLoadLibraryClass
 {
 public:
 	SVIOTriggerLoadLibraryClass() = default;
 	~SVIOTriggerLoadLibraryClass();
 
-	HRESULT Open( LPCTSTR libraryPath );
+	HRESULT Open(LPCTSTR libraryPath);
 	HRESULT Close();
-	
+
 	unsigned long GetCount() const;
 	unsigned long GetHandle(unsigned long index) const;
 	_variant_t GetName(unsigned long triggerIndex) const;
@@ -65,3 +67,4 @@ private:
 	SVTriggerGetParameterValuePtr m_pGetParameterValue {nullptr};
 	SVTriggerSetParameterValuePtr m_pSetParameterValue {nullptr};
 };
+}

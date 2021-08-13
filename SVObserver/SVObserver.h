@@ -13,7 +13,7 @@
 
 #pragma region Includes
 #include "Triggering/SVDigitizerLoadLibraryClass.h"
-#include "SVIOLibrary/SVIOTriggerLoadLibraryClass.h"
+#include "Triggering/SVIOTriggerLoadLibraryClass.h"
 #include "InitialInformationHandler.h"
 #include "SVSecurity/SVSecurityManager.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"

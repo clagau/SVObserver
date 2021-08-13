@@ -23,7 +23,7 @@
 #include "SVOLibrary/SVHardwareManifest.h"
 #include "SVMatroxGigeAcquisitionClass.h"
 #include "SVGigeCameraFileLibrary/SVGigeCameraStruct.h"
-#include "SVGigeCameraFileLibrary/SVGigeCameraManager.h"
+#include "SVGigeCameraManager.h"
 #include "Definitions/GlobalConst.h"
 #include "Definitions/TextDefineSvDef.h"
 #include "SVUtilityLibrary/StringHelper.h"

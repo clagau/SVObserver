@@ -16,7 +16,7 @@
 #include "SVTriggerConstants.h"
 #include "SVTriggerInfoStruct.h"
 #include "SVTriggerObject.h"
-#include "SVIOLibrary/SVIOTriggerLoadLibraryClass.h"
+#include "SVIOTriggerLoadLibraryClass.h"
 #include "SVUtilityLibrary/SVClock.h"
 #pragma endregion Includes
 

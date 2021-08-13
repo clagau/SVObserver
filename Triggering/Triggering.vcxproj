@@ -92,15 +92,18 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="SVDigitizerLoadLibraryClass.cpp" />
+    <ClCompile Include="SVIOTriggerLoadLibraryClass.cpp" />
     <ClCompile Include="SVOTriggerList.cpp" />
     <ClCompile Include="SVTriggerClass.cpp" />
     <ClCompile Include="SVTriggerObject.cpp" />
     <ClCompile Include="SVTriggerProcessingClass.cpp" />
+    <ClCompile Include="TriggerDevice.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="IODeviceBase.h" />
     <ClInclude Include="Stdafx.h" />
     <ClInclude Include="SVDigitizerLoadLibraryClass.h" />
+    <ClInclude Include="SVIOTriggerLoadLibraryClass.h" />
     <ClInclude Include="SVOTriggerList.h" />
     <ClInclude Include="SVOTriggerObj.h" />
     <ClInclude Include="SVTriggerClass.h" />
@@ -108,6 +111,7 @@
     <ClInclude Include="SVTriggerInfoStruct.h" />
     <ClInclude Include="SVTriggerObject.h" />
     <ClInclude Include="SVTriggerProcessingClass.h" />
+    <ClInclude Include="TriggerDevice.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

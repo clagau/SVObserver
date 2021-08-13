@@ -12,7 +12,7 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <map>
-#include "SVGigeCameraStruct.h"
+#include "SVGigeCameraFileLibrary/SVGigeCameraStruct.h"
 #pragma endregion Includes
 
 class SVGigeCameraManager  

@@ -15,7 +15,7 @@
 #include "Definitions/TriggerType.h"
 #include "SVOResource/resource.h"
 #include "SVObjectLibrary/SVObjectClass.h"
-#include "SVOLibrary/TriggerDevice.h"
+#include "TriggerDevice.h"
 #pragma endregion Includes
 
 //Namespace used only for forward declaration

@@ -12,14 +12,14 @@
 
 #pragma region Includes
 #include "Definitions/TriggerType.h"
-#include "SVOLibrary/TriggerDevice.h"
+#include "TriggerDevice.h"
 #include "SVTriggerInfoStruct.h"
 #pragma endregion Includes
 
-class SVIOTriggerLoadLibraryClass;
 
 namespace SvTrig
 {
+class SVIOTriggerLoadLibraryClass;
 class SVDigitizerLoadLibraryClass;
 
 struct AcquisitionParameter

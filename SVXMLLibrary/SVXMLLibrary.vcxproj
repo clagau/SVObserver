@@ -110,7 +110,6 @@
   <ItemGroup>
     <ClInclude Include="ISaxElementHandler.h" />
     <ClInclude Include="LoadConfiguration.h" />
-    <ClInclude Include="ObsoleteItemChecker.h" />
     <ClInclude Include="SaxContentHandler.h" />
     <ClInclude Include="SaxEncryptionHandler.h" />
     <ClInclude Include="SaxErrorHandler.h" />
@@ -135,7 +134,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="LoadConfiguration.inl" />
-    <None Include="ObsoleteItemChecker.inl" />
     <None Include="SaxXMLHandler.inl" />
     <None Include="SVNavigateTree.inl" />
     <None Include="SVXMLTree.inl" />

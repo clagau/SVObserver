@@ -1,13 +1,14 @@
 //*****************************************************************************
 // \copyright COPYRIGHT (c) 2015 by Seidenader Maschinenbau GmbH
 // All Rights Reserved
+// ObsoleteItemChecker.inl
 //*****************************************************************************
 // This is the Configuration Obsolete Item checker
 //******************************************************************************
 
 #pragma region Includes
-#include "SVConfigurationTags.h"
-#include "SVNavigateTree.h"
+#include "SVXMLLibrary/SVConfigurationTags.h"
+#include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes

@@ -16,7 +16,10 @@
 #pragma endregion Includes
 
 class SVIOConfigurationInterfaceClass;
-class SVIOTriggerLoadLibraryClass;
+namespace SvTrig
+{
+	class SVIOTriggerLoadLibraryClass;
+}
 
 enum IOBoardType
 {
@@ -102,7 +105,7 @@ public:
 	int nSpeed;
 	int nSeq;
 
-	SVIOTriggerLoadLibraryClass *m_psvTriggers;
+	SvTrig::SVIOTriggerLoadLibraryClass *m_psvTriggers;
 
 	long m_lSystemType;
 

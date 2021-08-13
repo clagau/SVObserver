@@ -27,9 +27,6 @@
     <ClCompile Include="AcquisitionDevice.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="TriggerDevice.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVTriggerDeviceParams.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -71,9 +68,6 @@
     <ClInclude Include="AcquisitionDevice.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="TriggerDevice.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVIMTypeInfoStruct.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -95,6 +89,9 @@
     <ClInclude Include="SVAcquisitionConstructParams.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="ObsoleteItemChecker.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SVContainableCriticalSection.inl">
@@ -104,6 +101,9 @@
       <Filter>Headerdateien</Filter>
     </None>
     <None Include="SVMemoryManager.inl">
+      <Filter>Headerdateien</Filter>
+    </None>
+    <None Include="ObsoleteItemChecker.inl">
       <Filter>Headerdateien</Filter>
     </None>
   </ItemGroup>

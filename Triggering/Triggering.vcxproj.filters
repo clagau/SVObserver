@@ -36,6 +36,12 @@
     <ClCompile Include="SVTriggerProcessingClass.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="TriggerDevice.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVIOTriggerLoadLibraryClass.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Stdafx.h">
@@ -66,6 +72,12 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVTriggerProcessingClass.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="TriggerDevice.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVIOTriggerLoadLibraryClass.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

@@ -59,6 +59,7 @@
 
 #pragma warning(push)
 #pragma warning(disable : 4244 4458 4459)
+#include <boost/algorithm/string.hpp>
 #include <boost/graph/adjacency_list.hpp>				//Used by static library
 #include <boost/graph/depth_first_search.hpp>			//Used by static library
 #include <boost/graph/breadth_first_search.hpp>			//Used by static library

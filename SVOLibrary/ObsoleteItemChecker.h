@@ -1,13 +1,14 @@
 //*****************************************************************************
 // \copyright COPYRIGHT (c) 2016 by Seidenader Maschinenbau GmbH
 // All Rights Reserved
+// ObsoleteItemChecker.h
 //*****************************************************************************
 // This is the Configuration Obsolete Item checker
 //******************************************************************************
 #pragma once
 
 #pragma region Includes
-#include "SVOLibrary/SVHardwareManifest.h"
+#include "SVHardwareManifest.h"
 #pragma endregion Includes
 
 namespace SvXml

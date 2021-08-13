@@ -122,7 +122,6 @@
     <ClCompile Include="SVIOConfigurationInterfaceClass.cpp" />
     <ClCompile Include="SVIODigitalLoadLibraryClass.cpp" />
     <ClCompile Include="SVIOEntryHostStruct.cpp" />
-    <ClCompile Include="SVIOTriggerLoadLibraryClass.cpp" />
     <ClCompile Include="SVOutputObjectList.cpp" />
     <ClCompile Include="SVRemoteInputObject.cpp" />
     <ClCompile Include="SVRemoteOutputObject.cpp" />
@@ -139,7 +138,6 @@
     <ClInclude Include="SVIODigitalStruct.h" />
     <ClInclude Include="SVIOEntryHostStruct.h" />
     <ClInclude Include="SVIOParameterEnum.h" />
-    <ClInclude Include="SVIOTriggerLoadLibraryClass.h" />
     <ClInclude Include="SVOutputObject.h" />
     <ClInclude Include="SVOutputObjectList.h" />
     <ClInclude Include="SVRemoteInputObject.h" />

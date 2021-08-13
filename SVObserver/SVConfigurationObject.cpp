@@ -43,7 +43,7 @@
 #include "SVIOLibrary/SVDigitalOutputObject.h"
 #include "SVIOLibrary/SVInputObjectList.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
-#include "SVIOLibrary/SVIOTriggerLoadLibraryClass.h"
+#include "Triggering/SVIOTriggerLoadLibraryClass.h"
 #include "SVIOLibrary/SVOutputObjectList.h"
 #include "SVIOLibrary/SVRemoteInputObject.h"
 #include "SVFileSystemLibrary/SVFileNameManagerClass.h"

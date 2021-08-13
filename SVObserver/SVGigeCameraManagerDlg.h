@@ -11,7 +11,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVGigeCameraFileLibrary/SVGigeCameraManager.h"
+#include "InspectionEngine/SVGigeCameraManager.h"
 #pragma endregion Includes
 
 class SVGigeCameraManagerDlg : public CDialog

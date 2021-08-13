@@ -12,6 +12,7 @@
 #include "TADialogLinearResultRangesPage.h"
 #include "SVObserver/SVSetupDialogManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
+#include "SVOGui/DataController.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -20,44 +21,40 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-namespace SvOg
-{
 	// TADialogLinearResultRangesPage
 
 
-	TADialogLinearResultRangesPage::TADialogLinearResultRangesPage(uint32_t inspectionId, uint32_t taskObjectId)
-		: CPropertyPage(TADialogLinearResultRangesPage::IDD)
-		, m_InspectionID{ inspectionId }
-		, m_TaskObjectID{ taskObjectId }
-		, m_pValueController (nullptr)
-	{
-
-	}
-
-	TADialogLinearResultRangesPage::~TADialogLinearResultRangesPage()
-	{
-	}
-
-
-	BEGIN_MESSAGE_MAP(TADialogLinearResultRangesPage, CPropertyPage)
-		//{{AFX_MSG_MAP(TADialogLinearResultRangesPage)
-		ON_BN_CLICKED(IDC_BTN_RANGE_MIN, &TADialogLinearResultRangesPage::OnBnClickedBtnRangeMin)
-		ON_BN_CLICKED(IDC_BTN_RANGE_MAX, &TADialogLinearResultRangesPage::OnBnClickedBtnRangeMax)
-		ON_BN_CLICKED(IDC_BTN_RANGE_DELTA, &TADialogLinearResultRangesPage::OnBnClickedBtnRangeDelta)
-		//}}AFX_MSG_MAP
-	END_MESSAGE_MAP()
+TADialogLinearResultRangesPage::TADialogLinearResultRangesPage(uint32_t inspectionId, uint32_t taskObjectId)
+	: CPropertyPage(TADialogLinearResultRangesPage::IDD)
+	, m_InspectionID{ inspectionId }
+	, m_TaskObjectID{ taskObjectId }
+	, m_pValueController (nullptr)
+{
 
 }
 
+TADialogLinearResultRangesPage::~TADialogLinearResultRangesPage()
+{
+}
+
+
+BEGIN_MESSAGE_MAP(TADialogLinearResultRangesPage, CPropertyPage)
+	//{{AFX_MSG_MAP(TADialogLinearResultRangesPage)
+	ON_BN_CLICKED(IDC_BTN_RANGE_MIN, &TADialogLinearResultRangesPage::OnBnClickedBtnRangeMin)
+	ON_BN_CLICKED(IDC_BTN_RANGE_MAX, &TADialogLinearResultRangesPage::OnBnClickedBtnRangeMax)
+	ON_BN_CLICKED(IDC_BTN_RANGE_DELTA, &TADialogLinearResultRangesPage::OnBnClickedBtnRangeDelta)
+	//}}AFX_MSG_MAP
+END_MESSAGE_MAP()
+
 // TADialogLinearResultRangesPage message handlers
-BOOL SvOg::TADialogLinearResultRangesPage::OnInitDialog()
+BOOL TADialogLinearResultRangesPage::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 
 	auto operatorListObjectId = getOperatorListObjectId();
 	if (0 != operatorListObjectId)
 	{
-		m_pValueController = std::make_unique<ValueController>(BoundValues{ m_InspectionID, operatorListObjectId, true });
+		m_pValueController = std::make_unique<SvOg::ValueController>(SvOg::BoundValues{ m_InspectionID, operatorListObjectId, true });
 		m_pValueController->Init();
 	}
 	std::map<uint32_t, SvPb::EmbeddedIdEnum> valueObjectIdEmbeddedIdMap {
@@ -82,7 +79,7 @@ BOOL SvOg::TADialogLinearResultRangesPage::OnInitDialog()
 				  // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void SvOg::TADialogLinearResultRangesPage::OnBnClickedBtnRangeMin()
+void TADialogLinearResultRangesPage::OnBnClickedBtnRangeMin()
 {
 	if (false == setRanges(SvPb::EmbeddedIdEnum::LinearThresholdMinEId))
 	{
@@ -92,7 +89,7 @@ void SvOg::TADialogLinearResultRangesPage::OnBnClickedBtnRangeMin()
 }
 
 
-void SvOg::TADialogLinearResultRangesPage::OnBnClickedBtnRangeMax()
+void TADialogLinearResultRangesPage::OnBnClickedBtnRangeMax()
 {
 	if (false == setRanges(SvPb::EmbeddedIdEnum::LinearThresholdMaxEId))
 	{
@@ -102,7 +99,7 @@ void SvOg::TADialogLinearResultRangesPage::OnBnClickedBtnRangeMax()
 }
 
 
-void SvOg::TADialogLinearResultRangesPage::OnBnClickedBtnRangeDelta()
+void TADialogLinearResultRangesPage::OnBnClickedBtnRangeDelta()
 {
 	if (false == setRanges(SvPb::EmbeddedIdEnum::LinearThresholdDeltaEId))
 	{
@@ -111,7 +108,7 @@ void SvOg::TADialogLinearResultRangesPage::OnBnClickedBtnRangeDelta()
 	}
 }
 
-bool SvOg::TADialogLinearResultRangesPage::setRanges(SvPb::EmbeddedIdEnum embeddedId)
+bool TADialogLinearResultRangesPage::setRanges(SvPb::EmbeddedIdEnum embeddedId)
 {
 	auto resultSetup = SVSetupDialogManager::Instance().SetupDialog(SvPb::DoubleResultClassId, m_ValueEmbeddedIdResultMap[embeddedId], this);
 	// SetupDialog() returns S_FALSE if the user press Cancel, which is NOT an error! Therefore the test below. 
@@ -124,7 +121,7 @@ bool SvOg::TADialogLinearResultRangesPage::setRanges(SvPb::EmbeddedIdEnum embedd
 }
 
 
-uint32_t SvOg::TADialogLinearResultRangesPage::getOperatorListObjectId()
+uint32_t TADialogLinearResultRangesPage::getOperatorListObjectId()
 {
 	uint32_t operatorListObjectId = 0U;
 	SvPb::InspectionCmdRequest requestCmd;
@@ -149,7 +146,7 @@ uint32_t SvOg::TADialogLinearResultRangesPage::getOperatorListObjectId()
 	return operatorListObjectId;
 }
 
-std::vector<SvPb::TaskObjectInfo> SvOg::TADialogLinearResultRangesPage::getResults(uint32_t operatorListObjectId)
+std::vector<SvPb::TaskObjectInfo> TADialogLinearResultRangesPage::getResults(uint32_t operatorListObjectId)
 {
 	std::vector<SvPb::TaskObjectInfo> results;
 	SvPb::InspectionCmdRequest requestCmd;
@@ -174,7 +171,7 @@ std::vector<SvPb::TaskObjectInfo> SvOg::TADialogLinearResultRangesPage::getResul
 	return results;
 }
 
-std::vector<SvPb::InputNameObjectNameIdPair> SvOg::TADialogLinearResultRangesPage::getMatchedInputsObjectsForResult(uint32_t resultId, 
+std::vector<SvPb::InputNameObjectNameIdPair> TADialogLinearResultRangesPage::getMatchedInputsObjectsForResult(uint32_t resultId, 
 	const std::map<uint32_t, SvPb::EmbeddedIdEnum>& valueObjects)
 {
 	std::vector<SvPb::InputNameObjectNameIdPair> results;

@@ -15,7 +15,12 @@
 #include "resource.h"
 #pragma endregion Includes
 
-class SVIOTriggerLoadLibraryClass;
+
+namespace SvTrig
+{
+	class SVIOTriggerLoadLibraryClass;
+}
+
 
 class SVTriggerSetupDlgClass : public CDialog
 {
@@ -24,7 +29,7 @@ public:
 	SVTriggerSetupDlgClass(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~SVTriggerSetupDlgClass();
 
-	SVIOTriggerLoadLibraryClass *m_psvTriggers;
+	SvTrig::SVIOTriggerLoadLibraryClass *m_psvTriggers;
 	long m_lStrobeInverts;
 	long m_lTrigInverts;
 	long m_lSystemType;

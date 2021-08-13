@@ -90,6 +90,12 @@
     <ClInclude Include="SVVirtualCamera.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="SVGigeCameraManager.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVMatroxGigeCameraProxy.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ResultViewItemDef.cpp">
@@ -159,6 +165,12 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVVirtualCamera.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVGigeCameraManager.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVMatroxGigeCameraProxy.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>

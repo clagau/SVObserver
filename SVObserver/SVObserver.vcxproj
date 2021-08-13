@@ -358,6 +358,7 @@ echo %time%
     <ClCompile Include="SVUtilities.cpp" />
     <ClCompile Include="SVUtilitiesCustomizeDialog.cpp" />
     <ClCompile Include="SVVisionProcessorHelper.cpp" />
+    <ClCompile Include="TADialogLinearResultRangesPage.cpp" />
     <ClCompile Include="ToolClipboard.cpp" />
     <ClCompile Include="ToolSetView.cpp" />
     <ClCompile Include="WebSocketSettingsLoader.cpp" />
@@ -552,6 +553,7 @@ echo %time%
     <ClInclude Include="SVUtilitiesCustomizeDialog.h" />
     <ClInclude Include="SVVisionProcessorConstants.h" />
     <ClInclude Include="SVVisionProcessorHelper.h" />
+    <ClInclude Include="TADialogLinearResultRangesPage.h" />
     <ClInclude Include="TextDefinesSvO.h" />
     <ClInclude Include="ToolClipboard.h" />
     <ClInclude Include="ToolSetView.h" />

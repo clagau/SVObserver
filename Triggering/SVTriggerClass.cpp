@@ -15,7 +15,7 @@
 #include "SVDigitizerLoadLibraryClass.h"
 #include "SVTriggerClass.h"
 #include "Definitions/SVGigeEnums.h"
-#include "SVIOLibrary/SVIOTriggerLoadLibraryClass.h"
+#include "SVIOTriggerLoadLibraryClass.h"
 #include "Triggering/SVTriggerConstants.h"
 #pragma endregion Includes
 

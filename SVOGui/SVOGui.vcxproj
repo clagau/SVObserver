@@ -193,7 +193,6 @@
     <ClCompile Include="SVToolAdjustmentLUTPage.cpp" />
     <ClCompile Include="SVWaterShedFilterDlg.cpp" />
     <ClCompile Include="TADialogGroupToolResultPage.cpp" />
-    <ClCompile Include="TADialogLinearResultRangesPage.cpp" />
     <ClCompile Include="TADialogLoopToolParameterPage.cpp" />
     <ClCompile Include="TADialogRingBufferParameterPage.cpp" />
     <ClCompile Include="TADialogTableDefinesPage.cpp" />
@@ -286,8 +285,6 @@
     <ClInclude Include="SVToolAdjustmentDialogTwoImagePage.h" />
     <ClInclude Include="SVToolAdjustmentLUTPage.h" />
     <ClInclude Include="SVWaterShedFilterDlg.h" />
-    <ClInclude Include="TADialogGroupToolResultPage.h" />
-    <ClInclude Include="TADialogLinearResultRangesPage.h" />
     <ClInclude Include="TADialogLoopToolParameterPage.h" />
     <ClInclude Include="TADialogRingBufferParameterPage.h" />
     <ClInclude Include="TADialogTableDefinesPage.h" />

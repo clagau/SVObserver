@@ -16,7 +16,7 @@
 	#error include 'stdafx.h' before including this file for PCH
 #endif
 
-#include "SVIOLibrary/SVIOTriggerLoadLibraryClass.h"
+#include "Triggering/SVIOTriggerLoadLibraryClass.h"
 #pragma endregion Includes
 
 static int SVMEBoardNumber = 0;
@@ -42,5 +42,5 @@ public:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
-	SVIOTriggerLoadLibraryClass m_svTriggers;
+	SvTrig::SVIOTriggerLoadLibraryClass m_svTriggers;
 };

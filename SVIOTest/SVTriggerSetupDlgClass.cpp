@@ -14,7 +14,7 @@
 #include "SVTriggerSetupDlgClass.h"
 #include "SVIOTestDlg.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
-#include "SVIOLibrary/SVIOTriggerLoadLibraryClass.h"
+#include "Triggering/SVIOTriggerLoadLibraryClass.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG

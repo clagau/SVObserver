@@ -14,7 +14,7 @@
 #include "SVTriggerProcessingClass.h"
 #include "SVOLibrary/SVHardwareManifest.h"
 #include "Triggering/SVTriggerClass.h"
-#include "SVIOLibrary/SVIOTriggerLoadLibraryClass.h"
+#include "SVIOTriggerLoadLibraryClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 

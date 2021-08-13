@@ -11,7 +11,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVIOLibrary/SVIOTriggerLoadLibraryClass.h"
+#include "Triggering/SVIOTriggerLoadLibraryClass.h"
 #include "SVLibrary/InitialInformation.h"
 #include "Triggering/SVDigitizerLoadLibraryClass.h"
 #pragma endregion Includes
@@ -60,9 +60,9 @@ private:
 	SvTrig::SVDigitizerLoadLibraryClass m_dllDigitizers;
 	SvTrig::SVDigitizerLoadLibraryClass m_dllFileAcquisition;
 
-	SVIOTriggerLoadLibraryClass m_svDLLTriggers;
-	SVIOTriggerLoadLibraryClass m_svDLLSoftwareTriggers;
-	SVIOTriggerLoadLibraryClass m_svDLLCameraTriggers;
+	SvTrig::SVIOTriggerLoadLibraryClass m_svDLLTriggers;
+	SvTrig::SVIOTriggerLoadLibraryClass m_svDLLSoftwareTriggers;
+	SvTrig::SVIOTriggerLoadLibraryClass m_svDLLCameraTriggers;
 
 	SvLib::InitialInformation m_InitialInfo;
 #pragma endregion Member variables
