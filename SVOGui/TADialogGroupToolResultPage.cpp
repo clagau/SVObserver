@@ -413,7 +413,15 @@ namespace SvOg
 					Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_UnknownException, SvStl::SourceFileParams(StdMessageParams));
 				}
 			}
-			return (S_OK == hr);
+			if (S_OK == hr)
+			{
+				loadDataList();
+				return true;
+			}
+			else
+			{
+				return false;
+			}
 		}
 		catch (const SvStl::MessageContainer& rSvE)
 		{
@@ -584,8 +592,9 @@ namespace SvOg
 		bool bMoveDownEnable = false;
 		if (Selection.GetMinRow() == Selection.GetMaxRow())
 		{
-			bMoveUpEnable = (1 < Selection.GetMinRow() && Selection.GetMinRow() <= m_resultData.size());
-			bMoveDownEnable = (0 < Selection.GetMinRow() && Selection.GetMinRow() + 2 < m_Grid.GetRowCount());
+			int pos = Selection.GetMinRow(); //GetMaxRow identically
+			bMoveUpEnable = (1 < pos && pos <= m_resultData.size());
+			bMoveDownEnable = (0 < pos && pos + 1 < m_Grid.GetRowCount());
 		}
 
 		GetDlgItem(IDC_BUTTON_MOVEUP)->EnableWindow(bMoveUpEnable);

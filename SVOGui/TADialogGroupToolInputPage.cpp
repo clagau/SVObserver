@@ -495,7 +495,15 @@ namespace SvOg
 					Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_UnknownException, SvStl::SourceFileParams(StdMessageParams));
 				}
 			}
-			return (S_OK == hr);
+			if (S_OK == hr)
+			{
+				loadDataList();
+				return true;
+			}
+			else
+			{
+				return false;
+			}
 		}
 		catch (const SvStl::MessageContainer& rSvE)
 		{
