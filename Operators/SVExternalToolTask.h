@@ -25,7 +25,6 @@
 #include "InspectionEngine/SVTaskObjectList.h"
 #include "SVDllToolLoadLibraryClass.h"
 #include "SVObjectLibrary/InputObject.h"
-#include "SVRPropertyTree/SVRPropTreeState.h"
 #include "SVValueObjectLibrary/LinkedValue.h"
 #include "SVValueObjectLibrary/SVLongValueObjectClass.h"
 #include "SVValueObjectLibrary/SVFileNameValueObjectClass.h"
@@ -92,7 +91,8 @@ struct SVExternalToolTaskData
 	long m_NumResultTables{0};
 	
 
-	SVRPropTreeState m_PropTreeState;
+	std::map<std::string, bool> m_proptreestate;
+
 };	// end struct SVExternalToolTaskData
 
 class SVExternalToolTask : public SvIe::SVTaskObjectListClass, public SvOi::IExternalToolTask, public SvOi::IExternalToolTaskDataAdmin

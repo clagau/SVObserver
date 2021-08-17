@@ -745,12 +745,12 @@ long SVExternalToolTask::getNumInputValues() const
 
 std::map<std::string, bool> SVExternalToolTask::getPropTreeState() const
 {
-	return m_Data.m_PropTreeState.m_State;
+	return m_Data.m_proptreestate;
 }
 
 void SVExternalToolTask::setPropTreeState(const std::map<std::string, bool>& propTreeState) 
 {
-	m_Data.m_PropTreeState.m_State = propTreeState;
+	m_Data.m_proptreestate = propTreeState;
 }
 
 
