@@ -414,30 +414,32 @@ HRESULT SVToolExtentClass::updateImageExtent()
 }
 
 
-HRESULT SVToolExtentClass::ensureValidScaleFactorUnlessDottedName(const SVImageExtentClass& rImageExtent, SvPb::SVExtentPropertyEnum extentProperty)
+HRESULT SVToolExtentClass::ensureValidScaleFactorIfDirectValue(const SVImageExtentClass& rImageExtent, SvPb::SVExtentPropertyEnum extentProperty)
 {
 	double dValue = 0.0;
 
 	HRESULT hrOk = rImageExtent.GetExtentProperty(extentProperty, dValue);
 
-	if (S_OK == hrOk)
+	if (S_OK != hrOk)
 	{
-		if (SvTo::isValidScaleFactor(dValue))
-		{
-			//@TODO[Arvid][10.20][10.08.2021] Set a direct value to an indirect value leads to an assert (RT00100.0157.002-Resize.txt) and involved SVO-3373.
-			return SetExtentValue(extentProperty, dValue);
-		}
-		else
-		{
-			_variant_t value{0.0};
-			GetExtentValue(extentProperty, value);
+		return hrOk;
+	}
+	if (false == isDirectValue(extentProperty))
+	{
+		return hrOk; // An indirect value must not be overwritten with a numeric value - regardless of whether it currently is invalid!
+	}
+	if (SvTo::isValidScaleFactor(dValue))
+	{
+		return SetExtentValue(extentProperty, dValue);
+	}
+	else
+	{
+		_variant_t value{0.0};
+		GetExtentValue(extentProperty, value);
 			
-			if (false == SvTo::isValidScaleFactor(value) && isDirectValue(extentProperty))
-			// A dotted name must not be overwritten with a numeric value - even if currently having an invalid value!
-			// We assume here that a non-empty linked name means that a dotted name is present.
-			{
-				return SetExtentValue(extentProperty, SvDef::cDefaultScaleFactor);
-			}
+		if (false == SvTo::isValidScaleFactor(value)) //ABXXX woanders (nicht im ResizeTool)
+		{
+			return SetExtentValue(extentProperty, SvDef::cDefaultScaleFactor);
 		}
 	}
 
@@ -491,7 +493,7 @@ HRESULT SVToolExtentClass::SetImageExtent(const SVImageExtentClass& rImageExtent
 		)
 	{
 		// cppcheck-suppress useStlAlgorithm
-		l_hrOk &= ensureValidScaleFactorUnlessDottedName(rImageExtent, extentProperty);
+		l_hrOk &= ensureValidScaleFactorIfDirectValue(rImageExtent, extentProperty);
 	}
 
 

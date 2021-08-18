@@ -20,16 +20,7 @@
 
 namespace SvTo
 {
-	static bool isValidScaleFactorLV(SvVol::LinkedValue& scaleFactorValue);
 	static void reportGeneralError(SvStl::MessageTextEnum AdditionalTextId, SvStl::MessageContainerVector* pErrorMessages, bool displayIfNotAddedToErrorList);
-
-
-	constexpr long MinScaleFactorThreshold = 0; // Scale Factor may not 
-												// be less than or equal 
-												// to 0.
-	constexpr long MaxScaleFactor = 1000;		// Maximum allowed Scale Factor. 
-												// Arbitrary limit of 1000.
-
 
 #pragma region Declarations
 #ifdef _DEBUG
@@ -608,24 +599,6 @@ void reportGeneralError(SvStl::MessageTextEnum AdditionalTextId, SvStl::MessageC
 	}
 }
 
-
-bool isValidScaleFactorLV(SvVol::LinkedValue& scaleFactorValue)
-{
-	double scaleFactor = 0.0;
-	scaleFactorValue.getValue(scaleFactor);
-	return isValidScaleFactor(scaleFactor);
-}
-
-
-bool isValidScaleFactor(double value)
-{
-	if ((value <= MinScaleFactorThreshold) || (value > MaxScaleFactor))
-	{
-		return false;
-	}
-
-	return true;
-}
 
 } //namespace SvTo
 

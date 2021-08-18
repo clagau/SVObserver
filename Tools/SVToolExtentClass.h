@@ -107,7 +107,7 @@ public:
 	HRESULT TranslatePointToSource(SVPoint<double> inPoint, SVPoint<double>& rOutPoint );
 	std::string GetAuxiliaryDrawTypeString() const;
 
-	HRESULT ensureValidScaleFactorUnlessDottedName(const SVImageExtentClass& rImageExtent, SvPb::SVExtentPropertyEnum extentProperty);
+	HRESULT ensureValidScaleFactorIfDirectValue(const SVImageExtentClass& rImageExtent, SvPb::SVExtentPropertyEnum extentProperty);
 
 private:
 	bool isDirectValue(SvPb::SVExtentPropertyEnum extentProperty) const;

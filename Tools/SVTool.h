@@ -266,5 +266,6 @@ protected:
 };
 
 bool isValidScaleFactor(double value);
+bool isValidScaleFactorLV(SvVol::LinkedValue& scaleFactorValue);
 
 } //namespace SvTo
