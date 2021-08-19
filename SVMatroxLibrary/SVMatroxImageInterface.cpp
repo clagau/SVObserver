@@ -693,7 +693,7 @@ HRESULT SVMatroxImageInterface::ArithmeticLut(const SVMatroxBuffer& rDestId, con
 	Height = std::min(Height, Height_Dest);
 	
 	//use reference because of performance 
-	const BYTE*& rData = lookupPtr->getDataRef();
+	const BYTE* const &rData = lookupPtr->getDataRef();
 	int depth = lookupPtr->getDepth();
 	
 	for (int y = 0; y < Height; y++)

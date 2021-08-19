@@ -34,7 +34,7 @@ enum SVMatroxBufferTypeEnum
 
 	SV32BitUnsigned			= 0x000000020,
 	SV32BitSigned			= SV32BitUnsigned | SVBufferSigned,
-	SV32BitFloat             =0x40000000 | SV32BitUnsigned,
+	SV32BitFloat             =0x40000000 | SV32BitSigned
 
 };
 
