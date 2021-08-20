@@ -639,7 +639,15 @@ namespace SvCmd
 		[] {return std::chrono::seconds{ 120 }; },
 		[](const SvPb::InspectionCmdRequest& rRequest) {return  getInvalidDependencies(rRequest.getinvaliddependenciesrequest()); }
 		)
-		}
+		},
+
+		{ SvPb::InspectionCmdRequest::kGetObjectNameRequest,
+		std::make_tuple(
+		[] {return ThreadPref::inspection; },
+		[] {return std::chrono::seconds{ 120 }; },
+		[](const SvPb::InspectionCmdRequest& rRequest) {return  getObjectName(rRequest.getobjectnamerequest()); }
+		)
+		},
 
 	};
 

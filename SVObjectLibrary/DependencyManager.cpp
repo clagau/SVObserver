@@ -187,6 +187,54 @@ namespace SvOl
 			}
 		}
 	}
+
+	void DependencyManager::getObjectDependency(SvOi::StringPairInserter Inserter, const std::set<uint32_t>& rSourceSet, SvOi::ToolDependencyEnum ToolDependency /*= SvOi::ToolDependencyEnum::Client*/) const
+	{
+		//! Note before calling this method the graph index must be updated this is done in the interface!
+		std::vector<Dependency> DependencyVector;
+		Dependencies ObjectDependencies;
+
+		if (SvOi::ToolDependencyEnum::Client == (SvOi::ToolDependencyEnum::Client & ToolDependency))
+		{
+			getChildDependents(rSourceSet, std::inserter(ObjectDependencies, ObjectDependencies.end()), SvOl::JoinType::Owner, SvOl::JoinType::Dependent, false);
+		}
+		if (SvOi::ToolDependencyEnum::Supplier == (SvOi::ToolDependencyEnum::Supplier & ToolDependency))
+		{
+			// Here the pairs need to be reversed
+			Dependencies ToolSuppliers;
+			getChildDependents(rSourceSet, std::inserter(ToolSuppliers, ToolSuppliers.end()), SvOl::JoinType::Owner, SvOl::JoinType::Dependent, true);
+			Dependencies::const_iterator SupplierIter(ToolSuppliers.begin());
+			for (; ToolSuppliers.end() != SupplierIter; ++SupplierIter)
+			{
+				ObjectDependencies.insert(Dependency(SupplierIter->second, SupplierIter->first));
+			}
+		}
+
+		//! This filters dependencies which are dependent on the same tool
+		std::copy(ObjectDependencies.begin(), ObjectDependencies.end(), std::back_inserter(DependencyVector));
+
+			//! First sort the supplier then the clients
+		std::sort(DependencyVector.begin(), DependencyVector.end(), DependencySort(true));
+		std::sort(DependencyVector.begin(), DependencyVector.end(), DependencySort(false));
+
+		ObjectDependencies.clear();
+		std::vector<Dependency>::const_iterator IterDependency(DependencyVector.begin());
+		for (; DependencyVector.end() != IterDependency; ++IterDependency)
+		{
+			SvOi::IObjectClass* pSupplier = SvOi::getObject(IterDependency->first);
+			SvOi::IObjectClass* pClient = SvOi::getObject(IterDependency->second);
+			if (nullptr != pSupplier && nullptr != pClient)
+			{
+				SvOi::IObjectClass* pParent = SvOi::getObject(pSupplier->GetParentID());
+				bool isParentToolset = (nullptr != pParent) && (SvPb::SVToolSetObjectType == pParent->GetObjectType());
+				//To add also add the parent tool e.g. LoopTool if available
+				std::string SupplierName = isParentToolset ? pSupplier->GetObjectNameToObjectType(SvPb::SVToolSetObjectType) : pSupplier->GetObjectNameBeforeObjectType(SvPb::SVToolSetObjectType);
+				std::string ClientName = pClient->GetObjectNameBeforeObjectType(SvPb::SVToolSetObjectType);
+
+				Inserter = SvDef::StringPair(SupplierName, ClientName);
+			}
+		}
+	}
 	#pragma endregion Public Methods
 
 	bool DependencyManager::DependencySort::operator()(const Dependency &rLhs, const Dependency &rRhs)
@@ -231,6 +279,12 @@ void SvOi::getToolDependency(SvObjectIdSetInserter Inserter, const std::set<uint
 {
 	SvOl::DependencyManager::Instance().updateVertexIndex();
 	SvOl::DependencyManager::Instance().getToolDependency(Inserter, rSourceSet);
+}
+
+void SvOi::getObjectDependency(SvOi::StringPairInserter Inserter, const std::set<uint32_t>& rSourceSet, SvOi::ToolDependencyEnum ToolDependency /*= SvOi::ToolDependencyEnum::Client*/)
+{
+	SvOl::DependencyManager::Instance().updateVertexIndex();
+	SvOl::DependencyManager::Instance().getObjectDependency(Inserter, rSourceSet, ToolDependency);
 }
 #pragma endregion IDependencyManager
 

@@ -211,6 +211,22 @@ message GetObjectParametersResponse
 	SVObjectTypeInfoStruct typeInfo = 4;
 }
 
+//This is the message to return the object-dotted-name to a defined position.
+message GetObjectNameRequest
+{
+	uint32 objectId = 1; //ID of the object.
+	oneof type
+	{
+		SVObjectTypeEnum BeforeType = 2;
+		SVObjectTypeEnum ToType = 3;
+	}
+}
+
+message GetObjectNameResponse
+{
+	bytes name = 1;
+}
+
 // This is the message to return the equation string
 message GetEquationRequest
 {
@@ -1076,7 +1092,8 @@ message InspectionCmdRequest
 		GetImageInfoExternalToolRequest getImageInfoExternalToolRequest = 66;
 		SetAndSortEmbeddedValueRequest setAndSortEmbeddedValueRequest = 68;
 		GetInvalidDependenciesRequest getInvalidDependenciesRequest = 69;
-		ValidateLinkedValueRequest validateLinkedValueRequest = 70;
+		GetObjectNameRequest getObjectNameRequest = 70;
+		ValidateLinkedValueRequest validateLinkedValueRequest = 71;
 	}
 }
 
@@ -1135,6 +1152,7 @@ message InspectionCmdResponse
 		GetInvalidDependenciesResponse getInvalidDependenciesResponse = 49;
 		ValidateValueParameterExternalToolResponse validateValueParameterExternalToolResponse = 50;
 		ResetAllObjectsResponse resetAllObjectsResponse = 51;
-		ValidateLinkedValueResponse validateLinkedValueResponse = 52;
+		GetObjectNameResponse getObjectNameResponse = 52;
+		ValidateLinkedValueResponse validateLinkedValueResponse = 53;
 	}
 }

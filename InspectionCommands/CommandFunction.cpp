@@ -2045,4 +2045,33 @@ SvPb::InspectionCmdResponse getInvalidDependencies(SvPb::GetInvalidDependenciesR
 	return cmdResponse;
 }
 
+SvPb::InspectionCmdResponse getObjectName(SvPb::GetObjectNameRequest request)
+{
+	SvPb::InspectionCmdResponse cmdResponse;
+
+	if (SvOi::IObjectClass* pObject = SvOi::getObject(request.objectid()); nullptr != pObject)
+	{
+		auto* pResponse = cmdResponse.mutable_getobjectnameresponse();
+		switch (request.type_case())
+		{
+		case SvPb::GetObjectNameRequest::kBeforeType:
+			pResponse->set_name(pObject->GetObjectNameBeforeObjectType(request.beforetype()));
+			break;
+		case SvPb::GetObjectNameRequest::kToType:
+			pResponse->set_name(pObject->GetObjectNameBeforeObjectType(request.totype()));
+			break;
+		default:
+			pResponse->set_name(pObject->GetName());
+			break;
+		}
+	}
+	else
+	{
+		cmdResponse.set_hresult(E_POINTER);
+	}
+	return cmdResponse;
+
+}
+
+
 } //namespace SvCmd

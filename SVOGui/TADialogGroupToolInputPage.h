@@ -24,6 +24,7 @@ namespace SvOg
 		SvPb::EmbeddedIdEnum m_oldEmbeddedId = SvPb::NoEmbeddedId;
 		SvPb::InputTypeEnum m_type = SvPb::InputTypeEnum::TypeDecimal;
 		LinkedValueData m_data;
+		SvDef::StringPairVector m_dependencies;
 	};
 
 	class TADialogGroupToolInputPage : public CPropertyPage, public ISVPropertyPageDialog

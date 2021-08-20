@@ -40,12 +40,18 @@ const TCHAR* const ColumnHeadings[] = {_T("Client"), _T("Supplier")};
 
 SVShowDependentsDialog::SVShowDependentsDialog(const std::set<uint32_t>& rSourceSet, SvPb::SVObjectTypeEnum objectType, LPCTSTR DisplayText, DialogType Type /*= DeleteConfirm*/, CWnd* pParent /*=nullptr*/)
 	: CDialog(SVShowDependentsDialog::IDD, pParent)
-	, m_rSourceSet(rSourceSet)
-	, m_objectType(objectType)
 	, m_DisplayText((nullptr != DisplayText) ? DisplayText : std::string())
 	, m_DialogType(Type)
 {
-	RetreiveList();
+	RetreiveList(rSourceSet, objectType);
+}
+
+SVShowDependentsDialog::SVShowDependentsDialog(SvDef::StringPairVector dependencyList, LPCTSTR DisplayText /*= nullptr*/, CWnd* pParent /*= nullptr*/)
+	: CDialog(SVShowDependentsDialog::IDD, pParent)
+	, m_dependencyList(dependencyList)
+	, m_DisplayText((nullptr != DisplayText) ? DisplayText : std::string())
+	, m_DialogType(Show)
+{
 }
 
 /*static*/ INT_PTR SVShowDependentsDialog::StandardDialog(const std::string& rName, uint32_t taskObjectID)
@@ -218,17 +224,17 @@ void SVShowDependentsDialog::setResizeControls()
 	m_Resizer.Add(this, IDCANCEL, SvMc::RESIZE_LOCKRIGHT | SvMc::RESIZE_LOCKBOTTOM);
 }
 
-void SVShowDependentsDialog::RetreiveList()
+void SVShowDependentsDialog::RetreiveList(const std::set<uint32_t>& rSourceSet, SvPb::SVObjectTypeEnum objectType)
 {
-	for (auto Iter = m_rSourceSet.begin(); m_rSourceSet.end() != Iter; ++Iter)
+	for (auto Iter = rSourceSet.begin(); rSourceSet.end() != Iter; ++Iter)
 	{
 		SvOi::IObjectClass* pSourceObject = SvOi::getObject(*Iter);
 		if (nullptr != pSourceObject)
 		{
 			std::string Name;
-			if (m_objectType == pSourceObject->GetObjectType())
+			if (objectType == pSourceObject->GetObjectType())
 			{
-				if (SvPb::SVToolObjectType != m_objectType)
+				if (SvPb::SVToolObjectType != objectType)
 				{
 					Name = pSourceObject->GetName();
 				}
@@ -239,7 +245,7 @@ void SVShowDependentsDialog::RetreiveList()
 			}
 			else
 			{
-				pSourceObject->GetCompleteNameToType(m_objectType, Name);
+				pSourceObject->GetCompleteNameToType(objectType, Name);
 			}
 
 			if (!Name.empty())
@@ -252,7 +258,7 @@ void SVShowDependentsDialog::RetreiveList()
 	m_dependencyList.clear();
 	SvOi::ToolDependencyEnum ToolDependency = (DeleteConfirm == m_DialogType) ? SvOi::ToolDependencyEnum::Client : SvOi::ToolDependencyEnum::ClientAndSupplier;
 
-	SvOi::getToolDependency(std::back_inserter(m_dependencyList), m_rSourceSet, m_objectType, ToolDependency);
+	SvOi::getToolDependency(std::back_inserter(m_dependencyList), rSourceSet, objectType, ToolDependency);
 }
 
 void SVShowDependentsDialog::addColumnHeadings()

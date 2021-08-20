@@ -38,4 +38,6 @@ namespace SvOi
 	//! \param Inserter [in] Iterator to insert the tool ID
 	//! \param rSourceSet [in] reference to the source set of IDs
 	void getToolDependency(SvOi::SvObjectIdSetInserter Inserter, const std::set<uint32_t>& rSourceSet);
+
+	void getObjectDependency(SvOi::StringPairInserter Inserter, const std::set<uint32_t>& rSourceSet, SvOi::ToolDependencyEnum ToolDependency = SvOi::ToolDependencyEnum::Client);
 } //namespace SvOi

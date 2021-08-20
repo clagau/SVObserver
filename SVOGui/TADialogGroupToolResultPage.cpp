@@ -13,6 +13,7 @@
 #include "DisplayHelper.h"
 #include "LinkedValueSelectorDialog.h"
 #include "Definitions/GlobalConst.h"
+#include "SVShowDependentsDialog.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -41,19 +42,23 @@ namespace SvOg
 
 		enum ColumnPos
 		{
-			NameColumn = 0,
+			DependencyColumn = 0,
+			NameColumn,
 			TypeColumn,
 			ValueColumn,
 			ValueButtonColumn,
 		};
 
-		std::map<int, ColumnDef> g_columnResultObjectsDefArray = { { NameColumn, ColumnDef{"Name", cNameColumnSize}},
+		std::map<int, ColumnDef> g_columnResultObjectsDefArray = { 
+			{DependencyColumn, ColumnDef{"", 15}},
+			{NameColumn, ColumnDef{"Name", cNameColumnSize}},
 			{TypeColumn, {"Type", cTypeColumnSize }},
 			{ValueColumn, {"Value", cIndirectNameColumnSize }},
 			{ValueButtonColumn, {"", cBoxColumnSize}},
 		};
 	}
 
+	SvDef::StringPairVector getDependency(uint32_t inspectionId, uint32_t valueId);
 	bool setValue(GroupResultData& data, const std::string& newStr)
 	{
 		if (SvPb::LinkedSelectedType::DirectValue == data.m_data.m_type && SvPb::isValueType(data.m_type))
@@ -179,6 +184,15 @@ namespace SvOg
 
 		switch (pItem->iColumn)
 		{
+		case DependencyColumn:
+		{
+			if (0 < m_resultData[pItem->iRow - 1].m_dependencies.size())
+			{
+				SVShowDependentsDialog Dlg(m_resultData[pItem->iRow - 1].m_dependencies);
+				Dlg.DoModal();
+			}
+			break;
+		}
 		case ValueButtonColumn:
 		{
 			ObjectSelectorData data;
@@ -472,6 +486,11 @@ namespace SvOg
 		for (int i = 0; numberOfObjects > i; ++i)
 		{
 			auto row = i + 1;
+
+			bool hasDependencies = (0 < m_resultData[i].m_dependencies.size());
+			m_Grid.SetItemText(row, DependencyColumn, hasDependencies ? "D" : "");
+			m_Grid.SetItemState(row, DependencyColumn, m_Grid.GetItemState(row, DependencyColumn) | GVIS_READONLY);
+
 			m_Grid.SetItemText(row, NameColumn, m_resultData[i].m_name.c_str());
 			m_Grid.SetItemState(row, NameColumn, m_Grid.GetItemState(row, NameColumn) & (~GVIS_READONLY));
 			using namespace SvGcl;
@@ -581,6 +600,8 @@ namespace SvOg
 			data.m_oldEmbeddedId = SvPb::ResultObjectValueEId + i;
 			data.m_type = static_cast<SvPb::InputTypeEnum>(m_Values.Get<int>(SvPb::ResultObjectTypeEId + i));
 			data.m_data = m_Values.Get<LinkedValueData>(SvPb::ResultObjectValueEId + i);
+			auto valueId = m_Values.GetObjectID(SvPb::ResultObjectValueEId + i);
+			data.m_dependencies = getDependency(m_InspectionID, valueId);
 			m_resultData.emplace_back(std::move(data));			
 		}
 	}
@@ -599,7 +620,22 @@ namespace SvOg
 
 		GetDlgItem(IDC_BUTTON_MOVEUP)->EnableWindow(bMoveUpEnable);
 		GetDlgItem(IDC_BUTTON_MOVEDOWN)->EnableWindow(bMoveDownEnable);
-		GetDlgItem(IDC_BUTTON_REMOVE)->EnableWindow(-1 != Selection.GetMaxRow() && Selection.GetMinRow() <= m_resultData.size());
+
+		bool bRemoveEnable = -1 != Selection.GetMaxRow() && Selection.GetMinRow() <= m_resultData.size();
+		if (bRemoveEnable)
+		{
+			for (int i = Selection.GetMaxRow(); i >= Selection.GetMinRow() && i <= m_resultData.size(); --i)
+			{
+				for (int j = Selection.GetMinCol(); j <= Selection.GetMaxCol(); j++)
+				{
+					if (m_Grid.IsCellSelected(i, j) && 0 < i && m_resultData.size() > i - 1)
+					{
+						bRemoveEnable = bRemoveEnable && 0 == m_resultData[i - 1].m_dependencies.size();
+					}
+				}
+			}
+		}
+		GetDlgItem(IDC_BUTTON_REMOVE)->EnableWindow(bRemoveEnable);
 
 		if (SvDef::c_maxTableColumn > m_resultData.size())
 		{

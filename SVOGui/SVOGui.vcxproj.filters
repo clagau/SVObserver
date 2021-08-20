@@ -545,5 +545,8 @@
     <ClInclude Include="BlobAnalyzer2Helper.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="TADialogGroupToolResultPage.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

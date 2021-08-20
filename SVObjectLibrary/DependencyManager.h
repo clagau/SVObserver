@@ -49,6 +49,8 @@ namespace SvOl
 	//! \param Inserter [in] Iterator to insert the tool ID
 	//! \param rSourceSet [in] reference to the source set of IDs
 	void getToolDependency(SvOi::SvObjectIdSetInserter Inserter, const std::set<uint32_t>& rSourceSet) const;
+
+	void getObjectDependency(SvOi::StringPairInserter Inserter, const std::set<uint32_t>& rSourceSet, SvOi::ToolDependencyEnum ToolDependency = SvOi::ToolDependencyEnum::Client) const;
 #pragma endregion Public Methods
 
 	#pragma region Private Methods

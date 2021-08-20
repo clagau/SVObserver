@@ -285,6 +285,7 @@
     <ClInclude Include="SVToolAdjustmentDialogTwoImagePage.h" />
     <ClInclude Include="SVToolAdjustmentLUTPage.h" />
     <ClInclude Include="SVWaterShedFilterDlg.h" />
+    <ClInclude Include="TADialogGroupToolResultPage.h" />
     <ClInclude Include="TADialogLoopToolParameterPage.h" />
     <ClInclude Include="TADialogRingBufferParameterPage.h" />
     <ClInclude Include="TADialogTableDefinesPage.h" />

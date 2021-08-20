@@ -35,6 +35,7 @@ namespace SvOg
 	#pragma region Constructor
 	public:
 		explicit SVShowDependentsDialog( const std::set<uint32_t>& rSourceSet, SvPb::SVObjectTypeEnum objectType = SvPb::SVToolObjectType, LPCTSTR DisplayText = nullptr, DialogType Type = DeleteConfirm, CWnd* pParent = nullptr );
+		explicit SVShowDependentsDialog(SvDef::StringPairVector dependencyList, LPCTSTR DisplayText = nullptr, CWnd* pParent = nullptr);
 	#pragma endregion Constructor
 
 	public:
@@ -51,7 +52,7 @@ namespace SvOg
 		//! Sets which controls are resized when the dialog is resized
 		void setResizeControls();
 
-		void RetreiveList();
+		void RetreiveList(const std::set<uint32_t>& m_rSourceSet, SvPb::SVObjectTypeEnum objectType);
 		void addColumnHeadings();
 		void addItems();
 		void setColumnWidths();
@@ -63,8 +64,6 @@ namespace SvOg
 		CRect m_OrginalClient;
 		CRect m_Gripper;
 		CListCtrl m_ListCtrl;
-		const std::set<uint32_t>& m_rSourceSet;
-		SvPb::SVObjectTypeEnum m_objectType;
 		SvDef::StringPairVector m_dependencyList;
 		std::string m_DisplayText;
 		DialogType m_DialogType;
