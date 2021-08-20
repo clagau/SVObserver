@@ -50,8 +50,10 @@ public:
 	//}}AFX_VIRTUAL
 
 // Implementation
+public:
+	void InitializeDllAndDisplayResults(bool jumpToInputPage, bool setDefaultValues = false);
+
 protected:
-	void InitializeDll(bool jumpToInputPage, bool setDefaultValues = false);
 	void SetDependencies();
 	void testExternalDll(bool setDefaultValues = false);
 	void setDefaultValuesForInputs();
@@ -82,7 +84,10 @@ protected:
 	bool m_preserveStatus{ false };
 
 private:
+	bool InitializeDll(bool setDefaultValues);
 	void showDllConfigurationPages(bool show);
+	void displayInitializationProblem(std::string error);
+	void displayInitializationFailure(const SvStl::MessageContainer& e);
 
 	ExternalToolTaskController& m_rExternalToolTaskController;
 	SvOg::ValueController m_valueController;

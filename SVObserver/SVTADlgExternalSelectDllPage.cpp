@@ -122,7 +122,7 @@ BOOL SVTADlgExternalSelectDllPage::OnInitDialog()
 	m_ToolTip.SetDelayTime(10, TTDT_INITIAL);
 	m_ToolTip.SetDelayTime(250, TTDT_RESHOW);
 
-	InitializeDll(true);
+	InitializeDllAndDisplayResults(true);
 	
 	for (auto i = 0; i < ExternalToolTaskController::NUM_TOOL_DEPENDENCIES; ++i)
 	{
@@ -261,7 +261,7 @@ void SVTADlgExternalSelectDllPage::OnBrowse()
 			m_valueController.Set<CString>(SvPb::EmbeddedIdEnum::DllFileNameEId, CString());
 			m_valueController.Commit(SvOg::PostAction::doNothing);
 
-			InitializeDll(false, false);
+			InitializeDllAndDisplayResults(false, false);
 			m_valueController.Set<CString>(SvPb::EmbeddedIdEnum::DllFileNameEId, m_currentExternalDllFilepath);
 				
 			bool isVersionEqual = SvSyl::FileVersion::isEqual(runpath.c_str(), dllPath.c_str());
@@ -301,7 +301,7 @@ void SVTADlgExternalSelectDllPage::testExternalDll(bool setDefaultValues)
 	m_valueController.SetDefault<CString>(SvPb::EmbeddedIdEnum::DllFileNameEId, m_currentExternalDllFilepath);
 	// ensure that all data are available for initialize dll
 	m_valueController.Commit(SvOg::PostAction::doNothing);
-	InitializeDll(false, setDefaultValues);
+	InitializeDllAndDisplayResults(false, setDefaultValues);
 }
 
 void SVTADlgExternalSelectDllPage::setDefaultValuesForInputs()
@@ -332,7 +332,6 @@ void SVTADlgExternalSelectDllPage::setDefaultValuesForInputs()
 		}
 		m_valueController.Set<SvOg::LinkedValueData>(SvPb::EmbeddedIdEnum::ExternalInputEId + LinkValueIndex, data);
 	}
-	
 }
 
 std::string SVTADlgExternalSelectDllPage::getStdStringFromValueController(SvPb::EmbeddedIdEnum objectId, int index)
@@ -371,49 +370,25 @@ void SVTADlgExternalSelectDllPage::SetDependencies()
 	m_rExternalToolTaskController.setAllAttributes();	// update dependency attributes
 }
 
-
 void SVTADlgExternalSelectDllPage::showDllConfigurationPages(bool show)
 {
 	m_rParent.PostMessage (show ? SV_ADAPT_TO_TESTED_DLL : SV_ADAPT_TO_UNTESTED_DLL);
 }
 
-
-void SVTADlgExternalSelectDllPage::InitializeDll(bool jumpToInputPage, bool setDefaultValues)
+void SVTADlgExternalSelectDllPage::InitializeDllAndDisplayResults(bool jumpToInputPage, bool setDefaultValues)
 {
 	bool dllWasInitialized = false;
 
 	try
 	{
-		bool problemsOccurred = false;
-
 		showDllConfigurationPages(false);
 
-		if (!m_preserveStatus)
-		{
-			m_strStatus.Empty();
-		}
-		UpdateData(FALSE);
-
-		auto [hrInitialize, statusMessagesResponse] = m_rExternalToolTaskController.initialize();
-
-		if (S_OK != hrInitialize)
-		{
-			problemsOccurred = true; // descriptions are contained in statusMessagesResponse.statusmessages()
-		}
-
-		for (const auto& message : statusMessagesResponse.statusmessages())
-		{
-			m_strStatus += message.c_str();
-			m_strStatus += cCRLF;
-		}
-		UpdateData(FALSE);
-
-		if (setDefaultValues)
-		{
-			setDefaultValuesForInputs();
-		}
+		bool problemsOccurred = InitializeDll(setDefaultValues);
 
 		dllWasInitialized = true;
+
+		// if we arrive here, basic initialization has been successful
+		// now let's check for problems the initialized DLL might have
 
 		auto [ok, firstError] = m_rExternalToolTaskController.resetAllObjects(true);
 
@@ -422,21 +397,8 @@ void SVTADlgExternalSelectDllPage::InitializeDll(bool jumpToInputPage, bool setD
 			problemsOccurred = true;
 			jumpToInputPage = false; //an error occurred here - we want to remain on the selection page and see what happened
 
-			std::string error = firstError.c_str();
-			error = std::regex_replace(error, std::regex("\\("), cCRLF+std::string("  ("));
-			error = std::regex_replace(error, std::regex("\\)\\s?"), std::string(")") + cCRLF);
-
-			m_strStatus += error.c_str();
-			m_strStatus += cCRLF;
-
-			SvStl::MessageContainer mc;
-			mc.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorInReset, SvStl::SourceFileParams(StdMessageParams), 0, m_ToolObjectID);
-
-			m_strStatus += mc.What().c_str();
-			m_strStatus += cCRLF;
+			displayInitializationProblem(firstError);
 		}
-
-		//if we arrive here, Initialization has been at least partially successful
 
 		SvDef::StringVector msgList;
 		msgList.emplace_back(problemsOccurred ? SvStl::MessageData::convertId2AdditionalText(SvStl::Tid_ExternalDllProblemsOccurred) : "");
@@ -455,26 +417,9 @@ void SVTADlgExternalSelectDllPage::InitializeDll(bool jumpToInputPage, bool setD
 	}
 	catch (const SvStl::MessageContainer& e)
 	{
-		//if we arrive here, Initialization has failed
+		// if we arrive here, initialization has failed 
 
-		// display all sub-errors in box
-		m_strStatus += _T("External DLL: test failed!");
-		m_strStatus += cCRLF;
-
-		if (!e.getMessage().getAdditionalText().empty())
-		{
-			m_strStatus += e.getMessage().getAdditionalText().c_str();
-			m_strStatus += cCRLF;
-		}
-		const SvStl::Messages& AdditionalMessages(e.getAdditionalMessages());
-		SvStl::Messages::const_iterator iter;
-		for (iter = AdditionalMessages.begin(); iter != AdditionalMessages.end(); ++iter)
-		{
-			m_strStatus += iter->getAdditionalText().c_str();
-			m_strStatus += cCRLF;
-		}
-
-		UpdateData(FALSE);
+		displayInitializationFailure(e);
 	}
 	showDllConfigurationPages(dllWasInitialized);
 
@@ -482,6 +427,75 @@ void SVTADlgExternalSelectDllPage::InitializeDll(bool jumpToInputPage, bool setD
 	{
 		m_rParent.PostMessage(SV_SELECT_INPUT_VALUE_PAGE);
 	}
+}
+
+bool SVTADlgExternalSelectDllPage::InitializeDll(bool setDefaultValues)
+{
+	bool problemsOccurred = false;
+
+	if (!m_preserveStatus)
+	{
+		m_strStatus.Empty();
+	}
+	UpdateData(FALSE);
+
+	auto [hrInitialize, statusMessagesResponse] = m_rExternalToolTaskController.initialize();
+
+	if (S_OK != hrInitialize)
+	{
+		problemsOccurred = true; // descriptions are contained in statusMessagesResponse.statusmessages()
+	}
+
+	for (const auto& message : statusMessagesResponse.statusmessages())
+	{
+		m_strStatus += message.c_str();
+		m_strStatus += cCRLF;
+	}
+	UpdateData(FALSE);
+
+	if (setDefaultValues)
+	{
+		setDefaultValuesForInputs();
+	}
+
+	return problemsOccurred;
+}
+
+void SVTADlgExternalSelectDllPage::displayInitializationProblem(std::string error)
+{
+	error = std::regex_replace(error, std::regex("\\("), cCRLF + std::string("  ("));
+	error = std::regex_replace(error, std::regex("\\)\\s?"), std::string(")") + cCRLF);
+
+	m_strStatus += error.c_str();
+	m_strStatus += cCRLF;
+
+	SvStl::MessageContainer mc;
+	mc.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorInReset, SvStl::SourceFileParams(StdMessageParams), 0, m_ToolObjectID);
+
+	m_strStatus += mc.What().c_str();
+	m_strStatus += cCRLF;
+}
+
+void SVTADlgExternalSelectDllPage::displayInitializationFailure(const SvStl::MessageContainer& e)
+{
+	// display all sub-errors in box
+	m_strStatus += _T("External DLL: test failed!");
+	m_strStatus += cCRLF;
+
+	if (!e.getMessage().getAdditionalText().empty())
+	{
+		m_strStatus += e.getMessage().getAdditionalText().c_str();
+		m_strStatus += cCRLF;
+	}
+	const SvStl::Messages& AdditionalMessages(e.getAdditionalMessages());
+	SvStl::Messages::const_iterator iter;
+	for (iter = AdditionalMessages.begin(); iter != AdditionalMessages.end(); ++iter)
+	{
+		m_strStatus += iter->getAdditionalText().c_str();
+		m_strStatus += cCRLF;
+	}
+
+	UpdateData(FALSE);
 }
 
 // Override PreTranslateMessage() so RelayEvent() can be 

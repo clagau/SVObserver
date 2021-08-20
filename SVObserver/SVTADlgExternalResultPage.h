@@ -38,11 +38,15 @@ public:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
+public:
+	BOOL OnSetActive() override;
+
 protected:
 	int SelectObject(int iIndex);
 	int GetItemIndex(SVRPropertyItem* pItem);
-
 	void rebuildPropertyTree();
+	std::pair<std::map<std::string, SVRPropertyItem*>, int> AssembleTree(SVRPropertyItem* pRoot);
+	void HandleTables(std::map<std::string, SVRPropertyItem*>& rMapGroupItems, int NumResults, SVRPropertyItem* pRoot);
 
 	const uint32_t m_InspectionID;
 	const uint32_t m_TaskObjectID;
@@ -57,7 +61,6 @@ protected:
 
 	SVRPropTree	m_Tree;
 	
-	BOOL OnSetActive() override;
 	afx_msg void OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult);
     afx_msg void OnItemQueryShowButton(NMHDR* pNotifyStruct, LRESULT* plResult);
     afx_msg void OnItemButtonClick(NMHDR* pNotifyStruct, LRESULT* plResult);

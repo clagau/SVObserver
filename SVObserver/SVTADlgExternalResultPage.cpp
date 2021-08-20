@@ -60,7 +60,6 @@ void SVTADlgExternalResultPage::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-
 /////////////////////////////////////////////////////////////////////////////
 // SVTADlgExternalResultPage message handlers
 
@@ -89,6 +88,182 @@ BOOL SVTADlgExternalResultPage::OnInitDialog()
 
 void SVTADlgExternalResultPage::rebuildPropertyTree()
 {
+	GetDlgItem(IDC_NO_RESULT_TXT)->ShowWindow(SW_HIDE);
+	GetDlgItem(IDC_RESULT_LIST)->ShowWindow(SW_SHOW);
+
+	m_Tree.DeleteAllItems();
+
+	SVRPropertyItem* pRoot = m_Tree.InsertItem(new SVRPropertyItem());
+	assert(pRoot);
+	pRoot->SetCanShrink(false);
+	pRoot->SetLabelText(_T("External Tool Results"));
+	pRoot->SetInfoText(_T(""));
+
+	auto [mapGroupItems, NumResults] = AssembleTree(pRoot);
+
+	HandleTables(mapGroupItems, NumResults, pRoot);
+
+	SVRPropertyItem* pChild = pRoot->GetChild();
+	while (pChild)
+	{
+		pChild->Expand(TRUE);
+		pChild = pChild->GetSibling();
+	}
+	pRoot->Expand(true);	// needed for redrawing
+
+	UpdateData(FALSE);
+}
+
+
+std::pair<std::map<std::string, SVRPropertyItem*>, int> SVTADlgExternalResultPage::AssembleTree(SVRPropertyItem* pRoot)
+{
+	std::map<std::string, SVRPropertyItem*> mapGroupItems;
+
+	SVRPropertyItem* pGroupItem = nullptr;
+
+	auto resultDefinitions = m_rExternalToolTaskController.getResultValuesDefinition().resultvaluesdefinition();
+	int NumResults = static_cast<int>(resultDefinitions.size());
+	for (int i = 0; i < NumResults; i++)
+	{
+		auto rDefinition = resultDefinitions[i];
+		if (rDefinition.usedisplaynames())
+		{
+			std::string GroupName = rDefinition.groupname();
+			auto iterGroup = mapGroupItems.find(GroupName);
+			if (iterGroup == mapGroupItems.end())
+			{
+				bool bTreeStyle = true;	// false = list-style
+				pGroupItem = m_Tree.InsertItem(new SVRPropertyItem(), pRoot);
+				pGroupItem->SetCanShrink(bTreeStyle);
+				pGroupItem->SetLabelText(GroupName.c_str());
+				pGroupItem->SetInfoText(_T(""));
+				pGroupItem->Expand();
+				pGroupItem->SetBold(true);
+				mapGroupItems[GroupName] = pGroupItem;
+			}
+			else
+			{
+				pGroupItem = iterGroup->second;
+			}
+		}
+
+		SVRPropertyItem* pParent = pGroupItem != 0 ? pGroupItem : pRoot;
+		SVRPropertyItemEdit* pEdit = (SVRPropertyItemEdit*)m_Tree.InsertItem(new SVRPropertyItemEdit(), pParent);
+		if (nullptr == pEdit)
+		{
+			break;
+		}
+
+		int iID = ID_BASE + i;
+		pEdit->SetCtrlID(iID);
+
+		std::string sLabel = SvUl::LoadStdString(IDS_OBJECTNAME_RESULT_01 + static_cast<int>(i));
+		///use the same displayname as in 8.20
+		sLabel += " (";
+		sLabel += rDefinition.displayname();
+		sLabel += ")";
+
+		pEdit->SetLabelText(sLabel.c_str());
+
+		std::string Type;
+		switch (rDefinition.vt())
+		{
+			case VT_BOOL: Type = _T("Bool");   break;
+			case VT_I4:   Type = _T("Long");   break;
+			case VT_R8:   Type = _T("Double"); break;
+			case VT_BSTR: Type = _T("String"); break;
+			case VT_ARRAY | VT_R8: Type = _T("Double Array"); break;
+			case VT_ARRAY | VT_I4: Type = _T("Long Array"); break;
+
+			default:      Type = _T("???");    break;
+		}
+
+		std::string sDescription = SvUl::Format(_T(" (Type : %s)  %s"), Type.c_str(), rDefinition.helptext().c_str());
+		pEdit->SetInfoText(sDescription.c_str());
+		pEdit->SetButtonText(_T("Range"));
+
+		_variant_t temp = m_ValueController.Get<_variant_t>(SvPb::ExternalResultEId + i);
+		std::string sValue = SvUl::VariantToString(temp);
+
+		pEdit->SetItemValue(sValue.c_str());
+		if (rDefinition.vt() == VT_BSTR || (rDefinition.vt() & VT_ARRAY))
+		{
+			pEdit->ReadOnly();
+		}
+		pEdit->OnRefresh();
+	}
+
+	return {mapGroupItems, NumResults};
+}
+
+
+
+void SVTADlgExternalResultPage::HandleTables(std::map<std::string, SVRPropertyItem*>& rMapGroupItems, int NumResults, SVRPropertyItem* pRoot)
+{
+	auto tableResultsResponse = m_rExternalToolTaskController.getTableResults();
+
+	int NumTableResults = tableResultsResponse.tableresultsdefinition_size();
+	for (int i = 0; i < NumTableResults; i++)
+	{
+		SVRPropertyItem* pGroupItem = nullptr;
+		auto rDefinition = tableResultsResponse.tableresultsdefinition()[i];
+		auto table = tableResultsResponse.tableobjects()[i];
+
+		if (rDefinition.usedisplaynames())
+		{
+			std::string GroupName = rDefinition.groupname();
+			auto iterGroup = rMapGroupItems.find(GroupName);
+
+			if (iterGroup == rMapGroupItems.end())
+			{
+				bool bTreeStyle = true;	// false = list-style
+				pGroupItem = m_Tree.InsertItem(new SVRPropertyItem(), pRoot);
+				pGroupItem->SetCanShrink(bTreeStyle);
+				pGroupItem->SetLabelText(GroupName.c_str());
+				pGroupItem->SetInfoText(_T(""));
+				pGroupItem->Expand();
+				pGroupItem->SetBold(true);
+				rMapGroupItems[GroupName] = pGroupItem;
+			}
+			else
+			{
+				pGroupItem = iterGroup->second;
+			}
+		}
+
+		SVRPropertyItem* pParent = pGroupItem != 0 ? pGroupItem : pRoot;
+		SVRPropertyItemEdit* pEdit = (SVRPropertyItemEdit*)m_Tree.InsertItem(new SVRPropertyItemEdit(), pParent);
+		if (nullptr == pEdit)
+		{
+			break;
+		}
+		int iID = ID_BASE + NumResults + i;
+		pEdit->SetCtrlID(iID);
+		std::string objectname = table.name();
+		///use the same displayname as in 8.20
+		std::string  sLabel = "Table Object";
+		if (i > 0)
+		{
+			sLabel = SvUl::Format(_T("%s%i"), "Table Object", i);
+		}
+
+		{
+			sLabel += " (";
+			sLabel += rDefinition.displayname();
+			sLabel += ")";
+		}
+		pEdit->SetLabelText(sLabel.c_str());
+		pEdit->ReadOnly();
+
+		std::string sDescription = SvUl::Format(_T(" (Type: Tableobject)  %s"), rDefinition.helptext().c_str());
+		pEdit->SetInfoText(sDescription.c_str());
+
+		pEdit->OnRefresh();
+	}
+}
+
+BOOL SVTADlgExternalResultPage::OnSetActive()
+{
 	if (m_InspectionID > 0)
 	{
 		m_rExternalToolTaskController.runOnce();
@@ -98,159 +273,7 @@ void SVTADlgExternalResultPage::rebuildPropertyTree()
 
 	if (m_rExternalToolTaskController.getNumResultValues() > 0)
 	{
-		GetDlgItem(IDC_NO_RESULT_TXT)->ShowWindow(SW_HIDE);
-		GetDlgItem(IDC_RESULT_LIST)->ShowWindow(SW_SHOW);
-
-		m_Tree.DeleteAllItems();
-
-		SVRPropertyItem* pRoot = m_Tree.InsertItem(new SVRPropertyItem());
-		assert(pRoot);
-		pRoot->SetCanShrink(false);
-		pRoot->SetLabelText(_T("External Tool Results"));
-		pRoot->SetInfoText(_T(""));
-
-		std::map<std::string, SVRPropertyItem*> mapGroupItems;
-		std::map<std::string, SVRPropertyItem*>::iterator iterGroup;
-
-		SVRPropertyItem* pGroupItem = nullptr;
-
-		auto resultDefinitions = m_rExternalToolTaskController.getResultValuesDefinition().resultvaluesdefinition();
-		int NumResults = static_cast<int>(resultDefinitions.size());
-		for (int i = 0; i < NumResults; i++)
-		{
-			auto rDefinition = resultDefinitions[i];
-			if (rDefinition.usedisplaynames())
-			{
-				std::string GroupName = rDefinition.groupname();
-				if ((iterGroup = mapGroupItems.find(GroupName)) == mapGroupItems.end())
-				{
-					bool bTreeStyle = true;	// false = list-style
-					pGroupItem = m_Tree.InsertItem(new SVRPropertyItem(), pRoot);
-					pGroupItem->SetCanShrink(bTreeStyle);
-					pGroupItem->SetLabelText(GroupName.c_str());
-					pGroupItem->SetInfoText(_T(""));
-					pGroupItem->Expand();
-					pGroupItem->SetBold(true);
-					mapGroupItems[GroupName] = pGroupItem;
-				}
-				else
-				{
-					pGroupItem = iterGroup->second;
-				}
-			}
-
-			SVRPropertyItem* pParent = pGroupItem != 0 ? pGroupItem : pRoot;
-			SVRPropertyItemEdit* pEdit = (SVRPropertyItemEdit*)m_Tree.InsertItem(new SVRPropertyItemEdit(), pParent);
-			if (nullptr == pEdit)
-			{
-				break;
-			}
-
-			int iID = ID_BASE + i;
-			pEdit->SetCtrlID(iID);
-
-			std::string sLabel = SvUl::LoadStdString(IDS_OBJECTNAME_RESULT_01 + static_cast<int>(i));
-			///use the same displayname as in 8.20
-			sLabel += " (";
-			sLabel += rDefinition.displayname();
-			sLabel += ")";
-
-			pEdit->SetLabelText(sLabel.c_str());
-
-			std::string Type;
-			switch (rDefinition.vt())
-			{
-				case VT_BOOL: Type = _T("Bool");   break;
-				case VT_I4:   Type = _T("Long");   break;
-				case VT_R8:   Type = _T("Double"); break;
-				case VT_BSTR: Type = _T("String"); break;
-				case VT_ARRAY | VT_R8: Type = _T("Double Array"); break;
-				case VT_ARRAY | VT_I4: Type = _T("Long Array"); break;
-
-				default:      Type = _T("???");    break;
-			}
-
-			std::string sDescription = SvUl::Format(_T(" (Type : %s)  %s"), Type.c_str(), rDefinition.helptext().c_str());
-			pEdit->SetInfoText(sDescription.c_str());
-			pEdit->SetButtonText(_T("Range"));
-
-			_variant_t temp = m_ValueController.Get<_variant_t>(SvPb::ExternalResultEId + i);
-			std::string sValue = SvUl::VariantToString(temp);
-
-			pEdit->SetItemValue(sValue.c_str());
-			if (rDefinition.vt() == VT_BSTR || (rDefinition.vt() & VT_ARRAY))
-			{
-				pEdit->ReadOnly();
-			}
-			pEdit->OnRefresh();
-		}
-
-		auto tableResultsResponse = m_rExternalToolTaskController.getTableResults();
-
-		int NumTableResults = tableResultsResponse.tableresultsdefinition_size();
-		for (int i = 0; i < NumTableResults; i++)
-		{
-			auto rDefinition = tableResultsResponse.tableresultsdefinition()[i];
-			auto table = tableResultsResponse.tableobjects()[i];
-
-			if (rDefinition.usedisplaynames())
-			{
-				std::string GroupName = rDefinition.groupname();
-
-				if ((iterGroup = mapGroupItems.find(GroupName)) == mapGroupItems.end())
-				{
-					bool bTreeStyle = true;	// false = list-style
-					pGroupItem = m_Tree.InsertItem(new SVRPropertyItem(), pRoot);
-					pGroupItem->SetCanShrink(bTreeStyle);
-					pGroupItem->SetLabelText(GroupName.c_str());
-					pGroupItem->SetInfoText(_T(""));
-					pGroupItem->Expand();
-					pGroupItem->SetBold(true);
-					mapGroupItems[GroupName] = pGroupItem;
-				}
-				else
-				{
-					pGroupItem = iterGroup->second;
-				}
-			}
-
-			SVRPropertyItem* pParent = pGroupItem != 0 ? pGroupItem : pRoot;
-			SVRPropertyItemEdit* pEdit = (SVRPropertyItemEdit*)m_Tree.InsertItem(new SVRPropertyItemEdit(), pParent);
-			if (nullptr == pEdit)
-			{
-				break;
-			}
-			int iID = ID_BASE + NumResults + i;
-			pEdit->SetCtrlID(iID);
-			std::string objectname = table.name();
-			///use the same displayname as in 8.20
-			std::string  sLabel = "Table Object";
-			if (i > 0)
-			{
-				sLabel = SvUl::Format(_T("%s%i"), "Table Object", i);
-			}
-
-			{
-				sLabel += " (";
-				sLabel += rDefinition.displayname();
-				sLabel += ")";
-			}
-			pEdit->SetLabelText(sLabel.c_str());
-			pEdit->ReadOnly();
-
-			std::string sDescription = SvUl::Format(_T(" (Type: Tableobject)  %s"), rDefinition.helptext().c_str());
-			pEdit->SetInfoText(sDescription.c_str());
-
-			pEdit->OnRefresh();
-		}
-
-		SVRPropertyItem* pChild = pRoot->GetChild();
-		while (pChild)
-		{
-			pChild->Expand(TRUE);
-			pChild = pChild->GetSibling();
-		}
-		pRoot->Expand(true);	// needed for redrawing
+		rebuildPropertyTree();
 	}
 	else
 	{
@@ -258,22 +281,8 @@ void SVTADlgExternalResultPage::rebuildPropertyTree()
 		GetDlgItem(IDC_RESULT_LIST)->ShowWindow(SW_HIDE);
 	}
 
-	UpdateData(FALSE);
-}
-
-
-
-
-BOOL SVTADlgExternalResultPage::OnSetActive()
-{
-
-	rebuildPropertyTree();
-
 	return CPropertyPage::OnSetActive();
 }
-
-
-
 
 void SVTADlgExternalResultPage::OnItemQueryShowButton(NMHDR* pNotifyStruct, LRESULT* plResult)
 {

@@ -26,6 +26,9 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
+constexpr int c_indexOfSelectDllPage = 0;/// this is the position at which the "Select DLL" page will be found
+constexpr int c_indexOfInputValuePage = 2;/// this is the position at which the "Input Values" page will be found - if it is present at all!
+constexpr int c_indexOfOutputValuePage = 3;/// this is the position at which the "Output Values" page will be found - if it is present at all!
 
 class GreyOutHelper //uses RAII to facilitate temporary renaming and greying out of MFC buttons
 {
@@ -88,18 +91,19 @@ BOOL SheetForExternalToolAdjustment::OnInitDialog()
 
 	rect.left = tabrect.left; rect.right = tabrect.left + width;
 
-	m_runOnceButton.Create("Run Once",
-			BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP,
-			rect, this, IDC_RUN_ONCE);
-
-	m_runOnceButton.SetFont(GetFont());
-	rect.left += width + 10; rect.right += width + 10;
-
 	m_reInitializeButton.Create("Re-Initialize",
 			BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP,
 			rect, this, IDC_RE_INITIALIZE);
 
 	m_reInitializeButton.SetFont(GetFont());
+
+	rect.left += width + 10; rect.right += width + 10;
+
+	m_runOnceButton.Create("Run Once",
+			BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP,
+			rect, this, IDC_RUN_ONCE);
+
+	m_runOnceButton.SetFont(GetFont());
 
 	return bResult;
 }
@@ -108,26 +112,34 @@ void SheetForExternalToolAdjustment::OnRunOnce()
 {
 	GreyOutHelper goh(m_runOnceButton, _T("<Running>"));
 
-	ValidateAllSheets();
 	SvOi::IObjectClass* pObject = GetTaskObject();
 	ResetTools(pObject);
+
+	auto activeIndex = GetActiveIndex();
+
+	if (c_indexOfOutputValuePage == activeIndex)
+	{
+		auto pOutputValuePage = dynamic_cast<SVTADlgExternalResultPage*>(GetActivePage());
+
+		if (nullptr != pOutputValuePage)
+		{
+			pOutputValuePage->OnSetActive();
+		}
+	}
 }
 
 void SheetForExternalToolAdjustment::OnReInitialize()
 {
 	GreyOutHelper goh(m_reInitializeButton, _T("<Initializing>"));
 
-	auto [result, statusMessagesResponse] = m_externalToolTaskController.initialize();
+	SetActivePage(c_indexOfSelectDllPage);
 
-	auto resultInfo = std::format("Return Value: {}", result);
+	auto pSelectDllPage = dynamic_cast<SVTADlgExternalSelectDllPage*>(GetPage(c_indexOfSelectDllPage));
 
-	for (const auto& message : statusMessagesResponse.statusmessages())
+	if (nullptr != pSelectDllPage)
 	{
-		resultInfo += _T("\n - ");
-		resultInfo += message;
+		pSelectDllPage->InitializeDllAndDisplayResults(false);
 	}
-
-	MessageBox(resultInfo.c_str(), "External Tool: Re-Initialize", MB_OK);
 }
 
 void SheetForExternalToolAdjustment::addPages()
@@ -163,12 +175,8 @@ LRESULT SheetForExternalToolAdjustment::AdaptToTestedDll(WPARAM, LPARAM)
 	return S_OK;
 }
 
-
 LRESULT SheetForExternalToolAdjustment::ExternalToolSelectInputValuePage(WPARAM, LPARAM)
 {
-	/// this is the position at which the "Input Values" page will be found - if it is present at all, that is!
-	constexpr int c_indexOfInputValuePage = 2;
-
 	return PostMessage(PSM_SETCURSEL, c_indexOfInputValuePage, 0);
 }
 
