@@ -21,6 +21,7 @@ namespace SvCl
 	: m_Name {rTreeItem.name()}
 	, m_Location {rTreeItem.location()}
 	, m_CheckedState {SvCl::ObjectSelectorItem::UncheckedEnabled}
+	, m_NodeState {SvCl::ObjectSelectorItem::UncheckedEnabled}
 	, m_ItemTypeName {rTreeItem.type()}
 	, m_ItemKey {rTreeItem.objectidindex()}
 	{
@@ -36,10 +37,12 @@ namespace SvCl
 			(m_Location == rRhs.m_Location) &&
 			(m_ItemTypeName == rRhs.m_ItemTypeName) &&
 			(m_ItemKey == rRhs.m_ItemKey) &&
-			(m_TreeItem == rRhs.m_TreeItem) &&
+			(m_NodeItem == rRhs.m_NodeItem) &&
+			(m_LeafItem == rRhs.m_LeafItem) &&
 			(m_Attribute == rRhs.m_Attribute) &&
 			(m_IconNumber == rRhs.m_IconNumber) &&
 			(m_Modified == rRhs.m_Modified) &&
+			(m_NodeState == rRhs.m_NodeState) &&
 			(m_CheckedState == rRhs.m_CheckedState) &&
 			(m_OrgCheckedState == rRhs.m_OrgCheckedState))
 		{

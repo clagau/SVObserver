@@ -38,10 +38,6 @@ namespace SvOsl
 	{
 		setLeftButtonCheckFlag( TVHT_ONITEM );
 	}
-
-	LeafTreeCtrl::~LeafTreeCtrl()
-	{
-	}
 	#pragma endregion Constructor
 
 	#pragma region Public Methods
@@ -85,7 +81,7 @@ namespace SvOsl
 						TVI_LAST);
 
 					SetItemState( Item, INDEXTOSTATEIMAGEMASK( IterChild->second->m_CheckedState ),  TVIS_STATEIMAGEMASK );
-					IterChild->second->m_TreeItem =  Item;
+					IterChild->second->m_LeafItem =  Item;
 				}
 				++IterChild;
 			}
@@ -108,17 +104,12 @@ namespace SvOsl
 				SvCl::ObjectTreeItems::iterator IterChild = Iter.node()->begin();
 				while( Iter.node()->end() != IterChild )
 				{
-					if( IterChild->second->isLeaf() )
-					{
-						IterChild->second->m_TreeItem =  nullptr;
-					}
-
+					IterChild->second->m_LeafItem =  nullptr;
 					++IterChild;
 				}
 			}
 
 			loadTree();
-
 			return;
 		}
 		else if( Location.empty() )
@@ -133,15 +124,15 @@ namespace SvOsl
 			SvCl::ObjectTreeItems::iterator IterChild = Iter.node()->begin();
 			while( Iter.node()->end() != IterChild )
 			{
-				if( IterChild->second->isLeaf() && (nullptr != IterChild->second->m_TreeItem) )
+				if( IterChild->second->isLeaf() && (nullptr != IterChild->second->m_LeafItem) )
 				{
 					SvCl::ObjectSelectorItem::CheckedStateEnum CheckedState( SvCl::ObjectSelectorItem::EmptyEnabled );
 					//The checked state is saved in the upper nibble of the item state (Filtered with 0xF000) and must be shifted by 12 to get the required value
-					CheckedState = static_cast<SvCl::ObjectSelectorItem::CheckedStateEnum> (GetItemState(IterChild->second->m_TreeItem, TVIS_STATEIMAGEMASK)>>12);
+					CheckedState = static_cast<SvCl::ObjectSelectorItem::CheckedStateEnum> (GetItemState(IterChild->second->m_LeafItem, TVIS_STATEIMAGEMASK)>>12);
 					//Check if state has changed
 					if( IterChild->second->m_CheckedState != CheckedState )
 					{
-						SetItemState( IterChild->second->m_TreeItem, INDEXTOSTATEIMAGEMASK( IterChild->second->m_CheckedState ),  TVIS_STATEIMAGEMASK );
+						SetItemState( IterChild->second->m_LeafItem, INDEXTOSTATEIMAGEMASK( IterChild->second->m_CheckedState ),  TVIS_STATEIMAGEMASK );
 					}
 				}
 				++IterChild;
@@ -149,42 +140,9 @@ namespace SvOsl
 		}
 	}
 
-	void LeafTreeCtrl::showContextMenu( bool)
-	{
-		//If single selection do not show context menu
-		if ( isSingleSelect() )
-		{
-			return;
-		}
+#pragma endregion Public Methods
 
-		CMenu Menu;
-		CMenu* pPopupMenu{nullptr};
-
-		UINT MenuResource = 0;
-
-		MenuResource = IDR_TREE_ALL_VALUES_MENU;
-
-		if( 0 != MenuResource && Menu.LoadMenu( MenuResource ) )
-		{
-			if(nullptr != (pPopupMenu = Menu.GetSubMenu(0)))
-			{
-				CPoint Point = getContextPoint();
-				ClientToScreen( &Point );
-				pPopupMenu->TrackPopupMenu( TPM_LEFTALIGN | TPM_RIGHTBUTTON, Point.x, Point.y, this );
-			}
-		}
-	}
-
-	bool LeafTreeCtrl::isCheckable() const
-	{
-		//Can always check item
-		bool Result(true);
-
-		return Result;
-	}
-	#pragma endregion Public Methods
-
-	#pragma region Protected Methods
+#pragma region Protected Methods
 	void LeafTreeCtrl::OnCheckAll()
 	{
 		TreeItemSet Items;
@@ -202,6 +160,99 @@ namespace SvOsl
 
 		setCheckState( Items, SvCl::ObjectSelectorItem::UncheckedEnabled );
 	}
-	#pragma endregion Protected Methods
+
+	void LeafTreeCtrl::showContextMenu(bool)
+	{
+		//If single selection do not show context menu
+		if (isSingleSelect())
+		{
+			return;
+		}
+
+		CMenu Menu;
+		CMenu* pPopupMenu {nullptr};
+
+		UINT MenuResource = 0;
+
+		MenuResource = IDR_TREE_ALL_VALUES_MENU;
+
+		if (0 != MenuResource && Menu.LoadMenu(MenuResource))
+		{
+			if (nullptr != (pPopupMenu = Menu.GetSubMenu(0)))
+			{
+				CPoint Point = getContextPoint();
+				ClientToScreen(&Point);
+				pPopupMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, Point.x, Point.y, this);
+			}
+		}
+	}
+
+	bool LeafTreeCtrl::isCheckable() const
+	{
+		//Can always check item
+		bool Result(true);
+
+		return Result;
+	}
+
+	bool LeafTreeCtrl::setCheckState(const TreeItemSet& rParentItems, SvCl::ObjectSelectorItem::CheckedStateEnum CheckedState)
+	{
+		TreeItemSet::iterator ParentIter = rParentItems.begin();
+
+		while (rParentItems.end() != ParentIter)
+		{
+			if (nullptr == *ParentIter)
+			{
+				return false;
+			}
+
+			std::string* pLocation = reinterpret_cast<std::string*>(GetItemData(*ParentIter));
+			if (nullptr == pLocation)
+			{
+				return false;
+			}
+
+			SvCl::ObjectTreeItems::iterator Iter = getParentPropPage().getTreeContainer().findItem(*pLocation);
+			if (getParentPropPage().getTreeContainer().end() != Iter)
+			{
+				//If no defined state then we want to toggle the state
+				if (SvCl::ObjectSelectorItem::EmptyEnabled == CheckedState)
+				{
+					switch (Iter->second->m_CheckedState)
+					{
+						case SvCl::ObjectSelectorItem::UncheckedEnabled:
+							CheckedState = SvCl::ObjectSelectorItem::CheckedEnabled;
+							break;
+						case SvCl::ObjectSelectorItem::CheckedEnabled:
+						case SvCl::ObjectSelectorItem::TriStateEnabled:
+							CheckedState = SvCl::ObjectSelectorItem::UncheckedEnabled;
+							break;
+						case SvCl::ObjectSelectorItem::UncheckedDisabled:
+							CheckedState = SvCl::ObjectSelectorItem::CheckedDisabled;
+							break;
+						case SvCl::ObjectSelectorItem::CheckedDisabled:
+						case SvCl::ObjectSelectorItem::TriStateDisabled:
+							CheckedState = SvCl::ObjectSelectorItem::UncheckedDisabled;
+							break;
+						default:
+							break;
+					}
+				}
+
+				Iter->second->m_CheckedState = CheckedState;
+				SetItemState(*ParentIter, INDEXTOSTATEIMAGEMASK(CheckedState), TVIS_STATEIMAGEMASK);
+				getUpdateItems().insert(Iter->first);
+
+				SvDef::StringSet updateItems = getParentPropPage().getTreeContainer().setParentState(Iter);
+				getUpdateItems().insert(updateItems.begin(), updateItems.end());
+			}
+			++ParentIter;
+		}
+
+		getParentPropPage().updateData(this);
+
+		return true;
+	}
+#pragma endregion Protected Methods
 
 } //namespace SvOsl

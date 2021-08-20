@@ -39,12 +39,12 @@ namespace SvOsl
 			\param rParent <in> a reference to the parent property page
 			\param SingleSelect <in> true for single selection mode
 		***********/
-		ObjectTreeCtrl( ObjectSelectorPpg& rParent, bool SingleSelect );
+		explicit ObjectTreeCtrl( ObjectSelectorPpg& rParent, bool SingleSelect );
 
 		/**********
 			The class destructor
 		***********/
-		virtual ~ObjectTreeCtrl();
+		virtual ~ObjectTreeCtrl() = default;
 	#pragma endregion Constructor
 
 	public:
@@ -63,7 +63,7 @@ namespace SvOsl
 		// Description:  The method gets the single select mode.
 		// Returns true if single select, false otherwise.
 		//************************************
-		inline bool isSingleSelect() const;
+		bool isSingleSelect() const { return m_SingleSelect; }
 	#pragma endregion Public Methods
 
 	protected:
@@ -134,7 +134,7 @@ namespace SvOsl
 		\param CheckedState <in> the state to change it to
 		\return True if state has changed
 		***********/
-		bool setCheckState( const TreeItemSet& rParentItems, SvCl::ObjectSelectorItem::CheckedStateEnum CheckedState = SvCl::ObjectSelectorItem::EmptyEnabled );
+		virtual bool setCheckState( const TreeItemSet& rParentItems, SvCl::ObjectSelectorItem::CheckedStateEnum CheckedState = SvCl::ObjectSelectorItem::EmptyEnabled ) = 0;
 
 		/**********
 		The method sets the state of the children items
@@ -153,37 +153,37 @@ namespace SvOsl
 		The method gets the parent property page
 		\return the property page reference
 		***********/
-		inline ObjectSelectorPpg& getParentPropPage() const;
+		ObjectSelectorPpg& getParentPropPage() const { return m_rParent; }
 
 		/**********
 		The method gets the point where the context menu was clicked
 		\return the point of the context menu
 		***********/
-		inline const CPoint& getContextPoint() const;
+		const CPoint& getContextPoint() const { return m_ContextPoint; }
 
 		/**********
 		The method sets the current selection
 		\param rCurrentSelection <in> a reference to the current selection
 		***********/
-		inline void setCurrentSelection( const std::string& rCurrentSelection );
+		void setCurrentSelection(const std::string& rCurrentSelection) { m_CurrentSelection = rCurrentSelection; }
 
 		/**********
 		The method gets a reference to the update items
 		\return a reference to the list of updated items
 		***********/
-		inline SvDef::StringSet& getUpdateItems() const;
+		SvDef::StringSet& getUpdateItems() const { return m_UpdateItems; }
 
 		/**********
 		The method gets the left button check flag
 		\return the check flag value
 		***********/
-		inline const UINT& getLeftButtonCheckFlag() const;
+		const UINT& getLeftButtonCheckFlag() const { return m_LeftButtonCheckFlag; }
 
 		/**********
 		The method sets the left button check flag
 		\param rCheckFlag <in> 
 		***********/
-		inline void setLeftButtonCheckFlag( const UINT& rCheckFlag );
+		void setLeftButtonCheckFlag(const UINT& rCheckFlag) { m_LeftButtonCheckFlag = rCheckFlag; }
 	#pragma endregion Protected Methods
 
 	private:
@@ -198,7 +198,3 @@ namespace SvOsl
 	};
 
 } //namespace SvOsl
-
-#pragma region Inline
-#include "ObjectTreeCtrl.inl"
-#pragma endregion Inline

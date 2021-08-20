@@ -87,10 +87,12 @@ namespace SvCl
 		std::string			m_Location;					//The location of the item
 		std::string			m_ItemTypeName;				//The name of the data type of the item
 		std::string			m_ItemKey;					//The item key
-		HTREEITEM			m_TreeItem{nullptr};		//the corresponding tree item handle
+		HTREEITEM			m_NodeItem {nullptr};		//the node item handle
+		HTREEITEM			m_LeafItem {nullptr};		//the Leaf item handle
 		AttributeEnum		m_Attribute{AttributeNone};	//The item attribute
 		int					m_IconNumber{0};			//The corresponding item image number
 		bool				m_Modified{false};			//Modified flag
+		CheckedStateEnum	m_NodeState {EmptyEnabled};	//The node checked state
 		CheckedStateEnum	m_CheckedState{EmptyEnabled};		//The item checked state
 		CheckedStateEnum	m_OrgCheckedState{EmptyEnabled};	//The item original checked state
 	#pragma endregion Member Variables

@@ -55,25 +55,30 @@ namespace SvOsl
 		// Description:  The method gets the tree container
 		// Returns:  a reference to the tree container
 		//************************************
-		inline SvCl::ObjectTreeItems& getTreeContainer() const;
+		SvCl::ObjectTreeItems& getTreeContainer() const { return m_rTreeContainer; }
 
 		//************************************
 		// Description:  The method gets the display text for the current highlighted node.
 		// Returns:  the display text of the highlighted node
 		//************************************
-		inline std::string getHighlightedNode() const;
+		std::string getHighlightedNode() const { return m_HighlightedNode; }
 
 		//************************************
 		// Description:  The method sets the current highlighted node.
 		// Parameter:  rHighlightedNode <in>:  a const reference to the display text of the node to be highlighted
 		//************************************
-		inline void setHighlightedNode( const std::string& rHighlightedNode );
+		void setHighlightedNode( const std::string& rHighlightedNode )
+		{
+			m_HighlightedNode = rHighlightedNode;
+			UpdateData(false);
+		}
+
 
 		//************************************
 		// Description:  The method sets the Help ID for the dialog.
 		// Parameter:  HelpID <in>:  a unique identifier for this dialog
 		//************************************
-		inline void setHelpID( int HelpID );
+		void setHelpID(int HelpID) { m_HelpID = HelpID; }
 
 		//************************************
 		// Description:  The method is called to update the dialog with new data
@@ -113,7 +118,4 @@ namespace SvOsl
 	};
 } //namespace SvOsl
 
-#pragma region Inline
-#include "ObjectSelectorPpg.inl"
-#pragma endregion Inline
 

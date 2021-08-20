@@ -50,14 +50,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="ObjectSelectorPpg.inl">
-      <Filter>Headerdateien</Filter>
-    </None>
-    <None Include="ObjectTreeCtrl.inl">
-      <Filter>Headerdateien</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <Filter Include="Quelldateien">
       <UniqueIdentifier>{5e65bb9e-77a2-415a-876e-c4a1e93877e2}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>

@@ -50,10 +50,6 @@ namespace SvOsl
 		, m_LeftButtonCheckFlag( TVHT_ONITEMSTATEICON )
 	{
 	}
-
-	ObjectTreeCtrl::~ObjectTreeCtrl()
-	{
-	}
 	#pragma endregion Constructor
 
 	#pragma region Protected Methods
@@ -246,14 +242,14 @@ namespace SvOsl
 						CheckedState =  SvCl::ObjectSelectorItem::CheckedEnabled;
 						break;
 					case SvCl::ObjectSelectorItem::CheckedEnabled:
-					case SvCl::ObjectSelectorItem::TriStateEnabled: // fall through...
+					case SvCl::ObjectSelectorItem::TriStateEnabled:
 						CheckedState = SvCl::ObjectSelectorItem::UncheckedEnabled;
 						break;
 					case SvCl::ObjectSelectorItem::UncheckedDisabled:
 						CheckedState = SvCl::ObjectSelectorItem::CheckedDisabled;
 						break;
 					case SvCl::ObjectSelectorItem::CheckedDisabled:
-					case SvCl::ObjectSelectorItem::TriStateDisabled: // fall through...
+					case SvCl::ObjectSelectorItem::TriStateDisabled:
 						CheckedState = SvCl::ObjectSelectorItem::UncheckedDisabled;
 						break;
 					default:
@@ -288,7 +284,14 @@ namespace SvOsl
 			bool TriState = SvCl::ObjectSelectorItem::TriStateEnabled == rCheckedState || SvCl::ObjectSelectorItem::TriStateDisabled == rCheckedState;
 			if( !TriState || ChildIter->second->isNode() )
 			{
-				ChildIter->second->m_CheckedState =  rCheckedState;
+				if (ChildIter->second->isLeaf())
+				{
+					ChildIter->second->m_CheckedState = rCheckedState;
+				}
+				if (ChildIter->second->isNode())
+				{
+					ChildIter->second->m_NodeState = rCheckedState;
+				}
 				m_UpdateItems.insert( ChildIter->first );
 				setChildrenState(ChildIter, rCheckedState);
 			}

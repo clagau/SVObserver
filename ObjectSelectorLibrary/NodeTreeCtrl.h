@@ -34,12 +34,12 @@ namespace SvOsl
 			\param rParent <in> a reference to the parent property page
 			\param SingleSelect <in> true for single selection mode
 		***********/
-		NodeTreeCtrl( ObjectSelectorPpg& rParent, bool SingleSelect );
+		explicit NodeTreeCtrl( ObjectSelectorPpg& rParent, bool SingleSelect );
 
 		/**********
 			The class destructor
 		***********/
-		virtual ~NodeTreeCtrl();
+		virtual ~NodeTreeCtrl() = default;
 	#pragma endregion Constructor
 
 	public:
@@ -88,6 +88,8 @@ namespace SvOsl
 		The method determines if item is checkable
 		***********/
 		virtual bool isCheckable() const override;
+
+		virtual bool setCheckState(const TreeItemSet& rParentItems, SvCl::ObjectSelectorItem::CheckedStateEnum CheckedState = SvCl::ObjectSelectorItem::EmptyEnabled);
 
 		/**********
 		The method expands all checked items

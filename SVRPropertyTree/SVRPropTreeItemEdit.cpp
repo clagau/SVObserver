@@ -295,7 +295,7 @@ void SVRPropertyItemEdit::OnActivate()
 	if ( !m_bKillFocusWorkaround )
 	{
 		OnRefresh();
-
+		EnableWindow(false == IsReadOnly());
 		DisplayButton();
 		int iButtonWidth = 0;
 		if (m_bShowButton)

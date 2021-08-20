@@ -111,10 +111,6 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="TextDefinesSvOsl.h" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="ObjectSelectorPpg.inl" />
-    <None Include="ObjectTreeCtrl.inl" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
