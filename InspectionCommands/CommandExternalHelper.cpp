@@ -126,10 +126,7 @@ namespace SvCmd
 	SvUl::NameObjectIdList convertNameObjectIdList(const ::google::protobuf::RepeatedPtrField< ::SvPb::ObjectNameIdPair >& rPbList)
 	{
 		SvUl::NameObjectIdList list;
-		for (const auto& rEntry : rPbList)
-		{
-			list.emplace_back(rEntry.objectname(), rEntry.objectid());
-		}
+		std::ranges::transform(rPbList, std::back_inserter(list), [](const auto& rEntry) -> SvUl::NameObjectIdPair { return { rEntry.objectname(), rEntry.objectid() }; });
 		return list;
 	}
 

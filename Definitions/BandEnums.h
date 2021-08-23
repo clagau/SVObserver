@@ -23,5 +23,5 @@ enum BandEnum
 	BandNumber = 3			//! The number of bands
 };
 
-constexpr BandEnum BandList[BandEnum::BandNumber] = {BandEnum::Band0, BandEnum::Band1, BandEnum::Band2};
+constexpr BandEnum BandList[BandEnum::BandNumber] = { BandEnum::Band0, BandEnum::Band1, BandEnum::Band2 };
 }

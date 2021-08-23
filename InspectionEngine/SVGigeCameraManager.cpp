@@ -57,20 +57,17 @@ HRESULT SVGigeCameraManager::UpdateConnectedCameras( const SVGigeCameraStructVec
 	HRESULT Result( S_OK );
 	m_OrderedCameras.clear();
 
-	for(auto const& rIniCamera :  m_iniCameras)
-	{
-		SVGigeCameraStruct GigeCamera(rIniCamera);
-		for(auto const& rCamera : rCameraList)
-		{
-			if(rIniCamera.m_IPAddress == rCamera.m_IPAddress )
+	std::ranges::transform(m_iniCameras, std::back_inserter(m_OrderedCameras), [rCameraList](const auto& rIniCam)
+		{ 
+			SVGigeCameraStruct gigeCamera(rIniCam);
+			auto iter = std::ranges::find_if(rCameraList, [rIniCam](const auto& rEntry) {return (rIniCam.m_IPAddress == rEntry.m_IPAddress); });
+			if (rCameraList.end() != iter)
 			{
-				GigeCamera = rCamera;
-				GigeCamera.m_CameraID = rIniCamera.m_CameraID;
-				break;
+				gigeCamera = *iter;
+				gigeCamera.m_CameraID = rIniCam.m_CameraID;
 			}
-		}
-		m_OrderedCameras.push_back(GigeCamera);
-	}
+			return gigeCamera;
+		});
 
 	return Result;
 }

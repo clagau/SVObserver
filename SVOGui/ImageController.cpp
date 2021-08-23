@@ -61,11 +61,8 @@ namespace SvOg
 			if (S_OK == hr && responseCmd.has_getspecialimagelistresponse())
 			{
 				m_specialImageList.clear();
-				m_specialImageList.reserve(responseCmd.getspecialimagelistresponse().specialimagenames().size());
-				for (auto tmp : responseCmd.getspecialimagelistresponse().specialimagenames())
-				{
-					m_specialImageList.emplace_back(tmp);
-				}
+				const auto& fromList = responseCmd.getspecialimagelistresponse().specialimagenames();
+				std::ranges::copy(fromList, std::back_inserter(m_specialImageList));
 			}
 		}
 		return hr;

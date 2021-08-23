@@ -192,16 +192,15 @@ bool SVColorThreshold::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVecto
 
 	if (Result)
 	{
-		bool isBinarize(true);
-
-		for (SvDef::BandEnum Band : SvDef::BandList)
-		{
-			//! Binarize only if band is enabled
-			if (ThresholdEnabled[Band])
-			{
-				isBinarize &= Binarize(LowerThreshold[Band], UpperThreshold[Band], ThresholdExclude[Band], pInputImageBufferArray[Band], pBandImageArray[Band]);
-			}
-		}
+		bool isBinarize = std::ranges::all_of(SvDef::BandList,
+			[&](SvDef::BandEnum Band) 
+			{ 
+				if (ThresholdEnabled[Band])
+				{
+					return Binarize(LowerThreshold[Band], UpperThreshold[Band], ThresholdExclude[Band], pInputImageBufferArray[Band], pBandImageArray[Band]);
+				}
+				return true;
+			});
 
 		if (!isBinarize)
 		{
