@@ -17,7 +17,7 @@
 #include "ObjectInterfaces/IFormulaController.h"
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVOLibrary/SVQueueObject.h"
-#include "SVStatusLibrary/RunStatus.h"
+#include "InspectionEngine/RunStatus.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "InspectionEngine/SVTaskObject.h" // For SVImageClassPtrSet
 #include "SVInfoStructs.h"

@@ -96,6 +96,9 @@
     <ClInclude Include="SVMatroxGigeCameraProxy.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="RunStatus.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ResultViewItemDef.cpp">
@@ -171,6 +174,9 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVMatroxGigeCameraProxy.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="RunStatus.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>

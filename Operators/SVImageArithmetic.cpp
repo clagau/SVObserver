@@ -18,7 +18,7 @@
 #include "Tools/SVTool.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
-#include "SVStatusLibrary/RunStatus.h"
+#include "InspectionEngine/RunStatus.h"
 #include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
 #include "SVValueObjectLibrary/SVLongValueObjectClass.h"
 #include "SVMatroxLibrary/SVMatroxBufferCreateStruct.h"

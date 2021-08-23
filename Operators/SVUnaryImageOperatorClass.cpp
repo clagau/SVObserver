@@ -15,7 +15,7 @@
 #include "SVUnaryImageOperatorList.h"
 #include "SVStdImageOperatorListClass.h"
 #include "SVInplaceImageOperatorListClass.h"
-#include "SVStatusLibrary/RunStatus.h"
+#include "InspectionEngine/RunStatus.h"
 #pragma region Includes
 
 namespace SvOp

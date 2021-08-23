@@ -20,7 +20,7 @@
 #include "SVLibrary/SVTemplate.h"
 #include "Definitions/Color.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVStatusLibrary/RunStatus.h"
+#include "RunStatus.h"
 #include "ObjectInterfaces/IInspectionProcess.h"
 #include "ObjectInterfaces/ITaskObjectListClass.h"
 #include "ObjectInterfaces/IToolSet.h"

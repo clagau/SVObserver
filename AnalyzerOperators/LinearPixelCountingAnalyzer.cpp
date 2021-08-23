@@ -14,7 +14,7 @@
 #include "LinearPixelCountingAnalyzer.h"
 #include "Definitions/LinearEdgeEnums.h"
 #include "Operators/SVLinearEdgeAProcessingClass.h"
-#include "SVStatusLibrary/RunStatus.h"
+#include "InspectionEngine/RunStatus.h"
 #pragma endregion Includes
 
 namespace SvAo

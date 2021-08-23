@@ -20,7 +20,7 @@
 #include "InspectionEngine/SVDataBuffer.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
-#include "SVStatusLibrary/RunStatus.h"
+#include "InspectionEngine/RunStatus.h"
 #include "Tools/SVTool.h"
 #pragma endregion Includes
 

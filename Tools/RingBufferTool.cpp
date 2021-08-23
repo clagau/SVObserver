@@ -14,7 +14,7 @@
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVStatusLibrary/RunStatus.h"
+#include "InspectionEngine/RunStatus.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "ObjectInterfaces/ITriggerRecordControllerRW.h"

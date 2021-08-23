@@ -11,7 +11,7 @@
 #include "SVProtoBuf/SVO-Enum.h"
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
 #include "SVMatroxLibrary/SVMatroxSimpleEnums.h"
-#include "SVStatusLibrary/RunStatus.h"
+#include "InspectionEngine/RunStatus.h"
 #include "SVMatroxLibrary/SVMatroxBlobInterface.h"
 #include "SVImageAnalyzerClass.h"
 #include "ObjectInterfaces/NameValueVector.h"

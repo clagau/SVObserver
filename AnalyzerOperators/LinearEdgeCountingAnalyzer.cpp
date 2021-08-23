@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "LinearEdgeCountingAnalyzer.h"
 #include "Operators/SVLinearEdgeAProcessingClass.h"
-#include "SVStatusLibrary/RunStatus.h"
+#include "InspectionEngine/RunStatus.h"
 #pragma endregion Includes
 
 namespace SvAo

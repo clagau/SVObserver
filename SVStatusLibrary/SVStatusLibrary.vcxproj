@@ -162,16 +162,12 @@
     <ClCompile Include="MessageManager.cpp" />
     <ClCompile Include="MessageTextGenerator.cpp" />
     <ClCompile Include="RegistryAccess.cpp" />
-    <ClCompile Include="RunStatus.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="SVEventLogClass.cpp" />
-    <ClCompile Include="SVEventRecordStruct.cpp" />
-    <ClCompile Include="SVOIntelRAIDStatusClass.cpp" />
     <ClCompile Include="SVSVIMStateClass.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -186,12 +182,8 @@
     <ClInclude Include="MessageTextGenerator.h" />
     <ClInclude Include="MessageTextMap.h" />
     <ClInclude Include="RegistryAccess.h" />
-    <ClInclude Include="RunStatus.h" />
     <ClInclude Include="SourceFileParams.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="SVEventLogClass.h" />
-    <ClInclude Include="SVEventRecordStruct.h" />
-    <ClInclude Include="SVOIntelRAIDStatusClass.h" />
     <ClInclude Include="SVSVIMStateClass.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

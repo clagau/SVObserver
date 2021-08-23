@@ -21,7 +21,7 @@
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
 #include "SVObjectLibrary/SVToolsetScriptTags.h"
-#include "SVStatusLibrary/RunStatus.h"
+#include "InspectionEngine/RunStatus.h"
 #include "SVUtilityLibrary/SVSafeArray.h"
 #include "Tools/SVTool.h"
 #include "SVProtoBuf/Overlay.h"

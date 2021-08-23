@@ -12,7 +12,7 @@
 #include "SVMatroxLibrary/SVMatroxEnums.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
-#include "SVStatusLibrary/RunStatus.h"
+#include "InspectionEngine/RunStatus.h"
 #include "SVStatusLibrary/MessageContainer.h"
 
 #pragma endregion Includes

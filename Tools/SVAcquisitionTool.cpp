@@ -12,7 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVAcquisitionTool.h"
-#include "SVStatusLibrary/RunStatus.h"
+#include "InspectionEngine/RunStatus.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #pragma endregion Includes
 

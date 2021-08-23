@@ -14,7 +14,7 @@
 #include "SVOCVAnalyzer.h"
 #include "Operators/SVOCVAnalyzerResult.h"
 #include "SVMatroxLibrary/SVOLicenseManager.h"
-#include "SVStatusLibrary/RunStatus.h"
+#include "InspectionEngine/RunStatus.h"
 #pragma endregion Includes
 
 namespace SvAo

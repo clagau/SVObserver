@@ -10,7 +10,7 @@
 #include "Operators/IndexEquation.h"
 #include "SVProtoBuf/SVO-Enum.h"
 #include "SVObjectLibrary/SVObjectLibrary.h"
-#include "SVStatusLibrary/RunStatus.h"
+#include "InspectionEngine/RunStatus.h"
 #include "SVValueObjectLibrary/DoubleSortValueObject.h"
 #pragma endregion Includes
 

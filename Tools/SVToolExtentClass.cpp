@@ -437,7 +437,7 @@ HRESULT SVToolExtentClass::ensureValidScaleFactorIfDirectValue(const SVImageExte
 		_variant_t value{0.0};
 		GetExtentValue(extentProperty, value);
 			
-		if (false == SvTo::isValidScaleFactor(value)) //ABXXX woanders (nicht im ResizeTool)
+		if (false == SvTo::isValidScaleFactor(value))
 		{
 			return SetExtentValue(extentProperty, SvDef::cDefaultScaleFactor);
 		}

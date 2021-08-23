@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVResultPointY.h"
 #include "SVRange.h"
-#include "SVStatusLibrary/RunStatus.h"
+#include "InspectionEngine/RunStatus.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVValueObjectLibrary\SVPointValueObjectClass.h"
 #pragma endregion Includes

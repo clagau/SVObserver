@@ -17,7 +17,7 @@
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "SVMatroxLibrary/SVMatroxImageRotateStruct.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
-#include "SVStatusLibrary/RunStatus.h"
+#include "InspectionEngine/RunStatus.h"
 #include "Tools/SVLinearToolClass.h"
 #include "Tools/SVTool.h"
 #include "Operators/SVResultDouble.h"

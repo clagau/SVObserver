@@ -796,8 +796,6 @@ void SVObserverApp::OnStop()
 
 	if (IsProductTypeRAID())
 	{
-		m_IntelRAID.UpdateStatus();
-
 		if (SVSVIMStateClass::CheckState(SV_STATE_RAID_FAILURE))
 		{
 			pConfig->SetRaidErrorBit(true);
@@ -2088,7 +2086,6 @@ BOOL SVObserverApp::InitInstance()
 
 	if (IsProductTypeRAID())
 	{
-		m_IntelRAID.UpdateStatus();
 	}
 	else
 	{
@@ -5099,8 +5096,6 @@ void SVObserverApp::Start(DWORD desiredState)
 
 		if (IsProductTypeRAID())
 		{
-			m_IntelRAID.UpdateStatus();
-
 			if (SVSVIMStateClass::CheckState(SV_STATE_RAID_FAILURE))
 			{
 				if (pConfig->SetRaidErrorBit(true) != S_OK)

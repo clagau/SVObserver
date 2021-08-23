@@ -27,7 +27,7 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVOLibrary/SVMemoryManager.h"
 #include "SVStatusLibrary/GlobalPath.h"
-#include "SVStatusLibrary/RunStatus.h"
+#include "InspectionEngine/RunStatus.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVSystemLibrary/SVThreadManager.h"
 #include "SVUtilityLibrary/StringHelper.h"

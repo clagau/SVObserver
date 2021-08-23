@@ -23,7 +23,7 @@
 #include "SVMatroxLibrary/SVMatroxErrorEnum.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVStatusLibrary/MessageContainer.h"
-#include "SVStatusLibrary/RunStatus.h"
+#include "InspectionEngine/RunStatus.h"
 #include "SVResult.h"
 #include "SVVariantResultClass.h"
 #include "Tools/SVTool.h"

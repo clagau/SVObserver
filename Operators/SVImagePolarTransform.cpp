@@ -27,7 +27,7 @@
 #include "SVMatroxLibrary/SVMatroxPolarTransformStruct.h"
 #include "SVMatroxLibrary/SVMatroxImageInterface.h"
 #include "SVProtoBuf/Overlay.h"
-#include "SVStatusLibrary/RunStatus.h"
+#include "InspectionEngine/RunStatus.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "Tools/SVTool.h"
 #include "Tools/SVPolarTransformationTool.h"

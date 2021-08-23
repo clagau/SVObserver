@@ -15,7 +15,7 @@
 #include "Definitions/SVObjectTypeInfoStruct.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVStatusLibrary/RunStatus.h"
+#include "RunStatus.h"
 #include "SVUtilityLibrary/SVClock.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "ObjectInterfaces/IInspectionProcess.h"

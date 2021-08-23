@@ -19,7 +19,6 @@
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVFileSystemLibrary/SVFileNameClass.h"
 #include "SVGlobal.h"
-#include "SVStatusLibrary/SVOIntelRAIDStatusClass.h"
 #include "SVLibrary/SVUtilityIniClass.h"
 #include "SVOLibrary/SVObserverEnums.h"
 #pragma endregion Includes
@@ -336,8 +335,6 @@ public:
 #pragma region Member variables
 private:
 	HANDLE m_hAppThread;
-
-	SvStl::SVOIntelRAIDStatusClass m_IntelRAID;
 
 	SVIPDoc* m_pCurrentDocument;
 	long m_OfflineCount;

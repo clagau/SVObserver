@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVResultDouble.h"
 #include "SVRange.h"
-#include "SVStatusLibrary/RunStatus.h"
+#include "InspectionEngine/RunStatus.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 

@@ -9,7 +9,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "IndexEquation.h"
-#include "SVStatusLibrary/RunStatus.h"
+#include "InspectionEngine/RunStatus.h"
 #include "SVValueObjectLibrary/SVLongValueObjectClass.h"
 #pragma endregion Includes
 

@@ -14,7 +14,7 @@
 #include "SVMatroxLibrary/SVMatroxBlobInterface.h"
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
 #include "SVProtoBuf/ConverterHelper.h"
-#include "SVStatusLibrary/RunStatus.h"
+#include "InspectionEngine/RunStatus.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "Tools/SVTool.h"

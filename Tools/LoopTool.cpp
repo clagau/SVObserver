@@ -10,7 +10,7 @@
 #include "LoopTool.h"
 #include "ObjectInterfaces/IInspectionProcess.h"
 #include "Operators/SVConditional.h"
-#include "SVStatusLibrary/RunStatus.h"
+#include "InspectionEngine/RunStatus.h"
 #pragma endregion Includes
 
 //This comment is to avoid that the SVConditional include is marked as not required due to forward declaration from a base class

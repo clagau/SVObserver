@@ -15,7 +15,7 @@
 #include "Definitions/LinearEdgeEnums.h"
 #include "Operators/SVLinearEdgeAProcessingClass.h"
 #include "Operators/SVLinearEdgeBProcessingClass.h"
-#include "SVStatusLibrary/RunStatus.h"
+#include "InspectionEngine/RunStatus.h"
 #include "Tools/SVTool.h"
 #include "SVProtoBuf/Overlay.h"
 #pragma endregion Includes

@@ -16,7 +16,7 @@
 #include "AnalyzerOperators/SVAnalyzer.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "Operators/ToolSizeAdjustTask.h"
-#include "SVStatusLibrary/RunStatus.h"
+#include "InspectionEngine/RunStatus.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #pragma endregion Includes
 

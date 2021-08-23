@@ -15,7 +15,7 @@
 #include "SVShapeMaskHelperClass.h"
 #include "SVUserMaskOperatorClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "SVStatusLibrary/RunStatus.h"
+#include "InspectionEngine/RunStatus.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #pragma endregion Includes
 

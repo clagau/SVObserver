@@ -91,6 +91,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="ResultViewItemDef.h" />
+    <ClInclude Include="RunStatus.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SVAcquisitionClass.h" />
     <ClInclude Include="SVAcquisitionDevice.h" />
@@ -120,6 +121,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ResultViewItemDef.cpp" />
+    <ClCompile Include="RunStatus.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
