@@ -67,9 +67,7 @@ namespace SvOg
 		//{{AFX_MSG(LinkedValueSelectorDialog)
 		virtual BOOL OnInitDialog() override;
 		virtual void OnOK() override;
-
-		//virtual BOOL OnKillActive() override;
-		void OnSelchangeValueType();
+		void OnRadioType();
 		//}}AFX_MSG
 		DECLARE_MESSAGE_MAP()
 
@@ -86,7 +84,6 @@ namespace SvOg
 		CString m_directValue;
 
 	private:
-		CComboBox m_valueTypeCtrl;
 		uint32_t m_inspectionId;
 		uint32_t m_objectId;
 		const std::string m_ObjectName;
@@ -97,13 +94,12 @@ namespace SvOg
 		ValidCheckCallback m_validCheckCallback = nullptr;
 
 		//linked 
-		SvOsl::ObjectTreeGenerator m_linkedTreeGenerator;
 		CPropertySheet m_dlgLinkedSheet;
+		SvOsl::ObjectTreeGenerator m_linkedTreeGenerator;
 		std::unique_ptr<SvOsl::ObjectSelectorPpg> m_pDlgLinkedPage;
 		ObjectSelectorData m_objectSelectorData;
 
 		//For Formula
-		CPropertySheet m_dlgFormulaSheet;
 		std::unique_ptr<SVFormulaEditorPageClass> m_pDlgFormulaPage;
 		SvOi::IFormulaControllerPtr m_FormulaController;
 	};

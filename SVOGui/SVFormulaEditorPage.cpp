@@ -45,6 +45,33 @@ enum
 	SV_EQUATION_BUFFER_SIZE = 4096, //This enumeration defines the Equation Buffer Size.
 };
 
+//This RAII - class sets the ControlParent StyleFlag and resets it at the end - but only if was is not already set
+class ControlParentSetter
+{
+public:
+	ControlParentSetter(CWnd* pWnd)
+		: m_pWnd(pWnd)
+	{
+		m_flagSet = nullptr != pWnd && (0 == (WS_EX_CONTROLPARENT & pWnd->GetExStyle()));
+		if (m_flagSet)
+		{
+			pWnd->ModifyStyleEx(0, WS_EX_CONTROLPARENT);
+		}
+	}
+
+	~ControlParentSetter()
+	{
+		if (m_flagSet)
+		{
+			m_pWnd->ModifyStyleEx(WS_EX_CONTROLPARENT, 0);
+		}
+	}
+
+private:
+	bool m_flagSet = false;
+	CWnd* m_pWnd;
+};
+
 const int c_offsetXForCursorToolbar = 340;
 constexpr const TCHAR* cQuote = _T("\"");
 
@@ -387,9 +414,6 @@ void SVFormulaEditorPageClass::setEquationText()
 	enableUndoButton();
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// SVFormulaEditorPageClass message handlers
-
 void SVFormulaEditorPageClass::OnLocalVariableSelect()
 {
 	UpdateData(TRUE);
@@ -409,8 +433,12 @@ void SVFormulaEditorPageClass::OnLocalVariableSelect()
 	std::string InspectionName = m_FormulaController->GetInspectionName();
 	std::string Title = SvUl::Format(_T("%s - %s"), ToolsetOutput.c_str(), InspectionName.c_str());
 
+	//If the 'ControlParent' style flag is not set for the parent control, showDialog() on the ObjectTreeGenerator leads to a deadlock. 
+	//For this reason it will be temporarily set before calling showDialog().
+	std::unique_ptr<ControlParentSetter> setter = std::make_unique<ControlParentSetter>(GetParent());
 	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog(Title.c_str(), ToolsetOutput.c_str(), Filter.c_str(), this);
-
+	setter.reset();
+	
 	if (IDOK == Result)
 	{
 		SVObjectReference ObjRef {SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult()};
@@ -650,8 +678,13 @@ BOOL SVFormulaEditorPageClass::OnCommand(WPARAM wParam, LPARAM lParam)
 			deleteInEditor(1);
 			break;
 		case ID_FORMULA_TEST:
+		{
+			//If the 'ControlParent' style flag is not set for the parent control, opening a message box (called from onValidate) leads to a deadlock. 
+			//For this reason it will be temporarily set beforehand.
+			ControlParentSetter setter {GetParent()};
 			onValidate();
 			break;
+		}
 		case ID_FORMULA_UNDO:
 			onUndo();
 			break;
