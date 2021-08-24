@@ -82,7 +82,6 @@ namespace SvOsl
 
 		bool isSingleObject = TypeSingleObject == (TypeSingleObject & m_SelectorType);
 
-		m_TreeContainer.setTreeType( isSingleObject );
 		m_TreeContainer.setNodeCheckedStates();
 		m_TreeContainer.synchronizeCheckedStates();
 
@@ -167,6 +166,8 @@ namespace SvOsl
 			m_helpID = (TypeSingleObject == m_SelectorType) ? IDD_OUTPUT_SELECTOR : IDD_OBJECT_SELECTOR_PPG;
 			m_helpID += SvOr::HELPFILE_DLG_IDD_OFFSET;
 		}
+
+		m_TreeContainer.setTreeType(TypeSingleObject == (TypeSingleObject & m_SelectorType));
 		//Reset the leaf count here as this method is called at the start of inserting the objects into the selector
 		m_LeafCount = 0;
 	}

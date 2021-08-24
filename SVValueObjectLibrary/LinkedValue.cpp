@@ -429,7 +429,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 		ConvertVariantToProtobuf(varValue, rLinkedValue.mutable_value());
 		ConvertVariantToProtobuf(GetDefaultValue(), rLinkedValue.mutable_defaultvalue());
 		ConvertVariantToProtobuf(m_directValue, rLinkedValue.mutable_directvalue());
-		rLinkedValue.set_indirectdotname(m_indirectValueRef.GetCompleteName(true));
+		rLinkedValue.set_indirectdotname(m_indirectValueRef.GetObjectNameToObjectType(SvPb::SVToolSetObjectType, true));
 		rLinkedValue.set_indirectidstring((convertObjectIdToString(m_indirectValueRef.getObjectId()) + m_indirectValueRef.GetIndexString()).c_str());
 		rLinkedValue.set_formula(m_formulaString.c_str());
 		rLinkedValue.set_equationid(m_equation.getObjectId());

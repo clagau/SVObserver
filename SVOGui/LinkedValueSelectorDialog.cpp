@@ -209,7 +209,7 @@ namespace SvOg
 		//check and set indirect value
 		m_linkedTreeGenerator.checkModifiedItems();
 		SVObjectReference ObjRef{ m_linkedTreeGenerator.getSingleObjectResult() };
-		m_data.m_indirectDotName = ObjRef.GetObjectNameToObjectType(SvPb::SVInspectionObjectType, true);
+		m_data.m_indirectDotName = ObjRef.GetObjectNameToObjectType(SvPb::SVToolSetObjectType, true);
 		if (m_data.m_indirectDotName.empty() && SvPb::LinkedSelectedType::IndirectValue == m_data.m_type)
 		{
 			SvDef::StringVector msgList;
@@ -332,6 +332,9 @@ namespace SvOg
 			nameSet.insert(m_data.m_indirectDotName);
 			m_linkedTreeGenerator.setCheckItems(nameSet);
 		}
+
+		m_linkedTreeGenerator.getTreeContainer().setNodeCheckedStates();
+		m_linkedTreeGenerator.getTreeContainer().synchronizeCheckedStates();
 
 		m_pDlgLinkedPage = std::make_unique<SvOsl::ObjectSelectorPpg>(m_linkedTreeGenerator.getTreeContainer(), "Link");
 		m_dlgLinkedSheet.AddPage(m_pDlgLinkedPage.get());
