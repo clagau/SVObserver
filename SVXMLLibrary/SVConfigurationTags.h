@@ -22,6 +22,7 @@ namespace  SvXml
 	constexpr const char* CTAG_SOFTWARETRIGGER_PERIOD			= (_T("SoftwareTriggerPeriod"));
 	constexpr const char* CTAG_START_OBJECT_ID				= (_T("StartObjectID"));
 	constexpr const char* CTAG_TRIGGER_PER_OBJECT_ID			= (_T("TriggerPerObjectID"));
+	constexpr const char* CTAG_OBJECT_ID_COUNT					= (_T("ObjectIDCount"));
 	constexpr const char* CTAG_LIGHT_REFERENCE_ARRAY          = (_T("LightReferenceArray"));
 	constexpr const char* CTAG_ACQUISITION_DEVICE_FILE_NAME   = (_T("AcquisitionDeviceFileName"));
 	constexpr const char* CTAG_TYPE                           = (_T("Type"));

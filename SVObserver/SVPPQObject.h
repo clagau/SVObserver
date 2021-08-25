@@ -473,7 +473,7 @@ private:
 	long getNeededRecords() const;
 
 	PpqCameraCallBack m_cameraCallback;
-	PpqTriggerCallBack m_triggerCallback;
+	SvTrig::PpqTriggerCallBack m_triggerCallback;
 	SvVol::BasicValueObjects	m_PpqValues;
 	SvDef::SVPPQOutputModeEnum m_outputMode;
 	long m_outputDelay;

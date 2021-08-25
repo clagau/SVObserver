@@ -101,6 +101,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="IODeviceBase.h" />
+    <ClInclude Include="ObjectIDParameters.h" />
     <ClInclude Include="Stdafx.h" />
     <ClInclude Include="SVDigitizerLoadLibraryClass.h" />
     <ClInclude Include="SVIOTriggerLoadLibraryClass.h" />

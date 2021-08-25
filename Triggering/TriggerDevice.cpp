@@ -15,6 +15,9 @@
 #include "SVUtilityLibrary/SVClock.h"
 #pragma endregion Includes
 
+namespace SvTrig
+{
+
 void CALLBACK TriggerDevice::APCProc(ULONG_PTR)
 {
 }
@@ -158,4 +161,4 @@ void TriggerDevice::Notify(const SvTrig::SVTriggerInfoStruct& rTriggerInfo)
 	m_triggerQueue.PushTail(rTriggerInfo);
 	m_Thread.Signal(this);
 }
-
+}//namespace SvTrig

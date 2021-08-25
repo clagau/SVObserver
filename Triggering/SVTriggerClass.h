@@ -65,17 +65,18 @@ public:
 	SVIOTriggerLoadLibraryClass* getDLLTrigger() { return m_pDLLTrigger; }
 
 	SvDef::TriggerType getType() const { return m_type; }
-
+	void setPause(bool pauseState);
+	bool getPause() const { return m_pause; }
 protected:
 	virtual void preProcessTriggers(SvTrig::SVTriggerInfoStruct& rTriggerInfo) override;
 	virtual void postProcessTriggers(DWORD sleepDuration, bool softwareTrigger) override;
 
 private:
 	int m_digitizerNumber{ -1 };
-	long m_currentObjectID{ 0L };
 	long m_triggerIndex{ 0L };
 	SVIOTriggerLoadLibraryClass* m_pDLLTrigger{nullptr};
 	unsigned long m_triggerChannel {0UL};
+	bool m_pause {false};
 	SvDef::TriggerType m_type{SvDef::TriggerType::HardwareTrigger};
 
 	std::vector<AcquisitionParameter> m_acqTriggerParameters;

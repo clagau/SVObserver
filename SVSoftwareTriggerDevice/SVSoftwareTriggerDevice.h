@@ -24,13 +24,8 @@ class SVSoftwareTriggerDevice : public SvTrig::IODeviceBase
 		std::atomic_uint32_t m_timerID {0};
 		std::atomic_ulong m_triggerIndex {0UL};
 		std::atomic_uint16_t m_period {0};
-		std::atomic_bool m_newPeriod {false};
-	};
-
-	enum ParameterEnum
-	{
-		SVTriggerPeriod	= 0,
-		SVBoardVersion	= 1
+		std::atomic_bool m_newSetting {false};
+		std::atomic_bool m_pause {false};
 	};
 
 public:
@@ -57,6 +52,7 @@ private:
 
 	long GetTriggerPeriod(unsigned long triggerIndex) const;
 	HRESULT SetTriggerPeriod(unsigned long triggerIndex, long period);
+	void SetTriggerPause(unsigned long triggerIndex, bool pause);
 
 	std::array<TimerInfo, cMaxSoftwareTriggers> m_timerList;
 };

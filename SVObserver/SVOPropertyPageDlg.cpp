@@ -880,7 +880,7 @@ void SVOPropertyPageDlg::SetupAdvancedTrigger()
 			pEdit->SetCtrlID(PROP_ADV_TRIGGER_START_OBJECT_ID);
 			pEdit->SetLabelText(_T("Start Object ID"));
 			pEdit->SetInfoText(_T("Enter the Object ID with which the trigger should start with. It shall automatically increment"));
-			pEdit->SetItemValue(m_TriggerObj.getStartObjectID());
+			pEdit->SetItemValue(m_TriggerObj.getObjectIDParameters().m_startObjectID);
 		}
 		pEdit = dynamic_cast<SVRPropertyItemEdit*> (m_Tree.InsertItem(new SVRPropertyItemEdit(), pRoot));
 		if (pEdit)
@@ -888,7 +888,15 @@ void SVOPropertyPageDlg::SetupAdvancedTrigger()
 			pEdit->SetCtrlID(PROP_ADV_TRIGGER_PER_OBJECT_ID);
 			pEdit->SetLabelText(_T("Trigger per Object ID"));
 			pEdit->SetInfoText(_T("Enter the number of trigger for each ObjectID"));
-			pEdit->SetItemValue(m_TriggerObj.getTriggerPerObjectID());
+			pEdit->SetItemValue(m_TriggerObj.getObjectIDParameters().m_triggerPerObjectID);
+		}
+		pEdit = dynamic_cast<SVRPropertyItemEdit*> (m_Tree.InsertItem(new SVRPropertyItemEdit(), pRoot));
+		if (pEdit)
+		{
+			pEdit->SetCtrlID(PROP_ADV_TRIGGER_OBJECT_ID_COUNT);
+			pEdit->SetLabelText(_T("Object ID count"));
+			pEdit->SetInfoText(_T("Enter the number of object IDs to generate for each trigger session (-1 means continous)"));
+			pEdit->SetItemValue(m_TriggerObj.getObjectIDParameters().m_objectIDCount);
 		}
 
 		pRoot->Select(true);
@@ -1495,17 +1503,25 @@ void SVOPropertyPageDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 
 				case PROP_ADV_TRIGGER_START_OBJECT_ID:
 				{
-					long startObjectID;
+					long startObjectID {0L};
 					m_Tree.FindItem(ctrlID)->GetItemValue(startObjectID);
-					m_TriggerObj.setStartObjectID(startObjectID);
+					m_TriggerObj.getObjectIDParameters().m_startObjectID = startObjectID;
 					break;
 				}
 
 				case PROP_ADV_TRIGGER_PER_OBJECT_ID:
 				{
-					long triggerPerObjectID;
+					long triggerPerObjectID {1L};
 					m_Tree.FindItem(ctrlID)->GetItemValue(triggerPerObjectID);
-					m_TriggerObj.setTriggerPerObjectID(triggerPerObjectID);
+					m_TriggerObj.getObjectIDParameters().m_triggerPerObjectID = triggerPerObjectID;
+					break;
+				}
+
+				case PROP_ADV_TRIGGER_OBJECT_ID_COUNT:
+				{
+					long objectIDCount {-1L};
+					m_Tree.FindItem(ctrlID)->GetItemValue(objectIDCount);
+					m_TriggerObj.getObjectIDParameters().m_objectIDCount = objectIDCount;
 					break;
 				}
 

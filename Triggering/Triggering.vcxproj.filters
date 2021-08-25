@@ -80,5 +80,8 @@
     <ClInclude Include="SVIOTriggerLoadLibraryClass.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="ObjectIDParameters.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

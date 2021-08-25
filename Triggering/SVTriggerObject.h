@@ -46,9 +46,8 @@ namespace SvTrig
 		bool RegisterCallback(PpqTriggerCallBack pPpqTriggerCallback);
 		bool UnregisterCallback();
 
-		long getStartObjectID() const;
-		long getTriggerPerObjectID() const;
-		void setObjectIDParameters(long startObjectID, long triggerPerObjectID);
+		const ObjectIDParameters& getObjectIDParameters() const;
+		void setObjectIDParameters(const ObjectIDParameters& rObjectIDParams);
 
 		void Fire(double triggerTime = 0.0);
 

@@ -13,10 +13,10 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <memory>
+#include "ObjectIDParameters.h"
 #include "SVTriggerConstants.h"
 #include "Definitions/TriggerType.h"
 #pragma endregion Includes
-
 
 namespace SvTrig
 {
@@ -25,7 +25,7 @@ namespace SvTrig
 	public:
 		SVOTriggerObj(const std::string& name, int iDig) : m_sTriggerDisplayName(name)
 			, m_iDigNumber(iDig)
-			, m_timerPeriod(SvTrig::TimerPeriod)
+			, m_timerPeriod(TimerPeriod)
 			, m_triggerType(SvDef::TriggerType::HardwareTrigger){}
 
 		virtual ~SVOTriggerObj() = default;
@@ -36,11 +36,8 @@ namespace SvTrig
 		long GetTimerPeriod() const { return m_timerPeriod; }
 		void SetTimerPeriod(long period) { m_timerPeriod = period; }
 
-		long getStartObjectID() const { return m_startObjectID; }
-		void setStartObjectID(long startObjectID) { m_startObjectID = startObjectID; }
-
-		long getTriggerPerObjectID() const { return m_triggerPerObjectID; }
-		void setTriggerPerObjectID(long triggerPerObjectID) { m_triggerPerObjectID = triggerPerObjectID; }
+		ObjectIDParameters& getObjectIDParameters() { return m_objectIDParams; }
+		void setObjectIDParameters(const ObjectIDParameters& rObjectIDParams) { m_objectIDParams = rObjectIDParams; }
 
 		SvDef::TriggerType getTriggerType() const { return m_triggerType; }
 		void setTriggerType(SvDef::TriggerType triggerType) { m_triggerType = triggerType; }
@@ -51,8 +48,7 @@ namespace SvTrig
 
 		int m_iDigNumber{ 0 };
 		long m_timerPeriod{ 0L };
-		long m_startObjectID{ 0L };
-		long m_triggerPerObjectID{ 1L };
+		ObjectIDParameters m_objectIDParams;
 	};
 
 	typedef std::shared_ptr<SVOTriggerObj> SVOTriggerObjPtr;

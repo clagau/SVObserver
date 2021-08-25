@@ -806,7 +806,7 @@ void CSVIOTESTDlg::OnTriggerParam()
 		for( unsigned long x = 0 ; x < count ; x++ )
 		{
 			unsigned long triggerchannel = m_psvTriggers->GetHandle(x);
-			_variant_t value = m_psvTriggers->GetParameterValue(triggerchannel, 0);
+			_variant_t value = m_psvTriggers->GetParameterValue(triggerchannel, SVIOParameterEnum::TriggerPeriod);
 
 			switch (x)
 			{
@@ -851,7 +851,7 @@ void CSVIOTESTDlg::OnTriggerParam()
 					value = l_dlg.m_period4;
 					break;
 				}
-				m_psvTriggers->SetParameterValue( triggerchannel, 0, value);
+				m_psvTriggers->SetParameterValue( triggerchannel, SVIOParameterEnum::TriggerPeriod, value);
 			}
 		}
 	}
@@ -922,7 +922,7 @@ void CSVIOTESTDlg::OnTriggerParam()
 						break;
 					}
 				}
-				m_psvTriggers->SetParameterValue( triggerchannel, SVSignalEdge, value);
+				m_psvTriggers->SetParameterValue( triggerchannel, SVIOParameterEnum::SVSignalEdge, value);
 			}
 		}
 		m_lStrobeInverts = l_dlg.m_lStrobeInverts;

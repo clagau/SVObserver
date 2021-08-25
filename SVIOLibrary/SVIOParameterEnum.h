@@ -19,13 +19,15 @@ enum SVIOParameterEnum
 	SVBoardName = 2,
 	SVModuleReady = 3,
 	SVBoardVersion = 100,
-	SVFanState=101,
-	SVBoardType=102,
-	SVFanFreq=103,
-	SVLogDump=104,
-	SVRabbitRTC=105,
-	SVRabbitWriteLog=106,
-	PlcSimulatedTrigger=200
+	SVFanState = 101,
+	SVBoardType = 102,
+	SVFanFreq = 103,
+	SVLogDump = 104,
+	SVRabbitRTC = 105,
+	SVRabbitWriteLog = 106,
+	PlcSimulatedTrigger = 200,
+	TriggerPeriod = 201,
+	TriggerPause = 202
 };
 
 // Sub Commands for Parallel Board.

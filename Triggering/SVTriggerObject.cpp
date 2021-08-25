@@ -17,6 +17,7 @@
 #include "SVTriggerInfoStruct.h"
 #include "SVTriggerObject.h"
 #include "SVIOTriggerLoadLibraryClass.h"
+#include "SVIOLibrary/SVIOParameterEnum.h"
 #include "SVUtilityLibrary/SVClock.h"
 #pragma endregion Includes
 
@@ -88,7 +89,7 @@ namespace SvTrig
 					acquisitionParam.m_active = true;
 					m_pSoftwareTrigger->addAcquisitionTrigger(std::move(acquisitionParam));
 				}
-				m_pSoftwareTrigger->setObjectIDParameters(m_pMainTrigger->getStartObjectID(), m_pMainTrigger->getTriggerPerObjectID());
+				m_pSoftwareTrigger->setObjectIDParameters(m_pMainTrigger->getObjectIDParameters());
 				m_pSoftwareTrigger->setTriggerCount(m_pMainTrigger->getTriggerCount());
 			}
 			m_pCurrentTrigger = m_pSoftwareTrigger;
@@ -98,6 +99,7 @@ namespace SvTrig
 		if (nullptr != m_pCurrentTrigger)
 		{
 			m_pCurrentTrigger->setTriggerType(isTestMode);
+			m_pCurrentTrigger->setPause(false);
 		}
 		return nullptr != m_pCurrentTrigger;
 	}
@@ -154,29 +156,17 @@ namespace SvTrig
 		return false;
 	}
 
-	long SVTriggerObject::getStartObjectID() const
+	const ObjectIDParameters& SVTriggerObject::getObjectIDParameters() const
 	{
-		if (nullptr != m_pCurrentTrigger)
-		{
-			return m_pCurrentTrigger->getStartObjectID();
-		}
-		return -1;
+		static ObjectIDParameters emptyParams {};
+		return (nullptr != m_pCurrentTrigger) ? m_pCurrentTrigger->getObjectIDParameters() : emptyParams; 
 	}
 
-	long SVTriggerObject::getTriggerPerObjectID() const
-	{
-		if (nullptr != m_pCurrentTrigger)
-		{
-			return m_pCurrentTrigger->getTriggerPerObjectID();
-		}
-		return -1;
-	}
-
-	void SVTriggerObject::setObjectIDParameters(long startObjectID, long triggerPerObjectID)
+	void SVTriggerObject::setObjectIDParameters(const ObjectIDParameters& rObjectIDParams)
 	{
 		if (nullptr != m_pMainTrigger)
 		{
-			m_pMainTrigger->setObjectIDParameters(startObjectID, triggerPerObjectID);
+			m_pMainTrigger->setObjectIDParameters(rObjectIDParams);
 		}
 	}
 
@@ -206,7 +196,7 @@ namespace SvTrig
 		return m_timerPeriod;
 	}
 
-	void SVTriggerObject::SetSoftwareTriggerPeriod(long period, bool setTimer)
+	void SVTriggerObject::SetSoftwareTriggerPeriod(long period, bool setTimer /*= false*/)
 	{
 		m_timerPeriod = period;
 
@@ -218,7 +208,7 @@ namespace SvTrig
 			{
 				unsigned long triggerHandle = pDllTrigger->GetHandle(m_pCurrentTrigger->getDigitizerNumber());
 				_variant_t value = period;
-				pDllTrigger->SetParameterValue(triggerHandle, 0, value);
+				pDllTrigger->SetParameterValue(triggerHandle, SVIOParameterEnum::TriggerPeriod, value);
 			}
 		}
 	}

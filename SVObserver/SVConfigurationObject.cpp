@@ -43,7 +43,7 @@
 #include "SVIOLibrary/SVDigitalOutputObject.h"
 #include "SVIOLibrary/SVInputObjectList.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
-#include "Triggering/SVIOTriggerLoadLibraryClass.h"
+#include "SVIOLibrary/SVIOParameterEnum.h"
 #include "SVIOLibrary/SVOutputObjectList.h"
 #include "SVIOLibrary/SVRemoteInputObject.h"
 #include "SVFileSystemLibrary/SVFileNameManagerClass.h"
@@ -62,6 +62,7 @@
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVXMLLibrary/SVObjectXMLWriter.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
+#include "Triggering/SVIOTriggerLoadLibraryClass.h"
 #include "Triggering/SVTriggerClass.h"
 #include "Triggering/SVTriggerObject.h"
 #include "Triggering/SVTriggerProcessingClass.h"
@@ -1797,17 +1798,19 @@ bool SVConfigurationObject::LoadTrigger(SVTreeType& rTree)
 			{
 				pTrigger->SetSoftwareTriggerPeriod(Value);
 			}
-			long startObjectID{ 0L };
-			long triggerPerObjectID{ 0L };
+			SvTrig::ObjectIDParameters objectIDParams;;
 			if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_START_OBJECT_ID, hSubChild, Value))
 			{
-				startObjectID = Value;
+				objectIDParams.m_startObjectID = Value;
 			}
 			if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_TRIGGER_PER_OBJECT_ID, hSubChild, Value))
 			{
-				triggerPerObjectID = Value;
+				objectIDParams.m_triggerPerObjectID = Value;
 			}
-			pTrigger->setObjectIDParameters(startObjectID, triggerPerObjectID);
+			if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_OBJECT_ID_COUNT, hSubChild, Value))
+			{
+				objectIDParams.m_objectIDCount = Value;
+			}
 
 			bOk = false == DeviceName.empty();
 
@@ -1829,6 +1832,7 @@ bool SVConfigurationObject::LoadTrigger(SVTreeType& rTree)
 
 			if (bOk)
 			{
+				pTrigger->setObjectIDParameters(objectIDParams);
 				bOk = AddTrigger(pTrigger);
 			}
 
@@ -3163,11 +3167,14 @@ void SVConfigurationObject::SaveTrigger(SvOi::IObjectWriter& rWriter) const
 			variantValue = pTrigger->GetSoftwareTriggerPeriod();
 			rWriter.WriteAttribute(SvXml::CTAG_SOFTWARETRIGGER_PERIOD, variantValue);
 			variantValue.Clear();
-			variantValue = pTrigger->getStartObjectID();
+			variantValue = pTrigger->getObjectIDParameters().m_startObjectID;
 			rWriter.WriteAttribute(SvXml::CTAG_START_OBJECT_ID, variantValue);
 			variantValue.Clear();
-			variantValue = pTrigger->getTriggerPerObjectID();
+			variantValue = pTrigger->getObjectIDParameters().m_triggerPerObjectID;
 			rWriter.WriteAttribute(SvXml::CTAG_TRIGGER_PER_OBJECT_ID, variantValue);
+			variantValue.Clear();
+			variantValue = pTrigger->getObjectIDParameters().m_objectIDCount;
+			rWriter.WriteAttribute(SvXml::CTAG_OBJECT_ID_COUNT, variantValue);
 			variantValue.Clear();
 			rWriter.EndElement();
 		}
@@ -3868,7 +3875,7 @@ HRESULT SVConfigurationObject::AttachAcqToTriggers()
 					{
 						unsigned long triggerHandle = pTriggerDevice->getDLLTrigger()->GetHandle(iDigNum);
 						_variant_t value = pTrigger->GetSoftwareTriggerPeriod();
-						pTriggerDevice->getDLLTrigger()->SetParameterValue(triggerHandle, 0, value);
+						pTriggerDevice->getDLLTrigger()->SetParameterValue(triggerHandle, SVIOParameterEnum::TriggerPeriod, value);
 					}
 					SvIe::SVVirtualCameraPtrVector cameraVector = pPPQ->GetVirtualCameras();
 					for (auto* pCamera : cameraVector)

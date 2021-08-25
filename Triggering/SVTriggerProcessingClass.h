@@ -13,19 +13,15 @@
 #pragma region Includes
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <set>
-#include "Triggering/SVTriggerClass.h"
 #pragma endregion Includes
 
-class SVIOTriggerLoadLibraryClass;
 
 
 namespace SvTrig
 {
+	class SVIOTriggerLoadLibraryClass;
 	class SVTriggerClass;
-} //namespace SvTrig
 
-namespace SvTrig
-{
 	class SVTriggerProcessingClass
 	{
 	public:
@@ -37,7 +33,7 @@ namespace SvTrig
 
 		HRESULT UpdateTriggerSubsystem( SVIOTriggerLoadLibraryClass* p_pDLLTrigger );
 
-		SvTrig::SVTriggerClass* GetTrigger( LPCTSTR p_szName ) const;
+		SVTriggerClass* GetTrigger( LPCTSTR p_szName ) const;
 
 		// These two (2) methods, Startup, Shutdown are only meant to be called by the main application class and no other
 		// They used to be protected and a friend class declaration was used, but that was a bad design as the friend was declares in another project

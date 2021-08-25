@@ -12,10 +12,15 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SoftwareTriggerDlg.h"
-#include "Triggering\SVTriggerConstants.h"
+#include "Triggering/SVTriggerClass.h"
+#include "Triggering/SVTriggerConstants.h"
+#include "Triggering/SVTriggerObject.h"
 #pragma endregion Includes
 
-#define COLOR_WARN RGB(255,240,64)
+constexpr COLORREF COLOR_WARN = RGB(255, 240, 64);
+
+constexpr const char* cContinue = _T("Continue");
+constexpr const char* cPause = _T("Pause");
 
 SoftwareTriggerDlg::SoftwareTriggerDlg(CWnd* pParent /*=nullptr*/): 
 	CDialog(SoftwareTriggerDlg::IDD, pParent),
@@ -75,7 +80,7 @@ int SoftwareTriggerDlg::SelectTrigger()
 	item.mask = TCIF_PARAM;
 	if (m_triggerTabs.GetItem(idx, &item))
 	{
-		SVTriggerProxy* pTrigger = reinterpret_cast<SVTriggerProxy*> (item.lParam);
+		SvTrig::SVTriggerObject* pTrigger = reinterpret_cast<SvTrig::SVTriggerObject*> (item.lParam);
 		if( nullptr != pTrigger )
 		{
 			int Value = pTrigger->GetSoftwareTriggerPeriod();
@@ -85,8 +90,13 @@ int SoftwareTriggerDlg::SelectTrigger()
 			m_pSpins->SetValue( Value );
 			m_knobCtrl.SetValue( Value );
 			SetFrequency( Value );
-			m_pauseBtn.SetWindowText( pTrigger->ButtonText().c_str() );
-			m_singleTriggerBtn.EnableWindow(pTrigger->Paused());
+
+			if (nullptr != pTrigger->getDevice())
+			{
+				bool paused = pTrigger->getDevice()->getPause();
+				m_pauseBtn.SetWindowText(paused ? cContinue : cPause);
+				m_singleTriggerBtn.EnableWindow(paused);
+			}
 		}
 		else
 		{
@@ -103,21 +113,6 @@ int SoftwareTriggerDlg::SelectTrigger()
 void SoftwareTriggerDlg::OnTcnSelchangeTriggerTabs(NMHDR *, LRESULT *pResult)
 {
 	*pResult = SelectTrigger();
-}
-
-void SoftwareTriggerDlg::OnStop()
-{
-	for (int i = 0; i < m_triggerTabs.GetItemCount(); ++i)
-	{
-		TCITEM item;
-		memset(&item, 0, sizeof(TCITEM));
-		item.mask = TCIF_PARAM;
-		if (m_triggerTabs.GetItem(i, &item))
-		{
-			SVTriggerProxy* pTrigger = reinterpret_cast<SVTriggerProxy *>(item.lParam);
-			pTrigger->Continue();
-		}
-	}
 }
 
 bool SoftwareTriggerDlg::EditOK()
@@ -214,40 +209,37 @@ BOOL SoftwareTriggerDlg::OnInitDialog()
 
 void SoftwareTriggerDlg::ClearTriggers()
 {
-	OnStop();
-	for (int i = 0; i < m_triggerTabs.GetItemCount(); ++i)
-	{
-		TCITEM item;
-		memset(&item, 0, sizeof(TCITEM));
-		item.mask = TCIF_PARAM;
-		if (m_triggerTabs.GetItem(i, &item))
-		{
-			SVTriggerProxy* pTrigger = reinterpret_cast<SVTriggerProxy *>(item.lParam);
-			delete pTrigger;
-		}
-	}
 	m_triggerTabs.DeleteAllItems();
 }
 
-bool SoftwareTriggerDlg::AddTrigger(SvTrig::SVTriggerObject* pTrigger)
+bool SoftwareTriggerDlg::AddTrigger(SvTrig::SVTriggerObject* pTrigger, bool paused)
 {
 	assert( nullptr != pTrigger );
 	if( nullptr == pTrigger ){ return false; }
 
-	int l_count = m_triggerTabs.GetItemCount();
-	return m_triggerTabs.InsertItem(
+	if (paused && nullptr != pTrigger->getDevice())
+	{
+		pTrigger->getDevice()->setPause(paused);
+	}
+	int count = m_triggerTabs.GetItemCount();
+	long tabIndex = m_triggerTabs.InsertItem(
 		TCIF_TEXT|TCIF_PARAM, 
-		l_count, 
+		count, 
 		pTrigger->GetName(), 
 		0, 
-		reinterpret_cast<LPARAM>(new SVTriggerProxy(pTrigger))) > -1;
+		reinterpret_cast<LPARAM>(pTrigger));
+	if (tabIndex < cMaxTriggerCount)
+	{
+		m_triggerPauseState[tabIndex] = paused;
+	}
+	return tabIndex > -1;
 }
 
-SoftwareTriggerDlg & SoftwareTriggerDlg::Instance()
+SoftwareTriggerDlg& SoftwareTriggerDlg::Instance()
 {
 	static SoftwareTriggerDlg dlg(nullptr);
 	static bool created = false;
-	if (!created)
+	if (false == created)
 	{
 		created = true;
 		CWnd* pParent = ::AfxGetMainWnd();
@@ -268,7 +260,7 @@ void SoftwareTriggerDlg::SetTriggerPeriod(int val)
 	item.mask = TCIF_PARAM;
 	if (m_triggerTabs.GetItem(idx, &item) && item.lParam)
 	{
-		SVTriggerProxy* pTrigger = reinterpret_cast<SVTriggerProxy*> (item.lParam);
+		SvTrig::SVTriggerObject* pTrigger = reinterpret_cast<SvTrig::SVTriggerObject*> (item.lParam);
 		pTrigger->SetSoftwareTriggerPeriod(val, true);
 	}
 }
@@ -310,10 +302,14 @@ void SoftwareTriggerDlg::OnBnClickedPausebutton()
 	item.mask = TCIF_PARAM;
 	if (m_triggerTabs.GetItem(idx, &item) && item.lParam)
 	{
-		SVTriggerProxy* pTrigger = reinterpret_cast<SVTriggerProxy *>(item.lParam);
-		pTrigger->Toggle();
-		m_singleTriggerBtn.EnableWindow(pTrigger->Paused());
-		m_pauseBtn.SetWindowText( pTrigger->ButtonText().c_str() );
+		SvTrig::SVTriggerObject* pTrigger = reinterpret_cast<SvTrig::SVTriggerObject*> (item.lParam);
+		if (nullptr != pTrigger->getDevice() && idx < cMaxTriggerCount)
+		{
+			m_triggerPauseState[idx] = !m_triggerPauseState[idx];
+			pTrigger->getDevice()->setPause(m_triggerPauseState[idx]);
+			m_pauseBtn.SetWindowText(m_triggerPauseState[idx] ? cContinue : cPause);
+			m_singleTriggerBtn.EnableWindow(m_triggerPauseState[idx]);
+		}
 	}
 }
 
@@ -325,7 +321,7 @@ void SoftwareTriggerDlg::OnSingleTrigger()
 	item.mask = TCIF_PARAM;
 	if (m_triggerTabs.GetItem(idx, &item) && item.lParam)
 	{
-		SVTriggerProxy* pTrigger = reinterpret_cast<SVTriggerProxy*>(item.lParam);
-		pTrigger->GetTrigger()->Fire();
+		SvTrig::SVTriggerObject* pTrigger = reinterpret_cast<SvTrig::SVTriggerObject*>(item.lParam);
+		pTrigger->Fire();
 	}
 }

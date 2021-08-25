@@ -1797,7 +1797,7 @@ bool SVOConfigAssistantDlg::SendTriggerDataToConfiguration()
 						bRet = pTrigger->Create(pMainTriggerDevice, pSoftwareTrigger) && bRet;
 					}
 					pTrigger->SetSoftwareTriggerPeriod(pTriggerObj->GetTimerPeriod());
-					pTrigger->setObjectIDParameters(pTriggerObj->getStartObjectID(), pTriggerObj->getTriggerPerObjectID());
+					pTrigger->setObjectIDParameters(pTriggerObj->getObjectIDParameters());
 
 					if ( bAddTrigger )
 					{
@@ -2610,8 +2610,7 @@ bool SVOConfigAssistantDlg::GetConfigurationForExisting()
 			{
 				pTriggerObj->setTriggerType(pcfgTrigger->getType());
 				pTriggerObj->SetTimerPeriod(pcfgTrigger->GetSoftwareTriggerPeriod());
-				pTriggerObj->setStartObjectID(pcfgTrigger->getStartObjectID());
-				pTriggerObj->setTriggerPerObjectID(pcfgTrigger->getTriggerPerObjectID());
+				pTriggerObj->setObjectIDParameters(pcfgTrigger->getObjectIDParameters());
 			}
 		}
 	}

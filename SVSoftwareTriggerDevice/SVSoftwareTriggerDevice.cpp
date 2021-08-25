@@ -85,11 +85,11 @@ _variant_t SVSoftwareTriggerDevice::TriggerGetParameterName( unsigned long, unsi
 	// as an array and therefore this enum may not apply.
 	switch (index)
 	{
-		case SVTriggerPeriod:
+		case SVIOParameterEnum::TriggerPeriod:
 			result.SetString(_T("Trigger Timer Period"));
 			break;
 			
-		case SVBoardVersion:
+		case SVIOParameterEnum::SVBoardVersion:
 			result.SetString(_T("Board Version"));
 			break;
 	}
@@ -105,13 +105,13 @@ _variant_t SVSoftwareTriggerDevice::TriggerGetParameterValue( unsigned long trig
 	// as an array and therefore this enum may not apply.
 	switch ( Index)
 	{
-		case SVTriggerPeriod:
+		case SVIOParameterEnum::TriggerPeriod:
 		{
 			result = GetTriggerPeriod(triggerIndex);
 			break;
 		}
 				
-		case SVBoardVersion:
+		case SVIOParameterEnum::SVBoardVersion:
 		{
 			result.SetString(_T("Software Trigger Module 1.0 firmware 0x0500"));
 			break;
@@ -129,12 +129,27 @@ HRESULT SVSoftwareTriggerDevice::TriggerSetParameterValue( unsigned long trigger
 
 	switch (Index)
 	{
-		case SVTriggerPeriod:
+		case SVIOParameterEnum::TriggerPeriod:
 		{
 			if(VT_I4 == rValue.vt)
 			{
 				result = SetTriggerPeriod(triggerIndex, rValue.lVal);
 			}
+			break;
+		}
+
+		case SVIOParameterEnum::TriggerPause:
+		{
+			if (VT_BOOL == rValue.vt)
+			{
+				SetTriggerPause(triggerIndex, rValue.boolVal ? true : false);
+				result = S_OK;
+			}
+			break;
+		}
+
+		default:
+		{
 			break;
 		}
 	}
@@ -147,23 +162,24 @@ void SVSoftwareTriggerDevice::dispatchTrigger(unsigned long triggerIndex)
 	if (m_moduleReady)
 	{
 		int triggerChannel = triggerIndex - 1;
+		bool validChannel = triggerChannel >= 0 && triggerChannel < m_timerList.size();
 
 		SvTrig::IntVariantMap triggerData;
 		triggerData[SvTrig::TriggerDataEnum::TimeStamp] = _variant_t(SvUl::GetTimeStamp());
 		triggerData[SvTrig::TriggerDataEnum::TriggerChannel] = _variant_t(triggerChannel);
 
 		auto iter = m_triggerCallbackMap.find(triggerIndex);
-		if (m_triggerCallbackMap.end() != iter)
+		if (m_triggerCallbackMap.end() != iter && validChannel && false == m_timerList[triggerChannel].m_pause)
 		{
 			iter->second(triggerData);
 		}
 
 		///Check if a new trigger period
-		if(triggerChannel >= 0 && triggerChannel < m_timerList.size() && m_timerList[triggerChannel].m_newPeriod)
+		if(validChannel && m_timerList[triggerChannel].m_newSetting)
 		{
 			::timeKillEvent(m_timerList[triggerChannel].m_timerID);
-			m_timerList[triggerChannel].m_newPeriod = false;
-			if(0 != m_timerList[triggerChannel].m_period)
+			m_timerList[triggerChannel].m_newSetting = false;
+			if(false == m_timerList[triggerChannel].m_pause && 0 != m_timerList[triggerChannel].m_period)
 			{
 				m_timerList[triggerChannel].m_timerID = ::timeSetEvent(m_timerList[triggerChannel].m_period, 0, TimerProc, reinterpret_cast<DWORD_PTR> (this), TIME_PERIODIC | TIME_CALLBACK_FUNCTION);
 			}
@@ -182,7 +198,7 @@ void SVSoftwareTriggerDevice::beforeStartTrigger(unsigned long triggerIndex)
 	int triggerChannel = triggerIndex - 1;
 	TimerInfo& rTimer = m_timerList[triggerChannel];
 	assert(0 == rTimer.m_timerID);
-	rTimer.m_newPeriod = false;
+	rTimer.m_newSetting = false;
 	rTimer.m_timerID = ::timeSetEvent(rTimer.m_period, 0, TimerProc, reinterpret_cast<DWORD_PTR> (this), TIME_PERIODIC | TIME_CALLBACK_FUNCTION);
 }
 
@@ -190,7 +206,7 @@ void SVSoftwareTriggerDevice::beforeStopTrigger(unsigned long triggerIndex)
 {
 	int triggerChannel = triggerIndex - 1;
 	TimerInfo& rTimer = m_timerList[triggerChannel];
-	if(TIMERR_NOERROR != ::timeKillEvent(rTimer.m_timerID))
+	if(false == rTimer.m_pause && TIMERR_NOERROR != ::timeKillEvent(rTimer.m_timerID))
 	{
 		assert(false);
 	}
@@ -211,25 +227,45 @@ long SVSoftwareTriggerDevice::GetTriggerPeriod( unsigned long triggerIndex) cons
 
 HRESULT SVSoftwareTriggerDevice::SetTriggerPeriod(unsigned long triggerIndex, long period)
 {
+	HRESULT result {E_INVALIDARG};
+
 	if(0 <= period)
 	{
 		int triggerChannel = triggerIndex - 1;
 		TimerInfo& rTimer = m_timerList[triggerChannel];
-		bool restartTimer = (0 == rTimer.m_period);
 		rTimer.m_period = static_cast<uint16_t> (period);
 		rTimer.m_triggerIndex = triggerIndex;
 		if (true == m_moduleReady)
 		{
-			if(restartTimer && 0 != rTimer.m_period)
+			if(false == rTimer.m_pause && 0 != rTimer.m_period)
 			{
 				rTimer.m_timerID = ::timeSetEvent(rTimer.m_period, 0, TimerProc, reinterpret_cast<DWORD_PTR> (this), TIME_PERIODIC | TIME_CALLBACK_FUNCTION);
 			}
 			else
 			{
-				rTimer.m_newPeriod = true;
+				rTimer.m_newSetting = true;
 			}
 		}
+		result = S_OK;
 	}
-	return S_OK;
+	return result;
 }
 
+void SVSoftwareTriggerDevice::SetTriggerPause(unsigned long triggerIndex, bool pause)
+{
+	int triggerChannel = triggerIndex - 1;
+	TimerInfo& rTimer = m_timerList[triggerChannel];
+	rTimer.m_pause = pause;
+	rTimer.m_triggerIndex = triggerIndex;
+	if (true == m_moduleReady)
+	{
+		if (false == rTimer.m_pause && 0 != rTimer.m_period)
+		{
+			rTimer.m_timerID = ::timeSetEvent(rTimer.m_period, 0, TimerProc, reinterpret_cast<DWORD_PTR> (this), TIME_PERIODIC | TIME_CALLBACK_FUNCTION);
+		}
+		else
+		{
+			rTimer.m_newSetting = true;
+		}
+	}
+}

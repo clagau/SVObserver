@@ -1216,7 +1216,8 @@ void SVRCCommand::GetConfigurationInfo(const SvPb::GetConfigurationInfoRequest&,
 
 void SVRCCommand::SoftwareTrigger(const SvPb::SoftwareTriggerRequest& rRequest, SvRpc::Task<SvPb::StandardResponse> task)
 {
-	HRESULT result{ CheckState() };
+	DWORD checkAdditional = (0 < rRequest.period()) ? SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION : 0;
+	HRESULT result{ CheckState(checkAdditional) };
 
 	if (S_OK == result)
 	{
@@ -1241,30 +1242,42 @@ void SVRCCommand::SoftwareTrigger(const SvPb::SoftwareTriggerRequest& rRequest, 
 						if (nullptr != pInspection)
 						{
 							std::string inspectionName = SvUl::to_ansi(rRequest.inspectionname());
-							//Period 0 means a single trigger
-							if (pInspection->GetName() == inspectionName && 0 == rRequest.period())
+							if (pInspection->GetName() == inspectionName)
 							{
-								SvIe::SVVirtualCameraPtrVector cameraVector = pPPQ->GetVirtualCameras();
-								bool canExternalSoftwareTrigger{ cameraVector.size() > 0 };
-								canExternalSoftwareTrigger &= std::all_of(cameraVector.begin(), cameraVector.end(), [](const auto* pCamera) { return pCamera->canExternalSoftwareTrigger(); });
-	
 								SvTrig::SVTriggerObject* pTrigger = pPPQ->GetTrigger();
 								if (nullptr != pTrigger)
 								{
-									canExternalSoftwareTrigger |= SvDef::TriggerType::SoftwareTrigger == pTrigger->getType();
-									if (canExternalSoftwareTrigger)
+									//Period of 0 is a single trigger
+									if (0 == rRequest.period())
 									{
-										pTrigger->Fire();
-										result = S_OK;
+										SvIe::SVVirtualCameraPtrVector cameraVector = pPPQ->GetVirtualCameras();
+										bool canExternalSoftwareTrigger {cameraVector.size() > 0};
+										canExternalSoftwareTrigger &= std::all_of(cameraVector.begin(), cameraVector.end(), [](const auto* pCamera) { return pCamera->canExternalSoftwareTrigger(); });
+										canExternalSoftwareTrigger |= SvDef::TriggerType::SoftwareTrigger == pTrigger->getType();
+										if (canExternalSoftwareTrigger)
+										{
+											pTrigger->Fire();
+											result = S_OK;
+										}
+										else
+										{
+											result = E_FAIL;
+										}
 									}
 									else
 									{
-										result = E_NOTIMPL;
+										SvTrig::ObjectIDParameters ObjectIDParams;
+										ObjectIDParams.m_startObjectID = rRequest.startobjectid();
+										ObjectIDParams.m_triggerPerObjectID = rRequest.triggerperobjectid();
+										ObjectIDParams.m_objectIDCount = rRequest.numberobjectid();
+										pTrigger->setObjectIDParameters(ObjectIDParams);
+										pTrigger->SetSoftwareTriggerPeriod(rRequest.period());
+										result = S_OK;
 									}
 								}
 								else
 								{
-									result = E_NOTIMPL;
+									result = E_POINTER;
 								}
 							}
 						}

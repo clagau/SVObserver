@@ -16,7 +16,8 @@
 #include "SVTriggerClass.h"
 #include "Definitions/SVGigeEnums.h"
 #include "SVIOTriggerLoadLibraryClass.h"
-#include "Triggering/SVTriggerConstants.h"
+#include "SVIOLibrary/SVIOParameterEnum.h"
+#include "SVTriggerConstants.h"
 #pragma endregion Includes
 
 namespace SvTrig
@@ -132,7 +133,7 @@ HRESULT SVTriggerClass::Start()
 	if ( nullptr != m_pDLLTrigger )
 	{
 		l_hrOk = m_pDLLTrigger->Start( m_triggerChannel );
-		m_currentObjectID = getStartObjectID();
+		getObjectIDParameters().m_currentObjectID = getObjectIDParameters().m_startObjectID;
 		m_triggerIndex = 0L;
 	}
 	else
@@ -165,23 +166,40 @@ HRESULT SVTriggerClass::Stop()
 	return l_hrOk;
 }
 
+void SVTriggerClass::setPause(bool pauseState)
+{
+	m_pause = pauseState;
+	if (nullptr != m_pDLLTrigger)
+	{
+		_variant_t value;
+		value = m_pause;
+		m_pDLLTrigger->SetParameterValue(m_triggerChannel, SVIOParameterEnum::TriggerPause, value);
+	}
+}
+
 void SVTriggerClass::preProcessTriggers(SvTrig::SVTriggerInfoStruct& rTriggerInfo)
 {
 	if (SvDef::TriggerType::SoftwareTrigger == m_type || SvDef::TriggerType::CameraTrigger == m_type)
 	{
 		++m_triggerIndex;
-		if (getTriggerPerObjectID() < m_triggerIndex)
+		const SvTrig::ObjectIDParameters& rObjIDParam = getObjectIDParameters();
+		if (rObjIDParam.m_triggerPerObjectID < m_triggerIndex)
 		{
-			++m_currentObjectID;
+			++rObjIDParam.m_currentObjectID;
 			m_triggerIndex = 1L;
 		}
-		else if(0 == getStartObjectID())
+		else if(0 == rObjIDParam.m_startObjectID)
 		{
-			m_currentObjectID = (0 == m_currentObjectID) ? 1 : m_currentObjectID;
+			rObjIDParam.m_currentObjectID = (0 == rObjIDParam.m_currentObjectID) ? 1 : rObjIDParam.m_currentObjectID;
 		}
-		rTriggerInfo.m_Data[SvTrig::TriggerDataEnum::ObjectID] = _variant_t(m_currentObjectID);
+		rTriggerInfo.m_Data[SvTrig::TriggerDataEnum::ObjectID] = _variant_t(rObjIDParam.m_currentObjectID);
 		rTriggerInfo.m_Data[SvTrig::TriggerDataEnum::TriggerIndex] = _variant_t(m_triggerIndex);
-		rTriggerInfo.m_Data[SvTrig::TriggerDataEnum::TriggerPerObjectID] = _variant_t(getTriggerPerObjectID());
+		rTriggerInfo.m_Data[SvTrig::TriggerDataEnum::TriggerPerObjectID] = _variant_t(rObjIDParam.m_triggerPerObjectID);
+
+		if (rObjIDParam.m_objectIDCount > 0 && (rObjIDParam.m_currentObjectID >= rObjIDParam.m_startObjectID + rObjIDParam.m_objectIDCount))
+		{
+				setPause(true);
+		}
 	}
 }
 

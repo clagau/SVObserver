@@ -98,6 +98,7 @@
 #include "SVOLibrary/ObsoleteItemChecker.h"
 #include "SVOLibrary/SVHardwareManifest.h"
 #include "Triggering/SVTriggerProcessingClass.h"
+#include "Triggering/SVTriggerObject.h"
 #include "SVUtilityLibrary/SHA256.h"
 
 
@@ -4916,9 +4917,7 @@ void SVObserverApp::Start(DWORD desiredState)
 
 	UpdateAndGetLogDataManager();
 
-	double l_StartLoading;
-
-	l_StartLoading = SvUl::GetTimeStamp();
+	double startLoading = SvUl::GetTimeStamp();
 
 	SVObjectManagerClass::Instance().ClearAllIndicator();
 
@@ -4932,6 +4931,7 @@ void SVObserverApp::Start(DWORD desiredState)
 		throw Exception;
 	}
 
+	bool isLocalStart {false == SVSVIMStateClass::CheckState(SV_STATE_REMOTE_CMD)};
 	long lSize = pConfig->GetPPQCount();
 	try
 	{
@@ -4968,9 +4968,8 @@ void SVObserverApp::Start(DWORD desiredState)
 			}
 		}
 
-		SoftwareTriggerDlg& l_trgrDlg = SoftwareTriggerDlg::Instance();
-		l_trgrDlg.ShowWindow(SW_HIDE);
-		l_trgrDlg.ClearTriggers();
+		SoftwareTriggerDlg::Instance().ShowWindow(SW_HIDE);
+		SoftwareTriggerDlg::Instance().ClearTriggers();
 
 
 		SvSml::ShareEvents::GetInstance().QuiesceSharedMemory();
@@ -5011,7 +5010,7 @@ void SVObserverApp::Start(DWORD desiredState)
 				SvTrig::SVTriggerObject* pTrigger{ pPPQ->GetTrigger() };
 				if (nullptr != pTrigger && SvDef::TriggerType::SoftwareTrigger == pTrigger->getType() || isTestMode)
 				{
-					l_trgrDlg.AddTrigger(pTrigger);
+					SoftwareTriggerDlg::Instance().AddTrigger(pTrigger, isTestMode && isLocalStart);
 				}
 			}
 		}// end for
@@ -5024,9 +5023,9 @@ void SVObserverApp::Start(DWORD desiredState)
 		}
 
 
-		if (l_trgrDlg.HasTriggers())
+		if (SoftwareTriggerDlg::Instance().HasTriggers())
 		{
-			l_trgrDlg.SelectTrigger();
+			SoftwareTriggerDlg::Instance().SelectTrigger();
 		}
 	}
 	catch (SvStl::MessageContainer&)
@@ -5138,17 +5137,17 @@ void SVObserverApp::Start(DWORD desiredState)
 
 		std::string TriggerCounts;
 		GetTriggersAndCounts(TriggerCounts);
-		long l_lTime = static_cast<long>(SvUl::GetTimeStamp() - l_StartLoading);
+		long loadTime = static_cast<long> (SvUl::GetTimeStamp() - startLoading);
 		SvDef::StringVector msgList;
 		msgList.push_back(TriggerCounts);
-		msgList.push_back(SvUl::Format(_T("%d"), l_lTime));
+		msgList.push_back(SvUl::Format(_T("%d"), loadTime));
 		//add go-online message to the event viewer.
 		SvStl::MessageManager Exception(SvStl::MsgType::Log);
 		Exception.setMessage(SVMSG_SVO_27_SVOBSERVER_GO_ONLINE, SvStl::Tid_GoOnlineTime, msgList, SvStl::SourceFileParams(StdMessageParams));
 
 		SVObjectManagerClass::Instance().SetState(SVObjectManagerClass::ReadOnly);
 
-		if (SoftwareTriggerDlg::Instance().HasTriggers())
+		if (isLocalStart && SoftwareTriggerDlg::Instance().HasTriggers())
 		{
 			EnableTriggerSettings();
 		}
@@ -5838,8 +5837,7 @@ void SVObserverApp::OnStopAll()
 
 		SetPriorityClass(GetCurrentProcess(), NORMAL_PRIORITY_CLASS);
 
-		SoftwareTriggerDlg& l_trgrDlg = SoftwareTriggerDlg::Instance();
-		l_trgrDlg.ClearTriggers();
+		SoftwareTriggerDlg::Instance().ClearTriggers();
 	}
 }// end OnStopAll
 

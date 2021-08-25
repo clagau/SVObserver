@@ -12,14 +12,18 @@
 #pragma once
 
 #pragma region Includes
+#include "ObjectIDParameters.h"
 #include "SVSystemLibrary/SVAsyncProcedure.h"
-#include "Triggering/SVTriggerInfoStruct.h"
+#include "SVTriggerInfoStruct.h"
 #include "SVContainerLibrary/SVRingBuffer.h"
 #pragma endregion Includes
 
+namespace SvTrig
+{
+
 typedef std::function<void(SvTrig::SVTriggerInfoStruct&&)> PpqTriggerCallBack;
 
-class TriggerDevice  
+class TriggerDevice
 {
 public:
 	static void CALLBACK APCProc(ULONG_PTR pParam);
@@ -30,12 +34,10 @@ public:
 	long getTriggerCount() { return m_triggerCount; }
 	void setTriggerCount(long triggerCount = 0L) { m_triggerCount = triggerCount; }
 
-	long getStartObjectID() const { return m_startObjectID; }
-	long getTriggerPerObjectID() const { return m_triggerPerObjectID; }
-	void setObjectIDParameters(long startObjectID, long triggerPerObjectID) { m_startObjectID = startObjectID; m_triggerPerObjectID = triggerPerObjectID; }
+	const ObjectIDParameters& getObjectIDParameters() const { return m_objectIDParams; }
+	void setObjectIDParameters(const ObjectIDParameters& rObjectIDParams) { m_objectIDParams = rObjectIDParams; }
 
-
-	virtual bool IsStarted() const { return m_isStarted;  }
+	virtual bool IsStarted() const { return m_isStarted; }
 
 	virtual void ClearDevice();
 	virtual HRESULT Destroy();
@@ -47,17 +49,17 @@ public:
 	virtual HRESULT Stop();
 	virtual HRESULT Reset();
 
-	LPCTSTR GetDeviceName() const {	return m_DeviceName.c_str(); }
+	LPCTSTR GetDeviceName() const { return m_DeviceName.c_str(); }
 	void SetDeviceName(LPCTSTR pName) { m_DeviceName = pName; }
 
-	virtual void Notify(const SvTrig::SVTriggerInfoStruct& rTriggerInfo);
+	virtual void Notify(const SVTriggerInfoStruct& rTriggerInfo);
 
 protected:
-	typedef SVRingBuffer<SvTrig::SVTriggerInfoStruct, SVElementClear> TriggerQueue;
+	typedef SVRingBuffer<SVTriggerInfoStruct, SVElementClear> TriggerQueue;
 
 	void Process(bool& rWaitForEvents);
 
-	virtual void preProcessTriggers(SvTrig::SVTriggerInfoStruct&) {}
+	virtual void preProcessTriggers(SVTriggerInfoStruct&) {}
 	virtual void postProcessTriggers(DWORD, bool) {}
 
 private:
@@ -65,13 +67,13 @@ private:
 
 	std::string m_DeviceName;
 	bool m_isStarted {false};
-	long m_triggerCount{0L};
-	long m_startObjectID{ 1L };
-	long m_triggerPerObjectID{ 1L };
+	long m_triggerCount {0L};
+	ObjectIDParameters m_objectIDParams {};
 
 	SvSyl::SVAsyncProcedure m_Thread;
 
-	TriggerQueue m_triggerQueue{ 10 };
+	TriggerQueue m_triggerQueue {10};
 
-	PpqTriggerCallBack m_pPpqTriggerCallback{ nullptr };
+	PpqTriggerCallBack m_pPpqTriggerCallback {nullptr};
 };
+}//namespace SvTrig

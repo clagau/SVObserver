@@ -13,62 +13,46 @@
 
 #pragma region Includes
 #include "SVMFCControls/SVKnobControl.h"
-#include "Triggering/SVTriggerObject.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
+
+constexpr int cMaxTriggerCount = 4;
+
+namespace SvTrig
+{
+class SVTriggerObject;
+}
 
 // SoftwareTriggerDlg dialog
 namespace sv
 {
-	struct Def
-	{
-		const bool visible;
-		const int limit;
-		Def(bool v, int l): visible(v), limit(l) {}
-	};
-}
-
-class SVTriggerProxy
+struct Def
 {
-public:
-	explicit SVTriggerProxy(SvTrig::SVTriggerObject* t) : m_pTrigger(t), m_paused(false), m_period(200)
-	{
-	}
-	int GetSoftwareTriggerPeriod() { if( !m_paused){m_period = m_pTrigger->GetSoftwareTriggerPeriod();} return m_period; }
-	std::string GetName() const { return std::string( m_pTrigger->GetName() ); }
-	void SetSoftwareTriggerPeriod(long period, bool setTimer = false) { m_period = period; if (!m_paused) m_pTrigger->SetSoftwareTriggerPeriod(period, setTimer); }
-	SvTrig::SVTriggerObject* GetTrigger() { return m_pTrigger; }
-	void Pause() { m_paused = true; m_period = GetSoftwareTriggerPeriod(); m_pTrigger->SetSoftwareTriggerPeriod(0, true); }
-	void Continue() { if (m_paused) { m_paused = false; m_pTrigger->SetSoftwareTriggerPeriod(m_period, true); } }
-	std::string ButtonText() const { return m_paused ? std::string(_T("Continue")) : std::string(_T("Pause")); }
-	bool Toggle() { if (m_paused) Continue(); else Pause(); return m_paused; }
-	bool Paused() const { return m_paused;  }
-
-private:
-	SvTrig::SVTriggerObject* m_pTrigger;
-	long m_period;
-	bool m_paused;
+	const bool visible;
+	const int limit;
+	Def(bool v, int l) : visible(v), limit(l) {}
 };
+}
 
 class SVSpinGroup
 {
 public:
-	SVSpinGroup(CSpinButtonCtrl & spin, CEdit & edit, CStatic & label, sv::Def & def, SVSpinGroup * next = 0);
+	SVSpinGroup(CSpinButtonCtrl& spin, CEdit& edit, CStatic& label, sv::Def& def, SVSpinGroup* next = 0);
 	~SVSpinGroup() { delete m_next; }
 	void Show();
 	bool Hide();
 	bool SetValue(int val);
 	bool Increment(int val);
-	SVSpinGroup * find(int spinId);
+	SVSpinGroup* find(int spinId);
 	int GetValue() const;
 private:
-	CSpinButtonCtrl & m_spin;
-	CEdit & m_edit;
-	CStatic & m_label;
+	CSpinButtonCtrl& m_spin;
+	CEdit& m_edit;
+	CStatic& m_label;
 	int m_limit;
 	int m_value;
 	bool m_visible;
-	SVSpinGroup * m_next;
+	SVSpinGroup* m_next;
 	static int GetLimit() { return (std::numeric_limits<int>::max)(); }
 };
 
@@ -78,14 +62,14 @@ class SoftwareTriggerDlg : public CDialog
 public:
 	virtual ~SoftwareTriggerDlg();
 
-// Dialog Data
+	// Dialog Data
 	enum { IDD = IDD_TRIGGER_PERIOD_DLG };
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	void SetTriggerPeriod(int val);
 	bool EditOK();
-	void SetFrequency( int Value );
+	void SetFrequency(int Value);
 
 	DECLARE_MESSAGE_MAP()
 public:
@@ -93,59 +77,57 @@ public:
 	CEdit m_intervalEdit;
 
 	SvMc::SVKnobControl m_knobCtrl;
-	afx_msg void OnTcnSelchangeTriggerTabs(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnTcnSelchangeTriggerTabs(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnEnChangeUsecEdit();
 	afx_msg void OnBnClickedOk();
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg LRESULT OnTriggerChange(WPARAM wParam, LPARAM lParam);
-	afx_msg void OnDeltaposSpin(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnDeltaposSpin(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnEnKillfocusUsecEdit();
 	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 	afx_msg void OnBnClickedPausebutton();
 	afx_msg void OnSingleTrigger();
 
+	virtual BOOL OnInitDialog() override;
 	void ClearTriggers();
-	bool AddTrigger(SvTrig::SVTriggerObject* pTrigger);
+	bool AddTrigger(SvTrig::SVTriggerObject* pTrigger, bool paused);
 	bool HasTriggers() const { return m_triggerTabs.GetItemCount() > 0; }
 	int SelectTrigger();
-
-	void OnStop();
 
 	static SoftwareTriggerDlg& Instance();
 
 private:
-	CSpinButtonCtrl		m_msecSpin;
-	CEdit				m_msecEdit;
-	CStatic				m_msecLabel;
-	CSpinButtonCtrl		m_secSpin;
-	CEdit				m_secEdit;
-	CStatic				m_secLabel;
-	CStatic				m_frequency;
-	CStatic				m_ppmLabel;
-	CButton				m_pauseBtn;
-	CButton				m_singleTriggerBtn;
+	CSpinButtonCtrl	m_msecSpin;
+	CEdit m_msecEdit;
+	CStatic m_msecLabel;
+	CSpinButtonCtrl m_secSpin;
+	CEdit m_secEdit;
+	CStatic m_secLabel;
+	CStatic	m_frequency;
+	CStatic	m_ppmLabel;
+	CButton	m_pauseBtn;
+	CButton	m_singleTriggerBtn;
 
-	SVSpinGroup*		m_pSpins = nullptr;
-	CBrush*				m_pBrush;
+	SVSpinGroup* m_pSpins {nullptr};
+	CBrush* m_pBrush {nullptr};
 
-public:
-	virtual BOOL OnInitDialog() override;
+	std::array<bool, cMaxTriggerCount> m_triggerPauseState = {false, false, false, false};
 };
 
 // SVSpinGroup inline implementation
 
-inline	SVSpinGroup::SVSpinGroup(CSpinButtonCtrl & spin, CEdit & edit, CStatic & label, sv::Def & def, SVSpinGroup * next) :
-		m_spin(spin),
-		m_edit(edit),
-		m_label(label),
-		m_limit(def.limit),
-		m_visible(def.visible),
-		m_value(0),
-		m_next(next)
-{ 
-	if (m_visible) 
-		Show(); 
-	m_spin.SetRange(0, static_cast<short>(m_limit -1));
+inline	SVSpinGroup::SVSpinGroup(CSpinButtonCtrl& spin, CEdit& edit, CStatic& label, sv::Def& def, SVSpinGroup* next) :
+	m_spin(spin),
+	m_edit(edit),
+	m_label(label),
+	m_limit(def.limit),
+	m_visible(def.visible),
+	m_value(0),
+	m_next(next)
+{
+	if (m_visible)
+		Show();
+	m_spin.SetRange(0, static_cast<short>(m_limit - 1));
 	m_spin.SetPos(0);
 	m_edit.SetWindowText(_T("00"));
 }
@@ -159,7 +141,7 @@ inline void SVSpinGroup::Show()
 
 inline bool SVSpinGroup::Hide()
 {
-	if (!m_value &&  (!m_next || m_next->Hide()))
+	if (!m_value && (!m_next || m_next->Hide()))
 	{
 		m_spin.ShowWindow(SW_HIDE);
 		m_edit.ShowWindow(SW_HIDE);
@@ -171,12 +153,12 @@ inline bool SVSpinGroup::Hide()
 
 inline bool SVSpinGroup::SetValue(int val)
 {
-	int carry = val/m_limit;
-	m_value = val%m_limit;
-	
+	int carry = val / m_limit;
+	m_value = val % m_limit;
+
 	std::string Text = SvUl::Format(_T("%d"), m_value);
 	m_spin.SetPos(m_value);
-	m_edit.SetWindowText( Text.c_str() );
+	m_edit.SetWindowText(Text.c_str());
 	if (m_value || carry)
 	{
 		Show();
@@ -197,7 +179,7 @@ inline bool SVSpinGroup::SetValue(int val)
 	return true;
 }
 
-inline SVSpinGroup * SVSpinGroup::find(int spinId)
+inline SVSpinGroup* SVSpinGroup::find(int spinId)
 {
 	if (m_spin.GetDlgCtrlID() == spinId)
 	{
@@ -212,7 +194,7 @@ inline SVSpinGroup * SVSpinGroup::find(int spinId)
 
 inline int SVSpinGroup::GetValue() const
 {
-	return m_limit * (m_next?m_next->GetValue():0) + m_value;
+	return m_limit * (m_next ? m_next->GetValue() : 0) + m_value;
 }
 
 inline bool SVSpinGroup::Increment(int val)
@@ -235,7 +217,7 @@ inline bool SVSpinGroup::Increment(int val)
 	}
 
 	std::string Text = SvUl::Format(_T("%d"), m_value);
-	m_edit.SetWindowText( Text.c_str() );
+	m_edit.SetWindowText(Text.c_str());
 	return true;
 }
 
