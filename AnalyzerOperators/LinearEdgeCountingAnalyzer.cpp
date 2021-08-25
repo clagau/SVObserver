@@ -29,7 +29,7 @@ static char THIS_FILE[] = __FILE__;
 SV_IMPLEMENT_CLASS( LinearEdgeCountingAnalyzer, SvPb::LinearEdgeCountingLineAnalyzerClassId);
 
 LinearEdgeCountingAnalyzer::LinearEdgeCountingAnalyzer( SVObjectClass* POwner, int StringResourceID )
-								:SVLinearAnalyzerClass( POwner, StringResourceID ) 
+								:LinearAnalyzer( POwner, StringResourceID ) 
 {
 	m_bEnableDirection = false;
 	m_bEnableEdgeSelect = false;
@@ -68,7 +68,7 @@ LinearEdgeCountingAnalyzer::~LinearEdgeCountingAnalyzer()
 
 bool LinearEdgeCountingAnalyzer::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool bOk = SVLinearAnalyzerClass::CreateObject(rCreateStructure);
+	bool bOk = LinearAnalyzer::CreateObject(rCreateStructure);
 
 	// Set / Reset Printable Flag
 	m_svEdgeCount.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
@@ -83,10 +83,10 @@ bool LinearEdgeCountingAnalyzer::ResetObject(SvStl::MessageContainerVector *pErr
 	return __super::ResetObject(pErrorMessages) && ValidateEdgeA(pErrorMessages);
 }
 
-bool LinearEdgeCountingAnalyzer::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool LinearEdgeCountingAnalyzer::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	// All inputs and outputs must be validated first
-	bool Result = SVLinearAnalyzerClass::onRun( rRunStatus, pErrorMessages ) && ValidateEdgeA(pErrorMessages);
+	bool Result = LinearAnalyzer::onRun( rRunStatus, pErrorMessages ) && ValidateEdgeA(pErrorMessages);
 
 	if( Result )
 	{

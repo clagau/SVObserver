@@ -272,7 +272,7 @@ bool SVImageArithmetic::getOperator(long& Operator, SvStl::MessageContainerVecto
 	}
 	return true;
 }
-bool SVImageArithmetic::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages)
+bool SVImageArithmetic::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages)
 {
 	// All inputs and outputs must be validated first
 	//@WARNING[MZA][7.50][17.01.2017] Not sure if we need to check ValidateLocal in Run-mode, maybe it is enough to check it in ResetObject

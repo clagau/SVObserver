@@ -18,7 +18,7 @@
 
 namespace SvAo
 {
-class SVHistogramAnalyzer;
+class HistogramAnalyzer;
 }
 
 class SVSquare: public CStatic
@@ -43,7 +43,7 @@ private:
 class SVHistogramAnalyzerSetup : public CDialog
 {
 public:
-	SvAo::SVHistogramAnalyzer* m_pAnalyzer;
+	SvAo::HistogramAnalyzer* m_pAnalyzer;
 
 	HRESULT SetInspectionData();
 	void Refresh();

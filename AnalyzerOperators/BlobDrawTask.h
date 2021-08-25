@@ -39,7 +39,7 @@ namespace SvAo
 
 		virtual bool CloseObject() override;
 
-		virtual bool onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages = nullptr) override;
+		virtual bool onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages = nullptr) override;
 
 		virtual bool ResetObject(SvStl::MessageContainerVector* pErrorMessages = nullptr) override;
 

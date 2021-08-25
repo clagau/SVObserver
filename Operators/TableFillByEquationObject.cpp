@@ -112,7 +112,7 @@ void TableFillByEquationObject::setColumnValueObjects(const std::vector<TableCol
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
-bool TableFillByEquationObject::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool TableFillByEquationObject::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	bool returnValue = __super::onRun( rRunStatus, pErrorMessages );
 	if (returnValue)

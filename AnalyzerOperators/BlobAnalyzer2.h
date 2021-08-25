@@ -9,7 +9,7 @@
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
 #include "BlobFeatureTask.h"
-#include "SVImageAnalyzerClass.h"
+#include "ImageAnalyzer.h"
 #include "ObjectInterfaces/IBlobAnalyzer2.h"
 #include "SVValueObjectLibrary/DoubleSortValueObject.h"
 #include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
@@ -31,7 +31,7 @@ class BlobDrawTask;
 /////////////////////////////////////////////////////////////////////////////
 //
 //
-class BlobAnalyzer2 : public SVImageAnalyzerClass, public SvOi::IBlobAnalyzer2
+class BlobAnalyzer2 : public ImageAnalyzer, public SvOi::IBlobAnalyzer2
 {
 	SV_DECLARE_CLASS
 
@@ -51,7 +51,7 @@ public:
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages = nullptr) override;
 
-	virtual bool onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 	/// When the user right clicks inside a tool figure, checks whether it is on a blob. 
 	/// If it finds a blob at that point, gets the index of the blob and returns true.
@@ -62,7 +62,7 @@ public:
 	const std::set<MIL_ID>& getFeatureGroups() const { return m_featureGroups; };
 
 protected:
-	virtual bool Run(RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages = nullptr) override;
+	virtual bool Run(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages = nullptr) override;
 	virtual HRESULT onCollectOverlays(SvIe::SVImageClass* pImage, SVExtentMultiLineStructVector& rMultiLineArray ) override;
 	virtual void addOverlayGroups(const SvIe::SVImageClass* pImage, SvPb::Overlay& rOverlay) const override;
 

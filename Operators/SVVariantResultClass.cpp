@@ -104,7 +104,7 @@ SVObjectClass* SVVariantResultClass::GetInputValue()
 	return nullptr;
 }
 
-bool SVVariantResultClass::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVVariantResultClass::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	if( __super::onRun( rRunStatus, pErrorMessages ) )
 	{

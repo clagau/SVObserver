@@ -216,7 +216,7 @@ bool SVImageTransform::isInputImage(uint32_t imageId) const
 	return Result;
 }
 
-bool SVImageTransform::onRun( RunStatus& runStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVImageTransform::onRun( SvIe::RunStatus& runStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	bool bRetVal = SVTransform::onRun( runStatus, pErrorMessages );
 

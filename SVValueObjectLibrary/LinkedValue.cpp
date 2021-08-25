@@ -1126,7 +1126,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 		}
 	}
 
-	bool LinkedValue::runEmbedded(RunStatus& /*rRunStatus*/, SvStl::MessageContainerVector* /*pErrorMessages*/)
+	bool LinkedValue::runEmbedded(SvIe::RunStatus& /*rRunStatus*/, SvStl::MessageContainerVector* /*pErrorMessages*/)
 	{
 		if (SvPb::LinkedSelectedType::Formula == getSelectedType())
 		{

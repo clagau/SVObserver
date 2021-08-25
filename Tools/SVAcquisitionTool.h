@@ -40,7 +40,7 @@ public:
 	virtual std::vector<std::string> getToolAdjustNameList() const override;
 
 protected:
-	virtual bool Run(RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages = nullptr) override;
+	virtual bool Run(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages = nullptr) override;
 	virtual bool useOverlayColorTool() const override { return false; };
 	void init();
 

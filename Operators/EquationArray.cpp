@@ -43,7 +43,7 @@ namespace SvOp
 		return bOk;
 	}
 
-	bool EquationArray::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages)
+	bool EquationArray::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages)
 	{
 		if (0 >= m_stopValue - m_startValue + 1)
 		{

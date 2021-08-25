@@ -104,7 +104,7 @@ public:
 	virtual void Persist(SvOi::IObjectWriter& rWriter) const override;
 	virtual HRESULT SetObjectValue(SVObjectAttributeClass* PDataObject) override;
 
-	bool runEmbedded(RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages);
+	bool runEmbedded(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages);
 
 	virtual SvPb::LinkedSelectedType getSelectedType() const override;
 

@@ -36,7 +36,7 @@ namespace SvAo
 
 		virtual bool CloseObject() override;
 
-		virtual bool onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages = nullptr) override;
+		virtual bool onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages = nullptr) override;
 
 		SvDef::StringVector getAnalyzerResult(int blobIndex) const;
 
@@ -50,7 +50,7 @@ namespace SvAo
 		void setResultBufferId(MIL_ID resultBufferID) { m_ResultBufferID = resultBufferID; };
 
 	protected:
-		virtual bool Run(RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages = nullptr) override;
+		virtual bool Run(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages = nullptr) override;
 
 	private:
 		void init();

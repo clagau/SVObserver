@@ -48,7 +48,7 @@ public:
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
-	virtual bool Run( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool Run( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 	virtual const SvIe::SVImageClass* getOutputImage(bool) const override { return &m_OutputImage; };
 	virtual const SvIe::SVImageClass* getReferenceImage(bool ) const override { return &m_LogicalROIImage; };
@@ -58,7 +58,7 @@ public:
 protected:
 
 	HRESULT CollectInputImageNames();
-	bool RunLocal(RunStatus &rRunStatus, SvOi::SVImageBufferHandlePtr input, SvIe::SVImageClass& rOutputImage);
+	bool RunLocal(SvIe::RunStatus &rRunStatus, SvOi::SVImageBufferHandlePtr input, SvIe::SVImageClass& rOutputImage);
 	SvOi::SVImageBufferHandlePtr createTmpSourceImage();
 	
 private:

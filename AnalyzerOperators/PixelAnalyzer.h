@@ -1,6 +1,6 @@
 //*****************************************************************************
 /// \copyright (c) 2003,2018 by Seidenader Maschinenbau GmbH
-/// \file SVPixelAnalyzer.h
+/// \file PixelAnalyzer.h
 /// All Rights Reserved 
 //*****************************************************************************
 /// This class is the TaskObjectList-Implementation of the PixelAnalyzer 
@@ -8,7 +8,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVImageAnalyzerClass.h"
+#include "ImageAnalyzer.h"
 #include "SVValueObjectLibrary/SVByteValueObjectClass.h"
 #include "SVValueObjectLibrary/SVLongValueObjectClass.h"
 #pragma endregion Includes
@@ -16,15 +16,15 @@
 namespace SvAo
 {
 
-class SVPixelAnalyzer : public SVImageAnalyzerClass
+class PixelAnalyzer : public ImageAnalyzer
 {
 	SV_DECLARE_CLASS
 
 public:
-	explicit SVPixelAnalyzer( LPCSTR ObjectName /* = "Pixel Analyzer" */ );
-	SVPixelAnalyzer(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVPIXELANALYZER );
+	explicit PixelAnalyzer( LPCSTR ObjectName /* = "Pixel Analyzer" */ );
+	PixelAnalyzer(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVPIXELANALYZER );
 
-	virtual ~SVPixelAnalyzer();
+	virtual ~PixelAnalyzer();
 	virtual bool CloseObject() override;
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
@@ -42,7 +42,7 @@ public:
 	SvVol::SVByteValueObjectClass m_pixelCountColor;
 
 protected:
-	virtual bool onRun(RunStatus &rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
+	virtual bool onRun(SvIe::RunStatus &rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	__int64		m_contextID = M_NULL;
 	__int64		m_ResultID = M_NULL;

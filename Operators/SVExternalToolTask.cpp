@@ -1302,7 +1302,7 @@ bool SVExternalToolTask::CloseObject()
 	return __super::CloseObject();
 }
 
-bool SVExternalToolTask::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool SVExternalToolTask::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool ok = true;
 
@@ -1916,7 +1916,7 @@ void SVExternalToolTaskData::InitializeInputs(SVExternalToolTask*  pExternalTool
 
 }
 
-bool SVExternalToolTask::prepareInput(SvOi::ITRCImagePtr pResultImageBuffers[], RunStatus& rRunStatus)
+bool SVExternalToolTask::prepareInput(SvOi::ITRCImagePtr pResultImageBuffers[], SvIe::RunStatus& rRunStatus)
 {
 	collectInputValues();
 
@@ -2097,7 +2097,7 @@ void SVExternalToolTask::collectInputValues()
 }
 
 
-bool SVExternalToolTask::collectInputImages(RunStatus& rRunStatus)
+bool SVExternalToolTask::collectInputImages(SvIe::RunStatus& rRunStatus)
 {
 	bool okToRun = true;
 

@@ -3,7 +3,7 @@
 //* All Rights Reserved
 //******************************************************************************
 //* .Module Name     : SVBlobAnalyzer
-//* .File Name       : $Workfile:   SVBlobAnalyzer.h  $
+//* .File Name       : $Workfile:   BlobAnalyzer.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.5  $
 //* .Check In Date   : $Date:   18 Nov 2014 05:07:48  $
@@ -13,7 +13,7 @@
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
 #include "SVMatroxLibrary/SVMatroxSimpleEnums.h"
-#include "SVImageAnalyzerClass.h"
+#include "ImageAnalyzer.h"
 #include "ObjectInterfaces/IBlobAnalyzer.h"
 #include "SVValueObjectLibrary/DoubleSortValueObject.h"
 #include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
@@ -78,7 +78,7 @@ const LPCSTR g_strBlobFillTypeEnums =
 /////////////////////////////////////////////////////////////////////////////
 //
 //
-class SVBlobAnalyzerClass : public SVImageAnalyzerClass, public SvOi::IBlobAnalyzer
+class SVBlobAnalyzerClass : public ImageAnalyzer, public SvOi::IBlobAnalyzer
 {
 	SV_DECLARE_CLASS
 
@@ -123,7 +123,7 @@ public:
 /*- aFeatureIndex. ------------------------------------------------------------*/
 	SvOp::SVLongResult* GetBlobResultObject();
 
-	virtual bool onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 	virtual bool IsPtOverResult( const POINT& rPoint ) override;
 	virtual	SvDef::StringVector getAnalyzerResult() override;

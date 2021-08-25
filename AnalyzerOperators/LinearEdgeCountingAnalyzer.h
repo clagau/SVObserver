@@ -11,14 +11,14 @@
 #pragma once
 
 #pragma region Includes
-#include "SVLinearAnalyzerClass.h"
+#include "LinearAnalyzer.h"
 #include "SVValueObjectLibrary/SVLongValueObjectClass.h"
 #pragma endregion Includes
 
 namespace SvAo
 {
 
-class LinearEdgeCountingAnalyzer : public SVLinearAnalyzerClass
+class LinearEdgeCountingAnalyzer : public LinearAnalyzer
 {
 	SV_DECLARE_CLASS
 
@@ -33,7 +33,7 @@ public:
 	virtual void addOverlayResults(SvPb::Overlay& rOverlay, bool isVertical = false) const override;
 	
 protected:
-	virtual bool onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 	SvVol::SVLongValueObjectClass	m_svEdgeCount;
 

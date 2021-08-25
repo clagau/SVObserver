@@ -57,7 +57,7 @@ SvVol::SVDoubleValueObjectClass* SVEvaluate::getOutputMathResult()
 	return &m_outputMathResult;
 }
 
-bool SVEvaluate::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVEvaluate::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	SvVol::SVDoubleValueObjectClass* pResult = getOutputMathResult();
 	

@@ -18,7 +18,7 @@
 #include "SVSetupDialogManager.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVToolSet.h"
-#include "AnalyzerOperators/SVAnalyzer.h"
+#include "AnalyzerOperators/Analyzer.h"
 #include "InspectionCommands/CommandExternalHelper.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
@@ -62,7 +62,7 @@ SVToolAdjustmentDialogAnalyzerPageClass::SVToolAdjustmentDialogAnalyzerPageClass
 			SvDef::SVObjectTypeInfoStruct info;
 			info.m_ObjectType = SvPb::SVAnalyzerObjectType;
 
-			m_pCurrentAnalyzer = dynamic_cast<SvAo::SVAnalyzerClass*> (m_pTool->getFirstObject(info));
+			m_pCurrentAnalyzer = dynamic_cast<SvAo::Analyzer*> (m_pTool->getFirstObject(info));
 		}
 	}
 }
@@ -202,7 +202,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnButtonDetails()
 		SVSetupDialogManager::Instance().SetupDialog(m_pCurrentAnalyzer->GetClassID(), m_pCurrentAnalyzer->getObjectId(), this);
 
 		// Restore the pointer (in case of Cancel)
-		m_pCurrentAnalyzer = dynamic_cast<SvAo::SVAnalyzerClass*> (SVObjectManagerClass::Instance().GetObject(analyzerId));
+		m_pCurrentAnalyzer = dynamic_cast<SvAo::Analyzer*> (SVObjectManagerClass::Instance().GetObject(analyzerId));
 
 		if (nullptr != m_pTool)
 		{
@@ -405,7 +405,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnResultButton()
 		dlg.DoModal();
 
 		// Restore the pointer (in case of Cancel)
-		m_pCurrentAnalyzer = dynamic_cast<SvAo::SVAnalyzerClass*> (SVObjectManagerClass::Instance().GetObject(analyzerId));
+		m_pCurrentAnalyzer = dynamic_cast<SvAo::Analyzer*> (SVObjectManagerClass::Instance().GetObject(analyzerId));
 	}
 }
 

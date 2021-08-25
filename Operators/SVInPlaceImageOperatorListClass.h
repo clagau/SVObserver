@@ -44,7 +44,7 @@ public:
 	virtual bool isInputImage(uint32_t) const override { return false; };
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
-	virtual bool Run( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool Run( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 	virtual const SvIe::SVImageClass* getOutputImage(bool bRunMode = false) const override { return getInputImage(bRunMode); };
 	virtual const SvIe::SVImageClass* getReferenceImage(bool bRunMode = false) const override { return getInputImage(bRunMode); };

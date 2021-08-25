@@ -444,7 +444,7 @@ void SVToolClass::UpdateAuxiliaryExtents()
 	}
 }
 
-inline  void SVToolClass::UpdateStateAndCounter(RunStatus& rRunStatus)
+inline  void SVToolClass::UpdateStateAndCounter(SvIe::RunStatus& rRunStatus)
 {
 	// if disabled or disabled by condition
 	// leave in previous state
@@ -491,7 +491,7 @@ inline  void SVToolClass::UpdateStateAndCounter(RunStatus& rRunStatus)
 	setStatus(rRunStatus);
 }
 
-bool SVToolClass::Run(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool SVToolClass::Run(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool retVal = true;
 	clearRunErrorMessages();
@@ -580,7 +580,7 @@ bool SVToolClass::Run(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErr
 	return retVal;
 }// end Run
 
-bool SVToolClass::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool SVToolClass::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::onRun(rRunStatus, pErrorMessages);
 

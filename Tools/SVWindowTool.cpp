@@ -12,7 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVWindowTool.h"
-#include "AnalyzerOperators/SVAnalyzer.h"
+#include "AnalyzerOperators/Analyzer.h"
 #include "Operators/SVConditional.h"
 #include "Operators/SVLUTEquation.h"
 #include "Operators/SVLUTOperator.h"
@@ -87,7 +87,7 @@ void SVWindowToolClass::BuildAvailableAnalyzerList ()
 
 	// Add the White Pixel Analyzer
 	analyzerClassInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVAnalyzerObjectType;
-	analyzerClassInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVPixelAnalyzerObjectType;
+	analyzerClassInfo.m_ObjectTypeInfo.m_SubType = SvPb::PixelAnalyzerObjectType;
 	analyzerClassInfo.m_ClassId = SvPb::PixelAnalyzerClassId;
 	analyzerClassInfo.m_ClassName = SvUl::LoadStdString( IDS_CLASSNAME_SVPIXELANALYZER );
 	m_availableChildren.push_back(analyzerClassInfo);
@@ -101,7 +101,7 @@ void SVWindowToolClass::BuildAvailableAnalyzerList ()
 
 	// Add the Histogram Analyzer
 	analyzerClassInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::SVAnalyzerObjectType;
-	analyzerClassInfo.m_ObjectTypeInfo.m_SubType = SvPb::SVHistogramAnalyzerObjectType;
+	analyzerClassInfo.m_ObjectTypeInfo.m_SubType = SvPb::HistogramAnalyzerObjectType;
 	analyzerClassInfo.m_ClassId = SvPb::HistogramAnalyzerClassId;
 	analyzerClassInfo.m_ClassName = SvUl::LoadStdString( IDS_CLASSNAME_SVHISTOGRAMANALYZER );
 	m_availableChildren.push_back(analyzerClassInfo);
@@ -274,7 +274,7 @@ SvOi::ParametersForML SVWindowToolClass::getParameterForMonitorList(SvStl::Messa
 		rMessages.push_back(Msg);
 	}
 
-	SvAo::SVAnalyzerClass* pCurrentAnalyzer = dynamic_cast<SvAo::SVAnalyzerClass *>(getFirstObject(SvDef::SVObjectTypeInfoStruct(SvPb::SVAnalyzerObjectType)));
+	SvAo::Analyzer* pCurrentAnalyzer = dynamic_cast<SvAo::Analyzer *>(getFirstObject(SvDef::SVObjectTypeInfoStruct(SvPb::SVAnalyzerObjectType)));
 	if (nullptr != pCurrentAnalyzer)
 	{
 		pCurrentAnalyzer->addParameterForMonitorList(rMessages, std::back_inserter(retList));

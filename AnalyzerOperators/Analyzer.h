@@ -2,8 +2,8 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVAnalyzerClass
-//* .File Name       : $Workfile:   SVAnalyzer.h  $
+//* .Module Name     : Analyzer
+//* .File Name       : $Workfile:   Analyzer.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.3  $
 //* .Check In Date   : $Date:   15 May 2014 10:09:12  $
@@ -19,14 +19,14 @@
 namespace SvAo
 {
 
-class SVAnalyzerClass : public SvIe::SVTaskObjectListClass
+class Analyzer : public SvIe::SVTaskObjectListClass
 {
 	///This class does not need to call SV_DECLARE_CLASS as it is a base class and only derived classes are instantiated
 	//SV_DECLARE_CLASS
 public:
-	explicit SVAnalyzerClass( LPCSTR ObjectName /* = "Empty Analyzer" */ );
-	SVAnalyzerClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVANALYZER );
-	virtual ~SVAnalyzerClass();
+	explicit Analyzer( LPCSTR ObjectName /* = "Empty Analyzer" */ );
+	Analyzer( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVANALYZER );
+	virtual ~Analyzer();
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 	virtual void DisconnectImages() {};

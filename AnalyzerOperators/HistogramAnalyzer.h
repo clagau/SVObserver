@@ -2,8 +2,8 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVHistogramAnalyzer
-//* .File Name       : $Workfile:   SVHistogramAnalyzer.h  $
+//* .Module Name     : HistogramAnalyzer
+//* .File Name       : $Workfile:   HistogramAnalyzer.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 10:46:26  $
@@ -11,7 +11,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVImageAnalyzerClass.h"
+#include "ImageAnalyzer.h"
 #include "InspectionEngine/SVImageClass.h"
 #include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
 #include "SVValueObjectLibrary/SVDoubleValueObjectClass.h"
@@ -22,7 +22,7 @@
 namespace SvAo
 {
 
-class SVHistogramAnalyzer : public SVImageAnalyzerClass
+class HistogramAnalyzer : public ImageAnalyzer
 {
 	SV_DECLARE_CLASS
 
@@ -32,8 +32,8 @@ class SVHistogramAnalyzer : public SVImageAnalyzerClass
 // Constructor(s):
 //******************************************************************************
 public:
-	explicit SVHistogramAnalyzer( LPCSTR ObjectName /* = "Histogram Analyzer" */ );
-	SVHistogramAnalyzer( SVObjectClass* POwner = nullptr , int StringResourceID = IDS_CLASSNAME_SVHISTOGRAMANALYZER );
+	explicit HistogramAnalyzer( LPCSTR ObjectName /* = "Histogram Analyzer" */ );
+	HistogramAnalyzer( SVObjectClass* POwner = nullptr , int StringResourceID = IDS_CLASSNAME_SVHISTOGRAMANALYZER );
 
 public:
    long             msvlHistValueArraySize;
@@ -65,7 +65,7 @@ public:
 	SvVol::SVBoolValueObjectClass		msvAccumulateCounts;
 	SvVol::SVBoolValueObjectClass		msvDynamicHeight;
 
-	virtual        ~SVHistogramAnalyzer();
+	virtual        ~HistogramAnalyzer();
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 
@@ -91,7 +91,7 @@ private:
 	void AddResult(const std::pair<SvPb::EmbeddedIdEnum, DWORD> &);
 
 protected:
-	virtual bool onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 	__int64 m_HistResultID = 0LL;
 	std::vector<long>   msvplHistValues;

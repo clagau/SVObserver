@@ -31,14 +31,13 @@
 namespace SvIe
 {
 struct SVExtentPropertyInfoStruct;
+class RunStatus;
 }
 
 namespace SvOp
 {
 class SVConditional;
 }
-
-class RunStatus;
 
 namespace SvTo
 {
@@ -175,15 +174,15 @@ public:
 
 protected:
 	void UpdateAuxiliaryExtents();
-	virtual bool Run(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages = nullptr) override;
+	virtual bool Run(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages = nullptr) override;
 
 	//Set the counter and State is called in Run()
-	inline  virtual void  UpdateStateAndCounter(RunStatus& rRunStatus);
+	inline  virtual void  UpdateStateAndCounter(SvIe::RunStatus& rRunStatus);
 
 	// Remove Embedded Extents
 	void removeEmbeddedExtents();
 
-	virtual bool onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages = nullptr) override;
+	virtual bool onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages = nullptr) override;
 
 	virtual void UpdateOverlayIDs(SVExtentMultiLineStruct& p_rMultiLine) override;
 	virtual bool createAllObjectsFromChild(SVObjectClass& rChildObject) override;

@@ -11,7 +11,7 @@
 
 #pragma region Includes
 #include "SVUtilityLibrary/StringHelper.h"
-#include "AnalyzerOperators/SVBlobAnalyzer.h"
+#include "AnalyzerOperators/BlobAnalyzer.h"
 #include "Operators/SVResultDouble.h"
 #include "RemoteMonitorList.h"
 #include "RemoteMonitorListHelper.h"

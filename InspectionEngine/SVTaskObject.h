@@ -32,7 +32,6 @@ namespace SvTo
 	class LoopTool;
 }
 
-
 namespace SvVol
 {
 	class LinkedValue;
@@ -43,13 +42,12 @@ namespace SvOl
 	class InputObject;
 }
 
-
-class RunStatus;
 class SVToolSet;
 
 namespace SvIe
 {
-struct SVExtentPropertyInfoStruct;
+	class RunStatus;
+	struct SVExtentPropertyInfoStruct;
 
 class SVTaskObjectClass : public SVObjectAppClass, public SvOi::ITaskObject
 {

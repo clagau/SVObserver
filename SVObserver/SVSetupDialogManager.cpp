@@ -15,31 +15,31 @@
 #include "SVObserver.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVMatroxLibrary/SVMatroxBlobInterface.h"
-#include "AnalyzerOperators/SVAnalyzer.h"
+#include "AnalyzerOperators/Analyzer.h"
 #include "SVOGui/DataController.h"
 #include "SVOGui/SVLuminanceAnalyzerDlg.h"
 #include "SVOGui/SVBarCodeProperties.h"
-#include "AnalyzerOperators/SVBarCodeAnalyzerClass.h"
+#include "AnalyzerOperators/BarCodeAnalyzer.h"
 #include "Operators/SVBarCodeResult.h"
-#include "AnalyzerOperators/SVBlobAnalyzer.h"
+#include "AnalyzerOperators/BlobAnalyzer.h"
 #include "SVOGui/SVBlobAnalyzerDialog.h"
 #include "Tools/SVColorTool.h"
-#include "AnalyzerOperators/SVHistogramAnalyzer.h"
+#include "AnalyzerOperators/HistogramAnalyzer.h"
 #include "SVHistogramAnalyzerSetup.h"
 #include "SVInspectionProcess.h"
 #include "SVIPDoc.h"
-#include "AnalyzerOperators/SVLinearAnalyzerClass.h"
+#include "AnalyzerOperators/LinearAnalyzer.h"
 #include "Operators/SVLinearEdgeProcessingClass.h"
 #include "SVMeasureAnalyzerAdjustmentSheet.h"
-#include "AnalyzerOperators/SVOCVAnalyzer.h"
+#include "AnalyzerOperators/CVAnalyzer.h"
 #include "Operators/SVOCVAnalyzerResult.h"
 #include "SVOGui/SVOCVSheet.h"
 #include "SVPatAdvancedPageClass.h"
 #include "SVPatAnalyzeSetupDlgSheet.h"
 #include "SVPatGeneralPageClass.h"
 #include "SVOGui/SVPatternAnalyzerModelPage.h"
-#include "AnalyzerOperators/SVPatternAnalyzerClass.h"
-#include "AnalyzerOperators/SVPixelAnalyzer.h"
+#include "AnalyzerOperators/PatternAnalyzer.h"
+#include "AnalyzerOperators/PixelAnalyzer.h"
 #include "SVPixelAnalyzerDlg.h"
 #include "SVProfileEdgeMarkerAdjustmentPage.h"
 #include "Operators/SVResult.h"
@@ -215,11 +215,11 @@ HRESULT SVSetupDialogManager::SVColorToolClassSetupDialog(uint32_t objectId, CWn
 	return l_Status;
 }
 
-HRESULT SVSetupDialogManager::SVHistogramAnalyzerSetupDialog(uint32_t objectId, CWnd* )
+HRESULT SVSetupDialogManager::HistogramAnalyzerSetupDialog(uint32_t objectId, CWnd* )
 {
 	HRESULT l_Status = S_OK;
 
-	SvAo::SVHistogramAnalyzer* l_pAnalyzer = dynamic_cast<SvAo::SVHistogramAnalyzer*>(SVObjectManagerClass::Instance().GetObject(objectId));
+	SvAo::HistogramAnalyzer* l_pAnalyzer = dynamic_cast<SvAo::HistogramAnalyzer*>(SVObjectManagerClass::Instance().GetObject(objectId));
 
 	if (nullptr != l_pAnalyzer)
 	{
@@ -276,7 +276,7 @@ HRESULT SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog(uint32_t objectId
 {
 	HRESULT l_Status = S_OK;
 
-	SvAo::SVLinearAnalyzerClass* pAnalyzer = dynamic_cast<SvAo::SVLinearAnalyzerClass*>(SVObjectManagerClass::Instance().GetObject(objectId));
+	SvAo::LinearAnalyzer* pAnalyzer = dynamic_cast<SvAo::LinearAnalyzer*>(SVObjectManagerClass::Instance().GetObject(objectId));
 
 	SVInspectionProcess* pInspection(nullptr);
 
@@ -374,7 +374,7 @@ HRESULT SVSetupDialogManager::SVLuminanceAnalyzerClassSetupDialog(uint32_t objec
 {
 	HRESULT l_Status = S_OK;
 
-	SvAo::SVAnalyzerClass* pAnalyzer = dynamic_cast<SvAo::SVAnalyzerClass*> (SVObjectManagerClass::Instance().GetObject(objectId));
+	SvAo::Analyzer* pAnalyzer = dynamic_cast<SvAo::Analyzer*> (SVObjectManagerClass::Instance().GetObject(objectId));
 
 	if (nullptr != pAnalyzer && SvPb::SVLuminanceAnalyzerObjectType == pAnalyzer->GetObjectSubType())
 	{
@@ -393,7 +393,7 @@ HRESULT SVSetupDialogManager::SVOCVAnalyzerClassSetupDialog(uint32_t objectId, C
 {
 	HRESULT l_Status = S_OK;
 
-	SvAo::SVOCVAnalyzer* pAnalyzer = dynamic_cast<SvAo::SVOCVAnalyzer*>(SVObjectManagerClass::Instance().GetObject(objectId));
+	SvAo::OCVAnalyzer* pAnalyzer = dynamic_cast<SvAo::OCVAnalyzer*>(SVObjectManagerClass::Instance().GetObject(objectId));
 
 	if (nullptr != pAnalyzer)
 	{
@@ -468,11 +468,11 @@ HRESULT SVSetupDialogManager::SVOCVAnalyzerClassSetupDialog(uint32_t objectId, C
 	return l_Status;
 }
 
-HRESULT SVSetupDialogManager::SVPixelAnalyzerClassSetupDialog(uint32_t objectId, CWnd*)
+HRESULT SVSetupDialogManager::PixelAnalyzerClassSetupDialog(uint32_t objectId, CWnd*)
 {
 	HRESULT l_Status = S_FALSE;
 
-	SvAo::SVPixelAnalyzer* pAnalyzer = dynamic_cast<SvAo::SVPixelAnalyzer*> (SVObjectManagerClass::Instance().GetObject(objectId));
+	SvAo::PixelAnalyzer* pAnalyzer = dynamic_cast<SvAo::PixelAnalyzer*> (SVObjectManagerClass::Instance().GetObject(objectId));
 
 	if (nullptr != pAnalyzer)
 	{
@@ -497,7 +497,7 @@ HRESULT SVSetupDialogManager::SVPixelAnalyzerClassSetupDialog(uint32_t objectId,
 HRESULT SVSetupDialogManager::SVPatternAnalyzerClassSetupDialog(uint32_t objectId, CWnd* pParentWnd)
 {
 	HRESULT l_Status = S_OK;
-	SvAo::SVPatternAnalyzerClass* l_pAnalyzer = dynamic_cast<SvAo::SVPatternAnalyzerClass*>(SVObjectManagerClass::Instance().GetObject(objectId));
+	SvAo::PatternAnalyzer* l_pAnalyzer = dynamic_cast<SvAo::PatternAnalyzer*>(SVObjectManagerClass::Instance().GetObject(objectId));
 
 	SVInspectionProcess* pInspection(nullptr);
 

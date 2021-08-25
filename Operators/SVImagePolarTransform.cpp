@@ -453,7 +453,7 @@ void SVImagePolarTransform::AnglesTo360( double& p_dStart, double& p_dEnd)
 	}
 }	
 
-bool SVImagePolarTransform::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVImagePolarTransform::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	BOOL bUseFormula( false );
 	long AngularMethod = 0;

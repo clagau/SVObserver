@@ -46,7 +46,7 @@ public:
 protected:
 	virtual bool isInputImage(uint32_t imageId) const override;
 
-	virtual bool onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 	virtual bool useOverlayColorTool() const override { return false; };
 #pragma endregion Protected Methods
 

@@ -11,14 +11,14 @@
 #pragma once
 
 #pragma region Includes
-#include "SVLinearAnalyzerClass.h"
+#include "LinearAnalyzer.h"
 #include "SVValueObjectLibrary/SVLongValueObjectClass.h"
 #pragma endregion Includes
 
 namespace SvAo
 {
 
-class LinearPixelCountingAnalyzer : public SVLinearAnalyzerClass
+class LinearPixelCountingAnalyzer : public LinearAnalyzer
 {
 	SV_DECLARE_CLASS
 
@@ -31,7 +31,7 @@ public:
 	virtual HRESULT GetSelectedEdgeOverlays( SVExtentMultiLineStruct &p_MultiLine ) override;
 
 protected:
-	virtual bool onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 	virtual void addOverlayResultDetails(SvPb::Overlay& rOverlay, bool isVertical = false) const override;
 

@@ -13,7 +13,7 @@
 #include "SVPixelAnalyzerDlg.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVInspectionProcess.h"
-#include "AnalyzerOperators/SVPixelAnalyzer.h"        // Required for SVPixelAnalyzer
+#include "AnalyzerOperators/PixelAnalyzer.h"        // Required for PixelAnalyzer
 #include "SVSetupDialogManager.h"
 #pragma endregion Includes
 
@@ -86,7 +86,7 @@ BOOL SVPixelAnalyzerDlg::OnInitDialog()
 	}
 	else
 	{
-		m_pAnalyzer = dynamic_cast<SvAo::SVPixelAnalyzer*> (SVObjectManagerClass::Instance().GetObject(m_TaskObjectID));
+		m_pAnalyzer = dynamic_cast<SvAo::PixelAnalyzer*> (SVObjectManagerClass::Instance().GetObject(m_TaskObjectID));
 		msvulMinGrayscale = 0;
 		if (nullptr != m_pAnalyzer)
 		{
@@ -171,7 +171,6 @@ void SVPixelAnalyzerDlg::SetGrayscale(long alGrayscale)
 
 	SetInspectionData();
 }
-
 
 
 void SVPixelAnalyzerDlg::OnWhiteRad() 

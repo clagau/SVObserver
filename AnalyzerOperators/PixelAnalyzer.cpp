@@ -1,13 +1,13 @@
 //*****************************************************************************
 /// \copyright (c) 2003,2018 by Seidenader Maschinenbau GmbH
-/// \file SVPixelAnalyzer.cpp
+/// \file PixelAnalyzer.cpp
 /// All Rights Reserved 
 //*****************************************************************************
 /// This class is the TaskObjectList-Implementation of the PixelAnalyzer 
 //*****************************************************************************
 #pragma region Includes
 #include "stdafx.h"
-#include "SVPixelAnalyzer.h"
+#include "PixelAnalyzer.h"
 #include "InspectionEngine/SVImageClass.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "Operators/SVRange.h"
@@ -29,24 +29,24 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVPixelAnalyzer, SvPb::PixelAnalyzerClassId);
+SV_IMPLEMENT_CLASS( PixelAnalyzer, SvPb::PixelAnalyzerClassId);
 
-SVPixelAnalyzer::SVPixelAnalyzer( LPCSTR ObjectName )
-: SVImageAnalyzerClass( ObjectName )
+PixelAnalyzer::PixelAnalyzer( LPCSTR ObjectName )
+: ImageAnalyzer( ObjectName )
 {
 	init();
 }
 
-SVPixelAnalyzer::SVPixelAnalyzer(SVObjectClass* POwner, int StringResourceID )
-: SVImageAnalyzerClass( POwner, StringResourceID ) 
+PixelAnalyzer::PixelAnalyzer(SVObjectClass* POwner, int StringResourceID )
+: ImageAnalyzer( POwner, StringResourceID ) 
 {
 	init();
 }
 
-void SVPixelAnalyzer::init()
+void PixelAnalyzer::init()
 {
 	// Identify our output type
-	m_ObjectTypeInfo.m_SubType = SvPb::SVPixelAnalyzerObjectType;
+	m_ObjectTypeInfo.m_SubType = SvPb::PixelAnalyzerObjectType;
 
 	// Identify our input type needs
 
@@ -74,27 +74,27 @@ void SVPixelAnalyzer::init()
 	}
 }
 
-SVPixelAnalyzer::~SVPixelAnalyzer()
+PixelAnalyzer::~PixelAnalyzer()
 {
-	SVPixelAnalyzer::CloseObject();
+	PixelAnalyzer::CloseObject();
 }
 
-bool SVPixelAnalyzer::CloseObject()
+bool PixelAnalyzer::CloseObject()
 {
 	SVMatroxImageInterface::Destroy(m_contextID);
 	SVMatroxImageInterface::Destroy(m_ResultID);
 	m_contextID = M_NULL;
 	m_ResultID = M_NULL;
-	return SVImageAnalyzerClass::CloseObject();
+	return ImageAnalyzer::CloseObject();
 }
 
-bool SVPixelAnalyzer::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
+bool PixelAnalyzer::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
 	bool isError(false);
     	
     while (1)
     {
-        if (! SVImageAnalyzerClass::CreateObject(rCreateStructure) )
+        if (! ImageAnalyzer::CreateObject(rCreateStructure) )
         {
 			
 			SvStl::MessageManager MesMan(SvStl::MsgType::Log );
@@ -134,7 +134,7 @@ bool SVPixelAnalyzer::CreateObject( const SVObjectLevelCreateStruct& rCreateStru
 	return m_isCreated;
 }
 
-bool SVPixelAnalyzer::onRun(RunStatus &rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool PixelAnalyzer::onRun(SvIe::RunStatus &rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result{true};
 	while (1)
@@ -178,7 +178,7 @@ bool SVPixelAnalyzer::onRun(RunStatus &rRunStatus, SvStl::MessageContainerVector
 	return Result;
 }
 
-bool SVPixelAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
+bool PixelAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 
@@ -211,7 +211,7 @@ bool SVPixelAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	return Result;
 }
 
-void SVPixelAnalyzer::addParameterForMonitorList(SvStl::MessageContainerVector& rMessages, std::back_insert_iterator<SvOi::ParametersForML> inserter) const
+void PixelAnalyzer::addParameterForMonitorList(SvStl::MessageContainerVector& rMessages, std::back_insert_iterator<SvOi::ParametersForML> inserter) const
 {
 	bool isNoError = true;
 

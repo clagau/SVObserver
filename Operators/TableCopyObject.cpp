@@ -188,7 +188,7 @@ void TableCopyObject::changeEmbeddedId(SvPb::EmbeddedIdEnum oldId, SvPb::Embedde
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
-bool TableCopyObject::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool TableCopyObject::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool returnValue = __super::onRun(rRunStatus, pErrorMessages);
 	if (returnValue)

@@ -184,7 +184,7 @@ bool SVLUTOperator::CloseObject()
 //              : If MIL LUT buffer is not yet allocated, it tries to do this, 
 //				: also.
 ////////////////////////////////////////////////////////////////////////////////
-bool SVLUTOperator::RecalcLUT( RunStatus& rRunStatus )
+bool SVLUTOperator::RecalcLUT( SvIe::RunStatus& rRunStatus )
 {
 	if( getOutputImage() )
 	{
@@ -411,7 +411,7 @@ bool SVLUTOperator::RecalcLUT( RunStatus& rRunStatus )
 	return false;
 }
 
-bool SVLUTOperator::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVLUTOperator::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 { 
 	// Is doing special friend routing !!!
 	// Don't call base class onRun(...).

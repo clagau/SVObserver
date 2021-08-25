@@ -68,7 +68,7 @@ void IndexEquation::SetName(LPCTSTR Name)
 	}
 }
 
-bool IndexEquation::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool IndexEquation::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool   bRetVal = true;
 	if (nullptr != m_pResultColumn)

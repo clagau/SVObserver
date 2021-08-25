@@ -77,7 +77,7 @@ public:
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	//! DoNothing in onRun
-	virtual bool onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
+	virtual bool onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 	
 	//************************************
 	//! Get the result of the formula 
@@ -126,7 +126,7 @@ protected:
 	//! \param rRunStatus [in,out]
 	//! \returns TRUE
 	//************************************
-	virtual bool Run( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool Run( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 	
 	//************************************
 	//! retrieves the inputmodes. Check for consistency 

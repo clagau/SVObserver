@@ -17,7 +17,7 @@
 #include "Definitions/LinearEdgeEnums.h"
 #include "InspectionEngine/SVImageClass.h"
 #include "Tools/SVTool.h"
-#include "AnalyzerOperators/SVAnalyzer.h"
+#include "AnalyzerOperators/Analyzer.h"
 #include "SVProtoBuf/Overlay.h"
 #pragma endregion Includes
 
@@ -205,7 +205,7 @@ bool SVLinearEdgeProcessingClass::ResetObject(SvStl::MessageContainerVector *pEr
 	return Result;
 }
 
-bool SVLinearEdgeProcessingClass::onRun( RunStatus &p_rsvRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVLinearEdgeProcessingClass::onRun( SvIe::RunStatus &p_rsvRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	bool l_bOk = __super::onRun(p_rsvRunStatus, pErrorMessages);
 
@@ -460,7 +460,7 @@ HRESULT SVLinearEdgeProcessingClass::GetPointFromDistance(double p_dDistance, SV
 	HRESULT l_hrOk{S_OK};
 	rPoint.clear();
 
-	SvAo::SVAnalyzerClass* pAnalyzer = dynamic_cast<SvAo::SVAnalyzerClass*>(GetAnalyzer());
+	SvAo::Analyzer* pAnalyzer = dynamic_cast<SvAo::Analyzer*>(GetAnalyzer());
 	if( nullptr == pAnalyzer ||
 		S_OK != pAnalyzer->GetImageExtent().GetOutputRectangle( rect ) )
 	{
@@ -483,7 +483,7 @@ HRESULT SVLinearEdgeProcessingClass::GetEdgeOverlayFromDistance( double dDistanc
 	
 	rLine.Initialize();
 
-	SvAo::SVAnalyzerClass* pAnalyzer = dynamic_cast<SvAo::SVAnalyzerClass*>(GetAnalyzer());
+	SvAo::Analyzer* pAnalyzer = dynamic_cast<SvAo::Analyzer*>(GetAnalyzer());
 	if( nullptr == pAnalyzer ||
 		S_OK != pAnalyzer->GetImageExtent().GetOutputRectangle( rect ) )
 	{
@@ -523,7 +523,7 @@ HRESULT SVLinearEdgeProcessingClass::GetOutputEdgePoint(SVPoint<double>& rPoint)
 	
 	rPoint.clear();
 
-	SvAo::SVAnalyzerClass* pAnalyzer = dynamic_cast<SvAo::SVAnalyzerClass*>(GetAnalyzer());
+	SvAo::Analyzer* pAnalyzer = dynamic_cast<SvAo::Analyzer*>(GetAnalyzer());
 	if( nullptr == pAnalyzer ||
 		S_OK != pAnalyzer->GetImageExtent().GetOutputRectangle( rect ) ||
 		( S_OK != m_svLowerThresholdValue.GetValue( l_ulLower ) ) ||
@@ -558,7 +558,7 @@ HRESULT SVLinearEdgeProcessingClass::GetThresholdBarsOverlay( SVExtentMultiLineS
 	HRESULT l_hrOk{S_OK};
 	rMultiLine.Initialize();
 
-	SvAo::SVAnalyzerClass* pAnalyzer = dynamic_cast<SvAo::SVAnalyzerClass*>(GetAnalyzer());
+	SvAo::Analyzer* pAnalyzer = dynamic_cast<SvAo::Analyzer*>(GetAnalyzer());
 	if( nullptr == pAnalyzer ||
 		S_OK != pAnalyzer->GetImageExtent().GetOutputRectangle( rect ) ||
 		( S_OK != m_svLowerThresholdValue.GetValue( l_ulLower ) ) ||
@@ -622,7 +622,7 @@ HRESULT SVLinearEdgeProcessingClass::GetHistogramOverlay( SVExtentLineStruct &rL
 	HRESULT l_hrOk{S_OK};
 	rLine.Initialize();
 
-	SvAo::SVAnalyzerClass* pAnalyzer = dynamic_cast<SvAo::SVAnalyzerClass*>(GetAnalyzer());
+	SvAo::Analyzer* pAnalyzer = dynamic_cast<SvAo::Analyzer*>(GetAnalyzer());
 	if( nullptr == pAnalyzer ||
 		S_OK != pAnalyzer->GetImageExtent().GetOutputRectangle( rect ) ||
 		(S_OK != GetInputLinearVectorData( Data )) )
@@ -655,7 +655,7 @@ HRESULT SVLinearEdgeProcessingClass::GetEdgesOverlay( SVExtentMultiLineStruct &r
 
 	std::vector<double> Edges;
 
-	SvAo::SVAnalyzerClass* pAnalyzer = dynamic_cast<SvAo::SVAnalyzerClass*>(GetAnalyzer());
+	SvAo::Analyzer* pAnalyzer = dynamic_cast<SvAo::Analyzer*>(GetAnalyzer());
 	if( nullptr == pAnalyzer ||
 		S_OK != pAnalyzer->GetImageExtent().GetOutputRectangle( rect ) ||
 		 ( S_OK != m_svLinearEdges.GetArrayValues( Edges ) ) )
@@ -721,7 +721,7 @@ HRESULT SVLinearEdgeProcessingClass::GetSelectedEdgeOverlay( SVExtentLineStruct 
 	HRESULT l_hrOk{S_OK};
 	rLine.Initialize();
 
-	SvAo::SVAnalyzerClass* pAnalyzer = dynamic_cast<SvAo::SVAnalyzerClass*>(GetAnalyzer());
+	SvAo::Analyzer* pAnalyzer = dynamic_cast<SvAo::Analyzer*>(GetAnalyzer());
 	if( nullptr == pAnalyzer ||
 		S_OK != pAnalyzer->GetImageExtent().GetOutputRectangle( rect ) ||
 		S_OK != GetOutputEdgeDistance( l_dDistance ) )
@@ -761,7 +761,7 @@ void SVLinearEdgeProcessingClass::addOverlayFullResult(SvPb::Overlay& rOverlay, 
 	pResultShape->mutable_color()->set_value(m_cfEdges);
 	auto* pResultMarker = pResultShape->mutable_markers();
 	RECT rect{};
-	SvAo::SVAnalyzerClass* pAnalyzer = dynamic_cast<SvAo::SVAnalyzerClass*>(GetAnalyzer());
+	SvAo::Analyzer* pAnalyzer = dynamic_cast<SvAo::Analyzer*>(GetAnalyzer());
 	if (nullptr != pAnalyzer)
 	{
 		pAnalyzer->GetImageExtent().GetOutputRectangle(rect);
@@ -787,7 +787,7 @@ void SVLinearEdgeProcessingClass::addOverlayResultMarker(SvPb::OverlayShapeGroup
 	pResultShape->mutable_color()->set_value(m_cfEdges);
 	auto* pResultMarker = pResultShape->mutable_marker();
 	RECT rect{};
-	SvAo::SVAnalyzerClass* pAnalyzer = dynamic_cast<SvAo::SVAnalyzerClass*>(GetAnalyzer());
+	SvAo::Analyzer* pAnalyzer = dynamic_cast<SvAo::Analyzer*>(GetAnalyzer());
 	if (nullptr != pAnalyzer)
 	{
 		pAnalyzer->GetImageExtent().GetOutputRectangle(rect);
@@ -949,7 +949,7 @@ void SVLinearEdgeProcessingClass::addOverlayResultDetails(SvPb::Overlay& rOverla
 		auto* pResultMarker = pResultShape->mutable_markers();
 
 		RECT rect{};
-		SvAo::SVAnalyzerClass* pAnalyzer = dynamic_cast<SvAo::SVAnalyzerClass*>(GetAnalyzer());
+		SvAo::Analyzer* pAnalyzer = dynamic_cast<SvAo::Analyzer*>(GetAnalyzer());
 		if (nullptr != pAnalyzer &&	S_OK == pAnalyzer->GetImageExtent().GetOutputRectangle(rect))
 		{
 			pResultMarker->set_minvalue(rect.left);

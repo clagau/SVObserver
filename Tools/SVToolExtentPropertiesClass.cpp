@@ -139,4 +139,4 @@ HRESULT SVToolExtentPropertiesClass::SetPropertyInfo( SvPb::SVExtentPropertyEnum
 	return result;
 }
 
-} //namespace SvIe
+} //namespace SvTo

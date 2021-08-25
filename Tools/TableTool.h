@@ -48,7 +48,7 @@ public:
 
 #pragma region Protected Methods
 protected:
-	virtual bool onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 	virtual bool useOverlayColorTool() const override { return false; };
 #pragma endregion Protected Methods
 

@@ -11,7 +11,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVImageAnalyzerClass.h"
+#include "ImageAnalyzer.h"
 #include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
 #include "SVValueObjectLibrary/SVByteValueObjectClass.h"
 #include "SVValueObjectLibrary/SVDoubleValueObjectClass.h"
@@ -36,7 +36,7 @@ enum
 	SVBCStringFormatReplaceCharacters,
 };
 
-class SVBarCodeAnalyzerClass : public SVImageAnalyzerClass  
+class SVBarCodeAnalyzerClass : public ImageAnalyzer  
 {
 	SV_DECLARE_CLASS
 
@@ -55,7 +55,7 @@ public:
 
 protected:
 	void init();
-	virtual bool onRun(RunStatus &rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
+	virtual bool onRun(SvIe::RunStatus &rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 private:
 	bool SaveRegExpression( SvStl::MessageContainerVector *pErrorMessages=nullptr );

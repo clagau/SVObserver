@@ -4,7 +4,7 @@
 //*****************************************************************************
 #pragma once
 #pragma region Includes
-#include "SVAnalyzer.h"
+#include "Analyzer.h"
 #include "SVObjectLibrary/InputObject.h"
 #pragma endregion Includes
 
@@ -17,21 +17,21 @@ class SVImageClass;
 namespace SvAo
 {
 
-class SVImageAnalyzerClass : public SVAnalyzerClass
+class ImageAnalyzer : public Analyzer
 {
 	///This class does not need to call SV_DECLARE_CLASS as it is a base class and only derived classes are instantiated
 	//SV_DECLARE_CLASS
 
 public:
-	explicit SVImageAnalyzerClass( LPCSTR ObjectName /* = "Empty Analyzer" */ );
-	SVImageAnalyzerClass(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVIMAGEANALYZER );
-	virtual ~SVImageAnalyzerClass();
+	explicit ImageAnalyzer( LPCSTR ObjectName /* = "Empty Analyzer" */ );
+	ImageAnalyzer(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVIMAGEANALYZER );
+	virtual ~ImageAnalyzer();
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
-	virtual bool onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 /*- GetInputPixelDepth () --------------------------------------------------*/
 /*- If successful, this function will return the pixel depth of the         */
-/*- SVImageAnalyzerClass input image.  If unsuccessful an error condition   */
+/*- ImageAnalyzer input image.  If unsuccessful an error condition   */
 /*- will be returned. ------------------------------------------------------*/
     unsigned long       GetInputPixelDepth ();
 	SvIe::SVImageClass* getInputImage(bool bRunMode = false);

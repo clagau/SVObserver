@@ -95,7 +95,7 @@ bool SVMaxMinusMinFilterClass::ResetObject(SvStl::MessageContainerVector *pError
 // .Description : Runs this operator.
 //              : Returns FALSE, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
-bool SVMaxMinusMinFilterClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVMaxMinusMinFilterClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 { 
 	if( m_pCurrentUIOPL && nullptr != m_ProcBufferHandlePtr && nullptr != rInputImageHandle && nullptr != rOutputImageHandle)
 	{

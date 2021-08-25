@@ -623,7 +623,7 @@ HRESULT SVUserMaskOperatorClass::SetObjectValue( SVObjectAttributeClass* pDataOb
 }
 
 
-SvStl::MessageTextEnum SVUserMaskOperatorClass::onRunImageType(RunStatus& rRunStatus)
+SvStl::MessageTextEnum SVUserMaskOperatorClass::onRunImageType(SvIe::RunStatus& rRunStatus)
 {
 	if (nullptr == m_MaskBufferHandlePtr)
 	{
@@ -679,7 +679,7 @@ SvStl::MessageTextEnum SVUserMaskOperatorClass::onRunImageType(RunStatus& rRunSt
 	}
 }
 
-SvStl::MessageTextEnum SVUserMaskOperatorClass::onRunMask(bool First, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, RunStatus& rRunStatus, DWORD dwMaskType)
+SvStl::MessageTextEnum SVUserMaskOperatorClass::onRunMask(bool First, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, SvIe::RunStatus& rRunStatus, DWORD dwMaskType)
 {
 	if (dwMaskType == MASK_TYPE_IMAGE)
 	{
@@ -723,7 +723,7 @@ SvStl::MessageTextEnum SVUserMaskOperatorClass::onRunMask(bool First, SvOi::SVIm
 	return SvStl::Tid_Empty;
 }
 
-bool SVUserMaskOperatorClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVUserMaskOperatorClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 { 
 	BOOL bActive;
 	m_bvoActivated.GetValue( bActive );

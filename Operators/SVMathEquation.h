@@ -29,7 +29,7 @@ public:
 protected:
 	void init();
 	virtual bool CreateObject(const SVObjectLevelCreateStruct& rCreateStructure) override;
-	virtual bool onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 protected:
 	SvVol::SVDoubleValueObjectClass result;			// resultant value

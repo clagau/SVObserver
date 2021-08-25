@@ -42,7 +42,7 @@ namespace SvOp
 #pragma endregion Public Methods
 
 	protected:
-		//virtual bool onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages = nullptr) override;
+		//virtual bool onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages = nullptr) override;
 
 #pragma region Private Methods
 	private:

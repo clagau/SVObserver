@@ -23,7 +23,7 @@
 //@TODO[gra][8.00][25.01.2018]: This class should move to SVOGui
 namespace SvAo
 {
-class SVAnalyzerClass;
+class Analyzer;
 }
 namespace SvOp
 {
@@ -126,7 +126,7 @@ private:
 
 	//@TODO[gra][8.00][25.01.2018]: This should be changed when access is possible through Inspection commands
 	SvTo::SVToolClass* m_pTool{ nullptr };
-	SvAo::SVAnalyzerClass* m_pAnalyzer {nullptr};
+	SvAo::Analyzer* m_pAnalyzer {nullptr};
 	SvOp::SVLinearEdgeProcessingClass* m_pEdge{ nullptr };
 	std::shared_ptr<SvOg::ValueController> m_pAnalyzerValues;
 #pragma endregion Member variables

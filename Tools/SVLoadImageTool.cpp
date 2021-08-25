@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVLoadImageTool.h"
 #include "Definitions/SVImageFormatEnum.h"
-#include "AnalyzerOperators/SVAnalyzer.h"
+#include "AnalyzerOperators/Analyzer.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
 #include "Operators/ToolSizeAdjustTask.h"
 #include "InspectionEngine/RunStatus.h"
@@ -112,7 +112,7 @@ bool SVLoadImageToolClass::CloseObject()
 	return false;
 }
 
-bool SVLoadImageToolClass::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool SVLoadImageToolClass::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	// All inputs and outputs must be validated first
 	if (ValidateLocal(pErrorMessages) && __super::onRun(rRunStatus, pErrorMessages))

@@ -145,7 +145,7 @@ bool SVLUTEquation::SetDefaultFormula(SvStl::MessageContainerVector *pErrorMessa
 	return false;
 }
 
-bool SVLUTEquation::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVLUTEquation::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	bool   bRetVal   = true;
 	// Resize to 256 entries...

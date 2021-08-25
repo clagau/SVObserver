@@ -139,7 +139,7 @@ BandThreshold* SVColorThreshold::GetBandThreshold(SvDef::BandEnum Band)
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
-bool SVColorThreshold::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool SVColorThreshold::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = true;
 

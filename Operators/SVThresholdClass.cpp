@@ -216,7 +216,7 @@ SvVol::SVBoolValueObjectClass& SVThresholdClass::GetThresholdActivateAttribute()
 //              : Returns FALSE, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
 bool SVThresholdClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle,
-							  RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+							  SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 { 
 	// Binarizing: lowerThresh <= x <= m_upperThresh		--> 255 
 	//	 		   otherwise							--> 0
@@ -292,7 +292,7 @@ bool SVThresholdClass::onRun( bool First, SvOi::SVImageBufferHandlePtr rInputIma
 		if( bUseExternalLT || bUseExternalUT || bUseExternalATM )
 		{
 			// Run equation friends...
-			RunStatus runStatus;
+			SvIe::RunStatus runStatus;
 
 			runStatus.m_triggerRecord = std::move(rRunStatus.m_triggerRecord);
 			runStatus.m_UpdateCounters = rRunStatus.m_UpdateCounters;

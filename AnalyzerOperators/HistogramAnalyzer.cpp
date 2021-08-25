@@ -2,8 +2,8 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVHistogramAnalyzer
-//* .File Name       : $Workfile:   SVHistogramAnalyzer.cpp  $
+//* .Module Name     : HistogramAnalyzer
+//* .File Name       : $Workfile:   HistogramAnalyzer.cpp  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   01 Oct 2013 14:19:30  $
@@ -11,7 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "SVHistogramAnalyzer.h"
+#include "HistogramAnalyzer.h"
 #include "Definitions/SVImageFormatEnum.h"
 #include "InspectionEngine/SVDataBuffer.h"
 #include "InspectionEngine/SVImageClass.h"
@@ -166,16 +166,16 @@ namespace helper
 #define Err_SetValleyDefault	(JH_ErrorBase+137)
 #define Err_GetResult			(JH_ErrorBase+138)
 
-SV_IMPLEMENT_CLASS( SVHistogramAnalyzer, SvPb::HistogramAnalyzerClassId);
+SV_IMPLEMENT_CLASS( HistogramAnalyzer, SvPb::HistogramAnalyzerClassId);
 
-SVHistogramAnalyzer::SVHistogramAnalyzer( LPCSTR ObjectName )
-						  :SVImageAnalyzerClass( ObjectName )
+HistogramAnalyzer::HistogramAnalyzer( LPCSTR ObjectName )
+						  :ImageAnalyzer( ObjectName )
 {
 	init();
 }
 
-SVHistogramAnalyzer::SVHistogramAnalyzer( SVObjectClass* POwner, int StringResourceID )
-		:SVImageAnalyzerClass( POwner, StringResourceID ) 
+HistogramAnalyzer::HistogramAnalyzer( SVObjectClass* POwner, int StringResourceID )
+		:ImageAnalyzer( POwner, StringResourceID ) 
 {
 	init();
 }
@@ -186,11 +186,11 @@ struct fail_to_create: public std::runtime_error
 };
 
 ////////////////////////////////////////////////////////////////////////////////
-// .Title       : Initialization of class SVHistogramAnalyzer
+// .Title       : Initialization of class HistogramAnalyzer
 // -----------------------------------------------------------------------------
 // .Description : Initialization of newly Instantiated Object
 ////////////////////////////////////////////////////////////////////////////////
-void SVHistogramAnalyzer::init()
+void HistogramAnalyzer::init()
 {
 	// init () should instantiate any dynamic children and 
 	//   add them to the task object list.  
@@ -206,7 +206,7 @@ void SVHistogramAnalyzer::init()
 
 	
 		// Identify our output type
-		m_ObjectTypeInfo.m_SubType = SvPb::SVHistogramAnalyzerObjectType;
+		m_ObjectTypeInfo.m_SubType = SvPb::HistogramAnalyzerObjectType;
 
 		// Register Embedded Objects
 		RegisterEmbeddedObject( 
@@ -412,7 +412,7 @@ void SVHistogramAnalyzer::init()
 		}
 }
 
-void SVHistogramAnalyzer::AddResult(const std::pair<SvPb::EmbeddedIdEnum, DWORD>& p)
+void HistogramAnalyzer::AddResult(const std::pair<SvPb::EmbeddedIdEnum, DWORD>& p)
 {
 	SvIe::SVClassInfoStruct l_resultInfo;
 	SvDef::SVObjectTypeInfoStruct l_ifceInfo;
@@ -432,7 +432,7 @@ void SVHistogramAnalyzer::AddResult(const std::pair<SvPb::EmbeddedIdEnum, DWORD>
 	}
 }
 
-bool SVHistogramAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
+bool HistogramAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 
@@ -459,18 +459,18 @@ bool SVHistogramAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMessa
 	return Result;
 }
 
-SVHistogramAnalyzer::~SVHistogramAnalyzer()
+HistogramAnalyzer::~HistogramAnalyzer()
 {
-	SVHistogramAnalyzer::CloseObject();
+	HistogramAnalyzer::CloseObject();
 }
 
-bool SVHistogramAnalyzer::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
+bool HistogramAnalyzer::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
 	int LastError{0};
 
     while (1)
     {
-        if (!SVImageAnalyzerClass::CreateObject(rCreateStructure) )
+        if (!ImageAnalyzer::CreateObject(rCreateStructure) )
         {
 			SvStl::MessageManager MesMan(SvStl::MsgType::Log );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16153);
@@ -579,18 +579,18 @@ bool SVHistogramAnalyzer::CreateObject( const SVObjectLevelCreateStruct& rCreate
     return m_isCreated;
 }
 
-bool SVHistogramAnalyzer::CloseObject()
+bool HistogramAnalyzer::CloseObject()
 {
 	m_histogramImage.CloseObject();
 	msvplHistValues.clear();
 	SVMatroxImageInterface l_lIntf;
 	l_lIntf.Destroy( m_HistResultID );
-	SVImageAnalyzerClass::CloseObject();
+	ImageAnalyzer::CloseObject();
 
    return true;
 }
 
-SvOi::IObjectClass* SVHistogramAnalyzer::GetResultObject(SvPb::EmbeddedIdEnum embeddedID)
+SvOi::IObjectClass* HistogramAnalyzer::GetResultObject(SvPb::EmbeddedIdEnum embeddedID)
 {
 	for(int i = 0; i < GetSize(); ++i)
 	{
@@ -603,7 +603,7 @@ SvOi::IObjectClass* SVHistogramAnalyzer::GetResultObject(SvPb::EmbeddedIdEnum em
 	return nullptr;
 }
 
-bool SVHistogramAnalyzer::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool HistogramAnalyzer::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	bool Result = true;
 	SvIe::SVImageClass *pInputImage{nullptr};
@@ -1036,7 +1036,7 @@ bool SVHistogramAnalyzer::onRun( RunStatus& rRunStatus, SvStl::MessageContainerV
 	return Result;
 }
 
-HRESULT SVHistogramAnalyzer::createHistogramImage()
+HRESULT HistogramAnalyzer::createHistogramImage()
 {
 	HRESULT hr = S_OK;
 
@@ -1069,7 +1069,7 @@ HRESULT SVHistogramAnalyzer::createHistogramImage()
 	return hr;
 }
 
-HRESULT SVHistogramAnalyzer::paintHistogramImage(const SvOi::ITriggerRecordRWPtr& pTriggerRecord)
+HRESULT HistogramAnalyzer::paintHistogramImage(const SvOi::ITriggerRecordRWPtr& pTriggerRecord)
 {
 	HRESULT hr = S_OK;
 	SvOi::ITRCImagePtr pImageBuffer = m_histogramImage.getImageToWrite(pTriggerRecord);

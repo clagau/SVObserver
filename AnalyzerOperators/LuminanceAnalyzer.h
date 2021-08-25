@@ -2,7 +2,7 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVLuminanceAnalyzer
+//* .Module Name     : LuminanceAnalyzer
 //* .File Name       : $Workfile:   SVAnalyzerLuminance.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $
@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Inlcudes
-#include "SVImageAnalyzerClass.h"
+#include "ImageAnalyzer.h"
 #include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
 #include "SVValueObjectLibrary/SVDoubleValueObjectClass.h"
 #include "SVValueObjectLibrary/SVLongValueObjectClass.h"
@@ -21,15 +21,15 @@
 namespace SvAo
 {
 
-class SVLuminanceAnalyzer : public SVImageAnalyzerClass
+class LuminanceAnalyzer : public ImageAnalyzer
 {
 	SV_DECLARE_CLASS
 
 public:
-	explicit SVLuminanceAnalyzer( LPCSTR ObjectName /* = "Luminace Analyzer" */ );
-	SVLuminanceAnalyzer( SVObjectClass* POwner = nullptr , int StringResourceID = IDS_CLASSNAME_SVLUMINANCEANALYZER );
+	explicit LuminanceAnalyzer( LPCSTR ObjectName /* = "Luminace Analyzer" */ );
+	LuminanceAnalyzer( SVObjectClass* POwner = nullptr , int StringResourceID = IDS_CLASSNAME_SVLUMINANCEANALYZER );
 
-	virtual ~SVLuminanceAnalyzer();
+	virtual ~LuminanceAnalyzer();
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 
@@ -59,7 +59,7 @@ private:
 protected:
 	double calculateVariance( double aNumberOfSamples, double aAverageValue, double aAccumulatedSquares );
 
-	virtual bool onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 /*- USED BY onRun () ------------------------------------------*/
 /*- These values are only used by the Run () function, and   */

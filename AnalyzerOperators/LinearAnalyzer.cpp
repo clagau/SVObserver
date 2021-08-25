@@ -2,15 +2,15 @@
 // * COPYRIGHT (c) 2005 by SVResearch, Harrisburg
 // * All Rights Reserved
 // ******************************************************************************
-// * .Module Name     : SVLinearAnalyzerClass
-// * .File Name       : $Workfile:   SVLinearAnalyzerClass.cpp  $
+// * .Module Name     : LinearAnalyzer
+// * .File Name       : $Workfile:   LinearAnalyzer.cpp  $
 // * ----------------------------------------------------------------------------
 // * .Current Version : $Revision:   1.4  $
 // * .Check In Date   : $Date:   10 Jul 2014 17:44:52  $
 // ******************************************************************************
 
 #include "stdafx.h"
-#include "SVLinearAnalyzerClass.h"
+#include "LinearAnalyzer.h"
 #include "Operators/SVLinearEdgeProcessingClass.h"
 #include "InspectionEngine/SVImageClass.h"
 #include "Tools/SVTool.h"
@@ -25,11 +25,11 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 ///For this class it is not necessary to call SV_IMPLEMENT_CLASS as it is a base class and only derived classes are instantiated.
-//SV_IMPLEMENT_CLASS( SVLinearAnalyzerClass, SVLinearAnalyzerClassGuid );
+//SV_IMPLEMENT_CLASS( LinearAnalyzer, SVLinearAnalyzerClassGuid );
 
 
-SVLinearAnalyzerClass::SVLinearAnalyzerClass( SVObjectClass* POwner, int StringResourceID )
-					            :SVAnalyzerClass( POwner, StringResourceID )
+LinearAnalyzer::LinearAnalyzer( SVObjectClass* POwner, int StringResourceID )
+					            :Analyzer( POwner, StringResourceID )
 {
 	// Identify yourself
 	m_ObjectTypeInfo.m_ObjectType = SvPb::SVAnalyzerObjectType;
@@ -60,15 +60,15 @@ SVLinearAnalyzerClass::SVLinearAnalyzerClass( SVObjectClass* POwner, int StringR
 	m_svShowAllEdgeBOverlays.SetDefaultValue( BOOL(false), true);
 }
 
-SVLinearAnalyzerClass::~SVLinearAnalyzerClass()
+LinearAnalyzer::~LinearAnalyzer()
 {
 }
 
-bool SVLinearAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
+bool LinearAnalyzer::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
 	SVImageInfoClass ImageInfo;
 
-	bool bOk = SVAnalyzerClass::CreateObject(rCreateStructure);
+	bool bOk = Analyzer::CreateObject(rCreateStructure);
 
 	bOk = bOk && S_OK == GetPixelDepth();
 
@@ -94,7 +94,7 @@ bool SVLinearAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rCrea
 	return bOk;
 }
 
-bool SVLinearAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
+bool LinearAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 
@@ -126,7 +126,7 @@ bool SVLinearAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMes
 	return Result;
 }
 
-HRESULT SVLinearAnalyzerClass::GetSelectedEdgeOverlays( SVExtentMultiLineStruct &p_rsvMiltiLine )
+HRESULT LinearAnalyzer::GetSelectedEdgeOverlays( SVExtentMultiLineStruct &p_rsvMiltiLine )
 {
 	const SVImageExtentClass& rAnalyzerExtents = GetImageExtent();
 
@@ -157,7 +157,7 @@ HRESULT SVLinearAnalyzerClass::GetSelectedEdgeOverlays( SVExtentMultiLineStruct 
 	return S_OK;
 }
 
-HRESULT SVLinearAnalyzerClass::updateImageExtent()
+HRESULT LinearAnalyzer::updateImageExtent()
 {
 	HRESULT result{S_OK};
 
@@ -206,7 +206,7 @@ HRESULT SVLinearAnalyzerClass::updateImageExtent()
 	return result;
 }
 
-void SVLinearAnalyzerClass::addParameterForMonitorList(SvStl::MessageContainerVector& rMessages, std::back_insert_iterator<SvOi::ParametersForML> inserter) const
+void LinearAnalyzer::addParameterForMonitorList(SvStl::MessageContainerVector& rMessages, std::back_insert_iterator<SvOi::ParametersForML> inserter) const
 {
 	std::vector<std::string> nameList = getParameterNamesForML();
 
@@ -230,14 +230,14 @@ void SVLinearAnalyzerClass::addParameterForMonitorList(SvStl::MessageContainerVe
 	}
 }
 
-SvOp::SVLinearEdgeProcessingClass *SVLinearAnalyzerClass::GetEdgeA() const
+SvOp::SVLinearEdgeProcessingClass *LinearAnalyzer::GetEdgeA() const
 {
 	SvDef::SVObjectTypeInfoStruct  info {SvPb::SVLinearEdgeProcessingObjectType, SvPb::SVLinearEdgeAProcessingObjectType};
 	SvOp::SVLinearEdgeProcessingClass* pEdge = dynamic_cast<SvOp::SVLinearEdgeProcessingClass *>(getFirstObject(info));
 	return pEdge;
 }
 
-SvOp::SVLinearEdgeProcessingClass *SVLinearAnalyzerClass::GetEdgeB() const
+SvOp::SVLinearEdgeProcessingClass *LinearAnalyzer::GetEdgeB() const
 {
 
 	SvDef::SVObjectTypeInfoStruct  info {SvPb::SVLinearEdgeProcessingObjectType, SvPb::SVLinearEdgeBProcessingObjectType};;
@@ -245,7 +245,7 @@ SvOp::SVLinearEdgeProcessingClass *SVLinearAnalyzerClass::GetEdgeB() const
 	return pEdge;
 }
 
-HRESULT SVLinearAnalyzerClass::GetPixelDepth()
+HRESULT LinearAnalyzer::GetPixelDepth()
 {
 	HRESULT l_hrOk = S_FALSE;
 
@@ -261,7 +261,7 @@ HRESULT SVLinearAnalyzerClass::GetPixelDepth()
 }
 
 
-SvPb::GetNormalizerValuesResponse SVLinearAnalyzerClass::getNormalizerValues()
+SvPb::GetNormalizerValuesResponse LinearAnalyzer::getNormalizerValues()
 {
 	SvPb::GetNormalizerValuesResponse response;
 	response.set_normalrangebasesize(m_svNormalizer.GetNormalRangeBaseSize());
@@ -275,7 +275,7 @@ SvPb::GetNormalizerValuesResponse SVLinearAnalyzerClass::getNormalizerValues()
 	return response;
 }
 
-SvPb::GetNormalizerValuesResponse SVLinearAnalyzerClass::setNormalizerRanges(const SvPb::SetNormalizerRangesRequest& request)
+SvPb::GetNormalizerValuesResponse LinearAnalyzer::setNormalizerRanges(const SvPb::SetNormalizerRangesRequest& request)
 {
 	m_svNormalizer.SetRealRange(request.realmin(), request.realmax(), request.realstepwidth());
 	m_svNormalizer.SetNormalRange(request.normalmin(), request.normalmax(), request.normalstepwidth());
@@ -292,7 +292,7 @@ SvPb::GetNormalizerValuesResponse SVLinearAnalyzerClass::setNormalizerRanges(con
 	return response;
 }
 
-HRESULT SVLinearAnalyzerClass::GetInputProfileOrientation(long& rProfileOrientation) const
+HRESULT LinearAnalyzer::GetInputProfileOrientation(long& rProfileOrientation) const
 {
 	HRESULT Result(E_FAIL);
 	if( m_InputProfileOrientation.IsConnected() && nullptr != m_InputProfileOrientation.GetInputObjectInfo().getObject() )
@@ -305,7 +305,7 @@ HRESULT SVLinearAnalyzerClass::GetInputProfileOrientation(long& rProfileOrientat
 	return Result;
 }
 
-HRESULT SVLinearAnalyzerClass::GetInputUseRotationAngle(bool& rUseRotationAngle)
+HRESULT LinearAnalyzer::GetInputUseRotationAngle(bool& rUseRotationAngle)
 {
 	HRESULT Result(E_FAIL);
 	if( m_InputUseRotationAngle.IsConnected() && nullptr != m_InputUseRotationAngle.GetInputObjectInfo().getObject())
@@ -318,7 +318,7 @@ HRESULT SVLinearAnalyzerClass::GetInputUseRotationAngle(bool& rUseRotationAngle)
 	return Result;
 }
 
-HRESULT SVLinearAnalyzerClass::onCollectOverlays(SvIe::SVImageClass*,SVExtentMultiLineStructVector& rMultiLineArray)
+HRESULT LinearAnalyzer::onCollectOverlays(SvIe::SVImageClass*,SVExtentMultiLineStructVector& rMultiLineArray)
 {
 	HRESULT l_hrRet = S_OK;
 	SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*>(GetTool());
@@ -444,7 +444,7 @@ HRESULT SVLinearAnalyzerClass::onCollectOverlays(SvIe::SVImageClass*,SVExtentMul
 	return l_hrRet;
 }
 
-void SVLinearAnalyzerClass::addOverlayGroups(const SvIe::SVImageClass*, SvPb::Overlay& rOverlay) const
+void LinearAnalyzer::addOverlayGroups(const SvIe::SVImageClass*, SvPb::Overlay& rOverlay) const
 {
 	const SVImageExtentClass& rAnalyzerExtents = GetImageExtent();
 
@@ -488,7 +488,7 @@ void SVLinearAnalyzerClass::addOverlayGroups(const SvIe::SVImageClass*, SvPb::Ov
 	addOverlayResultDetails(rOverlay, isVertical);
 }
 
-void SVLinearAnalyzerClass::addOverlayResultDetails(SvPb::Overlay& rOverlay, bool isVertical) const
+void LinearAnalyzer::addOverlayResultDetails(SvPb::Overlay& rOverlay, bool isVertical) const
 {
 	auto* pEdge = GetEdgeA();
 	if (nullptr != pEdge)
@@ -502,7 +502,7 @@ void SVLinearAnalyzerClass::addOverlayResultDetails(SvPb::Overlay& rOverlay, boo
 	}
 }
 
-bool SVLinearAnalyzerClass::ValidateEdgeA(SvStl::MessageContainerVector *pErrorMessages)
+bool LinearAnalyzer::ValidateEdgeA(SvStl::MessageContainerVector *pErrorMessages)
 {
 	if (nullptr == GetEdgeA())
 	{
@@ -516,7 +516,7 @@ bool SVLinearAnalyzerClass::ValidateEdgeA(SvStl::MessageContainerVector *pErrorM
 	return true;
 }
 
-bool SVLinearAnalyzerClass::ValidateEdgeB(SvStl::MessageContainerVector *pErrorMessages)
+bool LinearAnalyzer::ValidateEdgeB(SvStl::MessageContainerVector *pErrorMessages)
 {
 	if (nullptr == GetEdgeB())
 	{
@@ -530,7 +530,7 @@ bool SVLinearAnalyzerClass::ValidateEdgeB(SvStl::MessageContainerVector *pErrorM
 	return true;
 }
 
-bool SVLinearAnalyzerClass::setParameterToList(const std::string& rName, std::back_insert_iterator<SvOi::ParametersForML> inserter) const
+bool LinearAnalyzer::setParameterToList(const std::string& rName, std::back_insert_iterator<SvOi::ParametersForML> inserter) const
 {
 	SVObjectClass* pObject = nullptr;
 	SVObjectManagerClass::Instance().GetObjectByDottedName(rName, pObject);
@@ -547,12 +547,12 @@ bool SVLinearAnalyzerClass::setParameterToList(const std::string& rName, std::ba
 	}
 }
 
-std::vector<std::string> SVLinearAnalyzerClass::getParameterNamesForML() const
+std::vector<std::string> LinearAnalyzer::getParameterNamesForML() const
 {
 	return {};
 }
 
-void SVLinearAnalyzerClass::addDPointResultToAvailableChildren(SvPb::EmbeddedIdEnum embeddedID, UINT idForClassnamePart1)
+void LinearAnalyzer::addDPointResultToAvailableChildren(SvPb::EmbeddedIdEnum embeddedID, UINT idForClassnamePart1)
 {
 	SvIe::SVClassInfoStruct resultClassInfo;
 	SvDef::SVObjectTypeInfoStruct interfaceInfo;
@@ -577,7 +577,7 @@ void SVLinearAnalyzerClass::addDPointResultToAvailableChildren(SvPb::EmbeddedIdE
 }
 
 
-void SVLinearAnalyzerClass::addScalarResultToAvailableChildren(SvPb::EmbeddedIdEnum embeddedID, SvPb::SVObjectSubTypeEnum subtype, UINT idForClassnamePart1, UINT idForClassnamePart2)
+void LinearAnalyzer::addScalarResultToAvailableChildren(SvPb::EmbeddedIdEnum embeddedID, SvPb::SVObjectSubTypeEnum subtype, UINT idForClassnamePart1, UINT idForClassnamePart2)
 {
 	SvIe::SVClassInfoStruct resultClassInfo;
 	SvDef::SVObjectTypeInfoStruct interfaceInfo;

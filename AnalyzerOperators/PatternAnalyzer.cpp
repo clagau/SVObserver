@@ -2,8 +2,8 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVPatternAnalyzerClass
-//* .File Name       : $Workfile:   SVPatternAnalyzerClass.cpp  $
+//* .Module Name     : PatternAnalyzer
+//* .File Name       : $Workfile:   PatternAnalyzer.cpp  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.6  $
 //* .Check In Date   : $Date:   07 Aug 2014 09:28:48  $
@@ -12,7 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <cmath>
-#include "SVPatternAnalyzerClass.h"
+#include "PatternAnalyzer.h"
 #include "Definitions/Color.h"
 #include "Definitions/GlobalConst.h"
 #include "Definitions/SVResetStruct.h"
@@ -73,14 +73,14 @@ enum
 #define ERR_SRI15		(SRI_ErrorBase+15)
 #define ERR_SRI16		(SRI_ErrorBase+16)
 
-SV_IMPLEMENT_CLASS(SVPatternAnalyzerClass, SvPb::PatternAnalyzerClassId);
+SV_IMPLEMENT_CLASS(PatternAnalyzer, SvPb::PatternAnalyzerClassId);
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-SVPatternAnalyzerClass::SVPatternAnalyzerClass(SVObjectClass* POwner, int StringResourceID)
-  : SVImageAnalyzerClass(POwner, StringResourceID)
+PatternAnalyzer::PatternAnalyzer(SVObjectClass* POwner, int StringResourceID)
+  : ImageAnalyzer(POwner, StringResourceID)
   , m_bReloadModelFromFile(false)
 {
 	m_ObjectTypeInfo.m_SubType = SvPb::SVPatternAnalyzerObjectType;
@@ -148,13 +148,13 @@ SVPatternAnalyzerClass::SVPatternAnalyzerClass(SVObjectClass* POwner, int String
 	CreateResult();
 }
 
-SVPatternAnalyzerClass::~SVPatternAnalyzerClass()
+PatternAnalyzer::~PatternAnalyzer()
 {
 	CloseMIL();
-	SVPatternAnalyzerClass::CloseObject();
+	PatternAnalyzer::CloseObject();
 }
 
-SVObjectClass* SVPatternAnalyzerClass::CreateResult()
+SVObjectClass* PatternAnalyzer::CreateResult()
 {
 	// Declare Input Interface of Result...
 	SvIe::SVClassInfoStruct resultClassInfo;
@@ -196,7 +196,7 @@ SVObjectClass* SVPatternAnalyzerClass::CreateResult()
 	return pResult;
 }
 
-void SVPatternAnalyzerClass::SetDefaultSearchValues()
+void PatternAnalyzer::SetDefaultSearchValues()
 {
 	msv_dpatAcceptanceThreshold.SetDefaultValue(70.0); // Acceptance level 70%
 	msv_dpatCertaintyThreshold.SetDefaultValue(80.0);	 // Certainty level 80%
@@ -231,7 +231,7 @@ void SVPatternAnalyzerClass::SetDefaultSearchValues()
 	m_vec2dPatResults.fill(0.0);
 }
 
-bool SVPatternAnalyzerClass::UpdateModelFromInputImage(long posX, long posY, long modelWidth, long modelHeight)
+bool PatternAnalyzer::UpdateModelFromInputImage(long posX, long posY, long modelWidth, long modelHeight)
 {
 	if (SvDef::cMinPatternModelNewSize > modelWidth)
 	{
@@ -249,7 +249,7 @@ bool SVPatternAnalyzerClass::UpdateModelFromInputImage(long posX, long posY, lon
 	return false;
 }
 
-bool SVPatternAnalyzerClass::UpdateModelFromInputImage(long posX, long posY)
+bool PatternAnalyzer::UpdateModelFromInputImage(long posX, long posY)
 {
 	bool bOk = false;
 
@@ -313,7 +313,7 @@ bool SVPatternAnalyzerClass::UpdateModelFromInputImage(long posX, long posY)
 	return bOk;
 }
 
-bool SVPatternAnalyzerClass::UpdateModelFromBuffer()
+bool PatternAnalyzer::UpdateModelFromBuffer()
 {
 	bool bOk = false;
 
@@ -346,7 +346,7 @@ bool SVPatternAnalyzerClass::UpdateModelFromBuffer()
 	return bOk;
 }
 
-bool SVPatternAnalyzerClass::RestorePattern (const std::string& rImageFile, SvStl::MessageContainerVector *pErrorMessages)
+bool PatternAnalyzer::RestorePattern (const std::string& rImageFile, SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool bOk = ReloadImage(rImageFile, m_lpatModelWidth, m_lpatModelHeight, m_patBufferHandlePtr, pErrorMessages);
 
@@ -396,7 +396,7 @@ bool SVPatternAnalyzerClass::RestorePattern (const std::string& rImageFile, SvSt
 // 	 Date		Author				Comment                                       
 //  04-12-00 	Sri				First Implementation
 ////////////////////////////////////////////////////////////////////////////////
-bool SVPatternAnalyzerClass::SetSearchParameters ()
+bool PatternAnalyzer::SetSearchParameters ()
 {
 	bool bOk = true;
 
@@ -630,7 +630,7 @@ bool SVPatternAnalyzerClass::SetSearchParameters ()
 	return bOk;
 }
 
-void SVPatternAnalyzerClass::CloseMIL ()
+void PatternAnalyzer::CloseMIL ()
 {
 	SVMatroxPatternInterface::DestroyContext( m_patContextHandle );
 	SVMatroxPatternInterface::DestroyResult( m_patResultHandle );
@@ -652,9 +652,9 @@ void SVPatternAnalyzerClass::CloseMIL ()
 // 	 Date		Author				Comment                                       
 //  04-12-00 	Sri				First Implementation
 ////////////////////////////////////////////////////////////////////////////////
-bool SVPatternAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
+bool PatternAnalyzer::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 {
-	bool bOk = SVImageAnalyzerClass::CreateObject(rCreateStructure);
+	bool bOk = ImageAnalyzer::CreateObject(rCreateStructure);
 
 	// Set / Reset Printable Flags
 	const UINT cAttributes = SvPb::audittrail | SvPb::remotelySetable;
@@ -715,14 +715,14 @@ bool SVPatternAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCrea
 	return bOk;
 }
 
-bool SVPatternAnalyzerClass::CloseObject()
+bool PatternAnalyzer::CloseObject()
 {
 	ResetResultValues(); // SEJ - Why do this here ?
 
-	return SVImageAnalyzerClass::CloseObject();
+	return ImageAnalyzer::CloseObject();
 }
 
-void SVPatternAnalyzerClass::ResetResultValues()
+void PatternAnalyzer::ResetResultValues()
 {
 	msv_dpatResultMatchScore.SetResultSize(0);
 	msv_dpatResultAngle.SetResultSize(0);
@@ -738,7 +738,7 @@ void SVPatternAnalyzerClass::ResetResultValues()
 	}
 }
 
-bool SVPatternAnalyzerClass::onRun (RunStatus &rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool PatternAnalyzer::onRun (SvIe::RunStatus &rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	//@WARNING[MZA][7.50][17.01.2017] Not sure if we need to check ValidateLocal in Run-mode, maybe it is enough to check it in ResetObject
 	bool Result = __super::onRun(rRunStatus, pErrorMessages) && ValidateLocal(pErrorMessages);
@@ -795,7 +795,7 @@ bool SVPatternAnalyzerClass::onRun (RunStatus &rRunStatus, SvStl::MessageContain
 	return Result;
 }
 
-bool SVPatternAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
+bool PatternAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 
@@ -878,12 +878,12 @@ bool SVPatternAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 	return Result;
 }
 
-SvDef::StringVector SVPatternAnalyzerClass::getSpecialImageList() const
+SvDef::StringVector PatternAnalyzer::getSpecialImageList() const
 {
 	return {SvDef::PatternModelImageName, SvDef::PatternDontCareImageName};
 }
 
-bool SVPatternAnalyzerClass::getSpecialImage(const std::string& rName, SvOi::SVImageBufferHandlePtr& rImagePtr) const
+bool PatternAnalyzer::getSpecialImage(const std::string& rName, SvOi::SVImageBufferHandlePtr& rImagePtr) const
 {
 	if (SvDef::PatternModelImageName == rName)
 	{
@@ -898,7 +898,7 @@ bool SVPatternAnalyzerClass::getSpecialImage(const std::string& rName, SvOi::SVI
 	return false;
 }
 
-SvStl::MessageContainerVector SVPatternAnalyzerClass::validateAndSetEmbeddedValues(const SvOi::SetValueStructVector& rValueVector, bool shouldSet)
+SvStl::MessageContainerVector PatternAnalyzer::validateAndSetEmbeddedValues(const SvOi::SetValueStructVector& rValueVector, bool shouldSet)
 {
 	SvStl::MessageContainerVector messages;
 	long dontCareWidth = 0;
@@ -924,7 +924,7 @@ SvStl::MessageContainerVector SVPatternAnalyzerClass::validateAndSetEmbeddedValu
 	return messages;
 }
 
-void SVPatternAnalyzerClass::addParameterForMonitorList(SvStl::MessageContainerVector& , std::back_insert_iterator<SvOi::ParametersForML> inserter) const
+void PatternAnalyzer::addParameterForMonitorList(SvStl::MessageContainerVector& , std::back_insert_iterator<SvOi::ParametersForML> inserter) const
 {
 	inserter = SvOi::ParameterPairForML(msv_dpatResultX.GetCompleteName(), msv_dpatResultX.getObjectId());
 	// cppcheck-suppress redundantAssignment symbolName=inserter ; cppCheck doesn't know back_insert_iterator
@@ -938,7 +938,7 @@ void SVPatternAnalyzerClass::addParameterForMonitorList(SvStl::MessageContainerV
 	inserter = SvOi::ParameterPairForML(msv_lpatNumFoundOccurances.GetCompleteName(), msv_lpatNumFoundOccurances.getObjectId());
 }
 
-HRESULT SVPatternAnalyzerClass::onCollectOverlays(SvIe::SVImageClass* , SVExtentMultiLineStructVector& rMultiLineArray )
+HRESULT PatternAnalyzer::onCollectOverlays(SvIe::SVImageClass* , SVExtentMultiLineStructVector& rMultiLineArray )
 {
 	// only if ToolSet/Tool was not Disabled
 	SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (GetTool());
@@ -967,7 +967,7 @@ HRESULT SVPatternAnalyzerClass::onCollectOverlays(SvIe::SVImageClass* , SVExtent
 	return S_OK;
 }
 
-void SVPatternAnalyzerClass::addOverlayGroups(const SvIe::SVImageClass*, SvPb::Overlay& rOverlay) const
+void PatternAnalyzer::addOverlayGroups(const SvIe::SVImageClass*, SvPb::Overlay& rOverlay) const
 {
 	auto* pGroup = rOverlay.add_shapegroups();
 	pGroup->set_name("Pattern");
@@ -1020,7 +1020,7 @@ void SVPatternAnalyzerClass::addOverlayGroups(const SvIe::SVImageClass*, SvPb::O
 // 	 Date		Author				Comment                                       
 //  04-12-00 	Sri				First Implementation
 ////////////////////////////////////////////////////////////////////////////////
-bool SVPatternAnalyzerClass::IsPtOverResult( const POINT& rPoint )
+bool PatternAnalyzer::IsPtOverResult( const POINT& rPoint )
 {
 	long lOccurances = 0;
 	msv_lpatNumFoundOccurances.GetValue(lOccurances);
@@ -1048,7 +1048,7 @@ bool SVPatternAnalyzerClass::IsPtOverResult( const POINT& rPoint )
 //              : selects the Menu item 'Display Analyzer Result', display the 
 //				: Match Score, X & Y values and the Angle of this pattern.
 //				: Called from SVImageView::OnCommand
-SvDef::StringVector SVPatternAnalyzerClass::getAnalyzerResult()
+SvDef::StringVector PatternAnalyzer::getAnalyzerResult()
 {
 	SvDef::StringVector result;
 
@@ -1091,7 +1091,7 @@ SvDef::StringVector SVPatternAnalyzerClass::getAnalyzerResult()
 	return result;
 }
 
-void SVPatternAnalyzerClass::ResizeResultValues(int nNum)
+void PatternAnalyzer::ResizeResultValues(int nNum)
 {
 	// Set array sizes
 	msv_dpatResultMatchScore.SetArraySize(nNum);
@@ -1102,7 +1102,7 @@ void SVPatternAnalyzerClass::ResizeResultValues(int nNum)
 	m_vec2dPatResults.resize( SV_NUMBER_OF_PATTERN_RESULTS, nNum );
 }
 
-bool SVPatternAnalyzerClass::ResetPattern(SvStl::MessageContainerVector *pErrorMessages)
+bool PatternAnalyzer::ResetPattern(SvStl::MessageContainerVector *pErrorMessages)
 {
 	std::string	FileName;
 	
@@ -1143,7 +1143,7 @@ bool SVPatternAnalyzerClass::ResetPattern(SvStl::MessageContainerVector *pErrorM
 	return bOk;
 }
 
-std::vector<SVExtentFigureStruct> SVPatternAnalyzerClass::GetResultExtentFigureList( long lOccurances )
+std::vector<SVExtentFigureStruct> PatternAnalyzer::GetResultExtentFigureList( long lOccurances )
 {
 	std::vector<SVExtentFigureStruct> retList;
 	if (lOccurances > 0)
@@ -1213,7 +1213,7 @@ std::vector<SVExtentFigureStruct> SVPatternAnalyzerClass::GetResultExtentFigureL
 	return retList;
 }
 
-HRESULT SVPatternAnalyzerClass::executePatternAndSetResults( SVMatroxBuffer ImageBufId)
+HRESULT PatternAnalyzer::executePatternAndSetResults( SVMatroxBuffer ImageBufId)
 {
 	HRESULT MatroxCode = SVMatroxPatternInterface::Execute( m_patResultHandle, ImageBufId, m_patContextHandle );
 	if (S_OK == MatroxCode)
@@ -1317,7 +1317,7 @@ HRESULT SVPatternAnalyzerClass::executePatternAndSetResults( SVMatroxBuffer Imag
 	return MatroxCode;
 }
 
-bool SVPatternAnalyzerClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const
+bool PatternAnalyzer::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const
 {
 	bool Result = IsValidSize(pErrorMessages);
 
@@ -1334,7 +1334,7 @@ bool SVPatternAnalyzerClass::ValidateLocal(SvStl::MessageContainerVector *pError
 	return Result;
 }
 
-bool SVPatternAnalyzerClass::RestoreDontCareImage(SvStl::MessageContainerVector *pErrorMessages)
+bool PatternAnalyzer::RestoreDontCareImage(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = true;
 	m_DontCareBufferHandlePtr.reset();
@@ -1368,7 +1368,7 @@ bool SVPatternAnalyzerClass::RestoreDontCareImage(SvStl::MessageContainerVector 
 	return Result;
 }
 
-bool SVPatternAnalyzerClass::getNewUseDontCareValue(const SvOi::SetValueStructVector &rValueVector)
+bool PatternAnalyzer::getNewUseDontCareValue(const SvOi::SetValueStructVector &rValueVector)
 {
 	BOOL useDontCare = false;
 	SvOi::SetValueStructVector::const_iterator iter = std::find_if(rValueVector.begin(), rValueVector.end(), [&](const SvOi::SetValueStructVector::value_type& rEntry)->bool
@@ -1389,7 +1389,7 @@ bool SVPatternAnalyzerClass::getNewUseDontCareValue(const SvOi::SetValueStructVe
 	return useDontCare ? true : false;
 }
 
-bool SVPatternAnalyzerClass::validateNewDontCareFileName(const SvOi::SetValueStructVector &rValueVector, long& rDontCareWidth, long& rDontCareHeight, SvStl::MessageContainerVector& rMessages)
+bool PatternAnalyzer::validateNewDontCareFileName(const SvOi::SetValueStructVector &rValueVector, long& rDontCareWidth, long& rDontCareHeight, SvStl::MessageContainerVector& rMessages)
 {
 	bool isValueToSet = false;
 	SvOi::SetValueStructVector::const_iterator iter = std::find_if(rValueVector.begin(), rValueVector.end(), [&](const SvOi::SetValueStructVector::value_type& rEntry)->bool
@@ -1432,7 +1432,7 @@ bool SVPatternAnalyzerClass::validateNewDontCareFileName(const SvOi::SetValueStr
 	return isValueToSet;
 }
 
-bool SVPatternAnalyzerClass::validateNewModelFileName(const SvOi::SetValueStructVector &rValueVector, long& rModelWidth, long& rModelHeight, SvStl::MessageContainerVector &messages)
+bool PatternAnalyzer::validateNewModelFileName(const SvOi::SetValueStructVector &rValueVector, long& rModelWidth, long& rModelHeight, SvStl::MessageContainerVector &messages)
 {
 	bool isValueToSet = false;
 	SvOi::SetValueStructVector::const_iterator iter = std::find_if(rValueVector.begin(), rValueVector.end(), [&](const SvOi::SetValueStructVector::value_type& rEntry)->bool
@@ -1477,7 +1477,7 @@ bool SVPatternAnalyzerClass::validateNewModelFileName(const SvOi::SetValueStruct
 	return isValueToSet;
 }
 
-bool SVPatternAnalyzerClass::IsValidSize(SvStl::MessageContainerVector *pErrorMessages) const
+bool PatternAnalyzer::IsValidSize(SvStl::MessageContainerVector *pErrorMessages) const
 {
 	long modelWidth = 0;
 	long modelHeight = 0;
@@ -1492,7 +1492,7 @@ bool SVPatternAnalyzerClass::IsValidSize(SvStl::MessageContainerVector *pErrorMe
 	return IsValidSize(modelWidth, modelHeight, useDontCare?true:false, dontCareWidth, dontCareHeight, pErrorMessages);
 }
 
-bool SVPatternAnalyzerClass::IsValidSize(long modelWidth, long modelHeight, bool useDontCare, long dontCareWidth, long dontCareHeight, SvStl::MessageContainerVector *pErrorMessages) const
+bool PatternAnalyzer::IsValidSize(long modelWidth, long modelHeight, bool useDontCare, long dontCareWidth, long dontCareHeight, SvStl::MessageContainerVector *pErrorMessages) const
 {
 	bool bRet = true;
 
@@ -1541,7 +1541,7 @@ bool SVPatternAnalyzerClass::IsValidSize(long modelWidth, long modelHeight, bool
 	return bRet;
 }
 
-bool SVPatternAnalyzerClass::CreateModelBuffer()
+bool PatternAnalyzer::CreateModelBuffer()
 {
 	long width = 0, height = 0;
 	m_lpatModelWidth.GetValue(width);
@@ -1549,7 +1549,7 @@ bool SVPatternAnalyzerClass::CreateModelBuffer()
 	return CreateBuffer(width, height, m_patBufferHandlePtr);
 }
 
-bool SVPatternAnalyzerClass::CreateBuffer(long width, long height, SvOi::SVImageBufferHandlePtr& rBufferHandle)
+bool PatternAnalyzer::CreateBuffer(long width, long height, SvOi::SVImageBufferHandlePtr& rBufferHandle)
 {
 	rBufferHandle.reset();
 
@@ -1565,7 +1565,7 @@ bool SVPatternAnalyzerClass::CreateBuffer(long width, long height, SvOi::SVImage
 	return (S_OK == SvIe::SVImageProcessingClass::CreateImageBuffer(patBuffer, rBufferHandle));
 }
 
-bool SVPatternAnalyzerClass::ReloadImage(const std::string& rImageFile, SvVol::SVLongValueObjectClass& rWidthValueObject, SvVol::SVLongValueObjectClass& rHeightValueObject, SvOi::SVImageBufferHandlePtr& rBufferHandle, SvStl::MessageContainerVector* pErrorMessages)
+bool PatternAnalyzer::ReloadImage(const std::string& rImageFile, SvVol::SVLongValueObjectClass& rWidthValueObject, SvVol::SVLongValueObjectClass& rHeightValueObject, SvOi::SVImageBufferHandlePtr& rBufferHandle, SvStl::MessageContainerVector* pErrorMessages)
 {
 	bool bOk = true;
 	SVMatroxBuffer importHandle;
@@ -1639,7 +1639,7 @@ bool SVPatternAnalyzerClass::ReloadImage(const std::string& rImageFile, SvVol::S
 	return bOk;
 }
 
-HRESULT SVPatternAnalyzerClass::CreateModelHandle(long modelWidth, long modelHeight)
+HRESULT PatternAnalyzer::CreateModelHandle(long modelWidth, long modelHeight)
 {
 	HRESULT MatroxCode = S_OK; 
 

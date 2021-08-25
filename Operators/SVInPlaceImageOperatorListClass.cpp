@@ -76,7 +76,7 @@ bool SVInPlaceImageOperatorListClass::ResetObject(SvStl::MessageContainerVector 
 // .Description : Is doing in place processing on input image!!!
 //				:
 //				: Special routing for image operators here.
-bool SVInPlaceImageOperatorListClass::Run( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVInPlaceImageOperatorListClass::Run( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	clearRunErrorMessages();
 
@@ -104,7 +104,7 @@ bool SVInPlaceImageOperatorListClass::Run( RunStatus& rRunStatus, SvStl::Message
 		}
 	
 		bool bFirstFlag = true;
-		RunStatus ChildRunStatus;
+		SvIe::RunStatus ChildRunStatus;
 		ChildRunStatus.m_UpdateCounters = childUpdateCounters;
 		ChildRunStatus.m_triggerRecord = std::move(rRunStatus.m_triggerRecord);
 		// Run children...

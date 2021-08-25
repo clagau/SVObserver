@@ -12,7 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <algorithm>
-#include "SVBarCodeAnalyzerClass.h"
+#include "BarCodeAnalyzer.h"
 #include "ObjectInterfaces\IBarCode.h"
 #include "SVLibrary/SVOIniClass.h"
 #include "Operators/SVBarCodeResult.h"   
@@ -46,7 +46,7 @@ SV_IMPLEMENT_CLASS (SVBarCodeAnalyzerClass, SvPb::BarCodeAnalyzerClassId);
 //////////////////////////////////////////////////////////////////////
 
 SVBarCodeAnalyzerClass::SVBarCodeAnalyzerClass (SVObjectClass* POwner, int StringResourceID)
-	: SVImageAnalyzerClass (POwner, StringResourceID)
+	: ImageAnalyzer (POwner, StringResourceID)
 {
 	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
 	{
@@ -284,7 +284,7 @@ bool SVBarCodeAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCrea
 {
 	if ( !m_bHasLicenseError )
 	{
-		if (SVImageAnalyzerClass::CreateObject (rCreateStructure))
+		if (ImageAnalyzer::CreateObject (rCreateStructure))
 		{
 			if (InitMil ())
 			{
@@ -339,7 +339,7 @@ SVBarCodeAnalyzerClass::~SVBarCodeAnalyzerClass()
 bool SVBarCodeAnalyzerClass::CloseObject()
 {
 	CloseMil ();
-	return SVImageAnalyzerClass::CloseObject();
+	return ImageAnalyzer::CloseObject();
 }
 
 bool SVBarCodeAnalyzerClass::CharIsControl( TCHAR p_Char )
@@ -347,7 +347,7 @@ bool SVBarCodeAnalyzerClass::CharIsControl( TCHAR p_Char )
 	return p_Char < ' ' || p_Char > 126;
 }
 
-bool SVBarCodeAnalyzerClass::onRun (RunStatus &rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool SVBarCodeAnalyzerClass::onRun (SvIe::RunStatus &rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	if ( m_bHasLicenseError )
 	{
@@ -361,7 +361,7 @@ bool SVBarCodeAnalyzerClass::onRun (RunStatus &rRunStatus, SvStl::MessageContain
 	}
 	
 	msv_szBarCodeValue.SetValue(std::string());
-	if (SVImageAnalyzerClass::onRun (rRunStatus, pErrorMessages))
+	if (ImageAnalyzer::onRun (rRunStatus, pErrorMessages))
 	{
 		if (nullptr == m_pBarCodeResult)
 		{

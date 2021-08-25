@@ -466,7 +466,7 @@ bool ResizeTool::isInputImage(uint32_t imageId) const
 	return Result;
 }
 
-bool ResizeTool::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool ResizeTool::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	//@TODO [Arvid][10.10][27.11.2020] the message management in this tool in general 
 	//and in this function in particular is somewhat strange and should be redone!

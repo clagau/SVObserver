@@ -517,4 +517,4 @@ HRESULT SVMaskShapeDoughnut::ValidateProperties(MapType& rProperties) const
 	return hr;
 }
 
-} //namespace SvIe
+} //namespace SvOp

@@ -2,7 +2,7 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVHistogramAnalyzer
+//* .Module Name     : HistogramAnalyzer
 //* .File Name       : $Workfile:   SVHistogramAnalyzerSetup.cpp  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $
@@ -11,7 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "AnalyzerOperators/SVHistogramAnalyzer.h"
+#include "AnalyzerOperators/HistogramAnalyzer.h"
 #include "SVHistogramAnalyzerSetup.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVSetupDialogManager.h"

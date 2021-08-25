@@ -86,58 +86,59 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Analyzer.cpp" />
+    <ClCompile Include="BarCodeAnalyzer.cpp" />
+    <ClCompile Include="BlobAnalyzer.cpp" />
     <ClCompile Include="BlobAnalyzer2.cpp" />
     <ClCompile Include="BlobDrawTask.cpp" />
     <ClCompile Include="BlobFeatureList.cpp" />
     <ClCompile Include="BlobFeatureTask.cpp" />
+    <ClCompile Include="CVAnalyzer.cpp" />
+    <ClCompile Include="HistogramAnalyzer.cpp" />
+    <ClCompile Include="ImageAnalyzer.cpp" />
+    <ClCompile Include="LinearAnalyzer.cpp" />
     <ClCompile Include="LinearEdgeCountingAnalyzer.cpp" />
     <ClCompile Include="LinearEdgePositionAnalyzer.cpp" />
     <ClCompile Include="LinearMaximumBackgroundObjectAnalyzer.cpp" />
     <ClCompile Include="LinearMaximumForegroundObjectAnalyzer.cpp" />
     <ClCompile Include="LinearMaximumObjectAnalyzer.cpp" />
+    <ClCompile Include="LinearMeasurementAnalyzer.cpp" />
     <ClCompile Include="LinearPixelCountingAnalyzer.cpp" />
+    <ClCompile Include="LuminanceAnalyzer.cpp" />
+    <ClCompile Include="PatternAnalyzer.cpp" />
+    <ClCompile Include="PixelAnalyzer.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="SVAnalyzer.cpp" />
-    <ClCompile Include="SVBarCodeAnalyzerClass.cpp" />
-    <ClCompile Include="SVBlobAnalyzer.cpp" />
-    <ClCompile Include="SVHistogramAnalyzer.cpp" />
-    <ClCompile Include="SVImageAnalyzerClass.cpp" />
-    <ClCompile Include="SVLinearAnalyzerClass.cpp" />
-    <ClCompile Include="SVLinearMeasurementAnalyzerClass.cpp" />
-    <ClCompile Include="SVLuminanceAnalyzer.cpp" />
-    <ClCompile Include="SVOCVAnalyzer.cpp" />
-    <ClCompile Include="SVPatternAnalyzerClass.cpp" />
-    <ClCompile Include="SVPixelAnalyzer.cpp" />
     <ClCompile Include="TableAddColumnAnalyzer.cpp" />
     <ClCompile Include="TableExcludeAnalyzer.cpp" />
     <ClCompile Include="TableLimitAnalyzer.cpp" />
     <ClCompile Include="TableSortAnalyzer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Analyzer.h" />
+    <ClInclude Include="BarCodeAnalyzer.h" />
+    <ClInclude Include="BlobAnalyzer.h" />
     <ClInclude Include="BlobAnalyzer2.h" />
     <ClInclude Include="BlobDrawTask.h" />
     <ClInclude Include="BlobFeatureList.h" />
     <ClInclude Include="BlobFeatureTask.h" />
+    <ClInclude Include="CVAnalyzer.h" />
+    <ClInclude Include="HistogramAnalyzer.h" />
+    <ClInclude Include="ImageAnalyzer.h" />
+    <ClInclude Include="LinearAnalyzer.h" />
     <ClInclude Include="LinearEdgeCountingAnalyzer.h" />
     <ClInclude Include="LinearEdgePositionAnalyzer.h" />
     <ClInclude Include="LinearMaximumBackgroundObjectAnalyzer.h" />
     <ClInclude Include="LinearMaximumForegroundObjectAnalyzer.h" />
     <ClInclude Include="LinearMaximumObjectAnalyzer.h" />
+    <ClInclude Include="LinearMeasurementAnalyzer.h" />
     <ClInclude Include="LinearPixelCountingAnalyzer.h" />
+    <ClInclude Include="LuminanceAnalyzer.h" />
+    <ClInclude Include="PatternAnalyzer.h" />
+    <ClInclude Include="PixelAnalyzer.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="SVAnalyzer.h" />
-    <ClInclude Include="SVBarCodeAnalyzerClass.h" />
-    <ClInclude Include="SVBlobAnalyzer.h" />
-    <ClInclude Include="SVHistogramAnalyzer.h" />
-    <ClInclude Include="SVImageAnalyzerClass.h" />
-    <ClInclude Include="SVLinearAnalyzerClass.h" />
-    <ClInclude Include="SVLuminanceAnalyzer.h" />
-    <ClInclude Include="SVOCVAnalyzer.h" />
-    <ClInclude Include="SVPatternAnalyzerClass.h" />
-    <ClInclude Include="SVPixelAnalyzer.h" />
     <ClInclude Include="TableAddColumnAnalyzer.h" />
     <ClInclude Include="TableExcludeAnalyzer.h" />
     <ClInclude Include="TableLimitAnalyzer.h" />

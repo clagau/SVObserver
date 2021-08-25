@@ -56,7 +56,7 @@ public:
 protected:
 	HRESULT UpdateOutputImageExtents();
 	virtual bool isInputImage(uint32_t imageId) const override;
-	virtual bool onRun( RunStatus &p_rRunStatus, SvStl::MessageContainerVector *pErrorMessages = nullptr ) override;
+	virtual bool onRun( SvIe::RunStatus &p_rRunStatus, SvStl::MessageContainerVector *pErrorMessages = nullptr ) override;
 
 private:
 	void LocalInitialize();

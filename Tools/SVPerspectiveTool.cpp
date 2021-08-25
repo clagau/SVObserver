@@ -293,7 +293,7 @@ bool SVPerspectiveToolClass::isInputImage(uint32_t imageId) const
 }
 
 
-bool SVPerspectiveToolClass::onRun( RunStatus &p_rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVPerspectiveToolClass::onRun( SvIe::RunStatus &p_rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	bool l_bOk = SVToolClass::onRun( p_rRunStatus, pErrorMessages );
 

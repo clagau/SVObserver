@@ -14,7 +14,7 @@
 
 #include "SVMessage/SVMessage.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
-#include "AnalyzerOperators/SVAnalyzer.h"
+#include "AnalyzerOperators/Analyzer.h"
 #include "Operators/SVConditional.h"
 #include "SVInspectionProcess.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
@@ -451,7 +451,7 @@ SvOi::IObjectClass* SVToolSet::getBand0Image() const
 // -----------------------------------------------------------------------------
 // .Description : runs this toolset
 ////////////////////////////////////////////////////////////////////////////////
-bool SVToolSet::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool SVToolSet::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	m_TriggerCount.SetValue(rRunStatus.m_lTriggerCount > 0L ? rRunStatus.m_lTriggerCount : 0L);
 
@@ -476,7 +476,7 @@ bool SVToolSet::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErr
 //				: Otherwise it returns FALSE, that means: if the Tool Set should
 //				: not run, because the Tool Set Condition failed!
 ////////////////////////////////////////////////////////////////////////////////
-bool SVToolSet::Run(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool SVToolSet::Run(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool bRetVal = true;
 	clearRunErrorMessages();
@@ -513,7 +513,7 @@ bool SVToolSet::Run(RunStatus& rRunStatus, SvStl::MessageContainerVector *pError
 				m_EnabledCount.SetValue(++lCount);
 			}
 
-			RunStatus toolRunStatus;
+			SvIe::RunStatus toolRunStatus;
 			toolRunStatus.m_triggerRecord = std::move(rRunStatus.m_triggerRecord);
 			// Run your children...
 			for (int i = 0; i < GetSize(); i++)
@@ -720,7 +720,7 @@ bool SVToolSet::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) con
 	}
 }
 
-void SVToolSet::setPostRunStatus(double timer, RunStatus &rRunStatus)
+void SVToolSet::setPostRunStatus(double timer, SvIe::RunStatus &rRunStatus)
 {
 	double l_Elapsed = (SvUl::GetTimeStamp() - timer);
 	m_EndTime = SvUl::ConvertTo(SvUl::Seconds, l_Elapsed);

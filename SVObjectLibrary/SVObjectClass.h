@@ -34,7 +34,11 @@ struct SVObjectLevelCreateStruct;
 struct SVObjectNameInfo;
 
 class SVObjectAttributeClass;
-class RunStatus;
+
+namespace SvIe
+{
+	class RunStatus;
+}
 
 typedef std::vector<SVObjectClass*> SVObjectPtrVector;
 typedef std::back_insert_iterator<SVObjectPtrVector> SVObjectPtrVectorInserter;

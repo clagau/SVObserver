@@ -38,7 +38,7 @@ public:
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 	void createImageObject(bool useImageObject);
 
-	HRESULT Refresh(RunStatus* pRunStatus = nullptr);
+	HRESULT Refresh(SvIe::RunStatus* pRunStatus = nullptr);
 
 	enum ShapeTypeEnum
 	{

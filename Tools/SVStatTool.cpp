@@ -540,7 +540,7 @@ bool SVStatTool::HasVariable() const
 	return bRetVal;
 }
 
-bool SVStatTool::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool SVStatTool::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::onRun(rRunStatus, pErrorMessages) && ValidateLocal(pErrorMessages);
 

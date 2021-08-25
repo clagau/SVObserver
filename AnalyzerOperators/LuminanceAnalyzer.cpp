@@ -11,7 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "SVLuminanceAnalyzer.h"
+#include "LuminanceAnalyzer.h"
 #include "InspectionEngine/SVDataBuffer.h"
 #include "InspectionEngine/SVImageClass.h"
 #include "InspectionEngine/SVImageProcessingClass.h"
@@ -33,23 +33,23 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVLuminanceAnalyzer, SvPb::LuminanceAnalyzerClassId);
+SV_IMPLEMENT_CLASS( LuminanceAnalyzer, SvPb::LuminanceAnalyzerClassId);
 
-SVLuminanceAnalyzer::SVLuminanceAnalyzer( LPCSTR ObjectName )
-: SVImageAnalyzerClass( ObjectName )
+LuminanceAnalyzer::LuminanceAnalyzer( LPCSTR ObjectName )
+: ImageAnalyzer( ObjectName )
 , msvlHistValueArraySize( 0 )
 {
 	init();
 }
 
-SVLuminanceAnalyzer::SVLuminanceAnalyzer( SVObjectClass* POwner, int StringResourceID )
-: SVImageAnalyzerClass( POwner, StringResourceID ) 
+LuminanceAnalyzer::LuminanceAnalyzer( SVObjectClass* POwner, int StringResourceID )
+: ImageAnalyzer( POwner, StringResourceID ) 
 , msvlHistValueArraySize( 0 )
 {
 	init();
 }
 
-void SVLuminanceAnalyzer::init()
+void LuminanceAnalyzer::init()
 {
 	// init () should instantiate any dynamic children and 
 	//   add them to the task object list.  
@@ -118,7 +118,7 @@ void SVLuminanceAnalyzer::init()
 	}
 }
 
-bool SVLuminanceAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
+bool LuminanceAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 
@@ -144,17 +144,17 @@ bool SVLuminanceAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMessa
 	return Result;
 }
 
-SVLuminanceAnalyzer::~SVLuminanceAnalyzer()
+LuminanceAnalyzer::~LuminanceAnalyzer()
 {
-	SVLuminanceAnalyzer::CloseObject();
+	LuminanceAnalyzer::CloseObject();
 }
 
-bool SVLuminanceAnalyzer::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
+bool LuminanceAnalyzer::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
 	SvIe::SVImageClass* pImage(nullptr);
 	bool bError(false);
 
-	if (! SVImageAnalyzerClass::CreateObject( rCreateStructure ) )
+	if (! ImageAnalyzer::CreateObject( rCreateStructure ) )
 	{
 		SvStl::MessageManager MesMan(SvStl::MsgType::Log );
 		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16095);
@@ -224,18 +224,18 @@ bool SVLuminanceAnalyzer::CreateObject( const SVObjectLevelCreateStruct& rCreate
 }
 
 
-bool SVLuminanceAnalyzer::CloseObject()
+bool LuminanceAnalyzer::CloseObject()
 {
 
 	msvplHistValues.clear();
 	SVMatroxImageInterface l_lIntf;
 	l_lIntf.Destroy( m_HistResultID );
-	SVImageAnalyzerClass::CloseObject ();
+	ImageAnalyzer::CloseObject ();
 
 	return true;
 }
 
-void SVLuminanceAnalyzer::addParameterForMonitorList(SvStl::MessageContainerVector& rMessages, std::back_insert_iterator<SvOi::ParametersForML> inserter) const
+void LuminanceAnalyzer::addParameterForMonitorList(SvStl::MessageContainerVector& rMessages, std::back_insert_iterator<SvOi::ParametersForML> inserter) const
 {
 	bool isNoError = true;
 
@@ -257,7 +257,7 @@ void SVLuminanceAnalyzer::addParameterForMonitorList(SvStl::MessageContainerVect
 	}
 }
 
-bool SVLuminanceAnalyzer::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool LuminanceAnalyzer::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	__int64          sum(0);
 	long             lNbrPixels(0);
@@ -465,7 +465,7 @@ bool SVLuminanceAnalyzer::onRun( RunStatus& rRunStatus, SvStl::MessageContainerV
 	return true;
 }
 
-double SVLuminanceAnalyzer::calculateVariance( double aNumberOfSamples, double aAverageValue, double aAccumulatedSquares )
+double LuminanceAnalyzer::calculateVariance( double aNumberOfSamples, double aAverageValue, double aAccumulatedSquares )
 {
 	///////////////////////////////////////////////////////////////////
 	// Variance is a cumulative measure of the

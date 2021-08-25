@@ -354,7 +354,7 @@ namespace SvAo
 	}
 
 
-	bool BlobFeatureList::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages)
+	bool BlobFeatureList::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages)
 	{
 		try
 		{
@@ -558,7 +558,7 @@ namespace SvAo
 		}
 	}
 
-	bool BlobFeatureList::Run(RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages)
+	bool BlobFeatureList::Run(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages)
 	{
 		bool retVal = __super::Run(rRunStatus, pErrorMessages);
 
@@ -590,7 +590,7 @@ namespace SvAo
 		//do range
 		for (auto* pFeatureTask : m_featureTaskVec)
 		{
-			RunStatus ChildRunStatus;
+			SvIe::RunStatus ChildRunStatus;
 			pFeatureTask->evalRange(ChildRunStatus);
 			rRunStatus.updateState(ChildRunStatus, false);
 		}

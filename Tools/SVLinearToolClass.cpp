@@ -12,7 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVLinearToolClass.h"
-#include "AnalyzerOperators/SVAnalyzer.h"
+#include "AnalyzerOperators/Analyzer.h"
 #include "Operators/SVConditional.h"
 #include "Operators/SVLinearImageOperatorList.h"
 #include "Operators/SVThresholdClass.h"
@@ -301,7 +301,7 @@ SvOi::ParametersForML SVLinearToolClass::getParameterForMonitorList(SvStl::Messa
 		rMessages.push_back(Msg);
 	}
 
-	SvAo::SVAnalyzerClass* pCurrentAnalyzer = dynamic_cast<SvAo::SVAnalyzerClass *>(getFirstObject(SvDef::SVObjectTypeInfoStruct(SvPb::SVAnalyzerObjectType)));
+	SvAo::Analyzer* pCurrentAnalyzer = dynamic_cast<SvAo::Analyzer *>(getFirstObject(SvDef::SVObjectTypeInfoStruct(SvPb::SVAnalyzerObjectType)));
 	if (nullptr != pCurrentAnalyzer)
 	{
 		pCurrentAnalyzer->addParameterForMonitorList(rMessages, std::back_inserter(retList));

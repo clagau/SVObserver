@@ -42,12 +42,12 @@ protected:
 	static HRESULT SVBlobAnalyzerClassSetupDialog( uint32_t objectId, CWnd* PParentWnd );
 	static HRESULT BlobAnalyzer2SetupDialog(uint32_t objectId, CWnd* pParentWnd);
 	static HRESULT SVColorToolClassSetupDialog( uint32_t objectId, CWnd* PParentWnd );
-	static HRESULT SVHistogramAnalyzerSetupDialog( uint32_t objectId, CWnd* PParentWnd );
+	static HRESULT HistogramAnalyzerSetupDialog( uint32_t objectId, CWnd* PParentWnd );
 	static HRESULT SVLinearAnalyzerClassSetupDialog( uint32_t objectId, CWnd* PParentWnd );
 	static HRESULT SVLuminanceAnalyzerClassSetupDialog( uint32_t objectId, CWnd* PParentWnd );
 	static HRESULT SVOCVAnalyzerClassSetupDialog( uint32_t objectId, CWnd* PParentWnd );
 	static HRESULT SVPatternAnalyzerClassSetupDialog( uint32_t objectId, CWnd* pParentWnd );
-	static HRESULT SVPixelAnalyzerClassSetupDialog( uint32_t objectId, CWnd* PParentWnd );
+	static HRESULT PixelAnalyzerClassSetupDialog( uint32_t objectId, CWnd* PParentWnd );
 	static HRESULT SVResultClassSetupDialog( uint32_t objectId, CWnd* PParentWnd );
 
 private:
@@ -63,7 +63,7 @@ private:
 		std::make_pair(SvPb::ColorToolClassId, &SVSetupDialogManager::SVColorToolClassSetupDialog),
 		std::make_pair(SvPb::DPointXResultClassId, &SVSetupDialogManager::SVResultClassSetupDialog),
 		std::make_pair(SvPb::DPointYResultClassId, &SVSetupDialogManager::SVResultClassSetupDialog),
-		std::make_pair(SvPb::HistogramAnalyzerClassId, &SVSetupDialogManager::SVHistogramAnalyzerSetupDialog),
+		std::make_pair(SvPb::HistogramAnalyzerClassId, &SVSetupDialogManager::HistogramAnalyzerSetupDialog),
 		std::make_pair(SvPb::LinearEdgeCountingLineAnalyzerClassId, &SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog),
 		std::make_pair(SvPb::LinearEdgePositionLineAnalyzerClassId, &SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog),
 		std::make_pair(SvPb::LinearMaximumBackgroundObjectLineAnalyzerClassId, &SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog),
@@ -74,7 +74,7 @@ private:
 		std::make_pair(SvPb::OCVAnalyzerClassId, &SVSetupDialogManager::SVOCVAnalyzerClassSetupDialog),
 		std::make_pair(SvPb::OCVAnalyzerResultClassId, &SVSetupDialogManager::SVResultClassSetupDialog),
 		std::make_pair(SvPb::PatternAnalyzerClassId, &SVSetupDialogManager::SVPatternAnalyzerClassSetupDialog),
-		std::make_pair(SvPb::PixelAnalyzerClassId, &SVSetupDialogManager::SVPixelAnalyzerClassSetupDialog),
+		std::make_pair(SvPb::PixelAnalyzerClassId, &SVSetupDialogManager::PixelAnalyzerClassSetupDialog),
 		std::make_pair(SvPb::DoubleResultClassId, &SVSetupDialogManager::SVResultClassSetupDialog),
 		std::make_pair(SvPb::LongResultClassId, &SVSetupDialogManager::SVResultClassSetupDialog),
 		std::make_pair(SvPb::PointXResultClassId, &SVSetupDialogManager::SVResultClassSetupDialog),

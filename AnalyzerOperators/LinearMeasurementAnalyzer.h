@@ -2,8 +2,8 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVLinearMeasurementAnalyzerClass
-//* .File Name       : $Workfile:   SVLinearMeasurementAnalyzerClass.h  $
+//* .Module Name     : LinearMeasurementAnalyzer
+//* .File Name       : $Workfile:   LinearMeasurementAnalyzer.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 12:04:12  $
@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVLinearAnalyzerClass.h"
+#include "LinearAnalyzer.h"
 #include "SVValueObjectLibrary/SVDoubleValueObjectClass.h"
 #include "SVValueObjectLibrary/SVDPointValueObjectClass.h"
 #pragma endregion Includes
@@ -20,20 +20,20 @@
 namespace SvAo
 {
 
-class SVLinearMeasurementAnalyzerClass : public SVLinearAnalyzerClass
+class LinearMeasurementAnalyzer : public LinearAnalyzer
 {
 	SV_DECLARE_CLASS
 
 public:
-	SVLinearMeasurementAnalyzerClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVLINEARMEASUREMENTLINEANALYZER );
-	virtual ~SVLinearMeasurementAnalyzerClass();
+	LinearMeasurementAnalyzer( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVLINEARMEASUREMENTLINEANALYZER );
+	virtual ~LinearMeasurementAnalyzer();
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 	virtual void addOverlayResults(SvPb::Overlay& rOverlay, bool isVertical = false) const override;
 
 protected:
-	virtual bool onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 	
 	virtual std::vector<std::string> getParameterNamesForML() const override;
 

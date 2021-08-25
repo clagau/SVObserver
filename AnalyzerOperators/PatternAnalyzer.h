@@ -2,7 +2,7 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVPatternAnalyzerClass
+//* .Module Name     : PatternAnalyzer
 //* .File Name       : $Workfile:   svpatternanalyzerclass.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.3  $
@@ -12,7 +12,7 @@
 
 #pragma region Includes
 #include "ObjectInterfaces/SVImageBufferHandleInterface.h"
-#include "SVImageAnalyzerClass.h"
+#include "ImageAnalyzer.h"
 #include "ObjectInterfaces/IPatternAnalyzer.h"
 #include "SVLibrary/SVTemplate.h"
 #include "Definitions/StringTypeDef.h"
@@ -25,20 +25,20 @@
 namespace SvAo
 {
 
-class SVPatternAnalyzerClass : public SVImageAnalyzerClass, public SvOi::IPatternAnalyzer  
+class PatternAnalyzer : public ImageAnalyzer, public SvOi::IPatternAnalyzer  
 {
 	SV_DECLARE_CLASS
 
 	friend class SVSetupDialogManager;
 
 public:
-	SVPatternAnalyzerClass (SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVPATTERNANALYZER);
+	PatternAnalyzer (SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVPATTERNANALYZER);
 
-	virtual	~SVPatternAnalyzerClass();
+	virtual	~PatternAnalyzer();
 	virtual bool CloseObject() override;
 	
 	virtual bool CreateObject(const SVObjectLevelCreateStruct& rCreateStructure) override;
-	virtual bool onRun(RunStatus &rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
+	virtual bool onRun(SvIe::RunStatus &rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	void CloseMIL();
 

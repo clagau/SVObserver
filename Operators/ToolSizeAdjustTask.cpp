@@ -109,13 +109,13 @@ bool ToolSizeAdjustTask::AddEvaluationObject(SvOl::InputObject* pInput, SvPb::Cl
 	return registerInputObject(pInput, Name, embeddedId);
 }
 
-bool ToolSizeAdjustTask::onRun(RunStatus& , SvStl::MessageContainerVector*)
+bool ToolSizeAdjustTask::onRun(SvIe::RunStatus& , SvStl::MessageContainerVector*)
 {
 	//DoNothing in onRun
 	return true;
 }
 
-bool  ToolSizeAdjustTask::Run( RunStatus&, SvStl::MessageContainerVector* )
+bool  ToolSizeAdjustTask::Run( SvIe::RunStatus&, SvStl::MessageContainerVector* )
 {
 	//DoNothing in Run
 	return true;

@@ -57,7 +57,7 @@ bool TableLimitAnalyzer::CreateObject( const SVObjectLevelCreateStruct& rCreateS
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
-bool TableLimitAnalyzer::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool TableLimitAnalyzer::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	bool returnValue = __super::onRun( rRunStatus, pErrorMessages );
 	

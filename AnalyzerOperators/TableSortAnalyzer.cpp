@@ -87,7 +87,7 @@ bool TableSortAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMessage
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
-bool TableSortAnalyzer::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool TableSortAnalyzer::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	bool returnValue = __super::onRun( rRunStatus, pErrorMessages );
 	

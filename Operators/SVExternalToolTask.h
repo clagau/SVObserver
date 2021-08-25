@@ -169,7 +169,7 @@ public:
 protected:
 	HRESULT Uninitialize();
 	
-	virtual bool onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 	void SetIndirectValueSaveFlag();
 
 	SvIe::SVImageClass* GetInputImage(int iIndex, bool bRunMode = false);
@@ -185,11 +185,11 @@ protected:
 private:
 	HRESULT InitializeResultObjects();
 
-	bool prepareInput(SvOi::ITRCImagePtr pResultImageBuffers[], RunStatus& rRunStatus);
+	bool prepareInput(SvOi::ITRCImagePtr pResultImageBuffers[], SvIe::RunStatus& rRunStatus);
 	void getResults(SvOi::ITRCImagePtr pResultImageBuffers[]);
 	bool anyImagesResized();
 	void collectInputValues();
-	bool collectInputImages(RunStatus& rRunStatus);
+	bool collectInputImages(SvIe::RunStatus& rRunStatus);
 	bool collectMilResultBuffers(SvOi::ITRCImagePtr pResultImageBuffers[]);
 	void collectResultValues();
 	void collectResultImages(SvOi::ITRCImagePtr pResultImageBuffers[]);

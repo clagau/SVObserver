@@ -648,7 +648,7 @@ message BarCodeTypeParameter
 }
 message GetNormalizerValuesRequest
 {
-	uint32 linearAnalyzerId = 1; //ID of the analyzer object (SVLinearAnalyzerClass)
+	uint32 linearAnalyzerId = 1; //ID of the analyzer object (LinearAnalyzer)
 }
 message GetNormalizerValuesResponse
 {
@@ -663,7 +663,7 @@ message GetNormalizerValuesResponse
 }
 message SetNormalizerRangesRequest
 {
-	uint32 linearAnalyzerId = 1; //ID of the analyzer object (SVLinearAnalyzerClass)
+	uint32 linearAnalyzerId = 1; //ID of the analyzer object (LinearAnalyzer)
 	double normalMax = 2;
 	double normalMin = 3;
 	double normalStepWidth = 4;

@@ -23,7 +23,7 @@
 #include "SVMainFrm.h"
 #include "SVIPSplitterFrame.h"
 #include "SVOResource/ConstGlobalSvOr.h"
-#include "AnalyzerOperators/SVAnalyzer.h"
+#include "AnalyzerOperators/Analyzer.h"
 #include "Definitions/GlobalConst.h"
 #include "ObjectInterfaces/IObjectWriter.h"
 #include "SVImageLibrary/SVDrawContext.h"
@@ -381,7 +381,7 @@ BOOL SVImageView::OnCommand( WPARAM wParam, LPARAM lParam )
 					SvDef::SVObjectTypeInfoStruct l_svInfo;
 					l_svInfo.m_ObjectType = SvPb::SVAnalyzerObjectType;
 
-					SvAo::SVAnalyzerClass* pAnalyzer = dynamic_cast<SvAo::SVAnalyzerClass*>(pTool->getFirstObject(l_svInfo));
+					SvAo::Analyzer* pAnalyzer = dynamic_cast<SvAo::Analyzer*>(pTool->getFirstObject(l_svInfo));
 					if(nullptr != pAnalyzer )
 					{
 						CPoint l_point;
@@ -563,7 +563,7 @@ void SVImageView::OnContextMenu( CWnd* , CPoint point )
 			else
 			{	//RunOrTestMode is false if entry the else
 				bool l_resultFound = false;
-				SvAo::SVAnalyzerClass* pAnalyzer = nullptr;
+				SvAo::Analyzer* pAnalyzer = nullptr;
 				SVIPDoc *l_psvIPDoc = GetIPDoc();
 
 				if( nullptr != l_psvIPDoc )
@@ -582,7 +582,7 @@ void SVImageView::OnContextMenu( CWnd* , CPoint point )
 							SvDef::SVObjectTypeInfoStruct l_svInfo;
 							l_svInfo.m_ObjectType = SvPb::SVAnalyzerObjectType;
 
-							pAnalyzer = dynamic_cast<SvAo::SVAnalyzerClass*>(pTool->getFirstObject(l_svInfo));
+							pAnalyzer = dynamic_cast<SvAo::Analyzer*>(pTool->getFirstObject(l_svInfo));
 							if (pAnalyzer)
 							{
 								l_resultFound = pAnalyzer->IsPtOverResult(l_point);
@@ -848,7 +848,7 @@ void SVImageView::OnRButtonDblClk( UINT nFlags, CPoint point )
 				SvDef::SVObjectTypeInfoStruct l_svInfo;
 				l_svInfo.m_ObjectType = SvPb::SVAnalyzerObjectType;
 
-				SvAo::SVAnalyzerClass* pAnalyzer = dynamic_cast<SvAo::SVAnalyzerClass*>(pTool->getFirstObject(l_svInfo));
+				SvAo::Analyzer* pAnalyzer = dynamic_cast<SvAo::Analyzer*>(pTool->getFirstObject(l_svInfo));
 				if(nullptr != pAnalyzer)
 				{
 					SVSetupDialogManager::Instance().SetupDialog( pAnalyzer->GetClassID(), pAnalyzer->getObjectId(), this );

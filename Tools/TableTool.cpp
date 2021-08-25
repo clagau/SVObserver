@@ -178,7 +178,7 @@ std::vector<std::string> TableTool::getToolAdjustNameList() const
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
-bool TableTool::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool TableTool::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	bool returnValue = __super::onRun( rRunStatus, pErrorMessages );
 	if (returnValue)

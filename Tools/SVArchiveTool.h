@@ -96,7 +96,7 @@ public:
 protected:
 	SV_DECLARE_CLASS
 
-	virtual bool onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 	virtual bool useOverlayColorTool() const override { return false; };
 
 	HRESULT QueueArchiveString( const std::string& rArchiveString );

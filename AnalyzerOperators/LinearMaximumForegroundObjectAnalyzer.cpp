@@ -32,7 +32,7 @@ static char THIS_FILE[] = __FILE__;
 SV_IMPLEMENT_CLASS( LinearMaximumForegroundObjectAnalyzer, SvPb::LinearMaximumForegroundObjectLineAnalyzerClassId);
 
 LinearMaximumForegroundObjectAnalyzer::LinearMaximumForegroundObjectAnalyzer( SVObjectClass* POwner, int StringResourceID )
-										   :SVLinearAnalyzerClass( POwner, StringResourceID ) 
+										   :LinearAnalyzer( POwner, StringResourceID ) 
 {
 	m_bEnableDirection = false;
 	m_bEnableEdgeSelect = false;
@@ -126,7 +126,7 @@ LinearMaximumForegroundObjectAnalyzer::~LinearMaximumForegroundObjectAnalyzer()
 
 bool LinearMaximumForegroundObjectAnalyzer::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool bOk = SVLinearAnalyzerClass::CreateObject(rCreateStructure);
+	bool bOk = LinearAnalyzer::CreateObject(rCreateStructure);
 	mdpEdgeA.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
 	mdpEdgeB.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
 	mdpCenter.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
@@ -181,7 +181,7 @@ void LinearMaximumForegroundObjectAnalyzer::addOverlayResults(SvPb::Overlay& rOv
 	pGroup->set_detaillevel(SvPb::Level1);
 	pGroup->set_name("LAnalyzer-Result");
 	RECT rect{};
-	SvAo::SVAnalyzerClass* pAnalyzer = dynamic_cast<SvAo::SVAnalyzerClass*>(GetAnalyzer());
+	SvAo::Analyzer* pAnalyzer = dynamic_cast<SvAo::Analyzer*>(GetAnalyzer());
 	if (nullptr != pAnalyzer)
 	{
 		pAnalyzer->GetImageExtent().GetOutputRectangle(rect);
@@ -221,7 +221,7 @@ void LinearMaximumForegroundObjectAnalyzer::addOverlayResults(SvPb::Overlay& rOv
 	}
 }
 
-bool LinearMaximumForegroundObjectAnalyzer::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool LinearMaximumForegroundObjectAnalyzer::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	std::vector<double> AEdges;
 	std::vector<double> BEdges;

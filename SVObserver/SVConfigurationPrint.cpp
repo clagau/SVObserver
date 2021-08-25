@@ -48,7 +48,7 @@
 #include "SVIPDoc.h"
 #include "Operators/SVShapeMaskHelperClass.h"
 #include "SVIOController.h"
-#include "AnalyzerOperators/SVBlobAnalyzer.h"
+#include "AnalyzerOperators/BlobAnalyzer.h"
 #include "Operators/SVResultDouble.h"
 #include "RemoteMonitorList.h"
 #include "RemoteMonitorListHelper.h"

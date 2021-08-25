@@ -33,7 +33,7 @@ public:
 	SvVol::SVDoubleValueObjectClass*		getOutputMathResult();
 protected:
 
-	virtual bool onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 protected:
 	// Embedded Object: ( Outputs )

@@ -252,7 +252,7 @@ SVShapeMaskHelperClass::ShapeTypeEnum SVShapeMaskHelperClass::GetShape( )
 	return static_cast <ShapeTypeEnum> (lValue);
 }
 
-HRESULT SVShapeMaskHelperClass::Refresh(RunStatus* pRunStatus)
+HRESULT SVShapeMaskHelperClass::Refresh(SvIe::RunStatus* pRunStatus)
 {
 	HRESULT hr = S_FALSE;
 	if ( m_pShape )

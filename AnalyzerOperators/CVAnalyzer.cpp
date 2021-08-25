@@ -2,7 +2,7 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVOCVAnalyzer
+//* .Module Name     : OCVAnalyzer
 //* .File Name       : $Workfile: 
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.4  $
@@ -11,7 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "SVOCVAnalyzer.h"
+#include "CVAnalyzer.h"
 #include "Operators/SVOCVAnalyzerResult.h"
 #include "SVMatroxLibrary/SVOLicenseManager.h"
 #include "InspectionEngine/RunStatus.h"
@@ -27,11 +27,11 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVOCVAnalyzer, SvPb::OCVAnalyzerClassId);
+SV_IMPLEMENT_CLASS( OCVAnalyzer, SvPb::OCVAnalyzerClassId);
 
 /////////////////////////////////////////////////////////////////////////////
-SVOCVAnalyzer::SVOCVAnalyzer( SVObjectClass* POwner, int StringResourceID )
-		:SVImageAnalyzerClass( POwner, StringResourceID ) 
+OCVAnalyzer::OCVAnalyzer( SVObjectClass* POwner, int StringResourceID )
+		:ImageAnalyzer( POwner, StringResourceID ) 
 {
 	init();
 
@@ -46,7 +46,7 @@ SVOCVAnalyzer::SVOCVAnalyzer( SVObjectClass* POwner, int StringResourceID )
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void SVOCVAnalyzer::init()
+void OCVAnalyzer::init()
 {
 	m_ObjectTypeInfo.m_ObjectType = SvPb::SVAnalyzerObjectType;
 	m_ObjectTypeInfo.m_SubType = SvPb::SVOCVAnalyzerObjectType;
@@ -62,7 +62,7 @@ void SVOCVAnalyzer::init()
 }
 
 
-SVOCVAnalyzer::~SVOCVAnalyzer()
+OCVAnalyzer::~OCVAnalyzer()
 {
 	if ( m_bHasLicenseError )
 	{
@@ -74,9 +74,9 @@ SVOCVAnalyzer::~SVOCVAnalyzer()
 
 
 ////////////////////////////////////////////////////////////////////////////////
-bool SVOCVAnalyzer::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
+bool OCVAnalyzer::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	m_isCreated = SVImageAnalyzerClass::CreateObject(rCreateStructure);
+	m_isCreated = ImageAnalyzer::CreateObject(rCreateStructure);
 	
 	if ( m_bHasLicenseError )
 	{
@@ -86,7 +86,7 @@ bool SVOCVAnalyzer::CreateObject( const SVObjectLevelCreateStruct& rCreateStruct
 	return m_isCreated;
 }
 
-bool SVOCVAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
+bool OCVAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 
@@ -107,7 +107,7 @@ bool SVOCVAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 //
 //
 //
-bool SVOCVAnalyzer::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool OCVAnalyzer::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	if ( !m_bHasLicenseError )
 	{
@@ -130,12 +130,12 @@ bool SVOCVAnalyzer::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector 
 }
 
 
-bool SVOCVAnalyzer::IsPtOverResult(const POINT&)
+bool OCVAnalyzer::IsPtOverResult(const POINT&)
 {
 	return true;
 }
 
-SvDef::StringVector SVOCVAnalyzer::getAnalyzerResult()
+SvDef::StringVector OCVAnalyzer::getAnalyzerResult()
 {
 	SvDef::StringVector result;
 

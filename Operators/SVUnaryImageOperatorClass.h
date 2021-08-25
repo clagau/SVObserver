@@ -30,11 +30,11 @@ public:
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 
 	//First definition of onRun with this parameter (SVTaskObjectClass has different parameter), so override is not possible
-	virtual bool Run( bool First, SvOi::SVImageBufferHandlePtr RInputImageHandle, SvOi::SVImageBufferHandlePtr ROutputImageHandle, RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr );
+	virtual bool Run( bool First, SvOi::SVImageBufferHandlePtr RInputImageHandle, SvOi::SVImageBufferHandlePtr ROutputImageHandle, SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr );
 
 protected:
 	//First definition of onRun with this parameter (SVTaskObjectClass has different parameter), so override is not possible
-	virtual bool onRun( bool First, SvOi::SVImageBufferHandlePtr RInputImageHandle, SvOi::SVImageBufferHandlePtr ROutputImageHandle, RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr );
+	virtual bool onRun( bool First, SvOi::SVImageBufferHandlePtr RInputImageHandle, SvOi::SVImageBufferHandlePtr ROutputImageHandle, SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr );
 	const SvIe::SVImageClass* getReferenceImage() const;
 	const SvIe::SVImageClass* getOutputImage(bool bRunMode = false) const;
 

@@ -16,7 +16,7 @@
 
 namespace SvAo
 {
-class SVPatternAnalyzerClass;
+class PatternAnalyzer;
 }
 class SVPatAnalyzeSetupDlgSheet;
 
@@ -51,7 +51,7 @@ public:
 	int		m_nPosAccuracyIndex;
 	int		m_nSpeedIndex;
 
-	SvAo::SVPatternAnalyzerClass* m_pPatAnalyzer;
+	SvAo::PatternAnalyzer* m_pPatAnalyzer;
 
 // Overrides
 	// ClassWizard generate virtual function overrides

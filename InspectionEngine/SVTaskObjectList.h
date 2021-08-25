@@ -18,7 +18,10 @@
 #include "SVProtoBuf/InspectionCommands.h"
 #pragma endregion Includes
 
-class RunStatus;
+namespace SvIe
+{
+	class RunStatus;
+}
 
 namespace SvIe
 {

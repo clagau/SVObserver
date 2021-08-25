@@ -12,7 +12,7 @@
 #pragma once
 
 class SVToolClass;
-class SVPatternAnalyzerClass;
+class PatternAnalyzer;
 class SVPatAnalyzeSetupDlgSheet;
 
 /////////////////////////////////////////////////////////////////////////////

@@ -15,6 +15,8 @@
 #include "ObjectInterfaces/ITriggerRecordRW.h"
 #pragma endregion Includes
 
+namespace SvIe
+{
 class RunStatus
 {
 public:
@@ -169,3 +171,5 @@ inline DWORD RunStatus::GetState() const
 	return run.state;
 }
 
+} //namespace SvIe
+	

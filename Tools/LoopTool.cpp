@@ -67,7 +67,7 @@ void LoopTool::BuildEmbeddedObjectList()
 	m_LinkedBreak.SetDefaultValue(vtTemp, true);
 }
 
-bool LoopTool::Run(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool LoopTool::Run(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool retVal = true;
 	clearRunErrorMessages();
@@ -264,7 +264,7 @@ bool LoopTool::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 }
 
 
-bool LoopTool::RunAllChildren(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool LoopTool::RunAllChildren(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	clearRunErrorMessages();
 	bool childUpdateCounters = rRunStatus.m_UpdateCounters;
@@ -274,7 +274,7 @@ bool LoopTool::RunAllChildren(RunStatus& rRunStatus, SvStl::MessageContainerVect
 
 	if (!rRunStatus.IsDisabled() && !rRunStatus.IsDisabledByCondition())
 	{
-		RunStatus ChildRunStatus;
+		SvIe::RunStatus ChildRunStatus;
 		ChildRunStatus.m_triggerRecord = std::move(rRunStatus.m_triggerRecord);
 		ChildRunStatus.m_UpdateCounters = childUpdateCounters;
 		// Run your children...

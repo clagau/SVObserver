@@ -119,7 +119,7 @@ namespace SvAo
 		return l_bOk;
 	}
 
-	void BlobFeatureTask::evalRange(RunStatus& rRunStatus)
+	void BlobFeatureTask::evalRange(SvIe::RunStatus& rRunStatus)
 	{
 		//range check
 		BOOL isRange = false;

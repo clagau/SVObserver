@@ -253,7 +253,7 @@ bool SVColorToolClass::isInputImage(uint32_t imageId) const
 	return Result;
 }
 
-bool SVColorToolClass::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool SVColorToolClass::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result(true);
 	BOOL convertToHSI(true);

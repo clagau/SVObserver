@@ -22,7 +22,7 @@
 
 namespace SvAo
 {
-class SVAnalyzerClass;
+class Analyzer;
 }
 namespace SvTo
 {
@@ -95,7 +95,7 @@ public:
 protected:
 	SVToolAdjustmentDialogSheetClass*	m_pParentDialog;
 	SvTo::SVToolClass* m_pTool;
-	SvAo::SVAnalyzerClass*	m_pCurrentAnalyzer;
+	SvAo::Analyzer*	m_pCurrentAnalyzer;
 
 	/// If a analyzer additional added to the combobox, because it is normally not available but now selected, it is saved here. 
 	/// If the selection of this get lost it will deleted from the combobox

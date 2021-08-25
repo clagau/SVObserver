@@ -119,7 +119,7 @@ bool SVLinearImageOperatorList::ResetObject(SvStl::MessageContainerVector *pErro
 	return Result;
 }
 
-bool SVLinearImageOperatorList::Run(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool SVLinearImageOperatorList::Run(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	clearRunErrorMessages();
 
@@ -257,7 +257,7 @@ bool SVLinearImageOperatorList::Run(RunStatus& rRunStatus, SvStl::MessageContain
 			}
 
 			//update Result objects explicitely
-			RunStatus ResultRunStatus;
+			SvIe::RunStatus ResultRunStatus;
 			ResultRunStatus.m_UpdateCounters = rRunStatus.m_UpdateCounters;
 			ResultRunStatus.m_triggerRecord = std::move(rRunStatus.m_triggerRecord);
 			for (SvOp::SVDoubleResult* pResult : m_Results)
@@ -416,7 +416,7 @@ void SVLinearImageOperatorList::ResetLogicalROIImage()
 	}
 }
 
-bool SVLinearImageOperatorList::RunLocalRotation(RunStatus &rRunStatus, SvOi::SVImageBufferHandlePtr input, SvOi::ITRCImagePtr pOutputBuffer, const SVImageExtentClass& rImageExtent)
+bool SVLinearImageOperatorList::RunLocalRotation(SvIe::RunStatus &rRunStatus, SvOi::SVImageBufferHandlePtr input, SvOi::ITRCImagePtr pOutputBuffer, const SVImageExtentClass& rImageExtent)
 {
 	bool childUpdateCounters = rRunStatus.m_UpdateCounters;
 
@@ -445,7 +445,7 @@ bool SVLinearImageOperatorList::RunLocalRotation(RunStatus &rRunStatus, SvOi::SV
 			SVMatroxImageInterface::Rotate(pOutputBuffer->getHandle()->GetBuffer(), l_Rotate);
 		}
 
-		RunStatus ChildRunStatus;
+		SvIe::RunStatus ChildRunStatus;
 		ChildRunStatus.m_UpdateCounters = childUpdateCounters;
 		ChildRunStatus.m_triggerRecord = std::move(rRunStatus.m_triggerRecord);
 		// Run children...

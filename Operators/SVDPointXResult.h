@@ -35,7 +35,7 @@ public:
 
 protected:
 	SvVol::SVDPointValueObjectClass* getInputPoint();
-	virtual bool onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 protected:
 	// Output

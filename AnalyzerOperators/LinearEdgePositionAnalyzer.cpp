@@ -31,7 +31,7 @@ static char THIS_FILE[] = __FILE__;
 SV_IMPLEMENT_CLASS( LinearEdgePositionAnalyzer, SvPb::LinearEdgePositionLineAnalyzerClassId);
 
 LinearEdgePositionAnalyzer::LinearEdgePositionAnalyzer( SVObjectClass* POwner, int StringResourceID )
-								:SVLinearAnalyzerClass( POwner, StringResourceID ) 
+								:LinearAnalyzer( POwner, StringResourceID ) 
 {
 	init();
 }
@@ -75,7 +75,7 @@ LinearEdgePositionAnalyzer::~LinearEdgePositionAnalyzer()
 
 bool LinearEdgePositionAnalyzer::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool bOk = SVLinearAnalyzerClass::CreateObject(rCreateStructure);
+	bool bOk = LinearAnalyzer::CreateObject(rCreateStructure);
 
 	dpEdge.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
 	m_svLinearDistance.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
@@ -109,7 +109,7 @@ std::vector<std::string> LinearEdgePositionAnalyzer::getParameterNamesForML() co
 	};
 }
 
-bool LinearEdgePositionAnalyzer::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool LinearEdgePositionAnalyzer::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	SVPoint<double> edgePoint;
 	double Distance( 0.0 );

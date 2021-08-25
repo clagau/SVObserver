@@ -203,7 +203,7 @@ public:
 protected:
 	void init();
 
-	virtual bool onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 	double getResult() const { return m_Yacc.equationResult; };
 

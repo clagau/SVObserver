@@ -11,7 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "SVBlobAnalyzer.h"
+#include "BlobAnalyzer.h"
 #include "SVMatroxLibrary/SVMatroxBlobInterface.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "Definitions/Color.h"
@@ -95,7 +95,7 @@ struct SVBlobFeatureConstant BlobFeatureConstants[]=
 SV_IMPLEMENT_CLASS( SVBlobAnalyzerClass, SvPb::BlobAnalyzerClassId );
 
 SVBlobAnalyzerClass::SVBlobAnalyzerClass( SVObjectClass* POwner, int StringResourceID )
-: SVImageAnalyzerClass(POwner, StringResourceID ) 
+: ImageAnalyzer(POwner, StringResourceID ) 
 , m_pResultTable( nullptr )
 {
 	init();
@@ -268,7 +268,7 @@ SvOi::IObjectClass* SVBlobAnalyzerClass::getResultBlob()
 
 bool SVBlobAnalyzerClass::CloseObject()
 {
-    SVImageAnalyzerClass::CloseObject ();
+    ImageAnalyzer::CloseObject ();
 	
 	if (S_OK != SVMatroxBlobInterface::DestroyResult(m_ResultBufferID))
 	{
@@ -558,7 +558,7 @@ bool SVBlobAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCreateS
 
 	do
 	{
-		if(!SVImageAnalyzerClass::CreateObject(rCreateStructure))
+		if(!ImageAnalyzer::CreateObject(rCreateStructure))
 		{
 			SvStl::MessageManager MesMan(SvStl::MsgType::Log );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16116, getObjectId());
@@ -818,7 +818,7 @@ void SVBlobAnalyzerClass::EnableFeature(int Feature)
 	}
 }
 
-bool SVBlobAnalyzerClass::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVBlobAnalyzerClass::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	bool Result = true;
 	SvIe::SVImageClass* pInputImage(nullptr);

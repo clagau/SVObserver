@@ -2,8 +2,8 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVOCVAnalyzer
-//* .File Name       : $Workfile:   SVOCVAnalyzer.h  $
+//* .Module Name     : OCVAnalyzer
+//* .File Name       : $Workfile:   CVAnalyzer.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.2  $
 //* .Check In Date   : $Date:   15 May 2014 11:07:28  $
@@ -11,20 +11,20 @@
 #pragma once
 
 #pragma region Includes
-#include "SVImageAnalyzerClass.h"
+#include "ImageAnalyzer.h"
 #pragma endregion Includes
 
 namespace SvAo
 {
 
-class SVOCVAnalyzer : public SVImageAnalyzerClass
+class OCVAnalyzer : public ImageAnalyzer
 {
 	SV_DECLARE_CLASS
 
 public:
-	SVOCVAnalyzer( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVOCVANALYZER	);
+	OCVAnalyzer( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVOCVANALYZER	);
 
-	virtual ~SVOCVAnalyzer();
+	virtual ~OCVAnalyzer();
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 
@@ -34,7 +34,7 @@ public:
 	virtual	SvDef::StringVector getAnalyzerResult() override;
 
 protected:
-	virtual bool onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 private:
 	void init();

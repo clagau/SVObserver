@@ -13,7 +13,7 @@
 #include "SVMatroxLibrary/SVMatroxSimpleEnums.h"
 #include "InspectionEngine/RunStatus.h"
 #include "SVMatroxLibrary/SVMatroxBlobInterface.h"
-#include "SVImageAnalyzerClass.h"
+#include "ImageAnalyzer.h"
 #include "ObjectInterfaces/NameValueVector.h"
 #include "Definitions/SVImageFormatEnum.h"
 #pragma endregion Includes
@@ -70,7 +70,7 @@ namespace SvAo
 		return __super::CloseObject();
 	}
 
-	bool BlobDrawTask::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages)
+	bool BlobDrawTask::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages)
 	{
 		try
 		{
@@ -84,7 +84,7 @@ namespace SvAo
 			m_isFillBlobs.GetValue(isFillBlob);
 			if (isFillBlob)
 			{
-				auto* pAnalyzer = dynamic_cast<SVImageAnalyzerClass*>(GetOwnerInfo().getObject());
+				auto* pAnalyzer = dynamic_cast<ImageAnalyzer*>(GetOwnerInfo().getObject());
 				if (nullptr == pAnalyzer)
 				{
 					SvStl::MessageManager msg(SvStl::MsgType::Data);

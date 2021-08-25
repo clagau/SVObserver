@@ -126,13 +126,13 @@ enum SVObjectSubTypeEnum
 	SVGlobalConstantObjectType					= 0x00000064;
 
 	// Analyzer Subtypes:	
-	SVPixelAnalyzerObjectType				    = 0x00000100;
+	PixelAnalyzerObjectType				    = 0x00000100;
 	SVBlobAnalyzerObjectType					= 0x00000101;
 	SVLuminanceAnalyzerObjectType				= 0x00000102;
 	SVOCVAnalyzerObjectType						= 0x00000105;
-	SVHistogramAnalyzerObjectType				= 0x00000106;
+	HistogramAnalyzerObjectType				= 0x00000106;
 	BlobAnalyzer2ObjectType						= 0x00000107;
-	SVPixelAnalyzerResultObjectType		        = 0x00000200;
+	PixelAnalyzerResultObjectType		        = 0x00000200;
 	SVPixelCountObjectType						= 0x00000201;
 
 	SVLinePixelCountingAnalyzerObjectType		= 0x00000300;

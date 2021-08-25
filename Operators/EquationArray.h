@@ -36,7 +36,7 @@ namespace SvOp
 #pragma endregion Methods to replace processMessage
 
 	protected:
-		virtual bool onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages = nullptr) override;
+		virtual bool onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages = nullptr) override;
 
 		std::vector<double> getValueArray() const { return m_valueArray; };
 

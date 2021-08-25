@@ -170,4 +170,4 @@ protected:
 	virtual HRESULT ValidateProperties(MapType& rmapProperties) const override;
 };
 
-} //namespace SvIe
+} //namespace SvOp

@@ -583,7 +583,7 @@ void SVEquation::disconnectObjectInput(uint32_t objectId)
 ////////////////////////////////////////////////////////////////////////////////
 // If Conditional is disabled equation.Run() returns always true.
 // Otherwise the return value depends on the Conditional equation result!
-bool SVEquation::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool SVEquation::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool retVal = __super::onRun(rRunStatus, pErrorMessages);
 

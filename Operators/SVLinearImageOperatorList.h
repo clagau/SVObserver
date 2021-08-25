@@ -40,7 +40,7 @@ public:
 	virtual bool CloseObject() override;
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
-	virtual bool Run(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages = nullptr) override;
+	virtual bool Run(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages = nullptr) override;
 		
 protected:
 	HRESULT getUseRotationAngle(BOOL& rUseRotationAngle);
@@ -81,7 +81,7 @@ private:
 	/// If Rotation used, remove ROIImage, if not add ROIImage to the embeddedList.
 	void ResetLogicalROIImage();
 
-	bool RunLocalRotation(RunStatus &rRunStatus, SvOi::SVImageBufferHandlePtr input, SvOi::ITRCImagePtr pOutputBuffer, const SVImageExtentClass& rImageExtent);
+	bool RunLocalRotation(SvIe::RunStatus &rRunStatus, SvOi::SVImageBufferHandlePtr input, SvOi::ITRCImagePtr pOutputBuffer, const SVImageExtentClass& rImageExtent);
 
 	/// Allocate SVResult objects for the value objects m_MinProfile, m_MaxProfile, m_ProfileDelta and save the pointers into the 
 	/// local array m_Results.

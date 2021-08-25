@@ -102,7 +102,7 @@ SvVol::SVDPointValueObjectClass* SVDPointYResult::getInputPoint()
 	return m_inputObject.getInput<SvVol::SVDPointValueObjectClass>();
 }
 
-bool SVDPointYResult::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVDPointYResult::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	// All inputs and outputs must be validated first
 	if( __super::onRun( rRunStatus, pErrorMessages ) )

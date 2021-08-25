@@ -67,7 +67,7 @@ public:
 protected:
 	void init();
 	bool getInputValue( double& RVal );
-	virtual bool onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
+	virtual bool onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	bool checkLinkedValues(RangeEnum::ERange firstType, RangeEnum::ERange secondType, SvStl::MessageContainerVector * pErrorMessages);
 

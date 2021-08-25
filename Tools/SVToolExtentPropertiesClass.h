@@ -51,4 +51,4 @@ private:
 	SVToolExtentPropertiesMap m_extentPropertyInfo;
 };
 
-} //namespace SvIe
+} //namespace SvTo

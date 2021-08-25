@@ -31,7 +31,7 @@ SV_IMPLEMENT_CLASS( LinearPixelCountingAnalyzer, SvPb::LinearPixelCountingLineAn
 
 
 LinearPixelCountingAnalyzer::LinearPixelCountingAnalyzer( SVObjectClass* POwner, int StringResourceID )
-								 :SVLinearAnalyzerClass( POwner, StringResourceID ) 
+								 :LinearAnalyzer( POwner, StringResourceID ) 
 {
 	m_bEnableDirection = false;
 	m_bEnableEdgeSelect = false;
@@ -83,7 +83,7 @@ LinearPixelCountingAnalyzer::~LinearPixelCountingAnalyzer()
 
 bool LinearPixelCountingAnalyzer::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool bOk = SVLinearAnalyzerClass::CreateObject(rCreateStructure);
+	bool bOk = LinearAnalyzer::CreateObject(rCreateStructure);
 
 	// Set / Reset Printable Flag
 	blackPixelCount.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
@@ -99,7 +99,7 @@ HRESULT LinearPixelCountingAnalyzer::GetSelectedEdgeOverlays(SVExtentMultiLineSt
 	return S_OK;
 }
 
-bool LinearPixelCountingAnalyzer::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool LinearPixelCountingAnalyzer::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	std::vector<double> Edges;
 

@@ -2717,7 +2717,7 @@ void SVInspectionProcess::UpdateMainImagesByProduct(SVInspectionInfoStruct& rIpI
 	}
 }
 
-HRESULT SVInspectionProcess::copyValues2TriggerRecord(RunStatus& rRunStatus)
+HRESULT SVInspectionProcess::copyValues2TriggerRecord(SvIe::RunStatus& rRunStatus)
 {
 	if (nullptr != rRunStatus.m_triggerRecord)
 	{
@@ -2751,7 +2751,7 @@ HRESULT SVInspectionProcess::copyValues2TriggerRecord(RunStatus& rRunStatus)
 	return E_FAIL;
 }
 
-bool SVInspectionProcess::Run(RunStatus& rRunStatus)
+bool SVInspectionProcess::Run(SvIe::RunStatus& rRunStatus)
 {
 	// Validate IPDoc's values...
 	bool retVal = IsCreated();
@@ -2761,7 +2761,7 @@ bool SVInspectionProcess::Run(RunStatus& rRunStatus)
 
 		// Run the Toolset
 		unsigned long l_state = rRunStatus.GetState();
-		if (GetToolSet() && l_state != RunStatus::SV_INVALID)
+		if (GetToolSet() && l_state != SvIe::RunStatus::SV_INVALID)
 		{
 			retVal &= GetToolSet()->Run(rRunStatus);
 		}
@@ -2769,7 +2769,7 @@ bool SVInspectionProcess::Run(RunStatus& rRunStatus)
 		{
 			rRunStatus.SetInvalid();
 			rRunStatus.SetInspectionStarted(false);
-			if (RunStatus::SV_INVALID == rRunStatus.GetState())
+			if (SvIe::RunStatus::SV_INVALID == rRunStatus.GetState())
 			{
 				SvStl::MessageManager Exception(SvStl::MsgType::Log);
 				Exception.setMessage(SVMSG_SVO_37_INVALID_RUN_STATUS, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));

@@ -320,7 +320,7 @@ bool SVCylindricalWarpToolClass::DoesObjectHaveExtents() const
 	return false;
 }
 
-bool SVCylindricalWarpToolClass::onRun( RunStatus& p_rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVCylindricalWarpToolClass::onRun( SvIe::RunStatus& p_rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	bool l_bOk = __super::onRun( p_rRunStatus, pErrorMessages );
 

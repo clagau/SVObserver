@@ -66,7 +66,7 @@ private:
 
 	virtual bool isInputImage(uint32_t imageId) const override;
 
-	virtual bool onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
+	virtual bool onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	bool ModifyImageExtentByScaleFactors();
 #pragma endregion private methods

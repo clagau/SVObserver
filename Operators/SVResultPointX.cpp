@@ -90,7 +90,7 @@ bool SVPointXResult::CreateObject( const SVObjectLevelCreateStruct& rCreateStruc
 	return m_isCreated;
 }
 
-bool SVPointXResult::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVPointXResult::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	// All inputs and outputs must be validated first
 	if( __super::onRun( rRunStatus, pErrorMessages ) )

@@ -2,8 +2,8 @@
 // * COPYRIGHT (c) 2005 by SVResearch, Harrisburg
 // * All Rights Reserved
 // ******************************************************************************
-// * .Module Name     : SVLinearMeasurementAnalyzerClass
-// * .File Name       : $Workfile:   SVLinearMeasurementAnalyzerClass.cpp  $
+// * .Module Name     : LinearMeasurementAnalyzer
+// * .File Name       : $Workfile:   LinearMeasurementAnalyzer.cpp  $
 // * ----------------------------------------------------------------------------
 // * .Current Version : $Revision:   1.0  $
 // * .Check In Date   : $Date:   23 Apr 2013 12:04:02  $
@@ -11,7 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "SVLinearMeasurementAnalyzerClass.h"
+#include "LinearMeasurementAnalyzer.h"
 #include "SVMessage/SVMessage.h"
 #include "Definitions/LinearEdgeEnums.h"
 #include "Operators/SVLinearEdgeAProcessingClass.h"
@@ -30,10 +30,10 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVLinearMeasurementAnalyzerClass, SvPb::LinearMeasurementAnalyzerClassId);
+SV_IMPLEMENT_CLASS( LinearMeasurementAnalyzer/*ABX umbenennen? */, SvPb::LinearMeasurementAnalyzerClassId);
 
-SVLinearMeasurementAnalyzerClass::SVLinearMeasurementAnalyzerClass( SVObjectClass* POwner, int StringResourceID )
-									 :SVLinearAnalyzerClass( POwner, StringResourceID ) 
+LinearMeasurementAnalyzer::LinearMeasurementAnalyzer( SVObjectClass* POwner, int StringResourceID )
+									 :LinearAnalyzer( POwner, StringResourceID ) 
 {
 	m_bEnableDirection = true;
 	m_bEnableEdgeSelect = true;
@@ -44,7 +44,7 @@ SVLinearMeasurementAnalyzerClass::SVLinearMeasurementAnalyzerClass( SVObjectClas
 	init();
 }
 
-void SVLinearMeasurementAnalyzerClass::init()
+void LinearMeasurementAnalyzer::init()
 {
 	// Identify our type
 	m_ObjectTypeInfo.m_SubType = SvPb::SVLinearMeasurementAnalyzerObjectType;
@@ -111,14 +111,14 @@ void SVLinearMeasurementAnalyzerClass::init()
 }
 
 
-SVLinearMeasurementAnalyzerClass::~SVLinearMeasurementAnalyzerClass()
+LinearMeasurementAnalyzer::~LinearMeasurementAnalyzer()
 {
-	SVLinearMeasurementAnalyzerClass::CloseObject();
+	LinearMeasurementAnalyzer::CloseObject();
 }
 
-bool SVLinearMeasurementAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
+bool LinearMeasurementAnalyzer::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool bOk = SVLinearAnalyzerClass::CreateObject(rCreateStructure);
+	bool bOk = LinearAnalyzer::CreateObject(rCreateStructure);
 
 	// Set / Reset Printable Flag
 	mdpEdgeA.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
@@ -134,12 +134,12 @@ bool SVLinearMeasurementAnalyzerClass::CreateObject( const SVObjectLevelCreateSt
 	return bOk;
 }
 
-bool SVLinearMeasurementAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
+bool LinearMeasurementAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	return __super::ResetObject(pErrorMessages) && ValidateEdgeA(pErrorMessages) && ValidateEdgeB(pErrorMessages);
 }
 
-void SVLinearMeasurementAnalyzerClass::addOverlayResults(SvPb::Overlay& rOverlay, bool isVertical) const
+void LinearMeasurementAnalyzer::addOverlayResults(SvPb::Overlay& rOverlay, bool isVertical) const
 {
 	auto* pGroup = rOverlay.add_shapegroups();
 	if (nullptr != pGroup)
@@ -159,7 +159,7 @@ void SVLinearMeasurementAnalyzerClass::addOverlayResults(SvPb::Overlay& rOverlay
 	}
 }
 
-bool SVLinearMeasurementAnalyzerClass::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool LinearMeasurementAnalyzer::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	bool Result = __super::onRun( rRunStatus, pErrorMessages ) && ValidateEdgeA(pErrorMessages) && ValidateEdgeB(pErrorMessages);
 
@@ -239,7 +239,7 @@ bool SVLinearMeasurementAnalyzerClass::onRun( RunStatus& rRunStatus, SvStl::Mess
 	return Result;
 }
 
-std::vector<std::string> SVLinearMeasurementAnalyzerClass::getParameterNamesForML() const
+std::vector<std::string> LinearMeasurementAnalyzer::getParameterNamesForML() const
 {
 	return {
 		SvUl::LoadStdString(IDS_OBJECTNAME_DPEDGE_A) + " " + SvUl::LoadStdString(IDS_CLASSNAME_RESULT_POINT_X) + "." + SvUl::LoadStdString(IDS_OBJECTNAME_DX),

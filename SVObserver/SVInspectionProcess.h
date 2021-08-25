@@ -75,7 +75,7 @@ public:
 	virtual HRESULT RegisterSubObject( SVObjectClass* pObject ) override;
 	virtual HRESULT UnregisterSubObject( SVObjectClass* pObject ) override;
 
-	bool Run( RunStatus& rRunStatus );
+	bool Run( SvIe::RunStatus& rRunStatus );
 
 	void SetPPQIdentifier(uint32_t PPQId);
 	uint32_t GetPPQIdentifier() const;
@@ -338,7 +338,7 @@ protected:
 
 	void SingleRunModeLoop( bool p_Refresh = false );
 
-	HRESULT copyValues2TriggerRecord(RunStatus& rRunStatus);
+	HRESULT copyValues2TriggerRecord(SvIe::RunStatus& rRunStatus);
 
 	static void CALLBACK APCThreadProcess(ULONG_PTR pParam);
 
@@ -380,7 +380,7 @@ private:
 	SVPublishList m_publishList;
 
 	// Run status of last tool set run, if any...
-	RunStatus m_runStatus;
+	SvIe::RunStatus m_runStatus;
 
 	// Inspection pointers
 	SVToolSet* m_pCurrentToolset{nullptr};

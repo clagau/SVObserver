@@ -5,7 +5,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "SVImageAnalyzerClass.h"
+#include "ImageAnalyzer.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "InspectionEngine/SVImageClass.h"
@@ -22,21 +22,21 @@ static char THIS_FILE[] = __FILE__;
 #pragma endregion Declarations
 
 ///For this class it is not necessary to call SV_IMPLEMENT_CLASS as it is a base class and only derived classes are instantiated.
-//SV_IMPLEMENT_CLASS( SVImageAnalyzerClass, SVImageAnalyzerClassGuid );
+//SV_IMPLEMENT_CLASS( ImageAnalyzer, ImageAnalyzerGuid );
 
-SVImageAnalyzerClass::SVImageAnalyzerClass( LPCSTR ObjectName )
-: SVAnalyzerClass( ObjectName ) 
+ImageAnalyzer::ImageAnalyzer( LPCSTR ObjectName )
+: Analyzer( ObjectName ) 
 {
 	init();
 }
 
-SVImageAnalyzerClass::SVImageAnalyzerClass( SVObjectClass* pOwner, int StringResourceID )
-: SVAnalyzerClass( pOwner, StringResourceID ) 
+ImageAnalyzer::ImageAnalyzer( SVObjectClass* pOwner, int StringResourceID )
+: Analyzer( pOwner, StringResourceID ) 
 {
 	init();
 }
 
-void SVImageAnalyzerClass::init()
+void ImageAnalyzer::init()
 {
 	// Set object type info...
 	m_ObjectTypeInfo.m_ObjectType = SvPb::SVAnalyzerObjectType;
@@ -47,25 +47,25 @@ void SVImageAnalyzerClass::init()
 	registerInputObject( &m_inputImage, SvDef::ImageAnalyzerImageName, SvPb::ImageInputEId);
 }
 
-SVImageAnalyzerClass::~SVImageAnalyzerClass()
+ImageAnalyzer::~ImageAnalyzer()
 {
 }
 
-bool SVImageAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
+bool ImageAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	return __super::ResetObject(pErrorMessages) && ValidateLocal(pErrorMessages);
 }
-bool SVImageAnalyzerClass::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool ImageAnalyzer::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	return __super::onRun(rRunStatus, pErrorMessages) && ValidateLocal(pErrorMessages);
 }
 
-SvIe::SVImageClass* SVImageAnalyzerClass::getInputImage(bool bRunMode /*= false*/)
+SvIe::SVImageClass* ImageAnalyzer::getInputImage(bool bRunMode /*= false*/)
 {
 	return m_inputImage.getInput<SvIe::SVImageClass>(bRunMode);
 }
 
-unsigned long SVImageAnalyzerClass::GetInputPixelDepth()
+unsigned long ImageAnalyzer::GetInputPixelDepth()
 {
 	SVImageInfoClass ImageInfo; 
 	unsigned long ulPixelDepth(0);
@@ -83,7 +83,7 @@ unsigned long SVImageAnalyzerClass::GetInputPixelDepth()
 	return ulPixelDepth;
 }
 
-bool SVImageAnalyzerClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const
+bool ImageAnalyzer::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const
 {
 	SVObjectClass* pObject = m_inputImage.GetInputObjectInfo().getObject();
 	if( !m_inputImage.IsConnected() || nullptr == pObject || !pObject->IsCreated() )

@@ -103,7 +103,7 @@ SvPb::EmbeddedIdEnum SVLongResult::GetInputEmbeddedID() const
 	}
 }
 
-bool SVLongResult::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVLongResult::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	// All inputs and outputs must be validated first
 	if( __super::onRun( rRunStatus, pErrorMessages ) )

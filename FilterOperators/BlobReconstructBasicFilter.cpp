@@ -56,7 +56,7 @@ void BlobReconstructBasicFilter::init()
 	m_isGrayOn.SetObjectAttributesAllowed(cAttributes, SvOi::SetAttributeType::AddAttribute);
 }
 
-bool BlobReconstructBasicFilter::onRun(bool, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool BlobReconstructBasicFilter::onRun(bool, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	if (nullptr != rInputImageHandle && !rInputImageHandle->empty() && nullptr != rOutputImageHandle && !rOutputImageHandle->empty())
 	{

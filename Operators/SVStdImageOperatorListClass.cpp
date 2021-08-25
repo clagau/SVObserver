@@ -109,7 +109,7 @@ bool SVStdImageOperatorListClass::ResetObject(SvStl::MessageContainerVector *pEr
 // -----------------------------------------------------------------------------
 // .Description : Special routing here.
 ////////////////////////////////////////////////////////////////////////////////
-bool SVStdImageOperatorListClass::Run(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool SVStdImageOperatorListClass::Run(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	clearRunErrorMessages();
 
@@ -174,7 +174,7 @@ HRESULT SVStdImageOperatorListClass::CollectInputImageNames()
 	return hr;
 }
 
-bool SVStdImageOperatorListClass::RunLocal(RunStatus &rRunStatus, SvOi::SVImageBufferHandlePtr input, SvIe::SVImageClass&)
+bool SVStdImageOperatorListClass::RunLocal(SvIe::RunStatus &rRunStatus, SvOi::SVImageBufferHandlePtr input, SvIe::SVImageClass&)
 {
 	bool bRetVal = true;
 	SvOi::ITRCImagePtr pOutputImageBuffer = m_OutputImage.getImageToWrite(rRunStatus.m_triggerRecord);
@@ -200,7 +200,7 @@ bool SVStdImageOperatorListClass::RunLocal(RunStatus &rRunStatus, SvOi::SVImageB
 			return false;
 		}
 
-		RunStatus ChildRunStatus;
+		SvIe::RunStatus ChildRunStatus;
 		ChildRunStatus.m_triggerRecord = std::move(rRunStatus.m_triggerRecord);
 		ChildRunStatus.m_UpdateCounters = rRunStatus.m_UpdateCounters;
 		// Run children...

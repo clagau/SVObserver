@@ -630,7 +630,7 @@ bool SVOCVAnalyzeResult::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 //
 //
 //
-bool SVOCVAnalyzeResult::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVOCVAnalyzeResult::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	std::string FoundString;
 	std::string MatchString;

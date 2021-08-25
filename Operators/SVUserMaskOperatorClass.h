@@ -80,9 +80,9 @@ public:
 
 protected:
 	virtual bool isInputImage(uint32_t imageId) const override;
-	SvStl::MessageTextEnum onRunImageType(RunStatus& rRunStatus);
-	SvStl::MessageTextEnum onRunMask(bool First, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, RunStatus& rRunStatus, DWORD dwMaskType);
-	virtual bool onRun(bool First, SvOi::SVImageBufferHandlePtr RInputImageHandle, SvOi::SVImageBufferHandlePtr ROutputImageHandle, RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages = nullptr) override;
+	SvStl::MessageTextEnum onRunImageType(SvIe::RunStatus& rRunStatus);
+	SvStl::MessageTextEnum onRunMask(bool First, SvOi::SVImageBufferHandlePtr rInputImageHandle, SvOi::SVImageBufferHandlePtr rOutputImageHandle, SvIe::RunStatus& rRunStatus, DWORD dwMaskType);
+	virtual bool onRun(bool First, SvOi::SVImageBufferHandlePtr RInputImageHandle, SvOi::SVImageBufferHandlePtr ROutputImageHandle, SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages = nullptr) override;
 	virtual void addOverlayGroups(const SvIe::SVImageClass*, SvPb::Overlay& rOverlay) const override;
 	
 	SVImageInfoClass      m_MaskBufferInfo;

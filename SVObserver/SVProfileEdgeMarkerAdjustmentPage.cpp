@@ -16,7 +16,7 @@
 #include "Definitions/LinearEdgeEnums.h"
 #include "SVOGui/ImageController.h"
 #include "Tools/SVTool.h"
-#include "AnalyzerOperators/SVAnalyzer.h"
+#include "AnalyzerOperators/Analyzer.h"
 #include "Operators/SVLinearEdgeProcessingClass.h"
 #pragma endregion Includes
 
@@ -102,7 +102,7 @@ BOOL SVProfileEdgeMarkerAdjustmentPage::OnInitDialog()
 
 	m_pEdge = dynamic_cast<SvOp::SVLinearEdgeProcessingClass*> (SvOi::getObject(m_TaskObjectID));
 	m_pTool = (m_pEdge == nullptr ) ? nullptr : dynamic_cast<SvTo::SVToolClass*> (m_pEdge->GetAncestorInterface(SvPb::SVToolObjectType));
-	m_pAnalyzer = (m_pEdge == nullptr) ? nullptr : dynamic_cast<SvAo::SVAnalyzerClass*> (m_pEdge->GetAncestorInterface(SvPb::SVAnalyzerObjectType));
+	m_pAnalyzer = (m_pEdge == nullptr) ? nullptr : dynamic_cast<SvAo::Analyzer*> (m_pEdge->GetAncestorInterface(SvPb::SVAnalyzerObjectType));
 	if (nullptr != m_pAnalyzer)
 	{
 		m_pAnalyzerValues = std::shared_ptr<SvOg::ValueController> {new SvOg::ValueController{SvOg::BoundValues {m_InspectionID, m_pAnalyzer->getObjectId()}}};

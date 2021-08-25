@@ -13,6 +13,9 @@
 #include "RunStatus.h"
 #include "Definitions/Color.h"
 
+namespace SvIe
+{
+
 RunStatus::RunStatus()
 {
 	run.state = SV_INVALID;
@@ -56,5 +59,5 @@ DWORD RunStatus::GetStatusColor() const
 	return (IsFailed() ? SvDef::DefaultFailedColor : (IsWarned() ? SvDef::DefaultWarnedColor : SvDef::DefaultGoodColor));
 }
 
-
+} //namespace SvIe
 

@@ -11,7 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "SVAnalyzer.h"
+#include "Analyzer.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #pragma endregion Includes
 
@@ -26,45 +26,45 @@ static char THIS_FILE[] = __FILE__;
 #pragma endregion Declarations
 
 ///For this class it is not necessary to call SV_IMPLEMENT_CLASS as it is a base class and only derived classes are instantiated.
-//SV_IMPLEMENT_CLASS( SVAnalyzerClass, SVAnalyzerClassId );
+//SV_IMPLEMENT_CLASS( Analyzer, SVAnalyzerClassId );
 
-SVAnalyzerClass::SVAnalyzerClass( LPCSTR ObjectName )
+Analyzer::Analyzer( LPCSTR ObjectName )
 : SVTaskObjectListClass( ObjectName ) 
 {
 	init();
 }
 
-SVAnalyzerClass::SVAnalyzerClass( SVObjectClass* POwner, int StringResourceID )
+Analyzer::Analyzer( SVObjectClass* POwner, int StringResourceID )
 : SVTaskObjectListClass( POwner, StringResourceID ) 
 {
 	init();
 }
 
 // Initialization of newly Instantiated Object
-void SVAnalyzerClass::init()
+void Analyzer::init()
 {
 	// Indentify our type in the Output List
 	m_ObjectTypeInfo.m_ObjectType = SvPb::SVAnalyzerObjectType;
 }
 
-SVAnalyzerClass::~SVAnalyzerClass()
+Analyzer::~Analyzer()
 {
 }
 
-bool SVAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
+bool Analyzer::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
 	m_isCreated = SVTaskObjectClass::CreateObject(rCreateStructure) && nullptr != GetInspection() && nullptr != GetTool();
 
 	return m_isCreated;
 }
 
-SvOi::IObjectClass* SVAnalyzerClass::GetResultObject()
+SvOi::IObjectClass* Analyzer::GetResultObject()
 {
 	SvDef::SVObjectTypeInfoStruct TypeInfo{SvPb::SVResultObjectType};
 	return getFirstObject(TypeInfo);
 }
 
-bool SVAnalyzerClass::createAllObjectsFromChild( SVObjectClass& rChildObject )
+bool Analyzer::createAllObjectsFromChild( SVObjectClass& rChildObject )
 {
 	SVObjectLevelCreateStruct createStruct;
 	createStruct.OwnerObjectInfo.SetObject(this);
@@ -75,7 +75,7 @@ bool SVAnalyzerClass::createAllObjectsFromChild( SVObjectClass& rChildObject )
 	return rChildObject.createAllObjects(createStruct);
 }
 
-void SVAnalyzerClass::connectChildObject( SVTaskObjectClass& rChildObject )
+void Analyzer::connectChildObject( SVTaskObjectClass& rChildObject )
 {
 	SVObjectLevelCreateStruct createStruct;
 	createStruct.OwnerObjectInfo.SetObject(this);

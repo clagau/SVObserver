@@ -93,7 +93,7 @@ protected:
 
 	void init( void );
 	void resetValues();
-	virtual bool onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 	virtual bool useOverlayColorTool() const override { return false; };
 
 	void RestoreFeatureAttributes();

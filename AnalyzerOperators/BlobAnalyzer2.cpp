@@ -50,7 +50,7 @@ namespace SvAo
 	SV_IMPLEMENT_CLASS(BlobAnalyzer2, SvPb::BlobAnalyzer2ClassId);
 
 	BlobAnalyzer2::BlobAnalyzer2(SVObjectClass* POwner, int StringResourceID)
-		: SVImageAnalyzerClass(POwner, StringResourceID)
+		: ImageAnalyzer(POwner, StringResourceID)
 		, m_pResultTable(nullptr)
 	{
 		init();
@@ -174,7 +174,7 @@ namespace SvAo
 
 	bool BlobAnalyzer2::CloseObject()
 	{
-		SVImageAnalyzerClass::CloseObject();
+		ImageAnalyzer::CloseObject();
 
 		if (S_OK != SVMatroxBlobInterface::DestroyResult(m_ResultBufferID))
 		{
@@ -199,7 +199,7 @@ namespace SvAo
 
 		try
 		{
-			if (!SVImageAnalyzerClass::CreateObject(rCreateStructure))
+			if (!ImageAnalyzer::CreateObject(rCreateStructure))
 			{
 				SvStl::MessageManager MesMan(SvStl::MsgType::Log);
 				MesMan.setMessage(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16116, getObjectId());
@@ -299,7 +299,7 @@ namespace SvAo
 		return m_isCreated;
 	}
 
-	bool BlobAnalyzer2::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+	bool BlobAnalyzer2::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 	{
 		try
 		{
@@ -568,7 +568,7 @@ namespace SvAo
 		return S_OK;
 	}
 
-	bool BlobAnalyzer2::Run(RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages)
+	bool BlobAnalyzer2::Run(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages)
 	{
 		bool retVal = __super::Run(rRunStatus, pErrorMessages);
 		//set the TableTool to the same state than the BlobFeatureList

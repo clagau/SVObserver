@@ -2,8 +2,8 @@
 // * COPYRIGHT (c) 2005 by SVResearch, Harrisburg
 // * All Rights Reserved
 // ******************************************************************************
-// * .Module Name     : SVLinearAnalyzerClass
-// * .File Name       : $Workfile:   SVLinearAnalyzerClass.h  $
+// * .Module Name     : LinearAnalyzer
+// * .File Name       : $Workfile:   LinearAnalyzer.h  $
 // * ----------------------------------------------------------------------------
 // * .Current Version : $Revision:   1.3  $
 // * .Check In Date   : $Date:   10 Jul 2014 17:44:52  $
@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVAnalyzer.h"
+#include "Analyzer.h"
 #include "SVLibrary/SVValueBaseNormalizerClass.h"
 #include "SVObjectLibrary/InputObject.h"
 #include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
@@ -27,7 +27,7 @@ class SVLinearEdgeProcessingClass;
 namespace SvAo
 {
 
-class SVLinearAnalyzerClass : public SVAnalyzerClass, public SvOi::ISVLinearAnalyzer
+class LinearAnalyzer : public Analyzer, public SvOi::ISVLinearAnalyzer
 {
 	///This class does not need to call SV_DECLARE_CLASS as it is a base class and only derived classes are instantiated
 	//SV_DECLARE_CLASS
@@ -35,8 +35,8 @@ class SVLinearAnalyzerClass : public SVAnalyzerClass, public SvOi::ISVLinearAnal
 	friend class SVSetupDialogManager;
 
 public:
-	SVLinearAnalyzerClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVLINEARANALYZER );
-	virtual ~SVLinearAnalyzerClass();
+	LinearAnalyzer( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVLINEARANALYZER );
+	virtual ~LinearAnalyzer();
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 

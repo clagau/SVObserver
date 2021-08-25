@@ -134,7 +134,7 @@ std::vector<std::string> SVAcquisitionToolClass::getToolAdjustNameList() const
 	return { cToolAdjustNameList.begin(), cToolAdjustNameList.end() };
 }
 
-bool SVAcquisitionToolClass::Run(RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages)
+bool SVAcquisitionToolClass::Run(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages)
 {
 	if (nullptr != m_replaceSourceImage)
 	{

@@ -227,7 +227,7 @@ bool RingBufferTool::isInputImage(uint32_t) const
 	return Result;
 }	
 
-bool RingBufferTool::onRun( RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool RingBufferTool::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	bool returnValue = SVToolClass::onRun( rRunStatus, pErrorMessages );
 	if (returnValue)
