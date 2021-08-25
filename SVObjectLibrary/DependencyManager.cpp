@@ -231,6 +231,7 @@ namespace SvOl
 				std::string SupplierName = isParentToolset ? pSupplier->GetObjectNameToObjectType(SvPb::SVToolSetObjectType) : pSupplier->GetObjectNameBeforeObjectType(SvPb::SVToolSetObjectType);
 				std::string ClientName = pClient->GetObjectNameBeforeObjectType(SvPb::SVToolSetObjectType);
 
+				// cppcheck-suppress unreadVariable symbolName=Inserter ; cppCheck doesn't know back_insert_iterator
 				Inserter = SvDef::StringPair(SupplierName, ClientName);
 			}
 		}

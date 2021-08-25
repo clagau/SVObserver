@@ -49,7 +49,7 @@ enum
 class ControlParentSetter
 {
 public:
-	ControlParentSetter(CWnd* pWnd)
+	explicit ControlParentSetter(CWnd* pWnd)
 		: m_pWnd(pWnd)
 	{
 		m_flagSet = nullptr != pWnd && (0 == (WS_EX_CONTROLPARENT & pWnd->GetExStyle()));

@@ -32,7 +32,6 @@ namespace SvStl
 	constexpr const char* DefaultTempFolder = _T( "C:\\Temp" );
 	constexpr const char* DefaultRunFolder = _T( "C:\\RUN" );
 	constexpr const char* DefaultObserverBinPath = _T( "C:\\SVObserver\\bin" );
-	constexpr const char* DefaultObserverPath = _T( "C:\\SVObserver" );	
 	constexpr const char* DefaultSecondObserverPath = _T( "D:\\SVObserver" );	
 	constexpr const char* DefaultRamDrive = _T("V:");
 
@@ -49,7 +48,6 @@ namespace SvStl
 	constexpr const char* SVIMObserverBinPathTag = _T("ObserverBinPath");
 	constexpr const char* SVIMSVObserverRunPathTag = _T("ObserverRunPath");
 	constexpr const char* SVIMSVObserverTempPath = _T("ObserverTempPath");
-	constexpr const char* SVIMSVObserverPath = _T("ObserverPath");
 	constexpr const char* SVIMSVObserverSecondPath = _T("ObserverSecondPath");
 	constexpr const char* SVIMSVObserverLastValidPath = _T("LastValidPath");
 	constexpr const char* SVIMRamDrive = _T("RamDrive");
@@ -158,14 +156,6 @@ namespace SvStl
 		return AppendFilename(m_TempFolder, filename);
 	}
 
-
-	std::string GlobalPath::GetObserverPath(LPCTSTR filename )
-	{
-		InitializePath();
-		return AppendFilename(m_SVObserverFolder, filename);
-	}
-
-
 	std::string GlobalPath::GetSecondObserverPath(LPCTSTR filename )
 	{
 		InitializePath();
@@ -229,9 +219,6 @@ namespace SvStl
   
 			m_TempFolder  =  GetValueString(SVIMDirectorySectionTag,SVIMSVObserverTempPath,DefaultTempFolder,GetSVIMIniPath());
 			::WritePrivateProfileString( SVIMDirectorySectionTag, SVIMSVObserverTempPath, m_TempFolder.c_str(), GetSVIMIniPath());
-
-			m_SVObserverFolder = GetValueString(SVIMDirectorySectionTag,SVIMSVObserverPath,DefaultObserverPath,GetSVIMIniPath());
-			::WritePrivateProfileString( SVIMDirectorySectionTag, SVIMSVObserverPath, m_SVObserverFolder.c_str(), GetSVIMIniPath());
 
 			m_SVSecondObserverFolder = GetValueString(SVIMDirectorySectionTag,SVIMSVObserverSecondPath,DefaultSecondObserverPath,GetSVIMIniPath());
 			::WritePrivateProfileString( SVIMDirectorySectionTag, SVIMSVObserverSecondPath, m_SVSecondObserverFolder.c_str(), GetSVIMIniPath());

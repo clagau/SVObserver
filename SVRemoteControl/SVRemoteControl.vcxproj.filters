@@ -203,9 +203,6 @@
     <ClInclude Include="SVImageObject.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVImageBuffer.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVImageConvertorGDI.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>

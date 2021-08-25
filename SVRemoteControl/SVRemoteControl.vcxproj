@@ -398,7 +398,6 @@
     <ClInclude Include="SVDataDefObjectList.h" />
     <ClInclude Include="SVErrorObject.h" />
     <ClInclude Include="SVErrorObjectList.h" />
-    <ClInclude Include="SVImageBuffer.h" />
     <ClInclude Include="SVImageConvertorGDI.h" />
     <ClInclude Include="SVImageObject.h" />
     <ClInclude Include="SVImageObjectList.h" />

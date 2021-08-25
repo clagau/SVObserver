@@ -28,7 +28,6 @@ namespace SvStl
 		std::string GetBinPath(LPCTSTR filename = nullptr);
 		std::string GetTempPath(LPCTSTR filename = nullptr);
 		std::string GetLastValidPath(LPCTSTR filename = nullptr);
-		std::string GetObserverPath(LPCTSTR filename = nullptr);
 		std::string GetSecondObserverPath(LPCTSTR filename = nullptr);
 		std::string GetAutoSaveRootPath(LPCTSTR filename = nullptr);
 		std::string GetPathOnRamDrive(LPCTSTR filename = nullptr);
@@ -65,7 +64,6 @@ namespace SvStl
 
 		///SVObserver Path 
 		bool m_IsInitilizedPath;
-		std::string m_SVObserverFolder;
 		std::string m_SVSecondObserverFolder;
 		std::string m_SVObserverBinFolder;
 		std::string m_SVObserverRunFolder;
