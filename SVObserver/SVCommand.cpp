@@ -2014,7 +2014,8 @@ STDMETHODIMP SVCommand::SVSetInputs(SAFEARRAY* psaNames, SAFEARRAY* psaValues, S
 		if (nullptr != pConfig && pConfig->GetInspectionObject(Name.c_str(), &pInspection))
 		{
 			//If Remote inputs then the name must be replaced otherwise add "Inspections." to name
-			if (std::string::npos != Name.find(SvDef::FqnRemoteInput))
+			constexpr const char* FqnRemoteInput = _T(".Remote Input");
+			if (std::string::npos != Name.find(FqnRemoteInput))
 			{
 				SvUl::searchAndReplace(Name, pInspection->GetName(), SvDef::FqnRemoteInputs);
 			}

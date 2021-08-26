@@ -37,7 +37,7 @@ END_MESSAGE_MAP()
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_RESIZE)
 
-void traceScalefactorValues(const std::string& rHeading, const SvOg::ValueController& rVC)
+void traceScalefactorValues(uint32_t inspectionId, const std::string& rHeading, const SvOg::ValueController& rVC)
 {
 	const std::vector<SvPb::EmbeddedIdEnum> allScaleFactorEIDs
 	{
@@ -65,7 +65,7 @@ void traceScalefactorValues(const std::string& rHeading, const SvOg::ValueContro
 		{
 			if (lvd.m_type == SvPb::LinkedSelectedType::IndirectValue)
 			{
-				traceStream << lvd.m_indirectDotName;
+				traceStream << SvCmd::getDottedName(inspectionId, lvd.m_indirectIdName);
 				traceStream << " -> ";
 			}
 			if (lvd.m_type == SvPb::LinkedSelectedType::Formula)
@@ -274,7 +274,7 @@ bool SVTADlgResizePage::CommitAndCheckNewParameterValues()
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_RESIZE)
 
-	traceScalefactorValues("Committed", m_resizeValueController);
+	traceScalefactorValues(m_inspectionID, "Committed", m_resizeValueController);
 
 #endif 
 

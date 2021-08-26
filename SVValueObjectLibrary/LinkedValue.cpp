@@ -169,7 +169,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 	{
 		setSelectedType(rData.type());
 		SvPb::ConvertProtobufToVariant(rData.directvalue(), m_directValue);
-		m_indirectValueRef = GetObjectReferenceForDottedName(rData.indirectdotname());
+		m_indirectValueRef = SVObjectReference{rData.indirectidstring()};
 		m_formulaString = rData.formula();
 		SvStl::MessageContainerVector errorMessages;
 		bool isOk = UpdateConnection(&errorMessages);
@@ -429,7 +429,6 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 		ConvertVariantToProtobuf(varValue, rLinkedValue.mutable_value());
 		ConvertVariantToProtobuf(GetDefaultValue(), rLinkedValue.mutable_defaultvalue());
 		ConvertVariantToProtobuf(m_directValue, rLinkedValue.mutable_directvalue());
-		rLinkedValue.set_indirectdotname(m_indirectValueRef.GetObjectNameToObjectType(SvPb::SVToolSetObjectType, true));
 		rLinkedValue.set_indirectidstring((convertObjectIdToString(m_indirectValueRef.getObjectId()) + m_indirectValueRef.GetIndexString()).c_str());
 		rLinkedValue.set_formula(m_formulaString.c_str());
 		rLinkedValue.set_equationid(m_equation.getObjectId());
@@ -450,7 +449,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 		}
 		case SvPb::LinkedSelectedType::IndirectValue:
 		{
-			value = validateIndirectValue(rLinkedValue.indirectdotname(), defaultValue);
+			value = validateIndirectValue(rLinkedValue.indirectidstring(), defaultValue);
 			break;
 		}
 		case SvPb::LinkedSelectedType::Formula:
@@ -1232,9 +1231,9 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 		return true;
 	}
 
-	variant_t LinkedValue::validateIndirectValue(const std::string& rIndirectdotname, variant_t defaultValue) const
+	variant_t LinkedValue::validateIndirectValue(const std::string& rIndirectIdString, variant_t defaultValue) const
 	{
-		SVObjectReference refObject {GetObjectReferenceForDottedName(rIndirectdotname)};
+		SVObjectReference refObject {rIndirectIdString};
 		if (refObject.getObject())
 		{
 			SvStl::MessageContainerVector errorMessages;

@@ -118,11 +118,8 @@ constexpr const char* FqnPpqTriggerCount = _T("Trigger Count");
 constexpr const char* FqnPpqNotCompleteCount = _T("Not Complete Count");
 constexpr const char* FqnPpqMissingImageCount = _T("Missing Image Count");
 
-
-
-//! PPQ Variables FQN names
-constexpr const char* FqnRemoteInput = _T(".Remote Input");
-constexpr const char* FqnDioInput = _T(".DIO.Input");
+constexpr const char* DioInputStr = _T("DIO.Input");
+constexpr const char* RemoteInputStr = _T("Remote Input");
 
 constexpr const char* cConfigExtension = _T(".svx");
 constexpr const char* cPackedConfigExtension = _T(".svz");

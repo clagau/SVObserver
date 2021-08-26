@@ -205,7 +205,7 @@ namespace SvOp
 					defaults[i].Clear();
 					if (SvPb::LinkedSelectedType::IndirectValue == rValues.value().type())
 					{
-						SVObjectReference refObject{ GetObjectReferenceForDottedName(rValues.value().indirectdotname()) };
+						SVObjectReference refObject{ rValues.value().indirectidstring() };
 						SvStl::MessageContainerVector msgVector;
 						if (false == checkObject(rValues.name(), refObject.getObject(), type, &msgVector))
 						{

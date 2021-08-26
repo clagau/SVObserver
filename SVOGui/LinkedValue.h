@@ -17,7 +17,7 @@ namespace SvOg
 		variant_t m_Value;
 		variant_t m_defaultValue;
 		variant_t m_directValue;
-		std::string m_indirectDotName;
+		std::string m_indirectIdName;
 		std::string m_formula;
 		uint32_t m_equationId = SvDef::InvalidObjectId;
 
@@ -27,7 +27,7 @@ namespace SvOg
 				&& SvUl::isSameVar(m_Value, rValue.m_Value)
 				&& SvUl::isSameVar(m_defaultValue, rValue.m_defaultValue)
 				&& SvUl::isSameVar(m_directValue, rValue.m_directValue)
-				&& m_indirectDotName == rValue.m_indirectDotName
+				&& m_indirectIdName == rValue.m_indirectIdName
 				&& m_formula == rValue.m_formula;
 		}
 

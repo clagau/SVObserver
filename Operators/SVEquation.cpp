@@ -127,8 +127,8 @@ int SVEquationSymbolTableClass::AddSymbol(LPCTSTR name)
 		LookUpName = m_InspectionName;
 		LookUpName += SymbolName;
 	}
-	else if (SvUl::Left(SymbolName, m_DIOInputName.size()) == m_DIOInputName
-		|| SvUl::Left(SymbolName, m_RemoteInputName.size()) == m_RemoteInputName)
+	else if (SvUl::Left(SymbolName, strlen(SvDef::DioInputStr)) == SvDef::DioInputStr
+		|| SvUl::Left(SymbolName, strlen(SvDef::RemoteInputStr)) == SvDef::RemoteInputStr)
 	{
 		LookUpName = m_InspectionName;
 		LookUpName += SymbolName;

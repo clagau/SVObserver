@@ -495,6 +495,9 @@ private:
 
 	HRESULT LoadAuditList(SVTreeType& rTree);
 
+	void setIOIds(SVTreeType& rTree, SVTreeType::SVBranchHandle hInspectionProcess, SVInspectionProcess* pInspection) const;
+
+#pragma region Member Variables
 	std::list<SVFileNameClass>    m_AdditionalFiles;  //We need a list as the file manager has pointers to these objects!
 	std::unique_ptr<SVIOController> m_pIOController;
 	std::unique_ptr<SVInputObjectList> m_pInputObjectList;
@@ -518,7 +521,7 @@ private:
 	mutable SvUl::CAuditFiles m_AuditWhiteList;
 	/// list with default files for audidtrail  
 	mutable SvUl::CAuditFiles m_AuditDefaultList;
-
+#pragma endregion Member Variables
 };
 
 

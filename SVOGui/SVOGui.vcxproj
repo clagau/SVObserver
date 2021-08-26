@@ -139,7 +139,6 @@
     <ClCompile Include="LinkedValueWidgetHelper.cpp" />
     <ClCompile Include="MaskController.cpp" />
     <ClCompile Include="NormalizerController.cpp" />
-    <ClCompile Include="ObjectSelectorController.cpp" />
     <ClCompile Include="PictureDisplay.cpp" />
     <ClCompile Include="RangeController.cpp" />
     <ClCompile Include="Ranking2FilterDlg.cpp" />
@@ -232,7 +231,6 @@
     <ClInclude Include="LinkedValueWidgetHelper.h" />
     <ClInclude Include="MaskController.h" />
     <ClInclude Include="NormalizerController.h" />
-    <ClInclude Include="ObjectSelectorController.h" />
     <ClInclude Include="PictureDisplay.h" />
     <ClInclude Include="RangeController.h" />
     <ClInclude Include="Ranking2FilterDlg.h" />

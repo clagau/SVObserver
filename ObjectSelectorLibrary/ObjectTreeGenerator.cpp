@@ -136,11 +136,29 @@ namespace SvOsl
 					Location.insert( DotPos, Name.c_str() );
 				}
 			}
-			SvCl::ObjectTreeItems::iterator Iter = m_TreeContainer.findItem( Location );
-			if( m_TreeContainer.end() != Iter )
+			//Check if objectID format
+			if (0 == rItemName.find(_T("{#")))
 			{
-				Iter->second->m_CheckedState = SvCl::ObjectSelectorItem::CheckedEnabled;
-				Result = true;
+				SvCl::ObjectTreeItems::pre_order_iterator iter(m_TreeContainer.pre_order_begin());
+
+				while (m_TreeContainer.pre_order_end() != iter)
+				{
+					if (iter->second->m_ItemKey == rItemName)
+					{
+						iter->second->m_CheckedState = SvCl::ObjectSelectorItem::CheckedEnabled;
+						break;
+					}
+					++iter;
+				}
+			}
+			else
+			{
+				SvCl::ObjectTreeItems::iterator Iter = m_TreeContainer.findItem(Location);
+				if (m_TreeContainer.end() != Iter)
+				{
+					Iter->second->m_CheckedState = SvCl::ObjectSelectorItem::CheckedEnabled;
+					Result = true;
+				}
 			}
 		}
 

@@ -1894,6 +1894,8 @@ bool SVConfigurationObject::LoadInspection(SVTreeType& rTree)
 
 		SvXml::SVNavigateTree::GetItemBranch(rTree, SvXml::CTAG_INSPECTION_PROCESS, hSubChild, hInspectionProcess);
 
+		setIOIds(rTree, hInspectionProcess, pInspection);
+
 		if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_INSPECTION_TOOLSET_IMAGE, hSubChild, Value))
 		{
 			ToolsetName = SvUl::createStdString(_bstr_t(Value.bstrVal));
@@ -5830,4 +5832,42 @@ void  SVConfigurationObject::SaveAuditList(SvOi::IObjectWriter& rWriter) const
 HRESULT  SVConfigurationObject::LoadAuditList(SVTreeType& rTree)
 {
 	return (LoadAuditList(rTree, SvUl::AuditListType::auditDefault) | LoadAuditList(rTree, SvUl::AuditListType::white));
+}
+
+void SVConfigurationObject::setIOIds(SVTreeType& rTree, SVTreeType::SVBranchHandle hInspectionProcess, SVInspectionProcess* pInspection) const
+{
+	assert(pInspection && hInspectionProcess);
+	if (nullptr == pInspection || nullptr == hInspectionProcess)
+	{
+		return;
+	}
+
+	SVTreeType::SVBranchHandle hIO(nullptr);
+	SvXml::SVNavigateTree::GetItemBranch(rTree, SvXml::CTAG_IO, hInspectionProcess, hIO);
+	if (nullptr != hIO)
+	{
+		SVTreeType::SVLeafHandle hVariable(rTree.getFirstLeaf(hIO));
+		bool bContinue = rTree.isValidLeaf(hIO, hVariable);
+		std::map<std::string, uint32_t> ioObjectMap;
+
+		while (bContinue)
+		{
+			std::string name(rTree.getLeafName(hVariable));
+			_variant_t Value;
+			rTree.getLeafData(hVariable, Value);
+			uint32_t id = calcObjectId(Value);
+			if (SvDef::InvalidObjectId != id)
+			{
+				ioObjectMap[name] = id;
+			}
+
+			hVariable = rTree.getNextLeaf(hIO, hVariable);
+			bContinue = bContinue && rTree.isValidLeaf(hIO, hVariable);
+		}
+
+		if (false == ioObjectMap.empty())
+		{
+			pInspection->setIOObjectIdMap(std::move(ioObjectMap));
+		}
+	}
 }

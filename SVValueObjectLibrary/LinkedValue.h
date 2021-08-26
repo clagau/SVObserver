@@ -148,10 +148,10 @@ private:
 
 
 	/// Validate indirect value and return the current value. Throw an exception if validation failed.
-	/// \param rIndirectdotname [in] The dotted name of the indirect value object.
+	/// \param rIndirectIdString [in] The dotted name of the indirect value object.
 	/// \param defaultValue [in] The default name.
 	/// \returns variant_t
-	variant_t validateIndirectValue(const std::string& rIndirectdotname, variant_t defaultValue) const;
+	variant_t validateIndirectValue(const std::string& rIndirectIdString, variant_t defaultValue) const;
 
 	/// Validate formula and return the current value. Throw an exception if validation failed.
 	/// \param rFormula [in] The formula text.

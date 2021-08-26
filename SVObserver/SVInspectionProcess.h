@@ -230,6 +230,8 @@ public:
 
 	void buildValueObjectData();
 
+	void setIOObjectIdMap(std::map<std::string, uint32_t>&& ioObjectMap);
+
 #pragma region Methods to replace processMessage
 	virtual bool createAllObjects( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 	virtual bool CreateChildObject( SVObjectClass* pChildObject, DWORD context = 0 ) override;
@@ -404,6 +406,7 @@ private:
 	mutable std::mutex m_inspectionMutex;
 	bool m_lastRunProductValid{ true };
 	SVProductInfoStruct m_lastRunProduct;
+	std::map<std::string, uint32_t> m_ioObjectMap;
 
 	bool m_bNewDisableMethod{false};
 	bool m_initialAuxiliaryExtents {false}; //This is only required to be able to read old configuration files with extents set

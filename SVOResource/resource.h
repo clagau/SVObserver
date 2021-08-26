@@ -2198,7 +2198,7 @@
 #define IDC_CHK_UNEVEN_GRID             15995
 #define IDC_VALUE                       15996
 #define IDC_LINKED                      15997
-#define IDC_FORMULAR                    15998
+#define IDC_FORMULA                    15998
 #define IDC_BTN_LEARN                   16002
 #define IDC_BTN_NORMALIZE               16003
 #define IDC_TRANSLATIONX_EDIT           16004

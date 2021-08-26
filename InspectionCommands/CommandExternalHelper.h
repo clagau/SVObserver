@@ -56,6 +56,12 @@ HRESULT InspectionCommands(uint32_t inspectionID, const SvPb::InspectionCmdReque
 
 HRESULT RunOnceSynchronous(uint32_t inspectionID);
 
+/// Returns the dotted name up to "Tool Set".
+/// \param inspectionId [in] The inspectionId of this object.
+/// \param objectIdString [in] The objectId as string possible with index.
+/// \returns std::string
+std::string getDottedName(uint32_t inspectionId, std::string objectIdString);
+
 ///convert protobuf message to a vector of objectinfos
 bool ResponseToObjectInfo(const SvPb::InspectionCmdResponse& rResponse, SvOi::ObjectInfoVector&  rToolSetInfos);
 

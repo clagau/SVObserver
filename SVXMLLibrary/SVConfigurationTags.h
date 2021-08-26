@@ -14,7 +14,6 @@
 namespace  SvXml
 {
 	constexpr const char* CTAG_PPQ_MODE						 = (_T("PPQMode"));
-	constexpr const char* CTAG_UNIQUE_REFERENCE_Id            = (_T("UniqueReferenceId")); // @WARNING:  Differs only in capitalization from CTAG_UNIQUE_REFERENCE_ID.
 	constexpr const char* CTAG_UNIQUE_REFERENCE_ID            = (_T("UniqueReferenceID")); // Id
 	constexpr const char* CTAG_TRIGGER                        = (_T("Trigger"));
 	constexpr const char* CTAG_CAMERA                         = (_T("Camera"));
@@ -108,7 +107,7 @@ namespace  SvXml
 	constexpr const char* CTAG_FAILSTATUS_LIST                = (_T("FailStatusList"));
 	constexpr const char* CTAG_PPQ_NAME                       = (_T("PPQName"));
 	constexpr const char* CTAG_REJECT_QUEUE_DEPTH             = (_T("RejectQueueDepth"));
-	constexpr const char* CTAG_IS_ACTIVATED						= (_T("IsActivated"));
+	constexpr const char* CTAG_IS_ACTIVATED					  = (_T("IsActivated"));
 	constexpr const char* CTAG_VERSION_NUMBER                 = (_T("VersionNumber"));
 	constexpr const char* CTAGF_INPUT_X                       = (_T("Input_%d")); // CTAGF indicates formatting is required.
 	constexpr const char* CTAG_ITEM_NAME                      = (_T("ItemName"));

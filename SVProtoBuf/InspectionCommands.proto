@@ -88,7 +88,6 @@ message LinkedValue
 	Variant value = 2;
 	Variant defaultValue = 3;
 	Variant directValue = 4;
-	bytes indirectDotName = 5;
 	bytes indirectIDString = 6;
 	bytes formula = 7;
 	uint32 equationId = 8;

@@ -125,6 +125,7 @@ namespace Gdiplus
 #include <mutex>
 #include <numeric>
 #include <Objidl.h>
+#include <ranges>
 #include <regex>
 #pragma warning(push)
 #pragma warning(disable : 4996)

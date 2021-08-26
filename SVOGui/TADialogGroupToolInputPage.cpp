@@ -667,7 +667,7 @@ namespace SvOg
 		}
 		else
 		{
-			valueString = m_inputData[pos].m_data.m_indirectDotName.c_str();
+			valueString = SvCmd::getDottedName(m_InspectionID, m_inputData[pos].m_data.m_indirectIdName).c_str();
 		}
 		m_Grid.SetItemText(pos+1, ValueColumn, valueString);
 		if (isChangeable)

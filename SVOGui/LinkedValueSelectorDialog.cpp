@@ -10,7 +10,6 @@
 #include "Definitions/StringTypeDef.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "SVMessage/SVMessage.h"
-#include "SVObjectLibrary/SVObjectReference.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "Definitions/GlobalConst.h"
 #include "FormulaController.h"
@@ -45,7 +44,7 @@ namespace SvOg
 		//{{AFX_MSG_MAP(LinkedValueSelectorDialog)
 		ON_BN_CLICKED(IDC_VALUE, OnRadioType)
 		ON_BN_CLICKED(IDC_LINKED, OnRadioType)
-		ON_BN_CLICKED(IDC_FORMULAR, OnRadioType)
+		ON_BN_CLICKED(IDC_FORMULA, OnRadioType)
 		//}}AFX_MSG_MAP
 	END_MESSAGE_MAP()
 
@@ -136,12 +135,12 @@ namespace SvOg
 		case LinkedValueSelectorTypesEnum::All:
 			break;
 		case LinkedValueSelectorTypesEnum::DirectIndirect:
-			GetDlgItem(IDC_FORMULAR)->ShowWindow(SW_HIDE);
+			GetDlgItem(IDC_FORMULA)->ShowWindow(SW_HIDE);
 			break;
 		case LinkedValueSelectorTypesEnum::Indirect:
 			m_iType = 1;
 			GetDlgItem(IDC_VALUE)->ShowWindow(SW_HIDE);
-			GetDlgItem(IDC_FORMULAR)->ShowWindow(SW_HIDE);
+			GetDlgItem(IDC_FORMULA)->ShowWindow(SW_HIDE);
 			break;
 		default:
 			assert(false);
@@ -211,9 +210,8 @@ namespace SvOg
 
 		//check and set indirect value
 		m_linkedTreeGenerator.checkModifiedItems();
-		SVObjectReference ObjRef{ m_linkedTreeGenerator.getSingleObjectResult() };
-		m_data.m_indirectDotName = ObjRef.GetObjectNameToObjectType(SvPb::SVToolSetObjectType, true);
-		if (m_data.m_indirectDotName.empty() && SvPb::LinkedSelectedType::IndirectValue == m_data.m_type)
+		m_data.m_indirectIdName = m_linkedTreeGenerator.getSingleObjectResult();
+		if (m_data.m_indirectIdName.empty() && SvPb::LinkedSelectedType::IndirectValue == m_data.m_type)
 		{
 			SvDef::StringVector msgList;
 			msgList.push_back(m_ObjectName);
@@ -328,10 +326,10 @@ namespace SvOg
 			m_linkedTreeGenerator.insertTreeObjects(responseCmd.getobjectselectoritemsresponse().tree());
 		}
 
-		if (!m_data.m_indirectDotName.empty())
+		if (!m_data.m_indirectIdName.empty())
 		{
 			SvDef::StringSet nameSet;
-			nameSet.insert(m_data.m_indirectDotName);
+			nameSet.insert(m_data.m_indirectIdName);
 			m_linkedTreeGenerator.setCheckItems(nameSet);
 		}
 

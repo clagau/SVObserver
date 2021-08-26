@@ -19,7 +19,7 @@ LinkedValueData convertLinkedValue(const SvPb::LinkedValue& rValue)
 	SvPb::ConvertProtobufToVariant(rValue.value(), data.m_Value);
 	SvPb::ConvertProtobufToVariant(rValue.defaultvalue(), data.m_defaultValue);
 	SvPb::ConvertProtobufToVariant(rValue.directvalue(), data.m_directValue);
-	data.m_indirectDotName = rValue.indirectdotname();
+	data.m_indirectIdName = rValue.indirectidstring();
 	data.m_type = rValue.type();
 	data.m_formula = rValue.formula();
 	data.m_equationId = rValue.equationid();
@@ -31,7 +31,7 @@ SvPb::LinkedValue convertLinkedValue(const LinkedValueData& rValue)
 	SvPb::LinkedValue data;
 	data.set_type(static_cast<SvPb::LinkedSelectedType>(rValue.m_type));
 	SvPb::ConvertVariantToProtobuf(rValue.m_directValue, data.mutable_directvalue());
-	data.set_indirectdotname(rValue.m_indirectDotName);
+	data.set_indirectidstring(rValue.m_indirectIdName);
 	data.set_formula(rValue.m_formula);
 	SvPb::ConvertVariantToProtobuf(rValue.m_defaultValue, data.mutable_defaultvalue());
 	SvPb::ConvertVariantToProtobuf(rValue.m_Value, data.mutable_value());

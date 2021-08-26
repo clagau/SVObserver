@@ -1060,6 +1060,11 @@ bool SVInspectionProcess::RebuildInspectionInputList()
 			if (nullptr != pNewObject)
 			{
 				pNewObject->SetName(pInput->GetName());
+				auto findIter = m_ioObjectMap.find(pInput->GetName());
+				if (m_ioObjectMap.end() != findIter && SvDef::InvalidObjectId != findIter->second && pNewObject->getObjectId() != findIter->second)
+				{
+					SVObjectManagerClass::Instance().ChangeUniqueObjectID(pNewObject, findIter->second);
+				}
 				pNewObject->SetObjectOwner(this);
 				pNewObject->SetObjectAttributesSet(pNewObject->ObjectAttributesSet() & SvPb::publishable, SvOi::SetAttributeType::OverwriteAttribute);
 				pNewObject->ResetObject();
@@ -3228,6 +3233,18 @@ void SVInspectionProcess::Persist(SvOi::IObjectWriter& rWriter) const
 	rWriter.WriteAttribute(SvXml::CTAG_INSPECTION_NEW_DISABLE_METHOD, value);
 	value.Clear();
 
+	if (m_PPQInputs.size())
+	{
+		rWriter.StartElement(SvXml::CTAG_IO);
+		for (auto* pObject : m_PPQInputs
+			| std::views::filter([](auto pE) { return nullptr != pE && pE->getObject(); })
+			| std::views::transform([](auto pE) {return pE->getObject(); }))
+		{
+			rWriter.WriteAttribute(pObject->GetName(), convertObjectIdToVariant(pObject->getObjectId()));
+		}
+		rWriter.EndElement();
+	}
+
 	// Save the Toolset
 	SVToolSet* pToolSet = GetToolSet();
 	pToolSet->Persist(rWriter);
@@ -3875,6 +3892,11 @@ void SVInspectionProcess::buildValueObjectData()
 		pTrcRW->changeDataDef(std::move(dataDefList), m_memValueDataOffset, m_trcPos);
 	}
 
+}
+
+void SVInspectionProcess::setIOObjectIdMap(std::map<std::string, uint32_t>&& ioObjectMap)
+{
+	m_ioObjectMap = std::move(ioObjectMap);
 }
 
 SvSml::RingBufferPointer SVInspectionProcess::GetSlotmanager()

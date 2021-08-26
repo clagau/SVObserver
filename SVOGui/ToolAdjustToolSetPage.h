@@ -32,7 +32,8 @@ private:
 	virtual void DoDataExchange(CDataExchange* pDX) override;
 
 	enum { IDD = IDD_TA_TOOL_SET_DIALOG };
-	CString     m_InspectedObjectID;
+	std::string m_inspectedObjectId_IdString;
+	CString     m_inspectedObjectId_NameString;
 
 	uint32_t m_InspectionID;
 	uint32_t m_TaskObjectID;

@@ -107,9 +107,6 @@ private:
 	std::string m_InspectionName;
 
 	std::string  m_ToolSetName = SvUl::LoadedStrings::g_ToolSetName + ".";
-	std::string m_DIOInputName {_T("DIO.Input")};
-	std::string  m_RemoteInputName {_T("Remote Input")};
-
 	uint32_t m_ownerId = SvDef::InvalidObjectId;
 };
 

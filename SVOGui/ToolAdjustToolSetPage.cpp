@@ -10,7 +10,6 @@
 #include "stdafx.h"
 #include "ToolAdjustToolSetPage.h"
 #include "InspectionCommands/CommandExternalHelper.h"
-#include "SVObjectLibrary/SVObjectReference.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "Definitions/ObjectNames.h"
 #pragma endregion Includes
@@ -48,7 +47,7 @@ HRESULT ToolAdjustToolSetPage::SetInspectionData()
 
 	//We need to set the main LinkedValue object
 	auto data = m_values.Get<LinkedValueData>(SvPb::InspectedObjectIDEId);
-	data.m_indirectDotName = std::string{m_InspectedObjectID};
+	data.m_indirectIdName = m_inspectedObjectId_IdString;
 	data.m_type = SvPb::IndirectValue;
 	m_values.Set<LinkedValueData>(SvPb::InspectedObjectIDEId, data);
 	m_values.Commit();
@@ -61,7 +60,7 @@ void ToolAdjustToolSetPage::DoDataExchange(CDataExchange* pDX)
 	CDialog::DoDataExchange(pDX);
 
 	//{{AFX_DATA_MAP(SVTADlgStatisticsPage)
-	DDX_Text(pDX, IDC_INSPECTED_OBECT_ID, m_InspectedObjectID);
+	DDX_Text(pDX, IDC_INSPECTED_OBECT_ID, m_inspectedObjectId_NameString);
 	//}}AFX_DATA_MAP
 }
 
@@ -73,7 +72,8 @@ BOOL ToolAdjustToolSetPage::OnInitDialog()
 
 	//We need to get the linked object Id to get the dotted name
 	const auto& data = m_values.Get<LinkedValueData>(SvPb::InspectedObjectIDEId);
-	m_InspectedObjectID = data.m_indirectDotName.c_str();
+	m_inspectedObjectId_IdString = data.m_indirectIdName;
+	m_inspectedObjectId_NameString = SvCmd::getDottedName(m_InspectionID, m_inspectedObjectId_IdString).c_str();
 
 	UpdateData(false);
 
@@ -96,7 +96,7 @@ void ToolAdjustToolSetPage::OnBtnObjectPicker()
 	}
 
 	SvDef::StringSet Items;
-	Items.insert(std::string(m_InspectedObjectID));
+	Items.insert(m_inspectedObjectId_IdString);
 	SvOsl::ObjectTreeGenerator::Instance().setCheckItems(Items);
 
 	std::string ToolsetOutput = SvUl::LoadStdString(IDS_SELECT_TOOLSET_OUTPUT);
@@ -107,9 +107,8 @@ void ToolAdjustToolSetPage::OnBtnObjectPicker()
 
 	if( IDOK == Result )
 	{
-		SVObjectReference objectRef {SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult()};
-
-		m_InspectedObjectID = objectRef.GetObjectNameToObjectType(SvPb::SVToolSetObjectType).c_str();
+		m_inspectedObjectId_IdString = SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult();
+		m_inspectedObjectId_NameString = SvCmd::getDottedName(m_InspectionID, m_inspectedObjectId_IdString).c_str();
 
 		UpdateData(false);
 

@@ -727,7 +727,9 @@ std::string SVObjectClass::GetObjectNameToObjectType(SvPb::SVObjectTypeEnum obje
 	if (objectType != objectTypeToInclude)
 	{
 		SVObjectClass* pObject = m_ownerObjectInfo.getObject();
-		if (nullptr != pObject && pObject != this)
+		if (nullptr != pObject && pObject != this &&
+			//special code for Remote/Digital Input. If ToolSet is selected for this part the inspection name should not be added!
+			(SvPb::SVToolSetObjectType != objectTypeToInclude || SvPb::SVInspectionObjectType != pObject->GetObjectType()))
 		{
 			Result = pObject->GetObjectNameToObjectType(objectTypeToInclude);
 		}
@@ -816,7 +818,9 @@ SVObjectReference SVObjectClass::GetObjectReferenceForDottedName(const std::stri
 	std::string fullDottedName;
 
 	//If the tool set name is at the start then add the inspection name at the beginning
-	if (rDottedName._Starts_with(SvUl::LoadedStrings::g_ToolSetName))
+	if (rDottedName._Starts_with(SvUl::LoadedStrings::g_ToolSetName)
+		|| SvUl::Left(rDottedName, strlen(SvDef::DioInputStr)) == SvDef::DioInputStr
+		|| SvUl::Left(rDottedName, strlen(SvDef::RemoteInputStr)) == SvDef::RemoteInputStr)
 	{
 		const SvOi::IObjectClass* pInspection = GetAncestorInterface(SvPb::SVInspectionObjectType);
 		if (nullptr != pInspection)

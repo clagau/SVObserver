@@ -45,9 +45,6 @@
     <ClCompile Include="MaskController.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="ObjectSelectorController.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="PictureDisplay.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -309,9 +306,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="MaskController.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjectSelectorController.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="PictureDisplay.h">

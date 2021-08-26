@@ -464,7 +464,7 @@ void SVTADlgExternalInputSelectPage::setValueColumn(SvPb::EmbeddedIdEnum eId, Sv
 	}
 	else
 	{
-		valueString = data.m_indirectDotName.c_str();
+		valueString = SvCmd::getDottedName(m_InspectionID, data.m_indirectIdName).c_str();
 	}
 
 	rEdit.SetItemValue(valueString);
