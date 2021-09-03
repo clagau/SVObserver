@@ -12,9 +12,9 @@
 #include "SVVariantValueObjectClass.h"
 #include "ObjectInterfaces\ILinkedObject.h"
 #include "SVObjectLibrary\SVObjectReference.h"
-#pragma endregion Includes
 #include "SVEnumerateValueObjectClass.h"
 #include "Operators\SVEquation.h"
+#pragma endregion Includes
 
 namespace SvVol
 {

@@ -137,6 +137,18 @@ namespace SvCl
 					AllChecked = false;
 					break;
 				}
+				if (IterChild->second->isLeaf())
+				{
+					if (AllChecked && ObjectSelectorItem::CheckedEnabled != IterChild->second->m_CheckedState)
+					{
+						AllChecked = false;
+						SomeChecked = true;
+					}
+					else if(false == AllChecked && false == SomeChecked && ObjectSelectorItem::CheckedEnabled == IterChild->second->m_CheckedState)
+					{
+						SomeChecked = true;
+					}
+				}
 				//If Tristate then don't need to check further
 				if( !AllChecked && SomeChecked )
 				{
@@ -281,7 +293,7 @@ namespace SvCl
 		if( end() != Iter )
 		{
 			Iter->second->m_CheckedState = ObjectSelectorItem::UncheckedEnabled;
-			Iter->second->m_NodeState = ObjectSelectorItem::UncheckedEnabled;
+			Iter->second->m_NodeState = m_SingleSelect ? ObjectSelectorItem::EmptyEnabled : ObjectSelectorItem::UncheckedEnabled;
 
 			updateItems = setParentState( Iter );
 			updateItems.insert( Iter->first );

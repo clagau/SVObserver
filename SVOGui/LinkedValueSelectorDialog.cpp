@@ -42,9 +42,9 @@ namespace SvOg
 
 	BEGIN_MESSAGE_MAP(LinkedValueSelectorDialog, CDialog)
 		//{{AFX_MSG_MAP(LinkedValueSelectorDialog)
-		ON_BN_CLICKED(IDC_VALUE, OnRadioType)
-		ON_BN_CLICKED(IDC_LINKED, OnRadioType)
-		ON_BN_CLICKED(IDC_FORMULA, OnRadioType)
+		ON_BN_CLICKED(IDC_VALUE, OnValue)
+		ON_BN_CLICKED(IDC_LINKED, OnLinked)
+		ON_BN_CLICKED(IDC_FORMULA, OnFormula)
 		//}}AFX_MSG_MAP
 	END_MESSAGE_MAP()
 
@@ -59,7 +59,7 @@ namespace SvOg
 		, m_validCheckCallback(validCallback)
 		, m_possibleTypes(possibleTypes)
 	{
-		m_iType = m_data.m_type - 1;
+		m_type = m_data.m_type;
 		assert(LinkedValueSelectorTypesEnum::None != m_possibleTypes);
 	}
 
@@ -90,7 +90,6 @@ namespace SvOg
 	{
 		CDialog::DoDataExchange(pDX);
 		//{{AFX_DATA_MAP(LinkedValueSelectorDialog)
-		DDX_Radio(pDX, IDC_VALUE, m_iType);
 		DDX_Text(pDX, IDC_VALUE_EDIT, m_directValue);
 		//}}AFX_DATA_MAP
 	}
@@ -138,7 +137,7 @@ namespace SvOg
 			GetDlgItem(IDC_FORMULA)->ShowWindow(SW_HIDE);
 			break;
 		case LinkedValueSelectorTypesEnum::Indirect:
-			m_iType = 1;
+			m_type = SvPb::LinkedSelectedType::IndirectValue;
 			GetDlgItem(IDC_VALUE)->ShowWindow(SW_HIDE);
 			GetDlgItem(IDC_FORMULA)->ShowWindow(SW_HIDE);
 			break;
@@ -181,6 +180,7 @@ namespace SvOg
 		m_dlgLinkedSheet.SetWindowPos(nullptr, rcSheet.left - 7, rcSheet.top, 0, 0,
 			SWP_NOZORDER | SWP_NOSIZE | SWP_NOACTIVATE);
 		m_dlgLinkedSheet.GetTabControl()->ShowWindow(false);
+		m_dlgLinkedSheet.ModifyStyleEx(0, WS_EX_CONTROLPARENT);
 		m_dlgLinkedSheet.ModifyStyle(0, WS_TABSTOP);
 		m_dlgLinkedSheet.SetActivePage(0);
 
@@ -200,7 +200,7 @@ namespace SvOg
 	void LinkedValueSelectorDialog::OnOK()
 	{
 		UpdateData();
-		m_data.m_type = static_cast<SvPb::LinkedSelectedType>(m_iType + 1);
+		m_data.m_type = m_type;
 
 		//check and set directValue
 		if (false == checkAndSetDirectValue() && SvPb::LinkedSelectedType::DirectValue == m_data.m_type)
@@ -277,10 +277,25 @@ namespace SvOg
 		}
 	}
 
-	void LinkedValueSelectorDialog::OnRadioType()
+	void LinkedValueSelectorDialog::OnValue()
+	{
+		changeType(SvPb::DirectValue);
+	}
+
+	void LinkedValueSelectorDialog::OnLinked()
+	{
+		changeType(SvPb::IndirectValue);
+	}
+
+	void LinkedValueSelectorDialog::OnFormula()
+	{
+		changeType(SvPb::Formula);
+	}
+
+	void LinkedValueSelectorDialog::changeType(SvPb::LinkedSelectedType newType)
 	{
 		UpdateData();
-		if (SvPb::LinkedSelectedType::Formula == static_cast<SvPb::LinkedSelectedType>(m_iType + 1))
+		if (SvPb::LinkedSelectedType::Formula == m_type)
 		{
 			auto equationText = m_pDlgFormulaPage->getEquationText();
 			double value{ 0 };
@@ -297,6 +312,7 @@ namespace SvOg
 				return;
 			}
 		}
+		m_type = newType;
 
 		updateShownControls();
 	}
@@ -347,23 +363,38 @@ namespace SvOg
 
 	void LinkedValueSelectorDialog::updateShownControls()
 	{
-		SvPb::LinkedSelectedType type = static_cast<SvPb::LinkedSelectedType>(m_iType + 1);
-
 		CWnd* pWnd = GetDlgItem(IDC_VALUE_EDIT);
 		if (pWnd)
 		{
-			pWnd->ShowWindow(SvPb::DirectValue == type ? SW_SHOW : SW_HIDE);
+			pWnd->ShowWindow(SvPb::DirectValue == m_type ? SW_SHOW : SW_HIDE);
+		}
+
+		pWnd = GetDlgItem(IDC_VALUE);
+		if (pWnd)
+		{
+			pWnd->EnableWindow(SvPb::DirectValue != m_type);
+		}
+
+		pWnd = GetDlgItem(IDC_LINKED);
+		if (pWnd)
+		{
+			pWnd->EnableWindow(SvPb::IndirectValue != m_type);
+		}
+
+		pWnd = GetDlgItem(IDC_FORMULA);
+		if (pWnd)
+		{
+			pWnd->EnableWindow(SvPb::Formula != m_type);
 		}
 
 		bool isSheet = false;
-				
-		if (SvPb::LinkedSelectedType::IndirectValue == type)
+		if (SvPb::LinkedSelectedType::IndirectValue == m_type)
 		{
 			m_dlgLinkedSheet.SetActivePage(0);
 			isSheet = true;
 		}
 
-		if (LinkedValueSelectorTypesEnum::All == m_possibleTypes && SvPb::LinkedSelectedType::Formula == type)
+		if (LinkedValueSelectorTypesEnum::All == m_possibleTypes && SvPb::LinkedSelectedType::Formula == m_type)
 		{
 			m_dlgLinkedSheet.SetActivePage(1);
 			isSheet = true;

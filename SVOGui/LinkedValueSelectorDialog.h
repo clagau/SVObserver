@@ -67,18 +67,21 @@ namespace SvOg
 		//{{AFX_MSG(LinkedValueSelectorDialog)
 		virtual BOOL OnInitDialog() override;
 		virtual void OnOK() override;
-		void OnRadioType();
+		void OnValue();
+		void OnLinked();
+		void OnFormula();
 		//}}AFX_MSG
 		DECLARE_MESSAGE_MAP()
 
 	private:
+		void changeType(SvPb::LinkedSelectedType newType);
 		void createObjectPage();
 		void createFormulaPage();
 		void updateShownControls();
 		bool checkAndSetDirectValue();
 
 	protected:
-		int m_iType;
+		SvPb::LinkedSelectedType m_type;
 
 		//Value
 		CString m_directValue;

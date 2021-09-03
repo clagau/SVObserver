@@ -1084,7 +1084,9 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 		_variant_t Value(0);
 		Value = (convertObjectIdToString(m_indirectValueRef.getObjectId()) + m_indirectValueRef.GetIndexString(true)).c_str();
 		rWriter.WriteAttribute(scLinkedIndirectValueTag, Value);
-		Value = m_formulaString.c_str();
+		std::string Temp = m_formulaString;
+		SvUl::AddEscapeSpecialCharacters(Temp, true);
+		Value = Temp.c_str();
 		rWriter.WriteAttribute(scLinkedFormulaTag, Value);
 
 		rWriter.EndElement();
@@ -1117,6 +1119,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 		else if (pDataObject->GetAttributeData(scLinkedFormulaTag, stringList))
 		{
 			m_formulaString = (0 < stringList.size() ? stringList[0] : "");
+			SvUl::RemoveEscapedSpecialCharacters(m_formulaString, true);
 			return S_OK;
 		}
 		else
