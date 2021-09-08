@@ -6686,6 +6686,12 @@ BEGIN
     IDS_OBJECTNAME_IMAGETOOL_USE_LUT      "ImageToolUseLut"
 END
 
+STRINGTABLE
+BEGIN
+IDS_OBJECTNAME_MISSING_IMAGE_COUNT "Missing Image Count"
+IDS_OBJECTNAME_NOT_COMPLETE_COUNT  "Not Complete Count"
+END
+
 #endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
 

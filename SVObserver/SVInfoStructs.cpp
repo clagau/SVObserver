@@ -102,7 +102,9 @@ void SVInspectionInfoStruct::setTriggerRecordIncompleted()
 SVProductInfoStruct::SVProductInfoStruct()
 	: m_ProductActive(0)
 	, m_monitorListSMSlot(-1)
-	, m_lastPPQPosition{ 0L }
+	, m_lastPPQPosition {0L}
+	,m_MissingImageCount {0}
+	,m_NotCompleteCount {0}
 {
 	Reset();
 }
@@ -117,8 +119,10 @@ SVProductInfoStruct::SVProductInfoStruct(const SVProductInfoStruct& rRhs)
 	, m_svInspectionInfos(rRhs.m_svInspectionInfos)
 	, m_ProductActive(0)
 	, m_monitorListSMSlot(rRhs.m_monitorListSMSlot)
-	, m_lastPPQPosition{ rRhs.m_lastPPQPosition }
-	, m_CantProcessReason{ rRhs.m_CantProcessReason }
+	, m_lastPPQPosition {rRhs.m_lastPPQPosition}
+	, m_CantProcessReason {rRhs.m_CantProcessReason}
+	,m_MissingImageCount {rRhs.m_MissingImageCount}
+	,m_NotCompleteCount {rRhs.m_NotCompleteCount}
 {
 	for (int i = 0; i < SvDef::cMaximumCameras; ++i)
 	{
@@ -143,6 +147,9 @@ SVProductInfoStruct& SVProductInfoStruct::operator=(const SVProductInfoStruct& r
 		}
 		m_dataComplete = rRhs.m_dataComplete;
 		m_lastPPQPosition = rRhs.m_lastPPQPosition;
+		m_CantProcessReason = rRhs.m_CantProcessReason;
+		m_MissingImageCount = rRhs.m_MissingImageCount;
+		m_NotCompleteCount = rRhs.m_NotCompleteCount;
 
 		m_triggerInfo = rRhs.m_triggerInfo;
 		m_outputsInfo = rRhs.m_outputsInfo;
@@ -175,15 +182,15 @@ HRESULT SVProductInfoStruct::Assign(const SVProductInfoStruct& rData, bool shoul
 			m_hasCameraImage[i] = rData.m_hasCameraImage[i];
 		}
 		m_dataComplete = rData.m_dataComplete;
+		m_CantProcessReason = rData.m_CantProcessReason;
 		m_lastPPQPosition = rData.m_lastPPQPosition;
+		m_MissingImageCount = rData.m_MissingImageCount;
+		m_NotCompleteCount = rData.m_NotCompleteCount;
 		m_triggerInfo = rData.m_triggerInfo;
 		m_outputsInfo = rData.m_outputsInfo;
 		m_pPPQ = rData.m_pPPQ;
-
 		m_monitorListSMSlot = rData.m_monitorListSMSlot;
-
 		m_svCameraInfos = rData.m_svCameraInfos;
-
 		m_svInspectionInfos.clear();
 
 		if (false == shouldSkipIPInfo)
@@ -196,7 +203,6 @@ HRESULT SVProductInfoStruct::Assign(const SVProductInfoStruct& rData, bool shoul
 			SetProductActive();
 		}
 	}
-
 	return l_Status;
 }
 
@@ -234,8 +240,8 @@ void SVProductInfoStruct::InitProductInfo()
 	m_triggered = false;
 	m_dataComplete = false;
 	m_monitorListSMSlot = -1;
-	m_outputsInfo = std::move(SVOutputsInfoStruct{});
-	m_triggerInfo = std::move(SvTrig::SVTriggerInfoStruct{});
+	m_outputsInfo = std::move(SVOutputsInfoStruct {});
+	m_triggerInfo = std::move(SvTrig::SVTriggerInfoStruct {});
 
 	for (auto& rCamera : m_svCameraInfos)
 	{
@@ -259,18 +265,18 @@ void SVProductInfoStruct::Reset()
 	m_triggered = false;
 	m_dataComplete = false;
 	m_monitorListSMSlot = -1;
-	m_outputsInfo = std::move(SVOutputsInfoStruct{});
+	m_outputsInfo = std::move(SVOutputsInfoStruct {});
 	m_pPPQ = nullptr;
-	m_triggerInfo = std::move(SvTrig::SVTriggerInfoStruct{});
+	m_triggerInfo = std::move(SvTrig::SVTriggerInfoStruct {});
 
 	for (auto& rCamera : m_svCameraInfos)
 	{
-		rCamera.second = std::move(SvIe::SVCameraInfoStruct{});
+		rCamera.second = std::move(SvIe::SVCameraInfoStruct {});
 	}
 
 	for (auto& rInspection : m_svInspectionInfos)
 	{
-		rInspection.second = std::move(SVInspectionInfoStruct{});
+		rInspection.second = std::move(SVInspectionInfoStruct {});
 	}
 }// end Reset
 
@@ -387,68 +393,54 @@ void SVProductInfoStruct::setInspectionTriggerRecordComplete(uint32_t iPId)
 
 SVInspectionNameUpdate::SVInspectionNameUpdate()
 	: m_InspectionName()
-{
-}
+{}
 
 SVInspectionNameUpdate::SVInspectionNameUpdate(const std::string& p_rName)
 	: m_InspectionName(p_rName)
-{
-}
+{}
 
 SVInspectionNameUpdate::SVInspectionNameUpdate(const SVInspectionNameUpdate& p_rObject)
 	: m_InspectionName(p_rObject.m_InspectionName)
-{
-}
+{}
 
 SVInspectionNameUpdate::~SVInspectionNameUpdate()
-{
-}
+{}
 
 SVRemoveImages::SVRemoveImages()
 	: m_Images()
-{
-}
+{}
 
 SVRemoveImages::SVRemoveImages(const std::set<uint32_t>& p_rImages)
 	: m_Images(p_rImages)
-{
-}
+{}
 
 SVRemoveImages::SVRemoveImages(const SVRemoveImages& p_rObject)
 	: m_Images(p_rObject.m_Images)
-{
-}
+{}
 
 SVRemoveImages::~SVRemoveImages()
-{
-}
+{}
 
 SVRemoveValues::SVRemoveValues()
 	: m_Values()
-{
-}
+{}
 
 SVRemoveValues::SVRemoveValues(const std::set<uint32_t>& p_rValues)
 	: m_Values(p_rValues)
-{
-}
+{}
 
 SVRemoveValues::SVRemoveValues(const SVRemoveValues& p_rObject)
 	: m_Values(p_rObject.m_Values)
-{
-}
+{}
 
 SVRemoveValues::~SVRemoveValues()
-{
-}
+{}
 
 SVRemoveSubjectStruct::SVRemoveSubjectStruct()
-{
-}
+{}
 
 SVRemoveSubjectStruct::~SVRemoveSubjectStruct()
-{
-}
+{}
 
 SVInputRequestInfoStruct::SVInputRequestInfoStruct()
 	: m_ValueObjectRef(), m_Value()
@@ -458,8 +450,7 @@ SVInputRequestInfoStruct::SVInputRequestInfoStruct()
 
 SVInputRequestInfoStruct::SVInputRequestInfoStruct(const SVObjectReference& rValueObject, const _variant_t& rValue)
 	: m_ValueObjectRef(rValueObject), m_Value(rValue)
-{
-}
+{}
 
 void SVInputRequestInfoStruct::Reset()
 {
@@ -468,16 +459,14 @@ void SVInputRequestInfoStruct::Reset()
 }// end Reset
 
 void SVInputRequestInfoStruct::Init()
-{
-}// end Init
+{}// end Init
 
 SVInputImageRequestInfoStruct::SVInputImageRequestInfoStruct()
 	: m_ObjectName()
 	, m_ImageInfo()
 	, m_ImageHandlePtr()
 	, m_bUsingCameraName(false)
-{
-}
+{}
 
 SVInputImageRequestInfoStruct::~SVInputImageRequestInfoStruct()
 {

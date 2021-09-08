@@ -2261,6 +2261,8 @@ HRESULT SVPPQObject::StartInspection(uint32_t inspectionID)
 	if (canStartInspection)
 	{
 		pProduct->m_lastPPQPosition = m_lastPPQPosition;
+		pProduct->m_NotCompleteCount = m_NotCompleteCount;
+		pProduct->m_MissingImageCount = m_MissingImageCount;
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
 		long ppqPos = m_PPQPositions.GetIndexByTriggerCount(pProduct->ProcessCount());
 		::OutputDebugString(SvUl::Format(_T("%s Start Inspection TRI=%d, PPQPos=%d\n"), GetName(), pProduct->ProcessCount(), ppqPos).c_str());

@@ -2394,6 +2394,8 @@
 #define IDC_BUTTON_LINK_OFFSET          16197
 #define IDC_STATIC_GAIN                 16198
 #define IDC_STATIC_OFFSET                 16199
+#define IDS_OBJECTNAME_MISSING_IMAGE_COUNT 16200
+#define IDS_OBJECTNAME_NOT_COMPLETE_COUNT  16201
 #define ID_UNDO_CHANGES                 20000
 #define ID_BROWSE_BUTTON                20001
 #define ID_PLUSBUTTON                   20002

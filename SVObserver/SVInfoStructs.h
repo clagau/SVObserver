@@ -172,12 +172,13 @@ struct SVProductInfoStruct
 	/// \param iPId [in] id of the IP. If SvDef::InvalidObjectId then for inspection will done the action.
 	void setInspectionTriggerRecordComplete(uint32_t iPId);
 
-	bool m_triggered;
+	bool m_triggered {false};
 	bool m_hasCameraImage[SvDef::cMaximumCameras];
-	bool m_dataComplete;
-	long m_lastPPQPosition;
+	bool m_dataComplete {false};
+	long m_lastPPQPosition {-1};
 	CantProcessEnum m_CantProcessReason = CantProcessEnum::NoReason ; //last Reason which prevent start of inspection
-
+	int m_MissingImageCount {0};
+	int m_NotCompleteCount {0};
 	SvTrig::SVTriggerInfoStruct m_triggerInfo;
 	SVOutputsInfoStruct m_outputsInfo;
 	SVPPQObject* m_pPPQ = nullptr;

@@ -151,6 +151,9 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed)
 		double triggerToAcqTime{ 0.0 };
 		double acqTime{ 0.0 };
 
+		m_pCurrentToolset->setMissingImageCount(product.m_MissingImageCount);
+		m_pCurrentToolset->setNotCompleteCount(product.m_NotCompleteCount);
+
 		if (nullptr != m_pToolSetCamera)
 		{
 			SvIe::SVObjectIdSVCameraInfoStructMap::const_iterator iterCamera(product.m_svCameraInfos.find(m_pToolSetCamera->getObjectId()));

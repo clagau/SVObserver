@@ -88,6 +88,9 @@ void SVToolSet::init()
 
 	RegisterEmbeddedObject(&m_InspectionName, SvPb::InspectionNameEId, SvDef::c_InspectionName, false, SvOi::SVResetItemIP);
 
+	RegisterEmbeddedObject(&m_MissingImageCountTS, SvPb::MissingImageCountEId, IDS_OBJECTNAME_MISSING_IMAGE_COUNT, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_NotCompleteCountTS, SvPb::NotCompleteCountEId, IDS_OBJECTNAME_NOT_COMPLETE_COUNT, false, SvOi::SVResetItemNone);
+
 	//Link inspected object ID with incoming object ID as default
 	m_InspectedObjectID.setIndirectValue(SVObjectReference {&m_ObjectID});
 	//Display them as integers

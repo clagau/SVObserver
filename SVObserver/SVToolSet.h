@@ -106,6 +106,8 @@ public:
 	void setTriggerIndex(DWORD triggerIndex) { m_TriggerIndex.SetValue(triggerIndex); }
 	void setTriggerPerObjectID(DWORD triggerPerObjectID) { m_TriggerPerObjectID.SetValue(triggerPerObjectID); }
 	void setInspectionname(std::string Inspectionname) { m_InspectionName.SetValue(Inspectionname);};
+	void setMissingImageCount(int missingeImageCount) { m_MissingImageCountTS.SetValue(missingeImageCount); }
+	void setNotCompleteCount(int notCompleteCount) { m_NotCompleteCountTS.SetValue(notCompleteCount); }
 
 	long getTriggerCount() const;
 	SvPb::OverlayDesc getOverlayStruct(const SvOi::ISVImage& rImage) const;
@@ -208,6 +210,9 @@ private:
 	SvVol::LinkedValue m_InspectedObjectID;			//! The inspected object ID, which will be passed to the PLC to identify the inspection result
 	SvVol::SVStringValueObjectClass m_ToolComment;
 	SvVol::SVStringValueObjectClass m_InspectionName;
+
+	SvVol::SVLongValueObjectClass m_MissingImageCountTS; //MissingImageCount in ppq  at the time the inspection is started
+	SvVol::SVLongValueObjectClass m_NotCompleteCountTS;//NotCompleteCount in ppq  at the time the inspection is started
 #pragma endregion Member Variables
 };
 
