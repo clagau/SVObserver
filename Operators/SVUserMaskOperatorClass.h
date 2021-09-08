@@ -92,7 +92,6 @@ protected:
 
 	SvOl::InputObject m_userMaskImageInput;
 	SVExtentMultiLineStruct	   m_MultiLine;
-	uint32_t                   m_idShapeHelper;
 
 	//embeddedValues
 	SvVol::SVEnumerateValueObjectClass  m_evoCurrentMaskOperator;

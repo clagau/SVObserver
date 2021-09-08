@@ -137,7 +137,7 @@ public:
 	
 	unsigned int GetScaleIndex() const { return m_ScaleIndex; }
 	unsigned int GetScaleCount() const { return m_cScaleCount; }
-	HGDIOBJ GetFont() const { return m_hFont[m_ScaleIndex]; }
+	HFONT GetFont() const { return m_hFont[m_ScaleIndex]; }
 
 	//************************************
 	// Method:    GetZoomstep
@@ -181,7 +181,7 @@ protected:
 	static int m_InstanceCount;
 	static const unsigned int m_cScaleCount = 31;
 	static double m_ScaleFactor[m_cScaleCount];
-	static HGDIOBJ m_hFont[m_cScaleCount];
+	static HFONT m_hFont[m_cScaleCount];
  #pragma endregion Member variables
 };
 

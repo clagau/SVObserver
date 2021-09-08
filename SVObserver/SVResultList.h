@@ -86,7 +86,7 @@ public:
 
 #pragma region Member Variables
 protected:
-	mutable Concurrency::critical_section m_Lock;
+	mutable std::mutex m_dataMutex;
 	ResultViewReferences  m_ResultViewReferences;
 	SVToolSet* m_pToolSet;
 	std::vector<SvOp::SVResult*> m_results;

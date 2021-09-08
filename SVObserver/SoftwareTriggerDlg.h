@@ -60,7 +60,7 @@ class SoftwareTriggerDlg : public CDialog
 {
 	SoftwareTriggerDlg(CWnd* pParent = nullptr);   // standard constructor
 public:
-	virtual ~SoftwareTriggerDlg();
+	virtual ~SoftwareTriggerDlg() = default;
 
 	// Dialog Data
 	enum { IDD = IDD_TRIGGER_PERIOD_DLG };
@@ -87,12 +87,14 @@ public:
 	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 	afx_msg void OnBnClickedPausebutton();
 	afx_msg void OnSingleTrigger();
+	afx_msg void OnDestroy();
 
 	virtual BOOL OnInitDialog() override;
 	void ClearTriggers();
 	bool AddTrigger(SvTrig::SVTriggerObject* pTrigger, bool paused);
 	bool HasTriggers() const { return m_triggerTabs.GetItemCount() > 0; }
 	int SelectTrigger();
+	void Close();
 
 	static SoftwareTriggerDlg& Instance();
 
@@ -110,6 +112,7 @@ private:
 
 	SVSpinGroup* m_pSpins {nullptr};
 	CBrush* m_pBrush {nullptr};
+	static bool m_created;
 
 	std::array<bool, cMaxTriggerCount> m_triggerPauseState = {false, false, false, false};
 };

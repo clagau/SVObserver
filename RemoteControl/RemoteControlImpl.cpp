@@ -147,19 +147,12 @@ HRESULT RemoteControlImpl::LoadConfig(LPCTSTR sourceFile) const
 		}
 
 		std::string filePath = SvUl::to_utf8(std::string(sourceFile));
-		if (!filePath.empty())
-		{
-			SvPb::LoadConfigRequest Request;
-			Request.set_filename(filePath);
-			SvPb::StandardResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
-				&SvWsl::SVRCClientService::LoadConfig,
-				std::move(Request)).get();
-			result = Response.hresult();
-		}
-		else
-		{
-			result = E_INVALIDARG;
-		}
+		SvPb::LoadConfigRequest Request;
+		Request.set_filename(filePath);
+		SvPb::StandardResponse Response = SvWsl::runRequest(*m_pSvrcClientService.get(),
+			&SvWsl::SVRCClientService::LoadConfig,
+			std::move(Request)).get();
+		result = Response.hresult();
 		SVLog(result, __FILE__, __LINE__);
 	}
 	HANDLE_EXCEPTION(result)

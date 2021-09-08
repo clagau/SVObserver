@@ -164,6 +164,7 @@ void SVObjectManagerClass::Shutdown()
 	if (!(m_UniqueObjectEntries.empty()))
 	{
 		m_UniqueObjectEntries.clear();
+		SvOl::DependencyManager::Instance().Clear();
 	}
 }
 
@@ -1374,13 +1375,6 @@ void SVObjectManagerClass::listAllObjects()
 		::OutputDebugString(SvUl::Format(_T("%lu; %s\n"), rEntry.second->m_ObjectID, objectData.c_str()).c_str());
 	}
 #endif
-}
-
-void SVObjectManagerClass::clearHeapMemory()
-{
-	/// is only called when CHECK_MEMORY_LEAKS is defined
-	std::unique_lock<std::recursive_mutex> Autolock(m_Mutex, std::defer_lock);
-	SVUniqueObjectEntryMap(m_UniqueObjectEntries).swap(m_UniqueObjectEntries);
 }
 
 #pragma region IObjectManager-function

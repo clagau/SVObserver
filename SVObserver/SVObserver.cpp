@@ -68,7 +68,6 @@
 #include "SVIOLibrary/SVInputObjectList.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVLibrary/SVPackedFile.h"
-#include "SVLibrary/SVOINIClass.h"
 #include "SVLibrary/SVWinUtility.h"
 #include "SVLogLibrary/Logging.h"
 #include "SVMatroxLibrary/SVMatroxApplicationInterface.h"
@@ -100,11 +99,6 @@
 #include "Triggering/SVTriggerProcessingClass.h"
 #include "Triggering/SVTriggerObject.h"
 #include "SVUtilityLibrary/SHA256.h"
-
-
-
-
-
 
 #pragma endregion Includes
 
@@ -190,8 +184,8 @@ BEGIN_MESSAGE_MAP(SVObserverApp, CWinApp)
 
 	ON_COMMAND(ID_RC_GO_OFFLINE, OnRCGoOffline)
 	ON_COMMAND(ID_RC_GO_ONLINE, OnRCGoOnline)
-	ON_COMMAND(ID_RC_CLOSE_AND_CLEAN_RUN_DIR, OnRCCloseAndCleanUpDownloadDirectory)
 	ON_COMMAND(ID_RC_OPEN_CURRENT_SVX, OnRCOpenCurrentSVX)
+	ON_COMMAND(ID_MEM_LEAK_DETECTION, OnMemLeakDetection)
 
 	ON_COMMAND(ID_STOP, OnStop)
 	ON_COMMAND(ID_UPDATE_ALL_IOVIEWS, OnUpdateAllIOViews)
@@ -311,17 +305,10 @@ SVObserverApp::SVObserverApp() :
 	m_ConfigFileName.SetFileType(SV_SVZ_CONFIGURATION_FILE_TYPE);
 	m_ConfigFileName.setExcludeCharacters(SvDef::cExcludeCharsConfigName);
 
-	SVFileNameManagerClass::Instance().AddItem(&m_SvxFileName);
-
 }// end SVObserver ctor
 
 SVObserverApp::~SVObserverApp()
 {
-	// File management for config file.
-	SVFileNameManagerClass::Instance().RemoveItem(&m_SvxFileName);
-
-	// Optional:  Delete all global objects allocated by libprotobuf.
-	google::protobuf::ShutdownProtobufLibrary();
 }
 #pragma endregion Constructor
 
@@ -1519,14 +1506,6 @@ void SVObserverApp::OnRunUtility(UINT uiId)
 	}
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnRCGoOffline
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              : NOTE: Be careful by implementing an update function for
-//				:		for this command! RC should be able to have access
-//				:		all the time!
-////////////////////////////////////////////////////////////////////////////////
 void SVObserverApp::OnRCGoOffline()
 {
 	if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
@@ -1537,11 +1516,6 @@ void SVObserverApp::OnRCGoOffline()
 	}
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnRCGoOnline
-// -----------------------------------------------------------------------------
-// .Description : ...
-////////////////////////////////////////////////////////////////////////////////
 void SVObserverApp::OnRCGoOnline()
 {
 	if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
@@ -1550,28 +1524,6 @@ void SVObserverApp::OnRCGoOnline()
 	}
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnRCCloseAndCleanUpDownloadDirectory
-// -----------------------------------------------------------------------------
-// .Description : ...
-////////////////////////////////////////////////////////////////////////////////
-void SVObserverApp::OnRCCloseAndCleanUpDownloadDirectory()
-{
-	// Returns Nonzero to SVRC Module via SVRCResult, if it is successfully.
-	// Otherwise it returns 0.
-
-	// Closes loaded configuration
-	// Cleans up execution directory ( download directory )
-
-	// Close config immediately, without hint or user message...
-	DestroyConfig(false, true);	// Close config immediately
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnUpdateAllIOViews
-// -----------------------------------------------------------------------------
-// .Description : ...
-////////////////////////////////////////////////////////////////////////////////
 void SVObserverApp::OnUpdateAllIOViews()
 {
 	if (GetIODoc() &&
@@ -1796,19 +1748,8 @@ void SVObserverApp::OnEditPublishedResults(UINT nID)
 	}
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnRCClose
-// -----------------------------------------------------------------------------
-// .Description : ...
-////////////////////////////////////////////////////////////////////////////////
 void SVObserverApp::OnRCClose()
 {
-	// Returns Nonzero to SVRC Module via SVRCResult, if it is successfully.
-	// Otherwise it returns 0.
-
-	// Closes loaded configuration
-	// Cleans up execution directory ( download directory )
-
 	// Close config immediately, without hint or user message...
 	DestroyConfig(false, true);	// Close config immediately
 }
@@ -1865,7 +1806,9 @@ BOOL SVObserverApp::InitInstance()
 	}
 
 	//Initializing  must be before first use of  MessageNotification::FireNotify which is i.e called from CheckDrive 
-	SVVisionProcessorHelper::Instance().Startup();
+	startInstances();
+	SVDirectX::Instance().Initialize();
+
 	// Check for proper setup of V: for SVRemoteControl
 	if (S_OK != CheckDrive(SvStl::GlobalPath::Inst().GetPathOnRamDrive().c_str()))
 	{
@@ -1905,15 +1848,6 @@ BOOL SVObserverApp::InitInstance()
 		_tmkdir(_T("D:\\TEMP"));
 	}
 
-	// Startup Matrox App
-	SVMatroxApplicationInterface::Startup();
-
-	//must be called before SVDigitizerProcessingClass-Startup
-	SvOi::createTriggerRecordControllerInstance(SvOi::TRC_DataType::Writer);
-
-	SVHardwareManifest::Instance().Startup();
-	SvTrig::SVTriggerProcessingClass::Instance().Startup();
-	SvIe::SVDigitizerProcessingClass::Instance().Startup();
 
 	InitializeSecurity();
 
@@ -1947,14 +1881,11 @@ BOOL SVObserverApp::InitInstance()
 
 	LoadStdProfileSettings(7);  // Standard-INI-Dateioptionen einlesen (einschlieﬂlich MRU)
 
-	SvLib::SVOINIClass SvimIni(SvStl::GlobalPath::Inst().GetSVIMIniPath());
-
 	SvUl::LoadDll::Instance().setDefaultPath(SvStl::GlobalPath::Inst().GetBinPath(_T("\\")));
 
 	ValidateMRUList();
 
-	int diagnostic = SvimIni.GetValueInt(_T("Settings"), _T("Diagnostic"), 0);
-	SvSyl::SVThread::SetDiagnostic(diagnostic == 1);
+	SvSyl::SVThread::SetDiagnostic(m_IniInfoHandler.GetInitialInfo().m_diagnostic);
 
 	// Get SourceImageDepth
 	m_lSouceImageDepth = GetProfileInt(_T("Settings"), _T("Source Image Depth"), -1);
@@ -1993,12 +1924,6 @@ BOOL SVObserverApp::InitInstance()
 	// Get AutoRunDelay from Registry...
 	m_AutoRunDelayTime = GetProfileInt(_T("Settings"), _T("Auto Run Delay Time"), m_AutoRunDelayTime);
 	WriteProfileInt(_T("Settings"), _T("Auto Run Delay Time"), m_AutoRunDelayTime);
-
-	// *** // ***
-	SVObjectManagerClass::Instance().ConstructRootObject(SvPb::RootClassId);
-	// *** // ***
-
-	m_IniInfoHandler.LoadIniFilesAndDlls();
 
 	if (S_OK != m_IniInfoHandler.GetInitializationStatusFlags())
 	{
@@ -2068,8 +1993,7 @@ BOOL SVObserverApp::InitInstance()
 	sWin.DestroyWindow();
 
 	TheSVMemoryManager().InitializeMemoryManager(SvDef::ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME,
-		SvDef::ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME,
-		SvimIni);
+		SvDef::ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME, m_IniInfoHandler.GetInitialInfo().m_archiveToolBufferSize, m_IniInfoHandler.GetInitialInfo().m_archiveToolAsyncBufferSize);
 
 	// Das Hauptfenster ist initialisiert und kann jetzt angezeigt und aktualisiert werden.
 #ifdef _DEBUG
@@ -2110,48 +2034,14 @@ BOOL SVObserverApp::InitInstance()
 	SvStl::MessageManager Info(SvStl::MsgType::Log);
 	Info.setMessage(SVMSG_SVO_25_SVOBSERVER_STARTED, SvStl::Tid_Version, msgList, SvStl::SourceFileParams(StdMessageParams));
 
-	SVDirectX::Instance().Initialize();
+	ExtrasEngine::Instance().SetAutoSaveEnabled(m_IniInfoHandler.GetInitialInfo().m_enableAutosave);
 
-	int AutoSaveValue = SvimIni.GetValueInt(_T("Settings"), _T("EnableAutosave"), 0); //accept a number: non-zero enables
-
-	std::string AutoSaveValueString = SvimIni.GetValueString(_T("Settings"), _T("EnableAutosave"), _T("FALSE"));
-
-	if (AutoSaveValueString == std::string("TRUE") || AutoSaveValueString == std::string("true"))
-	{
-		AutoSaveValue = 1;
-	}
-
-	ExtrasEngine::Instance().SetAutoSaveEnabled(AutoSaveValue != 0);
-
-	m_DataValidDelay = static_cast<long> (SvimIni.GetValueInt(_T("Settings"), _T("DataValidDelay"), 0));
+	m_DataValidDelay = m_IniInfoHandler.GetInitialInfo().m_dataValidDelay;
 
 	///This sets the reserved text size for text value objects which can change in size
-	int maxTextSize = SvimIni.GetValueInt(_T("Settings"), _T("MaxTextSize"), SvDef::cMaxStringByteSize);
+	int maxTextSize = (0 == m_IniInfoHandler.GetInitialInfo().m_maxTextSize) ? SvDef::cMaxStringByteSize : m_IniInfoHandler.GetInitialInfo().m_maxTextSize;
 	SvVol::SVStringValueObjectClass::setMaxTextSize(maxTextSize);
 
-	SvLog::bootstrap_logging();
-
-	WebSocketSettings Settings;
-	WebSocketSettingsLoader settingsLoader;
-	settingsLoader.loadFromIni(Settings);
-
-	try
-	{
-		SvLog::init_logging(Settings.logSettings);
-	}
-	catch (std::runtime_error& rRuntimeError)
-	{
-		SV_LOG_GLOBAL(error) << std::string(rRuntimeError.what());
-	}
-
-
-	SV_LOG_GLOBAL(info) << "SVObserverIniPath:" << settingsLoader.GetIni();
-	SvSml::ShareEvents::GetInstance().SetParameter(Settings.shareControlSettings);
-	std::unique_ptr<SvHttp::HttpServerSettings>  pSettings = std::make_unique<SvHttp::HttpServerSettings>();
-	*pSettings.get() = Settings.httpSettings;
-
-	std::shared_ptr<SVRCCommand> pSVRCCommand = std::make_shared<SVRCCommand>();
-	SVRCWebsocketServer::Instance()->Start(pSVRCCommand, std::move(pSettings));
 
 	if (!SVOLicenseManager::Instance().HasMatroxLicense())
 	{
@@ -2164,8 +2054,6 @@ BOOL SVObserverApp::InitInstance()
 		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SVObserver_MatroxGigELicenseNotFound, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10127);
 	}
-
-	SVObjectManagerClass::Instance().fitFirstObjectId();
 
 	return true;
 }
@@ -2195,16 +2083,12 @@ void SVObserverApp::Serialize(CArchive& ar)
 
 int SVObserverApp::ExitInstance()
 {
+	stopInstances();
+
+	SVClassRegisterListClass::Instance().Shutdown();
 	SVDirectX::Instance().clear();
-	SVVisionProcessorHelper::Instance().Shutdown();
-	SVRCWebsocketServer::Instance()->Stop();
 
-	SvSml::ShareEvents::GetInstance().QuiesceSharedMemory();
-	SvSml::SharedMemWriter::Instance().Destroy();
 	ValidateMRUList();
-
-	// Destroy still open message windows
-	DestroyMessageWindow();
 
 #if !defined( _DEBUG )
 	// Display close window	
@@ -2212,31 +2096,11 @@ int SVObserverApp::ExitInstance()
 	if (m_pMessageWindow && m_pMessageWindow->Create(IDD_MESSAGE_DIALOG))
 	{
 		m_pMessageWindow->ShowWindow(SW_SHOW);
-}
+	}
 #else
 	m_pMessageWindow = nullptr;
 #endif
 
-	// *** // ***
-	SVObjectManagerClass::Instance().DestroyRootObject();
-	// *** // ***
-
-	m_IniInfoHandler.INIClose();
-
-	SvTrig::SVTriggerProcessingClass::Instance().Shutdown();
-	SvIe::SVDigitizerProcessingClass::Instance().Shutdown();
-	SVHardwareManifest::Instance().Shutdown();
-
-	SVObjectManagerClass::Instance().Shutdown();
-	SVClassRegisterListClass::Instance().Shutdown();
-
-	SVIOConfigurationInterfaceClass::Instance().Shutdown();
-
-	SvOi::destroyTriggerRecordController();
-	// Shutdown MIL
-	SVMatroxApplicationInterface::Shutdown();
-
-	SvStl::MessageManager::setShowDisplayFunction(nullptr);
 
 	//add message to event viewer - SVObserver stopped
 	SvStl::MessageManager Msg(SvStl::MsgType::Log);
@@ -2256,6 +2120,8 @@ int SVObserverApp::ExitInstance()
 		delete CMFCVisualManager::GetInstance();
 	}
 
+	// Optional:  Delete all global objects allocated by libprotobuf.
+	google::protobuf::ShutdownProtobufLibrary();
 	return CWinApp::ExitInstance();
 }
 
@@ -2841,7 +2707,7 @@ HRESULT SVObserverApp::LoadPackedConfiguration(LPCTSTR pFileName, ConfigFileType
 
 	if (0 == _access(fileName.c_str(), 0))
 	{
-		OnRCCloseAndCleanUpDownloadDirectory();
+		OnRCClose();
 	}
 	else
 	{
@@ -4265,6 +4131,22 @@ void SVObserverApp::UpdateAllMenuExtrasUtilities()
 			menu.Detach();
 		}
 		pMdiChild = dynamic_cast<CMDIChildWnd*>(pMdiChild->GetWindow(GW_HWNDNEXT));
+	}
+}
+
+void SVObserverApp::OnMemLeakDetection()
+{
+	if (m_IniInfoHandler.GetInitialInfo().m_memoryLeakDetection)
+	{
+		if(m_MemLeakDetection)
+		{
+			startInstances();
+		}
+		else
+		{
+			stopInstances();
+		}
+		m_MemLeakDetection = !m_MemLeakDetection;
 	}
 }
 
@@ -5817,11 +5699,88 @@ bool SVObserverApp::DestroyMessageWindow()
 #pragma endregion Protected Methods
 
 #pragma region Private Methods
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnStopAll
-// -----------------------------------------------------------------------------
-// .Description : ...
-////////////////////////////////////////////////////////////////////////////////
+void SVObserverApp::startInstances()
+{
+	SVFileNameManagerClass::Instance().AddItem(&m_SvxFileName);
+
+	SvStl::MessageManager::setShowDisplayFunction(SvMc::DisplayMessageBox::showDialog);
+	SVVisionProcessorHelper::Instance().Startup();
+	SVMatroxApplicationInterface::Startup();
+	//must be called before SVDigitizerProcessingClass-Startup
+	SvOi::createTriggerRecordControllerInstance(SvOi::TRC_DataType::Writer);
+	SVHardwareManifest::Instance().Startup();
+	SvTrig::SVTriggerProcessingClass::Instance().Startup();
+	SvIe::SVDigitizerProcessingClass::Instance().Startup();
+
+	SVObjectManagerClass::Instance().ConstructRootObject(SvPb::RootClassId);
+	m_IniInfoHandler.LoadIniFilesAndDlls();
+
+	SvLog::bootstrap_logging();
+	WebSocketSettings Settings;
+	WebSocketSettingsLoader settingsLoader;
+	settingsLoader.loadFromIni(Settings);
+
+	try
+	{
+		SvLog::init_logging(Settings.logSettings);
+	}
+	catch (std::runtime_error& rRuntimeError)
+	{
+		SV_LOG_GLOBAL(error) << std::string(rRuntimeError.what());
+	}
+
+	SV_LOG_GLOBAL(info) << "SVObserverIniPath:" << settingsLoader.GetIni();
+	SvSml::ShareEvents::GetInstance().SetParameter(Settings.shareControlSettings);
+	std::unique_ptr<SvHttp::HttpServerSettings>  pSettings = std::make_unique<SvHttp::HttpServerSettings>();
+	*pSettings.get() = Settings.httpSettings;
+
+	std::shared_ptr<SVRCCommand> pSVRCCommand = std::make_shared<SVRCCommand>();
+	SVRCWebsocketServer::Instance()->Start(pSVRCCommand, std::move(pSettings));
+
+	SVThreadManager::Instance();
+	HINSTANCE hZipInstance {nullptr};
+	SvUl::LoadDll::Instance().getDll(SvUl::ZipDll, hZipInstance);
+
+
+	fillExchangeObjectId();
+	fillExchangeEmbedded();
+	fillEmbeddedIdFromIndirectLinked();
+
+
+	SVObjectManagerClass::Instance().fitFirstObjectId();
+}
+
+void SVObserverApp::stopInstances()
+{
+	SVVisionProcessorHelper::Instance().Shutdown();
+	SVRCWebsocketServer::Instance()->Stop();
+
+	SvSml::ShareEvents::GetInstance().QuiesceSharedMemory();
+	SvSml::SharedMemWriter::Instance().Destroy();
+	// Destroy still open message windows
+	DestroyMessageWindow();
+
+	SVObjectManagerClass::Instance().DestroyRootObject();
+
+	SvTrig::SVTriggerProcessingClass::Instance().Shutdown();
+	SvIe::SVDigitizerProcessingClass::Instance().Shutdown();
+	SVHardwareManifest::Instance().Shutdown();
+
+	SVObjectManagerClass::Instance().Shutdown();
+
+	SVIOConfigurationInterfaceClass::Instance().Shutdown();
+
+	m_IniInfoHandler.INIClose();
+	SvOi::destroyTriggerRecordController();
+	// Shutdown MIL
+	SVMatroxApplicationInterface::Shutdown();
+	SvStl::MessageManager::setShowDisplayFunction(nullptr);
+
+	// File management for config file.
+	SVFileNameManagerClass::Instance().RemoveItem(&m_SvxFileName);
+	SoftwareTriggerDlg::Instance().Close();
+}
+
 void SVObserverApp::OnStopAll()
 {
 	if (m_pMainWnd)

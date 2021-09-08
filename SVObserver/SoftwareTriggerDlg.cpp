@@ -22,17 +22,13 @@ constexpr COLORREF COLOR_WARN = RGB(255, 240, 64);
 constexpr const char* cContinue = _T("Continue");
 constexpr const char* cPause = _T("Pause");
 
+bool SoftwareTriggerDlg::m_created {false};
+
 SoftwareTriggerDlg::SoftwareTriggerDlg(CWnd* pParent /*=nullptr*/): 
 	CDialog(SoftwareTriggerDlg::IDD, pParent),
 	m_knobCtrl(SvTrig::MinTimerPeriod_ms, SvTrig::MaxTimerPeriod_ms),
 	m_pBrush(nullptr)
 {
-}
-
-SoftwareTriggerDlg::~SoftwareTriggerDlg()
-{
-	delete m_pSpins;
-	delete m_pBrush;
 }
 
 void SoftwareTriggerDlg::DoDataExchange(CDataExchange* pDX)
@@ -66,6 +62,7 @@ BEGIN_MESSAGE_MAP(SoftwareTriggerDlg, CDialog)
 	ON_EN_KILLFOCUS(IDC_USEC_EDIT, &SoftwareTriggerDlg::OnEnKillfocusUsecEdit)
 	ON_WM_CTLCOLOR()
 	ON_BN_CLICKED(IDC_PAUSEBUTTON, &SoftwareTriggerDlg::OnBnClickedPausebutton)
+	ON_WM_DESTROY()
 END_MESSAGE_MAP()
 
 
@@ -235,19 +232,30 @@ bool SoftwareTriggerDlg::AddTrigger(SvTrig::SVTriggerObject* pTrigger, bool paus
 	return tabIndex > -1;
 }
 
+void SoftwareTriggerDlg::Close()
+{
+	if (m_created)
+	{
+		m_created = false;
+		DestroyWindow();
+	}
+}
+
 SoftwareTriggerDlg& SoftwareTriggerDlg::Instance()
 {
 	static SoftwareTriggerDlg dlg(nullptr);
-	static bool created = false;
-	if (false == created)
+	if (false == m_created)
 	{
-		created = true;
 		CWnd* pParent = ::AfxGetMainWnd();
-		while (nullptr != pParent->GetParent())
+		if (nullptr != pParent)
 		{
-			pParent = pParent->GetParent();
+			while (nullptr != pParent->GetParent())
+			{
+				pParent = pParent->GetParent();
+			}
+			dlg.Create(IDD_TRIGGER_PERIOD_DLG, pParent);
+			m_created = true;
 		}
-		dlg.Create(IDD_TRIGGER_PERIOD_DLG, pParent);
 	}
 	return dlg;
 }
@@ -324,4 +332,13 @@ void SoftwareTriggerDlg::OnSingleTrigger()
 		SvTrig::SVTriggerObject* pTrigger = reinterpret_cast<SvTrig::SVTriggerObject*>(item.lParam);
 		pTrigger->Fire();
 	}
+}
+
+void SoftwareTriggerDlg::OnDestroy()
+{
+	delete m_pSpins;
+	delete m_pBrush;
+	m_pSpins = nullptr;
+	m_pBrush = nullptr;
+	CDialog::OnDestroy();
 }

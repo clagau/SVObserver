@@ -22,7 +22,6 @@ HRESULT GlobalRCGetMode( unsigned long* plMode );
 std::string GlobalRCGetConfigurationName(bool runPath = true);
 HRESULT GlobalRCSaveConfiguration(LPCTSTR pFileName);
 bool GlobalRCOpenConfiguration( LPCTSTR ConfigName );
-void GlobalRCCloseAndCleanConfiguration();
 void GlobalRCCloseConfiguration();
 HRESULT GlobalRCLoadPackedConfiguration(LPCTSTR pFileName, ConfigFileType fileType);
 HRESULT GlobalRCAddFileToConfig(LPCTSTR pFileName);

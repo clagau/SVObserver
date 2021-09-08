@@ -2316,8 +2316,6 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 
 	try
 	{
-		fillExchangeObjectId();
-
 		std::string BoardName;
 		long lNumBoardDig(0);
 		long lNumCameras(0);
@@ -2693,11 +2691,6 @@ bool SVConfigurationObject::DestroyConfiguration()
 	}
 
 	SVObjectManagerClass::Instance().resetNextObjectId();
-#if defined CHECK_MEMORY_LEAKS
-	///This insures that no memory is still allocated on the heap
-	SVObjectManagerClass::Instance().clearHeapMemory();
-#endif
-
 	return bOk;
 }
 

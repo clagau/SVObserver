@@ -676,4 +676,3 @@ void SVImageViewScroll::OnSetFocus(CWnd* pOldWnd)
 		}
 	}
 }
-

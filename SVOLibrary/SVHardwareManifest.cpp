@@ -108,15 +108,8 @@ void SVHardwareManifest::Startup()
 
 void SVHardwareManifest::Shutdown()
 {
-	if (!(m_TriggerDeviceParams.empty()))
-	{
-		m_TriggerDeviceParams.clear();
-	}
-
-	if (!(m_AcquisitionDeviceParams.empty()))
-	{
-		m_AcquisitionDeviceParams.clear();
-	}
+	m_TriggerDeviceParams.clear();
+	m_AcquisitionDeviceParams.clear();
 }
 
 const SVTriggerDeviceParamsVector& SVHardwareManifest::GetTriggerDeviceParams() const

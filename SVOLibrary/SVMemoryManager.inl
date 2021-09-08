@@ -14,18 +14,17 @@ constexpr int AsyncDefault4GB = 50;
 constexpr int AsyncDefault16GB = 200;
 constexpr int GoOfflineDefault4GB = 300;
 constexpr int GoOfflineDefault16GB = 2000;
+constexpr int cKiloByte = 1024;
 
 template <typename OWNERTYPE>
-inline void SVMemoryManager<OWNERTYPE>::InitializeMemoryManager(LPCTSTR strPoolName1, LPCTSTR strPoolName2, const SvLib::SVOINIClass& rSvimIni)
+inline void SVMemoryManager<OWNERTYPE>::InitializeMemoryManager(LPCTSTR strPoolName1, LPCTSTR strPoolName2, long goOfflineBufferSize, long asyncBufferSize)
 {
 	//Get Amount of System Memory
 	MEMORYSTATUSEX statex;
 	statex.dwLength = sizeof(statex);
 	GlobalMemoryStatusEx(&statex);
-	DWORDLONG AmountOfRam = (statex.ullTotalPhys / 1024) / 1024;
+	DWORDLONG AmountOfRam = (statex.ullTotalPhys / cKiloByte) / cKiloByte;
 
-	int iGoOfflineBufferSize = 0;
-	int iAsyncBufferSize = 0;
 	// allocate pools in the memory manager
 
 	//Log amount of physical memory - may help in debugging issues in the future.
@@ -35,18 +34,16 @@ inline void SVMemoryManager<OWNERTYPE>::InitializeMemoryManager(LPCTSTR strPoolN
 	Msg.setMessage(SVMSG_SVO_54_EMPTY, SvStl::Tid_AmountOfSystemMemoryText, MessageList, SvStl::SourceFileParams(StdMessageParams), SvStl::Memory_Log_45001);
 
 	//if amount of physical memory is around 16 GigE allocate the larger memory pools.
-	if (AmountOfRam >= UseLargerArchiveMemoryPool)
+	if (0 == goOfflineBufferSize)
 	{
-		iGoOfflineBufferSize = rSvimIni.GetValueInt(_T("Settings"), _T("ArchiveToolGoOfflineBufferSize"), GoOfflineDefault16GB);
-		iAsyncBufferSize = rSvimIni.GetValueInt(_T("Settings"), _T("ArchiveToolAsyncBufferSize"), AsyncDefault16GB);
+		goOfflineBufferSize = (AmountOfRam >= UseLargerArchiveMemoryPool) ? GoOfflineDefault16GB : GoOfflineDefault4GB;
 	}
-	else
+	if (0 == asyncBufferSize)
 	{
-		iGoOfflineBufferSize = rSvimIni.GetValueInt(_T("Settings"), _T("ArchiveToolGoOfflineBufferSize"), GoOfflineDefault4GB);
-		iAsyncBufferSize = rSvimIni.GetValueInt(_T("Settings"), _T("ArchiveToolAsyncBufferSize"), AsyncDefault4GB);
+		asyncBufferSize = (AmountOfRam >= UseLargerArchiveMemoryPool) ? AsyncDefault16GB : AsyncDefault4GB;
 	}
-	CreatePool(strPoolName1, iGoOfflineBufferSize * 1024);
-	CreatePool(strPoolName2, iAsyncBufferSize * 1024);
+	CreatePool(strPoolName1, goOfflineBufferSize * cKiloByte);
+	CreatePool(strPoolName2, asyncBufferSize * cKiloByte);
 }
 
 template <typename OWNERTYPE>

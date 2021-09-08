@@ -38,16 +38,6 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-void FireNotification(SvPb::NotifyType notifyType, const _variant_t& parameter)
-{
-	SVVisionProcessorHelper::Instance().FireNotification(notifyType, parameter);
-}
-
-void FireMessageNotification(const SvStl::MessageContainer& rMessage, int messageType)
-{
-	SVVisionProcessorHelper::Instance().FireMessageNotification(rMessage, messageType);
-}
-
 SVVisionProcessorHelper& SVVisionProcessorHelper::Instance()
 {
 	static SVVisionProcessorHelper object;
@@ -90,8 +80,7 @@ HRESULT SVVisionProcessorHelper::LoadConfiguration(std::string& rFileName) const
 
 				if (bSuccess)
 				{
-					//global function to close config and clean up c:\run dir
-					GlobalRCCloseAndCleanConfiguration();
+					GlobalRCCloseConfiguration();
 				}
 			}
 			else
@@ -106,8 +95,7 @@ HRESULT SVVisionProcessorHelper::LoadConfiguration(std::string& rFileName) const
 
 			if (bSuccess)
 			{
-				//global function to close config and clean up c:\run dir
-				GlobalRCCloseAndCleanConfiguration();
+				GlobalRCCloseConfiguration();
 			}
 		}
 		else
@@ -1102,13 +1090,30 @@ void SVVisionProcessorHelper::Startup()
 		std::make_pair(SvDef::FqnCameras, setCameraItems),
 	};
 
-	SvStl::MessageManager::setNotificationFunction(::FireMessageNotification);
-	SVSVIMStateClass::setNotificationFunction(::FireNotification);
+	SvStl::MessageNotifyFunctor msgNotifier = [this](const SvStl::MessageContainer& rMessage, int type) {return FireMessageNotification(rMessage, type); };
+	SvStl::MessageManager::setNotificationFunction(msgNotifier);
+
+	NotifyFunctor notifier = [this](SvPb::NotifyType notifyType, const _variant_t& parameter) {return FireNotification(notifyType, parameter); };
+	SVSVIMStateClass::setNotificationFunction(notifier);
 }
 
 void SVVisionProcessorHelper::Shutdown()
 {
-	//SvStl::MessageManager::setNotificationFunction(nullptr);
+	std::lock_guard<std::mutex> lockGuard(m_SubscriptionsMutex);
+	for (auto rSub : m_Subscriptions)
+	{
+		rSub.m_context->cancel();
+	}
+	for (auto rMsgSub : m_MessageSubscriptions)
+	{
+		rMsgSub.m_context->cancel();
+	}
+
+	m_GetItemsFunctors.clear();
+	m_SetItemsFunctors.clear();
+	m_Subscriptions.clear();
+	m_MessageSubscriptions.clear();
+	SvStl::MessageManager::setNotificationFunction(nullptr);
 	SVSVIMStateClass::setNotificationFunction(nullptr);
 }
 
@@ -1143,7 +1148,7 @@ void SVVisionProcessorHelper::FireNotification(SvPb::NotifyType notifyType, cons
 	}
 	response.set_type(notifyType);
 	SvPb::ConvertVariantToProtobuf(parameter, response.mutable_parameter());
-	ProcessNotification(response);
+	ProcessNotification(std::move(response));
 }
 
 void SVVisionProcessorHelper::FireMessageNotification(const SvStl::MessageContainer& rMessage, int type) const
@@ -1182,7 +1187,7 @@ void SVVisionProcessorHelper::FireMessageNotification(const SvStl::MessageContai
 	}
 }
 
-void SVVisionProcessorHelper::ProcessNotification(const SvPb::GetNotificationStreamResponse& response) const
+void SVVisionProcessorHelper::ProcessNotification(SvPb::GetNotificationStreamResponse&& response) const
 {
 	std::lock_guard<std::mutex> lockGuard(m_SubscriptionsMutex);
 	for(auto it = m_Subscriptions.begin(); it != m_Subscriptions.end(); )
@@ -1197,9 +1202,7 @@ void SVVisionProcessorHelper::ProcessNotification(const SvPb::GetNotificationStr
 		bool allNotifications = it->m_notifyList.empty();
 		if (allNotifications || isNotifyTypeInList)
 		{
-			SvPb::GetNotificationStreamResponse copyResponse;
-			copyResponse.CopyFrom(response);
-			it->m_observer.onNext(std::move(copyResponse));
+			it->m_observer.onNext(std::move(response));
 		}
 		++it;
 	}

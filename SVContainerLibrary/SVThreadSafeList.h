@@ -6,19 +6,12 @@
 
 #pragma once
 
-#pragma region Includes
-//Moved to precompiled header: #include <ppl.h>
-//Moved to precompiled header: #include <concrt.h>
-//Moved to precompiled header: #include <deque>
-//Moved to precompiled header: #include <iterator>
-#pragma endregion Includes
-
 template<typename type>
 class SVThreadSafeList
 {
 #pragma region Public
 public:
-	typedef std::deque<typename type> Container;
+	typedef std::vector<typename type> Container;
 	typedef typename Container::size_type size_type;
 
 	SVThreadSafeList() {}
@@ -27,17 +20,17 @@ public:
 
 	inline bool empty() const 
 	{ 
-		Concurrency::reader_writer_lock::scoped_lock_read lock(m_dataLock);
+		std::lock_guard<std::mutex> lock(m_dataMutex);
 		return m_list.empty(); 
 	}
 	inline size_t size() const 
 	{ 
-		Concurrency::reader_writer_lock::scoped_lock_read lock(m_dataLock);
-		return m_list.size(); 
+		std::lock_guard<std::mutex> lock(m_dataMutex);
+		return m_list.size();
 	}
 	const type& operator[](size_type nIndex) const 
 	{ 
-		Concurrency::reader_writer_lock::scoped_lock_read lock(m_dataLock);
+		std::lock_guard<std::mutex> lock(m_dataMutex);
 		if (nIndex >= 0 && nIndex < m_list.size())
 		{
 			return m_list[nIndex]; 
@@ -51,7 +44,7 @@ public:
 	/////////////////////////////////////////////////
 	int Add(const type& newElement)
 	{
-		Concurrency::reader_writer_lock::scoped_lock lock(m_dataLock); // writer lock
+		std::lock_guard<std::mutex> lock(m_dataMutex);
 		m_list.push_back(newElement);
 		return static_cast<int>(m_list.size() - 1);
 	}
@@ -62,7 +55,7 @@ public:
 	/// \returns int Position of the add.
 	int Insert(size_t position, const type& newElement)
 	{
-		Concurrency::reader_writer_lock::scoped_lock lock(m_dataLock); // writer lock
+		std::lock_guard<std::mutex> lock(m_dataMutex);
 		if (0 <= position && m_list.size() > position)
 		{
 			m_list.insert(m_list.begin()+position, newElement);
@@ -81,7 +74,7 @@ public:
 	/////////////////////////////////////////////////
 	void RemoveAt(int nIndex)
 	{
-		Concurrency::reader_writer_lock::scoped_lock lock(m_dataLock);  // writer lock
+		std::lock_guard<std::mutex> lock(m_dataMutex);
 		if (0 <= nIndex && m_list.size() > nIndex)
 		{
 			auto it = m_list.begin() + nIndex;
@@ -94,7 +87,7 @@ public:
 	/////////////////////////////////////////////////
 	void RemoveAll()
 	{
-		Concurrency::reader_writer_lock::scoped_lock lock(m_dataLock);  // writer lock
+		std::lock_guard<std::mutex> lock(m_dataMutex);
 		if (!m_list.empty())
 		{
 			m_list.clear();
@@ -104,7 +97,7 @@ public:
 
 #pragma region Protected
 protected:
-	mutable Concurrency::reader_writer_lock m_dataLock;
+	mutable std::mutex m_dataMutex;
 	Container m_list;
 	type m_emptytype; // empty item to be returned if
 #pragma endregion Protected

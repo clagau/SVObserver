@@ -55,7 +55,7 @@ void SVResultList::SetToolSet(SVToolSet* pToolSet)
 
 void SVResultList::Refresh(SvIe::SVTaskObjectClass* pRootObject)
 {
-	Concurrency::critical_section::scoped_lock  AutoLock(m_Lock);
+	std::lock_guard<std::mutex> lock(m_dataMutex);
 
 	m_results.clear();
 
@@ -79,21 +79,21 @@ void SVResultList::Refresh(SvIe::SVTaskObjectClass* pRootObject)
 
 double SVResultList::getUpdateTimeStamp()
 {
-	Concurrency::critical_section::scoped_lock  AutoLock(m_Lock);
+	std::lock_guard<std::mutex> lock(m_dataMutex);
 
 	return m_ResultViewReferences.getUpdateTimeStamp();
 }
 
 void SVResultList::Save(SvOi::IObjectWriter& rWriter)
 {
-	Concurrency::critical_section::scoped_lock  AutoLock(m_Lock);
+	std::lock_guard<std::mutex> lock(m_dataMutex);
 
 	m_ResultViewReferences.Save(rWriter);
 }
 
 bool SVResultList::LoadViewedVariables(ResultViewReferences::SVTreeType& rTree, ResultViewReferences::SVTreeType::SVBranchHandle htiParent)
 {
-	Concurrency::critical_section::scoped_lock  AutoLock(m_Lock);
+	std::lock_guard<std::mutex> lock(m_dataMutex);
 
 	m_ResultViewReferences.Clear();
 	SVInspectionProcess* pInspec(nullptr);
@@ -134,27 +134,27 @@ bool SVResultList::LoadViewedVariables(ResultViewReferences::SVTreeType& rTree, 
 
 void SVResultList::RebuildReferenceVector(SVInspectionProcess* pInspection )
 {
-	Concurrency::critical_section::scoped_lock  AutoLock(m_Lock);
+	std::lock_guard<std::mutex> lock(m_dataMutex);
 
 	return m_ResultViewReferences.RebuildReferenceVector(pInspection);
 }
 
 void  SVResultList::GetResultData(SvIe::SVIPResultData& rResultData) const
 {
-	Concurrency::critical_section::scoped_lock  AutoLock(m_Lock);
+	std::lock_guard<std::mutex> lock(m_dataMutex);
 
 	m_ResultViewReferences.GetResultData( rResultData);
 }
 
 std::vector <SvIe::IPResultTableData> SVResultList::getResultTableData(const SvOi::ITriggerRecordR& rTriggerRecord)
 {
-	Concurrency::critical_section::scoped_lock  AutoLock(m_Lock);
+	std::lock_guard<std::mutex> lock(m_dataMutex);
 	return m_ResultViewReferences.getResultTableData(rTriggerRecord);
 }
 
 HRESULT SVResultList::GetResultDefinitions( ResultViewReferences::SVResultDefinitionVector& rDefinitions )  const
 {
-	Concurrency::critical_section::scoped_lock  AutoLock(m_Lock);
+	std::lock_guard<std::mutex> lock(m_dataMutex);
 
 	return m_ResultViewReferences.GetResultDefinitions(rDefinitions);
 }
@@ -193,14 +193,14 @@ void SVResultList::Clear()
 
 const SVObjectReferenceVector& SVResultList::GetSelectedObjects() const
 {
-	Concurrency::critical_section::scoped_lock  AutoLock(m_Lock);
+	std::lock_guard<std::mutex> lock(m_dataMutex);
 
 	return m_ResultViewReferences.GetSelectedObjects();
 }
 
 bool SVResultList::Insert( const std::string& rDottedName )
 {
-	Concurrency::critical_section::scoped_lock  AutoLock(m_Lock);
+	std::lock_guard<std::mutex> lock(m_dataMutex);
 
 	return m_ResultViewReferences.Insert( rDottedName );
 }

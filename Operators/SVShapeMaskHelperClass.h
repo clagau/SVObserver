@@ -65,7 +65,7 @@ protected:
 	SvVol::LinkedValue       m_voOffset;
 	SvVol::SVEnumerateValueObjectClass  m_evoXYSymmetry;
 
-	SVMaskShape*           m_pShape;
+	SVMaskShape* m_pShape {nullptr};
 	std::unique_ptr<SvIe::SVImageClass> m_pImage{ nullptr };
 
 private:

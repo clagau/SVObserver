@@ -62,7 +62,6 @@ void SVUserMaskOperatorClass::init()
 
 	// RRRRGGGGHHHHHH who created this stupid object structure????
 	SVShapeMaskHelperClass* pShapeHelper = new SVShapeMaskHelperClass(this);
-	m_idShapeHelper = pShapeHelper->getObjectId();
 
 	bool bAddFriend = AddFriend( pShapeHelper->getObjectId() );
 	assert( bAddFriend );	UNREFERENCED_PARAMETER(bAddFriend);
@@ -210,49 +209,28 @@ bool SVUserMaskOperatorClass::ResetObject(SvStl::MessageContainerVector *pErrorM
 
 SVShapeMaskHelperClass* SVUserMaskOperatorClass::GetShapeHelper()
 {
-	SVShapeMaskHelperClass* pMaskHelper = nullptr;
-
 	// Get Friend Object
 	for( size_t i = 0; i < m_friendList.size(); i++ )
 	{
 		const SVObjectInfoStruct& friendObjectInfo = m_friendList[i];
-		if(nullptr != (pMaskHelper = dynamic_cast<SVShapeMaskHelperClass*> (friendObjectInfo.getObject())))
+		if(SvPb::SVShapeMaskHelperObjectType == friendObjectInfo.m_ObjectTypeInfo.m_SubType)
 		{
-			m_idShapeHelper = pMaskHelper->getObjectId();
-			break;
+			return static_cast<SVShapeMaskHelperClass*>  (friendObjectInfo.getObject());
 		}
 	}
 
-	//!! temp workaround for 4.60 Beta 4
-	if ( nullptr == pMaskHelper )
-	{
-		SVShapeMaskHelperClass* pShapeHelper = new SVShapeMaskHelperClass(this);
-		m_idShapeHelper = pShapeHelper->getObjectId();
-
-		bool bAddFriend = AddFriend( pShapeHelper->getObjectId() );
-		assert(bAddFriend);	UNREFERENCED_PARAMETER(bAddFriend);
-
-		if( CreateChildObject(pShapeHelper) )
-		{
-			pMaskHelper = pShapeHelper;
-		}
-	}
-
-	assert( pMaskHelper );
-	return pMaskHelper;
+	return nullptr;
 }
 
 const SVShapeMaskHelperClass* SVUserMaskOperatorClass::GetShapeHelper() const
 {
-	SVShapeMaskHelperClass* pMaskHelper = nullptr;
-
 	// Get Friend Object
 	for (size_t i = 0; i < m_friendList.size(); i++)
 	{
 		const SVObjectInfoStruct& friendObjectInfo = m_friendList[i];
-		if (nullptr != (pMaskHelper = dynamic_cast<SVShapeMaskHelperClass*> (friendObjectInfo.getObject())))
+		if (SvPb::SVShapeMaskHelperObjectType == friendObjectInfo.m_ObjectTypeInfo.m_SubType)
 		{
-			return pMaskHelper;
+			return static_cast<SVShapeMaskHelperClass*>  (friendObjectInfo.getObject());
 		}
 	}
 	return nullptr;

@@ -957,11 +957,20 @@ void SVRCCommand::LoadConfig(const SvPb::LoadConfigRequest& rRequest, SvRpc::Tas
 
 	if (S_OK == result)
 	{
-		std::string ConfigFile = SvUl::to_ansi(rRequest.filename());
-
-		SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
-		result = SVVisionProcessorHelper::Instance().LoadConfiguration(ConfigFile);
-		SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
+		std::string configFile = SvUl::to_ansi(rRequest.filename());
+		
+		if (configFile.empty())
+		{
+			SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
+			GlobalRCCloseConfiguration();
+			SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
+		}
+		else
+		{
+			SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
+			result = SVVisionProcessorHelper::Instance().LoadConfiguration(configFile);
+			SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
+		}
 	}
 	
 	Response.set_hresult(result);

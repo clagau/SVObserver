@@ -140,6 +140,7 @@ bool SVShapeMaskHelperClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 	if (nullptr != m_pShape )
 	{
 		delete m_pShape;
+		m_pShape = nullptr;
 	}
 
 	ShapeTypeEnum eShapeType = GetShape();

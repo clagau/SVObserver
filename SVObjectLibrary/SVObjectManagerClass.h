@@ -195,9 +195,6 @@ public:
 	/// Used to output all objects listed in the object manager
 	void listAllObjects();
 
-	/// Use this function to clear the heap memory used by the object manager to better find memory leaks
-	void clearHeapMemory();
-
 	///return Mutex  
 	std::recursive_mutex* GetMutex() { return  &m_Mutex; }
 

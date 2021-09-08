@@ -32,16 +32,6 @@ BEGIN_MESSAGE_MAP(ResultTabbedView, CView)
 END_MESSAGE_MAP()
 #pragma endregion Declarations
 
-#pragma region Constructor
-ResultTabbedView::ResultTabbedView() :
-	m_pIPDoc(nullptr)
-{
-}
-
-ResultTabbedView::~ResultTabbedView()
-{
-}
-#pragma endregion Constructor
 
 #pragma region Public Methods
 void ResultTabbedView::GetParameters(SvOi::IObjectWriter& rWriter)
@@ -214,6 +204,7 @@ int ResultTabbedView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_TabCtrl.AddTab(&m_ResultTableList, _T("Table Result"));
 	m_TabCtrl.SetActiveTab(0);
 
+	m_TabCtrl.AutoDestroyWindow(true);
 	return 0;
 }
 
@@ -231,7 +222,7 @@ void ResultTabbedView::OnSize(UINT nType, int cx, int cy)
 #pragma endregion Private Methods
 
 
-afx_msg LRESULT ResultTabbedView::OnChangingActiveTab(WPARAM wParam, LPARAM)
+LRESULT ResultTabbedView::OnChangingActiveTab(WPARAM wParam, LPARAM)
 {
 	//! wParam contains the active tab index
 	UpdateTab(static_cast<int> (wParam));

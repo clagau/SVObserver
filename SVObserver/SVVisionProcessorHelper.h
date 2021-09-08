@@ -132,7 +132,7 @@ private:
 	HRESULT GetObjectDefinition(const SvOi::IObjectClass& rObj, const long p_Filter, SVDataDefinitionStruct& rDataDef) const;
 
 
-	void ProcessNotification(const SvPb::GetNotificationStreamResponse& response) const;
+	void ProcessNotification(SvPb::GetNotificationStreamResponse&& response) const;
 
 	SVGetItemsFunctorMap m_GetItemsFunctors;
 	SVSetItemsFunctorMap m_SetItemsFunctors;

@@ -156,14 +156,9 @@ bool GlobalRCOpenConfiguration( LPCTSTR ConfigName )
 	return true;
 }
 
-void GlobalRCCloseAndCleanConfiguration()
-{
-	SendMessage (AfxGetApp()->m_pMainWnd->m_hWnd, WM_COMMAND, MAKEWPARAM (ID_RC_CLOSE_AND_CLEAN_RUN_DIR, 0), 0);
-}
-
 void GlobalRCCloseConfiguration()
 {
-	SendMessage (AfxGetApp()->m_pMainWnd->m_hWnd, WM_COMMAND, MAKEWPARAM (ID_RC_CLOSE, 0), 0);
+	SendMessage(AfxGetApp()->m_pMainWnd->m_hWnd, WM_COMMAND, MAKEWPARAM(ID_RC_CLOSE, 0), 0);
 }
 
 HRESULT GlobalRCLoadPackedConfiguration(LPCTSTR pFileName, ConfigFileType fileType)

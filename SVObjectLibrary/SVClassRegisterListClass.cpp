@@ -1351,13 +1351,6 @@ void fillExchangeEmbedded()
 
 SvPb::EmbeddedIdEnum calcEmbeddedId(const _variant_t& rEmbeddedIdVariant, const _variant_t& rObjectName)
 {
-	static bool init = false;
-	if (!init)
-	{
-		fillExchangeEmbedded();
-		init = true;
-	}
-
 	SvPb::EmbeddedIdEnum embeddedId;
 	switch (rEmbeddedIdVariant.vt)
 	{
@@ -1544,13 +1537,6 @@ void fillEmbeddedIdFromIndirectLinked()
 }
 SvPb::EmbeddedIdEnum getEmbeddedIdFromIndirectLinked(SvPb::EmbeddedIdEnum indirectLinkedEmbeddedId)
 {
-	static bool init = false;
-	if (!init)
-	{
-		fillEmbeddedIdFromIndirectLinked();
-		init = true;
-	}
-	
 	auto iter = g_EmbeddedIdFromIndirectMap.find(indirectLinkedEmbeddedId);
 	if (g_EmbeddedIdFromIndirectMap.end() != iter)
 	{
@@ -1797,12 +1783,7 @@ std::string saveObjectIdMapping()
 
 void resetExchangeObjectIdMap()
 {
-#if defined CHECK_MEMORY_LEAKS
-	///This insures that no memory is still allocated on the heap
-	std::unordered_map<GUID, uint32_t>{}.swap(g_ExchangeObjectID);
-#else
 	g_ExchangeObjectID.clear();
-#endif
 }
 
 #pragma endregion Declarations

@@ -31,6 +31,7 @@ void SVRCWebsocketServer::Start(std::shared_ptr<SVRCCommand> pCmd, std::unique_p
 	m_pHttpserver = std::make_unique<SvHttp::HttpServer>(*m_pSettings.get(), m_io_service);
 	m_pHttpserver->start();
 	m_bIsRunning = true;
+	m_io_service.restart();
 
 	m_pThread.reset(new std::thread([this]()
 	{
@@ -57,7 +58,11 @@ void SVRCWebsocketServer::Stop()
 	{
 		m_pThread->join();
 	}
-
+	m_pHttpserver.reset();
+	m_pRpcServer.reset();
+	m_pRequestHandler.reset();
+	m_pCommand.reset();
+	m_pSettings.reset();
 }
 SVRCWebsocketServer::~SVRCWebsocketServer()
 {

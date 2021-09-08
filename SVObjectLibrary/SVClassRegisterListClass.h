@@ -31,6 +31,8 @@ SvPb::EmbeddedIdEnum calcEmbeddedId(const _variant_t& rEmbeddedIdVariant, const 
 SvPb::EmbeddedIdEnum calcInputEmbeddedId(const _variant_t& rObjectName);
 SvPb::EmbeddedIdEnum getEmbeddedIdFromIndirectLinked(SvPb::EmbeddedIdEnum indirectLinkedEmbeddedId);
 void fillExchangeObjectId();
+void fillExchangeEmbedded();
+void fillEmbeddedIdFromIndirectLinked();
 uint32_t calcObjectId(const std::string& objectIdString);
 uint32_t calcObjectId(const _variant_t& rObjectIdVariant);
 std::string convertObjectIdToString(uint32_t objectId);

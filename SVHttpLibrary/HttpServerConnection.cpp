@@ -720,13 +720,7 @@ void HttpServerConnection::ws_on_read(const boost::system::error_code& error, si
 				m_rSettings.pEventHandler->onTextMessage(m_ConnectionId, std::move(m_Payload));
 			}
 		}
-#if defined CHECK_MEMORY_LEAKS
-		///This insures that no memory is still allocated on the heap
-		std::vector<char>{}.swap(m_Payload);
-#else
-
 		m_Payload.clear();
-#endif
 	}
 
 	if (m_WsSocket.is_open())

@@ -22,7 +22,7 @@ constexpr double cZoomStepSmall = 0.1;
 
 int ZoomHelper::m_InstanceCount{0};
 double ZoomHelper::m_ScaleFactor[ZoomHelper::m_cScaleCount] = {0};
-HGDIOBJ ZoomHelper::m_hFont[ZoomHelper::m_cScaleCount] = {nullptr};
+HFONT ZoomHelper::m_hFont[ZoomHelper::m_cScaleCount] = {nullptr};
 
 #pragma region Constructor
 ZoomHelper::ZoomHelper() :

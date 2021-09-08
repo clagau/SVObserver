@@ -102,6 +102,15 @@ namespace SvLib
 		long m_MaxPreloadFileNumber{ DefaultMaxPreloadFileNumber };
 		long  m_PreloadTimeDelay{ DefaultPreloadTimeDelay };
 
+		long m_archiveToolBufferSize {0L};
+		long m_archiveToolAsyncBufferSize {0L};
+		long m_dataValidDelay {0L};
+		int m_maxTextSize {0};
+
+		bool m_enableAutosave {false};
+		bool m_diagnostic {false};
+		bool m_memoryLeakDetection {false};
+
 #pragma endregion Member variables
 	};
 } //namespace SvLib

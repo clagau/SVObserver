@@ -24,8 +24,8 @@ class ResultTabbedView : public CView
 
 #pragma region Constructor
 protected:
-	ResultTabbedView();
-	virtual ~ResultTabbedView();
+	ResultTabbedView() = default;
+	virtual ~ResultTabbedView() = default;
 #pragma endregion Constructor
 
 #pragma region Public Methods
@@ -55,6 +55,6 @@ private:
 	CMFCTabCtrl m_TabCtrl;
 	ResultListCtrl m_ResultList;
 	ResultTableListCtrl m_ResultTableList;
-	SVIPDoc* m_pIPDoc;
+	SVIPDoc* m_pIPDoc {nullptr};
 #pragma endregion Member variables
 };

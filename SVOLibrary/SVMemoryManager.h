@@ -17,7 +17,6 @@
 #include "SVContainableCriticalSection.h"
 #include "SVLibrary/SVTemplate.h"	// for singleton
 #include "SVMessage/SVMessage.h"
-#include "SVLibrary/SVOINIClass.h"
 
 
 #pragma endregion Includes
@@ -30,7 +29,7 @@ template <typename OWNERTYPE>
 class SVMemoryManager
 {
 public:
-	void InitializeMemoryManager(LPCTSTR strPoolName1, LPCTSTR strPoolName2, const SvLib::SVOINIClass& rSvimIni);
+	void InitializeMemoryManager(LPCTSTR strPoolName1, LPCTSTR strPoolName2, long goOfflineBufferSize, long asyncBufferSize);
 	HRESULT CreatePool( LPCTSTR strPoolName, __int64 lPoolSizeKBytes );
 	HRESULT ReservePoolMemory( LPCTSTR strPoolName, OWNERTYPE owner, __int64 lSizeInBytes );
 	bool    CanReservePoolMemory( LPCTSTR strPoolName, __int64 lSizeInBytes );

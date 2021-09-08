@@ -2461,7 +2461,6 @@
 #define ID_EXTRAS_TESTOUTPUTS           20081
 #define ID_EDIT_EDITTOOLSET             20083
 #define ID_RC_GO_OFFLINE                20086
-#define ID_RC_CLOSE_AND_CLEAN_RUN_DIR   20088
 #define ID_SAVE_RESULTS_TO_FILE         20089
 #define ID_RC_GO_ONLINE                 20090
 #define ID_SAVE_RESULTSTABLE_TO_FILE    20091
@@ -2549,6 +2548,7 @@
 #define ID_MONITORLIST_REMOVE_ITEM      20334
 #define ID_ADD_TOOL_PARA_TO_MONITORLIST 20335
 #define ID_REMOVE_TOOL_PARA_TO_MONITORLIST 20336
+#define ID_MEM_LEAK_DETECTION           20337
 #define ID_Dummy                        20339
 #define ID_ZOOM_SLIDER_MOVED            20340
 #define ID_TOOLBAR_STANDARD             20341

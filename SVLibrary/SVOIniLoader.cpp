@@ -40,6 +40,13 @@ constexpr const char* ShowUpdateFirmwareTag = _T("ShowUpdateFirmware");
 constexpr const char* DisplaySectionTag = _T("Display");
 constexpr const char* ForcedImageUpdateTimeInSecondsTag = _T("ForcedImageUpdateTimeInSeconds");
 constexpr const char* PreTriggerTimeWindowTag = _T("PreTriggerTimeWindow");
+constexpr const char* ArchiveBufferSizeTag = _T("ArchiveToolGoOfflineBufferSize");
+constexpr const char* ArchiveAsyncBufferSizeTag = _T("ArchiveToolAsyncBufferSize");
+constexpr const char* DataValidDelayTag = _T("DataValidDelay");
+constexpr const char* MaxTextSizeTag = _T("MaxTextSize");
+constexpr const char* EnableAutosaveTag = _T("EnableAutosave");
+constexpr const char* DiagnosticTag = _T("Diagnostic");
+constexpr const char* MemoryLeakDetectionTag = _T("MemoryLeakDetection");
 
 constexpr const char* NAKSectionTag = _T("NAK_SETTINGS");
 constexpr const char*  NAKMode = _T("NAKMode");
@@ -165,10 +172,19 @@ void  SVOIniLoader::LoadSVIMIni(LPCTSTR svimIniFile)
 	m_rInitialInfo.m_NAKMode = static_cast<SvDef::NakGeneration>(SvimIni.GetValueInt(NAKSectionTag, NAKMode, SvDef::NakGeneration::Bursts));
 	m_rInitialInfo.m_NAKParameter = SvimIni.GetValueInt(NAKSectionTag, NAKParameter, SvDef::DefaultNakParameter);
 	m_rInitialInfo.m_preTriggerTimeWindow = SvimIni.GetValueDouble(SettingsTag, PreTriggerTimeWindowTag, 0.0);
+	m_rInitialInfo.m_archiveToolBufferSize = static_cast<long> (SvimIni.GetValueInt(SettingsTag, ArchiveBufferSizeTag, 0));
+	m_rInitialInfo.m_archiveToolAsyncBufferSize = static_cast<long> (SvimIni.GetValueInt(SettingsTag, ArchiveAsyncBufferSizeTag, 0));
+	m_rInitialInfo.m_dataValidDelay = static_cast<long> (SvimIni.GetValueInt(SettingsTag, DataValidDelayTag, 0));
+	m_rInitialInfo.m_maxTextSize = SvimIni.GetValueInt(_T("Settings"), _T("MaxTextSize"), 0);
+	int value = SvimIni.GetValueInt(SettingsTag, EnableAutosaveTag, 0);
+	m_rInitialInfo.m_enableAutosave = (0 != value);
+	value = SvimIni.GetValueInt(SettingsTag, DiagnosticTag, 0);
+	m_rInitialInfo.m_diagnostic = (0 != value);
+	value = SvimIni.GetValueInt(SettingsTag, MemoryLeakDetectionTag, 0);
+	m_rInitialInfo.m_memoryLeakDetection = (0 != value);
 
 	m_rInitialInfo.m_PreloadTimeDelay = SvimIni.GetValueInt(FileAcquisitionSectionTag, PreloadTimeDelay, DefaultPreloadTimeDelay);
 	m_rInitialInfo.m_MaxPreloadFileNumber = SvimIni.GetValueInt(FileAcquisitionSectionTag, MaxPreloadFileNumber, DefaultMaxPreloadFileNumber);
-
 }
 
 HRESULT SVOIniLoader::LoadHardwareIni(LPCTSTR hardwareIniFile)

@@ -225,6 +225,7 @@ public:
 	bool OkToEdit();
 	void OnRCOpenCurrentSVX();
 	void UpdateAllMenuExtrasUtilities();
+	void OnMemLeakDetection();
 
 	long GetMaxPPQLength() const;
 
@@ -304,6 +305,8 @@ protected:
 
 #pragma region Private Methods
 private:
+	void startInstances();
+	void stopInstances();
 	void OnStopAll();
 	bool InitATL();
 	void StopRegression();
@@ -374,6 +377,7 @@ private:
 	SVMessageWindow* m_pMessageWindow;
 
 	bool m_ATLInited;
+	bool m_MemLeakDetection {false};
 
 	mutable SVFileNameClass m_ConfigFileName;
 	SVFileNameClass m_SvxFileName;
