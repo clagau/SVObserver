@@ -128,8 +128,11 @@ void CifXCard::readProcessData(uint32_t notification)
 void CifXCard::popInputDataQueue()
 {
 	std::lock_guard<std::mutex> guard {m_cifxMutex};
-	m_currentInputData = m_inputDataQueue.front();
-	m_inputDataQueue.pop();
+	if (false == m_inputDataQueue.empty())
+	{
+		m_currentInputData = m_inputDataQueue.front();
+		m_inputDataQueue.pop();
+	}
 }
 
 void CifXCard::closeCifX()

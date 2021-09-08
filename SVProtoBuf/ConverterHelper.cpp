@@ -74,7 +74,7 @@ HRESULT ConvertVariantToProtobuf(const _variant_t& rVariant, SvPb::Variant* pPbV
 					pPbVariant->set_type(VT_BSTR);
 					std::string Text;
 					Text.assign(_bstr_t(rVariant));
-					pPbVariant->set_strval(Text);
+					pPbVariant->set_strval(SvUl::to_utf8(Text));
 					break;
 				}
 
@@ -108,7 +108,7 @@ HRESULT ConvertVariantToProtobuf(const _variant_t& rVariant, SvPb::Variant* pPbV
 					pPbVariant->set_count(count);
 					pPbVariant->set_type(rVariant.vt);
 					//Note SVRemoteControl.ocx has always used strval and ConvertProtobufToVariant as well so not bytesval!
-					pPbVariant->set_strval(StringArray);
+					pPbVariant->set_strval(SvUl::to_utf8(StringArray));
 				}
 				else
 				{
@@ -194,7 +194,7 @@ HRESULT ConvertProtobufToVariant(const SvPb::Variant& rPbVariant, _variant_t& rV
 
 		case VT_BSTR:
 		{
-			_bstr_t bstr(rPbVariant.strval().c_str());
+			_bstr_t bstr(SvUl::to_ansi(rPbVariant.strval()).c_str());
 			rVariant.bstrVal = bstr.Detach();
 			break;
 		}
@@ -258,12 +258,12 @@ HRESULT ConvertProtobufToVariant(const SvPb::Variant& rPbVariant, _variant_t& rV
 		{
 			if (VT_BSTR == Type)
 			{
-				const std::string& rStringArray = SvUl::to_ansi(rPbVariant.strval());
+				std::string StringArray = SvUl::to_ansi(rPbVariant.strval());
 
 				std::vector<std::string> Items;
 				Items.reserve(rPbVariant.count());
 				std::string Item;
-				std::istringstream tokenStream(rStringArray);
+				std::istringstream tokenStream(StringArray);
 				while (std::getline(tokenStream, Item, ';'))
 				{
 					Items.push_back(Item);

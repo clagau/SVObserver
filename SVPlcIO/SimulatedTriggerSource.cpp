@@ -310,6 +310,7 @@ void SimulatedTriggerSource::createTriggerReport(uint8_t channel)
 			triggerReport = std::move(gTriggerReport[channel]);
 			gTriggerReport[channel] = {};
 		}
+		gNewTrigger[channel] = false;
 		sendTriggerReport(triggerReport);
 		{
 			std::lock_guard<std::mutex> guard{ m_triggerSourceMutex };

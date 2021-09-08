@@ -1,16 +1,16 @@
-//******************************************************************************
-//* COPYRIGHT (c) 2014 by Seidenader Vision Inc., Harrisburg
-//* All Rights Reserved
-//******************************************************************************
-//* .Module Name     : SVPlcIOImpl
+//*****************************************************************************
+/// \copyright COPYRIGHT (c) 2017,2017 by Seidenader Maschinenbau GmbH
+/// All Rights Reserved
+/// \file SVPlcIOImpl.h
+/// \brief Exported functions of the DLL
 //******************************************************************************
 
 #pragma once
 
-//Moved to precompiled header: #include <comdef.h>
-//Moved to precompiled header: #include <vector>
+#pragma region Includes
 #include "TriggerEngineConnection.h"
 #include "Triggering/IODeviceBase.h"
+#pragma endregion Includes
 
 namespace SvPlc
 {

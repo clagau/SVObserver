@@ -1,8 +1,8 @@
-//******************************************************************************
-//* COPYRIGHT (c) 2014 by Seidenader Vision Inc., Harrisburg
-//* All Rights Reserved
-//******************************************************************************
-//* .Module Name     : SVIMPL
+//*****************************************************************************
+/// \copyright COPYRIGHT (c) 2017,2017 by Seidenader Maschinenbau GmbH
+/// All Rights Reserved
+/// \file SVPlcIOImpl.cpp
+/// \brief Exported functions of the DLL
 //******************************************************************************
 
 #pragma region Includes

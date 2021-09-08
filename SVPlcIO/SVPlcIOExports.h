@@ -1,14 +1,13 @@
-//******************************************************************************
-//* COPYRIGHT (c) 2014 by Seidenader Vision Inc., Harrisburg
-//* All Rights Reserved
-//******************************************************************************
-//* .Module Name     : SVPlcIOExports
+//*****************************************************************************
+/// \copyright COPYRIGHT (c) 2017,2017 by Seidenader Maschinenbau GmbH
+/// All Rights Reserved
+/// \file SVPlcIOExports.h
+/// \brief Exported functions of the DLL
 //******************************************************************************
 
 #pragma once
 
 #pragma region Includes
-//Moved to precompiled header: #include <comdef.h>
 #include "Triggering/SVTriggerInfoStruct.h"
 #pragma endregion Includes
 
