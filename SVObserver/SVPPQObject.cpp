@@ -2534,14 +2534,7 @@ bool SVPPQObject::SetProductComplete(SVProductInfoStruct& rProduct)
 		rProduct.SetProductComplete();
 		if (isNAK)
 		{
-			if (rProduct.m_CantProcessReason & CantProcessEnum::MissingImage)
-			{
-				m_spMissingImageCount->setValue(++m_MissingImageCount);
-			}
-			else
-			{
-				m_spNotCompleteCount->setValue(++m_NotCompleteCount);
-			}
+			checkNakReason(rProduct.m_CantProcessReason);
 		}
 
 #if defined(TRACE_PPQ2)
@@ -2599,16 +2592,7 @@ bool SVPPQObject::SetProductIncomplete(SVProductInfoStruct& p_rProduct)
 #endif
 		if (isNak)
 		{
-			if (p_rProduct.m_CantProcessReason & CantProcessEnum::MissingImage)
-			{
-				m_spMissingImageCount->setValue(++m_MissingImageCount);
-	
-			}
-			else
-			{
-				m_spNotCompleteCount->setValue(++m_NotCompleteCount);
-				
-			}
+			checkNakReason(p_rProduct.m_CantProcessReason);
 		}
 #if defined (TRACE_PPQ2)
 		::OutputDebugString(std::format("{}: isNak: {},  Set Product Incomplete \n", p_rProduct.m_triggerInfo.lTriggerCount,isNak).c_str());
@@ -4249,5 +4233,44 @@ long SVPPQObject::getNeededRecords() const
 	else
 	{
 		return m_maxProcessingOffset4Interest;
+	}
+}
+
+void SVPPQObject::checkNakReason(CantProcessEnum cantProcessReason)
+{
+	switch (cantProcessReason)
+	{
+		case CantProcessEnum::NoReason:
+		{
+			m_spNotCompleteCount->setValue(++m_NotCompleteCount);
+			SvStl::MessageManager Msg(SvStl::MsgType::Log);
+			Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ProductIncompleteNak, SvStl::SourceFileParams(StdMessageParams));
+			break;
+		}
+		case CantProcessEnum::MissingProduct:
+		{
+			m_spNotCompleteCount->setValue(++m_NotCompleteCount);
+			SvStl::MessageManager Msg(SvStl::MsgType::Log);
+			Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ProductMissingNak, SvStl::SourceFileParams(StdMessageParams));
+			break;
+		}
+		case CantProcessEnum::MissingImage:
+		{
+			m_spMissingImageCount->setValue(++m_MissingImageCount);
+			SvStl::MessageManager Msg(SvStl::MsgType::Log);
+			Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ImageMissingNak, SvStl::SourceFileParams(StdMessageParams));
+			break;
+		}
+		case CantProcessEnum::MissingInput:
+		{
+			m_spNotCompleteCount->setValue(++m_NotCompleteCount);
+			SvStl::MessageManager Msg(SvStl::MsgType::Log);
+			Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_InputMissingNak, SvStl::SourceFileParams(StdMessageParams));
+			break;
+		}
+		default:
+		{
+			break;
+		}
 	}
 }

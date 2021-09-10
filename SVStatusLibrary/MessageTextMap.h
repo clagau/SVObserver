@@ -697,5 +697,10 @@ namespace SvStl
 
 		{ Tid_SVRC_AccessDenied, _T("SVRC Access denied: Current state = %s, Check state = %s") },
 		{Tid_InvalidValues, _T("Invalid input values")},
+
+		{Tid_ProductMissingNak, _T("NAK has been caused by a missing PPQ product")},
+		{Tid_ImageMissingNak, _T("NAK has been caused by a missing camera image")},
+		{Tid_InputMissingNak, _T("NAK has been caused by a missing input")},
+		{Tid_ProductIncompleteNak, _T("NAK caused by product incomplete (usually PPQ full)")}
 };
 } //namespace SvStl

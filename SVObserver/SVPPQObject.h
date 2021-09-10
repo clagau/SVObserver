@@ -472,6 +472,8 @@ private:
 	void calcUseProcessingOffset4InterestFlag();
 	long getNeededRecords() const;
 
+	void checkNakReason(CantProcessEnum cantProcessReason);
+
 	PpqCameraCallBack m_cameraCallback;
 	SvTrig::PpqTriggerCallBack m_triggerCallback;
 	SvVol::BasicValueObjects	m_PpqValues;

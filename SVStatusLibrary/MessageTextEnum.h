@@ -662,5 +662,10 @@ enum MessageTextEnum
 
 	Tid_SVRC_AccessDenied,
 	Tid_InvalidValues,
+
+	Tid_ProductMissingNak,
+	Tid_ImageMissingNak,
+	Tid_InputMissingNak,
+	Tid_ProductIncompleteNak,
 };
 } //namespace SvStl
