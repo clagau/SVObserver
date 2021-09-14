@@ -956,7 +956,7 @@ void SVIPDoc::OnAdjustLightReference()
 
 	if (dlg.CreatePages(cameraVector, LightRefVector))
 	{
-		SVSVIMStateClass::AddState(SV_STATE_EDITING);
+		SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
 
 		SVConfigurationObject* pConfig(nullptr);
 		SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
@@ -983,8 +983,6 @@ void SVIPDoc::OnAdjustLightReference()
 				pConfig->ModifyAcquisitionDevice(deviceName.c_str(), lightRef);
 			}
 		}
-
-		SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 	}
 	// Show default LUT: black --> black, white --> white...
 	GetImageView()->ShowExtremeLUT(FALSE);
@@ -1030,8 +1028,7 @@ void SVIPDoc::OnAdjustLut()
 
 	if (bSuccess)
 	{
-		SVSVIMStateClass::AddState(SV_STATE_EDITING);
-
+		SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
 
 		if (dlg.DoModal() == IDOK)
 		{
@@ -1067,7 +1064,6 @@ void SVIPDoc::OnAdjustLut()
 				pConfig->ModifyAcquisitionDevice(pDevice->DeviceName().c_str(), &deviceParams);
 			}
 		}
-		SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 	}
 
 	// Show default LUT: black --> black, white --> white...
@@ -1603,7 +1599,7 @@ void SVIPDoc::OpenToolAdjustmentDialog(int tab)
 		SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject(GetSelectedToolID()));
 		if (nullptr != pTool)
 		{
-			SVSVIMStateClass::AddState(SV_STATE_EDITING);
+			SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
 			try
 			{
 				std::unique_ptr<SVToolAdjustmentDialogSheetClass> pSheet = GetToolAdjustmentSheet(this, tab);
@@ -1653,7 +1649,6 @@ void SVIPDoc::OpenToolAdjustmentDialog(int tab)
 				SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
 				Exception.setMessage(SVMSG_SVO_UNHANDLED_EXCEPTION, SvStl::Tid_Default, SvStl::SourceFileParams(StdMessageParams));
 			}
-			SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 		}
 		RebuildResultsList();
 		UpdateAllViews(nullptr, RefreshView);
@@ -1667,7 +1662,7 @@ void SVIPDoc::OnEditToolSet()
 	{
 		if (GetToolSet())
 		{
-			SVSVIMStateClass::AddState(SV_STATE_EDITING);
+			SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
 
 			SVToolAdjustmentDialogSheetClass toolSetDialog(this, GetInspectionID(), GetToolSet()->getObjectId(), _T("Tool Set Adjustment: "));
 			toolSetDialog.init();
@@ -1677,21 +1672,18 @@ void SVIPDoc::OnEditToolSet()
 			{
 				SetModifiedFlag();
 			}
-
-			SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 		}
 	}
 }
 
 void SVIPDoc::OnFileSaveImage()
 {
-	SVSVIMStateClass::AddState(SV_STATE_EDITING); /// do this before calling validate for security as it may display a logon dialog!
+	SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
 	if (S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate(SECURITY_POINT_FILE_MENU_SAVE_IMAGE))
 	{
 		SvOg::SVSaveToolSetImageDialogClass dlg(GetInspectionID(), GetToolSet()->getObjectId());
 		dlg.DoModal();
 	}
-	SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 }
 
 //******************************************************************************
@@ -1712,11 +1704,14 @@ void SVIPDoc::Dump(CDumpContext& dc) const
 
 void SVIPDoc::OnResultsPicker()
 {
+
 	//This shall change the state to editing only when previously in edit mode
 	//This will avoid changing the modes while in Run, Regression or Test mode
+	std::unique_ptr<SVSVIMStateClass::SetResetState> pStateEditing {nullptr};
 	if (SVSVIMStateClass::CheckState(SV_STATE_EDIT))
 	{
-		SVSVIMStateClass::AddState(SV_STATE_EDITING); /// do this before calling validate for security as it may display a logon dialog!
+		// cppcheck-suppress unreadVariable symbolName=pStateEditing ; RAII variable
+		pStateEditing = std::make_unique<SVSVIMStateClass::SetResetState>(SV_STATE_EDITING);  /// do this before calling validate for security as it may display a logon dialog!
 	}
 	if (S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate(SECURITY_POINT_EDIT_MENU_RESULT_PICKER))
 	{
@@ -1765,20 +1760,16 @@ void SVIPDoc::OnResultsPicker()
 			UpdateAllViews(nullptr);
 		}
 	}
-
-	if (SVSVIMStateClass::CheckState(SV_STATE_EDIT))
-	{
-		SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
-	}
 }
 
 void SVIPDoc::OnResultsTablePicker()
 {
 	//This shall change the state to editing only when previously in edit mode
 	//This will avoid changing the modes while in Run, Regression or Test mode
+	std::unique_ptr<SVSVIMStateClass::SetResetState> pStateEditing {nullptr};
 	if (SVSVIMStateClass::CheckState(SV_STATE_EDIT))
 	{
-		SVSVIMStateClass::AddState(SV_STATE_EDITING); /// do this before calling validate for security as it may display a logon dialog!
+		pStateEditing = std::make_unique<SVSVIMStateClass::SetResetState>(SV_STATE_EDITING);  /// do this before calling validate for security as it may display a logon dialog!
 	}
 	if (S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate(SECURITY_POINT_EDIT_MENU_RESULT_PICKER))
 	{
@@ -1826,11 +1817,6 @@ void SVIPDoc::OnResultsTablePicker()
 				}
 			}
 		}
-	}
-
-	if (SVSVIMStateClass::CheckState(SV_STATE_EDIT))
-	{
-		SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 	}
 }
 
@@ -2006,7 +1992,7 @@ void SVIPDoc::OnPublishedResultsPicker()
 	SVInspectionProcess* pInspection(GetInspectionProcess());
 	if (nullptr != pInspection)
 	{
-		SVSVIMStateClass::AddState(SV_STATE_EDITING);
+		SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
 		std::string InspectionName(pInspection->GetName());
 
 		SvPb::InspectionCmdRequest requestCmd;
@@ -2060,7 +2046,6 @@ void SVIPDoc::OnPublishedResultsPicker()
 			}// end for
 			TheSVObserverApp.GetIODoc()->UpdateAllViews(nullptr);
 		}
-		SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 	}
 }
 
@@ -2069,7 +2054,7 @@ void SVIPDoc::OnPublishedResultImagesPicker()
 	SVInspectionProcess* pInspection(GetInspectionProcess());
 	if (nullptr != pInspection)
 	{
-		SVSVIMStateClass::AddState(SV_STATE_EDITING);
+		SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
 
 		std::string InspectionName(pInspection->GetName());
 
@@ -2119,8 +2104,6 @@ void SVIPDoc::OnPublishedResultImagesPicker()
 				TheSVObserverApp.GetIODoc()->UpdateAllViews(nullptr);
 			}
 		}
-
-		SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 	}
 }
 
@@ -2138,16 +2121,13 @@ bool SVIPDoc::checkOkToDelete(SvIe::SVTaskObjectClass* pTaskObject)
 {
 	bool bRetVal = false;
 
-	SVSVIMStateClass::AddState(SV_STATE_EDITING);
-	// show dependents dialog
-
 	if (pTaskObject)
 	{
+		SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
 		INT_PTR dlgResult = SvOg::SVShowDependentsDialog::StandardDialog(pTaskObject->GetName(), pTaskObject->getObjectId());
 
 		bRetVal = (IDOK == dlgResult);
 	}
-	SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 	return bRetVal;
 }
 
@@ -3223,11 +3203,10 @@ void SVIPDoc::OnEditAdjustToolPosition()
 		//------ Window tool, Luminance hands back a SvDef::SVImageObjectType. Sub type 0.
 		if (GetImageView())
 		{
-			SVSVIMStateClass::AddState(SV_STATE_EDITING);
+			SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
 			std::string DlgName = SvUl::Format(_T("Adjust Tool Size and Position - %s"), pTool->GetName());
 			SvOg::SVAdjustToolSizePositionDlg dlg(m_InspectionID, pTool->getObjectId(), DlgName.c_str(), dynamic_cast<CWnd*>(this->GetMDIChild()));
 			dlg.DoModal();
-			SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 		}
 	}
 }
@@ -3539,7 +3518,7 @@ void SVIPDoc::OnEditDataDefinitionLists()
 
 	if (nullptr != pInspection)
 	{
-		SVSVIMStateClass::AddState(SV_STATE_EDITING);
+		SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
 		std::string inspectionName = pInspection->GetName();
 		std::string Title = _T("Data Definition Lists - ");
 		Title += inspectionName;
@@ -3549,7 +3528,6 @@ void SVIPDoc::OnEditDataDefinitionLists()
 		sheet.m_psh.dwFlags |= PSH_NOAPPLYNOW;
 
 		sheet.DoModal();
-		SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 	}
 }
 

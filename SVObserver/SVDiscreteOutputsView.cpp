@@ -241,7 +241,7 @@ void SVDiscreteOutputsView::OnLButtonDblClk(UINT, CPoint point)
 				dlg.m_pIOEntry   = pIOEntry;
 				dlg.m_pDigOutput = pDigitalOutput;
 
-				SVSVIMStateClass::AddState( SV_STATE_EDITING );
+				SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
 				switch( dlg.DoModal() )
 				{
 				case IDOK:
@@ -335,7 +335,6 @@ void SVDiscreteOutputsView::OnLButtonDblClk(UINT, CPoint point)
 					break;
 				}// end switch
 
-				SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
 				OnUpdate( nullptr, 0, nullptr );
 			}
 			else

@@ -233,7 +233,7 @@ void SVRemoteOutputsView::OnLButtonDblClk(UINT, CPoint point)
 	if ( l_item >= 0 && ((flags & LVHT_ONITEMLABEL) == LVHT_ONITEMLABEL) && ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&
 		 TheSVObserverApp.OkToEdit() )
 	{
-		SVSVIMStateClass::AddState( SV_STATE_EDITING );
+		SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
 
 		pRemoteOutput = dynamic_cast<SVRemoteOutputObject*>( reinterpret_cast<SVObjectClass*>(m_rCtrl.GetItemData( l_item )));
 		if( pRemoteOutput )
@@ -254,9 +254,8 @@ void SVRemoteOutputsView::OnLButtonDblClk(UINT, CPoint point)
 				OnRemoteOutputProperties();
 			}
 		}
-
-		SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
 		OnUpdate( nullptr, 0, nullptr );
+
 		m_rCtrl.SetItemState( l_item, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
 	} // if ( item >= 0 && ! SVSVIMStateClass::CheckState
 }// OnLButtonDbm_rCtrllk(
@@ -285,13 +284,12 @@ BOOL SVRemoteOutputsView::PreTranslateMessage(MSG* pMsg)
 					if( S_OK == RemoteOutputGroupNameAtItem( GroupName, l_item )  )
 					{
 						// New Entry...
-						SVSVIMStateClass::AddState( SV_STATE_EDITING );
+						SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
 						if( AddOutput( l_item ) )
 						{
 							SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
 							l_item++;
 						}
-						SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
 						OnUpdate( nullptr, 0, nullptr );
 						m_rCtrl.SetItemState( l_item, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
 						l_bRet = TRUE;
@@ -304,7 +302,7 @@ BOOL SVRemoteOutputsView::PreTranslateMessage(MSG* pMsg)
 					if( S_OK == RemoteOutputGroupNameAtItem( GroupName, l_item )  )
 					{
 						// New Entry...
-						SVSVIMStateClass::AddState( SV_STATE_EDITING );
+						SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
 						SVRemoteOutputObject* pRemoteOutput = dynamic_cast<SVRemoteOutputObject*>( reinterpret_cast<SVObjectClass*>(l_pdwItemData));
 						if( pRemoteOutput )
 						{
@@ -318,7 +316,6 @@ BOOL SVRemoteOutputsView::PreTranslateMessage(MSG* pMsg)
 							// Edit DLL Properties.
 							OnRemoteOutputProperties();
 						}
-						SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
 						OnUpdate( nullptr, 0, nullptr );
 						m_rCtrl.SetItemState( l_item, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
 						l_bRet = TRUE;
@@ -414,14 +411,13 @@ void SVRemoteOutputsView::OnRemoteOutputAdd()
 		{
 			l_item = m_rCtrl.GetNextSelectedItem(l_Pos);
 		}
-		SVSVIMStateClass::AddState( SV_STATE_EDITING );
 
+		SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
 		if( AddOutput( l_item ) )
 		{
 			SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
 		}
 
-		SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
 		OnUpdate( nullptr, 0, nullptr );
 		if( l_item > -1 )
 		{
@@ -580,11 +576,9 @@ void SVRemoteOutputsView::OnRemoteOutputEdit()
 {
 	if( TheSVObserverApp.OkToEdit() )
 	{
-		SVSVIMStateClass::AddState( SV_STATE_EDITING );
+		SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
 
 		EditOutput(m_CurrentItem);
-		
-		SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
 		OnUpdate( nullptr, 0, nullptr );
 	}
 }

@@ -44,9 +44,8 @@ void SVRCCommand::GetVersion(const SvPb::GetSVObserverVersionRequest&, SvRpc::Ta
 	SvPb::GetVersionResponse Response;
 	if (false == SVSVIMStateClass::CheckState(notAllowedStates))
 	{
-		SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
+		SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 		Response.set_version(SvUl::to_utf8(SvSyl::SVVersionInfo::GetShortTitleVersion()));
-		SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
 	}
 	task.finish(std::move(Response));
 }
@@ -54,9 +53,10 @@ void SVRCCommand::GetVersion(const SvPb::GetSVObserverVersionRequest&, SvRpc::Ta
 void SVRCCommand::GetDeviceMode(const SvPb::GetDeviceModeRequest&, SvRpc::Task<SvPb::GetDeviceModeResponse> task)
 {
 	SvPb::GetDeviceModeResponse Response;
-	SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
-	Response.set_mode(SVSVIMStateClass::getCurrentMode());
-	SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
+	{
+		SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+		Response.set_mode(SVSVIMStateClass::getCurrentMode());
+	}
 	task.finish(std::move(Response));
 }
 
@@ -75,10 +75,9 @@ void SVRCCommand::SetDeviceMode(const SvPb::SetDeviceModeRequest& rRequest, SvRp
 			SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 			if (nullptr != pConfig)
 			{
-				SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
+				SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 				//Note this needs to be done using SendMessage due to this being a worker thread
 				result = GlobalRCSetMode(static_cast<unsigned long> (DesiredMode));
-				SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
 			}
 			else
 			{
@@ -159,9 +158,8 @@ void SVRCCommand::GetConfig(const SvPb::GetConfigRequest& rRequest, SvRpc::Task<
 			{
 				try
 				{
-					SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
+					SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 					result = GlobalRCSaveConfiguration(TempFileName.c_str());
-					SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
 				}
 				catch (const SvStl::MessageContainer& rSvE)
 				{
@@ -234,9 +232,11 @@ void SVRCCommand::PutConfig(const SvPb::PutConfigRequest& rRequest, SvRpc::Task<
 				//@WARNING [gra][8.10][11.06.2018] SendMessage is used to avoid problems by accessing the SVObserverApp instance from another thread
 				//This should be changed using inspection commands
 				fileType = (1 == fileVersion) ? ConfigFileType::PackedFormat : fileType;
-				SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
-				result = GlobalRCLoadPackedConfiguration(TempFileName.c_str(), fileType);
-				SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
+
+				{
+					SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+					result = GlobalRCLoadPackedConfiguration(TempFileName.c_str(), fileType);
+				}
 				::remove(TempFileName.c_str());
 			}
 		}
@@ -258,9 +258,8 @@ void SVRCCommand::GetOfflineCount(const SvPb::GetOfflineCountRequest&, SvRpc::Ta
 
 	if (S_OK == result)
 	{
-		SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
+		SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 		Response.set_count(TheSVObserverApp.getOfflineCount());
-		SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
 	}
 
 	task.finish(std::move(Response));
@@ -280,9 +279,8 @@ void SVRCCommand::ActivateMonitorList(const SvPb::ActivateMonitorListRequest& rR
 		{
 			std::string listName = SvUl::to_ansi(rRequest.listname());
 			bool bActivate = rRequest.activate();
-			SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
+			SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 			result = pConfig->ActivateRemoteMonitorList(listName, bActivate);
-			SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
 		}
 		else
 		{
@@ -313,9 +311,11 @@ void SVRCCommand::GetProductFilter(const SvPb::GetProductFilterRequest& rRequest
 		{
 			SvSml::SVProductFilterEnum ProductFilter;
 			std::string listName = SvUl::to_ansi(rRequest.listname());
-			SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
-			result = pConfig->GetRemoteMonitorListProductFilter(listName, ProductFilter);
-			SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
+
+			{
+				SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+				result = pConfig->GetRemoteMonitorListProductFilter(listName, ProductFilter);
+			}
 
 			switch (ProductFilter)
 			{
@@ -365,9 +365,8 @@ void SVRCCommand::SetProductFilter(const SvPb::SetProductFilterRequest& rRequest
 				break;
 			}
 			std::string listName = SvUl::to_ansi(rRequest.listname());
-			SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
+			SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 			result = pConfig->SetRemoteMonitorListProductFilter(listName, ProductFilter);
-			SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
 		}
 		else
 		{
@@ -396,9 +395,10 @@ void SVRCCommand::GetItems(const SvPb::GetItemsRequest& rRequest, SvRpc::Task<Sv
 
 		if (false == ItemNameSet.empty())
 		{
-			SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
-			result = SVVisionProcessorHelper::Instance().GetItems(ItemNameSet, ResultItems);
-			SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
+			{
+				SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+				result = SVVisionProcessorHelper::Instance().GetItems(ItemNameSet, ResultItems);
+			}
 
 			for (const auto& rEntry : ResultItems)
 			{
@@ -519,9 +519,8 @@ void SVRCCommand::SetItems(const SvPb::SetItemsRequest& rRequest, SvRpc::Task<Sv
 		{
 			if (!Items.empty())
 			{
-				SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
+				SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 				result = SVVisionProcessorHelper::Instance().SetItems(Items, ItemResults, rRequest.runonce());
-				SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
 			}
 			else
 			{
@@ -624,10 +623,9 @@ void SVRCCommand::PutFile(const SvPb::PutFileRequest& rRequest, SvRpc::Task<SvPb
 
 			if (S_OK == result && rRequest.saveinconfig())
 			{
-				SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
+				SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 				//Note this needs to be done using SendMessage due to this being a worker thread
 				result = GlobalRCAddFileToConfig(destinationPath.c_str());
-				SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
 			}
 
 		}
@@ -669,9 +667,11 @@ void SVRCCommand::RegisterMonitorList(const SvPb::RegisterMonitorListRequest& rR
 		}
 
 		SVNameStatusMap ItemResults;
-		SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
-		result = SVVisionProcessorHelper::Instance().RegisterMonitorList(MonitorListName, PpqName, rejectDepth, prodList, rejectCondList, failStatusList, ItemResults);
-		SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
+
+		{
+			SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+			result = SVVisionProcessorHelper::Instance().RegisterMonitorList(MonitorListName, PpqName, rejectDepth, prodList, rejectCondList, failStatusList, ItemResults);
+		}
 
 		for (const auto& rEntry : ItemResults)
 		{
@@ -701,9 +701,11 @@ void SVRCCommand::GetInspectionNames(const SvPb::GetInspectionNamesRequest&, SvR
 	{
 		SvDef::StringSet InspectionNames;
 
-		SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
-		result = SVVisionProcessorHelper::Instance().GetInspectionNames(InspectionNames);
-		SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
+		{
+			SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+			result = SVVisionProcessorHelper::Instance().GetInspectionNames(InspectionNames);
+		}
+
 		SvPb::Value* pValue = Response.mutable_names();
 		if (S_OK == result && nullptr != pValue)
 		{
@@ -756,9 +758,11 @@ void SVRCCommand::GetMonitorListProperties(const SvPb::GetMonitorListPropertiesR
 	if (S_OK == result)
 	{
 		MonitorlistProperties  MonitorListProp;
-		SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
-		result = SVVisionProcessorHelper::Instance().GetMonitorListProperties(SvUl::to_ansi(rRequest.listname()), MonitorListProp);
-		SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
+
+		{
+			SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+			result = SVVisionProcessorHelper::Instance().GetMonitorListProperties(SvUl::to_ansi(rRequest.listname()), MonitorListProp);
+		}
 
 		Response.set_rejectdepth(MonitorListProp.RejectQueDepth);
 		Response.set_active(MonitorListProp.isActive);
@@ -775,9 +779,8 @@ void SVRCCommand::GetMaxRejectDepth(const SvPb::GetMaxRejectDepthRequest&, SvRpc
 
 	if (S_OK == result)
 	{
-		SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
+		SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 		Response.set_maxrejectdepth(RemoteMonitorNamedList::GetMaxRejectQueueDepth());
-		SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
 	}
 	task.finish(std::move(Response));
 }
@@ -791,9 +794,10 @@ void SVRCCommand::GetConfigReport(const SvPb::GetConfigReportRequest&, SvRpc::Ta
 	{
 		std::string Report;
 
-		SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
-		result = SVVisionProcessorHelper::Instance().GetConfigurationPrintReport(Report);
-		SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
+		{
+			SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+			result = SVVisionProcessorHelper::Instance().GetConfigurationPrintReport(Report);
+		}
 		//No conversion to utf8 as the report is already utf16 (XML)
 		Response.set_report(Report);
 	}
@@ -814,9 +818,10 @@ void SVRCCommand::GetDataDefinitionList(const SvPb::GetDataDefinitionListRequest
 		std::string InspectionName = SvUl::to_ansi(rRequest.inspectionname());
 		SVDataDefinitionListType DataDefinitionType = static_cast<SVDataDefinitionListType> (rRequest.type());
 
-		SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
-		result = SVVisionProcessorHelper::Instance().GetDataDefinitionList(InspectionName, DataDefinitionType, DataDefinitionList);
-		SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
+		{
+			SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+			result = SVVisionProcessorHelper::Instance().GetDataDefinitionList(InspectionName, DataDefinitionType, DataDefinitionList);
+		}
 
 		for (const auto& rEntry : DataDefinitionList)
 		{
@@ -851,31 +856,34 @@ void SVRCCommand::QueryMonitorList(const SvPb::QueryMonitorListRequest& rRequest
 	if(S_OK == result)
 	{
 		SvDef::StringSet Items;
-		SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
-		std::string listName = SvUl::to_ansi(rRequest.listname());
-		switch (rRequest.type())
+
 		{
-			case SvPb::ListType::productItem:
+			SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+			std::string listName = SvUl::to_ansi(rRequest.listname());
+			switch (rRequest.type())
 			{
-				result = SVVisionProcessorHelper::Instance().QueryProductList(listName, Items);
-				break;
-			}
-			case SvPb::ListType::rejectCondition:
-			{
-				result = SVVisionProcessorHelper::Instance().QueryRejectCondList(listName, Items);
-				break;
-			}
-			case SvPb::ListType::failStatus:
-			{
-				result = SVVisionProcessorHelper::Instance().QueryFailStatusList(listName, Items);
-				break;
-			}
-			default:
-			{
-				break;
+				case SvPb::ListType::productItem:
+				{
+					result = SVVisionProcessorHelper::Instance().QueryProductList(listName, Items);
+					break;
+				}
+				case SvPb::ListType::rejectCondition:
+				{
+					result = SVVisionProcessorHelper::Instance().QueryRejectCondList(listName, Items);
+					break;
+				}
+				case SvPb::ListType::failStatus:
+				{
+					result = SVVisionProcessorHelper::Instance().QueryFailStatusList(listName, Items);
+					break;
+				}
+				default:
+				{
+					break;
+				}
 			}
 		}
-		SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
+
 		SvPb::Value* pValue = Response.mutable_names();
 		if (S_OK == result && nullptr != pValue)
 		{
@@ -895,9 +903,12 @@ void SVRCCommand::QueryMonitorListNames(const SvPb::QueryMonitorListNamesRequest
 	if (S_OK == result)
 	{
 		SvDef::StringSet Items;
-		SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
-		result = SVVisionProcessorHelper::Instance().QueryMonitorListNames(Items);
-		SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
+		
+		{
+			SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+			result = SVVisionProcessorHelper::Instance().QueryMonitorListNames(Items);
+		}
+
 		SvPb::Value* pValue = Response.mutable_names();
 		if (S_OK == result && nullptr != pValue)
 		{
@@ -924,9 +935,8 @@ void SVRCCommand::RunOnce(const SvPb::RunOnceRequest& rRequest, SvRpc::Task<SvPb
 			pConfig->GetInspection(SvUl::to_ansi(rRequest.inspectionname()).c_str(), pInspection);
 			if (nullptr != pInspection)
 			{
-				SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
+				SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 				SvCmd::RunOnceSynchronous(pInspection->getObjectId());
-				SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
 			}
 			else
 			{
@@ -961,15 +971,13 @@ void SVRCCommand::LoadConfig(const SvPb::LoadConfigRequest& rRequest, SvRpc::Tas
 		
 		if (configFile.empty())
 		{
-			SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
+			SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 			GlobalRCCloseConfiguration();
-			SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
 		}
 		else
 		{
-			SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
+			SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 			result = SVVisionProcessorHelper::Instance().LoadConfiguration(configFile);
-			SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
 		}
 	}
 	
@@ -988,10 +996,10 @@ void SVRCCommand::GetObjectSelectorItems(const SvPb::GetObjectSelectorItemsReque
 		SvPb::InspectionCmdResponse responseCmd;
 		*requestCmd.mutable_getobjectselectoritemsrequest() = rRequest;
 
-
-		SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
-		SvCmd::InspectionCommands(rRequest.inspectionid(), requestCmd, &responseCmd);
-		SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
+		{
+			SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+			SvCmd::InspectionCommands(rRequest.inspectionid(), requestCmd, &responseCmd);
+		}
 
 		selectorResponse = responseCmd.getobjectselectoritemsresponse();
 		ConvertTreeNames(selectorResponse.mutable_tree());
@@ -1028,9 +1036,11 @@ void SVRCCommand::ExecuteInspectionCmd(const SvPb::InspectionCmdRequest& rReques
 		}
 
 		uint32_t inspectionID = rRequest.inspectionid();
-		SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
-		SvCmd::InspectionCommands(inspectionID, rRequest, &response);
-		SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
+
+		{
+			SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+			SvCmd::InspectionCommands(inspectionID, rRequest, &response);
+		}
 
 		///@WARNING [gra][10.10][21.05.2021] This next section to update SVIPDoc should be done in the inspection commands
 		SVIPDoc* pDoc = TheSVObserverApp.GetIPDoc(inspectionID);
@@ -1097,30 +1107,32 @@ void SVRCCommand::GetConfigurationTree(const SvPb::GetConfigurationTreeRequest&,
 		SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 		if (nullptr != pConfig)
 		{
-			SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
 			std::vector<SvPb::ConfigTreeItem> configVector;
-			const SVInspectionProcessVector& rInspectionVector = pConfig->GetInspections();
-			for (const auto* pInspection : rInspectionVector)
-			{
-				if (nullptr != pInspection)
-				{
-					uint32_t inspectionID{ pInspection->getObjectId() };
-					std::vector<uint32_t> objectVector;
-					objectVector.emplace_back(inspectionID);
-					SVToolSet* pToolSet = pInspection->GetToolSet();
-					if (nullptr != pToolSet)
-					{
-						uint32_t toolsetID{ pToolSet->getObjectId() };
-						addObjectChildren(inspectionID, toolsetID, std::back_inserter(objectVector));
 
-						for (const auto& rObjectID : objectVector)
+			{
+				SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+				const SVInspectionProcessVector& rInspectionVector = pConfig->GetInspections();
+				for (const auto* pInspection : rInspectionVector)
+				{
+					if (nullptr != pInspection)
+					{
+						uint32_t inspectionID {pInspection->getObjectId()};
+						std::vector<uint32_t> objectVector;
+						objectVector.emplace_back(inspectionID);
+						SVToolSet* pToolSet = pInspection->GetToolSet();
+						if (nullptr != pToolSet)
 						{
-							addConfigItem(inspectionID, rObjectID, std::back_inserter(configVector));
+							uint32_t toolsetID {pToolSet->getObjectId()};
+							addObjectChildren(inspectionID, toolsetID, std::back_inserter(objectVector));
+
+							for (const auto& rObjectID : objectVector)
+							{
+								addConfigItem(inspectionID, rObjectID, std::back_inserter(configVector));
+							}
 						}
 					}
 				}
 			}
-			SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
 			SvPb::convertVectorToTree(configVector, response.mutable_tree());
 		}
 	}
@@ -1147,10 +1159,9 @@ void SVRCCommand::ConfigCommand(const SvPb::ConfigCommandRequest& rRequest, SvRp
 				SvPb::ConfigDataResponse* pConfigDataResponse = response.mutable_configdataresponse();
 				if (nullptr != pConfigDataResponse)
 				{
-					SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
+					SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 					pConfigDataResponse->set_configfileloaded(GlobalRCGetConfigurationName(false));
 					pConfigDataResponse->set_lastmodified(static_cast<unsigned long>(SVSVIMStateClass::getLastModifiedTime()));
-					SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
 				}
 				break;
 			}
@@ -1188,9 +1199,8 @@ void SVRCCommand::SetTriggerConfig(const SvPb::SetTriggerConfigRequest& rRequest
 					{
 						_variant_t plcSimulatedFile;
 						plcSimulatedFile.SetString(fileName.c_str());
-						SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
+						SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 						result = pTrigger->getDLLTrigger()->SetParameterValue(pTrigger->getTriggerChannel() + 1, SVIOParameterEnum::PlcSimulatedTrigger, plcSimulatedFile);
-						SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
 						break;
 					}
 				}
@@ -1211,12 +1221,11 @@ void SVRCCommand::GetConfigurationInfo(const SvPb::GetConfigurationInfoRequest&,
 
 	if (SVSVIMStateClass::CheckState(cNotAllowedStates) == false)
 	{
-		SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
+		SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 		Response.set_filename(GlobalRCGetConfigurationName(false).c_str());
 		Response.set_lastmodified(SVSVIMStateClass::getLastModifiedTime());
 		Response.set_loadedsince(SVSVIMStateClass::getLoadedSinceTime());
 		Response.set_hash(SVSVIMStateClass::GetHash());
-		SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
 	}
 
 	task.finish(std::move(Response));
@@ -1591,9 +1600,12 @@ void SVRCCommand::clipboardAction(const SvPb::ClipboardRequest rRequest, SvPb::S
 		case SvPb::ClipboardActionEnum::Copy:
 		{
 			ToolClipboard clipboard;
-			SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
-			HRESULT result = clipboard.writeToClipboard(rRequest.objectid());
-			SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
+			HRESULT result {S_OK};
+
+			{
+				SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+				result = clipboard.writeToClipboard(rRequest.objectid());
+			}
 			pResponse->set_hresult(result);
 			if (S_OK != result)
 			{
@@ -1612,9 +1624,13 @@ void SVRCCommand::clipboardAction(const SvPb::ClipboardRequest rRequest, SvPb::S
 				if (nullptr != pObject)
 				{
 					uint32_t ownerID = pObject->GetParentID();
-					uint32_t toolID;
-					SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
-					HRESULT result = clipboard.readFromClipboard(postID, ownerID, toolID);
+					uint32_t toolID {0UL};
+					HRESULT result {S_OK};
+
+					{
+						SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+						result = clipboard.readFromClipboard(postID, ownerID, toolID);
+					}
 					pResponse->set_hresult(result);
 					if (S_OK == result)
 					{
@@ -1631,7 +1647,6 @@ void SVRCCommand::clipboardAction(const SvPb::ClipboardRequest rRequest, SvPb::S
 						const auto& rMessage = clipboard.getLastErrorMessage().getMessageContainer();
 						convertMessageToProtobuf(rMessage, pResponse->mutable_errormessages()->add_messages());
 					}
-					SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
 				}
 			}
 			else
@@ -1645,8 +1660,12 @@ void SVRCCommand::clipboardAction(const SvPb::ClipboardRequest rRequest, SvPb::S
 		case SvPb::ClipboardActionEnum::Cut:
 		{
 			ToolClipboard clipboard;
-			SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
-			HRESULT result = clipboard.writeToClipboard(rRequest.objectid());
+			HRESULT result {S_OK};
+
+			{
+				SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
+				result = clipboard.writeToClipboard(rRequest.objectid());
+			}
 			pResponse->set_hresult(result);
 			if (S_OK == result)
 			{
@@ -1667,6 +1686,8 @@ void SVRCCommand::clipboardAction(const SvPb::ClipboardRequest rRequest, SvPb::S
 					requestCmd.set_inspectionid(inspectionID);
 					SvPb::DeleteObjectRequest* pDelObj = requestCmd.mutable_deleteobjectrequest();
 					pDelObj->set_objectid(rRequest.objectid());
+
+					SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 					SvCmd::InspectionCommands(inspectionID, requestCmd, &responseCmd);
 					if (false == deleteObjectName.empty())
 					{
@@ -1691,7 +1712,6 @@ void SVRCCommand::clipboardAction(const SvPb::ClipboardRequest rRequest, SvPb::S
 				const auto& rMessage = clipboard.getLastErrorMessage().getMessageContainer();
 				convertMessageToProtobuf(rMessage, pResponse->mutable_errormessages()->add_messages());
 			}
-			SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
 			break;
 		}
 		default:

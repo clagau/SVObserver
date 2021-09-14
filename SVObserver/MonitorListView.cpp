@@ -613,7 +613,7 @@ void MonitorListView::OnLButtonDblClk(UINT, CPoint point)
 	{
 		if (TheSVObserverApp.OkToEdit())
 		{
-			SVSVIMStateClass::AddState(SV_STATE_EDITING);
+			SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
 
 			if (EditMonitoredItem(item,false))
 			{
@@ -624,7 +624,6 @@ void MonitorListView::OnLButtonDblClk(UINT, CPoint point)
 					pIODoc->SetModifiedFlag();
 				}
 			}
-			SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 			m_rCtrl.SetItemState(item, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
 		}
 	}
@@ -992,8 +991,8 @@ void MonitorListView::AddItem()
 		{
 			item = m_rCtrl.GetNextSelectedItem(Pos);
 		}
-		SVSVIMStateClass::AddState(SV_STATE_EDITING);
 
+		SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
 		if (EditMonitoredItem(item,false))
 		{
 			SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
@@ -1003,7 +1002,6 @@ void MonitorListView::AddItem()
 				pIODoc->SetModifiedFlag();
 			}
 		}
-		SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 
 		if (item > -1)
 		{
@@ -1113,7 +1111,7 @@ void MonitorListView::OnAddRemoveList()
 {
 	if (TheSVObserverApp.OkToEdit())
 	{
-		SVSVIMStateClass::AddState(SV_STATE_EDITING);
+		SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
 		SVConfigurationObject* pConfig(nullptr);
 		SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 
@@ -1131,7 +1129,6 @@ void MonitorListView::OnAddRemoveList()
 				OnUpdate(this, 0, nullptr);
 			}
 		}
-		SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 	}
 }
 
@@ -1139,7 +1136,7 @@ void MonitorListView::OnEditListProperties()
 {
 	if (TheSVObserverApp.OkToEdit())
 	{
-		SVSVIMStateClass::AddState(SV_STATE_EDITING);
+		SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
 		POSITION Pos = m_rCtrl.GetFirstSelectedItemPosition();
 		if (Pos)
 		{
@@ -1170,7 +1167,6 @@ void MonitorListView::OnEditListProperties()
 				}
 			}
 		}
-		SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 	}
 }
 
@@ -1178,7 +1174,7 @@ void MonitorListView::OnDeleteItem()
 {
 	if (TheSVObserverApp.OkToEdit())
 	{
-		SVSVIMStateClass::AddState(SV_STATE_EDITING);
+		SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
 		POSITION Pos = m_rCtrl.GetFirstSelectedItemPosition();
 		if (nullptr != Pos)
 		{
@@ -1203,7 +1199,6 @@ void MonitorListView::OnDeleteItem()
 				}
 			}
 		}
-		SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 	}
 }
 
@@ -1220,7 +1215,7 @@ void MonitorListView::OnEdit(bool bImageItem)
 {
 	if (TheSVObserverApp.OkToEdit())
 	{
-		SVSVIMStateClass::AddState(SV_STATE_EDITING);
+		SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
 
 		POSITION Pos = m_rCtrl.GetFirstSelectedItemPosition();
 		if (nullptr != Pos)
@@ -1236,7 +1231,6 @@ void MonitorListView::OnEdit(bool bImageItem)
 				}
 			}
 		}
-		SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 	}
 }
 

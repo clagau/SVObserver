@@ -155,7 +155,7 @@ BOOL SVIODoc::CanCloseFrame(CFrameWnd* pFrame)
 
 void SVIODoc::OnExtrasTestoutputs()
 {
-	SVSVIMStateClass::AddState( SV_STATE_EDITING );
+	SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
 	if( S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate(SECURITY_POINT_EXTRAS_MENU_TEST_OUTPUTS) )
 	{
 		if ( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) )
@@ -163,7 +163,6 @@ void SVIODoc::OnExtrasTestoutputs()
 			SVIOConfigurationInterfaceClass::Instance().TestDigitalOutputs();
 		}
 	}
-	SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
 }
 
 void SVIODoc::OnExtrasEditRemoteInputs()
@@ -190,7 +189,7 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 		SvMc::SVRemoteInputDialog oDlg;
 		oDlg.m_lRemoteInputCount = count;
 
-		SVSVIMStateClass::AddState( SV_STATE_EDITING );
+		SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
 		if( IDOK == oDlg.DoModal() )
 		{
 			SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
@@ -288,7 +287,6 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 
 			UpdateAllViews( nullptr );
 		}// end if
-		SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
 
 		count = pInputList->getRemoteInputCount();
 		if( count > 0 )

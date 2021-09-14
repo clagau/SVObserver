@@ -414,7 +414,7 @@ void SVObserverApp::OnFileOpenSVC()
 {
 	ValidateMRUList();
 
-	SVSVIMStateClass::AddState(SV_STATE_EDITING); /// do this before calling validate for security as it may display a logon dialog!
+	SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING}; /// do this before calling validate for security as it may display a logon dialog!
 	// Proof user rights...
 	if (S_OK == m_svSecurityMgr.SVValidate(SECURITY_POINT_FILE_MENU_SELECT_CONFIGURATION))
 	{
@@ -445,8 +445,6 @@ void SVObserverApp::OnFileOpenSVC()
 	}// end if ( S_OK == m_svSecurityMgr.Validate( SECURITY_POINT_FILE_MENU_SELECT_CONFIGURATION) )
 	// Update Remote Inputs Tab
 	UpdateRemoteInputTabs();
-
-	SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -553,10 +551,9 @@ void SVObserverApp::OnUpdateAuditTrailAdditionalFiles(CCmdUI* PCmdUI)
 
 void SVObserverApp::OnThreadAffinitySetup()
 {
-	SVSVIMStateClass::AddState(SV_STATE_EDITING);
+	SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
 	SVThreadInfoDlg dlg;
 	dlg.DoModal();
-	SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 }
 
 void SVObserverApp::OnUpdateModeRun(CCmdUI* PCmdUI)
@@ -1466,7 +1463,7 @@ void SVObserverApp::OnExtrasUtilitiesEdit()
 {
 	SVUtilities util;
 
-	SVSVIMStateClass::AddState(SV_STATE_EDITING); /// do this before calling validate for security as it may display a logon dialog!
+	SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING}; /// do this before calling validate for security as it may display a logon dialog!
 	if (S_OK == m_svSecurityMgr.SVValidate(SECURITY_POINT_EXTRAS_MENU_UTILITIES_SETUP))
 	{
 		CWnd* pWindow = AfxGetMainWnd();
@@ -1483,7 +1480,6 @@ void SVObserverApp::OnExtrasUtilitiesEdit()
 		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SVObserver_AuthorizationFailed_Modification, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10123);
 	}
-	SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 }
 
 void SVObserverApp::OnUpdateRegressionTest(CCmdUI* pCmdUI)
@@ -1536,7 +1532,7 @@ void SVObserverApp::OnUpdateAllIOViews()
 
 void SVObserverApp::OnExtrasSecuritySetup()
 {
-	SVSVIMStateClass::AddState(SV_STATE_EDITING); /// do this before calling validate for security as it may display a logon dialog!
+	SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING}; /// do this before calling validate for security as it may display a logon dialog!
 	if (S_OK == m_svSecurityMgr.SVValidate(SECURITY_POINT_EXTRAS_MENU_SECURITY_MANAGER))
 	{
 		m_svSecurityMgr.SVSetupDialog();
@@ -1575,12 +1571,11 @@ void SVObserverApp::OnExtrasSecuritySetup()
 			StopRegression();
 		}
 	}
-	SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 }
 
 void SVObserverApp::OnAuditTrailDefaultFiles()
 {
-	SVSVIMStateClass::AddState(SV_STATE_EDITING);
+	SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
 	SVConfigurationObject* pConfig(nullptr);
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 	if ((nullptr != pConfig))
@@ -1589,7 +1584,6 @@ void SVObserverApp::OnAuditTrailDefaultFiles()
 	}
 	else
 	{
-		SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 		return;
 	}
 	SvOg::AuditFilesDialog Dlg(pConfig->GetAuditDefaultList(), SvOg::AuditFilesDialog::EDefault);
@@ -1598,12 +1592,11 @@ void SVObserverApp::OnAuditTrailDefaultFiles()
 		pConfig->SetAuditDefaultList(std::move(Dlg.GetFiles()));
 		SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
 	}
-	SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 }
 
 void SVObserverApp::OnAuditTrailAdditionalFiles()
 {
-	SVSVIMStateClass::AddState(SV_STATE_EDITING);
+	SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
 	SVConfigurationObject* pConfig(nullptr);
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 	if ((nullptr != pConfig))
@@ -1612,7 +1605,6 @@ void SVObserverApp::OnAuditTrailAdditionalFiles()
 	}
 	else
 	{
-		SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 		return;
 	}
 	SvOg::AuditFilesDialog Dlg(pConfig->GetAuditWhiteList(), SvOg::AuditFilesDialog::WhiteList);
@@ -1621,7 +1613,6 @@ void SVObserverApp::OnAuditTrailAdditionalFiles()
 		pConfig->SetAuditWhiteList(std::move(Dlg.GetFiles()));
 		SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
 	}
-	SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 }
 
 void SVObserverApp::OnModeEdit()
@@ -3954,26 +3945,27 @@ bool SVObserverApp::ShowConfigurationAssistant(int /*= 3*/,
 
 	cDlg.SetNewConfiguration(bFileNewConfiguration);
 
-	SVSVIMStateClass::AddState(SV_STATE_EDITING);
-	if (cDlg.DoModal() == IDOK)
 	{
-		bOk = true;
-		if (cDlg.Modified())
+		SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
+		if (cDlg.DoModal() == IDOK)
 		{
-			SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
-		}
-		if (nullptr != pConfig)
-		{
-			pConfig->ClearRemoteOutputUnUsedData();
-			pConfig->ValidateRemoteMonitorList();
-			SVIODoc* pIODoc = GetIODoc();
-			if (pIODoc)
+			bOk = true;
+			if (cDlg.Modified())
 			{
-				pIODoc->UpdateAllViews(nullptr);
+				SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
+			}
+			if (nullptr != pConfig)
+			{
+				pConfig->ClearRemoteOutputUnUsedData();
+				pConfig->ValidateRemoteMonitorList();
+				SVIODoc* pIODoc = GetIODoc();
+				if (pIODoc)
+				{
+					pIODoc->UpdateAllViews(nullptr);
+				}
 			}
 		}
 	}
-	SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 
 	//****RPY - End - added new AppAssistant
 

@@ -61,8 +61,8 @@ class SVSVIMStateClass
 {
 public:
 
-	//RAII helper class  for m_LockCountSvrc
-	class SVRCBlocker
+	//RAII helper struct for m_LockCountSvrc
+	struct SVRCBlocker
 	{
 	public:
 		SVRCBlocker()
@@ -75,6 +75,24 @@ public:
 		}
 
 	};
+
+	//RAII class to set and reset the state
+	struct SetResetState
+	{
+		explicit SetResetState(DWORD state) :
+			m_state(state)
+		{
+			SVSVIMStateClass::AddState(m_state);
+		}
+
+		~SetResetState()
+		{
+			SVSVIMStateClass::RemoveState(m_state);
+		}
+	private:
+		DWORD m_state;
+	};
+
 
 	static long GetState() { return m_SVIMState; }
 

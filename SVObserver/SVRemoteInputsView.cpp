@@ -178,7 +178,7 @@ void SVRemoteInputsView::OnLButtonDblClk(UINT, CPoint point)
 					dlg.SetIOName( Name.c_str() );
 					dlg.SetIOValue( value );
 
-					SVSVIMStateClass::AddState( SV_STATE_EDITING );
+					SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
 					if(IDOK ==  dlg.DoModal())
 					{
 						dlg.GetIOValue( value );
@@ -194,8 +194,6 @@ void SVRemoteInputsView::OnLButtonDblClk(UINT, CPoint point)
 						SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
 					}
 					OnUpdate( nullptr, 0, nullptr );
-
-					SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
 				}
 			}
 		}

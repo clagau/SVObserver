@@ -513,7 +513,7 @@ void SVRemoteOutputDataController::SetupRemoteOutputGroup(SVConfigurationObject*
 		return;
 	}
 
-	SVSVIMStateClass::AddState(SV_STATE_EDITING);
+	SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
 	// these containers hold the list of ppq names that will be used for Remote Groups.
 	SvDef::StringVector AvailablePPQs;
 	// Initialize PPQ - Remote Groups by selecting from dialog.
@@ -526,8 +526,7 @@ void SVRemoteOutputDataController::SetupRemoteOutputGroup(SVConfigurationObject*
 			AvailablePPQs.push_back( pPPQ->GetName() );
 		}
 	}
-
-
+ 
 	SVRemoteOutputGroupAddRemoveDlg l_dlg;
 	l_dlg.m_AvailablePPQs = AvailablePPQs;
 	l_dlg.m_SetupGroup = p_rOriginalList;
@@ -573,7 +572,6 @@ void SVRemoteOutputDataController::SetupRemoteOutputGroup(SVConfigurationObject*
 			SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
 		}
 	}
-	SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 }
 
 bool SVRemoteOutputDataController::RenameGroup( const std::string& rOldName, const std::string& rNewName )

@@ -322,8 +322,6 @@ STDMETHODIMP SVCommand::SVPutSVIMConfig(long lOffset, long lBlockSize, BSTR* pFi
 		return SVMSG_63_SVIM_IN_WRONG_MODE;
 	}
 
-	SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
-
 	bool bSuccess = false;
 
 	try
@@ -373,6 +371,7 @@ STDMETHODIMP SVCommand::SVPutSVIMConfig(long lOffset, long lBlockSize, BSTR* pFi
 
 		if (bLastFlag)
 		{
+			SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 			bSuccess = S_OK == GlobalRCLoadPackedConfiguration(PackedFileName.c_str(), fileType);
 			PackedFileName.clear();
 			fileType = ConfigFileType::SvzFormatDefaultName;
@@ -397,8 +396,6 @@ STDMETHODIMP SVCommand::SVPutSVIMConfig(long lOffset, long lBlockSize, BSTR* pFi
 		Exception.setMessage(SVMSG_CMDCOMSRV_ERROR, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
 		hrResult = S_FALSE;
 	}
-
-	SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
 
 	return hrResult;
 }// end SVPutSVIMConfig
@@ -573,9 +570,8 @@ STDMETHODIMP SVCommand::SVLoadSVIMConfig(BSTR bstrConfigFilename)
 	{
 		std::string ConfigFile = SvUl::createStdString(_bstr_t(bstrConfigFilename));
 
-		SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
+		SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 		result = SVVisionProcessorHelper::Instance().LoadConfiguration(ConfigFile);
-		SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
 	}
 
 	return result;
@@ -2042,9 +2038,8 @@ STDMETHODIMP SVCommand::SVSetInputs(SAFEARRAY* psaNames, SAFEARRAY* psaValues, S
 	if (S_OK == result && 0 != ParameterObjects.size())
 	{
 		SVNameStatusMap SetItemsResult;
-		SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
+		SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 		result = SVVisionProcessorHelper::Instance().SetItems(ParameterObjects, SetItemsResult, false);
-		SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
 	}
 
 	return result;
@@ -2233,9 +2228,8 @@ HRESULT SVCommand::SVSetToolParameterList(SAFEARRAY* psaNames, SAFEARRAY* psaVal
 	if (S_OK == result && 0 != ParameterObjects.size())
 	{
 		SVNameStatusMap SetItemsResult;
-		SVSVIMStateClass::AddState(SV_STATE_REMOTE_CMD);
+		SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
 		result = SVVisionProcessorHelper::Instance().SetItems(ParameterObjects, SetItemsResult, false);
-		SVSVIMStateClass::RemoveState(SV_STATE_REMOTE_CMD);
 	}
 
 	return result;

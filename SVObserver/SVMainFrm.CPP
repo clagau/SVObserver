@@ -1310,7 +1310,7 @@ void SVMainFrame::OnUpdateViewResultDisplayUpdate( CCmdUI* pCmdUI )
 
 void SVMainFrame::OnExtrasStartLastConfiguration()
 {
-	SVSVIMStateClass::AddState(SV_STATE_EDITING); /// do this before calling validate for security as it may display a logon dialog!
+	SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING}; /// do this before calling validate for security as it may display a logon dialog!
 	if (S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate(SECURITY_POINT_EXTRAS_MENU_ADDITIONAL_ENVIRON))
 	{
 		bool StartLastConfiguration(false);
@@ -1318,7 +1318,6 @@ void SVMainFrame::OnExtrasStartLastConfiguration()
 		StartLastConfiguration = !StartLastConfiguration;
 		RootObject::setRootChildValue(SvDef::FqnEnvironmentStartLastConfig, StartLastConfiguration);
 	}
-	SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 }
 
 void SVMainFrame::OnUpdateExtrasStartLastConfiguration(CCmdUI* pCmdUI)

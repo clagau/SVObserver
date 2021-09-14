@@ -216,8 +216,8 @@ void PlcOutputsView::OnLButtonDblClk(UINT, CPoint point)
 				dlg.m_pPlcOutput = pPlcOutput;
 				dlg.m_PpqIndex = item / m_maxOutputNumber;
 
-				SVSVIMStateClass::AddState(SV_STATE_EDITING);
-				if(IDOK == dlg.DoModal())
+				SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
+				if (IDOK == dlg.DoModal())
 				{
 					SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
 
@@ -257,13 +257,13 @@ void PlcOutputsView::OnLButtonDblClk(UINT, CPoint point)
 						// Rebuild Outputs
 						SVPPQObject* pPPQ = pConfig->GetPPQ(dlg.m_PpqIndex);
 						if (nullptr != pPPQ)
-						{ 
+						{
 							pPPQ->RebuildOutputList();
 						}
 
 					}// end if
+
 				}
-				SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 				OnUpdate(nullptr, 0, nullptr);
 			}
 			else

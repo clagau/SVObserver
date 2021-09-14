@@ -185,7 +185,7 @@ bool GlobalConstantView::editItem( int Item )
 		}
 	}
 
-	SVSVIMStateClass::AddState( SV_STATE_EDITING );
+	SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
 	if( IDOK == GlobalDlg.DoModal() )
 	{
 		SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
@@ -204,8 +204,6 @@ bool GlobalConstantView::editItem( int Item )
 			updateAllIPDocs( false );
 		}
 	}
-	SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
-
 	return Result;
 }
 
@@ -215,7 +213,7 @@ bool GlobalConstantView::deleteItem( int Item )
 
 	if( -1 != Item )
 	{
-		SVSVIMStateClass::AddState( SV_STATE_EDITING );
+		SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
 		LVITEM lvItem;
 		lvItem.mask = LVIF_PARAM;
 		lvItem.iItem = Item;
@@ -240,7 +238,6 @@ bool GlobalConstantView::deleteItem( int Item )
 				}
 			}
 		}
-		SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
 	}
 
 	return Result;

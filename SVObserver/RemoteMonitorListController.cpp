@@ -77,7 +77,7 @@ bool RemoteMonitorListController::IsEmpty() const
 bool RemoteMonitorListController::Setup(SVConfigurationObject* pConfig)
 {
 	bool bRetVal = false;
-	SVSVIMStateClass::AddState(SV_STATE_EDITING);
+	SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
 	const PPQNameListNames& rPPQList = GetPPQMonitorLists(pConfig);
 	MonitorListAddRemoveDlg dlg(m_list, rPPQList);
 	INT_PTR rc = dlg.DoModal();
@@ -91,7 +91,6 @@ bool RemoteMonitorListController::Setup(SVConfigurationObject* pConfig)
 			Msg.setMessage(errorMessages[0].getMessage());
 		}
 	}
-	SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 	return bRetVal;
 }
 

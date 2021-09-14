@@ -458,7 +458,7 @@ BOOL SVPPQWindowClass::OnCmdMsg( UINT nID, int nCode, void* pExtra, AFX_CMDHANDL
 	{
 		if ( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) )
 		{
-			SVSVIMStateClass::AddState( SV_STATE_EDITING );
+			SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
 
 			int pos = nID - 50;
 	
@@ -504,7 +504,6 @@ BOOL SVPPQWindowClass::OnCmdMsg( UINT nID, int nCode, void* pExtra, AFX_CMDHANDL
 				    }
 			    }// end if( buttonList.GetSize() > pos && buttonList.GetAt( pos ) )
             }// end if (iResult == IDOK)
-			SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
 		}
 		else
 		{

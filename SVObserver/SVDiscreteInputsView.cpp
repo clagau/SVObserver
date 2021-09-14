@@ -190,14 +190,13 @@ void SVDiscreteInputsView::OnLButtonDblClk(UINT, CPoint point)
 				dlg.m_pDigInput = pDigInput;
 				dlg.m_pIOEntry  = pIOEntry;
 
-				SVSVIMStateClass::AddState( SV_STATE_EDITING );
+				SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
 				if(ID_OK == dlg.DoModal())
 				{
 					SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
 				}
 
 				OnUpdate( nullptr, 0, nullptr );
-				SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
 			}
 		}
 	}
