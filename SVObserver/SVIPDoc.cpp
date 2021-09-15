@@ -63,7 +63,6 @@
 #include "SVOGui/TextDefinesSvOg.h"
 #include "SVOResource/ConstGlobalSvOr.h"
 #include "SVProtoBuf/InspectionCommands.h"
-#include "SVStatusLibrary/GlobalPath.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
@@ -3287,14 +3286,19 @@ void SVIPDoc::OnToolDependencies()
 	SVToolSet* pToolSet = GetToolSet();
 	if (nullptr != pToolSet)
 	{
-		CWaitCursor MouseBusy;
-		std::set<uint32_t> ToolIDSet;
-		pToolSet->GetToolIds(std::inserter(ToolIDSet, ToolIDSet.end()));
-		SvDef::StringPairVector m_dependencyList;
-		std::string FileName;
-		//Don't need to check inspection pointer because ToolSet pointer is valid
-		FileName = SvUl::Format(_T("%s\\%s.dot"), SvStl::GlobalPath::Inst().GetTempPath().c_str(), GetInspectionProcess()->GetName());
-		SvOi::getToolDependency(std::back_inserter(m_dependencyList), ToolIDSet, SvPb::SVToolObjectType, SvOi::ToolDependencyEnum::Client, FileName);
+		SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
+		bool bFullAccess = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
+		constexpr const TCHAR* Filter = _T("GraphViz Files (*.dot)|*.dot||");
+		SvMc::SVFileDialog fileDlg(false, bFullAccess, _T("dot"), nullptr, 0, Filter, nullptr);
+		fileDlg.m_ofn.lpstrTitle = _T("Select File");
+		if (fileDlg.DoModal() == IDOK)
+		{
+			CWaitCursor MouseBusy;
+			std::set<uint32_t> ToolIDSet;
+			pToolSet->GetToolIds(std::inserter(ToolIDSet, ToolIDSet.end()));
+			SvDef::StringPairVector m_dependencyList;
+			SvOi::getToolDependency(std::back_inserter(m_dependencyList), ToolIDSet, SvPb::SVToolObjectType, SvOi::ToolDependencyEnum::Client, fileDlg.GetPathName().GetString());
+		}
 	}
 }
 

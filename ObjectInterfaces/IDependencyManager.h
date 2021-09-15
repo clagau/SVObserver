@@ -32,7 +32,7 @@ namespace SvOi
 	//! \param rSourceSet [in] reference to the source set of IDs
 	//! \param nameToObjectType [in] Object type to define the dotted name start
 	//! \param rFileName [in] Optional file name to save the graph file 
-	void getToolDependency( StringPairInserter Inserter, const std::set<uint32_t>& rSourceSet, SvPb::SVObjectTypeEnum nameToObjectType, ToolDependencyEnum ToolDependency = Client, const std::string& rFileName = std::string());
+	void getToolDependency( StringPairInserter Inserter, const std::set<uint32_t>& rSourceSet, SvPb::SVObjectTypeEnum nameToObjectType, ToolDependencyEnum ToolDependency = Client, LPCTSTR fileName = nullptr);
 
 	//! Return the tool dependency of the given sources
 	//! \param Inserter [in] Iterator to insert the tool ID
