@@ -1769,6 +1769,7 @@ void SVIPDoc::OnResultsTablePicker()
 	std::unique_ptr<SVSVIMStateClass::SetResetState> pStateEditing {nullptr};
 	if (SVSVIMStateClass::CheckState(SV_STATE_EDIT))
 	{
+		// cppcheck-suppress unreadVariable symbolName=pStateEditing ; RAII variable
 		pStateEditing = std::make_unique<SVSVIMStateClass::SetResetState>(SV_STATE_EDITING);  /// do this before calling validate for security as it may display a logon dialog!
 	}
 	if (S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate(SECURITY_POINT_EDIT_MENU_RESULT_PICKER))
