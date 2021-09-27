@@ -145,6 +145,8 @@ public:
 	 const SvVol::SVDWordValueObjectClass& getColorObject() const { return m_statusColor; };
 	 virtual void overwriteInputSource(SvOi::SVImageBufferHandlePtr imageHandlePtr) {};
 
+	 virtual void resetCounters();
+
 #pragma region ITool methods
 	virtual bool areAuxExtentsAvailable() const override;
 	virtual SvUl::NameObjectIdList getAvailableAuxSourceImages() const override;

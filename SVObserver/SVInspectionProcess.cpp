@@ -630,14 +630,14 @@ bool SVInspectionProcess::CanGoOnline()
 
 	CWaitCursor l_cwcMouse;
 
+	
 	SetResetCounts();
+
 	m_svReset.AddState(SvDef::SVResetStateInitializeOnReset | SvDef::SVResetStateArchiveToolCreateFiles | SvDef::SVResetStateLoadFiles);
 
 	l_bOk = (S_OK == InitializeRunOnce());
 
 	m_svReset.RemoveState(SvDef::SVResetStateInitializeOnReset | SvDef::SVResetStateArchiveToolCreateFiles | SvDef::SVResetStateLoadFiles);
-
-	ClearResetCounts();
 
 	m_StoreIndex = SvSml::SharedMemWriter::Instance().GetInspectionStoreId(GetName());
 
@@ -673,8 +673,6 @@ bool SVInspectionProcess::CanRegressionGoOnline()
 	l_bOk = resetAllObjects();
 
 	m_svReset.RemoveState(SvDef::SVResetStateInitializeOnReset | SvDef::SVResetStateArchiveToolCreateFiles | SvDef::SVResetStateLoadFiles);
-
-	ClearResetCounts();
 
 	return l_bOk;
 }
@@ -1405,14 +1403,6 @@ HRESULT SVInspectionProcess::RebuildInspection(bool shouldCreateAllObject)
 	return l_Status;
 }
 
-void SVInspectionProcess::ClearResetCounts()
-{
-	if (nullptr != m_pCurrentToolset)
-	{
-		m_pCurrentToolset->ClearResetCounts();
-	}
-}
-
 void SVInspectionProcess::SetResetCounts()
 {
 	if (nullptr != m_pCurrentToolset)
@@ -1976,7 +1966,6 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum& rResetItem
 			if (SvOi::SVResetItemIP == rResetItem)
 			{
 				bRet &= resetAllObjects();
-				bRet &= S_OK == m_pCurrentToolset->ClearResetCounts();
 			}
 			else
 			{

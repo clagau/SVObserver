@@ -3377,7 +3377,7 @@ void SVIPDoc::OnViewResetCountsCurrentIP()
 {
 	if (S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate(SECURITY_POINT_VIEW_MENU_RESET_COUNTS_CURRENT))
 	{
-		SVInspectionProcess* pInspection = GetInspectionProcess();
+ 		SVInspectionProcess* pInspection = GetInspectionProcess();
 
 		// @TODO:  What should we do if there's an error?  (Method is void.)
 		if (nullptr != pInspection && nullptr != pInspection->GetToolSet())

@@ -65,7 +65,7 @@ void SVToolSet::init()
 	RegisterEmbeddedObject(&m_RegressionTestMode, SvPb::RegressionTestModeEId, IDS_OBJECTNAME_REGRESSIONTESTMODE, false, SvOi::SVResetItemNone);
 
 	RegisterEmbeddedObject(&m_DrawFlag, SvPb::ConditionalToolSetDrawFlagEId, IDS_OBJECTNAME_DRAWTOOL_FLAG, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_ResetCounts, SvPb::ResetInspectionCountsEId, IDS_OBJECTNAME_RESET_COUNTS, false, SvOi::SVResetItemIP);
+	RegisterEmbeddedObject(&m_ResetCountsObject, SvPb::ResetInspectionCountsEId, IDS_OBJECTNAME_RESET_COUNTS, false, SvOi::SVResetItemIP);
 	RegisterEmbeddedObject(&m_TriggerCount, SvPb::TriggerCountEId, IDS_OBJECTNAME_TRIGGER_COUNT, false, SvOi::SVResetItemNone);
 	RegisterEmbeddedObject(&m_PPQIndexAtCompletion, SvPb::PPQIndexEId, IDS_PPQ_INDEX_AT_COMPLETION, false, SvOi::SVResetItemNone);
 	RegisterEmbeddedObject(&m_Times[ToolSetTimes::TriggerDelta], SvPb::TriggerDeltaEId, IDS_TRIGGER_DELTA, false, SvOi::SVResetItemNone);
@@ -219,7 +219,7 @@ bool SVToolSet::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 	m_RegressionTestMode.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::AddAttribute);
 	m_DrawFlag.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::AddAttribute);
 	m_ToolTime.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
-	m_ResetCounts.SetObjectAttributesAllowed(SvPb::remotelySetable | SvPb::setableOnline | SvPb::embedable, SvOi::SetAttributeType::OverwriteAttribute);
+	m_ResetCountsObject.SetObjectAttributesAllowed(SvPb::remotelySetable | SvPb::setableOnline | SvPb::embedable, SvOi::SetAttributeType::OverwriteAttribute);
 	m_TriggerCount.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
 	m_PPQIndexAtCompletion.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
 	for (int i = 0; i < ToolSetTimes::MaxCount; ++i)
@@ -383,13 +383,6 @@ SvVol::SVEnumerateValueObjectClass* SVToolSet::GetDrawFlagObject()
 	return &m_DrawFlag;
 }
 
-HRESULT SVToolSet::getResetCounts(bool& rResetCounts)  const
-{
-	BOOL Value(false);
-	HRESULT Result = m_ResetCounts.GetValue(Value);
-	rResetCounts = Value ? true : false;
-	return Result;
-}
 
 long SVToolSet::getTriggerCount() const
 {
@@ -483,6 +476,31 @@ bool SVToolSet::Run(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *
 {
 	bool bRetVal = true;
 	clearRunErrorMessages();
+
+	if (m_ResetCounts)
+	{
+		// Reset Counters...
+		m_PassedCount.SetValue(0);
+		m_FailedCount.SetValue(0);
+		m_WarnedCount.SetValue(0);
+		m_EnabledCount.SetValue(0);
+		m_ProcessedCount.SetValue(0);
+
+		m_bResetMinMaxToolsetTime = true;
+		m_ResetCounts = false;
+
+		for (SVTaskObjectClass* tool : m_TaskObjectVector)
+		{ 
+			if (tool != nullptr)
+			{
+				if (tool->m_ObjectTypeInfo.m_ObjectType == SvPb::SVObjectTypeEnum::SVToolObjectType)
+				{
+					SvTo::SVToolClass* svtool = static_cast<SvTo::SVToolClass*>(tool);
+					svtool->resetCounters();
+				}
+			}
+		}
+	}
 
 	double l_Timer = SvUl::GetTimeStamp();
 	m_ToolTime.Start();
@@ -605,25 +623,16 @@ bool SVToolSet::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::ResetObject(pErrorMessages) && ValidateLocal(pErrorMessages);
 
+	BOOL bResetCounter(false);
+	if (S_OK == m_ResetCountsObject.GetValue(bResetCounter) && bResetCounter)
+	{
+		m_ResetCounts = true;
+		m_ResetCountsObject.SetValue(false);
+	}
+
 	m_inputConditionBool.validateInput();
 
-	BOOL bResetCounter(false);
-	if (S_OK == m_ResetCounts.GetValue(bResetCounter) && bResetCounter)
-	{
-		// Reset Counters...
-		m_PassedCount.SetDefaultValue(0);
-		m_FailedCount.SetDefaultValue(0);
-		m_WarnedCount.SetDefaultValue(0);
-		m_EnabledCount.SetDefaultValue(0);
-		m_ProcessedCount.SetDefaultValue(0);
-		m_RegressionTestMode.SetDefaultValue(SVSVIMStateClass::CheckState(SV_STATE_REGRESSION));
-
-		m_bResetMinMaxToolsetTime = true;
-	}
-	else
-	{
-		m_RegressionTestMode.SetDefaultValue(SVSVIMStateClass::CheckState(SV_STATE_REGRESSION));
-	}
+	m_RegressionTestMode.SetDefaultValue(SVSVIMStateClass::CheckState(SV_STATE_REGRESSION));
 
 	SVImageExtentClass ImageExtent(m_MainImageObject.GetImageExtents());
 	double Width(0.0);
@@ -649,7 +658,7 @@ HRESULT SVToolSet::ResetCounts()
 		SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(GetInspection());
 
 		//add request to inspection process
-		if (nullptr != pInspection && pInspection->AddInputRequest(SVObjectReference{ &m_ResetCounts }, _T("true")))
+		if (nullptr != pInspection && pInspection->AddInputRequest(SVObjectReference{ &m_ResetCountsObject }, _T("true")))
 		{
 			//add request to inspection process
 			if (!pInspection->AddInputRequestMarker())
@@ -668,11 +677,6 @@ HRESULT SVToolSet::ResetCounts()
 	}
 
 	return Result;
-}
-
-HRESULT SVToolSet::ClearResetCounts()
-{
-	return m_ResetCounts.SetValue(BOOL(false));
 }
 
 HRESULT SVToolSet::onCollectOverlays(SvIe::SVImageClass*, SVExtentMultiLineStructVector& )
@@ -770,9 +774,6 @@ void SVToolSet::setPostRunStatus(double timer, SvIe::RunStatus &rRunStatus)
 			m_MaxToolsetTime.SetValue(l_i64MaxTime);
 		}
 
-		if (m_bResetMinMaxToolsetTime)
-		{
-			m_bResetMinMaxToolsetTime = false;
-		}
+		m_bResetMinMaxToolsetTime = false;
 	}
 }

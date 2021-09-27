@@ -34,6 +34,7 @@ public:
 	virtual bool usePropagateSizeAndPosition() const override;
 	virtual void addOverlays(const SvIe::SVImageClass* p_Image, SvPb::OverlayDesc& rOverlay) const override;
 	virtual bool ResetObject(SvStl::MessageContainerVector* pErrorMessages = nullptr) override;
+	virtual void resetCounters() override;
 
 	virtual bool areAuxExtentsAvailable() const override { return false; };
 	virtual SvPb::InspectionCmdResponse getInvalidDependencies() const override;

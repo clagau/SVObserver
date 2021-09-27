@@ -63,7 +63,6 @@ public:
 	bool WasEnabled() const;
 
 	HRESULT ResetCounts();
-	HRESULT ClearResetCounts();
 
 	//! Update the tool position
 	void updateToolPosition();
@@ -95,8 +94,6 @@ public:
 			}
 		}
 	};
-
-	HRESULT getResetCounts( bool& rResetCounts ) const override;
 
 	void setTime(double time, ToolSetTimes timeType) { m_Times[timeType].SetValue(static_cast<__int64> (time)); }
 	void setPpqPosition(long ppqPosition) { m_PPQIndexAtCompletion.SetValue(ppqPosition); }
@@ -161,8 +158,10 @@ protected:
 
 	SvVol::SVBoolValueObjectClass  m_isObjectValid;	//	Embedded
 	SvVol::SVBoolValueObjectClass m_Enabled;
-	SvVol::SVBoolValueObjectClass m_ResetCounts;
+	SvVol::SVBoolValueObjectClass m_ResetCountsObject;
 	SvVol::SVLongValueObjectClass m_TriggerCount;
+
+	bool m_ResetCounts = false;
 
 	SVResultList m_ResultList;
 

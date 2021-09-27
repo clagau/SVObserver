@@ -32,6 +32,7 @@ public:
 	virtual void addOverlays(const SvIe::SVImageClass* p_Image, SvPb::OverlayDesc& rOverlay) const override;
 	virtual bool areAuxExtentsAvailable() const override { return false; };
 	virtual std::vector<std::string> getToolAdjustNameList() const override;
+	virtual void resetCounters() override;
 
 protected:
 	virtual bool useOverlayColorTool() const override { return false; };

@@ -3192,7 +3192,7 @@ void SVObserverApp::ResetAllCounts()
 		if (nullptr != pInspection) { pInspection->GetToolSet()->ResetCounts(); }
 	}// end for
 
-	if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
+	if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING|SV_STATE_REGRESSION))
 	{
 		for (l = 0; l < lSize; l++)
 		{

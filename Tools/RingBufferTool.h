@@ -100,8 +100,8 @@ private:
 	//ringbuffer
 	std::vector<SvOi::ITRCImagePtr> m_ringBuffer;
 	//std::vector<SvOi::SVImageBufferHandlePtr> m_ringBuffer;
-	bool m_isBufferFull;
-	int m_nextBufferPos;
+	bool m_isBufferFull = false;
+	int m_nextBufferPos = 0;
 	int m_ringBufferDepth = 10;
 #pragma endregion Member Variables
 };

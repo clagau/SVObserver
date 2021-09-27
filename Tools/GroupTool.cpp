@@ -172,6 +172,26 @@ namespace SvTo
 		return result;
 	}
 
+	void GroupTool::resetCounters()
+	{
+		__super::resetCounters();
+
+		// THB Step through the list of child tools and call reset counters for all of them
+		
+		for (SVTaskObjectClass* tool : m_TaskObjectVector)
+		{
+			if (tool != nullptr)
+			{
+				if (tool->getObjectTypeInfo().m_ObjectType == SvPb::SVObjectTypeEnum::SVToolObjectType)
+				{
+					SvTo::SVToolClass* svtool = static_cast<SvTo::SVToolClass*>(tool);
+					svtool->resetCounters();
+				}
+			}
+		}
+		
+	}
+
 	SvPb::InspectionCmdResponse GroupTool::getInvalidDependencies() const
 	{
 		SvPb::InspectionCmdResponse cmdResponse;

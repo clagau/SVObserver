@@ -305,4 +305,21 @@ bool LoopTool::RunAllChildren(SvIe::RunStatus& rRunStatus, SvStl::MessageContain
 	return bRetVal;
 }
 
+void LoopTool::resetCounters()
+{
+	__super::resetCounters();
+
+	for (SVTaskObjectClass* tool : m_TaskObjectVector)
+	{
+		if (tool != nullptr)
+		{
+			if (tool->getObjectTypeInfo().m_ObjectType == SvPb::SVObjectTypeEnum::SVToolObjectType)
+			{
+				SvTo::SVToolClass* svtool = static_cast<SvTo::SVToolClass*>(tool);
+				svtool->resetCounters();
+			}
+		}
+	}
+}
+
 } //namespace SvTo

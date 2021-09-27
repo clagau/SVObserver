@@ -43,8 +43,6 @@ namespace SvOi
 
 		virtual bool WasEnabled() const = 0; 
 
-		virtual HRESULT getResetCounts(bool& rResetCounts) const = 0;
-
 		virtual ISVImage* getCurrentImageInterface() = 0;
 
 		virtual IValueObject* GetDrawFlagObject() = 0;

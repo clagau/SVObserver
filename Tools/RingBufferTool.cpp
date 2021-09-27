@@ -39,8 +39,6 @@ SV_IMPLEMENT_CLASS( RingBufferTool, SvPb::RingBufferToolClassId );
 #pragma region Constructor
 RingBufferTool::RingBufferTool( SVObjectClass* pOwner, int stringResourceID )
 	:SVToolClass( pOwner, stringResourceID )
-	, m_isBufferFull(false)
-	, m_nextBufferPos(0)
 {
 	LocalInitialize ();
 }
@@ -81,6 +79,8 @@ bool RingBufferTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStruc
 	m_drawToolFlag.SetObjectAttributesAllowed(cAttribute, SvOi::SetAttributeType::RemoveAttribute);
 
 	m_isCreated = bOk;
+
+	m_nextBufferPos = -1;
 
 	return bOk;
 }

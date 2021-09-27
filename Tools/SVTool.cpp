@@ -663,25 +663,6 @@ bool SVToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::ResetObject(pErrorMessages) && ValidateLocal(pErrorMessages);
 
-	SvOi::IInspectionProcess* pInspection = GetInspectionInterface();
-	if (nullptr != pInspection)
-	{
-		SvOi::IToolSet* pToolSet = dynamic_cast<SvOi::IToolSet*>(pInspection->GetToolSetInterface());
-		if (nullptr != pToolSet)
-		{
-			bool bResetCounter = false;
-			if (S_OK == pToolSet->getResetCounts(bResetCounter) && bResetCounter)
-			{
-				// Reset Counter...
-				m_PassedCount.SetDefaultValue(0, true);
-				m_FailedCount.SetDefaultValue(0, true);
-				m_WarnedCount.SetDefaultValue(0, true);
-				m_EnabledCount.SetDefaultValue(0, true);
-				m_ProcessedCount.SetDefaultValue(0, true);
-			}
-		}
-	}
-
 	///UpdateBottomAndRight is called again when imageExtents are changed by ToolsizeAdjust
 	if (Result)
 	{
@@ -1170,6 +1151,17 @@ SvPb::EAutoSize SVToolClass::getAutoSizeEnabled() const
 {
 	return GetAutoSizeEnabled();
 }
+
+void SVToolClass::resetCounters()
+{
+	// Reset Counter...
+	m_PassedCount.SetDefaultValue(0, true);
+	m_FailedCount.SetDefaultValue(0, true);
+	m_WarnedCount.SetDefaultValue(0, true);
+	m_EnabledCount.SetDefaultValue(0, true);
+	m_ProcessedCount.SetDefaultValue(0, true);
+}
+
 #pragma endregion ITool methods
 
 SvVol::SVStringValueObjectClass* SVToolClass::GetInputImageNames()
