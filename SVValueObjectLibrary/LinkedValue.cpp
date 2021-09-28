@@ -683,6 +683,10 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 			m_equation.SetEquationText(m_formulaString);
 			SvOi::EquationTestResult testResult = m_equation.Test(pErrorMessages);
 			Result = testResult.bPassed;
+			if (Result)
+			{
+				setValueFromDouble(m_equation.GetYACCResult());
+			}
 			DisconnectInput();
 			break;
 		}
@@ -1132,13 +1136,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 	{
 		if (SvPb::LinkedSelectedType::Formula == getSelectedType())
 		{
-			variant_t value = m_equation.RunAndGetResult();
-			if (S_OK != ::VariantChangeTypeEx(&value, &value, SvDef::LCID_USA, VARIANT_ALPHABOOL, GetDefaultType()))
-			{
-				assert(false);
-				return false;
-			}
-			return (S_OK == __super::setValue(value));
+			return setValueFromDouble(m_equation.RunAndGetResult());
 		}
 		return true;
 	}
@@ -1296,6 +1294,17 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 			Exception.Throw();
 		}
 		return value;
+	}
+
+	bool LinkedValue::setValueFromDouble(double value)
+	{
+		variant_t valueVar = value;
+		if (S_OK != ::VariantChangeTypeEx(&valueVar, &valueVar, SvDef::LCID_USA, VARIANT_ALPHABOOL, GetDefaultType()))
+		{
+			assert(false);
+			return false;
+		}
+		return (S_OK == __super::setValue(valueVar));
 	}
 
 	void LinkedValue::setSelectedType(SvPb::LinkedSelectedType type)

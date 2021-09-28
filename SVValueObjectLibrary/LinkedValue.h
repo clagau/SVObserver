@@ -158,6 +158,8 @@ private:
 	/// \returns variant_t
 	variant_t validateFormula(const std::string& rFormula) const;
 
+	bool setValueFromDouble(double value);
+
 	void setSelectedType(SvPb::LinkedSelectedType type);
 #pragma endregion Private Methods
 
