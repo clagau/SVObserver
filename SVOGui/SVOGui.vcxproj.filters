@@ -264,6 +264,9 @@
     <ClCompile Include="BlobAnalyzer2Helper.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="ToolSizeController.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AuxiliaryExtentsController.h">
@@ -540,6 +543,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="TADialogGroupToolResultPage.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="ToolSizeController.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

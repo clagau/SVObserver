@@ -16,7 +16,9 @@
 #include "PictureDisplay.h"
 #include "SVMFCControls\AvailableObjectListComboBox.h"
 #include "ImageController.h"
+#include "ToolSizeController.h"
 #pragma endregion Includes
+
 
 namespace SvOg
 {
@@ -52,5 +54,6 @@ namespace SvOg
 		std::string m_inputName;
 		
 		ImageController m_ImageController;
+		ToolSizeController m_ToolsizeHelper;
 	};
 } //namespace SvOg

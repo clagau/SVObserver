@@ -449,6 +449,8 @@ SvPb::InspectionCmdResponse getImage(SvPb::GetImageRequest request)
 	return cmdResponse;
 }
 
+
+
 SvPb::InspectionCmdResponse areAuxiliaryExtentsAvailable(SvPb::AreAuxiliaryExtentsAvailableRequest request)
 {
 	SvPb::InspectionCmdResponse cmdResponse;
@@ -1220,6 +1222,8 @@ SvPb::InspectionCmdResponse setExtentParameter(SvPb::SetExtentParameterRequest r
 	SvOi::ITool* pTool = dynamic_cast<SvOi::ITool*>(SvOi::getObject(request.objectid()));
 	SvPb::SetExtentParameterResponse* pResponse = cmdResponse.mutable_setextentparameterresponse();
 	auto* pParameter = pResponse->mutable_parameters();
+	std::string debug = request.DebugString();
+
 	if (nullptr != pTool && nullptr != pParameter)
 	{
 		HRESULT result{S_OK};

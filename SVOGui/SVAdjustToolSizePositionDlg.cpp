@@ -45,6 +45,8 @@ BEGIN_MESSAGE_MAP(SVAdjustToolSizePositionDlg, CDialog)
 	ON_NOTIFY(PTN_ITEMCHANGED, IDC_RESULT_LIST, OnItemChanged)
 	ON_BN_CLICKED(IDOK, OnOK)
 	ON_BN_CLICKED(IDCANCEL, OnCancel)
+	ON_BN_CLICKED(IDC_CHECK_AUTOFIT, OnCheckAutofit)
+
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -61,23 +63,12 @@ inline bool ApproxEqual(double d1, double d2)
 #pragma region Constructor
 SVAdjustToolSizePositionDlg::SVAdjustToolSizePositionDlg(uint32_t inspectionId, uint32_t taskObjectId, LPCTSTR Caption, CWnd* pParentWnd)
 	: CDialog(SVAdjustToolSizePositionDlg::IDD, pParentWnd)
-	, m_toolTaskId(taskObjectId)
 	, m_ipId(inspectionId)
 	, m_Title(Caption)
-	, m_values{ SvOg::BoundValues{ inspectionId, taskObjectId } }
+	, m_ToolSizeHelper(inspectionId, taskObjectId)
 {
-	SvPb::InspectionCmdRequest requestCmd;
-	SvPb::InspectionCmdResponse responseCmd;
-	auto* pRequest = requestCmd.mutable_getextentparameterrequest();
-	pRequest->set_objectid(m_toolTaskId);
 
-	HRESULT hr = SvCmd::InspectionCommands(m_ipId, requestCmd, &responseCmd);
-	if (S_OK == hr && responseCmd.has_getextentparameterresponse())
-	{
-		m_extents = responseCmd.getextentparameterresponse().parameters();
-		m_translationType = responseCmd.getextentparameterresponse().translationtype();
-	}
-	m_originalExtents = m_extents;
+	m_ToolSizeHelper.StoreExtents(true);
 }
 
 SVAdjustToolSizePositionDlg::~SVAdjustToolSizePositionDlg()
@@ -101,6 +92,7 @@ void SVAdjustToolSizePositionDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_LEFT_BUTTON, m_btnLeft);
 	DDX_Control(pDX, IDC_DOWN_BUTTON, m_btnDown);
 	DDX_Radio(pDX, IDC_TOP_LEFT_RADIO, m_iMode);
+	DDX_Control(pDX, IDC_CHECK_AUTOFIT, m_CheckAutoFit);
 	//}}AFX_DATA_MAP
 }
 
@@ -108,57 +100,20 @@ BOOL SVAdjustToolSizePositionDlg::OnInitDialog()
 {
 	m_iMode = MODE_MOVE;	// Default action: Move
 	CDialog::OnInitDialog();
-	m_values.Init();
-
 	SetWindowText(m_Title.c_str());
-
 	createIcons();
-	bool bShow = false;
-	bool bShowEditTool = false;
-
-	SvPb::InspectionCmdRequest requestCmd;
-	SvPb::InspectionCmdResponse responseCmd;
-	auto* pRequest = requestCmd.mutable_gettoolsizeadjustparameterrequest();
-	pRequest->set_objectid(m_toolTaskId);
-	HRESULT hr = SvCmd::InspectionCommands(m_ipId, requestCmd, &responseCmd);
-	if (S_OK == hr && responseCmd.has_gettoolsizeadjustparameterresponse())
-	{
-		auto responseData = responseCmd.gettoolsizeadjustparameterresponse();
-		//m_isFullSizeAllowed = responseData.isfullsizeallowed();
-		//m_isAdjustSizeAllowed = responseData.isadjustsizeallowed();
-		//m_isAdjustPositionAllowed = responseData.isadjustpositionallowed();
-		m_autoSizeEnabled = responseData.enableautosize();
-		bShow = responseData.canresizetoparent();
-		bShowEditTool = true;
-	}
-
-	requestCmd.Clear();
-	responseCmd.Clear();
-	// If it's a Linear Tool, hide the "Full Image" button if rotation is enabled.
-	auto* pParamRequest = requestCmd.mutable_getobjectparametersrequest();
-	pParamRequest->set_objectid(m_toolTaskId);
-
-	hr = SvCmd::InspectionCommands(m_ipId, requestCmd, &responseCmd);
-	if (S_OK == hr && responseCmd.has_getobjectparametersresponse())
-	{
-		if (SvPb::SVLinearToolObjectType == responseCmd.getobjectparametersresponse().typeinfo().subtype())
-		{
-			bool rotation = m_values.Get<bool>(SvPb::LinearToolUseRotationEId);
-			if (rotation)
-			{
-				bShow = false;
-			}
-		}
-	}
+	m_ToolSizeHelper.InitValues();
+	bool bShowEditTool = m_ToolSizeHelper.hasAdjustToolSizeParameter();
+	bool bShowFullSize = m_ToolSizeHelper.CanResizeToParent();
+	bool bAutoSizeEnabled = bShowFullSize && m_ToolSizeHelper.GetAutofitAllowedFlag();
 
 	GetDlgItem(IDC_BUT_EDIT_TOOL)->ShowWindow(bShowEditTool ? SW_SHOW : SW_HIDE);
-	GetDlgItem(IDC_FULL_ROI_BTN)->ShowWindow(bShow ? SW_SHOW : SW_HIDE);
+	GetDlgItem(IDC_FULL_ROI_BTN)->ShowWindow(bShowFullSize ? SW_SHOW : SW_HIDE);
 	GetDlgItem(IDC_FULL_ROI_BTN)->EnableWindow(!IsFullSize() && IsFullSizeAllowed());
 
 	GetDlgItem(IDC_BUTTON_PROPAGATE)->EnableWindow(UsePropagate());
 
-	auto iterFindRot = std::find_if(m_extents.begin(), m_extents.end(), [](const auto& rItem) { return SvPb::SVExtentPropertyRotationAngle == rItem.type(); });
-	if (m_extents.end() == iterFindRot || iterFindRot->filteredoutflag() )
+	if (m_ToolSizeHelper.HasRotation(false) == false)
 	{
 		GetDlgItem(IDC_ROTATION_RADIO)->ShowWindow(SW_HIDE);	// hide rotation option
 	}
@@ -181,10 +136,30 @@ BOOL SVAdjustToolSizePositionDlg::OnInitDialog()
 	m_Tree.ShowInfoText(false);
 	BuildTreeFromExtents();
 
+	m_CheckAutoFit.EnableWindow(bAutoSizeEnabled);
+	m_CheckAutoFit.SetCheck(IsAutofit() ? BST_CHECKED : BST_UNCHECKED);
+	
+	GetDlgItem(IDC_FULL_ROI_BTN)->EnableWindow(!IsFullSize() && IsFullSizeAllowed());
+	GetDlgItem(IDOK)->EnableWindow(m_hResultFromSetExtent == S_OK);
+
 	return TRUE;  // return TRUE unless you set the focus to a control
 }
+bool SVAdjustToolSizePositionDlg::IsAutofit()
+{
+	SizeModes Modes;
+	if (!m_ToolSizeHelper.GetToolSizeMode(false, Modes))
+	{
+		return false;
+	}
 
-LRESULT SVAdjustToolSizePositionDlg::OnNotifyLButtonDown(WPARAM , LPARAM lParam)
+	auto pred = [&Modes](auto ad)
+	{
+		return (Modes[ad] == SvDef::TSAutoFit);
+	};
+
+	return std::all_of(SvDef::AllToolSizeAdjustEnum, SvDef::AllToolSizeAdjustEnum + SvDef::TSValuesCount, pred);
+}
+LRESULT SVAdjustToolSizePositionDlg::OnNotifyLButtonDown(WPARAM, LPARAM lParam)
 {
 	m_pButton = reinterpret_cast <SvMc::SVUpDownButton*> (lParam);
 
@@ -194,7 +169,7 @@ LRESULT SVAdjustToolSizePositionDlg::OnNotifyLButtonDown(WPARAM , LPARAM lParam)
 	return 0;
 }
 
-LRESULT SVAdjustToolSizePositionDlg::OnNotifyLButtonUp(WPARAM, LPARAM )
+LRESULT SVAdjustToolSizePositionDlg::OnNotifyLButtonUp(WPARAM, LPARAM)
 {
 	KillTimer(TIMER_PAUSE);
 	KillTimer(TIMER_REPEAT);
@@ -240,62 +215,70 @@ void SVAdjustToolSizePositionDlg::OnModeRadio()
 	UpdateData(FALSE);
 }
 
+
+std::map< SvPb::SVExtentPropertyEnum, double> SVAdjustToolSizePositionDlg::GetExtentsFromTree()
+{
+	std::map< SvPb::SVExtentPropertyEnum, double> mymap;
+	
+	if (nullptr == m_pRoot)
+	{
+		return mymap;
+	}
+
+	SVRPropertyItem* pNext = m_pRoot->GetChild();
+	while (pNext)
+	{
+
+		SvPb::SVExtentPropertyEnum eProperty = static_cast<SvPb::SVExtentPropertyEnum> (pNext->GetCtrlID() - ID_BASE);
+		std::string Value;
+		pNext->GetItemValue(Value);
+		double dValue = atof(Value.c_str());
+		mymap[eProperty] = dValue;
+		SVRPropertyItem* pNextSibling = pNext->GetSibling();
+		if (pNextSibling)
+		{
+			pNext = pNextSibling;
+		}
+		else
+		{
+			pNext = pNext->GetChild();
+		}
+	}
+	return mymap;
+}
 void SVAdjustToolSizePositionDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 {
 	LPNMPROPTREE pNMPropTree = reinterpret_cast<LPNMPROPTREE>(pNotifyStruct);
 	*plResult = S_OK;
 	if (pNMPropTree->pItem)
 	{
+		
 		SVRPropertyItem* pItem = pNMPropTree->pItem;
-
-		// do validation
 		SvPb::SVExtentPropertyEnum eProperty = static_cast<SvPb::SVExtentPropertyEnum> (pItem->GetCtrlID() - ID_BASE);
 		std::string Value;
 		pItem->GetItemValue(Value);
-		double dValue = atof(Value.c_str());
-		double dOldValue = SvCmd::getValueForProperties<double>(m_extents, eProperty);
-		if (!ApproxEqual(dOldValue, dValue))
+		if (m_PreviousTreeEntries[eProperty] == Value)
 		{
-			SvPb::InspectionCmdRequest requestCmd;
-			SvPb::InspectionCmdResponse responseCmd;
-			auto* pRequest = requestCmd.mutable_setextentparameterrequest();
-			pRequest->set_objectid(m_toolTaskId);
-			pRequest->mutable_setproperty()->set_propertyflag(eProperty);
-			pRequest->mutable_setproperty()->set_value(dValue);
-
-			HRESULT hr = SvCmd::InspectionCommands(m_ipId, requestCmd, &responseCmd);
-			pItem->SetItemValue(SvUl::AsString(dValue).c_str());
-			pItem->OnRefresh();
-
-			if (S_OK == hr && responseCmd.has_setextentparameterresponse())
-			{
-				m_extents = responseCmd.setextentparameterresponse().parameters();
-				m_translationType = responseCmd.getextentparameterresponse().translationtype();
-			}
-			FillTreeFromExtents();
+			return;
 		}
+
 	}
+	
+	*plResult = S_OK;
+	std::map< SvPb::SVExtentPropertyEnum, double>  Extends = GetExtentsFromTree();
+	m_hResultFromSetExtent =  m_ToolSizeHelper.SetExtentsMap(Extends);
+	FillTreeFromExtents(false);
+
+
 }
+
 
 void SVAdjustToolSizePositionDlg::OnOK()
 {
 	//check if extents have change.  if they change set SV_STATE_MODIFIED
-	bool hasChanged = false;
-	if (m_originalExtents.size() == m_extents.size())
-	{
-		for (int i = 0; i < m_extents.size(); i++)
-		{
-			if (m_extents[i].value() != m_originalExtents[i].value() || m_extents[i].type() != m_originalExtents[i].type())
-			{
-				hasChanged = true;
-				break;
-			}
-		}
-	}
-	else
-	{
-		hasChanged = true;
-	}
+	bool hasChanged = m_ToolSizeHelper.HasChanged(true);
+
+
 	if (hasChanged)
 	{	//This AddState is not clean separated, because it is not possible this value to set from GUI2.0
 		//But the modified topic should be reviewed for GUI2.0 anyway.
@@ -309,13 +292,7 @@ void SVAdjustToolSizePositionDlg::OnOK()
 
 void SVAdjustToolSizePositionDlg::OnCancel()
 {
-	SvPb::InspectionCmdRequest requestCmd;
-	auto* pRequest = requestCmd.mutable_setextentparameterrequest();
-	pRequest->set_objectid(m_toolTaskId);
-	pRequest->mutable_extentlist()->mutable_extentlist()->MergeFrom(m_originalExtents);
-
-	HRESULT hr = SvCmd::InspectionCommands(m_ipId, requestCmd, nullptr);
-	assert(S_OK == hr);
+	m_ToolSizeHelper.RestoreExtents();
 
 	OnBnClickedPropagate();
 	CDialog::OnCancel();
@@ -323,29 +300,15 @@ void SVAdjustToolSizePositionDlg::OnCancel()
 
 void SVAdjustToolSizePositionDlg::OnBnClickedFullROI()
 {
-	SvPb::InspectionCmdRequest requestCmd;
-	SvPb::InspectionCmdResponse responseCmd;
-	auto* pRequest = requestCmd.mutable_setextentparameterrequest();
-	pRequest->set_objectid(m_toolTaskId);
-	pRequest->set_settoparent(true);
-
-	HRESULT hr = SvCmd::InspectionCommands(m_ipId, requestCmd, &responseCmd);
-	if (S_OK == hr && responseCmd.has_setextentparameterresponse())
+	if (m_ToolSizeHelper.SetExtentToParent())
 	{
-		m_extents = responseCmd.setextentparameterresponse().parameters();
-		m_translationType = responseCmd.getextentparameterresponse().translationtype();
-
-		FillTreeFromExtents();
+		FillTreeFromExtents(true);
 		m_Tree.Invalidate();
 	}
 }
 void SVAdjustToolSizePositionDlg::OnBnClickedPropagate()
 {
-	SvPb::InspectionCmdRequest requestCmd;
-	SvPb::PropagateSizeAndPositionRequest* pRequest = requestCmd.mutable_propagatesizeandpositionrequest();
-	pRequest->set_objectid(m_ipId);
-
-	SvCmd::InspectionCommands(m_ipId, requestCmd, nullptr);
+	m_ToolSizeHelper.Propagate();
 }
 
 void SVAdjustToolSizePositionDlg::OnBnClickedEditTool()
@@ -402,19 +365,8 @@ HRESULT SVAdjustToolSizePositionDlg::ButtonAction(SvMc::SVUpDownButton* pButton)
 	}
 
 
-	bool bAllowedAction = false;
-	SvPb::InspectionCmdRequest requestCmd;
-	SvPb::InspectionCmdResponse responseCmd;
-	auto* pRequest = requestCmd.mutable_isallowedlocationrequest();
-	pRequest->set_objectid(m_toolTaskId);
-	pRequest->set_location(eAction);
-	pRequest->set_direction(Direction);
-	
-	HRESULT hr = SvCmd::InspectionCommands(m_ipId, requestCmd, &responseCmd);
-	if (S_OK == hr && responseCmd.has_isallowedlocationresponse())
-	{
-		bAllowedAction = responseCmd.isallowedlocationresponse().isallowed();
-	}
+	bool bAllowedAction = m_ToolSizeHelper.Isallowedlocation(eAction, Direction);
+	HRESULT hr {S_OK};
 	if (bAllowedAction && eAction == SvPb::SVExtentLocationPropertyRotate)
 	{
 		hr = AdjustToolAngle(dx);
@@ -424,97 +376,68 @@ HRESULT SVAdjustToolSizePositionDlg::ButtonAction(SvMc::SVUpDownButton* pButton)
 		hr = AdjustTool(eAction, dx, dy);
 	}
 
-	FillTreeFromExtents();
+	FillTreeFromExtents(true);
 	m_Tree.Invalidate();
 	return hr;
 }
 
-HRESULT SVAdjustToolSizePositionDlg::AdjustTool(SvPb::SVExtentLocationPropertyEnum eAction, int dx, int dy)
+bool  SVAdjustToolSizePositionDlg::AdjustTool(SvPb::SVExtentLocationPropertyEnum eAction, int dx, int dy)
 {
-	SvPb::InspectionCmdRequest requestCmd;
-	SvPb::InspectionCmdResponse responseCmd;
-	auto* pRequest = requestCmd.mutable_setextentparameterrequest();
-	pRequest->set_objectid(m_toolTaskId);
-	auto* pUpdateParam = pRequest->mutable_updatefromoutputspace();
-	pUpdateParam->set_action(eAction);
-	pUpdateParam->set_dx(dx);
-	pUpdateParam->set_dy(dy);
 
-	HRESULT hr = SvCmd::InspectionCommands(m_ipId, requestCmd, &responseCmd);
-	if (S_OK == hr && responseCmd.has_setextentparameterresponse())
-	{
-		m_extents = responseCmd.setextentparameterresponse().parameters();
-		m_translationType = responseCmd.getextentparameterresponse().translationtype();
-	}
+	return m_ToolSizeHelper.AdjustTool(eAction, dx, dy);
 
-	return hr;
 }
 
-HRESULT SVAdjustToolSizePositionDlg::AdjustToolAngle(double dDAngle)
+bool SVAdjustToolSizePositionDlg::AdjustToolAngle(double dDAngle)
 {
-	double dCurrentAngle = SvCmd::getValueForProperties<double>(m_extents, SvPb::SVExtentPropertyRotationAngle);
 
-	if (SvPb::SVExtentTranslationPolarUnwrap == m_translationType)
-	{
-		dCurrentAngle += dDAngle;
-	}
-	else
-	{
-		dCurrentAngle -= dDAngle;
-	}
+	return m_ToolSizeHelper.AdjustToolAngle(true, dDAngle);
 
-	SvPb::InspectionCmdRequest requestCmd;
-	SvPb::InspectionCmdResponse responseCmd;
-	auto* pRequest = requestCmd.mutable_setextentparameterrequest();
-	pRequest->set_objectid(m_toolTaskId);
-	pRequest->mutable_setproperty()->set_propertyflag(SvPb::SVExtentPropertyRotationAngle);
-	pRequest->mutable_setproperty()->set_value(dCurrentAngle);
 
-	HRESULT result = SvCmd::InspectionCommands(m_ipId, requestCmd, &responseCmd);
-	if (S_OK == result && responseCmd.has_setextentparameterresponse())
-	{
-		m_extents = responseCmd.setextentparameterresponse().parameters();
-		m_translationType = responseCmd.getextentparameterresponse().translationtype();
-	}
-
-	return result;
 }
 
 void SVAdjustToolSizePositionDlg::BuildTreeFromExtents()
 {
-	SVRPropertyItem* pRoot = m_Tree.InsertItem(new SVRPropertyItem());
-	assert(pRoot);
-	pRoot->SetCanShrink(false);
-	pRoot->SetInfoText(_T(""));
-	pRoot->HideItem();
-	pRoot->SetHeight(2);  //@TODO:  Document why 2 is used here.
+	m_pRoot = m_Tree.InsertItem(new SVRPropertyItem());
+	//pRoot = m_Tree.GetRootItem(); This is a differnt Item!
+	
+	assert(m_pRoot);
+	m_pRoot->SetCanShrink(false);
+	m_pRoot->SetInfoText(_T(""));
+	m_pRoot->HideItem();
+	m_pRoot->SetHeight(2);
 
-	FillTreeFromExtents(pRoot, true);
+	FillTreeFromExtents(m_pRoot, true,true);
 
-	SVRPropertyItem* pChild = pRoot->GetChild();
+	SVRPropertyItem* pChild = m_pRoot->GetChild();
 	while (pChild)
 	{
 		pChild->Expand(TRUE);
 		pChild = pChild->GetSibling();
 	}
-	pRoot->Expand(true);	// needed for redrawing
+	m_pRoot->Expand(true);	// needed for redrawing
 }
 
-void SVAdjustToolSizePositionDlg::FillTreeFromExtents()
+void SVAdjustToolSizePositionDlg::FillTreeFromExtents(bool overwrite)
 {
-	SVRPropertyItem* pRoot = m_Tree.GetRootItem();
-	FillTreeFromExtents(pRoot, false);
+	
+	FillTreeFromExtents(m_pRoot, false, overwrite);
 
 	GetDlgItem(IDC_FULL_ROI_BTN)->EnableWindow(!IsFullSize() && IsFullSizeAllowed());
+	GetDlgItem(IDOK)->EnableWindow(m_hResultFromSetExtent == S_OK);
 }
 
-void SVAdjustToolSizePositionDlg::FillTreeFromExtents(SVRPropertyItem* pRoot, bool shouldCreate)
+void SVAdjustToolSizePositionDlg::FillTreeFromExtents(SVRPropertyItem* pRoot, bool shouldCreate, bool overwrite)
 {
 	assert(pRoot);
-	
-	for (auto item : m_extents)
+	m_ToolSizeHelper.InitValues();
+	if (overwrite)
 	{
-		if ((0 == (m_iPropertyFilter & item.type())) || item.filteredoutflag())	
+		m_hResultFromSetExtent = m_ToolSizeHelper.CheckExtents();
+	}
+	for (auto item : m_ToolSizeHelper.GetExtents(false))
+	{
+		if ((0 == (m_iPropertyFilter & item.type())) || item.filteredoutflag())
 		{
 			continue;
 		}
@@ -532,29 +455,55 @@ void SVAdjustToolSizePositionDlg::FillTreeFromExtents(SVRPropertyItem* pRoot, bo
 
 		if (nullptr != pEdit)
 		{
-			double dValue = item.value();
+		
+
+			double ExtentValue = item.value();
+			double DisplayedValue = ExtentValue;
+			bool isequal(true);
+			if (shouldCreate == false && overwrite == false)
+			{
+				std::string strValue;
+				pEdit->GetItemValue(strValue);
+				DisplayedValue = std::stod(strValue);
+				isequal = ApproxEqual(DisplayedValue, ExtentValue);
+			}
+			std::string LabelText;
+			if (isequal == false)
+			{
+				//char BlackDot[] = {'\x95', ' ', '\0'};
+				//LabelText = std::string(BlackDot) + item.name().c_str();
+				pEdit->SetBackColor(0xcccccc);//grey
+				LabelText = item.name().c_str();
+
+			}
+			else
+			{
+				pEdit->SetBackColor(GetSysColor(COLOR_WINDOW));
+				LabelText = item.name().c_str();
+			}
 
 			pEdit->SetCtrlID(ID_BASE + (int)item.type());
-			pEdit->SetLabelText(item.name().c_str());
+			pEdit->SetLabelText(LabelText.c_str());
 			pEdit->SetBold(false);
 			pEdit->SetHeight(16);
 
 			std::string Value;
 			if ((item.type() & SvPb::SVExtentPropertyEnum::SVExtentPropertyNoDecimalPlaces) != 0)
 			{
-				Value = SvUl::Format(_T("%d"), static_cast<int> (dValue));
+				Value = SvUl::Format(_T("%d"), static_cast<int> (DisplayedValue));
+
 			}
 			else if ((item.type() & SvPb::SVExtentPropertyEnum::SVExtentProperty2DecimalPlaces) != 0)
 			{
-				Value = SvUl::Format(_T("%.2f"), dValue);
+				Value = SvUl::Format(_T("%.2f"), DisplayedValue);
 			}
 			else
 			{
-				Value = SvUl::AsString(dValue);
+				Value = SvUl::AsString(DisplayedValue);
 			}
 
 			bool bReadonly(false);
-			if (m_autoSizeEnabled != SvPb::EnableNone)
+			if (m_ToolSizeHelper.GetAutoSizeEnabled() != SvPb::EnableNone)
 			{
 				bReadonly = item.issetbyreset();
 			}
@@ -564,8 +513,14 @@ void SVAdjustToolSizePositionDlg::FillTreeFromExtents(SVRPropertyItem* pRoot, bo
 				pEdit->SetForeColor(::GetSysColor(COLOR_INACTIVECAPTION));
 				pEdit->ReadOnly(true);
 			}
+			else
+			{
+				pEdit->SetForeColor(::GetSysColor(COLOR_WINDOWTEXT));
+				pEdit->ReadOnly(false);
+			}
 			pEdit->SetItemValue(Value.c_str());
 			pEdit->OnRefresh();
+			m_PreviousTreeEntries[item.type()] = Value;
 		}
 	}
 }
@@ -587,61 +542,14 @@ bool SVAdjustToolSizePositionDlg::UsePropagate()
 
 bool SVAdjustToolSizePositionDlg::IsFullSizeAllowed()
 {
-	bool bAllowFullsize(true);
-	if (m_autoSizeEnabled == SvPb::EnableNone)
-	{
-		bAllowFullsize = false;
-	}
 
-	std::array<SvPb::SVExtentPropertyEnum, 4> PropArray = {SvPb::SVExtentPropertyWidth, SvPb::SVExtentPropertyHeight, SvPb::SVExtentPropertyPositionPointX, SvPb::SVExtentPropertyPositionPointY};
-	std::for_each(PropArray.begin(), PropArray.end(), [&](SvPb::SVExtentPropertyEnum p)
-	{
-		if (bAllowFullsize)
-		{
-			auto iter = std::find_if(m_extents.begin(), m_extents.end(), [p](auto item) { return p == item.type(); });
-			if (m_extents.end() != iter && iter->issetbyreset())
-			{
-				bAllowFullsize = false;
-			}
-		}
 
-	}
-	);
-
-	return bAllowFullsize;
+	return m_ToolSizeHelper.IsFullSizeAllowed(true);
 }
 
 bool SVAdjustToolSizePositionDlg::IsFullSize()
 {
-	bool bFull{false};
-	long width = SvCmd::getValueForProperties<long>(m_extents, SvPb::SVExtentPropertyOutputWidth);
-	long height = SvCmd::getValueForProperties<long>(m_extents, SvPb::SVExtentPropertyOutputHeight);
-	long top = SvCmd::getValueForProperties<long>(m_extents, SvPb::SVExtentPropertyPositionPointY);
-	long left = SvCmd::getValueForProperties<long>(m_extents, SvPb::SVExtentPropertyPositionPointX);
-
-	SvPb::InspectionCmdRequest requestCmd;
-	SvPb::InspectionCmdResponse responseCmd;
-	auto* pRequest = requestCmd.mutable_getextentparameterrequest();
-	pRequest->set_objectid(m_toolTaskId);
-	pRequest->set_shouldfromparent(true);
-
-	HRESULT hr = SvCmd::InspectionCommands(m_ipId, requestCmd, &responseCmd);
-	if (S_OK == hr && responseCmd.has_getextentparameterresponse())
-	{
-		auto parentExtent = responseCmd.getextentparameterresponse().parameters();
-		long parentWidth = SvCmd::getValueForProperties<long>(parentExtent, SvPb::SVExtentPropertyOutputWidth);
-		long parentHeight = SvCmd::getValueForProperties<long>(parentExtent, SvPb::SVExtentPropertyOutputHeight);
-		long parentTop = SvCmd::getValueForProperties<long>(parentExtent, SvPb::SVExtentPropertyPositionPointY);
-		long parentLeft = SvCmd::getValueForProperties<long>(parentExtent, SvPb::SVExtentPropertyPositionPointX);
-		if (parentWidth == width
-			&& parentHeight == height
-			&& parentTop == top
-			&& parentLeft == left)
-		{
-			bFull = true;
-		}
-	}
-	return bFull;
+	return m_ToolSizeHelper.IsFullSize(false);
 }
 
 void SVAdjustToolSizePositionDlg::createIcons()
@@ -653,6 +561,22 @@ void SVAdjustToolSizePositionDlg::createIcons()
 	m_icoArrowRight = static_cast<HICON> (::LoadImage(hInstance, MAKEINTRESOURCE(IDI_ARROW_RIGHT), IMAGE_ICON, SvOr::IconSize, SvOr::IconSize, LR_DEFAULTCOLOR));
 	m_icoArrowClockwise = static_cast<HICON> (::LoadImage(hInstance, MAKEINTRESOURCE(IDI_ARROW_CLOCKWISE), IMAGE_ICON, SvOr::IconSize, SvOr::IconSize, LR_DEFAULTCOLOR));
 	m_icoArrowCounterclockwise = static_cast<HICON> (::LoadImage(hInstance, MAKEINTRESOURCE(IDI_ARROW_COUNTERCLOCKWISE), IMAGE_ICON, SvOr::IconSize, SvOr::IconSize, LR_DEFAULTCOLOR));
+}
+void SVAdjustToolSizePositionDlg::OnCheckAutofit()
+{
+	UpdateData(FALSE);
+	if (m_CheckAutoFit.GetCheck() == BST_CHECKED)
+	{
+		m_ToolSizeHelper.SetAllToolSizeMode(SvDef::TSAutoFit, true);
+		m_ToolSizeHelper.SetExtentToParent();
+	}
+	else if (m_CheckAutoFit.GetCheck() == BST_UNCHECKED)
+	{
+		m_ToolSizeHelper.SetAllToolSizeMode(SvDef::TSNone, true);
+	}
+	FillTreeFromExtents(true);
+	m_Tree.Invalidate();
+
 }
 #pragma endregion Private Methods
 } //namespace SvOg

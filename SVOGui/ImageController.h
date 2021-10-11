@@ -12,10 +12,13 @@
 #include "Definitions/StringTypeDef.h"
 #include "SVProtoBuf/SVO-Enum.h"
 #include "SVStatusLibrary\MessageContainer.h"
+#include "SVProtoBuf\InspectionCommands.h"
 #pragma endregion Includes
+
 
 namespace SvOg
 {
+	using Extents = ::google::protobuf::RepeatedPtrField< ::SvPb::ExtentParameter >;
 	class ImageController
 	{
 		uint32_t m_InspectionID;
@@ -47,6 +50,8 @@ namespace SvOg
 		IPictureDisp* GetImage(uint32_t imageID) const;
 		IPictureDisp* GetImage(uint32_t imageID, long& rWidth, long& rHeight) const;
 
+		
+		
 		HRESULT ConnectToImage(const std::string& inputName, const std::string& name, uint32_t instanceID = SvDef::InvalidObjectId) const;
 		HRESULT SaveImage(const std::string& rImageName, const std::string& rFilename);
 		bool IsToolValid() const;

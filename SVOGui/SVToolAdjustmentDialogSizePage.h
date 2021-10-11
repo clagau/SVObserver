@@ -10,7 +10,9 @@
 #include "Definitions/SVExtentEnums.h"
 #include "SVMFCControls/SVEnumerateCombo.h"
 #include "ISVPropertyPageDialog.h"
-#include "DataController.h"
+#include "ToolSizeController.h"
+#include "ImageController.h"
+#include "SVMFCControls/AvailableObjectListComboBox.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -38,6 +40,10 @@ public:
 	afx_msg void OnBnClickedButtonPositionFormulaX();
 	afx_msg void OnBnClickedButtonTaHeight();
 
+	afx_msg void OnBnClickedButtonFormulaFrom();
+	afx_msg void OnBnClickedButtonFullImage();
+
+
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
@@ -51,30 +57,20 @@ public:
 	// Dialog Data
 	enum { IDD = IDD_TA_SIZE_DIALOG };
 
-
 private:
-	SvMc::SVEnumerateCombo m_ComboBox[SvDef::ToolSizeAdjustEnum::TSValuesCount];
 	
-	std::unique_ptr<ValueController> m_pTaskValueController;
-
-	uint32_t m_ipId;
-	uint32_t m_toolId;
-	uint32_t m_taskId = SvDef::InvalidObjectId;
-	struct EQAdjustStruct
-	{
-		uint32_t m_Id = SvDef::InvalidObjectId;
-		SvPb::SVObjectSubTypeEnum m_subType = SvPb::SVObjectSubTypeEnum::SVNotSetSubObjectType;
-		SvPb::EmbeddedIdEnum m_inputModeEmbeddedId = SvPb::NoEmbeddedId;
-		SvPb::SVExtentPropertyEnum m_extentProp;
-		std::string m_name;
-	};
-	EQAdjustStruct m_EQAdjustStruct[SvDef::ToolSizeAdjustEnum::TSValuesCount];
+	SvMc::SVEnumerateCombo m_ComboBox[SvDef::ToolSizeAdjustEnum::TSValuesCount];
+	uint32_t m_ipId {SvDef::InvalidObjectId };
+	uint32_t m_toolId {SvDef::InvalidObjectId}; ;
 	CButton m_Button[SvDef::ToolSizeAdjustEnum::TSValuesCount];
 	CEdit m_EditCtrl[SvDef::ToolSizeAdjustEnum::TSValuesCount];
-	
-	bool m_isFullSizeAllowed = false;
-	bool m_isAdjustSizeAllowed = false;
-	bool m_isAdjustPositionAllowed = false;
-	SvPb::EAutoSize m_autoSizeEnabled = SvPb::EAutoSize::EnableNone;
+	ToolSizeController m_ToolSizeHelper;
+	ImageController m_ImageController;
+	CButton m_Button_Full_Image;
+	CButton m_Button_FormulaFrom;
+
+	SvMc::AvailableObjectListComboBox<uint32_t> m_ComboBoxImages;
+
+
 };
 } //namespace SvOg

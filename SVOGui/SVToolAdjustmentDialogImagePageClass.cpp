@@ -25,106 +25,136 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvOg
 {
-	static LPCTSTR ImageTag = _T("Image");
-	static LPCTSTR NoImageTag = _T("(No Image Available)");
+static LPCTSTR ImageTag = _T("Image");
+static LPCTSTR NoImageTag = _T("(No Image Available)");
 
-	BEGIN_MESSAGE_MAP(SVToolAdjustmentDialogImagePageClass, CPropertyPage)
-		//{{AFX_MSG_MAP(SVToolAdjustmentDialogImagePageClass)
-		ON_CBN_SELCHANGE(IDC_COMBO1, OnSelchangeCombo1)
-		//}}AFX_MSG_MAP
-	END_MESSAGE_MAP()
+BEGIN_MESSAGE_MAP(SVToolAdjustmentDialogImagePageClass, CPropertyPage)
+	//{{AFX_MSG_MAP(SVToolAdjustmentDialogImagePageClass)
+	ON_CBN_SELCHANGE(IDC_COMBO1, OnSelchangeCombo1)
+	//}}AFX_MSG_MAP
+END_MESSAGE_MAP()
 
-	SVToolAdjustmentDialogImagePageClass::SVToolAdjustmentDialogImagePageClass(uint32_t inspectionId, uint32_t taskObjectId, SvPb::SVObjectSubTypeEnum SubType /*= SvPb::SVImageMonoType*/, int id /*=IDD*/)
-	: CPropertyPage( id )
-		, m_ImageController{inspectionId, taskObjectId, SubType}
+SVToolAdjustmentDialogImagePageClass::SVToolAdjustmentDialogImagePageClass(uint32_t inspectionId, uint32_t taskObjectId, SvPb::SVObjectSubTypeEnum SubType /*= SvPb::SVImageMonoType*/, int id /*=IDD*/)
+	: CPropertyPage(id)
+	, m_ImageController {inspectionId, taskObjectId, SubType}
+	, m_ToolsizeHelper(inspectionId, taskObjectId)
+{
+}
+
+SVToolAdjustmentDialogImagePageClass::~SVToolAdjustmentDialogImagePageClass()
+{}
+
+HRESULT SVToolAdjustmentDialogImagePageClass::SetInspectionData()
+{
+	UpdateData(true); // get data from dialog
+
+	HRESULT hr = m_ImageController.ToolRunOnce();
+
+	UpdateData(false);
+
+	return hr;
+}
+
+void SVToolAdjustmentDialogImagePageClass::refresh()
+{
+	SetInspectionData();
+	m_dialogImage.Refresh();
+}
+
+void SVToolAdjustmentDialogImagePageClass::DoDataExchange(CDataExchange* pDX)
+{
+	CPropertyPage::DoDataExchange(pDX);
+	//{{AFX_DATA_MAP(SVToolAdjustmentDialogImagePageClass)
+	DDX_Control(pDX, IDC_COMBO1, m_availableSourceImageListBox);
+	DDX_Control(pDX, IDC_DIALOGIMAGE, m_dialogImage);
+	//}}AFX_DATA_MAP
+}
+
+BOOL SVToolAdjustmentDialogImagePageClass::OnInitDialog()
+{
+	CPropertyPage::OnInitDialog();
+	m_ToolsizeHelper.InitValues();
+	m_ImageController.Init();
+	const SvUl::NameObjectIdList& rAvailableImageList = m_ImageController.GetAvailableImageList();
+
+	// This requires that the input name sorts in descending natural order
+	// and that the images we are concerned with are first in the list
+	std::string selectedImageName;
+	const SvUl::InputNameObjectIdPairList& rImageList = m_ImageController.GetInputImageList(SvDef::InvalidObjectId, 1);
+	if (rImageList.size())
 	{
+		m_inputName = rImageList.begin()->first;
+		selectedImageName = rImageList.begin()->second.first;
 	}
 
-	SVToolAdjustmentDialogImagePageClass::~SVToolAdjustmentDialogImagePageClass()
+	m_availableSourceImageListBox.Init(rAvailableImageList, selectedImageName, NoImageTag);
+	m_dialogImage.AddTab(ImageTag);
+	m_dialogImage.setImage(m_ImageController.GetImage(selectedImageName));
+	m_dialogImage.Refresh();
+
+	UpdateData(false); // set data to dialog
+
+	return TRUE;  // return TRUE unless you set the focus to a control
+	// EXCEPTION: OCX-Eigenschaftenseiten sollten FALSE zurückgeben
+}
+
+void SVToolAdjustmentDialogImagePageClass::OnSelchangeCombo1()
+{
+	UpdateData(TRUE); // get data from dialog
+
+	int index = m_availableSourceImageListBox.GetCurSel();
+	if (LB_ERR != index)
 	{
-	}
-
-	HRESULT SVToolAdjustmentDialogImagePageClass::SetInspectionData()
-	{
-		UpdateData(true); // get data from dialog
-
-		HRESULT hr = m_ImageController.ToolRunOnce();
-
-		UpdateData(false);
-
-		return hr;
-	}
-
-	void SVToolAdjustmentDialogImagePageClass::refresh()
-	{
-		SetInspectionData();
-		m_dialogImage.Refresh();
-	}
-
-	void SVToolAdjustmentDialogImagePageClass::DoDataExchange(CDataExchange* pDX)
-	{
-		CPropertyPage::DoDataExchange(pDX);
-		//{{AFX_DATA_MAP(SVToolAdjustmentDialogImagePageClass)
-		DDX_Control(pDX, IDC_COMBO1, m_availableSourceImageListBox);
-		DDX_Control(pDX, IDC_DIALOGIMAGE, m_dialogImage);
-		//}}AFX_DATA_MAP
-	}
-
-	BOOL SVToolAdjustmentDialogImagePageClass::OnInitDialog() 
-	{
-		CPropertyPage::OnInitDialog();
-		m_ImageController.Init();
-		const SvUl::NameObjectIdList& rAvailableImageList = m_ImageController.GetAvailableImageList();
-	
-		// This requires that the input name sorts in descending natural order
-		// and that the images we are concerned with are first in the list
-		std::string selectedImageName;
-		const SvUl::InputNameObjectIdPairList& rImageList = m_ImageController.GetInputImageList(SvDef::InvalidObjectId, 1);
-		if (rImageList.size())
+		bool bIsValid = m_ImageController.IsToolValid();
+		CString imageName;
+		m_availableSourceImageListBox.GetLBText(index, imageName);
+		if (!imageName.IsEmpty() && imageName != NoImageTag)
 		{
-			m_inputName = rImageList.begin()->first;
-			selectedImageName = rImageList.begin()->second.first;
-		}
-	
-		m_availableSourceImageListBox.Init(rAvailableImageList, selectedImageName, NoImageTag);
-		m_dialogImage.AddTab(ImageTag);
-		m_dialogImage.setImage(m_ImageController.GetImage(selectedImageName));
-		m_dialogImage.Refresh();
+			std::string svImageName(imageName);
+			//setImage must be before ConnectToImage because ConnectToImage does a reset and then it cannot get the image.
+			IPictureDisp* pImage = m_ImageController.GetImage(svImageName);
+			m_dialogImage.setImage(pImage);
+			m_ImageController.ConnectToImage(m_inputName, svImageName);
+			refresh();
+			SvStl::MessageContainerVector errorMessages;
+			HRESULT result = m_ImageController.ResetTask(errorMessages);
 
-		UpdateData(false); // set data to dialog
-
-		return TRUE;  // return TRUE unless you set the focus to a control
-		// EXCEPTION: OCX-Eigenschaftenseiten sollten FALSE zurückgeben
-	}
-
-	void SVToolAdjustmentDialogImagePageClass::OnSelchangeCombo1() 
-	{
-		UpdateData(TRUE); // get data from dialog
-
-		int index = m_availableSourceImageListBox.GetCurSel();
-		if (LB_ERR != index)
-		{
-			bool bIsValid = m_ImageController.IsToolValid();
-			CString imageName;
-			m_availableSourceImageListBox.GetLBText(index, imageName);
-			if (!imageName.IsEmpty() && imageName != NoImageTag)
+			if (bIsValid && S_OK != result)
 			{
-				std::string svImageName(imageName);
-				//setImage must be before ConnectToImage because ConnectToImage does a reset and then it cannot get the image.
-				IPictureDisp* pImage = m_ImageController.GetImage(svImageName);
-				m_dialogImage.setImage(pImage);
-				m_ImageController.ConnectToImage(m_inputName, svImageName);
-				refresh();
-				SvStl::MessageContainerVector errorMessages;
-				HRESULT result = m_ImageController.ResetTask(errorMessages);
+				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 
-				if (bIsValid && S_OK != result)
+
+
+				if (m_ToolsizeHelper.CanResizeToParent())
 				{
-					SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display );
-					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_ToolPositionError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10232 );
+					auto answer = Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_ToolPositionError_Three_Button, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10232, SvDef::InvalidObjectId, MB_YESNOCANCEL);
+					switch (answer)
+					{
+						case IDNO:
+						{
+							m_ToolsizeHelper.SetExtentToParent();
+							m_ToolsizeHelper.InitValues();
+							break;
+						}
+						case IDYES:
+						{
+							m_ToolsizeHelper.SetAllToolSizeMode(SvDef::TSAutoFit,false);
+							m_ToolsizeHelper.InitValues();
+							break;
+						}
+						default:
+							break;
+					}
 				}
+				else
+				{
+					Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_ToolPositionError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10232);
+				}
+
 			}
+
 		}
 	}
+}
 } //namespace SvOg
 

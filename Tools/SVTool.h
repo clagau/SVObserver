@@ -61,6 +61,11 @@ public:
 
 	bool WasEnabled() const;
 
+	virtual bool hasExtension() const override
+	{
+		return m_hasExtents;
+	}
+
 	//************************************
 	//! return Flag with enabled Autosize
 	//! \returns  EnableSize  | EnablePosition
@@ -160,15 +165,13 @@ public:
 	virtual SvOi::ParametersForML getParameterForMonitorList(SvStl::MessageContainerVector& rMessages) const override;
 	virtual void finishAddTool() override;
 	virtual SvPb::EAutoSize getAutoSizeEnabled() const override;
+	//!control the ROI of Inputwindow
 	virtual HRESULT updateExtentFromOutputSpace(SvPb::SVExtentLocationPropertyEnum eAction, long dx, long dy) override;
 	virtual HRESULT setExtentProperty(SvPb::SVExtentPropertyEnum eProperty, double value) override;
 	virtual HRESULT setExtentList(const ::google::protobuf::RepeatedPtrField<::SvPb::ExtentParameter> param) override;
 	virtual HRESULT setExtentToParent() override;
 	//!  Return false  if the input location 
 	//! is not allowed for the tool 
-	//! \param Location [in]
-	//! \param Direction 
-	//! \returns bool
 	virtual bool isAllowedLocation(const SvPb::SVExtentLocationPropertyEnum Location, SvPb::SVExtentDirectionsEnum Direction = SvPb::SVExtentDirectionBoth) const override;
 	virtual SvPb::InspectionCmdResponse getInvalidDependencies() const override { return {}; };
 	virtual std::vector<std::string> getToolAdjustNameList() const override { return {}; }
@@ -264,6 +267,7 @@ protected:
 	SVToolExtentClass m_toolExtent;
 
 	bool m_canResizeToParent {false};
+	bool m_hasExtents {true};
 };
 
 bool isValidScaleFactor(double value);

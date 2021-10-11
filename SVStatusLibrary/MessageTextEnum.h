@@ -176,6 +176,7 @@ enum MessageTextEnum
 	Tid_Error_InvalidFormula,
 	Tid_Error_CreationFilterFailed,
 	Tid_Error_ToolPositionError,
+	Tid_Error_ToolPositionError_Three_Button,
 	Tid_RingBuffer_Depth_Invalid_ValueString,
 	Tid_RingBuffer_ImageIndex_Invalid_ValueString,
 	Tid_Error_NoDeviceContext,

@@ -47,8 +47,8 @@ constexpr long			cDefaultResultViewWidth = 840L;
 constexpr long			cDefaultResultViewHeight = 200L;
 
 // Default tool extents
-constexpr double		cDefaultWindowToolLeft = 10.0;
-constexpr double		cDefaultWindowToolTop = 10.0;
+constexpr double		cDefaultWindowToolLeft = 0;//10.0;
+constexpr double		cDefaultWindowToolTop = 0;//10.0;
 constexpr double		cDefaultWindowToolWidth = 100.0;
 constexpr double		cDefaultWindowToolHeight = 100.0;
 constexpr double		cDefaultScaleFactor = 1.0;

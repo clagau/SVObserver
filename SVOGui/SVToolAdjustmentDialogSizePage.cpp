@@ -7,7 +7,6 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "Definitions/TextDefineSvDef.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "FormulaController.h"
@@ -24,29 +23,35 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
+namespace
+{
+
+static LPCTSTR NoImageTag = _T("(No Image Available)");
+static LPCTSTR NoToolTag = _T("(No Tool Available)");
+}
 namespace SvOg
 {
 
 SVToolAdjustmentDialogSizePage::SVToolAdjustmentDialogSizePage(uint32_t inspectionId, uint32_t taskObjectId)
-: CPropertyPage(SVToolAdjustmentDialogSizePage::IDD)
-, m_ipId(inspectionId)
-, m_toolId(taskObjectId)
-{
-}
+	: CPropertyPage(SVToolAdjustmentDialogSizePage::IDD)
+	, m_ipId(inspectionId)
+	, m_toolId(taskObjectId)
+	, m_ToolSizeHelper(inspectionId, taskObjectId)
+	, m_ImageController {inspectionId, taskObjectId, SvPb::SVNotSetSubObjectType,false}
+{}
 
 SVToolAdjustmentDialogSizePage::~SVToolAdjustmentDialogSizePage()
-{
-}
+{}
 
 void SVToolAdjustmentDialogSizePage::DoDataExchange(CDataExchange* pDX)
 {
 	CPropertyPage::DoDataExchange(pDX);
-	
+
 	DDX_Control(pDX, IDC_COMBO_TA_SIZE_MODE_WIDTH, m_ComboBox[SvDef::ToolSizeAdjustEnum::TSWidth]);
 	DDX_Control(pDX, IDC_COMBO_TA_SIZE_MODE_HEIGHT, m_ComboBox[SvDef::ToolSizeAdjustEnum::TSHeight]);
 	DDX_Control(pDX, IDC_COMBO_TA_SIZE_MODE_POSITIONX, m_ComboBox[SvDef::ToolSizeAdjustEnum::TSPositionX]);
 	DDX_Control(pDX, IDC_COMBO_TA_SIZE_MODE_POSITIONY, m_ComboBox[SvDef::ToolSizeAdjustEnum::TSPositionY]);
-	
+
 	DDX_Control(pDX, IDC_BUTTON_TA_WIDTH_FORMULA, m_Button[SvDef::ToolSizeAdjustEnum::TSWidth]);
 	DDX_Control(pDX, IDC_BUTTON_TA_HEIGHT, m_Button[SvDef::ToolSizeAdjustEnum::TSHeight]);
 	DDX_Control(pDX, IDC_BUTTON_POSITION_FORMULA_X, m_Button[SvDef::ToolSizeAdjustEnum::TSPositionX]);
@@ -56,6 +61,12 @@ void SVToolAdjustmentDialogSizePage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_HEIGHT_EDIT, m_EditCtrl[SvDef::ToolSizeAdjustEnum::TSHeight]);
 	DDX_Control(pDX, IDC_TRANSLATIONX_EDIT, m_EditCtrl[SvDef::ToolSizeAdjustEnum::TSPositionX]);
 	DDX_Control(pDX, IDC_TRANSLATIONY_EDIT, m_EditCtrl[SvDef::ToolSizeAdjustEnum::TSPositionY]);
+
+	DDX_Control(pDX, IDC_BUTTON_FULL_IMAGE, m_Button_Full_Image);
+	DDX_Control(pDX, IDC_BUTTON_FORMULA_FROM, m_Button_FormulaFrom);
+	DDX_Control(pDX, IDC_COMBO_IMAGE_LIST, m_ComboBoxImages);
+
+
 }
 
 BEGIN_MESSAGE_MAP(SVToolAdjustmentDialogSizePage, CPropertyPage)
@@ -67,157 +78,34 @@ BEGIN_MESSAGE_MAP(SVToolAdjustmentDialogSizePage, CPropertyPage)
 	ON_BN_CLICKED(IDC_BUTTON_POSITION_Y, &SVToolAdjustmentDialogSizePage::OnBnClickedButtonPositionY)
 	ON_BN_CLICKED(IDC_BUTTON_POSITION_FORMULA_X, &SVToolAdjustmentDialogSizePage::OnBnClickedButtonPositionFormulaX)
 	ON_BN_CLICKED(IDC_BUTTON_TA_HEIGHT, &SVToolAdjustmentDialogSizePage::OnBnClickedButtonTaHeight)
+	ON_BN_CLICKED(IDC_BUTTON_FULL_IMAGE, &SVToolAdjustmentDialogSizePage::OnBnClickedButtonFullImage)
+	ON_BN_CLICKED(IDC_BUTTON_FORMULA_FROM, &SVToolAdjustmentDialogSizePage::OnBnClickedButtonFormulaFrom)
 END_MESSAGE_MAP()
 
 // SVToolAdjustmentDialogSizePage message handlers
 BOOL SVToolAdjustmentDialogSizePage::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
-	bool isOk = true;
+	m_ImageController.Init();
+	m_ToolSizeHelper.InitValues();
 
-	// Get the Evaluate Objects..
-	SvDef::SVObjectTypeInfoStruct evaluateObjectInfo;
-	evaluateObjectInfo.m_ObjectType = SvPb::SVEquationObjectType;
-	evaluateObjectInfo.m_SubType = SvPb::EQSizePositionXType;
-	SvPb::InspectionCmdRequest requestCmd;
-	SvPb::InspectionCmdResponse responseCmd;
-	auto* pRequest = requestCmd.mutable_getobjectidrequest()->mutable_info();
-	pRequest->set_ownerid(m_toolId);
-	SvCmd::setTypeInfos(evaluateObjectInfo, *pRequest->mutable_infostruct());
+	for (const auto type : SvDef::AllToolSizeAdjustEnum)
+	{
+		m_ComboBox[type].SetEnumTypes(m_ToolSizeHelper.GetEnumTypes(type));
 
-	HRESULT hr = SvCmd::InspectionCommands(m_ipId, requestCmd, &responseCmd);
-	if (S_OK == hr && responseCmd.has_getobjectidresponse())
-	{
-		m_EQAdjustStruct[SvDef::ToolSizeAdjustEnum::TSPositionX].m_Id = responseCmd.getobjectidresponse().objectid();
-		m_EQAdjustStruct[SvDef::ToolSizeAdjustEnum::TSPositionX].m_name = SvUl::LoadStdString(IDS_CLASSNAME_EQ_ADJUSTSIZE_POSITION_X);
-		m_EQAdjustStruct[SvDef::ToolSizeAdjustEnum::TSPositionX].m_subType = SvPb::EQSizePositionXType;
-		m_EQAdjustStruct[SvDef::ToolSizeAdjustEnum::TSPositionX].m_extentProp = SvPb::SVExtentPropertyPositionPointX;
-		m_EQAdjustStruct[SvDef::ToolSizeAdjustEnum::TSPositionX].m_inputModeEmbeddedId = SvPb::ToolSizeAdjustSizePositionXModeEId;
-	}
-	else
-	{
-		isOk = false;
-		assert(false);
 	}
 
-	responseCmd.Clear();
-	evaluateObjectInfo.m_SubType = SvPb::EQSizePositionYType;
-	pRequest->set_ownerid(m_toolId);
-	SvCmd::setTypeInfos(evaluateObjectInfo, *pRequest->mutable_infostruct());
+	bool isOk = m_ToolSizeHelper.InitToolList();
+	const SvUl::NameObjectIdList& rAvailableToolList = m_ToolSizeHelper.GetAvailableToolList();
 
-	hr = SvCmd::InspectionCommands(m_ipId, requestCmd, &responseCmd);
-	if (S_OK == hr && responseCmd.has_getobjectidresponse())
+	std::string selectedToolName;
+	if (rAvailableToolList.size())
 	{
-		m_EQAdjustStruct[SvDef::ToolSizeAdjustEnum::TSPositionY].m_Id = responseCmd.getobjectidresponse().objectid();
-		m_EQAdjustStruct[SvDef::ToolSizeAdjustEnum::TSPositionY].m_name = SvUl::LoadStdString(IDS_CLASSNAME_EQ_ADJUSTSIZE_POSITION_Y);
-		m_EQAdjustStruct[SvDef::ToolSizeAdjustEnum::TSPositionY].m_subType = SvPb::EQSizePositionYType;
-		m_EQAdjustStruct[SvDef::ToolSizeAdjustEnum::TSPositionY].m_extentProp = SvPb::SVExtentPropertyPositionPointY;
-		m_EQAdjustStruct[SvDef::ToolSizeAdjustEnum::TSPositionY].m_inputModeEmbeddedId = SvPb::ToolSizeAdjustSizePositionYModeEId;
-	}
-	else
-	{
-		isOk = false;
-		assert(false);
+
+		selectedToolName = rAvailableToolList.begin()->first;
 	}
 
-	responseCmd.Clear();
-	evaluateObjectInfo.m_SubType = SvPb::EQSizeWidthType;
-	pRequest->set_ownerid(m_toolId);
-	SvCmd::setTypeInfos(evaluateObjectInfo, *pRequest->mutable_infostruct());
-
-	hr = SvCmd::InspectionCommands(m_ipId, requestCmd, &responseCmd);
-	if (S_OK == hr && responseCmd.has_getobjectidresponse())
-	{
-		m_EQAdjustStruct[SvDef::ToolSizeAdjustEnum::TSWidth].m_Id = responseCmd.getobjectidresponse().objectid();
-		m_EQAdjustStruct[SvDef::ToolSizeAdjustEnum::TSWidth].m_name = SvUl::LoadStdString(IDS_CLASSNAME_EQ_ADJUSTSIZE_WIDTH);
-		m_EQAdjustStruct[SvDef::ToolSizeAdjustEnum::TSWidth].m_subType = SvPb::EQSizeWidthType;
-		m_EQAdjustStruct[SvDef::ToolSizeAdjustEnum::TSWidth].m_extentProp = SvPb::SVExtentPropertyWidth;
-		m_EQAdjustStruct[SvDef::ToolSizeAdjustEnum::TSWidth].m_inputModeEmbeddedId = SvPb::ToolSizeAdjustSizeWidthModeEId;
-	}
-	else
-	{
-		isOk = false;
-		assert(false);
-	}
-
-	responseCmd.Clear();
-	evaluateObjectInfo.m_SubType = SvPb::EQSizeHeightType;
-	pRequest->set_ownerid(m_toolId);
-	SvCmd::setTypeInfos(evaluateObjectInfo, *pRequest->mutable_infostruct());
-
-	hr = SvCmd::InspectionCommands(m_ipId, requestCmd, &responseCmd);
-	if (S_OK == hr && responseCmd.has_getobjectidresponse())
-	{
-		m_EQAdjustStruct[SvDef::ToolSizeAdjustEnum::TSHeight].m_Id = responseCmd.getobjectidresponse().objectid();
-		m_EQAdjustStruct[SvDef::ToolSizeAdjustEnum::TSHeight].m_name = SvUl::LoadStdString(IDS_CLASSNAME_EQ_ADJUSTSIZE_HEIGHT);
-		m_EQAdjustStruct[SvDef::ToolSizeAdjustEnum::TSHeight].m_subType = SvPb::EQSizeHeightType;
-		m_EQAdjustStruct[SvDef::ToolSizeAdjustEnum::TSHeight].m_extentProp = SvPb::SVExtentPropertyHeight;
-		m_EQAdjustStruct[SvDef::ToolSizeAdjustEnum::TSHeight].m_inputModeEmbeddedId = SvPb::ToolSizeAdjustSizeHeightModeEId;
-	}
-	else
-	{
-		isOk = false;
-		assert(false);
-	}
-
-	responseCmd.Clear();
-	// Get ToolSizeAdjustTask 
-	SvDef::SVObjectTypeInfoStruct ToolSizeAdjustTaskInfo;
-	ToolSizeAdjustTaskInfo.m_ObjectType = SvPb::SVToolSizeAdjustTaskType;
-	SvCmd::setTypeInfos(ToolSizeAdjustTaskInfo, *pRequest->mutable_infostruct());
-
-	hr = SvCmd::InspectionCommands(m_ipId, requestCmd, &responseCmd);
-	if (S_OK == hr && responseCmd.has_getobjectidresponse())
-	{
-		m_taskId = responseCmd.getobjectidresponse().objectid();
-		m_pTaskValueController = std::make_unique<ValueController>(BoundValues {m_ipId, m_taskId});
-		if (nullptr != m_pTaskValueController)
-		{
-			m_pTaskValueController->Init();
-		}
-		else
-		{
-			assert(false);
-			isOk = false;
-		}
-	}
-	else
-	{
-		assert(false);
-		isOk = false;
-	}
-
-	if (isOk)
-	{
-		requestCmd.Clear();
-		responseCmd.Clear();
-		auto* pParamRequest = requestCmd.mutable_gettoolsizeadjustparameterrequest();
-		pParamRequest->set_objectid(m_taskId);
-
-		hr = SvCmd::InspectionCommands(m_ipId, requestCmd, &responseCmd);
-		if (S_OK == hr && responseCmd.has_gettoolsizeadjustparameterresponse())
-		{
-			auto responseData = responseCmd.gettoolsizeadjustparameterresponse();
-			m_isFullSizeAllowed = responseData.isfullsizeallowed();
-			m_isAdjustSizeAllowed = responseData.isadjustsizeallowed();
-			m_isAdjustPositionAllowed = responseData.isadjustpositionallowed();
-			m_autoSizeEnabled = responseData.enableautosize();
-		}
-
-		for (int vType = SvDef::ToolSizeAdjustEnum::TSPositionX; vType < SvDef::ToolSizeAdjustEnum::TSValuesCount; ++vType)
-		{
-			m_ComboBox[vType].SetEnumTypes(m_pTaskValueController->GetEnumTypes(m_EQAdjustStruct[vType].m_inputModeEmbeddedId));
-			if (!m_isFullSizeAllowed)
-			{
-				///Remove Fullsize from combobox
-				int index = m_ComboBox[vType].FindString(-1, SvDef::SizeAdjustTextFullSize);
-				if (index >= 0)
-				{
-					m_ComboBox[vType].DeleteString(index);
-				}
-			}
-		}
-	}
+	m_ComboBoxImages.Init(rAvailableToolList, selectedToolName, NoToolTag);
 
 	if (isOk)
 	{
@@ -227,13 +115,13 @@ BOOL SVToolAdjustmentDialogSizePage::OnInitDialog()
 	else
 	{
 		// Not valid call...
-		if( GetParent())
+		if (GetParent())
 		{
-			GetParent()->SendMessage( WM_CLOSE );
+			GetParent()->SendMessage(WM_CLOSE);
 		}
 		else
 		{
-			SendMessage( WM_CLOSE );
+			SendMessage(WM_CLOSE);
 		}
 	}
 	return TRUE;  // return TRUE unless you set the focus to a control
@@ -243,32 +131,17 @@ HRESULT SVToolAdjustmentDialogSizePage::SetInspectionData()
 {
 	HRESULT hresult = S_OK;
 	UpdateData(true); // get data from dialog
+	SizeModes modes;
 
-	for (int vType = SvDef::ToolSizeAdjustEnum::TSPositionX; vType < SvDef::ToolSizeAdjustEnum::TSValuesCount; ++vType)
+	for (const auto vType : SvDef::AllToolSizeAdjustEnum)
 	{
 		int sel = m_ComboBox[vType].GetCurSel();
 		if (sel >= 0)
 		{
 			long Value = (long)m_ComboBox[vType].GetItemData(sel);
 
-			if ((vType == SvDef::ToolSizeAdjustEnum::TSPositionX || vType == SvDef::ToolSizeAdjustEnum::TSPositionY))
-			{
-				if ((m_autoSizeEnabled & SvPb::EnablePosition) == 0)
-				{
-					Value = SvDef::TSNone;
-				}
-			}
-			else if ((m_autoSizeEnabled & SvPb::EnableSize) == 0)
-			{
-				Value = SvDef::TSNone;
-			}
+			modes[vType] = (SvDef::ToolSizeModes)Value;
 
-			m_pTaskValueController->Set<long>(m_EQAdjustStruct[vType].m_inputModeEmbeddedId, Value);
-			bool bEnabled = (Value == SvDef::TSFormula);
-			ValueController EquationValues {BoundValues{ m_ipId, m_EQAdjustStruct[vType].m_Id }};
-			EquationValues.Init();
-			EquationValues.Set<bool>(SvPb::EquationEnabledEId, bEnabled);
-			EquationValues.Commit(PostAction::doNothing);
 		}
 		else
 		{
@@ -280,129 +153,54 @@ HRESULT SVToolAdjustmentDialogSizePage::SetInspectionData()
 		}
 	}
 
-	m_pTaskValueController->Commit();
+	if (hresult == S_OK)
+	{
+		hresult = m_ToolSizeHelper.SetToolSizeMode(modes, false);
+	}
 	return hresult;
 }
 
-void SVToolAdjustmentDialogSizePage::Refresh( bool bSave /*= true*/ )
+void SVToolAdjustmentDialogSizePage::Refresh(bool bSave /*= true*/)
 {
 	if (bSave)
 	{
 		SetInspectionData();
 	}
+	m_ToolSizeHelper.InitValues();
+	m_ToolSizeHelper.SetFormulas(true, false);
 
 	///Hide not allowed Controls
-	int show = (!m_isAdjustSizeAllowed) ? SW_HIDE : SW_SHOW;
-
-	bool bEnable = (!m_isAdjustSizeAllowed) ? false : true;
-	bEnable = (m_autoSizeEnabled & SvPb::EnableSize) == SvPb::EnableSize ? bEnable : false;
-	m_ComboBox[SvDef::ToolSizeAdjustEnum::TSWidth].ShowWindow(show);
-	m_EditCtrl[SvDef::ToolSizeAdjustEnum::TSWidth].ShowWindow(show);
-	m_ComboBox[SvDef::ToolSizeAdjustEnum::TSHeight].ShowWindow(show);
-	m_EditCtrl[SvDef::ToolSizeAdjustEnum::TSHeight].ShowWindow(show);
+	int show = m_ToolSizeHelper.IsAdjustSizeAllowed() ? SW_SHOW : SW_HIDE;
+	for (auto ad : SvDef::AllToolSizeAdjustEnum)
+	{
+		m_ComboBox[ad].ShowWindow(show);
+		m_EditCtrl[ad].ShowWindow(show);
+	}
+	bool bEnable = m_ToolSizeHelper.IsAdjustSizeAllowed() && ((m_ToolSizeHelper.GetAutoSizeEnabled() & SvPb::EnableSize) == SvPb::EnableSize);
 
 	m_ComboBox[SvDef::ToolSizeAdjustEnum::TSWidth].EnableWindow(bEnable);
 	m_ComboBox[SvDef::ToolSizeAdjustEnum::TSHeight].EnableWindow(bEnable);
 
-	show = (!m_isAdjustPositionAllowed) ? SW_HIDE : SW_SHOW;
-	bEnable = (!m_isAdjustPositionAllowed) ? false : true;
-	bEnable = (m_autoSizeEnabled & SvPb::EnablePosition) == SvPb::EnablePosition ? bEnable : false;
-
-	m_ComboBox[SvDef::ToolSizeAdjustEnum::TSPositionX].ShowWindow(show);
-	m_EditCtrl[SvDef::ToolSizeAdjustEnum::TSPositionX].ShowWindow(show);
-	m_ComboBox[SvDef::ToolSizeAdjustEnum::TSPositionY].ShowWindow(show);
-	m_EditCtrl[SvDef::ToolSizeAdjustEnum::TSPositionY].ShowWindow(show);
+	bEnable = m_ToolSizeHelper.IsAdjustSizeAllowed() && ((m_ToolSizeHelper.GetAutoSizeEnabled() & SvPb::EnablePosition) == SvPb::EnablePosition);
 
 	m_ComboBox[SvDef::ToolSizeAdjustEnum::TSPositionX].EnableWindow(bEnable);
 	m_ComboBox[SvDef::ToolSizeAdjustEnum::TSPositionY].EnableWindow(bEnable);
 
-	::google::protobuf::RepeatedPtrField< ::SvPb::ExtentParameter > extentParameter, parentExtentParameter;
-	SvPb::InspectionCmdRequest requestCmd;
-	SvPb::InspectionCmdResponse responseCmd;
-	auto* pRequest = requestCmd.mutable_getextentparameterrequest();
-	pRequest->set_objectid(m_toolId);
 
-	HRESULT hr = SvCmd::InspectionCommands(m_ipId, requestCmd, &responseCmd);
-	if (S_OK == hr && responseCmd.has_getextentparameterresponse())
+	SizeModes Modes;
+	SizeValues Values;
+	m_ToolSizeHelper.GetToolSizeMode(true, Modes, Values);
+	for (const auto vType : SvDef::AllToolSizeAdjustEnum)
 	{
-		extentParameter = responseCmd.getextentparameterresponse().parameters();
-	}
-	responseCmd.Clear();
-	pRequest->set_shouldfromparent(true);
+		long nShow = SvDef::TSFormula == Modes[vType] ? SW_SHOW : SW_HIDE;
 
-	hr = SvCmd::InspectionCommands(m_ipId, requestCmd, &responseCmd);
-	if (S_OK == hr && responseCmd.has_getextentparameterresponse())
-	{
-		parentExtentParameter = responseCmd.getextentparameterresponse().parameters();
-	}
-
-	// refresh  combo settings...
-	for (int vType = SvDef::ToolSizeAdjustEnum::TSPositionX; vType < SvDef::ToolSizeAdjustEnum::TSValuesCount; ++vType)
-	{
-		long nShow(SW_HIDE);
-		CString csResult;
-		long SelMode = m_pTaskValueController->Get<long>(m_EQAdjustStruct[vType].m_inputModeEmbeddedId);
-		if (SvDef::ToolSizeAdjustEnum::TSPositionX == vType || SvDef::ToolSizeAdjustEnum::TSPositionY == vType)
-		{
-			if (0 == (m_autoSizeEnabled & SvPb::EnablePosition))
-			{
-				SelMode = SvDef::TSNone;
-			}
-		}
-		else if (0 == (m_autoSizeEnabled & SvPb::EnableSize))
-		{
-			SelMode = SvDef::TSNone;
-		}
-
-		m_ComboBox[vType].SetCurSelItemData(SelMode);
-
-		if (SvDef::TSFormula == SelMode)
-		{
-			nShow = SW_SHOW;
-			FormulaController formula(m_ipId, m_toolId, m_EQAdjustStruct[vType].m_Id);
-			bool isOwnerEnabled, isEquationEnabled = false;
-			formula.IsOwnerAndEquationEnabled(isOwnerEnabled, isEquationEnabled);
-			std::string text = formula.GetEquationText();
-			if (isEquationEnabled && !text.empty())
-			{
-				double result = 0;
-				SvStl::MessageContainerVector errorMessage;
-				int errorPos = formula.ValidateEquation(text, result, false, errorMessage);
-				if (FormulaController::validateSuccessful == errorPos)
-				{
-					csResult.Format(_T("%ld"), static_cast<long>(result));
-				}
-			}
-		}
-		else if (SvDef::TSNone == SelMode)
-		{
-			auto propEnum = m_EQAdjustStruct[vType].m_extentProp;
-			auto valuePair = std::find_if(extentParameter.begin(), extentParameter.end(), [propEnum](const auto value) { return value.type() == propEnum; });
-			if (extentParameter.end() != valuePair)
-			{
-				csResult.Format(_T("%ld"), static_cast<long>(valuePair->value()));
-			}
-		}
-		else if (SelMode == SvDef::TSFullSize)
-		{
-			if (SvDef::ToolSizeAdjustEnum::TSHeight == SvDef::ToolSizeAdjustEnum(vType) || SvDef::ToolSizeAdjustEnum::TSWidth == SvDef::ToolSizeAdjustEnum(vType))
-			{
-				auto propEnum = m_EQAdjustStruct[vType].m_extentProp;
-				auto valuePair = std::find_if(parentExtentParameter.begin(), parentExtentParameter.end(), [propEnum](const auto value) { return value.type() == propEnum; });
-				if (parentExtentParameter.end() != valuePair)
-				{
-					csResult.Format(_T("%ld"), static_cast<long>(valuePair->value()));
-				}
-			}
-			else
-			{
-				csResult.Format(_T("%ld"), 0l);
-			}
-		}
+		CString csResult = Values[vType].c_str();
+		m_ComboBox[vType].SetCurSelItemData(Modes[vType]);
 		m_EditCtrl[vType].SetWindowText(csResult);
 		m_Button[vType].ShowWindow(nShow);
 	}
-	UpdateData( false ); // set data to dialog
+	m_Button_Full_Image.ShowWindow(m_ToolSizeHelper.CanResizeToParent() ? SW_SHOW : SW_HIDE);
+	UpdateData(false); // set data to dialog
 }
 
 void SVToolAdjustmentDialogSizePage::OnBnClickedButtonFormula(SvDef::ToolSizeAdjustEnum mode)
@@ -412,11 +210,12 @@ void SVToolAdjustmentDialogSizePage::OnBnClickedButtonFormula(SvDef::ToolSizeAdj
 		assert(false);
 		return;
 	}
-	
-	CString strCaption = m_EQAdjustStruct[mode].m_name.c_str();
+
+	ToolSizeController::EQAdjustStruct  EqStruct = m_ToolSizeHelper.GetEquationStruct(mode);
+	CString strCaption = EqStruct.m_name.c_str();
 	strCaption += _T(" Formula");
 
-	SvDef::SVObjectTypeInfoStruct info(SvPb::SVEquationObjectType, m_EQAdjustStruct[mode].m_subType);
+	SvDef::SVObjectTypeInfoStruct info(SvPb::SVEquationObjectType, EqStruct.m_subType);
 	SVFormulaEditorSheetClass dlg(m_ipId, m_toolId, info, strCaption);
 	dlg.DoModal();
 	Refresh(true);
@@ -426,33 +225,36 @@ void SVToolAdjustmentDialogSizePage::OnSelchangeCombo(SvDef::ToolSizeAdjustEnum 
 {
 	/// full size must be selected in both or none of the combo boxes 
 	DWORD_PTR selMode = m_ComboBox[mode].GetCurSelItemData();
-	if (SvDef::TSFullSize == selMode)
+	if (SvDef::TSAutoFit == selMode)
 	{
 		///set all other to full size 
-		for( int vType = SvDef::ToolSizeAdjustEnum::TSPositionX; vType < SvDef::ToolSizeAdjustEnum::TSValuesCount; ++vType)
+		for (const auto type : SvDef::AllToolSizeAdjustEnum)
 		{
-			if (vType == mode)
+			if (type == mode)
 			{
-				continue;	
+				continue;
 			}
-			m_ComboBox[vType].SetCurSelItemData(SvDef::TSFullSize);
+			m_ComboBox[type].SetCurSelItemData(SvDef::TSAutoFit);
 		}
+
 	}
-	else 
+	else
 	{
-		///Then all must be not be full sized
-		for( int vType = SvDef::ToolSizeAdjustEnum::TSPositionX; vType < SvDef::ToolSizeAdjustEnum::TSValuesCount; ++vType)
+		///Then all must be not be auto fit 
+		for (const auto type : SvDef::AllToolSizeAdjustEnum)
 		{
-			if (vType == mode)
+			if (type == mode)
 			{
-				continue;	
+				continue;
 			}
-			if (SvDef::TSFullSize == m_ComboBox[vType].GetCurSelItemData() )
+			if (SvDef::TSAutoFit == m_ComboBox[type].GetCurSelItemData())
 			{
-				m_ComboBox[vType].SetCurSelItemData(SvDef::TSNone);
+				m_ComboBox[type].SetCurSelItemData(SvDef::TSNone);
 			}
 		}
 	}
+
+
 	Refresh(true);
 }
 
@@ -496,22 +298,69 @@ void SVToolAdjustmentDialogSizePage::OnBnClickedButtonTaHeight()
 	return OnBnClickedButtonFormula(SvDef::ToolSizeAdjustEnum::TSHeight);
 }
 
+
+void SVToolAdjustmentDialogSizePage::OnBnClickedButtonFormulaFrom()
+{
+	bool ready {false};
+
+	UpdateData(TRUE); // get data from dialog
+	int index = m_ComboBoxImages.GetCurSel();
+	if (LB_ERR != index)
+	{
+
+		CString toolName;
+		m_ComboBoxImages.GetLBText(index, toolName);
+		if (!toolName.IsEmpty() && toolName != NoToolTag)
+		{
+			std::string stoolName(toolName);
+
+			SizeValues values;
+			for (auto en : SvDef::AllToolSizeAdjustEnum)
+			{
+				values[en] = "\"" + stoolName + "." +
+					SvUl::LoadStdString(m_ToolSizeHelper.IDS_Objectnames[en])
+					+ "\"";
+			}
+			m_ToolSizeHelper.SetAllToolSizeMode(SvDef::TSFormula, false);
+			ready = m_ToolSizeHelper.SetFormulas(true, true, values);
+
+		}
+	}
+	if (!ready)
+	{
+		m_ToolSizeHelper.SetAllToolSizeMode(SvDef::TSFormula, false);
+		m_ToolSizeHelper.SetFormulas(true, true);
+	}
+	Refresh(false);
+}
+
+void SVToolAdjustmentDialogSizePage::OnBnClickedButtonFullImage()
+{
+	m_ToolSizeHelper.SetAllToolSizeMode(SvDef::TSNone, false);
+	m_ToolSizeHelper.SetExtentToParent();
+	Refresh(false);
+}
+
+
+
 bool SVToolAdjustmentDialogSizePage::QueryAllowExit()
 {
 	/// no empty formulas 
-	for( int vType  = SvDef::ToolSizeAdjustEnum::TSPositionX; vType < SvDef::ToolSizeAdjustEnum::TSValuesCount; ++vType)
+
+	for (const auto vType : SvDef::AllToolSizeAdjustEnum)
 	{
 		int sel = m_ComboBox[vType].GetCurSel();
-		if( sel >= 0 )
+		if (sel >= 0)
 		{
-			long Value = static_cast<long>(m_ComboBox[vType].GetItemData( sel ));
+			long Value = static_cast<long>(m_ComboBox[vType].GetItemData(sel));
 			if (SvDef::TSFormula == Value)
 			{
-				FormulaController formula(m_ipId, m_toolId, m_EQAdjustStruct[vType].m_Id);
-				if(formula.GetEquationText().empty() )
+				DWORD eqId = m_ToolSizeHelper.GetEquationStruct(vType).m_Id;
+				FormulaController formula(m_ipId, m_toolId, eqId);
+				if (formula.GetEquationText().empty())
 				{
-					SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display );
-					Exception.setMessage( SVMSG_SVO_64_EMPTY_FORMULAS_ARE_NOT_ALLOWED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16038_EmptyFormula );
+					SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
+					Exception.setMessage(SVMSG_SVO_64_EMPTY_FORMULAS_ARE_NOT_ALLOWED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16038_EmptyFormula);
 					return false;
 				}
 			}
@@ -526,7 +375,7 @@ BOOL SVToolAdjustmentDialogSizePage::OnSetActive()
 	return CPropertyPage::OnSetActive();
 }
 
-BOOL SVToolAdjustmentDialogSizePage::OnKillActive() 
+BOOL SVToolAdjustmentDialogSizePage::OnKillActive()
 {
 	HRESULT hr = E_FAIL;
 	if (false == QueryAllowExit())

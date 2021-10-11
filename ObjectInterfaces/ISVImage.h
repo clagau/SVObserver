@@ -9,6 +9,7 @@
 #pragma region Includes
 #include "SVImageBufferHandleInterface.h"
 #include "SVProtoBuf/SVO-Enum.h"
+#include "SVProtoBuf/InspectionCommands.h"
 #pragma endregion Includes
 
 namespace SvPb
@@ -68,5 +69,7 @@ namespace SvOi
 		/// Return the Overlay struct depend of this image.
 		/// \returns SvPb::OverlayDesc
 		virtual SvPb::OverlayDesc getOverlayStruct() const = 0;
+
+		virtual void getExtentProperties(::google::protobuf::RepeatedPtrField< ::SvPb::ExtentParameter >& rExtentProperties) const  = 0;
 	};
 } //namespace SvOi

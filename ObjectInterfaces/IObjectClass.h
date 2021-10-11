@@ -187,5 +187,7 @@ namespace SvOi
 		/// \param stopSearchAtObjectId [in]
 		/// \returns uint32_t
 		virtual uint32_t getFirstClosedParent(uint32_t stopSearchAtObjectId) const = 0;
+
+		virtual bool hasExtension() const = 0;
 	};
 } //namespace SvOi

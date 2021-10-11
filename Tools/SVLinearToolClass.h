@@ -46,7 +46,9 @@ public:
 	virtual std::vector<std::string> getToolAdjustNameList() const override;
 
 	bool GetRotation() const;
-	
+
+	virtual bool canResizeToParent() const override { return m_canResizeToParent && !GetRotation(); };
+
 
 	//************************************
 	//! return Flag with enabled Autosize

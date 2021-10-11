@@ -63,7 +63,7 @@ constexpr const char* ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME = _T("ArchiveTool
 
 constexpr const char* SizeAdjustTextNone = _T("Manual");
 constexpr const char* SizeAdjustTextFormula = _T("Formula");
-constexpr const char* SizeAdjustTextFullSize = _T("Auto Fit");
+constexpr const char* SizeAdjustTextAutoFitSize = _T("Auto Fit");
 
 static std::initializer_list<const char*> c_allInterpolationModeNames
 {

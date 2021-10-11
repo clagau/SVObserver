@@ -63,6 +63,7 @@
 #include <concrt.h>										//Used by static library
 #include <comutil.h>
 #include <ctime>			//Used by static library
+#include <format>
 #include <functional>
 #include <future>
 #include <guiddef.h>

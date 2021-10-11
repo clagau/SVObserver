@@ -819,7 +819,7 @@ HRESULT SVToolClass::setExtentList(const ::google::protobuf::RepeatedPtrField<::
 	{
 		imageExtents.SetExtentProperty(data.type(), data.value());
 	}
-
+	imageExtents.UpdateData();
 	HRESULT retVal = SetImageExtent(imageExtents);
 	auto* pInspection = GetInspectionInterface();
 	if (S_OK == retVal && nullptr != pInspection)
@@ -862,6 +862,7 @@ HRESULT SVToolClass::SetImageExtent(const SVImageExtentClass& rImageExtent)
 
 void SVToolClass::removeEmbeddedExtents()
 {
+	m_hasExtents = false;
 	m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyPositionPointX, nullptr);
 	m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyPositionPointY, nullptr);
 	m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyWidth, nullptr);

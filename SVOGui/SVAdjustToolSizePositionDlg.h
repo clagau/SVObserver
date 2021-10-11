@@ -15,7 +15,9 @@
 #include "SVRPropertyTree/SVRPropTree.h"
 #include "SVMFCControls\SVUpDownButton.h"
 #include "DataController.h"
+#include "ToolSizeController.h"
 #pragma endregion Includes
+
 
 namespace SvOg
 {
@@ -50,6 +52,7 @@ protected:
 	afx_msg void OnBnClickedFullROI();
 	afx_msg void OnBnClickedPropagate();
 	afx_msg void OnBnClickedEditTool();
+	afx_msg void  OnCheckAutofit();
 	
 
 	//}}AFX_MSG
@@ -59,9 +62,12 @@ protected:
 
 #pragma region Private Methods
 private:
+	std::map< SvPb::SVExtentPropertyEnum, double> GetExtentsFromTree();
 	HRESULT ButtonAction(SvMc::SVUpDownButton* pButton);
-	HRESULT AdjustTool( SvPb::SVExtentLocationPropertyEnum eAction, int dx, int dy );
-	HRESULT AdjustToolAngle(double dDAngle);
+	bool AdjustTool( SvPb::SVExtentLocationPropertyEnum eAction, int dx, int dy );
+	bool AdjustToolAngle(double dDAngle);
+
+	bool IsAutofit();
 
 	//************************************
 	// Method:    BuildTreeFromExtents
@@ -75,7 +81,7 @@ private:
 	// Description: Edit the entries of the property tree with the information from the extents.
 	// Returns:   void
 	//************************************
-	void FillTreeFromExtents();
+	void FillTreeFromExtents(bool overwrite);
 
 	//************************************
 	// Method:    FillTreeFromExtents
@@ -84,7 +90,7 @@ private:
 	// Parameter: bool shouldCreate Define if the entries should be create new or only edit.
 	// Returns:   void
 	//************************************
-	void FillTreeFromExtents( SVRPropertyItem* pRoot, bool shouldCreate );
+	void FillTreeFromExtents( SVRPropertyItem* pRoot, bool shouldCreate, bool overwrite );
 
 
 	bool IsFullSize();
@@ -135,17 +141,15 @@ private:
 	SvMc::SVUpDownButton	m_btnDown;
 	int		m_iMode = -1;
 	//}}AFX_DATA
-
-	::google::protobuf::RepeatedPtrField< ::SvPb::ExtentParameter > m_originalExtents;
-	::google::protobuf::RepeatedPtrField< ::SvPb::ExtentParameter > m_extents;
-	SvPb::SVExtentTranslationEnum m_translationType = SvPb::SVExtentTranslationNone;
-
-	uint32_t m_ipId;
-	uint32_t m_toolTaskId;
+	
+	uint32_t m_ipId=0;
 	SVRPropTree m_Tree;
+	SVRPropertyItem* m_pRoot = nullptr;
+
 	const static int m_iPropertyFilter = SvPb::SVExtentPropertyPositionsInput | SvPb::SVExtentPropertyDimensionsInput;
 	const static int ID_BASE = 1000;
 
+	CButton	m_CheckAutoFit; 
 	HICON m_icoArrowUp{ nullptr };
 	HICON m_icoArrowDown{ nullptr };
 	HICON m_icoArrowLeft{ nullptr };
@@ -155,10 +159,9 @@ private:
 	SvMc::SVUpDownButton* m_pButton = nullptr;
 	std::string m_Title;
 
-	//bool m_isFullSizeAllowed = false;
-	SvPb::EAutoSize m_autoSizeEnabled = SvPb::EAutoSize::EnableNone;
-
-	ValueController m_values;
+	ToolSizeController m_ToolSizeHelper;
+	std::map < SvPb::SVExtentPropertyEnum, std::string> m_PreviousTreeEntries;
+	HRESULT m_hResultFromSetExtent {S_OK};
 #pragma endregion Member variables
 };	// end class SVAdjustToolSizePositionDlg
 } //namespace SvOg

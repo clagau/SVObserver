@@ -10,6 +10,7 @@
 //******************************************************************************
 
 #pragma once
+#include "TextDefineSvDef.h"
 namespace SvDef
 {
 
@@ -54,9 +55,37 @@ enum ToolSizeAdjustEnum
 enum ToolSizeModes 
 { 
 	TSNone = 0, 
-	TSFullSize, 
+	TSAutoFit, 
 	TSFormula, 
 	TSModeCount 
 };
 
+static const ToolSizeAdjustEnum   AllToolSizeAdjustEnum[] =
+{
+	SvDef::TSPositionX,SvDef::TSPositionY,SvDef::TSWidth,SvDef::TSHeight
+};
+
+inline const std::string  ToString(SvDef::ToolSizeAdjustEnum e)
+{
+	const std::map<SvDef::ToolSizeAdjustEnum, const char*> MyEnumStrings {
+		{ SvDef::TSPositionX, "TSPositionX" },
+		{ SvDef::TSPositionY, "TSPositionY" },
+		{ SvDef::TSWidth, "TSWidth" },
+		{ SvDef::TSHeight, "TSHeight" },
+
+	};
+	auto   it = MyEnumStrings.find(e);
+	return it == MyEnumStrings.end() ? "Out of range" : it->second;
+}
+
+inline const std::string  ToString(SvDef::ToolSizeModes e)
+{
+	const std::map<SvDef::ToolSizeModes, const char*> MyEnumStrings {
+		{ SvDef::TSNone, SizeAdjustTextNone },
+		{ SvDef::TSAutoFit, SizeAdjustTextAutoFitSize },
+		{ SvDef::TSFormula, SizeAdjustTextFormula },
+	};
+	auto   it = MyEnumStrings.find(e);
+	return it == MyEnumStrings.end() ? "Out of range" : it->second;
+}
 } //namespace SvDef

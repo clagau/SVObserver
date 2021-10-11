@@ -1412,6 +1412,12 @@ RECT SVImageClass::GetOutputRectangle() const
 	return rectTemp;
 }
 
+void SVImageClass::getExtentProperties(::google::protobuf::RepeatedPtrField< ::SvPb::ExtentParameter >& rExtentProperties) const
+{
+	
+  m_ImageInfo.getExtentProperties(rExtentProperties);
+}
+
 SvPb::OverlayDesc SVImageClass::getOverlayStruct() const
 {
 	auto* pInsp = dynamic_cast<SvOi::IInspectionProcess*>(GetInspection());

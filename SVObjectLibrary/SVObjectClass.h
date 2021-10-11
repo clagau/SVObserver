@@ -164,6 +164,7 @@ public:
 	virtual void fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo, bool addHidden = false, bool stopIfClosed = false, bool firstObject = false) override;
 
 	virtual uint32_t getFirstClosedParent(uint32_t stopSearchAtObjectId) const override;
+	virtual bool hasExtension() const override;
 #pragma endregion virtual method (IObjectClass)
 
 	const SVObjectInfoStruct& GetOwnerInfo() const { return m_ownerObjectInfo; };

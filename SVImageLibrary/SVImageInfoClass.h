@@ -51,6 +51,12 @@ public:
 	HRESULT SetExtentProperty( SvPb::SVExtentPropertyEnum p_eProperty, double p_dValue );
 	HRESULT SetExtentProperty( SvPb::SVExtentPropertyEnum p_eProperty, const SVPoint<double>& rValue );
 
+	void getExtentProperties(::google::protobuf::RepeatedPtrField< ::SvPb::ExtentParameter >& rExtentProperties) const
+	{
+
+		 return m_svExtents.getExtentProperties(rExtentProperties);
+	}
+
 	HRESULT GetImageExtentsToFit(SVImageExtentClass inExtent, SVImageExtentClass &rOutExtent);
 
 	HRESULT GetOutputRectangle( RECT& rRect ) const;

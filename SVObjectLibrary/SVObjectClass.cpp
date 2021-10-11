@@ -1093,3 +1093,8 @@ HRESULT SVObjectClass::UnregisterSubObject(SVObjectClass*)
 {
 	return S_FALSE;
 }
+
+bool SVObjectClass::hasExtension() const 
+{
+	return false;
+}

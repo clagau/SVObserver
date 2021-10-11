@@ -129,6 +129,7 @@ public:
 	virtual long getPixelDepth() const override;
 	virtual HRESULT Save(const std::string& rFilename) override; 
 	virtual RECT GetOutputRectangle() const override;
+	virtual void getExtentProperties(::google::protobuf::RepeatedPtrField< ::SvPb::ExtentParameter >& rExtentProperties) const override;
 	virtual SvPb::OverlayDesc getOverlayStruct() const override;
 #pragma region virtual method (ISVImage)
 

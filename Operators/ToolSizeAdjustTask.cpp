@@ -57,7 +57,7 @@ ToolSizeAdjustTask::ToolSizeAdjustTask(bool AllowFullsize , bool AllowAdjustSize
 	
 	if (m_AllowFullSize == true)
 	{
-		EnumVector.push_back(SvOi::NameValuePair{ SvDef::SizeAdjustTextFullSize, SvDef::ToolSizeModes::TSFullSize });
+		EnumVector.push_back(SvOi::NameValuePair{ SvDef::SizeAdjustTextAutoFitSize, SvDef::ToolSizeModes::TSAutoFit });
 	}
 	EnumVector.push_back(SvOi::NameValuePair{ SvDef::SizeAdjustTextFormula, SvDef::ToolSizeModes::TSFormula });
 
@@ -141,9 +141,9 @@ HRESULT ToolSizeAdjustTask::GetModes(long &rModeWidth,long &rModeHeight,long &rM
 	if (S_OK == hresult)
 	{
 
-		if(( rModeWidth == SvDef::TSFullSize)  ||  (rModeHeight == SvDef::TSFullSize)  ||  (rModePosX == SvDef::TSFullSize)  ||  (rModePosY == SvDef::TSFullSize))
+		if(( rModeWidth == SvDef::TSAutoFit)  ||  (rModeHeight == SvDef::TSAutoFit)  ||  (rModePosX == SvDef::TSAutoFit)  ||  (rModePosY == SvDef::TSAutoFit))
 		{
-			if( ( rModeWidth != SvDef::TSFullSize)  ||   (rModeHeight != SvDef::TSFullSize)  ||  (rModePosX != SvDef::TSFullSize)  ||  (rModePosY != SvDef::TSFullSize))
+			if( ( rModeWidth != SvDef::TSAutoFit)  ||   (rModeHeight != SvDef::TSAutoFit)  ||  (rModePosX != SvDef::TSAutoFit)  ||  (rModePosY != SvDef::TSAutoFit))
 			{
 				hresult = SvStl::Err_16028_InvalidMode;
 			}
@@ -296,7 +296,7 @@ bool ToolSizeAdjustTask::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 
 		bool bSetImageExtend(false);
 		
-		if(( S_OK  == hresult) && (ModeWidth == SvDef::TSFullSize) &&  (AutoSizeEnable == SvPb::EnableSizeAndPosition))
+		if(( S_OK  == hresult) && (ModeWidth == SvDef::TSAutoFit) &&  (AutoSizeEnable == SvPb::EnableSizeAndPosition))
 		{
 			/////Set To Full size (Image Extent = parent Extent)
 			if( ( S_OK  == hresult) && (oldHeight != ParentOutputHeight || oldWidth != ParentOutputWidth || oldPosY != 0 || oldPosX != 0  ))
@@ -586,7 +586,7 @@ bool ToolSizeAdjustTask::UseAutoMode() const
 	for( int vType  = SvDef::ToolSizeAdjustEnum::TSPositionX ; vType < SvDef::ToolSizeAdjustEnum::TSValuesCount ; ++vType)
 	{
 		m_InputModes[vType].GetValue( Mode );
-		if (SvDef::TSFullSize == Mode || SvDef::TSFormula == Mode)
+		if (SvDef::TSAutoFit == Mode || SvDef::TSFormula == Mode)
 		{
 			return true;
 		}

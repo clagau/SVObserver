@@ -26,6 +26,16 @@ bool hasAttributes(const SvOi::IObjectClass* pObject)
 	return (0 != ((SvDef::selectableAttributes | SvPb::archivableImage | SvPb::taskObject) & pObject->ObjectAttributesAllowed())) ? true : false;
 }
 
+bool hasExtension(const SvOi::IObjectClass* pObject, bool&)
+{
+	bool result = false;
+	if (nullptr != pObject)
+	{
+		result = pObject->hasExtension();
+	}
+	return result;
+}
+
 class IsValidObject
 {
 public:
@@ -85,6 +95,8 @@ private:
 	uint32_t m_TaskObjectID;
 	int m_ToolPos {-1};
 };
+
+
 }
 
 IsAllowedFunc getAllowedFunc(const SvPb::GetAvailableObjectsRequest& rMessage)
@@ -99,6 +111,12 @@ IsAllowedFunc getAllowedFunc(const SvPb::GetAvailableObjectsRequest& rMessage)
 		{
 			return AllowedFunctionHelper::IsValidObject(true);
 		}
+		case SvPb::GetAvailableObjectsRequest::kHasExtension:
+		{
+			return AllowedFunctionHelper::hasExtension;
+		
+		}
+		
 		default:
 		{
 			return AllowedFunctionHelper::IsValidObject();

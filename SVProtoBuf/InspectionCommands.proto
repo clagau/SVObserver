@@ -131,6 +131,11 @@ message DefaultPlusHidden
 {
 }
 
+message HasExtension
+{
+}
+
+
 message UpdateFromOutpuSpace
 {
 	SVExtentLocationPropertyEnum action = 1;
@@ -389,6 +394,8 @@ message GetAvailableObjectsRequest
 	{
 		IsBeforeToolMethod isBeforeToolMethod=5; //same then default, but stop searching if required tool reached.
 		DefaultPlusHidden defaultPlusHidden=6;
+		HasExtension hasExtension =8;
+
 	}	
 
 	uint32 importantObjectForStopAtBorder = 7; //If this value set (!= SvDef::InvalidObjectId), than it look from this up to parent if any Border (e.g. Closed GroupTool) is available and set this than as starting position and also stop at a closed GroupTool.
@@ -1093,7 +1100,7 @@ message InspectionCmdRequest
 		GetInvalidDependenciesRequest getInvalidDependenciesRequest = 69;
 		GetObjectNameRequest getObjectNameRequest = 70;
 		ValidateLinkedValueRequest validateLinkedValueRequest = 71;
-	}
+		}
 }
 
 message InspectionCmdResponse
@@ -1153,5 +1160,5 @@ message InspectionCmdResponse
 		ResetAllObjectsResponse resetAllObjectsResponse = 51;
 		GetObjectNameResponse getObjectNameResponse = 52;
 		ValidateLinkedValueResponse validateLinkedValueResponse = 53;
-	}
+		}
 }
