@@ -216,6 +216,7 @@ void HttpServerConnection::http_on_read(const boost::system::error_code& error, 
 	if (ec == boost::system::errc::no_such_file_or_directory)
 	{
 		path = path.parent_path() / m_rSettings.DefaultErrorHtmlFile;
+		ec.clear();
 	}
 
 	body.open(path.string().c_str(), boost::beast::file_mode::scan, ec);
