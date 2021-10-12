@@ -174,6 +174,7 @@ BEGIN_MESSAGE_MAP(SVIPDoc, CDocument)
 	ON_COMMAND(ID_ADD_STARTTOOLGROUPING, OnAddStartToolGrouping)
 	ON_COMMAND(ID_ADD_ENDTOOLGROUPING, OnAddEndToolGrouping)
 	ON_COMMAND(ID_TOOL_DEPENDENCIES, OnToolDependencies)
+	ON_UPDATE_COMMAND_UI(ID_TOOL_DEPENDENCIES, OnUpdateToolDependencies)
 	ON_COMMAND(ID_ADD_LOOPTOOL, OnAddLoopTool)
 	ON_COMMAND(ID_ADD_GROUPTOOL, OnAddGroupTool)
 	ON_UPDATE_COMMAND_UI(ID_ADD_LOADIMAGETOOL, OnUpdateAddGeneralTool)
@@ -3300,6 +3301,13 @@ void SVIPDoc::OnToolDependencies()
 			SvOi::getToolDependency(std::back_inserter(m_dependencyList), ToolIDSet, SvPb::SVToolObjectType, SvOi::ToolDependencyEnum::Client, fileDlg.GetPathName().GetString());
 		}
 	}
+}
+
+void SVIPDoc::OnUpdateToolDependencies(CCmdUI* PCmdUI)
+{
+	bool Enabled = TheSVObserverApp.OkToEdit();
+
+	PCmdUI->Enable(Enabled);
 }
 
 void SVIPDoc::OnUpdateAddGeneralTool(CCmdUI* PCmdUI)
