@@ -602,7 +602,7 @@ bool SVBlobAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCreateS
 
 			if (FeaturesEnabled[i] == _T('0'))
 			{
-				disableEmbeddedObject(&m_Value[i]);
+				RemoveEmbeddedObject(&m_Value[i]);
 			}
 			m_Value[i].SetArraySize(m_lMaxBlobDataArraySize);	// no longer sample size (max number of blobs found)
 		}
@@ -794,7 +794,7 @@ void SVBlobAnalyzerClass::UpdateBlobFeatures()
 				{
 					m_Value[i].SetObjectAttributesAllowed(SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::RemoveAttribute);
 					FreeResult(i);
-					disableEmbeddedObject(&m_Value[i]);
+					RemoveEmbeddedObject(&m_Value[i]);
 				}
 			}
 		}
@@ -812,6 +812,12 @@ void SVBlobAnalyzerClass::UpdateBlobFeatures()
 void SVBlobAnalyzerClass::EnableFeature(int Feature)
 {
 	assert(0 <= Feature && SvOi::SV_NUMBER_OF_BLOB_FEATURES > Feature);
+	auto iter = std::ranges::find(m_embeddedList, &m_Value[Feature]);
+	if (iter == m_embeddedList.end())
+	{
+		RegisterEmbeddedObject(&m_Value[Feature], BlobFeatureConstants[Feature].embeddedID, BlobFeatureConstants[Feature].NewStringResourceID, false, SvOi::SVResetItemNone);
+	}
+
 	if (SvDef::InvalidObjectId == m_ResultIds[Feature])
 	{
 		AllocateResult(Feature);

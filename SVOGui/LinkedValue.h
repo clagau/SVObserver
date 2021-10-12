@@ -60,6 +60,7 @@ namespace SvOg
 
 		LinkedValueData getLinkedData() const { return m_data; };
 		void setLinkedData(const LinkedValueData& data);
+		bool setValue(const variant_t& rValue);
 		int GetArrayIndex() const { return -1; }
 
 		uint32_t GetObjectID() const { return m_instanceID; }

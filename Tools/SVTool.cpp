@@ -870,16 +870,16 @@ void SVToolClass::removeEmbeddedExtents()
 	m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyWidthFactorContent, nullptr);
 	m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyHeightFactorContent, nullptr);
 
-	disableEmbeddedObject(&m_ExtentLeft); // Remove it from the Embedded List so it is not scripted
-	disableEmbeddedObject(&m_ExtentTop);
-	disableEmbeddedObject(&m_ExtentRight);
-	disableEmbeddedObject(&m_ExtentBottom);
-	disableEmbeddedObject(&m_ExtentWidth);
-	disableEmbeddedObject(&m_ExtentHeight);
-	disableEmbeddedObject(&m_ExtentWidthFactorContent);
-	disableEmbeddedObject(&m_ExtentHeightFactorContent);
-	disableEmbeddedObject(&m_ExtentWidthFactorFormat);
-	disableEmbeddedObject(&m_ExtentHeightFactorFormat);
+	RemoveEmbeddedObject(&m_ExtentLeft); // Remove it from the Embedded List so it is not scripted
+	RemoveEmbeddedObject(&m_ExtentTop);
+	RemoveEmbeddedObject(&m_ExtentRight);
+	RemoveEmbeddedObject(&m_ExtentBottom);
+	RemoveEmbeddedObject(&m_ExtentWidth);
+	RemoveEmbeddedObject(&m_ExtentHeight);
+	RemoveEmbeddedObject(&m_ExtentWidthFactorContent);
+	RemoveEmbeddedObject(&m_ExtentHeightFactorContent);
+	RemoveEmbeddedObject(&m_ExtentWidthFactorFormat);
+	RemoveEmbeddedObject(&m_ExtentHeightFactorFormat);
 }
 
 HRESULT SVToolClass::GetPropertyInfo(SvPb::SVExtentPropertyEnum p_eProperty, SvIe::SVExtentPropertyInfoStruct& p_rInfo) const

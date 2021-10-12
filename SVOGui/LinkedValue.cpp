@@ -53,4 +53,16 @@ void LinkedValue::setLinkedData(const LinkedValueData& data)
 	}
 }
 
+bool LinkedValue::setValue(const variant_t& rValue)
+{
+	if (SvPb::LinkedSelectedType::DirectValue == m_data.m_type)
+	{
+		m_data.m_directValue = rValue;
+		m_data.m_Value = rValue;
+		m_bModified = true;
+		return true;
+	}
+	return false;
+}
+
 } //namespace SvOg

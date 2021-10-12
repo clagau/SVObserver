@@ -208,11 +208,19 @@ public:
 		if (!m_ReadOnly)
 		{
 			Container::iterator it = m_values.find(embeddedID);
-			assert(m_values.end() != it && 0 == it->second.index());
-			if (m_values.end() != it && 0 == it->second.index())
+			assert(m_values.end() != it);
+			if (m_values.end() != it)
+			{
+				if (0 == it->second.index())
 			{
 				std::get<0>(it->second).SetValue(rValue, ArrayIndex);
 				return true;
+				}
+				else
+				{
+					//ArrayIndex have not to set in LinkedValues
+					return -1 == ArrayIndex && std::get<1>(it->second).setValue(rValue);
+				}
 			}
 		}
 		return false;
