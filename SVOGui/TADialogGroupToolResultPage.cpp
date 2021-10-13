@@ -335,7 +335,7 @@ namespace SvOg
 			}
 			m_resultData.emplace_back(std::move(data));
 		}
-
+		setInspectionData();
 		FillGridControl();
 	}
 

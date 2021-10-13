@@ -442,7 +442,7 @@ namespace SvOg
 			}
 			m_inputData.emplace_back(std::move(data));
 		}
-
+		setInspectionData();
 		FillGridControl();
 	}
 

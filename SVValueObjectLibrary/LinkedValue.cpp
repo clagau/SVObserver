@@ -181,6 +181,8 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 			}
 			return E_FAIL;
 		}
+		//UpdateConnnection can delete indirectValue, if it was set before and now was switched to another type
+		m_indirectValueRef = SVObjectReference {rData.indirectidstring()};
 		return S_OK;
 	}
 

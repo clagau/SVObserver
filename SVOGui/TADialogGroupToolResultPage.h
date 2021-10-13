@@ -23,7 +23,7 @@ namespace SvOg
 		std::string m_name{ c_resultName };
 		SvPb::EmbeddedIdEnum m_oldEmbeddedId = SvPb::NoEmbeddedId;
 		SvPb::InputTypeEnum m_type = SvPb::InputTypeEnum::TypeDecimal;
-		LinkedValueData m_data;
+		LinkedValueData m_data {SvPb::LinkedSelectedType::DirectValue, {0.}, {0.}, {0.}};
 		SvDef::StringPairVector m_dependencies;
 	};
 

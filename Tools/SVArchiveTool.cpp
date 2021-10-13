@@ -206,7 +206,7 @@ void SVArchiveTool::initializeArchiveTool()
 	RegisterEmbeddedObject(&m_FilenameIndex2, SvPb::FilenameIndex2EId, IDS_OBJECTNAME_FILENAME_INDEX2, true, SvOi::SVResetItemTool);
 	m_FilenameIndex2.SetDefaultValue(_variant_t(0UL), true);
 
-	RegisterEmbeddedObject(&m_DirectorynameIndex, SvPb::DirectorynameIndexEId, IDS_OBJECTNAME_FILENAME_INDEX2, true, SvOi::SVResetItemTool);
+	RegisterEmbeddedObject(&m_DirectorynameIndex, SvPb::DirectorynameIndexEId, IDS_OBJECTNAME_DIRECTORYNAME_INDEX, true, SvOi::SVResetItemTool);
 	m_DirectorynameIndex.SetDefaultValue(_variant_t(0UL), true);
 
 	RegisterEmbeddedObject(&m_SubfolderSelection, SvPb::SubfolderSelectionEId, IDS_OBJECTNAME_SUBFOLDER_SELECTION, true, SvOi::SVResetItemTool);
