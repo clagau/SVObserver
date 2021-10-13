@@ -332,19 +332,3 @@ bool SVHardwareManifest::IsDigitalSVIM(SVIMProductEnum p_ProductType)
 	SVIMProductEnumSet::const_iterator it = DigitalList.find(p_ProductType);
 	return (it != DigitalList.end());
 }
-
-bool SVHardwareManifest::IsProductTypeRAID(SVIMProductEnum p_ProductType)
-{
-	static const SVIMProductEnumSet RaidList
-	{
-		SVIM_PRODUCT_X2_GD1A,
-		SVIM_PRODUCT_X2_GD1A_COLOR,
-		SVIM_PRODUCT_X2_GD2A,
-		SVIM_PRODUCT_X2_GD2A_COLOR,
-		SVIM_PRODUCT_X2_GD8A,
-		SVIM_PRODUCT_X2_GD8A_COLOR,
-	};
-
-	SVIMProductEnumSet::const_iterator it = RaidList.find(p_ProductType);
-	return (it != RaidList.end());
-}

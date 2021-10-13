@@ -23,5 +23,4 @@ namespace SvDef
 	constexpr unsigned long SVIM_SETUPMODE =		0x0080;
 	constexpr unsigned long SVIM_SAVING_CONFIG =	0x0100;
 	constexpr unsigned long SVIM_STOPPING =			0x0200;
-	constexpr unsigned long SVIM_RAID_FAILURE =		0x0400;
 } //namespace SvDef

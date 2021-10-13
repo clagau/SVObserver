@@ -1022,7 +1022,6 @@ bool SVConfigurationObject::LoadIO(SVTreeType& rTree)
 	lIOSize = Value;
 
 	uint32_t l_ModuleReadyId = SvDef::InvalidObjectId;
-	uint32_t l_RaidErrorId = SvDef::InvalidObjectId;
 
 	// Loop through all the "IO EntryXXX"
 	for (i = 0; i < lIOSize; i++)
@@ -1137,10 +1136,6 @@ bool SVConfigurationObject::LoadIO(SVTreeType& rTree)
 						{
 							l_ModuleReadyId = pOutput->getObjectId();
 						}
-						else if (SvDef::cRaidErrorIndicator == IOName)
-						{
-							l_RaidErrorId = pOutput->getObjectId();
-						}
 					}
 				}
 				else if (SvPb::PlcOutputObjectType == ioType)
@@ -1191,11 +1186,6 @@ bool SVConfigurationObject::LoadIO(SVTreeType& rTree)
 	{
 		m_pIOController->GetModuleReady()->m_IOId = l_ModuleReadyId;
 	}
-	if (nullptr != m_pIOController->GetRaidErrorBit())
-	{
-		m_pIOController->GetRaidErrorBit()->m_IOId = l_RaidErrorId;
-	}
-
 	return true;
 }
 
@@ -3801,10 +3791,6 @@ bool SVConfigurationObject::RebuildInputOutputLists(bool isLoad)
 		}
 	}
 
-	if (nullptr != m_pIOController)
-	{
-		m_pIOController->RebuildOutputList();
-	}
 	return bOk;
 }
 
@@ -3918,25 +3904,6 @@ HRESULT SVConfigurationObject::SetModuleReady(bool value)
 	return l_Status;
 }
 
-HRESULT SVConfigurationObject::SetRaidErrorBit(bool p_Value)
-{
-	HRESULT l_Status(S_OK);
-
-	if (nullptr != m_pIOController)
-	{
-		if (!m_pIOController->SetRaidErrorBit(p_Value))
-		{
-			l_Status = E_FAIL;
-		}
-	}
-	else
-	{
-		l_Status = E_FAIL;
-	}
-
-	return l_Status;
-}
-
 SVIOEntryHostStructPtr SVConfigurationObject::GetModuleReady()
 {
 	SVIOEntryHostStructPtr l_IOEntryPtr;
@@ -3944,18 +3911,6 @@ SVIOEntryHostStructPtr SVConfigurationObject::GetModuleReady()
 	if (nullptr != m_pIOController)
 	{
 		l_IOEntryPtr = m_pIOController->GetModuleReady();
-	}
-
-	return l_IOEntryPtr;
-}
-
-SVIOEntryHostStructPtr SVConfigurationObject::GetRaidErrorBit()
-{
-	SVIOEntryHostStructPtr l_IOEntryPtr;
-
-	if (nullptr != m_pIOController)
-	{
-		l_IOEntryPtr = m_pIOController->GetRaidErrorBit();
 	}
 
 	return l_IOEntryPtr;

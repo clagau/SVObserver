@@ -1054,13 +1054,6 @@ void SVMainFrame::OnConfigurationFinishedInitializing()
 
 	if( nullptr != l_pIODoc )
 	{
-		SVIOController* l_pIOController( l_pIODoc->GetIOController() );
-
-		if( nullptr != l_pIOController )
-		{
-			l_pIOController->RebuildOutputList();
-		}
-
 		l_pIODoc->UpdateAllViews( nullptr );
 	}// end if
 

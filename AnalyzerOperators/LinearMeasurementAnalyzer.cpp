@@ -30,7 +30,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( LinearMeasurementAnalyzer/*ABX umbenennen? */, SvPb::LinearMeasurementAnalyzerClassId);
+SV_IMPLEMENT_CLASS( LinearMeasurementAnalyzer, SvPb::LinearMeasurementAnalyzerClassId);
 
 LinearMeasurementAnalyzer::LinearMeasurementAnalyzer( SVObjectClass* POwner, int StringResourceID )
 									 :LinearAnalyzer( POwner, StringResourceID ) 

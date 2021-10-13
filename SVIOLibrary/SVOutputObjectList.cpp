@@ -326,10 +326,10 @@ bool SVOutputObjectList::ResetOutput( SVIOEntryHostStructPtr pIOEntry )
 		if (nullptr != pOutput)
 		{
 			bool l_bEnable = pIOEntry->m_Enabled;
-			if (!l_bEnable)	// Act as if enabled when Module Ready or Raid Error 
+			if (!l_bEnable)	// Act as if enabled when Module Ready
 			{
 				std::string Name = pOutput->GetName();
-				if (SvDef::cModuleReady == Name || SvDef::cRaidErrorIndicator == Name)
+				if (SvDef::cModuleReady == Name)
 				{
 					l_bEnable = true;
 				}
@@ -484,7 +484,6 @@ HRESULT SVOutputObjectList::RemoveUnusedOutputs( const SvDef::StringVector& rIns
 				}
 
 				l_Skip = l_Skip || (SvDef::cModuleReady == OutputName );
-				l_Skip = l_Skip || (SvDef::cRaidErrorIndicator == OutputName );
 
 				if( ! l_Skip )
 				{

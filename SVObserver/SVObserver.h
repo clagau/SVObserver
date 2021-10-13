@@ -197,7 +197,6 @@ public:
 	bool CheckSVIMType() const;
 	SVIMProductEnum GetSVIMType() const;
 
-	bool IsProductTypeRAID() const;
 	void ValidateMRUList();
 
 	void ResetAllCounts();

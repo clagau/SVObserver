@@ -29,7 +29,6 @@ namespace SvLib
 		m_FileAcquisitionBoardName = UnknownboardTag;
 		m_AcquisitionBoardName = UnknownboardTag;
 		m_DigitalBoardName = UnknownboardTag;
-		m_RAIDBoardName = UnknownboardTag;
 	}
 
 

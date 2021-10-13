@@ -264,10 +264,8 @@ public:
 	bool RenameOutputListInspectionNames(LPCTSTR OldInspectionName, LPCTSTR NewInspectionName);
 
 	HRESULT SetModuleReady(bool p_Value);
-	HRESULT SetRaidErrorBit(bool p_Value);
 
 	SVIOEntryHostStructPtr GetModuleReady();
-	SVIOEntryHostStructPtr GetRaidErrorBit();
 
 	SVIOController* GetIOController() const { return (nullptr != m_pIOController) ? m_pIOController.get() : nullptr; }
 

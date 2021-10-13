@@ -138,9 +138,6 @@ void SVDiscreteOutputsView::OnUpdate( CView* , LPARAM , CObject*  )
 			// Check Module Ready first
 			if(setListItem(i, pIOController->GetModuleReady())) {continue;}
 
-			 // Check GetRaidErrorBit() first
-			if (setListItem(i, pIOController->GetRaidErrorBit())) { continue; }
-
 			for(int j = 0; j < lPPQSize; ++j)
 			{
 				SVPPQObject* pPPQ = pConfig->GetPPQ(j);
@@ -276,11 +273,6 @@ void SVDiscreteOutputsView::OnLButtonDblClk(UINT, CPoint point)
 									pIOEntry->m_ObjectType = IO_INVALID_OBJECT;
 									pIOEntry->m_IOId = SvDef::InvalidObjectId;
 								}// end if
-								if( pIOEntry == pIOController->GetRaidErrorBit())
-								{
-									pIOEntry->m_ObjectType = IO_INVALID_OBJECT;
-									pIOEntry->m_IOId = SvDef::InvalidObjectId;
-								}// end if
 
 							}// end if
 							else
@@ -298,11 +290,6 @@ void SVDiscreteOutputsView::OnLButtonDblClk(UINT, CPoint point)
 									dlg.m_pIOEntry->m_IOId = dlg.m_pDigOutput->getObjectId();
 								}// end if
 
-								if( dlg.m_pIOEntry == pIOController->GetRaidErrorBit() )
-								{
-									dlg.m_pIOEntry->m_ObjectType = IO_DIGITAL_OUTPUT;
-									dlg.m_pIOEntry->m_IOId	= dlg.m_pDigOutput->getObjectId();
-								}// end if
 							}// end else
 
 							long lPPQSize = 0;

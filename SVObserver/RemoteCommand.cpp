@@ -88,11 +88,6 @@ bool GlobalRCGetState( DWORD* pdwSVIMState )
 		*pdwSVIMState |= SvDef::SVIM_ONLINE_PENDING;
 	}
 
-	if ( SVSVIMStateClass::CheckState( SV_STATE_RAID_FAILURE ) )
-	{
-		*pdwSVIMState |= SvDef::SVIM_RAID_FAILURE;
-	}
-
 	bOk = *pdwSVIMState != 0 || bOk;
 
 	return bOk;

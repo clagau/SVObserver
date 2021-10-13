@@ -779,22 +779,6 @@ void SVObserverApp::OnStop()
 
 	SetAllIPDocumentsOffline();
 
-	if (IsProductTypeRAID())
-	{
-		if (SVSVIMStateClass::CheckState(SV_STATE_RAID_FAILURE))
-		{
-			pConfig->SetRaidErrorBit(true);
-		}
-		else
-		{
-			pConfig->SetRaidErrorBit(false);
-		}
-	}
-	else
-	{
-		pConfig->SetRaidErrorBit(true);
-	}
-
 	std::string TriggerCounts;
 	GetTriggersAndCounts(TriggerCounts);
 
@@ -2000,13 +1984,7 @@ BOOL SVObserverApp::InitInstance()
 
 	Logout();
 
-	if (IsProductTypeRAID())
-	{
-	}
-	else
-	{
-		SVSVIMStateClass::RemoveState(SV_STATE_RAID_FAILURE);
-	}
+	SVSVIMStateClass::AddState(SV_STATE_AVAILABLE);
 
 	bool StartLastConfiguration = false;
 	RootObject::getRootChildValue(SvDef::FqnEnvironmentStartLastConfig, StartLastConfiguration);
@@ -3152,12 +3130,6 @@ SVIMProductEnum SVObserverApp::GetSVIMType() const
 	return eType;
 }
 
-
-bool SVObserverApp::IsProductTypeRAID() const
-{
-	bool bRet = (SvUl::CompareNoCase(m_rInitialInfo.m_RAIDBoardName, _T("Intel")) == 0);
-	return bRet;
-}
 
 void SVObserverApp::ValidateMRUList()
 {
@@ -4967,34 +4939,6 @@ void SVObserverApp::Start(DWORD desiredState)
 			pTrcRW->lockReset();
 		}
 
-		if (IsProductTypeRAID())
-		{
-			if (SVSVIMStateClass::CheckState(SV_STATE_RAID_FAILURE))
-			{
-				if (pConfig->SetRaidErrorBit(true) != S_OK)
-				{
-					SvStl::MessageContainer Exception(SVMSG_SVO_54_EMPTY, SvStl::Tid_GoOnlineFailure_RaidBits, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_45000);
-					throw Exception;
-				}
-			}
-			else
-			{
-				if (pConfig->SetRaidErrorBit(false) != S_OK)
-				{
-					SvStl::MessageContainer Exception(SVMSG_SVO_54_EMPTY, SvStl::Tid_GoOnlineFailure_RaidBits, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_45000);
-					throw Exception;
-				}
-			}
-		}
-		else
-		{
-			if (pConfig->SetRaidErrorBit(true) != S_OK)
-			{
-				SvStl::MessageContainer Exception(SVMSG_SVO_54_EMPTY, SvStl::Tid_GoOnlineFailure_RaidBits, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_45000);
-				throw Exception;
-			}
-		}
-
 		SVSVIMStateClass::changeState(desiredState, SV_STATE_UNAVAILABLE | SV_STATE_STARTING);
 
 		//Now that we are in the running state we allow trigger processing!
@@ -5478,8 +5422,6 @@ HRESULT SVObserverApp::ConstructDocuments(SVTreeType& p_rTree)
 
 		if (nullptr != pIOController)
 		{
-			pIOController->RebuildOutputList();
-
 			SVIODoc* l_pIODoc(TheSVObserverApp.NewSVIODoc(pIOController->GetName(), *pIOController));
 
 			if (nullptr != l_pIODoc)

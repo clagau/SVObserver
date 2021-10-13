@@ -307,7 +307,6 @@ namespace SvStl
 		{Tid_GoOnlineFailure_CreateTimerThread, _T("Configuration cannot enter Run.  There is the "
 							"error %s by creating the timer Thread.")},
 		{Tid_GoOnlineFailure_InvalidPointerConfig, _T("Configuration cannot enter Run.  Invalid pointer of configuration or mainWnd.")},
-		{Tid_GoOnlineFailure_RaidBits, _T("Configuration cannot enter Run.  Error by setting of raid bits.")},
 		{Tid_GoOnlineFailure_ModuleReadyOutput, _T("Configuration cannot enter Run.  Cannot write to module ready output.")},
 		{Tid_ErrorNotEnoughDiskSpace, _T("Unable to set monitor list for %s - Not enough Disk Space Available")},
 		{Tid_GoOnlineFailure_SendCameraParam, _T("Configuration cannot enter Run.  There is an "
@@ -503,8 +502,6 @@ namespace SvStl
 		{Tid_UpdateBufferFailed, _T("Update buffer failed.")},
 		{Tid_UpdateTranslationFailed, _T("Update translation failed.")},
 		{Tid_InvalidModuleReadyPointer, _T("Invalid module ready pointer.")},
-		{Tid_InvalidRaidBitPointer, _T("Invalid raid bit pointer.")},
-		{Tid_IoController_RebuildOutpuListFailed, _T("IOController: Rebuild Output list failed.")},
 		{Tid_GetPixelDepthFailed, _T("Get Pixel Depth failed.")},
 		{Tid_GetImageExtentFailed, _T("Get Image Extent failed.")},
 		{Tid_SetImageExtentFailed, _T("Set Image Extent failed.")},

@@ -19,7 +19,6 @@
 #include "ObjectInterfaces/IObjectWriter.h"
 #include "SVIOLibrary/SVOutputObjectList.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVOLibrary/SVHardwareManifest.h"
@@ -84,64 +83,11 @@ void SVIOController::initializeOutputs()
 			pInputValueObject.reset();
 		}
 
-		if (nullptr == m_pRaidErrorBit)
-		{
-			m_pRaidErrorBit = std::make_shared<SVIOEntryHostStruct>();
-			m_pRaidErrorBit->m_ObjectType = IO_DIGITAL_OUTPUT;
-			///This object is deleted in the destructor using m_pRaidErrorBit
-			std::shared_ptr<SvOi::IValueObject> pInputValueObject = std::make_shared<SvVol::SVBoolValueObjectClass>();
-			if (nullptr != pInputValueObject)
-			{
-				m_pRaidErrorBit->setValueObject(pInputValueObject);
-				SVObjectManagerClass::Instance().ChangeUniqueObjectID(m_pRaidErrorBit->getObject(), ObjectIdEnum::RaidErrorBitId);
-				SVObjectClass* pObject = dynamic_cast<SVObjectClass*> (pInputValueObject.get());
-				//! For Raid Error Indicator do not set the parent owner
-				pObject->SetName(SvDef::cRaidErrorIndicator);
-				pObject->ResetObject();
-				pInputValueObject->setValue(_variant_t(false));
-			}
-		}
 	}
-	else
+	if (nullptr != m_pModuleReady)
 	{
-		if(nullptr != m_pRaidErrorBit)
-		{
-			m_pRaidErrorBit->clear();
-			m_pRaidErrorBit.reset();
-		}
-		if (nullptr != m_pModuleReady)
-		{
-			m_pModuleReady->clear();
-			m_pModuleReady.reset();
-		}
-	}
-}
-
-bool SVIOController::RebuildOutputList()
-{
-	SVConfigurationObject* pConfig( nullptr );
-	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
-
-	if( nullptr == pConfig || nullptr == pConfig->GetOutputObjectList( ) )
-	{
-		return false;
-	}
-
-	//Start of check to see if there is a raid failure
-	if( TheSVObserverApp.IsProductTypeRAID() )
-	{
-		if ( SVSVIMStateClass::CheckState( SV_STATE_RAID_FAILURE) )
-		{
-			return SetRaidErrorBit( true );
-		}
-		else
-		{
-			return SetRaidErrorBit( false );
-		}//end of check to see if there is a raid failure
-	}
-	else // config type is raid, but not hardware, so turn to a failed state.
-	{
-		return SetRaidErrorBit( true );
+		m_pModuleReady->clear();
+		m_pModuleReady.reset();
 	}
 }
 
@@ -228,32 +174,10 @@ bool SVIOController::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 		{
 			Result = m_pModuleReady->getObject()->ResetObject(pErrorMessages);
 		}
-		if ( nullptr == m_pRaidErrorBit || nullptr == m_pRaidErrorBit->getObject() || !m_pRaidErrorBit->getObject()->IsCreated() )
-		{
-			Result = false;
-			if (nullptr != pErrorMessages)
-			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidRaidBitPointer, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
-				pErrorMessages->push_back(Msg);
-			}
-		}
-		else
-		{
-			Result = m_pRaidErrorBit->getObject()->ResetObject(pErrorMessages) && Result;
-		}
 	}
 
 	m_RemoteMonitorListController.ResetObject();
 
-	if( ! RebuildOutputList() )
-	{
-		Result = false;
-		if (nullptr != pErrorMessages)
-	{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_IoController_RebuildOutpuListFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId() );
-			pErrorMessages->push_back(Msg);
-	}
-	}
 	return Result;
 }
 
@@ -291,41 +215,9 @@ HRESULT SVIOController::SetModuleReady( bool Value )
 	return result;
 }
 
-bool SVIOController::SetRaidErrorBit( bool Value )
-{
-	bool Result( true );
-
-	// Don't set Module Ready if it isn't in the output list
-	if(nullptr != m_pRaidErrorBit && SvDef::InvalidObjectId != m_pRaidErrorBit->m_IOId)
-	{
-		SVOutputObjectList *pOutputList( nullptr );
-		if(nullptr != m_pRaidErrorBit->getValueObject())
-		{
-			m_pRaidErrorBit->getValueObject()->setValue( _variant_t(Value) );
-		}
-
-		SVConfigurationObject* pConfig( nullptr );
-		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
-
-		if( nullptr != pConfig ){ pOutputList = pConfig->GetOutputObjectList( ); }
-
-		if( nullptr == pOutputList || !pOutputList->WriteOutput( m_pRaidErrorBit, true, false ) )
-		{
-			Result = false; // JMS ERROR - Cannot write to module ready output.
-		}
-	}// end if
-
-	return Result;
-}
-
 SVIOEntryHostStructPtr SVIOController::GetModuleReady()
 {
 	return m_pModuleReady;
-}
-
-SVIOEntryHostStructPtr SVIOController::GetRaidErrorBit()
-{
-	return m_pRaidErrorBit;
 }
 
 uint32_t SVIOController::GetRemoteOutputController() const
@@ -583,5 +475,4 @@ void SVIOController::LocalDestroy()
 	m_RemoteMonitorListController.Clear();
 
 	m_pModuleReady.reset();
-	m_pRaidErrorBit.reset();
 }

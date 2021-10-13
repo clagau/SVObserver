@@ -60,7 +60,6 @@ namespace SvLib
 		std::string m_TriggerBoardName;
 		std::string m_AcquisitionBoardName;
 		std::string m_DigitalBoardName;
-		std::string m_RAIDBoardName;
 		std::string m_FileAcquisitionBoardName;
 
 		std::string m_DigitizerDLL;

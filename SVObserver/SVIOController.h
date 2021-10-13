@@ -49,8 +49,6 @@ public:
 
 	void initializeOutputs();
 
-	bool RebuildOutputList();
-
 	typedef SvXml::SVXMLMaterialsTree SVTreeType;
 
 	bool SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent );
@@ -58,10 +56,8 @@ public:
 	bool GetParameters(SvOi::IObjectWriter& rWriter) const;
 
 	HRESULT SetModuleReady( bool p_Value );
-	bool SetRaidErrorBit( bool p_Value );
 
 	SVIOEntryHostStructPtr GetModuleReady();
-	SVIOEntryHostStructPtr GetRaidErrorBit();
 
 	uint32_t GetRemoteOutputController() const;
 	size_t GetRemoteOutputGroupCount() const;
@@ -109,7 +105,6 @@ private:
 	void LocalDestroy();
 
 	SVIOEntryHostStructPtr m_pModuleReady;
-	SVIOEntryHostStructPtr m_pRaidErrorBit;
 
 	std::unique_ptr<SVRemoteOutputDataController> m_pRemoteOutputController;
 	RemoteMonitorListController m_RemoteMonitorListController;

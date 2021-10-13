@@ -76,7 +76,6 @@ message GetStateResponse
 	// SVIM_SETUPMODE =			0x0080; SVObserver is in edit mode
 	// SVIM_SAVING_CONFIG =		0x0100;	SVObserver is busy saving a configuration
 	// SVIM_STOPPING =			0x0200;	SVObserver is busy stopping the configuration
-	// SVIM_RAID_FAILURE =		0x0400; SVObserver has a raid failure
 }
 
 ///Gets the currently loaded configuration from SVObserver and saves it in the file name (locally)

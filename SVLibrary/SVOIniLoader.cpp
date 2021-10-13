@@ -57,7 +57,6 @@ constexpr const char* MaxPreloadFileNumber = _T("MaxFileNumber");
 constexpr const char* PreloadTimeDelay = _T("TimeDelay");
 
 constexpr const char* ProcessorSectionTag = _T("Processor");
-constexpr const char* RAIDTag = _T("RAID");
 constexpr const char* FrameGrabberSectionTag = _T("Frame Grabber");
 constexpr const char* DigitizerDLLTag = _T("DigitizerDLL");
 constexpr const char* TriggerDLLTag = _T("TriggerDLL");
@@ -209,8 +208,6 @@ HRESULT SVOIniLoader::LoadHardwareIni(LPCTSTR hardwareIniFile)
 	m_rInitialInfo.m_ProcessorBoardName = HardwareINI.GetValueString(ProcessorSectionTag, m_rInitialInfo.m_Processor.c_str(), EmptyString);
 	if (!m_rInitialInfo.m_ProcessorBoardName.empty())
 	{
-		m_rInitialInfo.m_RAIDBoardName = HardwareINI.GetValueString(m_rInitialInfo.m_ProcessorBoardName.c_str(), RAIDTag, EmptyString);
-
 		m_rInitialInfo.m_ProductName = HardwareINI.GetValueString(m_rInitialInfo.m_ProcessorBoardName.c_str(), ProductNameTag, EmptyString);
 	}
 

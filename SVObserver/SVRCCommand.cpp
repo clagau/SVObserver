@@ -105,7 +105,6 @@ void SVRCCommand::GetState(const SvPb::GetStateRequest&, SvRpc::Task<SvPb::GetSt
 	State |= SVSVIMStateClass::CheckState(SV_STATE_EDIT) ? SvDef::SVIM_SETUPMODE : 0;
 	State |= SVSVIMStateClass::CheckState(SV_STATE_CLOSING) ? SvDef::SVIM_STOPPING : 0;
 	State |= SVSVIMStateClass::CheckState(SV_STATE_START_PENDING) ? SvDef::SVIM_ONLINE_PENDING : 0;
-	State |= SVSVIMStateClass::CheckState(SV_STATE_RAID_FAILURE) ? SvDef::SVIM_RAID_FAILURE : 0;
 
 	if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
 	{

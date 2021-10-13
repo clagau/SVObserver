@@ -37,7 +37,6 @@ constexpr const char* cBucketTag = _T("Array");			// for backwards compatibility
 constexpr const char* cArrayTag = _T("Array_Elements");	// new style; one bucket, all array values
 
 constexpr const char* cModuleReady = _T("Module Ready");
-constexpr const char* cRaidErrorIndicator = _T("Raid Error Indicator");
 
 constexpr const char* cLinkName = _T(" Link");
 

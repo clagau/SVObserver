@@ -47,7 +47,6 @@ namespace ObjectIdEnum
 	constexpr uint32_t InputObjectListId = 26;
 	constexpr uint32_t OutputObjectListId = 27;
 	constexpr uint32_t ModuleReadyId = 28;
-	constexpr uint32_t RaidErrorBitId = 29;
 	constexpr uint32_t ConfigObjectId = 30;
 	constexpr uint32_t RemoteDataControllerObjectId = 31;
 

@@ -185,17 +185,6 @@ BOOL SVIOAdjustDialog::OnInitDialog()
 			m_Items[name] = pIOModuleReady;
 		}// end if
 
-		if ( SVHardwareManifest::IsProductTypeRAID( pConfig->GetProductType() ) )
-		{
-			SVIOEntryHostStructPtr pIORaid = pConfig->GetRaidErrorBit();
-			if(nullptr != pIORaid && SvDef::InvalidObjectId == pIORaid->m_IOId && SV_IS_KIND_OF(pIORaid->getObject(), SvVol::SVBoolValueObjectClass ) )
-			{
-				std::string name{pIORaid->getObject()->GetCompleteName()};
-				IOCombo.AddString(name.c_str());
-				m_Items[name] = pIORaid;
-			}// end if
-		}
-
 		for(int i = 0; i <  pConfig->GetPPQCount(); ++i )
 		{
 			SVIOEntryHostStructPtrVector IOEntryVector;
