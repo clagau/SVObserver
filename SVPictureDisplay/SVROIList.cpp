@@ -21,35 +21,35 @@ static char THIS_FILE[] = __FILE__;
 #pragma endregion Declarations
 
 /////////////////////////////////////////////////////////////////////////////
-// CSVROIList
+// SVROIList
 
-IMPLEMENT_DYNCREATE(CSVROIList, CCmdTarget)
+IMPLEMENT_DYNCREATE(SVROIList, CCmdTarget)
 // The coclass uuid
-IMPLEMENT_OLECREATE(CSVROIList, "SVROILIST", 0xB861BF63, 0xCD67, 0x4de7, 0xA6, 0x21, 0xCB, 0x46, 0x08, 0x8B, 0x00, 0xC3)
+IMPLEMENT_OLECREATE(SVROIList, "SVROILIST", 0xB861BF63, 0xCD67, 0x4de7, 0xA6, 0x21, 0xCB, 0x46, 0x08, 0x8B, 0x00, 0xC3)
 
-BEGIN_INTERFACE_MAP(CSVROIList, CCmdTarget)
-    INTERFACE_PART(CSVROIList, IID_ISVROIList, Dispatch)
-    INTERFACE_PART(CSVROIList, IID_IEnumVARIANT, EnumVARIANT)
+BEGIN_INTERFACE_MAP(SVROIList, CCmdTarget)
+    INTERFACE_PART(SVROIList, IID_ISVROIList, Dispatch)
+    INTERFACE_PART(SVROIList, IID_IEnumVARIANT, EnumVARIANT)
 END_INTERFACE_MAP()
 
-BEGIN_DISPATCH_MAP(CSVROIList, CCmdTarget)
-    //{{AFX_DISPATCH_MAP(CSVROIList)
+BEGIN_DISPATCH_MAP(SVROIList, CCmdTarget)
+    //{{AFX_DISPATCH_MAP(SVROIList)
     //}}AFX_DISPATCH_MAP
-    DISP_FUNCTION_ID(CSVROIList, "Item", 0, GetItem, VT_DISPATCH, VTS_I4)
-    DISP_DEFVALUE_ID(CSVROIList, 0)
-    DISP_PROPERTY_EX_ID(CSVROIList, "Count", 1, GetCount, SetNotSupported, VT_I4)
-    DISP_FUNCTION_ID(CSVROIList, "Add", 2, Add, VT_I4, VTS_DISPATCH)
-    DISP_FUNCTION_ID(CSVROIList, "Remove", 3, Remove, VT_I4, VTS_I4)
-	DISP_FUNCTION_ID(CSVROIList, "RemoveAll", 4, RemoveAll, VT_I4, VTS_NONE)
-    DISP_PROPERTY_EX_ID(CSVROIList, "_NewEnum", DISPID_NEWENUM, _NewEnum, SetNotSupported, VT_UNKNOWN)
+    DISP_FUNCTION_ID(SVROIList, "Item", 0, GetItem, VT_DISPATCH, VTS_I4)
+    DISP_DEFVALUE_ID(SVROIList, 0)
+    DISP_PROPERTY_EX_ID(SVROIList, "Count", 1, GetCount, SetNotSupported, VT_I4)
+    DISP_FUNCTION_ID(SVROIList, "Add", 2, Add, VT_I4, VTS_DISPATCH)
+    DISP_FUNCTION_ID(SVROIList, "Remove", 3, Remove, VT_I4, VTS_I4)
+	DISP_FUNCTION_ID(SVROIList, "RemoveAll", 4, RemoveAll, VT_I4, VTS_NONE)
+    DISP_PROPERTY_EX_ID(SVROIList, "_NewEnum", DISPID_NEWENUM, _NewEnum, SetNotSupported, VT_UNKNOWN)
 END_DISPATCH_MAP()
 
-BEGIN_MESSAGE_MAP(CSVROIList, CCmdTarget)
-    //{{AFX_MSG_MAP(CSVROIList)
+BEGIN_MESSAGE_MAP(SVROIList, CCmdTarget)
+    //{{AFX_MSG_MAP(SVROIList)
     //}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-CSVROIList::CSVROIList()
+SVROIList::SVROIList()
 {
     m_arROIObjects.RemoveAll();
 
@@ -57,13 +57,13 @@ CSVROIList::CSVROIList()
     AfxOleLockApp();
 }
 
-CSVROIList::~CSVROIList()
+SVROIList::~SVROIList()
 {
     RemoveAll();
     AfxOleUnlockApp();
 }
 
-void CSVROIList::OnFinalRelease()
+void SVROIList::OnFinalRelease()
 {
     // When the last reference for an automation object is released
     //  OnFinalRelease is called.  This implementation deletes the 
@@ -72,21 +72,21 @@ void CSVROIList::OnFinalRelease()
     delete this;
 }
 
-/*static*/ CSVROIList* CSVROIList::GetCppObjectFromDispatchPointer(LPDISPATCH lpDispatch)
+/*static*/ SVROIList* SVROIList::GetCppObjectFromDispatchPointer(LPDISPATCH lpDispatch)
 {
-    static size_t offset = offsetof(CSVROIList, m_xDispatch);
-    return reinterpret_cast <CSVROIList*> ( lpDispatch ? ((BYTE*)lpDispatch - offset) : nullptr );
+    static size_t offset = offsetof(SVROIList, m_xDispatch);
+    return reinterpret_cast <SVROIList*> ( lpDispatch ? ((BYTE*)lpDispatch - offset) : nullptr );
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// CSVROIList message handlers
+// SVROIList message handlers
 
-long CSVROIList::GetCount()
+long SVROIList::GetCount()
 {
 	return (long)m_arROIObjects.GetSize();
 }
 
-long CSVROIList::Add(LPDISPATCH pValue)
+long SVROIList::Add(LPDISPATCH pValue)
 {
     pValue->AddRef();
 	long lIndex = (long)m_arROIObjects.Add( pValue );
@@ -97,7 +97,7 @@ long CSVROIList::Add(LPDISPATCH pValue)
 	return lIndex;
 }
 
-HRESULT CSVROIList::Remove(long lIndex)
+HRESULT SVROIList::Remove(long lIndex)
 {
     LPDISPATCH pValue;
 
@@ -119,7 +119,7 @@ HRESULT CSVROIList::Remove(long lIndex)
     return S_OK;
 }
 
-HRESULT CSVROIList::RemoveAll()
+HRESULT SVROIList::RemoveAll()
 {
     LPDISPATCH pValue;
 
@@ -135,7 +135,7 @@ HRESULT CSVROIList::RemoveAll()
     return S_OK;
 }
 
-LPDISPATCH CSVROIList::GetItem(long lIndex)
+LPDISPATCH SVROIList::GetItem(long lIndex)
 {
     LPDISPATCH pValue;
 
@@ -155,9 +155,9 @@ LPDISPATCH CSVROIList::GetItem(long lIndex)
     return pValue;
 }
   
-LPUNKNOWN CSVROIList::_NewEnum()
+LPUNKNOWN SVROIList::_NewEnum()
 {
-    CSVROIList* pList = new CSVROIList();
+    SVROIList* pList = new SVROIList();
 
     if (pList)
     {
@@ -182,32 +182,32 @@ LPUNKNOWN CSVROIList::_NewEnum()
 // This class implements the IEnumVARIANT interface requried by the 
 // _NewEnum property of the collection
 //
-CSVROIList::XEnumVARIANT::XEnumVARIANT()
+SVROIList::XEnumVARIANT::XEnumVARIANT()
 {
     m_lCurrent = 0;
 }
 
-STDMETHODIMP_(ULONG) CSVROIList::XEnumVARIANT::AddRef()
+STDMETHODIMP_(ULONG) SVROIList::XEnumVARIANT::AddRef()
 {
-    METHOD_PROLOGUE(CSVROIList, EnumVARIANT)
+    METHOD_PROLOGUE(SVROIList, EnumVARIANT)
     return pThis->ExternalAddRef();
 }
 
-STDMETHODIMP_(ULONG) CSVROIList::XEnumVARIANT::Release()
+STDMETHODIMP_(ULONG) SVROIList::XEnumVARIANT::Release()
 {
-    METHOD_PROLOGUE(CSVROIList, EnumVARIANT)
+    METHOD_PROLOGUE(SVROIList, EnumVARIANT)
     return pThis->ExternalRelease();
 }
 
-STDMETHODIMP CSVROIList::XEnumVARIANT::QueryInterface( REFIID iid, void FAR* FAR* ppvObj )
+STDMETHODIMP SVROIList::XEnumVARIANT::QueryInterface( REFIID iid, void FAR* FAR* ppvObj )
 {
-    METHOD_PROLOGUE(CSVROIList, EnumVARIANT)
+    METHOD_PROLOGUE(SVROIList, EnumVARIANT)
     return (HRESULT)pThis->ExternalQueryInterface( (void FAR*)&iid, ppvObj);
 }
 
-STDMETHODIMP CSVROIList::XEnumVARIANT::Next( ULONG celt, VARIANT FAR* rgvar, ULONG FAR* pceltFetched)
+STDMETHODIMP SVROIList::XEnumVARIANT::Next( ULONG celt, VARIANT FAR* rgvar, ULONG FAR* pceltFetched)
 {
-    METHOD_PROLOGUE(CSVROIList, EnumVARIANT)
+    METHOD_PROLOGUE(SVROIList, EnumVARIANT)
 
     HRESULT hr = S_OK;
     ULONG l = 0;
@@ -263,9 +263,9 @@ STDMETHODIMP CSVROIList::XEnumVARIANT::Next( ULONG celt, VARIANT FAR* rgvar, ULO
     return hr;
 }
 
-STDMETHODIMP CSVROIList::XEnumVARIANT::Skip(unsigned long celt) 
+STDMETHODIMP SVROIList::XEnumVARIANT::Skip(unsigned long celt) 
 {
-    METHOD_PROLOGUE(CSVROIList, EnumVARIANT)
+    METHOD_PROLOGUE(SVROIList, EnumVARIANT)
 
 	long lSize = (long)pThis->m_arROIObjects.GetSize();
 	while (m_lCurrent < lSize && celt--) { m_lCurrent++; }
@@ -273,20 +273,20 @@ STDMETHODIMP CSVROIList::XEnumVARIANT::Skip(unsigned long celt)
     return (celt == 0 ? NOERROR : ResultFromScode( S_FALSE ));
 }
 
-STDMETHODIMP CSVROIList::XEnumVARIANT::Reset()
+STDMETHODIMP SVROIList::XEnumVARIANT::Reset()
 {
-    METHOD_PROLOGUE(CSVROIList, EnumVARIANT)
+    METHOD_PROLOGUE(SVROIList, EnumVARIANT)
 
     m_lCurrent = 0;
 
     return NOERROR;
 }
 
-STDMETHODIMP CSVROIList::XEnumVARIANT::Clone(IEnumVARIANT FAR* FAR*)
+STDMETHODIMP SVROIList::XEnumVARIANT::Clone(IEnumVARIANT FAR* FAR*)
 {
-    METHOD_PROLOGUE(CSVROIList, EnumVARIANT)
+    METHOD_PROLOGUE(SVROIList, EnumVARIANT)
 
-    CSVROIList* pList = new CSVROIList();
+    SVROIList* pList = new SVROIList();
     if (pList)
     {
 		// Copy all the items over to the new array

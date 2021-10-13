@@ -1,6 +1,6 @@
 //*****************************************************************************
 /// \copyright COPYRIGHT (c) 2017,2017 by Seidenader Maschinenbau GmbH
-/// \file SMView.h 
+/// \file SMViewApp.h 
 /// All Rights Reserved 
 //*****************************************************************************
 
@@ -16,10 +16,10 @@
 #endif
 
 //! Applicationclass CShareViewApp:
-class CSMViewApp : public CWinApp
+class SMViewApp : public CWinApp
 {
 public:
-	CSMViewApp();
+	SMViewApp();
 
 // Overrides
 public:
@@ -30,4 +30,4 @@ public:
 	DECLARE_MESSAGE_MAP()
 };
 
-extern CSMViewApp theApp;
+extern SMViewApp theApp;

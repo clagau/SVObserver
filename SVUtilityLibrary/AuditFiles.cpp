@@ -75,7 +75,7 @@ namespace SvUl
 	}
 
 
-	void CAuditFiles::SyncDefaultList(const std::vector<std::string>& rCrunfileList)
+	void AuditFiles::SyncDefaultList(const std::vector<std::string>& rCrunfileList)
 	{
 		std::map < std::string, AuditFile> temp;
 		for (auto& it : m_Files)
@@ -97,7 +97,7 @@ namespace SvUl
 		}
 	}
 
-	void  CAuditFiles::UpdateList()
+	void  AuditFiles::UpdateList()
 	{
 		for (auto& F : m_Files)
 		{
@@ -115,7 +115,7 @@ namespace SvUl
 		}
 	}
 
-	void  CAuditFiles::CalculateSHA256(int index)
+	void  AuditFiles::CalculateSHA256(int index)
 	{
 		if (index < 0 || index >= static_cast<int>(m_Files.size()))
 		{
@@ -143,7 +143,7 @@ namespace SvUl
 
 
 	}
-	void  CAuditFiles::CalculateSHA256()
+	void  AuditFiles::CalculateSHA256()
 	{
 
 		std::string hash;
@@ -169,13 +169,13 @@ namespace SvUl
 		}
 	}
 
-	void  CAuditFiles::Sort()
+	void  AuditFiles::Sort()
 	{
 		std::sort(m_Files.begin(), m_Files.end());
 
 	}
 
-	size_t   CAuditFiles::SetValues(const std::vector< AuditFile>& Files, bool bOnlyFlags)
+	size_t   AuditFiles::SetValues(const std::vector< AuditFile>& Files, bool bOnlyFlags)
 	{
 
 		if (bOnlyFlags && Files.size() == m_Files.size())
@@ -194,13 +194,13 @@ namespace SvUl
 		}
 
 	}
-	size_t   CAuditFiles::SetValues(const std::vector< AuditFile>& Files)
+	size_t   AuditFiles::SetValues(const std::vector< AuditFile>& Files)
 	{
 		m_Files = Files;
 		return m_Files.size();
 	}
 
-	size_t   CAuditFiles::SetValues(std::vector< AuditFile>&& Files)
+	size_t   AuditFiles::SetValues(std::vector< AuditFile>&& Files)
 	{
 		m_Files = std::move(Files);
 		return m_Files.size();

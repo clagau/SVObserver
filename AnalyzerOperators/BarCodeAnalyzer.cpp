@@ -2,8 +2,8 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVBarCodeAnalyzerClass
-//* .File Name       : $Workfile:   SVBarCodeAnalyzerClass.cpp  $
+//* .Module Name     : BarCodeAnalyzer
+//* .File Name       : $Workfile:   BarCodeAnalyzer.cpp  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.11  $
 //* .Check In Date   : $Date:   19 Dec 2014 03:59:30  $
@@ -39,13 +39,13 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS (SVBarCodeAnalyzerClass, SvPb::BarCodeAnalyzerClassId);
+SV_IMPLEMENT_CLASS (BarCodeAnalyzer, SvPb::BarCodeAnalyzerClassId);
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-SVBarCodeAnalyzerClass::SVBarCodeAnalyzerClass (SVObjectClass* POwner, int StringResourceID)
+BarCodeAnalyzer::BarCodeAnalyzer (SVObjectClass* POwner, int StringResourceID)
 	: ImageAnalyzer (POwner, StringResourceID)
 {
 	if (SVOLicenseManager::Instance().HasMatroxIdentificationLicense())
@@ -61,7 +61,7 @@ SVBarCodeAnalyzerClass::SVBarCodeAnalyzerClass (SVObjectClass* POwner, int Strin
 
 }
 
-void SVBarCodeAnalyzerClass::init()
+void BarCodeAnalyzer::init()
 {
 	m_ObjectTypeInfo.m_SubType = SvPb::SVBarCodeAnalyzerObjectType;
 	
@@ -137,7 +137,7 @@ void SVBarCodeAnalyzerClass::init()
 	msv_lBarcodeTimeout.SetDefaultValue(l_mTimeout,TRUE);
 
 	// Instantiate Children
-	SvOp::SVBarCodeResult* pAnalyzerResult = new SvOp::SVBarCodeResult (this, IDS_CLASSNAME_SVBARCODEANALYZERESULT);
+	SvOp::SVBarCodeResult* pAnalyzerResult = new SvOp::SVBarCodeResult (this, IDS_CLASSNAME_SVBARCODEANALYZERRESULT);
 	
 	if (nullptr != pAnalyzerResult)
 	{
@@ -145,7 +145,7 @@ void SVBarCodeAnalyzerClass::init()
 	}
 }
 
-bool SVBarCodeAnalyzerClass::InitMil (SvStl::MessageContainerVector *pErrorMessages)
+bool BarCodeAnalyzer::InitMil (SvStl::MessageContainerVector *pErrorMessages)
 {
 	CloseMil();
 	
@@ -271,7 +271,7 @@ bool SVBarCodeAnalyzerClass::InitMil (SvStl::MessageContainerVector *pErrorMessa
 	}
 }
 
-void SVBarCodeAnalyzerClass::CloseMil ()
+void BarCodeAnalyzer::CloseMil ()
 {
 	if ( m_bHasLicenseError )
 	{
@@ -280,7 +280,7 @@ void SVBarCodeAnalyzerClass::CloseMil ()
 	SVMatroxBarCodeInterface::Destroy( m_MilCodeId );
 }
 
-bool SVBarCodeAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
+bool BarCodeAnalyzer::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 {
 	if ( !m_bHasLicenseError )
 	{
@@ -325,7 +325,7 @@ bool SVBarCodeAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCrea
 	return true;
 }
 
-SVBarCodeAnalyzerClass::~SVBarCodeAnalyzerClass()
+BarCodeAnalyzer::~BarCodeAnalyzer()
 {
 	if ( m_bHasLicenseError )
 	{
@@ -333,21 +333,21 @@ SVBarCodeAnalyzerClass::~SVBarCodeAnalyzerClass()
 		SVOLicenseManager::Instance().RemoveLicenseErrorFromList(GetCompleteName());
 	}
 
-	SVBarCodeAnalyzerClass::CloseObject();
+	BarCodeAnalyzer::CloseObject();
 }
 
-bool SVBarCodeAnalyzerClass::CloseObject()
+bool BarCodeAnalyzer::CloseObject()
 {
 	CloseMil ();
 	return ImageAnalyzer::CloseObject();
 }
 
-bool SVBarCodeAnalyzerClass::CharIsControl( TCHAR p_Char )
+bool BarCodeAnalyzer::CharIsControl( TCHAR p_Char )
 {
 	return p_Char < ' ' || p_Char > 126;
 }
 
-bool SVBarCodeAnalyzerClass::onRun (SvIe::RunStatus &rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool BarCodeAnalyzer::onRun (SvIe::RunStatus &rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	if ( m_bHasLicenseError )
 	{
@@ -563,7 +563,7 @@ bool SVBarCodeAnalyzerClass::onRun (SvIe::RunStatus &rRunStatus, SvStl::MessageC
 }
 
 
-bool SVBarCodeAnalyzerClass::LoadRegExpression( bool DisplayErrorMessage, SvStl::MessageContainerVector *pErrorMessages )
+bool BarCodeAnalyzer::LoadRegExpression( bool DisplayErrorMessage, SvStl::MessageContainerVector *pErrorMessages )
 {
 	BOOL bSaveStringInFile;
 
@@ -610,7 +610,7 @@ bool SVBarCodeAnalyzerClass::LoadRegExpression( bool DisplayErrorMessage, SvStl:
   return true;
 }
 
-bool SVBarCodeAnalyzerClass::SaveRegExpression( SvStl::MessageContainerVector *pErrorMessage )
+bool BarCodeAnalyzer::SaveRegExpression( SvStl::MessageContainerVector *pErrorMessage )
 {
 	BOOL bSaveStringInFile;
 	
@@ -648,7 +648,7 @@ bool SVBarCodeAnalyzerClass::SaveRegExpression( SvStl::MessageContainerVector *p
 	return true;
 }
 
-bool SVBarCodeAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
+bool BarCodeAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 
@@ -696,7 +696,7 @@ bool SVBarCodeAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 	return Result;
 }
 
-bool SVBarCodeAnalyzerClass::checkEccAndEncValues(long type, double eccValue, double encValue, SvStl::MessageContainerVector* pErrorMessages)
+bool BarCodeAnalyzer::checkEccAndEncValues(long type, double eccValue, double encValue, SvStl::MessageContainerVector* pErrorMessages)
 {
 	const auto& rTypeInfoMessage = SvOi::getBarCodeTypeInfo();
 	auto iter = std::find_if(rTypeInfoMessage.typeparameters().cbegin(), rTypeInfoMessage.typeparameters().cend(), [type](const auto& rEntry) { return rEntry.type() == type; });

@@ -23,41 +23,41 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-IMPLEMENT_DYNCREATE(CSVROI, CCmdTarget)
+IMPLEMENT_DYNCREATE(SVROI, CCmdTarget)
 // The coclass uuid
-IMPLEMENT_OLECREATE(CSVROI, "SVROI",  0x2105ADD0, 0x7C8B, 0x4ec7, 0xA8, 0x75, 0x54, 0x90, 0x5D, 0x47, 0x72, 0x5B)
+IMPLEMENT_OLECREATE(SVROI, "SVROI",  0x2105ADD0, 0x7C8B, 0x4ec7, 0xA8, 0x75, 0x54, 0x90, 0x5D, 0x47, 0x72, 0x5B)
 
-BEGIN_INTERFACE_MAP(CSVROI, CCmdTarget)
-	INTERFACE_PART(CSVROI, IID_ISVROI, Dispatch)
+BEGIN_INTERFACE_MAP(SVROI, CCmdTarget)
+	INTERFACE_PART(SVROI, IID_ISVROI, Dispatch)
 // because we go through IDispatch, we don't implement a regular interface
-//    INTERFACE_PART(CSVROI, IID_ISVROI, ISVROI)
+//    INTERFACE_PART(SVROI, IID_ISVROI, ISVROI)
 END_INTERFACE_MAP()
 
-BEGIN_DISPATCH_MAP(CSVROI, CCmdTarget)
-	//{{AFX_DISPATCH_MAP(CSVROI)
+BEGIN_DISPATCH_MAP(SVROI, CCmdTarget)
+	//{{AFX_DISPATCH_MAP(SVROI)
 	//}}AFX_DISPATCH_MAP
-	DISP_PROPERTY_EX_ID(CSVROI, "Group", dispidGroup, GetParent, SetNotSupported, VT_I4)
-	DISP_FUNCTION_ID(CSVROI, "Set Overlay", dispidSetOverlay, SetOverlay, VT_HRESULT, VTS_PVARIANT VTS_PVARIANT VTS_I4)
+	DISP_PROPERTY_EX_ID(SVROI, "Group", dispidGroup, GetParent, SetNotSupported, VT_I4)
+	DISP_FUNCTION_ID(SVROI, "Set Overlay", dispidSetOverlay, SetOverlay, VT_HRESULT, VTS_PVARIANT VTS_PVARIANT VTS_I4)
 END_DISPATCH_MAP()
 
-BEGIN_MESSAGE_MAP(CSVROI, CCmdTarget)
-	//{{AFX_MSG_MAP(CSVROI)
+BEGIN_MESSAGE_MAP(SVROI, CCmdTarget)
+	//{{AFX_MSG_MAP(SVROI)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-CSVROI::CSVROI()
+SVROI::SVROI()
 : m_Parent(0)
 {
 	EnableAutomation();
 	AfxOleLockApp();
 }
 
-CSVROI::~CSVROI()
+SVROI::~SVROI()
 {
 	AfxOleUnlockApp();
 }
 
-void CSVROI::OnFinalRelease()
+void SVROI::OnFinalRelease()
 {
 	// When the last reference for an automation object is released
 	//  OnFinalRelease is called.  This implementation deletes the 
@@ -67,28 +67,28 @@ void CSVROI::OnFinalRelease()
 	delete this;
 }
 
-/*static*/ CSVROI* CSVROI::GetCppObjectFromDispatchPointer(LPDISPATCH lpDispatch)
+/*static*/ SVROI* SVROI::GetCppObjectFromDispatchPointer(LPDISPATCH lpDispatch)
 {
-	static size_t offset = offsetof(CSVROI, m_xDispatch);
-	return reinterpret_cast <CSVROI*> ( lpDispatch ? ((BYTE*)lpDispatch - offset) : nullptr );
+	static size_t offset = offsetof(SVROI, m_xDispatch);
+	return reinterpret_cast <SVROI*> ( lpDispatch ? ((BYTE*)lpDispatch - offset) : nullptr );
 }
 
 ////////////////////////////////////////////////////////////
 // OLE Automation methods/properties
 //
-long CSVROI::GetParent() const
+long SVROI::GetParent() const
 {
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 	return m_Parent;
 }
 
-VariantParamMap CSVROI::GetParameterMap() const
+VariantParamMap SVROI::GetParameterMap() const
 {
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 	return m_ParameterMap;
 }
 
-HRESULT CSVROI::SetOverlay(VARIANT* pParameterList, VARIANT* pParameterValue, LONG)
+HRESULT SVROI::SetOverlay(VARIANT* pParameterList, VARIANT* pParameterValue, LONG)
 {
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 

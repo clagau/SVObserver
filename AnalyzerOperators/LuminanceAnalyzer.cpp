@@ -105,7 +105,7 @@ void LuminanceAnalyzer::init()
 
 	// Set Local
 
-	SvOp::SVLongResult* pAnalyzerResult = new SvOp::SVLongResult(this, IDS_CLASSNAME_SVLUMINANCEANALYZERESULT);
+	SvOp::SVLongResult* pAnalyzerResult = new SvOp::SVLongResult(this, IDS_CLASSNAME_SVLUMINANCEANALYZERRESULT);
 
 	if(nullptr == pAnalyzerResult)
 	{

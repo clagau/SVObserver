@@ -148,7 +148,7 @@
     <ClCompile Include="SVCameraFilePropertyPageDlg.cpp" />
     <ClCompile Include="SVCameraPage.cpp" />
     <ClCompile Include="SVCameraPropDlgClass.cpp" />
-    <ClCompile Include="SVImageTest.cpp" />
+    <ClCompile Include="SVImageTestApp.cpp" />
     <ClCompile Include="SVImageTestDlg.cpp" />
     <ClCompile Include="SVTestAcquisitionClass.cpp" />
     <ClCompile Include="SVTestAcquisitionSubsystem.cpp" />
@@ -171,7 +171,7 @@
     <ClInclude Include="SVCameraFilePropertyPageDlg.h" />
     <ClInclude Include="SVCameraPage.h" />
     <ClInclude Include="SVCameraPropDlgClass.h" />
-    <ClInclude Include="SVImageTest.h" />
+    <ClInclude Include="SVImageTestApp.h" />
     <ClInclude Include="SVImageTestDlg.h" />
     <ClInclude Include="SVTestAcquisitionClass.h" />
     <ClInclude Include="SVTestAcquisitionSubsystem.h" />

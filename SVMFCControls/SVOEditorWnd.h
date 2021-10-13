@@ -2,7 +2,7 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : CSVOEditorWnd
+//* .Module Name     : SVOEditorWnd
 //* .File Name       : $Workfile:   SVOEditorWnd.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $
@@ -13,16 +13,16 @@
 
 namespace SvMc
 {
-	class CSVOEditorWnd : public CEdit
+	class SVOEditorWnd : public CEdit
 	{
 		// Construction
 	public:
 		//Constructor
-		CSVOEditorWnd( CListBox& rListBox, LPCTSTR ExcludeChar );
+		SVOEditorWnd( CListBox& rListBox, LPCTSTR ExcludeChar );
 
 	//protected:
 		//Destructor
-		virtual ~CSVOEditorWnd();
+		virtual ~SVOEditorWnd();
 
 		// Attributes
 	public:
@@ -36,7 +36,7 @@ namespace SvMc
 
 		// Overrides
 		// ClassWizard generated virtual function overrides
-		//{{AFX_VIRTUAL(CSVOEditorWnd)
+		//{{AFX_VIRTUAL(SVOEditorWnd)
 		//}}AFX_VIRTUAL
 
 		// Implementation
@@ -47,7 +47,7 @@ namespace SvMc
 		void EndEditing( bool b = true );
 
 
-		//{{AFX_MSG(CSVOEditorWnd)
+		//{{AFX_MSG(SVOEditorWnd)
 		afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 		afx_msg void OnNcDestroy();
 		afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);

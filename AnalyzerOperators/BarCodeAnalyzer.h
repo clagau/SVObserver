@@ -2,7 +2,7 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVBarCodeAnalyzerClass
+//* .Module Name     : BarCodeAnalyzer
 //* .File Name       : $Workfile:   svbarcodeanalyzerclass.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.3  $
@@ -36,13 +36,13 @@ enum
 	SVBCStringFormatReplaceCharacters,
 };
 
-class SVBarCodeAnalyzerClass : public ImageAnalyzer  
+class BarCodeAnalyzer : public ImageAnalyzer  
 {
 	SV_DECLARE_CLASS
 
 public:
-	SVBarCodeAnalyzerClass(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVBARCODEANALYZER);
-	virtual ~SVBarCodeAnalyzerClass();
+	BarCodeAnalyzer(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVBARCODEANALYZER);
+	virtual ~BarCodeAnalyzer();
 
 	void CloseMil();
 	bool InitMil(SvStl::MessageContainerVector *pErrorMessages=nullptr);

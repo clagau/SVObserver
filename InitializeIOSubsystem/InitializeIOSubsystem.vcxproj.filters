@@ -15,20 +15,17 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="InitializeIOSubsystem.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="InitializeIOSubsystemDlg.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="InitializeIOSubsystemApp.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="InitializeIOSubsystem.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="InitializeIOSubsystemDlg.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -39,6 +36,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="..\AutoBuild\AutoBuild.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="InitializeIOSubsystemApp.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

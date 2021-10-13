@@ -11,12 +11,12 @@
 
 #pragma region Includes
 #include "StdAfx.h"
-#include "SVTestIO.h"
+#include "SVTestIOApp.h"
 #include "SVTestIODlg.h"
 #include "SVTestIOExports.h"
 #pragma endregion Includes
 
-extern CSVTestIOApp theApp;
+extern SVTestIOApp theApp;
 constexpr unsigned long cInputMaxCount = 8;
 constexpr unsigned long cOutputMaxCount = 16;
 constexpr unsigned long cMaxTriggers = 4;

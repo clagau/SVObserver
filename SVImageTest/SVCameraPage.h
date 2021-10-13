@@ -47,7 +47,7 @@ class SVCameraPage : public CPropertyPage
 
 	//{{AFX_DATA(SVCameraPage)
 	enum { IDD = IDD_CAMERA_PAGE };
-	CDisplayPicture	m_CameraImage;
+	DisplayPicture	m_CameraImage;
 	CButton	m_StartStopButton;
 	CStatic	m_StartFrameCount;
 	CButton	m_ProperitiesButton;

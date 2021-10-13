@@ -2,8 +2,8 @@
 //* COPYRIGHT (c) 2005 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVSecurity.h
-//* .File Name       : $Workfile:   SVSecurity.h  $
+//* .Module Name     : SVSecurityApp.h
+//* .File Name       : $Workfile:   SVSecurityApp.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   25 Apr 2013 17:01:48  $
@@ -16,22 +16,22 @@
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
-// CSVSecurityApp
+// SVSecurityApp
 // See SVSecurity.cpp for the implementation of this class
 //
 
-class CSVSecurityApp : public CWinApp
+class SVSecurityApp : public CWinApp
 {
 public:
-	CSVSecurityApp();
-	virtual ~CSVSecurityApp();
+	SVSecurityApp();
+	virtual ~SVSecurityApp();
 
 // Overrides
 	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CSVSecurityApp)
+	//{{AFX_VIRTUAL(SVSecurityApp)
 	//}}AFX_VIRTUAL
 
-	//{{AFX_MSG(CSVSecurityApp)
+	//{{AFX_MSG(SVSecurityApp)
 		// NOTE - the ClassWizard will add and remove member functions here.
 		//    DO NOT EDIT what you see in these blocks of generated code !
 	//}}AFX_MSG

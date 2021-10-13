@@ -31,7 +31,7 @@
 #include "AnalyzerOperators/LinearAnalyzer.h"
 #include "Operators/SVLinearEdgeProcessingClass.h"
 #include "SVMeasureAnalyzerAdjustmentSheet.h"
-#include "AnalyzerOperators/CVAnalyzer.h"
+#include "AnalyzerOperators/OCVAnalyzer.h"
 #include "Operators/SVOCVAnalyzerResult.h"
 #include "SVOGui/SVOCVSheet.h"
 #include "SVPatAdvancedPageClass.h"
@@ -83,7 +83,7 @@ HRESULT SVSetupDialogManager::SVBarCodeAnalyzerClassSetupDialog(uint32_t objectI
 {
 	HRESULT l_Status = S_OK;
 
-	SvAo::SVBarCodeAnalyzerClass* pAnalyzer = dynamic_cast<SvAo::SVBarCodeAnalyzerClass*>(SVObjectManagerClass::Instance().GetObject(objectId));
+	SvAo::BarCodeAnalyzer* pAnalyzer = dynamic_cast<SvAo::BarCodeAnalyzer*>(SVObjectManagerClass::Instance().GetObject(objectId));
 
 	SVInspectionProcess* pInspection(nullptr);
 	SvOp::SVBarCodeResult *pResult{ nullptr };
@@ -119,7 +119,7 @@ HRESULT SVSetupDialogManager::SVBlobAnalyzerClassSetupDialog(uint32_t objectId, 
 {
 	HRESULT l_Status = S_OK;
 
-	SvAo::SVBlobAnalyzerClass* pAnalyzer = dynamic_cast<SvAo::SVBlobAnalyzerClass*> (SVObjectManagerClass::Instance().GetObject(objectId));
+	SvAo::BlobAnalyzer* pAnalyzer = dynamic_cast<SvAo::BlobAnalyzer*> (SVObjectManagerClass::Instance().GetObject(objectId));
 
 	if (nullptr != pAnalyzer)
 	{
@@ -397,7 +397,7 @@ HRESULT SVSetupDialogManager::SVOCVAnalyzerClassSetupDialog(uint32_t objectId, C
 
 	if (nullptr != pAnalyzer)
 	{
-		SvOp::SVOCVAnalyzeResult* pOCVResult = dynamic_cast<SvOp::SVOCVAnalyzeResult*> (pAnalyzer->GetResultObject());
+		SvOp::SVOCVAnalyzerResult* pOCVResult = dynamic_cast<SvOp::SVOCVAnalyzerResult*> (pAnalyzer->GetResultObject());
 		SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(pAnalyzer->GetInspection());
 
 		if (nullptr != pOCVResult && nullptr != pInspection)

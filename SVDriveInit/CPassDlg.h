@@ -2,7 +2,7 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : CCPassDlg
+//* .Module Name     : CPassDlg
 //* .File Name       : $Workfile:   CPassDlg.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $
@@ -15,14 +15,14 @@
 #include "resource.h"
 #pragma endregion Includes
 
-class CCPassDlg : public CDialog
+class CPassDlg : public CDialog
 {
 // Construction
 public:
-	CCPassDlg(CWnd* pParent = nullptr);   // standard constructor
+	CPassDlg(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
-	//{{AFX_DATA(CCPassDlg)
+	//{{AFX_DATA(CPassDlg)
 	enum { IDD = IDD_PASSWORD };
 	CString	m_password;
 	//}}AFX_DATA
@@ -30,7 +30,7 @@ public:
 
 // Overrides
 	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CCPassDlg)
+	//{{AFX_VIRTUAL(CPassDlg)
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
@@ -39,7 +39,7 @@ public:
 protected:
 
 	// Generated message map functions
-	//{{AFX_MSG(CCPassDlg)
+	//{{AFX_MSG(CPassDlg)
 	virtual void OnOK() override;
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()

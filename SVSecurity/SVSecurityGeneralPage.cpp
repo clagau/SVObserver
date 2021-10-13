@@ -16,7 +16,7 @@
 
 #include "SVAccessClass.h"
 #include "SVSecuritySetupSheet.h"
-#include "SVSecurity.h"
+#include "SVSecurityApp.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -24,7 +24,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-extern CSVSecurityApp theApp;
+extern SVSecurityApp theApp;
 
 IMPLEMENT_DYNCREATE(SVSecurityGeneralPage, CPropertyPage)
 

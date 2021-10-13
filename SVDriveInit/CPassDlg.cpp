@@ -2,7 +2,7 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : CCPassDlg
+//* .Module Name     : CPassDlg
 //* .File Name       : $Workfile:   CPassDlg.cpp  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $
@@ -19,36 +19,36 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
-// CCPassDlg dialog
+// CPassDlg dialog
 
 
-CCPassDlg::CCPassDlg(CWnd* pParent /*=nullptr*/)
-	: CDialog(CCPassDlg::IDD, pParent)
+CPassDlg::CPassDlg(CWnd* pParent /*=nullptr*/)
+	: CDialog(CPassDlg::IDD, pParent)
 {
-	//{{AFX_DATA_INIT(CCPassDlg)
+	//{{AFX_DATA_INIT(CPassDlg)
 	m_password = _T("");
 	//}}AFX_DATA_INIT
 }
 
 
-void CCPassDlg::DoDataExchange(CDataExchange* pDX)
+void CPassDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(CCPassDlg)
+	//{{AFX_DATA_MAP(CPassDlg)
 	DDX_Text(pDX, IDC_EDIT1, m_password);
 	//}}AFX_DATA_MAP
 }
 
 
-BEGIN_MESSAGE_MAP(CCPassDlg, CDialog)
-	//{{AFX_MSG_MAP(CCPassDlg)
+BEGIN_MESSAGE_MAP(CPassDlg, CDialog)
+	//{{AFX_MSG_MAP(CPassDlg)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
-// CCPassDlg message handlers
+// CPassDlg message handlers
 
-void CCPassDlg::OnOK() 
+void CPassDlg::OnOK() 
 {
 	UpdateData(TRUE);
 

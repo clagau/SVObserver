@@ -80,7 +80,7 @@ bool makeZipFile( const std::string& rZipFileName, const SvDef::StringVector& rZ
 					{
 						const UInt32 PropertyCount = 1;
 						const wchar_t* PropertyNames[PropertyCount] = {L"x"};
-						CPropVariant PropertyValues[PropertyCount] = { CPropVariant{static_cast<UInt32> (CompressionFormat::SevenZip)} };
+						PropVariant PropertyValues[PropertyCount] = { PropVariant{static_cast<UInt32> (CompressionFormat::SevenZip)} };
 		
 						if(S_OK == pSetProperties->SetProperties(PropertyNames, PropertyValues, PropertyCount))
 						{

@@ -18,7 +18,7 @@
 #define new DEBUG_NEW
 #endif
 
-// CPropTreeTestDlg dialog
+// PropTreeTestDlg dialog
 
 namespace
 {
@@ -28,26 +28,26 @@ namespace
 	const static int PROP_TRG_TYPE = 102;
 }
 
-CPropTreeTestDlg::CPropTreeTestDlg(CWnd* pParent /*=nullptr*/)
-	: CDialog(CPropTreeTestDlg::IDD, pParent)
+PropTreeTestDlg::PropTreeTestDlg(CWnd* pParent /*=nullptr*/)
+	: CDialog(PropTreeTestDlg::IDD, pParent)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
 
-void CPropTreeTestDlg::DoDataExchange(CDataExchange* pDX)
+void PropTreeTestDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 }
 
-BEGIN_MESSAGE_MAP(CPropTreeTestDlg, CDialog)
+BEGIN_MESSAGE_MAP(PropTreeTestDlg, CDialog)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_NOTIFY( PTN_ITEMCHANGED, IDC_RESULT_LIST, OnItemChanged )
 END_MESSAGE_MAP()
 
-// CPropTreeTestDlg message handlers
+// PropTreeTestDlg message handlers
 
-BOOL CPropTreeTestDlg::OnInitDialog()
+BOOL PropTreeTestDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
@@ -84,7 +84,7 @@ BOOL CPropTreeTestDlg::OnInitDialog()
 //  to draw the icon.  For MFC applications using the document/view model,
 //  this is automatically done for you by the framework.
 
-void CPropTreeTestDlg::OnPaint()
+void PropTreeTestDlg::OnPaint()
 {
 	if (IsIconic())
 	{
@@ -111,12 +111,12 @@ void CPropTreeTestDlg::OnPaint()
 
 // The system calls this function to obtain the cursor to display while the user drags
 //  the minimized window.
-HCURSOR CPropTreeTestDlg::OnQueryDragIcon()
+HCURSOR PropTreeTestDlg::OnQueryDragIcon()
 {
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
-void CPropTreeTestDlg::AddItemEdit( CString p_Name, CString p_Value, UINT p_ID )
+void PropTreeTestDlg::AddItemEdit( CString p_Name, CString p_Value, UINT p_ID )
 {
     SVRPropertyItem* pRoot = m_Tree.InsertItem(new SVRPropertyItem());
 	assert( pRoot );
@@ -143,7 +143,7 @@ void CPropTreeTestDlg::AddItemEdit( CString p_Name, CString p_Value, UINT p_ID )
 	pRoot->Expand( true );	// needed for redrawing
 }
 
-void CPropTreeTestDlg::AddItemCombo( CString p_Name, CString p_Value, UINT p_ID )
+void PropTreeTestDlg::AddItemCombo( CString p_Name, CString p_Value, UINT p_ID )
 {
     SVRPropertyItem* pRoot = m_Tree.InsertItem(new SVRPropertyItem());
 	assert( pRoot );
@@ -174,7 +174,7 @@ void CPropTreeTestDlg::AddItemCombo( CString p_Name, CString p_Value, UINT p_ID 
 	pRoot->Expand( true );	// needed for redrawing
 }
 
-void CPropTreeTestDlg::SetupTrigger()
+void PropTreeTestDlg::SetupTrigger()
 {
 	SVRPropertyItem* pRoot = m_Tree.InsertItem(new SVRPropertyItem());
 	if (pRoot)
@@ -206,7 +206,7 @@ void CPropTreeTestDlg::SetupTrigger()
 	}
 }
 
-afx_msg void CPropTreeTestDlg::OnItemChanged( NMHDR* p_NotifyStruct, LRESULT* pResult )
+afx_msg void PropTreeTestDlg::OnItemChanged( NMHDR* p_NotifyStruct, LRESULT* pResult )
 {
 	LPNMPROPTREE l_pNMPropTree = reinterpret_cast< LPNMPROPTREE >( p_NotifyStruct );
 	*pResult = S_OK;

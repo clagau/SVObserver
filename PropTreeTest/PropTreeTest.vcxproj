@@ -120,14 +120,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\AutoBuild\AutoBuild.h" />
-    <ClInclude Include="PropTreeTest.h" />
+    <ClInclude Include="PropTreeTestApp.h" />
     <ClInclude Include="PropTreeTestDlg.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="PropTreeTest.cpp" />
+    <ClCompile Include="PropTreeTestApp.cpp" />
     <ClCompile Include="PropTreeTestDlg.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

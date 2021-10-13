@@ -11,7 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "SVImageTest.h"
+#include "SVImageTestApp.h"
 #include "SVImageTestDlg.h"
 #include "SVTestAcquisitionClass.h"
 #include "SVTestAcquisitionSubsystem.h"
@@ -143,7 +143,7 @@ BOOL CSVImageTestDlg::OnInitDialog()
 		m_CameraSheet.SetActivePage( 3 - j );
 	}
 
-	CSVImageTestApp* pApp = (CSVImageTestApp *)AfxGetApp();
+	SVImageTestApp* pApp = (SVImageTestApp *)AfxGetApp();
 	m_modelNo = pApp->m_iniLoader.ModelNumberString();
 
 	UpdateData( FALSE );
@@ -261,7 +261,7 @@ void CSVImageTestDlg::OnStopAllCameras()
 
 void CSVImageTestDlg::OnUpdateModelNumber() 
 {
-	CSVImageTestApp* pApp = (CSVImageTestApp *)AfxGetApp();	
+	SVImageTestApp* pApp = (SVImageTestApp *)AfxGetApp();	
 	CString l_modelNumber = m_modelNo;
 	UpdateData();
 	pApp->m_iniLoader.DecodeModelNumber( static_cast<LPCTSTR> (m_modelNo) );

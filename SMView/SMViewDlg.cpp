@@ -59,13 +59,13 @@ END_MESSAGE_MAP()
 
 
 
-CSMViewDlg::CSMViewDlg(CWnd* pParent /*=NULL*/)
-	: CDialogEx(CSMViewDlg::IDD, pParent)
+SMViewDlg::SMViewDlg(CWnd* pParent /*=NULL*/)
+	: CDialogEx(SMViewDlg::IDD, pParent)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
 
-void CSMViewDlg::DoDataExchange(CDataExchange* pDX)
+void SMViewDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_READY_VALUE, m_ReadyValueCtrl);
@@ -73,31 +73,31 @@ void CSMViewDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT_TRIGGER, m_EditTrigger);
 }
 
-BEGIN_MESSAGE_MAP(CSMViewDlg, CDialogEx)
+BEGIN_MESSAGE_MAP(SMViewDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_MESSAGE(WM_REFRESH, OnRefresh)
 
-	ON_BN_CLICKED(IDC_BUTTON_SHOW, &CSMViewDlg::OnBnClickedButtonShow)
-	ON_BN_CLICKED(IDC_BUTTON_EXIT, &CSMViewDlg::OnBnClickedButtonExit)
-	ON_BN_CLICKED(IDC_BUT_GETPRODUCT, &CSMViewDlg::OnBnClickedButGetproduct)
-	ON_BN_CLICKED(IDC_BUT_GETFAILSTATUS, &CSMViewDlg::OnBnClickedButGetfailstatus)
-	ON_BN_CLICKED(IDC_BUT_REJECT, &CSMViewDlg::OnBnClickedButReject)
+	ON_BN_CLICKED(IDC_BUTTON_SHOW, &SMViewDlg::OnBnClickedButtonShow)
+	ON_BN_CLICKED(IDC_BUTTON_EXIT, &SMViewDlg::OnBnClickedButtonExit)
+	ON_BN_CLICKED(IDC_BUT_GETPRODUCT, &SMViewDlg::OnBnClickedButGetproduct)
+	ON_BN_CLICKED(IDC_BUT_GETFAILSTATUS, &SMViewDlg::OnBnClickedButGetfailstatus)
+	ON_BN_CLICKED(IDC_BUT_REJECT, &SMViewDlg::OnBnClickedButReject)
 END_MESSAGE_MAP()
 
 //enum ECOL { eName = 0, ePPQ, eIsActive, eRejectDepth, eProductDepth, eProductFilter, eImageCount, ePcount, };
-LPCTSTR CSMViewDlg::ColHeader[] = { _T("Name"),_T("PPQ"), _T("IsActive"), _T("RejectDepth"), _T("ProductDepth"), _T("Filter"), _T("ImCount")};
+LPCTSTR SMViewDlg::ColHeader[] = { _T("Name"),_T("PPQ"), _T("IsActive"), _T("RejectDepth"), _T("ProductDepth"), _T("Filter"), _T("ImCount")};
 // CShareViewDlg message handlers
 
-bool  CSMViewDlg::PostRefresh(DWORD par)
+bool  SMViewDlg::PostRefresh(DWORD par)
 {
 	PostMessage(WM_REFRESH, par, 0);
 	return true;
 
 }
 
-BOOL CSMViewDlg::OnInitDialog()
+BOOL SMViewDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
@@ -138,7 +138,7 @@ BOOL CSMViewDlg::OnInitDialog()
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
-void CSMViewDlg::OnSysCommand(UINT nID, LPARAM lParam)
+void SMViewDlg::OnSysCommand(UINT nID, LPARAM lParam)
 {
 	if ((nID & 0xFFF0) == IDM_ABOUTBOX)
 	{
@@ -155,7 +155,7 @@ void CSMViewDlg::OnSysCommand(UINT nID, LPARAM lParam)
 //  to draw the icon.  For MFC applications using the document/view model,
 //  this is automatically done for you by the framework.
 
-void CSMViewDlg::OnPaint()
+void SMViewDlg::OnPaint()
 {
 	if (IsIconic())
 	{
@@ -182,12 +182,12 @@ void CSMViewDlg::OnPaint()
 
 // The system calls this function to obtain the cursor to display while the user drags
 //  the minimized window.
-HCURSOR CSMViewDlg::OnQueryDragIcon()
+HCURSOR SMViewDlg::OnQueryDragIcon()
 {
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
-void CSMViewDlg::UpdateControls(bool isready)
+void SMViewDlg::UpdateControls(bool isready)
 {
 	if (isready)
 	{
@@ -228,7 +228,7 @@ void CSMViewDlg::UpdateControls(bool isready)
 
 
 }
-LRESULT  CSMViewDlg::OnRefresh(WPARAM wParam, LPARAM lParam)
+LRESULT  SMViewDlg::OnRefresh(WPARAM wParam, LPARAM lParam)
 {
 
 	UNREFERENCED_PARAMETER(lParam);
@@ -256,7 +256,7 @@ LRESULT  CSMViewDlg::OnRefresh(WPARAM wParam, LPARAM lParam)
 }
 
 
-void CSMViewDlg::OnBnClickedButtonShow()
+void SMViewDlg::OnBnClickedButtonShow()
 {
 
 	if (m_MonListsCtrl.GetItemCount() > 0)
@@ -267,22 +267,22 @@ void CSMViewDlg::OnBnClickedButtonShow()
 
 }
 
-void CSMViewDlg::OnBnClickedButtonExit()
+void SMViewDlg::OnBnClickedButtonExit()
 {
 
 	EndDialog(0);
 }
-void CSMViewDlg::OnBnClickedButGetproduct()
+void SMViewDlg::OnBnClickedButGetproduct()
 {
 	DisplayProduct(false);
 }
-void CSMViewDlg::OnBnClickedButReject()
+void SMViewDlg::OnBnClickedButReject()
 {
 	DisplayProduct(true);
 }
 
 
-void CSMViewDlg::DisplayProduct(bool isreject)
+void SMViewDlg::DisplayProduct(bool isreject)
 {
 	int sel = m_MonListsCtrl.GetSelectionMark();
 	if (sel < 0 || sel >= m_MonListsCtrl.GetItemCount())
@@ -309,7 +309,7 @@ void CSMViewDlg::DisplayProduct(bool isreject)
 }
 
 
-void CSMViewDlg::OnBnClickedButGetfailstatus()
+void SMViewDlg::OnBnClickedButGetfailstatus()
 {
 	int sel = m_MonListsCtrl.GetSelectionMark();
 	if (sel < 0 || sel >= m_MonListsCtrl.GetItemCount())

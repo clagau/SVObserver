@@ -2,8 +2,8 @@
 // * COPYRIGHT (c) 2006 by SVResearch, Harrisburg
 // * All Rights Reserved
 // ******************************************************************************
-// * .Module Name     : SVImageTest.h
-// * .File Name       : $Workfile:   SVImageTest.h  $
+// * .Module Name     : SVImageTestApp.h
+// * .File Name       : $Workfile:   SVImageTestApp.h  $
 // * ----------------------------------------------------------------------------
 // * .Current Version : $Revision:   1.0  $
 // * .Check In Date   : $Date:   22 Apr 2013 11:07:48  $
@@ -22,11 +22,11 @@
 
 class SVTestAcquisitionSubsystem;
 
-class CSVImageTestApp : public CWinApp
+class SVImageTestApp : public CWinApp
 {
 public:
-	CSVImageTestApp();
-	virtual ~CSVImageTestApp();
+	SVImageTestApp();
+	virtual ~SVImageTestApp();
 
 	SvLib::SVOIniLoader m_iniLoader;
 	std::string m_svimIniFile;
@@ -40,7 +40,7 @@ public:
 
 	// Overrides
 	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CSVImageTestApp)
+	//{{AFX_VIRTUAL(SVImageTestApp)
 	public:
 	virtual BOOL InitInstance() override;
 	virtual int ExitInstance() override;
@@ -48,7 +48,7 @@ public:
 
 // Implementation
 
-	//{{AFX_MSG(CSVImageTestApp)
+	//{{AFX_MSG(SVImageTestApp)
 		// NOTE - the ClassWizard will add and remove member functions here.
 		//    DO NOT EDIT what you see in these blocks of generated code !
 	//}}AFX_MSG

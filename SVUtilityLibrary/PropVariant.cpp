@@ -14,42 +14,42 @@
 #include "stdafx.h"
 #include "PropVariant.h"
 
-CPropVariant::CPropVariant(const PROPVARIANT &varSrc)
+PropVariant::PropVariant(const PROPVARIANT &varSrc)
 {
   vt = VT_EMPTY;
   InternalCopy(&varSrc);
 }
 
-CPropVariant::CPropVariant(const CPropVariant &varSrc)
+PropVariant::PropVariant(const PropVariant &varSrc)
 {
   vt = VT_EMPTY;
   InternalCopy(&varSrc);
 }
 
-CPropVariant::CPropVariant(BSTR bstrSrc)
+PropVariant::PropVariant(BSTR bstrSrc)
 {
   vt = VT_EMPTY;
   *this = bstrSrc;
 }
 
-CPropVariant::CPropVariant(LPCOLESTR lpszSrc)
+PropVariant::PropVariant(LPCOLESTR lpszSrc)
 {
   vt = VT_EMPTY;
   *this = lpszSrc;
 }
 
-CPropVariant& CPropVariant::operator=(const CPropVariant &varSrc)
+PropVariant& PropVariant::operator=(const PropVariant &varSrc)
 {
   InternalCopy(&varSrc);
   return *this;
 }
-CPropVariant& CPropVariant::operator=(const PROPVARIANT &varSrc)
+PropVariant& PropVariant::operator=(const PROPVARIANT &varSrc)
 {
   InternalCopy(&varSrc);
   return *this;
 }
 
-CPropVariant& CPropVariant::operator=(BSTR bstrSrc)
+PropVariant& PropVariant::operator=(BSTR bstrSrc)
 {
   *this = (LPCOLESTR)bstrSrc;
   return *this;
@@ -57,7 +57,7 @@ CPropVariant& CPropVariant::operator=(BSTR bstrSrc)
 
 static const char *kMemException = "out of memory";
 
-CPropVariant& CPropVariant::operator=(LPCOLESTR lpszSrc)
+PropVariant& PropVariant::operator=(LPCOLESTR lpszSrc)
 {
   InternalClear();
   vt = VT_BSTR;
@@ -73,7 +73,7 @@ CPropVariant& CPropVariant::operator=(LPCOLESTR lpszSrc)
 }
 
 
-CPropVariant& CPropVariant::operator=(const char *s)
+PropVariant& PropVariant::operator=(const char *s)
 {
   InternalClear();
   vt = VT_BSTR;
@@ -94,7 +94,7 @@ CPropVariant& CPropVariant::operator=(const char *s)
   return *this;
 }
 
-CPropVariant& CPropVariant::operator=(bool bSrc)
+PropVariant& PropVariant::operator=(bool bSrc)
 {
   if (vt != VT_BOOL)
   {
@@ -106,7 +106,7 @@ CPropVariant& CPropVariant::operator=(bool bSrc)
 }
 
 #define SET_PROP_FUNC(type, id, dest) \
-  CPropVariant& CPropVariant::operator=(type value) \
+  PropVariant& PropVariant::operator=(type value) \
   { if (vt != id) { InternalClear(); vt = id; } \
     dest = value; return *this; }
 
@@ -144,12 +144,12 @@ static HRESULT MyPropVariantClear(PROPVARIANT *prop)
   return ::VariantClear((VARIANTARG *)prop);
 }
 
-HRESULT CPropVariant::Clear()
+HRESULT PropVariant::Clear()
 {
   return MyPropVariantClear(this);
 }
 
-HRESULT CPropVariant::Copy(const PROPVARIANT* pSrc)
+HRESULT PropVariant::Copy(const PROPVARIANT* pSrc)
 {
   ::VariantClear((tagVARIANT *)this);
   switch(pSrc->vt)
@@ -177,7 +177,7 @@ HRESULT CPropVariant::Copy(const PROPVARIANT* pSrc)
 }
 
 
-HRESULT CPropVariant::Attach(PROPVARIANT *pSrc)
+HRESULT PropVariant::Attach(PROPVARIANT *pSrc)
 {
   HRESULT hr = Clear();
   if (FAILED(hr))
@@ -187,7 +187,7 @@ HRESULT CPropVariant::Attach(PROPVARIANT *pSrc)
   return S_OK;
 }
 
-HRESULT CPropVariant::Detach(PROPVARIANT *pDest)
+HRESULT PropVariant::Detach(PROPVARIANT *pDest)
 {
   HRESULT hr = MyPropVariantClear(pDest);
   if (FAILED(hr))
@@ -197,7 +197,7 @@ HRESULT CPropVariant::Detach(PROPVARIANT *pDest)
   return S_OK;
 }
 
-HRESULT CPropVariant::InternalClear()
+HRESULT PropVariant::InternalClear()
 {
   HRESULT hr = Clear();
   if (FAILED(hr))
@@ -208,7 +208,7 @@ HRESULT CPropVariant::InternalClear()
   return hr;
 }
 
-void CPropVariant::InternalCopy(const PROPVARIANT *pSrc)
+void PropVariant::InternalCopy(const PROPVARIANT *pSrc)
 {
   HRESULT hr = Copy(pSrc);
   if (FAILED(hr))
@@ -220,7 +220,7 @@ void CPropVariant::InternalCopy(const PROPVARIANT *pSrc)
   }
 }
 
-int CPropVariant::Compare(const CPropVariant &a)
+int PropVariant::Compare(const PropVariant &a)
 {
   if (vt != a.vt)
     return MyCompare(vt, a.vt);

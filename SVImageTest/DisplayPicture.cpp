@@ -25,26 +25,26 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-CDisplayPicture::CDisplayPicture()
+DisplayPicture::DisplayPicture()
 {
 }
 
-CDisplayPicture::~CDisplayPicture()
+DisplayPicture::~DisplayPicture()
 {
 }
 
-BEGIN_MESSAGE_MAP(CDisplayPicture, CStatic)
-	//{{AFX_MSG_MAP(CDisplayPicture)
+BEGIN_MESSAGE_MAP(DisplayPicture, CStatic)
+	//{{AFX_MSG_MAP(DisplayPicture)
 	ON_WM_PAINT()
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-SvOi::ITRCImagePtr CDisplayPicture::GetNextBuffer()
+SvOi::ITRCImagePtr DisplayPicture::GetNextBuffer()
 {
 	return m_pImage;
 }
 
-bool CDisplayPicture::UpdateDisplayBufferInfo( long bufWidth, long bufHeight, int iFormat )
+bool DisplayPicture::UpdateDisplayBufferInfo( long bufWidth, long bufHeight, int iFormat )
 {
 	SVMatroxBufferCreateStruct create;
 	create.m_lSizeX = bufWidth;
@@ -81,7 +81,7 @@ bool CDisplayPicture::UpdateDisplayBufferInfo( long bufWidth, long bufHeight, in
 	return true;
 }
 
-void CDisplayPicture::OnPaint() 
+void DisplayPicture::OnPaint() 
 {
 	CPaintDC dc(this); // device context for painting
 	

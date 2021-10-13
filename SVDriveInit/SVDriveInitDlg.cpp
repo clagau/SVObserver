@@ -230,7 +230,7 @@ BOOL SVDriveInitDlg::OnInitDialog()
 	SetIcon(m_hIcon, false);		// Set small icon
 
 #ifndef _DEBUG
-	CCPassDlg dlg;
+	CPassDlg dlg;
 	BOOL blValidPassword = false;
 
 	INT_PTR nResponse = dlg.DoModal();

@@ -18,9 +18,6 @@
     <ClCompile Include="StdAfx.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVIOTest.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVIOTestDlg.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -28,6 +25,9 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVTriggerSetupDlgClass.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVIOTestApp.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
@@ -46,9 +46,6 @@
     <ClInclude Include="StdAfx.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVIOTest.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVIOTestDlg.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -56,6 +53,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVTriggerSetupDlgClass.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVIOTestApp.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

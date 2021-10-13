@@ -2,7 +2,7 @@
 //* COPYRIGHT (c) 2013 by Seidenader Vision Inc., Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : CSVTestIOApp
+//* .Module Name     : SVTestIOApp
 //* .File Name       : $Workfile:   SVTestIO.cpp  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $
@@ -11,7 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "SVTestIO.h"
+#include "SVTestIOApp.h"
 #include "SVTestIODlg.h"
 #pragma endregion Includes
 
@@ -44,30 +44,30 @@
 //		details.
 //
 
-// CSVTestIOApp
+// SVTestIOApp
 
-BEGIN_MESSAGE_MAP(CSVTestIOApp, CWinApp)
+BEGIN_MESSAGE_MAP(SVTestIOApp, CWinApp)
 END_MESSAGE_MAP()
 
-// CSVTestIOApp construction
+// SVTestIOApp construction
 
-CSVTestIOApp::CSVTestIOApp()
+SVTestIOApp::SVTestIOApp()
 {
 	// TODO: add construction code here,
 	// Place all significant initialization in InitInstance
 }
 
-CSVTestIOApp::~CSVTestIOApp()
+SVTestIOApp::~SVTestIOApp()
 {
 }
 
-// The one and only CSVTestIOApp object
+// The one and only SVTestIOApp object
 
-CSVTestIOApp theApp;
+SVTestIOApp theApp;
 
-// CSVTestIOApp initialization
+// SVTestIOApp initialization
 
-BOOL CSVTestIOApp::InitInstance()
+BOOL SVTestIOApp::InitInstance()
 {
 	CWinApp::InitInstance();
 
@@ -85,7 +85,7 @@ BOOL CSVTestIOApp::InitInstance()
 	return TRUE;
 }
 
-BOOL CSVTestIOApp::ExitInstance()
+BOOL SVTestIOApp::ExitInstance()
 {
 
 	if( m_pTestIODlg )

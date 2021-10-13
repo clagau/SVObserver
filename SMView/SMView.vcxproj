@@ -129,7 +129,7 @@
     <ClInclude Include="MonitorListDlg.h" />
     <ClInclude Include="ProductDlg.h" />
     <ClInclude Include="Resource.h" />
-    <ClInclude Include="SMView.h" />
+    <ClInclude Include="SMViewApp.h" />
     <ClInclude Include="SMViewDlg.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -138,7 +138,7 @@
     <ClCompile Include="MonEntryDlg.cpp" />
     <ClCompile Include="MonitorListDlg.cpp" />
     <ClCompile Include="ProductDlg.cpp" />
-    <ClCompile Include="SMView.cpp" />
+    <ClCompile Include="SMViewApp.cpp" />
     <ClCompile Include="SMViewDlg.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

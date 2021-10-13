@@ -1043,7 +1043,7 @@ inline void SVConfigXMLPrint::WriteObject(Writer writer, SVObjectClass* pObject)
 
 			if (SvOp::SVDoubleResult* pBlobResult = dynamic_cast<SvOp::SVDoubleResult*>(pObject))
 			{
-				if (SV_IS_KIND_OF(pBlobResult->GetParent(), SvAo::SVBlobAnalyzerClass))
+				if (SV_IS_KIND_OF(pBlobResult->GetParent(), SvAo::BlobAnalyzer))
 				{
 					sLabel = SvUl::LoadStdString(IDS_BLOB_FEATURE_DEFAULT_VALUE) + _T(":");
 					const SvVol::SVDoubleValueObjectClass* pDoubleValueObj = dynamic_cast<const SvVol::SVDoubleValueObjectClass*> (pBlobResult->getInput());

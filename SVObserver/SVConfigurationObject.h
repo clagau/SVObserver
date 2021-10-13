@@ -516,9 +516,9 @@ private:
 
 	///list with additional files for audidtrail  
 	
-	mutable SvUl::CAuditFiles m_AuditWhiteList;
+	mutable SvUl::AuditFiles m_AuditWhiteList;
 	/// list with default files for audidtrail  
-	mutable SvUl::CAuditFiles m_AuditDefaultList;
+	mutable SvUl::AuditFiles m_AuditDefaultList;
 #pragma endregion Member Variables
 };
 

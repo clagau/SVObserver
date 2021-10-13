@@ -2,8 +2,8 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVBlobAnalyzer
-//* .File Name       : $Workfile:   SVBlobAnalyzer.cpp  $
+//* .Module Name     : BlobAnalyzer
+//* .File Name       : $Workfile:   BlobAnalyzer.cpp  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.9  $
 //* .Check In Date   : $Date:   23 Jan 2015 11:20:50  $
@@ -92,16 +92,16 @@ struct SVBlobFeatureConstant BlobFeatureConstants[]=
 };
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVBlobAnalyzerClass, SvPb::BlobAnalyzerClassId );
+SV_IMPLEMENT_CLASS( BlobAnalyzer, SvPb::BlobAnalyzerClassId );
 
-SVBlobAnalyzerClass::SVBlobAnalyzerClass( SVObjectClass* POwner, int StringResourceID )
+BlobAnalyzer::BlobAnalyzer( SVObjectClass* POwner, int StringResourceID )
 : ImageAnalyzer(POwner, StringResourceID ) 
 , m_pResultTable( nullptr )
 {
 	init();
 }
 
-void SVBlobAnalyzerClass::init()
+void BlobAnalyzer::init()
 {
 	for (int i = 0; i < SvOi::SV_NUMBER_OF_BLOB_FEATURES; i++)
 	{
@@ -228,13 +228,13 @@ void SVBlobAnalyzerClass::init()
 /////////////////////////////////////////////////////////////////////////////
 //
 //
-SVBlobAnalyzerClass::~SVBlobAnalyzerClass()
+BlobAnalyzer::~BlobAnalyzer()
 {
-	SVBlobAnalyzerClass::CloseObject();
+	BlobAnalyzer::CloseObject();
 }
 
 #pragma region IBlobAnalyzer
-SvOi::NameValueVector SVBlobAnalyzerClass::getFeatureList(bool isSelected) const
+SvOi::NameValueVector BlobAnalyzer::getFeatureList(bool isSelected) const
 {
 	std::string FeaturesEnabled;
 	m_PersistantFeaturesEnabled.getValue(FeaturesEnabled);
@@ -259,14 +259,14 @@ SvOi::NameValueVector SVBlobAnalyzerClass::getFeatureList(bool isSelected) const
 	return list;
 }
 
-SvOi::IObjectClass* SVBlobAnalyzerClass::getResultBlob()
+SvOi::IObjectClass* BlobAnalyzer::getResultBlob()
 { 
 	return dynamic_cast<SvOi::IObjectClass*> (m_pResultBlob);
 }
 
 #pragma endregion IBlobAnalyzer
 
-bool SVBlobAnalyzerClass::CloseObject()
+bool BlobAnalyzer::CloseObject()
 {
     ImageAnalyzer::CloseObject ();
 	
@@ -286,7 +286,7 @@ bool SVBlobAnalyzerClass::CloseObject()
 	return true;
 }
 
-DWORD SVBlobAnalyzerClass::AllocateResult(int FeatureIndex)
+DWORD BlobAnalyzer::AllocateResult(int FeatureIndex)
 {
 	SvIe::SVClassInfoStruct       resultClassInfo;
 	SvDef::SVObjectTypeInfoStruct  interfaceInfo;
@@ -382,7 +382,7 @@ DWORD SVBlobAnalyzerClass::AllocateResult(int FeatureIndex)
 // 	 Date		Author				Comment                                       
 //  04-12-00 	Sri				First Implementation
 ////////////////////////////////////////////////////////////////////////////////
-DWORD SVBlobAnalyzerClass::AllocateBlobResult ()
+DWORD BlobAnalyzer::AllocateBlobResult ()
 {
 	SvIe::SVClassInfoStruct       resultClassInfo;
 	SvDef::SVObjectTypeInfoStruct  interfaceInfo;
@@ -464,7 +464,7 @@ DWORD SVBlobAnalyzerClass::AllocateBlobResult ()
 	return LastError;	
 }
 
-void SVBlobAnalyzerClass::FreeResult(int FeatureIndex)
+void BlobAnalyzer::FreeResult(int FeatureIndex)
 {
 	SvOi::IObjectClass* pResult = getResultObject(FeatureIndex);
 
@@ -476,7 +476,7 @@ void SVBlobAnalyzerClass::FreeResult(int FeatureIndex)
 	}
 }
 
-SvOi::IObjectClass* SVBlobAnalyzerClass::getResultObject(int Feature)
+SvOi::IObjectClass* BlobAnalyzer::getResultObject(int Feature)
 {
 	if (0 <= Feature && SvOi::SV_NUMBER_OF_BLOB_FEATURES > Feature)
 	{
@@ -485,7 +485,7 @@ SvOi::IObjectClass* SVBlobAnalyzerClass::getResultObject(int Feature)
 	return nullptr;
 }
 
-void SVBlobAnalyzerClass::RebuildResultObjectArray()
+void BlobAnalyzer::RebuildResultObjectArray()
 {
 	SvDef::SVObjectTypeInfoStruct info;
 	info.m_ObjectType = SvPb::SVResultObjectType;
@@ -524,7 +524,7 @@ void SVBlobAnalyzerClass::RebuildResultObjectArray()
 // 	 Date		Author				Comment                                       
 //  04-12-00 	Sri				First Implementation
 ////////////////////////////////////////////////////////////////////////////////
-SvOp::SVLongResult* SVBlobAnalyzerClass::GetBlobResultObject()
+SvOp::SVLongResult* BlobAnalyzer::GetBlobResultObject()
 {
 	SvOp::SVLongResult*    pResult = nullptr;
 	SvDef::SVObjectTypeInfoStruct info {SvPb::SVResultObjectType, SvPb::SVResultLongObjectType};
@@ -551,7 +551,7 @@ SvOp::SVLongResult* SVBlobAnalyzerClass::GetBlobResultObject()
 /////////////////////////////////////////////////////////////////////////////
 //
 //
-bool SVBlobAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
+bool BlobAnalyzer::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 {
 	bool Result{ true };
 	std::string FeaturesEnabled;
@@ -771,7 +771,7 @@ bool SVBlobAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCreateS
 /////////////////////////////////////////////////////////////////////////////
 //
 //
-void SVBlobAnalyzerClass::UpdateBlobFeatures()
+void BlobAnalyzer::UpdateBlobFeatures()
 {
 	std::string FeaturesEnabled;
 	m_PersistantFeaturesEnabled.getValue(FeaturesEnabled);
@@ -809,7 +809,7 @@ void SVBlobAnalyzerClass::UpdateBlobFeatures()
 	}
 }
 
-void SVBlobAnalyzerClass::EnableFeature(int Feature)
+void BlobAnalyzer::EnableFeature(int Feature)
 {
 	assert(0 <= Feature && SvOi::SV_NUMBER_OF_BLOB_FEATURES > Feature);
 	auto iter = std::ranges::find(m_embeddedList, &m_Value[Feature]);
@@ -824,7 +824,7 @@ void SVBlobAnalyzerClass::EnableFeature(int Feature)
 	}
 }
 
-bool SVBlobAnalyzerClass::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool BlobAnalyzer::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	bool Result = true;
 	SvIe::SVImageClass* pInputImage(nullptr);
@@ -1305,7 +1305,7 @@ bool SVBlobAnalyzerClass::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageCont
 	return Result;
 }
 
-void SVBlobAnalyzerClass::SortBlobs (long alSortFeature, 
+void BlobAnalyzer::SortBlobs (long alSortFeature, 
 	long* alSortMap,
 	long p_lArraySize )
 {
@@ -1323,7 +1323,7 @@ void SVBlobAnalyzerClass::SortBlobs (long alSortFeature,
 	}
 }
 
-void SVBlobAnalyzerClass::MapQuickSort(double* aSortArray, long* alSortMap,	long alBeginning, long alEnd, bool abAscending)
+void BlobAnalyzer::MapQuickSort(double* aSortArray, long* alSortMap,	long alBeginning, long alEnd, bool abAscending)
 {
 	long    i = alEnd;
 	long   	j = alBeginning;
@@ -1390,7 +1390,7 @@ void SVBlobAnalyzerClass::MapQuickSort(double* aSortArray, long* alSortMap,	long
 /////////////////////////////////////////////////////////////////////////////
 //
 //
-DWORD SVBlobAnalyzerClass::BuildFeatureListID ()
+DWORD BlobAnalyzer::BuildFeatureListID ()
 {
 	DWORD LastError(0);
 	std::set<SVBlobSelectionEnum> featureSet;
@@ -1434,7 +1434,7 @@ DWORD SVBlobAnalyzerClass::BuildFeatureListID ()
 // 	 Date		Author				Comment                                       
 //  04-12-00	Sri				First Implementation
 ////////////////////////////////////////////////////////////////////////////////
-bool SVBlobAnalyzerClass::IsPtOverResult( const POINT& rPoint )
+bool BlobAnalyzer::IsPtOverResult( const POINT& rPoint )
 {
 	long l_lCurrentNbrOfBlobs = 0;
 
@@ -1480,7 +1480,7 @@ bool SVBlobAnalyzerClass::IsPtOverResult( const POINT& rPoint )
 	return ( m_nBlobIndex != -1 );
 }
 
-void SVBlobAnalyzerClass::addParameterForMonitorList(SvStl::MessageContainerVector&, std::back_insert_iterator<SvOi::ParametersForML> inserter) const
+void BlobAnalyzer::addParameterForMonitorList(SvStl::MessageContainerVector&, std::back_insert_iterator<SvOi::ParametersForML> inserter) const
 {
 	std::string FeaturesEnabled;
 	m_PersistantFeaturesEnabled.getValue(FeaturesEnabled);
@@ -1513,7 +1513,7 @@ void SVBlobAnalyzerClass::addParameterForMonitorList(SvStl::MessageContainerVect
 	}
 }
 
-void SVBlobAnalyzerClass::CreateArray()
+void BlobAnalyzer::CreateArray()
 {
 	m_lvoBlobSampleSize.GetValue(m_lBlobSampleSize);
 	m_lvoMaxBlobDataArraySize.GetValue(m_lMaxBlobDataArraySize);
@@ -1547,7 +1547,7 @@ void SVBlobAnalyzerClass::CreateArray()
 	}
 }
 
-bool SVBlobAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
+bool BlobAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 
@@ -1576,7 +1576,7 @@ bool SVBlobAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMessa
 	return Result;
 }
 
-HRESULT SVBlobAnalyzerClass::onCollectOverlays(SvIe::SVImageClass* , SVExtentMultiLineStructVector& rMultiLineArray )
+HRESULT BlobAnalyzer::onCollectOverlays(SvIe::SVImageClass* , SVExtentMultiLineStructVector& rMultiLineArray )
 {
 	// only if ToolSet/Tool was not Disabled
 	SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (GetTool());
@@ -1660,7 +1660,7 @@ HRESULT SVBlobAnalyzerClass::onCollectOverlays(SvIe::SVImageClass* , SVExtentMul
 	return S_OK;
 }
 
-void SVBlobAnalyzerClass::addOverlayGroups(const SvIe::SVImageClass*, SvPb::Overlay& rOverlay) const
+void BlobAnalyzer::addOverlayGroups(const SvIe::SVImageClass*, SvPb::Overlay& rOverlay) const
 {
 	auto* pGroup = rOverlay.add_shapegroups();
 	pGroup->set_name("Blobs");
@@ -1674,7 +1674,7 @@ void SVBlobAnalyzerClass::addOverlayGroups(const SvIe::SVImageClass*, SvPb::Over
 	pRectArray->set_y2trpos(m_Value[SvOi::SV_BOXY_MAX].getTrPos() + 1);
 }
 
-SvDef::StringVector SVBlobAnalyzerClass::getAnalyzerResult()
+SvDef::StringVector BlobAnalyzer::getAnalyzerResult()
 {
 	SvDef::StringVector result;
 
@@ -1699,7 +1699,7 @@ SvDef::StringVector SVBlobAnalyzerClass::getAnalyzerResult()
 	return result;
 }
 
-void SVBlobAnalyzerClass::fillResultId(int featurePos)
+void BlobAnalyzer::fillResultId(int featurePos)
 {
 	SVObjectPtrVector::const_iterator iterEmbedded = std::find_if(m_embeddedList.begin(), m_embeddedList.end(), [featurePos](const SVObjectPtrVector::value_type pEntry)->bool
 		{

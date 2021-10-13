@@ -192,7 +192,7 @@ STDMETHODIMP ArchiveExtractCallback::CryptoGetTextPassword( BSTR* )
 
 void ArchiveExtractCallback::GetPropertyFilePath( UInt32 index )
 {
-	CPropVariant prop;
+	PropVariant prop;
 	HRESULT hr = m_ArchiveHandler->GetProperty( index, kpidPath, &prop );
 	if ( hr != S_OK )
 	{
@@ -220,7 +220,7 @@ void ArchiveExtractCallback::GetPropertyFilePath( UInt32 index )
 
 void ArchiveExtractCallback::GetPropertyAttributes( UInt32 index )
 {
-	CPropVariant prop;
+	PropVariant prop;
 	HRESULT hr = m_ArchiveHandler->GetProperty( index, kpidAttrib, &prop );
 	if ( hr != S_OK )
 	{
@@ -245,7 +245,7 @@ void ArchiveExtractCallback::GetPropertyAttributes( UInt32 index )
 
 void ArchiveExtractCallback::GetPropertyIsDir( UInt32 index )
 {
-	CPropVariant prop;
+	PropVariant prop;
 	HRESULT hr = m_ArchiveHandler->GetProperty( index, kpidIsDir, &prop );
 	if ( hr != S_OK )
 	{
@@ -268,7 +268,7 @@ void ArchiveExtractCallback::GetPropertyIsDir( UInt32 index )
 
 void ArchiveExtractCallback::GetPropertyModifiedTime( UInt32 index )
 {
-	CPropVariant prop;
+	PropVariant prop;
 	HRESULT hr = m_ArchiveHandler->GetProperty( index, kpidMTime, &prop );
 	if ( hr != S_OK )
 	{
@@ -292,7 +292,7 @@ void ArchiveExtractCallback::GetPropertyModifiedTime( UInt32 index )
 
 void ArchiveExtractCallback::GetPropertySize( UInt32 index )
 {
-	CPropVariant prop;
+	PropVariant prop;
 	HRESULT hr = m_ArchiveHandler->GetProperty( index, kpidSize, &prop );
 	if ( hr != S_OK )
 	{

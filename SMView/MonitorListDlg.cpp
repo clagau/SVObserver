@@ -57,7 +57,7 @@ void MonitorListDlg::DoDataExchange(CDataExchange* pDX)
 
 void MonitorListDlg::FillControl()
 {
-	CSMViewDlg *pView = dynamic_cast<CSMViewDlg *>(AfxGetMainWnd());
+	SMViewDlg *pView = dynamic_cast<SMViewDlg *>(AfxGetMainWnd());
 	if(!pView)
 	{
 		return;
@@ -116,7 +116,7 @@ void MonitorListDlg::OnBnClickedButtonProperties()
 	CString objectName = m_ListCtrl.GetItemText(sel,1); 
 	std::string name = objectName.GetString();
 
-	CSMViewDlg *pView = dynamic_cast<CSMViewDlg *>(AfxGetMainWnd());
+	SMViewDlg *pView = dynamic_cast<SMViewDlg *>(AfxGetMainWnd());
 	if(!pView)
 	{
 		return;

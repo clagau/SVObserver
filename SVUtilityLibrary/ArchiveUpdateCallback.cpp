@@ -124,7 +124,7 @@ STDMETHODIMP ArchiveUpdateCallback::GetUpdateItemInfo(UInt32 , Int32* newData, I
 
 STDMETHODIMP ArchiveUpdateCallback::GetProperty(UInt32 index, PROPID propID, PROPVARIANT* value)
 {
-	CPropVariant prop;
+	PropVariant prop;
 
 	if (propID == kpidIsAnti)
 	{

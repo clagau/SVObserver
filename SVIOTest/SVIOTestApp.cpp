@@ -11,7 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "SVIOTest.h"
+#include "SVIOTestApp.h"
 #include "SVIOTestDlg.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVLibrary/InitialInformation.h"
@@ -29,10 +29,10 @@ static char THIS_FILE[] = __FILE__;
 BOOL SVIOInitOutputs();
 
 /////////////////////////////////////////////////////////////////////////////
-// CSVIOTESTApp
+// SVIOTestApp
 
-BEGIN_MESSAGE_MAP(CSVIOTESTApp, CWinApp)
-	//{{AFX_MSG_MAP(CSVIOTESTApp)
+BEGIN_MESSAGE_MAP(SVIOTestApp, CWinApp)
+	//{{AFX_MSG_MAP(SVIOTestApp)
 		// NOTE - the ClassWizard will add and remove mapping macros here.
 		//    DO NOT EDIT what you see in these blocks of generated code!
 	//}}AFX_MSG
@@ -40,26 +40,26 @@ BEGIN_MESSAGE_MAP(CSVIOTESTApp, CWinApp)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
-// CSVIOTESTApp construction
+// SVIOTestApp construction
 
-CSVIOTESTApp::CSVIOTESTApp()
+SVIOTestApp::SVIOTestApp()
 {
 	SVIOConfigurationInterfaceClass::Instance().Shutdown();
 }
 
-CSVIOTESTApp::~CSVIOTESTApp()
+SVIOTestApp::~SVIOTestApp()
 {
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// The one and only CSVIOTESTApp object
+// The one and only SVIOTestApp object
 
-CSVIOTESTApp theApp;
+SVIOTestApp theApp;
 
 /////////////////////////////////////////////////////////////////////////////
-// CSVIOTESTApp initialization
+// SVIOTestApp initialization
 
-BOOL CSVIOTESTApp::InitInstance()
+BOOL SVIOTestApp::InitInstance()
 {
 	TCHAR l_szSystemDir[ MAX_PATH + 1 ];
 	CString l_csSystemDir;
@@ -84,7 +84,7 @@ BOOL CSVIOTESTApp::InitInstance()
 	}
 	else
 	{
-		CSVIOTESTDlg dlg;
+		SVIOTestDlg dlg;
 
 		m_pMainWnd = &dlg;
 

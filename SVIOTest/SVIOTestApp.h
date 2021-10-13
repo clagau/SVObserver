@@ -21,22 +21,22 @@
 
 static int SVMEBoardNumber = 0;
 
-class CSVIOTESTApp : public CWinApp
+class SVIOTestApp : public CWinApp
 {
 public:
-	CSVIOTESTApp();
-	virtual ~CSVIOTESTApp();
+	SVIOTestApp();
+	virtual ~SVIOTestApp();
 
 // Overrides
 	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CSVIOTESTApp)
+	//{{AFX_VIRTUAL(SVIOTestApp)
 	public:
 	virtual BOOL InitInstance() override;
 	//}}AFX_VIRTUAL
 
 // Implementation
 
-	//{{AFX_MSG(CSVIOTESTApp)
+	//{{AFX_MSG(SVIOTestApp)
 		// NOTE - the ClassWizard will add and remove member functions here.
 		//    DO NOT EDIT what you see in these blocks of generated code !
 	//}}AFX_MSG

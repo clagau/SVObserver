@@ -16,7 +16,7 @@
 #include "SVSecuritySetupPage.h"
 #include "SVAccessClass.h"
 #include "SVSecuritySetupSheet.h"
-#include "SVSecurity.h"
+#include "SVSecurityApp.h"
 
 #pragma endregion Includes
 
@@ -26,7 +26,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-extern CSVSecurityApp theApp;
+extern SVSecurityApp theApp;
 
 IMPLEMENT_DYNCREATE(SVSecuritySetupPage, CPropertyPage)
 

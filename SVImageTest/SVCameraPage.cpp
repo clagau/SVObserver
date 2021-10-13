@@ -11,7 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "svimagetest.h"
+#include "SVImageTestApp.h"
 #include "SVCameraPage.h"
 #include "CameraLibrary/SVDeviceParamCollection.h"
 #include "CameraLibrary/SVLongValueDeviceParam.h"
@@ -128,7 +128,7 @@ void SVCameraPage::OnCameraFileBrowseButtonClick()
 	std::string cameraFileFilter;
 	std::string cameraFileDefaultExt;
 
-	CSVImageTestApp* pApp = (CSVImageTestApp *)AfxGetApp();
+	SVImageTestApp* pApp = (SVImageTestApp *)AfxGetApp();
 	// check for Gige...
 	if( nullptr != pApp && pApp->IsGigeSystem())
 	{
@@ -311,7 +311,7 @@ void SVCameraPage::LoadSVCameraFiles()
 
 void SVCameraPage::SetGigePacketSizeDeviceParam(SVDeviceParamCollection* pDeviceParams)
 {
-	CSVImageTestApp* pApp = (CSVImageTestApp *)AfxGetApp();
+	SVImageTestApp* pApp = (SVImageTestApp *)AfxGetApp();
 
 	// check if Packet Size Device Param exists
 	SVDeviceParam* l_pGigePacketSize = pDeviceParams->GetParameter( DeviceParamGigePacketSize );

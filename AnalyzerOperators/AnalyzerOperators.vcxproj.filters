@@ -69,9 +69,6 @@
     <ClCompile Include="BlobAnalyzer.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="CVAnalyzer.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="HistogramAnalyzer.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -91,6 +88,9 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="PixelAnalyzer.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="OCVAnalyzer.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
@@ -149,9 +149,6 @@
     <ClInclude Include="BlobAnalyzer.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="CVAnalyzer.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="HistogramAnalyzer.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -171,6 +168,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="PixelAnalyzer.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="OCVAnalyzer.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

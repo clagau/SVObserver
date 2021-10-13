@@ -93,7 +93,6 @@
     <ClCompile Include="BlobDrawTask.cpp" />
     <ClCompile Include="BlobFeatureList.cpp" />
     <ClCompile Include="BlobFeatureTask.cpp" />
-    <ClCompile Include="CVAnalyzer.cpp" />
     <ClCompile Include="HistogramAnalyzer.cpp" />
     <ClCompile Include="ImageAnalyzer.cpp" />
     <ClCompile Include="LinearAnalyzer.cpp" />
@@ -105,6 +104,7 @@
     <ClCompile Include="LinearMeasurementAnalyzer.cpp" />
     <ClCompile Include="LinearPixelCountingAnalyzer.cpp" />
     <ClCompile Include="LuminanceAnalyzer.cpp" />
+    <ClCompile Include="OCVAnalyzer.cpp" />
     <ClCompile Include="PatternAnalyzer.cpp" />
     <ClCompile Include="PixelAnalyzer.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -124,7 +124,6 @@
     <ClInclude Include="BlobDrawTask.h" />
     <ClInclude Include="BlobFeatureList.h" />
     <ClInclude Include="BlobFeatureTask.h" />
-    <ClInclude Include="CVAnalyzer.h" />
     <ClInclude Include="HistogramAnalyzer.h" />
     <ClInclude Include="ImageAnalyzer.h" />
     <ClInclude Include="LinearAnalyzer.h" />
@@ -136,6 +135,7 @@
     <ClInclude Include="LinearMeasurementAnalyzer.h" />
     <ClInclude Include="LinearPixelCountingAnalyzer.h" />
     <ClInclude Include="LuminanceAnalyzer.h" />
+    <ClInclude Include="OCVAnalyzer.h" />
     <ClInclude Include="PatternAnalyzer.h" />
     <ClInclude Include="PixelAnalyzer.h" />
     <ClInclude Include="stdafx.h" />

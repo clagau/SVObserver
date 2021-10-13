@@ -3,13 +3,13 @@
 //* All Rights Reserved
 //******************************************************************************
 //* .Module Name     : PropTreeTest
-//* .File Name       : $Workfile:   PropTreeTest.h  $
+//* .File Name       : $Workfile:   PropTreeTestApp.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   03 Oct 2013 14:43:26  $
 //******************************************************************************
 
-// PropTreeTest.h : main header file for the PROJECT_NAME application
+// PropTreeTestApp.h : main header file for the PROJECT_NAME application
 //
 
 #pragma once

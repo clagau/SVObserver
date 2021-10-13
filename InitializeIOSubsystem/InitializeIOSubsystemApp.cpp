@@ -2,42 +2,41 @@
 //* COPYRIGHT (c) 2014 by Seidenader Vision Inc., Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : InitializeIOSubsystem.cpp
-//* .File Name       : $Workfile:   InitializeIOSubsystem.cpp  $
+//* .File Name       : $Workfile:   InitializeIOSubsystemApp.cpp  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   18 Sep 2014 11:35:20  $
 //******************************************************************************
 
 #include "stdafx.h"
-#include "InitializeIOSubsystem.h"
+#include "InitializeIOSubsystemApp.h"
 #include "InitializeIOSubsystemDlg.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
-// CInitializeIOSubsystemApp
+// InitializeIOSubsystemApp
 
-BEGIN_MESSAGE_MAP(CInitializeIOSubsystemApp, CWinApp)
+BEGIN_MESSAGE_MAP(InitializeIOSubsystemApp, CWinApp)
 	ON_COMMAND(ID_HELP, &CWinApp::OnHelp)
 END_MESSAGE_MAP()
 
-// CInitializeIOSubsystemApp construction
+// InitializeIOSubsystemApp construction
 
-CInitializeIOSubsystemApp::CInitializeIOSubsystemApp()
+InitializeIOSubsystemApp::InitializeIOSubsystemApp()
 {
 	// TODO: add construction code here,
 	// Place all significant initialization in InitInstance
 }
 
-// The one and only CInitializeIOSubsystemApp object
+// The one and only InitializeIOSubsystemApp object
 
-CInitializeIOSubsystemApp theApp;
+InitializeIOSubsystemApp theApp;
 
-// CInitializeIOSubsystemApp initialization
+// InitializeIOSubsystemApp initialization
 
-BOOL CInitializeIOSubsystemApp::InitInstance()
+BOOL InitializeIOSubsystemApp::InitInstance()
 {
 	// InitCommonControlsEx() is required on Windows XP if an application
 	// manifest specifies use of ComCtl32.dll version 6 or later to enable
@@ -53,7 +52,7 @@ BOOL CInitializeIOSubsystemApp::InitInstance()
 
 	AfxEnableControlContainer();
 		
-	CInitializeIOSubsystemDlg dlg;
+	InitializeIOSubsystemDlg dlg;
 	m_pMainWnd = &dlg;
 	CString CommandLine( m_lpCmdLine );
 	CommandLine.MakeUpper();

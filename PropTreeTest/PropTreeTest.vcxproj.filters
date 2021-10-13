@@ -27,9 +27,6 @@
     <ClInclude Include="..\AutoBuild\AutoBuild.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="PropTreeTest.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="PropTreeTestDlg.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -42,15 +39,18 @@
     <ClInclude Include="Resource.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="PropTreeTestApp.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="PropTreeTest.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="PropTreeTestDlg.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="PropTreeTestApp.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>

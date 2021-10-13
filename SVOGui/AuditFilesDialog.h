@@ -53,7 +53,7 @@ namespace SvOg
 		SvMc::DlgItemResizer m_Resizer;				//Object which handles the resizing of all controls
 		SvGcl::GridCtrl m_FileGrid;						
 		DialogType m_DialogType;
-		SvUl::CAuditFiles                 m_AuditFiles;
+		SvUl::AuditFiles                 m_AuditFiles;
 		
 
 	};

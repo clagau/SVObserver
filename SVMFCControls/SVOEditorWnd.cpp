@@ -2,7 +2,7 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : CSVOEditorWnd
+//* .Module Name     : SVOEditorWnd
 //* .File Name       : $Workfile:   SVOEditorWnd.cpp  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.3  $
@@ -22,7 +22,7 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvMc
 {
-	CSVOEditorWnd::CSVOEditorWnd(CListBox& rListBox, LPCTSTR ExcludeChar) :
+	SVOEditorWnd::SVOEditorWnd(CListBox& rListBox, LPCTSTR ExcludeChar) :
 		m_rListBox( rListBox )
 	,	m_ExcludeChar( ExcludeChar )
 	,	m_edit_ended( false )
@@ -34,15 +34,15 @@ namespace SvMc
 	*		Destructor -- protected to prevent allocation on the stack
 	*			since object will be deleted when window is destroyed
 	*/
-	CSVOEditorWnd::~CSVOEditorWnd()
+	SVOEditorWnd::~SVOEditorWnd()
 	{
 	}
 
 	enum { WM_WAIT_FOR_DONE_EDITING = WM_APP + 1};
 
 
-	BEGIN_MESSAGE_MAP(CSVOEditorWnd, CEdit)
-		//{{AFX_MSG_MAP(CSVOEditorWnd)
+	BEGIN_MESSAGE_MAP(SVOEditorWnd, CEdit)
+		//{{AFX_MSG_MAP(SVOEditorWnd)
 		ON_WM_LBUTTONDOWN()
 		ON_WM_NCDESTROY()
 		ON_WM_CHAR()
@@ -60,7 +60,7 @@ namespace SvMc
 	*		@rdesc True if editing was started. False if n is not a valid index for the
 	*			list box being edited
 	*/
-	bool CSVOEditorWnd::Edit( int n	)
+	bool SVOEditorWnd::Edit( int n	)
 	{
 		// 
 		//	Invalid index, return false, deletes object
@@ -94,7 +94,7 @@ namespace SvMc
 	/*
 	*		Handler for mouse click, end editing if outside this window
 	*/
-	void CSVOEditorWnd::OnLButtonDown(UINT nFlags, CPoint point) 
+	void SVOEditorWnd::OnLButtonDown(UINT nFlags, CPoint point) 
 	{
 		ClientToScreen( &point ) ;
 		if ( WindowFromPoint( point ) != this )
@@ -106,7 +106,7 @@ namespace SvMc
 	/*
 	*		Delete C++ object when window is destroyed
 	*/
-	void CSVOEditorWnd::OnNcDestroy() 
+	void SVOEditorWnd::OnNcDestroy() 
 	{
 		CEdit::OnNcDestroy();
 
@@ -117,7 +117,7 @@ namespace SvMc
 	*		Handler for keyboard, ends editing on tab, return, or escape key
 	*		leaving listbox entry unchanged for escape key only
 	*/
-	void CSVOEditorWnd::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) 
+	void SVOEditorWnd::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) 
 	{
 		switch (nChar )
 		{
@@ -136,13 +136,13 @@ namespace SvMc
 	}
 
 
-	void CSVOEditorWnd::WaitForDoneEditing()
+	void SVOEditorWnd::WaitForDoneEditing()
 	{
 
 		SendMessage(WM_WAIT_FOR_DONE_EDITING, 0,0);
 	}
 
-	LRESULT CSVOEditorWnd::OnWaitForDoneEditing(WPARAM, LPARAM)
+	LRESULT SVOEditorWnd::OnWaitForDoneEditing(WPARAM, LPARAM)
 	{
 		while (!m_bDoneEditing)
 		{
@@ -152,7 +152,7 @@ namespace SvMc
 		return 0;
 	}
 
-	void CSVOEditorWnd::YieldMessages()
+	void SVOEditorWnd::YieldMessages()
 	{// Let other messages through
 		MSG msg;
 
@@ -167,7 +167,7 @@ namespace SvMc
 	/*
 	*		@mfunc Ends editing sequence
 	*/
-	void CSVOEditorWnd::EndEditing(
+	void SVOEditorWnd::EndEditing(
 		bool b		// @parmopt bool | b | true | If true, the list box item is updated
 		)
 	{
@@ -211,7 +211,7 @@ namespace SvMc
 	/*
 	*		Tell Windows that we need to get all WM_KEYDOWN messages
 	*/
-	UINT CSVOEditorWnd::OnGetDlgCode() 
+	UINT SVOEditorWnd::OnGetDlgCode() 
 	{
 		return DLGC_WANTALLKEYS ;
 	}
@@ -221,12 +221,12 @@ namespace SvMc
 	*			another program will cause this to happen in a way which can't be trapped by any
 	*			other method
 	*/
-	void CSVOEditorWnd::OnKillfocus() 
+	void SVOEditorWnd::OnKillfocus() 
 	{
 		EndEditing() ;
 	}
 
-	void CSVOEditorWnd::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
+	void SVOEditorWnd::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 	{
 		switch (nChar)
 		{
@@ -246,7 +246,7 @@ namespace SvMc
 		CEdit::OnChar(nChar, nRepCnt, nFlags);
 	}
 
-	void CSVOEditorWnd::OnLButtonDblClk(UINT , CPoint ) 
+	void SVOEditorWnd::OnLButtonDblClk(UINT , CPoint ) 
 	{
 		EndEditing() ;	
 	}

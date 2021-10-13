@@ -54,10 +54,10 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialog)
 END_MESSAGE_MAP()
 
-// CInitializeIOSubsystemDlg dialog
+// InitializeIOSubsystemDlg dialog
 
-CInitializeIOSubsystemDlg::CInitializeIOSubsystemDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CInitializeIOSubsystemDlg::IDD, pParent)
+InitializeIOSubsystemDlg::InitializeIOSubsystemDlg(CWnd* pParent /*=NULL*/)
+	: CDialog(InitializeIOSubsystemDlg::IDD, pParent)
 	, m_bLptIOInitialized(false)
 	, m_lGoodCounter(0)
 	, m_lVer(0)
@@ -72,7 +72,7 @@ CInitializeIOSubsystemDlg::CInitializeIOSubsystemDlg(CWnd* pParent /*=NULL*/)
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
 
-void CInitializeIOSubsystemDlg::DoDataExchange(CDataExchange* pDX)
+void InitializeIOSubsystemDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_PROGRESS1, m_Progress);
@@ -82,7 +82,7 @@ void CInitializeIOSubsystemDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_FAILED_COUNT, m_FailedCounts);
 }
 
-BEGIN_MESSAGE_MAP(CInitializeIOSubsystemDlg, CDialog)
+BEGIN_MESSAGE_MAP(InitializeIOSubsystemDlg, CDialog)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
@@ -93,9 +93,9 @@ BEGIN_MESSAGE_MAP(CInitializeIOSubsystemDlg, CDialog)
 	ON_WM_KEYDOWN()
 END_MESSAGE_MAP()
 
-// CInitializeIOSubsystemDlg message handlers
+// InitializeIOSubsystemDlg message handlers
 
-BOOL CInitializeIOSubsystemDlg::OnInitDialog()
+BOOL InitializeIOSubsystemDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
@@ -138,7 +138,7 @@ BOOL CInitializeIOSubsystemDlg::OnInitDialog()
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
-void CInitializeIOSubsystemDlg::OnSysCommand(UINT nID, LPARAM lParam)
+void InitializeIOSubsystemDlg::OnSysCommand(UINT nID, LPARAM lParam)
 {
 	if (IDM_ABOUTBOX == (nID & 0xFFF0))
 	{
@@ -155,7 +155,7 @@ void CInitializeIOSubsystemDlg::OnSysCommand(UINT nID, LPARAM lParam)
 //  to draw the icon.  For MFC applications using the document/view model,
 //  this is automatically done for you by the framework.
 
-void CInitializeIOSubsystemDlg::OnPaint()
+void InitializeIOSubsystemDlg::OnPaint()
 {
 	if (IsIconic())
 	{
@@ -182,12 +182,12 @@ void CInitializeIOSubsystemDlg::OnPaint()
 
 // The system calls this function to obtain the cursor to display while the user drags
 //  the minimized window.
-HCURSOR CInitializeIOSubsystemDlg::OnQueryDragIcon()
+HCURSOR InitializeIOSubsystemDlg::OnQueryDragIcon()
 {
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
-void CInitializeIOSubsystemDlg::OnTimer(UINT_PTR nIDEvent)
+void InitializeIOSubsystemDlg::OnTimer(UINT_PTR nIDEvent)
 {
 	// TODO: Add your message handler code here and/or call default
 
@@ -307,11 +307,11 @@ void CInitializeIOSubsystemDlg::OnTimer(UINT_PTR nIDEvent)
 	}
 }
 
-CInitializeIOSubsystemDlg::~CInitializeIOSubsystemDlg()
+InitializeIOSubsystemDlg::~InitializeIOSubsystemDlg()
 {
 }
 
-void CInitializeIOSubsystemDlg::OnDestroy()
+void InitializeIOSubsystemDlg::OnDestroy()
 {
 	FILE* fh = nullptr;
 	fopen_s(&fh, "c:\\SVObserver\\InitializeIOSubsystem Log.txt", "a" );
@@ -381,31 +381,31 @@ long Shutdown()
 	return 0;
 }
 
-void CInitializeIOSubsystemDlg::OnCancel()
+void InitializeIOSubsystemDlg::OnCancel()
 {
 	return;
 }
 
-void CInitializeIOSubsystemDlg::OnOK()
+void InitializeIOSubsystemDlg::OnOK()
 {
 	return;
 }
 
-void CInitializeIOSubsystemDlg::OnLButtonDown(UINT nFlags, CPoint point)
+void InitializeIOSubsystemDlg::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	// TODO: Add your message handler code here and/or call default
 	m_bShutdown = false;
 	CDialog::OnLButtonDown(nFlags, point);
 }
 
-void CInitializeIOSubsystemDlg::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+void InitializeIOSubsystemDlg::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	// TODO: Add your message handler code here and/or call default
 
 	CDialog::OnKeyDown(nChar, nRepCnt, nFlags);
 }
 
-BOOL CInitializeIOSubsystemDlg::PreTranslateMessage(MSG* pMsg)
+BOOL InitializeIOSubsystemDlg::PreTranslateMessage(MSG* pMsg)
 {
 	// TODO: Add your specialized code here and/or call the base class
 	if( WM_KEYDOWN == pMsg->message )

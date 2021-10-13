@@ -1,27 +1,38 @@
 //******************************************************************************
-//* COPYRIGHT (c) 2014 by Seidenader Vision Inc., Harrisburg
+//* COPYRIGHT (c) 2013 by Seidenader Vision Inc., Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : InitializeIOSubsystem.h
-//* .File Name       : $Workfile:   InitializeIOSubsystem.h  $
+//* .Module Name     : SVTestIOApp
+//* .File Name       : $Workfile:   SVTestIO.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   18 Sep 2014 11:35:20  $
+//* .Current Version : $Revision:   1.0  $
+//* .Check In Date   : $Date:   25 Apr 2013 18:28:06  $
 //******************************************************************************
 
 #pragma once
 
+#pragma region Includes
 #ifndef __AFXWIN_H__
 	#error "include 'stdafx.h' before including this file for PCH"
 #endif
 
-class CInitializeIOSubsystemApp : public CWinApp
+#pragma endregion Includes
+
+class SVTestIODlg;
+
+class SVTestIOApp : public CWinApp
 {
 public:
-	CInitializeIOSubsystemApp();
+	SVTestIOApp();
+	virtual ~SVTestIOApp();
+
+// Overrides
+public:
 	virtual BOOL InitInstance() override;
+	virtual BOOL ExitInstance() override;
+
+	SVTestIODlg* m_pTestIODlg;
 
 	DECLARE_MESSAGE_MAP()
 };
 
-extern CInitializeIOSubsystemApp theApp;

@@ -66,9 +66,7 @@ namespace SvUl
 	};
 
 
-
-
-	class CAuditFiles
+	class AuditFiles
 	{
 	public:
 

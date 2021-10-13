@@ -15,7 +15,7 @@
 //Moved to precompiled header: #include <math.h>
 #pragma warning (disable : 4786)
 #include "SVCameraFilePropertyPageDlg.h"
-#include "SVImageTest.h"
+#include "SVImageTestApp.h"
 #include "SVTestAcquisitionClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "CameraLibrary/SVDeviceParams.h"
@@ -671,7 +671,7 @@ SVDeviceParamCollection& SVCameraFilePropertyPageDlg::GetCameraDeviceParamsNonCo
 bool SVCameraFilePropertyPageDlg::IsGigeSystem() const
 {
 	bool bRetVal = false;
-	CSVImageTestApp* pApp = reinterpret_cast<CSVImageTestApp *>(AfxGetApp());
+	SVImageTestApp* pApp = reinterpret_cast<SVImageTestApp *>(AfxGetApp());
 	if (pApp)
 	{
 		bRetVal = pApp->IsGigeSystem(); 

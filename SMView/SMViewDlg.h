@@ -17,11 +17,11 @@
 class MonitorListMap;
 
 //! CShareViewDlg dialog application's main dialog
-class CSMViewDlg : public CDialogEx
+class SMViewDlg : public CDialogEx
 {
 // Construction
 public:
-	CSMViewDlg(CWnd* pParent = NULL);	// standard constructor
+	SMViewDlg(CWnd* pParent = NULL);	// standard constructor
 
 // Dialog Data
 	enum { IDD = IDD_SMView_DIALOG };

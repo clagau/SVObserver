@@ -61,7 +61,7 @@ void PixelAnalyzer::init()
 	m_pixelCount.setSaveValueFlag(false);
 
 	// Instantiate Children
-	SvOp::SVLongResult* pAnalyzerResult = new SvOp::SVLongResult(this, IDS_CLASSNAME_SVPIXELANALYZERESULT);
+	SvOp::SVLongResult* pAnalyzerResult = new SvOp::SVLongResult(this, IDS_CLASSNAME_SVPIXELANALYZERRESULT);
 
 	if (nullptr != pAnalyzerResult)
 	{

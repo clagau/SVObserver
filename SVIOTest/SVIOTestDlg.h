@@ -29,7 +29,7 @@ enum IOBoardType
 };
 
 /////////////////////////////////////////////////////////////////////////////
-// CSVIOTESTDlg dialog
+// SVIOTestDlg dialog
 
 struct SVIOTriggerDataStruct
 {
@@ -54,7 +54,7 @@ const int c_upperBoundForTriggerChannel = 4;
 const int c_upperBoundForFanId = 4;
 const int c_upperBoundForInputChannel = 9;
 
-class CSVIOTESTDlg : public CDialog
+class SVIOTestDlg : public CDialog
 {
 // Construction
 private:
@@ -69,15 +69,15 @@ public:
 	bool m_bTestRand;
 	bool m_bThreadRunning;
 
-	CSVIOTESTDlg(CWnd* pParent = nullptr);	// standard constructor
-	virtual ~CSVIOTESTDlg();
+	SVIOTestDlg(CWnd* pParent = nullptr);	// standard constructor
+	virtual ~SVIOTestDlg();
 
 	void __stdcall triggerCallback(const SvTrig::IntVariantMap& rTriggerData);
 
 	SVIOTriggerDataStruct* getTriggerData(unsigned long triggerChannel);
 
 // Dialog Data
-	//{{AFX_DATA(CSVIOTESTDlg)
+	//{{AFX_DATA(SVIOTestDlg)
 	enum { IDD = IDD_SVIOTEST_DIALOG };
 	CComboBox	m_BoardModelCombo;
 	CStatic	m_BoardTxt;
@@ -110,7 +110,7 @@ public:
 	long m_lSystemType;
 
 	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CSVIOTESTDlg)
+	//{{AFX_VIRTUAL(SVIOTestDlg)
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;	// DDX/DDV support
 	//}}AFX_VIRTUAL
@@ -121,7 +121,7 @@ protected:
 	HICON m_hIcon;
 
 	// Generated message map functions
-	//{{AFX_MSG(CSVIOTESTDlg)
+	//{{AFX_MSG(SVIOTestDlg)
 	virtual BOOL OnInitDialog() override;
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 	afx_msg void OnPaint();

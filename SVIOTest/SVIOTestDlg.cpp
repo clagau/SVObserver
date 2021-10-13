@@ -12,7 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <string>
-#include "SVIOTest.h"
+#include "SVIOTestApp.h"
 #include "SVIOTestDlg.h"
 #include "SVTriggerSetupDlgClass.h"
 #include "SVSoftwareTriggerSetupDlg.h"
@@ -30,7 +30,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 UINT_PTR m_nTimer;
-extern CSVIOTESTApp theApp;
+extern SVIOTestApp theApp;
 
 static LPCTSTR SVLPTIODLL = _T("SVLptIO.dll");
 
@@ -80,12 +80,12 @@ BEGIN_MESSAGE_MAP(CAboutDlg, CDialog)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
-// CSVIOTESTDlg dialog
+// SVIOTestDlg dialog
 
-CSVIOTESTDlg::CSVIOTESTDlg(CWnd* pParent /*=nullptr*/)
-	: CDialog(CSVIOTESTDlg::IDD, pParent)
+SVIOTestDlg::SVIOTestDlg(CWnd* pParent /*=nullptr*/)
+	: CDialog(SVIOTestDlg::IDD, pParent)
 {
-	//{{AFX_DATA_INIT(CSVIOTESTDlg)
+	//{{AFX_DATA_INIT(SVIOTestDlg)
 	m_lStaticChannel = 0;
 	m_BoardModel = -1;
 	//}}AFX_DATA_INIT
@@ -99,11 +99,11 @@ CSVIOTESTDlg::CSVIOTESTDlg(CWnd* pParent /*=nullptr*/)
 	}
 }
 
-CSVIOTESTDlg::~CSVIOTESTDlg()
+SVIOTestDlg::~SVIOTestDlg()
 {
 }
 
-SVIOTriggerDataStruct* CSVIOTESTDlg::getTriggerData(unsigned long triggerChannel)
+SVIOTriggerDataStruct* SVIOTestDlg::getTriggerData(unsigned long triggerChannel)
 {
 	SVIOTriggerDataStruct* pResult{nullptr};
 	if(c_upperBoundForTriggerChannel > triggerChannel)
@@ -113,12 +113,12 @@ SVIOTriggerDataStruct* CSVIOTESTDlg::getTriggerData(unsigned long triggerChannel
 	return pResult;
 }
 
-bool CSVIOTESTDlg::IsSoftwareTrigger() const
+bool SVIOTestDlg::IsSoftwareTrigger() const
 {
 	return (m_csTrigger.CompareNoCase("SVSoftwareTriggerDevice.dll") == 0);
 }
 
-bool CSVIOTESTDlg::AllowTriggerParamEditing() const
+bool SVIOTestDlg::AllowTriggerParamEditing() const
 {
 	bool bRetVal = false;
 	if( 0 == m_csDigital.CompareNoCase("SVNId.dll") ||
@@ -130,10 +130,10 @@ bool CSVIOTESTDlg::AllowTriggerParamEditing() const
 	return bRetVal;
 }
 
-void CSVIOTESTDlg::DoDataExchange(CDataExchange* pDX)
+void SVIOTestDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(CSVIOTESTDlg)
+	//{{AFX_DATA_MAP(SVIOTestDlg)
 	DDX_Control(pDX, IDC_BOARD_MODEL_COMBO, m_BoardModelCombo);
 	DDX_Control(pDX, IDC_SYSTEM_TEXT, m_BoardTxt);
 
@@ -172,8 +172,8 @@ void CSVIOTESTDlg::DoDataExchange(CDataExchange* pDX)
 
 }
 
-BEGIN_MESSAGE_MAP(CSVIOTESTDlg, CDialog)
-	//{{AFX_MSG_MAP(CSVIOTESTDlg)
+BEGIN_MESSAGE_MAP(SVIOTestDlg, CDialog)
+	//{{AFX_MSG_MAP(SVIOTestDlg)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
@@ -185,7 +185,7 @@ BEGIN_MESSAGE_MAP(CSVIOTESTDlg, CDialog)
 	ON_BN_CLICKED(IDC_RADIO1, OnSlow)
 	ON_BN_CLICKED(IDC_RADIO2, OnFast)
 	ON_WM_DESTROY()
-	ON_BN_CLICKED(IDC_ACCEPT_TRIGGERS, &CSVIOTESTDlg::OnBnClickedAcceptTriggers)
+	ON_BN_CLICKED(IDC_ACCEPT_TRIGGERS, &SVIOTestDlg::OnBnClickedAcceptTriggers)
 	ON_BN_CLICKED(IDC_TEST_OUTPUTS, OnTestOutputs)
 	ON_BN_CLICKED(IDC_START_OUTPUTS, OnStartTest)
 	ON_BN_CLICKED(IDC_RANDOM_BUTTON, OnRandBtn)
@@ -197,9 +197,9 @@ BEGIN_MESSAGE_MAP(CSVIOTESTDlg, CDialog)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
-// CSVIOTESTDlg message handlers
+// SVIOTestDlg message handlers
 
-BOOL CSVIOTESTDlg::OnInitDialog()
+BOOL SVIOTestDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
@@ -330,7 +330,7 @@ BOOL CSVIOTESTDlg::OnInitDialog()
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
-void CSVIOTESTDlg::OnSysCommand(UINT nID, LPARAM lParam)
+void SVIOTestDlg::OnSysCommand(UINT nID, LPARAM lParam)
 {
 	if (IDM_ABOUTBOX == (nID & 0xFFF0))
 	{
@@ -347,7 +347,7 @@ void CSVIOTESTDlg::OnSysCommand(UINT nID, LPARAM lParam)
 //  to draw the icon.  For MFC applications using the document/view model,
 //  this is automatically done for you by the framework.
 
-void CSVIOTESTDlg::OnPaint() 
+void SVIOTestDlg::OnPaint() 
 {
 	if (IsIconic())
 	{
@@ -374,12 +374,12 @@ void CSVIOTESTDlg::OnPaint()
 
 // The system calls this to obtain the cursor to display while the user drags
 //  the minimized window.
-HCURSOR CSVIOTESTDlg::OnQueryDragIcon()
+HCURSOR SVIOTestDlg::OnQueryDragIcon()
 {
 	return (HCURSOR) m_hIcon;
 }
 
-void CSVIOTESTDlg::OnButton1() 
+void SVIOTestDlg::OnButton1() 
 {
 	nSeq = 0; 
 
@@ -393,7 +393,7 @@ void CSVIOTESTDlg::OnButton1()
 	}
 }
 
-void CSVIOTESTDlg::OnButton2() 
+void SVIOTestDlg::OnButton2() 
 {
 	nSeq = 0; 
 
@@ -406,7 +406,7 @@ void CSVIOTESTDlg::OnButton2()
 	}
 }
 
-void CSVIOTESTDlg::OnTimer( UINT_PTR nIDEvent )
+void SVIOTestDlg::OnTimer( UINT_PTR nIDEvent )
 {
 	bool bValue = 0;
 	CStatic *pCStatic;
@@ -530,14 +530,14 @@ void CSVIOTESTDlg::OnTimer( UINT_PTR nIDEvent )
 	CDialog::OnTimer(nIDEvent);
 }
 
-void CSVIOTESTDlg::OnClose() 
+void SVIOTestDlg::OnClose() 
 {
 	KillTimer(m_nTimer);
 	
 	CDialog::OnClose();
 }
 
-void CSVIOTESTDlg::OnSequence() 
+void SVIOTestDlg::OnSequence() 
 {
 	nSeq = ~nSeq;
 	// TURN OFF ALL OUPUTS
@@ -549,17 +549,17 @@ void CSVIOTESTDlg::OnSequence()
 	}
 }
 
-void CSVIOTESTDlg::OnSlow() 
+void SVIOTestDlg::OnSlow() 
 {
 	nSpeed = 0;
 }
 
-void CSVIOTESTDlg::OnFast() 
+void SVIOTestDlg::OnFast() 
 {
 	nSpeed = 1;
 }
 
-void CSVIOTESTDlg::OnDestroy() 
+void SVIOTestDlg::OnDestroy() 
 {
 	m_bThreadRunning = false;
 	Sleep(100);
@@ -571,7 +571,7 @@ void CSVIOTESTDlg::OnDestroy()
 	CDialog::OnDestroy();
 }
 
-void CSVIOTESTDlg::OnTestOutputs() 
+void SVIOTestDlg::OnTestOutputs() 
 {
 	SVIOConfigurationInterfaceClass::Instance().TestDigitalOutputs();
 }
@@ -588,7 +588,7 @@ void SVIOTriggerDataStruct::OnTriggerStart()
 	m_MinTime = SvUl::GetMaxTimeStamp();
 }
 
-void CSVIOTESTDlg::StartTrigger(int triggerchannel) 
+void SVIOTestDlg::StartTrigger(int triggerchannel) 
 {
 	m_TriggerData[triggerchannel].OnTriggerStart();
 
@@ -600,7 +600,7 @@ void CSVIOTESTDlg::StartTrigger(int triggerchannel)
 
 }
 
-void __stdcall CSVIOTESTDlg::triggerCallback(const SvTrig::IntVariantMap& rTriggerData)
+void __stdcall SVIOTestDlg::triggerCallback(const SvTrig::IntVariantMap& rTriggerData)
 {
 	double timestamp{ 0.0 };
 	SvTrig::IntVariantMap::const_iterator Iter(rTriggerData.end());
@@ -656,7 +656,7 @@ void __stdcall CSVIOTESTDlg::triggerCallback(const SvTrig::IntVariantMap& rTrigg
 	}
 }
 
-void CSVIOTESTDlg::OnStartTriggers()
+void SVIOTestDlg::OnStartTriggers()
 {
 	unsigned long numTriggers = m_psvTriggers->GetCount();
 
@@ -687,7 +687,7 @@ void CSVIOTESTDlg::OnStartTriggers()
 	}
 }
 
-void CSVIOTESTDlg::OnStopTriggers() 
+void SVIOTestDlg::OnStopTriggers() 
 {
 	unsigned long numTriggers = m_psvTriggers->GetCount();
 
@@ -715,7 +715,7 @@ void CSVIOTESTDlg::OnStopTriggers()
 
 DWORD WINAPI SVWorkerThreadFunc( LPVOID lpParam )
 {
-	CSVIOTESTDlg* l_pOwner = (CSVIOTESTDlg*) lpParam;
+	SVIOTestDlg* l_pOwner = (SVIOTestDlg*) lpParam;
 
 	DWORD l_dwAccum = 0;
 	do
@@ -750,7 +750,7 @@ DWORD WINAPI SVWorkerThreadFunc( LPVOID lpParam )
 	return 0L;
 }
 
-void CSVIOTESTDlg::OnStartTest() 
+void SVIOTestDlg::OnStartTest() 
 {
 	DWORD dwThreadID;
 
@@ -770,17 +770,17 @@ void CSVIOTESTDlg::OnStartTest()
 	}
 }
 
-void CSVIOTESTDlg::OnRandBtn() 
+void SVIOTestDlg::OnRandBtn() 
 {
 	m_bTestRand = !m_bTestRand;
 }
 
-void CSVIOTESTDlg::OnFastSlow() 
+void SVIOTestDlg::OnFastSlow() 
 {
 	m_bFast = !m_bFast;
 }
 
-void CSVIOTESTDlg::OnChangeStaticChannel() 
+void SVIOTestDlg::OnChangeStaticChannel() 
 {
 	UpdateData();
 	if( m_bThreadRunning )
@@ -796,7 +796,7 @@ void CSVIOTESTDlg::OnChangeStaticChannel()
 	}
 }
 
-void CSVIOTESTDlg::OnTriggerParam() 
+void SVIOTestDlg::OnTriggerParam() 
 {
 	if (IsSoftwareTrigger())
 	{
@@ -930,7 +930,7 @@ void CSVIOTESTDlg::OnTriggerParam()
 	}
 }
 
-void CSVIOTESTDlg::ShowFans( bool p_bShow )
+void SVIOTestDlg::ShowFans( bool p_bShow )
 {
 	UINT cmd = (p_bShow) ? SW_SHOW : SW_HIDE;
 	
@@ -945,7 +945,7 @@ void CSVIOTESTDlg::ShowFans( bool p_bShow )
 	GetDlgItem(IDC_FAN_FREQ4)->ShowWindow( cmd );
 }
 
-void CSVIOTESTDlg::OnSelchangeBoardModelCombo() 
+void SVIOTestDlg::OnSelchangeBoardModelCombo() 
 {
 	VARIANT l_vt;
 	::VariantInit( &l_vt );
@@ -989,7 +989,7 @@ void CSVIOTESTDlg::OnSelchangeBoardModelCombo()
 	}
 }
 
-void CSVIOTESTDlg::updateValues(int triggerchannel)
+void SVIOTestDlg::updateValues(int triggerchannel)
 {
 	CString csText;
 
@@ -1032,7 +1032,7 @@ void CSVIOTESTDlg::updateValues(int triggerchannel)
 }
 
 
-void CSVIOTESTDlg::OnBnClickedAcceptTriggers()
+void SVIOTestDlg::OnBnClickedAcceptTriggers()
 {
 	if (m_bCurrentlyAcceptingTriggers)
 	{

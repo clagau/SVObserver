@@ -11,7 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "CVAnalyzer.h"
+#include "OCVAnalyzer.h"
 #include "Operators/SVOCVAnalyzerResult.h"
 #include "SVMatroxLibrary/SVOLicenseManager.h"
 #include "InspectionEngine/RunStatus.h"
@@ -51,7 +51,7 @@ void OCVAnalyzer::init()
 	m_ObjectTypeInfo.m_ObjectType = SvPb::SVAnalyzerObjectType;
 	m_ObjectTypeInfo.m_SubType = SvPb::SVOCVAnalyzerObjectType;
 
-	SvOp::SVOCVAnalyzeResult* pAnalyzerResult = new SvOp::SVOCVAnalyzeResult(this);
+	SvOp::SVOCVAnalyzerResult* pAnalyzerResult = new SvOp::SVOCVAnalyzerResult(this);
 
 	// Children list defaults:
 	if(nullptr != pAnalyzerResult )
@@ -139,7 +139,7 @@ SvDef::StringVector OCVAnalyzer::getAnalyzerResult()
 {
 	SvDef::StringVector result;
 
-	SvOp::SVOCVAnalyzeResult* pOCVResult = dynamic_cast<SvOp::SVOCVAnalyzeResult*> (GetResultObject());
+	SvOp::SVOCVAnalyzerResult* pOCVResult = dynamic_cast<SvOp::SVOCVAnalyzerResult*> (GetResultObject());
 
 	if(nullptr != pOCVResult)
 	{

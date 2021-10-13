@@ -154,7 +154,7 @@
     <ClCompile Include="SVAccessClass.cpp" />
     <ClCompile Include="SVAccessPointNode.cpp" />
     <ClCompile Include="SVPasswordDlg.cpp" />
-    <ClCompile Include="SVSecurity.cpp" />
+    <ClCompile Include="SVSecurityApp.cpp" />
     <ClCompile Include="SVSecurityGeneralPage.cpp" />
     <ClCompile Include="SVSecurityManager.cpp" />
     <ClCompile Include="SVSecuritySetupPage.cpp" />
@@ -178,7 +178,7 @@
     <ClInclude Include="SVAccessClass.h" />
     <ClInclude Include="SVAccessPointNode.h" />
     <ClInclude Include="SVPasswordDlg.h" />
-    <ClInclude Include="SVSecurity.h" />
+    <ClInclude Include="SVSecurityApp.h" />
     <ClInclude Include="SVSecurityGeneralPage.h" />
     <ClInclude Include="SVSecurityManager.h" />
     <ClInclude Include="SVSecuritySetupPage.h" />

@@ -11,7 +11,7 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include "SMView.h"
+#include "SMViewApp.h"
 #include "SMViewDlg.h"
 #include "ObjectInterfaces/ITriggerRecordControllerR.h"
 
@@ -24,14 +24,14 @@
 
 // CShareViewApp
 
-BEGIN_MESSAGE_MAP(CSMViewApp, CWinApp)
+BEGIN_MESSAGE_MAP(SMViewApp, CWinApp)
 	ON_COMMAND(ID_HELP, &CWinApp::OnHelp)
 END_MESSAGE_MAP()
 
 
 // CShareViewApp construction
 
-CSMViewApp::CSMViewApp()
+SMViewApp::SMViewApp()
 {
 	// TODO: add construction code here,
 	// Place all significant initialization in InitInstance
@@ -40,12 +40,12 @@ CSMViewApp::CSMViewApp()
 
 // The one and only CShareViewApp object
 
-CSMViewApp theApp;
+SMViewApp theApp;
 
 
 // CShareViewApp initialization
 
-BOOL CSMViewApp::InitInstance()
+BOOL SMViewApp::InitInstance()
 {
 	// InitCommonControlsEx() is required on Windows XP if an application
 	// manifest specifies use of ComCtl32.dll version 6 or later to enable
@@ -85,7 +85,7 @@ BOOL CSMViewApp::InitInstance()
 	// such as the name of your company or organization
 	SetRegistryKey(_T("Local AppWizard-Generated Applications"));
 
-	CSMViewDlg dlg;
+	SMViewDlg dlg;
 	m_pMainWnd = &dlg;
 	INT_PTR nResponse = dlg.DoModal();
 	if (nResponse == IDOK)

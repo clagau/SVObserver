@@ -12,7 +12,7 @@
 #include "stdafx.h"
 #include "resource.h"
 #include "SVPasswordDlg.h"
-#include "SVSecurity.h"
+#include "SVSecurityApp.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -20,7 +20,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-extern CSVSecurityApp theApp;
+extern SVSecurityApp theApp;
 
 SVPasswordDlg::SVPasswordDlg( LPCTSTR Status, CWnd* pParent /*=nullptr*/) : CDialog(SVPasswordDlg::IDD, pParent)
 , m_Status( Status)

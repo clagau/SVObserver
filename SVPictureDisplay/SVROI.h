@@ -24,7 +24,7 @@ const IID BASED_CODE IID_ISVROI =
 {0xB5419935, 0x769D, 0x4527, {0x9D, 0x9B, 0x27, 0x76, 0xA1, 0x46, 0xFD, 0x4C}};
 #pragma endregion Declarations
 
-class CSVROI : public CCmdTarget
+class SVROI : public CCmdTarget
 {
 public:
 #pragma region enum
@@ -36,13 +36,13 @@ public:
 #pragma endregion enum
 
 #pragma region Constructor
-	CSVROI();
-	virtual ~CSVROI();
+	SVROI();
+	virtual ~SVROI();
 #pragma endregion Constructor
 
 	virtual void OnFinalRelease() override;
 
-	static CSVROI* GetCppObjectFromDispatchPointer(LPDISPATCH lpDispatch);
+	static SVROI* GetCppObjectFromDispatchPointer(LPDISPATCH lpDispatch);
 
 	// Implementation
 public:
@@ -52,15 +52,15 @@ public:
 	DECLARE_DISPATCH_MAP()
 	DECLARE_INTERFACE_MAP()
 
-	DECLARE_DYNCREATE(CSVROI)
-	DECLARE_OLECREATE(CSVROI)
+	DECLARE_DYNCREATE(SVROI)
+	DECLARE_OLECREATE(SVROI)
 
 	// Generated message map functions
-	//{{AFX_MSG(CSVROI)
+	//{{AFX_MSG(SVROI)
 	//}}AFX_MSG
 
 	// Generated OLE dispatch map functions
-	//{{AFX_DISPATCH(CSVROI)
+	//{{AFX_DISPATCH(SVROI)
 	//ROIType GetROIType() const;
 	long GetParent() const;
 	VariantParamMap GetParameterMap() const;

@@ -2,7 +2,7 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVBlobAnalyzer
+//* .Module Name     : BlobAnalyzer
 //* .File Name       : $Workfile:   BlobAnalyzer.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.5  $
@@ -78,16 +78,16 @@ const LPCSTR g_strBlobFillTypeEnums =
 /////////////////////////////////////////////////////////////////////////////
 //
 //
-class SVBlobAnalyzerClass : public ImageAnalyzer, public SvOi::IBlobAnalyzer
+class BlobAnalyzer : public ImageAnalyzer, public SvOi::IBlobAnalyzer
 {
 	SV_DECLARE_CLASS
 
 	friend class SVSetupDialogManager;
 
 public:
-	SVBlobAnalyzerClass(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVBLOBANALYZER);
+	BlobAnalyzer(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVBLOBANALYZER);
 
-	virtual ~SVBlobAnalyzerClass();
+	virtual ~BlobAnalyzer();
 
 #pragma region IBlobAnalyzer
 	virtual SvOi::NameValueVector getFeatureList(bool isSelected) const override;

@@ -27,9 +27,6 @@
     <ClCompile Include="SVPasswordDlg.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVSecurity.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVSecurityGeneralPage.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -43,6 +40,9 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SVSecurityStorage.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVSecurityApp.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
@@ -78,9 +78,6 @@
     <ClInclude Include="SVPasswordDlg.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVSecurity.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVSecurityGeneralPage.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -94,6 +91,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVSecurityStorage.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVSecurityApp.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

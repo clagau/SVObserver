@@ -43,9 +43,9 @@ static char THIS_FILE[] = __FILE__;
 #pragma endregion Declarations
 
 
-SV_IMPLEMENT_CLASS( SVOCVAnalyzeResult, SvPb::OCVAnalyzerResultClassId);
+SV_IMPLEMENT_CLASS( SVOCVAnalyzerResult, SvPb::OCVAnalyzerResultClassId);
 
-SVOCVAnalyzeResult::SVOCVAnalyzeResult( SVObjectClass* POwner, int StringResourceID  )
+SVOCVAnalyzerResult::SVOCVAnalyzerResult( SVObjectClass* POwner, int StringResourceID  )
 						:SVResult(POwner, StringResourceID )
 {
 	m_lCurrentFoundStringLength = 0;
@@ -65,7 +65,7 @@ SVOCVAnalyzeResult::SVOCVAnalyzeResult( SVObjectClass* POwner, int StringResourc
 }
 
 
-void SVOCVAnalyzeResult::clearAll()
+void SVOCVAnalyzerResult::clearAll()
 {	
 	// Identify yourself
 	m_ObjectTypeInfo.m_ObjectType = SvPb::SVResultObjectType;
@@ -198,7 +198,7 @@ void SVOCVAnalyzeResult::clearAll()
 	m_pIndexTable = nullptr;
 }
 
-SVOCVAnalyzeResult::~SVOCVAnalyzeResult()
+SVOCVAnalyzerResult::~SVOCVAnalyzerResult()
 {
 	// First destroy the MIL font and result buffer
 
@@ -223,7 +223,7 @@ SVOCVAnalyzeResult::~SVOCVAnalyzeResult()
 	}
 }
 
-bool SVOCVAnalyzeResult::CreateObject(	const SVObjectLevelCreateStruct& rCreateStructure )
+bool SVOCVAnalyzerResult::CreateObject(	const SVObjectLevelCreateStruct& rCreateStructure )
 {
 	bool bOk = SVResult::CreateObject(rCreateStructure);
 
@@ -265,7 +265,7 @@ bool SVOCVAnalyzeResult::CreateObject(	const SVObjectLevelCreateStruct& rCreateS
 	return bOk;
 }
 
-void SVOCVAnalyzeResult::HideResults()
+void SVOCVAnalyzerResult::HideResults()
 {
 	if ( !m_bHasLicenseError )
 	{
@@ -297,7 +297,7 @@ void SVOCVAnalyzeResult::HideResults()
 //
 //
 //
-bool SVOCVAnalyzeResult::CloseObject()
+bool SVOCVAnalyzerResult::CloseObject()
 {
 	bool bOk = SVResult::CloseObject();
 
@@ -321,7 +321,7 @@ bool SVOCVAnalyzeResult::CloseObject()
 // .Description : Generates the mil font model from the Font file and the
 //				  entered sampling rate.
 ////////////////////////////////////////////////////////////////////////////////
-bool SVOCVAnalyzeResult::GenerateFontModel()
+bool SVOCVAnalyzerResult::GenerateFontModel()
 {
 	// First destroy the MIL font and result buffer
 	if( !m_milFontID.empty() )
@@ -468,7 +468,7 @@ bool SVOCVAnalyzeResult::GenerateFontModel()
 	return bOk;
 }
 
-HRESULT SVOCVAnalyzeResult::LoadMatchString()
+HRESULT SVOCVAnalyzerResult::LoadMatchString()
 {
 	//
 	// Check to see if match string is to read from a file.
@@ -587,7 +587,7 @@ HRESULT SVOCVAnalyzeResult::LoadMatchString()
 	return hrRet;
 }
 
-bool SVOCVAnalyzeResult::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
+bool SVOCVAnalyzerResult::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = SVResult::ResetObject(pErrorMessages);
 
@@ -630,7 +630,7 @@ bool SVOCVAnalyzeResult::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 //
 //
 //
-bool SVOCVAnalyzeResult::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVOCVAnalyzerResult::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	std::string FoundString;
 	std::string MatchString;
@@ -1213,7 +1213,7 @@ bool SVOCVAnalyzeResult::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageConta
 		rRunStatus.SetInvalid();
 
 		SvDef::StringVector msgList;
-		msgList.push_back(_T("SVOCVAnalyzeResult::onRun"));
+		msgList.push_back(_T("SVOCVAnalyzerResult::onRun"));
 
 		if (nullptr != pErrorMessages)
 		{
@@ -1226,7 +1226,7 @@ bool SVOCVAnalyzeResult::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageConta
 	return bOk;
 }
 
-bool SVOCVAnalyzeResult::BuildHashTable( char *pBuffer )
+bool SVOCVAnalyzerResult::BuildHashTable( char *pBuffer )
 {
 	long lBufIndex = 0;
 	bool  bRet = true;
@@ -1342,7 +1342,7 @@ bool SVOCVAnalyzeResult::BuildHashTable( char *pBuffer )
 //  4-25-00    sri			First Implementation
 //	:
 ////////////////////////////////////////////////////////////////////////////////
-void SVOCVAnalyzeResult::InsertValueToTable ( short nValue, int nIndex )
+void SVOCVAnalyzerResult::InsertValueToTable ( short nValue, int nIndex )
 {
 	// Check whether the location contains a data
 	
@@ -1377,7 +1377,7 @@ void SVOCVAnalyzeResult::InsertValueToTable ( short nValue, int nIndex )
 //  4-25-00    sri			First Implementation
 //	:
 ////////////////////////////////////////////////////////////////////////////////
-long SVOCVAnalyzeResult::CheckStringInTable(const std::string& rMatchString)
+long SVOCVAnalyzerResult::CheckStringInTable(const std::string& rMatchString)
 {
 	long Result( -1L );
 	
@@ -1417,7 +1417,7 @@ long SVOCVAnalyzeResult::CheckStringInTable(const std::string& rMatchString)
 	return Result;
 } 
 
-HRESULT SVOCVAnalyzeResult::onCollectOverlays(SvIe::SVImageClass*, SVExtentMultiLineStructVector& rMultiLineArray)
+HRESULT SVOCVAnalyzerResult::onCollectOverlays(SvIe::SVImageClass*, SVExtentMultiLineStructVector& rMultiLineArray)
 {
 	HRESULT l_hr = S_OK;
 

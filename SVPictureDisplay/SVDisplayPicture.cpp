@@ -423,14 +423,14 @@ HRESULT SVDisplayPicture::SetPictureWithROI( IPictureDisp* p_Picture, unsigned l
 				m_BackgroundColor = BackgroundColor;
 
 				// Set DrawObjects
-				CSVROIList* pList = CSVROIList::GetCppObjectFromDispatchPointer(p_RoiList);
+				SVROIList* pList = SVROIList::GetCppObjectFromDispatchPointer(p_RoiList);
 				long lCount = pList->GetCount();
 
 				// List is one based...
 				for ( long i = 1; i <= lCount; ++i )
 				{
 					IDispatch* pDispatch = pList->GetItem(i);
-					CSVROI* pRoi = CSVROI::GetCppObjectFromDispatchPointer(pDispatch);
+					SVROI* pRoi = SVROI::GetCppObjectFromDispatchPointer(pDispatch);
 					long parent = pRoi->GetParent();
 					if (parent <= 0)
 					{

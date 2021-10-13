@@ -28,19 +28,19 @@ namespace SvOp
 #define  OCV_MAX_ENTREES       10000  // Max number of lines allowed in the match file
 
 ////////////////////////////////////////////////////////////////////////////////
-// .Title       : Class SVOCVAnalyzeResult 
+// .Title       : Class SVOCVAnalyzerResult 
 // -----------------------------------------------------------------------------
 // .Description : e.g. This base class capsules an Image and provides its ...
 ////////////////////////////////////////////////////////////////////////////////
-class SVOCVAnalyzeResult : public SVResult
+class SVOCVAnalyzerResult : public SVResult
 {
 protected:
 	SV_DECLARE_CLASS
 
 public:
-	SVOCVAnalyzeResult( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVOCVANALYZERESULT );
+	SVOCVAnalyzerResult( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVOCVANALYZERRESULT );
 
-	virtual ~SVOCVAnalyzeResult();
+	virtual ~SVOCVAnalyzerResult();
 
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 	virtual bool CloseObject() override;

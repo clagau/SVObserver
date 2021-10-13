@@ -14,22 +14,22 @@
 #include "ObjectInterfaces/ITRCImage.h"
 #pragma endregion Includes
 
-class CDisplayPicture : public CStatic
+class DisplayPicture : public CStatic
 {
 public:
 	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CDisplayPicture)
+	//{{AFX_VIRTUAL(DisplayPicture)
 	//}}AFX_VIRTUAL
 
 protected:
-	//{{AFX_MSG(CDisplayPicture)
+	//{{AFX_MSG(DisplayPicture)
 	afx_msg void OnPaint();
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()
 
 public:
-	CDisplayPicture();
+	DisplayPicture();
 
 	SvOi::ITRCImagePtr GetNextBuffer();
 
@@ -39,7 +39,7 @@ public:
 
 	int m_ScrollY;
 	int m_ScrollX;
-	virtual ~CDisplayPicture();
+	virtual ~DisplayPicture();
 
 	// Generated message map functions
 };

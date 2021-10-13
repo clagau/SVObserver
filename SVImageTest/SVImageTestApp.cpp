@@ -11,7 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "SVImageTest.h"
+#include "SVImageTestApp.h"
 #include "SVImageTestDlg.h"
 #include "SVTestAcquisitionSubsystem.h"
 #include "SVTestGigeAcquisitionSubsystem.h"
@@ -42,16 +42,16 @@ bool IsGigeDigitizer(LPCTSTR ProductName)
 	return l_bOk;
 }
 
-bool CSVImageTestApp::IsGigeSystem() const
+bool SVImageTestApp::IsGigeSystem() const
 {
 	return IsGigeDigitizer(m_iniLoader.GetInitialInfo().m_ProductName.c_str());
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// CSVImageTestApp
+// SVImageTestApp
 
-BEGIN_MESSAGE_MAP(CSVImageTestApp, CWinApp)
-	//{{AFX_MSG_MAP(CSVImageTestApp)
+BEGIN_MESSAGE_MAP(SVImageTestApp, CWinApp)
+	//{{AFX_MSG_MAP(SVImageTestApp)
 		// NOTE - the ClassWizard will add and remove mapping macros here.
 		//    DO NOT EDIT what you see in these blocks of generated code!
 	//}}AFX_MSG
@@ -59,9 +59,9 @@ BEGIN_MESSAGE_MAP(CSVImageTestApp, CWinApp)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
-// CSVImageTestApp construction
+// SVImageTestApp construction
 
-CSVImageTestApp::CSVImageTestApp()
+SVImageTestApp::SVImageTestApp()
 : m_pSubsystem(nullptr), m_iniLoader(m_iniFileInfo)
 {
 	m_svimIniFile = SvStl::GlobalPath::Inst().GetSVIMIniPath();
@@ -73,18 +73,18 @@ CSVImageTestApp::CSVImageTestApp()
 	m_oemIniFile = SvUl::Format( _T("%s\\OEMINFO.INI"), SystemDir);
 }
 
-CSVImageTestApp::~CSVImageTestApp()
+SVImageTestApp::~SVImageTestApp()
 {
 }
 /////////////////////////////////////////////////////////////////////////////
-// The one and only CSVImageTestApp object
+// The one and only SVImageTestApp object
 
-CSVImageTestApp theApp;
+SVImageTestApp theApp;
 
 /////////////////////////////////////////////////////////////////////////////
-// CSVImageTestApp initialization
+// SVImageTestApp initialization
 
-BOOL CSVImageTestApp::InitInstance()
+BOOL SVImageTestApp::InitInstance()
 {
 	AfxEnableControlContainer();
 
@@ -128,7 +128,7 @@ BOOL CSVImageTestApp::InitInstance()
 	return FALSE;
 }
 
-int CSVImageTestApp::ExitInstance() 
+int SVImageTestApp::ExitInstance() 
 {
 	UnLoadDigitizer();
 
@@ -146,7 +146,7 @@ int CSVImageTestApp::ExitInstance()
 	return CWinApp::ExitInstance();
 }
 
-SVTestAcquisitionSubsystem* CSVImageTestApp::LoadDigitizer()
+SVTestAcquisitionSubsystem* SVImageTestApp::LoadDigitizer()
 {
 	if (m_pSubsystem)
 	{
@@ -173,7 +173,7 @@ SVTestAcquisitionSubsystem* CSVImageTestApp::LoadDigitizer()
 	return m_pSubsystem;
 }
 
-void CSVImageTestApp::UnLoadDigitizer()
+void SVImageTestApp::UnLoadDigitizer()
 {
 	SVUnloadDeviceDialog dlg;
 	dlg.Show( &g_ImageTestDesktopWindow );

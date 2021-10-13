@@ -33,7 +33,7 @@ public:
 	bool m_bFailedToRead = false;
 	virtual bool onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
-	SVBarCodeResult(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVBARCODEANALYZERESULT);
+	SVBarCodeResult(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVBARCODEANALYZERRESULT);
 	virtual ~SVBarCodeResult();
 
 	HRESULT LoadMatchStringFile();

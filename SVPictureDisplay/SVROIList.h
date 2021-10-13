@@ -15,22 +15,22 @@
 #include "SVROI.h"
 #pragma endregion Includes
 /////////////////////////////////////////////////////////////////////////////
-// CSVROIList command target
+// SVROIList command target
 
 // The dispinterface uuid
 const IID BASED_CODE IID_ISVROIList =
 	{0x058A6CA5, 0x044C, 0x46b1, {0xBB, 0x65, 0xCB, 0xEA, 0x5A, 0x39, 0xB8, 0xBC}};
 
-class CSVROIList : public CCmdTarget
+class SVROIList : public CCmdTarget
 {
 public:
 #pragma region Constructor
-    CSVROIList();
-    virtual ~CSVROIList();
+    SVROIList();
+    virtual ~SVROIList();
     virtual void OnFinalRelease() override;
 #pragma endregion Constructor
 
-    static CSVROIList* GetCppObjectFromDispatchPointer(LPDISPATCH lpDispatch);
+    static SVROIList* GetCppObjectFromDispatchPointer(LPDISPATCH lpDispatch);
     
 // Attributes
 protected:
@@ -49,8 +49,8 @@ public:
     DECLARE_DISPATCH_MAP()
     DECLARE_INTERFACE_MAP()
 
-    DECLARE_DYNCREATE(CSVROIList)
-    DECLARE_OLECREATE(CSVROIList)
+    DECLARE_DYNCREATE(SVROIList)
+    DECLARE_OLECREATE(SVROIList)
 
 	BEGIN_INTERFACE_PART(EnumVARIANT, IEnumVARIANT)
         XEnumVARIANT();				// constructor to set m_lCurrent
@@ -63,11 +63,11 @@ public:
     END_INTERFACE_PART(EnumVARIANT)
 
     // Generated message map functions
-    //{{AFX_MSG(CSVROIList)
+    //{{AFX_MSG(SVROIList)
     //}}AFX_MSG
 
     // Generated OLE dispatch map functions
-    //{{AFX_DISPATCH(CSVROIList)
+    //{{AFX_DISPATCH(SVROIList)
     //}}AFX_DISPATCH
 };
 

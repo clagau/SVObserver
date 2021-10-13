@@ -17,13 +17,13 @@
 #include <vector>
 #pragma endregion Includes
 
-// CInitializeIOSubsystemDlg dialog
-class CInitializeIOSubsystemDlg : public CDialog
+// InitializeIOSubsystemDlg dialog
+class InitializeIOSubsystemDlg : public CDialog
 {
 // Construction
 public:
-	CInitializeIOSubsystemDlg(CWnd* pParent = NULL);	// standard constructor
-	virtual ~CInitializeIOSubsystemDlg();
+	InitializeIOSubsystemDlg(CWnd* pParent = NULL);	// standard constructor
+	virtual ~InitializeIOSubsystemDlg();
 // Dialog Data
 	enum { IDD = IDD_INITIALIZEIOSUBSYSTEM_DIALOG };
 

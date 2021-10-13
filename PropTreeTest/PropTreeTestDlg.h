@@ -15,12 +15,12 @@
 #include "resource.h"
 
 
-// CPropTreeTestDlg dialog
-class CPropTreeTestDlg : public CDialog
+// PropTreeTestDlg dialog
+class PropTreeTestDlg : public CDialog
 {
 // Construction
 public:
-	CPropTreeTestDlg(CWnd* pParent = nullptr);	// standard constructor
+	PropTreeTestDlg(CWnd* pParent = nullptr);	// standard constructor
 
 // Dialog Data
 	enum { IDD = IDD_PROPTREETEST_DIALOG };

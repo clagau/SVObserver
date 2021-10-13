@@ -3,7 +3,7 @@
 //* All Rights Reserved
 //******************************************************************************
 //* .Module Name     : OCVAnalyzer
-//* .File Name       : $Workfile:   CVAnalyzer.h  $
+//* .File Name       : $Workfile:   OCVAnalyzer.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.2  $
 //* .Check In Date   : $Date:   15 May 2014 11:07:28  $

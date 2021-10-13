@@ -115,7 +115,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="InitializeIOSubsystem.cpp" />
+    <ClCompile Include="InitializeIOSubsystemApp.cpp" />
     <ClCompile Include="InitializeIOSubsystemDlg.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -124,7 +124,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\AutoBuild\AutoBuild.h" />
-    <ClInclude Include="InitializeIOSubsystem.h" />
+    <ClInclude Include="InitializeIOSubsystemApp.h" />
     <ClInclude Include="InitializeIOSubsystemDlg.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />

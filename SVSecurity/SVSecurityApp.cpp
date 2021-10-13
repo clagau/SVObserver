@@ -10,7 +10,7 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include "SVSecurity.h"
+#include "SVSecurityApp.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -46,28 +46,28 @@ static char THIS_FILE[] = __FILE__;
 //
 
 /////////////////////////////////////////////////////////////////////////////
-// CSVSecurityApp
+// SVSecurityApp
 
-BEGIN_MESSAGE_MAP(CSVSecurityApp, CWinApp)
-	//{{AFX_MSG_MAP(CSVSecurityApp)
+BEGIN_MESSAGE_MAP(SVSecurityApp, CWinApp)
+	//{{AFX_MSG_MAP(SVSecurityApp)
 		// NOTE - the ClassWizard will add and remove mapping macros here.
 		//    DO NOT EDIT what you see in these blocks of generated code!
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-CSVSecurityApp::CSVSecurityApp()
+SVSecurityApp::SVSecurityApp()
 {
 	free((void*)m_pszHelpFilePath);
 	m_pszHelpFilePath = _tcsdup(_T("C:\\SVObserver\\bin\\SVObserver.chm"));
 	EnableHtmlHelp();	
 }
 
-CSVSecurityApp::~CSVSecurityApp()
+SVSecurityApp::~SVSecurityApp()
 {
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// The one and only CSVSecurityApp object
+// The one and only SVSecurityApp object
 
-CSVSecurityApp theApp;
+SVSecurityApp theApp;
 
