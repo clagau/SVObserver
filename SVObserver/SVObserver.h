@@ -54,101 +54,8 @@ public:
 #pragma region Public Methods
 #pragma region AFX_MSG Methods
 	//{{AFX_MSG(SVObserverApp)
-	afx_msg void OnAppAbout();
-	afx_msg void OnFileNewConfig();
-	afx_msg void OnFileSaveConfig(bool saveAs = false);
-	afx_msg void OnFileOpenSVC();
-	afx_msg void OnEditEnvironment();
-	afx_msg void OnTestMode();
-	afx_msg void OnRunMode();
-	afx_msg void OnStopTestMode();
-	afx_msg void OnThreadAffinitySetup();
-	afx_msg void OnUpdateThreadAffinitySetup(CCmdUI* PCmdUI);
-	afx_msg void  OnUpdateAuditTrailDefaultFiles(CCmdUI* PCmdUI);
-	afx_msg void  OnUpdateAuditTrailAdditionalFiles(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateModeRun(CCmdUI* PCmdUI);
-	afx_msg void OnFileCloseConfig();
-	afx_msg void OnFileSaveAll();
-	afx_msg void OnEditIOList();
-	afx_msg void OnUpdateEditEnvironment(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateEditIOList(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateFileClose(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateFileNew(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateFileOpen(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateFileOpenSVC(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateFileSaveAll(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateFileSaveAs(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateFileSaveCopyAs(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateFileSaveImage(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateFileUpdate(CCmdUI* PCmdUI);
-	afx_msg void OnStop();
-	afx_msg void OnUpdateEditDelete(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateEditEditTool(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateEditEditToolSet(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateEditRemoteInputs(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateEditAddRemoteOutputs(CCmdUI *pCmdUI);
-	afx_msg void OnUpdateExtrasLightReference(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateFilePrintPreview(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateFilePrintSetup(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateExtrasTestOutputs(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateHelp(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateHelpFinder(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateModeTest(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateNextPane(CCmdUI* PCmdUI);
-	afx_msg void OnUpdatePrevPane(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateWindowArrange(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateWindowCascade(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateWindowNew(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateWindowTileHorz(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateWindowTileVert(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateAppExit(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateAppAbout(CCmdUI* PCmdUI);
-	afx_msg void OnFilePrintConfig();
-	afx_msg void OnSVOFilePrintSetup();
-	afx_msg void OnExtrasLogin();
-	afx_msg void OnUpdateExtrasLogin(CCmdUI* PCmdUI);
-	afx_msg void OnGoOffline();
-	afx_msg void OnUpdateGoOffline(CCmdUI* PCmdUI);
-	afx_msg void OnGoOnline();
-	afx_msg void OnUpdateGoOnline(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateFilePrintConfig(CCmdUI* PCmdUI);
-	afx_msg void OnExtrasLogout();
-	afx_msg void OnUpdateExtrasLogout(CCmdUI* PCmdUI);
-	afx_msg BOOL OnOpenRecentFile(UINT NID);
-	afx_msg void OnRunMostRecentMRU( );
-	afx_msg void OnUpdateRecentFileMenu(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateExtraUtilities(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateEditPublishedResults(CCmdUI* PCmdUI);
-	afx_msg void OnAppExit();
-	afx_msg void OnFileSaveAsSVC();
-	afx_msg void OnUpdatePublishedResultsPicker(CCmdUI* pCmdUI);
-	afx_msg void OnUpdatePublishedImagesPicker(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateResultsPicker(CCmdUI* pCmdUI);
-	afx_msg void OnExtrasUtilitiesEdit();
-	afx_msg void OnUpdateRegressionTest(CCmdUI* pCmdUI);
-    afx_msg void OnEditMonitorList();
-    afx_msg void OnUpdateEditAddMonitorList(CCmdUI* pCmdUT);
-
-	// Special catch in Run Mode...
-	afx_msg void OnRunUtility( UINT uiId );
 
 	// Special for SVRCComm.DLL
-	afx_msg void OnRCGoOffline();
-	afx_msg void OnRCGoOnline();
-	afx_msg void OnRCCloseAndCleanUpDownloadDirectory();
-	afx_msg void OnUpdateAllIOViews();
-	afx_msg void OnExtrasSecuritySetup();
-	afx_msg void  OnAuditTrailDefaultFiles();
-	afx_msg void  OnAuditTrailAdditionalFiles();
-	afx_msg void OnModeEdit();
-	afx_msg void OnUpdateModeEdit(CCmdUI* pCmdUI);
-	afx_msg void OnTriggerSettings();
-	afx_msg void OnUpdateTriggerSettings(CCmdUI* pCmdUI);
-	afx_msg void OnUpdateExtrasUtilitiesEdit(CCmdUI* pCmdUI);
-	afx_msg void OnUpdateExtrasSecuritySetup(CCmdUI* pCmdUI);
-	afx_msg void OnEditRemoteOutputs();
-	afx_msg void OnEditPublishedResults( UINT nID );
-	afx_msg void OnRCClose();
 	//}}AFX_MSG
 #pragma endregion AFX_MSG Methods
 
@@ -177,9 +84,7 @@ public:
 	SVIODoc* NewSVIODoc( LPCTSTR DocName, SVIOController& Controller );
 	SVIPDoc* NewSVIPDoc( LPCTSTR DocName, SVInspectionProcess& Inspection );
 
-	HRESULT  LoadConfiguration( unsigned long& ulSVOConfigVersion, BSTR bstrFileName, SVTreeType& p_rTree);
-
-
+	HRESULT LoadConfiguration(unsigned long& ulSVOConfigVersion, BSTR bstrFileName, SVTreeType& p_rTree);
 	HRESULT LoadPackedConfiguration(LPCTSTR pFileName, ConfigFileType type);
 	HRESULT SavePackedConfiguration(LPCTSTR pFileName);
 
@@ -193,6 +98,12 @@ public:
 	bool InitPath( LPCTSTR PathName, bool CreateIfDoesNotExist = true, bool DeleteContents = true );
 
 	bool IsMatroxGige() const;
+
+	void OnAppExitWrapper() { CWinApp::OnAppExit(); }
+	void OnUpdateRecentFileMenuWrapper(CCmdUI* PCmdUI) { CWinApp::OnUpdateRecentFileMenu(PCmdUI); }
+	void PrintSetup() { OnFilePrintSetup(); }
+
+	void UpdateAllIOViews();
 
 	bool CheckSVIMType() const;
 	SVIMProductEnum GetSVIMType() const;
@@ -222,9 +133,7 @@ public:
 	bool ShowConfigurationAssistant( int Page = 3, bool bFileNewConfiguration = false );
 
 	bool OkToEdit();
-	void OnRCOpenCurrentSVX();
 	void UpdateAllMenuExtrasUtilities();
-	void OnMemLeakDetection();
 
 	long GetMaxPPQLength() const;
 
@@ -259,7 +168,22 @@ public:
 	HRESULT CheckDrive(const std::string& p_strDrive) const;
 
 	bool fileSaveAsSVX(const std::string& rFileName, bool resetAutoSave);
+	void executePreOrPostExecutionFile(const std::string& filepath, bool inRunMode = true);
 
+	void StopRegression();
+	
+	void Start(DWORD desiredState);///< In error cases this method throws an exception.
+
+	bool OpenConfigFileFromMostRecentList(int nID);
+	static int FindMenuItem(CMenu* Menu, LPCTSTR MenuString);
+	void startInstances();
+	void stopInstances();
+
+	void SaveConfig(bool saveAs = false);
+	void EnterRunMode();
+	void StopSvo();
+	void StopIfRunning();
+	void RCClose();
 
 #pragma region Encapsulation Methods
 	long getGigePacketSize() const { return m_rInitialInfo.m_gigePacketSize; }
@@ -277,23 +201,19 @@ public:
 	long getMaxPreloadFileNumber() const { return m_rInitialInfo.m_MaxPreloadFileNumber; }
 	long getPreloadTimeDelay() const { return m_rInitialInfo.m_PreloadTimeDelay; }
 	
-
 #pragma endregion
+
+	bool DetermineConfigurationSaveName(); ///< determines the name under which a configuration is to be changed
+
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
 protected:
 
-	/// In error cases this method throw Exception.
-	void Start(DWORD desiredState);
-
 	HRESULT DisconnectAllCameraBuffers();
 	HRESULT ConnectCameraBuffers();
 	HRESULT InitializeSecurity();
 
-    bool OpenConfigFileFromMostRecentList(int nID);
-	void EnableTriggerSettings();
-	void DisableTriggerSettings();
 
 	HRESULT ConstructDocuments( SVTreeType& p_rTree );
 
@@ -304,21 +224,14 @@ protected:
 
 #pragma region Private Methods
 private:
-	void startInstances();
-	void stopInstances();
 	void OnStopAll();
 	bool InitATL();
-	void StopRegression();
 
 	bool AddSecurityNode(HMODULE hMessageDll, long lId, LPCTSTR NTGroup, bool bForcePrompt = false);
 	bool AddSecurityNode( HMODULE hMessageDll, long lId );
 
-	static int FindMenuItem(CMenu* Menu, LPCTSTR MenuString);
-
-	bool DetermineConfigurationSaveName(); ///< determines the name under which a configuration is to be changed
-
-	//Function can throw an exception!
-	void StartTrigger(SVConfigurationObject* pConfig);
+	
+	void StartTrigger(SVConfigurationObject* pConfig);///< can throw an exception!
 
 
 #pragma endregion Private Methods
@@ -329,8 +242,15 @@ private:
 public:
 	SVSecurityManager m_svSecurityMgr;	// Security
 
+	InitialInformationHandler m_IniInfoHandler;
+	bool m_MemLeakDetection {false};
+	const SvLib::InitialInformation& m_rInitialInfo; ///< This reference exists to simplify access to InitializationStatusFlags()
 	typedef std::map<UINT, SvLib::SVUtilityIniClass> UtilityMenuMap;
 	UtilityMenuMap m_UtilityMenu;
+private:
+
+	long m_OfflineCount;
+
 
 #pragma endregion Public Member variables
 
@@ -339,7 +259,6 @@ private:
 	HANDLE m_hAppThread;
 
 	SVIPDoc* m_pCurrentDocument;
-	long m_OfflineCount;
 	DWORD m_AutoRunDelayTime;
 
 	// Version numbering code:
@@ -376,7 +295,6 @@ private:
 	SVMessageWindow* m_pMessageWindow;
 
 	bool m_ATLInited;
-	bool m_MemLeakDetection {false};
 
 	mutable SVFileNameClass m_ConfigFileName;
 	SVFileNameClass m_SvxFileName;
@@ -385,10 +303,6 @@ private:
 	HANDLE m_hEvent;
 
 	long m_DataValidDelay;
-
-	InitialInformationHandler m_IniInfoHandler;
-
-	const SvLib::InitialInformation &m_rInitialInfo; // This reference exists to simplify access to InitializationStatusFlags()
 
 #pragma endregion Member variables
 };

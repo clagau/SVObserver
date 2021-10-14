@@ -155,7 +155,8 @@ void RemoteMonitorListController::HideShowViewTab()
 	{
 		TheSVObserverApp.ShowIOTab(SVRemoteMonitorListViewID);
 	}
-	TheSVObserverApp.OnUpdateAllIOViews();
+
+	TheSVObserverApp.UpdateAllIOViews();
 }
 
 // This seems to never be called...

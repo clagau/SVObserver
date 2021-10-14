@@ -868,7 +868,7 @@ void SVIPDoc::OnUpdateStatusInfo(CCmdUI* pCmdUI)
 	{
 		case ID_INDICATOR_INFO:
 		{
-			static_cast<SVMainFrame*>(AfxGetApp()->m_pMainWnd)->OnUpdateStatusInfo(pCmdUI);
+			TheSVObserverApp.GetMainFrame()->UpdateStatusInfo(pCmdUI);
 			break;
 		}
 		default:
@@ -2134,7 +2134,6 @@ bool SVIPDoc::checkOkToDelete(SvIe::SVTaskObjectClass* pTaskObject)
 
 void SVIPDoc::RunRegressionTest()
 {
-
 	if (SVSVIMStateClass::CheckState(SV_STATE_REGRESSION | SV_STATE_REMOTE_CMD))
 	{  // already in regression mode, do nothing...
 		return;
@@ -2146,7 +2145,7 @@ void SVIPDoc::RunRegressionTest()
 
 	if (hasRunMode || hasTestMode)
 	{
-		TheSVObserverApp.OnStop();
+		TheSVObserverApp.StopSvo();
 	}
 
 	SVInspectionProcess* pInspection(GetInspectionProcess());

@@ -1952,7 +1952,7 @@ bool SVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 							//rename in configuration
 							pInspection->OnObjectRenamed(*pInspection, Key);
 
-							TheSVObserverApp.OnUpdateAllIOViews();
+							TheSVObserverApp.UpdateAllIOViews();
 							break;
 						}
 						pInspection = nullptr;

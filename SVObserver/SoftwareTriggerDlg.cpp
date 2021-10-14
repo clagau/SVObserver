@@ -24,6 +24,7 @@ constexpr const char* cPause = _T("Pause");
 
 bool SoftwareTriggerDlg::m_created {false};
 
+
 SoftwareTriggerDlg::SoftwareTriggerDlg(CWnd* pParent /*=nullptr*/): 
 	CDialog(SoftwareTriggerDlg::IDD, pParent),
 	m_knobCtrl(SvTrig::MinTimerPeriod_ms, SvTrig::MaxTimerPeriod_ms),

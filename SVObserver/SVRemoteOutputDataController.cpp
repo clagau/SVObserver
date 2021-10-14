@@ -396,7 +396,7 @@ HRESULT SVRemoteOutputDataController::ClearUnUsedData( )
 			// Hide the Remote Output Tab if no outputs exist.
 			TheSVObserverApp.HideIOTab(SVRemoteOutputsViewID);
 		}
-		TheSVObserverApp.OnUpdateAllIOViews(); // updates the view after clearing unused.
+		TheSVObserverApp.UpdateAllIOViews(); // updates the view after clearing unused.
 	}
 	return S_OK;
 }
@@ -499,7 +499,7 @@ void SVRemoteOutputDataController::SetupRemoteOutput(SVConfigurationObject* pCon
 			{
 				TheSVObserverApp.ShowIOTab( SVRemoteOutputsViewID );
 			}
-			TheSVObserverApp.OnUpdateAllIOViews();
+			TheSVObserverApp.UpdateAllIOViews();
 		}
 	}
 }
