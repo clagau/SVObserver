@@ -311,7 +311,8 @@ void RingBufferTool::LocalInitialize ()
 	// Resize Tool.
 	m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
 	m_ObjectTypeInfo.m_SubType    = SvPb::SVRingBufferToolObjectType;
-
+	
+	removeEmbeddedExtents();
 	m_ringBuffer.clear();
 }
 

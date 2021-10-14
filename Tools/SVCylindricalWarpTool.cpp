@@ -132,6 +132,7 @@ void SVCylindricalWarpToolClass::LocalInitialize()
 	m_svWarpAngle.SetDefaultValue( 180.0, true);
 	m_svWarpAngle.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
 	m_toolExtent.SetExtentObject( SvPb::SVExtentPropertyStartAngle, &m_svWarpAngle );
+	removeEmbeddedExtents();
 }
 
 HRESULT SVCylindricalWarpToolClass::LocalCreate()
