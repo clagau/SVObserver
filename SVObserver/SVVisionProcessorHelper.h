@@ -112,6 +112,8 @@ public:
 	void RegisterMessageStream(const SvPb::GetMessageStreamRequest& rRequest,
 		SvRpc::Observer<SvPb::GetMessageStreamResponse> Observer,
 		SvRpc::ServerStreamContext::Ptr ctx);
+
+	void setMainhWnd(HWND mainhWnd) { m_mainhWnd = mainhWnd; }
 private:
 	using SVGetItemsFunctor = std::function<HRESULT(const SvDef::StringSet&, SVNameStorageResultMap&)>;
 	using SVSetItemsFunctor = std::function<HRESULT(const SVNameStorageMap&, SVNameStatusMap&, bool RunOnce)>;
@@ -174,6 +176,8 @@ private:
 	mutable std::vector<NotificationSubscription> m_Subscriptions;
 	mutable std::vector<MessageSubscription> m_MessageSubscriptions;
 	mutable std::mutex m_SubscriptionsMutex;
+
+	HWND m_mainhWnd {nullptr};
 #pragma endregion Private Members
 };
 

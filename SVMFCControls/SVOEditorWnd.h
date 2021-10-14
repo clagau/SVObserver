@@ -64,7 +64,7 @@ namespace SvMc
 
 		CListBox& m_rListBox;		//Reference to list box containing item being edited
 		CString m_ExcludeChar;		//List of characters to exclude
-		int m_edit_index;			//Index of item being edited
+		int m_edit_index {-1};			//Index of item being edited
 		bool m_edit_ended ;			//Flag to prevent EndEditing() from executing more than once
 		bool m_bDoneEditing;		//Flag to indicate editing is done
 

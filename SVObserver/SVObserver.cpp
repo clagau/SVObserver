@@ -406,7 +406,7 @@ BOOL SVObserverApp::InitInstance()
 
 	// Haupt-MDI-Rahmenfenster erzeugen
 	SVMainFrame* pMainFrame = new SVMainFrame;
-	if (!pMainFrame) { return FALSE; }
+	if (nullptr == pMainFrame) { return FALSE; }
 
 	if (!pMainFrame->LoadFrame(IDR_MAINFRAME))
 	{
@@ -414,11 +414,11 @@ BOOL SVObserverApp::InitInstance()
 	}
 	m_pMainWnd = pMainFrame;
 
+	//m_pMainWnd has already been checked for null due to pMainFrame check
+	SVVisionProcessorHelper::Instance().setMainhWnd(m_pMainWnd->GetSafeHwnd());
 	// Load Utilities Menu
 	SVUtilities util;
-	CWnd* pWindow = AfxGetMainWnd();
-	CMenu* pMenu = (nullptr != pWindow) ? pWindow->GetMenu() : nullptr;
-	pMenu = util.FindSubMenuByName(pMenu, _T("&Utilities"));
+	CMenu* pMenu = util.FindSubMenuByName(m_pMainWnd->GetMenu(), _T("&Utilities"));
 	if (nullptr != pMenu)
 	{
 		util.LoadMenu(pMenu);

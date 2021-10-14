@@ -37,8 +37,6 @@ public:
 
 	SvOi::ITRCImagePtr m_pImage;
 
-	int m_ScrollY;
-	int m_ScrollX;
 	virtual ~DisplayPicture();
 
 	// Generated message map functions
