@@ -660,7 +660,7 @@ HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& rBuffer, const SVMatroxB
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(S_OK == l_Code);
+//	assert(S_OK == l_Code);
 	return l_Code;
 }
 

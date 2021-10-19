@@ -34,7 +34,9 @@
 #include "ObjectInterfaces/ILinkedObject.h"
 #pragma endregion Includes
 
+#ifdef _DEBUG
 //#define TRACE_IMAGE true 
+#endif 
 namespace SvIe
 {
 
@@ -273,6 +275,11 @@ HRESULT SVImageClass::InitializeImage(SVImageClass* pParentImage)
 
 HRESULT SVImageClass::UpdateImage(const SVImageExtentClass& rExtent, bool doNotRebuildStorage)
 {
+
+#if defined(TRACE_THEM_ALL) || defined(TRACE_IMAGE)
+	OutputDebugString(std::format("Set new Extent for Image {}\n", GetCompleteName()).c_str());
+#endif 
+
 	HRESULT Result {S_OK};
 
 	if (m_ImageInfo.GetExtents() != rExtent)
@@ -307,6 +314,10 @@ HRESULT SVImageClass::UpdateImage(uint32_t parentID, const SVImageInfoClass& rIm
 
 	if (m_ParentImageInfo.first != parentID || m_ImageInfo != rImageInfo)
 	{
+
+#if defined(TRACE_THEM_ALL) || defined(TRACE_IMAGE)
+		OutputDebugString(std::format("Set new parent for Image {}\n", GetCompleteName()).c_str());
+#endif 
 		if (m_ParentImageInfo.first != parentID)
 		{
 			ClearParentConnection();
@@ -332,6 +343,9 @@ HRESULT SVImageClass::UpdateImage(uint32_t parentID, const SVImageInfoClass& rIm
 
 HRESULT SVImageClass::UpdateImage(SvPb::SVImageTypeEnum ImageType)
 {
+#if defined(TRACE_THEM_ALL) || defined(TRACE_IMAGE)
+	OutputDebugString(std::format("Set new Type for Image {}\n", GetCompleteName()).c_str());
+#endif 
 	HRESULT l_Status = S_OK;
 
 	if (m_ImageType != ImageType)
@@ -351,8 +365,11 @@ const double& SVImageClass::GetLastResetTimeStamp() const
 	return m_LastReset;
 }
 
-bool SVImageClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
+bool SVImageClass::ResetObject(SvStl::MessageContainerVector* pErrorMessages)
 {
+#if defined(TRACE_THEM_ALL) || defined(TRACE_IMAGE)
+	OutputDebugString(std::format("SVImageClass::ResetObject {}\n", GetCompleteName()).c_str());
+#endif 
 	setInspectionPosForTrc();
 
 	bool Result = (S_OK == UpdateFromParentInformation(pErrorMessages)) && (S_OK == RebuildStorage(pErrorMessages)) && __super::ResetObject(pErrorMessages);
@@ -436,8 +453,9 @@ HRESULT SVImageClass::GetImageExtentsToFit(SVImageExtentClass inExtent, SVImageE
 	return l_hrOk;
 }
 
-HRESULT SVImageClass::UpdateFromParentInformation(SvStl::MessageContainerVector *pErrorMessages)
+HRESULT SVImageClass::UpdateFromParentInformation(SvStl::MessageContainerVector* pErrorMessages)
 {
+
 	HRESULT Result {S_OK};
 
 	if (m_ImageType != SvPb::SVImageTypeEnum::SVImageTypeMain)
@@ -446,6 +464,14 @@ HRESULT SVImageClass::UpdateFromParentInformation(SvStl::MessageContainerVector 
 
 		if (nullptr != l_pParentImage && (m_LastReset < l_pParentImage->GetLastResetTimeStamp() || m_LastReset < m_LastUpdate))
 		{
+#if defined(TRACE_THEM_ALL) || defined(TRACE_IMAGE)
+			OutputDebugString(
+				std::format("UpdateFromParentInformation: {} Parent_Image: {} \n",
+				GetCompleteName().c_str(),
+				l_pParentImage->GetCompleteName().c_str()).c_str()
+			);
+#endif 
+
 			SVImageExtentClass imageExtent = GetImageExtents();
 
 			SVImagePropertiesClass l_ImageProperties = m_ImageInfo.GetImageProperties();
@@ -505,7 +531,7 @@ HRESULT SVImageClass::UpdateFromToolInformation()
 	SVImageExtentClass toolExtent = m_ImageInfo.GetExtents();
 
 	// When initialized from CreateObject(), tool is nullptr.
-	SVTaskObjectClass*	pParentTask = dynamic_cast <SVTaskObjectClass*> (GetTool());
+	SVTaskObjectClass* pParentTask = dynamic_cast <SVTaskObjectClass*> (GetTool());
 	if (nullptr != pParentTask)
 	{
 		if ((SvPb::SVImageTypeEnum::SVImageTypeMain != m_ImageType) &&
@@ -543,7 +569,7 @@ HRESULT SVImageClass::UpdateFromToolInformation()
 			}
 		}
 
-		
+
 		if (SvPb::SVImageTypeEnum::SVImageTypePhysical == m_ImageType)
 		{
 			SvOi::ITool* pTool = GetToolInterface();
@@ -551,19 +577,19 @@ HRESULT SVImageClass::UpdateFromToolInformation()
 			{
 				pTool->SetToolImage(getObjectId());
 
-#if defined (TRACE_THEM_ALL) || defined (TRACE_IMAGE) 		
+#if defined (TRACE_THEM_ALL) || defined (TRACE_IMAGE) 	
 				std::string toolname;
 				if (GetTool())
 				{
 					toolname = GetTool()->GetCompleteName();
 				}
-				auto msg = std::format("Image was set:tool:{}, type:{}, name:{}\n ",
-					toolname, int(GetImageType()), GetCompleteName());
+				auto msg = std::format("UpdateFromToolInformation: SetToolImage (tool : image)  ({} : {})\n ",
+					toolname, GetCompleteName());
 				OutputDebugString(msg.c_str());
 #endif 
 			}
 		}
-#if defined (TRACE_THEM_ALL) || defined (TRACE_IMAGE) 			
+#if defined (TRACE_THEM_ALL) || defined (TRACE_IMAGE)
 		else
 		{
 			SvOi::ITool* pTool = GetToolInterface();
@@ -575,8 +601,8 @@ HRESULT SVImageClass::UpdateFromToolInformation()
 				{
 					toolname = GetTool()->GetCompleteName();
 				}
-				auto msg = std::format("Image was set:tool:{}, type:{}, name:{}\n ",
-					toolname, int(GetImageType()), GetCompleteName());
+				auto msg = std::format("UpdateFromToolInformation: WRONG TYPE in SetToolImage (tool : image)  ({}:{})\n ",
+					toolname, GetCompleteName());
 				OutputDebugString(msg.c_str());
 			}
 
@@ -631,7 +657,7 @@ HRESULT SVImageClass::UpdateChild(uint32_t childID, const SVImageInfoClass& rIma
 	if (Lock())
 	{
 		if (SvPb::SVImageTypeEnum::SVImageTypeDependent == m_ImageType ||
-			SvPb::SVImageTypeEnum::SVImageTypeLogical == m_ImageType)
+			SvPb::SVImageTypeEnum::SVImageTypeLogical == m_ImageType) //Matroxchildbuffer
 		{
 			SVImageClass* l_pParentImage = GetParentImage();
 
@@ -658,7 +684,7 @@ HRESULT SVImageClass::UpdateChild(uint32_t childID, const SVImageInfoClass& rIma
 			rChildInfo = rImageInfo;
 
 			auto* pChildObject = SvOi::getObject(childID);
-			auto isROI{ false };
+			auto isROI {false};
 			if (pChildObject)
 			{
 				isROI = (pChildObject->GetEmbeddedID() == SvPb::LogicalROIImageEId);
@@ -669,6 +695,8 @@ HRESULT SVImageClass::UpdateChild(uint32_t childID, const SVImageInfoClass& rIma
 			{
 				l_hrOk = m_ImageInfo.ValidateAgainstOutputSpace(rChildInfo.GetExtents());
 			}
+
+
 
 			auto* pChildObjectImage = dynamic_cast<SVImageClass*>(pChildObject);
 
@@ -689,49 +717,33 @@ HRESULT SVImageClass::UpdateChild(uint32_t childID, const SVImageInfoClass& rIma
 					{
 						pTool->addOrRemoveResetErrorMessage(e.getMessageContainer(), false);
 					}
-				}
-			}
+
 #if defined (TRACE_THEM_ALL) || defined (TRACE_IMAGE) 		
-			std::string msg = { "ValidateAgainstOuput: " };
-			msg += GetCompleteName();
+					std::string msg = {"ValidateAgainstOuput: "};
+					if (l_hrOk == S_OK)
+						msg += "REMOVE ERROR: ";
+					else
+						msg += "ADD RRROR: ";
 
-			if (l_hrOk == S_OK)
-				msg += ": OK ";
-			else
-				msg += ": NOT OK ";
+					msg += pTool->GetCompleteName();
 
-			if (GetTool())
-			{
-				GetTool()->GetName();
-				GetTool()->GetObjectName();
-				GetTool()->GetCompleteName();
-				msg += std::format("(tool:{}) ", GetTool()->GetCompleteName());
-			}
-			else
-				msg += "(no tool )";
 
-			if (pChildObject)
-			{
+					msg += std::format("\n( ROImage---Image:\n {}\n {}\n",
+						pChildObjectImage->GetCompleteName(), GetCompleteName());
+					::OutputDebugString(msg.c_str());
 
-				auto name = pChildObject->GetCompleteName();
-				msg += std::format("  CHILDOBJECT(ROI{}): {} ", isROI, name);
-				auto* pChildImage = dynamic_cast<SVImageClass*>(pChildObject);
-				if (pChildImage && pChildImage->GetTool()) // cppcheck-suppress knownConditionTrueFalse
-				{
-					msg += std::format("(Tool: {} )", pChildImage->GetTool()->GetCompleteName());
-					pChildImage->GetTool()->GetName();
-					pChildImage->GetTool()->GetObjectName();
-					pChildImage->GetTool()->GetCompleteName();
-					pChildImage->GetImageType();
-				}
-				else
-					msg += "(no tool )";
+					pChildObjectImage->GetImageExtents().OutputDebugInformationOnExtent("ROI_IMAGE");
 
-			}
-			//
-			msg += "\n";
-			::OutputDebugString(msg.c_str());
+					m_ImageInfo.GetExtents().OutputDebugInformationOnExtent("Image    :");
+
+
+
 #endif
+
+				}
+
+			}
+
 		}
 
 		if (!Unlock())
@@ -878,7 +890,7 @@ HRESULT SVImageClass::LoadImage(LPCTSTR fileName, const SvOi::ITriggerRecordRWPt
 Updated method to use GetParentImage() method which validates the Parent Image pointer attribute.
 The Parent Image attribute should not be used unless it is validated first.
 */
-const SVImageClass*const SVImageClass::GetRootImage() const
+const SVImageClass* const SVImageClass::GetRootImage() const
 {
 	SVImageClass* pParentImage = GetParentImage();
 
@@ -958,17 +970,17 @@ HRESULT SVImageClass::SetObjectValue(SVObjectAttributeClass* pDataObject)
 	HRESULT hr = E_FAIL;
 
 	SvCl::SVObjectLongArrayClass svLongArray;
-	bool bOk{pDataObject->GetAttributeData(_T("PixelDepth"), svLongArray)};
-	if(bOk)
+	bool bOk {pDataObject->GetAttributeData(_T("PixelDepth"), svLongArray)};
+	if (bOk)
 	{
 		for (int i = 0; i < static_cast<int> (svLongArray.size()); i++)
 		{
 			m_ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, svLongArray[i]);
 		}
 	}
-	else if(true == (bOk = pDataObject->GetAttributeData(_T("BandNumber"), svLongArray)))
+	else if (true == (bOk = pDataObject->GetAttributeData(_T("BandNumber"), svLongArray)))
 	{
-		long BandNumber{0L};
+		long BandNumber {0L};
 		for (int i = 0; i < static_cast<int> (svLongArray.size()); i++)
 		{
 			BandNumber = svLongArray[i];
@@ -977,10 +989,10 @@ HRESULT SVImageClass::SetObjectValue(SVObjectAttributeClass* pDataObject)
 		//In previous versions the Band Number was saved incorrectly this is a check to see if it fits to the format 
 		long formatValue {0L};
 		m_ImageInfo.GetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyFormat, formatValue);
-		SvDef::SVImageFormatEnum imageFormat{static_cast<SvDef::SVImageFormatEnum> (formatValue)};
-		if(SvDef::SVImageFormatEnum::SVImageFormatBGR888 ==  imageFormat || SvDef::SVImageFormatEnum::SVImageFormatBGR888X == imageFormat)
+		SvDef::SVImageFormatEnum imageFormat {static_cast<SvDef::SVImageFormatEnum> (formatValue)};
+		if (SvDef::SVImageFormatEnum::SVImageFormatBGR888 == imageFormat || SvDef::SVImageFormatEnum::SVImageFormatBGR888X == imageFormat)
 		{
-			if(cMonoBandNumber == BandNumber)
+			if (cMonoBandNumber == BandNumber)
 			{
 				m_ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, cColorBandNumber);
 			}
@@ -1034,7 +1046,7 @@ HRESULT SVImageClass::UpdatePosition()
 		}
 		else
 		{
-			
+
 			l_Status = S_NoParent;
 		}
 	}
@@ -1286,7 +1298,7 @@ void SVImageClass::fillSelectorList(std::back_insert_iterator<std::vector<SvPb::
 
 void SVImageClass::fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo, bool addHidden /*= false*/, bool stopIfClosed /*= false*/, bool /*firstObject = false*/)
 {
-	if (0 != (ObjectAttributesAllowed() & ~ SvPb::embedable) || addHidden)
+	if (0 != (ObjectAttributesAllowed() & ~SvPb::embedable) || addHidden)
 	{
 		__super::fillObjectList(inserter, rObjectInfo, addHidden, stopIfClosed);
 	}
@@ -1414,8 +1426,8 @@ RECT SVImageClass::GetOutputRectangle() const
 
 void SVImageClass::getExtentProperties(::google::protobuf::RepeatedPtrField< ::SvPb::ExtentParameter >& rExtentProperties) const
 {
-	
-  m_ImageInfo.getExtentProperties(rExtentProperties);
+
+	m_ImageInfo.getExtentProperties(rExtentProperties);
 }
 
 SvPb::OverlayDesc SVImageClass::getOverlayStruct() const
@@ -1458,7 +1470,7 @@ void SVImageClass::setInspectionPosForTrc()
 	}
 }
 
-bool SVImageClass::UpdateTRCBuffers(SvStl::MessageContainerVector *pErrorMessages)
+bool SVImageClass::UpdateTRCBuffers(SvStl::MessageContainerVector* pErrorMessages)
 {
 	if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
 	{

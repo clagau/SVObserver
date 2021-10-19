@@ -98,6 +98,8 @@ static const SVExtentPropertyStringMap cExtentPropertyShortNames =
 ///contains properties of a subset of cExtentPropertyShortNames. Useful if only some extent properties are of interest and to be logged
 static const SVExtentPropertyStringMap cExtentPropertyShortNamesAbridged =
 {
+	{SvPb::SVExtentPropertyPositionPointX, std::string("X")},
+	{SvPb::SVExtentPropertyPositionPointY, std::string("Y")},
 	{SvPb::SVExtentPropertyWidth, std::string("w")},
 	{SvPb::SVExtentPropertyHeight, std::string("h")},
 	{SvPb::SVExtentPropertyOutputWidth, std::string("wOut")},
