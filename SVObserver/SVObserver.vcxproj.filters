@@ -504,6 +504,12 @@
     <ClCompile Include="TADialogLinearResultRangesPage.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="SVObserverOuttakes.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="GuiHelpers.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="SVObserver.odl">
@@ -1061,6 +1067,12 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="TADialogLinearResultRangesPage.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVObserverOuttakes.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="GuiHelpers.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

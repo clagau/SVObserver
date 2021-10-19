@@ -26,6 +26,7 @@
 #include "SVFileAcquisitionDevice/SVFileAcquisitionLoadingModeEnum.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
 #include "SVObserver.h"
+#include "SVObserverOuttakes.h"
 #include "SVOPPQObj.h"
 #include "SVOInspectionObj.h"
 #include "Triggering/SVOTriggerObj.h"
@@ -2419,14 +2420,14 @@ bool SVOConfigAssistantDlg::SendDataToConfiguration()
 		if (pConfig->getPreRunExecutionFilePath() != pConfig->getPostRunExecutionFilePath())
 		{
 			std::remove(pConfig->getPreRunExecutionFilePath().c_str());
-			TheSVObserverApp.RemoveFileFromConfig(pConfig->getPreRunExecutionFilePath().c_str());
+			RemoveFileFromConfig(pConfig->getPreRunExecutionFilePath().c_str());
 		}
 
 		CString destinationPath{ runDirectory };
 		destinationPath += '\\';
 		destinationPath += std::filesystem::path(m_preExecutionFilePath).filename().c_str();
 		::CopyFile(m_preExecutionFilePath.c_str(), destinationPath, false);
-		TheSVObserverApp.AddFileToConfig(destinationPath);
+		AddFileToConfig(destinationPath);
 		m_preExecutionFilePath = destinationPath;
 		pConfig->setPreRunExecutionFilePath(destinationPath);
 	}
@@ -2435,7 +2436,7 @@ bool SVOConfigAssistantDlg::SendDataToConfiguration()
 		if (pConfig->getPreRunExecutionFilePath() != pConfig->getPostRunExecutionFilePath())
 		{
 			std::remove(pConfig->getPreRunExecutionFilePath().c_str());
-			TheSVObserverApp.RemoveFileFromConfig(pConfig->getPreRunExecutionFilePath().c_str());
+			RemoveFileFromConfig(pConfig->getPreRunExecutionFilePath().c_str());
 		}
 		pConfig->setPreRunExecutionFilePath(m_preExecutionFilePath.c_str());
 	}
@@ -2445,14 +2446,14 @@ bool SVOConfigAssistantDlg::SendDataToConfiguration()
 		if (pConfig->getPreRunExecutionFilePath() != pConfig->getPostRunExecutionFilePath())
 		{
 			std::remove(pConfig->getPostRunExecutionFilePath().c_str());
-			TheSVObserverApp.RemoveFileFromConfig(pConfig->getPostRunExecutionFilePath().c_str());
+			RemoveFileFromConfig(pConfig->getPostRunExecutionFilePath().c_str());
 		}
 
 		CString destinationPath{ runDirectory };
 		destinationPath += '\\';
 		destinationPath += std::filesystem::path(m_postExecutionFilePath).filename().c_str();
 		::CopyFile(m_postExecutionFilePath.c_str(), destinationPath, false);
-		TheSVObserverApp.AddFileToConfig(destinationPath);
+		AddFileToConfig(destinationPath);
 		m_postExecutionFilePath = destinationPath;
 		pConfig->setPostRunExecutionFilePath(destinationPath);
 	}
@@ -2461,7 +2462,7 @@ bool SVOConfigAssistantDlg::SendDataToConfiguration()
 		if (pConfig->getPreRunExecutionFilePath() != pConfig->getPostRunExecutionFilePath())
 		{
 			std::remove(pConfig->getPostRunExecutionFilePath().c_str());
-			TheSVObserverApp.RemoveFileFromConfig(pConfig->getPostRunExecutionFilePath().c_str());
+			RemoveFileFromConfig(pConfig->getPostRunExecutionFilePath().c_str());
 		}
 		pConfig->setPostRunExecutionFilePath(m_postExecutionFilePath.c_str());
 	}

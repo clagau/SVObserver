@@ -1,5 +1,4 @@
 //******************************************************************************
-//******************************************************************************
 //* COPYRIGHT (c) 2008 by Seidenader Vision, Inc., Harrisburg
 //* All Rights Reserved
 //******************************************************************************
@@ -15,30 +14,26 @@
 //Moved to precompiled header: #include <iostream>
 //Moved to precompiled header: #include <google\protobuf\stubs\common.h>
 #include "resource.h"
+#include "GuiHelpers.h"
 #include "ExtrasEngine.h"
-#include "LoadConfigWarning.h"
 #include "RootObject.h"
 #include "SVArchiveWritingDlg.h"
 #include "SVConfigurationObject.h"
 #include "SVDirectX.h"
-#include "SVDiscreteInputsView.h"
 #include "SVGigeCameraManagerDlg.h"
 #include "SVGlobal.h"
-#include "SVIOBoardCapabilities.h"
 #include "SVIOController.h"
 #include "SVIODoc.h"
-#include "SVIOTabbedView.h"
 #include "SVIPDoc.h"
 #include "SVIPDocInfoImporter.h"
-#include "SVIPSplitterFrame.h"
 #include "SVImageViewScroll.h"
 #include "SVImportedInspectionInfo.h"
 #include "SVInspectionProcess.h"
 #include "SVMainFrm.h"
 #include "SVMessageWindow.h"
-#include "SVMultiDocTemplate.h"
 #include "SVOConfigAssistantDlg.h"
 #include "SVObserver.h"
+#include "SVObserverOuttakes.h"
 #include "SVObserver_i.h"
 #include "SVPPQObject.h"
 #include "SVRCCommand.h"
@@ -62,7 +57,6 @@
 #include "InspectionEngine/SVDigitizerProcessingClass.h"
 #include "SVFileSystemLibrary/SVFileNameManagerClass.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
-#include "SVIOLibrary/SVInputObjectList.h"
 #include "SVLibrary/SVPackedFile.h"
 #include "SVLibrary/SVWinUtility.h"
 #include "SVLogLibrary/Logging.h"
@@ -72,7 +66,6 @@
 #include "SVMatroxLibrary/SVMatroxSystemInterface.h"
 #include "SVMatroxLibrary/SVOLicenseManager.h"
 #include "SVMessage/SVMessage.h"
-#include "SVOLibrary/ObsoleteItemChecker.h"
 #include "SVOLibrary/SVHardwareManifest.h"
 #include "SVOLibrary/SVMemoryManager.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
@@ -86,11 +79,10 @@
 #include "SVSystemLibrary/SVThread.h"
 #include "SVSystemLibrary/SVVersionInfo.h"
 #include "SVUtilityLibrary/LoadDll.h"
-#include "SVUtilityLibrary/SHA256.h"
 #include "SVUtilityLibrary/SVClock.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVUtilityLibrary/ZipHelper.h"
-#include "SVXMLLibrary/LoadConfiguration.h"
+#include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVXMLLibrary/SVObjectXMLWriter.h"
 #include "Triggering/SVTriggerObject.h"
@@ -195,11 +187,6 @@ SVObserverApp::~SVObserverApp()
 #pragma region Public Methods
 
 #pragma region AFX_VIRTUAL Methods
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : // e.g. Compare member function of class ...
-// -----------------------------------------------------------------------------
-// .Description : ...
-////////////////////////////////////////////////////////////////////////////////
 BOOL SVObserverApp::InitInstance()
 {
 	CWinApp::InitInstance();
@@ -387,22 +374,10 @@ BOOL SVObserverApp::InitInstance()
 	SVLutTestCases test;
 #endif
 
-	// Dokumentvorlagen der Anwendung registrieren. Dokumentvorlagen
-	//  dienen als Verbindung zwischen Dokumenten, Rahmenfenstern und Ansichten.
-	SVMultiDocTemplate* pDocTemplate = new SVMultiDocTemplate(IDR_SVOBSERVER_IPDOCTYPE,
-		RUNTIME_CLASS(SVIPDoc),			 // Doc
-		RUNTIME_CLASS(SVIPSplitterFrame),  // Frame
-		RUNTIME_CLASS(SVImageViewScroll));// View
+	AddDocTemplate(CreateMultiDocTemplate1());
 
-	AddDocTemplate(pDocTemplate);
+	AddDocTemplate(CreateMultiDocTemplate2());
 
-	// IODoc
-	SVMultiDocTemplate* pDocTemplate1 = new SVMultiDocTemplate(IDR_SVOBSERVER_IODOCTYPE,
-		RUNTIME_CLASS(SVIODoc),
-		RUNTIME_CLASS(SVIOTabbedView),
-		RUNTIME_CLASS(SVDiscreteInputsView));
-
-	AddDocTemplate(pDocTemplate1);
 
 	// Haupt-MDI-Rahmenfenster erzeugen
 	SVMainFrame* pMainFrame = new SVMainFrame;
@@ -501,12 +476,6 @@ void SVObserverApp::UpdateAllIOViews()
 	}
 }
 
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnIdle(LONG lCount)
-// -----------------------------------------------------------------------------
-// .Description : ...
-////////////////////////////////////////////////////////////////////////////////
 BOOL SVObserverApp::OnIdle(LONG lCount)
 {
 	BOOL bMore = CWinApp::OnIdle(lCount);
@@ -597,45 +566,7 @@ int SVObserverApp::Run()
 
 
 #pragma region virtual
-void SVObserverApp::AddFileToConfig(LPCTSTR FilePath)
-{
-	SVConfigurationObject* pConfig(nullptr);
-	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-
-	if (nullptr != pConfig)
-	{
-		const auto& rAdditionalFiles = pConfig->getAdditionalFiles();
-		if (std::any_of(rAdditionalFiles.cbegin(), rAdditionalFiles.cend(), [&FilePath](const auto& rFile) { return FilePath == rFile.GetFullFileName(); }))
-		{
-			//File is already in additional file list
-			return;
-		}
-		pConfig->getAdditionalFiles().emplace_back(SVFileNameClass{ FilePath });
-		SVFileNameManagerClass::Instance().AddItem(&pConfig->getAdditionalFiles().back());
-		SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
-	}
-}
-
-void SVObserverApp::RemoveFileFromConfig(LPCTSTR FilePath)
-{
-	SVConfigurationObject* pConfig(nullptr);
-	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-
-	if (nullptr != pConfig)
-	{
-		const auto& rAdditionalFiles = pConfig->getAdditionalFiles();
-		auto iter = std::find_if(rAdditionalFiles.begin(), rAdditionalFiles.end(), [&FilePath](const SVFileNameClass& rFile) {return FilePath == rFile.GetFullFileName(); });
-		if(rAdditionalFiles.end() != iter)
-		{
-			const SVFileNameClass& rSVFileName = *iter;
-			pConfig->getAdditionalFiles().remove(rSVFileName);
-			SVFileNameManagerClass::Instance().RemoveItem(&rSVFileName);
-			SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
-		}
-	}
-}
-
-HRESULT SVObserverApp::OpenFile(LPCTSTR PathName, bool editMode /*= false*/, ConfigFileType fileType /*= ConfigFileType::SvzStandard*/)
+HRESULT SVObserverApp::OpenFile(LPCTSTR PathName, bool editMode /*= false*/, ConfigFileType fileType /*= ConfigFileType::SvzStandard*/) //@TODO [Arvid][10.20][18.10.2021]: this function is too long
 {
 	TCHAR szDrive[_MAX_DRIVE];
 	TCHAR szDir[_MAX_DIR];
@@ -757,15 +688,9 @@ HRESULT SVObserverApp::OpenFile(LPCTSTR PathName, bool editMode /*= false*/, Con
 
 HRESULT SVObserverApp::OpenSVXFile()
 {
-	CWaitCursor wait;
+	HRESULT hr = S_OK;
 
-	HRESULT hr;
-	double l_StartLoading;
-	double l_FinishLoad;
-
-	bool bOk = true;
-
-	hr = S_OK;
+	bool bOk = true; 
 
 	while (1)
 	{
@@ -775,7 +700,6 @@ HRESULT SVObserverApp::OpenSVXFile()
 
 		try
 		{
-			unsigned long configVer = 0;
 			bool isGlobalInit = true;
 
 			try
@@ -790,202 +714,7 @@ HRESULT SVObserverApp::OpenSVXFile()
 				isGlobalInit = false;
 			}
 
-			while (1)
-			{
-				SVTreeType XMLTree;
-				std::string hash;
-				try
-				{
-					hash = SvUl::SHA256(m_SvxFileName.GetFullFileName().c_str());
-				}
-				catch (const std::exception& )
-				{
-					//hash = e.what();;
-					hash.clear();
-				}
-
-				SVSVIMStateClass::ConfigWasLoaded(hash.c_str());
-				
-				try
-				{
-					hr = SvXml::SVOCMLoadConfiguration(configVer, m_SvxFileName.GetFullFileName().c_str(), XMLTree);
-				}
-				catch (const SvStl::MessageContainer& rExp)
-				{
-					SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
-					Exception.setMessage(rExp.getMessage());
-					hr = E_FAIL;
-					break;
-				}
-
-				if (hr & SvDef::svErrorCondition)
-				{
-					break;
-				}
-				std::string itemType;
-				int errorCode(0);
-				hr = SvXml::CheckObsoleteItems(XMLTree, configVer, itemType, errorCode);
-				if (hr & SvDef::svErrorCondition)
-				{
-					SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
-					Exception.setMessage(SVMSG_SVO_76_CONFIGURATION_HAS_OBSOLETE_ITEMS, itemType.c_str(), SvStl::SourceFileParams(StdMessageParams), errorCode);
-					break;
-				}
-
-				checkVersionAndDisplayWarnings(m_CurrentVersion, configVer);
-
-				if (configVer > m_CurrentVersion)
-				{
-					std::string File, App;
-
-					::SVGetVersionString(App, m_CurrentVersion);
-					::SVGetVersionString(File, configVer);
-					SvDef::StringVector msgList;
-					msgList.push_back(File);
-					msgList.push_back(App);
-
-					SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-					INT_PTR result = Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SVObserver_WrongVersionNumber, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10128, SvDef::InvalidObjectId, MB_YESNO);
-					if (IDNO == result)
-					{
-						hr = E_FAIL;
-						break;
-					}
-				}
-
-				l_StartLoading = SvUl::GetTimeStamp();
-
-				SVConfigurationObject* pConfig(nullptr);
-				SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-
-				//If no configuration then it needs to be created
-				if (nullptr == pConfig)
-				{
-
-					RootObject* pRoot = nullptr;
-
-					SVObjectManagerClass::Instance().GetRootChildObject(pRoot, SvDef::FqnRoot);
-					if (nullptr != pRoot)
-					{
-						pRoot->createConfigurationObject(SVObjectManagerClass::Instance().GetMutex());
-						SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-					}
-				}
-
-				if (nullptr != pConfig)
-				{
-					try
-					{
-						hr = pConfig->LoadConfiguration(XMLTree);
-					}
-					catch (const SvStl::MessageContainer& rSvE)
-					{
-						hr = E_FAIL;
-						//SVMSG_SVO_IGNORE_EXCEPTION can be used to stop the loading but not display any messages
-						if (SVMSG_SVO_IGNORE_EXCEPTION != rSvE.getMessage().m_MessageCode)
-						{
-							SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
-							Exception.setMessage(rSvE.getMessage());
-						}
-					}
-				}
-
-				if (hr & SvDef::svErrorCondition)
-				{
-					break;
-				}
-
-				GetMainFrame()->ParseToolsetScripts(XMLTree);
-				wait.Restore();
-
-				if (nullptr != pConfig)
-				{
-					hr = pConfig->LoadRemoteMonitorList(XMLTree);
-					if (hr & SvDef::svErrorCondition)
-					{
-						break;
-					}
-
-					hr = pConfig->LoadGlobalConstants(XMLTree);
-					if (hr & SvDef::svErrorCondition)
-					{
-						break;
-					}
-
-					ObjectAttributeList objectAttributeList;
-					hr = pConfig->LoadObjectAttributesSet(XMLTree, std::inserter(objectAttributeList, objectAttributeList.end()));
-					if (S_OK == hr)
-					{
-						//Set ObjectAttributes needs before RebuildInputOutputLists, because digital Output will be set in this method and then the attributes must be set.
-						pConfig->SetObjectAttributes(objectAttributeList);
-					}
-					else if (hr & SvDef::svErrorCondition)
-					{
-						break;
-					}
-
-					if (isGlobalInit)
-					{
-						try
-						{
-							//the globalInit have to be finished before RebuildInputOutputLists called, because it will do a reset and this need the images and memory.
-							SvOi::getTriggerRecordControllerRWInstanceThrow().finishGlobalInit();
-						}
-						catch (const SvStl::MessageContainer& rExp)
-						{
-							SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
-							Exception.setMessage(rExp.getMessage());
-							hr = E_FAIL;
-							break;
-						}
-					}
-
-					pConfig->RebuildInputOutputLists(true);
-					if (S_OK == hr)
-					{
-						//Set ObjectAttributes also after RebuildInputOutputLists, because the LinkedValue-Children will be create in this function.
-						pConfig->SetObjectAttributes(objectAttributeList);
-					}
-
-					if (pConfig->IsConfigurationLoaded())
-					{
-						// Removes any invalid entries in the output list.
-						if (SVMSG_SVO_70_DUPLICATE_DISCRETE_OUTPUT == pConfig->ValidateOutputList())
-						{
-							SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
-							Exception.setMessage(SVMSG_SVO_70_DUPLICATE_DISCRETE_OUTPUT, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
-						}
-						// Upgrade the configuration depending on the version being loaded
-						pConfig->UpgradeConfiguration();
-
-						bool isSvimPlc = SVHardwareManifest::isPlcSystem(GetSVIMType());
-						bool isConfigPlc = SVHardwareManifest::isPlcSystem(pConfig->GetProductType());
-						if (isSvimPlc != isConfigPlc)
-						{
-							SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
-							SvDef::StringVector msgList;
-							msgList.emplace_back(isSvimPlc ? SvDef::SVO_PRODUCT_SVIM_NEO1 : SvDef::SVO_PRODUCT_SVIM_X2_GD8A);
-							msgList.emplace_back(isConfigPlc ? SvDef::SVO_PRODUCT_SVIM_NEO1 : SvDef::SVO_PRODUCT_SVIM_X2_GD8A);
-							Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ModelTypeMismatch, msgList, SvStl::SourceFileParams(StdMessageParams));
-						}
-					}
-				}
-
-				ConstructDocuments(XMLTree);
-
-				GetMainFrame()->OnConfigurationFinishedInitializing();
-
-				l_FinishLoad = SvUl::GetTimeStamp();
-				long l_lTime = static_cast<long>(l_FinishLoad - l_StartLoading);
-
-				SvDef::StringVector msgList;
-				msgList.push_back(getConfigFullFileName());
-				msgList.push_back(SvUl::Format(_T("%d"), l_lTime));
-				SvStl::MessageManager Exception(SvStl::MsgType::Log);
-				Exception.setMessage(SVMSG_SVO_29_SVOBSERVER_CONFIG_LOADED, SvStl::Tid_ConfigLoadTime, msgList, SvStl::SourceFileParams(StdMessageParams));
-
-				break;
-			} // while (1)
+			hr = LoadSvxFile(isGlobalInit);
 
 			if (hr & SvDef::svErrorCondition)
 			{
@@ -1043,33 +772,50 @@ HRESULT SVObserverApp::OpenSVXFile()
 		hr = bOk ? S_OK : S_FALSE;
 	}
 
-	// Logic to remove unused IO Tabs Remote inputs.
-	SVConfigurationObject* pConfig(nullptr);
-	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
+	HideTabsAfterOpenSvxFile(GetIODoc());
 
-	if (nullptr != pConfig)
-	{
-
-		if (pConfig->GetRemoteOutputGroupCount() == 0)
-		{
-			HideIOTab(SVRemoteOutputsViewID);
-		}
-
-		const RemoteMonitorListMap& rList = pConfig->GetRemoteMonitorList();
-		if (!rList.size())
-		{
-			HideIOTab(SVRemoteMonitorListViewID);
-		}
-	}
-	else
-	{
-		HideIOTab(SVRemoteOutputsViewID);
-	}
-
-	// Update Remote Inputs Tab
-	UpdateRemoteInputTabs();
 	return hr;
 }
+
+
+HRESULT SVObserverApp::LoadSvxFile(bool isGlobalInit)
+{
+	unsigned long configVer = 0;
+	CWaitCursor wait;
+
+	SVTreeType XMLTree;
+
+	if (false == LoadSvxFilePart1(configVer, m_CurrentVersion, m_SvxFileName.GetFullFileName(), XMLTree))
+	{
+		return E_FAIL;
+	}
+
+	double startTimeStamp = SvUl::GetTimeStamp();
+
+	auto [ok, hr] = LoadSvxFilePart2(isGlobalInit, GetSVIMType(), XMLTree, GetMainFrame());
+
+	if (false == ok)
+	{
+		return hr;
+	}
+
+	wait.Restore();
+
+	ConstructDocuments(XMLTree);
+
+	GetMainFrame()->OnConfigurationFinishedInitializing();
+
+	long timeUsed = static_cast<long>(SvUl::GetTimeStamp() - startTimeStamp);
+
+	SvDef::StringVector msgList;
+	msgList.push_back(getConfigFullFileName());
+	msgList.push_back(SvUl::Format(_T("%d"), timeUsed));
+	SvStl::MessageManager Exception(SvStl::MsgType::Log);
+	Exception.setMessage(SVMSG_SVO_29_SVOBSERVER_CONFIG_LOADED, SvStl::Tid_ConfigLoadTime, msgList, SvStl::SourceFileParams(StdMessageParams));
+
+	return hr;
+}
+
 
 SVIODoc* SVObserverApp::NewSVIODoc(LPCTSTR DocName, SVIOController& IOController)
 {
@@ -1092,23 +838,7 @@ SVIODoc* SVObserverApp::NewSVIODoc(LPCTSTR DocName, SVIOController& IOController
 					pDoc->SetIOController(&IOController);
 					pDoc->SetTitle(DocName);
 
-					SVConfigurationObject* pConfig(nullptr);
-					SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-
-					if (nullptr != pConfig)
-					{
-						//Now that IO constructed check which tabs to hide
-						if (false == SVHardwareManifest::isPlcSystem(pConfig->GetProductType()))
-						{
-							HideIOTab(SVIOPlcOutputsViewID);
-						}
-						if (false == SVHardwareManifest::isDiscreteIOSystem(pConfig->GetProductType()))
-						{
-							HideIOTab(SVIODiscreteInputsViewID);
-							HideIOTab(SVIODiscreteOutputsViewID);
-						}
-					}
-
+					HideTabsAfterNewSVIODoc(GetIODoc());
 				}
 			}
 		}
@@ -1116,6 +846,7 @@ SVIODoc* SVObserverApp::NewSVIODoc(LPCTSTR DocName, SVIOController& IOController
 
 	return pDoc;
 }
+
 
 SVIPDoc* SVObserverApp::NewSVIPDoc(LPCTSTR DocName, SVInspectionProcess& Inspection)
 {
@@ -1221,25 +952,13 @@ SVMainFrame* SVObserverApp::GetMainFrame() const
 	return dynamic_cast<SVMainFrame*>(m_pMainWnd);
 }
 
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : .
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              : CanClose Operator
-////////////////////////////////////////////////////////////////////////////////
 HRESULT SVObserverApp::CanCloseMainFrame()
 {
 	return DestroyConfig();
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : DestroyConfig
-// -----------------------------------------------------------------------------
-// .Description : ...
-////////////////////////////////////////////////////////////////////////////////
 HRESULT SVObserverApp::DestroyConfig(bool AskForSavingOrClosing /* = true */,
-	bool CloseWithoutHint /* = false */)
+	bool CloseWithoutHint /* = false */) //@TODO [Arvid][10.20][18.10.2021]: this function is much too long
 {
 	SVSVIMStateClass::SVRCBlocker block;
 	bool bCancel = false;
@@ -1466,11 +1185,6 @@ bool SVObserverApp::Logout(bool)
 	return false;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : InitPath
-// -----------------------------------------------------------------------------
-// .Description : 
-////////////////////////////////////////////////////////////////////////////////
 bool SVObserverApp::InitPath(LPCTSTR PathName, bool CreateIfDoesNotExist /*= true*/, bool DeleteContents /*= true*/)
 {
 	if (nullptr != PathName)
@@ -1653,290 +1367,7 @@ void SVObserverApp::ResetAllCounts()
 	}
 }
 
-// this is a recursive function which will attempt
-// to add the item "itemText" to the menu with the
-// given ID number. The "itemText" will be parsed for
-// delimiting "\" characters for levels between
-// popup menus. If a popup menu does not exist, it will
-// be created and inserted at the end of the menu.
-// ItemID of 0 will cause a separator to be added
-bool SVObserverApp::AddMenuItem(
-	HMENU hTargetMenu,
-	const std::string& rItemText,
-	UINT itemID)
-{
-	bool bSuccess = false;
-
-	assert(rItemText.size() > 0);
-	assert(nullptr != hTargetMenu);
-
-	// first, does the menu item have
-	// any required submenus to be found/created?
-	size_t Pos = rItemText.find('\\');
-	if (std::string::npos != Pos)
-	{
-		// yes, we need to do a recursive call
-		// on a submenu handle and with that sub
-		// menu name removed from itemText
-
-		// 1:get the popup menu name
-		std::string popupMenuName = SvUl::Left(rItemText, Pos);
-
-		// 2:get the rest of the menu item name
-		// minus the delimiting '\' character
-		size_t RestSize = rItemText.size() - popupMenuName.size() - 1;
-		std::string remainingText = SvUl::Right(rItemText, RestSize);
-
-		// 3:See whether the popup menu already exists
-		int itemCount = ::GetMenuItemCount(hTargetMenu);
-		bool bFoundSubMenu = false;
-		MENUITEMINFO menuItemInfo;
-
-		memset(&menuItemInfo, 0, sizeof(MENUITEMINFO));
-		menuItemInfo.cbSize = sizeof(MENUITEMINFO);
-		menuItemInfo.fMask =
-			MIIM_TYPE | MIIM_STATE | MIIM_ID | MIIM_SUBMENU;
-		for (int itemIndex = 0;
-			itemIndex < itemCount && !bFoundSubMenu; itemIndex++)
-		{
-			::GetMenuItemInfo(
-				hTargetMenu,
-				itemIndex,
-				TRUE,
-				&menuItemInfo);
-			if (menuItemInfo.hSubMenu != 0)
-			{
-				// this menu item is a popup menu (non popups give 0)
-				TCHAR    buffer[MAX_PATH];
-				::GetMenuString(
-					hTargetMenu,
-					itemIndex,
-					buffer,
-					MAX_PATH,
-					MF_BYPOSITION);
-				if (popupMenuName == buffer)
-				{
-					// this is the popup menu we have to add to
-					bFoundSubMenu = true;
-				}
-			}
-		}
-		// 4: If exists, do recursive call,
-		// else create do recursive call
-		// and then insert it
-		if (bFoundSubMenu)
-		{
-			bSuccess = AddMenuItem(
-				menuItemInfo.hSubMenu,
-				remainingText,
-				itemID);
-		}
-		else
-		{
-			// we need to create a new sub menu and insert it
-			HMENU hPopupMenu = ::CreatePopupMenu();
-			if (nullptr != hPopupMenu)
-			{
-				bSuccess = AddMenuItem(
-					hPopupMenu,
-					remainingText,
-					itemID);
-				if (bSuccess)
-				{
-					if (::AppendMenu(
-						hTargetMenu,
-						MF_POPUP,
-						reinterpret_cast<UINT_PTR> (hPopupMenu),
-						popupMenuName.c_str()) > 0)
-					{
-						bSuccess = true;
-						// hPopupMenu now owned by hTargetMenu,
-						// we do not need to destroy it
-					}
-					else
-					{
-						// failed to insert the popup menu
-						bSuccess = false;
-						// stop a resource leak
-						::DestroyMenu(hPopupMenu);
-					}
-				}
-			}
-		}
-	}
-	else
-	{
-		// 3:See whether the menu item already exists
-		int itemCount = ::GetMenuItemCount(hTargetMenu);
-		bool bFoundSubMenu = false;
-		MENUITEMINFO menuItemInfo;
-
-		memset(&menuItemInfo, 0, sizeof(MENUITEMINFO));
-		menuItemInfo.cbSize = sizeof(MENUITEMINFO);
-		menuItemInfo.fMask =
-			MIIM_TYPE | MIIM_STATE | MIIM_ID | MIIM_SUBMENU;
-		for (int itemIndex = 0;
-			itemIndex < itemCount && !bFoundSubMenu; itemIndex++)
-		{
-			::GetMenuItemInfo(
-				hTargetMenu,
-				itemIndex,
-				TRUE,
-				&menuItemInfo);
-			if (menuItemInfo.wID == itemID)
-			{
-				// Set the inspection name.
-				::ModifyMenuA(hTargetMenu, itemIndex, MF_BYPOSITION | MF_STRING, itemID, rItemText.c_str());
-				bFoundSubMenu = true;
-			}
-		}
-
-		// If not found then append menu.
-		if (!bFoundSubMenu)
-		{
-			if (itemID != 0)
-			{
-				// its a normal menu command
-				if (::AppendMenu(
-					hTargetMenu,
-					MF_ENABLED,
-					itemID,
-					rItemText.c_str()) > 0)
-				{
-					// we successfully added the item to the menu
-					bSuccess = true;
-				}
-			}
-			else
-			{
-				// we are inserting a separator
-				if (::AppendMenu(
-					hTargetMenu,
-					MF_SEPARATOR,
-					itemID,
-					rItemText.c_str()) > 0)
-				{
-					// we successfully added the separator to the menu
-					bSuccess = true;
-				}
-			}
-		}
-	}
-
-	return bSuccess;
-}
-
-// this is a recursive function which will attempt
-// to remove the menu item with "itemText" from the menu with the
-// target menu handle. "itemText" will be parsed for
-// delimiting "\" characters for levels between
-// popup menus. If the end popup menu exists, it will be deleted.
-bool SVObserverApp::RemoveMenu(
-	HMENU hTargetMenu,
-	const std::string& rItemText)
-{
-	bool bSuccess = false;
-
-	assert(rItemText.size() > 0);
-	assert(nullptr != hTargetMenu);
-
-	// first, does the menu item have
-	// any required submenus to be found/created?
-	size_t Pos = rItemText.find('\\');
-	if (std::string::npos != Pos)
-	{
-		// yes, we need to do a recursive call
-		// on a submenu handle and with that sub
-		// menu name removed from itemText
-
-		// 1:get the popup menu name
-		std::string popupMenuName = SvUl::Left(rItemText, Pos);
-
-		// 2:get the rest of the menu item name
-		// minus the delimiting '\' character
-		size_t RestSize = rItemText.size() - popupMenuName.size() - 1;
-		std::string remainingText = SvUl::Right(rItemText, RestSize);
-
-		// 3:See whether the popup menu already exists
-		int itemCount = ::GetMenuItemCount(hTargetMenu);
-		bool bFoundSubMenu = false;
-		MENUITEMINFO menuItemInfo;
-
-		memset(&menuItemInfo, 0, sizeof(MENUITEMINFO));
-		menuItemInfo.cbSize = sizeof(MENUITEMINFO);
-		menuItemInfo.fMask =
-			MIIM_TYPE | MIIM_STATE | MIIM_ID | MIIM_SUBMENU;
-		for (int itemIndex = 0;
-			itemIndex < itemCount && !bFoundSubMenu; itemIndex++)
-		{
-			::GetMenuItemInfo(
-				hTargetMenu,
-				itemIndex,
-				TRUE,
-				&menuItemInfo);
-			if (menuItemInfo.hSubMenu != 0)
-			{
-				// this menu item is a popup menu (non popups give 0)
-				TCHAR    buffer[MAX_PATH];
-				::GetMenuString(
-					hTargetMenu,
-					itemIndex,
-					buffer,
-					MAX_PATH,
-					MF_BYPOSITION);
-				if (popupMenuName == buffer)
-				{
-					// this is the popup menu we are looking for.
-					bFoundSubMenu = true;
-				}
-			}
-		}
-		// 4: If exists, do recursive call,
-		if (bFoundSubMenu)
-		{
-			bSuccess = RemoveMenu(menuItemInfo.hSubMenu, remainingText);
-		}
-	}
-	else
-	{
-		// See whether the popup menu exists
-		int itemCount = ::GetMenuItemCount(hTargetMenu);
-		MENUITEMINFO menuItemInfo;
-
-		memset(&menuItemInfo, 0, sizeof(MENUITEMINFO));
-		menuItemInfo.cbSize = sizeof(MENUITEMINFO);
-		menuItemInfo.fMask =
-			MIIM_TYPE | MIIM_STATE | MIIM_ID | MIIM_SUBMENU;
-		for (int itemIndex = 0; itemIndex < itemCount; itemIndex++)
-		{
-			::GetMenuItemInfo(
-				hTargetMenu,
-				itemIndex,
-				TRUE,
-				&menuItemInfo);
-			if (menuItemInfo.hSubMenu != 0)
-			{
-				// this menu item is a popup menu (non popups give 0)
-				TCHAR    buffer[MAX_PATH];
-				::GetMenuString(
-					hTargetMenu,
-					itemIndex,
-					buffer,
-					MAX_PATH,
-					MF_BYPOSITION);
-				if (rItemText == buffer)
-				{
-					// this is the popup menu we have to remove
-					bSuccess = DeleteMenu(hTargetMenu, itemIndex, MF_BYPOSITION) ? true : false;
-					break;
-				}
-			}
-		}
-	}
-	return bSuccess;
-}
-
-HRESULT SVObserverApp::SetMode(unsigned long lNewMode)
+HRESULT SVObserverApp::SetMode(unsigned long lNewMode) //@TODO [Arvid][10.20][18.10.2021]: this function is too long
 {
 	HRESULT l_hr = S_OK;
 
@@ -2044,7 +1475,6 @@ HRESULT SVObserverApp::SetMode(unsigned long lNewMode)
 	return l_hr;
 }
 
-
 HRESULT SVObserverApp::OnObjectRenamed(const std::string& p_rOldName, uint32_t objectId)
 {
 	HRESULT l_Status = S_OK;
@@ -2089,37 +1519,6 @@ HRESULT SVObserverApp::OnObjectRenamed(const std::string& p_rOldName, uint32_t o
 	return l_Status;
 }
 
-HRESULT SVObserverApp::RebuildOutputList()
-{
-	HRESULT l_Status = S_OK;
-
-	SVConfigurationObject* pConfig(nullptr);
-	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-
-	if (nullptr != pConfig)
-	{
-		pConfig->ValidateRemoteMonitorList();
-		pConfig->RebuildOutputObjectList();
-
-		SVIODoc* pIODoc = GetIODoc();
-		if (pIODoc)
-		{
-			pIODoc->UpdateAllViews(nullptr);
-		}
-	}
-	else
-	{
-		l_Status = E_FAIL;
-	}
-
-	return l_Status;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : SetStatusText
-// -----------------------------------------------------------------------------
-// .Description : ...
-////////////////////////////////////////////////////////////////////////////////
 bool SVObserverApp::SetStatusText(LPCTSTR PStrStatusText)
 {
 	// If PStrStatusText is a nullptr, the Main Frame deletes the last status info.
@@ -2261,23 +1660,13 @@ SVIPDoc* SVObserverApp::GetIPDoc(LPCTSTR StrIPDocPathName) const
 	return pIPDoc;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : AlreadyExistsIPDocTitle
-// -----------------------------------------------------------------------------
-// .Description : ...
-////////////////////////////////////////////////////////////////////////////////
 bool SVObserverApp::AlreadyExistsIPDocTitle(LPCTSTR)
 {
 	return false;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : ShowConfigurationAssistant
-// -----------------------------------------------------------------------------
-// .Description : ...
-////////////////////////////////////////////////////////////////////////////////
 bool SVObserverApp::ShowConfigurationAssistant(int /*= 3*/,
-	bool bFileNewConfiguration /*= false*/)
+	bool bFileNewConfiguration /*= false*/) //@TODO [Arvid][10.20][18.10.2021]: this function is much too long
 {
 	bool bOk = false;
 
@@ -3020,149 +2409,10 @@ void SVObserverApp::ResetAllIPDocModifyFlag(BOOL bModified)
 	}
 }
 
-void SVObserverApp::HideIOTab(DWORD p_dwID)
-{
-	SVIODoc* l_pIODoc = GetIODoc();
-
-	if (nullptr != l_pIODoc)
-	{
-		POSITION lViewPos = l_pIODoc->GetFirstViewPosition();
-		do
-		{
-			CView* pView = l_pIODoc->GetNextView(lViewPos);
-
-			SVIOTabbedView* pIOView = dynamic_cast<SVIOTabbedView*>(pView->GetParentFrame());
-			if (nullptr != pIOView)
-			{
-				TVisualObject* pCurrentTab = pIOView->m_Framework.GetActivePane();
-				TVisualObject* pHideTab = pIOView->m_Framework.Get(p_dwID);
-				//If tab to be hidden is active tab then select first visible tab
-				if (pCurrentTab == pHideTab)
-				{
-					for (const auto tabID : IOTabViews)
-					{
-						TVisualObject* pTab = pIOView->m_Framework.Get(tabID);
-						BOOL isVisible(false);
-						if (nullptr != pTab && pHideTab != pTab && pTab->IsTabVisible(isVisible) && isVisible)
-						{
-							pIOView->m_Framework.SetActiveTab(pTab);
-							pTab->SetActivePane();
-							break;
-						}
-					}
-				}
-				pHideTab->ShowTab(false);
-				break;
-			}
-		} while (lViewPos);
-	}
-}
-
-void SVObserverApp::ShowIOTab(DWORD p_dwID)
-{
-	SVIODoc* l_pIODoc = GetIODoc();
-
-	if (nullptr != l_pIODoc)
-	{
-		POSITION lViewPos = l_pIODoc->GetFirstViewPosition();
-		do
-		{
-			CView* pView = l_pIODoc->GetNextView(lViewPos);
-
-			SVIOTabbedView* pIOView = dynamic_cast<SVIOTabbedView*>(pView->GetParentFrame());
-			if (nullptr != pIOView)
-			{
-				TVisualObject* pShowTab = pIOView->m_Framework.Get(p_dwID);
-				if (nullptr != pShowTab)
-				{
-					pShowTab->ShowTab(true);
-					pIOView->m_Framework.SetActiveTab(pShowTab);
-					pShowTab->SetActivePane();
-				}
-				break;
-			}
-		} while (lViewPos);
-	}
-}
-
-void SVObserverApp::UpdateRemoteInputTabs()
-{
-	// Remote Inputs
-	bool l_bHideIOTab = true;
-	SVConfigurationObject* pConfig(nullptr);
-	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-
-	if (nullptr != pConfig)
-	{
-		SVInputObjectList* pList = pConfig->GetInputObjectList();
-		if (nullptr != pList)
-		{
-			if (pList->getRemoteInputCount() > 0)
-			{
-				l_bHideIOTab = false;
-			}
-		}
-	}
-
-	if (l_bHideIOTab)
-	{
-		HideIOTab(SVIORemoteInputsViewID);
-	}
-}
-
-HRESULT SVObserverApp::CheckDrive(const std::string& rDrive) const
-{
-	HRESULT l_hr = S_OK;
-	// Check if exists
-	if (!PathFileExists(rDrive.c_str()))
-	{
-		std::string Drive = SvUl::MakeUpper(SvUl::Left(rDrive, 1).c_str());
-
-		SvDef::StringVector msgList;
-		msgList.push_back(Drive);
-
-		SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
-		Exception.setMessage(SVMSG_SVO_5051_DRIVEDOESNOTEXIST, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams));
-	}
-	TCHAR VolumeName[100];
-	TCHAR FileSystemName[32];
-	DWORD dwSerialNumber;
-	DWORD dwMaxFileNameLength;
-	DWORD dwFileSystemFlags;
-
-	if (GetVolumeInformation(rDrive.c_str(),
-		VolumeName,
-		sizeof(VolumeName),
-		&dwSerialNumber,
-		&dwMaxFileNameLength,
-		&dwFileSystemFlags,
-		FileSystemName,
-		sizeof(FileSystemName)))
-	{
-		std::string Name(FileSystemName);
-		if (std::string::npos == Name.find(_T("NTFS")))
-		{
-			std::string Drive = SvUl::MakeUpper(SvUl::Left(rDrive, 1).c_str());
-
-			SvStl::MessageManager Exception(SvStl::MsgType::Log);
-			Exception.setMessage(SVMSG_SVO_5052_DRIVENOTNTFSFORMAT, Drive.c_str(), SvStl::SourceFileParams(StdMessageParams));
-
-#ifndef _DEBUG
-			assert(false);
-#else
-#if defined (TRACE_THEM_ALL) || defined (TRACE_SVO)
-			::OutputDebugString(Drive.c_str());
-#endif
-#endif
-		}
-	}
-
-	return l_hr;
-}
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
-void SVObserverApp::Start(DWORD desiredState)
+void SVObserverApp::Start(DWORD desiredState) //@TODO [Arvid][10.20][18.10.2021]: this function is much too long
 {
 	SVSVIMStateClass::SVRCBlocker block;
 
@@ -3405,7 +2655,6 @@ void SVObserverApp::Start(DWORD desiredState)
 	}
 }
 
-
 void SVObserverApp::executePreOrPostExecutionFile(const std::string& filepath, bool inRunMode)
 {
 	if (std::filesystem::exists(filepath) && inRunMode)
@@ -3434,7 +2683,6 @@ void SVObserverApp::executePreOrPostExecutionFile(const std::string& filepath, b
 		}
 	}
 }
-
 
 HRESULT SVObserverApp::DisconnectAllCameraBuffers()
 {
@@ -3635,7 +2883,6 @@ bool SVObserverApp::fileSaveAsSVX(const std::string& rFileName, bool resetAutoSa
 	return result;
 }
 
-
 bool SVObserverApp::DetermineConfigurationSaveName()
 {
 	SVFileNameClass svFileName = m_ConfigFileName;
@@ -3717,12 +2964,6 @@ void SVObserverApp::StartTrigger(SVConfigurationObject* pConfig)
 	}
 }
 
-/////////////////////////////////////////////////////////////////////////////
-//
-//  An intermediate method called when user selects a configuration 
-//  file from the Most Recent Used (MRU) list under menu File.\
-//
-//
 bool SVObserverApp::OpenConfigFileFromMostRecentList(int nID)
 {
 	ASSERT_VALID(this);
@@ -3768,32 +3009,7 @@ bool SVObserverApp::OpenConfigFileFromMostRecentList(int nID)
 	return bResult;
 }
 
-// get the Document Template for the SVIPDoc
-static CMultiDocTemplate* getIPDocTemplate()
-{
-	CWinApp& rApp = TheSVObserverApp;
-	CMultiDocTemplate* pTemplate = nullptr;
-	POSITION pos = rApp.GetFirstDocTemplatePosition();
-	while (!pTemplate && pos)
-	{
-		CMultiDocTemplate* pDocTemplate = dynamic_cast<CMultiDocTemplate*>(rApp.GetNextDocTemplate(pos));
-		if (pDocTemplate)
-		{
-			POSITION posDoc = pDocTemplate->GetFirstDocPosition();
-			while (!pTemplate && posDoc)
-			{
-				CDocument* pDoc = pDocTemplate->GetNextDoc(posDoc);
-				if (pDoc && pDoc->IsKindOf(RUNTIME_CLASS(SVIPDoc)))
-				{
-					pTemplate = pDocTemplate;
-				}
-			}
-		}
-	}
-	return pTemplate;
-}
-
-HRESULT SVObserverApp::ConstructDocuments(SVTreeType& p_rTree)
+HRESULT SVObserverApp::ConstructDocuments(SVTreeType& p_rTree) //@TODO [Arvid][10.20][18.10.2021]: this function is too long
 {
 	HRESULT l_Status(S_OK);
 
@@ -3936,7 +3152,7 @@ HRESULT SVObserverApp::ConstructDocuments(SVTreeType& p_rTree)
 	return l_Status;
 }
 
-HRESULT SVObserverApp::ConstructMissingDocuments()
+HRESULT SVObserverApp::ConstructMissingDocuments() //@TODO [Arvid][10.20][18.10.2021]: this function is too long
 {
 	HRESULT l_Status(S_OK);
 
@@ -4011,16 +3227,6 @@ HRESULT SVObserverApp::ConstructMissingDocuments()
 	return l_Status;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : DestroyMessageWindow
-// -----------------------------------------------------------------------------
-// .Description : Destroys still open message windows
-// -----------------------------------------------------------------------------
-// .Return Value
-//	: bool									Returns true, if a message window 
-//											was existent. Otherwise it returns
-//											false.
-////////////////////////////////////////////////////////////////////////////////
 bool SVObserverApp::DestroyMessageWindow()
 {
 	if (m_pMessageWindow)
@@ -4097,8 +3303,7 @@ void SVObserverApp::stopInstances()
 
 	SvSml::ShareEvents::GetInstance().QuiesceSharedMemory();
 	SvSml::SharedMemWriter::Instance().Destroy();
-	// Destroy still open message windows
-	DestroyMessageWindow();
+	DestroyMessageWindow();// Destroy still open message windows
 
 	SVObjectManagerClass::Instance().DestroyRootObject();
 
@@ -4121,7 +3326,7 @@ void SVObserverApp::stopInstances()
 	SoftwareTriggerDlg::Instance().Close();
 }
 
-void SVObserverApp::OnStopAll()
+void SVObserverApp::StopAll()
 {
 	if (m_pMainWnd)
 	{
@@ -4138,7 +3343,7 @@ void SVObserverApp::OnStopAll()
 
 		SoftwareTriggerDlg::Instance().ClearTriggers();
 	}
-}// end OnStopAll
+}
 
 void SVObserverApp::SaveConfig(bool saveAs /*= false*/)
 {
@@ -4164,7 +3369,6 @@ void SVObserverApp::SaveConfig(bool saveAs /*= false*/)
 	}
 }
 
-
 void SVObserverApp::EnterRunMode()
 {
 	try
@@ -4189,7 +3393,6 @@ void SVObserverApp::StopIfRunning()
 		Sleep(1000);  // wait for running threads to quiesce
 	}
 }
-
 
 void SVObserverApp::StopSvo()
 {
@@ -4252,7 +3455,7 @@ void SVObserverApp::StopSvo()
 	}
 
 	// Signal Module Stop...
-	OnStopAll();
+	StopAll();
 
 	// Increment Offline Count
 	m_OfflineCount++;
@@ -4295,13 +3498,10 @@ void SVObserverApp::StopSvo()
 
 void SVObserverApp::RCClose()
 {
-	// Close config immediately, without hint or user message...
-	DestroyConfig(false, true);	// Close config immediately
+	DestroyConfig(false, true);	// Close config immediately, without hint or user message...
 }
 
-
-
-bool SVObserverApp::InitATL()
+bool SVObserverApp::InitATL() //@TODO [Arvid][10.20][18.10.2021]: this function is too long
 {
 	HRESULT l_Status(S_OK);
 
@@ -4498,26 +3698,6 @@ bool SVObserverApp::AddSecurityNode(HMODULE hMessageDll, long lId)
 	}
 	return l_bRet;
 }
-
-int SVObserverApp::FindMenuItem(CMenu* Menu, LPCTSTR MenuString)
-{
-	assert(Menu);
-	assert(::IsMenu(Menu->GetSafeHmenu()));
-
-	int count = Menu->GetMenuItemCount();
-	for (int i = 0; i < count; i++)
-	{
-		CString str;
-		if (Menu->GetMenuString(i, str, MF_BYPOSITION) &&
-			(strcmp(str, MenuString) == 0))
-		{
-			return i;
-		}
-	}
-
-	return -1;
-}
-
 
 #pragma endregion Private Methods
 

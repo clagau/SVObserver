@@ -77,10 +77,10 @@ public:
 	//}}AFX_DATA
 
 public:
-	void AddFileToConfig(LPCTSTR FilePath);
-	void RemoveFileFromConfig(LPCTSTR FilePath);
 	HRESULT OpenFile(LPCTSTR PathName, bool editMode = false, ConfigFileType fileType = ConfigFileType::SvzStandard);
 	HRESULT OpenSVXFile();
+	HRESULT LoadSvxFile(bool isGlobalInit);
+
 	SVIODoc* NewSVIODoc( LPCTSTR DocName, SVIOController& Controller );
 	SVIPDoc* NewSVIPDoc( LPCTSTR DocName, SVInspectionProcess& Inspection );
 
@@ -111,12 +111,9 @@ public:
 	void ValidateMRUList();
 
 	void ResetAllCounts();
-	bool AddMenuItem(HMENU hTargetMenu, const std::string& itemText, UINT itemID);
-	bool RemoveMenu(HMENU hTargetMenu,  const std::string& itemText);
 	HRESULT SetMode( unsigned long p_lNewMode );
 
 	HRESULT OnObjectRenamed(const std::string& p_rOldName, uint32_t objectId);
-	HRESULT RebuildOutputList();
 	bool SetStatusText( LPCTSTR PStrStatusText );
 
 	const std::string& getConfigPathName() const;
@@ -161,12 +158,6 @@ public:
 	void SetAllIPDocumentsOffline();
 	void ResetAllIPDocModifyFlag(BOOL bModified);
 
-	void HideIOTab( DWORD p_dwID );
-	void ShowIOTab( DWORD p_dwID );
-	void UpdateRemoteInputTabs();
-
-	HRESULT CheckDrive(const std::string& p_strDrive) const;
-
 	bool fileSaveAsSVX(const std::string& rFileName, bool resetAutoSave);
 	void executePreOrPostExecutionFile(const std::string& filepath, bool inRunMode = true);
 
@@ -175,7 +166,6 @@ public:
 	void Start(DWORD desiredState);///< In error cases this method throws an exception.
 
 	bool OpenConfigFileFromMostRecentList(int nID);
-	static int FindMenuItem(CMenu* Menu, LPCTSTR MenuString);
 	void startInstances();
 	void stopInstances();
 
@@ -218,13 +208,13 @@ protected:
 	HRESULT ConstructDocuments( SVTreeType& p_rTree );
 
 	HRESULT ConstructMissingDocuments();
-
-	bool DestroyMessageWindow();
+	
+	bool DestroyMessageWindow();///< Destroys still open message windows. Returns true, if a message window was existent. Otherwise returns false
 #pragma endregion Protected Methods
 
 #pragma region Private Methods
 private:
-	void OnStopAll();
+	void StopAll();
 	bool InitATL();
 
 	bool AddSecurityNode(HMODULE hMessageDll, long lId, LPCTSTR NTGroup, bool bForcePrompt = false);
@@ -307,7 +297,8 @@ private:
 #pragma endregion Member variables
 };
 
-extern SVObserverApp TheSVObserverApp;
+extern SVObserverApp TheSVObserverApp; //@TODO [Arvid][10.20][18.10.2021]: better use a singleton instead
+
 
 ////////////////////////////////////////////////////////////////////////////////
 //{{AFX_INSERT_LOCATION}}

@@ -19,9 +19,6 @@
 
 typedef std::map<int, SvDef::StringPair > IntStrPairMap;
 
-class SVObserverApp;
-extern SVObserverApp TheSVObserverApp;
-
 enum SVGetPathInfo
 {
 	SVDRIVE				= 0x81,			// 0000 0000 1000 0001

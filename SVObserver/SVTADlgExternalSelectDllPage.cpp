@@ -187,7 +187,9 @@ void SVTADlgExternalSelectDllPage::OnDelete()
 
 void SVTADlgExternalSelectDllPage::OnAdd()
 {
-	bool bFullAccess = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS); //@TODO [Arvid][10.20][13.7.2021] is this necessary? otherwise we could do without #include "SVObserver/svobserver.h" and move this file and its header file to SVOGui
+	//@TODO [Arvid][10.20][13.7.2021] is this necessary? otherwise we could do without #include "SVObserver/svobserver.h" and move this file and its header file to SVOGui
+	bool bFullAccess = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS); 
+	//@TODO [Arvid][10.20][18.10.2021] maybe we could have a singleton for the security manager?
 	SvMc::SVFileDialog cfd(true, bFullAccess, _T("dll"), _T(""),
 		OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
 		_T("All Files (*.*)|*.*|Dynamic Link Library(*.dll)|*.dll||"));

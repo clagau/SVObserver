@@ -13,15 +13,16 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <comdef.h>
 //Moved to precompiled header: #include <regex>
-#include "SVConfigurationObject.h"
 #include "RemoteMonitorListHelper.h"
 #include "RemoteMonitorNamedList.h"
 #include "RootObject.h"
 #include "SVCommandInspectionGetItems.h"
+#include "SVConfigurationObject.h"
 #include "SVConfigurationTreeWriter.h"
 #include "SVGlobal.h"
 #include "SVMainFrm.h"
 #include "SVIOController.h"
+#include "SVIODoc.h"
 #include "SVIOTabbedView.h"
 #include "SVIPDoc.h"
 #include "SVObserver.h"
@@ -5635,21 +5636,21 @@ void SVConfigurationObject::changeSystemResetIO(SVIMProductEnum newConfigType)
 
 	if (SVHardwareManifest::isPlcSystem(newConfigType))
 	{
-		TheSVObserverApp.ShowIOTab(SVIOPlcOutputsViewID);
+		ShowIOTabIfPossible(SVIOPlcOutputsViewID);
 	}
 	else
 	{
-		TheSVObserverApp.HideIOTab(SVIOPlcOutputsViewID);
+		HideIOTabIfPossible(SVIOPlcOutputsViewID);
 	}
 	if (SVHardwareManifest::isDiscreteIOSystem(newConfigType))
 	{
-		TheSVObserverApp.ShowIOTab(SVIODiscreteInputsViewID);
-		TheSVObserverApp.ShowIOTab(SVIODiscreteOutputsViewID);
+		ShowIOTabIfPossible(SVIODiscreteInputsViewID);
+		ShowIOTabIfPossible(SVIODiscreteOutputsViewID);
 	}
 	else
 	{
-		TheSVObserverApp.HideIOTab(SVIODiscreteInputsViewID);
-		TheSVObserverApp.HideIOTab(SVIODiscreteOutputsViewID);
+		HideIOTabIfPossible(SVIODiscreteInputsViewID);
+		HideIOTabIfPossible(SVIODiscreteOutputsViewID);
 	}
 }
 

@@ -338,7 +338,7 @@ HRESULT SVRemoteOutputDataController::DeleteRemoteOutput( const std::string& rRe
 	if( m_RemoteGroupParameters.empty() )
 	{
 		// Hide the Remote Output Tab if no outputs exist.
-		TheSVObserverApp.HideIOTab(SVRemoteOutputsViewID);
+		HideIOTabIfPossible(SVRemoteOutputsViewID);
 	}
 	return l_hr;
 }
@@ -394,7 +394,7 @@ HRESULT SVRemoteOutputDataController::ClearUnUsedData( )
 		if( m_RemoteGroupParameters.empty() )
 		{
 			// Hide the Remote Output Tab if no outputs exist.
-			TheSVObserverApp.HideIOTab(SVRemoteOutputsViewID);
+			HideIOTabIfPossible(SVRemoteOutputsViewID);
 		}
 		TheSVObserverApp.UpdateAllIOViews(); // updates the view after clearing unused.
 	}
@@ -493,11 +493,11 @@ void SVRemoteOutputDataController::SetupRemoteOutput(SVConfigurationObject* pCon
 			}
 			if( IsEmpty() )
 			{
-				TheSVObserverApp.HideIOTab( SVRemoteOutputsViewID );
+				HideIOTabIfPossible( SVRemoteOutputsViewID );
 			}
 			else
 			{
-				TheSVObserverApp.ShowIOTab( SVRemoteOutputsViewID );
+				ShowIOTabIfPossible( SVRemoteOutputsViewID );
 			}
 			TheSVObserverApp.UpdateAllIOViews();
 		}

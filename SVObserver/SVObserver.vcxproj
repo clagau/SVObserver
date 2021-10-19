@@ -185,6 +185,7 @@ echo %time%
     <ClCompile Include="ExtrasEngine.cpp" />
     <ClCompile Include="FramedSplitterWnd.cpp" />
     <ClCompile Include="GlobalConstantView.cpp" />
+    <ClCompile Include="GuiHelpers.cpp" />
     <ClCompile Include="InitialInformationHandler.cpp" />
     <ClCompile Include="LoadConfigWarning.cpp" />
     <ClCompile Include="MonitorListAddRemoveDlg.cpp" />
@@ -278,6 +279,7 @@ echo %time%
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</MultiProcessorCompilation>
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</MultiProcessorCompilation>
     </ClCompile>
+    <ClCompile Include="SVObserverOuttakes.cpp" />
     <ClCompile Include="SVOCameraDlg.cpp" />
     <ClCompile Include="SVOCameraList.cpp" />
     <ClCompile Include="SVOCameraObj.cpp" />
@@ -381,6 +383,7 @@ echo %time%
     <ClInclude Include="ExtrasEngine.h" />
     <ClInclude Include="FramedSplitterWnd.h" />
     <ClInclude Include="GlobalConstantView.h" />
+    <ClInclude Include="GuiHelpers.h" />
     <ClInclude Include="InitialInformationHandler.h" />
     <ClInclude Include="LoadConfigWarning.h" />
     <ClInclude Include="MonitorListAddRemoveDlg.h" />
@@ -468,6 +471,7 @@ echo %time%
     <ClInclude Include="SVObjectScriptParserBase.h" />
     <ClInclude Include="SVObserver.h" />
     <ClInclude Include="SVObserverCP.h" />
+    <ClInclude Include="SVObserverOuttakes.h" />
     <ClInclude Include="SVOCameraDlg.h" />
     <ClInclude Include="SVOCameraList.h" />
     <ClInclude Include="SVOCameraObj.h" />

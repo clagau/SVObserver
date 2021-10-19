@@ -51,6 +51,9 @@ public:
 
 	void updateGlobalConstantsView() const;
 
+	void ShowIOTab(DWORD dwID);
+	void HideIOTab(DWORD dwID);
+
 #ifdef _DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
@@ -68,5 +71,10 @@ private:
 	SVIOController* m_pIOController;
 };
 
+
 //{{AFX_INSERT_LOCATION}}
+
+void ShowIOTabIfPossible(DWORD dwID);
+void HideIOTabIfPossible(DWORD dwID);
+
 

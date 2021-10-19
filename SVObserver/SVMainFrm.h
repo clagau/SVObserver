@@ -59,10 +59,6 @@ public:
 	virtual void OnUpdateFrameTitle(BOOL bAddToTitle) override;
 	void UpdateFrameTitleForDocument(LPCTSTR lpszDocName);
 
-	// MFC 1.0 backward compatible CreateClient hook (called by OnCreateClient)
-	virtual BOOL CreateClient(LPCREATESTRUCT lpCreateStruct, CMenu* pWindowMenu) override;
-
-
 	SVRegressionRunDlg* m_pregTestDlg;
 
 	//{{AFX_VIRTUAL(SVMainFrame)

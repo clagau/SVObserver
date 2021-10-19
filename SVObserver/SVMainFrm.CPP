@@ -12,6 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "ExtrasEngine.h"
+#include "GuiHelpers.h"
 #include "RemoteCommand.h"
 #include "RootObject.h"
 #include "SVAboutDialogClass.h"
@@ -27,12 +28,10 @@
 #include "SVImageView.h"
 #include "SVImageViewScroll.h"
 #include "SVInspectionProcess.h"
-#include "SVInspectionTreeParser.h"
 #include "SVMainFrm.h"
-#include "SVObjectScriptParser.h"
 #include "SVObserver.h"
+#include "SVObserverOuttakes.h"
 #include "SVPPQObject.h"
-#include "SVParserProgressDialog.h"
 #include "SVRegressionRunDlg.h"
 #include "SVThreadInfoDlg.h"
 #include "SVUtilities.h"
@@ -52,8 +51,6 @@
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVSystemLibrary/SVVersionInfo.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "SVXMLLibrary/SVConfigurationTags.h"
-#include "SVXMLLibrary/SVNavigateTree.h"
 #pragma endregion Includes
 
 
@@ -324,70 +321,6 @@ BOOL SVMainFrame::Create( LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD d
 ////////////////////////////////////////////////////////////////////////////////
 // Creating Operations(s)
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVMainFrame::CreateClient(LPCREATESTRUCT lpCreateStruct, CMenu* pWindowMenu)
-{
-	assert( nullptr != m_hWnd );
-	assert( nullptr == m_hWndMDIClient );
-	DWORD dwStyle = WS_VISIBLE | WS_CHILD | WS_BORDER | 
-		WS_CLIPCHILDREN | WS_CLIPSIBLINGS | 
-		MDIS_ALLCHILDSTYLES;    // allow children to be created invisible
-	DWORD dwExStyle = 0;
-	// will be inset by the frame
-
-	dwStyle &= ~WS_BORDER;
-	dwExStyle = WS_EX_CLIENTEDGE;
-
-	WNDCLASS	windowClass;
-
-	if (!(::GetClassInfo( AfxGetInstanceHandle(), "SVObserverMDIClient", &windowClass)))
-	{
-
-	if( !GetClassInfo( AfxGetInstanceHandle(), _T( "mdiclient" ), &windowClass ) )
-		return FALSE; 
-
-	// Use Körber Grey (RGB( 204, 204, 204 ) for the application's background.
-	m_BackgroundBrush.CreateSolidBrush( SvDef::KoerberGray );
-	windowClass.hbrBackground = m_BackgroundBrush.operator HBRUSH();
-	windowClass.lpszClassName = _T( "SVObserverMDIClient" );
-
-	if( !AfxRegisterClass( &windowClass ) )
-		return( false );
-	}
-	
-	CLIENTCREATESTRUCT ccs;
-	ccs.hWindowMenu = pWindowMenu->GetSafeHmenu();
-		// set hWindowMenu for MFC V1 backward compatibility
-		// for MFC V2, window menu will be set in OnMDIActivate
-	ccs.idFirstChild = AFX_IDM_FIRST_MDICHILD;
-
-	if( lpCreateStruct->style &( WS_HSCROLL | WS_VSCROLL ) )
-	{
-		// parent MDIFrame's scroll styles move to the MDICLIENT
-		dwStyle |=( lpCreateStruct->style &( WS_HSCROLL | WS_VSCROLL ) );
-
-		// fast way to turn off the scrollbar bits( without a resize )
-		ModifyStyle( WS_HSCROLL | WS_VSCROLL, 0, SWP_NOREDRAW | SWP_FRAMECHANGED );
-	}
-
-	// Create MDICLIENT control with special IDC
-	if( nullptr == ( m_hWndMDIClient = ::CreateWindowEx( dwExStyle,
-											  _T(  "SVObserverMDIClient"  ), 
-											  nullptr,
-											  dwStyle, 
-											  0, 0, 0, 0,
-											  m_hWnd,
-											  ( HMENU )AFX_IDW_PANE_FIRST,
-											  AfxGetInstanceHandle(),
-											  ( LPVOID )&ccs ) ) )
-	{
-		return false;
-	}
-	// Move it to the top of z-order
-	::BringWindowToTop( m_hWndMDIClient );
-
-	return true;
-}
-
 //******************************************************************************
 // Class Wizard Generated Virtual Function(s):
 //******************************************************************************
@@ -705,19 +638,19 @@ void SVMainFrame::OnFileNewConfig()
 
 				if (pConfig->GetRemoteOutputGroupCount() == 0)
 				{
-					TheSVObserverApp.HideIOTab(SVRemoteOutputsViewID);
+					HideIOTabIfPossible(SVRemoteOutputsViewID);
 				}
 			}
 			else
 			{
-				TheSVObserverApp.HideIOTab(SVRemoteOutputsViewID);
+				HideIOTabIfPossible(SVRemoteOutputsViewID);
 			}
 
 			// Never any Remotely Monitored Items on a New Configuration...
-			TheSVObserverApp.HideIOTab(SVRemoteMonitorListViewID);
+			HideIOTabIfPossible(SVRemoteMonitorListViewID);
 
 			// Update Remote Inputs Tab
-			TheSVObserverApp.UpdateRemoteInputTabs();
+			UpdateRemoteInputTabs(TheSVObserverApp.GetIODoc());
 		}
 	}
 	SVSVIMStateClass::RemoveState(SV_STATE_CREATING);
@@ -775,7 +708,7 @@ void SVMainFrame::OnFileOpenSVC()
 		}// end if ( svFileName.SelectFile() )
 	}// end if ( S_OK == TheSVObserverApp.m_svSecurityMgr.Validate( SECURITY_POINT_FILE_MENU_SELECT_CONFIGURATION) )
 	// Update Remote Inputs Tab
-	TheSVObserverApp.UpdateRemoteInputTabs();
+	UpdateRemoteInputTabs(TheSVObserverApp.GetIODoc());
 }
 
 
@@ -1200,17 +1133,17 @@ void SVMainFrame::OnExtrasSecuritySetup()
 			pMenu = pWindow->GetMenu();
 
 			// Look for "Extras" menu.
-			int pos = TheSVObserverApp.FindMenuItem(pMenu, "E&xtras");
+			int pos = FindMenuItem(pMenu, "E&xtras");
 			if (pos == -1)
 			{
 				return;
 			}
 
 			CMenu* submenu = pMenu->GetSubMenu(pos);
-			pos = TheSVObserverApp.FindMenuItem(submenu, "&Security Setup");
+			pos = FindMenuItem(submenu, "&Security Setup");
 			if (pos > -1)
 			{
-				if (TheSVObserverApp.FindMenuItem(submenu, "User Log&out") == -1)
+				if (FindMenuItem(submenu, "User Log&out") == -1)
 				{
 					submenu->InsertMenu(pos, MF_BYPOSITION, ID_EXTRAS_LOGOUT, "User Log&out");
 					submenu->InsertMenu(pos, MF_BYPOSITION, ID_EXTRAS_LOGIN, "User &Login");
@@ -1638,12 +1571,12 @@ void SVMainFrame::OnUpdateEditRemoteInputs(CCmdUI* PCmdUI)
 		// If there are more than 100, then the user will have to go to the inspection to edit published results
 		// If more are to be supported, then these resources for the ID_EDIT_PUBLISHEDRESULTS_LIMIT will need changed. 
 		const SVInspectionProcessVector& rInspections = pConfig->GetInspections();
-		TheSVObserverApp.RemoveMenu(hmen, _T("&Edit\\Published Results")); // start empty.
+		RemoveMenu(hmen, _T("&Edit\\Published Results")); // start empty.
 		for (UINT i = 0; i < static_cast<UINT>(rInspections.size()) && i < (ID_EDIT_PUBLISHEDRESULTS_LIMIT - ID_EDIT_PUBLISHEDRESULTS_BASE + 1); i++)
 		{
 			// Add a menu for each inspection.
 			std::string Name = SvUl::Format(_T("&Edit\\Published Results\\%s"), rInspections[i]->GetName());
-			TheSVObserverApp.AddMenuItem(hmen, Name, static_cast<UINT>(ID_EDIT_PUBLISHEDRESULTS_BASE + i));
+			AddMenuItem(hmen, Name, static_cast<UINT>(ID_EDIT_PUBLISHEDRESULTS_BASE + i));
 		}
 	}
 }
@@ -2143,7 +2076,7 @@ LRESULT SVMainFrame::RemoteRegisterMonitorList( WPARAM , LPARAM  )
 LRESULT SVMainFrame::onAddFileToConfig(WPARAM , LPARAM lParam)
 {
 	LPCTSTR pFileName = reinterpret_cast<LPCTSTR> (lParam);
-	TheSVObserverApp.AddFileToConfig(pFileName);
+	AddFileToConfig(pFileName);
 	return 0;
 }
 
@@ -2261,162 +2194,6 @@ void SVMainFrame::OnUpdateToolbarZoom(CCmdUI *pCmdUI)
 	{
 		pCmdUI->SetCheck( 0 );
 	}
-}
-
-HRESULT SVMainFrame::ParseToolsetScripts( SVTreeType& p_rTree )
-{
-	HRESULT l_Status( S_OK );
-
-	SVTreeType::SVBranchHandle hItemToolset = nullptr;
-	SVTreeType::SVBranchHandle htiChild = nullptr;
-
-	if( SvXml::SVNavigateTree::GetItemBranch( p_rTree, SvXml::CTAG_INSPECTION, nullptr, htiChild ) )
-	{
-		// Set the Caption
-		CString title = _T( "Loading Toolset(s) ..." );
-		SVParserProgressDialog l_ParserProgressDialog( title, this );
-
-		SVTreeType::SVBranchHandle htiSubChild( p_rTree.getFirstBranch( htiChild ) );
-		;
-		while( S_OK == l_Status && nullptr != htiSubChild )
-		{
-			std::shared_ptr<std::string> pToolsetScript{ new std::string };
-			uint32_t ownerId = SvDef::InvalidObjectId;
-
-			SVInspectionProcess* pInspect( nullptr );
-			SVTreeType::SVBranchHandle htiSVIPDoc = nullptr;
-			SVTreeType::SVBranchHandle htiDataChild( p_rTree.getFirstBranch( htiSubChild ) );
-
-			while( nullptr != htiDataChild )
-			{
-				std::string DataName = p_rTree.getBranchName( htiDataChild );
-
-				if ( 0 == DataName.compare( SvXml::CTAG_INSPECTION_PROCESS ) )
-				{
-					if( SvXml::SVNavigateTree::GetItemBranch( p_rTree, SvXml::CTAG_TOOLSET_SET, htiDataChild, hItemToolset ) )
-					{
-						_variant_t svVariant;
-
-						if( SvXml::SVNavigateTree::GetItem( p_rTree, SvXml::CTAG_UNIQUE_REFERENCE_ID, htiDataChild, svVariant ) )
-						{
-							ownerId = calcObjectId(svVariant);
-						}
-					}
-				}
-				else if ( 0 == DataName.compare( SvXml::CTAG_SVIPDOC ) )
-				{
-					htiSVIPDoc = htiDataChild;
-				}
-
-				htiDataChild = p_rTree.getNextBranch( htiSubChild, htiDataChild );
-			}
-
-			if( nullptr != htiSVIPDoc )
-			{
-				_variant_t svVariant;
-
-				if (SvDef::InvalidObjectId == ownerId)
-				{
-					if( SvXml::SVNavigateTree::GetItem( p_rTree, SvXml::CTAG_UNIQUE_REFERENCE_ID, htiSVIPDoc, svVariant ) )
-					{
-						ownerId = calcObjectId(svVariant);
-					}
-					else
-					{
-						l_Status = E_FAIL;
-					}
-				}
-
-				if( S_OK == l_Status )
-				{
-					if( SvXml::SVNavigateTree::GetItem( p_rTree, SvXml::CTAG_TOOLSET_SCRIPT, htiSVIPDoc, svVariant ) )
-					{
-						std::string NewString = SvUl::LoadStdString( IDS_OBJECTNAME_PAT_DELTAPOS );
-
-						std::string ToolsetScript = SvUl::createStdString( svVariant );
-
-						// Pre-Parse Typo fix.
-						// This peice of code fixes the Angel to Angle typo.
-						SvUl::searchAndReplace( ToolsetScript, _T("Axis Secondary Angel"), _T("Axis Secondary Angle") );
-
-						// Pre-Parse Typo fix number two.
-						// This peice of code fixes the Principle to Principal typo.
-						SvUl::searchAndReplace( ToolsetScript, _T("Axis Principle Angle"), _T("Axis Principal Angle") );
-
-						// Pre-Parse Type fix number three.
-						// This piece of code changes "Angle delta Positive" to "Angle Delta Positive".
-						SvUl::searchAndReplace( ToolsetScript, _T("Angle delta Positive"), NewString.c_str() );
-
-						*pToolsetScript = ToolsetScript;
-					}
-					else if( nullptr == hItemToolset )
-					{
-						l_Status = E_FAIL;
-					}
-				}
-			}
-			else
-			{
-				l_Status = E_FAIL;
-			}
-
-			if( S_OK == l_Status )
-			{
-				if (SvDef::InvalidObjectId != ownerId)
-				{
-					pInspect = dynamic_cast< SVInspectionProcess* >( SVObjectManagerClass::Instance().GetObject( ownerId ) );
-
-					if( nullptr == pInspect )
-					{
-						l_Status = E_FAIL;
-					}
-				}
-				else
-				{
-					l_Status = E_FAIL;
-				}
-			}
-
-			SVConfigurationObject* pConfig( nullptr );
-			SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
-
-			if( S_OK == l_Status && nullptr != pConfig )
-			{
-				unsigned long parserHandle = SVObjectScriptParser::GetParserHandle();
-				if (nullptr == hItemToolset)
-				{
-					l_Status = E_FAIL;
-				}
-				else // new parsing
-				{
-					SVConfigurationObject::updateConfTreeToNewestVersion(p_rTree, hItemToolset);
-					SVObjectScriptParser* pParser = new SVObjectScriptParser(new SVInspectionTreeParser< SVTreeType >(p_rTree, hItemToolset, parserHandle, ownerId, pInspect, &l_ParserProgressDialog));
-					if( nullptr != pParser )
-					{
-						// Set the Parser Object
-						l_ParserProgressDialog.AddParser(parserHandle, pParser);
-					}
-					else
-					{
-						l_Status = E_FAIL;
-					}
-				}
-			}
-			htiSubChild = p_rTree.getNextBranch( htiChild, htiSubChild );
-		}
-
-		if( S_OK == l_Status )
-		{
-			// Show the Dialog
-			l_ParserProgressDialog.DoModal();
-		}
-	}
-	else
-	{
-		l_Status = E_FAIL;
-	}
-
-	return l_Status;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -2929,32 +2706,6 @@ void SVMainFrame::InitToolBars()
 	ShowControlBar(&m_wndStatusBar, true, false);
 }
 
-// get the Document Template for the SVIPDoc
-static CMultiDocTemplate* getIPDocTemplate()
-{
-	CWinApp& rApp = TheSVObserverApp;
-	CMultiDocTemplate* pTemplate = nullptr;
-	POSITION pos = rApp.GetFirstDocTemplatePosition();
-	while (!pTemplate && pos)
-	{
-		CMultiDocTemplate* pDocTemplate = dynamic_cast<CMultiDocTemplate*>(rApp.GetNextDocTemplate(pos));
-		if (pDocTemplate)
-		{
-			POSITION posDoc = pDocTemplate->GetFirstDocPosition();
-			while (!pTemplate && posDoc)
-			{
-				CDocument* pDoc = pDocTemplate->GetNextDoc(posDoc);
-				if (pDoc && pDoc->IsKindOf(RUNTIME_CLASS(SVIPDoc)))
-				{
-					pTemplate = pDocTemplate;
-				}
-			}
-		}
-	}
-	return pTemplate;
-}
-
-
 void EnableTriggerSettings(bool enable)
 {
 	if (enable == false)
@@ -2990,6 +2741,31 @@ void EnableTriggerSettings(bool enable)
 	}
 }
 
+
+// get the Document Template for the SVIPDoc
+CMultiDocTemplate* getIPDocTemplate()
+{
+	CWinApp& rApp = TheSVObserverApp;
+	CMultiDocTemplate* pTemplate = nullptr;
+	POSITION pos = rApp.GetFirstDocTemplatePosition();
+	while (!pTemplate && pos)
+	{
+		CMultiDocTemplate* pDocTemplate = dynamic_cast<CMultiDocTemplate*>(rApp.GetNextDocTemplate(pos));
+		if (pDocTemplate)
+		{
+			POSITION posDoc = pDocTemplate->GetFirstDocPosition();
+			while (!pTemplate && posDoc)
+			{
+				CDocument* pDoc = pDocTemplate->GetNextDoc(posDoc);
+				if (pDoc && pDoc->IsKindOf(RUNTIME_CLASS(SVIPDoc)))
+				{
+					pTemplate = pDocTemplate;
+				}
+			}
+		}
+	}
+	return pTemplate;
+}
 
 
 

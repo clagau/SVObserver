@@ -3,7 +3,7 @@
 // * All Rights Reserved
 // ******************************************************************************
 // * .Module Name     : SVOCMGlobals
-// * .File Name       : $Workfile:   SVOCMGlobals.h  $
+// * .File Name       : $Workfile:   LoadConfiguration.h  $
 // * ----------------------------------------------------------------------------
 // * .Current Version : $Revision:   1.2  $
 // * .Check In Date   : $Date:   03 Sep 2014 15:54:44  $

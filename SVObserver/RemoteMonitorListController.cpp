@@ -18,6 +18,7 @@
 #include "RemoteMonitorList.h"
 #include "RemoteMonitorListHelper.h"
 #include "SVConfigurationObject.h"
+#include "SVIODoc.h"
 #include "SVIOTabbedView.h"
 #include "SVObserver.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
@@ -149,21 +150,21 @@ void RemoteMonitorListController::HideShowViewTab()
 {
 	if (IsEmpty())
 	{
-		TheSVObserverApp.HideIOTab(SVRemoteMonitorListViewID);
+		HideIOTabIfPossible(SVRemoteMonitorListViewID);
 	}
 	else
 	{
-		TheSVObserverApp.ShowIOTab(SVRemoteMonitorListViewID);
+		ShowIOTabIfPossible(SVRemoteMonitorListViewID);
 	}
 
 	TheSVObserverApp.UpdateAllIOViews();
 }
 
-// This seems to never be called...
 void RemoteMonitorListController::ResetObject()
 {
 	ValidateInputs();
 }
+
 
 // must exist and must be published
 bool RemoteMonitorListController::IsValidMonitoredObject(const SVObjectClass* pObject)
@@ -251,7 +252,7 @@ void RemoteMonitorListController::ValidateInputs()
 	}
 	if (IsEmpty())
 	{
-		TheSVObserverApp.HideIOTab(SVRemoteMonitorListViewID);
+		HideIOTabIfPossible(SVRemoteMonitorListViewID);
 	}
 }
 

@@ -31,6 +31,7 @@
 #include "SVLutDlg.h"
 #include "SVMainFrm.h"
 #include "SVObserver.h"
+#include "SVObserverOuttakes.h"
 #include "SVPPQObject.h"
 #include "SVRegressionRunDlg.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
@@ -3173,7 +3174,7 @@ bool SVIPDoc::deleteTool(NavigatorElement* pNaviElement)
 	SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 	if (S_OK == responseCmd.hresult())
 	{
-		TheSVObserverApp.RebuildOutputList();
+		RebuildOutputObjectListHelper(TheSVObserverApp.GetIODoc());
 	}
 	else if (responseCmd.has_standardresponse())
 	{

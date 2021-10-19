@@ -291,11 +291,11 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 		count = pInputList->getRemoteInputCount();
 		if( count > 0 )
 		{
-			TheSVObserverApp.ShowIOTab(SVIORemoteInputsViewID);
+			ShowIOTabIfPossible(SVIORemoteInputsViewID);
 		}
 		else
 		{
-			TheSVObserverApp.HideIOTab(SVIORemoteInputsViewID);
+			HideIOTabIfPossible(SVIORemoteInputsViewID);
 		}
 	}// end if
 }// end OnExtrasEditRemoteInputs
@@ -353,3 +353,81 @@ void SVIODoc::SetIOController(SVIOController* pController)
 	pController->SetIODoc(this);
 }
 
+void SVIODoc::HideIOTab(DWORD dwID)
+{
+	POSITION lViewPos = GetFirstViewPosition();
+	do
+	{
+		CView* pView = GetNextView(lViewPos);
+
+		SVIOTabbedView* pIOView = dynamic_cast<SVIOTabbedView*>(pView->GetParentFrame());
+		if (nullptr != pIOView)
+		{
+			TVisualObject* pCurrentTab = pIOView->m_Framework.GetActivePane();
+			TVisualObject* pHideTab = pIOView->m_Framework.Get(dwID);
+			//If tab to be hidden is active tab then select first visible tab
+			if (pCurrentTab == pHideTab)
+			{
+				for (const auto tabID : IOTabViews)
+				{
+					TVisualObject* pTab = pIOView->m_Framework.Get(tabID);
+					BOOL isVisible(false);
+					if (nullptr != pTab && pHideTab != pTab && pTab->IsTabVisible(isVisible) && isVisible)
+					{
+						pIOView->m_Framework.SetActiveTab(pTab);
+						pTab->SetActivePane();
+						break;
+					}
+				}
+			}
+			pHideTab->ShowTab(false);
+			break;
+		}
+	} while (lViewPos);
+}
+
+
+void SVIODoc::ShowIOTab(DWORD dwID)
+{
+	POSITION lViewPos = GetFirstViewPosition();
+	do
+	{
+		CView* pView = GetNextView(lViewPos);
+
+		SVIOTabbedView* pIOView = dynamic_cast<SVIOTabbedView*>(pView->GetParentFrame());
+		if (nullptr != pIOView)
+		{
+			TVisualObject* pShowTab = pIOView->m_Framework.Get(dwID);
+			if (nullptr != pShowTab)
+			{
+				pShowTab->ShowTab(true);
+				pIOView->m_Framework.SetActiveTab(pShowTab);
+				pShowTab->SetActivePane();
+			}
+			break;
+		}
+	} while (lViewPos);
+}
+
+
+
+
+void ShowIOTabIfPossible(DWORD dwID)
+{
+	auto pIODoc = TheSVObserverApp.GetIODoc();
+
+	if (nullptr != pIODoc)
+	{
+		pIODoc->ShowIOTab(dwID);
+	}
+}
+
+void HideIOTabIfPossible(DWORD dwID)
+{
+	auto pIODoc = TheSVObserverApp.GetIODoc();
+
+	if (nullptr != pIODoc)
+	{
+		pIODoc->HideIOTab(dwID);
+	}
+}
