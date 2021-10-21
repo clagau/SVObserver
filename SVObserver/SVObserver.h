@@ -70,6 +70,8 @@ public:
 	virtual void Serialize(CArchive& ar) override;
 	virtual int ExitInstance() override;
 	virtual int Run() override;
+	afx_msg BOOL OnOpenRecentFile(UINT NID);
+
 	//}}AFX_VIRTUAL
 #pragma endregion AFX_VIRTUAL Methods
 
@@ -219,9 +221,10 @@ private:
 
 	bool AddSecurityNode(HMODULE hMessageDll, long lId, LPCTSTR NTGroup, bool bForcePrompt = false);
 	bool AddSecurityNode( HMODULE hMessageDll, long lId );
-
-	
+		
 	void StartTrigger(SVConfigurationObject* pConfig);///< can throw an exception!
+
+	afx_msg void OnUpdateRecentFileMenu(CCmdUI* PCmdUI);
 
 
 #pragma endregion Private Methods

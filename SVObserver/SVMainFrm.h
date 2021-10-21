@@ -127,7 +127,6 @@ private:
 	afx_msg void OnGoOnline();
 
 	afx_msg void OnFilePrintConfig();
-	afx_msg BOOL OnOpenRecentFile(UINT NID);
 
 	afx_msg void OnExtrasLogin();
 	afx_msg void OnExtrasLogout();
@@ -187,7 +186,6 @@ private:
 	afx_msg void OnUpdateFilePrintConfig(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateExtrasLogout(CCmdUI* PCmdUI);
 	afx_msg void OnRunMostRecentMRU();
-	afx_msg void OnUpdateRecentFileMenu(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateExtraUtilities(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateEditPublishedResults(CCmdUI* PCmdUI);
 	afx_msg void OnUpdatePublishedResultsPicker(CCmdUI* pCmdUI);

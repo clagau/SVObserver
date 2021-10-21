@@ -136,6 +136,9 @@ IMPLEMENT_SERIAL(SVObserverApp, CWinApp, 0);
 
 BEGIN_MESSAGE_MAP(SVObserverApp, CWinApp)
 	//{{AFX_MSG_MAP(SVObserverApp)
+	//@TODO [Arvid][10.20][20.10.2021] Moved this back here because OnOpenRecentFile was not called after the first time when this was in SVMainframe.h
+	ON_COMMAND_EX_RANGE(ID_FILE_MRU_FILE1, ID_FILE_MRU_FILE16, OnOpenRecentFile)
+	ON_UPDATE_COMMAND_UI_RANGE(ID_FILE_MRU_FILE1, ID_FILE_MRU_FILE16, OnUpdateRecentFileMenu)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -3697,6 +3700,50 @@ bool SVObserverApp::AddSecurityNode(HMODULE hMessageDll, long lId)
 		LocalFree(pszTmp);
 	}
 	return l_bRet;
+}
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Command message processor for range: ID_FILE_MRU_FILE1, ID_FILE_MRU_FILE16
+//
+BOOL SVObserverApp::OnOpenRecentFile(UINT nID)
+{
+	if (S_OK == m_svSecurityMgr.SVValidate(SECURITY_POINT_FILE_MENU_RECENT_CONFIGURATIONS))
+	{
+		ValidateMRUList();
+
+		if (!SVSVIMStateClass::CheckState(SV_STATE_UNAVAILABLE))
+		{
+			bool bRunning = SVSVIMStateClass::CheckState(SV_STATE_RUNNING);
+
+			if (!bRunning)
+			{
+				bool l_bOk = OpenConfigFileFromMostRecentList(nID);
+				if (l_bOk && !m_svSecurityMgr.SVIsSecured(SECURITY_POINT_MODE_MENU_EDIT_TOOLSET))
+				{
+					SetModeEdit(true); // Set Edit mode
+				}
+			}
+		}
+	}
+
+	// @HACK - This method is always returning TRUE.
+	return true;
+}
+
+
+void SVObserverApp::OnUpdateRecentFileMenu(CCmdUI* PCmdUI)
+{
+	OnUpdateRecentFileMenuWrapper(PCmdUI);
+
+	bool bEnable = (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_REGRESSION | SV_STATE_TEST)
+		&& m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_RECENT_CONFIGURATIONS) && (SVOLicenseManager::Instance().HasMatroxLicense()));
+
+	if (false == bEnable)
+	{
+		for (long l = ID_FILE_MRU_FILE1; l < (long)(PCmdUI->m_nID); l++)
+			PCmdUI->m_pMenu->EnableMenuItem(l, MF_BYCOMMAND | MF_GRAYED);
+	}
 }
 
 #pragma endregion Private Methods

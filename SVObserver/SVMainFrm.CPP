@@ -99,7 +99,6 @@ BEGIN_MESSAGE_MAP(SVMainFrame, CMDIFrameWnd)
 	ON_COMMAND(ID_STOP, OnStop)
 
 	ON_COMMAND(ID_FILE_PRINT_CONFIG, OnFilePrintConfig)
-	ON_COMMAND_EX_RANGE(ID_FILE_MRU_FILE1, ID_FILE_MRU_FILE16, OnOpenRecentFile)
 
 	ON_COMMAND(ID_EXTRAS_LOGOUT, OnExtrasLogout)
 	ON_COMMAND(ID_EXTRAS_LOGIN, OnExtrasLogin)
@@ -149,7 +148,6 @@ BEGIN_MESSAGE_MAP(SVMainFrame, CMDIFrameWnd)
 	ON_UPDATE_COMMAND_UI(ID_FILE_PRINT_CONFIG, OnUpdateFilePrintConfig)
 	ON_UPDATE_COMMAND_UI(ID_FILE_PRINT_PREVIEW, OnUpdateFilePrintPreview)
 	ON_UPDATE_COMMAND_UI(ID_FILE_PRINT_SETUP, OnUpdateFilePrintSetup)
-	ON_UPDATE_COMMAND_UI_RANGE(ID_FILE_MRU_FILE1, ID_FILE_MRU_FILE16, OnUpdateRecentFileMenu)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_DELETE, OnUpdateEditDelete)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_EDITIOLIST, OnUpdateEditIOList)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_EDITENVIRONMENT, OnUpdateEditEnvironment)
@@ -1045,34 +1043,6 @@ void SVMainFrame::OnFilePrintConfig()
 	}
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// Command message processor for range: ID_FILE_MRU_FILE1, ID_FILE_MRU_FILE16
-//
-BOOL SVMainFrame::OnOpenRecentFile(UINT nID)
-{
-	if (S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate(SECURITY_POINT_FILE_MENU_RECENT_CONFIGURATIONS))
-	{
-		TheSVObserverApp.ValidateMRUList();
-
-		if (!SVSVIMStateClass::CheckState(SV_STATE_UNAVAILABLE))
-		{
-			bool bRunning = SVSVIMStateClass::CheckState(SV_STATE_RUNNING);
-
-			if (!bRunning)
-			{
-				bool l_bOk = TheSVObserverApp.OpenConfigFileFromMostRecentList(nID);
-				if (l_bOk && !TheSVObserverApp.m_svSecurityMgr.SVIsSecured(SECURITY_POINT_MODE_MENU_EDIT_TOOLSET))
-				{
-					TheSVObserverApp.SetModeEdit(true); // Set Edit mode
-				}
-			}
-		}
-	}
-
-	// @HACK - This method is always returning TRUE.
-	return true;
-}
-
 void SVMainFrame::OnExtrasLogin()
 {
 	TheSVObserverApp.m_svSecurityMgr.SVLogon();
@@ -1750,17 +1720,6 @@ void SVMainFrame::OnUpdateExtrasLogout(CCmdUI* PCmdUI)
 	PCmdUI->Enable(TheSVObserverApp.m_svSecurityMgr.SVIsLoggedOn());
 }
 
-
-void SVMainFrame::OnUpdateRecentFileMenu(CCmdUI* PCmdUI)
-{
-	TheSVObserverApp.OnUpdateRecentFileMenuWrapper(PCmdUI);
-
-	bool bEnable = (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_REGRESSION | SV_STATE_TEST)
-		&& TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_RECENT_CONFIGURATIONS) && (SVOLicenseManager::Instance().HasMatroxLicense()));
-
-	for (long l = ID_FILE_MRU_FILE1; !bEnable && l < (long)(PCmdUI->m_nID); l++)
-		PCmdUI->m_pMenu->EnableMenuItem(l, MF_BYCOMMAND | MF_GRAYED);
-}
 
 void SVMainFrame::OnUpdateExtraUtilities(CCmdUI* PCmdUI)
 {
