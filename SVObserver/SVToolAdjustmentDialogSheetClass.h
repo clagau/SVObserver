@@ -19,7 +19,7 @@ namespace SvOi
 
 namespace SvOg
 {
-	class SVExternalToolImageSelectPage;
+	class SVTADlgExternalToolImageSelectPage;
 }
 
 namespace SvOp

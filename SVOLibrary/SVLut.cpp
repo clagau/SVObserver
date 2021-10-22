@@ -99,7 +99,7 @@ bool SVLutInfo::SetTransformOperation(const SVLutTransformOperation& rOperation)
 	return nullptr != mpTransform;
 }
 
-SVHANDLE SVLutInfo::GetHandle() const
+unsigned long SVLutInfo::GetHandle() const
 {
 	return mHandle;
 }

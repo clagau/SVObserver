@@ -2,8 +2,8 @@
 //* COPYRIGHT (c) 2008 by Seidenader Vision Inc., Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVUtilityGlobals
-//* .File Name       : $Workfile:   SVUtilityGlobals.cpp  $
+//* .Module Name     : SVFileSystemLibrary
+//* .File Name       : $Workfile:   FilepathUtilities.cpp  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   25 Apr 2013 19:39:08  $
@@ -11,7 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "SVUtilityGlobals.h"
+#include "FilepathUtilities.h"
 #pragma endregion Includes
 
 void KeepPrevError( HRESULT& p_rhrPrev, HRESULT p_hrNew )

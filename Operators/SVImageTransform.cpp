@@ -18,6 +18,7 @@
 #include "SVMatroxLibrary/SVMatroxImageRotateStruct.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "InspectionEngine/RunStatus.h"
+#include "SVFileSystemLibrary/FilepathUtilities.h"
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "Tools/SVTool.h"

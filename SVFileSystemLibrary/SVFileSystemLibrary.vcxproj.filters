@@ -30,6 +30,9 @@
     <ClCompile Include="SVFileNameManagerClass.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="FilepathUtilities.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -54,6 +57,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVFileNameManagerClass.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="FilepathUtilities.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

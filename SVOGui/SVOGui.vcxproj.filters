@@ -99,9 +99,6 @@
     <ClCompile Include="SVEdgeMarkerAdjustmentPageClass.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVExternalToolImageSelectPage.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVFillBlobDlg.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -267,6 +264,9 @@
     <ClCompile Include="ToolSizeController.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="SVTADlgExternalToolImageSelectPage.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AuxiliaryExtentsController.h">
@@ -372,9 +372,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVEdgeMarkerAdjustmentPageClass.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVExternalToolImageSelectPage.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVFillBlobDlg.h">
@@ -546,6 +543,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="ToolSizeController.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVTADlgExternalToolImageSelectPage.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

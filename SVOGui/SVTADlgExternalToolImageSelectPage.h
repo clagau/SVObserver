@@ -2,8 +2,8 @@
 //* COPYRIGHT (c) 2004 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVExternalToolImageSelectPage
-//* .File Name       : $Workfile:   SVExternalToolImageSelectPage.h  $
+//* .Module Name     : SVTADlgExternalToolImageSelectPage
+//* .File Name       : $Workfile:   SVTADlgExternalToolImageSelectPage.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.1  $
 //* .Check In Date   : $Date:   26 Jun 2014 17:30:38  $
@@ -22,27 +22,27 @@
 
 namespace SvOg
 {
-	class SVExternalToolImageSelectPage : public CPropertyPage
+	class SVTADlgExternalToolImageSelectPage : public CPropertyPage
 	{
 		typedef std::map<UINT, std::string> ImageInputList; // maps CtrlID to InputName
 
 	#pragma region Constructor
 	public:
-		SVExternalToolImageSelectPage(uint32_t inspectionId, uint32_t taskObjectId, int id = IDD);
-		virtual ~SVExternalToolImageSelectPage() {}
+		SVTADlgExternalToolImageSelectPage(uint32_t inspectionId, uint32_t taskObjectId, int id = IDD);
+		virtual ~SVTADlgExternalToolImageSelectPage() {}
 	#pragma endregion Constructor
 
 	#pragma region Protected Methods
 	// Overrides
 		// ClassWizard generate virtual function overrides
-		//{{AFX_VIRTUAL(SVExternalToolImageSelectPage)
+		//{{AFX_VIRTUAL(SVTADlgExternalToolImageSelectPage)
 	protected:
 		virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 		virtual BOOL OnInitDialog() override;
 		//}}AFX_VIRTUAL
 
 		// Generated message map functions
-		//{{AFX_MSG(SVExternalToolImageSelectPage)
+		//{{AFX_MSG(SVTADlgExternalToolImageSelectPage)
 		void OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult);
 		void OnPropClick(NMHDR* pNotifyStruct, LRESULT* plResult);
 		//}}AFX_MSG
@@ -70,7 +70,7 @@ namespace SvOg
 	#pragma region Member variables
 	private:
 		// Dialog Data
-		//{{AFX_DATA(SVExternalToolImageSelectPage)
+		//{{AFX_DATA(SVTADlgExternalToolImageSelectPage)
 		enum { IDD = IDD_TA_EXTERNAL_IMAGES };
 		PictureDisplay m_ImageDisplay;
 		//}}AFX_DATA

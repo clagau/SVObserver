@@ -13,7 +13,7 @@
 #include "SVTADlgExternalInputSelectPage.h"
 #include "SVTADlgExternalResultPage.h"
 #include "Definitions/SVUserMessage.h"
-#include "SVOGui/SVExternalToolImageSelectPage.h"
+#include "SVOGui/SVTADlgExternalToolImageSelectPage.h"
 
 
 #pragma endregion Includes
@@ -167,7 +167,7 @@ LRESULT SheetForExternalToolAdjustment::AdaptToTestedDll(WPARAM, LPARAM)
 	m_runOnceButton.ShowWindow(SW_SHOW);
 	m_reInitializeButton.ShowWindow(SW_SHOW);
 
-	AddPage(new SvOg::SVExternalToolImageSelectPage(GetInspectionID(), GetTaskObjectID()));
+	AddPage(new SvOg::SVTADlgExternalToolImageSelectPage(GetInspectionID(), GetTaskObjectID()));
 	AddPage(new SVTADlgExternalInputSelectPage(_T("Input Values"), GetInspectionID(), GetTaskObjectID(), m_externalToolTaskController));
 	AddPage(new SVTADlgExternalResultPage(_T("Result Values"), GetInspectionID(), m_externalToolTaskController.getExternalToolTaskObjectId(), m_externalToolTaskController));
 

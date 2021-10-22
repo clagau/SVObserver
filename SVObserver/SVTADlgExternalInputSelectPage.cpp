@@ -15,7 +15,7 @@
 #include "Definitions/SVUserMessage.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "ObjectSelectorLibrary\ObjectTreeGenerator.h"
-#include "SVOGui\SVExternalToolImageSelectPage.h"
+#include "SVOGui\SVTADlgExternalToolImageSelectPage.h"
 #include "SVTADlgExternalResultPage.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVOGui/BoundValue.h"

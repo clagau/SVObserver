@@ -161,7 +161,6 @@
     <ClCompile Include="SVCylindricalWarpDlg.cpp" />
     <ClCompile Include="SVDlgImage.cpp" />
     <ClCompile Include="SVEdgeMarkerAdjustmentPageClass.cpp" />
-    <ClCompile Include="SVExternalToolImageSelectPage.cpp" />
     <ClCompile Include="SVFillBlobDlg.cpp" />
     <ClCompile Include="SVFormulaEditorPage.cpp" />
     <ClCompile Include="SVFormulaEditorSheet.cpp" />
@@ -176,6 +175,7 @@
     <ClCompile Include="SVSaveToolSetImageDialog.cpp" />
     <ClCompile Include="SVShowDependentsDialog.cpp" />
     <ClCompile Include="SVTADlgColorToolPage.cpp" />
+    <ClCompile Include="SVTADlgExternalToolImageSelectPage.cpp" />
     <ClCompile Include="SVTADlgFileImageSourcePage.cpp" />
     <ClCompile Include="SVTADlgGeneralPage.cpp" />
     <ClCompile Include="SVTADlgPassFailPage.cpp" />
@@ -254,7 +254,6 @@
     <ClInclude Include="SVCylindricalWarpDlg.h" />
     <ClInclude Include="SVDlgImage.h" />
     <ClInclude Include="SVEdgeMarkerAdjustmentPageClass.h" />
-    <ClInclude Include="SVExternalToolImageSelectPage.h" />
     <ClInclude Include="SVFillBlobDlg.h" />
     <ClInclude Include="SVFormulaEditorPage.h" />
     <ClInclude Include="SVFormulaEditorSheet.h" />
@@ -269,6 +268,7 @@
     <ClInclude Include="SVSaveToolSetImageDialog.h" />
     <ClInclude Include="SVShowDependentsDialog.h" />
     <ClInclude Include="SVTADlgColorToolPage.h" />
+    <ClInclude Include="SVTADlgExternalToolImageSelectPage.h" />
     <ClInclude Include="SVTADlgFileImageSourcePage.h" />
     <ClInclude Include="SVTADlgGeneralPage.h" />
     <ClInclude Include="SVTADlgPassFailPage.h" />

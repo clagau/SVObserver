@@ -2,8 +2,8 @@
 //* COPYRIGHT (c) 2004 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVExternalToolImageSelectPage
-//* .File Name       : $Workfile:   SVExternalToolImageSelectPage.cpp  $
+//* .Module Name     : SVTADlgExternalToolImageSelectPage
+//* .File Name       : $Workfile:   SVTADlgExternalToolImageSelectPage.cpp  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.4  $
 //* .Check In Date   : $Date:   26 Jun 2014 17:30:38  $
@@ -11,7 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "SVExternalToolImageSelectPage.h" //@TODO [Arvid][10.20][8.7.2021] rename to SVTADlgExternalToolImageSelectPage
+#include "SVTADlgExternalToolImageSelectPage.h"
 #include "SVRPropertyTree/SVRPropTreeItemCombo.h"
 #pragma endregion Includes
 
@@ -46,8 +46,8 @@ SvPb::SVObjectSubTypeEnum GetImageSubtype(bool mayBeColor, bool mayBeBlackAndWhi
 	return ImageSubType;
 }
 
-	BEGIN_MESSAGE_MAP(SVExternalToolImageSelectPage, CPropertyPage)
-		//{{AFX_MSG_MAP(SVExternalToolImageSelectPage)
+	BEGIN_MESSAGE_MAP(SVTADlgExternalToolImageSelectPage, CPropertyPage)
+		//{{AFX_MSG_MAP(SVTADlgExternalToolImageSelectPage)
 		ON_NOTIFY(PTN_ITEMCHANGED, IDC_IMAGE_LIST, OnItemChanged)
 		ON_NOTIFY(PTN_PROPCLICK, IDC_IMAGE_LIST, OnPropClick)
 		//}}AFX_MSG_MAP
@@ -56,7 +56,7 @@ SvPb::SVObjectSubTypeEnum GetImageSubtype(bool mayBeColor, bool mayBeBlackAndWhi
 
 
 	#pragma region Constructor
-	SVExternalToolImageSelectPage::SVExternalToolImageSelectPage(uint32_t inspectionId, uint32_t taskObjectId, int id)
+	SVTADlgExternalToolImageSelectPage::SVTADlgExternalToolImageSelectPage(uint32_t inspectionId, uint32_t taskObjectId, int id)
 	: CPropertyPage(id)
 	, m_InspectionID(inspectionId)
 	, m_TaskObjectID(taskObjectId)
@@ -68,15 +68,15 @@ SvPb::SVObjectSubTypeEnum GetImageSubtype(bool mayBeColor, bool mayBeBlackAndWhi
 	#pragma endregion Constructor
 
 	#pragma region Protected Methods
-	void SVExternalToolImageSelectPage::DoDataExchange(CDataExchange* pDX)
+	void SVTADlgExternalToolImageSelectPage::DoDataExchange(CDataExchange* pDX)
 	{
 		CPropertyPage::DoDataExchange(pDX);
-		//{{AFX_DATA_MAP(SVExternalToolImageSelectPage)
+		//{{AFX_DATA_MAP(SVTADlgExternalToolImageSelectPage)
 		DDX_Control(pDX, IDC_IMAGE_DISPLAY, m_ImageDisplay);
 		//}}AFX_DATA_MAP
 	}
 
-	BOOL SVExternalToolImageSelectPage::OnInitDialog()
+	BOOL SVTADlgExternalToolImageSelectPage::OnInitDialog()
 	{
 		CPropertyPage::OnInitDialog();
 	
@@ -98,7 +98,7 @@ SvPb::SVObjectSubTypeEnum GetImageSubtype(bool mayBeColor, bool mayBeBlackAndWhi
 					  // EXCEPTION: OCX Property Pages should return FALSE
 	}
 
-	void SVExternalToolImageSelectPage::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
+	void SVTADlgExternalToolImageSelectPage::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 	{
 		UpdateData(true); // get data from dialog
 		LPNMPROPTREE pNMPropTree = reinterpret_cast<LPNMPROPTREE>(pNotifyStruct);
@@ -144,7 +144,7 @@ SvPb::SVObjectSubTypeEnum GetImageSubtype(bool mayBeColor, bool mayBeBlackAndWhi
 		}
 	}
 
-	void SVExternalToolImageSelectPage::OnPropClick(NMHDR* pNotifyStruct, LRESULT* plResult)
+	void SVTADlgExternalToolImageSelectPage::OnPropClick(NMHDR* pNotifyStruct, LRESULT* plResult)
 	{
 		LPNMPROPTREE pNMPropTree = reinterpret_cast<LPNMPROPTREE>(pNotifyStruct);
 		*plResult = S_FALSE;
@@ -163,7 +163,7 @@ SvPb::SVObjectSubTypeEnum GetImageSubtype(bool mayBeColor, bool mayBeBlackAndWhi
 	#pragma endregion Protected Methods
 
 	#pragma region Private Methods
-	void SVExternalToolImageSelectPage::buildPropertyTree()
+	void SVTADlgExternalToolImageSelectPage::buildPropertyTree()
 	{
 		// PTS_NOTIFY - SVRPropTree will send notification messages to the parent window
 		DWORD dwStyle = WS_CHILD|WS_VISIBLE|PTS_NOTIFY;
@@ -227,7 +227,7 @@ SvPb::SVObjectSubTypeEnum GetImageSubtype(bool mayBeColor, bool mayBeBlackAndWhi
 	}
 
 
-	void SVExternalToolImageSelectPage::setImages(ImageController &imgCtrl)
+	void SVTADlgExternalToolImageSelectPage::setImages(ImageController &imgCtrl)
 	{
 		imgCtrl.ToolRunOnce();
 		const SvUl::InputNameObjectIdPairList& NameObjectIdPairs = imgCtrl.GetInputImageList(SvDef::InvalidObjectId, m_numImages);

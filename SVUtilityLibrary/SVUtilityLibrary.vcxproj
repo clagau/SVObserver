@@ -179,7 +179,6 @@
     <ClCompile Include="SVGUID.cpp" />
     <ClCompile Include="SVHistogramBase.cpp" />
     <ClCompile Include="SVSafeArray.cpp" />
-    <ClCompile Include="SVUtilityGlobals.cpp" />
     <ClCompile Include="ZipHelper.cpp" />
   </ItemGroup>
   <ItemGroup>

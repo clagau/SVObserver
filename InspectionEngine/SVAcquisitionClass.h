@@ -139,7 +139,7 @@ public:
 	virtual HRESULT UpdateWithCompletedBuffer( const SvOi::ITRCImagePtr& rImage, const double StartTick, const double StopTick) override;
 	virtual void setNeededBuffers(int neededBuffers) override;
 
-	SVHANDLE m_hDigitizer;
+	unsigned long m_hDigitizer;
 	BSTR m_LastImage;
 
 protected:

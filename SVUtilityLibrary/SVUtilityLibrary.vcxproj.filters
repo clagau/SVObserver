@@ -78,9 +78,6 @@
     <ClCompile Include="ModuleInfo.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVUtilityGlobals.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVClock.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>

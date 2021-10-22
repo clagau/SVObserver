@@ -12,7 +12,7 @@
 #pragma once
 
 //Moved to precompiled header: #include <vector>
-#include "SVUtilityLibrary/SVUtilityGlobals.h"
+#include "SVFileSystemLibrary/FilepathUtilities.h"
 #include "SVLutTransform.h"
 
 enum SVLutFormatEnum
@@ -45,10 +45,10 @@ public:
 	void SetBandSize(UINT uiBandSize);
 	void SetMaxValue(UINT uiMaxValue);
 	bool IsNullHandle() const;
-	SVHANDLE GetHandle() const;
+	unsigned long GetHandle() const;
 	void Cleanup();
 private:
-	SVHANDLE        mHandle;        // handle to Acquisition Device
+	unsigned long        mHandle;        // handle to Acquisition Device
 
 	UINT            muiBands;       // number of LUT bands to create
 	UINT            muiBandSize;    // Size of one band in neutral format

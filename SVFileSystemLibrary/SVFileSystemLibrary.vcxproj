@@ -86,6 +86,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="FilepathUtilities.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -96,6 +97,7 @@
     <ClCompile Include="SVFileNameManagerClass.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="FilepathUtilities.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SVFileInfo.h" />
     <ClInclude Include="SVFileInfoComparator.h" />

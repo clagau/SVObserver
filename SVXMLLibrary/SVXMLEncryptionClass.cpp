@@ -12,9 +12,8 @@
 #include "stdafx.h"
 #include <msxml2.h>
 #include "SVXMLEncryptionClass.h"
-#include "SVMessage\SVMessage.h"
+#include "SVMessage/SVMessage.h"
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
-
 namespace  SvXml
 {
 const WCHAR* const	cNameSeed = L"NameSeed";
