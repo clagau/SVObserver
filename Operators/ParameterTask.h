@@ -39,6 +39,8 @@ namespace SvOp
 
 		SvPb::InspectionCmdResponse setAndSortEmbeddedValues(SvPb::SetAndSortEmbeddedValueRequest request);
 
+		SVObjectClass* OverwriteEmbeddedObject(uint32_t uniqueID, SvPb::EmbeddedIdEnum embeddedID);
+
 #pragma endregion Public Methods
 
 	protected:
@@ -51,6 +53,8 @@ namespace SvOp
 		void registerParameter();
 		bool checkObject(const std::string& name, const SvOi::IObjectClass* pObject, SvPb::InputTypeEnum type, SvStl::MessageContainerVector* pErrorMessages);
 		bool checkValue(SvStl::MessageContainerVector* pErrorMessages);
+
+		void setObject(int index);
 #pragma endregion Private Methods
 
 #pragma region Member Variables

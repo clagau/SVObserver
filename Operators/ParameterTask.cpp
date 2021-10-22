@@ -175,6 +175,7 @@ namespace SvOp
 		defaults.resize(request.embeddedlist_size());
 		for (int i = 0; request.embeddedlist_size() > i; ++i)
 		{
+			setObject(i);
 			try
 			{
 				const auto& rValues = request.embeddedlist(i);
@@ -260,6 +261,7 @@ namespace SvOp
 				if (newFreePos < cMaxNumberOfObjects)
 				{
 					iter->set_oldembeddedid(m_startEmbeddedIdValue + newFreePos);
+					setObject(newFreePos);
 					newFreePos++;
 				}
 				else
@@ -313,18 +315,25 @@ namespace SvOp
 			}
 		}
 
-		for (int i = request.embeddedlist_size(); m_objects.size() > i; ++i)
-		{
-			m_objects[i]->SetObjectEmbedded(m_startEmbeddedIdValue + i, this, m_objects[i]->GetObjectName());
-			m_TypeObjects[i]->SetObjectEmbedded(m_startEmbeddedIdType + i, this, m_TypeObjects[i]->GetObjectName());
-		}
-
 		m_NumberOfObjects.SetValue(request.embeddedlist_size());
 		registerParameter();
 		//The next method is needed, because if an object will be deleted, but used in the ResultView, the ResultList has to rebuild, otherwise it can crash.
 		GetInspectionInterface()->SetDefaultInputs();
 
 		return cmd;
+	}
+
+	SVObjectClass* ParameterTask::OverwriteEmbeddedObject(uint32_t uniqueID, SvPb::EmbeddedIdEnum embeddedID)
+	{
+		if (int index = embeddedID - m_startEmbeddedIdValue; 0 <= index && index < cMaxNumberOfObjects)
+		{
+			setObject(index);
+		}
+		else if (index = embeddedID - m_startEmbeddedIdType; 0 <= index && index < cMaxNumberOfObjects)
+		{
+			setObject(index);			
+		}
+		return __super::OverwriteEmbeddedObject(uniqueID, embeddedID);
 	}
 
 	void ParameterTask::init()
@@ -342,18 +351,7 @@ namespace SvOp
 
 		m_objects.resize(cMaxNumberOfObjects);
 		m_TypeObjects.resize(cMaxNumberOfObjects);
-		for (int i = 0; i < cMaxNumberOfObjects; ++i)
-		{
-			std::string name = SvUl::LoadStdString(IDS_OBJECTNAME_INPUT_01 + i);
-			m_objects[i] = std::make_unique<SvVol::LinkedValue>();
-			m_objects[i]->setSaveDefaultValueFlag(true);
-			m_TypeObjects[i] = std::make_unique <SvVol::SVEnumerateValueObjectClass>();
-			RegisterEmbeddedObject(m_objects[i].get(), m_startEmbeddedIdValue + i, name.c_str(), false, SvOi::SVResetItemTool);
-			RegisterEmbeddedObject(m_TypeObjects[i].get(), m_startEmbeddedIdType + i, (name + cTypeNamePostfix).c_str(), false, SvOi::SVResetItemOwner);
-			m_TypeObjects[i]->SetEnumTypes(cObjectTypeEnum);
-			m_TypeObjects[i]->SetDefaultValue(0l, true);
-		}
-
+		
 		m_statusTag.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
 		m_statusColor.SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
 	}
@@ -376,6 +374,7 @@ namespace SvOp
 		for (int i = 0; number > i; ++i)
 		{
 			long type;
+			setObject(i);
 			m_TypeObjects[i]->GetValue(type);
 			m_objects[i]->UpdateContent();
 			UINT defaultStringValueAttributes = SvPb::viewable | SvPb::publishable | SvPb::archivable | SvPb::embedable | SvPb::dataDefinitionValue;
@@ -411,11 +410,19 @@ namespace SvOp
 		}
 		for (int i = number; cMaxNumberOfObjects > i; ++i)
 		{
-			m_objects[i]->setDefaultValue(0.0);
-			m_objects[i]->setDirectValue(m_objects[i]->getDefaultValue());
-			m_objects[i]->SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
-			m_objects[i]->DisconnectInput();
-			m_TypeObjects[i]->SetObjectAttributesAllowed(SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
+			if (nullptr != m_objects[i])
+			{
+				m_objects[i]->DisconnectInput();
+				RemoveEmbeddedObject(m_objects[i].get());
+				m_objects[i]->CloseObject();
+				m_objects[i] = nullptr;
+			}
+			if (nullptr != m_TypeObjects[i])
+			{
+				RemoveEmbeddedObject(m_TypeObjects[i].get());
+				m_TypeObjects[i]->CloseObject();
+				m_TypeObjects[i] = nullptr;
+			}
 		}
 	}
 
@@ -511,6 +518,16 @@ namespace SvOp
 		m_NumberOfObjects.GetValue(number);
 		for (int i = 0; number > i; ++i)
 		{
+			if (nullptr == m_objects[i] || nullptr == m_TypeObjects[i])
+			{
+				SvStl::MessageManager Msg(SvStl::MsgType::Log);
+				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidData, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				if (nullptr != pErrorMessages)
+				{
+					pErrorMessages->push_back(Msg.getMessageContainer());
+				}
+				return false;
+			}
 			auto* pObject = m_objects[i].get();
 			long type;
 			m_TypeObjects[i]->GetValue(type);
@@ -560,6 +577,27 @@ namespace SvOp
 			}
 		}		
 		return bRet;
+	}
+
+	void ParameterTask::setObject(int index)
+	{
+		std::string name = SvUl::LoadStdString(IDS_OBJECTNAME_INPUT_01 + index);
+		if (nullptr == m_objects[index])
+		{
+			m_objects[index] = std::make_unique<SvVol::LinkedValue>();
+			CreateChildObject(m_objects[index].get());
+			m_objects[index]->setSaveDefaultValueFlag(true);
+			RegisterEmbeddedObject(m_objects[index].get(), m_startEmbeddedIdValue + index, name.c_str(), false, SvOi::SVResetItemTool);
+		}
+
+		if (nullptr == m_TypeObjects[index])
+		{
+			m_TypeObjects[index] = std::make_unique <SvVol::SVEnumerateValueObjectClass>();
+			CreateChildObject(m_TypeObjects[index].get());
+			RegisterEmbeddedObject(m_TypeObjects[index].get(), m_startEmbeddedIdType + index, (name + cTypeNamePostfix).c_str(), false, SvOi::SVResetItemOwner);
+			m_TypeObjects[index]->SetEnumTypes(cObjectTypeEnum);
+			m_TypeObjects[index]->SetDefaultValue(0l, true);
+		}
 	}
 
 	SV_IMPLEMENT_CLASS(InputParameterTask, SvPb::InputParameterTaskClassId);

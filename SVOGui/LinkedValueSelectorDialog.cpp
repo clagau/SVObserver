@@ -221,7 +221,8 @@ namespace SvOg
 		}
 
 		//formula check
-		if (LinkedValueSelectorTypesEnum::All == m_possibleTypes && m_FormulaController)
+		if (LinkedValueSelectorTypesEnum::All == m_possibleTypes && m_FormulaController 
+			&& m_pDlgFormulaPage && m_pDlgFormulaPage->GetSafeHwnd()) //If m_pDlgFormulaPage is not initialized, not try to set it, because getEquationText return a empty string. 
 		{
 			auto equationText = m_pDlgFormulaPage->getEquationText();
 			double value{ 0 };

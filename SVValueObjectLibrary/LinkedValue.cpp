@@ -468,6 +468,10 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 
 		if (VT_EMPTY != defaultValue.vt && value.vt != defaultValue.vt)
 		{
+			if (VT_BOOL == value.vt)
+			{
+				value.boolVal = value.boolVal ? 1 : 0;
+			}
 			if (S_OK != ::VariantChangeTypeEx(&value, &value, SvDef::LCID_USA, VARIANT_ALPHABOOL, defaultValue.vt))
 			{
 				SvStl::MessageManager Exception(SvStl::MsgType::Log);

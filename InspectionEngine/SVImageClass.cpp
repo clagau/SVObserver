@@ -1289,7 +1289,7 @@ void SVImageClass::copiedSavedImage(SvOi::ITriggerRecordRWPtr pTr)
 
 void SVImageClass::fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, SvOi::IsObjectAllowedFunc pFunctor, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum nameToType, SvPb::ObjectSelectorType requiredType, bool stopIfClosed /*= false*/, bool /*firstObject = false*/) const
 {
-	if (0 != ObjectAttributesAllowed())
+	if (0 != (ObjectAttributesAllowed() & ~SvPb::embedable))
 	{
 		nameToType = (SvPb::SVNotSetObjectType == nameToType) ? GetObjectType() : nameToType;
 		__super::fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType, stopIfClosed);

@@ -252,15 +252,7 @@ void TableObject::clearTable()
 SVObjectClass* TableObject::OverwriteEmbeddedObject(uint32_t uniqueID, SvPb::EmbeddedIdEnum embeddedID)
 {
 	//check if it is an embeddedID from an column-Value object. This will not generated automatically. Create it before it will be overwrite
-	bool isColumnValue = false;
-	for (int i = 0; i < SvDef::c_maxTableColumn; ++i)
-	{
-		if (SvPb::TableColumnValueEId+i == embeddedID)
-		{
-			isColumnValue = true;
-		}
-	}
-	if (isColumnValue)
+	if (SvPb::TableColumnValueEId <= embeddedID && SvPb::TableColumnValueEId + SvDef::c_maxTableColumn > embeddedID)
 	{
 		// Construct new object...
 		SvVol::DoubleSortValueObject* pObject = dynamic_cast<SvVol::DoubleSortValueObject*>(SvOi::ConstructObject(SvPb::DoubleSortValueClassId));
