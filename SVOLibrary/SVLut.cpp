@@ -12,6 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVLut.h"
+#include "SVFileSystemLibrary/FilepathUtilities.h"
 #pragma endregion Includes
 
 

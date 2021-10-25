@@ -12,7 +12,6 @@
 #pragma once
 
 //Moved to precompiled header: #include <vector>
-#include "SVFileSystemLibrary/FilepathUtilities.h"
 #include "SVLutTransform.h"
 
 enum SVLutFormatEnum

@@ -14,6 +14,10 @@
 #include "FilepathUtilities.h"
 #pragma endregion Includes
 
+bool isFilepathOnRegularPartition(const std::string& rFilePath);
+bool isFilepathOnNetwork(const std::string& rFilePath);
+
+
 void KeepPrevError( HRESULT& p_rhrPrev, HRESULT p_hrNew )
 {
 	if( S_OK == p_rhrPrev )
