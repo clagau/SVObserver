@@ -19,6 +19,7 @@
 #include "Definitions/StringTypeDef.h"
 #include "InspectionCommands/CommandExternalHelper.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
+#include "SVFileSystemLibrary/FilepathUtilities.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVOResource/ConstGlobalSvOr.h"
 #include "SVStatusLibrary/MessageManager.h"

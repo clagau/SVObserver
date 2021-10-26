@@ -20,6 +20,7 @@
 #include "InspectionCommands/CommandExternalHelper.h"
 #include "InspectionEngine/SVImageClass.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
+#include "SVFileSystemLibrary/FilepathUtilities.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVOResource/ConstGlobalSvOr.h"
 #include "SVStatusLibrary/GlobalPath.h"

@@ -55,6 +55,7 @@
 #include "Definitions/TextDefineSVDef.h"
 #include "InspectionCommands/CommandExternalHelper.h"
 #include "InspectionEngine/SVDigitizerProcessingClass.h"
+#include "SVFileSystemLibrary/FilepathUtilities.h"
 #include "SVFileSystemLibrary/SVFileNameManagerClass.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVLibrary/SVPackedFile.h"
