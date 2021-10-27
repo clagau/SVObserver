@@ -19,7 +19,6 @@
 #include "ObjectInterfaces/IValueObject.h"
 #include "Definitions/SVResetStruct.h"
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
-#include "SVFileSystemLibrary/FilepathUtilities.h"
 #include "SVValueObjectLibrary/LinkedValue.h"
 #pragma endregion Includes
 

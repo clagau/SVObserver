@@ -12,17 +12,15 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVLut.h"
-#include "SVFileSystemLibrary/FilepathUtilities.h"
 #pragma endregion Includes
 
 
-SVLutInfo::SVLutInfo() : mHandle(0), muiFormat(SVLUT_FORMAT_NEUTRAL), muiBands(0), muiBandSize(0), muiMaxValue(0), mpTransform(nullptr)
+SVLutInfo::SVLutInfo() : muiFormat(SVLUT_FORMAT_NEUTRAL), muiBands(0), muiBandSize(0), muiMaxValue(0), mpTransform(nullptr)
 {
 }
 
-SVLutInfo::SVLutInfo( UINT p_Bands, UINT p_BandSize, UINT p_BandMaxValue, const SVLutTransform& p_rTransform )
-: mHandle( 0 )
-, muiFormat( SVLUT_FORMAT_NEUTRAL )
+SVLutInfo::SVLutInfo( UINT p_Bands, UINT p_BandSize, UINT p_BandMaxValue, const SVLutTransform& p_rTransform ):
+muiFormat( SVLUT_FORMAT_NEUTRAL )
 , muiBands( p_Bands )
 , muiBandSize( p_BandSize )
 , muiMaxValue( p_BandMaxValue )
@@ -30,7 +28,7 @@ SVLutInfo::SVLutInfo( UINT p_Bands, UINT p_BandSize, UINT p_BandMaxValue, const 
 {
 }
 
-SVLutInfo::SVLutInfo(const SVLutInfo& rhs) : mHandle(0), muiFormat(SVLUT_FORMAT_NEUTRAL), muiBands(0), muiBandSize(0), muiMaxValue(0), mpTransform(nullptr)
+SVLutInfo::SVLutInfo(const SVLutInfo& rhs) : muiFormat(SVLUT_FORMAT_NEUTRAL), muiBands(0), muiBandSize(0), muiMaxValue(0), mpTransform(nullptr)
 {
 	*this = rhs;
 }
@@ -100,12 +98,6 @@ bool SVLutInfo::SetTransformOperation(const SVLutTransformOperation& rOperation)
 	return nullptr != mpTransform;
 }
 
-unsigned long SVLutInfo::GetHandle() const
-{
-	return mHandle;
-}
-
-
 void SVLutInfo::SetBands(UINT nBands)
 {
 	muiBands = nBands;
@@ -114,11 +106,6 @@ void SVLutInfo::SetBands(UINT nBands)
 UINT SVLutInfo::Bands() const
 {
 	return muiBands;
-}
-
-bool SVLutInfo::IsNullHandle() const
-{
-	return 0 == mHandle;
 }
 
 UINT SVLutInfo::Format() const
@@ -724,20 +711,6 @@ SVLutTestCases::SVLutTestCases()
 	lut.Destroy();
 	lut.Create(info);
 	lut.Create(info);	// check for auto cleanup
-
-#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
-	if (lut.Info().IsNullHandle())
-	{
-		::OutputDebugString("Problem with IsNullHandle - false positive\n");
-	}
-#endif
-
-#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
-	if (! info.IsNullHandle() )
-	{
-		::OutputDebugString("Problem with IsNullHandle - false negative\n");
-	}
-#endif
 
 	SVDefaultLutTransform transform;
 	transform.SetOperation(SVLutTransformOperationClip());

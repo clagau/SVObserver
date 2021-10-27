@@ -43,12 +43,8 @@ public:
 	void SetFormat(UINT uiFormat);
 	void SetBandSize(UINT uiBandSize);
 	void SetMaxValue(UINT uiMaxValue);
-	bool IsNullHandle() const;
-	unsigned long GetHandle() const;
 	void Cleanup();
 private:
-	unsigned long        mHandle;        // handle to Acquisition Device
-
 	UINT            muiBands;       // number of LUT bands to create
 	UINT            muiBandSize;    // Size of one band in neutral format
 	UINT            muiFormat;      // color format of the LUT
