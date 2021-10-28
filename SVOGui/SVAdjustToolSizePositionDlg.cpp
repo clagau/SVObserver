@@ -427,6 +427,33 @@ void SVAdjustToolSizePositionDlg::FillTreeFromExtents(bool overwrite)
 	GetDlgItem(IDOK)->EnableWindow(m_hResultFromSetExtent == S_OK);
 }
 
+bool  SVAdjustToolSizePositionDlg::IsReadonly(::SvPb::ExtentParameter& item,  SizeModes& Modes ) 
+{
+	bool bReadonly(false);
+	if (m_ToolSizeHelper.GetAutoSizeEnabled() != SvPb::EnableNone)
+	{
+		bReadonly = item.issetbyreset();
+	}
+
+	else if ((item.type() & SvPb::SVExtentPropertyEnum::SVExtentPropertyHeight) && Modes[SvDef::TSHeight] != SvDef::TSNone)
+	{
+		bReadonly = true;
+	}
+	else if ((item.type() & SvPb::SVExtentPropertyEnum::SVExtentPropertyWidth) && Modes[SvDef::TSWidth] != SvDef::TSNone)
+	{
+		bReadonly = true;
+	}
+	else if ((item.type() & SvPb::SVExtentPropertyEnum::SVExtentPropertyPositionPointX) && Modes[SvDef::TSPositionX] != SvDef::TSNone)
+	{
+		bReadonly = true;
+	}
+	else if ((item.type() & SvPb::SVExtentPropertyEnum::SVExtentPropertyPositionPointY) && Modes[SvDef::TSPositionY] != SvDef::TSNone)
+	{
+		bReadonly = true;
+	}
+	return bReadonly;
+}
+
 void SVAdjustToolSizePositionDlg::FillTreeFromExtents(SVRPropertyItem* pRoot, bool shouldCreate, bool overwrite)
 {
 	assert(pRoot);
@@ -435,6 +462,9 @@ void SVAdjustToolSizePositionDlg::FillTreeFromExtents(SVRPropertyItem* pRoot, bo
 	{
 		m_hResultFromSetExtent = m_ToolSizeHelper.CheckExtents();
 	}
+	SizeModes Modes;
+	m_ToolSizeHelper.GetToolSizeMode(false, Modes);
+
 	for (auto item : m_ToolSizeHelper.GetExtents(false))
 	{
 		if ((0 == (m_iPropertyFilter & item.type())) || item.filteredoutflag())
@@ -501,14 +531,8 @@ void SVAdjustToolSizePositionDlg::FillTreeFromExtents(SVRPropertyItem* pRoot, bo
 			{
 				Value = SvUl::AsString(DisplayedValue);
 			}
-
-			bool bReadonly(false);
-			if (m_ToolSizeHelper.GetAutoSizeEnabled() != SvPb::EnableNone)
-			{
-				bReadonly = item.issetbyreset();
-			}
-
-			if (bReadonly)
+			
+			if (IsReadonly(item, Modes))
 			{
 				pEdit->SetForeColor(::GetSysColor(COLOR_INACTIVECAPTION));
 				pEdit->ReadOnly(true);

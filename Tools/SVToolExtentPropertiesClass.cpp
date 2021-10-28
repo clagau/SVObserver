@@ -74,7 +74,7 @@ HRESULT SVToolExtentPropertiesClass::GetProperties( SVImageExtentClass& rExtents
 						Value.dblVal = 1.0;
 					}
 				}
-				result = (VT_R8 == Value.vt) ? rExtents.SetExtentProperty( iter->first, Value.dblVal ) : E_INVALIDARG;
+				result  = (VT_R8 == Value.vt) ? rExtents.SetExtentProperty( iter->first, Value.dblVal ) : E_INVALIDARG;
 			}
 		}
 	}

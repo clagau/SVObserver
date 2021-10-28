@@ -36,12 +36,15 @@ constexpr const char* PERSPECTIVE_WARP_TYPE_HORIZONTAL = _T("Horizontal Warp");
 constexpr const char* PERSPECTIVE_WARP_TYPE_VERTICAL = _T("Vertical Warp");
 #pragma endregion Declarations
 
-SV_IMPLEMENT_CLASS( SVPerspectiveToolClass, SvPb::PerspectiveToolClassId)
+SV_IMPLEMENT_CLASS(SVPerspectiveToolClass, SvPb::PerspectiveToolClassId)
 
-SVPerspectiveToolClass::SVPerspectiveToolClass( SVObjectClass *p_pOwner, int p_iStringResourceID )
+SVPerspectiveToolClass::SVPerspectiveToolClass(SVObjectClass* p_pOwner, int p_iStringResourceID)
 	:SVToolClass(p_pOwner, p_iStringResourceID)
+	
 {
 	LocalInitialize();
+	m_hasExtents = false;
+	
 }
 
 SVPerspectiveToolClass::~SVPerspectiveToolClass()

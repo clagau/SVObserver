@@ -436,7 +436,7 @@ bool ToolSizeController::SetToolSizeMode(SizeModes modes, bool reset)
 	m_pTaskValueController->Commit();
 	if (reset)
 	{
-		ResetObject();
+		ResetTool();
 	}
 	return true;
 }
@@ -459,7 +459,7 @@ bool ToolSizeController::SetAllToolSizeMode(SvDef::ToolSizeModes mode, bool rese
 	return ret;
 }
 
-bool ToolSizeController::ResetObject()
+bool ToolSizeController::ResetTool()
 {
 	SvPb::InspectionCmdRequest requestCmd;
 	auto* pRequest = requestCmd.mutable_resetobjectrequest();
@@ -467,7 +467,18 @@ bool ToolSizeController::ResetObject()
 
 	return (S_OK == SvCmd::InspectionCommands(m_ipId, requestCmd, nullptr));
 }
+// cppcheck-suppress unusedFunction
+bool ToolSizeController::ResetToolSizeAdjustTask()
+{
+	if (m_SizeAdjustTaskId == SvDef::InvalidObjectId)
+		return false;
 
+	SvPb::InspectionCmdRequest requestCmd;
+	auto* pRequest = requestCmd.mutable_resetobjectrequest();
+	pRequest->set_objectid(m_SizeAdjustTaskId);
+
+	return (S_OK == SvCmd::InspectionCommands(m_ipId, requestCmd, nullptr));
+}
 
 bool  ToolSizeController::StoreExtents(bool init)
 {
@@ -743,11 +754,12 @@ bool ToolSizeController::SetFormulas(bool init, bool overwrite, const SizeValues
 			{
 				double val;
 				SvStl::MessageContainerVector  dummy;
-				formula.ValidateEquation(rValues.at(adEnum), val, true, dummy);
+				ret = (SvOi::IFormulaController::validateSuccessful == formula.ValidateEquation_NoReset(rValues.at(adEnum), val, true, dummy) )&& ret;
 			}
 		}
 	}
-	return true;
+	ResetTool();
+return ret;
 }
 
 bool ToolSizeController::Isallowedlocation(SvPb::SVExtentLocationPropertyEnum eAction, SvPb::SVExtentDirectionsEnum Direction)

@@ -52,8 +52,8 @@ void EQAdjustSize::Init()
 	m_ObjectTypeInfo.m_ObjectType = SvPb::SVEquationObjectType;
 	m_ObjectTypeInfo.m_SubType = m_SubType;
 	RegisterEmbeddedObject( &m_result, m_ResultId, IDS_OBJECTNAME_RESULT, false, SvOi::SVResetItemNone );
-	// Set Embedded defaults
-	constexpr double DefaultValue = 100.0;
+	//@TODO[MEC][10.20][28.10.2021] Find a better default value! 
+	constexpr double DefaultValue = 100.0; 
 	m_result.SetDefaultValue( DefaultValue );
 	m_result.setSaveValueFlag(false);
 }
@@ -85,10 +85,17 @@ bool EQAdjustSize::ResetObject(SvStl::MessageContainerVector* pErrorMessages)
 	{
 		if( HasCondition() && IsEnabled() )
 		{
+			
 			m_result.SetValue(getResult());
 		}
 		
 	}
+#ifdef TRACE_EQADJUSTSIZE 
+	double val;
+	m_result.GetValue(val);
+	auto text = std::format("ResetObject  Result( {} )ret {}  Hascondition:{}; IsEnabled{}   \n", Result, val, HasCondition() , IsEnabled());
+	OutputDebugString(text.c_str());
+#endif 
 	return Result;
 }
 

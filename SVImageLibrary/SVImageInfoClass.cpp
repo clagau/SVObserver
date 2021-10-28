@@ -115,6 +115,7 @@ HRESULT SVImageInfoClass::Initialize()
 
 	m_svExtents.SetTranslation(SvPb::SVExtentTranslationShift);
 
+		//@TODO[mec] replace with constants 
 	if (S_OK != m_svExtents.SetExtentProperty(SvPb::SVExtentPropertyPositionPoint, SVPoint<double>(10.0, 10.0)))
 	{
 		l_hrOk = S_FALSE;

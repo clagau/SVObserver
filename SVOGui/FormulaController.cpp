@@ -38,10 +38,10 @@ namespace SvOg
 {
 #pragma region Constructor
 FormulaController::FormulaController(uint32_t inspectionID, uint32_t taskObjectID, uint32_t equationID)
-	: m_InspectionID { inspectionID }
-	, m_TaskObjectID { taskObjectID }
-	, m_EquationID { equationID }
-	, m_EnableID { SvPb::ToolEnabledEId }
+	: m_InspectionID {inspectionID}
+	, m_TaskObjectID {taskObjectID}
+	, m_EquationID {equationID}
+	, m_EnableID {SvPb::ToolEnabledEId}
 	, m_isConditional {false}
 	, m_values {SvOg::BoundValues{ inspectionID, taskObjectID }}
 	, m_EquationValues {SvOg::BoundValues{ inspectionID, equationID }}
@@ -50,10 +50,10 @@ FormulaController::FormulaController(uint32_t inspectionID, uint32_t taskObjectI
 }
 
 FormulaController::FormulaController(uint32_t inspectionID, uint32_t taskObjectID, const SvDef::SVObjectTypeInfoStruct& rInfo)
-	: m_InspectionID { inspectionID }
-	, m_TaskObjectID { taskObjectID }
-	, m_EnableID { SvPb::ToolEnabledEId }
-	, m_Info{rInfo}
+	: m_InspectionID {inspectionID}
+	, m_TaskObjectID {taskObjectID}
+	, m_EnableID {SvPb::ToolEnabledEId}
+	, m_Info {rInfo}
 	, m_isConditional {SvPb::SVConditionalObjectType == rInfo.m_SubType}
 	, m_values {SvOg::BoundValues { inspectionID, taskObjectID, !m_isConditional}}
 	, m_EquationValues {SvOg::BoundValues { inspectionID, SvDef::InvalidObjectId, !m_isConditional}}
@@ -64,8 +64,7 @@ FormulaController::FormulaController(uint32_t inspectionID, uint32_t taskObjectI
 
 #pragma region Destructor
 FormulaController::~FormulaController()
-{
-}
+{}
 #pragma endregion Destructor
 
 #pragma region Public Methods
@@ -96,7 +95,7 @@ std::string FormulaController::GetEquationText() const
 	pRequest->set_objectid(m_EquationID);
 
 	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
-	if (S_OK == hr && responseCmd.has_getequationresponse() )
+	if (S_OK == hr && responseCmd.has_getequationresponse())
 	{
 		equationText = responseCmd.getequationresponse().equationtext();
 	}
@@ -198,7 +197,19 @@ void FormulaController::setEditModeFreezeFlag(bool flag)
 	}
 }
 
-int FormulaController::ValidateEquation(const std::string& equationString, double& result, bool bSetValue, SvStl::MessageContainerVector& rErrorMessages) const
+
+// cppcheck-suppress unusedFunction
+bool  FormulaController::ResetOwner()const
+{
+	SvPb::InspectionCmdRequest requestCmd;
+	SvPb::InspectionCmdResponse responseCmd;
+	auto* pResetObjectRequest = requestCmd.mutable_resetobjectrequest();
+	pResetObjectRequest->set_objectid(m_TaskObjectID);
+	auto hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, nullptr);
+	return (hr == S_OK);
+
+}
+int FormulaController::ValidateEquation_NoReset(const std::string& equationString, double& result, bool bSetValue, SvStl::MessageContainerVector& rErrorMessages) const
 {
 	int retValue = validateSuccessful;
 	SvPb::InspectionCmdRequest requestCmd;
@@ -214,18 +225,7 @@ int FormulaController::ValidateEquation(const std::string& equationString, doubl
 		retValue = responseCmd.validateandsetequationresponse().validatestatus();
 		result = responseCmd.validateandsetequationresponse().result();
 		rErrorMessages = SvPb::convertProtobufToMessageVector(responseCmd.validateandsetequationresponse().messages());;
-
-		if (validateSuccessful == retValue && bSetValue)
-		{
-			requestCmd.Clear();
-			auto* pResetObjectRequest = requestCmd.mutable_resetobjectrequest();
-			pResetObjectRequest->set_objectid(m_TaskObjectID);
-			hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, nullptr);
-			if (S_OK != hr)
-			{
-				retValue = resetFailed;
-			}
-		}
+		
 	}
 	else
 	{
@@ -235,6 +235,24 @@ int FormulaController::ValidateEquation(const std::string& equationString, doubl
 		e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownCommandError, SvStl::SourceFileParams(StdMessageParams));
 		assert(false);
 	}
+	return retValue;
+}
+
+int FormulaController::ValidateEquation(const std::string& equationString, double& result, bool bSetValue, SvStl::MessageContainerVector& rErrorMessages) const
+{
+	int retValue = ValidateEquation_NoReset(equationString, result, bSetValue, rErrorMessages);
+	if (validateSuccessful == retValue && bSetValue)
+	{
+		SvPb::InspectionCmdRequest requestCmd;
+		auto* pResetObjectRequest = requestCmd.mutable_resetobjectrequest();
+		pResetObjectRequest->set_objectid(m_TaskObjectID);
+		auto hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, nullptr);
+		if (S_OK != hr)
+		{
+			retValue = resetFailed;
+		}
+	}
+
 	return retValue;
 }
 #pragma endregion virtual Methods IFormulaController

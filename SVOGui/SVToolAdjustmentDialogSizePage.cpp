@@ -323,7 +323,7 @@ void SVToolAdjustmentDialogSizePage::OnBnClickedButtonFormulaFrom()
 			}
 			m_ToolSizeHelper.SetAllToolSizeMode(SvDef::TSFormula, false);
 			ready = m_ToolSizeHelper.SetFormulas(true, true, values);
-
+			
 		}
 	}
 	if (!ready)

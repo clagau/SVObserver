@@ -112,7 +112,7 @@ private:
 	//! \returns bool
 	//************************************
 	bool UsePropagate();
-
+	bool  IsReadonly(::SvPb::ExtentParameter& rExtentParameter,  SizeModes& Modes);
 	
 #pragma endregion Private Methods
 

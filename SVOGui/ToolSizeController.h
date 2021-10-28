@@ -70,7 +70,8 @@ public:
 	bool  AdjustTool(SvPb::SVExtentLocationPropertyEnum eAction, int dx, int dy);
 	bool AdjustToolAngle(bool init, double dDAngle);
 	bool Isallowedlocation(SvPb::SVExtentLocationPropertyEnum eAction, SvPb::SVExtentDirectionsEnum Direction);
-	bool ResetObject();
+	bool ResetTool();
+	bool ResetToolSizeAdjustTask();
 	const SvUl::NameObjectIdList& GetAvailableToolList() const;
 	bool InitToolList();
 	const unsigned IDS_Objectnames[4] = {IDS_OBJECTNAME_EXTENT_LEFT,IDS_OBJECTNAME_EXTENT_TOP,IDS_OBJECTNAME_EXTENT_WIDTH, IDS_OBJECTNAME_EXTENT_HEIGHT};

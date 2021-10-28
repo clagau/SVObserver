@@ -58,7 +58,9 @@ public:
 	/// \return return the position of the failure. If the validation is successful, the value will be "validateSuccessful". If the reset of the object failed the value will be "resetFailed", but the string will be set (if bSetValue == true).
 	//**********
 	virtual int ValidateEquation(const std::string &equationString, double& result, bool bSetValue, SvStl::MessageContainerVector& rErrorMessages) const override;
-#pragma endregion Virtual Methods (IFormulaController)
+#pragma endregion Virtual Methods (IFormulaController)	
+	int  ValidateEquation_NoReset(const std::string& equationString, double& result, bool bSetValue, SvStl::MessageContainerVector& rErrorMessages) const;
+	bool  ResetOwner()const; 
 #pragma endregion Public Methods
 
 #pragma region Private Methods
