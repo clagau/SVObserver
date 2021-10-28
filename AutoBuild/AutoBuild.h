@@ -20,7 +20,7 @@
 // FILEVER lay out is as follows: a,b,c,d
 //    a is the major version number
 //    b is the minor version number
-//    c is the beta version number - if c equals 0 or is greater than 254 then the application is marked as Released
+//    c is the beta version number - if c equals 0 or is greater than 254 then the application is marked as released
 //    d is used for the revision number underlying the build (if zero it is ignored)
 
 #define FILEVER        10,20,0,13

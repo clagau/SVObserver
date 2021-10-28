@@ -15,9 +15,11 @@
 
 #pragma comment (lib, "version.lib")
 
-//do not change the directly following line: it will be directly manipulated by the BuildController
-auto constexpr c_instrumentedForBullseye = false;
 auto constexpr c_bullseyeVersionInfoString = _T(" (for bullseye)");
+//do not change the line directly following this comment: it will be directly manipulated by the BuildController
+auto constexpr c_instrumentedForBullseye = false;
+//do not change the line directly following this comment: it will be directly manipulated by the BuildController
+auto constexpr c_GitIdentifier = 0;
 
 namespace SvSyl
 {
@@ -139,6 +141,11 @@ std::string SVVersionInfo::GetShortTitleVersion()
 		else if (patchOrSvnNumber >= 100)
 		{
 			buf << _T("r") << patchOrSvnNumber;
+		}
+
+		if (0 != c_GitIdentifier)
+		{
+			buf << _T("[") << std::hex << c_GitIdentifier << std::dec << _T("]");
 		}
 
 		auto alphaOrBetaNumber = LOWORD(fileInfo.dwFileVersionLS);
