@@ -112,6 +112,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="TableAddColumnAnalyzer.cpp" />
+    <ClCompile Include="TableDeleteColumnAnalyzer.cpp" />
     <ClCompile Include="TableExcludeAnalyzer.cpp" />
     <ClCompile Include="TableLimitAnalyzer.cpp" />
     <ClCompile Include="TableSortAnalyzer.cpp" />
@@ -140,6 +141,7 @@
     <ClInclude Include="PixelAnalyzer.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="TableAddColumnAnalyzer.h" />
+    <ClInclude Include="TableDeleteColumnAnalyzer.h" />
     <ClInclude Include="TableExcludeAnalyzer.h" />
     <ClInclude Include="TableLimitAnalyzer.h" />
     <ClInclude Include="TableSortAnalyzer.h" />

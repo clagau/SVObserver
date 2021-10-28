@@ -41,6 +41,7 @@ public:
 	virtual bool DoesObjectHaveExtents() const override;
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
+	virtual bool resetAllObjects(SvStl::MessageContainerVector* pErrorMessages = nullptr) override;
 
 	SvVol::ValueObjectSortContainer&  getSortContainer() { return m_pResultTable->getSortContainer();};
 	void UpdateNumberOfRows() { return m_pResultTable->UpdateNumberOfRows(); };
@@ -60,6 +61,8 @@ public:
 	/// Remove a add on column form the table.
 	/// \param pColumn [in] Column object to be removed.
 	void removeNewColumn(const SvVol::DoubleSortValuePtr pColumn);
+
+	void removeSourceColumn(const SvVol::DoubleSortValueObject* pColumn);
 
 	virtual void OnEmbeddedIDChanged(const SVObjectClass* pOwnerObject, SvPb::EmbeddedIdEnum oldEmbeddedID, SvPb::EmbeddedIdEnum newEmbeddedID) override;
 	virtual bool areAuxExtentsAvailable() const override { return false; };

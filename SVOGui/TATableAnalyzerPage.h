@@ -86,7 +86,7 @@ namespace SvOg
 		void setSortProperties();
 
 		/// Update the column combo box depend of the selected analyzer..
-		void setColumnSelectionCB();
+		void setColumnSelectionCB(bool useSourceAvailable = false);
 
 		/// Update the displayed property controls of the selected exclude analyzer.
 		void setExcludeProperties();
@@ -95,6 +95,7 @@ namespace SvOg
 		void setLimitProperties();
 
 		void setAddColumnProperties();
+		void setDeleteColumnProperties();
 
 		/// Set the data of the old (current) selection and if this failed, it display an error and reset the selection to this analyzer.
 		/// \returns HRESULT S_OK, if setting works.
@@ -110,6 +111,8 @@ namespace SvOg
 		HRESULT SetAddAnalyzerData(SvStl::MessageContainerVector &rErrorMessageList);
 
 		SvUl::NameObjectIdList getTableAnalyzer();
+
+		void setSourceTableObjectId();
 #pragma endregion Private Methods
 
 #pragma region Member Variables
@@ -135,7 +138,9 @@ namespace SvOg
 		uint32_t m_selectedAnalyzerID = SvDef::InvalidObjectId;
 		long m_selectedSubType;
 		SvUl::NameObjectIdList m_availableColumn;
+		SvUl::NameObjectIdList m_availableSourceColumn;
 		std::string m_inputName; 
+		uint32_t m_sourceTableObjectId = SvDef::InvalidObjectId;
 
 		std::shared_ptr<ValueController> m_pValues;
 

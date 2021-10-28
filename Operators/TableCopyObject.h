@@ -47,6 +47,9 @@ public:
 	/// \param pColumn [in] Column object to be removed.
 	void removeNewColumn(const SvVol::DoubleSortValuePtr pColumn);
 
+	void clearRemoveSourceColumnList();
+	void removeSourceColumn(const SvVol::DoubleSortValueObject* pColumn);
+
 	/// Change the embeddedId of a copy column to a new ID.
 	/// \param oldId [in] Old embeddedID.
 	/// \param newId [in] New embeddedID.
@@ -85,12 +88,15 @@ private:
 	/// \param pos [in] Add position. If pos == -1, add it at the end.
 	/// \param pColumn [in] The new Column.
 	void AddEntryToNewValueList(int pos, SvVol::DoubleSortValuePtr pColumn);
+
+	std::vector<SvVol::DoubleSortValuePtr> getUsedSourceValueList() const;
 #pragma endregion Private Methods
 
 #pragma region Member Variables
 private:
 	TableObject* m_pSourceTable;
 	std::vector<SvVol::DoubleSortValuePtr> m_NewValueList;
+	std::vector<SvPb::EmbeddedIdEnum> m_DeleteEmbeddedList; //< A list of embeddedId which should not copy from Source.
 #pragma endregion Member Variables
 };
 

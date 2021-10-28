@@ -270,6 +270,7 @@ enum SVObjectSubTypeEnum
 	TableAnalyzerExcludeType				= 0x00004011;
 	TableAnalyzerLimitType					= 0x00004012;
 	TableAnalyzerAddColumnType				= 0x00004013;
+	TableAnalyzerDeleteColumnType			= 0x00004014;
 
 
 	//ValueObject SubTypes
@@ -557,6 +558,7 @@ enum ClassIdEnum
 	BlobFeatureTaskClassId = 119;
 	BlobFeatureListClassId = 120;
 	BlobDrawClassId = 121;
+	TableAnaylzerDeleteColumnClassId = 122;
 
 	//Result Class Ids
 	PointXResultClassId = 200;
@@ -1269,6 +1271,8 @@ enum EmbeddedIdEnum
 	ImageArithmeticUseLutEId = 100055;
 	MissingImageCountEId = 100056;
 	NotCompleteCountEId = 100057;
+	DeleteColumnInputEId = 100058;
+
 	//The following Ids are the first of an array and must have 100 reserved Ids 
 	ImageInputEId = 150000;
 }

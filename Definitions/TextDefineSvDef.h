@@ -55,6 +55,7 @@ constexpr const char* cInspectionFixedName = _T("Inspection_");
 constexpr const char* cInputTag_SortColumn = _T("SortColumn");
 constexpr const char* cInputTag_ExcludeColumn = _T("ExcludeColumn");
 constexpr const char* cInputTag_NewColumn = _T("NewColumn");
+constexpr const char* cInputTag_DeleteColumn = _T("DeleteColumn");
 constexpr const char* cInputTag_LongResultValue = _T("LongResultValue");
 
 constexpr const char* ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME = _T("ArchiveToolOnlineAsync");

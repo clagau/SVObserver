@@ -144,6 +144,20 @@ void TableCopyObject::removeNewColumn(const SvVol::DoubleSortValuePtr pColumn)
 	}
 }
 
+void TableCopyObject::clearRemoveSourceColumnList()
+{
+	m_DeleteEmbeddedList.clear();
+}
+
+void TableCopyObject::removeSourceColumn(const SvVol::DoubleSortValueObject* pColumn)
+{
+	auto embeddedId = (nullptr != pColumn) ? pColumn->GetEmbeddedID() : SvPb::NoEmbeddedId;
+	if (std::ranges::none_of(m_DeleteEmbeddedList, [embeddedId](auto value) {return embeddedId == value;}))
+	{
+		m_DeleteEmbeddedList.push_back(embeddedId);
+	}
+}
+
 void TableCopyObject::changeEmbeddedId(SvPb::EmbeddedIdEnum oldId, SvPb::EmbeddedIdEnum newId)
 {
 	std::vector<SvVol::DoubleSortValuePtr>::const_iterator valueIter = std::find_if(m_ValueList.begin(), m_ValueList.end(), [&oldId](const SvVol::DoubleSortValuePtr& entry)->bool
@@ -195,7 +209,7 @@ bool TableCopyObject::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContainer
 	{
 		if (nullptr != m_pSourceTable)
 		{
-			const std::vector<SvVol::DoubleSortValuePtr>& rSourceValues = m_pSourceTable->getValueList();
+			const std::vector<SvVol::DoubleSortValuePtr>& rSourceValues = getUsedSourceValueList();
 			if (!rSourceValues.empty())
 			{
 				setSortContainerDummy(SvVol::DummySortContainer(0));
@@ -254,7 +268,8 @@ void TableCopyObject::Initialize()
 
 void TableCopyObject::RemoveUnusedColumn()
 {
-	std::vector<SvVol::DoubleSortValuePtr> SourceValues = m_pSourceTable->getValueList();
+	std::vector<SvVol::DoubleSortValuePtr> SourceValues = getUsedSourceValueList();
+
 	for (int i = static_cast<int>(m_ValueList.size()) - 1; i >= 0; i--)
 	{
 		std::vector<SvVol::DoubleSortValuePtr>::iterator findIter = std::find_if(SourceValues.begin(), SourceValues.end(), [&](const SvVol::DoubleSortValuePtr& entry)->bool
@@ -282,7 +297,7 @@ void TableCopyObject::RemoveUnusedColumn()
 int TableCopyObject::ResetCopyColumn()
 {
 	int valueListPos = -1;
-	std::vector<SvVol::DoubleSortValuePtr> SourceValues = m_pSourceTable->getValueList();
+	std::vector<SvVol::DoubleSortValuePtr> SourceValues = getUsedSourceValueList();
 	for (const auto pSourceColumn : SourceValues)
 	{
 		valueListPos++;
@@ -421,6 +436,24 @@ void TableCopyObject::AddEntryToNewValueList(int pos, SvVol::DoubleSortValuePtr 
 	}
 }
 
+std::vector<SvVol::DoubleSortValuePtr> TableCopyObject::getUsedSourceValueList() const
+{
+	if (m_pSourceTable)
+	{
+		std::vector<SvVol::DoubleSortValuePtr> SourceValues = m_pSourceTable->getValueList();
+		SourceValues.erase(std::remove_if(SourceValues.begin(), SourceValues.end(), [this](const auto& rEntry)
+		{
+			if (nullptr != rEntry.get())
+			{
+				auto sourceEmbeddedId = rEntry->GetEmbeddedID();
+				return std::ranges::any_of(m_DeleteEmbeddedList, [sourceEmbeddedId](SvPb::EmbeddedIdEnum embeddedId) { return sourceEmbeddedId == embeddedId; });
+			}
+			return true;
+		}), SourceValues.end());
+		return SourceValues;
+	}
+	return {};
+}
 #pragma endregion Private Methods
 
 } //namespace SvOp

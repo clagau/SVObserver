@@ -845,6 +845,7 @@ SvPb::InspectionCmdResponse createObject(SvPb::CreateObjectRequest request)
 						}
 					}
 				}
+				pParent->resetAllObjects();
 			}
 			break;
 		}

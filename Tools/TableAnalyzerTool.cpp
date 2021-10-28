@@ -103,6 +103,8 @@ bool TableAnalyzerTool::DoesObjectHaveExtents() const
 
 bool TableAnalyzerTool::ResetObject(SvStl::MessageContainerVector* pErrorMessages)
 {
+	m_pResultTable->clearRemoveSourceColumnList();
+
 	bool Result = SVToolClass::ResetObject(pErrorMessages);
 
 	Result = ValidateLocal(pErrorMessages) && Result;
@@ -135,7 +137,6 @@ bool TableAnalyzerTool::ResetObject(SvStl::MessageContainerVector* pErrorMessage
 	if (Result)
 	{
 		m_pResultTable->setSourecTable(pTableObject);
-		Result = m_pResultTable->ResetObject(pErrorMessages);
 	}
 	else
 	{
@@ -150,6 +151,17 @@ bool TableAnalyzerTool::ResetObject(SvStl::MessageContainerVector* pErrorMessage
 	}
 
 	return Result;
+}
+
+bool TableAnalyzerTool::resetAllObjects(SvStl::MessageContainerVector* pErrorMessages)
+{
+	bool result = __super::resetAllObjects(pErrorMessages);
+	if (result)
+	{
+		//after all values are reset, resultTable must be reset again, because the columns that were just deleted must be removed again.
+		result = m_pResultTable->ResetObject(pErrorMessages);
+	}
+	return result;
 }
 
 SvVol::DoubleSortValuePtr TableAnalyzerTool::addNewColumn(LPCTSTR name, const SVTaskObjectClass* pAnalyzer)
@@ -179,6 +191,14 @@ void TableAnalyzerTool::removeNewColumn(const SvVol::DoubleSortValuePtr pColumn)
 	if (nullptr != m_pResultTable)
 	{
 		m_pResultTable->removeNewColumn(pColumn);
+	}
+}
+
+void TableAnalyzerTool::removeSourceColumn(const SvVol::DoubleSortValueObject* pColumn)
+{
+	if (nullptr != m_pResultTable)
+	{
+		m_pResultTable->removeSourceColumn(pColumn);
 	}
 }
 
@@ -262,6 +282,13 @@ void TableAnalyzerTool::LocalInitialize()
 	analyzerClassInfo.m_ObjectTypeInfo.m_SubType = SvPb::TableAnalyzerAddColumnType;
 	analyzerClassInfo.m_ClassId = SvPb::TableAnaylzerAddColumnClassId;
 	analyzerClassInfo.m_ClassName = SvUl::LoadStdString(IDS_CLASSNAME_TABLEANALYZER_ADDCOLUMN);
+	m_availableChildren.push_back(analyzerClassInfo);
+
+	// Add the Add Column Analyzer
+	analyzerClassInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::TableAnalyzerType;
+	analyzerClassInfo.m_ObjectTypeInfo.m_SubType = SvPb::TableAnalyzerDeleteColumnType;
+	analyzerClassInfo.m_ClassId = SvPb::TableAnaylzerDeleteColumnClassId;
+	analyzerClassInfo.m_ClassName = SvUl::LoadStdString(IDS_CLASSNAME_TABLEANALYZER_DELETECOLUMN);
 	m_availableChildren.push_back(analyzerClassInfo);
 
 

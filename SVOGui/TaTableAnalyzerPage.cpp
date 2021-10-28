@@ -131,6 +131,7 @@ BOOL TaTableAnalyzerPage::OnInitDialog()
 	m_ExcludeLowWidget = std::make_unique<LinkedValueWidgetHelper>(m_EditExcludeLow, m_ButtonExcludeLow, m_InspectionID, m_TaskObjectID, SvPb::TableAnaylzerExcludeLowEId, nullptr, ObjectSelectorData {m_TaskObjectID});
 	m_LimitWidget = std::make_unique<LinkedValueWidgetHelper>(m_EditLimitValue, m_ButtonLimitValue, m_InspectionID, m_TaskObjectID, SvPb::TableAnaylzerLimitValueEId, nullptr, ObjectSelectorData {m_TaskObjectID});
 
+	setSourceTableObjectId();
 	RetrieveAvailableColumnList();
 	refresh();
 	SetPropertyControls();
@@ -300,6 +301,7 @@ void TaTableAnalyzerPage::OnAddColumnFormula()
 
 BOOL TaTableAnalyzerPage::OnSetActive()
 {
+	setSourceTableObjectId();
 	refresh();
 	return CPropertyPage::OnSetActive();
 }
@@ -344,6 +346,12 @@ HRESULT TaTableAnalyzerPage::SetInspectionData()
 			}
 			break;
 			case SvPb::TableAnalyzerLimitType:
+			{
+				hrOk = m_pValues->Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
+				errorMessageList = m_pValues->getFailedMessageList();
+			}
+			break;
+			case SvPb::TableAnalyzerDeleteColumnType:
 			{
 				hrOk = m_pValues->Commit(SvOg::PostAction::doReset | SvOg::PostAction::doRunOnce);
 				errorMessageList = m_pValues->getFailedMessageList();
@@ -426,6 +434,9 @@ void TaTableAnalyzerPage::SetPropertyControls()
 		case SvPb::TableAnalyzerAddColumnType:
 			setAddColumnProperties();
 			break;
+		case SvPb::TableAnalyzerDeleteColumnType:
+			setDeleteColumnProperties();
+			break;
 		default:
 			break;
 	}
@@ -442,17 +453,27 @@ HRESULT TaTableAnalyzerPage::RetrieveAvailableColumnList()
 	pRequest->mutable_typeinfo()->set_subtype(SvPb::DoubleSortValueObjectType);
 
 	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
-	SvUl::NameObjectIdList availableList;
 	if (S_OK == hr && responseCmd.has_getavailableobjectsresponse())
 	{
 		m_availableColumn = SvCmd::convertNameObjectIdList(responseCmd.getavailableobjectsresponse().list());
+	}
+
+	m_availableSourceColumn.clear();
+	if (SvDef::InvalidObjectId != m_sourceTableObjectId)
+	{
+		pRequest->set_objectid(m_sourceTableObjectId);
+		hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
+		if (S_OK == hr && responseCmd.has_getavailableobjectsresponse())
+		{
+			m_availableSourceColumn = SvCmd::convertNameObjectIdList(responseCmd.getavailableobjectsresponse().list());
+		}
 	}
 	return hr;
 }
 
 void TaTableAnalyzerPage::ShowControls(long SubType)
 {
-	GetDlgItem(IDC_COLUMN_SELECT_CBOX)->ShowWindow((SvPb::TableAnalyzerSortType == SubType || SvPb::TableAnalyzerExcludeType == SubType) ? SW_SHOW : SW_HIDE);
+	GetDlgItem(IDC_COLUMN_SELECT_CBOX)->ShowWindow((SvPb::TableAnalyzerSortType == SubType || SvPb::TableAnalyzerExcludeType == SubType || SvPb::TableAnalyzerDeleteColumnType == SubType) ? SW_SHOW : SW_HIDE);
 
 	GetDlgItem(IDC_SORT_LABEL)->ShowWindow((SvPb::TableAnalyzerSortType == SubType) ? SW_SHOW : SW_HIDE);
 	GetDlgItem(IDC_ASC_RADIO)->ShowWindow((SvPb::TableAnalyzerSortType == SubType) ? SW_SHOW : SW_HIDE);
@@ -540,7 +561,14 @@ void TaTableAnalyzerPage::setAddColumnProperties()
 	}
 }
 
-void TaTableAnalyzerPage::setColumnSelectionCB()
+void TaTableAnalyzerPage::setDeleteColumnProperties()
+{
+	setColumnSelectionCB(true);
+
+	updateValueController();
+}
+
+void TaTableAnalyzerPage::setColumnSelectionCB(bool useSourceAvailable)
 {
 	RetrieveAvailableColumnList();
 	std::string selectedTableName;
@@ -559,7 +587,14 @@ void TaTableAnalyzerPage::setColumnSelectionCB()
 		selectedTableName = responseCmd.getinputsresponse().list(0).objectname();
 	}
 
-	m_columnSelectionCB.Init(m_availableColumn, selectedTableName, NoColumnTag);
+	if (useSourceAvailable)
+	{
+		m_columnSelectionCB.Init(m_availableSourceColumn, selectedTableName, NoColumnTag);
+	}
+	else
+	{
+		m_columnSelectionCB.Init(m_availableColumn, selectedTableName, NoColumnTag);
+	}
 }
 
 HRESULT TaTableAnalyzerPage::prepareSwitchOfAnalyzerSelection()
@@ -726,6 +761,27 @@ SvUl::NameObjectIdList TaTableAnalyzerPage::getTableAnalyzer()
 	return SvUl::NameObjectIdList();
 }
 
+void TaTableAnalyzerPage::setSourceTableObjectId()
+{
+	SvPb::InspectionCmdRequest requestCmd;
+	SvPb::InspectionCmdResponse responseCmd;
+	auto* pRequest = requestCmd.mutable_getinputsrequest();
+	pRequest->set_objectid(m_TaskObjectID);
+	pRequest->mutable_typeinfo()->set_objecttype(SvPb::TableObjectType);
+	pRequest->set_objecttypetoinclude(SvPb::SVToolSetObjectType);
+	pRequest->set_shouldexcludefirstobjectname(true);
+
+	HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
+	SvUl::InputNameObjectIdPairList connectedList;
+	if (S_OK == hr && responseCmd.has_getinputsresponse() && 0 < responseCmd.getinputsresponse().list_size())
+	{
+		m_sourceTableObjectId = responseCmd.getinputsresponse().list(0).objectid();
+	}
+	else
+	{
+		m_sourceTableObjectId = SvDef::InvalidObjectId;
+	}
+}
 #pragma endregion Private Methods
 } //namespace SvOg
 
