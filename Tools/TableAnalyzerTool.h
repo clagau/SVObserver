@@ -13,6 +13,11 @@
 #include "Operators/TableCopyObject.h"
 #pragma endregion Includes
 
+namespace SvOp
+{
+class SVLongResult;
+}
+
 namespace SvTo
 {
 
@@ -86,6 +91,7 @@ private:
 private:
 	SvOp::TableCopyObject* m_pResultTable;
 	SvOl::InputObject m_sourceTableInput;
+	SvOp::SVLongResult* m_pResult = nullptr;
 #pragma endregion Member Variables
 };
 

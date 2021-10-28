@@ -66,10 +66,10 @@ bool TableAnalyzerTool::CreateObject(const SVObjectLevelCreateStruct& rCreateStr
 	}
 
 	// add input of result
-	SvOp::SVLongResult* pResult = dynamic_cast<SvOp::SVLongResult*>(SvOi::FindObject(getObjectId(), SvDef::SVObjectTypeInfoStruct(SvPb::SVResultObjectType, SvPb::SVResultLongObjectType)));
-	if (nullptr != pResult)
+	m_pResult = dynamic_cast<SvOp::SVLongResult*>(SvOi::FindObject(getObjectId(), SvDef::SVObjectTypeInfoStruct(SvPb::SVResultObjectType, SvPb::SVResultLongObjectType)));
+	if (nullptr != m_pResult)
 	{
-		if (S_OK != pResult->ConnectToObject(SvDef::cInputTag_LongResultValue, m_pResultTable->getNumberOfRowObject()->getObjectId()))
+		if (S_OK != m_pResult->ConnectToObject(SvDef::cInputTag_LongResultValue, m_pResultTable->getNumberOfRowObject()->getObjectId()))
 		{
 			bOk = false;
 			SvStl::MessageContainer message;
@@ -101,7 +101,7 @@ bool TableAnalyzerTool::DoesObjectHaveExtents() const
 	return false;
 }
 
-bool TableAnalyzerTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
+bool TableAnalyzerTool::ResetObject(SvStl::MessageContainerVector* pErrorMessages)
 {
 	bool Result = SVToolClass::ResetObject(pErrorMessages);
 
@@ -140,6 +140,13 @@ bool TableAnalyzerTool::ResetObject(SvStl::MessageContainerVector *pErrorMessage
 	else
 	{
 		m_pResultTable->setSourecTable(nullptr);
+	}
+
+	assert(m_pResult);
+	//The "number of Rows"-Result must be the last task, because the other tasks can change the value.
+	if (m_pResult && m_TaskObjectVector[m_TaskObjectVector.size()-1] != m_pResult)
+	{
+		moveTaskObject(m_pResult->getObjectId());
 	}
 
 	return Result;
