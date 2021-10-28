@@ -9,7 +9,7 @@
 #include "stdafx.h"
 #include "ResultTableListCtrl.h"
 #include "SVIPDoc.h"
-#include "SVObserver.h"
+#include "SVSecurity/SVSecurityManager.h"
 #include "SVMessage/SVMessage.h"
 #include "SVObjectLibrary/SVClsids.h"
 #include "SVObjectLibrary/SVObjectClass.h"
@@ -152,7 +152,7 @@ void ResultTableListCtrl::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 {
 	//	Allow the Result Picker in every mode except Stop
 	if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_EDIT | SV_STATE_TEST | SV_STATE_REGRESSION) &&
-		TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_MODE_MENU_EDIT_TOOLSET))
+		TheSecurityManager().SVIsDisplayable(SECURITY_POINT_MODE_MENU_EDIT_TOOLSET))
 	{
 		CMenu* pPopupMenu = m_ContextMenuItem.GetSubMenu(0);
 		assert(nullptr != pPopupMenu);

@@ -18,6 +18,7 @@
 #include "SVImageViewScroll.h"
 #include "SVIPDoc.h"
 #include "SVObserver.h"
+#include "SVSecurity/SVSecurityManager.h"
 #include "SVPatResultDlgClass.h"
 #include "SVSetupDialogManager.h"
 #include "SVMainFrm.h"
@@ -363,7 +364,7 @@ BOOL SVImageView::OnCommand( WPARAM wParam, LPARAM lParam )
 	{
 		case ID_CONFIG_ANALYZER:
 		{
-			if( TheSVObserverApp.OkToEdit() )
+			if( TheSVObserverApp().OkToEdit() )
 			{
 				OnRButtonDblClk( 0, m_mousePoint );
 			}
@@ -404,7 +405,7 @@ BOOL SVImageView::OnCommand( WPARAM wParam, LPARAM lParam )
 		{
 			long l_err = 0;
 			if(ImageIsEmpty() ||
-				!TheSVObserverApp.OkToEdit() )
+				!TheSVObserverApp().OkToEdit() )
 			{
 				l_err = -1269;
 				break;
@@ -601,7 +602,7 @@ void SVImageView::OnContextMenu( CWnd* , CPoint point )
 					l_pPopup->DeleteMenu( ID_CONFIG_ANALYZER, MF_BYCOMMAND );
 				}
 
-				if( !TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_MODE_MENU_EDIT_TOOLSET ) )
+				if( !TheSecurityManager().SVIsDisplayable( SECURITY_POINT_MODE_MENU_EDIT_TOOLSET ) )
 				{
 					l_pPopup->DeleteMenu( ID_CONFIG_ANALYZER, MF_BYCOMMAND );
 				}
@@ -807,7 +808,7 @@ void SVImageView::OnLButtonDblClk( UINT nFlags, CPoint point )
 		TransformFromViewSpace( l_point );
 
 		std::string Text = SvUl::Format( _T(" X: %d, Y: %d "), l_point.x, l_point.y );
-		TheSVObserverApp.SetStatusText( Text.c_str() );
+		TheSVObserverApp().SetStatusText( Text.c_str() );
 
 		if (false == ImageIsEmpty() && nullptr != l_psvIPDoc)
 		{
@@ -837,7 +838,7 @@ void SVImageView::OnRButtonDblClk( UINT nFlags, CPoint point )
 		TransformFromViewSpace( l_point );
 		
 		std::string Text = SvUl::Format( _T(" X: %d, Y: %d "), l_point.x, l_point.y );
-		TheSVObserverApp.SetStatusText( Text.c_str() );
+		TheSVObserverApp().SetStatusText( Text.c_str() );
 		
 		if( nullptr != l_psvIPDoc && false == ImageIsEmpty())
 		{
@@ -865,7 +866,7 @@ void SVImageView::OnRButtonDblClk( UINT nFlags, CPoint point )
 void SVImageView::OnLButtonDown( UINT nFlags, CPoint point )
 {
 	if( !SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&
-		TheSVObserverApp.OkToEdit() )
+		TheSVObserverApp().OkToEdit() )
 	{
 		if(false == ImageIsEmpty())
 		{
@@ -907,7 +908,7 @@ void SVImageView::OnLButtonDown( UINT nFlags, CPoint point )
 				Text = SvUl::Format( _T(" Col: %d, Row: %d "), point.x, point.y );
 			}
 
-			TheSVObserverApp.SetStatusText( Text.c_str() );
+			TheSVObserverApp().SetStatusText( Text.c_str() );
 		}
 
 		CWnd::OnLButtonDown( nFlags, point );
@@ -917,7 +918,7 @@ void SVImageView::OnLButtonDown( UINT nFlags, CPoint point )
 void SVImageView::OnMouseMove(UINT nFlags, CPoint point)
 {
 	if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST) &&
-		TheSVObserverApp.OkToEdit())
+		TheSVObserverApp().OkToEdit())
 	{
 		if (m_lastMouseMovePoint == point)
 		{
@@ -1017,7 +1018,7 @@ void SVImageView::OnMouseMove(UINT nFlags, CPoint point)
 		}
 		SetCursor(hCursor);
 
-		TheSVObserverApp.SetStatusText(Text.c_str());
+		TheSVObserverApp().SetStatusText(Text.c_str());
 
 		CWnd::OnMouseMove(nFlags, point);
 	}
@@ -1039,7 +1040,7 @@ void SVImageView::OnLButtonUp( UINT nFlags, CPoint point )
 	ReleaseCapture();
 
 	std::string Text = SvUl::Format( _T(" Col: %d, Row: %d "), point.x, point.y );
-	TheSVObserverApp.SetStatusText( Text.c_str() );
+	TheSVObserverApp().SetStatusText( Text.c_str() );
 
 	CWnd::OnLButtonUp( nFlags, point );
 
@@ -1056,7 +1057,7 @@ void SVImageView::OnLButtonUp( UINT nFlags, CPoint point )
 ////////////////////////////////////////////////////////////////////////////////
 void SVImageView::OnCaptureChanged( CWnd* pWnd )
 {
-	TheSVObserverApp.SetStatusText( nullptr );
+	TheSVObserverApp().SetStatusText( nullptr );
 
 	CWnd::OnCaptureChanged( pWnd );
 }
@@ -1068,7 +1069,7 @@ void SVImageView::OnCaptureChanged( CWnd* pWnd )
 ////////////////////////////////////////////////////////////////////////////////
 void SVImageView::OnNcMouseMove( UINT hitTest, CPoint point )
 {
-	TheSVObserverApp.SetStatusText( nullptr );
+	TheSVObserverApp().SetStatusText( nullptr );
 
 	CWnd::OnNcMouseMove( hitTest, point );
 }

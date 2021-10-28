@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVRegressionFileSelectDlg.h"
 #include "SVRegressionFileSelectSheet.h"
-#include "SVObserver.h"
+#include "SVSecurity/SVSecurityManager.h"
 #include "SVMFCControls/SVDlgFolder.h"
 #include "SVMFCControls/SVFileDialog.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
@@ -103,7 +103,7 @@ void SVRegressionFileSelectDlg::OnBtnRegTestBrowseFiles()
 	//get last regression path for this camera from registry...
 	std::string KeyName = SvUl::Format( _T("LastPath_%i"), CameraNumber);
 	m_RegistryPath = AfxGetApp()->GetProfileString(_T("RegressionTest"), KeyName.c_str(), SvStl::GlobalPath::Inst().GetTempPath().c_str());
-	bool bFullAccess = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
+	bool bFullAccess = TheSecurityManager().SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
 
 	switch (m_iSelectFileRadio)
 	{

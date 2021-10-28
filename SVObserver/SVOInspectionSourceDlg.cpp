@@ -21,6 +21,7 @@
 #include "SVInspectionExporter.h"
 #include "SVInspectionImporter.h"
 #include "SVObserver.h"
+#include "SVSecurity/SVSecurityManager.h"
 #include "SVMFCControls/SVFileDialog.h"
 #include "SVGlobal.h"
 #include "SVStatusLibrary\MessageManager.h"
@@ -218,7 +219,7 @@ void SVOInspectionSourceDlg::OnBtnImportIpd()
 {
 	// prompt for file 
 	DWORD dwFlags = OFN_DONTADDTORECENT | OFN_ENABLESIZING | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
-	bool bFullAccess = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
+	bool bFullAccess = TheSecurityManager().SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
 	SvMc::SVFileDialog dlg(true, bFullAccess, AllInspectionExportFileExt, nullptr, dwFlags, AllInspectionExportFileFilters, this);
 	dlg.m_ofn.lpstrTitle = _T("Select File");
 
@@ -242,7 +243,7 @@ void SVOInspectionSourceDlg::OnBtnImportIpd()
 			HRESULT hr = SVInspectionImporter::GetProperties(PathName, l_NewDisableMethod, l_EnableAuxExtents, l_VersionNumber);
 			if (S_OK == hr && nullptr != pInspectionObj )
 			{
-				bool shouldLoad = l_VersionNumber <= TheSVObserverApp.getCurrentVersion();
+				bool shouldLoad = l_VersionNumber <= TheSVObserverApp().getCurrentVersion();
 				if( shouldLoad )
 				{
 					// Save it for later, when we exit the dialog
@@ -257,7 +258,7 @@ void SVOInspectionSourceDlg::OnBtnImportIpd()
 					std::string File;
 					std::string App;
 
-					::SVGetVersionString( App, TheSVObserverApp.getCurrentVersion() );
+					::SVGetVersionString( App, TheSVObserverApp().getCurrentVersion() );
 					::SVGetVersionString( File, l_VersionNumber );
 					SvDef::StringVector msgList;
 					msgList.push_back(File);
@@ -296,14 +297,14 @@ void SVOInspectionSourceDlg::OnBtnExportIpd()
 
 				// prompt for path and file name
 				DWORD dwFlags = OFN_DONTADDTORECENT | OFN_ENABLESIZING | OFN_PATHMUSTEXIST | OFN_NOCHANGEDIR | OFN_HIDEREADONLY;
-				bool bFullAccess = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
+				bool bFullAccess = TheSecurityManager().SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
 				SvMc::SVFileDialog dlg(false, bFullAccess, fileExt, InspectionName.GetString(), dwFlags, fileFilters, this);
 				if (dlg.DoModal() == IDOK)
 				{
 					std::string pathName = dlg.GetPathName().GetString();
 			   
 					// Create XML file
-					SVInspectionExporter::Export( pathName, Name, TheSVObserverApp.getCurrentVersion(), IsColor );
+					SVInspectionExporter::Export( pathName, Name, TheSVObserverApp().getCurrentVersion(), IsColor );
 				}
 			}
 		}

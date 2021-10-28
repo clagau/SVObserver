@@ -12,7 +12,6 @@
 #pragma region Inlcudes
 #include "stdafx.h"
 #include "SVSetupDialogManager.h"
-#include "SVObserver.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVMatroxLibrary/SVMatroxBlobInterface.h"
 #include "AnalyzerOperators/Analyzer.h"
@@ -91,7 +90,7 @@ HRESULT SVSetupDialogManager::SVBarCodeAnalyzerClassSetupDialog(uint32_t objectI
 	if (nullptr != pAnalyzer && nullptr != (pInspection = dynamic_cast<SVInspectionProcess*>(pAnalyzer->GetInspection())) &&
 		nullptr != (pResult = dynamic_cast<SvOp::SVBarCodeResult*>(pAnalyzer->GetResultObject())))
 	{
-		SVIPDoc* pIPDoc = TheSVObserverApp.GetIPDoc(pInspection->getObjectId());
+		SVIPDoc* pIPDoc = GetIPDocByInspectionID(pInspection->getObjectId());
 
 		if (nullptr != pIPDoc)
 		{
@@ -126,7 +125,7 @@ HRESULT SVSetupDialogManager::SVBlobAnalyzerClassSetupDialog(uint32_t objectId, 
 		if (nullptr != pAnalyzer->GetInspection())
 		{
 			uint32_t InspectionID(pAnalyzer->GetInspection()->getObjectId());
-			SVIPDoc* pIPDoc = TheSVObserverApp.GetIPDoc(InspectionID);
+			SVIPDoc* pIPDoc = GetIPDocByInspectionID(InspectionID);
 
 			if (nullptr != pIPDoc)
 			{
@@ -192,7 +191,7 @@ HRESULT SVSetupDialogManager::SVColorToolClassSetupDialog(uint32_t objectId, CWn
 
 		if (nullptr != pInspection)
 		{
-			SVIPDoc* pIPDoc = TheSVObserverApp.GetIPDoc(pInspection->getObjectId());
+			SVIPDoc* pIPDoc = GetIPDocByInspectionID(pInspection->getObjectId());
 			assert(nullptr != pIPDoc);
 
 			if (nullptr != pIPDoc)
@@ -286,7 +285,7 @@ HRESULT SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog(uint32_t objectId
 		// Get Complete Name up to the tool level...
 		Title = pAnalyzer->GetObjectNameBeforeObjectType(SvPb::SVToolSetObjectType) + _T(" ") + Title;
 
-		SVIPDoc* pIPDoc = TheSVObserverApp.GetIPDoc(pInspection->getObjectId());
+		SVIPDoc* pIPDoc = GetIPDocByInspectionID(pInspection->getObjectId());
 
 		SvOp::SVLinearEdgeProcessingClass *pEdgeA = pAnalyzer->GetEdgeA();
 		SvOp::SVLinearEdgeProcessingClass *pEdgeB = pAnalyzer->GetEdgeB();
@@ -406,7 +405,7 @@ HRESULT SVSetupDialogManager::SVOCVAnalyzerClassSetupDialog(uint32_t objectId, C
 
 			if (IDOK == dlg.DoModal())
 			{
-				SVIPDoc*pIPDoc = TheSVObserverApp.GetIPDoc(pInspection->getObjectId());
+				SVIPDoc*pIPDoc = GetIPDocByInspectionID(pInspection->getObjectId());
 
 				if (nullptr != pIPDoc)
 				{
@@ -479,7 +478,7 @@ HRESULT SVSetupDialogManager::PixelAnalyzerClassSetupDialog(uint32_t objectId, C
 		if (nullptr != pAnalyzer->GetInspection())
 		{
 			uint32_t inspectionID = pAnalyzer->GetInspection()->getObjectId();
-			SVIPDoc* pIPDoc = TheSVObserverApp.GetIPDoc(inspectionID);
+			SVIPDoc* pIPDoc = GetIPDocByInspectionID(inspectionID);
 
 			if (nullptr != pIPDoc)
 			{

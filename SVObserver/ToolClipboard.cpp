@@ -291,7 +291,7 @@ void ToolClipboard::writeBaseAndEnvironmentNodes(SvOi::IObjectWriter& rWriter) c
 	rWriter.ElementAttribute(SvXml::TypeTag, Value );
 
 	Value.Clear();
-	Value = TheSVObserverApp.getCurrentVersion();
+	Value = TheSVObserverApp().getCurrentVersion();
 
 	rWriter.StartElement( SvXml::CTAG_ENVIRONMENT  );
 	rWriter.WriteAttribute( SvXml::CTAG_VERSION_NUMBER, Value );
@@ -513,7 +513,7 @@ HRESULT ToolClipboard::checkVersion( SVTreeType& rTree ) const
 		SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_VERSION_NUMBER, EnvironmentItem, ClipboardVersion );
 
 		//Clipboard SVObserver version and current version must be the same
-		if ( VT_UI4 == ClipboardVersion.vt && TheSVObserverApp.getCurrentVersion() == ClipboardVersion.ulVal )
+		if ( VT_UI4 == ClipboardVersion.vt && TheSVObserverApp().getCurrentVersion() == ClipboardVersion.ulVal )
 		{
 			Result = S_OK;
 		}
@@ -606,7 +606,7 @@ HRESULT ToolClipboard::validateIds(std::string& rXmlData, uint32_t postId, uint3
 		}
 	}
 
-	SVIPDoc* pDoc = TheSVObserverApp.GetIPDoc(m_pInspection->getObjectId());
+	SVIPDoc* pDoc = GetIPDocByInspectionID(m_pInspection->getObjectId());
 	SVToolSet* pToolSet = m_pInspection->GetToolSet();
 	bool isColorCamera = m_pInspection->IsColorCamera();
 	SvTo::SVToolClass* pPostTool = dynamic_cast<SvTo::SVToolClass*>(SVObjectManagerClass::Instance().GetObject(postId));
@@ -736,7 +736,7 @@ HRESULT ToolClipboard::replaceToolName( std::string& rXmlData, SVTreeType& rTree
 			}
 			else
 			{
-				SVIPDoc* pDoc = (nullptr != m_pInspection) ? TheSVObserverApp.GetIPDoc(m_pInspection->getObjectId()) : nullptr;
+				SVIPDoc* pDoc = (nullptr != m_pInspection) ? GetIPDocByInspectionID(m_pInspection->getObjectId()) : nullptr;
 				if (nullptr != pDoc)
 				{
 					// Check to make sure the tool name is unique

@@ -74,7 +74,13 @@ private:
 
 //{{AFX_INSERT_LOCATION}}
 
+SVIODoc* GetTheIODoc();
+SVIODoc* NewSVIODoc(LPCTSTR DocName, SVIOController& Controller);
+
+
 void ShowIOTabIfPossible(DWORD dwID);
 void HideIOTabIfPossible(DWORD dwID);
+
+CDocTemplate* CreateIoDocMultiDocTemplate();
 
 

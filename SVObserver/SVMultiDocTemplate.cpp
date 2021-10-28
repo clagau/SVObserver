@@ -62,7 +62,7 @@ void SVMultiDocTemplate::SetDefaultTitle( CDocument* PDocument )
 #else
 			wsprintf( szNum, _T( " %d" ), m_nUntitledCount + i );
 #endif
-		} while( TheSVObserverApp.AlreadyExistsIPDocTitle( CString( strDocName + szNum ) ) );
+		} while( TheSVObserverApp().AlreadyExistsIPDocTitle( CString( strDocName + szNum ) ) );
 
 		strDocName += szNum;
 		m_nUntitledCount += i - 1;
@@ -95,3 +95,4 @@ void SVMultiDocTemplate::AssertValid() const
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
+

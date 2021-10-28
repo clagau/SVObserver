@@ -30,8 +30,9 @@
 #include "SVLightReferenceDialog.h"
 #include "SVLutDlg.h"
 #include "SVMainFrm.h"
+#include "SVMultiDocTemplate.h"
 #include "SVObserver.h"
-#include "SVObserverOuttakes.h"
+#include "SVSecurity/SVSecurityManager.h"
 #include "SVPPQObject.h"
 #include "SVRegressionRunDlg.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
@@ -203,6 +204,9 @@ BEGIN_MESSAGE_MAP(SVIPDoc, CDocument)
 
 
 END_MESSAGE_MAP()
+
+HRESULT RebuildOutputObjectListHelper(SVIODoc* pIODoc);
+
 #pragma endregion Declarations
 
 #pragma region local methods
@@ -335,7 +339,7 @@ void SVIPDoc::init()
 
 	IsNew = true;
 
-	TheSVObserverApp.setCurrentDocument(this);
+	TheSVObserverApp().setCurrentDocument(this);
 
 	// Default result height and tool set view width.
 	m_nWidthToolSetView = SvDef::cDefaultToolsetViewWidth;
@@ -356,7 +360,7 @@ SVIPDoc::~SVIPDoc()
 
 	m_oDisplay.Destroy();
 
-	TheSVObserverApp.setCurrentDocument(nullptr);
+	TheSVObserverApp().setCurrentDocument(nullptr);
 }
 
 CMDIChildWnd* SVIPDoc::GetMDIChild()
@@ -811,7 +815,7 @@ BOOL SVIPDoc::CanCloseFrame(CFrameWnd* pFrame)
 {
 	BOOL bCanClose = FALSE;
 
-	if (TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_CLOSE_CONFIGURATION))
+	if (TheSecurityManager().SVIsDisplayable(SECURITY_POINT_FILE_MENU_CLOSE_CONFIGURATION))
 	{
 		if (SVSVIMStateClass::CheckState(SV_STATE_CANCELING) || SVSVIMStateClass::CheckState(SV_STATE_CLOSING))
 		{
@@ -855,7 +859,7 @@ BOOL SVIPDoc::OnNewDocument()
 void SVIPDoc::CloseDocument()
 {
 	if (!SVSVIMStateClass::CheckState(SV_STATE_CANCELING | SV_STATE_CLOSING) &&
-		!(S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate(SECURITY_POINT_FILE_MENU_CLOSE_CONFIGURATION)))
+		!(S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_FILE_MENU_CLOSE_CONFIGURATION)))
 	{
 		return;
 	}
@@ -869,7 +873,7 @@ void SVIPDoc::OnUpdateStatusInfo(CCmdUI* pCmdUI)
 	{
 		case ID_INDICATOR_INFO:
 		{
-			TheSVObserverApp.GetMainFrame()->UpdateStatusInfo(pCmdUI);
+			TheSVObserverApp().GetMainFrame()->UpdateStatusInfo(pCmdUI);
 			break;
 		}
 		default:
@@ -883,7 +887,7 @@ void SVIPDoc::OnUpdateStatusInfo(CCmdUI* pCmdUI)
 void SVIPDoc::OnUpdateRunRegressionTest(CCmdUI* PCmdUI)
 {
 	// @WARNING:  Pointers should be checked before they are dereferenced.
-	PCmdUI->Enable(TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_MODE_MENU_REGRESSION_TEST));
+	PCmdUI->Enable(TheSecurityManager().SVIsDisplayable(SECURITY_POINT_MODE_MENU_REGRESSION_TEST));
 	PCmdUI->SetCheck(SVSVIMStateClass::CheckState(SV_STATE_REGRESSION));
 }
 
@@ -891,7 +895,7 @@ void SVIPDoc::OnAllowAdjustLightReference(CCmdUI* pCmdUI)
 {
 	bool bEnable = (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_REGRESSION) &&
 		SVSVIMStateClass::CheckState(SV_STATE_TEST | SV_STATE_EDIT) &&
-		TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_MODE_MENU_EDIT_TOOLSET));
+		TheSecurityManager().SVIsDisplayable(SECURITY_POINT_MODE_MENU_EDIT_TOOLSET));
 	if (bEnable)
 	{
 		SvIe::SVVirtualCameraPtrVector cameraVector;
@@ -906,7 +910,7 @@ void SVIPDoc::OnAllowAdjustLut(CCmdUI* pCmdUI)
 {
 	bool bEnable = (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_REGRESSION) &&
 		SVSVIMStateClass::CheckState(SV_STATE_TEST | SV_STATE_EDIT) &&
-		TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_MODE_MENU_EDIT_TOOLSET));
+		TheSecurityManager().SVIsDisplayable(SECURITY_POINT_MODE_MENU_EDIT_TOOLSET));
 	if (bEnable)
 	{
 		SvIe::SVVirtualCameraPtrVector cameraVector;
@@ -1317,7 +1321,7 @@ void SVIPDoc::OnUpdateEditCutCopy(CCmdUI* pCmdUI)
 	ToolSetView* pToolSetView = GetToolSetView();
 	SVToolSet* pToolSet = GetToolSet();
 
-	if (TheSVObserverApp.OkToEdit() && nullptr != pToolSet && nullptr != pToolSetView)
+	if (TheSVObserverApp().OkToEdit() && nullptr != pToolSet && nullptr != pToolSetView)
 	{
 		if (!pToolSetView->IsLabelEditing())
 		{
@@ -1420,7 +1424,7 @@ void SVIPDoc::OnUpdateEditPaste(CCmdUI* pCmdUI)
 {
 	ToolSetView* pToolSetView = GetToolSetView();
 	SVToolSet* pToolSet = GetToolSet();
-	bool enabled = TheSVObserverApp.OkToEdit() && nullptr != pToolSet && nullptr != pToolSetView && false == pToolSetView->IsLabelEditing();
+	bool enabled = TheSVObserverApp().OkToEdit() && nullptr != pToolSet && nullptr != pToolSetView && false == pToolSetView->IsLabelEditing();
 
 	if (enabled)
 	{
@@ -1595,7 +1599,7 @@ void SVIPDoc::OnEditToolTab1()
 void SVIPDoc::OpenToolAdjustmentDialog(int tab)
 {
 	// Check current user access...
-	if (TheSVObserverApp.OkToEdit())
+	if (TheSVObserverApp().OkToEdit())
 	{
 		SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject(GetSelectedToolID()));
 		if (nullptr != pTool)
@@ -1622,7 +1626,7 @@ void SVIPDoc::OpenToolAdjustmentDialog(int tab)
 					if (nullptr != pConfig)
 					{
 						pConfig->ValidateRemoteMonitorList();
-						TheSVObserverApp.GetIODoc()->UpdateAllViews(nullptr);
+						GetTheIODoc()->UpdateAllViews(nullptr);
 					}
 				}
 				else
@@ -1659,7 +1663,7 @@ void SVIPDoc::OpenToolAdjustmentDialog(int tab)
 void SVIPDoc::OnEditToolSet()
 {
 	// Check current user access...
-	if (TheSVObserverApp.OkToEdit())
+	if (TheSVObserverApp().OkToEdit())
 	{
 		if (GetToolSet())
 		{
@@ -1680,7 +1684,7 @@ void SVIPDoc::OnEditToolSet()
 void SVIPDoc::OnFileSaveImage()
 {
 	SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
-	if (S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate(SECURITY_POINT_FILE_MENU_SAVE_IMAGE))
+	if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_FILE_MENU_SAVE_IMAGE))
 	{
 		SvOg::SVSaveToolSetImageDialogClass dlg(GetInspectionID(), GetToolSet()->getObjectId());
 		dlg.DoModal();
@@ -1714,7 +1718,7 @@ void SVIPDoc::OnResultsPicker()
 		// cppcheck-suppress unreadVariable symbolName=pStateEditing ; RAII variable
 		pStateEditing = std::make_unique<SVSVIMStateClass::SetResetState>(SV_STATE_EDITING);  /// do this before calling validate for security as it may display a logon dialog!
 	}
-	if (S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate(SECURITY_POINT_EDIT_MENU_RESULT_PICKER))
+	if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_EDIT_MENU_RESULT_PICKER))
 	{
 		SVInspectionProcess* pInspection(GetInspectionProcess());
 		SVResultList* pResultList(GetResultList());
@@ -1773,7 +1777,7 @@ void SVIPDoc::OnResultsTablePicker()
 		// cppcheck-suppress unreadVariable symbolName=pStateEditing ; RAII variable
 		pStateEditing = std::make_unique<SVSVIMStateClass::SetResetState>(SV_STATE_EDITING);  /// do this before calling validate for security as it may display a logon dialog!
 	}
-	if (S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate(SECURITY_POINT_EDIT_MENU_RESULT_PICKER))
+	if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_EDIT_MENU_RESULT_PICKER))
 	{
 		SVResultList* pResultList(GetResultList());
 		assert(nullptr != pResultList);
@@ -2046,7 +2050,7 @@ void SVIPDoc::OnPublishedResultsPicker()
 					}// end if
 				}
 			}// end for
-			TheSVObserverApp.GetIODoc()->UpdateAllViews(nullptr);
+			GetTheIODoc()->UpdateAllViews(nullptr);
 		}
 	}
 }
@@ -2103,7 +2107,7 @@ void SVIPDoc::OnPublishedResultImagesPicker()
 			if (nullptr != pConfig)
 			{
 				pConfig->ValidateRemoteMonitorList();
-				TheSVObserverApp.GetIODoc()->UpdateAllViews(nullptr);
+				GetTheIODoc()->UpdateAllViews(nullptr);
 			}
 		}
 	}
@@ -2146,7 +2150,7 @@ void SVIPDoc::RunRegressionTest()
 
 	if (hasRunMode || hasTestMode)
 	{
-		TheSVObserverApp.StopSvo();
+		TheSVObserverApp().StopSvo();
 	}
 
 	SVInspectionProcess* pInspection(GetInspectionProcess());
@@ -2162,7 +2166,7 @@ void SVIPDoc::RunRegressionTest()
 		if (hasRunMode)
 		{
 			// Dual Security access point
-			if (S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate(SECURITY_POINT_MODE_MENU_REGRESSION_TEST,
+			if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_MODE_MENU_REGRESSION_TEST,
 				SECURITY_POINT_MODE_MENU_EXIT_RUN_MODE))
 			{
 				l_bAllowAccess = true;
@@ -2172,7 +2176,7 @@ void SVIPDoc::RunRegressionTest()
 				return;
 			}
 		}
-		else if (S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate(SECURITY_POINT_MODE_MENU_REGRESSION_TEST))
+		else if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_MODE_MENU_REGRESSION_TEST))
 		{
 			l_bAllowAccess = true;
 		}
@@ -2181,7 +2185,7 @@ void SVIPDoc::RunRegressionTest()
 		{
 			SVSVIMStateClass::changeState(SV_STATE_REGRESSION, SV_STATE_TEST | SV_STATE_EDIT | SV_STATE_STOP);
 
-			TheSVObserverApp.DeselectTool();
+			TheSVObserverApp().DeselectTool();
 
 			m_oDisplay.CanGoOnline();
 			// check to see if it is able to go into Regression mode
@@ -2315,7 +2319,7 @@ void SVIPDoc::OnChangeToolSetDrawFlag(UINT nId)
 	assert(nId >= ID_VIEW_TOOLSETDRAW_POP_BASE && nId <= ID_VIEW_TOOLSETDRAW_POP_MAX);
 
 	// Access denied...
-	if (!TheSVObserverApp.OkToEdit()) { return; }
+	if (!TheSVObserverApp().OkToEdit()) { return; }
 
 	if (nId >= ID_VIEW_TOOLSETDRAW_POP_BASE && nId <= ID_VIEW_TOOLSETDRAW_POP_MAX)
 	{
@@ -2431,7 +2435,7 @@ void SVIPDoc::RecreateImageSurfaces()
 void SVIPDoc::OnUpdateFileExit(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING) && !SVSVIMStateClass::CheckState(SV_STATE_REGRESSION) && !SVSVIMStateClass::CheckState(SV_STATE_TEST)
-		&& TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_EXIT));
+		&& TheSecurityManager().SVIsDisplayable(SECURITY_POINT_FILE_MENU_EXIT));
 }
 
 CFile* SVIPDoc::GetFile(LPCTSTR lpszFileName, UINT nOpenFlags, CFileException* pError)
@@ -3174,7 +3178,7 @@ bool SVIPDoc::deleteTool(NavigatorElement* pNaviElement)
 	SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 	if (S_OK == responseCmd.hresult())
 	{
-		RebuildOutputObjectListHelper(TheSVObserverApp.GetIODoc());
+		RebuildOutputObjectListHelper(GetTheIODoc());
 	}
 	else if (responseCmd.has_standardresponse())
 	{
@@ -3215,7 +3219,7 @@ void SVIPDoc::OnEditAdjustToolPosition()
 void SVIPDoc::OnUpdateEditAdjustToolPosition(CCmdUI* pCmdUI)
 {
 	// Check current user access...
-	if (!TheSVObserverApp.OkToEdit())
+	if (!TheSVObserverApp().OkToEdit())
 	{
 		return pCmdUI->Enable(false);
 	}
@@ -3277,7 +3281,7 @@ void SVIPDoc::OnShowToolRelations()
 void SVIPDoc::OnUpdateShowToolRelations(CCmdUI* pCmdUI)
 {
 	// Check current user access...
-	bool Enabled = TheSVObserverApp.OkToEdit();
+	bool Enabled = TheSVObserverApp().OkToEdit();
 
 	pCmdUI->Enable(Enabled);
 }
@@ -3288,7 +3292,7 @@ void SVIPDoc::OnToolDependencies()
 	if (nullptr != pToolSet)
 	{
 		SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
-		bool bFullAccess = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
+		bool bFullAccess = TheSecurityManager().SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
 		constexpr const TCHAR* Filter = _T("GraphViz Files (*.dot)|*.dot||");
 		SvMc::SVFileDialog fileDlg(false, bFullAccess, _T("dot"), nullptr, 0, Filter, nullptr);
 		fileDlg.m_ofn.lpstrTitle = _T("Select File");
@@ -3305,21 +3309,21 @@ void SVIPDoc::OnToolDependencies()
 
 void SVIPDoc::OnUpdateToolDependencies(CCmdUI* PCmdUI)
 {
-	bool Enabled = TheSVObserverApp.OkToEdit();
+	bool Enabled = TheSVObserverApp().OkToEdit();
 
 	PCmdUI->Enable(Enabled);
 }
 
 void SVIPDoc::OnUpdateAddGeneralTool(CCmdUI* PCmdUI)
 {
-	bool Enabled = TheSVObserverApp.OkToEdit();
+	bool Enabled = TheSVObserverApp().OkToEdit();
 
 	PCmdUI->Enable(Enabled);
 }
 
 void SVIPDoc::OnUpdateAddGeneralImageMonoTypeTool(CCmdUI* PCmdUI)
 {
-	bool Enabled = TheSVObserverApp.OkToEdit() && isImageAvailable(SvPb::SVImageMonoType);
+	bool Enabled = TheSVObserverApp().OkToEdit() && isImageAvailable(SvPb::SVImageMonoType);
 
 	PCmdUI->Enable(Enabled);
 }
@@ -3328,7 +3332,7 @@ void SVIPDoc::OnUpdateAddCylindricalWarpTool(CCmdUI* pCmdUI)
 {
 	bool Enabled = !SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST);
 
-	Enabled = Enabled && TheSVObserverApp.OkToEdit() && isImageAvailable(SvPb::SVImageMonoType);
+	Enabled = Enabled && TheSVObserverApp().OkToEdit() && isImageAvailable(SvPb::SVImageMonoType);
 
 	if (pCmdUI->m_pSubMenu)
 	{
@@ -3344,7 +3348,7 @@ void SVIPDoc::OnUpdateAddCylindricalWarpTool(CCmdUI* pCmdUI)
 void SVIPDoc::OnUpdateAddTransformationTool(CCmdUI* pCmdUI)
 {
 	bool Enabled = !SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST);
-	Enabled = Enabled && TheSVObserverApp.OkToEdit() && isImageAvailable(SvPb::SVImageMonoType);
+	Enabled = Enabled && TheSVObserverApp().OkToEdit() && isImageAvailable(SvPb::SVImageMonoType);
 
 	pCmdUI->Enable(Enabled);
 }
@@ -3353,7 +3357,7 @@ void SVIPDoc::OnUpdateAddColorTool(CCmdUI* PCmdUI)
 {
 	bool Enabled = !SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST);
 	// Check current user access...
-	Enabled = Enabled && TheSVObserverApp.OkToEdit() && isImageAvailable(SvPb::SVImageColorType);
+	Enabled = Enabled && TheSVObserverApp().OkToEdit() && isImageAvailable(SvPb::SVImageColorType);
 
 	PCmdUI->Enable(Enabled);
 }
@@ -3362,7 +3366,7 @@ afx_msg void SVIPDoc::OnUpdateAddToolWithSubTools(CCmdUI* PCmdUI)
 {
 	bool Enabled = !SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST);
 	// Check current user access...
-	Enabled = Enabled && TheSVObserverApp.OkToEdit();
+	Enabled = Enabled && TheSVObserverApp().OkToEdit();
 	ToolSetView* pView = GetToolSetView();
 	if (!pView || pView->IsSubToolSelected())
 	{
@@ -3375,15 +3379,15 @@ afx_msg void SVIPDoc::OnUpdateAddToolWithSubTools(CCmdUI* PCmdUI)
 
 void SVIPDoc::OnViewResetAllCounts()
 {
-	if (S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate(SECURITY_POINT_VIEW_MENU_RESET_COUNTS_ALL))
+	if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_VIEW_MENU_RESET_COUNTS_ALL))
 	{
-		TheSVObserverApp.ResetAllCounts();
+		TheSVObserverApp().ResetAllCounts();
 	}
 }
 
 void SVIPDoc::OnViewResetCountsCurrentIP()
 {
-	if (S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate(SECURITY_POINT_VIEW_MENU_RESET_COUNTS_CURRENT))
+	if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_VIEW_MENU_RESET_COUNTS_CURRENT))
 	{
  		SVInspectionProcess* pInspection = GetInspectionProcess();
 
@@ -3516,13 +3520,13 @@ SVToolGrouping& SVIPDoc::GetToolGroupings()
 void SVIPDoc::OnUpdateViewResetCountsAllIPs(CCmdUI* pCmdUI)
 {
 	// @WARNING:  Pointers should be checked before they are dereferenced.
-	pCmdUI->Enable(TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_VIEW_MENU_RESET_COUNTS_ALL));
+	pCmdUI->Enable(TheSecurityManager().SVIsDisplayable(SECURITY_POINT_VIEW_MENU_RESET_COUNTS_ALL));
 }
 
 void SVIPDoc::OnUpdateViewResetCountsCurrentIP(CCmdUI* pCmdUI)
 {
 	// @WARNING:  Pointers should be checked before they are dereferenced.
-	pCmdUI->Enable(TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_VIEW_MENU_RESET_COUNTS_CURRENT));
+	pCmdUI->Enable(TheSecurityManager().SVIsDisplayable(SECURITY_POINT_VIEW_MENU_RESET_COUNTS_CURRENT));
 }
 
 void SVIPDoc::OnEditDataDefinitionLists()
@@ -4001,3 +4005,133 @@ bool SVIPDoc::isImageAvailable(SvPb::SVObjectSubTypeEnum ImageSubType) const
 
 	return Result;
 }
+
+
+SVIPDoc* NewSVIPDoc(LPCTSTR DocName, SVInspectionProcess& Inspection)
+{
+	SVIPDoc* pDoc = nullptr;
+	CDocTemplate* pDocTemplate = nullptr;
+	POSITION pos = TheSVObserverApp().GetFirstDocTemplatePosition();
+	if (pos)
+	{
+		pDocTemplate = TheSVObserverApp().GetNextDocTemplate(pos);
+		if (pDocTemplate)
+		{
+			pDoc = dynamic_cast<SVIPDoc*>(pDocTemplate->OpenDocumentFile(nullptr, TRUE));   // Make visible
+
+			if (nullptr != pDoc)
+			{
+				pDoc->SetInspectionID(Inspection.getObjectId());
+				pDoc->SetRegressionTestPlayEquationController(Inspection.getRegressionTestPlayConditionController());
+
+				pDoc->SetTitle(DocName);
+			}
+		}
+	}
+
+	return pDoc;
+}
+
+
+SVIPDoc* GetIPDocByInspectionID(uint32_t inspectionID)
+{
+	SVIPDoc* pIPDoc(nullptr);
+	POSITION pos = TheSVObserverApp().GetFirstDocTemplatePosition();
+	while (pos && !pIPDoc)
+	{
+		CDocTemplate* pDocTemplate = TheSVObserverApp().GetNextDocTemplate(pos);
+		if (pDocTemplate)
+		{
+			POSITION posDoc = pDocTemplate->GetFirstDocPosition();
+			while (posDoc && !pIPDoc)
+			{
+				SVIPDoc* pDoc = dynamic_cast <SVIPDoc*>(pDocTemplate->GetNextDoc(posDoc));
+				if (nullptr != pDoc)
+				{
+					if (pDoc->GetInspectionID() == inspectionID)
+					{
+						pIPDoc = pDoc;
+					}
+				}
+			}
+		}
+	}
+	return pIPDoc;
+}
+
+
+void ResetAllIPDocModifyFlag(BOOL bModified)
+{
+	POSITION pos = TheSVObserverApp().GetFirstDocTemplatePosition(); 
+	if (pos)
+	{
+		do
+		{
+			CDocTemplate* pDocTemplate = TheSVObserverApp().GetNextDocTemplate(pos); //@TODO [Arvid][10.20][27.10.2021] similar control structures occur multiple times. Use std::algorithm?
+			if (pDocTemplate)
+			{
+				POSITION posDoc = pDocTemplate->GetFirstDocPosition();
+				if (posDoc)
+				{
+					do
+					{
+						CDocument* newDoc = pDocTemplate->GetNextDoc(posDoc);
+						if (newDoc)
+						{
+							SVIPDoc* pTmpDoc = dynamic_cast <SVIPDoc*> (newDoc);
+
+							if (nullptr != pTmpDoc)
+							{
+								pTmpDoc->SetModifiedFlag(bModified);
+							}
+						}
+					} while (posDoc);
+				}
+			}
+		} while (pos);
+	}
+	//also set the IODoc Modified flag
+	SVIODoc* pIODoc = GetTheIODoc();
+	if (pIODoc)
+	{
+		pIODoc->SetModifiedFlag(bModified);
+	}
+}
+
+HRESULT RebuildOutputObjectListHelper(SVIODoc* pIODoc)
+{
+	HRESULT l_Status = S_OK;
+
+	SVConfigurationObject* pConfig(nullptr);
+	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
+
+	if (nullptr != pConfig)
+	{
+		pConfig->ValidateRemoteMonitorList();
+		pConfig->RebuildOutputObjectList();
+
+		if (pIODoc)
+		{
+			pIODoc->UpdateAllViews(nullptr);
+		}
+	}
+	else
+	{
+		l_Status = E_FAIL;
+	}
+
+	return l_Status;
+}
+
+
+CDocTemplate* CreateIpDocMultiDocTemplate()
+{
+	// Dokumentvorlagen der Anwendung registrieren. Dokumentvorlagen
+	//  dienen als Verbindung zwischen Dokumenten, Rahmenfenstern und Ansichten.
+	return new SVMultiDocTemplate(IDR_SVOBSERVER_IPDOCTYPE,
+		RUNTIME_CLASS(SVIPDoc),			 // Doc
+		RUNTIME_CLASS(SVIPSplitterFrame),  // Frame
+		RUNTIME_CLASS(SVImageViewScroll));// View
+}
+
+

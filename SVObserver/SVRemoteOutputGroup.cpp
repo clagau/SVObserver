@@ -13,7 +13,6 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <comdef.h>
 #include "SVRemoteOutputGroup.h"
-#include "SVObserver.h"
 #include "TextDefinesSvO.h"
 #include "ObjectInterfaces/IObjectWriter.h"
 #include "SVIOLibrary/SVRemoteOutputObject.h"

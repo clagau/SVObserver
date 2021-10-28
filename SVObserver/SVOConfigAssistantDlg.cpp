@@ -26,7 +26,6 @@
 #include "SVFileAcquisitionDevice/SVFileAcquisitionLoadingModeEnum.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
 #include "SVObserver.h"
-#include "SVObserverOuttakes.h"
 #include "SVOPPQObj.h"
 #include "SVOInspectionObj.h"
 #include "Triggering/SVOTriggerObj.h"
@@ -127,7 +126,7 @@ SVOConfigAssistantDlg::SVOConfigAssistantDlg(CWnd* pParent /*=nullptr*/)
 	: CDialog(SVOConfigAssistantDlg::IDD, pParent)
 	, m_ctlConfigurationName(SvDef::cExcludeCharsConfigName)
 {
-	SVIMProductEnum eSvimType = TheSVObserverApp.GetSVIMType();
+	SVIMProductEnum eSvimType = TheSVObserverApp().GetSVIMType();
 	SetConfigurationSystem( eSvimType );
 }
 
@@ -200,7 +199,7 @@ BOOL SVOConfigAssistantDlg::OnInitDialog()
 	{
 		m_bConfigName = TRUE;
 		GetConfigurationForExisting();
-		m_ctlConfigurationName.SetWindowText( TheSVObserverApp.getConfigFileName().c_str() );
+		m_ctlConfigurationName.SetWindowText( TheSVObserverApp().getConfigFileName().c_str() );
 		m_ctlConfigurationName.EnableWindow(FALSE);
 	}
 	SetupSystemComboBox();
@@ -1953,7 +1952,7 @@ bool SVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 							//rename in configuration
 							pInspection->OnObjectRenamed(*pInspection, Key);
 
-							TheSVObserverApp.UpdateAllIOViews();
+							TheSVObserverApp().UpdateAllIOViews();
 							break;
 						}
 						pInspection = nullptr;
@@ -2389,7 +2388,7 @@ bool SVOConfigAssistantDlg::SendDataToConfiguration()
 	// Added this to fix memory leak freeing MIL buffers
 	// before we close Acq devices, we need to tell all toolsets to Close
 	// this closes the connection between toolset images and the MIL acq image.
-	TheSVObserverApp.DisconnectToolsetBuffers();
+	TheSVObserverApp().DisconnectToolsetBuffers();
 
 	SendAcquisitionDataToConfiguration();
 
@@ -3129,7 +3128,7 @@ bool SVOConfigAssistantDlg::ItemChanged(int iItemDlg, LPCTSTR LabelName, int iAc
 					{
 						CheckTriggers();
 						long l_lPpqLength = pPPQObj->GetPPQLength();
-						long l_lImageDepth = TheSVObserverApp.GetMaxPPQLength();
+						long l_lImageDepth = TheSVObserverApp().GetMaxPPQLength();
 						if ( pPPQObj->GetMaintainSourceImageProperty() )
 						{
 							if ( l_lPpqLength <= l_lImageDepth )
@@ -3159,7 +3158,7 @@ bool SVOConfigAssistantDlg::ItemChanged(int iItemDlg, LPCTSTR LabelName, int iAc
 						if ( pPPQObj->GetMaintainSourceImageProperty() )
 						{
 							long l_lPpqLength = pPPQObj->GetPPQLength();
-							long l_lImageDepth = TheSVObserverApp.GetMaxPPQLength();
+							long l_lImageDepth = TheSVObserverApp().GetMaxPPQLength();
 							if ( l_lPpqLength > l_lImageDepth )
 							{
 								std::string Msg = SvUl::Format( _T("%s%d"), PPQ_PROP_SRC_IMG_ERROR, l_lImageDepth);
@@ -3171,7 +3170,7 @@ bool SVOConfigAssistantDlg::ItemChanged(int iItemDlg, LPCTSTR LabelName, int iAc
 						{
 							// see if error conditions exist, if so remove it
 							// maintain source image = false
-							long l_lImageDepth = TheSVObserverApp.GetMaxPPQLength();
+							long l_lImageDepth = TheSVObserverApp().GetMaxPPQLength();
 							std::string Msg = SvUl::Format( _T("%s%d"),PPQ_PROP_SRC_IMG_ERROR,l_lImageDepth);
 							//create error display message
 							RemoveMessageFromList(BuildDisplayMessage( MESSAGE_TYPE_ERROR, LabelName, Msg.c_str() ).c_str() );
@@ -3702,7 +3701,7 @@ HRESULT SVOConfigAssistantDlg::CheckCamera( SVOCameraObj& rCameraObj, bool SetFi
 				rCameraObj.SetCameraFileParams( DeviceParams );
 			}
 
-			bool bDisplayWarnings = TheSVObserverApp.GetSVIMType() == GetProductType();
+			bool bDisplayWarnings = TheSVObserverApp().GetSVIMType() == GetProductType();
 			std::string MessageIncorrectCamFile = BuildDisplayMessage(MESSAGE_TYPE_WARNING, CameraName.c_str(), MESSAGE_INCORRECT_CAM_FILE);
 			RemoveMessageFromList(MessageIncorrectCamFile.c_str());
 			if( DeviceParams.ParameterExists( DeviceParamVendorId ) || DeviceParams.ParameterExists( DeviceParamModelName ) )

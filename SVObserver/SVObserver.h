@@ -15,10 +15,9 @@
 #include "Triggering/SVDigitizerLoadLibraryClass.h"
 #include "Triggering/SVIOTriggerLoadLibraryClass.h"
 #include "InitialInformationHandler.h"
-#include "SVSecurity/SVSecurityManager.h"
-#include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVFileSystemLibrary/SVFileNameClass.h"
 #include "SVGlobal.h"
+#include "MonitorListAttributeStruct.h"
 #include "SVLibrary/SVUtilityIniClass.h"
 #include "SVOLibrary/SVObserverEnums.h"
 #pragma endregion Includes
@@ -38,7 +37,6 @@ namespace SvOi
 	class IObjectWriter;
 }
 
-typedef SvXml::SVXMLMaterialsTree SVTreeType;
 #pragma endregion Declarations
 
 class SVObserverApp : public CWinApp
@@ -81,12 +79,7 @@ public:
 public:
 	HRESULT OpenFile(LPCTSTR PathName, bool editMode = false, ConfigFileType fileType = ConfigFileType::SvzStandard);
 	HRESULT OpenSVXFile();
-	HRESULT LoadSvxFile(bool isGlobalInit);
 
-	SVIODoc* NewSVIODoc( LPCTSTR DocName, SVIOController& Controller );
-	SVIPDoc* NewSVIPDoc( LPCTSTR DocName, SVInspectionProcess& Inspection );
-
-	HRESULT LoadConfiguration(unsigned long& ulSVOConfigVersion, BSTR bstrFileName, SVTreeType& p_rTree);
 	HRESULT LoadPackedConfiguration(LPCTSTR pFileName, ConfigFileType type);
 	HRESULT SavePackedConfiguration(LPCTSTR pFileName);
 
@@ -94,7 +87,6 @@ public:
 	HRESULT CanCloseMainFrame();
 	HRESULT DestroyConfig( bool AskForSavingOrClosing = true, bool CloseWithoutHint = false );
 	void RemoveUnusedFiles();
-	SVIODoc* GetIODoc() const;
 
 	bool Logout( bool BForceLogout = false );
 	bool InitPath( LPCTSTR PathName, bool CreateIfDoesNotExist = true, bool DeleteContents = true );
@@ -102,7 +94,6 @@ public:
 	bool IsMatroxGige() const;
 
 	void OnAppExitWrapper() { CWinApp::OnAppExit(); }
-	void OnUpdateRecentFileMenuWrapper(CCmdUI* PCmdUI) { CWinApp::OnUpdateRecentFileMenu(PCmdUI); }
 	void PrintSetup() { OnFilePrintSetup(); }
 
 	void UpdateAllIOViews();
@@ -125,8 +116,6 @@ public:
 
 	std::string  getSvxFullFilename() const { return m_SvxFileName.GetFullFileName(); } 
 
-	SVIPDoc* GetIPDoc(uint32_t inspectionID) const;
-	SVIPDoc* GetIPDoc( LPCTSTR StrIPDocPathName ) const;
 	bool AlreadyExistsIPDocTitle( LPCTSTR StrIPDocTitle );
 
 	bool ShowConfigurationAssistant( int Page = 3, bool bFileNewConfiguration = false );
@@ -158,14 +147,19 @@ public:
 	void RunAllIPDocuments();
 	void SetAllIPDocumentsOnline();
 	void SetAllIPDocumentsOffline();
-	void ResetAllIPDocModifyFlag(BOOL bModified);
 
-	bool fileSaveAsSVX(const std::string& rFileName, bool resetAutoSave);
 	void executePreOrPostExecutionFile(const std::string& filepath, bool inRunMode = true);
+
+	bool fileSaveAsSVXWrapper(const std::string& rFileName, bool resetAutoSave);
 
 	void StopRegression();
 	
 	void Start(DWORD desiredState);///< In error cases this method throws an exception.
+	bool InitialChecks(DWORD desiredState);
+	void PrepareForStart(SVConfigurationObject* pConfig, DWORD desiredState, bool isLocalStart);
+	HRESULT PrepareCamerasAndMemory();
+	void CreateImageStores(SVConfigurationObject* pConfig, PPQMonitorList &rPpqMonitorList, HRESULT Result, DWORD desiredState, bool isLocalStart);
+	void RunInspections(SVConfigurationObject* pConfig, DWORD desiredState);
 
 	bool OpenConfigFileFromMostRecentList(int nID);
 	void startInstances();
@@ -193,9 +187,8 @@ public:
 	long getMaxPreloadFileNumber() const { return m_rInitialInfo.m_MaxPreloadFileNumber; }
 	long getPreloadTimeDelay() const { return m_rInitialInfo.m_PreloadTimeDelay; }
 	
-#pragma endregion
-
 	bool DetermineConfigurationSaveName(); ///< determines the name under which a configuration is to be changed
+#pragma endregion
 
 #pragma endregion Public Methods
 
@@ -205,9 +198,6 @@ protected:
 	HRESULT DisconnectAllCameraBuffers();
 	HRESULT ConnectCameraBuffers();
 	HRESULT InitializeSecurity();
-
-
-	HRESULT ConstructDocuments( SVTreeType& p_rTree );
 
 	HRESULT ConstructMissingDocuments();
 	
@@ -233,8 +223,6 @@ private:
 
 #pragma region Public member variables
 public:
-	SVSecurityManager m_svSecurityMgr;	// Security
-
 	InitialInformationHandler m_IniInfoHandler;
 	bool m_MemLeakDetection {false};
 	const SvLib::InitialInformation& m_rInitialInfo; ///< This reference exists to simplify access to InitializationStatusFlags()
@@ -300,7 +288,7 @@ private:
 #pragma endregion Member variables
 };
 
-extern SVObserverApp TheSVObserverApp; //@TODO [Arvid][10.20][18.10.2021]: better use a singleton instead
+SVObserverApp& TheSVObserverApp();
 
 
 ////////////////////////////////////////////////////////////////////////////////

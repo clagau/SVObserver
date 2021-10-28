@@ -258,7 +258,7 @@ void SVRCCommand::GetOfflineCount(const SvPb::GetOfflineCountRequest&, SvRpc::Ta
 	if (S_OK == result)
 	{
 		SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
-		Response.set_count(TheSVObserverApp.getOfflineCount());
+		Response.set_count(TheSVObserverApp().getOfflineCount());
 	}
 
 	task.finish(std::move(Response));
@@ -1042,7 +1042,7 @@ void SVRCCommand::ExecuteInspectionCmd(const SvPb::InspectionCmdRequest& rReques
 		}
 
 		///@WARNING [gra][10.10][21.05.2021] This next section to update SVIPDoc should be done in the inspection commands
-		SVIPDoc* pDoc = TheSVObserverApp.GetIPDoc(inspectionID);
+		SVIPDoc* pDoc = GetIPDocByInspectionID(inspectionID);
 		if (S_OK == response.hresult() && nullptr != pDoc)
 		{
 			switch (rRequest.message_case())
@@ -1635,7 +1635,7 @@ void SVRCCommand::clipboardAction(const SvPb::ClipboardRequest rRequest, SvPb::S
 					{
 						SvOi::IObjectClass* pInspection = pObject->GetAncestorInterface(SvPb::SVInspectionObjectType);
 						///@WARNING [gra][10.10][21.05.2021] SVIPDoc should be done in the inspection commands
-						SVIPDoc* pDoc = (nullptr != pInspection) ? TheSVObserverApp.GetIPDoc(pInspection->getObjectId()) : nullptr;
+						SVIPDoc* pDoc = (nullptr != pInspection) ? GetIPDocByInspectionID(pInspection->getObjectId()) : nullptr;
 						if (nullptr != pDoc)
 						{
 							pDoc->updateToolsetView(toolID, postID, ownerID);
@@ -1691,7 +1691,7 @@ void SVRCCommand::clipboardAction(const SvPb::ClipboardRequest rRequest, SvPb::S
 					if (false == deleteObjectName.empty())
 					{
 						///@WARNING [gra][10.10][21.05.2021] SVIPDoc should be done in the inspection commands
-						SVIPDoc* pDoc = TheSVObserverApp.GetIPDoc(pInspection->getObjectId());
+						SVIPDoc* pDoc = GetIPDocByInspectionID(pInspection->getObjectId());
 						if (nullptr != pDoc)
 						{
 							pDoc->GetToolGroupings().RemoveTool(deleteObjectName);

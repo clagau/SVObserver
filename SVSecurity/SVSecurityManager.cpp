@@ -23,6 +23,14 @@ static char THIS_FILE[]=__FILE__;
 #define new DEBUG_NEW
 #endif
 
+
+SVSecurityManager g_theSecurityManager;
+
+SVSecurityManager& TheSecurityManager()
+{
+	return g_theSecurityManager;
+}	// Security
+
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////

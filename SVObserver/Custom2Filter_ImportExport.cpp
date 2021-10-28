@@ -11,6 +11,7 @@
 #include "SVObserver.h"
 #include "ObjectInterfaces/ICustom2Filter.h"
 #include "ObjectInterfaces/IObjectWriter.h"
+#include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVXMLLibrary/SaxXMLHandler.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVXMLLibrary/SVObjectXMLWriter.h"
@@ -137,7 +138,7 @@ void SvOi::exportCustom2Filter(const std::string &filePath,
 		XmlWriter.ElementAttribute( _T("Type"), Value );
 
 		Value.Clear();
-		Value = TheSVObserverApp.getCurrentVersion();
+		Value = TheSVObserverApp().getCurrentVersion();
 
 		XmlWriter.StartElement( SvXml::CTAG_ENVIRONMENT  );
 		XmlWriter.WriteAttribute( SvXml::CTAG_VERSION_NUMBER, Value );

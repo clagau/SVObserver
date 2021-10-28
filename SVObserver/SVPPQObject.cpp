@@ -271,7 +271,7 @@ void SVPPQObject::init()
 	m_inspectionTimeoutMillisec = 0;
 	m_outputDelay = 100;
 	m_resetDelay = 0;
-	m_DataValidDelay = TheSVObserverApp.getDataValidDelay();
+	m_DataValidDelay = TheSVObserverApp().getDataValidDelay();
 	m_NextOutputDelayTimestamp = 0.0;
 	m_NextOutputResetTimestamp = 0.0;
 	m_uOutputTimer = 0;
@@ -1115,7 +1115,7 @@ bool SVPPQObject::GoOffline()
 	if (!m_bOnline) { return false; }
 
 #ifdef EnableTracking
-	if (TheSVObserverApp.UpdateAndGetLogDataManager())
+	if (TheSVObserverApp().UpdateAndGetLogDataManager())
 	{
 		std::string l_FileName;
 
@@ -2029,7 +2029,7 @@ SVProductInfoStruct* SVPPQObject::IndexPPQ(SvTrig::SVTriggerInfoStruct&& rTrigge
 	}
 
 #ifdef _DEBUG
-	if (TheSVObserverApp.GetLogDataManager())
+	if (TheSVObserverApp().GetLogDataManager())
 	{
 #if defined (TRACE_THEM_ALL) || defined (TRACE_IP)
 		std::string l_ProductStates;

@@ -73,7 +73,7 @@ BOOL SVOCameraDlg::OnInitDialog()
     m_bNewConfig = m_pParent->GetNewConfigFlag();
 	
 	if( SVHardwareManifest::IsDigitalSVIM( m_pParent->GetProductType() )
-		&& SVHardwareManifest::IsDigitalSVIM( TheSVObserverApp.GetSVIMType() ))
+		&& SVHardwareManifest::IsDigitalSVIM( TheSVObserverApp().GetSVIMType() ))
 	{
 		m_btnCameraManager.ShowWindow(SW_SHOW);
 	}
@@ -361,7 +361,7 @@ BOOL SVOCameraDlg::OnHelpInfo(HELPINFO* pHelpInfo)
 
 void SVOCameraDlg::OnCameraManager() 
 {
-	TheSVObserverApp.DisplayCameraManager(m_pParent->GetProductType());
+	TheSVObserverApp().DisplayCameraManager(m_pParent->GetProductType());
 	m_pParent->ItemChanged(CAMERA_DLG, _T(""), ITEM_ACTION_REFRESH);
 }
 

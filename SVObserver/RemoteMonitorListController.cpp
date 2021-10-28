@@ -28,8 +28,6 @@
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #pragma endregion Includes
 
-extern SVObserverApp TheSVObserverApp;
-
 LPCTSTR RemoteMonitorListController::s_DefaultMonitorListName = _T("MonitorList_");
 
 PPQNameListNames RemoteMonitorListController::GetPPQMonitorLists(SVConfigurationObject* pConfig) const
@@ -157,7 +155,7 @@ void RemoteMonitorListController::HideShowViewTab()
 		ShowIOTabIfPossible(SVRemoteMonitorListViewID);
 	}
 
-	TheSVObserverApp.UpdateAllIOViews();
+	TheSVObserverApp().UpdateAllIOViews();
 }
 
 void RemoteMonitorListController::ResetObject()

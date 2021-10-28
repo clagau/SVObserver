@@ -8,6 +8,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVObserver.h"
+#include "SVSecurity/SVSecurityManager.h"
 #include "SVSetupDialogManager.h"
 #include "SVMessage\SVMessage.h"
 #include "ObjectInterfaces\ISVOApp_Helper.h"
@@ -21,22 +22,22 @@
 #pragma region implementation of methods from ISVOApp_Helper
 bool SvOi::isOkToEdit()
 {
-	return TheSVObserverApp.OkToEdit();
+	return TheSVObserverApp().OkToEdit();
 }
 
 DWORD  SvOi::getLoadingVersion()
 {
-	return TheSVObserverApp.getLoadingVersion();
+	return TheSVObserverApp().getLoadingVersion();
 }
 
 DWORD  SvOi::getCurrentVersion()
 {
-	return TheSVObserverApp.getCurrentVersion();
+	return TheSVObserverApp().getCurrentVersion();
 }
 
 INT_PTR SvOi::OpenSVFileDialog(bool bOpenFileDialog, LPCTSTR Extention, std::string& FileName, DWORD Flags, LPCTSTR Filter, std::string& Path, LPCTSTR Title)
 {
-	bool FullAccess = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
+	bool FullAccess = TheSecurityManager().SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
 
 	SvMc::SVFileDialog FileDlg(bOpenFileDialog,
 		FullAccess,
@@ -60,7 +61,7 @@ INT_PTR SvOi::OpenSVFileDialog(bool bOpenFileDialog, LPCTSTR Extention, std::str
 
 INT_PTR SvOi::OpenSVFolderDialog(std::string& Path, LPCTSTR Title)
 {
-	bool FullAccess = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
+	bool FullAccess = TheSecurityManager().SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
 
 	SvMc::SVDlgFolder FolderDlg(FullAccess, Path.c_str());
 
@@ -98,7 +99,7 @@ void SvOi::destroyLicenseManagerDialog()
 
 long SvOi::getGigePacketSize()
 {
-	return TheSVObserverApp.getGigePacketSize();
+	return TheSVObserverApp().getGigePacketSize();
 }
 
 void SvOi::modifyAcquisitionDevice(LPCTSTR acquisitionName, const SVDeviceParamCollection* pParams)

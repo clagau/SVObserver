@@ -37,3 +37,6 @@ public:
 private:
 	SVAccessClass* m_pSVAccess;
 };
+
+__declspec(dllexport) SVSecurityManager& TheSecurityManager();
+

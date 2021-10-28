@@ -94,7 +94,7 @@ void GlobalConstantView::OnAddItem()
 
 void GlobalConstantView::OnUpdateAddItem( CCmdUI* pCmdUI )
 {
-	pCmdUI->Enable( TheSVObserverApp.OkToEdit() );
+	pCmdUI->Enable( TheSVObserverApp().OkToEdit() );
 }
 
 #pragma endregion Public Methods
@@ -355,7 +355,7 @@ void GlobalConstantView::updateAllIPDocs( bool RunOnce ) const
 		const SVInspectionProcessVector& rInspections = pConfig->GetInspections();
 		for (auto pInspection : rInspections)
 		{
-			SVIPDoc* pDoc =  TheSVObserverApp.GetIPDoc( pInspection->getObjectId() );
+			SVIPDoc* pDoc = GetIPDocByInspectionID( pInspection->getObjectId() );
 			if( nullptr != pDoc )
 			{
 				if (RunOnce)
@@ -423,7 +423,7 @@ bool GlobalConstantView::checkAllDependencies(SvVol::BasicValueObject* pObject, 
 BOOL GlobalConstantView::PreTranslateMessage(MSG* pMsg)
 {
 	BOOL bRet = false;
-	if( WM_KEYDOWN == pMsg->message && TheSVObserverApp.OkToEdit() )
+	if( WM_KEYDOWN == pMsg->message && TheSVObserverApp().OkToEdit() )
 	{
 		POSITION Pos = m_rCtrl.GetFirstSelectedItemPosition();
 	
@@ -507,7 +507,7 @@ void GlobalConstantView::OnLButtonDblClk(UINT, CPoint point)
 
 	if ( 0 <= item && (LVHT_ONITEMLABEL == (flags & LVHT_ONITEMLABEL) ))
 	{
-		if (TheSVObserverApp.OkToEdit())
+		if (TheSVObserverApp().OkToEdit())
 		{
 			if( editItem(item) )
 			{
@@ -523,7 +523,7 @@ void GlobalConstantView::OnLButtonDblClk(UINT, CPoint point)
 
 void GlobalConstantView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 {
-	if (TheSVObserverApp.OkToEdit())
+	if (TheSVObserverApp().OkToEdit())
 	{
 		CMenu* PupupMenu = m_ContextMenuItem.GetSubMenu( 0 );
 		assert( nullptr != PupupMenu );
@@ -553,7 +553,7 @@ void GlobalConstantView::OnEditItem()
 
 void GlobalConstantView::OnUpdateEditItem( CCmdUI* pCmdUI )
 {
-	bool Enabled ( TheSVObserverApp.OkToEdit() );
+	bool Enabled ( TheSVObserverApp().OkToEdit() );
 
 	if( Enabled && -1 == getSelectedItem() )
 	{
@@ -579,7 +579,7 @@ void GlobalConstantView::OnDeleteItem()
 
 void GlobalConstantView::OnUpdateDeleteItem( CCmdUI* pCmdUI )
 {
-	bool Enabled ( TheSVObserverApp.OkToEdit() );
+	bool Enabled ( TheSVObserverApp().OkToEdit() );
 
 	if( Enabled && -1 == getSelectedItem() )
 	{

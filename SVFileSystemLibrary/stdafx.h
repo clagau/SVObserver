@@ -59,6 +59,7 @@
 #include <iterator>			//Used by static library
 #include <map>				//Used by static library
 #include <set>				//Used by static library
+#include <shlwapi.h>
 #include <string>			//Used by static library
 #include <tchar.h>
 #include <vector>			//Used by static library

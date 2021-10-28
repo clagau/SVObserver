@@ -12,10 +12,67 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "FilepathUtilities.h"
+#include "Definitions/StringTypeDef.h"
+#include "SVMessage/SVMessage.h"
+#include "SVStatusLibrary/MessageManager.h"
+#include "SVUtilityLibrary/StringHelper.h"
+
 #pragma endregion Includes
 
 bool isFilepathOnRegularPartition(const std::string& rFilePath);
 bool isFilepathOnNetwork(const std::string& rFilePath);
+
+HRESULT CheckDrive(const std::string& rDrive)
+{
+	HRESULT l_hr = S_OK;
+	// Check if exists
+	if (!PathFileExists(rDrive.c_str()))
+	{
+		std::string Drive = SvUl::MakeUpper(SvUl::Left(rDrive, 1).c_str());
+
+		SvDef::StringVector msgList;
+		msgList.push_back(Drive);
+
+		SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
+		Exception.setMessage(SVMSG_SVO_5051_DRIVEDOESNOTEXIST, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams));
+	}
+	TCHAR VolumeName[100];
+	TCHAR FileSystemName[32];
+	DWORD dwSerialNumber;
+	DWORD dwMaxFileNameLength;
+	DWORD dwFileSystemFlags;
+
+	if (GetVolumeInformation(rDrive.c_str(),
+		VolumeName,
+		sizeof(VolumeName),
+		&dwSerialNumber,
+		&dwMaxFileNameLength,
+		&dwFileSystemFlags,
+		FileSystemName,
+		sizeof(FileSystemName)))
+	{
+		std::string Name(FileSystemName);
+		if (std::string::npos == Name.find(_T("NTFS")))
+		{
+			std::string Drive = SvUl::MakeUpper(SvUl::Left(	rDrive, 1).c_str());
+
+			SvStl::MessageManager Exception(SvStl::MsgType::Log);
+			Exception.setMessage(SVMSG_SVO_5052_DRIVENOTNTFSFORMAT, Drive.c_str(), SvStl::SourceFileParams(StdMessageParams));
+
+#ifndef _DEBUG
+			assert(false);
+#else
+#if defined (TRACE_THEM_ALL) || defined (TRACE_SVO)
+			::OutputDebugString(Drive.c_str());
+#endif
+#endif
+		}
+	}
+
+	return l_hr;
+}
+
+
 
 
 void KeepPrevError( HRESULT& p_rhrPrev, HRESULT p_hrNew )

@@ -14,7 +14,11 @@
 //Moved to precompiled header: #include <comdef.h>
 #include "SVIODoc.h"
 #include "GlobalConstantView.h"
+#include "GuiHelpers.h"
+#include "SVDiscreteInputsView.h"
+#include "SVMultiDocTemplate.h"
 #include "SVObserver.h"
+#include "SVSecurity/SVSecurityManager.h"
 #include "SVInfoStructs.h"
 #include "SVIOController.h"
 #include "SVIOTabbedView.h"
@@ -136,7 +140,7 @@ BOOL SVIODoc::CanCloseFrame(CFrameWnd* pFrame)
 {
 	BOOL bCanClose = FALSE;
 		
-	if( TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_MODE_MENU_EDIT_TOOLSET ) )
+	if( TheSecurityManager().SVIsDisplayable( SECURITY_POINT_MODE_MENU_EDIT_TOOLSET ) )
 	{
 		if( SVSVIMStateClass::CheckState( SV_STATE_CANCELING ) || SVSVIMStateClass::CheckState( SV_STATE_CLOSING ) )
 		{
@@ -156,7 +160,7 @@ BOOL SVIODoc::CanCloseFrame(CFrameWnd* pFrame)
 void SVIODoc::OnExtrasTestoutputs()
 {
 	SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
-	if( S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate(SECURITY_POINT_EXTRAS_MENU_TEST_OUTPUTS) )
+	if( S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_EXTRAS_MENU_TEST_OUTPUTS) )
 	{
 		if ( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) )
 		{
@@ -300,6 +304,7 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 	}// end if
 }// end OnExtrasEditRemoteInputs
 
+
 void SVIODoc::OnEditGlobalConstantAdd()
 {
 	POSITION Pos( GetFirstViewPosition() );
@@ -411,10 +416,69 @@ void SVIODoc::ShowIOTab(DWORD dwID)
 
 
 
+SVIODoc* NewSVIODoc(LPCTSTR DocName, SVIOController& IOController)
+{
+	SVIODoc* pDoc = nullptr;
+	CDocTemplate* pDocTemplate = nullptr;
+	POSITION pos = TheSVObserverApp().GetFirstDocTemplatePosition();
+	if (pos)
+	{
+		pDocTemplate = TheSVObserverApp().GetNextDocTemplate(pos);
+		if (pDocTemplate)
+		{
+			pDocTemplate = TheSVObserverApp().GetNextDocTemplate(pos);
+			if (pDocTemplate)
+			{
+				// Create a new empty visible document
+				pDoc = dynamic_cast<SVIODoc*>(pDocTemplate->OpenDocumentFile(nullptr, true));   // Make visible
+
+				if (nullptr != pDoc)
+				{
+					pDoc->SetIOController(&IOController);
+					pDoc->SetTitle(DocName);
+
+					HideTabsAfterNewSVIODoc(GetTheIODoc());
+				}
+			}
+		}
+	}
+
+	return pDoc;
+}
+
+
+SVIODoc* GetTheIODoc()
+{
+	SVIODoc* pIODoc(nullptr);
+
+	POSITION pos = TheSVObserverApp().GetFirstDocTemplatePosition();
+	while (pos && !pIODoc)
+	{
+		CDocTemplate* pDocTemplate = TheSVObserverApp().GetNextDocTemplate(pos);
+		if (pDocTemplate)
+		{
+			POSITION posDoc = pDocTemplate->GetFirstDocPosition();
+			while (posDoc && !pIODoc)
+			{
+				CDocument* newDoc = pDocTemplate->GetNextDoc(posDoc);
+				if (newDoc)
+				{
+					SVIODoc* pTmpDoc = dynamic_cast <SVIODoc*>(newDoc);
+					if (nullptr != pTmpDoc)
+					{
+						pIODoc = pTmpDoc;
+					}
+				}
+			}
+		}
+	}
+	return pIODoc;
+}
+
 
 void ShowIOTabIfPossible(DWORD dwID)
 {
-	auto pIODoc = TheSVObserverApp.GetIODoc();
+	auto pIODoc = GetTheIODoc();
 
 	if (nullptr != pIODoc)
 	{
@@ -424,10 +488,19 @@ void ShowIOTabIfPossible(DWORD dwID)
 
 void HideIOTabIfPossible(DWORD dwID)
 {
-	auto pIODoc = TheSVObserverApp.GetIODoc();
+	auto pIODoc = GetTheIODoc();
 
 	if (nullptr != pIODoc)
 	{
 		pIODoc->HideIOTab(dwID);
 	}
+}
+
+CDocTemplate* CreateIoDocMultiDocTemplate()
+{
+	// IODoc
+	return new SVMultiDocTemplate(IDR_SVOBSERVER_IODOCTYPE,
+		RUNTIME_CLASS(SVIODoc),
+		RUNTIME_CLASS(SVIOTabbedView),
+		RUNTIME_CLASS(SVDiscreteInputsView));
 }

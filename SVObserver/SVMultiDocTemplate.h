@@ -28,5 +28,3 @@ public:
 	virtual void AssertValid() const override;
 #endif //_DEBUG
 };
-
-

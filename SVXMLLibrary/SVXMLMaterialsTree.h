@@ -247,3 +247,5 @@ namespace SvXml
 	#pragma endregion Member variables
 	};
 } //namespace SvXml
+
+typedef SvXml::SVXMLMaterialsTree SVTreeType;

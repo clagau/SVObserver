@@ -13,6 +13,7 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <comdef.h>
 //Moved to precompiled header: #include <regex>
+#include "ExtrasEngine.h"
 #include "RemoteMonitorListHelper.h"
 #include "RemoteMonitorNamedList.h"
 #include "RootObject.h"
@@ -72,8 +73,10 @@
 #include "ObjectInterfaces/ICommand.h"
 #include "SVUtilityLibrary/AuditFiles.h"
 #include "SVStatusLibrary/GlobalPath.h"
+#include "SVUtilityLibrary/ZipHelper.h"
 #include "InspectionEngine/SVFileAcquisitionClass.h"
 #include "SVFileAcquisitionDevice/SVFileAcquisitionDeviceParamEnum.h"
+
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -902,7 +905,7 @@ void SVConfigurationObject::LoadEnvironment(SVTreeType& rTree, bool& Configurati
 		throw MsgCont;
 	}
 
-	TheSVObserverApp.setLoadingVersion(Value);
+	TheSVObserverApp().setLoadingVersion(Value);
 
 	//This is the deprecated tag and has changed to SvXml::CTAG_IMAGE_UPDATE and SvXml::CTAG_RESULT_UPDATE
 	//Needs to be read for older configurations and becomes the standard default
@@ -2473,8 +2476,8 @@ HRESULT SVConfigurationObject::LoadFileAcquisitionConfiguration(SVTreeType& rTre
 			{
 				SVImageInfoClass svImageInfo;
 
-				_variant_t MaxFileNr = TheSVObserverApp.getMaxPreloadFileNumber();
-				_variant_t TimeDelay = TheSVObserverApp.getPreloadTimeDelay();
+				_variant_t MaxFileNr = TheSVObserverApp().getMaxPreloadFileNumber();
+				_variant_t TimeDelay = TheSVObserverApp().getPreloadTimeDelay();
 				
 				// Set the device parameters for the File Acquisition device (Note: do this before calling LoadFiles)
 				psvDevice->SetDeviceParameter(SVFileAcquisitionParameterPreloadTimeDelay, TimeDelay);
@@ -2786,7 +2789,7 @@ void SVConfigurationObject::SaveEnvironment(SvOi::IObjectWriter& rWriter) const
 {
 	rWriter.StartElement(SvXml::CTAG_ENVIRONMENT);
 
-	_variant_t svValue = TheSVObserverApp.getCurrentVersion();
+	_variant_t svValue = TheSVObserverApp().getCurrentVersion();
 	rWriter.WriteAttribute(SvXml::CTAG_VERSION_NUMBER, svValue);
 	svValue = GetProductType();
 	rWriter.WriteAttribute(SvXml::CTAG_CONFIGURATION_TYPE, svValue);
@@ -3195,7 +3198,7 @@ void SVConfigurationObject::SaveInspection(SvOi::IObjectWriter& rWriter, Attribu
 			pInspection->Persist(rWriter);
 
 			//SVIPDoc
-			SVIPDoc* pDoc = TheSVObserverApp.GetIPDoc(pInspection->getObjectId());
+			SVIPDoc* pDoc = GetIPDocByInspectionID(pInspection->getObjectId());
 			if (pDoc)
 			{
 				rWriter.StartElement(SvXml::CTAG_SVIPDOC);
@@ -3553,7 +3556,7 @@ void SVConfigurationObject::getInspectionObjectAttributesSet(const SVInspectionP
 
 void SVConfigurationObject::ConvertColorToStandardProductType(bool& rConfigColor)
 {
-	SVIMProductEnum CurrentType(TheSVObserverApp.GetSVIMType());
+	SVIMProductEnum CurrentType(TheSVObserverApp().GetSVIMType());
 	SVIMProductEnum ConfigType(GetProductType());
 
 	//Need to change the product type from color to standard product type
@@ -3572,7 +3575,7 @@ void SVConfigurationObject::SaveConfiguration(SvXml::SVObjectXMLWriter& rWriter)
 	rWriter.WriteRootElement(RootName.c_str());
 	rWriter.WriteSchema();
 
-	DWORD versionNumber = TheSVObserverApp.getCurrentVersion();
+	DWORD versionNumber = TheSVObserverApp().getCurrentVersion();
 	std::string versionString = SvUl::Format("%d.%d", versionNumber >> 16, (versionNumber >> 8) & 0x000000ff);
 	rWriter.WriteRevisionHistory(versionString.c_str(), 1);
 	rWriter.WriteStartOfBase();
@@ -4808,7 +4811,7 @@ void SVConfigurationObject::UpdateInspectionList4TRC()
 
 void SVConfigurationObject::updateConfTreeToNewestVersion(SVTreeType& rTree, SVTreeType::SVBranchHandle& rToolset)
 {
-	DWORD version = TheSVObserverApp.getLoadingVersion();
+	DWORD version = TheSVObserverApp().getLoadingVersion();
 	if (version < 0x71400) //< 7.20  Add lut Equation  clip 
 	{
 		SVTreeType::SVBranchHandle lutEquationBranch;
@@ -5820,3 +5823,90 @@ void SVConfigurationObject::setIOIds(SVTreeType& rTree, SVTreeType::SVBranchHand
 		}
 	}
 }
+
+
+void RemoveFileFromConfig(LPCTSTR FilePath) //@TODO [Arvid][10.20][26.10.2021] this should be a member of SVConfigurationObject
+{
+	SVConfigurationObject* pConfig(nullptr);
+	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
+
+	if (nullptr != pConfig)
+	{
+		const auto& rAdditionalFiles = pConfig->getAdditionalFiles();
+		auto iter = std::find_if(rAdditionalFiles.begin(), rAdditionalFiles.end(), [&FilePath](const SVFileNameClass& rFile) {return FilePath == rFile.GetFullFileName(); });
+		if (rAdditionalFiles.end() != iter)
+		{
+			const SVFileNameClass& rSVFileName = *iter;
+			pConfig->getAdditionalFiles().remove(rSVFileName);
+			SVFileNameManagerClass::Instance().RemoveItem(&rSVFileName);
+			SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
+		}
+	}
+}
+
+void AddFileToConfig(LPCTSTR FilePath) //@TODO [Arvid][10.20][26.10.2021] this should be a member of SVConfigurationObject
+{
+	SVConfigurationObject* pConfig(nullptr);
+	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
+
+	if (nullptr != pConfig)
+	{
+		const auto& rAdditionalFiles = pConfig->getAdditionalFiles();
+		if (std::any_of(rAdditionalFiles.cbegin(), rAdditionalFiles.cend(), [&FilePath](const auto& rFile) { return FilePath == rFile.GetFullFileName(); }))
+		{
+			//File is already in additional file list
+			return;
+		}
+		pConfig->getAdditionalFiles().emplace_back(SVFileNameClass {FilePath});
+		SVFileNameManagerClass::Instance().AddItem(&pConfig->getAdditionalFiles().back());
+		SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
+	}
+}
+
+
+bool fileSaveAsSVX(SVConfigurationObject* pConfig, const std::string& rSvxFilepath, const std::string& rFileName, bool resetAutoSave)
+{
+	pConfig->ValidateRemoteMonitorList(); // sanity check
+
+	std::ofstream os;
+	os.open(rSvxFilepath.c_str());
+	if (os.is_open())
+	{
+		SvXml::SVObjectXMLWriter writer(os);
+		pConfig->SaveConfiguration(writer);
+		os.close();
+	}
+	//If the file name is not empty we compress all files into a .svz file
+	if (!rFileName.empty())
+	{
+		SvDef::StringVector FileNameList = SVFileNameManagerClass::Instance().GetFileNameList();
+		bool shouldWebAppIdsDeleted = isSafeToDeleteWebAppIdsJson();
+		if (shouldWebAppIdsDeleted)
+		{
+			std::string webAppIdsName = SvStl::GlobalPath::Inst().GetRunPath(SvDef::cWebAppIds);
+			auto findIter = std::find(FileNameList.begin(), FileNameList.end(), webAppIdsName);
+			if (FileNameList.end() != findIter)
+			{
+				FileNameList.erase(findIter);
+			}
+		}
+		if (SvUl::makeZipFile(rFileName, FileNameList, _T(""), false))
+		{
+			if (resetAutoSave)
+			{
+				ExtrasEngine::Instance().ResetAutoSaveInformation();
+			}
+		}
+		else
+		{
+			SvDef::StringVector msgList;
+			msgList.emplace_back(rFileName);
+			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+			Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ZipFileFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
+			return false;
+		}
+	}
+	return true;
+}
+
+

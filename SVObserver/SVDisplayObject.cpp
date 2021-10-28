@@ -382,10 +382,10 @@ HRESULT SVDisplayObject::ProcessNotifyIPDoc( bool& p_rProcessed )
 				
 			}
 			// check if forcedUpdate is active
-			if (!l_Process && TheSVObserverApp.IsForcedImageUpdateActive())
+			if (!l_Process && TheSVObserverApp().IsForcedImageUpdateActive())
 			{
 				double elapsed = SvUl::GetTimeStamp() - m_LastUpdateTime;
-				double interval = SvUl::ConvertFrom(SvUl::Seconds, TheSVObserverApp.GetForcedImageUpdateTimeInSeconds());
+				double interval = SvUl::ConvertFrom(SvUl::Seconds, TheSVObserverApp().GetForcedImageUpdateTimeInSeconds());
 				// check last update time and if current time is greater than last update time + ForcedImageUpdateTime then Update
 				l_Process = (elapsed >= interval);
 #if defined (TRACE_THEM_ALL) || defined (TRACE_OTHER)

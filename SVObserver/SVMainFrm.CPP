@@ -30,7 +30,7 @@
 #include "SVInspectionProcess.h"
 #include "SVMainFrm.h"
 #include "SVObserver.h"
-#include "SVObserverOuttakes.h"
+#include "SVSecurity/SVSecurityManager.h"
 #include "SVPPQObject.h"
 #include "SVRegressionRunDlg.h"
 #include "SVThreadInfoDlg.h"
@@ -239,7 +239,9 @@ END_MESSAGE_MAP()
 
 #pragma region Constructor
 
-SVMainFrame::SVMainFrame()
+CMultiDocTemplate* getIPDocTemplate();
+
+SVMainFrame::SVMainFrame() :m_PosSize {0}, m_bSizeChanged {false}, m_pregTestDlg {nullptr}
 {
 	m_oemLargeIcon = nullptr;
 	m_oemSmallIcon = nullptr;
@@ -405,7 +407,7 @@ void SVMainFrame::UpdateFrameTitleForDocument( LPCTSTR lpszDocName )
 		if( SVSVIMStateClass::CheckState( SV_STATE_READY | SV_STATE_RUNNING ) )
 		{
 			lstrcat( szText, _T( " - " ) );
-			lstrcat( szText, TheSVObserverApp.getConfigFileName().c_str() );
+			lstrcat( szText, TheSVObserverApp().getConfigFileName().c_str() );
 		}
 
 		// get name of currently active view
@@ -553,14 +555,14 @@ void SVMainFrame::OnClose()
 	// If Running, check if access to exit run.
 	if ( SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
 	{
-		if( S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate( SECURITY_POINT_FILE_MENU_EXIT, 
+		if( S_OK == TheSecurityManager().SVValidate( SECURITY_POINT_FILE_MENU_EXIT, 
 			SECURITY_POINT_MODE_MENU_EXIT_RUN_MODE ) )
 		{
 			OnStop();
 			l_bAllowAccess = true;
 		}
 	}
-	else if( S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate( SECURITY_POINT_FILE_MENU_EXIT ) )
+	else if( S_OK == TheSecurityManager().SVValidate( SECURITY_POINT_FILE_MENU_EXIT ) )
 	{
 		l_bAllowAccess = true;
 	}
@@ -584,10 +586,10 @@ void SVMainFrame::OnClose()
 		}
 
 		// Log out...
-		TheSVObserverApp.Logout();
+		TheSVObserverApp().Logout();
 
 		// Last checking...
-		if (S_OK == TheSVObserverApp.CanCloseMainFrame() )
+		if (S_OK == TheSVObserverApp().CanCloseMainFrame() )
 		{
 			SVSVIMStateClass::changeState(SV_STATE_UNAVAILABLE, SV_STATE_READY);
 			CMDIFrameWnd::OnClose();
@@ -615,17 +617,17 @@ void SVMainFrame::OnAppAbout()
 void SVMainFrame::OnFileNewConfig()
 {
 	SVSVIMStateClass::AddState(SV_STATE_CREATING);
-	if (S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate(SECURITY_POINT_FILE_MENU_NEW))
+	if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_FILE_MENU_NEW))
 	{
-		if ((TheSVObserverApp.ShowConfigurationAssistant(0, true))) // if not cancelled
+		if ((TheSVObserverApp().ShowConfigurationAssistant(0, true))) // if not cancelled
 		{
-			if (TheSVObserverApp.OkToEdit() || !TheSVObserverApp.m_svSecurityMgr.SVIsSecured(SECURITY_POINT_MODE_MENU_EDIT_TOOLSET))
+			if (TheSVObserverApp().OkToEdit() || !TheSecurityManager().SVIsSecured(SECURITY_POINT_MODE_MENU_EDIT_TOOLSET))
 			{
-				TheSVObserverApp.SetModeEdit(true);
+				TheSVObserverApp().SetModeEdit(true);
 			}
 			else
 			{
-				TheSVObserverApp.SetModeEdit(false);
+				TheSVObserverApp().SetModeEdit(false);
 			}
 			// Logic to remove unused remote inputs.
 			SVConfigurationObject* pConfig(nullptr);
@@ -648,7 +650,7 @@ void SVMainFrame::OnFileNewConfig()
 			HideIOTabIfPossible(SVRemoteMonitorListViewID);
 
 			// Update Remote Inputs Tab
-			UpdateRemoteInputTabs(TheSVObserverApp.GetIODoc());
+			UpdateRemoteInputTabs(GetTheIODoc());
 		}
 	}
 	SVSVIMStateClass::RemoveState(SV_STATE_CREATING);
@@ -661,7 +663,7 @@ void SVMainFrame::OnFileNewConfig()
 ////////////////////////////////////////////////////////////////////////////////
 void SVMainFrame::OnFileSaveConfig(bool saveAs /*= false*/)
 {
-	TheSVObserverApp.SaveConfig(saveAs);
+	TheSVObserverApp().SaveConfig(saveAs);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -674,11 +676,11 @@ void SVMainFrame::OnFileSaveConfig(bool saveAs /*= false*/)
 ////////////////////////////////////////////////////////////////////////////////
 void SVMainFrame::OnFileOpenSVC()
 {
-	TheSVObserverApp.ValidateMRUList();
+	TheSVObserverApp().ValidateMRUList();
 
 	SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING}; /// do this before calling validate for security as it may display a logon dialog!
 	// Proof user rights...
-	if (S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate(SECURITY_POINT_FILE_MENU_SELECT_CONFIGURATION))
+	if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_FILE_MENU_SELECT_CONFIGURATION))
 	{
 		SVFileNameClass svFileName;
 
@@ -695,7 +697,7 @@ void SVMainFrame::OnFileOpenSVC()
 			AfxGetApp()->WriteProfileString(_T("Settings"), _T("SVCFilePath"), svFileName.GetPathName().c_str());
 
 			SVOLicenseManager::Instance().ClearLicenseErrors();
-			if (S_OK == TheSVObserverApp.OpenFile(svFileName.GetFullFileName().c_str(), true))
+			if (S_OK == TheSVObserverApp().OpenFile(svFileName.GetFullFileName().c_str(), true))
 			{
 				if (SVOLicenseManager::Instance().HasToolErrors())
 				{
@@ -704,9 +706,9 @@ void SVMainFrame::OnFileOpenSVC()
 				ExtrasEngine::Instance().ResetAutoSaveInformation(); //reset autosave timestamp after configuration was loaded
 			}
 		}// end if ( svFileName.SelectFile() )
-	}// end if ( S_OK == TheSVObserverApp.m_svSecurityMgr.Validate( SECURITY_POINT_FILE_MENU_SELECT_CONFIGURATION) )
+	}// end if ( S_OK == TheSecurityManager().Validate( SECURITY_POINT_FILE_MENU_SELECT_CONFIGURATION) )
 	// Update Remote Inputs Tab
-	UpdateRemoteInputTabs(TheSVObserverApp.GetIODoc());
+	UpdateRemoteInputTabs(GetTheIODoc());
 }
 
 
@@ -717,16 +719,16 @@ void SVMainFrame::OnFileOpenSVC()
 ////////////////////////////////////////////////////////////////////////////////
 void SVMainFrame::OnFileCloseConfig()
 {
-	if (S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate(SECURITY_POINT_FILE_MENU_CLOSE_CONFIGURATION))
+	if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_FILE_MENU_CLOSE_CONFIGURATION))
 	{
 		SVSVIMStateClass::RemoveState(SV_STATE_EDIT);
 
-		TheSVObserverApp.ValidateMRUList();
+		TheSVObserverApp().ValidateMRUList();
 
 		// Check if current config is modified, ask for saving and try to close
-		TheSVObserverApp.DestroyConfig();
+		TheSVObserverApp().DestroyConfig();
 
-		TheSVObserverApp.ValidateMRUList();
+		TheSVObserverApp().ValidateMRUList();
 	}
 }
 
@@ -737,7 +739,7 @@ void SVMainFrame::OnFileCloseConfig()
 ////////////////////////////////////////////////////////////////////////////////
 void SVMainFrame::OnFileSaveAll()
 {
-	if (S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate(SECURITY_POINT_FILE_MENU_SAVE_CONFIGURATION))
+	if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_FILE_MENU_SAVE_CONFIGURATION))
 	{
 		OnFileSaveConfig();
 	}
@@ -751,7 +753,7 @@ void SVMainFrame::OnFileSaveAll()
 ////////////////////////////////////////////////////////////////////////////////
 void SVMainFrame::OnFileSaveAsSVC()
 {
-	if (S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate(SECURITY_POINT_FILE_MENU_SAVE_CONFIGURATION_AS))
+	if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_FILE_MENU_SAVE_CONFIGURATION_AS))
 	{
 		if (SVSVIMStateClass::CheckState(SV_STATE_READY))
 		{
@@ -768,7 +770,7 @@ void SVMainFrame::OnFileSaveAsSVC()
 ////////////////////////////////////////////////////////////////////////////////
 void SVMainFrame::OnEditEnvironment()
 {
-	TheSVObserverApp.ShowConfigurationAssistant();
+	TheSVObserverApp().ShowConfigurationAssistant();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -778,11 +780,11 @@ void SVMainFrame::OnEditEnvironment()
 ////////////////////////////////////////////////////////////////////////////////
 void SVMainFrame::OnEditIOList()
 {
-	if (TheSVObserverApp.GetIODoc())
+	if (GetTheIODoc())
 	{
 		// Get the active MDI child window.             
-		POSITION pos = TheSVObserverApp.GetIODoc()->GetFirstViewPosition();
-		CView* pView = TheSVObserverApp.GetIODoc()->GetNextView(pos);
+		POSITION pos = GetTheIODoc()->GetFirstViewPosition();
+		CView* pView = GetTheIODoc()->GetNextView(pos);
 
 		CMDIChildWnd* pFrame = (CMDIChildWnd*)pView->GetParentFrame();
 		pFrame->MDIActivate();
@@ -808,13 +810,13 @@ void SVMainFrame::OnTestMode()
 
 	if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
 	{
-		if (S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate(SECURITY_POINT_MODE_MENU_EXIT_RUN_MODE, SECURITY_POINT_MODE_MENU_TEST))
+		if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_MODE_MENU_EXIT_RUN_MODE, SECURITY_POINT_MODE_MENU_TEST))
 		{
 			OnStop();
 			allowAccess = true;
 		}
 	}
-	else if (S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate(SECURITY_POINT_MODE_MENU_TEST))
+	else if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_MODE_MENU_TEST))
 	{
 		allowAccess = true;
 	}
@@ -823,17 +825,17 @@ void SVMainFrame::OnTestMode()
 	{
 		if (SVSVIMStateClass::CheckState(SV_STATE_REGRESSION))
 		{
-			TheSVObserverApp.StopRegression();
+			TheSVObserverApp().StopRegression();
 		}
 		ExtrasEngine::Instance().ExecuteAutoSaveIfAppropriate(false);
-		TheSVObserverApp.Start(SV_STATE_TEST);
+		TheSVObserverApp().Start(SV_STATE_TEST);
 		SoftwareTriggerDlg::Instance().ShowWindow(SW_SHOW);
 	}
 }
 
 void SVMainFrame::OnRunMode()
 {
-	TheSVObserverApp.EnterRunMode();
+	TheSVObserverApp().EnterRunMode();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -848,7 +850,7 @@ void SVMainFrame::OnStopTestMode()
 		return;
 	}
 
-	if (S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate(SECURITY_POINT_MODE_MENU_STOP))
+	if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_MODE_MENU_STOP))
 	{
 		SVSVIMStateClass::SVRCBlocker block;
 		OnStop();
@@ -867,14 +869,14 @@ void SVMainFrame::OnModeEdit()
 	// If Running, check if access to exit run.
 	if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
 	{
-		if (S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate(SECURITY_POINT_MODE_MENU_EXIT_RUN_MODE,
+		if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_MODE_MENU_EXIT_RUN_MODE,
 			SECURITY_POINT_MODE_MENU_EDIT_TOOLSET))
 		{
 			OnStop();
 			l_bAllowAccess = true;
 		}
 	}
-	else if (S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate(SECURITY_POINT_MODE_MENU_EDIT_TOOLSET))
+	else if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_MODE_MENU_EDIT_TOOLSET))
 	{
 		l_bAllowAccess = true;
 	}
@@ -885,7 +887,7 @@ void SVMainFrame::OnModeEdit()
 		{
 			if (SVSVIMStateClass::CheckState(SV_STATE_REGRESSION))
 			{
-				TheSVObserverApp.StopRegression();
+				TheSVObserverApp().StopRegression();
 			}
 
 			if (SVSVIMStateClass::CheckState(SV_STATE_TEST))
@@ -895,7 +897,7 @@ void SVMainFrame::OnModeEdit()
 
 			if (SVSVIMStateClass::CheckState(SV_STATE_READY))
 			{
-				TheSVObserverApp.SetModeEdit(true); // Set Edit mode
+				TheSVObserverApp().SetModeEdit(true); // Set Edit mode
 			}
 		}
 	}
@@ -918,27 +920,27 @@ void SVMainFrame::OnGoOffline()
 		return;
 	}
 
-	TheSVObserverApp.DeselectTool();
+	TheSVObserverApp().DeselectTool();
 
 	SetStatusInfoText(_T(""));
 
 	if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
 	{
 		// Dual Security access point
-		if (S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate(SECURITY_POINT_MODE_MENU_STOP,
+		if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_MODE_MENU_STOP,
 			SECURITY_POINT_MODE_MENU_EXIT_RUN_MODE))
 		{
 			OnStop();
 		}
 	}
-	else if (S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate(SECURITY_POINT_MODE_MENU_STOP))
+	else if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_MODE_MENU_STOP))
 	{
 		bool isRegression = SVSVIMStateClass::CheckState(SV_STATE_REGRESSION);
 		//Call OnStop first otherwise the SV_STATE_STOP is not set as StopRegression removes SV_STATE_REGRESSION
 		OnStop();
 		if (isRegression)
 		{
-			TheSVObserverApp.StopRegression();
+			TheSVObserverApp().StopRegression();
 		}
 	}
 }
@@ -959,11 +961,11 @@ void SVMainFrame::OnGoOnline()
 
 	if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING)) { return; }
 
-	if (S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate(SECURITY_POINT_MODE_MENU_RUN))
+	if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_MODE_MENU_RUN))
 	{
 		if (SVSVIMStateClass::CheckState(SV_STATE_REGRESSION))
 		{
-			TheSVObserverApp.StopRegression();
+			TheSVObserverApp().StopRegression();
 		}
 
 		if (SVSVIMStateClass::CheckState(SV_STATE_TEST))
@@ -978,17 +980,17 @@ void SVMainFrame::OnGoOnline()
 		if (SVSVIMStateClass::CheckState(SV_STATE_READY) && false == SVSVIMStateClass::CheckState(SV_STATE_TEST | SV_STATE_RUNNING))
 		{
 			SVSVIMStateClass::RemoveState(SV_STATE_EDIT);
-			TheSVObserverApp.DeselectTool();
+			TheSVObserverApp().DeselectTool();
 
-			if (S_OK == TheSVObserverApp.m_IniInfoHandler.GetInitializationStatusFlags())
+			if (S_OK == TheSVObserverApp().m_IniInfoHandler.GetInitializationStatusFlags())
 			{
-				if (TheSVObserverApp.CheckSVIMType())
+				if (TheSVObserverApp().CheckSVIMType())
 				{
 					CWaitCursor wait;
 
 					try
 					{
-						TheSVObserverApp.Start(SV_STATE_RUNNING);
+						TheSVObserverApp().Start(SV_STATE_RUNNING);
 					}
 					catch (const SvStl::MessageContainer& rExp)
 					{
@@ -998,15 +1000,15 @@ void SVMainFrame::OnGoOnline()
 				else
 				{
 					SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-					Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SVObserver_CannotRun_WrongModelNumber, TheSVObserverApp.m_rInitialInfo.GetModelNumberVector(), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10121);
+					Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SVObserver_CannotRun_WrongModelNumber, TheSVObserverApp().m_rInitialInfo.GetModelNumberVector(), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10121);
 					SVSVIMStateClass::changeState(prevState, SV_STATE_RUNNING);
 				}
 			}
 			else
 			{
 				SvDef::StringVector msgList;
-				msgList.push_back(TheSVObserverApp.m_rInitialInfo.ModelNumberString());
-				msgList.push_back(TheSVObserverApp.m_rInitialInfo.InitializationFailureDescription(TheSVObserverApp.m_IniInfoHandler.GetInitializationStatusFlags()));
+				msgList.push_back(TheSVObserverApp().m_rInitialInfo.ModelNumberString());
+				msgList.push_back(TheSVObserverApp().m_rInitialInfo.InitializationFailureDescription(TheSVObserverApp().m_IniInfoHandler.GetInitializationStatusFlags()));
 
 				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
 				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SVObserver_InitializationFailure, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10126);
@@ -1016,7 +1018,7 @@ void SVMainFrame::OnGoOnline()
 
 			if (SVSVIMStateClass::CheckState(SV_STATE_STOP_PENDING))
 			{
-				TheSVObserverApp.m_pMainWnd->PostMessage(WM_COMMAND, MAKEWPARAM(ID_STOP, 0), 0);
+				TheSVObserverApp().m_pMainWnd->PostMessage(WM_COMMAND, MAKEWPARAM(ID_STOP, 0), 0);
 			}
 			else if (0 != exceptionContainer.getMessage().m_MessageCode)
 			{
@@ -1030,10 +1032,10 @@ void SVMainFrame::OnGoOnline()
 
 void SVMainFrame::OnFilePrintConfig()
 {
-	if (S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate(SECURITY_POINT_FILE_MENU_PRINT))
+	if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_FILE_MENU_PRINT))
 	{
 		if (!SVSVIMStateClass::CheckState(SV_STATE_READY | SV_STATE_RUNNING) ||
-			std::string(TheSVObserverApp.getConfigFullFileName()).empty())
+			std::string(TheSVObserverApp().getConfigFullFileName()).empty())
 		{
 			return;
 		}
@@ -1045,18 +1047,18 @@ void SVMainFrame::OnFilePrintConfig()
 
 void SVMainFrame::OnExtrasLogin()
 {
-	TheSVObserverApp.m_svSecurityMgr.SVLogon();
+	TheSecurityManager().SVLogon();
 
 	// Check if Edit Mode should continue.
 	if (SVSVIMStateClass::CheckState(SV_STATE_EDIT))
 	{	// If this user is not allowed to edit then remove the edit mode
-		if (!TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_MODE_MENU_EDIT_TOOLSET))
+		if (!TheSecurityManager().SVIsDisplayable(SECURITY_POINT_MODE_MENU_EDIT_TOOLSET))
 		{
 			SVSVIMStateClass::RemoveState(SV_STATE_EDIT);
 		}
 		else
 		{	// If they are still allowed then select the current tool.
-			SVMainFrame* pWndMain = dynamic_cast<SVMainFrame*> (TheSVObserverApp.GetMainWnd());
+			SVMainFrame* pWndMain = dynamic_cast<SVMainFrame*> (TheSVObserverApp().GetMainWnd());
 			if (pWndMain)
 			{
 				pWndMain->PostMessage(SV_SET_TOOL_SELECTED_IN_TOOL_VIEW, (WPARAM)TRUE);
@@ -1072,7 +1074,7 @@ void SVMainFrame::OnExtrasUtilitiesEdit()
 	SVUtilities util;
 
 	SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING}; /// do this before calling validate for security as it may display a logon dialog!
-	if (S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate(SECURITY_POINT_EXTRAS_MENU_UTILITIES_SETUP))
+	if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_EXTRAS_MENU_UTILITIES_SETUP))
 	{
 		CWnd* pWindow = AfxGetMainWnd();
 		CMenu* pMenu = (nullptr != pWindow) ? pWindow->GetMenu() : nullptr;
@@ -1080,7 +1082,7 @@ void SVMainFrame::OnExtrasUtilitiesEdit()
 		if (nullptr != pMenu)
 		{
 			util.SetupUtilities(pMenu);
-			TheSVObserverApp.UpdateAllMenuExtrasUtilities();
+			TheSVObserverApp().UpdateAllMenuExtrasUtilities();
 		}
 	}
 	else
@@ -1093,10 +1095,10 @@ void SVMainFrame::OnExtrasUtilitiesEdit()
 void SVMainFrame::OnExtrasSecuritySetup()
 {
 	SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING}; /// do this before calling validate for security as it may display a logon dialog!
-	if (S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate(SECURITY_POINT_EXTRAS_MENU_SECURITY_MANAGER))
+	if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_EXTRAS_MENU_SECURITY_MANAGER))
 	{
-		TheSVObserverApp.m_svSecurityMgr.SVSetupDialog();
-		if (TheSVObserverApp.m_svSecurityMgr.SVGetUseLogon())
+		TheSecurityManager().SVSetupDialog();
+		if (TheSecurityManager().SVGetUseLogon())
 		{
 			CMenu* pMenu;
 			CWnd* pWindow = AfxGetMainWnd();
@@ -1128,7 +1130,7 @@ void SVMainFrame::OnExtrasSecuritySetup()
 
 		if (SVSVIMStateClass::CheckState(SV_STATE_REGRESSION))
 		{
-			TheSVObserverApp.StopRegression();
+			TheSVObserverApp().StopRegression();
 		}
 	}
 }
@@ -1186,9 +1188,9 @@ void SVMainFrame::OnRunUtility(UINT uiId)
 {
 	SVUtilities util;
 
-	if (S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate(SECURITY_POINT_EXTRAS_MENU_UTILITIES_RUN))
+	if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_EXTRAS_MENU_UTILITIES_RUN))
 	{
-		util.RunUtility(&(TheSVObserverApp.m_svSecurityMgr), uiId);
+		util.RunUtility(&(TheSecurityManager()), uiId);
 	}
 	else
 	{
@@ -1200,7 +1202,7 @@ void SVMainFrame::OnRunUtility(UINT uiId)
 void SVMainFrame::OnExtrasLogout()
 {
 	// Force log out, regardless auto login mode...
-	TheSVObserverApp.m_svSecurityMgr.SVLogout();
+	TheSecurityManager().SVLogout();
 
 	if (SVSVIMStateClass::CheckState(SV_STATE_EDIT))
 	{
@@ -1209,11 +1211,11 @@ void SVMainFrame::OnExtrasLogout()
 
 	if (SVSVIMStateClass::CheckState(SV_STATE_REGRESSION))
 	{
-		TheSVObserverApp.StopRegression();
+		TheSVObserverApp().StopRegression();
 	}
 
 	// We need to deselect any tool that might be set for operator move.
-	SVMainFrame* pWndMain = dynamic_cast<SVMainFrame*> (TheSVObserverApp.GetMainWnd());
+	SVMainFrame* pWndMain = dynamic_cast<SVMainFrame*> (TheSVObserverApp().GetMainWnd());
 	if (nullptr != pWndMain)
 	{
 		pWndMain->PostMessage(SV_SET_TOOL_SELECTED_IN_TOOL_VIEW, (WPARAM)FALSE);   // Deselect any tool selected for move.
@@ -1222,7 +1224,7 @@ void SVMainFrame::OnExtrasLogout()
 
 void SVMainFrame::OnRCGoOffline()
 {
-	TheSVObserverApp.StopIfRunning();
+	TheSVObserverApp().StopIfRunning();
 }
 
 
@@ -1230,50 +1232,50 @@ void SVMainFrame::OnRCGoOnline()
 {
 	if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
 	{
-		TheSVObserverApp.SetMode(static_cast<long> (SvPb::DeviceModeType::runMode));
+		TheSVObserverApp().SetMode(static_cast<long> (SvPb::DeviceModeType::runMode));
 	}
 }
 
 void SVMainFrame::OnRCOpenCurrentSVX()
 {
-	TheSVObserverApp.OpenFile(SVRCGetSVCPathName());
+	TheSVObserverApp().OpenFile(SVRCGetSVCPathName());
 }
 
 void SVMainFrame::OnMemLeakDetection()
 {
-	if (TheSVObserverApp.m_IniInfoHandler.GetInitialInfo().m_memoryLeakDetection)
+	if (TheSVObserverApp().m_IniInfoHandler.GetInitialInfo().m_memoryLeakDetection)
 	{
-		if (TheSVObserverApp.m_MemLeakDetection)
+		if (TheSVObserverApp().m_MemLeakDetection)
 		{
-			TheSVObserverApp.startInstances();
+			TheSVObserverApp().startInstances();
 		}
 		else
 		{
-			TheSVObserverApp.stopInstances();
+			TheSVObserverApp().stopInstances();
 		}
-		TheSVObserverApp.m_MemLeakDetection = !TheSVObserverApp.m_MemLeakDetection;
+		TheSVObserverApp().m_MemLeakDetection = !TheSVObserverApp().m_MemLeakDetection;
 	}
 }
 
 void SVMainFrame::OnSVOFilePrintSetup()
 {
-	if (S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate(SECURITY_POINT_FILE_MENU_PRINT_SETUP))
+	if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_FILE_MENU_PRINT_SETUP))
 	{
-		TheSVObserverApp.PrintSetup();
+		TheSVObserverApp().PrintSetup();
 	}
 }
 
 
 void SVMainFrame::OnStop()
 {
-	TheSVObserverApp.StopSvo();
+	TheSVObserverApp().StopSvo();
 }
 
 
 // This function is used when the m_ShouldRunLastEnvironmentAutomatically is set.
 void SVMainFrame::OnRunMostRecentMRU()
 {
-	TheSVObserverApp.ValidateMRUList();
+	TheSVObserverApp().ValidateMRUList();
 
 	if (!SVSVIMStateClass::CheckState(SV_STATE_UNAVAILABLE))
 	{
@@ -1281,7 +1283,7 @@ void SVMainFrame::OnRunMostRecentMRU()
 
 		if (!bRunning)
 		{
-			TheSVObserverApp.OpenConfigFileFromMostRecentList(ID_FILE_MRU_FILE1);
+			TheSVObserverApp().OpenConfigFileFromMostRecentList(ID_FILE_MRU_FILE1);
 		}
 	}
 }
@@ -1296,7 +1298,7 @@ void SVMainFrame::OnEditMonitorList()
 		if (pConfig->SetupRemoteMonitorList())
 		{
 			SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
-			SVIODoc* pIODoc = TheSVObserverApp.GetIODoc();
+			SVIODoc* pIODoc = GetTheIODoc();
 			if (pIODoc)
 			{
 				pIODoc->SetModifiedFlag();
@@ -1307,11 +1309,11 @@ void SVMainFrame::OnEditMonitorList()
 
 void SVMainFrame::OnUpdateAllIOViews()
 {
-	if (TheSVObserverApp.GetIODoc() &&
+	if (GetTheIODoc() &&
 		SVSVIMStateClass::CheckState(SV_STATE_READY | SV_STATE_RUNNING) &&
 		!SVSVIMStateClass::CheckState(SV_STATE_CANCELING))
 	{
-		TheSVObserverApp.GetIODoc()->UpdateAllViews(nullptr);
+		GetTheIODoc()->UpdateAllViews(nullptr);
 	}
 }
 
@@ -1331,7 +1333,7 @@ void SVMainFrame::OnAppExit()
 
 	if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
 	{
-		if (S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate(SECURITY_POINT_MODE_MENU_EXIT_RUN_MODE,
+		if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_MODE_MENU_EXIT_RUN_MODE,
 			SECURITY_POINT_FILE_MENU_EXIT))
 		{
 			OnStop();
@@ -1345,7 +1347,7 @@ void SVMainFrame::OnAppExit()
 
 	if (l_bAllowAccess)
 	{
-		TheSVObserverApp.OnAppExitWrapper();
+		TheSVObserverApp().OnAppExitWrapper();
 	}
 }
 
@@ -1375,7 +1377,7 @@ void SVMainFrame::OnUpdateModeRun(CCmdUI* PCmdUI)
 {
 	PCmdUI->Enable(SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT | SV_STATE_READY) &&
 		!SVSVIMStateClass::CheckState(SV_STATE_RUNNING) &&
-		TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_MODE_MENU_RUN));
+		TheSecurityManager().SVIsDisplayable(SECURITY_POINT_MODE_MENU_RUN));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1387,7 +1389,7 @@ void SVMainFrame::OnUpdateEditEnvironment(CCmdUI* PCmdUI)
 {
 	PCmdUI->Enable(SVSVIMStateClass::CheckState(SV_STATE_READY) &&
 		!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION) &&
-		TheSVObserverApp.OkToEdit());
+		TheSVObserverApp().OkToEdit());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1398,25 +1400,25 @@ void SVMainFrame::OnUpdateEditEnvironment(CCmdUI* PCmdUI)
 void SVMainFrame::OnUpdateEditIOList(CCmdUI* PCmdUI)
 {
 	PCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION) &&
-		SVSVIMStateClass::CheckState(SV_STATE_EDIT) && nullptr != TheSVObserverApp.GetIODoc());
+		SVSVIMStateClass::CheckState(SV_STATE_EDIT) && nullptr != GetTheIODoc());
 }
 
 void SVMainFrame::OnUpdateFileClose(CCmdUI* PCmdUI)
 {
 	PCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION)
-		&& TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_CLOSE_CONFIGURATION));
+		&& TheSecurityManager().SVIsDisplayable(SECURITY_POINT_FILE_MENU_CLOSE_CONFIGURATION));
 }
 
 void SVMainFrame::OnUpdateFileNew(CCmdUI* PCmdUI)
 {
 	PCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION) &&
-		TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_NEW) && (SVOLicenseManager::Instance().HasMatroxLicense()));
+		TheSecurityManager().SVIsDisplayable(SECURITY_POINT_FILE_MENU_NEW) && (SVOLicenseManager::Instance().HasMatroxLicense()));
 }
 
 void SVMainFrame::OnUpdateFileOpen(CCmdUI* PCmdUI)
 {
 	PCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION)
-		&& TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_SELECT_CONFIGURATION) && (SVOLicenseManager::Instance().HasMatroxLicense()));
+		&& TheSecurityManager().SVIsDisplayable(SECURITY_POINT_FILE_MENU_SELECT_CONFIGURATION) && (SVOLicenseManager::Instance().HasMatroxLicense()));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1427,21 +1429,21 @@ void SVMainFrame::OnUpdateFileOpen(CCmdUI* PCmdUI)
 void SVMainFrame::OnUpdateFileOpenSVC(CCmdUI* PCmdUI)
 {
 	PCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION)
-		&& TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_SELECT_CONFIGURATION) && (SVOLicenseManager::Instance().HasMatroxLicense()));
+		&& TheSecurityManager().SVIsDisplayable(SECURITY_POINT_FILE_MENU_SELECT_CONFIGURATION) && (SVOLicenseManager::Instance().HasMatroxLicense()));
 }
 
 void SVMainFrame::OnUpdateFileSaveAll(CCmdUI* PCmdUI)
 {
 	PCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION)
 		&& SVSVIMStateClass::CheckState(SV_STATE_READY)
-		&& TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_SAVE_CONFIGURATION));
+		&& TheSecurityManager().SVIsDisplayable(SECURITY_POINT_FILE_MENU_SAVE_CONFIGURATION));
 }
 
 void SVMainFrame::OnUpdateFileSaveAs(CCmdUI* PCmdUI)
 {
 	PCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION)
 		&& SVSVIMStateClass::CheckState(SV_STATE_READY)
-		&& TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_SAVE_CONFIGURATION_AS));
+		&& TheSecurityManager().SVIsDisplayable(SECURITY_POINT_FILE_MENU_SAVE_CONFIGURATION_AS));
 }
 
 void SVMainFrame::OnUpdateFileSaveCopyAs(CCmdUI* PCmdUI)
@@ -1453,7 +1455,7 @@ void SVMainFrame::OnUpdateFileSaveImage(CCmdUI* PCmdUI)
 {
 	PCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_REGRESSION | SV_STATE_TEST)
 		&& SVSVIMStateClass::CheckState(SV_STATE_READY)
-		&& TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_SAVE_IMAGE));
+		&& TheSecurityManager().SVIsDisplayable(SECURITY_POINT_FILE_MENU_SAVE_IMAGE));
 }
 
 void SVMainFrame::OnUpdateFileUpdate(CCmdUI* PCmdUI)
@@ -1466,7 +1468,7 @@ void SVMainFrame::OnUpdateExtrasLogin(CCmdUI* PCmdUI)
 {
 	PCmdUI->Enable(SVSVIMStateClass::CheckState(SV_STATE_AVAILABLE | SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_READY | SV_STATE_REGRESSION));
 
-	if (!TheSVObserverApp.m_svSecurityMgr.SVGetUseLogon())
+	if (!TheSecurityManager().SVGetUseLogon())
 	{	// If not logon mode then remove the login and logout menu items.
 		CMenu* pMenu;
 		CWnd* pWindow = AfxGetMainWnd();
@@ -1488,25 +1490,25 @@ void SVMainFrame::OnUpdateExtrasLogin(CCmdUI* PCmdUI)
 void SVMainFrame::OnUpdateEditDelete(CCmdUI* PCmdUI)
 {
 	PCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_REGRESSION) &&
-		TheSVObserverApp.OkToEdit());
+		TheSVObserverApp().OkToEdit());
 }
 
 void SVMainFrame::OnUpdateEditEditTool(CCmdUI* PCmdUI)
 {
 	PCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION) &&
-		TheSVObserverApp.OkToEdit());
+		TheSVObserverApp().OkToEdit());
 }
 
 void SVMainFrame::OnUpdateEditEditToolSet(CCmdUI* PCmdUI)
 {
 	PCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION) &&
-		TheSVObserverApp.OkToEdit());
+		TheSVObserverApp().OkToEdit());
 }
 
 void SVMainFrame::OnUpdateEditRemoteInputs(CCmdUI* PCmdUI)
 {
 	PCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION) &&
-		TheSVObserverApp.OkToEdit());
+		TheSVObserverApp().OkToEdit());
 	SVInputObjectList* pInputs(nullptr);
 	SVConfigurationObject* pConfig(nullptr);
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
@@ -1532,7 +1534,7 @@ void SVMainFrame::OnUpdateEditRemoteInputs(CCmdUI* PCmdUI)
 	// message for the Edit popup UpdateUI or similar.
 
 	// Get Menu handle
-	HMENU hmen = ::GetMenu(TheSVObserverApp.GetMainWnd()->m_hWnd);
+	HMENU hmen = ::GetMenu(TheSVObserverApp().GetMainWnd()->m_hWnd);
 	if (nullptr != pConfig)
 	{
 		// The IO menu is limited to 100 Published results menu items.
@@ -1590,25 +1592,25 @@ void SVMainFrame::OnUpdateEditAddMonitorList(CCmdUI* pCmdUI)
 void SVMainFrame::OnUpdateExtrasLightReference(CCmdUI* PCmdUI)
 {
 	PCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_REGRESSION) &&
-		TheSVObserverApp.OkToEdit());
+		TheSVObserverApp().OkToEdit());
 }
 
 void SVMainFrame::OnUpdateFilePrintPreview(CCmdUI* PCmdUI)
 {
 	PCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_REGRESSION)
-		&& TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_PRINT));
+		&& TheSecurityManager().SVIsDisplayable(SECURITY_POINT_FILE_MENU_PRINT));
 }
 
 void SVMainFrame::OnUpdateFilePrintSetup(CCmdUI* PCmdUI)
 {
 	PCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_REGRESSION | SV_STATE_TEST)
-		&& TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_PRINT_SETUP));
+		&& TheSecurityManager().SVIsDisplayable(SECURITY_POINT_FILE_MENU_PRINT_SETUP));
 }
 
 void SVMainFrame::OnUpdateExtrasTestOutputs(CCmdUI* PCmdUI)
 {
 	PCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION)
-		&& TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_EXTRAS_MENU_TEST_OUTPUTS));
+		&& TheSecurityManager().SVIsDisplayable(SECURITY_POINT_EXTRAS_MENU_TEST_OUTPUTS));
 }
 
 void SVMainFrame::OnUpdateHelp(CCmdUI* PCmdUI)
@@ -1624,7 +1626,7 @@ void SVMainFrame::OnUpdateHelpFinder(CCmdUI* PCmdUI)
 void SVMainFrame::OnUpdateModeTest(CCmdUI* PCmdUI)
 {
 	PCmdUI->Enable((SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT | SV_STATE_STOP)) &&
-		TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_MODE_MENU_TEST));
+		TheSecurityManager().SVIsDisplayable(SECURITY_POINT_MODE_MENU_TEST));
 
 	PCmdUI->SetCheck(SVSVIMStateClass::CheckState(SV_STATE_TEST) &&
 		!SVSVIMStateClass::CheckState(SV_STATE_REGRESSION));
@@ -1674,7 +1676,7 @@ void SVMainFrame::OnUpdateWindowTileVert(CCmdUI* PCmdUI)
 void SVMainFrame::OnUpdateAppExit(CCmdUI* PCmdUI)
 {
 	PCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_REGRESSION)
-		&& TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_EXIT));
+		&& TheSecurityManager().SVIsDisplayable(SECURITY_POINT_FILE_MENU_EXIT));
 }
 
 void SVMainFrame::OnUpdateAppAbout(CCmdUI*)
@@ -1689,8 +1691,8 @@ void SVMainFrame::OnUpdateGoOffline(CCmdUI* PCmdUI)
 {
 	PCmdUI->Enable((SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT | SV_STATE_STOP)) &&
 		SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_READY) &&
-		(TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_MODE_MENU_EXIT_RUN_MODE) ||
-		TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_MODE_MENU_STOP)));
+		(TheSecurityManager().SVIsDisplayable(SECURITY_POINT_MODE_MENU_EXIT_RUN_MODE) ||
+		TheSecurityManager().SVIsDisplayable(SECURITY_POINT_MODE_MENU_STOP)));
 
 	PCmdUI->SetCheck(SVSVIMStateClass::CheckState(SV_STATE_STOP));
 }
@@ -1704,7 +1706,7 @@ void SVMainFrame::OnUpdateGoOnline(CCmdUI* PCmdUI)
 {
 	PCmdUI->Enable(SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT | SV_STATE_STOP) &&
 		SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_READY) &&
-		TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_MODE_MENU_RUN));
+		TheSecurityManager().SVIsDisplayable(SECURITY_POINT_MODE_MENU_RUN));
 
 	PCmdUI->SetCheck(SVSVIMStateClass::CheckState(SV_STATE_RUNNING));
 }
@@ -1712,18 +1714,18 @@ void SVMainFrame::OnUpdateGoOnline(CCmdUI* PCmdUI)
 void SVMainFrame::OnUpdateFilePrintConfig(CCmdUI* PCmdUI)
 {
 	PCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_REGRESSION | SV_STATE_TEST)
-		&& TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_PRINT));
+		&& TheSecurityManager().SVIsDisplayable(SECURITY_POINT_FILE_MENU_PRINT));
 }
 
 void SVMainFrame::OnUpdateExtrasLogout(CCmdUI* PCmdUI)
 {
-	PCmdUI->Enable(TheSVObserverApp.m_svSecurityMgr.SVIsLoggedOn());
+	PCmdUI->Enable(TheSecurityManager().SVIsLoggedOn());
 }
 
 
 void SVMainFrame::OnUpdateExtraUtilities(CCmdUI* PCmdUI)
 {
-	PCmdUI->Enable(TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_EXTRAS_MENU_UTILITIES_RUN));
+	PCmdUI->Enable(TheSecurityManager().SVIsDisplayable(SECURITY_POINT_EXTRAS_MENU_UTILITIES_RUN));
 }
 
 void SVMainFrame::OnUpdateEditPublishedResults(CCmdUI* PCmdUI)
@@ -1762,7 +1764,7 @@ void SVMainFrame::OnUpdateModeEdit(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable((SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT | SV_STATE_READY)) &&
 		SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_READY) &&
-		TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_MODE_MENU_EDIT_TOOLSET));
+		TheSecurityManager().SVIsDisplayable(SECURITY_POINT_MODE_MENU_EDIT_TOOLSET));
 
 	pCmdUI->SetCheck(SVSVIMStateClass::CheckState(SV_STATE_EDIT));
 }
@@ -1776,15 +1778,15 @@ void SVMainFrame::OnUpdateExtrasUtilitiesEdit(CCmdUI* pCmdUI)
 {
 	if (pCmdUI->m_pSubMenu)
 	{
-		bool l_bEnable = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_EXTRAS_MENU_UTILITIES_SETUP) ||
-			(TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_EXTRAS_MENU_UTILITIES_RUN) &&
+		bool l_bEnable = TheSecurityManager().SVIsDisplayable(SECURITY_POINT_EXTRAS_MENU_UTILITIES_SETUP) ||
+			(TheSecurityManager().SVIsDisplayable(SECURITY_POINT_EXTRAS_MENU_UTILITIES_RUN) &&
 				!SVSVIMStateClass::CheckState(SV_STATE_RUNNING));
 		unsigned int l_uiGray = l_bEnable ? 0 : MF_GRAYED;
 		pCmdUI->m_pMenu->EnableMenuItem(pCmdUI->m_nIndex, MF_BYPOSITION | l_uiGray);
 	}
 	else
 	{
-		pCmdUI->Enable(TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_EXTRAS_MENU_UTILITIES_SETUP) &&
+		pCmdUI->Enable(TheSecurityManager().SVIsDisplayable(SECURITY_POINT_EXTRAS_MENU_UTILITIES_SETUP) &&
 			!SVSVIMStateClass::CheckState(SV_STATE_RUNNING));
 	}
 }
@@ -1797,7 +1799,7 @@ void SVMainFrame::OnUpdateExtrasSecuritySetup(CCmdUI* pCmdUI)
 
 void SVMainFrame::OnRCClose()
 {
-	TheSVObserverApp.RCClose();
+	TheSVObserverApp().RCClose();
 }
 
 
@@ -1827,7 +1829,7 @@ void SVMainFrame::OnEditPublishedResults(UINT nID)
 		const SVInspectionProcessVector& rInspections = pConfig->GetInspections();
 		if (uiInspection < rInspections.size())
 		{
-			SVIPDoc* pDoc = TheSVObserverApp.GetIPDoc(rInspections[uiInspection]->getObjectId());
+			SVIPDoc* pDoc = GetIPDocByInspectionID(rInspections[uiInspection]->getObjectId());
 			if (nullptr != pDoc)
 			{
 				pDoc->OnPublishedResultsPicker();
@@ -1858,9 +1860,9 @@ void SVMainFrame::UpdateStatusInfo(CCmdUI* pCmdUI)
 		{
 			BSTR l_bstUser = nullptr;
 			CString l_strUser = _T("User: ");
-			if( TheSVObserverApp.m_svSecurityMgr.SVGetUseLogon() )
+			if( TheSecurityManager().SVGetUseLogon() )
 			{
-				TheSVObserverApp.m_svSecurityMgr.SVGetUser( l_bstUser );
+				TheSecurityManager().SVGetUser( l_bstUser );
 				if( nullptr != l_bstUser )
 				{
 					l_strUser += l_bstUser;
@@ -1965,7 +1967,7 @@ void SVMainFrame::UpdateStatusInfo(CCmdUI* pCmdUI)
 			}
 			else
 			{
-				if ( !SVOLicenseManager::Instance().HasMatroxGigELicense() && TheSVObserverApp.IsMatroxGige() )
+				if ( !SVOLicenseManager::Instance().HasMatroxGigELicense() && TheSVObserverApp().IsMatroxGige() )
 				{
 					Error = cGigeNoLicense;
 				}
@@ -2028,7 +2030,7 @@ LRESULT SVMainFrame::InvalidateStatusBar( WPARAM , LPARAM  )
 
 LRESULT SVMainFrame::RemoteRegisterMonitorList( WPARAM , LPARAM  )
 {
-	TheSVObserverApp.GetIODoc()->GetIOController()->ShowMonitorListTab();
+	GetTheIODoc()->GetIOController()->ShowMonitorListTab();
 	return 0;
 }
 
@@ -2042,7 +2044,7 @@ LRESULT SVMainFrame::onAddFileToConfig(WPARAM , LPARAM lParam)
 LRESULT SVMainFrame::onSaveConfig(WPARAM , LPARAM lParam)
 {
 	LPCTSTR pFileName = reinterpret_cast<LPCTSTR> (lParam);
-	return TheSVObserverApp.SavePackedConfiguration(pFileName);
+	return TheSVObserverApp().SavePackedConfiguration(pFileName);
 }
 
 LRESULT SVMainFrame::Shutdown(WPARAM wParam, LPARAM)
@@ -2056,7 +2058,7 @@ LRESULT SVMainFrame::Shutdown(WPARAM wParam, LPARAM)
 
 LRESULT SVMainFrame::UpdateIPDocViews(WPARAM wParam, LPARAM lParam)
 {
-	SVIPDoc* pDoc = TheSVObserverApp.GetIPDoc(static_cast<uint32_t> (wParam));
+	SVIPDoc* pDoc = GetIPDocByInspectionID(static_cast<uint32_t> (wParam));
 	if (nullptr != pDoc)
 	{
 		pDoc->UpdateAllViews(nullptr, lParam);
@@ -2073,7 +2075,7 @@ void SVMainFrame::OnMouseMove( UINT nFlags, CPoint point )
 
 void SVMainFrame::OnViewPPQBar()
 {
-	bool accessAllowed = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_VIEW_MENU_PPQ_BAR);
+	bool accessAllowed = TheSecurityManager().SVIsDisplayable(SECURITY_POINT_VIEW_MENU_PPQ_BAR);
 
 	if (accessAllowed && !m_PPQBar.IsWindowVisible())
 	{
@@ -2197,14 +2199,14 @@ void SVMainFrame::OnConfigurationFinishedInitializing()
 
 	// Update the IO views. 
 
-	SVIODoc* l_pIODoc( TheSVObserverApp.GetIODoc() );
+	SVIODoc* l_pIODoc( GetTheIODoc() );
 
 	if( nullptr != l_pIODoc )
 	{
 		l_pIODoc->UpdateAllViews( nullptr );
 	}// end if
 
-	TheSVObserverApp.UpdateAllMenuExtrasUtilities();
+	TheSVObserverApp().UpdateAllMenuExtrasUtilities();
 
 	// Set the tool selected for an operator to move if any.
 	PostMessage( SV_SET_TOOL_SELECTED_IN_TOOL_VIEW, (WPARAM) TRUE );
@@ -2225,7 +2227,7 @@ void SVMainFrame::OnConfigurationFinishedInitializing()
 		PostMessage ( WM_COMMAND, MAKEWPARAM (ID_MODE_RUN, 0), 0 );
 	}
 
-	TheSVObserverApp.RemoveUnusedFiles();
+	TheSVObserverApp().RemoveUnusedFiles();
 }
 
 void SVMainFrame::OnActivateApp(BOOL bActive, DWORD dwThreadID)
@@ -2365,12 +2367,12 @@ LRESULT SVMainFrame::OnDisplayChange(WPARAM p_p1, LPARAM p_p2)
 
 LRESULT SVMainFrame::OnSetMode( WPARAM , LPARAM lParam )
 {
-	return TheSVObserverApp.SetMode( static_cast<unsigned long>(lParam ));
+	return TheSVObserverApp().SetMode( static_cast<unsigned long>(lParam ));
 }
 
 LRESULT SVMainFrame::OnLoadPackedConfiguration( WPARAM wParam, LPARAM lParam )
 {
-	return TheSVObserverApp.LoadPackedConfiguration(reinterpret_cast<LPCTSTR> (lParam), static_cast<ConfigFileType> (wParam));
+	return TheSVObserverApp().LoadPackedConfiguration(reinterpret_cast<LPCTSTR> (lParam), static_cast<ConfigFileType> (wParam));
 }
 
 #ifdef _DEBUG
@@ -2388,7 +2390,7 @@ void SVMainFrame::Dump(CDumpContext& dc) const
 
 LRESULT SVMainFrame::OnUserChanged(WPARAM, LPARAM  )
 {
-	bool accessAllowed = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_VIEW_MENU_PPQ_BAR ) ;  // ID_VIEW_PPQ_BAR );
+	bool accessAllowed = TheSecurityManager().SVIsDisplayable( SECURITY_POINT_VIEW_MENU_PPQ_BAR ) ;  // ID_VIEW_PPQ_BAR );
 
 	if( !accessAllowed )
 	{
@@ -2405,7 +2407,7 @@ LRESULT SVMainFrame::OnUserChanged(WPARAM, LPARAM  )
 
 void SVMainFrame::OnViewImageDisplayUpdate()
 {
-	if( S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate( SECURITY_POINT_VIEW_MENU_IMAGE_DISPLAY_UPDATE ) )
+	if( S_OK == TheSecurityManager().SVValidate( SECURITY_POINT_VIEW_MENU_IMAGE_DISPLAY_UPDATE ) )
 	{
 		SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
 
@@ -2417,7 +2419,7 @@ void SVMainFrame::OnViewImageDisplayUpdate()
 
 void SVMainFrame::OnUpdateViewImageDisplayUpdate( CCmdUI* pCmdUI )
 {
-	BOOL bEnable = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_VIEW_MENU_IMAGE_DISPLAY_UPDATE );
+	BOOL bEnable = TheSecurityManager().SVIsDisplayable( SECURITY_POINT_VIEW_MENU_IMAGE_DISPLAY_UPDATE );
 	bEnable &= !SVSVIMStateClass::CheckState( SV_STATE_REGRESSION );
 	pCmdUI->Enable( bEnable);
 	bool ImageUpdate( false );
@@ -2427,7 +2429,7 @@ void SVMainFrame::OnUpdateViewImageDisplayUpdate( CCmdUI* pCmdUI )
 
 void SVMainFrame::OnViewResultDisplayUpdate()
 {
-	if( S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate( SECURITY_POINT_VIEW_MENU_RESULT_DISPLAY_UPDATE ) )
+	if( S_OK == TheSecurityManager().SVValidate( SECURITY_POINT_VIEW_MENU_RESULT_DISPLAY_UPDATE ) )
 	{
 		SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
 
@@ -2439,7 +2441,7 @@ void SVMainFrame::OnViewResultDisplayUpdate()
 
 void SVMainFrame::OnUpdateViewResultDisplayUpdate( CCmdUI* pCmdUI )
 {
-	BOOL bEnable = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_VIEW_MENU_RESULT_DISPLAY_UPDATE );
+	BOOL bEnable = TheSecurityManager().SVIsDisplayable(SECURITY_POINT_VIEW_MENU_RESULT_DISPLAY_UPDATE );
 	bEnable &= !SVSVIMStateClass::CheckState( SV_STATE_REGRESSION );
 	pCmdUI->Enable( bEnable);
 
@@ -2451,7 +2453,7 @@ void SVMainFrame::OnUpdateViewResultDisplayUpdate( CCmdUI* pCmdUI )
 void SVMainFrame::OnExtrasStartLastConfiguration()
 {
 	SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING}; /// do this before calling validate for security as it may display a logon dialog!
-	if (S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate(SECURITY_POINT_EXTRAS_MENU_ADDITIONAL_ENVIRON))
+	if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_EXTRAS_MENU_ADDITIONAL_ENVIRON))
 	{
 		bool StartLastConfiguration(false);
 		RootObject::getRootChildValue(SvDef::FqnEnvironmentStartLastConfig, StartLastConfiguration);
@@ -2463,7 +2465,7 @@ void SVMainFrame::OnExtrasStartLastConfiguration()
 void SVMainFrame::OnUpdateExtrasStartLastConfiguration(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION)
-				   && TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_EXTRAS_MENU_ADDITIONAL_ENVIRON) 
+				   && TheSecurityManager().SVIsDisplayable(SECURITY_POINT_EXTRAS_MENU_ADDITIONAL_ENVIRON) 
 				   && (SVOLicenseManager::Instance().HasMatroxLicense()));
 
 	bool StartLastConfiguration(false);
@@ -2473,7 +2475,7 @@ void SVMainFrame::OnUpdateExtrasStartLastConfiguration(CCmdUI* pCmdUI)
 
 void SVMainFrame::OnExtrasEnableAutoSave()
 {
-	if (S_OK != TheSVObserverApp.m_svSecurityMgr.SVValidate(SECURITY_POINT_EXTRAS_MENU_AUTOSAVE_CONFIGURATION))
+	if (S_OK != TheSecurityManager().SVValidate(SECURITY_POINT_EXTRAS_MENU_AUTOSAVE_CONFIGURATION))
 	{
 		return;
 	}
@@ -2483,7 +2485,7 @@ void SVMainFrame::OnExtrasEnableAutoSave()
 
 void SVMainFrame::OnUpdateExtrasEnableAutoSave(CCmdUI *pCmdUI)
 {
-	bool bEnable = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_EXTRAS_MENU_AUTOSAVE_CONFIGURATION );
+	bool bEnable = TheSecurityManager().SVIsDisplayable( SECURITY_POINT_EXTRAS_MENU_AUTOSAVE_CONFIGURATION );
 
 	pCmdUI->Enable( bEnable );
 	pCmdUI->SetCheck( ExtrasEngine::Instance().IsAutoSaveEnabled());
@@ -2491,7 +2493,7 @@ void SVMainFrame::OnUpdateExtrasEnableAutoSave(CCmdUI *pCmdUI)
 
 void SVMainFrame::OnExtrasEnableFbwf()
 {
-	if( S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate(SECURITY_POINT_EXTRAS_MENU_FBWF_CONFIGURATION) )
+	if( S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_EXTRAS_MENU_FBWF_CONFIGURATION) )
 	{
 		bool Value {false};
 		RootObject::getRootChildValue(SvDef::FqnEnvironmentDiskProtection, Value);
@@ -2502,7 +2504,7 @@ void SVMainFrame::OnExtrasEnableFbwf()
 void SVMainFrame::OnUpdateExtrasEnableFbwf(CCmdUI *pCmdUI)
 {
 	//temporarily disabled as per SVO-1084. Parameter was: (ExtrasEngine::Instance().IsFbwfAvailable()==true)
-	//bool bEnable = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_EXTRAS_MENU_FBWF_CONFIGURATION );
+	//bool bEnable = TheSecurityManager().SVIsDisplayable( SECURITY_POINT_EXTRAS_MENU_FBWF_CONFIGURATION );
 	bool bEnable = false;
 	pCmdUI->Enable(bEnable);
 
@@ -2704,12 +2706,11 @@ void EnableTriggerSettings(bool enable)
 // get the Document Template for the SVIPDoc
 CMultiDocTemplate* getIPDocTemplate()
 {
-	CWinApp& rApp = TheSVObserverApp;
 	CMultiDocTemplate* pTemplate = nullptr;
-	POSITION pos = rApp.GetFirstDocTemplatePosition();
+	POSITION pos = TheSVObserverApp().GetFirstDocTemplatePosition();
 	while (!pTemplate && pos)
 	{
-		CMultiDocTemplate* pDocTemplate = dynamic_cast<CMultiDocTemplate*>(rApp.GetNextDocTemplate(pos));
+		CMultiDocTemplate* pDocTemplate = dynamic_cast<CMultiDocTemplate*>(TheSVObserverApp().GetNextDocTemplate(pos));
 		if (pDocTemplate)
 		{
 			POSITION posDoc = pDocTemplate->GetFirstDocPosition();
@@ -2725,6 +2726,4 @@ CMultiDocTemplate* getIPDocTemplate()
 	}
 	return pTemplate;
 }
-
-
 

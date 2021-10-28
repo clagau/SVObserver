@@ -14,6 +14,7 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVObserver.h"
+#include "SVSecurity/SVSecurityManager.h"
 #include "SVConfigurationObject.h"
 #include "SVMessage/SVMessage.h"
 #include "SVPPQEntryDialog.h"
@@ -454,7 +455,7 @@ int SVPPQWindowClass::OnCreate( LPCREATESTRUCT lpCreateStruct )
 BOOL SVPPQWindowClass::OnCmdMsg( UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo ) 
 {
 	// Click on PPQEntry button 
-	if( S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate( SECURITY_POINT_VIEW_MENU_PPQ_BAR ) )
+	if( S_OK == TheSecurityManager().SVValidate( SECURITY_POINT_VIEW_MENU_PPQ_BAR ) )
 	{
 		if ( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) )
 		{
@@ -479,7 +480,7 @@ BOOL SVPPQWindowClass::OnCmdMsg( UINT nID, int nCode, void* pExtra, AFX_CMDHANDL
 					pConfig->RebuildInputOutputLists();
 				}
 
-				TheSVObserverApp.RefreshAllIPDocuments();
+				TheSVObserverApp().RefreshAllIPDocuments();
 
 				if( buttonList.GetSize() > pos && buttonList.GetAt( pos ) )
 			    {
@@ -509,7 +510,7 @@ BOOL SVPPQWindowClass::OnCmdMsg( UINT nID, int nCode, void* pExtra, AFX_CMDHANDL
 		{
 			// Access during Test or Run Mode denied!
 			std::string Msg  = SvUl::LoadStdString( IDS_USER_INFORMATION_NO_ACCESS_DURING_TEST_RUN_MODE );
-			TheSVObserverApp.SetStatusText( Msg.c_str() );
+			TheSVObserverApp().SetStatusText( Msg.c_str() );
 			MessageBeep( 0xffffffff );
 		}
 	}

@@ -611,7 +611,7 @@ void MonitorListView::OnLButtonDblClk(UINT, CPoint point)
 
 	if (item >= 0 && ((flags & LVHT_ONITEMLABEL) == LVHT_ONITEMLABEL))
 	{
-		if (TheSVObserverApp.OkToEdit())
+		if (TheSVObserverApp().OkToEdit())
 		{
 			SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
 
@@ -632,7 +632,7 @@ void MonitorListView::OnLButtonDblClk(UINT, CPoint point)
 BOOL MonitorListView::PreTranslateMessage(MSG* pMsg)
 {
 	BOOL bRet = false;
-	if (pMsg->message == WM_KEYDOWN && TheSVObserverApp.OkToEdit())
+	if (pMsg->message == WM_KEYDOWN && TheSVObserverApp().OkToEdit())
 	{
 		POSITION Pos = m_rCtrl.GetFirstSelectedItemPosition();
 		if (nullptr != Pos)
@@ -983,7 +983,7 @@ bool MonitorListView::EditMonitoredItem(int item, bool bEditImage)
 
 void MonitorListView::AddItem()
 {
-	if (TheSVObserverApp.OkToEdit())
+	if (TheSVObserverApp().OkToEdit())
 	{
 		POSITION Pos = m_rCtrl.GetFirstSelectedItemPosition();
 		int item = -1;
@@ -1016,7 +1016,7 @@ void MonitorListView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 	UINT nFlags = 0;
 	CPoint ListPoint = point;
 
-	if (TheSVObserverApp.OkToEdit())
+	if (TheSVObserverApp().OkToEdit())
 	{
 		m_rCtrl.ScreenToClient(&ListPoint);
 
@@ -1109,7 +1109,7 @@ void MonitorListView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 
 void MonitorListView::OnAddRemoveList()
 {
-	if (TheSVObserverApp.OkToEdit())
+	if (TheSVObserverApp().OkToEdit())
 	{
 		SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
 		SVConfigurationObject* pConfig(nullptr);
@@ -1134,7 +1134,7 @@ void MonitorListView::OnAddRemoveList()
 
 void MonitorListView::OnEditListProperties()
 {
-	if (TheSVObserverApp.OkToEdit())
+	if (TheSVObserverApp().OkToEdit())
 	{
 		SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
 		POSITION Pos = m_rCtrl.GetFirstSelectedItemPosition();
@@ -1172,7 +1172,7 @@ void MonitorListView::OnEditListProperties()
 
 void MonitorListView::OnDeleteItem()
 {
-	if (TheSVObserverApp.OkToEdit())
+	if (TheSVObserverApp().OkToEdit())
 	{
 		SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
 		POSITION Pos = m_rCtrl.GetFirstSelectedItemPosition();
@@ -1213,7 +1213,7 @@ void MonitorListView::OnEditItem()
 }
 void MonitorListView::OnEdit(bool bImageItem)
 {
-	if (TheSVObserverApp.OkToEdit())
+	if (TheSVObserverApp().OkToEdit())
 	{
 		SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
 

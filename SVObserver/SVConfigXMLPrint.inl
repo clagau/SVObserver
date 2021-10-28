@@ -19,6 +19,7 @@
 #include "SVIPDoc.h"
 #include "SVInspectionProcess.h"
 #include "SVObserver.h"
+#include "SVIODoc.h"
 #include "SVToolGrouping.h"
 #include "SVToolSet.h"
 #include "InspectionEngine/SVAcquisitionClass.h"
@@ -68,7 +69,7 @@ const static wchar_t* XML_FailStatusItem = L"FailStatusItem";
 static SVToolGrouping GetToolGroupings(uint32_t inspectionId)
 {
 	// get the document that owns this inspection
-	SVIPDoc* pDoc = TheSVObserverApp.GetIPDoc(inspectionId);
+	SVIPDoc* pDoc = GetIPDocByInspectionID(inspectionId);
 	if (pDoc)
 	{
 		return pDoc->GetToolGroupings();
@@ -511,7 +512,7 @@ inline void SVConfigXMLPrint::WriteResultIO(Writer writer) const
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 	SVObserverApp* pApp = dynamic_cast <SVObserverApp*> (AfxGetApp());
 
-	if (nullptr != pConfig && nullptr != pApp && pApp->GetIODoc())
+	if (nullptr != pConfig && nullptr != pApp && GetTheIODoc())
 	{
 		SVIOEntryHostStructPtrVector ppIOEntries;
 		long lPPQSize = pConfig->GetPPQCount();
@@ -591,10 +592,9 @@ inline void SVConfigXMLPrint::WriteModuleIO(Writer writer) const
 
 	SVConfigurationObject* pConfig(nullptr);
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-	SVObserverApp* pApp = dynamic_cast <SVObserverApp*> (AfxGetApp());
 
 	// Print IODoc contents
-	if (pApp->GetIODoc())
+	if (GetTheIODoc())
 	{
 		SVInputObjectList* pInputList = nullptr;
 		// Get list of available inputs

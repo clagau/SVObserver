@@ -614,7 +614,7 @@ STDMETHODIMP SVCommand::SVGetSVIMOfflineCount(unsigned long* pOfflineCount)
 
 	if (nullptr != pOfflineCount)
 	{
-		*pOfflineCount = TheSVObserverApp.getOfflineCount();
+		*pOfflineCount = TheSVObserverApp().getOfflineCount();
 		bSuccess = true;
 	}
 
@@ -635,7 +635,7 @@ STDMETHODIMP SVCommand::SVGetSVIMVersion(unsigned long* pVersion)
 
 	if (nullptr != pVersion)
 	{
-		*pVersion = TheSVObserverApp.getCurrentVersion();
+		*pVersion = TheSVObserverApp().getCurrentVersion();
 		bSuccess = true;
 	}
 
@@ -1332,7 +1332,7 @@ STDMETHODIMP SVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* psa
 					::SafeArrayPutElement(*ppsaImages, &l, nullptr);
 					::SafeArrayPutElement(*ppsaOverlays, &l, bstrOverlay);
 				}
-			}// if (TheSVObserverApp.m_pConfiguration->GetInspectionObject(strName, &pInspection))
+			}// if (TheSVObserverApp().m_pConfiguration->GetInspectionObject(strName, &pInspection))
 			else	// couldn't find inspection
 			{
 				hrOK = SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST;

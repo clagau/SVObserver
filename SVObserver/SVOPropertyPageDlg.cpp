@@ -15,6 +15,7 @@
 
 #include "SVOPropertyPageDlg.h"
 #include "SVObserver.h"
+#include "SVSecurity/SVSecurityManager.h"
 #include "SVHBitmapUtilitiesLibrary/SVImageFile.h"
 #include "SVHBitmapUtilitiesLibrary/SVImageFileLoader.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
@@ -209,7 +210,7 @@ void SVOPropertyPageDlg::SetupCamera()
 		// There is only GigE at this time
 		LPCTSTR fileFilter = cGigeCameraFileFilter;
 		
-		bool bFullAccess = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
+		bool bFullAccess = TheSecurityManager().SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
 		SVRPropertyItemFile* pFile = (SVRPropertyItemFile*)m_Tree.InsertItem(new SVRPropertyItemFile(bFullAccess, SVR_FILE,
 				fileFilter, FileName.GetDefaultPathName().c_str(), TRUE), pRoot);
 		if (pFile)
@@ -287,7 +288,7 @@ void SVOPropertyPageDlg::SetupFileCamera(SVRPropertyItem* pRoot)
 	SVFileNameClass FileName;
 	FileName.SetFileType(SV_IMAGE_SOURCE_FILE_TYPE);
 	
-	bool bFullAccess = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
+	bool bFullAccess = TheSecurityManager().SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
 	SVRPropertyItemFile* pFile = (SVRPropertyItemFile*)m_Tree.InsertItem(new SVRPropertyItemFile(bFullAccess, SVR_FILE,
 									fileFilter, FileName.GetDefaultPathName().c_str(), true), pRoot);
 	if (pFile)
@@ -434,7 +435,7 @@ void SVOPropertyPageDlg::SetupAdvancedCamera()
 					m_CameraObj.GetCameraDeviceParamsNonConst() );
 				
 				CameraAdvancedHideItems();
-			}// end if ( TheSVObserverApp.IsDigitalSVIM() )
+			}// end if ( TheSVObserverApp().IsDigitalSVIM() )
 			else // should never get here, perhaps there should be an exception logged/displayed instead?
 			{
 				pCombo = (SVRPropertyItemCombo*)m_Tree.InsertItem(new SVRPropertyItemCombo(), pRoot);
@@ -985,7 +986,7 @@ void SVOPropertyPageDlg::SetupPPQ()
 		{
 			std::string InfoString = SvUl::Format( _T("Enabling this option will maintain source images and published result images "
 				"throughout the length of the PPQ. Because of this, "
-				"the PPQ Length can not be > %d"),TheSVObserverApp.GetMaxPPQLength());
+				"the PPQ Length can not be > %d"),TheSVObserverApp().GetMaxPPQLength());
 			pCombo->SetCtrlID(PROP_PPQ_MAINTAIN_SRC_IMG);
 			pCombo->SetLabelText(_T("Maintain Published Images"));
 			pCombo->SetInfoText( InfoString.c_str() );

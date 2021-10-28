@@ -486,9 +486,6 @@
     <ClCompile Include="SVTADlgExternalResultPage.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVTADlgExternalSelectDllPage.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="SVTADlgResizePage.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -504,10 +501,13 @@
     <ClCompile Include="TADialogLinearResultRangesPage.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVObserverOuttakes.cpp">
+    <ClCompile Include="GuiHelpers.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="GuiHelpers.cpp">
+    <ClCompile Include="SVXFunctions.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVTADlgExternalSelectDllPage.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1045,9 +1045,6 @@
     <ClInclude Include="SVTADlgExternalResultPage.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVTADlgExternalSelectDllPage.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVTADlgResizePage.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -1069,10 +1066,13 @@
     <ClInclude Include="TADialogLinearResultRangesPage.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVObserverOuttakes.h">
+    <ClInclude Include="GuiHelpers.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="GuiHelpers.h">
+    <ClInclude Include="SVXFunctions.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVTADlgExternalSelectDllPage.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

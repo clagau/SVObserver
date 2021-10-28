@@ -15,7 +15,6 @@
 #include "RootObject.h"
 #include "SVInspectionProcess.h"
 #include "SVIPDoc.h"
-#include "SVObserver.h"
 #include "SVConfigurationObject.h"
 #include "SVPPQObject.h"
 #include "ObjectInterfaces/IObjectWriter.h"
@@ -247,7 +246,7 @@ static std::string GetFilenameWithoutExt(const std::string& filename)
 
 static void PersistDocument(uint32_t inspectionId, SvOi::IObjectWriter& rWriter)
 {
-	SVIPDoc* pDoc =  TheSVObserverApp.GetIPDoc(inspectionId);
+	SVIPDoc* pDoc =  GetIPDocByInspectionID(inspectionId);
 	if (pDoc)
 	{
 		rWriter.StartElement(SvXml::CTAG_SVIPDOC);

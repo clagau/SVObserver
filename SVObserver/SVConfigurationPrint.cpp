@@ -34,6 +34,7 @@
 #include "InspectionEngine/SVAcquisitionClass.h"
 #include "InspectionEngine/SVImageClass.h"
 #include "SVObserver.h"
+#include "SVIODoc.h"
 #include "SVToolSet.h"
 #include "SVIOLibrary/SVInputObjectList.h"
 #include "SVIOLibrary/SVDigitalInputObject.h"
@@ -187,7 +188,7 @@ private:
 static SVToolGrouping GetToolGroupings(uint32_t inspectionId)
 {
 	// get the document that owns this inspection
-	SVIPDoc* pDoc = TheSVObserverApp.GetIPDoc(inspectionId);
+	SVIPDoc* pDoc = GetIPDocByInspectionID(inspectionId);
 	if (pDoc)
 	{
 		return pDoc->GetToolGroupings();
@@ -2000,10 +2001,9 @@ void SVConfigurationPrint::PrintModuleIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 
 	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
-	SVObserverApp* pApp = dynamic_cast<SVObserverApp*>(AfxGetApp());
 
 	// Print IODoc contents
-	if (pApp->GetIODoc())
+	if (GetTheIODoc())
 	{
 		SVInputObjectList* pInputList = nullptr;
 		SVDigitalInputObject* pDigInput;
@@ -2123,7 +2123,6 @@ void SVConfigurationPrint::PrintResultIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 
 	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
-	SVObserverApp* pApp = dynamic_cast<SVObserverApp*>(AfxGetApp());
 
 	// Get the number of PPQs
 	long lPPQSize = 0;
@@ -2139,7 +2138,7 @@ void SVConfigurationPrint::PrintResultIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 	}
 
 	// Print IODoc contents
-	if (pApp->GetIODoc())
+	if (GetTheIODoc())
 	{
 		// Print Result Output title...
 		DWORD dwMaxOutput = 0;

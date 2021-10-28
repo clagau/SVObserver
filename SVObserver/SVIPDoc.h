@@ -376,3 +376,8 @@ private:
 	HANDLE m_RegressionTestHandle = nullptr;
 };
 
+SVIPDoc* NewSVIPDoc(LPCTSTR DocName, SVInspectionProcess& Inspection);
+SVIPDoc* GetIPDocByInspectionID(uint32_t inspectionID);
+void ResetAllIPDocModifyFlag(BOOL bModified);
+
+CDocTemplate* CreateIpDocMultiDocTemplate();

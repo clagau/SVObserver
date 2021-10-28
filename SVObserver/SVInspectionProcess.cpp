@@ -722,7 +722,7 @@ bool SVInspectionProcess::GoOnline()
 bool SVInspectionProcess::GoOffline()
 {
 #ifdef EnableTracking
-	if (TheSVObserverApp.UpdateAndGetLogDataManager())
+	if (TheSVObserverApp().UpdateAndGetLogDataManager())
 	{
 		std::string l_FileName;
 

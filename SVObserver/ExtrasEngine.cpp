@@ -10,7 +10,7 @@
 #include "stdafx.h"
 #include "ExtrasEngine.h"
 #include "RootObject.h"
-#include "SVObserver.h" //needed only for one call to SVObserverApp::fileSaveAsSVX()
+#include "SVObserver.h" //needed only for one call to SVObserverApp::fileSaveAsSVXWrapper()
 #include "TextDefinesSvO.h"
 #include "SVMessage/SVMessage.h"
 #include "Definitions/GlobalConst.h"
@@ -79,7 +79,7 @@ void ExtrasEngine::ExecuteAutoSaveIfAppropriate(bool always)
 		}
 	}	//this means the last autosave was less than m_AutoSaveDeltaTime_s seconds ago and the autosave is not automatic: nothing to do!
 
-	CWnd *pMainFrame = TheSVObserverApp.GetMainWnd(); 
+	CWnd *pMainFrame = TheSVObserverApp().GetMainWnd(); 
 
 	CDialog autosavePopupDialog; 
 	autosavePopupDialog.Create(IDD_AUTOSAVE_IN_PROGRESS, pMainFrame);
@@ -111,7 +111,7 @@ void ExtrasEngine::ExecuteAutoSaveIfAppropriate(bool always)
 	::MoveFile(Temp1Name.c_str(), Temp2Name.c_str());
 
 	//save the current configuration in the AutoSave Directory
-	TheSVObserverApp.fileSaveAsSVX(Temp1Name, true);
+	TheSVObserverApp().fileSaveAsSVXWrapper(Temp1Name, true);
 
 	autosavePopupDialog.DestroyWindow();
 }

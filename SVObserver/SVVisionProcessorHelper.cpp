@@ -17,7 +17,6 @@
 #include "RemoteMonitorListController.h"
 #include "SVConfigurationObject.h"
 #include "SVConfigXMLPrint.h"
-#include "SVObserver.h"
 #include "SVRemoteControlConstants.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"

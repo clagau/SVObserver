@@ -231,7 +231,7 @@ void SVRemoteOutputsView::OnLButtonDblClk(UINT, CPoint point)
 	int l_item = m_rCtrl.HitTest( point, &flags );
 
 	if ( l_item >= 0 && ((flags & LVHT_ONITEMLABEL) == LVHT_ONITEMLABEL) && ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&
-		 TheSVObserverApp.OkToEdit() )
+		 TheSVObserverApp().OkToEdit() )
 	{
 		SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
 
@@ -263,7 +263,7 @@ void SVRemoteOutputsView::OnLButtonDblClk(UINT, CPoint point)
 BOOL SVRemoteOutputsView::PreTranslateMessage(MSG* pMsg)
 {
 	BOOL l_bRet = FALSE;
-	if(pMsg->message==WM_KEYDOWN && TheSVObserverApp.OkToEdit() )
+	if(pMsg->message==WM_KEYDOWN && TheSVObserverApp().OkToEdit() )
 	{
 		POSITION l_Pos = m_rCtrl.GetFirstSelectedItemPosition();
 		if( nullptr != l_Pos )
@@ -403,7 +403,7 @@ HRESULT SVRemoteOutputsView::RemoteOutputGroupNameAtItem( std::string& rGroupNam
 
 void SVRemoteOutputsView::OnRemoteOutputAdd()
 {
-	if( TheSVObserverApp.OkToEdit() )
+	if( TheSVObserverApp().OkToEdit() )
 	{
 		POSITION l_Pos = m_rCtrl.GetFirstSelectedItemPosition();
 		int l_item = -1;
@@ -428,7 +428,7 @@ void SVRemoteOutputsView::OnRemoteOutputAdd()
 
 void SVRemoteOutputsView::OnRemoteOutputProperties()
 {
-	if( TheSVObserverApp.OkToEdit() )
+	if( TheSVObserverApp().OkToEdit() )
 	{
 		SVConfigurationObject* pConfig = nullptr;
 		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
@@ -507,7 +507,7 @@ void SVRemoteOutputsView::OnContextMenu(CWnd* /*pWnd*/, CPoint point )
 
 void SVRemoteOutputsView::OnRemoteOutputDelete()
 {
-	if( TheSVObserverApp.OkToEdit() )
+	if( TheSVObserverApp().OkToEdit() )
 	{
 		POSITION l_Pos = m_rCtrl.GetFirstSelectedItemPosition();
 		if( nullptr != l_Pos )
@@ -574,7 +574,7 @@ void SVRemoteOutputsView::OnRemoteOutputDelete()
 
 void SVRemoteOutputsView::OnRemoteOutputEdit()
 {
-	if( TheSVObserverApp.OkToEdit() )
+	if( TheSVObserverApp().OkToEdit() )
 	{
 		SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
 

@@ -522,4 +522,8 @@ private:
 #pragma endregion Member Variables
 };
 
+void AddFileToConfig(LPCTSTR FilePath);
+void RemoveFileFromConfig(LPCTSTR FilePath);
+
+bool fileSaveAsSVX(class SVConfigurationObject* pConfig, const std::string& rSvxFilepath, const std::string& rFileName, bool resetAutoSave);
 

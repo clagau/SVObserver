@@ -397,7 +397,7 @@ HRESULT SVRemoteOutputDataController::ClearUnUsedData( )
 			// Hide the Remote Output Tab if no outputs exist.
 			HideIOTabIfPossible(SVRemoteOutputsViewID);
 		}
-		TheSVObserverApp.UpdateAllIOViews(); // updates the view after clearing unused.
+		TheSVObserverApp().UpdateAllIOViews(); // updates the view after clearing unused.
 	}
 	return S_OK;
 }
@@ -487,7 +487,7 @@ void SVRemoteOutputDataController::SetupRemoteOutput(SVConfigurationObject* pCon
 
 		if( S_OK == l_hr )
 		{
-			SVIODoc* pIODoc = TheSVObserverApp.GetIODoc();
+			SVIODoc* pIODoc = GetTheIODoc();
 			if(nullptr != pIODoc)
 			{
 				pIODoc->SetModifiedFlag();
@@ -500,7 +500,7 @@ void SVRemoteOutputDataController::SetupRemoteOutput(SVConfigurationObject* pCon
 			{
 				ShowIOTabIfPossible( SVRemoteOutputsViewID );
 			}
-			TheSVObserverApp.UpdateAllIOViews();
+			TheSVObserverApp().UpdateAllIOViews();
 		}
 	}
 }

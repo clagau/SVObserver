@@ -549,7 +549,7 @@ void ToolSetView::RenameItem()
 		case NavElementType::SubLoopTool:
 			if (SvDef::InvalidObjectId != toolId) // it's a Tool
 			{
-				TheSVObserverApp.OnObjectRenamed(m_LabelSaved, toolId);
+				TheSVObserverApp().OnObjectRenamed(m_LabelSaved, toolId);
 				NavElement->m_DisplayName = m_LabelEdited;
 			}
 			break;
@@ -559,7 +559,7 @@ void ToolSetView::RenameItem()
 			if (SvDef::InvalidObjectId != toolId) // it's a Tool
 			{
 				rGroupings.RenameItem(m_LabelSaved, m_LabelEdited);
-				TheSVObserverApp.OnObjectRenamed(m_LabelSaved, toolId);
+				TheSVObserverApp().OnObjectRenamed(m_LabelSaved, toolId);
 				NavElement->m_DisplayName = m_LabelEdited;
 				
 			}
@@ -880,7 +880,7 @@ void ToolSetView::OnEndLabelEditToolSetList(NMHDR*, LRESULT* pResult)
 	pCurrentDocument->UpdateAllViews(nullptr);
 
 	// Update result io view, too...
-	SVIODoc* pIODoc = TheSVObserverApp.GetIODoc();
+	SVIODoc* pIODoc = GetTheIODoc();
 	if (nullptr != pIODoc)
 	{
 		pIODoc->UpdateAllViews(nullptr);
@@ -1097,7 +1097,7 @@ bool ToolSetView::IsEndToolGroupAllowed() const
 
 bool ToolSetView::enterSelectedEntry()
 {
-	if (!TheSVObserverApp.OkToEdit() || IsLabelEditing())
+	if (!TheSVObserverApp().OkToEdit() || IsLabelEditing())
 	{
 		return false;
 	}
