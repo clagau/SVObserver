@@ -435,7 +435,7 @@ bool  SVAdjustToolSizePositionDlg::IsReadonly(::SvPb::ExtentParameter& item,  Si
 		bReadonly = item.issetbyreset();
 	}
 
-	else if ((item.type() & SvPb::SVExtentPropertyEnum::SVExtentPropertyHeight) && Modes[SvDef::TSHeight] != SvDef::TSNone)
+	if ((item.type() & SvPb::SVExtentPropertyEnum::SVExtentPropertyHeight) && Modes[SvDef::TSHeight] != SvDef::TSNone)
 	{
 		bReadonly = true;
 	}
