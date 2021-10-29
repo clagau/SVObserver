@@ -54,7 +54,7 @@ namespace SvTrig
 		long GetSoftwareTriggerPeriod() const;
 		void SetSoftwareTriggerPeriod(long period, bool setTimer = false);
 
-		SvTrig::SVTriggerClass* getDevice() { return m_pMainTrigger; }
+		SvTrig::SVTriggerClass* getDevice() { return m_pCurrentTrigger; }
 
 		SvDef::TriggerType getType() const;
 		long getTriggerCount() const;

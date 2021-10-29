@@ -199,7 +199,10 @@ void SVSoftwareTriggerDevice::beforeStartTrigger(unsigned long triggerIndex)
 	TimerInfo& rTimer = m_timerList[triggerChannel];
 	assert(0 == rTimer.m_timerID);
 	rTimer.m_newSetting = false;
-	rTimer.m_timerID = ::timeSetEvent(rTimer.m_period, 0, TimerProc, reinterpret_cast<DWORD_PTR> (this), TIME_PERIODIC | TIME_CALLBACK_FUNCTION);
+	if (false == rTimer.m_pause)
+	{
+		rTimer.m_timerID = ::timeSetEvent(rTimer.m_period, 0, TimerProc, reinterpret_cast<DWORD_PTR> (this), TIME_PERIODIC | TIME_CALLBACK_FUNCTION);
+	}
 }
 
 void SVSoftwareTriggerDevice::beforeStopTrigger(unsigned long triggerIndex)
