@@ -275,8 +275,8 @@ bool SVImageArithmetic::getOperator(long& Operator, SvStl::MessageContainerVecto
 bool SVImageArithmetic::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages)
 {
 	// All inputs and outputs must be validated first
-	//@WARNING[MZA][7.50][17.01.2017] Not sure if we need to check ValidateLocal in Run-mode, maybe it is enough to check it in ResetObject
-	if (false == SVTaskObjectClass::onRun(rRunStatus) && ValidateLocal(pErrorMessages))
+	
+	if  (false == SVTaskObjectClass::onRun(rRunStatus) )
 	{
 		return false;
 	}
@@ -284,10 +284,20 @@ bool SVImageArithmetic::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContain
 	SvIe::SVImageClass* pImageA = m_InputImageA.getInput<SvIe::SVImageClass>(true);
 	SvIe::SVImageClass* pImageB = m_InputImageB.getInput<SvIe::SVImageClass>(true);
 	SvIe::SVImageClass* pOutputImage = getOutputImage();
+	SvVol::SVLongValueObjectClass* pArithOperator = m_InputArithmaticOperator.getInput<SvVol::SVLongValueObjectClass>();
+
+
+	if (nullptr == pImageA || nullptr == pImageB || nullptr == pArithOperator || nullptr ==  pOutputImage)
+	{
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+			pErrorMessages->push_back(Msg);
+		}
+		return false;
+	}
 
 	
-
-	assert(pImageA && pImageB && pOutputImage );
 
 	BOOL enableGain {FALSE}, enableLut {FALSE};
 	if (getEnableLut(enableLut, pErrorMessages) == false)
