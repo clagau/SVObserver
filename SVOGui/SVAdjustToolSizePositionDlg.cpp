@@ -426,8 +426,8 @@ void SVAdjustToolSizePositionDlg::FillTreeFromExtents(bool overwrite)
 	GetDlgItem(IDC_FULL_ROI_BTN)->EnableWindow(!IsFullSize() && IsFullSizeAllowed());
 	GetDlgItem(IDOK)->EnableWindow(m_hResultFromSetExtent == S_OK);
 }
-
-bool  SVAdjustToolSizePositionDlg::IsReadonly(::SvPb::ExtentParameter& item,  SizeModes& Modes ) 
+// cppcheck-suppress constParameter symbolName=Modes ; cppCheck doesn't know Modes[] is not a const function
+bool  SVAdjustToolSizePositionDlg::IsReadonly(::SvPb::ExtentParameter& item,   SizeModes& Modes ) const
 {
 	bool bReadonly(false);
 	if (m_ToolSizeHelper.GetAutoSizeEnabled() != SvPb::EnableNone)
