@@ -5739,6 +5739,20 @@ END
 
 STRINGTABLE
 BEGIN
+    IDS_OBJECTNAME_EDGE_A_DIRECTION "Edge A Direction"
+    IDS_OBJECTNAME_EDGE_A_POLARISATION "Edge A Polarisation"
+    IDS_OBJECTNAME_EDGE_A_EDGE_SELECT "Edge A Edge Select"
+    IDS_OBJECTNAME_EDGE_A_EDGE_SELECT_THIS_VALUE 
+                            "Edge A Edge Select This Value"
+    IDS_OBJECTNAME_EDGE_A_IS_FIXED_EDGE_MARKER "Edge A Is Fixed Edge Marker"
+    IDS_OBJECTNAME_EDGE_A_POSITION "Edge A Position"
+    IDS_OBJECTNAME_EDGE_A_POSITION_OFFSET "Edge A Position Offset"
+    IDS_OBJECTNAME_EDGE_A_LOWER_THRESHOLD_VALUE "Edge A Lower Threshold Value"
+    IDS_OBJECTNAME_EDGE_A_UPPER_THRESHOLD_VALUE "Edge A Upper Threshold Value"
+END
+
+STRINGTABLE
+BEGIN
     IDR_MAINFRAME           "SVObserver"
     IDR_SVOBSERVER_IPDOCTYPE 
                             "\nInspec\nInspec\nSVObserver Inspec. Process Doc Files (*.ipd)\n.ipd\nSVObserverInspectionProcess.Document\nSVObserver Inspection Process Document"
