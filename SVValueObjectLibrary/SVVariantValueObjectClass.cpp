@@ -404,6 +404,16 @@ double SVVariantValueObjectClass::ValueType2Double(const _variant_t& rValue) con
 	return Result;
 }
 
+_variant_t SVVariantValueObjectClass::Variant2ValueType(const _variant_t& rValue) const
+{
+	_variant_t result {rValue};
+	if (VT_EMPTY != GetDefaultType() && VT_EMPTY != rValue.vt)
+	{
+		result.ChangeType(GetDefaultType(), &rValue);
+	}
+	return result;
+}
+
 _variant_t SVVariantValueObjectClass::ConvertString2Type( const std::string& rValue ) const
 {
 	return ConvertString2Type(rValue, GetDefaultValue());

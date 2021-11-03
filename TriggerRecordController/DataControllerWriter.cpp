@@ -452,6 +452,10 @@ void DataControllerWriter::clearImageBuffer(bool shouldResetImageStruct)
 			}
 		}
 	}
+	else
+	{
+		m_imageStructList = {};
+	}
 }
 
 void DataControllerWriter::clearAll()
@@ -470,9 +474,9 @@ void DataControllerWriter::clearAll()
 	m_dataVector.clear();
 
 	m_pCommonData->m_imageRefCountSize = 0;
-	setImageStructList({});
-
 	__super::clearAll();
+	//setImageStructList must be set after clearAll from base, because all flags must be reset.
+	setImageStructList({});
 }
 
 bool DataControllerWriter::setInspections(SvPb::InspectionList&& rInspectionList)

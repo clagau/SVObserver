@@ -801,19 +801,11 @@ T SVValueObjectClass<T>::convertVariantValue(const _variant_t& rValue, const _va
 	{
 		result = ConvertString2Type(SvUl::createStdString(rValue), rDefaultValue);
 	}
-	//!For type safety check that the VT type is either the default value main value or when not set yet (VT_EMPTY)
-	else if (rDefaultValue.vt == rValue.vt || ValueType2Variant(m_pValue).vt == rValue.vt || ValueType2Variant(m_pValue).vt == VT_EMPTY)
+	else
 	{
 		result = Variant2ValueType(rValue);
 	}
-	else
-	{
-		//This happens if the variant to convert is of a different type then this value object!
-		assert(false);
-		SvStl::MessageManager Exception(SvStl::MsgType::Log);
-		Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_WrongType, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
-		Exception.Throw();
-	}
+	
 	return result;
 }
 

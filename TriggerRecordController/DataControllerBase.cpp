@@ -98,6 +98,8 @@ void DataControllerBase::clearImageBuffer(bool)
 
 void DataControllerBase::clearAll()
 {
+	m_isGlobalInit = false;
+	m_setInitFlagAfterResetSet.clear();
 	clearImageBuffer();
 }
 

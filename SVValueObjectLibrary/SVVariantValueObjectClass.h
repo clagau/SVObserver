@@ -53,8 +53,8 @@ protected:
 	virtual void clearMemoryBlockPointer() override { m_pMemBlockData = nullptr; }
 
 	virtual double ValueType2Double(const _variant_t& rValue) const override;
-	virtual _variant_t ValueType2Variant( const _variant_t* pValue ) const override { return (nullptr != pValue) ? *pValue : _variant_t(); }
-	virtual _variant_t Variant2ValueType( const _variant_t& rValue) const override { return rValue; }
+	virtual _variant_t ValueType2Variant(const _variant_t* pValue) const override { return (nullptr != pValue) ? *pValue : _variant_t(); }
+	virtual _variant_t Variant2ValueType(const _variant_t& rValue) const override;
 
 	//! Convert a string in a variant. Throw an exception if the string isn't convertible into a variant
 	//! \param rValue [in] The input string

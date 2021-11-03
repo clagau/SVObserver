@@ -157,6 +157,9 @@ public:
 
 #pragma region Public Methods
 public:
+	/// Clear Image Buffer
+	/// \param shouldResetImageStruct [in] if true, image struct will be reset, else the whole struct will be deleted.
+	/// \returns void
 	virtual void clearImageBuffer(bool shouldResetImageStruct = false);
 	virtual void clearAll();
 
