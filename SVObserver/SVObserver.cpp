@@ -2379,6 +2379,7 @@ HRESULT SVObserverApp::PrepareCamerasAndMemory()
 }
 
 
+// cppcheck-suppress constParameter; rPpqMonitorList
 void SVObserverApp::CreateImageStores(SVConfigurationObject* pConfig, PPQMonitorList& rPpqMonitorList, HRESULT Result, DWORD desiredState, bool isLocalStart)
 {
 	double preTriggerTimeWidow {0.0};

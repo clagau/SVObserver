@@ -143,6 +143,7 @@ std::string SVVersionInfo::GetShortTitleVersion()
 			buf << _T("r") << patchOrSvnNumber;
 		}
 
+		// cppcheck-suppress knownConditionTrueFalse; c_GitIdentifier can be changed by BuildController
 		if (0 != c_GitIdentifier)
 		{
 			buf << _T("[") << std::hex << c_GitIdentifier << std::dec << _T("]");
