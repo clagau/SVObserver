@@ -212,9 +212,9 @@ public:
 			if (m_values.end() != it)
 			{
 				if (0 == it->second.index())
-			{
-				std::get<0>(it->second).SetValue(rValue, ArrayIndex);
-				return true;
+				{
+					std::get<0>(it->second).SetValue(rValue, ArrayIndex);
+					return true;
 				}
 				else
 				{

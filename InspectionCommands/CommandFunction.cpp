@@ -415,10 +415,19 @@ SvPb::InspectionCmdResponse getImage(SvPb::GetImageRequest request)
 			data = pImage->getLastImage();
 		}
 	}
-	else if (!request.imagename().empty() && SvDef::InvalidObjectId != request.parentid())
+	else if (SvOi::ITaskObject* pObject = dynamic_cast<SvOi::ITaskObject*>(SvOi::getObject(request.parentid()));  nullptr != pObject)
 	{
-		SvOi::ITaskObject* pObject = dynamic_cast<SvOi::ITaskObject*>(SvOi::getObject(request.parentid()));
-		if (nullptr != pObject)
+		if (SvPb::NoEmbeddedId != request.embeddedid())
+		{
+			if (!pObject->getImage(request.embeddedid(), data))
+			{
+				SvStl::MessageContainer message(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidData, SvStl::SourceFileParams(StdMessageParams));
+				SvPb::convertMessageToProtobuf(message, pResponse->mutable_messages()->add_messages());
+				cmdResponse.set_hresult(E_FAIL);
+				return cmdResponse;
+			}
+		}
+		else if (false == request.imagename().empty())
 		{
 			if (!pObject->getSpecialImage(request.imagename(), data))
 			{

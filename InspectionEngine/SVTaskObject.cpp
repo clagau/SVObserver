@@ -473,6 +473,28 @@ SvStl::MessageContainer SVTaskObjectClass::getFirstTaskMessage() const
 	return SvStl::MessageContainer();
 }
 
+bool SVTaskObjectClass::getImage(SvPb::EmbeddedIdEnum embeddedId, SvOi::SVImageBufferHandlePtr& rImagePtr) const
+{
+	auto iter = std::ranges::find_if(m_embeddedList, [embeddedId](auto* pObject) { return nullptr != pObject && embeddedId == pObject->GetEmbeddedID(); });
+	if (m_embeddedList.end() != iter)
+	{
+		const SvIe::SVImageClass* pImage = dynamic_cast<SvIe::SVImageClass*>(*iter);
+		if (pImage)
+		{
+			if (SvPb::SVImageTypeEnum::SVImageTypePhysical == pImage->GetImageType())
+			{
+				rImagePtr = pImage->GetParentImageInterface()->getLastImage();
+			}
+			else
+			{
+				rImagePtr = pImage->getLastImage();
+			}
+			return true;
+		}
+	}
+	return false;
+}
+
 std::vector<uint32_t> SVTaskObjectClass::getEmbeddedList() const
 {
 	std::vector<uint32_t> Result(m_embeddedList.size());

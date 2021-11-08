@@ -87,6 +87,12 @@ namespace SvOi
 		/// \returns bool return true if setting of this image was succeeded.
 		virtual bool getSpecialImage(const std::string& rName, SVImageBufferHandlePtr& rImagePtr) const = 0;
 
+		/// Get a image from this task.
+		/// \param embeddedId [in] The embeddedId of image of this task.
+		/// \param rImagePtr [out] Pointer to the image.
+		/// \returns bool return true if setting of this image was succeeded.
+		virtual bool getImage(SvPb::EmbeddedIdEnum embeddedId, SVImageBufferHandlePtr& rImagePtr) const = 0;
+
 		// Get the embedded list of the task object
 		/// \returns a list of embedded IDs
 		virtual std::vector<uint32_t> getEmbeddedList() const = 0;

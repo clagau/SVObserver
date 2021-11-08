@@ -660,7 +660,8 @@ enum MessageTextEnum
 
 	Tid_SVRC_AccessDenied,
 	Tid_InvalidValues,
-
+	Tid_InvalidParameterValue,
+	
 	Tid_ProductMissingNak,
 	Tid_ImageMissingNak,
 	Tid_InputMissingNak,

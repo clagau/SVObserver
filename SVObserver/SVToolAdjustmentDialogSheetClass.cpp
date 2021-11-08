@@ -51,6 +51,7 @@
 #include "SVOGui/TADialogTableParameterPage.h"
 #include "SVOGui/TADialogTableDefinesPage.h"
 #include "SVOGui/TATableAnalyzerPage.h"
+#include "SVOGui/TADialogDrawPage.h"
 #include "SVOGui/TATableSourcePage.h"
 #include "SVOGui/ToolAdjustToolSetPage.h"
 #include "SVStatusLibrary/MessageManager.h"
@@ -401,6 +402,11 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 			AddPage(new SvOg::SVTADlgGeneralPage(m_InspectionID, m_TaskObjectID, subType));
 			break;
 		}
+
+		case SvPb::SVObjectSubTypeEnum::DrawToolObjectType:
+			AddPage(new SvOg::TADialogDrawPage(m_InspectionID, m_TaskObjectID));
+			addConditionalDialog();
+			break;
 
 		case SvPb::SVObjectSubTypeEnum::SVNotSetSubObjectType:
 			//Special case for the Tool Set parameters

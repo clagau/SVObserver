@@ -49,13 +49,13 @@ void SVShapeMaskHelperClass::init()
 	RegisterEmbeddedObject( &m_bvoAutoResize, SvPb::ShapeMaskAutoResizeEId, IDS_OBJECTNAME_SHAPE_MASK_AUTO_RESIZE, false, SvOi::SVResetItemTool );
 	RegisterEmbeddedObject( &m_evoShapeType, SvPb::ShapeMaskTypeEId, IDS_OBJECTNAME_SHAPE_MASK_TYPE, false, SvOi::SVResetItemTool );
 	RegisterEmbeddedObject( &m_evoMaskArea, SvPb::ShapeMaskMaskAreaEId, IDS_OBJECTNAME_SHAPE_MASK_MASK_AREA, false, SvOi::SVResetItemTool );
-	RegisterEmbeddedObject(&m_voCenterX, SvPb::ShapeMaskPropertyCenterXEId, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_CENTER_X, true, SvOi::SVResetItemTool);
+	RegisterEmbeddedObject(&m_voCenterX, SvPb::CenterXEId, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_CENTER_X, true, SvOi::SVResetItemTool);
 	m_voCenterX.SetDefaultValue(_variant_t(50L), true);
-	RegisterEmbeddedObject(&m_voCenterY, SvPb::ShapeMaskPropertyCenterYEId, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_CENTER_Y, true, SvOi::SVResetItemTool);
+	RegisterEmbeddedObject(&m_voCenterY, SvPb::CenterYEId, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_CENTER_Y, true, SvOi::SVResetItemTool);
 	m_voCenterY.SetDefaultValue(_variant_t(50L), true);
-	RegisterEmbeddedObject(&m_voWidth, SvPb::ShapeMaskPropertyWidthEId, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_WIDTH, true, SvOi::SVResetItemTool);
+	RegisterEmbeddedObject(&m_voWidth, SvPb::WidthEId, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_WIDTH, true, SvOi::SVResetItemTool);
 	m_voWidth.SetDefaultValue(_variant_t(80L), true);
-	RegisterEmbeddedObject(&m_voHeight, SvPb::ShapeMaskPropertyHeightEId, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_HEIGHT, true, SvOi::SVResetItemTool);
+	RegisterEmbeddedObject(&m_voHeight, SvPb::HeightEId, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_HEIGHT, true, SvOi::SVResetItemTool);
 	m_voHeight.SetDefaultValue(_variant_t(80L), true);
 	RegisterEmbeddedObject(&m_voSideThickness, SvPb::ShapeMaskPropertySideThicknessEId, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_SIDE_THICKNESS, true, SvOi::SVResetItemTool);
 	m_voSideThickness.SetDefaultValue(_variant_t(20L), true);
@@ -268,16 +268,16 @@ HRESULT SVShapeMaskHelperClass::Refresh(SvIe::RunStatus* pRunStatus)
 
 		_variant_t variantValue;
 		m_voCenterX.GetValue(variantValue);
-		mapProperties[SvPb::ShapeMaskPropertyCenterXEId] = variantValue;
+		mapProperties[SvPb::CenterXEId] = variantValue;
 
 		m_voCenterY.GetValue(variantValue);
-		mapProperties[SvPb::ShapeMaskPropertyCenterYEId] = variantValue;
+		mapProperties[SvPb::CenterYEId] = variantValue;
 		
 		m_voWidth.GetValue(variantValue);
-		mapProperties[SvPb::ShapeMaskPropertyWidthEId] = variantValue;
+		mapProperties[SvPb::WidthEId] = variantValue;
 		
 		m_voHeight.GetValue(variantValue);
-		mapProperties[SvPb::ShapeMaskPropertyHeightEId] = variantValue;
+		mapProperties[SvPb::HeightEId] = variantValue;
 
 		if ( eShapeType == SVShapeMaskHelperClass::SVMaskShapeTypeDoughnut )
 		{

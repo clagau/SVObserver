@@ -33,15 +33,15 @@ static char THIS_FILE[] = __FILE__;
 
 SVMaskShape::SVMaskShape()
 {
-	m_mapProperties[SvPb::ShapeMaskPropertyCenterXEId] = 0;
-	m_mapProperties[SvPb::ShapeMaskPropertyCenterYEId] = 0;
-	m_mapProperties[SvPb::ShapeMaskPropertyWidthEId] = 0;
-	m_mapProperties[SvPb::ShapeMaskPropertyHeightEId] = 0;
+	m_mapProperties[SvPb::CenterXEId] = 0;
+	m_mapProperties[SvPb::CenterYEId] = 0;
+	m_mapProperties[SvPb::WidthEId] = 0;
+	m_mapProperties[SvPb::HeightEId] = 0;
 
-	m_mapProperties[SvPb::ShapeMaskPropertyCenterXEId].order = 1;
-	m_mapProperties[SvPb::ShapeMaskPropertyCenterYEId].order = 2;
-	m_mapProperties[SvPb::ShapeMaskPropertyWidthEId].order = 3;
-	m_mapProperties[SvPb::ShapeMaskPropertyHeightEId].order = 4;
+	m_mapProperties[SvPb::CenterXEId].order = 1;
+	m_mapProperties[SvPb::CenterYEId].order = 2;
+	m_mapProperties[SvPb::WidthEId].order = 3;
+	m_mapProperties[SvPb::HeightEId].order = 4;
 }
 
 SVMaskShape::~SVMaskShape()	// this is a base class
@@ -168,10 +168,10 @@ HRESULT SVMaskShape::ValidateProperties(MapType& rProperties) const
 {
 	HRESULT hr = S_OK;
 
-	if (   rProperties.find(SvPb::ShapeMaskPropertyWidthEId) != rProperties.end()
-		&& rProperties.find(SvPb::ShapeMaskPropertyHeightEId) != rProperties.end()
-		&& rProperties.find(SvPb::ShapeMaskPropertyCenterXEId) != rProperties.end()
-		&& rProperties.find(SvPb::ShapeMaskPropertyCenterYEId) != rProperties.end() )
+	if (   rProperties.find(SvPb::WidthEId) != rProperties.end()
+		&& rProperties.find(SvPb::HeightEId) != rProperties.end()
+		&& rProperties.find(SvPb::CenterXEId) != rProperties.end()
+		&& rProperties.find(SvPb::CenterYEId) != rProperties.end() )
 	{
 		SVImageInfoClass info;
 		hr = GetImageInfo( info );
@@ -182,11 +182,11 @@ HRESULT SVMaskShape::ValidateProperties(MapType& rProperties) const
 		}
 		if ( S_OK == hr )
 		{
-			hr = rProperties[SvPb::ShapeMaskPropertyHeightEId].value >= 0 ? S_OK : S_FALSE;//SVMSG_SVO_32_VALUE_OUT_OF_RANGE;
+			hr = rProperties[SvPb::HeightEId].value >= 0 ? S_OK : S_FALSE;//SVMSG_SVO_32_VALUE_OUT_OF_RANGE;
 		}
 		if ( S_OK == hr )
 		{
-			hr = rProperties[SvPb::ShapeMaskPropertyWidthEId].value >= 0 ? S_OK : S_FALSE;//SVMSG_SVO_32_VALUE_OUT_OF_RANGE;
+			hr = rProperties[SvPb::WidthEId].value >= 0 ? S_OK : S_FALSE;//SVMSG_SVO_32_VALUE_OUT_OF_RANGE;
 		}
 	}
 
@@ -259,10 +259,10 @@ RECT SVMaskShape::GetRect() const
 	else
 	{
 		MapTypeConstIterator iter;
-		long lCenterX = m_mapProperties.end() != (iter = m_mapProperties.find(SvPb::ShapeMaskPropertyCenterXEId)) ? iter->second.value : 0L;
-		long lCenterY = m_mapProperties.end() != (iter = m_mapProperties.find(SvPb::ShapeMaskPropertyCenterYEId)) ? iter->second.value : 0L;
-		long lWidth = m_mapProperties.end() != (iter = m_mapProperties.find(SvPb::ShapeMaskPropertyWidthEId)) ? iter->second.value : 0L;
-		long lHeight = m_mapProperties.end() != (iter = m_mapProperties.find(SvPb::ShapeMaskPropertyHeightEId)) ? iter->second.value : 0L;
+		long lCenterX = m_mapProperties.end() != (iter = m_mapProperties.find(SvPb::CenterXEId)) ? iter->second.value : 0L;
+		long lCenterY = m_mapProperties.end() != (iter = m_mapProperties.find(SvPb::CenterYEId)) ? iter->second.value : 0L;
+		long lWidth = m_mapProperties.end() != (iter = m_mapProperties.find(SvPb::WidthEId)) ? iter->second.value : 0L;
+		long lHeight = m_mapProperties.end() != (iter = m_mapProperties.find(SvPb::HeightEId)) ? iter->second.value : 0L;
 		long lHalfWidth = lWidth / 2;
 		long lHalfHeight = lHeight / 2;
 
@@ -286,8 +286,8 @@ SIZE SVMaskShape::GetSize() const
 	else
 	{
 		MapTypeConstIterator iter;
-		long lWidth = m_mapProperties.end() != (iter = m_mapProperties.find(SvPb::ShapeMaskPropertyWidthEId)) ? iter->second.value : 0L;
-		long lHeight = m_mapProperties.end() != (iter = m_mapProperties.find(SvPb::ShapeMaskPropertyHeightEId)) ? iter->second.value : 0L;
+		long lWidth = m_mapProperties.end() != (iter = m_mapProperties.find(SvPb::WidthEId)) ? iter->second.value : 0L;
+		long lHeight = m_mapProperties.end() != (iter = m_mapProperties.find(SvPb::HeightEId)) ? iter->second.value : 0L;
 		return SIZE{lWidth, lHeight};
 	}
 }
@@ -443,15 +443,15 @@ HRESULT SVMaskShapeSymmetricTrapezoid::ValidateProperties(MapType& rProperties) 
 		{
 			case VerticalAxisTop:
 			case VerticalAxisBottom:
-				rProperties[SvPb::ShapeMaskPropertyWidthEId].value =  std::max< long >( rProperties[SvPb::ShapeMaskPropertyWidthEId].value, rProperties[SvPb::ShapeMaskPropertyOffsetEId].value * 2 );
+				rProperties[SvPb::WidthEId].value =  std::max< long >( rProperties[SvPb::WidthEId].value, rProperties[SvPb::ShapeMaskPropertyOffsetEId].value * 2 );
 				break;
 			case HorizontalAxisLeft:
 			case HorizontalAxisRight:
-				rProperties[SvPb::ShapeMaskPropertyHeightEId].value =  std::max< long >( rProperties[SvPb::ShapeMaskPropertyHeightEId].value, rProperties[SvPb::ShapeMaskPropertyOffsetEId].value * 2 );
+				rProperties[SvPb::HeightEId].value =  std::max< long >( rProperties[SvPb::HeightEId].value, rProperties[SvPb::ShapeMaskPropertyOffsetEId].value * 2 );
 				break;
 		}
-		rProperties[SvPb::ShapeMaskPropertyWidthEId].value =  std::max< long >( 2, rProperties[SvPb::ShapeMaskPropertyWidthEId].value );
-		rProperties[SvPb::ShapeMaskPropertyHeightEId].value =  std::max< long >( 2, rProperties[SvPb::ShapeMaskPropertyHeightEId].value );
+		rProperties[SvPb::WidthEId].value =  std::max< long >( 2, rProperties[SvPb::WidthEId].value );
+		rProperties[SvPb::HeightEId].value =  std::max< long >( 2, rProperties[SvPb::HeightEId].value );
 	}
 
 	hr = SVMaskShape::ValidateProperties( rProperties );
@@ -508,8 +508,8 @@ HRESULT SVMaskShapeDoughnut::ValidateProperties(MapType& rProperties) const
 		rProperties[SvPb::ShapeMaskPropertyTopBottomThicknessEId].value =  std::max< long >( rProperties[SvPb::ShapeMaskPropertyTopBottomThicknessEId].value, 1 );
 		rProperties[SvPb::ShapeMaskPropertySideThicknessEId].value =  std::max< long >( rProperties[SvPb::ShapeMaskPropertySideThicknessEId].value, 1 );
 	
-		rProperties[SvPb::ShapeMaskPropertyHeightEId].value =  std::max< long >( rProperties[SvPb::ShapeMaskPropertyHeightEId].value, rProperties[SvPb::ShapeMaskPropertyTopBottomThicknessEId].value * 2 );
-		rProperties[SvPb::ShapeMaskPropertyWidthEId].value =  std::max< long >( rProperties[SvPb::ShapeMaskPropertyWidthEId].value, rProperties[SvPb::ShapeMaskPropertySideThicknessEId].value * 2 );
+		rProperties[SvPb::HeightEId].value =  std::max< long >( rProperties[SvPb::HeightEId].value, rProperties[SvPb::ShapeMaskPropertyTopBottomThicknessEId].value * 2 );
+		rProperties[SvPb::WidthEId].value =  std::max< long >( rProperties[SvPb::WidthEId].value, rProperties[SvPb::ShapeMaskPropertySideThicknessEId].value * 2 );
 	}
 
 	hr = SVMaskShape::ValidateProperties( rProperties );

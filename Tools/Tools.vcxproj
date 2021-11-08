@@ -87,6 +87,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ArchiveToolHelper.cpp" />
+    <ClCompile Include="DrawTool.cpp" />
     <ClCompile Include="GroupTool.cpp" />
     <ClCompile Include="LoopTool.cpp" />
     <ClCompile Include="ResizeTool.cpp" />
@@ -122,6 +123,7 @@
   <ItemGroup>
     <ClInclude Include="ArchiveMethodEnum.h" />
     <ClInclude Include="ArchiveToolHelper.h" />
+    <ClInclude Include="DrawTool.h" />
     <ClInclude Include="GroupTool.h" />
     <ClInclude Include="LoopTool.h" />
     <ClInclude Include="ResizeTool.h" />

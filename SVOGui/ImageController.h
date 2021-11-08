@@ -47,6 +47,8 @@ namespace SvOg
 
 		IPictureDisp* GetImage(const std::string& name) const;
 		IPictureDisp* GetImage(const std::string& name, long& rWidth, long& rHeight) const;
+		IPictureDisp* GetImage(SvPb::EmbeddedIdEnum embeddedId) const;
+		IPictureDisp* GetImage(SvPb::EmbeddedIdEnum embeddedId, long& rWidth, long& rHeight) const;
 		IPictureDisp* GetImage(uint32_t imageID) const;
 		IPictureDisp* GetImage(uint32_t imageID, long& rWidth, long& rHeight) const;
 

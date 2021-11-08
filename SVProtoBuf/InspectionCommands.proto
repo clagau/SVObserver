@@ -298,12 +298,16 @@ message TaskObjectListResponse
 	repeated TaskObjectInfo taskobjectinfos = 1; 
 }
 
-//get an image(if imageId is set, return this, else try to get image with name and parent)
+//get an image. Three cases possible (try from first to last case):
+// 1. if imageId is set (!= 0), use them and ignore the other parameter
+// 2. if embeddedId and parentId is set, use them and ignore the other parameter. The parentId must have an image with embeddedId.
+// 3. else try to get image with name and parent
 message GetImageRequest
 {
 	uint32 imageId = 1;  //ID of the image
 	bytes imageName = 2; //Name of the image at parent object
 	uint32 parentId = 3; //ID of the parent
+	EmbeddedIdEnum embeddedId = 4;
 } 
 
 message GetImageResponse

@@ -169,6 +169,7 @@ BEGIN_MESSAGE_MAP(SVIPDoc, CDocument)
 	ON_COMMAND(ID_ADD_RINGBUFFERTOOL, OnAddRingBufferTool)
 	ON_COMMAND(ID_ADD_TABLETOOL, OnAddTableTool)
 	ON_COMMAND(ID_ADD_TABLEANALYZERTOOL, OnAddTableAnalyzerTool)
+	ON_COMMAND(ID_ADD_DRAWTOOL, OnAddDrawTool)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_ADJUSTLIGHTREFERENCE, OnAllowAdjustLightReference)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_ADJUSTLUT, OnAllowAdjustLut)
 	ON_UPDATE_COMMAND_UI(ID_ADD_STARTTOOLGROUPING, OnUpdateAddStartToolGrouping)
@@ -200,7 +201,7 @@ BEGIN_MESSAGE_MAP(SVIPDoc, CDocument)
 	ON_UPDATE_COMMAND_UI(ID_ADD_COLORTOOL, OnUpdateAddColorTool)
 	ON_UPDATE_COMMAND_UI(ID_ADD_LOOPTOOL, OnUpdateAddToolWithSubTools)
 	ON_UPDATE_COMMAND_UI(ID_ADD_GROUPTOOL, OnUpdateAddToolWithSubTools)
-
+	ON_UPDATE_COMMAND_UI(ID_ADD_DRAWTOOL, OnUpdateAddGeneralTool)
 
 
 END_MESSAGE_MAP()
@@ -1153,6 +1154,11 @@ void SVIPDoc::OnAddTableTool()
 void SVIPDoc::OnAddTableAnalyzerTool()
 {
 	AddTool(SvPb::TableAnalyzerToolClassId);
+}
+
+void SVIPDoc::OnAddDrawTool()
+{
+	AddTool(SvPb::DrawToolClassId);
 }
 
 void SVIPDoc::OnAddPolarUnwrapTool()

@@ -654,8 +654,8 @@ HRESULT ToolClipboard::validateIds(std::string& rXmlData, uint32_t postId, uint3
 						bool useToolSetImage {false};
 						if (isColorCamera)
 						{
-							constexpr std::array<int, 11> nonMonoImageTools {SvPb::ColorToolClassId, SvPb::LoadImageToolClassId, SvPb::ArchiveToolClassId, SvPb::MathToolClassId, SvPb::AcquisitionToolClassId, 
-								SvPb::StatisticsToolClassId, SvPb::ExternalToolClassId, SvPb::RingBufferToolClassId, SvPb::TableToolClassId, SvPb::TableAnalyzerToolClassId, SvPb::ShiftToolClassId};
+							constexpr std::array<int, 12> nonMonoImageTools {SvPb::ColorToolClassId, SvPb::LoadImageToolClassId, SvPb::ArchiveToolClassId, SvPb::MathToolClassId, SvPb::AcquisitionToolClassId, 
+								SvPb::StatisticsToolClassId, SvPb::ExternalToolClassId, SvPb::RingBufferToolClassId, SvPb::TableToolClassId, SvPb::TableAnalyzerToolClassId, SvPb::ShiftToolClassId, SvPb::DrawToolClassId};
 							if (nonMonoImageTools.end() != std::find(nonMonoImageTools.begin(), nonMonoImageTools.end(), toolClassId))
 							{
 								useToolSetImage = true;

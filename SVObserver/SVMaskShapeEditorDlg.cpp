@@ -479,15 +479,15 @@ void SVMaskShapeEditorDlg::ObjectChangedExDialogImage(long , long , VARIANT* Par
 		
 		if (isResizeable)
 		{
-			m_ShapeHelperValues.Set(SvPb::ShapeMaskPropertyWidthEId, width);
-			m_ShapeHelperValues.Set(SvPb::ShapeMaskPropertyHeightEId, Height);
+			m_ShapeHelperValues.Set(SvPb::WidthEId, width);
+			m_ShapeHelperValues.Set(SvPb::HeightEId, Height);
 		}
 		if (isMoveable)
 		{
 			long CenterX = ParaMap[CDSVPictureDisplay::P_X1].lVal + width / 2;
 			long CenterY = ParaMap[CDSVPictureDisplay::P_Y1].lVal + Height / 2;
-			m_ShapeHelperValues.Set(SvPb::ShapeMaskPropertyCenterXEId, CenterX);
-			m_ShapeHelperValues.Set(SvPb::ShapeMaskPropertyCenterYEId, CenterY);
+			m_ShapeHelperValues.Set(SvPb::CenterXEId, CenterX);
+			m_ShapeHelperValues.Set(SvPb::CenterYEId, CenterY);
 		}
 	}
 
@@ -631,10 +631,10 @@ HRESULT SVMaskShapeEditorDlg::BuildPropertyList()
 
 	//first = embedded, second = true means LinkedValue, false not LinkedValue
 	std::initializer_list<SvPb::EmbeddedIdEnum> baseEmbeddedIdList = {
-	SvPb::ShapeMaskPropertyCenterXEId,
-	SvPb::ShapeMaskPropertyCenterYEId,
-	SvPb::ShapeMaskPropertyWidthEId,
-	SvPb::ShapeMaskPropertyHeightEId };
+	SvPb::CenterXEId,
+	SvPb::CenterYEId,
+	SvPb::WidthEId,
+	SvPb::HeightEId };
 	for (const auto& embeddedIdPair : baseEmbeddedIdList)//propertiesListMap[m_eShapeType])
 	{
 		setPropertyToList(embeddedIdPair, pRoot);
@@ -946,10 +946,10 @@ RECT SVMaskShapeEditorDlg::getRect() const
 	}
 	else
 	{
-		long lCenterX = m_ShapeHelperValues.Get<SvOg::LinkedValueData>(SvPb::ShapeMaskPropertyCenterXEId).m_Value;
-		long lCenterY = m_ShapeHelperValues.Get<SvOg::LinkedValueData>(SvPb::ShapeMaskPropertyCenterYEId).m_Value;
-		long lWidth = m_ShapeHelperValues.Get<SvOg::LinkedValueData>(SvPb::ShapeMaskPropertyWidthEId).m_Value;
-		long lHeight = m_ShapeHelperValues.Get<SvOg::LinkedValueData>(SvPb::ShapeMaskPropertyHeightEId).m_Value;
+		long lCenterX = m_ShapeHelperValues.Get<SvOg::LinkedValueData>(SvPb::CenterXEId).m_Value;
+		long lCenterY = m_ShapeHelperValues.Get<SvOg::LinkedValueData>(SvPb::CenterYEId).m_Value;
+		long lWidth = m_ShapeHelperValues.Get<SvOg::LinkedValueData>(SvPb::WidthEId).m_Value;
+		long lHeight = m_ShapeHelperValues.Get<SvOg::LinkedValueData>(SvPb::HeightEId).m_Value;
 		long lHalfWidth = lWidth / 2;
 		long lHalfHeight = lHeight / 2;
 
@@ -971,9 +971,9 @@ CDSVPictureDisplay::AllowType SVMaskShapeEditorDlg::getDrawChangeType() const
 	}
 
 	//If string empty it is a direct value and it is allowed to change it
-	bool bMove = isChangable(SvPb::ShapeMaskPropertyCenterXEId) && isChangable(SvPb::ShapeMaskPropertyCenterYEId);
+	bool bMove = isChangable(SvPb::CenterXEId) && isChangable(SvPb::CenterYEId);
 
-	bool bAll = bMove && isChangable(SvPb::ShapeMaskPropertyWidthEId) && isChangable(SvPb::ShapeMaskPropertyHeightEId);
+	bool bAll = bMove && isChangable(SvPb::WidthEId) && isChangable(SvPb::HeightEId);
 
 	switch (m_eShapeType)
 	{

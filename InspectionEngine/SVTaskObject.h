@@ -152,6 +152,7 @@ public:
 	virtual SvStl::MessageContainer getFirstTaskMessage() const override;
 	virtual SvDef::StringVector getSpecialImageList() const override { return {}; };
 	virtual bool getSpecialImage(const std::string& , SvOi::SVImageBufferHandlePtr& ) const override { return false; };
+	virtual bool getImage(SvPb::EmbeddedIdEnum embeddedId, SvOi::SVImageBufferHandlePtr& rImagePtr) const override;
 	virtual std::vector<uint32_t> getEmbeddedList() const override;
 	virtual bool isErrorMessageEmpty() const override { return m_ResetErrorMessages.empty() && m_RunErrorMessages.empty(); };
 	virtual bool AddFriend(uint32_t friendId, uint32_t addPreId = SvDef::InvalidObjectId) override;

@@ -86,6 +86,8 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DrawOvalTask.cpp" />
+    <ClCompile Include="DrawRectangleTask.cpp" />
     <ClCompile Include="EQAdjustSize.cpp" />
     <ClCompile Include="EQAdjustSizeHeight.cpp" />
     <ClCompile Include="EQAdjustSizePositionX.cpp" />
@@ -161,6 +163,9 @@
     <ClCompile Include="ToolSizeAdjustTask.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DrawOvalTask.h" />
+    <ClInclude Include="DrawRectangleTask.h" />
+    <ClInclude Include="DrawTask.h" />
     <ClInclude Include="EQAdjustSize.h" />
     <ClInclude Include="EQAdjustSizeHeight.h" />
     <ClInclude Include="EQAdjustSizePositionX.h" />

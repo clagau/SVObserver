@@ -129,6 +129,8 @@
     <ClCompile Include="CDSVPictureDisplay.cpp" />
     <ClCompile Include="Custom2FilterDlg.cpp" />
     <ClCompile Include="Displayhelper.cpp" />
+    <ClCompile Include="DrawTaskTree.cpp" />
+    <ClCompile Include="DrawToolController.cpp" />
     <ClCompile Include="ExternalToolTaskController.cpp" />
     <ClCompile Include="FormulaController.cpp" />
     <ClCompile Include="GlobalConstantConflictDlg.cpp" />
@@ -191,6 +193,7 @@
     <ClCompile Include="SVToolAdjustmentDialogTwoImagePage.cpp" />
     <ClCompile Include="SVToolAdjustmentLUTPage.cpp" />
     <ClCompile Include="SVWaterShedFilterDlg.cpp" />
+    <ClCompile Include="TADialogDrawPage.cpp" />
     <ClCompile Include="TADialogGroupToolResultPage.cpp" />
     <ClCompile Include="TADialogLoopToolParameterPage.cpp" />
     <ClCompile Include="TADialogRingBufferParameterPage.cpp" />
@@ -220,6 +223,9 @@
     <ClInclude Include="Custom2FilterDlg.h" />
     <ClInclude Include="DataController.h" />
     <ClInclude Include="DisplayHelper.h" />
+    <ClInclude Include="DrawTaskTree.h" />
+    <ClInclude Include="DrawToolController.h" />
+    <ClInclude Include="DrawToolHelperStructs.h" />
     <ClInclude Include="ExternalToolTaskController.h" />
     <ClInclude Include="FormulaController.h" />
     <ClInclude Include="GlobalConstantConflictDlg.h" />
@@ -284,6 +290,7 @@
     <ClInclude Include="SVToolAdjustmentDialogTwoImagePage.h" />
     <ClInclude Include="SVToolAdjustmentLUTPage.h" />
     <ClInclude Include="SVWaterShedFilterDlg.h" />
+    <ClInclude Include="TADialogDrawPage.h" />
     <ClInclude Include="TADialogGroupToolResultPage.h" />
     <ClInclude Include="TADialogLoopToolParameterPage.h" />
     <ClInclude Include="TADialogRingBufferParameterPage.h" />

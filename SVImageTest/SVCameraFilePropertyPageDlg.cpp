@@ -47,9 +47,9 @@ BEGIN_MESSAGE_MAP(SVCameraFilePropertyPageDlg, CDialog)
 	ON_WM_ERASEBKGND()
 	ON_WM_CLOSE()
 	//}}AFX_MSG_MAP
-    ON_NOTIFY(PTN_ITEMCHANGED, IDC_PROPERTYTREE, OnItemChanged)
-    ON_NOTIFY(PTN_QUERY_SHOW_BUTTON, IDC_PROPERTYTREE, OnItemQueryShowButton)
-    ON_NOTIFY(PTN_ITEMBUTTONCLICK, IDC_PROPERTYTREE, OnItemButtonClick)
+	ON_NOTIFY(PTN_ITEMCHANGED, IDC_PROPERTYTREE, OnItemChanged)
+	ON_NOTIFY(PTN_QUERY_SHOW_BUTTON, IDC_PROPERTYTREE, OnItemQueryShowButton)
+	ON_NOTIFY(PTN_ITEMBUTTONCLICK, IDC_PROPERTYTREE, OnItemButtonClick)
 END_MESSAGE_MAP()
 
 SVCameraFilePropertyPageDlg::SVCameraFilePropertyPageDlg(CWnd* pParent /*=nullptr*/)
@@ -379,7 +379,7 @@ void SVCameraFilePropertyPageDlg::OnPaint()
 	CPaintDC dc(this); // device context for painting
 
 	if (IsIconic())
-    {
+	{
 		SendMessage(WM_ICONERASEBKGND, (WPARAM) dc.GetSafeHdc(), 0);
 
 		// Center icon in client rectangle
@@ -392,9 +392,9 @@ void SVCameraFilePropertyPageDlg::OnPaint()
 
 		// Draw the icon
 		dc.DrawIcon(x, y, m_hIcon);
-    }
+	}
 	else
-    {
+	{
 		CDialog::OnPaint();
 	}
 }
@@ -419,7 +419,7 @@ void SVCameraFilePropertyPageDlg::OnSize(UINT nType, int cx, int cy)
 
 BOOL SVCameraFilePropertyPageDlg::OnEraseBkgnd(CDC* pdc) 
 {
-    CDialog::OnEraseBkgnd(pdc);
+	CDialog::OnEraseBkgnd(pdc);
 	// don't bother erasing the background since our control will always
 	// cover the entire client area
 	return TRUE;
@@ -644,8 +644,8 @@ void SVCameraFilePropertyPageDlg::CameraAdvancedHideItems()
 
 void SVCameraFilePropertyPageDlg::SetTitle(std::string Name)
 {
-    std::string Tmp = _T("Property Settings  -  ") + Name;
-    SetWindowText(Tmp.c_str());
+	std::string Tmp = _T("Property Settings  -  ") + Name;
+	SetWindowText(Tmp.c_str());
 }
 
 const SVDeviceParamCollection& SVCameraFilePropertyPageDlg::GetCameraFileParams()

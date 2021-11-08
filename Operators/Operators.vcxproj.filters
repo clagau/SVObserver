@@ -225,6 +225,12 @@
     <ClCompile Include="EquationArray.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="DrawRectangleTask.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="DrawOvalTask.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EQAdjustSize.h">
@@ -435,6 +441,15 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="EquationArray.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawRectangleTask.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawTask.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawOvalTask.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

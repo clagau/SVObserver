@@ -67,6 +67,7 @@ enum SVObjectTypeEnum
 	SVUnaryImageOperatorListObjectType		= 0x00006000;
 	TableObjectType							= 0x00007000;
 	TableAnalyzerType						= 0x00007001;
+	DrawTaskType							= 0x00007002;
 
 	SVAnalyzerObjectType					= 0x00010000;
 
@@ -120,6 +121,7 @@ enum SVObjectSubTypeEnum
 	SVTableAnalyzerToolObjectType				= 0x0000002c;
 	LoopToolObjectType							= 0x0000002d;
 	GroupToolObjectType							= 0x0000002e;
+	DrawToolObjectType							= 0x0000002f;
 
 	SVEnvironmentObjectType						= 0x00000062;
 	SVCameraObjectType							= 0x00000063;
@@ -272,6 +274,9 @@ enum SVObjectSubTypeEnum
 	TableAnalyzerAddColumnType				= 0x00004013;
 	TableAnalyzerDeleteColumnType			= 0x00004014;
 
+	//DrawTask Subtypes
+	DrawRectangleTaskType					= 0x00004100;
+	DrawOvalTaskType						= 0x00004101;
 
 	//ValueObject SubTypes
 	SVDWordValueObjectType					= 0x00005000;
@@ -533,6 +538,7 @@ enum ClassIdEnum
 	LoopToolClassId = 41;
 	ExternalToolClassId = 42;
 	GroupToolClassId = 43;
+	DrawToolClassId = 44;
 
 
 	//Analyzer Class Ids
@@ -653,6 +659,8 @@ enum ClassIdEnum
 	InputParameterTaskClassId = 448;
 	ResultParameterTaskClassId = 449;
 	InputConnectedClassId = 450;
+	DrawRectangleClassId = 451;
+	DrawOvalClassId = 452;
 }
 
 enum EmbeddedIdEnum
@@ -850,10 +858,10 @@ enum EmbeddedIdEnum
 	MaskFillColorEId = 200;
 	ShapeMaskTypeEId = 201;
 	ShapeMaskMaskAreaEId = 202;
-	ShapeMaskPropertyCenterXEId = 203;
-	ShapeMaskPropertyCenterYEId = 204;
-	ShapeMaskPropertyWidthEId = 205;
-	ShapeMaskPropertyHeightEId = 206;
+	CenterXEId = 203;
+	CenterYEId = 204;
+	WidthEId = 205;
+	HeightEId = 206;
 	ShapeMaskPropertySideThicknessEId = 207;
 	ShapeMaskPropertyTopBottomThicknessEId = 208;
 	ShapeMaskPropertyOffsetEId = 209;
@@ -1186,14 +1194,20 @@ enum EmbeddedIdEnum
 	UseAdditionalImageEId = 553;
 	LinkedValueContentEId = 554;
 	LinkedValueTypeEId = 555;
-
+	IsColorImageEId = 556;
+	UseBackgroundImageEId = 557;
+	PositionXEId = 558;
+	PositionYEId = 559;
 	StatNumberOfValidSamplesEId = 560; //Statistics Tool: number of valid values considered in statistic
-
 	ImageToolEnabledGainId = 561;
 	ImageToolGainId = 562;
 	ImageToolOffsetId = 563;
 	ImageToolUseLutId = 566;
-
+	AutoFitSizeEId = 567;
+	DrawAreaEId = 568;
+	LeftEId = 569;
+	TopEId = 570;
+	
 	//The following Ids are the first of an array and must have 100 reserved Ids 
 	OutputImageEId = 1000; //Output Images, e.g. External needs 4
 	RingBufferIndexEId = 1100; //For ringBuffer index of output images (by now 2 indexes)
