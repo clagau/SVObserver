@@ -30,5 +30,3 @@ enum SVIMProductEnum
 	SVIM_PRODUCT_NEO1 = 1033,
 	SVIM_PRODUCT_TYPE_UNKNOWN = 0xFFFF,
 };
-
-typedef std::vector<SVIMProductEnum> SVIMProductEnumList;

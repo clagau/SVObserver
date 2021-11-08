@@ -157,7 +157,7 @@ public:
 	int GetAllowedNumberOfDigs(bool bTrigger = FALSE);
 
 	void LastInspectionLabelDeleted(LPCTSTR InspectionLabel);
-	void SetIOBoardCapabilities(const SVIOBoardCapabilities& rCapable);
+	void SetIOBoardCapabilities(const std::string& rIOBoard, SVIMProductEnum eSVIMType);
 
 	SVImportedInspectionInfoList& GetImportedInspectionInfoList();
 	void ClearImportedInspectionInfoList();

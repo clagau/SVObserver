@@ -17,7 +17,6 @@
 #include "GuiHelpers.h"
 #include "SVDiscreteInputsView.h"
 #include "SVMultiDocTemplate.h"
-#include "SVObserver.h"
 #include "SVSecurity/SVSecurityManager.h"
 #include "SVInfoStructs.h"
 #include "SVIOController.h"
@@ -420,13 +419,13 @@ SVIODoc* NewSVIODoc(LPCTSTR DocName, SVIOController& IOController)
 {
 	SVIODoc* pDoc = nullptr;
 	CDocTemplate* pDocTemplate = nullptr;
-	POSITION pos = TheSVObserverApp().GetFirstDocTemplatePosition();
+	POSITION pos = AfxGetApp()->GetFirstDocTemplatePosition();
 	if (pos)
 	{
-		pDocTemplate = TheSVObserverApp().GetNextDocTemplate(pos);
+		pDocTemplate = AfxGetApp()->GetNextDocTemplate(pos);
 		if (pDocTemplate)
 		{
-			pDocTemplate = TheSVObserverApp().GetNextDocTemplate(pos);
+			pDocTemplate = AfxGetApp()->GetNextDocTemplate(pos);
 			if (pDocTemplate)
 			{
 				// Create a new empty visible document
@@ -451,10 +450,10 @@ SVIODoc* GetTheIODoc()
 {
 	SVIODoc* pIODoc(nullptr);
 
-	POSITION pos = TheSVObserverApp().GetFirstDocTemplatePosition();
+	POSITION pos = AfxGetApp()->GetFirstDocTemplatePosition();
 	while (pos && !pIODoc)
 	{
-		CDocTemplate* pDocTemplate = TheSVObserverApp().GetNextDocTemplate(pos);
+		CDocTemplate* pDocTemplate = AfxGetApp()->GetNextDocTemplate(pos);
 		if (pDocTemplate)
 		{
 			POSITION posDoc = pDocTemplate->GetFirstDocPosition();

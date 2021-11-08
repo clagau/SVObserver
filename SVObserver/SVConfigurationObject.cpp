@@ -13,6 +13,7 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <comdef.h>
 //Moved to precompiled header: #include <regex>
+#include "ConfigurationOuttakes.h"
 #include "ExtrasEngine.h"
 #include "RemoteMonitorListHelper.h"
 #include "RemoteMonitorNamedList.h"
@@ -5665,7 +5666,7 @@ void SVConfigurationObject::UpdateAuditFiles(bool calculateHash)
 	SVObserverApp* pApp = dynamic_cast <SVObserverApp*> (AfxGetApp());
 	if (pApp)
 	{
-		ConfigFilename = pApp->getSvxFullFilename();
+		ConfigFilename = GetFullSvxFileName();
 
 	}
 	webAppIdsFilename = SvStl::GlobalPath::Inst().GetRunPath(SvDef::cWebAppIds);

@@ -13,6 +13,7 @@
 #include "SVUtilityLibrary/StringHelper.h"
 #include "AnalyzerOperators/BlobAnalyzer.h"
 #include "Operators/SVResultDouble.h"
+#include "ConfigurationOuttakes.h"
 #include "RemoteMonitorList.h"
 #include "RemoteMonitorListHelper.h"
 #include "RootObject.h"
@@ -113,14 +114,13 @@ inline const std::string SVConfigXMLPrint::Print() const
 inline void SVConfigXMLPrint::PrintXMLDoc(Writer writer) const
 {
 	writer->WriteStartDocument(XmlStandalone::XmlStandalone_Yes);
-	SVObserverApp* pApp = dynamic_cast <SVObserverApp*> (AfxGetApp());
 	wchar_t head[] = L"<?xml version=\"1.0\"?>";
 	writer->WriteRaw(head);
 
 	{
 		WriteStartEndElement Configuration(writer, nullptr, L"Configuration", nullptr);
-		writer->WriteAttributeString(nullptr, XML_Name, nullptr, SvUl::to_utf16(pApp->getConfigFileName(), cp_dflt).c_str());
-		writer->WriteAttributeString(nullptr, L"Path", nullptr, SvUl::to_utf16(pApp->getConfigFullFileName(), cp_dflt).c_str());
+		writer->WriteAttributeString(nullptr, XML_Name, nullptr, SvUl::to_utf16(getConfigFileName(), cp_dflt).c_str());
+		writer->WriteAttributeString(nullptr, L"Path", nullptr, SvUl::to_utf16(getConfigFullFileName(), cp_dflt).c_str());
 		writer->WriteAttributeString(nullptr, L"Timestamp", nullptr, sv_xml::now().c_str());
 
 		{

@@ -13,7 +13,9 @@
 #include "SVPPQBar.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "SVObserver.h"
+#include "SVConfigurationObject.h"
+#include "SVObserverOuttakes.h"
+#include "SVIPDoc.h"
 #include "SVSecurity/SVSecurityManager.h"
 #include "SVConfigurationObject.h"
 #include "SVMessage/SVMessage.h"
@@ -29,15 +31,6 @@ static char THIS_FILE[] = __FILE__;
 #define SV_PPQ_BUTTON_WIDTH 30
 
 IMPLEMENT_DYNCREATE( SVPPQBar, SVWindowBar )
-
-SVPPQBar::SVPPQBar()
-: SVWindowBar()
-{
-}
-
-SVPPQBar::~SVPPQBar()
-{
-}
 
 CSize SVPPQBar::CalcFixedLayout( BOOL , BOOL  )
 {
@@ -480,7 +473,7 @@ BOOL SVPPQWindowClass::OnCmdMsg( UINT nID, int nCode, void* pExtra, AFX_CMDHANDL
 					pConfig->RebuildInputOutputLists();
 				}
 
-				TheSVObserverApp().RefreshAllIPDocuments();
+				RefreshAllIPDocuments();
 
 				if( buttonList.GetSize() > pos && buttonList.GetAt( pos ) )
 			    {
@@ -510,7 +503,7 @@ BOOL SVPPQWindowClass::OnCmdMsg( UINT nID, int nCode, void* pExtra, AFX_CMDHANDL
 		{
 			// Access during Test or Run Mode denied!
 			std::string Msg  = SvUl::LoadStdString( IDS_USER_INFORMATION_NO_ACCESS_DURING_TEST_RUN_MODE );
-			TheSVObserverApp().SetStatusText( Msg.c_str() );
+			SetStatusText( Msg.c_str() );
 			MessageBeep( 0xffffffff );
 		}
 	}

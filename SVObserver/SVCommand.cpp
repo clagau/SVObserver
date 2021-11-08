@@ -11,7 +11,9 @@
 
 #pragma region Includes
 #include "stdafx.h"
+
 #include "SVObserver.h"
+#include "SVObserverOuttakes.h"
 
 #include "SVObserver_i.h"
 #include "SVCommand.h"
@@ -614,7 +616,7 @@ STDMETHODIMP SVCommand::SVGetSVIMOfflineCount(unsigned long* pOfflineCount)
 
 	if (nullptr != pOfflineCount)
 	{
-		*pOfflineCount = TheSVObserverApp().getOfflineCount();
+		*pOfflineCount = getSvoOfflineCount();
 		bSuccess = true;
 	}
 

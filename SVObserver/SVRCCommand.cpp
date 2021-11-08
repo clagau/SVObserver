@@ -13,6 +13,7 @@
 #include "SVConfigurationObject.h"
 #include "SVInspectionProcess.h"
 #include "SVIPDoc.h"
+#include "SVObserverOuttakes.h"
 #include "SVObserver.h"
 #include "SVPPQObject.h"
 #include "SVVisionProcessorHelper.h"
@@ -258,7 +259,7 @@ void SVRCCommand::GetOfflineCount(const SvPb::GetOfflineCountRequest&, SvRpc::Ta
 	if (S_OK == result)
 	{
 		SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
-		Response.set_count(TheSVObserverApp().getOfflineCount());
+		Response.set_count(getSvoOfflineCount());
 	}
 
 	task.finish(std::move(Response));

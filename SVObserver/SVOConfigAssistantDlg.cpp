@@ -25,6 +25,8 @@
 #include "CameraLibrary/SVboolValueDeviceParam.h"
 #include "SVFileAcquisitionDevice/SVFileAcquisitionLoadingModeEnum.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
+#include "ConfigurationOuttakes.h"
+#include "SVObserverOuttakes.h"
 #include "SVObserver.h"
 #include "SVOPPQObj.h"
 #include "SVOInspectionObj.h"
@@ -56,6 +58,8 @@
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
+
+typedef std::vector<SVIMProductEnum> SVIMProductEnumList;
 
 constexpr int GrayScaleBitDepth = 8;
 
@@ -199,7 +203,7 @@ BOOL SVOConfigAssistantDlg::OnInitDialog()
 	{
 		m_bConfigName = TRUE;
 		GetConfigurationForExisting();
-		m_ctlConfigurationName.SetWindowText( TheSVObserverApp().getConfigFileName().c_str() );
+		m_ctlConfigurationName.SetWindowText( getConfigFileName().c_str() );
 		m_ctlConfigurationName.EnableWindow(FALSE);
 	}
 	SetupSystemComboBox();
@@ -2388,7 +2392,7 @@ bool SVOConfigAssistantDlg::SendDataToConfiguration()
 	// Added this to fix memory leak freeing MIL buffers
 	// before we close Acq devices, we need to tell all toolsets to Close
 	// this closes the connection between toolset images and the MIL acq image.
-	TheSVObserverApp().DisconnectToolsetBuffers();
+	DisconnectToolsetBuffers();
 
 	SendAcquisitionDataToConfiguration();
 
@@ -3913,9 +3917,51 @@ void SVOConfigAssistantDlg::SetupTriggerStrobeMessage()
 	}
 }
 
-void SVOConfigAssistantDlg::SetIOBoardCapabilities(const SVIOBoardCapabilities& rCapable)
+void SVOConfigAssistantDlg::SetIOBoardCapabilities(const std::string& rIOBoard, SVIMProductEnum eSVIMType)
 {
-	m_svCapabilities = rCapable;
+	SVIOBoardCapabilities svCapable;
+	unsigned long lCount;
+	SVIOConfigurationInterfaceClass::Instance().GetDigitalInputCount(lCount);
+	svCapable.SetInputCount(lCount);
+	SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount(lCount);
+	svCapable.SetOutputCount(lCount);
+
+	// Special code to determine the inverters 
+	// and triggers based on IO board
+	if (_T("10") == rIOBoard)
+	{
+		svCapable.SetStrobeInverters(1);
+		svCapable.SetTriggerInverters(1);
+		svCapable.SetTriggerCount(1);
+	}
+	else if (_T("12") == rIOBoard)
+	{
+		svCapable.SetStrobeInverters(1);
+		svCapable.SetTriggerInverters(1);
+		svCapable.SetTriggerCount(3);
+	}
+	else if (_T("00") == rIOBoard)
+	{
+		// Get Trigger count from the TriggerDLL (in this case the DigitizerDLL)
+		const SVIMTypeInfoStruct& info = SVHardwareManifest::GetSVIMTypeInfo(eSVIMType);
+		svCapable.SetNonIOSVIM(info.m_MaxTriggers);
+	}
+	else if (_T("30") == rIOBoard)
+	{
+		// Get Trigger count from the SVPlcIO.dll
+		const SVIMTypeInfoStruct& info = SVHardwareManifest::GetSVIMTypeInfo(eSVIMType);
+		svCapable.SetStrobeInverters(info.m_MaxTriggers);
+		svCapable.SetTriggerInverters(info.m_MaxTriggers);
+		svCapable.SetTriggerCount(info.m_MaxTriggers);
+	}
+	else
+	{
+		svCapable.SetStrobeInverters(3);
+		svCapable.SetTriggerInverters(3);
+		svCapable.SetTriggerCount(3);
+	}
+
+	m_svCapabilities = svCapable;
 }
 
 void SVOConfigAssistantDlg::OnHelpButton()

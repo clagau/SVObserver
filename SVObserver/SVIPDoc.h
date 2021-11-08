@@ -380,5 +380,10 @@ private:
 SVIPDoc* NewSVIPDoc(LPCTSTR DocName, SVInspectionProcess& Inspection);
 SVIPDoc* GetIPDocByInspectionID(uint32_t inspectionID);
 void ResetAllIPDocModifyFlag(BOOL bModified);
+void SetAllIPDocumentsOffline();
+void RefreshAllIPDocuments();
+void RunAllIPDocuments();
+void SetAllIPDocumentsOnline();
+
 
 CDocTemplate* CreateIpDocMultiDocTemplate();

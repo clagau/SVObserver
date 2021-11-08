@@ -510,6 +510,12 @@
     <ClCompile Include="SVTADlgExternalSelectDllPage.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="ConfigurationOuttakes.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SVObserverOuttakes.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="SVObserver.odl">
@@ -1073,6 +1079,12 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVTADlgExternalSelectDllPage.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="ConfigurationOuttakes.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SVObserverOuttakes.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

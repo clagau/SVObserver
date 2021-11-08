@@ -29,6 +29,14 @@ static const HRESULT ErrorMatroxServiceNotRunning = 0xcf00116f;
 
 extern bool g_bUseCorrectListRecursion;
 
+InitialInformationHandler g_IniInfoHandler;
+
+InitialInformationHandler& getIniInfoHandler()
+{
+	return g_IniInfoHandler;
+}
+
+
 
 #pragma region Public Methods
 void InitialInformationHandler::ResetInformation()

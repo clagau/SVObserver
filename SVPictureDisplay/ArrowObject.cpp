@@ -33,7 +33,8 @@ ArrowObject::~ArrowObject()
 }
 
 ArrowObject::ArrowObject( long x1, long y1, long x2, long y2, long Orientation, COLORREF color, long lAllowEdit ) : 
-	LineObject(x1, y1, x2, y2, color, lAllowEdit), m_eOrient(static_cast<SVOrientation>(Orientation))
+	LineObject(x1, y1, x2, y2, color, lAllowEdit), 
+	m_eOrient(static_cast<SVOrientation>(Orientation))
 {
 }
 #pragma endregion Constructor

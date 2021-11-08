@@ -298,7 +298,6 @@ private:
 	BOOL m_bSizeChanged;
 	UINT m_PosSize;
 	HANDLE m_hDisplayChangedEvent; // Set if the display settings have been changed since the Window was created.
-
 };
 
-void EnableTriggerSettings(bool enable);
+SVMainFrame* GetSvoMainFrame();

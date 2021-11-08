@@ -33,6 +33,7 @@
 #include "Operators/SVEquation.h"
 #include "InspectionEngine/SVAcquisitionClass.h"
 #include "InspectionEngine/SVImageClass.h"
+#include "ConfigurationOuttakes.h"
 #include "SVObserver.h"
 #include "SVIODoc.h"
 #include "SVToolSet.h"
@@ -320,7 +321,7 @@ void SVConfigurationPrint::DoPrintConfig()
 		
 		// Special...
 		// Set up doc info an start the config printing process...
-		std::string Title = pApp->getConfigFileName();
+		std::string Title = getConfigFileName();
 		
 		if( 31 < Title.size() )
 		{
@@ -1221,8 +1222,6 @@ void SVConfigurationPrint::PrintMonitorListItem(CDC* pDC, CPoint& ptCurPos, int 
 
 void SVConfigurationPrint::OnVirtualPrint(BOOL bRealPrintInput /* = FALSE */) 
 {
-	SVObserverApp*         pApp    = dynamic_cast <SVObserverApp*> (AfxGetApp());
-
     m_isRealPrint = bRealPrintInput;
 	
     CDC* pDC = &m_printDC;
@@ -1237,7 +1236,7 @@ void SVConfigurationPrint::OnVirtualPrint(BOOL bRealPrintInput /* = FALSE */)
 	pDC->SelectObject(&m_fontTitle);
 	
     // Print config title
-	std::string Label = SvUl::Format(_T("Configuration %s"), pApp->getConfigFileName().c_str() );
+	std::string Label = SvUl::Format(_T("Configuration %s"), getConfigFileName().c_str() );
 	
 	ptCurPos.x  = nIndentLevel * m_shortTabPixels;
 	ptTemp      = ptCurPos;
@@ -1246,7 +1245,7 @@ void SVConfigurationPrint::OnVirtualPrint(BOOL bRealPrintInput /* = FALSE */)
 	pDC->SelectObject(&m_fontText);
 	
 	// Print config path
-	PrintValueObject(pDC, ptCurPos, _T("Current Path:"), pApp->getConfigFullFileName().c_str());
+	PrintValueObject(pDC, ptCurPos, _T("Current Path:"), getConfigFullFileName().c_str());
 	
 	// Print current date
 	// Get current date

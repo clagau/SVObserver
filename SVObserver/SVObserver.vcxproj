@@ -181,6 +181,7 @@ echo %time%
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ConfigurationOuttakes.cpp" />
     <ClCompile Include="Custom2Filter_ImportExport.cpp" />
     <ClCompile Include="ExtrasEngine.cpp" />
     <ClCompile Include="FramedSplitterWnd.cpp" />
@@ -279,6 +280,7 @@ echo %time%
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</MultiProcessorCompilation>
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</MultiProcessorCompilation>
     </ClCompile>
+    <ClCompile Include="SVObserverOuttakes.cpp" />
     <ClCompile Include="SVOCameraDlg.cpp" />
     <ClCompile Include="SVOCameraList.cpp" />
     <ClCompile Include="SVOCameraObj.cpp" />
@@ -380,6 +382,7 @@ echo %time%
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\AutoBuild\AutoBuild.h" />
+    <ClInclude Include="ConfigurationOuttakes.h" />
     <ClInclude Include="ExtrasEngine.h" />
     <ClInclude Include="FramedSplitterWnd.h" />
     <ClInclude Include="GlobalConstantView.h" />
@@ -471,6 +474,7 @@ echo %time%
     <ClInclude Include="SVObjectScriptParserBase.h" />
     <ClInclude Include="SVObserver.h" />
     <ClInclude Include="SVObserverCP.h" />
+    <ClInclude Include="SVObserverOuttakes.h" />
     <ClInclude Include="SVOCameraDlg.h" />
     <ClInclude Include="SVOCameraList.h" />
     <ClInclude Include="SVOCameraObj.h" />

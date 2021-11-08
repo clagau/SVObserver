@@ -74,9 +74,9 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 public:
-	SVPPQBar();
+	SVPPQBar() = default;
 
-	virtual ~SVPPQBar();
+	virtual ~SVPPQBar() = default;
 
 	BOOL Create( CWnd* pParentWnd, DWORD dwStyle = WS_CHILD | WS_VISIBLE, UINT nID = AFX_IDW_CONTROLBAR_FIRST + 16 );
 	BOOL BuildButtons();

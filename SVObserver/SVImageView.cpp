@@ -18,6 +18,7 @@
 #include "SVImageViewScroll.h"
 #include "SVIPDoc.h"
 #include "SVObserver.h"
+#include "SVObserverOuttakes.h"
 #include "SVSecurity/SVSecurityManager.h"
 #include "SVPatResultDlgClass.h"
 #include "SVSetupDialogManager.h"
@@ -808,7 +809,7 @@ void SVImageView::OnLButtonDblClk( UINT nFlags, CPoint point )
 		TransformFromViewSpace( l_point );
 
 		std::string Text = SvUl::Format( _T(" X: %d, Y: %d "), l_point.x, l_point.y );
-		TheSVObserverApp().SetStatusText( Text.c_str() );
+		SetStatusText( Text.c_str() );
 
 		if (false == ImageIsEmpty() && nullptr != l_psvIPDoc)
 		{
@@ -838,7 +839,7 @@ void SVImageView::OnRButtonDblClk( UINT nFlags, CPoint point )
 		TransformFromViewSpace( l_point );
 		
 		std::string Text = SvUl::Format( _T(" X: %d, Y: %d "), l_point.x, l_point.y );
-		TheSVObserverApp().SetStatusText( Text.c_str() );
+		SetStatusText( Text.c_str() );
 		
 		if( nullptr != l_psvIPDoc && false == ImageIsEmpty())
 		{
@@ -908,7 +909,7 @@ void SVImageView::OnLButtonDown( UINT nFlags, CPoint point )
 				Text = SvUl::Format( _T(" Col: %d, Row: %d "), point.x, point.y );
 			}
 
-			TheSVObserverApp().SetStatusText( Text.c_str() );
+			SetStatusText( Text.c_str() );
 		}
 
 		CWnd::OnLButtonDown( nFlags, point );
@@ -1018,7 +1019,7 @@ void SVImageView::OnMouseMove(UINT nFlags, CPoint point)
 		}
 		SetCursor(hCursor);
 
-		TheSVObserverApp().SetStatusText(Text.c_str());
+		SetStatusText(Text.c_str());
 
 		CWnd::OnMouseMove(nFlags, point);
 	}
@@ -1040,7 +1041,7 @@ void SVImageView::OnLButtonUp( UINT nFlags, CPoint point )
 	ReleaseCapture();
 
 	std::string Text = SvUl::Format( _T(" Col: %d, Row: %d "), point.x, point.y );
-	TheSVObserverApp().SetStatusText( Text.c_str() );
+	SetStatusText( Text.c_str() );
 
 	CWnd::OnLButtonUp( nFlags, point );
 
@@ -1057,7 +1058,7 @@ void SVImageView::OnLButtonUp( UINT nFlags, CPoint point )
 ////////////////////////////////////////////////////////////////////////////////
 void SVImageView::OnCaptureChanged( CWnd* pWnd )
 {
-	TheSVObserverApp().SetStatusText( nullptr );
+	SetStatusText( nullptr );
 
 	CWnd::OnCaptureChanged( pWnd );
 }
@@ -1069,7 +1070,7 @@ void SVImageView::OnCaptureChanged( CWnd* pWnd )
 ////////////////////////////////////////////////////////////////////////////////
 void SVImageView::OnNcMouseMove( UINT hitTest, CPoint point )
 {
-	TheSVObserverApp().SetStatusText( nullptr );
+	SetStatusText( nullptr );
 
 	CWnd::OnNcMouseMove( hitTest, point );
 }

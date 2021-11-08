@@ -12,14 +12,10 @@
 #pragma once
 
 #pragma region Includes
-#include "Triggering/SVDigitizerLoadLibraryClass.h"
-#include "Triggering/SVIOTriggerLoadLibraryClass.h"
 #include "InitialInformationHandler.h"
-#include "SVFileSystemLibrary/SVFileNameClass.h"
-#include "SVGlobal.h"
-#include "MonitorListAttributeStruct.h"
 #include "SVLibrary/SVUtilityIniClass.h"
 #include "SVOLibrary/SVObserverEnums.h"
+#include "SVGlobal.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -31,6 +27,7 @@ class SVIPDoc;
 class SVMainFrame;
 class SVMessageWindow;
 class SVUserObjectListClass;
+class InitialInformationHandler;
 
 namespace SvOi
 {
@@ -80,12 +77,6 @@ public:
 	HRESULT OpenFile(LPCTSTR PathName, bool editMode = false, ConfigFileType fileType = ConfigFileType::SvzStandard);
 	HRESULT OpenSVXFile();
 
-	HRESULT LoadPackedConfiguration(LPCTSTR pFileName, ConfigFileType type);
-	HRESULT SavePackedConfiguration(LPCTSTR pFileName);
-
-	SVMainFrame* GetMainFrame() const;
-	HRESULT CanCloseMainFrame();
-	HRESULT DestroyConfig( bool AskForSavingOrClosing = true, bool CloseWithoutHint = false );
 	void RemoveUnusedFiles();
 
 	bool Logout( bool BForceLogout = false );
@@ -107,18 +98,10 @@ public:
 	HRESULT SetMode( unsigned long p_lNewMode );
 
 	HRESULT OnObjectRenamed(const std::string& p_rOldName, uint32_t objectId);
-	bool SetStatusText( LPCTSTR PStrStatusText );
-
-	const std::string& getConfigPathName() const;
-	const std::string& getConfigFileName() const;
-	const std::string getConfigFullFileName() const;
-	bool setConfigFullFileName(LPCTSTR csFullFileName, bool bLoadFile);
-
-	std::string  getSvxFullFilename() const { return m_SvxFileName.GetFullFileName(); } 
 
 	bool AlreadyExistsIPDocTitle( LPCTSTR StrIPDocTitle );
 
-	bool ShowConfigurationAssistant( int Page = 3, bool bFileNewConfiguration = false );
+	bool UpdateConfiguration(bool newConfiguration = false);
 
 	bool OkToEdit();
 	void UpdateAllMenuExtrasUtilities();
@@ -132,48 +115,26 @@ public:
 
 	HRESULT DisplayCameraManager(SVIMProductEnum eProductType);
 
-	HRESULT DisconnectToolsetBuffers();
-	HRESULT ConnectToolsetBuffers();
-
-	HRESULT DisconnectCameras();
-	HRESULT ConnectCameras();
-
 	HRESULT SendCameraParameters();
 
 	HRESULT SetModeEdit( bool p_bState );
-	HRESULT GetTriggersAndCounts( std::string& rTriggerCounts ) const;
 
-	void RefreshAllIPDocuments();
-	void RunAllIPDocuments();
-	void SetAllIPDocumentsOnline();
-	void SetAllIPDocumentsOffline();
-
-	void executePreOrPostExecutionFile(const std::string& filepath, bool inRunMode = true);
-
-	bool fileSaveAsSVXWrapper(const std::string& rFileName, bool resetAutoSave);
-
-	void StopRegression();
-	
 	void Start(DWORD desiredState);///< In error cases this method throws an exception.
 	bool InitialChecks(DWORD desiredState);
 	void PrepareForStart(SVConfigurationObject* pConfig, DWORD desiredState, bool isLocalStart);
 	HRESULT PrepareCamerasAndMemory();
-	void CreateImageStores(SVConfigurationObject* pConfig, PPQMonitorList &rPpqMonitorList, HRESULT Result, DWORD desiredState, bool isLocalStart);
 	void RunInspections(SVConfigurationObject* pConfig, DWORD desiredState);
 
-	bool OpenConfigFileFromMostRecentList(int nID);
 	void startInstances();
 	void stopInstances();
 
-	void SaveConfig(bool saveAs = false);
 	void EnterRunMode();
-	void StopSvo();
 	void StopIfRunning();
-	void RCClose();
+
+	CRecentFileList* getRecentFileList() { return  m_pRecentFileList; }
 
 #pragma region Encapsulation Methods
-	long getGigePacketSize() const { return m_rInitialInfo.m_gigePacketSize; }
-	long getOfflineCount() const { return m_OfflineCount; }
+	long getGigePacketSize() const { return m_rInitialInfoSvo.m_gigePacketSize; }
 	SVIPDoc* getCurrentDocument() const { return m_pCurrentDocument; }
 	void setCurrentDocument(SVIPDoc* pIPDoc) { m_pCurrentDocument = pIPDoc; }
 	DWORD getCurrentVersion() const { return m_CurrentVersion; }
@@ -181,41 +142,28 @@ public:
 	void setLoadingVersion(DWORD version) { m_LoadingVersion = version; }
 	long getDataValidDelay() const { return m_DataValidDelay; }
 
-	bool IsForcedImageUpdateActive() const { return (m_rInitialInfo.m_forcedImageUpdateTimeInSeconds) ? true : false; }
-	unsigned char GetForcedImageUpdateTimeInSeconds() const { return m_rInitialInfo.m_forcedImageUpdateTimeInSeconds; }
+	bool IsForcedImageUpdateActive() const { return (m_rInitialInfoSvo.m_forcedImageUpdateTimeInSeconds) ? true : false; }
+	unsigned char GetForcedImageUpdateTimeInSeconds() const { return m_rInitialInfoSvo.m_forcedImageUpdateTimeInSeconds; }
 	
-	long getMaxPreloadFileNumber() const { return m_rInitialInfo.m_MaxPreloadFileNumber; }
-	long getPreloadTimeDelay() const { return m_rInitialInfo.m_PreloadTimeDelay; }
-	
-	bool DetermineConfigurationSaveName(); ///< determines the name under which a configuration is to be changed
-#pragma endregion
+	long getMaxPreloadFileNumber() const { return m_rInitialInfoSvo.m_MaxPreloadFileNumber; }
+	long getPreloadTimeDelay() const { return m_rInitialInfoSvo.m_PreloadTimeDelay; }
+	#pragma endregion
 
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
 protected:
 
-	HRESULT DisconnectAllCameraBuffers();
-	HRESULT ConnectCameraBuffers();
 	HRESULT InitializeSecurity();
-
-	HRESULT ConstructMissingDocuments();
 	
 	bool DestroyMessageWindow();///< Destroys still open message windows. Returns true, if a message window was existent. Otherwise returns false
 #pragma endregion Protected Methods
 
 #pragma region Private Methods
 private:
-	void StopAll();
 	bool InitATL();
 
-	bool AddSecurityNode(HMODULE hMessageDll, long lId, LPCTSTR NTGroup, bool bForcePrompt = false);
-	bool AddSecurityNode( HMODULE hMessageDll, long lId );
-		
-	void StartTrigger(SVConfigurationObject* pConfig);///< can throw an exception!
-
 	afx_msg void OnUpdateRecentFileMenu(CCmdUI* PCmdUI);
-
 
 #pragma endregion Private Methods
 
@@ -223,15 +171,10 @@ private:
 
 #pragma region Public member variables
 public:
-	InitialInformationHandler m_IniInfoHandler;
 	bool m_MemLeakDetection {false};
-	const SvLib::InitialInformation& m_rInitialInfo; ///< This reference exists to simplify access to InitializationStatusFlags()
+	const SvLib::InitialInformation& m_rInitialInfoSvo; ///< This reference exists to simplify access to InitializationStatusFlags()
 	typedef std::map<UINT, SvLib::SVUtilityIniClass> UtilityMenuMap;
 	UtilityMenuMap m_UtilityMenu;
-private:
-
-	long m_OfflineCount;
-
 
 #pragma endregion Public Member variables
 
@@ -277,9 +220,6 @@ private:
 
 	bool m_ATLInited;
 
-	mutable SVFileNameClass m_ConfigFileName;
-	SVFileNameClass m_SvxFileName;
-
 	HMENU m_hAddMenu;
 	HANDLE m_hEvent;
 
@@ -290,9 +230,7 @@ private:
 
 SVObserverApp& TheSVObserverApp();
 
-
 ////////////////////////////////////////////////////////////////////////////////
 //{{AFX_INSERT_LOCATION}}
 // DevStudio inserts additional declarations immediate in front of the preceding line
 ////////////////////////////////////////////////////////////////////////////////
-

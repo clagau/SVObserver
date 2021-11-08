@@ -14,23 +14,19 @@
 //Moved to precompiled header: #include <iostream>
 //Moved to precompiled header: #include <google\protobuf\stubs\common.h>
 #include "resource.h"
+#include "ConfigurationOuttakes.h"
 #include "GuiHelpers.h"
 #include "ExtrasEngine.h"
 #include "RootObject.h"
-#include "SVArchiveWritingDlg.h"
-#include "SVConfigurationObject.h"
 #include "SVDirectX.h"
 #include "SVGigeCameraManagerDlg.h"
 #include "SVGlobal.h"
-#include "SVIOController.h"
 #include "SVIODoc.h"
 #include "SVIPDoc.h"
-#include "SVIPDocInfoImporter.h"
-#include "SVImportedInspectionInfo.h"
 #include "SVInspectionProcess.h"
 #include "SVMainFrm.h"
 #include "SVMessageWindow.h"
-#include "SVOConfigAssistantDlg.h"
+#include "SVObserverOuttakes.h"
 #include "SVObserver.h"
 #include "SVSecurity/SVSecurityManager.h"
 #include "SVObserver_i.h"
@@ -58,8 +54,6 @@
 #include "SVFileSystemLibrary/FilepathUtilities.h"
 #include "SVFileSystemLibrary/SVFileNameManagerClass.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
-#include "SVLibrary/SVPackedFile.h"
-#include "SVLibrary/SVWinUtility.h"
 #include "SVLogLibrary/Logging.h"
 #include "SVMFCControls/DisplayMessageBox.h"
 #include "SVMatroxLibrary/SVMatroxApplicationInterface.h"
@@ -93,6 +87,7 @@ constexpr double	cNormalNonPageMemoryUsage = 80.0;		 //Value as a percentage of 
 
 #pragma endregion Declarations
 
+void CreateImageStores(SVConfigurationObject* pConfig, PPQMonitorList& rPpqMonitorList, HRESULT Result, DWORD desiredState, bool isLocalStart);
 
 class CSVObserverModule : public CAtlMfcModule
 {
@@ -109,7 +104,6 @@ SVObserverApp& TheSVObserverApp()
 {
 	return g_theSVObserverApp;
 }
-
 
 //******************************************************************************
 //* DEFINITIONS OF MODULE-LOCAL VARIABLES:
@@ -133,13 +127,11 @@ public:
 constexpr CLSID clsid =
 { 0xf4c4d491, 0xd660, 0x11d0, { 0x9b, 0x52, 0x0, 0x80, 0x5f, 0x71, 0x7d, 0xce } };
 
-constexpr int batExecutionTimeout = 2 * 60000;
-
 IMPLEMENT_SERIAL(SVObserverApp, CWinApp, 0);
 
 BEGIN_MESSAGE_MAP(SVObserverApp, CWinApp)
 	//{{AFX_MSG_MAP(SVObserverApp)
-	//@TODO [Arvid][10.20][20.10.2021] Moved this back here because OnOpenRecentFile was not called after the first time when this was in SVMainframe.h 
+	//Moved this back here because OnOpenRecentFile was not called after the first time when this was in SVMainframe.h 
 	ON_COMMAND_EX_RANGE(ID_FILE_MRU_FILE1, ID_FILE_MRU_FILE16, OnOpenRecentFile)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_FILE_MRU_FILE1, ID_FILE_MRU_FILE16, OnUpdateRecentFileMenu)
 	//}}AFX_MSG_MAP
@@ -148,7 +140,7 @@ END_MESSAGE_MAP()
 #pragma region Constructor
 SVObserverApp::SVObserverApp() :
 	m_DataValidDelay(0),
-	m_rInitialInfo(m_IniInfoHandler.GetInitialInfo())
+	m_rInitialInfoSvo(getIniInfoHandler().GetInitialInfo())
 {
 	free((void*)m_pszHelpFilePath);
 
@@ -159,7 +151,7 @@ SVObserverApp::SVObserverApp() :
 	::OutputDebugString(_T("Executing => SVObserverApp::SVObserverApp()\n"));
 #endif
 
-	m_IniInfoHandler.ResetInformation();
+	getIniInfoHandler().ResetInformation();
 
 	// The Standard Configuration Execution Directory
 	m_ConfigExePNVariableName = _T("ConfigurationExecutionPathName");
@@ -171,7 +163,6 @@ SVObserverApp::SVObserverApp() :
 
 	m_LastValidConfigPNVariableValue = _T("");
 
-	m_OfflineCount = 0;
 	m_AutoRunDelayTime = 1000;
 
 	m_CurrentVersion = SvSyl::SVVersionInfo::GetLongVersion();
@@ -179,10 +170,6 @@ SVObserverApp::SVObserverApp() :
 
 	m_pCurrentDocument = nullptr;	// Set by current Document!!!
 	m_pMessageWindow = nullptr;
-
-	m_ConfigFileName.SetFileType(SV_SVZ_CONFIGURATION_FILE_TYPE);
-	m_ConfigFileName.setExcludeCharacters(SvDef::cExcludeCharsConfigName);
-
 }// end SVObserver ctor
 
 SVObserverApp::~SVObserverApp()
@@ -317,7 +304,7 @@ BOOL SVObserverApp::InitInstance()
 
 	ValidateMRUList();
 
-	SvSyl::SVThread::SetDiagnostic(m_IniInfoHandler.GetInitialInfo().m_diagnostic);
+	SvSyl::SVThread::SetDiagnostic(getIniInfoHandler().GetInitialInfo().m_diagnostic);
 
 	// Get SourceImageDepth
 	m_lSouceImageDepth = GetProfileInt(_T("Settings"), _T("Source Image Depth"), -1);
@@ -357,11 +344,11 @@ BOOL SVObserverApp::InitInstance()
 	m_AutoRunDelayTime = GetProfileInt(_T("Settings"), _T("Auto Run Delay Time"), m_AutoRunDelayTime);
 	WriteProfileInt(_T("Settings"), _T("Auto Run Delay Time"), m_AutoRunDelayTime);
 
-	if (S_OK != m_IniInfoHandler.GetInitializationStatusFlags())
+	if (S_OK != getIniInfoHandler().GetInitializationStatusFlags())
 	{
 		SvDef::StringVector msgList;
-		msgList.push_back(m_rInitialInfo.ModelNumberString());
-		msgList.push_back(m_rInitialInfo.InitializationFailureDescription(m_IniInfoHandler.GetInitializationStatusFlags()));
+		msgList.push_back(m_rInitialInfoSvo.ModelNumberString());
+		msgList.push_back(m_rInitialInfoSvo.InitializationFailureDescription(getIniInfoHandler().GetInitializationStatusFlags()));
 
 #ifndef _DEBUG                    // 23 Mar 1999 - frb.
 		sWin.ShowWindow(SW_HIDE);
@@ -383,7 +370,6 @@ BOOL SVObserverApp::InitInstance()
 	AddDocTemplate(CreateIpDocMultiDocTemplate());
 
 	AddDocTemplate(CreateIoDocMultiDocTemplate());
-
 
 	// Haupt-MDI-Rahmenfenster erzeugen
 	SVMainFrame* pMainFrame = new SVMainFrame;
@@ -413,7 +399,7 @@ BOOL SVObserverApp::InitInstance()
 	sWin.DestroyWindow();
 
 	TheSVMemoryManager().InitializeMemoryManager(SvDef::ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME,
-		SvDef::ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME, m_IniInfoHandler.GetInitialInfo().m_archiveToolBufferSize, m_IniInfoHandler.GetInitialInfo().m_archiveToolAsyncBufferSize);
+		SvDef::ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME, getIniInfoHandler().GetInitialInfo().m_archiveToolBufferSize, getIniInfoHandler().GetInitialInfo().m_archiveToolAsyncBufferSize);
 
 	// Das Hauptfenster ist initialisiert und kann jetzt angezeigt und aktualisiert werden.
 #ifdef _DEBUG
@@ -448,12 +434,12 @@ BOOL SVObserverApp::InitInstance()
 	SvStl::MessageManager Info(SvStl::MsgType::Log);
 	Info.setMessage(SVMSG_SVO_25_SVOBSERVER_STARTED, SvStl::Tid_Version, msgList, SvStl::SourceFileParams(StdMessageParams));
 
-	ExtrasEngine::Instance().SetAutoSaveEnabled(m_IniInfoHandler.GetInitialInfo().m_enableAutosave);
+	ExtrasEngine::Instance().SetAutoSaveEnabled(getIniInfoHandler().GetInitialInfo().m_enableAutosave);
 
-	m_DataValidDelay = m_IniInfoHandler.GetInitialInfo().m_dataValidDelay;
+	m_DataValidDelay = getIniInfoHandler().GetInitialInfo().m_dataValidDelay;
 
 	///This sets the reserved text size for text value objects which can change in size
-	int maxTextSize = (0 == m_IniInfoHandler.GetInitialInfo().m_maxTextSize) ? SvDef::cMaxStringByteSize : m_IniInfoHandler.GetInitialInfo().m_maxTextSize;
+	int maxTextSize = (0 == getIniInfoHandler().GetInitialInfo().m_maxTextSize) ? SvDef::cMaxStringByteSize : getIniInfoHandler().GetInitialInfo().m_maxTextSize;
 	SvVol::SVStringValueObjectClass::setMaxTextSize(maxTextSize);
 
 
@@ -616,14 +602,14 @@ HRESULT SVObserverApp::OpenFile(LPCTSTR PathName, bool editMode /*= false*/, Con
 				Extension = szExt;
 				if (0 == SvUl::CompareNoCase(Extension, std::string(SvDef::cConfigExtension)))
 				{
-					m_SvxFileName.SetFullFileName(rFile.c_str());
+					SetFullSvxFileName(rFile);
 					//When this is set then we need to rename the file to the name of the svx file
 					if (fileType == ConfigFileType::SvzFormatDefaultName)
 					{
 						std::string oldFileName{ FileName };
 						SvUl::searchAndReplace(FileName, OriginalFile.c_str(), szFile);
 						::rename(oldFileName.c_str(), FileName.c_str());
-						OriginalFile = m_SvxFileName.GetFileNameOnly();
+						OriginalFile = GetSvxFileNameOnly();
 					}
 					break;
 				}
@@ -640,8 +626,8 @@ HRESULT SVObserverApp::OpenFile(LPCTSTR PathName, bool editMode /*= false*/, Con
 	}
 	else if (0 == SvUl::CompareNoCase(Extension, std::string(SvDef::cConfigExtension)))
 	{
-		m_SvxFileName.SetFullFileName(FileName.c_str());
-		SVFileNameManagerClass::Instance().LoadItem(&m_SvxFileName);
+		SetFullSvxFileName(FileName);
+		LoadSvxFilenameFromManager();
 		//In the future we want to use the new file format
 		SvUl::searchAndReplace(FileName, SvDef::cConfigExtension, SvDef::cPackedConfigExtension);
 	}
@@ -655,12 +641,7 @@ HRESULT SVObserverApp::OpenFile(LPCTSTR PathName, bool editMode /*= false*/, Con
 		}
 		else
 		{
-			m_ConfigFileName.SetFileNameOnly(OriginalFile.c_str());
-			m_ConfigFileName.SetExtension(SvDef::cPackedConfigExtension);
-			m_ConfigFileName.SetPathName(nullptr);
-
-			RootObject::setRootChildValue(SvDef::FqnEnvironmentConfigurationFileName, m_ConfigFileName.GetFileName());
-			RootObject::setRootChildValue(SvDef::FqnEnvironmentConfigurationName, OriginalFile);
+			SetConfigFileNameOnly(OriginalFile);
 		}
 		result = OpenSVXFile();
 		//Only if loaded locally then add to recent list
@@ -722,7 +703,7 @@ HRESULT SVObserverApp::OpenSVXFile()
 				isGlobalInit = false;
 			}
 
-			hr = LoadSvxFile(m_CurrentVersion, m_SvxFileName.GetFullFileName(), getConfigFullFileName(), GetSVIMType(), GetMainFrame(), isGlobalInit);
+			hr = LoadSvxFile(m_CurrentVersion, GetFullSvxFileName(), getConfigFullFileName(), GetSVIMType(), dynamic_cast<SVMainFrame*>(m_pMainWnd), isGlobalInit);
 
 			if (hr & SvDef::svErrorCondition)
 			{
@@ -788,270 +769,6 @@ HRESULT SVObserverApp::OpenSVXFile()
 
 #pragma endregion virtual
 
-HRESULT SVObserverApp::LoadPackedConfiguration(LPCTSTR pFileName, ConfigFileType fileType)
-{
-	HRESULT l_Status = S_OK;
-	std::string fileName{ pFileName };
-
-	if (0 == _access(fileName.c_str(), 0))
-	{
-		RCClose();
-	}
-	else
-	{
-		l_Status = E_UNEXPECTED;
-	}
-
-	if (S_OK == l_Status)
-	{
-		if (ConfigFileType::PackedFormat == fileType)
-		{
-			SVPackedFile PackedFile;
-			if (PackedFile.UnPackFiles(fileName.c_str(), SvStl::GlobalPath::Inst().GetRunPath().c_str()))
-			{
-				if (PackedFile.getConfigFilePath().empty() || (_access(PackedFile.getConfigFilePath().c_str(), 0) != 0))
-				{
-					l_Status = E_UNEXPECTED;
-				}
-				else
-				{
-					fileName = PackedFile.getConfigFilePath();
-				}
-				fileType = ConfigFileType::SvzFormatPutConfig;
-			}
-			else
-			{
-				l_Status = E_UNEXPECTED;
-			}
-		}
-	}
-
-	if (S_OK == l_Status)
-	{
-		l_Status = OpenFile(fileName.c_str(), false, fileType);
-	}
-
-	return l_Status;
-}
-
-HRESULT SVObserverApp::SavePackedConfiguration(LPCTSTR pFileName)
-{
-	HRESULT Result {S_OK};
-
-	bool bRunning = SVSVIMStateClass::CheckState(SV_STATE_RUNNING);
-
-	if (bRunning)
-	{
-		StopIfRunning();
-	}
-
-	if (SVSVIMStateClass::CheckState(SV_STATE_READY))
-	{
-		if (false == fileSaveAsSVXWrapper(pFileName, false))
-		{
-			Result = E_UNEXPECTED;
-		}
-
-		if (bRunning)
-		{
-			EnterRunMode();
-		}
-	}
-
-	return Result;
-}
-
-SVMainFrame* SVObserverApp::GetMainFrame() const
-{
-	return dynamic_cast<SVMainFrame*>(m_pMainWnd);
-}
-
-HRESULT SVObserverApp::CanCloseMainFrame()
-{
-	return DestroyConfig();
-}
-
-HRESULT SVObserverApp::DestroyConfig(bool AskForSavingOrClosing /* = true */,
-	bool CloseWithoutHint /* = false */) //@TODO [Arvid][10.20][18.10.2021]: this function is much too long
-{
-	SVSVIMStateClass::SVRCBlocker block;
-	bool bCancel = false;
-
-	bool bOk = !SVSVIMStateClass::CheckState(SV_STATE_READY | SV_STATE_RUNNING | SV_STATE_TEST);
-	HRESULT hr = S_OK;
-
-	if (!bOk)
-	{
-		bool bClose = true;
-
-		if (CloseWithoutHint)
-		{
-			SVSVIMStateClass::AddState(SV_STATE_CANCELING);
-		}
-		else
-		{
-			SvDef::StringVector msgList;
-			msgList.push_back(getConfigFileName());
-			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-			INT_PTR result = Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_UserQuestionCloseConfig, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10130, SvDef::InvalidObjectId, MB_YESNO);
-			bClose = IDYES == result;
-			if (!bClose)
-			{
-				hr = ERROR_CANCELLED;
-			}
-		}
-
-		if (bClose)
-		{
-			if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST))
-			{
-				StopSvo();
-			}
-
-			if (AskForSavingOrClosing)
-			{
-				// Check if current config is modified and ask for saving
-				if (SVSVIMStateClass::CheckState(SV_STATE_MODIFIED))
-				{
-					SvDef::StringVector msgList;
-					msgList.push_back(getConfigFileName());
-					SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-					INT_PTR result = Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_UserQuestionSaveChanges, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10131, SvDef::InvalidObjectId, MB_YESNOCANCEL);
-					switch (result)
-					{
-					case IDNO:
-					{
-						SVSVIMStateClass::AddState(SV_STATE_CANCELING);
-						ResetAllIPDocModifyFlag(false);
-						break;
-					}
-					case IDYES:
-					{
-						if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_FILE_MENU_SAVE_CONFIGURATION))
-						{
-							SaveConfig();
-							ResetAllIPDocModifyFlag(false);
-
-							// Check whether config saving is done.
-							// If not, an error or an user cancel
-							// command occured!
-							bClose = !std::string(getConfigFullFileName()).empty() &&
-								!SVSVIMStateClass::CheckState(SV_STATE_MODIFIED);
-						}
-						break;
-					}
-					case IDCANCEL:  // Fall through to default case.
-					default:	// Don´t close config!
-					{
-						bCancel = true;
-						bClose = false;
-						break;
-					}
-					}// end switch( result )
-				}// end if ( SVSVIMStateClass::CheckState( SV_STATE_MODIFIED ) )
-			}
-			else
-			{
-				SVSVIMStateClass::AddState(SV_STATE_CANCELING);
-			}
-		}// end if ( bClose )
-
-		if (bClose)
-		{
-			bOk = bClose = SVSVIMStateClass::CheckState(SV_STATE_READY);
-		}
-
-		if (bClose)
-		{
-			_variant_t configName;
-			configName.SetString(getConfigFullFileName().c_str());
-			SVVisionProcessorHelper::Instance().FireNotification(SvPb::NotifyType::configUnloaded, configName);
-			SVOLicenseManager::Instance().ClearLicenseErrors();
-			SVSVIMStateClass::ConfigWasUnloaded();
-			SVSVIMStateClass::changeState(SV_STATE_UNAVAILABLE | SV_STATE_CLOSING, SV_STATE_READY | SV_STATE_MODIFIED | SV_STATE_EDIT | SV_STATE_STOP);
-
-			if (bOk)
-			{
-				CWaitCursor wait;
-
-				wait.Restore();
-
-				SVConfigurationObject* pConfig(nullptr);
-				SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-
-				if (nullptr != pConfig)
-				{
-					RootObject* pRoot = nullptr;
-					SVObjectManagerClass::Instance().GetRootChildObject(pRoot, SvDef::FqnRoot);
-					if (nullptr != pRoot)
-					{
-
-						pRoot->destroyConfigurationObject(SVObjectManagerClass::Instance().GetMutex());
-
-					}
-				}
-
-				wait.Restore();
-
-				GetMainFrame()->SetStatusInfoText(_T(""));
-
-				wait.Restore();
-
-				// Destroy the current PPQ
-				GetMainFrame()->DestroyPPQButtons();
-				GetMainFrame()->InitToolBars();
-
-				wait.Restore();
-
-				SVSVIMStateClass::changeState(SV_STATE_AVAILABLE, SV_STATE_UNAVAILABLE | SV_STATE_CLOSING | SV_STATE_CANCELING);
-				bOk = setConfigFullFileName(nullptr, true);
-
-				wait.Restore();
-
-				m_IniInfoHandler.INIReset();
-			}// end if ( bOk )
-		}// end if ( bClose )
-
-	}// end if bOk = ! SVSVIMStateClass::CheckState( SV_STATE_READY | SV_STATE_RUNNING );
-	else
-	{
-		SVConfigurationObject* pConfig(nullptr);
-		SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-
-		if (nullptr != pConfig)
-		{
-			RootObject* pRoot = nullptr;
-			SVObjectManagerClass::Instance().GetRootChildObject(pRoot, SvDef::FqnRoot);
-			if (nullptr != pRoot)
-			{
-
-				pRoot->destroyConfigurationObject(SVObjectManagerClass::Instance().GetMutex());
-			}
-		}
-
-		(dynamic_cast<SVMainFrame*> (GetMainWnd()))->SetStatusInfoText(_T(""));
-	}
-
-	if (S_OK == hr)
-	{
-		hr = bOk ? S_OK : S_FALSE;
-	}
-
-	if (bCancel)
-	{
-		hr = ERROR_CANCELLED;
-	}
-	else
-	{
-		DisconnectCameras();
-		ConnectCameras();
-	}
-
-	::OutputDebugString(SvUl::Format(_T("Closing config %s\n"), getConfigFileName().c_str()).c_str());
-	SVObjectManagerClass::Instance().listAllObjects();
-	return hr;
-}
-
 void SVObserverApp::RemoveUnusedFiles()
 {
 	SVFileNameManagerClass::Instance().RemoveUnusedFiles();
@@ -1116,10 +833,10 @@ bool SVObserverApp::InitPath(LPCTSTR PathName, bool CreateIfDoesNotExist /*= tru
 
 bool SVObserverApp::IsMatroxGige() const
 {
-	bool result = (0 == SvUl::CompareNoCase(m_rInitialInfo.m_ProductName, SvDef::SVO_PRODUCT_SVIM_X2_GD2A)
-		|| 0 == SvUl::CompareNoCase(m_rInitialInfo.m_ProductName, SvDef::SVO_PRODUCT_SVIM_X2_GD4A)
-		|| 0 == SvUl::CompareNoCase(m_rInitialInfo.m_ProductName, SvDef::SVO_PRODUCT_SVIM_X2_GD8A)
-		|| 0 == SvUl::CompareNoCase(m_rInitialInfo.m_ProductName, SvDef::SVO_PRODUCT_SVIM_NEO1));
+	bool result = (0 == SvUl::CompareNoCase(m_rInitialInfoSvo.m_ProductName, SvDef::SVO_PRODUCT_SVIM_X2_GD2A)
+		|| 0 == SvUl::CompareNoCase(m_rInitialInfoSvo.m_ProductName, SvDef::SVO_PRODUCT_SVIM_X2_GD4A)
+		|| 0 == SvUl::CompareNoCase(m_rInitialInfoSvo.m_ProductName, SvDef::SVO_PRODUCT_SVIM_X2_GD8A)
+		|| 0 == SvUl::CompareNoCase(m_rInitialInfoSvo.m_ProductName, SvDef::SVO_PRODUCT_SVIM_NEO1));
 	return result;
 }
 
@@ -1182,23 +899,23 @@ SVIMProductEnum SVObserverApp::GetSVIMType() const
 {
 	SVIMProductEnum eType = SVIM_PRODUCT_TYPE_UNKNOWN;
 
-	if (0 == SvUl::CompareNoCase(m_rInitialInfo.m_ProductName, SvDef::SVO_PRODUCT_SVIM_X2_GD1A))
+	if (0 == SvUl::CompareNoCase(m_rInitialInfoSvo.m_ProductName, SvDef::SVO_PRODUCT_SVIM_X2_GD1A))
 	{
 		eType = SVIM_PRODUCT_X2_GD1A;
 	}
-	else if (0 == SvUl::CompareNoCase(m_rInitialInfo.m_ProductName, SvDef::SVO_PRODUCT_SVIM_X2_GD2A))
+	else if (0 == SvUl::CompareNoCase(m_rInitialInfoSvo.m_ProductName, SvDef::SVO_PRODUCT_SVIM_X2_GD2A))
 	{
 		eType = SVIM_PRODUCT_X2_GD2A;
 	}
-	else if (0 == SvUl::CompareNoCase(m_rInitialInfo.m_ProductName, SvDef::SVO_PRODUCT_SVIM_X2_GD4A))
+	else if (0 == SvUl::CompareNoCase(m_rInitialInfoSvo.m_ProductName, SvDef::SVO_PRODUCT_SVIM_X2_GD4A))
 	{
 		eType = SVIM_PRODUCT_X2_GD4A;
 	}
-	else if (0 == SvUl::CompareNoCase(m_rInitialInfo.m_ProductName, SvDef::SVO_PRODUCT_SVIM_X2_GD8A))
+	else if (0 == SvUl::CompareNoCase(m_rInitialInfoSvo.m_ProductName, SvDef::SVO_PRODUCT_SVIM_X2_GD8A))
 	{
 		eType = SVIM_PRODUCT_X2_GD8A;
 	}
-	else if (0 == SvUl::CompareNoCase(m_rInitialInfo.m_ProductName, SvDef::SVO_PRODUCT_SVIM_NEO1))
+	else if (0 == SvUl::CompareNoCase(m_rInitialInfoSvo.m_ProductName, SvDef::SVO_PRODUCT_SVIM_NEO1))
 	{
 		eType = SVIM_PRODUCT_NEO1;
 	}
@@ -1405,119 +1122,23 @@ HRESULT SVObserverApp::OnObjectRenamed(const std::string& p_rOldName, uint32_t o
 	return l_Status;
 }
 
-bool SVObserverApp::SetStatusText(LPCTSTR PStrStatusText)
-{
-	// If PStrStatusText is a nullptr, the Main Frame deletes the last status info.
-	// If no Main Frame exists, the function returns FALSE.
-	// Otherwise ( and this should always be ) it returns TRUE!
-	if (m_pMainWnd)
-	{
-		GetMainFrame()->SetStatusInfoText(PStrStatusText);
-		return true;
-	}
-	return false;
-}
-
-const std::string& SVObserverApp::getConfigPathName() const
-{
-	return m_ConfigFileName.GetPathName();
-}
-
-const std::string& SVObserverApp::getConfigFileName() const
-{
-	return m_ConfigFileName.GetFileName();
-}
-
-const std::string SVObserverApp::getConfigFullFileName() const
-{
-	return m_ConfigFileName.GetFullFileName();
-}
-
-bool SVObserverApp::setConfigFullFileName(LPCTSTR csFullFileName, bool bLoadFile)
-{
-	m_ConfigFileName.SetFullFileName(csFullFileName);
-
-	bool bOk = true;
-
-	if (m_ConfigFileName.GetPathName().empty())
-	{
-		SVFileNameManagerClass::Instance().SetConfigurationPathName(nullptr);
-	}
-	else
-	{
-		if (0 == SvUl::CompareNoCase(m_ConfigFileName.GetPathName(), SvStl::GlobalPath::Inst().GetRunPath()))
-		{
-			SVFileNameManagerClass::Instance().SetConfigurationPathName(nullptr);
-		}
-		else
-		{
-			bOk = SVFileNameManagerClass::Instance().SetConfigurationPathName(m_ConfigFileName.GetPathName().c_str());
-			// if this returns FALSE, unable to access specified path!
-			if (!bOk)
-			{
-				SvDef::StringVector msgList;
-				msgList.push_back(SvStl::MessageData::convertId2AdditionalText(bLoadFile ? SvStl::Tid_Load : SvStl::Tid_Save));
-				msgList.push_back(m_ConfigFileName.GetPathName());
-				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-				Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_UnableConfig, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10132);
-			}
-		}
-	}
-
-	if (bOk)
-	{
-		if (!SVFileNameManagerClass::Instance().GetConfigurationPathName().empty())
-		{
-			AfxGetApp()->WriteProfileString(_T("Settings"), _T("ConfigurationFilePath"), SVFileNameManagerClass::Instance().GetConfigurationPathName().c_str());
-		}
-	}
-
-	RootObject::setRootChildValue(SvDef::FqnEnvironmentConfigurationFileName, csFullFileName);
-	RootObject::setRootChildValue(SvDef::FqnEnvironmentConfigurationName, m_ConfigFileName.GetFileNameOnly());
-
-
-	return bOk;
-}
-
 bool SVObserverApp::AlreadyExistsIPDocTitle(LPCTSTR)
 {
 	return false;
 }
 
-bool SVObserverApp::ShowConfigurationAssistant(int /*= 3*/,
-	bool bFileNewConfiguration /*= false*/) //@TODO [Arvid][10.20][18.10.2021]: this function is much too long
+bool SVObserverApp::UpdateConfiguration(bool newConfiguration /*= false*/)
 {
-	bool bOk = false;
-
 	// Access denied, if... // Check Edit Mode
 	if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST))
 		return false;
 
-	if (bFileNewConfiguration)
+	if (newConfiguration)
 	{
-		// Clean up SVObserver
-		if (S_OK != DestroyConfig())
+		if (false == PrepareForNewConfiguration())
 		{
-			// Needs Attention !!!
-			// Should get error code if returned S_FALSE; 
-			// If returned ERROR_CANCELLED, user cancelled
 			return false;
 		}
-
-		RootObject* pRoot = nullptr;
-
-		SVObjectManagerClass::Instance().GetRootChildObject(pRoot, SvDef::FqnRoot);
-		if (nullptr != pRoot)
-		{
-			pRoot->createConfigurationObject(SVObjectManagerClass::Instance().GetMutex());
-		}
-
-		// Clean up Execution Directory...
-		// Check path, create if necessary and delete contents...
-		InitPath(std::string(SVFileNameManagerClass::Instance().GetRunPathName() + _T("\\")).c_str(), true, true);
-
-		// Ensure that DestroyConfig() can do his work...
-		SVSVIMStateClass::AddState(SV_STATE_READY);
 	}
 	else
 	{
@@ -1527,194 +1148,17 @@ bool SVObserverApp::ShowConfigurationAssistant(int /*= 3*/,
 		ResetAllIPDocModifyFlag(false);
 	}
 
-	//****RPY - Start - added new AppAssistant
 
-	SVOConfigAssistantDlg cDlg;
+	bool ok = CreateAndUseConfigAssistant(newConfiguration);
 
-	SVIMProductEnum eSVIMType = GetSVIMType();
-
-	cDlg.SetCurrentSystem(eSVIMType);
-
-	SVConfigurationObject* pConfig(nullptr);
-	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-
-	if (nullptr != pConfig)
-	{
-		if (pConfig->GetProductType() != SVIM_PRODUCT_TYPE_UNKNOWN)
-		{
-			cDlg.SetConfigurationSystem(pConfig->GetProductType());
-		}
-		else
-		{
-			cDlg.SetConfigurationSystem(eSVIMType);
-		}
-	}
-	else
-	{
-		cDlg.SetConfigurationSystem(eSVIMType);
-	}
-
-	SVIOBoardCapabilities l_svCapable;
-	unsigned long l_lCount;
-	SVIOConfigurationInterfaceClass::Instance().GetDigitalInputCount(l_lCount);
-	l_svCapable.SetInputCount(l_lCount);
-	SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount(l_lCount);
-	l_svCapable.SetOutputCount(l_lCount);
-
-	// Special code to determine the inverters 
-	// and triggers based on IO board
-	if (_T("10") == m_rInitialInfo.m_IOBoard)
-	{
-		l_svCapable.SetStrobeInverters(1);
-		l_svCapable.SetTriggerInverters(1);
-		l_svCapable.SetTriggerCount(1);
-	}
-	else if (_T("12") == m_rInitialInfo.m_IOBoard)
-	{
-		l_svCapable.SetStrobeInverters(1);
-		l_svCapable.SetTriggerInverters(1);
-		l_svCapable.SetTriggerCount(3);
-	}
-	else if (_T("00") == m_rInitialInfo.m_IOBoard)
-	{
-		// Get Trigger count from the TriggerDLL (in this case the DigitizerDLL)
-		const SVIMTypeInfoStruct& info = SVHardwareManifest::GetSVIMTypeInfo(eSVIMType);
-		l_svCapable.SetNonIOSVIM(info.m_MaxTriggers);
-	}
-	else if (_T("30") == m_rInitialInfo.m_IOBoard)
-	{
-		// Get Trigger count from the SVPlcIO.dll
-		const SVIMTypeInfoStruct& info = SVHardwareManifest::GetSVIMTypeInfo(eSVIMType);
-		l_svCapable.SetStrobeInverters(info.m_MaxTriggers);
-		l_svCapable.SetTriggerInverters(info.m_MaxTriggers);
-		l_svCapable.SetTriggerCount(info.m_MaxTriggers);
-	}
-	else
-	{
-		l_svCapable.SetStrobeInverters(3);
-		l_svCapable.SetTriggerInverters(3);
-		l_svCapable.SetTriggerCount(3);
-	}
-
-	cDlg.SetIOBoardCapabilities(l_svCapable);
-
-	cDlg.SetNewConfiguration(bFileNewConfiguration);
-
-	{
-		SVSVIMStateClass::SetResetState stateEditing {SV_STATE_EDITING};
-		if (cDlg.DoModal() == IDOK)
-		{
-			bOk = true;
-			if (cDlg.Modified())
-			{
-				SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
-			}
-			if (nullptr != pConfig)
-			{
-				pConfig->ClearRemoteOutputUnUsedData();
-				pConfig->ValidateRemoteMonitorList();
-				SVIODoc* pIODoc = GetTheIODoc();
-				if (pIODoc)
-				{
-					pIODoc->UpdateAllViews(nullptr);
-				}
-			}
-		}
-	}
-
-	//****RPY - End - added new AppAssistant
-
-	// Call the application assistant dialog...
-
-	if (bOk)
-	{
-		CWaitCursor wait;
-
-		std::string NewName = cDlg.GetConfigurationName();
-		if (bFileNewConfiguration)
-		{
-			m_ConfigFileName.SetFileNameOnly(NewName.c_str());
-			m_ConfigFileName.SetExtension(SvDef::cPackedConfigExtension);
-
-			RootObject::setRootChildValue(SvDef::FqnEnvironmentConfigurationName, m_ConfigFileName.GetFileNameOnly());
-
-			if (nullptr != pConfig)
-			{
-				// Make all the PPQs build their default digital inputs
-				long lPPQCount = pConfig->GetPPQCount();
-				for (long lPPQ = 0; lPPQ < lPPQCount; lPPQ++)
-				{
-					SVPPQObject* pPPQ = pConfig->GetPPQ(lPPQ);
-					assert(nullptr != pPPQ);
-					pPPQ->RebuildInputList();
-					pPPQ->RebuildOutputList();
-				}// end for
-			}
-		}
-
-		if (nullptr != pConfig)
-		{
-			bOk = pConfig->RebuildInputOutputLists();
-
-			ConstructMissingDocuments();
-
-			// Check for Imported Inspection and adjust views, window placement and conditional history
-			const SVImportedInspectionInfoList& infoList = cDlg.GetImportedInspectionInfoList();
-			for (SVImportedInspectionInfoList::const_iterator it = infoList.begin(); it != infoList.end(); ++it)
-			{
-				const SVImportedInspectionInfo& info = (*it);
-				SVIPDoc* pDoc = GetIPDocByInspectionID(info.m_inspectionId);
-				if (pDoc)
-				{
-					SVIPDocInfoImporter::Import(pDoc, info);
-				}
-			}
-			cDlg.ClearImportedInspectionInfoList();
-
-			if (SVOLicenseManager::Instance().HasToolErrors())
-			{
-				SVOLicenseManager::Instance().ShowLicenseManagerErrors();
-			}
-			else
-			{
-				//close dialog if it is up and has no errors
-				SVOLicenseManager::Instance().ClearLicenseErrors();
-			}
-
-			//
-			// Set the tool selected for an operator to move if any.
-			// 26 Jan 2000 - frb.
-			//
-			AfxGetMainWnd()->PostMessage(SV_SET_TOOL_SELECTED_IN_TOOL_VIEW, (WPARAM)TRUE);
-
-			bOk = pConfig->Activate() && bOk;
-		}
-
-		if (bFileNewConfiguration)
-		{
-			UpdateAllMenuExtrasUtilities();
-			SVSVIMStateClass::changeState(SV_STATE_READY, SV_STATE_AVAILABLE);
-		}
-
-		// Rebuild PPQBar Buttons
-		GetMainFrame()->DestroyPPQButtons();
-		GetMainFrame()->BuildPPQButtons();
-
-		// Validate Output List TB
-		if (SVMSG_SVO_70_DUPLICATE_DISCRETE_OUTPUT == pConfig->ValidateOutputList())
-		{
-			SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
-			Exception.setMessage(SVMSG_SVO_70_DUPLICATE_DISCRETE_OUTPUT, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
-		}
-	}// end if DoModal == IDOK
-
-	if (!bOk && bFileNewConfiguration)
+	if (!ok && newConfiguration)
 	{
 		SVSVIMStateClass::changeState(SV_STATE_AVAILABLE, SV_STATE_READY | SV_STATE_MODIFIED);
 	}
 
-	return bOk;
+	return ok;
 }
+
 
 bool SVObserverApp::OkToEdit()
 {
@@ -1854,102 +1298,6 @@ HRESULT SVObserverApp::DisplayCameraManager(SVIMProductEnum eProductType)
 	return hr;
 }
 
-HRESULT SVObserverApp::DisconnectToolsetBuffers()
-{
-	// EB 2002 02 28
-	// Added this to fix memory leak freeing MIL buffers
-	// before we close Acq devices, we need to tell all toolsets to Close
-	// this closes the connection between toolset images and the MIL acq image.
-
-	SVConfigurationObject* pConfig(nullptr);
-	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-
-	long lInspectionCount = 0;
-
-	//If the pointer is a nullptr then the count will be 0
-	if (nullptr != pConfig) { lInspectionCount = pConfig->GetInspectionCount(); }
-
-	for (long lInspection = 0; lInspection < lInspectionCount; lInspection++)
-	{
-		SVInspectionProcess* pInspection = pConfig->GetInspection(lInspection);
-		if (nullptr != pInspection)
-		{
-			if (nullptr != pInspection->GetToolSet())
-			{
-				pInspection->DisconnectToolSetMainImage();
-			}
-		}
-	}
-
-	return S_OK;
-}
-
-HRESULT SVObserverApp::ConnectToolsetBuffers()
-{
-	// EB 2002 02 28
-	// Added this to fix memory leak freeing MIL buffers
-	// before we close Acq devices, we need to tell all toolsets to Close
-	// reopen the connection between toolset images and the MIL acq image here.
-
-	SVConfigurationObject* pConfig(nullptr);
-	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-
-	long lInspectionCount = 0;
-	//If the pointer is a nullptr then the count will be 0
-	if (nullptr != pConfig) { lInspectionCount = pConfig->GetInspectionCount(); }
-
-	for (long lInspection = 0; lInspection < lInspectionCount; lInspection++)
-	{
-		SVInspectionProcess* pInspection = pConfig->GetInspection(lInspection);
-		if (nullptr != pInspection)
-		{
-			if (nullptr != pInspection->GetToolSet())
-			{
-				pInspection->ConnectToolSetMainImage();
-			}
-		}
-	}
-
-	return S_OK;
-}
-
-HRESULT SVObserverApp::DisconnectCameras()
-{
-	HRESULT hr = S_OK;
-
-	try
-	{
-		hr = DisconnectAllCameraBuffers();
-	}
-	catch (...)
-	{
-		assert(FALSE);
-		hr = E_FAIL;
-	}
-
-	SvIe::SVDigitizerProcessingClass::Instance().DisconnectDevices();
-
-	return hr;
-}
-
-HRESULT SVObserverApp::ConnectCameras()
-{
-	HRESULT hr = S_OK;
-
-	SvIe::SVDigitizerProcessingClass::Instance().ConnectDevices();
-
-	try
-	{
-		hr = ConnectCameraBuffers();
-	}
-	catch (...)
-	{
-		assert(FALSE);
-		hr = E_FAIL;
-	}
-
-	return hr;
-}
 
 HRESULT SVObserverApp::SendCameraParameters()
 {
@@ -1975,17 +1323,17 @@ HRESULT SVObserverApp::SendCameraParameters()
 			// Check for the camera file and camera to match.
 			if (S_OK == hr)
 			{
-				HRESULT l_hrTmp = pDevice->IsValidCameraFileParameters(*pDeviceParams);
-				if (E_NOTIMPL != l_hrTmp && S_OK != l_hrTmp)
+				HRESULT hrTmp = pDevice->IsValidCameraFileParameters(*pDeviceParams);
+				if (E_NOTIMPL != hrTmp && S_OK != hrTmp)
 				{
 					hr = SV_CAN_GO_ONLINE_FAILURE_ACQUISITION;
 				}
 			}
 
 			// Send GIGE packet size if was set from hardware.ini
-			if (IsMatroxGige() && m_rInitialInfo.m_gigePacketSize != 0)
+			if (IsMatroxGige() && m_rInitialInfoSvo.m_gigePacketSize != 0)
 			{
-				pDeviceParams->SetParameter(DeviceParamGigePacketSize, SVLongValueDeviceParam{ m_rInitialInfo.m_gigePacketSize });
+				pDeviceParams->SetParameter(DeviceParamGigePacketSize, SVLongValueDeviceParam{ m_rInitialInfoSvo.m_gigePacketSize });
 				SVDeviceParam* pParam = pDeviceParams->GetParameter(DeviceParamGigePacketSize);
 				if (nullptr != pParam)
 				{
@@ -2011,7 +1359,7 @@ HRESULT SVObserverApp::SendCameraParameters()
 
 HRESULT SVObserverApp::SetModeEdit(bool p_bState)
 {
-	HRESULT l_hr = S_OK;
+	HRESULT hr = S_OK;
 	if (p_bState)
 	{
 		SVSVIMStateClass::changeState(SV_STATE_EDIT, SV_STATE_STOP);
@@ -2025,171 +1373,8 @@ HRESULT SVObserverApp::SetModeEdit(bool p_bState)
 		//
 		DeselectTool();
 	}
-	return l_hr;
+	return hr;
 }
-
-HRESULT SVObserverApp::GetTriggersAndCounts(std::string& rTriggerCounts) const
-{
-	HRESULT l_hr = S_FALSE;
-	SVConfigurationObject* pConfig(nullptr);
-	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-
-	if (nullptr != pConfig)
-	{
-		long l_lCount = pConfig->GetPPQCount();
-		for (int l_lPPQ = 0; l_lPPQ < l_lCount; l_lPPQ++)
-		{
-			SVPPQObject* pPPQ = pConfig->GetPPQ(l_lPPQ);
-			//Returns true when pointer valid
-			if (nullptr != pPPQ)
-			{
-				SvTrig::SVTriggerObject* pTrigger(pPPQ->GetTrigger());
-				if (nullptr != pTrigger)
-				{
-					l_hr = S_OK;
-					std::string Temp = SvUl::Format(_T("\n%s count-%d"), pTrigger->GetName(), pTrigger->getTriggerCount());
-					rTriggerCounts += Temp;
-				}
-			}
-		}
-	}
-	return l_hr;
-}
-
-void SVObserverApp::RefreshAllIPDocuments()
-{
-	//get list of IPDoc's.
-
-	POSITION pos = GetFirstDocTemplatePosition();
-	if (pos)
-	{
-		do
-		{
-			CDocTemplate* pDocTemplate = GetNextDocTemplate(pos);
-			if (pDocTemplate)
-			{
-				POSITION posDoc = pDocTemplate->GetFirstDocPosition();
-				if (posDoc)
-				{
-					do
-					{
-						CDocument* newDoc = pDocTemplate->GetNextDoc(posDoc);
-						if (newDoc)
-						{
-							SVIPDoc* pTmpDoc = dynamic_cast <SVIPDoc*> (newDoc);
-							if (nullptr != pTmpDoc)
-							{
-								pTmpDoc->UpdateWithLastProduct();
-							}
-						}
-					} while (posDoc);
-				}
-			}
-		} while (pos);
-	}
-}
-
-void SVObserverApp::RunAllIPDocuments()
-{
-	//get list of IPDoc's.
-	SVSVIMStateClass::SVRCBlocker block;
-	POSITION pos = GetFirstDocTemplatePosition();
-	if (pos)
-	{
-		do
-		{
-			CDocTemplate* pDocTemplate = GetNextDocTemplate(pos);
-			if (pDocTemplate)
-			{
-				POSITION posDoc = pDocTemplate->GetFirstDocPosition();
-				if (posDoc)
-				{
-					do
-					{
-						CDocument* newDoc = pDocTemplate->GetNextDoc(posDoc);
-						if (newDoc)
-						{
-							SVIPDoc* pTmpDoc = dynamic_cast <SVIPDoc*> (newDoc);
-							if (nullptr != pTmpDoc)
-							{
-								pTmpDoc->RunOnce();
-							}
-						}
-					} while (posDoc);
-				}
-			}
-		} while (pos);
-	}
-}
-
-void SVObserverApp::SetAllIPDocumentsOnline()
-{
-	//get list of IPDoc's.
-	SVSVIMStateClass::SVRCBlocker block;
-	POSITION pos = GetFirstDocTemplatePosition();
-	if (pos)
-	{
-		do
-		{
-			CDocTemplate* pDocTemplate = GetNextDocTemplate(pos);
-			if (pDocTemplate)
-			{
-				POSITION posDoc = pDocTemplate->GetFirstDocPosition();
-				if (posDoc)
-				{
-					do
-					{
-						CDocument* newDoc = pDocTemplate->GetNextDoc(posDoc);
-						if (newDoc)
-						{
-							SVIPDoc* pTmpDoc = dynamic_cast <SVIPDoc*> (newDoc);
-
-							if (nullptr != pTmpDoc)
-							{
-								pTmpDoc&& pTmpDoc->GoOnline();
-							}
-						}
-					} while (posDoc);
-				}
-			}
-		} while (pos);
-	}
-}
-
-void SVObserverApp::SetAllIPDocumentsOffline()
-{
-	//get list of IPDoc's.
-
-	POSITION pos = GetFirstDocTemplatePosition();
-	if (pos)
-	{
-		do
-		{
-			CDocTemplate* pDocTemplate = GetNextDocTemplate(pos);
-			if (pDocTemplate)
-			{
-				POSITION posDoc = pDocTemplate->GetFirstDocPosition();
-				if (posDoc)
-				{
-					do
-					{
-						CDocument* newDoc = pDocTemplate->GetNextDoc(posDoc);
-						if (newDoc)
-						{
-							SVIPDoc* pTmpDoc = dynamic_cast <SVIPDoc*> (newDoc);
-
-							if (nullptr != pTmpDoc)
-							{
-								pTmpDoc&& pTmpDoc->GoOffline();
-							}
-						}
-					} while (posDoc);
-				}
-			}
-		} while (pos);
-	}
-}
-
 
 void SVObserverApp::Start(DWORD desiredState)
 {
@@ -2379,45 +1564,6 @@ HRESULT SVObserverApp::PrepareCamerasAndMemory()
 }
 
 
-// cppcheck-suppress constParameter; rPpqMonitorList
-void SVObserverApp::CreateImageStores(SVConfigurationObject* pConfig, PPQMonitorList& rPpqMonitorList, HRESULT Result, DWORD desiredState, bool isLocalStart)
-{
-	double preTriggerTimeWidow {0.0};
-	if (SVHardwareManifest::isDiscreteIOSystem(pConfig->GetProductType()))
-	{
-		preTriggerTimeWidow = (0.0 == m_rInitialInfo.m_preTriggerTimeWindow) ? SvDef::cDefaultPreTriggerTimeWindow : m_rInitialInfo.m_preTriggerTimeWindow;
-	}
-
-	long lSize = pConfig->GetPPQCount();
-
-	///In this loop the ImageStores are created 
-	for (long l = 0; S_OK == Result && l < lSize; l++)
-	{
-		auto* pPPQ = pConfig->GetPPQ(l);
-		//Returns true when pointer valid
-		if (nullptr != pPPQ)
-		{
-			pPPQ->setPreTriggerTimeWindow(preTriggerTimeWidow);
-			///Set NAK Behavior
-			pPPQ->SetNAKMode(m_rInitialInfo.m_NAKMode, m_rInitialInfo.m_NAKParameter);
-
-			// Do this before calling CanGoOnline 
-			const MonitorListAttributeStruct& rActiveList = rPpqMonitorList[pPPQ->GetName()];
-			pPPQ->SetMonitorList(rActiveList);
-			pPPQ->SetSlotmanager(SvSml::SharedMemWriter::Instance().GetSlotManager(pPPQ->GetName()));
-			bool isTestMode {SV_STATE_TEST == desiredState};
-			pPPQ->PrepareGoOnline(isTestMode);
-
-			SvTrig::SVTriggerObject* pTrigger {pPPQ->GetTrigger()};
-			if (nullptr != pTrigger && SvDef::TriggerType::SoftwareTrigger == pTrigger->getType() || isTestMode)
-			{
-				SoftwareTriggerDlg::Instance().AddTrigger(pTrigger, isTestMode && isLocalStart);
-			}
-		}
-	}// end for
-}
-
-
 void SVObserverApp::RunInspections(SVConfigurationObject* pConfig, DWORD desiredState)
 {
 	long lSize = pConfig->GetPPQCount();
@@ -2482,90 +1628,6 @@ void SVObserverApp::RunInspections(SVConfigurationObject* pConfig, DWORD desired
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
-void SVObserverApp::executePreOrPostExecutionFile(const std::string& filepath, bool inRunMode)
-{
-	if (std::filesystem::exists(filepath) && inRunMode)
-	{
-		std::string filename = std::filesystem::path(filepath).filename().generic_string();
-		SHELLEXECUTEINFO ShExecInfo = {0};
-		ShExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
-		ShExecInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
-		ShExecInfo.hwnd = NULL;
-		ShExecInfo.lpVerb = NULL;
-		ShExecInfo.lpFile = filename.c_str();
-		ShExecInfo.lpParameters = "";
-		ShExecInfo.lpDirectory = SvStl::GlobalPath::Inst().GetRunPath().c_str();
-		ShExecInfo.nShow = SW_HIDE;
-		ShExecInfo.hInstApp = NULL;
-
-		ShellExecuteEx(&ShExecInfo);
-		DWORD returnValue = WaitForSingleObject(ShExecInfo.hProcess, batExecutionTimeout);
-
-		if (returnValue == WAIT_TIMEOUT)
-		{
-			SvDef::StringVector msgList;
-			msgList.push_back(filename);
-			SvStl::MessageManager Msg(SvStl::MsgType::Log);
-			Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_BatchfileExecutionTimeout, msgList, SvStl::SourceFileParams(StdMessageParams));
-		}
-	}
-}
-
-HRESULT SVObserverApp::DisconnectAllCameraBuffers()
-{
-	HRESULT hr = DisconnectToolsetBuffers();
-
-	if (S_OK == hr)
-	{
-		hr = SvIe::SVDigitizerProcessingClass::Instance().DestroyBuffers();
-	}
-
-	return hr;
-}
-
-HRESULT SVObserverApp::ConnectCameraBuffers()
-{
-	HRESULT hr = S_OK;
-
-	SVConfigurationObject* pConfig(nullptr);
-	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-	SvDef::StringVector Cameras;
-	SvIe::SVDigitizerProcessingClass::Instance().GetAcquisitionDeviceList(Cameras);
-
-	if (nullptr != pConfig)
-	{
-		SvDef::StringVector::const_iterator Iter(Cameras.begin());
-		for (; Cameras.end() != Iter; ++Iter)
-		{
-			SvIe::SVAcquisitionClassPtr pAcqDevice;
-
-			pAcqDevice = SvIe::SVDigitizerProcessingClass::Instance().GetAcquisitionDevice(Iter->c_str());
-			if (nullptr != pAcqDevice)
-			{
-				// dummy vars
-				SVLightReference* pLR;
-				SVFileNameArrayClass* pFiles;
-				SVLut* pLut;
-				SVDeviceParamCollection* pParams;
-
-				if (pConfig->GetAcquisitionDevice(Iter->c_str(), pFiles, pLR, pLut, pParams))
-				{
-					SVImageInfoClass svImageInfo;
-					pAcqDevice->GetImageInfo(&svImageInfo);
-					hr = pAcqDevice->CreateBuffers(svImageInfo);
-				}
-			}
-		}
-
-		if (S_OK == hr)
-		{
-			hr = ConnectToolsetBuffers();
-		}
-	}
-
-	return hr;
-}
-
 HRESULT SVObserverApp::InitializeSecurity()
 {
 	HMODULE hMessageDll{ nullptr };
@@ -2640,261 +1702,12 @@ HRESULT SVObserverApp::InitializeSecurity()
 }
 
 
-bool SVObserverApp::fileSaveAsSVXWrapper(const std::string& rFileName, bool resetAutoSave)
-{
-	//When a file name is present it must have the correct extension
-	if (!rFileName.empty() && std::string::npos == rFileName.find(SvDef::cPackedConfigExtension))
-	{
-		SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-		Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SVObserver_WrongPathnameEntered, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10134);
-		return false;
-	}
-
-	CWaitCursor wait;
-	bool result {true};
-	SVSVIMStateClass::AddState(SV_STATE_SAVING);
-	ResetAllIPDocModifyFlag(false);
-
-	SVConfigurationObject* pConfig(nullptr);
-	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-
-	if (nullptr != pConfig)
-	{
-		m_SvxFileName.SetFileName(m_ConfigFileName.GetFileName().c_str());
-		m_SvxFileName.SetPathName(SVFileNameManagerClass::Instance().GetRunPathName().c_str());
-		m_SvxFileName.SetExtension(SvDef::cConfigExtension);
-		std::string svxFilePath = m_SvxFileName.GetFullFileName();
-
-		result = fileSaveAsSVX(pConfig, svxFilePath, rFileName, resetAutoSave);
-	}
-
-	SVSVIMStateClass::RemoveState(SV_STATE_SAVING);
-	return result;
-}
-
-
-bool SVObserverApp::DetermineConfigurationSaveName()
-{
-	SVFileNameClass svFileName = m_ConfigFileName;
-	svFileName.SetFileType(SV_SVZ_CONFIGURATION_FILE_TYPE);
-	//Need to remove the *.svx files being visible
-	svFileName.SetFileExtensionFilterList(_T("SVResearch Configuration Files (*.svz)|*.svz||"));
-
-	if (getConfigPathName().empty() ||
-		0 == SvUl::CompareNoCase(getConfigPathName(), SvStl::GlobalPath::Inst().GetRunPath()))
-	{
-		svFileName.SetPathName(AfxGetApp()->GetProfileString(_T("Settings"), _T("ConfigurationFilePath"), SvStl::GlobalPath::Inst().GetRunPath().c_str()));
-
-		if (0 == SvUl::CompareNoCase(svFileName.GetPathName(), SvStl::GlobalPath::Inst().GetRunPath().c_str()))
-		{
-			if (!SVFileNameManagerClass::Instance().GetConfigurationPathName().empty())
-			{
-				svFileName.SetPathName(SVFileNameManagerClass::Instance().GetConfigurationPathName().c_str());
-			}
-		}
-	}
-
-	if (svFileName.SaveFile())
-	{
-		if (setConfigFullFileName(svFileName.GetFullFileName().c_str(), false))
-		{
-			AfxGetApp()->WriteProfileString(_T("Settings"), _T("ConfigurationFilePath"), svFileName.GetPathName().c_str());
-		}
-		else
-		{
-			return false;
-		}
-	}
-	else
-	{
-		return false;
-	}
-	return true;
-}
-
-void SVObserverApp::StartTrigger(SVConfigurationObject* pConfig)
-{
-	SVSVIMStateClass::SVRCBlocker block;
-	//The pointer is usually checked by the caller
-	if (nullptr != pConfig)
-	{
-		SvStl::MessageContainer Msg;
-		long ppqCount = pConfig->GetPPQCount();
-		for (long i = 0; i < ppqCount && 0 == Msg.getMessage().m_MessageCode; i++)
-		{
-			auto* pPPQ = pConfig->GetPPQ(i);
-			if (nullptr != pPPQ)
-			{
-				SvTrig::SVTriggerObject* pTrigger{ pPPQ->GetTrigger() };
-				if (nullptr != pTrigger)
-				{
-					pPPQ->setOnline();
-					if (!pTrigger->Start())
-					{
-						SvDef::StringVector msgList;
-						msgList.push_back(pTrigger->GetName());
-						Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_GoOnlineFailure_Trigger, msgList, SvStl::SourceFileParams(StdMessageParams));
-					}
-				}
-			}
-		}
-		if (0 != Msg.getMessage().m_MessageCode)
-		{
-			//If an error has occurred need to clean up
-			for (long i = 0; i < ppqCount; i++)
-			{
-				auto* pPPQ = pConfig->GetPPQ(i);
-				if (nullptr != pPPQ)
-				{
-					pPPQ->GoOffline();
-				}
-			}
-			throw Msg;
-		}
-	}
-}
-
-bool SVObserverApp::OpenConfigFileFromMostRecentList(int nID)
-{
-	ASSERT_VALID(this);
-	assert(nullptr != m_pRecentFileList);
-
-	assert(nID >= ID_FILE_MRU_FILE1);
-	assert(nID < ID_FILE_MRU_FILE1 + (int)m_pRecentFileList->GetSize());
-	int nIndex = nID - ID_FILE_MRU_FILE1;
-	assert((*m_pRecentFileList)[nIndex].GetLength() != 0);
-
-#if defined (TRACE_THEM_ALL) || defined (TRACE_SVO)
-	TRACE2("MRU: open file (%d) '%s'.\n", (nIndex)+1,
-		(LPCTSTR)(*m_pRecentFileList)[nIndex]);
-#endif
-	bool bResult = false;
-
-	// Check Security to see if save is allowed
-
-	// Open and read the Configuration from the Most Recent Used
-	// List under the menu File.
-	//
-	SVFileNameClass svFileName;
-
-	svFileName.SetFullFileName((*m_pRecentFileList)[nIndex]);
-
-	HRESULT hr = OpenFile((*m_pRecentFileList)[nIndex]);
-
-	//if S_OK, check to see if it has any tool errors in the license manager
-	if (S_OK == hr)
-	{
-		if (SVOLicenseManager::Instance().HasToolErrors())
-		{
-			SVOLicenseManager::Instance().ShowLicenseManagerErrors();
-		}
-	}
-
-	if (S_FALSE == hr)    // don't do on ERROR_CANCELLED
-	{
-		m_pRecentFileList->Remove(nIndex);
-	}
-	bResult = (S_OK == hr);
-
-	return bResult;
-}
-
-HRESULT SVObserverApp::ConstructMissingDocuments() //@TODO [Arvid][10.20][18.10.2021]: this function is too long
-{
-	HRESULT l_Status(S_OK);
-
-	SVConfigurationObject* pConfig(nullptr);
-	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-
-	if (nullptr != pConfig)
-	{
-		SVIOController* l_pIOController = pConfig->GetIOController();
-
-		if (nullptr != l_pIOController)
-		{
-			if (nullptr == l_pIOController->GetIODoc())
-			{
-				SVIODoc* l_pIODoc(NewSVIODoc(l_pIOController->GetName(), *l_pIOController));
-
-				if (nullptr != l_pIODoc)
-				{
-					l_pIODoc->UpdateAllViews(nullptr);
-				}
-				else
-				{
-					l_Status = E_FAIL;
-				}
-			}
-		}
-		else
-		{
-			l_Status = E_FAIL;
-		}
-
-		const SVInspectionProcessVector& rInspections = pConfig->GetInspections();
-
-		SVInspectionProcessVector::const_iterator l_Iter(rInspections.begin());
-
-		while (S_OK == l_Status && l_Iter != rInspections.end())
-		{
-			SVInspectionProcess* pInspection(*l_Iter);
-
-			if (nullptr != pInspection)
-			{
-				if (nullptr == GetIPDocByInspectionID(pInspection->getObjectId()))
-				{
-					SVIPDoc* l_pIPDoc(NewSVIPDoc(pInspection->GetName(), *pInspection));
-
-					if (nullptr != l_pIPDoc)
-					{
-						l_pIPDoc->mbInitImagesByName = true;
-
-						// Init Document
-						if (!l_pIPDoc->InitAfterSystemIsDocked())
-						{
-							l_Status = E_FAIL;
-						}
-					}
-				}
-			}
-			else
-			{
-				l_Status = E_FAIL;
-			}
-
-			++l_Iter;
-		}
-	}
-	else
-	{
-		l_Status = E_FAIL;
-	}
-
-
-	return l_Status;
-}
-
-bool SVObserverApp::DestroyMessageWindow()
-{
-	if (m_pMessageWindow)
-	{
-		if (::IsWindow(m_pMessageWindow->m_hWnd))
-		{
-			m_pMessageWindow->DestroyWindow();
-		}
-
-		delete m_pMessageWindow;
-		m_pMessageWindow = nullptr;
-		return true;
-	}
-	return false;
-}
 #pragma endregion Protected Methods
 
 #pragma region Private Methods
 void SVObserverApp::startInstances()
 {
-	SVFileNameManagerClass::Instance().AddItem(&m_SvxFileName);
+	AddSvxFilenameToManager();
 
 	SvStl::MessageManager::setShowDisplayFunction(SvMc::DisplayMessageBox::showDialog);
 	SVVisionProcessorHelper::Instance().Startup();
@@ -2906,7 +1719,7 @@ void SVObserverApp::startInstances()
 	SvIe::SVDigitizerProcessingClass::Instance().Startup();
 
 	SVObjectManagerClass::Instance().ConstructRootObject(SvPb::RootClassId);
-	m_IniInfoHandler.LoadIniFilesAndDlls();
+	getIniInfoHandler().LoadIniFilesAndDlls();
 
 	SvLog::bootstrap_logging();
 	WebSocketSettings Settings;
@@ -2942,6 +1755,23 @@ void SVObserverApp::startInstances()
 	SVObjectManagerClass::Instance().fitFirstObjectId();
 }
 
+bool SVObserverApp::DestroyMessageWindow()
+{
+	if (m_pMessageWindow)
+	{
+		if (::IsWindow(m_pMessageWindow->m_hWnd))
+		{
+			m_pMessageWindow->DestroyWindow();
+		}
+
+		delete m_pMessageWindow;
+		m_pMessageWindow = nullptr;
+		return true;
+	}
+	return false;
+}
+
+
 void SVObserverApp::stopInstances()
 {
 	SVVisionProcessorHelper::Instance().Shutdown();
@@ -2961,58 +1791,15 @@ void SVObserverApp::stopInstances()
 
 	SVIOConfigurationInterfaceClass::Instance().Shutdown();
 
-	m_IniInfoHandler.INIClose();
+	getIniInfoHandler().INIClose();
 	SvOi::destroyTriggerRecordController();
 	// Shutdown MIL
 	SVMatroxApplicationInterface::Shutdown();
 	SvStl::MessageManager::setShowDisplayFunction(nullptr);
 
 	// File management for config file.
-	SVFileNameManagerClass::Instance().RemoveItem(&m_SvxFileName);
+	RemoveSvxFilenameFromManager();
 	SoftwareTriggerDlg::Instance().Close();
-}
-
-void SVObserverApp::StopAll()
-{
-	if (m_pMainWnd)
-	{
-		GetMainFrame()->SetStatusInfoText(_T(""));
-
-		auto* pTrcRW = SvOi::getTriggerRecordControllerRWInstance();
-		if (nullptr != pTrcRW)
-		{
-			pTrcRW->unlockReset();
-		}
-		SVSVIMStateClass::RemoveState(SV_STATE_RUNNING | SV_STATE_TEST);
-
-		SetPriorityClass(GetCurrentProcess(), NORMAL_PRIORITY_CLASS);
-
-		SoftwareTriggerDlg::Instance().ClearTriggers();
-	}
-}
-
-void SVObserverApp::SaveConfig(bool saveAs /*= false*/)
-{
-	if (saveAs || getConfigPathName().empty())
-	{
-		if (false == DetermineConfigurationSaveName())
-		{
-			return;
-		}
-	}
-	std::string fileName {getConfigFullFileName()};
-
-	if (fileSaveAsSVXWrapper(fileName, true))
-	{
-		setConfigFullFileName(fileName.c_str(), false);
-		if (0 == _access(fileName.c_str(), 0))
-		{
-			AddToRecentFileList(fileName.c_str());
-			SVSVIMStateClass::RemoveState(SV_STATE_MODIFIED);
-		}
-
-		((CMDIFrameWnd*)AfxGetMainWnd())->OnUpdateFrameTitle(TRUE);
-	}
 }
 
 void SVObserverApp::EnterRunMode()
@@ -3031,7 +1818,6 @@ void SVObserverApp::EnterRunMode()
 
 void SVObserverApp::StopIfRunning()
 {
-
 	if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
 	{
 		StopSvo();
@@ -3040,115 +1826,7 @@ void SVObserverApp::StopIfRunning()
 	}
 }
 
-void SVObserverApp::StopSvo()
-{
-	CWaitCursor wait;
-	SVSVIMStateClass::SVRCBlocker block;
-
-	SVArchiveWritingDlg* pArchiveWriteDlg = nullptr;
-
-	GetMainFrame()->SetStatusInfoText(_T(""));
-
-	EnableTriggerSettings(false);
-
-	if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_EDIT | SV_STATE_REGRESSION))
-	{
-		return;
-	}
-
-	if (SVSVIMStateClass::CheckState(SV_STATE_STOPING))
-	{
-		if (SVSVIMStateClass::CheckState(SV_STATE_STOP_PENDING))
-		{
-			SVSVIMStateClass::RemoveState(SV_STATE_STOP_PENDING);
-		}
-		return;
-	}
-
-	if (SVSVIMStateClass::CheckState(SV_STATE_STARTING))
-	{
-		SVSVIMStateClass::AddState(SV_STATE_STOP_PENDING);
-		return;
-	}
-
-	if (TheSVMemoryManager().ReservedBytes(SvDef::ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME) > 0)
-	{
-		pArchiveWriteDlg = new SVArchiveWritingDlg;
-		pArchiveWriteDlg->Create(IDD_DLG_ARCHIVETOOL_CLOSE_PROGRESS);
-		pArchiveWriteDlg->ShowWindow(SW_SHOW);
-		SVYieldPaintMessages();
-	}
-
-	bool wasInRunMode = SVSVIMStateClass::CheckState(SV_STATE_RUNNING);
-
-	SVSVIMStateClass::changeState(SV_STATE_UNAVAILABLE | SV_STATE_STOPING, SV_STATE_READY | SV_STATE_RUNNING | SV_STATE_STOP_PENDING);
-	auto* pTrcRW = SvOi::getTriggerRecordControllerRWInstance();
-	if (nullptr != pTrcRW)
-	{
-		pTrcRW->unlockReset();
-	}
-
-	SVObjectManagerClass::Instance().SetState(SVObjectManagerClass::ReadWrite);
-
-	SetThreadPriority(THREAD_PRIORITY_NORMAL);
-
-	SVConfigurationObject* pConfig(nullptr);
-	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-
-	if (nullptr != pConfig)
-	{
-		pConfig->SetModuleReady(false);
-	}
-
-	// Signal Module Stop...
-	StopAll();
-
-	// Increment Offline Count
-	m_OfflineCount++;
-
-	long lSize = pConfig->GetPPQCount();
-	for (long l = 0; l < lSize; l++)
-	{
-		SVPPQObject* pPPQ = pConfig->GetPPQ(l);
-		if (nullptr != pPPQ) { pPPQ->GoOffline(); }
-	}
-	// Stop the FailStatus Stream PPQ Listeners
-
-	SetAllIPDocumentsOffline();
-
-	std::string TriggerCounts;
-	GetTriggersAndCounts(TriggerCounts);
-
-	//add message to event viewer - gone off-line
-	SvStl::MessageManager Exception(SvStl::MsgType::Log);
-	Exception.setMessage(SVMSG_SVO_28_SVOBSERVER_GO_OFFLINE, TriggerCounts.c_str(), SvStl::SourceFileParams(StdMessageParams));
-
-	if (pConfig != nullptr)
-	{
-		executePreOrPostExecutionFile(pConfig->getPostRunExecutionFilePath(), wasInRunMode);
-	}
-
-	SVSVIMStateClass::changeState(SV_STATE_READY | SV_STATE_STOP, SV_STATE_UNAVAILABLE | SV_STATE_STOPING | SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT);
-
-	if (SVSVIMStateClass::CheckState(SV_STATE_START_PENDING))
-	{
-		GetMainFrame()->PostMessage(WM_COMMAND, MAKEWPARAM(ID_MODE_RUN, 0), 0);
-	}
-
-	if (pArchiveWriteDlg)
-	{
-		pArchiveWriteDlg->DestroyWindow();
-		delete pArchiveWriteDlg;
-	}
-}
-
-void SVObserverApp::RCClose()
-{
-	DestroyConfig(false, true);	// Close config immediately, without hint or user message...
-}
-
-bool SVObserverApp::InitATL() //@TODO [Arvid][10.20][18.10.2021]: this function is too long
-{
+bool SVObserverApp::InitATL(){
 	HRESULT l_Status(S_OK);
 
 	bool l_AppRegister(false);
@@ -3251,101 +1929,6 @@ bool SVObserverApp::InitATL() //@TODO [Arvid][10.20][18.10.2021]: this function 
 	return true;
 }
 
-void SVObserverApp::StopRegression()
-{
-	//get list of IPDoc's.
-	//see if the IPDoc is running regression, if so send command to stop.
-	//since only 1 IPDoc can run regression at a time, as soon as 1 is found, break...
-	SVSVIMStateClass::SVRCBlocker block;
-	CDocTemplate* pDocTemplate = nullptr;
-	CString strExt;
-	POSITION pos = GetFirstDocTemplatePosition();
-	if (pos)
-	{
-		bool bDone = false;
-		do
-		{
-			pDocTemplate = GetNextDocTemplate(pos);
-			if (pDocTemplate)
-			{
-				POSITION posDoc = pDocTemplate->GetFirstDocPosition();
-				if (posDoc)
-				{
-					do
-					{
-						CDocument* newDoc = pDocTemplate->GetNextDoc(posDoc);
-						if (newDoc)
-						{
-							SVIPDoc* pTmpDoc = dynamic_cast <SVIPDoc*> (newDoc);
-							if (pTmpDoc)
-							{
-								if (pTmpDoc->IsRegressionTestRunning())
-								{
-									POSITION TmpPos = pTmpDoc->GetFirstViewPosition();
-									CView* pIPView = pTmpDoc->GetNextView(TmpPos);
-									CMDIChildWnd* pFrame = (CMDIChildWnd*)pIPView->GetParentFrame();
-									pFrame->MDIActivate();
-									pTmpDoc->RegressionTestModeChanged();
-									bDone = true;
-								}
-							}
-						}
-					} while (posDoc && !bDone);
-				}
-			}
-		} while (pos && !bDone);
-	}
-
-	StopSvo();
-}
-
-bool SVObserverApp::AddSecurityNode(HMODULE hMessageDll, long lId, LPCTSTR NTGroup, bool bForcePrompt)
-{
-	LPTSTR pTmp;
-
-	if (FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS |
-		FORMAT_MESSAGE_FROM_HMODULE,
-		(LPCVOID)hMessageDll, lId,
-		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
-		(LPTSTR)&pTmp, 0, nullptr))
-	{
-
-		std::string Tmp(pTmp);
-		Tmp = SvUl::Left(Tmp, Tmp.find('\n') - 1);
-		TheSecurityManager().SVAdd(lId, Tmp.c_str(), NTGroup, bForcePrompt);
-		LocalFree(pTmp);
-		return true;
-	}
-	return false;
-}
-
-bool SVObserverApp::AddSecurityNode(HMODULE hMessageDll, long lId)
-{
-	bool l_bRet = true;
-	LPTSTR pszTmp;
-
-	if (FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS |
-		FORMAT_MESSAGE_FROM_HMODULE,
-		(LPCVOID)hMessageDll, lId,
-		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
-		(LPTSTR)&pszTmp, 0, nullptr))
-	{
-		CString strTmp = pszTmp;
-		int l_pos = strTmp.Find('\n', 0);
-		if (l_pos > 0)
-		{
-			TheSecurityManager().SVAdd(lId, strTmp.Left(l_pos - 1));
-		}
-		else
-		{
-			l_bRet = false;
-		}
-		LocalFree(pszTmp);
-	}
-	return l_bRet;
-}
-
-
 /////////////////////////////////////////////////////////////////////////////
 // Command message processor for range: ID_FILE_MRU_FILE1, ID_FILE_MRU_FILE16
 //
@@ -3361,7 +1944,7 @@ BOOL SVObserverApp::OnOpenRecentFile(UINT nID)
 
 			if (!bRunning)
 			{
-				bool l_bOk = OpenConfigFileFromMostRecentList(nID);
+				bool l_bOk = OpenConfigFileFromMostRecentList(m_pRecentFileList, nID);
 				if (l_bOk && !TheSecurityManager().SVIsSecured(SECURITY_POINT_MODE_MENU_EDIT_TOOLSET))
 				{
 					SetModeEdit(true); // Set Edit mode
@@ -3373,7 +1956,6 @@ BOOL SVObserverApp::OnOpenRecentFile(UINT nID)
 	// @HACK - This method is always returning TRUE.
 	return true;
 }
-
 
 void SVObserverApp::OnUpdateRecentFileMenu(CCmdUI* PCmdUI)
 {
@@ -3388,5 +1970,43 @@ void SVObserverApp::OnUpdateRecentFileMenu(CCmdUI* PCmdUI)
 			PCmdUI->m_pMenu->EnableMenuItem(l, MF_BYCOMMAND | MF_GRAYED);
 	}
 }
-
 #pragma endregion Private Methods
+
+//this function is here because it requires a PPQMonitorListParameter - and spurious CheckInclude issues appear if it is in SVObserverOuttakes, fo rexample
+// cppcheck-suppress constParameter ; cppCheck doesn't know rPpqMonitorList[] is not a const function
+void CreateImageStores(SVConfigurationObject* pConfig, PPQMonitorList& rPpqMonitorList, HRESULT Result, DWORD desiredState, bool isLocalStart)
+{
+	double preTriggerTimeWidow {0.0};
+	if (SVHardwareManifest::isDiscreteIOSystem(pConfig->GetProductType()))
+	{
+		preTriggerTimeWidow = (0.0 == TheSVObserverApp().m_rInitialInfoSvo.m_preTriggerTimeWindow) ? SvDef::cDefaultPreTriggerTimeWindow : TheSVObserverApp().m_rInitialInfoSvo.m_preTriggerTimeWindow;
+	}
+
+	long lSize = pConfig->GetPPQCount();
+
+	///In this loop the ImageStores are created 
+	for (long l = 0; S_OK == Result && l < lSize; l++)
+	{
+		auto* pPPQ = pConfig->GetPPQ(l);
+		//Returns true when pointer valid
+		if (nullptr != pPPQ)
+		{
+			pPPQ->setPreTriggerTimeWindow(preTriggerTimeWidow);
+			///Set NAK Behavior
+			pPPQ->SetNAKMode(TheSVObserverApp().m_rInitialInfoSvo.m_NAKMode, TheSVObserverApp().m_rInitialInfoSvo.m_NAKParameter);
+
+			// Do this before calling CanGoOnline 
+			const MonitorListAttributeStruct& rActiveList = rPpqMonitorList[pPPQ->GetName()];
+			pPPQ->SetMonitorList(rActiveList);
+			pPPQ->SetSlotmanager(SvSml::SharedMemWriter::Instance().GetSlotManager(pPPQ->GetName()));
+			bool isTestMode {SV_STATE_TEST == desiredState};
+			pPPQ->PrepareGoOnline(isTestMode);
+
+			SvTrig::SVTriggerObject* pTrigger {pPPQ->GetTrigger()};
+			if (nullptr != pTrigger && SvDef::TriggerType::SoftwareTrigger == pTrigger->getType() || isTestMode)
+			{
+				SoftwareTriggerDlg::Instance().AddTrigger(pTrigger, isTestMode && isLocalStart);
+			}
+		}
+	}
+}

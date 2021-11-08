@@ -11,9 +11,10 @@
 
 #pragma region includes
 #include "stdafx.h"
+#include "ConfigurationOuttakes.h"
 #include "RemoteCommand.h"
 #include "SVFileSystemLibrary/SVFileNameClass.h"
-#include "SVObserver.h"
+#include "Definitions/SVIMCommand.h"
 #include "Definitions/SVUserMessage.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "Definitions/SVIMCommand.h"
@@ -115,7 +116,7 @@ HRESULT GlobalRCGetMode( unsigned long* pMode )
 // Global functions for SVFocusNT Remote Commands
 std::string GlobalRCGetConfigurationName(bool runPath)
 {
-	std::string Result = ((SVObserverApp*)AfxGetApp())->getConfigFullFileName();
+	std::string Result = getConfigFullFileName();
 
 	if(runPath)
 	{

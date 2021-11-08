@@ -66,8 +66,7 @@ private:
 
 	SvLib::InitialInformation m_InitialInfo;
 #pragma endregion Member variables
-
-
 };
 
 
+InitialInformationHandler& getIniInfoHandler();

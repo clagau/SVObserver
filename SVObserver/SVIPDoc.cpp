@@ -31,6 +31,7 @@
 #include "SVLutDlg.h"
 #include "SVMainFrm.h"
 #include "SVMultiDocTemplate.h"
+#include "SVObserverOuttakes.h"
 #include "SVObserver.h"
 #include "SVSecurity/SVSecurityManager.h"
 #include "SVPPQObject.h"
@@ -874,7 +875,7 @@ void SVIPDoc::OnUpdateStatusInfo(CCmdUI* pCmdUI)
 	{
 		case ID_INDICATOR_INFO:
 		{
-			TheSVObserverApp().GetMainFrame()->UpdateStatusInfo(pCmdUI);
+			GetSvoMainFrame()->UpdateStatusInfo(pCmdUI);
 			break;
 		}
 		default:
@@ -2156,7 +2157,7 @@ void SVIPDoc::RunRegressionTest()
 
 	if (hasRunMode || hasTestMode)
 	{
-		TheSVObserverApp().StopSvo();
+		StopSvo();
 	}
 
 	SVInspectionProcess* pInspection(GetInspectionProcess());
@@ -4017,10 +4018,10 @@ SVIPDoc* NewSVIPDoc(LPCTSTR DocName, SVInspectionProcess& Inspection)
 {
 	SVIPDoc* pDoc = nullptr;
 	CDocTemplate* pDocTemplate = nullptr;
-	POSITION pos = TheSVObserverApp().GetFirstDocTemplatePosition();
+	POSITION pos = AfxGetApp()->GetFirstDocTemplatePosition();
 	if (pos)
 	{
-		pDocTemplate = TheSVObserverApp().GetNextDocTemplate(pos);
+		pDocTemplate = AfxGetApp()->GetNextDocTemplate(pos);
 		if (pDocTemplate)
 		{
 			pDoc = dynamic_cast<SVIPDoc*>(pDocTemplate->OpenDocumentFile(nullptr, TRUE));   // Make visible
@@ -4042,10 +4043,10 @@ SVIPDoc* NewSVIPDoc(LPCTSTR DocName, SVInspectionProcess& Inspection)
 SVIPDoc* GetIPDocByInspectionID(uint32_t inspectionID)
 {
 	SVIPDoc* pIPDoc(nullptr);
-	POSITION pos = TheSVObserverApp().GetFirstDocTemplatePosition();
+	POSITION pos = AfxGetApp()->GetFirstDocTemplatePosition();
 	while (pos && !pIPDoc)
 	{
-		CDocTemplate* pDocTemplate = TheSVObserverApp().GetNextDocTemplate(pos);
+		CDocTemplate* pDocTemplate = AfxGetApp()->GetNextDocTemplate(pos);
 		if (pDocTemplate)
 		{
 			POSITION posDoc = pDocTemplate->GetFirstDocPosition();
@@ -4068,12 +4069,12 @@ SVIPDoc* GetIPDocByInspectionID(uint32_t inspectionID)
 
 void ResetAllIPDocModifyFlag(BOOL bModified)
 {
-	POSITION pos = TheSVObserverApp().GetFirstDocTemplatePosition(); 
+	POSITION pos = AfxGetApp()->GetFirstDocTemplatePosition(); 
 	if (pos)
 	{
 		do
 		{
-			CDocTemplate* pDocTemplate = TheSVObserverApp().GetNextDocTemplate(pos); //@TODO [Arvid][10.20][27.10.2021] similar control structures occur multiple times. Use std::algorithm?
+			CDocTemplate* pDocTemplate = AfxGetApp()->GetNextDocTemplate(pos); //@TODO [Arvid][10.20][27.10.2021] similar control structures occur multiple times. Use std::algorithm?
 			if (pDocTemplate)
 			{
 				POSITION posDoc = pDocTemplate->GetFirstDocPosition();
@@ -4103,6 +4104,44 @@ void ResetAllIPDocModifyFlag(BOOL bModified)
 		pIODoc->SetModifiedFlag(bModified);
 	}
 }
+
+
+void SetAllIPDocumentsOffline()
+{
+	//get list of IPDoc's.
+
+	POSITION pos = AfxGetApp()->GetFirstDocTemplatePosition();
+	if (pos)
+	{
+		do
+		{
+			CDocTemplate* pDocTemplate = AfxGetApp()->GetNextDocTemplate(pos);
+			if (pDocTemplate)
+			{
+				POSITION posDoc = pDocTemplate->GetFirstDocPosition();
+				if (posDoc)
+				{
+					do
+					{
+						CDocument* newDoc = pDocTemplate->GetNextDoc(posDoc);
+						if (newDoc)
+						{
+							SVIPDoc* pTmpDoc = dynamic_cast <SVIPDoc*> (newDoc);
+
+							if (nullptr != pTmpDoc)
+							{
+								pTmpDoc&& pTmpDoc->GoOffline();
+							}
+						}
+					} while (posDoc);
+				}
+			}
+		} while (pos);
+	}
+}
+
+
+
 
 HRESULT RebuildOutputObjectListHelper(SVIODoc* pIODoc)
 {
@@ -4140,4 +4179,104 @@ CDocTemplate* CreateIpDocMultiDocTemplate()
 		RUNTIME_CLASS(SVImageViewScroll));// View
 }
 
+
+void RefreshAllIPDocuments()
+{
+	//get list of IPDoc's.
+
+	POSITION pos = AfxGetApp()->GetFirstDocTemplatePosition();
+	if (pos)
+	{
+		do
+		{
+			CDocTemplate* pDocTemplate = AfxGetApp()->GetNextDocTemplate(pos);
+			if (pDocTemplate)
+			{
+				POSITION posDoc = pDocTemplate->GetFirstDocPosition();
+				if (posDoc)
+				{
+					do
+					{
+						CDocument* newDoc = pDocTemplate->GetNextDoc(posDoc);
+						if (newDoc)
+						{
+							SVIPDoc* pTmpDoc = dynamic_cast <SVIPDoc*> (newDoc);
+							if (nullptr != pTmpDoc)
+							{
+								pTmpDoc->UpdateWithLastProduct();
+							}
+						}
+					} while (posDoc);
+				}
+			}
+		} while (pos);
+	}
+}
+
+void RunAllIPDocuments()
+{
+	//get list of IPDoc's.
+	SVSVIMStateClass::SVRCBlocker block;
+	POSITION pos = AfxGetApp()->GetFirstDocTemplatePosition();
+	if (pos)
+	{
+		do
+		{
+			CDocTemplate* pDocTemplate = AfxGetApp()->GetNextDocTemplate(pos);
+			if (pDocTemplate)
+			{
+				POSITION posDoc = pDocTemplate->GetFirstDocPosition();
+				if (posDoc)
+				{
+					do
+					{
+						CDocument* newDoc = pDocTemplate->GetNextDoc(posDoc);
+						if (newDoc)
+						{
+							SVIPDoc* pTmpDoc = dynamic_cast <SVIPDoc*> (newDoc);
+							if (nullptr != pTmpDoc)
+							{
+								pTmpDoc->RunOnce();
+							}
+						}
+					} while (posDoc);
+				}
+			}
+		} while (pos);
+	}
+}
+
+void SetAllIPDocumentsOnline()
+{
+	//get list of IPDoc's.
+	SVSVIMStateClass::SVRCBlocker block;
+	POSITION pos = AfxGetApp()->GetFirstDocTemplatePosition();
+	if (pos)
+	{
+		do
+		{
+			CDocTemplate* pDocTemplate = AfxGetApp()->GetNextDocTemplate(pos);
+			if (pDocTemplate)
+			{
+				POSITION posDoc = pDocTemplate->GetFirstDocPosition();
+				if (posDoc)
+				{
+					do
+					{
+						CDocument* newDoc = pDocTemplate->GetNextDoc(posDoc);
+						if (newDoc)
+						{
+							SVIPDoc* pTmpDoc = dynamic_cast <SVIPDoc*> (newDoc);
+
+							if (nullptr != pTmpDoc)
+							{
+								pTmpDoc&& pTmpDoc->GoOnline();
+							}
+						}
+					} while (posDoc);
+				}
+			}
+		} while (pos);
+	}
+}
 

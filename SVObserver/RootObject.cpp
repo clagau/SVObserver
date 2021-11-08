@@ -115,7 +115,7 @@ HRESULT RootObject::RefreshObject(const SVObjectClass* const pSender, RefreshObj
 			//Save Start Last Configuration in registry
 			double Value {0.0};
 			pSender->getValue(Value);
-			TheSVObserverApp().WriteProfileInt(_T("Settings"), _T("Run Last Configuration Automatically"), static_cast<int> (Value));
+			AfxGetApp()->WriteProfileInt(_T("Settings"), _T("Run Last Configuration Automatically"), static_cast<int> (Value));
 		}
 	}
 
@@ -342,7 +342,7 @@ bool RootObject::createRootChildren()
 		}
 		// Load special profile settings
 		bool StartLastConfiguration(false);
-		if (TheSVObserverApp().GetProfileInt(_T("Settings"), _T("Run Last Configuration Automatically"), 0))
+		if (AfxGetApp()->GetProfileInt(_T("Settings"), _T("Run Last Configuration Automatically"), 0))
 		{
 			StartLastConfiguration = true;
 		}
