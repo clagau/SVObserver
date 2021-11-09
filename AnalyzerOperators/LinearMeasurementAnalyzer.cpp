@@ -77,7 +77,7 @@ void LinearMeasurementAnalyzer::init()
 	{
 		AddFriend(pEdgeB->getObjectId());
 
-		pEdgeB->m_svEdgeSelect.SetDefaultValue(SvDef::SV_LAST_EDGE, true);
+		pEdgeB->setEdgeSelectDefaultValue(SvDef::SV_LAST_EDGE);
 	}
 
 	// Set Embedded defaults

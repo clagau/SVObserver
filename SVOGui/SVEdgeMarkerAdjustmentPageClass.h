@@ -36,6 +36,7 @@ namespace SvOg
 		UseLowerThresholdMaxMinusOffset,
 		UseLowerThresholdMinPlusOffset,
 		EdgeLowerThresholdValue,
+		EdgeLowerThresholdSelected,
 		LowerThresholdMaxMinusPercentDiff,
 		LowerThresholdMaxMinusOffset,
 		LowerThresholdMinPlusOffset,
@@ -44,6 +45,7 @@ namespace SvOg
 		UseUpperThresholdMaxMinusOffset,
 		UseUpperThresholdMinPlusOffset,
 		EdgeUpperThresholdValue,
+		EdgeUpperThresholdSelected,
 		UpperThresholdMaxMinusPercentDiff,
 		UpperThresholdMaxMinusOffset,
 		UpperThresholdMinPlusOffset,
@@ -52,10 +54,34 @@ namespace SvOg
 		EdgeIdCount
 	};
 
+	constexpr auto g_EdgeAEmbeddedIds = std::array<SvPb::EmbeddedIdEnum, EdgeIdCount>
+	{
+		SvPb::EdgeADirectionEId, SvPb::EdgeAPolarisationEId, SvPb::EdgeAEdgeSelectEId, SvPb::EdgeAEdgeSelectThisValueEId,
+		SvPb::EdgeAIsFixedEdgeMarkerEId, SvPb::EdgeAPositionEId, SvPb::EdgeAPositionOffsetEId, SvPb::UseLowerThresholdSelectableEId,
+		SvPb::UseLowerThresholdMaxMinusPercentDiffEId, SvPb::UseLowerThresholdMaxMinusOffsetEId, SvPb::UseLowerThresholdMinPlusOffsetEId,
+		SvPb::EdgeALowerThresholdValueEId, SvPb::EdgeALowerThresholdSelectedValueEId, SvPb::LowerThresholdMaxMinusPercentDiffEId, SvPb::LowerThresholdMaxMinusOffsetEId,
+		SvPb::LowerThresholdMinPlusOffsetEId, SvPb::UseUpperThresholdSelectableEId, SvPb::UseUpperThresholdMaxMinusPercentDiffEId,
+		SvPb::UseUpperThresholdMaxMinusOffsetEId, SvPb::UseUpperThresholdMinPlusOffsetEId, SvPb::EdgeAUpperThresholdValueEId, SvPb::EdgeAUpperThresholdSelectedValueEId,
+		SvPb::UpperThresholdMaxMinusPercentDiffEId, SvPb::UpperThresholdMaxMinusOffsetEId, SvPb::UpperThresholdMinPlusOffsetEId,
+		SvPb::LinearEdgesEId
+	};
+
+	constexpr auto g_EdgeBEmbeddedIds = std::array<SvPb::EmbeddedIdEnum, EdgeIdCount>
+	{
+		SvPb::EdgeBDirectionEId, SvPb::EdgeBPolarisationEId, SvPb::EdgeBEdgeSelectEId, SvPb::EdgeBEdgeSelectThisValueEId,
+		SvPb::EdgeBIsFixedEdgeMarkerEId, SvPb::EdgeBPositionEId, SvPb::EdgeBPositionOffsetEId, SvPb::UseLowerThresholdSelectableBEId,
+		SvPb::UseLowerThresholdMaxMinusPercentDiffBEId, SvPb::UseLowerThresholdMaxMinusOffsetBEId, SvPb::UseLowerThresholdMinPlusOffsetBEId,
+		SvPb::EdgeBLowerThresholdValueEId, SvPb::EdgeBLowerThresholdSelectedValueEId, SvPb::LowerThresholdMaxMinusPercentDiffBEId, SvPb::LowerThresholdMaxMinusOffsetBEId,
+		SvPb::LowerThresholdMinPlusOffsetBEId, SvPb::UseUpperThresholdSelectableBEId, SvPb::UseUpperThresholdMaxMinusPercentDiffBEId,
+		SvPb::UseUpperThresholdMaxMinusOffsetBEId, SvPb::UseUpperThresholdMinPlusOffsetBEId, SvPb::EdgeBUpperThresholdValueEId, SvPb::EdgeBUpperThresholdSelectedValueEId,
+		SvPb::UpperThresholdMaxMinusPercentDiffBEId, SvPb::UpperThresholdMaxMinusOffsetBEId, SvPb::UpperThresholdMinPlusOffsetBEId,
+		SvPb::LinearEdgesEId
+	};
+
 	class SVEdgeMarkerAdjustmentPageClass : public CPropertyPage
 	{
 	public:
-		SVEdgeMarkerAdjustmentPageClass(uint32_t inspectionId, uint32_t taskObjectId, const std::vector<SvPb::EmbeddedIdEnum>& rEdgeEmbeddedIds, uint32_t analyzerID, UINT nIDCaption = 0, int ID = IDD);
+		SVEdgeMarkerAdjustmentPageClass(uint32_t inspectionId, uint32_t taskObjectId, const std::array<SvPb::EmbeddedIdEnum, EdgeIdCount>& rEdgeEmbeddedIds, uint32_t analyzerID, UINT nIDCaption = 0, int ID = IDD);
 		virtual ~SVEdgeMarkerAdjustmentPageClass();
 
 		virtual HRESULT GetInspectionData();
@@ -68,6 +94,7 @@ namespace SvOg
 		bool m_bEnablePosition;
 		bool m_bEnableThreshold;
 		bool m_bEdgeA;
+		bool m_existEdgeB = true;
 
 	// Dialogfelddaten
 		//{{AFX_DATA(SVEdgeMarkerAdjustmentPageClass)
@@ -90,8 +117,8 @@ namespace SvOg
 		// Parameter: Upper - New position for the upper slider control
 		// Returns:   S_OK every time
 		//************************************
-		// @WARNING:  This is a bad design.  Public member variables should not be used.  Instead use accessor functions.
-		virtual HRESULT UpdateSliderData(DWORD Lower, DWORD Upper);
+		virtual HRESULT UpdateSliderData() = 0;
+		HRESULT UpdateSliderData(DWORD Lower, DWORD Upper);
 
 		void setScrollRange( CSliderCtrl* pSliderCtrl, int min, int max );
 		void setScrollPos( CSliderCtrl* pSliderCtrl, int pos );
@@ -131,7 +158,7 @@ namespace SvOg
 
 		//! This list needs to be initialized by the corresponding Linear Edge
 		//! either EdgeA or EdgeB and the size and order must correspond to the enum EdgeEmbeddedEnum list
-		const std::vector<SvPb::EmbeddedIdEnum>& m_rEdgeEmbeddedIds;
+		const std::array<SvPb::EmbeddedIdEnum, EdgeIdCount>& m_rEdgeEmbeddedIds;
 
 		const uint32_t m_InspectionID;
 		const uint32_t m_TaskObjectID;

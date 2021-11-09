@@ -70,21 +70,13 @@ void LinearMaximumObjectAnalyzer::init()
 	if( nullptr != pEdgeA )
 	{
 		AddFriend(pEdgeA->getObjectId());
-
-		pEdgeA->m_svPolarisation.SetDefaultValue(SvDef::SV_POSITIVE_POLARISATION, true);
-
-		pEdgeA->m_svEdgeSelect.SetDefaultValue(SvDef::SV_THIS_EDGE, true);
-		pEdgeA->m_svEdgeSelectThisValue.SetDefaultValue( 1.0, true );
+		pEdgeA->setDefaultValues(SvDef::SV_POSITIVE_POLARISATION, SvDef::SV_THIS_EDGE, 1.0);
 	}
 
 	if( nullptr != pEdgeB )
 	{
 		AddFriend(pEdgeB->getObjectId());
-
-		pEdgeB->m_svPolarisation.SetDefaultValue(SvDef::SV_NEGATIVE_POLARISATION, true);
-
-		pEdgeB->m_svEdgeSelect.SetDefaultValue(SvDef::SV_THIS_EDGE, true);
-		pEdgeB->m_svEdgeSelectThisValue.SetDefaultValue(1.0, true);
+		pEdgeA->setDefaultValues(SvDef::SV_NEGATIVE_POLARISATION, SvDef::SV_THIS_EDGE, 1.0);
 	}
 
 	// Set Embedded defaults
@@ -224,8 +216,7 @@ void LinearMaximumObjectAnalyzer::addOverlayResults(SvPb::Overlay& rOverlay, boo
 bool LinearMaximumObjectAnalyzer::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	SVImageExtentClass Extents;
-	std::vector<double> AEdges;
-	std::vector<double> BEdges;
+	
 	SVPoint<double> edgePointA;
 	SVPoint<double> edgePointB;
 	double DistanceA( 0.0 );
@@ -233,7 +224,7 @@ bool LinearMaximumObjectAnalyzer::onRun( SvIe::RunStatus& rRunStatus, SvStl::Mes
 
 	bool Result = __super::onRun(rRunStatus, pErrorMessages) && ValidateEdgeA(pErrorMessages) && ValidateEdgeB(pErrorMessages);
 	
-	if ( nullptr == GetTool() || S_OK != GetEdgeA()->m_svLinearEdges.GetArrayValues( AEdges ) || S_OK != GetEdgeB()->m_svLinearEdges.GetArrayValues( BEdges ) )
+	if ( nullptr == GetTool() )
 	{
 		Result = false;
 		if (nullptr != pErrorMessages)
@@ -245,6 +236,8 @@ bool LinearMaximumObjectAnalyzer::onRun( SvIe::RunStatus& rRunStatus, SvStl::Mes
 
 	if( Result )
 	{
+		std::vector<double> AEdges = GetEdgeA()->getLinearEdges();
+		std::vector<double> BEdges = GetEdgeB()->getLinearEdges();
 		int l_iFResultAIndex = -1;
 		int l_iFResultBIndex = -1;
 		int l_iBResultAIndex = -1;

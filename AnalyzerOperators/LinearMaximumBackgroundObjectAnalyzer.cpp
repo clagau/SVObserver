@@ -55,21 +55,13 @@ void LinearMaximumBackgroundObjectAnalyzer::init()
 	if( nullptr != pEdgeA )
 	{
 		AddFriend(pEdgeA->getObjectId());
-
-		pEdgeA->m_svPolarisation.SetDefaultValue(SvDef::SV_NEGATIVE_POLARISATION, true);
-
-		pEdgeA->m_svEdgeSelect.SetDefaultValue(SvDef::SV_THIS_EDGE, true);
-		pEdgeA->m_svEdgeSelectThisValue.SetDefaultValue( 1.0, true);
+		pEdgeA->setDefaultValues(SvDef::SV_NEGATIVE_POLARISATION, SvDef::SV_THIS_EDGE, 1.0);
 	}
 
 	if( nullptr != pEdgeB )
 	{
 		AddFriend(pEdgeB->getObjectId());
-
-		pEdgeB->m_svPolarisation.SetDefaultValue(SvDef::SV_POSITIVE_POLARISATION, true);
-
-		pEdgeB->m_svEdgeSelect.SetDefaultValue(SvDef::SV_THIS_EDGE, true);
-		pEdgeB->m_svEdgeSelectThisValue.SetDefaultValue( 1.0, true );
+		pEdgeA->setDefaultValues(SvDef::SV_POSITIVE_POLARISATION, SvDef::SV_THIS_EDGE, 1.0);
 	}
 
 	RegisterEmbeddedObject( &m_svLinearDistanceA, SvPb::LinearDistanceEdgeAEId, IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_A, false, SvOi::SVResetItemNone );
@@ -234,8 +226,6 @@ std::vector<std::string> LinearMaximumBackgroundObjectAnalyzer::getParameterName
 
 bool LinearMaximumBackgroundObjectAnalyzer::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
-	std::vector<double> AEdges;
-	std::vector<double> BEdges;
 	SVPoint<double> edgePointA;
 	SVPoint<double> edgePointB;
 	double DistanceA( 0.0 );
@@ -243,7 +233,7 @@ bool LinearMaximumBackgroundObjectAnalyzer::onRun( SvIe::RunStatus& rRunStatus, 
 
 	bool Result = __super::onRun(rRunStatus, pErrorMessages) && ValidateEdgeA(pErrorMessages) && ValidateEdgeB(pErrorMessages);
 	
-	if ( nullptr == GetTool() || S_OK != GetEdgeA()->m_svLinearEdges.GetArrayValues( AEdges ) || S_OK != GetEdgeB()->m_svLinearEdges.GetArrayValues( BEdges ) )
+	if ( nullptr == GetTool() )
 	{
 		Result = false;
 		if (nullptr != pErrorMessages)
@@ -255,6 +245,8 @@ bool LinearMaximumBackgroundObjectAnalyzer::onRun( SvIe::RunStatus& rRunStatus, 
 
 	if( Result )
 	{
+		std::vector<double> AEdges = GetEdgeA()->getLinearEdges();
+		std::vector<double> BEdges = GetEdgeB()->getLinearEdges();
 		int resultAIndex = -1;
 		int resultBIndex = -1;
 		int offsetB = 0;

@@ -82,19 +82,19 @@ SVLinearEdgeProcessingClass::SVLinearEdgeProcessingClass( SVObjectClass* POwner,
 	m_svUseLowerThresholdMaxMinusPercentDiff.SetDefaultValue(BOOL(false));
 	m_svUseLowerThresholdMaxMinusOffset.SetDefaultValue(BOOL(false));
 	m_svUseLowerThresholdMinPlusOffset.SetDefaultValue(BOOL(false));
-	m_svLowerThresholdValue.SetDefaultValue(SvDef::cDefaultToolLowerThreshold);
-	m_svLowerMaxMinusPercentDiffValue.SetDefaultValue(0);
-	m_svLowerMaxMinusOffsetValue.SetDefaultValue(0);
-	m_svLowerMinPlusOffsetValue.SetDefaultValue(0);
+	m_svLowerThresholdSelected.SetDefaultValue(SvDef::cDefaultToolLowerThreshold);
+	m_svLowerMaxMinusPercentDiffValue.SetDefaultValue(0l);
+	m_svLowerMaxMinusOffsetValue.SetDefaultValue(0l);
+	m_svLowerMinPlusOffsetValue.SetDefaultValue(0l);
 
 	m_svUseUpperThresholdSelectable.SetDefaultValue(BOOL(true));
 	m_svUseUpperThresholdMaxMinusPercentDiff.SetDefaultValue(BOOL(false));
 	m_svUseUpperThresholdMaxMinusOffset.SetDefaultValue(BOOL(false));
 	m_svUseUpperThresholdMinPlusOffset.SetDefaultValue(BOOL(false));
-	m_svUpperThresholdValue.SetDefaultValue(SvDef::cDefaultToolUpperThreshold);
-	m_svUpperMaxMinusPercentDiffValue.SetDefaultValue(0);
-	m_svUpperMaxMinusOffsetValue.SetDefaultValue(0);
-	m_svUpperMinPlusOffsetValue.SetDefaultValue(0);
+	m_svUpperThresholdSelected.SetDefaultValue(SvDef::cDefaultToolUpperThreshold);
+	m_svUpperMaxMinusPercentDiffValue.SetDefaultValue(0l);
+	m_svUpperMaxMinusOffsetValue.SetDefaultValue(0l);
+	m_svUpperMinPlusOffsetValue.SetDefaultValue(0l);
 
 	m_cfThresholds = SvDef::DefaultSubFunctionColor1;
 	m_cfHistogram = SvDef::DefaultSubFunctionColor1;
@@ -124,11 +124,11 @@ bool SVLinearEdgeProcessingClass::CreateObject( const SVObjectLevelCreateStruct&
 	}
 
 	//set attributes for Upper and Lower Threshold values.
-	m_svUpperThresholdValue.SetObjectAttributesAllowed( SvPb::remotelySetable | SvPb::setableOnline, SvOi::SetAttributeType::AddAttribute );
-	m_svUpperThresholdValue.SetObjectAttributesAllowed( SvPb::extentObject, SvOi::SetAttributeType::RemoveAttribute );
+	m_svUpperThresholdSelected.SetObjectAttributesAllowed( SvPb::remotelySetable | SvPb::setableOnline, SvOi::SetAttributeType::AddAttribute );
+	m_svUpperThresholdSelected.SetObjectAttributesAllowed( SvPb::extentObject, SvOi::SetAttributeType::RemoveAttribute );
 
-	m_svLowerThresholdValue.SetObjectAttributesAllowed( SvPb::remotelySetable | SvPb::setableOnline, SvOi::SetAttributeType::AddAttribute );
-	m_svLowerThresholdValue.SetObjectAttributesAllowed( SvPb::extentObject, SvOi::SetAttributeType::RemoveAttribute );
+	m_svLowerThresholdSelected.SetObjectAttributesAllowed( SvPb::remotelySetable | SvPb::setableOnline, SvOi::SetAttributeType::AddAttribute );
+	m_svLowerThresholdSelected.SetObjectAttributesAllowed( SvPb::extentObject, SvOi::SetAttributeType::RemoveAttribute );
 
 	m_svLinearEdges.SetObjectAttributesAllowed( SvPb::viewable | SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
 
@@ -140,10 +140,10 @@ bool SVLinearEdgeProcessingClass::CreateObject( const SVObjectLevelCreateStruct&
 	m_svUseUpperThresholdSelectable.GetValue(bUpper);
 
 	SvOi::SetAttributeType AddRemoveType = bLower ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
-	m_svLowerThresholdValue.SetObjectAttributesAllowed( SvPb::audittrail, AddRemoveType );
+	m_svLowerThresholdSelected.SetObjectAttributesAllowed( SvPb::audittrail, AddRemoveType );
 
 	AddRemoveType = bUpper ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
-	m_svUpperThresholdValue.SetObjectAttributesAllowed( SvPb::audittrail, AddRemoveType );
+	m_svUpperThresholdSelected.SetObjectAttributesAllowed( SvPb::audittrail, AddRemoveType );
 
 	SvVol::SVDoubleValueObjectClass* pLinearData = m_InputLinearData.getInput<SvVol::SVDoubleValueObjectClass>();
 	if (nullptr != pLinearData)
@@ -152,6 +152,35 @@ bool SVLinearEdgeProcessingClass::CreateObject( const SVObjectLevelCreateStruct&
 	}
 
 	return bOk;
+}
+
+SVLinearEdgeProcessingClass::UpdateEnum SVLinearEdgeProcessingClass::getThresholdMode(const SvVol::SVBoolValueObjectClass& rUseSelected, const SvVol::SVBoolValueObjectClass& rUsePercentDiff, const SvVol::SVBoolValueObjectClass& rUseMinOffset, const SvVol::SVBoolValueObjectClass& rUseMaxOffset)
+{
+	BOOL bUsed {false};
+	rUseSelected.GetValue(bUsed);
+	if (bUsed)
+	{
+		return UpdateEnum::Selected;
+	}
+
+	rUsePercentDiff.GetValue(bUsed);
+	if (bUsed)
+	{
+		return UpdateEnum::PercentDiff;
+	}
+
+	rUseMinOffset.GetValue(bUsed);
+	if (bUsed)
+	{
+		return UpdateEnum::MinOffset;
+	}
+
+	rUseMaxOffset.GetValue(bUsed);
+	if (bUsed)
+	{
+		return UpdateEnum::MaxOffset;
+	}
+	return UpdateEnum::None;
 }
 
 bool SVLinearEdgeProcessingClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
@@ -164,18 +193,13 @@ bool SVLinearEdgeProcessingClass::ResetObject(SvStl::MessageContainerVector *pEr
 	m_InputDelta.validateInput();
 	m_InputLinearData.validateInput();
 
-	BOOL bUpper{false};
-	BOOL bLower{false};
-	m_svUseLowerThresholdSelectable.GetValue(bLower);
-	m_svLowerThresholdValue.setSaveValueFlag(TRUE == bLower);
-	m_svUseUpperThresholdSelectable.GetValue(bUpper);
-	m_svUpperThresholdValue.setSaveValueFlag(TRUE == bUpper);
+	m_updateLowerState = getThresholdMode(m_svUseLowerThresholdSelectable, m_svUseLowerThresholdMaxMinusPercentDiff, m_svUseLowerThresholdMinPlusOffset, m_svUseLowerThresholdMaxMinusOffset);
+	UpdateThresholdValues(m_updateLowerState, m_svLowerThresholdSelected, m_svLowerMaxMinusPercentDiffValue, m_svLowerMinPlusOffsetValue, m_svLowerMaxMinusOffsetValue, m_lowerThreshold, m_svLowerThresholdValueObject);
+	m_needUpdateThresholdValueLower = (UpdateEnum::Selected != m_updateLowerState || SvPb::LinkedSelectedType::DirectValue != m_svLowerThresholdSelected.getSelectedType());
 
-	SvOi::SetAttributeType AddRemoveType = bLower ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
-	m_svLowerThresholdValue.SetObjectAttributesAllowed( SvPb::audittrail, AddRemoveType );
-
-	AddRemoveType = bUpper ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
-	m_svUpperThresholdValue.SetObjectAttributesAllowed( SvPb::audittrail, AddRemoveType );
+	m_updateUpperState = getThresholdMode(m_svUseUpperThresholdSelectable, m_svUseUpperThresholdMaxMinusPercentDiff, m_svUseUpperThresholdMinPlusOffset, m_svUseUpperThresholdMaxMinusOffset);
+	UpdateThresholdValues(m_updateUpperState, m_svUpperThresholdSelected, m_svUpperMaxMinusPercentDiffValue, m_svUpperMinPlusOffsetValue, m_svUpperMaxMinusOffsetValue, m_upperThreshold, m_svUpperThresholdValueObject);
+	m_needUpdateThresholdValueUpper = (UpdateEnum::Selected != m_updateUpperState || SvPb::LinkedSelectedType::DirectValue != m_svUpperThresholdSelected.getSelectedType());
 
 	if( S_OK != GetPixelDepth() )
 	{
@@ -209,8 +233,8 @@ bool SVLinearEdgeProcessingClass::onRun( SvIe::RunStatus &p_rsvRunStatus, SvStl:
 {
 	bool l_bOk = __super::onRun(p_rsvRunStatus, pErrorMessages);
 
-	if ( S_OK != UpdateUpperThresholdValues() ||
-		  S_OK != UpdateLowerThresholdValues() ||
+	if ((m_needUpdateThresholdValueLower && false == UpdateThresholdValues(m_updateLowerState, m_svLowerThresholdSelected, m_svLowerMaxMinusPercentDiffValue, m_svLowerMinPlusOffsetValue, m_svLowerMaxMinusOffsetValue, m_lowerThreshold, m_svLowerThresholdValueObject)) ||
+		(m_needUpdateThresholdValueUpper && false == UpdateThresholdValues(m_updateUpperState, m_svUpperThresholdSelected, m_svUpperMaxMinusPercentDiffValue, m_svUpperMinPlusOffsetValue, m_svUpperMaxMinusOffsetValue, m_upperThreshold, m_svUpperThresholdValueObject)) ||
 		  S_OK != UpdateEdgeList() )
 	{
 		l_bOk = false;
@@ -526,8 +550,8 @@ HRESULT SVLinearEdgeProcessingClass::GetOutputEdgePoint(SVPoint<double>& rPoint)
 	SvAo::Analyzer* pAnalyzer = dynamic_cast<SvAo::Analyzer*>(GetAnalyzer());
 	if( nullptr == pAnalyzer ||
 		S_OK != pAnalyzer->GetImageExtent().GetOutputRectangle( rect ) ||
-		( S_OK != m_svLowerThresholdValue.GetValue( l_ulLower ) ) ||
-		( S_OK != m_svUpperThresholdValue.GetValue( l_ulUpper ) ) )
+		( S_OK != m_svLowerThresholdValueObject.GetValue( l_ulLower ) ) ||
+		( S_OK != m_svUpperThresholdValueObject.GetValue( l_ulUpper ) ) )
 	{
 		l_hrOk = S_FALSE;
 	}
@@ -561,8 +585,8 @@ HRESULT SVLinearEdgeProcessingClass::GetThresholdBarsOverlay( SVExtentMultiLineS
 	SvAo::Analyzer* pAnalyzer = dynamic_cast<SvAo::Analyzer*>(GetAnalyzer());
 	if( nullptr == pAnalyzer ||
 		S_OK != pAnalyzer->GetImageExtent().GetOutputRectangle( rect ) ||
-		( S_OK != m_svLowerThresholdValue.GetValue( l_ulLower ) ) ||
-		( S_OK != m_svUpperThresholdValue.GetValue( l_ulUpper ) ) )
+		( S_OK != m_svLowerThresholdValueObject.GetValue( l_ulLower ) ) ||
+		( S_OK != m_svUpperThresholdValueObject.GetValue( l_ulUpper ) ) )
 	{
 		l_hrOk = S_FALSE;
 	}
@@ -895,7 +919,7 @@ void SVLinearEdgeProcessingClass::addOverlayResultDetails(SvPb::Overlay& rOverla
 	auto* pThresholdLowerMarker = pThesholdLowerShape->mutable_marker();
 	pThresholdLowerMarker->set_minvalue(SvDef::cMin8BitPixelValue);
 	pThresholdLowerMarker->set_maxvalue(SvDef::cMax8BitPixelValue);
-	SvPb::setValueObject(m_svLowerThresholdValue, *pThresholdLowerMarker->mutable_value(), true);
+	SvPb::setValueObject(m_svLowerThresholdValueObject, *pThresholdLowerMarker->mutable_value(), true);
 	pThresholdLowerMarker->set_sizetype(SvPb::Size::Full);
 	if (isVertical)
 	{
@@ -910,7 +934,7 @@ void SVLinearEdgeProcessingClass::addOverlayResultDetails(SvPb::Overlay& rOverla
 	auto* pThresholdUpperMarker = pThesholdUpperShape->mutable_marker();
 	pThresholdUpperMarker->set_minvalue(SvDef::cMin8BitPixelValue);
 	pThresholdUpperMarker->set_maxvalue(SvDef::cMax8BitPixelValue);
-	SvPb::setValueObject(m_svUpperThresholdValue, *pThresholdUpperMarker->mutable_value(), true);
+	SvPb::setValueObject(m_svUpperThresholdValueObject, *pThresholdUpperMarker->mutable_value(), true);
 	pThresholdUpperMarker->set_sizetype(SvPb::Size::Full);
 	if (isVertical)
 	{
@@ -1000,199 +1024,115 @@ bool SVLinearEdgeProcessingClass::addGraphOverlay(SvPb::Overlay& rOverlay, bool 
 	return false;
 }
 
-HRESULT SVLinearEdgeProcessingClass::UpdateUpperThresholdValues()
+void SVLinearEdgeProcessingClass::setDefaultValues(SvDef::SV_EDGECONTROL_POLARISATION_ENUM polarisationValue, SvDef::SV_EDGECONTROL_EDGESELECT_ENUM edgeSelectValue, double edgeSelectThisValue)
 {
-	HRESULT Result( S_OK );
-	HRESULT hTemp( S_OK );
+	m_svPolarisation.SetDefaultValue(polarisationValue, true);
 
-	BOOL State( FALSE );
-
-	double dMin = 0.0;
-	double dMax = 0.0;
-
-	if( ( S_OK != GetInputMinThreshold(dMin) ) )
-	{
-		Result = S_FALSE;
-	}
-
-	if( S_OK != GetInputMaxThreshold(dMax) )
-	{
-		Result = S_FALSE;
-	}
-
-	if( S_OK == ( hTemp = m_svUseUpperThresholdSelectable.GetValue( State ) ) )
-	{
-		if( ! State )
-		{
-			double dUpper = 0.0;
-			if( ( S_OK == m_svUseUpperThresholdMaxMinusPercentDiff.GetValue( State ) ) && State )
-			{
-				DWORD PercentDiff( 0 );
-
-				if( S_OK == m_svUpperMaxMinusPercentDiffValue.GetValue( PercentDiff )  )
-				{
-					if( 0 != PercentDiff )
-					{
-						double dPercent = static_cast<double> (PercentDiff) / 100.0;
-
-						dUpper = dMax - ( ( dMax - dMin ) * dPercent );
-					}
-					else
-					{
-						dUpper = dMax;
-					}
-				}
-				else
-				{
-					Result = S_FALSE;
-				}
-			}
-			else if( ( S_OK == m_svUseUpperThresholdMaxMinusOffset.GetValue( State ) ) && State )
-			{
-				DWORD Offset( 0 );
-
-				if( S_OK == (hTemp = m_svUpperMaxMinusOffsetValue.GetValue( Offset )) )
-				{
-					dUpper = dMax -  static_cast<double> (Offset);
-				}
-				else
-				{
-					Result = hTemp;
-				}
-			}
-			else if( ( S_OK == m_svUseUpperThresholdMinPlusOffset.GetValue( State ) ) && State )
-			{
-				DWORD Offset( 0 );
-
-				if( S_OK == ( hTemp = m_svUpperMinPlusOffsetValue.GetValue( Offset ) ) )
-				{
-					dUpper = dMin + static_cast<double> (Offset);
-				}
-				else
-				{
-					Result = hTemp;
-				}
-			}
-
-			if( dUpper < 0.0 )
-			{
-				dUpper = 0.0;
-			}
-
-			if( 255.0 < dUpper )
-			{
-				dUpper = 255.0;
-			}
-
-			if( S_OK != ( hTemp = m_svUpperThresholdValue.SetValue(static_cast<DWORD> (dUpper)) ) )
-			{
-				Result = hTemp;
-			}
-		}
-	}
-	else
-	{
-		Result = hTemp;
-	}
-
-	return Result;
+	m_svEdgeSelect.SetDefaultValue(edgeSelectValue, true);
+	m_svEdgeSelectThisValue.SetDefaultValue(edgeSelectThisValue, true);
 }
 
-HRESULT SVLinearEdgeProcessingClass::UpdateLowerThresholdValues()
+bool SVLinearEdgeProcessingClass::UpdateThresholdValues(SVLinearEdgeProcessingClass::UpdateEnum updateState, const SvVol::LinkedValue& rThresholdSelected, const SvVol::LinkedValue& rThresholdPercentDiff,
+	const SvVol::LinkedValue& rThresholdMinOffset, const SvVol::LinkedValue& rThresholdMaxOffset, byte& rThresholdValue, SvVol::SVDWordValueObjectClass& rThresholdValueObject)
 {
-	HRESULT Result( S_OK );
-	HRESULT hTemp( S_OK );
-
-	BOOL bState( false );
-	double dMin( 0.0 );
-	double dMax( 0.0 );
-
-	if( S_OK != GetInputMinThreshold(dMin) )
+	double dLower(0.0);
+	switch (updateState)
 	{
-		Result = S_FALSE;
-	}
-
-	if( S_OK != GetInputMaxThreshold(dMax) )
-	{
-		Result = S_FALSE;
-	}
-
-	if( S_OK == ( hTemp = m_svUseLowerThresholdSelectable.GetValue( bState ) ) )
-	{
-		if( ! bState )
+		case UpdateEnum::Selected:
+			rThresholdSelected.getValue(dLower);
+			break;
+		case UpdateEnum::PercentDiff:
 		{
-			double dLower(0.0);
-			if( ( S_OK == m_svUseLowerThresholdMaxMinusPercentDiff.GetValue( bState ) ) && bState )
+			double percentDiff(0);
+			HRESULT hTemp = rThresholdPercentDiff.getValue(percentDiff);
+			if (S_OK == hTemp)
 			{
-				DWORD PercentDiff( 0 );
-
-				if( S_OK == ( hTemp = m_svLowerMaxMinusPercentDiffValue.GetValue( PercentDiff ) ) )
+				double dMax(0.0);
+				if (S_OK != GetInputMaxThreshold(dMax))
 				{
-					if( 0 != PercentDiff )
+					return S_FALSE;
+				}
+
+				if (0 != percentDiff)
+				{
+					double dMin(0.0);
+					if (S_OK != GetInputMinThreshold(dMin))
 					{
-						double l_dPercent = static_cast<double> (PercentDiff) / 100.0;
-
-						dLower = dMax - ( ( dMax - dMin ) * l_dPercent );
+						return S_FALSE;
 					}
-					else
-					{
-						dLower = dMax;
-					}
+
+					dLower = dMax - ((dMax - dMin) * percentDiff/100.);
 				}
 				else
 				{
-					Result = hTemp;
+					dLower = dMax;
 				}
 			}
-			else if( ( S_OK == m_svUseLowerThresholdMaxMinusOffset.GetValue( bState ) ) && bState )
+			else
 			{
-				DWORD Offset( 0 );
-
-				if( S_OK == ( hTemp = m_svLowerMaxMinusOffsetValue.GetValue( Offset ) ) )
-				{
-					dLower = dMax - static_cast<double> (Offset);
-				}
-				else
-				{
-					Result = hTemp;
-				}
+				return false;
 			}
-			else if( ( S_OK == m_svUseLowerThresholdMinPlusOffset.GetValue( bState ) ) && bState )
-			{
-				DWORD Offset( 0 );
-
-				if( S_OK == ( hTemp = m_svLowerMinPlusOffsetValue.GetValue( Offset ) ) )
-				{
-					dLower = dMin + static_cast<double> (Offset);
-				}
-				else
-				{
-					Result = hTemp;
-				}
-			}
-
-			if( dLower < 0.0 )
-			{
-				dLower = 0.0;
-			}
-
-			if( 255.0 < dLower )
-			{
-				dLower = 255.0;
-			}
-
-			if( S_OK != ( hTemp = m_svLowerThresholdValue.SetValue(static_cast<DWORD> (dLower))))
-			{
-				Result = hTemp;
-			}
+			break;
 		}
+		case UpdateEnum::MinOffset:
+		{
+			double offset(0);
+			HRESULT hTemp = rThresholdMinOffset.getValue(offset);
+			if (S_OK == hTemp)
+			{
+				double dMin(0.0);
+				if (S_OK != GetInputMinThreshold(dMin))
+				{
+					return S_FALSE;
+				}
+
+				dLower = dMin + offset;
+			}
+			else
+			{
+				return false;
+			}
+			break;
+		}
+		case UpdateEnum::MaxOffset:
+		{
+			double offset(0);
+			HRESULT hTemp = rThresholdMaxOffset.getValue(offset);
+			if (S_OK == hTemp)
+			{
+				double dMax(0.0);
+				if (S_OK != GetInputMaxThreshold(dMax))
+				{
+					return false;
+				}
+				dLower = dMax - offset;
+			}
+			else
+			{
+				return false;
+			}
+			break;
+		}
+		case UpdateEnum::None:
+			return true;
+		default:
+			return false;
+	}
+
+	if( dLower < 0.0 )
+	{
+		rThresholdValue = 0;
+	}
+	else if( 255.0 < dLower )
+	{
+		rThresholdValue = 255;
 	}
 	else
 	{
-		Result = hTemp;
+		rThresholdValue = static_cast<byte>(dLower);
 	}
 
-	return Result;
+	return (S_OK == rThresholdValueObject.SetValue(static_cast<DWORD> (rThresholdValue)));
 }
 
 HRESULT SVLinearEdgeProcessingClass::UpdateEdgeList()
@@ -1202,22 +1142,10 @@ HRESULT SVLinearEdgeProcessingClass::UpdateEdgeList()
 	std::vector<double> Data;
 	std::vector<double> Edges;
 
-	DWORD Upper( 0 );
-	DWORD Lower( 0 );
 	long Direction( 0L );
 	long Polarisation( 0L );
 
 	Result = GetInputLinearVectorData( Data );
-
-	if( S_OK == Result )
-	{
-		Result = m_svUpperThresholdValue.GetValue( Upper );
-	}
-
-	if( S_OK == Result )
-	{
-		Result = m_svLowerThresholdValue.GetValue( Lower );
-	}
 
 	if( S_OK == Result )
 	{
@@ -1240,15 +1168,15 @@ HRESULT SVLinearEdgeProcessingClass::UpdateEdgeList()
 				// Calc edges...
 				for( long l = 0; l < l_lCount - 1; ++l )
 				{
-					if( S_OK == IsEdge( Data[ l ], Data[ l + 1 ], Upper, Lower, Polarisation ) )
+					if( S_OK == IsEdge( Data[ l ], Data[ l + 1 ], m_upperThreshold, m_lowerThreshold, Polarisation ) )
 					{
 						if( Polarisation == SvDef::SV_ANY_POLARISATION )
 						{
 							double l_dDistance1 = 0.0;
 							double l_dDistance2 = 0.0;
 
-							bool l_bDistance1 = S_OK == CalculateSubPixelEdge( Data[ l ], Data[ l + 1 ], Upper, Lower, SvDef::SV_POSITIVE_POLARISATION, l_dDistance1 );
-							bool l_bDistance2 = S_OK == CalculateSubPixelEdge( Data[ l ], Data[ l + 1 ], Upper, Lower, SvDef::SV_NEGATIVE_POLARISATION, l_dDistance2 );
+							bool l_bDistance1 = S_OK == CalculateSubPixelEdge( Data[ l ], Data[ l + 1 ], m_upperThreshold, m_lowerThreshold, SvDef::SV_POSITIVE_POLARISATION, l_dDistance1 );
+							bool l_bDistance2 = S_OK == CalculateSubPixelEdge( Data[ l ], Data[ l + 1 ], m_upperThreshold, m_lowerThreshold, SvDef::SV_NEGATIVE_POLARISATION, l_dDistance2 );
 
 							if ( l_dDistance1 <= l_dDistance2 )
 							{
@@ -1287,7 +1215,7 @@ HRESULT SVLinearEdgeProcessingClass::UpdateEdgeList()
 						{
 							double l_dDistance = 0.0;
 
-							if( S_OK == CalculateSubPixelEdge( Data[ l ], Data[ l + 1 ], Upper, Lower, Polarisation, l_dDistance ) )
+							if( S_OK == CalculateSubPixelEdge( Data[ l ], Data[ l + 1 ], m_upperThreshold, m_lowerThreshold, Polarisation, l_dDistance ) )
 							{
 								l_dDistance = l + l_dDistance;
 
@@ -1304,15 +1232,15 @@ HRESULT SVLinearEdgeProcessingClass::UpdateEdgeList()
 			{
 				for( long l = l_lCount - 1; 0 < l; --l )
 				{
-					if( S_OK == IsEdge( Data[ l ], Data[ l - 1 ], Upper, Lower, Polarisation ) )
+					if( S_OK == IsEdge( Data[ l ], Data[ l - 1 ], m_upperThreshold, m_lowerThreshold, Polarisation ) )
 					{
 						if( Polarisation == SvDef::SV_ANY_POLARISATION )
 						{
 							double l_dDistance1 = 0.0;
 							double l_dDistance2 = 0.0;
 
-							bool l_bDistance1 = S_OK == CalculateSubPixelEdge( Data[ l ], Data[ l - 1 ], Upper, Lower, SvDef::SV_POSITIVE_POLARISATION, l_dDistance1 );
-							bool l_bDistance2 = S_OK == CalculateSubPixelEdge( Data[ l ], Data[ l - 1 ], Upper, Lower, SvDef::SV_NEGATIVE_POLARISATION, l_dDistance2 );
+							bool l_bDistance1 = S_OK == CalculateSubPixelEdge( Data[ l ], Data[ l - 1 ], m_upperThreshold, m_lowerThreshold, SvDef::SV_POSITIVE_POLARISATION, l_dDistance1 );
+							bool l_bDistance2 = S_OK == CalculateSubPixelEdge( Data[ l ], Data[ l - 1 ], m_upperThreshold, m_lowerThreshold, SvDef::SV_NEGATIVE_POLARISATION, l_dDistance2 );
 
 							if ( l_dDistance1 <= l_dDistance2 )
 							{
@@ -1351,7 +1279,7 @@ HRESULT SVLinearEdgeProcessingClass::UpdateEdgeList()
 						{
 							double l_dDistance = 0.0;
 
-							if( S_OK == CalculateSubPixelEdge( Data[ l ], Data[ l - 1 ], Upper, Lower, Polarisation, l_dDistance ) )
+							if( S_OK == CalculateSubPixelEdge( Data[ l ], Data[ l - 1 ], m_upperThreshold, m_lowerThreshold, Polarisation, l_dDistance ) )
 							{
 								l_dDistance = l - l_dDistance;
 
@@ -1371,7 +1299,7 @@ HRESULT SVLinearEdgeProcessingClass::UpdateEdgeList()
 				{
 					double l_dValue = 0.0;
 
-					if( S_OK == GetBlackWhiteEdgeValue( Data[ l ], Upper, Lower, l_dValue ) )
+					if( S_OK == GetBlackWhiteEdgeValue( Data[ l ], m_upperThreshold, m_lowerThreshold, l_dValue ) )
 					{
 						Edges.push_back( l_dValue );
 					}

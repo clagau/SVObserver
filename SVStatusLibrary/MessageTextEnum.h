@@ -184,6 +184,7 @@ enum MessageTextEnum
 	Tid_Sax_ConInitializeExFailed,
 	Tid_UnknowThread,
 	Tid_SeedImageDifferentSize,
+	Tid_Value_Invalid,
 
 	//MatroxGigE
 	Tid_MatroxGigE_Connect_FindCameraError,

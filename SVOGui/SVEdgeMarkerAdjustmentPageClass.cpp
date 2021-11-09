@@ -23,7 +23,7 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvOg
 {
-	SVEdgeMarkerAdjustmentPageClass::SVEdgeMarkerAdjustmentPageClass(uint32_t inspectionId, uint32_t taskObjectId, const std::vector<SvPb::EmbeddedIdEnum>& rEdgeEmbeddedIds, uint32_t analyzerID, UINT nIDCaption /*= 0*/, int ID /*= IDD*/)
+	SVEdgeMarkerAdjustmentPageClass::SVEdgeMarkerAdjustmentPageClass(uint32_t inspectionId, uint32_t taskObjectId, const std::array<SvPb::EmbeddedIdEnum, EdgeIdCount>& rEdgeEmbeddedIds, uint32_t analyzerID, UINT nIDCaption /*= 0*/, int ID /*= IDD*/)
 	: CPropertyPage(ID, nIDCaption)
 	, m_bEnableDirection(false)
 	, m_bEnableEdgeSelect(false)
@@ -50,15 +50,7 @@ namespace SvOg
 
 	HRESULT SVEdgeMarkerAdjustmentPageClass::GetInspectionData()
 	{
-		HRESULT Result = S_OK;
-
-		DWORD Upper( 0 );
-		DWORD Lower( 0 );
-
-		Upper = m_values.Get<DWORD>(m_rEdgeEmbeddedIds[EdgeEmbeddedEnum::EdgeUpperThresholdValue]);
-		Lower = m_values.Get<DWORD>(m_rEdgeEmbeddedIds[EdgeEmbeddedEnum::EdgeLowerThresholdValue]);
-
-		Result = UpdateSliderData( Lower, Upper );
+		HRESULT Result = UpdateSliderData();
 
 		bool bIsFixedEdgeMarker = m_values.Get<bool>(m_rEdgeEmbeddedIds[EdgeEmbeddedEnum::EdgeIsFixedEdgeMarker]);
 
@@ -380,7 +372,7 @@ namespace SvOg
 			}
 		}
 
-		m_values.Commit();
+		m_values.Commit(PostAction::doRunOnce|PostAction::doReset);
 
 		if( S_OK != GetInspectionData() )
 		{
@@ -511,8 +503,8 @@ namespace SvOg
 			msg.setMessage(rExp.getMessage());
 		}
 
-		// initialize edge parameters
-		GetInspectionData();
+		// initialize edge parameters (only get InspectionData from this class not from the derived class, because they are not init yet)
+		SVEdgeMarkerAdjustmentPageClass::GetInspectionData();
 
 		return TRUE;  // return TRUE unless you set the focus to a control
 					  // EXCEPTION: OCX-Eigenschaftenseiten sollten FALSE zurückgeben

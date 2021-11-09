@@ -206,6 +206,7 @@ namespace SvStl
 		{Tid_Sax_ConInitializeExFailed, _T("CoInitializeEx Failed")},
 		{Tid_UnknowThread, _T("Unknown Thread")},
 		{Tid_SeedImageDifferentSize, _T("Seed image and Source image are of different sizes but they must have the same size.")},
+		{Tid_Value_Invalid, _T("Value has to be between %s and %s, current %s")},
 		{Tid_Error_ToolPositionError_Three_Button, _T("Changing image source has placed the tool outside of the selected source image.  Please either: "
 					"select a new image source, resize the image source to contain this tool, or resize/position this tool to fit on the source image. "
 					"Press 'Yes' to enable auto fit." 

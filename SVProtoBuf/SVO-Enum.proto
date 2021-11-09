@@ -1063,7 +1063,7 @@ enum EmbeddedIdEnum
 	Band2LowerThresholdEId = 405;
 	Band2ThresholdExcludeEId = 406;
 	Band2ThresholdEnabledEId = 407;
-	EdgeUpperThresholdValueEId = 408;
+	EdgeAUpperThresholdSelectedValueEId = 408;
 	EdgeADirectionEId = 409;
 	EdgeAPolarisationEId = 410;
 	EdgeAEdgeSelectEId = 411;
@@ -1071,7 +1071,7 @@ enum EmbeddedIdEnum
 	EdgeAIsFixedEdgeMarkerEId = 413;
 	EdgeAPositionEId = 414;
 	EdgeAPositionOffsetEId = 415;
-	EdgeALowerThresholdValueEId = 416;
+	EdgeALowerThresholdSelectedValueEId = 416;
 	EdgeBDirectionEId = 418;
 	EdgeBPolarisationEId = 419;
 	EdgeBEdgeSelectEId = 420;
@@ -1079,8 +1079,8 @@ enum EmbeddedIdEnum
 	EdgeBIsFixedEdgeMarkerEId = 422;
 	EdgeBPositionEId = 423;
 	EdgeBPositionOffsetEId = 424;
-	EdgeBLowerThresholdValueEId = 425;
-	EdgeBUpperThresholdValueEId = 426;
+	EdgeBLowerThresholdSelectedValueEId = 425;
+	EdgeBUpperThresholdSelectedValueEId = 426;
 	DrawCriteriaEId = 427;
 	ResizeInterpolationModeEId = 428;
 	ResizeOverscanEId = 429;
@@ -1152,7 +1152,6 @@ enum EmbeddedIdEnum
 	ArchiveImageFileRootPart3LinkEId = 498; //obsolete, but needed for loading configs older than 10.20
 	IsClosedEId = 499;
 	TriggerPerObjectIDEId = 500;
-	
 	FeatureTypeEId = 501;
 	SortEnumEId = 502;
 	IsExcludeEId = 503;
@@ -1207,7 +1206,11 @@ enum EmbeddedIdEnum
 	DrawAreaEId = 568;
 	LeftEId = 569;
 	TopEId = 570;
-	
+	EdgeALowerThresholdValueEId = 571;
+	EdgeAUpperThresholdValueEId = 572;
+	EdgeBLowerThresholdValueEId = 573;
+	EdgeBUpperThresholdValueEId = 574;
+
 	//The following Ids are the first of an array and must have 100 reserved Ids 
 	OutputImageEId = 1000; //Output Images, e.g. External needs 4
 	RingBufferIndexEId = 1100; //For ringBuffer index of output images (by now 2 indexes)

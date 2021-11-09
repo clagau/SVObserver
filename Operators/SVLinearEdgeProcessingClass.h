@@ -11,8 +11,10 @@
 #pragma once
 
 #pragma region Includes
+#include "Definitions/LinearEdgeEnums.h"
 #include "InspectionEngine/SVTaskObject.h"
 #include "SVObjectLibrary/InputObject.h"
+#include "SVValueObjectLibrary/LinkedValue.h"
 #include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
 #include "SVValueObjectLibrary/SVDoubleValueObjectClass.h"
 #include "SVValueObjectLibrary/SVEnumerateValueObjectClass.h"
@@ -65,8 +67,32 @@ public:
 	/// Add Graph overlay and return true if done.
 	bool addGraphOverlay(SvPb::Overlay& rOverlay, bool isVertical = false);
 	
-	const std::vector<SvPb::EmbeddedIdEnum>& getEdgeEmbeddedIds() { return m_EdgeEmbeddedIds; }
+	std::vector<double> getLinearEdges() const { std::vector<double> result; m_svLinearEdges.GetArrayValues(result); return result; };
+	void setDefaultValues(SvDef::SV_EDGECONTROL_POLARISATION_ENUM polarisationValue, SvDef::SV_EDGECONTROL_EDGESELECT_ENUM edgeSelectValue, double edgeSelectThisValue);
+	void setEdgeSelectDefaultValue(SvDef::SV_EDGECONTROL_EDGESELECT_ENUM edgeSelectValue) { m_svEdgeSelect.SetDefaultValue(edgeSelectValue, true); };
+	void setDirectionDefaultValue(SvDef::SV_EDGECONTROL_DIRECTION_ENUM directionValue) { m_svDirection.SetDefaultValue(directionValue, true); };
+	DWORD getColorNumber() const { return m_dwColorNumber; };
 
+protected:
+	enum class UpdateEnum
+	{
+		None,
+		Selected,
+		PercentDiff,
+		MaxOffset,
+		MinOffset
+	};
+	bool UpdateThresholdValues(UpdateEnum updateState, const SvVol::LinkedValue& rThresholdSelected, const SvVol::LinkedValue& rThresholdPercentDiff,
+		const SvVol::LinkedValue& rThresholdMinOffset, const SvVol::LinkedValue& rThresholdMaxOffset, byte& rThresholdValue, SvVol::SVDWordValueObjectClass& rThresholdValueObject);
+	HRESULT UpdateEdgeList();
+	HRESULT IsEdge(double p_dStart, double p_dEnd, DWORD p_dwUpper, DWORD p_dwLower, DWORD p_dwPolarisation);
+	HRESULT GetBlackWhiteEdgeValue(double p_dCurrent, DWORD p_dwUpper, DWORD p_dwLower, double& l_rdValue);
+	HRESULT CalculateSubPixelEdge(double p_dStart, double p_dEnd, DWORD p_dwUpper, DWORD p_dwLower, DWORD p_dwPolarisation, double& p_rdDistance);
+
+
+	UpdateEnum getThresholdMode(const SvVol::SVBoolValueObjectClass& rUseSelected, const SvVol::SVBoolValueObjectClass& rUsePercentDiff, const SvVol::SVBoolValueObjectClass& rUseMinOffset, const SvVol::SVBoolValueObjectClass& rUseMaxOffset);
+
+protected:
 	SvVol::SVEnumerateValueObjectClass m_svDirection;
 	SvVol::SVEnumerateValueObjectClass m_svPolarisation;
 	SvVol::SVEnumerateValueObjectClass m_svEdgeSelect;
@@ -80,31 +106,32 @@ public:
 	SvVol::SVBoolValueObjectClass	m_svUseLowerThresholdMaxMinusPercentDiff;
 	SvVol::SVBoolValueObjectClass	m_svUseLowerThresholdMaxMinusOffset;
 	SvVol::SVBoolValueObjectClass	m_svUseLowerThresholdMinPlusOffset;
-	SvVol::SVDWordValueObjectClass m_svLowerThresholdValue;
-	SvVol::SVDWordValueObjectClass m_svLowerMaxMinusPercentDiffValue;
-	SvVol::SVDWordValueObjectClass m_svLowerMaxMinusOffsetValue;
-	SvVol::SVDWordValueObjectClass m_svLowerMinPlusOffsetValue;
+	SvVol::SVDWordValueObjectClass m_svLowerThresholdValueObject;
+	byte m_lowerThreshold = 0;
+	UpdateEnum m_updateLowerState = UpdateEnum::Selected;
+	bool m_needUpdateThresholdValueLower = true;
+	SvVol::LinkedValue m_svLowerThresholdSelected;
+	SvVol::LinkedValue m_svLowerMaxMinusPercentDiffValue;
+	SvVol::LinkedValue m_svLowerMaxMinusOffsetValue;
+	SvVol::LinkedValue m_svLowerMinPlusOffsetValue;
 
 	SvVol::SVBoolValueObjectClass	m_svUseUpperThresholdSelectable;
 	SvVol::SVBoolValueObjectClass	m_svUseUpperThresholdMaxMinusPercentDiff;
 	SvVol::SVBoolValueObjectClass	m_svUseUpperThresholdMaxMinusOffset;
 	SvVol::SVBoolValueObjectClass	m_svUseUpperThresholdMinPlusOffset;
-	SvVol::SVDWordValueObjectClass m_svUpperThresholdValue;
-	SvVol::SVDWordValueObjectClass m_svUpperMaxMinusPercentDiffValue;
-	SvVol::SVDWordValueObjectClass m_svUpperMaxMinusOffsetValue;
-	SvVol::SVDWordValueObjectClass m_svUpperMinPlusOffsetValue;
+	SvVol::SVDWordValueObjectClass m_svUpperThresholdValueObject;
+	byte m_upperThreshold = 0;
+	UpdateEnum m_updateUpperState = UpdateEnum::Selected;
+	bool m_needUpdateThresholdValueUpper = true;
+	SvVol::LinkedValue m_svUpperThresholdSelected;
+	SvVol::LinkedValue m_svUpperMaxMinusPercentDiffValue;
+	SvVol::LinkedValue m_svUpperMaxMinusOffsetValue;
+	SvVol::LinkedValue m_svUpperMinPlusOffsetValue;
 
 	SvVol::SVDoubleValueObjectClass m_svLinearEdges;
 
 	DWORD m_dwColorNumber;
 
-protected:
-	HRESULT UpdateUpperThresholdValues();
-	HRESULT UpdateLowerThresholdValues();
-	HRESULT UpdateEdgeList();
-	HRESULT IsEdge( double p_dStart, double p_dEnd, DWORD p_dwUpper, DWORD p_dwLower, DWORD p_dwPolarisation );
-	HRESULT GetBlackWhiteEdgeValue( double p_dCurrent, DWORD p_dwUpper, DWORD p_dwLower, double &l_rdValue );
-	HRESULT CalculateSubPixelEdge( double p_dStart, double p_dEnd, DWORD p_dwUpper, DWORD p_dwLower, DWORD p_dwPolarisation, double &p_rdDistance );
 
 	SvOl::InputObject m_InputImage;
 	SvOl::InputObject m_InputMinThreshold;
@@ -120,8 +147,6 @@ protected:
 	COLORREF m_cfThresholds;
 	COLORREF m_cfHistogram;
 	COLORREF m_cfEdges;
-
-	std::vector<SvPb::EmbeddedIdEnum> m_EdgeEmbeddedIds;
 };
 
 } //namespace SvOp

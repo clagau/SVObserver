@@ -50,6 +50,7 @@
 #include "InspectionCommands/CommandExternalHelper.h"
 #include "InspectionCommands/CommandFunction.h"
 #include "SVOGui/BlobAnalyzer2Sheet.h"
+#include "SVOGui/SVEdgeMarkerAdjustmentPageClass.h"
 #pragma endregion Inlcudes
 
 	
@@ -299,12 +300,12 @@ HRESULT SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog(uint32_t objectId
 
 		if (nullptr != pEdgeA)
 		{
-			pPageA = new SVProfileEdgeMarkerAdjustmentPage(pInspection->getObjectId(), pEdgeA->getObjectId(), pEdgeA->getEdgeEmbeddedIds(), objectId, IDS_EDGE_A);
+			pPageA = new SVProfileEdgeMarkerAdjustmentPage(pInspection->getObjectId(), pEdgeA->getObjectId(), SvOg::g_EdgeAEmbeddedIds, objectId, IDS_EDGE_A);
 		}
 
 		if (nullptr != pEdgeB)
 		{
-			pPageB = new SVProfileEdgeMarkerAdjustmentPage(pInspection->getObjectId(), pEdgeB->getObjectId(), pEdgeB->getEdgeEmbeddedIds(), objectId, IDS_EDGE_B);
+			pPageB = new SVProfileEdgeMarkerAdjustmentPage(pInspection->getObjectId(), pEdgeB->getObjectId(), SvOg::g_EdgeBEmbeddedIds, objectId, IDS_EDGE_B);
 		}
 
 		if (nullptr != pIPDoc && (nullptr != pPageA || nullptr != pPageB))
@@ -312,6 +313,7 @@ HRESULT SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog(uint32_t objectId
 			if (nullptr != pPageA && nullptr != pEdgeA)
 			{
 				pPageA->m_bEdgeA = true;
+				pPageA->m_existEdgeB = (nullptr != pPageB);
 
 				//set enable flags
 				pPageA->m_bEnableDirection = pAnalyzer->m_bEnableDirection;

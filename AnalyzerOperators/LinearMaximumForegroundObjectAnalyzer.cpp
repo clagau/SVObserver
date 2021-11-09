@@ -72,21 +72,13 @@ void LinearMaximumForegroundObjectAnalyzer::init()
 	if( nullptr != pEdgeA )
 	{
 		AddFriend(pEdgeA->getObjectId());
-
-		pEdgeA->m_svPolarisation.SetDefaultValue(SvDef::SV_POSITIVE_POLARISATION, true);
-
-		pEdgeA->m_svEdgeSelect.SetDefaultValue(SvDef::SV_THIS_EDGE, true);
-		pEdgeA->m_svEdgeSelectThisValue.SetDefaultValue(1.0, true);
+		pEdgeA->setDefaultValues(SvDef::SV_POSITIVE_POLARISATION, SvDef::SV_THIS_EDGE, 1.0);
 	}
 
 	if( nullptr != pEdgeB )
 	{
 		AddFriend(pEdgeB->getObjectId());
-
-		pEdgeB->m_svPolarisation.SetDefaultValue(SvDef::SV_NEGATIVE_POLARISATION, true);
-
-		pEdgeB->m_svEdgeSelect.SetDefaultValue(SvDef::SV_THIS_EDGE, true);
-		pEdgeB->m_svEdgeSelectThisValue.SetDefaultValue(1.0, true);
+		pEdgeA->setDefaultValues(SvDef::SV_NEGATIVE_POLARISATION, SvDef::SV_THIS_EDGE, 1.0);
 	}
 
 	// Set Embedded defaults
@@ -223,8 +215,6 @@ void LinearMaximumForegroundObjectAnalyzer::addOverlayResults(SvPb::Overlay& rOv
 
 bool LinearMaximumForegroundObjectAnalyzer::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
-	std::vector<double> AEdges;
-	std::vector<double> BEdges;
 	SVPoint<double> edgePointA;
 	SVPoint<double> edgePointB;
 	double DistanceA( 0.0 );
@@ -232,7 +222,7 @@ bool LinearMaximumForegroundObjectAnalyzer::onRun( SvIe::RunStatus& rRunStatus, 
 
 	bool l_bOk = __super::onRun( rRunStatus, pErrorMessages) && ValidateEdgeA(pErrorMessages) && ValidateEdgeB(pErrorMessages);
 	
-	if (nullptr == GetTool() || S_OK != GetEdgeA()->m_svLinearEdges.GetArrayValues( AEdges ) || S_OK != GetEdgeB()->m_svLinearEdges.GetArrayValues( BEdges ) )
+	if (nullptr == GetTool() )
 	{
 		l_bOk = false;
 		if (nullptr != pErrorMessages)
@@ -244,6 +234,8 @@ bool LinearMaximumForegroundObjectAnalyzer::onRun( SvIe::RunStatus& rRunStatus, 
 
 	if( l_bOk )
 	{
+		std::vector<double> AEdges = GetEdgeA()->getLinearEdges();
+		std::vector<double> BEdges = GetEdgeB()->getLinearEdges();
 		int resultAIndex = -1;
 		int resultBIndex = -1;
 		int offsetB = 0;

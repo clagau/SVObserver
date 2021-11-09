@@ -18,6 +18,7 @@
 #include "SVOGui/SVEdgeMarkerAdjustmentPageClass.h"
 #include "SVOGui/PictureDisplay.h"
 #pragma endregion Includes
+#include "SVOGui/LinkedValueWidgetHelper.h"
 
 #pragma region Declarations
 //@TODO[gra][8.00][25.01.2018]: This class should move to SVOGui
@@ -39,7 +40,7 @@ class SVProfileEdgeMarkerAdjustmentPage : public SvOg::SVEdgeMarkerAdjustmentPag
 {
 #pragma region Constructor
 public:
-	SVProfileEdgeMarkerAdjustmentPage(uint32_t inspectionID, uint32_t taskObjectID, const std::vector<SvPb::EmbeddedIdEnum>& rEdgeEmbeddedIds, uint32_t analyzerID, UINT nIDCaption = 0 );
+	SVProfileEdgeMarkerAdjustmentPage(uint32_t inspectionID, uint32_t taskObjectID, const std::array<SvPb::EmbeddedIdEnum, SvOg::EdgeIdCount>& rEdgeEmbeddedIds, uint32_t analyzerID, UINT nIDCaption = 0 );
 	virtual ~SVProfileEdgeMarkerAdjustmentPage();
 #pragma endregion Constructor
 
@@ -55,20 +56,23 @@ protected:
 
 	//{{AFX_MSG(SVProfileEdgeMarkerAdjustmentPage)
 	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
-	afx_msg void OnUpperUserSelectable();
-	afx_msg void OnLowerUserSelectable();
-	afx_msg void OnUpperUseMaxMinusDiff();
-	afx_msg void OnUpperUseMaxMinusOffset();
-	afx_msg void OnUpperUseMinPlusOffset();
-	afx_msg void OnLowerUseMaxMinusDiff();
-	afx_msg void OnLowerUseMaxMinusOffset();
-	afx_msg void OnLowerUseMinPlusOffset();
+	afx_msg void OnUseFlagChanged();
+	afx_msg void OnChangeUpperSelected();
 	afx_msg void OnChangeUpperPercentDiff();
 	afx_msg void OnChangeUpperMaxOffset();
 	afx_msg void OnChangeUpperMinOffset();
+	afx_msg void OnChangeLowerSelected();
 	afx_msg void OnChangeLowerPercentDiff();
 	afx_msg void OnChangeLowerMaxOffset();
 	afx_msg void OnChangeLowerMinOffset();
+	afx_msg void OnUpperSelectedButton();
+	afx_msg void OnUpperPercentDiffButton();
+	afx_msg void OnUpperMaxOffsetButton();
+	afx_msg void OnUpperMinOffsetButton();
+	afx_msg void OnLowerSelectedButton();
+	afx_msg void OnLowerPercentDiffButton();
+	afx_msg void OnLowerMaxOffsetButton();
+	afx_msg void OnLowerMinOffsetButton();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 #pragma endregion MFC Methods
@@ -81,7 +85,8 @@ public:
 
 #pragma region Protected Methods
 protected:
-	virtual HRESULT UpdateSliderData(DWORD Lower, DWORD Upper) override;
+	SvPb::EmbeddedIdEnum getValueEIdFromThresholdOption(bool isUpper) const;
+	virtual HRESULT UpdateSliderData() override;
 #pragma region Protected Methods
 
 #pragma region Private Methods
@@ -108,20 +113,32 @@ private:
 	static const long m_egdeLinesStopPos = 12;
 
 	enum { IDD = IDD_PROFILE_GR_EDGE_MARKER_ADJUST_DIALOG };
+	CEdit	m_LowerSelectedEditCtrl;
+	CButton m_LowerSelectedButton;
+	std::unique_ptr<SvOg::LinkedValueWidgetHelper> m_LowerSelectedWidget;
 	CEdit	m_LowerMinOffsetEditCtrl;
+	CButton m_LowerMinOffsetButton;
+	std::unique_ptr<SvOg::LinkedValueWidgetHelper> m_LowerMinOffsetWidget;
 	CEdit	m_LowerMaxOffsetEditCtrl;
+	CButton m_LowerMaxOffsetButton;
+	std::unique_ptr<SvOg::LinkedValueWidgetHelper> m_LowerMaxOffsetWidget;
 	CEdit	m_LowerMaxDiffEditCtrl;
+	CButton m_LowerMaxDiffButton;
+	std::unique_ptr<SvOg::LinkedValueWidgetHelper> m_LowerMaxDiffWidget;
+	CEdit	m_UpperSelectedEditCtrl;
+	CButton m_UpperSelectedButton;
+	std::unique_ptr<SvOg::LinkedValueWidgetHelper> m_UpperSelectedWidget;
 	CEdit	m_UpperMinOffsetEditCtrl;
+	CButton m_UpperMinOffsetButton;
+	std::unique_ptr<SvOg::LinkedValueWidgetHelper> m_UpperMinOffsetWidget;
 	CEdit	m_UpperMaxOffsetEditCtrl;
+	CButton m_UpperMaxOffsetButton;
+	std::unique_ptr<SvOg::LinkedValueWidgetHelper> m_UpperMaxOffsetWidget;
 	CEdit	m_UpperMaxDiffEditCtrl;
-	BYTE	m_lowerThresholdMaxOffset;
-	BYTE	m_lowerThresholdMinOffset;
-	int		m_lowerThresholdMaxPercentDiff;
-	BYTE	m_upperThresholdMaxOffset;
-	BYTE	m_upperThresholdMinOffset;
-	int 	m_upperThresholdMaxPercentDiff;
-	int		m_lowerThresholdOption;
-	int		m_upperThresholdOption;
+	CButton m_UpperMaxDiffButton;
+	std::unique_ptr<SvOg::LinkedValueWidgetHelper> m_UpperMaxDiffWidget;
+	int		m_lowerThresholdOption = 0;
+	int		m_upperThresholdOption = 0;
 	SvOg::PictureDisplay m_dialogImage;
 
 	//@TODO[gra][8.00][25.01.2018]: This should be changed when access is possible through Inspection commands

@@ -11,6 +11,41 @@
 #include "Definitions/GlobalConst.h"
 #pragma endregion Includes
 
+namespace
+{
+bool checkValue(int minValue, int maxValue, const variant_t& rValue, SvStl::MessageContainer& rMessageContainer)
+{
+	bool isOk {true};
+	try
+	{
+		int value = (int)rValue;
+		isOk = (minValue <= value && maxValue >= value);
+	}
+	catch (...)
+	{
+		isOk = false;
+	}
+	if (false == isOk)
+	{
+		SvDef::StringVector msgList;
+		msgList.push_back(SvUl::Format(_T("%d"), minValue));
+		msgList.push_back(SvUl::Format(_T("%d"), maxValue));
+		variant_t val;
+		HRESULT hr = ::VariantChangeTypeEx(&val, &rValue, SvDef::LCID_USA, VARIANT_ALPHABOOL, VT_BSTR);	// use United States locale
+		if (S_OK == hr)
+		{
+			msgList.push_back(SvUl::createStdString(val));
+		}
+		else
+		{
+			msgList.push_back("<undef>");
+		}
+		rMessageContainer.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Value_Invalid, msgList, SvStl::SourceFileParams(StdMessageParams));
+	}
+	return isOk;
+}
+}
+
 namespace SvOg
 {
 	CBitmap LinkedValueWidgetHelper::ms_downArrowBitmap;
@@ -77,7 +112,7 @@ namespace SvOg
 		}
 	}
 
-	void LinkedValueWidgetHelper::EditboxToValue()
+	void LinkedValueWidgetHelper::EditboxToValue(bool ignoreEmptyString)
 	{
 		assert(m_pValueController);
 		if (m_pValueController)
@@ -87,6 +122,11 @@ namespace SvOg
 			{
 				CString tmpStr;
 				m_rValueEdit.GetWindowText(tmpStr);
+				if (ignoreEmptyString && tmpStr.IsEmpty())
+				{
+					return;
+				}
+
 				variant_t tmp {tmpStr};
 				SvStl::MessageContainer msgContainer;
 				bool isValid = (S_OK == ::VariantChangeTypeEx(&data.m_directValue, &tmp, SvDef::LCID_USA, VARIANT_ALPHABOOL, data.m_defaultValue.vt));
@@ -116,6 +156,11 @@ namespace SvOg
 				}
 			}
 		}
+	}
+
+	ValidCheckCallback LinkedValueWidgetHelper::getCheckValueFunction(int minValue, int maxValue)
+	{
+		return std::bind(checkValue, minValue, maxValue, std::placeholders::_1, std::placeholders::_2);
 	}
 
 	void LinkedValueWidgetHelper::EnsureDownArrowBitmapIsLoaded()
@@ -148,13 +193,20 @@ namespace SvOg
 					return;
 			}
 			m_rValueEdit.EnableWindow(enableFlag);
+			CString currentStr;
+			m_rValueEdit.GetWindowText(currentStr);
+			CString newStr;
 			if (m_convertValueCallback)
 			{
-				m_rValueEdit.SetWindowText(m_convertValueCallback(data.m_Value));
+				newStr = m_convertValueCallback(data.m_Value);
 			}
 			else
 			{
-				m_rValueEdit.SetWindowText(static_cast<CString>(data.m_Value));
+				newStr = static_cast<CString>(data.m_Value);
+			}
+			if (currentStr != newStr)
+			{
+				m_rValueEdit.SetWindowText(newStr);
 			}
 		}
 	}

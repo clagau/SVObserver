@@ -24,7 +24,10 @@ namespace SvOg
 		void update();
 
 		/// reads a string from an editbox and sets the appropriate ValueObject accordingly.
-		void EditboxToValue();
+		/// \param ignoreEmptyString [in] if this flag set, it ignore the editbox-text if it is empty.
+		void EditboxToValue(bool ignoreEmptyString = false);
+
+		static ValidCheckCallback getCheckValueFunction(int minValue, int maxValue);
 
 	private:
 		static void EnsureDownArrowBitmapIsLoaded();

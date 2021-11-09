@@ -25,6 +25,8 @@ class SVLinearEdgeAProcessingClass : public SVLinearEdgeProcessingClass
 public:
 	SVLinearEdgeAProcessingClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVLINEAREDGEAPROCESSING );
 	virtual ~SVLinearEdgeAProcessingClass();
+
+	virtual bool CreateObject(const SVObjectLevelCreateStruct& rCreateStructure) override;
 };
 
 } //namespace SvOp

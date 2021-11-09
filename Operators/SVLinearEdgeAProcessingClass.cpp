@@ -49,8 +49,12 @@ SVLinearEdgeAProcessingClass::SVLinearEdgeAProcessingClass(SVObjectClass* POwner
 	RegisterEmbeddedObject( &m_svUseLowerThresholdMaxMinusPercentDiff, SvPb::UseLowerThresholdMaxMinusPercentDiffEId, IDS_OBJECTNAME_USELOWERTHRESHOLD_MAXMINUSPERCENTDIFF_A, false, SvOi::SVResetItemNone );
 	RegisterEmbeddedObject( &m_svUseLowerThresholdMaxMinusOffset, SvPb::UseLowerThresholdMaxMinusOffsetEId, IDS_OBJECTNAME_USELOWERTHRESHOLD_MAXMINUSOFFSET_A, false, SvOi::SVResetItemNone );
 	RegisterEmbeddedObject( &m_svUseLowerThresholdMinPlusOffset, SvPb::UseLowerThresholdMinPlusOffsetEId, IDS_OBJECTNAME_USELOWERTHRESHOLD_MINPLUSOFFSET_A, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_svLowerThresholdValue, SvPb::EdgeALowerThresholdValueEId, IDS_OBJECTNAME_EDGE_A_LOWER_THRESHOLD_VALUE, false, SvOi::SVResetItemNone );
-	m_svLowerThresholdValue.SetOutputFormat(SvVol::OutputFormat_int);
+	RegisterEmbeddedObject(&m_svLowerThresholdValueObject, SvPb::EdgeALowerThresholdValueEId, IDS_OBJECTNAME_EDGE_A_LOWER_THRESHOLD_VALUE, false, SvOi::SVResetItemNone);
+	m_svLowerThresholdValueObject.SetOutputFormat(SvVol::OutputFormat_int);
+	m_svLowerThresholdValueObject.setSaveValueFlag(false);
+	m_svLowerThresholdValueObject.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
+	RegisterEmbeddedObject( &m_svLowerThresholdSelected, SvPb::EdgeALowerThresholdSelectedValueEId, IDS_OBJECTNAME_EDGE_A_UPPER_THRESHOLD_SELECTED, false, SvOi::SVResetItemNone );
+	m_svLowerThresholdSelected.SetOutputFormat(SvVol::OutputFormat_int);
 	RegisterEmbeddedObject( &m_svLowerMaxMinusPercentDiffValue, SvPb::LowerThresholdMaxMinusPercentDiffEId, IDS_OBJECTNAME_LOWERTHRESHOLD_PERCENTDIFF_A, false, SvOi::SVResetItemNone );
 	m_svLowerMaxMinusPercentDiffValue.SetOutputFormat(SvVol::OutputFormat_int);
 	RegisterEmbeddedObject( &m_svLowerMaxMinusOffsetValue, SvPb::LowerThresholdMaxMinusOffsetEId, IDS_OBJECTNAME_LOWERTHRESHOLD_MAXOFFSET_A, false, SvOi::SVResetItemNone );
@@ -62,8 +66,12 @@ SVLinearEdgeAProcessingClass::SVLinearEdgeAProcessingClass(SVObjectClass* POwner
 	RegisterEmbeddedObject( &m_svUseUpperThresholdMaxMinusPercentDiff, SvPb::UseUpperThresholdMaxMinusPercentDiffEId, IDS_OBJECTNAME_USEUPPERTHRESHOLD_MAXMINUSPERCENTDIFF_A, false, SvOi::SVResetItemNone );
 	RegisterEmbeddedObject( &m_svUseUpperThresholdMaxMinusOffset, SvPb::UseUpperThresholdMaxMinusOffsetEId, IDS_OBJECTNAME_USEUPPERTHRESHOLD_MAXMINUSOFFSET_A, false, SvOi::SVResetItemNone );
 	RegisterEmbeddedObject( &m_svUseUpperThresholdMinPlusOffset, SvPb::UseUpperThresholdMinPlusOffsetEId, IDS_OBJECTNAME_USEUPPERTHRESHOLD_MINPLUSOFFSET_A, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &m_svUpperThresholdValue, SvPb::EdgeUpperThresholdValueEId, IDS_OBJECTNAME_EDGE_A_UPPER_THRESHOLD_VALUE, false, SvOi::SVResetItemNone );
-	m_svUpperThresholdValue.SetOutputFormat(SvVol::OutputFormat_int);
+	RegisterEmbeddedObject(&m_svUpperThresholdValueObject, SvPb::EdgeAUpperThresholdValueEId, IDS_OBJECTNAME_EDGE_A_UPPER_THRESHOLD_VALUE, false, SvOi::SVResetItemNone);
+	m_svUpperThresholdValueObject.SetOutputFormat(SvVol::OutputFormat_int);
+	m_svUpperThresholdValueObject.setSaveValueFlag(false);
+	m_svUpperThresholdValueObject.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
+	RegisterEmbeddedObject( &m_svUpperThresholdSelected, SvPb::EdgeAUpperThresholdSelectedValueEId, IDS_OBJECTNAME_EDGE_A_UPPER_THRESHOLD_SELECTED, false, SvOi::SVResetItemNone );
+	m_svUpperThresholdSelected.SetOutputFormat(SvVol::OutputFormat_int);
 	RegisterEmbeddedObject( &m_svUpperMaxMinusPercentDiffValue, SvPb::UpperThresholdMaxMinusPercentDiffEId, IDS_OBJECTNAME_UPPERTHRESHOLD_PERCENTDIFF_A, false, SvOi::SVResetItemNone );
 	m_svUpperMaxMinusPercentDiffValue.SetOutputFormat(SvVol::OutputFormat_int);
 	RegisterEmbeddedObject( &m_svUpperMaxMinusOffsetValue, SvPb::UpperThresholdMaxMinusOffsetEId, IDS_OBJECTNAME_UPPERTHRESHOLD_MAXOFFSET_A, false, SvOi::SVResetItemNone );
@@ -72,23 +80,24 @@ SVLinearEdgeAProcessingClass::SVLinearEdgeAProcessingClass(SVObjectClass* POwner
 	m_svUpperMinPlusOffsetValue.SetOutputFormat(SvVol::OutputFormat_int);
 
 	RegisterEmbeddedObject(&m_svLinearEdges, SvPb::LinearEdgesEId, IDS_CLASSNAME_SVLINEAREDGESCLASS, false, SvOi::SVResetItemNone );
-
-	//! This cannot be initialized direct during construction because m_EdgeEmbeddedIds is inherited
-	m_EdgeEmbeddedIds = std::vector<SvPb::EmbeddedIdEnum>
-	{
-		SvPb::EdgeADirectionEId, SvPb::EdgeAPolarisationEId, SvPb::EdgeAEdgeSelectEId, SvPb::EdgeAEdgeSelectThisValueEId,
-		SvPb::EdgeAIsFixedEdgeMarkerEId, SvPb::EdgeAPositionEId, SvPb::EdgeAPositionOffsetEId, SvPb::UseLowerThresholdSelectableEId,
-		SvPb::UseLowerThresholdMaxMinusPercentDiffEId, SvPb::UseLowerThresholdMaxMinusOffsetEId, SvPb::UseLowerThresholdMinPlusOffsetEId,
-		SvPb::EdgeALowerThresholdValueEId, SvPb::LowerThresholdMaxMinusPercentDiffEId, SvPb::LowerThresholdMaxMinusOffsetEId,
-		SvPb::LowerThresholdMinPlusOffsetEId, SvPb::UseUpperThresholdSelectableEId, SvPb::UseUpperThresholdMaxMinusPercentDiffEId,
-		SvPb::UseUpperThresholdMaxMinusOffsetEId, SvPb::UseUpperThresholdMinPlusOffsetEId, SvPb::EdgeUpperThresholdValueEId,
-		SvPb::UpperThresholdMaxMinusPercentDiffEId, SvPb::UpperThresholdMaxMinusOffsetEId, SvPb::UpperThresholdMinPlusOffsetEId,
-		SvPb::LinearEdgesEId
-	};
 }
 
 SVLinearEdgeAProcessingClass::~SVLinearEdgeAProcessingClass()
 {
 }
 
+
+bool SVLinearEdgeAProcessingClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
+{
+	if (m_svLowerThresholdSelected.GetName() == SvUl::LoadStdString(IDS_OBJECTNAME_EDGE_A_LOWER_THRESHOLD_VALUE))
+	{
+		m_svLowerThresholdSelected.SetObjectName(SvUl::LoadStdString(IDS_OBJECTNAME_EDGE_A_LOWER_THRESHOLD_SELECTED).c_str());
+	}
+	if (m_svUpperThresholdSelected.GetName() == SvUl::LoadStdString(IDS_OBJECTNAME_EDGE_A_UPPER_THRESHOLD_VALUE))
+	{
+		m_svUpperThresholdSelected.SetObjectName(SvUl::LoadStdString(IDS_OBJECTNAME_EDGE_A_UPPER_THRESHOLD_SELECTED).c_str());
+	}
+
+	return __super::CreateObject(rCreateStructure);
+}
 } //namespace SvOp

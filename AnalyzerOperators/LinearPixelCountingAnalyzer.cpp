@@ -51,7 +51,7 @@ void LinearPixelCountingAnalyzer::init()
 
 	if( nullptr != pEdge )
 	{
-		pEdge->m_svDirection.SetDefaultValue(SvDef::SV_UNDEFINED_DIRECTION, true );
+		pEdge->setDirectionDefaultValue(SvDef::SV_UNDEFINED_DIRECTION);
 
 		AddFriend( pEdge->getObjectId() );
 	}
@@ -101,14 +101,12 @@ HRESULT LinearPixelCountingAnalyzer::GetSelectedEdgeOverlays(SVExtentMultiLineSt
 
 bool LinearPixelCountingAnalyzer::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
-	std::vector<double> Edges;
-
 	// All inputs and outputs must be validated first
 	bool Result = __super::onRun( rRunStatus, pErrorMessages );
 
 	SvOp::SVLinearEdgeProcessingClass *pEdge = GetEdgeA();
 
-	if ( nullptr == pEdge || S_OK != pEdge->m_svLinearEdges.GetArrayValues( Edges ) )
+	if ( nullptr == pEdge )
 	{
 		Result = false;
 		if (nullptr != pErrorMessages)
@@ -123,13 +121,14 @@ bool LinearPixelCountingAnalyzer::onRun( SvIe::RunStatus& rRunStatus, SvStl::Mes
 
 	if( Result )
 	{
+		std::vector<double> Edges = pEdge->getLinearEdges();
 		for( size_t l = 0; l < Edges.size(); l++ )
 		{
 			if( Edges[ l ] == 0.0 )
 			{
 				lBlack++;
 			}
-			else if( Edges[ l ] == pEdge->m_dwColorNumber - 1 )
+			else if( Edges[ l ] == pEdge->getColorNumber() - 1 )
 			{
 				lWhite++;
 			}
