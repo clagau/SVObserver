@@ -1472,7 +1472,7 @@ void SVImageClass::setInspectionPosForTrc()
 
 bool SVImageClass::UpdateTRCBuffers(SvStl::MessageContainerVector* pErrorMessages)
 {
-	if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
+	if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST))
 	{
 		//[MZA][8.10][26.06.2018] In Run-mode it is not valid to updated TRC-Buffer. Return true to avoid abort of the run.
 		return true;

@@ -1491,7 +1491,7 @@ bool SVInspectionProcess::resetAllObjects(SvStl::MessageContainerVector* pErrorM
 
 		Result = __super::resetAllObjects(&ErrorMessages) && Result;
 
-		if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_REGRESSION))
+		if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION))
 		{
 			buildValueObjectData();
 		}
