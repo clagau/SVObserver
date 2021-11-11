@@ -32,7 +32,7 @@ static char THIS_FILE[] = __FILE__;
 SV_IMPLEMENT_CLASS( SVMathToolClass, SvPb::MathToolClassId );
 
 SVMathToolClass::SVMathToolClass( SVObjectClass* POwner, int StringResourceID )
-: SVToolClass( POwner, StringResourceID )
+: SVToolClass( false,POwner, StringResourceID )
 {
 	init();
 }
@@ -43,8 +43,7 @@ void SVMathToolClass::init(void)
 	m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
 	m_ObjectTypeInfo.m_SubType    = SvPb::SVMathToolObjectType;
 
-	// Hide and Remove Embedded Extents
-	removeEmbeddedExtents();
+	
 
 	// Set up the friend
 	m_pMathEquation = new SvOp::SVMathEquation( this );

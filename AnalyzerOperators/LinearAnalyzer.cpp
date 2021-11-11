@@ -157,8 +157,9 @@ HRESULT LinearAnalyzer::GetSelectedEdgeOverlays( SVExtentMultiLineStruct &p_rsvM
 	return S_OK;
 }
 
-HRESULT LinearAnalyzer::updateImageExtent()
+HRESULT LinearAnalyzer::updateImageExtent(bool /*init*/ )
 {
+	//@TODO[MEC][10.20][02.11.2021] Check if we can use init  
 	HRESULT result{S_OK};
 
 	long Width( 0 );

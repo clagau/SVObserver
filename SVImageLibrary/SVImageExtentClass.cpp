@@ -248,6 +248,7 @@ SVImageExtentClass &SVImageExtentClass::operator=(const SVImageExtentClass& rRhs
 		m_eTranslation = rRhs.m_eTranslation;
 		m_extentValues = rRhs.m_extentValues;
 		m_figure = rRhs.m_figure;
+		m_isUpdated = rRhs.m_isUpdated;
 	}
 	return *this;
 }
@@ -263,6 +264,7 @@ void SVImageExtentClass::Initialize()
 	{
 		m_extentValues[extentProperty] = 0.0;
 	}
+	m_isUpdated = false;
 }
 
 SvPb::SVExtentTranslationEnum SVImageExtentClass::GetTranslation() const
@@ -401,7 +403,7 @@ HRESULT SVImageExtentClass::UpdateData()
 	{
 		l_hrOk = BuildFigure();
 	}
-
+	m_isUpdated = (l_hrOk == S_OK);
 	return l_hrOk;
 }
 
@@ -3910,6 +3912,7 @@ HRESULT SVImageExtentClass::UpdatePolar(SvPb::SVExtentLocationPropertyEnum p_eLo
 
 void SVImageExtentClass::ClearOutputData()
 {
+	m_isUpdated = false;
 	m_figure.Initialize();
 
 	DisableExtentProperty(SvPb::SVExtentPropertyOutputPositionPoint);

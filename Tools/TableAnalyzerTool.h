@@ -92,7 +92,7 @@ private:
 
 #pragma region Member Variables
 private:
-	SvOp::TableCopyObject* m_pResultTable;
+	SvOp::TableCopyObject* m_pResultTable = nullptr;
 	SvOl::InputObject m_sourceTableInput;
 	SvOp::SVLongResult* m_pResult = nullptr;
 #pragma endregion Member Variables

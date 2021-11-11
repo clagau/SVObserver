@@ -41,13 +41,53 @@ class SVConditional;
 
 namespace SvTo
 {
+
+enum class ExtType
+{
+	Left,Top,Right,Bottom,Width,Height
+};
+
+class  EmbeddedExtents
+{
+public:
+	EmbeddedExtents() = delete;
+	explicit EmbeddedExtents(SVToolClass* pOwner);
+	void SetTypeNameForExtents();
+	void RegisterEmbeddedExtents();
+	void	SetDefaults();
+	void SetAttributes();
+	
+	SVToolClass* const m_pOwner; 
+	// Embedded Objects for Extents
+	SvVol::SVDoubleValueObjectClass m_ExtentLeft;
+	SvVol::SVDoubleValueObjectClass m_ExtentTop;
+	SvVol::SVDoubleValueObjectClass m_ExtentRight;
+	SvVol::SVDoubleValueObjectClass m_ExtentBottom;
+	SvVol::SVDoubleValueObjectClass m_ExtentWidth;
+	SvVol::SVDoubleValueObjectClass m_ExtentHeight;
+	SvVol::LinkedValue m_ExtentWidthFactorContent;
+	SvVol::LinkedValue m_ExtentHeightFactorContent;
+	SvVol::LinkedValue m_ExtentWidthFactorFormat;
+	SvVol::LinkedValue m_ExtentHeightFactorFormat;
+
+	
+
+	SvVol::SVDoubleValueObjectClass m_svAuxiliarySourceX;
+	SvVol::SVDoubleValueObjectClass m_svAuxiliarySourceY;
+	SvVol::SVDoubleValueObjectClass m_svAuxiliarySourceAngle;
+	SvVol::SVStringValueObjectClass m_svAuxiliaryDrawType;
+	SvVol::SVStringValueObjectClass m_svAuxiliarySourceImageName;
+};
+
+
 class SVToolClass : public SvIe::SVTaskObjectListClass, public SvOi::ITool
 {
 	///This class does not need to call SV_DECLARE_CLASS as it is a base class and only derived classes are instantiated
 	//SV_DECLARE_CLASS
 
 public:
-	SVToolClass(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTOOL);
+	SVToolClass() = delete;
+	explicit SVToolClass(bool hasEmbedededExtents , SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTOOL);
 	virtual ~SVToolClass();
 
 	virtual bool resetAllObjects(SvStl::MessageContainerVector *pErrorMessages = nullptr) override;
@@ -61,9 +101,9 @@ public:
 
 	bool WasEnabled() const;
 
-	virtual bool hasExtension() const override
+	virtual bool allowExtensionCopy() const override
 	{
-		return m_hasExtents;
+		return (nullptr != m_pEmbeddedExtents.get());
 	}
 
 	//************************************
@@ -76,7 +116,9 @@ public:
 
 	void SetImageExtentProperty(SvPb::SVExtentPropertyEnum p_eProperty, SvOi::IValueObject* pValueObject);
 
-	virtual HRESULT SetImageExtent(const SVImageExtentClass& rImageExtent) override;
+	virtual HRESULT SetImageExtent(const SVImageExtentClass& rImageExtent) ;
+	const SVImageExtentClass& GetImageExtent() const;
+
 
 	void SetAlwaysUpdate(bool p_bAlwaysUpdate);
 
@@ -106,7 +148,7 @@ public:
 	virtual SvVol::SVStringValueObjectClass* GetInputImageNames();
 	virtual bool SetFirstInputImageName(LPCTSTR FirstName) override;
 
-	virtual HRESULT updateImageExtent() override;
+	virtual HRESULT updateImageExtent(bool init) override;
 	virtual HRESULT UpdateImageWithExtent() override;
 	virtual HRESULT GetParentExtent(SVImageExtentClass& p_rParent) const;
 
@@ -149,9 +191,11 @@ public:
 	 void removeTaskMessages(DWORD MessageCode, SvStl::MessageTextEnum AdditionalTextId);
 	 const SvVol::SVDWordValueObjectClass& getColorObject() const { return m_statusColor; };
 	 virtual void overwriteInputSource(SvOi::SVImageBufferHandlePtr imageHandlePtr) {};
+	
+
 
 	 virtual void resetCounters();
-
+	 virtual const SVImageExtentClass* GetImageExtentPtr() const;
 #pragma region ITool methods
 	virtual bool areAuxExtentsAvailable() const override;
 	virtual SvUl::NameObjectIdList getAvailableAuxSourceImages() const override;
@@ -184,8 +228,7 @@ protected:
 	//Set the counter and State is called in Run()
 	inline  virtual void  UpdateStateAndCounter(SvIe::RunStatus& rRunStatus);
 
-	// Remove Embedded Extents
-	void removeEmbeddedExtents();
+	
 
 	virtual bool onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages = nullptr) override;
 
@@ -201,6 +244,9 @@ private:
 	bool ValidateLocal(SvStl::MessageContainerVector *pErrorMessages = nullptr) const;
 
 protected:
+
+	std::unique_ptr<EmbeddedExtents> m_pEmbeddedExtents = nullptr;
+	
 	SvVol::SVBoolValueObjectClass ToolSelectedForOperatorMove;
 	SvOp::SVConditional* m_pToolConditional;
 
@@ -239,35 +285,18 @@ protected:
 	SvVol::SVLongValueObjectClass m_ToolPosition;
 	SvVol::SVBoolValueObjectClass m_editFreezeFlag;
 
-	// Embedded Objects for Extents
-	SvVol::SVDoubleValueObjectClass m_ExtentLeft;
-	SvVol::SVDoubleValueObjectClass m_ExtentTop;
-	SvVol::SVDoubleValueObjectClass m_ExtentRight;
-	SvVol::SVDoubleValueObjectClass m_ExtentBottom;
-	SvVol::SVDoubleValueObjectClass m_ExtentWidth;
-	SvVol::SVDoubleValueObjectClass m_ExtentHeight;
-	SvVol::LinkedValue m_ExtentWidthFactorContent;
-	SvVol::LinkedValue m_ExtentHeightFactorContent;
-	SvVol::LinkedValue m_ExtentWidthFactorFormat;
-	SvVol::LinkedValue m_ExtentHeightFactorFormat;
-
 	//***** New source image extent value objects
 	SvVol::SVBoolValueObjectClass m_svUpdateAuxiliaryExtents;
-
-	SvVol::SVDoubleValueObjectClass m_svAuxiliarySourceX;
-	SvVol::SVDoubleValueObjectClass m_svAuxiliarySourceY;
-	SvVol::SVDoubleValueObjectClass m_svAuxiliarySourceAngle;
-	SvVol::SVStringValueObjectClass m_svAuxiliaryDrawType;
-	SvVol::SVStringValueObjectClass m_svAuxiliarySourceImageName;
-	//***** New source image extent value objects
 
 	// Tool Comments
 	SvVol::SVStringValueObjectClass m_ToolComment;
 
+	//SVImageExtentClass  is a member of SVToolExtentClass
 	SVToolExtentClass m_toolExtent;
 
 	bool m_canResizeToParent {false};
-	bool m_hasExtents {true};
+	
+	
 };
 
 bool isValidScaleFactor(double value);

@@ -575,7 +575,7 @@ bool SVImagePolarTransform::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageCo
 	if ( result )
 	{
 		//This update call is required for the image extents which may have changed above
-		pTool->updateImageExtent();
+		pTool->updateImageExtent(true);
 		
 		const SVImageExtentClass& rImageToolExtents = pTool->GetImageExtent();
 

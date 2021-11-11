@@ -36,7 +36,7 @@ constexpr const char* CYLINDRICAL_WARP_TYPE_VERTICAL = _T("Vertical Warp");
 SV_IMPLEMENT_CLASS( SVCylindricalWarpToolClass, SvPb::CylindricalWarpToolClassId)
 
 SVCylindricalWarpToolClass::SVCylindricalWarpToolClass( SVObjectClass* p_pOwner, int p_iStringResourceID )
-	: SVToolClass(p_pOwner, p_iStringResourceID)
+	: SVToolClass(false,p_pOwner, p_iStringResourceID)
 {
 	LocalInitialize();
 }
@@ -132,7 +132,7 @@ void SVCylindricalWarpToolClass::LocalInitialize()
 	m_svWarpAngle.SetDefaultValue( 180.0, true);
 	m_svWarpAngle.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::AddAttribute );
 	m_toolExtent.SetExtentObject( SvPb::SVExtentPropertyStartAngle, &m_svWarpAngle );
-	removeEmbeddedExtents();
+
 }
 
 HRESULT SVCylindricalWarpToolClass::LocalCreate()

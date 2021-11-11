@@ -43,14 +43,126 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
+EmbeddedExtents::EmbeddedExtents(SVToolClass* pOwner)
+	:m_pOwner(pOwner)
+{
+	
+}
+
+void EmbeddedExtents::SetTypeNameForExtents()
+{
+	m_ExtentWidth.SetTypeName(_T("Extent Width"));
+	m_ExtentHeight.SetTypeName(_T("Extent Height"));
+	m_ExtentLeft.SetTypeName(_T("Extent X"));
+	m_ExtentTop.SetTypeName(_T("Extent Y"));
+	m_ExtentRight.SetTypeName(_T("Extent X"));
+	m_ExtentBottom.SetTypeName(_T("Extent Y"));
+	m_svAuxiliarySourceX.SetTypeName(_T("Extent X"));
+	m_svAuxiliarySourceY.SetTypeName(_T("Extent Y"));
+	m_svAuxiliarySourceAngle.SetTypeName(_T("Extent Angle"));
+	m_ExtentHeightFactorContent.SetTypeName(_T("Scale Factor"));
+	m_ExtentWidthFactorContent.SetTypeName(_T("Scale Factor"));
+	m_ExtentHeightFactorFormat.SetTypeName(_T("Scale Factor"));
+	m_ExtentWidthFactorFormat.SetTypeName(_T("Scale Factor"));
+	;
+}
+
+
+
+void EmbeddedExtents::RegisterEmbeddedExtents()
+{
+	if (m_pOwner)
+	{
+		m_pOwner->RegisterEmbeddedObject(&m_ExtentLeft, SvPb::ExtentRelativeLeftPositionEId, IDS_OBJECTNAME_EXTENT_LEFT, false, SvOi::SVResetItemTool);
+		m_pOwner->RegisterEmbeddedObject(&m_ExtentTop, SvPb::ExtentRelativeTopPositionEId, IDS_OBJECTNAME_EXTENT_TOP, false, SvOi::SVResetItemTool);
+		m_pOwner->RegisterEmbeddedObject(&m_ExtentRight, SvPb::ExtentRelativeRightPositionEId, IDS_OBJECTNAME_EXTENT_RIGHT, false, SvOi::SVResetItemNone);
+		m_pOwner->RegisterEmbeddedObject(&m_ExtentBottom, SvPb::ExtentRelativeBottomPositionEId, IDS_OBJECTNAME_EXTENT_BOTTOM, false, SvOi::SVResetItemNone);
+		m_pOwner->RegisterEmbeddedObject(&m_ExtentWidth, SvPb::ExtentWidthEId, IDS_OBJECTNAME_EXTENT_WIDTH, false, SvOi::SVResetItemTool);
+		m_pOwner->RegisterEmbeddedObject(&m_ExtentHeight, SvPb::ExtentHeightEId, IDS_OBJECTNAME_EXTENT_HEIGHT, false, SvOi::SVResetItemTool);
+	
+		//m_pOwner->RegisterEmbeddedObject(&m_svUpdateAuxiliaryExtents, SvPb::UpdateAuxiliaryExtentsEId, IDS_OBJECTNAME_UPDATE_AUXILIARY_EXTENTS_OBJECT, false, SvOi::SVResetItemTool);
+		m_pOwner->RegisterEmbeddedObject(&m_svAuxiliarySourceX, SvPb::AuxiliarySourceXEId, IDS_OBJECTNAME_AUXILIARY_SOURCE_X, false, SvOi::SVResetItemNone);
+		m_pOwner->RegisterEmbeddedObject(&m_svAuxiliarySourceY, SvPb::AuxiliarySourceYEId, IDS_OBJECTNAME_AUXILIARY_SOURCE_Y, false, SvOi::SVResetItemNone);
+		m_pOwner->RegisterEmbeddedObject(&m_svAuxiliarySourceAngle, SvPb::AuxiliarySourceAngleEId, IDS_OBJECTNAME_AUXILIARY_SOURCE_ANGLE, false, SvOi::SVResetItemNone);
+		m_pOwner->RegisterEmbeddedObject(&m_svAuxiliarySourceImageName, SvPb::AuxiliarySourceImageNameEId, IDS_OBJECTNAME_AUXILIARY_SOURCE_IMAGE_NAME, false, SvOi::SVResetItemNone);
+		m_pOwner->RegisterEmbeddedObject(&m_svAuxiliaryDrawType, SvPb::AuxiliaryDrawTypeEId, IDS_OBJECTNAME_AUXILIARY_DRAW_TYPE_NAME, false, SvOi::SVResetItemNone);
+		m_pOwner->RegisterEmbeddedObject(&m_ExtentWidthFactorContent, SvPb::ExtentWidthFactorContentEId, IDS_OBJECTNAME_EXTENT_WIDTH_FACTOR_CONTENT, true, SvOi::SVResetItemTool);
+		m_ExtentWidthFactorContent.SetDefaultValue(_variant_t(0.0), true);
+
+		m_pOwner->RegisterEmbeddedObject(&m_ExtentHeightFactorContent, SvPb::ExtentHeightFactorContentEId, IDS_OBJECTNAME_EXTENT_HEIGHT_FACTOR_CONTENT, true, SvOi::SVResetItemTool);
+		m_ExtentHeightFactorContent.SetDefaultValue(_variant_t(0.0), true);
+
+		m_pOwner->RegisterEmbeddedObject(&m_ExtentWidthFactorFormat, SvPb::ExtentWidthFactorFormatEId, IDS_OBJECTNAME_EXTENT_WIDTH_FACTOR_FORMAT, true, SvOi::SVResetItemTool);
+		m_ExtentWidthFactorFormat.SetDefaultValue(_variant_t(0.0), true);
+
+		m_pOwner->RegisterEmbeddedObject(&m_ExtentHeightFactorFormat, SvPb::ExtentHeightFactorFormatEId, IDS_OBJECTNAME_EXTENT_HEIGHT_FACTOR_FORMAT, true, SvOi::SVResetItemTool);
+		m_ExtentHeightFactorFormat.SetDefaultValue(_variant_t(0.0), true);
+	}
+}
+
+void EmbeddedExtents::SetDefaults()
+{
+	m_ExtentLeft.SetDefaultValue(SvDef::cDefaultWindowToolLeft, true);
+	m_ExtentTop.SetDefaultValue(SvDef::cDefaultWindowToolTop, true);
+	m_ExtentRight.SetDefaultValue(SvDef::cDefaultWindowToolLeft + SvDef::cDefaultWindowToolWidth, true);
+	m_ExtentRight.setSaveValueFlag(false);
+	m_ExtentBottom.SetDefaultValue(SvDef::cDefaultWindowToolTop + SvDef::cDefaultWindowToolHeight, true);
+	m_ExtentBottom.setSaveValueFlag(false);
+	m_ExtentWidth.SetDefaultValue(SvDef::cDefaultWindowToolWidth, true);
+	m_ExtentHeight.SetDefaultValue(SvDef::cDefaultWindowToolHeight, true);
+	m_ExtentWidthFactorContent.SetDefaultValue(SvDef::cDefaultScaleFactor, true);
+	m_ExtentHeightFactorContent.SetDefaultValue(SvDef::cDefaultScaleFactor, true);
+	m_ExtentWidthFactorFormat.SetDefaultValue(0.0, true);
+	//this needs to be 0.0 rather than SvDef::cDefaultScaleFactor to ensure proper behaviour 
+	//with pre-10.10 configurations in ResizeTool::CreateObject()
+	m_ExtentHeightFactorFormat.SetDefaultValue(0.0, true);
+	//this needs to be 0.0 rather than SvDef::cDefaultScaleFactor to ensure proper behaviour 
+	//with pre-10.10 configurations in ResizeTool::CreateObject()
+
+
+
+	m_svAuxiliarySourceX.SetDefaultValue(0.0, true);
+	m_svAuxiliarySourceX.setSaveValueFlag(false);
+	m_svAuxiliarySourceY.SetDefaultValue(0.0, true);
+	m_svAuxiliarySourceY.setSaveValueFlag(false);
+	m_svAuxiliarySourceAngle.SetDefaultValue(0.0, true);
+	m_svAuxiliarySourceAngle.setSaveValueFlag(false);
+	m_svAuxiliarySourceImageName.SetDefaultValue(_T(""), true);
+	m_svAuxiliarySourceImageName.setSaveValueFlag(false);
+	m_svAuxiliaryDrawType.SetDefaultValue("", true);
+	m_svAuxiliaryDrawType.setSaveValueFlag(false);
+}
+
 ///For this class it is not necessary to call SV_IMPLEMENT_CLASS as it is a base class and only derived classes are instantiated.
 //SV_IMPLEMENT_CLASS(SVToolClass, SVToolClassId);
 
-SVToolClass::SVToolClass(SVObjectClass* POwner, int StringResourceID /*= IDS_CLASSNAME_SVTOOL*/)
+void EmbeddedExtents::SetAttributes()
+{
+	m_ExtentLeft.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::setableOnline | SvPb::remotelySetable | SvPb::extentObject, SvOi::SetAttributeType::AddAttribute);
+	m_ExtentTop.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::setableOnline | SvPb::remotelySetable | SvPb::extentObject, SvOi::SetAttributeType::AddAttribute);
+	m_ExtentRight.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::AddAttribute);
+	m_ExtentBottom.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::AddAttribute);
+	m_ExtentWidth.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::remotelySetable | SvPb::extentObject | SvPb::setableOnline, SvOi::SetAttributeType::AddAttribute);
+	m_ExtentHeight.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::remotelySetable | SvPb::extentObject | SvPb::setableOnline, SvOi::SetAttributeType::AddAttribute);
+
+	// Defaults for the Scale Factors should be hidden but NOT removed at this time
+	m_ExtentWidthFactorContent.SetObjectAttributesAllowed(SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::RemoveAttribute);
+	m_ExtentHeightFactorContent.SetObjectAttributesAllowed(SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::RemoveAttribute);
+	m_ExtentWidthFactorFormat.SetObjectAttributesAllowed(SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::RemoveAttribute);
+	m_ExtentHeightFactorFormat.SetObjectAttributesAllowed(SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::RemoveAttribute);
+
+	
+}
+
+
+SVToolClass::SVToolClass(bool hasEmbeddedExtents, SVObjectClass* POwner, int StringResourceID /*= IDS_CLASSNAME_SVTOOL*/)
 	: SVTaskObjectListClass(POwner, StringResourceID)
 	, m_pToolConditional(nullptr)
-	, m_toolExtent{m_imageExtent}
 {
+	if (hasEmbeddedExtents)
+	{
+		m_pEmbeddedExtents = std::make_unique<EmbeddedExtents>(this);
+	}
 	init();
 }
 
@@ -78,68 +190,36 @@ void SVToolClass::init()
 	RegisterEmbeddedObject(&m_ToolTime, SvPb::ToolTimeEId, IDS_OBJECTNAME_TOOLTIME, false, SvOi::SVResetItemNone);
 	RegisterEmbeddedObject(&m_editFreezeFlag, SvPb::ConditionalEditFreezeFlagEId, IDS_OBJECTNAME_EDITMODE_FREEZEFLAG, false, SvOi::SVResetItemNone);
 
-	/////////////////////////////////////////////////////////////////////////
-	// Extents - These are shadows of the extents in the SVImageInfoClass,
-	// so that they can be exposed and be used by other objects in the system.
-	// They are not updated directly (at this point in time).
-	/////////////////////////////////////////////////////////////////////////
-	//Special type names for extents
-	m_ExtentWidth.SetTypeName(_T("Extent Width"));
-	m_ExtentHeight.SetTypeName(_T("Extent Height"));
-	m_ExtentLeft.SetTypeName(_T("Extent X"));
-	m_ExtentTop.SetTypeName(_T("Extent Y"));
-	m_ExtentRight.SetTypeName(_T("Extent X"));
-	m_ExtentBottom.SetTypeName(_T("Extent Y"));
-	m_svAuxiliarySourceX.SetTypeName(_T("Extent X"));
-	m_svAuxiliarySourceY.SetTypeName(_T("Extent Y"));
-	m_svAuxiliarySourceAngle.SetTypeName(_T("Extent Angle"));
-	m_ExtentHeightFactorContent.SetTypeName(_T("Scale Factor")); 
-	m_ExtentWidthFactorContent.SetTypeName(_T("Scale Factor"));
-	m_ExtentHeightFactorFormat.SetTypeName(_T("Scale Factor"));
-	m_ExtentWidthFactorFormat.SetTypeName(_T("Scale Factor"));
+	
+	if (m_pEmbeddedExtents.get())
+	{
+		m_pEmbeddedExtents->SetTypeNameForExtents();
+		m_pEmbeddedExtents->RegisterEmbeddedExtents();
 
-	RegisterEmbeddedObject(&m_ExtentLeft, SvPb::ExtentRelativeLeftPositionEId, IDS_OBJECTNAME_EXTENT_LEFT, false, SvOi::SVResetItemTool);
-	RegisterEmbeddedObject(&m_ExtentTop, SvPb::ExtentRelativeTopPositionEId, IDS_OBJECTNAME_EXTENT_TOP, false, SvOi::SVResetItemTool);
-	RegisterEmbeddedObject(&m_ExtentRight, SvPb::ExtentRelativeRightPositionEId, IDS_OBJECTNAME_EXTENT_RIGHT, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_ExtentBottom, SvPb::ExtentRelativeBottomPositionEId, IDS_OBJECTNAME_EXTENT_BOTTOM, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_ExtentWidth, SvPb::ExtentWidthEId, IDS_OBJECTNAME_EXTENT_WIDTH, false, SvOi::SVResetItemTool);
-	RegisterEmbeddedObject(&m_ExtentHeight, SvPb::ExtentHeightEId, IDS_OBJECTNAME_EXTENT_HEIGHT, false, SvOi::SVResetItemTool);
+	}
+	
 	RegisterEmbeddedObject(&ToolSelectedForOperatorMove, SvPb::ToolSelectedForOperatorMoveEId, IDS_OBJECTNAME_TOOL_SELECTED_FOR_OPERATOR_MOVE, false, SvOi::SVResetItemNone);
 	RegisterEmbeddedObject(&m_drawToolFlag, SvPb::ConditionalToolDrawFlagEId, IDS_OBJECTNAME_DRAWTOOL_FLAG, false, SvOi::SVResetItemNone);
 	RegisterEmbeddedObject(&m_svUpdateAuxiliaryExtents, SvPb::UpdateAuxiliaryExtentsEId, IDS_OBJECTNAME_UPDATE_AUXILIARY_EXTENTS_OBJECT, false, SvOi::SVResetItemTool);
-	RegisterEmbeddedObject(&m_svAuxiliarySourceX, SvPb::AuxiliarySourceXEId, IDS_OBJECTNAME_AUXILIARY_SOURCE_X, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_svAuxiliarySourceY, SvPb::AuxiliarySourceYEId, IDS_OBJECTNAME_AUXILIARY_SOURCE_Y, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_svAuxiliarySourceAngle, SvPb::AuxiliarySourceAngleEId, IDS_OBJECTNAME_AUXILIARY_SOURCE_ANGLE, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_svAuxiliarySourceImageName, SvPb::AuxiliarySourceImageNameEId, IDS_OBJECTNAME_AUXILIARY_SOURCE_IMAGE_NAME, false, SvOi::SVResetItemNone);
-	RegisterEmbeddedObject(&m_svAuxiliaryDrawType, SvPb::AuxiliaryDrawTypeEId, IDS_OBJECTNAME_AUXILIARY_DRAW_TYPE_NAME, false, SvOi::SVResetItemNone);
 	// Tool Comment...
 	RegisterEmbeddedObject(&m_ToolComment, SvPb::ToolCommentTypeEId, IDS_OBJECTNAME_TOOL_COMMENT, false, SvOi::SVResetItemNone);
 
-	RegisterEmbeddedObject(&m_ExtentWidthFactorContent, SvPb::ExtentWidthFactorContentEId, IDS_OBJECTNAME_EXTENT_WIDTH_FACTOR_CONTENT, true, SvOi::SVResetItemTool);
-	m_ExtentWidthFactorContent.SetDefaultValue(_variant_t(0.0), true);
-
-	RegisterEmbeddedObject(&m_ExtentHeightFactorContent, SvPb::ExtentHeightFactorContentEId, IDS_OBJECTNAME_EXTENT_HEIGHT_FACTOR_CONTENT, true, SvOi::SVResetItemTool);
-	m_ExtentHeightFactorContent.SetDefaultValue(_variant_t(0.0), true);
-
-	RegisterEmbeddedObject(&m_ExtentWidthFactorFormat, SvPb::ExtentWidthFactorFormatEId, IDS_OBJECTNAME_EXTENT_WIDTH_FACTOR_FORMAT, true, SvOi::SVResetItemTool);
-	m_ExtentWidthFactorFormat.SetDefaultValue(_variant_t(0.0), true);
-
-	RegisterEmbeddedObject(&m_ExtentHeightFactorFormat, SvPb::ExtentHeightFactorFormatEId, IDS_OBJECTNAME_EXTENT_HEIGHT_FACTOR_FORMAT, true, SvOi::SVResetItemTool);
-	m_ExtentHeightFactorFormat.SetDefaultValue(_variant_t(0.0), true);
 
 	m_toolExtent.SetTool(this);
 	m_toolExtent.SetTranslation(SvPb::SVExtentTranslationShift);
 	m_toolExtent.SetAlwaysUpdate(false);
-	m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyPositionPointX, &m_ExtentLeft);
-	m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyPositionPointY, &m_ExtentTop);
-	m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyWidth, &m_ExtentWidth);
-	m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyHeight, &m_ExtentHeight);
-	m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyWidthFactorContent, &m_ExtentWidthFactorContent);
-	m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyHeightFactorContent, &m_ExtentHeightFactorContent);
-	m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyWidthFactorFormat, &m_ExtentWidthFactorFormat);
-	m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyHeightFactorFormat, &m_ExtentHeightFactorFormat);
-
-	//
+	bool bEx = (m_pEmbeddedExtents.get() != nullptr);
+	
+	m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyPositionPointX, bEx?  &(m_pEmbeddedExtents->m_ExtentLeft): nullptr);
+	m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyPositionPointY, bEx ?  &(m_pEmbeddedExtents->m_ExtentTop) : nullptr);
+	m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyWidth, bEx ?  &(m_pEmbeddedExtents->m_ExtentWidth) : nullptr);
+	m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyHeight, bEx ? &(m_pEmbeddedExtents->m_ExtentHeight) : nullptr);
+	m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyWidthFactorContent, bEx ? &(m_pEmbeddedExtents->m_ExtentWidthFactorContent) : nullptr);
+	m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyHeightFactorContent, bEx ? &(m_pEmbeddedExtents->m_ExtentHeightFactorContent) : nullptr);
+	m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyWidthFactorFormat, bEx ? &(m_pEmbeddedExtents->m_ExtentWidthFactorFormat) : nullptr);
+	m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyHeightFactorFormat, bEx ?  &(m_pEmbeddedExtents->m_ExtentHeightFactorFormat) : nullptr);
+	
+	
 	// Set Embedded defaults
 	m_isObjectValid.SetDefaultValue(BOOL(false), true);
 	m_isObjectValid.setSaveValueFlag(false);
@@ -174,39 +254,17 @@ void SVToolClass::init()
 	/////////////////////////////////////////////////////////////////////////
 	// Set Default values for Shadowed Extents
 	/////////////////////////////////////////////////////////////////////////
-	m_ExtentLeft.SetDefaultValue(SvDef::cDefaultWindowToolLeft, true);
-	m_ExtentTop.SetDefaultValue(SvDef::cDefaultWindowToolTop, true);
-	m_ExtentRight.SetDefaultValue(SvDef::cDefaultWindowToolLeft + SvDef::cDefaultWindowToolWidth, true);
-	m_ExtentRight.setSaveValueFlag(false);
-	m_ExtentBottom.SetDefaultValue(SvDef::cDefaultWindowToolTop + SvDef::cDefaultWindowToolHeight, true);
-	m_ExtentBottom.setSaveValueFlag(false);
-	m_ExtentWidth.SetDefaultValue(SvDef::cDefaultWindowToolWidth, true);
-	m_ExtentHeight.SetDefaultValue(SvDef::cDefaultWindowToolHeight, true);
-	m_ExtentWidthFactorContent.SetDefaultValue(SvDef::cDefaultScaleFactor, true);
-	m_ExtentHeightFactorContent.SetDefaultValue(SvDef::cDefaultScaleFactor, true);
-	m_ExtentWidthFactorFormat.SetDefaultValue(0.0, true);
-	//this needs to be 0.0 rather than SvDef::cDefaultScaleFactor to ensure proper behaviour 
-	//with pre-10.10 configurations in ResizeTool::CreateObject()
-	m_ExtentHeightFactorFormat.SetDefaultValue(0.0, true);
-	//this needs to be 0.0 rather than SvDef::cDefaultScaleFactor to ensure proper behaviour 
-	//with pre-10.10 configurations in ResizeTool::CreateObject()
-
+	if (m_pEmbeddedExtents.get())
+	{
+		m_pEmbeddedExtents->SetDefaults();
+	}
+	
 	m_drawToolFlag.SetEnumTypes(IDS_TOOLDRAW_ENUMOBJECT_LIST);
 	m_drawToolFlag.SetDefaultValue(0L, true);
 
 	m_svUpdateAuxiliaryExtents.SetDefaultValue(BOOL(false), true);
 
-	m_svAuxiliarySourceX.SetDefaultValue(0.0, true);
-	m_svAuxiliarySourceX.setSaveValueFlag(false);
-	m_svAuxiliarySourceY.SetDefaultValue(0.0, true);
-	m_svAuxiliarySourceY.setSaveValueFlag(false);
-	m_svAuxiliarySourceAngle.SetDefaultValue(0.0, true);
-	m_svAuxiliarySourceAngle.setSaveValueFlag(false);
-	m_svAuxiliarySourceImageName.SetDefaultValue(_T(""), true);
-	m_svAuxiliarySourceImageName.setSaveValueFlag(false);
-	m_svAuxiliaryDrawType.SetDefaultValue("", true);
-	m_svAuxiliaryDrawType.setSaveValueFlag(false);
-
+	
 	m_pCurrentToolSet = nullptr;
 
 	// Auxiliary Source Image.
@@ -272,20 +330,14 @@ bool SVToolClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure
 	m_ProcessedCount.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
 	m_ToolTime.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
 
-	m_ExtentLeft.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::setableOnline | SvPb::remotelySetable | SvPb::extentObject, SvOi::SetAttributeType::AddAttribute);
-	m_ExtentTop.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::setableOnline | SvPb::remotelySetable | SvPb::extentObject, SvOi::SetAttributeType::AddAttribute);
-	m_ExtentRight.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::AddAttribute);
-	m_ExtentBottom.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::AddAttribute);
-	m_ExtentWidth.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::remotelySetable | SvPb::extentObject | SvPb::setableOnline, SvOi::SetAttributeType::AddAttribute);
-	m_ExtentHeight.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::remotelySetable | SvPb::extentObject | SvPb::setableOnline, SvOi::SetAttributeType::AddAttribute);
+	if (m_pEmbeddedExtents.get())
+	{
+		m_pEmbeddedExtents->SetAttributes();
+	}
 
-	// Defaults for the Scale Factors should be hidden but NOT removed at this time
-	m_ExtentWidthFactorContent.SetObjectAttributesAllowed(SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::RemoveAttribute);
-	m_ExtentHeightFactorContent.SetObjectAttributesAllowed(SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::RemoveAttribute);
-	m_ExtentWidthFactorFormat.SetObjectAttributesAllowed(SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::RemoveAttribute);
-	m_ExtentHeightFactorFormat.SetObjectAttributesAllowed(SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::RemoveAttribute);
+	
 
-	// Auxiliary Tool Source Extent
+	//// Auxiliary Tool Source Extent
 	m_svUpdateAuxiliaryExtents.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::setableOnline | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
 
 	m_drawToolFlag.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::AddAttribute);
@@ -402,14 +454,12 @@ void SVToolClass::UpdateAuxiliaryExtents()
 {
 	if (GetInspectionInterface()->getEnableAuxiliaryExtent())
 	{
-		BOOL l_bUpdateSourceExtents = false;
-
 		bool l_bForceOffsetReset = GetInspectionInterface()->IsOffsetUpdateForced();
-
 		m_toolExtent.UpdateOffsetData(l_bForceOffsetReset);
 
-		HRESULT hr = m_svUpdateAuxiliaryExtents.GetValue(l_bUpdateSourceExtents);
-		if (S_OK == hr && l_bUpdateSourceExtents)
+		BOOL bUpdateSourceExtents = false;
+		HRESULT 	hr = m_svUpdateAuxiliaryExtents.GetValue(bUpdateSourceExtents);
+		if (m_pEmbeddedExtents && S_OK == hr && bUpdateSourceExtents)
 		{
 			SVExtentOffsetStruct l_svOffsetData;
 			SvIe::SVImageClass* pAuxSourceImage = m_AuxSourceImageInput.getInput<SvIe::SVImageClass>(true);
@@ -424,11 +474,11 @@ void SVToolClass::UpdateAuxiliaryExtents()
 
 			if (nullptr != pAuxSourceImage)
 			{
-				m_svAuxiliarySourceImageName.SetValue(pAuxSourceImage->GetCompleteName());
+				m_pEmbeddedExtents->m_svAuxiliarySourceImageName.SetValue(pAuxSourceImage->GetCompleteName());
 			}
 
 			std::string DrawType = m_toolExtent.GetAuxiliaryDrawTypeString();
-			m_svAuxiliaryDrawType.SetValue(DrawType);
+			m_pEmbeddedExtents->m_svAuxiliaryDrawType.SetValue(DrawType);
 
 			SVPoint<double> point;
 			SvIe::SVImageClass* pImage = m_toolExtent.GetToolImage();
@@ -436,10 +486,10 @@ void SVToolClass::UpdateAuxiliaryExtents()
 			{
 				pImage->TranslateFromOutputSpaceToImage(pAuxSourceImage, point, point);
 			}
-			m_svAuxiliarySourceX.SetValue(point.m_x);
-			m_svAuxiliarySourceY.SetValue(point.m_y);
+			m_pEmbeddedExtents->m_svAuxiliarySourceX.SetValue(point.m_x);
+			m_pEmbeddedExtents->m_svAuxiliarySourceY.SetValue(point.m_y);
 
-			m_svAuxiliarySourceAngle.SetValue(l_svOffsetData.m_dRotationAngle);
+			m_pEmbeddedExtents->m_svAuxiliarySourceAngle.SetValue(l_svOffsetData.m_dRotationAngle);
 		}
 	}
 }
@@ -648,15 +698,18 @@ void SVToolClass::setAuxiliaryExtents()
 	UINT auxAttribute = bEnabled ? SvDef::defaultValueObjectAttributes : SvPb::noAttributes;
 
 	m_svUpdateAuxiliaryExtents.SetObjectAttributesAllowed(auxAttribute, SvOi::SetAttributeType::OverwriteAttribute);
-	m_svAuxiliarySourceX.SetObjectAttributesAllowed(auxAttribute, SvOi::SetAttributeType::OverwriteAttribute);
-	m_svAuxiliarySourceY.SetObjectAttributesAllowed(auxAttribute, SvOi::SetAttributeType::OverwriteAttribute);
-	m_svAuxiliarySourceAngle.SetObjectAttributesAllowed(auxAttribute, SvOi::SetAttributeType::OverwriteAttribute);
-	m_svAuxiliaryDrawType.SetObjectAttributesAllowed(auxAttribute, SvOi::SetAttributeType::OverwriteAttribute);
-	m_svAuxiliarySourceImageName.SetObjectAttributesAllowed(auxAttribute, SvOi::SetAttributeType::OverwriteAttribute);
+	if (m_pEmbeddedExtents)
+	{
+		m_pEmbeddedExtents->m_svAuxiliarySourceX.SetObjectAttributesAllowed(auxAttribute, SvOi::SetAttributeType::OverwriteAttribute);
+		m_pEmbeddedExtents->m_svAuxiliarySourceY.SetObjectAttributesAllowed(auxAttribute, SvOi::SetAttributeType::OverwriteAttribute);
+		m_pEmbeddedExtents->m_svAuxiliarySourceAngle.SetObjectAttributesAllowed(auxAttribute, SvOi::SetAttributeType::OverwriteAttribute);
+		m_pEmbeddedExtents->m_svAuxiliaryDrawType.SetObjectAttributesAllowed(auxAttribute, SvOi::SetAttributeType::OverwriteAttribute);
+		m_pEmbeddedExtents->m_svAuxiliarySourceImageName.SetObjectAttributesAllowed(auxAttribute, SvOi::SetAttributeType::OverwriteAttribute);
 
-	m_svAuxiliarySourceX.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
-	m_svAuxiliarySourceY.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
-	m_svAuxiliarySourceAngle.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
+		m_pEmbeddedExtents->m_svAuxiliarySourceX.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
+		m_pEmbeddedExtents->m_svAuxiliarySourceY.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
+		m_pEmbeddedExtents->m_svAuxiliarySourceAngle.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
+	}
 }
 
 bool SVToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
@@ -700,19 +753,19 @@ bool SVToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 void SVToolClass::UpdateBottomAndRight()
 {
 	//This update call is required for the image extents which can have changed
-	updateImageExtent();
+	updateImageExtent(true);
 
-	if(GetImageExtent().hasFigure())
+	if(m_pEmbeddedExtents &&  GetImageExtent().hasFigure())
 	{
 		const SVExtentFigureStruct& rFigure = GetImageExtent().GetFigure();
-		if (SvPb::noAttributes != m_ExtentRight.ObjectAttributesAllowed())
+		if (SvPb::noAttributes != m_pEmbeddedExtents->m_ExtentRight.ObjectAttributesAllowed())
 		{
-			m_ExtentRight.SetValue(static_cast<long>(rFigure.m_svBottomRight.m_x));
+			m_pEmbeddedExtents->m_ExtentRight.SetValue(static_cast<long>(rFigure.m_svBottomRight.m_x));
 		}
 
-		if (SvPb::noAttributes != m_ExtentBottom.ObjectAttributesAllowed())
+		if (SvPb::noAttributes != m_pEmbeddedExtents->m_ExtentBottom.ObjectAttributesAllowed())
 		{
-			m_ExtentBottom.SetValue(static_cast<long>(rFigure.m_svBottomRight.m_y));
+			m_pEmbeddedExtents->m_ExtentBottom.SetValue(static_cast<long>(rFigure.m_svBottomRight.m_y));
 		}
 	}
 }
@@ -753,9 +806,9 @@ void SVToolClass::removeTaskMessages(DWORD MessageCode, SvStl::MessageTextEnum A
 		TaskObj->removeTaskMessage(MessageCode, AdditionalTextId);
 	}
 }
-HRESULT SVToolClass::updateImageExtent()
+HRESULT SVToolClass::updateImageExtent(bool init )
 {
-	return m_toolExtent.updateImageExtent();
+	return m_toolExtent.updateImageExtent(init);
 }
 
 HRESULT SVToolClass::UpdateImageWithExtent()
@@ -860,27 +913,17 @@ HRESULT SVToolClass::SetImageExtent(const SVImageExtentClass& rImageExtent)
 	return m_toolExtent.SetImageExtent(rImageExtent);
 }
 
-void SVToolClass::removeEmbeddedExtents()
-{
-	m_hasExtents = false;
-	m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyPositionPointX, nullptr);
-	m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyPositionPointY, nullptr);
-	m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyWidth, nullptr);
-	m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyHeight, nullptr);
-	m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyWidthFactorContent, nullptr);
-	m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyHeightFactorContent, nullptr);
-
-	RemoveEmbeddedObject(&m_ExtentLeft); // Remove it from the Embedded List so it is not scripted
-	RemoveEmbeddedObject(&m_ExtentTop);
-	RemoveEmbeddedObject(&m_ExtentRight);
-	RemoveEmbeddedObject(&m_ExtentBottom);
-	RemoveEmbeddedObject(&m_ExtentWidth);
-	RemoveEmbeddedObject(&m_ExtentHeight);
-	RemoveEmbeddedObject(&m_ExtentWidthFactorContent);
-	RemoveEmbeddedObject(&m_ExtentHeightFactorContent);
-	RemoveEmbeddedObject(&m_ExtentWidthFactorFormat);
-	RemoveEmbeddedObject(&m_ExtentHeightFactorFormat);
+const SVImageExtentClass& SVToolClass::GetImageExtent() const 
+{ 
+	return m_toolExtent.getImageExtent();
 }
+
+const SVImageExtentClass* SVToolClass::GetImageExtentPtr() const 
+{ 
+	return &(m_toolExtent.getImageExtent());
+};
+
+
 
 HRESULT SVToolClass::GetPropertyInfo(SvPb::SVExtentPropertyEnum p_eProperty, SvIe::SVExtentPropertyInfoStruct& p_rInfo) const
 {
@@ -952,10 +995,13 @@ void SVToolClass::addOverlays(const SvIe::SVImageClass* pImage, SvPb::OverlayDes
 			pOverlay->set_displaybounding(true);
 			auto* pBoundingBox = pOverlay->mutable_boundingshape();
 			auto* pRect = pBoundingBox->mutable_rect();
-			SvPb::setValueObject(m_ExtentLeft, *pRect->mutable_x());
-			SvPb::setValueObject(m_ExtentTop, *pRect->mutable_y());
-			SvPb::setValueObject(m_ExtentWidth, *pRect->mutable_w());
-			SvPb::setValueObject(m_ExtentHeight, *pRect->mutable_h());
+			if (m_pEmbeddedExtents)
+			{
+				SvPb::setValueObject(m_pEmbeddedExtents->m_ExtentLeft, *pRect->mutable_x());
+				SvPb::setValueObject(m_pEmbeddedExtents->m_ExtentTop, *pRect->mutable_y());
+				SvPb::setValueObject(m_pEmbeddedExtents->m_ExtentWidth, *pRect->mutable_w());
+				SvPb::setValueObject(m_pEmbeddedExtents->m_ExtentHeight, *pRect->mutable_h());
+			}
 			setStateValueToOverlay(*pOverlay);
 			collectOverlays(pImage, *pOverlay);
 			break;

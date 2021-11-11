@@ -38,7 +38,7 @@ static char THIS_FILE[] = __FILE__;
 SV_IMPLEMENT_CLASS( SVWindowToolClass, SvPb::WindowToolClassId );
 
 SVWindowToolClass::SVWindowToolClass( SVObjectClass* POwner, int StringResourceID )
-	:SVToolClass( POwner, StringResourceID )
+	:SVToolClass(true, POwner, StringResourceID )
 {
 	init();
 }

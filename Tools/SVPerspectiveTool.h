@@ -29,6 +29,7 @@ public:
 	SVPerspectiveToolClass( SVObjectClass *p_pOwner = nullptr, int p_iStringResourceID = IDS_CLASSNAME_SVPERSPECTIVETOOL );
 	virtual ~SVPerspectiveToolClass();
 
+	virtual bool allowExtensionCopy() const override;
 	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 	virtual bool CloseObject() override;
 

@@ -35,7 +35,7 @@ SV_IMPLEMENT_CLASS( SVStatTool, SvPb::StatisticsToolClassId );
 
 
 SVStatTool::SVStatTool( SVObjectClass* POwner, int StringResourceID )
-				:SVToolClass( POwner, StringResourceID )
+				:SVToolClass( false,POwner, StringResourceID )
 				, m_NumberOfValidSamples(0)
 {
 	init();
@@ -49,8 +49,6 @@ void SVStatTool::init(void)
 	// Register an empty input object
 	registerInputObject( &m_inputValue, _T( "StatisticsToolValue" ), SvPb::ResultInputEId);
 
-	// Remove Embedded Extents
-	removeEmbeddedExtents();
 
 	// Set up your type...
 	//Register embedded objects.

@@ -29,7 +29,7 @@ namespace SvTo
 	SV_IMPLEMENT_CLASS(GroupTool, SvPb::GroupToolClassId);
 
 	GroupTool::GroupTool(SVObjectClass* POwner, int StringResourceID)
-		:SVToolClass(POwner, StringResourceID)
+		:SVToolClass(false,POwner, StringResourceID)
 	{
 		Initialize();
 	}
@@ -315,7 +315,7 @@ namespace SvTo
 		m_canResizeToParent = false;
 		m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
 		m_ObjectTypeInfo.m_SubType = SvPb::GroupToolObjectType;
-		removeEmbeddedExtents();
+		
 	}
 
 	SvDef::StringPairVector GroupTool::getInvalidDependenciesList() const

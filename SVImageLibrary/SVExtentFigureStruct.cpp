@@ -163,7 +163,6 @@ SVExtentSizeStruct SVExtentFigureStruct::Size() const
 	return SVExtentSizeStruct( m_svBottomRight.m_x - m_svTopLeft.m_x,  m_svBottomRight.m_y - m_svTopLeft.m_y );
 }
 
-// cppcheck-suppress unusedFunction
 double SVExtentFigureStruct::Top() const
 {
 	return m_svTopLeft.m_y;

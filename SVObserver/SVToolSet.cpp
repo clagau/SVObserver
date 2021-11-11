@@ -25,9 +25,6 @@
 #include "Definitions/ObjectNames.h"
 #pragma endregion Includes
 
-#ifdef _DEBUG
-//#define TRACE_TOOLSET
-#endif  
 SV_IMPLEMENT_CLASS(SVToolSet, SvPb::ToolSetClassId);
 
 SVToolSet::SVToolSet(SVObjectClass* POwner, int StringResourceID)
@@ -617,20 +614,10 @@ bool SVToolSet::Run(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *
 
 bool SVToolSet::resetAllObjects(SvStl::MessageContainerVector *pErrorMessages)
 {
-#ifdef 	 TRACE_TOOLSET
-	TRACE("\nSVToolSet::resetAllObject:\n");
-	TRACE1("\n ResetErrorMessage Size: %i \n", m_ResetErrorMessages.size());
-#endif 	
+
 	bool result = __super::resetAllObjects(pErrorMessages);
 	m_isObjectValid.SetValue(BOOL(result));
-#ifdef 	 TRACE_TOOLSET
-	TRACE1("\nSVToolSet::resetAllObject: return %i \n", result);
-	TRACE1("\n ResetErrorMessage Size: %i \n", m_ResetErrorMessages.size());
-#endif
-	if (true == result)
-	{
-		clearTaskMessages();
-	}
+
 	return result;
 }
 

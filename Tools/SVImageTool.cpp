@@ -39,7 +39,7 @@ static char THIS_FILE[] = __FILE__;
 SV_IMPLEMENT_CLASS(SVImageToolClass, SvPb::ImageToolClassId);
 
 SVImageToolClass::SVImageToolClass(SVObjectClass* POwner, int StringResourceID)
-	:SVToolClass(POwner, StringResourceID)
+	:SVToolClass(true,POwner, StringResourceID)
 {
 	init();
 }
@@ -325,8 +325,11 @@ void SVImageToolClass::addOverlays(const SvIe::SVImageClass* pImage, SvPb::Overl
 	auto* pRect = pBoundingBox->mutable_rect();
 	pRect->mutable_x()->set_value(0);
 	pRect->mutable_y()->set_value(0);
-	SvPb::setValueObject(m_ExtentWidth, *pRect->mutable_w());
-	SvPb::setValueObject(m_ExtentHeight, *pRect->mutable_h());
+	if (m_pEmbeddedExtents)
+	{
+		SvPb::setValueObject(m_pEmbeddedExtents->m_ExtentWidth, *pRect->mutable_w());
+		SvPb::setValueObject(m_pEmbeddedExtents->m_ExtentHeight, *pRect->mutable_h());
+	}
 	setStateValueToOverlay(*pOverlay);
 	collectOverlays(pImage, *pOverlay);
 }

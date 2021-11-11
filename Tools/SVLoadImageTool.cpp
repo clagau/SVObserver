@@ -33,7 +33,7 @@ static char THIS_FILE[] = __FILE__;
 SV_IMPLEMENT_CLASS( SVLoadImageToolClass, SvPb::LoadImageToolClassId );
 
 SVLoadImageToolClass::SVLoadImageToolClass( SVObjectClass* POwner, int StringResourceID )
-					 :SVToolClass( POwner, StringResourceID )
+					 :SVToolClass(true, POwner, StringResourceID )
 {
 	init();
 }

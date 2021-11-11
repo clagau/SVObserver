@@ -35,7 +35,7 @@ static char THIS_FILE[] = __FILE__;
 SV_IMPLEMENT_CLASS( SVPolarTransformationToolClass, SvPb::PolarTransformationToolClassId );
 
 SVPolarTransformationToolClass::SVPolarTransformationToolClass( SVObjectClass* POwner, int StringResourceID )
-							   :SVToolClass( POwner, StringResourceID )
+							   :SVToolClass( false,POwner, StringResourceID )
 {
 	// BoolValueObject to use new method
 	RegisterEmbeddedObject( &m_svAngularMethod, SvPb::OutputAngularMethodEId, IDS_OBJECTNAME_ANGULAR_METHOD,	false, SvOi::SVResetItemNone );
@@ -55,8 +55,7 @@ void SVPolarTransformationToolClass::init()
 	m_toolExtent.SetTranslation(SvPb::SVExtentTranslationPolarUnwrap );
 	m_toolExtent.SetAlwaysUpdate( true );
 
-	// Hide and Remove Embedded Extents
-	removeEmbeddedExtents();
+	
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( &m_SourceImageNames, SvPb::SourceImageNamesEId, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemTool );

@@ -32,7 +32,7 @@ SV_IMPLEMENT_CLASS(TableTool, SvPb::TableToolClassId);
 
 #pragma region Constructor
 TableTool::TableTool( SVObjectClass* pOwner, int stringResourceID )
-	:SVToolClass( pOwner, stringResourceID )
+	:SVToolClass( false,pOwner, stringResourceID )
 	,m_pClearEquation(nullptr)
 	,m_pTable(nullptr)
 {
@@ -245,8 +245,7 @@ void TableTool::LocalInitialize ()
 	m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
 	m_ObjectTypeInfo.m_SubType    = SvPb::SVTableToolObjectType;
 
-	// Hide and Remove Embedded Extents
-	removeEmbeddedExtents();
+	
 }
 
 void TableTool::BuildEmbeddedObjectList ()

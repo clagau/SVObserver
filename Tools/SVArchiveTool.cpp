@@ -52,7 +52,7 @@ SV_IMPLEMENT_CLASS(SVArchiveTool, SvPb::ArchiveToolClassId);
 
 
 SVArchiveTool::SVArchiveTool( SVObjectClass* POwner, int StringResourceID )
-              : SVToolClass(POwner, StringResourceID)
+              : SVToolClass(false,POwner, StringResourceID)
 {
 	initializeArchiveTool();
 }
@@ -78,8 +78,7 @@ void SVArchiveTool::initializeArchiveTool()
 	m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
 	m_ObjectTypeInfo.m_SubType = SvPb::SVToolArchiveObjectType;
 
-	// Hide and Remove Embedded Extents
-	removeEmbeddedExtents();
+	
 	
 	// Register Embedded Objects
 	RegisterEmbeddedObject(

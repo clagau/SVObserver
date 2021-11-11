@@ -64,7 +64,7 @@ protected:
 	virtual void addOverlayResults(SvPb::Overlay& , bool ) const {};
 	virtual void addOverlayResultDetails(SvPb::Overlay& rOverlay, bool isVertical = false) const;
 
-	virtual HRESULT updateImageExtent() override;
+	virtual HRESULT updateImageExtent(bool init) override;
 	HRESULT GetProjectedExtent( long p_lIndex, long &p_rlBottom, SVImageExtentClass& rImageExtent );
 
 	HRESULT GetInputProfileOrientation(long& rProfileOrientation) const;

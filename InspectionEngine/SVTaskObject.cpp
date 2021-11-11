@@ -85,11 +85,11 @@ SVTaskObjectClass::~SVTaskObjectClass()
 	assert(0 == m_inputs.size());
 }
 
-bool SVTaskObjectClass::resetAllObjects(SvStl::MessageContainerVector *pErrorMessages/*=nullptr */)
+bool SVTaskObjectClass::resetAllObjects(SvStl::MessageContainerVector* pErrorMessages/*=nullptr */)
 {
 	clearTaskMessages();
 
-	bool Result = (S_OK == updateImageExtent());
+	bool Result = (S_OK == updateImageExtent(true));
 
 	// Notify friends...
 	for (size_t i = 0; i < m_friendList.size(); ++i)
@@ -116,7 +116,7 @@ bool SVTaskObjectClass::resetAllObjects(SvStl::MessageContainerVector *pErrorMes
 			}
 		}
 	}
-	
+
 	if (nullptr != pErrorMessages && !m_ResetErrorMessages.empty())
 	{
 		pErrorMessages->insert(pErrorMessages->end(), m_ResetErrorMessages.begin(), m_ResetErrorMessages.end());
@@ -150,7 +150,7 @@ std::vector<SvOi::IObjectClass*> SVTaskObjectClass::getOutputListFiltered(UINT u
 	std::vector<SvOi::IObjectClass*> outputList;
 	getOutputList(std::back_inserter(outputList));
 	outputList.erase(std::remove_if(outputList.begin(), outputList.end(), [bAND, uiAttributes](auto* pObject)
-		{return bAND ? (pObject->ObjectAttributesSet() & uiAttributes) != uiAttributes // AND
+	{return bAND ? (pObject->ObjectAttributesSet() & uiAttributes) != uiAttributes // AND
 		: 0 == (pObject->ObjectAttributesSet() & uiAttributes); }), outputList.end());
 
 	return outputList;
@@ -162,7 +162,7 @@ void SVTaskObjectClass::GetOutputListFiltered(SVObjectReferenceVector& rObjectLi
 	getOutputList(std::back_inserter(outputList));
 	for (auto* pIObject : outputList)
 	{
-		SVObjectReference ObjectRef{ dynamic_cast<SVObjectClass*>(pIObject) };
+		SVObjectReference ObjectRef {dynamic_cast<SVObjectClass*>(pIObject)};
 		if (ObjectRef.getObject())
 		{
 			if (!ObjectRef.isArray())
@@ -196,17 +196,17 @@ void SVTaskObjectClass::GetOutputListFiltered(SVObjectReferenceVector& rObjectLi
 void SVTaskObjectClass::removeTaskMessage(DWORD MessageCode, SvStl::MessageTextEnum AdditionalTextId)
 {
 	auto it = std::find_if(m_ResetErrorMessages.begin(), m_ResetErrorMessages.end(),
-		[&](SvStl::MessageContainer &mc)
+		[&](SvStl::MessageContainer& mc)
 	{
 		return ((mc.getMessage().m_MessageCode == MessageCode) && (mc.getMessage().m_AdditionalTextId == AdditionalTextId));
-		
+
 	});
 	if (it != m_ResetErrorMessages.end())
 	{
 		m_ResetErrorMessages.erase(it);
 	}
 	auto it2 = std::find_if(m_RunErrorMessages.begin(), m_RunErrorMessages.end(),
-		[&](SvStl::MessageContainer &mc)
+		[&](SvStl::MessageContainer& mc)
 	{
 		return ((mc.getMessage().m_MessageCode == MessageCode) && (mc.getMessage().m_AdditionalTextId == AdditionalTextId));
 	});
@@ -384,34 +384,34 @@ SvStl::MessageContainerVector SVTaskObjectClass::validateAndSetEmbeddedValues(co
 		{
 			switch (rEntry.index())
 			{
-			case 0:
-			{
-				auto& rData = std::get<0>(rEntry);
-				if (nullptr != rData.m_pValueObject)
+				case 0:
 				{
-					rData.m_pValueObject->validateValue(rData.m_Value, rData.m_DefaultValue);
+					auto& rData = std::get<0>(rEntry);
+					if (nullptr != rData.m_pValueObject)
+					{
+						rData.m_pValueObject->validateValue(rData.m_Value, rData.m_DefaultValue);
+					}
+					else
+					{
+						SvStl::MessageContainer Msg(SVMSG_SVO_NULL_POINTER, SvStl::Tid_Default, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+						throw Msg;
+					}
+					break;
 				}
-				else
-				{
-					SvStl::MessageContainer Msg(SVMSG_SVO_NULL_POINTER, SvStl::Tid_Default, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
-					throw Msg;
-				}
-				break;
+				case 1:
+					auto & rData = std::get<1>(rEntry);
+					if (nullptr != rData.m_pValueObject)
+					{
+						rData.m_pValueObject->validateValue(rData.m_linkedData);
+					}
+					else
+					{
+						SvStl::MessageContainer Msg(SVMSG_SVO_NULL_POINTER, SvStl::Tid_Default, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+						throw Msg;
+					}
+					break;
 			}
-			case 1:
-				auto & rData = std::get<1>(rEntry);
-				if (nullptr != rData.m_pValueObject)
-				{
-					rData.m_pValueObject->validateValue(rData.m_linkedData);
-				}
-				else
-				{
-					SvStl::MessageContainer Msg(SVMSG_SVO_NULL_POINTER, SvStl::Tid_Default, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
-					throw Msg;
-				}
-				break;
-			}
-			
+
 		}
 		catch (const SvStl::MessageContainer& rSvE)
 		{
@@ -426,12 +426,12 @@ SvStl::MessageContainerVector SVTaskObjectClass::validateAndSetEmbeddedValues(co
 		{
 			switch (rEntry.index())
 			{
-			case 0:
-				Result = setEmbeddedValue(std::get<0>(rEntry), std::back_inserter(messages));
-				break;
-			case 1:
-				Result = setEmbeddedValue(std::get<1>(rEntry), std::back_inserter(messages));
-				break;
+				case 0:
+					Result = setEmbeddedValue(std::get<0>(rEntry), std::back_inserter(messages));
+					break;
+				case 1:
+					Result = setEmbeddedValue(std::get<1>(rEntry), std::back_inserter(messages));
+					break;
 			}
 		}
 	}
@@ -444,7 +444,7 @@ void SVTaskObjectClass::ResolveDesiredInputs(const SvDef::SVObjectTypeInfoVector
 	// Apply desired input interface...
 	for (int i = 0; i < rDesiredInputs.size() && i < m_inputs.size(); ++i)
 	{
-		auto* pInInfo = *(m_inputs.begin()+i);
+		auto* pInInfo = *(m_inputs.begin() + i);
 
 		const SvDef::SVObjectTypeInfoStruct& rDesiredInType = rDesiredInputs[i];
 
@@ -692,7 +692,7 @@ bool SVTaskObjectClass::isInputImage(uint32_t imageId) const
 		// Notify friends...
 		for (size_t i = 0; !Result && i < m_friendList.size(); ++i)
 		{
-			const SVObjectInfoStruct &rFriend = m_friendList[i];
+			const SVObjectInfoStruct& rFriend = m_friendList[i];
 
 			if (nullptr != rFriend.getObject() && rFriend.getObject()->GetParent() == this)
 			{
@@ -718,23 +718,18 @@ bool SVTaskObjectClass::DoesObjectHaveExtents() const
 	return false;
 }
 
-HRESULT SVTaskObjectClass::SetImageExtent(const SVImageExtentClass& rImageExtent)
-{
-	m_imageExtent = rImageExtent;
-	return S_OK;
-}
 
 HRESULT SVTaskObjectClass::SetImageExtentToParent()
 {
 	return S_FALSE;
 }
 
-HRESULT SVTaskObjectClass::SetImageExtentToFit(const SVImageExtentClass& )
+HRESULT SVTaskObjectClass::SetImageExtentToFit(const SVImageExtentClass&)
 {
 	return S_FALSE;
 }
 
-HRESULT SVTaskObjectClass::GetPropertyInfo(SvPb::SVExtentPropertyEnum, SVExtentPropertyInfoStruct& ) const
+HRESULT SVTaskObjectClass::GetPropertyInfo(SvPb::SVExtentPropertyEnum, SVExtentPropertyInfoStruct&) const
 {
 	return S_FALSE;
 }
@@ -923,7 +918,7 @@ bool SVTaskObjectClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStr
 {
 	bool Result = SVObjectAppClass::CreateObject(rCreateStructure);
 
-	Result &= (S_OK == updateImageExtent());
+	Result &= (S_OK == updateImageExtent(true));
 
 	// Create our friends
 	for (size_t j = 0; j < m_friendList.size(); ++j)
@@ -1011,7 +1006,7 @@ void SVTaskObjectClass::MovedEmbeddedObject(SVObjectClass* pToMoveObject, SVObje
 	}
 }
 
-bool SVTaskObjectClass::resetAllOutputListObjects(SvStl::MessageContainerVector *pErrorMessages/*=nullptr */)
+bool SVTaskObjectClass::resetAllOutputListObjects(SvStl::MessageContainerVector* pErrorMessages/*=nullptr */)
 {
 	bool Result = true;
 
@@ -1152,7 +1147,7 @@ void SVTaskObjectClass::PersistInputs(SvOi::IObjectWriter& rWriter) const
 	}
 }
 
-bool SVTaskObjectClass::Run(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool SVTaskObjectClass::Run(RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages)
 {
 	clearRunErrorMessages();
 
@@ -1169,9 +1164,9 @@ bool SVTaskObjectClass::Run(RunStatus& rRunStatus, SvStl::MessageContainerVector
 	return bRetVal;
 }
 
-bool SVTaskObjectClass::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool SVTaskObjectClass::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages)
 {
-	bool bRetVal = (S_OK == updateImageExtent());
+	bool bRetVal = (S_OK == updateImageExtent(false));
 
 	for (auto* pLinkedObject : m_embeddedFormulaLinked)
 	{
@@ -1195,7 +1190,7 @@ bool SVTaskObjectClass::onRun(RunStatus& rRunStatus, SvStl::MessageContainerVect
 	return bRetVal;
 }
 
-bool SVTaskObjectClass::runFriends(RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool SVTaskObjectClass::runFriends(RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages)
 {
 	bool bRetVal = true;
 
@@ -1299,7 +1294,7 @@ HRESULT SVTaskObjectClass::GetImageList(SVImageClassPtrVector& p_rImageList, UIN
 
 	std::vector<SvOi::IObjectClass*> list;
 	fillObjectList(std::back_inserter(list), info);
-	
+
 	for (auto* pObject : list)
 	{
 		SVImageClass* pImage = dynamic_cast<SVImageClass*>(pObject);
@@ -1454,7 +1449,7 @@ void SVTaskObjectClass::UpdateOverlayName(SVExtentMultiLineStruct& p_rMultiLine,
 	}
 }
 
-HRESULT SVTaskObjectClass::CollectOverlays(SVImageClass* p_Image, SVExtentMultiLineStructVector &p_MultiLineArray)
+HRESULT SVTaskObjectClass::CollectOverlays(SVImageClass* p_Image, SVExtentMultiLineStructVector& p_MultiLineArray)
 {
 	HRESULT hrRet = S_OK;
 
@@ -1497,38 +1492,33 @@ void SVTaskObjectClass::collectOverlays(const SVImageClass* pImage, SvPb::Overla
 	}
 }
 
-HRESULT SVTaskObjectClass::onCollectOverlays(SVImageClass* p_Image, SVExtentMultiLineStructVector &p_MultiLineArray)
+HRESULT SVTaskObjectClass::onCollectOverlays(SVImageClass* p_Image, SVExtentMultiLineStructVector& p_MultiLineArray)
 {
 	HRESULT l_Status = E_FAIL;
-
-	if (nullptr != p_Image)
+	// cppcheck-suppress nullPointer
+	if (nullptr != p_Image && nullptr != GetImageExtentPtr() && GetImageExtentPtr()->hasFigure())
 	{
-		if (GetImageExtent().hasFigure())
+	// cppcheck-suppress nullPointer
+		const SVImageExtentClass& rImageExtents = *GetImageExtentPtr();
+		SVExtentMultiLineStruct l_MultiLine;
+		UpdateOverlayIDs(l_MultiLine);
+		UpdateOverlayName(l_MultiLine, rImageExtents);
+		SVTaskObjectClass* pTaskObject = dynamic_cast<SVTaskObjectClass*> (GetTool());
+		if (nullptr != pTaskObject)
 		{
-			SVExtentMultiLineStruct l_MultiLine;
-
-			UpdateOverlayIDs(l_MultiLine);
-
-			UpdateOverlayName(l_MultiLine, GetImageExtent());
-
-			SVTaskObjectClass* pTaskObject = dynamic_cast<SVTaskObjectClass*> (GetTool());
-
-			if (nullptr != pTaskObject)
-			{
-				pTaskObject->UpdateOverlayColor(l_MultiLine);
-				pTaskObject->GetDrawInfo(l_MultiLine);
-			}
-			else
-			{
-				UpdateOverlayColor(l_MultiLine);
-				GetDrawInfo(l_MultiLine);
-			}
-
-			l_MultiLine.AssignExtentFigure(GetImageExtent().GetFigure(), l_MultiLine.m_Color);
-
-			p_MultiLineArray.push_back(l_MultiLine);
-			l_Status = S_OK;
+			pTaskObject->UpdateOverlayColor(l_MultiLine);
+			pTaskObject->GetDrawInfo(l_MultiLine);
 		}
+		else
+		{
+			UpdateOverlayColor(l_MultiLine);
+			GetDrawInfo(l_MultiLine);
+		}
+
+		l_MultiLine.AssignExtentFigure(rImageExtents.GetFigure(), l_MultiLine.m_Color);
+		p_MultiLineArray.push_back(l_MultiLine);
+		l_Status = S_OK;
+
 	}
 
 	return l_Status;
@@ -1611,7 +1601,7 @@ HRESULT SVTaskObjectClass::setEmbeddedValue(const SvOi::SetValueStruct& rEntry, 
 		}
 		// cppcheck-suppress unreadVariable symbolName=inserter ; cppCheck doesn't know back_insert_iterator
 		inserter = Msg.getMessageContainer();
-	}			
+	}
 	return Result;
 }
 
@@ -1665,7 +1655,7 @@ HRESULT SVTaskObjectClass::setEmbeddedValue(const SvOi::SetLinkedStruct& rEntry,
 
 void SVTaskObjectClass::addOrRemoveResetErrorMessage(SvStl::MessageContainer& rErrorMessage, bool add)
 {
-	if (add )
+	if (add)
 	{
 		if (m_ResetErrorMessages.size() == 0)
 		{

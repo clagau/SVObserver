@@ -147,12 +147,12 @@ protected:
 
 	virtual HRESULT RemoveObjectConnection(uint32_t objectID ) override;
 
-	HRESULT UpdateChild(uint32_t childID, const SVImageInfoClass& rImageInfo);
+	HRESULT UpdateChild(uint32_t childID, const SVImageInfoClass& rImageInfo, bool reporterror);
 	HRESULT RemoveChild(uint32_t childID );
 
-	HRESULT UpdatePosition( );
+	HRESULT UpdatePosition(bool reporterror );
 
-	HRESULT UpdateChildren();
+	HRESULT UpdateChildren(bool reporterror);
 	HRESULT RemoveChildren();
 
 	bool Lock() const;

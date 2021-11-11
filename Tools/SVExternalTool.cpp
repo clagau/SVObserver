@@ -28,7 +28,7 @@ static char THIS_FILE[] = __FILE__;
 SV_IMPLEMENT_CLASS( SVExternalTool, SvPb::ExternalToolClassId);
 
 SVExternalTool::SVExternalTool( SVObjectClass* POwner, int StringResourceID )
-						  :SVToolClass( POwner, StringResourceID )
+						  :SVToolClass(false, POwner, StringResourceID )
 {
 	Initialize();
 }
@@ -73,7 +73,7 @@ void SVExternalTool::Initialize()
 		Add( l_pTask );
 	}
 
-	removeEmbeddedExtents();
+	
 }
 
 

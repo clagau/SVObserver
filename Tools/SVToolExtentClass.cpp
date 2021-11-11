@@ -36,8 +36,7 @@ SVToolExtentClass::SVTranslationFilterSet SVToolExtentClass::
 m_LinearToolTranslations {SvPb::SVExtentTranslationProfile, SvPb::SVExtentTranslationProfileShift}
 ;
 
-SVToolExtentClass::SVToolExtentClass(SVImageExtentClass& rImageExtent) :
-	m_rImageExtent {rImageExtent}
+SVToolExtentClass::SVToolExtentClass() 
 {
 	Initialize();
 }
@@ -65,7 +64,8 @@ HRESULT SVToolExtentClass::Initialize()
 
 	KeepPrevError(l_svOk, m_svRootOffsetData.Initialize());
 	KeepPrevError(l_svOk, m_svSelectedOffsetData.Initialize());
-
+	m_ImageExtent.setIsUpdated(false);
+	
 	return l_svOk;
 }
 
@@ -77,6 +77,7 @@ void SVToolExtentClass::SetToolImage(SvIe::SVImageClass *pToolImage)
 
 		m_svRootOffsetData.Initialize();
 		m_svSelectedOffsetData.Initialize();
+		m_ImageExtent.setIsUpdated(false);
 	}
 }
 
@@ -210,7 +211,7 @@ HRESULT SVToolExtentClass::UpdateImageWithExtent(SVToolExtentTypeEnum ToolExtent
 			}
 			else
 			{
-				imageExtents = m_rImageExtent;
+				imageExtents = m_ImageExtent;
 
 				SvOi::IInspectionProcess* pInspection = m_pToolImage->GetInspectionInterface();
 
@@ -252,7 +253,7 @@ HRESULT SVToolExtentClass::UpdateImageWithExtent(SVToolExtentTypeEnum ToolExtent
 		}
 		else
 		{
-			imageExtents = m_rImageExtent;
+			imageExtents = m_ImageExtent;
 		}
 
 		if (S_OK == l_Status)
@@ -395,19 +396,27 @@ HRESULT SVToolExtentClass::SetExtentValue(SvPb::SVExtentPropertyEnum extentPrope
 	return l_hrOk;
 }
 
-HRESULT SVToolExtentClass::updateImageExtent()
+HRESULT SVToolExtentClass::updateImageExtent(bool init )
 {
-	m_rImageExtent.Initialize();
-	m_rImageExtent.SetTranslation(m_eTranslation);
-
-	HRESULT result = m_Properties.GetProperties(m_rImageExtent);
+	if (init || m_ImageExtent.GetTranslation() != m_eTranslation)
+	{
+		m_ImageExtent.Initialize();
+		m_ImageExtent.SetTranslation(m_eTranslation);
+	}
+	
+	
+	HRESULT result = m_Properties.GetProperties(m_ImageExtent);
 	if (S_OK == result)
 	{
-		result = m_rImageExtent.UpdateData();
+		if (m_ImageExtent.getIsUpdated()== false)
+		{
+			
+			result = m_ImageExtent.UpdateData();
+		}
 	}
 	else
 	{
-		m_rImageExtent.Initialize();
+		m_ImageExtent.Initialize();
 	}
 
 	return result;
@@ -452,7 +461,7 @@ HRESULT SVToolExtentClass::SetImageExtent(const SVImageExtentClass& rImageExtent
 
 	double dValue = 0.0;
 
-	m_rImageExtent = rImageExtent;
+	m_ImageExtent = rImageExtent;
 
 	SvPb::SVExtentTranslationEnum translation = rImageExtent.GetTranslation();
 
@@ -575,12 +584,12 @@ HRESULT SVToolExtentClass::UpdateOffsetDataToImage(SVExtentOffsetStruct& rOffset
 	if (pImageParent != pAuxRefImage && pImageParent != m_pToolImage &&
 		nullptr != pToolParent && pToolParent != m_pTool)
 	{
-		/*l_svOk =*/ m_rImageExtent.UpdateSourceOffset(offsetData);
+		/*l_svOk =*/ m_ImageExtent.UpdateSourceOffset(offsetData);
 		l_svOk = pToolParent->UpdateOffsetDataToImage(offsetData, pAuxRefImage);
 	}
 	else if (pImageParent == pAuxRefImage || nullptr == pAuxRefImage)
 	{
-		l_svOk = m_rImageExtent.UpdateSourceOffset(offsetData);
+		l_svOk = m_ImageExtent.UpdateSourceOffset(offsetData);
 	}
 	else
 	{
@@ -666,7 +675,7 @@ HRESULT SVToolExtentClass::UpdateOffsetData(bool bForceUpdate)
 
 				if (S_OK == l_svOk)
 				{
-					l_svOk = m_rImageExtent.UpdateSourceOffset(offsetData);
+					l_svOk = m_ImageExtent.UpdateSourceOffset(offsetData);
 				}
 
 				if (S_OK == l_svOk)
@@ -733,7 +742,7 @@ HRESULT SVToolExtentClass::TranslatePointToSource(SVPoint<double> inPoint, SVPoi
 	}
 	else
 	{
-		result = m_rImageExtent.TranslateFromOutputSpace(inPoint, rOutPoint);
+		result = m_ImageExtent.TranslateFromOutputSpace(inPoint, rOutPoint);
 
 		if (S_OK == result)
 		{
@@ -901,7 +910,7 @@ HRESULT SVToolExtentClass::SetExtentPropertyInfo(SvPb::SVExtentPropertyEnum exte
 
 void SVToolExtentClass::getExtentProperties(::google::protobuf::RepeatedPtrField< ::SvPb::ExtentParameter >& rExtentProperties) const
 {
-	m_rImageExtent.getExtentProperties(rExtentProperties);
+	m_ImageExtent.getExtentProperties(rExtentProperties);
 	for (auto& rExtent : rExtentProperties)
 	{
 		SvIe::SVExtentPropertyInfoStruct info;

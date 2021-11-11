@@ -42,7 +42,7 @@ public:
 		SVTransformationToolExtent = 2,
 	};
 
-	explicit SVToolExtentClass(SVImageExtentClass& rImageExtent);
+	SVToolExtentClass();
 	~SVToolExtentClass();
 
 	HRESULT Initialize();
@@ -59,7 +59,8 @@ public:
 	bool GetAlwaysUpdate() const { return m_bAlwaysUpdate; }
 	void SetAlwaysUpdate( bool bAlwaysUpdate ) { m_bAlwaysUpdate = bAlwaysUpdate; }
 
-	SVImageExtentClass& getImageExtent() {return m_rImageExtent;}
+	SVImageExtentClass& getImageExtent() {return m_ImageExtent;}
+	const SVImageExtentClass& getImageExtent() const { return m_ImageExtent; }
 
 	HRESULT ValidExtentAgainstParentImage( const SVImageExtentClass& rImageExtent ) const;
 	HRESULT UpdateExtentToParentExtents( SVImageExtentClass& rNewExtent  );
@@ -88,7 +89,7 @@ public:
 //- and the SVImageExtentClass.  This function appears to attempt to translate  
 //- between the two.  Translating and copying from the SVToolExtentClass based 
 //- structure into the SVImageExtentClass based structure. -------------------
-	HRESULT updateImageExtent();
+	HRESULT updateImageExtent(bool init);
 
 	HRESULT SetImageExtent( const SVImageExtentClass& rImageExtent);
 
@@ -138,11 +139,13 @@ private:
 
 	SVToolExtentPropertiesClass m_Properties;
 
-	SVImageExtentClass& m_rImageExtent;			//NOTE! This accesses the variable m_imageExtent directly in SVTaskObject
+	
 
+	SVImageExtentClass m_ImageExtent;
 	static SVTranslationFilterSet m_LinearToolTranslations;
 
 	mutable bool m_CircularReference = false;					//! Use this flag during UpdateOffsetDataToImage to make sure no circular references are present
+	
 };
 
 } //namespace SvIe

@@ -38,7 +38,7 @@ SV_IMPLEMENT_CLASS( RingBufferTool, SvPb::RingBufferToolClassId );
 
 #pragma region Constructor
 RingBufferTool::RingBufferTool( SVObjectClass* pOwner, int stringResourceID )
-	:SVToolClass( pOwner, stringResourceID )
+	:SVToolClass(false, pOwner, stringResourceID )
 {
 	LocalInitialize ();
 }
@@ -312,7 +312,7 @@ void RingBufferTool::LocalInitialize ()
 	m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
 	m_ObjectTypeInfo.m_SubType    = SvPb::SVRingBufferToolObjectType;
 	
-	removeEmbeddedExtents();
+	
 	m_ringBuffer.clear();
 }
 

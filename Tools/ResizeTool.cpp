@@ -35,7 +35,7 @@ SV_IMPLEMENT_CLASS(ResizeTool, SvPb::ResizeToolId);
 constexpr double defaultScalefactor = 1.0;
 
 ResizeTool::ResizeTool(SVObjectClass* pOwner, int stringResourceID)
-	: SVToolClass(pOwner, stringResourceID)
+	: SVToolClass(true,pOwner, stringResourceID)
 {
 	LocalInitialize();
 }
@@ -130,12 +130,15 @@ bool ResizeTool::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 {
 	bool bOk = SVToolClass::CreateObject(rCreateStructure);
 
-	// for the ResizeTool, we want to be able to see and store these scale factors
-	m_ExtentWidthFactorContent.SetObjectAttributesAllowed(SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::AddAttribute);
-	m_ExtentHeightFactorContent.SetObjectAttributesAllowed(SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::AddAttribute);
-	m_ExtentWidthFactorFormat.SetObjectAttributesAllowed(SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::AddAttribute);
-	m_ExtentHeightFactorFormat.SetObjectAttributesAllowed(SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::AddAttribute);
-
+	bOk &= (nullptr != m_pEmbeddedExtents.get());
+	if (m_pEmbeddedExtents.get())
+	{
+		// for the ResizeTool, we want to be able to see and store these scale factors
+		m_pEmbeddedExtents->m_ExtentWidthFactorContent.SetObjectAttributesAllowed(SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::AddAttribute);
+		m_pEmbeddedExtents->m_ExtentHeightFactorContent.SetObjectAttributesAllowed(SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::AddAttribute);
+		m_pEmbeddedExtents->m_ExtentWidthFactorFormat.SetObjectAttributesAllowed(SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::AddAttribute);
+		m_pEmbeddedExtents->m_ExtentHeightFactorFormat.SetObjectAttributesAllowed(SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::AddAttribute);
+	}
 	// We do not want the ROI image showing up as an output image.
 	m_LogicalROIImage.SetObjectAttributesAllowed(SvPb::embedable, SvOi::SetAttributeType::OverwriteAttribute);
 
@@ -159,34 +162,38 @@ bool ResizeTool::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 
 	m_isCreated = bOk;
 
-	double widthScaleFactor = 0.0;
-	m_ExtentWidthFactorFormat.getValue(widthScaleFactor);
-	if (widthScaleFactor == 0.0)
-	// m_ExtentWidthFactorFormat having a default value of 0.0 rather than SvDef::cDefaultScaleFactor
-	// ensures proper behaviour with pre-10.10 configurations
+	
+	if (m_pEmbeddedExtents)
 	{
-		if (SvPb::LinkedSelectedType::DirectValue == m_ExtentWidthFactorFormat.getSelectedType()) // A dotted name must not be overwritten with a numeric value - even if currently having a value of zero!
-			// We are assuming that an non-empty linked name means that a dotted name is present.
+		double widthScaleFactor = 0.0;
+		m_pEmbeddedExtents->m_ExtentWidthFactorFormat.getValue(widthScaleFactor);
+
+		if (widthScaleFactor == 0.0)
+			// m_ExtentWidthFactorFormat having a default value of 0.0 rather than SvDef::cDefaultScaleFactor
+			// ensures proper behaviour with pre-10.10 configurations
 		{
-			m_ExtentWidthFactorContent.getValue(widthScaleFactor);
-			m_ExtentWidthFactorFormat.setDirectValue(widthScaleFactor);
+			if (SvPb::LinkedSelectedType::DirectValue == m_pEmbeddedExtents->m_ExtentWidthFactorFormat.getSelectedType()) // A dotted name must not be overwritten with a numeric value - even if currently having a value of zero!
+				// We are assuming that an non-empty linked name means that a dotted name is present.
+			{
+				m_pEmbeddedExtents->m_ExtentWidthFactorContent.getValue(widthScaleFactor);
+				m_pEmbeddedExtents->m_ExtentWidthFactorFormat.setDirectValue(widthScaleFactor);
+			}
+		}
+
+		double heightScaleFactor = 0.0;
+		m_pEmbeddedExtents->m_ExtentHeightFactorFormat.getValue(heightScaleFactor);
+		if (heightScaleFactor == 0.0)
+			//m_ExtentHeightFactorFormat having a default value of 0.0 rather than SvDef::cDefaultScaleFactor
+			// ensures proper behaviour with pre-10.10 configurations
+		{
+			if (SvPb::LinkedSelectedType::DirectValue == m_pEmbeddedExtents->m_ExtentHeightFactorFormat.getSelectedType()) // A dotted name must not be overwritten with a numeric value - even if currently having a value of zero!
+				// We are assuming that an non-empty linked name means that a dotted name is present.
+			{
+				m_pEmbeddedExtents->m_ExtentHeightFactorContent.getValue(heightScaleFactor);
+				m_pEmbeddedExtents->m_ExtentHeightFactorFormat.setDirectValue(heightScaleFactor);
+			}
 		}
 	}
-
-	double heightScaleFactor = 0.0;
-	m_ExtentHeightFactorFormat.getValue(heightScaleFactor);
-	if (heightScaleFactor == 0.0)
-	//m_ExtentHeightFactorFormat having a default value of 0.0 rather than SvDef::cDefaultScaleFactor
-	// ensures proper behaviour with pre-10.10 configurations
-	{
-		if (SvPb::LinkedSelectedType::DirectValue == m_ExtentHeightFactorFormat.getSelectedType()) // A dotted name must not be overwritten with a numeric value - even if currently having a value of zero!
-			// We are assuming that an non-empty linked name means that a dotted name is present.
-		{
-			m_ExtentHeightFactorContent.getValue(heightScaleFactor);
-			m_ExtentHeightFactorFormat.setDirectValue(heightScaleFactor);
-		}
-	}
-
 	return bOk;
 }
 
@@ -385,17 +392,22 @@ bool ResizeTool::ModifyImageExtentByScaleFactors()
 #if defined (TRACE_THEM_ALL) || defined (TRACE_RESIZE)
 	auto before = m_toolExtent.getImageExtent();
 #endif
+	if (!m_pEmbeddedExtents.get())
+	{
+		assert(false);
+		return false;
+	}
 
 	double contentWidthScaleFactor = 0.0;
-	HRESULT hr = m_ExtentWidthFactorContent.getValue(contentWidthScaleFactor); //this scale factor influences only the image's content, not its size.
+	HRESULT hr = m_pEmbeddedExtents->m_ExtentWidthFactorContent.getValue(contentWidthScaleFactor); //this scale factor influences only the image's content, not its size.
 	bool ok = (S_OK == hr);
 	double contentHeightScaleFactor = 0.0;
-	ok = ok && (S_OK == m_ExtentHeightFactorContent.getValue(contentHeightScaleFactor)); //this scale factor influences only the image's content, not its size.
+	ok = ok && (S_OK == m_pEmbeddedExtents->m_ExtentHeightFactorContent.getValue(contentHeightScaleFactor)); //this scale factor influences only the image's content, not its size.
 
 	double formatWidthScaleFactor = 0.0;
-	ok = ok && (S_OK == m_ExtentWidthFactorFormat.getValue(formatWidthScaleFactor)); //this scale factor influences only the image's size, not its content.
+	ok = ok && (S_OK == m_pEmbeddedExtents->m_ExtentWidthFactorFormat.getValue(formatWidthScaleFactor)); //this scale factor influences only the image's size, not its content.
 	double formatHeightScaleFactor = 0.0;
-	ok = ok && (S_OK == m_ExtentHeightFactorFormat.getValue(formatHeightScaleFactor)); //this scale factor influences only the image's size, not its content.
+	ok = ok && (S_OK == m_pEmbeddedExtents->m_ExtentHeightFactorFormat.getValue(formatHeightScaleFactor)); //this scale factor influences only the image's size, not its content.
 
 	ok = ok && (S_OK == m_toolExtent.getImageExtent().SetExtentProperty(SvPb::SVExtentPropertyWidthFactorContent, contentWidthScaleFactor));
 	ok = ok && (S_OK == m_toolExtent.getImageExtent().SetExtentProperty(SvPb::SVExtentPropertyHeightFactorContent, contentHeightScaleFactor));
@@ -404,9 +416,9 @@ bool ResizeTool::ModifyImageExtentByScaleFactors()
 	ok = ok && (S_OK == m_toolExtent.getImageExtent().SetExtentProperty(SvPb::SVExtentPropertyHeightFactorFormat, formatHeightScaleFactor));
 
 	double imageWidthFactor = 0.0;
-	ok =  ok &&(S_OK == m_ExtentWidthFactorFormat.getValue(imageWidthFactor)); //this scale factor influences only image size, not enlargement
+	ok =  ok &&(S_OK == m_pEmbeddedExtents->m_ExtentWidthFactorFormat.getValue(imageWidthFactor)); //this scale factor influences only image size, not enlargement
 	double imageHeightFactor = 0.0;
-	ok =  ok &&(S_OK == m_ExtentHeightFactorFormat.getValue(imageHeightFactor)); //this scale factor influences only image size, not enlargement
+	ok =  ok &&(S_OK == m_pEmbeddedExtents->m_ExtentHeightFactorFormat.getValue(imageHeightFactor)); //this scale factor influences only image size, not enlargement
 
 	double currentImageWidth = 0.0;
 	ok =  ok &&(S_OK == m_toolExtent.getImageExtent().GetExtentProperty(SvPb::SVExtentPropertyWidth, currentImageWidth));
@@ -429,10 +441,16 @@ bool ResizeTool::ModifyImageExtentByScaleFactors()
 
 bool ResizeTool::areAllAllScaleFactorValuesValid()
 {
-	return isValidScaleFactorLV(m_ExtentWidthFactorContent)
-		&& isValidScaleFactorLV(m_ExtentHeightFactorContent)
-		&& isValidScaleFactorLV(m_ExtentWidthFactorFormat)
-		&& isValidScaleFactorLV(m_ExtentHeightFactorFormat);
+	if (!m_pEmbeddedExtents)
+	{
+		assert(false);
+		return false;
+	}
+	
+	return isValidScaleFactorLV(m_pEmbeddedExtents->m_ExtentWidthFactorContent)
+		&& isValidScaleFactorLV(m_pEmbeddedExtents->m_ExtentHeightFactorContent)
+		&& isValidScaleFactorLV(m_pEmbeddedExtents->m_ExtentWidthFactorFormat)
+		&& isValidScaleFactorLV(m_pEmbeddedExtents->m_ExtentHeightFactorFormat);
 }
 
 bool ResizeTool::isInterpolationModeValueOK()
@@ -477,9 +495,15 @@ bool ResizeTool::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVecto
 	auto toolimageextent = m_toolExtent.getImageExtent();
 	m_OutputImage.GetImageExtents().OutputDebugInformationOnExtent("on run", &toolimageextent);
 #endif
+	if (nullptr == m_pEmbeddedExtents.get())
+	{
+		assert(false);
+		rRunStatus.SetInvalid();
+		return false;
+	}
 
 	double contentHeightScaleFactor = 0.0;
-	m_ExtentHeightFactorContent.getValue(contentHeightScaleFactor); //this scale factor influences only enlargement, not image size.
+	m_pEmbeddedExtents->m_ExtentHeightFactorContent.getValue(contentHeightScaleFactor); //this scale factor influences only enlargement, not image size.
 	if (false == isValidScaleFactor(contentHeightScaleFactor))
 	{
 		Result = false;
@@ -487,7 +511,7 @@ bool ResizeTool::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVecto
 	}
 
 	double contentWidthScaleFactor = 0.0;
-	m_ExtentWidthFactorContent.getValue(contentWidthScaleFactor); //this scale factor influences only enlargement, not image size.
+	m_pEmbeddedExtents->m_ExtentWidthFactorContent.getValue(contentWidthScaleFactor); //this scale factor influences only enlargement, not image size.
 
 	if (false == isValidScaleFactor(contentWidthScaleFactor))
 	{
@@ -546,10 +570,10 @@ bool ResizeTool::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVecto
 		// they are not needed for the resize operation itself and therefore are not checked for validity
 
 		double formatHeightScaleFactor = 0.0;
-		m_ExtentHeightFactorFormat.getValue(formatHeightScaleFactor);
+		m_pEmbeddedExtents->m_ExtentHeightFactorFormat.getValue(formatHeightScaleFactor);
 
 		double formatWidthScaleFactor = 0.0;
-		m_ExtentWidthFactorFormat.getValue(formatWidthScaleFactor);
+		m_pEmbeddedExtents->m_ExtentWidthFactorFormat.getValue(formatWidthScaleFactor);
 
 		if ((contentHeightScaleFactor < formatHeightScaleFactor) || (contentWidthScaleFactor < formatWidthScaleFactor))
 		{

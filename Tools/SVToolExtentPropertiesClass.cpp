@@ -49,7 +49,7 @@ HRESULT SVToolExtentPropertiesClass::GetProperties( SVImageExtentClass& rExtents
 	HRESULT result = S_OK;
 
 	SVToolExtentPropertiesMap::const_iterator iter;
-
+ 
 	for ( iter = m_extentPropertyInfo.begin(); S_OK == result && iter != m_extentPropertyInfo.end(); ++iter )
 	{
 		if ( nullptr != iter->second.pValueObject )
@@ -74,7 +74,17 @@ HRESULT SVToolExtentPropertiesClass::GetProperties( SVImageExtentClass& rExtents
 						Value.dblVal = 1.0;
 					}
 				}
-				result  = (VT_R8 == Value.vt) ? rExtents.SetExtentProperty( iter->first, Value.dblVal ) : E_INVALIDARG;
+				double prevValue = 0;
+				rExtents.GetExtentProperty(iter->first, prevValue);
+				if (VT_R8 == Value.vt)
+				{
+					bool clear = Value.dblVal != prevValue;
+					result = rExtents.SetExtentProperty(iter->first, Value.dblVal, clear);
+					
+				}
+				else
+					result = E_INVALIDARG;
+				
 			}
 		}
 	}

@@ -22,7 +22,6 @@
 #include "SVValueObjectLibrary/SVDWordValueObjectClass.h"
 #include "SVImageLibrary/SVExtentMultiLineStruct.h"
 #include "SVStatusLibrary/MessageContainer.h"
-#include "SVImageLibrary/SVImageExtentClass.h"
 #include "Definitions/StringTypeDef.h"
 #pragma endregion Includes
 
@@ -73,11 +72,9 @@ public:
 	virtual bool isInputImage(uint32_t imageId) const override;
 
 	virtual bool DoesObjectHaveExtents() const;
-	const SVImageExtentClass& GetImageExtent() const { return m_imageExtent; }
-	virtual HRESULT SetImageExtent(const SVImageExtentClass& rImageExtent);
 	virtual HRESULT SetImageExtentToParent();
 	virtual HRESULT SetImageExtentToFit(const SVImageExtentClass& rImageExtent);
-	virtual HRESULT updateImageExtent() {return S_OK;}
+	virtual HRESULT updateImageExtent(bool /*init*/) { return S_OK; }
 	virtual HRESULT GetPropertyInfo(SvPb::SVExtentPropertyEnum p_eProperty, SVExtentPropertyInfoStruct& p_rInfo) const;
 
 	virtual bool connectAllInputs() override;
@@ -202,7 +199,7 @@ public:
 
 	void setStatus(const RunStatus& state);
 	void setStatus(DWORD color, DWORD state);
-
+	virtual const SVImageExtentClass* GetImageExtentPtr() const { return nullptr; };
 protected:
 	// Direct Method Call
 	// NOTE:
@@ -230,11 +227,13 @@ protected:
 
 	virtual bool resetAllOutputListObjects(SvStl::MessageContainerVector *pErrorMessages = nullptr);
 
+	
 private:
 	HRESULT LocalInitialize();
 	HRESULT setEmbeddedValue(const SvOi::SetValueStruct& rEntry, std::back_insert_iterator<SvStl::MessageContainerVector> inserter);
 	HRESULT setEmbeddedValue(const SvOi::SetLinkedStruct& rEntry, std::back_insert_iterator<SvStl::MessageContainerVector> inserter);
 
+	
 protected:
 	SvOi::IValueObjectPtrSet m_ValueObjectSet;
 
@@ -248,8 +247,7 @@ protected:
 
 	std::vector<SvOl::InputObject*> m_inputs;
 
-	SVImageExtentClass m_imageExtent;	//NOTE! this object is directly accessed by m_toolExtent (SVToolClass) via reference
-
+	
 	bool m_bUseOverlays;
 
 	SvStl::MessageContainerVector m_ResetErrorMessages;  ///The list of task messages

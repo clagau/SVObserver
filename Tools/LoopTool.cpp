@@ -28,7 +28,7 @@ static char THIS_FILE[] = __FILE__;
 SV_IMPLEMENT_CLASS(LoopTool, SvPb::LoopToolClassId);
 
 LoopTool::LoopTool(SVObjectClass* POwner, int StringResourceID)
-	:SVToolClass(POwner, StringResourceID)
+	:SVToolClass(false,POwner, StringResourceID)
 {
 	Initialize();
 }
@@ -42,7 +42,7 @@ void LoopTool::Initialize()
 	m_canResizeToParent = false;
 	m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
 	m_ObjectTypeInfo.m_SubType = SvPb::LoopToolObjectType;
-	removeEmbeddedExtents();
+	
 	BuildEmbeddedObjectList();
 }
 

@@ -1094,7 +1094,7 @@ HRESULT SVObjectClass::UnregisterSubObject(SVObjectClass*)
 	return S_FALSE;
 }
 
-bool SVObjectClass::hasExtension() const 
+bool SVObjectClass::allowExtensionCopy() const 
 {
 	return false;
 }

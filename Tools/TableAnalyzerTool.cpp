@@ -30,7 +30,7 @@ SV_IMPLEMENT_CLASS(TableAnalyzerTool, SvPb::TableAnalyzerToolClassId);
 
 #pragma region Constructor
 TableAnalyzerTool::TableAnalyzerTool(SVObjectClass* pOwner, int stringResourceID)
-	:SVToolClass(pOwner, stringResourceID)
+	:SVToolClass(false, pOwner, stringResourceID)
 {
 	LocalInitialize();
 }
@@ -251,8 +251,6 @@ void TableAnalyzerTool::LocalInitialize()
 	m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
 	m_ObjectTypeInfo.m_SubType = SvPb::SVTableAnalyzerToolObjectType;
 
-	// Hide and Remove Embedded Extents
-	removeEmbeddedExtents();
 
 	SvIe::SVClassInfoStruct analyzerClassInfo;
 

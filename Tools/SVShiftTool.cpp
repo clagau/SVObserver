@@ -38,7 +38,7 @@ SV_IMPLEMENT_CLASS(SVShiftTool, SvPb::ShiftToolClassId);
 
 #pragma region Constructor
 SVShiftTool::SVShiftTool( SVObjectClass* POwner, int StringResourceID )
-: SVToolClass( POwner, StringResourceID )
+: SVToolClass( true,POwner, StringResourceID )
 {
 	LocalInitialize();
 }
@@ -67,9 +67,12 @@ bool SVShiftTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStructur
 	m_LeftResult.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::RemoveAttribute );
 	m_TopResult.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::RemoveAttribute );
 
-	m_ExtentRight.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
-	m_ExtentBottom.SetObjectAttributesAllowed( SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute );
-	
+	assert(m_pEmbeddedExtents);
+	if (m_pEmbeddedExtents)
+	{
+		m_pEmbeddedExtents->m_ExtentRight.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
+		m_pEmbeddedExtents->m_ExtentBottom.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::RemoveAttribute);
+	}
 	m_LearnedTranslationX.SetObjectAttributesAllowed( SvPb::extentObject, SvOi::SetAttributeType::RemoveAttribute );
 	m_LearnedTranslationY.SetObjectAttributesAllowed( SvPb::extentObject, SvOi::SetAttributeType::RemoveAttribute );
 
@@ -167,8 +170,13 @@ void SVShiftTool::addOverlays(const SvIe::SVImageClass* pImage, SvPb::OverlayDes
 	auto* pRect = pBoundingBox->mutable_rect();
 	SvPb::setValueObject(m_LeftResult, *pRect->mutable_x(), true);
 	SvPb::setValueObject(m_TopResult, *pRect->mutable_y(), true);
-	SvPb::setValueObject(m_ExtentWidth, *pRect->mutable_w());
-	SvPb::setValueObject(m_ExtentHeight, *pRect->mutable_h());
+	
+	assert(m_pEmbeddedExtents);
+	if (m_pEmbeddedExtents)
+	{
+		SvPb::setValueObject(m_pEmbeddedExtents->m_ExtentWidth, *pRect->mutable_w());
+		SvPb::setValueObject(m_pEmbeddedExtents->m_ExtentHeight, *pRect->mutable_h());
+	}
 	setStateValueToOverlay(*pOverlay);
 	collectOverlays(pImage, *pOverlay);
 }
@@ -247,7 +255,7 @@ bool SVShiftTool::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVect
 		double dLeft(0.0);
 		double dTop(0.0);
 
-		if (S_OK != m_ExtentLeft.GetValue(dLeft) || !std::isfinite(dLeft) || S_OK != m_ExtentTop.GetValue(dTop) || !std::isfinite(dTop))
+		if (m_pEmbeddedExtents && (S_OK != m_pEmbeddedExtents->m_ExtentLeft.GetValue(dLeft) || !std::isfinite(dLeft) || S_OK != m_pEmbeddedExtents->m_ExtentTop.GetValue(dTop) || !std::isfinite(dTop)))
 		{
 			Result = false;
 			if (nullptr != pErrorMessages)
@@ -321,9 +329,11 @@ bool SVShiftTool::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVect
 					m_TranslationY.SetValue(lInputTranslationY);
 					m_DisplacementX.SetValue(dDisplacementX);
 					m_DisplacementY.SetValue(dDisplacementY);
-					m_ExtentLeft.SetValue(0.0);
-					m_ExtentTop.SetValue(0.0);
-
+					if (m_pEmbeddedExtents)
+					{
+						m_pEmbeddedExtents->m_ExtentLeft.SetValue(0.0);
+						m_pEmbeddedExtents->m_ExtentTop.SetValue(0.0);
+					}
 					m_LeftResult.SetValue(dDisplacementX);
 					m_TopResult.SetValue(dDisplacementY);
 				}
@@ -339,12 +349,12 @@ bool SVShiftTool::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVect
 			}
 
 			//This update call is required for the image extents which may have changed above
-			updateImageExtent();
-			if (GetImageExtent().hasFigure())
+			updateImageExtent(false);
+			if (m_pEmbeddedExtents && GetImageExtent().hasFigure() )
 			{
 				const SVExtentFigureStruct& rFigure = GetImageExtent().GetFigure();
-				m_ExtentRight.SetValue(rFigure.m_svBottomRight.m_x);
-				m_ExtentBottom.SetValue(rFigure.m_svBottomRight.m_y);
+				m_pEmbeddedExtents->m_ExtentRight.SetValue(rFigure.m_svBottomRight.m_x);
+				m_pEmbeddedExtents->m_ExtentBottom.SetValue(rFigure.m_svBottomRight.m_y);
 			}
 		}
 
@@ -481,11 +491,14 @@ void SVShiftTool::LocalInitialize()
 	m_toolExtent.SetExtentObject( SvPb::SVExtentPropertyTranslationOffsetY, &m_DisplacementY );
 
 	//Set Default Values
-	m_ExtentTop.SetDefaultValue( 10, true );
-	m_ExtentLeft.SetDefaultValue( 10, true );
-	m_ExtentWidth.SetDefaultValue( 100, true );
-	m_ExtentHeight.SetDefaultValue( 100, true );
-
+	//@TODO[MEC][10.20][03.11.2021] use constants 
+	if (m_pEmbeddedExtents)
+	{
+		m_pEmbeddedExtents->m_ExtentTop.SetDefaultValue(10, true);
+		m_pEmbeddedExtents->m_ExtentLeft.SetDefaultValue(10, true);
+		m_pEmbeddedExtents->m_ExtentWidth.SetDefaultValue(100, true);
+		m_pEmbeddedExtents->m_ExtentHeight.SetDefaultValue(100, true);
+	}
 	m_TranslationX.SetDefaultValue( 0, true );
 	m_TranslationX.setSaveValueFlag(false);
 	m_TranslationY.SetDefaultValue( 0, true );
@@ -582,8 +595,11 @@ void SVShiftTool::SetAttributeData()
 			m_toolExtent.SetExtentPropertyInfo(SvPb::SVExtentPropertyPositionPointY, info);
 
 			//set default value to be 0, 0
-			m_ExtentLeft.SetDefaultValue(0, true);
-			m_ExtentTop.SetDefaultValue(0, true);
+			if (m_pEmbeddedExtents)
+			{
+				m_pEmbeddedExtents->m_ExtentLeft.SetDefaultValue(0, true);
+				m_pEmbeddedExtents->m_ExtentTop.SetDefaultValue(0, true);
+			}
 		}
 	}
 }

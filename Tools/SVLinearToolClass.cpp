@@ -38,7 +38,7 @@ SV_IMPLEMENT_CLASS( SVLinearToolClass, SvPb::LinearToolClassId );
 
 #pragma region Constructor
 SVLinearToolClass::SVLinearToolClass( SVObjectClass* POwner, int StringResourceID )
-: SVToolClass( POwner, StringResourceID )
+: SVToolClass(true, POwner, StringResourceID )
 {
 	init();
 }
@@ -77,9 +77,12 @@ bool SVLinearToolClass::CreateObject( const SVObjectLevelCreateStruct& rCreateSt
 	Attributes = SvPb::remotelySetable | SvPb::setableOnline;
 	m_SourceImageNames.setSaveValueFlag(false);
 	m_SourceImageNames.SetObjectAttributesAllowed( Attributes, SvOi::SetAttributeType::RemoveAttribute );
-	m_ExtentLeft.SetObjectAttributesAllowed( Attributes, SvOi::SetAttributeType::RemoveAttribute );
-	m_ExtentTop.SetObjectAttributesAllowed( Attributes, SvOi::SetAttributeType::RemoveAttribute );
-
+	assert(m_pEmbeddedExtents);
+	if (m_pEmbeddedExtents)
+	{
+		m_pEmbeddedExtents->m_ExtentLeft.SetObjectAttributesAllowed(Attributes, SvOi::SetAttributeType::RemoveAttribute);
+		m_pEmbeddedExtents->m_ExtentTop.SetObjectAttributesAllowed(Attributes, SvOi::SetAttributeType::RemoveAttribute);
+	}
 
 	if(bOk)
 	{
@@ -150,20 +153,20 @@ bool SVLinearToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessage
 	if ( Result )
 	{
 		//This update call is required for the image extents which may have changed above
-		updateImageExtent();
+		updateImageExtent(true);
 
-		if(GetImageExtent().hasFigure())
+		if(GetImageExtent().hasFigure() && m_pEmbeddedExtents)
 		{
 			SVExtentFigureStruct rFigure = GetImageExtent().GetFigure();
 
-			if( m_ExtentLeft.ObjectAttributesAllowed() != SvPb::noAttributes )
+			if(m_pEmbeddedExtents->m_ExtentLeft.ObjectAttributesAllowed() != SvPb::noAttributes )
 			{
-				m_ExtentLeft.SetValue(rFigure.m_svTopLeft.m_x);
+				m_pEmbeddedExtents->m_ExtentLeft.SetValue(rFigure.m_svTopLeft.m_x);
 			}
 				
-			if( m_ExtentTop.ObjectAttributesAllowed() != SvPb::noAttributes )
+			if(m_pEmbeddedExtents->m_ExtentTop.ObjectAttributesAllowed() != SvPb::noAttributes )
 			{
-				m_ExtentTop.SetValue(rFigure.m_svTopLeft.m_y);
+				m_pEmbeddedExtents->m_ExtentTop.SetValue(rFigure.m_svTopLeft.m_y);
 			}
 		}
 		else
@@ -321,10 +324,13 @@ void SVLinearToolClass::addOverlays(const SvIe::SVImageClass* pImage, SvPb::Over
 	pOverlay->set_displaybounding(true);
 	auto* pBoundingBox = pOverlay->mutable_boundingshape();
 	auto* pRect = pBoundingBox->mutable_rect();
-	SvPb::setValueObject(m_ExtentLeft, *pRect->mutable_x());
-	SvPb::setValueObject(m_ExtentTop, *pRect->mutable_y());
-	SvPb::setValueObject(m_ExtentWidth, *pRect->mutable_w());
-	SvPb::setValueObject(m_ExtentHeight, *pRect->mutable_h());
+	if (m_pEmbeddedExtents)
+	{
+		SvPb::setValueObject(m_pEmbeddedExtents->m_ExtentLeft, *pRect->mutable_x());
+		SvPb::setValueObject(m_pEmbeddedExtents->m_ExtentTop, *pRect->mutable_y());
+		SvPb::setValueObject(m_pEmbeddedExtents->m_ExtentWidth, *pRect->mutable_w());
+		SvPb::setValueObject(m_pEmbeddedExtents->m_ExtentHeight, *pRect->mutable_h());
+	}
 	setStateValueToOverlay(*pOverlay);
 	if (isRotation)
 	{

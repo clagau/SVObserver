@@ -107,7 +107,7 @@ This method now verifies the Parent Image pointer attribute.
 If the attribute is invalid, the Parent Image pointer and the Parent Index are both cleared.
 The Parent Image attribute should not be used unless it is validated first.
 */
-SVImageClass *SVImageClass::GetParentImage() const
+SVImageClass* SVImageClass::GetParentImage() const
 {
 	SVImageClass* l_pParent = nullptr;
 
@@ -386,7 +386,7 @@ bool SVImageClass::ResetObject(SvStl::MessageContainerVector* pErrorMessages)
 }
 
 
-HRESULT SVImageClass::RebuildStorage(SvStl::MessageContainerVector *pErrorMessages)
+HRESULT SVImageClass::RebuildStorage(SvStl::MessageContainerVector* pErrorMessages)
 {
 	HRESULT hr = S_OK;
 
@@ -394,7 +394,7 @@ HRESULT SVImageClass::RebuildStorage(SvStl::MessageContainerVector *pErrorMessag
 	{
 		return hr;
 	}
-	
+
 	if (m_LastReset <= m_LastUpdate)
 	{
 		// One of the use cases for RebuildStorage() is, when a Tool is added 
@@ -402,18 +402,11 @@ HRESULT SVImageClass::RebuildStorage(SvStl::MessageContainerVector *pErrorMessag
 		// Image, then the Parent wont be assigned yet.  The assignment 
 		// happens in OnCreate of the Tool.  Therefore the following 
 		// UpdatePosition() will return an E_FAIL.
-		hr = UpdatePosition();
-		
+		hr = UpdatePosition(pErrorMessages != nullptr);
+
 
 		//Update children but do not check if they cause errors as these are handled somewhere else
-#pragma warning(suppress : 4189)
-		auto huc = UpdateChildren(); // cppcheck-suppress unreadVariable
-#if defined (TRACE_THEM_ALL) || defined (TRACE_IMAGE) 		
-		if (huc != S_OK)
-		{
-			OutputDebugString("Updatechildren returns FAIL\n");
-		}
-#endif 
+		UpdateChildren(false);//   pErrorMessages != nullptr 
 	}
 
 	if (S_OK == hr)
@@ -432,13 +425,13 @@ HRESULT SVImageClass::RebuildStorage(SvStl::MessageContainerVector *pErrorMessag
 	//Update Position returns S_FALSE when ROI for LiniarTool without rotation is moved 
 	// outside the parentwindow. When moved with the mouse this is corrected 
 	//later should be ignored here S_OK != S_FALSE  &&
-	if ( S_OK != hr  && S_NoParent != hr && nullptr != pErrorMessages && pErrorMessages->empty())
+	if (S_OK != hr && S_NoParent != hr && nullptr != pErrorMessages && pErrorMessages->empty())
 	{
 		SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RebuildFailed, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 		pErrorMessages->push_back(Msg);
 	}
-	
-	return hr==S_OK? S_OK : E_FAIL;
+
+	return hr == S_OK ? S_OK : E_FAIL;
 }
 
 const SVImageExtentClass& SVImageClass::GetImageExtents() const
@@ -446,7 +439,7 @@ const SVImageExtentClass& SVImageClass::GetImageExtents() const
 	return m_ImageInfo.GetExtents();
 }
 
-HRESULT SVImageClass::GetImageExtentsToFit(SVImageExtentClass inExtent, SVImageExtentClass &rOutExtent)
+HRESULT SVImageClass::GetImageExtentsToFit(SVImageExtentClass inExtent, SVImageExtentClass& rOutExtent)
 {
 	HRESULT l_hrOk = m_ImageInfo.GetImageExtentsToFit(inExtent, rOutExtent);
 
@@ -537,10 +530,10 @@ HRESULT SVImageClass::UpdateFromToolInformation()
 		if ((SvPb::SVImageTypeEnum::SVImageTypeMain != m_ImageType) &&
 			(SvPb::SVImageTypeEnum::SVImageTypeIndependent != m_ImageType) &&
 			(SvPb::SVImageTypeEnum::SVImageTypeDependent != m_ImageType) &&
-			pParentTask->DoesObjectHaveExtents())
+			pParentTask->DoesObjectHaveExtents() && pParentTask->GetImageExtentPtr())
 		{
 			RECT l_Rect;
-			SVImageExtentClass tempExtent = pParentTask->GetImageExtent();
+			SVImageExtentClass tempExtent = *(pParentTask->GetImageExtentPtr());
 
 			if (SvPb::SVImageTypeEnum::SVImageTypeLogical == m_ImageType)
 			{
@@ -650,7 +643,7 @@ HRESULT SVImageClass::ClearParentConnection()
 Updated method to use GetParentImage() method which validates the Parent Image pointer attribute.
 The Parent Image attribute should not be used unless it is validated first.
 */
-HRESULT SVImageClass::UpdateChild(uint32_t childID, const SVImageInfoClass& rImageInfo)
+HRESULT SVImageClass::UpdateChild(uint32_t childID, const SVImageInfoClass& rImageInfo, bool reportError)
 {
 	HRESULT l_hrOk = S_OK;
 
@@ -670,7 +663,7 @@ HRESULT SVImageClass::UpdateChild(uint32_t childID, const SVImageInfoClass& rIma
 
 				l_svImageInfo.SetImageProperties(l_svImageProperties);
 
-				l_hrOk = l_pParentImage->UpdateChild(childID, l_svImageInfo);
+				l_hrOk = l_pParentImage->UpdateChild(childID, l_svImageInfo, reportError);
 			}
 			else
 			{
@@ -682,25 +675,16 @@ HRESULT SVImageClass::UpdateChild(uint32_t childID, const SVImageInfoClass& rIma
 			//add entry to childMap if not exist.
 			SVImageInfoClass& rChildInfo = m_ChildArrays[childID];
 			rChildInfo = rImageInfo;
-
 			auto* pChildObject = SvOi::getObject(childID);
 			auto isROI {false};
-			if (pChildObject)
+			if (pChildObject && pChildObject->GetEmbeddedID() == SvPb::LogicalROIImageEId)
 			{
-				isROI = (pChildObject->GetEmbeddedID() == SvPb::LogicalROIImageEId);
-			}
-
-
-			if (isROI)
-			{
+				isROI = true;
 				l_hrOk = m_ImageInfo.ValidateAgainstOutputSpace(rChildInfo.GetExtents());
 			}
-
-
-
 			auto* pChildObjectImage = dynamic_cast<SVImageClass*>(pChildObject);
 
-			if (nullptr != pChildObjectImage)
+			if (nullptr != pChildObjectImage && reportError)
 			{
 				auto pTool = dynamic_cast<SVTaskObjectClass*>(pChildObjectImage->GetTool());
 
@@ -723,26 +707,21 @@ HRESULT SVImageClass::UpdateChild(uint32_t childID, const SVImageInfoClass& rIma
 					if (l_hrOk == S_OK)
 						msg += "REMOVE ERROR: ";
 					else
-						msg += "ADD RRROR: ";
+						msg += "ADD ERRROR: ";
 
 					msg += pTool->GetCompleteName();
 
 
 					msg += std::format("\n( ROImage---Image:\n {}\n {}\n",
 						pChildObjectImage->GetCompleteName(), GetCompleteName());
+
 					::OutputDebugString(msg.c_str());
-
-					pChildObjectImage->GetImageExtents().OutputDebugInformationOnExtent("ROI_IMAGE");
-
-					m_ImageInfo.GetExtents().OutputDebugInformationOnExtent("Image    :");
-
-
-
 #endif
 
 				}
-
 			}
+
+
 
 		}
 
@@ -1031,7 +1010,7 @@ HRESULT SVImageClass::SetObjectValue(SVObjectAttributeClass* pDataObject)
 
 //* JMS - New Image Object methods
 
-HRESULT SVImageClass::UpdatePosition()
+HRESULT SVImageClass::UpdatePosition(bool report)
 {
 	HRESULT l_Status = S_OK;
 
@@ -1042,7 +1021,7 @@ HRESULT SVImageClass::UpdatePosition()
 	{
 		if (nullptr != m_ParentImageInfo.second)
 		{
-			l_Status = m_ParentImageInfo.second->UpdateChild(getObjectId(), m_ImageInfo);
+			l_Status = m_ParentImageInfo.second->UpdateChild(getObjectId(), m_ImageInfo, report);
 		}
 		else
 		{
@@ -1054,7 +1033,7 @@ HRESULT SVImageClass::UpdatePosition()
 	return l_Status;
 }
 
-HRESULT SVImageClass::UpdateChildren()
+HRESULT SVImageClass::UpdateChildren(bool reporterror)
 {
 	HRESULT l_hrOk = S_OK;
 
@@ -1064,7 +1043,7 @@ HRESULT SVImageClass::UpdateChildren()
 
 		while (l_Iter != m_ChildArrays.end())
 		{
-			if (S_OK != UpdateChild(l_Iter->first, l_Iter->second))
+			if (S_OK != UpdateChild(l_Iter->first, l_Iter->second, reporterror))
 			{
 				l_hrOk = E_FAIL;
 			}

@@ -37,7 +37,11 @@ public:
 	virtual SvDef::StringVector getAnalyzerResult() {return SvDef::StringVector{};}
 
 	virtual void addParameterForMonitorList(SvStl::MessageContainerVector& , std::back_insert_iterator<SvOi::ParametersForML> ) const {};
-
+	const SVImageExtentClass& GetImageExtent() const { return m_imageExtent; }
+	virtual const SVImageExtentClass* GetImageExtentPtr() const
+	{
+		return &(m_imageExtent);
+	};
 protected:
 	virtual bool createAllObjectsFromChild( SVObjectClass& rChildObject ) override;
 
@@ -45,6 +49,8 @@ protected:
 
 private:
 	void init();
+public:	
+	SVImageExtentClass m_imageExtent;	
 };
 
 } //namespace SvAo

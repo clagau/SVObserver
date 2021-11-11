@@ -33,7 +33,7 @@ SV_IMPLEMENT_CLASS(DrawTool, SvPb::DrawToolClassId );
 
 #pragma region Constructor
 DrawTool::DrawTool( SVObjectClass* pOwner, int stringResourceID )
-	:SVToolClass( pOwner, stringResourceID )
+	:SVToolClass( true,pOwner, stringResourceID )
 {
 	BuildInputObjectList();
 	BuildEmbeddedObjectList();
@@ -103,12 +103,12 @@ bool DrawTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 			SvIe::SVImageClass* pInputImage = m_InputBGImage.getInput<SvIe::SVImageClass>(true);
 			if (nullptr != pInputImage)
 			{
-				if (m_useAutofit)
+				if ( m_pEmbeddedExtents.get() && m_useAutofit)
 				{
 					SVImageInfoClass inputImageInfo = pInputImage->GetImageInfo();
-					m_ExtentWidth.SetValue(inputImageInfo.getOutputWidth());
-					m_ExtentHeight.SetValue(inputImageInfo.getOutputHeight());
-					getToolExtent().updateImageExtent();
+					m_pEmbeddedExtents->m_ExtentWidth.SetValue(inputImageInfo.getOutputWidth());
+					m_pEmbeddedExtents->m_ExtentHeight.SetValue(inputImageInfo.getOutputHeight());
+					getToolExtent().updateImageExtent(true);
 				}
 			}
 			else
