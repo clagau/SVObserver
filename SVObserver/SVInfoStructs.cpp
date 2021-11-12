@@ -103,6 +103,7 @@ SVProductInfoStruct::SVProductInfoStruct()
 	: m_ProductActive(0)
 	, m_monitorListSMSlot(-1)
 	, m_lastPPQPosition {0L}
+	, m_prevTriggerNAK {false}
 	,m_MissingImageCount {0}
 	,m_NotCompleteCount {0}
 {
@@ -112,6 +113,7 @@ SVProductInfoStruct::SVProductInfoStruct()
 SVProductInfoStruct::SVProductInfoStruct(const SVProductInfoStruct& rRhs)
 	: m_triggered(rRhs.m_triggered)
 	, m_dataComplete(rRhs.m_dataComplete)
+	, m_prevTriggerNAK(rRhs.m_prevTriggerNAK)
 	, m_triggerInfo(rRhs.m_triggerInfo)
 	, m_outputsInfo(rRhs.m_outputsInfo)
 	, m_pPPQ(rRhs.m_pPPQ)
@@ -146,6 +148,7 @@ SVProductInfoStruct& SVProductInfoStruct::operator=(const SVProductInfoStruct& r
 			m_hasCameraImage[i] = rRhs.m_hasCameraImage[i];
 		}
 		m_dataComplete = rRhs.m_dataComplete;
+		m_prevTriggerNAK = rRhs.m_prevTriggerNAK;
 		m_lastPPQPosition = rRhs.m_lastPPQPosition;
 		m_CantProcessReason = rRhs.m_CantProcessReason;
 		m_MissingImageCount = rRhs.m_MissingImageCount;
@@ -182,6 +185,7 @@ HRESULT SVProductInfoStruct::Assign(const SVProductInfoStruct& rData, bool shoul
 			m_hasCameraImage[i] = rData.m_hasCameraImage[i];
 		}
 		m_dataComplete = rData.m_dataComplete;
+		m_prevTriggerNAK = rData.m_prevTriggerNAK;
 		m_CantProcessReason = rData.m_CantProcessReason;
 		m_lastPPQPosition = rData.m_lastPPQPosition;
 		m_MissingImageCount = rData.m_MissingImageCount;
@@ -264,6 +268,7 @@ void SVProductInfoStruct::Reset()
 	}
 	m_triggered = false;
 	m_dataComplete = false;
+	m_prevTriggerNAK = false;
 	m_monitorListSMSlot = -1;
 	m_outputsInfo = std::move(SVOutputsInfoStruct {});
 	m_pPPQ = nullptr;

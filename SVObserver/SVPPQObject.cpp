@@ -1652,8 +1652,9 @@ bool SVPPQObject::WriteOutputs(SVProductInfoStruct* pProduct)
 		else
 		{
 			SetProductIncomplete(*pProduct);
+			pProduct->m_outputsInfo.m_NakResult = true;
 			//Data index with -1 will return the default output values which is required in this case
-			pProduct->m_outputsInfo.m_Outputs = m_pOutputList->getOutputValues(m_UsedOutputs, true, false, true);
+			pProduct->m_outputsInfo.m_Outputs = m_pOutputList->getOutputValues(m_UsedOutputs, true, false, pProduct->m_outputsInfo.m_NakResult);
 		}
 		if (0 == inspectedObjectID)
 		{
@@ -1986,6 +1987,29 @@ SVProductInfoStruct* SVPPQObject::IndexPPQ(SvTrig::SVTriggerInfoStruct&& rTrigge
 		if (nullptr != pPrevProduct)
 		{
 			pNewProduct->m_triggerInfo.m_PreviousTrigger = pPrevProduct->m_triggerInfo.m_triggerTimeStamp;
+
+			uint32_t newObjectID {0UL};
+			uint32_t prevObjectID {0UL};
+
+			SvTrig::IntVariantMap::const_iterator iterData = pPrevProduct->m_triggerInfo.m_Data.find(SvTrig::TriggerDataEnum::ObjectID);
+			if (pPrevProduct->m_triggerInfo.m_Data.end() != iterData)
+			{
+				prevObjectID = static_cast<uint32_t> (iterData->second);
+			}
+			iterData = pNewProduct->m_triggerInfo.m_Data.find(SvTrig::TriggerDataEnum::ObjectID);
+			if (pNewProduct->m_triggerInfo.m_Data.end() != iterData)
+			{
+				newObjectID = static_cast<uint32_t> (iterData->second);
+			}
+			if (newObjectID != 0 && newObjectID == prevObjectID)
+			{
+				//Object has more than 1 trigger per Object then relay NAK result to new product
+				iterData = pNewProduct->m_triggerInfo.m_Data.find(SvTrig::TriggerDataEnum::TriggerIndex);
+				if (pNewProduct->m_triggerInfo.m_Data.end() != iterData && 1u < static_cast<DWORD> (iterData->second))
+				{
+					pNewProduct->m_prevTriggerNAK = pPrevProduct->m_outputsInfo.m_NakResult;
+				}
+			}
 		}
 
 		pNewProduct->m_triggered = true;
@@ -2437,6 +2461,9 @@ void SVPPQObject::AddResultsToPPQ(SVProductInfoStruct& rProduct)
 	BOOL bNAK(true);
 	m_PpqOutputs[PpqOutputEnums::ACK].GetValue(bACK);
 	m_PpqOutputs[PpqOutputEnums::NAK].GetValue(bNAK);
+	//Previous trigger NAK is true when Trigger per Object > 1 and a NAK occured during a previous trigger with the same objectID
+	bNAK |= rProduct.m_prevTriggerNAK ? TRUE : FALSE;
+
 	rProduct.m_outputsInfo.m_Outputs = m_pOutputList->getOutputValues(m_UsedOutputs, false, bACK ? true : false, bNAK ? true : false);
 	rProduct.m_outputsInfo.m_NakResult = bNAK ? true : false;
 	rProduct.m_outputsInfo.m_DataValidResult = bValid && !bNAK;

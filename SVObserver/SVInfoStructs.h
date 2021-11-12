@@ -175,6 +175,7 @@ struct SVProductInfoStruct
 	bool m_triggered {false};
 	bool m_hasCameraImage[SvDef::cMaximumCameras];
 	bool m_dataComplete {false};
+	bool m_prevTriggerNAK {false};
 	long m_lastPPQPosition {-1};
 	CantProcessEnum m_CantProcessReason = CantProcessEnum::NoReason ; //last Reason which prevent start of inspection
 	int m_MissingImageCount {0};
