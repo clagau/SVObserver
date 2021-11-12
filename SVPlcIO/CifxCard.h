@@ -49,7 +49,7 @@ public:
 	void readProcessData(uint32_t notification);
 
 	const InputData& getCurrentInputData() { return m_currentInputData; }
-	void popInputDataQueue();
+	bool popInputDataQueue();
 
 	void setHandleForTelegramReceptionEvent(HANDLE h) { m_hTelegramReadEvent = h; }
 
@@ -72,7 +72,7 @@ private:
 	void BuildConfigurationReq(CIFX_PACKET* ptPacket, uint16_t NodeId, uint16_t DataLength);
 
 	std::vector<ConfigDataSet> createConfigList(TelegramLayout layout);
-	void writeResponseData(const uint8_t* pSdoDynamic, size_t sdoDynamicSize);
+	void writeResponseData(const Telegram& rInputTelegram,  const uint8_t* pSdoDynamic, size_t sdoDynamicSize);
 
 	const uint16_t m_CifXNodeId {0};
 	const uint16_t m_maxPlcDataSize {0UL};

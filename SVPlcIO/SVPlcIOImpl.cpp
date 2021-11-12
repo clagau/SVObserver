@@ -148,7 +148,7 @@ HRESULT SVPlcIOImpl::SetOutputData(unsigned long triggerIndex, const SvTrig::Int
 		{
 			resultString += std::to_string(rResult) + ' ';
 		}
-		std::string fileData = SvUl::Format(_T("%d; %d; %f; %d; %s\r\n"), triggerIndex, outputCount, reportResult.m_timestamp, reportResult.m_objectID, resultString.c_str());
+		std::string fileData = SvUl::Format(_T("%lu; %u; %f; %u; %s\r\n"), triggerIndex, outputCount, reportResult.m_timestamp, reportResult.m_objectID, resultString.c_str());
 		m_logOutFile.write(fileData.c_str(), fileData.size());
 	}
 	return S_OK;
@@ -410,7 +410,7 @@ void SVPlcIOImpl::reportTrigger(const TriggerReport& rTriggerReport)
 			const TriggerReport& rData = rTriggerReport;
 			///This is required as m_inputCount[rData.m_channel] is atomic
 			uint32_t inputCount = m_inputCount[rData.m_channel];
-			std::string fileData = SvUl::Format(_T("%d; %d; %f; %d; %d; %d; %f\r\n"), triggerIndex, inputCount, rData.m_triggerTimestamp, rData.m_objectID, rData.m_triggerIndex, rData.m_triggerPerObjectID, SvUl::GetTimeStamp());
+			std::string fileData = SvUl::Format(_T("%lu; %u; %f; %u; %hhu; %hhu; %f\r\n"), triggerIndex, inputCount, rData.m_triggerTimestamp, rData.m_objectID, rData.m_triggerIndex, rData.m_triggerPerObjectID, SvUl::GetTimeStamp());
 			m_logInFile.write(fileData.c_str(), fileData.size());
 		}
 	}

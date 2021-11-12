@@ -1976,11 +1976,7 @@ void SVObserverApp::OnUpdateRecentFileMenu(CCmdUI* PCmdUI)
 // cppcheck-suppress constParameter ; cppCheck doesn't know rPpqMonitorList[] is not a const function
 void CreateImageStores(SVConfigurationObject* pConfig, PPQMonitorList& rPpqMonitorList, HRESULT Result, DWORD desiredState, bool isLocalStart)
 {
-	double preTriggerTimeWidow {0.0};
-	if (SVHardwareManifest::isDiscreteIOSystem(pConfig->GetProductType()))
-	{
-		preTriggerTimeWidow = (0.0 == TheSVObserverApp().m_rInitialInfoSvo.m_preTriggerTimeWindow) ? SvDef::cDefaultPreTriggerTimeWindow : TheSVObserverApp().m_rInitialInfoSvo.m_preTriggerTimeWindow;
-	}
+	double preTriggerTimeWidow {(0.0 == TheSVObserverApp().m_rInitialInfoSvo.m_preTriggerTimeWindow) ? SvDef::cDefaultPreTriggerTimeWindow : TheSVObserverApp().m_rInitialInfoSvo.m_preTriggerTimeWindow};
 
 	long lSize = pConfig->GetPPQCount();
 

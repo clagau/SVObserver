@@ -669,6 +669,7 @@ namespace SvStl
 		{ Tid_CifxDllLoadError , _T("Cifx error, could not load CifX32DLL.dll") },
 		{ Tid_CifxVersionInfo , _T("Cifx Driver %s Powerlink Controlled Node %s") },
 		{ Tid_CifxResponseDataError , _T("Cifx error, writing response data") },
+		{ Tid_CifxPlcOpertaion , _T("Cifx, in operation mode") },
 
 		{ Tid_ModuleReady , _T("Module ready set to %s") },
 		{ Tid_ModelTypeMismatch , _T("Model mismatch SVIM type is %s, the loaded configuration is type %s\nConfiguration shall not be able to go into Run mode") },

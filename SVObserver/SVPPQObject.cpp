@@ -1654,6 +1654,9 @@ bool SVPPQObject::WriteOutputs(SVProductInfoStruct* pProduct)
 			SetProductIncomplete(*pProduct);
 			//Data index with -1 will return the default output values which is required in this case
 			pProduct->m_outputsInfo.m_Outputs = m_pOutputList->getOutputValues(m_UsedOutputs, true, false, true);
+		}
+		if (0 == inspectedObjectID)
+		{
 			//Set the default inspected object ID which would be the input object ID
 			SvTrig::IntVariantMap::const_iterator iterData = pProduct->m_triggerInfo.m_Data.find(SvTrig::TriggerDataEnum::ObjectID);
 			if (pProduct->m_triggerInfo.m_Data.end() != iterData)

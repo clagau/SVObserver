@@ -67,6 +67,8 @@ CifXCard::CifXCard(uint16_t CifXNodeId, uint16_t MaxPlcDataSize):
 
 void CifXCard::readProcessData(uint32_t notification)
 {
+	static uint16_t prevContentID {0U};
+
 	double timeStamp = SvUl::GetTimeStamp();
 	if (notification != m_notifyType || false == m_cifxLoadLib.isInitilized())
 	{
@@ -77,45 +79,48 @@ void CifXCard::readProcessData(uint32_t notification)
 	if (CIFX_NO_ERROR == result)
 	{
 		InputData inputData;
+		inputData.m_notificationTime = timeStamp;
 		uint8_t* pData = m_pReadBuffer.get();
 		memcpy(&inputData.m_telegram, pData, sizeof(Telegram));
 		pData += sizeof(Telegram);
 
-		switch (inputData.m_telegram.m_content)
+		if (prevContentID != inputData.m_telegram.m_contentID)
 		{
-			case TelegramContent::VersionData:
+			prevContentID = inputData.m_telegram.m_contentID;
+			switch (inputData.m_telegram.m_content)
 			{
-				memcpy(&inputData.m_dynamicData[0], pData, sizeof(PlcVersion));
-				inputData.m_notificationTime = timeStamp;
-				break;
-			}
+				case TelegramContent::VersionData:
+				{
+					memcpy(&inputData.m_dynamicData[0], pData, sizeof(PlcVersion));
+					break;
+				}
 
-	#if defined (TRACE_THEM_ALL) || defined (TRACE_PLC)
-			case TelegramContent::ConfigurationData:
-			{
-				memcpy(&gPlcConfig, pData, cConfigListSize * sizeof(ConfigDataSet));
+#if defined (TRACE_THEM_ALL) || defined (TRACE_PLC)
+				case TelegramContent::ConfigurationData:
+				{
+					memcpy(&gPlcConfig, pData, cConfigListSize * sizeof(ConfigDataSet));
+				}
+#endif
+				case TelegramContent::OperationData:
+				{
+					memcpy(&inputData.m_dynamicData[0], pData, cCmdDataSize);
+					break;
+				}
+				default:
+				{
+					break;
+				}
 			}
-	#endif
-			case TelegramContent::OperationData:
+			if (m_hTelegramReadEvent != nullptr)
 			{
-				memcpy(&inputData.m_dynamicData[0], pData, cCmdDataSize);
-				inputData.m_notificationTime = timeStamp;
-				break;
-			}
-			default:
-			{
-				break;
-			}
-		}
-		//Reduce lock guard scope
-		{
-			std::lock_guard<std::mutex> guard{ m_cifxMutex };
-			m_inputDataQueue.emplace(std::move(inputData));
-		}
+				//Reduce lock guard scope
+				{
+					std::lock_guard<std::mutex> guard {m_cifxMutex};
+					m_inputDataQueue.emplace(std::move(inputData));
+				}
 
-		if (m_hTelegramReadEvent != nullptr)
-		{
-			::SetEvent(m_hTelegramReadEvent);
+				::SetEvent(m_hTelegramReadEvent);
+			}
 		}
 	}
 	if (CIFX_NOTIFY_SYNC == m_notifyType)
@@ -125,14 +130,16 @@ void CifXCard::readProcessData(uint32_t notification)
 	}
 }
 
-void CifXCard::popInputDataQueue()
+bool CifXCard::popInputDataQueue()
 {
 	std::lock_guard<std::mutex> guard {m_cifxMutex};
 	if (false == m_inputDataQueue.empty())
 	{
 		m_currentInputData = m_inputDataQueue.front();
 		m_inputDataQueue.pop();
+		return true;
 	}
+	return false;
 }
 
 void CifXCard::closeCifX()
@@ -200,7 +207,7 @@ void CifXCard::sendVersion()
 	}
 
 	const uint8_t* pData = reinterpret_cast<const uint8_t*> (&m_plcVersion);
-	writeResponseData(pData, sizeof(PlcVersion));
+	writeResponseData(m_currentInputData.m_telegram, pData, sizeof(PlcVersion));
 
 	SvStl::MessageManager Msg(SvStl::MsgType::Log);
 	SvDef::StringVector msgList;
@@ -217,7 +224,6 @@ void CifXCard::sendVersion()
 
 void CifXCard::sendConfigList()
 {
-	m_protocolInitialized = false;
 	uint8_t layoutIndex = m_currentInputData.m_telegram.m_layout;
 	if(0 < layoutIndex )
 	{
@@ -227,7 +233,7 @@ void CifXCard::sendConfigList()
 		if(iter != m_configDataSetVector.end() && 0 < iter->second.size())
 		{
 			const uint8_t* pData = reinterpret_cast<const uint8_t*> (&iter->second[0]);
-			writeResponseData(pData, sizeof(ConfigDataSet) * cConfigListSize);
+			writeResponseData(m_currentInputData.m_telegram, pData, sizeof(ConfigDataSet) * cConfigListSize);
 			SvStl::MessageManager Msg(SvStl::MsgType::Log);
 			SvDef::StringVector msgList{std::to_string(layoutIndex)};
 			Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_CifxPlcConfigData, msgList, SvStl::SourceFileParams(StdMessageParams));
@@ -259,11 +265,17 @@ void CifXCard::sendConfigList()
 
 void CifXCard::sendOperationData(const InspectionState1& rState)
 {
-	m_protocolInitialized = (m_plcVersion != PlcVersion::PlcDataNone);
-	//InspectionSatet2 must be here due to pData pointing to it!
+	if (false == m_protocolInitialized)
+	{
+		m_protocolInitialized = (m_plcVersion != PlcVersion::PlcDataNone);
+		SvStl::MessageManager Msg(SvStl::MsgType::Log);
+		Msg.setMessage(SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_CifxPlcOpertaion, SvStl::SourceFileParams(StdMessageParams));
+		::OutputDebugString("Operation mode\n");
+	}
+	//insState2 must declared be here due to pData pointing to it!
 	InspectionState2 insState2;
-	size_t dynamicDataSize{ 0ULL };
-	const uint8_t* pData{ nullptr };
+	size_t dynamicDataSize {0ULL};
+	const uint8_t* pData {nullptr};
 	if (PlcVersion::PlcData1 == m_plcVersion)
 	{
 		pData = reinterpret_cast<const uint8_t*> (&rState);
@@ -279,8 +291,8 @@ void CifXCard::sendOperationData(const InspectionState1& rState)
 		pData = reinterpret_cast<const uint8_t*> (&insState2);
 		dynamicDataSize = sizeof(InspectionState2);
 	}
-	
-	writeResponseData(pData, dynamicDataSize);
+
+	writeResponseData(m_currentInputData.m_telegram, pData, dynamicDataSize);
 }
 
 void CifXCard::setReady(bool ready)
@@ -564,9 +576,10 @@ void CifXCard::BuildConfigurationReq(CIFX_PACKET* pPacket, uint16_t NodeId, uint
 	pConfigReq->tHead.ulSta = 0;							//Status code of operation
 	pConfigReq->tHead.ulExt = 0;							//extension
 
+	uint32_t stackCfgFlags = (CIFX_NOTIFY_SYNC == m_notifyType) ? MSK_EPLCN_IF_CFG_STACK_CFG_FLAGS_USE_CUSTOM_PDO_OBJ : MSK_EPLCN_IF_CFG_STACK_CFG_FLAGS_DISABLE_HOST_TRIGGERED_PREQ_XCHG;
 	pConfigReq->tData.ulSystemFlags = 0;                      //System Flags  
 	pConfigReq->tData.ulWatchdogTime = 1000;					//Watchdog time
-	pConfigReq->tData.ulStackCfgFlags = MSK_EPLCN_IF_CFG_STACK_CFG_FLAGS_USE_CUSTOM_PDO_OBJ;
+	pConfigReq->tData.ulStackCfgFlags = stackCfgFlags;
 	pConfigReq->tData.ulVendorId = cVendorId;
 	pConfigReq->tData.ulProductCode = cProductCode;
 	pConfigReq->tData.ulRevisionNumber = cRevisionNumber;
@@ -795,7 +808,7 @@ std::vector<ConfigDataSet> CifXCard::createConfigList(TelegramLayout layout)
 	return result;	
 }
 
-void CifXCard::writeResponseData(const uint8_t* pSdoDynamic, size_t sdoDynamicSize)
+void CifXCard::writeResponseData(const Telegram& rInputTelegram, const uint8_t* pSdoDynamic, size_t sdoDynamicSize)
 {
 
 	Telegram outputTelegram;
@@ -807,10 +820,10 @@ void CifXCard::writeResponseData(const uint8_t* pSdoDynamic, size_t sdoDynamicSi
 		++m_contentID;
 	}
 	outputTelegram.m_contentID = m_contentID;
-	outputTelegram.m_referenceID = m_currentInputData.m_telegram.m_contentID;
+	outputTelegram.m_referenceID =rInputTelegram.m_contentID;
 	outputTelegram.m_type = TelegramType::Response;
-	outputTelegram.m_content = m_currentInputData.m_telegram.m_content;
-	outputTelegram.m_layout = m_currentInputData.m_telegram.m_layout;
+	outputTelegram.m_content = rInputTelegram.m_content;
+	outputTelegram.m_layout = rInputTelegram.m_layout;
 	outputTelegram.m_systemStatus = m_ready ? SystemStatus::AppReady : SystemStatus::ComReady;
 
 	{
@@ -835,6 +848,5 @@ void CifXCard::writeResponseData(const uint8_t* pSdoDynamic, size_t sdoDynamicSi
 		SvStl::MessageManager Msg(SvStl::MsgType::Log);
 		Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CifxInitializationError, SvStl::SourceFileParams(StdMessageParams));
 	}
-
 }
 } //namespace SvPlc

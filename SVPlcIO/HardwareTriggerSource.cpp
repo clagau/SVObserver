@@ -62,58 +62,63 @@ void HardwareTriggerSource::queueResult(uint8_t channel, ChannelOut1&& channelOu
 {
 	///Channel has already been checked
 	std::lock_guard<std::mutex> guard {m_triggerSourceMutex};
-	if(true == m_inspectionStateQueue.empty() || 0 != m_inspectionStateQueue.front().m_channels[channel].m_objectID)
+	if (true == m_inspectionStateQueue.empty() || 0 != m_inspectionStateQueue.front().m_channels[channel].m_objectID)
 	{
-		m_inspectionStateQueue.emplace(InspectionState1{});
+		m_inspectionStateQueue.emplace(InspectionState1 {});
 	}
 	m_inspectionStateQueue.back().m_channels[channel] = std::move(channelOut);
 }
 
 void HardwareTriggerSource::analyzeTelegramData()
 {
-	m_cifXCard.popInputDataQueue();
-	const InputData& rInputData = m_cifXCard.getCurrentInputData();
-	switch (rInputData.m_telegram.m_content)
+	while (m_cifXCard.popInputDataQueue())
 	{
-		case TelegramContent::VersionData:
+		const InputData& rInputData = m_cifXCard.getCurrentInputData();
+		switch (rInputData.m_telegram.m_content)
 		{
-			m_cifXCard.sendVersion();
-			break;
-		}
-		case TelegramContent::TimeSyncData:
-		{
-			break;
-		}
-		case TelegramContent::ConfigurationData:
-		{
-			m_cifXCard.sendConfigList();
-			break;
-		}
-		case TelegramContent::OperationData:
-		{
-			InspectionState1 sendInpectionState;
+			case TelegramContent::VersionData:
 			{
-				std::lock_guard<std::mutex> guard {m_triggerSourceMutex};
-				if(false == m_inspectionStateQueue.empty())
-				{
-					sendInpectionState = std::move(m_inspectionStateQueue.front());
-					m_inspectionStateQueue.pop();
-				}
+				m_cifXCard.sendVersion();
+				break;
 			}
-			m_cifXCard.sendOperationData(sendInpectionState);
+			case TelegramContent::TimeSyncData:
+			{
+				break;
+			}
+			case TelegramContent::ConfigurationData:
+			{
+				m_cifXCard.sendConfigList();
+				break;
+			}
+			case TelegramContent::OperationData:
+			{
+				InspectionState1 sendInpectionState;
 
-			uint32_t triggerOffset = m_cifXCard.getTriggerDataOffset();
-			//If new trigger data check for new triggers
-			if(m_cifXCard.isProtocolInitialized() && 0 != memcmp(&m_previousTriggerData[0] + triggerOffset, &m_cifXCard.getCurrentInputData().m_dynamicData[0] + triggerOffset, cCmdDataSize - triggerOffset))
-			{
-				memcpy(&m_previousTriggerData[0], &m_cifXCard.getCurrentInputData().m_dynamicData[0], cCmdDataSize);
-				checkForNewTriggers();
+				{
+					std::lock_guard<std::mutex> guard {m_triggerSourceMutex};
+					if (false == m_inspectionStateQueue.empty())
+					{
+						sendInpectionState = std::move(m_inspectionStateQueue.front());
+						m_inspectionStateQueue.pop();
+					}
+				}
+
+				m_cifXCard.sendOperationData(sendInpectionState);
+
+				uint32_t triggerOffset = m_cifXCard.getTriggerDataOffset();
+				//If new trigger data check for new triggers
+				if (m_cifXCard.isProtocolInitialized() && 0 != memcmp(&m_previousTriggerData[0] + triggerOffset, &m_cifXCard.getCurrentInputData().m_dynamicData[0] + triggerOffset, cCmdDataSize - triggerOffset))
+				{
+					memcpy(&m_previousTriggerData[0], &m_cifXCard.getCurrentInputData().m_dynamicData[0], cCmdDataSize);
+					checkForNewTriggers();
+				}
+
+				break;
 			}
-			break;
-		}
-		default:
-		{
-			break;
+			default:
+			{
+				break;
+			}
 		}
 	}
 }

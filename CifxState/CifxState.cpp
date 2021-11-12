@@ -28,6 +28,11 @@ constexpr const char* cBoardName = "CIFx0";
 constexpr const char* cResult = "Result=%d\n";
 constexpr const char* cMissingMessageID = "Message ID %d missing\n";
 constexpr const char* cCheckPlcC = "-CHECKPLCCOMS";
+constexpr const char* cPlcIniFilePath = "C:\\SVObserver\\Bin\\SVPlcIO.ini";
+constexpr const char* cSettingsGroup ="Settings";
+constexpr const char* cPD0Version = "PD0Version";
+constexpr const char* cPLCNodeID = "PLC-NodeID";
+
 const uint32_t cCifXNodeId = 11; //The Powerlink Node Id used for the Hilscher CifX card value shall be 11-14 (SVIM1-SVIM4)
 const uint32_t cMaxPLC_DataSize = 456; //The maximum size of the PLC-data in bytes Telegram = 20 Bytes Dynamic = 436 Bytes
 
@@ -63,6 +68,9 @@ uint32_t g_notificationType { 0UL };
 std::atomic<int> g_notificationSync{ 0 };
 uint8_t g_ReadBuffer[cMaxPLC_DataSize];
 std::string g_version;
+double g_lastTimestamp {0.0};
+double g_intDeltaMin {0.0};
+double g_intDeltaMax {0.0};
 
 enum CifxMessage : int
 {
@@ -128,6 +136,11 @@ static const std::map<CifxMessage, LPCTSTR> cErrorMessages
 	{CifxMessage::CifxBusStateOnError, "Bus state on could not be set [0x%x]\n"},
 };
 
+double GetTimeStamp()
+{
+	return static_cast<double> (std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count()) / 1000000.0;
+}
+
 void printMessage(CifxMessage messageID, int32_t result = 0, LPCTSTR pText = nullptr)
 {
 	const auto iter = cErrorMessages.find(messageID);
@@ -160,6 +173,7 @@ void APIENTRY notificationHandler(uint32_t notification, uint32_t , void* , void
 {
 	if (g_notificationType == notification)
 	{
+		double timeStamp = GetTimeStamp();
 		int32_t result = g_cifxLoadLib.m_pChannelIORead(g_hChannel, 0, 0, cMaxPLC_DataSize, g_ReadBuffer, cTimeout);
 
 		if (CIFX_NO_ERROR == result)
@@ -170,6 +184,24 @@ void APIENTRY notificationHandler(uint32_t notification, uint32_t , void* , void
 				g_version = "with PLC Data Version=" + std::to_string(g_ReadBuffer[20]);
 				g_version += '.';
 				g_version += std::to_string(g_ReadBuffer[21]);
+
+				if (g_lastTimestamp == 0.0)
+				{
+					g_lastTimestamp = timeStamp;
+				}
+				else
+				{
+					double diff = timeStamp - g_lastTimestamp;
+					if (g_intDeltaMax < diff && diff < 10.0)
+					{
+						g_intDeltaMax = diff;
+					}
+					if (g_intDeltaMin == 0.0 || g_intDeltaMin > diff)
+					{
+						g_intDeltaMin = diff;
+					}
+					g_lastTimestamp = timeStamp;
+				}
 			}
 			g_cifxLoadLib.m_pChannelIOWrite(g_hChannel, 0, 0, cMaxPLC_DataSize, g_ReadBuffer, cTimeout);
 		}
@@ -290,9 +322,10 @@ void BuildConfigurationReq(CIFX_PACKET* pPacket, uint8_t NodeId, uint16_t DataLe
 	pConfigReq->tHead.ulSta = 0;							//Status code of operation
 	pConfigReq->tHead.ulExt = 0;							//extension
 
+	uint32_t stackCfgFlags = (CIFX_NOTIFY_SYNC == g_notificationType) ? MSK_EPLCN_IF_CFG_STACK_CFG_FLAGS_USE_CUSTOM_PDO_OBJ : MSK_EPLCN_IF_CFG_STACK_CFG_FLAGS_DISABLE_HOST_TRIGGERED_PREQ_XCHG;
 	pConfigReq->tData.ulSystemFlags = 0;                      //System Flags  
 	pConfigReq->tData.ulWatchdogTime = 1000;					//Watchdog time
-	pConfigReq->tData.ulStackCfgFlags = MSK_EPLCN_IF_CFG_STACK_CFG_FLAGS_USE_CUSTOM_PDO_OBJ;
+	pConfigReq->tData.ulStackCfgFlags = stackCfgFlags;
 	pConfigReq->tData.ulVendorId = cVendorId;
 	pConfigReq->tData.ulProductCode = cProductCode;
 	pConfigReq->tData.ulRevisionNumber = cRevisionNumber;
@@ -398,6 +431,13 @@ int main(int argc, char* args[])
 			g_plcNodeID = iter->second;
 		}
 	}
+	memset(buffer, 0, cBuffSize);
+	::GetPrivateProfileString(cSettingsGroup, cPD0Version, "3.4.0.2", buffer, cBuffSize, cPlcIniFilePath);
+	std::string Pd0Version = buffer;
+	g_plcNodeID = static_cast<uint16_t> (::GetPrivateProfileInt(cSettingsGroup, cPLCNodeID, g_plcNodeID, cPlcIniFilePath));
+
+	::SetPriorityClass(GetCurrentProcess(), REALTIME_PRIORITY_CLASS);
+	::SetThreadPriority(::GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
 
 	if (S_OK == g_cifxLoadLib.Open())
 	{
@@ -445,13 +485,12 @@ int main(int argc, char* args[])
 	Sleep(cResetTimeout);
 	if (CIFX_NO_ERROR == result)
 	{
-		constexpr const char cPD0NotificationVersion[] = "3.4.0.2";
 		CHANNEL_INFORMATION channelInfo;
 		g_cifxLoadLib.m_pChannelInfo(g_hChannel, sizeof(channelInfo), reinterpret_cast<void*> (&channelInfo));
 		std::string outputString((char*) channelInfo.abFWName);
 		std::string firmware;
 		firmware = std::to_string(channelInfo.usFWMajor) + '.' + std::to_string(channelInfo.usFWMinor) + '.' + std::to_string(channelInfo.usFWBuild) + '.' + std::to_string(channelInfo.usFWRevision);
-		g_notificationType = (cPD0NotificationVersion == firmware) ? CIFX_NOTIFY_PD0_IN : CIFX_NOTIFY_SYNC;
+		g_notificationType = (Pd0Version == firmware) ? CIFX_NOTIFY_PD0_IN : CIFX_NOTIFY_SYNC;
 		outputString += ' ' + firmware;
 		printMessage(CifxMessage::CifxSystemStartSuccess, 0, outputString.c_str());
 	}
@@ -573,7 +612,7 @@ int main(int argc, char* args[])
 		Sleep(cResetTimeout*2);
 
 		std::string notifications;
-		notifications = "Notifications=" + std::to_string(g_notificationSync);
+		notifications = "Notifications=" + std::to_string(g_notificationSync) + "\nInterrupt Delta Min = " + std::to_string(g_intDeltaMin) + " Interrupt Delta Max = " + std::to_string(g_intDeltaMax);
 		printMessage(CifxMessage::CifxNotificationsReceived, 0, notifications.c_str());
 	}
 

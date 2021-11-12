@@ -630,6 +630,7 @@ enum MessageTextEnum
 	Tid_CifxDllLoadError,
 	Tid_CifxVersionInfo,
 	Tid_CifxResponseDataError,
+	Tid_CifxPlcOpertaion,
 
 	Tid_ModuleReady,
 	Tid_ModelTypeMismatch,
