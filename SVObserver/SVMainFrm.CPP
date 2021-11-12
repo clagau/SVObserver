@@ -765,43 +765,7 @@ void SVMainFrame::OnEditIOList()
 // .Description : OnTestMode calls SetTestMode
 void SVMainFrame::OnTestMode()
 {
-	if (SVSVIMStateClass::CheckState(SV_STATE_REMOTE_CMD))
-	{
-		return;
-	}
-	bool allowAccess {false};
-
-	if (SVSVIMStateClass::CheckState(SV_STATE_TEST))
-	{
-		if (!SVSVIMStateClass::CheckState(SV_STATE_REGRESSION))
-		{
-			return;
-		}
-	}
-
-	if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
-	{
-		if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_MODE_MENU_EXIT_RUN_MODE, SECURITY_POINT_MODE_MENU_TEST))
-		{
-			OnStop();
-			allowAccess = true;
-		}
-	}
-	else if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_MODE_MENU_TEST))
-	{
-		allowAccess = true;
-	}
-
-	if (allowAccess)
-	{
-		if (SVSVIMStateClass::CheckState(SV_STATE_REGRESSION))
-		{
-			StopRegression();
-		}
-		ExtrasEngine::Instance().ExecuteAutoSaveIfAppropriate(false);
-		TheSVObserverApp().Start(SV_STATE_TEST);
-		SoftwareTriggerDlg::Instance().ShowWindow(SW_SHOW);
-	}
+	startDesiredState(SV_STATE_TEST);
 }
 
 void SVMainFrame::OnRunMode()
@@ -923,82 +887,7 @@ void SVMainFrame::OnGoOffline()
 ////////////////////////////////////////////////////////////////////////////////
 void SVMainFrame::OnGoOnline()
 {
-
-	if (SVSVIMStateClass::CheckState(SV_STATE_REMOTE_CMD))
-		return;
-
-	SvStl::MessageContainer exceptionContainer;
-	ExtrasEngine::Instance().ExecuteAutoSaveIfAppropriate(true);
-
-	if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING)) { return; }
-
-	if (S_OK == TheSecurityManager().SVValidate(SECURITY_POINT_MODE_MENU_RUN))
-	{
-		if (SVSVIMStateClass::CheckState(SV_STATE_REGRESSION))
-		{
-			StopRegression();
-		}
-
-		if (SVSVIMStateClass::CheckState(SV_STATE_TEST))
-		{
-			OnStop();
-		}
-
-		//After Regression and test both going to stop this should only be either Stop or Edit mode
-		long prevState = SVSVIMStateClass::CheckState(SV_STATE_EDIT) ? SV_STATE_EDIT : SVSVIMStateClass::CheckState(SV_STATE_STOP) ? SV_STATE_STOP : 0L;
-		prevState |= SVSVIMStateClass::CheckState(SV_STATE_READY) ? SV_STATE_READY : 0L;
-
-		if (SVSVIMStateClass::CheckState(SV_STATE_READY) && false == SVSVIMStateClass::CheckState(SV_STATE_TEST | SV_STATE_RUNNING))
-		{
-			SVSVIMStateClass::RemoveState(SV_STATE_EDIT);
-			TheSVObserverApp().DeselectTool();
-
-			if (S_OK == getIniInfoHandler().GetInitializationStatusFlags())
-			{
-				if (TheSVObserverApp().CheckSVIMType())
-				{
-					CWaitCursor wait;
-
-					try
-					{
-						TheSVObserverApp().Start(SV_STATE_RUNNING);
-					}
-					catch (const SvStl::MessageContainer& rExp)
-					{
-						exceptionContainer = rExp;
-					}
-				}
-				else
-				{
-					SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-					Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SVObserver_CannotRun_WrongModelNumber, TheSVObserverApp().m_rInitialInfoSvo.GetModelNumberVector(), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10121);
-					SVSVIMStateClass::changeState(prevState, SV_STATE_RUNNING);
-				}
-			}
-			else
-			{
-				SvDef::StringVector msgList;
-				msgList.push_back(TheSVObserverApp().m_rInitialInfoSvo.ModelNumberString());
-				msgList.push_back(TheSVObserverApp().m_rInitialInfoSvo.InitializationFailureDescription(getIniInfoHandler().GetInitializationStatusFlags()));
-
-				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SVObserver_InitializationFailure, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10126);
-
-				SVSVIMStateClass::changeState(prevState, SV_STATE_RUNNING);
-			}
-
-			if (SVSVIMStateClass::CheckState(SV_STATE_STOP_PENDING))
-			{
-				PostMessage(WM_COMMAND, MAKEWPARAM(ID_STOP, 0), 0);
-			}
-			else if (0 != exceptionContainer.getMessage().m_MessageCode)
-			{
-				SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
-				Exception.setMessage(exceptionContainer.getMessage());
-				SVSVIMStateClass::changeState(prevState, SV_STATE_RUNNING);
-			}
-		}
-	}
+	startDesiredState(SV_STATE_RUNNING);
 }
 
 void SVMainFrame::OnFilePrintConfig()
@@ -2626,6 +2515,95 @@ void SVMainFrame::InitToolBars()
 	ShowControlBar(&m_wndToolBarZoom, false, false);
 	ShowControlBar(&m_PPQBar, false, false);
 	ShowControlBar(&m_wndStatusBar, true, false);
+}
+
+void SVMainFrame::startDesiredState(DWORD desiredState)
+{
+	if (SVSVIMStateClass::CheckState(SV_STATE_REMOTE_CMD | desiredState))
+	{
+		return;
+	}
+
+	SvStl::MessageContainer exceptionContainer;
+	ExtrasEngine::Instance().ExecuteAutoSaveIfAppropriate(SV_STATE_RUNNING == desiredState);
+
+	long securityMode = (SV_STATE_TEST == desiredState) ? SECURITY_POINT_MODE_MENU_TEST : SECURITY_POINT_MODE_MENU_RUN;
+	if (S_OK == TheSecurityManager().SVValidate(securityMode))
+	{
+		if (SVSVIMStateClass::CheckState(SV_STATE_REGRESSION))
+		{
+			StopRegression();
+		}
+		DWORD oppositeState {(SV_STATE_RUNNING == desiredState) ? SV_STATE_TEST : SV_STATE_RUNNING};
+		if (SVSVIMStateClass::CheckState(oppositeState))
+		{
+			//Check if currently in run mode if allowed to exit run mode
+			if (SV_STATE_RUNNING == oppositeState && S_OK != TheSecurityManager().SVValidate(SECURITY_POINT_MODE_MENU_EXIT_RUN_MODE))
+			{
+				return;
+			}
+			OnStop();
+		}
+
+		//After Regression and test both going to stop this should only be either Stop or Edit mode
+		long prevState = SVSVIMStateClass::CheckState(SV_STATE_EDIT) ? SV_STATE_EDIT : SVSVIMStateClass::CheckState(SV_STATE_STOP) ? SV_STATE_STOP : 0L;
+		prevState |= SVSVIMStateClass::CheckState(SV_STATE_READY) ? SV_STATE_READY : 0L;
+
+		if (SVSVIMStateClass::CheckState(SV_STATE_READY) && false == SVSVIMStateClass::CheckState(SV_STATE_TEST | SV_STATE_RUNNING))
+		{
+			SVSVIMStateClass::RemoveState(SV_STATE_EDIT);
+			TheSVObserverApp().DeselectTool();
+
+			if (S_OK == getIniInfoHandler().GetInitializationStatusFlags())
+			{
+				if (TheSVObserverApp().CheckSVIMType())
+				{
+					CWaitCursor wait;
+
+					try
+					{
+						TheSVObserverApp().Start(desiredState);
+						if (SV_STATE_TEST == desiredState)
+						{
+							SoftwareTriggerDlg::Instance().ShowWindow(SW_SHOW);
+						}
+					}
+					catch (const SvStl::MessageContainer& rExp)
+					{
+						exceptionContainer = rExp;
+					}
+				}
+				else
+				{
+					SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+					Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SVObserver_CannotRun_WrongModelNumber, TheSVObserverApp().m_rInitialInfoSvo.GetModelNumberVector(), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10121);
+					SVSVIMStateClass::changeState(prevState, desiredState);
+				}
+			}
+			else
+			{
+				SvDef::StringVector msgList;
+				msgList.push_back(TheSVObserverApp().m_rInitialInfoSvo.ModelNumberString());
+				msgList.push_back(TheSVObserverApp().m_rInitialInfoSvo.InitializationFailureDescription(getIniInfoHandler().GetInitializationStatusFlags()));
+
+				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SVObserver_InitializationFailure, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10126);
+
+				SVSVIMStateClass::changeState(prevState, desiredState);
+			}
+
+			if (SVSVIMStateClass::CheckState(SV_STATE_STOP_PENDING))
+			{
+				PostMessage(WM_COMMAND, MAKEWPARAM(ID_STOP, 0), 0);
+			}
+			else if (0 != exceptionContainer.getMessage().m_MessageCode)
+			{
+				SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
+				Exception.setMessage(exceptionContainer.getMessage());
+				SVSVIMStateClass::changeState(prevState, desiredState);
+			}
+		}
+	}
 }
 
 SVMainFrame* GetSvoMainFrame()

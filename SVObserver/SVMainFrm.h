@@ -284,6 +284,8 @@ public:
 	void InitToolBars();
 private:
 
+	void startDesiredState(DWORD desiredState);
+
 	SVStatusBar				m_wndStatusBar;
 	CToolBar				m_wndToolBar;
 	ZoomToolBar				m_wndToolBarZoom;
