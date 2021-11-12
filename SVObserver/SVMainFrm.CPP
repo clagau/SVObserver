@@ -989,7 +989,7 @@ void SVMainFrame::OnGoOnline()
 
 			if (SVSVIMStateClass::CheckState(SV_STATE_STOP_PENDING))
 			{
-				GetSvoMainFrame()->PostMessage(WM_COMMAND, MAKEWPARAM(ID_STOP, 0), 0);
+				PostMessage(WM_COMMAND, MAKEWPARAM(ID_STOP, 0), 0);
 			}
 			else if (0 != exceptionContainer.getMessage().m_MessageCode)
 			{
@@ -1029,13 +1029,9 @@ void SVMainFrame::OnExtrasLogin()
 		}
 		else
 		{	// If they are still allowed then select the current tool.
-			SVMainFrame* pWndMain = dynamic_cast<SVMainFrame*> (GetSvoMainFrame());
-			if (pWndMain)
-			{
-				pWndMain->PostMessage(SV_SET_TOOL_SELECTED_IN_TOOL_VIEW, (WPARAM)TRUE);
-				// Logged on User changed
-				pWndMain->PostMessage(SV_LOGGED_ON_USER_CHANGED, 0);
-			}
+			PostMessage(SV_SET_TOOL_SELECTED_IN_TOOL_VIEW, (WPARAM)TRUE);
+			// Logged on User changed
+			PostMessage(SV_LOGGED_ON_USER_CHANGED, 0);
 		}
 	}
 }
@@ -1186,11 +1182,7 @@ void SVMainFrame::OnExtrasLogout()
 	}
 
 	// We need to deselect any tool that might be set for operator move.
-	SVMainFrame* pWndMain = dynamic_cast<SVMainFrame*> (GetSvoMainFrame());
-	if (nullptr != pWndMain)
-	{
-		pWndMain->PostMessage(SV_SET_TOOL_SELECTED_IN_TOOL_VIEW, (WPARAM)FALSE);   // Deselect any tool selected for move.
-	}
+	PostMessage(SV_SET_TOOL_SELECTED_IN_TOOL_VIEW, (WPARAM)FALSE);   // Deselect any tool selected for move.
 }
 
 void SVMainFrame::OnRCGoOffline()
@@ -1505,7 +1497,7 @@ void SVMainFrame::OnUpdateEditRemoteInputs(CCmdUI* PCmdUI)
 	// message for the Edit popup UpdateUI or similar.
 
 	// Get Menu handle
-	HMENU hmen = ::GetMenu(GetSvoMainFrame()->m_hWnd);
+	HMENU hmen = ::GetMenu(m_hWnd);
 	if (nullptr != pConfig)
 	{
 		// The IO menu is limited to 100 Published results menu items.
