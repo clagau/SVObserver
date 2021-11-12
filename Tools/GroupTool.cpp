@@ -153,22 +153,6 @@ namespace SvTo
 	{
 		bool result = __super::ResetObject(pErrorMessages);
 		updateValidCheckStrings();
-
-		BOOL isClosed = false;
-		m_isClosed.GetValue(isClosed);
-		if (isClosed)
-		{
-			auto dependencyList = getInvalidDependenciesList();
-			if (0 < dependencyList.size())
-			{
-				result = false;
-				if (nullptr != pErrorMessages)
-				{
-					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_GroupDependencies_Wrong, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
-					pErrorMessages->push_back(Msg);
-				}
-			}
-		}
 		return result;
 	}
 
