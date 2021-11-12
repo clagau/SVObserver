@@ -126,13 +126,13 @@ enum SVObjectSubTypeEnum
 	SVGlobalConstantObjectType					= 0x00000064;
 
 	// Analyzer Subtypes:	
-	SVPixelAnalyzerObjectType				    = 0x00000100;
+	PixelAnalyzerObjectType				    = 0x00000100;
 	SVBlobAnalyzerObjectType					= 0x00000101;
 	SVLuminanceAnalyzerObjectType				= 0x00000102;
 	SVOCVAnalyzerObjectType						= 0x00000105;
-	SVHistogramAnalyzerObjectType				= 0x00000106;
+	HistogramAnalyzerObjectType				= 0x00000106;
 	BlobAnalyzer2ObjectType						= 0x00000107;
-	SVPixelAnalyzerResultObjectType		        = 0x00000200;
+	PixelAnalyzerResultObjectType		        = 0x00000200;
 	SVPixelCountObjectType						= 0x00000201;
 
 	SVLinePixelCountingAnalyzerObjectType		= 0x00000300;
@@ -503,6 +503,7 @@ enum ClassIdEnum
 	VariantValueClassId = 14;
 	EnumerateValueClassId = 15;
 	ImageClassId = 16;
+	LinkedValueClassId = 17;
 
 	InspectionProcessClassId = 20;
 
@@ -677,7 +678,7 @@ enum EmbeddedIdEnum
 	ObjectIDEId = 22;
 	TriggerIndexEId = 23;
 	InspectedObjectIDEId = 24;
-	InspectedObjectIDLinkEId = 25;
+	InspectedObjectIDLinkEId = 25; //obsolete, but needed for loading configs older than 10.20
 	LuminanceValueEId = 26;
 	HistogramValueEId = 27;
 	HistogramMeanEId = 28;
@@ -743,15 +744,15 @@ enum EmbeddedIdEnum
 	CustomFilterTransformEId = 90;
 	RankingFilterRankingRankEId = 93;
 	RingBuffer_DepthEId = 94;
-	RingBufferLink_DepthEId = 95;
+	RingBufferLink_DepthEId = 95; //obsolete, but needed for loading configs older than 10.20
 	RangeClassFailHighEId = 96;
 	RangeClassFailLowEId = 97;
 	RangeClassWarnHighEId = 98;
 	RangeClassWarnLowEId = 99;
-	RangeClassFailHighIndirectEId = 100;
-	RangeClassFailLowIndirectEId = 101;
-	RangeClassWarnHighIndirectEId = 102;
-	RangeClassWarnLowIndirectEId = 103;
+	RangeClassFailHighIndirectEId = 100; //obsolete, but needed for loading configs older than 10.20
+	RangeClassFailLowIndirectEId = 101; //obsolete, but needed for loading configs older than 10.20
+	RangeClassWarnHighIndirectEId = 102; //obsolete, but needed for loading configs older than 10.20
+	RangeClassWarnLowIndirectEId = 103; //obsolete, but needed for loading configs older than 10.20
 	OCVPerformOCREId = 104;
 	OCVMatchLineNumberEId = 105;
 	OCVHighestMatchScoreEId = 106;
@@ -788,14 +789,14 @@ enum EmbeddedIdEnum
 	BaseFilenameEId = 137;
 	CenterFilenameEId = 138;
 	FilenameIndex1EId = 139;
-	FilenameIndex1LinkEId = 140;
+	FilenameIndex1LinkEId = 140; //obsolete, but needed for loading configs older than 10.20
 	FilenameIndex2EId = 141;
-	FilenameIndex2LinkEId = 142;
+	FilenameIndex2LinkEId = 142; //obsolete, but needed for loading configs older than 10.20
 	UseAlternativeImagePathsEId = 143;
 	SubfolderSelectionEId = 144;
-	SubfolderSelectionLinkEId = 145;
+	SubfolderSelectionLinkEId = 145; //obsolete, but needed for loading configs older than 10.20
 	DirectorynameIndexEId = 146;
-	DirectorynameIndexLinkEId = 147;
+	DirectorynameIndexLinkEId = 147; //obsolete, but needed for loading configs older than 10.20
 	EquationEnabledEId = 148;
 	ConditionalResultEId = 149;
 	MathEquationResultEId = 150;
@@ -1116,29 +1117,29 @@ enum EmbeddedIdEnum
 	EnvironmentStartLastConfiEIdEId = 472;
 	TableAnaylzerSortIsASCEId = 474;
 	TableAnaylzerExcludeHighEId = 475;
-	TableAnaylzerExcludeHigh_LinkEId = 476;
+	TableAnaylzerExcludeHigh_LinkEId = 476; //obsolete, but needed for loading configs older than 10.20
 	TableAnaylzerExcludeLowEId = 477;
-	TableAnaylzerExcludeLow_LinkEId = 478;
+	TableAnaylzerExcludeLow_LinkEId = 478; //obsolete, but needed for loading configs older than 10.20
 	TableAnaylzerLimitValueEId = 479;
-	TableAnaylzerLimitValue_LinkEId = 480;
+	TableAnaylzerLimitValue_LinkEId = 480; //obsolete, but needed for loading configs older than 10.20
 	MaxLoopsEId = 481;
 	LoopCounterEId = 482;
 	LinkedLoopsEId = 483;
-	LinkedLoops_LinkedEId = 484;
+	LinkedLoops_LinkedEId = 484; //obsolete, but needed for loading configs older than 10.20
 	LoopBreakEId = 485;
-	LoopBreak_LinkedEId = 486;
+	LoopBreak_LinkedEId = 486; //obsolete, but needed for loading configs older than 10.20
 	TriggerTimeEId = 487;
     SubfolderLocationEId = 488;
-    SubfolderLocationLinkEId = 489;
+    SubfolderLocationLinkEId = 489; //obsolete, but needed for loading configs older than 10.20
 	InspectionNameEId = 490;
 	FormatArchiveToolResultsEId = 491;
 	ArchiveResultsMinimumNumberOfCharactersEId = 492;
 	ArchiveResultsNumberOfDecimalsEId = 493;
 	ArchiveImageFileRootPart2EId = 494;
 	ArchiveImageFileRootPart3EId = 495;
-	ArchiveImageFileRootPart1LinkEId = 496;
-	ArchiveImageFileRootPart2LinkEId = 497;
-	ArchiveImageFileRootPart3LinkEId = 498;
+	ArchiveImageFileRootPart1LinkEId = 496; //obsolete, but needed for loading configs older than 10.20
+	ArchiveImageFileRootPart2LinkEId = 497; //obsolete, but needed for loading configs older than 10.20
+	ArchiveImageFileRootPart3LinkEId = 498; //obsolete, but needed for loading configs older than 10.20
 	IsClosedEId = 499;
 	TriggerPerObjectIDEId = 500;
 	
@@ -1147,27 +1148,27 @@ enum EmbeddedIdEnum
 	IsExcludeEId = 503;
 	IsInnerExcludeEId = 504;
 	ExcludeLowerBoundEId = 505;
-	ExcludeLowerBoundIndirectEId = 506;
+	ExcludeLowerBoundIndirectEId = 506; //obsolete, but needed for loading configs older than 10.20
 	ExcludeUpperBoundEId = 507;
-	ExcludeUpperBoundIndirectEId = 508;
+	ExcludeUpperBoundIndirectEId = 508; //obsolete, but needed for loading configs older than 10.20
 	ConnectivityBlobEId = 509;
 	IsGrayImageEId = 510;
 	IsRangeEId = 511;
 	IsCustomFeatureEId = 512;
 	NumberOfObjectsEId = 513;
-	ExtentWidthFactorContentLinkEId = 514;
-	ExtentHeightFactorContentLinkEId = 515;
+	ExtentWidthFactorContentLinkEId = 514; //obsolete, but needed for loading configs older than 10.20
+	ExtentHeightFactorContentLinkEId = 515;//obsolete, but needed for loading configs older than 10.20
 	ExtentWidthFactorFormatEId = 516;
-	ExtentWidthFactorFormatLinkEId = 517;
+	ExtentWidthFactorFormatLinkEId = 517; //obsolete, but needed for loading configs older than 10.20
 	ExtentHeightFactorFormatEId = 518;
-	ExtentHeightFactorFormatLinkEId = 519;
-	ShapeMaskPropertyCenterXLinkEId = 534;
-	ShapeMaskPropertyCenterYLinkEId = 635;
-	ShapeMaskPropertyWidthLinkEId = 536;
-	ShapeMaskPropertyHeightLinkEId = 537;
-	ShapeMaskPropertySideThicknessLinkEId = 538;
-	ShapeMaskPropertyTopBottomThicknessLinkEId = 539;
-	ShapeMaskPropertyOffsetLinkEId = 540;
+	ExtentHeightFactorFormatLinkEId = 519; //obsolete, but needed for loading configs older than 10.20
+	ShapeMaskPropertyCenterXLinkEId = 534; //obsolete, but needed for loading configs older than 10.20
+	ShapeMaskPropertyCenterYLinkEId = 635; //obsolete, but needed for loading configs older than 10.20
+	ShapeMaskPropertyWidthLinkEId = 536; //obsolete, but needed for loading configs older than 10.20
+	ShapeMaskPropertyHeightLinkEId = 537; //obsolete, but needed for loading configs older than 10.20
+	ShapeMaskPropertySideThicknessLinkEId = 538; //obsolete, but needed for loading configs older than 10.20
+	ShapeMaskPropertyTopBottomThicknessLinkEId = 539; //obsolete, but needed for loading configs older than 10.20
+	ShapeMaskPropertyOffsetLinkEId = 540; //obsolete, but needed for loading configs older than 10.20
 	MaskImageEId = 541;
 	ObjectTypeEId = 542;
 	IsColorAdditionalImageEId = 543;
@@ -1181,23 +1182,30 @@ enum EmbeddedIdEnum
 	Color3EId = 551;
 	DrawAdditionalImageStepNamesEId = 552;
 	UseAdditionalImageEId = 553;
+	LinkedValueContentEId = 554;
+	LinkedValueTypeEId = 555;
 
 	StatNumberOfValidSamplesEId = 560; //Statistics Tool: number of valid values considered in statistic
+
+	ImageToolEnabledGainId = 561;
+	ImageToolGainId = 562;
+	ImageToolOffsetId = 563;
+	ImageToolUseLutId = 566;
 
 	//The following Ids are the first of an array and must have 100 reserved Ids 
 	OutputImageEId = 1000; //Output Images, e.g. External needs 4
 	RingBufferIndexEId = 1100; //For ringBuffer index of output images (by now 2 indexes)
-	RingBufferIndexLinkEId = 1150; //For link of ringBuffer index of output images (by now 2 indexes)
+	RingBufferIndexLinkEId = 1150; //obsolete, but needed for loading configs older than 10.20
 	FilterCellEId = 1200; //Cells of the custom and rank filter (49 cells)
 	ExternalInputEId = 1300; //External Dll (50)
-	ExternalInputLinkedEId = 1400; //External Dll (50)
+	ExternalInputLinkedEId = 1400; //obsolete, but needed for loading configs older than 10.20
 	ExternalResultEId = 1500; //External Dll (50)
 	DllDependencyFileNameEId = 1600; //External Dll (50)
 	TableColumnValueEId = 1700; //Table Object Column (50)
 	BlobFeatureEId = 1800; //Blob Feature (SvOi::SV_NUMBER_OF_BLOB_FEATURES)
 	InputObjectTypeEId = 1900; //Type for Input Object
 	ResultObjectValueEId = 2000; //Result value object (for e.g. Result in Group Tool)
-	ResultObjectLinkedEId = 2100; //Result value object linked (for e.g. Result in Group Tool)
+	ResultObjectLinkedEId = 2100; //obsolete, but needed for loading configs older than 10.20
 	ResultObjectTypeEId = 2200; //Type for Result Object (for e.g. Result in Group Tool)
 
 
@@ -1255,7 +1263,12 @@ enum EmbeddedIdEnum
 	ToolConditionalInputEId = 100049;
 	OverlayColorInputEId = 100050;
 	BarCodeResultEId = 100051;
-
+	ImageArithmeticGainEnabledEId = 100052;
+	ImageArithmeticGainEId = 100053;
+	ImageArithmeticOffsetEId = 100054;
+	ImageArithmeticUseLutEId = 100055;
+	MissingImageCountEId = 100056;
+	NotCompleteCountEId = 100057;
 	//The following Ids are the first of an array and must have 100 reserved Ids 
 	ImageInputEId = 150000;
 }

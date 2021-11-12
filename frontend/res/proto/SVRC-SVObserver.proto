@@ -357,9 +357,8 @@ message GetNotificationStreamResponse
 	{
 		DeviceModeType currentMode = 1;                 //The current SVObserver device mode
 		uint32 lastModified = 2;                                //The last modified time stamp
-		MsgNotification DEPRECATED_msgNotification = 3;    //The message notification structure. not triggered anymore. use GetMessageStreamRequest instead
+		//Leave ID 3 empty for compatibility!
 		string configFileLoaded = 4;                    //The path to the loaded configuration file
-		string configFileUnloaded = 5;                    //The path to the loaded configuration file
 	}
 
 	NotifyType type = 11;            //The notification type
@@ -402,6 +401,15 @@ message GetConfigurationTreeResponse
 message SetTriggerConfigRequest
 {
 	string plcSimulateFile = 1;				//The name of the PLC simulate file to use
+}
+
+message SoftwareTriggerRequest
+{
+	string inspectionName = 1;				//The înspection name to trigger
+	sfixed32 period = 2;					//The trigger period in ms when 0 then a single trigger is sent
+	sfixed32 startObjectID = 3;				//The starting objectID value
+	sfixed32 triggerPerObjectID = 4;		//The number of trigger per objectID
+	fixed32 numberObjectID = 5;				//The number of objectIDs to trigger when 0 continuously
 }
 
 message GetConfigurationInfoRequest 

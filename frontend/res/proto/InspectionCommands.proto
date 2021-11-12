@@ -68,13 +68,41 @@ message NameNamePair
 	bytes nameTo = 2;
 } 
 
+message StandardValue
+{
+	Variant value = 1;
+	Variant defaultValue = 2;
+}
+
+enum LinkedSelectedType
+{
+	None = 0;
+	DirectValue = 1;
+	IndirectValue = 2;
+	Formula = 3;
+}
+
+message LinkedValue
+{
+	LinkedSelectedType type = 1;
+	Variant value = 2;
+	Variant defaultValue = 3;
+	Variant directValue = 4;
+	bytes indirectIDString = 6;
+	bytes formula = 7;
+	uint32 equationId = 8;
+}
 
 message ValueObjectValues
 {
 	uint32 objectId = 1;
 	EmbeddedIdEnum embeddedId = 2;
-	Variant value = 3;
-	Variant defaultValue = 4;
+	oneof valueData
+	{
+		StandardValue value = 3;
+		LinkedValue linkedValue = 4;
+	}
+	
 }
 
 message SetValueObjectValues
@@ -102,6 +130,11 @@ message IsBeforeToolMethod
 message DefaultPlusHidden
 {
 }
+
+message HasExtension
+{
+}
+
 
 message UpdateFromOutpuSpace
 {
@@ -180,6 +213,22 @@ message GetObjectParametersResponse
 	bytes name = 2;
 	uint32 allowedAttributes = 3;
 	SVObjectTypeInfoStruct typeInfo = 4;
+}
+
+//This is the message to return the object-dotted-name to a defined position.
+message GetObjectNameRequest
+{
+	uint32 objectId = 1; //ID of the object.
+	oneof type
+	{
+		SVObjectTypeEnum BeforeType = 2;
+		SVObjectTypeEnum ToType = 3;
+	}
+}
+
+message GetObjectNameResponse
+{
+	bytes name = 1;
 }
 
 // This is the message to return the equation string
@@ -345,6 +394,8 @@ message GetAvailableObjectsRequest
 	{
 		IsBeforeToolMethod isBeforeToolMethod=5; //same then default, but stop searching if required tool reached.
 		DefaultPlusHidden defaultPlusHidden=6;
+		HasExtension hasExtension =8;
+
 	}	
 
 	uint32 importantObjectForStopAtBorder = 7; //If this value set (!= SvDef::InvalidObjectId), than it look from this up to parent if any Border (e.g. Closed GroupTool) is available and set this than as starting position and also stop at a closed GroupTool.
@@ -483,6 +534,17 @@ message SetEmbeddedValuesRequest
 	repeated SetValueObjectValues list = 2;
 }
 
+message ValidateLinkedValueRequest
+{
+	ValueObjectValues data = 1;
+}
+
+message ValidateLinkedValueResponse
+{
+	Variant value = 1;
+	MessageContainer errorMessage = 2;
+}
+
 message GetOutputRectangleRequest
 {
 	uint32 imageId = 1;
@@ -592,7 +654,7 @@ message BarCodeTypeParameter
 }
 message GetNormalizerValuesRequest
 {
-	uint32 linearAnalyzerId = 1; //ID of the analyzer object (SVLinearAnalyzerClass)
+	uint32 linearAnalyzerId = 1; //ID of the analyzer object (LinearAnalyzer)
 }
 message GetNormalizerValuesResponse
 {
@@ -607,7 +669,7 @@ message GetNormalizerValuesResponse
 }
 message SetNormalizerRangesRequest
 {
-	uint32 linearAnalyzerId = 1; //ID of the analyzer object (SVLinearAnalyzerClass)
+	uint32 linearAnalyzerId = 1; //ID of the analyzer object (LinearAnalyzer)
 	double normalMax = 2;
 	double normalMin = 3;
 	double normalStepWidth = 4;
@@ -667,19 +729,19 @@ message FeatureData
 	bool is_Ascent = 6;
 	bool is_Exclude = 7;
 	bool is_Exclude_Inner = 8;
-	double lower_bound = 9;
-	bytes lower_bound_indirect = 10;
-	double upper_bound = 11;
-	bytes upper_bound_indirect = 12;
+	LinkedValue lower_bound = 9;
+	uint32 lower_bound_id = 10;
+	LinkedValue upper_bound = 11;
+	uint32 upper_bound_id = 12;
 	bool is_range = 13;
-	double range_fail_high = 14;
-	bytes range_fail_high_indirect = 15;
-	double range_warn_high = 16;
-	bytes range_warn_high_indirect = 17;
-	double range_warn_low = 18;
-	bytes range_warn_low_indirect = 19;
-	double range_fail_low = 20;
-	bytes range_fail_low_indirect = 21;	
+	LinkedValue range_fail_high = 14;
+	uint32 range_fail_high_id = 15;
+	LinkedValue range_warn_high = 16;
+	uint32 range_warn_high_id = 17;
+	LinkedValue range_warn_low = 18;
+	uint32 range_warn_low_id = 19;
+	LinkedValue range_fail_low = 20;
+	uint32 range_fail_low_id = 21;
 	uint32 equationId = 22;
 }
 
@@ -807,6 +869,11 @@ message ResetAllObjectsRequest
 	uint32 objectId = 1;
 }
 
+message ResetAllObjectsResponse
+{
+	MessageContainerVector errorMessages = 1;
+}
+
 message ClearDataExternalToolRequest
 {
 	uint32 objectId = 1;
@@ -852,10 +919,15 @@ message SetPropTreeStateExternalToolRequest
 
 message ValidateValueParameterExternalToolRequest
 {
-	uint32 objectId = 1;
-	uint32 taskObjectId = 2;
-	sint32 index = 3;
-	Variant newValue = 4;
+	uint32 taskObjectId = 1;
+	sint32 index = 2;
+	Variant newValue = 3;
+	uint32 exDllInterfaceType = 4;
+}
+
+message ValidateValueParameterExternalToolResponse
+{
+	MessageContainerVector errorMessages = 1;
 }
 
 message GetDllMessageStringRequest
@@ -912,7 +984,8 @@ message GetImageInfoExternalToolResponse
 message ValidateValueObjectRequest
 {
 	string dottedName = 1;
-	InputValueDefinition valueDefinition = 2;
+	uint32 objectId = 2;
+	InputValueDefinition valueDefinition = 3;
 }
 
 message ValidateValueObjectResponse
@@ -926,8 +999,8 @@ message EmbeddedValueStruct
 	bytes name = 1;
 	EmbeddedIdEnum oldEmbeddedId = 2; 	
 	InputTypeEnum type = 3;
-	bytes defaultValue = 4;
-	bytes value = 5;
+
+	LinkedValue value = 4;
 }
 
 message SetAndSortEmbeddedValueRequest
@@ -1023,10 +1096,11 @@ message InspectionCmdRequest
 		GetTableResultsExternalToolRequest getTableResultsExternalToolRequest = 64;
 		GetResultRangeObjectRequest getResultRangeObjectRequest = 65;
 		GetImageInfoExternalToolRequest getImageInfoExternalToolRequest = 66;
-		ValidateValueObjectRequest validateValueObjectRequest = 67;
 		SetAndSortEmbeddedValueRequest setAndSortEmbeddedValueRequest = 68;
 		GetInvalidDependenciesRequest getInvalidDependenciesRequest = 69;
-	}
+		GetObjectNameRequest getObjectNameRequest = 70;
+		ValidateLinkedValueRequest validateLinkedValueRequest = 71;
+		}
 }
 
 message InspectionCmdResponse
@@ -1080,8 +1154,11 @@ message InspectionCmdResponse
 		GetResultRangeObjectResponse getResultRangeObjectResponse = 44;
 		InitializeExternalToolTaskResponse initializeExternalToolTaskResponse = 45;
 		GetImageInfoExternalToolResponse getImageInfoExternalToolResponse = 46;
-		ValidateValueObjectResponse validateValueObjectResponse = 47;
 		SetAndSortEmbeddedValueResponse setAndSortEmbeddedValueResponse = 48;
 		GetInvalidDependenciesResponse getInvalidDependenciesResponse = 49;
-	}
+		ValidateValueParameterExternalToolResponse validateValueParameterExternalToolResponse = 50;
+		ResetAllObjectsResponse resetAllObjectsResponse = 51;
+		GetObjectNameResponse getObjectNameResponse = 52;
+		ValidateLinkedValueResponse validateLinkedValueResponse = 53;
+		}
 }
