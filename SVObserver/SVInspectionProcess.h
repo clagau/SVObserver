@@ -103,6 +103,7 @@ public:
 	virtual HRESULT propagateSizeAndPosition() override;
 	virtual bool usePropagateSizeAndPosition() const override;
 	virtual SvPb::OverlayDesc getOverlayStruct(const SvOi::ISVImage& rImage) const override;
+	virtual void setResultListUpdateFlag() override;
 #pragma endregion virtual method (IInspectionProcess)
 
 	bool IsCameraInInspection( const std::string& rCameraName ) const;

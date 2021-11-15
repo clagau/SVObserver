@@ -99,5 +99,7 @@ namespace SvOi
 		/// \param rImage [in] Image
 		/// \returns SvPb::OverlayDesc
 		virtual SvPb::OverlayDesc getOverlayStruct(const SvOi::ISVImage& rImage) const = 0;
+
+		virtual void setResultListUpdateFlag() = 0;
 	};
 } //namespace SvOi

@@ -3472,6 +3472,15 @@ SvPb::OverlayDesc SVInspectionProcess::getOverlayStruct(const SvOi::ISVImage& rI
 	SvStl::MessageContainer msg(SVMSG_SVO_NULL_POINTER, SvStl::Tid_Default, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 	throw msg;
 }
+
+void SVInspectionProcess::setResultListUpdateFlag()
+{
+	auto* pResultList = GetResultList();
+	if (pResultList)
+	{
+		pResultList->setUpdateFlag();
+	}
+}
 #pragma endregion IInspectionProcess methods
 
 bool SVInspectionProcess::IsDisabledPPQVariable(const SVObjectClass* pObject) const

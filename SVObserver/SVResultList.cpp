@@ -135,8 +135,16 @@ bool SVResultList::LoadViewedVariables(ResultViewReferences::SVTreeType& rTree, 
 void SVResultList::RebuildReferenceVector(SVInspectionProcess* pInspection )
 {
 	std::lock_guard<std::mutex> lock(m_dataMutex);
-
+	m_mustUpdate = false;
 	return m_ResultViewReferences.RebuildReferenceVector(pInspection);
+}
+
+void SVResultList::updateIfRequired()
+{
+	if (m_mustUpdate)
+	{
+		RebuildReferenceVector(dynamic_cast<SVInspectionProcess*>(m_pToolSet->GetInspection()));
+	}
 }
 
 void  SVResultList::GetResultData(SvIe::SVIPResultData& rResultData) const

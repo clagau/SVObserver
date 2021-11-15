@@ -509,6 +509,7 @@ bool SVTaskObjectListClass::DestroyChildObject( SVTaskObjectClass* pTaskObject, 
 			SvOi::IInspectionProcess* pInspection = GetInspectionInterface();
 			if (nullptr != pInspection)
 			{
+				pInspection->setResultListUpdateFlag();
 				if (SvDef::SVMFSetDefaultInputs == (context & SvDef::SVMFSetDefaultInputs))
 				{
 					pInspection->SetDefaultInputs();

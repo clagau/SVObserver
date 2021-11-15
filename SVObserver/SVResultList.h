@@ -48,6 +48,8 @@ public:
 
 	SVProductInspectedState GetInspectionState();
 
+	void updateIfRequired();
+
 	//************************************
 	// Description:  Build SVIPResultData from the reference vector.  (Get the values of the variables.)
 	// Parameter:  rResultData <out>:  object containing data from the class's variables.
@@ -82,6 +84,8 @@ public:
 	double getUpdateTimeStamp();
 	void Save(SvOi::IObjectWriter& rWriter);
 
+	void setUpdateFlag() { m_mustUpdate = true; };
+
 #pragma endregion Public Methods
 
 #pragma region Member Variables
@@ -90,6 +94,7 @@ protected:
 	ResultViewReferences  m_ResultViewReferences;
 	SVToolSet* m_pToolSet;
 	std::vector<SvOp::SVResult*> m_results;
+	bool m_mustUpdate = false;
 #pragma endregion Member Variables
 };
 

@@ -108,6 +108,7 @@ HRESULT CommandInspectionCollectImageData::UpdateResults(SVInspectionProcess* pI
 
 	if (nullptr != pResultList)
 	{
+		pResultList->updateIfRequired();
 		pResultList->GetResultData(rResultData);
 		hRet = S_OK;
 	}
