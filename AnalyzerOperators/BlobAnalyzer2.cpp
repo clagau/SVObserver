@@ -162,11 +162,6 @@ namespace SvAo
 			}
 		}
 
-		SvOi::IInspectionProcess* pInspection = GetInspectionInterface();
-		if (nullptr != pInspection)
-		{	//this we do need to avoid that SVO crash if deleted Table row is in Result Picker.
-			pInspection->SetDefaultInputs();
-		}
 
 		return pCmdResp;
 	}

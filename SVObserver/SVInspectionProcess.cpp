@@ -2942,9 +2942,6 @@ bool SVInspectionProcess::RunInspection(SVInspectionInfoStruct& rIPInfo, const S
 void SVInspectionProcess::SetDefaultInputs()
 {
 	// Setup Connections
-	connectAllInputs();
-
-	// Setup Connections
 	if (m_pCurrentToolset)
 	{
 		m_pCurrentToolset->SetDefaultInputs();
