@@ -67,8 +67,6 @@ CifXCard::CifXCard(uint16_t CifXNodeId, uint16_t MaxPlcDataSize):
 
 void CifXCard::readProcessData(uint32_t notification)
 {
-	static uint16_t prevContentID {0U};
-
 	double timeStamp = SvUl::GetTimeStamp();
 	if (notification != m_notifyType || false == m_cifxLoadLib.isInitilized())
 	{
@@ -83,6 +81,7 @@ void CifXCard::readProcessData(uint32_t notification)
 		uint8_t* pData = m_pReadBuffer.get();
 		memcpy(&inputData.m_telegram, pData, sizeof(Telegram));
 		pData += sizeof(Telegram);
+		static uint16_t prevContentID {0U};
 
 		if (prevContentID != inputData.m_telegram.m_contentID)
 		{
