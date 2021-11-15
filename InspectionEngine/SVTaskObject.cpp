@@ -643,22 +643,7 @@ SvOi::IObjectClass* SVTaskObjectClass::getFirstObject(const SvDef::SVObjectTypeI
 		return nullptr;
 	}
 
-	Result = __super::getFirstObject(rObjectTypeInfo, useFriends, pRequestor);
-	if (nullptr != Result)
-	{
-		return Result;
-	}
-
-	for (SVObjectPtrVector::const_iterator Iter = m_embeddedList.begin(); nullptr == Result && m_embeddedList.end() != Iter; ++Iter)
-	{
-		SVObjectClass* pObject = *Iter;
-
-		if (nullptr != pObject)
-		{
-			Result = pObject->getFirstObject(rObjectTypeInfo, useFriends, pRequestor);
-		}
-	}
-	return Result;
+	return __super::getFirstObject(rObjectTypeInfo, useFriends, pRequestor);
 }
 
 void SVTaskObjectClass::OnObjectRenamed(const SVObjectClass& rRenamedObject, const std::string& rOldName)

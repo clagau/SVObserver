@@ -307,7 +307,9 @@ namespace SvOp
 			m_objects[i]->SetObjectEmbedded(m_startEmbeddedIdValue + i, this, rValues.name().c_str());
 			m_objects[i]->setDefaultValue(defaults[i]);
 			m_objects[i]->setValue(rValues.value());
-			assert (m_objects[i]->resetAllObjects());
+			//@TODO[MZA][10.20][12.11.2021] next line removed, because it will not run in release, but has different behavior in Debug-Mode.
+			// check if needed, if not remove. if yes, then add it without assert.
+			//assert (m_objects[i]->resetAllObjects());
 			if (rValues.name() != oldName)
 			{
 				GetInspection()->OnObjectRenamed(*m_objects[i], oldName);

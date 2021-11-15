@@ -897,35 +897,50 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 			return false;
 		}
 
-		auto* pTable = dynamic_cast<SvOi::ITableObject*>(m_LinkedObjectRef.getFinalObject());
-		if (nullptr != pTable)
-		{ //Add children-LinkedValues for TableObject
-			const auto& tableValues = pTable->getValueList();
-			m_children.resize(tableValues.size());
-			SVObjectLevelCreateStruct createStruct;
-			createStruct.OwnerObjectInfo.SetObject(this);
-			for (int i = 0; i < tableValues.size(); ++i)
-			{
-				if (nullptr == m_children[i])
-				{
-					m_children[i] = std::make_unique<LinkedValue>();
-					m_children[i]->createAllObjects(createStruct);
-					if (i < m_childrenIds.size() && m_childrenIds[i] != m_children[i]->getObjectId())
-					{
-						SVObjectManagerClass::Instance().ChangeUniqueObjectID(m_children[i].get(), m_childrenIds[i]);
-					}
-				}
-				m_children[i]->donotCheckForDependency();
-				m_children[i]->SetName(tableValues[i]->GetName());
-				m_children[i]->setIndirectValue(tableValues[i]->GetObjectNameToObjectType(SvPb::SVToolSetObjectType));
-				m_children[i]->setDefaultValue(tableValues[i]->getDefaultValue());
-				Result = m_children[i]->resetAllObjects(pErrorMessages) && Result;
-			}
-		}
-		else
+		auto* pLinkedObject = m_LinkedObjectRef.getFinalObject();
+		if (nullptr != pLinkedObject)
 		{
-			m_children.clear();
-			m_childrenIds.clear();
+			switch (pLinkedObject->GetObjectType())
+			{
+				case SvPb::TableObjectType:
+				{ //Add children-LinkedValues for TableObject
+					const auto& tableValues = dynamic_cast<SvOi::ITableObject*>(pLinkedObject)->getValueList();
+					m_children.resize(tableValues.size());
+					SVObjectLevelCreateStruct createStruct;
+					createStruct.OwnerObjectInfo.SetObject(this);
+					for (int i = 0; i < tableValues.size(); ++i)
+					{
+						Result = resetChild(i, tableValues[i].get(), pErrorMessages, createStruct) && Result;
+					}
+					break;
+				}
+				case SvPb::SVImageObjectType:
+				{
+					SvDef::SVObjectTypeInfoStruct info;
+					info.m_EmbeddedID = SvPb::ExtentWidthEId;
+					auto* pChildWidth = dynamic_cast<SVValueObjectClass<double>*>(pLinkedObject->getFirstObject(info));
+					info.m_EmbeddedID = SvPb::ExtentHeightEId;
+					auto* pChildHeight = dynamic_cast<SVValueObjectClass<double>*>(pLinkedObject->getFirstObject(info));
+					if (pChildHeight && pChildWidth)
+					{
+						m_children.resize(2);
+						SVObjectLevelCreateStruct createStruct;
+						createStruct.OwnerObjectInfo.SetObject(this);
+						Result = resetChild(0, pChildWidth, pErrorMessages, createStruct) && Result;
+						Result = resetChild(1, pChildHeight, pErrorMessages, createStruct) && Result;
+					}
+					else
+					{
+						m_children.clear();
+						m_childrenIds.clear();
+					}
+					break;
+				}
+				default:
+					m_children.clear();
+					m_childrenIds.clear();
+					break;
+			}
 		}			
 		return Result;
 	}
@@ -953,23 +968,27 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 
 	HRESULT LinkedValue::GetChildObject(SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index/* = 0*/) const
 	{
-		HRESULT l_Status = __super::GetChildObject(rpObject, rNameInfo, Index);
-
-		if (S_OK != l_Status)
+		if (static_cast<const size_t> (Index) < rNameInfo.m_NameArray.size() && rNameInfo.m_NameArray[Index] == GetName())
 		{
-			for (const auto& pChild : m_children)
+			HRESULT l_Status = __super::GetChildObject(rpObject, rNameInfo, Index);
+
+			if (S_OK != l_Status)
 			{
-				if (nullptr != pChild)
+				for (const auto& pChild : m_children)
 				{
-					l_Status = pChild->GetChildObject(rpObject, rNameInfo, Index + 1);
-					if (S_OK == l_Status && nullptr != rpObject)
+					if (nullptr != pChild)
 					{
-						return l_Status;
+						l_Status = pChild->GetChildObject(rpObject, rNameInfo, Index + 1);
+						if (S_OK == l_Status && nullptr != rpObject)
+						{
+							return l_Status;
+						}
 					}
 				}
 			}
+			return l_Status;
 		}
-		return l_Status;
+		return S_FALSE;
 	}
 
 	bool LinkedValue::isArray() const
@@ -1320,6 +1339,29 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 			m_type = type;
 			m_TypeValue.SetValue(type);
 		}
+	}
+
+	template <typename T>
+	bool LinkedValue::resetChild(int pos, SVValueObjectClass<T>* pObject, SvStl::MessageContainerVector* pErrorMessages, const SVObjectLevelCreateStruct& rCreateStruct)
+	{
+		if (0 <= pos && pos < m_children.size() && nullptr != pObject)
+		{
+			if (nullptr == m_children[pos])
+			{
+				m_children[pos] = std::make_unique<LinkedValue>();
+				m_children[pos]->createAllObjects(rCreateStruct);
+				if (pos < m_childrenIds.size() && m_childrenIds[pos] != m_children[pos]->getObjectId())
+				{
+					SVObjectManagerClass::Instance().ChangeUniqueObjectID(m_children[pos].get(), m_childrenIds[pos]);
+				}
+			}
+			m_children[pos]->donotCheckForDependency();
+			m_children[pos]->SetName(pObject->GetName());
+			m_children[pos]->setIndirectValue(pObject->GetObjectNameToObjectType(SvPb::SVToolSetObjectType));
+			m_children[pos]->setDefaultValue(pObject->getDefaultValue());
+			return m_children[pos]->resetAllObjects(pErrorMessages);
+		}
+		return true;
 	}
 #pragma endregion Private Methods
 

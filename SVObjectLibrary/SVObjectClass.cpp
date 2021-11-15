@@ -350,6 +350,20 @@ SvOi::IObjectClass* SVObjectClass::getFirstObject(const SvDef::SVObjectTypeInfoS
 		}
 	}
 
+	for (SVObjectPtrVector::const_iterator Iter = m_embeddedList.begin(); m_embeddedList.end() != Iter; ++Iter)
+	{
+		SVObjectClass* pObject = *Iter;
+
+		if (nullptr != pObject)
+		{
+			auto* pResult = pObject->getFirstObject(rObjectTypeInfo, false, pRequestor);
+			if (pResult)
+			{
+				return pResult;
+			}
+		}
+	}
+
 	return nullptr;
 }
 

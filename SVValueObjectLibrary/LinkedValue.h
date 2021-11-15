@@ -161,6 +161,9 @@ private:
 	bool setValueFromDouble(double value);
 
 	void setSelectedType(SvPb::LinkedSelectedType type);
+
+	template <typename T>
+	bool resetChild(int pos, SVValueObjectClass<T>* pObject, SvStl::MessageContainerVector* pErrorMessages, const SVObjectLevelCreateStruct& rCreateStruct);
 #pragma endregion Private Methods
 
 #pragma region Member Variables
