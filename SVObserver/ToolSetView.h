@@ -45,13 +45,12 @@ public:
 	bool CheckParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent);
 	void SetViewSize(CSize &Size);
 	bool IsLabelEditing() const;
-	void SetSelectedTool(uint32_t toolId);
-	//pSelectedIndex gets the selected Index
-	uint32_t GetSelectedTool(int* pSelectedIndex = nullptr) const;
+	void SetSelectedToolId(uint32_t toolId);
+
+	NavigatorIndexAndToolId Get1stSelIndexAndId() const;
+	std::vector<uint32_t> GetAllSelectedToolIds() const;
 	
-	///Get Navigator Element Pointer for the Selected Element in the ListCtrl
-	//pSelectedIndex gets the selected Index
-	PtrNavigatorElement GetSelectedNavigatorElement(int* pSelectedIndex = nullptr) const;
+	NavigatorIndexAndElement Get1stSelIndexAndElement() const;
 	///Get Navigator Element Pointer for the index in the ListCtrl
 	PtrNavigatorElement GetNavigatorElement(int index) const;
 	void HandleExpandCollapse(const std::string& rName, bool bCollapse);

@@ -20,6 +20,8 @@ class ToolSetView;
 #pragma endregion Declarations
 
 
+using NavigatorIndexAndToolId = std::pair<int, uint32_t>;
+
 class SVToolSetListCtrl : public CListCtrl
 {
 	DECLARE_DYNCREATE(SVToolSetListCtrl)
@@ -52,13 +54,15 @@ public:
 
 	///Get Navigator Element Pointer for the Selected Element in the ListCtrl
 	//pSelectedIndex gets the selected Index
-	PtrNavigatorElement GetSelectedNavigatorElement(int* pSelectedIndex = nullptr) const;
+	NavigatorIndexAndElementVector GetSelectedNavigatorIndexAndElementVector() const;
 
 	///Get Navigator Element Pointer for the index in the ListCtrl
 	PtrNavigatorElement GetNavigatorElement(int index) const;
+	
+	NavigatorIndexAndToolId Get1stSelIndexAndId() const;
+	std::vector<uint32_t> GetAllSelectedToolIds() const;
 
-	uint32_t GetSelectedTool(int* pSelectedListpos= nullptr ) const;
-	void SetSelectedTool(uint32_t toolId);
+	void SetSelectedToolId(uint32_t toolId);
 	
 	///Select the last element in the list if no Element was selected.
 	void EnsureOneIsSelected();

@@ -29,7 +29,7 @@ struct NavigatorElement
 
 	std::string m_DisplayName;
 	std::string m_Comment; //< for non tool element
-	uint32_t m_objectId{ SvDef::InvalidObjectId };
+	uint32_t m_navigatorObjectId{ SvDef::InvalidObjectId };
 	uint32_t m_OwnerId {SvDef::InvalidObjectId};
 	NavElementType m_Type {NavElementType::Tool};
 	bool m_Collapsed {false};
@@ -37,3 +37,5 @@ struct NavigatorElement
 };
 
 typedef std::shared_ptr<NavigatorElement> PtrNavigatorElement;
+using NavigatorIndexAndElement = std::pair<int, PtrNavigatorElement>;
+using NavigatorIndexAndElementVector = std::vector<NavigatorIndexAndElement>;

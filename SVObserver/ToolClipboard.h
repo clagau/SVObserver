@@ -50,12 +50,19 @@ public:
 
 public:
 #pragma region Public Methods
+
+	HRESULT writeToClipboard(uint32_t toolId)
+	{
+		std::vector<uint32_t>rToolIds {toolId};
+		return writeToClipboard(rToolIds);
+	}
+
 	//************************************
 	// Description: Write tool to the clipboard
 	// Parameter: toolId <in> Reference to the selected tool Id to write to the clipboard
 	// Return: S_OK on success
 	//************************************
-	HRESULT writeToClipboard(uint32_t toolId) const;
+	HRESULT writeToClipboard(const std::vector<uint32_t>& rToolIds) const;
 
 	//************************************
 	// Description: Read tool from the clipboard
@@ -64,7 +71,7 @@ public:
 	// Parameter: rToolId <out> Reference to the tool ID generated from reading the clipboard
 	// Return: S_OK on success
 	//************************************
-	HRESULT readFromClipboard(uint32_t postId, uint32_t ownerId, uint32_t& rToolId);
+	std::pair<HRESULT, uint32_t> readFromClipboard(uint32_t postId, uint32_t ownerId);
 
 	//************************************
 	// Description: Checks to see if the clipboard data is valid
@@ -184,11 +191,11 @@ protected:
 
 	//************************************
 	// Description: This method parses the tree and generates the tool
-	// Parameter: rTree <in> Reference to the tree to parse
+	// Parameter : rTree <in> Reference to the tree to parse
 	// Parameter: rToolId <out> Reference to the tool ID generated
 	// Return: S_OK on success
 	//************************************
-	HRESULT parseTreeToTool(SVTreeType& rTree, SVObjectClass* pOwner, uint32_t& rToolId);
+	std::pair<HRESULT, uint32_t> parseTreeToTool(SVTreeType& rTree, SVObjectClass* pOwner);
 #pragma endregion Protected Methods
 
 private:

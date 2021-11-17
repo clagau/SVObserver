@@ -71,11 +71,11 @@ namespace SvOg
 		int pos = m_toolList.GetCurSel();
 		if (m_list.list_size() > pos && 0 <= pos)
 		{
-			m_selectedTool = { m_list.list(pos).objectname(), m_list.list(pos).objectid() };
+			m_selectedToolNameAndId = { m_list.list(pos).objectname(), m_list.list(pos).objectid() };
 		}
 		else
 		{
-			m_selectedTool = {};
+			m_selectedToolNameAndId = {};
 		}
 		CDialog::OnOK();
 	}

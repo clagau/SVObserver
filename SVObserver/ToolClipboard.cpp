@@ -33,7 +33,7 @@
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
-#include "SVUtilityLibrary\ZipHelper.h"
+#include "SVUtilityLibrary/ZipHelper.h"
 #include "SVXMLLibrary/SaxXMLHandler.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVXMLLibrary/SVObjectXMLWriter.h"
@@ -51,8 +51,12 @@ static char THIS_FILE[] = __FILE__;
 #pragma endregion Declarations
 
 #pragma region Public Methods
-HRESULT ToolClipboard::writeToClipboard(uint32_t toolId) const
+
+
+HRESULT ToolClipboard::writeToClipboard(const std::vector<uint32_t>& rToolIds) const
 {
+	uint32_t toolId = rToolIds[0]; //Arvid: for the time being we write only the first tool: this will change when we will paste multiple tools
+
 	HRESULT result( S_OK);
 
 	try
@@ -115,7 +119,7 @@ HRESULT ToolClipboard::writeToClipboard(uint32_t toolId) const
 	return result;
 }
 
-HRESULT ToolClipboard::readFromClipboard(uint32_t postId, uint32_t ownerId, uint32_t& rToolId)
+std::pair<HRESULT, uint32_t> ToolClipboard::readFromClipboard(uint32_t postId, uint32_t ownerId)
 {
 	HRESULT Result( S_OK );
 
@@ -189,7 +193,7 @@ HRESULT ToolClipboard::readFromClipboard(uint32_t postId, uint32_t ownerId, uint
 		}
 		if( S_OK == Result )
 		{
-			Result = parseTreeToTool( Tree, pOwner, rToolId);
+			return parseTreeToTool(Tree, pOwner);
 		}
 	}
 	catch( const SvStl::MessageContainer& rSvE )
@@ -198,7 +202,7 @@ HRESULT ToolClipboard::readFromClipboard(uint32_t postId, uint32_t ownerId, uint
 		e.setMessage( rSvE.getMessage() );
 	}
 
-	return Result;
+	return {Result, SvDef::InvalidObjectId};
 }
 
 bool ToolClipboard::isClipboardDataValid()
@@ -821,10 +825,8 @@ HRESULT ToolClipboard::replaceUniqueIds( std::string& rXmlData, SVTreeType& rTre
 	return Result;
 }
 
-HRESULT ToolClipboard::parseTreeToTool(SVTreeType& rTree, SVObjectClass* pOwner, uint32_t& rToolId)
+std::pair<HRESULT, uint32_t> ToolClipboard::parseTreeToTool(SVTreeType& rTree, SVObjectClass* pOwner)
 {
-	HRESULT Result( E_FAIL );
-
 	SVTreeType::SVBranchHandle ToolsItem( nullptr );
 
 	if( SvXml::SVNavigateTree::GetItemBranch( rTree, SvXml::ToolsTag, nullptr, ToolsItem ) )
@@ -857,20 +859,17 @@ HRESULT ToolClipboard::parseTreeToTool(SVTreeType& rTree, SVObjectClass* pOwner,
 					// Set the Parser Object
 					ParserProgressDialog.AddParser(parserHandle, pParser);
 					ParserProgressDialog.DoModal();
-					rToolId = calcObjectId(UniqueID);
-					Result = S_OK;
+					return {S_OK, calcObjectId(UniqueID)};
 				}
 			}
 		}
 	}
 
-	if( S_OK != Result )
-	{
-		SvStl::MessageManager e( SvStl::MsgType::Data);
-		e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ClipboardDataConverionFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25011_ClipboardDataConversion );
-		e.Throw();
-	}
-	return Result;
+	SvStl::MessageManager e( SvStl::MsgType::Data);
+	e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ClipboardDataConverionFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25011_ClipboardDataConversion );
+	e.Throw();
+
 }
+
 #pragma endregion Protected Methods
 

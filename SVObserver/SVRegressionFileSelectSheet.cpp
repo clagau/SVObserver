@@ -204,7 +204,7 @@ void SVRegressionFileSelectSheet::OnAddImage()
 		SvOg::SelectToolForNewSourceImageDialog dialog(m_InspectionID, std::move(listResponse));
 		if (IDOK == dialog.DoModal())
 		{
-			auto objectPair = dialog.getSelectedTool();
+			auto objectPair = dialog.getSelectedToolNameAndId();
 			std::string SelectedItems = SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult();
 			SVObjectReference objectRef{ SelectedItems };
 			RegressionTestStruct data;

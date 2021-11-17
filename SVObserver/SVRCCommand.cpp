@@ -1629,7 +1629,7 @@ void SVRCCommand::clipboardAction(const SvPb::ClipboardRequest rRequest, SvPb::S
 
 					{
 						SVSVIMStateClass::SetResetState remoteCmd {SV_STATE_REMOTE_CMD};
-						result = clipboard.readFromClipboard(postID, ownerID, toolID);
+						std::tie(result, toolID) = clipboard.readFromClipboard(postID, ownerID);
 					}
 					pResponse->set_hresult(result);
 					if (S_OK == result)

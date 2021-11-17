@@ -506,23 +506,24 @@ std::string SVIPDoc::CheckName(const std::string& rToolName) const
 
 bool SVIPDoc::AddTool(SvPb::ClassIdEnum classId)
 {
-	ToolSetView* pView = GetToolSetView();
-	if (nullptr == pView)
+	ToolSetView* pToolsetView = GetToolSetView();
+	if (nullptr == pToolsetView)
 	{
 		return false;
 	}
-	pView->getListCtrl().EnsureOneIsSelected();
+	pToolsetView->getListCtrl().EnsureOneIsSelected();
 
-	int SelectedListIndex(-1);
-	PtrNavigatorElement  spNavElement = pView->GetSelectedNavigatorElement(&SelectedListIndex);
-	if (!spNavElement)
+	PtrNavigatorElement  pNavElement = pToolsetView->Get1stSelIndexAndElement().second;
+
+	if (!pNavElement)
 	{
 		return false;
 	}
-	std::string Selection(spNavElement->m_DisplayName);
+
+	std::string Selection(pNavElement->m_DisplayName);
 	bool bAddToLoopGroupTool(false);
 	bool bAddToToolSet(false);
-	switch (spNavElement->m_Type)
+	switch (pNavElement->m_Type)
 	{
 		case NavElementType::SubTool:
 		case NavElementType::EndDelimiterTool:
@@ -558,8 +559,8 @@ bool SVIPDoc::AddTool(SvPb::ClassIdEnum classId)
 	}
 	else if (bAddToLoopGroupTool)
 	{
-		OwnerID = spNavElement->m_OwnerId;
-		TaskObjectInsertBeforeID = spNavElement->m_objectId;
+		OwnerID = pNavElement->m_OwnerId;
+		TaskObjectInsertBeforeID = pNavElement->m_navigatorObjectId;
 	}
 	SvPb::InspectionCmdRequest requestCmd;
 	SvPb::InspectionCmdResponse responseCmd;
@@ -618,21 +619,21 @@ bool SVIPDoc::AddTool(SvPb::ClassIdEnum classId)
 
 bool SVIPDoc::AddToolGrouping(bool bStartGroup)
 {
-	ToolSetView* pView = GetToolSetView();
-	if (nullptr == pView)
+	ToolSetView* pToolsetView = GetToolSetView();
+	if (nullptr == pToolsetView)
 	{
 		return false;
 	}
-	pView->getListCtrl().EnsureOneIsSelected();
+	pToolsetView->getListCtrl().EnsureOneIsSelected();
 
-	int SelectedListIndex(-1);
-	auto NavElement = pView->GetSelectedNavigatorElement(&SelectedListIndex);
-	if (!NavElement)
+	PtrNavigatorElement  pNavElement = pToolsetView->Get1stSelIndexAndElement().second;
+
+	if (!pNavElement)
 	{
 		return false;
 	}
-	std::string Selection(NavElement->m_DisplayName);
-	switch (NavElement->m_Type)
+	std::string Selection(pNavElement->m_DisplayName);
+	switch (pNavElement->m_Type)
 	{
 		case NavElementType::SubTool:
 		case NavElementType::EndDelimiterTool:
@@ -693,15 +694,15 @@ CView* SVIPDoc::getView() const
 
 ToolSetView* SVIPDoc::GetToolSetView() const
 {
-	ToolSetView* pView(nullptr);
+	ToolSetView* pToolsetView(nullptr);
 	POSITION pos(GetFirstViewPosition());
 
-	while (nullptr == pView && nullptr != pos)
+	while (nullptr == pToolsetView && nullptr != pos)
 	{
-		pView = dynamic_cast<ToolSetView*>(GetNextView(pos));
+		pToolsetView = dynamic_cast<ToolSetView*>(GetNextView(pos));
 	}
 
-	return pView;
+	return pToolsetView;
 }
 
 SVImageView* SVIPDoc::GetImageView(int p_Index)
@@ -1233,14 +1234,14 @@ void SVIPDoc::OnEditDelete()
 	{
 		return;
 	}
-	ToolSetView* pToolSetView = GetToolSetView();
+	ToolSetView* pToolsetView = GetToolSetView();
 	SVToolSet* pToolSet = GetToolSet();
-	if (!pToolSet || !pToolSetView || pToolSetView->IsLabelEditing())
+	if (!pToolSet || !pToolsetView || pToolsetView->IsLabelEditing())
 	{
 		return;
 	}
-	int SelectedIndex(-1);
-	PtrNavigatorElement pNavElement = pToolSetView->GetSelectedNavigatorElement(&SelectedIndex);
+	PtrNavigatorElement  pNavElement = pToolsetView->Get1stSelIndexAndElement().second;
+
 	if (!pNavElement)
 	{
 		return;
@@ -1289,10 +1290,10 @@ void SVIPDoc::OnEditDelete()
 
 void SVIPDoc::OnEditCut()
 {
-	ToolSetView* pToolSetView = GetToolSetView();
-	if (nullptr != pToolSetView && !pToolSetView->IsLabelEditing())
+	ToolSetView* pToolsetView = GetToolSetView();
+	if (nullptr != pToolsetView && !pToolsetView->IsLabelEditing())
 	{
-		uint32_t toolid = pToolSetView->GetSelectedTool();
+		uint32_t toolid = pToolsetView->Get1stSelIndexAndId().second;
 		if (SvDef::InvalidObjectId != toolid)
 		{
 			ToolClipboard clipboard;
@@ -1309,15 +1310,20 @@ void SVIPDoc::OnEditCopy()
 		return;
 	}
 
-	ToolSetView* pToolSetView = GetToolSetView();
-	if (nullptr != pToolSetView && !pToolSetView->IsLabelEditing())
+	ToolSetView* pToolsetView = GetToolSetView();
+	if (nullptr != pToolsetView && !pToolsetView->IsLabelEditing())
 	{
-		uint32_t toolid = pToolSetView->GetSelectedTool();
+
+#if defined (TRACE_THEM_ALL) || defined (TRACE_TOOL_IDS)
+		pToolsetView->GetAllSelectedToolIds();
+#endif
+		uint32_t toolid = pToolsetView->Get1stSelIndexAndId().second;
 		if (SvDef::InvalidObjectId != toolid)
 		{
 			ToolClipboard clipboard;
 			clipboard.writeToClipboard(toolid);
 		}
+
 	}
 }
 
@@ -1325,18 +1331,18 @@ void SVIPDoc::OnUpdateEditCutCopy(CCmdUI* pCmdUI)
 {
 	// Check current user access...
 	bool Enabled(false);
-	ToolSetView* pToolSetView = GetToolSetView();
+	ToolSetView* pToolsetView = GetToolSetView();
 	SVToolSet* pToolSet = GetToolSet();
 
-	if (TheSVObserverApp().OkToEdit() && nullptr != pToolSet && nullptr != pToolSetView)
+	if (TheSVObserverApp().OkToEdit() && nullptr != pToolSet && nullptr != pToolsetView)
 	{
-		if (!pToolSetView->IsLabelEditing())
+		if (!pToolsetView->IsLabelEditing())
 		{
-			int SelectedListIndex(-1);
-			auto NavElement = pToolSetView->GetSelectedNavigatorElement(&SelectedListIndex);
-			if (NavElement)
+			auto [SelectedListIndex, pNavElement] = pToolsetView->Get1stSelIndexAndElement();
+
+			if (pNavElement)
 			{
-				switch (NavElement->m_Type)
+				switch (pNavElement->m_Type)
 				{
 					case NavElementType::EndDelimiterTool:
 						break;
@@ -1364,13 +1370,13 @@ void SVIPDoc::OnEditPaste()
 	}
 
 	SVInspectionProcess* pInspection(GetInspectionProcess());
-	ToolSetView* pView = GetToolSetView();
-	if (nullptr == pInspection || nullptr == pView)
+	ToolSetView* pToolsetView = GetToolSetView();
+	if (nullptr == pInspection || nullptr == pToolsetView)
 	{
 		return;
 	}
-	int selectedListIndex(-1);
-	auto pNavElement = pView->GetSelectedNavigatorElement(&selectedListIndex);
+	PtrNavigatorElement  pNavElement = pToolsetView->Get1stSelIndexAndElement().second;
+
 	SVToolSet* pToolSet(pInspection->GetToolSet());
 	if (nullptr == pNavElement || nullptr == pToolSet)
 	{
@@ -1384,13 +1390,13 @@ void SVIPDoc::OnEditPaste()
 		case NavElementType::EndDelimiterTool:
 		case NavElementType::SubLoopTool:
 			ownerId = pNavElement->m_OwnerId;
-			if (SvDef::InvalidObjectId == pNavElement->m_objectId)
+			if (SvDef::InvalidObjectId == pNavElement->m_navigatorObjectId)
 			{	//at the end of the Group/Loop-Tool, get the objectId of the next tool after this tool
 				postToolId = getObjectAfterThis(ownerId);
 			}
 			else
 			{
-				postToolId = pNavElement->m_objectId;
+				postToolId = pNavElement->m_navigatorObjectId;
 			}
 			break;
 		case NavElementType::StartGrouping:
@@ -1411,7 +1417,7 @@ void SVIPDoc::OnEditPaste()
 		case NavElementType::Tool:
 		case NavElementType::LoopTool:
 		case NavElementType::GroupTool:
-			postToolId = pNavElement->m_objectId;
+			postToolId = pNavElement->m_navigatorObjectId;
 			break;
 		case NavElementType::EndDelimiterToolSet:
 		case NavElementType::Empty:
@@ -1420,9 +1426,16 @@ void SVIPDoc::OnEditPaste()
 	}
 
 	ToolClipboard clipboard;
-	uint32_t toolId(SvDef::InvalidObjectId);
-	if (S_OK == clipboard.readFromClipboard(postToolId, ownerId, toolId))
+	auto [result, toolId] = clipboard.readFromClipboard(postToolId, ownerId);
+
+	if (S_OK == result)
 	{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_TOOLSET)
+		std::stringstream str;
+		str << "Pasting " << toolId << " after " << postToolId << ", owner = " << ownerId << "\n";
+		::OutputDebugString(str.str().c_str());
+#endif
+
 		updateToolsetView(toolId, postToolId, ownerId, pNavElement->m_DisplayName.c_str());
 	}
 }
@@ -1435,8 +1448,7 @@ void SVIPDoc::OnUpdateEditPaste(CCmdUI* pCmdUI)
 
 	if (enabled)
 	{
-		int SelectedListIndex(-1);
-		auto pNavElement = pToolSetView->GetSelectedNavigatorElement(&SelectedListIndex);
+		auto [SelectedListIndex, pNavElement] = pToolSetView->Get1stSelIndexAndElement();
 
 		//Only if tool list active and a selected index is valid
 		enabled = (nullptr != pNavElement && -1 != SelectedListIndex && ToolClipboard::isClipboardDataValid());
@@ -3147,7 +3159,7 @@ bool SVIPDoc::deleteTool(NavigatorElement* pNaviElement)
 		}
 	}
 
-	SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject(pNaviElement->m_objectId));
+	SvTo::SVToolClass* pTool = dynamic_cast<SvTo::SVToolClass*> (SVObjectManagerClass::Instance().GetObject(pNaviElement->m_navigatorObjectId));
 	if (nullptr == pTool)
 	{
 		return false;
@@ -3237,15 +3249,15 @@ void SVIPDoc::OnUpdateEditAdjustToolPosition(CCmdUI* pCmdUI)
 		return pCmdUI->Enable(false);
 	}
 
-	int SelectedListIndex(-1);
-	auto NavElement = pToolSetView->GetSelectedNavigatorElement(&SelectedListIndex);
-	if (!NavElement || SelectedListIndex == -1)
+	auto [SelectedListIndex, pNavElement] = pToolSetView->Get1stSelIndexAndElement();
+
+	if (!pNavElement || SelectedListIndex == -1)
 	{
 		return pCmdUI->Enable(false);
 	}
-	std::string Selection(NavElement->m_DisplayName);
+	std::string Selection(pNavElement->m_DisplayName);
 	bool enabled(false);
-	switch (NavElement->m_Type)
+	switch (pNavElement->m_Type)
 	{
 		case NavElementType::SubTool:
 		case NavElementType::Tool:
@@ -3254,7 +3266,7 @@ void SVIPDoc::OnUpdateEditAdjustToolPosition(CCmdUI* pCmdUI)
 			enabled = true;
 			break;
 	}
-	uint32_t SelectedId(NavElement->m_objectId);
+	uint32_t SelectedId(pNavElement->m_navigatorObjectId);
 	if (!enabled || SvDef::InvalidObjectId == SelectedId)
 	{
 		return pCmdUI->Enable(false);
@@ -3472,7 +3484,7 @@ uint32_t SVIPDoc::GetSelectedToolID() const
 	ToolSetView* pView = GetToolSetView();
 	if (pView)
 	{
-		return pView->GetSelectedTool();
+		return pView->Get1stSelIndexAndId().second;
 	}
 	else
 	{
@@ -3485,7 +3497,7 @@ void SVIPDoc::SetSelectedToolID(uint32_t toolID)
 	ToolSetView* pView = GetToolSetView();
 	if (pView)
 	{
-		pView->SetSelectedTool(toolID);
+		pView->SetSelectedToolId(toolID);
 	}
 }
 

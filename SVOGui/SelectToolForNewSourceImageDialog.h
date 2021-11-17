@@ -23,7 +23,7 @@ namespace SvOg
 		explicit SelectToolForNewSourceImageDialog(uint32_t inspectionId, SvPb::GetToolsWithReplaceableSourceImageResponse list, CWnd* pParent = nullptr);   // standard constructor
 		virtual ~SelectToolForNewSourceImageDialog();
 
-		SvUl::NameObjectIdPair getSelectedTool() const { return m_selectedTool;	};
+		SvUl::NameObjectIdPair getSelectedToolNameAndId() const { return m_selectedToolNameAndId;};
 
 		// Dialog Data
 		//{{AFX_DATA(SelectToolForNewSourceImageDialog)
@@ -50,7 +50,7 @@ namespace SvOg
 	private:
 		const uint32_t m_InspectionID;
 		SvPb::GetToolsWithReplaceableSourceImageResponse m_list;
-		SvUl::NameObjectIdPair m_selectedTool{};
+		SvUl::NameObjectIdPair m_selectedToolNameAndId{};
 	};
 
 	SvPb::GetToolsWithReplaceableSourceImageResponse getToolsWithReplaceableSourceImage(uint32_t inspectionId);
