@@ -14,6 +14,7 @@
 #include "stdafx.h"
 #include "DisplayMessageBox.h"
 #include "SVUtilityLibrary\LoadDll.h"
+#include "SVSystemLibrary/SVVersionInfo.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -25,6 +26,7 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvMc
 {
+	CString DisplayMessageBox::m_Caption;
 	constexpr int Button1 = 0;
 	constexpr int Button2 = 1;
 	constexpr int Button3 = 2;
@@ -69,6 +71,7 @@ namespace SvMc
 		, m_ShowDetails( true )
 		, m_Type( Type )
 	{
+
 		Initialize();
 	}
 
@@ -141,6 +144,15 @@ namespace SvMc
 	BOOL DisplayMessageBox::OnInitDialog()
 	{
 		CDialog::OnInitDialog();
+		
+		if (m_Caption.IsEmpty())
+		{
+			m_Caption = "SVObserver ";
+			m_Caption += SvSyl::SVVersionInfo::GetVersion().c_str();
+			m_Caption += " Message";
+		}
+		
+		SetWindowText(m_Caption);
 
 		m_WhiteBrush.CreateSolidBrush( WhiteColor );
 

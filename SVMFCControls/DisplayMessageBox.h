@@ -130,6 +130,7 @@ namespace SvMc
 		HICON m_Icon;									//The handle of the icon which is displayed
 		bool m_ShowDetails;								//Flag which determines if the message details is shown
 		UINT m_Type;									//The message box type
+		static CString m_Caption;								//Caption of the dialog with the SVObserver version
 #pragma endregion Member variables
 	};
 } //namespace SvLib
