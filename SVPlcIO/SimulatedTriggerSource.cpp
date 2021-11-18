@@ -235,12 +235,18 @@ bool SimulatedTriggerSource::setTriggerChannel(uint8_t channel, bool active)
 			if (resultFile.is_open())
 			{
 				std::string fileData;
-				fileData += cObjectGood;
-				fileData += std::to_string(m_ObjectsGood) + _T("\r\n");
-				fileData += cObjectBad;
-				fileData += std::to_string(m_ObjectsBad) + _T("\r\n");
-				fileData += cObjectInvalid;
-				fileData += std::to_string(m_ObjectsInvalid) + _T("\r\n");
+				for (size_t i=0; i < m_channel.size(); ++i)
+				{
+					fileData += m_channel[i].m_simulatedTriggerData.m_name;
+					fileData += cObjectGood;
+					fileData += std::to_string(m_ObjectsGood[i]) + _T("\r\n");
+					fileData += m_channel[i].m_simulatedTriggerData.m_name;
+					fileData += cObjectBad;
+					fileData += std::to_string(m_ObjectsBad[i]) + _T("\r\n");
+					fileData += m_channel[i].m_simulatedTriggerData.m_name;
+					fileData += cObjectInvalid;
+					fileData += std::to_string(m_ObjectsInvalid[i]) + _T("\r\n");
+				}
 				resultFile.write(fileData.c_str(), fileData.size());
 				resultFile.close();
 			}
@@ -262,15 +268,15 @@ void SimulatedTriggerSource::queueResult(uint8_t channel, ChannelOut1&& channelO
 	/// Highest priority is invalid then bad then good (of all 14 results)
 	if (channelOut.m_results.end() != std::find(channelOut.m_results.begin(), channelOut.m_results.end(), cPlcInvalid))
 	{
-		++m_ObjectsInvalid;
+		++m_ObjectsInvalid[channel];
 	}
 	else if (channelOut.m_results.end() != std::find(channelOut.m_results.begin(), channelOut.m_results.end(), cPlcBad))
 	{
-		++m_ObjectsBad;
+		++m_ObjectsBad[channel];
 	}
 	else if (channelOut.m_results.end() != std::find(channelOut.m_results.begin(), channelOut.m_results.end(), cPlcGood))
 	{
-		++m_ObjectsGood;
+		++m_ObjectsGood[channel];
 	}
 	double triggerTimestamp{0.0};
 	{

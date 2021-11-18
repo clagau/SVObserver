@@ -243,6 +243,7 @@ void SVProductInfoStruct::InitProductInfo()
 	m_CantProcessReason = CantProcessEnum::NoReason;
 	m_triggered = false;
 	m_dataComplete = false;
+	m_prevTriggerNAK = false;
 	m_monitorListSMSlot = -1;
 	m_outputsInfo = std::move(SVOutputsInfoStruct {});
 	m_triggerInfo = std::move(SvTrig::SVTriggerInfoStruct {});

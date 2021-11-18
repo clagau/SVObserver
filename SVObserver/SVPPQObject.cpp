@@ -1640,21 +1640,11 @@ bool SVPPQObject::WriteOutputs(SVProductInfoStruct* pProduct)
 
 	if (nullptr != pProduct)
 	{
-		if (true == pProduct->m_dataComplete)
+		//As all inspections have been tested to have the same object ID we will set it to the first inspection
+		ObjectIdSVInspectionInfoStructMap::const_iterator iter{ pProduct->m_svInspectionInfos.begin() };
+		if (pProduct->m_svInspectionInfos.end() != iter)
 		{
-			//As all inspections have been tested to have the same object ID we will set it to the first inspection
-			ObjectIdSVInspectionInfoStructMap::const_iterator iter {pProduct->m_svInspectionInfos.begin()};
-			if (pProduct->m_svInspectionInfos.end() != iter)
-			{
-				inspectedObjectID = iter->second.m_ObjectID;
-			}
-		}
-		else
-		{
-			SetProductIncomplete(*pProduct);
-			pProduct->m_outputsInfo.m_NakResult = true;
-			//Data index with -1 will return the default output values which is required in this case
-			pProduct->m_outputsInfo.m_Outputs = m_pOutputList->getOutputValues(m_UsedOutputs, true, false, pProduct->m_outputsInfo.m_NakResult);
+			inspectedObjectID = iter->second.m_ObjectID;
 		}
 		if (0 == inspectedObjectID)
 		{
@@ -1988,27 +1978,9 @@ SVProductInfoStruct* SVPPQObject::IndexPPQ(SvTrig::SVTriggerInfoStruct&& rTrigge
 		{
 			pNewProduct->m_triggerInfo.m_PreviousTrigger = pPrevProduct->m_triggerInfo.m_triggerTimeStamp;
 
-			uint32_t newObjectID {0UL};
-			uint32_t prevObjectID {0UL};
-
-			SvTrig::IntVariantMap::const_iterator iterData = pPrevProduct->m_triggerInfo.m_Data.find(SvTrig::TriggerDataEnum::ObjectID);
-			if (pPrevProduct->m_triggerInfo.m_Data.end() != iterData)
+			if (pPrevProduct->m_dataComplete && pPrevProduct->m_outputsInfo.m_NakResult)
 			{
-				prevObjectID = static_cast<uint32_t> (iterData->second);
-			}
-			iterData = pNewProduct->m_triggerInfo.m_Data.find(SvTrig::TriggerDataEnum::ObjectID);
-			if (pNewProduct->m_triggerInfo.m_Data.end() != iterData)
-			{
-				newObjectID = static_cast<uint32_t> (iterData->second);
-			}
-			if (newObjectID != 0 && newObjectID == prevObjectID)
-			{
-				//Object has more than 1 trigger per Object then relay NAK result to new product
-				iterData = pNewProduct->m_triggerInfo.m_Data.find(SvTrig::TriggerDataEnum::TriggerIndex);
-				if (pNewProduct->m_triggerInfo.m_Data.end() != iterData && 1u < static_cast<DWORD> (iterData->second))
-				{
-					pNewProduct->m_prevTriggerNAK = pPrevProduct->m_outputsInfo.m_NakResult;
-				}
+				setPreviousNAK(*pPrevProduct, pNewProduct);
 			}
 		}
 
@@ -2577,7 +2549,15 @@ bool SVPPQObject::SetProductComplete(SVProductInfoStruct& rProduct)
 #endif
 	}
 
-
+	long ppqIndex = m_PPQPositions.GetIndexByTriggerCount(rProduct.ProcessCount());
+	if (rProduct.m_outputsInfo.m_NakResult && rProduct.m_dataComplete && ppqIndex > 0)
+	{
+		SVProductInfoStruct* pNextProduct = m_PPQPositions.GetProductAt(ppqIndex - 1);
+		if (nullptr != pNextProduct)
+		{
+			setPreviousNAK(rProduct, pNextProduct);
+		}
+	}
 
 	return l_Status;
 }
@@ -2599,34 +2579,46 @@ bool SVPPQObject::SetProductIncomplete(long p_PPQIndex)
 	return l_Status;
 }
 
-bool SVPPQObject::SetProductIncomplete(SVProductInfoStruct& p_rProduct)
+bool SVPPQObject::SetProductIncomplete(SVProductInfoStruct& rProduct)
 {
-	bool isNak = p_rProduct.m_outputsInfo.m_NakResult;
+	bool isNak = rProduct.m_outputsInfo.m_NakResult;
 	
 	bool l_Status = true;
 	// Release from Shared Memory
-	ReleaseSharedMemory(p_rProduct);
+	ReleaseSharedMemory(rProduct);
 
-	for (auto& rValue : p_rProduct.m_svCameraInfos)
+	for (auto& rValue : rProduct.m_svCameraInfos)
 	{
 		rValue.second.ClearCameraInfo();
 	}
-	p_rProduct.setInspectionTriggerRecordComplete(SvDef::InvalidObjectId);
-	if (p_rProduct.IsProductActive())
+	rProduct.setInspectionTriggerRecordComplete(SvDef::InvalidObjectId);
+	if (rProduct.IsProductActive())
 	{
-		p_rProduct.SetProductComplete();
-		SV_LOG_GLOBAL(trace) << "Product Incomplete: " << GetName() << " : " << p_rProduct.ProcessCount() << " : " << m_PPQPositions.GetIndexByTriggerCount(p_rProduct.ProcessCount());
+		rProduct.SetProductComplete();
+		SV_LOG_GLOBAL(trace) << "Product Incomplete: " << GetName() << " : " << rProduct.ProcessCount() << " : " << m_PPQPositions.GetIndexByTriggerCount(rProduct.ProcessCount());
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
-		long ppqPos = m_PPQPositions.GetIndexByTriggerCount(p_rProduct.ProcessCount());
-		::OutputDebugString(SvUl::Format(_T("%s Product incomplete TRI=%d, PPQPos=%d\n"), GetName(), p_rProduct.ProcessCount(), ppqPos).c_str());
+		long ppqPos = m_PPQPositions.GetIndexByTriggerCount(rProduct.ProcessCount());
+		::OutputDebugString(SvUl::Format(_T("%s Product incomplete TRI=%d, PPQPos=%d\n"), GetName(), rProduct.ProcessCount(), ppqPos).c_str());
 #endif
 		if (isNak)
 		{
-			checkNakReason(p_rProduct.m_CantProcessReason);
+			checkNakReason(rProduct.m_CantProcessReason);
 		}
 #if defined (TRACE_PPQ2)
 		::OutputDebugString(std::format("{}: isNak: {},  Set Product Incomplete \n", p_rProduct.m_triggerInfo.lTriggerCount,isNak).c_str());
 #endif
+	}
+	rProduct.m_dataComplete = true;
+	rProduct.m_outputsInfo.m_Outputs = m_pOutputList->getOutputValues(m_UsedOutputs, true, false, true);
+
+	long ppqIndex = m_PPQPositions.GetIndexByTriggerCount(rProduct.ProcessCount());
+	if (rProduct.m_outputsInfo.m_NakResult && ppqIndex > 0)
+	{
+		SVProductInfoStruct* pNextProduct = m_PPQPositions.GetProductAt(ppqIndex - 1);
+		if (nullptr != pNextProduct)
+		{
+			setPreviousNAK(rProduct, pNextProduct);
+		}
 	}
 
 	return l_Status;
@@ -4301,6 +4293,31 @@ void SVPPQObject::checkNakReason(CantProcessEnum cantProcessReason)
 		default:
 		{
 			break;
+		}
+	}
+}
+void SVPPQObject::setPreviousNAK(const SVProductInfoStruct& rCurrentProduct, SVProductInfoStruct* pNextProduct) const
+{
+	uint32_t newObjectID {0UL};
+	uint32_t prevObjectID {0UL};
+
+	SvTrig::IntVariantMap::const_iterator iterData = rCurrentProduct.m_triggerInfo.m_Data.find(SvTrig::TriggerDataEnum::ObjectID);
+	if (rCurrentProduct.m_triggerInfo.m_Data.end() != iterData)
+	{
+		prevObjectID = static_cast<uint32_t> (iterData->second);
+	}
+	iterData = pNextProduct->m_triggerInfo.m_Data.find(SvTrig::TriggerDataEnum::ObjectID);
+	if (pNextProduct->m_triggerInfo.m_Data.end() != iterData)
+	{
+		newObjectID = static_cast<uint32_t> (iterData->second);
+	}
+	if (newObjectID != 0 && newObjectID == prevObjectID)
+	{
+		//Object has more than 1 trigger per Object then relay NAK result to new product
+		iterData = pNextProduct->m_triggerInfo.m_Data.find(SvTrig::TriggerDataEnum::TriggerIndex);
+		if (pNextProduct->m_triggerInfo.m_Data.end() != iterData && 1u < static_cast<DWORD> (iterData->second))
+		{
+			pNextProduct->m_prevTriggerNAK = rCurrentProduct.m_outputsInfo.m_NakResult;
 		}
 	}
 }

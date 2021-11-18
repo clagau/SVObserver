@@ -336,10 +336,10 @@ protected:
 	bool SetInspectionComplete(SVProductInfoStruct& rProduct, uint32_t inspId);
 
 	bool SetProductComplete(long p_PPQIndex);
-	bool SetProductComplete( SVProductInfoStruct& p_rProduct );
+	bool SetProductComplete( SVProductInfoStruct& rProduct );
 
 	bool SetProductIncomplete( long p_PPQIndex );
-	bool SetProductIncomplete( SVProductInfoStruct& p_rProduct );
+	bool SetProductIncomplete( SVProductInfoStruct& rProduct );
 
 	bool RecycleProductInfo( SVProductInfoStruct *pProduct );
 
@@ -473,6 +473,8 @@ private:
 	long getNeededRecords() const;
 
 	void checkNakReason(CantProcessEnum cantProcessReason);
+
+	void setPreviousNAK(const SVProductInfoStruct& rCurrentProduct, SVProductInfoStruct* pNextProduct) const;
 
 	PpqCameraCallBack m_cameraCallback;
 	SvTrig::PpqTriggerCallBack m_triggerCallback;
