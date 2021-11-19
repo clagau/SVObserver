@@ -163,6 +163,10 @@ HRESULT SVPPQObject::ProcessOutputs(SVProductInfoStruct& rProduct)
 {
 	HRESULT l_Status = S_OK;
 
+	if (false == rProduct.m_dataComplete)
+	{
+		SetProductIncomplete(rProduct);
+	}
 	if (WriteOutputs(&rProduct))
 	{
 		rProduct.m_outputsInfo.m_EndProcess = SvUl::GetTimeStamp();
@@ -1977,8 +1981,8 @@ SVProductInfoStruct* SVPPQObject::IndexPPQ(SvTrig::SVTriggerInfoStruct&& rTrigge
 		if (nullptr != pPrevProduct)
 		{
 			pNewProduct->m_triggerInfo.m_PreviousTrigger = pPrevProduct->m_triggerInfo.m_triggerTimeStamp;
-
-			if (pPrevProduct->m_dataComplete && pPrevProduct->m_outputsInfo.m_NakResult)
+			bool isNAK = pPrevProduct->m_outputsInfo.m_NakResult || pPrevProduct->m_prevTriggerNAK;
+			if (pPrevProduct->m_dataComplete && isNAK)
 			{
 				setPreviousNAK(*pPrevProduct, pNewProduct);
 			}
@@ -2240,7 +2244,6 @@ HRESULT SVPPQObject::StartInspection(uint32_t inspectionID)
 					if (m_NewNAKCount > 2 && 0L == m_FirstNAKProcessCount)
 					{
 						m_FirstNAKProcessCount = pTempProduct->ProcessCount();
-						continue;
 					}
 				}
 				else
@@ -2248,10 +2251,17 @@ HRESULT SVPPQObject::StartInspection(uint32_t inspectionID)
 					pProduct = pTempProduct;
 				}
 			}
-			if (SvDef::Bursts == m_NAKMode && m_FirstNAKProcessCount > pTempProduct->ProcessCount())
+			if (SvDef::Bursts == m_NAKMode && m_FirstNAKProcessCount >= pTempProduct->ProcessCount() && false == pTempProduct->m_dataComplete)
 			{
 				SetProductIncomplete(*pTempProduct);
+				//Here we need to reset the NAK flag otherwise the m_NewNAKCounter would be incremented and cause the PPQ to be reset again
+				pTempProduct->m_outputsInfo.m_NakResult = false;
+				pTempProduct->m_prevTriggerNAK = true;
 				pTempProduct = nullptr;
+				if (0 != m_NewNAKCount)
+				{
+					::InterlockedExchange(&m_NewNAKCount, 0);
+				}
 			}
 		}
 	}
@@ -2434,9 +2444,9 @@ void SVPPQObject::AddResultsToPPQ(SVProductInfoStruct& rProduct)
 	m_PpqOutputs[PpqOutputEnums::ACK].GetValue(bACK);
 	m_PpqOutputs[PpqOutputEnums::NAK].GetValue(bNAK);
 	//Previous trigger NAK is true when Trigger per Object > 1 and a NAK occured during a previous trigger with the same objectID
-	bNAK |= rProduct.m_prevTriggerNAK ? TRUE : FALSE;
+	bACK &= (false == rProduct.m_prevTriggerNAK) ? TRUE : FALSE;
 
-	rProduct.m_outputsInfo.m_Outputs = m_pOutputList->getOutputValues(m_UsedOutputs, false, bACK ? true : false, bNAK ? true : false);
+	rProduct.m_outputsInfo.m_Outputs = m_pOutputList->getOutputValues(m_UsedOutputs, false, bACK ? true : false, (bNAK || rProduct.m_prevTriggerNAK) ? true : false);
 	rProduct.m_outputsInfo.m_NakResult = bNAK ? true : false;
 	rProduct.m_outputsInfo.m_DataValidResult = bValid && !bNAK;
 }
@@ -2549,8 +2559,9 @@ bool SVPPQObject::SetProductComplete(SVProductInfoStruct& rProduct)
 #endif
 	}
 
+	bool isPreviousNAK = rProduct.m_outputsInfo.m_NakResult || rProduct.m_prevTriggerNAK;
 	long ppqIndex = m_PPQPositions.GetIndexByTriggerCount(rProduct.ProcessCount());
-	if (rProduct.m_outputsInfo.m_NakResult && rProduct.m_dataComplete && ppqIndex > 0)
+	if (isPreviousNAK && rProduct.m_dataComplete && ppqIndex > 0)
 	{
 		SVProductInfoStruct* pNextProduct = m_PPQPositions.GetProductAt(ppqIndex - 1);
 		if (nullptr != pNextProduct)
@@ -2611,8 +2622,9 @@ bool SVPPQObject::SetProductIncomplete(SVProductInfoStruct& rProduct)
 	rProduct.m_dataComplete = true;
 	rProduct.m_outputsInfo.m_Outputs = m_pOutputList->getOutputValues(m_UsedOutputs, true, false, true);
 
+	bool isNAK = rProduct.m_outputsInfo.m_NakResult || rProduct.m_prevTriggerNAK;
 	long ppqIndex = m_PPQPositions.GetIndexByTriggerCount(rProduct.ProcessCount());
-	if (rProduct.m_outputsInfo.m_NakResult && ppqIndex > 0)
+	if (isNAK && ppqIndex > 0)
 	{
 		SVProductInfoStruct* pNextProduct = m_PPQPositions.GetProductAt(ppqIndex - 1);
 		if (nullptr != pNextProduct)
@@ -4317,7 +4329,7 @@ void SVPPQObject::setPreviousNAK(const SVProductInfoStruct& rCurrentProduct, SVP
 		iterData = pNextProduct->m_triggerInfo.m_Data.find(SvTrig::TriggerDataEnum::TriggerIndex);
 		if (pNextProduct->m_triggerInfo.m_Data.end() != iterData && 1u < static_cast<DWORD> (iterData->second))
 		{
-			pNextProduct->m_prevTriggerNAK = rCurrentProduct.m_outputsInfo.m_NakResult;
+			pNextProduct->m_prevTriggerNAK = true;
 		}
 	}
 }

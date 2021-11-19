@@ -73,7 +73,7 @@ void ChannelTimer(std::atomic_bool& rRun, SimulatedTriggerData simTriggerData)
 			}
 			currentIndex = 1;
 			objectID++;
-			if(simTriggerData.m_objectNumber > 0 && objectID > simTriggerData.m_objectID + simTriggerData.m_objectNumber)
+			if(simTriggerData.m_objectNumber > 0 && objectID >= simTriggerData.m_objectID + simTriggerData.m_objectNumber)
 			{
 				rRun = false;
 			}
@@ -318,6 +318,7 @@ void SimulatedTriggerSource::createTriggerReport(uint8_t channel)
 		}
 		gNewTrigger[channel] = false;
 		sendTriggerReport(triggerReport);
+		if(triggerReport.m_triggerIndex == triggerReport.m_triggerPerObjectID)
 		{
 			std::lock_guard<std::mutex> guard{ m_triggerSourceMutex };
 			m_channel[channel].m_objectIDTimeMap[triggerReport.m_objectID] = triggerReport.m_triggerTimestamp;
