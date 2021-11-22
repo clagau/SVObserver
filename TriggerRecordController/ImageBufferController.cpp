@@ -258,7 +258,7 @@ SvOi::ITRCImagePtr ImageBufferController::createNewImageHandle(int structId, int
 		}
 
 		SvDef::StringVector msgList;
-		msgList.push_back(std::format("{}, ({}) ", structId, Buffernumber));
+		msgList.push_back(SvUl::Format("%d, (%d) ", structId, Buffernumber));
 		SvStl::MessageManager e(SvStl::MsgType::Log);
 		e.setMessage(SVMSG_TRC_GENERAL_ERROR, SvStl::Tid_TRC_Error_NoBufferFree, msgList, SvStl::SourceFileParams(StdMessageParams));
 	}

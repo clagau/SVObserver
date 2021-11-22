@@ -365,7 +365,7 @@ HRESULT SVInspectionProcess::ProcessNotifyWithLastInspected(bool& p_rProcessed)
 		{
 			m_lastRunProduct.m_svInspectionInfos[getObjectId()].m_bReject = isReject();
 		}
-		std::pair<long, SVInspectionInfoStruct> data{ m_lastRunProduct.ProcessCount(), m_lastRunProduct.m_svInspectionInfos[getObjectId()] };
+		std::pair<long, SVInspectionInfoStruct> data{ m_lastRunProduct.triggerCount(), m_lastRunProduct.m_svInspectionInfos[getObjectId()] };
 		SVObjectManagerClass::Instance().UpdateObservers(std::string(SvO::cInspectionProcessTag), getObjectId(), data);
 
 		if (m_lastRunProduct.m_triggered && SvDef::InvalidObjectId != m_PPQId)
@@ -1452,7 +1452,7 @@ void SVInspectionProcess::SingleRunModeLoop(bool p_Refresh)
 		// Result View, Display Image and Overlay Update
 		if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
 		{
-			std::pair<long, SVInspectionInfoStruct> data{ l_svProduct.ProcessCount(), l_svProduct.m_svInspectionInfos[getObjectId()] };
+			std::pair<long, SVInspectionInfoStruct> data{ l_svProduct.triggerCount(), l_svProduct.m_svInspectionInfos[getObjectId()] };
 
 			SVObjectManagerClass::Instance().UpdateObservers(std::string(SvO::cInspectionProcessTag), getObjectId(), data);
 		}
@@ -3225,11 +3225,13 @@ void SVInspectionProcess::Persist(SvOi::IObjectWriter& rWriter) const
 	if (m_PPQInputs.size())
 	{
 		rWriter.StartElement(SvXml::CTAG_IO);
-		for (auto* pObject : m_PPQInputs
-			| std::views::filter([](auto pE) { return nullptr != pE && pE->getObject(); })
-			| std::views::transform([](auto pE) {return pE->getObject(); }))
+		for (auto pElement : m_PPQInputs)
 		{
-			rWriter.WriteAttribute(pObject->GetName(), convertObjectIdToVariant(pObject->getObjectId()));
+			if (nullptr != pElement && nullptr != pElement->getObject())
+			{
+				auto* pObject = pElement->getObject();
+				rWriter.WriteAttribute(pObject->GetName(), convertObjectIdToVariant(pObject->getObjectId()));
+			}
 		}
 		rWriter.EndElement();
 	}

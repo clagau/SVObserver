@@ -269,7 +269,7 @@ bool   ToolSizeController::GetValuesFromExtents(const Extents& rExtents, SizeVal
 		auto valuePair = std::find_if(rExtents.begin(), rExtents.end(), [propEnum](const auto value) { return value.type() == propEnum; });
 		if (rExtents.end() != valuePair)
 		{
-			Value = std::format("{}", static_cast<long>(valuePair->value()));
+			Value = std::to_string(static_cast<long>(valuePair->value()));
 
 		}
 		rValues[vType] = Value;
@@ -321,7 +321,7 @@ bool   ToolSizeController::GetToolSizeMode(bool init, SizeModes& rModes, SizeVal
 				int errorPos = formula.ValidateEquation(text, result, false, errorMessage);
 				if (FormulaController::validateSuccessful == errorPos)
 				{
-					Value = std::format("{}", static_cast<long>(result));
+					Value = std::to_string(static_cast<long>(result));
 				}
 			}
 		}
@@ -331,7 +331,7 @@ bool   ToolSizeController::GetToolSizeMode(bool init, SizeModes& rModes, SizeVal
 			auto valuePair = std::find_if(m_Extents.begin(), m_Extents.end(), [propEnum](const auto value) { return value.type() == propEnum; });
 			if (m_Extents.end() != valuePair)
 			{
-				Value = std::format("{}", static_cast<long>(valuePair->value()));
+				Value = std::to_string(static_cast<long>(valuePair->value()));
 
 			}
 		}
@@ -343,12 +343,12 @@ bool   ToolSizeController::GetToolSizeMode(bool init, SizeModes& rModes, SizeVal
 				auto valuePair = std::find_if(m_ParentExtents.begin(), m_ParentExtents.end(), [propEnum](const auto value) { return value.type() == propEnum; });
 				if (m_ParentExtents.end() != valuePair)
 				{
-					Value = std::format("{}", static_cast<long>(valuePair->value()));
+					Value = std::to_string(static_cast<long>(valuePair->value()));
 				}
 			}
 			else
 			{
-				Value = std::format("{}", 0l);
+				Value = std::to_string(0L);
 			}
 		}
 		rValues[vType] = Value;

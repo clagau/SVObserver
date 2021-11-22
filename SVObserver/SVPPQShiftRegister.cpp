@@ -54,7 +54,7 @@ HRESULT SVPPQShiftRegister::SetProductAt( size_t p_Index, SVProductInfoStruct* p
 		{
 			if( nullptr != p_pProduct )
 			{
-				m_HeadTriggerCount = p_pProduct->ProcessCount();
+				m_HeadTriggerCount = p_pProduct->triggerCount();
 			}
 			else
 			{
@@ -92,7 +92,7 @@ SVProductInfoStruct* SVPPQShiftRegister::IndexRegister()
 
 			if( nullptr != m_Products[ i ] )
 			{
-				l_HeadTriggerCount = m_Products[ i ]->ProcessCount();
+				l_HeadTriggerCount = m_Products[ i ]->triggerCount();
 
 				if( l_TailTriggerCount == 0 )
 				{
@@ -141,7 +141,7 @@ long SVPPQShiftRegister::GetIndexByTriggerCount(long triggerCount) const
 		{
 			if(nullptr != *iter)
 			{
-				if((*iter)->ProcessCount() == triggerCount)
+				if((*iter)->triggerCount() == triggerCount)
 				{
 					Result = static_cast<long>(std::distance(iter, m_Products.crend())-1);
 					return Result;

@@ -323,7 +323,7 @@ bool SVProductInfoStruct::setNextAvailableCameraImage()
 
 void SVProductInfoStruct::DumpIndexInfo(std::string& rData)
 {
-	rData = SvUl::Format(_T("TriggerCount=%ld-DataComplete=%s"), ProcessCount(), m_dataComplete ? _T("T") : _T("F"));
+	rData = SvUl::Format(_T("TriggerCount=%ld-DataComplete=%s"), triggerCount(), m_dataComplete ? _T("T") : _T("F"));
 
 	for (const auto& rCamera : m_svCameraInfos)
 	{

@@ -23,6 +23,9 @@
 #include "SVValueObjectLibrary/SVLongValueObjectClass.h"
 #include "SVMatroxLibrary/SVMatroxBufferCreateStruct.h"
 #include "SVValueObjectLibrary/SVValueObjectClass.h"
+#if defined(TRACE_IMAGE_SIZE)
+#include "SVUtilityLibrary/StringHelper.h"
+#endif
 #pragma endregion Includes
 
 namespace SvOp
@@ -364,7 +367,7 @@ bool SVImageArithmetic::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContain
 	MIL_INT Height_Dest = MbufInquire(MBd.GetIdentifier(), M_SIZE_Y, M_NULL);
 	MIL_INT Width_Dest = MbufInquire(MBd.GetIdentifier(), M_SIZE_X, M_NULL);
 
-	OutputDebugString(std::format("S1W: {}; S1H:{}; S2W: {}; S2H:{}; dW: {}; dH:{} \n", 
+	OutputDebugString(SvUl::Format("S1H: %ld; S1W: %ld; S2H: %ld; S2W: %ld; dH: %ld; dW: %ld\n", 
 		Height_1, Width_1, Height_2, Width_2, Height_Dest, Width_Dest).c_str());
 #endif // TRACE_IMAGE_SIZE  
 

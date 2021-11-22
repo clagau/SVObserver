@@ -115,7 +115,7 @@ HRESULT SVPPQObject::ProcessDelayOutputs(bool& rProcessed)
 			{
 				m_NextOutputDelayTimestamp = l_pProduct->m_outputsInfo.m_EndOutputDelay;
 
-				m_oOutputsDelayQueue.AddHead(l_pProduct->ProcessCount());
+				m_oOutputsDelayQueue.AddHead(l_pProduct->triggerCount());
 
 				l_pProduct = nullptr;
 
@@ -175,7 +175,7 @@ HRESULT SVPPQObject::ProcessOutputs(SVProductInfoStruct& rProduct)
 		{
 			rProduct.m_outputsInfo.m_EndResetDelay = rProduct.m_outputsInfo.m_EndProcess + m_resetDelay;
 
-			m_oOutputsResetQueue.AddTail(rProduct.ProcessCount());
+			m_oOutputsResetQueue.AddTail(rProduct.triggerCount());
 
 		}
 		SetProductComplete(rProduct);
@@ -201,7 +201,7 @@ HRESULT SVPPQObject::ProcessTimeDelayAndDataCompleteOutputs(SVProductInfoStruct&
 	{
 		m_NextOutputDelayTimestamp = p_rProduct.m_outputsInfo.m_EndOutputDelay;
 
-		m_oOutputsDelayQueue.AddHead(p_rProduct.ProcessCount());
+		m_oOutputsDelayQueue.AddHead(p_rProduct.triggerCount());
 
 		rProcessed = false;
 	}
@@ -1734,7 +1734,7 @@ bool SVPPQObject::WriteOutputs(SVProductInfoStruct* pProduct)
 		{
 			// Set output data valid expire time
 			pProduct->m_outputsInfo.m_EndDataValidDelay = SvUl::GetTimeStamp() + m_DataValidDelay;
-			m_DataValidDelayQueue.AddTail(pProduct->ProcessCount());
+			m_DataValidDelayQueue.AddTail(pProduct->triggerCount());
 		}
 	}
 
@@ -2109,7 +2109,7 @@ HRESULT SVPPQObject::NotifyInspections(long offset)
 			SVInspectionInfoStruct& rInfo = pTempProduct->m_svInspectionInfos[m_arInspections[i]->getObjectId()];
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
-			::OutputDebugString(SvUl::Format(_T("%s Notify Inspection TRI=%d CanProcess=%d, InProcess=%d, ProdActive=%d\n"), GetName(), pTempProduct->ProcessCount(), rInfo.m_CanProcess, rInfo.m_InProcess, pTempProduct->IsProductActive()).c_str());
+			::OutputDebugString(SvUl::Format(_T("%s Notify Inspection TRI=%d CanProcess=%d, InProcess=%d, ProdActive=%d\n"), GetName(), pTempProduct->triggerCount(), rInfo.m_CanProcess, rInfo.m_InProcess, pTempProduct->IsProductActive()).c_str());
 #endif
 			// if product has not been previously determined that it "can 
 			// process".  That would generally mean that it's been here 
@@ -2129,7 +2129,7 @@ HRESULT SVPPQObject::NotifyInspections(long offset)
 						m_ProcessInspectionsSet.insert(m_arInspections[i]->getObjectId());
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
-						::OutputDebugString(SvUl::Format(_T("%s Add Process Inspection Set TRI=%d\n"), GetName(), pTempProduct->ProcessCount()).c_str());
+						::OutputDebugString(SvUl::Format(_T("%s Add Process Inspection Set TRI=%d\n"), GetName(), pTempProduct->triggerCount()).c_str());
 #endif
 #ifdef EnableTracking
 						std::string l_Title = m_arInspections[i]->GetName();
@@ -2147,7 +2147,7 @@ HRESULT SVPPQObject::NotifyInspections(long offset)
 					// which indicates NOT "Processed".
 					l_Status = S_FALSE; // 1
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
-					::OutputDebugString(SvUl::Format(_T("%s Cannot Process Inspection TRI=%d\n"), GetName(), pTempProduct->ProcessCount()).c_str());
+					::OutputDebugString(SvUl::Format(_T("%s Cannot Process Inspection TRI=%d\n"), GetName(), pTempProduct->triggerCount()).c_str());
 #endif
 				}
 			} // if( !( l_rInfo.m_CanProcess ) && !( l_rInfo.m_InProcess ) && pTempProduct->IsProductActive() )
@@ -2233,17 +2233,17 @@ HRESULT SVPPQObject::StartInspection(uint32_t inspectionID)
 			if (true == rInfo.m_CanProcess && false == rInfo.m_InProcess && false == rInfo.m_HasBeenQueued)
 			{
 #ifdef EnableTracking
-				l_ProductIndex = m_PPQPositions.GetIndexByTriggerCount(pProduct->ProcessCount());
+				l_ProductIndex = m_PPQPositions.GetIndexByTriggerCount(pProduct->triggerCount());
 #endif
 				if (SvDef::Bursts == m_NAKMode)
 				{
-					if (0 == m_FirstNAKProcessCount || m_FirstNAKProcessCount < pTempProduct->ProcessCount())
+					if (0 == m_FirstNAKProcessCount || m_FirstNAKProcessCount < pTempProduct->triggerCount())
 					{
 						pProduct = pTempProduct;
 					}
 					if (m_NewNAKCount > 2 && 0L == m_FirstNAKProcessCount)
 					{
-						m_FirstNAKProcessCount = pTempProduct->ProcessCount();
+						m_FirstNAKProcessCount = pTempProduct->triggerCount();
 					}
 				}
 				else
@@ -2251,7 +2251,7 @@ HRESULT SVPPQObject::StartInspection(uint32_t inspectionID)
 					pProduct = pTempProduct;
 				}
 			}
-			if (SvDef::Bursts == m_NAKMode && m_FirstNAKProcessCount >= pTempProduct->ProcessCount() && false == pTempProduct->m_dataComplete)
+			if (SvDef::Bursts == m_NAKMode && m_FirstNAKProcessCount >= pTempProduct->triggerCount() && false == pTempProduct->m_dataComplete)
 			{
 				SetProductIncomplete(*pTempProduct);
 				//Here we need to reset the NAK flag otherwise the m_NewNAKCounter would be incremented and cause the PPQ to be reset again
@@ -2273,8 +2273,8 @@ HRESULT SVPPQObject::StartInspection(uint32_t inspectionID)
 		pProduct->m_NotCompleteCount = m_NotCompleteCount;
 		pProduct->m_MissingImageCount = m_MissingImageCount;
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
-		long ppqPos = m_PPQPositions.GetIndexByTriggerCount(pProduct->ProcessCount());
-		::OutputDebugString(SvUl::Format(_T("%s Start Inspection TRI=%d, PPQPos=%d\n"), GetName(), pProduct->ProcessCount(), ppqPos).c_str());
+		long ppqPos = m_PPQPositions.GetIndexByTriggerCount(pProduct->triggerCount());
+		::OutputDebugString(SvUl::Format(_T("%s Start Inspection TRI=%d, PPQPos=%d\n"), GetName(), pProduct->triggerCount(), ppqPos).c_str());
 #endif
 
 		if (pProduct->m_triggered == 0)
@@ -2318,14 +2318,14 @@ void SVPPQObject::StartOutputs(SVProductInfoStruct* pProduct)
 			{
 				if (0 == m_outputDelay)
 				{
-					m_oOutputsDelayQueue.AddTail(pProduct->ProcessCount());
+					m_oOutputsDelayQueue.AddTail(pProduct->triggerCount());
 				}
 				else if (0 < m_outputDelay)
 				{
 					pProduct->m_outputsInfo.m_EndOutputDelay = pProduct->m_triggerInfo.m_ToggleTimeStamp + m_outputDelay;
 					if (pProduct->m_outputsInfo.m_BeginProcess < pProduct->m_outputsInfo.m_EndOutputDelay)
 					{
-						m_oOutputsDelayQueue.AddTail(pProduct->ProcessCount());
+						m_oOutputsDelayQueue.AddTail(pProduct->triggerCount());
 					}
 				}
 				break;
@@ -2524,7 +2524,7 @@ bool SVPPQObject::SetProductComplete(SVProductInfoStruct& rProduct)
 	//@TODO[MEC][10.20][29.07.2021] 
 	//This function is also called under certain circumstances when NAKs occur. 
 	//Check if this is correct and if so, if it makes sense to set the NAK counter to zero. 
-	if (m_PPQPositions.IsProductAlive(rProduct.ProcessCount()))
+	if (m_PPQPositions.IsProductAlive(rProduct.triggerCount()))
 	{
 		::InterlockedExchange(&m_NAKCount, 0);
 	}
@@ -2550,17 +2550,17 @@ bool SVPPQObject::SetProductComplete(SVProductInfoStruct& rProduct)
 		}
 
 #if defined(TRACE_PPQ2)
-		::OutputDebugString(std::format("{}: isNak: {},  Set Product Complete \n", rProduct.m_triggerInfo.lTriggerCount, isNAK).c_str());
+		::OutputDebugString(SvUl::Format("%d: isNak: %d,  Set Product Complete \n", rProduct.m_triggerInfo.lTriggerCount, isNAK).c_str());
 #endif
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
-		long ppqPos = m_PPQPositions.GetIndexByTriggerCount(rProduct.ProcessCount());
-		::OutputDebugString(SvUl::Format(_T("%s Product complete TRI=%d, PPQPos=%d\n"), GetName(), rProduct.ProcessCount(), ppqPos).c_str());
+		long ppqPos = m_PPQPositions.GetIndexByTriggerCount(rProduct.triggerCount());
+		::OutputDebugString(SvUl::Format(_T("%s Product complete TRI=%d, PPQPos=%d\n"), GetName(), rProduct.triggerCount(), ppqPos).c_str());
 #endif
 	}
 
 	bool isPreviousNAK = rProduct.m_outputsInfo.m_NakResult || rProduct.m_prevTriggerNAK;
-	long ppqIndex = m_PPQPositions.GetIndexByTriggerCount(rProduct.ProcessCount());
+	long ppqIndex = m_PPQPositions.GetIndexByTriggerCount(rProduct.triggerCount());
 	if (isPreviousNAK && rProduct.m_dataComplete && ppqIndex > 0)
 	{
 		SVProductInfoStruct* pNextProduct = m_PPQPositions.GetProductAt(ppqIndex - 1);
@@ -2606,24 +2606,24 @@ bool SVPPQObject::SetProductIncomplete(SVProductInfoStruct& rProduct)
 	if (rProduct.IsProductActive())
 	{
 		rProduct.SetProductComplete();
-		SV_LOG_GLOBAL(trace) << "Product Incomplete: " << GetName() << " : " << rProduct.ProcessCount() << " : " << m_PPQPositions.GetIndexByTriggerCount(rProduct.ProcessCount());
+		SV_LOG_GLOBAL(trace) << "Product Incomplete: " << GetName() << " : " << rProduct.triggerCount() << " : " << m_PPQPositions.GetIndexByTriggerCount(rProduct.triggerCount());
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
-		long ppqPos = m_PPQPositions.GetIndexByTriggerCount(rProduct.ProcessCount());
-		::OutputDebugString(SvUl::Format(_T("%s Product incomplete TRI=%d, PPQPos=%d\n"), GetName(), rProduct.ProcessCount(), ppqPos).c_str());
+		long ppqPos = m_PPQPositions.GetIndexByTriggerCount(rProduct.triggerCount());
+		::OutputDebugString(SvUl::Format(_T("%s Product incomplete TRI=%d, PPQPos=%d\n"), GetName(), rProduct.triggerCount(), ppqPos).c_str());
 #endif
 		if (isNak)
 		{
 			checkNakReason(rProduct.m_CantProcessReason);
 		}
 #if defined (TRACE_PPQ2)
-		::OutputDebugString(std::format("{}: isNak: {},  Set Product Incomplete \n", p_rProduct.m_triggerInfo.lTriggerCount,isNak).c_str());
+		::OutputDebugString(SvUl::Format("%d: isNak: %d,  Set Product Incomplete \n", rProduct.m_triggerInfo.lTriggerCount,isNak).c_str());
 #endif
 	}
 	rProduct.m_dataComplete = true;
 	rProduct.m_outputsInfo.m_Outputs = m_pOutputList->getOutputValues(m_UsedOutputs, true, false, true);
 
 	bool isNAK = rProduct.m_outputsInfo.m_NakResult || rProduct.m_prevTriggerNAK;
-	long ppqIndex = m_PPQPositions.GetIndexByTriggerCount(rProduct.ProcessCount());
+	long ppqIndex = m_PPQPositions.GetIndexByTriggerCount(rProduct.triggerCount());
 	if (isNAK && ppqIndex > 0)
 	{
 		SVProductInfoStruct* pNextProduct = m_PPQPositions.GetProductAt(ppqIndex - 1);
@@ -2699,7 +2699,7 @@ HRESULT SVPPQObject::ProcessCameraResponse(const SVCameraQueueElement& rElement)
 							pProduct->m_hasCameraImage[cameraID] = true;
 						}
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
-						::OutputDebugString(SvUl::Format(_T("%s Camera %s | TRI=%d, PPQPos=%d\n"), GetName(), rElement.m_pCamera->GetName(), pProduct->ProcessCount(), l_ProductIndex).c_str());
+						::OutputDebugString(SvUl::Format(_T("%s Camera %s | TRI=%d, PPQPos=%d\n"), GetName(), rElement.m_pCamera->GetName(), pProduct->triggerCount(), l_ProductIndex).c_str());
 #endif
 					}
 					else
@@ -2806,7 +2806,7 @@ HRESULT SVPPQObject::ProcessCameraResponse(const SVCameraQueueElement& rElement)
 
 					IterCamera->second.m_CallbackTimeStamp = SvUl::GetTimeStamp();
 
-					m_oNotifyInspectionsSet.insert(pProduct->ProcessCount());
+					m_oNotifyInspectionsSet.insert(pProduct->triggerCount());
 					m_AsyncProcedure.Signal(nullptr);
 				} // if (( priorCameraSF == 0 ) && (1 != productComplete))
 				else
@@ -3009,7 +3009,7 @@ HRESULT SVPPQObject::MarkProductInspectionsMissingAcquisiton(SVProductInfoStruct
 		{
 			if (nullptr != pInspection && pInspection->IsCameraInInspection(pCamera->GetName()))
 			{
-				SVInspectionInfoPair l_Info(rProduct.ProcessCount(), rProduct.m_svInspectionInfos[pInspection->getObjectId()]);
+				SVInspectionInfoPair l_Info(rProduct.triggerCount(), rProduct.m_svInspectionInfos[pInspection->getObjectId()]);
 
 				l_Info.second.m_InspectedState = PRODUCT_NOT_INSPECTED;
 				l_Info.second.m_CanProcess = false;
@@ -3152,7 +3152,7 @@ HRESULT SVPPQObject::ProcessTrigger(bool& rProcessed)
 				{
 					InitializeProduct(pProduct);
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
-					::OutputDebugString(SvUl::Format(_T("%s Process Trigger TRI=%d, ProdActive=%d\n"), GetName(), pProduct->ProcessCount(), pProduct->IsProductActive()).c_str());
+					::OutputDebugString(SvUl::Format(_T("%s Process Trigger TRI=%d, ProdActive=%d\n"), GetName(), pProduct->triggerCount(), pProduct->IsProductActive()).c_str());
 #endif
 
 
@@ -3161,7 +3161,7 @@ HRESULT SVPPQObject::ProcessTrigger(bool& rProcessed)
 						m_spTiggercount->setValue(pProduct->m_triggerInfo.lTriggerCount);
 					}
 
-					m_oNotifyInspectionsSet.insert(pProduct->ProcessCount());
+					m_oNotifyInspectionsSet.insert(pProduct->triggerCount());
 
 					// Get Shared Memory Slot
 					if (HasActiveMonitorList() && GetSlotmanager().get())
@@ -3434,7 +3434,7 @@ HRESULT SVPPQObject::ProcessDataValidDelay(bool& rProcessed)
 					{
 						m_NextDataValidDelayTimestamp = pProduct->m_outputsInfo.m_EndDataValidDelay;
 
-						m_DataValidDelayQueue.AddHead(pProduct->ProcessCount());
+						m_DataValidDelayQueue.AddHead(pProduct->triggerCount());
 
 						pProduct = nullptr;
 						break;
@@ -3635,7 +3635,7 @@ HRESULT SVPPQObject::ProcessCompleteInspections(bool& rProcessed)
 						{
 							SetProductIncomplete(static_cast<long>(i));
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PPQ)
-							::OutputDebugString(SvUl::Format(_T("%s Product incomplete TRI=%d\n"), GetName(), l_pPPQProduct->ProcessCount()).c_str());
+							::OutputDebugString(SvUl::Format(_T("%s Product incomplete TRI=%d\n"), GetName(), l_pPPQProduct->triggerCount()).c_str());
 #endif
 						}
 						else
@@ -3722,7 +3722,7 @@ HRESULT SVPPQObject::GetProduct(SVProductInfoStruct& p_rProduct, long lProcessCo
 				{
 					p_rProduct = *l_pProduct;
 
-					if (p_rProduct.ProcessCount() < 1)
+					if (p_rProduct.triggerCount() < 1)
 					{
 						l_Status = E_FAIL;
 					}
@@ -3966,7 +3966,7 @@ void SVPPQObject::ReleaseSharedMemory(SVProductInfoStruct& rProduct)
 			long shareSlotIndex = rProduct.m_monitorListSMSlot;
 			if (shareSlotIndex >= 0 && GetSlotmanager().get())
 			{
-				GetSlotmanager()->ReleaseWriteSlot(shareSlotIndex, rProduct.ProcessCount(), true);
+				GetSlotmanager()->ReleaseWriteSlot(shareSlotIndex, rProduct.triggerCount(), true);
 				rProduct.m_monitorListSMSlot = -1;
 			}
 
@@ -3998,7 +3998,7 @@ void SVPPQObject::CommitSharedMemory(SVProductInfoStruct& rProduct)
 			long shareSlotIndex = rProduct.m_monitorListSMSlot;
 			if (shareSlotIndex >= 0 && GetSlotmanager().get())
 			{
-				GetSlotmanager()->ReleaseWriteSlot(shareSlotIndex, rProduct.ProcessCount(), true);
+				GetSlotmanager()->ReleaseWriteSlot(shareSlotIndex, rProduct.triggerCount(), true);
 				rProduct.m_monitorListSMSlot = -1;
 			}
 
@@ -4180,7 +4180,7 @@ void SVPPQObject::setTRofInterest(const SVProductInfoStruct& rProduct, bool isIn
 		{
 			long slotindex = rProduct.m_monitorListSMSlot;
 
-			if (rProduct.ProcessCount() > 0 && slotindex >= 0)
+			if (rProduct.triggerCount() > 0 && slotindex >= 0)
 			{
 				if (isReject)
 				{
@@ -4190,7 +4190,7 @@ void SVPPQObject::setTRofInterest(const SVProductInfoStruct& rProduct, bool isIn
 			else
 			{
 				SvDef::StringVector msgList;
-				msgList.push_back(std::format("Error in getting next Slot  {}, Processcount: {}", slotindex, rProduct.ProcessCount()));
+				msgList.push_back(SvUl::Format("Error in getting next Slot  %d, Trigger count: %d", slotindex, rProduct.triggerCount()));
 				SvStl::MessageManager Exception(SvStl::MsgType::Log);
 				Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ErrorProcessNotifyLastInspected, msgList, SvStl::SourceFileParams(StdMessageParams));
 			}

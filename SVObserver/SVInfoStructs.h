@@ -159,7 +159,7 @@ struct SVProductInfoStruct
 
 	bool setNextAvailableCameraImage( );
 
-	inline long ProcessCount() const {return m_triggerInfo.lTriggerCount;}
+	inline long triggerCount() const {return m_triggerInfo.lTriggerCount;}
 	inline const double& TimeStamp() const {return m_triggerInfo.m_triggerTimeStamp;}
 
 	void DumpIndexInfo( std::string& p_rData );

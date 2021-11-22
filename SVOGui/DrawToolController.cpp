@@ -8,6 +8,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "DrawToolController.h"
+#include "SVUtilityLibrary/StringHelper.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -33,7 +34,7 @@ std::string DrawToolController::getNodeText(TreeNodeData& rData)
 	{
 		case DrawNodeSubType::GeneralData:
 		{
-			textStr = std::format("{} Image: ", m_isColor ? "Color" : "Gray");
+			textStr = SvUl::Format("%s Image: ", m_isColor ? "Color" : "Gray");
 			break;
 		}
 		case DrawNodeSubType::SizeData:
@@ -45,7 +46,7 @@ std::string DrawToolController::getNodeText(TreeNodeData& rData)
 				{
 					long width = m_rValues.Get<long>(SvPb::ExtentWidthEId);
 					long height = m_rValues.Get<long>(SvPb::ExtentHeightEId);
-					textStr += std::format(": {} / {}", width, height);
+					textStr += SvUl::Format(": %d / %d", width, height);
 					break;
 				}
 				case DrawNodeType::Rectangle:
@@ -55,7 +56,7 @@ std::string DrawToolController::getNodeText(TreeNodeData& rData)
 					{
 						long width = rData.m_pValues->Get<LinkedValueData>(SvPb::WidthEId).m_Value;
 						long height = rData.m_pValues->Get<LinkedValueData>(SvPb::HeightEId).m_Value;
-						textStr += std::format(": {} / {}", width, height);
+						textStr += SvUl::Format(": %d / %d", width, height);
 					}
 					break;
 				}
@@ -74,7 +75,7 @@ std::string DrawToolController::getNodeText(TreeNodeData& rData)
 					{
 						long x = rData.m_pValues->Get<LinkedValueData>(SvPb::LeftEId).m_Value;
 						long y = rData.m_pValues->Get<LinkedValueData>(SvPb::TopEId).m_Value;
-						textStr += std::format(": {} / {}", x, y);
+						textStr += SvUl::Format(": %d / %d", x, y);
 					}
 					break;
 				}
@@ -85,7 +86,7 @@ std::string DrawToolController::getNodeText(TreeNodeData& rData)
 					{
 						long x = rData.m_pValues->Get<LinkedValueData>(SvPb::CenterXEId).m_Value;
 						long y = rData.m_pValues->Get<LinkedValueData>(SvPb::CenterYEId).m_Value;
-						textStr += std::format(": {} / {}", x, y);
+						textStr += SvUl::Format(": %d / %d", x, y);
 					}
 				}
 				break;
@@ -102,11 +103,11 @@ std::string DrawToolController::getNodeText(TreeNodeData& rData)
 				{
 					byte color2 = rData.m_pValues->Get<byte>(SvPb::Color2EId);
 					byte color3 = rData.m_pValues->Get<byte>(SvPb::Color3EId);
-					textStr += std::format(": {} / {} / {}", color1, color2, color3);
+					textStr += SvUl::Format(": %d / %d / %d", color1, color2, color3);
 				}
 				else
 				{
-					textStr += std::format(": {}", color1);
+					textStr += SvUl::Format(": %d", color1);
 				}
 			}
 			break;

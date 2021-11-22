@@ -107,7 +107,6 @@ namespace Gdiplus
 #include <direct.h>
 #include <filesystem>
 #include <float.h>
-#include <format>
 #include <fstream>
 #include <functional>
 #include <future>
@@ -125,7 +124,6 @@ namespace Gdiplus
 #include <mutex>
 #include <numeric>
 #include <Objidl.h>
-#include <ranges>
 #include <regex>
 #pragma warning(push)
 #pragma warning(disable : 4996)
