@@ -602,11 +602,13 @@ enum MessageTextEnum
 
 	Tid_InvalidInputType,
 	Tid_InvalidInputValue,
-	Tid_InvalidInputTable,
-	Tid_InvalidInputImage,
-	Tid_InvalidInputGrayImage,
-	Tid_InvalidInputColorImage,
-
+	Tid_InvalidInputObject,
+	Tid_aTable,
+	Tid_aTool,
+	Tid_anImage,
+	Tid_aGrayImage,
+	Tid_aColorImage,
+	
 	Tid_DuplicateParameterName,
 	Tid_DuplicateParameterNameWithLinked,
 	Tid_DuplicateParameterNameWithType,

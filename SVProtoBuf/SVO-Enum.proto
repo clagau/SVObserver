@@ -345,6 +345,7 @@ enum ObjectSelectorType
 	allImageObjects = 5;
 	grayImageObjects = 6;
 	colorImageObjects = 7;
+	toolObjects = 8;
 }
 
 enum SVExtentPropertyEnum
@@ -1139,8 +1140,8 @@ enum EmbeddedIdEnum
 	LoopBreakEId = 485;
 	LoopBreak_LinkedEId = 486; //obsolete, but needed for loading configs older than 10.20
 	TriggerTimeEId = 487;
-    SubfolderLocationEId = 488;
-    SubfolderLocationLinkEId = 489; //obsolete, but needed for loading configs older than 10.20
+	SubfolderLocationEId = 488;
+	SubfolderLocationLinkEId = 489; //obsolete, but needed for loading configs older than 10.20
 	InspectionNameEId = 490;
 	FormatArchiveToolResultsEId = 491;
 	ArchiveResultsMinimumNumberOfCharactersEId = 492;
@@ -1440,4 +1441,5 @@ enum InputTypeEnum
 	TypeGrayImage = 3;
 	TypeColorImage = 4;
 	TypeImage = 5;
+	TypeStates = 6;
 };

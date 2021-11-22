@@ -162,8 +162,8 @@ private:
 
 	void setSelectedType(SvPb::LinkedSelectedType type);
 
-	template <typename T>
-	bool resetChild(int pos, SVValueObjectClass<T>* pObject, SvStl::MessageContainerVector* pErrorMessages, const SVObjectLevelCreateStruct& rCreateStruct);
+	bool resetChildren(const SVObjectClass* const pLinkedObject, const std::vector<SvPb::EmbeddedIdEnum>& rEmbeddedIdList, SvStl::MessageContainerVector* pErrorMessages);
+	bool resetChild(int pos, SvOi::IValueObject* pValue, SvStl::MessageContainerVector* pErrorMessages, const SVObjectLevelCreateStruct& rCreateStruct);
 #pragma endregion Private Methods
 
 #pragma region Member Variables

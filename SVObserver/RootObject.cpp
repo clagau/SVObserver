@@ -446,6 +446,7 @@ void SvOi::fillRootChildSelectorList(std::back_insert_iterator<std::vector<SvPb:
 		case SvPb::allImageObjects:
 		case SvPb::grayImageObjects:
 		case SvPb::colorImageObjects:
+		case SvPb::toolObjects:
 		default:
 			typeOk = false;
 			break;

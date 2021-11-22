@@ -26,7 +26,7 @@ namespace SvOp
 	{
 #pragma region Constructor
 	public:
-		ParameterTask(SvPb::EmbeddedIdEnum startEmbeddedIdValue, SvPb::EmbeddedIdEnum startEmbeddedIdType,
+		ParameterTask(SvPb::EmbeddedIdEnum startEmbeddedIdValue, SvPb::EmbeddedIdEnum startEmbeddedIdType, LPCTSTR objectTypeEnumString,
 			SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_PARAMETER_TASK);
 		virtual ~ParameterTask();
 #pragma endregion Constructor
@@ -64,6 +64,7 @@ namespace SvOp
 		std::vector< std::unique_ptr<SvVol::SVEnumerateValueObjectClass>>  m_TypeObjects;
 		SvPb::EmbeddedIdEnum m_startEmbeddedIdValue;
 		SvPb::EmbeddedIdEnum m_startEmbeddedIdType;
+		LPCTSTR m_objectTypeEnumString;
 #pragma endregion Member Variables
 	};
 

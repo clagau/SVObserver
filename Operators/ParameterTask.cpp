@@ -24,6 +24,7 @@ namespace SvOp
 
 	constexpr long cMaxNumberOfObjects = 50;
 	constexpr const char* cObjectTypeEnum = _T("Decimal=0,Text=1,Table=2,GrayImage=3,ColorImage=4,Image=5");
+	constexpr const char* cObjectTypeResultEnum = _T("Decimal=0,Text=1,Table=2,GrayImage=3,ColorImage=4,Image=5,States=6");
 	constexpr const char* cTypeNamePostfix = _T(" Type");
 
 	SvPb::MessageContainerVector createMessage(uint32_t objectId, SvStl::MessageTextEnum textId, SvDef::StringVector additionalText = {})
@@ -85,13 +86,38 @@ namespace SvOp
 			return nullptr;
 		}
 	}
+
+	SvPb::SVObjectTypeEnum getObjectType(const SvOi::IObjectClass* pObject)
+	{
+		try
+		{
+			if (nullptr != pObject)
+			{
+				const SvVol::LinkedValue* pLinked = dynamic_cast<const SvVol::LinkedValue*>(pObject);
+				if (nullptr != pLinked)
+				{
+					auto pLinkedObject = pLinked->getLinkedObject();
+					return (nullptr != pLinkedObject) ? pLinkedObject->GetObjectType() : pObject->GetObjectType();
+				}
+				else
+				{
+					return pObject->GetObjectType();
+				}
+			}
+		}
+		catch (...)
+		{
+		}
+		return SvPb::SVObjectTypeEnum::SVNotSetObjectType;
+	}
 #pragma endregion Declarations
 
-	ParameterTask::ParameterTask(SvPb::EmbeddedIdEnum startEmbeddedIdValue, SvPb::EmbeddedIdEnum startEmbeddedIdType,
+	ParameterTask::ParameterTask(SvPb::EmbeddedIdEnum startEmbeddedIdValue, SvPb::EmbeddedIdEnum startEmbeddedIdType, LPCTSTR objectTypeEnumString,
 		SVObjectClass* pOwner, int StringResourceID)
 		: SVTaskObjectClass(pOwner, StringResourceID)
 		, m_startEmbeddedIdValue(startEmbeddedIdValue)
 		, m_startEmbeddedIdType(startEmbeddedIdType)
+		, m_objectTypeEnumString(objectTypeEnumString)
 	{
 		init();
 	}
@@ -396,6 +422,7 @@ namespace SvOp
 				m_objects[i]->SetObjectAttributesAllowed(defaultStringValueAttributes, SvOi::SetAttributeType::AddAttribute);
 				break;
 			case SvPb::InputTypeEnum::TypeTable:
+			case SvPb::InputTypeEnum::TypeStates:
 				m_objects[i]->SetObjectAttributesAllowed(defaultValueValueAttributes | SvPb::taskObject, SvOi::SetAttributeType::AddAttribute);
 				break;
 			case SvPb::InputTypeEnum::TypeGrayImage:
@@ -440,8 +467,9 @@ namespace SvOp
 			{
 				SvDef::StringVector msgList;
 				msgList.emplace_back(name);
+				msgList.emplace_back(SvStl::MessageData::convertId2AdditionalText(SvStl::Tid_aTable));
 				SvStl::MessageManager Msg(SvStl::MsgType::Log);
-				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidInputTable, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidInputObject, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 				if (nullptr != pErrorMessages)
 				{
 					pErrorMessages->push_back(Msg.getMessageContainer());
@@ -459,8 +487,9 @@ namespace SvOp
 			{
 				SvDef::StringVector msgList;
 				msgList.emplace_back(name);
+				msgList.emplace_back(SvStl::MessageData::convertId2AdditionalText(SvStl::Tid_anImage));
 				SvStl::MessageManager Msg(SvStl::MsgType::Log);
-				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidInputImage, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidInputObject, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 				if (nullptr != pErrorMessages)
 				{
 					pErrorMessages->push_back(Msg.getMessageContainer());
@@ -473,8 +502,9 @@ namespace SvOp
 				{
 					SvDef::StringVector msgList;
 					msgList.emplace_back(name);
+					msgList.emplace_back(SvStl::MessageData::convertId2AdditionalText(SvStl::Tid_aGrayImage));
 					SvStl::MessageManager Msg(SvStl::MsgType::Log);
-					Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidInputGrayImage, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+					Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidInputObject, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 					if (nullptr != pErrorMessages)
 					{
 						pErrorMessages->push_back(Msg.getMessageContainer());
@@ -485,14 +515,32 @@ namespace SvOp
 				{
 					SvDef::StringVector msgList;
 					msgList.emplace_back(name);
+					msgList.emplace_back(SvStl::MessageData::convertId2AdditionalText(SvStl::Tid_aColorImage));
 					SvStl::MessageManager Msg(SvStl::MsgType::Log);
-					Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidInputColorImage, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+					Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidInputObject, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 					if (nullptr != pErrorMessages)
 					{
 						pErrorMessages->push_back(Msg.getMessageContainer());
 					}
 					bRet = false;
 				}
+			}
+			break;
+		}
+		case SvPb::InputTypeEnum::TypeStates:
+		{
+			if (SvPb::SVToolObjectType != getObjectType(pObject))
+			{
+				SvDef::StringVector msgList;
+				msgList.emplace_back(name);
+				msgList.emplace_back(SvStl::MessageData::convertId2AdditionalText(SvStl::Tid_aTool));
+				SvStl::MessageManager Msg(SvStl::MsgType::Log);
+				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidInputObject, msgList, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				if (nullptr != pErrorMessages)
+				{
+					pErrorMessages->push_back(Msg.getMessageContainer());
+				}
+				bRet = false;
 			}
 			break;
 		}
@@ -559,6 +607,7 @@ namespace SvOp
 			case SvPb::InputTypeEnum::TypeGrayImage:
 			case SvPb::InputTypeEnum::TypeColorImage:
 			case SvPb::InputTypeEnum::TypeImage:
+			case SvPb::InputTypeEnum::TypeStates:
 			{
 				bRet &= checkObject(pObject->GetName(), pObject, typeEnum, pErrorMessages);
 				break;
@@ -597,14 +646,14 @@ namespace SvOp
 			m_TypeObjects[index] = std::make_unique <SvVol::SVEnumerateValueObjectClass>();
 			CreateChildObject(m_TypeObjects[index].get());
 			RegisterEmbeddedObject(m_TypeObjects[index].get(), m_startEmbeddedIdType + index, (name + cTypeNamePostfix).c_str(), false, SvOi::SVResetItemOwner);
-			m_TypeObjects[index]->SetEnumTypes(cObjectTypeEnum);
+			m_TypeObjects[index]->SetEnumTypes(m_objectTypeEnumString);
 			m_TypeObjects[index]->SetDefaultValue(0l, true);
 		}
 	}
 
 	SV_IMPLEMENT_CLASS(InputParameterTask, SvPb::InputParameterTaskClassId);
 	InputParameterTask::InputParameterTask(SVObjectClass* pOwner, int StringResourceID)
-		: ParameterTask(SvPb::ExternalInputEId, SvPb::InputObjectTypeEId, pOwner, StringResourceID)
+		: ParameterTask(SvPb::ExternalInputEId, SvPb::InputObjectTypeEId, cObjectTypeEnum, pOwner, StringResourceID)
 	{
 		m_ObjectTypeInfo.m_ObjectType = SvPb::ParameterTaskObjectType;
 		m_ObjectTypeInfo.m_SubType = SvPb::ParameterInputObjectType;
@@ -616,7 +665,7 @@ namespace SvOp
 
 	SV_IMPLEMENT_CLASS(ResultParameterTask, SvPb::ResultParameterTaskClassId);
 	ResultParameterTask::ResultParameterTask(SVObjectClass* pOwner, int StringResourceID)
-		: ParameterTask(SvPb::ResultObjectValueEId, SvPb::ResultObjectTypeEId, pOwner, StringResourceID)
+		: ParameterTask(SvPb::ResultObjectValueEId, SvPb::ResultObjectTypeEId, cObjectTypeResultEnum, pOwner, StringResourceID)
 	{
 		m_ObjectTypeInfo.m_ObjectType = SvPb::ParameterTaskObjectType;
 		m_ObjectTypeInfo.m_SubType = SvPb::ParameterResultObjectType;

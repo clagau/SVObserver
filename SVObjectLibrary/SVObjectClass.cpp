@@ -627,6 +627,8 @@ bool SVObjectClass::isCorrectType(SvPb::ObjectSelectorType requiredType, const S
 		return (SvPb::SVImageObjectType == pObject->GetObjectType() && SvPb::SVImageMonoType == pObject->GetObjectSubType());
 	case SvPb::colorImageObjects:
 		return (SvPb::SVImageObjectType == pObject->GetObjectType() && SvPb::SVImageColorType == pObject->GetObjectSubType());
+	case SvPb::toolObjects:
+		return (SvPb::SVToolObjectType == pObject->GetObjectType());
 	default:
 		return false;
 	}

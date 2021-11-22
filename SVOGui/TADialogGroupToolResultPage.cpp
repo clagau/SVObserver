@@ -247,6 +247,14 @@ namespace SvOg
 				data.m_searchArea = { SvPb::SearchArea::toolsetItems };
 				break;
 			}
+			case SvPb::InputTypeEnum::TypeStates:
+			{
+				possibleType = LinkedValueSelectorTypesEnum::Indirect;
+				data.m_type = SvPb::toolObjects;
+				data.m_attribute = SvPb::ObjectAttributes::taskObject;
+				data.m_searchArea = {SvPb::SearchArea::toolsetItems};
+				break;
+			}
 			}
 
 			data.m_excludeSameLineageVector = { m_TaskObjectID };

@@ -431,7 +431,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 		ConvertVariantToProtobuf(varValue, rLinkedValue.mutable_value());
 		ConvertVariantToProtobuf(GetDefaultValue(), rLinkedValue.mutable_defaultvalue());
 		ConvertVariantToProtobuf(m_directValue, rLinkedValue.mutable_directvalue());
-		rLinkedValue.set_indirectidstring((convertObjectIdToString(m_indirectValueRef.getObjectId()) + m_indirectValueRef.GetIndexString()).c_str());
+		rLinkedValue.set_indirectidstring((convertObjectIdToString(m_indirectValueRef.getObjectId()) + m_indirectValueRef.GetIndexString(true)).c_str());
 		rLinkedValue.set_formula(m_formulaString.c_str());
 		rLinkedValue.set_equationid(m_equation.getObjectId());
 	}
@@ -914,26 +914,14 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 					}
 					break;
 				}
+				case SvPb::SVToolObjectType:
+				{ //Add children-LinkedValues for states of Tools
+					Result = resetChildren(pLinkedObject, {SvPb::ToolEnabledEId, SvPb::PassedEId, SvPb::FailedEId, SvPb::WarnedEId, SvPb::PassedCountEId, SvPb::FailedCountEId, SvPb::WarnedCountEId, SvPb::EnabledCountEId}, pErrorMessages);
+					break;
+				}
 				case SvPb::SVImageObjectType:
 				{
-					SvDef::SVObjectTypeInfoStruct info;
-					info.m_EmbeddedID = SvPb::ExtentWidthEId;
-					auto* pChildWidth = dynamic_cast<SVValueObjectClass<double>*>(pLinkedObject->getFirstObject(info));
-					info.m_EmbeddedID = SvPb::ExtentHeightEId;
-					auto* pChildHeight = dynamic_cast<SVValueObjectClass<double>*>(pLinkedObject->getFirstObject(info));
-					if (pChildHeight && pChildWidth)
-					{
-						m_children.resize(2);
-						SVObjectLevelCreateStruct createStruct;
-						createStruct.OwnerObjectInfo.SetObject(this);
-						Result = resetChild(0, pChildWidth, pErrorMessages, createStruct) && Result;
-						Result = resetChild(1, pChildHeight, pErrorMessages, createStruct) && Result;
-					}
-					else
-					{
-						m_children.clear();
-						m_childrenIds.clear();
-					}
+					Result = resetChildren(pLinkedObject, {SvPb::ExtentWidthEId, SvPb::ExtentHeightEId}, pErrorMessages);
 					break;
 				}
 				default:
@@ -1341,10 +1329,34 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 		}
 	}
 
-	template <typename T>
-	bool LinkedValue::resetChild(int pos, SVValueObjectClass<T>* pObject, SvStl::MessageContainerVector* pErrorMessages, const SVObjectLevelCreateStruct& rCreateStruct)
+	bool LinkedValue::resetChildren(const SVObjectClass* const pLinkedObject, const std::vector<SvPb::EmbeddedIdEnum>& rEmbeddedIdList, SvStl::MessageContainerVector* pErrorMessages)
 	{
-		if (0 <= pos && pos < m_children.size() && nullptr != pObject)
+		std::vector<SvOi::IValueObject*> childList;
+		SvDef::SVObjectTypeInfoStruct info;
+		for (auto embeddedId : rEmbeddedIdList)
+		{
+			info.m_EmbeddedID = embeddedId;
+			auto* pChildObject = dynamic_cast<SvOi::IValueObject*>(pLinkedObject->getFirstObject(info));
+			if (nullptr != pChildObject)
+			{
+				childList.push_back(pChildObject);
+			}
+		}
+		m_children.resize(childList.size());
+		SVObjectLevelCreateStruct createStruct;
+		createStruct.OwnerObjectInfo.SetObject(this);
+		bool result = true;
+		for (int i = 0; i < childList.size(); ++i)
+		{
+			result = resetChild(i, childList[i], pErrorMessages, createStruct) && result;
+		}
+		return result;
+	}
+
+	bool LinkedValue::resetChild(int pos, SvOi::IValueObject* pValue, SvStl::MessageContainerVector* pErrorMessages, const SVObjectLevelCreateStruct& rCreateStruct)
+	{
+		auto* pObject = dynamic_cast<SVObjectClass*>(pValue);
+		if (0 <= pos && pos < m_children.size() && nullptr != pValue)
 		{
 			if (nullptr == m_children[pos])
 			{
@@ -1358,7 +1370,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 			m_children[pos]->donotCheckForDependency();
 			m_children[pos]->SetName(pObject->GetName());
 			m_children[pos]->setIndirectValue(pObject->GetObjectNameToObjectType(SvPb::SVToolSetObjectType));
-			m_children[pos]->setDefaultValue(pObject->getDefaultValue());
+			m_children[pos]->setDefaultValue(pValue->getDefaultValue());
 			return m_children[pos]->resetAllObjects(pErrorMessages);
 		}
 		return true;
