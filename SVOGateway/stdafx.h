@@ -59,6 +59,7 @@
 #pragma warning(disable : 4702)
 #include <boost/asio.hpp>
 #include <boost/asio/io_service.hpp>
+#include <boost/bind/bind.hpp>
 #pragma warning(pop)
 #pragma warning(push)
 #pragma warning(disable : 4714)

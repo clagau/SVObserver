@@ -1,7 +1,7 @@
 //*****************************************************************************
 /// \copyright (c) 2018,2018 by Seidenader Maschinenbau GmbH
 /// \file SVRC-SVOGateway.proto
-/// All Rights Reserved 
+/// All Rights Reserved
 //*****************************************************************************
 /// Protobuf file for all SVRC commands handled by the SVOGateway
 //******************************************************************************
@@ -17,7 +17,7 @@ import "BasicStructure.proto";
 import "Overlay.proto";
 
 //Retrieves the Gateway version
-message GetGatewayVersionRequest 
+message GetGatewayVersionRequest
 {
 }
 
@@ -109,7 +109,7 @@ message QueryListNameRequest
 
 //a list with all active monitorlist.
 //The monitor lists contain all metadata for the existing data and images in the shared memory.
-//There can be a maximum of one active monitor list per PPQ. 
+//There can be a maximum of one active monitor list per PPQ.
 message QueryListNameResponse
 {
 	repeated string listName = 1;	//The list of active montor names
@@ -132,23 +132,23 @@ message QueryListItemResponse
 
 //if the Trigger is -1, the values for the last trigger are returned
 //if  TriggerCount = -1 and the last trigger is the PreviousTrigger the status in the response is unchanged
-//and no values are retrieved 
+//and no values are retrieved
 message GetProductRequest
 {
 	sint32 triggerCount = 1;		//The trigger counter value
-	sint32 peviousTrigger = 2;		//The previous trigger 
+	sint32 peviousTrigger = 2;		//The previous trigger
 	string listName = 3;			//The monitor list name
 	bool nameInResponse = 4;		//True to retrieve the item names in the response
 }
 
 // In product response is an array of image ids
-// It is ensured that these images are available at least until GetProduct is called again 
+// It is ensured that these images are available at least until GetProduct is called again
 message GetProductResponse
 {
 	Product productItem = 1;		//The product to be retrieved
-} 
+}
 
-//request the image for an Id from GetProduct or GetRejectResponse 
+//request the image for an Id from GetProduct or GetRejectResponse
 message GetImageFromIdRequest
 {
 	ImageId id = 1;					//The image ID
@@ -160,7 +160,7 @@ message GetImageFromIdResponse
 }
 
 //If the Response are values from the LastRejectTriggers
-//the response has the state unchanged 
+//the response has the state unchanged
 message GetFailStatusRequest
 {
 	string listName = 1;				//The monitor list name
@@ -174,9 +174,9 @@ message GetFailStatusResponse
 	State status = 2;				//The status of the request
 }
 
-///Request Values or Images for triggercount =-1 the last value is retrieved 
+///Request Values or Images for triggercount =-1 the last value is retrieved
 //If the Response are values from the LastTriggercount
-//the response has the state unchanged 
+//the response has the state unchanged
 message GetTriggerItemsRequest
 {
 	uint32 trigger = 1;
@@ -226,7 +226,7 @@ message GetGatewayMessageStreamResponse
 message GetRejectRequest
 {
 	sint32 triggerCount = 1;		//The trigger counter value
-	sint32 peviousTrigger = 2;		//The previous trigger 
+	sint32 peviousTrigger = 2;		//The previous trigger
 	string listName = 3;			//The monitor list name
 	bool nameInResponse = 4;		//True to retrieve the item names in the response
 }
@@ -378,4 +378,95 @@ message SetRejectStreamPauseStateRequest
 
 	// Inspection that should be paused. If empty, all inspections are paused.
 	uint32 inspectionId = 2;
+}
+
+message LockAcquisitionStreamRequest
+{
+	// Scope of the lock to allow multiple different locks at the same time.
+	// For now we use the default value `0` only. There will be more in the future.
+	uint32 scope = 1;
+
+	// In case the lock is already locked, request a takeover otherwise fail.
+	bool requestTakeover = 2;
+
+	// Timeout in milliseconds to wait for lock to be released in case already locked.
+	// Use 0 to wait forever.
+	uint64 takeoverTimeout = 3;
+
+	// Optional message to present to the current lock owner when requesting the release.
+	string takeoverMessage = 4;
+
+	// Timeout in milliseconds when lock is automatically released again.
+	// 0 deactivates it.
+	uint64 lockExpire = 5;
+
+	// Optional description for why the lock is acquired.
+	string description = 6;
+}
+
+message LockAcquisitionStreamResponse
+{
+	oneof message
+	{
+		LockAcquiredNotification lockAcquiredNotification = 1;
+		LockTakeoverNotification lockTakeoverNotification = 2;
+		LockReleasedNotification lockReleasedNotification = 3;
+		LockAlreadyLockedNotification lockAlreadyLockedNotification = 4;
+	}
+}
+
+message LockAcquiredNotification
+{
+	uint32 lockId = 2;
+	string description = 3;
+	string user = 4;
+	string host = 5; // IP of the host that acquired the lock.
+}
+
+message LockTakeoverNotification
+{
+	uint32 takeoverId = 1;
+	string message = 2;
+	string user = 3;
+	string host = 4; // IP of the host that acquired the lock.
+}
+
+message LockAlreadyLockedNotification
+{
+	uint32 lockId = 1;
+	string description = 2;
+	string user = 3;
+	string host = 4; // IP of the host that acquired the lock.
+}
+
+message LockTakeoverRequest
+{
+	uint32 lockId = 1;
+	uint32 takeoverId = 2;
+}
+
+message LockTakeoverResponse
+{
+}
+
+enum LockReleaseReason
+{
+	// Released by the owner.
+	ExplicitRelease = 0;
+
+	// Owner disconnected.
+	Disconnect = 1;
+
+	// Owner did not refresh the lock in time.
+	Timeout = 2;
+
+	// Something on SVObserver side changed that automatically released the lock
+	// (e.g. configuration closed).
+	SVObserver = 3;
+}
+
+message LockReleasedNotification
+{
+	uint32 lockId = 1;
+	LockReleaseReason reason = 2;
 }

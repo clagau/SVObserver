@@ -95,6 +95,7 @@
     <ClCompile Include="ShareControl.cpp" />
     <ClCompile Include="SharedDataContainer.cpp" />
     <ClCompile Include="SharedDataStore.cpp" />
+    <ClCompile Include="SharedMemoryLock.cpp" />
     <ClCompile Include="SharedMemReader.cpp" />
     <ClCompile Include="SharedMemWriter.cpp" />
     <ClCompile Include="ShareEvents.cpp" />
@@ -120,6 +121,7 @@
     <ClInclude Include="SharedDataContainer.h" />
     <ClInclude Include="SharedDataStore.h" />
     <ClInclude Include="SharedMemIniFileTags.h" />
+    <ClInclude Include="SharedMemoryLock.h" />
     <ClInclude Include="SharedMemReader.h" />
     <ClInclude Include="SharedMemWriter.h" />
     <ClInclude Include="ShareEvents.h" />

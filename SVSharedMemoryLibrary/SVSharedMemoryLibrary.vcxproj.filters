@@ -46,6 +46,9 @@
     <ClCompile Include="SVSharedMemorySettings.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="SharedMemoryLock.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LastResponseData.h">
@@ -118,6 +121,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVSharedMonitorList.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SharedMemoryLock.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

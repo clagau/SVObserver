@@ -11,6 +11,7 @@
 #include "SVRPCLibrary/Observer.h"
 #include "SVRPCLibrary/ServerStreamContext.h"
 #include "SVRPCLibrary/Task.h"
+#include "SVSharedMemoryLibrary/SharedMemoryLock.h"
 #include "SVStorageResult.h"
 #pragma endregion Includes
 
@@ -19,7 +20,7 @@ struct SVStorageResult;
 class SVRCCommand 
 {
 public:
-	SVRCCommand() = default;
+	SVRCCommand();
 	~SVRCCommand() = default;
 
 	void GetVersion(const SvPb::GetSVObserverVersionRequest&, SvRpc::Task<SvPb::GetVersionResponse>);
@@ -73,5 +74,7 @@ private:
 	void addObjectChildren(uint32_t inspectionID, uint32_t parentID, std::back_insert_iterator<std::vector<uint32_t>> inserter) const;
 	void addConfigItem(uint32_t inspectionID, uint32_t objectID, std::back_insert_iterator<std::vector<SvPb::ConfigTreeItem>> inserter) const;
 	void clipboardAction(const SvPb::ClipboardRequest rRequest, SvPb::StandardResponse* pResponse) const;
+
+	SharedMemoryLock m_SharedMemoryLock;
 };
 

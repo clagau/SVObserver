@@ -61,6 +61,10 @@ message SVRCMessages
 		GetProductDataResponse getProductDataResponse = 1029;
 		GetGatewayMessageStreamRequest getGatewayMessageStreamRequest = 1030;
 		GetGatewayMessageStreamResponse getGatewayMessageStreamResponse = 1031;
+		LockAcquisitionStreamRequest lockAcquisitionStreamRequest = 1032;
+		LockAcquisitionStreamResponse lockAcquisitionStreamResponse = 1033;
+		LockTakeoverRequest lockTakeoverRequest = 1034;
+		LockTakeoverResponse lockTakeoverResponse = 1035;
 
 		//SVObserver commands
 		SetDeviceModeRequest setDeviceModeRequest = 2000;

@@ -19,9 +19,8 @@
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVMessage/SVMessage.h"
 #include "SVOGateway/WebAppVersionLoader.h"
-#include "SVSharedMemoryLibrary/ShareControlSetting.h" 
+#include "SVSharedMemoryLibrary/ShareControlSetting.h"
 #include "SVProtoBuf/ConverterHelper.h"
-#include "SVProtoBuf/SVAuth.h"
 #include "SVSystemLibrary/SVVersionInfo.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "ObjectInterfaces/ITriggerRecordR.h"
@@ -34,6 +33,8 @@
 
 namespace SvOgw
 {
+
+std::uint32_t SharedMemoryAccess::lock_acquisition_stream_t::ID_COUNTER = 0;
 
 SharedMemoryAccess::SharedMemoryAccess(
 	boost::asio::io_service& rIoService,
@@ -50,14 +51,23 @@ SharedMemoryAccess::SharedMemoryAccess(
 	, m_pause_timer(rIoService)
 	, m_overlay_controller(rIoService, rpcClient)
 	, m_pShareControlInstance{std::make_unique<SvSml::ShareControl>(ControlParameter)}
+	, m_SharedMemoryLock()
+	, m_LockOwner()
+	, m_AutoReleaseTimer(rIoService)
+	, m_LockTakeoverCancelTimer(rIoService)
+	, m_DisconnectCheckTimer(rIoService)
 {
 	schedule_trigger_record_pause_state();
+	schedule_disconnected_clients_check();
 	subscribe_to_trc();
 }
 
 SharedMemoryAccess::~SharedMemoryAccess()
 {
 	m_pause_timer.cancel();
+	m_AutoReleaseTimer.cancel();
+	m_LockTakeoverCancelTimer.cancel();
+	m_DisconnectCheckTimer.cancel();
 	unsubscribe_from_trc();
 }
 
@@ -942,12 +952,12 @@ void SharedMemoryAccess::rebuild_trc_pos_cache(product_stream_t& stream)
 
 void SharedMemoryAccess::collect_value_pos(std::vector<int>& positions, const std::unordered_map<uint32_t, int>& dataDefMap, const ::google::protobuf::RepeatedField<uint32_t>& ids)
 {
-#if defined (TRACE_THEM_ALL) || defined (TRACE_SHARED_MEMORY_ACCESS)	
+#if defined (TRACE_THEM_ALL) || defined (TRACE_SHARED_MEMORY_ACCESS)
 	DWORD tick = ::GetTickCount();
 	int notfound = 0;
-#endif 
+#endif
 	positions.clear();
-	
+
 	for (auto id : ids)
 	{
 		auto it = dataDefMap.find(id);
@@ -980,7 +990,7 @@ void SharedMemoryAccess::collect_value_pos(std::vector<int>& positions, const st
 	OutputDebugString(traceStream.str().c_str());
 	//uncomment the next line to enable error reporting to cmd window
 	//SV_LOG_GLOBAL(info) << traceStream.str();
-#endif 	
+#endif
 }
 
 void SharedMemoryAccess::collect_image_pos(
@@ -993,7 +1003,7 @@ void SharedMemoryAccess::collect_image_pos(
 #if defined (TRACE_THEM_ALL) || defined (TRACE_SHARED_MEMORY_ACCESS)
 	DWORD tick = ::GetTickCount();
 	int notfound {0};
-#endif 
+#endif
 	positions.clear();
 	for (const auto& id : ids)
 	{
@@ -1017,7 +1027,7 @@ void SharedMemoryAccess::collect_image_pos(
 			//uncomment the next line to enable error reporting to cmd window
 			//SV_LOG_GLOBAL(error) << traceStream.str();
 			notfound++;
-#endif 
+#endif
 		}
 	}
 #if defined (TRACE_THEM_ALL) || defined (TRACE_SHARED_MEMORY_ACCESS)
@@ -1331,6 +1341,346 @@ void SharedMemoryAccess::UpdateGroupPermissions(const SvAuth::SessionContext&, c
 	task.finish(SvPb::UpdateGroupPermissionsResponse());
 }
 
+void SharedMemoryAccess::AcquireLockStream(
+	const SvAuth::SessionContext& sessionContext,
+	const SvPb::LockAcquisitionStreamRequest& request,
+	SvRpc::Observer<SvPb::LockAcquisitionStreamResponse> observer,
+	SvRpc::ServerStreamContext::Ptr streamContext)
+{
+	auto streamPtr = lock_acquisition_stream_t::create(request, observer, streamContext, sessionContext);
+
+	if (request.scope() != 1U)
+	{
+		SvPenv::Error error;
+		error.set_errorcode(SvPenv::ErrorCode::badRequest);
+		error.set_message("Scope has to be always 1 for now.");
+		streamPtr->observer.error(error);
+		return;
+	}
+
+	
+	streamPtr->streamContext->registerOnCancelHandler([this, streamPtr]
+	{
+		if (streamPtr->isLockOwner)
+		{
+			release_lock(*streamPtr, SvPb::LockReleaseReason::ExplicitRelease);
+			m_AutoReleaseTimer.cancel();
+		}
+	});
+
+	if (m_LockOwner == streamPtr->sessionContext.username())
+	{
+		SvPenv::Error error;
+		error.set_errorcode(SvPenv::ErrorCode::forbidden);
+		error.set_message("Shared memory already locked by the same user.");
+		streamPtr->observer.error(error);
+		return;
+	}
+
+	m_LockAcquisitionStreams.push_back(streamPtr);
+	acquire_lock(*streamPtr);
+}
+
+void SharedMemoryAccess::acquire_lock(lock_acquisition_stream_t& stream)
+{
+	const bool isAcquired = m_SharedMemoryLock.Acquire(LockState::LockedBySVOGateway);
+
+	if (isAcquired)
+	{
+		handle_lock_acquisition(stream);
+	}
+	else
+	{
+		const bool isTakeoverRequest = stream.request.requesttakeover();
+
+		if (isTakeoverRequest)
+		{
+			handle_lock_takeover_request(stream);
+		}
+		else
+		{
+			auto lockOwnerStream = std::find_if(
+				m_LockAcquisitionStreams.begin(),
+				m_LockAcquisitionStreams.end(),
+				[](const std::shared_ptr<lock_acquisition_stream_t>& streamPtr)
+				{
+					return streamPtr->isLockOwner;
+				});
+
+			if (lockOwnerStream == m_LockAcquisitionStreams.end() ||
+				(*lockOwnerStream)->streamContext->isCancelled())
+			{
+				SvPenv::Error error;
+				error.set_errorcode(SvPenv::ErrorCode::notFound);
+				error.set_message("Couldn't find current lock owner");
+				stream.observer.error(error);
+				return;
+			}
+
+			SvPb::LockAcquisitionStreamResponse response;
+
+			auto notification = response.mutable_lockalreadylockednotification();
+			notification->set_lockid((*lockOwnerStream)->id);
+			notification->set_description((*lockOwnerStream)->request.description());
+			notification->set_user(m_LockOwner);
+			notification->set_host("SVOGateway");
+
+			stream.observer.onNext(std::move(response));
+		}
+	}
+}
+
+void SharedMemoryAccess::handle_lock_acquisition(lock_acquisition_stream_t& stream)
+{
+	stream.isLockOwner = true;
+	m_LockOwner = stream.sessionContext.username();
+	notify_client_about_lock_acquisition(stream);
+
+	const std::uint64_t expirationTimeout = stream.request.lockexpire();
+	if (expirationTimeout != 0)
+	{
+		schedule_auto_release_lock(stream, expirationTimeout);
+	}
+}
+
+void SharedMemoryAccess::notify_client_about_lock_acquisition(const lock_acquisition_stream_t& stream)
+{
+	SvPb::LockAcquisitionStreamResponse response;
+
+	auto notification = response.mutable_lockacquirednotification();
+	notification->set_lockid(stream.id);
+	notification->set_description(stream.request.description());
+	notification->set_user(m_LockOwner);
+	notification->set_host("SVOGateway");
+
+	stream.observer.onNext(std::move(response));
+}
+
+void SharedMemoryAccess::schedule_auto_release_lock(
+	lock_acquisition_stream_t& stream,
+	const std::uint64_t timeout)
+{
+	m_AutoReleaseTimer.expires_from_now(boost::posix_time::milliseconds(timeout));
+	m_AutoReleaseTimer.async_wait(boost::bind(&SharedMemoryAccess::auto_release_lock, this, boost::ref(stream)));
+}
+
+void SharedMemoryAccess::auto_release_lock(lock_acquisition_stream_t& stream)
+{
+	if (!(stream.streamContext->isCancelled()))
+	{
+		release_lock(stream, SvPb::LockReleaseReason::Timeout);
+	}
+}
+
+void SharedMemoryAccess::release_lock(lock_acquisition_stream_t& stream, const SvPb::LockReleaseReason reason)
+{
+	stream.isLockOwner = false;
+	m_SharedMemoryLock.Release();
+	m_LockOwner = "";
+
+	broadcast_release_notification(stream, reason);
+}
+
+void SharedMemoryAccess::broadcast_release_notification(
+	const lock_acquisition_stream_t& stream,
+	const SvPb::LockReleaseReason reason)
+{
+	SvPb::LockAcquisitionStreamResponse response;
+
+	auto notification = response.mutable_lockreleasednotification();
+	notification->set_lockid(stream.id);
+	notification->set_reason(reason);
+
+	for (auto& streamPtr : m_LockAcquisitionStreams)
+	{
+		if (!(streamPtr->streamContext->isCancelled()))
+		{
+			SvPb::LockAcquisitionStreamResponse responseCopy;
+			responseCopy.CopyFrom(response);
+			streamPtr->observer.onNext(std::move(responseCopy));
+		}
+	}
+
+	stream.streamContext->cancel();
+}
+
+void SharedMemoryAccess::handle_lock_takeover_request(lock_acquisition_stream_t& stream)
+{
+	notify_owner_about_lock_takeover(stream);
+
+	const std::uint64_t takeoverTimeout = stream.request.takeovertimeout();
+	if (takeoverTimeout != 0)
+	{
+		schedule_cancel_for_lock_takeover(stream, takeoverTimeout);
+	}
+}
+
+void SharedMemoryAccess::notify_owner_about_lock_takeover(const lock_acquisition_stream_t& stream)
+{
+	auto lockOwnerStream = std::find_if(
+		m_LockAcquisitionStreams.begin(),
+		m_LockAcquisitionStreams.end(),
+		[](const std::shared_ptr<lock_acquisition_stream_t>& streamPtr)
+		{
+			return streamPtr->isLockOwner;
+		});
+	if (lockOwnerStream == m_LockAcquisitionStreams.end() ||
+		(*lockOwnerStream)->streamContext->isCancelled())
+	{
+		SvPenv::Error error;
+		error.set_errorcode(SvPenv::ErrorCode::notFound);
+		error.set_message("Couldn't find current lock owner");
+		stream.observer.error(error);
+
+		return;
+	}
+
+	SvPb::LockAcquisitionStreamResponse response;
+
+	auto notification = response.mutable_locktakeovernotification();
+	notification->set_takeoverid(stream.id);
+	notification->set_message(stream.request.takeovermessage());
+	notification->set_user(stream.sessionContext.username());
+	notification->set_host("SVOGateway");
+
+	(*lockOwnerStream)->observer.onNext(std::move(response));
+}
+
+void SharedMemoryAccess::schedule_cancel_for_lock_takeover(
+	lock_acquisition_stream_t& stream,
+	const std::uint64_t timeout)
+{
+	m_LockTakeoverCancelTimer.expires_from_now(boost::posix_time::milliseconds(timeout));
+	m_LockTakeoverCancelTimer.async_wait(
+		boost::bind(&SharedMemoryAccess::cancel_lock_takeover, this, boost::ref(stream)));
+}
+
+void SharedMemoryAccess::cancel_lock_takeover(lock_acquisition_stream_t& stream)
+{
+	if (!(stream.isLockOwner) && !(stream.streamContext->isCancelled()))
+	{
+		stream.streamContext->cancel();
+	}
+}
+
+void SharedMemoryAccess::schedule_disconnected_clients_check()
+{
+	m_DisconnectCheckTimer.expires_from_now(boost::posix_time::minutes(5));
+	m_DisconnectCheckTimer.async_wait(
+		boost::bind(&SharedMemoryAccess::on_disconnected_clients_check, this, boost::placeholders::_1));
+}
+
+void SharedMemoryAccess::on_disconnected_clients_check(const boost::system::error_code& errorCode)
+{
+	if (errorCode == boost::asio::error::operation_aborted)
+	{
+		SV_LOG_GLOBAL(warning) << "on_disconnected_clients_check(): operation aborted!";
+		return;
+	}
+	if (errorCode)
+	{
+		SV_LOG_GLOBAL(error) << "on_disconnected_clients_check(): error occured during async wait: "
+			<< errorCode.message();
+		return;
+	}
+
+	m_io_service.dispatch([this]() { check_disconnected_clients(); });
+	schedule_disconnected_clients_check();
+}
+
+void SharedMemoryAccess::check_disconnected_clients()
+{
+	for (auto it = m_LockAcquisitionStreams.begin(); it != m_LockAcquisitionStreams.end();)
+	{
+		if ((*it)->streamContext->isCancelled())
+		{
+			it = m_LockAcquisitionStreams.erase(it);
+			continue;
+		}
+		++it;
+	}
+}
+
+void SharedMemoryAccess::TakeoverLock(
+	const SvAuth::SessionContext&,
+	const SvPb::LockTakeoverRequest& request,
+	SvRpc::Task<SvPb::LockTakeoverResponse> task)
+{
+	const std::uint32_t lockId = request.lockid();
+	auto lockOwnerStream = std::find_if(
+		m_LockAcquisitionStreams.begin(),
+		m_LockAcquisitionStreams.end(),
+		[lockId](const std::shared_ptr<lock_acquisition_stream_t>& streamPtr)
+		{
+			return streamPtr->isLockOwner && lockId == streamPtr->id;
+		});
+
+	if (lockOwnerStream == m_LockAcquisitionStreams.end() ||
+		(*lockOwnerStream)->streamContext->isCancelled())
+	{
+		SvPenv::Error error;
+		error.set_errorcode(SvPenv::ErrorCode::notFound);
+		error.set_message("Couldn't find current lock owner");
+		task.error(error);
+
+		return;
+	}
+
+	const std::uint32_t takeoverId = request.takeoverid();
+	auto takeoverCandidateStream = std::find_if(
+		m_LockAcquisitionStreams.begin(),
+		m_LockAcquisitionStreams.end(),
+		[takeoverId](const std::shared_ptr<lock_acquisition_stream_t>& streamPtr)
+		{
+			return takeoverId == streamPtr->id;
+		});
+
+	if (takeoverCandidateStream == m_LockAcquisitionStreams.end() ||
+		(*takeoverCandidateStream)->streamContext->isCancelled())
+	{
+		SvPenv::Error error;
+		error.set_errorcode(SvPenv::ErrorCode::notFound);
+		error.set_message("Couldn't find takeover candidate!");
+		task.error(error);
+
+		return;
+	}
+
+	(*lockOwnerStream)->isLockOwner = false;
+	(*lockOwnerStream)->streamContext->cancel();
+
+	m_SharedMemoryLock.Takeover();
+	handle_lock_acquisition(*(*takeoverCandidateStream));
+
+	m_LockTakeoverCancelTimer.cancel();
+
+	SvPb::LockTakeoverResponse response;
+	task.finish(std::move(response));
+}
+
+SharedMemoryAccess::lock_acquisition_stream_t::lock_acquisition_stream_t(
+	const SvPb::LockAcquisitionStreamRequest& req,
+	const SvRpc::Observer<SvPb::LockAcquisitionStreamResponse>& obs,
+	const SvRpc::ServerStreamContext::Ptr& streamCtx,
+	const SvAuth::SessionContext& sessionCtx)
+	: id(++ID_COUNTER)
+	, observer(obs)
+	, streamContext(streamCtx)
+	, sessionContext(sessionCtx)
+	, isLockOwner(false)
+{
+	this->request.CopyFrom(req);
+}
+
+std::shared_ptr<SharedMemoryAccess::lock_acquisition_stream_t> SharedMemoryAccess::lock_acquisition_stream_t::create(
+	const SvPb::LockAcquisitionStreamRequest& request,
+	const SvRpc::Observer<SvPb::LockAcquisitionStreamResponse>& observer,
+	const SvRpc::ServerStreamContext::Ptr& streamContext,
+	const SvAuth::SessionContext& sessionContext)
+{
+	return std::make_shared<lock_acquisition_stream_t>(request, observer, streamContext, sessionContext);
+}
+
 bool SharedMemoryAccess::CheckRequestPermissions(const SvAuth::SessionContext& rSessionContext, const SvPenv::Envelope& rEnvelope, SvRpc::Task<SvPenv::Envelope> task)
 {
 	if (m_skipPermissionChecks)
@@ -1482,6 +1832,7 @@ bool SharedMemoryAccess::is_request_allowed(const SvPenv::Envelope& rEnvelope, c
 	case SvPb::SVRCMessages::kGetTriggerStreamRequest:
 	case SvPb::SVRCMessages::kGetConfigurationTreeRequest:
 	case SvPb::SVRCMessages::kGetConfigurationInfoRequest:
+	case SvPb::SVRCMessages::kLockTakeoverRequest:
 		return permissions.svobserver().configuration().read();
 
 	case SvPb::SVRCMessages::kActivateMonitorListRequest:
@@ -1501,6 +1852,7 @@ bool SharedMemoryAccess::is_request_allowed(const SvPenv::Envelope& rEnvelope, c
 	case SvPb::SVRCMessages::kGetGatewayMessageStreamRequest:
 	case SvPb::SVRCMessages::kGetNotificationStreamRequest:
 	case SvPb::SVRCMessages::kGetMessageStreamRequest:
+	case SvPb::SVRCMessages::kLockAcquisitionStreamRequest:
 		return permissions.svobserver().notifications().subscribe();
 
 	case SvPb::SVRCMessages::kGetItemsRequest:

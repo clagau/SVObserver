@@ -226,6 +226,31 @@ ServerRequestHandler::ServerRequestHandler(SharedMemoryAccess* sma, SvAuth::Auth
 	{
 		sma->UpdateGroupPermissions(rSessionContext, req, task);
 	});
+
+	registerStreamHandler<
+		SvPb::SVRCMessages,
+		SvPb::SVRCMessages::kLockAcquisitionStreamRequest,
+		SvPb::LockAcquisitionStreamRequest,
+		SvPb::LockAcquisitionStreamResponse>([sma](
+			const SvAuth::SessionContext& sessionContext,
+			SvPb::LockAcquisitionStreamRequest&& request,
+			SvRpc::Observer<SvPb::LockAcquisitionStreamResponse> observer,
+			SvRpc::ServerStreamContext::Ptr streamContext)
+			{
+				sma->AcquireLockStream(sessionContext, request, observer, streamContext);
+			});
+
+	registerRequestHandler<
+		SvPb::SVRCMessages,
+		SvPb::SVRCMessages::kLockTakeoverRequest,
+		SvPb::LockTakeoverRequest,
+		SvPb::LockTakeoverResponse>([sma](
+			const SvAuth::SessionContext& sessionContext,
+			SvPb::LockTakeoverRequest&& request,
+			SvRpc::Task<SvPb::LockTakeoverResponse> task)
+			{
+				sma->TakeoverLock(sessionContext, request, task);
+			});
 }
 
 }

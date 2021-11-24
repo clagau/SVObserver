@@ -13,9 +13,11 @@
 
 #include "SVOverlayLibrary/OverlayController.h"
 #include "SVProtoBuf/SVRC.h"
+#include "SVProtoBuf/SVAuth.h"
 #include "SVSharedMemoryLibrary/ShareControl.h"
 #include "SVRPCLibrary/ServerStreamContext.h"
 #include "SVRPCLibrary/Task.h"
+#include "SVSharedMemoryLibrary/SharedMemoryLock.h"
 #include "ObjectInterfaces/ITriggerRecordControllerR.h"
 #pragma endregion Includes
 
@@ -86,6 +88,9 @@ public:
 	void GetGroupDetails(const SvAuth::SessionContext&, const SvPb::GetGroupDetailsRequest&, SvRpc::Task<SvPb::GetGroupDetailsResponse>);
 	void UpdateGroupPermissions(const SvAuth::SessionContext&, const SvPb::UpdateGroupPermissionsRequest&, SvRpc::Task<SvPb::UpdateGroupPermissionsResponse>);
 
+	void AcquireLockStream(const SvAuth::SessionContext&, const SvPb::LockAcquisitionStreamRequest&, SvRpc::Observer<SvPb::LockAcquisitionStreamResponse>, SvRpc::ServerStreamContext::Ptr);
+	void TakeoverLock(const SvAuth::SessionContext&, const SvPb::LockTakeoverRequest&, SvRpc::Task<SvPb::LockTakeoverResponse>);
+
 	bool CheckRequestPermissions(const SvAuth::SessionContext&, const SvPenv::Envelope&, SvRpc::Task<SvPenv::Envelope>);
 	bool CheckStreamPermissions(const SvAuth::SessionContext&, const SvPenv::Envelope&, SvRpc::Observer<SvPenv::Envelope>, SvRpc::ServerStreamContext::Ptr);
 
@@ -152,6 +157,46 @@ private:
 	};
 
 private:
+	struct lock_acquisition_stream_t
+	{
+		lock_acquisition_stream_t(
+			const SvPb::LockAcquisitionStreamRequest&,
+			const SvRpc::Observer<SvPb::LockAcquisitionStreamResponse>&,
+			const SvRpc::ServerStreamContext::Ptr&,
+			const SvAuth::SessionContext&);
+
+		static std::shared_ptr<lock_acquisition_stream_t> create(
+			const SvPb::LockAcquisitionStreamRequest&,
+			const SvRpc::Observer<SvPb::LockAcquisitionStreamResponse>&,
+			const SvRpc::ServerStreamContext::Ptr&,
+			const SvAuth::SessionContext&);
+
+		static std::uint32_t ID_COUNTER;
+
+		std::uint32_t id;
+		SvPb::LockAcquisitionStreamRequest request;
+		SvRpc::Observer<SvPb::LockAcquisitionStreamResponse> observer;
+		SvRpc::ServerStreamContext::Ptr streamContext;
+		SvAuth::SessionContext sessionContext;
+		bool isLockOwner;
+	};
+
+	void acquire_lock(lock_acquisition_stream_t&);
+	void handle_lock_acquisition(lock_acquisition_stream_t&);
+	void notify_client_about_lock_acquisition(const lock_acquisition_stream_t&);
+	void schedule_auto_release_lock(lock_acquisition_stream_t&, const std::uint64_t);
+	void auto_release_lock(lock_acquisition_stream_t&);
+	void release_lock(lock_acquisition_stream_t&, const SvPb::LockReleaseReason);
+	void broadcast_release_notification(const lock_acquisition_stream_t& stream, SvPb::LockReleaseReason);
+	void handle_lock_takeover_request(lock_acquisition_stream_t&);
+	void notify_owner_about_lock_takeover(const lock_acquisition_stream_t&);
+	void schedule_cancel_for_lock_takeover(lock_acquisition_stream_t&, const std::uint64_t);
+	void cancel_lock_takeover(lock_acquisition_stream_t&);
+	void schedule_disconnected_clients_check();
+	void on_disconnected_clients_check(const boost::system::error_code&);
+	void check_disconnected_clients();
+
+private:
 	void subscribe_to_trc();
 	int get_inspection_pos_for_id(const SvPb::InspectionList& rList, uint32_t id);
 
@@ -168,6 +213,13 @@ private:
 	int m_TrcReadySubscriptionId;
 	int m_TrcResetSubscriptionId;
 	int m_TrcNewInterestTrSubscriptionId;
+
+	SharedMemoryLock m_SharedMemoryLock;
+	std::string m_LockOwner;
+	boost::asio::deadline_timer m_AutoReleaseTimer;
+	boost::asio::deadline_timer m_LockTakeoverCancelTimer;
+	boost::asio::deadline_timer m_DisconnectCheckTimer;
+	std::vector<std::shared_ptr<lock_acquisition_stream_t>> m_LockAcquisitionStreams;
 
 	std::mutex m_NewTriggerMutex;
 	std::vector<SvOi::TrInterestEventData> m_NewTriggerQueue;
