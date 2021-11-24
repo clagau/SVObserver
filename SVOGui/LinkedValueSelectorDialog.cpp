@@ -325,13 +325,13 @@ namespace SvOg
 		if (m_objectSelectorData.m_excludeSameLineageVector.empty())
 		{
 			*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
-				m_objectSelectorData.m_searchArea, m_inspectionId, m_objectSelectorData.m_attribute, SvDef::InvalidObjectId, false,
+				m_objectSelectorData.m_searchArea, m_inspectionId, m_objectSelectorData.m_attribute, SvDef::InvalidObjectId, m_objectSelectorData.m_wholeArray,
 				m_objectSelectorData.m_type, SvPb::GetObjectSelectorItemsRequest::kAttributesAllowed, m_objectSelectorData.m_stopAtId);
 		}
 		else
 		{
 			*requestCmd.mutable_getobjectselectoritemsrequest() = SvCmd::createObjectSelectorRequest(
-				m_objectSelectorData.m_searchArea, m_inspectionId, m_objectSelectorData.m_attribute, SvDef::InvalidObjectId, false,
+				m_objectSelectorData.m_searchArea, m_inspectionId, m_objectSelectorData.m_attribute, SvDef::InvalidObjectId, m_objectSelectorData.m_wholeArray,
 				m_objectSelectorData.m_type, m_objectSelectorData.m_excludeSameLineageVector, m_objectSelectorData.m_stopAtId);
 		}
 		SvPb::InspectionCmdResponse responseCmd;

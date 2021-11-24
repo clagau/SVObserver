@@ -44,6 +44,7 @@ public:
 	VARTYPE GetValueType() const { return (nullptr !=  valuePtr()) ? valuePtr()->vt : VT_NULL; };
 
 	void setStandardFormatString() override {} //not currently used in this class
+	virtual bool isArray() const override;
 
 
 protected:

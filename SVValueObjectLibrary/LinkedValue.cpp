@@ -927,6 +927,13 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 				default:
 					m_children.clear();
 					m_childrenIds.clear();
+					if (0 != (GetDefaultType() & VT_ARRAY))
+					{
+						if (auto* pValue = dynamic_cast<SvOi::IValueObject*>(pLinkedObject) ; nullptr != pValue)
+						{
+							SetArraySize(pValue->getArraySize());
+						}
+					}
 					break;
 			}
 		}			

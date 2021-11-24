@@ -159,6 +159,7 @@ protected:
 	virtual HRESULT ValidateIndex(int ArrayIndex) const;
 
 	ValueType& DefaultValue() { return m_DefaultValue; };
+	const ValueType& DefaultValue() const { return m_DefaultValue; };
 	ValueType* valuePtr() { return m_pValue; }
 	const ValueType* valuePtr() const { return m_pValue; }
 

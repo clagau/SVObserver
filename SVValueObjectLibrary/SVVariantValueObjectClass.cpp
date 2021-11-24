@@ -284,6 +284,11 @@ HRESULT SVVariantValueObjectClass::SetValueKeepType(LPCTSTR Value, int Index)
 	return hr;
 }
 
+bool SVVariantValueObjectClass::isArray() const
+{
+	return __super::isArray() || 0 != (GetDefaultType() & VT_ARRAY);
+}
+
 std::string SVVariantValueObjectClass::ToString(const VARIANT& rValue, bool bScript )
 {
 	std::string Result;

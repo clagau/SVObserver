@@ -820,16 +820,6 @@ std::vector<T> SVValueObjectClass<T>::variant2VectorType(const _variant_t& rValu
 	}
 	else
 	{
-		VARTYPE varType = rValue.vt & ~VT_ARRAY;
-		//!For type safety check that the VT type is either the default value main value or when not set yet (VT_EMPTY)
-		if (rDefaultValue.vt != varType && ValueType2Variant(m_pValue).vt != varType && ValueType2Variant(m_pValue).vt != VT_EMPTY)
-		{
-			//This happens if the variant to convert is of a different type then this value object!
-			assert(false);
-			SvStl::MessageManager Exception(SvStl::MsgType::Log);
-			Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_WrongType, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
-			Exception.Throw();
-		}
 		result = SvUl::getVectorFromOneDim<T>(rValue);
 		//Allow arraysize 0
 		if (0 > result.size())

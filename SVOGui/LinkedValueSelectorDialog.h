@@ -30,6 +30,7 @@ namespace SvOg
 		SvPb::ObjectAttributes m_attribute = SvPb::selectableForEquation;
 		std::vector<uint32_t> m_excludeSameLineageVector;
 		uint32_t m_stopAtId = SvDef::InvalidObjectId;
+		bool m_wholeArray = false;
 	};
 
 	enum class LinkedValueSelectorTypesEnum

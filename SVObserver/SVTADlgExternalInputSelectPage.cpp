@@ -339,20 +339,29 @@ void SVTADlgExternalInputSelectPage::SelectObject(SVRPropertyItemEdit& rItem)
 	if (pDef)
 	{
 		SvOg::ObjectSelectorData objSelectorData;
-		bool isTable{ pDef->type() == SvPb::ExDllInterfaceType::TableArray };
+		auto vtType = static_cast<VARTYPE>(pDef->vt());
+		switch (pDef->type())
+		{
+			case SvPb::ExDllInterfaceType::TableArray:
+				objSelectorData.m_type = SvPb::tableObjects;
+				objSelectorData.m_attribute = SvPb::taskObject;
+				objSelectorData.m_searchArea = {SvPb::SearchArea::toolsetItems};
+				vtType = VT_EMPTY;
+				break;
+			case SvPb::ExDllInterfaceType::Array:
+				objSelectorData.m_type = (pDef->vt() & VT_BSTR) == 0 ? SvPb::allNumberValueObjects : SvPb::allValueObjects;
+				objSelectorData.m_attribute = SvPb::archivable;
+				objSelectorData.m_searchArea = {SvPb::SearchArea::globalConstantItems, SvPb::SearchArea::cameraObject, SvPb::SearchArea::ppqItems, SvPb::SearchArea::toolsetItems};
+				objSelectorData.m_wholeArray = true;
+				break;
+			default:
+				objSelectorData.m_type = (pDef->vt() & VT_BSTR) == 0 ? SvPb::allNumberValueObjects : SvPb::allValueObjects;
+				objSelectorData.m_attribute = SvPb::archivable;
+				objSelectorData.m_searchArea = {SvPb::SearchArea::globalConstantItems, SvPb::SearchArea::cameraObject, SvPb::SearchArea::ppqItems, SvPb::SearchArea::toolsetItems};
+				objSelectorData.m_wholeArray = false;
+				break;
+		}
 
-		if (!isTable)
-		{
-			objSelectorData.m_type = (pDef->vt() & VT_BSTR) == 0 ? SvPb::allNumberValueObjects : SvPb::allValueObjects;
-			objSelectorData.m_attribute = SvPb::archivable;
-			objSelectorData.m_searchArea = { SvPb::SearchArea::globalConstantItems, SvPb::SearchArea::cameraObject, SvPb::SearchArea::ppqItems, SvPb::SearchArea::toolsetItems };
-		}
-		else
-		{
-			objSelectorData.m_type = SvPb::tableObjects;
-			objSelectorData.m_attribute = SvPb::taskObject;
-			objSelectorData.m_searchArea = { SvPb::SearchArea::toolsetItems };
-		}
 		objSelectorData.m_excludeSameLineageVector = { m_ToolObjectID };
 		objSelectorData.m_stopAtId = m_ToolObjectID;
 
@@ -361,7 +370,7 @@ void SVTADlgExternalInputSelectPage::SelectObject(SVRPropertyItemEdit& rItem)
 		SvOg::LinkedValueSelectorDialog dlg(m_InspectionID, m_InputValues.GetObjectID(eId), 
 			m_InputValues.GetName(eId),
 			m_InputValues.Get<SvOg::LinkedValueData>(eId),
-			isTable? VT_EMPTY : static_cast<VARTYPE>(pDef->vt()),
+			vtType,
 			objSelectorData, nullptr, objectSelectType);
 		if (IDOK == dlg.DoModal())
 		{
