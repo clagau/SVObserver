@@ -269,8 +269,8 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed)
 
 		if (l_Process)
 		{
-			m_NotifyWithLastInspected = true;
 			rIPInfo.ClearIndexes();
+			m_NotifyWithLastInspected = true;
 		}
 
 #ifdef EnableTracking
@@ -522,10 +522,7 @@ void SVInspectionProcess::ThreadProcess(bool& p_WaitForEvents)
 	{
 		ProcessInspection(processed);
 	}
-	if (false == processed)
-	{
-		ProcessNotifyWithLastInspected(processed);
-	}
+	ProcessNotifyWithLastInspected(processed);
 	if (false == processed)
 	{
 		ProcessCommandQueue(processed);
