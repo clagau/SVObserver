@@ -96,11 +96,13 @@ SvPb::InspectionCmdResponse DeleteObject(SvPb::DeleteObjectRequest request)
 				flag = 0;
 				break;
 		}
-		auto* pTaskObjectList = dynamic_cast<SvOi::ITaskObjectListClass*> (SvOi::getObject(pObject->GetParentID()));
+		SvOi::IObjectClass* pParent = SvOi::getObject(pObject->GetParentID());
+		auto* pTaskObjectList = dynamic_cast<SvOi::ITaskObjectListClass*> (pParent);
 		auto* pTaskObject = dynamic_cast<SvOi::ITaskObject*> (pObject);
 		if(nullptr != pTaskObject && nullptr != pTaskObjectList)
 		{
 			pTaskObjectList->DestroyChild(*pTaskObject, flag);
+			pParent->resetAllObjects();
 		}
 	}
 	else
