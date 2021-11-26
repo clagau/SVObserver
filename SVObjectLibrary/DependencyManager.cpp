@@ -65,11 +65,11 @@ namespace SvOl
 		}
 
 		//! This filters dependencies which are dependent on the same tool
-		std::copy_if(ObjectDependencies.begin(), ObjectDependencies.end(), std::back_inserter(DependencyVector), [&rSourceSet](const Dependency &rDependency)
+		std::copy_if(ObjectDependencies.begin(), ObjectDependencies.end(), std::back_inserter(DependencyVector), [&rSourceSet](const Dependency& rDependency)
 		{
 			//copies dependency when true is returned
-			SvOi::IObjectClass* pSupplier = SvOi::getObject( rDependency.first );
-			SvOi::IObjectClass* pClient = SvOi::getObject( rDependency.second );
+			SvOi::IObjectClass* pSupplier = SvOi::getObject(rDependency.first);
+			SvOi::IObjectClass* pClient = SvOi::getObject(rDependency.second);
 			if (nullptr != pSupplier && nullptr != pClient)
 			{
 				//Basic value objects don't have tools check if main object is of type ToolObjectType
@@ -84,6 +84,7 @@ namespace SvOl
 					pToolSupplier = (isParentTool ? pToolParent : pSupplier->GetAncestorInterface(supplierAncestorType));
 				}
 				SvOi::IObjectClass* pToolClient = isClient ? pClient : pClient->GetAncestorInterface(SvPb::SVToolObjectType);
+				SvOi::IObjectClass* pTopToolClient = pClient->GetAncestorInterface(SvPb::SVToolObjectType, true);
 				if (nullptr != pToolSupplier && nullptr != pToolClient)
 				{
 					//If same Tool filter out directly
@@ -94,7 +95,8 @@ namespace SvOl
 					else
 					{
 						//One of the dependency tools must be in the source set
-						if (rSourceSet.end() != rSourceSet.find(pToolSupplier->getObjectId()) || rSourceSet.end() != rSourceSet.find(pToolClient->getObjectId()))
+						bool isNotParentSupplier = (rSourceSet.end() != rSourceSet.find(pToolSupplier->getObjectId()) && pToolSupplier != pTopToolClient);
+						if (isNotParentSupplier || rSourceSet.end() != rSourceSet.find(pToolClient->getObjectId()))
 						{
 							return true;
 						}
