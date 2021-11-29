@@ -114,7 +114,7 @@ namespace SvOg
 			}
 			else
 			{
-				m_FormulaController = std::make_shared<FormulaController>(m_inspectionId, m_objectId, m_data.m_equationId);
+				m_FormulaController = std::make_shared<FormulaController>(m_inspectionId, m_objectId, m_data.m_equationId, m_objectSelectorData.m_stopAtId);
 			}
 			break;
 		case LinkedValueSelectorTypesEnum::DirectIndirect:

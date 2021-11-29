@@ -936,6 +936,31 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 					}
 					break;
 			}
+
+			//! This is important when copying tools that the value of another inspection is not used due to the object ID being valid
+			//! That is why check that the linked value of an object is in the same inspection
+			const IObjectClass* pLinkedObjectInspection = pLinkedObject->GetAncestorInterface(SvPb::SVInspectionObjectType);
+			bool isSameInpection = GetAncestorInterface(SvPb::SVInspectionObjectType) == pLinkedObjectInspection;
+			//! If linked object has no inspection (e.g. Global Constants) then we don't need to check that the inspections are the same
+			if (nullptr != pLinkedObjectInspection && !isSameInpection)
+			{
+				if (nullptr != pErrorMessages)
+				{
+					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_WrongInspection, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+					pErrorMessages->push_back(Msg);
+				}
+				return false;
+			}
+
+			if (m_checkForValidDependency && false == checkIfValidDependency(m_LinkedObjectRef.getObject()))
+			{
+				if (nullptr != pErrorMessages)
+				{
+					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_GroupDependencies_Wrong, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+					pErrorMessages->push_back(Msg);
+				}
+				return false;
+			}
 		}			
 		return Result;
 	}
@@ -947,7 +972,13 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 			m_LinkedObjectRef.getObject()->disconnectObject(getObjectId());
 			m_LinkedObjectRef = SVObjectReference();
 		}
-		m_children.clear();
+		for (auto& rChild : m_children)
+		{
+			if (nullptr != rChild)
+			{
+				rChild->DisconnectInput();
+			}
+		}
 	}
 
 	UINT LinkedValue::ObjectAttributesSet(int iIndex) const

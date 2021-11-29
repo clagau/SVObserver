@@ -26,8 +26,9 @@ class FormulaController : public SvOi::IFormulaController
 {
 #pragma region Constructor
 public:
-	FormulaController(uint32_t rInspectionID, uint32_t rTaskObjectId, uint32_t rEquationObjectId);
-	FormulaController(uint32_t rInspectionID, uint32_t rTaskObjectId, const SvDef::SVObjectTypeInfoStruct& rInfo);
+	FormulaController(uint32_t inspectionID, uint32_t taskObjectID, uint32_t equationID);
+	FormulaController(uint32_t inspectionID, uint32_t taskObjectID, uint32_t equationID, uint32_t stopAtId);
+	FormulaController(uint32_t inspectionID, uint32_t taskObjectID, const SvDef::SVObjectTypeInfoStruct& rInfo);
 #pragma endregion Constructor
 
 #pragma region Destructor
@@ -72,6 +73,7 @@ private:
 private:
 	const uint32_t m_InspectionID; // Instance ID of the Inspection
 	const uint32_t m_TaskObjectID; // Instance ID of the Owner (Toolset or Tool or other TaskObject)
+	const uint32_t m_StopAtID; //Instance Id of stop to build ObjectSelectorList (for closed GroupTool)
 	const SvDef::SVObjectTypeInfoStruct m_Info;
 
 	bool m_isConditional;		//Note this variable must be above the variables m_values and m_EquationValues due to initialization

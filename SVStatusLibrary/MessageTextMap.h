@@ -647,6 +647,7 @@ namespace SvStl
 		{Tid_aGrayImage, _T("a gray image")},
 		{Tid_aColorImage, _T("a color image")},
 
+		{Tid_ForbittenNameForParameterName, _T("The name \"%s\" is already used for another object in this parameter task.")},
 		{Tid_DuplicateParameterName, _T("It is not allowed to have duplicated parameter names:\n %s") },
 		{Tid_DuplicateParameterNameWithLinked, _T("It is not allowed to have a parameter name which is already used\nby a linked parameter name: %s") },
 		{Tid_DuplicateParameterNameWithType, _T("It is not allowed to have a parameter name which is already used\nby a type parameter name: %s.") },

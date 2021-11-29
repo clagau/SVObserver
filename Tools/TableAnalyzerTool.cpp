@@ -124,7 +124,6 @@ bool TableAnalyzerTool::ResetObject(SvStl::MessageContainerVector* pErrorMessage
 	}
 	else if (pTableObject->GetAncestorInterface(SvPb::SVInspectionObjectType) != GetAncestorInterface(SvPb::SVInspectionObjectType))
 	{
-		m_sourceTableInput.SetInputObject(nullptr);
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{

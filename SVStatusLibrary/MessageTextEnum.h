@@ -609,6 +609,7 @@ enum MessageTextEnum
 	Tid_aGrayImage,
 	Tid_aColorImage,
 	
+	Tid_ForbittenNameForParameterName,
 	Tid_DuplicateParameterName,
 	Tid_DuplicateParameterNameWithLinked,
 	Tid_DuplicateParameterNameWithType,

@@ -25,6 +25,7 @@ namespace SvOg
 		SvPb::InputTypeEnum m_type = SvPb::InputTypeEnum::TypeDecimal;
 		LinkedValueData m_data {SvPb::LinkedSelectedType::DirectValue, {0.}, {0.}, {0.}};
 		SvDef::StringPairVector m_dependencies;
+		SvStl::MessageData m_errorData;
 	};
 
 	class TADialogGroupToolInputPage : public CPropertyPage, public ISVPropertyPageDialog
@@ -79,7 +80,7 @@ namespace SvOg
 
 #pragma region Private Methods
 	private:
-		bool setInspectionData();
+		bool setInspectionData(bool displayMessageBox = true);
 
 		/// Initialized the grid control. Define the number and size of the column and add the header names.
 		void initGridControl();
@@ -113,7 +114,7 @@ namespace SvOg
 		SvGcl::GridCtrl m_Grid;						//The grid displaying the name and the formulas
 		std::vector<GroupInputData> m_inputData;
 
-		//int m_numbersObjects = 0;
+		SvStl::MessageContainerVector m_errorMessages;
 #pragma endregion Member Variables
 	};
 } //namespace SvOg

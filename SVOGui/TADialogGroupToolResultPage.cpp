@@ -56,8 +56,15 @@ namespace SvOg
 			{ValueColumn, {"Value", cIndirectNameColumnSize }},
 			{ValueButtonColumn, {"", cBoxColumnSize}},
 		};
+
+		bool isOk(const GroupResultData& rData)
+		{
+			return (SvDef::InvalidObjectId == rData.m_errorData.m_ObjectId);
+		}
 	}
 
+	SvStl::MessageContainerVector getErrorMessage(uint32_t inspectionId, uint32_t toolId);
+	SvStl::MessageData getMessage(const SvStl::MessageContainerVector& rErrorMessages, uint32_t objectId);
 	SvDef::StringPairVector getDependency(uint32_t inspectionId, uint32_t valueId);
 	bool setValue(GroupResultData& data, const std::string& newStr)
 	{
@@ -133,6 +140,8 @@ namespace SvOg
 
 		DisplayHelper::setIconListToGrid(m_ImageList, m_downArrowBitmap, m_Grid);
 
+		m_errorMessages = getErrorMessage(m_InspectionID, m_toolId);
+
 		loadDataList();
 		initGridControl();
 		FillGridControl();
@@ -186,6 +195,11 @@ namespace SvOg
 		{
 		case DependencyColumn:
 		{
+			if (false == isOk(m_resultData[pItem->iRow - 1]))
+			{
+				SvStl::MessageManager Msg(SvStl::MsgType::Display);
+				Msg.setMessage(m_resultData[pItem->iRow - 1].m_errorData);
+			}
 			if (0 < m_resultData[pItem->iRow - 1].m_dependencies.size())
 			{
 				SVShowDependentsDialog Dlg(m_resultData[pItem->iRow - 1].m_dependencies);
@@ -264,6 +278,7 @@ namespace SvOg
 			{
 				m_resultData[pItem->iRow - 1].m_data = dlg.getData();
 				setValueColumn(pItem->iRow - 1);
+				setInspectionData(false);
 				m_Grid.Refresh();
 			}
 		}
@@ -343,7 +358,7 @@ namespace SvOg
 			}
 			m_resultData.emplace_back(std::move(data));
 		}
-		setInspectionData();
+		setInspectionData(false);
 		FillGridControl();
 	}
 
@@ -394,7 +409,7 @@ namespace SvOg
 #pragma endregion Protected Methods
 
 #pragma region Private Methods
-	bool TADialogGroupToolResultPage::setInspectionData()
+	bool TADialogGroupToolResultPage::setInspectionData(bool displayMessageBox)
 	{
 		UpdateData(TRUE);
 		try
@@ -415,40 +430,43 @@ namespace SvOg
 			HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 			if (S_OK != hr)
 			{
-				SvStl::MessageContainerVector messages;
 				if (responseCmd.has_setandsortembeddedvalueresponse())
 				{
 					auto& rMsg = responseCmd.setandsortembeddedvalueresponse();
-					if (rMsg.has_errormessages() && 0 < rMsg.errormessages().messages_size())
+					if (rMsg.has_errormessages())
 					{
-						messages = convertProtobufToMessageVector(rMsg.errormessages());
+						m_errorMessages = convertProtobufToMessageVector(rMsg.errormessages());
 					}
 				}
 
-				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-				if (0 < messages.size())
+				if (displayMessageBox)
 				{
-					Msg.setMessage(messages[0].getMessage());
+					SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+					if (0 < m_errorMessages.size())
+					{
+						Msg.setMessage(m_errorMessages[0].getMessage());
+					}
+					else
+					{
+						Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_UnknownException, SvStl::SourceFileParams(StdMessageParams));
+					}
 				}
-				else
-				{
-					Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_UnknownException, SvStl::SourceFileParams(StdMessageParams));
-				}
-			}
-			if (S_OK == hr)
-			{
-				loadDataList();
-				return true;
 			}
 			else
 			{
-				return false;
+				m_errorMessages.clear();
 			}
+			loadDataList();
+			FillGridControl();
+			return S_OK == hr;
 		}
 		catch (const SvStl::MessageContainer& rSvE)
 		{
-			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-			Msg.setMessage(rSvE.getMessage());
+			if (displayMessageBox)
+			{
+				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+				Msg.setMessage(rSvE.getMessage());
+			}
 			return false;
 		}
 	}
@@ -496,6 +514,8 @@ namespace SvOg
 			auto row = i + 1;
 
 			bool hasDependencies = (0 < m_resultData[i].m_dependencies.size());
+			m_Grid.SetItemBkColour(row, DependencyColumn, isOk(m_resultData[i]) ? SvDef::White : SvDef::Black);
+			m_Grid.SetItemFgColour(row, DependencyColumn, isOk(m_resultData[i]) ? SvDef::Black : SvDef::White);
 			m_Grid.SetItemText(row, DependencyColumn, hasDependencies ? "D" : "");
 			m_Grid.SetItemState(row, DependencyColumn, m_Grid.GetItemState(row, DependencyColumn) | GVIS_READONLY);
 
@@ -610,6 +630,7 @@ namespace SvOg
 			data.m_data = m_Values.Get<LinkedValueData>(SvPb::ResultObjectValueEId + i);
 			auto valueId = m_Values.GetObjectID(SvPb::ResultObjectValueEId + i);
 			data.m_dependencies = getDependency(m_InspectionID, valueId);
+			data.m_errorData = getMessage(m_errorMessages, valueId);
 			m_resultData.emplace_back(std::move(data));			
 		}
 	}

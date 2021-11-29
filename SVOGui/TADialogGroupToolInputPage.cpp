@@ -118,6 +118,37 @@ namespace SvOg
 
 			return result;
 		}
+
+		bool isOk(const GroupInputData& rData)
+		{
+			return (SvDef::InvalidObjectId == rData.m_errorData.m_ObjectId);
+		}
+	}
+
+	SvStl::MessageContainerVector getErrorMessage(uint32_t inspectionId, uint32_t toolId)
+	{
+		SvPb::InspectionCmdRequest requestCmd;
+		SvPb::InspectionCmdResponse responseCmd;
+		auto* pGetMessageListRequest = requestCmd.mutable_getmessagelistrequest();
+		pGetMessageListRequest->set_objectid(toolId);
+
+		HRESULT hr = SvCmd::InspectionCommands(inspectionId, requestCmd, &responseCmd);
+		if (hr == S_OK && responseCmd.has_standardresponse())
+		{
+			return SvPb::convertProtobufToMessageVector(responseCmd.standardresponse().errormessages());
+		}
+		assert(false);
+		return {};
+	}
+
+	SvStl::MessageData getMessage(const SvStl::MessageContainerVector& rErrorMessages, uint32_t objectId)
+	{
+		auto iter = std::ranges::find_if(rErrorMessages, [objectId](const auto& rEntry) { return rEntry.getObjectId() == objectId; });
+		if (rErrorMessages.end() != iter)
+		{
+			return iter->getMessage();
+		}
+		return {};
 	}
 
 	SvDef::StringPairVector getDependency(uint32_t inspectionId, uint32_t valueId)
@@ -218,6 +249,8 @@ namespace SvOg
 
 		DisplayHelper::setIconListToGrid(m_ImageList, m_downArrowBitmap, m_Grid);
 
+		m_errorMessages = getErrorMessage(m_InspectionID, m_toolId);
+
 		loadDataList();
 		initGridControl();
 		FillGridControl();
@@ -271,6 +304,11 @@ namespace SvOg
 		{
 		case DependencyColumn:
 		{
+			if (false == isOk(m_inputData[pItem->iRow - 1]))
+			{
+				SvStl::MessageManager Msg(SvStl::MsgType::Display);
+				Msg.setMessage(m_inputData[pItem->iRow - 1].m_errorData);
+			}
 			if (0 < m_inputData[pItem->iRow - 1].m_dependencies.size())
 			{
 				SVShowDependentsDialog Dlg(m_inputData[pItem->iRow - 1].m_dependencies);
@@ -341,6 +379,7 @@ namespace SvOg
 			{
 				m_inputData[pItem->iRow - 1].m_data = dlg.getData();
 				setValueColumn(pItem->iRow - 1);
+				setInspectionData(false);
 				m_Grid.Refresh();
 			}
 		}
@@ -442,7 +481,7 @@ namespace SvOg
 			}
 			m_inputData.emplace_back(std::move(data));
 		}
-		setInspectionData();
+		setInspectionData(false);
 		FillGridControl();
 	}
 
@@ -493,7 +532,7 @@ namespace SvOg
 #pragma endregion Protected Methods
 
 #pragma region Private Methods
-	bool TADialogGroupToolInputPage::setInspectionData()
+	bool TADialogGroupToolInputPage::setInspectionData(bool displayMessageBox)
 	{
 		UpdateData(TRUE);
 		try
@@ -514,40 +553,43 @@ namespace SvOg
 			HRESULT hr = SvCmd::InspectionCommands(m_InspectionID, requestCmd, &responseCmd);
 			if (S_OK != hr)
 			{
-				SvStl::MessageContainerVector messages;
 				if (responseCmd.has_setandsortembeddedvalueresponse())
 				{
 					auto& rMsg = responseCmd.setandsortembeddedvalueresponse();
-					if (rMsg.has_errormessages() && 0 < rMsg.errormessages().messages_size())
+					if (rMsg.has_errormessages())
 					{
-						messages = convertProtobufToMessageVector(rMsg.errormessages());
+						m_errorMessages = convertProtobufToMessageVector(rMsg.errormessages());
 					}
 				}
 
-				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-				if (0 < messages.size())
+				if (displayMessageBox)
 				{
-					Msg.setMessage(messages[0].getMessage());
+					SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+					if (0 < m_errorMessages.size())
+					{
+						Msg.setMessage(m_errorMessages[0].getMessage());
+					}
+					else
+					{
+						Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_UnknownException, SvStl::SourceFileParams(StdMessageParams));
+					}
 				}
-				else
-				{
-					Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_UnknownException, SvStl::SourceFileParams(StdMessageParams));
-				}
-			}
-			if (S_OK == hr)
-			{
-				loadDataList();
-				return true;
 			}
 			else
 			{
-				return false;
+				m_errorMessages.clear();
 			}
+			loadDataList();
+			FillGridControl();
+			return S_OK == hr;
 		}
 		catch (const SvStl::MessageContainer& rSvE)
 		{
-			SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
-			Msg.setMessage(rSvE.getMessage());
+			if (displayMessageBox)
+			{
+				SvStl::MessageManager Msg(SvStl::MsgType::Log | SvStl::MsgType::Display);
+				Msg.setMessage(rSvE.getMessage());
+			}
 			return false;
 		}
 	}
@@ -595,6 +637,8 @@ namespace SvOg
 			auto row = i + 1;
 
 			bool hasDependencies = (0 < m_inputData[i].m_dependencies.size());
+			m_Grid.SetItemBkColour(row, DependencyColumn,  isOk(m_inputData[i]) ? SvDef::White : SvDef::Black);
+			m_Grid.SetItemFgColour(row, DependencyColumn, isOk(m_inputData[i]) ? SvDef::Black : SvDef::White);
 			m_Grid.SetItemText(row, DependencyColumn, hasDependencies ? "D" : "");
 			m_Grid.SetItemState(row, DependencyColumn, m_Grid.GetItemState(row, DependencyColumn) | GVIS_READONLY);
 
@@ -714,6 +758,7 @@ namespace SvOg
 	{
 		m_inputData.clear();
 		m_Values.Init();
+
 		for (int i = 0; c_maxValues > i; ++i)
 		{
 			if (0 == m_Values.GetAllowedAttributeFlags(SvPb::ExternalInputEId + i))
@@ -729,6 +774,7 @@ namespace SvOg
 			
 			auto valueId = m_Values.GetObjectID(SvPb::ExternalInputEId + i);
 			data.m_dependencies = getDependency(m_InspectionID, valueId);
+			data.m_errorData = getMessage(m_errorMessages, valueId);;
 			m_inputData.emplace_back(std::move(data));
 		}
 	}
