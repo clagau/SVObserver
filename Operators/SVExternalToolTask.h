@@ -109,7 +109,7 @@ public:
 	void SetResultArraySize();
 	virtual bool CloseObject() override;
 	HRESULT Initialize(std::vector<std::string>& rStatusMsgs, bool inCreationProcess = false, bool initializeAll = false);
-
+	
 #pragma region IExternalToolTask methods
 	virtual SvOi::IExternalToolTaskDataAdmin& getExternalToolDataAdmin() override;
 	virtual HRESULT triggerInitialize(std::vector<std::string>& rStatusMsgs, bool inCreationProcess = false, bool initializeAll = false) override;
@@ -183,6 +183,7 @@ protected:
 	HRESULT AllocateResult (int iIndex);
 
 private:
+	bool isToolActive();
 	HRESULT InitializeResultObjects();
 
 	bool prepareInput(SvOi::ITRCImagePtr pResultImageBuffers[], SvIe::RunStatus& rRunStatus);

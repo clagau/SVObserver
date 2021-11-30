@@ -1257,7 +1257,7 @@ void SVImageClass::goingOffline()
 
 void SVImageClass::copiedSavedImage(SvOi::ITriggerRecordRWPtr pTr)
 {
-	if (m_editModeFreezeFlag && !m_isChildImageInTRC)
+	if (m_editModeFreezeFlag && !m_isChildImageInTRC && hasStorage())
 	{
 		auto image = getImageToWrite(pTr);
 		assert(nullptr != m_savedBuffer && nullptr != image && !image->isEmpty());
@@ -1439,6 +1439,11 @@ void SVImageClass::setImageSubType()
 	}
 }
 
+bool SVImageClass::hasStorage() const
+{
+	return  m_LastReset > std::numeric_limits<double>::lowest();
+ 
+}
 void SVImageClass::setInspectionPosForTrc()
 {
 	auto* pInsp = GetInspection();
@@ -1561,6 +1566,11 @@ bool SVImageClass::UpdateTRCBuffers(SvStl::MessageContainerVector* pErrorMessage
 
 void SVImageClass::copyCurrent2SaveImage()
 {
+	if (!hasStorage())
+	{
+		return;
+	}
+
 	if (m_ImageInfoOfSavedBuffer != m_ImageInfo)
 	{
 		m_ImageInfoOfSavedBuffer = m_ImageInfo;

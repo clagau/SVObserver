@@ -219,7 +219,9 @@ public:
 	virtual bool isAllowedLocation(const SvPb::SVExtentLocationPropertyEnum Location, SvPb::SVExtentDirectionsEnum Direction = SvPb::SVExtentDirectionBoth) const override;
 	virtual SvPb::InspectionCmdResponse getInvalidDependencies() const override { return {}; };
 	virtual std::vector<std::string> getToolAdjustNameList() const override { return {}; }
+	virtual bool isToolActive() const;
 #pragma endregion ITool methods
+	
 
 protected:
 	void UpdateAuxiliaryExtents();

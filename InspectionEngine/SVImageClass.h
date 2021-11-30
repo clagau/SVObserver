@@ -159,6 +159,7 @@ protected:
 	bool Unlock() const;
 
 	void setImageSubType();
+	bool hasStorage() const;
 private:
 	void init();
 
@@ -167,8 +168,8 @@ private:
 	void copyCurrent2SaveImage();
 
 protected:
-	mutable double m_LastUpdate;
-	mutable double m_LastReset;
+	mutable double m_LastUpdate {std::numeric_limits<double>::max()};
+	mutable double m_LastReset {std::numeric_limits<double>::lowest()};
 
 	SvPb::SVImageTypeEnum m_ImageType;
 	SVImageInfoClass m_ImageInfo;

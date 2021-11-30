@@ -541,15 +541,33 @@ inline  void SVToolClass::UpdateStateAndCounter(SvIe::RunStatus& rRunStatus)
 	setStatus(rRunStatus);
 }
 
+bool  SVToolClass::isToolActive() const
+{
+	if (!IsEnabled())
+	{
+		return false;
+	}
+	BOOL freezeFlag(false);
+	m_editFreezeFlag.GetValue(freezeFlag);
+	
+	if( freezeFlag  
+		&& SVSVIMStateClass::CheckState(SV_STATE_READY | SV_STATE_EDIT) 
+		&& (false == SVSVIMStateClass::CheckState(SV_STATE_REGRESSION | SV_STATE_TEST)))
+	{
+			return false;
+	}
+
+	return true;
+}
 bool SVToolClass::Run(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool retVal = true;
 	clearRunErrorMessages();
 	m_ToolTime.Start();
-	bool isEnabled = IsEnabled();
+	bool isToolActive = IsEnabled();
 	BOOL freezeFlag(false);
 	m_editFreezeFlag.GetValue(freezeFlag);
-	if (TRUE == freezeFlag && isEnabled)
+	if (TRUE == freezeFlag && isToolActive)
 	{
 		if (SVSVIMStateClass::CheckState(SV_STATE_READY|SV_STATE_EDIT) && (false == SVSVIMStateClass::CheckState(SV_STATE_REGRESSION|SV_STATE_TEST)))
 		{
@@ -558,11 +576,11 @@ bool SVToolClass::Run(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector
 			{
 				copiedSavedImage(rRunStatus.m_triggerRecord);
 			}
-			isEnabled = false;
+			isToolActive = false;
 		}
 	}
 	
-	if (isEnabled)
+	if (isToolActive)
 	{
 		if (rRunStatus.m_UpdateCounters)
 		{

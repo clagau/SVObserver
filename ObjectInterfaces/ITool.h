@@ -55,5 +55,6 @@ typedef std::vector<ParameterPairForML> ParametersForML;
 		virtual bool isAllowedLocation(const SvPb::SVExtentLocationPropertyEnum Location, SvPb::SVExtentDirectionsEnum Direction = SvPb::SVExtentDirectionBoth) const = 0;
 		virtual SvPb::InspectionCmdResponse getInvalidDependencies() const = 0;
 		virtual std::vector<std::string> getToolAdjustNameList() const = 0;
+		virtual bool isToolActive() const = 0;
 	};
 } //namespace SvOi
