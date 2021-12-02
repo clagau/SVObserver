@@ -1360,49 +1360,21 @@ bool SVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 		return false;
 	}
 
-	SVLightReference* psvLight = nullptr;
-	SVFileNameArrayClass* psvFiles = nullptr;
-	SVLut* pLut = nullptr;
-	SVDeviceParamCollection* pDeviceParams = nullptr;
-
-	std::string AcquisitionName;
-	SVConfigurationObject::SVAcquisitionDeviceMap::iterator aPos = pConfig->GetAcquisitionDeviceStartPosition();
-	while (aPos != pConfig->GetAcquisitionDeviceEndPosition())
-	{
-		//see if things are in the dlg...
-		pConfig->GetAcquisitionDeviceNextAssoc( aPos, AcquisitionName );
-		if (!IsDigitizerUsed(AcquisitionName.c_str()))
-		{
-			SvIe::SVAcquisitionClassPtr psvDevice = SvIe::SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( AcquisitionName.c_str() );
-			pConfig->RemoveAcquisitionDevice(AcquisitionName.c_str());
-			if( nullptr != psvDevice )
-			{
-				psvDevice->DestroyBuffers();
-				psvDevice->UnloadFiles();
-				psvDevice->ResetLightReference();
-				psvDevice->ResetLut();
-			}
-		}
-	}
-
-	SVFileNameArrayClass svFiles;
-	SVLightReference svLight;
-	SVDeviceParamCollection svDeviceParams;
 	std::string DigName;
 
 	int iCamCnt = m_CameraList.GetCameraListCount();
-
 	for (int iAcq = 0; iAcq < iCamCnt; iAcq++)
 	{
-		svFiles.clear();
 		int CameraIndex(iAcq);
 		SvIe::SVAcquisitionClassPtr psvDevice;
 
 		const SVOCameraObjPtr pCameraObj( GetCameraObject( CameraIndex ) );
 		if( nullptr != pCameraObj )
 		{
+			SVFileNameArrayClass svFiles;
 			SVFileNameClass svFile;
 			SVLut lut;
+			SVLightReference lightRef;
 			// For File Acquisition
 			if ( pCameraObj->IsFileAcquisition())
 			{
@@ -1412,8 +1384,6 @@ bool SVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 				psvDevice = SvIe::SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( DigName.c_str() );
 				if ( nullptr != psvDevice )
 				{
-					SVLightReference lightRef;
-
 					SVDeviceParamCollection deviceParams;
 
 					_variant_t fileNameVar = pCameraObj->GetImageFilename().c_str();
@@ -1487,7 +1457,12 @@ bool SVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 					svFiles.push_back(svFile);
 				}
 
-				psvLight = nullptr;
+				SVLightReference* psvLight {nullptr};
+				SVFileNameArrayClass* psvFiles {nullptr};
+				SVLut* pLut {nullptr};
+				SVDeviceParamCollection* pDeviceParams {nullptr};
+				SVDeviceParamCollection svDeviceParams;
+
 				psvDevice = SvIe::SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( DigName.c_str() );
 				if ( nullptr != psvDevice )
 				{
@@ -1516,8 +1491,6 @@ bool SVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 						pLut = &lut;
 
 						psvDevice->ResetLightReference();
-						//psvDevice->GetLightReference( svLight );
-						//psvLight = &svLight;
 						bGetLightReference = true;
 					}
 
@@ -1528,9 +1501,9 @@ bool SVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 					{
 						psvDevice->LoadFiles(svFiles);
 
-						if ( S_OK == psvDevice->LoadLightReference( svLight ) )
+						if ( S_OK == psvDevice->LoadLightReference(lightRef) )
 						{
-							psvDevice->SetLightReference( svLight );
+							psvDevice->SetLightReference(lightRef);
 						}
 
 						if ( svDeviceParams.ParameterExists( DeviceParamCameraFormats ) )
@@ -1554,8 +1527,8 @@ bool SVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 					// needs to happen AFTER SetDeviceParameters on a New
 					if ( bGetLightReference )
 					{
-						psvDevice->GetLightReference(svLight);
-						psvLight = &svLight;
+						psvDevice->GetLightReference(lightRef);
+						psvLight = &lightRef;
 					}
 
 					// set the trigger and strobe polarity in the I/O board based on Acq. device params
@@ -1584,7 +1557,7 @@ bool SVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 
 				if ( nullptr == psvLight )
 				{
-					psvLight = &svLight;    // assign dummy var
+					psvLight = &lightRef;    // assign dummy var
 				}
 				if ( nullptr == pLut )
 				{
@@ -1599,6 +1572,28 @@ bool SVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 			}
 		}
 	}
+
+	//Remove any unused acquisition devices
+	std::string AcquisitionName;
+	SVConfigurationObject::SVAcquisitionDeviceMap::iterator aPos = pConfig->GetAcquisitionDeviceStartPosition();
+	while (aPos != pConfig->GetAcquisitionDeviceEndPosition())
+	{
+		//see if things are in the dlg...
+		pConfig->GetAcquisitionDeviceNextAssoc(aPos, AcquisitionName);
+		if (!IsDigitizerUsed(AcquisitionName.c_str()))
+		{
+			SvIe::SVAcquisitionClassPtr psvDevice = SvIe::SVDigitizerProcessingClass::Instance().GetAcquisitionDevice(AcquisitionName.c_str());
+			pConfig->RemoveAcquisitionDevice(AcquisitionName.c_str());
+			if (nullptr != psvDevice)
+			{
+				psvDevice->DestroyBuffers();
+				psvDevice->UnloadFiles();
+				psvDevice->ResetLightReference();
+				psvDevice->ResetLut();
+			}
+		}
+	}
+
 	return bRet;
 }
 
