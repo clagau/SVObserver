@@ -1458,7 +1458,6 @@ bool SVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 				}
 
 				SVLightReference* psvLight {nullptr};
-				SVFileNameArrayClass* psvFiles {nullptr};
 				SVLut* pLut {nullptr};
 				SVDeviceParamCollection* pDeviceParams {nullptr};
 				SVDeviceParamCollection svDeviceParams;
@@ -1467,6 +1466,7 @@ bool SVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 				if ( nullptr != psvDevice )
 				{
 					bool bGetLightReference = false;
+					SVFileNameArrayClass* psvFiles {nullptr};
 					SVImageInfoClass svImageInfo;
 
 					if ( pConfig->GetAcquisitionDevice( DigName.c_str(), psvFiles, psvLight, pLut, pDeviceParams ) )
