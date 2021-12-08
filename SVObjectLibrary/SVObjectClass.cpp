@@ -101,6 +101,17 @@ This destructor unregisters itself from the object manager and frees all of the 
 SVObjectClass::~SVObjectClass()
 {
 	assert(0 == m_embeddedList.size());
+	if (m_notificationSet.size())
+	{
+		auto tmpSet = m_notificationSet;
+		for (auto func : tmpSet)
+		{
+			if (func && func.get() && (*func.get()))
+			{
+				(*func.get())(SvOi::ObjectNotificationType::Deleting, m_objectId);
+			}
+		}
+	}
 	disconnectAllInputs();
 
 	SVObjectManagerClass::Instance().CloseUniqueObjectID(this);
@@ -1091,6 +1102,23 @@ UINT SVObjectClass::SetObjectAttributesSet(UINT Attributes, SvOi::SetAttributeTy
 	{
 		assert(false);
 		return 0;
+	}
+}
+
+void SVObjectClass::setObjectId(uint32_t objectId) 
+{ 
+	uint32_t oldId = m_objectId;
+	m_objectId = objectId; 
+	if (m_notificationSet.size())
+	{
+		auto tmpSet = m_notificationSet;
+		for (auto func : tmpSet)
+		{
+			if (func && func.get() && (*func.get()))
+			{
+				(*func.get())(SvOi::ObjectNotificationType::ObjectIdChange, oldId);
+			}
+		}
 	}
 }
 

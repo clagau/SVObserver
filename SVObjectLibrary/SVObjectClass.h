@@ -149,7 +149,7 @@ public:
 	virtual UINT ObjectAttributesSet(int iIndex=0) const override;
 	virtual UINT SetObjectAttributesSet( UINT Attributes, SvOi::SetAttributeType Type, int iIndex=0 ) override;
 	virtual uint32_t getObjectId() const override {	return m_objectId; };
-	void setObjectId(uint32_t objectId) { m_objectId = objectId; };
+	void setObjectId(uint32_t objectId);
 	virtual SvPb::EmbeddedIdEnum GetEmbeddedID() const override { return m_embeddedID; };
 	virtual bool is_Created() const override;
 	virtual SvUl::NameClassIdList GetCreatableObjects(const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo) const override;
@@ -215,6 +215,9 @@ public:
 	/// Set indirect value string to LinkedValue to help to convert LinkedValue from old to new struct.
 	HRESULT setIndirectStringToObject(SvPb::EmbeddedIdEnum embeddedId, const std::vector<_variant_t>& rValueString);
 
+	void registerNotification(SvOi::ObjectNotificationFunctionPtr pFunc) { m_notificationSet.emplace(pFunc); };
+	void deregisterNotification(SvOi::ObjectNotificationFunctionPtr func) { m_notificationSet.erase(func); };
+
 protected:
 	/// Convert a string (dotted name) to an object.
 	/// \param rValue [in] Input string
@@ -267,4 +270,6 @@ private:
 	std::string m_Name;			//user given name
 	std::set <uint32_t> m_connectedSet;
 	std::mutex m_inputMutex;
+
+	std::set<SvOi::ObjectNotificationFunctionPtr> m_notificationSet;
 };

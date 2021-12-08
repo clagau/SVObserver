@@ -109,8 +109,6 @@ public:
 	long getTriggerCount() const;
 	SvPb::OverlayDesc getOverlayStruct(const SvOi::ISVImage& rImage) const;
 
-	void reloadInspectedObjectIdIndirectValue() { m_InspectedObjectID.reloadIndirectValue(); };
-
 #pragma region virtual method (IToolSet)
 	virtual bool IsToolPreviousToSelected(uint32_t toolID) const override;
 	/// Return the first band 0 image from the first color tool. If there are no color Tool it return nullptr.

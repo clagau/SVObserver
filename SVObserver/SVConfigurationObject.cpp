@@ -2404,16 +2404,6 @@ void SVConfigurationObject::UpgradeConfiguration()
 			}
 		}
 	}
-
-	//For Inspection and Tool Set the Create-method is called before data is read from the config-file. 
-	//For this reason the indirect-Ref for the inspectedObjectId has the wrong objectId, if it is set from toolSet-init. Correct this here.
-	for (auto* pInsp : m_arInspectionArray)
-	{
-		if (pInsp && pInsp->GetToolSet())
-		{
-			pInsp->GetToolSet()->reloadInspectedObjectIdIndirectValue();
-		}
-	}
 }
 
 HRESULT SVConfigurationObject::LoadAcquisitionDeviceFilename(SVTreeType& rTree, SVTreeType::SVBranchHandle hDig, SVFileNameArrayClass& rFileArray)
