@@ -37,22 +37,13 @@ namespace SvOi
 {
 	class IObjectClass;
 	typedef std::function<bool(const IObjectClass* pObject, unsigned int Attribute, int ArrayIndex)> IsObjectAllowedFunc;
-	
+
 	enum SetAttributeType
 	{
 		AddAttribute,
 		RemoveAttribute,
 		OverwriteAttribute
 	};
-
-	enum class ObjectNotificationType
-	{
-		Deleting,
-		ObjectIdChange
-	};
-
-	using ObjectNotificationFunction = std::function<void(SvOi::ObjectNotificationType, uint32_t)>;
-	using ObjectNotificationFunctionPtr = std::shared_ptr<ObjectNotificationFunction>;
 
 	//this class is a interface. It should only have pure virtual public method and no member variables
 	class IObjectClass

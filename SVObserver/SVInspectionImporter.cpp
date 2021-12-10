@@ -16,6 +16,7 @@
 #include "SVConfigurationObject.h"
 #include "SVInspectionTreeParser.h"
 #include "SVInspectionProcess.h"
+#include "SVToolSet.h"
 #include "SVIProgress.h"
 #include "SVObjectScriptParser.h"
 #include "SVParserProgressDialog.h"
@@ -425,6 +426,11 @@ HRESULT LoadInspectionXml(SvXml::SVXMLMaterialsTree& rXmlTree, const std::string
 
 						// Show the Dialog
 						l_ParserProgressDialog.DoModal();
+
+						if (pInspection->GetToolSet())
+						{
+							pInspection->GetToolSet()->reloadInspectedObjectIdIndirectValue();
+						}
 						pInspection->connectAllInputs();
 
 						rProgress.UpdateText(_T("Parsing Complete."));

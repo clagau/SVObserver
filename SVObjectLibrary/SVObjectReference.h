@@ -47,7 +47,6 @@ public:
 	SVObjectReference( SVObjectClass* pObject, const SVObjectNameInfo& p_rNameInfo );
 	explicit SVObjectReference(SVObjectClass* pObject);
 	explicit SVObjectReference( uint32_t objectId );
-	~SVObjectReference();
 	/// This constructor create an object depending of a ID and if required an index. 
 	/// \param objectIdAndIndexString [in] A string with a ID and if required an index (e.g.{7407F882-3AA5-48E2-B2E9-542538CB1650}[1])
 	explicit SVObjectReference(const std::string& objectIdAndIndexString);
@@ -56,7 +55,12 @@ public:
 
 	void setObjectId(uint32_t objectId) { m_objectId = objectId; };
 	void clear();
+
+	/// Load object from objectId
 	void update();
+	
+	/// if object different to objectId, objectId will be set to current objectId. if m_pObject == nullptr, this method do nothing.
+	void reloadObjectId();
 
 	SVObjectClass* getObject() const;
 	SVObjectClass* getFinalObject() const;
@@ -130,7 +134,6 @@ public:
 	
 protected:	
 	const std::string& GetIndex() const;
-	void onChangeNotification(SvOi::ObjectNotificationType type, uint32_t objectId);
 	
 	SVObjectClass* m_pObject = nullptr;
 	mutable SVObjectClass* m_pFinalObject = nullptr; /// Similar to m_pObject, but if m_pObject is a LinkedValue to a object, m_pFinalObject will be set to the aim object.
@@ -139,7 +142,6 @@ protected:
 	uint32_t m_objectId = SvDef::InvalidObjectId;
 	SVObjectNameInfo m_NameInfo;
 	long m_ArrayIndex = -1; // zero based Array index.   -1 and true for isArray indicates reference to whole array
-	SvOi::ObjectNotificationFunctionPtr m_pNotficationFuncPtr = std::make_shared<SvOi::ObjectNotificationFunction>([this](SvOi::ObjectNotificationType type, uint32_t objectId) { return onChangeNotification(type, objectId); });
 };
 
 typedef std::vector<SVObjectReference> SVObjectReferenceVector;

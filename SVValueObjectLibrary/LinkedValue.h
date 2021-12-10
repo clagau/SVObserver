@@ -110,6 +110,8 @@ public:
 
 	virtual HRESULT setIndirectStringForOldStruct(const std::vector<_variant_t>& rValueString) override;
 	virtual void setChildIds(const std::vector<uint32_t>& rObjectIds) override;
+
+	void reloadIndirectValue() { m_indirectValueRef.reloadObjectId(); };
 #pragma endregion Public Methods
 
 #pragma region Protected Methods

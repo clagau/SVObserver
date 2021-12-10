@@ -380,7 +380,7 @@ SvDef::StringPairVector SVTADlgArchiveResultsPage::GetSelectedHeaderNamePairs()
 	{
 		// we want to be able to refer to individual object elements (for arrays)
 		// for scalar objects we obtain the same identification string as before
-		auto objectRefIdentifier = rEntry.GetObjectIdAndIndexOneBased();
+		auto objectRefIdentifier = convertObjectIdToString(rEntry.getObjectId()) + rEntry.GetIndexString(true); 
 		auto completeName = rEntry.GetCompleteName(true);
 		
 		// and we want our header labels not too verbose.
