@@ -547,9 +547,15 @@ HRESULT SVToolGrouping::LoadTools(SVTreeType& rTree, SVTreeType::SVBranchHandle 
 				if (VT_EMPTY != Value.vt)
 				{
 					std::string toolName = SvUl::createStdString(Value.GetVARIANT());
+					bool collapse = false;
+					if (0 < toolName.size() && '+' == toolName[0])
+					{
+						toolName.erase(0,1);
+						collapse = true;
+					}
 					if (!toolName.empty())
 					{
-						rGroupings.m_list.insert(rGroupings.m_list.end(), std::make_pair(toolName, ToolGroupData(ToolGroupData::Tool, toolName)));
+						rGroupings.m_list.insert(rGroupings.m_list.end(), std::make_pair(toolName, ToolGroupData(ToolGroupData::Tool, toolName, collapse)));
 					}
 					else
 					{
@@ -765,6 +771,10 @@ bool SVToolGrouping::GetParameters(SvOi::IObjectWriter& rWriter)
 					bToolListActive = true;
 				}
 				_bstr_t name(it->first.c_str());
+				if (it->second.m_bCollapsed)
+				{
+					name = "+" + name;
+				}
 				_variant_t value(name);
 				rWriter.WriteAttribute(SvXml::CTAG_TOOL, value);
 			}

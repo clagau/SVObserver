@@ -35,7 +35,7 @@ public:
 	bool m_bCollapsed;
 	std::string m_comment;
 
-	ToolGroupData(Type rType, const std::string& rName) : m_type(rType), m_name(rName), m_bCollapsed(false) {}
+	ToolGroupData(Type rType, const std::string& rName, bool collapsed = false) : m_type(rType), m_name(rName), m_bCollapsed(collapsed) {}
 	ToolGroupData(Type rType, const std::string& rName, const std::string& rEndName, bool bCollapsed) : m_type(rType), m_name(rName), m_endName(rEndName), m_bCollapsed(bCollapsed) {}
 };
 
