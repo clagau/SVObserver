@@ -423,11 +423,15 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 	{
 		rLinkedValue.set_type(getSelectedType());
 		_variant_t varValue;
-		HRESULT result = getValue(varValue);
-		if (S_OK != result)
+		if (SvPb::LinkedSelectedType::IndirectValue != rLinkedValue.type() || nullptr != m_indirectValueRef.getFinalObject())
 		{
-			varValue.Clear();
+			HRESULT result = getValue(varValue);
+			if (S_OK != result)
+			{
+				varValue.Clear();
+			}
 		}
+
 		ConvertVariantToProtobuf(varValue, rLinkedValue.mutable_value());
 		ConvertVariantToProtobuf(GetDefaultValue(), rLinkedValue.mutable_defaultvalue());
 		ConvertVariantToProtobuf(m_directValue, rLinkedValue.mutable_directvalue());
@@ -1406,6 +1410,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 				}
 			}
 			m_children[pos]->donotCheckForDependency();
+			m_children[pos]->SetObjectOwner(this);
 			m_children[pos]->SetName(pObject->GetName());
 			m_children[pos]->setIndirectValue(pObject->GetObjectNameToObjectType(SvPb::SVToolSetObjectType));
 			m_children[pos]->setDefaultValue(pValue->getDefaultValue());

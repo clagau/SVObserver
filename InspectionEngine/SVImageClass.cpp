@@ -471,7 +471,7 @@ HRESULT SVImageClass::UpdateFromParentInformation(SvStl::MessageContainerVector*
 			SVImageExtentClass imageExtent = GetImageExtents();
 
 			SVImagePropertiesClass l_ImageProperties = m_ImageInfo.GetImageProperties();
-			SVImageInfoClass l_ImageInfo = l_pParentImage->GetImageInfo();
+			SVImageInfoClass l_ImageInfo {l_pParentImage->GetImageInfo()};
 
 			l_ImageInfo.SetOwnerImage(getObjectId());
 

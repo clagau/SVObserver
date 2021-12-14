@@ -151,28 +151,10 @@ namespace SvOg
 		return {};
 	}
 
-	SvDef::StringPairVector getDependency(uint32_t inspectionId, uint32_t valueId)
+	SvDef::StringPairVector getDependency(uint32_t valueId)
 	{
 		SvDef::StringPairVector dependencyList;
 		SvOi::getObjectDependency(std::back_inserter(dependencyList), {valueId}, SvOi::ToolDependencyEnum::Client);
-
-		SvPb::InspectionCmdRequest requestCmd;
-		SvPb::InspectionCmdResponse responseCmd;
-		auto* pRequest = requestCmd.mutable_getobjectnamerequest();
-		pRequest->set_objectid(valueId);
-		pRequest->set_beforetype(SvPb::SVToolSetObjectType);
-		HRESULT hr = SvCmd::InspectionCommands(inspectionId, requestCmd, &responseCmd);
-		if (S_OK != hr || false == responseCmd.has_getobjectnameresponse())
-		{
-			assert(false);
-			return {};
-		}
-		std::string name = responseCmd.getobjectnameresponse().name();
-
-		dependencyList.erase(std::remove_if(dependencyList.begin(), dependencyList.end(),
-			[name](const auto& rEntry) {return rEntry.first != name; }),
-			dependencyList.end());
-
 		return dependencyList;
 	}
 
@@ -773,7 +755,7 @@ namespace SvOg
 			data.m_data = m_Values.Get<LinkedValueData>(SvPb::ExternalInputEId + i);
 			
 			auto valueId = m_Values.GetObjectID(SvPb::ExternalInputEId + i);
-			data.m_dependencies = getDependency(m_InspectionID, valueId);
+			data.m_dependencies = getDependency(valueId);
 			data.m_errorData = getMessage(m_errorMessages, valueId);;
 			m_inputData.emplace_back(std::move(data));
 		}

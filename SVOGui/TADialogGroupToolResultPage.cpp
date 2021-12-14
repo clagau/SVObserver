@@ -65,7 +65,7 @@ namespace SvOg
 
 	SvStl::MessageContainerVector getErrorMessage(uint32_t inspectionId, uint32_t toolId);
 	SvStl::MessageData getMessage(const SvStl::MessageContainerVector& rErrorMessages, uint32_t objectId);
-	SvDef::StringPairVector getDependency(uint32_t inspectionId, uint32_t valueId);
+	SvDef::StringPairVector getDependency(uint32_t valueId);
 	bool setValue(GroupResultData& data, const std::string& newStr)
 	{
 		if (SvPb::LinkedSelectedType::DirectValue == data.m_data.m_type && SvPb::isValueType(data.m_type))
@@ -629,7 +629,7 @@ namespace SvOg
 			data.m_type = static_cast<SvPb::InputTypeEnum>(m_Values.Get<int>(SvPb::ResultObjectTypeEId + i));
 			data.m_data = m_Values.Get<LinkedValueData>(SvPb::ResultObjectValueEId + i);
 			auto valueId = m_Values.GetObjectID(SvPb::ResultObjectValueEId + i);
-			data.m_dependencies = getDependency(m_InspectionID, valueId);
+			data.m_dependencies = getDependency(valueId);
 			data.m_errorData = getMessage(m_errorMessages, valueId);
 			m_resultData.emplace_back(std::move(data));			
 		}
