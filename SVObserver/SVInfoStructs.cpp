@@ -245,9 +245,9 @@ void SVProductInfoStruct::InitProductInfo()
 	m_dataComplete = false;
 	m_prevTriggerNAK = false;
 	m_monitorListSMSlot = -1;
-	m_outputsInfo = std::move(SVOutputsInfoStruct {});
+	m_outputsInfo.clear();
 	m_triggerInfo = std::move(SvTrig::SVTriggerInfoStruct {});
-
+	
 	for (auto& rCamera : m_svCameraInfos)
 	{
 		rCamera.second.ClearInfo();
@@ -271,7 +271,7 @@ void SVProductInfoStruct::Reset()
 	m_dataComplete = false;
 	m_prevTriggerNAK = false;
 	m_monitorListSMSlot = -1;
-	m_outputsInfo = std::move(SVOutputsInfoStruct {});
+	m_outputsInfo.clear();
 	m_pPPQ = nullptr;
 	m_triggerInfo = std::move(SvTrig::SVTriggerInfoStruct {});
 

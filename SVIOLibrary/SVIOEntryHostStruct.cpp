@@ -35,6 +35,11 @@ void SVIOEntryHostStruct::setValueObject(std::shared_ptr<SvOi::IValueObject> pVa
 	if(nullptr != m_pValueObject)
 	{
 		m_pObject = dynamic_cast<SVObjectClass*> (m_pValueObject.get());
+		SVObjectClass* pInspection = m_pObject->GetAncestor(SvPb::SVInspectionObjectType);
+		if (nullptr != pInspection)
+		{
+			m_inspectionId = pInspection->getObjectId();
+		}
 	}
 }
 
@@ -43,6 +48,11 @@ void SVIOEntryHostStruct::setLinkedObject(SVObjectClass* pObject)
 	//Required to avoid dynamic cast at run time
 	m_pObject = pObject;
 	m_pLinkedValueObject = dynamic_cast<SvOi::IValueObject*> (m_pObject);
+	SVObjectClass* pInspection = m_pObject->GetAncestor(SvPb::SVInspectionObjectType);
+	if (nullptr != pInspection)
+	{
+		m_inspectionId = pInspection->getObjectId();
+	}
 }
 
 bool SVIOEntryHostStruct::PtrGreater(SVIOEntryHostStructPtr elem1, SVIOEntryHostStructPtr elem2)

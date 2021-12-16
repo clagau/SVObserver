@@ -409,7 +409,6 @@ bool SVPPQObject::Rebuild()
 	// Return if not created
 	if (!m_isCreated) { return false; }
 
-	// Delete buckets for the PPQ positions
 	m_PPQPositions.clear();
 
 	m_qAvailableProductInfos.RemoveAll();
@@ -2446,7 +2445,9 @@ void SVPPQObject::AddResultsToPPQ(SVProductInfoStruct& rProduct)
 	//Previous trigger NAK is true when Trigger per Object > 1 and a NAK occured during a previous trigger with the same objectID
 	bACK &= (false == rProduct.m_prevTriggerNAK) ? TRUE : FALSE;
 
-	rProduct.m_outputsInfo.m_Outputs = m_pOutputList->getOutputValues(m_UsedOutputs, false, bACK ? true : false, (bNAK || rProduct.m_prevTriggerNAK) ? true : false);
+	setOutputResults(0, rProduct.m_outputsInfo.m_outputResult);
+	bool objectNak = (bNAK || rProduct.m_prevTriggerNAK) ? true : false;
+	rProduct.m_outputsInfo.m_Outputs = m_pOutputList->getOutputValues(m_UsedOutputs, rProduct.m_outputsInfo.m_outputResult, false, bACK ? true : false, objectNak);
 	rProduct.m_outputsInfo.m_NakResult = bNAK ? true : false;
 	rProduct.m_outputsInfo.m_DataValidResult = bValid && !bNAK;
 }
@@ -2620,7 +2621,7 @@ bool SVPPQObject::SetProductIncomplete(SVProductInfoStruct& rProduct)
 #endif
 	}
 	rProduct.m_dataComplete = true;
-	rProduct.m_outputsInfo.m_Outputs = m_pOutputList->getOutputValues(m_UsedOutputs, true, false, true);
+	rProduct.m_outputsInfo.m_Outputs = m_pOutputList->getOutputValues(m_UsedOutputs, rProduct.m_outputsInfo.m_outputResult, true, false, true);
 
 	bool isNAK = rProduct.m_outputsInfo.m_NakResult || rProduct.m_prevTriggerNAK;
 	long ppqIndex = m_PPQPositions.GetIndexByTriggerCount(rProduct.triggerCount());
@@ -3601,12 +3602,13 @@ HRESULT SVPPQObject::ProcessCompleteInspections(bool& rProcessed)
 				if (l_pPPQProduct->m_outputsInfo.m_EndProcess == 0.0)
 				{
 					SVInspectionInfoStruct& l_rInspectInfo = l_Info.second;
-					SVInspectionInfoStruct& l_rPPQInspectInfo = l_pPPQProduct->m_svInspectionInfos[l_rInspectInfo.m_pInspection->getObjectId()];
+					uint32_t inspectedID {l_rInspectInfo.m_pInspection->getObjectId()};
+					SVInspectionInfoStruct& l_rPPQInspectInfo = l_pPPQProduct->m_svInspectionInfos[inspectedID];
 
 					l_rPPQInspectInfo = l_rInspectInfo;
-
 					l_rPPQInspectInfo.ClearIndexes();
 
+					setOutputResults(inspectedID, l_pPPQProduct->m_outputsInfo.m_outputResult);
 #ifdef EnableTracking
 					std::string l_Title = l_rInspectInfo.m_pInspection->GetName();
 
@@ -4072,11 +4074,14 @@ bool SVPPQObject::SetupProductInfoStructs()
 	BuildCameraInfos(cameraInfos);
 	m_pMasterProductInfos = new SVProductInfoStruct[getPPQLength() + g_lPPQExtraBufferSize];
 
+	unsigned long outputSize {0UL};
+	SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount(outputSize);
 	for (int j = 0; j < getPPQLength() + g_lPPQExtraBufferSize; j++)
 	{
 		m_pMasterProductInfos[j].m_pPPQ = this;
 		m_pMasterProductInfos[j].m_svCameraInfos = cameraInfos;
 		m_pMasterProductInfos[j].m_svInspectionInfos.clear();
+		m_pMasterProductInfos[j].m_outputsInfo.m_outputResult.resize(outputSize);
 
 		for (auto* pInsp : m_arInspections)
 		{
@@ -4330,6 +4335,28 @@ void SVPPQObject::setPreviousNAK(const SVProductInfoStruct& rCurrentProduct, SVP
 		if (pNextProduct->m_triggerInfo.m_Data.end() != iterData && 1u < static_cast<DWORD> (iterData->second))
 		{
 			pNextProduct->m_prevTriggerNAK = true;
+		}
+	}
+}
+
+void SVPPQObject::setOutputResults(uint32_t inspectedID, std::vector<bool>& rOutputResult) const
+{
+	for (const auto& pIOEntry : m_UsedOutputs)
+	{
+		if (nullptr != pIOEntry && pIOEntry->m_Enabled && nullptr != pIOEntry->getValueObject())
+		{
+			//Note when inspectedID = 0 then we set the PPQ variables otherwise the specified inspection results
+			if (pIOEntry->m_inspectionId == inspectedID)
+			{
+				SVOutputObject* pOutput = dynamic_cast<SVOutputObject*> (SVObjectManagerClass::Instance().GetObject(pIOEntry->m_IOId));
+				if (nullptr != pOutput && rOutputResult.size() > 0)
+				{
+					int outputIndex = pOutput->GetChannel() % rOutputResult.size();
+					_variant_t outputValue;
+					pIOEntry->getValueObject()->getValue(outputValue);
+					rOutputResult.at(outputIndex) = outputValue ? true : false;
+				}
+			}
 		}
 	}
 }

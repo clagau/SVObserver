@@ -74,6 +74,20 @@ struct SVOutputsInfoStruct
 	SVOutputsInfoStruct& operator=(const SVOutputsInfoStruct& rRhs) = default;
 	SVOutputsInfoStruct& operator=(SVOutputsInfoStruct&& rRhs) = default;
 
+	void clear()
+	{
+		m_DataValidResult = false;
+		m_OutputToggleResult = false;
+		m_NakResult = true;
+		m_EndOutputDelay = 0.0;
+		m_EndResetDelay = 0.0;
+		m_EndDataValidDelay = 0.0;
+		m_BeginProcess = 0.0;
+		m_EndProcess = 0.0;
+		m_Outputs.clear();
+		std::fill(m_outputResult.begin(), m_outputResult.end(), false);
+	}
+
 	bool m_DataValidResult {false};
 	bool m_OutputToggleResult {false};
 	bool m_NakResult {true};
@@ -83,6 +97,7 @@ struct SVOutputsInfoStruct
 	double m_BeginProcess {0.0};
 	double m_EndProcess {0.0};
 	ObjectIdVariantPairVector m_Outputs;
+	std::vector<bool> m_outputResult;
 };
 
 

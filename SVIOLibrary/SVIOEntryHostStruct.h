@@ -46,6 +46,7 @@ struct SVIOEntryHostStruct
 	SVIOObjectType m_ObjectType{IO_INVALID_OBJECT};
 
 	uint32_t m_IOId{0UL};
+	uint32_t m_inspectionId {0UL};
 
 	void setValueObject(std::shared_ptr<SvOi::IValueObject> pValueObject);
 	void setLinkedObject(SVObjectClass* pObject);

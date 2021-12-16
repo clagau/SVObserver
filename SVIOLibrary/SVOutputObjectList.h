@@ -37,7 +37,7 @@ public:
 	HRESULT AttachOutput(SVOutputObjectPtr pOutput);
 	HRESULT DetachOutput(uint32_t outputID );
 
-	ObjectIdVariantPairVector getOutputValues(const SVIOEntryHostStructPtrVector& rIOEntries, bool useDefaults, bool p_ACK, bool p_NAK);
+	ObjectIdVariantPairVector getOutputValues(const SVIOEntryHostStructPtrVector& rIOEntries, const std::vector<bool>& rOutputResult, bool useDefaults, bool p_ACK, bool p_NAK);
 	bool ResetOutputs(SVIOEntryHostStructPtrVector& rIOEntries);
 	bool WriteOutputs(const ObjectIdVariantPairVector& rOutputValues);
 	bool WriteOutput( SVIOEntryHostStructPtr pIOEntry, bool p_ACK, bool p_NAK );
@@ -60,7 +60,7 @@ public:
 #pragma endregion Methods to replace processMessage
 
 private:
-	std::pair<uint32_t, _variant_t> getDigitalOutputValue(const SVIOEntryHostStructPtr& pIOEntry, bool useDefault, bool p_ACK, bool p_NAK );
+	std::pair<uint32_t, _variant_t> getDigitalOutputValue(const SVIOEntryHostStructPtr& pIOEntry, const std::vector<bool>& rOutputResult, bool useDefault, bool p_ACK, bool p_NAK );
 	SVOutputObjectPtr findOutputName(const std::string& rOutputName) const;
 
 	mutable std::mutex m_protectOutputList;

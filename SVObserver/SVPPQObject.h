@@ -475,6 +475,7 @@ private:
 	void checkNakReason(CantProcessEnum cantProcessReason);
 
 	void setPreviousNAK(const SVProductInfoStruct& rCurrentProduct, SVProductInfoStruct* pNextProduct) const;
+	void setOutputResults(uint32_t inspectedID, std::vector<bool>& rOutputResult) const;
 
 	PpqCameraCallBack m_cameraCallback;
 	SvTrig::PpqTriggerCallBack m_triggerCallback;
