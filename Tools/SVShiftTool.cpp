@@ -433,24 +433,24 @@ void SVShiftTool::LocalInitialize()
 	m_ObjectTypeInfo.m_ObjectType = SvPb::SVToolObjectType;
 	m_ObjectTypeInfo.m_SubType = SvPb::SVShiftToolObjectType;
 
-	SVObjectClass* l_pObject = nullptr;
+	SVTaskObjectClass* pObject = nullptr;
 
-	SVObjectManagerClass::Instance().ConstructObject( SvPb::EvaluateTranslationXClassId, l_pObject );
+	SVObjectManagerClass::Instance().ConstructObject( SvPb::EvaluateTranslationXClassId, pObject);
 
-	if( nullptr != l_pObject )
+	if( nullptr != pObject)
 	{
-		l_pObject->SetObjectOwner( this );
+		pObject->SetObjectOwner( this );
 
-		AddFriend( l_pObject->getObjectId() );
+		AddFriend(pObject );
 	}
 
-	SVObjectManagerClass::Instance().ConstructObject( SvPb::EvaluateTranslationYClassId, l_pObject );
+	SVObjectManagerClass::Instance().ConstructObject( SvPb::EvaluateTranslationYClassId, pObject);
 
-	if( nullptr != l_pObject )
+	if( nullptr != pObject)
 	{
-		l_pObject->SetObjectOwner( this );
+		pObject->SetObjectOwner( this );
 
-		AddFriend( l_pObject->getObjectId() );
+		AddFriend(pObject );
 	}
 
 	SvOp::ToolSizeAdjustTask::AddToFriendlist(this, false, true, true);

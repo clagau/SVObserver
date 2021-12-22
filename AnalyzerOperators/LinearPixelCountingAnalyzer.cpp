@@ -53,7 +53,7 @@ void LinearPixelCountingAnalyzer::init()
 	{
 		pEdge->setDirectionDefaultValue(SvDef::SV_UNDEFINED_DIRECTION);
 
-		AddFriend( pEdge->getObjectId() );
+		AddFriend( pEdge );
 	}
 
 	// Register Embedded Objects

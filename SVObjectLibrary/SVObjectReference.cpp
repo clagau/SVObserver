@@ -29,6 +29,7 @@ SVObjectReference::SVObjectReference( SVObjectClass* pObject ):
 	{
 		m_objectId = m_pObject->getObjectId();
 		m_NameInfo.ParseObjectName(m_pObject->GetCompleteName().c_str());
+		registerNotification();
 	}
 }
 
@@ -36,6 +37,7 @@ SVObjectReference::SVObjectReference(uint32_t objectId)
 	: m_objectId(objectId)
 {
 	m_pObject = SVObjectManagerClass::Instance().GetObject(m_objectId);
+	registerNotification();
 }
 
 SVObjectReference::SVObjectReference( SVObjectClass* pObject, long lArrayIndex, std::string strDefaultValue ):
@@ -46,6 +48,7 @@ SVObjectReference::SVObjectReference( SVObjectClass* pObject, long lArrayIndex, 
 	if( nullptr != m_pObject )
 	{
 		m_NameInfo.ParseObjectName( m_NameInfo, m_pObject->GetCompleteName().c_str() );
+		registerNotification();
 	}
 	m_NameInfo.SetIsIndexPresent(true);
 	m_NameInfo.SetIndex( SvUl::Format(_T("%d"), lArrayIndex ));
@@ -56,7 +59,11 @@ SVObjectReference::SVObjectReference( SVObjectClass* pObject, long lArrayIndex, 
 SVObjectReference::SVObjectReference( SVObjectClass* pObject, const SVObjectNameInfo& p_rNameInfo )
 	: m_pObject(pObject)
 {
-	m_objectId = m_pObject ? m_pObject->getObjectId() : SvDef::InvalidObjectId;
+	if (nullptr != m_pObject)
+	{
+		m_objectId = m_pObject->getObjectId();
+		registerNotification();
+	}
 	m_NameInfo = p_rNameInfo;
 	m_ArrayIndex = p_rNameInfo.GetIndexValue();
 }
@@ -77,6 +84,7 @@ SVObjectReference::SVObjectReference(const std::string& objectIdAndIndexString)
 		}
 		m_NameInfo.ParseObjectName(m_NameInfo, tmpName);
 		m_ArrayIndex = m_NameInfo.GetIndexValue();
+		registerNotification();
 	}
 	else
 	{
@@ -103,9 +111,16 @@ SVObjectReference::SVObjectReference(const std::string& objectIdAndIndexString)
 	}
 }
 
+SVObjectReference::~SVObjectReference()
+{
+	deregisterNotification();
+}
+
 const SVObjectReference& SVObjectReference::operator = ( const SVObjectReference& rhs )
 {
+	deregisterNotification();
 	m_pObject = rhs.m_pObject;
+	registerNotification();
 	m_pValueObject = nullptr;
 	m_pFinalObject = nullptr;
 	m_pLinkedObject = nullptr;
@@ -117,6 +132,7 @@ const SVObjectReference& SVObjectReference::operator = ( const SVObjectReference
 
 void  SVObjectReference::clear()
 {
+	deregisterNotification();
 	m_pObject = nullptr;
 	m_pValueObject = nullptr;
 	m_pFinalObject = nullptr;
@@ -131,17 +147,11 @@ void SVObjectReference::update()
 	auto* pObject = SVObjectManagerClass::Instance().GetObject(m_objectId);
 	if (m_pObject != pObject)
 	{
+		deregisterNotification();
 		m_pObject = pObject;
+		registerNotification();
 		m_pValueObject = nullptr;
 		m_pFinalObject = nullptr;
-	}
-}
-
-void SVObjectReference::reloadObjectId()
-{
-	if (nullptr != m_pObject)
-	{
-		m_objectId = m_pObject->getObjectId();
 	}
 }
 
@@ -429,3 +439,36 @@ void SVObjectReference::fillSelectorList(std::back_insert_iterator<std::vector<S
 	}
 }
 
+void SVObjectReference::onChangeNotification(SvOi::ObjectNotificationType type, uint32_t objectId)
+{
+	switch (type)
+	{
+		case SvOi::ObjectNotificationType::Deleting:
+			clear();
+			break;
+		case SvOi::ObjectNotificationType::ObjectIdChange:
+			if (nullptr != m_pObject && objectId == m_objectId)
+			{
+				m_objectId = m_pObject->getObjectId();
+			}
+			break;
+		default:
+			break;
+	}
+}
+
+void SVObjectReference::registerNotification()
+{
+	if (nullptr != m_pObject)
+	{
+		m_pObject->registerNotification(this);
+	}
+}
+
+void SVObjectReference::deregisterNotification()
+{
+	if (nullptr != m_pObject)
+	{
+		m_pObject->deregisterNotification(this);
+	}
+}

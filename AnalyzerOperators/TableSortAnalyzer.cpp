@@ -64,7 +64,7 @@ bool TableSortAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMessage
 	SvVol::DoubleSortValueObject* pColumnValues = m_sortColumnInput.getInput<SvVol::DoubleSortValueObject>();
 	if (nullptr == pColumnValues
 		//check if column part of the right table object (The object must be from same tool as this analyzer.)
-		|| nullptr == pColumnValues->GetParent() || pColumnValues->GetParent()->GetParent() != m_ownerObjectInfo.getObject())
+		|| nullptr == pColumnValues->GetParent() || pColumnValues->GetParent()->GetParent() != GetParent())
 	{
 		Result = false;
 		if (nullptr != pErrorMessages)
@@ -95,7 +95,7 @@ bool TableSortAnalyzer::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageContai
 	{
 		BOOL isASC( true );
 		m_isASC.GetValue( isASC );
-		SvTo::TableAnalyzerTool* pTool = dynamic_cast<SvTo::TableAnalyzerTool*> (m_ownerObjectInfo.getObject());
+		SvTo::TableAnalyzerTool* pTool = dynamic_cast<SvTo::TableAnalyzerTool*> (GetParent());
 		SvVol::DoubleSortValueObject* pColumnValues = m_sortColumnInput.getInput<SvVol::DoubleSortValueObject>(true);
 		if (nullptr != pTool && nullptr != pColumnValues)
 		{

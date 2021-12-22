@@ -97,7 +97,7 @@ void TableObject::changeEIdinOrder(SvPb::EmbeddedIdEnum startEId)
 	{
 		if (nullptr != pValue && currentEId != pValue->GetEmbeddedID())
 		{
-			pValue->SetObjectEmbedded(currentEId, pValue->GetOwnerInfo().getObject(), pValue->GetName());
+			pValue->SetObjectEmbedded(currentEId, pValue->GetParent(), pValue->GetName());
 		}
 		currentEId = currentEId + 1;
 	}

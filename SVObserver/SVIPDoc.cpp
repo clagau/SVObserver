@@ -1507,16 +1507,13 @@ void SVIPDoc::updateToolsetView(uint32_t toolID, uint32_t postID, uint32_t owner
 			pTool->resetAllObjects();
 		}
 
-		SVObjectLevelCreateStruct createStruct;
-		createStruct.OwnerObjectInfo.SetObject(pInspection);
+		SVObjectLevelCreateStruct createStruct(*pInspection);
 		createStruct.m_pInspection = pInspection;
 
 		pInspection->ConnectObject(createStruct);
 		pInspection->connectAllInputs();
 
-		SVObjectLevelCreateStruct createObjStruct;
-
-		pInspection->createAllObjects(createObjStruct);
+		pInspection->createAllObjects();
 		//Reset only the inserted tool
 		pTool->resetAllObjects();
 		if (nullptr != pInspection->GetToolSet())

@@ -66,8 +66,7 @@ SvOi::IObjectClass* Analyzer::GetResultObject()
 
 bool Analyzer::createAllObjectsFromChild( SVObjectClass& rChildObject )
 {
-	SVObjectLevelCreateStruct createStruct;
-	createStruct.OwnerObjectInfo.SetObject(this);
+	SVObjectLevelCreateStruct createStruct(*this);
 	createStruct.m_pInspection = GetInspection();
 	createStruct.m_pTool = GetTool();
 	createStruct.m_pAnalyzer = this;
@@ -77,8 +76,7 @@ bool Analyzer::createAllObjectsFromChild( SVObjectClass& rChildObject )
 
 void Analyzer::connectChildObject( SVTaskObjectClass& rChildObject )
 {
-	SVObjectLevelCreateStruct createStruct;
-	createStruct.OwnerObjectInfo.SetObject(this);
+	SVObjectLevelCreateStruct createStruct(*this);
 	createStruct.m_pInspection = GetInspection();
 	createStruct.m_pTool = GetTool();
 	createStruct.m_pAnalyzer = this;

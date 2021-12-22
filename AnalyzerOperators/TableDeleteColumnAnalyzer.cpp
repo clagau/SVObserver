@@ -51,7 +51,7 @@ bool TableDeleteColumnAnalyzer::ResetObject(SvStl::MessageContainerVector* pErro
 
 	m_deleteColumnInput.validateInput();
 
-	SvTo::TableAnalyzerTool* pTool = dynamic_cast<SvTo::TableAnalyzerTool*> (m_ownerObjectInfo.getObject());
+	SvTo::TableAnalyzerTool* pTool = dynamic_cast<SvTo::TableAnalyzerTool*> (GetParent());
 	SvVol::DoubleSortValueObject* pColumnValues = m_deleteColumnInput.getInput<SvVol::DoubleSortValueObject>(false);
 	if (nullptr == pTool || nullptr == pColumnValues)
 	{

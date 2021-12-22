@@ -1675,9 +1675,7 @@ bool  SVConfigurationObject::LoadCameras(SVTreeType& rTree, long& lNumCameras, b
 
 			if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_UNIQUE_REFERENCE_ID, hSubChild, Value))
 			{
-				SVObjectManagerClass::Instance().CloseUniqueObjectID(pCamera);
-				pCamera->setObjectId(calcObjectId(Value));
-				SVObjectManagerClass::Instance().OpenUniqueObjectID(pCamera);
+				SVObjectManagerClass::Instance().ChangeUniqueObjectID(pCamera, calcObjectId(Value));
 			}
 
 			if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_BAND_LINK, hSubChild, Value))
@@ -1925,9 +1923,7 @@ bool SVConfigurationObject::LoadInspection(SVTreeType& rTree)
 			bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_UNIQUE_REFERENCE_ID, hTempIPObjectItem, Value);
 			if (bOk)
 			{
-				SVObjectManagerClass::Instance().CloseUniqueObjectID(pInspection);
-				pInspection->setObjectId(calcObjectId(Value));
-				SVObjectManagerClass::Instance().OpenUniqueObjectID(pInspection);
+				SVObjectManagerClass::Instance().ChangeUniqueObjectID(pInspection, calcObjectId(Value));
 			}
 		}
 
@@ -2007,9 +2003,7 @@ bool SVConfigurationObject::LoadPPQ(SVTreeType& rTree)
 
 		if (bOk)
 		{
-			SVObjectManagerClass::Instance().CloseUniqueObjectID(pPPQ);
-			pPPQ->setObjectId(calcObjectId(Value));
-			SVObjectManagerClass::Instance().OpenUniqueObjectID(pPPQ);
+			SVObjectManagerClass::Instance().ChangeUniqueObjectID(pPPQ, calcObjectId(Value));
 		}// end if
 
 		bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_PPQ_MODE, hSubChild, Value);
@@ -2402,16 +2396,6 @@ void SVConfigurationObject::UpgradeConfiguration()
 				Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ErrorPpqTriggerCount, SvStl::SourceFileParams(StdMessageParams));
 				break;
 			}
-		}
-	}
-
-	//For Inspection and Tool Set the Create-method is called before data is read from the config-file. 
-	//For this reason the indirect-Ref for the inspectedObjectId has the wrong objectId, if it is set from toolSet-init. Correct this here.
-	for (auto* pInsp : m_arInspectionArray)
-	{
-		if (pInsp && pInsp->GetToolSet())
-		{
-			pInsp->GetToolSet()->reloadInspectedObjectIdIndirectValue();
 		}
 	}
 }

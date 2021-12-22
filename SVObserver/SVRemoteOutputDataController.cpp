@@ -188,9 +188,7 @@ bool SVRemoteOutputDataController::SetParameters( SVTreeType& p_rTree, SVTreeTyp
 		result = SvXml::SVNavigateTree::GetItem( p_rTree, SvXml::CTAG_UNIQUE_REFERENCE_ID, htiIORemoteOutput, svVariant );
 		if (result)
 		{
-			SVObjectManagerClass::Instance().CloseUniqueObjectID( this );
-			setObjectId(calcObjectId(svVariant));
-			SVObjectManagerClass::Instance().OpenUniqueObjectID( this );
+			SVObjectManagerClass::Instance().ChangeUniqueObjectID( this, calcObjectId(svVariant));
 		}
 
 		// Remote Output Parameters

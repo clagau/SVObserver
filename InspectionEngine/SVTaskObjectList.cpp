@@ -673,8 +673,7 @@ bool SVTaskObjectListClass::createAllObjects( const SVObjectLevelCreateStruct& r
 {
 	bool Result = __super::createAllObjects( rCreateStructure );
 
-	SVObjectLevelCreateStruct createStruct;
-	createStruct.OwnerObjectInfo.SetObject(this);
+	SVObjectLevelCreateStruct createStruct(*this);
 	createStruct.m_pInspection = GetInspection();
 	createStruct.m_pTool	= GetTool();
 	createStruct.m_pAnalyzer = GetAnalyzer();
@@ -693,8 +692,7 @@ void SVTaskObjectListClass::ConnectObject( const SVObjectLevelCreateStruct& rCre
 {
 	__super::ConnectObject( rCreateStructure );
 
-	SVObjectLevelCreateStruct createStruct;
-	createStruct.OwnerObjectInfo.SetObject(this);
+	SVObjectLevelCreateStruct createStruct(*this);
 	createStruct.m_pInspection = GetInspection();
 	createStruct.m_pTool = GetTool();
 	createStruct.m_pAnalyzer = GetAnalyzer();
@@ -832,8 +830,7 @@ bool SVTaskObjectListClass::replaceObject(SVObjectClass* pObject, uint32_t newId
 		if (pDuplicatedObject)
 		{
 			// Get the Owner
-			SVObjectInfoStruct ownerInfo = pDuplicatedObject->GetOwnerInfo();
-			SVObjectClass* pOwner = SVObjectManagerClass::Instance().GetObject(ownerInfo.getObjectId());
+			SVObjectClass* pOwner = pDuplicatedObject->GetParent();
 			if (pOwner)
 			{
 				SVTaskObjectListClass* pTaskListOwner = dynamic_cast<SVTaskObjectListClass*>(pOwner);
@@ -919,18 +916,18 @@ void SVTaskObjectListClass::DeleteAll()
 	m_LastListUpdateTimestamp = SvUl::GetTimeStamp();
 }
 
-SVObjectClass* SVTaskObjectListClass::UpdateObject(uint32_t friendId, SVObjectClass* p_psvObject, SVObjectClass* p_psvNewOwner )
+SVTaskObjectClass* SVTaskObjectListClass::UpdateObject(uint32_t friendId, SVObjectClass* p_psvObject, SVObjectClass* p_psvNewOwner )
 {
-	SVObjectClass* l_psvObject = nullptr;
+	SVTaskObjectClass* pObject = nullptr;
 
 	int l_iSize = static_cast<int> (m_TaskObjectVector.size());
 
 	// find the friend in our taskObject List
-	for (int i = 0; nullptr == l_psvObject && i < l_iSize; i++)
+	for (int i = 0; nullptr == pObject && i < l_iSize; i++)
 	{
-		l_psvObject = m_TaskObjectVector[i];
+		pObject = m_TaskObjectVector[i];
 
-		if ( nullptr != l_psvObject && friendId == l_psvObject->getObjectId() )
+		if ( nullptr != pObject && friendId == pObject->getObjectId() )
 		{
 			m_TaskObjectVector.erase(m_TaskObjectVector.begin() + i);
 
@@ -938,7 +935,7 @@ SVObjectClass* SVTaskObjectListClass::UpdateObject(uint32_t friendId, SVObjectCl
 		}
 		else
 		{
-			l_psvObject = nullptr;
+			pObject = nullptr;
 		}
 	}
 
@@ -947,7 +944,7 @@ SVObjectClass* SVTaskObjectListClass::UpdateObject(uint32_t friendId, SVObjectCl
 		p_psvObject->SetObjectOwner( p_psvNewOwner );
 	}
 
-	return l_psvObject;
+	return pObject;
 }
 
 bool SVTaskObjectListClass::getAvailableObjects(SVClassInfoStructVector* pList, const SvDef::SVObjectTypeInfoStruct* pObjectTypeInfo) const
@@ -1073,9 +1070,7 @@ bool SVTaskObjectListClass::resetAllObjects( SvStl::MessageContainerVector *pErr
 
 void SVTaskObjectListClass::connectChildObject( SVTaskObjectClass& rChildObject )
 {
-	SVObjectLevelCreateStruct createStruct;
-
-	createStruct.OwnerObjectInfo.SetObject(this);
+	SVObjectLevelCreateStruct createStruct(*this);
 	createStruct.m_pInspection = GetInspection();
 	createStruct.m_pTool	= GetTool();
 	createStruct.m_pAnalyzer = GetAnalyzer();
@@ -1143,7 +1138,7 @@ bool SVTaskObjectListClass::RemoveFriend(uint32_t friendID)
 		{
 			for (int i = static_cast<int>(m_friendList.size()) - 1; i >= 0; --i)
 			{
-				if (m_friendList[i].getObjectId() == friendID)
+				if (nullptr != m_friendList[i] && m_friendList[i]->getObjectId() == friendID)
 				{
 					// Remove Friend...
 					m_friendList.RemoveAt(i);

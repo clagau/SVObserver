@@ -71,13 +71,13 @@ void LinearMaximumForegroundObjectAnalyzer::init()
 
 	if( nullptr != pEdgeA )
 	{
-		AddFriend(pEdgeA->getObjectId());
+		AddFriend(pEdgeA);
 		pEdgeA->setDefaultValues(SvDef::SV_POSITIVE_POLARISATION, SvDef::SV_THIS_EDGE, 1.0);
 	}
 
 	if( nullptr != pEdgeB )
 	{
-		AddFriend(pEdgeB->getObjectId());
+		AddFriend(pEdgeB);
 		pEdgeA->setDefaultValues(SvDef::SV_NEGATIVE_POLARISATION, SvDef::SV_THIS_EDGE, 1.0);
 	}
 

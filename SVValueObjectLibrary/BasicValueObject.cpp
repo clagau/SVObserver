@@ -528,11 +528,7 @@ namespace SvVol
 		}
 		if (nullptr != pOwner)
 		{
-			SVObjectLevelCreateStruct CreateStruct;
-
-			CreateStruct.OwnerObjectInfo.SetObject(pOwner);
-			CreateObject(CreateStruct);
-
+			CreateObject(SVObjectLevelCreateStruct{*pOwner});
 		}
 		m_Created = true;
 	}

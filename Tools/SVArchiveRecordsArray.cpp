@@ -8,7 +8,6 @@
 #include "SVArchiveRecordsArray.h"
 #include "SVArchiveTool.h"
 #include "ObjectInterfaces/IValueObject.h"
-#include "SVObjectLibrary/SVObjectInfoStruct.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVValueObjectLibrary/SVStringValueObjectClass.h"
 #pragma endregion Includes

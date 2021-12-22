@@ -1369,12 +1369,9 @@ HRESULT SVInspectionProcess::RebuildInspection(bool shouldCreateAllObject)
 		}
 	}
 	////////////////////////
-
-	SVObjectLevelCreateStruct createStruct;
-
 	if (shouldCreateAllObject || !IsCreated())
 	{
-		if (createAllObjects(createStruct))
+		if (createAllObjects())
 		{
 			l_Status = E_FAIL;
 		}
@@ -2587,20 +2584,14 @@ SVToolSet* SVInspectionProcess::GetToolSet() const
 	return m_pCurrentToolset;
 }
 
-bool SVInspectionProcess::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
+bool SVInspectionProcess::CreateObject()
 {
-	bool l_bOk = SVObjectClass::CreateObject(rCreateStructure);
-
-	SVObjectLevelCreateStruct createStruct;
-
-	createStruct.OwnerObjectInfo.SetObject(this);
+	SVObjectLevelCreateStruct createStruct(*this);
 	createStruct.m_pInspection = this;
 
-	l_bOk = l_bOk && m_pCurrentToolset->createAllObjects(createStruct);
+	m_isCreated = m_pCurrentToolset->createAllObjects(createStruct);
 
 	m_RegressionTestPlayEquation.ConnectObject(createStruct);
-
-	m_isCreated = l_bOk;
 
 	return m_isCreated;
 }
@@ -2953,13 +2944,6 @@ void SVInspectionProcess::SetDefaultInputs()
 SVPublishList& SVInspectionProcess::GetPublishList()
 {
 	return m_publishList;
-}
-
-SVObjectClass* SVInspectionProcess::UpdateObject(uint32_t, SVObjectClass* p_psvObject, SVObjectClass* p_psvNewOwner)
-{
-	p_psvObject->SetObjectOwner(p_psvNewOwner);
-
-	return p_psvObject; //l_psvObject;
 }
 
 LPCTSTR SVInspectionProcess::GetDeviceName() const
@@ -3553,23 +3537,21 @@ void SVInspectionProcess::getToolMessages(SvStl::MessageContainerInserter& rInse
 	}
 }
 
-bool SVInspectionProcess::createAllObjects(const SVObjectLevelCreateStruct& rCreateStructure)
+bool SVInspectionProcess::createAllObjects()
 {
-	bool Result = __super::createAllObjects(rCreateStructure);
-
+	bool retValue = CreateObject();
 	if (nullptr != GetToolSet())
 	{
-		Result &= GetToolSet()->createAllObjects(rCreateStructure);
+		return GetToolSet()->createAllObjects(SVObjectLevelCreateStruct{*this}) && retValue;
 	}
-	return Result;
+	return false;
 }
 
 bool SVInspectionProcess::CreateChildObject(SVObjectClass* pChildObject, DWORD context)
 {
 	if (nullptr != pChildObject)
 	{
-		SVObjectLevelCreateStruct createStruct;
-		createStruct.OwnerObjectInfo.SetObject(this);
+		SVObjectLevelCreateStruct createStruct(*this);
 		createStruct.m_pInspection = this;
 
 		bool Return = pChildObject->createAllObjects(createStruct);
@@ -3700,9 +3682,7 @@ bool SVInspectionProcess::replaceObject(SVObjectClass* pObject, uint32_t newId)
 			}
 
 			// Get the Owner
-			SVObjectInfoStruct ownerInfo = pDuplicateObject->GetOwnerInfo();
-
-			SVObjectClass* pOwner = SVObjectManagerClass::Instance().GetObject(ownerInfo.getObjectId());
+			SVObjectClass* pOwner = pDuplicateObject->GetParent();
 			if (pOwner)
 			{
 				// Ask the owner to kill the imposter!
@@ -3752,7 +3732,7 @@ bool SVInspectionProcess::replaceObject(SVObjectClass* pObject, uint32_t newId)
 
 				if (nullptr != m_pToolSetConditional)
 				{
-					m_pCurrentToolset->AddFriend(m_pToolSetConditional->getObjectId());
+					m_pCurrentToolset->AddFriend(m_pToolSetConditional);
 
 					m_pCurrentToolset->CreateChildObject(m_pToolSetConditional);
 

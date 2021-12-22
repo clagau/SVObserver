@@ -42,7 +42,7 @@ TableAddColumnAnalyzer::TableAddColumnAnalyzer(SVObjectClass* pOwner, int String
 
 TableAddColumnAnalyzer::~TableAddColumnAnalyzer()
 {
-	SvTo::TableAnalyzerTool* pTool = dynamic_cast<SvTo::TableAnalyzerTool*> (m_ownerObjectInfo.getObject());
+	SvTo::TableAnalyzerTool* pTool = dynamic_cast<SvTo::TableAnalyzerTool*> (GetParent());
 	if (nullptr != pTool)
 	{
 		pTool->removeNewColumn(m_pNewColumn);
@@ -55,7 +55,7 @@ bool TableAddColumnAnalyzer::CreateObject(const SVObjectLevelCreateStruct& rCrea
 {
 	bool bOk = __super::CreateObject(rCreateStructure);
 
-	SvTo::TableAnalyzerTool* pTool = dynamic_cast<SvTo::TableAnalyzerTool*> (m_ownerObjectInfo.getObject());
+	SvTo::TableAnalyzerTool* pTool = dynamic_cast<SvTo::TableAnalyzerTool*> (GetParent());
 	auto* pColumnEquation = dynamic_cast<SvOp::IndexEquation*>(getFirstObject({SvPb::SVEquationObjectType, SvPb::IndexEquationObjectType}));
 	if (nullptr != pTool && nullptr != pColumnEquation)
 	{
@@ -95,7 +95,7 @@ bool TableAddColumnAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMe
 
 	m_newColumnInput.validateInput();
 
-	SvTo::TableAnalyzerTool* pTool = dynamic_cast<SvTo::TableAnalyzerTool*> (m_ownerObjectInfo.getObject());
+	SvTo::TableAnalyzerTool* pTool = dynamic_cast<SvTo::TableAnalyzerTool*> (GetParent());
 	if (nullptr == pTool || nullptr == m_pNewColumn)
 	{
 		if (nullptr != pErrorMessages)
@@ -120,7 +120,7 @@ void TableAddColumnAnalyzer::Initialize()
 
 	auto* pColumnEquation = new SvOp::IndexEquation(this);
 	pColumnEquation->SetEquationText(SvDef::cIndexKeyword);
-	AddFriend(pColumnEquation->getObjectId());
+	AddFriend(pColumnEquation);
 
 	// New Column Input.
 	m_newColumnInput.SetInputObjectType(SvPb::SVValueObjectType, SvPb::DoubleSortValueObjectType);

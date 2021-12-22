@@ -101,6 +101,8 @@ This destructor unregisters itself from the object manager and frees all of the 
 SVObjectClass::~SVObjectClass()
 {
 	assert(0 == m_embeddedList.size());
+	assert(0 == m_notificationList.size());
+	sendChangeNotification(SvOi::ObjectNotificationType::Deleting, m_objectId);
 	disconnectAllInputs();
 
 	SVObjectManagerClass::Instance().CloseUniqueObjectID(this);
@@ -190,9 +192,9 @@ bool SVObjectClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructu
 {
 	bool Result(false);
 
-	if (rCreateStructure.OwnerObjectInfo.getObject() != this && rCreateStructure.OwnerObjectInfo.getObjectId() != getObjectId())
+	if (&rCreateStructure.m_rOwner != this  && rCreateStructure.m_rOwner.getObjectId() != getObjectId())
 	{
-		SetObjectOwner(rCreateStructure.OwnerObjectInfo.getObject());
+		SetObjectOwner(&rCreateStructure.m_rOwner);
 		Result = true;
 	}
 	else
@@ -207,9 +209,9 @@ bool SVObjectClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructu
 
 void SVObjectClass::ConnectObject(const SVObjectLevelCreateStruct& rCreateStructure)
 {
-	if (rCreateStructure.OwnerObjectInfo.getObject() != this && rCreateStructure.OwnerObjectInfo.getObjectId() != getObjectId())
+	if (&rCreateStructure.m_rOwner != this && rCreateStructure.m_rOwner.getObjectId() != getObjectId())
 	{
-		SetObjectOwner(rCreateStructure.OwnerObjectInfo.getObject());
+		SetObjectOwner(&rCreateStructure.m_rOwner);
 	}
 }
 
@@ -228,7 +230,7 @@ bool SVObjectClass::CloseObject()
 		}
 	}
 	m_embeddedList.clear();
-
+	sendChangeNotification(SvOi::ObjectNotificationType::Deleting, m_objectId);
 	m_isCreated = false;
 
 	return true;
@@ -257,9 +259,9 @@ std::string SVObjectClass::GetCompleteName() const
 {
 	std::string Result;
 
-	if (nullptr != m_ownerObjectInfo.getObject() && m_ownerObjectInfo.getObject() != this)
+	if (nullptr != m_pOwner && m_pOwner != this)
 	{
-		Result = m_ownerObjectInfo.getObject()->GetCompleteName();
+		Result = m_pOwner->GetCompleteName();
 	}
 
 	if (0 < Result.size())
@@ -421,13 +423,12 @@ void SVObjectClass::fillObjectList(std::back_insert_iterator<std::vector<SvOi::I
 
 uint32_t SVObjectClass::getFirstClosedParent(uint32_t stopSearchAtObjectId) const
 {
-	auto* pOwner = GetOwnerInfo().getObject();
-	if (getObjectId() == stopSearchAtObjectId || nullptr == pOwner)
+	if (getObjectId() == stopSearchAtObjectId || nullptr == m_pOwner)
 	{
 		return SvDef::InvalidObjectId;
 	}
 	
-	return pOwner->getFirstClosedParent(stopSearchAtObjectId);
+	return m_pOwner->getFirstClosedParent(stopSearchAtObjectId);
 }
 #pragma endregion virtual method (IObjectClass)
 
@@ -456,17 +457,16 @@ bool SVObjectClass::SetObjectOwner(SVObjectClass* pNewOwner)
 	assert(pNewOwner != this); // can't own yourself...
 
 	//First disconnect the previous owner
-	uint32_t objectId = m_ownerObjectInfo.getObjectId();
-	if (SvDef::InvalidObjectId != objectId)
+	if (nullptr != m_pOwner)
 	{
-		SVObjectManagerClass::Instance().disconnectDependency(objectId, getObjectId(), SvOl::JoinType::Owner);
+		SVObjectManagerClass::Instance().disconnectDependency(m_pOwner->getObjectId(), getObjectId(), SvOl::JoinType::Owner);
 	}
 
-	m_ownerObjectInfo.SetObject(pNewOwner);
-	objectId = m_ownerObjectInfo.getObjectId();
-	if (SvDef::InvalidObjectId != objectId)
+	m_pOwner = pNewOwner;
+
+	if (nullptr != m_pOwner)
 	{
-		SVObjectManagerClass::Instance().connectDependency(objectId, getObjectId(), SvOl::JoinType::Owner);
+		SVObjectManagerClass::Instance().connectDependency(m_pOwner->getObjectId(), getObjectId(), SvOl::JoinType::Owner);
 		return true;
 	}
 	return false;
@@ -563,14 +563,6 @@ HRESULT SVObjectClass::SetObjectValue(SVObjectAttributeClass* pDataObject)
 // Override this function to implement object behavior...
 void SVObjectClass::SetDisabled()
 {
-}
-
-/*
-This method is a placeholder for derived functionality.  This method performs no operation.
-*/
-SVObjectClass* SVObjectClass::UpdateObject(uint32_t , SVObjectClass* , SVObjectClass* )
-{
-	return nullptr;
 }
 
 bool SVObjectClass::isCorrectType(SvPb::ObjectSelectorType requiredType, const SVObjectClass* pTestObject) const
@@ -701,6 +693,16 @@ HRESULT SVObjectClass::setIndirectStringToObject(SvPb::EmbeddedIdEnum embeddedId
 	return E_FAIL;
 }
 
+void SVObjectClass::registerNotification(SVObjectReference* pRef) 
+{ 
+	m_notificationList.AddIfNoExist(pRef);
+}
+
+void SVObjectClass::deregisterNotification(SVObjectReference* pRef) 
+{ 
+	m_notificationList.Remove(pRef);
+}
+
 /*
 This method returns Ancestor Object of specified Object Type of this Object, if any.  Otherwise it returns NULL.
 */
@@ -742,12 +744,11 @@ std::string SVObjectClass::GetObjectNameToObjectType(SvPb::SVObjectTypeEnum obje
 	SvPb::SVObjectTypeEnum objectType = GetObjectType();
 	if (objectType != objectTypeToInclude)
 	{
-		SVObjectClass* pObject = m_ownerObjectInfo.getObject();
-		if (nullptr != pObject && pObject != this &&
+		if (nullptr != m_pOwner && m_pOwner != this &&
 			//special code for Remote/Digital Input. If ToolSet is selected for this part the inspection name should not be added!
-			(SvPb::SVToolSetObjectType != objectTypeToInclude || SvPb::SVInspectionObjectType != pObject->GetObjectType()))
+			(SvPb::SVToolSetObjectType != objectTypeToInclude || SvPb::SVInspectionObjectType != m_pOwner->GetObjectType()))
 		{
-			Result = pObject->GetObjectNameToObjectType(objectTypeToInclude);
+			Result = m_pOwner->GetObjectNameToObjectType(objectTypeToInclude);
 		}
 	}
 
@@ -773,10 +774,9 @@ std::string SVObjectClass::GetObjectNameBeforeObjectType(SvPb::SVObjectTypeEnum 
 	SvPb::SVObjectTypeEnum objectType = GetObjectType();
 	if (objectType != objectTypeToInclude)
 	{
-		SVObjectClass* pObject = m_ownerObjectInfo.getObject();
-		if (nullptr != pObject && pObject != this && pObject->GetObjectType() != objectTypeToInclude)
+		if (nullptr != m_pOwner && m_pOwner != this && m_pOwner->GetObjectType() != objectTypeToInclude)
 		{
-			Result = pObject->GetObjectNameBeforeObjectType(objectTypeToInclude);
+			Result = m_pOwner->GetObjectNameBeforeObjectType(objectTypeToInclude);
 		}
 	}
 	if (!Result.empty())
@@ -1094,6 +1094,13 @@ UINT SVObjectClass::SetObjectAttributesSet(UINT Attributes, SvOi::SetAttributeTy
 	}
 }
 
+void SVObjectClass::setObjectId(uint32_t objectId) 
+{ 
+	uint32_t oldId = m_objectId;
+	m_objectId = objectId; 
+	sendChangeNotification(SvOi::ObjectNotificationType::ObjectIdChange, oldId);
+}
+
 /*
 This method must be overridden if the derived class desires this functionality
 */
@@ -1113,4 +1120,20 @@ HRESULT SVObjectClass::UnregisterSubObject(SVObjectClass*)
 bool SVObjectClass::allowExtensionCopy() const 
 {
 	return false;
+}
+
+void SVObjectClass::sendChangeNotification(SvOi::ObjectNotificationType type, uint32_t objectId)
+{
+	if (m_notificationList.size())
+	{
+		//onChangeNotification can deregister the notification and this will decrease the m_notifactionList. For this reason the list have to be copied before use it in a for loop
+		auto tmpList = m_notificationList.getContainerCopy();
+		for (auto* pRef : tmpList)
+		{
+			if (nullptr != pRef)
+			{
+				pRef->onChangeNotification(type, objectId);
+			}
+		}
+	}
 }

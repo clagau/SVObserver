@@ -90,13 +90,19 @@ void SVThresholdClass::init()
 	// Add equation friends...
 	SVUpperThresholdEquation* pUTFriend = new SVUpperThresholdEquation( this );
 	if( pUTFriend )
-		AddFriend( pUTFriend->getObjectId() );
+	{
+		AddFriend( pUTFriend );
+	}
 	SVLowerThresholdEquation* pLTFriend = new SVLowerThresholdEquation( this );
 	if( pLTFriend )
-		AddFriend( pLTFriend->getObjectId() );
+	{
+		AddFriend( pLTFriend );
+	}
 	SVAutoThresholdEquation* pATFriend = new SVAutoThresholdEquation( this );
 	if( pATFriend )
-		AddFriend( pATFriend->getObjectId() );
+	{
+		AddFriend( pATFriend );
+	}
 
 	// Identify our input type needs...
 

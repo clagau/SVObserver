@@ -344,7 +344,7 @@ namespace SvAo
 	{
 		for (size_t j = 0; j < m_friendList.size(); j++)
 		{
-			SvOp::IndexEquation* pEquation = dynamic_cast<SvOp::IndexEquation*> (m_friendList[j].getObject());
+			SvOp::IndexEquation* pEquation = dynamic_cast<SvOp::IndexEquation*> (m_friendList[j]);
 			if (nullptr != pEquation)
 			{
 				if (SvDef::CustomFeatureEquationName == std::string(pEquation->GetName()))
@@ -367,7 +367,7 @@ namespace SvAo
 					pObject->SetObjectOwner(this);
 					pObject->SetName(SvDef::CustomFeatureEquationName);
 					pObject->SetEquationText(SvDef::cIndexKeyword);
-					AddFriend(pObject->getObjectId());
+					AddFriend(pObject);
 					if (CreateChildObject(pObject))
 					{
 						m_pEquation = pObject;

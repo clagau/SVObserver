@@ -1169,19 +1169,17 @@ void SVConfigXMLPrint::WriteChildren(Writer writer, SVObjectClass* pObj) const
 
 void SVConfigXMLPrint::WriteFriends(Writer writer, SvIe::SVTaskObjectClass* pObj) const
 {
-	const SVObjectInfoArrayClass& rFriendList = pObj->GetFriendList();
+	auto rFriendList = pObj->GetFriendList().getContainerCopy();
 	size_t sz = rFriendList.size();
 
 	if (sz > 0)
 	{
 		writer->WriteStartElement(nullptr, L"Friends", nullptr);
-		for (size_t nCnt = 0; nCnt < sz; nCnt++)
+		for (auto* pFriend : rFriendList)
 		{
-			const SVObjectInfoStruct& rObjInfo = rFriendList[nCnt];
-
-			if (rObjInfo.getObject())
+			if (pFriend)
 			{
-				WriteObject(writer, rObjInfo.getObject());
+				WriteObject(writer, pFriend);
 			}  // end if( rObjInfo )
 		}  // end for( int nCnt = 0; nCnt < sz; nCnt++ )
 		writer->WriteEndElement();

@@ -20,7 +20,6 @@
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVUtilityLibrary/StringHelper.h"
 #include "SVOResource/resource.h"
-#include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "SVOGui/SelectToolForNewSourceImageDialog.h"
 #pragma endregion Includes
 
@@ -205,8 +204,6 @@ void SVRegressionFileSelectSheet::OnAddImage()
 		if (IDOK == dialog.DoModal())
 		{
 			auto objectPair = dialog.getSelectedToolNameAndId();
-			std::string SelectedItems = SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult();
-			SVObjectReference objectRef{ SelectedItems };
 			RegressionTestStruct data;
 			data.Name = objectPair.first;
 			data.objectId = objectPair.second;

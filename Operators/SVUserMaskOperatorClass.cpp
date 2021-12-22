@@ -63,7 +63,7 @@ void SVUserMaskOperatorClass::init()
 	// RRRRGGGGHHHHHH who created this stupid object structure????
 	SVShapeMaskHelperClass* pShapeHelper = new SVShapeMaskHelperClass(this);
 
-	bool bAddFriend = AddFriend( pShapeHelper->getObjectId() );
+	bool bAddFriend = AddFriend( pShapeHelper );
 	assert( bAddFriend );	UNREFERENCED_PARAMETER(bAddFriend);
 
 
@@ -210,12 +210,11 @@ bool SVUserMaskOperatorClass::ResetObject(SvStl::MessageContainerVector *pErrorM
 SVShapeMaskHelperClass* SVUserMaskOperatorClass::GetShapeHelper()
 {
 	// Get Friend Object
-	for( size_t i = 0; i < m_friendList.size(); i++ )
+	for (size_t j = 0; j < m_friendList.size(); ++j)
 	{
-		const SVObjectInfoStruct& friendObjectInfo = m_friendList[i];
-		if(SvPb::SVShapeMaskHelperObjectType == friendObjectInfo.m_ObjectTypeInfo.m_SubType)
+		if(nullptr != m_friendList[j] && SvPb::SVShapeMaskHelperObjectType == m_friendList[j]->GetObjectSubType())
 		{
-			return static_cast<SVShapeMaskHelperClass*>  (friendObjectInfo.getObject());
+			return static_cast<SVShapeMaskHelperClass*>  (m_friendList[j]);
 		}
 	}
 
@@ -225,12 +224,11 @@ SVShapeMaskHelperClass* SVUserMaskOperatorClass::GetShapeHelper()
 const SVShapeMaskHelperClass* SVUserMaskOperatorClass::GetShapeHelper() const
 {
 	// Get Friend Object
-	for (size_t i = 0; i < m_friendList.size(); i++)
+	for (size_t j = 0; j < m_friendList.size(); ++j)
 	{
-		const SVObjectInfoStruct& friendObjectInfo = m_friendList[i];
-		if (SvPb::SVShapeMaskHelperObjectType == friendObjectInfo.m_ObjectTypeInfo.m_SubType)
+		if (nullptr != m_friendList[j] && SvPb::SVShapeMaskHelperObjectType == m_friendList[j]->GetObjectSubType())
 		{
-			return static_cast<SVShapeMaskHelperClass*>  (friendObjectInfo.getObject());
+			return static_cast<SVShapeMaskHelperClass*>  (m_friendList[j]);
 		}
 	}
 	return nullptr;

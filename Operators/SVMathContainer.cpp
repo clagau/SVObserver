@@ -48,7 +48,7 @@ SVMathContainer::SVMathContainer( SVObjectClass* POwner, int StringResourceID )
 
 	// Make a friend
 	SVMathEquation* pMathEquation = new SVMathEquation( this );
-	AddFriend( pMathEquation->getObjectId() );
+	AddFriend( pMathEquation );
 }
 
 SVMathContainer::~SVMathContainer()

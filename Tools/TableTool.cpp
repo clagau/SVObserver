@@ -55,9 +55,9 @@ bool TableTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure 
 	bOk &= (nullptr != GetInspection());
 
 	//set equation for table tool
-	for( size_t j = 0; j < m_friendList.size(); j++ )
+	for (size_t j = 0; j < m_friendList.size(); ++j)
 	{
-		SvOp::SVEquation* pEquation = dynamic_cast<SvOp::SVEquation*> (m_friendList[j].getObject());
+		SvOp::SVEquation* pEquation = dynamic_cast<SvOp::SVEquation*> (m_friendList[j]);
 		if (nullptr != pEquation)
 		{
 			if (SvDef::TableClearEquationName == std::string(pEquation->GetName()))
@@ -119,7 +119,7 @@ bool TableTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 		m_ColumnEquationList.clear();
 		for( size_t j = 0; j < m_friendList.size(); j++ )
 		{
-			SvOp::TableColumnEquation* equation = dynamic_cast<SvOp::TableColumnEquation*> (m_friendList[j].getObject());
+			SvOp::TableColumnEquation* equation = dynamic_cast<SvOp::TableColumnEquation*> (m_friendList[j]);
 			if (nullptr != equation)
 			{
 				if (SvDef::c_maxTableColumn > m_ColumnEquationList.size())
@@ -233,12 +233,13 @@ void TableTool::LocalInitialize ()
 	BuildEmbeddedObjectList ();
 
 	//Clear Condition Equation
-	SVObjectClass* pObject = dynamic_cast<SVObjectClass*> (SvOi::ConstructObject(SvPb::EquationClassId));
+	SVTaskObjectClass* pObject = nullptr;
+	SVObjectManagerClass::Instance().ConstructObject(SvPb::EquationClassId, pObject);
 	if( nullptr != pObject )
 	{
 		pObject->SetObjectOwner( this );
 		pObject->SetName(SvDef::TableClearEquationName);
-		AddFriend( pObject->getObjectId() );
+		AddFriend( pObject );
 	}
 
 	// Set up your type

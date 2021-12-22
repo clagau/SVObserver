@@ -927,15 +927,13 @@ void SVConfigurationPrint::PrintChildren( CDC* pDC, SVObjectClass* pObj, CPoint&
 ////////////////////////////////////////////////////////////////////////////////
 void SVConfigurationPrint::PrintFriends( CDC* pDC, SvIe::SVTaskObjectClass* pObj, CPoint& ptCurPos, int nIndentLevel )
 {
-	const SVObjectInfoArrayClass& rFriendList = pObj->GetFriendList();
+	auto rFriendList = pObj->GetFriendList().getContainerCopy();
 	
-	for (size_t nCnt = 0; nCnt < rFriendList.size(); nCnt++)
+	for (auto* pFriend : rFriendList)
 	{
-		const SVObjectInfoStruct& rObjInfo = rFriendList[nCnt];
-		
-		if (rObjInfo.getObject())
+		if (nullptr != pFriend)
 		{
-			PrintObject(pDC, rObjInfo.getObject(), ptCurPos, nIndentLevel);
+			PrintObject(pDC, pFriend, ptCurPos, nIndentLevel);
 		}  // end if( rObjInfo )
 	}  // end for( size_t nCnt = 0; nCnt < rFriendList.GetSize (); nCnt++ )
 }  // end function void SVConfigurationPrint:::PrintFriends( ... )

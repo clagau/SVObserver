@@ -47,7 +47,7 @@ void SVMathToolClass::init(void)
 
 	// Set up the friend
 	m_pMathEquation = new SvOp::SVMathEquation( this );
-	AddFriend( m_pMathEquation->getObjectId() );
+	AddFriend( m_pMathEquation );
 
 	// Setup the result
 	SvIe::SVClassInfoStruct resultClassInfo;

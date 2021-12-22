@@ -87,12 +87,12 @@ ToolSizeAdjustTask::~ToolSizeAdjustTask()
 
 bool ToolSizeAdjustTask::AddEvaluationObject(SvOl::InputObject* pInput, SvPb::ClassIdEnum classId, LPCTSTR Name, SvPb::EmbeddedIdEnum embeddedId)
 {
-	SVObjectClass* pObject(nullptr);
+	SVTaskObjectClass* pObject(nullptr);
 	SVObjectManagerClass::Instance().ConstructObject( classId, pObject );
 	if( nullptr != pObject )
 	{
 		pObject->SetObjectOwner( this );
-		AddFriend( pObject->getObjectId() );
+		AddFriend( pObject );
 	}
 	else
 	{
@@ -522,7 +522,7 @@ ToolSizeAdjustTask* ToolSizeAdjustTask::AddToFriendlist(SvTo::SVToolClass* pTool
 	if (nullptr != pToolSizeAdjustTask)
 	{
 		pToolSizeAdjustTask->SetObjectOwner( pTool );
-		pTool->AddFriend( pToolSizeAdjustTask->getObjectId() );
+		pTool->AddFriend( pToolSizeAdjustTask );
 	}
 	return pToolSizeAdjustTask;
 }

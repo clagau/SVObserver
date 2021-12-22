@@ -115,14 +115,14 @@ public:
 	bool getAvailableObjects(SVClassInfoStructVector* pList, const SvDef::SVObjectTypeInfoStruct* pObjectTypeInfo ) const;
 	virtual bool resetAllObjects( SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 #pragma endregion Methods to replace processMessage
+
+	SVTaskObjectClass* UpdateObject(uint32_t friendId, SVObjectClass* p_psvObject, SVObjectClass* p_psvNewOwner);
 #pragma endregion public methods	
 
 #pragma region protected methods
 protected:
 	void DeleteAt( int Index, int Count = 1 );
 	void DeleteAll();
-
-	virtual SVObjectClass* UpdateObject(uint32_t friendId, SVObjectClass* p_psvObject, SVObjectClass* p_psvNewOwner) override;
 
 	// Direct Method Call
 	// NOTE:

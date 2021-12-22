@@ -233,6 +233,8 @@ protected:
 
 	HRESULT DetachObservers( uint32_t subjectID );
 
+	std::tuple<HRESULT, SVObjectClass*, SVObjectNameInfo> getObjectByDottedName(const std::string& rFullName) const;
+
 	long m_State;
 
 	//@Todo[MEC][8.20] [15.05.2019] probaly after some code cleanup std::mutex would be enough  

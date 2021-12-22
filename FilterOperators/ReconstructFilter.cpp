@@ -40,7 +40,7 @@ bool ReconstructFilter::ResetObject(SvStl::MessageContainerVector *pErrorMessage
 	m_SeedImageInput.validateInput();
 
 	auto* pSeedImage = m_SeedImageInput.getInput<SvIe::SVImageClass>();
-	auto* pOwner = m_ownerObjectInfo.getObject();
+	auto* pOwner = GetParent();
 	SvIe::SVImageClass* pSourceImage = nullptr;
 	if (nullptr != pOwner)
 	{

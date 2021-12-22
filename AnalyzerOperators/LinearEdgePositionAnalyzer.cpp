@@ -43,7 +43,7 @@ void LinearEdgePositionAnalyzer::init()
 
 	SvOp::SVLinearEdgeProcessingClass *pEdge = new SvOp::SVLinearEdgeAProcessingClass( this );
 
-	AddFriend( pEdge->getObjectId() );
+	AddFriend( pEdge );
 
 	RegisterEmbeddedObject( &dpEdge, SvPb::DPEdgeAEId, IDS_OBJECTNAME_DPEDGE, false, SvOi::SVResetItemNone );
 	RegisterEmbeddedObject( &m_svLinearDistance, SvPb::LinearDistanceEdgeAEId, IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_A, false, SvOi::SVResetItemNone );

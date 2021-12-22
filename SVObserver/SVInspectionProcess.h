@@ -69,7 +69,7 @@ public:
 	virtual void ResetName() override;
 	virtual void SetName( LPCTSTR StrString ) override;
 
-	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
+	bool CreateObject( );
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	virtual HRESULT RegisterSubObject( SVObjectClass* pObject ) override;
@@ -232,8 +232,9 @@ public:
 
 	void setIOObjectIdMap(std::map<std::string, uint32_t>&& ioObjectMap);
 
+
 #pragma region Methods to replace processMessage
-	virtual bool createAllObjects( const SVObjectLevelCreateStruct& rCreateStructure ) override;
+	virtual bool createAllObjects();
 	virtual bool CreateChildObject( SVObjectClass* pChildObject, DWORD context = 0 ) override;
 	virtual void ConnectObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 	bool DestroyChildObject(SVObjectClass* pChildcontext);
@@ -316,8 +317,6 @@ protected:
 	typedef SVTQueueObject<SVInputRequestInfoStructPtr> SVInputRequestQueue;
 	typedef SVTQueueObject<SVInputImageRequestInfoStructPtr> SVInputImageRequestQueue;
 	typedef SVTQueueObject<SVProductInfoStruct> SVProductQueue;
-	
-	virtual SVObjectClass* UpdateObject(uint32_t friendId, SVObjectClass *p_psvObject, SVObjectClass *p_psvNewOwner ) override;
 
 	bool RunInspection(SVInspectionInfoStruct& rIPInfo, const SvIe::SVObjectIdSVCameraInfoStructMap& rCameraInfos, long triggerCount, bool p_UpdateCounts = true );
 

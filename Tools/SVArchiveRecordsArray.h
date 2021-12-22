@@ -16,8 +16,6 @@ namespace SvVol
 class SVStringValueObjectClass;
 }
 
-struct SVObjectInfoStruct;
-
 namespace SvTo
 {
 class SVArchiveTool;

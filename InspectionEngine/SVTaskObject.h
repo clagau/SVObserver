@@ -17,7 +17,6 @@
 #include "SVProtoBuf/SVO-Enum.h"
 #include "ObjectInterfaces/ITaskObject.h"
 #include "ObjectInterfaces/IValueObject.h"
-#include "SVObjectLibrary/SVObjectInfoArrayClass.h"
 #include "SVObjectAppClass.h"
 #include "SVValueObjectLibrary/SVDWordValueObjectClass.h"
 #include "SVImageLibrary/SVExtentMultiLineStruct.h"
@@ -129,7 +128,7 @@ public:
 	SVObjectClass* GetFriend(const SvDef::SVObjectTypeInfoStruct& rObjectType) const;
 	
 	/// This method returns a reference to the friends list attribute of this object.
-	const SVObjectInfoArrayClass& GetFriendList() const { return m_friendList;	};
+	const SVThreadSafeList<SVTaskObjectClass*>& GetFriendList() const { return m_friendList; };
 
 	virtual void fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, SvOi::IsObjectAllowedFunc pFunctor, UINT attribute, bool wholeArray, SvPb::SVObjectTypeEnum nameToType, SvPb::ObjectSelectorType requiredType, bool stopIfClosed = false, bool firstObject = false) const override;
 	virtual void fillObjectList(std::back_insert_iterator<std::vector<SvOi::IObjectClass*>> inserter, const SvDef::SVObjectTypeInfoStruct& rObjectInfo, bool addHidden = false, bool stopIfClosed = false, bool firstObject = false) override;
@@ -153,6 +152,7 @@ public:
 	virtual std::vector<uint32_t> getEmbeddedList() const override;
 	virtual bool isErrorMessageEmpty() const override { return m_ResetErrorMessages.empty() && m_RunErrorMessages.empty(); };
 	virtual bool AddFriend(uint32_t friendId, uint32_t addPreId = SvDef::InvalidObjectId) override;
+	bool AddFriend(SVTaskObjectClass* pFriend, uint32_t addPreId = SvDef::InvalidObjectId);
 	virtual void moveFriendObject(uint32_t objectToMoveId, uint32_t preObjectId = SvDef::InvalidObjectId) override;
 	virtual void getToolsWithReplaceableSourceImage(SvPb::GetToolsWithReplaceableSourceImageResponse&) const override {};
 	virtual SvPb::InspectionCmdResponse setAndSortEmbeddedValues(SvPb::SetAndSortEmbeddedValueRequest request) override { assert(false); return {}; };
@@ -232,6 +232,7 @@ private:
 	HRESULT LocalInitialize();
 	HRESULT setEmbeddedValue(const SvOi::SetValueStruct& rEntry, std::back_insert_iterator<SvStl::MessageContainerVector> inserter);
 	HRESULT setEmbeddedValue(const SvOi::SetLinkedStruct& rEntry, std::back_insert_iterator<SvStl::MessageContainerVector> inserter);
+	bool addFriend(SVTaskObjectClass& rFriend, uint32_t addPreId = SvDef::InvalidObjectId);
 
 	
 protected:
@@ -242,7 +243,7 @@ protected:
 	SvVol::SVDWordValueObjectClass m_statusColor;
 	bool m_bSkipFirstFriend; //if true first friend will not be "run" by "runFriends". Is used for conditionalTask, because it will be run before the normal run separately.
 	//Contains a list of friend objects, which will be informed about certain actions or messages this object is doing/processing.
-	SVObjectInfoArrayClass m_friendList;
+	SVThreadSafeList<SVTaskObjectClass*> m_friendList;
 	std::vector<SvVol::LinkedValue*> m_embeddedFormulaLinked;
 
 	std::vector<SvOl::InputObject*> m_inputs;

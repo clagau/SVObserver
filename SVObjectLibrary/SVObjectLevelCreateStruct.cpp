@@ -15,10 +15,8 @@
 #include "SVObjectClass.h"
 #pragma endregion Includes
 
-SVObjectLevelCreateStruct::SVObjectLevelCreateStruct()
-: m_pInspection(nullptr)
-, m_pTool(nullptr)
-, m_pAnalyzer(nullptr)
+SVObjectLevelCreateStruct::SVObjectLevelCreateStruct(SVObjectClass& rOwner)
+: m_rOwner(rOwner)
 {
 }
 

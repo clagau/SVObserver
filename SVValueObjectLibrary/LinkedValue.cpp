@@ -435,7 +435,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 		ConvertVariantToProtobuf(varValue, rLinkedValue.mutable_value());
 		ConvertVariantToProtobuf(GetDefaultValue(), rLinkedValue.mutable_defaultvalue());
 		ConvertVariantToProtobuf(m_directValue, rLinkedValue.mutable_directvalue());
-		rLinkedValue.set_indirectidstring((convertObjectIdToString(m_indirectValueRef.getObjectId()) + m_indirectValueRef.GetIndexString(true)).c_str());
+		rLinkedValue.set_indirectidstring(m_indirectValueRef.GetObjectIdAndIndexOneBased().c_str());
 		rLinkedValue.set_formula(m_formulaString.c_str());
 		rLinkedValue.set_equationid(m_equation.getObjectId());
 	}
@@ -526,6 +526,10 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 		m_type = static_cast<SvPb::LinkedSelectedType>(lValue);
 
 		m_equation.CreateObject(rCreateStructure);
+		if (nullptr == m_indirectValueRef.getObject() && SvDef::InvalidObjectId != m_indirectValueRef.getObjectId())
+		{
+			m_indirectValueRef.update();
+		}
 		UpdateConnection();
 		return ret;
 	}
@@ -679,10 +683,6 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 		}
 		case SvPb::LinkedSelectedType::IndirectValue:
 		{
-			if (nullptr == m_indirectValueRef.getObject())
-			{
-				m_indirectValueRef.update();
-			}
 			Result = updateLinkedValue(m_indirectValueRef, pErrorMessages) && Result;
 			break;
 		}
@@ -880,16 +880,12 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 
 		if (nullptr == m_LinkedObjectRef.getObject())
 		{
-			m_LinkedObjectRef.update();
-			if (nullptr == m_LinkedObjectRef.getObject())
+			if (nullptr != pErrorMessages)
 			{
-				if (nullptr != pErrorMessages)
-				{
-					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_EmptyObjectForIndirectValue, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
-					pErrorMessages->push_back(Msg);
-				}
-				return false;
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_EmptyObjectForIndirectValue, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+				pErrorMessages->push_back(Msg);
 			}
+			return false;
 		}
 		else if (0 == m_LinkedObjectRef.getObject()->ObjectAttributesAllowed())
 		{
@@ -910,8 +906,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 				{ //Add children-LinkedValues for TableObject
 					const auto& tableValues = dynamic_cast<SvOi::ITableObject*>(pLinkedObject)->getValueList();
 					m_children.resize(tableValues.size());
-					SVObjectLevelCreateStruct createStruct;
-					createStruct.OwnerObjectInfo.SetObject(this);
+					SVObjectLevelCreateStruct createStruct(*this);
 					for (int i = 0; i < tableValues.size(); ++i)
 					{
 						Result = resetChild(i, tableValues[i].get(), pErrorMessages, createStruct) && Result;
@@ -1141,7 +1136,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 
 		rWriter.WriteAttribute(scLinkedDirectValueTag, m_directValue);
 		_variant_t Value(0);
-		Value = (convertObjectIdToString(m_indirectValueRef.getObjectId()) + m_indirectValueRef.GetIndexString(true)).c_str();
+		Value = m_indirectValueRef.GetObjectIdAndIndexOneBased().c_str();
 		rWriter.WriteAttribute(scLinkedIndirectValueTag, Value);
 		std::string Temp = m_formulaString;
 		SvUl::AddEscapeSpecialCharacters(Temp, true);
@@ -1385,8 +1380,7 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 			}
 		}
 		m_children.resize(childList.size());
-		SVObjectLevelCreateStruct createStruct;
-		createStruct.OwnerObjectInfo.SetObject(this);
+		SVObjectLevelCreateStruct createStruct(*this);
 		bool result = true;
 		for (int i = 0; i < childList.size(); ++i)
 		{

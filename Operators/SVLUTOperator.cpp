@@ -100,7 +100,7 @@ void SVLUTOperator::init()
 	// Add equation friends...
 	SVLUTEquation* pLUTEquationFriend = new SVLUTEquation( this );
 	if( pLUTEquationFriend )
-		AddFriend( pLUTEquationFriend->getObjectId() );
+		AddFriend( pLUTEquationFriend );
 
 
 	// Identify our input type needs...

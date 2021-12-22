@@ -73,14 +73,9 @@ bool SVRemoteOutputObject::SetParameters( SVTreeType& rTree, SVTreeType::SVBranc
 	bool bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_UNIQUE_REFERENCE_ID, htiParent, svVariant );
 	if ( bOk )
 	{
-		bOk = SVObjectManagerClass::Instance().CloseUniqueObjectID( this );
+		bOk = SVObjectManagerClass::Instance().ChangeUniqueObjectID( this, calcObjectId(svVariant) );
 
-		if( bOk )
-		{
-			setObjectId(calcObjectId(svVariant));
-			bOk = SVObjectManagerClass::Instance().OpenUniqueObjectID( this );
-		}
-		else
+		if( false == bOk )
 		{
 			OutputDebugString( "Remote Output Unable to set RemoteOutputObject Unique Id\n");
 		}

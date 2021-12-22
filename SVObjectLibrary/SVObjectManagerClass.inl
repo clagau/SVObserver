@@ -44,15 +44,11 @@ HRESULT SVObjectManagerClass::ConstructObject(SvPb::ClassIdEnum classID, SVObjec
 template< typename SVObjectTypeName >
 HRESULT SVObjectManagerClass::GetObjectByDottedName( const std::string& rFullName, SVObjectTypeName*& rpObject )
 {
-	HRESULT Result = S_OK;
+	auto [Result, pObject, _] = getObjectByDottedName(rFullName);
 
-	SVObjectReference ObjRef;
-
-	Result = GetObjectByDottedName( rFullName, ObjRef );
-
-	if( nullptr != ObjRef.getObject() )
+	if( nullptr != pObject)
 	{
-		rpObject = dynamic_cast<SVObjectTypeName*> ( ObjRef.getObject() );
+		rpObject = dynamic_cast<SVObjectTypeName*> (pObject);
 	}
 	else
 	{

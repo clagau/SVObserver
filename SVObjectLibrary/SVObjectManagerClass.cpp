@@ -270,12 +270,11 @@ HRESULT SVObjectManagerClass::GetObjectByIdentifier(uint32_t objectID, SVObjectC
 
 HRESULT SVObjectManagerClass::GetObjectByDottedName(const std::string& rFullName, uint32_t& rObjectID) const
 {
-	SVObjectReference ObjectRef;
-	HRESULT Status = GetObjectByDottedName(rFullName, ObjectRef);
+	auto [Status, pObject, _] = getObjectByDottedName(rFullName);
 
-	if (nullptr != ObjectRef.getObject())
+	if (nullptr != pObject)
 	{
-		rObjectID = ObjectRef.getObject()->getObjectId();
+		rObjectID = pObject->getObjectId();
 	}
 	else
 	{
@@ -292,17 +291,9 @@ HRESULT SVObjectManagerClass::GetObjectByDottedName(const std::string& rFullName
 
 HRESULT SVObjectManagerClass::GetObjectByDottedName(const std::string& rFullName, SVObjectClass*& rpObject) const
 {
-	SVObjectReference ObjectRef;
-	HRESULT Result = GetObjectByDottedName(rFullName, ObjectRef);
+	auto [Result, pObject, _] = getObjectByDottedName(rFullName);
 
-	if (nullptr != ObjectRef.getObject())
-	{
-		rpObject = ObjectRef.getObject();
-	}
-	else
-	{
-		rpObject = nullptr;
-	}
+	rpObject = pObject;
 
 	if (S_OK == Result && nullptr == rpObject)
 	{
@@ -314,86 +305,20 @@ HRESULT SVObjectManagerClass::GetObjectByDottedName(const std::string& rFullName
 
 HRESULT SVObjectManagerClass::GetObjectByDottedName(const std::string& rFullName, SVObjectReference& rObjectRef) const
 {
-	HRESULT Result = S_OK;
-
 	if (0 == rFullName.find(SvOl::ToolSetName))
 	{
 		SvStl::MessageManager Exception(SvStl::MsgType::Log);
 		Exception.setMessage(SVMSG_SVO_96_DOTTED_NAME_NOT_UNIQUE, rFullName.c_str(), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25049_DottedName);
 		assert(false);
-		Result = E_FAIL;
 		rObjectRef = SVObjectReference();
-		return Result;
+		return E_FAIL;
 	}
 
-	std::unique_lock<std::recursive_mutex> Autolock(m_Mutex, std::defer_lock);
-	bool Status = !(rFullName.empty());
+	auto [Result, pObject, NameInfo] = getObjectByDottedName(rFullName);
 
-	if (Status && ReadWrite == m_State && (Autolock.owns_lock() == false))
+	if (nullptr != pObject)
 	{
-		Autolock.lock();
-	}
-
-	if (Status)
-	{
-		std::string Name = rFullName;
-		TranslateDottedName(Name);
-		SVObjectClass* pChildRootObject(nullptr);
-		SVObjectNameInfo NameInfo;
-
-		NameInfo.ParseObjectName(Name);
-
-		uint32_t ChildRootID = GetChildRootObjectID(NameInfo.m_NameArray[0]);
-		uint32_t ConfigID = GetChildRootObjectID(SvDef::FqnConfiguration);
-		Result = GetObjectByIdentifier(ChildRootID, pChildRootObject);
-
-		if (nullptr != pChildRootObject)
-		{
-			//Check if it is configuration object as it needs to be stripped of the FqnConfiguration name
-			if (ChildRootID == ConfigID)
-			{
-				if (0 == Name.find(pChildRootObject->GetName()))
-				{
-					NameInfo.RemoveTopName();
-				}
-			}
-			SVObjectClass* pObject(nullptr);
-			//Only child root object
-			if (1 == NameInfo.m_NameArray.size() && m_RootNameChildren.end() != m_RootNameChildren.find(NameInfo.m_NameArray[0]))
-			{
-				pObject = pChildRootObject;
-			}
-			else
-			{
-				SVObjectClass* pParent(nullptr);
-				if (ChildRootID == ConfigID)
-				{
-					pParent = pChildRootObject;
-				}
-				else
-				{
-					uint32_t RootObjetctID = GetChildRootObjectID(SvDef::FqnRoot);
-					Result = GetObjectByIdentifier(RootObjetctID, pParent);
-				}
-				if (nullptr != pParent)
-				{
-					Result = pParent->GetChildObject(pObject, NameInfo);
-				}
-			}
-
-			if (nullptr != pObject)
-			{
-				rObjectRef = SVObjectReference(pObject, NameInfo);
-			}
-			else
-			{
-				rObjectRef = SVObjectReference();
-			}
-		}
-		else
-		{
-			rObjectRef = SVObjectReference();
-		}
+		rObjectRef = SVObjectReference(pObject, NameInfo);
 	}
 	else
 	{
@@ -589,10 +514,14 @@ bool SVObjectManagerClass::CloseUniqueObjectID(SVObjectClass* pObject)
 
 bool SVObjectManagerClass::ChangeUniqueObjectID(SVObjectClass* pObject, uint32_t newId)
 {
-	if (SvDef::InvalidObjectId != newId && CloseUniqueObjectID(pObject))
+	if (SvDef::InvalidObjectId != newId && nullptr != pObject)
 	{
-		pObject->setObjectId(newId);
-		return OpenUniqueObjectID(pObject);
+		if (pObject->getObjectId() != newId && CloseUniqueObjectID(pObject))
+		{
+			pObject->setObjectId(newId);
+			return OpenUniqueObjectID(pObject);
+		}
+		return (pObject->getObjectId() == newId);
 	}
 	return false;
 }
@@ -1375,6 +1304,68 @@ void SVObjectManagerClass::listAllObjects()
 		::OutputDebugString(SvUl::Format(_T("%lu; %s\n"), rEntry.second->m_ObjectID, objectData.c_str()).c_str());
 	}
 #endif
+}
+
+std::tuple<HRESULT, SVObjectClass*, SVObjectNameInfo> SVObjectManagerClass::getObjectByDottedName(const std::string& rFullName) const
+{
+	std::unique_lock<std::recursive_mutex> Autolock(m_Mutex, std::defer_lock);
+	bool Status = !(rFullName.empty());
+
+	if (Status && ReadWrite == m_State && (Autolock.owns_lock() == false))
+	{
+		Autolock.lock();
+	}
+
+	SVObjectNameInfo NameInfo;
+	if (Status)
+	{
+		std::string Name = rFullName;
+		TranslateDottedName(Name);
+		SVObjectClass* pChildRootObject(nullptr);
+		NameInfo.ParseObjectName(Name);
+
+		uint32_t ChildRootID = GetChildRootObjectID(NameInfo.m_NameArray[0]);
+		uint32_t ConfigID = GetChildRootObjectID(SvDef::FqnConfiguration);
+		HRESULT Result = GetObjectByIdentifier(ChildRootID, pChildRootObject);
+
+		if (nullptr != pChildRootObject)
+		{
+			//Check if it is configuration object as it needs to be stripped of the FqnConfiguration name
+			if (ChildRootID == ConfigID)
+			{
+				if (0 == Name.find(pChildRootObject->GetName()))
+				{
+					NameInfo.RemoveTopName();
+				}
+			}
+			SVObjectClass* pObject(nullptr);
+			//Only child root object
+			if (1 == NameInfo.m_NameArray.size() && m_RootNameChildren.end() != m_RootNameChildren.find(NameInfo.m_NameArray[0]))
+			{
+				pObject = pChildRootObject;
+			}
+			else
+			{
+				SVObjectClass* pParent(nullptr);
+				if (ChildRootID == ConfigID)
+				{
+					pParent = pChildRootObject;
+				}
+				else
+				{
+					uint32_t RootObjetctID = GetChildRootObjectID(SvDef::FqnRoot);
+					Result = GetObjectByIdentifier(RootObjetctID, pParent);
+				}
+				if (nullptr != pParent)
+				{
+					Result = pParent->GetChildObject(pObject, NameInfo);
+				}
+			}
+			return {Result, pObject, NameInfo};
+		}
+	}
+
+	return {E_FAIL, nullptr, NameInfo};
 }
 
 #pragma region IObjectManager-function

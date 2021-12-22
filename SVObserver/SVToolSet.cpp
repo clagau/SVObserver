@@ -176,7 +176,7 @@ void SVToolSet::init()
 	m_isCreated = false;
 
 	SvOp::SVConditional* pConditional = new SvOp::SVConditional(this);
-	AddFriend(pConditional->getObjectId());
+	AddFriend(pConditional);
 
 	// Identify our input type needs
 	m_inputConditionBool.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVBoolValueObjectType, SvPb::ConditionalResultEId);
@@ -694,8 +694,7 @@ bool SVToolSet::createAllObjectsFromChild(SVObjectClass& rChildObject)
 	// Set defaults, to ensure that no invalid input info exists...
 	SetDefaultInputs();
 
-	SVObjectLevelCreateStruct createStruct;
-	createStruct.OwnerObjectInfo.SetObject(this);
+	SVObjectLevelCreateStruct createStruct(*this);
 	createStruct.m_pInspection = GetInspection();
 
 	return rChildObject.createAllObjects(createStruct);
@@ -703,8 +702,7 @@ bool SVToolSet::createAllObjectsFromChild(SVObjectClass& rChildObject)
 
 void SVToolSet::connectChildObject(SVTaskObjectClass& rChildObject)
 {
-	SVObjectLevelCreateStruct createStruct;
-	createStruct.OwnerObjectInfo.SetObject(this);
+	SVObjectLevelCreateStruct createStruct(*this);
 	createStruct.m_pInspection = GetInspection();
 
 	rChildObject.ConnectObject(createStruct);

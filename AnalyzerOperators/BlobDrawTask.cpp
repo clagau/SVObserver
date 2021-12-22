@@ -84,7 +84,7 @@ namespace SvAo
 			m_isFillBlobs.GetValue(isFillBlob);
 			if (isFillBlob)
 			{
-				auto* pAnalyzer = dynamic_cast<ImageAnalyzer*>(GetOwnerInfo().getObject());
+				auto* pAnalyzer = dynamic_cast<ImageAnalyzer*>(GetParent());
 				if (nullptr == pAnalyzer)
 				{
 					SvStl::MessageManager msg(SvStl::MsgType::Data);
@@ -198,7 +198,7 @@ namespace SvAo
 		m_useAdditionalImage.GetValue(useAdditionalImage);
 		if (useAdditionalImage)
 		{
-			auto* pAnalyzer = dynamic_cast<BlobAnalyzer2*>(GetOwnerInfo().getObject());
+			auto* pAnalyzer = dynamic_cast<BlobAnalyzer2*>(GetParent());
 			if (nullptr == pAnalyzer)
 			{
 				if (pErrorMessages)

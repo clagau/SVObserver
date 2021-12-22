@@ -16,7 +16,7 @@
 //Moved to precompiled header: #include <iterator>
 
 #include "ObjectInterfaces/IObjectClass.h"
-
+#include "SVContainerLibrary/SVThreadSafeList.h"
 #include "SVObjectInfoStruct.h"
 #include "SVObjectLibrary.h"
 #include "SVUtilityLibrary/NameObjectIdList.h"
@@ -119,7 +119,7 @@ public:
 	SVObjectClass* GetAncestor( SvPb::SVObjectTypeEnum AncestorObjectType, bool topLevel=false ) const;
 	LPCTSTR GetObjectName() const;
 
-	SVObjectClass* GetParent() const { return m_ownerObjectInfo.getObject(); };
+	SVObjectClass* GetParent() const { return m_pOwner; };
 	
 	bool IsCreated() const { return m_isCreated; };
 
@@ -141,7 +141,7 @@ public:
 	virtual std::string GetObjectNameBeforeObjectType(SvPb::SVObjectTypeEnum objectTypeToInclude) const override;
 	virtual const SvPb::SVObjectTypeEnum& GetObjectType() const override { return m_ObjectTypeInfo.m_ObjectType; };
 	virtual SvPb::SVObjectSubTypeEnum GetObjectSubType() const override;
-	virtual uint32_t GetParentID() const override { return m_ownerObjectInfo.getObjectId(); };
+	virtual uint32_t GetParentID() const override { return m_pOwner ? m_pOwner->getObjectId() : SvDef::InvalidObjectId; };
 	virtual SvOi::IObjectClass* GetAncestorInterface(SvPb::SVObjectTypeEnum ancestorObjectType, bool topLevel = false) override;
 	virtual const SvOi::IObjectClass* GetAncestorInterface(SvPb::SVObjectTypeEnum ancestorObjectType, bool topLevel = false) const override;
 	virtual UINT ObjectAttributesAllowed() const override;
@@ -149,7 +149,7 @@ public:
 	virtual UINT ObjectAttributesSet(int iIndex=0) const override;
 	virtual UINT SetObjectAttributesSet( UINT Attributes, SvOi::SetAttributeType Type, int iIndex=0 ) override;
 	virtual uint32_t getObjectId() const override {	return m_objectId; };
-	void setObjectId(uint32_t objectId) { m_objectId = objectId; };
+	void setObjectId(uint32_t objectId);
 	virtual SvPb::EmbeddedIdEnum GetEmbeddedID() const override { return m_embeddedID; };
 	virtual bool is_Created() const override;
 	virtual SvUl::NameClassIdList GetCreatableObjects(const SvDef::SVObjectTypeInfoStruct& rObjectTypeInfo) const override;
@@ -167,8 +167,7 @@ public:
 	virtual bool allowExtensionCopy() const override;
 #pragma endregion virtual method (IObjectClass)
 
-	const SVObjectInfoStruct& GetOwnerInfo() const { return m_ownerObjectInfo; };
-	const SvDef::SVObjectTypeInfoStruct getObjectTypeInfo() const { return m_ObjectTypeInfo; };
+	const SvDef::SVObjectTypeInfoStruct& getObjectTypeInfo() const { return m_ObjectTypeInfo; };
 
 #pragma region Methods to replace processMessage
 	/// Call the method createObject for all children and itself.
@@ -202,7 +201,6 @@ public:
 	virtual bool replaceObject(SVObjectClass* , uint32_t ) { return false; };
 #pragma endregion Methods to replace processMessage
 
-	virtual SVObjectClass* UpdateObject(uint32_t friendId, SVObjectClass* pObject, SVObjectClass* pNewOwner);
 	virtual bool isCorrectType(SvPb::ObjectSelectorType requiredType, const SVObjectClass* pTestObject = nullptr) const;
 	bool checkIfValidDependency(const SVObjectClass* pObject) const;
 
@@ -214,6 +212,9 @@ public:
 	/// Old for loading old configs older than 10.20
 	/// Set indirect value string to LinkedValue to help to convert LinkedValue from old to new struct.
 	HRESULT setIndirectStringToObject(SvPb::EmbeddedIdEnum embeddedId, const std::vector<_variant_t>& rValueString);
+
+	void registerNotification(SVObjectReference* pRef);
+	void deregisterNotification(SVObjectReference* pRef);
 
 protected:
 	/// Convert a string (dotted name) to an object.
@@ -239,6 +240,7 @@ protected:
 private:
 	void init();
 	void PersistEmbeddeds(SvOi::IObjectWriter& rWriter) const;
+	void sendChangeNotification(SvOi::ObjectNotificationType type, uint32_t objectId);
 
 protected:
 	//This attribute holds the enumerated bits of allowed object attributes.
@@ -251,7 +253,7 @@ protected:
 	//If object is embedded, set this ID
 	SvPb::EmbeddedIdEnum m_embeddedID;
 	//Owner Info
-	SVObjectInfoStruct m_ownerObjectInfo;
+	SVObjectClass* m_pOwner = nullptr;
 	SvDef::SVObjectTypeInfoStruct m_ObjectTypeInfo;
 	uint32_t m_objectId = SvDef::InvalidObjectId;
 
@@ -267,4 +269,6 @@ private:
 	std::string m_Name;			//user given name
 	std::set <uint32_t> m_connectedSet;
 	std::mutex m_inputMutex;
+
+	SVThreadSafeList<SVObjectReference*> m_notificationList;
 };

@@ -12,6 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVTaskObject.h"
+#include "SVTaskObjectList.h"
 #include "SVExtentPropertyInfoStruct.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
@@ -94,10 +95,9 @@ bool SVTaskObjectClass::resetAllObjects(SvStl::MessageContainerVector* pErrorMes
 	// Notify friends...
 	for (size_t i = 0; i < m_friendList.size(); ++i)
 	{
-		const SVObjectInfoStruct& rfriend = m_friendList[i];
-		if (nullptr != rfriend.getObject())
+		if (nullptr != m_friendList[i])
 		{
-			Result &= rfriend.getObject()->resetAllObjects(&m_ResetErrorMessages);
+			Result &= m_friendList[i]->resetAllObjects(&m_ResetErrorMessages);
 		}
 	}
 
@@ -130,16 +130,9 @@ void SVTaskObjectClass::getOutputList(std::back_insert_iterator<std::vector<SvOi
 {
 	for (size_t i = 0; i < m_friendList.size(); ++i)
 	{
-		const SVObjectInfoStruct& rFriend = m_friendList[i];
-
-		// Check if Friend is alive...
-		SVTaskObjectClass* l_pObject(nullptr);
-
-		l_pObject = dynamic_cast<SVTaskObjectClass*>(SVObjectManagerClass::Instance().GetObject(rFriend.getObjectId()));
-
-		if (nullptr != l_pObject)
+		if (nullptr != m_friendList[i])
 		{
-			l_pObject->getOutputList(inserter);
+			m_friendList[i]->getOutputList(inserter);
 		}
 	}
 
@@ -226,22 +219,19 @@ void SVTaskObjectClass::DestroyFriends()
 {
 	for (size_t i = 0; i < m_friendList.size(); ++i)
 	{
-		const SVObjectInfoStruct& rFriend = m_friendList[i];
-		// Check if Friend is alive...
-		SVObjectClass* pFriend = SVObjectManagerClass::Instance().GetObject(rFriend.getObjectId());
-		if (pFriend)
+		if (nullptr != m_friendList[i])
 		{
-			auto* pOwner = dynamic_cast<SVTaskObjectClass*>(pFriend->GetParent());
+			auto* pOwner = dynamic_cast<SVTaskObjectClass*>(m_friendList[i]->GetParent());
 			if (pOwner)
 			{
 				// Close, Disconnect and Delete Friend...
-				pOwner->DestroyFriend(pFriend);
+				pOwner->DestroyFriend(m_friendList[i]);
 			}
 			else
 			{
 				// Friend has no owner...
-				pFriend->CloseObject();
-				delete pFriend;
+				m_friendList[i]->CloseObject();
+				delete m_friendList[i];
 			}
 		}
 	}
@@ -253,12 +243,15 @@ SVObjectClass* SVTaskObjectClass::GetFriend(const SvDef::SVObjectTypeInfoStruct&
 	// Check if friend is already applied...
 	for (int i = 0; i < static_cast<int>(m_friendList.size()); i++)
 	{
-		const SvDef::SVObjectTypeInfoStruct* pInfoStruct = &(m_friendList[i].m_ObjectTypeInfo);
-		if (pInfoStruct->m_ObjectType == rObjectType.m_ObjectType && pInfoStruct->m_SubType == rObjectType.m_SubType)
+		if (nullptr != m_friendList[i])
 		{
-			if (SvPb::NoEmbeddedId == pInfoStruct->m_EmbeddedID || pInfoStruct->m_EmbeddedID == rObjectType.m_EmbeddedID)
+			const SvDef::SVObjectTypeInfoStruct& rInfoStruct = m_friendList[i]->getObjectTypeInfo();
+			if (rInfoStruct.m_ObjectType == rObjectType.m_ObjectType && rInfoStruct.m_SubType == rObjectType.m_SubType)
 			{
-				return 	m_friendList[i].getObject();
+				if (SvPb::NoEmbeddedId == rInfoStruct.m_EmbeddedID || rInfoStruct.m_EmbeddedID == rObjectType.m_EmbeddedID)
+				{
+					return m_friendList[i];
+				}
 			}
 		}
 	}
@@ -276,10 +269,9 @@ HRESULT SVTaskObjectClass::GetChildObject(SVObjectClass*& rpObject, const SVObje
 			// Notify friends...
 			for (size_t i = 0; nullptr == rpObject && i < m_friendList.size(); ++i)
 			{
-				const SVObjectInfoStruct& rfriend = m_friendList[i];
-				if (nullptr != rfriend.getObject())
+				if (nullptr != m_friendList[i])
 				{
-					l_Status = rfriend.getObject()->GetChildObject(rpObject, rNameInfo, Index + 1);
+					l_Status = m_friendList[i]->GetChildObject(rpObject, rNameInfo, Index + 1);
 				}
 			}
 		}
@@ -299,11 +291,9 @@ void SVTaskObjectClass::fillSelectorList(std::back_insert_iterator<std::vector<S
 
 	for (size_t i = 0; i < m_friendList.size(); ++i)
 	{
-		// Check if Friend is alive...
-		auto* pObject = SVObjectManagerClass::Instance().GetObject(m_friendList[i].getObjectId());
-		if (nullptr != pObject)
+		if (nullptr != m_friendList[i])
 		{
-			pObject->fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType, stopIfClosed);
+			m_friendList[i]->fillSelectorList(treeInserter, pFunctor, attribute, wholeArray, nameToType, requiredType, stopIfClosed);
 		}
 	}
 }
@@ -314,11 +304,9 @@ void SVTaskObjectClass::fillObjectList(std::back_insert_iterator<std::vector<SvO
 
 	for (size_t i = 0; i < m_friendList.size(); ++i)
 	{
-		// Check if Friend is alive...
-		auto* pObject = SVObjectManagerClass::Instance().GetObject(m_friendList[i].getObjectId());
-		if (nullptr != pObject)
+		if (nullptr != m_friendList[i])
 		{
-			pObject->fillObjectList(inserter, rObjectInfo, addHidden, stopIfClosed);
+			m_friendList[i]->fillObjectList(inserter, rObjectInfo, addHidden, stopIfClosed);
 		}
 	}
 }
@@ -505,75 +493,40 @@ std::vector<uint32_t> SVTaskObjectClass::getEmbeddedList() const
 
 bool SVTaskObjectClass::AddFriend(uint32_t friendId, uint32_t addPreId)
 {
-	size_t position = m_friendList.size();
 	// Check ID...
 	if (SvDef::InvalidObjectId == friendId)
 	{
 		return false;
 	}
-	// Check if friend is already applied...
-	if (m_friendList.size())
+
+	auto* pNewFriend = dynamic_cast<SVTaskObjectClass*>(SVObjectManagerClass::Instance().GetObject(friendId));
+	if (nullptr != pNewFriend)
 	{
-		for (int i = static_cast<int>(m_friendList.size()) - 1; i >= 0; --i)
-		{
-			if (m_friendList[i].getObjectId() == friendId)
-			{
-				return false;
-			}
-
-			if (m_friendList[i].getObjectId() == addPreId)
-			{
-				position = i;
-			}
-		}
+		return addFriend(*pNewFriend, addPreId);
 	}
+	return false;
+}
 
-	SVObjectInfoStruct newFriendInfo;
-	// Check if Friend is alive...
-	SVObjectClass* pNewFriend = SVObjectManagerClass::Instance().GetObject(friendId);
-	if (pNewFriend)
+bool SVTaskObjectClass::AddFriend(SVTaskObjectClass* pFriend, uint32_t addPreId)
+{
+	if (nullptr != pFriend)
 	{
-		// Check if we are the Owner
-		// Note:: Special hack for friend scripting
-		// if we are the owner - it's not from the script
-		SVObjectClass* l_psvOwner = pNewFriend->GetParent();
-
-		if (l_psvOwner == this)
-		{
-			newFriendInfo.SetObject(pNewFriend);
-		}
-		else
-		{
-			auto* pTaskOwner = dynamic_cast<SVTaskObjectClass*>(l_psvOwner);
-			if (nullptr != pTaskOwner)
-			{
-				SVObjectClass* l_psvNewObject = pTaskOwner->UpdateObject(friendId, pNewFriend, this);
-
-				assert(nullptr != l_psvNewObject);
-
-				newFriendInfo.SetObject(l_psvNewObject);
-			}
-		}
+		return addFriend(*pFriend, addPreId);
 	}
-	else
-	{
-		newFriendInfo.GetObjectReference().setObjectId(friendId);
-	}
-
-	return (m_friendList.Insert(position, newFriendInfo) >= 0);
+	return false;
 }
 
 void SVTaskObjectClass::moveFriendObject(uint32_t objectToMoveId, uint32_t preObjectId)
 {
 	int currentPos = -1;
 	int newPos = -1;
-	for (int i = 0; i <= m_friendList.size(); i++)
+	for (int i = 0; i < m_friendList.size(); i++)
 	{
-		if (m_friendList[i].getObjectId() == objectToMoveId)
+		if (nullptr != m_friendList[i] && m_friendList[i]->getObjectId() == objectToMoveId)
 		{
 			currentPos = i;
 		}
-		if (m_friendList[i].getObjectId() == preObjectId)
+		if (nullptr != m_friendList[i] && m_friendList[i]->getObjectId() == preObjectId)
 		{
 			newPos = i;
 		}
@@ -581,16 +534,16 @@ void SVTaskObjectClass::moveFriendObject(uint32_t objectToMoveId, uint32_t preOb
 
 	if (0 <= currentPos && m_friendList.size() > currentPos)
 	{
-		auto object = m_friendList[currentPos];
+		auto* pObject = m_friendList[currentPos];
 		//change first object which is later in the list.
 		if (currentPos > newPos)
 		{
 			m_friendList.RemoveAt(currentPos);
-			m_friendList.Insert(newPos, object);
+			m_friendList.Insert(newPos, pObject);
 		}
 		else
 		{
-			m_friendList.Insert(newPos, object);
+			m_friendList.Insert(newPos, pObject);
 			m_friendList.RemoveAt(currentPos);
 		}
 	}
@@ -626,10 +579,9 @@ SvOi::IObjectClass* SVTaskObjectClass::getFirstObject(const SvDef::SVObjectTypeI
 	{
 		for (size_t i = 0; i < m_friendList.size(); ++i)
 		{
-			const SVObjectInfoStruct& rfriend = m_friendList[i];
-			if (nullptr != rfriend.getObject())
+			if (nullptr != m_friendList[i])
 			{
-				Result = rfriend.getObject()->getFirstObject(rObjectTypeInfo, true, pRequestor);
+				Result = m_friendList[i]->getFirstObject(rObjectTypeInfo, true, pRequestor);
 				if (nullptr != Result)
 				{
 					return Result;
@@ -651,10 +603,9 @@ void SVTaskObjectClass::OnObjectRenamed(const SVObjectClass& rRenamedObject, con
 {
 	for (size_t i = 0; i < m_friendList.size(); ++i)
 	{
-		const SVObjectInfoStruct& rfriend = m_friendList[i];
-		if (nullptr != rfriend.getObject())
+		if (nullptr != m_friendList[i])
 		{
-			rfriend.getObject()->OnObjectRenamed(rRenamedObject, rOldName);
+			m_friendList[i]->OnObjectRenamed(rRenamedObject, rOldName);
 		}
 	}
 
@@ -678,11 +629,9 @@ bool SVTaskObjectClass::isInputImage(uint32_t imageId) const
 		// Notify friends...
 		for (size_t i = 0; !Result && i < m_friendList.size(); ++i)
 		{
-			const SVObjectInfoStruct& rFriend = m_friendList[i];
-
-			if (nullptr != rFriend.getObject() && rFriend.getObject()->GetParent() == this)
+			if (nullptr != m_friendList[i] && m_friendList[i]->GetParent() == this)
 			{
-				Result = rFriend.getObject()->isInputImage(imageId);
+				Result = m_friendList[i]->isInputImage(imageId);
 			}
 		}
 
@@ -727,11 +676,9 @@ bool SVTaskObjectClass::connectAllInputs()
 	// tell friends to connect...
 	for (size_t j = 0; j < m_friendList.size(); ++j)
 	{
-		const SVObjectInfoStruct& rFriend = m_friendList[j];
-		SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(rFriend.getObjectId());
-		if (nullptr != pObject)
+		if (nullptr != m_friendList[j])
 		{
-			pObject->connectAllInputs();
+			m_friendList[j]->connectAllInputs();
 		}
 	}
 
@@ -753,19 +700,21 @@ bool SVTaskObjectClass::connectAllInputs()
 					{
 						SVObjectClass* pOwner = GetParent();
 						SVObjectClass* pRequestor = this;
-						const SvOi::IObjectClass* pObject(nullptr);
 						bool bSuccess = false;
 
 						// Ask first friends...
 						for (size_t j = 0; j < m_friendList.size(); ++j)
 						{
-							pObject = SVObjectManagerClass::Instance().getFirstObject(m_friendList[j].getObjectId(), info);
-							if (pObject)
+							if (nullptr != m_friendList[j])
 							{
-								// Connect input ...
-								pInput->SetInputObject(pObject->getObjectId());
-								bSuccess = true;
-								break;
+								const auto* pObject = SVObjectManagerClass::Instance().getFirstObject(m_friendList[j]->getObjectId(), info);
+								if (nullptr != pObject)
+								{
+									// Connect input ...
+									pInput->SetInputObject(pObject->getObjectId());
+									bSuccess = true;
+									break;
+								}
 							}
 						}
 
@@ -778,7 +727,7 @@ bool SVTaskObjectClass::connectAllInputs()
 							while (pOwner)
 							{
 								bool isColorInspection = (nullptr != pInspection) ? pInspection->IsColorCamera() : false;
-								pObject = nullptr;
+								const SvOi::IObjectClass* pObject {nullptr};
 								// if color system & pOwner == SVToolSet
 								if (isColorInspection && SvPb::SVToolSetObjectType == pOwner->GetObjectType() && SvPb::SVImageObjectType == info.m_ObjectType && SvPb::SVImageMonoType == info.m_SubType)
 								{
@@ -826,12 +775,11 @@ SvStl::MessageContainerVector SVTaskObjectClass::getErrorMessages() const
 
 HRESULT SVTaskObjectClass::ConnectToObject(const std::string& rInputName, uint32_t newID, SvPb::SVObjectTypeEnum objectType /*= SvPb::SVNotSetObjectType*/, bool shouldResetObject /*= false*/)
 {
-	for (size_t i = 0; i < m_friendList.size(); ++i)
+	for (size_t j = 0; j < m_friendList.size(); ++j)
 	{
-		const SVObjectInfoStruct& rFriend = m_friendList[i];
-		if (SVTaskObjectClass* pTaskObject = dynamic_cast<SVTaskObjectClass*>(rFriend.getObject()))
+		if (nullptr != m_friendList[j])
 		{
-			HRESULT result = pTaskObject->ConnectToObject(rInputName, newID, objectType, shouldResetObject);
+			HRESULT result = m_friendList[j]->ConnectToObject(rInputName, newID, objectType, shouldResetObject);
 			if (S_OK == result)
 			{
 				return result;
@@ -909,11 +857,9 @@ bool SVTaskObjectClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStr
 	// Create our friends
 	for (size_t j = 0; j < m_friendList.size(); ++j)
 	{
-		const SVObjectInfoStruct& rFriend = m_friendList[j];
-		SVObjectClass* pFriend = SVObjectManagerClass::Instance().GetObject(rFriend.getObjectId());
-		if (pFriend)
+		if (nullptr != m_friendList[j])
 		{
-			Result = CreateChildObject(pFriend) && Result;
+			Result = CreateChildObject(m_friendList[j]) && Result;
 
 			assert(Result);
 		}
@@ -996,18 +942,13 @@ bool SVTaskObjectClass::resetAllOutputListObjects(SvStl::MessageContainerVector*
 {
 	bool Result = true;
 
-	for (size_t i = 0; i < m_friendList.size(); ++i)
+	for (size_t j = 0; j < m_friendList.size(); ++j)
 	{
-		const SVObjectInfoStruct& rFriend = m_friendList[i];
-
-		// Check if Friend is alive...
-		SVTaskObjectClass* pObject = dynamic_cast<SVTaskObjectClass*> (SVObjectManagerClass::Instance().GetObject(rFriend.getObjectId()));
-
-		if (nullptr != pObject)
+		if (nullptr != m_friendList[j])
 		{
 			//return-value and error-messages do not be saved here, because this object will call resetAllOutputListObjects by its own and return error message to the parents.
 			//this call here is important to reset (resize) the embedded images, so the parents can use it for its reset.
-			pObject->resetAllOutputListObjects();
+			m_friendList[j]->resetAllOutputListObjects();
 		}
 	}
 
@@ -1061,12 +1002,11 @@ void SVTaskObjectClass::SetDisabled()
 	m_statusColor.SetValue(SvDef::DefaultDisabledColor);
 
 	// Set friends to disabled...
-	for (size_t i = 0; i < m_friendList.size(); ++i)
+	for (size_t j = 0; j < m_friendList.size(); ++j)
 	{
-		const SVObjectInfoStruct& rFriend = m_friendList[i];
-		if (rFriend.getObject())
+		if (nullptr != m_friendList[j])
 		{
-			rFriend.getObject()->SetDisabled();
+			m_friendList[j]->SetDisabled();
 		}
 	}
 }
@@ -1100,15 +1040,12 @@ void SVTaskObjectClass::PersistFriends(SvOi::IObjectWriter& rWriter) const
 	{
 		rWriter.StartElement(scFriendsTag);
 
-		for (size_t i = 0; i < m_friendList.size(); ++i)
+		for (size_t j = 0; j < m_friendList.size(); ++j)
 		{
-			const SVObjectInfoStruct& rFriend = m_friendList[i];
-			// Check if Friend is alive...
-			SVObjectClass* pFriend = SVObjectManagerClass::Instance().GetObject(rFriend.getObjectId());
-			if (SVTaskObjectClass* pTaskObjectFriend = dynamic_cast<SVTaskObjectClass*>(pFriend))
+			if (nullptr != m_friendList[j])
 			{
-				rWriter.StartElement(pTaskObjectFriend->GetObjectName()); // use internal name for node name
-				pTaskObjectFriend->Persist(rWriter);
+				rWriter.StartElement(m_friendList[j]->GetObjectName()); // use internal name for node name
+				m_friendList[j]->Persist(rWriter);
 				rWriter.EndElement();
 			}
 		}
@@ -1184,10 +1121,9 @@ bool SVTaskObjectClass::runFriends(RunStatus& rRunStatus, SvStl::MessageContaine
 	size_t j = m_bSkipFirstFriend ? 1 : 0;
 	for (; j < m_friendList.size(); ++j)
 	{
-		const SVObjectInfoStruct& rFriend = m_friendList[j];
-		if (SVTaskObjectClass* pTaskObject = dynamic_cast<SVTaskObjectClass*>(rFriend.getObject()))
+		if (nullptr != m_friendList[j])
 		{
-			bRetVal = pTaskObject->Run(rRunStatus, pErrorMessages) && bRetVal;
+			bRetVal = m_friendList[j]->Run(rRunStatus, pErrorMessages) && bRetVal;
 		}
 		else
 		{
@@ -1205,12 +1141,11 @@ void SVTaskObjectClass::disconnectAllInputs()
 		pInput->disconnectAllInputs();
 	}
 
-	for (size_t i = 0; i < m_friendList.size(); ++i)
+	for (size_t j = 0; j < m_friendList.size(); ++j)
 	{
-		const SVObjectInfoStruct& rfriend = m_friendList[i];
-		if (nullptr != rfriend.getObject())
+		if (nullptr != m_friendList[j])
 		{
-			rfriend.getObject()->disconnectAllInputs();
+			m_friendList[j]->disconnectAllInputs();
 		}
 	}
 
@@ -1225,12 +1160,11 @@ void SVTaskObjectClass::disconnectAllInputs()
 
 void SVTaskObjectClass::getInputs(std::back_insert_iterator<std::vector<SvOl::InputObject*>> inserter) const
 {
-	for (size_t i = 0; i < m_friendList.size(); ++i)
+	for (size_t j = 0; j < m_friendList.size(); ++j)
 	{
-		auto* pTask = dynamic_cast<SVTaskObjectClass*>(m_friendList[i].getObject());
-		if (nullptr != pTask)
+		if (nullptr != m_friendList[j])
 		{
-			pTask->getInputs(inserter);
+			m_friendList[j]->getInputs(inserter);
 		}
 	}
 
@@ -1245,15 +1179,12 @@ bool SVTaskObjectClass::CloseObject()
 	bool Result = SVObjectAppClass::CloseObject();
 
 	// Close our Friends
-	for (size_t i = 0; i < m_friendList.size(); ++i)
+	for (size_t j = 0; j < m_friendList.size(); ++j)
 	{
-		const SVObjectInfoStruct& rFriend = m_friendList[i];
-		// Check if Friend is alive...
-		SVObjectClass* pFriend = SVObjectManagerClass::Instance().GetObject(rFriend.getObjectId());
-		if (pFriend)
+		if (m_friendList[j])
 		{
 			// Close Friend...
-			Result = pFriend->CloseObject() && Result;
+			Result = m_friendList[j]->CloseObject() && Result;
 		}
 	}
 
@@ -1330,12 +1261,11 @@ HRESULT SVTaskObjectClass::UnregisterSubObject(SVObjectClass* pObject)
 void SVTaskObjectClass::setEditModeFreezeFlag(bool flag)
 {
 	__super::setEditModeFreezeFlag(flag);
-	for (size_t i = 0; i < m_friendList.size(); ++i)
+	for (size_t j = 0; j < m_friendList.size(); ++j)
 	{
-		const SVObjectInfoStruct& rfriend = m_friendList[i];
-		if (nullptr != rfriend.getObject())
+		if (nullptr != m_friendList[j])
 		{
-			rfriend.getObject()->setEditModeFreezeFlag(flag);
+			m_friendList[j]->setEditModeFreezeFlag(flag);
 		}
 	}
 	for (auto* pEmbedded : m_embeddedList)
@@ -1350,12 +1280,11 @@ void SVTaskObjectClass::setEditModeFreezeFlag(bool flag)
 void SVTaskObjectClass::copiedSavedImage(SvOi::ITriggerRecordRWPtr pTr)
 {
 	__super::copiedSavedImage(pTr);
-	for (size_t i = 0; i < m_friendList.size(); ++i)
+	for (size_t j = 0; j < m_friendList.size(); ++j)
 	{
-		const SVObjectInfoStruct& rfriend = m_friendList[i];
-		if (nullptr != rfriend.getObject())
+		if (nullptr != m_friendList[j])
 		{
-			rfriend.getObject()->copiedSavedImage(pTr);
+			m_friendList[j]->copiedSavedImage(pTr);
 		}
 	}
 	for (auto* pEmbedded : m_embeddedList)
@@ -1370,12 +1299,11 @@ void SVTaskObjectClass::copiedSavedImage(SvOi::ITriggerRecordRWPtr pTr)
 void SVTaskObjectClass::goingOffline()
 {
 	__super::goingOffline();
-	for (size_t i = 0; i < m_friendList.size(); ++i)
+	for (size_t j = 0; j < m_friendList.size(); ++j)
 	{
-		const SVObjectInfoStruct& rfriend = m_friendList[i];
-		if (nullptr != rfriend.getObject())
+		if (nullptr != m_friendList[j])
 		{
-			rfriend.getObject()->goingOffline();
+			m_friendList[j]->goingOffline();
 		}
 	}
 	for (auto* pEmbedded : m_embeddedList)
@@ -1444,15 +1372,11 @@ HRESULT SVTaskObjectClass::CollectOverlays(SVImageClass* p_Image, SVExtentMultiL
 		hrRet = onCollectOverlays(p_Image, p_MultiLineArray);
 	}
 
-	for (size_t j = 0; j < m_friendList.size(); j++)
+	for (size_t j = 0; j < m_friendList.size(); ++j)
 	{
-		const SVObjectInfoStruct& l_rFriend = m_friendList[j];
-
-		SVTaskObjectClass* pObject = dynamic_cast<SVTaskObjectClass*>(l_rFriend.getObject());
-
-		if (pObject)
+		if (nullptr != m_friendList[j])
 		{
-			HRESULT l_Temp = pObject->CollectOverlays(p_Image, p_MultiLineArray);
+			HRESULT l_Temp = m_friendList[j]->CollectOverlays(p_Image, p_MultiLineArray);
 
 			if (S_OK == hrRet)
 			{
@@ -1468,12 +1392,11 @@ void SVTaskObjectClass::collectOverlays(const SVImageClass* pImage, SvPb::Overla
 {
 	addOverlayGroups(pImage, rOverlay);
 
-	for (size_t j = 0; j < m_friendList.size(); j++)
+	for (size_t j = 0; j < m_friendList.size(); ++j)
 	{
-		SVTaskObjectClass* pObject = dynamic_cast<SVTaskObjectClass*>(m_friendList[j].getObject());
-		if (pObject)
+		if (nullptr != m_friendList[j])
 		{
-			pObject->collectOverlays(pImage, rOverlay);
+			m_friendList[j]->collectOverlays(pImage, rOverlay);
 		}
 	}
 }
@@ -1666,5 +1589,43 @@ void SVTaskObjectClass::addOrRemoveResetErrorMessage(SvStl::MessageContainer& rE
 	}
 
 }
+
+bool SVTaskObjectClass::addFriend(SVTaskObjectClass& rFriend, uint32_t addPreId)
+{
+	size_t position = m_friendList.size();
+	// Check if friend is already applied...
+	if (m_friendList.size())
+	{
+		for (int i = static_cast<int>(m_friendList.size()) - 1; i >= 0; --i)
+		{
+			if (nullptr != m_friendList[i] && m_friendList[i]->getObjectId() == rFriend.getObjectId())
+			{
+				return false;
+			}
+
+			if (nullptr != m_friendList[i] && m_friendList[i]->getObjectId() == addPreId)
+			{
+				position = i;
+			}
+		}
+	}
+
+	auto* pNewFriend = &rFriend;
+	// Check if we are the Owner
+// Note:: Special hack for friend scripting
+// if we are the owner - it's not from the script
+	SVObjectClass* pOwner = rFriend.GetParent();
+
+	if (pOwner != this)
+	{
+		auto* pTaskOwner = dynamic_cast<SVTaskObjectListClass*>(pOwner);
+		if (nullptr != pTaskOwner)
+		{
+			pNewFriend = pTaskOwner->UpdateObject(rFriend.getObjectId(), &rFriend, this);
+		}
+	}
+	return (m_friendList.Insert(position, pNewFriend) >= 0);
+}
+
 } //namespace SvIe
 

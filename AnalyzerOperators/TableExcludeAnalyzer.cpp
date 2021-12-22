@@ -66,7 +66,7 @@ bool TableExcludeAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMess
 	SvVol::DoubleSortValueObject* pObject = m_excludeColumnInput.getInput<SvVol::DoubleSortValueObject>();
 	if (nullptr == pObject
 		//check if column part of the right table object (The object must be from same tool as this analyzer.)
-		|| nullptr == pObject->GetParent() || pObject->GetParent()->GetParent() != m_ownerObjectInfo.getObject())
+		|| nullptr == pObject->GetParent() || pObject->GetParent()->GetParent() != GetParent())
 	{
 		Result = false;
 		if (nullptr != pErrorMessages)
@@ -115,7 +115,7 @@ bool TableExcludeAnalyzer::onRun( SvIe::RunStatus& rRunStatus, SvStl::MessageCon
 		m_excludeLow.GetValue( TempValue );
 		double excludeLow= static_cast<double> (TempValue);
 
-		SvTo::TableAnalyzerTool* pTool = dynamic_cast<SvTo::TableAnalyzerTool*>(m_ownerObjectInfo.getObject());
+		SvTo::TableAnalyzerTool* pTool = dynamic_cast<SvTo::TableAnalyzerTool*>(GetParent());
 		SvVol::DoubleSortValueObject* pColumnValues = m_excludeColumnInput.getInput<SvVol::DoubleSortValueObject>(true);
 		if (nullptr != pTool && nullptr != pColumnValues)
 		{

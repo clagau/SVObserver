@@ -49,6 +49,21 @@ public:
 		return static_cast<int>(m_list.size() - 1);
 	}
 
+	int AddIfNoExist(const type& newElement)
+	{
+		std::lock_guard<std::mutex> lock(m_dataMutex);
+		auto iter = std::ranges::find(m_list, newElement);
+		if (m_list.end() == iter)
+		{
+			m_list.push_back(newElement);
+			return static_cast<int>(m_list.size() - 1);
+		}
+		else
+		{
+			return static_cast<int>(std::distance(m_list.begin(), iter));
+		}
+	}
+
 	/// Insert an Element to the list at a position
 	/// \param position [in] The position of the add.
 	/// \param newElement [in] item to be added.
@@ -82,6 +97,16 @@ public:
 		}
 	}
 
+	void Remove(type value)
+	{
+		std::lock_guard<std::mutex> lock(m_dataMutex);
+		auto iter = std::ranges::find(m_list, value);
+		if (m_list.end() != iter)
+		{
+			m_list.erase(iter);
+		}
+	}
+
 	/////////////////////////////////////////////////
 	/// Remove all Elements from the list, not concurrent safe
 	/////////////////////////////////////////////////
@@ -92,6 +117,12 @@ public:
 		{
 			m_list.clear();
 		}
+	}
+
+	Container getContainerCopy() const
+	{
+		std::lock_guard<std::mutex> lock(m_dataMutex);
+		return m_list;
 	}
 #pragma endregion Public
 

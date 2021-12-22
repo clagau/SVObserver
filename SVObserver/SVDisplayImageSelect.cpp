@@ -92,10 +92,8 @@ BOOL SVDisplayImageSelect::OnInitDialog()
 	auto getImageName = [](SvIe::SVImageClass* pImage) {
 		std::string imageName;
 
-		if (pImage->GetOwnerInfo().CheckExistence() &&
-			(pImage->GetOwnerInfo().getObject() != nullptr) &&
-			(SvPb::SVObjectTypeEnum::SVToolSetObjectType == pImage->GetOwnerInfo().getObject()->GetObjectType())
-			)
+		if (auto* pParent = pImage->GetParent() ;
+			nullptr != pParent && SvPb::SVObjectTypeEnum::SVToolSetObjectType == pParent->GetObjectType())
 		{
 			imageName = pImage->GetName();
 		}

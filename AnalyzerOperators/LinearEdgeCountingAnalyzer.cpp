@@ -47,7 +47,7 @@ void LinearEdgeCountingAnalyzer::init()
 
 	SvOp::SVLinearEdgeProcessingClass *pEdge = new SvOp::SVLinearEdgeAProcessingClass( this );
 
-	AddFriend( pEdge->getObjectId() );
+	AddFriend( pEdge );
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( &m_svEdgeCount, SvPb::EdgeCountEId, IDS_OBJECTNAME_EDGE_COUNT, false, SvOi::SVResetItemNone );

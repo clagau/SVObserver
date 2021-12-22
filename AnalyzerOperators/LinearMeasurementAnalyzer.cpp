@@ -70,12 +70,12 @@ void LinearMeasurementAnalyzer::init()
 
 	if( nullptr != pEdgeA )
 	{
-		AddFriend(pEdgeA->getObjectId());
+		AddFriend(pEdgeA);
 	}
 
 	if( nullptr != pEdgeB )
 	{
-		AddFriend(pEdgeB->getObjectId());
+		AddFriend(pEdgeB);
 
 		pEdgeB->setEdgeSelectDefaultValue(SvDef::SV_LAST_EDGE);
 	}

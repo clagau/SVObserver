@@ -69,7 +69,7 @@ bool SVObjectAppClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStru
 ////////////////////////////////////////////////////////////////////////////////////////
 void SVObjectAppClass::ConnectObject(const SVObjectLevelCreateStruct& rCreateStructure)
 {
-	if( rCreateStructure.OwnerObjectInfo.getObject() != this && rCreateStructure.OwnerObjectInfo.getObjectId() != getObjectId() )
+	if( &rCreateStructure.m_rOwner != this && rCreateStructure.m_rOwner.getObjectId() != getObjectId() )
 	{
 		UpdateConnections( rCreateStructure );
 
@@ -148,8 +148,7 @@ void SVObjectAppClass::UpdateConnections(const SVObjectLevelCreateStruct& rCreat
 
 bool SVObjectAppClass::createAllObjectsFromChild( SVObjectClass& rChildObject )
 {
-	SVObjectLevelCreateStruct createStruct;
-	createStruct.OwnerObjectInfo.SetObject(this);
+	SVObjectLevelCreateStruct createStruct(*this);
 	createStruct.m_pInspection = GetInspection();
 	createStruct.m_pTool = GetTool();
 	createStruct.m_pAnalyzer = GetAnalyzer();

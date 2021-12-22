@@ -273,7 +273,7 @@ void SVToolClass::init()
 
 	// instantiate the Conditional class
 	SvOp::SVConditional* pCondition = new SvOp::SVConditional(this);
-	AddFriend(pCondition->getObjectId());
+	AddFriend(pCondition);
 
 	// Identify our input type needs
 	m_conditionBoolInput.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVBoolValueObjectType, SvPb::ConditionalResultEId);
@@ -309,7 +309,7 @@ bool SVToolClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure
 	{
 		//conditional must be the first friend because it will be blocked in runFriends if tool
 		assert(0 == j);
-		m_pToolConditional = dynamic_cast<SvOp::SVConditional*> (m_friendList[j].getObject());
+		m_pToolConditional = dynamic_cast<SvOp::SVConditional*> (m_friendList[j]);
 		setSkipFirstFriendFromRun();
 	}
 
@@ -1250,8 +1250,7 @@ bool SVToolClass::SetFirstInputImageName(LPCTSTR FirstName)
 
 bool SVToolClass::createAllObjectsFromChild(SVObjectClass& rChildObject)
 {
-	SVObjectLevelCreateStruct createStruct;
-	createStruct.OwnerObjectInfo.SetObject(this);
+	SVObjectLevelCreateStruct createStruct(*this);
 	createStruct.m_pInspection = dynamic_cast<SVObjectClass*>(GetInspectionInterface());
 	createStruct.m_pTool = this;
 
@@ -1260,8 +1259,7 @@ bool SVToolClass::createAllObjectsFromChild(SVObjectClass& rChildObject)
 
 void SVToolClass::connectChildObject(SVTaskObjectClass& rChildObject)
 {
-	SVObjectLevelCreateStruct createStruct;
-	createStruct.OwnerObjectInfo.SetObject(this);
+	SVObjectLevelCreateStruct createStruct(*this);
 	createStruct.m_pInspection = dynamic_cast<SVObjectClass*>(GetInspectionInterface());
 	createStruct.m_pTool = this;
 

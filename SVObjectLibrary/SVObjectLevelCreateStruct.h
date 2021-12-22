@@ -11,10 +11,6 @@
 
 #pragma once
 
-#pragma region Includes
-#include "SVObjectInfoStruct.h"
-#pragma endregion Includes
-
 class SVObjectClass;
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -25,13 +21,13 @@ class SVObjectClass;
 ////////////////////////////////////////////////////////////////////////////////
 struct SVObjectLevelCreateStruct
 {
-	SVObjectLevelCreateStruct();
+	explicit SVObjectLevelCreateStruct(SVObjectClass& rOwner);
 
 	virtual ~SVObjectLevelCreateStruct();
 
-	SVObjectInfoStruct OwnerObjectInfo;
-	SVObjectClass* m_pInspection;
-	SVObjectClass* m_pTool;
-	SVObjectClass* m_pAnalyzer;
+	SVObjectClass& m_rOwner;
+	SVObjectClass* m_pInspection = nullptr;
+	SVObjectClass* m_pTool = nullptr;
+	SVObjectClass* m_pAnalyzer = nullptr;
 };
 
