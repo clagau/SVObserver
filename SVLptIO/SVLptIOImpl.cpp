@@ -1398,6 +1398,7 @@ void SVLptIOImpl::HandleIRQ()
 	{
 		return;
 	}
+	double timeStamp = SvUl::GetTimeStamp();
 
 #ifdef LogDebugData
 	g_TDebugData[g_CallbackCount].m_dStatusReg0 = StatusReg;
@@ -1421,8 +1422,6 @@ void SVLptIOImpl::HandleIRQ()
 	HRESULT hr = GetStatusPort(StatusReg);
 	if (S_OK == hr)
 	{
-		double timeStamp = SvUl::GetTimeStamp();
-
 		for(unsigned long i = 1; i <= cMaxLptTriggers; ++i)
 		{
 			short nTriggerBit = SVTriggerNone;
