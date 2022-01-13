@@ -297,7 +297,7 @@ namespace SvOsl
 					 (0 == checkSelection || 
 						( 1 == checkSelection && SvCl::ObjectSelectorItem::CheckedEnabled == Iter->second->m_CheckedState) || 
 						( 2 == checkSelection && SvCl::ObjectSelectorItem::CheckedEnabled != Iter->second->m_CheckedState) ) &&
-					 (0 == typeSelection || Iter->second->m_ItemTypeName.c_str() == typeText ))
+					 (0 == typeSelection || typeText == Iter->second->m_ItemTypeName.c_str() ))
 				{
 					m_Grid.SetRowCount(i + 1);
 					m_Grid.SetItemText(i, NameColumn, Iter->second->m_Name.c_str());

@@ -62,7 +62,7 @@ namespace SvMc
 		m_currentString = textStr;
 		m_isCurrentStringActive = false;
 		//set help text if edit text empty
-		if (_T("") == m_currentString)
+		if (m_currentString.IsEmpty())
 		{
 			SetWindowText(m_helpString);
 		}
@@ -112,7 +112,7 @@ namespace SvMc
 		else
 		{
 			//set help text if edit text empty
-			if (_T("") == m_currentString)
+			if (m_currentString.IsEmpty())
 			{
 				SetWindowText(m_helpString);
 			}
@@ -127,7 +127,7 @@ namespace SvMc
 	{
 		m_helpString = text;
 
-		if (GetFocus() != this && _T("") == m_currentString)
+		if (GetFocus() != this && m_currentString.IsEmpty())
 		{
 			SetWindowText(m_helpString);
 		}
