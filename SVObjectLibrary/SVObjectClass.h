@@ -213,8 +213,7 @@ public:
 	/// Set indirect value string to LinkedValue to help to convert LinkedValue from old to new struct.
 	HRESULT setIndirectStringToObject(SvPb::EmbeddedIdEnum embeddedId, const std::vector<_variant_t>& rValueString);
 
-	void registerNotification(SVObjectReference* pRef);
-	void deregisterNotification(SVObjectReference* pRef);
+	SvOi::ObjectNotificationRAIIPtr registerNotification(SvOi::ObjectNotificationFunctionPtr pFunc);
 
 protected:
 	/// Convert a string (dotted name) to an object.
@@ -270,5 +269,5 @@ private:
 	std::set <uint32_t> m_connectedSet;
 	std::mutex m_inputMutex;
 
-	SVThreadSafeList<SVObjectReference*> m_notificationList;
+	SVThreadSafeList<SvOi::ObjectNotificationFunctionPtr> m_notificationList;
 };

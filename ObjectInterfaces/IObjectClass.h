@@ -53,6 +53,7 @@ namespace SvOi
 
 	using ObjectNotificationFunction = std::function<void(SvOi::ObjectNotificationType, uint32_t)>;
 	using ObjectNotificationFunctionPtr = std::shared_ptr<ObjectNotificationFunction>;
+	using ObjectNotificationRAIIPtr = std::unique_ptr<void, std::function<void(void*)>>;
 
 	//this class is a interface. It should only have pure virtual public method and no member variables
 	class IObjectClass

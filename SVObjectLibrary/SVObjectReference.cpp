@@ -113,12 +113,12 @@ SVObjectReference::SVObjectReference(const std::string& objectIdAndIndexString)
 
 SVObjectReference::~SVObjectReference()
 {
-	deregisterNotification();
+	m_notifyPtr.reset();
 }
 
 const SVObjectReference& SVObjectReference::operator = ( const SVObjectReference& rhs )
 {
-	deregisterNotification();
+	m_notifyPtr.reset();
 	m_pObject = rhs.m_pObject;
 	registerNotification();
 	m_pValueObject = nullptr;
@@ -132,7 +132,7 @@ const SVObjectReference& SVObjectReference::operator = ( const SVObjectReference
 
 void  SVObjectReference::clear()
 {
-	deregisterNotification();
+	m_notifyPtr.reset();
 	m_pObject = nullptr;
 	m_pValueObject = nullptr;
 	m_pFinalObject = nullptr;
@@ -147,7 +147,7 @@ void SVObjectReference::update()
 	auto* pObject = SVObjectManagerClass::Instance().GetObject(m_objectId);
 	if (m_pObject != pObject)
 	{
-		deregisterNotification();
+		m_notifyPtr.reset();
 		m_pObject = pObject;
 		registerNotification();
 		m_pValueObject = nullptr;
@@ -461,14 +461,6 @@ void SVObjectReference::registerNotification()
 {
 	if (nullptr != m_pObject)
 	{
-		m_pObject->registerNotification(this);
-	}
-}
-
-void SVObjectReference::deregisterNotification()
-{
-	if (nullptr != m_pObject)
-	{
-		m_pObject->deregisterNotification(this);
+		m_notifyPtr = m_pObject->registerNotification(std::make_shared<SvOi::ObjectNotificationFunction>([this](SvOi::ObjectNotificationType type, uint32_t objectId) { return onChangeNotification(type, objectId); }));
 	}
 }

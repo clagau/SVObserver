@@ -127,12 +127,11 @@ public:
 	long IncrementIndex();
 
 	void fillSelectorList(std::back_insert_iterator<std::vector<SvPb::TreeItem>> treeInserter, bool wholeArray, SvOi::IsObjectAllowedFunc pFunctor, UINT attribute, SvPb::SVObjectTypeEnum nameToType);
-	void onChangeNotification(SvOi::ObjectNotificationType type, uint32_t objectId);
 	
 protected:	
+	void onChangeNotification(SvOi::ObjectNotificationType type, uint32_t objectId);
 	const std::string& GetIndex() const;
 	void registerNotification();
-	void deregisterNotification();
 	
 	SVObjectClass* m_pObject = nullptr;
 	mutable SVObjectClass* m_pFinalObject = nullptr; /// Similar to m_pObject, but if m_pObject is a LinkedValue to a object, m_pFinalObject will be set to the aim object.
@@ -141,7 +140,7 @@ protected:
 	uint32_t m_objectId = SvDef::InvalidObjectId;
 	SVObjectNameInfo m_NameInfo;
 	long m_ArrayIndex = -1; // zero based Array index.   -1 and true for isArray indicates reference to whole array
-	SvOi::ObjectNotificationFunctionPtr m_pNotficationFuncPtr = std::make_shared<SvOi::ObjectNotificationFunction>([this](SvOi::ObjectNotificationType type, uint32_t objectId) { return onChangeNotification(type, objectId); });
+	SvOi::ObjectNotificationRAIIPtr m_notifyPtr;
 };
 
 typedef std::vector<SVObjectReference> SVObjectReferenceVector;

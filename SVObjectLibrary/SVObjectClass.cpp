@@ -693,14 +693,15 @@ HRESULT SVObjectClass::setIndirectStringToObject(SvPb::EmbeddedIdEnum embeddedId
 	return E_FAIL;
 }
 
-void SVObjectClass::registerNotification(SVObjectReference* pRef) 
+SvOi::ObjectNotificationRAIIPtr SVObjectClass::registerNotification(SvOi::ObjectNotificationFunctionPtr pFunc)
 { 
-	m_notificationList.AddIfNoExist(pRef);
-}
+	m_notificationList.AddIfNoExist(pFunc);
 
-void SVObjectClass::deregisterNotification(SVObjectReference* pRef) 
-{ 
-	m_notificationList.Remove(pRef);
+	return SvOi::ObjectNotificationRAIIPtr(new int, ([this, pFunc](auto* pValue)
+	{
+		delete pValue;
+		this->m_notificationList.Remove(pFunc);
+	}));
 }
 
 /*
@@ -1128,11 +1129,11 @@ void SVObjectClass::sendChangeNotification(SvOi::ObjectNotificationType type, ui
 	{
 		//onChangeNotification can deregister the notification and this will decrease the m_notifactionList. For this reason the list have to be copied before use it in a for loop
 		auto tmpList = m_notificationList.getContainerCopy();
-		for (auto* pRef : tmpList)
+		for (auto func : tmpList)
 		{
-			if (nullptr != pRef)
+			if (func && func.get() && (*func.get()))
 			{
-				pRef->onChangeNotification(type, objectId);
+				(*func.get())(type, objectId);
 			}
 		}
 	}
