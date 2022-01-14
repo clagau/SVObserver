@@ -275,7 +275,7 @@ bool writerTest(LogClass& rLogClass, const int numberOfRuns, const TrcTesterConf
 			try
 			{
 				cameraStructList.emplace_back(specifyBufferFromImage(rInspectionsData[i].m_imageFilesList[0]->at(0)));
-				pTrcRW->startResetTriggerRecordStructure(i);
+				auto pResetHandle = pTrcRW->startResetTriggerRecordStructure(i);
 
 				for (const auto* pImageList : rInspectionsData[i].m_imageFilesList)
 				{
@@ -284,7 +284,7 @@ bool writerTest(LogClass& rLogClass, const int numberOfRuns, const TrcTesterConf
 				//add a special buffer which will be set only once and then should all the run the same.
 				pTrcRW->addOrChangeImage(getNextObjectId(), specifyBufferFromImage(rInspectionsData[i].m_imageFilesList[0]->at(0)));
 
-				pTrcRW->finishResetTriggerRecordStructure();
+				pResetHandle->free();
 			}
 			catch (const SvStl::MessageContainer& rExp)
 			{
@@ -781,12 +781,12 @@ bool readerTest(LPCTSTR testName, ReaderTestData testData)
 		auto pTRC = SvOi::getTriggerRecordControllerRInstance();
 		if (nullptr != pTRC)
 		{
-			int resetCallbackHandle = pTRC->registerResetCallback(OnResetTRC);
-			int readyCallbackHandle = pTRC->registerReadyCallback(OnReadyTRC);
-			int newTrCallBackHandle = pTRC->registerNewTrCallback(OnNewTr);
+			SvOi::RAIIPtr resetCallbackHandle = pTRC->registerResetCallback(OnResetTRC);
+			SvOi::RAIIPtr readyCallbackHandle = pTRC->registerReadyCallback(OnReadyTRC);
+			SvOi::RAIIPtr newTrCallBackHandle = pTRC->registerNewTrCallback(OnNewTr);
 			LogClass* pLogClass = &testData.m_rLogClass;
 			auto newInterestTrFunctor = [pLogClass](const std::vector<SvOi::TrInterestEventData>& rDataVec) { return OnNewInterestTr(pLogClass, rDataVec); };
-			int newInterestCallBackHandle = pTRC->registerNewInterestTrCallback(newInterestTrFunctor);
+			SvOi::RAIIPtr newInterestCallBackHandle = pTRC->registerNewInterestTrCallback(newInterestTrFunctor);
 			if (pTRC->isValid())
 			{
 				OnReadyTRC();
@@ -794,10 +794,9 @@ bool readerTest(LPCTSTR testName, ReaderTestData testData)
 
 			retValue = readerTestLoop(testData, *pTRC);
 
-			pTRC->unregisterResetCallback(resetCallbackHandle);
-			pTRC->unregisterReadyCallback(readyCallbackHandle);
-			pTRC->unregisterNewTrCallback(newTrCallBackHandle);
-			pTRC->unregisterNewInterestTrCallback(newInterestCallBackHandle);
+			resetCallbackHandle.reset();
+			readyCallbackHandle.reset();
+			newTrCallBackHandle.reset();
 		}
 	}
 	else

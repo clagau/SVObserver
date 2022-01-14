@@ -3753,7 +3753,7 @@ bool SVConfigurationObject::RebuildInputOutputLists(bool isLoad)
 	try
 	{
 		//avoid that TRC-memory will be recreated for every inspection, but do it once at the end.
-		pTrcRW->setGlobalInit();
+		auto pGlobalInitRAII = pTrcRW->setGlobalInit();
 		for (auto pInspection : m_arInspectionArray)
 		{
 			if (nullptr != pInspection)
@@ -3761,7 +3761,7 @@ bool SVConfigurationObject::RebuildInputOutputLists(bool isLoad)
 				bOk = FinishIPDoc(pInspection, isLoad) && bOk;
 			}
 		}
-		pTrcRW->finishGlobalInit();
+		pGlobalInitRAII->free();
 	}
 	catch (const SvStl::MessageContainer& rSvE)
 	{

@@ -71,9 +71,9 @@ namespace SvTrcT
 	{
 		if (nullptr != m_pTRC)
 		{
-			m_pTRC->unregisterResetCallback(m_resetCallbackId);
-			m_pTRC->unregisterReadyCallback(m_readyCallbackId);
-			m_pTRC->unregisterNewTrCallback(m_newTrIdCallbackId);
+			m_resetCallbackRAII.reset();
+			m_readyCallbackRAII.reset();
+			m_newTrIdCallbackRAII.reset();
 		}
 		SvOi::destroyTriggerRecordController();
 
@@ -168,9 +168,9 @@ namespace SvTrcT
 			auto resetUpdateFunctor = [this]() { return OnResetUpdate(); };
 			auto readyUpdateFunctor = [this]() { return OnReadyUpdate(); };
 			auto newTrIdFunctor = [this](SvOi::TrEventData data) { return OnNewTrId(data); };
-			m_resetCallbackId = m_pTRC->registerResetCallback(resetUpdateFunctor);
-			m_readyCallbackId = m_pTRC->registerReadyCallback(readyUpdateFunctor);
-			m_newTrIdCallbackId = m_pTRC->registerNewTrCallback(newTrIdFunctor);
+			m_resetCallbackRAII = m_pTRC->registerResetCallback(resetUpdateFunctor);
+			m_readyCallbackRAII = m_pTRC->registerReadyCallback(readyUpdateFunctor);
+			m_newTrIdCallbackRAII = m_pTRC->registerNewTrCallback(newTrIdFunctor);
 			m_isTRCValid = m_pTRC->isValid();
 		}
 		resetController();
@@ -546,12 +546,12 @@ namespace SvTrcT
 				bufferStruct.m_lSizeY = m_mainHeigth;
 				bufferStruct.m_eAttribute = SVBufAttImageProc;
 				bufferStruct.m_eType = SV8BitUnsigned;
-				pTrcRw->startResetTriggerRecordStructure();
+				auto pResetHandle = pTrcRw->startResetTriggerRecordStructure();
 				pTrcRw->removeAllImageBuffer(m_mainId);
 				pTrcRw->addImageBuffer(m_mainId, bufferStruct, 1);
-				pTrcRw->finishResetTriggerRecordStructure();
+				pResetHandle->free();
 
-				pTrcRw->startResetTriggerRecordStructure(m_inspectionPos);
+				pResetHandle = pTrcRw->startResetTriggerRecordStructure(m_inspectionPos);
 				pTrcRw->addOrChangeImage(m_mainId, bufferStruct);
 				int sourcePos = 0;
 				uint32_t sourceImage = m_mainId;
@@ -562,7 +562,7 @@ namespace SvTrcT
 					sourceImage = tool->getObjectId();
 					bufferStruct = tool->getBufferOut();
 				}
-				pTrcRw->finishResetTriggerRecordStructure();
+				pResetHandle->free();
 			}
 		}
 		if (nullptr != m_pTRC)

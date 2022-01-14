@@ -329,7 +329,7 @@ namespace
 		return l_Status;
 	}
 
-	std::pair<bool, HRESULT> doStuffAfterConfigurationLoad(SVConfigurationObject* pConfig, SVTreeType& rXMLTree, bool isGlobalInit, SVIMProductEnum SVIMType)
+	std::pair<bool, HRESULT> doStuffAfterConfigurationLoad(SVConfigurationObject* pConfig, SVTreeType& rXMLTree, SvOi::TRC_RAIIPtr globalInitRAII, SVIMProductEnum SVIMType)
 	{
 		HRESULT hr = pConfig->LoadRemoteMonitorList(rXMLTree);
 		if (hr & SvDef::svErrorCondition)
@@ -355,20 +355,21 @@ namespace
 			return {false, hr};
 		}
 
-		if (isGlobalInit)
+		try
 		{
-			try
+			//the globalInit have to be finished before RebuildInputOutputLists called, because it will do a reset and this need the images and memory.
+			if (nullptr != globalInitRAII)
 			{
-				//the globalInit have to be finished before RebuildInputOutputLists called, because it will do a reset and this need the images and memory.
-				SvOi::getTriggerRecordControllerRWInstanceThrow().finishGlobalInit();
+				globalInitRAII->free();
+				globalInitRAII = nullptr;
 			}
-			catch (const SvStl::MessageContainer& rExp)
-			{
-				SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
-				Exception.setMessage(rExp.getMessage());
-				hr = E_FAIL;
-				return {false, hr};
-			}
+		}
+		catch (const SvStl::MessageContainer& rExp)
+		{
+			SvStl::MessageManager Exception(SvStl::MsgType::Log | SvStl::MsgType::Display);
+			Exception.setMessage(rExp.getMessage());
+			hr = E_FAIL;
+			return {false, hr};
 		}
 
 		pConfig->RebuildInputOutputLists(true);
@@ -471,7 +472,7 @@ bool LoadSvxFilePart1(unsigned long& ulSVOConfigVersion, unsigned long svoVersio
 }
 
 
-HRESULT LoadSvxFile(unsigned long svoVersion, const std::string& rSvxFilePath, const std::string& rSvzFilePath, SVIMProductEnum SVIMType, SVMainFrame* pMainFrame, bool isGlobalInit)
+HRESULT LoadSvxFile(unsigned long svoVersion, const std::string& rSvxFilePath, const std::string& rSvzFilePath, SVIMProductEnum SVIMType, SVMainFrame* pMainFrame, SvOi::TRC_RAIIPtr globalInitRAII)
 {
 	unsigned long configVer = 0;
 	CWaitCursor wait;
@@ -485,7 +486,7 @@ HRESULT LoadSvxFile(unsigned long svoVersion, const std::string& rSvxFilePath, c
 
 	double startTimeStamp = SvUl::GetTimeStamp();
 
-	auto [ok, hr] = LoadSvxFilePart2(isGlobalInit, SVIMType, XMLTree, pMainFrame);
+	auto [ok, hr] = LoadSvxFilePart2(std::move(globalInitRAII), SVIMType, XMLTree, pMainFrame);
 
 	if (false == ok)
 	{
@@ -510,7 +511,7 @@ HRESULT LoadSvxFile(unsigned long svoVersion, const std::string& rSvxFilePath, c
 }
 
 
-std::pair<bool, HRESULT> LoadSvxFilePart2(bool isGlobalInit, SVIMProductEnum SVIMType, SVTreeType& rXmlTree, SVMainFrame* pMainFrame)
+std::pair<bool, HRESULT> LoadSvxFilePart2(SvOi::TRC_RAIIPtr globalInitRAII, SVIMProductEnum SVIMType, SVTreeType& rXmlTree, SVMainFrame* pMainFrame)
 {
 	HRESULT hr = S_OK;
 
@@ -557,7 +558,7 @@ std::pair<bool, HRESULT> LoadSvxFilePart2(bool isGlobalInit, SVIMProductEnum SVI
 
 	if (nullptr != pConfig)
 	{
-		return doStuffAfterConfigurationLoad(pConfig, rXmlTree, isGlobalInit, SVIMType);
+		return doStuffAfterConfigurationLoad(pConfig, rXmlTree, std::move(globalInitRAII), SVIMType);
 	}
 
 	return {false, E_FAIL};

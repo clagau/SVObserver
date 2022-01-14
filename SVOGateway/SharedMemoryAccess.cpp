@@ -1222,7 +1222,7 @@ void SharedMemoryAccess::subscribe_to_trc()
 	auto* pTrc = SvOi::getTriggerRecordControllerRInstance();
 	if (nullptr != pTrc)
 	{
-		m_TrcReadySubscriptionId = pTrc->registerReadyCallback([this]()
+		m_TrcReadySubscriptionRAII = pTrc->registerReadyCallback([this]()
 		{
 			SV_LOG_GLOBAL(debug) << "TRC is ready";
 			m_trc_ready = true;
@@ -1231,12 +1231,12 @@ void SharedMemoryAccess::subscribe_to_trc()
 					rebuild_trc_pos_caches();
 				});
 		});
-		m_TrcResetSubscriptionId = pTrc->registerResetCallback([this]()
+		m_TrcResetSubscriptionRAII = pTrc->registerResetCallback([this]()
 		{
 			SV_LOG_GLOBAL(debug) << "TRC was reset";
 			m_trc_ready = false;
 		});
-		m_TrcNewInterestTrSubscriptionId = pTrc->registerNewInterestTrCallback([this](const std::vector<SvOi::TrInterestEventData>& rEvents)
+		m_TrcNewInterestTrSubscriptionRAII = pTrc->registerNewInterestTrCallback([this](const std::vector<SvOi::TrInterestEventData>& rEvents)
 		{
 			if (!m_trc_ready)
 			{
@@ -1261,13 +1261,9 @@ void SharedMemoryAccess::subscribe_to_trc()
 
 void SharedMemoryAccess::unsubscribe_from_trc()
 {
-	auto* pTrc = SvOi::getTriggerRecordControllerRInstance();
-	if (nullptr != pTrc)
-	{
-		pTrc->unregisterReadyCallback(m_TrcReadySubscriptionId);
-		pTrc->unregisterResetCallback(m_TrcResetSubscriptionId);
-		pTrc->unregisterNewInterestTrCallback(m_TrcNewInterestTrSubscriptionId);
-	}
+	m_TrcReadySubscriptionRAII.reset();
+	m_TrcResetSubscriptionRAII.reset();
+	m_TrcNewInterestTrSubscriptionRAII.reset();
 }
 
 int SharedMemoryAccess::get_inspection_pos_for_id(const SvPb::InspectionList& rList, uint32_t id)

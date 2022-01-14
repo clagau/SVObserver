@@ -689,21 +689,20 @@ HRESULT SVObserverApp::OpenSVXFile()
 
 		try
 		{
-			bool isGlobalInit = true;
+			SvOi::TRC_RAIIPtr globalInitPtr;
 
 			try
 			{
 				//avoid that TRC-memory will be recreated for every loading step, but do it once at the end.
-				SvOi::getTriggerRecordControllerRWInstanceThrow().setGlobalInit();
+				globalInitPtr = SvOi::getTriggerRecordControllerRWInstanceThrow().setGlobalInit();
 			}
 			catch (const SvStl::MessageContainer& rExp)
 			{
 				SvStl::MessageManager Exception(SvStl::MsgType::Log);
 				Exception.setMessage(rExp.getMessage());
-				isGlobalInit = false;
 			}
 
-			hr = LoadSvxFile(m_CurrentVersion, GetFullSvxFileName(), getConfigFullFileName(), GetSVIMType(), dynamic_cast<SVMainFrame*>(m_pMainWnd), isGlobalInit);
+			hr = LoadSvxFile(m_CurrentVersion, GetFullSvxFileName(), getConfigFullFileName(), GetSVIMType(), dynamic_cast<SVMainFrame*>(m_pMainWnd), std::move(globalInitPtr));
 
 			if (hr & SvDef::svErrorCondition)
 			{

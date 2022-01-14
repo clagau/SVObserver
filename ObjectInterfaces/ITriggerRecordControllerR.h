@@ -54,6 +54,8 @@ namespace SvOi
 		bool m_isInterest = false;
 	};
 
+	using RAIIPtr = std::unique_ptr<void, std::function<void(void*)>>;
+
 	class ITriggerRecordControllerR
 	{
 	public:
@@ -114,38 +116,22 @@ namespace SvOi
 		/// Register a Callback function to call if TRC reset. (After this event the TRC is not longer valid. It is possible to get this event even it TRC already invalid)
 		/// \param pCallback [in] Pointer of the callback-function.
 		/// \returns int handleId of the Callback. It is needed to unregister the callback. (< 0 register was not successfully)
-		virtual int registerResetCallback(std::function<void()> pCallback) = 0;
-
-		/// Unregister a Callback function to call if TRC reset.
-		/// \param handleId [in] The handleId was get by register of the callback-function.
-		virtual void unregisterResetCallback(int handleId) = 0;
+		virtual RAIIPtr registerResetCallback(std::function<void()> pCallback) = 0;
 
 		/// Register a Callback function to call if reset is finished and TRC is ready to use.
 		/// \param pCallback [in] Pointer of the callback-function.
 		/// \returns int handleId of the Callback. It is needed to unregister the callback. (< 0 register was not successfully)
-		virtual int registerReadyCallback(std::function<void()> pCallback) = 0;
-
-		/// Unregister a Callback function to call if reset is finished and TRC is ready to use.
-		/// \param handleId [in] The handleId was get by register of the callback-function.
-		virtual void unregisterReadyCallback(int handleId) = 0;
+		virtual RAIIPtr registerReadyCallback(std::function<void()> pCallback) = 0;
 
 		/// Register a Callback function to call if a new trigger record is finished.
 		/// \param pCallback [in] Pointer of the callback-function. First parameter is inspection and second is trId.
 		/// \returns int handleId of the Callback. It is needed to unregister the callback.
-		virtual int registerNewTrCallback(std::function<void(TrEventData)> pCallback) = 0;
-
-		/// Unregister a Callback function to call if a new trigger record is finished.
-		/// \param handleId [in] The handleId was get by register of the callback-function. (< 0 register was not successfully)
-		virtual void unregisterNewTrCallback(int handleId) = 0;
+		virtual RAIIPtr registerNewTrCallback(std::function<void(TrEventData)> pCallback) = 0;
 
 		/// Register a Callback function to call if a trigger record is set to interest.
 		/// \param pCallback [in] Pointer of the callback-function. A vector of pairs: First parameter is inspection and second is trId.
 		/// \returns int handleId of the Callback. It is needed to unregister the callback.
-		virtual int registerNewInterestTrCallback(std::function<void(const std::vector<TrInterestEventData>&)> pCallback) = 0;
-
-		/// Unregister a Callback function to call if a trigger record is set to interest.
-		/// \param handleId [in] The handleId was get by register of the callback-function. (< 0 register was not successfully)
-		virtual void unregisterNewInterestTrCallback(int handleId) = 0;
+		virtual RAIIPtr registerNewInterestTrCallback(std::function<void(const std::vector<TrInterestEventData>&)> pCallback) = 0;
 
 		/// Set a list of trigger record the interest flag. If true, it set its to the list of interest. This means those Trs will be keep for longer. (But this method do nothing if TrOfInterest mode is on pause.)
 		/// \param trVector [in] Vector of the Trs.

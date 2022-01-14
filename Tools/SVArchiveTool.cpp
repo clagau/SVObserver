@@ -666,10 +666,10 @@ bool SVArchiveTool::AllocateImageBuffers(SvStl::MessageContainerVector *pErrorMe
 				try
 				{
 					SvOi::ITriggerRecordControllerRW& rTRC = SvOi::getTriggerRecordControllerRWInstanceThrow();
-					bool mustResetStarted = !rTRC.isResetStarted();
-					if (mustResetStarted)
+					SvOi::TRC_RAIIPtr pResetRaii;
+					if (false == rTRC.isResetStarted())
 					{
-						rTRC.startResetTriggerRecordStructure();
+						pResetRaii = rTRC.startResetTriggerRecordStructure();
 					}
 					rTRC.removeAllImageBuffer(getObjectId());
 
@@ -687,9 +687,9 @@ bool SVArchiveTool::AllocateImageBuffers(SvStl::MessageContainerVector *pErrorMe
 								SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ArchiveTool_NotEnoughBuffer, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
 								pErrorMessages->push_back(Msg);
 							}
-							if (mustResetStarted)
+							if (nullptr != pResetRaii)
 							{
-								rTRC.finishResetTriggerRecordStructure();
+								pResetRaii->free();
 							}
 							m_lastBufferMap.clear();
 							return false;
@@ -697,9 +697,9 @@ bool SVArchiveTool::AllocateImageBuffers(SvStl::MessageContainerVector *pErrorMe
 
 						rTRC.addImageBuffer(getObjectId(), iter.first, bufferNumber);
 					}
-					if (mustResetStarted)
+					if (nullptr != pResetRaii)
 					{
-						rTRC.finishResetTriggerRecordStructure();
+						pResetRaii->free();
 					}
 					m_lastBufferMap = bufferMap;
 					m_lastMaxImages = dwMaxImages;

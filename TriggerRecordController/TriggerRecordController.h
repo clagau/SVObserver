@@ -16,6 +16,18 @@
 
 namespace SvTrc
 {
+class TRC_Raii : public SvOi::ITRC_Raii
+{
+public:
+	explicit TRC_Raii(std::function<void()> freeFunc) : m_freeCallback(freeFunc) {};
+	~TRC_Raii();
+
+	virtual void free() override;
+
+private:
+	std::function<void()> m_freeCallback;
+};
+
 class TriggerRecordController final : public SvOi::ITriggerRecordControllerRW
 {
 #pragma region Constructor
@@ -50,15 +62,11 @@ public:
 	virtual SvOi::ITriggerRecordRPtr createTriggerRecordObject(int inspectionPos, int trId) override;
 	virtual SvOi::ITriggerRecordRPtr createTriggerRecordObjectPerTriggerCount(int inspectionPos, int triggerCount) override;
 
-	virtual int registerResetCallback(std::function<void()> pCallback) override;
-	virtual void unregisterResetCallback(int handleId) override;
-	virtual int registerReadyCallback(std::function<void()> pCallback) override;
-	virtual void unregisterReadyCallback(int handleId) override;
-	virtual int registerNewTrCallback(std::function<void(SvOi::TrEventData)> pCallback) override;
-	virtual void unregisterNewTrCallback(int handleId) override;
-	virtual int registerNewInterestTrCallback(std::function<void(const std::vector<SvOi::TrInterestEventData>&)> pCallback) override;
-	virtual void unregisterNewInterestTrCallback(int handleId) override;
-
+	virtual SvOi::RAIIPtr registerResetCallback(std::function<void()> pCallback) override;
+	virtual SvOi::RAIIPtr registerReadyCallback(std::function<void()> pCallback) override;
+	virtual SvOi::RAIIPtr registerNewTrCallback(std::function<void(SvOi::TrEventData)> pCallback) override;
+	virtual SvOi::RAIIPtr registerNewInterestTrCallback(std::function<void(const std::vector<SvOi::TrInterestEventData>&)> pCallback) override;
+	
 	virtual bool setTrsOfInterest(const std::vector<SvOi::ITriggerRecordRPtr>& trVector, bool isInterest) override;
 	virtual std::vector<SvOi::ITriggerRecordRPtr> getTrsOfInterest(int inspectionPos, int n) override;
 	virtual void pauseTrsOfInterest(bool pauseFlag, int inspectionPos = -1) override;
@@ -80,11 +88,9 @@ public:
 
 	virtual SvOi::ITRCImagePtr getImageBuffer(const SVMatroxBufferCreateStruct& bufferStruct, bool createBufferExternIfNecessary = false) const override;
 
-	virtual void startResetTriggerRecordStructure(int inspectionPos = m_cResetStartedAddBuffer) override;
-	virtual void finishResetTriggerRecordStructure() override;
-
-	virtual void setGlobalInit() override;
-	virtual void finishGlobalInit() override;
+	virtual SvOi::TRC_RAIIPtr startResetTriggerRecordStructure(int inspectionPos = m_cResetStartedAddBuffer) override;
+	
+	virtual SvOi::TRC_RAIIPtr setGlobalInit() override;
 
 	virtual int addOrChangeImage(uint32_t imageId, const SVMatroxBufferCreateStruct& rBufferStruct, int inspectionPos = -1) override;
 	virtual int addOrChangeChildImage(uint32_t imageId, uint32_t parentId, const MatroxBufferChildDataStruct& rBufferStruct, int inspectionPos = -1) override;
@@ -113,6 +119,14 @@ public:
 
 #pragma region Private Methods
 private:
+	void unregisterResetCallback(int handleId);
+	void unregisterReadyCallback(int handleId);
+	void unregisterNewTrCallback(int handleId);
+	void unregisterNewInterestTrCallback(int handleId);
+
+	void finishGlobalInit();
+	void finishResetTriggerRecordStructure();
+
 	/// Recalculate the required buffer completely. 
 	/// Normally it will only the required buffer fit depending of the changed image, but if went reset wrong, a recalculate should done, because the numbers can be wrong.
 	void recalcRequiredBuffer();

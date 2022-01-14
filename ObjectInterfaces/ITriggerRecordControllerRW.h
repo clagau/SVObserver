@@ -31,6 +31,16 @@ typedef std::shared_ptr<ITRCImage> ITRCImagePtr;
 
 namespace SvOi
 {
+class ITRC_Raii
+{
+public:
+	virtual ~ITRC_Raii() = default;
+	/// Free the object and call the freeCallback. If the freeCallback throw an exception, it will be throw out of this method.
+	virtual void free() = 0;
+};
+
+using TRC_RAIIPtr = std::unique_ptr<ITRC_Raii>;
+
 	class ITriggerRecordControllerRW : public ITriggerRecordControllerR
 	{
 	public:
@@ -73,22 +83,16 @@ namespace SvOi
 		virtual ITRCImagePtr getImageBuffer(const SVMatroxBufferCreateStruct& bufferStruct, bool createBufferExternIfNecessary = false) const = 0;
 
 		/// Delete intern the memory and start the process to create the new memory structure. ATTENTION: All old TR-instances of all IPs have to be deleted before.
-		/// ATTENTION: In error case the method throw an exception of the type SvStl::MessageContainer.
+		/// ATTENTION: In error case the method throw an exception of the type SvStl::MessageContainer. (Also the free of the ptr can throw an exception)
 		/// \param inspectionPos [in] Position (in the inspection list) of the inspection, if only reset of additional buffers set m_cResetStartedAddBuffer.
-		virtual void startResetTriggerRecordStructure(int inspectionPos = m_cResetStartedAddBuffer) = 0;
-
-		/// Finished the reset of the trigger record structure and create the new memory structure.
-		/// ATTENTION: In error case the method throw an exception of the type SvStl::MessageContainer.
-		virtual void finishResetTriggerRecordStructure() = 0;
-
+		/// \returns SvOi::RAIIPtr Reset will be last, until the unique_ptr is freed (Then the new memory structure will be created.). 
+		virtual TRC_RAIIPtr startResetTriggerRecordStructure(int inspectionPos = m_cResetStartedAddBuffer) = 0;
+		
 		/// Set the TRC to global initialization, that means with changing of the TRC-structure the images (and its memory) will not be changed, but first with finishGlobalInit. 
 		/// This increase the performance, if it will be initialized more IPs.
-		/// ATTENTION: In error case the method throw an exception of the type SvStl::MessageContainer.
-		virtual void setGlobalInit() = 0;
-
-		/// It finished the global initialization, that means it will change the images and its memory. 
-		/// ATTENTION: In error case the method throw an exception of the type SvStl::MessageContainer.
-		virtual void finishGlobalInit() = 0;
+		/// \returns SvOi::RAIIPtr GlobalInit will be last, until the unique_ptr is freed.
+		/// ATTENTION: In error case the method throw an exception of the type SvStl::MessageContainer. (Also the free of the ptr can throw an exception)
+		virtual TRC_RAIIPtr setGlobalInit() = 0;
 
 		/// Change the bufferStruct of the buffer, if for this image no entry available it will be added. It must not be in the reset state (called startResetTriggerRecordStructure before.)
 		/// ATTENTION: All old Tr-instances of all IPs have to be deleted before.

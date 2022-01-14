@@ -1465,11 +1465,10 @@ bool SVInspectionProcess::resetAllObjects(SvStl::MessageContainerVector* pErrorM
 	bool Result = true;
 	try
 	{
-		bool shouldResetTRC = (false == pTrcRW->isResetLocked());
-
-		if (shouldResetTRC)
+		SvOi::TRC_RAIIPtr pResetRaii;
+		if (false == pTrcRW->isResetLocked())
 		{
-			pTrcRW->startResetTriggerRecordStructure(m_trcPos);
+			pResetRaii = pTrcRW->startResetTriggerRecordStructure(m_trcPos);
 		}
 
 		if (nullptr != m_pCurrentToolset)
@@ -1490,9 +1489,9 @@ bool SVInspectionProcess::resetAllObjects(SvStl::MessageContainerVector* pErrorM
 			buildValueObjectData();
 		}
 
-		if (shouldResetTRC)
+		if (nullptr != pResetRaii)
 		{
-			pTrcRW->finishResetTriggerRecordStructure();
+			pResetRaii->free();
 		}
 	}
 	catch (const SvStl::MessageContainer& rExp)

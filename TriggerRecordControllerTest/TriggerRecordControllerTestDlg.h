@@ -86,9 +86,9 @@ namespace SvTrcT
 		SvOg::PictureDisplay m_dialogImage;
 		const int m_inspectionPos = 0;
 		bool m_isReader = false;
-		int m_resetCallbackId = -1;
-		int m_readyCallbackId = -1;
-		int m_newTrIdCallbackId = -1;
+		SvOi::RAIIPtr m_resetCallbackRAII;
+		SvOi::RAIIPtr m_readyCallbackRAII;
+		SvOi::RAIIPtr m_newTrIdCallbackRAII;
 		std::atomic_bool m_isTRCValid = true;
 	};
 

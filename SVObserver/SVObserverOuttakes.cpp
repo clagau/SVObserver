@@ -243,11 +243,6 @@ void StopAll()
 	{
 		pSVMainFrame->SetStatusInfoText(_T(""));
 
-		auto* pTrcRW = SvOi::getTriggerRecordControllerRWInstance();
-		if (nullptr != pTrcRW)
-		{
-			pTrcRW->unlockReset();
-		}
 		SVSVIMStateClass::RemoveState(SV_STATE_RUNNING | SV_STATE_TEST);
 
 		SetPriorityClass(GetCurrentProcess(), NORMAL_PRIORITY_CLASS);

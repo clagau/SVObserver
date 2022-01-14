@@ -117,7 +117,7 @@ bool TrcTester::setBuffers()
 	for (int i = 0; i < m_config.getNoOfRepetitionsPerStep(); i++)
 	{
 		setInspections(numbersOfRecords, *m_pTrcRW, m_rLogClass, strTestCreateInspections);
-		m_pTrcRW->setGlobalInit();
+		auto globalInitPtr = m_pTrcRW->setGlobalInit();
 		double start = SvUl::GetTimeStamp();
 		setBufferOk = setInspectionBuffers(strTestSetBuffers);
 		if (!setBufferOk)
@@ -134,7 +134,7 @@ bool TrcTester::setBuffers()
 			m_rLogClass.Log(logStr.c_str(), LogLevel::Error, LogType::FAIL, __LINE__, strTestSetBuffers);
 			break;
 		}
-		m_pTrcRW->finishGlobalInit();
+		globalInitPtr->free();
 		double end = SvUl::GetTimeStamp();
 		double elapsed_ms = end - start;
 		elapsed_ms_sum += elapsed_ms;
@@ -173,14 +173,14 @@ bool TrcTester::checkBufferMaximum()
 	try
 	{
 		double start = SvUl::GetTimeStamp();
-		m_pTrcRW->startResetTriggerRecordStructure(0);
+		auto pResetHandle = m_pTrcRW->startResetTriggerRecordStructure(0);
 		bool independentOk = m_pTrcRW->removeAllImageBuffer();
 		for (int i = 0; i < numberOfImages; i++)
 		{
 			independentOk &= ( 0 <= m_pTrcRW->addOrChangeImage(getNextObjectId(), specifyBuffer(i / m_config.getSpecifyBufferDiv())));
 		}
 		m_pTrcRW->addImageBuffer(getNextObjectId(), specifyBuffer(1), numberOfAddBuffer);
-		m_pTrcRW->finishResetTriggerRecordStructure();
+		pResetHandle->free();
 		double end = SvUl::GetTimeStamp();
 		double elapsed_ms = end - start;
 		std::string logStr = SvUl::Format(_T("set images (maxBuffer = %d) good case (%f ms/ %f ms)"), maxBuffer, elapsed_ms, m_config.getMaxTimeCheckBufferPerBuffer()*numberOfImages);
@@ -205,10 +205,10 @@ bool TrcTester::checkBufferMaximum()
 
 	try
 	{
-		m_pTrcRW->startResetTriggerRecordStructure();
+		auto pResetHandle = m_pTrcRW->startResetTriggerRecordStructure();
 		//pTrcRW->removeAllImageBuffer();
 		m_pTrcRW->addImageBuffer(getNextObjectId(), specifyBuffer(3), 1);
-		m_pTrcRW->finishResetTriggerRecordStructure();
+		pResetHandle->free();
 
 		m_rLogClass.Log(_T("set images too many buffers, but no exception"), LogLevel::Error, LogType::FAIL, __LINE__, strTestCheckBufferMaximum);
 		return false;
@@ -253,9 +253,9 @@ bool TrcTester::createTR2WriteAndRead()
 	{
 		for (int i = 0; i < numberOfInspection; i++)
 		{
-			m_pTrcRW->startResetTriggerRecordStructure(i);
+			auto pResetHandle = m_pTrcRW->startResetTriggerRecordStructure(i);
 			retValue = (0 <= m_pTrcRW->addOrChangeImage(getNextObjectId(), specifyBufferRandom()));
-			m_pTrcRW->finishResetTriggerRecordStructure();
+			pResetHandle->free();
 			if (!retValue)
 			{
 				m_rLogClass.Log(_T("init Inspection"), LogLevel::Error, LogType::FAIL, __LINE__, strTestCreateTR2WriteAndRead);
@@ -390,12 +390,12 @@ bool TrcTester::setAndReadImage()
 	auto bufferStruct = specifyBufferFromImage(imageIds[0]);
 	try
 	{
-		m_pTrcRW->startResetTriggerRecordStructure(0);
+		auto pResetHandle = m_pTrcRW->startResetTriggerRecordStructure(0);
 		m_pTrcRW->removeAllImageBuffer();
 		m_pTrcRW->addImageBuffer(getNextObjectId(), bufferStruct, 1);
 		
 		retValue = (0 <= m_pTrcRW->addOrChangeImage(getNextObjectId(), bufferStruct));
-		m_pTrcRW->finishResetTriggerRecordStructure();
+		pResetHandle->free();
 		if (!retValue)
 		{
 			m_rLogClass.Log(_T("init Inspection"), LogLevel::Error, LogType::FAIL, __LINE__, strTestSetAndReadImage);
@@ -518,9 +518,9 @@ bool TrcTester::setAndReadValues()
 	try
 	{
 		auto tmpDefList = dataDefList;
-		m_pTrcRW->startResetTriggerRecordStructure(0);
+		auto pResetHandle = m_pTrcRW->startResetTriggerRecordStructure(0);
 		m_pTrcRW->changeDataDef(std::move(tmpDefList), memOffset, 0);
-		m_pTrcRW->finishResetTriggerRecordStructure();
+		pResetHandle->free();
 	}
 	catch (const SvStl::MessageContainer& rExp)
 	{
@@ -626,14 +626,14 @@ bool TrcTester::setInspectionBuffers(LPCSTR testAreaStr)
 	{
 		try
 		{
-			m_pTrcRW->startResetTriggerRecordStructure(i);
+			auto pResetHandle = m_pTrcRW->startResetTriggerRecordStructure(i);
 
 			for (int j = 0; j < m_config.getNumberOfBuffersPerInspection(); j++)
 			{
 				m_pTrcRW->addOrChangeImage(getNextObjectId(), specifyBuffer(1 + j));
 			}
 
-			m_pTrcRW->finishResetTriggerRecordStructure(); // i.e the current inspection will be completed
+			pResetHandle->free(); // i.e the current inspection will be completed
 
 		}
 		catch (const SvStl::MessageContainer& rExp)
@@ -661,14 +661,14 @@ bool TrcTester::setIndependentBuffers(LPCSTR testAreaStr)
 	}
 	try
 	{
-		m_pTrcRW->startResetTriggerRecordStructure();
+		auto pResetHandle = m_pTrcRW->startResetTriggerRecordStructure();
 		bool independentOk = true;
 		for (int i = 0; i < m_config.getNumberOfBuffersPerInspection(); i++)
 		{
 			independentOk &= m_pTrcRW->removeAllImageBuffer();
 			m_pTrcRW->addImageBuffer(getNextObjectId(), specifyBuffer(m_config.getNumberOfIndependentBuffers()), 1);
 		}
-		m_pTrcRW->finishResetTriggerRecordStructure();
+		pResetHandle->free();
 
 		if (!independentOk)
 		{

@@ -210,9 +210,9 @@ private:
 	bool m_skipPermissionChecks;
 	std::unique_ptr<SvSml::ShareControl> m_pShareControlInstance;
 	std::atomic_bool m_trc_ready {false};
-	int m_TrcReadySubscriptionId;
-	int m_TrcResetSubscriptionId;
-	int m_TrcNewInterestTrSubscriptionId;
+	SvOi::RAIIPtr m_TrcReadySubscriptionRAII;
+	SvOi::RAIIPtr m_TrcResetSubscriptionRAII;
+	SvOi::RAIIPtr m_TrcNewInterestTrSubscriptionRAII;
 
 	SharedMemoryLock m_SharedMemoryLock;
 	std::string m_LockOwner;
