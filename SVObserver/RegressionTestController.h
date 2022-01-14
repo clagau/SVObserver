@@ -5,9 +5,11 @@
 //******************************************************************************
 
 #pragma once
+#include "SVInspectionProcess.h"
 #include "SVRegressionTestStruct.h"
 #include "ObjectInterfaces/IFormulaController.h"
-#include "SVInspectionProcess.h"
+#include "Triggering/ObjectIDParameters.h"
+
 
 
 class RegressionTestController
@@ -29,7 +31,7 @@ class RegressionTestController
 public:
 	RegressionTestController() = default;
 	RegressionRunFileStruct RegressionTestSetFiles(RegressionTestStruct& rRegTestStruct, RegressionRuningState& runState);
-	DWORD runThread(HWND hMainWnd, HWND hRegressionWnd, SVInspectionProcess& rIP);
+	DWORD runThread(HWND hMainWnd, HWND hRegressionWnd, SVInspectionProcess& rIP, const SvTrig::ObjectIDParameters& rObjectIDParams);
 
 	void stopRunning();
 	void resetEquationText();
@@ -53,15 +55,17 @@ private:
 	bool setImagesForNextRun(SVInspectionProcess& rIP, RegressionRuningState& runState, std::back_insert_iterator<std::vector<RegressionRunFileStruct>> fileNameInserter);
 
 private:
-	RegressionRunModeEnum m_RunMode;
-	RegressionPlayModeEnum m_RunPlayMode;
+	RegressionRunModeEnum m_RunMode {RegressionRunModeEnum::RegModePause};
+	RegressionPlayModeEnum m_RunPlayMode {RegressionPlayModeEnum::RunToEnd};
 	int m_iTimeoutMS = 0;
-	bool m_isRunning{ false };
-	bool m_isStopping;
-	bool m_UsePlayCondition{ false };
+	bool m_isRunning {false};
+	bool m_isStopping {false};
+	bool m_UsePlayCondition {false};
 	SvOi::IFormulaControllerPtr m_pPlayEquationController;
 	std::string m_LoadEquationText;
-	bool m_IsInitEquationText{ false };
+	bool m_IsInitEquationText {false};
+	long m_triggerIndex {0L};
+	SvTrig::ObjectIDParameters m_objectIDParams;
 	std::vector<RegressionTestStruct> m_regCameras;
 	std::vector<RegressionTestStruct> m_regImages;
 };

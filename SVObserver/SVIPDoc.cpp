@@ -73,6 +73,7 @@
 #include "SVXMLLibrary/SVObjectXMLWriter.h"
 #include "Tools/LoopTool.h"
 #include "Tools/SVTool.h"
+#include "Triggering/SVTriggerObject.h"
 #include "ObjectInterfaces/ObjectInfo.h"
 #include "SVStatusLibrary/MessageTextEnum.h"
 #pragma endregion Includes
@@ -3431,12 +3432,12 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread(LPVOID lpParam)
 		hRegressionWnd = pMainFrm->m_pregTestDlg->GetSafeHwnd();
 	}
 	auto* pIp = pIPDoc->GetInspectionProcess();
-	if (nullptr == pIp || nullptr == hRegressionWnd)
+	if (nullptr == pIp || nullptr == hRegressionWnd || nullptr == pIp->GetPPQ() || nullptr == pIp->GetPPQ()->GetTrigger())
 	{
 		return static_cast<DWORD> (E_FAIL);
 	}
 
-	return pIPDoc->m_regTest.runThread(pMainFrm->GetSafeHwnd(), hRegressionWnd, *pIp);
+	return pIPDoc->m_regTest.runThread(pMainFrm->GetSafeHwnd(), hRegressionWnd, *pIp, pIp->GetPPQ()->GetTrigger()->getObjectIDParameters());
 }
 
 void SVIPDoc::RegressionTestComplete()

@@ -188,9 +188,9 @@ void SVTriggerClass::preProcessTriggers(SvTrig::SVTriggerInfoStruct& rTriggerInf
 			++rObjIDParam.m_currentObjectID;
 			m_triggerIndex = 1L;
 		}
-		else if(0 == rObjIDParam.m_startObjectID)
+		else if(0 == rObjIDParam.m_startObjectID && 0 == rObjIDParam.m_currentObjectID)
 		{
-			rObjIDParam.m_currentObjectID = (0 == rObjIDParam.m_currentObjectID) ? 1 : rObjIDParam.m_currentObjectID;
+			rObjIDParam.m_currentObjectID = 1L;
 		}
 		rTriggerInfo.m_Data[SvTrig::TriggerDataEnum::ObjectID] = _variant_t(rObjIDParam.m_currentObjectID);
 		rTriggerInfo.m_Data[SvTrig::TriggerDataEnum::TriggerIndex] = _variant_t(m_triggerIndex);

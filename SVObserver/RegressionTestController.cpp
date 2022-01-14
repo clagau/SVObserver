@@ -5,6 +5,7 @@
 //******************************************************************************
 #include "stdafx.h"
 #include "RegressionTestController.h"
+#include "SVToolSet.h"
 #include "Definitions/SVUserMessage.h"
 #include "InspectionCommands/CommandExternalHelper.h"
 
@@ -125,8 +126,11 @@ RegressionRunFileStruct RegressionTestController::RegressionTestSetFiles(Regress
 }
 
 
-DWORD RegressionTestController::runThread(HWND hMainWnd, HWND hRegressionWnd, SVInspectionProcess& rIP)
+DWORD RegressionTestController::runThread(HWND hMainWnd, HWND hRegressionWnd, SVInspectionProcess& rIP, const SvTrig::ObjectIDParameters& rObjectIDParams)
 {
+	m_objectIDParams = rObjectIDParams;
+	m_objectIDParams.m_currentObjectID = m_objectIDParams.m_startObjectID;
+	m_triggerIndex = 0;
 	m_isRunning = true;
 	m_RunMode = RegModePause;
 	m_isStopping = false;
@@ -201,6 +205,9 @@ DWORD RegressionTestController::runThread(HWND hMainWnd, HWND hRegressionWnd, SV
 		//send image info to the dialog...
 		if (runState.bRunFlag)
 		{
+			rIP.GetToolSet()->setObjectID(m_objectIDParams.m_currentObjectID);
+			rIP.GetToolSet()->setTriggerIndex(m_triggerIndex);
+			rIP.GetToolSet()->setTriggerPerObjectID(m_objectIDParams.m_triggerPerObjectID);
 			runState.bRunFlag = false;
 			SendMessage(hRegressionWnd, WM_REGRESSION_TEST_SET_FILENAMES, reinterpret_cast<LPARAM> (&fileNameVec), 0);
 			runOnce(rIP);
@@ -331,6 +338,12 @@ void RegressionTestController::setPlayPause(HWND hRegressionWnd, RegressionRunin
 
 bool RegressionTestController::setImagesForNextRun(SVInspectionProcess& rIP, RegressionRuningState& runState, std::back_insert_iterator<std::vector<RegressionRunFileStruct>> fileNameInserter)
 {
+	if (RegressionRunModeEnum::RegModeBackToBeginningStop == m_RunMode)
+	{
+		m_objectIDParams.m_currentObjectID = m_objectIDParams.m_startObjectID;
+		m_triggerIndex = 0;
+	}
+
 	bool allSingleImage = true;
 	for (auto& regData : m_regCameras)
 	{
@@ -349,6 +362,30 @@ bool RegressionTestController::setImagesForNextRun(SVInspectionProcess& rIP, Reg
 				});
 			(*cameraIter)->setRegFileName(runFileStruct.FileName);
 			rIP.AddInputImageRequestByCameraName(runFileStruct.ObjectName, runFileStruct.FileName);
+
+			if (RegressionRunModeEnum::RegModeSingleStepBack == m_RunMode)
+			{
+				--m_triggerIndex;
+			}
+			else
+			{
+				++m_triggerIndex;
+			}
+
+			if (m_objectIDParams.m_triggerPerObjectID < m_triggerIndex)
+			{
+				++m_objectIDParams.m_currentObjectID;
+				m_triggerIndex = 1L;
+			}
+			else if (1L > m_triggerIndex)
+			{
+				--m_objectIDParams.m_currentObjectID;
+				m_triggerIndex = m_objectIDParams.m_triggerPerObjectID;
+			}
+			else if (0 == m_objectIDParams.m_startObjectID && 0 == m_objectIDParams.m_currentObjectID)
+			{
+				m_objectIDParams.m_currentObjectID = 1L;
+			}
 		}
 	}//end for i to num cameras...
 
