@@ -163,10 +163,6 @@ enum SVMatroxBufferValues
 	SVValueEccCheckDigit				= 5,			// M_ECC_CHECK_DIGIT
 	SVValueEccReedSolomon				= M_ECC_REED_SOLOMON,
 	
-	SVValueEcc050						= 0,			// M_ECC_050
-	SVValueEcc080						= 1,			// M_ECC_080
-	SVValueEcc100						= 2,			// M_ECC_100
-	SVValueEcc140						= 3,			// M_ECC_140
 	SVValueEcc200						= 7,			// M_ECC_200
 	SVValueEccReedSolomon0				= 10,
 	SVValueEccReedSolomon1				= SVValueEccReedSolomon0 + 1,

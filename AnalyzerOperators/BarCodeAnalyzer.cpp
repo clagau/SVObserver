@@ -754,10 +754,6 @@ SvPb::GetBarCodeTypeInfosResponse SvOi::getBarCodeTypeInfo()
 		std::array <std::pair<long, std::string>, 21> tmpArray = { 
 			std::pair<long, std::string>{SVValueEccNone, "None" },
 			std::pair<long, std::string>{SVValueAny, "Any" },
-			std::pair<long, std::string>{SVValueEcc050, "ECC-50" },
-			std::pair<long, std::string>{SVValueEcc080, "ECC-80" },
-			std::pair<long, std::string>{SVValueEcc100, "ECC-100" },
-			std::pair<long, std::string>{SVValueEcc140, "ECC-140" },
 			std::pair<long, std::string>{SVValueEcc200, "ECC-200" },
 			std::pair<long, std::string>{SVValueEccCheckDigit, "Check Digit" },
 			std::pair<long, std::string>{SVValueEccReedSolomon, "Reed-Solomon" },
@@ -824,7 +820,7 @@ SvPb::GetBarCodeTypeInfosResponse SvOi::getBarCodeTypeInfo()
 	{
 		std::array<std::tuple<long, std::string, std::vector<long>, long, std::vector<long>, long>, 16> arrTmp = { 
 			std::make_tuple(SVDataMatrix, "Data Matrix", std::vector<long>{ SVValueEncNum, SVValueENCAlpha, SVValueENCAlphaNum, SVValueENCAlphaNumPunc, SVValueENCAscii, SVValueENCIso8, SVValueAny}, SVValueAny, 
-				std::vector<long>{ SVValueEccNone, SVValueAny, SVValueEcc050, SVValueEcc080, SVValueEcc100, SVValueEcc140, SVValueEcc200 }, SVValueAny),
+				std::vector<long>{ SVValueEccNone, SVValueAny, SVValueEcc200 }, SVValueAny),
 			std::make_tuple(SVEan13, "EAN-13", std::vector<long>{ SVValueEncNum }, SVValueEncNum, std::vector<long>{ SVValueEccCheckDigit }, SVValueEccCheckDigit),
 			std::make_tuple(SVCode39, "3 of 9", std::vector<long>{ SVValueEncStandard, SVValueENCAscii }, SVValueEncStandard, std::vector<long>{ SVValueEccNone, SVValueEccCheckDigit }, SVValueEccNone),
 			std::make_tuple(SVInterleaved25, "Interleaved 2 of 5", std::vector<long>{ SVValueEncNum }, SVValueEncNum, std::vector<long>{ SVValueEccNone, SVValueEccCheckDigit }, SVValueEccNone),
