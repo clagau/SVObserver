@@ -73,7 +73,7 @@ SVImageArithmetic::SVImageArithmetic(SVObjectClass* POwner, int StringResourceID
 	m_InputGain.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVVariantValueObjectType, SvPb::ImageToolGainId);
 	registerInputObject(&m_InputGain, _T("ImageArithmeticGain"), SvPb::ImageArithmeticGainEId);
 
-	m_InputUseLut.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVBoolValueObjectType, SvPb::ImageToolUseLutId);
+	m_InputUseLut.SetInputObjectType(SvPb::SVValueObjectType, SvPb::SVBoolValueObjectType, SvPb::ImageToolReplaceOneId);
 	registerInputObject(&m_InputUseLut, _T("ImageArithmeticUseLut"), SvPb::ImageArithmeticUseLutEId);
 
 	// Register Embedded Objects

@@ -1202,7 +1202,7 @@ enum EmbeddedIdEnum
 	ImageToolEnabledGainId = 561;
 	ImageToolGainId = 562;
 	ImageToolOffsetId = 563;
-	ImageToolUseLutId = 566;
+	ImageToolReplaceOneId = 566;
 	AutoFitSizeEId = 567;
 	DrawAreaEId = 568;
 	LeftEId = 569;

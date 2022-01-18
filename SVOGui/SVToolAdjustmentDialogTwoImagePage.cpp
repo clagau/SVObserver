@@ -116,7 +116,7 @@ HRESULT SVToolAdjustmentDialogTwoImagePageClass::SetInspectionData()
 	}
 	
 	m_values.Set<bool>(SvPb::ImageToolEnabledGainId, m_IsGainEnabled);
-	m_values.Set<bool>(SvPb::ImageToolUseLutId, m_UseLut);
+	m_values.Set<bool>(SvPb::ImageToolReplaceOneId, m_UseLut);
 
 	hr = m_values.Commit(SvOg::PostAction::doRunOnce | SvOg::PostAction::doReset);
 	
@@ -240,7 +240,7 @@ BOOL SVToolAdjustmentDialogTwoImagePageClass::OnInitDialog()
 	}
 	
 	m_IsGainEnabled = m_values.Get<BOOL>(SvPb::ImageToolEnabledGainId);;
-	m_UseLut = m_values.Get<BOOL>(SvPb::ImageToolUseLutId);
+	m_UseLut = m_values.Get<BOOL>(SvPb::ImageToolReplaceOneId);
 	
 	
 	ShowGainAndOffset(lOperator);

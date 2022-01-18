@@ -122,7 +122,7 @@ void SVImageToolClass::BuildEmbeddedObjectList()
 	RegisterEmbeddedObject(&m_IsGainOffsetEnabled, SvPb::ImageToolEnabledGainId, IDS_OBJECTNAME_IMAGETOOL_ENABLE_GAIN, false, SvOi::SVResetItemTool);
 	m_IsGainOffsetEnabled.SetDefaultValue(FALSE);
 
-	RegisterEmbeddedObject(&m_UseLut, SvPb::ImageToolUseLutId, IDS_OBJECTNAME_IMAGETOOL_USE_LUT, false, SvOi::SVResetItemTool);
+	RegisterEmbeddedObject(&m_UseLut, SvPb::ImageToolReplaceOneId, IDS_OBJECTNAME_RECALCULATE_ONCE, false, SvOi::SVResetItemTool);
 	m_UseLut.SetDefaultValue(FALSE);
 
 	RegisterEmbeddedObject(&m_LinkedGain, SvPb::ImageToolGainId, IDS_OBJECTNAME_IMAGETOOL_GAIN, false, SvOi::SVResetItemTool);
