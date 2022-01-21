@@ -28,7 +28,7 @@ static char THIS_FILE[] = __FILE__;
 SV_IMPLEMENT_CLASS(LoopTool, SvPb::LoopToolClassId);
 
 LoopTool::LoopTool(SVObjectClass* POwner, int StringResourceID)
-	:SVToolClass(false,POwner, StringResourceID)
+	:SVToolClass(ToolExtType::None,POwner, StringResourceID)
 {
 	Initialize();
 }

@@ -38,7 +38,7 @@ SV_IMPLEMENT_CLASS(SVShiftTool, SvPb::ShiftToolClassId);
 
 #pragma region Constructor
 SVShiftTool::SVShiftTool( SVObjectClass* POwner, int StringResourceID )
-: SVToolClass( true,POwner, StringResourceID )
+: SVToolClass(ToolExtType::All,POwner, StringResourceID )
 {
 	LocalInitialize();
 }

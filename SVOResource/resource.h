@@ -85,8 +85,8 @@
 #define IDD_CHILDREN_DIALOG             5023
 #define IDD_BLOB2_RANGE_DIALOG          5024
 #define IDD_BLOB2_DRAW_DIALOG           5025
-#define IDD_GROUPTOOL_INPUTRESULT_DIALOG      5026
-#define IDD_LINKEDVALUE_SELECTOR_DIALOG      5027
+#define IDD_GROUPTOOL_INPUTRESULT_DIALOG 5026
+#define IDD_LINKEDVALUE_SELECTOR_DIALOG 5027
 #define IDD_PROFILE_GR_EDGE_MARKER_ADJUST_DIALOG 5028
 #define IDD_TA_DRAW_DIALOG              5029
 #define IDD_TA_TWO_IMAGE_DIALOG         5033
@@ -136,7 +136,7 @@
 #define IDD_DLG_CONFIG_ASSISTANT        5095
 #define IDD_DLG_PROPPAGE_AA_CAMERA      5096
 #define IDD_DLG_PROPPAGE_AA_TRIGGER     5097
-#define IDD_DLG_PROPPAGE_FILE_EXEC		5098
+#define IDD_DLG_PROPPAGE_FILE_EXEC      5098
 #define IDD_LUT_DIALOG                  5100
 #define IDD_CUSTOM_FILTER               5102
 #define IDD_OCV_MATCH_DIALOG            5105
@@ -1399,7 +1399,7 @@
 #define IDC_PQ_TAB                      15010
 #define IDC_SHUTDOWN_TEXT               15011
 #define IDC_SLIDER1                     15012
-#define IDC_CHECK_USE_LUT               15013
+#define IDC_CHECK_RECALCULATE_ONCE               15013
 #define IDC_CHECK1                      15014
 #define IDC_CHECK2                      15015
 #define IDC_CHECK3                      15016
@@ -2434,11 +2434,14 @@
 #define IDC_EDIT5                       16209
 #define IDC_EDIT6                       16210
 #define IDS_OBJECTNAME_MISSING_IMAGE_COUNT 16211
-#define IDS_OBJECTNAME_NOT_COMPLETE_COUNT  16212
-#define IDC_CHECK_AUTOFIT                16213
+#define IDS_OBJECTNAME_NOT_COMPLETE_COUNT 16212
+#define IDC_CHECK_AUTOFIT               16213
 #define IDC_BUTTON_FULL_IMAGE           16214
 #define IDC_BUTTON_FORMULA_FROM         16215
 #define IDC_COMBO_IMAGE_LIST            16216
+#define IDC_CHECK_USE_1_1               16217
+#define IDC_INPUT_IMAGE_NR_TEXT         16218
+#define IDC_IMAGE_INPUT_NR_COMBO        16219
 #define ID_UNDO_CHANGES                 20000
 #define ID_BROWSE_BUTTON                20001
 #define ID_PLUSBUTTON                   20002
@@ -2628,7 +2631,7 @@
 #define ID_DEFAULT_ADDFILE              20369
 #define ID_DEFAULT_DELETEFILE           20370
 #define ID_ADD_GROUPTOOL                20371
-#define ID_TRIGGER_SETTINGS				21017
+#define ID_TRIGGER_SETTINGS             21017
 #define ID_VIEW_TOOLSETDRAW             32999
 #define ID_VIEW_TOOLSETDRAW_POP_BASE    33000
 #define ID_VIEW_TOOLSETDRAW_POP_MAX     33049
@@ -2679,9 +2682,9 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        11157
+#define _APS_NEXT_RESOURCE_VALUE        11158
 #define _APS_NEXT_COMMAND_VALUE         20372
-#define _APS_NEXT_CONTROL_VALUE         16217
+#define _APS_NEXT_CONTROL_VALUE         16220
 #define _APS_NEXT_SYMED_VALUE           3002
 #endif
 #endif

@@ -34,7 +34,7 @@ static char THIS_FILE[] = __FILE__;
 SV_IMPLEMENT_CLASS( SVTransformationToolClass, SvPb::TransformationToolClassId);
 
 SVTransformationToolClass::SVTransformationToolClass( SVObjectClass* POwner, int StringResourceID )
-						  :SVToolClass(false, POwner, StringResourceID )
+						  :SVToolClass(ToolExtType::NoHeightWidth, POwner, StringResourceID )
 {
 	init();
 }
@@ -74,6 +74,11 @@ void SVTransformationToolClass::init()
 	// Add the Image Transformation Class
 	SvOp::SVImageTransform* pTransform = new SvOp::SVImageTransform;
 	if( pTransform ) Add( pTransform );
+	
+	if (m_pEmbeddedExtents)
+	{
+		m_pEmbeddedExtents->SetAttributes();
+	}
 
 }
 

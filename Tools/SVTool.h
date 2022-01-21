@@ -47,11 +47,16 @@ enum class ExtType
 	Left,Top,Right,Bottom,Width,Height
 };
 
+//Describes if the tool has EmbeddeExtents. 
+enum class ToolExtType
+{
+	None, All,NoHeightWidth
+};
 class  EmbeddedExtents
 {
 public:
 	EmbeddedExtents() = delete;
-	explicit EmbeddedExtents(SVToolClass* pOwner);
+	explicit EmbeddedExtents(SVToolClass* pOwner, ToolExtType tetype );
 	void SetTypeNameForExtents();
 	void RegisterEmbeddedExtents();
 	void	SetDefaults();
@@ -77,6 +82,7 @@ public:
 	SvVol::SVDoubleValueObjectClass m_svAuxiliarySourceAngle;
 	SvVol::SVStringValueObjectClass m_svAuxiliaryDrawType;
 	SvVol::SVStringValueObjectClass m_svAuxiliarySourceImageName;
+	ToolExtType m_ToolExtType {ToolExtType::All};
 };
 
 
@@ -87,7 +93,7 @@ class SVToolClass : public SvIe::SVTaskObjectListClass, public SvOi::ITool
 
 public:
 	SVToolClass() = delete;
-	explicit SVToolClass(bool hasEmbedededExtents , SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTOOL);
+	explicit SVToolClass(ToolExtType toolExtType , SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTOOL);
 	virtual ~SVToolClass();
 
 	virtual bool resetAllObjects(SvStl::MessageContainerVector *pErrorMessages = nullptr) override;
@@ -179,7 +185,7 @@ public:
 	/// \param retList [in,out] The ParameterList
 	/// \param embeddedId [in] The EmbeddedId of the object
 	bool addEntryToMonitorList(SvOi::ParametersForML &retList, SvPb::EmbeddedIdEnum embeddedID) const;
-
+	
 	SVToolExtentClass& getToolExtent() {return m_toolExtent;}
 	HRESULT UpdateOffsetDataToImage(SVExtentOffsetStruct& p_rsvOffsetData, SvIe::SVImageClass* p_svToolImage);
 

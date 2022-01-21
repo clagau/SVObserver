@@ -52,7 +52,7 @@ SV_IMPLEMENT_CLASS(SVArchiveTool, SvPb::ArchiveToolClassId);
 
 
 SVArchiveTool::SVArchiveTool( SVObjectClass* POwner, int StringResourceID )
-              : SVToolClass(false,POwner, StringResourceID)
+              :SVToolClass(ToolExtType::None,POwner, StringResourceID)
 {
 	initializeArchiveTool();
 }

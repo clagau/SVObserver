@@ -30,7 +30,7 @@ SV_IMPLEMENT_CLASS(TableAnalyzerTool, SvPb::TableAnalyzerToolClassId);
 
 #pragma region Constructor
 TableAnalyzerTool::TableAnalyzerTool(SVObjectClass* pOwner, int stringResourceID)
-	:SVToolClass(false, pOwner, stringResourceID)
+	:SVToolClass(ToolExtType::None, pOwner, stringResourceID)
 {
 	LocalInitialize();
 }

@@ -55,6 +55,8 @@ namespace SvOg
 		}			
 		m_AuxExtentsController.EnableAuxExtents(m_bUpdateAuxiliaryExtents ? true : false);
 
+		m_AuxExtentsController.setUseUnitMapping(m_UseUnitMapping ? true : false);
+		
 		if (SvPb::GroupToolObjectType == m_subType)
 		{
 			m_values.Set<bool>(SvPb::IsClosedEId, m_bCloseTool);
@@ -72,6 +74,8 @@ namespace SvOg
 
 	void SVTADlgGeneralPage::refresh()
 	{
+		
+
 		// Update dialog with freeze tool attributes...
 		long CurrentSelection = m_values.Get<long>(SvPb::ConditionalToolDrawFlagEId);
 		m_drawToolCombo.SetCurSelItemData(CurrentSelection);
@@ -86,16 +90,19 @@ namespace SvOg
 		if (m_bAuxExtentsAvailable)
 		{
 			GetDlgItem(IDC_SOURCE_IMAGE_COMBO)->EnableWindow(m_bUpdateAuxiliaryExtents);
+			if (m_IsExternalTool)
+			{
+				GetDlgItem(IDC_CHECK_USE_1_1)->EnableWindow(true);
+			}
 		}
+		
+		
+		
+
+
 		UpdateData(false); // Send Data to Dialog...
 	}
-
-	void SVTADlgGeneralPage::SetupAuxExtents()
-	{
-		m_bUpdateAuxiliaryExtents = m_AuxExtentsController.IsUpdateAuxExtentsEnabled();
-		UpdateData(false);
-	}
-
+	
 	void SVTADlgGeneralPage::SetupDrawFlagComboBox()
 	{
 		const SvOi::NameValueVector& rDrawCriteria = m_values.GetEnumTypes(SvPb::ConditionalToolDrawFlagEId);
@@ -137,6 +144,7 @@ namespace SvOg
 		DDX_Check(pDX, IDC_ENABLE_AUXILIARY_EXTENTS, m_bUpdateAuxiliaryExtents);
 		DDX_Control(pDX, IDC_TOOL_OVERLAYCOLOR_COMBO, m_AvailableToolForColorOverlayCombo);
 		DDX_Check(pDX, IDC_CLOSE_TOOL_CBOX, m_bCloseTool);
+		DDX_Check(pDX, IDC_CHECK_USE_1_1, m_UseUnitMapping);
 		//}}AFX_DATA_MAP
 	}
 
@@ -148,6 +156,7 @@ namespace SvOg
 		ON_CBN_SELCHANGE(IDC_SOURCE_IMAGE_COMBO, OnSelchangeSourceImageCombo)
 		ON_CBN_SELCHANGE(IDC_TOOL_OVERLAYCOLOR_COMBO, OnSelchangeToolForOverlayColorCombo)
 		ON_BN_CLICKED(ID_SHOW_RELATIONS, OnShowRelations)
+		ON_BN_CLICKED(IDC_CHECK_USE_1_1, OnUpdateUseUnitMapping)
 		//}}AFX_MSG_MAP
 	END_MESSAGE_MAP()
 
@@ -161,6 +170,7 @@ namespace SvOg
 
 		m_AuxExtentsController.Init();
 		m_values.Init();
+		m_IsExternalTool = m_AuxExtentsController.isExternalTool();
 
 		SetupDrawFlagComboBox();
 		m_bAuxExtentsAvailable = CheckAuxiliaryExtentsAvailable();
@@ -182,12 +192,29 @@ namespace SvOg
 			GetDlgItem(IDC_SOURCE_IMAGE_TEXT)->ShowWindow(SW_SHOW);
 			GetDlgItem(IDC_SOURCE_IMAGE_COMBO)->ShowWindow(SW_SHOW);
 		
-			SetupAuxExtents();
+			
+			m_bUpdateAuxiliaryExtents = m_AuxExtentsController.IsUpdateAuxExtentsEnabled();
 
 			GetDlgItem(IDC_SOURCE_IMAGE_COMBO)->EnableWindow(m_bUpdateAuxiliaryExtents);
 
+			
+		}
+
+		if (!m_bAuxExtentsAvailable || !m_IsExternalTool)
+		{
+			GetDlgItem(IDC_CHECK_USE_1_1)->ShowWindow(SW_HIDE);
+		}
+		else
+		{
+			GetDlgItem(IDC_CHECK_USE_1_1)->ShowWindow(SW_SHOW);
+			m_UseUnitMapping = m_AuxExtentsController.hasUnitMappeing();
+		}
+		
+		if (m_bAuxExtentsAvailable)
+		{
 			SetImages();
 		}
+
 
 		if (SvPb::GroupToolObjectType != m_subType)
 		{
@@ -230,6 +257,21 @@ namespace SvOg
 		GetDlgItem(IDC_SOURCE_IMAGE_COMBO)->EnableWindow(m_bUpdateAuxiliaryExtents);
 		refresh();
 	}
+
+
+	void SVTADlgGeneralPage::OnUpdateUseUnitMapping()
+	{
+		SetInspectionData();
+		
+		m_AuxExtentsController.resetTaskObject();
+		m_AuxExtentsController.FindAuxSourceImages();
+		SetImages();
+
+
+		GetDlgItem(IDC_SOURCE_IMAGE_COMBO)->EnableWindow(m_bUpdateAuxiliaryExtents);
+		refresh();
+	}
+
 
 	void SVTADlgGeneralPage::OnUpdateCloseTool()
 	{

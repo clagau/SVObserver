@@ -39,7 +39,7 @@ static char THIS_FILE[] = __FILE__;
 SV_IMPLEMENT_CLASS(SVImageToolClass, SvPb::ImageToolClassId);
 
 SVImageToolClass::SVImageToolClass(SVObjectClass* POwner, int StringResourceID)
-	:SVToolClass(true,POwner, StringResourceID)
+	:SVToolClass(ToolExtType::All,POwner, StringResourceID)
 {
 	init();
 }
@@ -122,7 +122,7 @@ void SVImageToolClass::BuildEmbeddedObjectList()
 	RegisterEmbeddedObject(&m_IsGainOffsetEnabled, SvPb::ImageToolEnabledGainId, IDS_OBJECTNAME_IMAGETOOL_ENABLE_GAIN, false, SvOi::SVResetItemTool);
 	m_IsGainOffsetEnabled.SetDefaultValue(FALSE);
 
-	RegisterEmbeddedObject(&m_UseLut, SvPb::ImageToolReplaceOneId, IDS_OBJECTNAME_RECALCULATE_ONCE, false, SvOi::SVResetItemTool);
+	RegisterEmbeddedObject(&m_UseLut, SvPb::ImageToolRecalculateOnceId, IDS_OBJECTNAME_RECALCULATE_ONCE, false, SvOi::SVResetItemTool);
 	m_UseLut.SetDefaultValue(FALSE);
 
 	RegisterEmbeddedObject(&m_LinkedGain, SvPb::ImageToolGainId, IDS_OBJECTNAME_IMAGETOOL_GAIN, false, SvOi::SVResetItemTool);

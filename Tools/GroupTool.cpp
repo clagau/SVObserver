@@ -29,7 +29,7 @@ namespace SvTo
 	SV_IMPLEMENT_CLASS(GroupTool, SvPb::GroupToolClassId);
 
 	GroupTool::GroupTool(SVObjectClass* POwner, int StringResourceID)
-		:SVToolClass(false,POwner, StringResourceID)
+		:SVToolClass(ToolExtType::None,POwner, StringResourceID)
 	{
 		Initialize();
 	}

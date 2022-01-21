@@ -198,10 +198,7 @@ namespace SvOp
 			m_pfnGetHBITMAPResultImages = (GetHBITMAPResultImagesPtr)::GetProcAddress(m_hmHandle, "SVGetHBITMAPResultImages");
 			m_pfnGetResultImageDefinitions = (GetResultImageDefinitionsPtr)::GetProcAddress(m_hmHandle, "SVGetResultImageDefinitions");
 			m_pfnDestroyImageDefinitionStructure = (DestroyImageDefinitionStructurePtr)::GetProcAddress(m_hmHandle, "SVDestroyImageDefinitionStructure");
-
-
 			m_pfnGetResultTables = (GetResultTablesPtr)::GetProcAddress(m_hmHandle, "GetResultTables");
-
 			m_pfnGetResultTablesMaxRowSize = (GetResultTablesMaxRowSizePtr)::GetProcAddress(m_hmHandle, "GetResultTablesMaxRowSize");
 			m_pfnGetResultValuesMaxArraySize = (GetResultValuesMaxArraySizePtr)::GetProcAddress(m_hmHandle, "GetResultValuesMaxArraySize");
 
@@ -227,6 +224,14 @@ namespace SvOp
 			if (nullptr == m_pfnGetResultImageDefinitions) m_pfnGetResultImageDefinitions = (GetResultImageDefinitionsPtr)::GetProcAddress(m_hmHandle, "GetResultImageDefinitions");
 			if (nullptr == m_pfnDestroyImageDefinitionStructure) m_pfnDestroyImageDefinitionStructure = (DestroyImageDefinitionStructurePtr)::GetProcAddress(m_hmHandle, "DestroyImageDefinitionStructure");
 
+			if (nullptr == m_pfnGetTransformationDefinitions)
+			{
+				m_pfnGetTransformationDefinitions = (GetTransformationDefinitionsPtr)::GetProcAddress(m_hmHandle, "GetTransformationDefinitions");
+			}
+			if (nullptr == m_pfnDestroyTransformationDefinitions)
+			{
+				m_pfnDestroyTransformationDefinitions = (DestroyTransformationDefinitionsPtr)::GetProcAddress(m_hmHandle, "DestroyTransformationDefinitions");
+			}
 
 			if ((
 				nullptr != m_pfnSimpleTest &&
@@ -427,7 +432,32 @@ namespace SvOp
 		}
 
 	}
-
+	bool SVDLLToolLoadLibraryClass::HasTransformationMatrix(int& rImageIndexIn, int& rImageIndexOut, int& rResutMatrixIndex)
+	{
+		rImageIndexIn = rImageIndexOut = rResutMatrixIndex = -1;
+		if (m_pfnGetTransformationDefinitions == nullptr || m_pfnDestroyTransformationDefinitions == nullptr)
+		{
+			return false;
+		}
+		long size;
+		TransformDefs* pTransformdefs {nullptr};
+		if (S_OK == m_pfnGetTransformationDefinitions(&size, &pTransformdefs))
+		{
+			rImageIndexIn = pTransformdefs[0].imageinput;
+			rImageIndexOut = pTransformdefs[0].imageoutput;
+			rResutMatrixIndex = pTransformdefs[0].resultindex;
+			if (m_pfnDestroyTransformationDefinitions)
+			{
+				m_pfnDestroyTransformationDefinitions(pTransformdefs);
+			}
+			return true;
+		}
+		return false;
+	}
+		
+	
+		
+	
 
 	bool  SVDLLToolLoadLibraryClass::UseResultTablesMaxRowSize() const
 	{
@@ -522,6 +552,8 @@ namespace SvOp
 		m_pfnGetResultTables = nullptr;
 		m_pfnGetResultTablesMaxRowSize = nullptr;
 		m_pfnGetResultValuesMaxArraySize = nullptr;
+		m_pfnGetTransformationDefinitions  = nullptr;
+		m_pfnDestroyTransformationDefinitions = nullptr;
 
 
 		return l_hrOk;

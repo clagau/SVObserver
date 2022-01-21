@@ -159,6 +159,18 @@ namespace SvOg
 		void SetInspectionID(uint32_t inspectionID) { return m_Data.SetInspectionID(inspectionID); }
 		uint32_t GetInspectionID() const { return m_Data.GetInspectionID(); }
 		uint32_t GetObjectID(uint32_t rEmbeddedID) const { return m_Data.GetObjectID((SvPb::EmbeddedIdEnum) rEmbeddedID); }
+		bool resetTaskObject() 
+		{ 
+			try
+			{
+				ResetObject(m_Data.GetInspectionID(), m_Data.GetTaskID());
+			}
+			catch(  ... )
+			{
+				return false;
+			}
+			return true;
+		}
 #pragma endregion Public Methods
 
 #pragma region Member Variables

@@ -29,7 +29,7 @@ static char THIS_FILE[] = __FILE__;
 SV_IMPLEMENT_CLASS( SVAcquisitionToolClass, SvPb::AcquisitionToolClassId );
 
 SVAcquisitionToolClass::SVAcquisitionToolClass( SVObjectClass* POwner, int StringResourceID )
-					   :SVToolClass(true, POwner, StringResourceID )
+					   :SVToolClass(ToolExtType::All, POwner, StringResourceID )
 {
 	init();
 }

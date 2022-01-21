@@ -9,6 +9,7 @@
 #include "Stdafx.h"
 #include "AuxiliaryExtentsController.h"
 #include "InspectionCommands\CommandExternalHelper.h"
+#include "ExternalToolTaskController.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -21,10 +22,28 @@ AuxiliaryExtentsController::AuxiliaryExtentsController(uint32_t inspectionID, ui
 	, m_ImageController {inspectionID, taskObjectID}
 	, m_values {BoundValues{ inspectionID, taskObjectID }}
 {
+	
+	std::unique_ptr<ExternalToolTaskController> pExternalToolTaskControler = std::make_unique<ExternalToolTaskController>(inspectionID, taskObjectID);
+	if (pExternalToolTaskControler)
+	{
+		m_ExternalToolTaskObjectId = pExternalToolTaskControler->getExternalToolTaskObjectId();
+	}
+	
+	if (m_ExternalToolTaskObjectId)
+	{
+		m_pExternalToolTaskValues = std::make_unique<ValueController>(BoundValues {inspectionID, m_ExternalToolTaskObjectId});
+	}
+
 }
 
 HRESULT AuxiliaryExtentsController::Init()
 {
+	
+	if (m_pExternalToolTaskValues)
+	{
+		m_pExternalToolTaskValues->Init();
+	}
+	
 	HRESULT hr = m_values.Init();
 	if (S_OK == hr)
 	{
@@ -52,6 +71,10 @@ bool AuxiliaryExtentsController::AreAuxiliaryExtentsAvailable() const
 
 HRESULT AuxiliaryExtentsController::Commit()
 {
+	if (m_pExternalToolTaskValues)
+	{
+		m_pExternalToolTaskValues->Commit();
+	}
 	return m_values.Commit();
 }
 
@@ -150,5 +173,26 @@ SvUl::NameObjectIdPair AuxiliaryExtentsController::GetAuxSourceImage() const
 HRESULT AuxiliaryExtentsController::RunOnce()
 {
 	return SvCmd::RunOnceSynchronous(m_InspectionID);
+}
+bool AuxiliaryExtentsController::isExternalTool() const
+{
+	return m_ExternalToolTaskObjectId != SvDef::InvalidObjectId;
+}
+
+bool AuxiliaryExtentsController::hasUnitMappeing() const
+{
+	if (m_pExternalToolTaskValues)
+	{
+		return m_pExternalToolTaskValues->Get<bool>(SvPb::UseUnitMappingEId);
+	}
+	return false;
+}
+
+void AuxiliaryExtentsController::setUseUnitMapping(bool val)
+{
+	if (m_pExternalToolTaskValues)
+	{
+		m_pExternalToolTaskValues->Set<bool>(SvPb::UseUnitMappingEId, val);
+	}
 }
 } //namespace SvOg

@@ -124,7 +124,7 @@ private:
 
 	bool m_bAlwaysUpdate;
 
-	SvIe::SVImageClass* m_pSelectedImage;
+	SvIe::SVImageClass* m_pSelectedImage; //auxtoolimage
 	SvTo::SVToolClass* m_pTool;
 
 	SVExtentOffsetStruct m_svRootOffsetData;

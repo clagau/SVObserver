@@ -124,6 +124,7 @@ public:
 	bool OutputDebugInformationOnExtent(const char* pDescription, const SVImageExtentClass * pReference=nullptr, long deltaThreshold=0) const ;
 	void setIsUpdated(bool isupdate) { m_isUpdated = isupdate; };
 	bool getIsUpdated() const  { return m_isUpdated; }
+	void setTransfermatrix(const std::vector<double>& rMatrix  );
 private:
 	HRESULT UpdateLine( SvPb::SVExtentLocationPropertyEnum eLocation, const SVPoint<double>& rStart, const SVPoint<double>& rEnd );
 	HRESULT UpdatePolar( SvPb::SVExtentLocationPropertyEnum eLocation, const SVPoint<double>& rStart, const SVPoint<double>& rEnd );
@@ -153,6 +154,8 @@ private:
 
 	SVExtentPropertyValueMap m_extentValues;
 	bool m_isUpdated = false;
-	
+	double m_TransferAngle=0.0;
+	double m_TransferMatrix[2][3] = {{1.0, 0.0,0.0},{0.0, 1.0,0.0}};
+	bool m_useTransferMatrix {false};
 };
 

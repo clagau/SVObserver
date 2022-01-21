@@ -9,24 +9,27 @@
 #include "CDllTool.h"
 #include <atlsafe.h>
 #include <iosfwd>
+#include <MilDyn/milim.h>
+
 
 
 // Implement CDllTool Class
 CDllTool::CDllTool()
 {
 	::ZeroMemory(&m_GUID, sizeof(GUID));
-
+	m_FunctionMatrix = MbufAlloc2d(M_DEFAULT_HOST, 3, 3, M_FLOAT + 32, M_ARRAY, M_NULL);
 	//TODO: add initialize of member parameter if necessary.
 }
 
 CDllTool::~CDllTool()
 {
 	cleanData();
+	MbufFree(m_FunctionMatrix);
 }
 
 #pragma region static function
 
-void CDllTool::getInputValuesDefinitionEx(std::array<InputValueDefinitionStructEx, NUM_INPUT_VALUES>  &inputDefEx)
+void CDllTool::getInputValuesDefinitionEx(std::array<InputValueDefinitionStructEx, NUM_INPUT_VALUES>& inputDefEx)
 {
 
 	//TODO: add the definition for all inputs, like the comment sample. Delete the comment sample afterwards.
@@ -55,7 +58,7 @@ void CDllTool::getInputValuesDefinitionEx(std::array<InputValueDefinitionStructE
 
 	CComSafeArray<double> sa(50);
 	for (int i = 0; i < 50; i++)
-		sa[i] = double(i)*1.5;
+		sa[i] = double(i) * 1.5;
 
 	inputDefEx[InputValue_DOUBLE_ARRAY].vt = VT_ARRAY | VT_R8;
 	inputDefEx[InputValue_DOUBLE_ARRAY].Name = "DVektor";
@@ -120,7 +123,7 @@ void CDllTool::getInputValuesDefinitionEx(std::array<InputValueDefinitionStructE
 
 	CComSafeArray<double> sa2(50);
 	for (int i = 0; i < 50; i++)
-		sa2[i] = double(i)*1.5;
+		sa2[i] = double(i) * 1.5;
 
 	inputDefEx[InputValue_Second_Double_Array].vt = VT_ARRAY | VT_R8;
 	inputDefEx[InputValue_Second_Double_Array].Name = "ZDVektor";
@@ -135,18 +138,53 @@ void CDllTool::getInputValuesDefinitionEx(std::array<InputValueDefinitionStructE
 	inputDefEx[InputValue_LONG_TABLE_SELECT].vDefaultValue.lVal = 0;
 	inputDefEx[InputValue_LONG_TABLE_SELECT].vDefaultValue.vt = VT_I4;
 
-	inputDefEx[InpitValue_LONG_DELAY_MS].vt = VT_I4;
-	inputDefEx[InpitValue_LONG_DELAY_MS].Name = "Delay";
-	inputDefEx[InpitValue_LONG_DELAY_MS].HelpText = "Delay(ms)";
-	inputDefEx[InpitValue_LONG_DELAY_MS].Group = "DelayGroup";
-	inputDefEx[InpitValue_LONG_DELAY_MS].vDefaultValue.lVal = 0;
-	inputDefEx[InpitValue_LONG_DELAY_MS].vDefaultValue.vt = VT_I4;
+	inputDefEx[InputValue_LONG_DELAY_MS].vt = VT_I4;
+	inputDefEx[InputValue_LONG_DELAY_MS].Name = "Delay";
+	inputDefEx[InputValue_LONG_DELAY_MS].HelpText = "Delay(ms)";
+	inputDefEx[InputValue_LONG_DELAY_MS].Group = "DelayGroup";
+	inputDefEx[InputValue_LONG_DELAY_MS].vDefaultValue.lVal = 0;
+	inputDefEx[InputValue_LONG_DELAY_MS].vDefaultValue.vt = VT_I4;
+
+
+
+	inputDefEx[InputValue_DOUBLE_CENTER_X].vt = VT_R8;
+	inputDefEx[InputValue_DOUBLE_CENTER_X].Name = "CENTER_X";
+	inputDefEx[InputValue_DOUBLE_CENTER_X].HelpText = "x koordinate drehpunkt";
+	inputDefEx[InputValue_DOUBLE_CENTER_X].Group = "Abbildung";
+	inputDefEx[InputValue_DOUBLE_CENTER_X].vDefaultValue = 0;
+
+	inputDefEx[InputValue_DOUBLE_CENTER_Y].vt = VT_R8;
+	inputDefEx[InputValue_DOUBLE_CENTER_Y].Name = "CENTER_Y";
+	inputDefEx[InputValue_DOUBLE_CENTER_Y].HelpText = "Y Koordinate drehpunkt";
+	inputDefEx[InputValue_DOUBLE_CENTER_Y].Group = "Abbildung";
+	inputDefEx[InputValue_DOUBLE_CENTER_Y].vDefaultValue = 0;
+
+
+	inputDefEx[InputValue_DOUBLE_OFFSET_X].vt = VT_R8;
+	inputDefEx[InputValue_DOUBLE_OFFSET_X].Name = "offset_X";
+	inputDefEx[InputValue_DOUBLE_OFFSET_X].HelpText = "x koordinate offset";
+	inputDefEx[InputValue_DOUBLE_OFFSET_X].Group = "Abbildung";
+	inputDefEx[InputValue_DOUBLE_OFFSET_X].vDefaultValue = 0;
+
+	inputDefEx[InputValue_DOUBLE_OFFSET_Y].vt = VT_R8;
+	inputDefEx[InputValue_DOUBLE_OFFSET_Y].Name = "offste y";
+	inputDefEx[InputValue_DOUBLE_OFFSET_Y].HelpText = "Y Koordinate offset";
+	inputDefEx[InputValue_DOUBLE_OFFSET_Y].Group = "Abbildung";
+	inputDefEx[InputValue_DOUBLE_OFFSET_Y].vDefaultValue = 0;
+
+	inputDefEx[InputValue_DOUBLE_ANGEL].vt = VT_R8;
+	inputDefEx[InputValue_DOUBLE_ANGEL].Name = "ANGEL";
+	inputDefEx[InputValue_DOUBLE_ANGEL].HelpText = "DREHWINKEL";
+	inputDefEx[InputValue_DOUBLE_ANGEL].Group = "Abbildung";
+	inputDefEx[InputValue_DOUBLE_ANGEL].vDefaultValue = 0;
+
+
 
 }
 
 
 
-void CDllTool::getResultValueDefinitionEx(std::array< ResultValueDefinitionStructEx, NUM_RESULT_VALUES>  &ResultValues)
+void CDllTool::getResultValueDefinitionEx(std::array< ResultValueDefinitionStructEx, NUM_RESULT_VALUES>& ResultValues)
 {
 	//TODO: Add the definition for all results, like the comment sample. Delete the comment sample afterwards.
 	ResultValues[ResultValue_LONG].vt = VT_I4;
@@ -192,13 +230,20 @@ void CDllTool::getResultValueDefinitionEx(std::array< ResultValueDefinitionStruc
 	ResultValues[RESULTVALUE_DOUBLE_ARRAY_ROW].HelpText = "ARRAY input 6,7 ";
 	ResultValues[RESULTVALUE_DOUBLE_ARRAY_ROW].Group = "SpecCopy";
 	ResultValues[RESULTVALUE_DOUBLE_ARRAY_ROW].ArraySize = 10;
+
+
+	ResultValues[RESULTVALUE_DOUBLE_ARRAY_FUNCTION].vt = VT_ARRAY | VT_R8;
+	ResultValues[RESULTVALUE_DOUBLE_ARRAY_FUNCTION].Name = "Abbildungsmatrix";
+	ResultValues[RESULTVALUE_DOUBLE_ARRAY_FUNCTION].HelpText = "AbbildungsMatrix from Input image 1 to 1";
+	ResultValues[RESULTVALUE_DOUBLE_ARRAY_FUNCTION].Group = "Abbildung";
+	ResultValues[RESULTVALUE_DOUBLE_ARRAY_FUNCTION].ArraySize = 9;
 }
 
 
 
 
 
-void CDllTool::getResultTableDefinitionEx(std::array<ResultTableDefinitionStructEx, NUM_RESULT_TABLES> &ResultTables)
+void CDllTool::getResultTableDefinitionEx(std::array<ResultTableDefinitionStructEx, NUM_RESULT_TABLES>& ResultTables)
 {
 	//TODO: Add the definition for all results, like the comment sample. Delete the comment sample afterwards.
 	_bstr_t ColumnNames[ColumnCountA] = {"eins", "zwei", "drei", "vier","fuenf","sechs"};
@@ -233,11 +278,8 @@ void CDllTool::getResultTableDefinitionEx(std::array<ResultTableDefinitionStruct
 	ResultTables[SecondResultTable].ColumnNames.parray = saStrB.Detach();
 	ResultTables[SecondResultTable].RowCount = RowCountA;
 	ResultTables[SecondResultTable].Group = "TableGroup";
-
-
-
-
 }
+
 HRESULT CDllTool::validateInputValues(long lParameterNumber, const	VARIANT vParameterValue)
 {
 	HRESULT hr = S_OK;
@@ -266,7 +308,7 @@ HRESULT CDllTool::validateInputValues(long lParameterNumber, const	VARIANT vPara
 			{
 				hr = ERRORCODE_INPUTVALUE_DOUBLE_ARRAY_WRONGTYPE;
 			}
-			
+
 
 			break;
 		}
@@ -411,20 +453,35 @@ HRESULT CDllTool::initRun(const ImageDefinitionStruct* const p_paStructs, const 
 	m_ResultTables.resize(NUM_RESULT_TABLES);
 	m_ResultTables[FirstResultTable].vt = VT_ARRAY | VT_R8;
 	m_ResultTables[FirstResultTable].parray = tdimsa.Detach();
-	
-	
+
+
 	m_ResultTables[SecondResultTable].vt = VT_ARRAY | VT_R8;
 	m_ResultTables[SecondResultTable].parray = tdimsb.Detach();
 
+	//xr = a[0]x + a[1]y + a[2}
+	//yr = a[3]x + a[4] y + a[5] 
+	//a[6] angel
+	CComSafeArray<double> a(7);
+	a[0] = 1.0;
+	a[1] = 0.0;
+	a[2] = 0.0;
+	a[3] = 0.0;
+	a[4] = 1.0;
+	a[5] = 0.0;
+	a[6] =0.0;
 
+
+
+	m_aResultValues[RESULTVALUE_DOUBLE_ARRAY_FUNCTION].vt = VT_ARRAY | VT_R8;
+	m_aResultValues[RESULTVALUE_DOUBLE_ARRAY_FUNCTION].parray = a.Detach();
 
 	return hr;
 }
 
 HRESULT CDllTool::run_copyTableInput2Output()
 {
-	
-	
+
+
 	if (m_ResultTables[FirstResultTable].vt == (VT_ARRAY | VT_R8) && m_ResultTables[FirstResultTable].parray)
 	{
 		SafeArrayDestroy(m_ResultTables[FirstResultTable].parray);
@@ -453,7 +510,7 @@ HRESULT CDllTool::run_copyTableInput2Output()
 					aIndex[1] = y;
 					double val {0};
 
-					if (x < NX &&  y < NY)
+					if (x < NX && y < NY)
 					{
 						saInput.MultiDimGetAt(aIndex, val);
 					}
@@ -475,7 +532,7 @@ HRESULT CDllTool::run_copyTableInput2Output()
 HRESULT CDllTool::run_copySelectedTableInput2Output(int Select)
 {
 
-	
+
 	m_aResultValues[RESULTVALUE_DOUBLE_ARRAY_ROW].Clear();
 	ATLASSERT(m_aInputValues[InputValue_TABLE_ARRAY].vt == (VT_ARRAY | VT_R8));
 	if (m_aInputValues[InputValue_TABLE_ARRAY].vt == (VT_ARRAY | VT_R8))
@@ -489,21 +546,21 @@ HRESULT CDllTool::run_copySelectedTableInput2Output(int Select)
 		m_aResultValues[ResultValue_INT_ROWCOUNT] = NY;
 
 		long Index[2];
-		
+
 		double val {0};
-		
+
 
 		for (int y = 0; y < NY; y++)
 		{
-			
+
 			for (int x = 0; x < NX; x++)
 			{
 				Index[0] = x;
 				Index[1] = y;
 				saInput.MultiDimGetAt(Index, val);
-			
+
 			}
-			
+
 		}
 
 		if (Select < NX && NY >0)
@@ -556,7 +613,7 @@ HRESULT CDllTool::run()
 	///copy input to output
 	HRESULT hr = S_OK;
 
-	long delay = m_aInputValues[InpitValue_LONG_DELAY_MS];
+	long delay = m_aInputValues[InputValue_LONG_DELAY_MS];
 	delay = delay > 3000 ? 3000 : delay;
 	if (delay > 0)
 	{
@@ -582,11 +639,11 @@ HRESULT CDllTool::run()
 	if (m_aInputValues[InputValue_DOUBLE_ARRAY].vt == (VT_ARRAY | VT_R8))
 	{
 		int inputarrayLen = 0;
-		
+
 		CComSafeArray<double> saInput((m_aInputValues[InputValue_DOUBLE_ARRAY].parray));
 
 		inputarrayLen = saInput.GetCount();
-	
+
 
 		//copy input to output 
 		CComSafeArray<double> saOutput(inputarrayLen);
@@ -607,11 +664,11 @@ HRESULT CDllTool::run()
 	if (m_aInputValues[InputValue_INT_ARRAY].vt == (VT_ARRAY | VT_I4))
 	{
 		int inputarrayLen = 0;
-		
+
 		CComSafeArray<int> saInput((m_aInputValues[InputValue_INT_ARRAY].parray));
 
 		inputarrayLen = saInput.GetCount();
-	
+
 
 		//copy input to output 
 		CComSafeArray<int> saOutput(inputarrayLen);
@@ -629,28 +686,64 @@ HRESULT CDllTool::run()
 
 	ATLASSERT(m_aInputValues[InputValue_Second_Double_Array].vt == (VT_ARRAY | VT_R8));
 	if (m_aInputValues[InputValue_Second_Double_Array].vt == (VT_ARRAY | VT_R8))
+	{
+		double out {0};
+		int inputarrayLen = 0;
+		CComSafeArray<double> saInput((m_aInputValues[InputValue_Second_Double_Array].parray));
+
+		inputarrayLen = saInput.GetCount();
+
+
+		for (int i = 0; i < inputarrayLen; i++)
 		{
-			double out{ 0 };
-			int inputarrayLen = 0;
-			CComSafeArray<double> saInput((m_aInputValues[InputValue_Second_Double_Array].parray));
-
-			inputarrayLen = saInput.GetCount();
-			
-
-			for (int i = 0; i < inputarrayLen; i++)
-			{
-				out+= saInput[i];
-			}
-			//m_aResultValues[ResultValue_DOUBLE].dblVal += out;
+			out += saInput[i];
 		}
+		//m_aResultValues[ResultValue_DOUBLE].dblVal += out;
+	}
 
 	run_copySelectedTableInput2Output(Select);
 	run_copyTableInput2Output();
 
 	//copy first input image to first result image
 	static_assert(0 < NUM_INPUT_IMAGES && 0 < NUM_RESULT_IMAGES, "for this sample you need at least one input and one result image");
-	MbufCopy(m_aInputImages[0], m_aResultImages[0]);
+	//MbufCopy(m_aInputImages[0], m_aResultImages[0]);
+	MIL_DOUBLE  SX {0}, SY {0}, OffsetX {0}, OffsetY {0};
+	MIL_DOUBLE Angel {0};
+
+
+	SX = m_aInputValues[InputValue_DOUBLE_CENTER_X];
+	SY = m_aInputValues[InputValue_DOUBLE_CENTER_Y];
+	OffsetX = m_aInputValues[InputValue_DOUBLE_OFFSET_X];
+	OffsetY = m_aInputValues[InputValue_DOUBLE_OFFSET_Y];
+
+	Angel = m_aInputValues[InputValue_DOUBLE_ANGEL];
+
+
+	// MIL_ID  FunctionMatrix = MbufAlloc2d(M_DEFAULT_HOST, 3, 3, M_FLOAT + 32, M_ARRAY, M_NULL);
+
+	MimRotate(M_NULL, m_FunctionMatrix, Angel, SX, SY, SX - OffsetX, SY - OffsetY, M_DEFAULT);
+
+	float FunctionMatrix[3][3];
+
+
+	MbufGet2d(m_FunctionMatrix, 0, 0, 3, 3, FunctionMatrix);
+	MbufClear(m_aResultImages[0], M_COLOR_BLACK);
+	MimRotate(m_aInputImages[0], m_aResultImages[0], Angel, SX, SY, SX - OffsetX, SY - OffsetY, M_DEFAULT+ M_OVERSCAN_CLEAR);
 	MbufCopy(m_aInputImages[1], m_aResultImages[1]);
+
+	m_aResultValues[RESULTVALUE_DOUBLE_ARRAY_FUNCTION].Clear();
+	CComSafeArray<double> saMatrix(9);
+
+
+	saMatrix[0] = FunctionMatrix[0][0];
+	saMatrix[1] = FunctionMatrix[0][1];
+	saMatrix[2] = FunctionMatrix[0][2];
+	saMatrix[3] = FunctionMatrix[1][0];
+	saMatrix[4] = FunctionMatrix[1][1];
+	saMatrix[5] = FunctionMatrix[1][2];
+	saMatrix[6] = Angel;
+	m_aResultValues[RESULTVALUE_DOUBLE_ARRAY_FUNCTION].vt = VT_ARRAY | VT_R8;
+	m_aResultValues[RESULTVALUE_DOUBLE_ARRAY_FUNCTION].parray = saMatrix.Detach();
 	return hr;
 }
 
@@ -746,7 +839,7 @@ HRESULT CDllTool::getResultTables(VARIANT* pResultValues) const
 }
 
 
-HRESULT CDllTool::getResultTablesMaxRowSize(std::array<int, NUM_RESULT_TABLES> &rRowSizes) const
+HRESULT CDllTool::getResultTablesMaxRowSize(std::array<int, NUM_RESULT_TABLES>& rRowSizes) const
 {
 	for (int i = 0; i < rRowSizes.size(); i++)
 	{
@@ -757,7 +850,7 @@ HRESULT CDllTool::getResultTablesMaxRowSize(std::array<int, NUM_RESULT_TABLES> &
 }
 
 
-HRESULT  CDllTool::getResultValuesMaxArraySize(std::array<int, NUM_RESULT_VALUES> &rArraySizes) const
+HRESULT  CDllTool::getResultValuesMaxArraySize(std::array<int, NUM_RESULT_VALUES>& rArraySizes) const
 {
 	for (int i = 0; i < rArraySizes.size(); i++)
 	{
@@ -796,4 +889,17 @@ void CDllTool::cleanData()
 
 	//TODO: add your code if necessary.
 }
+
+
+
+HRESULT CDllTool::getTransformationDefinitions(std::array<TransformDefs, 1>& transformdefs)
+{
+	
+	transformdefs[0].imageinput = 0;
+	transformdefs[0].imageoutput = 0;
+	transformdefs[0].resultindex = RESULTVALUE_DOUBLE_ARRAY_FUNCTION;
+	return S_OK;
+
+}
+
 #pragma endregion

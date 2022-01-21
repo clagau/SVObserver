@@ -35,7 +35,7 @@ static char THIS_FILE[] = __FILE__;
 SV_IMPLEMENT_CLASS( SVPolarTransformationToolClass, SvPb::PolarTransformationToolClassId );
 
 SVPolarTransformationToolClass::SVPolarTransformationToolClass( SVObjectClass* POwner, int StringResourceID )
-							   :SVToolClass( false,POwner, StringResourceID )
+							   :SVToolClass(ToolExtType::None,POwner, StringResourceID )
 {
 	// BoolValueObject to use new method
 	RegisterEmbeddedObject( &m_svAngularMethod, SvPb::OutputAngularMethodEId, IDS_OBJECTNAME_ANGULAR_METHOD,	false, SvOi::SVResetItemNone );

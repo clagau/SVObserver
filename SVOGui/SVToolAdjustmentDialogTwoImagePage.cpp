@@ -74,7 +74,7 @@ BEGIN_MESSAGE_MAP(SVToolAdjustmentDialogTwoImagePageClass, CPropertyPage)
 	ON_CBN_SELCHANGE(IDC_COMBO2, OnSelChangeCombo2)
 	ON_CBN_SELCHANGE(IDC_OPERATOR_COMBO, OnSelchangeOperatorCombo)
 	ON_BN_CLICKED(IDC_CHECK_ENABLE_GAIN, OnCheckEnableGain)
-	ON_BN_CLICKED(IDC_CHECK_USE_LUT, OnCheckUseLut)
+	ON_BN_CLICKED(IDC_CHECK_RECALCULATE_ONCE, OnCheckRecalculateOnce)
 	ON_BN_CLICKED(IDC_BUTTON_LINK_GAIN, OnBnClickedButtonGain)
 	ON_EN_KILLFOCUS(IDC_EDIT_GAIN, OnKillFocusGain)
 	ON_BN_CLICKED(IDC_BUTTON_LINK_OFFSET, OnBnClickedButtonOffset)
@@ -112,11 +112,11 @@ HRESULT SVToolAdjustmentDialogTwoImagePageClass::SetInspectionData()
 	if (!IsFloatBufferAllowed)
 	{
 		m_IsGainEnabled = false;
-		m_UseLut = false;
+		m_RecalculateOnce = false;
 	}
 	
 	m_values.Set<bool>(SvPb::ImageToolEnabledGainId, m_IsGainEnabled);
-	m_values.Set<bool>(SvPb::ImageToolReplaceOneId, m_UseLut);
+	m_values.Set<bool>(SvPb::ImageToolRecalculateOnceId, m_RecalculateOnce);
 
 	hr = m_values.Commit(SvOg::PostAction::doRunOnce | SvOg::PostAction::doReset);
 	
@@ -166,7 +166,7 @@ void SVToolAdjustmentDialogTwoImagePageClass::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_COMBO1, m_firstAvailableSourceImageListBoxCtl);
 	DDX_Control(pDX, IDC_COMBO2, m_secondAvailableSourceImageListBoxCtl);
 	DDX_Check(pDX, IDC_CHECK_ENABLE_GAIN, m_IsGainEnabled);
-	DDX_Check(pDX, IDC_CHECK_USE_LUT, m_UseLut);
+	DDX_Check(pDX, IDC_CHECK_RECALCULATE_ONCE, m_RecalculateOnce);
 	DDX_Control(pDX, IDC_EDIT_GAIN, m_EditGainValue);
 	DDX_Control(pDX, IDC_EDIT_OFFSET, m_EditOffsetValue);
 	DDX_Control(pDX, IDC_BUTTON_LINK_GAIN, m_ButtonGainLink);
@@ -240,7 +240,7 @@ BOOL SVToolAdjustmentDialogTwoImagePageClass::OnInitDialog()
 	}
 	
 	m_IsGainEnabled = m_values.Get<BOOL>(SvPb::ImageToolEnabledGainId);;
-	m_UseLut = m_values.Get<BOOL>(SvPb::ImageToolReplaceOneId);
+	m_RecalculateOnce = m_values.Get<BOOL>(SvPb::ImageToolRecalculateOnceId);
 	
 	
 	ShowGainAndOffset(lOperator);
@@ -359,7 +359,7 @@ void SVToolAdjustmentDialogTwoImagePageClass::ShowGainAndOffset(long op)
 	}
 
 	int command = m_IsGainEnabled ? SW_SHOW : SW_HIDE;
-	std::vector<int> controlIds {IDC_BUTTON_LINK_GAIN, IDC_CHECK_USE_LUT, IDC_STATIC_GAIN,
+	std::vector<int> controlIds {IDC_BUTTON_LINK_GAIN, IDC_CHECK_RECALCULATE_ONCE, IDC_STATIC_GAIN,
 		IDC_STATIC_OFFSET, IDC_EDIT_OFFSET, IDC_EDIT_GAIN, IDC_BUTTON_LINK_OFFSET,};
 	for (auto id : controlIds)
 	{
@@ -376,7 +376,7 @@ void SVToolAdjustmentDialogTwoImagePageClass::OnCheckEnableGain()
 	refresh();
 }
 
-void SVToolAdjustmentDialogTwoImagePageClass::OnCheckUseLut()
+void SVToolAdjustmentDialogTwoImagePageClass::OnCheckRecalculateOnce()
 {
 	refresh();
 }

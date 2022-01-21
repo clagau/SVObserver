@@ -57,6 +57,14 @@ struct ResultTableDefinitionStructEx : public DefinitionStructEx
 	
 };
 
+struct TransformDefs
+{
+	long  resultindex {-1};//index the result which hold the transformation vector
+	long imageinput {0}; //image index  
+	long imageoutput {0}; //image index 
+	_variant_t Reseved1; // not used at this time
+};
+
 #pragma pack (pop)
 
 

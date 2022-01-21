@@ -510,6 +510,11 @@ long SVImageInfoClass::getPixelDepth() const
 	return depth;
 }
 
+void SVImageInfoClass::setTransfermatrix(const std::vector<double>& rMatrix)
+{
+	m_svExtents.setTransfermatrix(rMatrix);
+}
+
 
 
 BITMAPINFOHEADER SVImageInfoClass::GetBitmapInfoHeader() const

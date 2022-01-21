@@ -90,6 +90,8 @@ public:
 	long getBandNumber() const;
 	long  getPixelDepth() const;
 
+	void setTransfermatrix(const std::vector<double>& rMatrix);
+
 private:
 	uint32_t m_OwnerImageID{ SvDef::InvalidObjectId };
 	uint32_t m_OwnerObjectID{ SvDef::InvalidObjectId };

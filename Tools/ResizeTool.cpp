@@ -35,7 +35,7 @@ SV_IMPLEMENT_CLASS(ResizeTool, SvPb::ResizeToolId);
 constexpr double defaultScalefactor = 1.0;
 
 ResizeTool::ResizeTool(SVObjectClass* pOwner, int stringResourceID)
-	: SVToolClass(true,pOwner, stringResourceID)
+	:SVToolClass(ToolExtType::All,pOwner, stringResourceID)
 {
 	LocalInitialize();
 }

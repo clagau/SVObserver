@@ -38,7 +38,7 @@ SV_IMPLEMENT_CLASS( SVLinearToolClass, SvPb::LinearToolClassId );
 
 #pragma region Constructor
 SVLinearToolClass::SVLinearToolClass( SVObjectClass* POwner, int StringResourceID )
-: SVToolClass(true, POwner, StringResourceID )
+:SVToolClass(ToolExtType::All, POwner, StringResourceID )
 {
 	init();
 }

@@ -33,6 +33,9 @@ namespace SvOg
 
 		afx_msg void OnSelchangeDrawToolCombo();
 		afx_msg void OnUpdateAuxiliaryExtents();
+	
+		afx_msg void OnUpdateUseUnitMapping();
+
 		afx_msg void OnUpdateCloseTool();
 		afx_msg void OnSelchangeSourceImageCombo();
 		afx_msg void OnSelchangeToolForOverlayColorCombo();
@@ -50,10 +53,8 @@ namespace SvOg
 		void refresh();
 		bool CheckAuxiliaryExtentsAvailable() const;
 		HRESULT SetInspectionData();
-		void SetupAuxExtents();
 		void SetupDrawFlagComboBox();
 		void SetImages();
-
 		void initToolForOverlayColor();
 
 	public:
@@ -61,14 +62,17 @@ namespace SvOg
 
 	protected:
 		SvMc::AvailableObjectListComboBox<uint32_t> m_AvailableSourceImageCombo;
+		long   m_SelectedInputImage {0};
+		BOOL  m_UseUnitMapping{FALSE}; // use 1:1 mapping if auxextants are enabled for the inspection 
+		bool m_IsExternalTool {false};
 		SvMc::SVEnumerateCombo m_drawToolCombo;
-		BOOL m_bUpdateAuxiliaryExtents = false;
+		BOOL m_bUpdateAuxiliaryExtents = false; //calculate Auxextents for this tool 
 		BOOL m_bCloseTool = false;
 		SvMc::AvailableObjectListComboBox<uint32_t> m_AvailableToolForColorOverlayCombo;
 		SvUl::NameObjectIdList m_availableToolList;
 		std::string m_inputName_toolForColorOverlay{};
 
-		bool m_bAuxExtentsAvailable = false;
+		bool m_bAuxExtentsAvailable = false; //Are Auxextents calculation enabled for this Inspection 
 		const uint32_t m_InspectionID;
 		const uint32_t m_TaskObjectID;
 		const SvPb::SVObjectSubTypeEnum m_subType;

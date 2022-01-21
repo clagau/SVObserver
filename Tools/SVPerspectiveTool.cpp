@@ -38,7 +38,7 @@ constexpr const char* PERSPECTIVE_WARP_TYPE_VERTICAL = _T("Vertical Warp");
 
 SV_IMPLEMENT_CLASS(SVPerspectiveToolClass, SvPb::PerspectiveToolClassId)
 SVPerspectiveToolClass::SVPerspectiveToolClass(SVObjectClass* p_pOwner, int p_iStringResourceID)
-	:SVToolClass(true,p_pOwner, p_iStringResourceID)
+	:SVToolClass(ToolExtType::All,p_pOwner, p_iStringResourceID)
 	
 {
 	LocalInitialize();

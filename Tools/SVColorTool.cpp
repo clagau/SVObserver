@@ -37,7 +37,7 @@ SV_IMPLEMENT_CLASS( SVColorToolClass, SvPb::ColorToolClassId);
 
 #pragma region Constructor
 SVColorToolClass::SVColorToolClass( SVObjectClass* POwner, int StringResourceID )
-: SVToolClass( true,POwner, StringResourceID )
+: SVToolClass(ToolExtType::All,POwner, StringResourceID )
 {
 	LocalInitialize();
 }

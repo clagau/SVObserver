@@ -446,28 +446,28 @@ enum SVExtentTranslationEnum
 	SVExtentTranslationUnknown         = 0;
 	SVExtentTranslationNone            = 10;
 	SVExtentTranslationShift           = 20; //<default e.g WindowTool Shifttool
-	SVExtentTranslationRotate          = 30;
-	SVExtentTranslationFlippedRotate   = 31;
+	SVExtentTranslationRotate          = 30; //< not used 
+	SVExtentTranslationFlippedRotate   = 31; //SVImageExtentClass patternExtents
 	SVExtentTranslationProfile         = 40; //<LinearTool with Rotation
 	SVExtentTranslationProfileShift    = 41; //<LinearTool without Rotation
-	SVExtentTranslationTransformShift  = 50;
-	SVExtentTranslationTransformRotate = 51;
-	SVExtentTranslationPolarUnwrap     = 60;
-	SVExtentTranslationLine            = 80;
+	SVExtentTranslationTransformShift  = 50; //SVImagetransform 
+	SVExtentTranslationTransformRotate = 51; //SVImagetransform 
+	SVExtentTranslationPolarUnwrap     = 60; //SVPolarTransformationToolClass
+	SVExtentTranslationLine            = 80; //LinearAnalyzer
 
 	/// SvDef::SVExtentTranslationResize - Does a position, height, and width, 
 	///  translation that uses the scale factor values.
 	///  Uses include the Resize Tool.
-	SVExtentTranslationResize		   = 89;
+	SVExtentTranslationResize		   = 89; //ResizeTool
 
 	/// SVExtentDoubleHeight - Does a position, and height translation 
 	///  that uses the height scale factor value.
 	///  Uses include the Image Tool, Double Height operation.
-	SVExtentTranslationDoubleHeight    = 90;
+	SVExtentTranslationDoubleHeight    = 90; //imageTool
 
 	SVExtentTranslationFlipVertical	   = 91;
 	SVExtentTranslationFlipHorizontal  = 92;
-	SVExtentTranslationFigureShift	   = 93;
+	SVExtentTranslationFigureShift	   = 93; //SVLoadImageToolClass
 	SVExtentTranslationLinear          = 100;
 	SVExtentTranslationCylindricalWarpH			= 110;
 	SVExtentTranslationCylindricalWarpV			= 111;
@@ -1202,7 +1202,7 @@ enum EmbeddedIdEnum
 	ImageToolEnabledGainId = 561;
 	ImageToolGainId = 562;
 	ImageToolOffsetId = 563;
-	ImageToolReplaceOneId = 566;
+	ImageToolRecalculateOnceId = 566;
 	AutoFitSizeEId = 567;
 	DrawAreaEId = 568;
 	LeftEId = 569;
@@ -1211,6 +1211,7 @@ enum EmbeddedIdEnum
 	EdgeAUpperThresholdValueEId = 572;
 	EdgeBLowerThresholdValueEId = 573;
 	EdgeBUpperThresholdValueEId = 574;
+	UseUnitMappingEId = 575;
 
 	//The following Ids are the first of an array and must have 100 reserved Ids 
 	OutputImageEId = 1000; //Output Images, e.g. External needs 4
@@ -1293,6 +1294,7 @@ enum EmbeddedIdEnum
 
 	//The following Ids are the first of an array and must have 100 reserved Ids 
 	ImageInputEId = 150000;
+	
 }
 
 

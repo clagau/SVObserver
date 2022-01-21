@@ -49,6 +49,9 @@ public:
 	 \return hresult value
 	***********/
 	static HRESULT getErrorMessageString(unsigned long ulErrorNumber, BSTR* pbstrErrorMessage);
+
+
+	static HRESULT getTransformationDefinitions(std::array<TransformDefs, 1>& transformdefs);
 #pragma endregion
 
 #pragma region public function
@@ -114,6 +117,10 @@ public:
 	HRESULT getResultTablesMaxRowSize(std::array<int, NUM_RESULT_TABLES>&  rRowSizes) const;
 	HRESULT getResultValuesMaxArraySize(std::array<int, NUM_RESULT_VALUES> &rArraySizes) const;
 
+
+	
+	
+
 #pragma endregion
 #pragma endregion
 
@@ -151,6 +158,7 @@ private:
 	//TODO: add your result parameter and delete comment sample afterwards.
 	static const int c_I1_minValue = 0;
 	static const int c_I1_maxValue = 1000000;
+	MIL_ID  m_FunctionMatrix {M_NULL};
 
 #pragma endregion
 };

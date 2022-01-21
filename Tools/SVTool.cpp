@@ -43,10 +43,10 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-EmbeddedExtents::EmbeddedExtents(SVToolClass* pOwner)
-	:m_pOwner(pOwner)
+EmbeddedExtents::EmbeddedExtents(SVToolClass* pOwner, ToolExtType tetype)
+:m_pOwner(pOwner), m_ToolExtType(tetype)
 {
-	
+
 }
 
 void EmbeddedExtents::SetTypeNameForExtents()
@@ -73,14 +73,15 @@ void EmbeddedExtents::RegisterEmbeddedExtents()
 {
 	if (m_pOwner)
 	{
-		m_pOwner->RegisterEmbeddedObject(&m_ExtentLeft, SvPb::ExtentRelativeLeftPositionEId, IDS_OBJECTNAME_EXTENT_LEFT, false, SvOi::SVResetItemTool);
-		m_pOwner->RegisterEmbeddedObject(&m_ExtentTop, SvPb::ExtentRelativeTopPositionEId, IDS_OBJECTNAME_EXTENT_TOP, false, SvOi::SVResetItemTool);
-		m_pOwner->RegisterEmbeddedObject(&m_ExtentRight, SvPb::ExtentRelativeRightPositionEId, IDS_OBJECTNAME_EXTENT_RIGHT, false, SvOi::SVResetItemNone);
-		m_pOwner->RegisterEmbeddedObject(&m_ExtentBottom, SvPb::ExtentRelativeBottomPositionEId, IDS_OBJECTNAME_EXTENT_BOTTOM, false, SvOi::SVResetItemNone);
-		m_pOwner->RegisterEmbeddedObject(&m_ExtentWidth, SvPb::ExtentWidthEId, IDS_OBJECTNAME_EXTENT_WIDTH, false, SvOi::SVResetItemTool);
-		m_pOwner->RegisterEmbeddedObject(&m_ExtentHeight, SvPb::ExtentHeightEId, IDS_OBJECTNAME_EXTENT_HEIGHT, false, SvOi::SVResetItemTool);
-	
-		//m_pOwner->RegisterEmbeddedObject(&m_svUpdateAuxiliaryExtents, SvPb::UpdateAuxiliaryExtentsEId, IDS_OBJECTNAME_UPDATE_AUXILIARY_EXTENTS_OBJECT, false, SvOi::SVResetItemTool);
+		if (m_ToolExtType == ToolExtType::All)
+		{
+			m_pOwner->RegisterEmbeddedObject(&m_ExtentLeft, SvPb::ExtentRelativeLeftPositionEId, IDS_OBJECTNAME_EXTENT_LEFT, false, SvOi::SVResetItemTool);
+			m_pOwner->RegisterEmbeddedObject(&m_ExtentTop, SvPb::ExtentRelativeTopPositionEId, IDS_OBJECTNAME_EXTENT_TOP, false, SvOi::SVResetItemTool);
+			m_pOwner->RegisterEmbeddedObject(&m_ExtentRight, SvPb::ExtentRelativeRightPositionEId, IDS_OBJECTNAME_EXTENT_RIGHT, false, SvOi::SVResetItemNone);
+			m_pOwner->RegisterEmbeddedObject(&m_ExtentBottom, SvPb::ExtentRelativeBottomPositionEId, IDS_OBJECTNAME_EXTENT_BOTTOM, false, SvOi::SVResetItemNone);
+			m_pOwner->RegisterEmbeddedObject(&m_ExtentWidth, SvPb::ExtentWidthEId, IDS_OBJECTNAME_EXTENT_WIDTH, false, SvOi::SVResetItemTool);
+			m_pOwner->RegisterEmbeddedObject(&m_ExtentHeight, SvPb::ExtentHeightEId, IDS_OBJECTNAME_EXTENT_HEIGHT, false, SvOi::SVResetItemTool);
+		}
 		m_pOwner->RegisterEmbeddedObject(&m_svAuxiliarySourceX, SvPb::AuxiliarySourceXEId, IDS_OBJECTNAME_AUXILIARY_SOURCE_X, false, SvOi::SVResetItemNone);
 		m_pOwner->RegisterEmbeddedObject(&m_svAuxiliarySourceY, SvPb::AuxiliarySourceYEId, IDS_OBJECTNAME_AUXILIARY_SOURCE_Y, false, SvOi::SVResetItemNone);
 		m_pOwner->RegisterEmbeddedObject(&m_svAuxiliarySourceAngle, SvPb::AuxiliarySourceAngleEId, IDS_OBJECTNAME_AUXILIARY_SOURCE_ANGLE, false, SvOi::SVResetItemNone);
@@ -138,6 +139,7 @@ void EmbeddedExtents::SetDefaults()
 
 void EmbeddedExtents::SetAttributes()
 {
+
 	m_ExtentLeft.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::setableOnline | SvPb::remotelySetable | SvPb::extentObject, SvOi::SetAttributeType::AddAttribute);
 	m_ExtentTop.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::setableOnline | SvPb::remotelySetable | SvPb::extentObject, SvOi::SetAttributeType::AddAttribute);
 	m_ExtentRight.SetObjectAttributesAllowed(SvPb::audittrail, SvOi::SetAttributeType::AddAttribute);
@@ -151,17 +153,16 @@ void EmbeddedExtents::SetAttributes()
 	m_ExtentWidthFactorFormat.SetObjectAttributesAllowed(SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::RemoveAttribute);
 	m_ExtentHeightFactorFormat.SetObjectAttributesAllowed(SvDef::defaultValueObjectAttributes, SvOi::SetAttributeType::RemoveAttribute);
 
-	
+
 }
 
-
-SVToolClass::SVToolClass(bool hasEmbeddedExtents, SVObjectClass* POwner, int StringResourceID /*= IDS_CLASSNAME_SVTOOL*/)
+SVToolClass::SVToolClass(ToolExtType toolExtType , SVObjectClass* POwner, int StringResourceID /*= IDS_CLASSNAME_SVTOOL*/)
 	: SVTaskObjectListClass(POwner, StringResourceID)
 	, m_pToolConditional(nullptr)
 {
-	if (hasEmbeddedExtents)
+	if (ToolExtType::None != toolExtType)
 	{
-		m_pEmbeddedExtents = std::make_unique<EmbeddedExtents>(this);
+		m_pEmbeddedExtents = std::make_unique<EmbeddedExtents>(this, toolExtType);
 	}
 	init();
 }
@@ -190,14 +191,14 @@ void SVToolClass::init()
 	RegisterEmbeddedObject(&m_ToolTime, SvPb::ToolTimeEId, IDS_OBJECTNAME_TOOLTIME, false, SvOi::SVResetItemNone);
 	RegisterEmbeddedObject(&m_editFreezeFlag, SvPb::ConditionalEditFreezeFlagEId, IDS_OBJECTNAME_EDITMODE_FREEZEFLAG, false, SvOi::SVResetItemNone);
 
-	
+
 	if (m_pEmbeddedExtents.get())
 	{
 		m_pEmbeddedExtents->SetTypeNameForExtents();
 		m_pEmbeddedExtents->RegisterEmbeddedExtents();
 
 	}
-	
+
 	RegisterEmbeddedObject(&ToolSelectedForOperatorMove, SvPb::ToolSelectedForOperatorMoveEId, IDS_OBJECTNAME_TOOL_SELECTED_FOR_OPERATOR_MOVE, false, SvOi::SVResetItemNone);
 	RegisterEmbeddedObject(&m_drawToolFlag, SvPb::ConditionalToolDrawFlagEId, IDS_OBJECTNAME_DRAWTOOL_FLAG, false, SvOi::SVResetItemNone);
 	RegisterEmbeddedObject(&m_svUpdateAuxiliaryExtents, SvPb::UpdateAuxiliaryExtentsEId, IDS_OBJECTNAME_UPDATE_AUXILIARY_EXTENTS_OBJECT, false, SvOi::SVResetItemTool);
@@ -209,17 +210,28 @@ void SVToolClass::init()
 	m_toolExtent.SetTranslation(SvPb::SVExtentTranslationShift);
 	m_toolExtent.SetAlwaysUpdate(false);
 	bool bEx = (m_pEmbeddedExtents.get() != nullptr);
+
+	if (bEx && m_pEmbeddedExtents->m_ToolExtType == ToolExtType::All)
+	{
+		m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyPositionPointX, &(m_pEmbeddedExtents->m_ExtentLeft) );
+		m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyPositionPointY, &(m_pEmbeddedExtents->m_ExtentTop) );
+		m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyWidth,  &(m_pEmbeddedExtents->m_ExtentWidth) );
+		m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyHeight, &(m_pEmbeddedExtents->m_ExtentHeight));
+	}
+	else
+	{
+		m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyPositionPointX, nullptr);
+		m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyPositionPointY, nullptr);
+		m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyWidth,nullptr);
+		m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyHeight, nullptr);
+	}
 	
-	m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyPositionPointX, bEx?  &(m_pEmbeddedExtents->m_ExtentLeft): nullptr);
-	m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyPositionPointY, bEx ?  &(m_pEmbeddedExtents->m_ExtentTop) : nullptr);
-	m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyWidth, bEx ?  &(m_pEmbeddedExtents->m_ExtentWidth) : nullptr);
-	m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyHeight, bEx ? &(m_pEmbeddedExtents->m_ExtentHeight) : nullptr);
 	m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyWidthFactorContent, bEx ? &(m_pEmbeddedExtents->m_ExtentWidthFactorContent) : nullptr);
 	m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyHeightFactorContent, bEx ? &(m_pEmbeddedExtents->m_ExtentHeightFactorContent) : nullptr);
 	m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyWidthFactorFormat, bEx ? &(m_pEmbeddedExtents->m_ExtentWidthFactorFormat) : nullptr);
-	m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyHeightFactorFormat, bEx ?  &(m_pEmbeddedExtents->m_ExtentHeightFactorFormat) : nullptr);
-	
-	
+	m_toolExtent.SetExtentObject(SvPb::SVExtentPropertyHeightFactorFormat, bEx ? &(m_pEmbeddedExtents->m_ExtentHeightFactorFormat) : nullptr);
+
+
 	// Set Embedded defaults
 	m_isObjectValid.SetDefaultValue(BOOL(false), true);
 	m_isObjectValid.setSaveValueFlag(false);
@@ -258,13 +270,13 @@ void SVToolClass::init()
 	{
 		m_pEmbeddedExtents->SetDefaults();
 	}
-	
+
 	m_drawToolFlag.SetEnumTypes(IDS_TOOLDRAW_ENUMOBJECT_LIST);
 	m_drawToolFlag.SetDefaultValue(0L, true);
 
 	m_svUpdateAuxiliaryExtents.SetDefaultValue(BOOL(false), true);
 
-	
+
 	m_pCurrentToolSet = nullptr;
 
 	// Auxiliary Source Image.
@@ -285,8 +297,7 @@ void SVToolClass::init()
 }
 
 SVToolClass::~SVToolClass()
-{
-}
+{}
 
 bool SVToolClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 {
@@ -335,7 +346,7 @@ bool SVToolClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure
 		m_pEmbeddedExtents->SetAttributes();
 	}
 
-	
+
 
 	//// Auxiliary Tool Source Extent
 	m_svUpdateAuxiliaryExtents.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::setableOnline | SvPb::remotelySetable, SvOi::SetAttributeType::AddAttribute);
@@ -348,7 +359,7 @@ bool SVToolClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure
 
 	if (areAuxExtentsAvailable())
 	{
-		BOOL bEnabled{ false };
+		BOOL bEnabled {false};
 		m_svUpdateAuxiliaryExtents.GetValue(bEnabled);
 		m_AuxSourceImageInput.SetObjectAttributesAllowed(bEnabled ? SvPb::audittrail | SvPb::embedable : SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
 	}
@@ -380,7 +391,7 @@ bool SVToolClass::CloseObject()
 	return SVTaskObjectListClass::CloseObject();
 }
 
-bool SVToolClass::resetAllObjects(SvStl::MessageContainerVector *pErrorMessages)
+bool SVToolClass::resetAllObjects(SvStl::MessageContainerVector* pErrorMessages)
 {
 	BOOL freezeFlag(false);
 	m_editFreezeFlag.GetValue(freezeFlag);
@@ -463,7 +474,7 @@ void SVToolClass::UpdateAuxiliaryExtents()
 		{
 			SVExtentOffsetStruct l_svOffsetData;
 			SvIe::SVImageClass* pAuxSourceImage = m_AuxSourceImageInput.getInput<SvIe::SVImageClass>(true);
-			
+
 			m_toolExtent.SetSelectedImage(pAuxSourceImage);
 
 			hr = m_toolExtent.GetSelectedOffsetData(l_svOffsetData);
@@ -549,17 +560,17 @@ bool  SVToolClass::isToolActive() const
 	}
 	BOOL freezeFlag(false);
 	m_editFreezeFlag.GetValue(freezeFlag);
-	
-	if( freezeFlag  
-		&& SVSVIMStateClass::CheckState(SV_STATE_READY | SV_STATE_EDIT) 
+
+	if (freezeFlag
+		&& SVSVIMStateClass::CheckState(SV_STATE_READY | SV_STATE_EDIT)
 		&& (false == SVSVIMStateClass::CheckState(SV_STATE_REGRESSION | SV_STATE_TEST)))
 	{
-			return false;
+		return false;
 	}
 
 	return true;
 }
-bool SVToolClass::Run(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool SVToolClass::Run(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages)
 {
 	bool retVal = true;
 	clearRunErrorMessages();
@@ -569,7 +580,7 @@ bool SVToolClass::Run(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector
 	m_editFreezeFlag.GetValue(freezeFlag);
 	if (TRUE == freezeFlag && isToolActive)
 	{
-		if (SVSVIMStateClass::CheckState(SV_STATE_READY|SV_STATE_EDIT) && (false == SVSVIMStateClass::CheckState(SV_STATE_REGRESSION|SV_STATE_TEST)))
+		if (SVSVIMStateClass::CheckState(SV_STATE_READY | SV_STATE_EDIT) && (false == SVSVIMStateClass::CheckState(SV_STATE_REGRESSION | SV_STATE_TEST)))
 		{
 			assert(rRunStatus.m_triggerRecord);
 			if (nullptr != rRunStatus.m_triggerRecord)
@@ -579,7 +590,7 @@ bool SVToolClass::Run(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector
 			isToolActive = false;
 		}
 	}
-	
+
 	if (isToolActive)
 	{
 		if (rRunStatus.m_UpdateCounters)
@@ -648,7 +659,7 @@ bool SVToolClass::Run(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector
 	return retVal;
 }// end Run
 
-bool SVToolClass::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool SVToolClass::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages)
 {
 	bool Result = __super::onRun(rRunStatus, pErrorMessages);
 
@@ -705,9 +716,9 @@ HRESULT SVToolClass::TranslatePointToSource(SVPoint<double> inPoint, SVPoint<dou
 
 void SVToolClass::setAuxiliaryExtents()
 {
-	BOOL bEnabled{false};
+	BOOL bEnabled {false};
 	SvOi::IInspectionProcess* pInspection = GetInspectionInterface();
-	
+
 	if (nullptr != pInspection && pInspection->getEnableAuxiliaryExtent())
 	{
 		m_svUpdateAuxiliaryExtents.GetValue(bEnabled);
@@ -730,7 +741,7 @@ void SVToolClass::setAuxiliaryExtents()
 	}
 }
 
-bool SVToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
+bool SVToolClass::ResetObject(SvStl::MessageContainerVector* pErrorMessages)
 {
 	bool Result = __super::ResetObject(pErrorMessages) && ValidateLocal(pErrorMessages);
 
@@ -745,13 +756,13 @@ bool SVToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	if (areAuxExtentsAvailable())
 	{
 		m_AuxSourceImageInput.SetObjectAttributesAllowed(SvPb::audittrail | SvPb::embedable, SvOi::SetAttributeType::OverwriteAttribute);
-		BOOL bEnabled{ false };
+		BOOL bEnabled {false};
 		m_svUpdateAuxiliaryExtents.GetValue(bEnabled);
 		if (bEnabled)
 		{
 			m_AuxSourceImageInput.validateInput();
 		}
-		m_AuxSourceImageInput.SetObjectAttributesAllowed(bEnabled? SvPb::audittrail | SvPb::embedable : SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
+		m_AuxSourceImageInput.SetObjectAttributesAllowed(bEnabled ? SvPb::audittrail | SvPb::embedable : SvPb::noAttributes, SvOi::SetAttributeType::OverwriteAttribute);
 	}
 	else
 	{
@@ -764,7 +775,7 @@ bool SVToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	{
 		m_overlayColorToolInput.validateInput();
 	}
-	
+
 	return Result;
 }
 
@@ -773,7 +784,7 @@ void SVToolClass::UpdateBottomAndRight()
 	//This update call is required for the image extents which can have changed
 	updateImageExtent(true);
 
-	if(m_pEmbeddedExtents &&  GetImageExtent().hasFigure())
+	if (m_pEmbeddedExtents && GetImageExtent().hasFigure())
 	{
 		const SVExtentFigureStruct& rFigure = GetImageExtent().GetFigure();
 		if (SvPb::noAttributes != m_pEmbeddedExtents->m_ExtentRight.ObjectAttributesAllowed())
@@ -824,7 +835,7 @@ void SVToolClass::removeTaskMessages(DWORD MessageCode, SvStl::MessageTextEnum A
 		TaskObj->removeTaskMessage(MessageCode, AdditionalTextId);
 	}
 }
-HRESULT SVToolClass::updateImageExtent(bool init )
+HRESULT SVToolClass::updateImageExtent(bool init)
 {
 	return m_toolExtent.updateImageExtent(init);
 }
@@ -931,13 +942,13 @@ HRESULT SVToolClass::SetImageExtent(const SVImageExtentClass& rImageExtent)
 	return m_toolExtent.SetImageExtent(rImageExtent);
 }
 
-const SVImageExtentClass& SVToolClass::GetImageExtent() const 
-{ 
+const SVImageExtentClass& SVToolClass::GetImageExtent() const
+{
 	return m_toolExtent.getImageExtent();
 }
 
-const SVImageExtentClass* SVToolClass::GetImageExtentPtr() const 
-{ 
+const SVImageExtentClass* SVToolClass::GetImageExtentPtr() const
+{
 	return &(m_toolExtent.getImageExtent());
 };
 
@@ -981,7 +992,7 @@ void SVToolClass::UpdateOverlayIDs(SVExtentMultiLineStruct& p_rMultiLine)
 	}
 }
 
-HRESULT SVToolClass::CollectOverlays(SvIe::SVImageClass *pImage, SVExtentMultiLineStructVector& rMultiLineArray)
+HRESULT SVToolClass::CollectOverlays(SvIe::SVImageClass* pImage, SVExtentMultiLineStructVector& rMultiLineArray)
 {
 	HRESULT l_Status = S_OK;
 
@@ -1068,7 +1079,7 @@ HRESULT SVToolClass::SetAuxSourceImage(SvIe::SVImageClass* pImage)
 			auto iter = std::find_if(imageList.begin(), imageList.end(), [&pImage](const auto& rEntry) { return rEntry == pImage; });
 			if (imageList.end() != iter)
 			{
-				m_AuxSourceImageInput.SetInputObject(*iter); 
+				m_AuxSourceImageInput.SetInputObject(*iter);
 				l_hr = S_OK;
 			}
 			else
@@ -1080,7 +1091,7 @@ HRESULT SVToolClass::SetAuxSourceImage(SvIe::SVImageClass* pImage)
 		{
 			m_AuxSourceImageInput.SetInputObject(nullptr);
 		}
-		
+
 		m_toolExtent.SetSelectedImage(m_AuxSourceImageInput.getInput<SvIe::SVImageClass>());
 
 		SvOi::IInspectionProcess* pInspection = GetInspectionInterface();
@@ -1114,7 +1125,7 @@ const SVImageInfoClass* SVToolClass::getFirstImageInfo() const
 	return pRetVal;
 }
 
-bool SVToolClass::addEntryToMonitorList(SvOi::ParametersForML &retList, SvPb::EmbeddedIdEnum embeddedID) const
+bool SVToolClass::addEntryToMonitorList(SvOi::ParametersForML& retList, SvPb::EmbeddedIdEnum embeddedID) const
 {
 	auto* pResultObject = getFirstObject(SvDef::SVObjectTypeInfoStruct(SvPb::SVObjectTypeEnum::SVNotSetObjectType, SvPb::SVObjectSubTypeEnum::SVNotSetSubObjectType, embeddedID));
 	if (nullptr != pResultObject)
@@ -1141,7 +1152,7 @@ SvUl::NameObjectIdList SVToolClass::getAvailableAuxSourceImages() const
 	HRESULT hr = GetSourceImages(&ImageList);
 	if (S_OK == hr)
 	{
-		std::transform(ImageList.begin(), ImageList.end(), std::back_inserter(list), 
+		std::transform(ImageList.begin(), ImageList.end(), std::back_inserter(list),
 			[](const auto& rEntry) { return std::make_pair(rEntry->getDisplayedName(), rEntry->getObjectId()); });
 	}
 	return list;
@@ -1378,7 +1389,7 @@ bool SVToolClass::isAllowedLocation(const SvPb::SVExtentLocationPropertyEnum Loc
 	return ret;
 }
 
-bool SVToolClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const
+bool SVToolClass::ValidateLocal(SvStl::MessageContainerVector* pErrorMessages) const
 {
 	if (m_conditionBoolInput.IsConnected() && m_conditionBoolInput.GetInputObjectInfo().getObject())
 	{

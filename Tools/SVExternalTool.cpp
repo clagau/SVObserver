@@ -28,7 +28,7 @@ static char THIS_FILE[] = __FILE__;
 SV_IMPLEMENT_CLASS( SVExternalTool, SvPb::ExternalToolClassId);
 
 SVExternalTool::SVExternalTool( SVObjectClass* POwner, int StringResourceID )
-						  :SVToolClass(false, POwner, StringResourceID )
+						  :SVToolClass(ToolExtType::NoHeightWidth, POwner, StringResourceID )
 {
 	Initialize();
 }
@@ -72,8 +72,12 @@ void SVExternalTool::Initialize()
 	{
 		Add( l_pTask );
 	}
-
-	
+	if (m_pEmbeddedExtents)
+	{
+		m_pEmbeddedExtents->SetAttributes();
+	}
+	m_toolExtent.SetTranslation(SvPb::SVExtentTranslationNone);
+	m_toolExtent.updateImageExtent(false);
 }
 
 

@@ -36,7 +36,7 @@ constexpr const char* CYLINDRICAL_WARP_TYPE_VERTICAL = _T("Vertical Warp");
 SV_IMPLEMENT_CLASS( SVCylindricalWarpToolClass, SvPb::CylindricalWarpToolClassId)
 
 SVCylindricalWarpToolClass::SVCylindricalWarpToolClass( SVObjectClass* p_pOwner, int p_iStringResourceID )
-	: SVToolClass(false,p_pOwner, p_iStringResourceID)
+	: SVToolClass(ToolExtType::None,p_pOwner, p_iStringResourceID)
 {
 	LocalInitialize();
 }

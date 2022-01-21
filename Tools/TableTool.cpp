@@ -32,7 +32,7 @@ SV_IMPLEMENT_CLASS(TableTool, SvPb::TableToolClassId);
 
 #pragma region Constructor
 TableTool::TableTool( SVObjectClass* pOwner, int stringResourceID )
-	:SVToolClass( false,pOwner, stringResourceID )
+	:SVToolClass(ToolExtType::None,pOwner, stringResourceID )
 	,m_pClearEquation(nullptr)
 	,m_pTable(nullptr)
 {

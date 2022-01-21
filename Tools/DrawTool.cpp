@@ -33,7 +33,7 @@ SV_IMPLEMENT_CLASS(DrawTool, SvPb::DrawToolClassId );
 
 #pragma region Constructor
 DrawTool::DrawTool( SVObjectClass* pOwner, int stringResourceID )
-	:SVToolClass( true,pOwner, stringResourceID )
+	:SVToolClass(ToolExtType::All,pOwner, stringResourceID )
 {
 	BuildInputObjectList();
 	BuildEmbeddedObjectList();

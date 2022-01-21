@@ -35,7 +35,7 @@ SV_IMPLEMENT_CLASS( SVStatTool, SvPb::StatisticsToolClassId );
 
 
 SVStatTool::SVStatTool( SVObjectClass* POwner, int StringResourceID )
-				:SVToolClass( false,POwner, StringResourceID )
+				:SVToolClass(ToolExtType::None,POwner, StringResourceID )
 				, m_NumberOfValidSamples(0)
 {
 	init();

@@ -24,7 +24,12 @@ enum InputValuesEnum
 	InputValue_TABLE_NAMES,
 	InputValue_Second_Double_Array,
 	InputValue_LONG_TABLE_SELECT,
-	InpitValue_LONG_DELAY_MS,
+	InputValue_LONG_DELAY_MS,
+	InputValue_DOUBLE_CENTER_X,
+	InputValue_DOUBLE_CENTER_Y,
+	InputValue_DOUBLE_OFFSET_X,
+	InputValue_DOUBLE_OFFSET_Y,
+	InputValue_DOUBLE_ANGEL,
 	NUM_INPUT_VALUES
 };
 enum InputImagesEnum
@@ -43,6 +48,7 @@ enum ResultValuesEnum
 	ResultValue_INT_ROWCOUNT,
 	RESULTVALUE_BSTR_ROWNAME,
 	RESULTVALUE_DOUBLE_ARRAY_ROW,
+	RESULTVALUE_DOUBLE_ARRAY_FUNCTION,
 	NUM_RESULT_VALUES
 };
 enum ResultImagesEnum

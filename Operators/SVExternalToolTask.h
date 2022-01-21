@@ -73,6 +73,15 @@ struct SVExternalToolTaskData
 	std::array<SvOl::InputObject, NUM_INPUT_IMAGES> m_aInputImageInfo; 
 	std::array<SvVol::LinkedValue, NUM_INPUT_OBJECTS> m_aInputObjects; // our own value objects
 
+	
+	/// if true suppose 1:1 mapping of image mapping
+	SvVol::SVBoolValueObjectClass  m_UseUnitMapping; 
+
+	bool m_UseTransformationMatrix = false;
+	int m_ResultIndexTransformationMatrix {-1};
+	int m_InputImageIndex {-1};
+	int m_OutputImageIndex {-1};
+
 
 	std::vector<SvVol::SVVariantValueObjectClass> m_aResultObjects; //[NUM_RESULT_OBJECTS];
 	std::vector<SvOp::TableObject*>  m_ResultTableObjects;// SvOp::SVExternalToolTaskData::NUM_RESULT_TABLE_OBJECTS);
@@ -229,6 +238,7 @@ private:
 	SvOi::SVImageBufferHandlePtr             m_aInputImagesCopy[SVExternalToolTaskData::NUM_INPUT_IMAGES];
 	bool                     m_bUseImageCopies;
 	
+
 private:
 	HRESULT collectInputImageNames( );
 	

@@ -31,7 +31,7 @@ bool operator < (const GUID& guid1, const GUID& guid2)
 }
 
 extern "C" int APIENTRY
-DllMain(HINSTANCE , DWORD dwReason, LPVOID lpReserved)
+DllMain(HINSTANCE, DWORD dwReason, LPVOID lpReserved)
 {
 	// Remove this if you use lpReserved
 	UNREFERENCED_PARAMETER(lpReserved);
@@ -96,7 +96,7 @@ HRESULT LookupTool(GUID guidTool, CDllTool*& rpDllTool)
 // ******* Simple Test function to check that the calling convention is correct.
 TOOLDLL_API long __stdcall SVSimpleTest(long lValue1, long lValue2)
 {
-	UNREFERENCED_PARAMETER(lValue1); 
+	UNREFERENCED_PARAMETER(lValue1);
 #if _DEBUG
 	fdb("===== SVSimpleTest - lValue1=%ld lValue2=%ld\n", lValue1, lValue2);
 #endif
@@ -133,7 +133,7 @@ TOOLDLL_API HRESULT __stdcall SVGetToolVersion(long* plVersionNumber)
 	fdb("===== SVGetToolVersion - Enter - static_iToolVersion=%d\n", static_iToolVersion);
 #endif
 
-	*plVersionNumber = (long)static_iToolVersion;
+	* plVersionNumber = (long)static_iToolVersion;
 
 #if _DEBUG
 	fdb("===== SVGetToolVersion - Exit\n");
@@ -331,7 +331,7 @@ TOOLDLL_API HRESULT __stdcall SVGetInputValueDefinitionsEx(long* plArraySize,
 
 	////////////////////////////////////////////////////////////////////////
 
-	
+
 
 #if _DEBUG
 	fdb("===== SVGetInputValueDefinitions - Exit - hr=0x%X\n", hr);
@@ -350,7 +350,7 @@ TOOLDLL_API HRESULT __stdcall SVDestroyInputValueDefinitionStructuresEx(
 	HRESULT hr = S_OK;
 	for (int i = 0; i < NUM_INPUT_VALUES; i++)
 	{
-		
+
 		::VariantClear(&paStructs[i].vDefaultValue);
 	}
 	delete[] paStructs;
@@ -437,7 +437,7 @@ TOOLDLL_API HRESULT __stdcall SVGetErrorMessageString(unsigned long ulErrorNumbe
 }
 
 // cppcheck-suppress unusedFunction
-TOOLDLL_API HRESULT __stdcall SVValidateValueParameter(GUID , long lParameterNumber,
+TOOLDLL_API HRESULT __stdcall SVValidateValueParameter(GUID, long lParameterNumber,
 	VARIANT vParameterValue)
 {
 #if _DEBUG
@@ -475,7 +475,7 @@ TOOLDLL_API HRESULT __stdcall SVGetNumberOfInputImages(long* plNumberOfInputImag
 	fdb("===== SVGetNumberOfInputImages - Enter - NUM_INPUT_IMAGES=%d\n", NUM_INPUT_IMAGES);
 #endif
 
-	*plNumberOfInputImages = NUM_INPUT_IMAGES;
+	* plNumberOfInputImages = NUM_INPUT_IMAGES;
 
 	HRESULT hr = S_OK;
 
@@ -488,7 +488,7 @@ TOOLDLL_API HRESULT __stdcall SVGetNumberOfInputImages(long* plNumberOfInputImag
 
 // Only implement One of the set of InputImages / ResultImages
 // cppcheck-suppress unusedFunction
-TOOLDLL_API HRESULT __stdcall SVSetMILInputImages(GUID guidTool, long , long* paMILhandles)
+TOOLDLL_API HRESULT __stdcall SVSetMILInputImages(GUID guidTool, long, long* paMILhandles)
 {
 #if _DEBUG
 	fdb("===== SVSetMILInputImages - Enter\n");
@@ -655,9 +655,9 @@ TOOLDLL_API HRESULT __stdcall GetResultTablesMaxRowSize(GUID guidTool, long Size
 		hr = LookupTool(guidTool, pTool);
 
 		if (hr == S_OK)
-		{	
-			
-			hr = pTool->getResultTablesMaxRowSize(*(std::array<int,NUM_RESULT_TABLES>*)pRowSizes);
+		{
+
+			hr = pTool->getResultTablesMaxRowSize(*(std::array<int, NUM_RESULT_TABLES>*)pRowSizes);
 		}
 	}
 	return hr;
@@ -697,8 +697,8 @@ TOOLDLL_API HRESULT __stdcall SVGetInputValueDefinitions(long* plArraySize, Inpu
 		*ppaStructs = new InputValueDefinitionStruct[NUM_INPUT_VALUES];
 	else
 		*ppaStructs = NULL;
-	
-	
+
+
 
 	//### check alloc failed
 	if (ppaStructs == NULL)
@@ -716,24 +716,24 @@ TOOLDLL_API HRESULT __stdcall SVGetInputValueDefinitions(long* plArraySize, Inpu
 
 	std::array<InputValueDefinitionStructEx, NUM_INPUT_VALUES> InputsEx;
 	CDllTool::getInputValuesDefinitionEx(InputsEx);
-	for (int index =0 ; index < NUM_INPUT_VALUES; index++ )
+	for (int index = 0; index < NUM_INPUT_VALUES; index++)
 	{
 		(*ppaStructs)[index].bstrDisplayName = InputsEx[index].Name.copy();
 
 		(*ppaStructs)[index].lVT = InputsEx[index].vt;
-		
+
 		(*ppaStructs)[index].bstrHelpText = InputsEx[index].HelpText.copy();
-		(*ppaStructs)[index].bstrGroup =  InputsEx[index].Group.copy();
+		(*ppaStructs)[index].bstrGroup = InputsEx[index].Group.copy();
 		VARIANT defaultValue = InputsEx[index].vDefaultValue.Detach();
 		(*ppaStructs)[index].vDefaultValue.Attach(defaultValue);
 
-	
+
 	}
 
 	return hr;
 }
 
-TOOLDLL_API HRESULT __stdcall SVDestroyInputValueDefinitionStructures( InputValueDefinitionStruct* paStructs)
+TOOLDLL_API HRESULT __stdcall SVDestroyInputValueDefinitionStructures(InputValueDefinitionStruct* paStructs)
 {
 
 	HRESULT hr = S_OK;
@@ -778,7 +778,7 @@ TOOLDLL_API HRESULT __stdcall SVGetResultValueDefinitions(long* plArraySize, Res
 }
 
 
-TOOLDLL_API HRESULT __stdcall SVDestroyResultValueDefinitionStructures( ResultValueDefinitionStruct* paStructs)
+TOOLDLL_API HRESULT __stdcall SVDestroyResultValueDefinitionStructures(ResultValueDefinitionStruct* paStructs)
 {
 
 	HRESULT hr = S_OK;
@@ -808,7 +808,7 @@ TOOLDLL_API HRESULT __stdcall GetResultValueDefinitionsAd(long* plArraySize, Res
 
 	for (int index = 0; index < NUM_RESULT_VALUES; index++)
 	{
-		(*ppaResultValues)[index].MaxArraylen=  ResultsEx[index].ArraySize;
+		(*ppaResultValues)[index].MaxArraylen = ResultsEx[index].ArraySize;
 	}
 	return hr;
 }
@@ -852,15 +852,15 @@ TOOLDLL_API HRESULT __stdcall GetResultTableDefinitions(long* pSize, ResultTable
 		(*ppaResultTableDefs)[index].bstrDisplayName = ResultsEx[index].HelpText.copy();
 
 		(*ppaResultTableDefs)[index].lVT = ResultsEx[index].vt;
-		
-		
+
+
 		(*ppaResultTableDefs)[index].ColoumnCount = ResultsEx[index].ColoumnCount;
 		(*ppaResultTableDefs)[index].RowCount = ResultsEx[index].RowCount;
 		VARIANT columnName = ResultsEx[index].ColumnNames.Detach();
 		(*ppaResultTableDefs)[index].ColumnNames.Attach(columnName);
 		//smart array of bstr with names
 	}
-	
+
 
 	return hr;
 }
@@ -872,3 +872,31 @@ TOOLDLL_API HRESULT __stdcall DestroyResultTableDefinitionStructures(ResultTable
 	return hr;
 }
 
+
+// cppcheck-suppress unusedFunction
+TOOLDLL_API HRESULT __stdcall GetTransformationDefinitions(long* pSize, TransformDefs** ppTransformdefs)
+{
+	HRESULT hr = S_OK;
+
+
+	*ppTransformdefs = new TransformDefs[1];
+
+	if (*ppTransformdefs == NULL)
+	{
+
+		return S_FALSE;
+	}
+	*pSize = 1;
+	using TA = std::array<TransformDefs, 1>;
+	CDllTool::getTransformationDefinitions(*(TA*)(*ppTransformdefs));
+
+	return hr;
+}
+
+// cppcheck-suppress unusedFunction
+TOOLDLL_API HRESULT __stdcall  DestroyTransformationDefinitions(TransformDefs* pTransformdefs)
+{
+	HRESULT hr = S_OK;
+	delete[] pTransformdefs;
+	return hr;
+}

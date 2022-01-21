@@ -26,6 +26,7 @@
 
 class SVObjectClass;
 
+
 namespace SvIe
 {
 
@@ -121,6 +122,7 @@ public:
 
 	int getImagePosInTRC() const { return m_imagePosInTRC; };
 
+	void setTransfermatrix(const std::vector<double>& rMatrix);
 #pragma region virtual method (ISVImage)
 	virtual SvPb::SVImageTypeEnum GetImageType() const override;
 	virtual SvOi::ISVImage* GetParentImageInterface() const override;

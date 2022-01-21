@@ -52,7 +52,7 @@ protected:
 	afx_msg void OnSelChangeCombo2();
 	afx_msg void OnSelchangeOperatorCombo();
 	afx_msg void OnCheckEnableGain();
-	afx_msg void OnCheckUseLut();
+	afx_msg void OnCheckRecalculateOnce();
 	afx_msg void OnBnClickedButtonGain();
 	afx_msg void OnKillFocusGain();
 	afx_msg void OnBnClickedButtonOffset();
@@ -85,7 +85,7 @@ protected:
 
 private:
 	BOOL m_IsGainEnabled {FALSE};
-	BOOL m_UseLut {FALSE};
+	BOOL m_RecalculateOnce {FALSE};
 
 	CButton m_ButtonGainLink;
 	CEdit m_EditGainValue;

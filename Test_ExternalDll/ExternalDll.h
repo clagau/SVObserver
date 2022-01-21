@@ -21,6 +21,7 @@ struct InputValueDefinitionStructEx;
 struct ResultValueDefinitionStructEx;
 struct ResultTableDefinitionStructEx;
 struct ResultValueDefinitionStructAd;
+struct TransformDefs;
 #pragma warning(push)
 #pragma warning(disable : 4471)
 enum SVImageFormatEnum;
@@ -87,3 +88,8 @@ TOOLDLL_API HRESULT __stdcall GetResultTableDefinitions(long* pSize, ResultTable
 TOOLDLL_API HRESULT __stdcall DestroyResultTableDefinitionStructures(ResultTableDefinitionStruct* paStructs);
 TOOLDLL_API HRESULT __stdcall GetResultValueDefinitionsAd(long* plArraySize, ResultValueDefinitionStructAd** ppaResultValues);
 TOOLDLL_API HRESULT __stdcall DestroyResultValueDefinitionStructuresAd(ResultValueDefinitionStructAd* paStructs);
+
+
+//new optional interface function in Observer  10.20 to enable calculation for auxilaryextents 
+TOOLDLL_API HRESULT __stdcall GetTransformationDefinitions(long* pSize, TransformDefs** ppTransformdefs);
+TOOLDLL_API HRESULT __stdcall DestroyTransformationDefinitions(TransformDefs* pTransformdefs);

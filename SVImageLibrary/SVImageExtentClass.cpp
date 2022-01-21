@@ -170,17 +170,55 @@ SVPoint<double> SVRotatePoint(const SVPoint<double>& rCenter, double dRadius, do
 
 	result.m_x = rCenter.m_x + dRadius * dXCos;
 	result.m_y = rCenter.m_y + dRadius * dYSin;
-
 	return result;
 }
 
+
+
 SVPoint<double> SVRotatePoint(const SVPoint<double>& rCenter, const SVPoint<double>& rStartPoint, double dAngle)
 {
-	double dRadius = SVGetRadius(rCenter, rStartPoint);
-	double dResultAngle = SVGetRotationAngle(rCenter, rStartPoint) + dAngle;
-
-	return SVRotatePoint(rCenter, dRadius, dResultAngle);
+	
+	double Angle = fmod(dAngle, 360);
+	double dcos, dsin;
+	
+	if(Angle < 0)
+	{
+		Angle += 360;
+	}
+	if (Angle == 0)
+	{
+		dcos = 1;
+		dsin = 0;
+	}
+	else if (Angle == 90)
+	{
+		dcos = 0;
+		dsin =  1;
+	}
+	else if (Angle == 180)
+	{
+		dcos = -1;
+		dsin = 0;
+	}
+	else if (Angle == 270)
+	{
+		dcos = 0;
+		dsin = -1;
+	}
+	else
+	{
+		dcos = cos(Degrees2Radians(dAngle));
+		dsin = sin(Degrees2Radians(dAngle));
+	}
+	SVPoint<double> point = rStartPoint - rCenter;
+	SVPoint<double>erg;
+	erg.m_x = point.m_x * dcos - point.m_y * dsin;
+	erg.m_y = point.m_x * dsin + point.m_y * dcos;
+	erg = erg + rCenter;
+	return erg;
 }
+
+
 
 double SVGetFlippedRotationAngle(const SVPoint<double>& rCenter, const SVPoint<double>& rPoint)
 {
@@ -265,6 +303,7 @@ void SVImageExtentClass::Initialize()
 		m_extentValues[extentProperty] = 0.0;
 	}
 	m_isUpdated = false;
+	m_useTransferMatrix = false;
 }
 
 SvPb::SVExtentTranslationEnum SVImageExtentClass::GetTranslation() const
@@ -1576,7 +1615,7 @@ HRESULT SVImageExtentClass::TranslateToOutputSpace(SVPoint<double> value, SVPoin
 			if (S_OK == l_hrOk)
 			{
 				rResult = SVRotatePoint(rotation, value, -dAngle);
-
+				
 				rResult = rResult - rotation + outputRotation;
 			}
 
@@ -1990,6 +2029,12 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace(SVPoint<double> value, SVPo
 	HRESULT l_hrOk {S_OK};
 
 	rResult.clear();
+	if (m_useTransferMatrix)
+	{
+		rResult.m_x = value.m_x * m_TransferMatrix[0][0] + value.m_y * m_TransferMatrix[0][1] + m_TransferMatrix[0][2];
+		rResult.m_y = value.m_x * m_TransferMatrix[1][0] + value.m_y * m_TransferMatrix[1][1] + m_TransferMatrix[1][2];
+		return S_OK;
+	}
 
 	switch (m_eTranslation)
 	{
@@ -3208,6 +3253,13 @@ bool SVImageExtentClass::operator!=(const SVImageExtentClass& rRhs) const
 HRESULT SVImageExtentClass::UpdateSourceOffset(SVExtentOffsetStruct& rOffsetData) const
 {
 	HRESULT l_hrOk = S_FALSE;
+	
+	if (m_useTransferMatrix)
+	{
+		rOffsetData.m_dRotationAngle = ::fmod((rOffsetData.m_dRotationAngle + m_TransferAngle), 360.0);
+		return S_OK;
+	}
+
 
 	switch (m_eTranslation)
 	{
@@ -5044,5 +5096,24 @@ bool SVImageExtentClass::OutputDebugInformationOnExtent(const char* pDescription
 	OutputDebugString(info.str().c_str());
 
 	return isBigDelta;
+}
+void SVImageExtentClass::setTransfermatrix(const std::vector<double>& rMatrix)
+{
+	if (rMatrix.size() < 7)
+	{
+		m_useTransferMatrix = false;
+		return;
+	}
+	//{{1.0, 0.0, 0.0}, {0.0, 1.0,0.0}};
+	m_TransferMatrix[0][0] = rMatrix[0];
+	m_TransferMatrix[0][1] = rMatrix[1];
+	m_TransferMatrix[0][2] = rMatrix[2];
+	m_TransferMatrix[1][0] = rMatrix[3];
+	m_TransferMatrix[1][1] = rMatrix[4];
+	m_TransferMatrix[1][2] = rMatrix[5];
+	m_TransferAngle = rMatrix[6];
+	m_useTransferMatrix = true;
+	return;
+
 }
 

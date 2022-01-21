@@ -16,11 +16,14 @@ namespace SvOg
 {
 	class AuxiliaryExtentsController
 	{
-		const uint32_t m_InspectionID;
-		const uint32_t m_TaskObjectID;
-		ImageController m_ImageController;
+		const uint32_t m_InspectionID ;
+		const uint32_t m_TaskObjectID ;
+		uint32_t m_ExternalToolTaskObjectId  {SvDef::InvalidObjectId};
+		ImageController m_ImageController ;
 		ValueController m_values;
+		
 		SvUl::NameObjectIdList m_auxSourceImages;
+		std::unique_ptr<ValueController> m_pExternalToolTaskValues;
 
 		public:
 			AuxiliaryExtentsController(uint32_t inspectionID, uint32_t taskObjectID);
@@ -36,9 +39,14 @@ namespace SvOg
 			std::string GetAuxSourceImageName() const;
 			HRESULT SetAuxSourceImage(const std::string& rName);
 			SvUl::NameObjectIdPair GetAuxSourceImage() const;
-
+			
+			bool isExternalTool() const;
+			bool hasUnitMappeing() const;
+			void setUseUnitMapping(bool);
+			bool resetTaskObject() { return m_values.resetTaskObject(); };
+			HRESULT FindAuxSourceImages();
 	private:
-		HRESULT FindAuxSourceImages();
+		
 		HRESULT RunOnce();
 	};
 } //namespace SvOg

@@ -32,7 +32,7 @@ static char THIS_FILE[] = __FILE__;
 SV_IMPLEMENT_CLASS( SVMathToolClass, SvPb::MathToolClassId );
 
 SVMathToolClass::SVMathToolClass( SVObjectClass* POwner, int StringResourceID )
-: SVToolClass( false,POwner, StringResourceID )
+:SVToolClass(ToolExtType::None,POwner, StringResourceID )
 {
 	init();
 }

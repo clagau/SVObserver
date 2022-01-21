@@ -48,12 +48,10 @@ SV_IMPLEMENT_CLASS(SVExternalToolTask, SvPb::ExternalToolTaskClassId)
 
 
 SVExternalToolTaskData::SVExternalToolTaskData() : m_ResultTableObjects(NUM_RESULT_TABLE_OBJECTS, nullptr)
-{
-}
+{}
 
 SVExternalToolTaskData::~SVExternalToolTaskData()
-{
-}
+{}
 
 SVExternalToolTask::SVExternalToolTask(SVObjectClass* POwner, int StringResourceID)
 	:SVTaskObjectListClass(POwner, StringResourceID)
@@ -70,22 +68,20 @@ SVExternalToolTask::SVExternalToolTask(SVObjectClass* POwner, int StringResource
 	for (i = 0; i < m_Data.m_aInputImageInfo.size(); i++)
 	{
 		std::string l_Name = SvUl::Format(_T("ExternalToolTaskImage%d"), i);
-
 		// this object will be filled in SVTaskObject::ConnectAllInputs
 		// we supply the base object type (Image) and ConnectAllInputs finds the nearest match (Toolset main image)
 		m_Data.m_aInputImageInfo[i].SetInputObjectType(SvPb::SVImageObjectType, SvPb::SVImageMonoType);
 		registerInputObject(&m_Data.m_aInputImageInfo[i], l_Name, SvPb::ImageInputEId + i);
 	}
-
 	RegisterEmbeddedObject(&m_Data.m_voDllPath, SvPb::DllFileNameEId, IDS_OBJECTNAME_DLL_PATH, false, SvOi::SVResetItemTool);
-
+	RegisterEmbeddedObject(&m_Data.m_UseUnitMapping, SvPb::UseUnitMappingEId, "Use Unit Mapping", false, SvOi::SVResetItemTool);
+	m_Data.m_UseUnitMapping.setDefaultValue(FALSE);
 	// Initialize Dll Dependencies 
 	m_Data.m_aDllDependencies.resize(SVExternalToolTaskData::NUM_TOOL_DEPENDENCIES);
 	for (i = 0; i < m_Data.m_aDllDependencies.size(); i++)
 	{
 		RegisterEmbeddedObject(&m_Data.m_aDllDependencies[i], SvPb::DllDependencyFileNameEId + i, IDS_OBJECTNAME_DLL_DEP_FILE_01 + static_cast<int>(i), false, SvOi::SVResetItemTool);
 	}
-
 	// init Tool Name
 	RegisterEmbeddedObject(&m_Data.m_voToolName, SvPb::DllToolNameEId, IDS_OBJECTNAME_DLL_TOOL_NAME, false, SvOi::SVResetItemNone);
 	m_Data.m_voToolName.setSaveValueFlag(false);
@@ -771,45 +767,35 @@ void SVExternalToolTask::setPropTreeState(const std::map<std::string, bool>& pro
 void SVExternalToolTask::getDllNameAndVersion(std::vector<std::string>& rStatusMsgs)
 {
 	BSTR bstrName = nullptr;
-
 	HRESULT hr = m_dll.GetToolName(&bstrName);
-
 	if (S_OK != hr)
 	{
 		rStatusMsgs.push_back("Error on GetToolName()");
 		throw hr;
 	}
-
 	std::string Name = SvUl::createStdString(bstrName);
 	m_Data.m_voToolName.SetValue(Name);
-
 	SysFreeString(bstrName);
-
 	long lVersion = 0;
 	hr = m_dll.GetToolVersion(&lVersion);
-
 	if (S_OK != hr)
 	{
 		rStatusMsgs.push_back("Error on GetToolVersion()");
 		throw hr;
 	}
-
 	m_Data.m_voToolVersion.SetValue(lVersion);
 }
 
 std::vector<SVImageDefinitionStruct> SVExternalToolTask::initializeInputImages(std::vector<std::string>& rStatusMsgs, bool inCreationProces)
 {
 	// Initialize Input Images
-
 	HRESULT hr = m_dll.GetNumberOfInputImages(&m_Data.m_lNumInputImages);
 	if (S_OK != hr)
 	{
 		rStatusMsgs.push_back("Error on GetNumberOfInputImages()");
 		throw hr;
 	}
-
 	std::vector<SVImageDefinitionStruct> aInputImages;	// used in m_dll.InitializeRun
-
 	m_aInspectionInputImages.resize(m_Data.m_lNumInputImages);
 	m_aInspectionInputHBMImages.resize(m_Data.m_lNumInputImages);
 	aInputImages.resize(m_Data.m_lNumInputImages);
@@ -821,14 +807,11 @@ std::vector<SVImageDefinitionStruct> SVExternalToolTask::initializeInputImages(s
 		rStatusMsgs.push_back("Error on GetInputImageInformation()");
 		throw hr;
 	}
-
 	if (!inCreationProces)
 	{
 		updateImageInputInfo();
 	}
-
 	m_aPreviousInputImageRect.clear();
-
 	for (int i = 0; i < m_Data.m_lNumInputImages; i++)
 	{
 		m_Data.m_aInputImageInfo[i].SetObjectAttributesAllowed(SvPb::audittrail | SvPb::embedable, SvOi::SetAttributeType::OverwriteAttribute);
@@ -1056,49 +1039,90 @@ void SVExternalToolTask::initializeResultImages(std::vector<std::string>& rStatu
 	m_aInspectionResultHBMImages.resize(NumResultImages);
 	m_Data.m_aResultImageDefinitions.resize(NumResultImages);
 
+	BOOL useUnitImageMapping {FALSE};
+	m_Data.m_UseUnitMapping.GetValue(useUnitImageMapping);
+
+	
+	m_Data.m_UseTransformationMatrix = false;
+	m_Data.m_ResultIndexTransformationMatrix = -1;;
+	m_Data.m_InputImageIndex = 0;
+	m_Data.m_OutputImageIndex = 0;
+
+	int ImageIn {-1}, ImageOut {-1}, ResultIndex {-1};
+	if (!useUnitImageMapping &&  m_dll.HasTransformationMatrix(ImageIn, ImageOut, ResultIndex))
+	{
+		if (m_Data.m_lNumResultImages > ImageOut && m_Data.m_lNumInputImages > ImageIn)
+		{
+			if (ResultIndex < m_Data.m_ResultDefinitions.size() && m_Data.m_ResultDefinitions[ResultIndex].getVT() == (VT_ARRAY | VT_R8))
+			{
+				m_Data.m_UseTransformationMatrix = true;
+				m_Data.m_ResultIndexTransformationMatrix = ResultIndex;
+				m_Data.m_InputImageIndex = ImageIn;
+				m_Data.m_OutputImageIndex = ImageOut;
+			}
+		}
+	}
+
+	auto  parentId = SvDef::InvalidObjectId;
+	
+	if (useUnitImageMapping || m_Data.m_UseTransformationMatrix)
+	{
+		long InputIndex = 0;
+		if (m_Data.m_UseTransformationMatrix)
+		{
+			InputIndex = m_Data.m_InputImageIndex;
+		}
+		
+		if (InputIndex > -1 && InputIndex < m_Data.m_aInputImageInfo.size())
+		{
+			auto pInputImage = m_Data.m_aInputImageInfo[InputIndex].getInputObject<SvIe::SVImageClass>();
+			if (pInputImage)
+			{
+				parentId = pInputImage->getObjectId();
+			}
+		}
+	}
 	int l_pImageNames[] = {IDS_OBJECTNAME_IMAGE1, IDS_OBJECTNAME_IMAGE2, IDS_OBJECTNAME_IMAGE3, IDS_OBJECTNAME_IMAGE4};
 	for (int i = 0; i < m_Data.m_aResultImageDefinitions.size(); i++)
 	{
 		m_Data.m_aResultImageDefinitions[i] = paResultImageDefs[i];
+		SvIe::SVImageClass* pImage = &(m_aResultImages[i]);
+		pImage->SetObjectAttributesAllowed(SvPb::archivableImage | SvPb::publishResultImage | SvPb::dataDefinitionImage, SvOi::OverwriteAttribute);
+		//! Check is Feature already in embedded list	
+		SVObjectPtrVector::const_iterator Iter = std::find_if(m_embeddedList.begin(), m_embeddedList.end(), [i](const SVObjectPtrVector::value_type pEntry)->bool
+		{
+			return (pEntry->GetEmbeddedID() == SvPb::OutputImageEId + i);
+		}
+		);
+		if (m_embeddedList.end() == Iter)
+		{
+			RegisterEmbeddedImage(pImage, SvPb::OutputImageEId + i, l_pImageNames[i]);
+		}
 
-		{// begin block
-		 // create buffer
-			SvIe::SVImageClass* pImage = &(m_aResultImages[i]);
-			pImage->SetObjectAttributesAllowed(SvPb::archivableImage | SvPb::publishResultImage | SvPb::dataDefinitionImage, SvOi::OverwriteAttribute);
-			//! Check is Feature already in embedded list	
-			SVObjectPtrVector::const_iterator Iter = std::find_if(m_embeddedList.begin(), m_embeddedList.end(), [i](const SVObjectPtrVector::value_type pEntry)->bool
-			{
-				return (pEntry->GetEmbeddedID() == SvPb::OutputImageEId + i);
-			}
-			);
-			if (m_embeddedList.end() == Iter)
-			{
-				RegisterEmbeddedImage(pImage, SvPb::OutputImageEId + i, l_pImageNames[i]);
-			}
+		// get image info
+		SVImageInfoClass imageInfo;
+		GetImageInfo(&paResultImageDefs[i], imageInfo);
+		if (nullptr != GetTool())
+		{
+			imageInfo.SetOwner(GetTool()->getObjectId());
+		}
+		else
+		{
+			imageInfo.SetOwner(SvDef::InvalidObjectId);
+		}
 
-			// get image info
-			SVImageInfoClass imageInfo;
-			GetImageInfo(&paResultImageDefs[i], imageInfo);
-			if (nullptr != GetTool())
-			{
-				imageInfo.SetOwner(GetTool()->getObjectId());
-			}
-			else
-			{
-				imageInfo.SetOwner(SvDef::InvalidObjectId);
-			}
+		pImage->InitializeImage(SvPb::SVImageTypeEnum::SVImageTypePhysical);
+		if (!m_dll.UseMil())
+		{
+			imageInfo.setDibBufferFlag(true);
+		}
 
-			pImage->InitializeImage(SvPb::SVImageTypeEnum::SVImageTypePhysical);
-			if (!m_dll.UseMil())
-			{
-				imageInfo.setDibBufferFlag(true);
-			}
-			pImage->UpdateImage(SvDef::InvalidObjectId, imageInfo);
-		}// end block
+		pImage->UpdateImage(parentId, imageInfo);
+
 		if (m_bUseImageCopies)
 		{
-			SVImageInfoClass imageInfo;
-			GetImageInfo(&paResultImageDefs[i], imageInfo);
+			SVImageInfoClass imInfo;
+			GetImageInfo(&paResultImageDefs[i], imInfo);
 			if (nullptr != GetTool())
 			{
 				imageInfo.SetOwner(GetTool()->getObjectId());
@@ -1107,12 +1131,9 @@ void SVExternalToolTask::initializeResultImages(std::vector<std::string>& rStatu
 			{
 				imageInfo.SetOwner(SvDef::InvalidObjectId);
 			}
-
-			// create buffer
-			SvIe::SVImageProcessingClass::CreateImageBuffer(imageInfo, m_aResultImagesCopy[i]);
-		}// end if ( m_bUseImageCopies )
-
-	}// end for ( int i = 0 ; i < m_Data.m_lNumResultImages; i++)
+			SvIe::SVImageProcessingClass::CreateImageBuffer(imInfo, m_aResultImagesCopy[i]);
+		}
+	}
 
 	for (int i = m_Data.m_lNumResultImages; i < SVExternalToolTaskData::NUM_RESULT_IMAGES; i++)
 	{
@@ -2023,6 +2044,20 @@ void SVExternalToolTask::getResults(SvOi::ITRCImagePtr pResultImageBuffers[])
 	}
 
 	collectResultImages(pResultImageBuffers);
+
+	if (m_Data.m_UseTransformationMatrix)
+	{
+		std::vector<double> TMatrix;
+		SvIe::SVImageClass* pImage = &(m_aResultImages[m_Data.m_OutputImageIndex]);
+		GetResultValueObject(m_Data.m_ResultIndexTransformationMatrix)->getValues(TMatrix);
+		pImage->setTransfermatrix(TMatrix);
+		//SvTo::SVToolClass*  pTool = dynamic_cast<SvTo::SVToolClass*>(GetTool());
+		SvTo::SVToolClass* pTool = static_cast<SvTo::SVToolClass*>(GetTool());
+		if (pTool)
+		{
+			const_cast<SVImageExtentClass*>(pTool->GetImageExtentPtr())->setTransfermatrix(TMatrix);
+		}
+	}
 }
 
 
@@ -2317,12 +2352,11 @@ void SVExternalToolTask::collectResultImages(SvOi::ITRCImagePtr pResultImageBuff
 					SvOi::SVImageBufferHandlePtr l_ImageBufferCopy = m_aResultImagesCopy[i];
 					if (nullptr != pResultImageBuffers[i] && !pResultImageBuffers[i]->isEmpty() && nullptr != l_ImageBufferCopy && !l_ImageBufferCopy->empty())
 					{
-						// Ask Joe: what if different sizes??
 						SVMatroxBufferInterface::CopyBuffer(pResultImageBuffers[i]->getHandle()->GetBuffer(), l_ImageBufferCopy->GetBuffer());
 					}
 				}
-			}// end if ( m_bUseImageCopies )
-		}// if( m_dll.UseMil() )
+			}
+		}
 		else
 		{ // Use HBitmaps 
 			HRESULT hr = m_dll.GetHBITMAPResultImages(getObjectId(), m_Data.m_lNumResultImages, m_Data.m_lNumResultImages ? &(m_aInspectionResultHBMImages[0]) : nullptr);
@@ -2343,9 +2377,9 @@ void SVExternalToolTask::collectResultImages(SvOi::ITRCImagePtr pResultImageBuff
 				}
 				m_aInspectionResultHBMImages[i] = 0;
 
-			}// end for( int i = 0 ; i < m_Data.m_lNumResultImages ; i++ )
-		}// end else use HBITMAP
-	}// end if ( m_Data.m_lNumResultImages > 0 )
+			}
+		}
+	}
 
 }
 

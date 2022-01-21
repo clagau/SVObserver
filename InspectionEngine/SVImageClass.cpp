@@ -259,6 +259,10 @@ HRESULT SVImageClass::InitializeImage(SVImageClass* pParentImage)
 
 	if (nullptr != pParentImage)
 	{
+
+#if defined(TRACE_THEM_ALL) || defined(TRACE_IMAGE)
+		OutputDebugString(SvUl::Format("Initialize Image  %s Parent %s\n", GetCompleteName().c_str(), pParentImage->GetCompleteName().c_str()).c_str());
+#endif 
 		uint32_t ImageID = pParentImage->getObjectId();
 		if (m_ParentImageInfo.first != ImageID)
 		{
@@ -280,7 +284,7 @@ HRESULT SVImageClass::UpdateImage(const SVImageExtentClass& rExtent, bool doNotR
 {
 
 #if defined(TRACE_THEM_ALL) || defined(TRACE_IMAGE)
-	OutputDebugString(SvUl::Format("Set new Extent for Image %s\n", GetCompleteName()).c_str());
+	OutputDebugString(SvUl::Format("Set new Extent for Image %s\n", GetCompleteName().c_str()).c_str());
 #endif 
 
 	HRESULT Result {S_OK};
@@ -319,7 +323,7 @@ HRESULT SVImageClass::UpdateImage(uint32_t parentID, const SVImageInfoClass& rIm
 	{
 
 #if defined(TRACE_THEM_ALL) || defined(TRACE_IMAGE)
-		OutputDebugString(SvUl::Format("Set new parent for Image %s\n", GetCompleteName()).c_str());
+		OutputDebugString(SvUl::Format("Set new parent for Image %s\n", GetCompleteName().c_str()).c_str());
 #endif 
 		if (m_ParentImageInfo.first != parentID)
 		{
@@ -347,7 +351,7 @@ HRESULT SVImageClass::UpdateImage(uint32_t parentID, const SVImageInfoClass& rIm
 HRESULT SVImageClass::UpdateImage(SvPb::SVImageTypeEnum ImageType)
 {
 #if defined(TRACE_THEM_ALL) || defined(TRACE_IMAGE)
-	OutputDebugString(SvUl::Format("Set new Type for Image %s\n", GetCompleteName()).c_str());
+	OutputDebugString(SvUl::Format("Set new Type for Image %s\n", GetCompleteName().c_str()).c_str());
 #endif 
 	HRESULT l_Status = S_OK;
 
@@ -371,7 +375,7 @@ const double& SVImageClass::GetLastResetTimeStamp() const
 bool SVImageClass::ResetObject(SvStl::MessageContainerVector* pErrorMessages)
 {
 #if defined(TRACE_THEM_ALL) || defined(TRACE_IMAGE)
-	OutputDebugString(SvUl::Format("SVImageClass::ResetObject %s\n", GetCompleteName()).c_str());
+	OutputDebugString(SvUl::Format("SVImageClass::ResetObject %s\n", GetCompleteName().c_str()).c_str());
 #endif 
 	setInspectionPosForTrc();
 
@@ -462,7 +466,7 @@ HRESULT SVImageClass::UpdateFromParentInformation(SvStl::MessageContainerVector*
 		{
 #if defined(TRACE_THEM_ALL) || defined(TRACE_IMAGE)
 			OutputDebugString(
-				SvUl::Format("UpdateFromParentInformation: %s Parent_Image: %s\n",
+				SvUl::Format("UpdateFromParentInformation: %s \n PARENTIMAGE: %s\n",
 				GetCompleteName().c_str(),
 				l_pParentImage->GetCompleteName().c_str()).c_str()
 			);
@@ -530,37 +534,45 @@ HRESULT SVImageClass::UpdateFromToolInformation()
 	SVTaskObjectClass* pParentTask = dynamic_cast <SVTaskObjectClass*> (GetTool());
 	if (nullptr != pParentTask)
 	{
+
 		if ((SvPb::SVImageTypeEnum::SVImageTypeMain != m_ImageType) &&
 			(SvPb::SVImageTypeEnum::SVImageTypeIndependent != m_ImageType) &&
 			(SvPb::SVImageTypeEnum::SVImageTypeDependent != m_ImageType) &&
-			pParentTask->DoesObjectHaveExtents() && pParentTask->GetImageExtentPtr())
+			 pParentTask->GetImageExtentPtr())
 		{
-			RECT l_Rect;
-			SVImageExtentClass tempExtent = *(pParentTask->GetImageExtentPtr());
-
-			if (SvPb::SVImageTypeEnum::SVImageTypeLogical == m_ImageType)
+			if (false == pParentTask->DoesObjectHaveExtents())
 			{
-				// @Hack
-				// It does not make sense that a logical buffer is not a 1:1 
-				// pixel correlation to its parent physical buffer.  For this 
-				// reason the translation type will be ignored when retrieving
-				// the logical rectangle.  
-				// The usage that this is specifically excluded for is for 
-				// creating a logical ROI buffer, which should not reflect the 
-				// output buffer translation.
-				tempExtent.SetTranslation(SvPb::SVExtentTranslationShift);
-				l_Status = tempExtent.GetLogicalRectangle(l_Rect);
+				toolExtent.SetTranslation(SvPb::SVExtentTranslationNone);
 			}
 			else
 			{
-				l_Status = tempExtent.GetOutputRectangle(l_Rect);
-			}
+				RECT l_Rect;
+				SVImageExtentClass tempExtent = *(pParentTask->GetImageExtentPtr());
 
-			if (S_OK == l_Status)
-			{
-				if (0 < (l_Rect.bottom - l_Rect.top + 1) && 0 < (l_Rect.right - l_Rect.left + 1))
+				if (SvPb::SVImageTypeEnum::SVImageTypeLogical == m_ImageType)
 				{
-					toolExtent = tempExtent;
+					// @Hack
+					// It does not make sense that a logical buffer is not a 1:1 
+					// pixel correlation to its parent physical buffer.  For this 
+					// reason the translation type will be ignored when retrieving
+					// the logical rectangle.  
+					// The usage that this is specifically excluded for is for 
+					// creating a logical ROI buffer, which should not reflect the 
+					// output buffer translation.
+					tempExtent.SetTranslation(SvPb::SVExtentTranslationShift);
+					l_Status = tempExtent.GetLogicalRectangle(l_Rect);
+				}
+				else
+				{
+					l_Status = tempExtent.GetOutputRectangle(l_Rect);
+				}
+
+				if (S_OK == l_Status)
+				{
+					if (0 < (l_Rect.bottom - l_Rect.top + 1) && 0 < (l_Rect.right - l_Rect.left + 1))
+					{
+						toolExtent = tempExtent;
+					}
 				}
 			}
 		}
@@ -580,7 +592,7 @@ HRESULT SVImageClass::UpdateFromToolInformation()
 					toolname = GetTool()->GetCompleteName();
 				}
 				auto msg = SvUl::Format("UpdateFromToolInformation: SetToolImage (tool : image)  (%s : %s)\n ",
-					toolname, GetCompleteName());
+					toolname.c_str(), GetCompleteName().c_str());
 				OutputDebugString(msg.c_str());
 #endif 
 			}
@@ -598,7 +610,7 @@ HRESULT SVImageClass::UpdateFromToolInformation()
 					toolname = GetTool()->GetCompleteName();
 				}
 				auto msg = SvUl::Format("UpdateFromToolInformation: WRONG TYPE in SetToolImage (tool : image)  (%s:%s)\n ",
-					toolname, GetCompleteName());
+					toolname.c_str(), GetCompleteName().c_str());
 				OutputDebugString(msg.c_str());
 			}
 
@@ -716,7 +728,7 @@ HRESULT SVImageClass::UpdateChild(uint32_t childID, const SVImageInfoClass& rIma
 
 
 					msg += SvUl::Format("\n( ROImage---Image:\n %s\n %s\n",
-						pChildObjectImage->GetCompleteName(), GetCompleteName());
+						pChildObjectImage->GetCompleteName().c_str(), GetCompleteName().c_str());
 
 					::OutputDebugString(msg.c_str());
 #endif
@@ -1126,6 +1138,12 @@ void SVImageClass::SetTranslationOffset(double offsetX, double offsetY)
 	m_ImageInfo.SetExtentProperty(SvPb::SVExtentPropertyTranslationOffsetY, offsetY);
 }
 
+void SVImageClass::setTransfermatrix(const std::vector<double>& rMatrix)
+{
+	m_ImageInfo.setTransfermatrix(rMatrix);
+
+}
+
 void SVImageClass::setImage(SvOi::ITRCImagePtr pImage, const SvOi::ITriggerRecordRWPtr& pTriggerRecord)
 {
 	assert(nullptr != pTriggerRecord);
@@ -1296,6 +1314,9 @@ HRESULT SVImageClass::TranslateFromOutputSpaceToImage(SVImageClass* pImage, SVPo
 	HRESULT l_hr = E_FAIL;
 
 	rOutPoint.clear();
+#if defined(TRACE_THEM_ALL) || defined(TRACE_IMAGE)
+	OutputDebugString(SvUl::Format("Translate from outputspace  begin for %s \n", GetCompleteName().c_str()).c_str());
+#endif 
 
 	if (nullptr != pImage)
 	{
@@ -1306,7 +1327,18 @@ HRESULT SVImageClass::TranslateFromOutputSpaceToImage(SVImageClass* pImage, SVPo
 			const SVImageExtentClass rExtents = pCurrentImage->GetImageExtents();
 			rExtents.TranslateFromOutputSpace(inPoint, inPoint);
 			pCurrentImage = pCurrentImage->GetParentImage();
+#if defined(TRACE_THEM_ALL) || defined(TRACE_IMAGE)
+			if (pCurrentImage)
+				OutputDebugString(SvUl::Format("Translate from outputspace next Parent  %s \n", pCurrentImage->GetCompleteName().c_str()).c_str());
+#endif 
+
+
+
 		} while (pImage != pCurrentImage && nullptr != pCurrentImage);
+
+#if defined(TRACE_THEM_ALL) || defined(TRACE_IMAGE)
+		OutputDebugString(SvUl::Format("Translate from outputspace  end for %s \n", GetCompleteName().c_str()).c_str());
+#endif 
 
 		if (pImage == pCurrentImage)
 		{
@@ -1442,7 +1474,7 @@ void SVImageClass::setImageSubType()
 bool SVImageClass::hasStorage() const
 {
 	return  m_LastReset > std::numeric_limits<double>::lowest();
- 
+
 }
 void SVImageClass::setInspectionPosForTrc()
 {
