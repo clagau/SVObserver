@@ -32,6 +32,7 @@ namespace SvIe
 
 #define S_NoParent                                ((HRESULT)80000L)
 
+
 class SVImageClass : public SVObjectAppClass, public SvOi::ISVImage
 {
 	SV_DECLARE_CLASS
@@ -123,6 +124,7 @@ public:
 	int getImagePosInTRC() const { return m_imagePosInTRC; };
 
 	void setTransfermatrix(const std::vector<double>& rMatrix);
+	static const std::vector<double> UnitMatrix;
 #pragma region virtual method (ISVImage)
 	virtual SvPb::SVImageTypeEnum GetImageType() const override;
 	virtual SvOi::ISVImage* GetParentImageInterface() const override;

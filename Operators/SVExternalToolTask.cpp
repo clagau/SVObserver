@@ -31,6 +31,7 @@
 #include "ObjectInterfaces/ISVOApp_Helper.h"
 #include "ObjectInterfaces/IObjectClass.h"
 #include "SVUtilityLibrary/SafeArrayHelper.h"
+#include "InspectionEngine/SVImageClass.h"
 
 #pragma endregion Includes
 
@@ -1118,6 +1119,10 @@ void SVExternalToolTask::initializeResultImages(std::vector<std::string>& rStatu
 		}
 
 		pImage->UpdateImage(parentId, imageInfo);
+		if (parentId != SvDef::InvalidObjectId)
+		{
+			pImage->setTransfermatrix(std::vector<double>(SvIe::SVImageClass::UnitMatrix));
+		}
 
 		if (m_bUseImageCopies)
 		{

@@ -538,45 +538,40 @@ HRESULT SVImageClass::UpdateFromToolInformation()
 		if ((SvPb::SVImageTypeEnum::SVImageTypeMain != m_ImageType) &&
 			(SvPb::SVImageTypeEnum::SVImageTypeIndependent != m_ImageType) &&
 			(SvPb::SVImageTypeEnum::SVImageTypeDependent != m_ImageType) &&
-			 pParentTask->GetImageExtentPtr())
+			 pParentTask->GetImageExtentPtr() && pParentTask->DoesObjectHaveExtents())
 		{
-			if (false == pParentTask->DoesObjectHaveExtents())
+
+
+			RECT l_Rect;
+			SVImageExtentClass tempExtent = *(pParentTask->GetImageExtentPtr());
+
+			if (SvPb::SVImageTypeEnum::SVImageTypeLogical == m_ImageType)
 			{
-				toolExtent.SetTranslation(SvPb::SVExtentTranslationNone);
+				// @Hack
+				// It does not make sense that a logical buffer is not a 1:1 
+				// pixel correlation to its parent physical buffer.  For this 
+				// reason the translation type will be ignored when retrieving
+				// the logical rectangle.  
+				// The usage that this is specifically excluded for is for 
+				// creating a logical ROI buffer, which should not reflect the 
+				// output buffer translation.
+				tempExtent.SetTranslation(SvPb::SVExtentTranslationShift);
+				l_Status = tempExtent.GetLogicalRectangle(l_Rect);
 			}
 			else
 			{
-				RECT l_Rect;
-				SVImageExtentClass tempExtent = *(pParentTask->GetImageExtentPtr());
+				l_Status = tempExtent.GetOutputRectangle(l_Rect);
+			}
 
-				if (SvPb::SVImageTypeEnum::SVImageTypeLogical == m_ImageType)
+			if (S_OK == l_Status)
+			{
+				if (0 < (l_Rect.bottom - l_Rect.top + 1) && 0 < (l_Rect.right - l_Rect.left + 1))
 				{
-					// @Hack
-					// It does not make sense that a logical buffer is not a 1:1 
-					// pixel correlation to its parent physical buffer.  For this 
-					// reason the translation type will be ignored when retrieving
-					// the logical rectangle.  
-					// The usage that this is specifically excluded for is for 
-					// creating a logical ROI buffer, which should not reflect the 
-					// output buffer translation.
-					tempExtent.SetTranslation(SvPb::SVExtentTranslationShift);
-					l_Status = tempExtent.GetLogicalRectangle(l_Rect);
-				}
-				else
-				{
-					l_Status = tempExtent.GetOutputRectangle(l_Rect);
-				}
-
-				if (S_OK == l_Status)
-				{
-					if (0 < (l_Rect.bottom - l_Rect.top + 1) && 0 < (l_Rect.right - l_Rect.left + 1))
-					{
-						toolExtent = tempExtent;
-					}
+					toolExtent = tempExtent;
 				}
 			}
-		}
 
+		}
 
 		if (SvPb::SVImageTypeEnum::SVImageTypePhysical == m_ImageType)
 		{
@@ -1143,6 +1138,7 @@ void SVImageClass::setTransfermatrix(const std::vector<double>& rMatrix)
 	m_ImageInfo.setTransfermatrix(rMatrix);
 
 }
+const std::vector<double> SVImageClass::UnitMatrix = {1.0,0.0,0.0,0.0,1.0,0.0,0.0};
 
 void SVImageClass::setImage(SvOi::ITRCImagePtr pImage, const SvOi::ITriggerRecordRWPtr& pTriggerRecord)
 {
