@@ -57,6 +57,7 @@ namespace SvOg
 	{
 		m_PathName = m_values.Get<CString>(SvPb::PathNameEId);
 		m_BContinuousReload = m_values.Get<bool>(SvPb::ContinuousReloadEId);
+		m_BIsColorImage = m_values.Get<bool>(SvPb::IsColorImageCheckEId);
 		UpdateData(false); // Set data to dialog
 	}
 
@@ -71,6 +72,7 @@ namespace SvOg
 			m_values.Set<CString>(SvPb::PathNameEId, name);
 		}
 		m_values.Set<bool>(SvPb::ContinuousReloadEId, m_BContinuousReload  ? true : false);
+		m_values.Set<bool>(SvPb::IsColorImageCheckEId, m_BIsColorImage ? true : false);
 	}
 
 	void SVTADlgFileImageSourcePage::DoDataExchange(CDataExchange* pDX)
@@ -80,6 +82,7 @@ namespace SvOg
 		DDX_Control(pDX, IDC_IMAGE, m_imageCtrl);
 		DDX_Text(pDX, IDC_IMAGE_SOURCE_EDIT, m_PathName);
 		DDX_Check(pDX, IDC_RELOAD_CHECK, m_BContinuousReload);
+		DDX_Check(pDX, IDC_COLOR_CHECK, m_BIsColorImage);
 		//}}AFX_DATA_MAP
 	}
 
@@ -91,6 +94,7 @@ namespace SvOg
 		//{{AFX_MSG_MAP(SVTADlgFileImageSourcePage)
 		ON_BN_CLICKED(ID_BROWSE_BUTTON, OnBrowseButton)
 		ON_BN_CLICKED(IDC_RELOAD_CHECK, OnReloadCheck)
+		ON_BN_CLICKED(IDC_COLOR_CHECK, OnColorImageCheck)
 		//}}AFX_MSG_MAP
 	END_MESSAGE_MAP()
 
@@ -135,6 +139,11 @@ namespace SvOg
 	}
 
 	void SVTADlgFileImageSourcePage::OnReloadCheck() 
+	{
+		refresh();
+	}
+
+	void SVTADlgFileImageSourcePage::OnColorImageCheck()
 	{
 		refresh();
 	}

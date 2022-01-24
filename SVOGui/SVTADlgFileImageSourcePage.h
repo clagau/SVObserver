@@ -34,6 +34,7 @@ namespace SvOg
 		//{{AFX_MSG(SVTADlgFileImageSourcePage)
 		afx_msg void OnBrowseButton();
 		afx_msg void OnReloadCheck();
+		afx_msg void OnColorImageCheck();
 		//}}AFX_MSG
 		DECLARE_MESSAGE_MAP()
 
@@ -61,6 +62,7 @@ namespace SvOg
 		SvOg::PictureDisplay m_imageCtrl;
 		CString	m_PathName;
 		BOOL m_BContinuousReload{ false };
+		BOOL m_BIsColorImage{ false };
 		//}}AFX_DATA
 	#pragma endregion Member variables
 	};

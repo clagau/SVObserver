@@ -64,6 +64,7 @@ protected:
 	SvIe::SVImageClass m_fileImage;
 	SvVol::SVFileNameValueObjectClass m_currentPathName;
 	SvVol::SVBoolValueObjectClass m_continuousReload;
+	SvVol::SVBoolValueObjectClass m_isColorImage;
 	bool m_ReloadFileImage;
 
 };

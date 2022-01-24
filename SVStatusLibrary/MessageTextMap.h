@@ -709,6 +709,7 @@ namespace SvStl
 		{Tid_ProductMissingNak, _T("NAK has been caused by a missing PPQ product")},
 		{Tid_ImageMissingNak, _T("NAK has been caused by a missing camera image")},
 		{Tid_InputMissingNak, _T("NAK has been caused by a missing input")},
-		{Tid_ProductIncompleteNak, _T("NAK caused by product incomplete (usually PPQ full)")}
+		{Tid_ProductIncompleteNak, _T("NAK caused by product incomplete (usually PPQ full)")},
+		{Tid_IsColorCheckForGrayscaleImage, _T("Color image checkbox selected, but image is grayscale")}
 };
 } //namespace SvStl

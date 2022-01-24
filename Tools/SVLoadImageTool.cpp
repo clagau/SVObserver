@@ -18,6 +18,8 @@
 #include "Operators/ToolSizeAdjustTask.h"
 #include "InspectionEngine/RunStatus.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
+#include "SVHBitmapUtilitiesLibrary/SVImageFile.h"
+#include "SVHBitmapUtilitiesLibrary/SVImageFileLoader.h"
 #pragma endregion Includes
 
 namespace SvTo
@@ -30,6 +32,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
+constexpr int GrayScaleBitDepth = 8;
 SV_IMPLEMENT_CLASS( SVLoadImageToolClass, SvPb::LoadImageToolClassId );
 
 SVLoadImageToolClass::SVLoadImageToolClass( SVObjectClass* POwner, int StringResourceID )
@@ -51,6 +54,8 @@ void SVLoadImageToolClass::init()
 	RegisterEmbeddedImage( &m_fileImage, SvPb::OutputImageEId, IDS_OBJECTNAME_IMAGE1 );
 	RegisterEmbeddedObject( &m_currentPathName, SvPb::PathNameEId, IDS_OBJECTNAME_PATHNAME, false, SvOi::SVResetItemTool );
 	RegisterEmbeddedObject( &m_continuousReload, SvPb::ContinuousReloadEId, IDS_OBJECTNAME_CONTINUOUS_RELOAD, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject(&m_isColorImage, SvPb::IsColorImageCheckEId, IDS_OBJECTNAME_COLOR_IMAGE, false, SvOi::SVResetItemNone);
+
 
 	// Set Embedded defaults
 	m_currentPathName.SetDefaultValue( _T( "" ), true );
@@ -81,9 +86,9 @@ bool SVLoadImageToolClass::CreateObject( const SVObjectLevelCreateStruct& rCreat
 		// Setup...
 		ImageInfo.SetOwner( getObjectId() );
 		ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SvDef::SVImageFormatMono8 );
-		ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 1 );
+		ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 1);
 		ImageInfo.SetImageProperty( SvDef::SVImagePropertyEnum::SVImagePropertyBandLink, 0 );
-		ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth,8);
+		ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyPixelDepth, SV8BitUnsigned);
 
 		bOk = (S_OK == m_fileImage.UpdateImage(SvDef::InvalidObjectId, ImageInfo));
 	}
@@ -131,6 +136,7 @@ bool SVLoadImageToolClass::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageCont
 			return false;
 		}
 
+
 		if (bReload || m_ReloadFileImage || nullptr == m_fileImage.getImageReadOnly(rRunStatus.m_triggerRecord.get()))
 		{
 			if (S_OK != m_fileImage.LoadImage(ImagePathName.c_str(), rRunStatus.m_triggerRecord))
@@ -147,6 +153,9 @@ bool SVLoadImageToolClass::onRun(SvIe::RunStatus& rRunStatus, SvStl::MessageCont
 			m_ReloadFileImage = false;
 		}
 		
+
+
+
 		if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
 		{
 			//If not in runMode reload always, because outside of runMode it is not sure if the last image still valid.
@@ -166,9 +175,54 @@ bool SVLoadImageToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMess
 	
 	m_ReloadFileImage = true;
 
+	bool correctModeForImage = true;
+	BOOL bIsColorImage = false;
+	m_isColorImage.GetValue(bIsColorImage);
+
+	int imagePropertyFormat;
+	SVImageInfoClass ImageInfo = m_fileImage.GetImageInfo();
+	ImageInfo.GetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyFormat, imagePropertyFormat);
+
+	if (bIsColorImage)
+	{
+		SVImageFile FileImage;
+		std::string ImagePathName;
+		m_currentPathName.GetValue(ImagePathName);
+		if (S_OK == SVImageFileLoader::LoadFirstFile(ImagePathName.c_str(), _T("*.bmp"), FileImage))
+		{
+			bool selectedFileIsColor = FileImage.GetBitDepth() > GrayScaleBitDepth;
+			if (selectedFileIsColor && SvDef::SVImageFormatBGR888X != imagePropertyFormat)
+			{
+				ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SvDef::SVImageFormatBGR888X);
+				ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 3L);
+				m_fileImage.UpdateImage(SvDef::InvalidObjectId, ImageInfo);
+				m_fileImage.InitializeImage(SvPb::SVImageTypeEnum::SVImageTypePhysical);
+			}
+			else if (false == selectedFileIsColor && SvDef::SVImageFormatBGR888X == imagePropertyFormat)
+			{
+				if (S_OK != Result && nullptr != pErrorMessages)
+				{
+					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_IsColorCheckForGrayscaleImage, SvStl::SourceFileParams(StdMessageParams), 0, getObjectId());
+					pErrorMessages->push_back(Msg);
+				}
+				correctModeForImage = false;
+			}
+		}
+	}
+	else
+	{
+		if (SvDef::SVImageFormatMono8 != imagePropertyFormat)
+		{
+			ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyFormat, SvDef::SVImageFormatMono8);
+			ImageInfo.SetImageProperty(SvDef::SVImagePropertyEnum::SVImagePropertyBandNumber, 1L);
+			m_fileImage.UpdateImage(SvDef::InvalidObjectId, ImageInfo);
+			m_fileImage.InitializeImage(SvPb::SVImageTypeEnum::SVImageTypePhysical);
+		}
+	}
+
 	UpdateImageWithExtent();
 
-	return Result && ValidateLocal(pErrorMessages);
+	return Result && ValidateLocal(pErrorMessages) && correctModeForImage;
 }
 
 bool SVLoadImageToolClass::isInputImage(uint32_t imageId) const

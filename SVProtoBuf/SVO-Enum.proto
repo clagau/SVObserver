@@ -1212,7 +1212,7 @@ enum EmbeddedIdEnum
 	EdgeBLowerThresholdValueEId = 573;
 	EdgeBUpperThresholdValueEId = 574;
 	UseUnitMappingEId = 575;
-
+	
 	//The following Ids are the first of an array and must have 100 reserved Ids 
 	OutputImageEId = 1000; //Output Images, e.g. External needs 4
 	RingBufferIndexEId = 1100; //For ringBuffer index of output images (by now 2 indexes)
@@ -1294,7 +1294,8 @@ enum EmbeddedIdEnum
 
 	//The following Ids are the first of an array and must have 100 reserved Ids 
 	ImageInputEId = 150000;
-	
+
+	IsColorImageCheckEId = 150001;
 }
 
 

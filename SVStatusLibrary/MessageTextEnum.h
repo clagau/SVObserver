@@ -671,5 +671,7 @@ enum MessageTextEnum
 	Tid_ImageMissingNak,
 	Tid_InputMissingNak,
 	Tid_ProductIncompleteNak,
+	
+	Tid_IsColorCheckForGrayscaleImage,
 };
 } //namespace SvStl
