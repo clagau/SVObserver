@@ -10,7 +10,8 @@
 #pragma region Includes
 #include "SVOResource/resource.h"
 #include "PictureDisplay.h"
-#include "SVMFCControls\AvailableObjectListComboBox.h"
+#include "SVMFCControls/AvailableObjectListComboBox.h"
+#include "SVMFCControls/SVEnumerateCombo.h"
 #include "DataController.h"
 #include "DrawTaskTree.h"
 #include "DrawToolController.h"
@@ -49,6 +50,16 @@ namespace SvOg
 			Static5,
 			Edit5,
 			LinkedValueButton5,
+			Edit6,
+			LinkedValueButton6,
+			Edit7,
+			LinkedValueButton7,
+			Edit8,
+			LinkedValueButton8,
+			Edit9,
+			LinkedValueButton9,
+			Edit10,
+			LinkedValueButton10,
 			Button1,
 			Button2,
 			Button3,
@@ -72,6 +83,7 @@ namespace SvOg
 		void OnKillFocusEdit(UINT nID);
 		void OnSelchangeCombo2();
 		void OnSelchangeBackGroundCombo();
+		void OnSelchangeGeneralCombo(TreeNodeData& rData);
 		void OnBeginLabelEdit(NMHDR* pNMHDR, LRESULT* pResult);
 		void OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult);
 		void OnDragTree(NMHDR* pNMHDR, LRESULT* pResult);
@@ -89,6 +101,7 @@ namespace SvOg
 		//{{AFX_DATA(TADialogDrawPage)
 		enum { IDD = IDD_TA_DRAW_DIALOG };
 		SvMc::AvailableObjectListComboBox<uint32_t> m_comboBox2;
+		SvMc::SVEnumerateCombo m_comboBox2Enum;
 		std::string m_availableSourceInputName;
 		DrawTaskTree m_treeCtrl;
 		PictureDisplay m_dialogImage;
@@ -108,13 +121,18 @@ namespace SvOg
 		void setBaseImageSizeCtrl();
 		void setSizeCtrl(TreeNodeData& rData);
 		void setColorCtrl(TreeNodeData& rData);
+		void setAngleCtrl(TreeNodeData& rData);
+		void setGeneralCtrl(TreeNodeData& rData);
 		void setPositionCtrl(TreeNodeData& rData);
+		void setPointsCtrl(TreeNodeData& rData);
 		void addNodeInto(HTREEITEM item, SvPb::ClassIdEnum classId, DrawTaskTree::addPosEnum atBegin);
 		void loadNode(HTREEITEM item, uint32_t objectId);
 		void hideAllBOSACtrl();
 		void setValueCtrlData(SvPb::EmbeddedIdEnum embeddedId, ValueController& rValueController, TADialogDrawPage::BOSAEnum ctrlEnum, int min, int max, const std::string& fieldName, bool readOnly = false);
 		std::pair<std::string, std::string> getBGImageNamePair();
 		void ObjectChangedExDialogImage(long, long, VARIANT* ParameterList, VARIANT* ParameterValue);
+		void setControl(TADialogDrawPage::BOSAEnum editEnum, TADialogDrawPage::BOSAEnum buttonEnum, SvPb::EmbeddedIdEnum embeddedId, const ObjectSelectorData& rSelectorData, TreeNodeData& rData);
+		void setControl(TADialogDrawPage::BOSAEnum staticEnum, LPCSTR staticText, TADialogDrawPage::BOSAEnum editEnum, TADialogDrawPage::BOSAEnum buttonEnum, SvPb::EmbeddedIdEnum embeddedId, const ObjectSelectorData& rSelectorData, TreeNodeData& rData);
 	
 	private:
 		uint32_t m_InspectionID;
@@ -132,7 +150,8 @@ namespace SvOg
 		//overlay
 		long m_handleToOverlayObjects = -1;
 
-		std::array<EditCtrlData, 5> m_editCtrlDataList = {EditCtrlData{IDC_EDIT1}, EditCtrlData{IDC_EDIT2}, EditCtrlData{IDC_EDIT3}, EditCtrlData{IDC_EDIT4}, EditCtrlData{IDC_EDIT5}};
+		std::array<EditCtrlData, NumberOfCtrls> m_editCtrlDataList = {EditCtrlData{IDC_EDIT1}, EditCtrlData{IDC_EDIT2}, EditCtrlData{IDC_EDIT3}, EditCtrlData{IDC_EDIT4}, EditCtrlData{IDC_EDIT5},
+			EditCtrlData{IDC_EDIT6}, EditCtrlData{IDC_EDIT7}, EditCtrlData{IDC_EDIT8}, EditCtrlData{IDC_EDIT9}, EditCtrlData{IDC_EDIT10}};
 		DrawToolController m_drawToolController;
 
 		std::array<CWnd, BOSAEnum::NUM_OF_CONTROL> m_BSOAControls;

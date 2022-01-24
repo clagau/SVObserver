@@ -11,7 +11,14 @@ enum class DrawNodeType
 	NoDefined,
 	BaseImage,
 	Rectangle,
-	Oval
+	Oval,
+	Segment,
+	Triangle,
+	Lines,
+	Points,
+	Polygon,
+	Text,
+	BucketFill
 };
 
 enum class DrawNodeSubType
@@ -21,7 +28,9 @@ enum class DrawNodeSubType
 	GeneralData,
 	SizeData,
 	Position,
-	Color
+	Points,
+	Color,
+	Angle,
 };
 
 struct TreeNodeData
@@ -52,9 +61,10 @@ public:
 		return true;
 	}
 
-	std::unique_ptr<LinkedValueWidgetHelper> m_Widget;
+	std::unique_ptr<LinkedValueWidgetHelper> m_Widget = nullptr;
 	std::string m_fieldName;
 	UINT m_nIDC;
+	bool m_useNumberValue = false;
 	int m_value = 0;
 	bool m_useMinMax = false;
 	int m_min = 0;

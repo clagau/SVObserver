@@ -64,8 +64,8 @@ SVImagePolarTransform::SVImagePolarTransform( SVObjectClass* POwner, int StringR
 	RegisterEmbeddedObject( &m_centerY, SvPb::OutputCenterYEId, IDS_OBJECTNAME_CENTER_Y, false, SvOi::SVResetItemTool);
 	RegisterEmbeddedObject( &m_startRadius, SvPb::OutputStartRadiusEId, IDS_OBJECTNAME_START_RADIUS, false, SvOi::SVResetItemTool);
 	RegisterEmbeddedObject( &m_endRadius, SvPb::OutputEndRadiusEId, IDS_OBJECTNAME_END_RADIUS, false, SvOi::SVResetItemTool);
-	RegisterEmbeddedObject( &m_startAngle, SvPb::OutputStartAngleEId, IDS_OBJECTNAME_START_ANGLE, false, SvOi::SVResetItemTool );
-	RegisterEmbeddedObject( &m_endAngle, SvPb::OutputEndAngleEId, IDS_OBJECTNAME_END_ANGLE, false, SvOi::SVResetItemTool);
+	RegisterEmbeddedObject( &m_startAngle, SvPb::StartAngleEId, IDS_OBJECTNAME_START_ANGLE, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_endAngle, SvPb::EndAngleEId, IDS_OBJECTNAME_END_ANGLE, false, SvOi::SVResetItemTool);
 	RegisterEmbeddedObject( &m_interpolationMode, SvPb::OutputInterpolationModeEId, IDS_OBJECTNAME_INTERPOLATION_MODE, false, SvOi::SVResetItemNone );
 
 	RegisterEmbeddedObject( &m_useFormulaInput, SvPb::OutputUseFormulaEId, IDS_OBJECTNAME_USE_FORMULA, false, SvOi::SVResetItemTool );

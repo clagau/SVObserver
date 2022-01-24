@@ -80,16 +80,6 @@ bool DrawTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	if (Result)
 	{
 		BOOL boolTmp;
-		m_isColorImageObject.GetValue(boolTmp);
-		m_isColorImage = boolTmp;
-		for (auto* pTaskObj : m_TaskObjectVector)
-		{
-			auto* pTask = dynamic_cast<SvOp::DrawTask*>(pTaskObj);
-			if (nullptr != pTask)
-			{
-				pTask->setColorImageFlag(m_isColorImage);
-			}
-		}
 		m_useBGImageObject.GetValue(boolTmp);
 		m_useBGImage = boolTmp;
 		m_autoFitSizeObject.GetValue(boolTmp);
@@ -121,12 +111,25 @@ bool DrawTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 				}
 			}
 		}
+
+		m_isColorImageObject.GetValue(boolTmp);
+		m_isColorImage = boolTmp;
+
 		SVImageInfoClass imageInfo;
 		imageInfo.SetExtents(getToolExtent().getImageExtent());
 		imageInfo.SetImageProperty(SvDef::SVImagePropertyBandNumber, m_isColorImage ? 3 : 1);
 		imageInfo.SetImageProperty(SvDef::SVImagePropertyFormat, m_isColorImage ? SvDef::SVImageFormatBGR888 : SvDef::SVImageFormatMono8);
 		imageInfo.SetTranslation(SvPb::SVExtentTranslationNone);
 		m_OutputImage.UpdateImage(SvDef::InvalidObjectId, imageInfo);
+
+		for (auto* pTaskObj : m_TaskObjectVector)
+		{
+			auto* pTask = dynamic_cast<SvOp::DrawTask*>(pTaskObj);
+			if (nullptr != pTask)
+			{
+				pTask->setImageInfo(imageInfo);
+			}
+		}
 	}
 
 	return Result;
@@ -231,9 +234,9 @@ SvOi::ITRCImagePtr DrawTool::onRunLocal( SvIe::RunStatus& rRunStatus, SvStl::Mes
 						{
 							double tmp = 0.;
 							m_BackgroundImageX.getValue(tmp);
-							offsetX = static_cast<int>(tmp);
+							offsetX = -static_cast<int>(tmp);
 							m_BackgroundImageY.getValue(tmp);
-							offsetY = static_cast<int>(tmp);
+							offsetY = -static_cast<int>(tmp);
 						}
 						
 						if (0 == offsetX && 0 == offsetY)
@@ -300,11 +303,60 @@ void DrawTool::BuildAvailableTaskList()
 	taskClassInfo.m_ClassName = SvUl::LoadStdString(IDS_OBJECTNAME_DRAW_RECTANGLE);
 	m_availableChildren.push_back(taskClassInfo);
 
-	// Add the rectangle task
+	// Add the oval task
 	taskClassInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::DrawTaskType;
 	taskClassInfo.m_ObjectTypeInfo.m_SubType = SvPb::DrawOvalTaskType;
 	taskClassInfo.m_ClassId = SvPb::DrawOvalClassId;
 	taskClassInfo.m_ClassName = SvUl::LoadStdString(IDS_OBJECTNAME_DRAW_OVAL);
+	m_availableChildren.push_back(taskClassInfo);
+
+	// Add the segment task
+	taskClassInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::DrawTaskType;
+	taskClassInfo.m_ObjectTypeInfo.m_SubType = SvPb::DrawSegmentTaskType;
+	taskClassInfo.m_ClassId = SvPb::DrawSegmentClassId;
+	taskClassInfo.m_ClassName = SvUl::LoadStdString(IDS_OBJECTNAME_DRAW_SEGMENT);
+	m_availableChildren.push_back(taskClassInfo);
+
+	// Add the triangle task
+	taskClassInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::DrawTaskType;
+	taskClassInfo.m_ObjectTypeInfo.m_SubType = SvPb::DrawTriangleTaskType;
+	taskClassInfo.m_ClassId = SvPb::DrawTriangleClassId;
+	taskClassInfo.m_ClassName = SvUl::LoadStdString(IDS_OBJECTNAME_DRAW_TRIANGLE);
+	m_availableChildren.push_back(taskClassInfo);
+
+	// Add the lines task
+	taskClassInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::DrawTaskType;
+	taskClassInfo.m_ObjectTypeInfo.m_SubType = SvPb::DrawLineTaskType;
+	taskClassInfo.m_ClassId = SvPb::DrawLineClassId;
+	taskClassInfo.m_ClassName = SvUl::LoadStdString(IDS_OBJECTNAME_DRAW_LINES);
+	m_availableChildren.push_back(taskClassInfo);
+
+	// Add the points task
+	taskClassInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::DrawTaskType;
+	taskClassInfo.m_ObjectTypeInfo.m_SubType = SvPb::DrawPointsTaskType;
+	taskClassInfo.m_ClassId = SvPb::DrawPointsClassId;
+	taskClassInfo.m_ClassName = SvUl::LoadStdString(IDS_OBJECTNAME_DRAW_POINTS);
+	m_availableChildren.push_back(taskClassInfo);
+
+	// Add the polygon task
+	taskClassInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::DrawTaskType;
+	taskClassInfo.m_ObjectTypeInfo.m_SubType = SvPb::DrawPolygonTaskType;
+	taskClassInfo.m_ClassId = SvPb::DrawPolygonClassId;
+	taskClassInfo.m_ClassName = SvUl::LoadStdString(IDS_OBJECTNAME_DRAW_POLYGON);
+	m_availableChildren.push_back(taskClassInfo);
+
+	// Add the Text task
+	taskClassInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::DrawTaskType;
+	taskClassInfo.m_ObjectTypeInfo.m_SubType = SvPb::DrawTextTaskType;
+	taskClassInfo.m_ClassId = SvPb::DrawTextClassId;
+	taskClassInfo.m_ClassName = SvUl::LoadStdString(IDS_OBJECTNAME_DRAW_TEXT);
+	m_availableChildren.push_back(taskClassInfo);
+
+	// Add the BucketFill task
+	taskClassInfo.m_ObjectTypeInfo.m_ObjectType = SvPb::DrawTaskType;
+	taskClassInfo.m_ObjectTypeInfo.m_SubType = SvPb::DrawBucketFillTaskType;
+	taskClassInfo.m_ClassId = SvPb::DrawBucketFillClassId;
+	taskClassInfo.m_ClassName = SvUl::LoadStdString(IDS_OBJECTNAME_DRAW_BUCKETFILL);
 	m_availableChildren.push_back(taskClassInfo);
 }
 #pragma endregion Private Methods

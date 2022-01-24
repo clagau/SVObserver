@@ -1,9 +1,9 @@
 //*****************************************************************************
-/// \copyright (c) 2021,2021 by Seidenader Maschinenbau GmbH
-/// \file DrawOvalTask.h
+/// \copyright (c) 2022,2022 by Seidenader Maschinenbau GmbH
+/// \file DrawTextTask.h
 /// All Rights Reserved 
 //*****************************************************************************
-/// Class coordinated to draw an oval use by DrawTool
+/// Class coordinated to draw a text by DrawTool
 //******************************************************************************
 #pragma once
 
@@ -16,15 +16,15 @@
 namespace SvOp //< Operators
 {
 
-class DrawOvalTask : public DrawTask
+class DrawTextTask : public DrawTask
 {
 #pragma region Constructor
 	SV_DECLARE_CLASS
 public:
-	explicit DrawOvalTask(LPCTSTR ObjectName);
-	DrawOvalTask(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_OBJECTNAME_DRAW_OVAL);
+	explicit DrawTextTask(LPCTSTR ObjectName);
+	DrawTextTask(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_OBJECTNAME_DRAW_TEXT);
 
-	virtual ~DrawOvalTask();
+	virtual ~DrawTextTask();
 #pragma endregion Constructor
 
 #pragma region Public Methods
@@ -46,12 +46,19 @@ private:
 
 #pragma region Member Variables
 protected:
-	bool m_drawOutside = false;
+	SvVol::SVBoolValueObjectClass m_IsBGTransparentObject;
+	bool m_isTransparent = false;
+	SvVol::SVByteValueObjectClass  m_BGColor1Object;
+	SvVol::SVByteValueObjectClass  m_BGColor2Object;
+	SvVol::SVByteValueObjectClass  m_BGColor3Object;
+	MIL_DOUBLE m_bgColor = 0;
 
-	SvVol::LinkedValue       m_centerX;
-	SvVol::LinkedValue       m_centerY;
-	SvVol::LinkedValue       m_width;
-	SvVol::LinkedValue       m_height;
+	SvVol::LinkedValue       m_xValue;
+	SvVol::LinkedValue       m_yValue;
+	SvVol::LinkedValue       m_text;
+	SvVol::SVEnumerateValueObjectClass m_fontSizeEnumObject;
+	SvVol::LinkedValue       m_fontScaleX;
+	SvVol::LinkedValue       m_fontScaleY;
 #pragma endregion Member Variables
 };
 

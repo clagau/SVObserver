@@ -20,11 +20,7 @@ static char THIS_FILE[] = __FILE__;
 
 namespace SvOg
 {
-static const std::vector<std::pair<SvPb::ClassIdEnum, SvPb::SVObjectSubTypeEnum>> c_typeConvVec = {
-	{SvPb::DrawRectangleClassId, SvPb::DrawRectangleTaskType},
-	{SvPb::DrawOvalClassId, SvPb::DrawOvalTaskType}};
-
-
+extern const std::vector<std::pair<SvPb::ClassIdEnum, SvPb::SVObjectSubTypeEnum>> c_typeConvVec;
 
 DrawTaskTree::DrawTaskTree(uint32_t inspectionId)
 	: CTreeCtrl()
@@ -288,6 +284,27 @@ void DrawTaskTree::addNodes(SvPb::SVObjectSubTypeEnum type, HTREEITEM parentItem
 		case SvPb::DrawOvalTaskType:
 			addOvalNodes(parentItem, objectId, rName, hInsertAfter);
 			break;
+		case SvPb::DrawSegmentTaskType:
+			addSegmentNodes(parentItem, objectId, rName, hInsertAfter);
+			break;
+		case SvPb::DrawTriangleTaskType:
+			addTriangleNodes(parentItem, objectId, rName, hInsertAfter);
+			break;
+		case SvPb::DrawLineTaskType:
+			addLinesNodes(parentItem, objectId, rName, hInsertAfter);
+			break;
+		case SvPb::DrawPointsTaskType:
+			addPointsNodes(parentItem, objectId, rName, hInsertAfter);
+			break;
+		case SvPb::DrawPolygonTaskType:
+			addPolygonNodes(parentItem, objectId, rName, hInsertAfter);
+			break;
+		case SvPb::DrawTextTaskType:
+			addTextNodes(parentItem, objectId, rName, hInsertAfter);
+			break;
+		case SvPb::DrawBucketFillTaskType:
+			addBucketFillNodes(parentItem, objectId, rName, hInsertAfter);
+			break;
 	}
 }
 
@@ -389,7 +406,8 @@ void DrawTaskTree::addRectangleNodes(HTREEITEM parentItem, uint32_t objectId, co
 	{
 		InsertNode({objectId, DrawNodeType::Rectangle, DrawNodeSubType::Position, pData->m_pValues}, hItem, "");
 		InsertNode({objectId, DrawNodeType::Rectangle, DrawNodeSubType::SizeData, pData->m_pValues}, hItem, "");
-		auto hLastInterNode = InsertNode({objectId, DrawNodeType::Rectangle, DrawNodeSubType::Color, pData->m_pValues}, hItem, "");
+		InsertNode({objectId, DrawNodeType::Rectangle, DrawNodeSubType::Color, pData->m_pValues}, hItem, "");
+		auto hLastInterNode = InsertNode({objectId, DrawNodeType::Rectangle, DrawNodeSubType::GeneralData, pData->m_pValues}, hItem, "");
 		pData->m_lastInternItem = hLastInterNode;
 	}
 }
@@ -402,7 +420,99 @@ void DrawTaskTree::addOvalNodes(HTREEITEM parentItem, uint32_t objectId, const s
 	{
 		InsertNode({objectId, DrawNodeType::Oval, DrawNodeSubType::Position, pData->m_pValues}, hItem, "");
 		InsertNode({objectId, DrawNodeType::Oval, DrawNodeSubType::SizeData, pData->m_pValues}, hItem, "");
-		auto hLastInterNode = InsertNode({objectId, DrawNodeType::Oval, DrawNodeSubType::Color, pData->m_pValues}, hItem, "");
+		InsertNode({objectId, DrawNodeType::Oval, DrawNodeSubType::Color, pData->m_pValues}, hItem, "");
+		auto hLastInterNode = InsertNode({objectId, DrawNodeType::Oval, DrawNodeSubType::GeneralData, pData->m_pValues}, hItem, "");
+		pData->m_lastInternItem = hLastInterNode;
+	}
+}
+
+void DrawTaskTree::addSegmentNodes(HTREEITEM parentItem, uint32_t objectId, const std::string& rName, HTREEITEM hInsertAfter)
+{
+	auto hItem = InsertNode(objectId, DrawNodeType::Segment, DrawNodeSubType::MainNode, parentItem, rName, hInsertAfter);
+	auto* pData = reinterpret_cast<TreeNodeData*>(GetItemData(hItem));
+	if (nullptr != pData)
+	{
+		InsertNode({objectId, DrawNodeType::Segment, DrawNodeSubType::Position, pData->m_pValues}, hItem, "");
+		InsertNode({objectId, DrawNodeType::Segment, DrawNodeSubType::SizeData, pData->m_pValues}, hItem, "");
+		InsertNode({objectId, DrawNodeType::Segment, DrawNodeSubType::Color, pData->m_pValues}, hItem, "");
+		InsertNode({objectId, DrawNodeType::Segment, DrawNodeSubType::Angle, pData->m_pValues}, hItem, "");
+		auto hLastInterNode = InsertNode({objectId, DrawNodeType::Segment, DrawNodeSubType::GeneralData, pData->m_pValues}, hItem, "");
+		pData->m_lastInternItem = hLastInterNode;
+	}
+}
+
+void DrawTaskTree::addTriangleNodes(HTREEITEM parentItem, uint32_t objectId, const std::string& rName, HTREEITEM hInsertAfter)
+{
+	auto hItem = InsertNode(objectId, DrawNodeType::Triangle, DrawNodeSubType::MainNode, parentItem, rName, hInsertAfter);
+	auto* pData = reinterpret_cast<TreeNodeData*>(GetItemData(hItem));
+	if (nullptr != pData)
+	{
+		InsertNode({objectId, DrawNodeType::Triangle, DrawNodeSubType::Points, pData->m_pValues}, hItem, "");
+		InsertNode({objectId, DrawNodeType::Triangle, DrawNodeSubType::Color, pData->m_pValues}, hItem, "");
+		auto hLastInterNode = InsertNode({objectId, DrawNodeType::Triangle, DrawNodeSubType::GeneralData, pData->m_pValues}, hItem, "");
+		pData->m_lastInternItem = hLastInterNode;
+	}
+}
+
+void DrawTaskTree::addLinesNodes(HTREEITEM parentItem, uint32_t objectId, const std::string& rName, HTREEITEM hInsertAfter)
+{
+	auto hItem = InsertNode(objectId, DrawNodeType::Lines, DrawNodeSubType::MainNode, parentItem, rName, hInsertAfter);
+	auto* pData = reinterpret_cast<TreeNodeData*>(GetItemData(hItem));
+	if (nullptr != pData)
+	{
+		InsertNode({objectId, DrawNodeType::Lines, DrawNodeSubType::Points, pData->m_pValues}, hItem, "");
+		InsertNode({objectId, DrawNodeType::Lines, DrawNodeSubType::Color, pData->m_pValues}, hItem, "");
+		auto hLastInterNode = InsertNode({objectId, DrawNodeType::Lines, DrawNodeSubType::GeneralData, pData->m_pValues}, hItem, "");
+		pData->m_lastInternItem = hLastInterNode;
+	}
+}
+
+void DrawTaskTree::addPointsNodes(HTREEITEM parentItem, uint32_t objectId, const std::string& rName, HTREEITEM hInsertAfter)
+{
+	auto hItem = InsertNode(objectId, DrawNodeType::Points, DrawNodeSubType::MainNode, parentItem, rName, hInsertAfter);
+	auto* pData = reinterpret_cast<TreeNodeData*>(GetItemData(hItem));
+	if (nullptr != pData)
+	{
+		InsertNode({objectId, DrawNodeType::Points, DrawNodeSubType::Points, pData->m_pValues}, hItem, "");
+		auto hLastInterNode = InsertNode({objectId, DrawNodeType::Points, DrawNodeSubType::Color, pData->m_pValues}, hItem, "");
+		pData->m_lastInternItem = hLastInterNode;
+	}
+}
+
+void DrawTaskTree::addPolygonNodes(HTREEITEM parentItem, uint32_t objectId, const std::string& rName, HTREEITEM hInsertAfter)
+{
+	auto hItem = InsertNode(objectId, DrawNodeType::Polygon, DrawNodeSubType::MainNode, parentItem, rName, hInsertAfter);
+	auto* pData = reinterpret_cast<TreeNodeData*>(GetItemData(hItem));
+	if (nullptr != pData)
+	{
+		InsertNode({objectId, DrawNodeType::Polygon, DrawNodeSubType::Points, pData->m_pValues}, hItem, "");
+		InsertNode({objectId, DrawNodeType::Polygon, DrawNodeSubType::Color, pData->m_pValues}, hItem, "");
+		auto hLastInterNode = InsertNode({objectId, DrawNodeType::Polygon, DrawNodeSubType::GeneralData, pData->m_pValues}, hItem, "");
+		pData->m_lastInternItem = hLastInterNode;
+	}
+}
+
+void DrawTaskTree::addTextNodes(HTREEITEM parentItem, uint32_t objectId, const std::string& rName, HTREEITEM hInsertAfter)
+{
+	auto hItem = InsertNode(objectId, DrawNodeType::Text, DrawNodeSubType::MainNode, parentItem, rName, hInsertAfter);
+	auto* pData = reinterpret_cast<TreeNodeData*>(GetItemData(hItem));
+	if (nullptr != pData)
+	{
+		InsertNode({objectId, DrawNodeType::Text, DrawNodeSubType::Points, pData->m_pValues}, hItem, "");
+		InsertNode({objectId, DrawNodeType::Text, DrawNodeSubType::Color, pData->m_pValues}, hItem, "");
+		auto hLastInterNode = InsertNode({objectId, DrawNodeType::Text, DrawNodeSubType::GeneralData, pData->m_pValues}, hItem, "");
+		pData->m_lastInternItem = hLastInterNode;
+	}
+}
+
+void DrawTaskTree::addBucketFillNodes(HTREEITEM parentItem, uint32_t objectId, const std::string& rName, HTREEITEM hInsertAfter)
+{
+	auto hItem = InsertNode(objectId, DrawNodeType::BucketFill, DrawNodeSubType::MainNode, parentItem, rName, hInsertAfter);
+	auto* pData = reinterpret_cast<TreeNodeData*>(GetItemData(hItem));
+	if (nullptr != pData)
+	{
+		InsertNode({objectId, DrawNodeType::BucketFill, DrawNodeSubType::Points, pData->m_pValues}, hItem, "");
+		auto hLastInterNode = InsertNode({objectId, DrawNodeType::BucketFill, DrawNodeSubType::Color, pData->m_pValues}, hItem, "");
 		pData->m_lastInternItem = hLastInterNode;
 	}
 }

@@ -20,6 +20,9 @@ namespace SvUl
 	//! function returns a 1 dim safe array with one element for an scalar variant
 	_variant_t VariantToSafeArray(_variant_t var);
 
+	///! function convert a safeArray-Variant to another safeArray-Variant with different type. If not possible it return an empty variant
+	_variant_t convertSafeArrayToOtherSafeArray(_variant_t var, VARTYPE  newType);
+
 	//! function returns a 1 dim safe array with 0 element 
 	_variant_t GetEmptySafeArray(VARTYPE  vart);
 

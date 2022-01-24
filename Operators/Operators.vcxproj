@@ -86,8 +86,16 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DrawBucketFillTask.cpp" />
+    <ClCompile Include="DrawLinesTask.cpp" />
     <ClCompile Include="DrawOvalTask.cpp" />
+    <ClCompile Include="DrawPointsTask.cpp" />
+    <ClCompile Include="DrawPolygonTask.cpp" />
     <ClCompile Include="DrawRectangleTask.cpp" />
+    <ClCompile Include="DrawSegmentTask.cpp" />
+    <ClCompile Include="DrawTask.cpp" />
+    <ClCompile Include="DrawTextTask.cpp" />
+    <ClCompile Include="DrawTriangleTask.cpp" />
     <ClCompile Include="EQAdjustSize.cpp" />
     <ClCompile Include="EQAdjustSizeHeight.cpp" />
     <ClCompile Include="EQAdjustSizePositionX.cpp" />
@@ -163,9 +171,16 @@
     <ClCompile Include="ToolSizeAdjustTask.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DrawBucketFillTask.h" />
+    <ClInclude Include="DrawLinesTask.h" />
     <ClInclude Include="DrawOvalTask.h" />
+    <ClInclude Include="DrawPointsTask.h" />
+    <ClInclude Include="DrawPolygonTask.h" />
     <ClInclude Include="DrawRectangleTask.h" />
+    <ClInclude Include="DrawSegmentTask.h" />
     <ClInclude Include="DrawTask.h" />
+    <ClInclude Include="DrawTextTask.h" />
+    <ClInclude Include="DrawTriangleTask.h" />
     <ClInclude Include="EQAdjustSize.h" />
     <ClInclude Include="EQAdjustSizeHeight.h" />
     <ClInclude Include="EQAdjustSizePositionX.h" />

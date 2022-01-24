@@ -1,9 +1,9 @@
 //*****************************************************************************
 /// \copyright (c) 2021,2021 by Seidenader Maschinenbau GmbH
-/// \file DrawOvalTask.h
+/// \file DrawSegmentTask.h
 /// All Rights Reserved 
 //*****************************************************************************
-/// Class coordinated to draw an oval use by DrawTool
+/// Class coordinated to draw a segment of an oval use by DrawTool
 //******************************************************************************
 #pragma once
 
@@ -16,15 +16,15 @@
 namespace SvOp //< Operators
 {
 
-class DrawOvalTask : public DrawTask
+class DrawSegmentTask : public DrawTask
 {
 #pragma region Constructor
 	SV_DECLARE_CLASS
 public:
-	explicit DrawOvalTask(LPCTSTR ObjectName);
-	DrawOvalTask(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_OBJECTNAME_DRAW_OVAL);
+	explicit DrawSegmentTask(LPCTSTR ObjectName);
+	DrawSegmentTask(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_OBJECTNAME_DRAW_SEGMENT);
 
-	virtual ~DrawOvalTask();
+	virtual ~DrawSegmentTask();
 #pragma endregion Constructor
 
 #pragma region Public Methods
@@ -46,12 +46,13 @@ private:
 
 #pragma region Member Variables
 protected:
-	bool m_drawOutside = false;
-
-	SvVol::LinkedValue       m_centerX;
-	SvVol::LinkedValue       m_centerY;
-	SvVol::LinkedValue       m_width;
-	SvVol::LinkedValue       m_height;
+	SvVol::LinkedValue m_centerX;
+	SvVol::LinkedValue m_centerY;
+	SvVol::LinkedValue m_width;
+	SvVol::LinkedValue m_height;
+	SvVol::LinkedValue m_startAngle;
+	SvVol::LinkedValue m_stopAngle;
+	SvVol::LinkedValue m_XAxisAngle;
 #pragma endregion Member Variables
 };
 

@@ -9,9 +9,7 @@
 
 #pragma region Includes
 #include "SVObjectLibrary/SVObjectLibrary.h"
-#include "SVValueObjectLibrary/SVEnumerateValueObjectClass.h"
 #include "SVValueObjectLibrary/LinkedValue.h"
-#include "SVValueObjectLibrary/SVByteValueObjectClass.h"
 #include "DrawTask.h"
 #pragma endregion Includes
 
@@ -31,15 +29,12 @@ public:
 
 #pragma region Public Methods
 public:
-	virtual bool CreateObject(const SVObjectLevelCreateStruct& rCreateStructure) override;
-	virtual bool ResetObject(SvStl::MessageContainerVector* pErrorMessages = nullptr) override;
-
-	virtual bool Run(SvOi::SVImageBufferHandlePtr pImageHandle, SvIe::RunStatus& rRunStatus, SvStl::MessageContainerVector* pErrorMessages = nullptr) override;
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
 protected:
-	#pragma endregion Protected Methods
+	virtual bool drawImage(SvOi::SVImageBufferHandlePtr pImageHandle, DrawArea drawArea) override;
+#pragma endregion Protected Methods
 
 #pragma region Private Methods
 private:
@@ -51,17 +46,10 @@ private:
 
 #pragma region Member Variables
 protected:
-	//@TODO[MZA][10.20][07.10.2021] SvVol::SVEnumerateValueObjectClass  m_drawArea;
 	SvVol::LinkedValue       m_leftValue;
 	SvVol::LinkedValue       m_topValue;
 	SvVol::LinkedValue       m_width;
 	SvVol::LinkedValue       m_height;
-
-	SvVol::SVByteValueObjectClass  m_Color1Object;
-	SvVol::SVByteValueObjectClass  m_Color2Object;
-	SvVol::SVByteValueObjectClass  m_Color3Object;
-
-	MIL_ID m_graphicContextId = M_NULL;
 #pragma endregion Member Variables
 };
 

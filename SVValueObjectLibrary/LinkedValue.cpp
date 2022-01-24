@@ -472,15 +472,35 @@ SV_IMPLEMENT_CLASS(LinkedValue, SvPb::LinkedValueClassId);
 
 		if (VT_EMPTY != defaultValue.vt && value.vt != defaultValue.vt)
 		{
-			if (VT_BOOL == value.vt)
+			if (0 == (value.vt & VT_ARRAY))
 			{
-				value.boolVal = value.boolVal ? 1 : 0;
+				if (VT_BOOL == value.vt)
+				{
+					value.boolVal = value.boolVal ? 1 : 0;
+				}
+				if (S_OK != ::VariantChangeTypeEx(&value, &value, SvDef::LCID_USA, VARIANT_ALPHABOOL, ~(VT_ARRAY)&defaultValue.vt))
+				{
+					SvStl::MessageManager Exception(SvStl::MsgType::Log);
+					Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValidateValue_LinkedTypeInvalid, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10029_ValueObject_Parameter_WrongSize, getObjectId());
+					Exception.Throw();
+				}
+				if (0 != (defaultValue.vt & VT_ARRAY))
+				{
+					value = SvUl::VariantToSafeArray(value);
+				}
 			}
-			if (S_OK != ::VariantChangeTypeEx(&value, &value, SvDef::LCID_USA, VARIANT_ALPHABOOL, defaultValue.vt))
+			else
 			{
-				SvStl::MessageManager Exception(SvStl::MsgType::Log);
-				Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValidateValue_LinkedTypeInvalid, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10029_ValueObject_Parameter_WrongSize, getObjectId());
-				Exception.Throw();
+				if (0 == (defaultValue.vt & VT_ARRAY))
+				{
+					SvStl::MessageManager Exception(SvStl::MsgType::Log);
+					Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValidateValue_LinkedTypeInvalid, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10029_ValueObject_Parameter_WrongSize, getObjectId());
+					Exception.Throw();
+				}
+				else
+				{
+					value = SvUl::convertSafeArrayToOtherSafeArray(value, defaultValue.vt);
+				}
 			}
 		}
 		return value;

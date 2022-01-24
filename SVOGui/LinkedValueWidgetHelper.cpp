@@ -127,9 +127,18 @@ namespace SvOg
 					return;
 				}
 
-				variant_t tmp {tmpStr};
 				SvStl::MessageContainer msgContainer;
-				bool isValid = (S_OK == ::VariantChangeTypeEx(&data.m_directValue, &tmp, SvDef::LCID_USA, VARIANT_ALPHABOOL, data.m_defaultValue.vt));
+				bool isValid {true};
+				if (0 == (data.m_defaultValue.vt & VT_ARRAY))
+				{
+					variant_t tmp {tmpStr};
+					isValid = (S_OK == ::VariantChangeTypeEx(&data.m_directValue, &tmp, SvDef::LCID_USA, VARIANT_ALPHABOOL, data.m_defaultValue.vt));
+				}
+				else
+				{
+					SvUl::StringToSafeArray<double>(std::string{tmpStr}, data.m_directValue);
+				}
+
 				if (false == isValid)
 				{
 					SvDef::StringVector msgList;
@@ -202,7 +211,7 @@ namespace SvOg
 			}
 			else
 			{
-				newStr = static_cast<CString>(data.m_Value);
+				newStr = SvUl::VariantToString(data.m_Value).c_str();
 			}
 			if (currentStr != newStr)
 			{

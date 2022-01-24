@@ -1,9 +1,9 @@
 //*****************************************************************************
-/// \copyright (c) 2021,2021 by Seidenader Maschinenbau GmbH
-/// \file DrawOvalTask.h
+/// \copyright (c) 2022,2022 by Seidenader Maschinenbau GmbH
+/// \file DrawBucketFillTask.h
 /// All Rights Reserved 
 //*****************************************************************************
-/// Class coordinated to draw an oval use by DrawTool
+/// Class coordinated to draw a bucket fill by DrawTool
 //******************************************************************************
 #pragma once
 
@@ -16,15 +16,15 @@
 namespace SvOp //< Operators
 {
 
-class DrawOvalTask : public DrawTask
+class DrawBucketFillTask : public DrawTask
 {
 #pragma region Constructor
 	SV_DECLARE_CLASS
 public:
-	explicit DrawOvalTask(LPCTSTR ObjectName);
-	DrawOvalTask(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_OBJECTNAME_DRAW_OVAL);
+	explicit DrawBucketFillTask(LPCTSTR ObjectName);
+	DrawBucketFillTask(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_OBJECTNAME_DRAW_BUCKETFILL);
 
-	virtual ~DrawOvalTask();
+	virtual ~DrawBucketFillTask();
 #pragma endregion Constructor
 
 #pragma region Public Methods
@@ -46,12 +46,8 @@ private:
 
 #pragma region Member Variables
 protected:
-	bool m_drawOutside = false;
-
-	SvVol::LinkedValue       m_centerX;
-	SvVol::LinkedValue       m_centerY;
-	SvVol::LinkedValue       m_width;
-	SvVol::LinkedValue       m_height;
+	SvVol::LinkedValue       m_xValue;
+	SvVol::LinkedValue       m_yValue;
 #pragma endregion Member Variables
 };
 

@@ -13,16 +13,20 @@ namespace SvOg
 {
 class ValueController;
 
+constexpr int NumberOfCtrls = 10;
+
 class DrawToolController
 {
 public:
-	DrawToolController(ValueController& rValues, std::array<EditCtrlData, 5>& rEditCtrlDataList);
+	DrawToolController(ValueController& rValues, std::array<EditCtrlData, NumberOfCtrls>& rEditCtrlDataList);
 	void init();
 
 	std::string getNodeText(TreeNodeData& rData);
 	bool setBOSAData(TreeNodeData& rData);
 	bool setBaseImageGeneralData();
 	bool setBaseImageSizeData();
+	bool setColorData(TreeNodeData& rData);
+	bool setCommonData(TreeNodeData& rData);
 
 	bool useBackgroundImage() const { return m_useBackgroundImage; };
 	void setUseBackgroundImage(bool isUsed) { m_useBackgroundImage = isUsed; };
@@ -32,12 +36,10 @@ public:
 	void setAutoFit(bool useAutofit) { m_useAutoFit = useAutofit; };
 
 private:
-	bool setSizeData(TreeNodeData& rData);
-	bool setPositionData(TreeNodeData& rData);
-	bool setColorData(TreeNodeData& rData);
+	
 
 private:
-	std::array<EditCtrlData, 5>& m_rEditCtrlDataList;
+	std::array<EditCtrlData, NumberOfCtrls>& m_rEditCtrlDataList;
 	ValueController& m_rValues;
 
 	bool m_useBackgroundImage = false;

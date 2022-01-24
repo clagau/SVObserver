@@ -277,6 +277,13 @@ enum SVObjectSubTypeEnum
 	//DrawTask Subtypes
 	DrawRectangleTaskType					= 0x00004100;
 	DrawOvalTaskType						= 0x00004101;
+	DrawSegmentTaskType						= 0x00004102;
+	DrawTriangleTaskType					= 0x00004103;
+	DrawLineTaskType						= 0x00004104;
+	DrawPolygonTaskType					    = 0x00004105;
+	DrawBucketFillTaskType					= 0x00004106;
+	DrawPointsTaskType					 	= 0x00004107;
+	DrawTextTaskType						= 0x00004108;
 
 	//ValueObject SubTypes
 	SVDWordValueObjectType					= 0x00005000;
@@ -662,6 +669,13 @@ enum ClassIdEnum
 	InputConnectedClassId = 450;
 	DrawRectangleClassId = 451;
 	DrawOvalClassId = 452;
+	DrawSegmentClassId = 453;
+	DrawTriangleClassId = 454;
+	DrawLineClassId = 455;
+	DrawPolygonClassId = 456;
+	DrawBucketFillClassId = 457;
+	DrawPointsClassId = 458;
+	DrawTextClassId = 459;
 }
 
 enum EmbeddedIdEnum
@@ -972,8 +986,8 @@ enum EmbeddedIdEnum
 	OutputCenterYEId = 313;
 	OutputStartRadiusEId = 314;
 	OutputEndRadiusEId = 315;
-	OutputStartAngleEId = 316;
-	OutputEndAngleEId = 317;
+	StartAngleEId = 316;
+	EndAngleEId = 317;
 	OutputInterpolationModeEId = 318;
 	OutputUseFormulaEId = 319;
 	OutputAngularMethodEId = 320;
@@ -1212,7 +1226,19 @@ enum EmbeddedIdEnum
 	EdgeBLowerThresholdValueEId = 573;
 	EdgeBUpperThresholdValueEId = 574;
 	UseUnitMappingEId = 575;
-	
+	X1EId = 576;
+	Y1EId = 577;
+	X2EId = 578;
+	Y2EId = 579;
+	X3EId = 580;
+	Y3EId = 581;
+	TextEId = 582;
+	IsBackgroundTransparentEId = 583;
+	FontSizeEId = 584;
+	FontScaleXEId = 585;
+	FontScaleYEId = 586;
+	XAxisAngleEId = 587;
+
 	//The following Ids are the first of an array and must have 100 reserved Ids 
 	OutputImageEId = 1000; //Output Images, e.g. External needs 4
 	RingBufferIndexEId = 1100; //For ringBuffer index of output images (by now 2 indexes)

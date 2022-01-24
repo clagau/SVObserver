@@ -1,9 +1,9 @@
 //*****************************************************************************
 /// \copyright (c) 2021,2021 by Seidenader Maschinenbau GmbH
-/// \file DrawOvalTask.h
+/// \file DrawTriangleTask.h
 /// All Rights Reserved 
 //*****************************************************************************
-/// Class coordinated to draw an oval use by DrawTool
+/// Class coordinated to draw a triangle use by DrawTool
 //******************************************************************************
 #pragma once
 
@@ -16,15 +16,15 @@
 namespace SvOp //< Operators
 {
 
-class DrawOvalTask : public DrawTask
+class DrawTriangleTask : public DrawTask
 {
 #pragma region Constructor
 	SV_DECLARE_CLASS
 public:
-	explicit DrawOvalTask(LPCTSTR ObjectName);
-	DrawOvalTask(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_OBJECTNAME_DRAW_OVAL);
+	explicit DrawTriangleTask(LPCTSTR ObjectName);
+	DrawTriangleTask(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_OBJECTNAME_DRAW_TRIANGLE);
 
-	virtual ~DrawOvalTask();
+	virtual ~DrawTriangleTask();
 #pragma endregion Constructor
 
 #pragma region Public Methods
@@ -46,12 +46,12 @@ private:
 
 #pragma region Member Variables
 protected:
-	bool m_drawOutside = false;
-
-	SvVol::LinkedValue       m_centerX;
-	SvVol::LinkedValue       m_centerY;
-	SvVol::LinkedValue       m_width;
-	SvVol::LinkedValue       m_height;
+	SvVol::LinkedValue       m_x1Value;
+	SvVol::LinkedValue       m_y1Value;
+	SvVol::LinkedValue       m_x2Value;
+	SvVol::LinkedValue       m_y2Value;
+	SvVol::LinkedValue       m_x3Value;
+	SvVol::LinkedValue       m_y3Value;
 #pragma endregion Member Variables
 };
 

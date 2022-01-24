@@ -154,6 +154,146 @@ namespace SvUl
 		return res;
 	}
 
+	template<typename SourceType, typename DestinationType>
+	_variant_t convertSafeArrayToOtherSafeArray(_variant_t var, VARTYPE  newType)
+	{
+		_variant_t res;
+		res.vt = newType;
+		CComSafeArray<DestinationType> sa(var.parray->rgsabound[0].cElements);
+		for (long i = 0; i < static_cast<int>(var.parray->rgsabound[0].cElements); ++i)
+		{
+			SourceType sourceValue;
+			if (S_OK == ::SafeArrayGetElement(var.parray, &i, &sourceValue))
+			{
+				DestinationType value = static_cast<DestinationType>(sourceValue);
+				sa.SetAt(i, value);
+			}
+		}
+		res.parray = sa.Detach();
+		return res;
+	}
+
+	_variant_t convertSafeArrayToOtherSafeArray(_variant_t var, VARTYPE  newType)
+	{
+		if ((VT_ARRAY & var.vt) == 0 || (VT_ARRAY & newType) == 0 || nullptr == var.parray)
+		{
+			return {};
+		}
+
+		switch ((~VT_ARRAY) & newType)
+		{
+			case VT_R8:
+			{
+				switch ((~VT_ARRAY) & var.vt)
+				{
+					case VT_R4:
+						return convertSafeArrayToOtherSafeArray<float, double>(var, newType);
+					case VT_I4:
+						return convertSafeArrayToOtherSafeArray<long, double>(var, newType);
+					case VT_UI4:
+						return convertSafeArrayToOtherSafeArray<unsigned long, double>(var, newType);
+					case VT_I2:
+						return convertSafeArrayToOtherSafeArray<short, double>(var, newType);
+					case VT_UI2:
+						return convertSafeArrayToOtherSafeArray<unsigned short, double>(var, newType);
+				}
+				break;
+			}
+
+			case VT_R4:
+			{
+				switch ((~VT_ARRAY) & var.vt)
+				{
+					case VT_R8:
+						return convertSafeArrayToOtherSafeArray<double, float>(var, newType);
+					case VT_I4:
+						return convertSafeArrayToOtherSafeArray<long, float>(var, newType);
+					case VT_UI4:
+						return convertSafeArrayToOtherSafeArray<unsigned long, float>(var, newType);
+					case VT_I2:
+						return convertSafeArrayToOtherSafeArray<short, float>(var, newType);
+					case VT_UI2:
+						return convertSafeArrayToOtherSafeArray<unsigned short, float>(var, newType);
+				}
+				break;
+			}
+
+			case VT_I4:
+			{
+				switch ((~VT_ARRAY) & var.vt)
+				{
+					case VT_R8:
+						return convertSafeArrayToOtherSafeArray<double, long>(var, newType);
+					case VT_R4:
+						return convertSafeArrayToOtherSafeArray<float, long>(var, newType);
+					case VT_UI4:
+						return convertSafeArrayToOtherSafeArray<unsigned long, long>(var, newType);
+					case VT_I2:
+						return convertSafeArrayToOtherSafeArray<short, long>(var, newType);
+					case VT_UI2:
+						return convertSafeArrayToOtherSafeArray<unsigned short, long>(var, newType);
+				}
+				break;
+			}
+
+			case VT_UI4:
+			{
+				switch ((~VT_ARRAY) & var.vt)
+				{
+					case VT_R8:
+						return convertSafeArrayToOtherSafeArray<double, unsigned long>(var, newType);
+					case VT_R4:
+						return convertSafeArrayToOtherSafeArray<float, unsigned long>(var, newType);
+					case VT_I4:
+						return convertSafeArrayToOtherSafeArray<long, unsigned long>(var, newType);
+					case VT_I2:
+						return convertSafeArrayToOtherSafeArray<short, unsigned long>(var, newType);
+					case VT_UI2:
+						return convertSafeArrayToOtherSafeArray<unsigned short, unsigned long>(var, newType);
+				}
+				break;
+			}
+
+			case VT_I2:
+			{
+				switch ((~VT_ARRAY) & var.vt)
+				{
+					case VT_R8:
+						return convertSafeArrayToOtherSafeArray<double, short>(var, newType);
+					case VT_R4:
+						return convertSafeArrayToOtherSafeArray<float, short>(var, newType);
+					case VT_I4:
+						return convertSafeArrayToOtherSafeArray<long, short>(var, newType);
+					case VT_UI4:
+						return convertSafeArrayToOtherSafeArray<unsigned long, short>(var, newType);
+					case VT_UI2:
+						return convertSafeArrayToOtherSafeArray<unsigned short, short>(var, newType);
+				}
+				break;
+			}
+
+			case VT_UI2:
+			{
+				switch ((~VT_ARRAY) & var.vt)
+				{
+					case VT_R8:
+						return convertSafeArrayToOtherSafeArray<double, unsigned short>(var, newType);
+					case VT_R4:
+						return convertSafeArrayToOtherSafeArray<float, unsigned short>(var, newType);
+					case VT_I4:
+						return convertSafeArrayToOtherSafeArray<long, unsigned short>(var, newType);
+					case VT_UI4:
+						return convertSafeArrayToOtherSafeArray<unsigned long, unsigned short>(var, newType);
+					case VT_I2:
+						return convertSafeArrayToOtherSafeArray<short, unsigned short>(var, newType);
+				}
+				break;
+			}
+		}
+
+		return {};
+	}
+
 	std::string VariantToString(_variant_t var)
 	{
 		_bstr_t temp;
