@@ -473,26 +473,11 @@ void SVInspectionProcess::RemoveResetState(unsigned long p_State)
 bool SVInspectionProcess::CreateInspection(LPCTSTR szDocName)
 {
 	SetName(szDocName);
-	// Create Queues for Inspection Queue
-	if (!m_CommandQueue.Create())
-	{
-		return false;
-	}
 
 	m_NotifyWithLastInspected = false;
 
 	auto threadProcess = [this](bool& rProcessed) {ThreadProcess(rProcessed); };
 	if (S_OK != m_AsyncProcedure.Create(&SVInspectionProcess::APCThreadProcess, threadProcess, GetName(), SVThreadAttribute::SVAffinityUser))
-	{
-		return false;
-	}
-
-	// Create Queues for input/output requests
-	if (!m_InputRequests.Create())
-	{
-		return false;
-	}
-	if (!m_InputImageRequests.Create())
 	{
 		return false;
 	}
@@ -547,10 +532,6 @@ void SVInspectionProcess::DestroyInspection()
 	{
 		DestroyChildObject(m_pCurrentToolset);
 	}
-	// Destroy Queues for input/output requests
-	m_InputRequests.Destroy();
-	m_InputImageRequests.Destroy();
-	m_CommandQueue.Destroy();
 	if (m_processActive)
 	{
 		SVObjectManagerClass::Instance().DecrementInspectionIndicator();
@@ -1119,22 +1100,8 @@ bool SVInspectionProcess::AddInputRequest(SVInputRequestInfoStructPtr pInRequest
 		return false;
 	}
 
-	if (!m_InputRequests.Lock())
-	{
-		SvStl::MessageManager e(SvStl::MsgType::Log);
-		e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorLockingInputRequests, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17013_ErrorLockingInputRequests);
-		DebugBreak();
-	}
-
 	if (!m_InputRequests.AddTail(pInRequest))
 	{
-		if (!m_InputRequests.Unlock())
-		{
-			SvStl::MessageManager e(SvStl::MsgType::Log);
-			e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorUnlockingInputRequests, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17014_ErrorUnlockingInputRequests);
-			DebugBreak();
-		}
-
 		return false;
 	}
 
@@ -1150,13 +1117,6 @@ bool SVInspectionProcess::AddInputRequest(SVInputRequestInfoStructPtr pInRequest
 	{
 		::InterlockedIncrement(const_cast<long*>(&m_lInputRequestMarkerCount));
 	}// end if
-
-	if (!m_InputRequests.Unlock())
-	{
-		SvStl::MessageManager e(SvStl::MsgType::Log);
-		e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorUnlockingInputRequests, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17015_ErrorUnlockingInputRequests);
-		DebugBreak();
-	}
 
 	return true;
 }
@@ -1670,14 +1630,6 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum& rResetItem
 		return false;
 	}
 
-	// Process all input requests
-	if (!m_InputRequests.Lock())
-	{
-		SvStl::MessageManager e(SvStl::MsgType::Log);
-		e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorLockingInputRequests, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17025_ErrorLockingInputRequests);
-		DebugBreak();
-	}
-
 	SVInputRequestInfoStructPtr pInputRequest;
 	SVStdMapSVToolClassPtrSVInspectionProcessResetStruct toolMap;
 	while (m_lInputRequestMarkerCount > 0L)
@@ -2011,13 +1963,6 @@ bool SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum& rResetItem
 			}
 		}// end if ( nullptr != m_pCurrentToolset )
 	}// end while( m_lInputRequestMarkerCount > 0L )
-
-	if (!m_InputRequests.Unlock())
-	{
-		SvStl::MessageManager e(SvStl::MsgType::Log);
-		e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorUnlockingInputRequests, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17026_ErrorUnlockingInputRequests);
-		DebugBreak();
-	}
 
 	return bRet;
 }

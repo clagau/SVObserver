@@ -45,7 +45,6 @@ public:
 	LRESULT OnSetOutput(WPARAM wParam, LPARAM lParam);
 	
 	void SetOutput( unsigned long p_iChannel, bool p_bState);
-	CRITICAL_SECTION m_CriticalSection;
 	unsigned __int64 m_i64Frequency;
 	unsigned __int64 m_i64Start;
 

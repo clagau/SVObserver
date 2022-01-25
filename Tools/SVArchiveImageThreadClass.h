@@ -49,6 +49,8 @@ public:
 #pragma endregion Constructor
 
 #pragma region Public Methods
+	static SVArchiveImageThreadClass& Instance();
+
 	HRESULT GoOnline();
 	HRESULT GoOffline();
 	HRESULT QueueImage( BufferInfo info );
@@ -76,8 +78,5 @@ private:
 	long m_MaxNumberOfBuffer = 1;
 #pragma endregion Private Members
 };
-
-typedef TBasicSingletonHolder< SVArchiveImageThreadClass > SVArchiveImageThreadClassSingleton;
-inline SVArchiveImageThreadClass& TheSVArchiveImageThreadClass() {return SVArchiveImageThreadClassSingleton::Instance();}
 
 } //namespace SvTo

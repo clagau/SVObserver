@@ -319,42 +319,17 @@ const BASETYPE* TValueSemantics<BASETYPE>::operator -> () const
 	return m_pImpl;
 }
 
-
-
-
-
-
-// Singleton and Factory concepts borrowed from Loki
-template<class SINGLETON>
-class TBasicSingletonHolder
-{
-public:
-	typedef SINGLETON InstanceType;
-	static SINGLETON& Instance(...);	// the vararg is to prevent inlining
-private:
-	TBasicSingletonHolder();
-	TBasicSingletonHolder(const TBasicSingletonHolder&);
-	TBasicSingletonHolder& operator = (const TBasicSingletonHolder&);
-	~TBasicSingletonHolder();
-};
-
-// the MSVC 6.0 compiler seems to ignore these pragmas
-// use the vararg method comes from the documentation of "inline, __inline, __forceinline"
-//#pragma auto_inline (off) // do not inline this function!!!
-//#pragma inline_depth(0)
-
-template<class SINGLETON>
-SINGLETON& TBasicSingletonHolder<SINGLETON>::Instance(...)	// the vararg is to prevent inlining
-{
-	static SINGLETON obj;
-	return obj;
-}
-
-
 template <typename TYPEID, typename TYPEID2, class FACTORYBASE> 
 class TDoubleFactory
 {
 public:
+	static TDoubleFactory& Instance()
+	{
+		static TDoubleFactory object;
+
+		return object;
+	}
+
 	typedef FACTORYBASE* (*CreateFn)(TYPEID typeEnum);
 	bool Register(const TYPEID& id, const TYPEID2& id2, CreateFn fn);
 	FACTORYBASE* New(const TYPEID& id);
@@ -486,9 +461,3 @@ const typename TDoubleFactory<TYPEID, TYPEID2, FACTORYBASE>::TypeMapSecondary& T
 	return mapSecondaryType;
 }
 
-template<typename TYPEID, typename TYPEID2, class FACTORYBASE> class TDoubleFactorySingleton
-{
-public:
-	typedef TDoubleFactory<TYPEID, TYPEID2, FACTORYBASE> factoryclass;
-	typedef TBasicSingletonHolder<factoryclass> factory;
-};

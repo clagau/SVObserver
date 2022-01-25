@@ -398,7 +398,7 @@ BOOL SVObserverApp::InitInstance()
 	// Close Start Window
 	sWin.DestroyWindow();
 
-	TheSVMemoryManager().InitializeMemoryManager(SvDef::ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME,
+	SVMemoryManager::Instance().InitializeMemoryManager(SvDef::ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME,
 		SvDef::ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME, getIniInfoHandler().GetInitialInfo().m_archiveToolBufferSize, getIniInfoHandler().GetInitialInfo().m_archiveToolAsyncBufferSize);
 
 	// Das Hauptfenster ist initialisiert und kann jetzt angezeigt und aktualisiert werden.

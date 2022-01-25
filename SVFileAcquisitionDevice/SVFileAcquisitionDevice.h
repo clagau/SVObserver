@@ -12,7 +12,6 @@
 #pragma once
 
 #pragma region Includes
-#include "SVOLibrary/SVQueueObject.h"
 #include "SVFileCamera.h"
 #pragma endregion Includes
 

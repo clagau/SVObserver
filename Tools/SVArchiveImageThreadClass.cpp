@@ -34,6 +34,13 @@ SVArchiveImageThreadClass::~SVArchiveImageThreadClass()
 #pragma endregion Constructor
 
 #pragma region Public Methods
+SVArchiveImageThreadClass& SVArchiveImageThreadClass::Instance()
+{
+	static SVArchiveImageThreadClass object;
+
+	return object;
+}
+
 HRESULT SVArchiveImageThreadClass::GoOnline()
 {
 	if ( !m_bRunThread )

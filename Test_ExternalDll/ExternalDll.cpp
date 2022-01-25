@@ -57,7 +57,6 @@ DllMain(HINSTANCE, DWORD dwReason, LPVOID lpReserved)
 #if _DEBUG
 		fdb("DLL_PROCESS_ATTACH Vers %d  <%s>\n", static_iToolVersion, static_strToolName);
 #endif
-		::InitializeCriticalSection(&g_DllToolsCritSec);
 	}
 	else if (dwReason == DLL_PROCESS_DETACH)
 	{
@@ -78,7 +77,7 @@ HRESULT LookupTool(GUID guidTool, CDllTool*& rpDllTool)
 {
 	HRESULT hRet = S_OK;
 
-	::EnterCriticalSection(&g_DllToolsCritSec);
+	std::lock_guard<std::mutex> lock {g_DllToolsMutex};
 	MapToolsType::iterator iter;
 	if ((iter = g_DllTools.find(guidTool)) == g_DllTools.end())
 	{
@@ -88,7 +87,6 @@ HRESULT LookupTool(GUID guidTool, CDllTool*& rpDllTool)
 	{
 		rpDllTool = iter->second;
 	}
-	::LeaveCriticalSection(&g_DllToolsCritSec);
 	return hRet;
 }
 
@@ -214,9 +212,10 @@ TOOLDLL_API HRESULT __stdcall SVInitializeRun(GUID guidTool, long lImageArraySiz
 			pDllTool->setGUID(guidTool);
 
 			// store in map
-			::EnterCriticalSection(&g_DllToolsCritSec);
-			g_DllTools[guidTool] = pDllTool;
-			::LeaveCriticalSection(&g_DllToolsCritSec);
+			{
+				std::lock_guard<std::mutex> lock {g_DllToolsMutex};
+				g_DllTools[guidTool] = pDllTool;
+			}
 		}
 
 #if _DEBUG
@@ -245,21 +244,20 @@ TOOLDLL_API HRESULT __stdcall SVUninitializeRun(GUID guidTool)
 
 	CDllTool* pDllTool = NULL;
 
-	::EnterCriticalSection(&g_DllToolsCritSec);
-
-	MapToolsType::iterator iter;
-	if ((iter = g_DllTools.find(guidTool)) == g_DllTools.end())
 	{
-		hr = S_FALSE;
-	}
-	else
-	{
-		pDllTool = iter->second;
-		g_DllTools.erase(iter);
-	}
+		std::lock_guard<std::mutex> lock {g_DllToolsMutex};
 
-	::LeaveCriticalSection(&g_DllToolsCritSec);
-
+		MapToolsType::iterator iter;
+		if ((iter = g_DllTools.find(guidTool)) == g_DllTools.end())
+		{
+			hr = S_FALSE;
+		}
+		else
+		{
+			pDllTool = iter->second;
+			g_DllTools.erase(iter);
+		}
+	}
 
 	if (pDllTool)
 	{

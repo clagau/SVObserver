@@ -68,8 +68,7 @@ protected:
 	HANDLE m_hStopEvent;
 	HANDLE m_hDisplayThread;
 
-	bool m_CriticalSectionCreated;
-	CRITICAL_SECTION m_CriticalSection;
+	std::mutex m_displayMutex;
 
 	long m_PendingTrigger;
 	long m_CurrentTrigger;

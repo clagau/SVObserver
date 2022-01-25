@@ -44,7 +44,6 @@ SVDisplayObject::SVDisplayObject( LPCSTR ObjectName )
 , m_hStopEvent(nullptr)
 , m_hDisplayThread(nullptr)
 {
-	m_CriticalSectionCreated = ::InitializeCriticalSectionAndSpinCount( &m_CriticalSection, 5000 ) ? true : false;
 }
 
 SVDisplayObject::SVDisplayObject( SVObjectClass* POwner, int StringResourceID )
@@ -59,15 +58,11 @@ SVDisplayObject::SVDisplayObject( SVObjectClass* POwner, int StringResourceID )
 , m_hStopEvent(nullptr)
 , m_hDisplayThread(nullptr)
 {
-	m_CriticalSectionCreated = ::InitializeCriticalSectionAndSpinCount( &m_CriticalSection, 5000 ) ? true : false;
 }
 
 SVDisplayObject::~SVDisplayObject()
 {
 	Destroy();
-
-	m_CriticalSectionCreated = false;
-	::DeleteCriticalSection( &m_CriticalSection );
 
 	m_hStartEvent = nullptr;
 	m_hStopEvent = nullptr;
@@ -221,9 +216,7 @@ BOOL SVDisplayObject::Destroy()
 
 bool SVDisplayObject::CanGoOnline()
 {
-	bool l_Status = m_CriticalSectionCreated;
-
-	l_Status &= ( nullptr != GetIPDoc() );
+	bool l_Status = ( nullptr != GetIPDoc() );
 	l_Status &= ( nullptr != m_hStopEvent );
 	l_Status &= ( nullptr != m_hStartEvent );
 	l_Status &= ( nullptr != m_hDisplayThread );
@@ -275,7 +268,7 @@ DWORD WINAPI SVDisplayObject::SVDisplayThreadFunc( LPVOID lpParam )
 	if( nullptr != pDisplay )
 	{
 		bool l_Processed = true;
-		bool l_Running = pDisplay->m_CriticalSectionCreated;
+		bool l_Running = true;
 
 		HANDLE l_pHandles[ 2 ] = { pDisplay->m_hStopEvent, pDisplay->m_hStartEvent };
 
@@ -321,7 +314,7 @@ HRESULT SVDisplayObject::ProcessInspectionComplete( bool& p_rProcessed )
 
 	if( p_rProcessed )
 	{
-		::EnterCriticalSection( &( m_CriticalSection ) );
+		std::lock_guard<std::mutex> lock {m_displayMutex};
 
 		m_CurrentTrigger = m_PendingTrigger;
 		m_FrameRate = 10;
@@ -335,8 +328,6 @@ HRESULT SVDisplayObject::ProcessInspectionComplete( bool& p_rProcessed )
 		}
 
 		m_PendingTrigger = -1;
-
-		::LeaveCriticalSection( &( m_CriticalSection ) );
 	}
 
 	return l_Status;
@@ -451,7 +442,7 @@ HRESULT SVDisplayObject::FinishInspection( const std::pair<long, SVInspectionInf
 
 	if( ImageUpdate || ResultUpdate  || !SVSVIMStateClass::CheckState( SV_STATE_RUNNING ))
 	{
-		if( m_CriticalSectionCreated && nullptr != m_hStartEvent )
+		if( nullptr != m_hStartEvent )
 		{
 			bool l_State = !(SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST));
 
@@ -461,13 +452,11 @@ HRESULT SVDisplayObject::FinishInspection( const std::pair<long, SVInspectionInf
 
 			if (l_State)
 			{
-				::EnterCriticalSection(&(m_CriticalSection));
+				std::lock_guard<std::mutex> lock {m_displayMutex};
 
 				m_PendingTrigger = rData.first;
 
 				::SetEvent(m_hStartEvent);
-
-				::LeaveCriticalSection(&(m_CriticalSection));
 			}
 		}
 		else

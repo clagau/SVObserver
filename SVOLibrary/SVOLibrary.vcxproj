@@ -92,11 +92,10 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="SVAcquisitionConstructParams.cpp" />
-    <ClCompile Include="SVContainableCriticalSection.cpp" />
     <ClCompile Include="SVHardwareManifest.cpp" />
     <ClCompile Include="SVLut.cpp" />
     <ClCompile Include="SVLutTransform.cpp" />
-    <ClCompile Include="SVQueueObject.cpp" />
+    <ClCompile Include="SVMemoryManager.cpp" />
     <ClCompile Include="SVTriggerDeviceParams.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -105,13 +104,11 @@
     <ClInclude Include="ObsoleteItemChecker.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SVAcquisitionConstructParams.h" />
-    <ClInclude Include="SVContainableCriticalSection.h" />
     <ClInclude Include="SVHardwareManifest.h" />
     <ClInclude Include="SVIMTypeInfoStruct.h" />
     <ClInclude Include="SVLut.h" />
     <ClInclude Include="SVLutTransform.h" />
     <ClInclude Include="SVMemoryManager.h" />
-    <ClInclude Include="SVMultithread.h" />
     <ClInclude Include="SVObserverEnums.h" />
     <ClInclude Include="SVOLibrary.h" />
     <ClInclude Include="SVQueueObject.h" />
@@ -119,8 +116,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ObsoleteItemChecker.inl" />
-    <None Include="SVContainableCriticalSection.inl" />
-    <None Include="SVMemoryManager.inl" />
     <None Include="SVTQueueObject.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

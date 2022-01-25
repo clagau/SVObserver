@@ -60,9 +60,9 @@ SVArchiveTool::SVArchiveTool( SVObjectClass* POwner, int StringResourceID )
 
 SVArchiveTool::~SVArchiveTool()
 {
-	TheSVArchiveImageThreadClass().GoOffline();
-	TheSVMemoryManager().ReleasePoolMemory(SvDef::ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME, this);
-	TheSVMemoryManager().ReleasePoolMemory(SvDef::ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME, this);
+	SVArchiveImageThreadClass::Instance().GoOffline();
+	SVMemoryManager::Instance().ReleasePoolMemory(SvDef::ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME, this);
+	SVMemoryManager::Instance().ReleasePoolMemory(SvDef::ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME, this);
 	m_ResultCollection.SetArchiveTool(nullptr);
 	m_ImageCollection.SetArchiveTool(nullptr);
 }
@@ -592,7 +592,7 @@ bool SVArchiveTool::initializeOnRun(SvStl::MessageContainerVector *pErrorMessage
 
 		if (m_eArchiveMethod == SVArchiveAsynchronous )
 		{
-			/*HRESULT hrThreadOnline =*/ TheSVArchiveImageThreadClass().GoOnline();
+			/*HRESULT hrThreadOnline =*/ SVArchiveImageThreadClass::Instance().GoOnline();
 		}
 	}
 
@@ -634,8 +634,8 @@ bool SVArchiveTool::initializeOnRun(SvStl::MessageContainerVector *pErrorMessage
 
 bool SVArchiveTool::AllocateImageBuffers(SvStl::MessageContainerVector *pErrorMessages)
 {
-	TheSVMemoryManager().ReleasePoolMemory(SvDef::ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME, this);
-	TheSVMemoryManager().ReleasePoolMemory(SvDef::ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME, this);
+	SVMemoryManager::Instance().ReleasePoolMemory(SvDef::ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME, this);
+	SVMemoryManager::Instance().ReleasePoolMemory(SvDef::ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME, this);
 	if (m_eArchiveMethod == SVArchiveGoOffline || m_eArchiveMethod == SVArchiveAsynchronous )
 	{
 		// async doesn't really allocate any buffers but it does preparation work (initm_ImageInfo)
@@ -655,7 +655,7 @@ bool SVArchiveTool::AllocateImageBuffers(SvStl::MessageContainerVector *pErrorMe
 		if (SVArchiveAsynchronous == m_eArchiveMethod)
 		{
 			long imageCount = std::accumulate(bufferMap.begin(), bufferMap.end(), 0, [](long sum, std::pair<SVMatroxBufferCreateStruct, long> val) { return sum + val.second; });
-			TheSVArchiveImageThreadClass().setMaxNumberOfBuffer(toolPos, dwMaxImages*imageCount);
+			SVArchiveImageThreadClass::Instance().setMaxNumberOfBuffer(toolPos, dwMaxImages*imageCount);
 		}
 
 		assert( S_OK == hrAllocate );
@@ -679,7 +679,7 @@ bool SVArchiveTool::AllocateImageBuffers(SvStl::MessageContainerVector *pErrorMe
 					{
 						long bufferNumber = iter.second*dwMaxImages;
 						__int64 l_lImageBufferSize = getBufferSize(iter.first) * bufferNumber;
-						hrAllocate = TheSVMemoryManager().ReservePoolMemory(memoryPoolName, this, l_lImageBufferSize);
+						hrAllocate = SVMemoryManager::Instance().ReservePoolMemory(memoryPoolName, this, l_lImageBufferSize);
 						if (S_OK != hrAllocate)
 						{
 							if (nullptr != pErrorMessages)
@@ -1095,7 +1095,7 @@ void SVArchiveTool::goingOffline()
 {
 	if (m_eArchiveMethod == SVArchiveAsynchronous )
 	{
-		TheSVArchiveImageThreadClass().GoOffline();
+		SVArchiveImageThreadClass::Instance().GoOffline();
 	}
 
 	if (m_eArchiveMethod == SVArchiveGoOffline )

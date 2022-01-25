@@ -41,16 +41,7 @@ HRESULT AcquisitionDevice::Create()
 
 	if (S_OK == result)
 	{
-		m_cameraQueue.Create();
-		if (m_cameraQueue.IsCreated())
-		{
-			m_isCreated = true;
-		}
-		else
-		{
-			result = E_FAIL;
-			Destroy();
-		}
+		m_isCreated = true;
 	}
 
 	return result;

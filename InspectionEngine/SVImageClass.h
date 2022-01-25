@@ -159,9 +159,6 @@ protected:
 	HRESULT UpdateChildren(bool reporterror);
 	HRESULT RemoveChildren();
 
-	bool Lock() const;
-	bool Unlock() const;
-
 	void setImageSubType();
 	bool hasStorage() const;
 private:
@@ -191,8 +188,7 @@ private:
 	SvOi::SVImageBufferHandlePtr m_savedBuffer;
 	SVImageInfoClass m_ImageInfoOfSavedBuffer;
 
-	mutable bool m_bCriticalSectionCreated;
-	mutable CRITICAL_SECTION m_hCriticalSection;
+	mutable std::recursive_mutex m_imageMutex;
 
 	bool m_removeChildCircularReference = false;
 };

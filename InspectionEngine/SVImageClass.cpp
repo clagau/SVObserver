@@ -151,9 +151,6 @@ SVImageClass* SVImageClass::GetParentImage() const
 
 void SVImageClass::init()
 {
-	::InitializeCriticalSection(&m_hCriticalSection);
-	m_bCriticalSectionCreated = true;
-
 	m_ImageType = SvPb::SVImageTypeEnum::SVImageTypeUnknown;
 
 	m_ObjectTypeInfo.m_ObjectType = SvPb::SVImageObjectType;
@@ -193,13 +190,6 @@ SVImageClass::~SVImageClass()
 	ClearParentConnection();
 
 	RemoveChildren();
-
-	if (m_bCriticalSectionCreated)
-	{
-		::DeleteCriticalSection(&m_hCriticalSection);
-
-		m_bCriticalSectionCreated = false;
-	}
 }
 
 bool SVImageClass::DestroyImage()
@@ -208,28 +198,17 @@ bool SVImageClass::DestroyImage()
 
 	if (m_isCreated)
 	{
-		bOk = Lock();
+		bOk = (S_OK == ClearParentConnection());
 
 		assert(bOk);
 
-		if (bOk)
-		{
-			bOk = (S_OK == ClearParentConnection());
+		bOk = S_OK == RemoveChildren() && bOk;
 
-			assert(bOk);
+		assert(bOk);
 
-			bOk = S_OK == RemoveChildren() && bOk;
+		m_ImageType = SvPb::SVImageTypeEnum::SVImageTypeUnknown;
 
-			assert(bOk);
-
-			m_ImageType = SvPb::SVImageTypeEnum::SVImageTypeUnknown;
-
-			m_isCreated = false;
-
-			bOk = Unlock() && bOk;
-
-			assert(bOk);
-		}
+		m_isCreated = false;
 
 		if (!bOk)
 		{
@@ -641,6 +620,7 @@ HRESULT SVImageClass::ClearParentConnection()
 
 	if (SvDef::InvalidObjectId != m_ParentImageInfo.first)
 	{
+		std::lock_guard<std::recursive_mutex> lock {m_imageMutex};
 		l_hrOk = SVObjectManagerClass::Instance().DisconnectObjects(m_ParentImageInfo.first, getObjectId());
 	}
 
@@ -657,8 +637,9 @@ HRESULT SVImageClass::UpdateChild(uint32_t childID, const SVImageInfoClass& rIma
 {
 	HRESULT l_hrOk = S_OK;
 
-	if (Lock())
 	{
+		std::lock_guard<std::recursive_mutex> lock {m_imageMutex};
+
 		if (SvPb::SVImageTypeEnum::SVImageTypeDependent == m_ImageType ||
 			SvPb::SVImageTypeEnum::SVImageTypeLogical == m_ImageType) //Matroxchildbuffer
 		{
@@ -735,14 +716,6 @@ HRESULT SVImageClass::UpdateChild(uint32_t childID, const SVImageInfoClass& rIma
 
 		}
 
-		if (!Unlock())
-		{
-			l_hrOk = E_FAIL;
-		}
-	}
-	else
-	{
-		l_hrOk = E_FAIL;
 	}
 
 	return l_hrOk;
@@ -761,8 +734,8 @@ HRESULT SVImageClass::RemoveChild(uint32_t childID)
 	}
 	m_removeChildCircularReference = true;
 
-	if (Lock())
 	{
+		std::lock_guard<std::recursive_mutex> lock {m_imageMutex};
 		auto l_Iter = m_ChildArrays.find(childID);
 
 		if (l_Iter != m_ChildArrays.end())
@@ -789,15 +762,6 @@ HRESULT SVImageClass::RemoveChild(uint32_t childID)
 		{
 			l_hrOk = l_pParentImage->RemoveChild(childID);
 		}
-
-		if (!Unlock())
-		{
-			l_hrOk = E_FAIL;
-		}
-	}
-	else
-	{
-		l_hrOk = E_FAIL;
 	}
 
 	m_removeChildCircularReference = false;
@@ -815,10 +779,10 @@ bool SVImageClass::SafeImageCopyToHandle(SvOi::SVImageBufferHandlePtr& p_rHandle
 
 	if (l_bOk)
 	{
-		if (Lock())
 		{
-			HRESULT l_Code;
+			std::lock_guard<std::recursive_mutex> lock {m_imageMutex};
 
+			HRESULT l_Code;
 			SvOi::ITRCImagePtr pImageBuffer = getImageReadOnly(pTriggerRecord.get());
 			l_bOk = nullptr != pImageBuffer && !pImageBuffer->isEmpty();
 
@@ -831,7 +795,7 @@ bool SVImageClass::SafeImageCopyToHandle(SvOi::SVImageBufferHandlePtr& p_rHandle
 				l_Code = SVMatroxBufferInterface::ClearBuffer(p_rHandle->GetBuffer(), 0.0);
 			}
 
-			l_bOk = Unlock() && l_bOk && S_OK == l_Code;
+			l_bOk = l_bOk && S_OK == l_Code;
 		}
 	}
 	return l_bOk;
@@ -889,20 +853,6 @@ const SVImageClass* const SVImageClass::GetRootImage() const
 	}
 
 	return this;
-}
-
-bool SVImageClass::Lock() const
-{
-	::EnterCriticalSection(&m_hCriticalSection);
-
-	return true;
-}
-
-bool SVImageClass::Unlock() const
-{
-	::LeaveCriticalSection(&m_hCriticalSection);
-
-	return true;
 }
 
 HRESULT SVImageClass::RemoveObjectConnection(uint32_t objectID)
@@ -1047,28 +997,18 @@ HRESULT SVImageClass::UpdateChildren(bool reporterror)
 {
 	HRESULT l_hrOk = S_OK;
 
-	if (Lock())
 	{
-		auto l_Iter = m_ChildArrays.begin();
+		std::lock_guard<std::recursive_mutex> lock {m_imageMutex};
 
+		auto l_Iter = m_ChildArrays.begin();
 		while (l_Iter != m_ChildArrays.end())
 		{
 			if (S_OK != UpdateChild(l_Iter->first, l_Iter->second, reporterror))
 			{
 				l_hrOk = E_FAIL;
 			}
-
 			++l_Iter;
 		}
-
-		if (!Unlock())
-		{
-			l_hrOk = E_FAIL;
-		}
-	}
-	else
-	{
-		l_hrOk = E_FAIL;
 	}
 	return l_hrOk;
 }
@@ -1077,10 +1017,9 @@ HRESULT SVImageClass::RemoveChildren()
 {
 	HRESULT l_hrOk = S_OK;
 
-	if (Lock())
 	{
+		std::lock_guard<std::recursive_mutex> lock {m_imageMutex};
 		auto l_Iter = m_ChildArrays.begin();
-
 		while (l_Iter != m_ChildArrays.end())
 		{
 			if (S_OK != RemoveChild(l_Iter->first))
@@ -1091,15 +1030,8 @@ HRESULT SVImageClass::RemoveChildren()
 			l_Iter = m_ChildArrays.begin();
 		}
 
-		if (!Unlock())
-		{
-			l_hrOk = E_FAIL;
-		}
 	}
-	else
-	{
-		l_hrOk = E_FAIL;
-	}
+
 	return l_hrOk;
 }
 

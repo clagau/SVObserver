@@ -51,7 +51,7 @@ SVDeviceParam::~SVDeviceParam()
 /*static*/std::string SVDeviceParam::GetParameterName(SVDeviceParamEnum e)
 {
 	std::string Result;
-	TheDeviceParamFactory::InstanceType::const_iterator iter = TheDeviceParamFactory::Instance().PrimaryMap().find(e);
+	TheDeviceParamFactory::const_iterator iter = TheDeviceParamFactory::Instance().PrimaryMap().find(e);
 	if (iter != TheDeviceParamFactory::Instance().PrimaryMap().end())
 	{
 		Result = iter->second;

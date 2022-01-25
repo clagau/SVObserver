@@ -496,17 +496,6 @@ namespace SvStl
 	constexpr int Err_17009_ErrorFillingInputs = BRW_ErrorBase + 9;
 	constexpr int Err_17010_ErrorGettingPPQCount = BRW_ErrorBase + 10;
 	constexpr int Err_17011_ErrorGettingPPQ = BRW_ErrorBase + 11;
-	constexpr int Err_17013_ErrorLockingInputRequests = BRW_ErrorBase + 13;
-	constexpr int Err_17014_ErrorUnlockingInputRequests = BRW_ErrorBase + 14;
-	constexpr int Err_17015_ErrorUnlockingInputRequests = BRW_ErrorBase + 15;
-	constexpr int Err_17019_ErrorLockingInputRequests = BRW_ErrorBase + 19;
-	constexpr int Err_17020_ErrorRemovingAllInputRequests = BRW_ErrorBase + 20;
-	constexpr int Err_17021_ErrorUnlockingInputRequests = BRW_ErrorBase + 21;
-	constexpr int Err_17022_ErrorLockingInputImageRequests = BRW_ErrorBase + 22;
-	constexpr int Err_17023_ErrorRemovingAllInputImageRequests = BRW_ErrorBase + 23;
-	constexpr int Err_17024_ErrorUnlockingInputImageRequests = BRW_ErrorBase + 24;
-	constexpr int Err_17025_ErrorLockingInputRequests = BRW_ErrorBase + 25;
-	constexpr int Err_17026_ErrorUnlockingInputRequests = BRW_ErrorBase + 26;
 	constexpr int Err_17027_ErrorGettingTimeStamp = BRW_ErrorBase + 27;
 	constexpr int Err_17028_ErrorGettingTimeStamp = BRW_ErrorBase + 28;
 	constexpr int Err_17029_ErrorGettingPPQCount = BRW_ErrorBase + 29;

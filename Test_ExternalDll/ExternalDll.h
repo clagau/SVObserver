@@ -32,7 +32,7 @@ class CDllTool;
 HINSTANCE hReporterModule;
 typedef std::map< GUID, CDllTool* > MapToolsType;
 MapToolsType g_DllTools;
-CRITICAL_SECTION g_DllToolsCritSec;
+std::mutex g_DllToolsMutex;
 
 /**********
 This lookup for the tool

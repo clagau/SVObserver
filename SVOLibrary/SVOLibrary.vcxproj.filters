@@ -18,12 +18,6 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="SVContainableCriticalSection.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="SVQueueObject.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="AcquisitionDevice.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -42,18 +36,15 @@
     <ClCompile Include="SVAcquisitionConstructParams.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="SVMemoryManager.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="SVContainableCriticalSection.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="SVMemoryManager.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="SVMultithread.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="SVOLibrary.h">
@@ -94,13 +85,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="SVContainableCriticalSection.inl">
-      <Filter>Headerdateien</Filter>
-    </None>
     <None Include="SVTQueueObject.inl">
-      <Filter>Headerdateien</Filter>
-    </None>
-    <None Include="SVMemoryManager.inl">
       <Filter>Headerdateien</Filter>
     </None>
     <None Include="ObsoleteItemChecker.inl">

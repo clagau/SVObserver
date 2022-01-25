@@ -146,7 +146,7 @@ HRESULT SVArchiveRecord::QueueImage(SvOi::ITRCImagePtr& rImage, const std::strin
 	{
 		// the QueueImage function will copy the buffer, so pass in the original here
 		SVArchiveImageThreadClass::BufferInfo info(rImage, rFileName, m_ImageInfo, m_toolPos);
-		TheSVArchiveImageThreadClass().QueueImage(info);
+		SVArchiveImageThreadClass::Instance().QueueImage(info);
 	}
 	else
 	{

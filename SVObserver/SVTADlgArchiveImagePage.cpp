@@ -288,9 +288,9 @@ BOOL SVTADlgArchiveImagePage::OnInitDialog()
 	// cppcheck-suppress danglingLifetime //this pointer is immediately converted to a CString and does not "dangle"
 	m_sMaxImageNumber = Temp.c_str(); 
 
-	__int64 MemUsed = TheSVMemoryManager().ReservedBytes( SvDef::ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME );
+	__int64 MemUsed = SVMemoryManager::Instance().ReservedBytes( SvDef::ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME );
 	m_ToolImageMemoryUsage = 0;
-	m_TotalArchiveImageMemoryAvailable = TheSVMemoryManager().SizeOfPoolBytes( SvDef::ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME );
+	m_TotalArchiveImageMemoryAvailable = SVMemoryManager::Instance().SizeOfPoolBytes( SvDef::ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME );
 
 	m_wndAvailableArchiveImageMemory.ShowWindow( lMode == SvTo::SVArchiveGoOffline );
 
@@ -644,7 +644,7 @@ bool SVTADlgArchiveImagePage::checkImageMemory(uint32_t imageId, bool bNewState)
 
 			if (bCanReserve && (0 < lDelta))
 			{
-				bCanReserve = TheSVMemoryManager().CanReservePoolMemory( SvDef::ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME, lDelta );
+				bCanReserve = SVMemoryManager::Instance().CanReservePoolMemory( SvDef::ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME, lDelta );
 			}
 
 			if (bCanReserve)

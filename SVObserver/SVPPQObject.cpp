@@ -370,20 +370,9 @@ bool SVPPQObject::Create()
 	// Create buckets for the PPQ positions
 	m_PPQPositions.resize(getPPQLength());
 
-	// Create a set of ProductInfoStructs to use
-	if (!m_qAvailableProductInfos.Create()) { return false; }
-
 	SetupProductInfoStructs();
 
 	m_isCreated = true;
-
-	// Create the Queues that run the threads
-	m_isCreated &= m_CameraResponseQueue.Create();
-	m_isCreated &= m_oInspectionQueue.Create();
-	m_isCreated &= m_oOutputsDelayQueue.Create();
-	m_isCreated &= m_oOutputsResetQueue.Create();
-	m_isCreated &= m_DataValidDelayQueue.Create();
-	m_isCreated &= m_ProductRequests.Create();
 
 	m_oNotifyInspectionsSet.clear();
 	m_ProcessInspectionsSet.clear();
@@ -468,13 +457,6 @@ void SVPPQObject::Destroy()
 		m_PendingCameraResponses.clear();
 	}
 
-	m_ProductRequests.Destroy();
-	m_DataValidDelayQueue.Destroy();
-	m_oOutputsDelayQueue.Destroy();
-	m_oOutputsResetQueue.Destroy();
-	m_oInspectionQueue.Destroy();
-	m_CameraResponseQueue.Destroy();
-
 	// Delete buckets for the PPQ positions
 	m_PPQPositions.clear();
 
@@ -483,8 +465,6 @@ void SVPPQObject::Destroy()
 	delete[] m_pMasterProductInfos;
 
 	m_pMasterProductInfos = nullptr;
-
-	m_qAvailableProductInfos.Destroy();
 
 	m_AllInputs.clear();
 	m_UsedInputs.clear();
@@ -3706,7 +3686,7 @@ HRESULT SVPPQObject::GetProduct(SVProductInfoStruct& p_rProduct, long lProcessCo
 
 	p_rProduct.InitProductInfo();
 
-	if (m_AsyncProcedure.IsActive() && m_ProductRequests.IsCreated())
+	if (m_AsyncProcedure.IsActive())
 	{
 		SVProductInfoStruct* l_pProduct = new SVProductInfoStruct;
 
